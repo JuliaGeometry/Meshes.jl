@@ -22,18 +22,17 @@ for TRAIT in COMPILE_TIME_TRAITS
   @eval $TRAIT(::M) where M = $TRAIT(M)
 end
 
-nelms(mesh::M) where M = @error "not implemented"
+elements(mesh::M) where M = @error "not implemented"
 
 boundary(mesh::M) where M = @error "not implemented"
 
-interior(mesh::M) where M =
-  setdiff([element(mesh, elm) for elm in 1:nelms(mesh)], boundary(mesh))
+interior(mesh::M) where M = setdiff(elements(mesh), boundary(mesh))
+
+nelms(mesh::M) where M = length(elements(mesh))
 
 #----------------------
 # MESH ELEMENT TRAITS
 #----------------------
-element(mesh::M, elm::Integer) where M = elm
-
 coords!(x::AbstractVector, mesh::M, elm::E) where {M,E} =
   @error "not implemented"
 
@@ -56,18 +55,14 @@ function coords(mesh::M, elms::AbstractVector) where M
   X
 end
 
-coords(mesh::M) where M =
-  coords(mesh, [element(mesh, elm) for elm in 1:nelms(mesh)])
+coords(mesh::M) where M = coords(mesh, elements(mesh))
 
 volume(mesh::M, elm::E) where {M,E} = @error "not implemented"
 
 volume(mesh::M, elms::AbstractVector) where M =
   sum(volume(mesh, elm) for elm in elms)
 
-volume(mesh::M) where M =
-  volume(mesh, [element(mesh, elm) for elm in 1:nelms(mesh)])
-
-neighbors(mesh::M, elm::E) where {M,E} = @error "not implemented"
+volume(mesh::M) where M = volume(mesh, elements(mesh))
 
 vertices(mesh::M, elm::E) where {M,E} = @error "not implemented"
 
