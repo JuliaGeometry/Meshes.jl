@@ -1,3 +1,6 @@
+#--------------
+# MESH TRAITS
+#--------------
 """
     boundary(mesh)
 
@@ -5,8 +8,16 @@ An iterator for the elements in boundary of the `mesh`.
 """
 boundary(mesh::M) where M = @error "not implemented"
 
+"""
+    interior(mesh)
+
+An iterator for the elements in the interior of the `mesh`.
+"""
 interior(mesh::M) where M = setdiff(elements(mesh), boundary(mesh))
 
+#----------------------
+# MESH ELEMENT TRAITS
+#----------------------
 """
     center!(x, mesh, elm)
 
@@ -50,9 +61,17 @@ function center(mesh::M, elms::AbstractVector) where M
   X
 end
 
+"""
+    volume(mesh, elm)
+
+Volume of `mesh` element `elm`.
+"""
 volume(mesh::M, elm::E) where {M,E} = @error "not implemented"
 
+"""
+    volume(mesh, elms)
+
+Volume of various `mesh` elements `elms`.
+"""
 volume(mesh::M, elms::AbstractVector) where M =
   sum(volume(mesh, elm) for elm in elms)
-
-volume(mesh::M) where M = volume(mesh, elements(mesh))
