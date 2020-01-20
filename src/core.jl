@@ -17,12 +17,12 @@ Number of dimensions of the `mesh`.
 ndims(::Type{M}) where M = @error "not implemented"
 
 """
-    ctype(mesh)
+    coordtype(mesh)
 
 Coordinate type of the `mesh`, i.e coordinates are
 stored as static vectors with entries of this type.
 """
-ctype(::Type{M}) where M = @error "not implemented"
+coordtype(::Type{M}) where M = @error "not implemented"
 
 """
     isstructured(mesh)

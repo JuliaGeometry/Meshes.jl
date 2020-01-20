@@ -13,11 +13,11 @@ Number of vertices in element `elm` of the `mesh`.
 nverts(mesh::M, elm::E) where {M,E} = length(vertices(mesh, elm))
 
 """
-    cbuff(mesh)
+    coordbuff(mesh)
 
 A buffer for storing coordinates in a reference system.
 """
-cbuff(m::Type{M}) where M = MVector{ndims(m),ctype(m)}(undef)
+coordbuff(m::Type{M}) where M = MVector{ndims(m),ctype(m)}(undef)
 
 """
     coords!(X, mesh, elm, verts)
