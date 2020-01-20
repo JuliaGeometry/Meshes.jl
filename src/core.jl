@@ -3,6 +3,13 @@
 # MESH TRAITS
 #--------------
 """
+    ismesh(mesh)
+
+Informs that the `mesh` implements the API.
+"""
+ismesh(::Type{M}) where M = @error "not implemented"
+
+"""
     ndims(mesh)
 
 Number of dimensions of the `mesh`.
