@@ -4,7 +4,8 @@ using StaticArrays: MVector # default buffer for coordinates
 
 include("core.jl")
 include("basic.jl")
-include("geoprops.jl")
+include("geotraits.jl")
+include("itertraits.jl")
 
 COMPILE_TIME_TRAITS = [:ismesh, :ndims, :coordtype, :coordbuff,
                        :isstructured, :isregular]
