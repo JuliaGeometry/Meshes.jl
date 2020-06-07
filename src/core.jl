@@ -1,73 +1,76 @@
 
-#--------------
+# ------------
 # MESH TRAITS
-#--------------
+# ------------
 """
-    ismesh(mesh)
+    ismesh(::Type{M})
+    ismesh(mesh::M)
 
 Informs that the `mesh` implements the API.
 """
-ismesh(::Type{M}) where M = @error "not implemented"
+function ismesh end
 
 """
-    ndims(mesh)
+    ndims(::Type{M})
+    ndims(mesh::M)
 
-Number of dimensions of the `mesh`.
+Number of dimensions of the spatial domain that the
+`mesh` represents.
 """
-ndims(::Type{M}) where M = @error "not implemented"
-
-"""
-    coordtype(mesh)
-
-Coordinate type of the `mesh`, i.e coordinates are
-stored as static vectors with entries of this type.
-"""
-coordtype(::Type{M}) where M = @error "not implemented"
+function ndims end
 
 """
-    isstructured(mesh)
+    coordtype(::Type{M})
+    coordtype(mesh::M)
 
-Tells whether or not the `mesh` is structured, i.e. if any element
-in the `mesh` can be located with integer indices i, j, k, ...
+The machine type used to store each individual coordinate
+in the embedding space of the `mesh`.
 """
-isstructured(::Type{M}) where M = Val{false}()
-
-"""
-    isregular(mesh)
-
-Tells whether or not the `mesh` is regular, i.e. if besides being
-structured, the spacing between elements is fixed (e.g. image).
-
-### Notes
-
-Regular meshes have low memory storage in Cartesian spaces.
-"""
-isregular(::Type{M}) where M = Val{false}()
+function coordtype end
 
 """
-    elements(mesh)
+    isstructured(::Type{M})
+    isstructured(mesh::M)
 
-An iterator of `mesh` elements with known length (e.g. 1:n).
+Tells whether or not the `mesh` is structured, i.e. if any
+element in the mesh can be located with integer indices
+i, j, k, ...
 """
-elements(mesh::M) where M = @error "not implemented"
+function isstructured end
 
-#----------------------
-# MESH ELEMENT TRAITS
-#----------------------
 """
-    vertices(mesh, elm)
+    isregular(::Type{M})
+    isregular(mesh::M)
 
-Return the vertices of element `elm` in the `mesh`.
+Tells whether or not the `mesh` is regular, i.e. if besides
+being structured, the spacing between elements is fixed
+(e.g. image).
 """
-vertices(mesh::M, elm::E) where {M,E} = @error "not implemented"
+function isregular end
 
-#------------------------
-# ELEMENT VERTEX TRAITS
-#------------------------
 """
-    coords!(x, mesh, elm, vert)
+    elements(mesh::M)
 
-Set the coordinates `x` of vertex `vert` in element `elm` in the `mesh`.
+Return an iterator of `mesh` elements with known length (e.g. 1:n).
 """
-coords!(x::AbstractVector, mesh::M, elm::E, vert::V) where {M,E,V} =
-  @error "not implemented"
+function elements end
+
+# ---------------
+# ELEMENT TRAITS
+# ---------------
+"""
+    vertices(mesh::M, elm::E)
+
+Return the GUID of the vertices of element `elm` in the `mesh`.
+"""
+function vertices end
+
+# --------------
+# VERTEX TRAITS
+# --------------
+"""
+    vcoords!(x::AbstractVector{T}, mesh::M, vert::V)
+
+Retrieve the coordinates `x` of vertex `vert` in the `mesh`.
+"""
+function vcoords! end

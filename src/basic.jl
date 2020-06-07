@@ -1,12 +1,12 @@
 """
-    nelms(mesh)
+    nelms(mesh::M)
 
 Number of elements in the `mesh`.
 """
 nelms(mesh::M) where M = length(elements(mesh))
 
 """
-   nverts(mesh, elm)
+   nverts(mesh::M, elm::E)
 
 Number of vertices in element `elm` of the `mesh`.
 """
@@ -17,39 +17,39 @@ nverts(mesh::M, elm::E) where {M,E} = length(vertices(mesh, elm))
 
 A buffer for storing coordinates in a reference system.
 """
-coordbuff(m::Type{M}) where M = MVector{ndims(m),ctype(m)}(undef)
+coordbuff(mesh::Type{M}) where M = MVector{ndims(mesh),coordtype(mesh)}(undef)
 
 """
-    coords!(X, mesh, elm, verts)
+    vcoords!(X, mesh::M, verts::AbstractVector{V})
 
-Set coordinates `X` of vertices `verts` of element `elm`
-in `mesh` as columns of the matrix.
+Retrieve coordinates `X` of vertices `verts` in `mesh`
+as columns of the matrix.
 """
-function coords!(X::AbstractMatrix, mesh::M, elm::E,
-                 verts::AbstractVector) where {M,E}
+function vcoords!(X::AbstractMatrix, mesh::M,
+                  verts::AbstractVector{V}) where {M,V}
   for j in 1:length(verts)
-    coords!(view(X,:,j), mesh, elm, verts[j])
+    @inbounds vcoords!(view(X,:,j), mesh, verts[j])
   end
 end
 
 """
-    coords(mesh, elm, vert)
+    vcoords(mesh::M, vert::V)
 
-Allocating version of `coords!`.
+Return coordinates of vertex `vert` in `mesh`.
 """
-function coords(mesh::M, elm::E, vert::V) where {M,E,V}
-  x = cbuff(M)
-  coords!(x, mesh, elm, vert)
+function vcoords(mesh::M, vert::V) where {M,V}
+  x = coordbuff(M)
+  vcoords!(x, mesh, vert)
   x
 end
 
 """
-    coords(mesh, elm, verts)
+    vcoords(mesh::M, verts::AbstractVector{V})
 
-Allocating version of `coords!`.
+Return coordinates of vertices `verts` in `mesh`.
 """
-function coords(mesh::M, elm::E, verts::AbstractVector) where {M,E}
-  X = Matrix{ctype(M)}(undef, ndims(M), nelms(mesh))
-  coords!(X, mesh, elm, verts)
+function vcoords(mesh::M, verts::AbstractVector{V}) where {M,V}
+  X = Matrix{coordtype(M)}(undef, ndims(M), length(verts))
+  vcoords!(X, mesh, verts)
   X
 end
