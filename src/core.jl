@@ -33,18 +33,47 @@ function coordtype end
     isstructured(mesh::M)
 
 Tells whether or not the `mesh` is structured, i.e. if any
-element in the mesh can be located with integer indices
-i, j, k, ...
+element in the mesh can be located with integer indices.
+
+# Example
+
+A regular grid where each square is split into two half triangles
+is structured. One can easily enumerate the elements with integer
+indices and create a fast lookup scheme.
 """
 function isstructured end
+
+"""
+    iscartesian(::Type{M})
+    iscartesian(mesh::M)
+
+Tells whether or not the `mesh` is Cartesian, i.e. if any
+element in the mesh has "left", "right", "up" and "down"
+neighbor elements. These neighbors can be located based
+on the integer indices (i, j, k, ...) of the element.
+
+# Example
+
+Parallels and meridians in a bounding box over the Earth's
+globe form a Cartesian mesh. Even though the spacing between
+elements is not constant, it is still possible to navigate
+the mesh with "north", "south", "east" and "west" integer
+increments.
+"""
 
 """
     isregular(::Type{M})
     isregular(mesh::M)
 
 Tells whether or not the `mesh` is regular, i.e. if besides
-being structured, the spacing between elements is fixed
-(e.g. image).
+being Cartesian, the spacing between elements is constant
+(a.k.a. image). Regular meshes are ideal for systems with
+memory constraints.
+
+# Example
+
+A potograph image is a regular mesh. Each pixel (or voxel in 3D)
+contributes the same volume to the domain discretization.
 """
 function isregular end
 
