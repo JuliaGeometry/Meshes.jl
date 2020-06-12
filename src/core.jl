@@ -60,6 +60,7 @@ elements is not constant, it is still possible to navigate
 the mesh with "north", "south", "east" and "west" integer
 increments.
 """
+function iscartesian end
 
 """
     isregular(::Type{M})
