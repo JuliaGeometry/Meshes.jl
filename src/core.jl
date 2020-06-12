@@ -37,9 +37,9 @@ element in the mesh can be located with integer indices.
 
 # Example
 
-A regular grid where each square is split into two half triangles
-is structured. One can easily enumerate the elements with integer
-indices and create a fast lookup scheme.
+A regular grid where each square element is split into two half
+triangle elements is structured. One can easily enumerate the
+triangles with integer indices and create a fast lookup table.
 """
 function isstructured end
 
@@ -55,21 +55,34 @@ on the integer indices (i, j, k, ...) of the element.
 # Example
 
 Parallels and meridians in a bounding box over the Earth's
-globe form a Cartesian mesh. Even though the spacing between
-elements is not constant, it is still possible to navigate
+globe form a Cartesian mesh. It is possible to navigate
 the mesh with "north", "south", "east" and "west" integer
 increments.
 """
 function iscartesian end
 
 """
+    isrectlinear(::Type{M})
+    isrectlinear(mesh::M)
+
+Tells whether or not the `mesh` is rectilinear, i.e. if
+besides being Cartesian, each element is a rectangle.
+
+# Example
+
+The projection of a map on the Earth's globe onto UTM
+coordinates leads to rectangle elements.
+"""
+function isrectlinear end
+
+"""
     isregular(::Type{M})
     isregular(mesh::M)
 
 Tells whether or not the `mesh` is regular, i.e. if besides
-being Cartesian, the spacing between elements is constant
-(a.k.a. image). Regular meshes are ideal for systems with
-memory constraints.
+being rectilinear, the spacing between elements is constant
+(a.k.a. image). Regular meshes can be represented compactly
+under strict memory constraints.
 
 # Example
 
