@@ -62,8 +62,8 @@ increments.
 function iscartesian end
 
 """
-    isrectlinear(::Type{M})
-    isrectlinear(mesh::M)
+    isrectilinear(::Type{M})
+    isrectilinear(mesh::M)
 
 Tells whether or not the `mesh` is rectilinear, i.e. if
 besides being Cartesian, each element is a rectangle.
@@ -73,7 +73,7 @@ besides being Cartesian, each element is a rectangle.
 The projection of a map on the Earth's globe onto UTM
 coordinates leads to rectangle elements.
 """
-function isrectlinear end
+function isrectilinear end
 
 """
     isregular(::Type{M})
