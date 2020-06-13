@@ -2,12 +2,12 @@
 # GEOMETRIC TRAITS
 # -----------------
 """
-    ecoords!(x::AbstractVector{T}, mesh::M, elm::M)
+    elmcoords!(x::AbstractVector{T}, mesh::M, elm::M)
 
 Retrieve the coordinates `x` of the centroid of the element
 `elm` in `mesh`. Default to mean of vertices of `elm`.
 """
-function ecoords!(x::AbstractVector, mesh::M, elm::E) where {M,E}
+function elmcoords!(x::AbstractVector, mesh::M, elm::E) where {M,E}
   X = vcoords(mesh, vertices(mesh, elm))
   nd, nv = size(X)
   for i in 1:nd
@@ -16,48 +16,48 @@ function ecoords!(x::AbstractVector, mesh::M, elm::E) where {M,E}
 end
 
 """
-    ecoords!(X, mesh, elms)
+    elmcoords!(X, mesh, elms)
 
 Retrieve the coordinates of the centroids of elements
 `elms` in the `mesh` as columns of `X`.
 """
-function ecoords!(X::AbstractMatrix, mesh::M,
+function elmcoords!(X::AbstractMatrix, mesh::M,
                   elms::AbstractVector{E}) where {M,E}
   for j in 1:length(elms)
-    ecoords!(view(X,:,j), mesh, elms[j])
+    elmcoords!(view(X,:,j), mesh, elms[j])
   end
 end
 
 """
-    ecoords(mesh, elm)
+    elmcoords(mesh, elm)
 
 Return the coordinates of of the centroid of the element
 `elm` in `mesh`.
 """
-function ecoords(mesh::M, elm::E) where {M,E}
+function elmcoords(mesh::M, elm::E) where {M,E}
   x = coordbuff(M)
-  ecoords!(x, mesh, elm)
+  elmcoords!(x, mesh, elm)
   x
 end
 
 """
-    ecoords(mesh, elms)
+    elmcoords(mesh, elms)
 
 Return the coordinates of the centroids of elements
 `elms` in `mesh`.
 """
-function ecoords(mesh::M, elms::AbstractVector{E}) where {M,E}
+function elmcoords(mesh::M, elms::AbstractVector{E}) where {M,E}
   X = Matrix{coordtype(M)}(undef, ndims(M), length(elms))
-  ecoords!(X, mesh, elms)
+  elmcoords!(X, mesh, elms)
   X
 end
 
 """
-    ecoords(mesh)
+    elmcoords(mesh)
 
 Return the coordinates of the centroids of all elements in `mesh`.
 """
-ecoords(mesh::M) where M = ecoords(mesh, elements(mesh))
+elmcoords(mesh::M) where M = elmcoords(mesh, elements(mesh))
 
 """
     volume(mesh::M, elm::E)

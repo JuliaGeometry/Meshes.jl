@@ -112,8 +112,8 @@ function vertices end
 # VERTEX TRAITS
 # --------------
 """
-    vcoords!(x::AbstractVector{T}, mesh::M, vert::V)
+    vertcoords!(x::AbstractVector{T}, mesh::M, vert::V)
 
 Retrieve the coordinates `x` of vertex `vert` in the `mesh`.
 """
-function vcoords! end
+function vertcoords! end
