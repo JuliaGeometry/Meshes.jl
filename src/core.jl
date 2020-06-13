@@ -86,7 +86,7 @@ under strict memory constraints.
 
 # Example
 
-A potograph image is a regular mesh. Each pixel (or voxel in 3D)
+A photograph image is a regular mesh. Each pixel (or voxel in 3D)
 contributes the same volume to the domain discretization.
 """
 function isregular end

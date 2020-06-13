@@ -6,8 +6,10 @@ include("core.jl")
 include("basic.jl")
 include("geotraits.jl")
 
-COMPILE_TIME_TRAITS = [:ismesh, :ndims, :coordtype, :coordbuff,
-                       :isstructured, :isregular]
+COMPILE_TIME_TRAITS = [:ismesh, :ndims,
+                       :coordtype, :coordbuff,
+                       :isstructured, :iscartesian,
+                       :isrectilinear, :isregular]
 
 # default versions for mesh instances
 for TRAIT in COMPILE_TIME_TRAITS
