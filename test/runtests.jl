@@ -40,17 +40,6 @@ using Test, Random
         x = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
         tetrahedra = connect(x, NSimplex{4})
         @test tetrahedra == [Tetrahedron(x[1], x[2], x[3], x[4])]
-
-        @testset "matrix non-copy point views" begin
-            # point in row
-            points = [1 2; 1 4; 66 77]
-            comparison = [Point(1, 2), Point(1, 4), Point(66, 77)]
-            @test connect(points, Point{2}) == comparison
-            # point in column
-            points = [1 1 66; 2 4 77]
-            # huh, reinterpret array doesn't seem to like `==`
-            @test all(((a,b),)-> a==b, zip(connect(points, Point{2}), comparison))
-        end
     end
 
     @testset "face views" begin
