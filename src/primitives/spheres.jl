@@ -38,16 +38,6 @@ function Base.in(p::AbstractPoint, s::HyperSphere)
     sum(abs2, x - c) ≤ r^2
 end
 
-function centered(S::Type{HyperSphere{N,T}}) where {N,T}
-    center = Point(ntuple(i->zero(T),N))
-    radius = T(0.5)
-    S(center, radius)
-end
-
-function centered(::Type{T}) where {T<:HyperSphere}
-    return centered(HyperSphere{ndims_or(T, 3),eltype_or(T, Float32)})
-end
-
 function coordinates(s::Circle, nvertices=64)
     o = coordinates(s.center)
     r = s.radius

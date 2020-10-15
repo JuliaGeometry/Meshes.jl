@@ -46,7 +46,7 @@ export AbstractGeometry, GeometryPrimitive
 export LineFace, Polytope, Line, NgonFace
 export LineString, AbstractPolygon, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
-export QuadFace, metafree, coordinates, TetrahedronFace
+export coordinates, TetrahedronFace
 export AbstractFace, TriangleFace, QuadFace
 export OffsetInteger, ZeroIndex, OneIndex
 export FaceView, SimpleFaceView, TupleView
@@ -63,7 +63,7 @@ export Cylinder2, Cylinder3
 
 export height, origin, radius, width, widths, xwidth, yheight
 export before, during, isinside, isoutside, overlaps, intersects, finishes
-export centered, direction, area, update, extremity
+export direction, area, update, extremity
 export self_intersections, split_intersections
 
 # meshes
@@ -74,7 +74,7 @@ export NormalUVMesh
 export NormalUVWMesh
 
 # meta
-export MetaT, meta, meta_table
+export MetaT, meta, metafree, meta_table
 export PointMeta, MultiPointMeta, PolygonMeta, MultiLineStringMeta
 export MeshMeta, LineStringMeta, MultiPolygonMeta
 
