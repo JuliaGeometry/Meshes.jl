@@ -3,10 +3,10 @@
 [![Build Status](https://travis-ci.com/JuliaGeometry/Meshes.jl.svg?branch=master)](https://travis-ci.com/JuliaGeometry/Meshes.jl)
 [![Codecov](https://codecov.io/gh/JuliaGeometry/Meshes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaGeometry/Meshes.jl)
 
-This package provides concepts from mathematical geometry and finite
-element analysis, which are useful in geospatial modeling and numerical
-simulation. It was forked from the GeometryBasics.jl package after careful
-considerations.
+This package provides efficient implementations of concepts from
+mathematical geometry and finite element analysis, which are useful
+in geospatial modeling and numerical simulation. It was forked from
+the GeometryBasics.jl package after careful considerations.
 
 Unlike GeometryBasics.jl, which was originally designed with visualization
 pipelines in mind, Meshes.jl is concerned with rigorous mathematical
@@ -29,7 +29,7 @@ the following discussions:
 The code is being completely refactored to accommodate advanced use cases
 in geospatial modeling and geostatistics. Until then, we kindly ask users
 to read the source code, the test suite, and the docstrings that we are
-adding as part of this major effort.
+adding as part of this effort.
 
 ## Contributing
 
