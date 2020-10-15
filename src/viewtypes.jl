@@ -136,8 +136,6 @@ function Base.propertynames(faceview::FaceView)
     return propertynames(getfield(faceview, :elements))
 end
 
-Tables.schema(faceview::FaceView) = Tables.schema(getfield(faceview, :elements))
-
 Base.size(faceview::FaceView) = size(getfield(faceview, :faces))
 
 function Base.show(io::IO, ::Type{<:FaceView{Element}}) where {Element}

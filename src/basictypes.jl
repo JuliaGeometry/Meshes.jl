@@ -360,8 +360,6 @@ struct Mesh{Dim,T<:Number,Element<:Polytope{Dim,T},V<:AbstractVector{Element}} <
     simplices::V # usually a FaceView, to connect a set of points via a set of faces.
 end
 
-Tables.schema(mesh::Mesh) = Tables.schema(getfield(mesh, :simplices))
-
 function Base.getproperty(mesh::Mesh, name::Symbol)
     if name === :position
         # a mesh always has position defined by coordinates...
