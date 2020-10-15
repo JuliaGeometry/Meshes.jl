@@ -176,43 +176,17 @@ end
     r = Rectangle(Point(0.0, 0.0), Vec(1.0, 1.0))
     @test p ∈ r
 
-    rect = Rectangle(Point(0.0, 0.0), Vec(1.0, 1.0))
-    @test Meshes.positive_widths(rect) isa Rectangle{2,Float64}
-
     h1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
     h2 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
     @test union(h1, h2) isa Rectangle{2,Float64}
-    @test Meshes.diff(h1, h2) == h1
     @test Meshes.intersect(h1, h2) isa Rectangle{2,Float64}
-
-    b = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    v = Vec(1, 2)
-    @test update(b, v) isa Rectangle{2,Float64}
-    v = Vec(1.0, 2.0)
-    @test update(b, v) isa Rectangle{2,Float64}
-
-    p = Vec(5.0, 4.0)
-    rect = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    @test min_dist_dim(rect, p, 1) == 4.0
-    @test min_dist_dim(rect, p, 2) == 3.0
-    @test max_dist_dim(rect, p, 1) == 5.0
-    @test max_dist_dim(rect, p, 2) == 4.0
 
     rect1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
     rect2 = Rectangle(Point2(3.0, 1.0), Vec2(4.0, 2.0))
-    @test min_dist_dim(rect1, rect2, 1) == 2.0
-    @test min_dist_dim(rect1, rect2, 2) == 0.0
-    @test max_dist_dim(rect1, rect2, 1) == 7.0
-    @test max_dist_dim(rect1, rect2, 2) == 3.0
-
     @test !before(rect1, rect2)
     rect1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
     rect2 = Rectangle(Point2(3.0, 2.0), Vec2(4.0, 2.0))
     @test before(rect1, rect2)
-
-    @test !meets(rect1, rect2)
-    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(4.0, 2.0))
-    @test meets(rect1, rect2)
 
     rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
     rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
@@ -245,5 +219,4 @@ end
     rect1 = Rectangle(Point2(1.0, 1.0), Vec2(1.0, 2.0))
     rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 3.0))
     @test finishes(rect1, rect2)
-
 end
