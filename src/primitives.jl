@@ -29,15 +29,15 @@ end
 
 Extract all line segments in a Face.
 """
-@generated function convert_simplex(::Type{LineFace{T}}, f::Union{SimplexFace{N},NgonFace{N}}) where {T,N}
+@generated function convert_simplex(::Type{LineFace}, f::Union{SimplexFace{N},NgonFace{N}}) where {N}
     2 <= N || error("decompose not implented for N <= 2 yet. N: $N")
 
     v = Expr(:tuple)
     for i in 1:(N - 1)
-        push!(v.args, :(LineFace{$T}(f[$i], f[$(i + 1)])))
+        push!(v.args, :(LineFace(f[$i], f[$(i + 1)])))
     end
     # connect vertices N and 1
-    push!(v.args, :(LineFace{$T}(f[$N], f[1])))
+    push!(v.args, :(LineFace(f[$N], f[1])))
     return v
 end
 

@@ -108,11 +108,10 @@ end
 NFace = NgonFace
 
 @testset "Faces" begin
-    @test convert_simplex(TriangleFace, QuadFace{Int}(1, 2, 3, 4)) ==
+    @test convert_simplex(TriangleFace, QuadFace(1, 2, 3, 4)) ==
           (TriangleFace(1, 2, 3), TriangleFace(1, 3, 4))
-    @test convert_simplex(LineFace{Int}, QuadFace{Int}(1, 2, 3, 4)) ==
-          (LineFace{Int}(1, 2), LineFace{Int}(2, 3), LineFace{Int}(3, 4),
-           LineFace{Int}(4, 1))
+    @test convert_simplex(LineFace, QuadFace(1, 2, 3, 4)) ==
+          (LineFace(1, 2), LineFace(2, 3), LineFace(3, 4), LineFace(4, 1))
 end
 
 @testset "HyperSphere" begin

@@ -1,9 +1,11 @@
 """
-Abstract Geometry in R{Dim} with type T
+A geometry embedded in a `N`-dimensional space with coordinates of type `T`.
 """
-abstract type AbstractGeometry{Dim,T} end
+abstract type AbstractGeometry{N,T} end
+
 abstract type GeometryPrimitive{Dim,T} <: AbstractGeometry{Dim,T} end
-Base.ndims(::AbstractGeometry{Dim}) where {Dim} = Dim
+
+Base.ndims(::AbstractGeometry{N,T}) where {N,T} = N
 
 """
 Geometry made of N connected points. Connected as one flat geometry, it makes a Ngon / Polygon.
@@ -24,9 +26,9 @@ const TetrahedronFace{T} = SimplexFace{4,T}
 Face(::Type{<:SimplexFace{N}}, ::Type{T}) where {N,T} = SimplexFace{N,T}
 
 @fixed_vector NgonFace AbstractNgonFace
-const LineFace{T} = NgonFace{2,T}
+const LineFace = NgonFace{2,Int}
 const TriangleFace = NgonFace{3,Int}
-const QuadFace{T} = NgonFace{4,T}
+const QuadFace = NgonFace{4,Int}
 
 function Base.show(io::IO, x::TriangleFace)
     return print(io, "TriangleFace(", join(x, ", "), ")")

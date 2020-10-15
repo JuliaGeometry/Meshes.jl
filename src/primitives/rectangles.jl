@@ -140,7 +140,7 @@ end
 function faces(::Rectangle{2,T}, nvertices=(2, 2)) where {T}
     w, h = nvertices
     idx = LinearIndices(nvertices)
-    quad(i, j) = QuadFace{Int}(idx[i, j], idx[i + 1, j], idx[i + 1, j + 1], idx[i, j + 1])
+    quad(i, j) = QuadFace(idx[i, j], idx[i + 1, j], idx[i + 1, j + 1], idx[i, j + 1])
     return ivec((quad(i, j) for i in 1:(w - 1), j in 1:(h - 1)))
 end
 
@@ -177,6 +177,6 @@ function texturecoordinates(::Rectangle{3,T}) where {T}
 end
 
 function faces(::Rectangle{3,T}) where {T}
-    return QuadFace{Int}[(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16),
-                         (17, 18, 19, 20), (21, 22, 23, 24)]
+    return QuadFace[(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16),
+                    (17, 18, 19, 20), (21, 22, 23, 24)]
 end

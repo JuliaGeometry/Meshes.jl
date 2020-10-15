@@ -38,7 +38,7 @@ using Test, Random
                 (2.0, 2.0, 12.0), (0.0, 2.0, 12.0)
             ]
 
-            facets = QuadFace{Cint}[
+            facets = QuadFace[
                 1:4,
                 5:8,
                 [1,5,6,2],
@@ -47,7 +47,7 @@ using Test, Random
                 [4, 8, 5, 1]
             ]
 
-            markers = Cint[-1, -2, 0, 0, 0, 0]
+            markers = [-1, -2, 0, 0, 0, 0]
             # attach some additional information to our faces!
             mesh = Mesh(points, meta(facets, markers = markers))
             @test hasproperty(Meshes.faces(mesh), :markers)
@@ -378,8 +378,8 @@ end
         @test meshuvnormal isa NormalUVMesh{3,Float32}
 
         t = Tesselation(Rectangle(Point2f(0,0), Vec2f(2,2)), (30, 30))
-        m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace{Int})
-        @test Meshes.faces(m) isa Vector{QuadFace{Int}}
+        m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace)
+        @test Meshes.faces(m) isa Vector{QuadFace}
         @test Meshes.coordinates(m) isa Vector{Point2f}
     end
 
