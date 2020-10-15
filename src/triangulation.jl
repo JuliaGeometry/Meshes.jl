@@ -18,7 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Calculate the area of one triangle.
 """
 function area(vertices::AbstractVector{<:AbstractPoint{3,VT}},
-              face::TriangleFace{FT}) where {VT,FT}
+              face::TriangleFace) where {VT}
     v1, v2, v3 = vertices[face]
     return 0.5 * norm(orthogonal_vector(v1, v2, v3))
 end
@@ -29,7 +29,7 @@ end
 Calculate the area of all triangles.
 """
 function area(vertices::AbstractVector{<:AbstractPoint{3,VT}},
-              faces::AbstractVector{TriangleFace{FT}}) where {VT,FT}
+              faces::AbstractVector{TriangleFace}) where {VT}
     return sum(x -> area(vertices, x), faces)
 end
 
@@ -104,7 +104,7 @@ function snip(contour::AbstractVector{<:AbstractPoint{N,T}}, u, v, w, n, V) wher
 end
 
 """
-    faces(contour::AbstractArray{Point}, [facetype = GLTriangleFace])
+    faces(contour::AbstractArray{Point}, [facetype = TriangleFace])
 
 Triangulates a Polygon given as an `AbstractArray{Point}` without holes.
 It will return a Vector{`facetype`}, defining indexes into `contour`
@@ -179,33 +179,33 @@ end
 function earcut_triangulate(polygon::Vector{Vector{Point{2,Float64}}})
     lengths = map(x -> UInt32(length(x)), polygon)
     len = UInt32(length(lengths))
-    array = ccall((:u32_triangulate_f64, libearcut), Tuple{Ptr{GLTriangleFace},Cint},
+    array = ccall((:u32_triangulate_f64, libearcut), Tuple{Ptr{TriangleFace},Cint},
                   (Ptr{Ptr{Float64}}, Ptr{UInt32}, UInt32), polygon, lengths, len)
-    return unsafe_wrap(Vector{GLTriangleFace}, array[1], array[2])
+    return unsafe_wrap(Vector{TriangleFace}, array[1], array[2])
 end
 
 function earcut_triangulate(polygon::Vector{Vector{Point{2,Float32}}})
     lengths = map(x -> UInt32(length(x)), polygon)
     len = UInt32(length(lengths))
-    array = ccall((:u32_triangulate_f32, libearcut), Tuple{Ptr{GLTriangleFace},Cint},
+    array = ccall((:u32_triangulate_f32, libearcut), Tuple{Ptr{TriangleFace},Cint},
                   (Ptr{Ptr{Float32}}, Ptr{UInt32}, UInt32), polygon, lengths, len)
-    return unsafe_wrap(Vector{GLTriangleFace}, array[1], array[2])
+    return unsafe_wrap(Vector{TriangleFace}, array[1], array[2])
 end
 
 function earcut_triangulate(polygon::Vector{Vector{Point{2,Int64}}})
     lengths = map(x -> UInt32(length(x)), polygon)
     len = UInt32(length(lengths))
-    array = ccall((:u32_triangulate_i64, libearcut), Tuple{Ptr{GLTriangleFace},Cint},
+    array = ccall((:u32_triangulate_i64, libearcut), Tuple{Ptr{TriangleFace},Cint},
                   (Ptr{Ptr{Int64}}, Ptr{UInt32}, UInt32), polygon, lengths, len)
-    return unsafe_wrap(Vector{GLTriangleFace}, array[1], array[2])
+    return unsafe_wrap(Vector{TriangleFace}, array[1], array[2])
 end
 
 function earcut_triangulate(polygon::Vector{Vector{Point{2,Int32}}})
     lengths = map(x -> UInt32(length(x)), polygon)
     len = UInt32(length(lengths))
-    array = ccall((:u32_triangulate_i32, libearcut), Tuple{Ptr{GLTriangleFace},Cint},
+    array = ccall((:u32_triangulate_i32, libearcut), Tuple{Ptr{TriangleFace},Cint},
                   (Ptr{Ptr{Int32}}, Ptr{UInt32}, UInt32), polygon, lengths, len)
-    return unsafe_wrap(Vector{GLTriangleFace}, array[1], array[2])
+    return unsafe_wrap(Vector{TriangleFace}, array[1], array[2])
 end
 
 best_earcut_eltype(x) = Float64

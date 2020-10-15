@@ -11,7 +11,7 @@ end
     faces(geometry)
 Returns the face connections of a geometry. Is allowed to return lazy iterators!
 Use `decompose(ConcreteFaceType, geometry)` to get `Vector{ConcreteFaceType}` with
-`ConcreteFaceType` to be something like `TriangleFace{Int}`.
+`ConcreteFaceType` to be something like `TriangleFace`.
 """
 function faces(f::AbstractVector{<:AbstractFace})
     return f

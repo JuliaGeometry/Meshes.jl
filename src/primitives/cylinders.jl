@@ -96,7 +96,7 @@ function faces(c::Cylinder{3}, facets=30)
     isodd(facets) ? facets = 2 * div(facets, 2) : nothing
     facets < 8 ? facets = 8 : nothing
     nbv = Int(facets / 2)
-    indexes = Vector{TriangleFace{Int}}(undef, facets)
+    indexes = Vector{TriangleFace}(undef, facets)
     index = 1
     for j in 1:(nbv - 1)
         indexes[index] = (index + 2, index + 1, index)

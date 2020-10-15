@@ -281,7 +281,7 @@ end
         triangles = connect([x], [TriangleFace(1, 1, 1)])
         @test triangles == [Triangle(x, x, x)]
         points = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
-        faces = connect([1, 2, 3, 4], SimplexFace{4})
+        faces = connect([1, 2, 3, 4], TetrahedronFace{Int})
         triangles = connect(points, faces)
         @test triangles == [Tetrahedron(points...)]
     end
@@ -361,28 +361,26 @@ end
         @test mesh == [Triangle(x, x, x)]
 
         points = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
-        sfaces = connect([1, 2, 3, 4], SimplexFace{4})
+        sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
         mesh = Mesh(points, sfaces)
         @test mesh == [Tetrahedron(points...)]
 
         points = rand(Point3f, 8)
-        tfaces = [GLTriangleFace(1, 2, 3), GLTriangleFace(5, 6, 7)]
+        tfaces = [TriangleFace(1, 2, 3), TriangleFace(5, 6, 7)]
         normal = rand(Vec3f, 8)
         uv = rand(Vec2f, 8)
         mesh = Mesh(points, tfaces)
         meshuv = Mesh(meta(points; uv=uv), tfaces)
         meshuvnormal = Mesh(meta(points; normals=normal, uv=uv), tfaces)
 
-        @test mesh isa GLPlainMesh
-        @test meshuv isa GLUVMesh3D
-        @test meshuvnormal isa GLNormalUVMesh3D
+        @test mesh isa PlainMesh
+        @test meshuv isa UVMesh{3,Float32}
+        @test meshuvnormal isa NormalUVMesh{3,Float32}
 
         t = Tesselation(Rectangle(Point2f(0,0), Vec2f(2,2)), (30, 30))
         m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace{Int})
-        m2 = Meshes.mesh(m, pointtype=Point2f, facetype=QuadFace{GLIndex})
-        @test Meshes.faces(m2) isa Vector{QuadFace{GLIndex}}
-        @test Meshes.coordinates(m2) isa Vector{Point2f}
-
+        @test Meshes.faces(m) isa Vector{QuadFace{Int}}
+        @test Meshes.coordinates(m) isa Vector{Point2f}
     end
 
     @testset "Multi geometries" begin
@@ -510,7 +508,7 @@ end
 @testset "modifying meta" begin
     xx = rand(10)
     points = rand(Point3f, 10)
-    m = Meshes.Mesh(meta(points, xx=xx), GLTriangleFace[(1,2,3), (3,4,5)])
+    m = Meshes.Mesh(meta(points, xx=xx), TriangleFace[(1,2,3), (3,4,5)])
     color = rand(10)
     m = pointmeta(m; color=color)
 
@@ -537,7 +535,7 @@ end
         @test meta(x, value=[1]).position === x
     end
     pos = Point2f[(10, 2)]
-    m = Mesh(meta(pos, uv=[Vec2f(1, 1)]), [GLTriangleFace(1, 1, 1)])
+    m = Mesh(meta(pos, uv=[Vec2f(1, 1)]), [TriangleFace(1, 1, 1)])
     @test m.position === pos
 end
 
@@ -546,20 +544,20 @@ end
     m = Meshes.mesh(s, pointtype=Point3)
     @test m isa Mesh{3,Float64}
     @test coordinates(m) isa Vector{Point3}
-    @test Meshes.faces(m) isa Vector{GLTriangleFace}
+    @test Meshes.faces(m) isa Vector{TriangleFace}
     points1 = coordinates(m)
     points2 = decompose(Point3, m)
     @test coordinates.(points1) ≈ coordinates.(points2)
 
     m = Meshes.mesh(s, pointtype=Point3f)
     tmesh = triangle_mesh(m)
-    @test tmesh isa GLPlainMesh
+    @test tmesh isa PlainMesh
     points1 = coordinates(tmesh)
     points2 = decompose(Point3f, tmesh)
     @test coordinates.(points1) ≈ coordinates.(points2)
 
     nmesh = normal_mesh(m)
-    @test nmesh isa GLNormalMesh
+    @test nmesh isa NormalMesh
     points1 = metafree(coordinates(nmesh))
     points2 = decompose(Point3f, nmesh)
     @test coordinates.(points1) ≈ coordinates.(points2)
@@ -569,7 +567,7 @@ end
 
     @test m isa Mesh{3,Float32}
     @test coordinates(m) isa Vector{Point3f}
-    @test Meshes.faces(m) isa Vector{GLTriangleFace}
+    @test Meshes.faces(m) isa Vector{TriangleFace}
 end
 
 @testset "lines intersects" begin

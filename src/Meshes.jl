@@ -37,9 +37,6 @@ include("boundingboxes.jl")
 # points
 export Point, Point2, Point3, Point2f, Point3f
 
-# TODO: review these
-export PointMeta
-
 # vectors
 export Vec, Vec2, Vec3, Vec2f, Vec3f
 export vunit, vfill
@@ -50,20 +47,12 @@ export LineFace, Polytope, Line, NgonFace
 export LineString, AbstractPolygon, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export QuadFace, metafree, coordinates, TetrahedronFace
-export TupleView, SimplexFace, Mesh, meta
-export Triangle, TriangleP
-export AbstractFace, TriangleFace, QuadFace, GLTriangleFace
-export OffsetInteger, ZeroIndex, OneIndex, GLIndex
-export FaceView, SimpleFaceView
-export PolygonMeta, MultiPointMeta, MultiLineStringMeta, MeshMeta, LineStringMeta,
-       MultiPolygonMeta
+export AbstractFace, TriangleFace, QuadFace
+export OffsetInteger, ZeroIndex, OneIndex
+export FaceView, SimpleFaceView, TupleView
 export decompose, coordinates, faces, normals, decompose_uv, decompose_normals,
        texturecoordinates, convert_simplex
 export Tesselation, pointmeta, Normal, UV, UVW
-export GLTriangleFace, GLNormalMesh3D, GLPlainTriangleMesh, GLUVMesh3D, GLUVNormalMesh3D
-export AbstractMesh, Mesh, TriangleMesh
-export GLNormalMesh2D, PlainTriangleMesh
-export MetaT, meta_table
 
 # primitives
 export Rectangle, Cylinder, Pyramid, Sphere
@@ -73,18 +62,21 @@ export HyperSphere, Circle
 export Cylinder2, Cylinder3
 
 export height, origin, radius, width, widths, xwidth, yheight
-export before, during, isinside, isoutside, meets, overlaps, intersects, finishes
+export before, during, isinside, isoutside, overlaps, intersects, finishes
 export centered, direction, area, update, extremity
-export max_dist_dim, max_euclidean, max_euclideansq, min_dist_dim, min_euclidean
-export min_euclideansq, minmax_dist_dim, minmax_euclidean, minmax_euclideansq
 export self_intersections, split_intersections
 
 # meshes
-export AbstractMesh, TriangleMesh, PlainMesh, GLPlainMesh, GLPlainMesh2D, GLPlainMesh3D
-export UVMesh, GLUVMesh, GLUVMesh2D, GLUVMesh3D
-export NormalMesh, GLNormalMesh, GLNormalMesh2D, GLNormalMesh3D
-export NormalUVMesh, GLNormalUVMesh, GLNormalUVMesh2D, GLNormalUVMesh3D
-export NormalUVWMesh, GLNormalUVWMesh, GLNormalUVWMesh2D, GLNormalUVWMesh3D
+export AbstractMesh, Mesh, TriangleMesh, PlainMesh, PlainTriangleMesh
+export UVMesh
+export NormalMesh
+export NormalUVMesh
+export NormalUVWMesh
+
+# meta
+export MetaT, meta, meta_table
+export PointMeta, MultiPointMeta, PolygonMeta, MultiLineStringMeta
+export MeshMeta, LineStringMeta, MultiPolygonMeta
 
 # mesh creation
 export triangle_mesh, triangle_mesh, uv_mesh

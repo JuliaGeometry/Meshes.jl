@@ -1,9 +1,9 @@
 """
-Abstract Geometry in R{Dim} with Number type T
+Abstract Geometry in R{Dim} with type T
 """
-abstract type AbstractGeometry{Dim,T<:Number} end
+abstract type AbstractGeometry{Dim,T} end
 abstract type GeometryPrimitive{Dim,T} <: AbstractGeometry{Dim,T} end
-Base.ndims(x::AbstractGeometry{Dim}) where {Dim} = Dim
+Base.ndims(::AbstractGeometry{Dim}) where {Dim} = Dim
 
 """
 Geometry made of N connected points. Connected as one flat geometry, it makes a Ngon / Polygon.
@@ -19,24 +19,16 @@ abstract type AbstractNgonFace{N,T} <: AbstractFace{N,T} end
 
 abstract type AbstractSimplex{Dim,N,T} <: StaticVector{Dim,T} end
 
-"""
-Face index, connecting points to form a simplex
-"""
-
 @fixed_vector SimplexFace AbstractSimplexFace
 const TetrahedronFace{T} = SimplexFace{4,T}
 Face(::Type{<:SimplexFace{N}}, ::Type{T}) where {N,T} = SimplexFace{N,T}
 
-"""
-Face index, connecting points to form an Ngon
-"""
-
 @fixed_vector NgonFace AbstractNgonFace
 const LineFace{T} = NgonFace{2,T}
-const TriangleFace{T} = NgonFace{3,T}
+const TriangleFace = NgonFace{3,Int}
 const QuadFace{T} = NgonFace{4,T}
 
-function Base.show(io::IO, x::TriangleFace{T}) where {T}
+function Base.show(io::IO, x::TriangleFace)
     return print(io, "TriangleFace(", join(x, ", "), ")")
 end
 
@@ -134,7 +126,6 @@ It applies to infinite dimensions. The structure of this type is designed
 to allow embedding in higher-order spaces by parameterizing on `T`.
 """
 struct Simplex{Dim,T<:Real,N,Point<:AbstractPoint{Dim,T}} <: Polytope{Dim,T}
-
     points::SVector{N,Point}
 end
 

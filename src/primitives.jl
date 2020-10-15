@@ -10,29 +10,16 @@ end
 # conversion & decompose
 convert_simplex(::Type{T}, x::T) where {T} = (x,)
 
-function convert_simplex(NFT::Type{NgonFace{N,T1}},
-                         f::Union{NgonFace{N,T2}}) where {T1,T2,N}
-    return (convert(NFT, f),)
-end
-
-function convert_simplex(NFT::Type{NgonFace{3,T}}, f::NgonFace{3,T2}) where {T,T2}
-    return (convert(NFT, f),)
-end
-function convert_simplex(NFT::Type{NgonFace{2,T}}, f::NgonFace{2,T2}) where {T,T2}
-    return (convert(NFT, f),)
-end
-
 """
     convert_simplex(::Type{Face{3}}, f::Face{N})
 
 Triangulate an N-Face into a tuple of triangular faces.
 """
-@generated function convert_simplex(::Type{TriangleFace{T}},
-                                    f::Union{SimplexFace{N},NgonFace{N}}) where {T,N}
-    3 <= N || error("decompose not implemented for N <= 3 yet. N: $N")# other wise degenerate
+@generated function convert_simplex(::Type{TriangleFace}, f::Union{SimplexFace{N},NgonFace{N}}) where {N}
+    3 <= N || error("decompose not implemented for N <= 3 yet. N: $N")
     v = Expr(:tuple)
     for i in 3:N
-        push!(v.args, :(TriangleFace{T}(f[1], f[$(i - 1)], f[$i])))
+        push!(v.args, :(TriangleFace(f[1], f[$(i - 1)], f[$i])))
     end
     return v
 end
@@ -42,9 +29,8 @@ end
 
 Extract all line segments in a Face.
 """
-@generated function convert_simplex(::Type{LineFace{T}},
-                                    f::Union{SimplexFace{N},NgonFace{N}}) where {T,N}
-    2 <= N || error("decompose not implented for N <= 2 yet. N: $N")# other wise degenerate
+@generated function convert_simplex(::Type{LineFace{T}}, f::Union{SimplexFace{N},NgonFace{N}}) where {T,N}
+    2 <= N || error("decompose not implented for N <= 2 yet. N: $N")
 
     v = Expr(:tuple)
     for i in 1:(N - 1)

@@ -2,7 +2,7 @@ using Test, Meshes
 
 @testset "algorithms.jl" begin
     cube = Rectangle(Point(-0.5,-0.5,-0.5), Vec(1.0,1.0,1.0))
-    cube_faces = decompose(TriangleFace{Int}, faces(cube))
+    cube_faces = decompose(TriangleFace, faces(cube))
     cube_vertices = decompose(Point3f, cube)
     @test area(cube_vertices, cube_faces) == 6
     mesh = Mesh(cube_vertices, cube_faces)
@@ -47,7 +47,7 @@ end
         points = decompose(Point3f, Tesselation(s, (2, 3)))
         @test coordinates.(points) ≈ coordinates.(target)
 
-        FT = TriangleFace{Int}
+        FT = TriangleFace
         faces = FT[(1, 2, 4), (1, 4, 3), (3, 4, 6), (3, 6, 5)]
         @test faces == decompose(FT, Tesselation(s, (2, 3)))
 
@@ -69,11 +69,11 @@ end
         points = decompose(Point3, Tesselation(s, 8))
         @test coordinates.(points) ≈ coordinates.(target)
 
-        faces = TriangleFace{Int}[(3, 2, 1), (4, 2, 3), (5, 4, 3), (6, 4, 5), (7, 6, 5),
-                                  (8, 6, 7), (1, 8, 7), (2, 8, 1), (3, 1, 9), (2, 4, 10),
-                                  (5, 3, 9), (4, 6, 10), (7, 5, 9), (6, 8, 10), (1, 7, 9),
-                                  (8, 2, 10)]
-        @test faces == decompose(TriangleFace{Int}, Tesselation(s, 8))
+        faces = TriangleFace[(3, 2, 1), (4, 2, 3), (5, 4, 3), (6, 4, 5), (7, 6, 5),
+                             (8, 6, 7), (1, 8, 7), (2, 8, 1), (3, 1, 9), (2, 4, 10),
+                             (5, 3, 9), (4, 6, 10), (7, 5, 9), (6, 8, 10), (1, 7, 9),
+                             (8, 2, 10)]
+        @test faces == decompose(TriangleFace, Tesselation(s, 8))
 
         m = triangle_mesh(Tesselation(s, 8))
 
@@ -81,7 +81,7 @@ end
         points = metafree(coordinates(m))
         @test coordinates.(points) ≈ coordinates.(target)
         m = normal_mesh(s)
-        @test m isa GLNormalMesh
+        @test m isa NormalMesh
 
         muv = uv_mesh(s)
         @test boundingbox(Point.(texturecoordinates(muv))) == Rectangle(Point3f(0,0,0), Vec3f(1,1,1))
@@ -108,25 +108,11 @@ end
 NFace = NgonFace
 
 @testset "Faces" begin
-    @test convert_simplex(GLTriangleFace, QuadFace{Int}(1, 2, 3, 4)) ==
-          (GLTriangleFace(1, 2, 3), GLTriangleFace(1, 3, 4))
-    @test convert_simplex(NFace{3,ZeroIndex{Int}}, QuadFace{ZeroIndex{Int}}(1, 2, 3, 4)) ==
-          (NFace{3,ZeroIndex{Int}}(1, 2, 3), NFace{3,ZeroIndex{Int}}(1, 3, 4))
-    @test convert_simplex(NFace{3,OffsetInteger{3,Int}},
-                          NFace{4,OffsetInteger{2,Int}}(1, 2, 3, 4)) ==
-          (NFace{3,OffsetInteger{3,Int}}(1, 2, 3), NFace{3,OffsetInteger{3,Int}}(1, 3, 4))
+    @test convert_simplex(TriangleFace, QuadFace{Int}(1, 2, 3, 4)) ==
+          (TriangleFace(1, 2, 3), TriangleFace(1, 3, 4))
     @test convert_simplex(LineFace{Int}, QuadFace{Int}(1, 2, 3, 4)) ==
           (LineFace{Int}(1, 2), LineFace{Int}(2, 3), LineFace{Int}(3, 4),
            LineFace{Int}(4, 1))
-
-    @testset "NgonFace ambiguity" begin
-        face = NgonFace((1, 2))
-        @test convert_simplex(NgonFace{2,UInt32}, face) === (NgonFace{2,UInt32}((1, 2)),)
-        @test convert_simplex(typeof(face), face) === (face,)
-        face = NgonFace((1,))
-        @test convert_simplex(NgonFace{1,UInt32}, face) === (NgonFace{1,UInt32}((1,)),)
-        @test convert_simplex(typeof(face), face) === (face,)
-    end
 end
 
 @testset "HyperSphere" begin
@@ -144,9 +130,9 @@ end
                      (1.22465e-16, -2.99952e-32, -1.0)]
     @test coordinates.(points) ≈ coordinates.(target)
 
-    f = decompose(TriangleFace{Int}, Tesselation(sphere, 3))
-    face_target = TriangleFace{Int}[[1, 2, 5], [1, 5, 4], [2, 3, 6], [2, 6, 5], [4, 5, 8],
-                                    [4, 8, 7], [5, 6, 9], [5, 9, 8]]
+    f = decompose(TriangleFace, Tesselation(sphere, 3))
+    face_target = TriangleFace[[1, 2, 5], [1, 5, 4], [2, 3, 6], [2, 6, 5], [4, 5, 8],
+                               [4, 8, 7], [5, 6, 9], [5, 9, 8]]
     @test f == face_target
     circle = HyperSphere(Point2f(0, 0), 1.0f0)
     points = decompose(Point2f, Tesselation(circle, 20))
