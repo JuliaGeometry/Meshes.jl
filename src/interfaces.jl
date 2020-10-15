@@ -86,7 +86,7 @@ end
 # Specializations
 
 function decompose(::Type{P}, primitive) where {P<:AbstractPoint}
-    convert.(P, metafree(coordinates(primitive)))
+    convert.(P, coordinates(primitive))
 end
 
 function decompose(::Type{F}, primitive) where {F<:AbstractFace}
@@ -97,7 +97,7 @@ end
 
 # TODO: review these
 function decompose(::Type{Point}, primitive::LineString{Dim,T}) where {Dim,T}
-    return collect_with_eltype(Point{Dim,T}, metafree(coordinates(primitive)))
+    return collect_with_eltype(Point{Dim,T}, coordinates(primitive))
 end
 
 function collect_with_eltype(::Type{T}, iter) where {T}

@@ -308,23 +308,19 @@ struct MultiPolygon{Dim,T<:Real,Element<:AbstractPolygon{Dim,T},
     polygons::A
 end
 
-function MultiPolygon(polygons::AbstractVector{P};
-                      kw...) where {P<:AbstractPolygon{Dim,T}} where {Dim,T}
-    return MultiPolygon(meta(polygons; kw...))
+function MultiPolygon(polygons::AbstractVector{P}) where {P<:AbstractPolygon{Dim,T}} where {Dim,T}
+    return MultiPolygon(polygons)
 end
 
 Base.getindex(mp::MultiPolygon, i) = mp.polygons[i]
 Base.size(mp::MultiPolygon) = size(mp.polygons)
 
-struct MultiLineString{Dim,T<:Real,Element<:LineString{Dim,T},A<:AbstractVector{Element}} <:
-       AbstractVector{Element}
-
+struct MultiLineString{Dim,T<:Real,Element<:LineString{Dim,T},A<:AbstractVector{Element}} <: AbstractVector{Element}
     linestrings::A
 end
 
-function MultiLineString(linestrings::AbstractVector{L};
-                         kw...) where {L<:AbstractVector{LineP{Dim,T,P}}} where {Dim,T,P}
-    return MultiLineString(meta(linestrings; kw...))
+function MultiLineString(linestrings::AbstractVector{L}) where {L<:AbstractVector{LineP{Dim,T,P}}} where {Dim,T,P}
+    return MultiLineString(linestrings)
 end
 
 Base.getindex(ms::MultiLineString, i) = ms.linestrings[i]
@@ -335,15 +331,12 @@ Base.size(ms::MultiLineString) = size(ms.linestrings)
 
 A collection of points
 """
-struct MultiPoint{Dim,T<:Real,P<:AbstractPoint{Dim,T},A<:AbstractVector{P}} <:
-       AbstractVector{P}
-
+struct MultiPoint{Dim,T<:Real,P<:AbstractPoint{Dim,T},A<:AbstractVector{P}} <: AbstractVector{P}
     points::A
 end
 
-function MultiPoint(points::AbstractVector{P};
-                    kw...) where {P<:AbstractPoint{Dim,T}} where {Dim,T}
-    return MultiPoint(meta(points; kw...))
+function MultiPoint(points::AbstractVector{P}) where {P<:AbstractPoint{Dim,T}} where {Dim,T}
+    return MultiPoint(points)
 end
 
 Base.getindex(mpt::MultiPoint, i) = mpt.points[i]
@@ -354,7 +347,7 @@ Base.size(mpt::MultiPoint) = size(mpt.points)
 
 An abstract mesh is a collection of Polytope elements (Simplices / Ngons).
 The connections are defined via faces(mesh), the coordinates of the elements are returned by
-coordinates(mesh). Arbitrary meta information can be attached per point or per face
+coordinates(mesh).
 """
 abstract type AbstractMesh{Element<:Polytope} <: AbstractVector{Element} end
 
@@ -372,7 +365,7 @@ Tables.schema(mesh::Mesh) = Tables.schema(getfield(mesh, :simplices))
 function Base.getproperty(mesh::Mesh, name::Symbol)
     if name === :position
         # a mesh always has position defined by coordinates...
-        return metafree(coordinates(mesh))
+        return coordinates(mesh)
     else
         return getproperty(getfield(mesh, :simplices), name)
     end

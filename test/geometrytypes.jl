@@ -78,7 +78,7 @@ end
         m = triangle_mesh(Tesselation(s, 8))
 
         @test Meshes.faces(m) == faces
-        points = metafree(coordinates(m))
+        points = coordinates(m)
         @test coordinates.(points) ≈ coordinates.(target)
     end
 end

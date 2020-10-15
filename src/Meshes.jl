@@ -26,7 +26,6 @@ include("primitives/cylinders.jl")
 include("primitives/pyramids.jl")
 
 include("interfaces.jl")
-include("metadata.jl")
 include("viewtypes.jl")
 include("primitives.jl")
 include("meshes.jl")
@@ -51,7 +50,7 @@ export AbstractFace, TriangleFace, QuadFace
 export OffsetInteger, ZeroIndex, OneIndex
 export FaceView, SimpleFaceView, TupleView
 export decompose, coordinates, faces, convert_simplex
-export Tesselation, pointmeta
+export Tesselation
 
 # primitives
 export Rectangle, Cylinder, Pyramid, Sphere
@@ -67,11 +66,6 @@ export self_intersections, split_intersections
 
 # meshes
 export AbstractMesh, Mesh, TriangleMesh, PlainMesh, PlainTriangleMesh
-
-# meta
-export MetaT, meta, metafree, meta_table
-export PointMeta, MultiPointMeta, PolygonMeta, MultiLineStringMeta
-export MeshMeta, LineStringMeta, MultiPolygonMeta
 
 # mesh creation
 export triangle_mesh

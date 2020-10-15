@@ -13,7 +13,7 @@ const TriangleMesh{Dim,T,PointType} = AbstractMesh{TriangleP{Dim,T,PointType}}
 """
     PlainMesh{Dim, T}
 
-Triangle mesh with no meta information (just points + triangle faces)
+Triangle mesh (points + triangle faces)
 """
 const PlainMesh{Dim,T} = TriangleMesh{Dim,T,Point{Dim,T}}
 
@@ -31,18 +31,11 @@ function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleF
 
     positions = decompose(pointtype, primitive)
     faces = decompose(facetype, primitive)
-    # If faces returns nothing for primitive, we try to triangulate!
     if faces === nothing
-        # triangulation.jl
+        # try to triangulate
         faces = decompose(facetype, positions)
     end
-
-    # We want to preserve any existing attributes!
-    attrs = attributes(primitive)
-    # Make sure this doesn't contain position, we'll add position explicitely via meta!
-    delete!(attrs, :position)
-
-    return Mesh(meta(positions; attrs...), faces)
+    return Mesh(positions, faces)
 end
 
 function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) where {P<:AbstractPoint}
@@ -105,46 +98,4 @@ function Base.merge(meshes::AbstractVector{<:Mesh})
         end
         return Mesh(ps, fs)
     end
-end
-
-"""
-    pointmeta(mesh::Mesh; meta_data...)
-
-Attaches metadata to the coordinates of a mesh
-"""
-function pointmeta(mesh::Mesh; meta_data...)
-    points = coordinates(mesh)
-    attr = attributes(points)
-    delete!(attr, :position) # position == metafree(points)
-    # delete overlapping attributes so we can replace with `meta_data`
-    foreach(k -> delete!(attr, k), keys(meta_data))
-    return Mesh(meta(metafree(points); attr..., meta_data...), faces(mesh))
-end
-
-"""
-    pop_pointmeta(mesh::Mesh, property::Symbol)
-Remove `property` from point metadata.
-Returns the new mesh, and the property!
-"""
-function pop_pointmeta(mesh::Mesh, property::Symbol)
-    points = coordinates(mesh)
-    attr = attributes(points)
-    delete!(attr, :position) # position == metafree(points)
-    # delete overlapping attributes so we can replace with `meta_data`
-    m = pop!(attr, property)
-    return Mesh(meta(metafree(points); attr...), faces(mesh)), m
-end
-
-"""
-    facemeta(mesh::Mesh; meta_data...)
-
-Attaches metadata to the faces of a mesh
-"""
-function facemeta(mesh::Mesh; meta_data...)
-    return Mesh(coordinates(mesh), meta(faces(mesh); meta_data...))
-end
-
-function attributes(hasmeta::Mesh)
-    return Dict{Symbol,Any}((name => getproperty(hasmeta, name)
-                             for name in propertynames(hasmeta)))
 end
