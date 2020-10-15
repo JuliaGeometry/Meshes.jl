@@ -1,7 +1,6 @@
 module Meshes
 
 using StaticArrays
-using StructArrays
 using IterTools
 using LinearAlgebra
 using EarCut_jll
@@ -15,8 +14,9 @@ include("vectors.jl")
 include("matrices.jl")
 include("points.jl")
 
+# TODO: review this
 include("fixed_arrays.jl")
-include("offsetintegers.jl")
+
 include("basictypes.jl")
 
 include("primitives/rectangles.jl")
@@ -46,7 +46,6 @@ export LineString, AbstractPolygon, Polygon, MultiPoint, MultiLineString, MultiP
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export coordinates, TetrahedronFace
 export AbstractFace, TriangleFace, QuadFace
-export OffsetInteger, ZeroIndex, OneIndex
 export FaceView, SimpleFaceView, TupleView
 export decompose, coordinates, faces, convert_simplex
 export Tesselation
