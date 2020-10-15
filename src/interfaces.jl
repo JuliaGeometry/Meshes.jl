@@ -47,10 +47,7 @@ m1 = mesh(sphere) # uses a default value for tesselation
 m2 = mesh(Tesselation(sphere, 64)) # uses 64 for tesselation
 length(coordinates(m1)) != length(coordinates(m2))
 ```
-For grid based tesselation, you can also use a tuple:
-```julia
-rect = Rect2D(0, 0, 1, 1)
-Tesselation(rect, (5, 5))
+For grid based tesselation, you can also use a tuple.
 """
 struct Tesselation{Dim,T,Primitive,NGrid}
     primitive::Primitive

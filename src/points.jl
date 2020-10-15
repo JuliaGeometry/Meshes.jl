@@ -30,7 +30,7 @@ Point{N,T}(coords::NTuple{N,V}) where {N,T,V} = Point(T.(coords))
 Point{N,T}(coords::Vararg{V,N}) where {N,T,V} = Point(T.(coords))
 Base.convert(::Type{Point{N,T}}, coords) where {N,T} = Point{N,T}(coords)
 Base.convert(::Type{Point{N,T}}, p::Point) where {N,T} = Point{N,T}(p.coords)
-Base.convert(::Type{Point}, coords) = convert(Point{length(coords),eltype(coords)}, coords)
+Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
 # type aliases for convenience
 const Point2  = Point{2,Float64}

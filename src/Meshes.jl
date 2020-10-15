@@ -37,16 +37,16 @@ include("boundingboxes.jl")
 # points
 export Point, Point2, Point3, Point2f, Point3f
 
+# TODO: review these
+export PointMeta
+
 # vectors
 export Vec, Vec2, Vec3, Vec2f, Vec3f
 export vunit, vfill
 
-# TODO: review these
-export AbstractPoint, PointMeta, PointWithUV
-
 # geometries
 export AbstractGeometry, GeometryPrimitive
-export LineFace, Polytope, Line, NgonFace, convert_simplex
+export LineFace, Polytope, Line, NgonFace
 export LineString, AbstractPolygon, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export QuadFace, metafree, coordinates, TetrahedronFace
@@ -58,12 +58,26 @@ export FaceView, SimpleFaceView
 export PolygonMeta, MultiPointMeta, MultiLineStringMeta, MeshMeta, LineStringMeta,
        MultiPolygonMeta
 export decompose, coordinates, faces, normals, decompose_uv, decompose_normals,
-       texturecoordinates
+       texturecoordinates, convert_simplex
 export Tesselation, pointmeta, Normal, UV, UVW
 export GLTriangleFace, GLNormalMesh3D, GLPlainTriangleMesh, GLUVMesh3D, GLUVNormalMesh3D
 export AbstractMesh, Mesh, TriangleMesh
 export GLNormalMesh2D, PlainTriangleMesh
 export MetaT, meta_table
+
+# primitives
+export Rectangle, Cylinder, Pyramid, Sphere
+
+# TODO: review these
+export HyperSphere, Circle
+export Cylinder2, Cylinder3
+
+export height, origin, radius, width, widths, xwidth, yheight
+export before, during, isinside, isoutside, meets, overlaps, intersects, finishes
+export centered, direction, area, update, extremity
+export max_dist_dim, max_euclidean, max_euclideansq, min_dist_dim, min_euclidean
+export min_euclideansq, minmax_dist_dim, minmax_euclidean, minmax_euclideansq
+export self_intersections, split_intersections
 
 # meshes
 export AbstractMesh, TriangleMesh, PlainMesh, GLPlainMesh, GLPlainMesh2D, GLPlainMesh3D
@@ -75,17 +89,6 @@ export NormalUVWMesh, GLNormalUVWMesh, GLNormalUVWMesh2D, GLNormalUVWMesh3D
 # mesh creation
 export triangle_mesh, triangle_mesh, uv_mesh
 export uv_mesh, normal_mesh, uv_normal_mesh
-
-# primitives
-export height, origin, radius, width, widths, xwidth, yheight
-export HyperSphere, Circle, Sphere
-export Cylinder, Cylinder2, Cylinder3, Pyramid, extremity
-export Rect, Rect2D, Rect3D, IRect, IRect2D, IRect3D, FRect, FRect2D, FRect3D
-export before, during, isinside, isoutside, meets, overlaps, intersects, finishes
-export centered, direction, area, update
-export max_dist_dim, max_euclidean, max_euclideansq, min_dist_dim, min_euclidean
-export min_euclideansq, minmax_dist_dim, minmax_euclidean, minmax_euclideansq
-export self_intersections, split_intersections
 
 # bounding boxes
 export boundingbox

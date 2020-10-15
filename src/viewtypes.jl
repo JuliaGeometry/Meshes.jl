@@ -62,7 +62,7 @@ end
 end
 
 """
-    connect(points::AbstractVector{<: AbstractPoint}, P::Type{<: Polytype{N}}, skip::Int = N)
+    connect(points::AbstractVector{<:AbstractPoint}, P::Type{<:Polytype{N}}, skip::Int = N)
 
 Creates a view that connects a number of points to a Polytope `P`.
 Between each polytope, `skip` elements are skipped untill the next starts.
@@ -70,11 +70,11 @@ Example:
 ```julia
 x = connect(Point[(1, 2), (3, 4), (5, 6), (7, 8)], Line, 2)
 x == [Line(Point(1, 2), Point(3, 4)), Line(Point(5, 6), Point(7, 8))]
+```
 """
-@inline function connect(points::AbstractVector{Point},
-                         P::Type{<:Polytope{N,T} where {N,T}},
-                         skip::Int=length(P)) where {Point <: AbstractPoint}
-    return reinterpret(Polytope(P, Point), TupleView{length(P),skip}(points))
+@inline function connect(points::AbstractVector{P}, PL::Type{<:Polytope{N,T} where {N,T}},
+                         skip::Int=length(PL)) where {P<:AbstractPoint}
+    return reinterpret(Polytope(PL, P), TupleView{length(PL),skip}(points))
 end
 
 @inline function connect(points::AbstractVector{T}, ::Type{<:AbstractPoint{N}},

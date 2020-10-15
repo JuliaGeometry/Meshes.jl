@@ -78,8 +78,8 @@ using Test, Random
         @test Meshes.getcolumn(multipoly, :name) == pnames
         @test Meshes.MetaFree(MultiPolygonMeta) == MultiPolygon
 
-        meta_p = meta(polys[1], boundingbox=Rect(0, 0, 2, 2))
-        @test meta_p.boundingbox === Rect(0, 0, 2, 2)
+        meta_p = meta(polys[1], boundingbox=Rectangle(Point(0,0), Vec(2,2)))
+        @test meta_p.boundingbox === Rectangle(Point(0,0), Vec(2,2))
         @test metafree(meta_p) === polys[1]
         attributes(meta_p) == Dict{Symbol, Any}(:boundingbox => meta_p.boundingbox,
                                                 :polygon => polys[1])
@@ -111,20 +111,20 @@ using Test, Random
     end
 
     @testset "MultiLineString with metadata" begin
-        linestring1 = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
-        linestring2 = LineString(Point{2, Int}[(40, 40), (30, 30), (40, 20), (30, 10)])
+        linestring1 = LineString(Point{2,Int}[(10, 10), (20, 20), (10, 40)])
+        linestring2 = LineString(Point{2,Int}[(40, 40), (30, 30), (40, 20), (30, 10)])
         multilinestring = MultiLineString([linestring1, linestring2])
-        multilinestringmeta = MultiLineStringMeta([linestring1, linestring2]; boundingbox = Rect(1.0, 1.0, 2.0, 2.0))
+        multilinestringmeta = MultiLineStringMeta([linestring1, linestring2]; boundingbox = Rectangle(Point(1.0,1.0), Vec(2.0,2.0)))
         @test multilinestringmeta isa AbstractVector
-        @test meta(multilinestringmeta) === (boundingbox = Rect(1.0, 1.0, 2.0, 2.0),)
+        @test meta(multilinestringmeta) === (boundingbox = Rectangle(Point(1.0,1.0), Vec(2.0,2.0)),)
         @test metafree(multilinestringmeta) == multilinestring
         @test propertynames(multilinestringmeta) == (:linestrings, :boundingbox)
     end
 
     @testset "Mesh with metadata" begin
        m = triangle_mesh(HyperSphere(Point3f(0,0,0), 1.0f0))
-       m_meta = MeshMeta(m; boundingbox=Rect(1.0, 1.0, 2.0, 2.0))
-       @test meta(m_meta) === (boundingbox = Rect(1.0, 1.0, 2.0, 2.0),)
+       m_meta = MeshMeta(m; boundingbox = Rectangle(Point(1.0,1.0), Vec(2.0,2.0)))
+       @test meta(m_meta) === (boundingbox = Rectangle(Point(1.0,1.0), Vec(2.0,2.0)),)
        @test metafree(m_meta) === m
        @test propertynames(m_meta) == (:mesh, :boundingbox)
    end
@@ -147,12 +147,12 @@ end
         @test Meshes.getcolumn(poly, :name) == pnames[1]
         @test Meshes.getcolumn(multipoly, :name) == pnames
 
-        meta_p = MetaT(polys[1], boundingbox=Rect(0, 0, 2, 2))
-        @test meta_p.boundingbox === Rect(0, 0, 2, 2)
+        meta_p = MetaT(polys[1], boundingbox = Rectangle(Point(0,0), Vec(2,2)))
+        @test meta_p.boundingbox === Rectangle(Point(0,0), Vec(2,2))
         @test Meshes.metafree(meta_p) == polys[1]
         @test Meshes.metafree(poly) == polys[1]
         @test Meshes.metafree(multipoly) == multipol
-        @test Meshes.meta(meta_p) == (boundingbox = Meshes.HyperRectangle{2,Int64}([0, 0], [2, 2]),)
+        @test Meshes.meta(meta_p) == (boundingbox = Rectangle(Point(0,0), Vec(2, 2)),)
         @test Meshes.meta(poly) == (name = pnames[1], value = 0.0, category = bin[1])
         @test Meshes.meta(multipoly) == (name = pnames, value = numbers, category = bin)
     end
@@ -191,13 +191,13 @@ end
         linestring1 = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
         linestring2 = LineString(Point{2, Int}[(40, 40), (30, 30), (40, 20), (30, 10)])
         multilinestring = MultiLineString([linestring1, linestring2])
-        multilinestringmeta = MetaT(MultiLineString([linestring1, linestring2]); boundingbox = Rect(1.0, 1.0, 2.0, 2.0))
+        multilinestringmeta = MetaT(MultiLineString([linestring1, linestring2]); boundingbox = Rectangle(Point2(1,1), Vec2(2,2)))
         @test multilinestringmeta isa MetaT
-        @test multilinestringmeta.meta === (boundingbox = Rect(1.0, 1.0, 2.0, 2.0),)
+        @test multilinestringmeta.meta === (boundingbox = Rectangle(Point(1.0,1.0), Vec(2.0,2.0)),)
         @test multilinestringmeta.main == multilinestring
         @test propertynames(multilinestringmeta) == (:main, :boundingbox)
         @test Meshes.metafree(multilinestringmeta) == multilinestring
-        @test Meshes.meta(multilinestringmeta) == (boundingbox = Meshes.HyperRectangle{2,Float64}([1.0, 1.0], [2.0, 2.0]),)
+        @test Meshes.meta(multilinestringmeta) == (boundingbox = Rectangle(Point(1.0,1.0), Vec(2.0,2.0)),)
     end
 
     #=
@@ -377,7 +377,7 @@ end
         @test meshuv isa GLUVMesh3D
         @test meshuvnormal isa GLNormalUVMesh3D
 
-        t = Tesselation(FRect2D(0, 0, 2, 2), (30, 30))
+        t = Tesselation(Rectangle(Point2f(0,0), Vec2f(2,2)), (30, 30))
         m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace{Int})
         m2 = Meshes.mesh(m, pointtype=Point2f, facetype=QuadFace{GLIndex})
         @test Meshes.faces(m2) isa Vector{QuadFace{GLIndex}}
@@ -424,22 +424,22 @@ end
     @test decompose(Point3f, mesh) isa Vector{Point3f}
     @test decompose(Point3f, primitive) isa Vector{Point3f}
 
-    primitive = Rect2D(0, 0, 1, 1)
+    primitive = Rectangle(Point2(0, 0), Vec2(1, 1))
     mesh = triangle_mesh(primitive)
 
     @test decompose(Point2f, mesh) isa Vector{Point2f}
     @test decompose(Point{2,Int}, primitive) isa Vector{Point{2,Int}}
 
-    primitive = Rect3D(0, 0, 0, 1, 1, 1)
+    primitive = Rectangle(Point3(0,0,0), Vec3(1,1,1))
     triangle_mesh(primitive)
 
     primitive = HyperSphere(Point3f(0,0,0), 1.0f0)
     m_normal = normal_mesh(primitive)
     @test normals(m_normal) isa Vector{Vec3f}
-    primitive = Rect2D(0, 0, 1, 1)
+    primitive = Rectangle(Point2(0, 0), Vec2(1, 1))
     m_normal = normal_mesh(primitive)
     @test normals(m_normal) isa Vector{Vec3f}
-    primitive = Rect3D(0, 0, 0, 1, 1, 1)
+    primitive = Rectangle(Point3(0,0,0), Vec3(1,1,1))
     m_normal = normal_mesh(primitive)
     @test normals(m_normal) isa Vector{Vec3f}
 
@@ -453,12 +453,12 @@ end
     @test normals(m_normals) isa Vector{Vec3f}
 
     @test texturecoordinates(m) == nothing
-    r2 = Rect2D(0.0, 0.0, 1.0, 1.0)
+    r2 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
     @test iterate(texturecoordinates(r2)) == ([0.0, 1.0], ((0.0, 2), (1.0, 2)))
-    r3 = Rect3D(0.0, 0.0, 1.0, 1.0, 2.0, 2.0)
+    r3 = Rectangle(Point3(0.0, 0.0, 1.0), Vec3(1.0, 2.0, 2.0))
     @test iterate(texturecoordinates(r3)) == ([0, 0, 0], 2)
     uv = decompose_uv(m)
-    @test boundingbox(Point.(uv)) == Rect(0, 0, 0, 1, 1, 1)
+    @test boundingbox(Point.(uv)) == Rectangle(Point3(0,0,0), Vec3(1,1,1))
 
     points = decompose(Point2f, HyperSphere(Point2f(0, 0), 1.0f0))
     m = Meshes.mesh(points)
@@ -489,7 +489,7 @@ end
 end
 
 @testset "convert mesh + meta" begin
-    m = uv_normal_mesh(FRect3D(Vec(-1,-1,-1), Vec(1, 2, 3)))
+    m = uv_normal_mesh(Rectangle(Point3f(-1,-1,-1), Vec3f(1, 2, 3)))
     m_normal = normal_mesh(m)
     @test hasproperty(m_normal, :uv)
     @test m == m_normal
@@ -497,7 +497,7 @@ end
     @test m.normals == m_normal.normals
     @test m.uv == m_normal.uv
 
-    m = Meshes.mesh(FRect3D(Vec(-1,-1,-1), Vec(1, 2, 3));
+    m = Meshes.mesh(Rectangle(Point3f(-1,-1,-1), Vec3f(1, 2, 3));
                             uv=Vec2, normaltype=Vec3, pointtype=Point3)
     m_normal = normal_mesh(m)
     @test hasproperty(m_normal, :uv)

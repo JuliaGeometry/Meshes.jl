@@ -74,8 +74,8 @@ function texturecoordinates(::Sphere, nvertices=24)
     return ivec(((φ, θ) for θ in reverse(ux), φ in ux))
 end
 
-function faces(::Sphere, nvertices=24)
-    return faces(Rect(0, 0, 1, 1), (nvertices, nvertices))
+function faces(::Sphere{T}, nvertices=24) where {T}
+    return faces(Rectangle(Point{2,T}(0,0), Vec{2,T}(1,1)), (nvertices, nvertices))
 end
 
 function normals(::Sphere{T}, nvertices=24) where {T}

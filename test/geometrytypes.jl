@@ -1,7 +1,7 @@
 using Test, Meshes
 
 @testset "algorithms.jl" begin
-    cube = FRect(Vec(-0.5,-0.5,-0.5), Vec(1,1,1))
+    cube = Rectangle(Point(-0.5,-0.5,-0.5), Vec(1.0,1.0,1.0))
     cube_faces = decompose(TriangleFace{Int}, faces(cube))
     cube_vertices = decompose(Point3f, cube)
     @test area(cube_vertices, cube_faces) == 6
@@ -84,23 +84,23 @@ end
         @test m isa GLNormalMesh
 
         muv = uv_mesh(s)
-        @test boundingbox(Point.(texturecoordinates(muv))) == Rect(0.0f0, 0.0f0, 0.0f0, 1.0f0, 1.0f0, 1.0f0)
+        @test boundingbox(Point.(texturecoordinates(muv))) == Rectangle(Point3f(0,0,0), Vec3f(1,1,1))
     end
 end
 
-@testset "HyperRectangles" begin
-    a = Rect(Vec(0, 0), Vec(1, 1))
-    pt_expa = Point{2,Int}[(0, 0), (1, 0), (0, 1), (1, 1)]
+@testset "Rectangles" begin
+    a = Rectangle(Point(0, 0), Vec(1, 1))
+    pt_expa = Point[(0, 0), (1, 0), (0, 1), (1, 1)]
     @test decompose(Point{2,Int}, a) == pt_expa
     mesh = normal_mesh(a)
     @test decompose(Point2f, mesh) == convert.(Point2f, pt_expa)
 
-    b = Rect(Vec(1, 1, 1), Vec(1, 1, 1))
-    pt_expb = Point{3,Int}[(1, 1, 1), (1, 1, 2), (1, 2, 2), (1, 2, 1), (1, 1, 1),
-                           (2, 1, 1), (2, 1, 2), (1, 1, 2), (1, 1, 1), (1, 2, 1),
-                           (2, 2, 1), (2, 1, 1), (2, 2, 2), (1, 2, 2), (1, 1, 2),
-                           (2, 1, 2), (2, 2, 2), (2, 1, 2), (2, 1, 1), (2, 2, 1),
-                           (2, 2, 2), (2, 2, 1), (1, 2, 1), (1, 2, 2)]
+    b = Rectangle(Point(1,1,1), Vec(1,1,1))
+    pt_expb = Point[(1, 1, 1), (1, 1, 2), (1, 2, 2), (1, 2, 1), (1, 1, 1),
+                    (2, 1, 1), (2, 1, 2), (1, 1, 2), (1, 1, 1), (1, 2, 1),
+                    (2, 2, 1), (2, 1, 1), (2, 2, 2), (1, 2, 2), (1, 1, 2),
+                    (2, 1, 2), (2, 2, 2), (2, 1, 2), (2, 1, 1), (2, 2, 1),
+                    (2, 2, 2), (2, 2, 1), (1, 2, 1), (1, 2, 2)]
     @test decompose(Point{3,Int}, b) == pt_expb
     mesh = normal_mesh(b)
 end
@@ -127,21 +127,6 @@ NFace = NgonFace
         @test convert_simplex(NgonFace{1,UInt32}, face) === (NgonFace{1,UInt32}((1,)),)
         @test convert_simplex(typeof(face), face) === (face,)
     end
-end
-
-@testset "Normals" begin
-    n64 = Vec3[(0.0, 0.0, -1.0), (0.0, 0.0, -1.0), (0.0, 0.0, -1.0),
-               (0.0, 0.0, -1.0), (0.0, 0.0, 1.0), (0.0, 0.0, 1.0),
-               (0.0, 0.0, 1.0), (0.0, 0.0, 1.0), (-1.0, 0.0, 0.0),
-               (-1.0, 0.0, 0.0), (-1.0, 0.0, 0.0), (-1.0, 0.0, 0.0),
-               (1.0, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 0.0, 0.0),
-               (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 1.0, 0.0),
-               (0.0, 1.0, 0.0), (0.0, 1.0, 0.0), (0.0, -1.0, 0.0),
-               (0.0, -1.0, 0.0), (0.0, -1.0, 0.0), (0.0, -1.0, 0.0)]
-    n32 = map(Vec3f, n64)
-    r = triangle_mesh(centered(Rect3D))
-    # @test normals(coordinates(r), Meshes.faces(r)) == n32
-    # @test normals(coordinates(r), Meshes.faces(r)) == n64
 end
 
 @testset "HyperSphere" begin
@@ -174,126 +159,91 @@ end
 end
 
 @testset "Rectangles" begin
-    rect = FRect2D(0, 7, 20, 3)
-    @test (rect + 4) == FRect2D(4, 11, 20, 3)
-    @test (rect + Vec(2, -2)) == FRect2D(2, 5, 20, 3)
+    rect = Rectangle(Point2(0, 0), Vec2(1, 2))
+    @test rect isa Rectangle{2,Float64}
 
-    @test (rect - 4) == FRect2D(-4, 3, 20, 3)
-    @test (rect - Vec(2, -2)) == FRect2D(-2, 9, 20, 3)
-
-    base = Vec3f(1, 2, 3)
-    wxyz = Vec3f(-2, 4, 2)
-    rect = FRect3D(base, wxyz)
-    @test (rect + 4) == FRect3D(base .+ 4, wxyz)
-    @test (rect + Vec(2, -2, 3)) == FRect3D(base .+ Vec(2, -2, 3), wxyz)
-
-    @test (rect - 4) == FRect3D(base .- 4, wxyz)
-    @test (rect - Vec(2, -2, 7)) == FRect3D(base .- Vec(2, -2, 7), wxyz)
-
-    rect = FRect2D(0, 7, 20, 3)
-    @test (rect * 4) == FRect2D(0, 7 * 4, 20 * 4, 3 * 4)
-    @test (rect * Vec(2, -2)) == FRect2D(0, -7 * 2, 20 * 2, -3 * 2)
-
-    base = Vec3f(1, 2, 3)
-    wxyz = Vec3f(-2, 4, 2)
-    rect = FRect3D(base, wxyz)
-    @test (rect * 4) == FRect3D(base .* 4, wxyz .* 4)
-    @test (rect * Vec(2, -2, 3)) == FRect3D(base .* Vec(2, -2, 3), wxyz .* Vec(2, -2, 3))
-
-    rect1 = Rect(Vec(0.0, 0.0), Vec(1.0, 2.0))
-    rect2 = Rect(0.0, 0.0, 1.0, 2.0)
-    @test rect1 isa Meshes.HyperRectangle{2,Float64}
-    @test rect1 == rect2
-
-    split1, split2 = Meshes.split(rect1, 2, 1)
+    split1, split2 = Meshes.split(rect, 2, 1)
     @test widths(split1) == widths(split2)
     @test origin(split1) == Point(0.0, 0.0)
     @test origin(split2) == Point(0.0, 1.0)
-    @test in(split1, rect1)
-    @test !in(rect1, split1)
+    @test split1 ∈ rect
+    @test rect ∉ split1
 
-    prim = Rect(0.0, 0.0, 1.0, 1.0)
+    prim = Rectangle(Point2(0, 0), Vec2(1, 1))
     @test length(prim) == 2
 
-    @test width(prim) == 1.0
-    @test height(prim) == 1.0
+    p = Point(1.0, 1.0)
+    r = Rectangle(Point(0.0, 0.0), Vec(1.0, 1.0))
+    @test p ∈ r
 
-    b1 = Rect2D(0.0, 0.0, 2.0, 2.0)
-    b2 = Rect2D(0, 0, 2, 2)
-    @test isequal(b1, b2)
+    rect = Rectangle(Point(0.0, 0.0), Vec(1.0, 1.0))
+    @test Meshes.positive_widths(rect) isa Rectangle{2,Float64}
 
-    pt = Point(1.0, 1.0)
-    b1 = Rect(0.0, 0.0, 1.0, 1.0)
-    @test in(pt, b1)
-
-    rect = Rect(0.0, 0.0, 1.0, 1.0)
-    @test Meshes.positive_widths(rect) isa Meshes.HyperRectangle{2,Float64}
-
-    h1 = Rect(0.0, 0.0, 1.0, 1.0)
-    h2 = Rect(1.0, 1.0, 2.0, 2.0)
-    @test union(h1, h2) isa Meshes.HyperRectangle{2,Float64}
+    h1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
+    h2 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    @test union(h1, h2) isa Rectangle{2,Float64}
     @test Meshes.diff(h1, h2) == h1
-    @test Meshes.intersect(h1, h2) isa Meshes.HyperRectangle{2,Float64}
+    @test Meshes.intersect(h1, h2) isa Rectangle{2,Float64}
 
-    b = Rect(0.0, 0.0, 1.0, 1.0)
+    b = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
     v = Vec(1, 2)
-    @test update(b, v) isa Meshes.HyperRectangle{2,Float64}
+    @test update(b, v) isa Rectangle{2,Float64}
     v = Vec(1.0, 2.0)
-    @test update(b, v) isa Meshes.HyperRectangle{2,Float64}
+    @test update(b, v) isa Rectangle{2,Float64}
 
     p = Vec(5.0, 4.0)
-    rect = Rect(0.0, 0.0, 1.0, 1.0)
+    rect = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
     @test min_dist_dim(rect, p, 1) == 4.0
     @test min_dist_dim(rect, p, 2) == 3.0
     @test max_dist_dim(rect, p, 1) == 5.0
     @test max_dist_dim(rect, p, 2) == 4.0
 
-    rect1 = Rect(0.0, 0.0, 1.0, 1.0)
-    rect2 = Rect(3.0, 1.0, 4.0, 2.0)
+    rect1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
+    rect2 = Rectangle(Point2(3.0, 1.0), Vec2(4.0, 2.0))
     @test min_dist_dim(rect1, rect2, 1) == 2.0
     @test min_dist_dim(rect1, rect2, 2) == 0.0
     @test max_dist_dim(rect1, rect2, 1) == 7.0
     @test max_dist_dim(rect1, rect2, 2) == 3.0
 
     @test !before(rect1, rect2)
-    rect1 = Rect(0.0, 0.0, 1.0, 1.0)
-    rect2 = Rect(3.0, 2.0, 4.0, 2.0)
+    rect1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
+    rect2 = Rectangle(Point2(3.0, 2.0), Vec2(4.0, 2.0))
     @test before(rect1, rect2)
 
     @test !meets(rect1, rect2)
-    rect2 = Rect(1.0, 1.0, 4.0, 2.0)
+    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(4.0, 2.0))
     @test meets(rect1, rect2)
 
-    rect1 = Rect(1.0, 1.0, 2.0, 2.0)
-    rect2 = Rect(0.0, 0.0, 2.0, 1.0)
+    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
     @test !overlaps(rect1, rect2)
-    rect1 = Rect(1.0, 1.0, 2.0, 2.0)
-    rect2 = Rect(1.5, 1.5, 2.0, 2.0)
+    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Rectangle(Point2(1.5, 1.5), Vec2(2.0, 2.0))
     @test overlaps(rect1, rect2)
 
-    rect1 = Rect(1.0, 1.0, 2.0, 2.0)
-    rect2 = Rect(0.0, 0.0, 2.0, 1.0)
+    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
     @test !Meshes.starts(rect1, rect2)
-    rect2 = Rect(1.0, 1.0, 1.5, 1.5)
+    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(1.5, 1.5))
     @test !Meshes.starts(rect1, rect2)
-    rect2 = Rect(1.0, 1.0, 3.0, 3.0)
+    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(3.0, 3.0))
     @test Meshes.starts(rect1, rect2)
 
-    rect1 = Rect(1.0, 1.0, 2.0, 2.0)
-    rect2 = Rect(0.0, 0.0, 4.0, 4.0)
+    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(4.0, 4.0))
     @test during(rect1, rect2)
-    rect1 = Rect(0.0, 0.0, 2.0, 3.0)
-    rect2 = Rect(1.0, 1.0, 4.0, 2.0)
+    rect1 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 3.0))
+    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(4.0, 2.0))
     @test !during(rect1, rect2)
 
-    rect1 = Rect(1.0, 1.0, 2.0, 2.0)
-    rect2 = Rect(0.0, 0.0, 4.0, 4.0)
+    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(4.0, 4.0))
     @test !finishes(rect1, rect2)
-    rect1 = Rect(1.0, 0.0, 1.0, 1.0)
-    rect2 = Rect(0.0, 0.0, 2.0, 1.0)
+    rect1 = Rectangle(Point2(1.0, 0.0), Vec2(1.0, 1.0))
+    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
     @test !finishes(rect1, rect2)
-    rect1 = Rect(1.0, 1.0, 1.0, 2.0)
-    rect2 = Rect(0.0, 0.0, 2.0, 3.0)
+    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(1.0, 2.0))
+    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 3.0))
     @test finishes(rect1, rect2)
 
 end

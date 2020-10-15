@@ -52,15 +52,17 @@ function coordinates(c::Cylinder{2,T}, nvertices=(2, 2)) where {T}
     o = coordinates(c.origin)
     r = c.radius
     h = height(c)
-    rect = Rect(o[1] - r / 2, o[2], r, h)
+    p = Point{2,T}(o[1] - r /2, o[2])
+    w = SVector{2,T}(r, h)
+    rect = Rectangle(p, w)
     M = rotation(c)
     points = Point.(coordinates(rect, nvertices))
     vo = to_pointn(Point{3,T}, origin(c))
     return (M * (to_pointn(Point{3,T}, point) - vo) + coordinates(vo) for point in points)
 end
 
-function faces(sphere::Cylinder{2}, nvertices=(2, 2))
-    return faces(Rect(0, 0, 1, 1), nvertices)
+function faces(::Cylinder{2,T}, nvertices=(2, 2)) where {T}
+    return faces(Rectangle(Point{2,T}(0,0), SVector{2,T}(1,1)), nvertices)
 end
 
 function coordinates(c::Cylinder{3,T}, nvertices=30) where {T}
