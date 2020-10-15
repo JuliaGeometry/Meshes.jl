@@ -46,10 +46,6 @@ function coordinates(s::Circle, nvertices=64)
     return (inner(φ) for φ in φ)
 end
 
-function texturecoordinates(::Circle, nvertices=64)
-    return coordinates(HyperSphere(Point2f(0.5,0.5), 0.5f0), nvertices)
-end
-
 function coordinates(s::Sphere, nvertices=24)
     o = coordinates(s.center)
     r = s.radius
@@ -59,15 +55,6 @@ function coordinates(s::Sphere, nvertices=24)
     return ivec((inner(θ, φ) for θ in θ, φ in φ))
 end
 
-function texturecoordinates(::Sphere, nvertices=24)
-    ux = LinRange(0, 1, nvertices)
-    return ivec(((φ, θ) for θ in reverse(ux), φ in ux))
-end
-
 function faces(::Sphere{T}, nvertices=24) where {T}
     return faces(Rectangle(Point{2,T}(0,0), Vec{2,T}(1,1)), (nvertices, nvertices))
-end
-
-function normals(::Sphere{T}, nvertices=24) where {T}
-    return coordinates(HyperSphere(Point{3,T}(0,0,0), T(1)), nvertices)
 end

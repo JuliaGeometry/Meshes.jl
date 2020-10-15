@@ -3,24 +3,6 @@ const FaceMesh{Dim,T,Element} = Mesh{Dim,T,Element,<:FaceView{Element}}
 coordinates(mesh::FaceMesh) = coordinates(getfield(mesh, :simplices))
 faces(mesh::FaceMesh) = faces(getfield(mesh, :simplices))
 
-function texturecoordinates(mesh::AbstractMesh)
-    hasproperty(mesh, :uv) && return mesh.uv
-    hasproperty(mesh, :uvw) && return mesh.uvw
-    return nothing
-end
-
-function normals(mesh::AbstractMesh)
-    hasproperty(mesh, :normals) && return mesh.normals
-    return nothing
-end
-
-const PointWithUV{Dim,T} = PointMeta{Dim,T,Point{Dim,T},(:uv,),Tuple{Vec{2,T}}}
-const PointWithNormal{Dim,T} = PointMeta{Dim,T,Point{Dim,T},(:normals,),Tuple{Vec{3,T}}}
-const PointWithUVNormal{Dim,T} = PointMeta{Dim,T,Point{Dim,T},(:normals, :uv),
-                                           Tuple{Vec{3,T},Vec{2,T}}}
-const PointWithUVWNormal{Dim,T} = PointMeta{Dim,T,Point{Dim,T},(:normals, :uvw),
-                                            Tuple{Vec{3,T},Vec{3,T}}}
-
 """
     TriangleMesh{Dim, T, PointType}
 
@@ -36,43 +18,7 @@ Triangle mesh with no meta information (just points + triangle faces)
 const PlainMesh{Dim,T} = TriangleMesh{Dim,T,Point{Dim,T}}
 
 """
-    UVMesh{Dim, T}
-
-PlainMesh with texture coordinates meta at each point.
-`uvmesh.uv isa AbstractVector{Vec2f}`
-"""
-const UVMesh{Dim,T} = TriangleMesh{Dim,T,PointWithUV{Dim,T}}
-
-"""
-    NormalMesh{Dim, T}
-
-PlainMesh with normals meta at each point.
-`normalmesh.normals isa AbstractVector{Vec3f}`
-"""
-const NormalMesh{Dim,T} = TriangleMesh{Dim,T,PointWithNormal{Dim,T}}
-
-"""
-    NormalUVMesh{Dim, T}
-
-PlainMesh with normals and uv meta at each point.
-`normalmesh.normals isa AbstractVector{Vec3f}`
-`normalmesh.uv isa AbstractVector{Vec2f}`
-"""
-const NormalUVMesh{Dim,T} = TriangleMesh{Dim,T,PointWithUVNormal{Dim,T}}
-
-"""
-    NormalUVWMesh{Dim, T}
-
-PlainMesh with normals and uvw (texture coordinates in 3D) meta at each point.
-`normalmesh.normals isa AbstractVector{Vec3f}`
-`normalmesh.uvw isa AbstractVector{Vec3f}`
-"""
-const NormalUVWMesh{Dim,T} = TriangleMesh{Dim,T,PointWithUVWNormal{Dim,T}}
-
-"""
-    mesh(primitive::Meshable{N,T};
-         pointtype=Point{N,T}, facetype=TriangleFace,
-         uvtype=nothing, normaltype=nothing)
+    mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace)
 
 Creates a mesh from `primitive`.
 Uses the element types from the keyword arguments to create the attributes.
@@ -81,8 +27,7 @@ Note, that this can be an `Int` or `Tuple{Int, Int}``, when the primitive is gri
 It also only losely correlates to the number of vertices, depending on the algorithm used.
 #TODO: find a better number here!
 """
-function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace,
-              uv=nothing, normaltype=nothing) where {N,T}
+function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace) where {N,T}
 
     positions = decompose(pointtype, primitive)
     faces = decompose(facetype, primitive)
@@ -97,50 +42,17 @@ function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleF
     # Make sure this doesn't contain position, we'll add position explicitely via meta!
     delete!(attrs, :position)
 
-    if uv !== nothing
-        # this may overwrite an existing :uv, but will only create a copy
-        # if it has a different eltype, otherwise it should replace it
-        # with exactly the same instance - which is what we want here
-        attrs[:uv] = decompose(UV(uv), primitive)
-    end
-
-    if normaltype !== nothing
-        primitive_normals = normals(primitive)
-        if primitive_normals !== nothing
-            attrs[:normals] = convert.(normaltype, primitive_normals)
-        else
-            # Normals not implemented for primitive, so we calculate them!
-            n = normals(positions, faces; normaltype=normaltype)
-            if n !== nothing # ok jeez, this is a 2d mesh which cant have normals
-                attrs[:normals] = n
-            end
-        end
-    end
     return Mesh(meta(positions; attrs...), faces)
 end
 
-"""
-    mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace,
-         normaltype=nothing)
-Polygon triangluation!
-"""
-function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace,
-              normaltype=nothing) where {P<:AbstractPoint{2}}
+function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) where {P<:AbstractPoint}
 
-    return mesh(Polygon(polygon); pointtype=pointtype, facetype=facetype,
-                normaltype=normaltype)
+    return mesh(Polygon(polygon); pointtype=pointtype, facetype=facetype)
 end
 
-function mesh(polygon::AbstractPolygon{Dim,T}; pointtype=Point{Dim,T},
-              facetype=TriangleFace, normaltype=nothing) where {Dim,T}
-
+function mesh(polygon::AbstractPolygon{Dim,T}; pointtype=Point{Dim,T}, facetype=TriangleFace) where {Dim,T}
     faces = decompose(facetype, polygon)
     positions = decompose(pointtype, polygon)
-
-    if normaltype !== nothing
-        n = normals(positions, faces; normaltype=normaltype)
-        positions = meta(positions; normals=n)
-    end
     return Mesh(positions, faces)
 end
 
@@ -154,29 +66,6 @@ end
 
 function triangle_mesh(points::AbstractVector{P}; nvertices=nothing) where {P<:AbstractPoint}
     triangle_mesh(Polygon(points), nvertices=nvertices)
-end
-
-function uv_mesh(primitive::Meshable{N,T}) where {N,T}
-    mesh(primitive; pointtype=Point{N,T}, uv=Vec{2,T}, facetype=TriangleFace)
-end
-
-function uv_normal_mesh(primitive::Meshable{N,T}) where {N,T}
-    mesh(primitive; pointtype=Point{N,T}, uv=Vec{2,T}, normaltype=Vec{3,T}, facetype=TriangleFace)
-end
-
-function normal_mesh(points::AbstractVector{<:AbstractPoint},
-                     faces::AbstractVector{<:AbstractFace})
-    _points = decompose(Point3f, points)
-    _faces = decompose(TriangleFace, faces)
-    return Mesh(meta(_points; normals=normals(_points, _faces)), _faces)
-end
-
-function normal_mesh(primitive::Meshable{N}; nvertices=nothing) where {N}
-    if nvertices !== nothing
-        @warn("nvertices argument deprecated. Wrap primitive in `Tesselation(primitive, nvertices)`")
-        primitive = Tesselation(primitive, nvertices)
-    end
-    return mesh(primitive; pointtype=Point{N,Float32}, normaltype=Vec3f, facetype=TriangleFace)
 end
 
 """
@@ -230,14 +119,6 @@ function pointmeta(mesh::Mesh; meta_data...)
     # delete overlapping attributes so we can replace with `meta_data`
     foreach(k -> delete!(attr, k), keys(meta_data))
     return Mesh(meta(metafree(points); attr..., meta_data...), faces(mesh))
-end
-
-function pointmeta(mesh::Mesh, uv::UV)
-    return pointmeta(mesh; uv=decompose(uv, mesh))
-end
-
-function pointmeta(mesh::Mesh, normal::Normal)
-    return pointmeta(mesh; normals=decompose(normal, mesh))
 end
 
 """

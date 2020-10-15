@@ -50,9 +50,8 @@ export coordinates, TetrahedronFace
 export AbstractFace, TriangleFace, QuadFace
 export OffsetInteger, ZeroIndex, OneIndex
 export FaceView, SimpleFaceView, TupleView
-export decompose, coordinates, faces, normals, decompose_uv, decompose_normals,
-       texturecoordinates, convert_simplex
-export Tesselation, pointmeta, Normal, UV, UVW
+export decompose, coordinates, faces, convert_simplex
+export Tesselation, pointmeta
 
 # primitives
 export Rectangle, Cylinder, Pyramid, Sphere
@@ -68,10 +67,6 @@ export self_intersections, split_intersections
 
 # meshes
 export AbstractMesh, Mesh, TriangleMesh, PlainMesh, PlainTriangleMesh
-export UVMesh
-export NormalMesh
-export NormalUVMesh
-export NormalUVWMesh
 
 # meta
 export MetaT, meta, metafree, meta_table
@@ -79,8 +74,7 @@ export PointMeta, MultiPointMeta, PolygonMeta, MultiLineStringMeta
 export MeshMeta, LineStringMeta, MultiPolygonMeta
 
 # mesh creation
-export triangle_mesh, triangle_mesh, uv_mesh
-export uv_mesh, normal_mesh, uv_normal_mesh
+export triangle_mesh
 
 # bounding boxes
 export boundingbox

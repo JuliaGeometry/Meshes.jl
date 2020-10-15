@@ -63,27 +63,3 @@ function orthogonal_vector(v1, v2, v3)
     b = v3 - v1
     return cross(a, b)
 end
-
-"""
-```
-normals{VT,FD,FT,FO}(vertices::Vector{Point{3, VT}},
-                    faces::Vector{Face{FD,FT,FO}},
-                    NT = Normal{3, VT})
-```
-Compute all vertex normals.
-"""
-function normals(vertices::AbstractVector{<:AbstractPoint{3,T}}, faces::AbstractVector{F};
-                 normaltype=Vec{3,T}) where {T,F<:NgonFace}
-    normals_result = zeros(normaltype, length(vertices)) # initilize with same type as verts but with 0
-    for face in faces
-        v = metafree.(vertices[face])
-        # we can get away with two edges since faces are planar.
-        n = orthogonal_vector(v[1], v[2], v[3])
-        for i in 1:length(F)
-            fi = face[i]
-            normals_result[fi] = normals_result[fi] + n
-        end
-    end
-    normals_result .= normalize.(normals_result)
-    return normals_result
-end

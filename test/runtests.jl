@@ -367,15 +367,8 @@ end
 
         points = rand(Point3f, 8)
         tfaces = [TriangleFace(1, 2, 3), TriangleFace(5, 6, 7)]
-        normal = rand(Vec3f, 8)
-        uv = rand(Vec2f, 8)
         mesh = Mesh(points, tfaces)
-        meshuv = Mesh(meta(points; uv=uv), tfaces)
-        meshuvnormal = Mesh(meta(points; normals=normal, uv=uv), tfaces)
-
         @test mesh isa PlainMesh
-        @test meshuv isa UVMesh{3,Float32}
-        @test meshuvnormal isa NormalUVMesh{3,Float32}
 
         t = Tesselation(Rectangle(Point2f(0,0), Vec2f(2,2)), (30, 30))
         m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace)
@@ -431,33 +424,6 @@ end
     primitive = Rectangle(Point3(0,0,0), Vec3(1,1,1))
     triangle_mesh(primitive)
 
-    primitive = HyperSphere(Point3f(0,0,0), 1.0f0)
-    m_normal = normal_mesh(primitive)
-    @test normals(m_normal) isa Vector{Vec3f}
-    primitive = Rectangle(Point2(0, 0), Vec2(1, 1))
-    m_normal = normal_mesh(primitive)
-    @test normals(m_normal) isa Vector{Vec3f}
-    primitive = Rectangle(Point3(0,0,0), Vec3(1,1,1))
-    m_normal = normal_mesh(primitive)
-    @test normals(m_normal) isa Vector{Vec3f}
-
-    points = decompose(Point2f, HyperSphere(Point2f(0, 0), 1.0f0))
-    tmesh = triangle_mesh(points)
-    @test normals(tmesh) == nothing
-
-    m = Meshes.mesh(HyperSphere(Point3f(0,0,0), 1.0f0))
-    @test normals(m) === nothing
-    m_normals = pointmeta(m, Normal())
-    @test normals(m_normals) isa Vector{Vec3f}
-
-    @test texturecoordinates(m) == nothing
-    r2 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    @test iterate(texturecoordinates(r2)) == ([0.0, 1.0], ((0.0, 2), (1.0, 2)))
-    r3 = Rectangle(Point3(0.0, 0.0, 1.0), Vec3(1.0, 2.0, 2.0))
-    @test iterate(texturecoordinates(r3)) == ([0, 0, 0], 2)
-    uv = decompose_uv(m)
-    @test boundingbox(Point.(uv)) == Rectangle(Point3(0,0,0), Vec3(1,1,1))
-
     points = decompose(Point2f, HyperSphere(Point2f(0, 0), 1.0f0))
     m = Meshes.mesh(points)
     @test coordinates(m) == points
@@ -480,31 +446,6 @@ end
     @test decompose(Point{2, Int}, poly_ext_int) == [pts_ext..., pts_int1..., pts_int2...]
 end
 
-@testset "convert mesh + meta" begin
-    m = uv_normal_mesh(HyperSphere(Point2f(0, 0), 1.0f0))
-    # for 2D primitives we dont actually calculate normals
-    @test !hasproperty(m, :normals)
-end
-
-@testset "convert mesh + meta" begin
-    m = uv_normal_mesh(Rectangle(Point3f(-1,-1,-1), Vec3f(1, 2, 3)))
-    m_normal = normal_mesh(m)
-    @test hasproperty(m_normal, :uv)
-    @test m == m_normal
-    @test m.position == m_normal.position
-    @test m.normals == m_normal.normals
-    @test m.uv == m_normal.uv
-
-    m = Meshes.mesh(Rectangle(Point3f(-1,-1,-1), Vec3f(1, 2, 3));
-                            uv=Vec2, normaltype=Vec3, pointtype=Point3)
-    m_normal = normal_mesh(m)
-    @test hasproperty(m_normal, :uv)
-    @test m.position !== m_normal.position
-    @test m.normals !== m_normal.normals
-    # uv stays untouched, since we don't specify the element type in normalmesh
-    @test m.uv === m_normal.uv
-end
-
 @testset "modifying meta" begin
     xx = rand(10)
     points = rand(Point3f, 10)
@@ -516,7 +457,6 @@ end
     @test hasproperty(m, :color)
     @test_throws ErrorException Meshes.MetaType(Simplex)
     @test_throws ErrorException Meshes.MetaFree(Simplex)
-
 
     @test m.xx === xx
     @test m.color === color
@@ -551,20 +491,10 @@ end
 
     m = Meshes.mesh(s, pointtype=Point3f)
     tmesh = triangle_mesh(m)
-    @test tmesh isa PlainMesh
     points1 = coordinates(tmesh)
     points2 = decompose(Point3f, tmesh)
+    @test tmesh isa PlainMesh
     @test coordinates.(points1) ≈ coordinates.(points2)
-
-    nmesh = normal_mesh(m)
-    @test nmesh isa NormalMesh
-    points1 = metafree(coordinates(nmesh))
-    points2 = decompose(Point3f, nmesh)
-    @test coordinates.(points1) ≈ coordinates.(points2)
-    normals1 = normals(nmesh)
-    normals2 = decompose_normals(nmesh)
-    @test isequal(normals1, normals2)
-
     @test m isa Mesh{3,Float32}
     @test coordinates(m) isa Vector{Point3f}
     @test Meshes.faces(m) isa Vector{TriangleFace}

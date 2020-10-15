@@ -150,15 +150,6 @@ function coordinates(rect::Rectangle{2,T}, nvertices=(2, 2)) where {T}
     return ivec(Vec(x, y) for x in xrange, y in yrange)
 end
 
-function texturecoordinates(::Rectangle{2,T}, nvertices=(2, 2)) where {T}
-    xrange, yrange = LinRange.((0, 1), (1, 0), nvertices)
-    return ivec(Vec(x, y) for x in xrange, y in yrange)
-end
-
-function normals(::Rectangle{2,T}, nvertices=(2, 2)) where {T}
-    return Iterators.repeated(Vec(0, 0, 1), prod(nvertices))
-end
-
 ##
 # Rect3D decomposition
 function coordinates(rect::Rectangle{3,T}) where {T}
@@ -170,10 +161,6 @@ function coordinates(rect::Rectangle{3,T}) where {T}
                     (1, 1, 1), (0, 1, 1), (0, 0, 1), (1, 0, 1), (1, 1, 1), (1, 0, 1),
                     (1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 1, 0), (0, 1, 0), (0, 1, 1)]
     return ((x .* w .+ o) for x in xs)
-end
-
-function texturecoordinates(::Rectangle{3,T}) where {T}
-    return coordinates(Rectangle(Point{3,T}(0,0,0), SVector{3,T}(1,1,1)))
 end
 
 function faces(::Rectangle{3,T}) where {T}

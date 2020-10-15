@@ -80,11 +80,6 @@ end
         @test Meshes.faces(m) == faces
         points = metafree(coordinates(m))
         @test coordinates.(points) ≈ coordinates.(target)
-        m = normal_mesh(s)
-        @test m isa NormalMesh
-
-        muv = uv_mesh(s)
-        @test boundingbox(Point.(texturecoordinates(muv))) == Rectangle(Point3f(0,0,0), Vec3f(1,1,1))
     end
 end
 
@@ -92,7 +87,7 @@ end
     a = Rectangle(Point(0, 0), Vec(1, 1))
     pt_expa = Point[(0, 0), (1, 0), (0, 1), (1, 1)]
     @test decompose(Point{2,Int}, a) == pt_expa
-    mesh = normal_mesh(a)
+    mesh = triangle_mesh(a)
     @test decompose(Point2f, mesh) == convert.(Point2f, pt_expa)
 
     b = Rectangle(Point(1,1,1), Vec(1,1,1))
@@ -102,7 +97,6 @@ end
                     (2, 1, 2), (2, 2, 2), (2, 1, 2), (2, 1, 1), (2, 2, 1),
                     (2, 2, 2), (2, 2, 1), (1, 2, 1), (1, 2, 2)]
     @test decompose(Point{3,Int}, b) == pt_expb
-    mesh = normal_mesh(b)
 end
 
 NFace = NgonFace
