@@ -36,11 +36,8 @@ export Geometry, Primitive, Polytope
 export coordtype
 
 # primitives
-export Rectangle, Cylinder, Sphere
-export center, radius
-
-# TODO: review these
-export Cylinder2, Cylinder3
+export Rectangle, Sphere, Cylinder
+export center, radius, height, volume
 
 export LineFace, Line, NgonFace
 export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
@@ -51,7 +48,7 @@ export FaceView, SimpleFaceView, TupleView
 export decompose, coordinates, faces, convert_simplex
 export Tesselation
 
-export height, origin, radius, width, widths, xwidth, yheight
+export origin, width, widths, xwidth, yheight
 export before, during, isinside, isoutside, overlaps, intersects, finishes
 export direction, area, update, extremity
 export self_intersections, split_intersections

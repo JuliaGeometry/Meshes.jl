@@ -11,49 +11,16 @@ end
 
 @testset "Cylinder" begin
     @testset "constructors" begin
-        o, extr, r = Point2f(1, 2), Point2f(3, 4), 5.0f0
-        s = Cylinder(o, extr, r)
-        @test typeof(s) == Cylinder{2,Float32}
-        @test typeof(s) == Cylinder2{Float32}
-        @test origin(s) == o
-        @test extremity(s) == extr
-        @test radius(s) == r
-        h = norm(o - extr)
-        @test isapprox(height(s), h)
-        @test isapprox(direction(s), Vec2f(2, 2) ./ h)
-        v1 = Point(rand(Vec3))
-        v2 = Point(rand(Vec3))
-        R = rand()
-        s = Cylinder(v1, v2, R)
-        @test typeof(s) == Cylinder{3,Float64}
-        @test typeof(s) == Cylinder3{Float64}
-        @test origin(s) == v1
-        @test extremity(s) == v2
-        @test radius(s) == R
-        @test height(s) == norm(v2 - v1)
-        @test isapprox(direction(s), (v2 - v1) ./ norm(v2 - v1))
+        c = Cylinder(Point3(1,2,3), Point3(4,5,6), 5.0)
+        @test ndims(c) == 3
+        @test coordtype(c) == Float64
+        @test radius(c) == 5.0
+        @test height(c) == √27
+        @test volume(c) == π*5.0^2*√27
     end
 
     @testset "decompose" begin
-
-        o, extr, r = Point2f(1, 2), Point2f(3, 4), 5.0f0
-        s = Cylinder(o, extr, r)
-        target = Point3f[(-0.7677671, 3.767767, 0.0),
-                         (2.767767, 0.23223293, 0.0),
-                         (0.23223293, 4.767767, 0.0),
-                         (3.767767, 1.2322329, 0.0),
-                         (1.2322329, 5.767767, 0.0),
-                         (4.767767, 2.232233, 0.0)]
-        points = decompose(Point3f, Tesselation(s, (2, 3)))
-        @test coordinates.(points) ≈ coordinates.(target)
-
-        faces = TriangleFace.([(1, 2, 4), (1, 4, 3), (3, 4, 6), (3, 6, 5)])
-        @test faces == decompose(TriangleFace, Tesselation(s, (2, 3)))
-
-        v1 = Point3(1, 2, 3)
-        v2 = Point3(4, 5, 6)
-        R = 5.0
-        s = Cylinder(v1, v2, R)
+        c = Cylinder(Point3(1,2,3), Point3(4,5,6), 5.0)
         target = Point3[(4.535533905932738, -1.5355339059327373, 3.0),
                         (7.535533905932738, 1.4644660940672627, 6.0),
                         (3.0412414523193148, 4.041241452319315, -1.0824829046386295),
@@ -64,17 +31,15 @@ end
                         (1.9587585476806848, 2.9587585476806857, 10.08248290463863),
                         (1, 2, 3),
                         (4, 5, 6)]
-
-        points = decompose(Point3, Tesselation(s, 8))
+        points = decompose(Point3, Tesselation(c, 8))
         @test coordinates.(points) ≈ coordinates.(target)
-
         faces = TriangleFace.([(3, 2, 1), (4, 2, 3), (5, 4, 3), (6, 4, 5), (7, 6, 5),
                                (8, 6, 7), (1, 8, 7), (2, 8, 1), (3, 1, 9), (2, 4, 10),
                                (5, 3, 9), (4, 6, 10), (7, 5, 9), (6, 8, 10), (1, 7, 9),
                                (8, 2, 10)])
-        @test faces == decompose(TriangleFace, Tesselation(s, 8))
+        @test faces == decompose(TriangleFace, Tesselation(c, 8))
 
-        m = triangle_mesh(Tesselation(s, 8))
+        m = triangle_mesh(Tesselation(c, 8))
 
         @test Meshes.faces(m) == faces
         points = coordinates(m)
