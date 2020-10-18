@@ -92,23 +92,23 @@ function coordinates(c::Cylinder{3,T}, nvertices=30) where {T}
     return (inner(i) for i in range)
 end
 
-function faces(c::Cylinder{3}, facets=30)
+function faces(::Cylinder{3}, facets=30)
     isodd(facets) ? facets = 2 * div(facets, 2) : nothing
     facets < 8 ? facets = 8 : nothing
     nbv = Int(facets / 2)
     indexes = Vector{TriangleFace}(undef, facets)
     index = 1
     for j in 1:(nbv - 1)
-        indexes[index] = (index + 2, index + 1, index)
-        indexes[index + 1] = (index + 3, index + 1, index + 2)
+        indexes[index] = TriangleFace((index + 2, index + 1, index))
+        indexes[index + 1] = TriangleFace((index + 3, index + 1, index + 2))
         index += 2
     end
-    indexes[index] = (1, index + 1, index)
-    indexes[index + 1] = (2, index + 1, 1)
+    indexes[index] = TriangleFace((1, index + 1, index))
+    indexes[index + 1] = TriangleFace((2, index + 1, 1))
 
     for i in 1:length(indexes)
-        i % 2 == 1 ? push!(indexes, (indexes[i][1], indexes[i][3], 2 * nbv + 1)) :
-        push!(indexes, (indexes[i][2], indexes[i][1], 2 * nbv + 2))
+        i % 2 == 1 ? push!(indexes, TriangleFace((indexes[i][1], indexes[i][3], 2 * nbv + 1))) :
+        push!(indexes, TriangleFace((indexes[i][2], indexes[i][1], 2 * nbv + 2)))
     end
     return indexes
 end

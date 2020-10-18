@@ -19,7 +19,9 @@ Calculate the area of one triangle.
 """
 function area(vertices::AbstractVector{<:AbstractPoint{3,VT}},
               face::TriangleFace) where {VT}
-    v1, v2, v3 = vertices[face]
+    v1 = vertices[face[1]]
+    v2 = vertices[face[2]]
+    v3 = vertices[face[3]]
     return 0.5 * norm(orthogonal_vector(v1, v2, v3))
 end
 
@@ -158,7 +160,7 @@ function decompose(::Type{FaceType},
             b = V[v]
             c = V[w]
             #= output Triangle =#
-            push!(result, convert_simplex(FaceType, TriangleFace(a, b, c))...)
+            push!(result, convert_simplex(FaceType, TriangleFace((a, b, c)))...)
             #= remove v from remaining polygon =#
             s = v
             t = v + 1

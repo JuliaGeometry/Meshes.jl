@@ -48,7 +48,7 @@ using Test, Random
         triangles = connect(points, faces)
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
         x = Point3(1,1,1)
-        triangles = connect([x], [TriangleFace(1, 1, 1)])
+        triangles = connect([x], [TriangleFace((1, 1, 1))])
         @test triangles == [Triangle(x, x, x)]
         points = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
         faces = connect([1, 2, 3, 4], TetrahedronFace{Int})
@@ -88,8 +88,7 @@ end
         linestring = LineString(points, faces, 2)
         @test linestring == LineString([a => b, c => d])
 
-        faces = [LineFace(1, 2)
-        , LineFace(3, 4)]
+        faces = [LineFace((1, 2)), LineFace((3, 4))]
         linestring = LineString(points, faces)
         @test linestring == LineString([a => b, c => d])
     end
@@ -113,7 +112,7 @@ end
         polygon = Polygon(points, faces, 2)
         @test polygon == Polygon(LineString(points, faces, 2))
 
-        faces = [LineFace(1, 2), LineFace(3, 4)]
+        faces = [LineFace((1, 2)), LineFace((3, 4))]
         polygon = Polygon(points, faces)
         @test polygon == Polygon(LineString(points, faces))
         @test ndims(polygon) === 2
@@ -127,7 +126,7 @@ end
         @test mesh == [Triangle(points...)]
 
         x = Point3(1,1,1)
-        mesh = Mesh([x], [TriangleFace(1, 1, 1)])
+        mesh = Mesh([x], [TriangleFace((1, 1, 1))])
         @test mesh == [Triangle(x, x, x)]
 
         points = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
@@ -136,7 +135,7 @@ end
         @test mesh == [Tetrahedron(points...)]
 
         points = rand(Point3f, 8)
-        tfaces = [TriangleFace(1, 2, 3), TriangleFace(5, 6, 7)]
+        tfaces = [TriangleFace((1, 2, 3)), TriangleFace((5, 6, 7))]
         mesh = Mesh(points, tfaces)
         @test mesh isa PlainMesh
 

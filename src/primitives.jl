@@ -19,7 +19,7 @@ Triangulate an N-Face into a tuple of triangular faces.
     3 <= N || error("decompose not implemented for N <= 3 yet. N: $N")
     v = Expr(:tuple)
     for i in 3:N
-        push!(v.args, :(TriangleFace(f[1], f[$(i - 1)], f[$i])))
+        push!(v.args, :(TriangleFace((f[1], f[$(i - 1)], f[$i]))))
     end
     return v
 end
@@ -34,10 +34,10 @@ Extract all line segments in a Face.
 
     v = Expr(:tuple)
     for i in 1:(N - 1)
-        push!(v.args, :(LineFace(f[$i], f[$(i + 1)])))
+        push!(v.args, :(LineFace((f[$i], f[$(i + 1)]))))
     end
     # connect vertices N and 1
-    push!(v.args, :(LineFace(f[$N], f[1])))
+    push!(v.args, :(LineFace((f[$N], f[1]))))
     return v
 end
 

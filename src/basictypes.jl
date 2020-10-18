@@ -14,26 +14,36 @@ Note That `Polytope{N} where N == 3` denotes a Triangle both as a Simplex or Ngo
 """
 abstract type Polytope{Dim,T} <: AbstractGeometry{Dim,T} end
 abstract type AbstractPolygon{Dim,T} <: Polytope{Dim,T} end
+abstract type AbstractSimplex{Dim,N,T} <: StaticVector{Dim,T} end
 
-abstract type AbstractFace{N,T} <: StaticVector{N,T} end
+abstract type AbstractFace{N,T} <: Polytope{N,T} end
 abstract type AbstractSimplexFace{N,T} <: AbstractFace{N,T} end
 abstract type AbstractNgonFace{N,T} <: AbstractFace{N,T} end
 
-abstract type AbstractSimplex{Dim,N,T} <: StaticVector{Dim,T} end
+struct SimplexFace{N,T} <: AbstractSimplexFace{N,T}
+    data::NTuple{N,T}
+end
 
-@fixed_vector SimplexFace AbstractSimplexFace
+@propagate_inbounds Base.getindex(x::SimplexFace, i::Integer) = x.data[i]
+@propagate_inbounds Base.iterate(x::SimplexFace) = iterate(x.data)
+@propagate_inbounds Base.iterate(x::SimplexFace, i) = iterate(x.data, i)
+Base.length(::SimplexFace{N,T}) where {N,T} = N
+
 const TetrahedronFace{T} = SimplexFace{4,T}
 Face(::Type{<:SimplexFace{N}}, ::Type{T}) where {N,T} = SimplexFace{N,T}
 
-@fixed_vector NgonFace AbstractNgonFace
+struct NgonFace{N,T} <: AbstractNgonFace{N,T}
+    data::NTuple{N,T}
+end
+
+@propagate_inbounds Base.getindex(x::NgonFace, i::Integer) = x.data[i]
+@propagate_inbounds Base.iterate(x::NgonFace) = iterate(x.data)
+@propagate_inbounds Base.iterate(x::NgonFace, i) = iterate(x.data, i)
+Base.length(::NgonFace{N,T}) where {N,T} = N
+
 const LineFace = NgonFace{2,Int}
 const TriangleFace = NgonFace{3,Int}
 const QuadFace = NgonFace{4,Int}
-
-function Base.show(io::IO, x::TriangleFace)
-    return print(io, "TriangleFace(", join(x, ", "), ")")
-end
-
 Face(::Type{<:NgonFace{N}}, ::Type{T}) where {N,T} = NgonFace{N,T}
 Face(F::Type{NgonFace{N,FT}}, ::Type{T}) where {FT,N,T} = F
 
@@ -386,16 +396,13 @@ end
 Base.size(mesh::Mesh) = size(getfield(mesh, :simplices))
 Base.getindex(mesh::Mesh, i::Integer) = getfield(mesh, :simplices)[i]
 
-function Mesh(elements::AbstractVector{<:Polytope{Dim,T}}) where {Dim,T}
-    return Mesh{Dim,T,eltype(elements),typeof(elements)}(elements)
-end
-
 function Mesh(points::AbstractVector{<:AbstractPoint},
               faces::AbstractVector{<:AbstractFace})
     return Mesh(connect(points, faces))
 end
 
-function Mesh(points::AbstractVector{<:AbstractPoint}, faces::AbstractVector{<:Integer},
+function Mesh(points::AbstractVector{<:AbstractPoint},
+              faces::AbstractVector{<:Integer},
               facetype=TriangleFace, skip=1)
     return Mesh(connect(points, connect(faces, facetype, skip)))
 end
