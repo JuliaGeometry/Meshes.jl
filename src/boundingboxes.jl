@@ -12,7 +12,7 @@ function boundingbox(geometry::AbstractArray{<:Point{N,T}}) where {N,T}
     for p in geometry
         vmin, vmax = minmax(coordinates(p), vmin, vmax)
     end
-    Rectangle{N,T}(Point(vmin), vmax - vmin)
+    Rectangle(Point(vmin), vmax - vmin)
 end
 
 # --------------
@@ -20,13 +20,6 @@ end
 # --------------
 
 boundingbox(r::Rectangle) = r
-
-function boundingbox(a::Pyramid{T}) where {T}
-    w = a.width / 2
-    h = a.length
-    m = a.middle
-    Rectangle{3,T}(m - Point{3,T}(w, w, 0), m + Point{3,T}(w, w, h))
-end
 
 function boundingbox(s::Sphere)
     mini, maxi = extrema(s)

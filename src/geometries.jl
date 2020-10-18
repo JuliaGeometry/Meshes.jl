@@ -38,7 +38,6 @@ abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 include("primitives/rectangles.jl")
 include("primitives/spheres.jl")
 include("primitives/cylinders.jl")
-include("primitives/pyramids.jl")
 
 # ----------
 # POLYTOPES

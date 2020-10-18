@@ -33,7 +33,7 @@ export vunit, vfill
 
 # geometries
 export Geometry, Primitive, Polytope
-export Rectangle, Cylinder, Pyramid, Sphere
+export Rectangle, Cylinder, Sphere
 export coordtype
 
 export LineFace, Line, NgonFace
