@@ -16,11 +16,6 @@ include("points.jl")
 
 include("geometries.jl")
 
-include("primitives/rectangles.jl")
-include("primitives/spheres.jl")
-include("primitives/cylinders.jl")
-include("primitives/pyramids.jl")
-
 include("interfaces.jl")
 include("viewtypes.jl")
 include("primitives.jl")

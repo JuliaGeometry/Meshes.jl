@@ -1,26 +1,30 @@
 """
-    Geometry{N,T}
+    Geometry{Dim,T}
 
-A geometry embedded in a `N`-dimensional space with coordinates of type `T`.
+A geometry embedded in a `Dim`-dimensional space with coordinates of type `T`.
 """
-abstract type Geometry{N,T} end
+abstract type Geometry{Dim,T} end
 
 """
     ndims(geometry)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
-Base.ndims(::Geometry{N,T}) where {N,T} = N
+Base.ndims(::Geometry{Dim,T}) where {Dim,T} = Dim
 
 """
     coordtype(geometry)
 
 Return the machine type of each coordinate used to describe the `geometry`.
 """
-coordtype(::Geometry{N,T}) where {N,T}  = T
+coordtype(::Geometry{Dim,T}) where {Dim,T}  = T
+
+# -----------
+# PRIMITIVES
+# -----------
 
 """
-    Primitive{N,T}
+    Primitive{Dim,T}
 
 We say that a geometry is a "primitive" when it can be expressed as a single
 entity with no parts. For example, a sphere is a primitive described in terms
@@ -29,43 +33,26 @@ of a mathematical expression involving a metric and a radius.
 Primitives can be discretized into a collection of finite elements with meshing
 algorithms such as triangulation.
 """
-abstract type Primitive{N,T} <: Geometry{N,T} end
+abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
+
+include("primitives/rectangles.jl")
+include("primitives/spheres.jl")
+include("primitives/cylinders.jl")
+include("primitives/pyramids.jl")
+
+# ----------
+# POLYTOPES
+# ----------
 
 """
-Geometry made of connected points.
+    Polytope{Dim,T}
+
+We say that a geometry is a polytope when it is made of a collection of "flat" sides.
+They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
+by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
+faces and cells in 3D. See https://en.wikipedia.org/wiki/Polytope.
 """
 abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
-
-abstract type AbstractFace{N,T} <: Polytope{N,T} end
-abstract type AbstractSimplexFace{N,T} <: AbstractFace{N,T} end
-abstract type AbstractNgonFace{N,T} <: AbstractFace{N,T} end
-
-struct SimplexFace{N,T} <: AbstractSimplexFace{N,T}
-    data::NTuple{N,T}
-end
-
-@propagate_inbounds Base.getindex(x::SimplexFace, i::Integer) = x.data[i]
-@propagate_inbounds Base.iterate(x::SimplexFace) = iterate(x.data)
-@propagate_inbounds Base.iterate(x::SimplexFace, i) = iterate(x.data, i)
-Base.length(::SimplexFace{N,T}) where {N,T} = N
-
-const TetrahedronFace{T} = SimplexFace{4,T}
-Face(::Type{<:SimplexFace{N}}, ::Type{T}) where {N,T} = SimplexFace{N,T}
-
-struct NgonFace{N,T} <: AbstractNgonFace{N,T}
-    data::NTuple{N,T}
-end
-
-@propagate_inbounds Base.getindex(x::NgonFace, i::Integer) = x.data[i]
-@propagate_inbounds Base.iterate(x::NgonFace) = iterate(x.data)
-@propagate_inbounds Base.iterate(x::NgonFace, i) = iterate(x.data, i)
-Base.length(::NgonFace{N,T}) where {N,T} = N
-
-const LineFace = NgonFace{2,Int}
-const TriangleFace = NgonFace{3,Int}
-const QuadFace = NgonFace{4,Int}
-Face(::Type{<:NgonFace{N}}, ::Type{T}) where {N,T} = NgonFace{N,T}
-Face(F::Type{NgonFace{N,FT}}, ::Type{T}) where {FT,N,T} = F
 
 @propagate_inbounds Base.getindex(x::Polytope, i::Integer) = coordinates(x)[i]
 @propagate_inbounds Base.iterate(x::Polytope) = iterate(coordinates(x))
@@ -91,11 +78,12 @@ function (::Type{<:NNgon{N}})(points::Vararg{P,N}) where {P<:AbstractPoint{Dim,T
 end
 Base.show(io::IO, x::NNgon{N}) where {N} = print(io, "Ngon{$N}(", join(x, ", "), ")")
 
-# Interfaces
 coordinates(x::Ngon) = x.points
-# Base Array interface
 Base.length(::Type{<:NNgon{N}}) where {N} = N
 Base.length(::NNgon{N}) where {N} = N
+
+# TODO: review this
+include("faces.jl")
 
 """
 The Ngon Polytope element type when indexing an array of points with a SimplexFace
@@ -180,8 +168,7 @@ Base.length(::NSimplex{N}) where {N} = N
 """
 The Simplex Polytope element type when indexing an array of points with a SimplexFace
 """
-function Polytope(P::Type{<:AbstractPoint{Dim,T}},
-                  ::Type{<:AbstractSimplexFace{N}}) where {N,Dim,T}
+function Polytope(P::Type{<:AbstractPoint{Dim,T}}, ::Type{<:AbstractSimplexFace{N}}) where {N,Dim,T}
     return Simplex{Dim,T,N,P}
 end
 
@@ -191,20 +178,17 @@ The fully concrete Simplex type, when constructed from a point type!
 function Polytope(::Type{<:NSimplex{N}}, P::Type{<:AbstractPoint{NDim,T}}) where {N,NDim,T}
     return Simplex{NDim,T,N,P}
 end
-Base.show(io::IO, x::LineP) = print(io, "Line(", x[1], " => ", x[2], ")")
 
 """
     LineString(points::AbstractVector{<:AbstractPoint})
 
 A LineString is a geometry of connected line segments
 """
-struct LineString{Dim,T<:Real,P<:AbstractPoint,V<:AbstractVector{<:LineP{Dim,T,P}}} <:
-       AbstractVector{LineP{Dim,T,P}}
+struct LineString{Dim,T<:Real,P<:AbstractPoint,V<:AbstractVector{<:LineP{Dim,T,P}}} <: AbstractVector{LineP{Dim,T,P}}
     points::V
 end
 
 coordinates(x::LineString) = coordinates(x.points)
-
 Base.copy(x::LineString) = LineString(copy(x.points))
 Base.size(x::LineString) = size(getfield(x, :points))
 Base.getindex(x::LineString, i) = getindex(getfield(x, :points), i)
@@ -233,8 +217,7 @@ function LineString(points::AbstractVector{<:Pair{P,P}}) where {P<:AbstractPoint
     return LineString(reinterpret(LineP{N,T,P}, points))
 end
 
-function LineString(points::AbstractVector{<:AbstractPoint},
-                    faces::AbstractVector{<:LineFace})
+function LineString(points::AbstractVector{<:AbstractPoint}, faces::AbstractVector{<:LineFace})
     return LineString(connect(points, faces))
 end
 
@@ -268,8 +251,7 @@ end
     Polygon(exterior::AbstractVector{<:Point}, interiors::Vector{<:AbstractVector{<:AbstractPoint}})
 
 """
-struct Polygon{Dim,T,P<:AbstractPoint{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},
-               V<:AbstractVector{L}} <: Polytope{Dim,T}
+struct Polygon{Dim,T,P<:AbstractPoint{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},V<:AbstractVector{L}} <: Polytope{Dim,T}
     exterior::L
     interiors::V
 end
@@ -300,15 +282,12 @@ function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:Integer},
 end
 
 function Polygon(exterior::AbstractVector{P},
-                 faces::AbstractVector{<:LineFace}) where {P<:AbstractPoint{Dim,T}} where {Dim,
-                                                                                           T}
+                 faces::AbstractVector{<:LineFace}) where {P<:AbstractPoint{Dim,T}} where {Dim,T}
     return Polygon(LineString(exterior, faces))
 end
 
 function Polygon(exterior::AbstractVector{P},
-                 interior::AbstractVector{<:AbstractVector{P}}) where {P<:AbstractPoint{Dim,
-                                                                                        T}} where {Dim,
-                                                                                                   T}
+                 interior::AbstractVector{<:AbstractVector{P}}) where {P<:AbstractPoint{Dim,T}} where {Dim,T}
     ext = LineString(exterior)
     # We need to take extra care for empty interiors, since
     # if we just map over it, it won't infer the element type correctly!
@@ -332,8 +311,7 @@ end
 """
     MultiPolygon(polygons)
 """
-struct MultiPolygon{Dim,T<:Real,Element<:Polytope{Dim,T},
-                    A<:AbstractVector{Element}} <: AbstractVector{Element}
+struct MultiPolygon{Dim,T<:Real,Element<:Polytope{Dim,T},A<:AbstractVector{Element}} <: AbstractVector{Element}
     polygons::A
 end
 
