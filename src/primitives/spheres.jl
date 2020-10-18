@@ -8,7 +8,7 @@ struct Sphere{N,T} <: Primitive{N,T}
     radius::T
 end
 
-origin(s::Sphere) = s.center
+center(s::Sphere) = s.center
 radius(s::Sphere) = s.radius
 
 # TODO: review these

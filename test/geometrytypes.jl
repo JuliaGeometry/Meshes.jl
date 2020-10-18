@@ -109,6 +109,10 @@ end
 
 @testset "Sphere" begin
     sphere = Sphere(Point3f(0,0,0), 1.0f0)
+    @test ndims(sphere) == 3
+    @test coordtype(sphere) == Float32
+    @test center(sphere) == Point3f(0,0,0)
+    @test radius(sphere) == 1.0f0
 
     points = decompose(Point3f, Tesselation(sphere, 3))
     target = Point3f[(0.0, 0.0, 1.0),

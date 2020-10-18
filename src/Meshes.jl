@@ -33,8 +33,14 @@ export vunit, vfill
 
 # geometries
 export Geometry, Primitive, Polytope
-export Rectangle, Cylinder, Sphere
 export coordtype
+
+# primitives
+export Rectangle, Cylinder, Sphere
+export center, radius
+
+# TODO: review these
+export Cylinder2, Cylinder3
 
 export LineFace, Line, NgonFace
 export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
@@ -44,9 +50,6 @@ export AbstractFace, TriangleFace, QuadFace
 export FaceView, SimpleFaceView, TupleView
 export decompose, coordinates, faces, convert_simplex
 export Tesselation
-
-# TODO: review these
-export Cylinder2, Cylinder3
 
 export height, origin, radius, width, widths, xwidth, yheight
 export before, during, isinside, isoutside, overlaps, intersects, finishes
