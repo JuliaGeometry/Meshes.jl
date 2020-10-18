@@ -89,15 +89,14 @@ const Line{Dim,T} = LineP{Dim,T,Point{Dim,T}}
 # for triangle:
 const TriangleP{Dim,T,P<:AbstractPoint{Dim,T}} = Ngon{Dim,T,3,P}
 const Triangle{Dim,T} = TriangleP{Dim,T,Point{Dim,T}}
-const Triangle3d{T} = Triangle{3,T}
 
 Base.show(io::IO, x::TriangleP) = print(io, "Triangle(", join(x, ", "), ")")
-Base.summary(io::IO, x::Type{<:TriangleP}) = print(io, "Triangle")
+Base.summary(io::IO, ::Type{<:TriangleP}) = print(io, "Triangle")
 
 const Quadrilateral{Dim,T} = Ngon{Dim,T,4,P} where {P<:AbstractPoint{Dim,T}}
 
 Base.show(io::IO, x::Quadrilateral) = print(io, "Quad(", join(x, ", "), ")")
-Base.summary(io::IO, x::Type{<:Quadrilateral}) = print(io, "Quad")
+Base.summary(io::IO, ::Type{<:Quadrilateral}) = print(io, "Quad")
 
 function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,PointType}
     return if lines isa Base.ReinterpretArray
@@ -239,7 +238,7 @@ end
     Polygon(exterior::AbstractVector{<:Point}, interiors::Vector{<:AbstractVector{<:AbstractPoint}})
 
 """
-struct Polygon{Dim,T<:Real,P<:AbstractPoint{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},
+struct Polygon{Dim,T,P<:AbstractPoint{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},
                V<:AbstractVector{L}} <: AbstractPolygon{Dim,T}
     exterior::L
     interiors::V
@@ -355,8 +354,7 @@ abstract type AbstractMesh{Element<:Polytope} <: AbstractVector{Element} end
     Mesh <: AbstractVector{Element}
 The conrecte AbstractMesh implementation
 """
-struct Mesh{Dim,T<:Number,Element<:Polytope{Dim,T},V<:AbstractVector{Element}} <:
-       AbstractMesh{Element}
+struct Mesh{Dim,T,Element<:Polytope{Dim,T},V<:AbstractVector{Element}} <: AbstractMesh{Element}
     simplices::V # usually a FaceView, to connect a set of points via a set of faces.
 end
 
