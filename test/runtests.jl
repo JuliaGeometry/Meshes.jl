@@ -139,7 +139,7 @@ end
         mesh = Mesh(points, tfaces)
         @test mesh isa PlainMesh
 
-        t = Tesselation(Rectangle(Point2f(0,0), Vec2f(2,2)), (30, 30))
+        t = Tesselation(Box(Point2f(0,0), Vec2f(2,2)), (30, 30))
         m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace)
         @test Meshes.faces(m) isa Vector{QuadFace}
         @test Meshes.coordinates(m) isa Vector{Point2f}
@@ -184,13 +184,13 @@ end
     @test decompose(Point3f, mesh) isa Vector{Point3f}
     @test decompose(Point3f, primitive) isa Vector{Point3f}
 
-    primitive = Rectangle(Point2(0, 0), Vec2(1, 1))
+    primitive = Box(Point2(0, 0), Vec2(1, 1))
     mesh = triangle_mesh(primitive)
 
     @test decompose(Point2f, mesh) isa Vector{Point2f}
     @test decompose(Point{2,Int}, primitive) isa Vector{Point{2,Int}}
 
-    primitive = Rectangle(Point3(0,0,0), Vec3(1,1,1))
+    primitive = Box(Point3(0,0,0), Vec3(1,1,1))
     triangle_mesh(primitive)
 
     points = decompose(Point2f, Sphere(Point2f(0, 0), 1.0f0))

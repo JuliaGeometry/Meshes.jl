@@ -36,7 +36,7 @@ export Geometry, Primitive, Polytope
 export coordtype
 
 # primitives
-export Rectangle, Sphere, Cylinder
+export Box, Sphere, Cylinder
 export center, radius, height, volume
 
 export LineFace, Line, NgonFace

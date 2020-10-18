@@ -35,7 +35,7 @@ algorithms such as triangulation.
 """
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
-include("primitives/rectangle.jl")
+include("primitives/box.jl")
 include("primitives/sphere.jl")
 include("primitives/cylinder.jl")
 

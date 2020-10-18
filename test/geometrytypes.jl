@@ -1,7 +1,7 @@
 using Test, Meshes
 
 @testset "algorithms.jl" begin
-    cube = Rectangle(Point(-0.5,-0.5,-0.5), Vec(1.0,1.0,1.0))
+    cube = Box(Point(-0.5,-0.5,-0.5), Vec(1.0,1.0,1.0))
     cube_faces = decompose(TriangleFace, faces(cube))
     cube_vertices = decompose(Point3f, cube)
     @test area(cube_vertices, cube_faces) == 6
@@ -47,14 +47,14 @@ end
     end
 end
 
-@testset "Rectangles" begin
-    a = Rectangle(Point(0, 0), Vec(1, 1))
+@testset "Boxes" begin
+    a = Box(Point(0, 0), Vec(1, 1))
     pt_expa = Point[(0, 0), (1, 0), (0, 1), (1, 1)]
     @test decompose(Point{2,Int}, a) == pt_expa
     mesh = triangle_mesh(a)
     @test decompose(Point2f, mesh) == convert.(Point2f, pt_expa)
 
-    b = Rectangle(Point(1,1,1), Vec(1,1,1))
+    b = Box(Point(1,1,1), Vec(1,1,1))
     pt_expb = Point[(1, 1, 1), (1, 1, 2), (1, 2, 2), (1, 2, 1), (1, 1, 1),
                     (2, 1, 1), (2, 1, 2), (1, 1, 2), (1, 1, 1), (1, 2, 1),
                     (2, 2, 1), (2, 1, 1), (2, 2, 2), (1, 2, 2), (1, 1, 2),
@@ -105,9 +105,9 @@ end
     @test coordinates.(mpoints) ≈ coordinates.(tpoints)
 end
 
-@testset "Rectangles" begin
-    rect = Rectangle(Point2(0, 0), Vec2(1, 2))
-    @test rect isa Rectangle{2,Float64}
+@testset "Boxes" begin
+    rect = Box(Point2(0, 0), Vec2(1, 2))
+    @test rect isa Box{2,Float64}
 
     split1, split2 = Meshes.split(rect, 2, 1)
     @test widths(split1) == widths(split2)
@@ -116,54 +116,54 @@ end
     @test split1 ∈ rect
     @test rect ∉ split1
 
-    prim = Rectangle(Point2(0, 0), Vec2(1, 1))
+    prim = Box(Point2(0, 0), Vec2(1, 1))
     @test length(prim) == 2
 
     p = Point(1.0, 1.0)
-    r = Rectangle(Point(0.0, 0.0), Vec(1.0, 1.0))
+    r = Box(Point(0.0, 0.0), Vec(1.0, 1.0))
     @test p ∈ r
 
-    h1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    h2 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    @test union(h1, h2) isa Rectangle{2,Float64}
-    @test Meshes.intersect(h1, h2) isa Rectangle{2,Float64}
+    h1 = Box(Point2(0.0, 0.0), Vec2(1.0, 1.0))
+    h2 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    @test union(h1, h2) isa Box{2,Float64}
+    @test Meshes.intersect(h1, h2) isa Box{2,Float64}
 
-    rect1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    rect2 = Rectangle(Point2(3.0, 1.0), Vec2(4.0, 2.0))
+    rect1 = Box(Point2(0.0, 0.0), Vec2(1.0, 1.0))
+    rect2 = Box(Point2(3.0, 1.0), Vec2(4.0, 2.0))
     @test !before(rect1, rect2)
-    rect1 = Rectangle(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    rect2 = Rectangle(Point2(3.0, 2.0), Vec2(4.0, 2.0))
+    rect1 = Box(Point2(0.0, 0.0), Vec2(1.0, 1.0))
+    rect2 = Box(Point2(3.0, 2.0), Vec2(4.0, 2.0))
     @test before(rect1, rect2)
 
-    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
+    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 1.0))
     @test !overlaps(rect1, rect2)
-    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Rectangle(Point2(1.5, 1.5), Vec2(2.0, 2.0))
+    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Box(Point2(1.5, 1.5), Vec2(2.0, 2.0))
     @test overlaps(rect1, rect2)
 
-    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
+    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 1.0))
     @test !Meshes.starts(rect1, rect2)
-    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(1.5, 1.5))
+    rect2 = Box(Point2(1.0, 1.0), Vec2(1.5, 1.5))
     @test !Meshes.starts(rect1, rect2)
-    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(3.0, 3.0))
+    rect2 = Box(Point2(1.0, 1.0), Vec2(3.0, 3.0))
     @test Meshes.starts(rect1, rect2)
 
-    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(4.0, 4.0))
+    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Box(Point2(0.0, 0.0), Vec2(4.0, 4.0))
     @test during(rect1, rect2)
-    rect1 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 3.0))
-    rect2 = Rectangle(Point2(1.0, 1.0), Vec2(4.0, 2.0))
+    rect1 = Box(Point2(0.0, 0.0), Vec2(2.0, 3.0))
+    rect2 = Box(Point2(1.0, 1.0), Vec2(4.0, 2.0))
     @test !during(rect1, rect2)
 
-    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(4.0, 4.0))
+    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    rect2 = Box(Point2(0.0, 0.0), Vec2(4.0, 4.0))
     @test !finishes(rect1, rect2)
-    rect1 = Rectangle(Point2(1.0, 0.0), Vec2(1.0, 1.0))
-    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 1.0))
+    rect1 = Box(Point2(1.0, 0.0), Vec2(1.0, 1.0))
+    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 1.0))
     @test !finishes(rect1, rect2)
-    rect1 = Rectangle(Point2(1.0, 1.0), Vec2(1.0, 2.0))
-    rect2 = Rectangle(Point2(0.0, 0.0), Vec2(2.0, 3.0))
+    rect1 = Box(Point2(1.0, 1.0), Vec2(1.0, 2.0))
+    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 3.0))
     @test finishes(rect1, rect2)
 end
