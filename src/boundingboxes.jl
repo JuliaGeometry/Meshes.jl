@@ -28,7 +28,7 @@ function boundingbox(a::Pyramid{T}) where {T}
     Rectangle{3,T}(m - Point{3,T}(w, w, 0), m + Point{3,T}(w, w, h))
 end
 
-function boundingbox(a::Sphere{T}) where {T}
-    mini, maxi = extrema(a)
-    Rectangle{3,T}(mini, maxi .- mini)
+function boundingbox(s::Sphere)
+    mini, maxi = extrema(s)
+    Rectangle(Point(mini), maxi .- mini)
 end

@@ -107,8 +107,8 @@ NFace = NgonFace
           (LineFace((1, 2)), LineFace((2, 3)), LineFace((3, 4)), LineFace((4, 1)))
 end
 
-@testset "HyperSphere" begin
-    sphere = Sphere{Float32}(Point3f(0,0,0), 1.0f0)
+@testset "Sphere" begin
+    sphere = Sphere(Point3f(0,0,0), 1.0f0)
 
     points = decompose(Point3f, Tesselation(sphere, 3))
     target = Point3f[(0.0, 0.0, 1.0),
@@ -126,7 +126,7 @@ end
     face_target = TriangleFace.([(1, 2, 5), (1, 5, 4), (2, 3, 6), (2, 6, 5),
                                  (4, 5, 8), (4, 8, 7), (5, 6, 9), (5, 9, 8)])
     @test f == face_target
-    circle = HyperSphere(Point2f(0, 0), 1.0f0)
+    circle = Sphere(Point2f(0, 0), 1.0f0)
     points = decompose(Point2f, Tesselation(circle, 20))
     @test length(points) == 20
     tess = Tesselation(circle, 32)

@@ -38,6 +38,9 @@ export vunit, vfill
 
 # geometries
 export Geometry, Primitive, Polytope
+export Rectangle, Cylinder, Pyramid, Sphere
+export coordtype
+
 export LineFace, Line, NgonFace
 export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
@@ -47,11 +50,7 @@ export FaceView, SimpleFaceView, TupleView
 export decompose, coordinates, faces, convert_simplex
 export Tesselation
 
-# primitives
-export Rectangle, Cylinder, Pyramid, Sphere
-
 # TODO: review these
-export HyperSphere, Circle
 export Cylinder2, Cylinder3
 
 export height, origin, radius, width, widths, xwidth, yheight

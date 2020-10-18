@@ -178,7 +178,7 @@ end
 end
 
 @testset "decompose/triangulation" begin
-    primitive = HyperSphere(Point3f(0,0,0), 1.0f0)
+    primitive = Sphere(Point3f(0,0,0), 1.0f0)
     @test ndims(primitive) === 3
     mesh = triangle_mesh(primitive)
     @test decompose(Point3f, mesh) isa Vector{Point3f}
@@ -193,7 +193,7 @@ end
     primitive = Rectangle(Point3(0,0,0), Vec3(1,1,1))
     triangle_mesh(primitive)
 
-    points = decompose(Point2f, HyperSphere(Point2f(0, 0), 1.0f0))
+    points = decompose(Point2f, Sphere(Point2f(0, 0), 1.0f0))
     m = Meshes.mesh(points)
     @test coordinates(m) == points
 
@@ -216,7 +216,7 @@ end
 end
 
 @testset "mesh conversion" begin
-    s = HyperSphere(Point3(0,0,0), 1.0)
+    s = Sphere(Point3(0,0,0), 1.0)
     m = Meshes.mesh(s, pointtype=Point3)
     @test m isa Mesh{3,Float64}
     @test coordinates(m) isa Vector{Point3}
