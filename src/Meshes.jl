@@ -14,9 +14,6 @@ include("vectors.jl")
 include("matrices.jl")
 include("points.jl")
 
-# TODO: review this
-include("fixed_arrays.jl")
-
 include("basictypes.jl")
 
 include("primitives/rectangles.jl")
