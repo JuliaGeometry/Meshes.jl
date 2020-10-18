@@ -35,9 +35,9 @@ algorithms such as triangulation.
 """
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
-include("primitives/rectangles.jl")
-include("primitives/spheres.jl")
-include("primitives/cylinders.jl")
+include("primitives/rectangle.jl")
+include("primitives/sphere.jl")
+include("primitives/cylinder.jl")
 
 # ----------
 # POLYTOPES
