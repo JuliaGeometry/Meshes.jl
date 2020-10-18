@@ -43,7 +43,7 @@ function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) wh
     return mesh(Polygon(polygon); pointtype=pointtype, facetype=facetype)
 end
 
-function mesh(polygon::AbstractPolygon{Dim,T}; pointtype=Point{Dim,T}, facetype=TriangleFace) where {Dim,T}
+function mesh(polygon::Polytope{Dim,T}; pointtype=Point{Dim,T}, facetype=TriangleFace) where {Dim,T}
     faces = decompose(facetype, polygon)
     positions = decompose(pointtype, polygon)
     return Mesh(positions, faces)

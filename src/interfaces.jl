@@ -65,7 +65,7 @@ faces(tesselation::Tesselation) = faces(tesselation.primitive, nvertices(tessela
 # Types that can be converted to a mesh via the functions below
 const Meshable{Dim,T} = Union{Mesh{Dim,T},
                               Tesselation{Dim,T},
-                              AbstractPolygon{Dim,T},
+                              Polytope{Dim,T},
                               GeometryPrimitive{Dim,T}}
 
 """

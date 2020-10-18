@@ -42,7 +42,7 @@ export vunit, vfill
 # geometries
 export AbstractGeometry, GeometryPrimitive
 export LineFace, Polytope, Line, NgonFace
-export LineString, AbstractPolygon, Polygon, MultiPoint, MultiLineString, MultiPolygon
+export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export coordinates, TetrahedronFace
 export AbstractFace, TriangleFace, QuadFace

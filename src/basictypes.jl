@@ -8,13 +8,9 @@ abstract type GeometryPrimitive{Dim,T} <: AbstractGeometry{Dim,T} end
 Base.ndims(::AbstractGeometry{N,T}) where {N,T} = N
 
 """
-Geometry made of N connected points. Connected as one flat geometry, it makes a Ngon / Polygon.
-Connected as volume it will be a Simplex / Tri / Cube.
-Note That `Polytope{N} where N == 3` denotes a Triangle both as a Simplex or Ngon.
+Geometry made of connected points.
 """
 abstract type Polytope{Dim,T} <: AbstractGeometry{Dim,T} end
-abstract type AbstractPolygon{Dim,T} <: Polytope{Dim,T} end
-abstract type AbstractSimplex{Dim,N,T} <: StaticVector{Dim,T} end
 
 abstract type AbstractFace{N,T} <: Polytope{N,T} end
 abstract type AbstractSimplexFace{N,T} <: AbstractFace{N,T} end
@@ -59,7 +55,7 @@ Fixed Size Polygon, e.g.
 - N = 5 : Pentagon
 - ...
 """
-struct Ngon{Dim,T<:Real,N,Point<:AbstractPoint{Dim,T}} <: AbstractPolygon{Dim,T}
+struct Ngon{Dim,T<:Real,N,Point<:AbstractPoint{Dim,T}} <: Polytope{Dim,T}
     points::SVector{N,Point}
 end
 
@@ -249,7 +245,7 @@ end
 
 """
 struct Polygon{Dim,T,P<:AbstractPoint{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},
-               V<:AbstractVector{L}} <: AbstractPolygon{Dim,T}
+               V<:AbstractVector{L}} <: Polytope{Dim,T}
     exterior::L
     interiors::V
 end
@@ -310,14 +306,14 @@ function coordinates(polygon::Polygon{N,T,PointType}) where {N,T,PointType}
 end
 
 """
-    MultiPolygon(polygons::AbstractPolygon)
+    MultiPolygon(polygons)
 """
-struct MultiPolygon{Dim,T<:Real,Element<:AbstractPolygon{Dim,T},
+struct MultiPolygon{Dim,T<:Real,Element<:Polytope{Dim,T},
                     A<:AbstractVector{Element}} <: AbstractVector{Element}
     polygons::A
 end
 
-function MultiPolygon(polygons::AbstractVector{P}) where {P<:AbstractPolygon{Dim,T}} where {Dim,T}
+function MultiPolygon(polygons::AbstractVector{P}) where {P<:Polytope{Dim,T}} where {Dim,T}
     return MultiPolygon(polygons)
 end
 
