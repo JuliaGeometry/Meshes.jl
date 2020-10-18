@@ -56,13 +56,13 @@ function TupleView{N,M}(x::AbstractVector{T}; connect=false) where {T,N,M}
     return TupleView{NTuple{N,T},N,M,typeof(x)}(x, connect)
 end
 
-@inline function connected_line(points::AbstractVector{<:AbstractPoint{N}},
+@inline function connected_line(points::AbstractVector{<:Point{N}},
                                 skip=N) where {N}
     return connect(points, Line, skip)
 end
 
 """
-    connect(points::AbstractVector{<:AbstractPoint}, P::Type{<:Polytype{N}}, skip::Int = N)
+    connect(points::AbstractVector{<:Point}, P::Type{<:Polytype{N}}, skip::Int = N)
 
 Creates a view that connects a number of points to a Polytope `P`.
 Between each polytope, `skip` elements are skipped untill the next starts.
@@ -73,11 +73,11 @@ x == [Line(Point(1, 2), Point(3, 4)), Line(Point(5, 6), Point(7, 8))]
 ```
 """
 @inline function connect(points::AbstractVector{P}, PL::Type{<:Polytope{N,T} where {N,T}},
-                         skip::Int=length(PL)) where {P<:AbstractPoint}
+                         skip::Int=length(PL)) where {P<:Point}
     return reinterpret(Polytope(PL, P), TupleView{length(PL),skip}(points))
 end
 
-@inline function connect(points::AbstractVector{T}, ::Type{<:AbstractPoint{N}},
+@inline function connect(points::AbstractVector{T}, ::Type{<:Point{N}},
                          skip::Int=N) where {T <: Real,N}
     return reinterpret(Point{N,T}, TupleView{N,skip}(points))
 end
@@ -105,13 +105,13 @@ linestring = FaceView(points, LineFace[...])
 Polygon(linestring)
 ```
 """
-struct FaceView{Element,Point <: AbstractPoint,Face <: AbstractFace,P <: AbstractVector{Point},F <: AbstractVector{Face}} <: AbstractVector{Element}
+struct FaceView{Element,PT<:Point,Face<:AbstractFace,P<:AbstractVector{PT},F<:AbstractVector{Face}}<:AbstractVector{Element}
 
     elements::P
     faces::F
 end
 
-const SimpleFaceView{Dim,T,NFace,IndexType,PointType <: AbstractPoint{Dim,T},FaceType <: AbstractFace{NFace,IndexType}} = FaceView{Ngon{Dim,T,NFace,PointType},PointType,FaceType,Vector{PointType},Vector{FaceType}}
+const SimpleFaceView{Dim,T,NFace,IndexType,PointType <: Point{Dim,T},FaceType <: AbstractFace{NFace,IndexType}} = FaceView{Ngon{Dim,T,NFace,PointType},PointType,FaceType,Vector{PointType},Vector{FaceType}}
 
 function Base.getproperty(faceview::FaceView, name::Symbol)
     return getproperty(getfield(faceview, :elements), name)
@@ -146,7 +146,7 @@ end
 end
 
 function connect(points::AbstractVector{P},
-                 faces::AbstractVector{F}) where {P <: AbstractPoint,F <: AbstractFace}
+                 faces::AbstractVector{F}) where {P <: Point,F <: AbstractFace}
     return FaceView{Polytope(P, F),P,F,typeof(points),typeof(faces)}(points, faces)
 end
 

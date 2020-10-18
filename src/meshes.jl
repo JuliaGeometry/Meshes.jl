@@ -38,7 +38,7 @@ function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleF
     return Mesh(positions, faces)
 end
 
-function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) where {P<:AbstractPoint}
+function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) where {P<:Point}
 
     return mesh(Polygon(polygon); pointtype=pointtype, facetype=facetype)
 end
@@ -57,7 +57,7 @@ function triangle_mesh(primitive::Meshable{N,T}; nvertices=nothing) where {N,T}
     return mesh(primitive; pointtype=Point{N,T}, facetype=TriangleFace)
 end
 
-function triangle_mesh(points::AbstractVector{P}; nvertices=nothing) where {P<:AbstractPoint}
+function triangle_mesh(points::AbstractVector{P}; nvertices=nothing) where {P<:Point}
     triangle_mesh(Polygon(points), nvertices=nvertices)
 end
 

@@ -13,11 +13,11 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 =#
 """
-    area(vertices::AbstractVector{AbstractPoint{3}}, face::TriangleFace)
+    area(vertices::AbstractVector{<:Point{3}}, face::TriangleFace)
 
 Calculate the area of one triangle.
 """
-function area(vertices::AbstractVector{<:AbstractPoint{3,VT}},
+function area(vertices::AbstractVector{<:Point{3,VT}},
               face::TriangleFace) where {VT}
     v1 = vertices[face[1]]
     v2 = vertices[face[2]]
@@ -26,16 +26,16 @@ function area(vertices::AbstractVector{<:AbstractPoint{3,VT}},
 end
 
 """
-    area(vertices::AbstractVector{AbstractPoint{3}}, faces::AbstractVector{TriangleFace})
+    area(vertices::AbstractVector{<:Point{3}}, faces::AbstractVector{TriangleFace})
 
 Calculate the area of all triangles.
 """
-function area(vertices::AbstractVector{<:AbstractPoint{3,VT}},
+function area(vertices::AbstractVector{<:Point{3,VT}},
               faces::AbstractVector{TriangleFace}) where {VT}
     return sum(x -> area(vertices, x), faces)
 end
 
-function area(contour::AbstractVector{<:AbstractPoint{N,T}}) where {N,T}
+function area(contour::AbstractVector{<:Point{N,T}}) where {N,T}
     n = length(contour)
     n < 3 && return zero(T)
     A = zero(T)
@@ -66,7 +66,7 @@ end
  InsideTriangle decides if a point P is Inside of the triangle
  defined by A, B, C.
 """
-function Base.in(P::T, triangle::Triangle) where {T<:AbstractPoint}
+function Base.in(P::T, triangle::Triangle) where {T<:Point}
     A, B, C = coordinates(triangle)
     a = C - B
     b = A - C
@@ -83,7 +83,7 @@ function Base.in(P::T, triangle::Triangle) where {T<:AbstractPoint}
     return ((a_bp ≥ 0) && (b_cp ≥ 0) && (c_ap ≥ 0))
 end
 
-function snip(contour::AbstractVector{<:AbstractPoint{N,T}}, u, v, w, n, V) where {N,T}
+function snip(contour::AbstractVector{<:Point{N,T}}, u, v, w, n, V) where {N,T}
     A = contour[V[u]]
     B = contour[V[v]]
     C = contour[V[w]]
@@ -105,14 +105,7 @@ function snip(contour::AbstractVector{<:AbstractPoint{N,T}}, u, v, w, n, V) wher
     return true
 end
 
-"""
-    faces(contour::AbstractArray{Point}, [facetype = TriangleFace])
-
-Triangulates a Polygon given as an `AbstractArray{Point}` without holes.
-It will return a Vector{`facetype`}, defining indexes into `contour`
-"""
-function decompose(::Type{FaceType},
-                   points::AbstractArray{P}) where {P<:AbstractPoint,FaceType<:AbstractFace}
+function decompose(::Type{FaceType}, points::AbstractArray{P}) where {P<:Point,FaceType<:AbstractFace}
     #= allocate and initialize list of Vertices in polygon =#
     result = FaceType[]
 

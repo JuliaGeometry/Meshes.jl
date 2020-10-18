@@ -79,11 +79,11 @@ function consecutive_pairs(arr)
 end
 
 """
-    self_intersections(points::AbstractVector{AbstractPoint})
+    self_intersections(points::AbstractVector{<:Point})
 
 Finds all self intersections of polygon `points`
 """
-function self_intersections(points::AbstractVector{<:AbstractPoint})
+function self_intersections(points::AbstractVector{<:Point})
     sections = similar(points, 0)
     intersections = Int[]
 
@@ -109,12 +109,12 @@ function self_intersections(points::AbstractVector{<:AbstractPoint})
 end
 
 """
-    split_intersections(points::AbstractVector{AbstractPoint})
+    split_intersections(points::AbstractVector{<:Point})
 
 Splits polygon `points` into it's self intersecting parts. Only 1 intersection
 is handled right now.
 """
-function split_intersections(points::AbstractVector{<:AbstractPoint})
+function split_intersections(points::AbstractVector{<:Point})
     intersections, sections = self_intersections(points)
     return if isempty(intersections)
         return [points]

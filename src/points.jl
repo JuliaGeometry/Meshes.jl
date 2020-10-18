@@ -1,5 +1,3 @@
-abstract type AbstractPoint{N,T} end
-
 """
     Point{N,T}
 
@@ -17,7 +15,7 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 
 - Type aliases are `Point2`, `Point3`, `Point2f`, `Point3f`
 """
-struct Point{N,T} <: AbstractPoint{N,T}
+struct Point{N,T}
     coords::SVector{N,T}
 end
 

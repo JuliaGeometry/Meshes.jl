@@ -3,7 +3,7 @@
     coordinates(geometry)
 Returns the vertices of a geometry.
 """
-function coordinates(points::AbstractVector{<:AbstractPoint})
+function coordinates(points::AbstractVector{<:Point})
     return points
 end
 
@@ -71,13 +71,7 @@ const Meshable{Dim,T} = Union{Mesh{Dim,T},
 """
     decompose(T, meshable)
 
-Decompose a `meshable` object (e.g. Polygon) into elements of type `T`
-
-## Example
-
-```julia
-decompose(Point3, Rect3D())
-```
+Decompose a `meshable` object (e.g. Polygon) into elements of type `T`.
 """
 function decompose(::Type{T}, primitive) where {T}
     return collect_with_eltype(T, primitive)
@@ -85,7 +79,7 @@ end
 
 # Specializations
 
-function decompose(::Type{P}, primitive) where {P<:AbstractPoint}
+function decompose(::Type{P}, primitive) where {P<:Point}
     convert.(P, coordinates(primitive))
 end
 
