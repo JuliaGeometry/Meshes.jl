@@ -14,7 +14,7 @@ include("vectors.jl")
 include("matrices.jl")
 include("points.jl")
 
-include("basictypes.jl")
+include("geometries.jl")
 
 include("primitives/rectangles.jl")
 include("primitives/spheres.jl")
@@ -37,8 +37,8 @@ export Vec, Vec2, Vec3, Vec2f, Vec3f
 export vunit, vfill
 
 # geometries
-export AbstractGeometry, GeometryPrimitive
-export LineFace, Polytope, Line, NgonFace
+export Geometry, GeometryPrimitive, Polytope
+export LineFace, Line, NgonFace
 export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export coordinates, TetrahedronFace

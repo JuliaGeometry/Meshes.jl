@@ -1,16 +1,16 @@
 """
 A geometry embedded in a `N`-dimensional space with coordinates of type `T`.
 """
-abstract type AbstractGeometry{N,T} end
+abstract type Geometry{N,T} end
 
-abstract type GeometryPrimitive{Dim,T} <: AbstractGeometry{Dim,T} end
+abstract type GeometryPrimitive{Dim,T} <: Geometry{Dim,T} end
 
-Base.ndims(::AbstractGeometry{N,T}) where {N,T} = N
+Base.ndims(::Geometry{N,T}) where {N,T} = N
 
 """
 Geometry made of connected points.
 """
-abstract type Polytope{Dim,T} <: AbstractGeometry{Dim,T} end
+abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
 
 abstract type AbstractFace{N,T} <: Polytope{N,T} end
 abstract type AbstractSimplexFace{N,T} <: AbstractFace{N,T} end
