@@ -4,7 +4,7 @@
 A `HyperSphere` is a generalization of a sphere into N-dimensions.
 A `center` and `radius` must be specified.
 """
-struct HyperSphere{N,T} <: GeometryPrimitive{N,T}
+struct HyperSphere{N,T} <: Primitive{N,T}
     center::Point{N,T}
     radius::T
 end

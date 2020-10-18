@@ -43,7 +43,7 @@ struct Tesselation{Dim,T,Primitive,NGrid}
     nvertices::NTuple{NGrid,Int}
 end
 
-function Tesselation(primitive::GeometryPrimitive{Dim,T},
+function Tesselation(primitive::Primitive{Dim,T},
                      nvertices::NTuple{N,<:Integer}) where {Dim,T,N}
     return Tesselation{Dim,T,typeof(primitive),N}(primitive, Int.(nvertices))
 end
@@ -66,7 +66,7 @@ faces(tesselation::Tesselation) = faces(tesselation.primitive, nvertices(tessela
 const Meshable{Dim,T} = Union{Mesh{Dim,T},
                               Tesselation{Dim,T},
                               Polytope{Dim,T},
-                              GeometryPrimitive{Dim,T}}
+                              Primitive{Dim,T}}
 
 """
     decompose(T, meshable)

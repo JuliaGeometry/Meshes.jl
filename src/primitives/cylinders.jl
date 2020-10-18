@@ -4,7 +4,7 @@
 A `Cylinder` is a 2D rectangle or a 3D cylinder defined by
 its `origin` point, its `extremity` and a `radius`.
 """
-struct Cylinder{N,T} <: GeometryPrimitive{N,T}
+struct Cylinder{N,T} <: Primitive{N,T}
     origin::Point{N,T}
     extremity::Point{N,T}
     radius::T

@@ -1,4 +1,4 @@
-struct Pyramid{T} <: GeometryPrimitive{3,T}
+struct Pyramid{T} <: Primitive{3,T}
     middle::Point{3,T}
     length::T
     width::T

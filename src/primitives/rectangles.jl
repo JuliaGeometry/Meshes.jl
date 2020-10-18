@@ -3,7 +3,7 @@
 
 A `Rectangle` in `N` dimensions with coordinates of type `T`.
 """
-struct Rectangle{N,T} <: GeometryPrimitive{N,T}
+struct Rectangle{N,T} <: Primitive{N,T}
     origin::Point{N,T}
     widths::SVector{N,T}
 end

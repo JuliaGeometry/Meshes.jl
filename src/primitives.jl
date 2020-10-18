@@ -1,6 +1,6 @@
 ##
 # Generic base overloads
-Base.extrema(primitive::GeometryPrimitive) = (minimum(primitive), maximum(primitive))
+Base.extrema(primitive::Primitive) = (minimum(primitive), maximum(primitive))
 function widths(x::AbstractRange)
     mini, maxi = Float32.(extrema(x))
     return maxi - mini

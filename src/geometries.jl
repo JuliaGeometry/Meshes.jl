@@ -1,11 +1,35 @@
 """
+    Geometry{N,T}
+
 A geometry embedded in a `N`-dimensional space with coordinates of type `T`.
 """
 abstract type Geometry{N,T} end
 
-abstract type GeometryPrimitive{Dim,T} <: Geometry{Dim,T} end
+"""
+    ndims(geometry)
 
+Return the number of dimensions of the space where the `geometry` is embedded.
+"""
 Base.ndims(::Geometry{N,T}) where {N,T} = N
+
+"""
+    coordtype(geometry)
+
+Return the machine type of each coordinate used to describe the `geometry`.
+"""
+coordtype(::Geometry{N,T}) where {N,T}  = T
+
+"""
+    Primitive{N,T}
+
+We say that a geometry is a "primitive" when it can be expressed as a single
+entity with no parts. For example, a sphere is a primitive described in terms
+of a mathematical expression involving a metric and a radius.
+
+Primitives can be discretized into a collection of finite elements with meshing
+algorithms such as triangulation.
+"""
+abstract type Primitive{N,T} <: Geometry{N,T} end
 
 """
 Geometry made of connected points.

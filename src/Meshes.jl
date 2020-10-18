@@ -37,7 +37,7 @@ export Vec, Vec2, Vec3, Vec2f, Vec3f
 export vunit, vfill
 
 # geometries
-export Geometry, GeometryPrimitive, Polytope
+export Geometry, Primitive, Polytope
 export LineFace, Line, NgonFace
 export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
