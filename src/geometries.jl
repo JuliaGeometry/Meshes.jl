@@ -93,8 +93,7 @@ function coordinates(lines::AbstractArray{<:Line})
     end
 end
 
-const TriangleP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,3,P}
-const Triangle{Dim,T} = TriangleP{Dim,T,Point{Dim,T}}
+const Triangle{Dim,T} = Ngon{Dim,T,3,Point{Dim,T}}
 
 """
     volume(triangle)
