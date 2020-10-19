@@ -79,10 +79,9 @@ Base.length(::NNgon{N}) where {N} = N
 # TODO: review this
 include("faces.jl")
 
-const LineP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,2,P}
-const Line{Dim,T} = LineP{Dim,T,Point{Dim,T}}
+const Line{Dim,T} = Ngon{Dim,T,2,Point{Dim,T}}
 
-function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,PointType}
+function coordinates(lines::AbstractArray{<:Line})
     return if lines isa Base.ReinterpretArray
         return coordinates(lines.parent)
     else
@@ -114,7 +113,7 @@ end
 
 A LineString is a geometry of connected line segments
 """
-struct LineString{Dim,T,P<:Point,V<:AbstractVector{<:LineP{Dim,T,P}}} <: AbstractVector{LineP{Dim,T,P}}
+struct LineString{Dim,T,V<:AbstractVector{Line{Dim,T}}} <: AbstractVector{Line{Dim,T}}
     points::V
 end
 
@@ -122,10 +121,6 @@ coordinates(x::LineString) = coordinates(x.points)
 Base.copy(x::LineString) = LineString(copy(x.points))
 Base.size(x::LineString) = size(getfield(x, :points))
 Base.getindex(x::LineString, i) = getindex(getfield(x, :points), i)
-
-function LineString(points::AbstractVector{LineP{Dim,T,P}}) where {Dim,T,P}
-    return LineString{Dim,T,P,typeof(points)}(points)
-end
 
 """
     LineString(points::AbstractVector{<:Point}, skip = 1)
@@ -139,11 +134,11 @@ linestring = LineString(points)
 ```
 """
 function LineString(points::AbstractVector{<:Point}, skip=1)
-    return LineString(connect(points, LineP, skip))
+    return LineString(connect(points, Line, skip))
 end
 
-function LineString(points::AbstractVector{<:Pair{P,P}}) where {P<:Point{N,T}} where {N,T}
-    return LineString(reinterpret(LineP{N,T,P}, points))
+function LineString(points::AbstractVector{<:Pair{Point{N,T},Point{N,T}}}) where {N,T}
+    return LineString(reinterpret(Line{N,T}, points))
 end
 
 function LineString(points::AbstractVector{<:Point}, faces::AbstractVector{<:LineFace})
@@ -179,7 +174,7 @@ end
     Polygon(exterior::AbstractVector{<:Point}, interiors::Vector{<:AbstractVector{<:Point}})
 
 """
-struct Polygon{Dim,T,P<:Point{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},V<:AbstractVector{L}}
+struct Polygon{Dim,T,L<:AbstractVector{Line{Dim,T}},V<:AbstractVector{L}}
     exterior::L
     interiors::V
 end
@@ -190,11 +185,7 @@ function Base.:(==)(a::Polygon, b::Polygon)
     return (a.exterior == b.exterior) && (a.interiors == b.interiors)
 end
 
-function Polygon(exterior::E, interiors::AbstractVector{E}) where {E<:AbstractVector{LineP{Dim,T,P}}} where {Dim,T,P}
-    return Polygon{Dim,T,P,typeof(exterior),typeof(interiors)}(exterior, interiors)
-end
-
-Polygon(exterior::L) where {L<:AbstractVector{<:LineP}} = Polygon(exterior, L[])
+Polygon(exterior::L) where {L<:AbstractVector{<:Line}} = Polygon(exterior, L[])
 
 function Polygon(exterior::AbstractVector{P}, skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
     return Polygon(LineString(exterior, skip))
@@ -219,12 +210,12 @@ end
 
 Base.ndims(::Polygon{Dim,T}) where {Dim,T} = Dim
 
-function coordinates(polygon::Polygon{N,T,PointType}) where {N,T,PointType}
+function coordinates(polygon::Polygon{N,T}) where {N,T}
     exterior = coordinates(polygon.exterior)
     if isempty(polygon.interiors)
         return exterior
     else
-        result = PointType[]
+        result = Point{N,T}[]
         append!(result, exterior)
         foreach(x -> append!(result, coordinates(x)), polygon.interiors)
         return result
@@ -245,7 +236,7 @@ struct MultiLineString{Dim,T,Element<:LineString{Dim,T},A<:AbstractVector{Elemen
     linestrings::A
 end
 
-function MultiLineString(linestrings::AbstractVector{L}) where {L<:AbstractVector{LineP{Dim,T,P}}} where {Dim,T,P}
+function MultiLineString(linestrings::AbstractVector{L}) where {L<:AbstractVector{Line{Dim,T}}} where {Dim,T}
     return MultiLineString(linestrings)
 end
 
