@@ -1,7 +1,7 @@
 using Test, Meshes
 
 @testset "algorithms.jl" begin
-    cube = Box(Point(-0.5,-0.5,-0.5), Vec(1.0,1.0,1.0))
+    cube = Box(Point(-0.5,-0.5,-0.5), Point(0.5,0.5,0.5))
     cube_faces = decompose(TriangleFace, faces(cube))
     cube_vertices = decompose(Point3f, cube)
     @test area(cube_vertices, cube_faces) == 6
@@ -48,13 +48,13 @@ end
 end
 
 @testset "Boxes" begin
-    a = Box(Point(0, 0), Vec(1, 1))
+    a = Box(Point(0, 0), Point(1, 1))
     pt_expa = Point[(0, 0), (1, 0), (0, 1), (1, 1)]
     @test decompose(Point{2,Int}, a) == pt_expa
     mesh = triangle_mesh(a)
     @test decompose(Point2f, mesh) == convert.(Point2f, pt_expa)
 
-    b = Box(Point(1,1,1), Vec(1,1,1))
+    b = Box(Point(1,1,1), Point(2,2,2))
     pt_expb = Point[(1, 1, 1), (1, 1, 2), (1, 2, 2), (1, 2, 1), (1, 1, 1),
                     (2, 1, 1), (2, 1, 2), (1, 1, 2), (1, 1, 1), (1, 2, 1),
                     (2, 2, 1), (2, 1, 1), (2, 2, 2), (1, 2, 2), (1, 1, 2),
@@ -106,64 +106,51 @@ end
 end
 
 @testset "Boxes" begin
-    rect = Box(Point2(0, 0), Vec2(1, 2))
-    @test rect isa Box{2,Float64}
-
-    split1, split2 = Meshes.split(rect, 2, 1)
-    @test widths(split1) == widths(split2)
-    @test origin(split1) == Point(0.0, 0.0)
-    @test origin(split2) == Point(0.0, 1.0)
-    @test split1 ∈ rect
-    @test rect ∉ split1
-
-    prim = Box(Point2(0, 0), Vec2(1, 1))
-    @test length(prim) == 2
-
     p = Point(1.0, 1.0)
-    r = Box(Point(0.0, 0.0), Vec(1.0, 1.0))
+    r = Box(Point(0.0, 0.0), Point(1.0, 1.0))
     @test p ∈ r
 
-    h1 = Box(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    h2 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
+    h1 = Box(Point(0.0, 0.0), Point(1.0, 1.0))
+    h2 = Box(Point(1.0, 1.0), Point(3.0, 3.0))
     @test union(h1, h2) isa Box{2,Float64}
     @test Meshes.intersect(h1, h2) isa Box{2,Float64}
 
-    rect1 = Box(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    rect2 = Box(Point2(3.0, 1.0), Vec2(4.0, 2.0))
+    rect1 = Box(Point(0.0, 0.0), Point(1.0, 1.0))
+    rect2 = Box(Point(3.0, 1.0), Point(7.0, 3.0))
     @test !before(rect1, rect2)
-    rect1 = Box(Point2(0.0, 0.0), Vec2(1.0, 1.0))
-    rect2 = Box(Point2(3.0, 2.0), Vec2(4.0, 2.0))
+    rect1 = Box(Point(0.0, 0.0), Point(1.0, 1.0))
+    rect2 = Box(Point(3.0, 2.0), Point(7.0, 4.0))
     @test before(rect1, rect2)
 
-    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 1.0))
+    rect1 = Box(Point(1.0, 1.0), Point(3.0, 3.0))
+    rect2 = Box(Point(0.0, 0.0), Point(2.0, 1.0))
     @test !overlaps(rect1, rect2)
-    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Box(Point2(1.5, 1.5), Vec2(2.0, 2.0))
+    rect1 = Box(Point(1.0, 1.0), Point(3.0, 3.0))
+    rect2 = Box(Point(1.5, 1.5), Point(3.5, 3.5))
     @test overlaps(rect1, rect2)
 
-    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 1.0))
+    rect1 = Box(Point(1.0, 1.0), Point(3.0, 3.0))
+    rect2 = Box(Point(0.0, 0.0), Point(2.0, 1.0))
     @test !Meshes.starts(rect1, rect2)
-    rect2 = Box(Point2(1.0, 1.0), Vec2(1.5, 1.5))
+    rect2 = Box(Point(1.0, 1.0), Point(2.5, 2.5))
     @test !Meshes.starts(rect1, rect2)
-    rect2 = Box(Point2(1.0, 1.0), Vec2(3.0, 3.0))
+    rect2 = Box(Point(1.0, 1.0), Point(4.0, 4.0))
     @test Meshes.starts(rect1, rect2)
 
-    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Box(Point2(0.0, 0.0), Vec2(4.0, 4.0))
+    rect1 = Box(Point(1.0, 1.0), Point(3.0, 3.0))
+    rect2 = Box(Point(0.0, 0.0), Point(4.0, 4.0))
     @test during(rect1, rect2)
-    rect1 = Box(Point2(0.0, 0.0), Vec2(2.0, 3.0))
-    rect2 = Box(Point2(1.0, 1.0), Vec2(4.0, 2.0))
+    rect1 = Box(Point(0.0, 0.0), Point(2.0, 3.0))
+    rect2 = Box(Point(1.0, 1.0), Point(5.0, 3.0))
     @test !during(rect1, rect2)
 
-    rect1 = Box(Point2(1.0, 1.0), Vec2(2.0, 2.0))
-    rect2 = Box(Point2(0.0, 0.0), Vec2(4.0, 4.0))
+    rect1 = Box(Point(1.0, 1.0), Point(3.0, 3.0))
+    rect2 = Box(Point(0.0, 0.0), Point(4.0, 4.0))
     @test !finishes(rect1, rect2)
-    rect1 = Box(Point2(1.0, 0.0), Vec2(1.0, 1.0))
-    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 1.0))
+    rect1 = Box(Point(1.0, 0.0), Point(2.0, 1.0))
+    rect2 = Box(Point(0.0, 0.0), Point(2.0, 1.0))
     @test !finishes(rect1, rect2)
-    rect1 = Box(Point2(1.0, 1.0), Vec2(1.0, 2.0))
-    rect2 = Box(Point2(0.0, 0.0), Vec2(2.0, 3.0))
+    rect1 = Box(Point(1.0, 1.0), Point(2.0, 3.0))
+    rect2 = Box(Point(0.0, 0.0), Point(2.0, 3.0))
     @test finishes(rect1, rect2)
 end

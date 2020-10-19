@@ -16,7 +16,7 @@ function boundingbox(geometry::AbstractArray{<:Point{N,T}}) where {N,T}
     for p in geometry
         vmin, vmax = minmax(coordinates(p), vmin, vmax)
     end
-    Box(Point(vmin), vmax - vmin)
+    Box(Point(vmin), Point(vmax))
 end
 
 # --------------
@@ -27,5 +27,5 @@ boundingbox(b::Box) = b
 
 function boundingbox(s::Sphere)
     mini, maxi = extrema(s)
-    Box(Point(mini), maxi .- mini)
+    Box(Point(mini), Point(maxi))
 end

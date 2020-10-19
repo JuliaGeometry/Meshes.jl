@@ -45,5 +45,5 @@ function coordinates(s::Sphere{3}, nvertices=24)
 end
 
 function faces(::Sphere{3,T}, nvertices=24) where {T}
-    faces(Box(Point{2,T}(0,0), Vec{2,T}(1,1)), (nvertices, nvertices))
+    faces(Box(Point{2,T}(0,0), Point{2,T}(1,1)), (nvertices, nvertices))
 end
