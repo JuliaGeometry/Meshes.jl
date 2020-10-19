@@ -103,13 +103,8 @@ end
 const LineP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,2,P}
 const Line{Dim,T} = LineP{Dim,T,Point{Dim,T}}
 
-# Simplex{D, T, 3} & Ngon{D, T, 3} are both representing a triangle.
-# Since Ngon is supposed to be flat and a triangle is flat, lets prefer Ngon
-# for triangle:
 const TriangleP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,3,P}
 const Triangle{Dim,T} = TriangleP{Dim,T,Point{Dim,T}}
-
-const Quadrilateral{Dim,T} = Ngon{Dim,T,4,P} where {P<:Point{Dim,T}}
 
 function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,PointType}
     return if lines isa Base.ReinterpretArray
