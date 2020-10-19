@@ -1,3 +1,6 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
 
 """
     intersect(a::Line, b::Line) -> Point

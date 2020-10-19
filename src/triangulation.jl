@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 #=
 ported from:
 http://docs.ros.org/jade/api/convex_decomposition/html/triangulate_8cpp_source.html

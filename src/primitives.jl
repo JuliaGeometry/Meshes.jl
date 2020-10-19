@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 ##
 # Generic base overloads
 Base.extrema(primitive::Primitive) = (minimum(primitive), maximum(primitive))

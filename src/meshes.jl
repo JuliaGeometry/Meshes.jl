@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 const FaceMesh{Dim,T,Element} = Mesh{Dim,T,Element,<:FaceView{Element}}
 
 coordinates(mesh::FaceMesh) = coordinates(getfield(mesh, :simplices))

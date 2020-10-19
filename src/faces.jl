@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 abstract type AbstractFace{N,T} end
 abstract type AbstractSimplexFace{N,T} <: AbstractFace{N,T} end
 abstract type AbstractNgonFace{N,T} <: AbstractFace{N,T} end
