@@ -124,54 +124,6 @@ function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,
 end
 
 """
-A `Simplex` is a generalization of an N-dimensional tetrahedra and can be thought
-of as a minimal convex set containing the specified points.
-
-* A 0-simplex is a point.
-* A 1-simplex is a line segment.
-* A 2-simplex is a triangle.
-* A 3-simplex is a tetrahedron.
-
-Note that this datatype is offset by one compared to the traditional
-mathematical terminology. So a one-simplex is represented as `Simplex{2,T}`.
-This is for a simpler implementation.
-
-It applies to infinite dimensions. The structure of this type is designed
-to allow embedding in higher-order spaces by parameterizing on `T`.
-"""
-struct Simplex{Dim,T,N,P<:Point{Dim,T}} <: Polytope{Dim,T}
-    points::SVector{N,P}
-end
-
-const NSimplex{N} = Simplex{Dim,T,N,P} where {Dim,T,P}
-const TetrahedronP{T,P<:Point{3,T}} = Simplex{3,T,4,P}
-const Tetrahedron{T} = TetrahedronP{T,Point{3,T}}
-
-coordinates(x::Simplex) = x.points
-
-function (::Type{<:NSimplex{N}})(points::Vararg{P,N}) where {P<:Point{Dim,T},N} where {Dim,T}
-    return Simplex{Dim,T,N,P}(SVector(points))
-end
-
-# Base Array interface
-Base.length(::Type{<:NSimplex{N}}) where {N} = N
-Base.length(::NSimplex{N}) where {N} = N
-
-"""
-The Simplex Polytope element type when indexing an array of points with a SimplexFace
-"""
-function Polytope(P::Type{<:Point{Dim,T}}, ::Type{<:AbstractSimplexFace{N}}) where {N,Dim,T}
-    return Simplex{Dim,T,N,P}
-end
-
-"""
-The fully concrete Simplex type, when constructed from a point type!
-"""
-function Polytope(::Type{<:NSimplex{N}}, P::Type{<:Point{NDim,T}}) where {N,NDim,T}
-    return Simplex{NDim,T,N,P}
-end
-
-"""
     LineString(points::AbstractVector{<:Point})
 
 A LineString is a geometry of connected line segments

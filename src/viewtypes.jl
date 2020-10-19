@@ -150,8 +150,9 @@ end
 end
 
 function connect(points::AbstractVector{P},
-                 faces::AbstractVector{F}) where {P <: Point,F <: AbstractFace}
-    return FaceView{Polytope(P, F),P,F,typeof(points),typeof(faces)}(points, faces)
+                 faces::AbstractVector{F}) where {Dim,T,N,V,P<:Point{Dim,T},F<:AbstractFace{N,V}}
+    Element = Ngon{Dim,T,N,P}
+    return FaceView{Element,P,F,typeof(points),typeof(faces)}(points, faces)
 end
 
 coordinates(mesh::FaceView) = getfield(mesh, :elements)

@@ -28,7 +28,6 @@ using Test, Random
     @testset "connected views" begin
         numbers = [1, 2, 3, 4, 5, 6]
         x = connect(numbers, Point2)
-
         @test x == Point{2,Int}[(1, 2), (3, 4), (5, 6)]
 
         line = connect(x, Line, 1)
@@ -36,9 +35,6 @@ using Test, Random
 
         triangles = connect(x, Triangle)
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
-        x = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
-        tetrahedra = connect(x, NSimplex{4})
-        @test tetrahedra == [Tetrahedron(x[1], x[2], x[3], x[4])]
     end
 
     @testset "face views" begin
@@ -47,13 +43,16 @@ using Test, Random
         faces = connect([1, 2, 3], TriangleFace)
         triangles = connect(points, faces)
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
+
         x = Point3(1,1,1)
         triangles = connect([x], [TriangleFace((1, 1, 1))])
         @test triangles == [Triangle(x, x, x)]
-        points = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
+
+        points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
         faces = connect([1, 2, 3, 4], TetrahedronFace{Int})
-        triangles = connect(points, faces)
-        @test triangles == [Tetrahedron(points...)]
+        tetrahedron = connect(points, faces)[1]
+        @test ndims(tetrahedron) == 3
+        @test length(tetrahedron) == 4
     end
 
     @testset "reinterpret" begin
@@ -129,15 +128,15 @@ end
         mesh = Mesh([x], [TriangleFace((1, 1, 1))])
         @test mesh == [Triangle(x, x, x)]
 
-        points = connect([1, 2, 3, 4, 5, 6, 7, 8], Point2)
-        sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
-        mesh = Mesh(points, sfaces)
-        @test mesh == [Tetrahedron(points...)]
-
         points = rand(Point3f, 8)
         tfaces = [TriangleFace((1, 2, 3)), TriangleFace((5, 6, 7))]
         mesh = Mesh(points, tfaces)
         @test mesh isa PlainMesh
+
+        points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
+        sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
+        mesh = Mesh(points, sfaces)
+        @test mesh == [Meshes.NNgon{4}(points...)]
 
         t = Tesselation(Box(Point2f(0,0), Point2f(2,2)), (30, 30))
         m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace)
