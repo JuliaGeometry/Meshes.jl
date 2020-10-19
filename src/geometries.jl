@@ -78,7 +78,6 @@ const NNgon{N} = Ngon{Dim,T,N,P} where {Dim,T,P}
 function (::Type{<:NNgon{N}})(points::Vararg{P,N}) where {P<:Point{Dim,T},N} where {Dim,T}
     return Ngon{Dim,T,N,P}(SVector(points))
 end
-Base.show(io::IO, x::NNgon{N}) where {N} = print(io, "Ngon{$N}(", join(x, ", "), ")")
 
 coordinates(x::Ngon) = x.points
 Base.length(::Type{<:NNgon{N}}) where {N} = N
@@ -110,13 +109,7 @@ const Line{Dim,T} = LineP{Dim,T,Point{Dim,T}}
 const TriangleP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,3,P}
 const Triangle{Dim,T} = TriangleP{Dim,T,Point{Dim,T}}
 
-Base.show(io::IO, x::TriangleP) = print(io, "Triangle(", join(x, ", "), ")")
-Base.summary(io::IO, ::Type{<:TriangleP}) = print(io, "Triangle")
-
 const Quadrilateral{Dim,T} = Ngon{Dim,T,4,P} where {P<:Point{Dim,T}}
-
-Base.show(io::IO, x::Quadrilateral) = print(io, "Quad(", join(x, ", "), ")")
-Base.summary(io::IO, ::Type{<:Quadrilateral}) = print(io, "Quad")
 
 function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,PointType}
     return if lines isa Base.ReinterpretArray
@@ -153,8 +146,6 @@ end
 const NSimplex{N} = Simplex{Dim,T,N,P} where {Dim,T,P}
 const TetrahedronP{T,P<:Point{3,T}} = Simplex{3,T,4,P}
 const Tetrahedron{T} = TetrahedronP{T,Point{3,T}}
-
-Base.show(io::IO, x::TetrahedronP) = print(io, "Tetrahedron(", join(x, ", "), ")")
 
 coordinates(x::Simplex) = x.points
 
@@ -261,32 +252,25 @@ function Base.:(==)(a::Polygon, b::Polygon)
     return (a.exterior == b.exterior) && (a.interiors == b.interiors)
 end
 
-function Polygon(exterior::E,
-                 interiors::AbstractVector{E}) where {E<:AbstractVector{LineP{Dim,T,P}}} where {Dim,
-                                                                                                T,
-                                                                                                P}
+function Polygon(exterior::E, interiors::AbstractVector{E}) where {E<:AbstractVector{LineP{Dim,T,P}}} where {Dim,T,P}
     return Polygon{Dim,T,P,typeof(exterior),typeof(interiors)}(exterior, interiors)
 end
 
 Polygon(exterior::L) where {L<:AbstractVector{<:LineP}} = Polygon(exterior, L[])
 
-function Polygon(exterior::AbstractVector{P},
-                 skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
+function Polygon(exterior::AbstractVector{P}, skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
     return Polygon(LineString(exterior, skip))
 end
 
-function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:Integer},
-                 skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
+function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:Integer}, skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
     return Polygon(LineString(exterior, faces, skip))
 end
 
-function Polygon(exterior::AbstractVector{P},
-                 faces::AbstractVector{<:LineFace}) where {P<:Point{Dim,T}} where {Dim,T}
+function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:LineFace}) where {P<:Point{Dim,T}} where {Dim,T}
     return Polygon(LineString(exterior, faces))
 end
 
-function Polygon(exterior::AbstractVector{P},
-                 interior::AbstractVector{<:AbstractVector{P}}) where {P<:Point{Dim,T}} where {Dim,T}
+function Polygon(exterior::AbstractVector{P}, interior::AbstractVector{<:AbstractVector{P}}) where {P<:Point{Dim,T}} where {Dim,T}
     ext = LineString(exterior)
     # We need to take extra care for empty interiors, since
     # if we just map over it, it won't infer the element type correctly!
@@ -374,12 +358,6 @@ function Base.propertynames(mesh::Mesh)
         # a mesh always has positions!
         return (names..., :position)
     end
-end
-
-function Base.summary(io::IO, ::Mesh{Dim,T,Element}) where {Dim,T,Element}
-    print(io, "Mesh{$Dim, $T, ")
-    summary(io, Element)
-    return print(io, "}")
 end
 
 Base.size(mesh::Mesh) = size(getfield(mesh, :simplices))
