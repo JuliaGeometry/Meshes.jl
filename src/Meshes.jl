@@ -30,6 +30,7 @@ include("boundingboxes.jl")
 
 # points
 export Point, Point2, Point3, Point2f, Point3f
+export coordtype, coordinates
 
 # vectors
 export Vec, Vec2, Vec3, Vec2f, Vec3f
@@ -48,7 +49,7 @@ export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
 export FaceView, SimpleFaceView, TupleView
-export decompose, coordinates, faces, convert_simplex
+export decompose, faces, convert_simplex
 export Tesselation
 
 export before, during, isinside, isoutside, overlaps, intersects, finishes
