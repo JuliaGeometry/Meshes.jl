@@ -76,9 +76,11 @@ x = connect(Point[(1, 2), (3, 4), (5, 6), (7, 8)], Line, 2)
 x == [Line(Point(1, 2), Point(3, 4)), Line(Point(5, 6), Point(7, 8))]
 ```
 """
-@inline function connect(points::AbstractVector{P}, PL::Type{<:Polytope{N,T} where {N,T}},
-                         skip::Int=length(PL)) where {P<:Point}
-    return reinterpret(Polytope(PL, P), TupleView{length(PL),skip}(points))
+@inline function connect(points::AbstractVector{P}, PL::Type{<:Polytope},
+                         skip::Int=length(PL)) where {Dim,T,P<:Point{Dim,T}}
+    N = length(PL)
+    Element = Ngon{Dim,T,N,P}
+    return reinterpret(Element, TupleView{N,skip}(points))
 end
 
 @inline function connect(points::AbstractVector{T}, ::Type{<:Point{N}},

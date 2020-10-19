@@ -61,14 +61,6 @@ abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
 @propagate_inbounds Base.iterate(x::Polytope) = iterate(coordinates(x))
 @propagate_inbounds Base.iterate(x::Polytope, i) = iterate(coordinates(x), i)
 
-"""
-Fixed Size Polygon, e.g.
-- N 1-2 : Illegal!
-- N = 3 : Triangle
-- N = 4 : Quadrilateral (or Quad, Or tetragon)
-- N = 5 : Pentagon
-- ...
-"""
 struct Ngon{Dim,T,N,P<:Point{Dim,T}} <: Polytope{Dim,T}
     points::SVector{N,P}
 end
@@ -85,20 +77,6 @@ Base.length(::NNgon{N}) where {N} = N
 
 # TODO: review this
 include("faces.jl")
-
-"""
-The Ngon Polytope element type when indexing an array of points with a SimplexFace
-"""
-function Polytope(P::Type{<:Point{Dim,T}}, ::Type{<:AbstractNgonFace{N,IT}}) where {N,Dim,T,IT}
-    return Ngon{Dim,T,N,P}
-end
-
-"""
-The fully concrete Ngon type, when constructed from a point type!
-"""
-function Polytope(::Type{<:NNgon{N}}, P::Type{<:Point{NDim,T}}) where {N,NDim,T}
-    return Ngon{NDim,T,N,P}
-end
 
 const LineP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,2,P}
 const Line{Dim,T} = LineP{Dim,T,Point{Dim,T}}
