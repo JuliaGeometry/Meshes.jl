@@ -192,10 +192,6 @@ end
     mesh = Meshes.mesh(primitive)
     @test decompose(Point3, mesh) isa Vector{Point3}
 
-    points = decompose(Point2f, Sphere(Point2f(0, 0), 1.0f0))
-    mesh = Meshes.mesh(points)
-    @test coordinates(mesh) == points
-
     linestring = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
     pts = Point{2, Int}[(10, 10), (20, 20), (10, 40)]
     linestring = LineString(pts)

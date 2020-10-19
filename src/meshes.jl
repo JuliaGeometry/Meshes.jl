@@ -21,10 +21,6 @@ function mesh(geometry::Meshable{N,T}; facetype=TriangleFace) where {N,T}
     return Mesh(positions, faces)
 end
 
-function mesh(polygon::AbstractVector{P}; facetype=TriangleFace) where {P<:Point}
-    return mesh(Polygon(polygon); facetype=facetype)
-end
-
 function mesh(polytope::Polytope{Dim,T}; facetype=TriangleFace) where {Dim,T}
     faces = decompose(facetype, polytope)
     positions = decompose(Point{Dim,T}, polytope)
