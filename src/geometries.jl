@@ -56,13 +56,13 @@ by an ordered set of points. These points (a.k.a. vertices) are connected into e
 faces and cells in 3D. The number of points `N` in the polytope is known at compile
 time. For example, a triangle has N=3 points. See https://en.wikipedia.org/wiki/Polytope.
 """
-abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
+abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
 
 @propagate_inbounds Base.getindex(x::Polytope, i::Integer) = coordinates(x)[i]
 @propagate_inbounds Base.iterate(x::Polytope) = iterate(coordinates(x))
 @propagate_inbounds Base.iterate(x::Polytope, i) = iterate(coordinates(x), i)
 
-struct Ngon{Dim,T,N,P<:Point{Dim,T}} <: Polytope{Dim,T}
+struct Ngon{Dim,T,N,P<:Point{Dim,T}} <: Polytope{Dim,T,N}
     points::SVector{N,P}
 end
 
@@ -179,7 +179,7 @@ end
     Polygon(exterior::AbstractVector{<:Point}, interiors::Vector{<:AbstractVector{<:Point}})
 
 """
-struct Polygon{Dim,T,P<:Point{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},V<:AbstractVector{L}} <: Polytope{Dim,T}
+struct Polygon{Dim,T,P<:Point{Dim,T},L<:AbstractVector{<:LineP{Dim,T,P}},V<:AbstractVector{L}}
     exterior::L
     interiors::V
 end
@@ -217,6 +217,8 @@ function Polygon(exterior::AbstractVector{P}, interior::AbstractVector{<:Abstrac
     return Polygon(ext, int)
 end
 
+Base.ndims(::Polygon{Dim,T}) where {Dim,T} = Dim
+
 function coordinates(polygon::Polygon{N,T,PointType}) where {N,T,PointType}
     exterior = coordinates(polygon.exterior)
     if isempty(polygon.interiors)
@@ -232,7 +234,7 @@ end
 """
     MultiPolygon(polygons)
 """
-struct MultiPolygon{Dim,T,Element<:Polytope{Dim,T},A<:AbstractVector{Element}} <: AbstractVector{Element}
+struct MultiPolygon{Dim,T,Element<:Polygon{Dim,T},A<:AbstractVector{Element}} <: AbstractVector{Element}
     polygons::A
 end
 
