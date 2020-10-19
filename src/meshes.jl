@@ -11,20 +11,14 @@ faces(mesh::FaceMesh) = faces(getfield(mesh, :simplices))
 
 Creates a mesh from `geometry`.
 """
-function mesh(geometry::Meshable{N,T}; facetype=TriangleFace) where {N,T}
-    positions = decompose(Point{N,T}, geometry)
-    faces = decompose(facetype, geometry)
+function mesh(geometry::Meshable{Dim,T}; facetype=TriangleFace) where {Dim,T}
+    points = decompose(Point{Dim,T}, geometry)
+    faces  = decompose(facetype, geometry)
     if faces === nothing
         # try to triangulate
-        faces = decompose(facetype, positions)
+        faces = decompose(facetype, points)
     end
-    return Mesh(positions, faces)
-end
-
-function mesh(polytope::Polytope{Dim,T}; facetype=TriangleFace) where {Dim,T}
-    faces = decompose(facetype, polytope)
-    positions = decompose(Point{Dim,T}, polytope)
-    return Mesh(positions, faces)
+    return Mesh(points, faces)
 end
 
 """
