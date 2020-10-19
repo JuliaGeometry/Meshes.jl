@@ -7,18 +7,13 @@ coordinates(mesh::FaceMesh) = coordinates(getfield(mesh, :simplices))
 faces(mesh::FaceMesh) = faces(getfield(mesh, :simplices))
 
 """
-    mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace)
+    mesh(geometry::Meshable{N,T}; facetype=TriangleFace)
 
-Creates a mesh from `primitive`.
-Uses the element types from the keyword arguments to create the attributes.
-The attributes that have their type set to nothing are not added to the mesh.
-Note, that this can be an `Int` or `Tuple{Int, Int}``, when the primitive is grid based.
-It also only losely correlates to the number of vertices, depending on the algorithm used.
-#TODO: find a better number here!
+Creates a mesh from `geometry`.
 """
-function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace) where {N,T}
-    positions = decompose(pointtype, primitive)
-    faces = decompose(facetype, primitive)
+function mesh(geometry::Meshable{N,T}; facetype=TriangleFace) where {N,T}
+    positions = decompose(Point{N,T}, geometry)
+    faces = decompose(facetype, geometry)
     if faces === nothing
         # try to triangulate
         faces = decompose(facetype, positions)
@@ -26,38 +21,22 @@ function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleF
     return Mesh(positions, faces)
 end
 
-function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) where {P<:Point}
-    return mesh(Polygon(polygon); pointtype=pointtype, facetype=facetype)
+function mesh(polygon::AbstractVector{P}; facetype=TriangleFace) where {P<:Point}
+    return mesh(Polygon(polygon); facetype=facetype)
 end
 
-function mesh(polygon::Polytope{Dim,T}; pointtype=Point{Dim,T}, facetype=TriangleFace) where {Dim,T}
-    faces = decompose(facetype, polygon)
-    positions = decompose(pointtype, polygon)
+function mesh(polytope::Polytope{Dim,T}; facetype=TriangleFace) where {Dim,T}
+    faces = decompose(facetype, polytope)
+    positions = decompose(Point{Dim,T}, polytope)
     return Mesh(positions, faces)
 end
 
-function triangle_mesh(primitive::Meshable{N,T}; nvertices=nothing) where {N,T}
-    if nvertices !== nothing
-        @warn("nvertices argument deprecated. Wrap primitive in `Tesselation(primitive, nvertices)`")
-        primitive = Tesselation(primitive, nvertices)
-    end
-    return mesh(primitive; pointtype=Point{N,T}, facetype=TriangleFace)
+function triangle_mesh(geometry::Meshable)
+    return mesh(geometry; facetype=TriangleFace)
 end
 
-function triangle_mesh(points::AbstractVector{P}; nvertices=nothing) where {P<:Point}
-    triangle_mesh(Polygon(points), nvertices=nvertices)
-end
-
-"""
-    volume(triangle)
-
-Calculate the signed volume of one tetrahedron. Be sure the orientation of your
-surface is right.
-"""
-function volume(triangle::Triangle)
-    v1, v2, v3 = coordinates.(triangle)
-    sig = sign(orthogonal_vector(v1, v2, v3) ⋅ v1)
-    return sig * abs(v1 ⋅ (v2 × v3)) / 6
+function triangle_mesh(points::AbstractVector{P}) where {P<:Point}
+    return triangle_mesh(Polygon(points))
 end
 
 """

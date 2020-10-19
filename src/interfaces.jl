@@ -35,7 +35,7 @@ To transport this information to the various decompose methods, you can wrap it
 in the Tesselation object e.g. like this:
 
 ```julia
-sphere = Sphere(Point3f(0,0,0), 1.0f0)
+sphere = Sphere(Point3(0,0,0), 1.0)
 m1 = mesh(sphere) # uses a default value for tesselation
 m2 = mesh(Tesselation(sphere, 64)) # uses 64 for tesselation
 length(coordinates(m1)) != length(coordinates(m2))
@@ -84,7 +84,7 @@ end
 # Specializations
 
 function decompose(::Type{P}, primitive) where {P<:Point}
-    convert.(P, coordinates(primitive))
+    return convert.(P, coordinates(primitive))
 end
 
 function decompose(::Type{F}, primitive) where {F<:AbstractFace}

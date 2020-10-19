@@ -48,12 +48,13 @@ include("primitives/cylinder.jl")
 # ----------
 
 """
-    Polytope{Dim,T}
+    Polytope{Dim,T,N}
 
 We say that a geometry is a polytope when it is made of a collection of "flat" sides.
 They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
 by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
-faces and cells in 3D. See https://en.wikipedia.org/wiki/Polytope.
+faces and cells in 3D. The number of points `N` in the polytope is known at compile
+time. For example, a triangle has N=3 points. See https://en.wikipedia.org/wiki/Polytope.
 """
 abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
 
@@ -81,9 +82,6 @@ include("faces.jl")
 const LineP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,2,P}
 const Line{Dim,T} = LineP{Dim,T,Point{Dim,T}}
 
-const TriangleP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,3,P}
-const Triangle{Dim,T} = TriangleP{Dim,T,Point{Dim,T}}
-
 function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,PointType}
     return if lines isa Base.ReinterpretArray
         return coordinates(lines.parent)
@@ -94,6 +92,21 @@ function coordinates(lines::AbstractArray{LineP{Dim,T,PointType}}) where {Dim,T,
         end
         return result
     end
+end
+
+const TriangleP{Dim,T,P<:Point{Dim,T}} = Ngon{Dim,T,3,P}
+const Triangle{Dim,T} = TriangleP{Dim,T,Point{Dim,T}}
+
+"""
+    volume(triangle)
+
+Calculate the signed volume of one tetrahedron. Be sure the orientation of your
+surface is right.
+"""
+function volume(triangle::Triangle)
+    v1, v2, v3 = coordinates.(triangle)
+    sig = sign(orthogonal_vector(v1, v2, v3) ⋅ v1)
+    return sig * abs(v1 ⋅ (v2 × v3)) / 6
 end
 
 """

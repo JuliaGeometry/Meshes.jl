@@ -139,7 +139,7 @@ end
         @test mesh == [Meshes.NNgon{4}(points...)]
 
         t = Tesselation(Box(Point2f(0,0), Point2f(2,2)), (30, 30))
-        m = Meshes.mesh(t, pointtype=Point2f, facetype=QuadFace)
+        m = Meshes.mesh(t, facetype=QuadFace)
         @test Meshes.faces(m) isa Vector{QuadFace}
         @test Meshes.coordinates(m) isa Vector{Point2f}
     end
@@ -216,7 +216,7 @@ end
 
 @testset "mesh conversion" begin
     s = Sphere(Point3(0,0,0), 1.0)
-    m = Meshes.mesh(s, pointtype=Point3)
+    m = Meshes.mesh(s)
     @test m isa Mesh{3,Float64}
     @test coordinates(m) isa Vector{Point3}
     @test Meshes.faces(m) isa Vector{TriangleFace}
@@ -224,7 +224,8 @@ end
     points2 = decompose(Point3, m)
     @test coordinates.(points1) ≈ coordinates.(points2)
 
-    m = Meshes.mesh(s, pointtype=Point3f)
+    s = Sphere(Point3f(0,0,0), 1.0f0)
+    m = Meshes.mesh(s)
     tmesh = triangle_mesh(m)
     points1 = coordinates(tmesh)
     points2 = decompose(Point3f, tmesh)
