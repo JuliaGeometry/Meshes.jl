@@ -57,7 +57,7 @@ export direction, area, update, extremity
 export self_intersections, split_intersections
 
 # meshes
-export AbstractMesh, Mesh, TriangleMesh, PlainMesh, PlainTriangleMesh
+export AbstractMesh, Mesh
 
 # mesh creation
 export triangle_mesh

@@ -131,7 +131,7 @@ end
         points = rand(Point3f, 8)
         tfaces = [TriangleFace((1, 2, 3)), TriangleFace((5, 6, 7))]
         mesh = Mesh(points, tfaces)
-        @test mesh isa PlainMesh
+        @test mesh isa Mesh
 
         points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
         sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
@@ -228,7 +228,7 @@ end
     tmesh = triangle_mesh(m)
     points1 = coordinates(tmesh)
     points2 = decompose(Point3f, tmesh)
-    @test tmesh isa PlainMesh
+    @test tmesh isa Mesh
     @test coordinates.(points1) ≈ coordinates.(points2)
     @test m isa Mesh{3,Float32}
     @test coordinates(m) isa Vector{Point3f}

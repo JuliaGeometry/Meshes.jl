@@ -3,23 +3,8 @@
 # ------------------------------------------------------------------
 
 const FaceMesh{Dim,T,Element} = Mesh{Dim,T,Element,<:FaceView{Element}}
-
 coordinates(mesh::FaceMesh) = coordinates(getfield(mesh, :simplices))
 faces(mesh::FaceMesh) = faces(getfield(mesh, :simplices))
-
-"""
-    TriangleMesh{Dim, T, PointType}
-
-Abstract Mesh with triangle elements of eltype `T`.
-"""
-const TriangleMesh{Dim,T,PointType} = AbstractMesh{TriangleP{Dim,T,PointType}}
-
-"""
-    PlainMesh{Dim, T}
-
-Triangle mesh (points + triangle faces)
-"""
-const PlainMesh{Dim,T} = TriangleMesh{Dim,T,Point{Dim,T}}
 
 """
     mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace)
@@ -32,7 +17,6 @@ It also only losely correlates to the number of vertices, depending on the algor
 #TODO: find a better number here!
 """
 function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleFace) where {N,T}
-
     positions = decompose(pointtype, primitive)
     faces = decompose(facetype, primitive)
     if faces === nothing
@@ -43,7 +27,6 @@ function mesh(primitive::Meshable{N,T}; pointtype=Point{N,T}, facetype=TriangleF
 end
 
 function mesh(polygon::AbstractVector{P}; pointtype=P, facetype=TriangleFace) where {P<:Point}
-
     return mesh(Polygon(polygon); pointtype=pointtype, facetype=facetype)
 end
 
@@ -71,7 +54,7 @@ end
 Calculate the signed volume of one tetrahedron. Be sure the orientation of your
 surface is right.
 """
-function volume(triangle::Triangle) where {VT,FT}
+function volume(triangle::Triangle)
     v1, v2, v3 = coordinates.(triangle)
     sig = sign(orthogonal_vector(v1, v2, v3) ⋅ v1)
     return sig * abs(v1 ⋅ (v2 × v3)) / 6
