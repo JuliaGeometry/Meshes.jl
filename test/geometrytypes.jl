@@ -39,7 +39,7 @@ end
                                (8, 2, 10)])
         @test faces == decompose(TriangleFace, Tesselation(c, 8))
 
-        m = triangle_mesh(Tesselation(c, 8))
+        m = Meshes.mesh(Tesselation(c, 8))
 
         @test Meshes.faces(m) == faces
         points = coordinates(m)
@@ -51,7 +51,7 @@ end
     a = Box(Point(0, 0), Point(1, 1))
     pt_expa = Point[(0, 0), (1, 0), (0, 1), (1, 1)]
     @test decompose(Point{2,Int}, a) == pt_expa
-    mesh = triangle_mesh(a)
+    mesh = Meshes.mesh(a)
     @test decompose(Point2f, mesh) == convert.(Point2f, pt_expa)
 
     b = Box(Point(1,1,1), Point(2,2,2))
@@ -99,7 +99,7 @@ end
     points = decompose(Point2f, Tesselation(circle, 20))
     @test length(points) == 20
     tess = Tesselation(circle, 32)
-    mesh = triangle_mesh(tess)
+    mesh = Meshes.mesh(tess)
     mpoints = decompose(Point2f, mesh)
     tpoints = decompose(Point2f, tess)
     @test coordinates.(mpoints) ≈ coordinates.(tpoints)

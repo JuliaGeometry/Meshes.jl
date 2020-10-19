@@ -31,14 +31,6 @@ function mesh(polytope::Polytope{Dim,T}; facetype=TriangleFace) where {Dim,T}
     return Mesh(positions, faces)
 end
 
-function triangle_mesh(geometry::Meshable)
-    return mesh(geometry; facetype=TriangleFace)
-end
-
-function triangle_mesh(points::AbstractVector{P}) where {P<:Point}
-    return triangle_mesh(Polygon(points))
-end
-
 """
     volume(mesh)
 

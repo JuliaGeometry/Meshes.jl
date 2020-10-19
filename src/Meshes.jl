@@ -59,9 +59,6 @@ export self_intersections, split_intersections
 # meshes
 export AbstractMesh, Mesh
 
-# mesh creation
-export triangle_mesh
-
 # bounding boxes
 export boundingbox
 

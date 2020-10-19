@@ -179,22 +179,22 @@ end
 @testset "decompose/triangulation" begin
     primitive = Sphere(Point3f(0,0,0), 1.0f0)
     @test ndims(primitive) === 3
-    mesh = triangle_mesh(primitive)
+    mesh = Meshes.mesh(primitive)
     @test decompose(Point3f, mesh) isa Vector{Point3f}
     @test decompose(Point3f, primitive) isa Vector{Point3f}
 
     primitive = Box(Point2(0, 0), Point2(1, 1))
-    mesh = triangle_mesh(primitive)
-
+    mesh = Meshes.mesh(primitive)
     @test decompose(Point2f, mesh) isa Vector{Point2f}
     @test decompose(Point{2,Int}, primitive) isa Vector{Point{2,Int}}
 
     primitive = Box(Point3(0,0,0), Point3(1,1,1))
-    triangle_mesh(primitive)
+    mesh = Meshes.mesh(primitive)
+    @test decompose(Point3, mesh) isa Vector{Point3}
 
     points = decompose(Point2f, Sphere(Point2f(0, 0), 1.0f0))
-    m = Meshes.mesh(points)
-    @test coordinates(m) == points
+    mesh = Meshes.mesh(points)
+    @test coordinates(mesh) == points
 
     linestring = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
     pts = Point{2, Int}[(10, 10), (20, 20), (10, 40)]
@@ -226,7 +226,7 @@ end
 
     s = Sphere(Point3f(0,0,0), 1.0f0)
     m = Meshes.mesh(s)
-    tmesh = triangle_mesh(m)
+    tmesh = Meshes.mesh(m)
     points1 = coordinates(tmesh)
     points2 = decompose(Point3f, tmesh)
     @test tmesh isa Mesh
