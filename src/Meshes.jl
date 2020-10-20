@@ -45,7 +45,8 @@ export Box, Sphere, Cylinder
 export center, radius, height, sides, volume
 
 # polytopes
-export Line, Triangle, Quadrangle, Tetrahedron
+export Line, Triangle, Quadrangle
+export Pyramid, Tetrahedron, Hexahedron
 export vertices
 
 export LineFace, NgonFace
