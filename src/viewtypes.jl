@@ -113,14 +113,6 @@ end
 coordinates(mesh::FaceView) = getfield(mesh, :elements)
 faces(mesh::FaceView) = getfield(mesh, :faces)
 
-function Base.getproperty(faceview::FaceView, name::Symbol)
-    return getproperty(getfield(faceview, :elements), name)
-end
-
-function Base.propertynames(faceview::FaceView)
-    return propertynames(getfield(faceview, :elements))
-end
-
 Base.size(faceview::FaceView) = size(getfield(faceview, :faces))
 
 @propagate_inbounds function Base.getindex(x::FaceView{Element}, i) where {Element}
