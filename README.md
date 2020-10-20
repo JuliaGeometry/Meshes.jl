@@ -26,10 +26,9 @@ the following discussions:
 
 ## Usage
 
-The code is being completely refactored to accommodate advanced use cases
-in geospatial modeling and geostatistics. Until then, we kindly ask users
-to read the source code, the test suite, and the docstrings that we are
-adding as part of this effort.
+The code is being completely refactored to accommodate advanced use cases.
+Until then, we kindly ask users to read the source code, the test suite,
+and the docstrings that we are adding as part of this effort.
 
 ## Contributing
 
