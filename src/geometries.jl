@@ -190,17 +190,6 @@ end
 Base.getindex(mp::MultiPolygon, i) = mp.polygons[i]
 Base.size(mp::MultiPolygon) = size(mp.polygons)
 
-struct MultiLineString{Dim,T,Element<:LineString{Dim,T},A<:AbstractVector{Element}} <: AbstractVector{Element}
-    linestrings::A
-end
-
-function MultiLineString(linestrings::AbstractVector{L}) where {L<:AbstractVector{Line{Dim,T}}} where {Dim,T}
-    return MultiLineString(linestrings)
-end
-
-Base.getindex(ms::MultiLineString, i) = ms.linestrings[i]
-Base.size(ms::MultiLineString) = size(ms.linestrings)
-
 """
     AbstractMesh
 

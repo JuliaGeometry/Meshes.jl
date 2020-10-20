@@ -121,13 +121,6 @@ end
     end
 
     @testset "Multi geometries" begin
-        linestring1 = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
-        linestring2 = LineString(Point{2, Int}[(40, 40), (30, 30), (40, 20), (30, 10)])
-        multilinestring = MultiLineString([linestring1, linestring2])
-        @test size(multilinestring) === (2,)
-        @test multilinestring[1] === linestring1
-        @test multilinestring[2] === linestring2
-
         polygon11 = Polygon(Point{2, Int}[(30, 20), (45, 40), (10, 40), (30, 20)])
         polygon12 = Polygon(Point{2, Int}[(15, 5), (40, 10), (10, 20), (5, 10), (15, 5)])
         multipolygon1 = MultiPolygon([polygon11, polygon12])
