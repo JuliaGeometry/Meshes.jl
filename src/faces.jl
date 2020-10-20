@@ -3,10 +3,8 @@
 # ------------------------------------------------------------------
 
 abstract type AbstractFace{N,T} end
-abstract type AbstractSimplexFace{N,T} <: AbstractFace{N,T} end
-abstract type AbstractNgonFace{N,T} <: AbstractFace{N,T} end
 
-struct SimplexFace{N,T} <: AbstractSimplexFace{N,T}
+struct SimplexFace{N,T} <: AbstractFace{N,T}
     data::NTuple{N,T}
 end
 
@@ -18,7 +16,7 @@ Base.length(::SimplexFace{N,T}) where {N,T} = N
 const TetrahedronFace{T} = SimplexFace{4,T}
 Face(::Type{<:SimplexFace{N}}, ::Type{T}) where {N,T} = SimplexFace{N,T}
 
-struct NgonFace{N,T} <: AbstractNgonFace{N,T}
+struct NgonFace{N,T} <: AbstractFace{N,T}
     data::NTuple{N,T}
 end
 
