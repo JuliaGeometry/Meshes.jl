@@ -58,11 +58,9 @@ time. For example, a triangle has N=3 points. See https://en.wikipedia.org/wiki/
 """
 abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
 
-function (::Type{P})(vertices...) where {P<:Polytope}
-    PT  = eltype(vertices)
-    Dim = ndims(PT)
-    T   = coordtype(PT)
-    return P{Dim,T}(vertices)
+function (::Type{PT})(vertices...) where {PT<:Polytope}
+    P = eltype(vertices)
+    return PT{ndims(P),coordtype(P)}(vertices)
 end
 
 Base.getindex(p::Polytope, i) = getindex(p.vertices, i)
