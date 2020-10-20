@@ -76,6 +76,7 @@ vertices(p::Polytope) = p.vertices
 
 include("polytopes/line.jl")
 include("polytopes/triangle.jl")
+include("polytopes/quadrangle.jl")
 include("polytopes/tetrahedron.jl")
 
 # -----------------
