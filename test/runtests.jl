@@ -30,10 +30,10 @@ using Test, Random
         x = connect(numbers, Point2)
         @test x == Point{2,Int}[(1, 2), (3, 4), (5, 6)]
 
-        line = connect(x, Line, 1)
+        line = connect(x, Line{2,Int}, 1)
         @test line == [Line(Point(1, 2), Point(3, 4)), Line(Point(3, 4), Point(5, 6))]
 
-        triangles = connect(x, Triangle)
+        triangles = connect(x, Triangle{2,Int})
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
     end
 
@@ -67,8 +67,7 @@ end
 
 @testset "constructors" begin
     @testset "LineFace" begin
-
-        points = connect([1, 2, 3, 4, 5, 6], Point{2})
+        points = connect([1, 2, 3, 4, 5, 6], Point2)
         linestring = LineString(points)
         @test linestring == [Line(points[1], points[2]), Line(points[2], points[3])]
 
@@ -79,21 +78,13 @@ end
         linestring = LineString([points[1] => points[2], points[2] => points[3]])
         @test linestring == [Line(points[1], points[2]), Line(points[2], points[3])]
 
-        faces = [1, 2, 3]
-        linestring = LineString(points, faces)
-        @test linestring == LineString([points[1] => points[2], points[2] => points[3]])
         a, b, c, d = Point(1, 2), Point(3, 4), Point(5, 6), Point(7, 8)
-        points = [a, b, c, d]; faces = [1, 2, 3, 4]
-        linestring = LineString(points, faces, 2)
-        @test linestring == LineString([a => b, c => d])
-
-        faces = [LineFace((1, 2)), LineFace((3, 4))]
-        linestring = LineString(points, faces)
-        @test linestring == LineString([a => b, c => d])
+        ls1 = LineString([a => b, b => c, c => d])
+        ls2 = LineString([Line(a, b), Line(b, c), Line(c, d)])
+        @test ls1 == ls2
     end
 
     @testset "Polygon" begin
-
         points = connect([1, 2, 3, 4, 5, 6], Point2)
         polygon = Polygon(points)
         @test polygon == Polygon(LineString(points))
@@ -101,24 +92,9 @@ end
         points = rand(Point2, 4)
         linestring = LineString(points, 2)
         @test Polygon(points, 2) == Polygon(linestring)
-
-        faces = [1, 2, 3]
-        polygon = Polygon(points, faces)
-        @test polygon == Polygon(LineString(points, faces))
-
-        a, b, c, d = Point(1, 2), Point(3, 4), Point(5, 6), Point(7, 8)
-        points = [a, b, c, d]; faces = [1, 2, 3, 4]
-        polygon = Polygon(points, faces, 2)
-        @test polygon == Polygon(LineString(points, faces, 2))
-
-        faces = [LineFace((1, 2)), LineFace((3, 4))]
-        polygon = Polygon(points, faces)
-        @test polygon == Polygon(LineString(points, faces))
-        @test ndims(polygon) === 2
     end
 
     @testset "Mesh" begin
-
         numbers = [1, 2, 3, 4, 5, 6]
         points = connect(numbers, Point2)
         mesh = Mesh(points, [1,2,3])
@@ -136,7 +112,7 @@ end
         points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
         sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
         mesh = Mesh(points, sfaces)
-        @test mesh == [Meshes.NNgon{4}(points...)]
+        @test mesh == [Tetrahedron(points...)]
 
         t = Tesselation(Box(Point2f(0,0), Point2f(2,2)), (30, 30))
         m = Meshes.mesh(t, facetype=QuadFace)

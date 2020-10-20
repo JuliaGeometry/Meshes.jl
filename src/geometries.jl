@@ -58,28 +58,32 @@ time. For example, a triangle has N=3 points. See https://en.wikipedia.org/wiki/
 """
 abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
 
-@propagate_inbounds Base.getindex(x::Polytope, i::Integer) = coordinates(x)[i]
-@propagate_inbounds Base.iterate(x::Polytope) = iterate(coordinates(x))
-@propagate_inbounds Base.iterate(x::Polytope, i) = iterate(coordinates(x), i)
-
-struct Ngon{Dim,T,N,P<:Point{Dim,T}} <: Polytope{Dim,T,N}
-    points::SVector{N,P}
+function (::Type{P})(vertices...) where {P<:Polytope}
+    PT  = eltype(vertices)
+    Dim = ndims(PT)
+    T   = coordtype(PT)
+    return P{Dim,T}(vertices)
 end
 
-const NNgon{N} = Ngon{Dim,T,N,P} where {Dim,T,P}
+Base.getindex(p::Polytope, i) = getindex(p.vertices, i)
+Base.length(::Type{<:Polytope{Dim,T,N}}) where {Dim,T,N} = N
+Base.length(p::Polytope) = length(typeof(p))
 
-function (::Type{<:NNgon{N}})(points::Vararg{P,N}) where {P<:Point{Dim,T},N} where {Dim,T}
-    return Ngon{Dim,T,N,P}(SVector(points))
-end
+Base.iterate(p::Polytope, i) = iterate(p.vertices, i)
+Base.iterate(p::Polytope) = iterate(p.vertices)
 
-coordinates(x::Ngon) = x.points
-Base.length(::Type{<:NNgon{N}}) where {N} = N
-Base.length(::NNgon{N}) where {N} = N
+vertices(p::Polytope) = p.vertices
+
+include("polytopes/line.jl")
+include("polytopes/triangle.jl")
+include("polytopes/tetrahedron.jl")
+
+# -----------------
+# OTHER GEOMETRIES
+# -----------------
 
 # TODO: review this
 include("faces.jl")
-
-const Line{Dim,T} = Ngon{Dim,T,2,Point{Dim,T}}
 
 function coordinates(lines::AbstractArray{<:Line})
     return if lines isa Base.ReinterpretArray
@@ -91,20 +95,6 @@ function coordinates(lines::AbstractArray{<:Line})
         end
         return result
     end
-end
-
-const Triangle{Dim,T} = Ngon{Dim,T,3,Point{Dim,T}}
-
-"""
-    volume(triangle)
-
-Calculate the signed volume of one tetrahedron. Be sure the orientation of your
-surface is right.
-"""
-function volume(triangle::Triangle)
-    v1, v2, v3 = coordinates.(triangle)
-    sig = sign(orthogonal_vector(v1, v2, v3) ⋅ v1)
-    return sig * abs(v1 ⋅ (v2 × v3)) / 6
 end
 
 """
@@ -132,40 +122,12 @@ linestring = LineString(points)
 @assert linestring == LineString([a => b, b => c, c => d])
 ```
 """
-function LineString(points::AbstractVector{<:Point}, skip=1)
-    return LineString(connect(points, Line, skip))
+function LineString(points::AbstractVector{<:Point{Dim,T}}, skip::Int=1) where {Dim,T}
+    return LineString(connect(points, Line{Dim,T}, skip))
 end
 
 function LineString(points::AbstractVector{<:Pair{Point{N,T},Point{N,T}}}) where {N,T}
     return LineString(reinterpret(Line{N,T}, points))
-end
-
-function LineString(points::AbstractVector{<:Point}, faces::AbstractVector{<:LineFace})
-    return LineString(connect(points, faces))
-end
-
-"""
-    LineString(points::AbstractVector{<:Point}, indices::AbstractVector{<: Integer}, skip = 1)
-
-Creates a LineString from a vector of points and an index list.
-With `skip == 1`, the default, it will connect the line like this:
-
-
-```julia
-points = Point[a, b, c, d]; faces = [1, 2, 3, 4]
-linestring = LineString(points, faces)
-@assert linestring == LineString([a => b, b => c, c => d])
-```
-To make a segmented line, set skip to 2
-```julia
-points = Point[a, b, c, d]; faces = [1, 2, 3, 4]
-linestring = LineString(points, faces, 2)
-@assert linestring == LineString([a => b, c => d])
-```
-"""
-function LineString(points::AbstractVector{<:Point}, indices::AbstractVector{<:Integer}, skip=1)
-    faces = connect(indices, LineFace, skip)
-    return LineString(points, faces)
 end
 
 """
@@ -192,10 +154,6 @@ end
 
 function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:Integer}, skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
     return Polygon(LineString(exterior, faces, skip))
-end
-
-function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:LineFace}) where {P<:Point{Dim,T}} where {Dim,T}
-    return Polygon(LineString(exterior, faces))
 end
 
 function Polygon(exterior::AbstractVector{P}, interior::AbstractVector{<:AbstractVector{P}}) where {P<:Point{Dim,T}} where {Dim,T}
@@ -257,14 +215,13 @@ Base.size(mpt::MultiPoint) = size(mpt.points)
 """
     AbstractMesh
 
-An abstract mesh is a collection of Polytope elements (Simplices / Ngons).
-The connections are defined via faces(mesh), the coordinates of the elements are returned by
-coordinates(mesh).
+A mesh is a collection of Polytope elements.
 """
 abstract type AbstractMesh{Element<:Polytope} <: AbstractVector{Element} end
 
 """
     Mesh <: AbstractVector{Element}
+
 The conrecte AbstractMesh implementation
 """
 struct Mesh{Dim,T,Element<:Polytope{Dim,T},V<:AbstractVector{Element}} <: AbstractMesh{Element}

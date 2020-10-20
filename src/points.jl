@@ -45,14 +45,16 @@ const Point3f = Point{3,Float32}
 
 Return the number of dimensions of the space where the `point` is embedded.
 """
-Base.ndims(::Point{N,T}) where {N,T} = N
+Base.ndims(::Type{Point{N,T}}) where {N,T} = N
+Base.ndims(p::Point) = ndims(typeof(p))
 
 """
     coordtype(point)
 
 Return the machine type of each coordinate used to describe the `point`.
 """
-coordtype(::Point{N,T}) where {N,T}  = T
+coordtype(::Type{Point{N,T}}) where {N,T}  = T
+coordtype(p::Point) = coordtype(typeof(p))
 
 """
     coordinates(A::Point)

@@ -64,29 +64,6 @@ function area(contour::AbstractVector{Point{3,T}}) where {T}
     return norm(A) * T(0.5)
 end
 
-"""
-    in(point, triangle)
-
- InsideTriangle decides if a point P is Inside of the triangle
- defined by A, B, C.
-"""
-function Base.in(P::T, triangle::Triangle) where {T<:Point}
-    A, B, C = coordinates(triangle)
-    a = C - B
-    b = A - C
-    c = B - A
-
-    ap = P - A
-    bp = P - B
-    cp = P - C
-
-    a_bp = a[1] * bp[2] - a[2] * bp[1]
-    c_ap = c[1] * ap[2] - c[2] * ap[1]
-    b_cp = b[1] * cp[2] - b[2] * cp[1]
-
-    return ((a_bp ≥ 0) && (b_cp ≥ 0) && (c_ap ≥ 0))
-end
-
 function snip(contour::AbstractVector{<:Point{N,T}}, u, v, w, n, V) where {N,T}
     A = contour[V[u]]
     B = contour[V[v]]

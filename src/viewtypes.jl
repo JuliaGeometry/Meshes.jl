@@ -66,21 +66,19 @@ end
 end
 
 """
-    connect(points::AbstractVector{<:Point}, P::Type{<:Polytype{N}}, skip::Int = N)
+    connect(points::AbstractVector{<:Point}, ::Type{<:Polytope}, skip::Int)
 
 Creates a view that connects a number of points to a Polytope `P`.
-Between each polytope, `skip` elements are skipped untill the next starts.
+Between each polytope, `skip` elements are skipped until the next starts.
 Example:
 ```julia
 x = connect(Point[(1, 2), (3, 4), (5, 6), (7, 8)], Line, 2)
 x == [Line(Point(1, 2), Point(3, 4)), Line(Point(5, 6), Point(7, 8))]
 ```
 """
-@inline function connect(points::AbstractVector{P}, PL::Type{<:Polytope},
-                         skip::Int=length(PL)) where {Dim,T,P<:Point{Dim,T}}
-    N = length(PL)
-    Element = Ngon{Dim,T,N,P}
-    return reinterpret(Element, TupleView{N,skip}(points))
+@inline function connect(points::AbstractVector{<:Point},
+                         PL::Type{<:Polytope}, skip::Int=length(PL))
+    return reinterpret(PL, TupleView{length(PL),skip}(points))
 end
 
 @inline function connect(points::AbstractVector{T}, ::Type{<:Point{N}},
@@ -112,12 +110,12 @@ Polygon(linestring)
 ```
 """
 struct FaceView{Element,PT<:Point,Face<:AbstractFace,P<:AbstractVector{PT},F<:AbstractVector{Face}}<:AbstractVector{Element}
-
     elements::P
     faces::F
 end
 
-const SimpleFaceView{Dim,T,NFace,IndexType,PointType <: Point{Dim,T},FaceType <: AbstractFace{NFace,IndexType}} = FaceView{Ngon{Dim,T,NFace,PointType},PointType,FaceType,Vector{PointType},Vector{FaceType}}
+coordinates(mesh::FaceView) = getfield(mesh, :elements)
+faces(mesh::FaceView) = getfield(mesh, :faces)
 
 function Base.getproperty(faceview::FaceView, name::Symbol)
     return getproperty(getfield(faceview, :elements), name)
@@ -129,21 +127,11 @@ end
 
 Base.size(faceview::FaceView) = size(getfield(faceview, :faces))
 
-function Base.show(io::IO, ::Type{<:FaceView{Element}}) where {Element}
-    if @isdefined Element
-        print(io, "FaceView{", Element, "}")
-    else
-        print(io, "FaceView{T}")
-    end
-    return
-end
-
 @propagate_inbounds function Base.getindex(x::FaceView{Element}, i) where {Element}
     return Element(map(idx -> coordinates(x)[idx], faces(x)[i]))
 end
 
-@propagate_inbounds function Base.setindex!(x::FaceView{Element}, element::Element,
-                                            i) where {Element}
+@propagate_inbounds function Base.setindex!(x::FaceView{Element}, element::Element, i) where {Element}
     face = faces(x)[i]
     for (i, f) in enumerate(face) # TODO unroll!?
         coordinates(x)[face[i]] = element[i]
@@ -151,11 +139,7 @@ end
     return element
 end
 
-function connect(points::AbstractVector{P},
-                 faces::AbstractVector{F}) where {Dim,T,N,V,P<:Point{Dim,T},F<:AbstractFace{N,V}}
-    Element = Ngon{Dim,T,N,P}
+function connect(points::AbstractVector{P}, faces::AbstractVector{F}) where {Dim,T,N,V,P<:Point{Dim,T},F<:AbstractFace{N,V}}
+    Element = N == 3 ? Triangle{Dim,T} : Tetrahedron{Dim,T}
     return FaceView{Element,P,F,typeof(points),typeof(faces)}(points, faces)
 end
-
-coordinates(mesh::FaceView) = getfield(mesh, :elements)
-faces(mesh::FaceView) = getfield(mesh, :faces)

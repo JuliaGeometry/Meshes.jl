@@ -44,12 +44,15 @@ export coordtype
 export Box, Sphere, Cylinder
 export center, radius, height, sides, volume
 
-export LineFace, Line, NgonFace
+# polytopes
+export Line, Triangle, Tetrahedron
+export vertices
+
+export LineFace, NgonFace
 export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
-export Simplex, connect, Triangle, NSimplex, Tetrahedron
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
-export FaceView, SimpleFaceView, TupleView
-export decompose, faces, convert_simplex
+export FaceView, TupleView
+export connect, decompose, faces, convert_simplex
 export Tesselation
 
 export before, during, isinside, isoutside, overlaps, intersects, finishes
