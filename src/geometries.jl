@@ -181,16 +181,6 @@ function coordinates(polygon::Polygon{N,T}) where {N,T}
 end
 
 """
-    MultiPolygon(polygons)
-"""
-struct MultiPolygon{Dim,T,Element<:Polygon{Dim,T},A<:AbstractVector{Element}} <: AbstractVector{Element}
-    polygons::A
-end
-
-Base.getindex(mp::MultiPolygon, i) = mp.polygons[i]
-Base.size(mp::MultiPolygon) = size(mp.polygons)
-
-"""
     AbstractMesh
 
 A mesh is a collection of Polytope elements.

@@ -119,24 +119,6 @@ end
         @test Meshes.faces(m) isa Vector{QuadFace}
         @test Meshes.coordinates(m) isa Vector{Point2f}
     end
-
-    @testset "Multi geometries" begin
-        polygon11 = Polygon(Point{2, Int}[(30, 20), (45, 40), (10, 40), (30, 20)])
-        polygon12 = Polygon(Point{2, Int}[(15, 5), (40, 10), (10, 20), (5, 10), (15, 5)])
-        multipolygon1 = MultiPolygon([polygon11, polygon12])
-        @test size(multipolygon1) === (2,)
-        @test multipolygon1[1] === polygon11
-        @test multipolygon1[2] === polygon12
-
-        polygon21 = Polygon(Point{2, Int}[(40, 40), (20, 45), (45, 30), (40, 40)])
-        polygon22 = Polygon(LineString(Point{2, Int}[(20, 35), (10, 30), (10, 10), (30, 5), (45, 20), (20, 35)]),
-            [LineString(Point{2, Int}[(30, 20), (20, 15), (20, 25), (30, 20)])])
-        multipolygon2 = MultiPolygon([polygon21, polygon22])
-        @test size(multipolygon2) === (2,)
-        @test multipolygon2[1] === polygon21
-        @test multipolygon2[2] === polygon22
-    end
-
 end
 
 @testset "decompose/triangulation" begin
