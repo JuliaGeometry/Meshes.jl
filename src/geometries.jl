@@ -202,18 +202,6 @@ Base.getindex(ms::MultiLineString, i) = ms.linestrings[i]
 Base.size(ms::MultiLineString) = size(ms.linestrings)
 
 """
-    MultiPoint(points::AbstractVector{<:Point})
-
-A collection of points
-"""
-struct MultiPoint{Dim,T,P<:Point{Dim,T},A<:AbstractVector{P}} <: AbstractVector{P}
-    points::A
-end
-
-Base.getindex(mpt::MultiPoint, i) = mpt.points[i]
-Base.size(mpt::MultiPoint) = size(mpt.points)
-
-"""
     AbstractMesh
 
 A mesh is a collection of Polytope elements.

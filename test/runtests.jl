@@ -121,12 +121,6 @@ end
     end
 
     @testset "Multi geometries" begin
-        # coordinates from https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry#Geometric_objects
-        points = Point{2, Int}[(10, 40), (40, 30), (20, 20), (30, 10)]
-        multipoint = MultiPoint(points)
-        @test size(multipoint) === size(points)
-        @test multipoint[3] === points[3]
-
         linestring1 = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
         linestring2 = LineString(Point{2, Int}[(40, 40), (30, 30), (40, 20), (30, 10)])
         multilinestring = MultiLineString([linestring1, linestring2])

@@ -49,7 +49,7 @@ export Line, Triangle, Quadrangle, Tetrahedron
 export vertices
 
 export LineFace, NgonFace
-export LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
+export LineString, Polygon, MultiLineString, MultiPolygon
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
 export FaceView, TupleView
 export connect, decompose, faces, convert_simplex
