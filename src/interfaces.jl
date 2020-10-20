@@ -93,11 +93,6 @@ function decompose(::Type{F}, primitive) where {F<:AbstractFace}
     return collect_with_eltype(F, f)
 end
 
-# TODO: review these
-function decompose(::Type{Point}, primitive::LineString{Dim,T}) where {Dim,T}
-    return collect_with_eltype(Point{Dim,T}, coordinates(primitive))
-end
-
 function collect_with_eltype(::Type{T}, iter) where {T}
     result = T[]
     for element in iter

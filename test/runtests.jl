@@ -66,24 +66,6 @@ using Test, Random
 end
 
 @testset "constructors" begin
-    @testset "LineFace" begin
-        points = connect([1, 2, 3, 4, 5, 6], Point2)
-        linestring = LineString(points)
-        @test linestring == [Line(points[1], points[2]), Line(points[2], points[3])]
-
-        points = rand(Point2, 4)
-        linestring = LineString(points, 2)
-        @test linestring == [Line(points[1], points[2]), Line(points[3], points[4])]
-
-        linestring = LineString([points[1] => points[2], points[2] => points[3]])
-        @test linestring == [Line(points[1], points[2]), Line(points[2], points[3])]
-
-        a, b, c, d = Point(1, 2), Point(3, 4), Point(5, 6), Point(7, 8)
-        ls1 = LineString([a => b, b => c, c => d])
-        ls2 = LineString([Line(a, b), Line(b, c), Line(c, d)])
-        @test ls1 == ls2
-    end
-
     @testset "Mesh" begin
         numbers = [1, 2, 3, 4, 5, 6]
         points = connect(numbers, Point2)
@@ -126,19 +108,6 @@ end
     primitive = Box(Point3(0,0,0), Point3(1,1,1))
     mesh = Meshes.mesh(primitive)
     @test decompose(Point3, mesh) isa Vector{Point3}
-
-    linestring = LineString(Point{2, Int}[(10, 10), (20, 20), (10, 40)])
-    pts = Point{2, Int}[(10, 10), (20, 20), (10, 40)]
-    linestring = LineString(pts)
-    pts_decomp = decompose(Point{2, Int}, linestring)
-    @test pts == pts_decomp
-
-    pts_ext = Point{2, Int}[(5, 1), (3, 3), (4, 8), (1, 2), (5, 1)]
-    ls_ext = LineString(pts_ext)
-    pts_int1 = Point{2, Int}[(2, 2), (3, 8),(5, 6), (3, 4), (2, 2)]
-    ls_int1 = LineString(pts_int1)
-    pts_int2 = Point{2, Int}[(3, 2), (4, 5),(6, 1), (1, 4), (3, 2)]
-    ls_int2 =  LineString(pts_int2)
 end
 
 @testset "mesh conversion" begin

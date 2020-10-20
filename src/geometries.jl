@@ -86,51 +86,6 @@ include("polytopes/tetrahedron.jl")
 # TODO: review this
 include("faces.jl")
 
-function coordinates(lines::AbstractArray{<:Line})
-    return if lines isa Base.ReinterpretArray
-        return coordinates(lines.parent)
-    else
-        result = PointType[]
-        for line in lines
-            append!(result, coordinates(line))
-        end
-        return result
-    end
-end
-
-"""
-    LineString(points::AbstractVector{<:Point})
-
-A LineString is a geometry of connected line segments
-"""
-struct LineString{Dim,T,V<:AbstractVector{Line{Dim,T}}} <: AbstractVector{Line{Dim,T}}
-    points::V
-end
-
-coordinates(x::LineString) = coordinates(x.points)
-Base.copy(x::LineString) = LineString(copy(x.points))
-Base.size(x::LineString) = size(getfield(x, :points))
-Base.getindex(x::LineString, i) = getindex(getfield(x, :points), i)
-
-"""
-    LineString(points::AbstractVector{<:Point}, skip = 1)
-
-Creates a LineString from a vector of points
-With `skip == 1`, the default, it will connect the line like this:
-```julia
-points = Point[a, b, c, d]
-linestring = LineString(points)
-@assert linestring == LineString([a => b, b => c, c => d])
-```
-"""
-function LineString(points::AbstractVector{<:Point{Dim,T}}, skip::Int=1) where {Dim,T}
-    return LineString(connect(points, Line{Dim,T}, skip))
-end
-
-function LineString(points::AbstractVector{<:Pair{Point{N,T},Point{N,T}}}) where {N,T}
-    return LineString(reinterpret(Line{N,T}, points))
-end
-
 """
     AbstractMesh
 
