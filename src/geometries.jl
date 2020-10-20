@@ -132,55 +132,6 @@ function LineString(points::AbstractVector{<:Pair{Point{N,T},Point{N,T}}}) where
 end
 
 """
-    Polygon(exterior::AbstractVector{<:Point})
-    Polygon(exterior::AbstractVector{<:Point}, interiors::Vector{<:AbstractVector{<:Point}})
-
-"""
-struct Polygon{Dim,T,L<:AbstractVector{Line{Dim,T}},V<:AbstractVector{L}}
-    exterior::L
-    interiors::V
-end
-
-Base.copy(x::Polygon) = Polygon(copy(x.exterior), copy(x.interiors))
-
-function Base.:(==)(a::Polygon, b::Polygon)
-    return (a.exterior == b.exterior) && (a.interiors == b.interiors)
-end
-
-Polygon(exterior::L) where {L<:AbstractVector{<:Line}} = Polygon(exterior, L[])
-
-function Polygon(exterior::AbstractVector{P}, skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
-    return Polygon(LineString(exterior, skip))
-end
-
-function Polygon(exterior::AbstractVector{P}, faces::AbstractVector{<:Integer}, skip::Int=1) where {P<:Point{Dim,T}} where {Dim,T}
-    return Polygon(LineString(exterior, faces, skip))
-end
-
-function Polygon(exterior::AbstractVector{P}, interior::AbstractVector{<:AbstractVector{P}}) where {P<:Point{Dim,T}} where {Dim,T}
-    ext = LineString(exterior)
-    # We need to take extra care for empty interiors, since
-    # if we just map over it, it won't infer the element type correctly!
-    int = typeof(ext)[]
-    foreach(x -> push!(int, LineString(x)), interior)
-    return Polygon(ext, int)
-end
-
-Base.ndims(::Polygon{Dim,T}) where {Dim,T} = Dim
-
-function coordinates(polygon::Polygon{N,T}) where {N,T}
-    exterior = coordinates(polygon.exterior)
-    if isempty(polygon.interiors)
-        return exterior
-    else
-        result = Point{N,T}[]
-        append!(result, exterior)
-        foreach(x -> append!(result, coordinates(x)), polygon.interiors)
-        return result
-    end
-end
-
-"""
     AbstractMesh
 
 A mesh is a collection of Polytope elements.

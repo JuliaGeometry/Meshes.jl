@@ -183,17 +183,3 @@ function earcut_triangulate(polygon::Vector{Vector{Point{2,Int32}}})
                   (Ptr{Ptr{Int32}}, Ptr{UInt32}, UInt32), polygon, lengths, len)
     return unsafe_wrap(Vector{TriangleFace}, array[1], array[2])
 end
-
-best_earcut_eltype(x) = Float64
-best_earcut_eltype(::Type{Float64}) = Float64
-best_earcut_eltype(::Type{<:AbstractFloat}) = Float32
-best_earcut_eltype(::Type{Int64}) = Int64
-best_earcut_eltype(::Type{Int32}) = Int32
-best_earcut_eltype(::Type{<:Integer}) = Int64
-
-function faces(polygon::Polygon{Dim,T}) where {Dim,T}
-    PT = Point{Dim,best_earcut_eltype(T)}
-    points = [decompose(PT, polygon.exterior)]
-    foreach(x -> push!(points, decompose(PT, x)), polygon.interiors)
-    return earcut_triangulate(points)
-end

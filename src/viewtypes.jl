@@ -103,10 +103,6 @@ x[1] isa Triangle == true
 x isa AbstractVector{<: Triangle} == true
 # This means we can use it as a mesh:
 Mesh(x) # should just work!
-Can also be used for Points:
-
-linestring = FaceView(points, LineFace[...])
-Polygon(linestring)
 ```
 """
 struct FaceView{Element,PT<:Point,Face<:AbstractFace,P<:AbstractVector{PT},F<:AbstractVector{Face}}<:AbstractVector{Element}

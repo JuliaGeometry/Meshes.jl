@@ -75,7 +75,7 @@ const Meshable{Dim,T} = Union{Mesh{Dim,T},
 """
     decompose(T, meshable)
 
-Decompose a `meshable` object (e.g. Polygon) into elements of type `T`.
+Decompose a `meshable` object into elements of type `T`.
 """
 function decompose(::Type{T}, primitive) where {T}
     return collect_with_eltype(T, primitive)

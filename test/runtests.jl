@@ -84,16 +84,6 @@ end
         @test ls1 == ls2
     end
 
-    @testset "Polygon" begin
-        points = connect([1, 2, 3, 4, 5, 6], Point2)
-        polygon = Polygon(points)
-        @test polygon == Polygon(LineString(points))
-
-        points = rand(Point2, 4)
-        linestring = LineString(points, 2)
-        @test Polygon(points, 2) == Polygon(linestring)
-    end
-
     @testset "Mesh" begin
         numbers = [1, 2, 3, 4, 5, 6]
         points = connect(numbers, Point2)
@@ -149,10 +139,6 @@ end
     ls_int1 = LineString(pts_int1)
     pts_int2 = Point{2, Int}[(3, 2), (4, 5),(6, 1), (1, 4), (3, 2)]
     ls_int2 =  LineString(pts_int2)
-    poly_ext = Polygon(ls_ext)
-    poly_ext_int = Polygon(ls_ext, [ls_int1, ls_int2])
-    @test decompose(Point{2, Int}, poly_ext) == pts_ext
-    @test decompose(Point{2, Int}, poly_ext_int) == [pts_ext..., pts_int1..., pts_int2...]
 end
 
 @testset "mesh conversion" begin
