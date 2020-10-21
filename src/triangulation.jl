@@ -21,8 +21,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Calculate the area of one triangle.
 """
-function area(vertices::AbstractVector{<:Point{3,VT}},
-              face::TriangleFace) where {VT}
+function area(vertices::AbstractVector{<:Point}, face::TriangleFace)
     v1 = vertices[face[1]]
     v2 = vertices[face[2]]
     v3 = vertices[face[3]]
