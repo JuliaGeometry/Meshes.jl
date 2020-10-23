@@ -49,7 +49,7 @@ using Test, Random
         @test triangles == [Triangle(x, x, x)]
 
         points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
-        faces = connect([1, 2, 3, 4], TetrahedronFace{Int})
+        faces = connect([1, 2, 3, 4], TetrahedronFace)
         tetrahedron = connect(points, faces)[1]
         @test ndims(tetrahedron) == 3
         @test length(tetrahedron) == 4
@@ -82,7 +82,7 @@ end
         @test mesh isa Mesh
 
         points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
-        sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
+        sfaces = connect([1, 2, 3, 4], TetrahedronFace)
         mesh = Mesh(points, sfaces)
         @test elements(mesh)[1] == Tetrahedron(points...)
 
