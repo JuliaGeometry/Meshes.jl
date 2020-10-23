@@ -3,24 +3,8 @@
 # ------------------------------------------------------------------
 
 # TODO: review these
-"""
-    coordinates(geometry)
-Returns the vertices of a geometry.
-"""
-function coordinates(points::AbstractVector{<:Point})
-    return points
-end
-
-"""
-    faces(geometry)
-Returns the face connections of a geometry. Is allowed to return lazy iterators!
-Use `decompose(ConcreteFaceType, geometry)` to get `Vector{ConcreteFaceType}` with
-`ConcreteFaceType` to be something like `TriangleFace`.
-"""
-function faces(f::AbstractVector{<:AbstractFace})
-    return f
-end
-
+coordinates(ps::AbstractVector{<:Point}) = ps
+faces(fs::AbstractVector{<:AbstractFace}) = fs
 function faces(primitive, nvertices=nothing; kw...)
     # doesn't have any specific algorithm to generate faces
     # so will try to triangulate the coordinates!
@@ -67,10 +51,7 @@ end
 faces(tesselation::Tesselation) = faces(tesselation.primitive, nvertices(tesselation))
 
 # Types that can be converted to a mesh via the functions below
-const Meshable{Dim,T} = Union{Mesh{Dim,T},
-                              Tesselation{Dim,T},
-                              Polytope{Dim,T},
-                              Primitive{Dim,T}}
+const Meshable{Dim,T} = Union{Geometry{Dim,T},Tesselation{Dim,T}}
 
 """
     decompose(T, meshable)
