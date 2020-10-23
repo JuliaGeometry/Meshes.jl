@@ -122,32 +122,21 @@ Base.length(c::Chain) = length(typeof(c))
 # TODO: review this
 include("faces.jl")
 
-"""
-    AbstractMesh
-
-A mesh is a collection of Polytope elements.
-"""
-abstract type AbstractMesh{Element<:Polytope} <: AbstractVector{Element} end
-
-"""
-    Mesh <: AbstractVector{Element}
-
-The conrecte AbstractMesh implementation
-"""
-struct Mesh{Dim,T,Element<:Polytope{Dim,T},V<:AbstractVector{Element}} <: AbstractMesh{Element}
+struct Mesh{Dim,T,E<:Polytope{Dim,T},V<:AbstractVector{E}}
     simplices::V # usually a FaceView, to connect a set of points via a set of faces.
 end
 
-Base.size(mesh::Mesh) = size(getfield(mesh, :simplices))
-Base.getindex(mesh::Mesh, i::Integer) = getfield(mesh, :simplices)[i]
+Mesh(points::AbstractVector{<:Point},
+     faces::AbstractVector{<:AbstractFace}) = Mesh(connect(points, faces))
 
-function Mesh(points::AbstractVector{<:Point},
-              faces::AbstractVector{<:AbstractFace})
-    return Mesh(connect(points, faces))
-end
+Mesh(points::AbstractVector{<:Point},
+     faces::AbstractVector{<:Integer},
+     facetype=TriangleFace, skip=1) = Mesh(connect(points, connect(faces, facetype, skip)))
 
-function Mesh(points::AbstractVector{<:Point},
-              faces::AbstractVector{<:Integer},
-              facetype=TriangleFace, skip=1)
-    return Mesh(connect(points, connect(faces, facetype, skip)))
-end
+Base.getindex(m::Mesh, i) = getindex(m.simplices, i)
+Base.length(m::Mesh) = length(m.simplices)
+
+Base.iterate(m::Mesh, i) = iterate(m.simplices, i)
+Base.iterate(m::Mesh) = iterate(m.simplices)
+
+elements(m::Mesh) = m.simplices

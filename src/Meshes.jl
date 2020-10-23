@@ -65,7 +65,8 @@ export direction, area, update, extremity
 export self_intersections, split_intersections
 
 # meshes
-export AbstractMesh, Mesh
+export Mesh
+export elements
 
 # bounding boxes
 export boundingbox

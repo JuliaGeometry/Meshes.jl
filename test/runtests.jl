@@ -70,11 +70,11 @@ end
         numbers = [1, 2, 3, 4, 5, 6]
         points = connect(numbers, Point2)
         mesh = Mesh(points, [1,2,3])
-        @test mesh == [Triangle(points...)]
+        @test elements(mesh)[1] == Triangle(points...)
 
         x = Point3(1,1,1)
         mesh = Mesh([x], [TriangleFace((1, 1, 1))])
-        @test mesh == [Triangle(x, x, x)]
+        @test elements(mesh)[1] == Triangle(x, x, x)
 
         points = rand(Point3f, 8)
         tfaces = [TriangleFace((1, 2, 3)), TriangleFace((5, 6, 7))]
@@ -84,7 +84,7 @@ end
         points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
         sfaces = connect([1, 2, 3, 4], TetrahedronFace{Int})
         mesh = Mesh(points, sfaces)
-        @test mesh == [Tetrahedron(points...)]
+        @test elements(mesh)[1] == Tetrahedron(points...)
 
         t = Tesselation(Box(Point2f(0,0), Point2f(2,2)), (30, 30))
         m = Meshes.mesh(t, facetype=QuadFace)
