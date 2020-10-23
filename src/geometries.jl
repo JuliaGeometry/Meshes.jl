@@ -122,7 +122,7 @@ Base.length(c::Chain) = length(typeof(c))
 # TODO: review this
 include("faces.jl")
 
-struct Mesh{Dim,T,E<:Polytope{Dim,T},V<:AbstractVector{E}}
+struct Mesh{Dim,T,E<:Polytope{Dim,T},V<:AbstractVector{E}} <: Geometry{Dim,T}
     elements::V # usually a FaceView, to connect a set of points via a set of faces.
 end
 
