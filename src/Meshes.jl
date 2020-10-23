@@ -25,7 +25,6 @@ include("viewtypes.jl")
 include("primitives.jl")
 include("meshes.jl")
 include("triangulation.jl")
-include("lines.jl")
 include("boundingboxes.jl")
 
 # points
@@ -54,20 +53,17 @@ export vertices
 # chains
 export Chain
 
+# meshes
+export Mesh
+export elements, volume
+
+# TODO: review these
 export LineFace, NgonFace
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
 export FaceView, TupleView
 export connect, decompose, faces, convert_simplex
 export Tesselation
-
-# TODO: review these
-export area
-export before, during, overlaps, intersects, finishes
-export self_intersections, split_intersections
-
-# meshes
-export Mesh
-export elements, volume
+export area, before, during, overlaps, finishes
 
 # bounding boxes
 export boundingbox

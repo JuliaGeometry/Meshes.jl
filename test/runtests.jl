@@ -140,12 +140,12 @@ end
     e = Line(Point(1.0, 0.0), Point(0.0, 4.0))
     f = Line(Point(5.0, 0.0), Point(6.0, 0.0))
 
-    @test intersects(a, b) === (true, Point(1.0, 0.25))
-    @test intersects(a, c) === (false, Point(0.0, 0.0))
-    @test intersects(d, d) === (false, Point(0.0, 0.0))
-    found, point = intersects(d, e)
+    @test a ∩ b === (true, Point(1.0, 0.25))
+    @test a ∩ c === (false, Point(0.0, 0.0))
+    @test d ∩ d === (false, Point(0.0, 0.0))
+    found, point = d ∩ e
     @test found && coordinates(point) ≈ [0.0, 4.0]
-    @test intersects(a, f) === (false, Point(0.0, 0.0))
+    @test a ∩ f === (false, Point(0.0, 0.0))
 end
 
 @testset "Tests from GeometryTypes" begin
