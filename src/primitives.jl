@@ -3,14 +3,6 @@
 # ------------------------------------------------------------------
 
 ##
-# Generic base overloads
-Base.extrema(primitive::Primitive) = (minimum(primitive), maximum(primitive))
-function widths(x::AbstractRange)
-    mini, maxi = Float32.(extrema(x))
-    return maxi - mini
-end
-
-##
 # conversion & decompose
 convert_simplex(::Type{T}, x::T) where {T} = (x,)
 

@@ -82,6 +82,16 @@ at a reference (or start) point `A`.
 +(A::Point, v::Vec) = Point(A.coords + v)
 +(v::Vec, A::Point) = A + v
 
+"""
+    -(A::Point, v::Vec)
+    -(v::Vec, A::Point)
+
+Return the point at the end of the vector `-v` placed
+at a reference (or start) point `A`.
+"""
+-(A::Point, v::Vec) = Point(A.coords - v)
+-(v::Vec, A::Point) = A - v
+
 # TODO: implement rand properly with RNG, etc.
 Base.rand(::Type{Point{N,T}}) where {N,T} = Point(rand(SVector{N,T}))
 Base.rand(::Type{Point{N,T}}, n::Integer) where {N,T} = Point.(rand(SVector{N,T}, n))

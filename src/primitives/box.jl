@@ -24,11 +24,6 @@ Base.maximum(b::Box) = b.max
 sides(b::Box) = b.max - b.min
 volume(b::Box) = prod(b.max - b.min)
 
-function minmax(p::StaticVector, vmin, vmax)
-    any(isnan, p) && return (vmin, vmax)
-    return min.(p, vmin), max.(p, vmax)
-end
-
 # set operations
 
 """

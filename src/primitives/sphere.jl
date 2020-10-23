@@ -15,11 +15,6 @@ end
 center(s::Sphere) = s.center
 radius(s::Sphere) = s.radius
 
-# TODO: review these
-widths(s::Sphere{N,T}) where {N,T} = vfill(Vec{N,T}, 2s.radius)
-Base.minimum(s::Sphere) = coordinates(s.center) .- s.radius
-Base.maximum(s::Sphere) = coordinates(s.center) .+ s.radius
-
 function Base.in(p, s::Sphere)
     x = coordinates(p)
     c = coordinates(s.center)
