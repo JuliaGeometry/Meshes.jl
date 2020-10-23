@@ -51,10 +51,16 @@ include("primitives/cylinder.jl")
 We say that a geometry is a polytope when it is made of a collection of "flat" sides.
 They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
 by an ordered set of `N` points. These points (a.k.a. vertices) are connected into edges,
-faces and cells in 3D. See https://en.wikipedia.org/wiki/Polytope.
-
-We follow the ordering conventions of the VTK project:
+faces and cells in 3D. We follow the ordering conventions of the VTK project:
 https://lorensen.github.io/VTKExamples/site/VTKBook/05Chapter5/#54-cell-types
+
+Additionally, the following property must hold in order for a geometry to be considered
+a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, which may
+have (n-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
+
+Meshing algorithms discretize geometries into polytope elements (e.g. triangles,
+tetrahedrons, pyramids). Thus, the `Polytope` type can be used for dispatch in
+functions that are agnostic to the mesh element type.
 """
 abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
 
