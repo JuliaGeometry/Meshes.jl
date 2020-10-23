@@ -123,7 +123,7 @@ Base.length(c::Chain) = length(typeof(c))
 include("faces.jl")
 
 struct Mesh{Dim,T,E<:Polytope{Dim,T},V<:AbstractVector{E}}
-    simplices::V # usually a FaceView, to connect a set of points via a set of faces.
+    elements::V # usually a FaceView, to connect a set of points via a set of faces.
 end
 
 Mesh(points::AbstractVector{<:Point},
@@ -133,10 +133,16 @@ Mesh(points::AbstractVector{<:Point},
      faces::AbstractVector{<:Integer},
      facetype=TriangleFace, skip=1) = Mesh(connect(points, connect(faces, facetype, skip)))
 
-Base.getindex(m::Mesh, i) = getindex(m.simplices, i)
-Base.length(m::Mesh) = length(m.simplices)
+Base.getindex(m::Mesh, i) = getindex(m.elements, i)
+Base.length(m::Mesh) = length(m.elements)
 
-Base.iterate(m::Mesh, i) = iterate(m.simplices, i)
-Base.iterate(m::Mesh) = iterate(m.simplices)
+Base.iterate(m::Mesh, i) = iterate(m.elements, i)
+Base.iterate(m::Mesh) = iterate(m.elements)
 
-elements(m::Mesh) = m.simplices
+elements(m::Mesh) = m.elements
+
+faces(m::Mesh) = faces(m.elements)
+
+coordinates(m::Mesh) = coordinates(m.elements)
+
+volume(m::Mesh) = sum(volume, m)
