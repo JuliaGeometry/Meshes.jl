@@ -60,13 +60,14 @@ export FaceView, TupleView
 export connect, decompose, faces, convert_simplex
 export Tesselation
 
-export before, during, isinside, isoutside, overlaps, intersects, finishes
-export direction, area, update, extremity
+# TODO: review these
+export area
+export before, during, overlaps, intersects, finishes
 export self_intersections, split_intersections
 
 # meshes
 export Mesh
-export elements
+export elements, volume
 
 # bounding boxes
 export boundingbox

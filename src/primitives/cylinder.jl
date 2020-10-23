@@ -19,18 +19,18 @@ height(c::Cylinder) = norm(c.finish - c.start)
 volume(c::Cylinder) = π * radius(c)^2 * height(c)
 
 # TODO: review these
-direction(c::Cylinder) = (d = c.finish - c.start; d ./ norm(d))
 function rotation(c::Cylinder{T}) where T
-    d3 = direction(c)
-    u = @SVector [d3[1], d3[2], d3[3]]
+    d = c.finish - c.start
+    u = d ./ norm(d)
     if abs(u[1]) > 0 || abs(u[2]) > 0
-        v = @MVector [u[2], -u[1], T(0)]
+        v = MVector(u[2], -u[1], T(0))
     else
-        v = @MVector [T(0), -u[3], u[2]]
+        v = MVector(T(0), -u[3], u[2])
     end
     normalize!(v)
-    w = @SVector [u[2] * v[3] - u[3] * v[2], -u[1] * v[3] + u[3] * v[1],
-                  u[1] * v[2] - u[2] * v[1]]
+    w = SVector(u[2] * v[3] - u[3] * v[2],
+               -u[1] * v[3] + u[3] * v[1],
+                u[1] * v[2] - u[2] * v[1])
     return hcat(v, w, u)
 end
 
