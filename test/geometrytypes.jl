@@ -41,7 +41,6 @@ end
 
         m = Meshes.mesh(Tesselation(c, 8))
 
-        @test Meshes.faces(m) == faces
         points = coordinates(m)
         @test coordinates.(points) ≈ coordinates.(target)
     end

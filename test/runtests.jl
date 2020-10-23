@@ -88,8 +88,6 @@ end
 
         t = Tesselation(Box(Point2f(0,0), Point2f(2,2)), (30, 30))
         m = Meshes.mesh(t, facetype=QuadFace)
-        @test Meshes.faces(m) isa Vector{QuadFace}
-        @test Meshes.coordinates(m) isa Vector{Point2f}
     end
 end
 
@@ -114,22 +112,13 @@ end
     s = Sphere(Point3(0,0,0), 1.0)
     m = Meshes.mesh(s)
     @test m isa Mesh{3,Float64}
-    @test coordinates(m) isa Vector{Point3}
-    @test Meshes.faces(m) isa Vector{TriangleFace}
     points1 = coordinates(m)
     points2 = decompose(Point3, m)
     @test coordinates.(points1) ≈ coordinates.(points2)
 
     s = Sphere(Point3f(0,0,0), 1.0f0)
     m = Meshes.mesh(s)
-    tmesh = Meshes.mesh(m)
-    points1 = coordinates(tmesh)
-    points2 = decompose(Point3f, tmesh)
-    @test tmesh isa Mesh
-    @test coordinates.(points1) ≈ coordinates.(points2)
     @test m isa Mesh{3,Float32}
-    @test coordinates(m) isa Vector{Point3f}
-    @test Meshes.faces(m) isa Vector{TriangleFace}
 end
 
 @testset "lines intersects" begin

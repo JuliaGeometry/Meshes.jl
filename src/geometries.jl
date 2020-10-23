@@ -141,8 +141,6 @@ Base.iterate(m::Mesh) = iterate(m.elements)
 
 elements(m::Mesh) = m.elements
 
-faces(m::Mesh) = faces(m.elements)
-
 coordinates(m::Mesh) = coordinates(m.elements)
 
 volume(m::Mesh) = sum(volume, m)
