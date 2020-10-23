@@ -2,7 +2,7 @@ using Test, Meshes
 
 @testset "algorithms.jl" begin
     cube = Box(Point(-0.5,-0.5,-0.5), Point(0.5,0.5,0.5))
-    cube_faces = decompose(TriangleFace, faces(cube))
+    cube_faces = decompose(TriangleFace, cube)
     cube_vertices = decompose(Point3f, cube)
     @test area(cube_vertices, cube_faces) == 6
     mesh = Mesh(cube_vertices, cube_faces)
@@ -90,18 +90,11 @@ end
                      (1.22465e-16, -2.99952e-32, -1.0)]
     @test coordinates.(points) ≈ coordinates.(target)
 
-    f = decompose(TriangleFace, Tesselation(sphere, 3))
-    face_target = TriangleFace.([(1, 2, 5), (1, 5, 4), (2, 3, 6), (2, 6, 5),
-                                 (4, 5, 8), (4, 8, 7), (5, 6, 9), (5, 9, 8)])
-    @test f == face_target
     circle = Sphere(Point2f(0, 0), 1.0f0)
     points = decompose(Point2f, Tesselation(circle, 20))
     @test length(points) == 20
     tess = Tesselation(circle, 32)
-    mesh = Meshes.mesh(tess)
-    mpoints = decompose(Point2f, mesh)
     tpoints = decompose(Point2f, tess)
-    @test coordinates.(mpoints) ≈ coordinates.(tpoints)
 end
 
 @testset "Boxes" begin

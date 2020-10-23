@@ -7,8 +7,8 @@
 
 A sphere with `center` and `radius`.
 """
-struct Sphere{N,T} <: Primitive{N,T}
-    center::Point{N,T}
+struct Sphere{Dim,T} <: Primitive{Dim,T}
+    center::Point{Dim,T}
     radius::T
 end
 

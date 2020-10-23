@@ -3,14 +3,6 @@
 # ------------------------------------------------------------------
 
 # TODO: review these
-coordinates(ps::AbstractVector{<:Point}) = ps
-faces(fs::AbstractVector{<:AbstractFace}) = fs
-function faces(primitive, nvertices=nothing; kw...)
-    # doesn't have any specific algorithm to generate faces
-    # so will try to triangulate the coordinates!
-    return nothing
-end
-
 """
     Tesselation(primitive, nvertices)
 For abstract geometries, when we generate
