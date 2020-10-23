@@ -37,17 +37,22 @@ export Vec, Vec2, Vec3, Vec2f, Vec3f
 export vunit, vfill
 
 # geometries
-export Geometry, Primitive, Polytope
+export Geometry
 export coordtype
 
 # primitives
+export Primitive
 export Box, Sphere, Cylinder
 export center, radius, height, sides, volume
 
 # polytopes
+export Polytope
 export Line, Triangle, Quadrangle
 export Pyramid, Tetrahedron, Hexahedron
 export vertices
+
+# chains
+export Chain
 
 export LineFace, NgonFace
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace

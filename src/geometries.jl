@@ -85,6 +85,36 @@ include("polytopes/pyramid.jl")
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
 
+# -------
+# CHAINS
+# -------
+
+"""
+    Chain(g1, g2, ..., gn)
+
+Construct a chain of geometries `g1`, `g2`, ..., `gn`.
+See https://en.wikipedia.org/wiki/Chain_(algebraic_topology).
+
+    Chain(p1, p2, ..., pn)
+
+Alternatively, construct a chain of line geometries
+from a sequence of points `p1`, `p2`, ..., `pn`.
+"""
+struct Chain{Dim,T,N,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
+    geometries::NTuple{N,G}
+end
+
+Chain(geometries::Vararg{G,N}) where {N,G<:Geometry} = Chain(geometries)
+
+Chain(points::NTuple{N,P}) where {N,P<:Point} =
+    Chain(ntuple(i -> Line(points[i], points[i+1]), N-1))
+
+Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
+
+Base.getindex(c::Chain, i) = getindex(c.geometries, i)
+Base.length(::Type{<:Chain{Dim,T,N}}) where {Dim,T,N} = N
+Base.length(c::Chain) = length(typeof(c))
+
 # -----------------
 # OTHER GEOMETRIES
 # -----------------
