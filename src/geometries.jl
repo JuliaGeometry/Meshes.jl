@@ -38,6 +38,7 @@ See https://en.wikipedia.org/wiki/Geometric_primitive.
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
 include("primitives/box.jl")
+include("primitives/ball.jl")
 include("primitives/sphere.jl")
 include("primitives/cylinder.jl")
 

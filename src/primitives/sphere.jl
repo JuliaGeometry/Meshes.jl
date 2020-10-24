@@ -19,7 +19,7 @@ function Base.in(p, s::Sphere)
     x = coordinates(p)
     c = coordinates(s.center)
     r = s.radius
-    sum(abs2, x - c) ≤ r^2
+    sum(abs2, x - c) ≈ r^2
 end
 
 function coordinates(s::Sphere{2}, nvertices=64)

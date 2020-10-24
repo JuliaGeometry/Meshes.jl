@@ -41,7 +41,7 @@ export coordtype
 
 # primitives
 export Primitive
-export Box, Sphere, Cylinder
+export Box, Ball, Sphere, Cylinder
 export center, radius, height, sides, volume
 
 # polytopes
