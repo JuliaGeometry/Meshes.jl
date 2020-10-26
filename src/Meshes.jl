@@ -7,23 +7,18 @@ module Meshes
 using StaticArrays
 using IterTools
 using LinearAlgebra
-using EarCut_jll
 
 using Base: @propagate_inbounds
 
 import Base: +, -
 
-# basic concepts
 include("vectors.jl")
 include("matrices.jl")
 include("points.jl")
-
 include("geometries.jl")
-
 include("viewtypes.jl")
 include("primitives.jl")
 include("meshes.jl")
-include("triangulation.jl")
 include("boundingboxes.jl")
 
 # points
@@ -61,7 +56,7 @@ export LineFace, NgonFace
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
 export FaceView, TupleView
 export connect, decompose, faces, convert_simplex
-export area, before, during, overlaps, finishes
+export before, during, overlaps, finishes
 
 # bounding boxes
 export boundingbox
