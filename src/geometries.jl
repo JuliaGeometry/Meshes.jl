@@ -79,7 +79,7 @@ Base.iterate(p::Polytope) = iterate(p.vertices)
 
 vertices(p::Polytope) = p.vertices
 
-include("polytopes/line.jl")
+include("polytopes/segment.jl")
 include("polytopes/triangle.jl")
 include("polytopes/quadrangle.jl")
 include("polytopes/pyramid.jl")
@@ -108,7 +108,7 @@ end
 Chain(geometries::Vararg{G,N}) where {N,G<:Geometry} = Chain(geometries)
 
 Chain(points::NTuple{N,P}) where {N,P<:Point} =
-    Chain(ntuple(i -> Line(points[i], points[i+1]), N-1))
+    Chain(ntuple(i -> Segment(points[i], points[i+1]), N-1))
 
 Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
 

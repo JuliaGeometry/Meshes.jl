@@ -46,7 +46,7 @@ export center, radius, height, sides, volume
 
 # polytopes
 export Polytope
-export Line, Triangle, Quadrangle
+export Segment, Triangle, Quadrangle
 export Pyramid, Tetrahedron, Hexahedron
 export vertices
 

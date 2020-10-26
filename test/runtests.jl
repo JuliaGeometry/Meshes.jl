@@ -30,8 +30,8 @@ using Test, Random
         x = connect(numbers, Point2)
         @test x == Point{2,Int}[(1, 2), (3, 4), (5, 6)]
 
-        line = connect(x, Line{2,Int}, 1)
-        @test line == [Line(Point(1, 2), Point(3, 4)), Line(Point(3, 4), Point(5, 6))]
+        line = connect(x, Segment{2,Int}, 1)
+        @test line == [Segment(Point(1, 2), Point(3, 4)), Segment(Point(3, 4), Point(5, 6))]
 
         triangles = connect(x, Triangle{2,Int})
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
@@ -122,12 +122,12 @@ end
 end
 
 @testset "lines intersects" begin
-    a = Line(Point(0.0, 0.0), Point(4.0, 1.0))
-    b = Line(Point(0.0, 0.25), Point(3.0, 0.25))
-    c = Line(Point(0.0, 0.25), Point(0.5, 0.25))
-    d = Line(Point(0.0, 0.0), Point(0.0, 4.0))
-    e = Line(Point(1.0, 0.0), Point(0.0, 4.0))
-    f = Line(Point(5.0, 0.0), Point(6.0, 0.0))
+    a = Segment(Point(0.0, 0.0), Point(4.0, 1.0))
+    b = Segment(Point(0.0, 0.25), Point(3.0, 0.25))
+    c = Segment(Point(0.0, 0.25), Point(0.5, 0.25))
+    d = Segment(Point(0.0, 0.0), Point(0.0, 4.0))
+    e = Segment(Point(1.0, 0.0), Point(0.0, 4.0))
+    f = Segment(Point(5.0, 0.0), Point(6.0, 0.0))
 
     @test a ∩ b === (true, Point(1.0, 0.25))
     @test a ∩ c === (false, Point(0.0, 0.0))

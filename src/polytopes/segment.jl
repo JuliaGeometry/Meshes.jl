@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Line(p1, p2)
+    Segment(p1, p2)
 
 A line segment with points `p1`, `p2`.
 """
-struct Line{Dim,T} <: Polytope{Dim,T,2}
+struct Segment{Dim,T} <: Polytope{Dim,T,2}
     vertices::SVector{2,Point{Dim,T}}
 end
 
@@ -16,7 +16,7 @@ end
 
 Intersection of line segmens `l1` and `l2`.
 """
-function Base.intersect(a::Line{2,T1}, b::Line{2,T2}) where {T1,T2}
+function Base.intersect(a::Segment{2,T1}, b::Segment{2,T2}) where {T1,T2}
     T = promote_type(T1, T2)
     v1, v2 = coordinates.(a)
     v3, v4 = coordinates.(b)
