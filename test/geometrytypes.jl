@@ -1,14 +1,5 @@
 using Test, Meshes
 
-@testset "algorithms.jl" begin
-    cube = Box(Point(-0.5,-0.5,-0.5), Point(0.5,0.5,0.5))
-    cube_faces = decompose(TriangleFace, cube)
-    cube_vertices = decompose(Point3f, cube)
-    @test area(cube_vertices, cube_faces) == 6
-    mesh = Mesh(cube_vertices, cube_faces)
-    @test Meshes.volume(mesh) ≈ 1
-end
-
 @testset "Cylinder" begin
     @testset "constructors" begin
         c = Cylinder(Point3(1,2,3), Point3(4,5,6), 5.0)

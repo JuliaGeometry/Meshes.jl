@@ -31,5 +31,5 @@ function Base.in(P::T, triangle::Triangle) where {T<:Point}
     c_ap = c[1] * ap[2] - c[2] * ap[1]
     b_cp = b[1] * cp[2] - b[2] * cp[1]
 
-    return ((a_bp ≥ 0) && (b_cp ≥ 0) && (c_ap ≥ 0))
+    ((a_bp ≥ 0) && (b_cp ≥ 0) && (c_ap ≥ 0))
 end

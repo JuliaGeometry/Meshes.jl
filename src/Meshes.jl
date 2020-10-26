@@ -20,7 +20,6 @@ include("points.jl")
 
 include("geometries.jl")
 
-include("interfaces.jl")
 include("viewtypes.jl")
 include("primitives.jl")
 include("meshes.jl")
