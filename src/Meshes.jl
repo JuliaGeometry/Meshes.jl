@@ -17,7 +17,6 @@ include("matrices.jl")
 include("points.jl")
 include("geometries.jl")
 include("viewtypes.jl")
-include("primitives.jl")
 include("meshes.jl")
 include("boundingboxes.jl")
 

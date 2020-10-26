@@ -115,33 +115,3 @@ Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
 Base.getindex(c::Chain, i) = getindex(c.geometries, i)
 Base.length(::Type{<:Chain{Dim,T,N}}) where {Dim,T,N} = N
 Base.length(c::Chain) = length(typeof(c))
-
-# -----------------
-# OTHER GEOMETRIES
-# -----------------
-
-# TODO: review this
-include("faces.jl")
-
-struct Mesh{Dim,T,E<:Polytope{Dim,T},V<:AbstractVector{E}} <: Geometry{Dim,T}
-    elements::V # usually a FaceView, to connect a set of points via a set of faces.
-end
-
-Mesh(points::AbstractVector{<:Point},
-     faces::AbstractVector{<:AbstractFace}) = Mesh(connect(points, faces))
-
-Mesh(points::AbstractVector{<:Point},
-     faces::AbstractVector{<:Integer},
-     facetype=TriangleFace, skip=1) = Mesh(connect(points, connect(faces, facetype, skip)))
-
-Base.getindex(m::Mesh, i) = getindex(m.elements, i)
-Base.length(m::Mesh) = length(m.elements)
-
-Base.iterate(m::Mesh, i) = iterate(m.elements, i)
-Base.iterate(m::Mesh) = iterate(m.elements)
-
-elements(m::Mesh) = m.elements
-
-coordinates(m::Mesh) = coordinates(m.elements)
-
-volume(m::Mesh) = sum(volume, m)

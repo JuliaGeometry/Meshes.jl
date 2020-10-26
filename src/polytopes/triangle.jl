@@ -12,13 +12,13 @@ struct Triangle{Dim,T} <: Polytope{Dim,T,3}
 end
 
 function volume(triangle::Triangle)
-    v1, v2, v3 = coordinates.(triangle)
-    sig = sign(orthogonal_vector(v1, v2, v3) ⋅ v1)
-    return sig * abs(v1 ⋅ (v2 × v3)) / 6
+    A, B, C = triangle.vertices
+    abs((B - A) × (C - A)) / 2
 end
 
-function Base.in(P::T, triangle::Triangle) where {T<:Point}
-    A, B, C = vertices(triangle)
+function Base.in(P::Point, triangle::Triangle)
+    A, B, C = triangle.vertices
+
     a = C - B
     b = A - C
     c = B - A
