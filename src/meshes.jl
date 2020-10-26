@@ -7,7 +7,7 @@
 
 Creates a mesh from `geometry`.
 """
-function mesh(geometry::Meshable{Dim,T}; facetype=TriangleFace) where {Dim,T}
+function mesh(geometry::Geometry{Dim,T}; facetype=TriangleFace) where {Dim,T}
     points = decompose(Point{Dim,T}, geometry)
     faces  = decompose(facetype, geometry)
     if faces === nothing

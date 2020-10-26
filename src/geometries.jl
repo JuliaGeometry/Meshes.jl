@@ -98,7 +98,7 @@ See https://en.wikipedia.org/wiki/Chain_(algebraic_topology).
 
     Chain(p1, p2, ..., pn)
 
-Alternatively, construct a chain of line geometries
+Alternatively, construct a chain of line segments
 from a sequence of points `p1`, `p2`, ..., `pn`.
 """
 struct Chain{Dim,T,N,G<:Geometry{Dim,T}} <: Geometry{Dim,T}

@@ -62,7 +62,6 @@ export LineFace, NgonFace
 export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
 export FaceView, TupleView
 export connect, decompose, faces, convert_simplex
-export Tesselation
 export area, before, during, overlaps, finishes
 
 # bounding boxes

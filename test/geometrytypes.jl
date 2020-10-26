@@ -21,28 +21,7 @@ end
 
     @testset "decompose" begin
         c = Cylinder(Point3(1,2,3), Point3(4,5,6), 5.0)
-        target = Point3[(4.535533905932738, -1.5355339059327373, 3.0),
-                        (7.535533905932738, 1.4644660940672627, 6.0),
-                        (3.0412414523193148, 4.041241452319315, -1.0824829046386295),
-                        (6.041241452319315, 7.041241452319315, 1.9175170953613705),
-                        (-2.535533905932737, 5.535533905932738, 2.9999999999999996),
-                        (0.46446609406726314, 8.535533905932738, 6.0),
-                        (-1.0412414523193152, -0.04124145231931431, 7.0824829046386295),
-                        (1.9587585476806848, 2.9587585476806857, 10.08248290463863),
-                        (1, 2, 3),
-                        (4, 5, 6)]
-        points = decompose(Point3, Tesselation(c, 8))
-        @test coordinates.(points) ≈ coordinates.(target)
-        faces = TriangleFace.([(3, 2, 1), (4, 2, 3), (5, 4, 3), (6, 4, 5), (7, 6, 5),
-                               (8, 6, 7), (1, 8, 7), (2, 8, 1), (3, 1, 9), (2, 4, 10),
-                               (5, 3, 9), (4, 6, 10), (7, 5, 9), (6, 8, 10), (1, 7, 9),
-                               (8, 2, 10)])
-        @test faces == decompose(TriangleFace, Tesselation(c, 8))
-
-        m = Meshes.mesh(Tesselation(c, 8))
-
-        points = coordinates(m)
-        @test coordinates.(points) ≈ coordinates.(target)
+        points = decompose(Point3, c)
     end
 end
 
@@ -73,28 +52,14 @@ end
 
 @testset "Sphere" begin
     sphere = Sphere(Point3f(0,0,0), 1.0f0)
+    points = decompose(Point3f, sphere)
     @test ndims(sphere) == 3
     @test coordtype(sphere) == Float32
     @test center(sphere) == Point3f(0,0,0)
     @test radius(sphere) == 1.0f0
 
-    points = decompose(Point3f, Tesselation(sphere, 3))
-    target = Point3f[(0.0, 0.0, 1.0),
-                     (1.0, 0.0, 6.12323e-17),
-                     (1.22465e-16, 0.0, -1.0),
-                     (-0.0, 0.0, 1.0),
-                     (-1.0, 1.22465e-16, 6.12323e-17),
-                     (-1.22465e-16, 1.49976e-32, -1.0),
-                     (0.0, -0.0, 1.0),
-                     (1.0, -2.44929e-16, 6.12323e-17),
-                     (1.22465e-16, -2.99952e-32, -1.0)]
-    @test coordinates.(points) ≈ coordinates.(target)
-
     circle = Sphere(Point2f(0, 0), 1.0f0)
-    points = decompose(Point2f, Tesselation(circle, 20))
-    @test length(points) == 20
-    tess = Tesselation(circle, 32)
-    tpoints = decompose(Point2f, tess)
+    points = decompose(Point2f, circle)
 end
 
 @testset "Boxes" begin

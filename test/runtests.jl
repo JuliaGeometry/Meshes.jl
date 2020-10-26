@@ -86,8 +86,8 @@ end
         mesh = Mesh(points, sfaces)
         @test elements(mesh)[1] == Tetrahedron(points...)
 
-        t = Tesselation(Box(Point2f(0,0), Point2f(2,2)), (30, 30))
-        m = Meshes.mesh(t, facetype=QuadFace)
+        b = Box(Point2f(0,0), Point2f(2,2))
+        m = Meshes.mesh(b, facetype=QuadFace)
     end
 end
 

@@ -2,49 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# TODO: review these
-"""
-    Tesselation(primitive, nvertices)
-For abstract geometries, when we generate
-a mesh from them, we need to decide how fine grained we want to mesh them.
-To transport this information to the various decompose methods, you can wrap it
-in the Tesselation object e.g. like this:
-
-```julia
-sphere = Sphere(Point3(0,0,0), 1.0)
-m1 = mesh(sphere) # uses a default value for tesselation
-m2 = mesh(Tesselation(sphere, 64)) # uses 64 for tesselation
-length(coordinates(m1)) != length(coordinates(m2))
-```
-For grid based tesselation, you can also use a tuple.
-"""
-struct Tesselation{Dim,T,Primitive,NGrid}
-    primitive::Primitive
-    nvertices::NTuple{NGrid,Int}
-end
-
-function Tesselation(primitive::Primitive{Dim,T},
-                     nvertices::NTuple{N,<:Integer}) where {Dim,T,N}
-    return Tesselation{Dim,T,typeof(primitive),N}(primitive, Int.(nvertices))
-end
-
-Tesselation(primitive, nvertices::Integer) = Tesselation(primitive, (nvertices,))
-
-# This is a bit lazy, I guess we should just refactor these methods
-# to directly work on Tesselation - but this way it's backward compatible and less
-# refactor work :D
-nvertices(tesselation::Tesselation) = tesselation.nvertices
-nvertices(tesselation::Tesselation{T,N,P,1}) where {T,N,P} = tesselation.nvertices[1]
-
-function coordinates(tesselation::Tesselation)
-    return coordinates(tesselation.primitive, nvertices(tesselation))
-end
-
-faces(tesselation::Tesselation) = faces(tesselation.primitive, nvertices(tesselation))
-
-# Types that can be converted to a mesh via the functions below
-const Meshable{Dim,T} = Union{Geometry{Dim,T},Tesselation{Dim,T}}
-
 """
     decompose(T, meshable)
 
@@ -53,8 +10,6 @@ Decompose a `meshable` object into elements of type `T`.
 function decompose(::Type{T}, primitive) where {T}
     return collect_with_eltype(T, primitive)
 end
-
-# Specializations
 
 function decompose(::Type{P}, primitive) where {P<:Point}
     return convert.(P, coordinates(primitive))
