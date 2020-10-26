@@ -26,20 +26,15 @@ using Test, Random
     end
 
     @testset "connected views" begin
-        numbers = [1, 2, 3, 4, 5, 6]
-        x = connect(numbers, Point2)
-        @test x == Point{2,Int}[(1, 2), (3, 4), (5, 6)]
-
-        line = connect(x, Segment{2,Int}, 1)
-        @test line == [Segment(Point(1, 2), Point(3, 4)), Segment(Point(3, 4), Point(5, 6))]
-
-        triangles = connect(x, Triangle{2,Int})
+        points = Point{2,Int}[(1, 2), (3, 4), (5, 6)]
+        lines = connect(points, Segment{2,Int}, 1)
+        @test lines == [Segment(Point(1, 2), Point(3, 4)), Segment(Point(3, 4), Point(5, 6))]
+        triangles = connect(points, Triangle{2,Int})
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
     end
 
     @testset "face views" begin
-        numbers = [1, 2, 3, 4, 5, 6]
-        points = connect(numbers, Point{2})
+        points = Point.([(1, 2), (3, 4), (5, 6)])
         faces = connect([1, 2, 3], TriangleFace)
         triangles = connect(points, faces)
         @test triangles == [Triangle(Point(1, 2), Point(3, 4), Point(5, 6))]
@@ -48,7 +43,7 @@ using Test, Random
         triangles = connect([x], [TriangleFace((1, 1, 1))])
         @test triangles == [Triangle(x, x, x)]
 
-        points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
+        points = Point3[(1, 2, 3), (4, 5, 6), (7, 8, 9), (10, 11, 12)]
         faces = connect([1, 2, 3, 4], TetrahedronFace)
         tetrahedron = connect(points, faces)[1]
         @test ndims(tetrahedron) == 3
@@ -67,8 +62,7 @@ end
 
 @testset "constructors" begin
     @testset "Mesh" begin
-        numbers = [1, 2, 3, 4, 5, 6]
-        points = connect(numbers, Point2)
+        points = Point2[(1, 2), (3, 4), (5, 6)]
         mesh = Mesh(points, [1,2,3])
         @test elements(mesh)[1] == Triangle(points...)
 
@@ -81,7 +75,7 @@ end
         mesh = Mesh(points, tfaces)
         @test mesh isa Mesh
 
-        points = connect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Point3)
+        points = Point3[(1, 2, 3), (4, 5, 6), (7, 8, 9), (10, 11, 12)]
         sfaces = connect([1, 2, 3, 4], TetrahedronFace)
         mesh = Mesh(points, sfaces)
         @test elements(mesh)[1] == Tetrahedron(points...)

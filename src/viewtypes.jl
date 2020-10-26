@@ -72,11 +72,6 @@ x == [Segment(Point(1, 2), Point(3, 4)), Segment(Point(5, 6), Point(7, 8))]
     return reinterpret(PL, TupleView{length(PL),skip}(points))
 end
 
-@inline function connect(points::AbstractVector{T}, ::Type{<:Point{N}},
-                         skip::Int=N) where {T <: Real,N}
-    return reinterpret(Point{N,T}, TupleView{N,skip}(points))
-end
-
 @inline function connect(points::AbstractVector{T}, P::Type{<:AbstractFace{N}},
                          skip::Int=N) where {T <: Real,N}
     return reinterpret(Face(P, T), TupleView{N,skip}(points))
