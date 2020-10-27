@@ -95,3 +95,10 @@ at a reference (or start) point `A`.
 # TODO: implement rand properly with RNG, etc.
 Base.rand(::Type{Point{N,T}}) where {N,T} = Point(rand(SVector{N,T}))
 Base.rand(::Type{Point{N,T}}, n::Integer) where {N,T} = Point.(rand(SVector{N,T}, n))
+
+# -----------
+# IO methods
+# -----------
+function Base.show(io::IO, point::Point)
+  print(io, "Point$(Tuple(point.coords))")
+end

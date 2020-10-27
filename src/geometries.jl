@@ -78,6 +78,22 @@ Base.iterate(p::Polytope) = iterate(p.vertices)
 
 vertices(p::Polytope) = p.vertices
 
+# -----------
+# IO methods
+# -----------
+function Base.show(io::IO, p::Polytope)
+  kind = nameof(typeof(p))
+  vert = p.vertices
+  print(io, "$kind$vert")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", p::Polytope{Dim,T}) where {Dim,T}
+  kind = nameof(typeof(p))
+  lines = ["  └─$v" for v in p.vertices]
+  println(io, "$kind{$Dim,$T}")
+  print(io, join(lines, "\n"))
+end
+
 include("polytopes/segment.jl")
 include("polytopes/triangle.jl")
 include("polytopes/quadrangle.jl")
