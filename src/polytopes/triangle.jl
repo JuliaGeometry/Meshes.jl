@@ -8,7 +8,7 @@
 A triangle with points `p1`, `p2`, `p3`.
 """
 struct Triangle{Dim,T} <: Polytope{Dim,T,3}
-    vertices::SVector{3,Point{Dim,T}}
+    vertices::NTuple{3,Point{Dim,T}}
 end
 
 function volume(triangle::Triangle)

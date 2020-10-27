@@ -8,7 +8,7 @@
 A line segment with points `p1`, `p2`.
 """
 struct Segment{Dim,T} <: Polytope{Dim,T,2}
-    vertices::SVector{2,Point{Dim,T}}
+    vertices::NTuple{2,Point{Dim,T}}
 end
 
 """
