@@ -65,9 +65,8 @@ functions that are agnostic to the mesh element type.
 """
 abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
 
-function (::Type{PT})(vertices...) where {PT<:Polytope}
-    P = eltype(vertices)
-    return PT{ndims(P),coordtype(P)}(vertices)
+function (::Type{PT})(vertices::Vararg{P}) where {PT<:Polytope,P<:Point}
+    PT{ndims(P),coordtype(P)}(vertices)
 end
 
 Base.getindex(p::Polytope, i) = getindex(p.vertices, i)
