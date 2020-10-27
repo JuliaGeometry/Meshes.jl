@@ -45,9 +45,9 @@ vunit(Vec3, 3) == [0.0, 0.0, 1.0]
 ```
 """
 function vunit(VecType::Type, i::Integer)
-    N = length(VecType)
-    T = eltype(VecType)
-    VecType(ntuple(j->ifelse(i==j, one(T), zero(T)), N))
+  N = length(VecType)
+  T = eltype(VecType)
+  VecType(ntuple(j->ifelse(i==j, one(T), zero(T)), N))
 end
 
 """
@@ -64,5 +64,5 @@ vfill(Vec2f, 0) == [0.0f0, 0.0f0]
 ```
 """
 function vfill(VecType::Type, v::Number)
-    VecType(ntuple(j->v, length(VecType)))
+  VecType(ntuple(j->v, length(VecType)))
 end

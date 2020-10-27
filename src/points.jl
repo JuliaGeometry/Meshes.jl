@@ -20,7 +20,7 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 - Type aliases are `Point2`, `Point3`, `Point2f`, `Point3f`
 """
 struct Point{N,T}
-    coords::SVector{N,T}
+  coords::SVector{N,T}
 end
 
 # convenience constructors

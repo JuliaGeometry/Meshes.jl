@@ -13,12 +13,12 @@ of [`Point`](@ref) items.
 
 ```julia
 # points 1, 2 and 3 make up a triangle
-points = [Point(0,0), Point(1,0), Point(0,1)]
+points = [Point(0,0), Point(1,0), Point(0,1), ...]
 Δ = Connectivity(Triangle, (1,2,3))
 ```
 """
-struct Connectivity{P<:Polytope,N}
+struct Connectivity{N,P<:Polytope}
     list::NTuple{N,Int}
 end
 
-Connectivity(P::Type{<:Polytope}, list::NTuple{N,Int}) where {N} = Connectivity{P,N}(list)
+connect(list::NTuple{N,Int}, P::Type{<:Polytope}) where {N} = Connectivity{N,P}(list)

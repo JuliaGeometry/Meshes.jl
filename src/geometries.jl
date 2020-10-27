@@ -66,7 +66,7 @@ functions that are agnostic to the mesh element type.
 abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
 
 function (::Type{PT})(vertices::Vararg{P}) where {PT<:Polytope,P<:Point}
-    PT{ndims(P),coordtype(P)}(vertices)
+  PT{ndims(P),coordtype(P)}(vertices)
 end
 
 Base.getindex(p::Polytope, i) = getindex(p.vertices, i)
@@ -101,13 +101,13 @@ Alternatively, construct a chain of line segments
 from a sequence of points `p1`, `p2`, ..., `pn`.
 """
 struct Chain{Dim,T,N,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
-    geometries::NTuple{N,G}
+  geometries::NTuple{N,G}
 end
 
 Chain(geometries::Vararg{G,N}) where {N,G<:Geometry} = Chain(geometries)
 
 Chain(points::NTuple{N,P}) where {N,P<:Point} =
-    Chain(ntuple(i -> Segment(points[i], points[i+1]), N-1))
+  Chain(ntuple(i -> Segment(points[i], points[i+1]), N-1))
 
 Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
 

@@ -24,43 +24,44 @@ include("meshes.jl")
 include("boundingboxes.jl")
 
 export 
-    # points
-    Point, Point2, Point3, Point2f, Point3f,
-    coordtype, coordinates,
+  # points
+  Point, Point2, Point3, Point2f, Point3f,
+  coordtype, coordinates,
 
-    # vectors
-    Vec, Vec2, Vec3, Vec2f, Vec3f,
-    vunit, vfill,
+  # vectors
+  Vec, Vec2, Vec3, Vec2f, Vec3f,
+  vunit, vfill,
 
-    # geometries
-    Geometry,
-    coordtype,
+  # geometries
+  Geometry,
+  coordtype,
 
-    # primitives
-    Primitive,
-    Box, Ball, Sphere, Cylinder,
-    center, radius, height, sides, volume,
+  # primitives
+  Primitive,
+  Box, Ball, Sphere, Cylinder,
+  center, radius, height, sides, volume,
 
-    # polytopes
-    Polytope,
-    Segment, Triangle, Quadrangle,
-    Pyramid, Tetrahedron, Hexahedron,
-    vertices,
+  # polytopes
+  Polytope,
+  Segment, Triangle, Quadrangle,
+  Pyramid, Tetrahedron, Hexahedron,
+  vertices,
 
-    # chains
-    Chain,
+  # chains
+  Chain,
 
-    # connectivities
-    Connectivity,
+  # connectivities
+  Connectivity,
+  connect,
 
-    # meshes
-    Mesh,
-    UnstructuredMesh,
+  # meshes
+  Mesh,
+  UnstructuredMesh,
 
-    # TODO: review these
-    before, during, overlaps, finishes,
+  # TODO: review these
+  before, during, overlaps, finishes,
 
-    # bounding boxes
-    boundingbox
+  # bounding boxes
+  boundingbox
 
 end # module
