@@ -8,6 +8,6 @@
 A tetrahedron with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
 struct Pyramid{Dim,T} <: Polytope{Dim,T,5}
-    vertices::NTuple{5,Point{Dim,T}}
+  vertices::NTuple{5,Point{Dim,T}}
 end
 
