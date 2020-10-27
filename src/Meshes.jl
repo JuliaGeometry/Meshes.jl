@@ -8,60 +8,59 @@ using StaticArrays
 using IterTools
 using LinearAlgebra
 
-using Base: @propagate_inbounds
-
 import Base: +, -
 
+# basic types
 include("vectors.jl")
 include("matrices.jl")
 include("points.jl")
+
+# geometries and meshes
 include("geometries.jl")
 include("connectivities.jl")
-include("viewtypes.jl")
 include("meshes.jl")
+
+# algorithms
 include("boundingboxes.jl")
 
-# points
-export Point, Point2, Point3, Point2f, Point3f
-export coordtype, coordinates
+export 
+    # points
+    Point, Point2, Point3, Point2f, Point3f,
+    coordtype, coordinates,
 
-# vectors
-export Vec, Vec2, Vec3, Vec2f, Vec3f
-export vunit, vfill
+    # vectors
+    Vec, Vec2, Vec3, Vec2f, Vec3f,
+    vunit, vfill,
 
-# geometries
-export Geometry
-export coordtype
+    # geometries
+    Geometry,
+    coordtype,
 
-# primitives
-export Primitive
-export Box, Ball, Sphere, Cylinder
-export center, radius, height, sides, volume
+    # primitives
+    Primitive,
+    Box, Ball, Sphere, Cylinder,
+    center, radius, height, sides, volume,
 
-# polytopes
-export Polytope
-export Segment, Triangle, Quadrangle
-export Pyramid, Tetrahedron, Hexahedron
-export vertices
+    # polytopes
+    Polytope,
+    Segment, Triangle, Quadrangle,
+    Pyramid, Tetrahedron, Hexahedron,
+    vertices,
 
-# chains
-export Chain
+    # chains
+    Chain,
 
-# connectivities
-export Connectivity
+    # connectivities
+    Connectivity,
 
-# meshes
-export Mesh
-export elements, volume
+    # meshes
+    Mesh,
+    UnstructuredMesh,
 
-# TODO: review these
-export LineFace, NgonFace
-export AbstractFace, TriangleFace, QuadFace, TetrahedronFace
-export FaceView, TupleView
-export connect, decompose, faces, convert_simplex
-export before, during, overlaps, finishes
+    # TODO: review these
+    before, during, overlaps, finishes,
 
-# bounding boxes
-export boundingbox
+    # bounding boxes
+    boundingbox
 
 end # module
