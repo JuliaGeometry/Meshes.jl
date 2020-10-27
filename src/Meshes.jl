@@ -16,6 +16,7 @@ include("vectors.jl")
 include("matrices.jl")
 include("points.jl")
 include("geometries.jl")
+include("connectivities.jl")
 include("viewtypes.jl")
 include("meshes.jl")
 include("boundingboxes.jl")
@@ -45,6 +46,9 @@ export vertices
 
 # chains
 export Chain
+
+# connectivities
+export Connectivity
 
 # meshes
 export Mesh
