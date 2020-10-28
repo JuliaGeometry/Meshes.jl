@@ -71,9 +71,6 @@ abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
 
 vertices(p::Polytope) = p.vertices
 
-# -----------
-# IO methods
-# -----------
 function Base.show(io::IO, p::Polytope)
   kind = nameof(typeof(p))
   vert = join(p.vertices, ", ")
@@ -121,6 +118,29 @@ Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
 Base.getindex(c::Chain, i) = getindex(c.geometries, i)
 Base.length(::Type{<:Chain{Dim,T,N}}) where {Dim,T,N} = N
 Base.length(c::Chain) = length(typeof(c))
+Base.firstindex(c::Chain) = firstindex(c.geometries)
+Base.lastindex(c::Chain) = lastindex(c.geometries)
+Base.iterate(c::Chain, i) = iterate(c.geometries, i)
+Base.iterate(c::Chain) = iterate(c.geometries)
+
+function vertices(c::Chain{Dim,T,N,<:Segment}) where {Dim,T,N}
+  vs = [first(vertices(first(c.geometries)))]
+  for g in c.geometries
+    push!(vs, last(vertices(g)))
+  end
+  vs
+end
+
+function Base.show(io::IO, c::Chain{Dim,T,N}) where {Dim,T,N}
+  geoms = join(c.geometries, ", ")
+  print(io, "$N-chain($geoms)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T,N}) where {Dim,T,N}
+  lines = ["  └─$v" for v in c.geometries]
+  println(io, "$N-chain{$Dim,$T}")
+  print(io, join(lines, "\n"))
+end
 
 # ------
 # NGONS
@@ -136,11 +156,27 @@ spaces such as 3D spaces.
 """
 struct Ngon{Dim,T,N,C<:Chain{Dim,T,N}} <: Geometry{Dim,T}
   sides::C
+
+  function Ngon{Dim,T,N,C}(sides) where {Dim,T,N,C}
+    @assert N > 2 "n-gon must have at least three sides"
+    new(sides)
+  end
 end
 
-Ngon(sides::NTuple{N,L}) where {N,L<:Segment}  = Ngon(Chain(sides))
-Ngon(sides::Vararg{L,N}) where {N,L<:Segment}  = Ngon(sides)
-Ngon(points::NTuple{N,P}) where {N,P<:Point}   = Ngon(Chain(points))
+Ngon(sides::Chain{Dim,T,N}) where {Dim,T,N} = Ngon{Dim,T,N,Chain{Dim,T,N}}(sides)
+
+Ngon(points::NTuple{N,P}) where {N,P<:Point}   = Ngon(Chain((points...,first(points))))
 Ngon(points::Vararg{P,N}) where {N,P<:Point}   = Ngon(points)
 Ngon(points::NTuple{N,TP}) where {N,TP<:Tuple} = Ngon(Point.(points))
 Ngon(points::Vararg{TP,N}) where {N,TP<:Tuple} = Ngon(points)
+
+function Base.show(io::IO, ngon::Ngon{Dim,T,N}) where {Dim,T,N}
+  vert = join(ngon.sides, ", ")
+  print(io, "$N-gon($vert)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", ngon::Ngon{Dim,T,N}) where {Dim,T,N}
+  lines = ["  └─$v" for v in ngon.sides]
+  println(io, "$N-gon{$Dim,$T}")
+  print(io, join(lines, "\n"))
+end
