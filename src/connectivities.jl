@@ -29,6 +29,12 @@ into a polytope of type `PL`.
 """
 connect(list::NTuple{N,Int}, PL::Type{<:Polytope}) where {N} = Connectivity{PL,N}(list)
 
+"""
+    materialize(connec, points)
+
+Materialize a polytope using the `connec` list and a
+global vector of `points`.
+"""
 function materialize(connec::Connectivity{PL},
                      points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
   PL(view(points, collect(connec.list)))
