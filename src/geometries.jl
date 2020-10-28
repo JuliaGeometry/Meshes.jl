@@ -51,7 +51,7 @@ include("primitives/cylinder.jl")
 
 We say that a geometry is a polytope when it is made of a collection of "flat" sides.
 They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
-by an ordered set of `N` points. These points (a.k.a. vertices) are connected into edges,
+by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
 faces and cells in 3D. We follow the ordering conventions of the VTK project:
 https://lorensen.github.io/VTKExamples/site/VTKBook/05Chapter5/#54-cell-types
 
@@ -63,18 +63,11 @@ Meshing algorithms discretize geometries into polytope elements (e.g. triangles,
 tetrahedrons, pyramids). Thus, the `Polytope` type can be used for dispatch in
 functions that are agnostic to the mesh element type.
 """
-abstract type Polytope{Dim,T,N} <: Geometry{Dim,T} end
+abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
 
-function (::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point}
-  PL{ndims(P),coordtype(P)}(vertices)
-end
-
-Base.getindex(p::Polytope, i) = getindex(p.vertices, i)
-Base.length(::Type{<:Polytope{Dim,T,N}}) where {Dim,T,N} = N
-Base.length(p::Polytope) = length(typeof(p))
-
-Base.iterate(p::Polytope, i) = iterate(p.vertices, i)
-Base.iterate(p::Polytope) = iterate(p.vertices)
+(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(SVector(vertices))
+(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
+(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(SVector(vertices))
 
 vertices(p::Polytope) = p.vertices
 

@@ -7,8 +7,8 @@
 
 A triangle with points `p1`, `p2`, `p3`.
 """
-struct Triangle{Dim,T} <: Polytope{Dim,T,3}
-  vertices::NTuple{3,Point{Dim,T}}
+struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+  vertices::V
 end
 
 function volume(triangle::Triangle)

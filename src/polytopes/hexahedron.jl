@@ -7,6 +7,6 @@
 
 A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Hexahedron{Dim,T} <: Polytope{Dim,T,8}
-  vertices::NTuple{8,Point{Dim,T}}
+struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+  vertices::V
 end

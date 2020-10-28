@@ -7,6 +7,6 @@
 
 A quadrangle with points `p1`, `p2`, `p3`, `p4`.
 """
-struct Quadrangle{Dim,T} <: Polytope{Dim,T,4}
-  vertices::NTuple{4,Point{Dim,T}}
+struct Quadrangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+  vertices::V
 end

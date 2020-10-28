@@ -52,7 +52,7 @@ export
 
   # connectivities
   Connectivity,
-  connect,
+  connect, materialize,
 
   # meshes
   Mesh,
