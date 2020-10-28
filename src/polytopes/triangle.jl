@@ -12,24 +12,22 @@ struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
 end
 
 function volume(triangle::Triangle)
-    A, B, C = triangle.vertices
-    abs((B - A) × (C - A)) / 2
+  A, B, C = triangle.vertices
+  abs((B - A) × (C - A)) / 2
 end
 
 function Base.in(P::Point, triangle::Triangle)
-    A, B, C = triangle.vertices
+  A, B, C = triangle.vertices
+  bc = C - B
+  ca = A - C
+  ab = B - A
+  ap = P - A
+  bp = P - B
+  cp = P - C
 
-    a = C - B
-    b = A - C
-    c = B - A
+  abp = bc[1] * bp[2] - bc[2] * bp[1]
+  cap = ab[1] * ap[2] - ab[2] * ap[1]
+  bcp = ca[1] * cp[2] - ca[2] * cp[1]
 
-    ap = P - A
-    bp = P - B
-    cp = P - C
-
-    a_bp = a[1] * bp[2] - a[2] * bp[1]
-    c_ap = c[1] * ap[2] - c[2] * ap[1]
-    b_cp = b[1] * cp[2] - b[2] * cp[1]
-
-    ((a_bp ≥ 0) && (b_cp ≥ 0) && (c_ap ≥ 0))
+  (abp ≥ 0) && (bcp ≥ 0) && (cap ≥ 0)
 end
