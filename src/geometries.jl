@@ -76,8 +76,8 @@ vertices(p::Polytope) = p.vertices
 # -----------
 function Base.show(io::IO, p::Polytope)
   kind = nameof(typeof(p))
-  vert = p.vertices
-  print(io, "$kind$vert")
+  vert = join(p.vertices, ", ")
+  print(io, "$kind($vert)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope{Dim,T}) where {Dim,T}
@@ -114,12 +114,33 @@ struct Chain{Dim,T,N,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
 end
 
 Chain(geometries::Vararg{G,N}) where {N,G<:Geometry} = Chain(geometries)
-
 Chain(points::NTuple{N,P}) where {N,P<:Point} =
   Chain(ntuple(i -> Segment(points[i], points[i+1]), N-1))
-
 Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
 
 Base.getindex(c::Chain, i) = getindex(c.geometries, i)
 Base.length(::Type{<:Chain{Dim,T,N}}) where {Dim,T,N} = N
 Base.length(c::Chain) = length(typeof(c))
+
+# ------
+# NGONS
+# ------
+
+"""
+    Ngon(sides)
+
+A `n`-gon is a closed chain of `n` sides living in a common plane.
+See https://en.wikipedia.org/wiki/Polygon. Although the parametric
+dimension of a Ngon is 2, it can be embedded in higher-dimensional
+spaces such as 3D spaces.
+"""
+struct Ngon{Dim,T,N,C<:Chain{Dim,T,N}} <: Geometry{Dim,T}
+  sides::C
+end
+
+Ngon(sides::NTuple{N,L}) where {N,L<:Segment}  = Ngon(Chain(sides))
+Ngon(sides::Vararg{L,N}) where {N,L<:Segment}  = Ngon(sides)
+Ngon(points::NTuple{N,P}) where {N,P<:Point}   = Ngon(Chain(points))
+Ngon(points::Vararg{P,N}) where {N,P<:Point}   = Ngon(points)
+Ngon(points::NTuple{N,TP}) where {N,TP<:Tuple} = Ngon(Point.(points))
+Ngon(points::Vararg{TP,N}) where {N,TP<:Tuple} = Ngon(points)

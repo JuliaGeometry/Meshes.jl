@@ -50,6 +50,9 @@ export
   # chains
   Chain,
 
+  # ngons
+  Ngon,
+
   # connectivities
   Connectivity,
   connect, materialize,
