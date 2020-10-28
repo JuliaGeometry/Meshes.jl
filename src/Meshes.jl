@@ -49,9 +49,7 @@ export
 
   # chains
   Chain,
-
-  # ngons
-  Ngon,
+  vertices, isclosed
 
   # connectivities
   Connectivity,

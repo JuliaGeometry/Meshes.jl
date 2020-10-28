@@ -96,87 +96,30 @@ include("polytopes/hexahedron.jl")
 # -------
 
 """
-    Chain(g1, g2, ..., gn)
-
-Construct a chain of geometries `g1`, `g2`, ..., `gn`.
-See https://en.wikipedia.org/wiki/Chain_(algebraic_topology).
-
     Chain(p1, p2, ..., pn)
 
-Alternatively, construct a chain of line segments
-from a sequence of points `p1`, `p2`, ..., `pn`.
+A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
+See https://en.wikipedia.org/wiki/Polygonal_chain.
 """
-struct Chain{Dim,T,N,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
-  geometries::NTuple{N,G}
+struct Chain{Dim,T,N} <: Geometry{Dim,T}
+  vertices::NTuple{N,Point{Dim,T}}
 end
 
-Chain(geometries::Vararg{G,N}) where {N,G<:Geometry} = Chain(geometries)
-Chain(points::NTuple{N,P}) where {N,P<:Point} =
-  Chain(ntuple(i -> Segment(points[i], points[i+1]), N-1))
 Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
+Chain(points::NTuple{N,TP}) where {N,TP<:Tuple} = Chain(Point.(points))
+Chain(points::Vararg{TP,N}) where {N,TP<:Tuple} = Chain(points)
 
-Base.getindex(c::Chain, i) = getindex(c.geometries, i)
-Base.length(::Type{<:Chain{Dim,T,N}}) where {Dim,T,N} = N
-Base.length(c::Chain) = length(typeof(c))
-Base.firstindex(c::Chain) = firstindex(c.geometries)
-Base.lastindex(c::Chain) = lastindex(c.geometries)
-Base.iterate(c::Chain, i) = iterate(c.geometries, i)
-Base.iterate(c::Chain) = iterate(c.geometries)
+vertices(c::Chain) = c.vertices
 
-function vertices(c::Chain{Dim,T,N,<:Segment}) where {Dim,T,N}
-  vs = [first(vertices(first(c.geometries)))]
-  for g in c.geometries
-    push!(vs, last(vertices(g)))
-  end
-  vs
-end
+isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
 
 function Base.show(io::IO, c::Chain{Dim,T,N}) where {Dim,T,N}
-  geoms = join(c.geometries, ", ")
-  print(io, "$N-chain($geoms)")
+  vert = join(c.vertices, ", ")
+  print(io, "$N-chain($vert)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T,N}) where {Dim,T,N}
-  lines = ["  └─$v" for v in c.geometries]
+  lines = ["  └─$v" for v in c.vertices]
   println(io, "$N-chain{$Dim,$T}")
-  print(io, join(lines, "\n"))
-end
-
-# ------
-# NGONS
-# ------
-
-"""
-    Ngon(sides)
-
-A `n`-gon is a closed chain of `n` sides living in a common plane.
-See https://en.wikipedia.org/wiki/Polygon. Although the parametric
-dimension of a Ngon is 2, it can be embedded in higher-dimensional
-spaces such as 3D spaces.
-"""
-struct Ngon{Dim,T,N,C<:Chain{Dim,T,N}} <: Geometry{Dim,T}
-  sides::C
-
-  function Ngon{Dim,T,N,C}(sides) where {Dim,T,N,C}
-    @assert N > 2 "n-gon must have at least three sides"
-    new(sides)
-  end
-end
-
-Ngon(sides::Chain{Dim,T,N}) where {Dim,T,N} = Ngon{Dim,T,N,Chain{Dim,T,N}}(sides)
-
-Ngon(points::NTuple{N,P}) where {N,P<:Point}   = Ngon(Chain((points...,first(points))))
-Ngon(points::Vararg{P,N}) where {N,P<:Point}   = Ngon(points)
-Ngon(points::NTuple{N,TP}) where {N,TP<:Tuple} = Ngon(Point.(points))
-Ngon(points::Vararg{TP,N}) where {N,TP<:Tuple} = Ngon(points)
-
-function Base.show(io::IO, ngon::Ngon{Dim,T,N}) where {Dim,T,N}
-  vert = join(ngon.sides, ", ")
-  print(io, "$N-gon($vert)")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", ngon::Ngon{Dim,T,N}) where {Dim,T,N}
-  lines = ["  └─$v" for v in ngon.sides]
-  println(io, "$N-gon{$Dim,$T}")
   print(io, join(lines, "\n"))
 end
