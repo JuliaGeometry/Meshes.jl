@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Hexahedron(p1, p2, ..., p8)
+    Pyramid(p1, p2, p3, p4, p5)
 
-A hexahedron with points `p1`, `p2`, ..., `p8`.
+A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
-struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,3}
   vertices::V
 end

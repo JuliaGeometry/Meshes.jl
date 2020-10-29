@@ -7,7 +7,7 @@
 
 A triangle with points `p1`, `p2`, `p3`.
 """
-struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,2}
   vertices::V
 end
 

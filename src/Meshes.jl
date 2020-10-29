@@ -41,15 +41,22 @@ export
   Box, Ball, Sphere, Cylinder,
   center, radius, height, sides, volume,
 
-  # polytopes
-  Polytope,
-  Segment, Triangle, Quadrangle,
-  Pyramid, Tetrahedron, Hexahedron,
-  vertices,
-
   # chains
   Chain,
-  vertices, isclosed
+  vertices, isclosed,
+
+  # polytopes
+  Polytope,
+  vertices,
+
+  # faces
+  Face,
+  Segment, Triangle, Quadrangle,
+  Pyramid, Tetrahedron, Hexahedron,
+  vertices, rank,
+
+  # polygons
+  Polygon,
 
   # connectivities
   Connectivity,

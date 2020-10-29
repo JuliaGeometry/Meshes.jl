@@ -42,55 +42,6 @@ include("primitives/ball.jl")
 include("primitives/sphere.jl")
 include("primitives/cylinder.jl")
 
-# ----------
-# POLYTOPES
-# ----------
-
-"""
-    Polytope{Dim,T,N}
-
-We say that a geometry is a polytope when it is made of a collection of "flat" sides.
-They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
-by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
-faces and cells in 3D. We follow the ordering conventions of the VTK project:
-https://lorensen.github.io/VTKExamples/site/VTKBook/05Chapter5/#54-cell-types
-
-Additionally, the following property must hold in order for a geometry to be considered
-a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, which may
-have (n-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
-
-Meshing algorithms discretize geometries into polytope elements (e.g. triangles,
-tetrahedrons, pyramids). Thus, the `Polytope` type can be used for dispatch in
-functions that are agnostic to the mesh element type.
-"""
-abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
-
-(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(SVector(vertices))
-(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
-(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(SVector(vertices))
-
-vertices(p::Polytope) = p.vertices
-
-function Base.show(io::IO, p::Polytope)
-  kind = nameof(typeof(p))
-  vert = join(p.vertices, ", ")
-  print(io, "$kind($vert)")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", p::Polytope{Dim,T}) where {Dim,T}
-  kind = nameof(typeof(p))
-  lines = ["  └─$v" for v in p.vertices]
-  println(io, "$kind{$Dim,$T}")
-  print(io, join(lines, "\n"))
-end
-
-include("polytopes/segment.jl")
-include("polytopes/triangle.jl")
-include("polytopes/quadrangle.jl")
-include("polytopes/pyramid.jl")
-include("polytopes/tetrahedron.jl")
-include("polytopes/hexahedron.jl")
-
 # -------
 # CHAINS
 # -------
@@ -109,8 +60,19 @@ Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
 Chain(points::NTuple{N,TP}) where {N,TP<:Tuple} = Chain(Point.(points))
 Chain(points::Vararg{TP,N}) where {N,TP<:Tuple} = Chain(points)
 
+"""
+    vertices(chain)
+
+Return the vertices of a chain.
+"""
 vertices(c::Chain) = c.vertices
 
+"""
+    isclosed(chain)
+
+Tells whether or not the polygonal chain is closed.
+A closed chain is also known as a ring.
+"""
 isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
 
 function Base.show(io::IO, c::Chain{Dim,T,N}) where {Dim,T,N}
@@ -123,3 +85,90 @@ function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T,N}) where {Dim,T,N
   println(io, "$N-chain{$Dim,$T}")
   print(io, join(lines, "\n"))
 end
+
+# ----------
+# POLYTOPES
+# ----------
+
+"""
+    Polytope{Dim,T}
+
+We say that a geometry is a polytope when it is made of a collection of "flat" sides.
+They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
+by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
+faces and cells in 3D. We follow the ordering conventions of the VTK project:
+https://lorensen.github.io/VTKExamples/site/VTKBook/05Chapter5/#54-cell-types
+
+Additionally, the following property must hold in order for a geometry to be considered
+a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, which may
+have (n-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
+"""
+abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
+
+"""
+    Face{Dim,T,Rank}
+
+We say that a polytope is a face when it can be used as an element in a finite element
+mesh (e.g. segments, triangles, tetrahedrons). The `Rank` of the face reflects the actual
+parametric dimension of the polytope. For example, a segment is a 1-face, a triangle is a
+2-face and a tetrahedron is a 3-face. See https://en.wikipedia.org/wiki/Abstract_polytope.
+"""
+abstract type Face{Dim,T,Rank} <: Polytope{Dim,T} end
+
+(::Type{F})(vertices::Vararg{P}) where {F<:Face,P<:Point} = F(SVector(vertices))
+(::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
+(::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(SVector(vertices))
+
+"""
+    rank(face)
+
+Return the rank of the face.
+"""
+rank(::Face{Dim,T,Rank}) where {Dim,T,Rank} = Rank
+
+"""
+    vertices(face)
+
+Return the vertices of a face.
+"""
+vertices(f::Face) = f.vertices
+
+function Base.show(io::IO, f::Face)
+  kind = nameof(typeof(f))
+  vert = join(f.vertices, ", ")
+  print(io, "$kind($vert)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", f::Face{Dim,T}) where {Dim,T}
+  kind = nameof(typeof(f))
+  lines = ["  └─$v" for v in f.vertices]
+  println(io, "$kind{$Dim,$T}")
+  print(io, join(lines, "\n"))
+end
+
+include("faces/segment.jl")
+include("faces/triangle.jl")
+include("faces/quadrangle.jl")
+include("faces/pyramid.jl")
+include("faces/tetrahedron.jl")
+include("faces/hexahedron.jl")
+
+"""
+    Polygon(outer, [inner1, inner2, ...])
+
+A polygon with `outer` ring, and optional inner
+rings `inner1`, `inner2`, ...
+"""
+struct Polygon{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
+  outer::C
+  inners::Vector{C}
+
+  function Polygon{Dim,T,C}(outer, inners) where {Dim,T,C}
+    @assert isclosed(outer) "invalid outer ring"
+    @assert all(isclosed.(inners)) "invalid inner rings"
+    new(outer, inners)
+  end
+end
+
+Polygon(outer::Chain{Dim,T}, inners) where {Dim,T} = Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
+Polygon(outer::C) where {C<:Chain} = Polygon(outer, C[])

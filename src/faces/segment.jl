@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Pyramid(p1, p2, p3, p4, p5)
+    Segment(p1, p2)
 
-A tetrahedron with points `p1`, `p2`, `p3`, `p4`, `p5`.
+A line segment with points `p1`, `p2`.
 """
-struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,1}
   vertices::V
 end

@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Segment(p1, p2)
+    Quadrangle(p1, p2, p3, p4)
 
-A line segment with points `p1`, `p2`.
+A quadrangle with points `p1`, `p2`, `p3`, `p4`.
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+struct Quadrangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,2}
   vertices::V
 end

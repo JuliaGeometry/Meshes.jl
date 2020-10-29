@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Quadrangle(p1, p2, p3, p4)
+    Hexahedron(p1, p2, ..., p8)
 
-A quadrangle with points `p1`, `p2`, `p3`, `p4`.
+A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Quadrangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{Dim,T}
+struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,2}
   vertices::V
 end
