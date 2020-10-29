@@ -5,7 +5,6 @@
 module Meshes
 
 using StaticArrays
-using IterTools
 using LinearAlgebra
 
 import Base: +, -
