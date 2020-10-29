@@ -3,39 +3,36 @@
 # ------------------------------------------------------------------
 
 """
-    Connectivity{PL,N}
+    Connectivity{F,N}
 
-A connectivity list of `N` indices representing a polytope
-of type `PL`. Indices are taken from a global vector of
-[`Point`](@ref) items.
+A connectivity list of `N` indices representing a [`Face`](@ref)
+of type `F`. Indices are taken from a global vector of [`Point`](@ref).
 
-Connectivity objects are constructed with the [`connect`](@ref)
-helper function.
+Connectivity objects are constructed with the [`connect`](@ref) function.
 """
-struct Connectivity{PL<:Polytope,N}
+struct Connectivity{F<:Face,N}
   list::NTuple{N,Int}
 end
 
 """
-    connect(list, PL)
+    connect(list, F)
 
-Connect a `list` of indices from a global vector of points
-into a polytope of type `PL`.
+Connect a `list` of indices from a global vector of [`Point`](@ref)
+into a [`Face`](@ref) of type `F`.
 
 ## Example
 ```
 Δ = connect((1,2,3), Triangle)
 ```
 """
-connect(list::NTuple{N,Int}, PL::Type{<:Polytope}) where {N} = Connectivity{PL,N}(list)
+connect(list::NTuple{N,Int}, F::Type{<:Face}) where {N} = Connectivity{F,N}(list)
 
 """
     materialize(connec, points)
 
-Materialize a polytope using the `connec` list and a
-global vector of `points`.
+Materialize a face using the `connec` list and a global vector of `points`.
 """
-function materialize(connec::Connectivity{PL},
-                     points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
-  PL(view(points, collect(connec.list)))
+function materialize(connec::Connectivity{F},
+                     points::AbstractVector{P}) where {F<:Face,P<:Point}
+  F(view(points, collect(connec.list)))
 end
