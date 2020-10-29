@@ -22,3 +22,22 @@ function faces(m::UnstructuredMesh{Dim,T}, r) where {Dim,T}
   facerank(c) = rank(facetype(c){Dim,T})
   (materialize(cs[i], ps) for i in eachindex(cs) if facerank(cs[i]) == r)
 end
+
+function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}
+  nvert = length(m.points)
+  nface = length(m.connec)
+  print(io, "UnstructuredMesh($nvert vertices, $nface faces)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", m::UnstructuredMesh{Dim,T}) where {Dim,T}
+  println(io, "UnstructuredMesh{$Dim,$T}")
+  for r in 1:Dim
+    fs = collect(faces(m, r))
+    n  = length(fs)
+    if n > 0
+      lines = ["    └─$f" for f in fs]
+      println(io, "  $r-faces")
+      print(  io, join(lines, "\n"))
+    end
+  end
+end

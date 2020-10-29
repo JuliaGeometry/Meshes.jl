@@ -96,9 +96,6 @@ at a reference (or start) point `A`.
 Base.rand(::Type{Point{Dim,T}}) where {Dim,T} = Point(rand(SVector{Dim,T}))
 Base.rand(::Type{Point{Dim,T}}, n::Integer) where {Dim,T} = Point.(rand(SVector{Dim,T}, n))
 
-# -----------
-# IO methods
-# -----------
 function Base.show(io::IO, point::Point)
   print(io, "Point$(Tuple(point.coords))")
 end
