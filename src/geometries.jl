@@ -175,3 +175,23 @@ end
 Polygon(outer::Chain{Dim,T}, inners) where {Dim,T} =
   Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
 Polygon(outer::C) where {C<:Chain} = Polygon(outer, C[])
+
+function Base.show(io::IO, p::Polygon)
+  outer = p.outer
+  inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
+  print(io, "Polygon($outer$inner)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", p::Polygon{Dim,T}) where {Dim,T}
+  outer = "    └─$(p.outer)"
+  inner = ["    └─$v" for v in p.inners]
+  println(io, "Polygon{$Dim,$T}")
+  println(io, "  outer")
+  if isempty(inner)
+    print(io, outer)
+  else
+    println(io, outer)
+    println(io, "  inner")
+    print(io, join(inner, "\n"))
+  end
+end
