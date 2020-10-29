@@ -12,6 +12,8 @@ struct Ball{Dim,T} <: Primitive{Dim,T}
   radius::T
 end
 
+Ball(center::Tuple, radius) = Ball(Point(center), radius)
+
 center(b::Ball) = b.center
 radius(b::Ball) = b.radius
 

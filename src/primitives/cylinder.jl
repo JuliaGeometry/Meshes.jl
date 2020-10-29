@@ -14,6 +14,8 @@ struct Cylinder{T} <: Primitive{3,T}
   radius::T
 end
 
+Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
+
 radius(c::Cylinder) = c.radius
 height(c::Cylinder) = norm(c.finish - c.start)
 volume(c::Cylinder) = π * radius(c)^2 * height(c)

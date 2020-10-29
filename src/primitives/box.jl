@@ -19,6 +19,8 @@ struct Box{N,T} <: Primitive{N,T}
   max::Point{N,T}
 end
 
+Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
+
 Base.minimum(b::Box) = b.min
 Base.maximum(b::Box) = b.max
 sides(b::Box) = b.max - b.min

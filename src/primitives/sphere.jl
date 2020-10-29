@@ -12,6 +12,8 @@ struct Sphere{Dim,T} <: Primitive{Dim,T}
   radius::T
 end
 
+Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
+
 center(s::Sphere) = s.center
 radius(s::Sphere) = s.radius
 
