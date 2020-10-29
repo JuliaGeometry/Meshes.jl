@@ -30,7 +30,6 @@ export
 
   # vectors
   Vec, Vec2, Vec3, Vec2f, Vec3f,
-  vunit, vfill,
 
   # geometries
   Geometry,

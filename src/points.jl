@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    Point{N,T}
+    Point{Dim,T}
 
-A point in `N`-dimensional space with coordinates of type `T`.
+A point in `Dim`-dimensional space with coordinates of type `T`.
 The coordinates of the point provided upon construction are with
 respect to the canonical Euclidean basis. See [`vunit`](@ref).
 
@@ -19,19 +19,19 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 
 - Type aliases are `Point2`, `Point3`, `Point2f`, `Point3f`
 """
-struct Point{N,T}
-  coords::SVector{N,T}
+struct Point{Dim,T}
+  coords::SVector{Dim,T}
 end
 
 # convenience constructors
-Point(coords::NTuple{N,T}) where {N,T} = Point{N,T}(SVector(coords))
-Point(coords::Vararg{T,N}) where {N,T} = Point{N,T}(SVector(coords))
+Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
+Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
 
 # coordinate type conversions
-Point{N,T}(coords::NTuple{N,V}) where {N,T,V} = Point(T.(coords))
-Point{N,T}(coords::Vararg{V,N}) where {N,T,V} = Point(T.(coords))
-Base.convert(::Type{Point{N,T}}, coords) where {N,T} = Point{N,T}(coords)
-Base.convert(::Type{Point{N,T}}, p::Point) where {N,T} = Point{N,T}(p.coords)
+Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point(T.(coords))
+Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point(T.(coords))
+Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
+Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coords)
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
 # type aliases for convenience
@@ -45,7 +45,7 @@ const Point3f = Point{3,Float32}
 
 Return the number of dimensions of the space where the `point` is embedded.
 """
-Base.ndims(::Type{Point{N,T}}) where {N,T} = N
+Base.ndims(::Type{Point{Dim,T}}) where {Dim,T} = Dim
 Base.ndims(p::Point) = ndims(typeof(p))
 
 """
@@ -53,7 +53,7 @@ Base.ndims(p::Point) = ndims(typeof(p))
 
 Return the machine type of each coordinate used to describe the `point`.
 """
-coordtype(::Type{Point{N,T}}) where {N,T}  = T
+coordtype(::Type{Point{Dim,T}}) where {Dim,T}  = T
 coordtype(p::Point) = coordtype(typeof(p))
 
 """
@@ -93,8 +93,8 @@ at a reference (or start) point `A`.
 -(v::Vec, A::Point) = A - v
 
 # TODO: implement rand properly with RNG, etc.
-Base.rand(::Type{Point{N,T}}) where {N,T} = Point(rand(SVector{N,T}))
-Base.rand(::Type{Point{N,T}}, n::Integer) where {N,T} = Point.(rand(SVector{N,T}, n))
+Base.rand(::Type{Point{Dim,T}}) where {Dim,T} = Point(rand(SVector{Dim,T}))
+Base.rand(::Type{Point{Dim,T}}, n::Integer) where {Dim,T} = Point.(rand(SVector{Dim,T}, n))
 
 # -----------
 # IO methods
