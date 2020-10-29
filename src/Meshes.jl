@@ -62,8 +62,8 @@ export
 
   # meshes
   Mesh,
-  UnstructuredMesh,
-  faces, elements,
+  CartesianGrid, UnstructuredMesh,
+  faces, elements, spacing,
 
   # bounding boxes
   boundingbox

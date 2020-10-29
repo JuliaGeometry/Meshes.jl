@@ -7,7 +7,7 @@
 
 A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`.
 """
-abstract type Mesh{Dim,T} end
+abstract type Mesh{Dim,T} <: Geometry{Dim,T} end
 
 """
     faces(mesh, rank)
@@ -43,4 +43,5 @@ of any 3-face.
 """
 elements(m::Mesh{Dim}) where {Dim} = faces(m, Dim)
 
+include("meshes/cartesiangrid.jl")
 include("meshes/unstructured.jl")
