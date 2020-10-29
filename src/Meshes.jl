@@ -32,7 +32,7 @@ export
 
   # geometries
   Geometry,
-  coordtype,
+  embeddim, coordtype,
 
   # primitives
   Primitive,
