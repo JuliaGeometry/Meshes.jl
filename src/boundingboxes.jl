@@ -7,10 +7,10 @@
 
 Axis-aligned bounding box of the `geometry`.
 """
-boundingbox(geometry) = boundingbox(coordinates(geometry))
+boundingbox(geometry) = boundingbox(vertices(geometry))
 
 # fallback implementation treats geometry as a set of points
-function boundingbox(points::AbstractArray{<:Point{Dim,T}}) where {Dim,T}
+function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
   xmin = MVector(ntuple(i->typemax(T), Dim))
   xmax = MVector(ntuple(i->typemin(T), Dim))
   for p in points
@@ -24,6 +24,8 @@ end
 # -----------
 # PRIMITIVES
 # -----------
+
+boundingbox(p::Primitive) = boundingbox(boundary(p))
 
 boundingbox(b::Box) = b
 

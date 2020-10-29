@@ -25,6 +25,13 @@ Return the machine type of each coordinate used to describe the `geometry`.
 coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T}  = T
 coordtype(g::Geometry) = coordtype(typeof(g))
 
+"""
+    boundary(geometry)
+
+Return the boundary of the `geometry`.
+"""
+function boundary end
+
 # -----------
 # PRIMITIVES
 # -----------

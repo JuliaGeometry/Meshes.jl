@@ -23,3 +23,5 @@ function Base.in(p::Point, b::Ball)
   r = b.radius
   sum(abs2, x - c) ≤ r^2
 end
+
+boundary(b::Ball) = Sphere(b.center, b.radius)
