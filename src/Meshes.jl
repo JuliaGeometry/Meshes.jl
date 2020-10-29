@@ -56,6 +56,9 @@ export
   # polygons
   Polygon,
 
+  # sets
+  GeometrySet,
+
   # connectivities
   Connectivity,
   facetype, connect, materialize,

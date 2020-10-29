@@ -198,3 +198,21 @@ function Base.show(io::IO, ::MIME"text/plain", p::Polygon{Dim,T}) where {Dim,T}
     print(io, join(inner, "\n"))
   end
 end
+
+# -----
+# SETS
+# -----
+
+"""
+    GeometrySet(geometries)
+
+A set of `geometries` seen as a single geometry.
+
+## Example
+
+In a geographic map, countries can be described with
+multiple polygons (a.k.a. MultiPolygon).
+"""
+struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
+  geometries::Vector{G}
+end
