@@ -22,8 +22,15 @@ embeddim(g::Geometry) = embeddim(typeof(g))
 
 Return the machine type of each coordinate used to describe the `geometry`.
 """
-coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T}  = T
+coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T} = T
 coordtype(g::Geometry) = coordtype(typeof(g))
+
+"""
+    volume(geometry)
+
+Return the volume of the `geometry`.
+"""
+function volume end
 
 """
     boundary(geometry)
