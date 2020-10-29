@@ -82,11 +82,12 @@ spacing(g::CartesianGrid) = g.spacing
 
 function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
   dims = join(g.dims, "×")
-  print(io, "$dims CartesianGrid{$Dim,$T}")
+  print(io, "$dims CartesianGrid($(minimum(g)), $(maximum(g)))")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid{Dim,T}) where {Dim,T}
-  println(io, g)
+  dims = join(g.dims, "×")
+  println(io, "$dims CartesianGrid{$Dim,$T}")
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
   print(  io, "  spacing: ", spacing(g))
