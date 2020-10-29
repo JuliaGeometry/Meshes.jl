@@ -49,6 +49,14 @@
     @test finishes(rect1, rect2)
   end
 
+  @testset "Ball" begin
+    ball = Ball((1,2,3), 5)
+    @test embeddim(ball) == 3
+    @test coordtype(ball) == Int
+    @test center(ball) == Point(1,2,3)
+    @test radius(ball) == 5
+  end
+
   @testset "Sphere" begin
     sphere = Sphere(Point3f(0,0,0), 1.0f0)
     @test embeddim(sphere) == 3
