@@ -5,7 +5,7 @@
     @test coordtype(grid) == Float32
     @test size(grid) == (200,100)
     @test minimum(grid) == Point(0f0, 0f0)
-    @test maximum(grid) == Point(199f0, 99f0)
+    @test maximum(grid) == Point(200f0, 100f0)
     @test spacing(grid) == [1f0, 1f0]
 
     grid = CartesianGrid((200,100,50), (0.,0.,0.), (1.,1.,1.))
@@ -13,7 +13,7 @@
     @test coordtype(grid) == Float64
     @test size(grid) == (200,100,50)
     @test minimum(grid) == Point(0., 0., 0.)
-    @test maximum(grid) == Point(199., 99., 49.)
+    @test maximum(grid) == Point(200., 100., 50.)
     @test spacing(grid) == [1.,1.,1.]
 
     grid = CartesianGrid((-1.,-1.), (1.,1.), dims=(200,100))
@@ -22,7 +22,7 @@
     @test size(grid) == (200,100)
     @test minimum(grid) == Point(-1., -1.)
     @test maximum(grid) == Point(1., 1.)
-    @test spacing(grid) == [2/199, 2/99]
+    @test spacing(grid) == [2/200, 2/100]
   end
 
   @testset "UnstructuredMesh" begin

@@ -59,11 +59,11 @@ CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T}, spacing::NTuple{Dim,T}) wh
   CartesianGrid{Dim,T}(dims, Point(origin), SVector(spacing))
 
 CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
-            dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, start, (finish - start) ./ (dims .- 1))
+              dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
+  CartesianGrid{Dim,T}(dims, start, (finish - start) ./ dims)
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T};
-            dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
+              dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish); dims=dims)
 
 CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T} =
@@ -77,7 +77,7 @@ CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 Base.size(g::CartesianGrid) = g.dims
 Base.minimum(g::CartesianGrid) = g.origin
-Base.maximum(g::CartesianGrid) = g.origin + (g.dims .- 1) .* g.spacing
+Base.maximum(g::CartesianGrid) = g.origin + g.dims .* g.spacing
 spacing(g::CartesianGrid) = g.spacing
 
 function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
