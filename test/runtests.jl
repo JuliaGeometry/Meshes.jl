@@ -18,7 +18,7 @@ testfiles = [
   "polygons.jl",
   "primitives.jl",
   "meshes.jl",
-  "algorithms.jl"
+  "boundingboxes.jl"
 ]
 
 @testset "Meshes.jl" begin

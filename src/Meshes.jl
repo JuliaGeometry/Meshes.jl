@@ -65,9 +65,6 @@ export
   UnstructuredMesh,
   faces, elements,
 
-  # TODO: review these
-  before, during, overlaps, finishes,
-
   # bounding boxes
   boundingbox
 
