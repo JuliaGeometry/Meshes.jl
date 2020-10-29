@@ -15,6 +15,7 @@ struct UnstructuredMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
 end
 
 function faces(m::UnstructuredMesh{Dim,T}, r) where {Dim,T}
+  @assert r ≤ Dim "invalid rank for mesh"
   ps, cs = m.points, m.connec
   facerank(c) = rank(facetype(c){Dim,T})
   (materialize(cs[i], ps) for i in eachindex(cs) if facerank(cs[i]) == r)

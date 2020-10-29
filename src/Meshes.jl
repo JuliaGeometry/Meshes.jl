@@ -63,7 +63,7 @@ export
   # meshes
   Mesh,
   UnstructuredMesh,
-  faces,
+  faces, elements,
 
   # TODO: review these
   before, during, overlaps, finishes,

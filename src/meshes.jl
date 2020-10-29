@@ -28,4 +28,19 @@ segments = faces(mesh, 1)
 """
 function faces end
 
+"""
+    elements(mesh)
+
+Return the faces of the mesh with rank equal to the embedding dimension.
+
+## Example
+
+A 2D surface embedded in 3D space has no elements. When embedded in 2D space
+the elements can be triangles, quadrangles or any 2-face.
+
+The elements of a volume embedded in 3D space can be tetrahedrons, hexahedrons,
+of any 3-face.
+"""
+elements(m::Mesh{Dim}) where {Dim} = faces(m, Dim)
+
 include("meshes/unstructured.jl")
