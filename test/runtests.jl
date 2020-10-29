@@ -17,6 +17,7 @@ testfiles = [
   "faces.jl",
   "polygons.jl",
   "primitives.jl",
+  "meshes.jl",
   "algorithms.jl"
 ]
 

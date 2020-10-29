@@ -136,6 +136,8 @@ Return the vertices of a face.
 """
 vertices(f::Face) = f.vertices
 
+==(f1::Face, f2::Face) = f1.vertices == f2.vertices
+
 function Base.show(io::IO, f::Face)
   kind = nameof(typeof(f))
   vert = join(f.vertices, ", ")

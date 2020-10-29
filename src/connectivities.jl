@@ -44,3 +44,7 @@ function materialize(connec::Connectivity{F},
                      points::AbstractVector{P}) where {F<:Face,P<:Point}
   F(view(points, collect(connec.list)))
 end
+
+function Base.show(io::IO, c::Connectivity{F}) where {F}
+  print(io, "Connectivity{$F}$(c.list)")
+end

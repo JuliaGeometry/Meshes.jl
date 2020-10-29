@@ -7,7 +7,7 @@ module Meshes
 using StaticArrays
 using LinearAlgebra
 
-import Base: +, -
+import Base: ==, +, -
 
 # basic types
 include("vectors.jl")
