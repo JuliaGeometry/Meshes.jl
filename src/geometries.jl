@@ -126,7 +126,8 @@ abstract type Face{Dim,T,Rank} <: Polytope{Dim,T} end
 
 Return the rank of the face.
 """
-rank(::Face{Dim,T,Rank}) where {Dim,T,Rank} = Rank
+rank(::Type{<:Face{Dim,T,Rank}}) where {Dim,T,Rank} = Rank
+rank(f::Face) = rank(typeof(f))
 
 """
     vertices(face)

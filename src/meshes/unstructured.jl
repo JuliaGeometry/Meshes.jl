@@ -10,6 +10,12 @@ An unstructured mesh with `points` and connectivities
 based on the connectivity list `connec[i]`.
 """
 struct UnstructuredMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
-    points::Vector{Point{Dim,T}}
-    connec::Vector{Connectivity}
+  points::Vector{Point{Dim,T}}
+  connec::Vector{Connectivity}
+end
+
+function faces(m::UnstructuredMesh{Dim,T}, r) where {Dim,T}
+  ps, cs = m.points, m.connec
+  facerank(c) = rank(facetype(c){Dim,T})
+  (materialize(cs[i], ps) for i in eachindex(cs) if facerank(cs[i]) == r)
 end

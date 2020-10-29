@@ -15,6 +15,14 @@ struct Connectivity{F<:Face,N}
 end
 
 """
+    facetype(connectivity)
+
+Return the face type (e.g. Triangle) of the `connectivity`.
+"""
+facetype(::Type{Connectivity{F,N}}) where {F,N} = F
+facetype(c::Connectivity) = facetype(typeof(c))
+
+"""
     connect(list, F)
 
 Connect a `list` of indices from a global vector of [`Point`](@ref)

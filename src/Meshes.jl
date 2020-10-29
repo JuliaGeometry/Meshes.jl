@@ -58,11 +58,12 @@ export
 
   # connectivities
   Connectivity,
-  connect, materialize,
+  facetype, connect, materialize,
 
   # meshes
   Mesh,
   UnstructuredMesh,
+  faces,
 
   # TODO: review these
   before, during, overlaps, finishes,
