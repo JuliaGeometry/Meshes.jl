@@ -14,6 +14,8 @@ struct UnstructuredMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
   connec::Vector{Connectivity}
 end
 
+vertices(m::UnstructuredMesh) = m.points
+
 function faces(m::UnstructuredMesh{Dim,T}, r) where {Dim,T}
   @assert r ≤ Dim "invalid rank for mesh"
   ps, cs = m.points, m.connec

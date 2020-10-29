@@ -35,6 +35,7 @@
       [(1.0,1.0), (0.0,1.0), (0.5,0.5)],
       [(0.0,1.0), (0.0,0.0), (0.5,0.5)]
     ])
+    @test vertices(mesh) == points
     bytes = @allocated faces(mesh, 2)
     @test bytes < 100
     cells = faces(mesh, 2)

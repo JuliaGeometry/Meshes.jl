@@ -10,6 +10,13 @@ A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`.
 abstract type Mesh{Dim,T} <: Geometry{Dim,T} end
 
 """
+    vertices(mesh)
+
+Return the vertices of the `mesh`.
+"""
+function vertices end
+
+"""
     faces(mesh, rank)
 
 Return an iterator with `rank`-faces of the `mesh`.
