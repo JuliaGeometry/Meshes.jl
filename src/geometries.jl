@@ -49,7 +49,7 @@ include("primitives/cylinder.jl")
 """
     Chain(p1, p2, ..., pn)
 
-A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
+A chain from a sequence of points `p1`, `p2`, ..., `pn`.
 See https://en.wikipedia.org/wiki/Polygonal_chain.
 """
 struct Chain{Dim,T,N} <: Geometry{Dim,T}
@@ -70,7 +70,7 @@ vertices(c::Chain) = c.vertices
 """
     isclosed(chain)
 
-Tells whether or not the polygonal chain is closed.
+Tells whether or not the chain is closed.
 A closed chain is also known as a ring.
 """
 isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
@@ -170,5 +170,6 @@ struct Polygon{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
   end
 end
 
-Polygon(outer::Chain{Dim,T}, inners) where {Dim,T} = Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
+Polygon(outer::Chain{Dim,T}, inners) where {Dim,T} =
+  Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
 Polygon(outer::C) where {C<:Chain} = Polygon(outer, C[])
