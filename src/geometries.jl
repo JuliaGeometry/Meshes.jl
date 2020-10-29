@@ -10,18 +10,20 @@ A geometry embedded in a `Dim`-dimensional space with coordinates of type `T`.
 abstract type Geometry{Dim,T} end
 
 """
-    ndims(geometry)
+    embeddim(geometry)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
-Base.ndims(::Geometry{Dim,T}) where {Dim,T} = Dim
+embeddim(::Type{<:Geometry{Dim,T}}) where {Dim,T} = Dim
+embeddim(g::Geometry) = embeddim(typeof(g))
 
 """
     coordtype(geometry)
 
 Return the machine type of each coordinate used to describe the `geometry`.
 """
-coordtype(::Geometry{Dim,T}) where {Dim,T}  = T
+coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T}  = T
+coordtype(g::Geometry) = coordtype(typeof(g))
 
 # -----------
 # PRIMITIVES

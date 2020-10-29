@@ -51,7 +51,7 @@
 
   @testset "Sphere" begin
     sphere = Sphere(Point3f(0,0,0), 1.0f0)
-    @test ndims(sphere) == 3
+    @test embeddim(sphere) == 3
     @test coordtype(sphere) == Float32
     @test center(sphere) == Point3f(0,0,0)
     @test radius(sphere) == 1.0f0
@@ -59,7 +59,7 @@
 
   @testset "Cylinder" begin
     c = Cylinder(Point3(1,2,3), Point3(4,5,6), 5.0)
-    @test ndims(c) == 3
+    @test embeddim(c) == 3
     @test coordtype(c) == Float64
     @test radius(c) == 5.0
     @test height(c) == √27

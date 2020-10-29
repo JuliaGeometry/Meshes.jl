@@ -25,7 +25,7 @@ include("boundingboxes.jl")
 export 
   # points
   Point, Point2, Point3, Point2f, Point3f,
-  coordtype, coordinates,
+  embeddim, coordtype, coordinates,
 
   # vectors
   Vec, Vec2, Vec3, Vec2f, Vec3f,

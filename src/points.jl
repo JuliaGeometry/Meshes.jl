@@ -41,12 +41,12 @@ const Point2f = Point{2,Float32}
 const Point3f = Point{3,Float32}
 
 """
-    ndims(point)
+    embeddim(point)
 
 Return the number of dimensions of the space where the `point` is embedded.
 """
-Base.ndims(::Type{Point{Dim,T}}) where {Dim,T} = Dim
-Base.ndims(p::Point) = ndims(typeof(p))
+embeddim(::Type{Point{Dim,T}}) where {Dim,T} = Dim
+embeddim(p::Point) = embeddim(typeof(p))
 
 """
     coordtype(point)
