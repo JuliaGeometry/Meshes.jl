@@ -7,6 +7,6 @@
 
 A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,2}
+struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,3}
   vertices::V
 end
