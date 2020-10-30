@@ -24,3 +24,9 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,3}
   vertices::V
 end
+
+function facets(hex::Hexahedron)
+  connec = connect.([(1,2,3,4),(5,6,7,8),(1,5,6,2),
+                     (2,6,7,3),(3,4,8,7),(1,5,8,4)], Quadrangle)
+  (materialize(c, hex.vertices) for c in connec)
+end
