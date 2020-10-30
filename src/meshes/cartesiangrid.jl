@@ -149,5 +149,5 @@ function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid{Dim,T}) where {D
   println(io, "$dims CartesianGrid{$Dim,$T}")
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
-  print(  io, "  spacing: ", spacing(g))
+  print(  io, "  spacing: ", Tuple(spacing(g)))
 end
