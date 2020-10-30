@@ -2,6 +2,18 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# ORDERING CONVENTION
+#       v
+#       ^
+#       |
+# 3-----------2      
+# |     |     |      
+# |     |     |      
+# |     +---- | --> u
+# |           |      
+# |           |      
+# 0-----------1      
+
 """
     Quadrangle(p1, p2, p3, p4)
 

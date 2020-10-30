@@ -2,6 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# ORDERING CONVENTION
+#       v
+#       ^
+#       |
+#       |
+# 0-----+-----1 --> u
+
 """
     Segment(p1, p2)
 

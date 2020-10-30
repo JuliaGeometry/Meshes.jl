@@ -112,8 +112,8 @@ end
 We say that a geometry is a polytope when it is made of a collection of "flat" sides.
 They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
 by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
-faces and cells in 3D. We follow the ordering conventions of the VTK project:
-https://lorensen.github.io/VTKExamples/site/VTKBook/05Chapter5/#54-cell-types
+faces and cells in 3D. We follow the ordering conventions of the GMSH project:
+https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering
 
 Additionally, the following property must hold in order for a geometry to be considered
 a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, which may
