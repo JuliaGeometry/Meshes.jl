@@ -17,10 +17,11 @@ end
 vertices(m::UnstructuredMesh) = m.points
 
 function faces(m::UnstructuredMesh{Dim,T}, r) where {Dim,T}
-  @assert r ≤ Dim "invalid rank for mesh"
+  @assert 0 ≤ r ≤ Dim "invalid rank for mesh"
   ps, cs = m.points, m.connec
+  r == 0 && return ps
   facerank(c) = rank(facetype(c){Dim,T})
-  (materialize(cs[i], ps) for i in eachindex(cs) if facerank(cs[i]) == r)
+  (materialize(c, ps) for c in cs if facerank(c) == r)
 end
 
 function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}
@@ -30,14 +31,13 @@ function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}
 end
 
 function Base.show(io::IO, ::MIME"text/plain", m::UnstructuredMesh{Dim,T}) where {Dim,T}
+  nvert = length(m.points)
+  nface = length(m.connec)
   println(io, "UnstructuredMesh{$Dim,$T}")
-  for r in 1:Dim
-    fs = collect(faces(m, r))
-    n  = length(fs)
-    if n > 0
-      lines = ["    └─$f" for f in fs]
-      println(io, "  $r-faces")
-      print(  io, join(lines, "\n"))
-    end
-  end
+  println(io, "  $nvert vertices")
+  lines = ["    └─$p" for p in m.points]
+  println(io, join(lines, "\n"))
+  println(io, "  $nface faces")
+  lines = ["    └─$f" for f in m.connec]
+  print(  io, join(lines, "\n"))
 end

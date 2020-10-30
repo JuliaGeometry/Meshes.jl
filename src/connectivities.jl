@@ -46,5 +46,5 @@ function materialize(connec::Connectivity{F},
 end
 
 function Base.show(io::IO, c::Connectivity{F}) where {F}
-  print(io, "Connectivity{$F}$(c.list)")
+  print(io, "$F$(c.list)")
 end
