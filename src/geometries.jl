@@ -58,50 +58,6 @@ include("primitives/ball.jl")
 include("primitives/sphere.jl")
 include("primitives/cylinder.jl")
 
-# -------
-# CHAINS
-# -------
-
-"""
-    Chain(p1, p2, ..., pn)
-
-A chain from a sequence of points `p1`, `p2`, ..., `pn`.
-See https://en.wikipedia.org/wiki/Polygonal_chain.
-"""
-struct Chain{Dim,T,N} <: Geometry{Dim,T}
-  vertices::NTuple{N,Point{Dim,T}}
-end
-
-Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
-Chain(points::NTuple{N,TP}) where {N,TP<:Tuple} = Chain(Point.(points))
-Chain(points::Vararg{TP,N}) where {N,TP<:Tuple} = Chain(points)
-
-"""
-    vertices(chain)
-
-Return the vertices of a chain.
-"""
-vertices(c::Chain) = c.vertices
-
-"""
-    isclosed(chain)
-
-Tells whether or not the chain is closed.
-A closed chain is also known as a ring.
-"""
-isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
-
-function Base.show(io::IO, c::Chain{Dim,T,N}) where {Dim,T,N}
-  vert = join(c.vertices, ", ")
-  print(io, "$N-chain($vert)")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T,N}) where {Dim,T,N}
-  lines = ["  └─$v" for v in c.vertices]
-  println(io, "$N-chain{$Dim,$T}")
-  print(io, join(lines, "\n"))
-end
-
 # ----------
 # POLYTOPES
 # ----------
@@ -120,6 +76,21 @@ a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, whi
 have (n-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 """
 abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
+
+"""
+    vertices(polytope)
+
+Return the vertices of a `polytope`.
+"""
+vertices(p::Polytope) = p.vertices
+
+"""
+    facets(polytope)
+
+Return the facets of a `polytope`.
+See https://en.wikipedia.org/wiki/Facet_(geometry)
+"""
+function facets end
 
 """
     Face{Dim,T,Rank}
@@ -143,13 +114,6 @@ Return the rank of the face.
 rank(::Type{<:Face{Dim,T,Rank}}) where {Dim,T,Rank} = Rank
 rank(f::Face) = rank(typeof(f))
 
-"""
-    vertices(face)
-
-Return the vertices of a face.
-"""
-vertices(f::Face) = f.vertices
-
 ==(f1::Face, f2::Face) = f1.vertices == f2.vertices
 
 function Base.show(io::IO, f::Face)
@@ -171,6 +135,43 @@ include("faces/quadrangle.jl")
 include("faces/pyramid.jl")
 include("faces/tetrahedron.jl")
 include("faces/hexahedron.jl")
+
+# -------
+# CHAINS
+# -------
+
+"""
+    Chain(p1, p2, ..., pn)
+
+A chain from a sequence of points `p1`, `p2`, ..., `pn`.
+See https://en.wikipedia.org/wiki/Polygonal_chain.
+"""
+struct Chain{Dim,T,N} <: Polytope{Dim,T}
+  vertices::NTuple{N,Point{Dim,T}}
+end
+
+Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
+Chain(points::NTuple{N,TP}) where {N,TP<:Tuple} = Chain(Point.(points))
+Chain(points::Vararg{TP,N}) where {N,TP<:Tuple} = Chain(points)
+
+"""
+    isclosed(chain)
+
+Tells whether or not the chain is closed.
+A closed chain is also known as a ring.
+"""
+isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
+
+function Base.show(io::IO, c::Chain{Dim,T,N}) where {Dim,T,N}
+  vert = join(c.vertices, ", ")
+  print(io, "$N-chain($vert)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T,N}) where {Dim,T,N}
+  lines = ["  └─$v" for v in c.vertices]
+  println(io, "$N-chain{$Dim,$T}")
+  print(io, join(lines, "\n"))
+end
 
 """
     Polygon(outer, [inner1, inner2, ...])

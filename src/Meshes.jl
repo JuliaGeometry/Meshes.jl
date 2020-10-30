@@ -40,19 +40,20 @@ export
   Box, Ball, Sphere, Cylinder,
   center, radius, height, sides, volume,
 
-  # chains
-  Chain,
-  vertices, isclosed,
-
   # polytopes
   Polytope,
   vertices,
+  facets,
 
   # faces
   Face,
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
-  vertices, rank,
+  rank,
+
+  # chains
+  Chain,
+  isclosed,
 
   # polygons
   Polygon,
