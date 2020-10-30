@@ -80,6 +80,11 @@ Base.minimum(g::CartesianGrid) = g.origin
 Base.maximum(g::CartesianGrid) = g.origin + g.dims .* g.spacing
 spacing(g::CartesianGrid) = g.spacing
 
+function vertices(g::CartesianGrid)
+  inds = CartesianIndices(g.dims .+ 1)
+  ivec(g.origin + (ind.I .- 1) .* g.spacing for ind in inds)
+end
+
 function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
   dims = join(g.dims, "×")
   print(io, "$dims CartesianGrid($(minimum(g)), $(maximum(g)))")

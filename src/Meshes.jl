@@ -4,6 +4,7 @@
 
 module Meshes
 
+using IterTools
 using StaticArrays
 using LinearAlgebra
 
