@@ -33,12 +33,13 @@ export
 
   # geometries
   Geometry,
-  embeddim, coordtype, boundary,
+  embeddim, coordtype,
+  volume, boundary,
 
   # primitives
   Primitive,
   Box, Ball, Sphere, Cylinder,
-  center, radius, height, sides, volume,
+  center, radius, height, sides,
 
   # polytopes
   Polytope,
