@@ -26,8 +26,8 @@ end
 # convenience constructors
 Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
 Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
-Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
-Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(coords)
+Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
+Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)

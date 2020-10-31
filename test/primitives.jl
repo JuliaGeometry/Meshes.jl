@@ -24,6 +24,20 @@
     @test measure(b) ≈ π*(2^2)
     b = Ball(P3(0,0,0), T(2))
     @test measure(b) ≈ (4/3)*π*(2^3)
+
+    b = Ball(P2(0,0), T(2))
+    @test P2(1,0) ∈ b
+    @test P2(0,1) ∈ b
+    @test P2(2,0) ∈ b
+    @test P2(0,2) ∈ b
+    @test P2(3,5) ∉ b
+
+    b = Ball(P3(0,0,0), T(2))
+    @test P3(1,0,0) ∈ b
+    @test P3(0,0,1) ∈ b
+    @test P3(2,0,0) ∈ b
+    @test P3(0,0,2) ∈ b
+    @test P3(3,5,2) ∉ b
   end
 
   @testset "Sphere" begin
@@ -38,6 +52,20 @@
     @test measure(s) ≈ 2π*2
     s = Sphere(P3(0,0,0), T(2))
     @test measure(s) ≈ 4π*(2^2)
+
+    s = Sphere(P2(0,0), T(2))
+    @test P2(1,0) ∉ s
+    @test P2(0,1) ∉ s
+    @test P2(2,0) ∈ s
+    @test P2(0,2) ∈ s
+    @test P2(3,5) ∉ s
+
+    s = Sphere(P3(0,0,0), T(2))
+    @test P3(1,0,0) ∉ s
+    @test P3(0,0,1) ∉ s
+    @test P3(2,0,0) ∈ s
+    @test P3(0,0,2) ∈ s
+    @test P3(3,5,2) ∉ s
   end
 
   @testset "Cylinder" begin
