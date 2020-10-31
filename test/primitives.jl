@@ -1,6 +1,3 @@
-for T in (Float32, Float64)
-P2 = Point{2,T}
-P3 = Point{3,T}
 @testset "Primitives ($T)" begin
   @testset "Boxes" begin
     b = Box(P2(0, 0), P2(1, 1))
@@ -49,5 +46,4 @@ P3 = Point{3,T}
 
     @test measure(c) ≈ π*5.0^2*√27
   end
-end
 end

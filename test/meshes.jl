@@ -1,6 +1,3 @@
-for T in (Float32, Float64)
-P2 = Point{2,T}
-P3 = Point{3,T}
 @testset "Meshes ($T)" begin
   @testset "CartesianGrid" begin
     grid = CartesianGrid{T}(200,100)
@@ -60,5 +57,4 @@ P3 = Point{3,T}
     ]
     @test collect(elements(mesh)) == elms
   end
-end
 end

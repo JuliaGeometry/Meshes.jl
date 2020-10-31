@@ -24,6 +24,16 @@ testfiles = [
 
 @testset "Meshes.jl" begin
   for testfile in testfiles
+    # run with single precision
+    global T = Float32
+    global P2 = Point{2,T}
+    global P3 = Point{3,T}
+    include(testfile)
+
+    # run with double precision
+    global T = Float64
+    global P2 = Point{2,T}
+    global P3 = Point{3,T}
     include(testfile)
   end
 end
