@@ -16,11 +16,11 @@ end
 
 vertices(m::UnstructuredMesh) = m.points
 
-function faces(m::UnstructuredMesh{Dim,T}, r) where {Dim,T}
+function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
   @assert 0 ≤ r ≤ Dim "invalid rank for mesh"
   ps, cs = m.points, m.connec
   r == 0 && return ps
-  facerank(c) = rank(facetype(c){Dim,T})
+  facerank(c) = paramdim(facetype(c))
   (materialize(c, ps) for c in cs if facerank(c) == r)
 end
 

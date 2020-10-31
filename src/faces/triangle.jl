@@ -19,9 +19,11 @@
 
 A triangle with points `p1`, `p2`, `p3`.
 """
-struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,2}
+struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T}
   vertices::V
 end
+
+paramdim(::Type{<:Triangle}) = 2
 
 function facets(tri::Triangle)
   connec = connect.([(1,2), (2,3), (3,1)], Segment)

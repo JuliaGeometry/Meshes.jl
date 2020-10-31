@@ -101,26 +101,18 @@ See https://en.wikipedia.org/wiki/Facet_(geometry)
 function facets end
 
 """
-    Face{Dim,T,Rank}
+    Face{Dim,T}
 
 We say that a polytope is a face when it can be used as an element in a finite element
-mesh (e.g. segments, triangles, tetrahedrons). The `Rank` of the face reflects the actual
+mesh (e.g. segments, triangles, tetrahedrons). The rank of the face reflects the actual
 parametric dimension of the polytope. For example, a segment is a 1-face, a triangle is a
 2-face and a tetrahedron is a 3-face. See https://en.wikipedia.org/wiki/Abstract_polytope.
 """
-abstract type Face{Dim,T,Rank} <: Polytope{Dim,T} end
+abstract type Face{Dim,T} <: Polytope{Dim,T} end
 
 (::Type{F})(vertices::Vararg{P}) where {F<:Face,P<:Point} = F(SVector(vertices))
 (::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
 (::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(SVector(vertices))
-
-"""
-    rank(face)
-
-Return the rank of the face.
-"""
-rank(::Type{<:Face{Dim,T,Rank}}) where {Dim,T,Rank} = Rank
-rank(f::Face) = rank(typeof(f))
 
 ==(f1::Face, f2::Face) = f1.vertices == f2.vertices
 

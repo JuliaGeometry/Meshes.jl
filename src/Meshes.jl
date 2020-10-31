@@ -52,7 +52,6 @@ export
   Face,
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
-  rank,
 
   # chains
   Chain,

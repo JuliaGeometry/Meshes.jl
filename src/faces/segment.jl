@@ -14,8 +14,10 @@
 
 A line segment with points `p1`, `p2`.
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,1}
+struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T}
   vertices::V
 end
+
+paramdim(::Type{<:Segment}) = 1
 
 facets(seg::Segment) = (v for v in seg.vertices)

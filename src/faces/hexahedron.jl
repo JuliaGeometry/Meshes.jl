@@ -21,9 +21,11 @@
 
 A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T,3}
+struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T}
   vertices::V
 end
+
+paramdim(::Type{<:Hexahedron}) = 3
 
 function facets(hex::Hexahedron)
   connec = connect.([(1,2,3,4),(5,6,7,8),(1,5,6,2),
