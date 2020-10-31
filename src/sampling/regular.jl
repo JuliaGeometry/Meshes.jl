@@ -64,6 +64,23 @@ function sample(sphere::Sphere{3,T}, sampler::RegularSampler) where {T}
   ivec(c + r⃗(θ,φ) for θ in θrange, φ in φrange)
 end
 
+function sample(ball::Ball{Dim,T}, sampler::RegularSampler) where {Dim,T}
+  sz = _adjust_sizes(sampler.sizes, Dim)
+  c, r = center(ball), radius(ball)
+
+  V = T <: AbstractFloat ? T : Float64
+  smin, smax = V(0), V(1)
+  δs = (smax - smin) / (last(sz) - 1)
+  srange = range(smin+δs, stop=smax, length=last(sz))
+
+  # reuse samples on the boundary
+  points = sample(Sphere(c, r), sampler)
+
+  scale(p, s) = Point(s * coordinates(p))
+
+  ivec(scale(p, s) for p in points, s in srange)
+end
+
 # helper function to adjust sizes to a given length
 function _adjust_sizes(sizes, len)
   N, S = len, length(sizes)
