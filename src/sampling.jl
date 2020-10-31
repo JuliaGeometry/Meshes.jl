@@ -14,6 +14,7 @@ abstract type Sampler end
 
 Sample elements from `geometry` with `sampler`.
 """
-function sample end
+sample(geometry::Geometry, sizes) =
+  sample(geometry, RegularSampler(sizes))
 
 include("sampling/regular.jl")
