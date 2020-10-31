@@ -24,12 +24,12 @@ struct Point{Dim,T}
 end
 
 # convenience constructors
-Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
-Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
+Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
+Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
+Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
+Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(coords)
 
 # coordinate type conversions
-Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point(T.(coords))
-Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point(T.(coords))
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
 Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coords)
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
