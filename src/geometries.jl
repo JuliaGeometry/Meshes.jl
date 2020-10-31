@@ -18,6 +18,14 @@ embeddim(::Type{<:Geometry{Dim,T}}) where {Dim,T} = Dim
 embeddim(g::Geometry) = embeddim(typeof(g))
 
 """
+    paramdim(geometry)
+
+Return the number of parametric dimensions of the `geometry`. For example, a
+sphere embedded in 3D has 2 parametric dimension (polar and azimuthal angles).
+"""
+paramdim(g::Geometry) = paramdim(typeof(g))
+
+"""
     coordtype(geometry)
 
 Return the machine type of each coordinate used to describe the `geometry`.

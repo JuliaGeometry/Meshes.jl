@@ -35,7 +35,7 @@ export
 
   # geometries
   Geometry,
-  embeddim, coordtype,
+  embeddim, paramdim, coordtype,
   measure, boundary,
 
   # primitives

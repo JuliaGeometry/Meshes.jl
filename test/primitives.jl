@@ -2,6 +2,7 @@
   @testset "Boxes" begin
     b = Box(P2(0, 0), P2(1, 1))
     @test embeddim(b) == 2
+    @test paramdim(b) == 2
     @test coordtype(b) == T
     @test minimum(b) == P2(0, 0)
     @test maximum(b) == P2(1, 1)
@@ -14,6 +15,7 @@
   @testset "Ball" begin
     b = Ball(P3(1,2,3), T(5))
     @test embeddim(b) == 3
+    @test paramdim(b) == 3
     @test coordtype(b) == T
     @test center(b) == P3(1,2,3)
     @test radius(b) == T(5)
@@ -27,6 +29,7 @@
   @testset "Sphere" begin
     s = Sphere(P3(0,0,0), T(1))
     @test embeddim(s) == 3
+    @test paramdim(s) == 2
     @test coordtype(s) == T
     @test center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
@@ -40,6 +43,7 @@
   @testset "Cylinder" begin
     c = Cylinder(P3(1,2,3), P3(4,5,6), T(5))
     @test embeddim(c) == 3
+    @test paramdim(c) == 3
     @test coordtype(c) == T
     @test radius(c) == T(5)
     @test height(c) ≈ √27

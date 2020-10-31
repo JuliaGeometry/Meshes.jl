@@ -17,6 +17,8 @@ end
 Cylinder(start::Tuple, finish::Tuple, radius) =
   Cylinder(Point(start), Point(finish), radius)
 
+paramdim(::Type{<:Cylinder}) = 3
+
 radius(c::Cylinder) = c.radius
 height(c::Cylinder) = norm(c.finish - c.start)
 

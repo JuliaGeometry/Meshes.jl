@@ -14,6 +14,8 @@ end
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 
+paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
+
 center(s::Sphere) = s.center
 radius(s::Sphere) = s.radius
 
