@@ -26,11 +26,11 @@ coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T} = T
 coordtype(g::Geometry) = coordtype(typeof(g))
 
 """
-    volume(geometry)
+    measure(geometry)
 
-Return the volume of the `geometry`.
+Return the measure of the `geometry`, i.e. the length, area, or volume.
 """
-function volume end
+function measure end
 
 """
     boundary(geometry)

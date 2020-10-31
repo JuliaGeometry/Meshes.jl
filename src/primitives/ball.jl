@@ -17,6 +17,12 @@ Ball(center::Tuple, radius) = Ball(Point(center), radius)
 center(b::Ball) = b.center
 radius(b::Ball) = b.radius
 
+# https://en.wikipedia.org/wiki/Volume_of_an_n-ball
+function measure(b::Ball{Dim}) where {Dim}
+  r, n = b.radius, Dim
+  (π^(n/2) * r^n) / gamma(n/2 + 1)
+end
+
 function Base.in(p::Point, b::Ball)
   x = coordinates(p)
   c = coordinates(b.center)

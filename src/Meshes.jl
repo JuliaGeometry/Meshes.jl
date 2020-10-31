@@ -6,6 +6,7 @@ module Meshes
 
 using IterTools
 using StaticArrays
+using SpecialFunctions
 using LinearAlgebra
 
 import Base: ==, +, -
@@ -34,7 +35,7 @@ export
   # geometries
   Geometry,
   embeddim, coordtype,
-  volume, boundary,
+  measure, boundary,
 
   # primitives
   Primitive,

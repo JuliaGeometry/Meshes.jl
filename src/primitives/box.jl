@@ -25,7 +25,8 @@ Base.minimum(b::Box) = b.min
 Base.maximum(b::Box) = b.max
 Base.extrema(b::Box) = b.min, b.max
 sides(b::Box) = b.max - b.min
-volume(b::Box) = prod(b.max - b.min)
+
+measure(b::Box) = prod(b.max - b.min)
 
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   l, u = coordinates.((b.min, b.max))

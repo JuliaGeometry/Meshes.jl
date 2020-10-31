@@ -18,4 +18,5 @@ Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(fin
 
 radius(c::Cylinder) = c.radius
 height(c::Cylinder) = norm(c.finish - c.start)
-volume(c::Cylinder) = π * radius(c)^2 * height(c)
+
+measure(c::Cylinder) = π * radius(c)^2 * height(c)
