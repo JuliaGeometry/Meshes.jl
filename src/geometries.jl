@@ -112,7 +112,7 @@ abstract type Face{Dim,T} <: Polytope{Dim,T} end
 
 (::Type{F})(vertices::Vararg{P}) where {F<:Face,P<:Point} = F(SVector(vertices))
 (::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
-(::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(SVector(vertices))
+(::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(collect(vertices))
 
 ==(f1::Face, f2::Face) = f1.vertices == f2.vertices
 
