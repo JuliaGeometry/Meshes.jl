@@ -92,6 +92,8 @@ at a reference (or start) point `A`.
 -(A::Point, v::Vec) = Point(A.coords - v)
 -(v::Vec, A::Point) = A - v
 
+Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
+
 # TODO: implement rand properly with RNG, etc.
 Base.rand(::Type{Point{Dim,T}}) where {Dim,T} = Point(rand(SVector{Dim,T}))
 Base.rand(::Type{Point{Dim,T}}, n::Integer) where {Dim,T} = Point.(rand(SVector{Dim,T}, n))
