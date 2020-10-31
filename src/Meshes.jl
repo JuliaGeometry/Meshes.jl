@@ -22,6 +22,7 @@ include("connectivities.jl")
 include("meshes.jl")
 
 # algorithms
+include("sampling.jl")
 include("boundingboxes.jl")
 
 export 
@@ -71,6 +72,11 @@ export
   Mesh,
   CartesianGrid, UnstructuredMesh,
   faces, elements, spacing,
+
+  # sampling
+  Sampler,
+  RegularSampler,
+  sample,
 
   # bounding boxes
   boundingbox

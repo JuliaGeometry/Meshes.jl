@@ -1,0 +1,71 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
+"""
+    RegularSampler(n1, n2, ..., np)
+
+Sample geometry regularly using `n1` points along the first
+parametric dimension, `n2` points along the second parametric
+dimension, ..., `np` poitns along the last parametric dimension.
+
+## Example
+
+Sample sphere regularly with 360 longitudes and 180 latitudes:
+
+```julia
+sample(Sphere((0,0,0), 1), RegularSampler(360, 180))
+```
+"""
+struct RegularSampler{N} <: Sampler
+  sizes::NTuple{N,Int}
+end
+
+RegularSampler(sizes::Vararg{Int,N}) where {N} = RegularSampler(sizes)
+
+function sample(box::Box{Dim}, sampler::RegularSampler) where {Dim}
+  sz = _adjust_sizes(sampler.sizes, Dim)
+  l, u = extrema(box)
+
+  # origin and spacing
+  or, sp = l, (u - l) ./ (sz .- 1)
+
+  ivec(or + (ind.I .- 1) .* sp for ind in CartesianIndices(sz))
+end
+
+function sample(sphere::Sphere{2,T}, sampler::RegularSampler) where {T}
+  sz = _adjust_sizes(sampler.sizes, 1)
+  c, r = center(sphere), radius(sphere)
+
+  V = T <: AbstractFloat ? T : Float64
+  θmin, θmax = V(0), V(2π)
+  δθ = (θmax - θmin) / (sz[1] - 1)
+  θrange = range(θmin, stop=θmax-δθ, length=sz[1])
+
+  r⃗(θ) = Vec{2,V}(r*cos(θ), r*sin(θ))
+
+  ivec(c + r⃗(θ) for θ in θrange)
+end
+
+function sample(sphere::Sphere{3,T}, sampler::RegularSampler) where {T}
+  sz = _adjust_sizes(sampler.sizes, 2)
+  c, r = center(sphere), radius(sphere)
+
+  V = T <: AbstractFloat ? T : Float64
+  θmin, θmax = V(0), V(2π)
+  φmin, φmax = V(0), V(π)
+  δθ = (θmax - θmin) / (sz[1] - 1)
+  δφ = (φmax - φmin) / (sz[2] - 1)
+  θrange = range(θmin, stop=θmax-δθ, length=sz[1])
+  φrange = range(φmin, stop=φmax-δφ, length=sz[2])
+
+  r⃗(θ, φ) = Vec{3,V}(r*sin(θ)*cos(φ), r*sin(θ)*sin(φ), r*cos(θ))
+
+  ivec(c + r⃗(θ,φ) for θ in θrange, φ in φrange)
+end
+
+# helper function to adjust sizes to a given length
+function _adjust_sizes(sizes, len)
+  N, S = len, length(sizes)
+  S != N ? ntuple(i -> i ≤ S ? sizes[i] : last(sizes), N) : sizes
+end
