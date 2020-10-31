@@ -18,6 +18,7 @@ testfiles = [
   "polygons.jl",
   "primitives.jl",
   "meshes.jl",
+  "sampling.jl",
   "boundingboxes.jl"
 ]
 

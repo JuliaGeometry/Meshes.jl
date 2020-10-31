@@ -1,28 +1,31 @@
-@testset "Meshes" begin
+for T in (Float32, Float64)
+P2 = Point{2,T}
+P3 = Point{3,T}
+@testset "Meshes ($T)" begin
   @testset "CartesianGrid" begin
-    grid = CartesianGrid{Float32}(200,100)
+    grid = CartesianGrid{T}(200,100)
     @test embeddim(grid) == 2
-    @test coordtype(grid) == Float32
-    @test size(grid) == (200,100)
-    @test minimum(grid) == Point(0f0, 0f0)
-    @test maximum(grid) == Point(200f0, 100f0)
-    @test spacing(grid) == [1f0, 1f0]
+    @test coordtype(grid) == T
+    @test size(grid) == (200, 100)
+    @test minimum(grid) == P2(0, 0)
+    @test maximum(grid) == P2(200, 100)
+    @test spacing(grid) == T[1, 1]
 
-    grid = CartesianGrid((200,100,50), (0.,0.,0.), (1.,1.,1.))
+    grid = CartesianGrid((200,100,50), T.((0,0,0)), T.((1,1,1)))
     @test embeddim(grid) == 3
-    @test coordtype(grid) == Float64
-    @test size(grid) == (200,100,50)
-    @test minimum(grid) == Point(0., 0., 0.)
-    @test maximum(grid) == Point(200., 100., 50.)
-    @test spacing(grid) == [1.,1.,1.]
+    @test coordtype(grid) == T
+    @test size(grid) == (200, 100, 50)
+    @test minimum(grid) == P3(0, 0, 0)
+    @test maximum(grid) == P3(200, 100, 50)
+    @test spacing(grid) == T[1, 1, 1]
 
-    grid = CartesianGrid((-1.,-1.), (1.,1.), dims=(200,100))
+    grid = CartesianGrid(T.((-1.,-1.)), T.((1.,1.)), dims=(200,100))
     @test embeddim(grid) == 2
-    @test coordtype(grid) == Float64
-    @test size(grid) == (200,100)
-    @test minimum(grid) == Point(-1., -1.)
-    @test maximum(grid) == Point(1., 1.)
-    @test spacing(grid) == [2/200, 2/100]
+    @test coordtype(grid) == T
+    @test size(grid) == (200, 100)
+    @test minimum(grid) == P2(-1., -1.)
+    @test maximum(grid) == P2(1., 1.)
+    @test spacing(grid) == T[2/200, 2/100]
   end
 
   @testset "UnstructuredMesh" begin
@@ -57,4 +60,5 @@
     ]
     @test collect(elements(mesh)) == elms
   end
+end
 end
