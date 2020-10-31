@@ -24,7 +24,7 @@ end
 RegularSampler(sizes::Vararg{Int,N}) where {N} = RegularSampler(sizes)
 
 function sample(box::Box{Dim}, sampler::RegularSampler) where {Dim}
-  sz = _adjust_sizes(sampler.sizes, Dim)
+  sz = _adjust_sizes(sampler.sizes, paramdim(box))
   l, u = extrema(box)
 
   # origin and spacing
@@ -34,12 +34,12 @@ function sample(box::Box{Dim}, sampler::RegularSampler) where {Dim}
 end
 
 function sample(sphere::Sphere{2,T}, sampler::RegularSampler) where {T}
-  sz = _adjust_sizes(sampler.sizes, 1)
+  sz = _adjust_sizes(sampler.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
   V = T <: AbstractFloat ? T : Float64
   θmin, θmax = V(0), V(2π)
-  δθ = (θmax - θmin) / (sz[1] - 1)
+  δθ = (θmax - θmin) / sz[1]
   θrange = range(θmin, stop=θmax-δθ, length=sz[1])
 
   r⃗(θ) = Vec{2,V}(r*cos(θ), r*sin(θ))
@@ -47,25 +47,26 @@ function sample(sphere::Sphere{2,T}, sampler::RegularSampler) where {T}
   ivec(c + r⃗(θ) for θ in θrange)
 end
 
+# spherical coordinates in ISO 80000-2:2019 convention
 function sample(sphere::Sphere{3,T}, sampler::RegularSampler) where {T}
-  sz = _adjust_sizes(sampler.sizes, 2)
+  sz = _adjust_sizes(sampler.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
   V = T <: AbstractFloat ? T : Float64
-  θmin, θmax = V(0), V(2π)
-  φmin, φmax = V(0), V(π)
-  δθ = (θmax - θmin) / (sz[1] - 1)
-  δφ = (φmax - φmin) / (sz[2] - 1)
-  θrange = range(θmin, stop=θmax-δθ, length=sz[1])
+  θmin, θmax = V(0), V(π)
+  φmin, φmax = V(0), V(2π)
+  δθ = (θmax - θmin) / (sz[1] + 1)
+  δφ = (φmax - φmin) / (sz[2]    )
+  θrange = range(θmin+δθ, stop=θmax-δθ, length=sz[1])
   φrange = range(φmin, stop=φmax-δφ, length=sz[2])
 
   r⃗(θ, φ) = Vec{3,V}(r*sin(θ)*cos(φ), r*sin(θ)*sin(φ), r*cos(θ))
 
-  ivec(c + r⃗(θ,φ) for θ in θrange, φ in φrange)
+  ivec(c + r⃗(θ, φ) for θ in θrange, φ in φrange)
 end
 
 function sample(ball::Ball{Dim,T}, sampler::RegularSampler) where {Dim,T}
-  sz = _adjust_sizes(sampler.sizes, Dim)
+  sz = _adjust_sizes(sampler.sizes, paramdim(ball))
   c, r = center(ball), radius(ball)
 
   V = T <: AbstractFloat ? T : Float64
