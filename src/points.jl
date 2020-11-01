@@ -7,7 +7,7 @@
 
 A point in `Dim`-dimensional space with coordinates of type `T`.
 The coordinates of the point provided upon construction are with
-respect to the canonical Euclidean basis. See [`vunit`](@ref).
+respect to the canonical Euclidean basis.
 
 ## Example
 
@@ -60,7 +60,7 @@ coordtype(p::Point) = coordtype(typeof(p))
     coordinates(A::Point)
 
 Return the coordinates of the point with respect to the
-canonical Euclidean basis. See [`vunit`](@ref).
+canonical Euclidean basis.
 """
 coordinates(A::Point) = A.coords
 

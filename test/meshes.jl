@@ -1,4 +1,4 @@
-@testset "Meshes ($T)" begin
+@testset "Meshes" begin
   @testset "CartesianGrid" begin
     grid = CartesianGrid{T}(200,100)
     @test embeddim(grid) == 2
@@ -52,7 +52,7 @@
     @test collect(elements(mesh)) == elms
 
     # make sure there is no memory allocation
-    points = Point2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
+    points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = UnstructuredMesh(points, connec)
     bytes = @allocated faces(mesh, 2)

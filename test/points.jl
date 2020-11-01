@@ -1,4 +1,4 @@
-@testset "Points ($T)" begin
+@testset "Points" begin
   @test embeddim(Point(1, 2)) == 2
   @test embeddim(Point(1, 2, 3)) == 3
   @test coordtype(Point(1, 1)) == Int

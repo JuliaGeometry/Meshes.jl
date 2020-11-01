@@ -29,20 +29,3 @@ const Vec2  = Vec{2,Float64}
 const Vec3  = Vec{3,Float64}
 const Vec2f = Vec{2,Float32}
 const Vec3f = Vec{3,Float32}
-
-"""
-    vfill(VecType, v)
-
-Return the vector of type `VecType` with all
-coordinates equal to `v`.
-
-## Example
-
-```julia
-vfill(Vec2, 3) == [3.0, 3.0]
-vfill(Vec2f, 0) == [0.0f0, 0.0f0]
-```
-"""
-function vfill(VecType::Type, v::Number)
-  VecType(ntuple(j->v, length(VecType)))
-end

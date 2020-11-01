@@ -22,22 +22,22 @@ testfiles = [
   "boundingboxes.jl"
 ]
 
-@testset "Meshes.jl" begin
+# run tests with single precision
+T = Float32
+P2, P3 = Point{2,T}, Point{3,T}
+V2, V3 = Vec{2,T}, Vec{3,T}
+@testset "Meshes.jl ($T)" begin
   for testfile in testfiles
-    # run with single precision
-    global T = Float32
-    global P2 = Point{2,T}
-    global P3 = Point{3,T}
-    global V2 = Vec{2,T}
-    global V3 = Vec{3,T}
     include(testfile)
+  end
+end
 
-    # run with double precision
-    global T = Float64
-    global P2 = Point{2,T}
-    global P3 = Point{3,T}
-    global V2 = Vec{2,T}
-    global V3 = Vec{3,T}
+# run tests with double precision
+T = Float64
+P2, P3 = Point{2,T}, Point{3,T}
+V2, V3 = Vec{2,T}, Vec{3,T}
+@testset "Meshes.jl ($T)" begin
+  for testfile in testfiles
     include(testfile)
   end
 end

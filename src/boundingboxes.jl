@@ -32,6 +32,6 @@ boundingbox(b::Box) = b
 function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   c = center(s)
   r = radius(s)
-  r⃗ = vfill(Vec{Dim,T}, r)
+  r⃗ = Vec(ntuple(i->r, Dim))
   Box(c - r⃗, c + r⃗)
 end

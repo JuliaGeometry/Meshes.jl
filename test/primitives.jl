@@ -1,4 +1,4 @@
-@testset "Primitives ($T)" begin
+@testset "Primitives" begin
   @testset "Boxes" begin
     b = Box(P2(0, 0), P2(1, 1))
     @test embeddim(b) == 2
