@@ -22,7 +22,9 @@ testfiles = [
   "boundingboxes.jl"
 ]
 
-# run tests with single precision
+# --------------------------------
+# RUN TESTS WITH SINGLE PRECISION
+# --------------------------------
 T = Float32
 P2, P3 = Point{2,T}, Point{3,T}
 V2, V3 = Vec{2,T}, Vec{3,T}
@@ -32,7 +34,9 @@ V2, V3 = Vec{2,T}, Vec{3,T}
   end
 end
 
-# run tests with double precision
+# --------------------------------
+# RUN TESTS WITH DOUBLE PRECISION
+# --------------------------------
 T = Float64
 P2, P3 = Point{2,T}, Point{3,T}
 V2, V3 = Vec{2,T}, Vec{3,T}
