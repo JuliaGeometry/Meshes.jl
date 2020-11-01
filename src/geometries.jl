@@ -146,13 +146,13 @@ include("faces/hexahedron.jl")
 A chain from a sequence of points `p1`, `p2`, ..., `pn`.
 See https://en.wikipedia.org/wiki/Polygonal_chain.
 """
-struct Chain{Dim,T,N} <: Polytope{Dim,T}
-  vertices::NTuple{N,Point{Dim,T}}
+struct Chain{Dim,T} <: Polytope{Dim,T}
+  vertices::Vector{Point{Dim,T}}
 end
 
-Chain(points::Vararg{P,N}) where {N,P<:Point} = Chain(points)
-Chain(points::NTuple{N,TP}) where {N,TP<:Tuple} = Chain(Point.(points))
-Chain(points::Vararg{TP,N}) where {N,TP<:Tuple} = Chain(points)
+Chain(points::Vararg{P}) where {P<:Point} = Chain(collect(points))
+Chain(points::AbstractVector{TP}) where {TP<:Tuple} = Chain(Point.(points))
+Chain(points::Vararg{TP}) where {TP<:Tuple} = Chain(collect(points))
 
 """
     isclosed(chain)
@@ -162,12 +162,13 @@ A closed chain is also known as a ring.
 """
 isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
 
-function Base.show(io::IO, c::Chain{Dim,T,N}) where {Dim,T,N}
-  vert = join(c.vertices, ", ")
-  print(io, "$N-chain($vert)")
+function Base.show(io::IO, c::Chain)
+  N = length(c.vertices)
+  print(io, "$N-chain")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T,N}) where {Dim,T,N}
+function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
+  N = length(c.vertices)
   lines = ["  └─$v" for v in c.vertices]
   println(io, "$N-chain{$Dim,$T}")
   print(io, join(lines, "\n"))
@@ -178,6 +179,9 @@ end
 
 A polygon with `outer` ring, and optional inner
 rings `inner1`, `inner2`, ...
+
+Rings can be a vector of [`Point`](@ref) or a
+vector of tuples with coordinates for convenience.
 """
 struct Polygon{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
   outer::C
@@ -190,9 +194,12 @@ struct Polygon{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
   end
 end
 
-Polygon(outer::Chain{Dim,T}, inners) where {Dim,T} =
+Polygon(outer::C, inners=[]) where {Dim,T,C<:Chain{Dim,T}} =
   Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
-Polygon(outer::C) where {C<:Chain} = Polygon(outer, C[])
+Polygon(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
+  Polygon(Chain(outer), [Chain(inner) for inner in inners])
+Polygon(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
+  Polygon(Point.(outer), [Point.(inner) for inner in inners])
 
 function Base.show(io::IO, p::Polygon)
   outer = p.outer
