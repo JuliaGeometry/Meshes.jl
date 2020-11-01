@@ -25,3 +25,10 @@ seriously and value any type of feedback.
 
 We have high standards when it comes to source code. Please adopt the
 coding style that is present in the files when submitting pull requests.
+
+### Contributors
+
+Júlio Hoffimann, Simon Danisch, Arsh Sharma, Anshul Singhvi,
+Martijn Visser, Daniel Schwabeneder, F Freyer, Steve Kelly, Tim Holy,
+Matija Čufar, Benoît Legat, Erik Schenetter, Jan Weidner, Mohamed Tarek,
+Paul Jurczak, Zachary P. Christensen, Andrew Bylard, Yuval
