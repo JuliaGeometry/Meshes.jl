@@ -3,18 +3,18 @@
 # ------------------------------------------------------------------
 
 """
-    Sampler
+    SamplingMethod
 
 A method for sampling from geometries.
 """
-abstract type Sampler end
+abstract type SamplingMethod end
 
 """
-    sample(geometry, sampler)
+    sample(geometry, method)
 
-Sample elements from `geometry` with `sampler`.
+Sample elements from `geometry` with `method`.
 """
 sample(geometry::Geometry, sizes) =
-  sample(geometry, RegularSampler(sizes))
+  sample(geometry, RegularSampling(sizes))
 
 include("sampling/regular.jl")

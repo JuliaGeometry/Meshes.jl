@@ -73,8 +73,8 @@ export
   faces, elements, spacing,
 
   # sampling
-  Sampler,
-  RegularSampler,
+  SamplingMethod,
+  RegularSampling,
   sample,
 
   # bounding boxes

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    RegularSampler(n1, n2, ..., np)
+    RegularSampling(n1, n2, ..., np)
 
 Sample geometry regularly using `n1` points along the first
 parametric dimension, `n2` points along the second parametric
@@ -14,17 +14,17 @@ dimension, ..., `np` poitns along the last parametric dimension.
 Sample sphere regularly with 360 longitudes and 180 latitudes:
 
 ```julia
-sample(Sphere((0,0,0), 1), RegularSampler(360, 180))
+sample(Sphere((0,0,0), 1), RegularSampling(360, 180))
 ```
 """
-struct RegularSampler{N} <: Sampler
+struct RegularSampling{N} <: SamplingMethod
   sizes::NTuple{N,Int}
 end
 
-RegularSampler(sizes::Vararg{Int,N}) where {N} = RegularSampler(sizes)
+RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 
-function sample(box::Box{Dim}, sampler::RegularSampler) where {Dim}
-  sz = _adjust_sizes(sampler.sizes, paramdim(box))
+function sample(box::Box{Dim}, method::RegularSampling) where {Dim}
+  sz = _adjust_sizes(method.sizes, paramdim(box))
   l, u = extrema(box)
 
   # origin and spacing
@@ -33,8 +33,8 @@ function sample(box::Box{Dim}, sampler::RegularSampler) where {Dim}
   ivec(or + (ind.I .- 1) .* sp for ind in CartesianIndices(sz))
 end
 
-function sample(sphere::Sphere{2,T}, sampler::RegularSampler) where {T}
-  sz = _adjust_sizes(sampler.sizes, paramdim(sphere))
+function sample(sphere::Sphere{2,T}, method::RegularSampling) where {T}
+  sz = _adjust_sizes(method.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
   V = T <: AbstractFloat ? T : Float64
@@ -48,8 +48,8 @@ function sample(sphere::Sphere{2,T}, sampler::RegularSampler) where {T}
 end
 
 # spherical coordinates in ISO 80000-2:2019 convention
-function sample(sphere::Sphere{3,T}, sampler::RegularSampler) where {T}
-  sz = _adjust_sizes(sampler.sizes, paramdim(sphere))
+function sample(sphere::Sphere{3,T}, method::RegularSampling) where {T}
+  sz = _adjust_sizes(method.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
   V = T <: AbstractFloat ? T : Float64
@@ -65,8 +65,8 @@ function sample(sphere::Sphere{3,T}, sampler::RegularSampler) where {T}
   ivec(c + r⃗(θ, φ) for θ in θrange, φ in φrange)
 end
 
-function sample(ball::Ball{Dim,T}, sampler::RegularSampler) where {Dim,T}
-  sz = _adjust_sizes(sampler.sizes, paramdim(ball))
+function sample(ball::Ball{Dim,T}, method::RegularSampling) where {Dim,T}
+  sz = _adjust_sizes(method.sizes, paramdim(ball))
   c, r = center(ball), radius(ball)
 
   V = T <: AbstractFloat ? T : Float64
@@ -75,7 +75,7 @@ function sample(ball::Ball{Dim,T}, sampler::RegularSampler) where {Dim,T}
   srange = range(smin+δs, stop=smax, length=last(sz))
 
   # reuse samples on the boundary
-  points = sample(Sphere(c, r), RegularSampler(sz[1:Dim-1]))
+  points = sample(Sphere(c, r), RegularSampling(sz[1:Dim-1]))
 
   scale(p, s) = Point(s * coordinates(p))
 
