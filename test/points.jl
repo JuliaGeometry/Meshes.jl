@@ -37,4 +37,7 @@
 
   @test eltype(rand(P2, 3)) == P2
   @test eltype(rand(P3, 3)) == P3
+
+  @test P2(1, 2) ≈ P2(1 + eps(T), T(2))
+  @test P3(1, 2, 3) ≈ P3(1 + eps(T), T(2), T(3))
 end

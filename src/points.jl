@@ -94,9 +94,9 @@ at a reference (or start) point `A`.
 
 Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
 
-# TODO: implement rand properly with RNG, etc.
-Base.rand(::Type{Point{Dim,T}}) where {Dim,T} = Point(rand(SVector{Dim,T}))
-Base.rand(::Type{Point{Dim,T}}, n::Integer) where {Dim,T} = Point.(rand(SVector{Dim,T}, n))
+Random.rand(::Random.AbstractRNG,
+            ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
+  Point(rand(SVector{Dim,T}))
 
 function Base.show(io::IO, point::Point)
   print(io, "Point$(Tuple(point.coords))")

@@ -10,6 +10,7 @@ using SpecialFunctions
 using LinearAlgebra
 
 import Base: ==, +, -
+import Random
 
 # basic types
 include("vectors.jl")
