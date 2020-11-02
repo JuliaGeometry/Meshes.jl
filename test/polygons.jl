@@ -28,7 +28,7 @@
   end
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
-  # rpg --cluster 30 --algo 2opt --format line --output rpg --seed 1
+  # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
   fnames = ["poly$i.line" for i in 1:5]
   polys1 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
   for poly in polys1
@@ -37,10 +37,19 @@
   end
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
-  # rpg --cluster 30 --algo 2opt --format line --output rpg --seed 1 --holes 2
-  fnames = ["hole$i.line" for i in 1:5]
+  # rpg --cluster 30 --algo 2opt --format line --seed 1 --output smooth1 --smooth 2
+  fnames = ["smooth$i.line" for i in 1:5]
   polys2 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
   for poly in polys2
+    @test nvertices(first(rings(poly))) == 121
+    @test !hasholes(poly)
+  end
+
+  # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
+  # rpg --cluster 30 --algo 2opt --format line --seed 1 --output hole1 --holes 2
+  fnames = ["hole$i.line" for i in 1:5]
+  polys3 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
+  for poly in polys3
     outer, inners = rings(poly)
     @test nvertices(outer) < 31
     @test all(nvertices.(inners) .< 18)
