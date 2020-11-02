@@ -92,8 +92,19 @@ at a reference (or start) point `A`.
 -(A::Point, v::Vec) = Point(A.coords - v)
 -(v::Vec, A::Point) = A - v
 
+"""
+    isapprox(A::Point, B::Point)
+
+Tells whether or not the coordinates of points `A` and `B`
+are approximately equal.
+"""
 Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
 
+"""
+    rand(P::Type{<:Point}, n=1)
+
+Generates a random point of type `P`
+"""
 Random.rand(::Random.AbstractRNG,
             ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
   Point(rand(SVector{Dim,T}))

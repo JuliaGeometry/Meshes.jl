@@ -14,7 +14,6 @@ import Random
 
 # basic types
 include("vectors.jl")
-include("matrices.jl")
 include("points.jl")
 
 # geometries and meshes
