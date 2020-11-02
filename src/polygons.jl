@@ -28,10 +28,16 @@ end
 
 Polygon(outer::C, inners=[]) where {Dim,T,C<:Chain{Dim,T}} =
   Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
+
 Polygon(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
   Polygon(Chain(outer), [Chain(inner) for inner in inners])
+
 Polygon(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
   Polygon(Point.(outer), [Point.(inner) for inner in inners])
+
+Polygon(outer::Vararg{P}) where {P<:Point} = Polygon(collect(outer))
+
+Polygon(outer::Vararg{TP}) where {TP<:Tuple} = Polygon(collect(Point.(outer)))
 
 """
     rings(polygon)

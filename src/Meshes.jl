@@ -8,6 +8,7 @@ using IterTools
 using StaticArrays
 using SpecialFunctions
 using LinearAlgebra
+using RecipesBase
 
 import Base: ==, +, -
 import Random
@@ -24,6 +25,9 @@ include("meshes.jl")
 # algorithms
 include("sampling.jl")
 include("boundingboxes.jl")
+
+# plot recipes
+include("plotrecipes/polygons.jl")
 
 export 
   # points
