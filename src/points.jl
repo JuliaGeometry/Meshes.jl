@@ -105,9 +105,9 @@ Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwar
 
 Generates a random point of type `P`
 """
-Random.rand(::Random.AbstractRNG,
+Random.rand(rng::Random.AbstractRNG,
             ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
-  Point(rand(SVector{Dim,T}))
+  Point(rand(rng, SVector{Dim,T}))
 
 function Base.show(io::IO, point::Point)
   print(io, "Point$(Tuple(point.coords))")
