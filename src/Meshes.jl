@@ -45,7 +45,7 @@ export
 
   # polytopes
   Polytope,
-  vertices,
+  vertices, nvertices,
   facets,
 
   # faces
@@ -59,6 +59,7 @@ export
 
   # polygons
   Polygon,
+  rings, hasholes,
 
   # sets
   GeometrySet,

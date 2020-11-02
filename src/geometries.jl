@@ -93,6 +93,13 @@ Return the vertices of a `polytope`.
 vertices(p::Polytope) = p.vertices
 
 """
+    nvertices(polytope)
+
+Return the number of vertices in the `polytope`.
+"""
+nvertices(p::Polytope) = length(p.vertices)
+
+"""
     facets(polytope)
 
 Return the facets of a `polytope`.
@@ -200,6 +207,20 @@ Polygon(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
   Polygon(Chain(outer), [Chain(inner) for inner in inners])
 Polygon(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
   Polygon(Point.(outer), [Point.(inner) for inner in inners])
+
+"""
+    rings(polygon)
+
+Return the outer and inner rings of the polygon.
+"""
+rings(p::Polygon) = p.outer, p.inners
+
+"""
+    hasholes(polygon)
+
+Tells whether or not the `polygon` contains holes.
+"""
+hasholes(p::Polygon) = !isempty(p.inners)
 
 function Base.show(io::IO, p::Polygon)
   outer = p.outer
