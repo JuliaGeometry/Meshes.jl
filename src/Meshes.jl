@@ -27,6 +27,7 @@ include("sampling.jl")
 include("boundingboxes.jl")
 
 # plot recipes
+include("plotrecipes/chains.jl")
 include("plotrecipes/polygons.jl")
 
 export 
