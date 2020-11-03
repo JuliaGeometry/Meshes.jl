@@ -20,4 +20,4 @@ end
 
 paramdim(::Type{<:Segment}) = 1
 
-facets(seg::Segment) = (v for v in seg.vertices)
+facets(s::Segment) = (v for v in s.vertices)
