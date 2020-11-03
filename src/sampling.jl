@@ -14,7 +14,9 @@ abstract type SamplingMethod end
 
 Sample elements from `geometry` with `method`.
 """
-sample(geometry::Geometry, sizes) =
-  sample(geometry, RegularSampling(sizes))
+function sample end
 
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
 include("sampling/regular.jl")

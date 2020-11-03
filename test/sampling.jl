@@ -56,13 +56,4 @@
       @test p ≈ t
     end
   end
-
-  @testset "DefaultSampler" begin
-    # by default use RegularSampling
-    b = Box(P2(0, 0), P2(2, 2))
-    ps = sample(b, 3)
-    @test collect(ps) == P2[(0,0),(1,0),(2,0),(0,1),(1,1),(2,1),(0,2),(1,2),(2,2)]
-    ps = sample(b, (2, 3))
-    @test collect(ps) == P2[(0,0),(2,0),(0,1),(2,1),(0,2),(2,2)]
-  end
 end
