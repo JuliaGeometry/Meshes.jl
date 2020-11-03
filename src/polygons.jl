@@ -53,6 +53,23 @@ Tells whether or not the `polygon` contains holes.
 """
 hasholes(p::Polygon) = !isempty(p.inners)
 
+"""
+    windingnumber(point, polygon)
+
+Winding number of `point` with respect to the `polygon`.
+
+## References
+
+* Balbes, R. and Siegel, J. 1990. [A robust method for calculating
+  the simplicity and orientation of planar polygons]
+  (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
+"""
+function windingnumber(point::Point, polygon::Polygon)
+  xₒ = point
+  xs = vertices(polygon.outer)
+  sum(∠(xs[i], xₒ, xs[i+1]) for i in 1:length(xs)-1)
+end
+
 function Base.show(io::IO, p::Polygon)
   outer = p.outer
   inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
