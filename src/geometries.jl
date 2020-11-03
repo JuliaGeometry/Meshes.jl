@@ -126,6 +126,13 @@ See https://en.wikipedia.org/wiki/Facet_(geometry)
 function facets end
 
 """
+    center(polytope)
+
+Return the center of the `polytope`.
+"""
+center(p::Polytope) = Point(sum(coordinates.(p.vertices)) / length(p.vertices))
+
+"""
     Face{Dim,T}
 
 We say that a polytope is a face when it can be used as an element in a finite element
