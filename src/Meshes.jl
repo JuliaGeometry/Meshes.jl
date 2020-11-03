@@ -16,6 +16,7 @@ import Random
 # basic types
 include("vectors.jl")
 include("points.jl")
+include("angles.jl")
 
 # geometries and meshes
 include("geometries.jl")
@@ -39,6 +40,9 @@ export
 
   # vectors
   Vec, Vec2, Vec3, Vec2f, Vec3f,
+
+  # angles
+  ∠,
 
   # geometries
   Geometry,
