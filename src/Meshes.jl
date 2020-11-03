@@ -24,6 +24,7 @@ include("meshes.jl")
 
 # algorithms
 include("sampling.jl")
+include("discretization.jl")
 include("boundingboxes.jl")
 
 # plot recipes
@@ -41,6 +42,7 @@ export
 
   # geometries
   Geometry,
+  GeometrySet,
   embeddim, paramdim, coordtype,
   measure, boundary,
 
@@ -67,9 +69,6 @@ export
   Polygon,
   rings, hasholes,
 
-  # sets
-  GeometrySet,
-
   # connectivities
   Connectivity,
   facetype, connect, materialize,
@@ -83,6 +82,11 @@ export
   SamplingMethod,
   RegularSampling,
   sample,
+
+  # discretization
+  DiscretizationMethod,
+  FIST,
+  discretize,
 
   # bounding boxes
   boundingbox
