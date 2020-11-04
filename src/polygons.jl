@@ -59,20 +59,7 @@ hasholes(p::Polygon) = !isempty(p.inners)
 Tells whether or not the `polygon` is simple.
 See https://en.wikipedia.org/wiki/Simple_polygon.
 """
-function issimple(p::Polygon)
-  hasholes(p) && return false
-  vs = vertices(p.outer)
-  ss = [Segment(view(vs, [i,i+1])) for i in 1:length(vs)-1]
-  for i in 1:length(ss)
-    for j in i+1:length(ss)
-      I = intersecttype(ss[i], ss[j])
-      if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
-        return false
-      end
-    end
-  end
-  true
-end
+issimple(p::Polygon) = !hasholes(p) && issimple(p.outer)
 
 """
     windingnumber(point, polygon)
