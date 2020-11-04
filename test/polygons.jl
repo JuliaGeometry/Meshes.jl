@@ -34,6 +34,7 @@
   for poly in polys1
     @test nvertices(first(rings(poly))) == 31
     @test !hasholes(poly)
+    @test issimple(poly)
   end
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -43,6 +44,7 @@
   for poly in polys2
     @test nvertices(first(rings(poly))) == 121
     @test !hasholes(poly)
+    @test issimple(poly)
   end
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -54,5 +56,6 @@
     @test nvertices(outer) < 31
     @test all(nvertices.(inners) .< 18)
     @test hasholes(poly)
+    @test !issimple(poly)
   end
 end
