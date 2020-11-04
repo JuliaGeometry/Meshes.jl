@@ -27,7 +27,14 @@
 
     s1 = Segment(P2(1,1), P2(2,1))
     s2 = Segment(P2(1,0), P2(3,0))
-    @test s1 ∩ s2 == nothing
-    @test s2 ∩ s1 == nothing
+    @test s1 ∩ s2 === nothing
+    @test s2 ∩ s1 === nothing
+
+    s1 = Segment(P2(0.181429364026879, 0.546811355144474),
+                 P2(0.38282226144778, 0.107781953228536))
+    s2 = Segment(P2(0.412498700935005, 0.212081819871479),
+                 P2(0.395936725690311, 0.252041094122474))
+    @test s1 ∩ s2 === nothing
+    @test s2 ∩ s1 === nothing
   end
 end

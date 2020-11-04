@@ -54,6 +54,29 @@ Tells whether or not the `polygon` contains holes.
 hasholes(p::Polygon) = !isempty(p.inners)
 
 """
+    issimple(polygon)
+
+Tells whether or not the `polygon` is simple.
+See https://en.wikipedia.org/wiki/Simple_polygon.
+"""
+function issimple(p::Polygon)
+  hasholes(p) && return false
+  vs = vertices(p.outer)
+  ss = [Segment(view(vs, [i,i+1])) for i in 1:length(vs)-1]
+  for i in 1:length(ss)
+    for j in i+1:length(ss)
+      @show I = intersecttype(ss[i], ss[j])
+      if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
+        @show i
+        @show j
+        return false
+      end
+    end
+  end
+  true
+end
+
+"""
     windingnumber(point, polygon)
 
 Winding number of `point` with respect to the `polygon`.
@@ -65,9 +88,9 @@ Winding number of `point` with respect to the `polygon`.
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
 function windingnumber(point::Point, polygon::Polygon)
-  xₒ = point
-  xs = vertices(polygon.outer)
-  sum(∠(xs[i], xₒ, xs[i+1]) for i in 1:length(xs)-1)
+  vₒ = point
+  vs = vertices(polygon.outer)
+  sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
 end
 
 function Base.show(io::IO, p::Polygon)

@@ -13,6 +13,9 @@ using RecipesBase
 import Base: ==, +, -
 import Random
 
+# numerical tolerances
+include("tolerances.jl")
+
 # basic types
 include("vectors.jl")
 include("points.jl")
@@ -71,7 +74,8 @@ export
 
   # polygons
   Polygon,
-  rings, hasholes, windingnumber,
+  rings, hasholes,
+  issimple, windingnumber,
 
   # connectivities
   Connectivity,

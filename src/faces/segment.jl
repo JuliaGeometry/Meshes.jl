@@ -104,10 +104,14 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
     windingy += β
   end
 
+  # winding number ≈ 0?
+  wxzero = isapprox(windingx, 0, atol=atol(T))
+  wyzero = isapprox(windingy, 0, atol=atol(T))
+
   # there are three cases to consider
   # Balbes, R. and Siegel, J. 1990.
   if determinatex && determinatey # CASE (I)
-    if windingx ≉ 0 && windingy ≉ 0
+    if !wxzero && !wyzero
       # configuration (1)
       CrossingSegments(intersectpoint(s1, s2))
     else
@@ -115,7 +119,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       NonIntersectingSegments()
     end
   elseif determinatex || determinatey # CASE (II)
-    if (determinatex ? windingx : windingy) ≉ 0
+    if !(determinatex ? wxzero : wyzero)
       if x1 == y1 || x1 == y2 || x2 == y1 || x2 == y2
         # configuration (3)
         CornerTouchingSegments(intersectpoint(s1, s2))
@@ -128,7 +132,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       NonIntersectingSegments()
     end
   elseif !determinatex && !determinatey # CASE (III)
-    if (x2 - x1) × (y2 - y1) ≉ 0
+    if !isapprox((x2 - x1) × (y2 - y1), 0, atol=atol(T))
       # configuration (3)
       CornerTouchingSegments(intersectpoint(s1, s2))
     else
