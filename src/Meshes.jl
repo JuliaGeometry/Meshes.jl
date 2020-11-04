@@ -58,7 +58,7 @@ export
   # polytopes
   Polytope,
   vertices, nvertices,
-  facets,
+  facets, center,
 
   # faces
   Face,
@@ -71,7 +71,7 @@ export
 
   # polygons
   Polygon,
-  rings, hasholes,
+  rings, hasholes, windingnumber,
 
   # connectivities
   Connectivity,
