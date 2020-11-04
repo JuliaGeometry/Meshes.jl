@@ -47,6 +47,36 @@ function issimple(c::Chain)
   true
 end
 
+"""
+    windingnumber(point, chain)
+
+Winding number of `point` with respect to the `chain`.
+
+## References
+
+* Balbes, R. and Siegel, J. 1990. [A robust method for calculating
+  the simplicity and orientation of planar polygons]
+  (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
+"""
+function windingnumber(p::Point, c::Chain)
+  vₒ, vs = p, c.vertices
+  sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
+end
+
+"""
+    orientation(chain)
+
+Returns the orientation of the `chain` as either
+counter-clockwise (CCW) or clockwise (CW).
+"""
+function orientation(c::Chain{Dim,T}) where {Dim,T}
+  # pick any segment
+  x1, x2 = c.vertices[1:2]
+  x̄ = center(Segment(x1, x2))
+  w = windingnumber(x̄, c) - ∠(x1, x̄, x2)
+  isapprox(w, π, atol=atol(T)) ? :CCW : :CW
+end
+
 function Base.show(io::IO, c::Chain)
   N = length(c.vertices)
   print(io, "$N-chain")

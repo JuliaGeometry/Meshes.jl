@@ -70,12 +70,13 @@ export
 
   # chains
   Chain,
-  isclosed,
+  isclosed, issimple,
+  windingnumber, orientation,
 
   # polygons
   Polygon,
-  rings, hasholes,
-  issimple, windingnumber,
+  rings, hasholes, issimple,
+  windingnumber, orientation,
 
   # connectivities
   Connectivity,

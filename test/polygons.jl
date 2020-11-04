@@ -35,6 +35,7 @@
     @test nvertices(first(rings(poly))) == 31
     @test !hasholes(poly)
     @test issimple(poly)
+    @test orientation(poly) == :CCW
   end
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -45,6 +46,7 @@
     @test nvertices(first(rings(poly))) == 121
     @test !hasholes(poly)
     @test issimple(poly)
+    @test orientation(poly) == :CCW
   end
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -57,5 +59,8 @@
     @test all(nvertices.(inners) .< 18)
     @test hasholes(poly)
     @test !issimple(poly)
+    oorient, iorients = orientation(poly)
+    @test oorient == :CCW
+    @test all(iorients .== :CW)
   end
 end
