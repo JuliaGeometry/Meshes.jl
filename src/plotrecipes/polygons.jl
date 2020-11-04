@@ -11,14 +11,14 @@
 
   # plot outer ring
   @series begin
-    Tuple.(coordinates.(vertices(outer)))
+    outer
   end
 
   # plot inner rings
   for inner in inners
     @series begin
       primary --> false
-      Tuple.(coordinates.(vertices(inner)))
+      inner
     end
   end
 end

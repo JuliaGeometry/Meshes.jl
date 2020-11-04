@@ -7,5 +7,7 @@
   seriescolor --> :black
   label --> "chain"
 
-  Tuple.(coordinates.(vertices(chain)))
+  xs = coordinates.(vertices(chain))
+
+  Tuple.(xs)
 end
