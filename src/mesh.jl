@@ -50,5 +50,5 @@ of any 3-face.
 """
 elements(m::Mesh{Dim}) where {Dim} = faces(m, Dim)
 
-include("meshes/cartesiangrid.jl")
-include("meshes/unstructured.jl")
+include("mesh/cartesiangrid.jl")
+include("mesh/unstructured.jl")

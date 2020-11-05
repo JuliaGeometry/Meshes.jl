@@ -18,7 +18,7 @@ testfiles = [
   "faces.jl",
   "polygons.jl",
   "primitives.jl",
-  "meshes.jl",
+  "mesh.jl",
   "sampling.jl",
   "discretization.jl",
   "boundingboxes.jl"

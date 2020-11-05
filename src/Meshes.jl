@@ -24,7 +24,7 @@ include("angles.jl")
 # geometries and meshes
 include("geometries.jl")
 include("connectivities.jl")
-include("meshes.jl")
+include("mesh.jl")
 
 # algorithms
 include("sampling.jl")
