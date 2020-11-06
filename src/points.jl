@@ -28,6 +28,8 @@ Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coord
 Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
 Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
 Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
+Point(coords::AbstractVector{T}) where {T} =
+  Point{length(coords),T}(SVector{length(coords)}(coords))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)

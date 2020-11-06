@@ -40,4 +40,12 @@
 
   @test P2(1, 2) ≈ P2(1 + eps(T), T(2))
   @test P3(1, 2, 3) ≈ P3(1 + eps(T), T(2), T(3))
+
+  @test embeddim(Point([1,2])) == 2
+  @test coordtype(Point([1,2])) == Int
+  @test coordtype(Point([1.,2.])) == Float64
+
+  @test embeddim(Point([1,2,3])) == 3
+  @test coordtype(Point([1,2,3])) == Int
+  @test coordtype(Point([1.,2.,3.])) == Float64
 end
