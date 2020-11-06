@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 @recipe function f(chain::Chain)
-  seriestype --> :scatterpath
+  seriestype --> :path
   seriescolor --> :black
   label --> "chain"
 

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 @recipe function f(polygon::Polygon)
-  seriestype --> :scatterpath
+  seriestype --> :path
   seriescolor --> :black
   label --> "polygon"
 
