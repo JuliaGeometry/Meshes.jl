@@ -89,19 +89,23 @@ include("primitives/cylinder.jl")
 # ----------
 
 """
-    Polytope{Dim,T}
+    Polytope{N,Dim,T}
 
-We say that a geometry is a polytope when it is made of a collection of "flat" sides.
-They are called polygon in 2D and polyhedron in 3D spaces. A polytope can be expressed
-by an ordered set of points. These points (a.k.a. vertices) are connected into edges,
-faces and cells in 3D. We follow the ordering conventions of the GMSH project:
-https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering
+We say that a geometry is a N-polytope when it is a collection of "flat" sides that constitue a N-dimensional subspace.
+They are called polygon and polyhedron respectively for 2D (N=2) and 3D (N=3) subspaces, embedded in a `Dim`-dimensional space.
+The term polytope expresses a particular combinatorial structure. A polyhedron, for example, can be decomposed into faces. Each face can then be decomposed into edges, and edges into vertices.
+Some conventions act as a mapping between vertices and higher dimensional features (edges, faces, cells...), removing the need to store all features. We follow the [ordering conventions](https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering) of the GMSH project.
 
 Additionally, the following property must hold in order for a geometry to be considered
 a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, which may
-have (n-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
+have (n-1)-polytopes in common. For more information, see the [Wikipedia](https://en.wikipedia.org/wiki/Polytope) page.
 """
-abstract type Polytope{Dim,T} <: Geometry{Dim,T} end
+abstract type Polytope{N,Dim,T} <: Geometry{Dim,T} end
+
+const Polygon = Polytope{2}
+const Polyhedron = Polytope{3}
+
+paramdim(::Type{<: Polytope{N}}) where {N} = N
 
 """
     vertices(polytope)
@@ -133,14 +137,14 @@ Return the center of the `polytope`.
 center(p::Polytope) = Point(sum(coordinates.(p.vertices)) / length(p.vertices))
 
 """
-    Face{Dim,T}
+    Face{N, Dim,T}
 
 We say that a polytope is a face when it can be used as an element in a finite element
 mesh (e.g. segments, triangles, tetrahedrons). The rank of the face reflects the actual
 parametric dimension of the polytope. For example, a segment is a 1-face, a triangle is a
 2-face and a tetrahedron is a 3-face. See https://en.wikipedia.org/wiki/Abstract_polytope.
 """
-abstract type Face{Dim,T} <: Polytope{Dim,T} end
+abstract type Face{N,Dim,T} <: Polytope{N,Dim,T} end
 
 (::Type{F})(vertices::Vararg{P}) where {F<:Face,P<:Point} = F(SVector(vertices))
 (::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
@@ -154,7 +158,7 @@ function Base.show(io::IO, f::Face)
   print(io, "$kind($vert)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", f::Face{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", f::Face{N, Dim,T}) where {N, Dim,T}
   kind = nameof(typeof(f))
   lines = ["  └─$v" for v in f.vertices]
   println(io, "$kind{$Dim,$T}")

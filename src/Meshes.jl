@@ -60,6 +60,8 @@ export
 
   # polytopes
   Polytope,
+  Polygon,
+  Polyhedron,
   vertices, nvertices,
   facets, center,
 
