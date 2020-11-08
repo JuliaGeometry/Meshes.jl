@@ -179,7 +179,7 @@ include("faces/hexahedron.jl")
 include("chains.jl")
 
 # ---------
-# POLYGONS
+# POLYSURFACES
 # ---------
 
-include("polygons.jl")
+include("polysurfaces.jl")

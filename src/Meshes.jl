@@ -34,7 +34,7 @@ include("boundingboxes.jl")
 # plot recipes
 include("plotrecipes/faces.jl")
 include("plotrecipes/chains.jl")
-include("plotrecipes/polygons.jl")
+include("plotrecipes/polysurfaces.jl")
 
 export 
   # points
