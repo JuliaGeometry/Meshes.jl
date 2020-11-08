@@ -2,12 +2,12 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-@recipe function f(polygon::PolySurface)
+@recipe function f(polysurface::PolySurface)
   seriestype --> :path
   seriescolor --> :black
-  label --> "polygon"
+  label --> "polysurface"
 
-  outer, inners = rings(polygon)
+  outer, inners = rings(polysurface)
 
   # plot outer ring
   @series begin

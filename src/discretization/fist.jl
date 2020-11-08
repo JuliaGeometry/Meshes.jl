@@ -24,11 +24,11 @@ to heuristics implemented in the algorithm.
 struct FIST <: DiscretizationMethod end
 
 function discretize(polysurface::PolySurface, method::FIST)
-  verts, perms = _fist_remove_duplicates(polygon)
+  verts, perms = _fist_remove_duplicates(polysurface)
 end
 
-function _fist_remove_duplicates(polygon)
-  outer, inners = rings(polygon)
+function _fist_remove_duplicates(polysurface)
+  outer, inners = rings(polysurface)
 
   # retrieve vertices from rings
   verts = [@view vertices(r)[begin:end-1] for r in [outer; inners]]
