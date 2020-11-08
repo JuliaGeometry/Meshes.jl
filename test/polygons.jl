@@ -23,7 +23,7 @@
         push!(inners, inner)
       end
 
-      Polygon(outer, inners)
+      PolySurface(outer, inners)
     end
   end
 

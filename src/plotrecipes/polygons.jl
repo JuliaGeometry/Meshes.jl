@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-@recipe function f(polygon::Polygon)
+@recipe function f(polygon::PolySurface)
   seriestype --> :path
   seriescolor --> :black
   label --> "polygon"

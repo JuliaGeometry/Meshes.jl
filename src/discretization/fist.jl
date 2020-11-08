@@ -23,7 +23,7 @@ to heuristics implemented in the algorithm.
 """
 struct FIST <: DiscretizationMethod end
 
-function discretize(polygon::Polygon, method::FIST)
+function discretize(polygon::PolySurface, method::FIST)
   verts, perms = _fist_remove_duplicates(polygon)
 end
 

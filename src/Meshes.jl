@@ -74,7 +74,7 @@ export
   windingnumber, orientation,
 
   # polygons
-  Polygon,
+  PolySurface,
   rings, hasholes, issimple,
   windingnumber, orientation,
 
