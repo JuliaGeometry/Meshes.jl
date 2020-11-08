@@ -12,10 +12,6 @@ struct Chain{Dim,T} <: Polytope{1,Dim,T}
   vertices::Vector{Point{Dim,T}}
 end
 
-Chain(points::Vararg{P}) where {P<:Point} = Chain(collect(points))
-Chain(points::AbstractVector{TP}) where {TP<:Tuple} = Chain(Point.(points))
-Chain(points::Vararg{TP}) where {TP<:Tuple} = Chain(collect(points))
-
 """
     isclosed(chain)
 

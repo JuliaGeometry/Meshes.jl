@@ -146,11 +146,11 @@ parametric dimension of the polytope. For example, a segment is a 1-face, a tria
 """
 abstract type Face{N,Dim,T} <: Polytope{N,Dim,T} end
 
-(::Type{F})(vertices::Vararg{P}) where {F<:Face,P<:Point} = F(SVector(vertices))
-(::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
-(::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(collect(vertices))
+(::Type{F})(vertices::Vararg{TP}) where {F<:Polytope,TP<:Tuple} = F(collect(vertices))
+(::Type{F})(vertices::AbstractVector{TP}) where {F<:Polytope,TP<:Tuple} = F(Point.(vertices))
+(::Type{F})(vertices::Vararg{P}) where {F<:Polytope,P<:Point} = F(SVector(vertices))
 
-==(f1::Face, f2::Face) = f1.vertices == f2.vertices
+==(p1::Polytope, p2::Polytope) = p1.vertices == p2.vertices
 
 function Base.show(io::IO, f::Face)
   kind = nameof(typeof(f))
