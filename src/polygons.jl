@@ -5,7 +5,7 @@
 """
     PolySurface(outer, [inner1, inner2, ..., innerk])
 
-A polygon surface with `outer` ring, and optional inner
+A polygonal surface with `outer` ring, and optional inner
 rings `inner1`, `inner2`, ..., `innerk`.
 
 Rings can be a vector of [`Point`](@ref) or a

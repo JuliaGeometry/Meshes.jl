@@ -73,7 +73,7 @@ export
   isclosed, issimple,
   windingnumber, orientation,
 
-  # polygons
+  # polysurfaces
   PolySurface,
   rings, hasholes, issimple,
   windingnumber, orientation,
