@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    Polygon(outer, [inner1, inner2, ..., innerk])
+    PolySurface(outer, [inner1, inner2, ..., innerk])
 
-A polygon with `outer` ring, and optional inner
+A polygonal surface with `outer` ring, and optional inner
 rings `inner1`, `inner2`, ..., `innerk`.
 
 Rings can be a vector of [`Point`](@ref) or a
@@ -15,69 +15,69 @@ Most algorithms assume that the outer ring is oriented
 counter-clockwise (CCW) and that all inner rings are
 oriented clockwise (CW).
 """
-struct Polygon{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
+struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
   outer::C
   inners::Vector{C}
 
-  function Polygon{Dim,T,C}(outer, inners) where {Dim,T,C}
+  function PolySurface{Dim,T,C}(outer, inners) where {Dim,T,C}
     @assert isclosed(outer) "invalid outer ring"
     @assert all(isclosed.(inners)) "invalid inner rings"
     new(outer, inners)
   end
 end
 
-Polygon(outer::C, inners=[]) where {Dim,T,C<:Chain{Dim,T}} =
-  Polygon{Dim,T,Chain{Dim,T}}(outer, inners)
+PolySurface(outer::C, inners=[]) where {Dim,T,C<:Chain{Dim,T}} =
+  PolySurface{Dim,T,Chain{Dim,T}}(outer, inners)
 
-Polygon(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
-  Polygon(Chain(outer), [Chain(inner) for inner in inners])
+PolySurface(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
+  PolySurface(Chain(outer), [Chain(inner) for inner in inners])
 
-Polygon(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
-  Polygon(Point.(outer), [Point.(inner) for inner in inners])
+PolySurface(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
+  PolySurface(Point.(outer), [Point.(inner) for inner in inners])
 
-Polygon(outer::Vararg{P}) where {P<:Point} = Polygon(collect(outer))
+PolySurface(outer::Vararg{P}) where {P<:Point} = PolySurface(collect(outer))
 
-Polygon(outer::Vararg{TP}) where {TP<:Tuple} = Polygon(collect(Point.(outer)))
+PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(outer)))
 
 """
-    rings(polygon)
+    rings(polysurface)
 
 Return the outer and inner rings of the polygon.
 """
-rings(p::Polygon) = p.outer, p.inners
+rings(p::PolySurface) = p.outer, p.inners
 
 """
-    hasholes(polygon)
+    hasholes(polysurface)
 
-Tells whether or not the `polygon` contains holes.
+Tells whether or not the `polysurface` contains holes.
 """
-hasholes(p::Polygon) = !isempty(p.inners)
+hasholes(p::PolySurface) = !isempty(p.inners)
 
 """
-    issimple(polygon)
+    issimple(polysurface)
 
-Tells whether or not the `polygon` is simple.
+Tells whether or not the `polysurface` is a simple polygon.
 See https://en.wikipedia.org/wiki/Simple_polygon.
 """
-issimple(p::Polygon) = !hasholes(p) && issimple(p.outer)
+issimple(p::PolySurface) = !hasholes(p) && issimple(p.outer)
 
 """
-    windingnumber(point, polygon)
+    windingnumber(point, polysurface)
 
-Winding number of `point` with respect to the `polygon`.
+Winding number of `point` with respect to the `polysurface`.
 """
-windingnumber(point::Point, polygon::Polygon) =
-  windingnumber(point, polygon.outer)
+windingnumber(point::Point, p::PolySurface) =
+  windingnumber(point, p.outer)
 
 """
-    orientation(polygon)
+    orientation(polysurface)
 
-Returns the orientation of the `polygon` as either
+Returns the orientation of the `polysurface` as either
 counter-clockwise (CCW) or clockwise (CW).
 
 For polygons with holes, returns a list of orientations.
 """
-function orientation(p::Polygon)
+function orientation(p::PolySurface)
   if hasholes(p)
     orientation(p.outer), orientation.(p.inners)
   else
@@ -85,16 +85,16 @@ function orientation(p::Polygon)
   end
 end
 
-function Base.show(io::IO, p::Polygon)
+function Base.show(io::IO, p::PolySurface)
   outer = p.outer
   inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
-  print(io, "Polygon($outer$inner)")
+  print(io, "PolySurface($outer$inner)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::Polygon{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", p::PolySurface{Dim,T}) where {Dim,T}
   outer = "    └─$(p.outer)"
   inner = ["    └─$v" for v in p.inners]
-  println(io, "Polygon{$Dim,$T}")
+  println(io, "PolySurface{$Dim,$T}")
   println(io, "  outer")
   if isempty(inner)
     print(io, outer)
