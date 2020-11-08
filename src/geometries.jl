@@ -88,23 +88,12 @@ include("primitives/cylinder.jl")
 # POLYTOPES
 # ----------
 
-
-"""
-    AbstractPolytope{N}
-
-An abstract polytope is a combinatorial structure that generalizes the geometric polytope. It is agnostic of any embedding space or any geometrical considerations such as length or angles. A geometric polytope is said to be a realization of an abstract polytope. More information can be found on [Wikipedia](https://en.wikipedia.org/wiki/Abstract_polytope).
-
-A distinction is made between a abstract polytope (`AbstractPolytope`) and a geometric polytope (`Polytope`): an abstract polytope is agnostic of any realization space.
-
-"""
-abstract type AbstractPolytope{N} end
-
-
 """
     Polytope{N,Dim,T}
 
-We say that a geometry is a N-polytope when it is made of a collection of "flat" sides.
-They are called polygon in 2D and polyhedron in 3D spaces. A polyhedron, for example, can be decomposed into faces. Each face can then be decomposed into edges, and edges into vertices. A polytope describes this structure.
+We say that a geometry is a N-polytope when it is a collection of "flat" sides that constitue a N-dimensional subspace.
+They are called polygon and polyhedron respectively for 2D (N=2) and 3D (N=3) subspaces, embedded in a `Dim`-dimensional space.
+The term polytope expresses a particular combinatorial structure. A polyhedron, for example, can be decomposed into faces. Each face can then be decomposed into edges, and edges into vertices.
 Some conventions act as a mapping between vertices and higher dimensional features (edges, faces, cells...), removing the need to store all features. We follow the [ordering conventions](https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering) of the GMSH project.
 
 Additionally, the following property must hold in order for a geometry to be considered
@@ -116,7 +105,6 @@ abstract type Polytope{N,Dim,T} <: Geometry{Dim,T} end
 const Polygon = Polytope{2}
 const Polyhedron = Polytope{3}
 
-implements(::Type{<: Polytope{N}}) where {N} = AbstractPolytope{N}
 paramdim(::Type{<: Polytope{N}}) where {N} = N
 
 """
