@@ -5,7 +5,7 @@
 """
     PolySurface(outer, [inner1, inner2, ..., innerk])
 
-A polygon with `outer` ring, and optional inner
+A polygon surface with `outer` ring, and optional inner
 rings `inner1`, `inner2`, ..., `innerk`.
 
 Rings can be a vector of [`Point`](@ref) or a
@@ -40,39 +40,39 @@ PolySurface(outer::Vararg{P}) where {P<:Point} = PolySurface(collect(outer))
 PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(outer)))
 
 """
-    rings(polygon)
+    rings(polysurface)
 
 Return the outer and inner rings of the polygon.
 """
 rings(p::PolySurface) = p.outer, p.inners
 
 """
-    hasholes(polygon)
+    hasholes(polysurface)
 
-Tells whether or not the `polygon` contains holes.
+Tells whether or not the `polysurface` contains holes.
 """
 hasholes(p::PolySurface) = !isempty(p.inners)
 
 """
-    issimple(polygon)
+    issimple(polysurface)
 
-Tells whether or not the `polygon` is simple.
+Tells whether or not the `polysurface` is a simple polygon.
 See https://en.wikipedia.org/wiki/Simple_polygon.
 """
 issimple(p::PolySurface) = !hasholes(p) && issimple(p.outer)
 
 """
-    windingnumber(point, polygon)
+    windingnumber(point, polysurface)
 
-Winding number of `point` with respect to the `polygon`.
+Winding number of `point` with respect to the `polysurface`.
 """
-windingnumber(point::Point, polygon::PolySurface) =
-  windingnumber(point, polygon.outer)
+windingnumber(point::Point, p::PolySurface) =
+  windingnumber(point, p.outer)
 
 """
-    orientation(polygon)
+    orientation(polysurface)
 
-Returns the orientation of the `polygon` as either
+Returns the orientation of the `polysurface` as either
 counter-clockwise (CCW) or clockwise (CW).
 
 For polygons with holes, returns a list of orientations.
