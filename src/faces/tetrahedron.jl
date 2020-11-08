@@ -27,11 +27,9 @@
 
 A tetrahedron with points `p1`, `p2`, `p3`, `p4`.
 """
-struct Tetrahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T}
+struct Tetrahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{3,Dim,T}
   vertices::V
 end
-
-paramdim(::Type{<:Tetrahedron}) = 3
 
 function facets(tetra::Tetrahedron)
   connec = connect.([(1,2,3),(1,4,3),(1,4,2),(2,3,4)], Triangle)

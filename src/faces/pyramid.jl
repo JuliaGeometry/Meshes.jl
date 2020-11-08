@@ -25,11 +25,9 @@
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
-struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T}
+struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{3,Dim,T}
   vertices::V
 end
-
-paramdim(::Type{<:Pyramid}) = 3
 
 function facets(pyr::Pyramid)
   base = connect((1,2,3,4), Quadrangle)

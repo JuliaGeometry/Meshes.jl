@@ -15,7 +15,7 @@ Most algorithms assume that the outer ring is oriented
 counter-clockwise (CCW) and that all inner rings are
 oriented clockwise (CW).
 """
-struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polytope{Dim,T}
+struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polytope{2,Dim,T}
   outer::C
   inners::Vector{C}
 

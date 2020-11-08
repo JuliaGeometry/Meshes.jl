@@ -59,7 +59,10 @@ export
   center, radius, height, sides,
 
   # polytopes
+  AbstractPolytope,
   Polytope,
+  Polygon,
+  Polyhedron,
   vertices, nvertices,
   facets, center,
 
