@@ -36,8 +36,8 @@
       P2[(0.0,1.0), (0.0,0.0), (0.5,0.5)]
     ])
     @test vertices(mesh) == points
-    @test collect(faces(mesh, 2)) == triangles
-    @test collect(elements(mesh)) == triangles
+    @test vertices.(collect(faces(mesh, 2))) == vertices.(triangles)
+    @test vertices.(collect(elements(mesh))) == vertices.(triangles)
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)
@@ -49,7 +49,7 @@
       Quadrangle(P2[(0.0,0.0), (1.0,0.0), (0.25,0.5), (0.75,0.5)]),
       Quadrangle(P2[(0.25,0.5), (0.75,0.5), (0.0,1.0), (1.0,1.0)])
     ]
-    @test collect(elements(mesh)) == elms
+    @test vertices.(collect(elements(mesh))) == vertices.(elms)
 
     # make sure there is no memory allocation
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
