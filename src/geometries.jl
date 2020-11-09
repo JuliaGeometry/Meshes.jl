@@ -150,6 +150,10 @@ abstract type Face{N,Dim,T} <: Polytope{N,Dim,T} end
 (::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
 (::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(collect(vertices))
 
+(::Type{F})(vertices::Vararg{P}) where {F<:Polytope,P<:Point} = F(SVector(vertices))
+(::Type{F})(vertices::AbstractVector{TP}) where {F<:Polytope,TP<:Tuple} = F(Point.(vertices))
+(::Type{F})(vertices::Vararg{TP}) where {F<:Polytope,TP<:Tuple} = F(collect(vertices))
+
 ==(f1::Face, f2::Face) = f1.vertices == f2.vertices
 
 function Base.show(io::IO, f::Polytope)
