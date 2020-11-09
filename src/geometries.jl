@@ -184,12 +184,12 @@ include("conventions.jl")
 # COMMON POLYTOPES
 # ----------------
 
-include("common_polytopes/segment.jl")
-include("common_polytopes/triangle.jl")
-include("common_polytopes/quadrangle.jl")
-include("common_polytopes/pyramid.jl")
-include("common_polytopes/tetrahedron.jl")
-include("common_polytopes/hexahedron.jl")
+include("polytopes/segment.jl")
+include("polytopes/triangle.jl")
+include("polytopes/quadrangle.jl")
+include("polytopes/pyramid.jl")
+include("polytopes/tetrahedron.jl")
+include("polytopes/hexahedron.jl")
 
 # -----------
 # CONVENTIONS
