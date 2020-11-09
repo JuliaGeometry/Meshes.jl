@@ -64,9 +64,9 @@ export
   Polyhedron,
   vertices, nvertices,
   facets, center,
+  nfaces,
 
-  # faces
-  Face,
+  # common polytopes
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
 
@@ -83,6 +83,10 @@ export
   # connectivities
   Connectivity,
   facetype, connect, materialize,
+
+  # ordering conventions
+  Ordering, connectivity,
+  GMSH,
 
   # meshes
   Mesh,

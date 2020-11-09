@@ -1,0 +1,12 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
+"""
+    Hexahedron(p1, p2, ..., p8)
+
+A hexahedron with points `p1`, `p2`, ..., `p8`.
+"""
+struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{3,Dim,T}
+  vertices::V
+end

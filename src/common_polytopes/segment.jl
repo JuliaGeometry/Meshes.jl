@@ -2,23 +2,14 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# ORDERING CONVENTION
-#       v
-#       ^
-#       |
-#       |
-# 0-----+-----1 --> u
-
 """
     Segment(p1, p2)
 
 A line segment with points `p1`, `p2`.
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{1,Dim,T}
+struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
-
-facets(s::Segment) = (v for v in s.vertices)
 
 """
     s1 ∩ s2

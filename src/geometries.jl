@@ -152,25 +152,46 @@ abstract type Face{N,Dim,T} <: Polytope{N,Dim,T} end
 
 ==(f1::Face, f2::Face) = f1.vertices == f2.vertices
 
-function Base.show(io::IO, f::Face)
+function Base.show(io::IO, f::Polytope)
   kind = nameof(typeof(f))
   vert = join(f.vertices, ", ")
   print(io, "$kind($vert)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", f::Face{N, Dim,T}) where {N, Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", f::Polytope{N,Dim,T}) where {N,Dim,T}
   kind = nameof(typeof(f))
   lines = ["  └─$v" for v in f.vertices]
   println(io, "$kind{$Dim,$T}")
   print(io, join(lines, "\n"))
 end
 
-include("faces/segment.jl")
-include("faces/triangle.jl")
-include("faces/quadrangle.jl")
-include("faces/pyramid.jl")
-include("faces/tetrahedron.jl")
-include("faces/hexahedron.jl")
+nfaces(p, n::Val; ordering=GMSH) = (materialize(c, p.vertices) for c in connectivity(typeof(p), ordering, n))
+nfaces(p, ::Val{0}) = p.vertices
+facets(p::Polytope{N}; ordering=GMSH) where {N} = nfaces(p, Val(N-1); ordering)
+
+
+# ----------------
+# CONVENTION MODEL
+# ----------------
+
+include("conventions.jl")
+
+# ----------------
+# COMMON POLYTOPES
+# ----------------
+
+include("common_polytopes/segment.jl")
+include("common_polytopes/triangle.jl")
+include("common_polytopes/quadrangle.jl")
+include("common_polytopes/pyramid.jl")
+include("common_polytopes/tetrahedron.jl")
+include("common_polytopes/hexahedron.jl")
+
+# -----------
+# CONVENTIONS
+# -----------
+
+include("conventions/gmsh.jl")
 
 # -------
 # CHAINS
