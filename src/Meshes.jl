@@ -32,7 +32,7 @@ include("discretization.jl")
 include("boundingboxes.jl")
 
 # plot recipes
-include("plotrecipes/faces.jl")
+include("plotrecipes/polytopes.jl")
 include("plotrecipes/chains.jl")
 include("plotrecipes/polysurfaces.jl")
 
@@ -59,16 +59,11 @@ export
   center, radius, height, sides,
 
   # polytopes
-  Polytope,
-  Polygon,
-  Polyhedron,
-  vertices, nvertices,
-  facets, center,
-
-  # faces
-  Face,
+  Polytope, Polygon, Polyhedron,
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
+  vertices, nvertices,
+  facets, center,
 
   # chains
   Chain,

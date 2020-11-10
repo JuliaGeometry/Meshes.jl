@@ -19,7 +19,7 @@
 
 A triangle with points `p1`, `p2`, `p3`.
 """
-struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{2,Dim,T}
+struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
   vertices::V
 end
 

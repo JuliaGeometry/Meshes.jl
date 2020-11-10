@@ -3,14 +3,14 @@
 # ------------------------------------------------------------------
 
 """
-    Connectivity{F,N}
+    Connectivity{PL,N}
 
-A connectivity list of `N` indices representing a [`Face`](@ref)
-of type `F`. Indices are taken from a global vector of [`Point`](@ref).
+A connectivity list of `N` indices representing a [`Polytope`](@ref)
+of type `PL`. Indices are taken from a global vector of [`Point`](@ref).
 
 Connectivity objects are constructed with the [`connect`](@ref) function.
 """
-struct Connectivity{F<:Face,N}
+struct Connectivity{PL<:Polytope,N}
   list::NTuple{N,Int}
 end
 
@@ -19,32 +19,32 @@ end
 
 Return the face type (e.g. Triangle) of the `connectivity`.
 """
-facetype(::Type{Connectivity{F,N}}) where {F,N} = F
+facetype(::Type{Connectivity{PL,N}}) where {PL,N} = PL
 facetype(c::Connectivity) = facetype(typeof(c))
 
 """
-    connect(list, F)
+    connect(list, PL)
 
 Connect a `list` of indices from a global vector of [`Point`](@ref)
-into a [`Face`](@ref) of type `F`.
+into a [`Polytope`](@ref) of type `PL`.
 
 ## Example
 ```
 Δ = connect((1,2,3), Triangle)
 ```
 """
-connect(list::NTuple{N,Int}, F::Type{<:Face}) where {N} = Connectivity{F,N}(list)
+connect(list::NTuple{N,Int}, PL::Type{<:Polytope}) where {N} = Connectivity{PL,N}(list)
 
 """
     materialize(connec, points)
 
 Materialize a face using the `connec` list and a global vector of `points`.
 """
-function materialize(connec::Connectivity{F},
-                     points::AbstractVector{P}) where {F<:Face,P<:Point}
-  F(view(points, collect(connec.list)))
+function materialize(connec::Connectivity{PL},
+                     points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
+  PL(view(points, collect(connec.list)))
 end
 
-function Base.show(io::IO, c::Connectivity{F}) where {F}
-  print(io, "$F$(c.list)")
+function Base.show(io::IO, c::Connectivity{PL}) where {PL}
+  print(io, "$PL$(c.list)")
 end

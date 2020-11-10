@@ -91,21 +91,39 @@ include("primitives/cylinder.jl")
 """
     Polytope{N,Dim,T}
 
-We say that a geometry is a N-polytope when it is a collection of "flat" sides that constitue a N-dimensional subspace.
-They are called polygon and polyhedron respectively for 2D (N=2) and 3D (N=3) subspaces, embedded in a `Dim`-dimensional space.
-The term polytope expresses a particular combinatorial structure. A polyhedron, for example, can be decomposed into faces. Each face can then be decomposed into edges, and edges into vertices.
-Some conventions act as a mapping between vertices and higher dimensional features (edges, faces, cells...), removing the need to store all features. We follow the [ordering conventions](https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering) of the GMSH project.
+We say that a geometry is a N-polytope when it is a collection of "flat" sides
+that constitue a `N`-dimensional subspace. They are called polygon and polyhedron
+respectively for 2D (`N=2`) and 3D (`N=3`) subspaces, embedded in a `Dim`-dimensional
+space. The parameter `N` is also known as the rank or parametric dimension of the
+polytope: https://en.wikipedia.org/wiki/Abstract_polytope.
+
+The term polytope expresses a particular combinatorial structure. A polyhedron,
+for example, can be decomposed into faces. Each face can then be decomposed into
+edges, and edges into vertices. Some conventions act as a mapping between vertices
+and higher dimensional features (edges, faces, cells...), removing the need to
+store all features. We follow the ordering conventions of the GMSH project:
+https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering
 
 Additionally, the following property must hold in order for a geometry to be considered
-a polytope: the boundary of a (n+1)-polytope is a collection of n-polytopes, which may
-have (n-1)-polytopes in common. For more information, see the [Wikipedia](https://en.wikipedia.org/wiki/Polytope) page.
+a polytope: the boundary of a (N+1)-polytope is a collection of N-polytopes, which may
+have (N-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 """
 abstract type Polytope{N,Dim,T} <: Geometry{Dim,T} end
 
+(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(SVector(vertices))
+(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
+(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
+
+# type aliases for convenience
 const Polygon = Polytope{2}
 const Polyhedron = Polytope{3}
 
-paramdim(::Type{<: Polytope{N}}) where {N} = N
+"""
+    paramdim(polytope)
+
+Return the parametric dimension or rank of the polytope.
+"""
+paramdim(::Type{<:Polytope{N}}) where {N} = N
 
 """
     vertices(polytope)
@@ -130,47 +148,38 @@ See https://en.wikipedia.org/wiki/Facet_(geometry)
 function facets end
 
 """
+    p1 == p2
+
+Tells whether or not polytopes `p1` and `p2` are equal.
+"""
+==(p1::Polytope, p2::Polytope) = p1.vertices == p2.vertices
+
+"""
     center(polytope)
 
 Return the center of the `polytope`.
 """
 center(p::Polytope) = Point(sum(coordinates.(p.vertices)) / length(p.vertices))
 
-"""
-    Face{N, Dim,T}
-
-We say that a polytope is a face when it can be used as an element in a finite element
-mesh (e.g. segments, triangles, tetrahedrons). The rank of the face reflects the actual
-parametric dimension of the polytope. For example, a segment is a 1-face, a triangle is a
-2-face and a tetrahedron is a 3-face. See https://en.wikipedia.org/wiki/Abstract_polytope.
-"""
-abstract type Face{N,Dim,T} <: Polytope{N,Dim,T} end
-
-(::Type{F})(vertices::Vararg{P}) where {F<:Face,P<:Point} = F(SVector(vertices))
-(::Type{F})(vertices::AbstractVector{TP}) where {F<:Face,TP<:Tuple} = F(Point.(vertices))
-(::Type{F})(vertices::Vararg{TP}) where {F<:Face,TP<:Tuple} = F(collect(vertices))
-
-==(f1::Face, f2::Face) = f1.vertices == f2.vertices
-
-function Base.show(io::IO, f::Face)
-  kind = nameof(typeof(f))
-  vert = join(f.vertices, ", ")
+function Base.show(io::IO, p::Polytope)
+  kind = nameof(typeof(p))
+  vert = join(p.vertices, ", ")
   print(io, "$kind($vert)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", f::Face{N, Dim,T}) where {N, Dim,T}
-  kind = nameof(typeof(f))
-  lines = ["  └─$v" for v in f.vertices]
+function Base.show(io::IO, ::MIME"text/plain", p::Polytope{N,Dim,T}) where {N,Dim,T}
+  kind = nameof(typeof(p))
+  lines = ["  └─$v" for v in p.vertices]
   println(io, "$kind{$Dim,$T}")
   print(io, join(lines, "\n"))
 end
 
-include("faces/segment.jl")
-include("faces/triangle.jl")
-include("faces/quadrangle.jl")
-include("faces/pyramid.jl")
-include("faces/tetrahedron.jl")
-include("faces/hexahedron.jl")
+include("polytopes/segment.jl")
+include("polytopes/triangle.jl")
+include("polytopes/quadrangle.jl")
+include("polytopes/pyramid.jl")
+include("polytopes/tetrahedron.jl")
+include("polytopes/hexahedron.jl")
 
 # -------
 # CHAINS
@@ -178,8 +187,8 @@ include("faces/hexahedron.jl")
 
 include("chains.jl")
 
-# ---------
+# -------------
 # POLYSURFACES
-# ---------
+# -------------
 
 include("polysurfaces.jl")

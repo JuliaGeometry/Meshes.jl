@@ -21,7 +21,7 @@
 
 A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{3,Dim,T}
+struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
   vertices::V
 end
 
