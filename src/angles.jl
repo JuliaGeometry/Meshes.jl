@@ -11,7 +11,7 @@ See https://en.wikipedia.org/wiki/Angle.
 ## Example
 
 ```julia
-∠(Point(0,1), Point(0,0), (1,0)) == π/2
+∠(Point(0,1), Point(0,0), Point(1,0)) == π/2
 ```
 
 ## References
