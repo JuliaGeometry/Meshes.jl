@@ -25,6 +25,7 @@ include("angles.jl")
 include("geometries.jl")
 include("connectivities.jl")
 include("mesh.jl")
+include("conventions/gmsh.jl")
 
 # algorithms
 include("sampling.jl")
@@ -78,6 +79,8 @@ export
   # connectivities
   Connectivity,
   polytopetype, connect, materialize,
+  OrderingConvention, GMSH,
+  connectivity,
 
   # meshes
   Mesh,
