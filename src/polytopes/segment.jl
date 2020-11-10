@@ -14,11 +14,9 @@
 
 A line segment with points `p1`, `p2`.
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{Dim,T}
+struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
-
-paramdim(::Type{<:Segment}) = 1
 
 facets(s::Segment) = (v for v in s.vertices)
 

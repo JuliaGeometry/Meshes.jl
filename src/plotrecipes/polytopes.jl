@@ -12,11 +12,11 @@
 end
 
 # plot facets in a recursion
-@recipe function f(face::Face)
-  for fa in facets(face)
+@recipe function f(polytope::Polytope)
+  for f in facets(polytope)
     @series begin
       primary --> false
-      fa
+      f
     end
   end
 end
