@@ -1,4 +1,4 @@
-@testset "Polygons" begin
+@testset "PolySurfaces" begin
   # helper function to read *.line files containing polygons
   # generated with RPG (https://github.com/cgalab/genpoly-rpg)
   function readpoly(fname)
