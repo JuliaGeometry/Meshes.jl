@@ -20,8 +20,8 @@ function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
   @assert 0 ≤ r ≤ Dim "invalid rank for mesh"
   ps, cs = m.points, m.connec
   r == 0 && return ps
-  facerank(c) = paramdim(facetype(c))
-  (materialize(c, ps) for c in cs if facerank(c) == r)
+  rank(c) = paramdim(polytopetype(c))
+  (materialize(c, ps) for c in cs if rank(c) == r)
 end
 
 function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}

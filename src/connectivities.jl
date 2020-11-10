@@ -15,12 +15,12 @@ struct Connectivity{PL<:Polytope,N}
 end
 
 """
-    facetype(connectivity)
+    polytopetype(connectivity)
 
 Return the face type (e.g. Triangle) of the `connectivity`.
 """
-facetype(::Type{Connectivity{PL,N}}) where {PL,N} = PL
-facetype(c::Connectivity) = facetype(typeof(c))
+polytopetype(::Type{Connectivity{PL,N}}) where {PL,N} = PL
+polytopetype(c::Connectivity) = polytopetype(typeof(c))
 
 """
     connect(list, PL)

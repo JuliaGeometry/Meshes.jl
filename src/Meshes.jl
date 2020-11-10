@@ -77,7 +77,7 @@ export
 
   # connectivities
   Connectivity,
-  facetype, connect, materialize,
+  polytopetype, connect, materialize,
 
   # meshes
   Mesh,
