@@ -25,7 +25,7 @@ include("angles.jl")
 include("geometries.jl")
 include("connectivities.jl")
 include("mesh.jl")
-include("conventions/gmsh.jl")
+include("conventions.jl")
 
 # algorithms
 include("sampling.jl")
