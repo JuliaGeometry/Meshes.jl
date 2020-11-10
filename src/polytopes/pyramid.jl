@@ -25,7 +25,7 @@
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
-struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{3,Dim,T}
+struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
   vertices::V
 end
 

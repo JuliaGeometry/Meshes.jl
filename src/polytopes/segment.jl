@@ -14,7 +14,7 @@
 
 A line segment with points `p1`, `p2`.
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Face{1,Dim,T}
+struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
 
