@@ -20,7 +20,8 @@ struct GMSH <: OrderingConvention end
 # |        `\       
 # 0----------1 --> u
 
-connectivity(::Type{<:Triangle{GMSH}}, ::Val{1}, ::Type{GMSH}) = connect.([(1, 2), (2, 3), (3, 1)], Segment)
+connectivity(::Type{<:Triangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
+  connect.([(1, 2), (2, 3), (3, 1)], Segment)
 
 # Quadrangle
 #       v
@@ -34,7 +35,8 @@ connectivity(::Type{<:Triangle{GMSH}}, ::Val{1}, ::Type{GMSH}) = connect.([(1, 2
 # |           |      
 # 0-----------1      
 
-connectivity(::Type{<:Quadrangle{GMSH}}, ::Val{1}, ::Type{GMSH}) = connect.([(1, 2), (2, 3), (3, 4), (4, 1)], Segment)
+connectivity(::Type{<:Quadrangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
+  connect.([(1, 2), (2, 3), (3, 4), (4, 1)], Segment)
 
 # Pyramid
 #                4
