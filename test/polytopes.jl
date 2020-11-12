@@ -93,8 +93,9 @@
       @test nvertices(first(chains(poly))) == 31
       @test !hasholes(poly)
       @test issimple(poly)
-      @test orientation(poly) == :CCW
+      @test orientation(poly) == [:CCW]
       @test unique(poly) == poly
+      @test oriented!(poly) == poly
     end
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -105,8 +106,9 @@
       @test nvertices(first(chains(poly))) == 121
       @test !hasholes(poly)
       @test issimple(poly)
-      @test orientation(poly) == :CCW
+      @test orientation(poly) == [:CCW]
       @test unique(poly) == poly
+      @test oriented!(poly) == poly
     end
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -114,21 +116,22 @@
     fnames = ["hole$i.line" for i in 1:5]
     polys3 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
     for poly in polys3
-      outer, inners = chains(poly)
-      @test nvertices(outer) < 31
-      @test all(nvertices.(inners) .< 18)
+      rings = chains(poly)
+      @test nvertices(first(rings)) < 31
+      @test all(nvertices.(rings[2:end]) .< 18)
       @test hasholes(poly)
       @test !issimple(poly)
-      oorient, iorients = orientation(poly)
-      @test oorient == :CCW
-      @test all(iorients .== :CW)
+      orients = orientation(poly)
+      @test orients[1] == :CCW
+      @test all(orients[2:end] .== :CW)
       @test unique(poly) == poly
+      @test oriented!(poly) == poly
     end
 
     c = Chain(P2[(1,1),(2,2),(2,2),(3,3),(1,1)])
     p = PolySurface(c)
     unique!(p)
-    outer, inners = chains(p)
-    @test outer == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
+    rings = chains(p)
+    @test first(rings) == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
   end
 end

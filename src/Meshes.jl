@@ -67,14 +67,16 @@ export
   vertices, nvertices, facets,
   center, windingnumber,
   isclosed, issimple, hasholes,
-  chains, orientation, close!, open!,
+  chains, close!, open!,
+  orientation, oriented!,
 
   # connectivities
   Connectivity,
   polytopetype, connect, materialize,
 
   # conventions
-  OrderingConvention, GMSH,
+  OrderingConvention,
+  GMSH,
   connectivities,
 
   # meshes

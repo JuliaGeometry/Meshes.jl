@@ -47,7 +47,7 @@ PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(ou
 
 Return the outer and inner chains of the polygon.
 """
-chains(p::PolySurface) = p.outer, p.inners
+chains(p::PolySurface) = [p.outer; p.inners]
 
 """
     hasholes(polysurface)
@@ -81,11 +81,7 @@ counter-clockwise (CCW) or clockwise (CW).
 For polygons with holes, returns a list of orientations.
 """
 function orientation(p::PolySurface)
-  if hasholes(p)
-    orientation(p.outer), orientation.(p.inners)
-  else
-    orientation(p.outer)
-  end
+  orientation.([p.outer; p.inners])
 end
 
 """
@@ -103,6 +99,22 @@ Remove duplicate vertices in `polysurface`.
 function Base.unique!(p::PolySurface)
   close!(unique!(open!(p.outer)))
   hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
+  p
+end
+
+"""
+    oriented!(polysurface)
+
+Fix orientation of `polysurface` so that outer
+chain is counter-clockwise (CCW) and inner chains
+are clockwise (CW).
+"""
+function oriented!(p::PolySurface)
+  orients = orientation(p)
+  first(orients) == :CCW || reverse!(p.outer)
+  for i in 2:length(orients)
+    orients[i] == :CW || reverse!(p.inners[i])
+  end
   p
 end
 
