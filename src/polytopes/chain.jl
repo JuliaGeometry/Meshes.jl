@@ -133,6 +133,16 @@ function open!(c::Chain)
   c
 end
 
+"""
+    reverse!(chain)
+
+Reverse the `chain` vertices in place.
+"""
+function Base.reverse!(c::Chain)
+  reverse!(c.vertices)
+  c
+end
+
 function Base.show(io::IO, c::Chain)
   N = length(c.vertices)
   print(io, "$N-chain")

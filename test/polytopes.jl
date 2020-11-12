@@ -50,6 +50,10 @@
     @test c == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
     open!(c)
     @test c == Chain(P2[(1,1),(2,2),(3,3)])
+
+    c = Chain(P2[(1,1),(2,2),(3,3)])
+    reverse!(c)
+    @test c == Chain(P2[(3,3),(2,2),(1,1)])
   end
 
   @testset "PolySurfaces" begin
