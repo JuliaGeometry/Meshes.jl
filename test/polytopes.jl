@@ -90,6 +90,7 @@
       @test !hasholes(poly)
       @test issimple(poly)
       @test orientation(poly) == :CCW
+      @test unique(poly) == poly
     end
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -101,6 +102,7 @@
       @test !hasholes(poly)
       @test issimple(poly)
       @test orientation(poly) == :CCW
+      @test unique(poly) == poly
     end
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -116,6 +118,7 @@
       oorient, iorients = orientation(poly)
       @test oorient == :CCW
       @test all(iorients .== :CW)
+      @test unique(poly) == poly
     end
 
     c = Chain(P2[(1,1),(2,2),(2,2),(3,3),(1,1)])

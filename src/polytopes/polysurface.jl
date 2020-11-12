@@ -39,6 +39,9 @@ PolySurface(outer::Vararg{P}) where {P<:Point} = PolySurface(collect(outer))
 
 PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(outer)))
 
+==(p1::PolySurface, p2::PolySurface) =
+  p1.outer == p2.outer && p1.inners == p2.inners
+
 """
     chains(polysurface)
 
@@ -86,15 +89,21 @@ function orientation(p::PolySurface)
 end
 
 """
+    unique(polysurface)
+
+Return a new `polysurface` without duplicate vertices.
+"""
+Base.unique(p::PolySurface) = unique!(deepcopy(p))
+
+"""
     unique!(polysurface)
 
 Remove duplicate vertices in `polysurface`.
 """
 function Base.unique!(p::PolySurface)
-  # remove duplicates in chains
-  outer  = close!(unique!(open!(p.outer)))
-  inners = hasholes(p) ? (@. close!(unique!(open!(p.inners)))) : []
-  PolySurface(outer, inners)
+  close!(unique!(open!(p.outer)))
+  hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
+  p
 end
 
 function Base.show(io::IO, p::PolySurface)
