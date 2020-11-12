@@ -22,8 +22,3 @@ A quadrangle with points `p1`, `p2`, `p3`, `p4`.
 struct Quadrangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
   vertices::V
 end
-
-function facets(quad::Quadrangle)
-  connec = connect.([(1,2),(2,3),(3,4),(4,1)], Segment)
-  (materialize(c, quad.vertices) for c in connec)
-end
