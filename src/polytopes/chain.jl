@@ -105,9 +105,7 @@ function Base.unique!(c::Chain)
   sort!(keep)
 
   # update vertices in place
-  vs = verts[keep]
-  resize!(verts, length(vs))
-  verts[:] = vs
+  copy!(verts, verts[keep])
 
   c
 end
