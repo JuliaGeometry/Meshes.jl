@@ -12,10 +12,6 @@ struct Chain{Dim,T} <: Polytope{1,Dim,T}
   vertices::Vector{Point{Dim,T}}
 end
 
-Chain(points::Vararg{P}) where {P<:Point} = Chain(collect(points))
-Chain(points::AbstractVector{TP}) where {TP<:Tuple} = Chain(Point.(points))
-Chain(points::Vararg{TP}) where {TP<:Tuple} = Chain(collect(points))
-
 """
     isclosed(chain)
 
@@ -75,6 +71,34 @@ function orientation(c::Chain{Dim,T}) where {Dim,T}
   x̄ = center(Segment(x1, x2))
   w = windingnumber(x̄, c) - ∠(x1, x̄, x2)
   isapprox(w, π, atol=atol(T)) ? :CCW : :CW
+end
+
+"""
+    unique(chain)
+
+Return a new `chain` without duplicate vertices.
+"""
+function Base.unique(c::Chain)
+  # retrieve vertices from chain
+  verts = vertices(c)
+
+  # sort vertices lexicographically
+  perms = sortperm(coordinates.(verts))
+
+  # remove true duplicates
+  keep = Int[]
+  sorted = @view verts[perms]
+  for i in 1:length(sorted)-1
+    if sorted[i] != sorted[i+1]
+      # save index in the original vector
+      push!(keep, perms[i])
+    end
+  end
+  push!(keep, last(perms))
+
+  sort!(keep)
+
+  Chain(verts[keep])
 end
 
 function Base.show(io::IO, c::Chain)

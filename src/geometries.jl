@@ -180,15 +180,5 @@ include("polytopes/quadrangle.jl")
 include("polytopes/pyramid.jl")
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
-
-# -------
-# CHAINS
-# -------
-
-include("chains.jl")
-
-# -------------
-# POLYSURFACES
-# -------------
-
-include("polysurfaces.jl")
+include("polytopes/chain.jl")
+include("polytopes/polysurface.jl")

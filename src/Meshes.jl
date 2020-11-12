@@ -62,18 +62,11 @@ export
   Polytope, Polygon, Polyhedron,
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
-  vertices, nvertices,
-  facets, center,
-
-  # chains
-  Chain,
-  isclosed, issimple,
-  windingnumber, orientation,
-
-  # polysurfaces
-  PolySurface,
-  chains, hasholes, issimple,
-  windingnumber, orientation,
+  Chain, PolySurface,
+  vertices, nvertices, facets,
+  center, windingnumber,
+  isclosed, issimple, hasholes,
+  chains, orientation,
 
   # connectivities
   Connectivity,

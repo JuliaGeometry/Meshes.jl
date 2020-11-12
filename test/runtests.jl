@@ -17,7 +17,6 @@ testfiles = [
   "angles.jl",
   "geometries.jl",
   "polytopes.jl",
-  "polysurfaces.jl",
   "primitives.jl",
   "mesh.jl",
   "sampling.jl",
