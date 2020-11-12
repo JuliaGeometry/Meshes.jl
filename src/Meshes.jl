@@ -72,7 +72,7 @@ export
 
   # polysurfaces
   PolySurface,
-  rings, hasholes, issimple,
+  chains, hasholes, issimple,
   windingnumber, orientation,
 
   # connectivities

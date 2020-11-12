@@ -28,9 +28,9 @@ function discretize(polysurface::PolySurface, method::FIST)
 end
 
 function _fist_remove_duplicates(polysurface)
-  outer, inners = rings(polysurface)
+  outer, inners = chains(polysurface)
 
-  # retrieve vertices from rings
+  # retrieve vertices from chains
   verts = [@view vertices(r)[begin:end-1] for r in [outer; inners]]
 
   # sort vertices lexicographically

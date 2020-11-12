@@ -5,23 +5,23 @@
 """
     PolySurface(outer, [inner1, inner2, ..., innerk])
 
-A polygonal surface with `outer` ring, and optional inner
-rings `inner1`, `inner2`, ..., `innerk`.
+A polygonal surface with `outer` chain, and optional inner
+chains `inner1`, `inner2`, ..., `innerk`.
 
-Rings can be a vector of [`Point`](@ref) or a
+Chains can be a vector of [`Point`](@ref) or a
 vector of tuples with coordinates for convenience.
 
-Most algorithms assume that the outer ring is oriented
-counter-clockwise (CCW) and that all inner rings are
+Most algorithms assume that the outer chain is oriented
+counter-clockwise (CCW) and that all inner chains are
 oriented clockwise (CW).
 """
-struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polytope{2,Dim,T}
+struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   outer::C
   inners::Vector{C}
 
   function PolySurface{Dim,T,C}(outer, inners) where {Dim,T,C}
-    @assert isclosed(outer) "invalid outer ring"
-    @assert all(isclosed.(inners)) "invalid inner rings"
+    @assert isclosed(outer) "invalid outer chain"
+    @assert all(isclosed.(inners)) "invalid inner chains"
     new(outer, inners)
   end
 end
@@ -40,11 +40,11 @@ PolySurface(outer::Vararg{P}) where {P<:Point} = PolySurface(collect(outer))
 PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(outer)))
 
 """
-    rings(polysurface)
+    chains(polysurface)
 
-Return the outer and inner rings of the polygon.
+Return the outer and inner chains of the polygon.
 """
-rings(p::PolySurface) = p.outer, p.inners
+chains(p::PolySurface) = p.outer, p.inners
 
 """
     hasholes(polysurface)

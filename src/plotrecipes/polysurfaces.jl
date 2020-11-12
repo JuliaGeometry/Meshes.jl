@@ -7,14 +7,14 @@
   seriescolor --> :black
   label --> "polysurface"
 
-  outer, inners = rings(polysurface)
+  outer, inners = chains(polysurface)
 
-  # plot outer ring
+  # plot outer chain
   @series begin
     outer
   end
 
-  # plot inner rings
+  # plot inner chains
   for inner in inners
     @series begin
       primary --> false

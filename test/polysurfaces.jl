@@ -32,7 +32,7 @@
   fnames = ["poly$i.line" for i in 1:5]
   polys1 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
   for poly in polys1
-    @test nvertices(first(rings(poly))) == 31
+    @test nvertices(first(chains(poly))) == 31
     @test !hasholes(poly)
     @test issimple(poly)
     @test orientation(poly) == :CCW
@@ -43,7 +43,7 @@
   fnames = ["smooth$i.line" for i in 1:5]
   polys2 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
   for poly in polys2
-    @test nvertices(first(rings(poly))) == 121
+    @test nvertices(first(chains(poly))) == 121
     @test !hasholes(poly)
     @test issimple(poly)
     @test orientation(poly) == :CCW
@@ -54,7 +54,7 @@
   fnames = ["hole$i.line" for i in 1:5]
   polys3 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
   for poly in polys3
-    outer, inners = rings(poly)
+    outer, inners = chains(poly)
     @test nvertices(outer) < 31
     @test all(nvertices.(inners) .< 18)
     @test hasholes(poly)
