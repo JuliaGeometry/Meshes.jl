@@ -117,5 +117,11 @@
       @test oorient == :CCW
       @test all(iorients .== :CW)
     end
+
+    c = Chain(P2[(1,1),(2,2),(2,2),(3,3),(1,1)])
+    p = PolySurface(c)
+    unique!(p)
+    outer, inners = chains(p)
+    @test outer == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
   end
 end

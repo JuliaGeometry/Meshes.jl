@@ -85,6 +85,18 @@ function orientation(p::PolySurface)
   end
 end
 
+"""
+    unique!(polysurface)
+
+Remove duplicate vertices in `polysurface`.
+"""
+function Base.unique!(p::PolySurface)
+  # remove duplicates in chains
+  outer  = close!(unique!(open!(p.outer)))
+  inners = hasholes(p) ? (@. close!(unique!(open!(p.inners)))) : []
+  PolySurface(outer, inners)
+end
+
 function Base.show(io::IO, p::PolySurface)
   outer = p.outer
   inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
