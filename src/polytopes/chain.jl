@@ -101,6 +101,14 @@ function Base.unique(c::Chain)
   Chain(verts[keep])
 end
 
+"""
+    close!(chain)
+
+Close the `chain`, i.e. repeat the first vertex
+at the end of the vertex list.
+"""
+close!(c::Chain) = push!(c.vertices, first(c.vertices))
+
 function Base.show(io::IO, c::Chain)
   N = length(c.vertices)
   print(io, "$N-chain")
