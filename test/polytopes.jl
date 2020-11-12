@@ -128,10 +128,10 @@
       @test oriented!(poly) == poly
     end
 
-    c = Chain(P2[(1,1),(2,2),(2,2),(3,3),(1,1)])
-    p = PolySurface(c)
-    unique!(p)
-    rings = chains(p)
-    @test first(rings) == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
+    # test uniqueness
+    points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]
+    poly   = PolySurface(points)
+    unique!(poly)
+    @test first(chains(poly)) == Chain(points)
   end
 end
