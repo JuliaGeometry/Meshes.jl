@@ -82,7 +82,7 @@ export
 
   # conventions
   OrderingConvention, GMSH,
-  connectivity,
+  connectivities,
 
   # meshes
   Mesh,

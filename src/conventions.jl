@@ -9,13 +9,13 @@ from a list of vertices.
 abstract type OrderingConvention end
 
 """
-    connectivity(polytope, convention, k)
+    connectivities(polytope, convention, k)
 
 Return the list of `Connectivity` elements used to construct all
 faces of rank `rank` of a polytope, following an ordering convention.
 """
-function connectivity(polytope::Type{<:Polytope}, rank::Integer, convention::OrderingConvention)
-  connectivity(polytope, Val(rank), convention)
+function connectivities(polytope::Type{<:Polytope}, rank::Integer, convention::OrderingConvention)
+  connectivities(polytope, Val(rank), convention)
 end
 
 # ---------------------------
@@ -29,5 +29,5 @@ function facets(p::Polytope{N}, convention=GMSH) where {N}
 end
 
 function faces(p::Polytope, rank, convention=GMSH)
-  (materialize(ord, p.vertices) for ord in connectivity(typeof(p), rank, convention))
+  (materialize(ord, p.vertices) for ord in connectivities(typeof(p), rank, convention))
 end

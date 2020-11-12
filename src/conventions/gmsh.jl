@@ -20,7 +20,7 @@ struct GMSH <: OrderingConvention end
 # |        `\       
 # 0----------1 --> u
 
-connectivity(::Type{<:Triangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
+connectivities(::Type{<:Triangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
   connect.([(1, 2), (2, 3), (3, 1)], Segment)
 
 # Quadrangle
@@ -35,7 +35,7 @@ connectivity(::Type{<:Triangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
 # |           |      
 # 0-----------1      
 
-connectivity(::Type{<:Quadrangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
+connectivities(::Type{<:Quadrangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
   connect.([(1, 2), (2, 3), (3, 4), (4, 1)], Segment)
 
 # Pyramid
@@ -56,7 +56,7 @@ connectivity(::Type{<:Quadrangle{GMSH}}, ::Val{1}, ::Type{GMSH}) =
 #                     `\
 #                        u
 
-function connectivity(::Type{<:Pyramid{GMSH}}, ::Val{2}, ::Type{GMSH})
+function connectivities(::Type{<:Pyramid{GMSH}}, ::Val{2}, ::Type{GMSH})
   base = connect((1,2,3,4), Quadrangle)
   side = connect.([(1,2,5),(2,3,5),(3,4,5),(4,1,5)], Triangle)
   [base; side]
@@ -82,7 +82,7 @@ end
 #                 `\.
 #                    ` w
 
-connectivity(::Type{<:Tetrahedron{GMSH}}, ::Val{2}, ::Type{GMSH}) =
+connectivities(::Type{<:Tetrahedron{GMSH}}, ::Val{2}, ::Type{GMSH}) =
   connect.([(1,2,3),(1,4,3),(1,4,2),(2,3,4)], Triangle)
 
 # Hexahedron
@@ -99,6 +99,6 @@ connectivity(::Type{<:Tetrahedron{GMSH}}, ::Val{2}, ::Type{GMSH}) =
 #    \|      w  \|     
 #     4----------5     
 
-connectivity(::Type{<:Hexahedron}, ::Val{2}, ::Type{GMSH}) =
+connectivities(::Type{<:Hexahedron}, ::Val{2}, ::Type{GMSH}) =
   connect.([(1,2,3,4),(5,6,7,8),(1,5,6,2),
             (2,6,7,3),(3,4,8,7),(1,5,8,4)], Quadrangle)
