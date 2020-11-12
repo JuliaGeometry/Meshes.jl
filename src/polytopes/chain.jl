@@ -78,11 +78,16 @@ end
 
 Return a new `chain` without duplicate vertices.
 """
-function Base.unique(c::Chain)
-  # retrieve vertices from chain
-  verts = vertices(c)
+Base.unique(c::Chain) = unique!(deepcopy(c))
 
+"""
+    unique!(chain)
+
+Remove duplicate vertices in the `chain`.
+"""
+function Base.unique!(c::Chain)
   # sort vertices lexicographically
+  verts = c.vertices
   perms = sortperm(coordinates.(verts))
 
   # remove true duplicates
@@ -96,9 +101,15 @@ function Base.unique(c::Chain)
   end
   push!(keep, last(perms))
 
+  # preserve chain order
   sort!(keep)
 
-  Chain(verts[keep])
+  # update vertices in place
+  vs = verts[keep]
+  resize!(verts, length(vs))
+  verts[:] = vs
+
+  c
 end
 
 """
