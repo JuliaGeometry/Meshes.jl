@@ -120,6 +120,13 @@ at the end of the vertex list.
 """
 close!(c::Chain) = push!(c.vertices, first(c.vertices))
 
+"""
+    open!(chain)
+
+Open the `chain`, i.e. remove the last vertex.
+"""
+open!(c::Chain) = pop!(c.vertices)
+
 function Base.show(io::IO, c::Chain)
   N = length(c.vertices)
   print(io, "$N-chain")

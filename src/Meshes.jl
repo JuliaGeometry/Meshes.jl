@@ -66,7 +66,7 @@ export
   vertices, nvertices, facets,
   center, windingnumber,
   isclosed, issimple, hasholes,
-  chains, orientation, close!,
+  chains, orientation, close!, open!,
 
   # connectivities
   Connectivity,

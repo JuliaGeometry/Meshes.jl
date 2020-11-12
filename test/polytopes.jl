@@ -48,6 +48,8 @@
     c = Chain(P2[(1,1),(2,2),(3,3)])
     close!(c)
     @test c == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
+    open!(c)
+    @test c == Chain(P2[(1,1),(2,2),(3,3)])
   end
 
   @testset "PolySurfaces" begin
