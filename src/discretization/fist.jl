@@ -24,5 +24,6 @@ to heuristics implemented in the algorithm.
 struct FIST <: DiscretizationMethod end
 
 function discretize(polysurface::PolySurface, method::FIST)
-  p = unique(polysurface)
+  # preprocess input
+  p = polysurface |> unique |> oriented!
 end
