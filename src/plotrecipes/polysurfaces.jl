@@ -7,18 +7,18 @@
   seriescolor --> :black
   label --> "polysurface"
 
-  outer, inners = chains(polysurface)
+  pchains = chains(polysurface)
 
   # plot outer chain
   @series begin
-    outer
+    first(pchains)
   end
 
   # plot inner chains
-  for inner in inners
+  for pchain in pchains[2:end]
     @series begin
       primary --> false
-      inner
+      pchain
     end
   end
 end
