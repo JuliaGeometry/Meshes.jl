@@ -120,6 +120,8 @@ outer chain via bridges.
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
 function bridge(p::PolySurface)
+  hasholes(p) || return first(chains(p))
+
   # retrieve chains with coordinates
   pchains = [coordinates.(vertices(c)[begin:end-1]) for c in chains(p)]
 

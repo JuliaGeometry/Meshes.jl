@@ -24,11 +24,7 @@ to heuristics implemented in the algorithm.
 struct FIST <: DiscretizationMethod end
 
 function discretize(polysurface::PolySurface, method::FIST)
-  # cleanup polysurface so that is has unique
-  # vertices and correct orientations
-  p = unique(polysurface)
-
   # build bridges in case the polysurface has
   # holes, i.e. reduce to a single outer boundary
-  p = hasholes(p) ? bridge(p) : p
+  c = polysurface |> unique |> bridge
 end
