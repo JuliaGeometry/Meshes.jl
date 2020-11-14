@@ -23,8 +23,11 @@ to heuristics implemented in the algorithm.
 """
 struct FIST <: DiscretizationMethod end
 
-function discretize(polysurface::PolySurface, method::FIST)
+function discretize(polysurface::PolySurface, ::FIST)
   # build bridges in case the polysurface has
   # holes, i.e. reduce to a single outer boundary
-  c = polysurface |> unique |> bridge
+  𝒫 = polysurface |> unique |> bridge
+
+  # classify angles as convex vs. reflex
+  isconvex = angles(𝒫) .< π
 end
