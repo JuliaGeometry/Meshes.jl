@@ -54,6 +54,11 @@
     c = Chain(P2[(1,1),(2,2),(3,3)])
     reverse!(c)
     @test c == Chain(P2[(3,3),(2,2),(1,1)])
+
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test angles(c) ≈ [π/2, π/2, π/2, π/2]
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1)])
+    @test angles(c) ≈ [π/2, π/2]
   end
 
   @testset "PolySurfaces" begin

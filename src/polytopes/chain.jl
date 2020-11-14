@@ -141,6 +141,29 @@ function Base.reverse!(c::Chain)
   c
 end
 
+"""
+    angles(chain)
+
+Return angles of the `chain` in [0, π].
+"""
+function angles(c::Chain)
+  θs = map(2:length(c.vertices)-1) do i
+    p1 = c.vertices[i-1]
+    p2 = c.vertices[  i]
+    p3 = c.vertices[i+1]
+    ∠(p1, p2, p3)
+  end
+
+  if isclosed(c)
+    p1 = c.vertices[end-1]
+    p2 = c.vertices[1]
+    p3 = c.vertices[2]
+    push!(θs, ∠(p1, p2, p3))
+  end
+
+  abs.(θs)
+end
+
 function Base.show(io::IO, c::Chain)
   N = length(c.vertices)
   print(io, "$N-chain")
