@@ -138,10 +138,24 @@
       @test nb[1] == sum(np) + length(np) - 1
     end
 
+    # bridges between holes
+    outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
+    hole1 = P2[T.((0.2,0.2)),T.((0.4,0.2)),T.((0.4,0.4)),T.((0.2,0.4)),T.((0.2,0.2))]
+    hole2 = P2[T.((0.6,0.2)),T.((0.8,0.2)),T.((0.8,0.4)),T.((0.6,0.4)),T.((0.6,0.2))]
+    poly  = PolySurface(outer, reverse.([hole1, hole2]))
+    brid  = bridge(poly)
+    target = eachcol(T[
+      0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0  0.0
+      0.0  0.2  0.4  0.4  0.2  0.2  0.4  0.4  0.2  0.2  0.2  0.2  0.0  0.0  1.0  1.0  0.0
+    ])
+    @test vertices(first(chains(brid))) == Point.(target)
+
     # test uniqueness
     points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]
     poly   = PolySurface(points)
     unique!(poly)
     @test first(chains(poly)) == Chain(points)
+
+    # test angles
   end
 end
