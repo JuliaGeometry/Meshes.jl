@@ -64,10 +64,11 @@ export
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
   Chain, PolySurface,
-  vertices, nvertices, facets,
-  center, windingnumber,
+  vertices, nvertices,
+  faces, facets, center,
+  windingnumber, chains,
   isclosed, issimple, hasholes,
-  chains, close!, open!,
+  close!, open!, bridge,
   orientation, oriented!,
 
   # connectivities

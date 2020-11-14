@@ -128,6 +128,16 @@
       @test oriented!(poly) == poly
     end
 
+    # test bridges
+    for poly in [polys1; polys2; polys3]
+      bridged = bridge(poly)
+      np = nvertices.(chains(poly))
+      nb = nvertices.(chains(bridged))
+      @test !hasholes(bridged)
+      @test first(orientation(bridged)) == :CCW
+      @test nb[1] == sum(np) + length(np) - 1
+    end
+
     # test uniqueness
     points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]
     poly   = PolySurface(points)
