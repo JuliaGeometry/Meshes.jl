@@ -15,7 +15,7 @@ to heuristics implemented in the algorithm.
 
 ## References
 
-* Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
+* Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 * Eder et al. 2018. [Parallelized ear clipping for the triangulation and
   constrained Delaunay triangulation of polygons]
@@ -24,6 +24,11 @@ to heuristics implemented in the algorithm.
 struct FIST <: DiscretizationMethod end
 
 function discretize(polysurface::PolySurface, method::FIST)
-  # preprocess input
-  p = polysurface |> unique |> oriented!
+  # cleanup polysurface so that is has unique
+  # vertices and correct orientations
+  p = unique(polysurface)
+
+  # build bridges in case the polysurface has
+  # holes, i.e. reduce to a single outer boundary
+  p = hasholes(p) ? bridge(p) : p
 end

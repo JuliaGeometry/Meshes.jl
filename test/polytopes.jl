@@ -54,6 +54,8 @@
     c = Chain(P2[(1,1),(2,2),(3,3)])
     reverse!(c)
     @test c == Chain(P2[(3,3),(2,2),(1,1)])
+    c = Chain(P2[(1,1),(2,2),(3,3)])
+    @test reverse(c) == Chain(P2[(3,3),(2,2),(1,1)])
 
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test angles(c) ≈ [π/2, π/2, π/2, π/2]
@@ -100,7 +102,6 @@
       @test issimple(poly)
       @test orientation(poly) == [:CCW]
       @test unique(poly) == poly
-      @test oriented!(poly) == poly
     end
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -113,7 +114,6 @@
       @test issimple(poly)
       @test orientation(poly) == [:CCW]
       @test unique(poly) == poly
-      @test oriented!(poly) == poly
     end
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -130,16 +130,14 @@
       @test orients[1] == :CCW
       @test all(orients[2:end] .== :CW)
       @test unique(poly) == poly
-      @test oriented!(poly) == poly
     end
 
     # test bridges
     for poly in [polys1; polys2; polys3]
-      bridged = bridge(poly)
+      chain = bridge(poly)
       np = nvertices.(chains(poly))
-      nb = nvertices.(chains(bridged))
-      @test !hasholes(bridged)
-      @test first(orientation(bridged)) == :CCW
+      nb = nvertices(chain)
+      @test orientation(chain) == :CCW
       @test nb[1] == sum(np) + length(np) - 1
     end
 
@@ -148,12 +146,12 @@
     hole1 = P2[T.((0.2,0.2)),T.((0.4,0.2)),T.((0.4,0.4)),T.((0.2,0.4)),T.((0.2,0.2))]
     hole2 = P2[T.((0.6,0.2)),T.((0.8,0.2)),T.((0.8,0.4)),T.((0.6,0.4)),T.((0.6,0.2))]
     poly  = PolySurface(outer, reverse.([hole1, hole2]))
-    brid  = bridge(poly)
-    target = eachcol(T[
+    chain = bridge(poly)
+    target = T[
       0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0  0.0
       0.0  0.2  0.4  0.4  0.2  0.2  0.4  0.4  0.2  0.2  0.2  0.2  0.0  0.0  1.0  1.0  0.0
-    ])
-    @test vertices(first(chains(brid))) == Point.(target)
+    ]
+    @test vertices(chain) == Point.(eachcol(target))
 
     # test uniqueness
     points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]

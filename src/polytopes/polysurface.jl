@@ -22,7 +22,13 @@ struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   function PolySurface{Dim,T,C}(outer, inners) where {Dim,T,C}
     @assert isclosed(outer) "invalid outer chain"
     @assert all(isclosed.(inners)) "invalid inner chains"
-    new(outer, inners)
+
+    # fix orientation if needed
+    fix(c, o) = orientation(c) == o ? c : reverse(c)
+    ofixed = fix(outer, :CCW)
+    ifixed = map(c -> fix(c, :CW), inners)
+
+    new(ofixed, ifixed)
   end
 end
 
@@ -103,22 +109,6 @@ function Base.unique!(p::PolySurface)
 end
 
 """
-    oriented!(polysurface)
-
-Fix orientation of `polysurface` so that outer
-chain is counter-clockwise (CCW) and inner chains
-are clockwise (CW).
-"""
-function oriented!(p::PolySurface)
-  orients = orientation(p)
-  first(orients) == :CCW || reverse!(p.outer)
-  for i in 2:length(orients)
-    orients[i] == :CW || reverse!(p.inners[i])
-  end
-  p
-end
-
-"""
     bridge(polysurface)
 
 Transform `polysurface` with holes into a single
@@ -183,7 +173,7 @@ function bridge(p::PolySurface)
   # close boundary
   push!(outer, first(outer))
 
-  PolySurface(Point.(outer))
+  Chain(Point.(outer))
 end
 
 function Base.show(io::IO, p::PolySurface)

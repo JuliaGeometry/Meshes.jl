@@ -59,18 +59,45 @@ function windingnumber(p::Point, c::Chain)
   sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
 end
 
+abstract type OrientationMethod end
+
+struct WindingOrientation <: OrientationMethod end
+
+struct TriangleOrientation <: OrientationMethod end
+
 """
-    orientation(chain)
+    orientation(chain, [method])
 
 Returns the orientation of the `chain` as either
 counter-clockwise (CCW) or clockwise (CW).
+
+Optionally, specify the orientation `method`:
+
+* `WindingOrientation()` - Balbes, R. and Siegel, J. 1990.
+* `TriangleOrientation()` - Held, M. 1998.
+
+Default method is `WindingOrientation()`.
+
+## References
+
+* Balbes, R. and Siegel, J. 1990. [A robust method for calculating
+  the simplicity and orientation of planar polygons]
+  (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
+* Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
+  (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-function orientation(c::Chain{Dim,T}) where {Dim,T}
+orientation(c::Chain) = orientation(c, WindingOrientation())
+
+function orientation(c::Chain{Dim,T}, ::WindingOrientation) where {Dim,T}
   # pick any segment
   x1, x2 = c.vertices[1:2]
   x̄ = center(Segment(x1, x2))
   w = windingnumber(x̄, c) - ∠(x1, x̄, x2)
   isapprox(w, π, atol=atol(T)) ? :CCW : :CW
+end
+
+function orientation(c::Chain, ::TriangleOrientation)
+  @error "not implemented"
 end
 
 """
@@ -140,6 +167,13 @@ function Base.reverse!(c::Chain)
   reverse!(c.vertices)
   c
 end
+
+"""
+    reverse(chain)
+
+Reverse the `chain` vertices.
+"""
+Base.reverse(c::Chain) = reverse!(deepcopy(c))
 
 """
     angles(chain)
