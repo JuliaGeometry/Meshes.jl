@@ -12,6 +12,10 @@ struct Chain{Dim,T} <: Polytope{1,Dim,T}
   vertices::Vector{Point{Dim,T}}
 end
 
+nvertices(c::Chain) = length(c.vertices) - isclosed(c)
+
+vertices(c::Chain) = isclosed(c) ? (@view c.vertices[begin:end-1]) : c.vertices
+
 """
     isclosed(chain)
 

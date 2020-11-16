@@ -48,6 +48,8 @@ PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(ou
 ==(p1::PolySurface, p2::PolySurface) =
   p1.outer == p2.outer && p1.inners == p2.inners
 
+nvertices(p::PolySurface) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
+
 """
     chains(polysurface)
 
@@ -123,7 +125,7 @@ function bridge(p::PolySurface)
   hasholes(p) || return first(chains(p))
 
   # retrieve chains with coordinates
-  pchains = [coordinates.(vertices(c)[begin:end-1]) for c in chains(p)]
+  pchains = [coordinates.(vertices(c)) for c in chains(p)]
 
   # sort vertices lexicographically
   coords  = [coord for pchain in pchains for coord in pchain]

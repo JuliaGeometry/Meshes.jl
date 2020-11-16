@@ -97,7 +97,7 @@
     fnames = ["poly$i.line" for i in 1:5]
     polys1 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
     for poly in polys1
-      @test nvertices(first(chains(poly))) == 31
+      @test nvertices(first(chains(poly))) == 30
       @test !hasholes(poly)
       @test issimple(poly)
       @test orientation(poly) == [:CCW]
@@ -109,7 +109,7 @@
     fnames = ["smooth$i.line" for i in 1:5]
     polys2 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
     for poly in polys2
-      @test nvertices(first(chains(poly))) == 121
+      @test nvertices(first(chains(poly))) == 120
       @test !hasholes(poly)
       @test issimple(poly)
       @test orientation(poly) == [:CCW]
@@ -122,7 +122,7 @@
     polys3 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
     for poly in polys3
       rings = chains(poly)
-      @test nvertices(first(rings)) < 31
+      @test nvertices(first(rings)) < 30
       @test all(nvertices.(rings[2:end]) .< 18)
       @test hasholes(poly)
       @test !issimple(poly)
@@ -134,22 +134,22 @@
 
     # test bridges
     for poly in [polys1; polys2; polys3]
-      chain = bridge(poly)
+      b  = bridge(poly)
+      nb = nvertices(b)
       np = nvertices.(chains(poly))
-      nb = nvertices(chain)
-      @test orientation(chain) == :CCW
-      @test nb[1] == sum(np) + length(np) - 1
+      @test orientation(b) == :CCW
+      @test nb ≥ sum(np)
     end
 
     # bridges between holes
     outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
     hole1 = P2[T.((0.2,0.2)),T.((0.4,0.2)),T.((0.4,0.4)),T.((0.2,0.4)),T.((0.2,0.2))]
     hole2 = P2[T.((0.6,0.2)),T.((0.8,0.2)),T.((0.8,0.4)),T.((0.6,0.4)),T.((0.6,0.2))]
-    poly  = PolySurface(outer, reverse.([hole1, hole2]))
+    poly  = PolySurface(outer, [hole1, hole2])
     chain = bridge(poly)
     target = T[
-      0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0  0.0
-      0.0  0.2  0.4  0.4  0.2  0.2  0.4  0.4  0.2  0.2  0.2  0.2  0.0  0.0  1.0  1.0  0.0
+      0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0
+      0.0  0.2  0.4  0.4  0.2  0.2  0.4  0.4  0.2  0.2  0.2  0.2  0.0  0.0  1.0  1.0
     ]
     @test vertices(chain) == Point.(eachcol(target))
 
@@ -159,6 +159,6 @@
     unique!(poly)
     @test first(chains(poly)) == Chain(points)
 
-    # test angles
+    # TODO: test angles
   end
 end
