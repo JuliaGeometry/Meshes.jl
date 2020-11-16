@@ -31,10 +31,8 @@ coding style that is present in the files when submitting pull requests.
 
 ### Related packages
 
-This project is an evolution of previous efforts:
+This project is an evolution of previous efforts, originally developed
+for visualization purposes:
 
 - [GeometryTypes.jl](https://github.com/JuliaGeometry/GeometryTypes.jl)
 - [GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)
-
-The main difference is that we provide robust algorithms that work well
-in the context of finite element analysis and geospatial modeling. 
