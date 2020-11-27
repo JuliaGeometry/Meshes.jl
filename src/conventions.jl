@@ -24,11 +24,3 @@ end
 # ---------------------------
 
 include("conventions/gmsh.jl")
-
-function facets(p::Polytope{N}, convention=GMSH) where {N}
-  faces(p, N-1, convention)
-end
-
-function faces(p::Polytope, rank, convention=GMSH)
-  (materialize(ord, p.vertices) for ord in connectivities(typeof(p), rank, convention))
-end

@@ -140,12 +140,25 @@ Return the number of vertices in the `polytope`.
 nvertices(p::Polytope) = length(p.vertices)
 
 """
-    facets(polytope)
+    facets(polytope, convention=GMSH)
 
-Return the facets of a `polytope`.
+Return the facets of a `polytope` according to some
+ordering `convention`. Default convention is [`GMSH`](@ref).
 See https://en.wikipedia.org/wiki/Facet_(geometry)
 """
-function facets end
+function facets(p::Polytope{N}, convention=GMSH) where {N}
+  faces(p, N-1, convention)
+end
+
+"""
+    faces(polytope, rank, convention=GMSH)
+
+Return the faces of the `polytope` of given `rank` according
+to some ordering `convention`. Default convention is [`GMSH`](@ref).
+"""
+function faces(p::Polytope, rank, convention=GMSH)
+  (materialize(ord, p.vertices) for ord in connectivities(typeof(p), rank, convention))
+end
 
 """
     p1 == p2
