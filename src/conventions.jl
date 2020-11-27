@@ -15,7 +15,7 @@ Return the list of `Connectivity` elements used to construct all
 faces of rank `rank` of a polytope, following an ordering convention.
 """
 function connectivities(polytope::Type{<:Polytope}, rank::Integer,
-                        convention::OrderingConvention)
+                        convention::Type{<:OrderingConvention})
   connectivities(polytope, Val(rank), convention)
 end
 

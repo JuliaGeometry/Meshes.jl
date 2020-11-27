@@ -2,18 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# ORDERING CONVENTION
-# v
-# ^                 
-# |                 
-# 2                 
-# |`\               
-# |  `\             
-# |    `\           
-# |      `\         
-# |        `\       
-# 0----------1 --> u
-
 """
     Triangle(p1, p2, p3)
 
