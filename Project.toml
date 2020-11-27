@@ -1,7 +1,7 @@
 name = "Meshes"
 uuid = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 authors = ["Júlio Hoffimann and contributors"]
-version = "0.5.0"
+version = "0.5.1"
 
 [deps]
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
