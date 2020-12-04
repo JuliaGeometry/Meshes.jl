@@ -41,7 +41,7 @@
   @testset "Chains" begin
     c = Chain(P2[(1,1),(2,2),(3,3)])
     close!(c)
-    @test orientation(c) = CW
+    @test orientation(c) = [:CW]
 
     c = Chain(P2[(1,1),(2,2),(2,2),(3,3)])
     @test unique(c) == Chain(P2[(1,1),(2,2),(3,3)])
