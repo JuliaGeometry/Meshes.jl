@@ -1,3 +1,3 @@
 @testset "Bounding boxes" begin
-  # TODO
+  @test boundingbox((0,0),1) == (-1,1)
 end
