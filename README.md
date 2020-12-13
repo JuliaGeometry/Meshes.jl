@@ -1,7 +1,7 @@
 # Meshes.jl
 
-[![Build Status](https://travis-ci.com/JuliaGeometry/Meshes.jl.svg?branch=master)](https://travis-ci.com/JuliaGeometry/Meshes.jl)
-[![Codecov](https://codecov.io/gh/JuliaGeometry/Meshes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaGeometry/Meshes.jl)
+[![Build Status](https://img.shields.io/github/workflow/status/JuliaGeometry/Meshes.jl/CI?style=flat-square)](https://github.com/JuliaGeometry/Meshes.jl/actions)
+[![Codecov](https://img.shields.io/codecov/c/github/JuliaGeometry/Meshes.jl?style=flat-square)](https://codecov.io/gh/JuliaGeometry/Meshes.jl)
 
 This project provides efficient implementations of concepts from
 computational geometry and finite element analysis. It promotes
