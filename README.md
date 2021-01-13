@@ -1,9 +1,23 @@
-# Meshes.jl
+<p align="center">
+  <img src="docs/src/assets/logo-text.svg" height="200"><br>
+  <a href="https://github.com/JuliaGeometry/Meshes.jl/actions">
+    <img src="https://img.shields.io/github/workflow/status/JuliaGeometry/Meshes.jl/CI?style=flat-square">
+  </a>
+  <a href="https://codecov.io/gh/JuliaGeometry/Meshes.jl">
+    <img src="https://img.shields.io/codecov/c/github/JuliaGeometry/Meshes.jl?style=flat-square">
+  </a>
+  <a href="https://JuliaGeometry.github.io/Meshes.jl/stable">
+    <img src="https://img.shields.io/badge/docs-stable-blue?style=flat-square">
+  </a>
+  <a href="https://JuliaGeometry.github.io/Meshes.jl/latest">
+    <img src="https://img.shields.io/badge/docs-latest-blue?style=flat-square">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
+  </a>
+</p>
 
-[![Build Status](https://img.shields.io/github/workflow/status/JuliaGeometry/Meshes.jl/CI?style=flat-square)](https://github.com/JuliaGeometry/Meshes.jl/actions)
-[![Codecov](https://img.shields.io/codecov/c/github/JuliaGeometry/Meshes.jl?style=flat-square)](https://codecov.io/gh/JuliaGeometry/Meshes.jl)
-
-This project provides efficient implementations of concepts from
+Meshes.jl provides efficient implementations of concepts from
 computational geometry and finite element analysis. It promotes
 rigorous mathematical definitions of spatial discretizations
 (a.k.a. meshes) that are adequate for describing general
