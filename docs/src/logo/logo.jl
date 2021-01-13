@@ -96,5 +96,5 @@ end
 
 for ext in [".svg", ".png"]
   logo(240, "../assets/logo"*ext)
-  logotext(700, 200, "../assets/logo-text"*ext)
+  logotext(600, 200, "../assets/logo-text"*ext)
 end
