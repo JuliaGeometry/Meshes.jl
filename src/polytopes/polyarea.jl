@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    PolySurface(outer, [inner1, inner2, ..., innerk])
+    PolyArea(outer, [inner1, inner2, ..., innerk])
 
-A polygonal surface with `outer` chain, and optional inner
+A polygonal area with `outer` chain, and optional inner
 chains `inner1`, `inner2`, ..., `innerk`.
 
 Chains can be a vector of [`Point`](@ref) or a
@@ -15,11 +15,11 @@ Most algorithms assume that the outer chain is oriented
 counter-clockwise (CCW) and that all inner chains are
 oriented clockwise (CW).
 """
-struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
+struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   outer::C
   inners::Vector{C}
 
-  function PolySurface{Dim,T,C}(outer, inners) where {Dim,T,C}
+  function PolyArea{Dim,T,C}(outer, inners) where {Dim,T,C}
     @assert isclosed(outer) "invalid outer chain"
     @assert all(isclosed.(inners)) "invalid inner chains"
 
@@ -32,88 +32,88 @@ struct PolySurface{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolySurface(outer::C, inners=[]) where {Dim,T,C<:Chain{Dim,T}} =
-  PolySurface{Dim,T,Chain{Dim,T}}(outer, inners)
+PolyArea(outer::C, inners=[]) where {Dim,T,C<:Chain{Dim,T}} =
+  PolyArea{Dim,T,Chain{Dim,T}}(outer, inners)
 
-PolySurface(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
-  PolySurface(Chain(outer), [Chain(inner) for inner in inners])
+PolyArea(outer::AbstractVector{P}, inners=[]) where {P<:Point} =
+  PolyArea(Chain(outer), [Chain(inner) for inner in inners])
 
-PolySurface(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
-  PolySurface(Point.(outer), [Point.(inner) for inner in inners])
+PolyArea(outer::AbstractVector{TP}, inners=[]) where {TP<:Tuple} =
+  PolyArea(Point.(outer), [Point.(inner) for inner in inners])
 
-PolySurface(outer::Vararg{P}) where {P<:Point} = PolySurface(collect(outer))
+PolyArea(outer::Vararg{P}) where {P<:Point} = PolyArea(collect(outer))
 
-PolySurface(outer::Vararg{TP}) where {TP<:Tuple} = PolySurface(collect(Point.(outer)))
+PolyArea(outer::Vararg{TP}) where {TP<:Tuple} = PolyArea(collect(Point.(outer)))
 
-==(p1::PolySurface, p2::PolySurface) =
+==(p1::PolyArea, p2::PolyArea) =
   p1.outer == p2.outer && p1.inners == p2.inners
 
-nvertices(p::PolySurface) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
+nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
 
 """
-    chains(polysurface)
+    chains(polyarea)
 
 Return the outer and inner chains of the polygon.
 """
-chains(p::PolySurface) = [p.outer; p.inners]
+chains(p::PolyArea) = [p.outer; p.inners]
 
 """
-    hasholes(polysurface)
+    hasholes(polyarea)
 
-Tells whether or not the `polysurface` contains holes.
+Tells whether or not the `polyarea` contains holes.
 """
-hasholes(p::PolySurface) = !isempty(p.inners)
+hasholes(p::PolyArea) = !isempty(p.inners)
 
 """
-    issimple(polysurface)
+    issimple(polyarea)
 
-Tells whether or not the `polysurface` is a simple polygon.
+Tells whether or not the `polyarea` is a simple polygon.
 See https://en.wikipedia.org/wiki/Simple_polygon.
 """
-issimple(p::PolySurface) = !hasholes(p) && issimple(p.outer)
+issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
 
 """
-    windingnumber(point, polysurface)
+    windingnumber(point, polyarea)
 
-Winding number of `point` with respect to the `polysurface`.
+Winding number of `point` with respect to the `polyarea`.
 """
-windingnumber(point::Point, p::PolySurface) =
+windingnumber(point::Point, p::PolyArea) =
   windingnumber(point, p.outer)
 
 """
-    orientation(polysurface)
+    orientation(polyarea)
 
-Returns the orientation of the `polysurface` as either
+Returns the orientation of the `polyarea` as either
 counter-clockwise (CCW) or clockwise (CW).
 
 For polygons with holes, returns a list of orientations.
 """
-function orientation(p::PolySurface)
+function orientation(p::PolyArea)
   orientation.([p.outer; p.inners])
 end
 
 """
-    unique(polysurface)
+    unique(polyarea)
 
-Return a new `polysurface` without duplicate vertices.
+Return a new `polyarea` without duplicate vertices.
 """
-Base.unique(p::PolySurface) = unique!(deepcopy(p))
+Base.unique(p::PolyArea) = unique!(deepcopy(p))
 
 """
-    unique!(polysurface)
+    unique!(polyarea)
 
-Remove duplicate vertices in `polysurface`.
+Remove duplicate vertices in `polyarea`.
 """
-function Base.unique!(p::PolySurface)
+function Base.unique!(p::PolyArea)
   close!(unique!(open!(p.outer)))
   hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
   p
 end
 
 """
-    bridge(polysurface)
+    bridge(polyarea)
 
-Transform `polysurface` with holes into a single
+Transform `polyarea` with holes into a single
 outer chain via bridges.
 
 ## References
@@ -121,7 +121,7 @@ outer chain via bridges.
 * Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-function bridge(p::PolySurface)
+function bridge(p::PolyArea)
   hasholes(p) || return first(chains(p))
 
   # retrieve chains with coordinates
@@ -180,16 +180,16 @@ function bridge(p::PolySurface)
   Chain(Point.(outer))
 end
 
-function Base.show(io::IO, p::PolySurface)
+function Base.show(io::IO, p::PolyArea)
   outer = p.outer
   inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
-  print(io, "PolySurface($outer$inner)")
+  print(io, "PolyArea($outer$inner)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::PolySurface{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
   outer = "    └─$(p.outer)"
   inner = ["    └─$v" for v in p.inners]
-  println(io, "PolySurface{$Dim,$T}")
+  println(io, "PolyArea{$Dim,$T}")
   println(io, "  outer")
   if isempty(inner)
     print(io, outer)

@@ -23,10 +23,10 @@ to heuristics implemented in the algorithm.
 """
 struct FIST <: DiscretizationMethod end
 
-function discretize(polysurface::PolySurface, ::FIST)
-  # build bridges in case the polysurface has
+function discretize(polyarea::PolyArea, ::FIST)
+  # build bridges in case the polygonal area has
   # holes, i.e. reduce to a single outer boundary
-  𝒫 = polysurface |> unique |> bridge
+  𝒫 = polyarea |> unique |> bridge
 
   # perform ear clipping
   while nvertices(𝒫) > 3

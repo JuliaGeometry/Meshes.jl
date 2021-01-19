@@ -35,7 +35,7 @@ include("boundingboxes.jl")
 # plot recipes
 include("plotrecipes/polytopes.jl")
 include("plotrecipes/chains.jl")
-include("plotrecipes/polysurfaces.jl")
+include("plotrecipes/polyareas.jl")
 
 export 
   # points
@@ -63,7 +63,7 @@ export
   Polytope, Polygon, Polyhedron,
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
-  Chain, PolySurface,
+  Chain, PolyArea,
   vertices, nvertices,
   faces, facets, center,
   windingnumber, chains,
