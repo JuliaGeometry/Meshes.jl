@@ -28,6 +28,13 @@ function discretize(polysurface::PolySurface, ::FIST)
   # holes, i.e. reduce to a single outer boundary
   𝒫 = polysurface |> unique |> bridge
 
-  # classify angles as convex vs. reflex
-  isconvex = angles(𝒫) .< π
+  # perform ear clipping
+  while nvertices(𝒫) > 3
+    # CE1.1: classify angles as convex vs. reflex
+    isconvex = angles(𝒫) .< π
+
+    # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
+    intersects = map(1:nvertices(𝒫)) do i
+    end
+  end
 end
