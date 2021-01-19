@@ -63,7 +63,7 @@
     @test angles(c) ≈ [π/2, π/2]
   end
 
-  @testset "PolySurfaces" begin
+  @testset "PolyAreas" begin
     # helper function to read *.line files containing polygons
     # generated with RPG (https://github.com/cgalab/genpoly-rpg)
     function readpoly(fname)
@@ -88,7 +88,7 @@
           push!(inners, inner)
         end
 
-        PolySurface(outer, inners)
+        PolyArea(outer, inners)
       end
     end
 
@@ -145,7 +145,7 @@
     outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
     hole1 = P2[T.((0.2,0.2)),T.((0.4,0.2)),T.((0.4,0.4)),T.((0.2,0.4)),T.((0.2,0.2))]
     hole2 = P2[T.((0.6,0.2)),T.((0.8,0.2)),T.((0.8,0.4)),T.((0.6,0.4)),T.((0.6,0.2))]
-    poly  = PolySurface(outer, [hole1, hole2])
+    poly  = PolyArea(outer, [hole1, hole2])
     chain = bridge(poly)
     target = T[
       0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0
@@ -155,7 +155,7 @@
 
     # test uniqueness
     points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]
-    poly   = PolySurface(points)
+    poly   = PolyArea(points)
     unique!(poly)
     @test first(chains(poly)) == Chain(points)
 

@@ -2,12 +2,12 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-@recipe function f(polysurface::PolySurface)
+@recipe function f(polyarea::PolyArea)
   seriestype --> :path
   seriescolor --> :black
-  label --> "polysurface"
+  label --> "polyarea"
 
-  pchains = chains(polysurface)
+  pchains = chains(polyarea)
 
   # plot outer chain
   @series begin
