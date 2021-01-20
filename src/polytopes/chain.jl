@@ -182,12 +182,18 @@ Base.reverse(c::Chain) = reverse!(deepcopy(c))
 """
     angles(chain)
 
-Return angles of the `chain` in [0, π].
+Return angles ∠(vᵢ-1, vᵢ, vᵢ+1) at all vertices
+vᵢ of the `chain`. If the chain is open, the first
+and last vertices have no angles. Positive angles
+represent a CCW rotation whereas negative angles
+represent a CW rotation. In either case, the
+absolute value of the angles returned are never
+greater than `π`.
 """
 function angles(c::Chain)
   θs = map(2:length(c.vertices)-1) do i
     p1 = c.vertices[i-1]
-    p2 = c.vertices[  i]
+    p2 = c.vertices[i  ]
     p3 = c.vertices[i+1]
     ∠(p1, p2, p3)
   end
@@ -199,7 +205,23 @@ function angles(c::Chain)
     push!(θs, ∠(p1, p2, p3))
   end
 
-  abs.(θs)
+  θs
+end
+
+"""
+    innerangles(chain)
+
+Return inner angles of the *closed* `chain`. Inner
+angles are always positive, and unlike `angles`
+they can be greater than `π`.
+"""
+function innerangles(c::Chain{Dim,T}) where {Dim,T}
+  @assert isclosed(c) "Inner angles only defined for closed chains"
+
+  # correct sign of angles in case orientation is CW
+  θs = orientation(c) == :CW ? -angles(c) : angles(c)
+
+  [θ > 0 ? 2*T(π) - θ : -θ for θ in θs]
 end
 
 function Base.show(io::IO, c::Chain)

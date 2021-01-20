@@ -68,7 +68,7 @@ export
   faces, facets, center,
   windingnumber, chains,
   isclosed, issimple, hasholes,
-  angles, close!, open!,
+  angles, innerangles, close!, open!,
   orientation, bridge,
 
   # connectivities
