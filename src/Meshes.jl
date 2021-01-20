@@ -6,6 +6,7 @@ module Meshes
 
 using IterTools
 using StaticArrays
+using CircularArrays
 using SpecialFunctions
 using LinearAlgebra
 using RecipesBase

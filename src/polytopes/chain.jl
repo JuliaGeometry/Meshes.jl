@@ -14,7 +14,21 @@ end
 
 nvertices(c::Chain) = length(c.vertices) - isclosed(c)
 
-vertices(c::Chain) = isclosed(c) ? (@view c.vertices[begin:end-1]) : c.vertices
+"""
+    vertices(chain)
+
+Return the vertices of the `chain`. In the case that the
+chain is closed, the returned vector is circular and can
+be indexed with arbitrarily negative or positive indices.
+"""
+function vertices(c::Chain)
+  if isclosed(c)
+    vs = @view c.vertices[begin:end-1]
+    CircularVector(vs)
+  else
+    c.vertices
+  end
+end
 
 """
     isclosed(chain)
@@ -182,12 +196,12 @@ Base.reverse(c::Chain) = reverse!(deepcopy(c))
 """
     angles(chain)
 
-Return angles ∠(vᵢ-1, vᵢ, vᵢ+1) at all vertices
-vᵢ of the `chain`. If the chain is open, the first
+Return angles `∠(vᵢ-₁, vᵢ, vᵢ+₁)` at all vertices
+`vᵢ` of the `chain`. If the chain is open, the first
 and last vertices have no angles. Positive angles
 represent a CCW rotation whereas negative angles
 represent a CW rotation. In either case, the
-absolute value of the angles returned are never
+absolute value of the angles returned is never
 greater than `π`.
 """
 function angles(c::Chain)
