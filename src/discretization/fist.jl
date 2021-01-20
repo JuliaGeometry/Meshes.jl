@@ -30,11 +30,29 @@ function discretize(polyarea::PolyArea, ::FIST)
 
   # perform ear clipping
   while nvertices(𝒫) > 3
+    # current vertices
+    vs = vertices(𝒫)
+
     # CE1.1: classify angles as convex vs. reflex
-    isconvex = angles(𝒫) .< π
+    isconvex = innerangles(𝒫) .< π
 
     # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
     intersects = map(1:nvertices(𝒫)) do i
+      # target segment vᵢ-₁ -- vᵢ+₁
+      sᵢ = Segment(vs[i-1], vs[i+1])
+
+      # loop over all edges of 𝒫
+      cross = false
+      for j in 1:nvertices(𝒫)
+        sⱼ = Segment(vs[j], vs[j+1])
+        I = intersecttype(sᵢ, sⱼ)
+        if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
+          cross = true
+          break
+        end
+      end
+
+      cross
     end
   end
 end
