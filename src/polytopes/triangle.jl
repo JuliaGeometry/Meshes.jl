@@ -21,10 +21,3 @@ function Base.in(p::Point{2}, t::Triangle{2})
   areas = (abp, bcp, cap)
   all(areas .≥ 0) || all(areas .≤ 0)
 end
-
-"""
-    signarea(triangle)
-
-Compute the signed area of `triangle`.
-"""
-signarea(t::Triangle{2}) = signarea(t.vertices[1], t.vertices[2], t.vertices[3])

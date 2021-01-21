@@ -14,3 +14,13 @@ function signarea(p₁::Point{2}, p₂::Point{2}, p₃::Point{2})
   c = coordinates(p₃)
   ((b[1]-a[1])*(c[2]-a[2]) - (b[2]-a[2])*(c[1]-a[1])) / 2
 end
+
+"""
+    signarea(triangle)
+
+Compute the signed area of `triangle`.
+"""
+function signarea(t::Triangle{2})
+  vs = vertices(t)
+  signarea(vs[1], vs[2], vs[3])
+end
