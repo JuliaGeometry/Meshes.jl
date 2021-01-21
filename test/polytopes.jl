@@ -46,6 +46,14 @@
     t = Triangle(P2(0,0), P2(0,1), P2(1,0))
     @test signarea(t) == T(-0.5)
     @test area(t) == T(0.5)
+
+    t = Triangle(P2(0,0), P2(1,0), P2(1,1))
+    for p in P2[(0,0),(1,0),(1,1),(0.5,0),(1,0.5),(0.5,0.5)]
+      @test p ∈ t
+    end
+    for p in P2[(-1,0),(0,-1),(0.5,1)]
+      @test p ∉ t
+    end
   end
 
   @testset "Chains" begin
