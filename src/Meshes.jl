@@ -53,7 +53,7 @@ export
   Geometry,
   GeometrySet,
   embeddim, paramdim, coordtype,
-  measure, boundary,
+  measure, area, volume, boundary,
 
   # primitives
   Primitive,
@@ -70,7 +70,7 @@ export
   windingnumber, chains,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
-  orientation, bridge,
+  orientation, bridge, signarea,
 
   # connectivities
   Connectivity,

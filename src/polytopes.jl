@@ -31,6 +31,8 @@ abstract type Polytope{N,Dim,T} <: Geometry{Dim,T} end
 # type aliases for convenience
 const Polygon = Polytope{2}
 const Polyhedron = Polytope{3}
+area(p::Polygon) = measure(p)
+volume(p::Polyhedron) = measure(p)
 
 """
     paramdim(polytope)
