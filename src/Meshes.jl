@@ -33,6 +33,9 @@ include("sampling.jl")
 include("discretization.jl")
 include("boundingboxes.jl")
 
+# utilities
+include("utils.jl")
+
 # plot recipes
 include("plotrecipes/polytopes.jl")
 include("plotrecipes/chains.jl")
@@ -70,7 +73,7 @@ export
   windingnumber, chains,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
-  orientation, bridge, signarea,
+  orientation, bridge,
 
   # connectivities
   Connectivity,
@@ -97,6 +100,9 @@ export
   discretize,
 
   # bounding boxes
-  boundingbox
+  boundingbox,
+
+  # utililities
+  signarea
 
 end # module
