@@ -62,6 +62,14 @@
 
     q = Quadrangle(P2(0,0), P2(1,0), P2(1.5,1.0), P2(0.5,1.0))
     @test area(q) == T(1)
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1.5,1.0), P2(0.5,1.0))
+    for p in P2[(0,0),(1,0),(1.5,1.0),(0.5,1.0),(0.5,0.5)]
+      @test p ∈ q
+    end
+    for p in P2[(0,1),(1.5,0.0)]
+      @test p ∉ q
+    end
   end
 
   @testset "Chains" begin

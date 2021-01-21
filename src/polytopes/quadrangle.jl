@@ -17,3 +17,10 @@ function measure(q::Quadrangle)
   Δ₂ = Triangle(view(vs, [3,4,1]))
   measure(Δ₁) + measure(Δ₂)
 end
+
+function Base.in(p::Point, q::Quadrangle)
+  vs = q.vertices
+  Δ₁ = Triangle(view(vs, [1,2,3]))
+  Δ₂ = Triangle(view(vs, [3,4,1]))
+  p ∈ Δ₁ || p ∈ Δ₂
+end
