@@ -56,6 +56,14 @@
     end
   end
 
+  @testset "Quadrangles" begin
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    @test area(q) == T(1)
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1.5,1.0), P2(0.5,1.0))
+    @test area(q) == T(1)
+  end
+
   @testset "Chains" begin
     c = Chain(P2[(1,1),(2,2),(2,2),(3,3)])
     @test unique(c) == Chain(P2[(1,1),(2,2),(3,3)])
