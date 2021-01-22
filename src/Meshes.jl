@@ -103,6 +103,7 @@ export
   boundingbox,
 
   # utililities
-  signarea
+  signarea,
+  sideof
 
 end # module
