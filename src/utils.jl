@@ -24,3 +24,16 @@ function signarea(t::Triangle{2})
   vs = vertices(t)
   signarea(vs[1], vs[2], vs[3])
 end
+
+"""
+    sideof(point, segment)
+
+Determines on which side of the oriented `segment`
+the `point` lies. Possible results are `:LEFT`,
+`:RIGHT` or `:ON` the segment.
+"""
+function sideof(p::Point{2,T}, s::Segment{2,T}) where {T}
+  a, b = vertices(s)
+  area = signarea(p, a, b)
+  ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
+end
