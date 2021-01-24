@@ -216,7 +216,7 @@ function angles(c::Chain)
     p1 = c.vertices[end-1]
     p2 = c.vertices[1]
     p3 = c.vertices[2]
-    push!(θs, ∠(p1, p2, p3))
+    pushfirst!(θs, ∠(p1, p2, p3))
   end
 
   θs
