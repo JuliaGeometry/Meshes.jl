@@ -78,7 +78,6 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
     α = ∠(Q[j], x̄, Q[j+1])
     if α ≈ 0 || α ≈ π || α ≈ -π
       determinatex = false
-      break
     end
     windingx += α
   end
@@ -90,7 +89,6 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
     β = ∠(Q[j], ȳ, Q[j+1])
     if β ≈ 0 || β ≈ π || β ≈ -π
       determinatey = false
-      break
     end
     windingy += β
   end
@@ -111,7 +109,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
     end
   elseif determinatex || determinatey # CASE (II)
     if !(determinatex ? wxzero : wyzero)
-      if x1 == y1 || x1 == y2 || x2 == y1 || x2 == y2
+      if _istouching(x1, x2, y1, y2)
         # configuration (3)
         CornerTouchingSegments(intersectpoint(s1, s2))
       else
@@ -127,7 +125,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       # configuration (3)
       CornerTouchingSegments(intersectpoint(s1, s2))
     else
-      if x1 == y1 || x1 == y2 || x2 == y1 || x2 == y2
+      if _istouching(x1, x2, y1, y2)
         # configuration (3)
         CornerTouchingSegments(intersectpoint(s1, s2))
       elseif x2 ≠ y1
@@ -139,6 +137,15 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       end
     end
   end
+end
+
+function _istouching(x1::Point{Dim,T}, x2::Point{Dim,T},
+                     y1::Point{Dim,T}, y2::Point{Dim,T}) where {Dim,T}
+  c1 = isapprox(x1, y1, atol=atol(T))
+  c2 = isapprox(x1, y2, atol=atol(T))
+  c3 = isapprox(x2, y1, atol=atol(T))
+  c4 = isapprox(x2, y2, atol=atol(T))
+  any((c1, c2, c3, c4))
 end
 
 """
