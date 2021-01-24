@@ -11,6 +11,8 @@ struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
 
+measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
+
 facets(s::Segment) = (v for v in s.vertices)
 
 """
@@ -109,7 +111,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
     end
   elseif determinatex || determinatey # CASE (II)
     if !(determinatex ? wxzero : wyzero)
-      if _istouching(x1, x2, y1, y2)
+      if x1 ≈ y1 || x1 ≈ y2 || x2 ≈ y1 || x2 ≈ y2
         # configuration (3)
         CornerTouchingSegments(intersectpoint(s1, s2))
       else
@@ -125,35 +127,13 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       # configuration (3)
       CornerTouchingSegments(intersectpoint(s1, s2))
     else
-      if _istouching(x1, x2, y1, y2)
-        # configuration (3)
-        CornerTouchingSegments(intersectpoint(s1, s2))
-      elseif x2 ≠ y1
-        # configuration (4)
-        OverlappingSegments(intersectsegment(s1, s2))
-      else
-        # configuration (5)
-        NonIntersectingSegments()
-      end
+      # configuration (3), (4) or (5)
+      intersectcolinear(s1, s2)
     end
   end
 end
 
-function _istouching(x1::Point{Dim,T}, x2::Point{Dim,T},
-                     y1::Point{Dim,T}, y2::Point{Dim,T}) where {Dim,T}
-  c1 = isapprox(x1, y1, atol=atol(T))
-  c2 = isapprox(x1, y2, atol=atol(T))
-  c3 = isapprox(x2, y1, atol=atol(T))
-  c4 = isapprox(x2, y2, atol=atol(T))
-  any((c1, c2, c3, c4))
-end
-
-"""
-    intersectpoint(s1, s2)
-
-Compute the intersection of two line segments `s1` and `s2`
-assuming that it is a point.
-"""
+# compute the intersection of two line segments assuming that it is a point
 function intersectpoint(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   x1, x2 = vertices(s1)
   y1, y2 = vertices(s2)
@@ -172,30 +152,43 @@ function intersectpoint(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   x1 + s*(x2 - x1)
 end
 
-"""
-    intersectsegment(s1, s2)
+# intersection of two line segments assuming that they are colinear
+function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
+  # make sure the first segment is larger than the second
+  sa, sb = measure(s1) < measure(s2) ? (s2, s1) : (s1, s2)
+  x1, x2 = vertices(sa)
+  y1, y2 = vertices(sb)
 
-Compute the intersection of two line segments `s1` and `s2`
-assuming that it is a segment.
-"""
-function intersectsegment(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
-  x1, x2 = vertices(s1)
-  y1, y2 = vertices(s2)
+  # given that the segments are colinear we can simply
+  # operate on the scalar parameters of the vertices
+  # along the line defined by the vector --x1--x2->
+  Δ = x2 - x1
+  i = findfirst(!iszero, Δ)
+  t1 = (y1 - x1)[i] / Δ[i]
+  t2 = (y2 - x1)[i] / Δ[i]
 
-  # solve Ax = b
-  A = x2 - x1
-  b = y1 - x1
-  s = zero(T)
-  for i in 1:length(A)
-    if !iszero(A[i])
-      s = b[i] / A[i]
-      break
-    end
-  end
+  # fix direction of second segment to match the first
+  t1 > t2 && ((t1, t2) = (t2, t1))
 
-  if s > 0 # s1 is to the left of s2
-    Segment(y1, x2)
-  else # s1 is to the right of s2
-    Segment(x1, y2)
+  if t1 < zero(T) && t2 < zero(T)
+    NonIntersectingSegments()
+  elseif t1 < zero(T) && t2 ≈ zero(T)
+    CornerTouchingSegments(x1)
+  elseif t1 < zero(T) && t2 > zero(T)
+    OverlappingSegments(Segment(x1, x1 + t2*Δ))
+  elseif t1 ≈ zero(T) && t2 > zero(T)
+    OverlappingSegments(Segment(x1, x1 + t2*Δ))
+  elseif t1 > zero(T) && t2 < one(T)
+    OverlappingSegments(Segment(x1 + t1*Δ, x1 + t2*Δ))
+  elseif t1 < one(T) && t2 ≈ one(T)
+    OverlappingSegments(Segment(x1 + t1*Δ, x2))
+  elseif t1 < one(T) && t2 > one(T)
+    OverlappingSegments(Segment(x1 + t1*Δ, x1 + t2*Δ))
+  elseif t1 ≈ one(T) && t2 > one(T)
+    CornerTouchingSegments(x2)
+  elseif t1 > one(T) && t2 > one(T)
+    NonIntersectingSegments()
+  else
+    @error "please report bug"
   end
 end

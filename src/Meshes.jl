@@ -71,8 +71,6 @@ export
   vertices, nvertices,
   faces, facets,
   intersecttype,
-  intersectpoint,
-  intersectsegment,
   windingnumber, chains,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
