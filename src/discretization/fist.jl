@@ -28,31 +28,56 @@ function discretize(polyarea::PolyArea, ::FIST)
   # holes, i.e. reduce to a single outer boundary
   𝒫 = polyarea |> unique |> bridge
 
+  # points of resulting mesh
+  points = vertices(𝒫)
+
   # perform ear clipping
+  𝒬 = ears(𝒫)
+  𝒯 = Connectivity{Triangle,3}[]
   while nvertices(𝒫) > 3
-    # current vertices
-    vs = vertices(𝒫)
-
-    # CE1.1: classify angles as convex vs. reflex
-    isconvex = innerangles(𝒫) .< π
-
-    # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
-    intersects = map(1:nvertices(𝒫)) do i
-      # target segment vᵢ-₁ -- vᵢ+₁
-      sᵢ = Segment(vs[i-1], vs[i+1])
-
-      # loop over all edges of 𝒫
-      cross = false
-      for j in 1:nvertices(𝒫)
-        sⱼ = Segment(vs[j], vs[j+1])
-        I = intersecttype(sᵢ, sⱼ)
-        if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
-          cross = true
-          break
-        end
-      end
-
-      cross
+    clipped = false
+    if !isempty(𝒬)
+      i = pop!(𝒬)
+      push!(𝒯, connect((i-1,i,i+1), Triangle))
+      clipped = true
+    elseif clipped
+      𝒬 = ears(𝒫)
+    else
+      # recovery process
+      @warn "entered in recovery process"
     end
   end
+end
+
+function ears(𝒫)
+  v = vertices(𝒫)
+
+  # CE1.1: classify angles as convex vs. reflex
+  isconvex = innerangles(𝒫) .< π
+
+  # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
+  intersects = map(1:nvertices(𝒫)) do i
+    sᵢ = Segment(v[i-1], v[i+1])
+    cross = false
+    for j in 1:nvertices(𝒫)
+      sⱼ = Segment(v[j], v[j+1])
+      I = intersecttype(sᵢ, sⱼ)
+      if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
+        cross = true
+        break
+      end
+    end
+    cross
+  end
+
+  # CE1.3: check if vᵢ-1 ∈ C(vᵢ, vᵢ+1, vᵢ+2) and vᵢ+1 ∈ C(vᵢ-2, vᵢ-1, vᵢ)
+  incone = map(1:nvertices(𝒫)) do i
+    c1 = sideof(v[i-1], Segment(v[i+1], v[i  ])) != :LEFT
+    c2 = sideof(v[i-1], Segment(v[i+1], v[i+2])) != :RIGHT
+    c3 = sideof(v[i+1], Segment(v[i-1], v[i-2])) != :LEFT
+    c4 = sideof(v[i+1], Segment(v[i-1], v[i  ])) != :RIGHT
+    all((c1, c2, c3, c4))
+  end
+
+  findall(isconvex .& .!intersects .& incone)
 end
