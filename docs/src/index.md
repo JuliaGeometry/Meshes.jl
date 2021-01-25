@@ -22,15 +22,14 @@ Unlike other existing efforts in the Julia ecosystem, this project is being care
 designed to facilitate the use of *meshes across different scientific domains*. We
 follow a strict set of good software engineering practices, and are quite pedantic
 in our test suite to make sure that all our implementations are free of bugs in both
-single and double floating point precision.
+single and double floating point precision. Additionally, we guarantee type stability.
 
-The design of this project was motivated by various conceptual issues and bugs
-encountered with past attemps to represent geometry, which have been originally
-designed for visualization purposes (e.g.
-[GeometryTypes.jl](https://github.com/JuliaGeometry/GeometryTypes.jl),
+The design of this project was motivated by various conceptual issues encountered with
+past attemps to represent geometry, which have been originally designed for visualization
+purposes (e.g. [GeometryTypes.jl](https://github.com/JuliaGeometry/GeometryTypes.jl),
 [GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)).
-We hope to provide a smoother experience to end users, as well as mesh representations
-that are adequate for finite element analysis and advanced geospatial modeling.
+We hope to deliver a smoother experience with mesh representations that are adequate
+for finite element analysis and advanced geospatial modeling.
 
 ## Installation
 
@@ -42,9 +41,11 @@ Get the latest stable release with Julia's package manager:
 
 ## Quick example
 
-While we didn't have time to document the functionality of the package properly,
-we still would like to illustrate some of the concepts below. For more information,
-we kindly ask users to read the test suite.
+Although we didn't have time to document the functionality of the package properly,
+we still would like to illustrate some important features. For more information on
+available functionality, please consult the [Reference guide](points.md) and the
+[suite of tests](https://github.com/JuliaGeometry/Meshes.jl/tree/master/test) in
+the package.
 
 ```@example overview
 using Meshes
@@ -52,60 +53,51 @@ using Meshes
 
 ### Points and vectors
 
-A `Point` is defined by its coordinates in a global reference system. The type of the
+A [`Point`](@ref) is defined by its coordinates in a global reference system. The type of the
 coordinates is determined automatically based on the specified literals, or is forced
 to a specific type using helper constructors (e.g. `Point2`, `Point3`, `Point2f`, `Point3f`).
 
-A vector `Vec` follows the same pattern. It can be constructed with the generic `Vec`
+A vector [`Vec`](@ref) follows the same pattern. It can be constructed with the generic `Vec`
 constructor or with the variants `Vec2` and `Vec3` for double precision and `Vec2f`
 and `Vec3f` for single precision.
 
 ```@example overview
 A = Point(0, 0) # point with integer coordinates
 B = Point(1, 0) # another point in 2D space
+C = Point(0.0, 1.0) # double precision
+D = Point2(0, 1) # double precision from Int literal
+E = Point(1, 2, 3) # a point in 3D space
+F = Point3(1, 2, 3) # another point now with double precision
+G = Point(1f0, 2f0, 3f0) # single precision
+H = Point3f(1, 2, 3) # single precision from Int literal
 
-# points can be subtracted to produce a vector
+for P in (A,B,C,D,E,F,G,H)
+  println("Coordinate type: ", coordtype(P))
+  println("Embedding dimension: ", embeddim(P))
+end
+```
+
+Points can be subtracted to produce a vector:
+
+```@example overview
 v = B - A
 ```
 
-```@example overview
-C = Point(0.0, 1.0) # double precision
-D = Point2(0, 1) # double precision from Int literal
-
-C == D
-```
+They can't be added, but their coordinates can:
 
 ```@example overview
-# 3D points follow the same pattern
-E = Point(1, 2, 3)
-F = Point3(1, 2, 3)
-
-coordtype(E), coordtype(F)
-```
-
-```@example overview
-# for single precision, we add a `f` to the constructors
-G = Point(1f0, 2f0, 3f0) # single precision
-H = Point3f(1, 2, 3) # single precision from Int literal
-```
-
-```@example overview
-# points can't be added, only their coordinates
 coordinates(G) + coordinates(H)
 ```
 
+We can add a point to a vector though, and get a new point:
+
 ```@example overview
-# alternatively, we can add a point to a vector
 G + Vec3f(1,1,1)
 ```
 
-```@example overview
-# any point lives in an embedding space of given dimension
-embeddim(G)
-```
+And finally, we can create points at random with:
 
 ```@example overview
-# we can create points at random
 ps = rand(Point2, 10)
 ```
 
@@ -139,12 +131,25 @@ As well as their measure (e.g. area, volume) and other geometric properties:
 measure(b) == 1
 ```
 
+We can sample random points on primitives using different methods:
+
+```@example overview
+vs = sample(s, RegularSampling(10,10)) # 10 x 10 points over the sphere
+```
+
+And collect the generator with:
+
+```@example overview
+collect(vs)
+```
+
 ### Polytopes
 
 Polytopes are geometries with "flat" sides. They generalize polygons and polyhedra.
-Most commonly used polytopes are already defined in the project, including `Triangle`
-`Pyramid`, `Quadrangle`, `Segment`, `Tetrahedron`, and `Hexahedron`. Their vertices
-follow the GMSH ordering convention by default, but this is also customizable.
+Most commonly used polytopes are already defined in the project, including
+[`Triangle`](@ref), [`Pyramid`](@ref), [`Quadrangle`](@ref), [`Segment`](@ref),
+[`Tetrahedron`](@ref), and [`Hexahedron`](@ref). Their vertices follow the [`GMSH`](@ref)
+ordering convention by default, but this is also customizable.
 
 ```@example overview
 t = Triangle((0,0), (1,0), (0,1))

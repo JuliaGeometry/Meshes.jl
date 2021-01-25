@@ -47,8 +47,15 @@ makedocs(
         "algorithms/discretization.md",
         "algorithms/boundbox.md"
       ]
+  ],
+    "Contributing" => [
+      "contributing/guidelines.md"
+    ],
+    "About" => [
+      "License" => "about/license.md"
+    ],
+    "Index" => "links.md"
     ]
-  ]
 )
 
 deploydocs(repo="github.com/JuliaGeometry/Meshes.jl.git")
