@@ -183,7 +183,7 @@ function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   elseif t1 < one(T) && t2 ≈ one(T)
     OverlappingSegments(Segment(x1 + t1*Δ, x2))
   elseif t1 < one(T) && t2 > one(T)
-    OverlappingSegments(Segment(x1 + t1*Δ, x1 + t2*Δ))
+    OverlappingSegments(Segment(x1 + t1*Δ, x2))
   elseif t1 ≈ one(T) && t2 > one(T)
     CornerTouchingSegments(x2)
   elseif t1 > one(T) && t2 > one(T)

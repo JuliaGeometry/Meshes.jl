@@ -36,6 +36,48 @@
                  P2(0.395936725690311, 0.252041094122474))
     @test s1 ∩ s2 === nothing
     @test s2 ∩ s1 === nothing
+
+    s1 = Segment(P2(1,2), P2(1,0))
+    s2 = Segment(P2(1,0), P2(1,1))
+    @test s1 ∩ s2 == Segment(P2(1,1), P2(1,0))
+
+    s1 = Segment(P2(0,0), P2(2,0))
+    s2 = Segment(P2(-2,0), P2(-1,0))
+    s3 = Segment(P2(-1,0), P2(-2,0))
+    @test s1 ∩ s2 === s2 ∩ s1 === nothing
+    @test s1 ∩ s3 === s3 ∩ s1 === nothing
+
+    s1 = Segment(P2(-1,0), P2(0,0))
+    s2 = Segment(P2(0,0), P2(2,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == P2(0,0)
+
+    s1 = Segment(P2(-1,0), P2(1,0))
+    s2 = Segment(P2(0,0), P2(3,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == Segment(P2(0,0), P2(1,0))
+
+    s1 = Segment(P2(0,0), P2(1,0))
+    s2 = Segment(P2(0,0), P2(2,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == Segment(P2(0,0), P2(1,0))
+
+    s1 = Segment(P2(0,0), P2(3,0))
+    s2 = Segment(P2(1,0), P2(2,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == s2
+
+    s1 = Segment(P2(0,0), P2(2,0))
+    s2 = Segment(P2(1,0), P2(2,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == s2
+
+    s1 = Segment(P2(0,0), P2(2,0))
+    s2 = Segment(P2(1,0), P2(3,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == Segment(P2(1,0), P2(2,0))
+
+    s1 = Segment(P2(0,0), P2(2,0))
+    s2 = Segment(P2(2,0), P2(3,0))
+    @test s1 ∩ s2 == s2 ∩ s1 == P2(2,0)
+
+    s1 = Segment(P2(0,0), P2(2,0))
+    s2 = Segment(P2(3,0), P2(4,0))
+    @test s1 ∩ s2 === s2 ∩ s1 === nothing
   end
 
   @testset "Triangles" begin
