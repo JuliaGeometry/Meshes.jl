@@ -245,25 +245,32 @@ general `UnstructuredMesh`:
 g = CartesianGrid(100, 100)
 ```
 
+No memory is allocated:
+
 ```@example overview
-# no memory is allocated
 @allocated CartesianGrid(10000, 10000, 10000)
 ```
 
+but we can still loop over the elements, which are quadrangles in 2D:
+
 ```@example overview
-# we can still loop over the elements
 collect(elements(g))
 ```
 
-```@example overview
-# here is a general mesh with multiple element types
-points = Point2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
-Δs = connect.([(3,1,5),(4,6,2)], Triangle)
-□s = connect.([(1,2,5,6),(5,6,3,4)], Quadrangle)
-mesh = UnstructuredMesh(points, [Δs; □s])
-```
+We can construct a general unstructured mesh with a global vector of points
+and a collection of [`Connectivity`](@ref) that store the indices to the global
+vector of points:
 
 ```@example overview
-# the elements can be materialized from the global vector of points
+points = Point2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
+tris  = connect.([(3,1,5),(4,6,2)], Triangle)
+quads = connect.([(1,2,5,6),(5,6,3,4)], Quadrangle)
+mesh = UnstructuredMesh(points, [tris; quads])
+```
+
+The actual geometries of the elements are materialized in a lazy fashion like
+with the Cartesian grid:
+
+```@example overview
 collect(elements(mesh))
 ```
