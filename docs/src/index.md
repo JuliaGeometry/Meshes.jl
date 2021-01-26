@@ -80,7 +80,7 @@ end
 Points can be subtracted to produce a vector:
 
 ```@example overview
-v = B - A
+B - A
 ```
 
 They can't be added, but their coordinates can:
@@ -103,9 +103,10 @@ ps = rand(Point2, 10)
 
 ### Primitives
 
-Primitive geometries such as [`Box`](@ref), [`Sphere`](@ref), [`Cylinder`](@ref)
-are those geometries that can be efficiently represented in a computer without
-discretization. We can construct such geometries using clean syntax:
+Primitive geometries such as [`Box`](@ref), [`Ball`](@ref), [`Sphere`](@ref),
+[`Cylinder`](@ref) are those geometries that can be efficiently represented
+in a computer without discretization. We can construct such geometries using
+clean syntax:
 
 ```@example overview
 b = Box((0,0), (1,1))
@@ -190,45 +191,55 @@ other useful functionality:
 p = PolyArea(Point2[(0,0), (2,0), (2,2), (1,3), (0,2), (0,0)])
 ```
 
+The orientation of the above polygonal area is counter-clockwise (CCW):
+
 ```@example overview
-# orientation is counter-clockwise (CCW)
 orientation(p)
 ```
 
+We can get the outer polygonal chain, and reverse it:
+
 ```@example overview
-# get outer polygonal chain
 c = chains(p)[1]
 
 # revert its vertices
 reverse(c)
 ```
 
+A closed chain (a.k.a. rink) has circular vertices:
+
 ```@example overview
-# a closed chain (a.k.a ring) has circular vertices
 v = vertices(c)
 ```
 
+This means that we can index the vertices with indices that go
+beyond the range `1:nvertices(c)`. This is very useful for
+writing algorithms:
+
 ```@example overview
-# we can index beyond 1:nvertices(c)
 v[1:10]
 ```
 
+We can also compute angles of any given chain, no matter if it
+is open or closed:
+
 ```@example overview
-# let's compute the angles of the chain
 angles(c) * 180 / pi
 ```
 
+The sign of these angles is a function of the orientation:
+
 ```@example overview
-# angles are a function of the orientation
 angles(reverse(c)) * 180 / pi
 ```
 
+In case of closed chains, we can compute inner angles as well:
+
 ```@example overview
-# in the case of closed chains, we can ask for the inner angles
 innerangles(c) * 180 / pi
 ```
 
-And there is much more functionality available like for instance
+And there is a lot more functionality available like for instance
 determining whether or not a polygonal area or chain is simple:
 
 ```@example overview
@@ -237,9 +248,8 @@ issimple(p)
 
 ### Meshes
 
-Efficient (lazy) mesh representations are provided to avoid unncessary
-memory allocations. For example, we can create a [`CartesianGrid`](@ref)
-or general [`UnstructuredMesh`](@ref):
+Efficient (lazy) mesh representations are provided, including
+[`CartesianGrid`](@ref) and [`UnstructuredMesh`](@ref):
 
 ```@example overview
 g = CartesianGrid(100, 100)
