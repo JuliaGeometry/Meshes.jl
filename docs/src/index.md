@@ -204,11 +204,10 @@ We can get the outer polygonal chain, and reverse it:
 ```@example overview
 c = chains(p)[1]
 
-# revert its vertices
 reverse(c)
 ```
 
-A closed chain (a.k.a. rink) has circular vertices:
+A closed chain (a.k.a. ring) has circular vertices:
 
 ```@example overview
 v = vertices(c)
