@@ -24,12 +24,14 @@ follow a strict set of good software engineering practices, and are quite pedant
 in our test suite to make sure that all our implementations are free of bugs in both
 single and double floating point precision. Additionally, we guarantee type stability.
 
-The design of this project was motivated by various issues encountered with past attemps
+The design of this project was motivated by various issues encountered with past attempts
 to represent geometry, which have been originally designed for visualization
 purposes (e.g. [GeometryTypes.jl](https://github.com/JuliaGeometry/GeometryTypes.jl),
-[GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)). We hope to
-provide a smoother experience with mesh representations that are also adequate for
-finite finite element analysis and advanced geospatial modeling.
+[GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)) or specifically
+for finite element analysis (e.g. [JuAFEM.jl](https://kristofferc.github.io/JuAFEM.jl/dev/manual/grid),
+[MeshCore.jl](https://github.com/PetrKryslUCSD/MeshCore.jl)). We hope to provide a smoother
+experience with mesh representations that are adequate for finite finite element analysis,
+advanced geospatial modeling *and* visualization, not just one domain.
 
 ## Installation
 
