@@ -103,9 +103,9 @@ ps = rand(Point2, 10)
 
 ### Primitives
 
-Primitive geometries such as `Box`, `Sphere`, `Cylinder` are those geometries
-that can be efficiently represented in a computer without discretization.
-We can construct such geometries using clean syntax:
+Primitive geometries such as [`Box`](@ref), [`Sphere`](@ref), [`Cylinder`](@ref)
+are those geometries that can be efficiently represented in a computer without
+discretization. We can construct such geometries using clean syntax:
 
 ```@example overview
 b = Box((0,0), (1,1))
@@ -180,7 +180,7 @@ s1 ∩ s2
 
 Polytopes are widely used in GIS software under names such as "LineString" and "Polygon".
 We provide robust implementations of these concepts, which are formally known as polygonal
-`Chain` and `PolyArea`.
+[`Chain`](@ref) and [`PolyArea`](@ref).
 
 We can compute the orientation of a chain as clockwise or counter-clockwise, can open and
 close the chain, create bridges between the various inner rings with the outer ring, and
@@ -238,8 +238,8 @@ issimple(p)
 ### Meshes
 
 Efficient (lazy) mesh representations are provided to avoid unncessary
-memory allocations. For example, we can create a `CartesianGrid` or
-general `UnstructuredMesh`:
+memory allocations. For example, we can create a [`CartesianGrid`](@ref)
+or general [`UnstructuredMesh`](@ref):
 
 ```@example overview
 g = CartesianGrid(100, 100)
