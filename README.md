@@ -9,7 +9,7 @@
   <a href="https://JuliaGeometry.github.io/Meshes.jl/stable">
     <img src="https://img.shields.io/badge/docs-stable-blue?style=flat-square">
   </a>
-  <a href="https://JuliaGeometry.github.io/Meshes.jl/latest">
+  <a href="https://JuliaGeometry.github.io/Meshes.jl/dev">
     <img src="https://img.shields.io/badge/docs-latest-blue?style=flat-square">
   </a>
   <a href="LICENSE">
@@ -48,4 +48,4 @@ coding style that is present in the files when submitting pull requests.
 [docs-stable-url]: https://JuliaGeometry.github.io/Meshes.jl/stable
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue?style=flat-square
-[docs-latest-url]: https://JuliaGeometry.github.io/Meshes.jl/latest
+[docs-latest-url]: https://JuliaGeometry.github.io/Meshes.jl/dev
