@@ -24,12 +24,12 @@ follow a strict set of good software engineering practices, and are quite pedant
 in our test suite to make sure that all our implementations are free of bugs in both
 single and double floating point precision. Additionally, we guarantee type stability.
 
-The design of this project was motivated by various conceptual issues encountered with
-past attemps to represent geometry, which have been originally designed for visualization
+The design of this project was motivated by various issues encountered with past attemps
+to represent geometry, which have been originally designed for visualization
 purposes (e.g. [GeometryTypes.jl](https://github.com/JuliaGeometry/GeometryTypes.jl),
-[GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)).
-We hope to deliver a smoother experience with mesh representations that are also
-adequate for finite element analysis and advanced geospatial modeling.
+[GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)). We hope to
+provide a smoother experience with mesh representations that are adequate for finite
+finite element analysis and advanced geospatial modeling besides visualization.
 
 ## Installation
 
