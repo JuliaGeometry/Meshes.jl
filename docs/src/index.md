@@ -28,8 +28,8 @@ The design of this project was motivated by various issues encountered with past
 to represent geometry, which have been originally designed for visualization
 purposes (e.g. [GeometryTypes.jl](https://github.com/JuliaGeometry/GeometryTypes.jl),
 [GeometryBasics.jl](https://github.com/JuliaGeometry/GeometryBasics.jl)). We hope to
-provide a smoother experience with mesh representations that are adequate for finite
-finite element analysis and advanced geospatial modeling besides visualization.
+provide a smoother experience with mesh representations that are also adequate for
+finite finite element analysis and advanced geospatial modeling.
 
 ## Installation
 
