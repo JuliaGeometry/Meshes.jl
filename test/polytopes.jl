@@ -79,7 +79,9 @@
     s2 = Segment(P2(3,0), P2(4,0))
     @test s1 ∩ s2 === s2 ∩ s1 === nothing
 
-    @test Segment(P2(2.,1.), P2(1.,2.)) ∩ Segment(P2(1.,0.), P2(1.,1.)) === nothing
+    s1 = Segment(P2(2,1), P2(1,2))
+    s2 = Segment(P2(1,0), P2(1,1))
+    @test s1 ∩ s2 === s2 ∩ s1 === nothing
   end
 
   @testset "Triangles" begin
