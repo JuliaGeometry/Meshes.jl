@@ -8,7 +8,8 @@
 Angle ∠ABC between rays BA and BC.
 See https://en.wikipedia.org/wiki/Angle.
 
-Uses the two-argument form of `atan`. See https://en.wikipedia.org/wiki/Atan2.
+Uses the two-argument form of `atan`.
+See https://en.wikipedia.org/wiki/Atan2.
 
 ## Example
 
