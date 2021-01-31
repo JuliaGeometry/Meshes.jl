@@ -14,7 +14,7 @@ See https://en.wikipedia.org/wiki/Atan2.
 ## Example
 
 ```julia
-∠(Point(0,1), Point(0,0), Point(1,0)) == π/2
+∠(Point(1,0), Point(0,0), Point(0,1)) == π/2
 ```
 """
 function ∠(A::P, B::P, C::P) where {P<:Point{2}}
