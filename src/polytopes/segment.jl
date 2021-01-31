@@ -138,13 +138,12 @@ function intersectpoint(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   x1, x2 = vertices(s1)
   y1, y2 = vertices(s2)
 
-  tmp = y1 - y2
+  seg1 = x1 - y1
+  seg2 = x1 - x2
+  seg3 = y1 - y2
 
-  s = ((x1.coords[1] - y1.coords[1]) * tmp[2] -
-       (x1.coords[2] - y1.coords[2]) * tmp[1]) /
-      ((x1.coords[1] - x2.coords[1]) * tmp[2] -
-       (x1.coords[2] - x2.coords[2]) * tmp[1])
-
+  s = (seg1[1] * seg3[2] - seg1[2] * seg3[1]) /
+      (seg2[1] * seg3[2] - seg2[2] * seg3[1])
   x1 + s*(x2 - x1)
 end
 
