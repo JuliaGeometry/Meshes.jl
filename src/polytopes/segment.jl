@@ -138,18 +138,16 @@ function intersectpoint(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   x1, x2 = vertices(s1)
   y1, y2 = vertices(s2)
 
-  # solve Ax = b
-  A = (y2 - y1) - (x2 - x1)
-  b = (x1 - y1)
-  s = zero(T)
-  for i in 1:length(A)
-    if !iszero(A[i])
-      s = b[i] / A[i]
-      break
-    end
-  end
+  v1 = x1 - x2
+  v2 = y1 - y2
+  v12 = x1 - y1
 
-  x1 + s*(x2 - x1)
+  # the intersection point lies in between x1 and x2 at a fraction s
+  # (https://en.wikipedia.org/wiki/Line-line_intersection#Formulas)
+  s = (v12[1] * v2[2] - v12[2] * v2[1]) /
+      (v1[1] * v2[2] - v1[2] * v2[1])
+
+  x1 - s*v1
 end
 
 # intersection of two line segments assuming that they are colinear

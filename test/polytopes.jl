@@ -82,6 +82,10 @@
     s1 = Segment(P2(2,1), P2(1,2))
     s2 = Segment(P2(1,0), P2(1,1))
     @test s1 ∩ s2 === s2 ∩ s1 === nothing
+    
+    s1 = Segment(P2(1.5,1.5), P2(3.0,1.5))
+    s2 = Segment(P2(3.0,1.0), P2(2.0,2.0))
+    @test s1 ∩ s2 == s2 ∩ s1 == P2(2.5,1.5)
   end
 
   @testset "Triangles" begin
