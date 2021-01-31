@@ -142,8 +142,10 @@ function intersectpoint(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   v2 = y1 - y2
   v12 = x1 - y1
 
+  # find scalar along first segment
   s = (v12[1] * v2[2] - v12[2] * v2[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
-  x1 + s*(x2 - x1)
+  
+  x1 - s*v1
 end
 
 # intersection of two line segments assuming that they are colinear
