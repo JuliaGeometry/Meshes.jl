@@ -123,24 +123,28 @@
   end
 
   @testset "Chains" begin
+    # unique vertices
     c = Chain(P2[(1,1),(2,2),(2,2),(3,3)])
     @test unique(c) == Chain(P2[(1,1),(2,2),(3,3)])
     @test c == Chain(P2[(1,1),(2,2),(2,2),(3,3)])
     unique!(c)
     @test c == Chain(P2[(1,1),(2,2),(3,3)])
 
+    # closing/opening chains
     c = Chain(P2[(1,1),(2,2),(3,3)])
     close!(c)
     @test c == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
     open!(c)
     @test c == Chain(P2[(1,1),(2,2),(3,3)])
 
+    # reversing chains
     c = Chain(P2[(1,1),(2,2),(3,3)])
     reverse!(c)
     @test c == Chain(P2[(3,3),(2,2),(1,1)])
     c = Chain(P2[(1,1),(2,2),(3,3)])
     @test reverse(c) == Chain(P2[(3,3),(2,2),(1,1)])
 
+    # angles and inner angles
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test angles(c) ≈ [-π/2, -π/2, -π/2, -π/2]
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1)])
@@ -148,6 +152,11 @@
     c = Chain(P2[(0,0),(1,0),(1,1),(2,1),(2,2),(1,2),(0,0)])
     @test angles(c) ≈ [-atan(2), -π/2, +π/2, -π/2, -π/2, -(π-atan(2))]
     @test innerangles(c) ≈ [atan(2), π/2, 3π/2, π/2, π/2, π-atan(2)]
+
+    # reconstruct chain from vertices
+    c1 = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    c2 = Chain(vertices(c1))
+    @test c1 == c2
   end
 
   @testset "PolyAreas" begin

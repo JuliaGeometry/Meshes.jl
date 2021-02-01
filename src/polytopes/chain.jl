@@ -12,6 +12,9 @@ struct Chain{Dim,T} <: Polytope{1,Dim,T}
   vertices::Vector{Point{Dim,T}}
 end
 
+Chain(vertices::CircularVector) =
+  Chain([collect(vertices); vertices[begin]])
+
 nvertices(c::Chain) = length(c.vertices) - isclosed(c)
 
 """
