@@ -137,7 +137,7 @@ measure(b) == 1
 We can sample random points on primitives using different methods:
 
 ```@example overview
-vs = sample(s, RegularSampling(10,10)) # 10 x 10 points over the sphere
+vs = sample(s, RegularSampling(10)) # 10 points over the sphere
 ```
 
 And collect the generator with:
