@@ -49,35 +49,37 @@ function discretize(polyarea::PolyArea, ::FIST)
   end
 end
 
-function ears(𝒫)
+# return index of all ears of 𝒫
+ears(𝒫) = filter(i -> isear(𝒫, i), 1:nvertices(𝒫))
+
+# tells whether or not vertex i is an ear of 𝒫
+# assuming that 𝒫 has counter-clockwise orientation
+function isear(𝒫::Chain{Dim,T}, i) where {Dim,T}
   v = vertices(𝒫)
 
-  # CE1.1: classify angles as convex vs. reflex
-  isconvex = innerangles(𝒫) .< π
+  # CE1.1: classify angle as convex vs. reflex
+  α = ∠(v[i-1], v[i], v[i+1]) # oriented angle
+  θ = α > 0 ? 2*T(π) - α : -α # inner angle
+  isconvex = θ < π
 
   # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
-  intersects = map(1:nvertices(𝒫)) do i
-    sᵢ = Segment(v[i-1], v[i+1])
-    cross = false
-    for j in 1:nvertices(𝒫)
-      sⱼ = Segment(v[j], v[j+1])
-      I = intersecttype(sᵢ, sⱼ)
-      if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
-        cross = true
-        break
-      end
+  sᵢ = Segment(v[i-1], v[i+1])
+  intersects = false
+  for j in 1:nvertices(𝒫)
+    sⱼ = Segment(v[j], v[j+1])
+    I = intersecttype(sᵢ, sⱼ)
+    if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
+      intersects = true
+      break
     end
-    cross
   end
 
   # CE1.3: check if vᵢ-1 ∈ C(vᵢ, vᵢ+1, vᵢ+2) and vᵢ+1 ∈ C(vᵢ-2, vᵢ-1, vᵢ)
-  incone = map(1:nvertices(𝒫)) do i
-    c1 = sideof(v[i-1], Segment(v[i+1], v[i  ])) != :LEFT
-    c2 = sideof(v[i-1], Segment(v[i+1], v[i+2])) != :RIGHT
-    c3 = sideof(v[i+1], Segment(v[i-1], v[i-2])) != :LEFT
-    c4 = sideof(v[i+1], Segment(v[i-1], v[i  ])) != :RIGHT
-    all((c1, c2, c3, c4))
-  end
+  c1 = sideof(v[i-1], Segment(v[i+1], v[i  ])) != :LEFT
+  c2 = sideof(v[i-1], Segment(v[i+1], v[i+2])) != :RIGHT
+  c3 = sideof(v[i+1], Segment(v[i-1], v[i-2])) != :LEFT
+  c4 = sideof(v[i+1], Segment(v[i-1], v[i  ])) != :RIGHT
+  incone = all((c1, c2, c3, c4))
 
-  findall(isconvex .& .!intersects .& incone)
+  isconvex && !intersects && incone
 end
