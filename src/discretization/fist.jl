@@ -31,22 +31,32 @@ function discretize(polyarea::PolyArea, ::FIST)
   # points of resulting mesh
   points = vertices(𝒫)
 
+  # keep track of indices of vertices
+  inds = CircularVector(1:nvertices(𝒫))
+
   # perform ear clipping
   𝒬 = ears(𝒫)
   𝒯 = Connectivity{Triangle,3}[]
+  clipped = false
   while nvertices(𝒫) > 3
-    clipped = false
     if !isempty(𝒬)
       i = pop!(𝒬)
-      push!(𝒯, connect((i-1,i,i+1), Triangle))
+      push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
+      inds = [inds[begin:i-1]; inds[i+1:end]]
+      𝒫 = Chain(points[inds])
       clipped = true
     elseif clipped
       𝒬 = ears(𝒫)
+      clipped = false
     else
       # recovery process
       @warn "entered in recovery process"
+      sleep(1)
     end
   end
+  push!(𝒯, connect((inds[1], inds[2], inds[3]), Triangle))
+
+  UnstructuredMesh(collect(points), 𝒯)
 end
 
 # return index of all ears of 𝒫
