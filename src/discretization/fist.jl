@@ -51,7 +51,6 @@ function discretize(polyarea::PolyArea, ::FIST)
     else
       # recovery process
       @warn "entered in recovery process"
-      sleep(1)
     end
   end
   push!(𝒯, connect((inds[1], inds[2], inds[3]), Triangle))

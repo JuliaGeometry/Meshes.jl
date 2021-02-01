@@ -14,6 +14,9 @@ struct UnstructuredMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
   connec::Vector{Connectivity}
 end
 
+==(m1::UnstructuredMesh, m2::UnstructuredMesh) =
+  m1.points == m2.points && m1.connec == m2.connec
+
 vertices(m::UnstructuredMesh) = m.points
 
 function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
