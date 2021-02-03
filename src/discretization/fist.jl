@@ -39,20 +39,26 @@ function discretize(polyarea::PolyArea, ::FIST)
   𝒯 = Connectivity{Triangle,3}[]
   clipped = false
   while nvertices(𝒫) > 3
-    if !isempty(𝒬)
+    if !isempty(𝒬) # clip an ear
       i = pop!(𝒬)
+      # 1. push a new triangle to 𝒯
       push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
+      # 2. remove the vertex from 𝒫
       inds = [inds[begin:i-1]; inds[i+1:end]]
       𝒫 = Chain(points[inds])
+      # 3. update 𝒬 near clipped ear
+      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [i])
+      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [i+1])
       clipped = true
-    elseif clipped
+    elseif clipped # recompute all ears
       𝒬 = ears(𝒫)
       clipped = false
-    else
-      # recovery process
-      @warn "entered in recovery process"
+    else # recovery process
+      @error "recovery process not implemented"
+      break
     end
   end
+  # remaining polygonal area is the last triangle
   push!(𝒯, connect((inds[1], inds[2], inds[3]), Triangle))
 
   UnstructuredMesh(collect(points), 𝒯)
