@@ -1,15 +1,38 @@
 using Meshes
 using Test, Pkg, Random
 
-# workaround GR warnings
-ENV["GKSwstype"] = "100"
-
 # environment settings
 islinux = Sys.islinux()
-istravis = "TRAVIS" ∈ keys(ENV)
-isappveyor = "APPVEYOR" ∈ keys(ENV)
-isCI = istravis || isappveyor
 datadir = joinpath(@__DIR__,"data")
+
+# helper function to read *.line files containing polygons
+# generated with RPG (https://github.com/cgalab/genpoly-rpg)
+function readpoly(fname)
+  open(fname, "r") do f
+    # read outer chain
+    n = parse(Int, readline(f))
+    outer = map(1:n) do _
+      coords = readline(f)
+      x, y = parse.(Float64, split(coords))
+      Point(x, y)
+    end
+
+    # read inner chains
+    inners = []
+    while !eof(f)
+      n = parse(Int, readline(f))
+      inner = map(1:n) do _
+        coords = readline(f)
+        x, y = parse.(Float64, split(coords))
+        Point(x, y)
+      end
+      push!(inners, inner)
+    end
+
+    # return polygonal area
+    PolyArea(outer, inners)
+  end
+end
 
 # list of tests
 testfiles = [
