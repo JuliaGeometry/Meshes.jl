@@ -25,7 +25,7 @@ end
 
 # convenience constructors
 Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
-Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
+Point{Dim,T}(coords_head::V, coords_tail::Vararg{V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords_head, coords_tail...))
 Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
 Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
 Point(coords::AbstractVector{T}) where {T} =
