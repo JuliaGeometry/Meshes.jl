@@ -9,5 +9,7 @@
 
   xs = coordinates.(vertices(chain))
 
+  isclosed(chain) && push!(xs, xs[begin])
+
   Tuple.(xs)
 end
