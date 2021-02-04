@@ -43,11 +43,11 @@ include("plotrecipes/polyareas.jl")
 
 export 
   # points
-  Point, Point2, Point3, Point2f, Point3f,
+  Point, Point1, Point2, Point3, Point1f, Point2f, Point3f,
   embeddim, coordtype, coordinates,
 
   # vectors
-  Vec, Vec2, Vec3, Vec2f, Vec3f,
+  Vec, Vec1, Vec2, Vec3, Vec1f, Vec2f, Vec3f,
 
   # angles
   ∠,
