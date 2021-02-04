@@ -21,15 +21,20 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 """
 struct Point{Dim,T}
   coords::SVector{Dim,T}
+  Point{Dim,T}(coords::AbstractVector) where {Dim,T} = new{Dim,T}(coords)
 end
 
 # convenience constructors
 Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
-Point{Dim,T}(coords::Vararg{V,Dim}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
+Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
 Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
-Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
+Point(coords...) = Point(coords)
 Point(coords::AbstractVector{T}) where {T} =
   Point{length(coords),T}(SVector{length(coords)}(coords))
+
+# catches mismatching tuple dimensions
+Point{Dim1,T}(coords::NTuple{Dim2}) where {T,Dim1,Dim2} = 
+  throw(DimensionMismatch("Can't construct a Point{$(Dim1),$(T)} with an input of length $(Dim2)"))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
