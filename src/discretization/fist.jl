@@ -31,7 +31,7 @@ function discretize(polyarea::PolyArea, ::FIST)
   # points of resulting mesh
   points = vertices(𝒫)
 
-  # keep track of indices of vertices
+  # keep track of global indices
   inds = CircularVector(1:nvertices(𝒫))
 
   # perform ear clipping
