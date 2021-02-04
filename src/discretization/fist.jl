@@ -36,19 +36,22 @@ function discretize(polyarea::PolyArea, ::FIST)
 
   # perform ear clipping
   𝒬 = ears(𝒫)
+  n = nvertices(𝒫)
   𝒯 = Connectivity{Triangle,3}[]
   clipped = false
-  while nvertices(𝒫) > 3
+  while n > 3
     if !isempty(𝒬) # clip an ear
-      i = pop!(𝒬)
+      # 0. select candidate ear
+      i = pop!(𝒬); 𝒬[𝒬.>i] .-= 1
       # 1. push a new triangle to 𝒯
       push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
       # 2. remove the vertex from 𝒫
       inds = [inds[begin:i-1]; inds[i+1:end]]
       𝒫 = Chain(points[inds])
+      n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
-      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [i])
-      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [i+1])
+      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [mod1(i,n)])
+      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [mod1(i+1,n)])
       clipped = true
     elseif clipped # recompute all ears
       𝒬 = ears(𝒫)
