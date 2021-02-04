@@ -52,17 +52,3 @@ function boundary end
 # ----------------
 include("primitives.jl")
 include("polytopes.jl")
-
-"""
-    GeometrySet(geometries)
-
-A set of `geometries` seen as a single geometry.
-
-## Example
-
-In a geographic map, countries can be described with
-multiple polygons (a.k.a. MultiPolygon).
-"""
-struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
-  geometries::Vector{G}
-end
