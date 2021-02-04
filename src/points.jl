@@ -17,7 +17,7 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 
 ### Notes
 
-- Type aliases are `Point2`, `Point3`, `Point2f`, `Point3f`
+- Type aliases are `Point1`, `Point2`, `Point3`, `Point1f`, `Point2f`, `Point3f`
 """
 struct Point{Dim,T}
   coords::SVector{Dim,T}
@@ -37,8 +37,10 @@ Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coor
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
 # type aliases for convenience
+const Point1 = Point{1,Float64}
 const Point2  = Point{2,Float64}
 const Point3  = Point{3,Float64}
+const Point1f = Point{1,Float32}
 const Point2f = Point{2,Float32}
 const Point3f = Point{3,Float32}
 
