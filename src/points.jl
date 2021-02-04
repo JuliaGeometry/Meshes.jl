@@ -17,19 +17,24 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 
 ### Notes
 
-- Type aliases are `Point2`, `Point3`, `Point2f`, `Point3f`
+- Type aliases are `Point1`, `Point2`, `Point3`, `Point1f`, `Point2f`, `Point3f`
 """
 struct Point{Dim,T}
   coords::SVector{Dim,T}
+  Point{Dim,T}(coords::AbstractVector) where {Dim,T} = new{Dim,T}(coords)
 end
 
 # convenience constructors
 Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
-Point{Dim,T}(coords_head::V, coords_tail::Vararg{V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords_head, coords_tail...))
+Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
 Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
-Point(coords::Vararg{T,Dim}) where {Dim,T} = Point{Dim,T}(SVector(coords))
+Point(coords...) = Point(coords)
 Point(coords::AbstractVector{T}) where {T} =
   Point{length(coords),T}(SVector{length(coords)}(coords))
+
+# catches mismatching tuple dimensions
+Point{Dim1,T}(coords::NTuple{Dim2}) where {T,Dim1,Dim2} = 
+  throw(DimensionMismatch("Can't construct a Point{$(Dim1),$(T)} with an input of length $(Dim2)"))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
@@ -37,8 +42,10 @@ Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coor
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
 # type aliases for convenience
+const Point1 = Point{1,Float64}
 const Point2  = Point{2,Float64}
 const Point3  = Point{3,Float64}
+const Point1f = Point{1,Float32}
 const Point2f = Point{2,Float32}
 const Point3f = Point{3,Float32}
 
