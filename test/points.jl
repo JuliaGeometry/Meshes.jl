@@ -76,11 +76,11 @@
   @test_throws DimensionMismatch Point{-3,T}([4,5,6])
     
   # disabled for now, check that implicit conversion is disallowed and throws
-  @test_throws ... Point(1, .2) # not sure what to throw yet
-  @test_throws ... Point((3., 4))
-  @test_throws ... Point([5., 6., 7])
-  @test_throws ... Point{2,T}(8, 9.)
-  @test_throws ... Point{3,Int}((-1., -2))
-  @test_throws ... Point{4,T}([0, -1., +2, -4.])
+  # @test_throws ... Point(1, .2) # not sure what to throw yet
+  # @test_throws ... Point((3., 4))
+  # @test_throws ... Point([5., 6., 7])
+  # @test_throws ... Point{2,T}(8, 9.)
+  # @test_throws ... Point{3,Int}((-1., -2))
+  # @test_throws ... Point{4,T}([0, -1., +2, -4.])
   
 end
