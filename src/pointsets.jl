@@ -23,6 +23,8 @@ PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
 PointSet(points::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(points))
 PointSet(points::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(points))
 
+==(pset1::PointSet, pset2::PointSet) = pset1.points == pset2.points
+
 """
     embeddim(pointset)
 
