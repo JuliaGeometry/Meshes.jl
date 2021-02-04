@@ -38,6 +38,7 @@ end
 testfiles = [
   "points.jl",
   "angles.jl",
+  "pointsets.jl",
   "geometries.jl",
   "polytopes.jl",
   "primitives.jl",

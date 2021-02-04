@@ -22,6 +22,9 @@ include("vectors.jl")
 include("points.jl")
 include("angles.jl")
 
+# point sets
+include("pointsets.jl")
+
 # geometries and meshes
 include("geometries.jl")
 include("connectivities.jl")
@@ -53,9 +56,11 @@ export
   # angles
   ∠,
 
+  # point sets
+  PointSet,
+
   # geometries
   Geometry,
-  GeometrySet,
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
 
