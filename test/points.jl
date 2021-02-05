@@ -67,9 +67,9 @@
   @test coordtype(Point([1.,2.,3.])) == Float64
   
   # check all 1D Point constructors, because those tend to make trouble
-  Point(1) == Point((1,)) == Point([1])
-  Point{1,Int}(-2) == Point{1,Int}((-2,)) == Point{1,Int}([-2])
-  Point{1,T}(0) == Point{1,T}((0,)) == Point{1,T}([0])
+  @test Point(1) == Point((1,)) == Point([1])
+  @test Point{1,Int}(-2) == Point{1,Int}((-2,)) == Point{1,Int}([-2])
+  @test Point{1,T}(0) == Point{1,T}((0,)) == Point{1,T}([0])
  
   @test_throws DimensionMismatch Point{2,Int}(1)
   @test_throws DimensionMismatch Point{1,Int}((2,3))
