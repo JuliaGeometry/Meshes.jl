@@ -19,7 +19,7 @@
   @test coordinates(P2(1, 2)) == [1.0, 2.0]
   @test coordinates(P3(1, 2, 3)) == [1.0, 2.0, 3.0]
 
-  @test P1(1) - P2(1) == T[0]
+  @test P1(1) - P1(1) == T[0]
   @test P2(1, 2) - P2(1, 1) == T[0, 1]
   @test P3(1, 2, 3) - P3(1, 1, 1) == T[0, 1, 2]
   @test_throws DimensionMismatch P2(1, 2) - P3(1, 2, 3)
