@@ -86,5 +86,39 @@
     𝒫 = PolyArea([points; points[1]])
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+
+    poly = readpoly(joinpath(datadir, "poly4.line"))
+    points = P2.(coordinates.(vertices(first(chains(poly)))))
+    connec = connect.([(24, 25, 26), (23, 24, 26), (23, 26, 27),
+                       (23, 27, 28), (20, 21, 22), (22, 23, 28),
+                       (22, 28, 29), (22, 29, 30), (17, 18, 19),
+                       (16, 17, 19), (15, 16, 19), (13, 14, 15),
+                       (13, 15, 19), (13, 19, 20), (20, 22, 30),
+                       (11, 12, 13), (11, 13, 20), (11, 20, 30),
+                       (11, 30, 1), (6, 7, 8), (6, 8, 9),
+                       (6, 9, 10), (10, 11, 1), (10, 1, 2),
+                       (4, 5, 6), (4, 6, 10), (4, 10, 2),
+                       (2, 3, 4)], Triangle)
+    target = UnstructuredMesh(points, connec)
+    𝒫 = PolyArea([points; points[1]])
+    mesh = discretize(𝒫, FIST())
+    @test mesh == target
+
+    poly = readpoly(joinpath(datadir, "poly5.line"))
+    points = P2.(coordinates.(vertices(first(chains(poly)))))
+    connec = connect.([(25, 26, 27), (24, 25, 27), (23, 24, 27),
+                       (23, 27, 28), (23, 28, 29), (19, 20, 21),
+                       (18, 19, 21), (17, 18, 21), (15, 16, 17),
+                       (12, 13, 14), (7, 8, 9), (6, 7, 9),
+                       (6, 9, 10), (4, 5, 6), (2, 3, 4),
+                       (2, 4, 6), (1, 2, 6), (30, 1, 6),
+                       (22, 23, 29), (22, 29, 30), (11, 12, 14),
+                       (10, 11, 14), (10, 14, 15), (10, 15, 17),
+                       (6, 10, 17), (6, 17, 21), (6, 21, 22),
+                       (6, 22, 30)], Triangle)
+    target = UnstructuredMesh(points, connec)
+    𝒫 = PolyArea([points; points[1]])
+    mesh = discretize(𝒫, FIST())
+    @test mesh == target
   end
 end
