@@ -46,7 +46,7 @@ function discretize(polyarea::PolyArea, ::FIST)
       # 1. push a new triangle to 𝒯
       push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
       # 2. remove the vertex from 𝒫
-      inds = [inds[begin:i-1]; inds[i+1:end]]
+      inds = inds[setdiff(1:n, mod1(i,n))]
       𝒫 = Chain(points[inds])
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
@@ -57,8 +57,23 @@ function discretize(polyarea::PolyArea, ::FIST)
       𝒬 = ears(𝒫)
       clipped = false
     else # recovery process
-      @error "recovery process not implemented"
-      return
+      v = vertices(𝒫)
+      # check if consecutive edges vᵢ-1 -- vᵢ and vᵢ+1 -- vᵢ+2
+      # intersect and fix the issue by clipping ear (vᵢ, vᵢ+1, vᵢ+2)
+      for i in 1:n
+        s1 = Segment(v[i-1], v[i])
+        s2 = Segment(v[i+1], v[i+2])
+        if intersecttype(s1, s2) isa CrossingSegments
+          # 1. push a new triangle to 𝒯
+          push!(𝒯, connect((inds[i], inds[i+1], inds[i+2]), Triangle))
+          # 2. remove the vertex from 𝒫
+          inds = inds[setdiff(1:n, mod1(i+1,n))]
+          𝒫 = Chain(points[inds])
+          n = nvertices(𝒫)
+          clipped = true
+          break
+        end
+      end
     end
   end
   # remaining polygonal area is the last triangle
