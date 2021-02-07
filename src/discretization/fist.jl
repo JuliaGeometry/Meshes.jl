@@ -57,9 +57,9 @@ function discretize(polyarea::PolyArea, ::FIST)
       𝒬 = ears(𝒫)
       clipped = false
     else # recovery process
-      v = vertices(𝒫)
       # check if consecutive edges vᵢ-1 -- vᵢ and vᵢ+1 -- vᵢ+2
       # intersect and fix the issue by clipping ear (vᵢ, vᵢ+1, vᵢ+2)
+      v = vertices(𝒫)
       for i in 1:n
         s1 = Segment(v[i-1], v[i])
         s2 = Segment(v[i+1], v[i+2])
