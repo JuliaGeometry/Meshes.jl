@@ -25,7 +25,7 @@ v = B - A
 const Vec = SVector
 
 # type aliases for convenience
-const Vec1 = Vec{1,Float64}
+const Vec1  = Vec{1,Float64}
 const Vec2  = Vec{2,Float64}
 const Vec3  = Vec{3,Float64}
 const Vec1f = Vec{1,Float32}
