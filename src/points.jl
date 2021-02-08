@@ -33,7 +33,7 @@ Point(coords::AbstractVector{T}) where {T} =
   Point{length(coords),T}(SVector{length(coords)}(coords))
 
 # catches mismatching tuple dimensions
-Point{Dim1,T}(coords::NTuple{Dim2}) where {T,Dim1,Dim2} = 
+Point{Dim1,T}(::NTuple{Dim2}) where {T,Dim1,Dim2} = 
   throw(DimensionMismatch("Can't construct a Point{$(Dim1),$(T)} with an input of length $(Dim2)"))
 
 # coordinate type conversions
