@@ -76,10 +76,10 @@
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = UnstructuredMesh(points, connec)
-    @test coordinates(mesh, 1) == coordinates(center(Triangle(P2[(0,0), (1,0), (0.5,0.5)])))
-    @test coordinates(mesh, 2) == coordinates(center(Triangle(P2[(1,0), (1,1), (0.5,0.5)])))
-    @test coordinates(mesh, 3) == coordinates(center(Triangle(P2[(1,1), (0,1), (0.5,0.5)])))
-    @test coordinates(mesh, 4) == coordinates(center(Triangle(P2[(0,1), (0,0), (0.5,0.5)])))
+    @test coordinates(mesh, 1) == coordinates(centroid(Triangle(P2[(0,0), (1,0), (0.5,0.5)])))
+    @test coordinates(mesh, 2) == coordinates(centroid(Triangle(P2[(1,0), (1,1), (0.5,0.5)])))
+    @test coordinates(mesh, 3) == coordinates(centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)])))
+    @test coordinates(mesh, 4) == coordinates(centroid(Triangle(P2[(0,1), (0,0), (0.5,0.5)])))
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)

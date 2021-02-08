@@ -67,6 +67,7 @@ export
   Geometry,
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
+  centroid,
 
   # primitives
   Primitive,

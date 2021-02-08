@@ -84,11 +84,11 @@ Tells whether or not polytopes `p1` and `p2` are equal.
 ==(p1::Polytope, p2::Polytope) = p1.vertices == p2.vertices
 
 """
-    center(polytope)
+    centroid(polytope)
 
-Return the center of the `polytope`.
+Return the centroid of the `polytope`.
 """
-center(p::Polytope) = Point(sum(coordinates.(p.vertices)) / length(p.vertices))
+centroid(p::Polytope) = Point(sum(coordinates.(p.vertices)) / length(p.vertices))
 
 function Base.show(io::IO, p::Polytope)
   kind = nameof(typeof(p))

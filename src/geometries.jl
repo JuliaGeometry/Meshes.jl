@@ -34,6 +34,13 @@ coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T} = T
 coordtype(g::Geometry) = coordtype(typeof(g))
 
 """
+    centroid(geometry)
+
+Return the centroid of the `geometry`.
+"""
+centroid(g::Geometry) = center(g)
+
+"""
     measure(geometry)
 
 Return the measure of the `geometry`, i.e. the length, area, or volume.

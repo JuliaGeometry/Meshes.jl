@@ -112,7 +112,7 @@ orientation(c::Chain) = orientation(c, WindingOrientation())
 function orientation(c::Chain{Dim,T}, ::WindingOrientation) where {Dim,T}
   # pick any segment
   x1, x2 = c.vertices[1:2]
-  x̄ = center(Segment(x1, x2))
+  x̄ = centroid(Segment(x1, x2))
   w = windingnumber(x̄, c) - ∠(x1, x̄, x2)
   isapprox(w, π, atol=atol(T)) ? :CCW : :CW
 end

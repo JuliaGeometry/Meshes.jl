@@ -34,7 +34,7 @@ Compute the coordinates `buff` of the centroid of the `ind`-th element
 in the `mesh` in place.
 """
 function coordinates!(buff, m::UnstructuredMesh, ind::Int)
-  buff .= coordinates(center(materialize(m.connec[ind], m.points)))
+  buff .= coordinates(centroid(materialize(m.connec[ind], m.points)))
 end
 
 function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}

@@ -67,8 +67,8 @@ Balbes, R. and Siegel, J. 1990:
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
 function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
-  x̄ = center(s1)
-  ȳ = center(s2)
+  x̄ = centroid(s1)
+  ȳ = centroid(s2)
   x1, x2 = vertices(s1)
   y1, y2 = vertices(s2)
   Q = [x1, y1, x2, y2, x1]
