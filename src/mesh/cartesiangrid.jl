@@ -13,8 +13,8 @@ and cell spacing `spacing`. The three arguments must have the same length.
 Alternatively, construct a Cartesian grid from a `start` point (lower left)
 to a `finish` point (upper right).
 
-    CartesianGrid{T}(dims)
-    CartesianGrid{T}(dim1, dim2, ...)
+    CartesianGrid(dims)
+    CartesianGrid(dim1, dim2, ...)
 
 Finally, a Cartesian grid can be constructed by only passing the dimensions
 `dims` as a tuple, or by passing each dimension `dim1`, `dim2`, ... separately.
@@ -139,7 +139,22 @@ function elements(g::CartesianGrid{Dim,T}) where {Dim,T}
   ivec(element(ind) for ind in inds)
 end
 
-function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
+"""
+    coordinates!(buff, grid, ind)
+
+Compute the coordinates `buff` of the centroid of the `ind`-th element
+in the `grid` in place.
+"""
+function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
+  intcoords = CartesianIndices(g.dims)[ind]
+  neworigin = coordinates(g.origin) .+ g.spacing ./ 2
+  @inbounds @simd for i in 1:Dim
+    buff[i] = neworigin[i] + (intcoords[i] - 1)*g.spacing[i]
+  end
+  buff
+end
+
+function Base.show(io::IO, g::CartesianGrid{Dim}) where {Dim}
   dims = join(g.dims, "×")
   print(io, "$dims CartesianGrid($(minimum(g)), $(maximum(g)))")
 end

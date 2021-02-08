@@ -31,6 +31,9 @@ include("connectivities.jl")
 include("conventions.jl")
 include("mesh.jl")
 
+# coordinates traits
+include("coordinates.jl")
+
 # algorithms
 include("sampling.jl")
 include("discretization.jl")
@@ -58,6 +61,7 @@ export
 
   # point sets
   PointSet,
+  coordinates, coordinates!,
 
   # geometries
   Geometry,
@@ -95,6 +99,7 @@ export
   Mesh,
   CartesianGrid, UnstructuredMesh,
   faces, elements, spacing,
+  coordinates, coordinates!,
 
   # sampling
   SamplingMethod,

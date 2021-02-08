@@ -27,6 +27,16 @@ function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
   (materialize(c, ps) for c in cs if rank(c) == r)
 end
 
+"""
+    coordinates!(buff, mesh, ind)
+
+Compute the coordinates `buff` of the centroid of the `ind`-th element
+in the `mesh` in place.
+"""
+function coordinates!(buff, m::UnstructuredMesh, ind::Int)
+  buff .= coordinates(center(materialize(m.connec[ind], m.points)))
+end
+
 function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}
   nvert = length(m.points)
   nface = length(m.connec)

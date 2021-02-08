@@ -41,6 +41,15 @@ Return the machine type of each coordinate used to describe the `pointset`.
 coordtype(::Type{<:PointSet{Dim,T}}) where {Dim,T} = T
 coordtype(pset::PointSet) = coordtype(typeof(pset))
 
+"""
+    coordinates!(buff, pointset, ind)
+
+Compute the coordinates `buff` of the `ind`-th point in the `pointset` in place.
+"""
+function coordinates!(buff, pset::PointSet, ind::Int)
+  buff .= coordinates(pset.points[ind])
+end
+
 # ------------
 # IO methods
 # ------------
