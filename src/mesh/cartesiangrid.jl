@@ -154,6 +154,13 @@ function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
   buff
 end
 
+"""
+    nelements(grid)
+
+Return the number of elements in the `grid`.
+"""
+nelements(g::CartesianGrid) = prod(g.dims)
+
 function Base.show(io::IO, g::CartesianGrid{Dim}) where {Dim}
   dims = join(g.dims, "×")
   print(io, "$dims CartesianGrid($(minimum(g)), $(maximum(g)))")

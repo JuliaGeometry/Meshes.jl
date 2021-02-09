@@ -50,6 +50,13 @@ function coordinates!(buff, pset::PointSet, ind::Int)
   buff .= coordinates(pset.points[ind])
 end
 
+"""
+    nelements(pointset)
+
+Return the number of elements (i.e. points) in the `pointset`.
+"""
+nelements(pset::PointSet) = length(pset.points)
+
 # ------------
 # IO methods
 # ------------

@@ -37,6 +37,13 @@ function coordinates!(buff, m::UnstructuredMesh, ind::Int)
   buff .= coordinates(centroid(materialize(m.connec[ind], m.points)))
 end
 
+"""
+    nelements(mesh)
+
+Return the number of elements in the `mesh`.
+"""
+nelements(m::UnstructuredMesh) = length(m.connec)
+
 function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}
   nvert = length(m.points)
   nface = length(m.connec)

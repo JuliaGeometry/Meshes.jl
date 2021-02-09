@@ -62,6 +62,7 @@ export
   # point sets
   PointSet,
   coordinates, coordinates!,
+  nelements,
 
   # geometries
   Geometry,
@@ -101,6 +102,7 @@ export
   CartesianGrid, UnstructuredMesh,
   faces, elements, spacing,
   coordinates, coordinates!,
+  nelements,
 
   # sampling
   SamplingMethod,
