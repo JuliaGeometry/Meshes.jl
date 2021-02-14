@@ -79,7 +79,10 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", d::Discretization{Dim,T}) where {Dim,T}
   println(io, d)
-  lines = ["  └─$(d[i])" for i in 1:nelements(d)]
-  lines = length(lines) > 11 ? [lines[begin:5]; ["  ⋮"]; lines[end-4:end]] : lines
+  N = nelements(d)
+  I, J = N > 10 ? (5, N-4) : (N, N+1)
+  lines = [["  └─$(d[i])" for i in 1:I]
+           (N > 10 ? ["  ⋮"] : [])
+           ["  └─$(d[i])" for i in J:N]]
   print(io, join(lines, "\n"))
 end

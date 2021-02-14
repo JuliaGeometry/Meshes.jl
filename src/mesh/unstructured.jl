@@ -68,11 +68,16 @@ function Base.show(io::IO, ::MIME"text/plain", m::UnstructuredMesh{Dim,T}) where
   nface = length(m.connec)
   println(io, m)
   println(io, "  $nvert vertices")
-  lines = ["    └─$p" for p in m.points]
-  lines = length(lines) > 11 ? [lines[begin:5]; ["  ⋮"]; lines[end-4:end]] : lines
-  println(io, join(lines, "\n"))
+  println(io, _lines(m.points, "    "))
   println(io, "  $nface faces")
-  lines = ["    └─$f" for f in m.connec]
-  lines = length(lines) > 11 ? [lines[begin:5]; ["  ⋮"]; lines[end-4:end]] : lines
-  print(  io, join(lines, "\n"))
+  print(  io, _lines(m.connec, "    "))
+end
+
+function _lines(vec, tab="  ")
+  N = length(vec)
+  I, J = N > 10 ? (5, N-4) : (N, N+1)
+  lines = [["$(tab)└─$(vec[i])" for i in 1:I]
+           (N > 10 ? ["$(tab)⋮"] : [])
+           ["$(tab)└─$(vec[i])" for i in J:N]]
+  join(lines, "\n")
 end
