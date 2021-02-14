@@ -36,12 +36,3 @@ nelements(pset::PointSet) = length(pset.points)
 function coordinates!(buff, pset::PointSet, ind::Int)
   buff .= coordinates(pset.points[ind])
 end
-
-# -----------
-# IO METHODS
-# -----------
-
-function Base.show(io::IO, pset::PointSet{Dim,T}) where {Dim,T}
-  npts = length(pset.points)
-  print(io, "$npts PointSet{$Dim,$T}")
-end

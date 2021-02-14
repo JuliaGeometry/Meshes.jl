@@ -157,14 +157,13 @@ end
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, g::CartesianGrid{Dim}) where {Dim}
+function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
   dims = join(g.dims, "×")
-  print(io, "$dims CartesianGrid($(minimum(g)), $(maximum(g)))")
+  print(io, "$dims CartesianGrid{$Dim,$T}")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid{Dim,T}) where {Dim,T}
-  dims = join(g.dims, "×")
-  println(io, "$dims CartesianGrid{$Dim,$T}")
+function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
+  println(io, g)
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
   print(  io, "  spacing: ", Tuple(spacing(g)))

@@ -72,8 +72,9 @@ end
 # -----------
 
 function Base.show(io::IO, d::Discretization{Dim,T}) where {Dim,T}
-  nelms = nelements(d)
-  print(io, "$nelms Discretization{$Dim,$T}")
+  nelm = nelements(d)
+  name = nameof(typeof(d))
+  print(io, "$nelm $name{$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", d::Discretization{Dim,T}) where {Dim,T}

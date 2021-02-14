@@ -63,20 +63,16 @@ end
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}
-  nvert = length(m.points)
-  nface = length(m.connec)
-  print(io, "UnstructuredMesh($nvert vertices, $nface faces)")
-end
-
 function Base.show(io::IO, ::MIME"text/plain", m::UnstructuredMesh{Dim,T}) where {Dim,T}
   nvert = length(m.points)
   nface = length(m.connec)
-  println(io, "UnstructuredMesh{$Dim,$T}")
+  println(io, m)
   println(io, "  $nvert vertices")
   lines = ["    └─$p" for p in m.points]
+  lines = length(lines) > 11 ? [lines[begin:5]; ["  ⋮"]; lines[end-4:end]] : lines
   println(io, join(lines, "\n"))
   println(io, "  $nface faces")
   lines = ["    └─$f" for f in m.connec]
+  lines = length(lines) > 11 ? [lines[begin:5]; ["  ⋮"]; lines[end-4:end]] : lines
   print(  io, join(lines, "\n"))
 end
