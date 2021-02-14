@@ -85,66 +85,65 @@ function vertices(g::CartesianGrid)
   ivec(g.origin + (ind.I .- 1) .* g.spacing for ind in inds)
 end
 
-function elements(g::CartesianGrid{Dim,T}) where {Dim,T}
+elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
+
+# -------------------------
+# Discretization interface
+# -------------------------
+
+function Base.getindex(g::CartesianGrid{Dim}, ind::Int) where {Dim}
+  I = CartesianIndices(g.dims)[ind]
   o = coordinates(g.origin)
   s = g.spacing
+  i = I.I
 
-  inds = CartesianIndices(g.dims)
-  function element(ind)
-    i = ind.I
-    if Dim == 1 # segment
-      p1 = (o[1] + (i[1] - 1) * s[1],)
-      p2 = (o[1] + (    i[1]) * s[1],)
-      Segment(p1, p2)
-    elseif Dim == 2 # quadrangle
-      p1 = (o[1] + (i[1] - 1) * s[1],
-            o[2] + (i[2] - 1) * s[2])
-      p2 = (o[1] + (i[1]    ) * s[1],
-            o[2] + (i[2] - 1) * s[2])
-      p3 = (o[1] + (i[1]    ) * s[1],
-            o[2] + (i[2]    ) * s[2])
-      p4 = (o[1] + (i[1] - 1) * s[1],
-            o[2] + (i[2]    ) * s[2])
-      Quadrangle(p1, p2, p3, p4)
-    elseif Dim == 3 # hexahedron
-      p1 = (o[1] + (i[1] - 1) * s[1],
-            o[2] + (i[2] - 1) * s[2],
-            o[3] + (i[3] - 1) * s[3])
-      p2 = (o[1] + (i[1]    ) * s[1],
-            o[2] + (i[2] - 1) * s[2],
-            o[3] + (i[3] - 1) * s[3])
-      p3 = (o[1] + (i[1]    ) * s[1],
-            o[2] + (i[2]    ) * s[2],
-            o[3] + (i[3] - 1) * s[3])
-      p4 = (o[1] + (i[1] - 1) * s[1],
-            o[2] + (i[2]    ) * s[2],
-            o[3] + (i[3] - 1) * s[3])
-      p5 = (o[1] + (i[1] - 1) * s[1],
-            o[2] + (i[2] - 1) * s[2],
-            o[3] + (i[3]    ) * s[3])
-      p6 = (o[1] + (i[1]    ) * s[1],
-            o[2] + (i[2] - 1) * s[2],
-            o[3] + (i[3]    ) * s[3])
-      p7 = (o[1] + (i[1]    ) * s[1],
-            o[2] + (i[2]    ) * s[2],
-            o[3] + (i[3] - 1) * s[3])
-      p8 = (o[1] + (i[1] - 1) * s[1],
-            o[2] + (i[2]    ) * s[2],
-            o[3] + (i[3]    ) * s[3])
-      Hexahedron(p1, p2, p3, p4, p5, p6, p7, p8)
-    else
-      @error "not implemented"
-    end
+  if Dim == 1 # segment
+    p1 = (o[1] + (i[1] - 1) * s[1],)
+    p2 = (o[1] + (    i[1]) * s[1],)
+    Segment(p1, p2)
+  elseif Dim == 2 # quadrangle
+    p1 = (o[1] + (i[1] - 1) * s[1],
+          o[2] + (i[2] - 1) * s[2])
+    p2 = (o[1] + (i[1]    ) * s[1],
+          o[2] + (i[2] - 1) * s[2])
+    p3 = (o[1] + (i[1]    ) * s[1],
+          o[2] + (i[2]    ) * s[2])
+    p4 = (o[1] + (i[1] - 1) * s[1],
+          o[2] + (i[2]    ) * s[2])
+    Quadrangle(p1, p2, p3, p4)
+  elseif Dim == 3 # hexahedron
+    p1 = (o[1] + (i[1] - 1) * s[1],
+          o[2] + (i[2] - 1) * s[2],
+          o[3] + (i[3] - 1) * s[3])
+    p2 = (o[1] + (i[1]    ) * s[1],
+          o[2] + (i[2] - 1) * s[2],
+          o[3] + (i[3] - 1) * s[3])
+    p3 = (o[1] + (i[1]    ) * s[1],
+          o[2] + (i[2]    ) * s[2],
+          o[3] + (i[3] - 1) * s[3])
+    p4 = (o[1] + (i[1] - 1) * s[1],
+          o[2] + (i[2]    ) * s[2],
+          o[3] + (i[3] - 1) * s[3])
+    p5 = (o[1] + (i[1] - 1) * s[1],
+          o[2] + (i[2] - 1) * s[2],
+          o[3] + (i[3]    ) * s[3])
+    p6 = (o[1] + (i[1]    ) * s[1],
+          o[2] + (i[2] - 1) * s[2],
+          o[3] + (i[3]    ) * s[3])
+    p7 = (o[1] + (i[1]    ) * s[1],
+          o[2] + (i[2]    ) * s[2],
+          o[3] + (i[3] - 1) * s[3])
+    p8 = (o[1] + (i[1] - 1) * s[1],
+          o[2] + (i[2]    ) * s[2],
+          o[3] + (i[3]    ) * s[3])
+    Hexahedron(p1, p2, p3, p4, p5, p6, p7, p8)
+  else
+    @error "not implemented"
   end
-  ivec(element(ind) for ind in inds)
 end
 
-"""
-    coordinates!(buff, grid, ind)
+nelements(g::CartesianGrid) = prod(g.dims)
 
-Compute the coordinates `buff` of the centroid of the `ind`-th element
-in the `grid` in place.
-"""
 function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
   intcoords = CartesianIndices(g.dims)[ind]
   neworigin = coordinates(g.origin) .+ g.spacing ./ 2
@@ -154,12 +153,9 @@ function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
   buff
 end
 
-"""
-    nelements(grid)
-
-Return the number of elements in the `grid`.
-"""
-nelements(g::CartesianGrid) = prod(g.dims)
+# -----------
+# IO methods
+# -----------
 
 function Base.show(io::IO, g::CartesianGrid{Dim}) where {Dim}
   dims = join(g.dims, "×")

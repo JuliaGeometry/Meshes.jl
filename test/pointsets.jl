@@ -16,6 +16,10 @@
   @test nelements(pset1) == 2
   @test nelements(pset2) == 2
   @test nelements(pset3) == 2
+  for pset in [pset1, pset2, pset3]
+    @test pset[1] == P3(1,2,3)
+    @test pset[2] == P3(4,5,6)
+  end
 
   pset = PointSet(P2[(1,0), (0,1)])
   @test coordinates(pset, 1) == T[1, 0]

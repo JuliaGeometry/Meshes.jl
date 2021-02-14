@@ -22,6 +22,9 @@ include("vectors.jl")
 include("points.jl")
 include("angles.jl")
 
+# type traits
+include("traits/discretization.jl")
+
 # point sets
 include("pointsets.jl")
 
@@ -30,9 +33,6 @@ include("geometries.jl")
 include("connectivities.jl")
 include("conventions.jl")
 include("mesh.jl")
-
-# coordinates traits
-include("coordinates.jl")
 
 # algorithms
 include("sampling.jl")
@@ -58,6 +58,9 @@ export
 
   # angles
   ∠,
+
+  # traits
+  Discretization,
 
   # point sets
   PointSet,
