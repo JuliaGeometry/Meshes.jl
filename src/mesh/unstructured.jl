@@ -46,7 +46,7 @@ function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
 end
 
 # -------------------------
-# Discretization interface
+# DISCRETIZATION INTERFACE
 # -------------------------
 
 Base.getindex(m::UnstructuredMesh, ind::Int) =
@@ -60,7 +60,7 @@ function coordinates!(buff, m::UnstructuredMesh, ind::Int)
 end
 
 # -----------
-# IO methods
+# IO METHODS
 # -----------
 
 function Base.show(io::IO, m::UnstructuredMesh{Dim,T}) where {Dim,T}

@@ -25,6 +25,10 @@ PointSet(points::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(points))
 
 ==(pset1::PointSet, pset2::PointSet) = pset1.points == pset2.points
 
+# -------------------------
+# DISCRETIZATION INTERFACE
+# -------------------------
+
 Base.getindex(pset::PointSet, ind::Int) = getindex(pset.points, ind)
 
 nelements(pset::PointSet) = length(pset.points)
@@ -34,7 +38,7 @@ function coordinates!(buff, pset::PointSet, ind::Int)
 end
 
 # -----------
-# IO methods
+# IO METHODS
 # -----------
 
 function Base.show(io::IO, pset::PointSet{Dim,T}) where {Dim,T}

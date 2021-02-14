@@ -68,7 +68,7 @@ function coordinates(d::Discretization, inds::AbstractVector{Int})
 end
 
 # -----------
-# IO methods
+# IO METHODS
 # -----------
 
 function Base.show(io::IO, d::Discretization{Dim,T}) where {Dim,T}

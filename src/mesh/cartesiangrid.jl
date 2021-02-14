@@ -88,7 +88,7 @@ end
 elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
 
 # -------------------------
-# Discretization interface
+# DISCRETIZATION INTERFACE
 # -------------------------
 
 function Base.getindex(g::CartesianGrid{Dim}, ind::Int) where {Dim}
@@ -154,7 +154,7 @@ function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
 end
 
 # -----------
-# IO methods
+# IO METHODS
 # -----------
 
 function Base.show(io::IO, g::CartesianGrid{Dim}) where {Dim}
