@@ -43,6 +43,7 @@ testfiles = [
   "polytopes.jl",
   "primitives.jl",
   "mesh.jl",
+  "views.jl",
   "sampling.jl",
   "discretization.jl",
   "boundingboxes.jl"

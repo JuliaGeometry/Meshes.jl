@@ -34,6 +34,9 @@ include("connectivities.jl")
 include("conventions.jl")
 include("mesh.jl")
 
+# discretization views
+include("views.jl")
+
 # algorithms
 include("sampling.jl")
 include("discretization.jl")
@@ -106,6 +109,9 @@ export
   faces, elements, spacing,
   coordinates, coordinates!,
   nelements,
+
+  # views
+  View,
 
   # sampling
   SamplingMethod,
