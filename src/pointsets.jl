@@ -9,10 +9,16 @@ A set of `points` (a.k.a. point cloud) seen as a single entity.
 
 ## Examples
 
-Create a 2D point set with 100 points:
+All point sets below are the same and contain two points in R³:
 
 ```julia
-julia> PointSet(rand(Point2, 100))
+julia> PointSet([Point(1,2,3), Point(4,5,6)])
+julia> PointSet(Point(1,2,3), Point(4,5,6))
+julia> PointSet([(1,2,3), (4,5,6)])
+julia> PointSet((1,2,3), (4,5,6))
+julia> PointSet([[1,2,3], [4,5,6]])
+julia> PointSet([1,2,3], [4,5,6])
+julia> PointSet([1 4; 2 5; 3 6])
 ```
 """
 struct PointSet{Dim,T} <: Discretization{Dim,T}
@@ -20,8 +26,11 @@ struct PointSet{Dim,T} <: Discretization{Dim,T}
 end
 
 PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
-PointSet(points::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(points))
-PointSet(points::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(points))
+PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords))
+PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))
+PointSet(coords::AbstractVector{V}) where {V<:AbstractVector} = PointSet(Point.(coords))
+PointSet(coords::Vararg{V}) where {V<:AbstractVector} = PointSet(collect(coords))
+PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
 
 ==(pset1::PointSet, pset2::PointSet) = pset1.points == pset2.points
 
