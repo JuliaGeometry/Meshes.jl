@@ -49,6 +49,7 @@ include("utils.jl")
 include("plotrecipes/polytopes.jl")
 include("plotrecipes/chains.jl")
 include("plotrecipes/polyareas.jl")
+include("plotrecipes/pointsets.jl")
 include("plotrecipes/mesh.jl")
 
 export 

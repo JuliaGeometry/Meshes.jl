@@ -1,9 +1,28 @@
 using Meshes
-using Test, Pkg, Random
+using Test, Random, Plots
+using ReferenceTests, ImageIO
+
+# workaround GR warnings
+ENV["GKSwstype"] = "100"
 
 # environment settings
+isCI = "CI" ∈ keys(ENV)
 islinux = Sys.islinux()
+visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__,"data")
+
+# helper functions for visual regression tests
+function asimage(plt)
+  io = IOBuffer()
+  show(io, "image/png", plt)
+  seekstart(io)
+  ImageIO.load(io)
+end
+macro test_ref_plot(fname, plt)
+  esc(quote
+    @test_reference $fname asimage($plt)
+  end)
+end
 
 # helper function to read *.line files containing polygons
 # generated with RPG (https://github.com/cgalab/genpoly-rpg)
