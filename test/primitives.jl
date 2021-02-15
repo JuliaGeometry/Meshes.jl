@@ -7,9 +7,11 @@
     @test minimum(b) == P2(0, 0)
     @test maximum(b) == P2(1, 1)
     @test extrema(b) == (P2(0, 0), P2(1, 1))
-
     @test measure(b) == T(1)
     @test P2(1, 1) ∈ b
+
+    b = Box(P2(1, 1), P2(2, 2))
+    @test Meshes.center(b) == P2(1.5, 1.5)
   end
 
   @testset "Ball" begin

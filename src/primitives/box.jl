@@ -26,6 +26,7 @@ paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 Base.minimum(b::Box) = b.min
 Base.maximum(b::Box) = b.max
 Base.extrema(b::Box) = b.min, b.max
+center(b::Box) = Point((coordinates(b.max) + coordinates(b.min)) / 2)
 sides(b::Box) = b.max - b.min
 
 measure(b::Box) = prod(b.max - b.min)
