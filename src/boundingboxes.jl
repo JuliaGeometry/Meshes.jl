@@ -35,3 +35,10 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   r⃗ = Vec(ntuple(i->r, Dim))
   Box(c - r⃗, c + r⃗)
 end
+
+
+# -------
+# MESHES
+# -------
+
+boundingbox(g::CartesianGrid) = Box(extrema(g)...)
