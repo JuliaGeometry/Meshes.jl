@@ -6,6 +6,7 @@
     @test size(grid) == (200, 100)
     @test minimum(grid) == P2(0, 0)
     @test maximum(grid) == P2(200, 100)
+    @test extrema(grid) == (P2(0, 0), P2(200, 100))
     @test spacing(grid) == T[1, 1]
     @test nelements(grid) == 200*100
 
@@ -15,6 +16,7 @@
     @test size(grid) == (200, 100, 50)
     @test minimum(grid) == P3(0, 0, 0)
     @test maximum(grid) == P3(200, 100, 50)
+    @test extrema(grid) == (P3(0, 0, 0), P3(200, 100, 50))
     @test spacing(grid) == T[1, 1, 1]
     @test nelements(grid) == 200*100*50
 
@@ -41,6 +43,15 @@
       @test sprint(show, MIME"text/plain"(), grid) == "200×100 CartesianGrid{2,Float32}\n  minimum: Point(0.0f0, 0.0f0)\n  maximum: Point(200.0f0, 100.0f0)\n  spacing: (1.0f0, 1.0f0)"
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), grid) == "200×100 CartesianGrid{2,Float64}\n  minimum: Point(0.0, 0.0)\n  maximum: Point(200.0, 100.0)\n  spacing: (1.0, 1.0)"
+    end
+
+    if visualtests
+      @test_ref_plot "data/grid-1D-$T.png" plot(CartesianGrid{T}(10))
+      @test_ref_plot "data/grid-2D-$T.png" plot(CartesianGrid{T}(10,20))
+      @test_ref_plot "data/grid-3D-$T.png" plot(CartesianGrid{T}(10,20,30))
+      @test_ref_plot "data/grid-1D-$T-data.png" plot(CartesianGrid{T}(10),[1,2,3,4,5,5,4,3,2,1])
+      @test_ref_plot "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
+      # @test_ref_plot "data/grid3D-data.png" plot(RegularGrid(10,10,10),1:1000)
     end
   end
 

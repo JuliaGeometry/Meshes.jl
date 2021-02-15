@@ -78,6 +78,7 @@ CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 Base.size(g::CartesianGrid) = g.dims
 Base.minimum(g::CartesianGrid) = g.origin
 Base.maximum(g::CartesianGrid) = g.origin + g.dims .* g.spacing
+Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
 spacing(g::CartesianGrid) = g.spacing
 
 function vertices(g::CartesianGrid)
