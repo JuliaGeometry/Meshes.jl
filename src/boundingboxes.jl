@@ -2,28 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# -----------
+# GEOMETRIES
+# -----------
+
 """
     boundingbox(geometry)
 
 Axis-aligned bounding box of the `geometry`.
 """
-boundingbox(geometry) = boundingbox(vertices(geometry))
-
-# fallback implementation treats geometry as a set of points
-function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
-  xmin = MVector(ntuple(i->typemax(T), Dim))
-  xmax = MVector(ntuple(i->typemin(T), Dim))
-  for p in points
-    x = coordinates(p)
-    @. xmin = min(x, xmin)
-    @. xmax = max(x, xmax)
-  end
-  Box(Point(xmin), Point(xmax))
-end
-
-# -----------
-# PRIMITIVES
-# -----------
+boundingbox(geom::Geometry) = boundingbox(vertices(geom))
 
 boundingbox(p::Primitive) = boundingbox(boundary(p))
 
@@ -37,8 +25,32 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
 end
 
 
-# -------
-# MESHES
-# -------
+# ----------------
+# DISCRETIZATIONS
+# ----------------
 
-boundingbox(g::CartesianGrid) = Box(extrema(g)...)
+"""
+    boundingbox(discretization)
+
+Axis-aligned bounding box of the `discretization`.
+"""
+boundingbox(::Discretization) = @error "fallback not implemented"
+
+boundingbox(pset::PointSet) = boundingbox([pset[i] for i in 1:nelements(pset)])
+
+boundingbox(grid::CartesianGrid) = Box(extrema(grid)...)
+
+# ---------
+# FALLBACK
+# ---------
+
+function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
+  xmin = MVector(ntuple(i->typemax(T), Dim))
+  xmax = MVector(ntuple(i->typemin(T), Dim))
+  for p in points
+    x = coordinates(p)
+    @. xmin = min(x, xmin)
+    @. xmax = max(x, xmax)
+  end
+  Box(Point(xmin), Point(xmax))
+end
