@@ -9,7 +9,7 @@
     @test coordinates(v, i) == coordinates(p)
   end
 
-  grid = CartesianGrid(10, 10)
+  grid = CartesianGrid{T}(10, 10)
   inds = rand(1:100, 3)
   v = view(grid, inds)
   @test nelements(v) == 3
@@ -29,5 +29,11 @@
     e = mesh[inds[i]]
     @test v[i] == e
     @test coordinates(v, i) == coordinates(centroid(e))
+  end
+
+  if visualtests
+    d = CartesianGrid{T}(10, 10)
+    v = view(d, 1:50)
+    @test_ref_plot "data/domain-view-$T.png" plot(v)
   end
 end

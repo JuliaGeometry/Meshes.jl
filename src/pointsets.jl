@@ -32,6 +32,14 @@ PointSet(coords::AbstractVector{V}) where {V<:AbstractVector} = PointSet(Point.(
 PointSet(coords::Vararg{V}) where {V<:AbstractVector} = PointSet(collect(coords))
 PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
 
+"""
+    PointSet(domain)
+
+A point set representation of the `domain`, i.e. a set of centroid points
+for each element of the `domain`.
+"""
+PointSet(domain::Domain) = PointSet(coordinates(domain, 1:nelements(domain)))
+
 ==(pset1::PointSet, pset2::PointSet) = pset1.points == pset2.points
 
 # -----------------

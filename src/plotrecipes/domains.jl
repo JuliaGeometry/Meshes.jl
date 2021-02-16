@@ -2,14 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-@recipe function f(chain::Chain)
-  seriestype --> :path
-  seriescolor --> :black
-  label --> "chain"
+@recipe function f(domain::Domain)
+  PointSet(domain)
+end
 
-  xs = coordinates.(vertices(chain))
-
-  isclosed(chain) && push!(xs, xs[begin])
-
-  Tuple.(xs)
+@recipe function f(domain::Domain, data::AbstractVector)
+  PointSet(domain), data
 end

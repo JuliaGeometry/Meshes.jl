@@ -46,10 +46,10 @@ include("boundingboxes.jl")
 include("utils.jl")
 
 # plot recipes
-include("plotrecipes/polytopes.jl")
-include("plotrecipes/chains.jl")
-include("plotrecipes/polyareas.jl")
+include("plotrecipes/geometries.jl")
+include("plotrecipes/domains.jl")
 include("plotrecipes/pointsets.jl")
+include("plotrecipes/cartesiangrids.jl")
 include("plotrecipes/mesh.jl")
 
 export 
