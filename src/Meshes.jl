@@ -81,6 +81,7 @@ export
   Primitive,
   Box, Ball, Sphere, Cylinder,
   center, radius, height, sides,
+  measure, diagonal,
 
   # polytopes
   Polytope, Polygon, Polyhedron,
