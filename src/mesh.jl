@@ -7,7 +7,7 @@
 
 A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`.
 """
-abstract type Mesh{Dim,T} <: Discretization{Dim,T} end
+abstract type Mesh{Dim,T} <: Domain{Dim,T} end
 
 """
     vertices(mesh)

@@ -3,35 +3,36 @@
 # ------------------------------------------------------------------
 
 """
-    View(discretization, indices)
+    DomainView(domain, indices)
 
-A partial view of a `discretization` containing only the elements at `indices`.
+A partial view of a `domain` containing only the elements at `indices`.
 """
-struct View{Dim,T,D<:Discretization{Dim,T},I} <: Discretization{Dim,T}
-  disc::D
+struct DomainView{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
+  domain::D
   inds::I
 end
 
 # convenience functions
-Base.view(disc::Discretization, inds) = View(disc, inds)
+Base.view(domain::Domain, inds) = DomainView(domain, inds)
 
-# -------------------------
-# DISCRETIZATION INTERFACE
-# -------------------------
+# -----------------
+# DOMAIN INTERFACE
+# -----------------
 
-Base.getindex(v::View, ind::Int) = getindex(v.disc, v.inds[ind])
+Base.getindex(v::DomainView, ind::Int) =
+  getindex(v.domain, v.inds[ind])
 
-nelements(v::View) = length(v.inds)
+nelements(v::DomainView) = length(v.inds)
 
-coordinates!(buff, v::View, ind::Int) = 
-  coordinates!(buff, v.disc, v.inds[ind])
+coordinates!(buff, v::DomainView, ind::Int) = 
+  coordinates!(buff, v.domain, v.inds[ind])
 
 # -----------
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, v::View)
-  disc  = v.disc
+function Base.show(io::IO, v::DomainView)
+  domain  = v.domain
   nelms = length(v.inds)
-  print(io, "$nelms View{$disc}")
+  print(io, "$nelms View{$domain}")
 end

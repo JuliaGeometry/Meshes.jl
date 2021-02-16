@@ -23,7 +23,7 @@ include("points.jl")
 include("angles.jl")
 
 # type traits
-include("traits/discretization.jl")
+include("traits/domains.jl")
 
 # point sets
 include("pointsets.jl")
@@ -64,12 +64,7 @@ export
   ∠,
 
   # traits
-  Discretization,
-
-  # point sets
-  PointSet,
-  coordinates, coordinates!,
-  nelements,
+  Domain,
 
   # geometries
   Geometry,
@@ -105,6 +100,11 @@ export
   GMSH,
   connectivities,
 
+  # point sets
+  PointSet,
+  coordinates, coordinates!,
+  nelements,
+
   # meshes
   Mesh,
   CartesianGrid, UnstructuredMesh,
@@ -113,7 +113,7 @@ export
   nelements,
 
   # views
-  View,
+  DomainView,
 
   # sampling
   SamplingMethod,

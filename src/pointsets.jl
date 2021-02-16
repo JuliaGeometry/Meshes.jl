@@ -21,7 +21,7 @@ julia> PointSet([1,2,3], [4,5,6])
 julia> PointSet([1 4; 2 5; 3 6])
 ```
 """
-struct PointSet{Dim,T} <: Discretization{Dim,T}
+struct PointSet{Dim,T} <: Domain{Dim,T}
   points::Vector{Point{Dim,T}} 
 end
 
@@ -34,9 +34,9 @@ PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
 
 ==(pset1::PointSet, pset2::PointSet) = pset1.points == pset2.points
 
-# -------------------------
-# DISCRETIZATION INTERFACE
-# -------------------------
+# -----------------
+# DOMAIN INTERFACE
+# -----------------
 
 Base.getindex(pset::PointSet, ind::Int) = getindex(pset.points, ind)
 

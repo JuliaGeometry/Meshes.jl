@@ -25,16 +25,16 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
 end
 
 
-# ----------------
-# DISCRETIZATIONS
-# ----------------
+# --------
+# DOMAINS
+# --------
 
 """
-    boundingbox(discretization)
+    boundingbox(domain)
 
-Axis-aligned bounding box of the `discretization`.
+Axis-aligned bounding box of the `domain`.
 """
-boundingbox(::Discretization) = @error "fallback not implemented"
+boundingbox(::Domain) = @error "fallback not implemented"
 
 boundingbox(pset::PointSet) = boundingbox([pset[i] for i in 1:nelements(pset)])
 

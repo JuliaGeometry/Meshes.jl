@@ -45,9 +45,9 @@ function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
   (materialize(cs[i], ps) for i in eachindex(cs) if rs[i] == r)
 end
 
-# -------------------------
-# DISCRETIZATION INTERFACE
-# -------------------------
+# -----------------
+# DOMAIN INTERFACE
+# -----------------
 
 Base.getindex(m::UnstructuredMesh, ind::Int) =
   materialize(m.connec[m.elms[ind]], m.points)
