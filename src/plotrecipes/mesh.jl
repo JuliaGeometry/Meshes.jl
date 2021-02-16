@@ -34,15 +34,15 @@ end
     @series begin
       seriestype --> :scatterpath
       marker --> :vline
-      x = range(or[1]-sp[1]/2, step=sp[1], length=sz[1]+1)
+      x = range(or[1], step=sp[1], length=sz[1]+1)
       x, fill(zero(T), sz[1]+1)
     end
   elseif Dim == 2
     @series begin
       seriestype --> :path
       aspect_ratio --> :equal
-      xs = range(or[1]-sp[1]/2, step=sp[1], length=sz[1]+1)
-      ys = range(or[2]-sp[2]/2, step=sp[2], length=sz[2]+1)
+      xs = range(or[1], step=sp[1], length=sz[1]+1)
+      ys = range(or[2], step=sp[2], length=sz[2]+1)
       coords = []
       for x in xs
         push!(coords, (x, first(ys)))
@@ -62,9 +62,9 @@ end
     @series begin
       seriestype --> :path
       aspect_ratio --> :equal
-      xs = range(or[1]-sp[1]/2, step=sp[1], length=sz[1]+1)
-      ys = range(or[2]-sp[2]/2, step=sp[2], length=sz[2]+1)
-      zs = range(or[3]-sp[3]/2, step=sp[3], length=sz[3]+1)
+      xs = range(or[1], step=sp[1], length=sz[1]+1)
+      ys = range(or[2], step=sp[2], length=sz[2]+1)
+      zs = range(or[3], step=sp[3], length=sz[3]+1)
       coords = []
       for y in ys, z in zs
         push!(coords, (first(xs), y, z))
@@ -99,19 +99,22 @@ end
 
   if Dim == 1
     seriestype --> :path
-    x = range(or[1], step=sp[1], length=sz[1])
+    x = range(or[1]+sp[1]/2, step=sp[1], length=sz[1])
     x, Z
   elseif Dim == 2
     seriestype --> :heatmap
     aspect_ratio --> :equal
     colorbar --> true
-    x = range(or[1], step=sp[1], length=sz[1])
-    y = range(or[2], step=sp[2], length=sz[2])
+    x = range(or[1]+sp[1]/2, step=sp[1], length=sz[1])
+    y = range(or[2]+sp[2]/2, step=sp[2], length=sz[2])
     x, y, reverse(rotr90(Z), dims=2)
   elseif Dim == 3
     seriestype --> :heatmap
     aspect_ratio --> :equal
     colorbar --> true
+    x = range(or[1]+sp[1]/2, step=sp[1], length=sz[1])
+    y = range(or[2]+sp[2]/2, step=sp[2], length=sz[2])
+    z = range(or[3]+sp[3]/2, step=sp[3], length=sz[3])
     Z
   else
     @error "cannot plot in more than 3 dimensions"
