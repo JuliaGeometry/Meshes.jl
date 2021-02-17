@@ -23,7 +23,7 @@ include("points.jl")
 include("angles.jl")
 
 # type traits
-include("traits/domains.jl")
+include("traits/domain.jl")
 
 # point sets
 include("pointsets.jl")

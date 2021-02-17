@@ -72,6 +72,8 @@ function coordinates(domain::Domain, inds::AbstractVector{Int})
   coordinates!(buff, domain, inds)
 end
 
+Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
+
 # -----------
 # IO METHODS
 # -----------

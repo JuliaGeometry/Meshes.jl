@@ -154,6 +154,8 @@ function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
   buff
 end
 
+Base.eltype(g::CartesianGrid) = typeof(g[1])
+
 # -----------
 # IO METHODS
 # -----------
