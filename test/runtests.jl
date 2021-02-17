@@ -1,4 +1,5 @@
 using Meshes
+using Tables
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
@@ -62,6 +63,7 @@ testfiles = [
   "polytopes.jl",
   "primitives.jl",
   "mesh.jl",
+  "data.jl",
   "views.jl",
   "sampling.jl",
   "discretization.jl",

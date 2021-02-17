@@ -24,7 +24,7 @@ function domain end
 
 Return the values of `data` as a table.
 """
-function values end
+values(data::Data)
 
 # ----------
 # FALLBACKS
@@ -43,7 +43,6 @@ Tells whether or not the `data₁` and `data₂` are equal.
 # -----------
 
 Tables.istable(::Type{<:Data}) = true
-Tables.columnaccess(data::Data) = false
 Tables.rowaccess(data::Data) = true
 function Tables.schema(data::Data)
   geomtype = eltype(domain(data))
@@ -105,9 +104,10 @@ for MIME in MIMES
     𝒯 = values(data)
     s = Tables.schema(𝒯)
     vars = zip(s.names, s.types)
-    println(io, 𝒟)
+    println(io, data)
     println(io, "  variables")
     varlines = ["    └─$var ($V)" for (var,V) in vars]
-    print(io, join(sort(varlines), "\n"))
+    println(io, join(sort(varlines), "\n"))
+    print(  io, "  domain: ", 𝒟)
   end
 end

@@ -14,7 +14,7 @@ using RecipesBase
 
 import Tables
 import Random
-import Base: ==, +, -
+import Base: values, ==, +, -
 
 # numerical tolerances
 include("tolerances.jl")
@@ -67,7 +67,8 @@ export
   ∠,
 
   # traits
-  Domain,
+  Domain, Data,
+  domain, values,
 
   # geometries
   Geometry,
