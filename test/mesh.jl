@@ -1,5 +1,16 @@
 @testset "Meshes" begin
   @testset "CartesianGrid" begin
+    grid = CartesianGrid{T}(100)
+    @test embeddim(grid) == 1
+    @test coordtype(grid) == T
+    @test size(grid) == (100,)
+    @test minimum(grid) == P1(0)
+    @test maximum(grid) == P1(100)
+    @test extrema(grid) == (P1(0), P1(100))
+    @test spacing(grid) == T[1]
+    @test nelements(grid) == 100
+    @test eltype(grid) <: Segment{1,T}
+
     grid = CartesianGrid{T}(200,100)
     @test embeddim(grid) == 2
     @test coordtype(grid) == T
@@ -9,6 +20,7 @@
     @test extrema(grid) == (P2(0, 0), P2(200, 100))
     @test spacing(grid) == T[1, 1]
     @test nelements(grid) == 200*100
+    @test eltype(grid) <: Quadrangle{2,T}
 
     grid = CartesianGrid((200,100,50), T.((0,0,0)), T.((1,1,1)))
     @test embeddim(grid) == 3
@@ -19,6 +31,7 @@
     @test extrema(grid) == (P3(0, 0, 0), P3(200, 100, 50))
     @test spacing(grid) == T[1, 1, 1]
     @test nelements(grid) == 200*100*50
+    @test eltype(grid) <: Hexahedron{3,T}
 
     grid = CartesianGrid(T.((-1.,-1.)), T.((1.,1.)), dims=(200,100))
     @test embeddim(grid) == 2
@@ -28,6 +41,7 @@
     @test maximum(grid) == P2(1., 1.)
     @test spacing(grid) == T[2/200, 2/100]
     @test nelements(grid) == 200*100
+    @test eltype(grid) <: Quadrangle{2,T}
 
     grid = CartesianGrid{T}(200,100)
     @test coordinates(grid, 1) == T[0.5, 0.5]
@@ -35,6 +49,7 @@
     @test coordinates(grid, 200*100) == T[199.5, 99.5]
     @test coordinates(grid, 1:2) == T[0.5 1.5; 0.5 0.5]
     @test nelements(grid) == 200*100
+    @test eltype(grid) <: Quadrangle{2,T}
     @test grid[1] == Quadrangle(P2[(0,0), (1,0), (1,1), (0,1)])
     @test grid[2] == Quadrangle(P2[(1,0), (2,0), (2,1), (1,1)])
 
@@ -72,6 +87,7 @@
     for i in 1:length(triangles)
       @test mesh[i] == triangles[i]
     end
+    @test eltype(mesh) <: Triangle{2,T}
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)
@@ -88,6 +104,7 @@
     for i in 1:length(elms)
       @test mesh[i] == elms[i]
     end
+    @test eltype(mesh) <: Polygon{2,T}
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
