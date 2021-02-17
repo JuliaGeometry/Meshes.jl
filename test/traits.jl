@@ -1,4 +1,8 @@
 @testset "Traits" begin
+  @testset "Domain" begin
+    # TODO
+  end
+
   @testset "Data" begin
     # dummy type implementing the Data trait
     struct DummyData{𝒟,𝒯} <: Data
@@ -45,6 +49,11 @@
       @test sprint(show, MIME"text/plain"(), data) == "4 DummyData{2,Float32}\n  variables\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float32}"
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), data) == "4 DummyData{2,Float64}\n  variables\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float64}"
+    end
+
+    if visualtests
+      data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+      @test_ref_plot "data/data-$T.png" plot(data)
     end
   end
 end
