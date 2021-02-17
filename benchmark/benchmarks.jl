@@ -3,7 +3,7 @@ using BenchmarkTools: hasevals, tune!, run_result, minimum, allocs,
       Parameters, benchmarkable_parts, collectvars, warmup
 
 """
-Non-macro adaptation from `BenchmarkTools.@benchmarkable`
+Non-macro adaptation from `BenchmarkTools.@benchmarkable`.
 """
 function benchmarkable(ex, params)
   core, setup, teardown, _ = benchmarkable_parts([:(Ref($ex)[])])
