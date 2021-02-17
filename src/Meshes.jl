@@ -68,7 +68,7 @@ export
 
   # traits
   Domain, Data,
-  domain, values,
+  domain, values, asarray,
 
   # geometries
   Geometry,

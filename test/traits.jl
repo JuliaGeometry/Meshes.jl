@@ -30,5 +30,18 @@
     @test data[:b] == [5,6,7,8]
     @test_throws ErrorException data[:c] 
     @test_throws ErrorException data[:geometry]
+
+    # utility functions
+    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    @test asarray(data, :a) == [1 3; 2 4]
+    @test asarray(data, :b) == [5 7; 6 8]
+
+    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    @test sprint(show, data) == "4 DummyData{2,$T}"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), data) == "4 DummyData{2,Float32}\n  variables\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float32}"
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), data) == "4 DummyData{2,Float64}\n  variables\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float64}"
+    end
   end
 end
