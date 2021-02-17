@@ -1,4 +1,6 @@
-using BenchmarkTools: hasevals, tune!, run_result, minimum, allocs, prettytime, time, prettymemory, memory, generate_benchmark_definition, Parameters, benchmarkable_parts, collectvars, warmup
+using BenchmarkTools: hasevals, tune!, run_result, minimum, allocs,
+      prettytime, time, prettymemory, memory, generate_benchmark_definition,
+      Parameters, benchmarkable_parts, collectvars, warmup
 
 """
 Non-macro adaptation from `BenchmarkTools.@benchmarkable`
@@ -46,10 +48,6 @@ function run_benchmarks(exs, message = nothing)
   end
 end
 
-println("Julia version is $VERSION")
-t = @elapsed using Meshes
-println(string("Meshes.jl loading time: \e[33;1;1m$t\e[m seconds"))
-
 const point_exs = [
   :(Point(0., 1.)),
   :(Point([0., 1.])),
@@ -57,7 +55,12 @@ const point_exs = [
   :(Point(0., convert(Float64, 1))),
 ]
 
+println("Julia version is $VERSION")
+t = @elapsed using Meshes
+println(string("Meshes.jl loading time: \e[33;1;1m$t\e[m seconds"))
+
 println()
 println("Benchmarking Meshes.jl...")
 println()
+
 run_benchmarks(point_exs, "Points")
