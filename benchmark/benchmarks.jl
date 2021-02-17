@@ -11,16 +11,18 @@ function benchmarkable(ex, params)
   # extract any variable bindings shared between the core and setup expressions
   setup_vars = isa(setup, Expr) ? collectvars(setup) : []
   core_vars = isa(core, Expr) ? collectvars(core) : []
-  out_vars = filter(var -> var in setup_vars, core_vars)
+  out_vars = filter(in(setup_vars), core_vars)
 
   # generate the benchmark definition
-  bench = generate_benchmark_definition(@__MODULE__,
-                                  out_vars,
-                                  setup_vars,
-                                  core,
-                                  setup,
-                                  teardown,
-                                  Parameters(; params...))
+  bench = generate_benchmark_definition(
+    @__MODULE__,
+    out_vars,
+    setup_vars,
+    core,
+    setup,
+    teardown,
+    Parameters(; params...)
+  )
 end
 
 """
@@ -30,21 +32,25 @@ function btime(ex; params...)
   bench = benchmarkable(ex, params)
   warmup(bench)
   !hasevals(params) && tune!(bench)
+
   trial, result = run_result(bench)
   trialmin = minimum(trial)
   trialallocs = allocs(trialmin)
-  string("  \e[33;1;1m",
-          prettytime(time(trialmin)),
-          "\e[m (", trialallocs , " allocation",
-          trialallocs == 1 ? "" : "s", ": ",
-          prettymemory(memory(trialmin)), ")")
+
+  string(
+    "\e[33;1;1m",
+    prettytime(time(trialmin)),
+    "\e[m (", trialallocs , " allocation",
+    trialallocs == 1 ? "" : "s", ": ",
+    prettymemory(memory(trialmin)), ")"
+  )
 end
 
 function run_benchmarks(exs, message = nothing)
   !isnothing(message) && println("\e[34;1;1m", message, "\e[m")
   nchars_left = maximum(length, string.(exs))
   map(exs) do ex
-    println(' '^2, rpad(ex, nchars_left), " :", btime(ex))
+    println(' '^2, rpad(ex, nchars_left), " :  ", btime(ex))
   end
 end
 
