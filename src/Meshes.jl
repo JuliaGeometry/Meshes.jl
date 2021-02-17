@@ -4,6 +4,7 @@
 
 module Meshes
 
+using Tables
 using IterTools
 using StaticArrays
 using CircularArrays
@@ -11,8 +12,9 @@ using SpecialFunctions
 using LinearAlgebra
 using RecipesBase
 
-import Base: ==, +, -
+import Tables
 import Random
+import Base: ==, +, -
 
 # numerical tolerances
 include("tolerances.jl")
@@ -24,6 +26,7 @@ include("angles.jl")
 
 # type traits
 include("traits/domain.jl")
+include("traits/data.jl")
 
 # point sets
 include("pointsets.jl")
