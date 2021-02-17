@@ -42,7 +42,7 @@ Materialize a face using the `connec` list and a global vector of `points`.
 """
 function materialize(connec::Connectivity{PL},
                      points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
-  PL(view(points, collect(connec.list)))
+  PL(view(points, SVector(connec.list...)))
 end
 
 function Base.show(io::IO, c::Connectivity{PL}) where {PL}

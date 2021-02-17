@@ -4,14 +4,17 @@
 
 module Meshes
 
+using Tables
 using IterTools
 using StaticArrays
+using CircularArrays
 using SpecialFunctions
 using LinearAlgebra
 using RecipesBase
 
-import Base: ==, +, -
+import Tables
 import Random
+import Base: values, ==, +, -
 
 # numerical tolerances
 include("tolerances.jl")
@@ -21,68 +24,101 @@ include("vectors.jl")
 include("points.jl")
 include("angles.jl")
 
+# type traits
+include("traits/domain.jl")
+include("traits/data.jl")
+
+# point sets
+include("pointsets.jl")
+
 # geometries and meshes
 include("geometries.jl")
 include("connectivities.jl")
+include("conventions.jl")
 include("mesh.jl")
+
+# discretization views
+include("views.jl")
 
 # algorithms
 include("sampling.jl")
 include("discretization.jl")
 include("boundingboxes.jl")
 
+# utilities
+include("utils.jl")
+
 # plot recipes
-include("plotrecipes/polytopes.jl")
-include("plotrecipes/chains.jl")
-include("plotrecipes/polysurfaces.jl")
+include("plotrecipes/domain.jl")
+include("plotrecipes/data.jl")
+include("plotrecipes/geometries.jl")
+include("plotrecipes/pointsets.jl")
+include("plotrecipes/cartesiangrids.jl")
+include("plotrecipes/mesh.jl")
 
 export 
   # points
-  Point, Point2, Point3, Point2f, Point3f,
+  Point, Point1, Point2, Point3, Point1f, Point2f, Point3f,
   embeddim, coordtype, coordinates,
 
   # vectors
-  Vec, Vec2, Vec3, Vec2f, Vec3f,
+  Vec, Vec1, Vec2, Vec3, Vec1f, Vec2f, Vec3f,
 
   # angles
   ∠,
 
+  # traits
+  Domain, Data,
+  domain, values, asarray,
+
   # geometries
   Geometry,
-  GeometrySet,
   embeddim, paramdim, coordtype,
-  measure, boundary,
+  measure, area, volume, boundary,
+  centroid,
 
   # primitives
   Primitive,
   Box, Ball, Sphere, Cylinder,
   center, radius, height, sides,
+  measure, diagonal,
 
   # polytopes
   Polytope, Polygon, Polyhedron,
   Segment, Triangle, Quadrangle,
   Pyramid, Tetrahedron, Hexahedron,
+  Chain, PolyArea,
   vertices, nvertices,
-  facets, center,
-
-  # chains
-  Chain,
-  isclosed, issimple,
-  windingnumber, orientation,
-
-  # polysurfaces
-  PolySurface,
-  rings, hasholes, issimple,
-  windingnumber, orientation,
+  faces, facets,
+  intersecttype,
+  windingnumber, chains,
+  isclosed, issimple, hasholes,
+  angles, innerangles, close!, open!,
+  orientation, bridge,
 
   # connectivities
   Connectivity,
   polytopetype, connect, materialize,
 
+  # conventions
+  OrderingConvention,
+  GMSH,
+  connectivities,
+
+  # point sets
+  PointSet,
+  coordinates, coordinates!,
+  nelements,
+
   # meshes
   Mesh,
   CartesianGrid, UnstructuredMesh,
   faces, elements, spacing,
+  coordinates, coordinates!,
+  nelements,
+
+  # views
+  DomainView,
 
   # sampling
   SamplingMethod,
@@ -95,6 +131,10 @@ export
   discretize,
 
   # bounding boxes
-  boundingbox
+  boundingbox,
+
+  # utililities
+  signarea,
+  sideof
 
 end # module

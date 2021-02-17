@@ -7,9 +7,13 @@
     @test minimum(b) == P2(0, 0)
     @test maximum(b) == P2(1, 1)
     @test extrema(b) == (P2(0, 0), P2(1, 1))
-
     @test measure(b) == T(1)
     @test P2(1, 1) ∈ b
+
+    b = Box(P2(1, 1), P2(2, 2))
+    @test sides(b) == T[1, 1]
+    @test Meshes.center(b) == P2(1.5, 1.5)
+    @test diagonal(b) == √T(2)
   end
 
   @testset "Ball" begin
@@ -17,7 +21,7 @@
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
-    @test center(b) == P3(1,2,3)
+    @test Meshes.center(b) == P3(1,2,3)
     @test radius(b) == T(5)
 
     b = Ball(P2(0,0), T(2))
@@ -45,7 +49,7 @@
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
-    @test center(s) == P3(0, 0, 0)
+    @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
 
     s = Sphere(P2(0,0), T(2))

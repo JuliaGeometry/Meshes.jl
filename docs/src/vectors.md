@@ -1,0 +1,5 @@
+# Vectors
+
+```@docs
+Vec
+```

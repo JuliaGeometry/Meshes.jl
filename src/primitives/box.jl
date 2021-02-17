@@ -14,9 +14,9 @@ See https://en.wikipedia.org/wiki/Hyperrectangle.
 Box(Point(0,0,0), Point(1,1,1)) # unit cube
 ```
 """
-struct Box{N,T} <: Primitive{N,T}
-  min::Point{N,T}
-  max::Point{N,T}
+struct Box{Dim,T} <: Primitive{Dim,T}
+  min::Point{Dim,T}
+  max::Point{Dim,T}
 end
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
@@ -26,9 +26,10 @@ paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 Base.minimum(b::Box) = b.min
 Base.maximum(b::Box) = b.max
 Base.extrema(b::Box) = b.min, b.max
-sides(b::Box) = b.max - b.min
-
+center(b::Box) = Point((coordinates(b.max) + coordinates(b.min)) / 2)
 measure(b::Box) = prod(b.max - b.min)
+diagonal(b::Box) = norm(b.max - b.min)
+sides(b::Box) = b.max - b.min
 
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   l, u = coordinates.((b.min, b.max))

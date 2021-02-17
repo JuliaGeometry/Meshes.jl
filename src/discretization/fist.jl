@@ -15,7 +15,7 @@ to heuristics implemented in the algorithm.
 
 ## References
 
-* Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
+* Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 * Eder et al. 2018. [Parallelized ear clipping for the triangulation and
   constrained Delaunay triangulation of polygons]
@@ -23,47 +23,108 @@ to heuristics implemented in the algorithm.
 """
 struct FIST <: DiscretizationMethod end
 
-function discretize(polysurface::PolySurface, method::FIST)
-  verts, perms = _fist_remove_duplicates(polysurface)
-end
+function discretize(polyarea::PolyArea, ::FIST)
+  # build bridges in case the polygonal area has
+  # holes, i.e. reduce to a single outer boundary
+  𝒫 = polyarea |> unique |> bridge
 
-function _fist_remove_duplicates(polysurface)
-  outer, inners = rings(polysurface)
+  # points of resulting mesh
+  points = vertices(𝒫)
 
-  # retrieve vertices from rings
-  verts = [@view vertices(r)[begin:end-1] for r in [outer; inners]]
+  # keep track of global indices
+  inds = CircularVector(1:nvertices(𝒫))
 
-  # sort vertices lexicographically
-  perms = [sortperm(coordinates.(v)) for v in verts]
-
-  # remove true duplicates
-  vertsperms = map(1:length(verts)) do k
-    vert = verts[k]
-    perm = perms[k]
-
-    keep = Int[]
-    newperm = deepcopy(perm)
-    sorted = @view vert[perm]
-    for i in 1:length(sorted)-1
-      if sorted[i] != sorted[i+1]
-        # save index in the original vector
-        push!(keep, perm[i])
-      else
-        # pop index from permutation vector
-        # by assigning the value 0 and then
-        # decrease all other indices that
-        # are greater than the index by 1
-        newperm[newperm .> perm[i]] .-= 1
-        newperm[i] = 0
+  # perform ear clipping
+  𝒬 = ears(𝒫)
+  n = nvertices(𝒫)
+  𝒯 = Connectivity{Triangle,3}[]
+  clipped = false
+  while n > 3
+    if !isempty(𝒬) # clip an ear
+      # 0. select candidate ear
+      i = pop!(𝒬); 𝒬[𝒬.>i] .-= 1
+      # 1. push a new triangle to 𝒯
+      push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
+      # 2. remove the vertex from 𝒫
+      inds = inds[setdiff(1:n, mod1(i,n))]
+      𝒫 = Chain(points[inds])
+      n = nvertices(𝒫)
+      # 3. update 𝒬 near clipped ear
+      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [mod1(i,n)])
+      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [mod1(i+1,n)])
+      clipped = true
+    elseif clipped # recompute all ears
+      𝒬 = ears(𝒫)
+      clipped = false
+    else # recovery process
+      # check if consecutive edges vᵢ-1 -- vᵢ and vᵢ+1 -- vᵢ+2
+      # intersect and fix the issue by clipping ear (vᵢ, vᵢ+1, vᵢ+2)
+      v = vertices(𝒫)
+      for i in 1:n
+        s1 = Segment(v[i-1], v[i])
+        s2 = Segment(v[i+1], v[i+2])
+        if intersecttype(s1, s2) isa CrossingSegments
+          # 1. push a new triangle to 𝒯
+          push!(𝒯, connect((inds[i], inds[i+1], inds[i+2]), Triangle))
+          # 2. remove the vertex from 𝒫
+          inds = inds[setdiff(1:n, mod1(i+1,n))]
+          𝒫 = Chain(points[inds])
+          n = nvertices(𝒫)
+          clipped = true
+          break
+        end
       end
     end
-    push!(keep, last(perm))
+  end
+  # remaining polygonal area is the last triangle
+  push!(𝒯, connect((inds[1], inds[2], inds[3]), Triangle))
 
-    sort!(keep)
-    filter!(!iszero, newperm)
+  UnstructuredMesh(collect(points), 𝒯)
+end
 
-    view(vert, keep), newperm
+# return index of all ears of 𝒫
+ears(𝒫) = filter(i -> isear(𝒫, i), 1:nvertices(𝒫))
+
+# tells whether or not vertex i is an ear of 𝒫
+# assuming that 𝒫 has counter-clockwise orientation
+function isear(𝒫::Chain{Dim,T}, i) where {Dim,T}
+  v = vertices(𝒫)
+
+  # helper function to compute the vexity of vertex i
+  function vexity(i)
+    α = ∠(v[i-1], v[i], v[i+1]) # oriented angle
+    θ = α > 0 ? 2*T(π) - α : -α # inner angle
+    θ < π ? :CONVEX : :REFLEX
   end
 
-  first.(vertsperms), last.(vertsperms)
+  # helper function to check if vertex j is inside cone i
+  function incone(j, i)
+    s1 = sideof(v[j], Segment(v[i], v[i-1]))
+    s2 = sideof(v[j], Segment(v[i], v[i+1]))
+    if vexity(i) == :CONVEX
+      s1 != :LEFT && s2 != :RIGHT
+    else
+      s1 != :LEFT || s2 != :RIGHT
+    end
+  end
+
+  # CE1.1: classify angle as convex vs. reflex
+  isconvex = vexity(i) == :CONVEX
+
+  # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
+  sᵢ = Segment(v[i-1], v[i+1])
+  intersects = false
+  for j in 1:nvertices(𝒫)
+    sⱼ = Segment(v[j], v[j+1])
+    I = intersecttype(sᵢ, sⱼ)
+    if !(I isa CornerTouchingSegments || I isa NonIntersectingSegments)
+      intersects = true
+      break
+    end
+  end
+
+  # CE1.3: check if vᵢ-1 ∈ C(vᵢ, vᵢ+1, vᵢ+2) and vᵢ+1 ∈ C(vᵢ-2, vᵢ-1, vᵢ)
+  incones = incone(i-1, i+1) && incone(i+1, i-1)
+
+  isconvex && !intersects && incones
 end

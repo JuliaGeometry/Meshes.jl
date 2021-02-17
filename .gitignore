@@ -4,3 +4,4 @@
 .DS_Store
 Manifest.toml
 .vscode
+docs/build

@@ -1,0 +1,5 @@
+# Bounding box
+
+```@docs
+boundingbox
+```
