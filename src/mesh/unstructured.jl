@@ -54,11 +54,6 @@ Base.getindex(m::UnstructuredMesh, ind::Int) =
 
 nelements(m::UnstructuredMesh) = length(m.elms)
 
-function coordinates!(buff, m::UnstructuredMesh, ind::Int)
-  elm = materialize(m.connec[m.elms[ind]], m.points)
-  buff .= coordinates(centroid(elm))
-end
-
 # -----------
 # IO METHODS
 # -----------

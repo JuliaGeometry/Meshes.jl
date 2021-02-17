@@ -40,8 +40,6 @@ for each element of the `domain`.
 """
 PointSet(domain::Domain) = PointSet(coordinates(domain, 1:nelements(domain)))
 
-==(pset1::PointSet, pset2::PointSet) = pset1.points == pset2.points
-
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
@@ -51,5 +49,5 @@ Base.getindex(pset::PointSet, ind::Int) = getindex(pset.points, ind)
 nelements(pset::PointSet) = length(pset.points)
 
 function coordinates!(buff, pset::PointSet, ind::Int)
-  buff .= coordinates(pset.points[ind])
+  @inbounds buff .= coordinates(pset.points[ind])
 end

@@ -1,6 +1,39 @@
 @testset "Traits" begin
   @testset "Domain" begin
-    # TODO
+    # dummy type implementing the Domain trait
+    struct DummyDomain{Dim,T} <: Domain{Dim,T}
+      origin::Point{Dim,T}
+    end
+    function Base.getindex(domain::DummyDomain{Dim,T}, ind::Int) where {Dim,T}
+      c = domain.origin + Vec(ntuple(i->T(ind), Dim))
+      r = one(T)
+      Ball(c, r)
+    end
+    Meshes.nelements(d::DummyDomain) = 3
+
+    # basic properties
+    dom = DummyDomain(P2(0,0))
+    @test embeddim(dom) == 2
+    @test coordtype(dom) == T
+    @test eltype(dom) <: Ball{2,T}
+
+    # coordinates of centroids
+    dom = DummyDomain(P2(1,1))
+    @test coordinates(dom, 1:3) == T[2 3 4; 2 3 4]
+
+    dom = DummyDomain(P2(0,0))
+    @test sprint(show, dom) == "3 DummyDomain{2,$T}"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), dom) =="3 DummyDomain{2,Float32}\n  └─Ball{2, Float32}(Point(1.0f0, 1.0f0), 1.0f0)\n  └─Ball{2, Float32}(Point(2.0f0, 2.0f0), 1.0f0)\n  └─Ball{2, Float32}(Point(3.0f0, 3.0f0), 1.0f0)"
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), dom) =="3 DummyDomain{2,Float64}\n  └─Ball{2, Float64}(Point(1.0, 1.0), 1.0)\n  └─Ball{2, Float64}(Point(2.0, 2.0), 1.0)\n  └─Ball{2, Float64}(Point(3.0, 3.0), 1.0)"
+    end
+
+    if visualtests
+      dom = DummyDomain(P2(0,0))
+      @test_ref_plot "data/domain-$T.png" plot(dom)
+      @test_ref_plot "data/domain-data-$T.png" plot(dom,1:3)
+    end
   end
 
   @testset "Data" begin
