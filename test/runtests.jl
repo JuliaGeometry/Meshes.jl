@@ -63,7 +63,7 @@ testfiles = [
   "polytopes.jl",
   "primitives.jl",
   "mesh.jl",
-  "data.jl",
+  "traits.jl",
   "views.jl",
   "sampling.jl",
   "discretization.jl",
