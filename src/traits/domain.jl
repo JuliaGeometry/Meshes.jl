@@ -91,7 +91,7 @@ function Base.show(io::IO, domain::Domain{Dim,T}) where {Dim,T}
   print(io, "$nelm $name{$Dim,$T}")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", domain::Domain{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
   println(io, domain)
   N = nelements(domain)
   I, J = N > 10 ? (5, N-4) : (N, N+1)
