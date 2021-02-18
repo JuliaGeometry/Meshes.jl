@@ -20,9 +20,5 @@ See https://en.wikipedia.org/wiki/Atan2.
 function ∠(A::P, B::P, C::P) where {P<:Point{2}}
   BA = A - B
   BC = C - B
-
-  cross = BA × BC
-  inner = BA ⋅ BC
-
-  atan(cross, inner)
+  atan(BA × BC, BA ⋅ BC)
 end
