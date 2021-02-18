@@ -79,4 +79,13 @@
   # `Point{1,Int}(2,3)` which does about the same.
   # I don't think this can reasonably be fixed here without hurting performance
   
+  # check that input of mixed coordinate types is allowed and works as expected
+  @test Point(1, .2) == Point{2,Float64}(1., .2)
+  @test Point((3., 4)) == Point{2,Float64}(3., 4.)
+  @test Point([5., 6., 7]) == Point{3,Float64}(5., 6., 7.)
+  @test Point{2,T}(8, 9.) == Point{2,T}(SVector{2,T}(8., 9.))
+  @test Point{2,Int}((-1., -2)) == Point{2,Int}(SVector{2,Int}(-1, -2))
+  @test Point{4,T}([0, -1., +2, -4.]) == Point{4,T}(SVector{4,T}(0f0, -1f0, +2f0, -4f0))
+
+  
 end
