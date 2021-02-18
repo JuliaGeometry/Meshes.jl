@@ -11,8 +11,8 @@ using CircularArrays
 using LinearAlgebra
 using RecipesBase
 
-using Distances: Euclidean
 using SpecialFunctions: gamma
+using Distances: Euclidean, Mahalanobis
 using ReferenceFrameRotations: angle_to_dcm
 
 import Tables

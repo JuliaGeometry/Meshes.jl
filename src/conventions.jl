@@ -86,22 +86,24 @@ Return the direction cosine matrix of rotation for the given `angles`
 according to the rotation `convention`.
 """
 function rotmat(angles, convention::Type{<:RotationConvention})
-  N = length(angles)
-  @assert N ∈ [2,3] "dimension must be either 2 or 3"
+  nangles = length(angles)
+  @assert nangles ∈ [1,3] "invalid number of angles"
+
+  Dim = nangles == 1 ? 2 : 3
 
   # convert to radian if necessary
-  angleunits(convention) == :DEG && (angles = deg2rad.(angles))
+  θs = angleunits(convention) == :DEG ? deg2rad.(angles) : angles
 
   # invert sign if necessary
-  _0 = zero(eltype(angles))
-  N == 2 && (angles = [angles[1], _0, _0])
+  _0 = zero(eltype(θs))
+  Dim == 2 && (θs = [θs[1], _0, _0])
   intr = (orientation(convention) .== :CW) .& !isextrinsic(convention)
   extr = (orientation(convention) .== :CCW) .& isextrinsic(convention)
   inds = collect(intr .| extr)
-  angles[inds] *= -1
+  θs[inds] *= -1
 
   # rotation matrix
-  R = angle_to_dcm(angles..., axesseq(convention))[SOneTo(N),SOneTo(N)]
+  R = angle_to_dcm(θs..., axesseq(convention))[SOneTo(Dim),SOneTo(Dim)]
 
   isextrinsic(convention) ? R' : R
 end

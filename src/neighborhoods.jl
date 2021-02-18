@@ -31,4 +31,4 @@ function metric(::MetricBall) end
 # ----------------
 
 include("neighborhoods/normball.jl")
-# include("neighborhoods/ellipsoid.jl")
+include("neighborhoods/ellipsoid.jl")
