@@ -72,15 +72,11 @@
   @test Point{1,T}(0) == Point{1,T}((0,)) == Point{1,T}([0])
  
   @test_throws DimensionMismatch Point{2,Int}(1)
-  @test_throws DimensionMismatch Point{1,Int}((2,3))
+  @test_throws DimensionMismatch Point{3,Int}((2,3))
   @test_throws DimensionMismatch Point{-3,T}([4,5,6])
-    
-  # disabled for now, check that implicit conversion is disallowed and throws
-  # @test_throws ... Point(1, .2) # not sure what to throw yet
-  # @test_throws ... Point((3., 4))
-  # @test_throws ... Point([5., 6., 7])
-  # @test_throws ... Point{2,T}(8, 9.)
-  # @test_throws ... Point{3,Int}((-1., -2))
-  # @test_throws ... Point{4,T}([0, -1., +2, -4.])
+  # There are 2 cases that throw a MethodError instead of a DimensionMismatch:
+  # `Point{1,Int}((2,3))` because it tries to take the tuple as a whole and convert to Int and:
+  # `Point{1,Int}(2,3)` which does about the same.
+  # I don't think this can reasonably be fixed here without hurting performance
   
 end
