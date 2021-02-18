@@ -1,5 +1,6 @@
 using Meshes
 using Tables
+using Distances
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
@@ -65,6 +66,7 @@ testfiles = [
   "mesh.jl",
   "traits.jl",
   "views.jl",
+  "neighborhoods.jl",
   "sampling.jl",
   "discretization.jl",
   "boundingboxes.jl"
