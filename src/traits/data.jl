@@ -44,16 +44,17 @@ Tells whether or not the `data₁` and `data₂` are equal.
 
 Tables.istable(::Type{<:Data}) = true
 Tables.rowaccess(data::Data) = true
+function Tables.rows(data::Data)
+  rows = Tables.rows(values(data))
+  elms = domain(data)
+  ((row..., elms[i]) for (i, row) in Iterators.enumerate(rows))
+end
 function Tables.schema(data::Data)
   geomtype = eltype(domain(data))
   schema = Tables.schema(values(data))
   names, types = schema.names, schema.types
   Tables.Schema((names..., :geometry), (types..., geomtype))
 end
-# Tables.columns(data::Data) = Tables.columns(values(data))
-# Tables.columnnames(data::Data) = Tables.columnnames(values(data))
-# Tables.getcolumn(data::Data, c::Symbol) = Tables.getcolumn(values(data), c)
-# Tables.rows(data::Data) = Tables.rows(values(data))
 
 # -------------
 # VARIABLE API

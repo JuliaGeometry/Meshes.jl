@@ -54,12 +54,19 @@
     @test data₂ != data₃
 
     # Tables interface
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-    @test Tables.istable(data)
-    @test Tables.rowaccess(data)
-    s = Tables.schema(data)
+    dom = CartesianGrid{T}(2,2)
+    dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    @test Tables.istable(dat)
+    @test Tables.rowaccess(dat)
+    s = Tables.schema(dat)
     @test s.names == (:a,:b,:geometry)
     @test s.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
+    @test collect(Tables.rows(dat)) == [
+      (1, 5, dom[1]),
+      (2, 6, dom[2]),
+      (3, 7, dom[3]),
+      (4, 8, dom[4])
+    ]
 
     # variables interface
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
