@@ -132,7 +132,7 @@ export
   nelements,
 
   # views
-  DomainView,
+  DomainView, DataView,
 
   # neighborhoods
   NormBall, Ellipsoid,
