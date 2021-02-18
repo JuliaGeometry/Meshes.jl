@@ -8,9 +8,12 @@ using Tables
 using IterTools
 using StaticArrays
 using CircularArrays
-using SpecialFunctions
 using LinearAlgebra
 using RecipesBase
+
+using Distances: Euclidean
+using SpecialFunctions: gamma
+using ReferenceFrameRotations: angle_to_dcm
 
 import Tables
 import Random
@@ -37,8 +40,11 @@ include("connectivities.jl")
 include("conventions.jl")
 include("mesh.jl")
 
-# discretization views
+# domain and data views
 include("views.jl")
+
+# neighborhoods
+include("neighborhoods.jl")
 
 # algorithms
 include("sampling.jl")
@@ -100,10 +106,18 @@ export
   Connectivity,
   polytopetype, connect, materialize,
 
-  # conventions
+  # ordering conventions
   OrderingConvention,
   GMSH,
   connectivities,
+
+  # rotation conventions
+  RotationConvention,
+  GSLIB, Leapfrog, Datamine,
+  TaitBryanExtr, TaitBryanIntr,
+  EulerExtr, EulerIntr,
+  axesseq, orientation, angleunits,
+  mainaxis, isextrinsic, rotmat,
 
   # point sets
   PointSet,
@@ -119,6 +133,10 @@ export
 
   # views
   DomainView,
+
+  # neighborhoods
+  NormBall, Ellipsoid,
+  metric, radius,
 
   # sampling
   SamplingMethod,

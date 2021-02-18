@@ -3,6 +3,8 @@
 # ------------------------------------------------------------------
 
 """
+    GMSH
+
 Ordering convention of the GMSH project:
 https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering
 """
