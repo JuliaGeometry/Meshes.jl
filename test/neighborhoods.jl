@@ -55,27 +55,18 @@
     @test evaluate(metric(ellipsoid), T[0,0,0], T(2.1) * T[√2/2,-√2/2,0.0]) > T(1)
     @test evaluate(metric(ellipsoid), T[0,0,0], T(1.1) * T[0.5,0.5,√2/2]) > T(1)
 
-    ellipsoid = Ellipsoid(T.((2,1)), T.((45,)), convention=GSLIB)
-    if T == Float32
-      @test sprint(show, ellipsoid) == "Ellipsoid{Float32}((2.0f0, 1.0f0), (45.0f0,), GSLIB)"
-    else
-      @test sprint(show, ellipsoid) == "Ellipsoid{Float64}((2.0, 1.0), (45.0,), GSLIB)"
-    end
-  end
-  
-  @testset "RotationConvention" begin
-    # 2d simple test
+    # 2D simple test of default convention
     d₁ = metric(Ellipsoid([1.,1.], [0.]))
     d₂ = metric(Ellipsoid([1.,2.], [0.]))
     @test evaluate(d₁, [1.,0.], [0.,0.]) == evaluate(d₁, [0.,1.], [0.,0.])
     @test evaluate(d₂, [1.,0.], [0.,0.]) != evaluate(d₂, [0.,1.], [0.,0.])
 
-    # 3d simple test
+    # 3D simple test of default convention
     d₃ = metric(Ellipsoid([1.,.5,.5], [π/4,0.,0.]))
     @test evaluate(d₃, [1.,1.,0.], [0.,0.,0.]) ≈ √2
     @test evaluate(d₃, [-1.,1.,0.], [0.,0.,0.]) ≈ √8
 
-    # intrinsic conventions
+    # test of intrinsic conventions
     gslib = metric(Ellipsoid([50.,25.,5.], [30.,-30.,30.], convention=GSLIB))
     tait  = metric(Ellipsoid([25.,50.,5.], [-π/6,-π/6,π/6], convention=TaitBryanIntr))
     euler = metric(Ellipsoid([50.,25.,5.], deg2rad.([-78,-41,-50]), convention=EulerIntr))
@@ -91,7 +82,7 @@
     @test evaluate(euler, [0.,0.,1.], [0.,0.,0.]) ≈ evaluate(lpf, [0.,0.,1.], [0.,0.,0.])
     @test evaluate(euler, [0.,0.,1.], [0.,0.,0.]) - evaluate(gslib, [0.,0.,1.], [0.,0.,0.]) < 10^-3
 
-    # extrinsic conventions
+    # test of extrinsic conventions
     xtait  = metric(Ellipsoid([50.,25.,5.], [π,0,π/2], convention=TaitBryanExtr))
     xeuler = metric(Ellipsoid([50.,25.,5.], [-π/2,-π/2,-π/2], convention=EulerExtr))
 
@@ -102,5 +93,12 @@
     @test evaluate(xtait, [1.,0.,0.], [0.,0.,0.]) ≈ evaluate(xeuler, [1.,0.,0.], [0.,0.,0.])
     @test evaluate(xtait, [0.,1.,0.], [0.,0.,0.]) ≈ evaluate(xeuler, [0.,1.,0.], [0.,0.,0.])
     @test evaluate(xtait, [0.,0.,1.], [0.,0.,0.]) ≈ evaluate(xeuler, [0.,0.,1.], [0.,0.,0.])
+
+    ellipsoid = Ellipsoid(T.((2,1)), T.((45,)), convention=GSLIB)
+    if T == Float32
+      @test sprint(show, ellipsoid) == "Ellipsoid{Float32}((2.0f0, 1.0f0), (45.0f0,), GSLIB)"
+    else
+      @test sprint(show, ellipsoid) == "Ellipsoid{Float64}((2.0, 1.0), (45.0,), GSLIB)"
+    end
   end
 end
