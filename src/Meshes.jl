@@ -14,10 +14,12 @@ using RecipesBase
 using SpecialFunctions: gamma
 using Distances: Euclidean, Mahalanobis
 using ReferenceFrameRotations: angle_to_dcm
+using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
 import Random
 import Base: values, ==, +, -
+import NearestNeighbors: MinkowskiMetric
 
 # numerical tolerances
 include("tolerances.jl")
@@ -43,8 +45,9 @@ include("mesh.jl")
 # domain and data views
 include("views.jl")
 
-# neighborhoods
+# neighborhoods and searches
 include("neighborhoods.jl")
+include("neighborsearch.jl")
 
 # algorithms
 include("sampling.jl")
@@ -137,6 +140,12 @@ export
   # neighborhoods
   NormBall, Ellipsoid,
   metric, radius,
+
+  # neighbordhood search
+  NeighborSearchMethod,
+  BoundedNeighborSearchMethod,
+  NeighborhoodSearch,
+  search!, search,
 
   # sampling
   SamplingMethod,
