@@ -147,6 +147,7 @@ export
   NeighborhoodSearch,
   KNearestSearch,
   KBallSearch,
+  BoundedSearch,
   search!, search,
 
   # sampling
