@@ -44,7 +44,7 @@ function display_trial(trial::Trial)
     prettytime(time(trial)),
     "\e[m (", trialallocs , " allocation",
     trialallocs == 1 ? "" : "s", ": ",
-    prettymemory(memory(trial)), ")"
+    prettymemory(memory(trial)), ")",
   )
 end
 
