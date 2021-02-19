@@ -67,6 +67,7 @@ testfiles = [
   "traits.jl",
   "views.jl",
   "neighborhoods.jl",
+  "neighborsearch.jl",
   "sampling.jl",
   "discretization.jl",
   "boundingboxes.jl"
