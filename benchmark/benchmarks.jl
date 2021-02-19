@@ -1,11 +1,12 @@
-using BenchmarkTools: hasevals, tune!, run_result, minimum, allocs,
+using BenchmarkTools
+using BenchmarkTools: tune!, allocs,
       prettytime, time, prettymemory, memory, generate_benchmark_definition,
-      Parameters, benchmarkable_parts, collectvars, warmup
+      Parameters, benchmarkable_parts, collectvars, warmup, Trial
 
 """
 Non-macro adaptation from `BenchmarkTools.@benchmarkable`.
 """
-function benchmarkable(ex, params)
+function benchmarkable(ex, params = [])
   core, setup, teardown, _ = benchmarkable_parts([:(Ref($ex)[])])
 
   # extract any variable bindings shared between the core and setup expressions
@@ -21,52 +22,64 @@ function benchmarkable(ex, params)
     core,
     setup,
     teardown,
-    Parameters(; params...)
+    Parameters(; params...),
   )
 end
 
-"""
-Non-macro Adaptation from `BenchmarkTools.@btime`.
-"""
-function btime(ex; params...)
-  bench = benchmarkable(ex, params)
-  warmup(bench)
-  !hasevals(params) && tune!(bench)
+function add_benchmark!(group::BenchmarkGroup, ex::Expr)
+  group[string(ex)] = benchmarkable(ex)
+end
 
-  trial, result = run_result(bench)
+function add_benchmark!(group::BenchmarkGroup, exs)
+  add_benchmark!.(Ref(group), exs)
+  group
+end
+
+function display_trial(trial::Trial)
+  trialallocs = allocs(trial)
   trialmin = minimum(trial)
-  trialallocs = allocs(trialmin)
 
-  string(
+  println(
     "\e[33;1;1m",
-    prettytime(time(trialmin)),
+    prettytime(time(trial)),
     "\e[m (", trialallocs , " allocation",
     trialallocs == 1 ? "" : "s", ": ",
-    prettymemory(memory(trialmin)), ")"
+    prettymemory(memory(trial)), ")"
   )
 end
 
-function run_benchmarks(exs, message = nothing)
-  !isnothing(message) && println("\e[34;1;1m", message, "\e[m")
-  nchars_left = maximum(length, string.(exs))
-  map(exs) do ex
-    println(' '^2, rpad(ex, nchars_left), " :  ", btime(ex))
-  end
+function display_group(group::BenchmarkGroup)
+    nchars_left = maximum(length, keys(group.data))
+    foreach(group.data) do (str, val)
+      if val isa Trial
+        print(' '^2, rpad(str, nchars_left), " :  ")
+        display_trial(val)
+      else
+        println("\e[34;1;1m", str, "\e[m")
+        display_group(val)
+      end
+    end
 end
 
-const point_exs = [
+suite = BenchmarkGroup()
+
+suite["points"] = BenchmarkGroup(["microbenchmark", "points"]) # add tags for eventual filtering
+
+add_benchmark!(suite["points"], [
   :(Point(0., 1.)),
   :(Point([0., 1.])),
   :(Point([0., 1])),
   :(Point(0., convert(Float64, 1))),
-]
+])
 
 println("Julia version is $VERSION")
 t = @elapsed using Meshes
 println(string("Meshes.jl loading time: \e[33;1;1m$t\e[m seconds"))
-
 println()
 println("Benchmarking Meshes.jl...")
 println()
 
-run_benchmarks(point_exs, "Points")
+tune!(suite)
+result = run(suite)
+
+display_group(result)
