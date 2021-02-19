@@ -28,7 +28,8 @@ function Ellipsoid(semiaxes::S, angles::A; convention::C=TaitBryanExtr) where {S
   @assert valid "invalid number of semiaxes/angles"
 
   # invert semiaxes if necessary
-  ranges = mainaxis(convention) == :Y ? reverse(semiaxes, 1, 2) : semiaxes
+  invert = mainaxis(convention) == :Y
+  ranges = invert ? [semiaxes[i] for i in reverse(1:Dim,1,2)] : semiaxes
 
   # scaling matrix
   Λ = Diagonal(SVector{Dim}(one(eltype(ranges))./ranges.^2))
