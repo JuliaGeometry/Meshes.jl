@@ -1,7 +1,7 @@
 name = "Meshes"
 uuid = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 authors = ["Júlio Hoffimann and contributors"]
-version = "0.7.0"
+version = "0.8.0"
 
 [deps]
 CircularArrays = "7a955b69-7140-5f4e-a0ed-f168c5e2e749"
