@@ -19,4 +19,6 @@ function sample end
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
+
 include("sampling/regular.jl")
+include("sampling/uniform.jl")

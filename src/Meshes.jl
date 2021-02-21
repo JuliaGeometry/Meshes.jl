@@ -19,6 +19,7 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 import Tables
 import Random
 import Base: values, ==, +, -
+import StatsBase: sample
 import NearestNeighbors: MinkowskiMetric
 
 # numerical tolerances
@@ -153,6 +154,7 @@ export
   # sampling
   SamplingMethod,
   RegularSampling,
+  UniformSampling,
   sample,
 
   # discretization
