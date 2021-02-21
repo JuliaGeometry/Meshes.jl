@@ -5,12 +5,13 @@
 module Meshes
 
 using Tables
-using IterTools
 using StaticArrays
 using CircularArrays
 using LinearAlgebra
 using RecipesBase
 
+using IterTools: ivec
+using StatsBase: Weights
 using SpecialFunctions: gamma
 using Distances: Euclidean, Mahalanobis
 using ReferenceFrameRotations: angle_to_dcm
@@ -155,6 +156,7 @@ export
   SamplingMethod,
   RegularSampling,
   UniformSampling,
+  WeightedSampling,
   sample,
 
   # discretization
