@@ -1,6 +1,7 @@
 using Meshes
 using Tables
 using Distances
+using Statistics
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
