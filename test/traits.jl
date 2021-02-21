@@ -31,8 +31,8 @@
 
     if visualtests
       dom = DummyDomain(P2(0,0))
-      @test_ref_plot "data/domain-$T.png" plot(dom)
-      @test_ref_plot "data/domain-data-$T.png" plot(dom,1:3)
+      @test_reference "data/domain-$T.png" plot(dom)
+      @test_reference "data/domain-data-$T.png" plot(dom,1:3)
     end
   end
 
@@ -93,7 +93,7 @@
 
     if visualtests
       data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-      @test_ref_plot "data/data-$T.png" plot(data)
+      @test_reference "data/data-$T.png" plot(data)
     end
   end
 end
