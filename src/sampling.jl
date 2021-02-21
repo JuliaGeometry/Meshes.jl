@@ -23,3 +23,4 @@ function sample end
 include("sampling/regular.jl")
 include("sampling/uniform.jl")
 include("sampling/weighted.jl")
+include("sampling/ball.jl")

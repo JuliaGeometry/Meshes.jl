@@ -157,6 +157,7 @@ export
   RegularSampling,
   UniformSampling,
   WeightedSampling,
+  BallSampling,
   sample,
 
   # discretization
