@@ -179,6 +179,7 @@ export
   BisectPointPartition,
   BisectFractionPartition,
   BallPartition,
+  PlanePartition,
   partition,
 
   # discretization
