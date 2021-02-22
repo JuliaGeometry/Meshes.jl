@@ -51,6 +51,9 @@ include("views.jl")
 include("neighborhoods.jl")
 include("neighborsearch.jl")
 
+# partitions
+include("partitions.jl")
+
 # algorithms
 include("sampling.jl")
 include("discretization.jl")
@@ -151,6 +154,9 @@ export
   KBallSearch,
   BoundedSearch,
   search!, search,
+
+  # partitions
+  Partition,
 
   # sampling
   SamplingMethod,
