@@ -14,7 +14,7 @@ using Random
 using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
-using Distances: Euclidean, Mahalanobis
+using Distances: Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
@@ -178,6 +178,7 @@ export
   BlockPartition,
   BisectPointPartition,
   BisectFractionPartition,
+  BallPartition,
   partition,
 
   # discretization
