@@ -30,17 +30,19 @@ values(data::Data)
 # FALLBACKS
 # ----------
 
-"""
-    data₁ == data₂
+# implement Domain traits for convenience
+embeddim(data::Data) = embeddim(domain(data))
+coordtype(data::Data) = coordtype(domain(data))
+nelements(data::Data) = nelements(domain(data))
+coordinates!(buff, data::Data, ind::Int) =
+  coordinates!(buff, domain(data), ind)
 
-Tells whether or not the `data₁` and `data₂` are equal.
-"""
 ==(data₁::Data, data₂::Data) =
   domain(data₁) == domain(data₂) && values(data₁) == values(data₂)
 
-# -----------
-# TABLES API
-# -----------
+# -----------------
+# TABLES INTERFACE
+# -----------------
 
 Tables.istable(::Type{<:Data}) = true
 Tables.rowaccess(data::Data) = true
@@ -56,9 +58,9 @@ function Tables.schema(data::Data)
   Tables.Schema((names..., :geometry), (types..., geomtype))
 end
 
-# -------------
-# VARIABLE API
-# -------------
+# -------------------
+# VARIABLE INTERFACE
+# -------------------
 
 """
     getindex(data, var)
@@ -97,18 +99,14 @@ function Base.show(io::IO, data::Data)
   print(io, "$nelm $name{$Dim,$T}")
 end
 
-MIMES = [MIME"text/plain", MIME"text/html"]
-
-for MIME in MIMES
-  @eval function Base.show(io::IO, ::$MIME, data::Data)
-    𝒟 = domain(data)
-    𝒯 = values(data)
-    s = Tables.schema(𝒯)
-    vars = zip(s.names, s.types)
-    println(io, data)
-    println(io, "  variables")
-    varlines = ["    └─$var ($V)" for (var,V) in vars]
-    println(io, join(sort(varlines), "\n"))
-    print(  io, "  domain: ", 𝒟)
-  end
+function Base.show(io::IO, ::MIME"text/plain", data::Data)
+  𝒟 = domain(data)
+  𝒯 = values(data)
+  s = Tables.schema(𝒯)
+  vars = zip(s.names, s.types)
+  println(io, data)
+  println(io, "  variables")
+  varlines = ["    └─$var ($V)" for (var,V) in vars]
+  println(io, join(sort(varlines), "\n"))
+  print(  io, "  domain: ", 𝒟)
 end
