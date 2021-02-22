@@ -180,6 +180,7 @@ export
   BisectFractionPartition,
   BallPartition,
   PlanePartition,
+  DirectionPartition,
   partition,
 
   # discretization
