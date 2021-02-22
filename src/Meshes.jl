@@ -184,7 +184,8 @@ export
   PredicatePartition,
   SpatialPredicatePartition,
   ProductPartition,
-  partition,
+  HierarchicalPartition,
+  partition, →,
 
   # discretization
   DiscretizationMethod,
