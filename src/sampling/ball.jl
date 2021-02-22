@@ -5,8 +5,8 @@
 """
     BallSampling(radius; [options])
 
-A method for sampling isolated elements from a given domain according
-to a norm-ball of given `radius`.
+A method for sampling isolated elements from a given domain/data
+according to a norm-ball of given `radius`.
 
 ## Options
 
@@ -22,23 +22,25 @@ end
 BallSampling(radius; metric=Euclidean(), maxsize=nothing) =
   BallSampling(radius, metric, maxsize)
 
-function sample(domain::Domain{Dim,T}, method::BallSampling) where {Dim,T}
+function sample(object, method::BallSampling)
+  Dim = embeddim(object)
+  T = coordtype(object)
   radius = method.radius
   metric = method.metric
   msize  = method.maxsize ≠ nothing ? method.maxsize : Inf
 
   # neighborhood search with ball
   ball = NormBall(radius, metric)
-  searcher = NeighborhoodSearch(domain, ball)
+  searcher = NeighborhoodSearch(object, ball)
 
   # pre-allocate memory for coordinates
   coords = MVector{Dim,T}(undef)
 
   locations = Vector{Int}()
-  notviewed = trues(nelements(domain))
+  notviewed = trues(nelements(object))
   while length(locations) < msize && any(notviewed)
     location = rand(findall(notviewed))
-    coordinates!(coords, domain, location)
+    coordinates!(coords, object, location)
 
     # neighbors (including the location)
     neighbors = search(Point(coords), searcher)
@@ -47,5 +49,5 @@ function sample(domain::Domain{Dim,T}, method::BallSampling) where {Dim,T}
     notviewed[neighbors] .= false
   end
 
-  view(domain, locations)
+  view(object, locations)
 end
