@@ -237,4 +237,25 @@
     s2 = subsets(partition(g, bm → bn))
     @test setify(s1) == setify(s2)
   end
+
+  @testset "Utilities" begin
+    d = CartesianGrid{T}(10,10)
+    l, r = split(d, T(0.5))
+    @test nelements(l) == 50
+    @test nelements(r) == 50
+    l, r = split(d, T(0.5), T.((1,0)))
+    @test nelements(l) == 50
+    @test nelements(r) == 50
+    cl = mean(coordinates(l, 1:nelements(l)), dims=2)
+    cr = mean(coordinates(r, 1:nelements(r)), dims=2)
+    @test cl[1] < cr[1]
+    @test cl[2] == cr[2]
+    l, r = split(d, T(0.5), T.((0,1)))
+    @test nelements(l) == 50
+    @test nelements(r) == 50
+    cl = mean(coordinates(l, 1:nelements(l)), dims=2)
+    cr = mean(coordinates(r, 1:nelements(r)), dims=2)
+    @test cl[1] == cr[1]
+    @test cl[2] < cr[2]
+  end
 end

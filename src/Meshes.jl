@@ -185,7 +185,7 @@ export
   SpatialPredicatePartition,
   ProductPartition,
   HierarchicalPartition,
-  partition, →,
+  partition, split, →,
 
   # discretization
   DiscretizationMethod,
