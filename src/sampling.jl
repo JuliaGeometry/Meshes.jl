@@ -24,3 +24,23 @@ include("sampling/regular.jl")
 include("sampling/uniform.jl")
 include("sampling/weighted.jl")
 include("sampling/ball.jl")
+
+# ----------
+# UTILITIES
+# ----------
+
+"""
+    sample(object, nsamples, [weights], replace=false)
+
+Generate `nsamples` samples from spatial `object`
+uniformly or using `weights`, with or without
+replacement depending on `replace` option.
+"""
+function sample(object::Union{Domain,Data}, nsamples::Int,
+                weights::AbstractVector=[]; replace=false)
+  if isempty(weights)
+    sample(object, UniformSampling(nsamples, replace))
+  else
+    sample(object, WeightedSampling(nsamples, weights, replace))
+  end
+end

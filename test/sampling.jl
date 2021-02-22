@@ -93,4 +93,18 @@
     @test n < 50
     @test sqrt(sum((x - y).^2)) ≥ T(20)
   end
+
+  @testset "Utility" begin
+    # uniform sampling
+    d = CartesianGrid{T}(10,10)
+    s = sample(d, 50)
+    @test nelements(s) == 50
+    @test s[1] isa Quadrangle
+
+    # weighted sampling
+    d = CartesianGrid{T}(10,10,10)
+    s = sample(d, 100, rand([1,2], 1000))
+    @test nelements(s) == 100
+    @test s[1] isa Hexahedron
+  end
 end
