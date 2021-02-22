@@ -20,7 +20,7 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
 import Random
-import Base: values, ==, +, -
+import Base: values, ==, +, -, *
 import StatsBase: sample
 import NearestNeighbors: MinkowskiMetric
 
@@ -183,6 +183,7 @@ export
   DirectionPartition,
   PredicatePartition,
   SpatialPredicatePartition,
+  ProductPartition,
   partition,
 
   # discretization
