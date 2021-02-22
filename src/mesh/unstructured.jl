@@ -76,3 +76,8 @@ function _lines(vec, tab="  ")
            ["$(tab)└─$(vec[i])" for i in J:N]]
   join(lines, "\n")
 end
+
+# ---------
+# Utilities
+# ---------
+measure(m::UnstructuredMesh) = sum(measure, faces(mesh, 2))
