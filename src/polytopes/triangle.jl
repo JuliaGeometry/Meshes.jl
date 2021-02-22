@@ -13,6 +13,21 @@ end
 
 measure(t::Triangle{2}) = abs(signarea(t))
 
+function measure(tri::Triangle{3})
+	v1, v2, v3 = vertices(tri)
+	e1 = v2 - v1
+	e2 = v3 - v1
+	c = cross(e1, e2)
+	norm(c) * 0.5
+end
+
+function normal(tri::Triangle{3})
+    v1, v2, v3 = vertices(tri)
+	e1 = v2 - v1
+	e2 = v3 - v1
+	Vec(normalize(cross(e1, e2)))
+end
+
 function Base.in(p::Point{2}, t::Triangle{2})
   a, b, c = t.vertices
   abp = signarea(a, b, p)
