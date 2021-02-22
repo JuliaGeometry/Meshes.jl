@@ -182,6 +182,7 @@ export
   PlanePartition,
   DirectionPartition,
   PredicatePartition,
+  SpatialPredicatePartition,
   partition,
 
   # discretization
