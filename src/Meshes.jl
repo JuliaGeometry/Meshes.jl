@@ -177,6 +177,7 @@ export
   FractionPartition,
   BlockPartition,
   BisectPointPartition,
+  BisectFractionPartition,
   partition,
 
   # discretization
