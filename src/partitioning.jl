@@ -83,9 +83,8 @@ end
 # ----------------
 
 include("partitioning/random.jl")
-# include("partitioning/fraction.jl")
-# include("partitioning/slic.jl")
-# include("partitioning/block.jl")
+include("partitioning/fraction.jl")
+include("partitioning/block.jl")
 # include("partitioning/bisect_point.jl")
 # include("partitioning/bisect_fraction.jl")
 # include("partitioning/ball.jl")
@@ -93,6 +92,5 @@ include("partitioning/random.jl")
 # include("partitioning/direction.jl")
 # include("partitioning/predicate.jl")
 # include("partitioning/spatial_predicate.jl")
-# include("partitioning/variable.jl")
 # include("partitioning/product.jl")
 # include("partitioning/hierarchical.jl")

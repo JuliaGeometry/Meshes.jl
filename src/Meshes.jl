@@ -175,6 +175,7 @@ export
   SPredicatePartitionMethod,
   RandomPartition,
   FractionPartition,
+  BlockPartition,
   partition,
 
   # discretization
