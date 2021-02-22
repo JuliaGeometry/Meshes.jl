@@ -44,8 +44,10 @@ Base.getindex(partition::Partition, inds::AbstractVector{Int}) =
   [getindex(partition, ind) for ind in inds]
 
 function Base.show(io::IO, partition::Partition)
-  nsubsets = length(partition.subsets)
-  print(io, "$nsubsets Partition")
+  Dim = embeddim(partition.object)
+  T   = coordtype(partition.object)
+  N   = length(partition.subsets)
+  print(io, "$N Partition{$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
