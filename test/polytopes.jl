@@ -104,6 +104,10 @@
     for p in P2[(-1,0),(0,-1),(0.5,1.)]
       @test p ∉ t
     end
+    t = Triangle(P3(0,0,0), P3(0,1,0), P3(1,0,0))
+    @test measure(t) == T(0.5)
+    @test area(t) == T(0.5)
+    @test normal(t) == [0, 0, -1]
   end
 
   @testset "Quadrangles" begin

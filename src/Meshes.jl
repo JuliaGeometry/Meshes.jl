@@ -110,7 +110,7 @@ export
   windingnumber, chains,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
-  orientation, bridge,
+  orientation, bridge, normal,
 
   # connectivities
   Connectivity,
