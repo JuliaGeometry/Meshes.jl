@@ -181,6 +181,7 @@ export
   BallPartition,
   PlanePartition,
   DirectionPartition,
+  PredicatePartition,
   partition,
 
   # discretization
