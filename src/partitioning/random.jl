@@ -5,7 +5,7 @@
 """
     RandomPartition(k, [shuffle])
 
-A method for partitioning spatial data uniformly into `k` subsets
+A method for partitioning spatial objects uniformly into `k` subsets
 of approximately equal size. Optionally `shuffle` the data (default
 to `true`).
 """
