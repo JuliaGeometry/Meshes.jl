@@ -94,7 +94,7 @@
     @test sqrt(sum((x - y).^2)) ≥ T(20)
   end
 
-  @testset "Utility" begin
+  @testset "Utilities" begin
     # uniform sampling
     d = CartesianGrid{T}(10,10)
     s = sample(d, 50)
