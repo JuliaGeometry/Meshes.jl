@@ -7,8 +7,9 @@ module Meshes
 using Tables
 using StaticArrays
 using CircularArrays
-using LinearAlgebra
 using RecipesBase
+using LinearAlgebra
+using Random
 
 using IterTools: ivec
 using StatsBase: Weights
@@ -56,6 +57,7 @@ include("partitions.jl")
 
 # algorithms
 include("sampling.jl")
+include("partitioning.jl")
 include("discretization.jl")
 include("boundingboxes.jl")
 
@@ -157,6 +159,7 @@ export
 
   # partitions
   Partition,
+  subsets, metadata,
 
   # sampling
   SamplingMethod,
@@ -165,6 +168,13 @@ export
   WeightedSampling,
   BallSampling,
   sample,
+
+  # partitioning
+  PartitionMethod,
+  PredicatePartitionMethod,
+  SPredicatePartitionMethod,
+  RandomPartition,
+  partition,
 
   # discretization
   DiscretizationMethod,
