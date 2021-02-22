@@ -2,6 +2,7 @@ using Meshes
 using Tables
 using Distances
 using Statistics
+using LinearAlgebra
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
@@ -57,6 +58,7 @@ testfiles = [
   "neighborhoods.jl",
   "neighborsearch.jl",
   "sampling.jl",
+  "partitioning.jl",
   "discretization.jl",
   "boundingboxes.jl"
 ]
