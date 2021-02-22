@@ -39,8 +39,13 @@ include("traits/data.jl")
 # point sets
 include("pointsets.jl")
 
-# geometries and meshes
+# basic geometries
 include("geometries.jl")
+
+# geometry sets
+include("geometrysets.jl")
+
+# connectivities and meshes
 include("connectivities.jl")
 include("conventions.jl")
 include("mesh.jl")
@@ -111,6 +116,9 @@ export
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
   orientation, bridge,
+
+  # geometry sets
+  GeometrySet,
 
   # connectivities
   Connectivity,

@@ -52,6 +52,7 @@ testfiles = [
   "geometries.jl",
   "polytopes.jl",
   "primitives.jl",
+  "geometrysets.jl",
   "mesh.jl",
   "traits.jl",
   "views.jl",
