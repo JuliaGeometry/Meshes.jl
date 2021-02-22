@@ -157,6 +157,10 @@
     c1 = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     c2 = Chain(vertices(c1))
     @test c1 == c2
+
+    # centroid
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test centroid(c) == P2(0.5, 0.5)
   end
 
   @testset "PolyAreas" begin
@@ -232,6 +236,8 @@
     chain = poly |> unique |> bridge
     @test chain == Chain(P2[(0,0),(1,0),(1,1),(1,2),(0,2),(0,1),(0,0)])
 
-    # TODO: test angles
+    # centroid
+    poly = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test centroid(poly) == P2(0.5, 0.5)
   end
 end
