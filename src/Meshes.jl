@@ -65,6 +65,7 @@ include("partitions.jl")
 # algorithms
 include("sampling.jl")
 include("partitioning.jl")
+include("intersections.jl")
 include("discretization.jl")
 include("boundingboxes.jl")
 
@@ -116,7 +117,6 @@ export
   Chain, PolyArea,
   vertices, nvertices,
   faces, facets,
-  intersecttype,
   windingnumber, chains,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
@@ -199,6 +199,19 @@ export
   ProductPartition,
   HierarchicalPartition,
   partition, split, →,
+
+  # intersections
+  Intersection,
+  CrossingSegments,
+  MidTouchingSegments,
+  CornerTouchingBoxes,
+  OverlappingSegments,
+  NonIntersectingSegments,
+  OverlappingBoxes,
+  SegmentTouchingBoxes,
+  CornerTouchingBoxes,
+  NonIntersectingBoxes,
+  intersecttype,
 
   # discretization
   DiscretizationMethod,
