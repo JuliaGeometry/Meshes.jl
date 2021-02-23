@@ -57,7 +57,7 @@ struct OverlappingBoxes{B<:Box} <: Intersection
   value::B
 end
 
-struct SegmentTouchingBoxes{S<:Segment} <: Intersection
+struct FaceTouchingBoxes{S<:Segment} <: Intersection
   value::S
 end
 
