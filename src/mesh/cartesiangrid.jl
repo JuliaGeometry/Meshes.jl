@@ -156,6 +156,8 @@ end
 
 Base.eltype(g::CartesianGrid) = typeof(g[1])
 
+isgrid(::Type{<:CartesianGrid}) = true
+
 # -----------
 # IO METHODS
 # -----------

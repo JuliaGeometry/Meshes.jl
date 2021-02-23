@@ -7,6 +7,7 @@ module Meshes
 using Tables
 using StaticArrays
 using CircularArrays
+using SimpleTraits
 using RecipesBase
 using LinearAlgebra
 using Random
@@ -35,6 +36,7 @@ include("angles.jl")
 # type traits
 include("traits/domain.jl")
 include("traits/data.jl")
+include("traits/optional.jl")
 
 # point sets
 include("pointsets.jl")
@@ -88,9 +90,12 @@ export
   # angles
   ∠,
 
-  # traits
+  # domain/data traits
   Domain, Data,
-  domain, values, asarray,
+  domain, asarray,
+
+  # optional traits
+  isgrid,
 
   # geometries
   Geometry,

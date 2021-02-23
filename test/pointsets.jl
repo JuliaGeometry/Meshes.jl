@@ -1,4 +1,8 @@
 @testset "PointSets" begin
+  @test !isgrid(PointSet{1,T})
+  @test !isgrid(PointSet{2,T})
+  @test !isgrid(PointSet{3,T})
+
   pset = PointSet(rand(P1, 100))
   @test embeddim(pset) == 1
   @test coordtype(pset) == T

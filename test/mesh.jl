@@ -1,5 +1,9 @@
 @testset "Meshes" begin
   @testset "CartesianGrid" begin
+    @test isgrid(CartesianGrid{1,T})
+    @test isgrid(CartesianGrid{2,T})
+    @test isgrid(CartesianGrid{3,T})
+
     grid = CartesianGrid{T}(100)
     @test embeddim(grid) == 1
     @test coordtype(grid) == T
@@ -71,6 +75,8 @@
   end
 
   @testset "UnstructuredMesh" begin
+    @test !isgrid(UnstructuredMesh)
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = UnstructuredMesh(points, connec)
