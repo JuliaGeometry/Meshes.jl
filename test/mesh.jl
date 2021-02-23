@@ -1,5 +1,9 @@
 @testset "Meshes" begin
   @testset "CartesianGrid" begin
+    @test isgrid(CartesianGrid{1,T})
+    @test isgrid(CartesianGrid{2,T})
+    @test isgrid(CartesianGrid{3,T})
+
     grid = CartesianGrid{T}(100)
     @test embeddim(grid) == 1
     @test coordtype(grid) == T
@@ -61,16 +65,18 @@
     end
 
     if visualtests
-      @test_ref_plot "data/grid-1D-$T.png" plot(CartesianGrid{T}(10))
-      @test_ref_plot "data/grid-2D-$T.png" plot(CartesianGrid{T}(10,20))
-      @test_ref_plot "data/grid-3D-$T.png" plot(CartesianGrid{T}(10,20,30))
-      @test_ref_plot "data/grid-1D-$T-data.png" plot(CartesianGrid{T}(10),[1,2,3,4,5,5,4,3,2,1])
-      @test_ref_plot "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
-      # @test_ref_plot "data/grid3D-data.png" plot(RegularGrid(10,10,10),1:1000)
+      @test_reference "data/grid-1D-$T.png" plot(CartesianGrid{T}(10))
+      @test_reference "data/grid-2D-$T.png" plot(CartesianGrid{T}(10,20))
+      @test_reference "data/grid-3D-$T.png" plot(CartesianGrid{T}(10,20,30))
+      @test_reference "data/grid-1D-$T-data.png" plot(CartesianGrid{T}(10),[1,2,3,4,5,5,4,3,2,1])
+      @test_reference "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
+      # @test_reference "data/grid3D-data.png" plot(RegularGrid(10,10,10),1:1000)
     end
   end
 
   @testset "UnstructuredMesh" begin
+    @test !isgrid(UnstructuredMesh)
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = UnstructuredMesh(points, connec)

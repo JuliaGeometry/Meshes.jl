@@ -33,3 +33,8 @@ function Base.in(p::Point, b::Ball)
 end
 
 boundary(b::Ball) = Sphere(b.center, b.radius)
+
+function Base.show(io::IO, b::Ball{Dim,T}) where {Dim,T}
+  c, r = b.center, b.radius
+  print(io, "Ball{$Dim,$T}($c, $r))")
+end

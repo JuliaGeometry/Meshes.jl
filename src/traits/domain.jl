@@ -15,6 +15,24 @@ in each polygon.
 abstract type Domain{Dim,T} end
 
 """
+    getindex(domain, ind)
+
+Return the `ind`-th element in the `domain`.
+"""
+Base.getindex(domain::Domain, ind::Int)
+
+"""
+    nelements(domain)
+
+Return the number of elements in the `domain`.
+"""
+function nelements end
+
+# ----------
+# FALLBACKS
+# ----------
+
+"""
     embeddim(domain)
 
 Return the number of dimensions of the space where the `domain` is embedded.
@@ -31,29 +49,18 @@ coordtype(::Type{<:Domain{Dim,T}}) where {Dim,T} = T
 coordtype(domain::Domain) = coordtype(typeof(domain))
 
 """
-    getindex(domain, ind)
-
-Return the `ind`-th element in the `domain`.
-"""
-Base.getindex(domain::Domain, ind::Int)
-
-"""
-    nelements(domain)
-
-Return the number of elements in the `domain`.
-"""
-nelements(domain::Domain)
-
-"""
     coordinates!(buff, domain, ind)
 
-Compute the coordinates `buff` of the `ind`-th element in the `domain` in place.
+Compute the coordinates `buff` of the centroid of the `ind`-th element in
+the `domain` in place.
 """
-coordinates!(buff, domain::Domain, ind::Int)
-
-# ----------
-# FALLBACKS
-# ----------
+function coordinates!(buff, domain::Domain{Dim}, ind::Int) where {Dim}
+  x = coordinates(centroid(domain[ind]))
+  @inbounds for i in 1:Dim
+    buff[i] = x[i]
+  end
+  buff
+end
 
 function coordinates!(buff, domain::Domain, inds::AbstractVector{Int})
   for j in eachindex(inds)
@@ -84,7 +91,7 @@ function Base.show(io::IO, domain::Domain{Dim,T}) where {Dim,T}
   print(io, "$nelm $name{$Dim,$T}")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", domain::Domain{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
   println(io, domain)
   N = nelements(domain)
   I, J = N > 10 ? (5, N-4) : (N, N+1)

@@ -1,5 +1,7 @@
 @testset "Polytopes" begin
   @testset "Segment" begin
+    @test paramdim(Segment) == 1
+
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0.5,0.0), P2(2,0))
     @test s1 ∩ s2 == Segment(P2(0.5,0.0), P2(1,0))
@@ -89,6 +91,8 @@
   end
 
   @testset "Triangles" begin
+    @test paramdim(Triangle) == 2
+
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test signarea(t) == T(0.5)
     @test area(t) == T(0.5)
@@ -107,6 +111,8 @@
   end
 
   @testset "Quadrangles" begin
+    @test paramdim(Quadrangle) == 2
+
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test area(q) == T(1)
 
@@ -157,9 +163,27 @@
     c1 = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     c2 = Chain(vertices(c1))
     @test c1 == c2
+
+    # centroid
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test centroid(c) == P2(0.5, 0.5)
+  end
+
+  @testset "Hexahedrons" begin
+    @test paramdim(Hexahedron) == 3
+  end
+
+  @testset "Pyramids" begin
+    @test paramdim(Pyramid) == 3
+  end
+
+  @testset "Tetrahedrons" begin
+    @test paramdim(Tetrahedron) == 3
   end
 
   @testset "PolyAreas" begin
+    @test paramdim(PolyArea) == 2
+
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]
@@ -232,6 +256,8 @@
     chain = poly |> unique |> bridge
     @test chain == Chain(P2[(0,0),(1,0),(1,1),(1,2),(0,2),(0,1),(0,0)])
 
-    # TODO: test angles
+    # centroid
+    poly = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test centroid(poly) == P2(0.5, 0.5)
   end
 end

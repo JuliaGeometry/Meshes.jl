@@ -56,4 +56,55 @@
       @test p ≈ t
     end
   end
+
+  @testset "UniformSampling" begin
+    Random.seed!(2021)
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, UniformSampling(100))
+    μ = mean(coordinates(s, 1:nelements(s)), dims=2)
+    @test nelements(s) == 100
+    @test isapprox(μ, [50.,50.], atol=T(10))
+  end
+
+  @testset "WeightedSampling" begin
+    # uniform weights => uniform sampler
+    Random.seed!(2020)
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, WeightedSampling(100))
+    μ = mean(coordinates(s, 1:nelements(s)), dims=2)
+    @test nelements(s) == 100
+    @test isapprox(μ, [50.,50.], atol=T(10))
+  end
+
+  @testset "BallSampling" begin
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, BallSampling(T(10)))
+    n = nelements(s)
+    X = coordinates(s, sample(1:n, 2, replace=false))
+    x, y = X[:,1], X[:,2]
+    @test n < 100
+    @test sqrt(sum((x - y).^2)) ≥ T(10)
+
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, BallSampling(T(20)))
+    n = nelements(s)
+    X = coordinates(s, sample(1:n, 2, replace=false))
+    x, y = X[:,1], X[:,2]
+    @test n < 50
+    @test sqrt(sum((x - y).^2)) ≥ T(20)
+  end
+
+  @testset "Utilities" begin
+    # uniform sampling
+    d = CartesianGrid{T}(10,10)
+    s = sample(d, 50)
+    @test nelements(s) == 50
+    @test s[1] isa Quadrangle
+
+    # weighted sampling
+    d = CartesianGrid{T}(10,10,10)
+    s = sample(d, 100, rand([1,2], 1000))
+    @test nelements(s) == 100
+    @test s[1] isa Hexahedron
+  end
 end

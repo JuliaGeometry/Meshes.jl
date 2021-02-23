@@ -21,20 +21,14 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 """
 struct Point{Dim,T}
   coords::SVector{Dim,T}
-  Point{Dim,T}(coords::AbstractVector) where {Dim,T} = new{Dim,T}(coords)
+  Point{Dim,T}(coords::SVector) where {Dim,T} = new{Dim,T}(coords)
 end
 
 # convenience constructors
-Point{Dim,T}(coords::NTuple{Dim,V}) where {Dim,T,V} = Point{Dim,T}(SVector(coords))
-Point{Dim,T}(coords::Vararg{V}) where {Dim,T,V} = Point{Dim,T}(coords)
-Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(SVector(coords))
-Point(coords::Vararg{V}) where {V} = Point(coords)
-Point(coords::AbstractVector{T}) where {T} =
-  Point{length(coords),T}(SVector{length(coords)}(coords))
-
-# catches mismatching tuple dimensions
-Point{Dim1,T}(::NTuple{Dim2}) where {T,Dim1,Dim2} = 
-  throw(DimensionMismatch("Can't construct a Point{$(Dim1),$(T)} with an input of length $(Dim2)"))
+Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(SVector{Dim,T}(coords...))
+Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
+Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
+Point(coords...) = Point(SVector(coords...))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
@@ -108,6 +102,19 @@ Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
 Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
+
+"""
+    ⪯(A::Point, B::Point)
+    ⪰(A::Point, B::Point)
+    ≺(A::Point, B::Point)
+    ≻(A::Point, B::Point)
+
+Generalized inequality for non-negative orthant Rⁿ₊
+"""
+⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(B - A .≥ zero(T))
+⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .≥ zero(T))
+≺(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(B - A .> zero(T))
+≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .> zero(T))
 
 """
     rand(P::Type{<:Point}, n=1)

@@ -50,6 +50,8 @@ PolyArea(outer::Vararg{TP}) where {TP<:Tuple} = PolyArea(collect(Point.(outer)))
 
 nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
 
+centroid(p::PolyArea) = centroid(p.outer)
+
 """
     chains(polyarea)
 

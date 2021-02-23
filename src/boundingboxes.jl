@@ -34,7 +34,7 @@ end
 
 Axis-aligned bounding box of the `domain`.
 """
-boundingbox(::Domain) = @error "fallback not implemented"
+boundingbox(domain::Domain) = boundingbox(PointSet(domain))
 
 boundingbox(pset::PointSet) = boundingbox([pset[i] for i in 1:nelements(pset)])
 

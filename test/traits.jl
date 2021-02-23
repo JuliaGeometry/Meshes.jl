@@ -1,6 +1,39 @@
 @testset "Traits" begin
   @testset "Domain" begin
-    # TODO
+    # dummy type implementing the Domain trait
+    struct DummyDomain{Dim,T} <: Domain{Dim,T}
+      origin::Point{Dim,T}
+    end
+    function Base.getindex(domain::DummyDomain{Dim,T}, ind::Int) where {Dim,T}
+      c = domain.origin + Vec(ntuple(i->T(ind), Dim))
+      r = one(T)
+      Ball(c, r)
+    end
+    Meshes.nelements(d::DummyDomain) = 3
+
+    # basic properties
+    dom = DummyDomain(P2(0,0))
+    @test embeddim(dom) == 2
+    @test coordtype(dom) == T
+    @test eltype(dom) <: Ball{2,T}
+
+    # coordinates of centroids
+    dom = DummyDomain(P2(1,1))
+    @test coordinates(dom, 1:3) == T[2 3 4; 2 3 4]
+
+    dom = DummyDomain(P2(0,0))
+    @test sprint(show, dom) == "3 DummyDomain{2,$T}"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), dom) == "3 DummyDomain{2,Float32}\n  └─Ball{2,Float32}(Point(1.0f0, 1.0f0), 1.0))\n  └─Ball{2,Float32}(Point(2.0f0, 2.0f0), 1.0))\n  └─Ball{2,Float32}(Point(3.0f0, 3.0f0), 1.0))"
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), dom) == "3 DummyDomain{2,Float64}\n  └─Ball{2,Float64}(Point(1.0, 1.0), 1.0))\n  └─Ball{2,Float64}(Point(2.0, 2.0), 1.0))\n  └─Ball{2,Float64}(Point(3.0, 3.0), 1.0))"
+    end
+
+    if visualtests
+      dom = DummyDomain(P2(0,0))
+      @test_reference "data/domain-$T.png" plot(dom)
+      @test_reference "data/domain-data-$T.png" plot(dom,1:3)
+    end
   end
 
   @testset "Data" begin
@@ -21,12 +54,19 @@
     @test data₂ != data₃
 
     # Tables interface
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-    @test Tables.istable(data)
-    @test Tables.rowaccess(data)
-    s = Tables.schema(data)
+    dom = CartesianGrid{T}(2,2)
+    dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    @test Tables.istable(dat)
+    @test Tables.rowaccess(dat)
+    s = Tables.schema(dat)
     @test s.names == (:a,:b,:geometry)
     @test s.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
+    @test collect(Tables.rows(dat)) == [
+      (1, 5, dom[1]),
+      (2, 6, dom[2]),
+      (3, 7, dom[3]),
+      (4, 8, dom[4])
+    ]
 
     # variables interface
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
@@ -53,7 +93,7 @@
 
     if visualtests
       data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-      @test_ref_plot "data/data-$T.png" plot(data)
+      @test_reference "data/data-$T.png" plot(data)
     end
   end
 end

@@ -1,19 +1,34 @@
 @testset "Primitives" begin
   @testset "Boxes" begin
-    b = Box(P2(0, 0), P2(1, 1))
+    b = Box(P2(0,0), P2(1,1))
     @test embeddim(b) == 2
     @test paramdim(b) == 2
     @test coordtype(b) == T
-    @test minimum(b) == P2(0, 0)
-    @test maximum(b) == P2(1, 1)
-    @test extrema(b) == (P2(0, 0), P2(1, 1))
+    @test minimum(b) == P2(0,0)
+    @test maximum(b) == P2(1,1)
+    @test extrema(b) == (P2(0,0), P2(1,1))
     @test measure(b) == T(1)
-    @test P2(1, 1) ∈ b
+    @test P2(1,1) ∈ b
 
-    b = Box(P2(1, 1), P2(2, 2))
-    @test sides(b) == T[1, 1]
-    @test Meshes.center(b) == P2(1.5, 1.5)
+    b = Box(P2(1,1), P2(2,2))
+    @test sides(b) == T[1,1]
+    @test Meshes.center(b) == P2(1.5,1.5)
     @test diagonal(b) == √T(2)
+
+    # intersection of boxes
+    b1 = Box(P2(0,0), P2(1,1))
+    b2 = Box(P2(0.5,0.5), P2(2,2))
+    b3 = Box(P2(2,2), P2(3,3))
+    b4 = Box(P2(1,1), P2(2,2))
+    b5 = Box(P2(1.0,0.5), P2(2,2))
+    @test intersecttype(b1, b2) isa OverlappingBoxes
+    @test b1 ∩ b2 == Box(P2(0.5,0.5), P2(1,1))
+    @test intersecttype(b1, b3) isa NonIntersectingBoxes
+    @test b1 ∩ b3 === nothing
+    @test intersecttype(b1, b4) isa CornerTouchingBoxes
+    @test b1 ∩ b4 == P2(1,1)
+    @test intersecttype(b1, b5) isa FaceTouchingBoxes
+    @test b1 ∩ b5 == Box(P2(1.0,0.5), P2(1,1))
   end
 
   @testset "Ball" begin
