@@ -3,6 +3,7 @@
 *.jl.mem
 .DS_Store
 Manifest.toml
-!/benchmark/Manifest.toml
 .vscode
 docs/build
+/.benchmarkci
+/benchmark/*.json
