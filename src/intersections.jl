@@ -57,8 +57,8 @@ struct OverlappingBoxes{B<:Box} <: Intersection
   value::B
 end
 
-struct FaceTouchingBoxes{S<:Segment} <: Intersection
-  value::S
+struct FaceTouchingBoxes{B<:Box} <: Intersection
+  value::B
 end
 
 struct CornerTouchingBoxes{P<:Point} <: Intersection
@@ -74,3 +74,4 @@ Base.get(::NonIntersectingBoxes) = nothing
 # ----------------
 
 include("intersections/segments.jl")
+include("intersections/boxes.jl")

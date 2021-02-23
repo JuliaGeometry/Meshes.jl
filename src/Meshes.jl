@@ -209,7 +209,7 @@ export
   OverlappingSegments,
   NonIntersectingSegments,
   OverlappingBoxes,
-  SegmentTouchingBoxes,
+  FaceTouchingBoxes,
   CornerTouchingBoxes,
   NonIntersectingBoxes,
   intersecttype,
