@@ -84,6 +84,7 @@ export
   # points
   Point, Point1, Point2, Point3, Point1f, Point2f, Point3f,
   embeddim, coordtype, coordinates,
+  ⪯, ≺, ⪰, ≻,
 
   # vectors
   Vec, Vec1, Vec2, Vec3, Vec1f, Vec2f, Vec3f,

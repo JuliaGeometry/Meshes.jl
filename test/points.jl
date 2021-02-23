@@ -74,6 +74,7 @@
   @test_throws DimensionMismatch Point{2,Int}(1)
   @test_throws DimensionMismatch Point{3,Int}((2,3))
   @test_throws DimensionMismatch Point{-3,T}([4,5,6])
+
   # There are 2 cases that throw a MethodError instead of a DimensionMismatch:
   # `Point{1,Int}((2,3))` because it tries to take the tuple as a whole and convert to Int and:
   # `Point{1,Int}(2,3)` which does about the same.
@@ -87,5 +88,13 @@
   @test Point{2,Int}((-1., -2)) == Point{2,Int}((-1, -2))
   @test Point{4,T}([0, -1., +2, -4.]) == Point{4,T}((0f0, -1f0, +2f0, -4f0))
 
-  
+  # generalized inequality
+  @test P2(1, 1) ⪯ P2(1, 1)
+  @test !(P2(1, 1) ≺ P2(1, 1))
+  @test P2(1, 2) ⪯ P2(3, 4)
+  @test P2(1, 2) ≺ P2(3, 4)
+  @test P2(1, 1) ⪰ P2(1, 1)
+  @test !(P2(1, 1) ≻ P2(1, 1))
+  @test P2(3, 4) ⪰ P2(1, 2)
+  @test P2(3, 4) ≻ P2(1, 2)
 end

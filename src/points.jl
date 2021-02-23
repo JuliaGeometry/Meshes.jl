@@ -104,6 +104,19 @@ are approximately equal.
 Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
 
 """
+    ⪯(A::Point, B::Point)
+    ⪰(A::Point, B::Point)
+    ≺(A::Point, B::Point)
+    ≻(A::Point, B::Point)
+
+Generalized inequality for non-negative orthant Rⁿ₊
+"""
+⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(B - A .≥ zero(T))
+⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .≥ zero(T))
+≺(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(B - A .> zero(T))
+≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .> zero(T))
+
+"""
     rand(P::Type{<:Point}, n=1)
 
 Generates a random point of type `P`
