@@ -15,7 +15,3 @@ println(string("Meshes.jl loading time: \e[33;1;1m$t\e[m seconds"))
 println()
 println("Benchmarking Meshes.jl...")
 println()
-
-tune!(SUITE)
-result = run(SUITE)
-display_group(result)
