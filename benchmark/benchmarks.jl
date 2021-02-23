@@ -5,7 +5,7 @@ using BenchmarkTools: tune!, allocs,
 
 include("utils.jl")
 
-suite = BenchmarkGroup()
+SUITE = BenchmarkGroup()
 
 include("points.jl")
 
@@ -16,6 +16,6 @@ println()
 println("Benchmarking Meshes.jl...")
 println()
 
-tune!(suite)
-result = run(suite)
+tune!(SUITE)
+result = run(SUITE)
 display_group(result)

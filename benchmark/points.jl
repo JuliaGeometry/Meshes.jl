@@ -1,6 +1,6 @@
-suite["points"] = BenchmarkGroup(["microbenchmark", "points"]) # add tags for eventual filtering
+SUITE["points"] = BenchmarkGroup(["microbenchmark", "points"]) # add tags for eventual filtering
 
-add_benchmark!(suite["points"], [
+add_benchmark!(SUITE["points"], [
   :(Point(0., 1.)),
   :(Point([0., 1.])),
   :(Point([0., 1])),
