@@ -56,7 +56,7 @@ elements(m::Mesh{Dim}) where {Dim} = faces(m, Dim)
 
 Return the surface area of a mesh by summing the area of it's triangles.
 """
-measure(m::UnstructuredMesh) = sum(measure, elements(m))
+measure(m::Mesh) = sum(measure, faces(m, 2))
 
 
 include("mesh/cartesiangrid.jl")
