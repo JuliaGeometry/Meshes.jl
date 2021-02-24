@@ -49,9 +49,9 @@ seriously and value any type of feedback.
 
 Contributors are kindly asked to adhere to the [ColPrac](https://github.com/SciML/ColPrac) guidelines, and more specifically:
 - Pull Requests:
-  - the existing code style should be adopted
-  - a PR should only do one thing
-  - PRs that change code must have appropriate tests
+  - should adopt the existing code style
+  - should only do one thing
+  - should define appropriate tests for code changes
 
 If you have questions, don't hesitate to ask. Join our community in our
 [zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
