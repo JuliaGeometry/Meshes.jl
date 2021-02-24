@@ -15,6 +15,9 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
   </a>
+  <a href="https://github.com/SciML/ColPrac">
+    <img src="https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet">
+  </a>
   <a href="https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl">
     <img src="https://img.shields.io/badge/chat-on%20zulip-9cf?style=flat-square">
   </a>
@@ -42,8 +45,13 @@ Get the latest stable release with Julia's package manager:
 
 Contributions are very welcome, as are feature requests and suggestions.
 Please open an issue if you encounter any problems. We take issues very
-seriously and value any type of feedback. Please adopt the coding style
-that is present in the files when submitting pull requests.
+seriously and value any type of feedback.
+
+Contributors are kindly asked to adhere to the [ColPrac](https://github.com/SciML/ColPrac) guidelines, and more specifically:
+- Pull Requests:
+  - should adopt the existing code style
+  - should only do one thing
+  - should define appropriate tests for code changes
 
 If you have questions, don't hesitate to ask. Join our community in our
 [zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
