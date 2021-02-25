@@ -47,6 +47,30 @@
     @test nelements(grid) == 200*100
     @test eltype(grid) <: Quadrangle{2,T}
 
+    # indexing into a subgrid
+    grid = CartesianGrid{T}(10,10)
+    sub  = grid[1:2,1:2]
+    @test size(sub) == (2,2)
+    @test spacing(sub) == spacing(grid)
+    @test minimum(sub) == minimum(grid)
+    @test maximum(sub) == P2(2,2)
+    sub  = grid[1:1,2:3]
+    @test size(sub) == (1,2)
+    @test spacing(sub) == spacing(grid)
+    @test minimum(sub) == P2(0,1)
+    @test maximum(sub) == P2(1,3)
+    sub  = grid[2:4,3:7]
+    @test size(sub) == (3,5)
+    @test spacing(sub) == spacing(grid)
+    @test minimum(sub) == P2(1,2)
+    @test maximum(sub) == P2(4,7)
+    grid = CartesianGrid(P2(1,1), P2(11,11), dims=(10,10))
+    sub = grid[2:4,3:7]
+    @test size(sub) == (3,5)
+    @test spacing(sub) == spacing(grid)
+    @test minimum(sub) == P2(2,3)
+    @test maximum(sub) == P2(5,8)
+
     grid = CartesianGrid{T}(200,100)
     @test coordinates(grid, 1) == T[0.5, 0.5]
     @test coordinates(grid, 2) == T[1.5, 0.5]

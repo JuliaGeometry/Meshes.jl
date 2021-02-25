@@ -156,7 +156,28 @@ end
 
 Base.eltype(g::CartesianGrid) = typeof(g[1])
 
+# ----------------
+# OPTIONAL TRAITS
+# ----------------
+
 isgrid(::Type{<:CartesianGrid}) = true
+
+# ----------------------------
+# ADDITIONAL INDEXING METHODS
+# ----------------------------
+
+"""
+    getindex(grid, ranges)
+
+Return a subgrid of the Cartesian `grid` using integer `ranges`.
+"""
+function Base.getindex(g::CartesianGrid{Dim},
+                       r::Vararg{UnitRange{Int},Dim}) where {Dim}
+  start  = coordinates(g.origin) .+ (first.(r) .- 1) .* g.spacing
+  finish = coordinates(g.origin) .+ (last.(r)      ) .* g.spacing
+  dims   = length.(r)
+  CartesianGrid(Point(start), Point(finish), dims=dims)
+end
 
 # -----------
 # IO METHODS
