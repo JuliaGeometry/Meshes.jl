@@ -29,6 +29,16 @@
     @test b1 ∩ b4 == P2(1,1)
     @test intersecttype(b1, b5) isa FaceTouchingBoxes
     @test b1 ∩ b5 == Box(P2(1.0,0.5), P2(1,1))
+
+    # subsetting with boxes
+    b1 = Box(P2(0,0), P2(0.5,0.5))
+    b2 = Box(P2(0.1,0.1), P2(0.5,0.5))
+    b3 = Box(P2(0,0), P2(1,1))
+    @test b1 ⊆ b3
+    @test b2 ⊆ b3
+    @test !(b1 ⊆ b2)
+    @test !(b3 ⊆ b1)
+    @test !(b3 ⊆ b1)
   end
 
   @testset "Ball" begin

@@ -39,3 +39,6 @@ function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   end
   true
 end
+
+Base.issubset(b1::Box{Dim}, b2::Box{Dim}) where {Dim} =
+  b1.min ∈ b2 && b1.max ∈ b2

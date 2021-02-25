@@ -54,6 +54,20 @@ Return the boundary of the `geometry`.
 """
 function boundary end
 
+"""
+    g₁ ⊆ g₂
+
+Tells whether or not the geometry `g₁` is a subset of geometry `g₂`.
+"""
+Base.issubset(g₁::Geometry, g₂::Geometry) = all(p ∈ g₂ for p in vertices(g₁))
+
+"""
+    p ∈ g
+
+Tells whether or not the point `p` is in the geometry `g`.
+"""
+Base.in(p::Point, g::Geometry)
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
