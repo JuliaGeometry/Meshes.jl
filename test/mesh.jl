@@ -71,6 +71,12 @@
     @test minimum(sub) == P2(2,3)
     @test maximum(sub) == P2(5,8)
 
+    # subgrid from Cartesian ranges
+    grid = CartesianGrid{T}(10,10)
+    sub1 = grid[1:2,4:6]
+    sub2 = grid[CartesianIndex(1,4):CartesianIndex(2,6)]
+    @test sub1 == sub2
+
     grid = CartesianGrid{T}(200,100)
     @test coordinates(grid, 1) == T[0.5, 0.5]
     @test coordinates(grid, 2) == T[1.5, 0.5]
