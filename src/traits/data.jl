@@ -58,9 +58,9 @@ Tables.istable(::Type{<:Data}) = true
 Tables.rowaccess(data::Data) = true
 
 function Tables.rows(data::Data)
-  rows = Tables.rows(values(data))
-  elms = domain(data)
-  ((row..., elms[i]) for (i, row) in Iterators.enumerate(rows))
+  elms  = domain(data)
+  rows  = Tables.rows(values(data))
+  ((; NamedTuple(row)..., geometry=elms[i]) for (i, row) in Iterators.enumerate(rows))
 end
 
 function Tables.schema(data::Data)
