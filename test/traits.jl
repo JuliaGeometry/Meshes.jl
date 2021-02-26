@@ -44,6 +44,7 @@
     end
     Meshes.domain(data::DummyData) = data.domain
     Meshes.values(data::DummyData) = data.table
+    Meshes.constructor(::Type{D}) where {D<:DummyData} = DummyData
 
     # equality of data sets
     data₁ = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
