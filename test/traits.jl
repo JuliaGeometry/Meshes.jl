@@ -63,10 +63,10 @@
     @test s.names == (:a,:b,:geometry)
     @test s.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
     @test collect(Tables.rows(dat)) == [
-      (1, 5, dom[1]),
-      (2, 6, dom[2]),
-      (3, 7, dom[3]),
-      (4, 8, dom[4])
+      (a=1, b=5, geometry=dom[1]),
+      (a=2, b=6, geometry=dom[2]),
+      (a=3, b=7, geometry=dom[3]),
+      (a=4, b=8, geometry=dom[4])
     ]
 
     # variables interface
