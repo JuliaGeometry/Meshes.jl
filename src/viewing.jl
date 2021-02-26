@@ -92,3 +92,22 @@ _isinside(g::Geometry, geometry) = g ⊆ geometry
 
   CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
 end
+
+# ----------
+# UTILITIES
+# ----------
+
+"""
+    slice(object, xmin:xmax, ymin:ymax, ...)
+
+Slice the `object` using real coordinate ranges `xmin:xmax`, `ymin:ymax`, ...
+
+### Note
+
+This function is equivalent to `view(object, Box(first.(ranges), last.(ranges))`.
+
+In Julia the range `0.5:10.0` is materialized as `[0.5, ..., 9.5]` so it won't
+necessarily include the right value. This behavior is different than the more
+intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
+"""
+slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))

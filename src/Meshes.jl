@@ -179,6 +179,7 @@ export
 
   # viewing
   viewindices,
+  slice,
 
   # sampling
   SamplingMethod,
