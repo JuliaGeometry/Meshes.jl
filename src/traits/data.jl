@@ -55,7 +55,7 @@ coordinates!(buff, data::Data, ind::Int) =
 
 Tables.istable(::Type{<:Data}) = true
 
-Tables.rowaccess(data::Data) = true
+Tables.rowaccess(::Type{<:Data}) = true
 
 function Tables.rows(data::Data)
   elms  = domain(data)

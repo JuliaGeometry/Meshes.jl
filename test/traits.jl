@@ -68,6 +68,11 @@
       (a=3, b=7, geometry=dom[3]),
       (a=4, b=8, geometry=dom[4])
     ]
+    @test collect(Tables.columns(dat)) == [
+      [1,2,3,4],
+      [5,6,7,8],
+      [dom[1],dom[2],dom[3],dom[4]]
+    ]
 
     # variables interface
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
