@@ -53,6 +53,16 @@ coordinates!(buff, data::Data, ind::Int) =
 # TABLES INTERFACE
 # -----------------
 
+struct DataRow{T, E} <: Tables.AbstractRow
+    row::T
+    elms::E
+    i::Int
+end
+
+Tables.columnnames(x::DataRow) = [Tables.columnnames(getfield(x, :row))..., :geometry]
+Tables.getcolumn(x::DataRow, nm::Symbol) = nm === :geometry ? getfield(x, :elms)[getfield(x, :i)] : Tables.getcolumn(getfield(x, :row), nm)
+Tables.getcolumn(x::DataRow, i::Int) = i > length(Tables.columnnames(getfield(x, :row))) ? getfield(x, :elms)[getfield(x, :i)] : Tables.getcolumn(getfield(x, :row), i)
+
 Tables.istable(::Type{<:Data}) = true
 
 Tables.rowaccess(data::Data) = true
@@ -60,7 +70,7 @@ Tables.rowaccess(data::Data) = true
 function Tables.rows(data::Data)
   rows = Tables.rows(values(data))
   elms = domain(data)
-  ((row..., elms[i]) for (i, row) in Iterators.enumerate(rows))
+  (DataRow(row, elms, i) for (i, row) in Iterators.enumerate(rows))
 end
 
 function Tables.schema(data::Data)
