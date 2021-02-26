@@ -63,6 +63,7 @@ include("neighborsearch.jl")
 include("partitions.jl")
 
 # algorithms
+include("viewing.jl")
 include("sampling.jl")
 include("partitioning.jl")
 include("intersections.jl")
@@ -174,6 +175,9 @@ export
   # partitions
   Partition,
   subsets, metadata,
+
+  # viewing
+  viewindices,
 
   # sampling
   SamplingMethod,

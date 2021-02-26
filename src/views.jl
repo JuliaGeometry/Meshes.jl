@@ -17,7 +17,7 @@ struct DomainView{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
 end
 
 # convenience functions
-Base.view(domain::Domain, inds) = DomainView(domain, inds)
+Base.view(domain::Domain, inds::AbstractVector{Int}) = DomainView(domain, inds)
 
 # -----------------
 # DOMAIN INTERFACE

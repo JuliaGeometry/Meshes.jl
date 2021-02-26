@@ -57,6 +57,7 @@ testfiles = [
   "views.jl",
   "neighborhoods.jl",
   "neighborsearch.jl",
+  "viewing.jl",
   "sampling.jl",
   "partitioning.jl",
   "discretization.jl",
