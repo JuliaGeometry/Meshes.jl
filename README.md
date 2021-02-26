@@ -15,8 +15,10 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
   </a>
+</p>
+<p align="center">
   <a href="https://github.com/SciML/ColPrac">
-    <img src="https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet">
+    <img src="https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet?style=flat-square">
   </a>
   <a href="https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl">
     <img src="https://img.shields.io/badge/chat-on%20zulip-9cf?style=flat-square">
