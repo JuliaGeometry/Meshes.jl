@@ -54,17 +54,37 @@ coordinates!(buff, data::Data, ind::Int) =
 # -----------------
 
 Tables.istable(::Type{<:Data}) = true
+
 Tables.rowaccess(data::Data) = true
 function Tables.rows(data::Data)
   rows = Tables.rows(values(data))
   elms = domain(data)
   ((row..., elms[i]) for (i, row) in Iterators.enumerate(rows))
 end
+
 function Tables.schema(data::Data)
   geomtype = eltype(domain(data))
   schema = Tables.schema(values(data))
   names, types = schema.names, schema.types
   Tables.Schema((names..., :geometry), (types..., geomtype))
+end
+
+function Tables.materializer(::D) where {D<:Data}
+  function materializer(stable)
+    # build domain from geometry column
+    elms = Tables.getcolumn(stable, :geometry)
+    domain = GeometrySet(elms)
+
+    # build table from remaining columns
+    vars = setdiff(Tables.columnnames(stable), :geometry)
+    cols = map(vars) do var
+      var => Tables.getcolumn(stable, var)
+    end
+    table = (; cols...)
+
+    # combine the two with constructor
+    constructor(D)(domain, table)
+  end
 end
 
 # -------------------
