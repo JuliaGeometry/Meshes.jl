@@ -2,20 +2,63 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# -------------------
+# VIEWS WITH INDICES
+# -------------------
+
+Base.view(domain::Domain, inds) = DomainView(domain, inds)
+Base.view(data::Data, inds, vars) = DataView(data, inds, vars)
+
+function Base.view(data::Data, inds)
+  vars = collect(Tables.schema(values(data)).names)
+  DataView(data, inds, vars)
+end
+function Base.view(data::Data, vars::AbstractVector{Symbol})
+  inds = 1:nelements(domain(data))
+  DataView(data, inds, vars)
+end
+
+# specialize view to avoid infinite loops
+Base.view(v::DataView, inds, vars) =
+  DataView(v.data, v.inds[inds], vars)
+Base.view(v::DataView, inds) =
+  DataView(v.data, v.inds[inds], v.vars)
+Base.view(v::DataView, vars::AbstractVector{Symbol}) =
+  DataView(v.data, v.inds, vars)
+
+# ----------------------
+# VIEWS WITH GEOMETRIES
+# ----------------------
+
 """
     view(domain, geometry)
 
 Return a view of the `domain` containing all elements that
 are inside the `geometry`.
 """
-@traitfn function Base.view(domain::D, geometry::Geometry) where {D; !IsGrid{D}}
+Base.view(domain::Domain, geometry::Geometry) =
   view(domain, viewindices(domain, geometry))
+
+function Base.view(data::Data, geometry::Geometry)
+  dom = domain(data)
+  tab = values(data)
+
+  # retrieve subdomain
+  inds   = viewindices(dom, geometry)
+  subdom = view(dom, inds)
+
+  # retrieve subtable
+  tinds  = _linear(dom, inds)
+  tvars  = Tables.schema(tab).names
+  subtab = viewtable(tab, tinds, tvars)
+
+  subdom, subtab
 end
 
-# in the case of grid + box, we can preserve the type of the grid
-@traitfn function Base.view(domain::D, box::Box) where {D; IsGrid{D}}
-  domain[viewindices(domain, box)]
-end
+# convert from Cartesian to linear indices if needed
+@traitfn _linear(domain::D, inds) where {D; IsGrid{D}} =
+  vec(LinearIndices(size(domain))[inds])
+@traitfn _linear(::D, inds) where {D; !IsGrid{D}} = inds
 
 """
     viewindices(domain, geometry)

@@ -16,9 +16,6 @@ struct DomainView{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
   inds::I
 end
 
-# convenience functions
-Base.view(domain::Domain, inds::AbstractVector{Int}) = DomainView(domain, inds)
-
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
@@ -66,13 +63,6 @@ struct DataView{D<:Data,I,V} <: Data
   vars::V
 end
 
-# convenience functions
-Base.view(data::Data, inds::AbstractVector{Int}) =
-  DataView(data, inds, collect(Tables.schema(values(data)).names))
-Base.view(data::Data, vars::AbstractVector{Symbol}) =
-  DataView(data, 1:nelements(domain(data)), vars)
-Base.view(data::Data, inds, vars) = DataView(data, inds, vars)
-
 # ---------------
 # DATA INTERFACE
 # ---------------
@@ -83,14 +73,6 @@ values(v::DataView) = viewtable(values(v.data), v.inds, v.vars)
 # specialize methods for performance
 ==(v₁::DataView, v₂::DataView) =
   v₁.data == v₂.data && v₁.inds == v₂.inds && v₁.vars == v₂.vars
-
-# specialize view to avoid infinite loops
-Base.view(v::DataView, inds::AbstractVector{Int}) =
-  DataView(v.data, v.inds[inds], v.vars)
-Base.view(v::DataView, vars::AbstractVector{Symbol}) =
-  DataView(v.data, v.inds, vars)
-Base.view(v::DataView, inds, vars) =
-  DataView(v.data, v.inds[inds], vars)
 
 # -----------
 # IO METHODS

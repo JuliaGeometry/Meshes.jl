@@ -182,6 +182,8 @@ function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {D
   CartesianGrid(Point(start), Point(finish), dims=dims)
 end
 
+Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
+
 # -----------
 # IO METHODS
 # -----------
