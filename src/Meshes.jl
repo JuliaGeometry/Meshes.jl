@@ -96,6 +96,7 @@ export
   # domain/data traits
   Domain, Data,
   domain, asarray,
+  constructor,
 
   # optional traits
   isgrid,

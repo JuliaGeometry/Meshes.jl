@@ -69,6 +69,14 @@ end
 
 domain(v::DataView) = view(domain(v.data), v.inds)
 values(v::DataView) = viewtable(values(v.data), v.inds, v.vars)
+function constructor(::Type{DataView{D,I,V}}) where {D<:Data,I,V}
+  function ctor(domain, table)
+    data = constructor(D)(domain, table)
+    inds = 1:nelements(domain)
+    vars = Tables.schema(table).names
+    DataView(data, inds, vars)
+  end
+end
 
 # specialize methods for performance
 ==(v₁::DataView, v₂::DataView) =

@@ -26,6 +26,15 @@ Return the values of `data` as a table.
 """
 values(data::Data)
 
+"""
+    constructor(D)
+
+Return the constructor of the data type `D` as a function.
+The function takes a `domain` and `table` as inputs and
+combines them into an instance of the data type.
+"""
+function constructor(::Type{Data}) end
+
 # ----------
 # FALLBACKS
 # ----------

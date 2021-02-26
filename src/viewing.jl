@@ -52,7 +52,10 @@ function Base.view(data::Data, geometry::Geometry)
   tvars  = Tables.schema(tab).names
   subtab = viewtable(tab, tinds, tvars)
 
-  subdom, subtab
+  # constructor for data type
+  ctor = constructor(typeof(data))
+
+  ctor(subdom, subtab)
 end
 
 # convert from Cartesian to linear indices if needed
