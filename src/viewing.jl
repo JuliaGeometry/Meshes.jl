@@ -102,7 +102,7 @@ end
 
 Slice the `object` using real coordinate ranges `xmin:xmax`, `ymin:ymax`, ...
 
-### Note
+### Notes
 
 This function is equivalent to `view(object, Box(first.(ranges), last.(ranges))`.
 

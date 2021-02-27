@@ -99,7 +99,7 @@ export
   constructor,
 
   # optional traits
-  isgrid,
+  IsGrid, isgrid,
 
   # geometries
   Geometry,
