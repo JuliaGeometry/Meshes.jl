@@ -55,6 +55,9 @@ include("mesh.jl")
 # domain and data views
 include("views.jl")
 
+# paths for traversal
+include("paths.jl")
+
 # neighborhoods and searches
 include("neighborhoods.jl")
 include("neighborsearch.jl")
@@ -160,6 +163,12 @@ export
 
   # views
   DomainView, DataView,
+
+  # paths
+  Path,
+  LinearPath, RandomPath,
+  ShiftedPath, SourcePath,
+  traverse,
 
   # neighborhoods
   Neighborhood, MetricBall,

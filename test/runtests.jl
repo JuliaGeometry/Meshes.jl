@@ -55,6 +55,7 @@ testfiles = [
   "mesh.jl",
   "traits.jl",
   "views.jl",
+  "paths.jl",
   "neighborhoods.jl",
   "neighborsearch.jl",
   "viewing.jl",
