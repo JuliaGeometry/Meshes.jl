@@ -80,6 +80,7 @@ include("plotrecipes/geometries.jl")
 include("plotrecipes/pointsets.jl")
 include("plotrecipes/cartesiangrids.jl")
 include("plotrecipes/mesh.jl")
+include("plotrecipes/partitions.jl")
 
 export 
   # points
@@ -161,6 +162,7 @@ export
   DomainView, DataView,
 
   # neighborhoods
+  Neighborhood, MetricBall,
   NormBall, Ellipsoid,
   metric, radius,
 
