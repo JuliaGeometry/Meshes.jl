@@ -24,7 +24,6 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   Box(c - r⃗, c + r⃗)
 end
 
-
 # --------
 # DOMAINS
 # --------
@@ -39,6 +38,12 @@ boundingbox(domain::Domain) = boundingbox(PointSet(domain))
 boundingbox(pset::PointSet) = boundingbox([pset[i] for i in 1:nelements(pset)])
 
 boundingbox(grid::CartesianGrid) = Box(extrema(grid)...)
+
+# -----
+# DATA
+# -----
+
+boundingbox(data::Data) = boundingbox(domain(data))
 
 # ---------
 # FALLBACK
