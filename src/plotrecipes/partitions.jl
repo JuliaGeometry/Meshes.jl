@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 @recipe function f(partition::Partition)
-  color --> :auto
+  marker --> :auto
   for object in partition
     @series begin
       object
