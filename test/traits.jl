@@ -75,12 +75,12 @@
     ]
 
     # variables interface
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
     @test variables(data) == (Variable(:a,Int), Variable(:b,Int))
     @test name.(variables(data)) == (:a,:b)
     @test mactype.(variables(data)) == (Int,Int)
     @test data[:a] == [1,2,3,4]
-    @test data[:b] == [5,6,7,8]
+    @test isequal(data[:b], [5,missing,7,8])
     @test_throws ErrorException data[:c] 
     @test_throws ErrorException data[:geometry]
 
