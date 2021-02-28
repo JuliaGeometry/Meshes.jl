@@ -100,6 +100,11 @@ Returns the data for the variable `var` in `data` as a column vector.
 Base.getindex(data::Data, var::Symbol) =
   Tables.getcolumn(values(data), var)
 
+function variables(data::Data)
+  s = Tables.schema(values(data))
+  @. Variable(s.names, s.types)
+end
+
 # ----------
 # UTILITIES
 # ----------

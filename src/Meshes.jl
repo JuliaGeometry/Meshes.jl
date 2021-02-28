@@ -34,6 +34,7 @@ include("points.jl")
 include("angles.jl")
 
 # type traits
+include("traits/variable.jl")
 include("traits/domain.jl")
 include("traits/data.jl")
 include("traits/optional.jl")
@@ -98,9 +99,9 @@ export
   ∠,
 
   # domain/data traits
-  Domain, Data,
-  domain, asarray,
-  constructor,
+  Domain, Data, Variable,
+  domain, constructor, asarray,
+  variables, name, mactype,
 
   # optional traits
   IsGrid, isgrid,
