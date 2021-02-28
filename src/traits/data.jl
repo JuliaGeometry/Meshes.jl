@@ -45,6 +45,8 @@ coordtype(data::Data) = coordtype(domain(data))
 nelements(data::Data) = nelements(domain(data))
 coordinates!(buff, data::Data, ind::Int) =
   coordinates!(buff, domain(data), ind)
+coordinates(data::Data, inds) =
+  coordinates(domain(data), inds)
 
 ==(data₁::Data, data₂::Data) =
   domain(data₁) == domain(data₂) && values(data₁) == values(data₂)
@@ -102,7 +104,7 @@ Base.getindex(data::Data, var::Symbol) =
 
 function variables(data::Data)
   s = Tables.schema(values(data))
-  @. Variable(s.names, s.types)
+  @. Variable(s.names, nonmissingtype(s.types))
 end
 
 # ----------
