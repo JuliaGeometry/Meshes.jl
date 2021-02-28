@@ -43,8 +43,8 @@ function constructor(::Type{Data}) end
 embeddim(data::Data) = embeddim(domain(data))
 coordtype(data::Data) = coordtype(domain(data))
 nelements(data::Data) = nelements(domain(data))
-coordinates!(buff, data::Data, ind::Int) =
-  coordinates!(buff, domain(data), ind)
+coordinates!(buff, data::Data, inds) =
+  coordinates!(buff, domain(data), inds)
 coordinates(data::Data, inds) =
   coordinates(domain(data), inds)
 
