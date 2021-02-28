@@ -32,6 +32,10 @@ function nelements end
 # FALLBACKS
 # ----------
 
+==(d1::Domain, d2::Domain) =
+  nelements(d1) == nelements(d2) &&
+  all(d1[i] == d2[i] for i in 1:nelements(d1))
+
 """
     embeddim(domain)
 

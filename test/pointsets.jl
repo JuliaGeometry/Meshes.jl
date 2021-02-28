@@ -28,6 +28,8 @@
   pset5 = PointSet([T[1,2,3], T[4,5,6]])
   pset6 = PointSet(T[1,2,3], T[4,5,6])
   pset7 = PointSet(T[1 4; 2 5; 3 6])
+  @test pset1 == pset2 == pset3 == pset4 ==
+        pset5 == pset6 == pset7
   for pset in [pset1, pset2, pset3, pset4,
                pset5, pset6, pset7]
     @test embeddim(pset) == 3
