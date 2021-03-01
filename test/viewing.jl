@@ -38,11 +38,19 @@
     tt = values(v)
     @test tt == (a=[13,14,15,16,17,24,25,26,27,28,35,36,37,38,39,46,47,48,49,50,57,58,59,60,61],
                  b=[13,14,15,16,17,24,25,26,27,28,35,36,37,38,39,46,47,48,49,50,57,58,59,60,61])
-  end
+    
+    g = CartesianGrid{T}(250,250)
+    t = (a=rand(250*250), b=rand(250*250))
+    d = DummyData(g, t)
+    s1 = slice(d, T(50.5):T(100.2), T(41.7):T(81.3))
+    X1 = coordinates(s1, 1:nelements(s1))
+    @test all(T[50.5,41.7] .≤ minimum(X1, dims=2))
+    @test all(maximum(X1, dims=2) .≤ T[100.2,81.3])
 
-  @testset "Utilities" begin
-    d = CartesianGrid{T}(10,10)
-    s = slice(d, T(0.5):T(11), T(0.5):T(11))
-    @test s == CartesianGrid(P2(1,1), P2(10,10), dims=(9,9))
+    p = sample(d, 100)
+    s2 = slice(p, T(50.5):T(150.7), T(175.2):T(250.3))
+    X2 = coordinates(s2, 1:nelements(s2))
+    @test all(T[50.5,175.2] .≤ minimum(X2, dims=2))
+    @test all(maximum(X2, dims=2) .≤ T[150.7,250.3])
   end
 end

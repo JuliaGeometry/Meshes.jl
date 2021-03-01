@@ -21,7 +21,7 @@ end
 # specialize view to avoid infinite loops
 Base.view(v::DataView, inds, vars) =
   DataView(v.data, v.inds[inds], vars)
-Base.view(v::DataView, inds) =
+Base.view(v::DataView, inds::AbstractVector{Int}) =
   DataView(v.data, v.inds[inds], v.vars)
 Base.view(v::DataView, vars::AbstractVector{Symbol}) =
   DataView(v.data, v.inds, vars)

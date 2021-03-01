@@ -257,5 +257,9 @@
     cr = mean(coordinates(r, 1:nelements(r)), dims=2)
     @test cl[1] == cr[1]
     @test cl[2] < cr[2]
+
+    d = CartesianGrid{T}(10,10)
+    s = slice(d, T(0.5):T(11), T(0.5):T(11))
+    @test s == CartesianGrid(P2(1,1), P2(10,10), dims=(9,9))
   end
 end
