@@ -103,6 +103,8 @@
     if visualtests
       data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
       @test_reference "data/data-$T.png" plot(data)
+      data = DummyData(CartesianGrid{T}(2,2), (c=categorical([1,2,3,4]),))
+      @test_reference "data/data-categorical-$T.png" plot(data)
     end
   end
 end

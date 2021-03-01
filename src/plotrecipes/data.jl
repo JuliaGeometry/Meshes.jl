@@ -19,8 +19,11 @@
   for (i, var) in enumerate(vars)
     vals = data[var]
 
+    # handle categorical values
+    l = vals isa CategoricalArray ? levelcode.(vals) : copy(vals)
+
     # handle missing values
-    vals = replace(vals, missing => NaN)
+    replace!(l, missing => NaN)
 
     @series begin
       subplot := i

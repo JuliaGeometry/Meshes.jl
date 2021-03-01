@@ -3,6 +3,7 @@ using Tables
 using Distances
 using Statistics
 using LinearAlgebra
+using CategoricalArrays
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
