@@ -17,19 +17,20 @@
   layout --> length(vars)
 
   for (i, var) in enumerate(vars)
+    # data for variable
     vals = data[var]
 
     # handle categorical values
-    l = vals isa CategoricalArray ? levelcode.(vals) : copy(vals)
+    v = vals isa CategoricalArray ? levelcode.(vals) : copy(vals)
 
     # handle missing values
-    replace!(l, missing => NaN)
+    v = replace(v, missing => NaN)
 
     @series begin
       subplot := i
       title --> string(var)
       legend --> false
-      dom, vals
+      dom, v
     end
   end
 end
