@@ -41,7 +41,7 @@
 
     s1 = Segment(P2(1,2), P2(1,0))
     s2 = Segment(P2(1,0), P2(1,1))
-    @test s1 ∩ s2 == Segment(P2(1,1), P2(1,0))
+    @test s1 ∩ s2 == Segment(P2(1,0), P2(1,1))
 
     s1 = Segment(P2(0,0), P2(2,0))
     s2 = Segment(P2(-2,0), P2(-1,0))
