@@ -108,41 +108,22 @@ end
 
 # intersection of two line segments assuming that they are colinear
 function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
-  # make sure the first segment is larger than the second
-  sa, sb = measure(s1) < measure(s2) ? (s2, s1) : (s1, s2)
-  x1, x2 = vertices(sa)
-  y1, y2 = vertices(sb)
+  m1, M1 = coordinates.(vertices(s1))
+  m2, M2 = coordinates.(vertices(s2))
 
-  # given that the segments are colinear we can simply
-  # operate on the scalar parameters of the vertices
-  # along the line defined by the vector --x1--x2->
-  Δ = x2 - x1
-  i = findfirst(!iszero, Δ)
-  t1 = (y1 - x1)[i] / Δ[i]
-  t2 = (y2 - x1)[i] / Δ[i]
+  # make sure that segment vertices are "ordered"
+  m1, M1 = any(m1 .> M1) ? (M1, m1) : (m1, M1)
+  m2, M2 = any(m2 .> M2) ? (M2, m2) : (m2, M2)
 
-  # fix direction of second segment to match the first
-  t1 > t2 && ((t1, t2) = (t2, t1))
+  # relevant vertices
+  u = Point(max.(m1, m2))
+  v = Point(min.(M1, M2))
 
-  if t1 < zero(T) && t2 < zero(T)
-    NonIntersectingSegments()
-  elseif t1 < zero(T) && t2 ≈ zero(T)
-    CornerTouchingSegments(x1)
-  elseif t1 < zero(T) && t2 > zero(T)
-    OverlappingSegments(Segment(x1, x1 + t2*Δ))
-  elseif t1 ≈ zero(T) && t2 > zero(T)
-    OverlappingSegments(Segment(x1, x1 + t2*Δ))
-  elseif t1 > zero(T) && t2 < one(T)
-    OverlappingSegments(Segment(x1 + t1*Δ, x1 + t2*Δ))
-  elseif t1 < one(T) && t2 ≈ one(T)
-    OverlappingSegments(Segment(x1 + t1*Δ, x2))
-  elseif t1 < one(T) && t2 > one(T)
-    OverlappingSegments(Segment(x1 + t1*Δ, x2))
-  elseif t1 ≈ one(T) && t2 > one(T)
-    CornerTouchingSegments(x2)
-  elseif t1 > one(T) && t2 > one(T)
-    NonIntersectingSegments()
+  if isapprox(u, v, atol=atol(T))
+    CornerTouchingSegments(u)
+  elseif any(coordinates(u) .< coordinates(v))
+    OverlappingSegments(Segment(u, v))
   else
-    @error "please report bug"
+    NonIntersectingSegments()
   end
 end
