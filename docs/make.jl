@@ -42,10 +42,14 @@ makedocs(
         "geometries/polytopes.md"
       ],
       "Meshes" => "meshes.md",
+      "Neighborhoods" => "neighborhoods.md",
       "Algorithms" => [
         "algorithms/sampling.md",
+        "algorithms/partitioning.md",
         "algorithms/discretization.md",
-        "algorithms/boundbox.md"
+        "algorithms/boundbox.md",
+        "algorithms/intersection.md",
+        "algorithms/neighborsearch.md"
       ]
   ],
     "Contributing" => [

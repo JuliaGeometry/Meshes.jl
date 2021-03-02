@@ -1,0 +1,18 @@
+# Partition
+
+```@docs
+partition
+PartitionMethod
+RandomPartition
+FractionPartition
+BlockPartition
+BisectPointPartition
+BisectFractionPartition
+BallPartition
+PlanePartition
+DirectionPartition
+PredicatePartition
+SpatialPredicatePartition
+ProductPartition
+HierarchicalPartition
+```

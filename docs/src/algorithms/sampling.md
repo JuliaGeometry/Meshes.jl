@@ -4,4 +4,7 @@
 sample
 SamplingMethod
 RegularSampling
+UniformSampling
+WeightedSampling
+BallSampling
 ```
