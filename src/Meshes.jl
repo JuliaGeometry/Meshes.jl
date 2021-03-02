@@ -20,7 +20,7 @@ using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 # import categorical arrays as a temporary solution for plot recipes
-using CategoricalArrays: CategoricalArray, levelcode
+using CategoricalArrays: CategoricalValue, levelcode
 
 import Tables
 import Random

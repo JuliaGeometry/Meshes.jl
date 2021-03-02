@@ -21,7 +21,7 @@
     vals = data[var]
 
     # handle categorical values
-    v = vals isa CategoricalArray ? levelcode.(vals) : copy(vals)
+    v = eltype(vals) <: CategoricalValue ? levelcode.(vals) : copy(vals)
 
     # handle missing values
     v = replace(v, missing => NaN)
