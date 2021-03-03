@@ -53,7 +53,10 @@ makedocs(
       ]
   ],
     "Contributing" => [
-      "contributing/guidelines.md"
+      "contributing/guidelines.md",
+      "Developer guide" => [
+        "contributing/developer_guide/benchmarking.md"
+      ]
     ],
     "About" => [
       "License" => "about/license.md"
