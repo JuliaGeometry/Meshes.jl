@@ -79,18 +79,18 @@
     @test variables(data) == (Variable(:a,Int), Variable(:b,Int))
     @test name.(variables(data)) == (:a,:b)
     @test mactype.(variables(data)) == (Int,Int)
-    @test data[:a] == [1,2,3,4]
+    @test data[:a] == data["a"] == [1,2,3,4]
     @test isequal(data[:b], [5,missing,7,8])
     @test_throws ErrorException data[:c] 
     @test_throws ErrorException data[:geometry]
 
     # utility functions
     data = DummyData(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
-    @test asarray(data, :a) == [1,2,3,4]
-    @test asarray(data, :b) == [5,6,7,8]
+    @test asarray(data, :a) == asarray(data, "a") == [1,2,3,4]
+    @test asarray(data, :b) == asarray(data, "b") == [5,6,7,8]
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-    @test asarray(data, :a) == [1 3; 2 4]
-    @test asarray(data, :b) == [5 7; 6 8]
+    @test asarray(data, :a) == asarray(data, "a") == [1 3; 2 4]
+    @test asarray(data, :b) == asarray(data, "b") == [5 7; 6 8]
 
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
     @test sprint(show, data) == "4 DummyData{2,$T}"

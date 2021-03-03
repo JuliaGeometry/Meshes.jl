@@ -102,6 +102,9 @@ Returns the data for the variable `var` in `data` as a column vector.
 Base.getindex(data::Data, var::Symbol) =
   Tables.getcolumn(values(data), var)
 
+Base.getindex(data::Data, var::String) =
+  getindex(data, Symbol(var))
+
 function variables(data::Data)
   s = Tables.schema(values(data))
   @. Variable(s.names, nonmissingtype(s.types))
@@ -123,6 +126,9 @@ function asarray(data::Data, var::Symbol)
   hassize = hasmethod(size, (typeof(D),))
   hassize ? reshape(data[var], size(D)) : data[var]
 end
+
+asarray(data::Data, var::String) =
+  asarray(data, Symbol(var))
 
 # -----------
 # IO METHODS
