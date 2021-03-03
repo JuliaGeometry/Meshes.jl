@@ -8,6 +8,7 @@ include("utils.jl")
 SUITE = BenchmarkGroup()
 
 include("points.jl")
+include("intersections.jl")
 
 t = @elapsed using Meshes
 println("Julia version is $VERSION")
