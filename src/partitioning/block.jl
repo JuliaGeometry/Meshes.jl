@@ -16,7 +16,7 @@ BlockPartition(sides::NTuple{Dim,T}) where {Dim,T} = BlockPartition{Dim,T}(sides
 
 BlockPartition(sides::Vararg{T,Dim}) where {Dim,T} = BlockPartition(sides)
 
-function partition(object, method::BlockPartition)
+function partition(object, method::BlockPartition, calculate_metadata = false)
   Dim = embeddim(object)
   T = coordtype(object)
 
@@ -59,17 +59,29 @@ function partition(object, method::BlockPartition)
     append!(subsets[i], j)
   end
 
-  # neighboring blocks metadata
-  bstart  = CartesianIndex(ntuple(i -> 1, Dim))
-  boffset = CartesianIndex(ntuple(i -> 1, Dim))
-  bfinish = CartesianIndex(Dims(nblocks))
-  for (i, bcoords) in enumerate(bstart:bfinish)
-    for b in (bcoords - boffset):(bcoords + boffset)
-      if all(Tuple(bstart) .≤ Tuple(b) .≤ Tuple(bfinish)) && b ≠ bcoords
-        push!(neighbors[i], linear[b])
+  #Intitialize metadata to an empty Dict.
+  #If calculate_metadata is enabled, we will populate it.
+  metadata = Dict()
+
+  # neighboring blocks metadata if calculate_metadata is enabled
+  if calculate_metadata
+    bstart  = CartesianIndex(ntuple(i -> 1, Dim))
+    boffset = CartesianIndex(ntuple(i -> 1, Dim))
+    bfinish = CartesianIndex(Dims(nblocks))
+
+    for (i, bcoords) in enumerate(bstart:bfinish)
+      for b in (bcoords - boffset):(bcoords + boffset)
+        if all(Tuple(bstart) .≤ Tuple(b) .≤ Tuple(bfinish)) && b ≠ bcoords
+          push!(neighbors[i], linear[b])
+        end
       end
     end
+
+    # save metadata if calculate_metadata is enabled
+    metadata = Dict(:neighbors => neighbors)
+
   end
+  
 
   # filter out empty blocks
   empty = isempty.(subsets)
@@ -81,8 +93,6 @@ function partition(object, method::BlockPartition)
     end
   end
 
-  # save metadata
-  metadata = Dict(:neighbors => neighbors)
-
+  
   Partition(object, subsets, metadata)
 end
