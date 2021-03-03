@@ -1,12 +1,12 @@
-# Benchmarking
+# Developer guide
 
-## Overview
+## Benchmarking
 
 We use [PkgBenchmark](https://github.com/JuliaCI/PkgBenchmark.jl) to conduct benchmarks, coupled with [BenchmarkCI](https://github.com/tkf/BenchmarkCI.jl) to automate benchmark runs with [GitHub Actions](https://github.com/features/actions) on certain PRs. Currently, PRs will _not_ run benchmarks by default. Only PRs with the label `run benchmark` will trigger benchmarks on push, adding a comment with the benchmark results.
 
-## Run benchmarks locally
+### Running benchmarks locally
 
-#### With PkgBenchmark
+##### With PkgBenchmark
 
 To locally run benchmarks, you can use PkgBenchmark with the following code:
 
@@ -19,7 +19,7 @@ It will include `benchmark/benchmarks.jl` and look for a [`BenchmarkGroup`](http
 
 The full list of options is detailed in the [PkgBenchmark documentation](https://juliaci.github.io/PkgBenchmark.jl/stable/run_benchmarks/#PkgBenchmark.benchmarkpkg).
 
-#### Manually
+##### Manually
 
 Sometimes you may prefer to run the suite manually, especially during interactive development. All you have to do is include the `benchmark/benchmarks.jl` file, and run the `BenchmarkGroup` suite:
 
@@ -28,7 +28,7 @@ include("benchmark/benchmarks.jl")
 run(SUITE)
 ```
 
-## Limitations
+### Limitations
 
 Note that because GitHub Actions may use different runners between benchmarks, you are likely to see fluctuations and performance changes that may not always be relevant. This makes it somewhat unreliable for tracking regressions.
 
