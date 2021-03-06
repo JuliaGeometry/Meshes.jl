@@ -40,10 +40,9 @@
   end
 
   pset = PointSet(P2[(1,0), (0,1)])
-  @test coordinates(pset, 1) == T[1, 0]
-  @test coordinates(pset, 2) == T[0, 1]
-  @test coordinates(pset, 1:2) == T[1 0; 0 1]
   @test nelements(pset) == 2
+  @test centroid(pset, 1) == P2(1, 0)
+  @test centroid(pset, 2) == P2(0, 1)
 
   pset = PointSet(P2[(1,0), (0,1)])
   @test sprint(show, pset) == "2 PointSet{2,$T}"

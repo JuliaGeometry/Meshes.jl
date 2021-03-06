@@ -51,19 +51,12 @@ A method for partitioning domain/data objects with spatial predicate functions.
 abstract type SPredicatePartitionMethod <: PartitionMethod end
 
 function partition(object, method::SPredicatePartitionMethod)
-  Dim = embeddim(object)
-  T = coordtype(object)
-
-  # pre-allocate memory for coordinates
-  x = MVector{Dim,T}(undef)
-  y = MVector{Dim,T}(undef)
-
   subsets = Vector{Int}[]
   for i in randperm(nelements(object))
-    coordinates!(x, object, i)
+    x = coordinates(centroid(object, i))
     inserted = false
     for subset in subsets
-      coordinates!(y, object, subset[1])
+      y = coordinates(centroid(object, subset[1]))
       if method(x, y)
         push!(subset, i)
         inserted = true

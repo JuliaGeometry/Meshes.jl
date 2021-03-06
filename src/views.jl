@@ -25,8 +25,8 @@ Base.getindex(v::DomainView, ind::Int) =
 
 nelements(v::DomainView) = length(v.inds)
 
-coordinates!(buff, v::DomainView, ind::Int) = 
-  coordinates!(buff, v.domain, v.inds[ind])
+centroid(v::DomainView, ind::Int) = 
+  centroid(v.domain, v.inds[ind])
 
 # -----------
 # IO METHODS

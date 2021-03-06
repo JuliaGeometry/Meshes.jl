@@ -24,19 +24,13 @@ BisectPointPartition(normal::NTuple{Dim,T}, point::NTuple{Dim,T}) where {Dim,T} 
  BisectPointPartition(Vec(normal), Point(point))
 
 function partition(object, method::BisectPointPartition)
-  Dim = embeddim(object)
-  T = coordtype(object)
-  
   n = method.normal
   p = method.point
 
-  x = MVector{Dim,T}(undef)
-
-  left  = Vector{Int}()
-  right = Vector{Int}()
+  left, right = Int[], Int[]
   for location in 1:nelements(object)
-    coordinates!(x, object, location)
-    if (Point(x) - p) ⋅ n < zero(T)
+    pₒ = centroid(object, location)
+    if (pₒ - p) ⋅ n < zero(coordtype(object))
       push!(left, location)
     else
       push!(right, location)
