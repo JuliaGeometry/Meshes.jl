@@ -78,10 +78,9 @@
     @test sub1 == sub2
 
     grid = CartesianGrid{T}(200,100)
-    @test coordinates(grid, 1) == T[0.5, 0.5]
-    @test coordinates(grid, 2) == T[1.5, 0.5]
-    @test coordinates(grid, 200*100) == T[199.5, 99.5]
-    @test coordinates(grid, 1:2) == T[0.5 1.5; 0.5 0.5]
+    @test centroid(grid, 1) == P2(0.5, 0.5)
+    @test centroid(grid, 2) == P2(1.5, 0.5)
+    @test centroid(grid, 200*100) == P2(199.5, 99.5)
     @test nelements(grid) == 200*100
     @test eltype(grid) <: Quadrangle{2,T}
     @test grid[1] == Quadrangle(P2[(0,0), (1,0), (1,1), (0,1)])
@@ -154,10 +153,10 @@
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = UnstructuredMesh(points, connec)
-    @test coordinates(mesh, 1) == coordinates(centroid(Triangle(P2[(0,0), (1,0), (0.5,0.5)])))
-    @test coordinates(mesh, 2) == coordinates(centroid(Triangle(P2[(1,0), (1,1), (0.5,0.5)])))
-    @test coordinates(mesh, 3) == coordinates(centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)])))
-    @test coordinates(mesh, 4) == coordinates(centroid(Triangle(P2[(0,1), (0,0), (0.5,0.5)])))
+    @test centroid(mesh, 1) == centroid(Triangle(P2[(0,0), (1,0), (0.5,0.5)]))
+    @test centroid(mesh, 2) == centroid(Triangle(P2[(1,0), (1,1), (0.5,0.5)]))
+    @test centroid(mesh, 3) == centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)]))
+    @test centroid(mesh, 4) == centroid(Triangle(P2[(0,1), (0,0), (0.5,0.5)]))
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)

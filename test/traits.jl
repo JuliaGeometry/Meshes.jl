@@ -19,7 +19,8 @@
 
     # coordinates of centroids
     dom = DummyDomain(P2(1,1))
-    @test coordinates(dom, 1:3) == T[2 3 4; 2 3 4]
+    pts = centroid.(Ref(dom), 1:3)
+    @test pts == P2[(2,2), (3,3), (4,4)]
 
     dom = DummyDomain(P2(0,0))
     @test sprint(show, dom) == "3 DummyDomain{2,$T}"

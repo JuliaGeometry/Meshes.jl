@@ -22,11 +22,8 @@ function traverse(object, path::SourcePath)
   @assert all(1 .≤ sources .≤ nelements(object)) "sources must be valid locations"
   @assert length(sources) ≤ nelements(object) "more sources than points in object"
 
-  # coordinate matrix for source points
-  S = coordinates(object, sources)
-
   # fit search tree
-  kdtree = KDTree(S)
+  kdtree = KDTree(coordinates.([centroid(object, s) for s in sources]))
 
   # other locations that are not sources
   others = setdiff(1:nelements(object), sources)
@@ -34,14 +31,11 @@ function traverse(object, path::SourcePath)
   # process points in batches
   batches = Iterators.partition(others, batchsize)
 
-  # pre-allocate memory for coordinates
-  X = Matrix{coordtype(object)}(undef, embeddim(object), batchsize)
-
   # compute distances to sources
   dists = []
   for batch in batches
-    coordinates!(X, object, batch)
-    _, ds = knn(kdtree, view(X,:,1:length(batch)), length(sources), true)
+    coords = coordinates.([centroid(object, b) for b in batch])
+    _, ds = knn(kdtree, coords, length(sources), true)
     append!(dists, ds)
   end
 

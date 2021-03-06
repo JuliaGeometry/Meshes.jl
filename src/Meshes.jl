@@ -155,14 +155,12 @@ export
 
   # point sets
   PointSet,
-  coordinates, coordinates!,
   nelements,
 
   # meshes
   Mesh,
   CartesianGrid, UnstructuredMesh,
   faces, elements, spacing,
-  coordinates, coordinates!,
   nelements,
 
   # views

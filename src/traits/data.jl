@@ -39,17 +39,14 @@ function constructor(::Type{Data}) end
 # FALLBACKS
 # ----------
 
+==(data₁::Data, data₂::Data) =
+  domain(data₁) == domain(data₂) && values(data₁) == values(data₂)
+
 # implement Domain traits for convenience
 embeddim(data::Data) = embeddim(domain(data))
 coordtype(data::Data) = coordtype(domain(data))
 nelements(data::Data) = nelements(domain(data))
-coordinates!(buff, data::Data, inds) =
-  coordinates!(buff, domain(data), inds)
-coordinates(data::Data, inds) =
-  coordinates(domain(data), inds)
-
-==(data₁::Data, data₂::Data) =
-  domain(data₁) == domain(data₂) && values(data₁) == values(data₂)
+centroid(data::Data, ind) = centroid(domain(data), ind)
 
 # -----------------
 # TABLES INTERFACE

@@ -53,35 +53,11 @@ coordtype(::Type{<:Domain{Dim,T}}) where {Dim,T} = T
 coordtype(domain::Domain) = coordtype(typeof(domain))
 
 """
-    coordinates!(buff, domain, ind)
+    centroid(domain, ind)
 
-Compute the coordinates `buff` of the centroid of the `ind`-th element in
-the `domain` in place.
+Compute the the centroid of the `ind`-th element in the `domain`.
 """
-function coordinates!(buff, domain::Domain{Dim}, ind::Int) where {Dim}
-  x = coordinates(centroid(domain[ind]))
-  @inbounds for i in 1:Dim
-    buff[i] = x[i]
-  end
-  buff
-end
-
-function coordinates!(buff, domain::Domain, inds::AbstractVector{Int})
-  for j in eachindex(inds)
-    coordinates!(view(buff,:,j), domain, inds[j])
-  end
-  buff
-end
-
-function coordinates(domain::Domain, ind::Int)
-  buff = MVector{embeddim(domain),coordtype(domain)}(undef)
-  coordinates!(buff, domain, ind)
-end
-
-function coordinates(domain::Domain, inds::AbstractVector{Int})
-  buff = Matrix{coordtype(domain)}(undef, embeddim(domain), length(inds))
-  coordinates!(buff, domain, inds)
-end
+centroid(domain::Domain, ind::Int) = centroid(domain[ind])
 
 Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
 

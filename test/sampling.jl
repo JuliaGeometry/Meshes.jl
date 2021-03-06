@@ -61,9 +61,9 @@
     Random.seed!(2021)
     d = CartesianGrid{T}(100,100)
     s = sample(d, UniformSampling(100))
-    μ = mean(coordinates(s, 1:nelements(s)), dims=2)
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
-    @test isapprox(μ, [50.,50.], atol=T(10))
+    @test isapprox(μ, T[50.,50.], atol=T(10))
   end
 
   @testset "WeightedSampling" begin
@@ -71,25 +71,25 @@
     Random.seed!(2020)
     d = CartesianGrid{T}(100,100)
     s = sample(d, WeightedSampling(100))
-    μ = mean(coordinates(s, 1:nelements(s)), dims=2)
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
-    @test isapprox(μ, [50.,50.], atol=T(10))
+    @test isapprox(μ, T[50.,50.], atol=T(10))
   end
 
   @testset "BallSampling" begin
     d = CartesianGrid{T}(100,100)
     s = sample(d, BallSampling(T(10)))
     n = nelements(s)
-    X = coordinates(s, sample(1:n, 2, replace=false))
-    x, y = X[:,1], X[:,2]
+    x = coordinates(centroid(s, 1))
+    y = coordinates(centroid(s, 17))
     @test n < 100
     @test sqrt(sum((x - y).^2)) ≥ T(10)
 
     d = CartesianGrid{T}(100,100)
     s = sample(d, BallSampling(T(20)))
     n = nelements(s)
-    X = coordinates(s, sample(1:n, 2, replace=false))
-    x, y = X[:,1], X[:,2]
+    x = coordinates(centroid(s, 1))
+    y = coordinates(centroid(s, 17))
     @test n < 50
     @test sqrt(sum((x - y).^2)) ≥ T(20)
   end

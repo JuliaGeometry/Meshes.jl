@@ -38,7 +38,7 @@ PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
 A point set representation of the `domain`, i.e. a set of centroid points
 for each element of the `domain`.
 """
-PointSet(domain::Domain) = PointSet(coordinates(domain, 1:nelements(domain)))
+PointSet(domain::Domain) = PointSet([centroid(domain, ind) for ind in 1:nelements(domain)])
 
 # -----------------
 # DOMAIN INTERFACE
@@ -48,6 +48,4 @@ Base.getindex(pset::PointSet, ind::Int) = getindex(pset.points, ind)
 
 nelements(pset::PointSet) = length(pset.points)
 
-function coordinates!(buff, pset::PointSet, ind::Int)
-  @inbounds buff .= coordinates(pset.points[ind])
-end
+centroid(pset::PointSet, ind::Int) = pset.points[ind]

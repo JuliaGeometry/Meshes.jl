@@ -91,16 +91,19 @@
     grid = CartesianGrid((10,10), T.((-0.5,-0.5)), T.((1.0, 1.0)))
 
     p = partition(grid, BisectPointPartition(T.((0.0,1.0)), T.((5.0,5.1))))
-    @test nelements(p[1]) == 60
-    @test nelements(p[2]) == 40
+    p1, p2 = p[1], p[2]
+    @test nelements(p1) == 60
+    @test nelements(p2) == 40
 
-    # all points in X₁ are below those in X₂
-    X₁ = coordinates(p[1], 1:nelements(p[1]))
-    X₂ = coordinates(p[2], 1:nelements(p[2]))
-    M₁ = maximum(X₁, dims=2)
-    m₂ = minimum(X₂, dims=2)
-    @test all(X₁[2,j] < m₂[2] for j in 1:size(X₁,2))
-    @test all(X₂[2,j] > M₁[2] for j in 1:size(X₂,2))
+    # all points in p1 are below those in p2
+    pts1 = [centroid(p1, i) for i in 1:nelements(p1)]
+    pts2 = [centroid(p2, i) for i in 1:nelements(p2)]
+    X1 = reduce(hcat, coordinates.(pts1))
+    X2 = reduce(hcat, coordinates.(pts2))
+    M1 = maximum(X1, dims=2)
+    m2 = minimum(X2, dims=2)
+    @test all(X1[2,j] < m2[2] for j in 1:size(X1,2))
+    @test all(X2[2,j] > M1[2] for j in 1:size(X2,2))
 
     # flipping normal direction is equivalent to swapping subsets
     p₁ = partition(grid, BisectPointPartition(T.(( 1.0,0.0)), T.((5.1,5.0))))
@@ -113,16 +116,19 @@
     grid = CartesianGrid((10,10), T.((-0.5,-0.5)), T.((1.0,1.0)))
 
     p = partition(grid, BisectFractionPartition(T.((1.0,0.0)), T(0.2)))
-    @test nelements(p[1]) == 20
-    @test nelements(p[2]) == 80
+    p1, p2 = p[1], p[2]
+    @test nelements(p1) == 20
+    @test nelements(p2) == 80
 
-    # all points in X₁ are to the left of X₂
-    X₁ = coordinates(p[1], 1:nelements(p[1]))
-    X₂ = coordinates(p[2], 1:nelements(p[2]))
-    M₁ = maximum(X₁, dims=2)
-    m₂ = minimum(X₂, dims=2)
-    @test all(X₁[1,j] < m₂[1] for j in 1:size(X₁,2))
-    @test all(X₂[1,j] > M₁[1] for j in 1:size(X₂,2))
+    # all points in p1 are to the left of p2
+    pts1 = [centroid(p1, i) for i in 1:nelements(p1)]
+    pts2 = [centroid(p2, i) for i in 1:nelements(p2)]
+    X1 = reduce(hcat, coordinates.(pts1))
+    X2 = reduce(hcat, coordinates.(pts2))
+    M1 = maximum(X1, dims=2)
+    m2 = minimum(X2, dims=2)
+    @test all(X1[1,j] < m2[1] for j in 1:size(X1,2))
+    @test all(X2[1,j] > M1[1] for j in 1:size(X2,2))
 
     # flipping normal direction is equivalent to swapping subsets
     p₁ = partition(grid, BisectFractionPartition(T.(( 1.0,0.0)), T(0.2)))
@@ -246,15 +252,19 @@
     l, r = split(d, T(0.5), T.((1,0)))
     @test nelements(l) == 50
     @test nelements(r) == 50
-    cl = mean(coordinates(l, 1:nelements(l)), dims=2)
-    cr = mean(coordinates(r, 1:nelements(r)), dims=2)
+    lpts = [centroid(l, i) for i in 1:nelements(l)]
+    rpts = [centroid(r, i) for i in 1:nelements(r)]
+    cl = mean(coordinates.(lpts))
+    cr = mean(coordinates.(rpts))
     @test cl[1] < cr[1]
     @test cl[2] == cr[2]
     l, r = split(d, T(0.5), T.((0,1)))
     @test nelements(l) == 50
     @test nelements(r) == 50
-    cl = mean(coordinates(l, 1:nelements(l)), dims=2)
-    cr = mean(coordinates(r, 1:nelements(r)), dims=2)
+    lpts = [centroid(l, i) for i in 1:nelements(l)]
+    rpts = [centroid(r, i) for i in 1:nelements(r)]
+    cl = mean(coordinates.(lpts))
+    cr = mean(coordinates.(rpts))
     @test cl[1] == cr[1]
     @test cl[2] < cr[2]
 
