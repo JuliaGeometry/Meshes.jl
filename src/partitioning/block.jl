@@ -10,17 +10,19 @@ A method for partitioning spatial objects into blocks of given `sides`.
 """
 struct BlockPartition{Dim,T} <: PartitionMethod
   sides::SVector{Dim,T}
+  neighbors::Bool
 end
 
-BlockPartition(sides::NTuple{Dim,T}) where {Dim,T} = BlockPartition{Dim,T}(sides)
+BlockPartition(sides::NTuple{Dim,T}, neighbors = false) where {Dim,T} = BlockPartition{Dim,T}(sides, neighbors)
+BlockPartition(sides::Vararg{T,Dim}; neighbors::Bool = false) where {Dim,T} = BlockPartition(SVector(sides), neighbors)
 
-BlockPartition(sides::Vararg{T,Dim}) where {Dim,T} = BlockPartition(sides)
-
-function partition(object, method::BlockPartition, calculate_metadata = false)
+function partition(object, method::BlockPartition)
   Dim = embeddim(object)
-
   psides = method.sides
   bbox = boundingbox(object)
+  calculate_metadata = method.neighbors
+  
+  println("Neighbors has been set to ", calculate_metadata)
 
   @assert all(psides .≤ sides(bbox)) "invalid block sides"
 
@@ -55,16 +57,19 @@ function partition(object, method::BlockPartition, calculate_metadata = false)
     append!(subsets[i], j)
   end
 
+  if calculate_metadata == false
+    println("Metadata calculation has been disabled. To calculate Metadata, please enable it while calling BlockPartition with neighbors = true.") 
+  end
   #Intitialize metadata to an empty Dict.
-  #If calculate_metadata is enabled, we will populate it.
+  #If metadata calculation is enabled, we will populate the Dict.
   metadata = Dict()
 
-  # neighboring blocks metadata if calculate_metadata is enabled
-  if calculate_metadata
+  # neighboring blocks metadata
+  if calculate_metadata == true
+    println("Metadata Calculation has been enabled.")
     bstart  = CartesianIndex(ntuple(i -> 1, Dim))
     boffset = CartesianIndex(ntuple(i -> 1, Dim))
     bfinish = CartesianIndex(Dims(nblocks))
-
     for (i, bcoords) in enumerate(bstart:bfinish)
       for b in (bcoords - boffset):(bcoords + boffset)
         if all(Tuple(bstart) .≤ Tuple(b) .≤ Tuple(bfinish)) && b ≠ bcoords
@@ -72,12 +77,9 @@ function partition(object, method::BlockPartition, calculate_metadata = false)
         end
       end
     end
-
-    # save metadata if calculate_metadata is enabled
+    # Save Calculated Metadata
     metadata = Dict(:neighbors => neighbors)
-
   end
-  
 
   # filter out empty blocks
   empty = isempty.(subsets)
@@ -89,6 +91,5 @@ function partition(object, method::BlockPartition, calculate_metadata = false)
     end
   end
 
-  
   Partition(object, subsets, metadata)
 end
