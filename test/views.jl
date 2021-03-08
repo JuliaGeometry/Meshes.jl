@@ -7,7 +7,7 @@
     for i in 1:3
       p = pset[inds[i]]
       @test v[i] == p
-      @test coordinates(v, i) == coordinates(p)
+      @test centroid(v, i) == p
     end
 
     grid = CartesianGrid{T}(10, 10)
@@ -17,7 +17,7 @@
     for i in 1:3
       e = grid[inds[i]]
       @test v[i] == e
-      @test coordinates(v, i) == coordinates(centroid(e))
+      @test centroid(v, i) == centroid(e)
     end
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
@@ -29,7 +29,7 @@
     for i in 1:3
       e = mesh[inds[i]]
       @test v[i] == e
-      @test coordinates(v, i) == coordinates(centroid(e))
+      @test centroid(v, i) == centroid(e)
     end
 
     if visualtests
@@ -54,21 +54,28 @@
     v = view(dat, 2:4)
     @test domain(v) == view(dom, 2:4)
     @test values(v) == (a=[2,3,4], b=[6,7,8])
-    @test coordinates(domain(v), 1:nelements(domain(v))) == T[1.5 0.5 1.5; 0.5 1.5 1.5]
+    @test centroid(v, 1) == P2(1.5,0.5)
+    @test centroid(v, 2) == P2(0.5,1.5)
+    @test centroid(v, 3) == P2(1.5,1.5)
     @test v[:a] == [2,3,4]
     @test v[:b] == [6,7,8]
 
     v = view(dat, [:a])
     @test domain(v) == view(dom, 1:4)
     @test values(v) == (a=[1,2,3,4],)
-    @test coordinates(domain(v), 1:nelements(domain(v))) == T[0.5 1.5 0.5 1.5; 0.5 0.5 1.5 1.5]
+    @test centroid(v, 1) == P2(0.5,0.5)
+    @test centroid(v, 2) == P2(1.5,0.5)
+    @test centroid(v, 3) == P2(0.5,1.5)
+    @test centroid(v, 4) == P2(1.5,1.5)
     @test v[:a] == [1,2,3,4]
     @test_throws ErrorException v[:b]
 
     v = view(dat, 1:3, [:a])
     @test domain(v) == view(dom, 1:3)
     @test values(v) == (a=[1,2,3],)
-    @test coordinates(domain(v), 1:nelements(domain(v))) == T[0.5 1.5 0.5; 0.5 0.5 1.5]
+    @test centroid(v, 1) == P2(0.5,0.5)
+    @test centroid(v, 2) == P2(1.5,0.5)
+    @test centroid(v, 3) == P2(0.5,1.5)
     @test v[:a] == [1,2,3]
     @test_throws ErrorException v[:b]
   end

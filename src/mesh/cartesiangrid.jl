@@ -145,13 +145,10 @@ end
 
 nelements(g::CartesianGrid) = prod(g.dims)
 
-function coordinates!(buff, g::CartesianGrid{Dim}, ind::Int) where {Dim}
+function centroid(g::CartesianGrid{Dim}, ind::Int) where {Dim}
   intcoords = CartesianIndices(g.dims)[ind]
   neworigin = coordinates(g.origin) .+ g.spacing ./ 2
-  @inbounds @simd for i in 1:Dim
-    buff[i] = neworigin[i] + (intcoords[i] - 1)*g.spacing[i]
-  end
-  buff
+  Point(ntuple(i -> neworigin[i] + (intcoords[i] - 1)*g.spacing[i], Dim))
 end
 
 Base.eltype(g::CartesianGrid) = typeof(g[1])

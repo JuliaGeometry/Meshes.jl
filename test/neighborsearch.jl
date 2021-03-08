@@ -70,10 +70,10 @@
     S2 = KNearestSearch(𝒟, 10)
     B1 = BoundedSearch(S1, 5)
     B2 = BoundedSearch(S2, 5)
-    p = P2(coordinates(𝒟, rand(1:100)))
+    p = centroid(𝒟, rand(1:100))
     n = search(p, B1)
     @test length(n) == 5
-    p = P2(coordinates(𝒟, rand(1:100)))
+    p = centroid(𝒟, rand(1:100))
     n = search(p, B2)
     @test length(n) == 5
   end

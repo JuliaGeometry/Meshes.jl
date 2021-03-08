@@ -18,7 +18,6 @@ BlockPartition(sides::Vararg{T,Dim}) where {Dim,T} = BlockPartition(sides)
 
 function partition(object, method::BlockPartition, calculate_metadata = false)
   Dim = embeddim(object)
-  T = coordtype(object)
 
   psides = method.sides
   bbox = boundingbox(object)
@@ -36,21 +35,18 @@ function partition(object, method::BlockPartition, calculate_metadata = false)
   start   = @. ce - nleft * psides
   nblocks = @. nleft + nright
 
-  subsets   = [Vector{Int}() for i in 1:prod(nblocks)]
-  neighbors = [Vector{Int}() for i in 1:prod(nblocks)]
+  subsets   = [Int[] for i in 1:prod(nblocks)]
+  neighbors = [Int[] for i in 1:prod(nblocks)]
 
   # Cartesian to linear indices
   linear = LinearIndices(Dims(nblocks))
 
-  coords = MVector{Dim,T}(undef)
   for j in 1:nelements(object)
-    coordinates!(coords, object, j)
+    coords = coordinates(centroid(object, j))
 
     # find block coordinates
     c = @. floor(Int, (coords - start) / psides) + 1
-    @inbounds for i in 1:Dim
-      c[i] = clamp(c[i], 1, nblocks[i])
-    end
+    c = @. clamp(c, 1, nblocks)
     bcoords = CartesianIndex(Tuple(c))
 
     # block index

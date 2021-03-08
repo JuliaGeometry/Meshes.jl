@@ -23,8 +23,6 @@ BallSampling(radius; metric=Euclidean(), maxsize=nothing) =
   BallSampling(radius, metric, maxsize)
 
 function sample(object, method::BallSampling)
-  Dim = embeddim(object)
-  T = coordtype(object)
   radius = method.radius
   metric = method.metric
   msize  = method.maxsize ≠ nothing ? method.maxsize : Inf
@@ -33,17 +31,14 @@ function sample(object, method::BallSampling)
   ball = NormBall(radius, metric)
   searcher = NeighborhoodSearch(object, ball)
 
-  # pre-allocate memory for coordinates
-  coords = MVector{Dim,T}(undef)
-
   locations = Vector{Int}()
   notviewed = trues(nelements(object))
   while length(locations) < msize && any(notviewed)
     location = rand(findall(notviewed))
-    coordinates!(coords, object, location)
+    pₒ = centroid(object, location)
 
     # neighbors (including the location)
-    neighbors = search(Point(coords), searcher)
+    neighbors = search(pₒ, searcher)
 
     push!(locations, location)
     notviewed[neighbors] .= false
