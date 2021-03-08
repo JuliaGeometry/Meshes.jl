@@ -18,8 +18,7 @@ struct KNearestSearch{D,T} <: BoundedNeighborSearchMethod
 end
 
 function KNearestSearch(domain::D, k::Int; metric=Euclidean()) where {D}
-  ps = [centroid(domain, i) for i in 1:nelements(domain)]
-  xs = coordinates.(ps)
+  xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = metric isa MinkowskiMetric ? KDTree(xs, metric) : BallTree(xs, metric)
   KNearestSearch{D,typeof(tree)}(domain, k, tree)
 end

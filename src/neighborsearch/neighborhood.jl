@@ -18,9 +18,8 @@ end
 
 function NeighborhoodSearch(domain::D, neigh::N) where {D,N}
   tree = if neigh isa MetricBall
-    ps = [centroid(domain, i) for i in 1:nelements(domain)]
-    xs = coordinates.(ps)
     m  = metric(neigh)
+    xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
     m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   else
     nothing
