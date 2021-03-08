@@ -13,16 +13,14 @@ struct BlockPartition{Dim,T} <: PartitionMethod
   neighbors::Bool
 end
 
-BlockPartition(sides::NTuple{Dim,T}, neighbors = false) where {Dim,T} = BlockPartition{Dim,T}(sides, neighbors)
-BlockPartition(sides::Vararg{T,Dim}; neighbors::Bool = false) where {Dim,T} = BlockPartition(SVector(sides), neighbors)
+BlockPartition(sides::NTuple{Dim,T}; neighbors=false) where {Dim,T} = BlockPartition{Dim,T}(sides, neighbors)
+BlockPartition(sides::Vararg{T,Dim}; neighbors=false) where {Dim,T} = BlockPartition(SVector(sides), neighbors)
 
 function partition(object, method::BlockPartition)
   Dim = embeddim(object)
+
   psides = method.sides
   bbox = boundingbox(object)
-  calculate_metadata = method.neighbors
-  
-  println("Neighbors has been set to ", calculate_metadata)
 
   @assert all(psides .≤ sides(bbox)) "invalid block sides"
 
@@ -56,17 +54,13 @@ function partition(object, method::BlockPartition)
 
     append!(subsets[i], j)
   end
-
-  if calculate_metadata == false
-    println("Metadata calculation has been disabled. To calculate Metadata, please enable it while calling BlockPartition with neighbors = true.") 
-  end
+  
   #Intitialize metadata to an empty Dict.
-  #If metadata calculation is enabled, we will populate the Dict.
+  #If method.neighbors is enabled, we will populate it.
   metadata = Dict()
 
   # neighboring blocks metadata
-  if calculate_metadata == true
-    println("Metadata Calculation has been enabled.")
+  if method.neighbors == true
     bstart  = CartesianIndex(ntuple(i -> 1, Dim))
     boffset = CartesianIndex(ntuple(i -> 1, Dim))
     bfinish = CartesianIndex(Dims(nblocks))
@@ -77,8 +71,8 @@ function partition(object, method::BlockPartition)
         end
       end
     end
-    # Save Calculated Metadata
-    metadata = Dict(:neighbors => neighbors)
+
+    metadata[:neighbors] = neighbors
   end
 
   # filter out empty blocks
