@@ -55,8 +55,7 @@ function partition(object, method::BlockPartition)
     append!(subsets[i], j)
   end
   
-  #Intitialize metadata to an empty Dict.
-  #If method.neighbors is enabled, we will populate it.
+  # intitialize metadata
   metadata = Dict()
 
   # neighboring blocks metadata
