@@ -42,7 +42,9 @@ function discretize(polyarea::PolyArea, ::FIST)
   while n > 3
     if !isempty(𝒬) # clip an ear
       # 0. select candidate ear
-      i = pop!(𝒬); 𝒬[𝒬.>i] .-= 1
+      i = pop!(𝒬)
+      remove_adjacent_ears!(𝒬)
+      𝒬[𝒬.>i] .-= 1
       # 1. push a new triangle to 𝒯
       push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
       # 2. remove the vertex from 𝒫
@@ -141,4 +143,16 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   incones = incone(i-1, i+1) && incone(i+1, i-1)
 
   isconvex && !intersects && incones
+end
+
+function remove_adjacent_ears!(𝒬, i)
+  ind = 1
+  while ind <= length(𝒬)
+    j = 𝒬[ind]
+    if j <= i+2 && j >= i-2
+      deleteat!(𝒬, ind)
+    else
+      ind += 1
+    end
+  end
 end
