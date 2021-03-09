@@ -192,7 +192,9 @@
       @test nvertices(first(chains(poly))) == 30
       @test !hasholes(poly)
       @test issimple(poly)
-      @test orientation(poly) == [:CCW]
+      for algo in [WindingOrientation(), TriangleOrientation()]
+        @test orientation(poly, algo) == [:CCW]
+      end
       @test unique(poly) == poly
     end
 
@@ -204,7 +206,9 @@
       @test nvertices(first(chains(poly))) == 120
       @test !hasholes(poly)
       @test issimple(poly)
-      @test orientation(poly) == [:CCW]
+      for algo in [WindingOrientation(), TriangleOrientation()]
+        @test orientation(poly, algo) == [:CCW]
+      end
       @test unique(poly) == poly
     end
 
@@ -218,9 +222,11 @@
       @test all(nvertices.(rings[2:end]) .< 18)
       @test hasholes(poly)
       @test !issimple(poly)
-      orients = orientation(poly)
-      @test orients[1] == :CCW
-      @test all(orients[2:end] .== :CW)
+      for algo in [WindingOrientation(), TriangleOrientation()]
+        orients = orientation(poly, algo)
+        @test orients[1] == :CCW
+        @test all(orients[2:end] .== :CW)
+      end
       @test unique(poly) == poly
     end
 
@@ -229,7 +235,9 @@
       b  = bridge(poly)
       nb = nvertices(b)
       np = nvertices.(chains(poly))
-      @test orientation(b) == :CCW
+      for algo in [WindingOrientation(), TriangleOrientation()]
+        @test orientation(b, algo) == :CCW
+      end
       @test nb ≥ sum(np)
     end
 
