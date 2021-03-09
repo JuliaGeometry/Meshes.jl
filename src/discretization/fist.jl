@@ -43,7 +43,7 @@ function discretize(polyarea::PolyArea, ::FIST)
     if !isempty(𝒬) # clip an ear
       # 0. select candidate ear
       i = pop!(𝒬)
-      remove_adjacent_ears!(𝒬)
+      remove_adjacent_ears!(𝒬, i)
       𝒬[𝒬.>i] .-= 1
       # 1. push a new triangle to 𝒯
       push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
