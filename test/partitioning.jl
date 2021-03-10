@@ -82,9 +82,39 @@
     @test length(p) == 4
     @test all(nelements.(p) .== 25)
 
+    p = partition(grid, BlockPartition(T(5),T(5), neighbors = false))
+    @test length(p) == 4
+    @test all(nelements.(p) .== 25)
+
+    p = partition(grid, BlockPartition(T(5),T(5), neighbors = true))
+    @test length(p) == 4
+    @test all(nelements.(p) .== 25)
+
     p = partition(grid, BlockPartition(T(5),T(2)))
     @test length(p) == 12
     @test Set(nelements.(p)) == Set([5,10])
+
+    p = partition(grid, BlockPartition(T(5),T(2), neighbors = false))
+    @test length(p) == 12
+    @test Set(nelements.(p)) == Set([5,10])
+
+    p = partition(grid, BlockPartition(T(5),T(2), neighbors = true))
+    @test length(p) == 12
+    @test Set(nelements.(p)) == Set([5,10])
+
+    grid3d = CartesianGrid{T}(100,100,100)
+
+    p = partition(grid3d, BlockPartition(T(2.),T(2.),T(2.), neighbors = true))
+    @test length(p) == 125000
+    @test all(nelements.(p) .== 8)
+
+    p = partition(grid3d, BlockPartition(T(2.), T(2.), T(2.), neighbors = false))
+    @test length(p) == 125000
+    @test all(nelements.(p) .== 8)
+
+    p = partition(grid3d, BlockPartition(T(2.), T(2.), T(2.)))
+    @test length(p) == 125000
+    @test all(nelements.(p) .== 8)
   end
 
   @testset "BisectPointPartition" begin
