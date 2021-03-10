@@ -133,6 +133,10 @@ export
   angles, innerangles, close!, open!,
   orientation, bridge,
 
+  # orientation algorithms
+  WindingOrientation,
+  TriangleOrientation,
+
   # geometry sets
   GeometrySet,
 

@@ -117,8 +117,11 @@ function orientation(c::Chain{Dim,T}, ::WindingOrientation) where {Dim,T}
   isapprox(w, π, atol=atol(T)) ? :CCW : :CW
 end
 
-function orientation(c::Chain, ::TriangleOrientation)
-  @error "not implemented"
+function orientation(c::Chain{Dim,T}, ::TriangleOrientation) where {Dim,T}
+  v = vertices(c)
+  Δ(i) = signarea(v[1], v[i], v[i+1])
+  a = mapreduce(Δ, +, 2:length(v)-1)
+  a ≥ zero(T) ? :CCW : :CW
 end
 
 """

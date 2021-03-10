@@ -85,9 +85,23 @@ end
 # return index of all ears of 𝒫
 ears(𝒫) = filter(i -> isear(𝒫, i), 1:nvertices(𝒫))
 
+# tell whether or not vertex i is an ear of 𝒫
+function isear(𝒫, i)
+  O = orientation(𝒫, TriangleOrientation())
+  if O == :CCW
+    isearccw(𝒫, i)
+  else
+    # reverse chain and index
+    n = nvertices(𝒫)
+    ℛ = reverse(𝒫)
+    j = n - i - 1
+    isearccw(ℛ, j)
+  end
+end
+
 # tells whether or not vertex i is an ear of 𝒫
 # assuming that 𝒫 has counter-clockwise orientation
-function isear(𝒫::Chain{Dim,T}, i) where {Dim,T}
+function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   v = vertices(𝒫)
 
   # helper function to compute the vexity of vertex i

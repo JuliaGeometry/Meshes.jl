@@ -90,9 +90,8 @@ counter-clockwise (CCW) or clockwise (CW).
 
 For polygons with holes, returns a list of orientations.
 """
-function orientation(p::PolyArea)
-  orientation.([p.outer; p.inners])
-end
+orientation(p::PolyArea, algo=WindingOrientation()) =
+  orientation.([p.outer; p.inners], Ref(algo))
 
 """
     unique(polyarea)
