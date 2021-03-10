@@ -1,4 +1,13 @@
 @testset "Discretization" begin
+  function is_fully_connected(mesh::UnstructuredMesh)
+    inds = collect(1:length(vertices(mesh)))
+    connected = collect(Iterators.flatten(getproperty.(mesh.connec, :list)))
+    all(inds .== sort(unique(inds)))
+  end
+  function has_same_vertices(𝒫::PolyArea, mesh::UnstructuredMesh)
+    Set(vcat(vertices.(chains(𝒫))...)) == Set(vertices(mesh))
+  end
+
   @testset "FIST" begin
     𝒫 = Chain(P2[(0,0),(1,0),(1,1),(2,1),(2,2),(1,2),(0,0)])
     @test Meshes.ears(𝒫) == [2,4,5]
@@ -35,6 +44,8 @@
     𝒫 = PolyArea(points)
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+    @test is_fully_connected(mesh)
+    @test has_same_vertices(𝒫, mesh)
 
     poly = readpoly(joinpath(datadir, "poly1.line"))
     points = P2.(coordinates.(vertices(first(chains(poly)))))
@@ -52,6 +63,8 @@
     𝒫 = PolyArea([points; points[1]])
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+    @test is_fully_connected(mesh)
+    @test has_same_vertices(𝒫, mesh)
 
     poly = readpoly(joinpath(datadir, "poly2.line"))
     points = P2.(coordinates.(vertices(first(chains(poly)))))
@@ -69,6 +82,8 @@
     𝒫 = PolyArea([points; points[1]])
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+    @test is_fully_connected(mesh)
+    @test has_same_vertices(𝒫, mesh)
 
     poly = readpoly(joinpath(datadir, "poly3.line"))
     points = P2.(coordinates.(vertices(first(chains(poly)))))
@@ -86,6 +101,8 @@
     𝒫 = PolyArea([points; points[1]])
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+    @test is_fully_connected(mesh)
+    @test has_same_vertices(𝒫, mesh)
 
     poly = readpoly(joinpath(datadir, "poly4.line"))
     points = P2.(coordinates.(vertices(first(chains(poly)))))
@@ -103,6 +120,8 @@
     𝒫 = PolyArea([points; points[1]])
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+    @test is_fully_connected(mesh)
+    @test has_same_vertices(𝒫, mesh)
 
     poly = readpoly(joinpath(datadir, "poly5.line"))
     points = P2.(coordinates.(vertices(first(chains(poly)))))
@@ -120,5 +139,7 @@
     𝒫 = PolyArea([points; points[1]])
     mesh = discretize(𝒫, FIST())
     @test mesh == target
+    @test is_fully_connected(mesh)
+    @test has_same_vertices(𝒫, mesh)
   end
 end
