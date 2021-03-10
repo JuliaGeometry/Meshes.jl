@@ -42,9 +42,7 @@ function discretize(polyarea::PolyArea, ::FIST)
   while n > 3
     if !isempty(𝒬) # clip an ear
       # 0. select candidate ear
-      i = pop!(𝒬)
-      remove_adjacent_ears!(𝒬, i)
-      𝒬[𝒬.>i] .-= 1
+      i = pop!(𝒬); 𝒬[𝒬.>i] .-= 1
       # 1. push a new triangle to 𝒯
       push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
       # 2. remove the vertex from 𝒫
@@ -52,8 +50,8 @@ function discretize(polyarea::PolyArea, ::FIST)
       𝒫 = Chain(points[inds])
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
-      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [mod1(i,n)])
-      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [mod1(i+1,n)])
+      update_adjacent_ear!(𝒬, 𝒫, i-1, n)
+      update_adjacent_ear!(𝒬, 𝒫, i, n)
       clipped = true
     elseif clipped # recompute all ears
       𝒬 = ears(𝒫)
@@ -145,14 +143,17 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   isconvex && !intersects && incones
 end
 
-function remove_adjacent_ears!(𝒬, i)
-  ind = 1
-  while ind <= length(𝒬)
-    j = 𝒬[ind]
-    if j <= i+2 && j >= i-2
-      deleteat!(𝒬, ind)
-    else
-      ind += 1
+function update_adjacent_ear!(𝒬, 𝒫, i, n)
+  if !isear(𝒫, i)
+    ind = findfirst(==(i), 𝒬)
+    !isnothing(ind) && deleteat!(𝒬, ind)
+    if !isnothing(ind)
+      println("$(i) was deleted from 𝒬 (index $ind)")
+    end
+  else
+    if mod1(i,n) ∉ 𝒬
+      ind = something(findlast(<(mod1(i,n)), 𝒬), 1) + 1
+      insert!(𝒬, ind, mod1(i,n))
     end
   end
 end
