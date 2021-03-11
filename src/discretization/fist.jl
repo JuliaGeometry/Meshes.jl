@@ -147,9 +147,6 @@ function update_adjacent_ear!(𝒬, 𝒫, i, n)
   if !isear(𝒫, i)
     ind = findfirst(==(i), 𝒬)
     !isnothing(ind) && deleteat!(𝒬, ind)
-    if !isnothing(ind)
-      println("$(i) was deleted from 𝒬 (index $ind)")
-    end
   else
     if mod1(i,n) ∉ 𝒬
       ind = something(findlast(<(mod1(i,n)), 𝒬), 1) + 1
