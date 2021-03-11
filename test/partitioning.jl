@@ -99,7 +99,6 @@
     n = metadata(p)[:neighbors]
     @test length(n) == length(p)
     @test all(0 .< length.(n) .< 27) 
-    
   end
 
   @testset "BisectPointPartition" begin
