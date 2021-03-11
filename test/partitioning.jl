@@ -98,7 +98,7 @@
     @test Set(nelements.(p)) == Set(125)
     n = metadata(p)[:neighbors]
     @test length(n) == length(p)
-    @test all(0 .< length.(n) .≤ 27) 
+    @test all(0 .< length.(n) .< 27) 
     
   end
 
