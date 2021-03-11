@@ -7,6 +7,7 @@
     BlockPartition(side₁, side₂, ...)
 
 A method for partitioning spatial objects into blocks of given `sides`.
+Metadata calculation is disabled by default. Enable it by calling BlockPartition with neighbors = true.
 """
 struct BlockPartition{Dim,T} <: PartitionMethod
   sides::SVector{Dim,T}
@@ -57,7 +58,7 @@ function partition(object, method::BlockPartition)
   # intitialize metadata
   metadata = Dict()
   neighbors = [Int[] for i in 1:prod(nblocks)]
-  
+
   # neighboring blocks metadata
   if method.neighbors == true
     bstart  = CartesianIndex(ntuple(i -> 1, Dim))
