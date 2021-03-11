@@ -149,7 +149,7 @@ function update_adjacent_ear!(𝒬, 𝒫, i, n)
     !isnothing(ind) && deleteat!(𝒬, ind)
   else
     if mod1(i,n) ∉ 𝒬
-      ind = something(findlast(<(mod1(i,n)), 𝒬), 1) + 1
+      ind = something(findfirst(>(mod1(i,n)), 𝒬), 1)
       insert!(𝒬, ind, mod1(i,n))
     end
   end
