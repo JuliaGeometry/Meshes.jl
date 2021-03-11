@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    BlockPartition(sides)
-    BlockPartition(side₁, side₂, ...)
+    BlockPartition(sides; neighbors=false)
+    BlockPartition(side1, side2, ...; neighbors=false)
 
 A method for partitioning spatial objects into blocks of given `sides`.
 Optionally, compute the `neighbors` of a block as the metadata.
