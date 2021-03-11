@@ -1,8 +1,8 @@
 @testset "Discretization" begin
   function is_fully_connected(mesh::UnstructuredMesh)
-    inds = collect(1:length(vertices(mesh)))
-    connected = collect(Iterators.flatten(getproperty.(mesh.connec, :list)))
-    all(inds .== sort(unique(inds)))
+    inds = 1:length(vertices(mesh))
+    connected = Iterators.flatten(getproperty.(mesh.connec, :list))
+    all(inds .== sort(unique(connected)))
   end
   function has_same_vertices(𝒫::PolyArea, mesh::UnstructuredMesh)
     Set(vcat(vertices.(chains(𝒫))...)) == Set(vertices(mesh))
