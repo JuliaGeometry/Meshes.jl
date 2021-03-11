@@ -43,35 +43,42 @@
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
 
     𝒫 = readpoly(joinpath(datadir, "poly1.line"))
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
 
     𝒫 = readpoly(joinpath(datadir, "poly2.line"))
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
 
     𝒫 = readpoly(joinpath(datadir, "poly3.line"))
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
 
     𝒫 = readpoly(joinpath(datadir, "poly4.line"))
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
 
     𝒫 = readpoly(joinpath(datadir, "poly5.line"))
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
 
     𝒫 = readpoly(joinpath(datadir, "smooth1.line"))
     mesh = discretize(𝒫, FIST())
     @test is_fully_connected(mesh)
     @test has_same_vertices(𝒫, mesh)
+    @test nelements(mesh) == nvertices(𝒫) - 2
   end
 end
