@@ -98,13 +98,14 @@
     @test Set(nelements.(p)) == Set(125)
     n = metadata(p)[:neighbors]
     @test length(n) == length(p)
-    @test all(0 .< length.(n) .<= 125)
+    @test all(0 .< length.(n) .≤ 27) 
+    
   end
 
   @testset "BisectPointPartition" begin
     grid = CartesianGrid((10,10), T.((-0.5,-0.5)), T.((1.0, 1.0)))
 
-    p = partition(grid, BisectPointPartition(T.((0.0,1.0)), T.((5.0,5.1))))
+    p = partition(grid, BisectPointPartition(T.((0.0,1.0)), T.((5.0,5.1)))) 
     p1, p2 = p[1], p[2]
     @test nelements(p1) == 60
     @test nelements(p2) == 40
