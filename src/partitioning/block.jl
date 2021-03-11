@@ -3,18 +3,19 @@
 # ------------------------------------------------------------------
 
 """
-    BlockPartition(sides)
-    BlockPartition(side₁, side₂, ...)
+    BlockPartition(sides; neighbors=false)
+    BlockPartition(side₁, side₂, ...; neighbors=false)
 
 A method for partitioning spatial objects into blocks of given `sides`.
+Optionally, compute the `neighbors` of a block as the metadata.
 """
 struct BlockPartition{Dim,T} <: PartitionMethod
   sides::SVector{Dim,T}
+  neighbors::Bool
 end
 
-BlockPartition(sides::NTuple{Dim,T}) where {Dim,T} = BlockPartition{Dim,T}(sides)
-
-BlockPartition(sides::Vararg{T,Dim}) where {Dim,T} = BlockPartition(sides)
+BlockPartition(sides::NTuple{Dim,T}; neighbors=false) where {Dim,T} = BlockPartition{Dim,T}(sides, neighbors)
+BlockPartition(sides::Vararg{T,Dim}; neighbors=false) where {Dim,T} = BlockPartition(SVector(sides), neighbors)
 
 function partition(object, method::BlockPartition)
   Dim = embeddim(object)
@@ -36,7 +37,6 @@ function partition(object, method::BlockPartition)
   nblocks = @. nleft + nright
 
   subsets   = [Int[] for i in 1:prod(nblocks)]
-  neighbors = [Int[] for i in 1:prod(nblocks)]
 
   # Cartesian to linear indices
   linear = LinearIndices(Dims(nblocks))
@@ -54,17 +54,25 @@ function partition(object, method::BlockPartition)
 
     append!(subsets[i], j)
   end
+  
+  # intitialize metadata
+  metadata = Dict()
+  neighbors = [Int[] for i in 1:prod(nblocks)]
 
   # neighboring blocks metadata
-  bstart  = CartesianIndex(ntuple(i -> 1, Dim))
-  boffset = CartesianIndex(ntuple(i -> 1, Dim))
-  bfinish = CartesianIndex(Dims(nblocks))
-  for (i, bcoords) in enumerate(bstart:bfinish)
-    for b in (bcoords - boffset):(bcoords + boffset)
-      if all(Tuple(bstart) .≤ Tuple(b) .≤ Tuple(bfinish)) && b ≠ bcoords
-        push!(neighbors[i], linear[b])
+  if method.neighbors == true
+    bstart  = CartesianIndex(ntuple(i -> 1, Dim))
+    boffset = CartesianIndex(ntuple(i -> 1, Dim))
+    bfinish = CartesianIndex(Dims(nblocks))
+    for (i, bcoords) in enumerate(bstart:bfinish)
+      for b in (bcoords - boffset):(bcoords + boffset)
+        if all(Tuple(bstart) .≤ Tuple(b) .≤ Tuple(bfinish)) && b ≠ bcoords
+          push!(neighbors[i], linear[b])
+        end
       end
     end
+
+    metadata[:neighbors] = neighbors
   end
 
   # filter out empty blocks
@@ -76,9 +84,6 @@ function partition(object, method::BlockPartition)
       setdiff!(n, i)
     end
   end
-
-  # save metadata
-  metadata = Dict(:neighbors => neighbors)
 
   Partition(object, subsets, metadata)
 end
