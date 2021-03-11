@@ -36,7 +36,6 @@ function partition(object, method::BlockPartition)
   nblocks = @. nleft + nright
 
   subsets   = [Int[] for i in 1:prod(nblocks)]
-  neighbors = [Int[] for i in 1:prod(nblocks)]
 
   # Cartesian to linear indices
   linear = LinearIndices(Dims(nblocks))
@@ -57,7 +56,8 @@ function partition(object, method::BlockPartition)
   
   # intitialize metadata
   metadata = Dict()
-
+  neighbors = [Int[] for i in 1:prod(nblocks)]
+  
   # neighboring blocks metadata
   if method.neighbors == true
     bstart  = CartesianIndex(ntuple(i -> 1, Dim))
