@@ -187,7 +187,7 @@
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]
-    polys1 = [readpoly(Float64, joinpath(datadir, fname)) for fname in fnames]
+    polys1 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys1
       @test nvertices(first(chains(poly))) == 30
       @test !hasholes(poly)
