@@ -54,7 +54,7 @@ function discretize(polyarea::PolyArea, ::FIST)
         if isear(𝒫, j)
           𝒬 = 𝒬 ∪ [mod1(j,n)]
         else
-          𝒬 = setdiff(𝒬, [mod1(j,n)])
+          setdiff!(𝒬, [mod1(j,n)])
         end
       end
       clipped = true
