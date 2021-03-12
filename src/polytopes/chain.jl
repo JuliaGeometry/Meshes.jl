@@ -250,8 +250,12 @@ function Base.show(io::IO, c::Chain)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
-  N = length(c.vertices)
-  lines = ["  └─$v" for v in c.vertices]
+  v = c.vertices
+  N = length(v)
+  I, J = N > 10 ? (5, N-4) : (N, N+1)
+  lines = [["  └─$(v[i])" for i in 1:I]
+           (N > 10 ? ["  ⋮"] : [])
+           ["  └─$(v[i])" for i in J:N]]
   println(io, "$N-chain{$Dim,$T}")
   print(io, join(lines, "\n"))
 end
