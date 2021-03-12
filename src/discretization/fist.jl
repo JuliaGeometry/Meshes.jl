@@ -50,8 +50,13 @@ function discretize(polyarea::PolyArea, ::FIST)
       𝒫 = Chain(points[inds])
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
-      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [mod1(i,n)])
-      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [mod1(i+1,n)])
+      for j in (i-1, i)
+        if isear(𝒫, j)
+          𝒬 = 𝒬 ∪ [mod1(j,n)]
+        else
+          𝒬 = setdiff(𝒬, [mod1(j,n)])
+        end
+      end
       clipped = true
     elseif clipped # recompute all ears
       𝒬 = ears(𝒫)
