@@ -187,7 +187,7 @@
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]
-    polys1 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
+    polys1 = [readpoly(Float64, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys1
       @test nvertices(first(chains(poly))) == 30
       @test !hasholes(poly)
@@ -201,7 +201,7 @@
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output smooth1 --smooth 2
     fnames = ["smooth$i.line" for i in 1:5]
-    polys2 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
+    polys2 = [readpoly(Float64, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys2
       @test nvertices(first(chains(poly))) == 120
       @test !hasholes(poly)
@@ -215,7 +215,7 @@
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output hole1 --holes 2
     fnames = ["hole$i.line" for i in 1:5]
-    polys3 = [readpoly(joinpath(datadir, fname)) for fname in fnames]
+    polys3 = [readpoly(Float64, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys3
       rings = chains(poly)
       @test nvertices(first(rings)) < 30

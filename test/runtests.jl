@@ -18,13 +18,13 @@ datadir = joinpath(@__DIR__,"data")
 
 # helper function to read *.line files containing polygons
 # generated with RPG (https://github.com/cgalab/genpoly-rpg)
-function readpoly(fname)
+function readpoly(T, fname)
   open(fname, "r") do f
     # read outer chain
     n = parse(Int, readline(f))
     outer = map(1:n) do _
       coords = readline(f)
-      x, y = parse.(Float64, split(coords))
+      x, y = parse.(T, split(coords))
       Point(x, y)
     end
 
@@ -34,7 +34,7 @@ function readpoly(fname)
       n = parse(Int, readline(f))
       inner = map(1:n) do _
         coords = readline(f)
-        x, y = parse.(Float64, split(coords))
+        x, y = parse.(T, split(coords))
         Point(x, y)
       end
       push!(inners, inner)
