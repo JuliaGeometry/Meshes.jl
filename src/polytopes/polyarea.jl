@@ -48,6 +48,8 @@ PolyArea(outer::Vararg{TP}) where {TP<:Tuple} = PolyArea(collect(Point.(outer)))
 ==(p1::PolyArea, p2::PolyArea) =
   p1.outer == p2.outer && p1.inners == p2.inners
 
+vertices(p::PolyArea) = [vertices(p.outer); reduce(vcat, vertices(inner) for inner in p.inners)]
+
 nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
 
 centroid(p::PolyArea) = centroid(p.outer)
