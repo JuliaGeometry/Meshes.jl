@@ -50,8 +50,8 @@ function discretize(polyarea::PolyArea, ::FIST)
       𝒫 = Chain(points[inds])
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
-      isear(𝒫, i)   && (𝒬 = 𝒬 ∪ [mod1(i,n)])
-      isear(𝒫, i+1) && (𝒬 = 𝒬 ∪ [mod1(i+1,n)])
+      update_adjacent_ear!(𝒬, 𝒫, i-1, n)
+      update_adjacent_ear!(𝒬, 𝒫, i, n)
       clipped = true
     elseif clipped # recompute all ears
       𝒬 = ears(𝒫)
@@ -141,4 +141,16 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   incones = incone(i-1, i+1) && incone(i+1, i-1)
 
   isconvex && !intersects && incones
+end
+
+function update_adjacent_ear!(𝒬, 𝒫, i, n)
+  if !isear(𝒫, i)
+    ind = findfirst(==(i), 𝒬)
+    !isnothing(ind) && deleteat!(𝒬, ind)
+  else
+    if mod1(i,n) ∉ 𝒬
+      ind = something(findfirst(>(mod1(i,n)), 𝒬), 1)
+      insert!(𝒬, ind, mod1(i,n))
+    end
+  end
 end
