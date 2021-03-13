@@ -3,7 +3,8 @@ using Tables
 using Distances
 using Statistics
 using LinearAlgebra
-using CategoricalArrays, CircularArrays
+using CategoricalArrays
+using CircularArrays
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
