@@ -79,8 +79,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       NonIntersectingSegments()
     end
   elseif !determinatex && !determinatey # CASE (III)
-    u, v = (x2 - x1), (y2 - y1)
-    if !isapprox(u × v, zero(T), atol=atol(T)^2)
+    if !isapprox((x2 - x1) × (y2 - y1), zero(T), atol=atol(T)^2)
       # configuration (3)
       CornerTouchingSegments(intersectpoint(s1, s2))
     else
