@@ -35,51 +35,83 @@
     poly = PolyArea(points)
     mesh = discretize(poly, FIST())
     @test mesh == target
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly1.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly2.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly3.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly4.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly5.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth1.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     # TODO: hanging when T=Float32
     # poly = readpoly(T, joinpath(datadir, "smooth2.line"))
     # mesh = discretize(poly, FIST())
+    # @test Set(vertices(poly)) == Set(vertices(mesh))
+    # @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth3.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth4.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth5.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "hole1.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "hole2.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "hole3.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "hole4.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "hole5.line"))
     mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
   end
 end
