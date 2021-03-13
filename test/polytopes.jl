@@ -186,9 +186,9 @@
 
     # test accessor methods
     poly = PolyArea(P2[(1,2),(2,3),(1,2)])
-    @test vertices(poly) == CircularVector(P2[(1,2),(2,3)])
+    @test vertices(poly) == Meshes.CircularVector(P2[(1,2),(2,3)])
     poly = PolyArea(P2[(1,2),(2,3),(1,2)], [P2[(1.1, 2.54),(1.4,1.5),(1.1,2.54)]])
-    @test vertices(poly) == CircularVector(P2[(1,2),(2,3),(1.1,2.54),(1.4,1.5)])
+    @test vertices(poly) == Meshes.CircularVector(P2[(1,2),(2,3),(1.1,2.54),(1.4,1.5)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
