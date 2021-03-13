@@ -48,7 +48,11 @@ PolyArea(outer::Vararg{TP}) where {TP<:Tuple} = PolyArea(collect(Point.(outer)))
 ==(p1::PolyArea, p2::PolyArea) =
   p1.outer == p2.outer && p1.inners == p2.inners
 
-vertices(p::PolyArea) = [vertices(p.outer); reduce(vcat, vertices(inner) for inner in p.inners)]
+function vertices(p::PolyArea{Dim,T}) where {Dim,T}
+  vo = vertices(p.outer)
+  vi = reduce(vcat, vertices(inner) for inner in p.inners; init=Point{Dim,T}[])
+  [vo; vi]
+end
 
 nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
 

@@ -4,6 +4,7 @@ using Distances
 using Statistics
 using LinearAlgebra
 using CategoricalArrays
+using CircularArrays
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
