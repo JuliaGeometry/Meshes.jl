@@ -15,7 +15,7 @@ using Random
 using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
-using Distances: Euclidean, Mahalanobis, evaluate
+using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
@@ -26,6 +26,7 @@ import Tables
 import Random
 import Base: values, ==, +, -, *
 import StatsBase: sample
+import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # numerical tolerances
@@ -47,6 +48,9 @@ include("pointsets.jl")
 
 # basic geometries
 include("geometries.jl")
+
+# geometric distances
+include("distances.jl")
 
 # geometry sets
 include("geometrysets.jl")
