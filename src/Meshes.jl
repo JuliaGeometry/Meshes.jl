@@ -119,7 +119,7 @@ export
   Primitive,
   Line, Box, Ball, Sphere, Cylinder,
   center, radius, height, sides,
-  measure, diagonal,
+  points, measure, diagonal,
 
   # polytopes
   Polytope, Polygon, Polyhedron,
