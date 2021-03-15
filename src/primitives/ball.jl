@@ -5,7 +5,7 @@
 """
     Ball(center, radius)
 
-A Ball with `center` and `radius`.
+A ball with `center` and `radius`.
 """
 struct Ball{Dim,T} <: Primitive{Dim,T}
   center::Point{Dim,T}
