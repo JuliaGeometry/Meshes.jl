@@ -34,6 +34,19 @@ function vertices(c::Chain)
 end
 
 """
+    segments(chain)
+
+Return the segments linking consecutive points of the `chain`.
+"""
+function segments(c::Chain)
+  vs = vertices(c)
+  n = length(vs)
+  map(1:(n-1), 2:n) do (i, j)
+    Segment(vs[i], vs[j])
+  end
+end
+
+"""
     isclosed(chain)
 
 Tells whether or not the chain is closed.
