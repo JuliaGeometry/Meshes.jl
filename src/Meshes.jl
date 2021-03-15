@@ -117,7 +117,7 @@ export
 
   # primitives
   Primitive,
-  Box, Ball, Sphere, Cylinder,
+  Line, Box, Ball, Sphere, Cylinder,
   center, radius, height, sides,
   measure, diagonal,
 

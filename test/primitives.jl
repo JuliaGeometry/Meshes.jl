@@ -1,4 +1,9 @@
 @testset "Primitives" begin
+  @testset "Lines" begin
+    l = Line(P2(0,0), P2(1,1))
+    @test paramdim(l) == 1
+  end
+
   @testset "Boxes" begin
     b = Box(P2(0,0), P2(1,1))
     @test embeddim(b) == 2
