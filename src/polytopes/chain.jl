@@ -63,7 +63,7 @@ intersect at end points.
 """
 function issimple(c::Chain)
   vs = c.vertices
-  ss = [Segment(view(vs, [i,i+1])) for i in 1:length(vs)-1]
+  ss = segments(c)
   for i in 1:length(ss)
     for j in i+1:length(ss)
       I = intersecttype(ss[i], ss[j])
