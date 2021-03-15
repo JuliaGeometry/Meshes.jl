@@ -13,6 +13,7 @@ See https://en.wikipedia.org/wiki/Geometric_primitive.
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
 include("primitives/line.jl")
+include("primitives/ray.jl")
 include("primitives/box.jl")
 include("primitives/ball.jl")
 include("primitives/sphere.jl")
