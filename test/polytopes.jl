@@ -133,6 +133,10 @@
   end
 
   @testset "Chains" begin
+    # segments
+    c = Chain(P2[(1,1),(2,2),(3,3)])
+    @test segments(c) == [Segment(P2(1,1),P2(2,2)),Segment(P2(2,2),P2(3,3))]
+
     # unique vertices
     c = Chain(P2[(1,1),(2,2),(2,2),(3,3)])
     @test unique(c) == Chain(P2[(1,1),(2,2),(3,3)])
