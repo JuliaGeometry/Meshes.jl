@@ -3,9 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Line(a, b)
+    Line(p1, p2)
 
-A line passing through points `a` and `b`.
+A line passing through points `p1` and `p2`.
+
+See also [`Segment`](@ref).
 """
 struct Line{Dim,T} <: Primitive{Dim,T}
   a::Point{Dim,T}

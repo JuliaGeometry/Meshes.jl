@@ -5,7 +5,9 @@
 """
     Segment(p1, p2)
 
-A line segment with points `p1`, `p2`.
+An oriented line segment with end points `p1`, `p2`.
+
+See also [`Line`](@ref).
 """
 struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
