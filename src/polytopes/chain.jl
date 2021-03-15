@@ -41,7 +41,7 @@ Return the segments linking consecutive points of the `chain`.
 function segments(c::Chain)
   vs = vertices(c)
   n = length(vs)
-  [Segment(vs[i,i+1]) for i in 1:n-1]
+  [Segment(view(vs, [i,i+1])) for i in 1:n-1]
 end
 
 """
