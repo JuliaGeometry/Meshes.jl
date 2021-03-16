@@ -15,8 +15,7 @@ end
 Chain(vertices::CircularVector) =
   Chain([collect(vertices); vertices[begin]])
 
-Chain(vertices::AbstractVector) = Chain(collect(vertices))
-Chain(vertices::AbstractVector{<:Tuple}) = Chain(Point.(vertices))
+Chain(vertices::AbstractVector{<:Point}) = Chain(collect(vertices))
 
 nvertices(c::Chain) = length(c.vertices) - isclosed(c)
 
