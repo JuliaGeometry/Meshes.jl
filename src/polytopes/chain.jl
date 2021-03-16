@@ -8,9 +8,12 @@
 A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 See https://en.wikipedia.org/wiki/Polygonal_chain.
 """
-struct Chain{Dim,T} <: Polytope{1,Dim,T}
-  vertices::Vector{Point{Dim,T}}
+struct Chain{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
+  vertices::V
 end
+
+# specialize Polytope outer constructor to use standard vector
+Chain(vertices::Vararg{<:Point}) = Chain(collect(vertices))
 
 Chain(vertices::CircularVector) =
   Chain([collect(vertices); vertices[begin]])

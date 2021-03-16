@@ -5,6 +5,7 @@ using Statistics
 using LinearAlgebra
 using CategoricalArrays
 using CircularArrays
+using StaticArrays
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
