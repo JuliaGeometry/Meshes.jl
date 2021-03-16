@@ -79,6 +79,7 @@ include("sampling.jl")
 include("partitioning.jl")
 include("intersections.jl")
 include("discretization.jl")
+include("simplification.jl")
 include("boundingboxes.jl")
 
 # utilities
@@ -245,6 +246,11 @@ export
   DiscretizationMethod,
   FIST,
   discretize,
+
+  # simplification
+  SimplificationMethod,
+  DouglasPeucker,
+  simplify,
 
   # bounding boxes
   boundingbox,
