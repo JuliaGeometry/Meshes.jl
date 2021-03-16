@@ -5,6 +5,11 @@
     @test points(l) == (P2(0,0), P2(1,1))
   end
 
+  @testset "Rays" begin
+    r = Ray(P2(0,0), V2(1,1))
+    @test paramdim(r) == 1
+  end
+
   @testset "Boxes" begin
     b = Box(P2(0,0), P2(1,1))
     @test embeddim(b) == 2
