@@ -34,6 +34,17 @@ function vertices(c::Chain)
 end
 
 """
+    segments(chain)
+
+Return the segments linking consecutive points of the `chain`.
+"""
+function segments(c::Chain)
+  vs = c.vertices
+  n = length(vs)
+  (Segment(view(vs, [i,i+1])) for i in 1:n-1)
+end
+
+"""
     isclosed(chain)
 
 Tells whether or not the chain is closed.
@@ -52,7 +63,7 @@ intersect at end points.
 """
 function issimple(c::Chain)
   vs = c.vertices
-  ss = [Segment(view(vs, [i,i+1])) for i in 1:length(vs)-1]
+  ss = collect(segments(c))
   for i in 1:length(ss)
     for j in i+1:length(ss)
       I = intersecttype(ss[i], ss[j])

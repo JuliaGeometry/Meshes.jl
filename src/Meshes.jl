@@ -132,7 +132,7 @@ export
   Chain, PolyArea,
   vertices, nvertices,
   faces, facets,
-  windingnumber, chains,
+  windingnumber, chains, segments,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
   orientation, bridge,
