@@ -1,12 +1,5 @@
 @testset "Polytopes" begin
   @testset "Segment" begin
-    # constructors
-    s1 = Segment(P2[(1,1),(2,2),(1,1)])
-    s2 = Segment(P2(1,1),P2(2,2),P2(1,1))
-    s3 = Segment(@SVector P2[(1,1),(2,2),(1,1)])
-    s4 = Segment(T.((1,1.)),T.((2.,2.)),T.((1.,1.)))
-    @test s1 == s2 == s3 == s4
-
     @test paramdim(Segment) == 1
 
     s1 = Segment(P2(0,0), P2(1,0))
