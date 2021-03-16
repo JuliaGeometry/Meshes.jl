@@ -1,5 +1,12 @@
 @testset "Polytopes" begin
   @testset "Segment" begin
+    # constructors
+    s1 = Segment(P2[(1,1),(2,2),(1,1)])
+    s2 = Segment(P2(1,1),P2(2,2),P2(1,1))
+    s3 = Segment(@SVector P2[(1,1),(2,2),(1,1)])
+    s4 = Segment(T.((1,1.)),T.((2.,2.)),T.((1.,1.)))
+    @test s1 == s2 == s3 == s4
+
     @test paramdim(Segment) == 1
 
     s1 = Segment(P2(0,0), P2(1,0))
@@ -137,9 +144,9 @@
     c1 = Chain(P2[(1,1),(2,2),(1,1)])
     c2 = Chain(P2(1,1),P2(2,2),P2(1,1))
     c3 = Chain(CircularVector(P2[(1,1),(2,2)]))
-    c4 = Chain(@SVector P2[(1,1),(2,2),(1,1)])
-    c5 = Chain(T.((1,1.)),T.((2.,2.)),T.((1.,1.)))
-    @test c1 == c2 == c3 == c4 == c5
+    c4 = Chain(T.((1,1.)),T.((2.,2.)),T.((1.,1.)))
+    @test c2 isa Chain{2,T,Vector{P2}}
+    @test c1 == c2 == c3 == c4
 
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])
