@@ -13,7 +13,6 @@ struct Chain{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
 end
 
 Chain(vertices::Vararg{<:Point}) = Chain(collect(vertices))
-
 Chain(vertices::CircularVector) =
   Chain([collect(vertices); vertices[begin]])
 
