@@ -8,8 +8,8 @@
 A ray originating at point `p`, pointed in direction `v`.
 """
 struct Ray{Dim,T} <: Primitive{Dim,T}
-    p::Point{Dim,T}
-    v::Vec{Dim,T}
+  p::Point{Dim,T}
+  v::Vec{Dim,T}
 end
 
 paramdim(::Type{<:Ray}) = 1
