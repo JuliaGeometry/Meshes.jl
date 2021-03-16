@@ -133,6 +133,14 @@
   end
 
   @testset "Chains" begin
+    # constructors
+    c1 = Chain(P2[(1,1),(2,2),(1,1)])
+    c2 = Chain(P2(1,1),P2(2,2),P2(1,1))
+    c3 = Chain(CircularVector(P2[(1,1),(2,2)]))
+    c4 = Chain(@SVector P2[(1,1),(2,2),(1,1)])
+    c5 = Chain((1.,1.),(2.,2.),(1.,1.))
+    @test c1 == c2 == c3 == c4 == c5
+
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])
     @test collect(segments(c)) == [Segment(P2(1,1),P2(2,2)),Segment(P2(2,2),P2(3,3))]
