@@ -39,9 +39,9 @@ end
 Return the segments linking consecutive points of the `chain`.
 """
 function segments(c::Chain)
-  vs = vertices(c)
+  vs = c.vertices
   n = length(vs)
-  [Segment(view(vs, [i,i+1])) for i in 1:n-1]
+  (Segment(view(vs, [i,i+1])) for i in 1:n-1)
 end
 
 """
@@ -63,7 +63,7 @@ intersect at end points.
 """
 function issimple(c::Chain)
   vs = c.vertices
-  ss = segments(c)
+  ss = collect(segments(c))
   for i in 1:length(ss)
     for j in i+1:length(ss)
       I = intersecttype(ss[i], ss[j])
