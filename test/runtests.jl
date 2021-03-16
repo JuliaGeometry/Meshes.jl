@@ -53,6 +53,7 @@ testfiles = [
   "pointsets.jl",
   "polytopes.jl",
   "primitives.jl",
+  "distances.jl",
   "geometrysets.jl",
   "mesh.jl",
   "traits.jl",
