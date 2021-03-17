@@ -14,9 +14,10 @@ struct BlockPartition{Dim,T} <: PartitionMethod
   neighbors::Bool
 end
 
+BlockPartition(sides) = BlockPartition(sides, false)
 BlockPartition(sides::NTuple; neighbors=false) =
   BlockPartition(SVector(sides), neighbors)
-BlockPartition(sides::Vararg; neighbors=false) =
+BlockPartition(sides::Vararg{<:Number}; neighbors=false) =
   BlockPartition(SVector(sides), neighbors)
 
 function partition(object, method::BlockPartition)
