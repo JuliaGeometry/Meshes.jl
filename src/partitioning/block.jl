@@ -14,8 +14,10 @@ struct BlockPartition{Dim,T} <: PartitionMethod
   neighbors::Bool
 end
 
-BlockPartition(sides::NTuple{Dim,T}; neighbors=false) where {Dim,T} = BlockPartition{Dim,T}(sides, neighbors)
-BlockPartition(sides::Vararg{T,Dim}; neighbors=false) where {Dim,T} = BlockPartition(SVector(sides), neighbors)
+BlockPartition(sides::NTuple{Dim,T}; neighbors=false) where {Dim,T} =
+  BlockPartition(SVector(sides), neighbors)
+BlockPartition(sides::Vararg{T}; neighbors=false) where {T} =
+  BlockPartition(SVector(sides), neighbors)
 
 function partition(object, method::BlockPartition)
   Dim = embeddim(object)
