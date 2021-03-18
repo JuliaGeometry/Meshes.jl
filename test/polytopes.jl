@@ -226,7 +226,7 @@
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output smooth1 --smooth 2
     fnames = ["smooth$i.line" for i in 1:5]
-    polys2 = [readpoly(Float64, joinpath(datadir, fname)) for fname in fnames]
+    polys2 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys2
       @test nvertices(first(chains(poly))) == 120
       @test !hasholes(poly)
@@ -240,7 +240,7 @@
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output hole1 --holes 2
     fnames = ["hole$i.line" for i in 1:5]
-    polys3 = [readpoly(Float64, joinpath(datadir, fname)) for fname in fnames]
+    polys3 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys3
       rings = chains(poly)
       @test nvertices(first(rings)) < 30
@@ -260,10 +260,15 @@
       b  = bridge(poly)
       nb = nvertices(b)
       np = nvertices.(chains(poly))
-      for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(b, algo) == :CCW
-      end
       @test nb ≥ sum(np)
+      # triangle orientation always works even
+      # in the presence of self-intersections
+      @test orientation(b, TriangleOrientation()) == :CCW
+      # winding orientation is only suitable
+      # for simple polygonal chains
+      if issimple(b)
+        @test orientation(b, WindingOrientation()) == :CCW
+      end
     end
 
     # bridges between holes

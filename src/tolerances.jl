@@ -14,4 +14,4 @@ isapprox(a::T, b::T, atol=tol(T))
 ```
 """
 atol(::Type{Float64}) = 1e-10
-atol(::Type{Float32}) = 1f-6
+atol(::Type{Float32}) = 1f-5
