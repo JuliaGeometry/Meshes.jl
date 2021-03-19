@@ -8,6 +8,10 @@
   @testset "Rays" begin
     r = Ray(P2(0,0), V2(1,1))
     @test paramdim(r) == 1
+    @test r(T(0.)) == P2(0,0)
+    @test r(T(1.)) == P2(1,1)
+    @test r(T(Inf)) == P2(Inf,Inf)
+    @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
   end
 
   @testset "Boxes" begin
