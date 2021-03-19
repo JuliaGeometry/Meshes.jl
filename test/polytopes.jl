@@ -97,6 +97,7 @@
     @test s1(T(0.)) == P2(0., 0.)
     @test s1(T(1.)) == P2(1., 1.)
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s1(T(1.2))
+    @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s1(T(-0.5))
   end
 
   @testset "Triangles" begin
