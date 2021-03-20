@@ -24,8 +24,8 @@ struct BezierCurve{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Primitive{Dim,T}
   controls::V
 end
 
-BezierCurve(points::Vararg) = BezierCurve(collect(points))
 BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
+BezierCurve(points::Vararg) = BezierCurve(collect(points))
 
 ncontrols(b::BezierCurve) = length(b.controls)
 
