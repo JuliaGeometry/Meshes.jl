@@ -14,6 +14,24 @@
     @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
   end
 
+  @testset "Bezier curves" begin
+    b = BezierCurve(P2(0,0),P2(0.5,1),P2(1,0))
+    for method in [DeCasteljau(), Horner()]
+      @test b(T(0), method) == P2(0,0)
+      @test b(T(1), method) == P2(1,0)
+      @test b(T(0.5), method) == P2(0.5,0.5)
+      @test b(T(0.5), method) == P2(0.5,0.5)
+      @test_throws DomainError(T(-0.1), "b(t) is not defined for t outside [0, 1].") b(T(-0.1), method)
+      @test_throws DomainError(T(1.2), "b(t) is not defined for t outside [0, 1].") b(T(1.2), method)
+    end
+
+    b = BezierCurve(P2.(randn(100), randn(100)))
+    t1 = @timed b(T(0.2))
+    t2 = @timed b(T(0.2), Horner())
+    @test t1.time > t2.time
+    @test t2.bytes < 100
+  end
+
   @testset "Boxes" begin
     b = Box(P2(0,0), P2(1,1))
     @test embeddim(b) == 2

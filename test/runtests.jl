@@ -9,6 +9,9 @@ using StaticArrays
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
+# fix import conflict with Plots
+const BezierCurve = Meshes.BezierCurve
+
 # workaround GR warnings
 ENV["GKSwstype"] = "100"
 
