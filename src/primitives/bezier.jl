@@ -60,7 +60,7 @@ function (curve::BezierCurve)(t, ::DeCasteljau)
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
-  ss = collect(segments(Chain(curve.controls)))
+  ss = segments(Chain(curve.controls))
   points = [s(t) for s in ss]
   if length(points) == 1
     points[1]
