@@ -15,6 +15,9 @@
   end
 
   @testset "Bezier curves" begin
+    # fix import conflict with Plots
+    BezierCurve = Meshes.BezierCurve
+
     b = BezierCurve(P2(0,0),P2(0.5,1),P2(1,0))
     for method in [DeCasteljau(), Horner()]
       @test b(T(0), method) == P2(0,0)
