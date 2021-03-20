@@ -83,7 +83,7 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   cs = curve.controls
   t̄ = one(T) - t
   n = degree(curve)
-  pₙ = coordinates(cs[end])
+  pₙ = @views coordinates(cs[end])
   aₙ = pₙ
 
   # initialization with i = n + 1
@@ -92,7 +92,7 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   t̄ⁿ⁻ⁱ = one(T)
   for i in n:-1:1
     cᵢ₋₁ *= i / (n - i + one(T))
-    pᵢ₋₁ = coordinates(cs[i])
+    pᵢ₋₁ = @views coordinates(cs[i])
     t̄ⁿ⁻ⁱ *= t̄
     aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ
     bᵢ₋₁ = aᵢ₋₁ + bᵢ₋₁ * t
