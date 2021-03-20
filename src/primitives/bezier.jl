@@ -54,14 +54,10 @@ struct Horner <: BezierEvalMethod end
 
 (curve::BezierCurve)(t) = curve(t, DeCasteljau())
 
-function check_domain(::BezierCurve, t)
+function (curve::BezierCurve)(t, ::DeCasteljau)
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
-end
-
-function (curve::BezierCurve)(t, ::DeCasteljau)
-  check_domain(curve, t)
   ss = collect(segments(Chain(curve.controls)))
   points = [s(t) for s in ss]
   if length(points) == 1
@@ -72,7 +68,9 @@ function (curve::BezierCurve)(t, ::DeCasteljau)
 end
 
 function (curve::BezierCurve{<:Any,T})(t, ::Horner) where {T}
-  check_domain(curve, t)
+  if t < 0 || t > 1
+    throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
+  end
   tᶜ = one(T) - t
   tᵢ = one(T)
   cᵢ = one(T)
