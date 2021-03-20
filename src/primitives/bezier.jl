@@ -5,7 +5,7 @@
 """
     BezierCurve(points)
 
-A Bézier curve with control points `points`.
+A recursive Bézier curve with control points `points`.
 See https://en.wikipedia.org/wiki/Bézier_curve.
 A point on the curve `b` can be evaluated by calling
 `b(t)` with `t` between `0` and `1`.
