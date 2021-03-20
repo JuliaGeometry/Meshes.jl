@@ -67,7 +67,7 @@ function (curve::BezierCurve)(t, ::DeCasteljau)
   end
 end
 
-function (curve::BezierCurve{<:Any,T})(t, ::Horner) where {T}
+function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
