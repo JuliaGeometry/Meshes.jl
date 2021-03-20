@@ -29,6 +29,8 @@ BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
 
 ncontrols(b::BezierCurve) = length(b.controls)
 
+degree(b::BezierCurve) = ncontrols(b) - 1
+
 """
 Evaluation method used to obtain a point along
 a Bézier curve from a parametric expression.
@@ -67,21 +69,35 @@ function (curve::BezierCurve)(t, ::DeCasteljau)
   end
 end
 
+"""
+Apply Horner's method on the monomial representation of the
+Bézier curve B = ∑ᵢ aᵢtⁱ with i ∈ [0, n], n the degree of the
+curve, aᵢ = binomial(n, i) * pᵢ * t̄ⁿ⁻ⁱ and t̄ = (1 - t).
+Horner's rule recursively reconstructs B from a sequence bᵢ
+with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
+"""
 function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
-  tᶜ = one(T) - t
-  tᵢ = one(T)
-  cᵢ = one(T)
   cs = curve.controls
-  bᵢ = coordinates(first(cs)) .* tᶜ
-  n = ncontrols(curve) - 1
-  for i in 1:n-1
-    p = coordinates(cs[i+1])
-    tᵢ = tᵢ * t
-    cᵢ = (n - i + 1) * cᵢ / i
-    bᵢ = (bᵢ + cᵢ * p * tᵢ) * tᶜ
+  t̄ = one(T) - t
+  n = degree(curve)
+  pₙ = coordinates(cs[end])
+  aₙ = pₙ
+
+  # initialization with i = n + 1
+  bᵢ₋₁ = bₙ = aₙ
+  cᵢ₋₁ = one(T)
+  t̄ⁿ⁻ⁱ = one(T)
+  for i in n:-1:1
+    cᵢ₋₁ *= i / (n - i + one(T))
+    pᵢ₋₁ = coordinates(cs[i])
+    t̄ⁿ⁻ⁱ *= t̄
+    aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ
+    bᵢ₋₁ = aᵢ₋₁ + bᵢ₋₁ * t
   end
-  Point(bᵢ + coordinates(last(cs)) * tᵢ * t)
+
+  b₀ = bᵢ₋₁
+  Point(b₀)
 end
