@@ -122,7 +122,8 @@ export
 
   # primitives
   Primitive,
-  Line, Ray, Box, Ball, Sphere, Cylinder,
+  Line, Ray, BezierCurve, Box, Ball, Sphere, Cylinder,
+  ncontrols, degree, Horner, DeCasteljau,
   center, radius, height, sides,
   points, measure, diagonal,
 
