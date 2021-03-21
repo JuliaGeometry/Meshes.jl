@@ -258,6 +258,8 @@ function innerangles(c::Chain{Dim,T}) where {Dim,T}
   [θ > 0 ? 2*T(π) - θ : -θ for θ in θs]
 end
 
+Base.view(c::Chain, inds) = Chain(view(vertices(c), inds))
+
 function Base.show(io::IO, c::Chain)
   N = length(c.vertices)
   print(io, "$N-chain")

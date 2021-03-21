@@ -192,6 +192,11 @@
     # centroid
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test centroid(c) == P2(0.5, 0.5)
+
+    # views
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test view(c, 1:3) == Chain(P2[(0,0),(1,0),(1,1)])
+    @test view(c, 4:6) == Chain(P2[(0,1),(0,0),(1,0)])
   end
 
   @testset "Hexahedrons" begin
