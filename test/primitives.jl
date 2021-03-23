@@ -15,7 +15,8 @@
   end
 
   @testset "Planes" begin
-    p = Plane(P3(0, 0, 0), V3(1, 1, 1))
+    p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
+    @test p(T(1.0), T(0.0)) == P3(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
   end
