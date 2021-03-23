@@ -8,7 +8,7 @@ FIST
 # FIST  
 Examples for the FIST algorithm. 
   
-## Usage  
+### Usage  
   
 ```julia
 poly = readpoly(Float32, joinpath(datadir, "smooth1.line"))
