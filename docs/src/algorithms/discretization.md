@@ -51,8 +51,7 @@ plot(poly)
 ```  
 We will now use the `FIST` algorithm to discretize the polygon we previously obtained into triangles, and plot the discretized mesh in the following manner:  
 ```@example overview
-#Discretize the polygon into Triangles using FIST
+# Discretize the polygon into Triangles using FIST
 mesh = discretize(poly, FIST())
 plot(mesh)
 ```
-
