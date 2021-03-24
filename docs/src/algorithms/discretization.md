@@ -49,7 +49,7 @@ Now, we will read point values from an example file `smooth1.line`, and construc
 poly = readpoly(Float32, "/home/atreyamaj/.julia/dev/Meshes/test/data/smooth1.line")
 plot(poly)
 ```  
-We will now use the `FIST` algorithm to discretize the polygon we previously obtained into triangles, and plot the discretized mesh in the following manner:  
+We will now use the `FIST` algorithm to discretize the polygon we previously obtained into triangles, and plot the discretized mesh:  
 ```@example overview
 # Discretize the polygon into Triangles using FIST
 mesh = discretize(poly, FIST())
