@@ -43,7 +43,7 @@ function readpoly(T, fname)
   end
 end
 ```  
-Now, we will read point values from an example file `smooth1.line`, and construct a polygon from those files using the `readpoly` function in the following manner:  
+Now, we will read point values from an example file `smooth1.line`, and construct a polygon from those points using the `readpoly` function:  
 ```@example overview
 # Construct the polygon from the points in 'smooth1.line' 
 poly = readpoly(Float32, "/home/atreyamaj/.julia/dev/Meshes/test/data/smooth1.line")
