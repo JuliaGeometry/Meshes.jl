@@ -10,7 +10,7 @@ Examples for the FIST algorithm.
 
 ### Usage  
   
-```@example overview
+```@example FIST
 using Meshes
 using Plots
 
