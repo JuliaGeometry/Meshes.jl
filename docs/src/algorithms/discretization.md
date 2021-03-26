@@ -15,7 +15,7 @@ using Plots; gr(size=(300,300))
 using GeoStats
 ```
 
-Now, we will read point values from an example file `smooth1.line`, and construct a polygon from those files using the `readpoly` function in the following manner:  
+Now, we will read some point values, and construct a polygon from those files using the `PolyArea` function in the following manner:  
 
 ```@example overview
 #Construct the polygon from data points
