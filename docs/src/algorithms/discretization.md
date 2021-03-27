@@ -19,7 +19,11 @@ mesh = discretize(poly, FIST())
 plot(plot(poly), plot(mesh))
 ```
 ###### Examples of polygons and their corresponding FIST-discretized triangular meshes:  
-```@setup FIST
+```@eval 
+using Plots
+using Meshes
+using Markdown
+gr(size = (500,300))
 function readpoly(T, fname) 
   open(fname, "r") do f
     # read outer chain
@@ -46,24 +50,120 @@ function readpoly(T, fname)
     PolyArea(outer, inners)
   end
 end
-poly1 = readpoly(Float32, "../../../test/data/smooth1.line")
-mesh1 = discretize(poly1, FIST())
-poly2 = readpoly(Float32, "../../../test/data/poly1.line")
-mesh2 = discretize(poly2, FIST())
-poly3 = readpoly(Float32, "../../../test/data/hole1.line")
-mesh3 = discretize(poly3, FIST())
-poly4 = readpoly(Float32, "../../../test/data/poly3.line")
-mesh4 = discretize(poly4, FIST())
+poly = readpoly(Float32, "../../../test/data/smooth1.line")
+mesh = discretize(poly, FIST())
+plot(plot(poly), plot(mesh))
+savefig("plot1.svg")
+Markdown.parse("![Plot](plot1.svg)")
 ```
-```@example FIST
-plot(plot(poly1), plot(mesh1))
+```@eval
+using Plots
+using Meshes
+using Markdown
+gr(size = (500,300))
+function readpoly(T, fname) 
+  open(fname, "r") do f
+    # read outer chain
+    n = parse(Int, readline(f))
+    outer = map(1:n) do _
+      coords = readline(f)
+      x, y = parse.(T, split(coords))
+      Point(x, y)
+    end
+
+    # read inner chains
+    inners = []
+    while !eof(f)
+      n = parse(Int, readline(f))
+      inner = map(1:n) do _
+        coords = readline(f)
+        x, y = parse.(T, split(coords))
+        Point(x, y)
+      end
+      push!(inners, inner)
+    end
+
+    # return polygonal area
+    PolyArea(outer, inners)
+  end
+end
+poly = readpoly(Float32, "../../../test/data/poly1.line")
+mesh = discretize(poly, FIST())
+plot(plot(poly), plot(mesh))
+savefig("plot2.svg")
+Markdown.parse("![Plot](plot2.svg)")
 ```
-```@example FIST
-plot(plot(poly2), plot(mesh2))
+```@eval
+using Plots
+using Meshes
+using Markdown
+gr(size = (500,300))
+function readpoly(T, fname) 
+  open(fname, "r") do f
+    # read outer chain
+    n = parse(Int, readline(f))
+    outer = map(1:n) do _
+      coords = readline(f)
+      x, y = parse.(T, split(coords))
+      Point(x, y)
+    end
+
+    # read inner chains
+    inners = []
+    while !eof(f)
+      n = parse(Int, readline(f))
+      inner = map(1:n) do _
+        coords = readline(f)
+        x, y = parse.(T, split(coords))
+        Point(x, y)
+      end
+      push!(inners, inner)
+    end
+
+    # return polygonal area
+    PolyArea(outer, inners)
+  end
+end
+poly = readpoly(Float32, "../../../test/data/hole1.line")
+mesh = discretize(poly, FIST())
+plot(plot(poly), plot(mesh))
+savefig("plot3.svg")
+Markdown.parse("![Plot](plot3.svg)")
 ```
-```@example FIST
-plot(plot(poly3), plot(mesh3))
-```
-```@example FIST
-plot(plot(poly4), plot(mesh4))
+```@eval
+using Plots
+using Meshes
+using Markdown
+gr(size = (500,300))
+function readpoly(T, fname) 
+  open(fname, "r") do f
+    # read outer chain
+    n = parse(Int, readline(f))
+    outer = map(1:n) do _
+      coords = readline(f)
+      x, y = parse.(T, split(coords))
+      Point(x, y)
+    end
+
+    # read inner chains
+    inners = []
+    while !eof(f)
+      n = parse(Int, readline(f))
+      inner = map(1:n) do _
+        coords = readline(f)
+        x, y = parse.(T, split(coords))
+        Point(x, y)
+      end
+      push!(inners, inner)
+    end
+
+    # return polygonal area
+    PolyArea(outer, inners)
+  end
+end
+poly = readpoly(Float32, "../../../test/data/poly3.line")
+mesh = discretize(poly, FIST())
+plot(plot(poly), plot(mesh))
+savefig("plot4.svg")
+Markdown.parse("![Plot](plot4.svg)")
 ```
