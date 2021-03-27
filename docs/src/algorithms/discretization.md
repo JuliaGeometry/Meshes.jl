@@ -24,33 +24,7 @@ using Plots
 using Meshes
 using Markdown
 gr(size = (500,300))
-function readpoly(T, fname) 
-  open(fname, "r") do f
-    # read outer chain
-    n = parse(Int, readline(f))
-    outer = map(1:n) do _
-      coords = readline(f)
-      x, y = parse.(T, split(coords))
-      Point(x, y)
-    end
-
-    # read inner chains
-    inners = []
-    while !eof(f)
-      n = parse(Int, readline(f))
-      inner = map(1:n) do _
-        coords = readline(f)
-        x, y = parse.(T, split(coords))
-        Point(x, y)
-      end
-      push!(inners, inner)
-    end
-
-    # return polygonal area
-    PolyArea(outer, inners)
-  end
-end
-poly = readpoly(Float32, "../../../test/data/smooth1.line")
+poly = PolyArea(Point{2,Float32}[Point(0.22926679f0, 0.47329807f0), Point(0.23094065f0, 0.44913536f0), Point(0.2569517f0, 0.38217533f0), Point(0.3072999f0, 0.272418f0), Point(0.34814754f0, 0.18421611f0), Point(0.37949452f0, 0.11756973f0), Point(0.4013409f0, 0.07247882f0), Point(0.41368666f0, 0.048943404f0), Point(0.42597583f0, 0.031655528f0), Point(0.4382084f0, 0.0206152f0), Point(0.45038435f0, 0.015822414f0), Point(0.4625037f0, 0.017277176f0), Point(0.47175184f0, 0.02439156f0), Point(0.47812873f0, 0.03716557f0), Point(0.4816344f0, 0.055599205f0), Point(0.48226887f0, 0.07969247f0), Point(0.48172843f0, 0.10446181f0), Point(0.4800131f0, 0.12990724f0), Point(0.47712287f0, 0.15602873f0), Point(0.47305775f0, 0.18282633f0), Point(0.47093934f0, 0.20558843f0), Point(0.47076762f0, 0.22431506f0), Point(0.47254258f0, 0.23900622f0), Point(0.47626427f0, 0.24966191f0), Point(0.47768936f0, 0.25845313f0), Point(0.47681788f0, 0.26537988f0), Point(0.4736498f0, 0.27044216f0), Point(0.46818516f0, 0.27363995f0), Point(0.4613889f0, 0.27232954f0), Point(0.45326096f0, 0.2665109f0), Point(0.44380143f0, 0.256184f0), Point(0.43301025f0, 0.24134888f0), Point(0.4246466f0, 0.22978415f0), Point(0.41871038f0, 0.22148979f0), Point(0.4152017f0, 0.21646582f0), Point(0.4141205f0, 0.21471222f0), Point(0.41227448f0, 0.21589448f0), Point(0.40966362f0, 0.22001258f0), Point(0.40628797f0, 0.22706655f0), Point(0.40214747f0, 0.23705636f0), Point(0.40200475f0, 0.24653101f0), Point(0.40585983f0, 0.25549048f0), Point(0.41371268f0, 0.2639348f0), Point(0.4255633f0, 0.2718639f0), Point(0.4378565f0, 0.28495985f0), Point(0.4505922f0, 0.30322257f0), Point(0.46377045f0, 0.32665208f0), Point(0.47739124f0, 0.35524836f0), Point(0.5046394f0, 0.36442512f0), Point(0.5455148f0, 0.35418236f0), Point(0.60001767f0, 0.32452005f0), Point(0.66814786f0, 0.27543822f0), Point(0.7186763f0, 0.24664374f0), Point(0.75160307f0, 0.23813659f0), Point(0.76692814f0, 0.2499168f0), Point(0.7646515f0, 0.28198436f0), Point(0.7769703f0, 0.29925033f0), Point(0.8038847f0, 0.3017147f0), Point(0.84539455f0, 0.28937748f0), Point(0.9015f0, 0.26223865f0), Point(0.94408435f0, 0.24899776f0), Point(0.9731477f0, 0.24965483f0), Point(0.98869f0, 0.26420987f0), Point(0.9907113f0, 0.29266283f0), Point(0.9849871f0, 0.31338844f0), Point(0.97151726f0, 0.32638666f0), Point(0.950302f0, 0.3316575f0), Point(0.9213412f0, 0.32920095f0), Point(0.8798396f0, 0.34078467f0), Point(0.8257972f0, 0.36640862f0), Point(0.7592141f0, 0.40607283f0), Point(0.6800901f0, 0.4597773f0), Point(0.6450007f0, 0.49104902f0), Point(0.6539457f0, 0.49988794f0), Point(0.7069251f0, 0.48629412f0), Point(0.803939f0, 0.45026752f0), Point(0.877913f0, 0.4226481f0), Point(0.9288472f0, 0.40343583f0), Point(0.9567415f0, 0.39263073f0), Point(0.961596f0, 0.39023277f0), Point(0.9419039f0, 0.40523484f0), Point(0.89766514f0, 0.43763688f0), Point(0.8288798f0, 0.48743892f0), Point(0.7355478f0, 0.55464095f0), Point(0.6655121f0, 0.60063523f0), Point(0.6187727f0, 0.6254217f0), Point(0.5953296f0, 0.62900037f0), Point(0.5951828f0, 0.6113712f0), Point(0.57516366f0, 0.60261106f0), Point(0.53527224f0, 0.6027198f0), Point(0.4755085f0, 0.6116975f0), Point(0.3958725f0, 0.6295441f0), Point(0.33913234f0, 0.6398651f0), Point(0.30528808f0, 0.6426605f0), Point(0.2943397f0, 0.6379303f0), Point(0.30628717f0, 0.6256744f0), Point(0.32149008f0, 0.6093727f0), Point(0.33994842f0, 0.5890249f0), Point(0.36166218f0, 0.5646312f0), Point(0.38663134f0, 0.5361916f0), Point(0.3919681f0, 0.520893f0), Point(0.3776725f0, 0.5187355f0), Point(0.34374446f0, 0.52971905f0), Point(0.29018405f0, 0.5538437f0), Point(0.25439468f0, 0.5678829f0), Point(0.2363764f0, 0.5718367f0), Point(0.23612918f0, 0.56570506f0), Point(0.25365302f0, 0.549488f0), Point(0.2733971f0, 0.5246488f0), Point(0.29536137f0, 0.49118724f0), Point(0.3195459f0, 0.4491035f0), Point(0.34595063f0, 0.39839754f0), Point(0.3647463f0, 0.3590396f0), Point(0.37593287f0, 0.33102974f0), Point(0.37951034f0, 0.31436795f0), Point(0.37547874f0, 0.30905423f0), Point(0.36070493f0, 0.3204269f0), Point(0.33518887f0, 0.348486f0), Point(0.29893062f0, 0.3932315f0), Point(0.25193012f0, 0.45466346f0), Point(0.22926679f0, 0.47329807f0)], [])
 mesh = discretize(poly, FIST())
 plot(plot(poly), plot(mesh))
 savefig("plot1.svg")
@@ -61,33 +35,8 @@ using Plots
 using Meshes
 using Markdown
 gr(size = (500,300))
-function readpoly(T, fname) 
-  open(fname, "r") do f
-    # read outer chain
-    n = parse(Int, readline(f))
-    outer = map(1:n) do _
-      coords = readline(f)
-      x, y = parse.(T, split(coords))
-      Point(x, y)
-    end
 
-    # read inner chains
-    inners = []
-    while !eof(f)
-      n = parse(Int, readline(f))
-      inner = map(1:n) do _
-        coords = readline(f)
-        x, y = parse.(T, split(coords))
-        Point(x, y)
-      end
-      push!(inners, inner)
-    end
-
-    # return polygonal area
-    PolyArea(outer, inners)
-  end
-end
-poly = readpoly(Float32, "../../../test/data/poly1.line")
+poly = PolyArea(Point{2,Float32}[Point(0.18142937f0, 0.54681134f0), Point(0.38282228f0, 0.107781954f0), Point(0.43220532f0, 0.013640274f0), Point(0.48068276f0, 0.019459315f0), Point(0.48322055f0, 0.11583236f0), Point(0.46696007f0, 0.2230227f0), Point(0.48184678f0, 0.2656454f0), Point(0.45998818f0, 0.2784367f0), Point(0.4168235f0, 0.2190962f0), Point(0.4124987f0, 0.21208182f0), Point(0.39593673f0, 0.2520411f0), Point(0.44333926f0, 0.28375763f0), Point(0.4978224f0, 0.3981428f0), Point(0.7703431f0, 0.20181546f0), Point(0.7612364f0, 0.33008572f0), Point(0.9856581f0, 0.2215304f0), Point(0.99374324f0, 0.3353423f0), Point(0.87789994f0, 0.32551613f0), Point(0.5614043f0, 0.540334f0), Point(0.9494598f0, 0.39622766f0), Point(0.9688778f0, 0.38663587f0), Point(0.59554976f0, 0.655444f0), Point(0.59496254f0, 0.58492756f0), Point(0.27641845f0, 0.656314f0), Point(0.3242084f0, 0.6072907f0), Point(0.42408508f0, 0.49353212f0), Point(0.20984341f0, 0.59003067f0), Point(0.2799388f0, 0.52516246f0), Point(0.38555774f0, 0.32233855f0), Point(0.36943135f0, 0.30108362f0), Point(0.18142937f0, 0.54681134f0)], [])
 mesh = discretize(poly, FIST())
 plot(plot(poly), plot(mesh))
 savefig("plot2.svg")
@@ -98,33 +47,7 @@ using Plots
 using Meshes
 using Markdown
 gr(size = (500,300))
-function readpoly(T, fname) 
-  open(fname, "r") do f
-    # read outer chain
-    n = parse(Int, readline(f))
-    outer = map(1:n) do _
-      coords = readline(f)
-      x, y = parse.(T, split(coords))
-      Point(x, y)
-    end
-
-    # read inner chains
-    inners = []
-    while !eof(f)
-      n = parse(Int, readline(f))
-      inner = map(1:n) do _
-        coords = readline(f)
-        x, y = parse.(T, split(coords))
-        Point(x, y)
-      end
-      push!(inners, inner)
-    end
-
-    # return polygonal area
-    PolyArea(outer, inners)
-  end
-end
-poly = readpoly(Float32, "../../../test/data/hole1.line")
+poly = PolyArea(Point{2,Float32}[Point(0.18142937f0, 0.54681134f0), Point(0.38282228f0, 0.107781954f0), Point(0.43220532f0, 0.013640274f0), Point(0.48068276f0, 0.019459315f0), Point(0.48322055f0, 0.11583236f0), Point(0.46696007f0, 0.2230227f0), Point(0.48184678f0, 0.2656454f0), Point(0.45998818f0, 0.2784367f0), Point(0.4168235f0, 0.2190962f0), Point(0.4124987f0, 0.21208182f0), Point(0.39593673f0, 0.2520411f0), Point(0.44333926f0, 0.28375763f0), Point(0.4978224f0, 0.3981428f0), Point(0.7703431f0, 0.20181546f0), Point(0.7612364f0, 0.33008572f0), Point(0.9856581f0, 0.2215304f0), Point(0.99374324f0, 0.3353423f0), Point(0.9688778f0, 0.38663587f0), Point(0.59554976f0, 0.655444f0), Point(0.59496254f0, 0.58492756f0), Point(0.27641845f0, 0.656314f0), Point(0.3242084f0, 0.6072907f0), Point(0.42408508f0, 0.49353212f0), Point(0.20984341f0, 0.59003067f0), Point(0.18142937f0, 0.54681134f0)], [])
 mesh = discretize(poly, FIST())
 plot(plot(poly), plot(mesh))
 savefig("plot3.svg")
@@ -135,33 +58,7 @@ using Plots
 using Meshes
 using Markdown
 gr(size = (500,300))
-function readpoly(T, fname) 
-  open(fname, "r") do f
-    # read outer chain
-    n = parse(Int, readline(f))
-    outer = map(1:n) do _
-      coords = readline(f)
-      x, y = parse.(T, split(coords))
-      Point(x, y)
-    end
-
-    # read inner chains
-    inners = []
-    while !eof(f)
-      n = parse(Int, readline(f))
-      inner = map(1:n) do _
-        coords = readline(f)
-        x, y = parse.(T, split(coords))
-        Point(x, y)
-      end
-      push!(inners, inner)
-    end
-
-    # return polygonal area
-    PolyArea(outer, inners)
-  end
-end
-poly = readpoly(Float32, "../../../test/data/poly3.line")
+poly = PolyArea(Point{2,Float32}[Point(0.20974362f0, 0.11143557f0), Point(0.24619843f0, 0.019633872f0), Point(0.2525517f0, 0.10491638f0), Point(0.2605699f0, 0.03590731f0), Point(0.2794662f0, 0.009585844f0), Point(0.54061747f0, 0.2523168f0), Point(0.5210726f0, 0.27176696f0), Point(0.55140936f0, 0.29682124f0), Point(0.5437957f0, 0.24153952f0), Point(0.6285009f0, 0.21651964f0), Point(0.6449456f0, 0.2147006f0), Point(0.59213245f0, 0.26681182f0), Point(0.8229673f0, 0.74253976f0), Point(0.65908766f0, 0.56879747f0), Point(0.5620604f0, 0.53223926f0), Point(0.52954125f0, 0.5394655f0), Point(0.23878936f0, 0.1011955f0), Point(0.22548631f0, 0.09457563f0), Point(0.2759589f0, 0.71809477f0), Point(0.5383939f0, 0.85454345f0), Point(0.6496192f0, 0.9248424f0), Point(0.6248543f0, 0.8470848f0), Point(0.749698f0, 0.8314047f0), Point(0.75198966f0, 0.9489501f0), Point(0.7027816f0, 0.92791766f0), Point(0.7210894f0, 0.8686051f0), Point(0.65642047f0, 0.9434703f0), Point(0.6423689f0, 0.9363239f0), Point(0.549272f0, 0.9676014f0), Point(0.23183312f0, 0.71278405f0), Point(0.20974362f0, 0.11143557f0)], [])
 mesh = discretize(poly, FIST())
 plot(plot(poly), plot(mesh))
 savefig("plot4.svg")
