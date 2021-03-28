@@ -17,7 +17,7 @@ FIST
 
 ```@example FIST
 using Meshes
-using Plots;
+using Plots
 gr(size = (500,300)) # hide
 
 # Outer and inner chains of Polygon
