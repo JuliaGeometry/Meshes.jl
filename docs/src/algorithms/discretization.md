@@ -26,7 +26,7 @@ inners = []
 polyarea = PolyArea(outer, inners)
 
 # Discretize with FIST
-mesh = discretize(poly, FIST())
+mesh = discretize(polyarea, FIST())
 
 # Plot the polygon and mesh
 p1 = plot(poly)
