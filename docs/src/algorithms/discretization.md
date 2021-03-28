@@ -20,12 +20,10 @@ using Meshes
 using Plots
 gr(size = (500,300)) # hide
 
-# Outer and inner chains of Polygon
+# example polygonal area
 outer = [(0.22926679, 0.47329807), (0.45326096, 0.2665109), (0.51871038, 0.22148979), (0.3152017, 0.31646582), (0.5953296, 0.62900037), (0.5951828, 0.6113712), (0.74374446, 0.72971905), (0.29018405, 0.5538437), (0.25439468, 0.5678829), (0.22926679, 0.47329807)]
 inners = []
-
-# Construct Polygon
-poly = PolyArea(outer, inners)
+polyarea = PolyArea(outer, inners)
 
 # Discretize with FIST
 mesh = discretize(poly, FIST())
