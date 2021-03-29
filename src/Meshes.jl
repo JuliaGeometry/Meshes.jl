@@ -88,6 +88,7 @@ include("utils.jl")
 # plot recipes
 include("plotrecipes/domain.jl")
 include("plotrecipes/data.jl")
+include("plotrecipes/points.jl")
 include("plotrecipes/geometries.jl")
 include("plotrecipes/pointsets.jl")
 include("plotrecipes/cartesiangrids.jl")
