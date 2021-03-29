@@ -133,7 +133,7 @@ function Base.getindex(g::CartesianGrid{Dim}, ind::Int) where {Dim}
           o[3] + (i[3]    ) * s[3])
     p7 = (o[1] + (i[1]    ) * s[1],
           o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3] - 1) * s[3])
+          o[3] + (i[3]    ) * s[3])
     p8 = (o[1] + (i[1] - 1) * s[1],
           o[2] + (i[2]    ) * s[2],
           o[3] + (i[3]    ) * s[3])

@@ -47,6 +47,19 @@
     @test nelements(grid) == 200*100
     @test eltype(grid) <: Quadrangle{2,T}
 
+    grid = CartesianGrid((20,10,5), T.((0,0,0)), T.((5,5,5)))
+    @test embeddim(grid) == 3
+    @test coordtype(grid) == T
+    @test size(grid) == (20, 10, 5)
+    @test minimum(grid) == P3(0, 0, 0)
+    @test maximum(grid) == P3(100, 50, 25)
+    @test extrema(grid) == (P3(0, 0, 0), P3(100, 50, 25))
+    @test spacing(grid) == T[5, 5, 5]
+    @test nelements(grid) == 20*10*5
+    @test eltype(grid) <: Hexahedron{3,T}
+    @test vertices(grid[1]) == P3[(0, 0, 0), (5, 0, 0), (5, 5, 0), (0, 5, 0), (0, 0, 5), (5, 0, 5), (5, 5, 5), (0, 5, 5)]
+    @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
+
     # indexing into a subgrid
     grid = CartesianGrid{T}(10,10)
     sub  = grid[1:2,1:2]
