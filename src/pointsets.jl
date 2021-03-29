@@ -49,3 +49,5 @@ Base.getindex(pset::PointSet, ind::Int) = getindex(pset.points, ind)
 nelements(pset::PointSet) = length(pset.points)
 
 centroid(pset::PointSet, ind::Int) = pset.points[ind]
+
+centroid(pset::PointSet) = Point(sum(coordinates(p) for p in pset.points) / length(pset.points))

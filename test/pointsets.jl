@@ -39,6 +39,9 @@
     @test pset[2] == P3(4,5,6)
   end
 
+  pset = PointSet(P2[(0,0), (1,0), (0,1)])
+  @test centroid(pset) == P2(1/3, 1/3)
+
   pset = PointSet(P2[(1,0), (0,1)])
   @test nelements(pset) == 2
   @test centroid(pset, 1) == P2(1, 0)
