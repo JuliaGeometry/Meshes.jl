@@ -21,6 +21,16 @@ end
   end
 end
 
+@recipe function f(ray::Ray)
+  seriestype --> :path
+  seriescolor --> :black
+  arrow --> true
+
+  a = coordinates(ray(0))
+  b = coordinates(ray(1))
+  [Tuple(a), Tuple(b)]
+end
+
 @recipe function f(chain::Chain)
   seriestype --> :path
   seriescolor --> :black
