@@ -57,14 +57,7 @@
     @test spacing(grid) == T[5, 5, 5]
     @test nelements(grid) == 20*10*5
     @test eltype(grid) <: Hexahedron{3,T}
-    @test vertices(grid[1]) == P3[(0, 0, 0),
-                                  (5, 0, 0),
-                                  (5, 5, 0),
-                                  (0, 5, 0),
-                                  (0, 0, 5),
-                                  (5, 0, 5),
-                                  (5, 5, 5),
-                                  (0, 5, 5)]
+    @test vertices(grid[1]) == P3[(0, 0, 0), (5, 0, 0), (5, 5, 0), (0, 5, 0), (0, 0, 5), (5, 0, 5), (5, 5, 5), (0, 5, 5)]
     @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
     # indexing into a subgrid
