@@ -57,18 +57,15 @@
     @test spacing(grid) == T[5, 5, 5]
     @test nelements(grid) == 20*10*5
     @test eltype(grid) <: Hexahedron{3,T}
-    @test grid[1].vertices[1] == P3(0, 0, 0)
-    @test grid[1].vertices[2] == P3(5, 0, 0)
-    @test grid[1].vertices[3] == P3(5, 5, 0)
-    @test grid[1].vertices[4] == P3(0, 5, 0)
-    @test grid[1].vertices[5] == P3(0, 0, 5)
-    @test grid[1].vertices[6] == P3(5, 0, 5)
-    @test grid[1].vertices[7] == P3(5, 5, 5)
-    @test grid[1].vertices[8] == P3(0, 5, 5)
-    @test all([centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid)])
-
-
-
+    @test vertices(grid[1]) == P3[(0, 0, 0),
+                                  (5, 0, 0),
+                                  (5, 5, 0),
+                                  (0, 5, 0),
+                                  (0, 0, 5),
+                                  (5, 0, 5),
+                                  (5, 5, 5),
+                                  (0, 5, 5)]
+    @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
     # indexing into a subgrid
     grid = CartesianGrid{T}(10,10)
