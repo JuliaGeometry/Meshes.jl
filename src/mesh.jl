@@ -21,6 +21,10 @@ function vertices end
 
 Return an iterator with `rank`-faces of the `mesh`.
 
+    faces(mesh)
+
+Return an iterator with all faces of the `mesh`.
+
 ## Example
 
 Consider a mesh of tetrahedrons embedded in a 3D space. We can loop over
@@ -33,7 +37,7 @@ triangles = faces(mesh, 2)
 segments = faces(mesh, 1)
 ```
 """
-function faces end
+faces(m::Mesh{Dim}) where {Dim} = Iterators.flatten(faces(m, r) for r in 1:Dim)
 
 """
     elements(mesh)

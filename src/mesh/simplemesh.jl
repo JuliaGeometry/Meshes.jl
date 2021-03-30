@@ -39,9 +39,8 @@ end
 vertices(m::SimpleMesh) = m.points
 
 function faces(m::SimpleMesh{Dim}, r) where {Dim}
-  @assert 0 ≤ r ≤ Dim "invalid rank for mesh"
+  @assert 0 < r ≤ Dim "invalid rank for mesh"
   ps, cs, rs = m.points, m.connec, m.ranks
-  r == 0 && return ps
   (materialize(cs[i], ps) for i in eachindex(cs) if rs[i] == r)
 end
 
