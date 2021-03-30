@@ -56,6 +56,7 @@ testfiles = [
   "primitives.jl",
   "distances.jl",
   "geometrysets.jl",
+  "connectivities.jl",
   "mesh.jl",
   "traits.jl",
   "views.jl",

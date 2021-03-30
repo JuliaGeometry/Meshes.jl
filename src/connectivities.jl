@@ -33,7 +33,7 @@ into a [`Polytope`](@ref) of type `PL`.
 Δ = connect((1,2,3), Triangle)
 ```
 """
-connect(list::NTuple{N,Int}, PL::Type{<:Polytope}) where {N} = Connectivity{PL,N}(list)
+connect(list::Tuple, PL::Type{<:Polytope}) = Connectivity{PL,length(list)}(list)
 
 """
     materialize(connec, points)
