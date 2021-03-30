@@ -209,6 +209,8 @@
 
   @testset "Tetrahedrons" begin
     @test paramdim(Tetrahedron) == 3
+    t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
+    @test measure(t) == T(1/6)
   end
 
   @testset "PolyAreas" begin
