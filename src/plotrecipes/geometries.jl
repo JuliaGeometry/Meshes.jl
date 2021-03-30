@@ -63,3 +63,11 @@ end
     end
   end
 end
+
+@recipe function f(geometries::AbstractVector{<:Geometry})
+  for geometry in geometries
+    @series begin
+      geometry
+    end
+  end
+end
