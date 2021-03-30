@@ -15,6 +15,13 @@ struct Connectivity{PL<:Polytope,N}
 end
 
 """
+    indices(connectivity)
+
+Return the list of indices of the `connectivity`.
+"""
+indices(c::Connectivity) = c.list
+
+"""
     polytopetype(connectivity)
 
 Return the face type (e.g. Triangle) of the `connectivity`.

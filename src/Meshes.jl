@@ -149,7 +149,8 @@ export
 
   # connectivities
   Connectivity,
-  polytopetype, connect, materialize,
+  indices, polytopetype,
+  connect, materialize,
 
   # ordering conventions
   OrderingConvention,
