@@ -14,6 +14,8 @@ struct Ray{Dim,T} <: Primitive{Dim,T}
   v::Vec{Dim,T}
 end
 
+Ray(p::Tuple, v::Tuple) = Ray(Point(p), Vec(v))
+
 function (r::Ray)(t)
   if t < 0
     throw(DomainError(t, "r(t) is not defined for t < 0."))

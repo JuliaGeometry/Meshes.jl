@@ -14,6 +14,8 @@ struct Line{Dim,T} <: Primitive{Dim,T}
   b::Point{Dim,T}
 end
 
+Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
+
 paramdim(::Type{<:Line}) = 1
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
