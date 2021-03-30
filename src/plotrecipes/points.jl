@@ -9,3 +9,11 @@
 
   [Tuple(coordinates(point))]
 end
+
+@recipe function f(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
+  seriestype --> :scatter
+  seriescolor --> :black
+  legend --> false
+
+  Tuple.(coordinates.(points))
+end
