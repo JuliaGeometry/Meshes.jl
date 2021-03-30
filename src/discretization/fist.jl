@@ -84,7 +84,7 @@ function discretize(polyarea::PolyArea, ::FIST)
   # remaining polygonal area is the last triangle
   push!(𝒯, connect((inds[1], inds[2], inds[3]), Triangle))
 
-  UnstructuredMesh(collect(points), 𝒯)
+  SimpleMesh(collect(points), 𝒯)
 end
 
 # return index of all ears of 𝒫

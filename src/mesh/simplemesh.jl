@@ -3,13 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    UnstructuredMesh(points, connec)
+    SimpleMesh(points, connec)
 
-An unstructured mesh with `points` and connectivities
-`connec`. The i-th element of the mesh is lazily built
-based on the connectivity list `connec[i]`.
+A simple mesh with `points` and connectivities `connec`.
+The i-th face of the mesh is lazily built based on
+the connectivity list `connec[i]`.
 """
-struct UnstructuredMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
+struct SimpleMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
   # input fields
   points::Vector{Point{Dim,T}}
   connec::Vector{Connectivity}
@@ -18,27 +18,27 @@ struct UnstructuredMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
   ranks::Vector{Int}
   elms::Vector{Int}
 
-  function UnstructuredMesh{Dim,T,C}(points, connec) where {Dim,T,C}
+  function SimpleMesh{Dim,T,C}(points, connec) where {Dim,T,C}
     ranks = [paramdim(polytopetype(c)) for c in connec]
     elms  = [i for i in eachindex(ranks) if ranks[i] == Dim]
     new(points, connec, ranks, elms)
   end
 end
 
-function UnstructuredMesh(points, connec)
+function SimpleMesh(points, connec)
   p = first(points)
   Dim = embeddim(p)
   T = coordtype(p)
   C = eltype(connec)
-  UnstructuredMesh{Dim,T,C}(points, connec)
+  SimpleMesh{Dim,T,C}(points, connec)
 end
 
-==(m1::UnstructuredMesh, m2::UnstructuredMesh) =
+==(m1::SimpleMesh, m2::SimpleMesh) =
   m1.points == m2.points && m1.connec == m2.connec
 
-vertices(m::UnstructuredMesh) = m.points
+vertices(m::SimpleMesh) = m.points
 
-function faces(m::UnstructuredMesh{Dim}, r) where {Dim}
+function faces(m::SimpleMesh{Dim}, r) where {Dim}
   @assert 0 ≤ r ≤ Dim "invalid rank for mesh"
   ps, cs, rs = m.points, m.connec, m.ranks
   r == 0 && return ps
@@ -49,16 +49,16 @@ end
 # DOMAIN INTERFACE
 # -----------------
 
-Base.getindex(m::UnstructuredMesh, ind::Int) =
+Base.getindex(m::SimpleMesh, ind::Int) =
   materialize(m.connec[m.elms[ind]], m.points)
 
-nelements(m::UnstructuredMesh) = length(m.elms)
+nelements(m::SimpleMesh) = length(m.elms)
 
 # -----------
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, ::MIME"text/plain", m::UnstructuredMesh{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", m::SimpleMesh{Dim,T}) where {Dim,T}
   nvert = length(m.points)
   nface = length(m.connec)
   println(io, m)

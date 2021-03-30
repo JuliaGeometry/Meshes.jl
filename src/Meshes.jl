@@ -170,7 +170,7 @@ export
 
   # meshes
   Mesh,
-  CartesianGrid, UnstructuredMesh,
+  CartesianGrid, SimpleMesh,
   faces, elements, spacing,
   nelements,
 

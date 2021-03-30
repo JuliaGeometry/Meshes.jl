@@ -4,7 +4,7 @@
 
 ```@docs
 CartesianGrid
-UnstructuredMesh
+SimpleMesh
 ```
 
 ## Connectivities

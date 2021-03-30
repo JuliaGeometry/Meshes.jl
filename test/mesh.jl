@@ -116,12 +116,12 @@
     end
   end
 
-  @testset "UnstructuredMesh" begin
-    @test !isgrid(UnstructuredMesh)
+  @testset "SimpleMesh" begin
+    @test !isgrid(SimpleMesh)
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
-    mesh = UnstructuredMesh(points, connec)
+    mesh = SimpleMesh(points, connec)
     triangles = Triangle.([
       P2[(0.0,0.0), (1.0,0.0), (0.5,0.5)],
       P2[(1.0,0.0), (1.0,1.0), (0.5,0.5)],
@@ -140,7 +140,7 @@
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)
     □s = connect.([(1,2,5,6),(5,6,3,4)], Quadrangle)
-    mesh = UnstructuredMesh(points, [Δs; □s])
+    mesh = SimpleMesh(points, [Δs; □s])
     elms = [
       Triangle(P2[(0.0,1.0), (0.0,0.0), (0.25,0.5)]),
       Triangle(P2[(1.0,1.0), (0.75,0.5), (1.0,0.0)]),
@@ -156,7 +156,7 @@
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
-    mesh = UnstructuredMesh(points, connec)
+    mesh = SimpleMesh(points, connec)
     bytes = @allocated faces(mesh, 2)
     @test bytes < 100
     cells = faces(mesh, 2)
@@ -165,7 +165,7 @@
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
-    mesh = UnstructuredMesh(points, connec)
+    mesh = SimpleMesh(points, connec)
     @test centroid(mesh, 1) == centroid(Triangle(P2[(0,0), (1,0), (0.5,0.5)]))
     @test centroid(mesh, 2) == centroid(Triangle(P2[(1,0), (1,1), (0.5,0.5)]))
     @test centroid(mesh, 3) == centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)]))
@@ -173,11 +173,11 @@
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
-    mesh = UnstructuredMesh(points, connec)
+    mesh = SimpleMesh(points, connec)
     if T == Float32
-      @test sprint(show, MIME"text/plain"(), mesh) == "4 UnstructuredMesh{2,Float32}\n  5 vertices\n    └─Point(0.0f0, 0.0f0)\n    └─Point(1.0f0, 0.0f0)\n    └─Point(0.0f0, 1.0f0)\n    └─Point(1.0f0, 1.0f0)\n    └─Point(0.5f0, 0.5f0)\n  4 faces\n    └─Triangle(1, 2, 5)\n    └─Triangle(2, 4, 5)\n    └─Triangle(4, 3, 5)\n    └─Triangle(3, 1, 5)"
+      @test sprint(show, MIME"text/plain"(), mesh) == "4 SimpleMesh{2,Float32}\n  5 vertices\n    └─Point(0.0f0, 0.0f0)\n    └─Point(1.0f0, 0.0f0)\n    └─Point(0.0f0, 1.0f0)\n    └─Point(1.0f0, 1.0f0)\n    └─Point(0.5f0, 0.5f0)\n  4 faces\n    └─Triangle(1, 2, 5)\n    └─Triangle(2, 4, 5)\n    └─Triangle(4, 3, 5)\n    └─Triangle(3, 1, 5)"
     elseif T == Float64
-      @test sprint(show, MIME"text/plain"(), mesh) == "4 UnstructuredMesh{2,Float64}\n  5 vertices\n    └─Point(0.0, 0.0)\n    └─Point(1.0, 0.0)\n    └─Point(0.0, 1.0)\n    └─Point(1.0, 1.0)\n    └─Point(0.5, 0.5)\n  4 faces\n    └─Triangle(1, 2, 5)\n    └─Triangle(2, 4, 5)\n    └─Triangle(4, 3, 5)\n    └─Triangle(3, 1, 5)"
+      @test sprint(show, MIME"text/plain"(), mesh) == "4 SimpleMesh{2,Float64}\n  5 vertices\n    └─Point(0.0, 0.0)\n    └─Point(1.0, 0.0)\n    └─Point(0.0, 1.0)\n    └─Point(1.0, 1.0)\n    └─Point(0.5, 0.5)\n  4 faces\n    └─Triangle(1, 2, 5)\n    └─Triangle(2, 4, 5)\n    └─Triangle(4, 3, 5)\n    └─Triangle(3, 1, 5)"
     end
   end
 end

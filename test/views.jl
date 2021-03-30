@@ -22,7 +22,7 @@
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
-    mesh = UnstructuredMesh(points, connec)
+    mesh = SimpleMesh(points, connec)
     inds = rand(1:4, 3)
     v = view(mesh, inds)
     @test nelements(v) == 3

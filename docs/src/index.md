@@ -250,7 +250,7 @@ issimple(p)
 ### Meshes
 
 Efficient (lazy) mesh representations are provided, including
-[`CartesianGrid`](@ref) and [`UnstructuredMesh`](@ref):
+[`CartesianGrid`](@ref) and [`SimpleMesh`](@ref):
 
 ```@example overview
 g = CartesianGrid(100, 100)
@@ -276,7 +276,7 @@ vector of points:
 points = Point2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
 tris  = connect.([(3,1,5),(4,6,2)], Triangle)
 quads = connect.([(1,2,5,6),(5,6,3,4)], Quadrangle)
-mesh = UnstructuredMesh(points, [tris; quads])
+mesh = SimpleMesh(points, [tris; quads])
 ```
 
 The actual geometries of the elements are materialized in a lazy fashion like

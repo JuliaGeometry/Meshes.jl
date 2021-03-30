@@ -31,7 +31,7 @@
 
     points = P2[(0,0),(1,0),(1,1),(2,1),(2,2),(1,2),(0,0)]
     connec = connect.([(4,5,6),(3,4,6),(3,6,1),(1,2,3)], Triangle)
-    target = UnstructuredMesh(points[1:end-1], connec)
+    target = SimpleMesh(points[1:end-1], connec)
     poly = PolyArea(points)
     mesh = discretize(poly, FIST())
     @test mesh == target
