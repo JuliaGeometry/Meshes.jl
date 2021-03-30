@@ -11,7 +11,7 @@ evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
 Evaluate the Euclidean distance between `point` and `line`.
 """
 function evaluate(::Euclidean, p::Point, l::Line)
-  a, b = points(l)
+  a, b = l(0), l(1)
   u = p - a
   v = b - a
   α = (u ⋅ v) / (v ⋅ v)

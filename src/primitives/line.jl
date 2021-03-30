@@ -16,9 +16,4 @@ end
 
 paramdim(::Type{<:Line}) = 1
 
-"""
-    points(line)
-
-Return the anchor points of the `line`.
-"""
-points(line::Line) = line.a, line.b
+(l::Line)(t) = l.a + t * (l.b - l.a)

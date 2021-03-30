@@ -2,7 +2,7 @@
   @testset "Lines" begin
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
-    @test points(l) == (P2(0,0), P2(1,1))
+    @test (l(0), l(1)) == (P2(0,0), P2(1,1))
   end
 
   @testset "Rays" begin

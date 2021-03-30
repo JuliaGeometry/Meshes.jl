@@ -126,7 +126,7 @@ export
   Line, Ray, Plane, BezierCurve, Box, Ball, Sphere, Cylinder,
   ncontrols, degree, Horner, DeCasteljau,
   center, radius, height, sides,
-  points, measure, diagonal,
+  measure, diagonal,
 
   # polytopes
   Polytope, Polygon, Polyhedron,
