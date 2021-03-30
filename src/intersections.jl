@@ -25,6 +25,22 @@ abstract type Intersection end
 
 Base.get(I::Intersection) = I.value
 
+# ------------------------
+# LINE-LINE INTERSECTIONS
+# ------------------------
+
+struct CrossingLines{P<:Point} <: Intersection
+  value::P
+end
+
+struct OverlappingLines{L<:Line} <: Intersection
+  value::L
+end
+
+struct NonIntersectingLines <: Intersection end
+
+Base.get(::NonIntersectingLines) = nothing
+
 # ------------------------------
 # SEGMENT-SEGMENT INTERSECTIONS
 # ------------------------------
@@ -73,5 +89,6 @@ Base.get(::NonIntersectingBoxes) = nothing
 # IMPLEMENTATIONS
 # ----------------
 
+include("intersections/lines.jl")
 include("intersections/segments.jl")
 include("intersections/boxes.jl")

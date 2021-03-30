@@ -3,6 +3,19 @@
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
     @test (l(0), l(1)) == (P2(0,0), P2(1,1))
+
+    l1 = Line(P2(0,0), P2(1,0))
+    l2 = Line(P2(-1,-1), P2(-1,1))
+    @test l1 ∩ l2 == l2 ∩ l1 == P2(-1,0)
+
+    l1 = Line(P2(0,0), P2(1,0))
+    l2 = Line(P2(0,1), P2(1,1))
+    @test l1 ∩ l2 === l2 ∩ l1 === nothing
+
+    l1 = Line(P2(0,0), P2(1,0))
+    l2 = Line(P2(1,0), P2(2,0))
+    @test_broken l1 == l2
+    @test_broken l1 ∩ l2 == l2 ∩ l1 == l1
   end
 
   @testset "Rays" begin
