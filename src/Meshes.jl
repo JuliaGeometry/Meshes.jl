@@ -234,9 +234,12 @@ export
 
   # intersections
   Intersection,
+  CrossingLines,
+  OverlappingLines,
+  NonIntersectingLines,
   CrossingSegments,
   MidTouchingSegments,
-  CornerTouchingBoxes,
+  CornerTouchingSegments,
   OverlappingSegments,
   NonIntersectingSegments,
   OverlappingBoxes,
