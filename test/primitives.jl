@@ -151,6 +151,17 @@
     @test P3(2,0,0) ∈ s
     @test P3(0,0,2) ∈ s
     @test P3(3,5,2) ∉ s
+
+    # 2D sphere passing through 3 points
+    s = Sphere(P2(0,0), P2(0.5,0), P2(1,1))
+    @test Meshes.center(s) == P2(0.25, 0.75)
+    @test radius(s) == T(0.7905694150420949)
+    s = Sphere(P2(0,0), P2(1,0), P2(0,1))
+    @test Meshes.center(s) == P2(0.5, 0.5)
+    @test radius(s) == T(0.7071067811865476)
+    s = Sphere(P2(0,0), P2(1,0), P2(1,1))
+    @test Meshes.center(s) == P2(0.5, 0.5)
+    @test radius(s) == T(0.7071067811865476)
   end
 
   @testset "Cylinder" begin
