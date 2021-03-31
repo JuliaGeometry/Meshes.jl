@@ -31,6 +31,14 @@ end
   [Tuple(a), Tuple(b)]
 end
 
+@recipe function f(sphere::Sphere, nsamples=100)
+  seriestype --> :path
+  seriescolor --> :black
+
+  points = collect(sample(sphere, RegularSampling(nsamples)))
+  [points; first(points)]
+end
+
 @recipe function f(chain::Chain)
   seriestype --> :path
   seriescolor --> :black
