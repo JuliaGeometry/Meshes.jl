@@ -50,13 +50,21 @@ Please open an issue if you encounter any problems. We take issues very
 seriously and value any type of feedback.
 
 Contributors are kindly asked to adhere to the [ColPrac](https://github.com/SciML/ColPrac) guidelines, and more specifically:
+
+- Issues:
+  - should discuss a concrete problem
+  - should contain actionable items
+  - should be marked with existing labels
+  - should contain references if possible
 - Pull Requests:
-  - should adopt the existing code style
   - should only do one thing
+  - should adopt the existing code style
   - should define appropriate tests for code changes
 
-If you have questions, don't hesitate to ask. Join our community in our
+If you have questions or would like to brainstorm ideas in general,
+don't hesitate to start a thread in our
 [zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
+As ideas become concrete, they can be converted into GitHub issues for further action.
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue?style=flat-square
 [docs-stable-url]: https://JuliaGeometry.github.io/Meshes.jl/stable
