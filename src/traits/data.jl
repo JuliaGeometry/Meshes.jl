@@ -33,11 +33,28 @@ Return the constructor of the data type `D` as a function.
 The function takes a `domain` and `table` as inputs and
 combines them into an instance of the data type.
 """
-function constructor(::Type{Data}) end
+function constructor end
 
 # ----------
 # FALLBACKS
 # ----------
+
+function (D::Type{<:Data})(stable)
+  # build domain from geometry column
+  ctable = Tables.columns(stable)
+  elms   = Tables.getcolumn(ctable, :geometry)
+  domain = GeometrySet(elms)
+
+  # build table from remaining columns
+  vars = setdiff(Tables.columnnames(ctable), (:geometry,))
+  cols = map(vars) do var
+    var => Tables.getcolumn(ctable, var)
+  end
+  table = (; cols...)
+
+  # combine the two with constructor
+  constructor(D)(domain, table)
+end
 
 ==(data₁::Data, data₂::Data) =
   domain(data₁) == domain(data₂) && values(data₁) == values(data₂)
@@ -56,13 +73,13 @@ Tables.istable(::Type{<:Data}) = true
 
 Tables.rowaccess(::Type{<:Data}) = true
 
-Tables.rows(data::Data) = DataRows(Tables.rows(values(data)), domain(data))
+Tables.rows(data::Data) = DataRows(domain(data), Tables.rows(values(data)))
 
 # wrapper type for rows of the data table
 # so that we can easily inform the schema
-struct DataRows{𝒯,𝒟}
-  rtable::𝒯
+struct DataRows{𝒟,𝒯}
   domain::𝒟
+  rtable::𝒯
 end
 
 function Base.iterate(rows::DataRows, state=1)
@@ -89,23 +106,7 @@ TableTraits.isiterabletable(data::Data) = true
 IIE.getiterator(data::Data) = Tables.datavaluerows(Tables.rows(data))
 IIE.isiterable(data::Data) = true
 
-function Tables.materializer(::D) where {D<:Data}
-  function materializer(stable)
-    # build domain from geometry column
-    elms = Tables.getcolumn(stable, :geometry)
-    domain = GeometrySet(elms)
-
-    # build table from remaining columns
-    vars = setdiff(Tables.columnnames(stable), :geometry)
-    cols = map(vars) do var
-      var => Tables.getcolumn(stable, var)
-    end
-    table = (; cols...)
-
-    # combine the two with constructor
-    constructor(D)(domain, table)
-  end
-end
+Tables.materializer(D::Type{<:Data}) = D
 
 # -------------------
 # VARIABLE INTERFACE

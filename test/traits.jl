@@ -54,6 +54,13 @@
     Meshes.values(data::DummyData) = data.table
     Meshes.constructor(::Type{D}) where {D<:DummyData} = DummyData
 
+    # fallback constructor with spatial table
+    dom = CartesianGrid{T}(2,2)
+    tab = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    dat = DummyData(tab)
+    @test domain(dat) == domain(tab)
+    @test values(dat) == values(tab)
+
     # equality of data sets
     data₁ = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
     data₂ = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
@@ -82,6 +89,7 @@
       [5,6,7,8],
       [dom[1],dom[2],dom[3],dom[4]]
     ]
+    @test Tables.materializer(dat) <: DummyData
 
     # variables interface
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
