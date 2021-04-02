@@ -35,5 +35,20 @@ the `point` lies. Possible results are `:LEFT`,
 function sideof(p::Point{2,T}, s::Segment{2,T}) where {T}
   a, b = vertices(s)
   area = signarea(p, a, b)
-  ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
+  ifelse(area > atol(T),
+    :LEFT, ifelse(area < -atol(T),
+      :RIGHT, :ON))
+end
+
+"""
+    sideof(point, chain)
+
+Determines on which side of the closed `chain` the
+`point` lies. Possible results are `:INSIDE` or
+`:OUTSIDE` the chain.
+"""
+function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
+  w = windingnumber(p, c)
+  ifelse(isapprox(w, zero(T), atol=atol(T)),
+    :OUTSIDE, :INSIDE)
 end

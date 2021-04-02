@@ -150,7 +150,6 @@
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])
     @test collect(segments(c)) == [Segment(P2(1,1),P2(2,2)),Segment(P2(2,2),P2(3,3))]
-
     c = Chain(P2[(1,1),(2,2),(3,3),(1,1)])
     @test collect(segments(c)) == [Segment(P2(1,1),P2(2,2)),Segment(P2(2,2),P2(3,3)),Segment(P2(3,3),P2(1,1))]
 
@@ -313,5 +312,19 @@
     # centroid
     poly = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test centroid(poly) == P2(0.5, 0.5)
+
+    # point in polygonal area
+    outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
+    hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
+    hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
+    poly  = PolyArea(outer, [hole1, hole2])
+    @test all(p ∈ poly for p in outer)
+    @test P2(0.5,0.5) ∈ poly
+    @test P2(0.2,0.6) ∈ poly
+    @test P2(1.5,0.5) ∉ poly
+    @test P2(-0.5,0.5) ∉ poly
+    @test P2(0.25,0.25) ∉ poly
+    @test P2(0.75,0.25) ∉ poly
+    @test P2(0.75,0.75) ∈ poly
   end
 end

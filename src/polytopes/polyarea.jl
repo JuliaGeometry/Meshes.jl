@@ -187,6 +187,11 @@ function bridge(p::PolyArea)
   Chain(Point.(outer))
 end
 
+function Base.in(point::Point, polyarea::PolyArea)
+  sideof(point, polyarea.outer) == :INSIDE &&
+  all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
+end
+
 function Base.show(io::IO, p::PolyArea)
   outer = p.outer
   inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
