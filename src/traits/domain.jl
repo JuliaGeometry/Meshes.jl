@@ -36,6 +36,18 @@ function nelements end
   nelements(d1) == nelements(d2) &&
   all(d1[i] == d2[i] for i in 1:nelements(d1))
 
+Base.firstindex(domain::Domain) = 1
+
+Base.lastindex(domain::Domain) = nelements(domain)
+
+Base.iterate(domain::Domain, state=1) =
+  state > nelements(domain) ? nothing : (domain[state], state+1)
+
+Base.eltype(domain::Domain) =
+  eltype([domain[i] for i in 1:nelements(domain)])
+
+Base.length(domain::Domain) = nelements(domain)
+
 """
     embeddim(domain)
 
@@ -58,8 +70,6 @@ coordtype(domain::Domain) = coordtype(typeof(domain))
 Compute the the centroid of the `ind`-th element in the `domain`.
 """
 centroid(domain::Domain, ind::Int) = centroid(domain[ind])
-
-Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
 
 # -----------
 # IO METHODS

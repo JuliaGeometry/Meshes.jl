@@ -15,7 +15,14 @@
     dom = DummyDomain(P2(0,0))
     @test embeddim(dom) == 2
     @test coordtype(dom) == T
+
+    # indexable/iterable interface
+    dom = DummyDomain(P2(0,0))
+    @test dom[begin] == Ball(P2(1,1), T(1))
+    @test dom[end]   == Ball(P2(3,3), T(1))
     @test eltype(dom) <: Ball{2,T}
+    @test length(dom) == 3
+    @test collect(dom) == [Ball(P2(i,i), T(1)) for i in 1:3]
 
     # coordinates of centroids
     dom = DummyDomain(P2(1,1))
