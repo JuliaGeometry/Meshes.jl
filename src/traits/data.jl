@@ -56,18 +56,38 @@ Tables.istable(::Type{<:Data}) = true
 
 Tables.rowaccess(::Type{<:Data}) = true
 
-function Tables.rows(data::Data)
-  elms  = domain(data)
-  rows  = Tables.rows(values(data))
-  ((; NamedTuple(row)..., geometry=elms[i]) for (i, row) in Iterators.enumerate(rows))
+Tables.rows(data::Data) = DataRows(Tables.rows(values(data)), domain(data))
+
+# wrapper type for rows of the data table
+# so that we can easily inform the schema
+struct DataRows{𝒯,𝒟}
+  rtable::𝒯
+  domain::𝒟
 end
 
-function Tables.schema(data::Data)
-  geomtype = eltype(domain(data))
-  schema = Tables.schema(values(data))
+function Base.iterate(rows::DataRows, state=1)
+  if state > nelements(rows.domain)
+    nothing
+  else
+    row, _ = iterate(rows.rtable, state)
+    elm, _ = iterate(rows.domain, state)
+    (; NamedTuple(row)..., geometry=elm), state + 1
+  end
+end
+
+Base.length(rows::DataRows) = nelements(rows.domain)
+
+function Tables.schema(rows::DataRows)
+  geomtype = eltype(rows.domain)
+  schema = Tables.schema(rows.rtable)
   names, types = schema.names, schema.types
   Tables.Schema((names..., :geometry), (types..., geomtype))
 end
+
+# data table is compatible with the Queryverse
+TableTraits.isiterabletable(data::Data) = true
+IIE.getiterator(data::Data) = Tables.datavaluerows(Tables.rows(data))
+IIE.isiterable(data::Data) = true
 
 function Tables.materializer(::D) where {D<:Data}
   function materializer(stable)

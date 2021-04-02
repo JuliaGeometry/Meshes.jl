@@ -67,10 +67,11 @@
     dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
     @test Tables.istable(dat)
     @test Tables.rowaccess(dat)
-    s = Tables.schema(dat)
-    @test s.names == (:a,:b,:geometry)
-    @test s.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
-    @test collect(Tables.rows(dat)) == [
+    rows = Tables.rows(dat)
+    schema = Tables.schema(rows)
+    @test schema.names == (:a,:b,:geometry)
+    @test schema.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
+    @test collect(rows) == [
       (a=1, b=5, geometry=dom[1]),
       (a=2, b=6, geometry=dom[2]),
       (a=3, b=7, geometry=dom[3]),

@@ -29,6 +29,11 @@ import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
+# Queryverse compatibility
+import TableTraits
+import IteratorInterfaceExtensions
+const IIE = IteratorInterfaceExtensions
+
 # numerical tolerances
 include("tolerances.jl")
 
