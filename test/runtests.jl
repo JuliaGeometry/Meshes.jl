@@ -1,5 +1,6 @@
 using Meshes
 using Tables
+using Query
 using Distances
 using Statistics
 using LinearAlgebra

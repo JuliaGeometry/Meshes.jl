@@ -91,6 +91,13 @@
     ]
     @test Tables.materializer(dat) <: DummyData
 
+    # Query interface
+    dom = CartesianGrid{T}(2,2)
+    dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    new = dat |> @mutate(geometry=centroid(_.geometry)) |> DummyData
+    @test domain(new) isa PointSet
+    @test values(new) == values(dat)
+
     # variables interface
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
     @test variables(data) == (Variable(:a,Int), Variable(:b,Int))
