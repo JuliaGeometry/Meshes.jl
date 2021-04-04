@@ -18,6 +18,7 @@ using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
+using Lazy: @forward
 
 # import categorical arrays as a temporary solution for plot recipes
 using CategoricalArrays: CategoricalValue, levelcode

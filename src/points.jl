@@ -35,6 +35,9 @@ Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
 Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coords)
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
+# minimal iteator interface over coordinates
+@forward Point.coords (Base.length, Base.eltype, Base.iterate)
+
 # type aliases for convenience
 const Point1 = Point{1,Float64}
 const Point2  = Point{2,Float64}

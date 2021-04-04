@@ -5,6 +5,7 @@
   @test evaluate(Euclidean(), l, p) == T(1)
 
   p1, p2 = P2(1, 0), P2(0, 1)
+  @test Chebyshev()(p1, p2) == T(1)
   @test evaluate(Chebyshev(), p1, p2) == T(1)
 
   p = P2(68, 259)
