@@ -61,7 +61,7 @@ end
 # convert from Cartesian to linear indices if needed
 @traitfn _linear(domain::D, inds) where {D; IsGrid{D}} =
   vec(LinearIndices(size(domain))[inds])
-@traitfn _linear(::D, inds) where {D; !IsGrid{D}} = inds
+@traitfn _linear(domain::D, inds) where {D; !IsGrid{D}} = inds
 
 """
     viewindices(domain, geometry)
