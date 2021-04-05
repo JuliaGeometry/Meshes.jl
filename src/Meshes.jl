@@ -127,7 +127,7 @@ export
   centroid,
 
   # distances
-  mindistance,
+  closest_point, mindistance,
 
   # primitives
   Primitive,
