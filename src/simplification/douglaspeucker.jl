@@ -34,7 +34,7 @@ function simplify(v::AbstractVector{Point{Dim,T}},
   # find vertex with maximum distance
   imax, dmax = 0, zero(T)
   for i in 2:length(v)-1
-    d = evaluate(Euclidean(), v[i], Line(first(v), last(v)))
+    d = mindistance(Euclidean(), v[i], Line(first(v), last(v)))
     if d > dmax
       imax = i
       dmax = d

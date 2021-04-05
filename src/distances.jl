@@ -1,27 +1,27 @@
 # ------------------------------------------------------------------
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
-
-# flip arguments so that points always come first
-evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
-
 """
-    evaluate(Euclidean(), point, line)
+    mindistance(metric::PreMetric, g::Union{Geometry,Point}, p::Point)
 
-Evaluate the Euclidean distance between `point` and `line`.
+Returns the minimum distance between the the point `p` and the closest point in geometry `g` as
+measured by the `metric`.
 """
-function evaluate(::Euclidean, p::Point, l::Line)
-  a, b = l(0), l(1)
-  u = p - a
-  v = b - a
-  α = (u ⋅ v) / (v ⋅ v)
-  norm(u - α*v)
+function mindistance end
+
+# flip arguments to always have geometry be the first argument.
+mindistance(metric::PreMetric, p::Point, g::Geometry) = mindistance(metric, g, p)
+
+function mindistance(metric::Union{Euclidean,SqEuclidean}, l::Line, p::Point)
+    a, b = l(0), l(1)
+    u = p - a
+    v = b - a
+    α = (u ⋅ v) / (v ⋅ v)
+    metric(u, α * v)
 end
 
-"""
-    evaluate(::PreMetric, point1, point2)
+mindistance(metric::PreMetric, p1::Point, p2::Point) =
+    evaluate(metric, coordinates(p1), coordinates(p2))
 
-Evaluate pre-metric between coordinates of `point2` and `point2`.
-"""
-evaluate(d::PreMetric, p1::Point, p2::Point) =
-  evaluate(d, coordinates(p1), coordinates(p2))
+@deprecate evaluate(d::PreMetric, g::Union{Geometry,Point}, p::Point) mindistance(d, g, p)
+@deprecate evaluate(d::PreMetric, p::Point, g::Geometry) mindistance(d, g, p)

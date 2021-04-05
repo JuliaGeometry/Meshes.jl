@@ -15,7 +15,7 @@ using Random
 using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
-using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
+using Distances: PreMetric, Euclidean, Mahalanobis, SqEuclidean, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
@@ -100,7 +100,7 @@ include("plotrecipes/cartesiangrids.jl")
 include("plotrecipes/mesh.jl")
 include("plotrecipes/partitions.jl")
 
-export 
+export
   # points
   Point, Point1, Point2, Point3, Point1f, Point2f, Point3f,
   embeddim, coordtype, coordinates,
@@ -125,6 +125,9 @@ export
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
   centroid,
+
+  # distances
+  mindistance,
 
   # primitives
   Primitive,
