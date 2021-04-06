@@ -82,6 +82,9 @@ end
     windingnumber(point, chain)
 
 Winding number of `point` with respect to the `chain`.
+The winding number is the total number of times that
+the chain travels counterclockwise around the point.
+See https://en.wikipedia.org/wiki/Winding_number.
 
 ## References
 
@@ -89,9 +92,10 @@ Winding number of `point` with respect to the `chain`.
   the simplicity and orientation of planar polygons]
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-function windingnumber(p::Point, c::Chain)
+function windingnumber(p::Point{Dim,T}, c::Chain{Dim,T}) where {Dim,T}
   vₒ, vs = p, c.vertices
-  sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
+  ∑ = sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
+  ∑ / T(2π)
 end
 
 abstract type OrientationMethod end
@@ -127,7 +131,7 @@ function orientation(c::Chain{Dim,T}, ::WindingOrientation) where {Dim,T}
   # pick any segment
   x1, x2 = c.vertices[1:2]
   x̄ = centroid(Segment(x1, x2))
-  w = windingnumber(x̄, c) - ∠(x1, x̄, x2)
+  w = T(2π)*windingnumber(x̄, c) - ∠(x1, x̄, x2)
   isapprox(w, T(π), atol=atol(T)) ? :CCW : :CW
 end
 

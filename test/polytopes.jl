@@ -183,6 +183,14 @@
     @test angles(c) ≈ [-atan(2), -π/2, +π/2, -π/2, -π/2, -(π-atan(2))]
     @test innerangles(c) ≈ [atan(2), π/2, 3π/2, π/2, π/2, π-atan(2)]
 
+    # winding numbers
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test windingnumber(P2(0.5,0.5), c) ≈ 1
+    @test windingnumber(P2(0.5,0.5), reverse(c)) ≈ -1
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test windingnumber(P2(0.5,0.5), c) ≈ 2
+    @test windingnumber(P2(0.5,0.5), reverse(c)) ≈ -2
+
     # reconstruct chain from vertices
     c1 = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     c2 = Chain(vertices(c1))
