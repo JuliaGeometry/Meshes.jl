@@ -33,9 +33,9 @@ end
 
 Axis-aligned bounding box of the `domain`.
 """
-boundingbox(domain::Domain) = boundingbox(PointSet(domain))
+boundingbox(domain::Domain) = boundingbox(centroid.(domain))
 
-boundingbox(pset::PointSet) = boundingbox([pset[i] for i in 1:nelements(pset)])
+boundingbox(pset::PointSet) = boundingbox(collect(pset))
 
 boundingbox(grid::CartesianGrid) = Box(extrema(grid)...)
 

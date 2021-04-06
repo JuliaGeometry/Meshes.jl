@@ -71,6 +71,18 @@ Compute the the centroid of the `ind`-th element in the `domain`.
 """
 centroid(domain::Domain, ind::Int) = centroid(domain[ind])
 
+"""
+    centroid(domain)
+
+Compute the centroid of the `domain` as the centroid of all its
+element's centroids.
+"""
+function centroid(domain::Domain)
+  nelm = nelements(domain)
+  coords(ind) = coordinates(centroid(domain, ind))
+  Point(sum(coords(ind) for ind in 1:nelm) / nelm)
+end
+
 # -----------
 # IO METHODS
 # -----------

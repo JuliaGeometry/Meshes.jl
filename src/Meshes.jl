@@ -48,17 +48,14 @@ include("traits/domain.jl")
 include("traits/data.jl")
 include("traits/optional.jl")
 
-# point sets
-include("pointsets.jl")
-
 # basic geometries
 include("geometries.jl")
 
 # geometric distances
 include("distances.jl")
 
-# geometry sets
-include("geometrysets.jl")
+# collections
+include("collections.jl")
 
 # connectivities and meshes
 include("connectivities.jl")
@@ -102,7 +99,8 @@ include("plotrecipes/partitions.jl")
 
 export 
   # points
-  Point, Point1, Point2, Point3, Point1f, Point2f, Point3f,
+  Point, Point1, Point2, Point3,
+  Point1f, Point2f, Point3f,
   embeddim, coordtype, coordinates,
   ⪯, ≺, ⪰, ≻,
 
@@ -115,7 +113,7 @@ export
   # domain/data traits
   Domain, Data, Variable,
   domain, constructor, asarray,
-  variables, name, mactype,
+  nelements, variables, name, mactype,
 
   # optional traits
   IsGrid, isgrid,
@@ -128,7 +126,8 @@ export
 
   # primitives
   Primitive,
-  Line, Ray, Plane, BezierCurve, Box, Ball, Sphere, Cylinder,
+  Line, Ray, Plane, BezierCurve,
+  Box, Ball, Sphere, Cylinder,
   ncontrols, degree, Horner, DeCasteljau,
   center, radius, height, sides,
   measure, diagonal,
@@ -149,7 +148,9 @@ export
   WindingOrientation,
   TriangleOrientation,
 
-  # geometry sets
+  # point sets
+  Collection,
+  PointSet,
   GeometrySet,
 
   # connectivities
@@ -169,10 +170,6 @@ export
   EulerExtr, EulerIntr,
   axesseq, orientation, angleunits,
   mainaxis, isextrinsic, rotmat,
-
-  # point sets
-  PointSet,
-  nelements,
 
   # meshes
   Mesh,

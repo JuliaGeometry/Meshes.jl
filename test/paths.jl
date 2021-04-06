@@ -20,7 +20,7 @@
 
   @testset "SourcePath" begin
     grid = CartesianGrid{T}(3,3)
-    pset = PointSet(grid)
+    pset = PointSet(centroid.(grid))
 
     for sdomain in [grid, pset]
       p = traverse(sdomain, SourcePath([1,9]))

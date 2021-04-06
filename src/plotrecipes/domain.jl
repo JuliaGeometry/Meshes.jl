@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 @recipe function f(domain::Domain)
-  PointSet(domain)
+  PointSet(centroid.(domain))
 end
 
 @recipe function f(domain::Domain, data::AbstractVector)
-  PointSet(domain), data
+  PointSet(centroid.(domain)), data
 end
