@@ -11,7 +11,7 @@
   Tuple.(coordinates.(vertices(segment)))
 end
 
-# plot facets in a recursion
+# plot facets of polytope in a recursion
 @recipe function f(polytope::Polytope)
   for f in facets(polytope)
     @series begin
@@ -19,6 +19,15 @@ end
       f
     end
   end
+end
+
+# specialize triangle case for performance
+@recipe function f(triangle::Triangle)
+  seriestype --> :scatterpath
+  seriescolor --> :black
+  primary --> false
+
+  Tuple.(coordinates.(vertices(triangle)))
 end
 
 @recipe function f(ray::Ray)
