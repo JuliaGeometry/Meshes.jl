@@ -43,7 +43,7 @@ function (D::Type{<:Data})(stable)
   # build domain from geometry column
   ctable = Tables.columns(stable)
   elms   = Tables.getcolumn(ctable, :geometry)
-  domain = eltype(elms) <: Point ? PointSet(elms) : GeometrySet(elms)
+  domain = Collection(elms)
 
   # build table from remaining columns
   vars = setdiff(Tables.columnnames(ctable), (:geometry,))
