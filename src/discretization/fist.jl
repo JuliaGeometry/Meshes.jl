@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    FIST
+    FIST(shuffle=true)
 
 Fast Industrial-Strength Triangulation (FIST) of polygons.
 
@@ -13,6 +13,10 @@ for complex n-gons with holes. It has O(n²) time complexity where
 n is the number of vertices. In practice it is very efficient due
 to heuristics implemented in the algorithm.
 
+The option `shuffle` is used to shuffle the order in which ears
+are clipped. It improves the quality of the triangles, which can
+be very sliver otherwise.
+
 ## References
 
 * Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
@@ -21,9 +25,13 @@ to heuristics implemented in the algorithm.
   constrained Delaunay triangulation of polygons]
   (https://www.sciencedirect.com/science/article/pii/S092577211830004X)
 """
-struct FIST <: DiscretizationMethod end
+struct FIST <: DiscretizationMethod
+  shuffle::Bool
+end
 
-function discretize(polyarea::PolyArea, ::FIST)
+FIST() = FIST(true)
+
+function discretize(polyarea::PolyArea, method::FIST)
   # build bridges in case the polygonal area has
   # holes, i.e. reduce to a single outer boundary
   𝒫 = polyarea |> unique |> bridge
@@ -35,7 +43,7 @@ function discretize(polyarea::PolyArea, ::FIST)
   inds = CircularVector(1:nvertices(𝒫))
 
   # perform ear clipping
-  𝒬 = ears(𝒫)
+  𝒬 = ears(𝒫); method.shuffle && shuffle!(𝒬)
   n = nvertices(𝒫)
   𝒯 = Connectivity{Triangle,3}[]
   clipped = false
@@ -59,7 +67,7 @@ function discretize(polyarea::PolyArea, ::FIST)
       end
       clipped = true
     elseif clipped # recompute all ears
-      𝒬 = ears(𝒫)
+      𝒬 = ears(𝒫); method.shuffle && shuffle!(𝒬)
       clipped = false
     else # recovery process
       # check if consecutive edges vᵢ-1 -- vᵢ and vᵢ+1 -- vᵢ+2
