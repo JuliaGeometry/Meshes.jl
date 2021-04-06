@@ -68,11 +68,10 @@
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
-    # TODO: hanging when T=Float32
-    # poly = readpoly(T, joinpath(datadir, "smooth2.line"))
-    # mesh = discretize(poly, FIST())
-    # @test Set(vertices(poly)) == Set(vertices(mesh))
-    # @test nelements(mesh) == length(vertices(mesh)) - 2
+    poly = readpoly(T, joinpath(datadir, "smooth2.line"))
+    mesh = discretize(poly, FIST())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth3.line"))
     mesh = discretize(poly, FIST())
