@@ -52,11 +52,10 @@ end
 testfiles = [
   "points.jl",
   "angles.jl",
-  "pointsets.jl",
   "polytopes.jl",
   "primitives.jl",
+  "collections.jl",
   "distances.jl",
-  "geometrysets.jl",
   "connectivities.jl",
   "mesh.jl",
   "traits.jl",
