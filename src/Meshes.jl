@@ -26,7 +26,7 @@ import Tables
 import Random
 import Base: values, ==, +, -, *
 import StatsBase: sample
-import Distances: evaluate
+import Distances: colwise, evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # Queryverse compatibility
@@ -193,11 +193,11 @@ export
 
   # neighbordhood search
   NeighborSearchMethod,
-  BoundedNeighborSearchMethod,
+  FilteredNeighborSearchMethod,
   NeighborhoodSearch,
   KNearestSearch,
   KBallSearch,
-  BoundedSearch,
+  FilteredSearch,
   search!, search,
 
   # partitions

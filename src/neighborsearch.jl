@@ -27,12 +27,12 @@ specify a `mask` for all indices of the domain.
 function search end
 
 """
-    BoundedNeighborSearchMethod
+    FilteredNeighborSearchMethod
 
 A method for searching neighbors with the property that the number of neighbors
 is bounded above by a known constant (e.g. k-nearest neighbors).
 """
-abstract type BoundedNeighborSearchMethod <: NeighborSearchMethod end
+abstract type FilteredNeighborSearchMethod <: NeighborSearchMethod end
 
 """
     maxneighbors(method)
@@ -45,7 +45,7 @@ function maxneighbors end
 # FALLBACKS
 # ----------
 
-function search(pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
+function search(pₒ::Point, method::FilteredNeighborSearchMethod; mask=nothing)
   neighbors = Vector{Int}(undef, maxneighbors(method))
   nneigh = search!(neighbors, pₒ, method; mask=mask)
   view(neighbors, 1:nneigh)
@@ -58,4 +58,4 @@ end
 include("neighborsearch/neighborhood.jl")
 include("neighborsearch/knearest.jl")
 include("neighborsearch/kball.jl")
-include("neighborsearch/bounded.jl")
+include("neighborsearch/filtered.jl")
