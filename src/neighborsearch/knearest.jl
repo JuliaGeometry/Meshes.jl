@@ -8,7 +8,7 @@
 A method for searching `k` nearest neighbors in `domain`
 according to `metric`.
 """
-struct KNearestSearch{D,T} <: FilteredNeighborSearchMethod
+struct KNearestSearch{D,T} <: BoundedNeighborSearchMethod
   # input fields
   domain::D
   k::Int

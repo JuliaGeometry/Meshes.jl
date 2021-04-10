@@ -27,7 +27,7 @@ the sectors will match the rotated quadrants/octants.
 `FilteredSearch(method, maxpersector = 2)`
 [ASCII illustration]
 """
-struct FilteredSearch{M<:NeighborSearchMethod} <: FilteredNeighborSearchMethod
+struct FilteredSearch{M<:NeighborSearchMethod} <: BoundedNeighborSearchMethod
   method::M
   nmax::Int
   maxpercategory
@@ -35,7 +35,8 @@ struct FilteredSearch{M<:NeighborSearchMethod} <: FilteredNeighborSearchMethod
   order
 end
 
-FilteredSearch(method::M, nmax=0; maxpercategory=nothing, maxpersector=nothing, order=Euclidean()) where {M} =
+FilteredSearch(method::M, nmax=0; maxpercategory=nothing,
+               maxpersector=nothing, order=Euclidean()) where {M} =
   FilteredSearch{M}(method, nmax, maxpercategory, maxpersector, order)
 
 maxneighbors(method::FilteredSearch) = method.nmax

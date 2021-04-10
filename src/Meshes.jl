@@ -15,7 +15,7 @@ using Random
 using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
-using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
+using Distances: PreMetric, Euclidean, Mahalanobis, colwise, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
@@ -26,7 +26,7 @@ import Tables
 import Random
 import Base: values, ==, +, -, *
 import StatsBase: sample
-import Distances: colwise, evaluate
+import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # Queryverse compatibility
@@ -193,7 +193,7 @@ export
 
   # neighbordhood search
   NeighborSearchMethod,
-  FilteredNeighborSearchMethod,
+  BoundedNeighborSearchMethod,
   NeighborhoodSearch,
   KNearestSearch,
   KBallSearch,
