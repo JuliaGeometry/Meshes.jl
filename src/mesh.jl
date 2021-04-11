@@ -54,5 +54,9 @@ of any 3-face.
 """
 elements(m::Mesh{Dim}) where {Dim} = faces(m, Dim)
 
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
 include("mesh/cartesiangrid.jl")
 include("mesh/simplemesh.jl")
