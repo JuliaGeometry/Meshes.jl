@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    FilteredSearch(method, nmax=Inf; maxpercategory, maxpersector, order=Euclidean())
+    FilteredSearch(method, nmax=Inf; maxpercategory, maxpersector, metric=Euclidean())
 
 A method for searching at most `nmax` neighbors using `method`. Extra
-constraints available: `maxpercategory` and `maxpersector`. The priority is
-given to the nearest neighbor using `order`.
+constraints available: `maxpercategory` and `maxpersector`. The neighbors are
+sorted using `metric` distance (priority to the nearest). To preserve the order
+of the initial neighbors returned by `method`, set `metric = nothing`.
 
 ## Max per category
 
@@ -32,12 +33,12 @@ struct FilteredSearch{M<:NeighborSearchMethod} <: BoundedNeighborSearchMethod
   nmax::Int
   maxpercategory
   maxpersector
-  order
+  metric
 end
 
 FilteredSearch(method::M, nmax=0; maxpercategory=nothing,
-               maxpersector=nothing, order=Euclidean()) where {M} =
-  FilteredSearch{M}(method, nmax, maxpercategory, maxpersector, order)
+               maxpersector=nothing, metric=Euclidean()) where {M} =
+  FilteredSearch{M}(method, nmax, maxpercategory, maxpersector, metric)
 
 maxneighbors(method::FilteredSearch) = method.nmax
 
@@ -48,11 +49,10 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
   nmax = method.nmax == 0 ? Inf : method.nmax
 
   # get distances and give priority to closest neighbors if necessary
-  if !(meth isa KNearestSearch)
-    indcoords = reduce(hcat, coordinates.([centroid(obj, s) for s in inds]))
-    dists     = colwise(method.order, coordinates(pₒ), indcoords)
-    sorted    = sortperm(dists)
-    inds      = inds[sorted]
+  if !isnothing(method.metric)
+    dists  = [evaluate(method.metric, coordinates(pₒ), coordinates(centroid(obj, ind))) for ind in inds]
+    sorted = sortperm(dists)
+    inds   = inds[sorted]
   end
 
   # initialize category and sectors constraints if necessary
@@ -62,8 +62,6 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
   # check about initialization size
   nneigh = 0
   for i in inds
-    nneigh == nmax && break
-
     # check category
     if categs[:use]
       cat, pass = Dict(), false
@@ -89,6 +87,8 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
       neighbors[nneigh] = i
     end
 
+    nneigh == nmax && break
+
     # add counters
     sectors[:use] && (sectors[:count][indsector] += 1)
     if categs[:use]
@@ -96,7 +96,6 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
         categs[:count][col][cat[col]] += 1
       end
     end
-
   end
 
   # slice neighbors if nmax was not reached
@@ -120,15 +119,19 @@ function initsectors(method, maxpersector)
   N = embeddim(method.domain)
   ellips = method isa NeighborhoodSearch && method.neigh isa Ellipsoid
 
-  #add a noise to avoid samples at sectors limits
-  rotmatx = N == 2 ? rotmat([0.01], GSLIB) : rotmat([0.01, 0.01, 0.01], GSLIB)
+  # add a noise rotation to avoid samples at sectors limits
+  rotangs = N == 2 ? [0.001] : [0.001, 0.001, 0.001]
 
-  # add a reverse rotation matrix if it is an ellipsoid
+  # reverse rotation if it is an ellipsoid
   if ellips
     extrinsic = isextrinsic(method.neigh.convention)
     invertfac = extrinsic ? -1 : 1
-    rotmatx  += rotmat(invertfac*method.neigh.angles, method.neigh.convention)'
+    rotangs   = invertfac * (method.neigh.angles .+ rotangs)
   end
+
+  # rotation matrix
+  rotmatx = rotmat(rotangs, method.neigh.convention)'
+
   Dict(:use => true, :count => zeros(Int, 2^N), :rotmat => rotmatx, :max => maxpersector)
 end
 
