@@ -121,6 +121,7 @@ function initsectors(method, maxpersector)
 
   # add a noise rotation to avoid samples at sectors limits
   rotangs = N == 2 ? [0.001] : [0.001, 0.001, 0.001]
+  convention = ellips ? method.neigh.convention : GSLIB
 
   # reverse rotation if it is an ellipsoid
   if ellips
@@ -130,7 +131,7 @@ function initsectors(method, maxpersector)
   end
 
   # rotation matrix
-  rotmatx = rotmat(rotangs, method.neigh.convention)'
+  rotmatx = rotmat(rotangs, convention)'
 
   Dict(:use => true, :count => zeros(Int, 2^N), :rotmat => rotmatx, :max => maxpersector)
 end
