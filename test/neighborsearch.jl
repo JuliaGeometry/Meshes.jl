@@ -49,6 +49,10 @@
     n = search(P2(5,5), s)
     @test length(n) == 10
 
+    s = KBallSearch(𝒟, 10, Ellipsoid([100., 100.], [0.], convention=TaitBryanIntr))
+    n = search(P2(5,5), s)
+    @test length(n) == 10
+
     s = KBallSearch(𝒟, 10, NormBall(T(1)))
     n = search(P2(5,5), s)
     @test length(n) == 5
