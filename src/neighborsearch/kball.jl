@@ -29,7 +29,7 @@ maxneighbors(method::KBallSearch) = method.k
 
 function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
-  r = radius(method.ball)
+  r = method.ball isa NormBall ? radius(method.ball) : one(coordtype(pₒ))
 
   inds, dists = knn(method.tree, coordinates(pₒ), k, true)
 
