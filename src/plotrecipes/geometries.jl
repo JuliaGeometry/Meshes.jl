@@ -27,7 +27,8 @@ end
   seriescolor --> :black
   primary --> false
 
-  Tuple.(coordinates.(vertices(triangle)))
+  vs = vertices(triangle)
+  Tuple.(coordinates.([vs; first(vs)]))
 end
 
 @recipe function f(ray::Ray)
