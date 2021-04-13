@@ -57,9 +57,12 @@ include("distances.jl")
 # collections
 include("collections.jl")
 
+# rotation conventions
+include("conventions.jl")
+
 # connectivities and meshes
 include("connectivities.jl")
-include("conventions.jl")
+include("topostructures.jl")
 include("mesh.jl")
 
 # domain and data views
@@ -153,16 +156,6 @@ export
   PointSet,
   GeometrySet,
 
-  # connectivities
-  Connectivity,
-  indices, polytopetype,
-  connect, materialize,
-
-  # ordering conventions
-  OrderingConvention,
-  GMSH,
-  connectivities,
-
   # rotation conventions
   RotationConvention,
   GSLIB, Leapfrog, Datamine,
@@ -170,6 +163,22 @@ export
   EulerExtr, EulerIntr,
   axesseq, orientation, angleunits,
   mainaxis, isextrinsic, rotmat,
+
+  # connectivities
+  Connectivity,
+  paramdim, indices,
+  connect, materialize,
+
+  # topological structures
+  TopologicalStructure,
+  ExplicitStructure,
+  HalfEdgeStructure,
+  HalfEdge,
+  connectivities,
+  halfedges,
+  edgeoncell,
+  edgeonvertex,
+  ncells,
 
   # meshes
   Mesh,

@@ -19,7 +19,7 @@ struct SimpleMesh{Dim,T,Connectivity} <: Mesh{Dim,T}
   elms::Vector{Int}
 
   function SimpleMesh{Dim,T,C}(points, connec) where {Dim,T,C}
-    ranks = [paramdim(polytopetype(c)) for c in connec]
+    ranks = [paramdim(c) for c in connec]
     elms  = [i for i in eachindex(ranks) if ranks[i] == Dim]
     new(points, connec, ranks, elms)
   end
