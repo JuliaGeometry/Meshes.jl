@@ -49,7 +49,7 @@ Adjacency relation that maps the `connectivity` with rank `p`
 to a set of connectivities sharing a `p-1` connectivity.
 
 For example, the adjacency of a `Connectivity{Triangle}` can
-be a set of `Connectivity{Triangle}` sharing a `connectivity{Segment}`.
+be a set of `Connectivity{Triangle}` sharing a `Connectivity{Segment}`.
 """
 function adjacency end
 
