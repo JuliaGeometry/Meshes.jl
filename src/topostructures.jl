@@ -45,7 +45,7 @@ coboundary(c::Connectivity, rank::Integer, structure) =
 """
     adjacency(connectivity, structure)
 
-Adjacency relation that maps the `connectitivity` with rank `p`
+Adjacency relation that maps the `connectivity` with rank `p`
 to a set of connectivities sharing a `p-1` connectivity.
 
 For example, the adjacency of a `Connectivity{Triangle}` can
