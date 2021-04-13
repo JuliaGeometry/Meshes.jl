@@ -5,7 +5,7 @@
 """
     ExplicitStructure(connectivities)
 
-A data structure that encodess all incidence relations
+A data structure that encodes all incidence relations
 of a mesh explicitly as a list of `connectivities`.
 
 See also `[`Connectivity`](@ref).
