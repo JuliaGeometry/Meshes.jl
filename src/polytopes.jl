@@ -15,8 +15,7 @@ The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into
 edges, and edges into vertices. Some conventions act as a mapping between vertices
 and higher dimensional features (edges, faces, cells...), removing the need to
-store all features. We follow the ordering conventions of the GMSH project:
-https://gmsh.info/doc/texinfo/gmsh.html#Node-ordering
+store all features.
 
 Additionally, the following property must hold in order for a geometry to be considered
 a polytope: the boundary of a (N+1)-polytope is a collection of N-polytopes, which may

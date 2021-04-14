@@ -8,7 +8,7 @@
 Stores the indices of the `head` vertex, the `prev`
 and `next` edges in the left `cell`, and the opposite
 `half`-edge. For some half-edges the `cell` may be
-`nothing`.
+`nothing`, e.g. border edges of the mesh.
 
 See [`HalfEdgeStructure`](@ref) for more details.
 """
@@ -38,7 +38,10 @@ the incident cells.
 A vector of `halfedges` together with a vector of
 `edgeoncell` and a vector of `edgeonvertex` can be
 used to retrieve topolological relations in optimal
-time.
+time. In this case, `edgeonvertex[i]` returns the
+index of the half-edge in `halfedges` with head equal
+to `i`. Similarly, `edgeoncell[i]` returns the index
+of a half-edge in `halfedges` that is in the cell `i`.
 
 Such data structure is usually constructed from another
 data structure such as [`ExplicitStructure`](@ref) via
@@ -62,7 +65,31 @@ struct HalfEdgeStructure <: TopologicalStructure
   edgeonvertex::Vector{Int}
 end
 
+"""
+    halfedges(s)
+
+Return the half-edges of the half-edge structure `s`.
+"""
 halfedges(s::HalfEdgeStructure) = s.halfedges
+
+"""
+    edgeoncell(s, c)
+
+Return a half-edge of the half-edge structure `s` on the `c`-th cell.
+"""
 edgeoncell(s::HalfEdgeStructure, c) = s.halfedges[s.edgeoncell[c]]
+
+"""
+    edgeonvertex(s, v)
+
+Return the half-edge of the half-edge structure `s` for which the
+head is the `v`-th index.
+"""
 edgeonvertex(s::HalfEdgeStructure, v) = s.halfedges[s.edgeonvertex[v]]
+
+"""
+    ncells(s)
+
+Return the number of cells in the half-edge structure `s`.
+"""
 ncells(s::HalfEdgeStructure) = length(s.edgeoncell)

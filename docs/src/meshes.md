@@ -15,9 +15,3 @@ polytopetype
 connect
 materialize
 ```
-
-## Conventions
-
-```@docs
-GMSH
-```

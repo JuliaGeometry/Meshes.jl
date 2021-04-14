@@ -5,8 +5,8 @@
   s2 = convert(HalfEdgeStructure, s1)
   @test ncells(s2) == 2
   @test all(edgeoncell(s2, c).cell == c for c in 1:ncells(s2))
-  @test edgeoncell(s2, 1).head == 1
-  @test edgeoncell(s2, 2).head == 4
+  @test edgeoncell(s2, 1).head ∈ 1:3
+  @test edgeoncell(s2, 2).head ∈ 4:6
 
   s3 = convert(ExplicitStructure, s2)
   @test s3 == s1
