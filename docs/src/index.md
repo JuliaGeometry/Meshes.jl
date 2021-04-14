@@ -151,8 +151,7 @@ collect(vs)
 Polytopes are geometries with "flat" sides. They generalize polygons and polyhedra.
 Most commonly used polytopes are already defined in the project, including
 [`Triangle`](@ref), [`Pyramid`](@ref), [`Quadrangle`](@ref), [`Segment`](@ref),
-[`Tetrahedron`](@ref), and [`Hexahedron`](@ref). Their vertices follow the [`GMSH`](@ref)
-ordering convention by default, but this is also customizable.
+[`Tetrahedron`](@ref), and [`Hexahedron`](@ref).
 
 ```@example overview
 t = Triangle((0,0), (1,0), (0,1))

@@ -15,19 +15,19 @@ struct Connectivity{PL<:Polytope,N}
 end
 
 """
+    paramdim(connectivity)
+
+Return the parametric dimension of the `connectivity`.
+"""
+paramdim(::Type{Connectivity{PL,N}}) where {PL,N} = paramdim(PL)
+paramdim(c::Connectivity) = paramdim(typeof(c))
+
+"""
     indices(connectivity)
 
 Return the list of indices of the `connectivity`.
 """
 indices(c::Connectivity) = c.list
-
-"""
-    polytopetype(connectivity)
-
-Return the face type (e.g. Triangle) of the `connectivity`.
-"""
-polytopetype(::Type{Connectivity{PL,N}}) where {PL,N} = PL
-polytopetype(c::Connectivity) = polytopetype(typeof(c))
 
 """
     connect(list, PL)
