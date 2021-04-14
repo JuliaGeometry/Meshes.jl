@@ -113,4 +113,31 @@
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
   end
+
+  @testset "DevadossRourke" begin
+    poly = readpoly(T, joinpath(datadir, "poly1.line"))
+    mesh = discretize(poly, DevadossRourke())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+
+    poly = readpoly(T, joinpath(datadir, "poly2.line"))
+    mesh = discretize(poly, DevadossRourke())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+
+    poly = readpoly(T, joinpath(datadir, "poly3.line"))
+    mesh = discretize(poly, DevadossRourke())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+
+    poly = readpoly(T, joinpath(datadir, "poly4.line"))
+    mesh = discretize(poly, DevadossRourke())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+
+    poly = readpoly(T, joinpath(datadir, "poly5.line"))
+    mesh = discretize(poly, DevadossRourke())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+  end
 end

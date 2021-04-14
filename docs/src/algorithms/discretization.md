@@ -41,3 +41,9 @@ mesh = discretize(polyarea, FIST())
 
 plot(plot(polyarea), plot(mesh))
 ```
+
+### Devadoss-Rourke
+
+```@docs
+DevadossRourke
+```

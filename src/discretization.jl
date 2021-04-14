@@ -19,4 +19,6 @@ function discretize end
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
+
 include("discretization/fist.jl")
+include("discretization/dr.jl")
