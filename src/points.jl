@@ -27,6 +27,7 @@ end
 # convenience constructors
 Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(SVector{Dim,T}(coords...))
 Point{Dim,T}(p::Point) where {Dim,T} = Point{Dim,T}(p.coords)
+Point(p::Point) = Point(p.coords)
 Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
 Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
 Point(coords...) = Point(SVector(coords...))
