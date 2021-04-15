@@ -18,13 +18,13 @@ In the example below, no more than 2 neighbors of same geometry are selected.
 
 `FilteredSearch(method, maxpercategory = (geometry = 2,))`
      _________
-   /     . □   \           ○  Search point
-  /      . ▩    \        ▩ ▲  Neighbors selected
- / △ ▲   . ▩     \       □ △  Neighbors ignored
+  //     . □   \\           ○  Search point
+ //      . ▩    \\        ▩ ▲  Neighbors selected
+// △ ▲   . ▩     \\       □ △  Neighbors ignored
  ........○........
- \ △ ▲   .       /
-  \      .      /
-   \ △   . □   /
+\\ △ ▲   .       //
+ \\      .      //
+  \\ △   . □   //
      ‾‾‾‾‾‾‾‾‾
 
 ## Max per sector
@@ -35,13 +35,13 @@ the sectors will match the rotated quadrants/octants.
 
 `FilteredSearch(method, maxpersector = 2)`
      _________
-   /     . □   \           ○  Search point
-  /      . ▩    \        ▩ ▲  Neighbors selected
- / ▲ ▲   . ▩     \       □ △  Neighbors ignored
+  //     . □   \\           ○  Search point
+ //      . ▩    \\        ▩ ▲  Neighbors selected
+// ▲ ▲   . ▩     \\       □ △  Neighbors ignored
  ........○........
- \ ▲ ▲   .       /
-  \      .      /
-   \ △   . ▩   /
+\\ ▲ ▲   .       //
+ \\      .      //
+  \\ △   . ▩   //
      ‾‾‾‾‾‾‾‾‾
 """
 struct FilteredSearch{M<:NeighborSearchMethod} <: BoundedNeighborSearchMethod
