@@ -14,10 +14,18 @@ of the initial neighbors returned by `method`, set `metric = nothing`.
 
 It can be a `NamedTuple` or `Dict`, where the first element is the property name
 and the second defines the max neighbor per available categories of the property.
-In the example below, no more than 2 neighbors from the same hole are selected.
+In the example below, no more than 2 neighbors of same geometry are selected.
 
-`FilteredSearch(method, maxpercategory = (holeid = 2,))`
-[ASCII illustration]
+`FilteredSearch(method, maxpercategory = (geometry = 2,))`
+     _________
+   /     . □   \           ○  Search point
+  /      . ▩    \        ▩ ▲  Neighbors selected
+ / △ ▲   . ▩     \       □ △  Neighbors ignored
+ ........○........
+ \ △ ▲   .       /
+  \      .      /
+   \ △   . □   /
+     ‾‾‾‾‾‾‾‾‾
 
 ## Max per sector
 
@@ -26,7 +34,15 @@ cartesian quadrants (2-D) or octants (3-D). If the neighborhood is an `Ellipsoid
 the sectors will match the rotated quadrants/octants.
 
 `FilteredSearch(method, maxpersector = 2)`
-[ASCII illustration]
+     _________
+   /     . □   \           ○  Search point
+  /      . ▩    \        ▩ ▲  Neighbors selected
+ / ▲ ▲   . ▩     \       □ △  Neighbors ignored
+ ........○........
+ \ ▲ ▲   .       /
+  \      .      /
+   \ △   . ▩   /
+     ‾‾‾‾‾‾‾‾‾
 """
 struct FilteredSearch{M<:NeighborSearchMethod} <: BoundedNeighborSearchMethod
   method::M
@@ -59,14 +75,15 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
   categs  = initcategories(obj, inds, method.maxpercategory)
   sectors = initsectors(meth, method.maxpersector)
 
-  # check about initialization size
+  # loop each neighbor candidate
   nneigh = 0
   for i in inds
     # check category
     if categs[:use]
       cat, pass = Dict(), false
+      tab = Tables.columns(values(obj))
       for col in keys(categs[:max])
-        cat[col] = getproperty(values(obj)[i],col)
+        cat[col] = Tables.getcolumn(tab, col)[i]
         categs[:count][col][cat[col]] >= categs[:max][col] && (pass = true)
       end
       pass && continue
@@ -107,8 +124,8 @@ end
 # initialize categories constraints if necessary
 function initcategories(obj, inds, catgs)
   catgs == nothing && return Dict(:use => false)
-  tab   = values(obj)
-  catvals = Dict(k => unique(getproperty(tab[inds], k)) for k in keys(catgs))
+  tab   = Tables.columns(values(obj))
+  catvals = Dict(k => unique(Tables.getcolumn(tab, k)[inds]) for k in keys(catgs))
   counter = Dict(k => Dict(zip(v, zeros(Int,length(v)))) for (k, v) in catvals)
   Dict(:use => true, :max => catgs, :count => counter)
 end

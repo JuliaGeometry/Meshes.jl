@@ -15,7 +15,7 @@ using Random
 using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
-using Distances: PreMetric, Euclidean, Mahalanobis, colwise, evaluate
+using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
