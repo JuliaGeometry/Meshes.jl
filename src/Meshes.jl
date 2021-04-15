@@ -261,7 +261,7 @@ export
 
   # discretization
   DiscretizationMethod,
-  FIST, DevadossRourke,
+  FIST, Dehn1899,
   discretize,
 
   # simplification

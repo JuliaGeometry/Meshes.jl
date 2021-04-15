@@ -21,4 +21,4 @@ function discretize end
 # ----------------
 
 include("discretization/fist.jl")
-include("discretization/dr.jl")
+include("discretization/dehn.jl")

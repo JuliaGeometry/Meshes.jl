@@ -114,61 +114,61 @@
     @test nelements(mesh) == length(vertices(mesh)) - 2
   end
 
-  @testset "DevadossRourke" begin
+  @testset "Dehn1899" begin
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
-    time = @elapsed discretize(poly, DevadossRourke())
+    time = @elapsed discretize(poly, Dehn1899())
     @test time < 0.001
 
     poly = readpoly(T, joinpath(datadir, "poly1.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly2.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly3.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly4.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "poly5.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth1.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth2.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth3.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth4.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
 
     poly = readpoly(T, joinpath(datadir, "smooth5.line"))
-    mesh = discretize(poly, DevadossRourke())
+    mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
   end

@@ -3,12 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    DevadossRourke()
+    Dehn1899()
 
-Devadoss-Rourke triangulation.
+Max Dehns' triangulation proved in 1899.
 
 The algorithm is described in the first chapter of Devadoss & Rourke 2011,
-and is based on the Polygonal Jordan Curve theorem.
+and is based on a theorem derived in 1899 by the German mathematician Max Dehn.
+See https://en.wikipedia.org/wiki/Two_ears_theorem.
 
 Because the algorithm relies on recursion, it is only appropriate for small
 polygonal areas. Currently, the implementation does not support holes.
@@ -18,9 +19,9 @@ polygonal areas. Currently, the implementation does not support holes.
 * Devadoss, S & Rourke, J. 2011. [Discrete and computational geometry]
   (https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
 """
-struct DevadossRourke end
+struct Dehn1899 end
 
-function discretize(polyarea::PolyArea, ::DevadossRourke)
+function discretize(polyarea::PolyArea, ::Dehn1899)
   # build bridges in case the polygonal area has
   # holes, i.e. reduce to a single outer boundary
   𝒫 = polyarea |> unique |> bridge
@@ -29,12 +30,12 @@ function discretize(polyarea::PolyArea, ::DevadossRourke)
   points = collect(vertices(𝒫))
 
   # Devadoss-Rourke recursion
-  connec = devadossrourke(points, 1:length(points))
+  connec = dehn1899(points, 1:length(points))
 
   SimpleMesh(points, connec)
 end
 
-function devadossrourke(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
+function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
   I = CircularVector(inds)
   n = length(I)
 
@@ -75,8 +76,8 @@ function devadossrourke(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     rinds = [mod1(ind,n) for ind in rinds]
 
     # perform recursion
-    left  = devadossrourke(v, inds[linds])
-    right = devadossrourke(v, inds[rinds])
+    left  = dehn1899(v, inds[linds])
+    right = dehn1899(v, inds[rinds])
     [left; right]
   else
     # return the triangle
