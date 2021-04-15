@@ -60,8 +60,9 @@ function devadossrourke(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
 
     # adjust diagonal if necessary
     if !isdiag
+      l  = Line(v[I[i-1]], v[I[i+1]])
       js = rinds[intriangle .+ 1]
-      k  = argmin([evaluate(Euclidean(), v[I[i]], v[I[j]]) for j in js])
+      k  = argmax([evaluate(Euclidean(), l, v[I[j]]) for j in js])
       j  = js[k]
       linds = i:j
       rinds = j:i+n
