@@ -39,7 +39,7 @@ function devadossrourke(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
   n = length(I)
 
   if n > 3 # split chain
-    # lowermost vertex
+    # find lowest vertex
     i  = 1
     yᵢ = last(coordinates(v[I[1]]))
     for j in 2:n
@@ -72,7 +72,8 @@ function devadossrourke(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     left  = devadossrourke(v, I[linds])
     right = devadossrourke(v, I[rinds])
     [left; right]
-  else # return the triangle
+  else
+    # return the triangle
     [connect(Tuple(I), Triangle)]
   end
 end
