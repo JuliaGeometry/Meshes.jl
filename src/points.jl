@@ -31,6 +31,9 @@ Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
 Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
 Point(coords...) = Point(SVector(coords...))
 
+# promote rule for Point
+Base.promote_rule(::Type{Point{Dim,T}}, ::Type{Point{Dim,S}}) where {Dim, T, S} = Point{Dim, promote_type(T,S)}
+
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
 Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coords)
