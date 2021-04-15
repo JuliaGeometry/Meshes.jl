@@ -15,6 +15,7 @@ struct Line{Dim,T} <: Primitive{Dim,T}
 end
 
 Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
+Line(a,b) = Line(promote(a,b)...)
 
 paramdim(::Type{<:Line}) = 1
 
