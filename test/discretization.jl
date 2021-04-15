@@ -139,5 +139,12 @@
     mesh = discretize(poly, DevadossRourke())
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
+
+    poly = readpoly(T, joinpath(datadir, "taubin.line"))
+    mesh = discretize(poly, DevadossRourke())
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+    time = @elapsed discretize(poly, DevadossRourke())
+    @test time < 0.001
   end
 end

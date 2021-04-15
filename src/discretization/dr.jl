@@ -68,12 +68,18 @@ function devadossrourke(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
       rinds = j:i+n
     end
 
+    # we adjust the circular indices and
+    # use `inds` instead of `I` in the
+    # recursion to avoid memory copies
+    linds = [mod1(ind,n) for ind in linds]
+    rinds = [mod1(ind,n) for ind in rinds]
+
     # perform recursion
-    left  = devadossrourke(v, I[linds])
-    right = devadossrourke(v, I[rinds])
+    left  = devadossrourke(v, inds[linds])
+    right = devadossrourke(v, inds[rinds])
     [left; right]
   else
     # return the triangle
-    [connect(Tuple(I), Triangle)]
+    [connect(Tuple(inds), Triangle)]
   end
 end
