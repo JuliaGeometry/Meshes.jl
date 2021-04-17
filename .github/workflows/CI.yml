@@ -9,8 +9,6 @@ on:
     tags: '*'
 env:
   JULIA_NUM_THREADS: 2
-  JULIA_DEBUG: GR
-  JULIA_GR_PROVIDER: GR
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
