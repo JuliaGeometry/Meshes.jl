@@ -141,7 +141,6 @@ export
   Pyramid, Tetrahedron, Hexahedron,
   Chain, PolyArea,
   vertices, nvertices,
-  faces, facets,
   windingnumber, chains, segments,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
@@ -151,7 +150,7 @@ export
   WindingOrientation,
   TriangleOrientation,
 
-  # point sets
+  # collections
   Collection,
   PointSet,
   GeometrySet,

@@ -11,4 +11,14 @@
   @test boundingbox(CartesianGrid{T}(10,10)) == Box(P2(0,0), P2(10,10))
   @test boundingbox(CartesianGrid{T}(100,200)) == Box(P2(0,0), P2(100,200))
   @test boundingbox(CartesianGrid((10,10), T.((1,1)), T.((1,1)))) == Box(P2(1,1), P2(11,11))
+
+  # point set views
+  d = PointSet(T[0 1 2; 0 2 1])
+  v = view(d, 1:2)
+  @test boundingbox(v) == Box(P2(0,0), P2(1,2))
+
+  # cartesian grid views
+  d = CartesianGrid{T}(10,10)
+  v = view(d, 1:2)
+  @test_broken boundingbox(v) == Box(P2(0,0), P2(2,1))
 end
