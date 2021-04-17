@@ -24,5 +24,3 @@ function (s::Segment)(t)
 end
 
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
-
-facets(s::Segment) = (v for v in s.vertices)
