@@ -46,7 +46,8 @@ function maxneighbors end
 # ----------
 
 function search(pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
-  neighbors = Vector{Int}(undef, maxneighbors(method))
+  nmax = maxneighbors(method) == Inf ? 0 : maxneighbors(method)
+  neighbors = Vector{Int}(undef, nmax)
   nneigh = search!(neighbors, pₒ, method; mask=mask)
   view(neighbors, 1:nneigh)
 end

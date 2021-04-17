@@ -17,6 +17,7 @@ and the second defines the max neighbor per available categories of the property
 In the example below, no more than 2 neighbors of same geometry are selected.
 
 `FilteredSearch(method, maxpercategory = (geometry = 2,))`
+```ascii
      _________
   //     . □   \\           ○  Search point
  //      . ▩    \\        ▩ ▲  Neighbors selected
@@ -26,6 +27,7 @@ In the example below, no more than 2 neighbors of same geometry are selected.
  \\      .      //
   \\ △   . □   //
      ‾‾‾‾‾‾‾‾‾
+```
 
 ## Max per sector
 
@@ -34,6 +36,7 @@ cartesian quadrants (2-D) or octants (3-D). If the neighborhood is an `Ellipsoid
 the sectors will match the rotated quadrants/octants.
 
 `FilteredSearch(method, maxpersector = 2)`
+```ascii
      _________
   //     . □   \\           ○  Search point
  //      . ▩    \\        ▩ ▲  Neighbors selected
@@ -43,16 +46,17 @@ the sectors will match the rotated quadrants/octants.
  \\      .      //
   \\ △   . ▩   //
      ‾‾‾‾‾‾‾‾‾
+```
 """
 struct FilteredSearch{M<:NeighborSearchMethod} <: BoundedNeighborSearchMethod
   method::M
-  nmax::Int
+  nmax
   maxpercategory
   maxpersector
   metric
 end
 
-FilteredSearch(method::M, nmax=0; maxpercategory=nothing,
+FilteredSearch(method::M, nmax=Inf; maxpercategory=nothing,
                maxpersector=nothing, metric=Euclidean()) where {M} =
   FilteredSearch{M}(method, nmax, maxpercategory, maxpersector, metric)
 
@@ -61,24 +65,31 @@ maxneighbors(method::FilteredSearch) = method.nmax
 function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
   meth = method.method
   obj  = meth.domain
-  inds = search(pₒ, meth, mask=mask)
-  nmax = method.nmax == 0 ? Inf : method.nmax
+  nmax = method.nmax
 
-  # get distances and give priority to closest neighbors if necessary
+  # initial search, using mask if necessary
+  inds = search(pₒ, meth, mask=mask)
+
+  # `inds` is not guranteed to be sorted by distance. also, a different
+  # metric might be preferred to give priority to the FilteredSearch.
+  # unless `metric = nothing`, the indices are sorted here using metric
   if !isnothing(method.metric)
     dists  = [evaluate(method.metric, coordinates(pₒ), coordinates(centroid(obj, ind))) for ind in inds]
     sorted = sortperm(dists)
     inds   = inds[sorted]
   end
 
-  # initialize category and sectors constraints if necessary
+  # initialize category and sectors constraints if necessary. `Dict` containers
+  # are here created with the information necessary for further filtering.
   categs  = initcategories(obj, inds, method.maxpercategory)
   sectors = initsectors(meth, method.maxpersector)
 
   # loop each neighbor candidate
   nneigh = 0
   for i in inds
-    # check category
+    # check category. if exceeded the category, the neighbor is ignored;
+    # otherwise categs[:count][col][cat[col]] is incremented in the end after
+    # nmax and maxpersector checks
     if categs[:use]
       cat, pass = Dict(), false
       tab = Tables.columns(values(obj))
@@ -89,7 +100,9 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
       pass && continue
     end
 
-    # check sectors
+    # check sectors; if there are no space for neighbors in the indsector, it's
+    # ignored; otherwise sectors[:count][indsector] is incremented in the end
+    # after nmax checks
     if sectors[:use]
       centered  = sectors[:rotmat]' * (centroid(obj,i) - pₒ)
       indsector = getsector(centered)
@@ -121,7 +134,9 @@ function search!(neighbors, pₒ::Point, method::FilteredSearch; mask=nothing)
   nneigh
 end
 
-# initialize categories constraints if necessary
+# initialize categories constraints if necessary. e.g. if `maxpercategory =
+# (holeid = 2,)`, dict[:count][:holeid] will have all the possible values of
+# holeid, initiliazed to zero for further counting.
 function initcategories(obj, inds, catgs)
   catgs == nothing && return Dict(:use => false)
   tab   = Tables.columns(values(obj))
@@ -130,15 +145,19 @@ function initcategories(obj, inds, catgs)
   Dict(:use => true, :max => catgs, :count => counter)
 end
 
+# initialize sectors constraints if necessary. this will create a counter for
+# each sector and a rotation matrix to reverse ellipsoid rotation (if an
+# ellipsoid search is used). a rotation noise is also added to simplify filtering.
+# it is used here because if data is regular and fall onto axes (e.g. cartesian
+# grid data), the sector filtering will return misleading results without it.
 function initsectors(method, maxpersector)
-  # initialize sectors constraints if necessary
   maxpersector == nothing && return Dict(:use => false)
   N = embeddim(method.domain)
   ellips = method isa NeighborhoodSearch && method.neigh isa Ellipsoid
 
   # add a noise rotation to avoid samples at sectors limits
   rotangs = N == 2 ? [0.001] : [0.001, 0.001, 0.001]
-  convention = ellips ? method.neigh.convention : GSLIB
+  convention = ellips ? method.neigh.convention : Datamine
 
   # reverse rotation if it is an ellipsoid
   if ellips
@@ -153,6 +172,9 @@ function initsectors(method, maxpersector)
   Dict(:use => true, :count => zeros(Int, 2^N), :rotmat => rotmatx, :max => maxpersector)
 end
 
+# this function returns at which quadrant/octant the given centered coordinate
+# is. instead of making multiple if statements, a container is used to get the
+# combination of positive/negative coordinates and assign a code to it.
 function getsector(coords::AbstractVector)
   # get dimensions
   N    = size(coords,1)
