@@ -2,50 +2,47 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# recipe for base case
-@recipe function f(segment::Segment)
-  seriestype --> :scatterpath
-  seriescolor --> :black
-  primary --> false
-
-  Tuple.(coordinates.(vertices(segment)))
-end
-
-# plot facets of polytope in a recursion
-@recipe function f(polytope::Polytope)
-  for f in facets(polytope)
+@recipe function f(geometries::AbstractVector{<:Geometry})
+  for geometry in geometries
     @series begin
-      primary --> false
-      f
+      geometry
     end
   end
 end
 
-# specialize triangle case for performance
-@recipe function f(triangle::Triangle)
-  seriestype --> :scatterpath
+@recipe function f(segment::Segment)
+  seriestype --> :path
   seriescolor --> :black
   primary --> false
 
-  vs = vertices(triangle)
-  Tuple.(coordinates.([vs; first(vs)]))
+  vertices(segment)
+end
+
+@recipe function f(polygon::Polygon)
+  seriestype --> :path
+  seriescolor --> :black
+  primary --> false
+
+  points = vertices(polygon)
+  [points; first(points)]
 end
 
 @recipe function f(ray::Ray)
   seriestype --> :path
   seriescolor --> :black
   arrow --> true
+  label --> "ray"
 
-  a = coordinates(ray(0))
-  b = coordinates(ray(1))
-  [Tuple(a), Tuple(b)]
+  [ray(0), ray(1)]
 end
 
 @recipe function f(sphere::Sphere, nsamples=100)
   seriestype --> :path
   seriescolor --> :black
+  label --> "sphere"
 
-  points = collect(sample(sphere, RegularSampling(nsamples)))
+  samples = sample(sphere, RegularSampling(nsamples))
+  points  = collect(samples)
   [points; first(points)]
 end
 
@@ -54,11 +51,9 @@ end
   seriescolor --> :black
   label --> "chain"
 
-  xs = coordinates.(vertices(chain))
+  points = vertices(chain)
 
-  isclosed(chain) && push!(xs, xs[begin])
-
-  Tuple.(xs)
+  isclosed(chain) ? [points; first(points)] : points
 end
 
 @recipe function f(polyarea::PolyArea)
@@ -78,14 +73,6 @@ end
     @series begin
       primary --> false
       pchain
-    end
-  end
-end
-
-@recipe function f(geometries::AbstractVector{<:Geometry})
-  for geometry in geometries
-    @series begin
-      geometry
     end
   end
 end
