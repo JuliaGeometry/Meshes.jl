@@ -36,12 +36,6 @@
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), dom) == "3 DummyDomain{2,Float64}\n  └─Ball{2,Float64}(Point(1.0, 1.0), 1.0))\n  └─Ball{2,Float64}(Point(2.0, 2.0), 1.0))\n  └─Ball{2,Float64}(Point(3.0, 3.0), 1.0))"
     end
-
-    if visualtests
-      dom = DummyDomain(P2(0,0))
-      @test_reference "data/domain-$T.png" plot(dom)
-      @test_reference "data/domain-data-$T.png" plot(dom,1:3)
-    end
   end
 
   @testset "Data" begin
