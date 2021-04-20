@@ -51,11 +51,11 @@ include("traits/optional.jl")
 # basic geometries
 include("geometries.jl")
 
-# geometric distances
-include("distances.jl")
-
 # collections
 include("collections.jl")
+
+# geometric distances
+include("distances.jl")
 
 # rotation conventions
 include("conventions.jl")
@@ -149,6 +149,9 @@ export
   # orientation algorithms
   WindingOrientation,
   TriangleOrientation,
+
+  # multi-types
+  Multi,
 
   # collections
   Collection,

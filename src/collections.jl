@@ -2,13 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# helper type for concise definitions
-const PointOrGeometry{Dim,T} = Union{Point{Dim,T},Geometry{Dim,T}}
-
 """
     Collection(items)
 
-A collection of `items` seen as a single entity.
+A collection of `items` (points or geometries) seen as a single domain.
 """
 struct Collection{Dim,T,I<:PointOrGeometry{Dim,T}} <: Domain{Dim,T}
   items::Vector{I}
@@ -31,7 +28,7 @@ const PointSet{Dim,T} = Collection{Dim,T,Point{Dim,T}}
 """
     PointSet(points)
 
-A set of `points` (a.k.a. point cloud) seen as a single entity.
+A set of `points` (a.k.a. point cloud) seen as a single domain.
 
 ## Examples
 
@@ -71,7 +68,7 @@ const GeometrySet{Dim,T,G<:Geometry{Dim,T}} = Collection{Dim,T,G}
 """
     GeometrySet(geometries)
 
-A set of `geometries` seen as a single entity.
+A set of `geometries` seen as a single domain.
 """
 GeometrySet(geometries::AbstractVector{G}) where {G<:Geometry} =
   GeometrySet{embeddim(G),coordtype(G),G}(geometries)

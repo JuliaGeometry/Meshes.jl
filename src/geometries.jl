@@ -71,5 +71,40 @@ Base.in(p::Point, g::Geometry)
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
+
 include("primitives.jl")
 include("polytopes.jl")
+
+"""
+    PointOrGeometry{Dim,T}
+
+A union type that can represent either a point or a geometry.
+"""
+const PointOrGeometry{Dim,T} = Union{Point{Dim,T},Geometry{Dim,T}}
+
+"""
+    Multi(entities)
+
+A collection of points or geometries seen as a single entity.
+
+In geographic information systems (GIS) it is common to represent
+multiple polygons as a single entity. In this case the polygons
+refer to the same object in the real world (e.g. country with islands).
+"""
+struct Multi{Dim,T,I<:PointOrGeometry{Dim,T}} <: Geometry{Dim,T}
+  items::Vector{I}
+end
+
+Base.getindex(multi::Multi, ind) = getindex(multi.items, ind)
+Base.length(multi::Multi) = length(multi.items)
+Base.eltype(multi::Multi) = eltype(multi.items)
+Base.firstindex(multi::Multi) = firstindex(multi.items)
+Base.lastindex(multi::Multi) = lastindex(multi.items)
+Base.iterate(multi::Multi, state=1) =
+  state > length(multi) ? nothing : (multi[state], state+1)
+
+function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
+  n = length(multi.items)
+  G = eltype(multi.items)
+  print(io, "$n Multi-$(nameof(G)){$Dim,$T}")
+end
