@@ -95,9 +95,8 @@ include("plotrecipes/domain.jl")
 include("plotrecipes/data.jl")
 include("plotrecipes/points.jl")
 include("plotrecipes/geometries.jl")
-include("plotrecipes/pointsets.jl")
+include("plotrecipes/collections.jl")
 include("plotrecipes/cartesiangrids.jl")
-include("plotrecipes/mesh.jl")
 include("plotrecipes/partitions.jl")
 
 export 
