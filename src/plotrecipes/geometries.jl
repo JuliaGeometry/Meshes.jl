@@ -32,6 +32,7 @@ end
 @recipe function f(polygon::Polygon)
   seriestype --> :path
   seriescolor --> :auto
+  fill --> true
 
   points = vertices(polygon)
   [points; first(points)]
@@ -64,11 +65,6 @@ end
 end
 
 @recipe function f(polyarea::PolyArea)
-  seriestype --> :path
-  seriescolor --> :auto
-  linecolor --> :black
-  fill --> true
-
   if hasholes(polyarea)
     mesh  = discretize(polyarea, FIST())
     geoms = collect(mesh)
@@ -76,14 +72,18 @@ end
     geoms = [first(chains(polyarea))]
   end
 
+  seriestype --> :path
+
   @series begin
-    first(geoms)
+    seriescolor --> :auto
+    fill --> true
+    Multi(geoms)
   end
 
-  for geom in Iterators.drop(geoms, 1)
-    @series begin
-      primary --> false
-      geom
-    end
+  @series begin
+    linecolor --> :black
+    fill --> false
+    primary --> false
+    first(chains(polyarea))
   end
 end

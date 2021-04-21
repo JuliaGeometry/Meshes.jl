@@ -4,13 +4,13 @@
 
 @recipe function f(mesh::Mesh)
   seriescolor --> :black
-  fill --> true
   fillcolor --> :gray90
-  primary --> false
+  fill --> true
 
-  for elm in elements(mesh)
+  for element in elements(mesh)
     @series begin
-      elm
+      primary --> false
+      element
     end
   end
 end
