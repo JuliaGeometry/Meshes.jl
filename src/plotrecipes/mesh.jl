@@ -4,11 +4,12 @@
 
 @recipe function f(mesh::Mesh)
   seriescolor --> :black
-  legend --> false
+  fill --> true
+  fillcolor --> :gray90
+  primary --> false
 
   for elm in elements(mesh)
     @series begin
-      primary --> false
       elm
     end
   end

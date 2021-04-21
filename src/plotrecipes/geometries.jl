@@ -10,18 +10,28 @@
   end
 end
 
+@recipe function f(multi::Multi)
+  @series begin
+    first(multi)
+  end
+  for geometry in Iterators.drop(multi, 1)
+    @series begin
+      primary --> false
+      geometry
+    end
+  end
+end
+
 @recipe function f(segment::Segment)
   seriestype --> :path
-  seriescolor --> :black
-  primary --> false
+  linecolor --> :black
 
   vertices(segment)
 end
 
 @recipe function f(polygon::Polygon)
   seriestype --> :path
-  seriescolor --> :black
-  primary --> false
+  seriescolor --> :auto
 
   points = vertices(polygon)
   [points; first(points)]
@@ -29,17 +39,15 @@ end
 
 @recipe function f(ray::Ray)
   seriestype --> :path
-  seriescolor --> :black
+  linecolor --> :black
   arrow --> true
-  label --> "ray"
 
   [ray(0), ray(1)]
 end
 
 @recipe function f(sphere::Sphere, nsamples=100)
   seriestype --> :path
-  seriescolor --> :black
-  label --> "sphere"
+  linecolor --> :black
 
   samples = sample(sphere, RegularSampling(nsamples))
   points  = collect(samples)
@@ -48,8 +56,7 @@ end
 
 @recipe function f(chain::Chain)
   seriestype --> :path
-  seriescolor --> :black
-  label --> "chain"
+  linecolor --> :black
 
   points = vertices(chain)
 
@@ -58,21 +65,25 @@ end
 
 @recipe function f(polyarea::PolyArea)
   seriestype --> :path
-  seriescolor --> :black
-  label --> "polyarea"
+  seriescolor --> :auto
+  linecolor --> :black
+  fill --> true
 
-  pchains = chains(polyarea)
-
-  # plot outer chain
-  @series begin
-    first(pchains)
+  if hasholes(polyarea)
+    mesh  = discretize(polyarea, FIST())
+    geoms = collect(mesh)
+  else
+    geoms = [first(chains(polyarea))]
   end
 
-  # plot inner chains
-  for pchain in pchains[2:end]
+  @series begin
+    first(geoms)
+  end
+
+  for geom in Iterators.drop(geoms, 1)
     @series begin
       primary --> false
-      pchain
+      geom
     end
   end
 end

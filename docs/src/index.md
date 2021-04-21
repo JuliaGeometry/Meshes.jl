@@ -51,6 +51,7 @@ the package.
 
 ```@example overview
 using Meshes
+using Plots
 ```
 
 ### Points and vectors
@@ -268,19 +269,25 @@ collect(elements(g))
 ```
 
 We can construct a general unstructured mesh with a global vector of points
-and a collection of [`Connectivity`](@ref) that store the indices to the global
-vector of points:
+and a collection of [`Connectivity`](@ref) that store the indices to the
+global vector of points:
 
 ```@example overview
 points = Point2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
-tris  = connect.([(3,1,5),(4,6,2)], Triangle)
-quads = connect.([(1,2,5,6),(5,6,3,4)], Quadrangle)
+tris  = connect.([(1,5,3),(4,6,2)], Triangle)
+quads = connect.([(1,2,6,5),(4,3,5,6)], Quadrangle)
 mesh = SimpleMesh(points, [tris; quads])
 ```
 
-The actual geometries of the elements are materialized in a lazy fashion like
-with the Cartesian grid:
+The actual geometries of the elements are materialized in a lazy fashion
+like with the Cartesian grid:
 
 ```@example overview
 collect(elements(mesh))
+```
+
+and many geometries and meshes can be directly plotted with Plots.jl:
+
+```@example overview
+plot(mesh)
 ```
