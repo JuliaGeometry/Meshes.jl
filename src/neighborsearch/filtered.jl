@@ -56,9 +56,13 @@ struct FilteredSearch{M<:NeighborSearchMethod} <: BoundedNeighborSearchMethod
   metric
 end
 
-FilteredSearch(method::M, nmax=Inf; maxpercategory=nothing,
-               maxpersector=nothing, metric=Euclidean()) where {M} =
+function FilteredSearch(method::M, nmax=Inf; maxpercategory=nothing,
+               maxpersector=nothing, metric=:same) where {M}
+  if metric == :same
+    metric = method isa NeighborhoodSearch ? method.tree.metric : nothing
+  end
   FilteredSearch{M}(method, nmax, maxpercategory, maxpersector, metric)
+end
 
 maxneighbors(method::FilteredSearch) = method.nmax
 
