@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------
 
 @recipe function f(domain::Domain)
-  linecolor --> :black
   collect(domain)
 end
 

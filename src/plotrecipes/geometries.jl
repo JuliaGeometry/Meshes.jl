@@ -50,9 +50,11 @@ end
   @series begin
     geoms
   end
-  @series begin
-    primary --> false
-    first(chains(polyarea))
+  for chain in chains(polyarea)
+    @series begin
+      primary --> false
+      chain
+    end
   end
 end
 
@@ -60,9 +62,7 @@ end
   collect(multi)
 end
 
-@recipe function f(geometries::AbstractVector{<:Geometry})
-  seriescolor --> :auto
-  fill --> true
+@recipe function f(geometries::AbstractVector{G}) where {G<:Geometry}
   @series begin
     first(geometries)
   end
