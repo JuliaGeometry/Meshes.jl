@@ -103,6 +103,8 @@ Base.lastindex(multi::Multi) = lastindex(multi.items)
 Base.iterate(multi::Multi, state=1) =
   state > length(multi) ? nothing : (multi[state], state+1)
 
+paramdim(multi::Multi) = maximum(paramdim, multi.items)
+
 function centroid(multi::Multi)
   cs = coordinates.(centroid.(multi.items))
   Point(sum(cs) / length(cs))
