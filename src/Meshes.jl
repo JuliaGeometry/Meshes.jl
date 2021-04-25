@@ -177,7 +177,7 @@ export
   HalfEdge,
   connectivities,
   halfedges,
-  edgeoncell,
+  edgeonelem,
   edgeonvertex,
   ncells,
 

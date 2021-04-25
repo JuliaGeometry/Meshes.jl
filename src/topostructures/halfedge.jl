@@ -3,45 +3,45 @@
 # ------------------------------------------------------------------
 
 """
-    HalfEdge(head, cell, prev, next, half)
+    HalfEdge(head, elem, prev, next, half)
 
 Stores the indices of the `head` vertex, the `prev`
-and `next` edges in the left `cell`, and the opposite
-`half`-edge. For some half-edges the `cell` may be
+and `next` edges in the left `elem`, and the opposite
+`half`-edge. For some half-edges the `elem` may be
 `nothing`, e.g. border edges of the mesh.
 
 See [`HalfEdgeStructure`](@ref) for more details.
 """
 mutable struct HalfEdge
   head::Int
-  cell::Union{Int,Nothing}
+  elem::Union{Int,Nothing}
   prev::HalfEdge
   next::HalfEdge
   half::HalfEdge
-  HalfEdge(head, cell) = new(head, cell)
+  HalfEdge(head, elem) = new(head, elem)
 end
 
 function Base.show(io::IO, e::HalfEdge)
-  print(io, "HalfEdge($(e.head), $(e.cell))")
+  print(io, "HalfEdge($(e.head), $(e.elem))")
 end
 
 """
-    HalfEdgeStructure(halfedges, edgeoncell, edgeonvertex)
+    HalfEdgeStructure(halfedges, edgeonelem, edgeonvertex)
 
 A data structure for orientable 2-manifolds based
 on half-edges.
 
 Two types of half-edges exist (Kettner 1999). This
 implementation is the most common type that splits
-the incident cells.
+the incident elements.
 
 A vector of `halfedges` together with a vector of
-`edgeoncell` and a vector of `edgeonvertex` can be
+`edgeonelem` and a vector of `edgeonvertex` can be
 used to retrieve topolological relations in optimal
 time. In this case, `edgeonvertex[i]` returns the
 index of the half-edge in `halfedges` with head equal
-to `i`. Similarly, `edgeoncell[i]` returns the index
-of a half-edge in `halfedges` that is in the cell `i`.
+to `i`. Similarly, `edgeonelem[i]` returns the index
+of a half-edge in `halfedges` that is in the elem `i`.
 
 Such data structure is usually constructed from another
 data structure such as [`ExplicitStructure`](@ref) via
@@ -61,7 +61,7 @@ See also [`TopologicalStructure`](@ref).
 """
 struct HalfEdgeStructure <: TopologicalStructure
   halfedges::Vector{HalfEdge}
-  edgeoncell::Vector{Int}
+  edgeonelem::Vector{Int}
   edgeonvertex::Vector{Int}
 end
 
@@ -73,11 +73,11 @@ Return the half-edges of the half-edge structure `s`.
 halfedges(s::HalfEdgeStructure) = s.halfedges
 
 """
-    edgeoncell(s, c)
+    edgeonelem(s, c)
 
-Return a half-edge of the half-edge structure `s` on the `c`-th cell.
+Return a half-edge of the half-edge structure `s` on the `c`-th elem.
 """
-edgeoncell(s::HalfEdgeStructure, c) = s.halfedges[s.edgeoncell[c]]
+edgeonelem(s::HalfEdgeStructure, c) = s.halfedges[s.edgeonelem[c]]
 
 """
     edgeonvertex(s, v)
@@ -88,8 +88,8 @@ head is the `v`-th index.
 edgeonvertex(s::HalfEdgeStructure, v) = s.halfedges[s.edgeonvertex[v]]
 
 """
-    ncells(s)
+    nelements(s)
 
-Return the number of cells in the half-edge structure `s`.
+Return the number of elements in the half-edge structure `s`.
 """
-ncells(s::HalfEdgeStructure) = length(s.edgeoncell)
+nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
