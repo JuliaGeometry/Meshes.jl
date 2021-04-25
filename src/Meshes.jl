@@ -19,9 +19,6 @@ using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
-# import categorical arrays as a temporary solution for plot recipes
-using CategoricalArrays: CategoricalValue, levelcode
-
 import Tables
 import Random
 import Base: values, ==, +, -, *
