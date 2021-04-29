@@ -91,16 +91,23 @@ Return the volume of the `polyhedron`.
 volume(p::Polyhedron) = measure(p)
 
 function Base.show(io::IO, p::Polytope)
-  kind = nameof(typeof(p))
-  vert = join(p.vertices, ", ")
+  kind = prettyname(p)
+  vert = join(vertices(p), ", ")
   print(io, "$kind($vert)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
-  kind = nameof(typeof(p))
-  lines = ["  └─$v" for v in p.vertices]
+  kind = prettyname(p)
+  lines = ["  └─$v" for v in vertices(p)]
   println(io, "$kind{$Dim,$T}")
   print(io, join(lines, "\n"))
+end
+
+prettyname(p::Polytope) = prettyname(typeof(p))
+function prettyname(PL::Type{<:Polytope})
+  n = string(PL)
+  i = findfirst('{', n)
+  n[1:i-1]
 end
 
 # ----------------
@@ -108,10 +115,9 @@ end
 # ----------------
 
 include("polytopes/segment.jl")
-include("polytopes/triangle.jl")
-include("polytopes/quadrangle.jl")
+include("polytopes/ngon.jl")
+include("polytopes/chain.jl")
+include("polytopes/polyarea.jl")
 include("polytopes/pyramid.jl")
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
-include("polytopes/chain.jl")
-include("polytopes/polyarea.jl")
