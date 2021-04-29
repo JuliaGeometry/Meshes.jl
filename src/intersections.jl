@@ -98,6 +98,20 @@ struct NonIntersectingRayTri <: Intersection end
 
 Base.get(::NonIntersectingRayTri) = nothing
 
+# ------------------------
+# RAY-MESH INTERSECTIONS
+# ------------------------
+
+struct IntersectingRayMesh{P<:Point, T, N<:Integer} <: Intersection
+  value::P
+  t::T
+  i::N
+end
+
+struct NonIntersectingRayMesh <: Intersection end
+
+Base.get(::NonIntersectingRayMesh) = nothing
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
