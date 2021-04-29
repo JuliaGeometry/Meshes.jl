@@ -289,5 +289,5 @@ collect(elements(mesh))
 and many geometries and meshes can be directly plotted with Plots.jl:
 
 ```@example overview
-plot(mesh, linecolor=:black, color=:gray90)
+plot(mesh, linecolor=:black, fillcolor=:gray90)
 ```
