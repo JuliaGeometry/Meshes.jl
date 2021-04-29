@@ -126,13 +126,13 @@ extrema(b)
 ```
 
 ```@example overview
-center(s), radius(s)
+centroid(s), radius(s)
 ```
 
 As well as their measure (e.g. area, volume) and other geometric properties:
 
 ```@example overview
-measure(b) == 1
+measure(b)
 ```
 
 We can sample random points on primitives using different methods:
@@ -289,5 +289,5 @@ collect(elements(mesh))
 and many geometries and meshes can be directly plotted with Plots.jl:
 
 ```@example overview
-plot(mesh)
+plot(mesh, linecolor=:black, color=:gray90)
 ```

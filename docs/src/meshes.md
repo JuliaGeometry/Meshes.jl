@@ -11,7 +11,6 @@ SimpleMesh
 
 ```@docs
 Connectivity
-polytopetype
 connect
 materialize
 ```

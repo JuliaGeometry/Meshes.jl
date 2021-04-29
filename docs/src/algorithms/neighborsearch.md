@@ -1,9 +1,9 @@
-# Neighborhood search
+# Neighbor search
 
 ```@docs
 search
 NeighborSearchMethod
-NeighborhoodSearch
+BallSearch
 KNearestSearch
 KBallSearch
 BoundedSearch
