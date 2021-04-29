@@ -76,17 +76,8 @@ function Base.convert(::Type{ExplicitStructure}, s::HalfEdgeStructure)
       n = n.next
     end
 
-    # connect vertices into a polytope
-    nv = length(v)
-    if nv == 3
-      elemtype = Triangle
-    elseif nv == 4
-      elemtype = Quadrangle
-    else
-      throw(Error("Polytope type not implemented."))
-    end
-
-    connect(Tuple(v), elemtype)
+    # connect vertices into a n-gon
+    connect(Tuple(v), Ngon{length(v)})
   end
 
   ExplicitStructure(connec)
