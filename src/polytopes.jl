@@ -3,12 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{N,Dim,T}
+    Polytope{K,Dim,T}
 
-We say that a geometry is a N-polytope when it is a collection of "flat" sides
-that constitue a `N`-dimensional subspace. They are called polygon and polyhedron
-respectively for 2D (`N=2`) and 3D (`N=3`) subspaces, embedded in a `Dim`-dimensional
-space. The parameter `N` is also known as the rank or parametric dimension of the
+We say that a geometry is a K-polytope when it is a collection of "flat" sides
+that constitue a `K`-dimensional subspace. They are called polygon and polyhedron
+respectively for 2D (`K=2`) and 3D (`K=3`) subspaces, embedded in a `Dim`-dimensional
+space. The parameter `K` is also known as the rank or parametric dimension of the
 polytope: https://en.wikipedia.org/wiki/Abstract_polytope.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
@@ -18,27 +18,35 @@ and higher dimensional features (edges, faces, cells...), removing the need to
 store all features.
 
 Additionally, the following property must hold in order for a geometry to be considered
-a polytope: the boundary of a (N+1)-polytope is a collection of N-polytopes, which may
-have (N-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
+a polytope: the boundary of a (K+1)-polytope is a collection of K-polytopes, which may
+have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 """
-abstract type Polytope{N,Dim,T} <: Geometry{Dim,T} end
+abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
 (::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(SVector(vertices))
 (::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
 (::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
 
-# type aliases for convenience
+"""
+    Polygon{Dim,T}
+
+A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
+"""
 const Polygon = Polytope{2}
+
+"""
+    Polyhedron{Dim,T}
+
+A polygon is a 3-polytope, i.e. a polytope with parametric dimension 3.
+"""
 const Polyhedron = Polytope{3}
-area(p::Polygon) = measure(p)
-volume(p::Polyhedron) = measure(p)
 
 """
     paramdim(polytope)
 
 Return the parametric dimension or rank of the polytope.
 """
-paramdim(::Type{<:Polytope{N}}) where {N} = N
+paramdim(::Type{<:Polytope{K}}) where {K} = K
 
 """
     vertices(polytope)
@@ -68,13 +76,27 @@ Return the centroid of the `polytope`.
 """
 centroid(p::Polytope) = Point(sum(coordinates.(vertices(p))) / length(vertices(p)))
 
+"""
+    area(polygon)
+
+Return the area of the `polygon`.
+"""
+area(p::Polygon) = measure(p)
+
+"""
+   volume(polygon)
+
+Return the volume of the `polyhedron`.
+"""
+volume(p::Polyhedron) = measure(p)
+
 function Base.show(io::IO, p::Polytope)
   kind = nameof(typeof(p))
   vert = join(p.vertices, ", ")
   print(io, "$kind($vert)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::Polytope{N,Dim,T}) where {N,Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
   kind = nameof(typeof(p))
   lines = ["  └─$v" for v in p.vertices]
   println(io, "$kind{$Dim,$T}")
