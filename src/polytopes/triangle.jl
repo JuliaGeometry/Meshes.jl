@@ -12,6 +12,7 @@ struct Triangle{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
 end
 
 measure(t::Triangle{2}) = abs(signarea(t))
+measure(t::Triangle{3}) = area(t)
 
 function Base.in(p::Point{2}, t::Triangle{2})
   a, b, c = t.vertices
@@ -20,4 +21,20 @@ function Base.in(p::Point{2}, t::Triangle{2})
   cap = signarea(c, a, p)
   areas = (abp, bcp, cap)
   all(areas .≥ 0) || all(areas .≤ 0)
+end
+
+function Base.in(p::Point{3}, t::Triangle{3})
+  # https://people.cs.clemson.edu/~dhouse/courses/404/notes/barycentric.pdf
+  a, b, c = t.vertices
+
+  v_n = (b - a) × (c - b)
+
+  A = norm(v_n)
+
+  n = v_n / A
+
+  u = ((c - b) × (p - b)) ⋅ n / A
+  v = ((a - c) × (p - c)) ⋅ n / A
+  
+  (u ≥ 0) && (v ≥ 0) && ((u + v) ≤ 1)
 end

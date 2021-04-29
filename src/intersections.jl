@@ -85,6 +85,19 @@ struct NonIntersectingBoxes <: Intersection end
 
 Base.get(::NonIntersectingBoxes) = nothing
 
+# ------------------------
+# RAY-TRIANGLE INTERSECTIONS
+# ------------------------
+
+struct IntersectingRayTri{P<:Point, T} <: Intersection
+  value::P
+  t::T
+end
+
+struct NonIntersectingRayTri <: Intersection end
+
+Base.get(::NonIntersectingRayTri) = nothing
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
@@ -92,3 +105,4 @@ Base.get(::NonIntersectingBoxes) = nothing
 include("intersections/lines.jl")
 include("intersections/segments.jl")
 include("intersections/boxes.jl")
+include("intersections/rays.jl")

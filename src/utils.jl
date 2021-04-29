@@ -26,6 +26,17 @@ function signarea(t::Triangle{2})
 end
 
 """
+    area(triangle)
+
+Compute the area of `triangle`.
+"""
+function area(t::Triangle{3})
+  vs = vertices(t)
+
+  norm((vs[2] - vs[1]) × (vs[3] - vs[1])) / 2
+end
+
+"""
     sideof(point, segment)
 
 Determines on which side of the oriented `segment`
@@ -48,4 +59,16 @@ Determines on which side of the closed `chain` the
 function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
   w = windingnumber(p, c)
   ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
+end
+
+"""
+    normal(triangle)
+
+Determine the normalised normal of `triangle`
+"""
+function normal(t::Triangle)
+  vs = vertices(t)
+
+  # the normal of a Triangle is the cross product of two arbitrary edges
+  (vs[2] - vs[1]) × (vs[3] - vs[1]) / norm((vs[2] - vs[1]) × (vs[3] - vs[1]))
 end

@@ -118,6 +118,20 @@
     for p in P2[(-1,0),(0,-1),(0.5,1.)]
       @test p ∉ t
     end
+
+    t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
+    @test area(t) == T(0.5)
+
+    t = Triangle(P3(0,0,1), P3(0,1,1), P3(1,0,1))
+    @test area(t) == T(0.5)
+
+    t = Triangle(P3(0,0,0), P3(1,0,0), P3(1,0,1))
+    for p in P3[(0,0,0),(1,0,0),(1,0,1),(0.5,0,0.),(1.,0,0.5),(0.5,0,0.5)]
+     @test p ∈ t
+    end
+    for p in P3[(-1,0,0),(0,0,-1),(0.5,0,1.)]
+     @test p ∉ t
+    end
   end
 
   @testset "Quadrangles" begin
