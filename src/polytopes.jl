@@ -60,14 +60,14 @@ vertices(p::Polytope) = p.vertices
 
 Return the number of vertices in the `polytope`.
 """
-nvertices(p::Polytope) = length(p.vertices)
+nvertices(p::Polytope) = length(vertices(p))
 
 """
     p1 == p2
 
 Tells whether or not polytopes `p1` and `p2` are equal.
 """
-==(p1::Polytope, p2::Polytope) = p1.vertices == p2.vertices
+==(p1::Polytope, p2::Polytope) = vertices(p1) == vertices(p2)
 
 """
     centroid(polytope)
@@ -84,7 +84,7 @@ Return the area of the `polygon`.
 area(p::Polygon) = measure(p)
 
 """
-   volume(polygon)
+   volume(polyhedron)
 
 Return the volume of the `polyhedron`.
 """
