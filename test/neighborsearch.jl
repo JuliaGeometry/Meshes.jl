@@ -1,8 +1,8 @@
-@testset "Neighborhood search" begin
-  @testset "NeighborhoodSearch" begin
+@testset "Neighbor search" begin
+  @testset "BallSearch" begin
     𝒟 = CartesianGrid((10, 10), T.((-0.5,-0.5)), T.((1.0,1.0)))
 
-    S = NeighborhoodSearch(𝒟, NormBall(T(1)))
+    S = BallSearch(𝒟, NormBall(T(1)))
     n = search(P2(0,0), S)
     @test Set(n) == Set([1,2,11])
     n = search(P2(9,0), S)
@@ -12,7 +12,7 @@
     n = search(P2(9,9), S)
     @test Set(n) == Set([100,99,90])
 
-    S = NeighborhoodSearch(𝒟, NormBall(T(√2+eps(T))))
+    S = BallSearch(𝒟, NormBall(T(√2+eps(T))))
     n = search(P2(0,0), S)
     @test Set(n) == Set([1,2,11,12])
     n = search(P2(9,0), S)
@@ -24,7 +24,7 @@
 
     # non MinkowskiMetric example
     𝒟 = CartesianGrid((360,180), T.((0.0,-90.0)), T.((1.0,1.0)))
-    S = NeighborhoodSearch(𝒟, NormBall(T(150), Haversine(T(6371))))
+    S = BallSearch(𝒟, NormBall(T(150), Haversine(T(6371))))
     n = search(P2(0,0), S)
     @test Set(n) == Set([32041, 32400, 32401, 32760])
   end
@@ -70,7 +70,7 @@
 
   @testset "BoundedSearch" begin
     𝒟 = CartesianGrid((10,10), T.((-0.5,-0.5)), T.((1.0,1.0)))
-    S1 = NeighborhoodSearch(𝒟, NormBall(T(5)))
+    S1 = BallSearch(𝒟, NormBall(T(5)))
     S2 = KNearestSearch(𝒟, 10)
     B1 = BoundedSearch(S1, 5)
     B2 = BoundedSearch(S2, 5)

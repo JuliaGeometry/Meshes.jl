@@ -3,40 +3,38 @@
 # ------------------------------------------------------------------
 
 """
-    NeighborhoodSearch(domain, neighborhood)
+    BallSearch(domain, ball)
 
-A method for searching neighbors in `domain` inside `neighborhood`.
+A method for searching neighbors in `domain` inside `ball`.
 """
-struct NeighborhoodSearch{D,N,T} <: NeighborSearchMethod
+struct BallSearch{D,B,T} <: NeighborSearchMethod
   # input fields
   domain::D
-  neigh::N
+  ball::B
 
   # state fields
   tree::T
 end
 
-function NeighborhoodSearch(domain::D, neigh::N) where {D,N}
-  tree = if neigh isa MetricBall
-    m  = metric(neigh)
+function BallSearch(domain::D, ball::B) where {D,B}
+  tree = if ball isa MetricBall
+    m  = metric(ball)
     xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
     m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   else
     nothing
   end
-  NeighborhoodSearch{D,N,typeof(tree)}(domain, neigh, tree)
+  BallSearch{D,B,typeof(tree)}(domain, ball, tree)
 end
 
-searchinds(pₒ, method::NeighborhoodSearch{D,N,T}) where {D,N<:NormBall,T} =
-  inrange(method.tree, coordinates(pₒ), radius(method.neigh))
+searchinds(pₒ, method::BallSearch{D,B,T}) where {D,B<:NormBall,T} =
+  inrange(method.tree, coordinates(pₒ), radius(method.ball))
 
-searchinds(pₒ, method::NeighborhoodSearch{D,N,T}) where {D,N<:Ellipsoid,T} =
+searchinds(pₒ, method::BallSearch{D,B,T}) where {D,B<:Ellipsoid,T} =
   inrange(method.tree, coordinates(pₒ), one(coordtype(pₒ)))
 
-# search method for ball neighborhood
-function search(pₒ::Point, method::NeighborhoodSearch; mask=nothing)
+function search(pₒ::Point, method::BallSearch; mask=nothing)
   inds = searchinds(pₒ, method)
-
   if mask ≠ nothing
     neighbors = Vector{Int}()
     @inbounds for ind in inds

@@ -201,7 +201,7 @@ export
   # neighbordhood search
   NeighborSearchMethod,
   BoundedNeighborSearchMethod,
-  NeighborhoodSearch,
+  BallSearch,
   KNearestSearch,
   KBallSearch,
   BoundedSearch,

@@ -55,7 +55,7 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("neighborsearch/neighborhood.jl")
+include("neighborsearch/ball.jl")
 include("neighborsearch/knearest.jl")
 include("neighborsearch/kball.jl")
 include("neighborsearch/bounded.jl")

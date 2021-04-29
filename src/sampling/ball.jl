@@ -29,7 +29,7 @@ function sample(object, method::BallSampling)
 
   # neighborhood search with ball
   ball = NormBall(radius, metric)
-  searcher = NeighborhoodSearch(object, ball)
+  searcher = BallSearch(object, ball)
 
   locations = Vector{Int}()
   notviewed = trues(nelements(object))
