@@ -53,5 +53,6 @@ function materialize(connec::Connectivity{PL},
 end
 
 function Base.show(io::IO, c::Connectivity{PL}) where {PL}
-  print(io, "$PL$(c.list)")
+  name = prettyname(PL)
+  print(io, "$name$(c.list)")
 end

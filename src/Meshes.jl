@@ -133,9 +133,12 @@ export
 
   # polytopes
   Polytope, Polygon, Polyhedron,
-  Segment, Triangle, Quadrangle,
-  Pyramid, Tetrahedron, Hexahedron,
+  Segment,
+  Ngon, Triangle, Quadrangle,
+  Pentagon, Hexagon, Heptagon,
+  Octagon, Nonagon, Decagon,
   Chain, PolyArea,
+  Pyramid, Tetrahedron, Hexahedron,
   vertices, nvertices,
   windingnumber, chains, segments,
   isclosed, issimple, hasholes,
