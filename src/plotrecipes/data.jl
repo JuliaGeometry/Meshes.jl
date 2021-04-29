@@ -20,11 +20,8 @@
     # data for variable
     vals = data[var]
 
-    # handle categorical values
-    v = eltype(vals) <: CategoricalValue ? levelcode.(vals) : copy(vals)
-
     # handle missing values
-    v = replace(v, missing => NaN)
+    v = replace(vals, missing => NaN)
 
     @series begin
       subplot := i

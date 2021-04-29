@@ -19,9 +19,6 @@ using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
-# import categorical arrays as a temporary solution for plot recipes
-using CategoricalArrays: CategoricalValue, levelcode
-
 import Tables
 import Random
 import Base: values, ==, +, -, *
@@ -95,9 +92,8 @@ include("plotrecipes/domain.jl")
 include("plotrecipes/data.jl")
 include("plotrecipes/points.jl")
 include("plotrecipes/geometries.jl")
-include("plotrecipes/pointsets.jl")
+include("plotrecipes/collections.jl")
 include("plotrecipes/cartesiangrids.jl")
-include("plotrecipes/mesh.jl")
 include("plotrecipes/partitions.jl")
 
 export 
@@ -178,7 +174,7 @@ export
   HalfEdge,
   connectivities,
   halfedges,
-  edgeoncell,
+  edgeonelem,
   edgeonvertex,
   ncells,
 

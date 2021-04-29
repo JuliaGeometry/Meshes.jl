@@ -6,7 +6,6 @@
   seriestype --> :scatter
   seriescolor --> :black
   legend --> false
-
   [Tuple(coordinates(point))]
 end
 
@@ -14,6 +13,5 @@ end
   seriestype --> :scatter
   seriescolor --> :black
   legend --> false
-
   Tuple.(coordinates.(points))
 end
