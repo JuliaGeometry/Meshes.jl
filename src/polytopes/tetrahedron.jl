@@ -11,6 +11,9 @@ struct Tetrahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
   vertices::V
 end
 
+nvertices(::Type{<:Tetrahedron}) = 4
+nvertices(t::Tetrahedron) = nvertices(typeof(t))
+
 function measure(t::Tetrahedron)
   a, b, c, d = t.vertices
   abs((a - d) ⋅ ((b - d) × (c - d))) / 6

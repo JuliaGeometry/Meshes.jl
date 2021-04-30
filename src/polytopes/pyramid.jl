@@ -10,3 +10,6 @@ A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
   vertices::V
 end
+
+nvertices(::Type{<:Pyramid}) = 5
+nvertices(p::Pyramid) = nvertices(typeof(p))

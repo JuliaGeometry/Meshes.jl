@@ -151,6 +151,18 @@
     @test area(q) > T(1)
   end
 
+  @testset "N-hedrons" begin
+    @test paramdim(Tetrahedron) == 3
+    @test nvertices(Tetrahedron) == 4
+    @test paramdim(Pyramid) == 3
+    @test nvertices(Pyramid) == 5
+    @test paramdim(Hexahedron) == 3
+    @test nvertices(Hexahedron) == 8
+
+    t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
+    @test measure(t) == T(1/6)
+  end
+
   @testset "Chains" begin
     # constructors
     c1 = Chain(P2[(1,1),(2,2),(1,1)])
@@ -217,20 +229,6 @@
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test view(c, 1:3) == Chain(P2[(0,0),(1,0),(1,1)])
     @test view(c, 4:6) == Chain(P2[(0,1),(0,0),(1,0)])
-  end
-
-  @testset "Hexahedrons" begin
-    @test paramdim(Hexahedron) == 3
-  end
-
-  @testset "Pyramids" begin
-    @test paramdim(Pyramid) == 3
-  end
-
-  @testset "Tetrahedrons" begin
-    @test paramdim(Tetrahedron) == 3
-    t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
-    @test measure(t) == T(1/6)
   end
 
   @testset "PolyAreas" begin
