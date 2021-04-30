@@ -41,19 +41,12 @@ const Decagon    = Ngon{10}
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
-function signarea(t::Triangle{2})
-  vs = t.vertices
-  signarea(vs[1], vs[2], vs[3])
+# measure of N-gon embedded in 2D
+function signarea(ngon::Ngon{N,2}) where {N}
+  v = ngon.vertices
+  sum(i -> signarea(v[1], v[i], v[i+1]), 2:N-1)
 end
-
-measure(t::Triangle{2}) = abs(signarea(t))
-
-function measure(q::Quadrangle)
-  vs = q.vertices
-  Δ₁ = Triangle(view(vs, [1,2,3]))
-  Δ₂ = Triangle(view(vs, [3,4,1]))
-  measure(Δ₁) + measure(Δ₂)
-end
+measure(ngon::Ngon{N,2}) where {N} = abs(signarea(ngon))
 
 function Base.in(p::Point{2}, t::Triangle{2})
   a, b, c = t.vertices
