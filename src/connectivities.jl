@@ -11,7 +11,12 @@ of type `PL`. Indices are taken from a global vector of [`Point`](@ref).
 Connectivity objects are constructed with the [`connect`](@ref) function.
 """
 struct Connectivity{PL<:Polytope,N}
-  list::NTuple{N,Int}
+  indices::NTuple{N,Int}
+
+  function Connectivity{PL,N}(indices) where {PL,N}
+    @assert nvertices(PL) == N "invalid connectivity list"
+    new(indices)
+  end
 end
 
 """
@@ -27,12 +32,12 @@ paramdim(c::Connectivity) = paramdim(typeof(c))
 
 Return the list of indices of the `connectivity`.
 """
-indices(c::Connectivity) = c.list
+indices(c::Connectivity) = c.indices
 
 """
-    connect(list, PL)
+    connect(indices, PL)
 
-Connect a `list` of indices from a global vector of [`Point`](@ref)
+Connect a list of `indices` from a global vector of [`Point`](@ref)
 into a [`Polytope`](@ref) of type `PL`.
 
 ## Example
@@ -40,7 +45,8 @@ into a [`Polytope`](@ref) of type `PL`.
 Δ = connect((1,2,3), Triangle)
 ```
 """
-connect(list::Tuple, PL::Type{<:Polytope}) = Connectivity{PL,length(list)}(list)
+connect(indices::Tuple, PL::Type{<:Polytope}) =
+  Connectivity{PL,length(indices)}(indices)
 
 """
     materialize(connec, points)
@@ -49,10 +55,11 @@ Materialize a face using the `connec` list and a global vector of `points`.
 """
 function materialize(connec::Connectivity{PL},
                      points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
-  PL(view(points, SVector(connec.list...)))
+  PL(view(points, SVector(connec.indices...)))
 end
 
 function Base.show(io::IO, c::Connectivity{PL}) where {PL}
   name = prettyname(PL)
-  print(io, "$name$(c.list)")
+  inds = c.indices
+  print(io, "$name$inds")
 end
