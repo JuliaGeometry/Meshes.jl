@@ -100,17 +100,23 @@
     @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s1(T(-0.5))
   end
 
-  @testset "Triangles" begin
-    @test paramdim(Triangle) == 2
+  @testset "N-gons" begin
+    @test paramdim(Ngon) == 2
+    NGONS = [Triangle, Quadrangle, Pentagon, Hexagon,
+             Heptagon, Octagon, Nonagon, Decagon]
+    NVERT = 3:10
+    for i in 1:length(NGONS)
+      @test paramdim(NGONS[i]) == 2
+      @test nvertices(NGONS[i]) == NVERT[i]
+    end
 
+    # Triangle in 2D space
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test signarea(t) == T(0.5)
     @test area(t) == T(0.5)
-
     t = Triangle(P2(0,0), P2(0,1), P2(1,0))
     @test signarea(t) == T(-0.5)
     @test area(t) == T(0.5)
-
     t = Triangle(P2(0,0), P2(1,0), P2(1,1))
     for p in P2[(0,0),(1,0),(1,1),(0.5,0.),(1.,0.5),(0.5,0.5)]
       @test p ∈ t
@@ -118,17 +124,18 @@
     for p in P2[(-1,0),(0,-1),(0.5,1.)]
       @test p ∉ t
     end
-  end
 
-  @testset "Quadrangles" begin
-    @test paramdim(Quadrangle) == 2
+    # Triangle in 3D space
+    t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
+    @test area(t) == T(0.5)
+    t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,1))
+    @test area(t) > T(0.7)
 
+    # Quadrangle in 2D space
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test area(q) == T(1)
-
     q = Quadrangle(P2(0,0), P2(1,0), P2(1.5,1.0), P2(0.5,1.0))
     @test area(q) == T(1)
-
     q = Quadrangle(P2(0,0), P2(1,0), P2(1.5,1.0), P2(0.5,1.0))
     for p in P2[(0,0),(1,0),(1.5,1.0),(0.5,1.0),(0.5,0.5)]
       @test p ∈ q
@@ -136,6 +143,12 @@
     for p in P2[(0,1),(1.5,0.0)]
       @test p ∉ q
     end
+
+    # Quadrangle in 3D space
+    q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
+    @test area(q) == T(1)
+    q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,1))
+    @test area(q) > T(1)
   end
 
   @testset "Chains" begin

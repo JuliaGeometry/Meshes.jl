@@ -48,6 +48,13 @@ function signarea(ngon::Ngon{N,2}) where {N}
 end
 measure(ngon::Ngon{N,2}) where {N} = abs(signarea(ngon))
 
+# measure of N-gon embedded in higher dimension
+function measure(ngon::Ngon{N}) where {N}
+  areaₜ(A, B, C) = norm((B - A) × (C - A)) / 2
+  v = ngon.vertices
+  sum(i -> areaₜ(v[1], v[i], v[i+1]), 2:N-1)
+end
+
 function Base.in(p::Point{2}, t::Triangle{2})
   a, b, c = t.vertices
   abp = signarea(a, b, p)
