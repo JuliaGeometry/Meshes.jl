@@ -1,6 +1,7 @@
 @testset "Polytopes" begin
   @testset "Segment" begin
     @test paramdim(Segment) == 1
+    @test nvertices(Segment) == 2
 
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0.5,0.0), P2(2,0))

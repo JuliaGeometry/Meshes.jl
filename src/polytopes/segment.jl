@@ -15,6 +15,11 @@ struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
 
+nvertices(::Type{<:Segment}) = 2
+nvertices(s::Segment) = nvertices(typeof(s))
+
+measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
+
 function (s::Segment)(t)
   if t < 0 || t > 1
     throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
@@ -22,5 +27,3 @@ function (s::Segment)(t)
   p1, p2 = s.vertices
   p1 + t * (p2 - p1)
 end
-
-measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
