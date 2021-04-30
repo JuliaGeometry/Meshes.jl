@@ -41,6 +41,11 @@ const Decagon    = Ngon{10}
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
+function signarea(t::Triangle{2})
+  vs = t.vertices
+  signarea(vs[1], vs[2], vs[3])
+end
+
 measure(t::Triangle{2}) = abs(signarea(t))
 
 function measure(q::Quadrangle)

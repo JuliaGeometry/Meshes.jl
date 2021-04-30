@@ -3,26 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    signarea(p₁, p₂, p₃)
+    signarea(A, B, C)
 
 Compute signed area of triangle formed
-by points `p₁`, `p₂` and `p₃`.
+by points `A`, `B` and `C`.
 """
-function signarea(p₁::Point{2}, p₂::Point{2}, p₃::Point{2})
-  a = coordinates(p₁)
-  b = coordinates(p₂)
-  c = coordinates(p₃)
-  ((b[1]-a[1])*(c[2]-a[2]) - (b[2]-a[2])*(c[1]-a[1])) / 2
-end
-
-"""
-    signarea(triangle)
-
-Compute the signed area of `triangle`.
-"""
-function signarea(t::Triangle{2})
-  vs = vertices(t)
-  signarea(vs[1], vs[2], vs[3])
+function signarea(A::Point{2}, B::Point{2}, C::Point{2})
+  ((B - A) × (C - A)) / 2
 end
 
 """
