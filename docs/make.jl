@@ -47,7 +47,8 @@ makedocs(
         "algorithms/sampling.md",
         "algorithms/partitioning.md",
         "algorithms/discretization.md",
-        "algorithms/boundbox.md",
+        "algorithms/simplification.md",
+        "algorithms/boundingbox.md",
         "algorithms/intersection.md",
         "algorithms/neighborsearch.md"
       ]
