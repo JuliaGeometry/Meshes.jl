@@ -181,6 +181,9 @@ export
   edgeonvertex,
   nelements,
 
+  # topological relations
+  boundary, coboundary, adjacency,
+
   # meshes
   Mesh,
   CartesianGrid, SimpleMesh,
