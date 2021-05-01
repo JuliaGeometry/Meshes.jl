@@ -138,7 +138,7 @@ export
   Pentagon, Hexagon, Heptagon,
   Octagon, Nonagon, Decagon,
   Chain, PolyArea,
-  Pyramid, Tetrahedron, Hexahedron,
+  Tetrahedron, Pyramid, Hexahedron,
   vertices, nvertices,
   windingnumber, chains, segments,
   isclosed, issimple, hasholes,
@@ -179,7 +179,7 @@ export
   halfedges,
   edgeonelem,
   edgeonvertex,
-  ncells,
+  nelements,
 
   # meshes
   Mesh,
