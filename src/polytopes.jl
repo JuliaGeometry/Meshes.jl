@@ -111,7 +111,7 @@ prettyname(p::Polytope) = prettyname(typeof(p))
 function prettyname(PL::Type{<:Polytope})
   n = string(PL)
   i = findfirst('{', n)
-  n[1:i-1]
+  isnothing(i) ? n : n[1:i-1]
 end
 
 # ----------------
