@@ -57,7 +57,7 @@ function adjacency end
 # IMPLEMENTATIONS
 # ----------------
 
-include("topostructures/explicit.jl")
+include("topostructures/elemlist.jl")
 include("topostructures/halfedge.jl")
 
 # conversions between structures

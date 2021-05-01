@@ -44,7 +44,7 @@ to `i`. Similarly, `edgeonelem[i]` returns the index
 of a half-edge in `halfedges` that is in the elem `i`.
 
 Such data structure is usually constructed from another
-data structure such as [`ExplicitStructure`](@ref) via
+data structure such as [`ElementListStructure`](@ref) via
 `convert` methods:
 
 ```julia

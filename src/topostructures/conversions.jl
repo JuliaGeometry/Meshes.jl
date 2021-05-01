@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Base.convert(::Type{HalfEdgeStructure}, s::ExplicitStructure)
+function Base.convert(::Type{HalfEdgeStructure}, s::ElementListStructure)
   # half-edge structure only works with orientable 2-manifolds
   elems = (c for c in connectivities(s) if paramdim(c) == 2)
   nvertices = maximum(i for e in elems for i in indices(e))
@@ -63,7 +63,7 @@ function Base.convert(::Type{HalfEdgeStructure}, s::ExplicitStructure)
   HalfEdgeStructure(halfedges, edgeonelem, edgeonvertex)
 end
 
-function Base.convert(::Type{ExplicitStructure}, s::HalfEdgeStructure)
+function Base.convert(::Type{ElementListStructure}, s::HalfEdgeStructure)
   connec = map(1:nelements(s)) do i
     # select a half-edge on the elem
     e = edgeonelem(s, i)
@@ -80,5 +80,5 @@ function Base.convert(::Type{ExplicitStructure}, s::HalfEdgeStructure)
     connect(Tuple(v), Ngon{length(v)})
   end
 
-  ExplicitStructure(connec)
+  ElementListStructure(connec)
 end

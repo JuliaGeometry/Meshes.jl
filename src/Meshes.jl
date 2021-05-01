@@ -172,7 +172,7 @@ export
 
   # topological structures
   TopologicalStructure,
-  ExplicitStructure,
+  ElementListStructure,
   HalfEdgeStructure,
   HalfEdge,
   connectivities,
