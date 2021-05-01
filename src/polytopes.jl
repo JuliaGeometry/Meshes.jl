@@ -20,6 +20,10 @@ store all features.
 Additionally, the following property must hold in order for a geometry to be considered
 a polytope: the boundary of a (K+1)-polytope is a collection of K-polytopes, which may
 have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
+
+### Notes
+
+- Type aliases are `Polygon`, `Polyhedron`.
 """
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 

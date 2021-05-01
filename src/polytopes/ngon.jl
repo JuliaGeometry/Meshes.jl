@@ -12,10 +12,13 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 
 ### Notes
 
-Although the number of vertices `N` is known at compile time,
-we use abstract vectors to store the list of vertices. This
-design allows constructing N-gon from views of global vectors
-without expensive memory allocations.
+- Although the number of vertices `N` is known at compile time,
+  we use abstract vectors to store the list of vertices. This
+  design allows constructing N-gon from views of global vectors
+  without expensive memory allocations.
+
+- Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
+  `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
 struct Ngon{N,Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
   vertices::V

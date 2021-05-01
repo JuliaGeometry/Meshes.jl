@@ -3,11 +3,10 @@
 ```@docs
 Polytope
 Segment
-Triangle
-Quadrangle
+Ngon
 Chain
 PolyArea
-Pyramid
 Tetrahedron
+Pyramid
 Hexahedron
 ```
