@@ -93,3 +93,21 @@ edgeonvertex(s::HalfEdgeStructure, v) = s.halfedges[s.edgeonvertex[v]]
 Return the number of elements in the half-edge structure `s`.
 """
 nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
+
+function boundary(c::Connectivity{<:Ngon}, ::Val{1},
+                  s::HalfEdgeStructure)
+  v = first(indices(c))
+  e = edgeonvertex(s, v)
+  n = e.next
+  segments = [connect((v, n.head), Segment)]
+  while n != e
+    # move to next segment
+    v = n.head
+    n = n.next
+
+    # add to segment list
+    s = connect((v, n.head), Segment)
+    push!(segments, s)
+  end
+  segments
+end
