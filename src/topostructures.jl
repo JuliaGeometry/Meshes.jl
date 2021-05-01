@@ -26,8 +26,8 @@ the topological `structure`.
 For example, the boundary of a `Connectivity{Triangle}` is a
 set with three `Connectivity{Segment}`.
 """
-boundary(c::Connectivity, rank::Integer, structure) =
-  boundary(c, Val(rank), structure)
+boundary(connectivity, rank, structure::TopologicalStructure) =
+  boundary(connectivity, Val(rank), structure)
 
 """
     coboundary(connectivity, rank, structure)
@@ -39,8 +39,8 @@ topological `structure`.
 For example, the coboundary of a `Connectivity{Segment}` can
 be a set with two `Connectivity{Triangle}`.
 """
-coboundary(c::Connectivity, rank::Integer, structure) =
-  coboundary(c, Val(rank), structure)
+coboundary(connectivity, rank, structure::TopologicalStructure) =
+  coboundary(connectivity, Val(rank), structure)
 
 """
     adjacency(connectivity, structure)

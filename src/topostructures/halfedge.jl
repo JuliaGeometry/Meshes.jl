@@ -101,11 +101,8 @@ function boundary(c::Connectivity{<:Polygon}, ::Val{1},
   n = e.next
   segments = [connect((v, n.head), Segment)]
   while n != e
-    # move to next segment
     v = n.head
     n = n.next
-
-    # add to segment list
     s = connect((v, n.head), Segment)
     push!(segments, s)
   end
@@ -131,4 +128,23 @@ function boundary(c::Connectivity{<:Segment}, ::Val{0},
   e = edgeonvertex(s, v)
   n = e.next
   [v, n.head]
+end
+
+function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
+end
+
+function coboundary(v::Integer, ::Val{2}, s::HalfEdgeStructure)
+end
+
+function coboundary(c::Connectivity{<:Segment}, ::Val{2},
+                    s::HalfEdgeStructure)
+end
+
+function adjacency(c::Connectivity{<:Polygon}, s::HalfEdgeStructure)
+end
+
+function adjacency(c::Connectivity{<:Segment}, s::HalfEdgeStructure)
+end
+
+function adjacency(v::Integer, s::HalfEdgeStructure)
 end
