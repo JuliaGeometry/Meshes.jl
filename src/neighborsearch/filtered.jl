@@ -12,11 +12,12 @@ of the initial neighbors returned by `method`, set `metric = nothing`.
 
 ## Max per category
 
-It can be a `NamedTuple` or `Dict`, where the first element is the property name
-and the second defines the max neighbor per available categories of the property.
-In the example below, no more than 2 neighbors of same geometry are selected.
+It can be a `NamedTuple` or `Dict`, where the keys are names of categorical
+properties and the values define the maximum number of neighbors per value of
+the property. In the example below, no more than 2 neighbors of same rocktype
+are selected.
 
-`FilteredSearch(method, maxpercategory = (geometry = 2,))`
+`FilteredSearch(method, maxpercategory = (rocktype = 2,))`
 ```ascii
      _________
   //     . □   \\           ○  Search point
@@ -31,8 +32,8 @@ In the example below, no more than 2 neighbors of same geometry are selected.
 
 ## Max per sector
 
-Only allow a max number of neighbors inside each sector. The sectors are the
-cartesian quadrants (2-D) or octants (3-D). If the neighborhood is an `Ellipsoid`,
+Only allow a maximum number of neighbors inside each sector. The sectors are the
+cartesian quadrants (2D) or octants (3D). If the neighborhood is an `Ellipsoid`,
 the sectors will match the rotated quadrants/octants.
 
 `FilteredSearch(method, maxpersector = 2)`
