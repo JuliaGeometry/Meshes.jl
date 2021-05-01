@@ -111,3 +111,24 @@ function boundary(c::Connectivity{<:Ngon}, ::Val{1},
   end
   segments
 end
+
+function boundary(c::Connectivity{<:Ngon}, ::Val{0},
+                  s::HalfEdgeStructure)
+  v = first(indices(c))
+  e = edgeonvertex(s, v)
+  n = e.next
+  vertices = [v]
+  while n != e
+    push!(vertices, n.head)
+    n = n.next
+  end
+  vertices
+end
+
+function boundary(c::Connectivity{<:Segment}, ::Val{0},
+                  s::HalfEdgeStructure)
+  v = first(indices(c))
+  e = edgeonvertex(s, v)
+  n = e.next
+  [v, n.head]
+end
