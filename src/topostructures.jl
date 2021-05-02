@@ -29,6 +29,15 @@ set with three `Connectivity{Segment}`.
 boundary(connectivity, rank, structure::TopologicalStructure) =
   boundary(connectivity, Val(rank), structure)
 
+function boundary(c::Connectivity{<:Polygon}, ::Val{1}, ::TopologicalStructure)
+  v = CircularVector(collect(indices(c)))
+  [connect((v[i], v[i+1]), Segment) for i in 1:length(v)]
+end
+
+function boundary(c::Connectivity{<:Polytope}, ::Val{0}, ::TopologicalStructure)
+  collect(indices(c))
+end
+
 """
     coboundary(connectivity, rank, structure)
 

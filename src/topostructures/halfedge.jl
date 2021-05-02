@@ -94,42 +94,6 @@ Return the number of elements in the half-edge structure `s`.
 """
 nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
 
-function boundary(c::Connectivity{<:Polygon}, ::Val{1},
-                  s::HalfEdgeStructure)
-  v = first(indices(c))
-  e = edgeonvertex(s, v)
-  n = e.next
-  segments = [connect((v, n.head), Segment)]
-  while n != e
-    v = n.head
-    n = n.next
-    s = connect((v, n.head), Segment)
-    push!(segments, s)
-  end
-  segments
-end
-
-function boundary(c::Connectivity{<:Polygon}, ::Val{0},
-                  s::HalfEdgeStructure)
-  v = first(indices(c))
-  e = edgeonvertex(s, v)
-  n = e.next
-  vertices = [v]
-  while n != e
-    push!(vertices, n.head)
-    n = n.next
-  end
-  vertices
-end
-
-function boundary(c::Connectivity{<:Segment}, ::Val{0},
-                  s::HalfEdgeStructure)
-  v = first(indices(c))
-  e = edgeonvertex(s, v)
-  n = e.next
-  [v, n.head]
-end
-
 function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
 end
 
