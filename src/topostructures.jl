@@ -16,6 +16,10 @@ in a [`Mesh`](@ref).
 """
 abstract type TopologicalStructure end
 
+# ----------------------
+# TOPOLOGICAL RELATIONS
+# ----------------------
+
 """
     boundary(connectivity, rank, structure)
 
@@ -61,6 +65,57 @@ For example, the adjacency of a `Connectivity{Triangle}` can
 be a set of `Connectivity{Triangle}` sharing a `Connectivity{Segment}`.
 """
 function adjacency end
+
+# ---------------------
+# HIGH-LEVEL INTERFACE
+# ---------------------
+
+"""
+    faces(structure, rank)
+
+Return an iterator with `rank`-faces of the topological `structure`.
+
+## Example
+
+Consider a mesh of tetrahedrons embedded in a 3D space. We can loop over
+all 3-faces (a.k.a. elements) or over all 2-faces to handle the interfaces
+(i.e. triangles) between adjacent elements:
+
+```julia
+tetrahedrons = faces(structure, 3)
+triangles = faces(structure, 2)
+segments = faces(structure, 1)
+```
+"""
+faces(structure::TopologicalStructure, rank) = faces(structure, Val(rank))
+
+"""
+    elements(structure)
+
+Return the top-faces (a.k.a. elements) of the topological `structure`.
+
+## Example
+
+The elements of a volume embedded in 3D space can be tetrahedrons, hexahedrons,
+or any 3-face. The elements of a surface embedded in 3D space can be triangles,
+quadrangles or any 2-face.
+"""
+elements(structure::TopologicalStructure) =
+  (element(structure, ind) for ind in 1:nelements(structure))
+
+"""
+    element(structure, ind)
+
+Return the element of the topological `structure` at index `ind`.
+"""
+function element(::TopologicalStructure, ind) end
+
+"""
+    nelements(structure)
+
+Return the number of elements in the topological `structure`.
+"""
+function nelements(::TopologicalStructure) end
 
 # ----------------
 # IMPLEMENTATIONS

@@ -172,17 +172,14 @@ export
 
   # topological structures
   TopologicalStructure,
+  boundary, coboundary, adjacency,
+  faces, elements, element, nelements,
   ElementListStructure,
   HalfEdgeStructure,
   HalfEdge,
-  connectivities,
   halfedges,
   edgeonelem,
   edgeonvertex,
-  nelements,
-
-  # topological relations
-  boundary, coboundary, adjacency,
 
   # meshes
   Mesh,

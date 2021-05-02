@@ -20,13 +20,12 @@ struct ElementListStructure{C<:Connectivity} <: TopologicalStructure
   connec::Vector{C}
 end
 
-Base.getindex(s::ElementListStructure, ind) = getindex(s.connec, ind)
-Base.length(s::ElementListStructure) = length(s.connec)
-Base.eltype(s::ElementListStructure) = eltype(s.connec)
-Base.firstindex(s::ElementListStructure) = firstindex(s.connec)
-Base.lastindex(s::ElementListStructure) = lastindex(s.connec)
-Base.iterate(s::ElementListStructure, state=firstindex(s)) =
-  state > length(s) ? nothing : (s[state], state+1)
-
 ==(s1::ElementListStructure, s2::ElementListStructure) =
   s1.connec == s2.connec
+
+# ---------------------
+# HIGH-LEVEL INTERFACE
+# ---------------------
+
+element(s::ElementListStructure, ind) = s.connec[ind]
+nelements(s::ElementListStructure) = length(s.connec)

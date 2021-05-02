@@ -87,12 +87,9 @@ head is the `v`-th index.
 """
 edgeonvertex(s::HalfEdgeStructure, v) = s.halfedges[s.edgeonvertex[v]]
 
-"""
-    nelements(s)
-
-Return the number of elements in the half-edge structure `s`.
-"""
-nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
+# ----------------------
+# TOPOLOGICAL RELATIONS
+# ----------------------
 
 function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
 end
@@ -147,3 +144,20 @@ function adjacency(v::Integer, s::HalfEdgeStructure)
 
   vertices
 end
+
+# ---------------------
+# HIGH-LEVEL INTERFACE
+# ---------------------
+
+function element(s::HalfEdgeStructure, ind)
+  e = edgeonelem(s, ind)
+  n = e.next
+  v = [e.head]
+  while n != e
+    push!(v, n.head)
+    n = n.next
+  end
+  connect(Tuple(v), Ngon{length(v)})
+end
+
+nelements(s::HalfEdgeStructure) = length(s.edgeonelem)

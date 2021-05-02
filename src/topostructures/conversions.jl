@@ -4,7 +4,7 @@
 
 function Base.convert(::Type{HalfEdgeStructure}, s::ElementListStructure)
   # half-edge structure only works with orientable 2-manifolds
-  elems = (c for c in s if paramdim(c) == 2)
+  elems = elements(s)
   nvertices = maximum(i for e in elems for i in indices(e))
 
   # initialization step
@@ -64,21 +64,5 @@ function Base.convert(::Type{HalfEdgeStructure}, s::ElementListStructure)
 end
 
 function Base.convert(::Type{ElementListStructure}, s::HalfEdgeStructure)
-  connec = map(1:nelements(s)) do i
-    # select a half-edge on the elem
-    e = edgeonelem(s, i)
-
-    # retrieve vertices of the element
-    n = e.next
-    v = [e.head]
-    while n != e
-      push!(v, n.head)
-      n = n.next
-    end
-
-    # connect vertices into a n-gon
-    connect(Tuple(v), Ngon{length(v)})
-  end
-
-  ElementListStructure(connec)
+  ElementListStructure(collect(elements(s)))
 end
