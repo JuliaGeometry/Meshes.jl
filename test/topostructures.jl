@@ -14,6 +14,8 @@
   @test boundary(connect((2,3), Segment), 0, s2) == [2,3]
   @test boundary(connect((3,1), Segment), 0, s2) == [3,1]
   @test boundary(connect((4,3), Segment), 0, s2) == [4,3]
+  @test boundary(connect((3,2), Segment), 0, s2) == [3,2]
+  @test boundary(connect((2,4), Segment), 0, s2) == [2,4]
   @test adjacency(1, s2) == [2,3]
   @test adjacency(2, s2) == [4,3,1]
   @test adjacency(3, s2) == [1,2,4]
