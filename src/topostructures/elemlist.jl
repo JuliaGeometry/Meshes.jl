@@ -17,10 +17,16 @@ with algorithms that rely on neighborhood search. It is still useful for
 mesh visualization and IO operations.
 """
 struct ElementListStructure{C<:Connectivity} <: TopologicalStructure
-  connectivities::Vector{C}
+  connec::Vector{C}
 end
 
-connectivities(s::ElementListStructure) = s.connectivities
+Base.getindex(s::ElementListStructure, ind) = getindex(s.connec, ind)
+Base.length(s::ElementListStructure) = length(s.connec)
+Base.eltype(s::ElementListStructure) = eltype(s.connec)
+Base.firstindex(s::ElementListStructure) = firstindex(s.connec)
+Base.lastindex(s::ElementListStructure) = lastindex(s.connec)
+Base.iterate(s::ElementListStructure, state=firstindex(s)) =
+  state > length(s) ? nothing : (s[state], state+1)
 
 ==(s1::ElementListStructure, s2::ElementListStructure) =
-  Set(s1.connectivities) == Set(s2.connectivities)
+  s1.connec == s2.connec

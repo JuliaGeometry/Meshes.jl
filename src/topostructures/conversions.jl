@@ -4,7 +4,7 @@
 
 function Base.convert(::Type{HalfEdgeStructure}, s::ElementListStructure)
   # half-edge structure only works with orientable 2-manifolds
-  elems = (c for c in connectivities(s) if paramdim(c) == 2)
+  elems = (c for c in s if paramdim(c) == 2)
   nvertices = maximum(i for e in elems for i in indices(e))
 
   # initialization step
