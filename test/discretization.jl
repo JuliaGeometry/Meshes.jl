@@ -120,7 +120,9 @@
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
     time = @elapsed discretize(poly, Dehn1899())
-    @test time < 0.002
+    if T == Float64
+      @test time < 0.002
+    end
 
     poly = readpoly(T, joinpath(datadir, "poly1.line"))
     mesh = discretize(poly, Dehn1899())
