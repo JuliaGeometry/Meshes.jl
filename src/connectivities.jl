@@ -48,6 +48,11 @@ into a [`Polytope`](@ref) of type `PL`.
 connect(indices::Tuple, PL::Type{<:Polytope}) =
   Connectivity{PL,length(indices)}(indices)
 
+function connect(indices::Tuple, ::Type{Ngon})
+  N = length(indices)
+  Connectivity{Ngon{N},N}(indices)
+end
+
 """
     materialize(connec, points)
 
