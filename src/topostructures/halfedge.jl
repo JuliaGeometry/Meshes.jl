@@ -132,12 +132,14 @@ function adjacency(v::Integer, s::HalfEdgeStructure)
   # edge e is now the first arm of the star
   # we can follow the CCW loop until we find
   # it again or hit a border edge
+  p = e.prev
   n = e.next
-  o = n.next.half
+  o = p.half
   vertices = [n.head]
   while !isnothing(o.elem) && o != e
+    p = o.prev
     n = o.next
-    o = n.next.half
+    o = p.half
     push!(vertices, n.head)
   end
   # if border edge is hit, add last arm manually

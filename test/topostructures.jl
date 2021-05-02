@@ -31,6 +31,12 @@
   s1 = ElementListStructure(connec)
   s2 = convert(HalfEdgeStructure, s1)
   test_halfedge(connec, s2)
+  @test adjacency(1, s2) == [2,5,3]
+  @test adjacency(2, s2) == [4,6,1]
+  @test adjacency(3, s2) == [1,5,4]
+  @test adjacency(4, s2) == [3,6,2]
+  @test Set(adjacency(5, s2)) == Set([6,3,1])
+  @test Set(adjacency(6, s2)) == Set([2,4,5])
   s3 = convert(ElementListStructure, s2)
   @test s3 == s1
 end
