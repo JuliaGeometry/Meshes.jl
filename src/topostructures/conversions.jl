@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Base.convert(::Type{HalfEdgeStructure}, s::ElementListStructure)
+function Base.convert(::Type{HalfEdgeStructure}, s::TopologicalStructure)
   # half-edge structure only works with orientable 2-manifolds
   elems = elements(s)
   nvertices = maximum(i for e in elems for i in indices(e))
@@ -63,6 +63,6 @@ function Base.convert(::Type{HalfEdgeStructure}, s::ElementListStructure)
   HalfEdgeStructure(halfedges, edgeonelem, edgeonvertex)
 end
 
-function Base.convert(::Type{ElementListStructure}, s::HalfEdgeStructure)
-  ElementListStructure(collect(elements(s)))
+function Base.convert(::Type{ElementStructure}, s::TopologicalStructure)
+  ElementStructure(collect(elements(s)))
 end

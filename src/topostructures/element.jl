@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    ElementListStructure(connectivities)
+    ElementStructure(connectivities)
 
 A data structure that only stores the elements (or top-faces) of a mesh.
 Each element is represented with a [`Connectivity`](@ref) in a vector of
@@ -16,16 +16,16 @@ It does *not* support topological relations and is therefore incompatible
 with algorithms that rely on neighborhood search. It is still useful for
 mesh visualization and IO operations.
 """
-struct ElementListStructure{C<:Connectivity} <: TopologicalStructure
+struct ElementStructure{C<:Connectivity} <: TopologicalStructure
   connec::Vector{C}
 end
 
-==(s1::ElementListStructure, s2::ElementListStructure) =
+==(s1::ElementStructure, s2::ElementStructure) =
   s1.connec == s2.connec
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-element(s::ElementListStructure, ind) = s.connec[ind]
-nelements(s::ElementListStructure) = length(s.connec)
+element(s::ElementStructure, ind) = s.connec[ind]
+nelements(s::ElementStructure) = length(s.connec)
