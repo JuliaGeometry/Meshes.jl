@@ -63,6 +63,6 @@ function Base.convert(::Type{HalfEdgeStructure}, s::TopologicalStructure)
   HalfEdgeStructure(halfedges, edgeonelem, edgeonvertex)
 end
 
-function Base.convert(::Type{ElementStructure}, s::TopologicalStructure)
-  ElementStructure(collect(elements(s)))
+function Base.convert(::Type{FullStructure}, s::TopologicalStructure)
+  FullStructure(collect(elements(s)))
 end

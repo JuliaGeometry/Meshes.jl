@@ -23,7 +23,7 @@ materialize
 
 ```@docs
 TopologicalStructure
-ElementListStructure
+FullStructure
 HalfEdgeStructure
 ```
 

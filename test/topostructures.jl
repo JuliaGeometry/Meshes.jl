@@ -18,9 +18,9 @@
 
   # 2 triangles
   connec = connect.([(1,2,3),(4,3,2)], Triangle)
-  s1 = ElementStructure(connec)
+  s1 = FullStructure(connec)
   s2 = convert(HalfEdgeStructure, s1)
-  s3 = convert(ElementStructure, s2)
+  s3 = convert(FullStructure, s2)
   @test collect(elements(s1)) == connec
   @test collect(elements(s2)) == connec
   @test s3 == s1
@@ -32,9 +32,9 @@
 
   # 2 triangles + 2 quadrangles
   connec = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)], Ngon)
-  s1 = ElementStructure(connec)
+  s1 = FullStructure(connec)
   s2 = convert(HalfEdgeStructure, s1)
-  s3 = convert(ElementStructure, s2)
+  s3 = convert(FullStructure, s2)
   @test collect(elements(s1)) == connec
   @test collect(elements(s2)) == connec
   @test s3 == s1
@@ -48,9 +48,9 @@
 
   # 1 triangle + 3 quadrangles + 1 hole
   connec = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)], Ngon)
-  s1 = ElementStructure(connec)
+  s1 = FullStructure(connec)
   s2 = convert(HalfEdgeStructure, s1)
-  s3 = convert(ElementStructure, s2)
+  s3 = convert(FullStructure, s2)
   @test collect(elements(s1)) == connec
   @test collect(elements(s2)) == connec
   @test s3 == s1

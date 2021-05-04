@@ -6,10 +6,13 @@
     FullStructure(connectivities)
 
 A data structure that stores *all* `connectivities` of a mesh.
-Unlike the [`ElementListStructure`](@ref), this data structure
-also stores connectivities of faces that are not elements. For
-example, in a mesh of triangle elements this data structure also
-stores the connectivities of segments.
+
+### Notes
+
+This data structure is sometimes referred to as the "soup of geometries".
+It does *not* support topological relations and is therefore incompatible
+with algorithms that rely on neighborhood search. It is still useful for
+mesh visualization and IO operations.
 """
 struct FullStructure{C<:Connectivity} <: TopologicalStructure
   # input fields
