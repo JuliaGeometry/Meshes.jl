@@ -174,6 +174,7 @@ export
   TopologicalStructure,
   boundary, coboundary, adjacency,
   faces, elements, element, nelements,
+  FullStructure,
   ElementStructure,
   HalfEdgeStructure,
   HalfEdge,

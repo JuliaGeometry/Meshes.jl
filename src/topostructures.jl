@@ -121,6 +121,7 @@ function nelements(::TopologicalStructure) end
 # IMPLEMENTATIONS
 # ----------------
 
+include("topostructures/full.jl")
 include("topostructures/element.jl")
 include("topostructures/halfedge.jl")
 
