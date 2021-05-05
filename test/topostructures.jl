@@ -32,6 +32,11 @@
   for v in 1:4
     @test coboundary(v, 1, s2) == connect.([(v, u) for u in adjacency(v, s2)], Segment)
   end
+  @test coboundary(connect((1,2), Segment), 2, s2) == connect.([(1,2,3)], Triangle)
+  @test coboundary(connect((2,3), Segment), 2, s2) == connect.([(2,3,1),(3,2,4)], Triangle)
+  @test coboundary(connect((3,1), Segment), 2, s2) == connect.([(3,1,2)], Triangle)
+  @test coboundary(connect((2,4), Segment), 2, s2) == connect.([(2,4,3)], Triangle)
+  @test coboundary(connect((4,3), Segment), 2, s2) == connect.([(4,3,2)], Triangle)
 
   # 2 triangles + 2 quadrangles
   connec = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)], Ngon)
@@ -51,8 +56,17 @@
   for v in 1:6
     @test coboundary(v, 1, s2) == connect.([(v, u) for u in adjacency(v, s2)], Segment)
   end
+  @test coboundary(connect((1,2), Segment), 2, s2) == connect.([(1,2,6,5)], Quadrangle)
+  @test coboundary(connect((2,6), Segment), 2, s2) == connect.([(2,6,5,1),(6,2,4)], Ngon)
+  @test coboundary(connect((6,5), Segment), 2, s2) == connect.([(6,5,1,2),(5,6,4,3)], Quadrangle)
+  @test coboundary(connect((5,1), Segment), 2, s2) == connect.([(5,1,2,6),(1,5,3)], Ngon)
+  @test coboundary(connect((5,3), Segment), 2, s2) == connect.([(5,3,1),(3,5,6,4)], Ngon)
+  @test coboundary(connect((6,4), Segment), 2, s2) == connect.([(6,4,3,5),(4,6,2)], Ngon)
+  @test coboundary(connect((3,4), Segment), 2, s2) == connect.([(4,3,5,6)], Quadrangle)
+  @test coboundary(connect((3,1), Segment), 2, s2) == connect.([(3,1,5)], Triangle)
+  @test coboundary(connect((2,4), Segment), 2, s2) == connect.([(2,4,6)], Triangle)
 
-  # 1 triangle + 3 quadrangles + 1 hole
+  # 1 triangle + 3 quadrangles + 1 triangle hole
   connec = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)], Ngon)
   s1 = FullStructure(connec)
   s2 = convert(HalfEdgeStructure, s1)

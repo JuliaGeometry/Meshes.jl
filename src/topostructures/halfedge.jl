@@ -100,6 +100,31 @@ end
 
 function coboundary(c::Connectivity{<:Segment}, ::Val{2},
                     s::HalfEdgeStructure)
+  u, v = indices(c)
+  eᵤ = edgeonvertex(s, u)
+
+  # search edge counter-clockwise
+  e  = eᵤ
+  while !isnothing(e.elem) && e.half.head != v
+    e = e.prev.half
+  end
+
+  # search edge clockwise
+  if isnothing(e.elem) && e.half.head != v
+    e = eᵤ
+    while !isnothing(e.elem) && e.half.head != v
+      e = e.half.next
+    end
+  end
+
+  # construct elements
+  if isnothing(e.elem)
+    [elemonedge(e.half)]
+  elseif isnothing(e.half.elem)
+    [elemonedge(e)]
+  else
+    [elemonedge(e), elemonedge(e.half)]
+  end
 end
 
 function adjacency(c::Connectivity{<:Polygon}, s::HalfEdgeStructure)
@@ -150,8 +175,12 @@ end
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-function element(s::HalfEdgeStructure, ind)
-  e = edgeonelem(s, ind)
+element(s::HalfEdgeStructure, ind) = elemonedge(edgeonelem(s, ind))
+
+nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
+
+# helper function
+function elemonedge(e::HalfEdge)
   n = e.next
   v = [e.head]
   while n != e
@@ -160,5 +189,3 @@ function element(s::HalfEdgeStructure, ind)
   end
   connect(Tuple(v), Ngon{length(v)})
 end
-
-nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
