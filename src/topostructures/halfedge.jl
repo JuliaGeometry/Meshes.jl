@@ -66,18 +66,11 @@ struct HalfEdgeStructure <: TopologicalStructure
 end
 
 """
-    halfedges(s)
-
-Return the half-edges of the half-edge structure `s`.
-"""
-halfedges(s::HalfEdgeStructure) = s.halfedges
-
-"""
     edgeonelem(e, s)
 
 Return a half-edge of the half-edge structure `s` on the `e`-th elem.
 """
-edgeonelem(e, s::HalfEdgeStructure) = s.halfedges[s.edgeonelem[e]]
+edgeonelem(e::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonelem[e]]
 
 """
     edgeonvertex(v, s)
@@ -85,11 +78,23 @@ edgeonelem(e, s::HalfEdgeStructure) = s.halfedges[s.edgeonelem[e]]
 Return the half-edge of the half-edge structure `s` for which the
 head is the `v`-th index.
 """
-edgeonvertex(v, s::HalfEdgeStructure) = s.halfedges[s.edgeonvertex[v]]
+edgeonvertex(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonvertex[v]]
 
 # ----------------------
 # TOPOLOGICAL RELATIONS
 # ----------------------
+
+# helper function to construct
+# element from given half-edge
+function elemonedge(e::HalfEdge)
+  n = e.next
+  v = [e.head]
+  while n != e
+    push!(v, n.head)
+    n = n.next
+  end
+  connect(Tuple(v), Ngon{length(v)})
+end
 
 function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
   connect.([(v, u) for u in adjacency(v, s)], Segment)
@@ -178,14 +183,3 @@ end
 element(s::HalfEdgeStructure, ind) = elemonedge(edgeonelem(ind, s))
 
 nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
-
-# helper function
-function elemonedge(e::HalfEdge)
-  n = e.next
-  v = [e.head]
-  while n != e
-    push!(v, n.head)
-    n = n.next
-  end
-  connect(Tuple(v), Ngon{length(v)})
-end

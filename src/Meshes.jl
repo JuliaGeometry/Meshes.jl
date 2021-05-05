@@ -177,7 +177,6 @@ export
   FullStructure,
   HalfEdgeStructure,
   HalfEdge,
-  halfedges,
   edgeonelem,
   edgeonvertex,
 
