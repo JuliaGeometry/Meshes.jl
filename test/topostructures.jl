@@ -85,4 +85,15 @@
   for v in 1:7
     @test coboundary(v, 1, s2) == connect.([(v, u) for u in adjacency(v, s2)], Segment)
   end
+  @test coboundary(connect((1,2), Segment), 2, s2) == connect.([(1,2,6,5)], Quadrangle)
+  @test coboundary(connect((2,6), Segment), 2, s2) == connect.([(2,6,5,1),(6,2,4,7)], Quadrangle)
+  @test coboundary(connect((5,6), Segment), 2, s2) == connect.([(6,5,1,2)], Quadrangle)
+  @test coboundary(connect((5,1), Segment), 2, s2) == connect.([(5,1,2,6),(1,5,7,3)], Quadrangle)
+  @test coboundary(connect((3,1), Segment), 2, s2) == connect.([(3,1,5,7)], Quadrangle)
+  @test coboundary(connect((7,5), Segment), 2, s2) == connect.([(5,7,3,1)], Quadrangle)
+  @test coboundary(connect((7,6), Segment), 2, s2) == connect.([(7,6,2,4)], Quadrangle)
+  @test coboundary(connect((2,4), Segment), 2, s2) == connect.([(2,4,7,6)], Quadrangle)
+  @test coboundary(connect((3,7), Segment), 2, s2) == connect.([(3,7,4),(7,3,1,5)], Ngon)
+  @test coboundary(connect((7,4), Segment), 2, s2) == connect.([(7,4,3),(4,7,6,2)], Ngon)
+  @test coboundary(connect((3,4), Segment), 2, s2) == connect.([(4,3,7)], Triangle)
 end
