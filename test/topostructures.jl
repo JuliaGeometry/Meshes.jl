@@ -5,7 +5,7 @@
       inds = collect(indices(connec[e]))
       cvec = CircularVector(inds)
       segs = [connect((cvec[i], cvec[i+1]), Segment) for i in 1:length(cvec)]
-      he = edgeonelem(structure, e)
+      he = edgeonelem(e, structure)
       @test he.elem == e
       @test he.head ∈ inds
       @test boundary(connec[e], 0, s2) == inds

@@ -73,19 +73,19 @@ Return the half-edges of the half-edge structure `s`.
 halfedges(s::HalfEdgeStructure) = s.halfedges
 
 """
-    edgeonelem(s, c)
+    edgeonelem(e, s)
 
-Return a half-edge of the half-edge structure `s` on the `c`-th elem.
+Return a half-edge of the half-edge structure `s` on the `e`-th elem.
 """
-edgeonelem(s::HalfEdgeStructure, c) = s.halfedges[s.edgeonelem[c]]
+edgeonelem(e, s::HalfEdgeStructure) = s.halfedges[s.edgeonelem[e]]
 
 """
-    edgeonvertex(s, v)
+    edgeonvertex(v, s)
 
 Return the half-edge of the half-edge structure `s` for which the
 head is the `v`-th index.
 """
-edgeonvertex(s::HalfEdgeStructure, v) = s.halfedges[s.edgeonvertex[v]]
+edgeonvertex(v, s::HalfEdgeStructure) = s.halfedges[s.edgeonvertex[v]]
 
 # ----------------------
 # TOPOLOGICAL RELATIONS
@@ -101,7 +101,7 @@ end
 function coboundary(c::Connectivity{<:Segment}, ::Val{2},
                     s::HalfEdgeStructure)
   u, v = indices(c)
-  eᵤ = edgeonvertex(s, u)
+  eᵤ = edgeonvertex(u, s)
 
   # search edge counter-clockwise
   e  = eᵤ
@@ -134,7 +134,7 @@ function adjacency(c::Connectivity{<:Segment}, s::HalfEdgeStructure)
 end
 
 function adjacency(v::Integer, s::HalfEdgeStructure)
-  e = edgeonvertex(s, v)
+  e = edgeonvertex(v, s)
   h = e.half
   if isnothing(h.elem) # border edge
     # we are at the first arm of the star already
@@ -175,7 +175,7 @@ end
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-element(s::HalfEdgeStructure, ind) = elemonedge(edgeonelem(s, ind))
+element(s::HalfEdgeStructure, ind) = elemonedge(edgeonelem(ind, s))
 
 nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
 
