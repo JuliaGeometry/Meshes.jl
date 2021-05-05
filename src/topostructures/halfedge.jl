@@ -92,6 +92,7 @@ edgeonvertex(s::HalfEdgeStructure, v) = s.halfedges[s.edgeonvertex[v]]
 # ----------------------
 
 function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
+  connect.([(v, u) for u in adjacency(v, s)], Segment)
 end
 
 function coboundary(v::Integer, ::Val{2}, s::HalfEdgeStructure)
