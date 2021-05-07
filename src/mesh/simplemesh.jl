@@ -30,7 +30,7 @@ faces(m::SimpleMesh, rank) =
 # DOMAIN INTERFACE
 # -----------------
 
-Base.getindex(m::SimpleMesh, ind::Int) =
+element(m::SimpleMesh, ind::Int) =
   materialize(element(m.topology, ind), m.points)
 
 nelements(m::SimpleMesh) = nelements(m.topology)
@@ -41,14 +41,14 @@ nelements(m::SimpleMesh) = nelements(m.topology)
 
 function Base.show(io::IO, ::MIME"text/plain", m::SimpleMesh{Dim,T}) where {Dim,T}
   verts = m.points
-  elms  = collect(elements(m.topology))
+  elems = collect(elements(m.topology))
   nvert = length(verts)
-  nelms = length(elms)
+  nelms = length(elems)
   println(io, m)
   println(io, "  $nvert vertices")
   println(io, _lines(verts, "    "))
   println(io, "  $nelms elements")
-  print(  io, _lines(elms, "    "))
+  print(  io, _lines(elems, "    "))
 end
 
 function _lines(vec, tab="  ")

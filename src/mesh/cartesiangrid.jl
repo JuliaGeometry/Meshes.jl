@@ -92,7 +92,7 @@ elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
 # DOMAIN INTERFACE
 # -----------------
 
-function Base.getindex(g::CartesianGrid{Dim}, ind::Int) where {Dim}
+function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
   I = CartesianIndices(g.dims)[ind]
   o = coordinates(g.origin)
   s = g.spacing

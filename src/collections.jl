@@ -15,7 +15,7 @@ end
 # DOMAIN INTERFACE
 # -----------------
 
-Base.getindex(c::Collection, ind::Int) = c.items[ind]
+element(c::Collection, ind::Int) = c.items[ind]
 
 nelements(c::Collection) = length(c.items)
 

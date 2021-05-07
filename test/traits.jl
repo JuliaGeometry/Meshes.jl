@@ -4,7 +4,7 @@
     struct DummyDomain{Dim,T} <: Domain{Dim,T}
       origin::Point{Dim,T}
     end
-    function Base.getindex(domain::DummyDomain{Dim,T}, ind::Int) where {Dim,T}
+    function Meshes.element(domain::DummyDomain{Dim,T}, ind::Int) where {Dim,T}
       c = domain.origin + Vec(ntuple(i->T(ind), Dim))
       r = one(T)
       Ball(c, r)

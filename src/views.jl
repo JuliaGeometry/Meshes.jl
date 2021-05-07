@@ -20,8 +20,8 @@ end
 # DOMAIN INTERFACE
 # -----------------
 
-Base.getindex(v::DomainView, ind::Int) =
-  getindex(v.domain, v.inds[ind])
+element(v::DomainView, ind::Int) =
+  element(v.domain, v.inds[ind])
 
 nelements(v::DomainView) = length(v.inds)
 

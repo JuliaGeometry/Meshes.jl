@@ -112,7 +112,8 @@ export
   # domain/data traits
   Domain, Data, Variable,
   domain, constructor, asarray,
-  nelements, variables, name, mactype,
+  element, nelements,
+  variables, name, mactype,
 
   # optional traits
   IsGrid, isgrid,
