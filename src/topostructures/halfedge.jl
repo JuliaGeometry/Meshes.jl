@@ -98,8 +98,13 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
 
   # store all halfedges in a vector
   halfedges = HalfEdge[]
-  for he in values(edge4pair)
-    append!(halfedges, [he, he.half])
+  processed = Set{Tuple{Int,Int}}()
+  for ((u, v), he) in edge4pair
+    if (u, v) ∉ processed
+      append!(halfedges, [he, he.half])
+      push!(processed, (u, v))
+      push!(processed, (v, u))
+    end
   end
 
   # reverse mappings
@@ -137,18 +142,6 @@ edgeonvert(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonvert[v]]
 # ----------------------
 # TOPOLOGICAL RELATIONS
 # ----------------------
-
-# helper function to construct
-# n-gon from given half-edge
-function ngon4edge(e::HalfEdge)
-  n = e.next
-  v = [e.head]
-  while n != e
-    push!(v, n.head)
-    n = n.next
-  end
-  connect(Tuple(v), Ngon{length(v)})
-end
 
 function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
   connect.([(v, u) for u in adjacency(v, s)], Segment)
@@ -228,6 +221,18 @@ function adjacency(v::Integer, s::HalfEdgeStructure)
   isnothing(o.elem) && push!(vertices, o.half.head)
 
   vertices
+end
+
+# helper function to construct
+# n-gon from given half-edge
+function ngon4edge(e::HalfEdge)
+  n = e.next
+  v = [e.head]
+  while n != e
+    push!(v, n.head)
+    n = n.next
+  end
+  connect(Tuple(v), Ngon{length(v)})
 end
 
 # ---------------------
