@@ -179,9 +179,7 @@ export
   facet, nfacets,
   FullStructure,
   HalfEdgeStructure,
-  HalfEdge,
-  edgeonelem,
-  edgeonvert,
+  HalfEdge, half4elem, half4vert,
 
   # meshes
   Mesh,

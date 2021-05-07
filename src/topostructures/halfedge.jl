@@ -26,7 +26,7 @@ function Base.show(io::IO, e::HalfEdge)
 end
 
 """
-    HalfEdgeStructure(halfedges, edgeonelem, edgeonvert)
+    HalfEdgeStructure(halfedges, half4elem, half4vert)
 
 A data structure for orientable 2-manifolds based
 on half-edges.
@@ -36,11 +36,11 @@ implementation is the most common type that splits
 the incident elements.
 
 A vector of `halfedges` together with a dictionary of
-`edgeonelem` and a dictionary of `edgeonvert` can be
+`half4elem` and a dictionary of `half4vert` can be
 used to retrieve topolological relations in optimal
-time. In this case, `edgeonvert[i]` returns the index
+time. In this case, `half4vert[i]` returns the index
 of the half-edge in `halfedges` with head equal to `i`.
-Similarly, `edgeonelem[i]` returns the index of a
+Similarly, `half4elem[i]` returns the index of a
 half-edge in `halfedges` that is in the element `i`.
 
 See also [`TopologicalStructure`](@ref).
@@ -53,8 +53,8 @@ See also [`TopologicalStructure`](@ref).
 """
 struct HalfEdgeStructure <: TopologicalStructure
   halfedges::Vector{HalfEdge}
-  edgeonelem::Dict{Int,Int}
-  edgeonvert::Dict{Int,Int}
+  half4elem::Dict{Int,Int}
+  half4vert::Dict{Int,Int}
 end
 
 function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
@@ -64,13 +64,13 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
   nvertices = maximum(i for e in elems for i in indices(e))
 
   # initialization step
-  edge4pair = Dict{Tuple{Int,Int},HalfEdge}()
+  half4pair = Dict{Tuple{Int,Int},HalfEdge}()
   for (e, elem) in Iterators.enumerate(elems)
     inds = collect(indices(elem))
     v = CircularVector(inds)
     n = length(v)
     for i in 1:n
-      edge4pair[(v[i], v[i+1])] = HalfEdge(v[i], e)
+      half4pair[(v[i], v[i+1])] = HalfEdge(v[i], e)
     end
   end
 
@@ -81,13 +81,13 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
     n = length(v)
     for i in 1:n
       # update pointers prev and next
-      he = edge4pair[(v[i], v[i+1])]
-      he.prev = edge4pair[(v[i-1],   v[i])]
-      he.next = edge4pair[(v[i+1], v[i+2])]
+      he = half4pair[(v[i], v[i+1])]
+      he.prev = half4pair[(v[i-1],   v[i])]
+      he.next = half4pair[(v[i+1], v[i+2])]
 
       # if not a border element, update half
-      if haskey(edge4pair, (v[i+1], v[i]))
-        he.half = edge4pair[(v[i+1], v[i])]
+      if haskey(half4pair, (v[i+1], v[i]))
+        he.half = half4pair[(v[i+1], v[i])]
       else # create half-edge for border
         be = HalfEdge(v[i+1], nothing)
         be.half = he
@@ -97,47 +97,49 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
   end
 
   # store all halfedges in a vector
+  edgecount = 0
   halfedges = HalfEdge[]
-  processed = Set{Tuple{Int,Int}}()
-  for ((u, v), he) in edge4pair
-    if (u, v) ∉ processed
+  edge4pair = Dict{Tuple{Int,Int},Int}()
+  for ((u, v), he) in half4pair
+    if !haskey(edge4pair, (u, v))
       append!(halfedges, [he, he.half])
-      push!(processed, (u, v))
-      push!(processed, (v, u))
+      edgecount += 1
+      edge4pair[(u, v)] = edgecount
+      edge4pair[(v, u)] = edgecount
     end
   end
 
   # reverse mappings
-  edgeonelem = Dict{Int,Int}()
-  edgeonvert = Dict{Int,Int}()
+  half4elem = Dict{Int,Int}()
+  half4vert = Dict{Int,Int}()
   for (e, he) in enumerate(halfedges)
     if !isnothing(he.elem) # interior half-edge
-      if !haskey(edgeonelem, he.elem)
-        edgeonelem[he.elem] = e
+      if !haskey(half4elem, he.elem)
+        half4elem[he.elem] = e
       end
-      if !haskey(edgeonvert, he.head)
-        edgeonvert[he.head] = e
+      if !haskey(half4vert, he.head)
+        half4vert[he.head] = e
       end
     end
   end
 
-  HalfEdgeStructure(halfedges, edgeonelem, edgeonvert)
+  HalfEdgeStructure(halfedges, half4elem, half4vert)
 end
 
 """
-    edgeonelem(e, s)
+    half4elem(e, s)
 
 Return a half-edge of the half-edge structure `s` on the `e`-th elem.
 """
-edgeonelem(e::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonelem[e]]
+half4elem(e::Integer, s::HalfEdgeStructure) = s.halfedges[s.half4elem[e]]
 
 """
-    edgeonvert(v, s)
+    half4vert(v, s)
 
 Return the half-edge of the half-edge structure `s` for which the
 head is the `v`-th index.
 """
-edgeonvert(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonvert[v]]
+half4vert(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.half4vert[v]]
 
 # ----------------------
 # TOPOLOGICAL RELATIONS
@@ -153,7 +155,7 @@ end
 function coboundary(c::Connectivity{<:Segment}, ::Val{2},
                     s::HalfEdgeStructure)
   u, v = indices(c)
-  eᵤ = edgeonvert(u, s)
+  eᵤ = half4vert(u, s)
 
   # search edge counter-clockwise
   e  = eᵤ
@@ -186,7 +188,7 @@ function adjacency(c::Connectivity{<:Segment}, s::HalfEdgeStructure)
 end
 
 function adjacency(v::Integer, s::HalfEdgeStructure)
-  e = edgeonvert(v, s)
+  e = half4vert(v, s)
   h = e.half
   if isnothing(h.elem) # border edge
     # we are at the first arm of the star already
@@ -239,9 +241,9 @@ end
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-element(s::HalfEdgeStructure, ind) = ngon4edge(edgeonelem(ind, s))
+element(s::HalfEdgeStructure, ind) = ngon4edge(half4elem(ind, s))
 
-nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
+nelements(s::HalfEdgeStructure) = length(s.half4elem)
 
 function facet(s::HalfEdgeStructure, ind)
   e = s.halfedges[2ind-1]

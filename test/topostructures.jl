@@ -2,7 +2,7 @@
   function test_halfedge(elems, structure)
     @test nelements(structure) == length(elems)
     for e in 1:nelements(structure)
-      he = edgeonelem(e, structure)
+      he = half4elem(e, structure)
       inds = indices(elems[e])
       @test he.elem == e
       @test he.head ∈ inds
