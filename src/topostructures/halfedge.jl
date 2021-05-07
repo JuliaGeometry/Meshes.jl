@@ -21,27 +21,35 @@ mutable struct HalfEdge
   HalfEdge(head, elem) = new(head, elem)
 end
 
+"""
+    loop(halfedge)
+
+Loop over the heads of a cycle starting at given `halfedge`.
+"""
+function loop(e::HalfEdge)
+  n = e.next
+  v = [e.head]
+  while n != e
+    push!(v, n.head)
+    n = n.next
+  end
+  v
+end
+
 function Base.show(io::IO, e::HalfEdge)
   print(io, "HalfEdge($(e.head), $(e.elem))")
 end
 
 """
-    HalfEdgeStructure(halfedges, half4elem, half4vert)
+    HalfEdgeStructure(elements)
 
 A data structure for orientable 2-manifolds based
-on half-edges.
+on half-edges constructed from a list of polygon
+`elements`.
 
 Two types of half-edges exist (Kettner 1999). This
 implementation is the most common type that splits
 the incident elements.
-
-A vector of `halfedges` together with a dictionary of
-`half4elem` and a dictionary of `half4vert` can be
-used to retrieve topolological relations in optimal
-time. In this case, `half4vert[i]` returns the index
-of the half-edge in `halfedges` with head equal to `i`.
-Similarly, `half4elem[i]` returns the index of a
-half-edge in `halfedges` that is in the element `i`.
 
 See also [`TopologicalStructure`](@ref).
 
@@ -50,11 +58,25 @@ See also [`TopologicalStructure`](@ref).
 * Kettner, L. (1999). [Using generic programming for
   designing a data structure for polyhedral surfaces]
   (https://www.sciencedirect.com/science/article/pii/S0925772199000073)
+
+### Notes
+
+A vector of `halfedges` together with a dictionary of
+`half4elem` and a dictionary of `half4vert` can be
+used to retrieve topolological relations in optimal
+time. In this case, `half4vert[i]` returns the index
+of the half-edge in `halfedges` with head equal to `i`.
+Similarly, `half4elem[i]` returns the index of a
+half-edge in `halfedges` that is in the element `i`.
+Additionally, a dictionary `edge4pair` returns the
+index of the edge (i.e. two halves) for a given
+pair of vertices.
 """
 struct HalfEdgeStructure <: TopologicalStructure
   halfedges::Vector{HalfEdge}
   half4elem::Dict{Int,Int}
   half4vert::Dict{Int,Int}
+  edge4pair::Dict{Tuple{Int,Int},Int}
 end
 
 function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
@@ -123,7 +145,7 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  HalfEdgeStructure(halfedges, half4elem, half4vert)
+  HalfEdgeStructure(halfedges, half4elem, half4vert, edge4pair)
 end
 
 """
@@ -141,112 +163,42 @@ head is the `v`-th index.
 """
 half4vert(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.half4vert[v]]
 
-# ----------------------
-# TOPOLOGICAL RELATIONS
-# ----------------------
+"""
+    half4edge(e, s)
 
-function coboundary(v::Integer, ::Val{1}, s::HalfEdgeStructure)
-  connect.([(v, u) for u in adjacency(v, s)], Segment)
-end
+Return the half-edge of the half-edge structure `s` for the edge `e`.
 
-function coboundary(v::Integer, ::Val{2}, s::HalfEdgeStructure)
-end
+### Notes
 
-function coboundary(c::Connectivity{<:Segment}, ::Val{2},
-                    s::HalfEdgeStructure)
-  u, v = indices(c)
-  eᵤ = half4vert(u, s)
+Always return the half-edge to the "left".
+"""
+half4edge(e::Integer, s::HalfEdgeStructure) = s.halfedges[2e - 1]
 
-  # search edge counter-clockwise
-  e  = eᵤ
-  while !isnothing(e.elem) && e.half.head != v
-    e = e.prev.half
-  end
+"""
+    half4pair(uv, s)
 
-  # search edge clockwise
-  if isnothing(e.elem) && e.half.head != v
-    e = eᵤ
-    while !isnothing(e.elem) && e.half.head != v
-      e = e.half.next
-    end
-  end
+Return the half-edge of the half-edge structure `s` for the pair of
+vertices `uv`.
 
-  # construct elements
-  if isnothing(e.elem)
-    [ngon4edge(e.half)]
-  elseif isnothing(e.half.elem)
-    [ngon4edge(e)]
-  else
-    [ngon4edge(e), ngon4edge(e.half)]
-  end
-end
+### Notes
 
-function adjacency(c::Connectivity{<:Polygon}, s::HalfEdgeStructure)
-end
-
-function adjacency(c::Connectivity{<:Segment}, s::HalfEdgeStructure)
-end
-
-function adjacency(v::Integer, s::HalfEdgeStructure)
-  e = half4vert(v, s)
-  h = e.half
-  if isnothing(h.elem) # border edge
-    # we are at the first arm of the star already
-    # there is no need to adjust the CCW loop
-  else # interior edge
-    # we are at an interior edge and may need to
-    # adjust the CCW loop so that it starts at
-    # the first arm of the star
-    n = h.next
-    h = n.half
-    while !isnothing(h.elem) && n != e
-      n = h.next
-      h = n.half
-    end
-    e = n
-  end
-
-  # edge e is now the first arm of the star
-  # we can follow the CCW loop until we find
-  # it again or hit a border edge
-  p = e.prev
-  n = e.next
-  o = p.half
-  vertices = [n.head]
-  while !isnothing(o.elem) && o != e
-    p = o.prev
-    n = o.next
-    o = p.half
-    push!(vertices, n.head)
-  end
-  # if border edge is hit, add last arm manually
-  isnothing(o.elem) && push!(vertices, o.half.head)
-
-  vertices
-end
-
-# helper function to construct
-# n-gon from given half-edge
-function ngon4edge(e::HalfEdge)
-  n = e.next
-  v = [e.head]
-  while n != e
-    push!(v, n.head)
-    n = n.next
-  end
-  connect(Tuple(v), Ngon{length(v)})
-end
+Always return the half-edge to the "left".
+"""
+half4pair(uv::Tuple{Int,Int}, s::HalfEdgeStructure) = half4edge(s.edge4pair[uv], s)
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-element(s::HalfEdgeStructure, ind) = ngon4edge(half4elem(ind, s))
+function element(s::HalfEdgeStructure, ind)
+  v = loop(half4elem(ind, s))
+  connect(Tuple(v), Ngon{length(v)})
+end
 
 nelements(s::HalfEdgeStructure) = length(s.half4elem)
 
 function facet(s::HalfEdgeStructure, ind)
-  e = s.halfedges[2ind-1]
+  e = half4edge(ind, s)
   connect((e.head, e.half.head), Segment)
 end
 

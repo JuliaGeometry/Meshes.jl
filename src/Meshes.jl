@@ -60,6 +60,7 @@ include("conventions.jl")
 # connectivities and meshes
 include("connectivities.jl")
 include("topostructures.jl")
+include("toporelations.jl")
 include("mesh.jl")
 
 # domain and data views
@@ -173,13 +174,17 @@ export
 
   # topological structures
   TopologicalStructure,
-  boundary, coboundary, adjacency,
   faces, elements, facets,
   element, nelements,
   facet, nfacets,
   FullStructure,
-  HalfEdgeStructure,
-  HalfEdge, half4elem, half4vert,
+  HalfEdgeStructure, HalfEdge,
+  half4elem, half4vert,
+  half4edge, half4pair,
+
+  # topological relations
+  TopologicalRelation,
+  Boundary, Coboundary, Adjacency,
 
   # meshes
   Mesh,

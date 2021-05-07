@@ -16,60 +16,6 @@ in a [`Mesh`](@ref).
 """
 abstract type TopologicalStructure end
 
-# ----------------------
-# TOPOLOGICAL RELATIONS
-# ----------------------
-
-"""
-    boundary(connectivity, rank, structure)
-
-Boundary relation that maps the `connectivity` with a given
-rank to a set of connectivities of smaller `rank` based on
-the topological `structure`.
-
-For example, the boundary of a `Connectivity{Triangle}` is a
-set with three `Connectivity{Segment}`.
-"""
-boundary(connectivity, rank, structure::TopologicalStructure) =
-  boundary(connectivity, Val(rank), structure)
-
-function boundary(c::Connectivity{<:Polygon}, ::Val{1}, ::TopologicalStructure)
-  v = CircularVector(collect(indices(c)))
-  [connect((v[i], v[i+1]), Segment) for i in 1:length(v)]
-end
-
-function boundary(c::Connectivity{<:Polytope}, ::Val{0}, ::TopologicalStructure)
-  collect(indices(c))
-end
-
-"""
-    coboundary(connectivity, rank, structure)
-
-Co-boundary relation that maps the `connectivity` with a given
-rank to a set of connectivities of higher `rank` based on the
-topological `structure`.
-
-For example, the coboundary of a `Connectivity{Segment}` can
-be a set with two `Connectivity{Triangle}`.
-"""
-coboundary(connectivity, rank, structure::TopologicalStructure) =
-  coboundary(connectivity, Val(rank), structure)
-
-"""
-    adjacency(connectivity, structure)
-
-Adjacency relation that maps the `connectivity` with rank `p`
-to a set of connectivities sharing a `p-1` connectivity.
-
-For example, the adjacency of a `Connectivity{Triangle}` can
-be a set of `Connectivity{Triangle}` sharing a `Connectivity{Segment}`.
-"""
-function adjacency end
-
-# ---------------------
-# HIGH-LEVEL INTERFACE
-# ---------------------
-
 """
     faces(structure, rank)
 
