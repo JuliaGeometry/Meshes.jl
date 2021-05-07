@@ -26,7 +26,7 @@ function Base.show(io::IO, e::HalfEdge)
 end
 
 """
-    HalfEdgeStructure(halfedges, edgeonelem, edgeonvertex)
+    HalfEdgeStructure(halfedges, edgeonelem, edgeonvert)
 
 A data structure for orientable 2-manifolds based
 on half-edges.
@@ -35,21 +35,13 @@ Two types of half-edges exist (Kettner 1999). This
 implementation is the most common type that splits
 the incident elements.
 
-A vector of `halfedges` together with a vector of
-`edgeonelem` and a vector of `edgeonvertex` can be
+A vector of `halfedges` together with a dictionary of
+`edgeonelem` and a dictionary of `edgeonvert` can be
 used to retrieve topolological relations in optimal
-time. In this case, `edgeonvertex[i]` returns the
-index of the half-edge in `halfedges` with head equal
-to `i`. Similarly, `edgeonelem[i]` returns the index
-of a half-edge in `halfedges` that is in the elem `i`.
-
-Such data structure is usually constructed from another
-data structure such as [`ElementListStructure`](@ref) via
-`convert` methods:
-
-```julia
-he = convert(HalfEdgeStructure, structure)
-```
+time. In this case, `edgeonvert[i]` returns the index
+of the half-edge in `halfedges` with head equal to `i`.
+Similarly, `edgeonelem[i]` returns the index of a
+half-edge in `halfedges` that is in the element `i`.
 
 See also [`TopologicalStructure`](@ref).
 
@@ -61,8 +53,8 @@ See also [`TopologicalStructure`](@ref).
 """
 struct HalfEdgeStructure <: TopologicalStructure
   halfedges::Vector{HalfEdge}
-  edgeonelem::Vector{Int}
-  edgeonvertex::Vector{Int}
+  edgeonelem::Dict{Int,Int}
+  edgeonvert::Dict{Int,Int}
 end
 
 function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
@@ -83,9 +75,6 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
   end
 
   # add missing pointers
-  inneredges  = HalfEdge[]
-  borderedges = HalfEdge[]
-  edgeonelem  = Int[]
   for elem in elems
     inds = collect(indices(elem))
     v = CircularVector(inds)
@@ -103,28 +92,31 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
         be = HalfEdge(v[i+1], nothing)
         be.half = he
         he.half = be
-        push!(borderedges, be)
       end
-
-      # save inner half-edges in order
-      push!(inneredges, he)
     end
-
-    # save first halfedge for this elem
-    push!(edgeonelem, length(inneredges) - n + 1)
   end
 
-  # all half-edges (inner and border)
-  halfedges = [inneredges; borderedges]
-
-  # map vertices to inner half-edges
-  edgeonvertex = Vector{Int}(undef, nvertices)
-  for i in eachindex(edgeonvertex)
-    e = findfirst(he -> he.head == i, inneredges)
-    edgeonvertex[i] = e
+  # store all halfedges in a vector
+  halfedges = HalfEdge[]
+  for he in values(edge4pair)
+    append!(halfedges, [he, he.half])
   end
 
-  HalfEdgeStructure(halfedges, edgeonelem, edgeonvertex)
+  # reverse mappings
+  edgeonelem = Dict{Int,Int}()
+  edgeonvert = Dict{Int,Int}()
+  for (e, he) in enumerate(halfedges)
+    if !isnothing(he.elem) # interior half-edge
+      if !haskey(edgeonelem, he.elem)
+        edgeonelem[he.elem] = e
+      end
+      if !haskey(edgeonvert, he.head)
+        edgeonvert[he.head] = e
+      end
+    end
+  end
+
+  HalfEdgeStructure(halfedges, edgeonelem, edgeonvert)
 end
 
 """
@@ -135,20 +127,20 @@ Return a half-edge of the half-edge structure `s` on the `e`-th elem.
 edgeonelem(e::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonelem[e]]
 
 """
-    edgeonvertex(v, s)
+    edgeonvert(v, s)
 
 Return the half-edge of the half-edge structure `s` for which the
 head is the `v`-th index.
 """
-edgeonvertex(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonvertex[v]]
+edgeonvert(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.edgeonvert[v]]
 
 # ----------------------
 # TOPOLOGICAL RELATIONS
 # ----------------------
 
 # helper function to construct
-# element from given half-edge
-function elemonedge(e::HalfEdge)
+# n-gon from given half-edge
+function ngon4edge(e::HalfEdge)
   n = e.next
   v = [e.head]
   while n != e
@@ -168,7 +160,7 @@ end
 function coboundary(c::Connectivity{<:Segment}, ::Val{2},
                     s::HalfEdgeStructure)
   u, v = indices(c)
-  eᵤ = edgeonvertex(u, s)
+  eᵤ = edgeonvert(u, s)
 
   # search edge counter-clockwise
   e  = eᵤ
@@ -186,11 +178,11 @@ function coboundary(c::Connectivity{<:Segment}, ::Val{2},
 
   # construct elements
   if isnothing(e.elem)
-    [elemonedge(e.half)]
+    [ngon4edge(e.half)]
   elseif isnothing(e.half.elem)
-    [elemonedge(e)]
+    [ngon4edge(e)]
   else
-    [elemonedge(e), elemonedge(e.half)]
+    [ngon4edge(e), ngon4edge(e.half)]
   end
 end
 
@@ -201,7 +193,7 @@ function adjacency(c::Connectivity{<:Segment}, s::HalfEdgeStructure)
 end
 
 function adjacency(v::Integer, s::HalfEdgeStructure)
-  e = edgeonvertex(v, s)
+  e = edgeonvert(v, s)
   h = e.half
   if isnothing(h.elem) # border edge
     # we are at the first arm of the star already
@@ -242,6 +234,13 @@ end
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-element(s::HalfEdgeStructure, ind) = elemonedge(edgeonelem(ind, s))
+element(s::HalfEdgeStructure, ind) = ngon4edge(edgeonelem(ind, s))
 
 nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
+
+# ---------------------------------
+# CONVERSION FROM OTHER STRUCTURES
+# ---------------------------------
+
+Base.convert(::Type{HalfEdgeStructure}, s::TopologicalStructure) =
+  HalfEdgeStructure(collect(elements(s)))

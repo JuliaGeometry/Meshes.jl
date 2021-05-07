@@ -178,7 +178,7 @@ export
   HalfEdgeStructure,
   HalfEdge,
   edgeonelem,
-  edgeonvertex,
+  edgeonvert,
 
   # meshes
   Mesh,

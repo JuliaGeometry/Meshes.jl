@@ -123,6 +123,3 @@ function nelements(::TopologicalStructure) end
 
 include("topostructures/full.jl")
 include("topostructures/halfedge.jl")
-
-# conversions between structures
-include("topostructures/conversions.jl")

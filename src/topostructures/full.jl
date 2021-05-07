@@ -44,4 +44,14 @@ function faces(s::FullStructure, rank)
 end
 
 element(s::FullStructure, ind) = s.connec[s.elms[ind]]
+
 nelements(s::FullStructure) = length(s.elms)
+
+# ---------------------------------
+# CONVERSION FROM OTHER STRUCTURES
+# ---------------------------------
+
+function Base.convert(::Type{FullStructure}, s::TopologicalStructure)
+  # TODO: add all faces, not just the elements
+  FullStructure(collect(elements(s)))
+end
