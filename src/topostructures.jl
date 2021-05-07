@@ -117,6 +117,28 @@ Return the number of elements in the topological `structure`.
 """
 function nelements(::TopologicalStructure) end
 
+"""
+    facets(structure)
+
+Return the (top-1)-faces (a.k.a. facets) of the topological `structure`.
+"""
+facets(structure::TopologicalStructure) =
+  (facet(structure, ind) for ind in 1:nfacets(structure))
+
+"""
+    facet(structure, ind)
+
+Return the facet of the topological `structure` at index `ind`.
+"""
+function facet(::TopologicalStructure, ind) end
+
+"""
+    nfacets(structure)
+
+Return the number of facets in the topological `structure`.
+"""
+function nfacets(::TopologicalStructure) end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

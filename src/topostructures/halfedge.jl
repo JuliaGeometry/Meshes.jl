@@ -243,6 +243,13 @@ element(s::HalfEdgeStructure, ind) = ngon4edge(edgeonelem(ind, s))
 
 nelements(s::HalfEdgeStructure) = length(s.edgeonelem)
 
+function facet(s::HalfEdgeStructure, ind)
+  e = s.halfedges[2ind-1]
+  connect((e.head, e.half.head), Segment)
+end
+
+nfacets(s::HalfEdgeStructure) = length(s.halfedges) ÷ 2
+
 # ---------------------------------
 # CONVERSION FROM OTHER STRUCTURES
 # ---------------------------------

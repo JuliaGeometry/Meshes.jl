@@ -13,14 +13,20 @@
   elems = connect.([(1,2,3),(4,3,2)], Triangle)
   struc = HalfEdgeStructure(elems)
   test_halfedge(elems, struc)
+  @test nelements(struc) == 2
+  @test nfacets(struc) == 5
 
   # 2 triangles + 2 quadrangles
   elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)], Ngon)
   struc = HalfEdgeStructure(elems)
   test_halfedge(elems, struc)
+  @test nelements(struc) == 4
+  @test nfacets(struc) == 9
 
   # 1 triangle + 3 quadrangles + 1 triangle hole
   elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)], Ngon)
   struc = HalfEdgeStructure(elems)
   test_halfedge(elems, struc)
+  @test nelements(struc) == 4
+  @test nfacets(struc) == 11
 end

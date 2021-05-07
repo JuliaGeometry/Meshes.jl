@@ -174,7 +174,9 @@ export
   # topological structures
   TopologicalStructure,
   boundary, coboundary, adjacency,
-  faces, elements, element, nelements,
+  faces, elements, facets,
+  element, nelements,
+  facet, nfacets,
   FullStructure,
   HalfEdgeStructure,
   HalfEdge,
@@ -184,8 +186,10 @@ export
   # meshes
   Mesh,
   CartesianGrid, SimpleMesh,
-  faces, elements, spacing,
-  nelements,
+  faces, elements, facets,
+  element, nelements,
+  facet, nfacets,
+  spacing,
 
   # views
   DomainView, DataView,

@@ -47,6 +47,8 @@ element(s::FullStructure, ind) = s.connec[s.elms[ind]]
 
 nelements(s::FullStructure) = length(s.elms)
 
+facets(s::FullStructure) = faces(s, maximum(s.ranks) - 1)
+
 # ---------------------------------
 # CONVERSION FROM OTHER STRUCTURES
 # ---------------------------------
