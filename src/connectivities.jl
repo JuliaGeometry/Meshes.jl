@@ -40,27 +40,32 @@ indices(c::Connectivity) = c.indices
 Connect a list of `indices` from a global vector of [`Point`](@ref)
 into a [`Polytope`](@ref) of type `PL`.
 
-For polytopes of parametric dimension 2, the type `PL` can be a
-[`Ngon`](@ref) in which case the length of the indices is used
-to identify the actual polygon type.
+The type `PL` can be a [`Ngon`](@ref) in which case the length of
+the indices is used to identify the actual N-gon type (e.g. Triangle).
 
-Finally, the type `PL` can be ommitted. In this case, the
-indices are assumed to be connected as a [`Ngon`](@ref) or
-as a [`Segment`](@ref).
+Finally, the type `PL` can be ommitted. In this case, the indices are
+assumed to be connected as a [`Ngon`](@ref) or as a [`Segment`](@ref).
 
 ## Example
 
 Connect indices into a Triangle:
 
-```
+```julia
 connect((1,2,3), Triangle)
 ```
 
-Connect indices into geometries of parametric dimension 2.
-In this case, a `Triangle` and a `Quadrangle`:
+Connect indices into N-gons, a `Triangle` and a `Quadrangle`:
 
-```
+```julia
 connect.([(1,2,3), (2,3,4,5)], Ngon)
+```
+
+Connect indices into N-gon or segment:
+
+```julia
+connect((1,2)) # Segment
+connect((1,2,3)) # Triangle
+connect((1,2,3,4)) # Quadrangle
 ```
 """
 connect(indices::Tuple, PL::Type{<:Polytope}) =
