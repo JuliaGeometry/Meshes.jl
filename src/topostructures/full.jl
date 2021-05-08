@@ -31,8 +31,7 @@ end
 
 FullStructure(connec) = FullStructure{eltype(connec)}(connec)
 
-==(s1::FullStructure, s2::FullStructure) =
-  s1.connec == s2.connec
+==(s1::FullStructure, s2::FullStructure) = s1.connec == s2.connec
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
