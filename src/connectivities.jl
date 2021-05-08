@@ -35,14 +35,32 @@ Return the list of indices of the `connectivity`.
 indices(c::Connectivity) = c.indices
 
 """
-    connect(indices, PL)
+    connect(indices, [PL])
 
 Connect a list of `indices` from a global vector of [`Point`](@ref)
 into a [`Polytope`](@ref) of type `PL`.
 
+For polytopes of parametric dimension 2, the type `PL` can be a
+[`Ngon`](@ref) in which case the length of the indices is used
+to identify the actual polygon type.
+
+Finally, the type `PL` can be ommitted. In this case, the
+indices are assumed to be connected as a [`Ngon`](@ref) or
+as a [`Segment`](@ref).
+
 ## Example
+
+Connect indices into a Triangle:
+
 ```
-Δ = connect((1,2,3), Triangle)
+connect((1,2,3), Triangle)
+```
+
+Connect indices into geometries of parametric dimension 2.
+In this case, a `Triangle` and a `Quadrangle`:
+
+```
+connect.([(1,2,3), (2,3,4,5)], Ngon)
 ```
 """
 connect(indices::Tuple, PL::Type{<:Polytope}) =
@@ -51,6 +69,11 @@ connect(indices::Tuple, PL::Type{<:Polytope}) =
 function connect(indices::Tuple, ::Type{Ngon})
   N = length(indices)
   Connectivity{Ngon{N},N}(indices)
+end
+
+function connect(indices::Tuple)
+  N = length(indices)
+  N > 2 ? connect(indices, Ngon) : connect(indices, Segment)
 end
 
 """

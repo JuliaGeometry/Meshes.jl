@@ -21,4 +21,11 @@
   @test c[2] isa Connectivity{Triangle}
   @test c[3] isa Connectivity{Quadrangle}
   @test c[4] isa Connectivity{Triangle}
+
+  # ommitting polytope type means polygon or segment
+  @test connect((1,2)) isa Connectivity{Segment}
+  @test connect((1,2,3)) isa Connectivity{Triangle}
+  @test connect((1,2,3,4)) isa Connectivity{Quadrangle}
+  @test connect((1,2,3,4,5)) isa Connectivity{Pentagon}
+  @test connect((1,2,3,4,5,6)) isa Connectivity{Hexagon}
 end
