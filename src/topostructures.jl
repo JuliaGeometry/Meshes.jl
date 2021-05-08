@@ -17,6 +17,20 @@ in a [`Mesh`](@ref).
 abstract type TopologicalStructure end
 
 """
+    vertices(structure)
+
+Return the vertices of the topological `structure`.
+"""
+vertices(s::TopologicalStructure) = 1:nvertices(s)
+
+"""
+    nvertices(structure)
+
+Return the number of vertices in topological `structure`.
+"""
+function nvertices(::TopologicalStructure) end
+
+"""
     faces(structure, rank)
 
 Return an iterator with `rank`-faces of the topological `structure`.

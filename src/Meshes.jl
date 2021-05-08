@@ -174,6 +174,7 @@ export
 
   # topological structures
   TopologicalStructure,
+  vertices, nvertices,
   faces, elements, facets,
   element, nelements,
   facet, nfacets,

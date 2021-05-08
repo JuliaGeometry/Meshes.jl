@@ -1,6 +1,22 @@
 @testset "Topostructures" begin
   @testset "FullStructure" begin
-    # TODO
+    # 2 triangles
+    elems = connect.([(1,2,3),(4,3,2)])
+    struc = FullStructure(elems)
+    @test nvertices(struc) == 4
+    @test nelements(struc) == 2
+
+    # 2 triangles + 2 quadrangles
+    elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
+    struc = FullStructure(elems)
+    @test nvertices(struc) == 6
+    @test nelements(struc) == 4
+
+    # 1 triangle + 3 quadrangles + 1 triangle hole
+    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
+    struc = FullStructure(elems)
+    @test nvertices(struc) == 7
+    @test nelements(struc) == 4
   end
 
   @testset "HalfEdgeStructure" begin
@@ -15,21 +31,27 @@
     end
 
     # 2 triangles
-    elems = connect.([(1,2,3),(4,3,2)], Triangle)
+    elems = connect.([(1,2,3),(4,3,2)])
     struc = HalfEdgeStructure(elems)
-    test_halfedge(elems, struc)
+    @test nvertices(struc) == 4
+    @test nelements(struc) == 2
     @test nfacets(struc) == 5
+    test_halfedge(elems, struc)
 
     # 2 triangles + 2 quadrangles
-    elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)], Ngon)
+    elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
     struc = HalfEdgeStructure(elems)
-    test_halfedge(elems, struc)
+    @test nvertices(struc) == 6
+    @test nelements(struc) == 4
     @test nfacets(struc) == 9
+    test_halfedge(elems, struc)
 
     # 1 triangle + 3 quadrangles + 1 triangle hole
-    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)], Ngon)
+    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
     struc = HalfEdgeStructure(elems)
-    test_halfedge(elems, struc)
+    @test nvertices(struc) == 7
+    @test nelements(struc) == 4
     @test nfacets(struc) == 11
+    test_halfedge(elems, struc)
   end
 end

@@ -190,6 +190,8 @@ half4pair(uv::Tuple{Int,Int}, s::HalfEdgeStructure) = half4edge(s.edge4pair[uv],
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
+nvertices(s::HalfEdgeStructure) = length(s.half4vert)
+
 function element(s::HalfEdgeStructure, ind)
   v = loop(half4elem(ind, s))
   connect(Tuple(v), Ngon{length(v)})

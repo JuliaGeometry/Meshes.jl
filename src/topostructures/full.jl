@@ -37,6 +37,8 @@ FullStructure(connec) = FullStructure{eltype(connec)}(connec)
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
+nvertices(s::FullStructure) = maximum(i for c in s.connec for i in indices(c))
+
 function faces(s::FullStructure, rank)
   cs, rs = s.connec, s.ranks
   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
