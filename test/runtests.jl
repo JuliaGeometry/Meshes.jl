@@ -58,6 +58,7 @@ testfiles = [
   "distances.jl",
   "connectivities.jl",
   "topostructures.jl",
+  "toporelations.jl",
   "mesh.jl",
   "traits.jl",
   "views.jl",
