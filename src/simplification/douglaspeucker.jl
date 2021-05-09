@@ -5,8 +5,8 @@
 """
     DouglasPeucker(ϵ)
 
-The Douglas-Peucker algorithm for simplifying polygonal chains given
-a deviation tolerance `ϵ`.
+The Douglas-Peucker algorithm for simplifying polygonal chains or
+polygonal areas given a deviation tolerance `ϵ`.
 
 ## References
 
