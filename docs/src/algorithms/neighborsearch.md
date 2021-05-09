@@ -6,5 +6,5 @@ NeighborSearchMethod
 BallSearch
 KNearestSearch
 KBallSearch
-BoundedSearch
+FilteredSearch
 ```

@@ -215,7 +215,7 @@ export
   BallSearch,
   KNearestSearch,
   KBallSearch,
-  BoundedSearch,
+  FilteredSearch,
   search!, search,
 
   # partitions
