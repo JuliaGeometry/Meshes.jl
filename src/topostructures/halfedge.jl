@@ -44,13 +44,18 @@ end
     HalfEdgeStructure(elements)
     HalfEdgeStructure(halfedges)
 
-A data structure for orientable 2-manifolds based
-on half-edges constructed from a list of connectivity
-`elements` or from a list of `halfedges`.
+A data structure for orientable 2-manifolds based on
+half-edges constructed from a vector of connectivity
+`elements` or from a vector of pairs of `halfedges`.
 
-Two types of half-edges exist (Kettner 1999). This
-implementation is the most common type that splits
-the incident elements.
+## Examples
+
+Construct half-edge structure from a list of top-faces:
+
+```julia
+elements  = connect.([(1,2,3),(3,2,4,5)])
+structure = HalfEdgeStructure(elements)
+```
 
 See also [`TopologicalStructure`](@ref).
 
@@ -62,16 +67,20 @@ See also [`TopologicalStructure`](@ref).
 
 ### Notes
 
-A vector of `halfedges` together with a dictionary of
-`half4elem` and a dictionary of `half4vert` can be
-used to retrieve topolological relations in optimal
-time. In this case, `half4vert[i]` returns the index
-of the half-edge in `halfedges` with head equal to `i`.
-Similarly, `half4elem[i]` returns the index of a
-half-edge in `halfedges` that is in the element `i`.
-Additionally, a dictionary `edge4pair` returns the
-index of the edge (i.e. two halves) for a given
-pair of vertices.
+- Two types of half-edges exist (Kettner 1999). This
+  implementation is the most common type that splits
+  the incident elements.
+
+- A vector of `halfedges` together with a dictionary of
+  `half4elem` and a dictionary of `half4vert` can be
+  used to retrieve topolological relations in optimal
+  time. In this case, `half4vert[i]` returns the index
+  of the half-edge in `halfedges` with head equal to `i`.
+  Similarly, `half4elem[i]` returns the index of a
+  half-edge in `halfedges` that is in the element `i`.
+  Additionally, a dictionary `edge4pair` returns the
+  index of the edge (i.e. two halves) for a given
+  pair of vertices.
 """
 struct HalfEdgeStructure <: TopologicalStructure
   halfedges::Vector{HalfEdge}
@@ -80,31 +89,31 @@ struct HalfEdgeStructure <: TopologicalStructure
   edge4pair::Dict{Tuple{Int,Int},Int}
 end
 
-function HalfEdgeStructure(halfedges::AbstractVector{HalfEdge})
-  @assert iseven(length(halfedges)) "number of halfedges must be even"
+function HalfEdgeStructure(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
+  # make sure that first half-edge is in the interior
+  ordered = [isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂) for (h₁, h₂) in halves]
 
+  # flatten pairs of half-edges into a vector
+  halfedges = [half for pair in ordered for half in pair]
+
+  # map element and vertex to a half-edge
   half4elem = Dict{Int,Int}()
   half4vert = Dict{Int,Int}()
-  for (e, he) in enumerate(halfedges)
-    if !isnothing(he.elem) # interior half-edge
-      if !haskey(half4elem, he.elem)
-        half4elem[he.elem] = e
+  for (i, h) in enumerate(halfedges)
+    if !isnothing(h.elem) # interior half-edge
+      if !haskey(half4elem, h.elem)
+        half4elem[h.elem] = i
       end
-      if !haskey(half4vert, he.head)
-        half4vert[he.head] = e
+      if !haskey(half4vert, h.head)
+        half4vert[h.head] = i
       end
     end
   end
 
-  # sort halfedges so that the two-halves
-  # are next to each other in the vector
-  # TODO:
-
-  nedges = length(halfedges) ÷ 2
+  # map pair of vertices to an edge (i.e. two halves)
   edge4pair = Dict{Tuple{Int,Int},Int}()
-  for i in 1:nedges
-    e = halfedges[2i-1]
-    u, v = e.head, e.half.head
+  for (i, (h₁, h₂)) in enumerate(ordered)
+    u, v = h₁.head, h₂.head
     edge4pair[(u, v)] = i
     edge4pair[(v, u)] = i
   end
@@ -151,18 +160,18 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  # store all halfedges in a vector
-  halfedges = HalfEdge[]
+  # save halfedges in a vector of pairs
+  halves  = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
     if (u, v) ∉ visited
-      append!(halfedges, [he, he.half])
+      push!(halves,  (he, he.half))
       push!(visited, (u, v))
       push!(visited, (v, u))
     end
   end
 
-  HalfEdgeStructure(halfedges)
+  HalfEdgeStructure(halves)
 end
 
 """

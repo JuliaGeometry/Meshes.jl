@@ -52,8 +52,8 @@
     h5.prev = h3;  h5.next = h1
     h7.prev = h4;  h7.next = h9
     h9.prev = h7;  h9.next = h4
-    halfedges = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
-    struc = HalfEdgeStructure(halfedges)
+    halves  = [(h1,h2),(h3,h4),(h5,h6),(h7,h8),(h9,h10)]
+    struc = HalfEdgeStructure(halves)
     @test half4elem(1, struc) == h1
     @test half4elem(2, struc) == h4
     @test half4vert(1, struc) == h1
