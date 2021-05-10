@@ -55,7 +55,7 @@
     halfedges = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
 
     # test auxiliary dictionaries for half-edge structure
-    h4elem, h4vert, e4pair = Meshes.halfedgedicts(halfedges, true)
+    h4elem, h4vert, e4pair = Meshes.halfedgedicts(halfedges)
     @test h4elem[1] == 1
     @test h4elem[2] == 4
     @test h4vert[1] == 1
@@ -64,12 +64,14 @@
     @test h4vert[4] == 9
     @test e4pair[(1,2)] == 1
     @test e4pair[(2,1)] == 1
-    @test e4pair[(2,3)] == 3
-    @test e4pair[(3,2)] == 3
-    @test e4pair[(2,4)] == 7
-    @test e4pair[(4,2)] == 7
-    @test e4pair[(4,3)] == 9
-    @test e4pair[(3,4)] == 9
+    @test e4pair[(2,3)] == 2
+    @test e4pair[(3,2)] == 2
+    @test e4pair[(3,1)] == 3
+    @test e4pair[(1,3)] == 3
+    @test e4pair[(2,4)] == 4
+    @test e4pair[(4,2)] == 4
+    @test e4pair[(4,3)] == 5
+    @test e4pair[(3,4)] == 5
 
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])

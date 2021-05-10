@@ -119,27 +119,25 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
   end
 
   # store all halfedges in a vector
-  edgecount = 0
   halfedges = HalfEdge[]
-  edge4pair = Dict{Tuple{Int,Int},Int}()
+  visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
-    if !haskey(edge4pair, (u, v))
+    if (u, v) ∉ visited
       append!(halfedges, [he, he.half])
-      edgecount += 1
-      edge4pair[(u, v)] = edgecount
-      edge4pair[(v, u)] = edgecount
+      push!(visited, (u, v))
+      push!(visited, (v, u))
     end
   end
 
   # reverse mappings
-  half4elem, half4vert = halfedgedicts(halfedges, false)
+  half4elem, half4vert, edge4pair = halfedgedicts(halfedges)
 
   HalfEdgeStructure(halfedges, half4elem, half4vert, edge4pair)
 end
 
 # helper function to create auxiliary
 # dicionaries for half-edge structure
-function halfedgedicts(halfedges, pairs=true)
+function halfedgedicts(halfedges)
   half4elem = Dict{Int,Int}()
   half4vert = Dict{Int,Int}()
   for (e, he) in enumerate(halfedges)
@@ -153,19 +151,19 @@ function halfedgedicts(halfedges, pairs=true)
     end
   end
 
-  if pairs
-    edge4pair = Dict{Tuple{Int,Int},Int}()
-    for (i, e) in enumerate(halfedges)
-      u, v = e.head, e.half.head
-      if !haskey(edge4pair, (u, v))
-        edge4pair[(u, v)] = i
-        edge4pair[(v, u)] = i
-      end
-    end
-    half4elem, half4vert, edge4pair
-  else
-    half4elem, half4vert
+  # sort halfedges so that the two-halves
+  # are next to each other in the vector
+
+  nedges = length(halfedges) ÷ 2
+  edge4pair = Dict{Tuple{Int,Int},Int}()
+  for i in 1:nedges
+    e = halfedges[2i-1]
+    u, v = e.head, e.half.head
+    edge4pair[(u, v)] = i
+    edge4pair[(v, u)] = i
   end
+
+  half4elem, half4vert, edge4pair
 end
 
 """
