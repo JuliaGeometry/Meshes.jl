@@ -28,3 +28,8 @@ end
 function (∂::Boundary{2,0,S})(elem::Integer) where {S<:HalfEdgeStructure}
   loop(half4elem(elem, ∂.structure))
 end
+
+function (∂::Boundary{1,0,S})(edge::Integer) where {S<:HalfEdgeStructure}
+  e = half4edge(edge, ∂.structure)
+  [e.head, e.half.head]
+end
