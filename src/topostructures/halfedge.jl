@@ -42,10 +42,11 @@ end
 
 """
     HalfEdgeStructure(elements)
+    HalfEdgeStructure(halfedges)
 
 A data structure for orientable 2-manifolds based
-on half-edges constructed from a list of polygon
-`elements`.
+on half-edges constructed from a list of connectivity
+`elements` or from a list of `halfedges`.
 
 Two types of half-edges exist (Kettner 1999). This
 implementation is the most common type that splits
@@ -77,6 +78,38 @@ struct HalfEdgeStructure <: TopologicalStructure
   half4elem::Dict{Int,Int}
   half4vert::Dict{Int,Int}
   edge4pair::Dict{Tuple{Int,Int},Int}
+end
+
+function HalfEdgeStructure(halfedges::AbstractVector{HalfEdge})
+  @assert iseven(length(halfedges)) "number of halfedges must be even"
+
+  half4elem = Dict{Int,Int}()
+  half4vert = Dict{Int,Int}()
+  for (e, he) in enumerate(halfedges)
+    if !isnothing(he.elem) # interior half-edge
+      if !haskey(half4elem, he.elem)
+        half4elem[he.elem] = e
+      end
+      if !haskey(half4vert, he.head)
+        half4vert[he.head] = e
+      end
+    end
+  end
+
+  # sort halfedges so that the two-halves
+  # are next to each other in the vector
+  # TODO:
+
+  nedges = length(halfedges) ÷ 2
+  edge4pair = Dict{Tuple{Int,Int},Int}()
+  for i in 1:nedges
+    e = halfedges[2i-1]
+    u, v = e.head, e.half.head
+    edge4pair[(u, v)] = i
+    edge4pair[(v, u)] = i
+  end
+
+  HalfEdgeStructure(halfedges, half4elem, half4vert, edge4pair)
 end
 
 function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
@@ -129,41 +162,7 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  # reverse mappings
-  half4elem, half4vert, edge4pair = halfedgedicts(halfedges)
-
-  HalfEdgeStructure(halfedges, half4elem, half4vert, edge4pair)
-end
-
-# helper function to create auxiliary
-# dicionaries for half-edge structure
-function halfedgedicts(halfedges)
-  half4elem = Dict{Int,Int}()
-  half4vert = Dict{Int,Int}()
-  for (e, he) in enumerate(halfedges)
-    if !isnothing(he.elem) # interior half-edge
-      if !haskey(half4elem, he.elem)
-        half4elem[he.elem] = e
-      end
-      if !haskey(half4vert, he.head)
-        half4vert[he.head] = e
-      end
-    end
-  end
-
-  # sort halfedges so that the two-halves
-  # are next to each other in the vector
-
-  nedges = length(halfedges) ÷ 2
-  edge4pair = Dict{Tuple{Int,Int},Int}()
-  for i in 1:nedges
-    e = halfedges[2i-1]
-    u, v = e.head, e.half.head
-    edge4pair[(u, v)] = i
-    edge4pair[(v, u)] = i
-  end
-
-  half4elem, half4vert, edge4pair
+  HalfEdgeStructure(halfedges)
 end
 
 """
