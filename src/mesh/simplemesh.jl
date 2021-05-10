@@ -23,6 +23,8 @@ SimpleMesh(points::AbstractVector{<:Point},
 
 vertices(m::SimpleMesh) = m.points
 
+topology(m::SimpleMesh) = m.topology
+
 faces(m::SimpleMesh, rank) =
   (materialize(c, m.points) for c in faces(m.topology, rank))
 

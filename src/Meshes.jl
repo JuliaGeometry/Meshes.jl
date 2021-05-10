@@ -190,6 +190,7 @@ export
   # meshes
   Mesh,
   CartesianGrid, SimpleMesh,
+  vertices, topology,
   faces, elements, facets,
   element, nelements,
   facet, nfacets,

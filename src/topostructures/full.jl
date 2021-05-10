@@ -50,9 +50,9 @@ nelements(s::FullStructure) = length(s.elms)
 
 facets(s::FullStructure) = faces(s, maximum(s.ranks) - 1)
 
-# ---------------------------------
-# CONVERSION FROM OTHER STRUCTURES
-# ---------------------------------
+# ------------
+# CONVERSIONS
+# ------------
 
 function Base.convert(::Type{FullStructure}, s::TopologicalStructure)
   # TODO: add all faces, not just the elements

@@ -17,6 +17,13 @@ Return the vertices of the `mesh`.
 function vertices end
 
 """
+    topology(mesh)
+
+Return the topological structure of the `mesh`.
+"""
+function topology end
+
+"""
     faces(mesh, rank)
 
 Return an iterator with `rank`-faces of the `mesh`.
