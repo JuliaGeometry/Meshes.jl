@@ -186,6 +186,13 @@ Always return the half-edge to the "left".
 """
 half4pair(uv::Tuple{Int,Int}, s::HalfEdgeStructure) = half4edge(s.edge4pair[uv], s)
 
+"""
+    edge4pair(uv, s)
+
+Return the edge of the half-edge structure `s` for the pair of vertices `uv`.
+"""
+edge4pair(uv, s) = s.edge4pair[uv]
+
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------

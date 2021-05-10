@@ -19,8 +19,10 @@ Boundary{P,Q}(structure::S) where {P,Q,S} = Boundary{P,Q,S}(structure)
 # --------------------
 
 function (∂::Boundary{2,1,S})(elem::Integer) where {S<:HalfEdgeStructure}
-  v = CircularVector(loop(half4elem(elem, ∂.structure)))
-  [connect((v[i], v[i+1])) for i in 1:length(v)]
+  s = ∂.structure
+  l = loop(half4elem(elem, s))
+  v = CircularVector(l)
+  [edge4pair((v[i], v[i+1]), s) for i in 1:length(v)]
 end
 
 function (∂::Boundary{2,0,S})(elem::Integer) where {S<:HalfEdgeStructure}
