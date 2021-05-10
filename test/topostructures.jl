@@ -30,6 +30,47 @@
       end
     end
 
+    # 2 triangles as a list of half-edges
+    h1  = HalfEdge(1, 1)
+    h2  = HalfEdge(2, nothing)
+    h3  = HalfEdge(2, 1)
+    h4  = HalfEdge(3, 2)
+    h5  = HalfEdge(3, 1)
+    h6  = HalfEdge(1, nothing)
+    h7  = HalfEdge(2, 2)
+    h8  = HalfEdge(4, nothing)
+    h9  = HalfEdge(4, 2)
+    h10 = HalfEdge(3, nothing)
+    h1.half =  h2; h2.half  = h1
+    h3.half =  h4; h4.half  = h3
+    h5.half =  h6; h6.half  = h5
+    h7.half =  h8; h8.half  = h7
+    h9.half = h10; h10.half = h9
+    h1.prev = h5;  h1.next = h3
+    h3.prev = h1;  h3.next = h5
+    h4.prev = h9;  h4.next = h7
+    h5.prev = h3;  h5.next = h1
+    h7.prev = h4;  h7.next = h9
+    h9.prev = h7;  h9.next = h4
+    halfedges = [h1, h2, h3, h4, h5, h6, h7, h8, h9, h10]
+
+    # test auxiliary dictionaries for half-edge structure
+    h4elem, h4vert, e4pair = Meshes.halfedgedicts(halfedges, true)
+    @test h4elem[1] == 1
+    @test h4elem[2] == 4
+    @test h4vert[1] == 1
+    @test h4vert[2] == 3
+    @test h4vert[3] == 4
+    @test h4vert[4] == 9
+    @test e4pair[(1,2)] == 1
+    @test e4pair[(2,1)] == 1
+    @test e4pair[(2,3)] == 3
+    @test e4pair[(3,2)] == 3
+    @test e4pair[(2,4)] == 7
+    @test e4pair[(4,2)] == 7
+    @test e4pair[(4,3)] == 9
+    @test e4pair[(3,4)] == 9
+
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])
     struc = HalfEdgeStructure(elems)

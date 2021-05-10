@@ -132,14 +132,14 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
   end
 
   # reverse mappings
-  half4elem, half4vert = halfedgedicts(halfedges)
+  half4elem, half4vert = halfedgedicts(halfedges, false)
 
   HalfEdgeStructure(halfedges, half4elem, half4vert, edge4pair)
 end
 
 # helper function to create auxiliary
 # dicionaries for half-edge structure
-function halfedgedicts(halfedges)
+function halfedgedicts(halfedges, pairs=true)
   half4elem = Dict{Int,Int}()
   half4vert = Dict{Int,Int}()
   for (e, he) in enumerate(halfedges)
@@ -152,7 +152,20 @@ function halfedgedicts(halfedges)
       end
     end
   end
-  half4elem, half4vert
+
+  if pairs
+    edge4pair = Dict{Tuple{Int,Int},Int}()
+    for (i, e) in enumerate(halfedges)
+      u, v = e.head, e.half.head
+      if !haskey(edge4pair, (u, v))
+        edge4pair[(u, v)] = i
+        edge4pair[(v, u)] = i
+      end
+    end
+    half4elem, half4vert, edge4pair
+  else
+    half4elem, half4vert
+  end
 end
 
 """
