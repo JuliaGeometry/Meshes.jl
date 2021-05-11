@@ -25,11 +25,12 @@ function (𝒞::Coboundary{0,1,S})(vert::Integer) where {S<:HalfEdgeStructure}
 end
 
 function (𝒞::Coboundary{0,2,S})(vert::Integer) where {S<:HalfEdgeStructure}
-  𝒜 = Adjacency{0}(𝒞.structure)
+  s = 𝒞.structure
+  𝒜 = Adjacency{0}(s)
   u, vs = vert, 𝒜(vert)
   elems = Int[]
   for v in vs
-    e = half4pair((u, v), 𝒞.structure)
+    e = half4pair((u, v), s)
     h = e.half
     if e.elem ∉ elems
       push!(elems, e.elem)
