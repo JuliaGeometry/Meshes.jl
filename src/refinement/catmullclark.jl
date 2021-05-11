@@ -32,7 +32,7 @@ function refine(mesh, ::CatmullClark)
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(s)
   epts = map(1:nelements(s)) do elem
-    ps = points[∂₂₀(elem)]
+    ps = view(points, ∂₂₀(elem))
     cₒ = sum(coordinates, ps) / length(ps)
     Point(cₒ)
   end
@@ -41,9 +41,12 @@ function refine(mesh, ::CatmullClark)
   ∂₁₂ = Coboundary{1,2}(s)
   ∂₁₀ = Boundary{1,0}(s)
   fpts = map(1:nfacets(s)) do edge
-    ps = [epts[∂₁₂(edge)]; points[∂₁₀(edge)]]
-    cₒ = sum(coordinates, ps) / length(ps)
-    Point(cₒ)
+    ps = view(epts, ∂₁₂(edge))
+    qs = view(points, ∂₁₀(edge))
+    ∑p = sum(coordinates, ps)
+    ∑q = sum(coordinates, qs)
+    M  = length(ps) + length(qs)
+    Point((∑p + ∑q) / M)
   end
 
   # move original vertices
@@ -54,18 +57,16 @@ function refine(mesh, ::CatmullClark)
     P = coordinates(points[u])
 
     # average of centroids
-    ps = epts[∂₀₂(u)]
+    ps = view(epts, ∂₀₂(u))
     F  = sum(coordinates, ps) / length(ps)
 
     # average of midpoints
-    ms = map(∂₀₀(u)) do v
-      uv = points[[u,v]]
-      sum(coordinates, uv) / length(uv)
-    end
-    R  = sum(ms) / length(ms)
-
-    # number of adjacent edges
-    n  = length(ms)
+    vs = ∂₀₀(u)
+    n  = length(vs)
+    R  = sum(vs) do v
+      uv = view(points, [u,v])
+      sum(coordinates, uv) / 2
+    end / n
 
     Point((F + 2R + (n - 3)P) / n)
   end
