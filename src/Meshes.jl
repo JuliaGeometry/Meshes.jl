@@ -83,6 +83,7 @@ include("partitioning.jl")
 include("intersections.jl")
 include("discretization.jl")
 include("simplification.jl")
+include("refinement.jl")
 include("boundingboxes.jl")
 
 # utilities
@@ -182,6 +183,7 @@ export
   HalfEdgeStructure, HalfEdge,
   half4elem, half4vert,
   half4edge, half4pair,
+  edge4pair,
 
   # topological relations
   TopologicalRelation,
@@ -278,6 +280,11 @@ export
   SimplificationMethod,
   DouglasPeucker,
   simplify,
+
+  # refinement
+  RefinementMethod,
+  CatmullClark,
+  refine,
 
   # bounding boxes
   boundingbox,
