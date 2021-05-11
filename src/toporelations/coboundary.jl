@@ -25,20 +25,36 @@ function (𝒞::Coboundary{0,1,S})(vert::Integer) where {S<:HalfEdgeStructure}
 end
 
 function (𝒞::Coboundary{0,2,S})(vert::Integer) where {S<:HalfEdgeStructure}
-  s = 𝒞.structure
-  𝒜 = Adjacency{0}(s)
-  u, vs = vert, 𝒜(vert)
-  elems = Int[]
-  for v in vs
-    e = half4pair((u, v), s)
-    h = e.half
-    if e.elem ∉ elems
-      push!(elems, e.elem)
+  e = half4vert(vert, 𝒞.structure)
+  h = e.half
+  if isnothing(h.elem) # border edge
+    # we are at the first arm of the star already
+    # there is no need to adjust the CCW loop
+  else # interior edge
+    # we are at an interior edge and may need to
+    # adjust the CCW loop so that it starts at
+    # the first arm of the star
+    n = h.next
+    h = n.half
+    while !isnothing(h.elem) && n != e
+      n = h.next
+      h = n.half
     end
-    if !isnothing(h.elem) && h.elem ∉ elems
-      push!(elems, h.elem)
-    end
+    e = n
   end
+
+  # edge e is now the first arm of the star
+  # we can follow the CCW loop until we find
+  # it again or hit a border edge
+  p = e.prev
+  o = p.half
+  elems = [e.elem]
+  while !isnothing(o.elem) && o != e
+    push!(elems, o.elem)
+    p = o.prev
+    o = p.half
+  end
+
   elems
 end
 
