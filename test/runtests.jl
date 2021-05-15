@@ -70,6 +70,7 @@ testfiles = [
   "partitioning.jl",
   "discretization.jl",
   "simplification.jl",
+  "refinement.jl",
   "boundingboxes.jl"
 ]
 
