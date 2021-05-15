@@ -88,6 +88,7 @@ include("discretization.jl")
 include("simplification.jl")
 include("refinement.jl")
 include("boundingboxes.jl")
+include("supportfun.jl")
 
 # utilities
 include("utils.jl")
@@ -291,6 +292,9 @@ export
 
   # bounding boxes
   boundingbox,
+
+  # support function
+  supportfun,
 
   # utililities
   signarea,

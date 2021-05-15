@@ -71,7 +71,8 @@ testfiles = [
   "discretization.jl",
   "simplification.jl",
   "refinement.jl",
-  "boundingboxes.jl"
+  "boundingboxes.jl",
+  "supportfun.jl"
 ]
 
 # --------------------------------

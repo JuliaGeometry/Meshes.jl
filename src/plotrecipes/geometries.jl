@@ -23,6 +23,14 @@ end
   [points; first(points)]
 end
 
+@recipe function f(ball::Ball, nsamples=100)
+  seriestype --> :shape
+  linecolor --> :black
+  samples = sample(boundary(ball), RegularSampling(nsamples))
+  points  = collect(samples)
+  [points; first(points)]
+end
+
 @recipe function f(polygon::Polygon)
   seriestype --> :path
   seriescolor --> :auto
