@@ -30,8 +30,12 @@ end
     first.(coordinates.(pts)), data
   else
     aspect_ratio --> :equal
-    marker_z --> data
-    colorbar --> true
+    if eltype(data) <: Number
+      marker_z --> data
+      colorbar --> true
+    else # categorical array
+      group --> data
+    end
     @. Tuple(coordinates(pts))
   end
 end
