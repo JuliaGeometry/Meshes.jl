@@ -68,6 +68,7 @@ testfiles = [
   "viewing.jl",
   "sampling.jl",
   "partitioning.jl",
+  "intersections.jl",
   "discretization.jl",
   "simplification.jl",
   "refinement.jl",

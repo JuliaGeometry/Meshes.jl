@@ -3,19 +3,6 @@
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
     @test (l(0), l(1)) == (P2(0,0), P2(1,1))
-
-    l1 = Line(P2(0,0), P2(1,0))
-    l2 = Line(P2(-1,-1), P2(-1,1))
-    @test l1 ∩ l2 == l2 ∩ l1 == P2(-1,0)
-
-    l1 = Line(P2(0,0), P2(1,0))
-    l2 = Line(P2(0,1), P2(1,1))
-    @test l1 ∩ l2 === l2 ∩ l1 === nothing
-
-    l1 = Line(P2(0,0), P2(1,0))
-    l2 = Line(P2(1,0), P2(2,0))
-    @test l1 == l2
-    @test l1 ∩ l2 == l2 ∩ l1 == l1
   end
 
   @testset "Rays" begin
@@ -70,21 +57,6 @@
     @test sides(b) == T[1,1]
     @test Meshes.center(b) == P2(1.5,1.5)
     @test diagonal(b) == √T(2)
-
-    # intersection of boxes
-    b1 = Box(P2(0,0), P2(1,1))
-    b2 = Box(P2(0.5,0.5), P2(2,2))
-    b3 = Box(P2(2,2), P2(3,3))
-    b4 = Box(P2(1,1), P2(2,2))
-    b5 = Box(P2(1.0,0.5), P2(2,2))
-    @test intersecttype(b1, b2) isa OverlappingBoxes
-    @test b1 ∩ b2 == Box(P2(0.5,0.5), P2(1,1))
-    @test intersecttype(b1, b3) isa NoIntersection
-    @test b1 ∩ b3 === nothing
-    @test intersecttype(b1, b4) isa CornerTouchingBoxes
-    @test b1 ∩ b4 == P2(1,1)
-    @test intersecttype(b1, b5) isa FaceTouchingBoxes
-    @test b1 ∩ b5 == Box(P2(1.0,0.5), P2(1,1))
 
     # subsetting with boxes
     b1 = Box(P2(0,0), P2(0.5,0.5))
