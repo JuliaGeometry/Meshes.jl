@@ -272,6 +272,7 @@ export
   FaceTouchingBoxes,
   CornerTouchingBoxes,
   intersecttype,
+  hasintersect,
 
   # discretization
   DiscretizationMethod,

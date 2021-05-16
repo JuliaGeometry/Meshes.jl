@@ -25,10 +25,6 @@ abstract type Intersection end
 
 Base.get(I::Intersection) = I.value
 
-struct NoIntersection <: Intersection end
-
-Base.get(::NoIntersection) = nothing
-
 # ------------------------
 # LINE-LINE INTERSECTIONS
 # ------------------------
@@ -77,6 +73,14 @@ struct CornerTouchingBoxes{P<:Point} <: Intersection
   value::P
 end
 
+# ------------
+# CORNER CASE
+# ------------
+
+struct NoIntersection <: Intersection end
+
+Base.get(::NoIntersection) = nothing
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
@@ -84,3 +88,75 @@ end
 include("intersections/lines.jl")
 include("intersections/segments.jl")
 include("intersections/boxes.jl")
+
+"""
+    hasintersect(g1, g2)
+
+Return `true` if geometries `g1` and `g2` intersect and `false` otherwise.
+
+The algorithm works with any geometry that has a well-defined [`supportfun`](@ref).
+
+## References
+
+* Gilbert, E., Johnson, D., Keerthi, S. 1988. [A fast
+  Procedure for Computing the Distance Between Complex
+  Objects in Three-Dimensional Space]
+  (https://ieeexplore.ieee.org/document/2083)
+"""
+function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
+  # initial direction
+  d = centroid(g2) - centroid(g1)
+
+  # first point in Minkowski difference
+  P = minkowskipoint(g1, g2, d)
+  
+  # origin of coordinate system
+  O = minkowskiorigin(Dim, T)
+
+  # initialize simplex vertices
+  points = [P]
+
+  # move towards the origin
+  d = O - P
+  while true
+    P = minkowskipoint(g1, g2, d)
+    if (P - O) ⋅ d < zero(T)
+      return false
+    end
+    push!(points, P)
+
+    # line segment case
+    if length(points) == 2
+      B, A = points
+      AB = B - A
+      AO = O - A
+      d  = AB × AO × AB
+    else # simplex case
+      C, B, A = points
+      AB  = B - A
+      AC  = C - A
+      AO  = O - A
+      ABᵀ = AC × AB × AB
+      ACᵀ = AB × AC × AC
+      if ABᵀ ⋅ AO > zero(T)
+        popat!(points, 1) # pop C
+        d = ABᵀ
+      elseif ACᵀ ⋅ AO > zero(T)
+        popat!(points, 2) # pop B
+        d = ACᵀ
+      else
+        return true
+      end
+    end
+  end
+end
+
+# support point in Minkowski difference
+function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
+  n = Vec{Dim}(d[1:Dim])
+  v = supportfun(g1, n) - supportfun(g2, -n)
+  Point(ntuple(i-> i ≤ Dim ? v[i] : zero(T), max(Dim, 3)))
+end
+
+# origin of coordinate system
+minkowskiorigin(Dim, T) = Point(ntuple(i->zero(T), max(Dim, 3)))

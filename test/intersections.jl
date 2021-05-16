@@ -122,4 +122,41 @@
     @test intersecttype(b1, b5) isa FaceTouchingBoxes
     @test b1 ∩ b5 == Box(P2(1.0,0.5), P2(1,1))
   end
+
+  @testset "Misc" begin
+    t = Triangle(P2[(0,0),(1,0),(0,1)])
+    q = Quadrangle(P2[(1,1),(2,1),(2,2),(1,2)])
+    @test hasintersect(t, t)
+    @test hasintersect(q, q)
+    @test !hasintersect(t, q)
+    @test !hasintersect(q, t)
+
+    t = Triangle(P2[(1,0),(2,0),(1,1)])
+    q = Quadrangle(P2[(1.3,0.5),(2.3,0.5),(2.3,1.5),(1.3,1.5)])
+    @test hasintersect(t, t)
+    @test hasintersect(q, q)
+    @test hasintersect(t, q)
+    @test hasintersect(q, t)
+
+    t = Triangle(P2[(0,0),(1,0),(0,1)])
+    b = Ball(P2(0,0), T(1))
+    @test hasintersect(t, t)
+    @test hasintersect(b, b)
+    @test hasintersect(t, b)
+    @test hasintersect(b, t)
+
+    t = Triangle(P2[(1,0),(2,0),(1,1)])
+    b = Ball(P2(0,0), T(1))
+    @test hasintersect(t, t)
+    @test hasintersect(b, b)
+    @test hasintersect(t, b)
+    @test hasintersect(b, t)
+
+    t = Triangle(P2[(1,0),(2,0),(1,1)])
+    b = Ball(P2(-0.01,0), T(1))
+    @test hasintersect(t, t)
+    @test hasintersect(b, b)
+    @test !hasintersect(t, b)
+    @test !hasintersect(b, t)
+  end
 end
