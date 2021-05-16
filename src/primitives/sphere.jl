@@ -35,6 +35,8 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3)
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
+isconvex(::Type{<:Sphere}) = false
+
 center(s::Sphere) = s.center
 radius(s::Sphere) = s.radius
 

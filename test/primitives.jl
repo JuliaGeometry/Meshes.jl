@@ -2,12 +2,18 @@
   @testset "Lines" begin
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
+    @test isconvex(l)
+
+    l = Line(P2(0,0), P2(1,1))
     @test (l(0), l(1)) == (P2(0,0), P2(1,1))
   end
 
   @testset "Rays" begin
     r = Ray(P2(0,0), V2(1,1))
     @test paramdim(r) == 1
+    @test isconvex(r)
+
+    r = Ray(P2(0,0), V2(1,1))
     @test r(T(0.)) == P2(0,0)
     @test r(T(1.)) == P2(1,1)
     @test r(T(Inf)) == P2(Inf,Inf)
@@ -19,6 +25,7 @@
     @test p(T(1.0), T(0.0)) == P3(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
+    @test isconvex(p)
   end
 
   @testset "Bezier curves" begin
@@ -50,6 +57,9 @@
     @test minimum(b) == P2(0,0)
     @test maximum(b) == P2(1,1)
     @test extrema(b) == (P2(0,0), P2(1,1))
+    @test isconvex(b)
+
+    b = Box(P2(0,0), P2(1,1))
     @test measure(b) == T(1)
     @test P2(1,1) ∈ b
 
@@ -76,6 +86,7 @@
     @test coordtype(b) == T
     @test Meshes.center(b) == P3(1,2,3)
     @test radius(b) == T(5)
+    @test isconvex(b)
 
     b = Ball(P2(0,0), T(2))
     @test measure(b) ≈ π*(2^2)
@@ -104,6 +115,7 @@
     @test coordtype(s) == T
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
+    @test !isconvex(s)
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
@@ -143,6 +155,7 @@
     @test coordtype(c) == T
     @test radius(c) == T(5)
     @test height(c) ≈ √27
+    @test isconvex(c)
 
     @test measure(c) ≈ π*5.0^2*√27
   end

@@ -19,6 +19,8 @@ Cylinder(start::Tuple, finish::Tuple, radius) =
 
 paramdim(::Type{<:Cylinder}) = 3
 
+isconvex(::Type{<:Cylinder}) = true
+
 radius(c::Cylinder) = c.radius
 height(c::Cylinder) = norm(c.finish - c.start)
 

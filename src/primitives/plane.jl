@@ -17,8 +17,10 @@ end
 
 Plane(pₒ::Tuple, v::Tuple, w::Tuple) = Plane(Point(pₒ), Vec(v), Vec(w))
 
+paramdim(::Type{<:Plane}) = 2
+
+isconvex(::Type{<:Plane}) = true
+
 function (p::Plane)(s, t)
   p.pₒ + s*p.v + t*p.w
 end
-
-paramdim(::Type{<:Plane}) = 2

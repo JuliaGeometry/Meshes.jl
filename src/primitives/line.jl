@@ -18,6 +18,8 @@ Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
 
 paramdim(::Type{<:Line}) = 1
 
+isconvex(::Type{<:Line}) = true
+
 (l::Line)(t) = l.a + t * (l.b - l.a)
 
 function Base.in(p::Point, l::Line)

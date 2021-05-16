@@ -16,6 +16,8 @@ Ball(center::Tuple, radius) = Ball(Point(center), radius)
 
 paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 
+isconvex(::Type{<:Ball}) = true
+
 center(b::Ball) = b.center
 radius(b::Ball) = b.radius
 

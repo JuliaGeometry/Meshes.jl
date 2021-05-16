@@ -68,6 +68,13 @@ Tells whether or not the point `p` is in the geometry `g`.
 """
 Base.in(p::Point, g::Geometry)
 
+"""
+    isconvex(geometry)
+
+Tells whether or not the `geometry` is convex.
+"""
+isconvex(g::Geometry) = isconvex(typeof(g))
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

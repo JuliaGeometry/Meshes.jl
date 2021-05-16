@@ -23,6 +23,8 @@ Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
+isconvex(::Type{<:Box}) = true
+
 Base.minimum(b::Box) = b.min
 Base.maximum(b::Box) = b.max
 Base.extrema(b::Box) = b.min, b.max

@@ -16,11 +16,13 @@ end
 
 Ray(p::Tuple, v::Tuple) = Ray(Point(p), Vec(v))
 
+paramdim(::Type{<:Ray}) = 1
+
+isconvex(::Type{<:Ray}) = true
+
 function (r::Ray)(t)
   if t < 0
     throw(DomainError(t, "r(t) is not defined for t < 0."))
   end
   r.p + t * r.v
 end
-
-paramdim(::Type{<:Ray}) = 1

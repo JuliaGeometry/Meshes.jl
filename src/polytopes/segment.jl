@@ -15,6 +15,8 @@ struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
 
+isconvex(::Type{<:Segment}) = true
+
 nvertices(::Type{<:Segment}) = 2
 nvertices(s::Segment) = nvertices(typeof(s))
 
