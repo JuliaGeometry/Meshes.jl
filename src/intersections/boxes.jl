@@ -26,7 +26,7 @@ function intersecttype(b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T}
   if u ≺ v
     OverlappingBoxes(Box(u, v))
   elseif u ≻ v
-    NonIntersectingBoxes()
+    NoIntersection()
   elseif isapprox(u, v, atol=atol(T))
     CornerTouchingBoxes(u)
   else

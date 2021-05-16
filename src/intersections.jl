@@ -25,6 +25,10 @@ abstract type Intersection end
 
 Base.get(I::Intersection) = I.value
 
+struct NoIntersection <: Intersection end
+
+Base.get(::NoIntersection) = nothing
+
 # ------------------------
 # LINE-LINE INTERSECTIONS
 # ------------------------
@@ -36,10 +40,6 @@ end
 struct OverlappingLines{L<:Line} <: Intersection
   value::L
 end
-
-struct NonIntersectingLines <: Intersection end
-
-Base.get(::NonIntersectingLines) = nothing
 
 # ------------------------------
 # SEGMENT-SEGMENT INTERSECTIONS
@@ -61,10 +61,6 @@ struct OverlappingSegments{S<:Segment} <: Intersection
   value::S
 end
 
-struct NonIntersectingSegments <: Intersection end
-
-Base.get(::NonIntersectingSegments) = nothing
-
 # ----------------------
 # BOX-BOX INTERSECTIONS
 # ----------------------
@@ -80,10 +76,6 @@ end
 struct CornerTouchingBoxes{P<:Point} <: Intersection
   value::P
 end
-
-struct NonIntersectingBoxes <: Intersection end
-
-Base.get(::NonIntersectingBoxes) = nothing
 
 # ----------------
 # IMPLEMENTATIONS

@@ -261,18 +261,16 @@ export
 
   # intersections
   Intersection,
+  NoIntersection,
   CrossingLines,
   OverlappingLines,
-  NonIntersectingLines,
   CrossingSegments,
   MidTouchingSegments,
   CornerTouchingSegments,
   OverlappingSegments,
-  NonIntersectingSegments,
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
-  NonIntersectingBoxes,
   intersecttype,
 
   # discretization

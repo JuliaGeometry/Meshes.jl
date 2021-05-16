@@ -18,7 +18,7 @@ function intersecttype(l1::Line{3,T}, l2::Line{3,T}) where {T}
   c, d = l2(0), l2(1)
 
   if measure(Tetrahedron(a, b, c, d)) > 0
-    NonIntersectingLines()
+    NoIntersection()
   elseif isapprox(abs((b - a) × (c - d)), zero(T), atol=atol(T)^2)
     OverlappingLines(l1)
   else
@@ -35,7 +35,7 @@ function intersecttype(l1::Line{2,T}, l2::Line{2,T}) where {T}
   elseif isapprox(measure(Triangle(a, b, c)), zero(T), atol=atol(T)^2)
     OverlappingLines(l1)
   else
-    NonIntersectingLines()
+    NoIntersection()
   end
 end
 

@@ -63,7 +63,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       CrossingSegments(intersectpoint(s1, s2))
     else
       # configuration (5)
-      NonIntersectingSegments()
+      NoIntersection()
     end
   elseif determinatex || determinatey # CASE (II)
     if !(determinatex ? wxzero : wyzero)
@@ -76,7 +76,7 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
       end
     else
       # configuration (5)
-      NonIntersectingSegments()
+      NoIntersection()
     end
   elseif !determinatex && !determinatey # CASE (III)
     if !isapprox((x2 - x1) × (y2 - y1), zero(T), atol=atol(T)^2)
@@ -114,6 +114,6 @@ function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   elseif any(coordinates(u) .< coordinates(v))
     OverlappingSegments(Segment(u, v))
   else
-    NonIntersectingSegments()
+    NoIntersection()
   end
 end

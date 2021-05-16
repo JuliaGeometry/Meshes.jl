@@ -79,7 +79,7 @@
     b5 = Box(P2(1.0,0.5), P2(2,2))
     @test intersecttype(b1, b2) isa OverlappingBoxes
     @test b1 ∩ b2 == Box(P2(0.5,0.5), P2(1,1))
-    @test intersecttype(b1, b3) isa NonIntersectingBoxes
+    @test intersecttype(b1, b3) isa NoIntersection
     @test b1 ∩ b3 === nothing
     @test intersecttype(b1, b4) isa CornerTouchingBoxes
     @test b1 ∩ b4 == P2(1,1)
