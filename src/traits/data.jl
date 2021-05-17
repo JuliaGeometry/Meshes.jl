@@ -108,29 +108,35 @@ IIE.isiterable(data::Data) = true
 
 Tables.materializer(D::Type{<:Data}) = D
 
+# -----------------
+# COLUMN INTERFACE
+# -----------------
+
+function Base.getindex(data::Data, col::Symbol)
+  if col == :geometry
+    collect(domain(data))
+  else
+    Tables.getcolumn(values(data), col)
+  end
+end
+
+Base.getindex(data::Data, col::String) =
+  getindex(data, Symbol(col))
+
 # -------------------
 # VARIABLE INTERFACE
 # -------------------
 
 """
-    getindex(data, var)
+    variables(data)
 
-Returns the data for the variable `var` in `data` as a column vector.
+Returns the variables stored in `data` as a vector of
+[`Variable`](@ref).
 """
-Base.getindex(data::Data, var::Symbol) =
-  Tables.getcolumn(values(data), var)
-
-Base.getindex(data::Data, var::String) =
-  getindex(data, Symbol(var))
-
 function variables(data::Data)
   s = Tables.schema(values(data))
   @. Variable(s.names, nonmissingtype(s.types))
 end
-
-# ----------
-# UTILITIES
-# ----------
 
 """
     asarray(data, var)
