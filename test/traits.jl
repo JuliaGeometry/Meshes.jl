@@ -44,8 +44,8 @@
       domain::𝒟
       table::𝒯
     end
-    Meshes.domain(data::DummyData) = data.domain
-    Meshes.values(data::DummyData) = data.table
+    Meshes.domain(data::DummyData) = getfield(data, :domain)
+    Meshes.values(data::DummyData) = getfield(data, :table)
     Meshes.constructor(::Type{D}) where {D<:DummyData} = DummyData
 
     # fallback constructor with spatial table
@@ -94,9 +94,10 @@
 
     # column interface
     data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
-    @test data[:a] == data["a"] == [1,2,3,4]
+    @test data[:a] == data["a"] == data.a == [1,2,3,4]
     @test isequal(data[:b], [5,missing,7,8])
     @test data[:geometry] == collect(CartesianGrid{T}(2,2))
+    @test data[:geometry] == data["geometry"] == data.geometry
     @test_throws ErrorException data[:c] 
 
     # variables interface

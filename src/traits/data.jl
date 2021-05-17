@@ -123,6 +123,9 @@ end
 Base.getindex(data::Data, col::String) =
   getindex(data, Symbol(col))
 
+Base.getproperty(data::Data, col::Symbol) =
+  getindex(data, col)
+
 # -------------------
 # VARIABLE INTERFACE
 # -------------------

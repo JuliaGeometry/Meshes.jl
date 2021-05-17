@@ -17,8 +17,8 @@
       domain::𝒟
       table::𝒯
     end
-    Meshes.domain(data::DummyData) = data.domain
-    Meshes.values(data::DummyData) = data.table
+    Meshes.domain(data::DummyData) = getfield(data, :domain)
+    Meshes.values(data::DummyData) = getfield(data, :table)
     Meshes.constructor(::Type{D}) where {D<:DummyData} = DummyData
 
     g = CartesianGrid{T}(10,10)

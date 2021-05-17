@@ -45,8 +45,8 @@
       domain::𝒟
       table::𝒯
     end
-    Meshes.domain(data::DummyData) = data.domain
-    Meshes.values(data::DummyData) = data.table
+    Meshes.domain(data::DummyData) = getfield(data, :domain)
+    Meshes.values(data::DummyData) = getfield(data, :table)
 
     dom = CartesianGrid{T}(2,2)
     dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
@@ -57,8 +57,8 @@
     @test centroid(v, 1) == P2(1.5,0.5)
     @test centroid(v, 2) == P2(0.5,1.5)
     @test centroid(v, 3) == P2(1.5,1.5)
-    @test v[:a] == [2,3,4]
-    @test v[:b] == [6,7,8]
+    @test v[:a] == v["a"] == v.a == [2,3,4]
+    @test v[:b] == v["b"] == v.b == [6,7,8]
 
     v = view(dat, [:a])
     @test domain(v) == view(dom, 1:4)

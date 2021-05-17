@@ -67,8 +67,13 @@ end
 # DATA INTERFACE
 # ---------------
 
-domain(v::DataView) = view(domain(v.data), v.inds)
-values(v::DataView) = viewtable(values(v.data), v.inds, v.vars)
+domain(v::DataView) = view(domain(getfield(v, :data)),
+                           getfield(v, :inds))
+
+values(v::DataView) = viewtable(values(getfield(v, :data)),
+                                getfield(v, :inds),
+                                getfield(v, :vars))
+
 function constructor(::Type{DataView{D,I,V}}) where {D<:Data,I,V}
   function ctor(domain, table)
     data = constructor(D)(domain, table)
@@ -80,14 +85,16 @@ end
 
 # specialize methods for performance
 ==(v₁::DataView, v₂::DataView) =
-  v₁.data == v₂.data && v₁.inds == v₂.inds && v₁.vars == v₂.vars
+  getfield(v₁, :data) == getfield(v₂, :data) &&
+  getfield(v₁, :inds) == getfield(v₂, :inds) &&
+  getfield(v₁, :vars) == getfield(v₂, :vars)
 
 # -----------
 # IO METHODS
 # -----------
 
 function Base.show(io::IO, v::DataView)
-  data  = v.data
-  nelms = length(v.inds)
+  data  = getfield(v, :data)
+  nelms = length(getfield(v, :inds))
   print(io, "$nelms View{$data}")
 end
