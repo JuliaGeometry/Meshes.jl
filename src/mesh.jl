@@ -97,6 +97,33 @@ Return the number of facets in the `mesh`.
 """
 nfacets(m::Mesh) = nfacets(topology(m))
 
+# -----------
+# IO METHODS
+# -----------
+
+function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
+  t = topology(m)
+  verts = vertices(m)
+  elems = elements(t)
+  nvert = nvertices(m)
+  nelms = nelements(m)
+  println(io, m)
+  println(io, "  $nvert vertices")
+  println(io, _lines(verts, "    "))
+  println(io, "  $nelms elements")
+  print(  io, _lines(elems, "    "))
+end
+
+function _lines(itr, tab="  ")
+  vec = collect(itr)
+  N = length(vec)
+  I, J = N > 10 ? (5, N-4) : (N, N+1)
+  lines = [["$(tab)└─$(vec[i])" for i in 1:I]
+           (N > 10 ? ["$(tab)⋮"] : [])
+           ["$(tab)└─$(vec[i])" for i in J:N]]
+  join(lines, "\n")
+end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

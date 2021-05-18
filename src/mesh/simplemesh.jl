@@ -24,28 +24,3 @@ SimpleMesh(points::AbstractVector{<:Point},
 vertices(m::SimpleMesh) = m.points
 
 topology(m::SimpleMesh) = m.topology
-
-# -----------
-# IO METHODS
-# -----------
-
-function Base.show(io::IO, ::MIME"text/plain", m::SimpleMesh{Dim,T}) where {Dim,T}
-  verts = m.points
-  elems = collect(elements(m.topology))
-  nvert = length(verts)
-  nelms = length(elems)
-  println(io, m)
-  println(io, "  $nvert vertices")
-  println(io, _lines(verts, "    "))
-  println(io, "  $nelms elements")
-  print(  io, _lines(elems, "    "))
-end
-
-function _lines(vec, tab="  ")
-  N = length(vec)
-  I, J = N > 10 ? (5, N-4) : (N, N+1)
-  lines = [["$(tab)└─$(vec[i])" for i in 1:I]
-           (N > 10 ? ["$(tab)⋮"] : [])
-           ["$(tab)└─$(vec[i])" for i in J:N]]
-  join(lines, "\n")
-end
