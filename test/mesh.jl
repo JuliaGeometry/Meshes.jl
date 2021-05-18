@@ -130,7 +130,6 @@
     ])
     @test vertices(mesh) == points
     @test collect(faces(mesh, 2)) == triangles
-    @test collect(faces(mesh)) == triangles
     @test collect(elements(mesh)) == triangles
     @test nelements(mesh) == 4
     for i in 1:length(triangles)

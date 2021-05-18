@@ -43,11 +43,11 @@ all 3-faces (a.k.a. elements) or over all 2-faces to handle the interfaces
 
 ```julia
 tetrahedrons = faces(structure, 3)
-triangles = faces(structure, 2)
-segments = faces(structure, 1)
+triangles    = faces(structure, 2)
+segments     = faces(structure, 1)
 ```
 """
-faces(structure::TopologicalStructure, rank) = faces(structure, Val(rank))
+function faces(::TopologicalStructure, rank) end
 
 """
     elements(structure)

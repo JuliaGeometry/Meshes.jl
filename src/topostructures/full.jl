@@ -50,6 +50,8 @@ nelements(s::FullStructure) = length(s.elms)
 
 facets(s::FullStructure) = faces(s, maximum(s.ranks) - 1)
 
+nfacets(s::FullStructure) = count(==(maximum(s.ranks) - 1), s.ranks)
+
 # ------------
 # CONVERSIONS
 # ------------

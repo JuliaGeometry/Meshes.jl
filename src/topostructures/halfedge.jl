@@ -225,16 +225,26 @@ edge4pair(uv, s) = s.edge4pair[uv]
 
 nvertices(s::HalfEdgeStructure) = length(s.half4vert)
 
+function faces(s::HalfEdgeStructure, rank)
+  if rank == 2
+    elements(s)
+  elseif rank == 1
+    facets(s)
+  else
+    throw(ArgumentError("invalid rank for half-edge structure"))
+  end
+end
+
 function element(s::HalfEdgeStructure, ind)
   v = loop(half4elem(ind, s))
-  connect(Tuple(v), Ngon{length(v)})
+  connect(Tuple(v))
 end
 
 nelements(s::HalfEdgeStructure) = length(s.half4elem)
 
 function facet(s::HalfEdgeStructure, ind)
   e = half4edge(ind, s)
-  connect((e.head, e.half.head), Segment)
+  connect((e.head, e.half.head))
 end
 
 nfacets(s::HalfEdgeStructure) = length(s.halfedges) ÷ 2

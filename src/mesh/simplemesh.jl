@@ -25,18 +25,6 @@ vertices(m::SimpleMesh) = m.points
 
 topology(m::SimpleMesh) = m.topology
 
-faces(m::SimpleMesh, rank) =
-  (materialize(c, m.points) for c in faces(m.topology, rank))
-
-# -----------------
-# DOMAIN INTERFACE
-# -----------------
-
-element(m::SimpleMesh, ind::Int) =
-  materialize(element(m.topology, ind), m.points)
-
-nelements(m::SimpleMesh) = nelements(m.topology)
-
 # -----------
 # IO METHODS
 # -----------
