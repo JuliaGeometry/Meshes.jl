@@ -75,6 +75,11 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
+==(g1::CartesianGrid, g2::CartesianGrid) =
+  g1.dims    == g2.dims    &&
+  g1.origin  == g2.origin  &&
+  g1.spacing == g2.spacing
+
 Base.size(g::CartesianGrid) = g.dims
 Base.minimum(g::CartesianGrid) = g.origin
 Base.maximum(g::CartesianGrid) = g.origin + g.dims .* g.spacing
@@ -139,7 +144,7 @@ function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
           o[3] + (i[3]    ) * s[3])
     Hexahedron(p1, p2, p3, p4, p5, p6, p7, p8)
   else
-    @error "not implemented"
+    throw(ErrorException("not implemented"))
   end
 end
 

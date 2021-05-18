@@ -97,6 +97,14 @@ Return the number of facets in the `mesh`.
 """
 nfacets(m::Mesh) = nfacets(topology(m))
 
+# ----------
+# FALLBACKS
+# ----------
+
+==(m1::Mesh, m2::Mesh) =
+  vertices(m1) == vertices(m2) &&
+  topology(m1) == topology(m2)
+
 # -----------
 # IO METHODS
 # -----------
