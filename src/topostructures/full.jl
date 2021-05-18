@@ -56,7 +56,7 @@ nfacets(s::FullStructure) = count(==(maximum(s.ranks) - 1), s.ranks)
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{FullStructure}, s::TopologicalStructure)
+function Base.convert(::Type{<:FullStructure}, s::TopologicalStructure)
   # TODO: add all faces, not just the elements
   FullStructure(collect(elements(s)))
 end

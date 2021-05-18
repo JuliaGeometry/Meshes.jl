@@ -105,6 +105,13 @@ nfacets(m::Mesh) = nfacets(topology(m))
   vertices(m1) == vertices(m2) &&
   topology(m1) == topology(m2)
 
+# ------------
+# CONVERSIONS
+# ------------
+
+Base.convert(Topology::Type{<:TopologicalStructure}, m::Mesh) =
+  SimpleMesh(vertices(m), convert(Topology, topology(m)))
+
 # -----------
 # IO METHODS
 # -----------

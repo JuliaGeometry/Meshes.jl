@@ -253,5 +253,5 @@ nfacets(s::HalfEdgeStructure) = length(s.halfedges) ÷ 2
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{HalfEdgeStructure}, s::TopologicalStructure) =
+Base.convert(::Type{<:HalfEdgeStructure}, s::TopologicalStructure) =
   HalfEdgeStructure(collect(elements(s)))
