@@ -16,7 +16,7 @@ end
 
 SimpleMesh(points::AbstractVector{<:Point},
            connec::AbstractVector{<:Connectivity}) =
-  SimpleMesh(points, FullStructure(connec))
+  SimpleMesh(points, FullTopology(connec))
 
 vertices(m::SimpleMesh) = m.points
 

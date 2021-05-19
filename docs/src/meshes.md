@@ -23,7 +23,7 @@ materialize
 
 ```@docs
 Topology
-FullStructure
+FullTopology
 HalfEdgeStructure
 ```
 

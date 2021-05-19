@@ -1,20 +1,20 @@
 @testset "Topology" begin
-  @testset "FullStructure" begin
+  @testset "FullTopology" begin
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])
-    struc = FullStructure(elems)
+    struc = FullTopology(elems)
     @test nvertices(struc) == 4
     @test nelements(struc) == 2
 
     # 2 triangles + 2 quadrangles
     elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
-    struc = FullStructure(elems)
+    struc = FullTopology(elems)
     @test nvertices(struc) == 6
     @test nelements(struc) == 4
 
     # 1 triangle + 3 quadrangles + 1 triangle hole
     elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
-    struc = FullStructure(elems)
+    struc = FullTopology(elems)
     @test nvertices(struc) == 7
     @test nelements(struc) == 4
   end

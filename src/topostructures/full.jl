@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    FullStructure(connectivities)
+    FullTopology(connectivities)
 
 A data structure that stores *all* `connectivities` of a mesh.
 
@@ -14,7 +14,7 @@ It does *not* support topological relations and is therefore incompatible
 with algorithms that rely on neighborhood search. It is still useful for
 mesh visualization and IO operations.
 """
-struct FullStructure{C<:Connectivity} <: Topology
+struct FullTopology{C<:Connectivity} <: Topology
   # input fields
   connec::Vector{C}
 
@@ -22,41 +22,41 @@ struct FullStructure{C<:Connectivity} <: Topology
   ranks::Vector{Int}
   elms::Vector{Int}
 
-  function FullStructure{C}(connec) where {C}
+  function FullTopology{C}(connec) where {C}
     ranks = [paramdim(c) for c in connec]
     elms  = findall(isequal(maximum(ranks)), ranks)
     new(connec, ranks, elms)
   end
 end
 
-FullStructure(connec) = FullStructure{eltype(connec)}(connec)
+FullTopology(connec) = FullTopology{eltype(connec)}(connec)
 
-==(s1::FullStructure, s2::FullStructure) = s1.connec == s2.connec
+==(t1::FullTopology, t2::FullTopology) = t1.connec == t2.connec
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-nvertices(s::FullStructure) = maximum(i for c in s.connec for i in indices(c))
+nvertices(t::FullTopology) = maximum(i for c in t.connec for i in indices(c))
 
-function faces(s::FullStructure, rank)
-  cs, rs = s.connec, s.ranks
+function faces(t::FullTopology, rank)
+  cs, rs = t.connec, t.ranks
   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
 end
 
-element(s::FullStructure, ind) = s.connec[s.elms[ind]]
+element(t::FullTopology, ind) = t.connec[t.elms[ind]]
 
-nelements(s::FullStructure) = length(s.elms)
+nelements(t::FullTopology) = length(t.elms)
 
-facets(s::FullStructure) = faces(s, maximum(s.ranks) - 1)
+facets(t::FullTopology) = faces(t, maximum(t.ranks) - 1)
 
-nfacets(s::FullStructure) = count(==(maximum(s.ranks) - 1), s.ranks)
+nfacets(t::FullTopology) = count(==(maximum(t.ranks) - 1), t.ranks)
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{<:FullStructure}, t::Topology)
+function Base.convert(::Type{<:FullTopology}, t::Topology)
   # TODO: add all faces, not just the elements
-  FullStructure(collect(elements(t)))
+  FullTopology(collect(elements(t)))
 end

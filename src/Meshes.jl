@@ -183,7 +183,7 @@ export
   faces, elements, facets,
   element, nelements,
   facet, nfacets,
-  FullStructure,
+  FullTopology,
   HalfEdgeStructure, HalfEdge,
   half4elem, half4vert,
   half4edge, half4pair,
