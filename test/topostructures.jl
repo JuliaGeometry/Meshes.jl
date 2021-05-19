@@ -1,4 +1,4 @@
-@testset "TopologicalStructure" begin
+@testset "Topology" begin
   @testset "FullStructure" begin
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])

@@ -3,29 +3,29 @@
 # ------------------------------------------------------------------
 
 """
-    Coboundary{P,Q,S}
+    Coboundary{P,Q,T}
 
 The co-boundary relation from rank `P` to greater rank `Q` for
-topological structure of type `S`.
+topology of type `T`.
 """
-struct Coboundary{P,Q,S<:TopologicalStructure} <: TopologicalRelation
-  structure::S
+struct Coboundary{P,Q,T<:Topology} <: TopologicalRelation
+  topology::T
 end
 
-Coboundary{P,Q}(structure::S) where {P,Q,S} = Coboundary{P,Q,S}(structure)
+Coboundary{P,Q}(topology::T) where {P,Q,T} = Coboundary{P,Q,T}(topology)
 
-# --------------------
-# HALF-EDGE STRUCTURE
-# --------------------
+# -------------------
+# HALF-EDGE TOPOLOGY
+# -------------------
 
-function (𝒞::Coboundary{0,1,S})(vert::Integer) where {S<:HalfEdgeStructure}
-  s = 𝒞.structure
-  𝒜 = Adjacency{0}(s)
-  [edge4pair((vert, other), s) for other in 𝒜(vert)]
+function (𝒞::Coboundary{0,1,T})(vert::Integer) where {T<:HalfEdgeStructure}
+  t = 𝒞.topology
+  𝒜 = Adjacency{0}(t)
+  [edge4pair((vert, other), t) for other in 𝒜(vert)]
 end
 
-function (𝒞::Coboundary{0,2,S})(vert::Integer) where {S<:HalfEdgeStructure}
-  e = half4vert(vert, 𝒞.structure)
+function (𝒞::Coboundary{0,2,T})(vert::Integer) where {T<:HalfEdgeStructure}
+  e = half4vert(vert, 𝒞.topology)
   h = e.half
   if isnothing(h.elem) # border edge
     # we are at the first arm of the star already
@@ -58,7 +58,7 @@ function (𝒞::Coboundary{0,2,S})(vert::Integer) where {S<:HalfEdgeStructure}
   elems
 end
 
-function (𝒞::Coboundary{1,2,S})(edge::Integer) where {S<:HalfEdgeStructure}
-  e = half4edge(edge, 𝒞.structure)
+function (𝒞::Coboundary{1,2,T})(edge::Integer) where {T<:HalfEdgeStructure}
+  e = half4edge(edge, 𝒞.topology)
   isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
 end

@@ -177,8 +177,8 @@ export
   paramdim, indices,
   connect, materialize,
 
-  # topological structures
-  TopologicalStructure,
+  # topologies
+  Topology,
   vertices, nvertices,
   faces, elements, facets,
   element, nelements,
@@ -196,7 +196,7 @@ export
   # meshes
   Mesh,
   CartesianGrid, SimpleMesh,
-  vertices, topology,
+  vertices, nvertices, topology,
   faces, elements, facets,
   element, nelements,
   facet, nfacets,

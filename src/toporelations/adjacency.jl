@@ -3,22 +3,22 @@
 # ------------------------------------------------------------------
 
 """
-    Adjacency{P,S}
+    Adjacency{P,T}
 
-The adjacency relation of rank `P` for topological structure of type `S`.
+The adjacency relation of rank `P` for topology of type `T`.
 """
-struct Adjacency{P,S<:TopologicalStructure} <: TopologicalRelation
-  structure::S
+struct Adjacency{P,T<:Topology} <: TopologicalRelation
+  topology::T
 end
 
-Adjacency{P}(structure::S) where {P,S} = Adjacency{P,S}(structure)
+Adjacency{P}(topology::T) where {P,T} = Adjacency{P,T}(topology)
 
-# --------------------
-# HALF-EDGE STRUCTURE
-# --------------------
+# -------------------
+# HALF-EDGE TOPOLOGY
+# -------------------
 
-function (𝒜::Adjacency{0,S})(vert::Integer) where {S<:HalfEdgeStructure}
-  e = half4vert(vert, 𝒜.structure)
+function (𝒜::Adjacency{0,T})(vert::Integer) where {T<:HalfEdgeStructure}
+  e = half4vert(vert, 𝒜.topology)
   h = e.half
   if isnothing(h.elem) # border edge
     # we are at the first arm of the star already

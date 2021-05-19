@@ -14,7 +14,7 @@ It does *not* support topological relations and is therefore incompatible
 with algorithms that rely on neighborhood search. It is still useful for
 mesh visualization and IO operations.
 """
-struct FullStructure{C<:Connectivity} <: TopologicalStructure
+struct FullStructure{C<:Connectivity} <: Topology
   # input fields
   connec::Vector{C}
 
@@ -56,7 +56,7 @@ nfacets(s::FullStructure) = count(==(maximum(s.ranks) - 1), s.ranks)
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{<:FullStructure}, s::TopologicalStructure)
+function Base.convert(::Type{<:FullStructure}, t::Topology)
   # TODO: add all faces, not just the elements
-  FullStructure(collect(elements(s)))
+  FullStructure(collect(elements(t)))
 end

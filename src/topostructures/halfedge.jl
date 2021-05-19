@@ -57,7 +57,7 @@ elements  = connect.([(1,2,3),(3,2,4,5)])
 structure = HalfEdgeStructure(elements)
 ```
 
-See also [`TopologicalStructure`](@ref).
+See also [`Topology`](@ref).
 
 ## References
 
@@ -82,7 +82,7 @@ See also [`TopologicalStructure`](@ref).
   index of the edge (i.e. two halves) for a given
   pair of vertices.
 """
-struct HalfEdgeStructure <: TopologicalStructure
+struct HalfEdgeStructure <: Topology
   halfedges::Vector{HalfEdge}
   half4elem::Dict{Int,Int}
   half4vert::Dict{Int,Int}
@@ -253,5 +253,5 @@ nfacets(s::HalfEdgeStructure) = length(s.halfedges) ÷ 2
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{<:HalfEdgeStructure}, s::TopologicalStructure) =
-  HalfEdgeStructure(collect(elements(s)))
+Base.convert(::Type{<:HalfEdgeStructure}, t::Topology) =
+  HalfEdgeStructure(collect(elements(t)))

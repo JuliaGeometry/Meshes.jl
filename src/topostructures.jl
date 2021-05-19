@@ -3,10 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    TopologicalStructure
+    Topology
 
-A data structure for constructing topological relations
-in a [`Mesh`](@ref).
+A data structure for constructing topological relations in a [`Mesh`](@ref).
 
 ## References
 
@@ -14,26 +13,26 @@ in a [`Mesh`](@ref).
   based on simplicial and cell complexes]
   (https://diglib.eg.org/handle/10.2312/egst.20071055.063-087)
 """
-abstract type TopologicalStructure end
+abstract type Topology end
 
 """
-    vertices(structure)
+    vertices(topology)
 
-Return the vertices of the topological `structure`.
+Return the vertices of the `topology`.
 """
-vertices(s::TopologicalStructure) = 1:nvertices(s)
-
-"""
-    nvertices(structure)
-
-Return the number of vertices in topological `structure`.
-"""
-function nvertices(::TopologicalStructure) end
+vertices(t::Topology) = 1:nvertices(t)
 
 """
-    faces(structure, rank)
+    nvertices(topology)
 
-Return an iterator with `rank`-faces of the topological `structure`.
+Return the number of vertices in the `topology`.
+"""
+function nvertices(::Topology) end
+
+"""
+    faces(topology, rank)
+
+Return an iterator with `rank`-faces of the `topology`.
 
 ## Example
 
@@ -42,17 +41,17 @@ all 3-faces (a.k.a. elements) or over all 2-faces to handle the interfaces
 (i.e. triangles) between adjacent elements:
 
 ```julia
-tetrahedrons = faces(structure, 3)
-triangles    = faces(structure, 2)
-segments     = faces(structure, 1)
+tetrahedrons = faces(topology, 3)
+triangles    = faces(topology, 2)
+segments     = faces(topology, 1)
 ```
 """
-function faces(::TopologicalStructure, rank) end
+function faces(::Topology, rank) end
 
 """
-    elements(structure)
+    elements(topology)
 
-Return the top-faces (a.k.a. elements) of the topological `structure`.
+Return the top-faces (a.k.a. elements) of the `topology`.
 
 ## Example
 
@@ -60,44 +59,42 @@ The elements of a volume embedded in 3D space can be tetrahedrons, hexahedrons,
 or any 3-face. The elements of a surface embedded in 3D space can be triangles,
 quadrangles or any 2-face.
 """
-elements(structure::TopologicalStructure) =
-  (element(structure, ind) for ind in 1:nelements(structure))
+elements(t::Topology) = (element(t, i) for i in 1:nelements(t))
 
 """
-    element(structure, ind)
+    element(topology, ind)
 
-Return the element of the topological `structure` at index `ind`.
+Return the element of the `topology` at index `ind`.
 """
-function element(::TopologicalStructure, ind) end
-
-"""
-    nelements(structure)
-
-Return the number of elements in the topological `structure`.
-"""
-function nelements(::TopologicalStructure) end
+function element(::Topology, ind) end
 
 """
-    facets(structure)
+    nelements(topology)
 
-Return the (top-1)-faces (a.k.a. facets) of the topological `structure`.
+Return the number of elements in the `topology`.
 """
-facets(structure::TopologicalStructure) =
-  (facet(structure, ind) for ind in 1:nfacets(structure))
-
-"""
-    facet(structure, ind)
-
-Return the facet of the topological `structure` at index `ind`.
-"""
-function facet(::TopologicalStructure, ind) end
+function nelements(::Topology) end
 
 """
-    nfacets(structure)
+    facets(topology)
 
-Return the number of facets in the topological `structure`.
+Return the (top-1)-faces (a.k.a. facets) of the `topology`.
 """
-function nfacets(::TopologicalStructure) end
+facets(t::Topology) = (facet(t, i) for i in 1:nfacets(t))
+
+"""
+    facet(topology, ind)
+
+Return the facet of the `topology` at index `ind`.
+"""
+function facet(::Topology, ind) end
+
+"""
+    nfacets(topology)
+
+Return the number of facets in the `topology`.
+"""
+function nfacets(::Topology) end
 
 # ----------------
 # IMPLEMENTATIONS

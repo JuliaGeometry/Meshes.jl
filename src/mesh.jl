@@ -109,8 +109,8 @@ nfacets(m::Mesh) = nfacets(topology(m))
 # CONVERSIONS
 # ------------
 
-Base.convert(Topology::Type{<:TopologicalStructure}, m::Mesh) =
-  SimpleMesh(vertices(m), convert(Topology, topology(m)))
+Base.convert(TP::Type{<:Topology}, m::Mesh) =
+  SimpleMesh(vertices(m), convert(TP, topology(m)))
 
 # -----------
 # IO METHODS

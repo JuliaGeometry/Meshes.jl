@@ -19,10 +19,10 @@ connect
 materialize
 ```
 
-### Topological structures
+### Topology
 
 ```@docs
-TopologicalStructure
+Topology
 FullStructure
 HalfEdgeStructure
 ```

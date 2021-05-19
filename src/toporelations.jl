@@ -6,7 +6,7 @@
     TopologicalRelation
 
 A topological relation between faces of a [`Mesh`](@ref) implemented
-for a given [`TopologicalStructure`](@ref).
+for a given [`Topology`](@ref).
 
 ## References
 

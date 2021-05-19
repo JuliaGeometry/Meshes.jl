@@ -3,33 +3,33 @@
 # ------------------------------------------------------------------
 
 """
-    Boundary{P,Q,S}
+    Boundary{P,Q,T}
 
 The boundary relation from rank `P` to smaller rank `Q` for
-topological structure of type `S`.
+topology of type `T`.
 """
-struct Boundary{P,Q,S<:TopologicalStructure} <: TopologicalRelation
-  structure::S
+struct Boundary{P,Q,T<:Topology} <: TopologicalRelation
+  topology::T
 end
 
-Boundary{P,Q}(structure::S) where {P,Q,S} = Boundary{P,Q,S}(structure)
+Boundary{P,Q}(topology::T) where {P,Q,T} = Boundary{P,Q,T}(topology)
 
-# --------------------
-# HALF-EDGE STRUCTURE
-# --------------------
+# -------------------
+# HALF-EDGE TOPOLOGY
+# -------------------
 
-function (∂::Boundary{2,1,S})(elem::Integer) where {S<:HalfEdgeStructure}
-  s = ∂.structure
-  l = loop(half4elem(elem, s))
+function (∂::Boundary{2,1,T})(elem::Integer) where {T<:HalfEdgeStructure}
+  t = ∂.topology
+  l = loop(half4elem(elem, t))
   v = CircularVector(l)
-  [edge4pair((v[i], v[i+1]), s) for i in 1:length(v)]
+  [edge4pair((v[i], v[i+1]), t) for i in 1:length(v)]
 end
 
-function (∂::Boundary{2,0,S})(elem::Integer) where {S<:HalfEdgeStructure}
-  loop(half4elem(elem, ∂.structure))
+function (∂::Boundary{2,0,T})(elem::Integer) where {T<:HalfEdgeStructure}
+  loop(half4elem(elem, ∂.topology))
 end
 
-function (∂::Boundary{1,0,S})(edge::Integer) where {S<:HalfEdgeStructure}
-  e = half4edge(edge, ∂.structure)
+function (∂::Boundary{1,0,T})(edge::Integer) where {T<:HalfEdgeStructure}
+  e = half4edge(edge, ∂.topology)
   [e.head, e.half.head]
 end
