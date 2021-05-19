@@ -62,7 +62,7 @@ include("conventions.jl")
 
 # connectivities and meshes
 include("connectivities.jl")
-include("topostructures.jl")
+include("topologies.jl")
 include("toporelations.jl")
 include("mesh.jl")
 

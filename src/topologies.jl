@@ -100,5 +100,5 @@ function nfacets(::Topology) end
 # IMPLEMENTATIONS
 # ----------------
 
-include("topostructures/full.jl")
-include("topostructures/halfedge.jl")
+include("topologies/full.jl")
+include("topologies/halfedge.jl")
