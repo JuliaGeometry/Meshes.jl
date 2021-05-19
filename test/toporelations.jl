@@ -1,8 +1,8 @@
 @testset "TopologicalRelation" begin
-  @testset "HalfEdgeStructure" begin
+  @testset "HalfEdgeTopology" begin
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])
-    struc = HalfEdgeStructure(elems)
+    struc = HalfEdgeTopology(elems)
     ∂ = Boundary{2,0}(struc)
     @test ∂(1) == [2,3,1]
     @test ∂(2) == [3,2,4]
@@ -39,7 +39,7 @@
 
     # 2 triangles + 2 quadrangles
     elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
-    struc = HalfEdgeStructure(elems)
+    struc = HalfEdgeTopology(elems)
     ∂ = Boundary{2,0}(struc)
     @test ∂(1) == [1,2,6,5]
     @test ∂(2) == [6,2,4]

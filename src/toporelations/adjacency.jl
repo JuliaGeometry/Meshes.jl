@@ -17,7 +17,7 @@ Adjacency{P}(topology::T) where {P,T} = Adjacency{P,T}(topology)
 # HALF-EDGE TOPOLOGY
 # -------------------
 
-function (𝒜::Adjacency{0,T})(vert::Integer) where {T<:HalfEdgeStructure}
+function (𝒜::Adjacency{0,T})(vert::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(vert, 𝒜.topology)
   h = e.half
   if isnothing(h.elem) # border edge

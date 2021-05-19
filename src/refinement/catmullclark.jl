@@ -27,20 +27,20 @@ function refine(mesh, ::CatmullClark)
   connec = topology(mesh)
 
   # convert to half-edge structure
-  s = convert(HalfEdgeStructure, connec)
+  t = convert(HalfEdgeTopology, connec)
 
   # add centroids of elements
-  ∂₂₀ = Boundary{2,0}(s)
-  epts = map(1:nelements(s)) do elem
+  ∂₂₀ = Boundary{2,0}(t)
+  epts = map(1:nelements(t)) do elem
     ps = view(points, ∂₂₀(elem))
     cₒ = sum(coordinates, ps) / length(ps)
     Point(cₒ)
   end
 
   # add midpoints of edges
-  ∂₁₂ = Coboundary{1,2}(s)
-  ∂₁₀ = Boundary{1,0}(s)
-  fpts = map(1:nfacets(s)) do edge
+  ∂₁₂ = Coboundary{1,2}(t)
+  ∂₁₀ = Boundary{1,0}(t)
+  fpts = map(1:nfacets(t)) do edge
     ps = view(epts, ∂₁₂(edge))
     qs = view(points, ∂₁₀(edge))
     ∑p = sum(coordinates, ps)
@@ -50,9 +50,9 @@ function refine(mesh, ::CatmullClark)
   end
 
   # move original vertices
-  ∂₀₂ = Coboundary{0,2}(s)
-  ∂₀₀ = Adjacency{0}(s)
-  vpts = map(1:nvertices(s)) do u
+  ∂₀₂ = Coboundary{0,2}(t)
+  ∂₀₀ = Adjacency{0}(t)
+  vpts = map(1:nvertices(t)) do u
     # original point
     P = coordinates(points[u])
 
@@ -78,9 +78,9 @@ function refine(mesh, ::CatmullClark)
   offset₂ = offset₁ + length(epts)
 
   # connect vertices into new quadrangles
-  ∂₂₁ = Boundary{2,1}(s)
+  ∂₂₁ = Boundary{2,1}(t)
   newconnec = Connectivity{Quadrangle,4}[]
-  for elem in 1:nelements(s)
+  for elem in 1:nelements(t)
     verts = CircularVector(∂₂₀(elem))
     edges = CircularVector(∂₂₁(elem))
     for i in 1:length(edges)

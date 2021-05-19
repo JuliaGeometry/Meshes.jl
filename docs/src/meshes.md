@@ -24,7 +24,7 @@ materialize
 ```@docs
 Topology
 FullTopology
-HalfEdgeStructure
+HalfEdgeTopology
 ```
 
 ## Examples

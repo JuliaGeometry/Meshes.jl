@@ -18,13 +18,13 @@ Coboundary{P,Q}(topology::T) where {P,Q,T} = Coboundary{P,Q,T}(topology)
 # HALF-EDGE TOPOLOGY
 # -------------------
 
-function (𝒞::Coboundary{0,1,T})(vert::Integer) where {T<:HalfEdgeStructure}
+function (𝒞::Coboundary{0,1,T})(vert::Integer) where {T<:HalfEdgeTopology}
   t = 𝒞.topology
   𝒜 = Adjacency{0}(t)
   [edge4pair((vert, other), t) for other in 𝒜(vert)]
 end
 
-function (𝒞::Coboundary{0,2,T})(vert::Integer) where {T<:HalfEdgeStructure}
+function (𝒞::Coboundary{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(vert, 𝒞.topology)
   h = e.half
   if isnothing(h.elem) # border edge
@@ -58,7 +58,7 @@ function (𝒞::Coboundary{0,2,T})(vert::Integer) where {T<:HalfEdgeStructure}
   elems
 end
 
-function (𝒞::Coboundary{1,2,T})(edge::Integer) where {T<:HalfEdgeStructure}
+function (𝒞::Coboundary{1,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
   e = half4edge(edge, 𝒞.topology)
   isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
 end

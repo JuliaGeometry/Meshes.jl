@@ -10,7 +10,7 @@ and `next` edges in the left `elem`, and the opposite
 `half`-edge. For some half-edges the `elem` may be
 `nothing`, e.g. border edges of the mesh.
 
-See [`HalfEdgeStructure`](@ref) for more details.
+See [`HalfEdgeTopology`](@ref) for more details.
 """
 mutable struct HalfEdge
   head::Int
@@ -41,8 +41,8 @@ function Base.show(io::IO, e::HalfEdge)
 end
 
 """
-    HalfEdgeStructure(elements)
-    HalfEdgeStructure(halfedges)
+    HalfEdgeTopology(elements)
+    HalfEdgeTopology(halfedges)
 
 A data structure for orientable 2-manifolds based on
 half-edges constructed from a vector of connectivity
@@ -50,11 +50,11 @@ half-edges constructed from a vector of connectivity
 
 ## Example
 
-Construct half-edge structure from a list of top-faces:
+Construct half-edge topology from a list of top-faces:
 
 ```julia
-elements  = connect.([(1,2,3),(3,2,4,5)])
-structure = HalfEdgeStructure(elements)
+elements = connect.([(1,2,3),(3,2,4,5)])
+topology = HalfEdgeTopology(elements)
 ```
 
 See also [`Topology`](@ref).
@@ -82,14 +82,14 @@ See also [`Topology`](@ref).
   index of the edge (i.e. two halves) for a given
   pair of vertices.
 """
-struct HalfEdgeStructure <: Topology
+struct HalfEdgeTopology <: Topology
   halfedges::Vector{HalfEdge}
   half4elem::Dict{Int,Int}
   half4vert::Dict{Int,Int}
   edge4pair::Dict{Tuple{Int,Int},Int}
 end
 
-function HalfEdgeStructure(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
+function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
   # make sure that first half-edge is in the interior
   ordered = [isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂) for (h₁, h₂) in halves]
 
@@ -118,11 +118,11 @@ function HalfEdgeStructure(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
     edge4pair[(v, u)] = i
   end
 
-  HalfEdgeStructure(halfedges, half4elem, half4vert, edge4pair)
+  HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
 end
 
-function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
-  @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge structure"
+function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
+  @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge topology"
 
   # number of vertices is the maximum index in connectivities
   nvertices = maximum(i for e in elems for i in indices(e))
@@ -171,87 +171,87 @@ function HalfEdgeStructure(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  HalfEdgeStructure(halves)
+  HalfEdgeTopology(halves)
 end
 
 """
-    half4elem(e, s)
+    half4elem(e, t)
 
-Return a half-edge of the half-edge structure `s` on the `e`-th elem.
+Return a half-edge of the half-edge topology `t` on the `e`-th elem.
 """
-half4elem(e::Integer, s::HalfEdgeStructure) = s.halfedges[s.half4elem[e]]
+half4elem(e::Integer, t::HalfEdgeTopology) = t.halfedges[t.half4elem[e]]
 
 """
-    half4vert(v, s)
+    half4vert(v, t)
 
-Return the half-edge of the half-edge structure `s` for which the
+Return the half-edge of the half-edge topology `t` for which the
 head is the `v`-th index.
 """
-half4vert(v::Integer, s::HalfEdgeStructure) = s.halfedges[s.half4vert[v]]
+half4vert(v::Integer, t::HalfEdgeTopology) = t.halfedges[t.half4vert[v]]
 
 """
-    half4edge(e, s)
+    half4edge(e, t)
 
-Return the half-edge of the half-edge structure `s` for the edge `e`.
+Return the half-edge of the half-edge topology `t` for the edge `e`.
 
 ### Notes
 
 Always return the half-edge to the "left".
 """
-half4edge(e::Integer, s::HalfEdgeStructure) = s.halfedges[2e - 1]
+half4edge(e::Integer, t::HalfEdgeTopology) = t.halfedges[2e - 1]
 
 """
-    half4pair(uv, s)
+    half4pair(uv, t)
 
-Return the half-edge of the half-edge structure `s` for the pair of
+Return the half-edge of the half-edge topology `t` for the pair of
 vertices `uv`.
 
 ### Notes
 
 Always return the half-edge to the "left".
 """
-half4pair(uv::Tuple{Int,Int}, s::HalfEdgeStructure) = half4edge(s.edge4pair[uv], s)
+half4pair(uv::Tuple{Int,Int}, t::HalfEdgeTopology) = half4edge(t.edge4pair[uv], t)
 
 """
-    edge4pair(uv, s)
+    edge4pair(uv, t)
 
-Return the edge of the half-edge structure `s` for the pair of vertices `uv`.
+Return the edge of the half-edge topology `t` for the pair of vertices `uv`.
 """
-edge4pair(uv, s) = s.edge4pair[uv]
+edge4pair(uv, t) = t.edge4pair[uv]
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-nvertices(s::HalfEdgeStructure) = length(s.half4vert)
+nvertices(t::HalfEdgeTopology) = length(t.half4vert)
 
-function faces(s::HalfEdgeStructure, rank)
+function faces(t::HalfEdgeTopology, rank)
   if rank == 2
-    elements(s)
+    elements(t)
   elseif rank == 1
-    facets(s)
+    facets(t)
   else
-    throw(ArgumentError("invalid rank for half-edge structure"))
+    throw(ArgumentError("invalid rank for half-edge topology"))
   end
 end
 
-function element(s::HalfEdgeStructure, ind)
-  v = loop(half4elem(ind, s))
+function element(t::HalfEdgeTopology, ind)
+  v = loop(half4elem(ind, t))
   connect(Tuple(v))
 end
 
-nelements(s::HalfEdgeStructure) = length(s.half4elem)
+nelements(t::HalfEdgeTopology) = length(t.half4elem)
 
-function facet(s::HalfEdgeStructure, ind)
-  e = half4edge(ind, s)
+function facet(t::HalfEdgeTopology, ind)
+  e = half4edge(ind, t)
   connect((e.head, e.half.head))
 end
 
-nfacets(s::HalfEdgeStructure) = length(s.halfedges) ÷ 2
+nfacets(t::HalfEdgeTopology) = length(t.halfedges) ÷ 2
 
 # ------------
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{<:HalfEdgeStructure}, t::Topology) =
-  HalfEdgeStructure(collect(elements(t)))
+Base.convert(::Type{<:HalfEdgeTopology}, t::Topology) =
+  HalfEdgeTopology(collect(elements(t)))
