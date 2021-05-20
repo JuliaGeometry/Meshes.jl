@@ -6,6 +6,7 @@ module Meshes
 
 using Tables
 using StaticArrays
+using SparseArrays
 using CircularArrays
 using SimpleTraits
 using RecipesBase
@@ -54,29 +55,23 @@ include("geometries.jl")
 # collections
 include("collections.jl")
 
-# geometric distances
-include("distances.jl")
-
-# rotation conventions
-include("conventions.jl")
-
 # connectivities and meshes
 include("connectivities.jl")
 include("topologies.jl")
 include("toporelations.jl")
 include("mesh.jl")
 
-# domain and data views
-include("views.jl")
-
-# paths for traversal
+# miscellaneous
+include("conventions.jl")
 include("paths.jl")
-
-# neighborhoods and searches
+include("distances.jl")
 include("neighborhoods.jl")
 include("neighborsearch.jl")
+include("supportfun.jl")
+include("laplacian.jl")
 
-# partitions
+# views and partitions
+include("views.jl")
 include("partitions.jl")
 
 # algorithms
@@ -88,7 +83,6 @@ include("discretization.jl")
 include("simplification.jl")
 include("refinement.jl")
 include("boundingboxes.jl")
-include("supportfun.jl")
 
 # utilities
 include("utils.jl")
@@ -172,6 +166,30 @@ export
   axesseq, orientation, angleunits,
   mainaxis, isextrinsic, rotmat,
 
+  # paths
+  Path,
+  LinearPath, RandomPath,
+  ShiftedPath, SourcePath,
+  traverse,
+
+  # neighborhoods
+  Neighborhood, MetricBall,
+  NormBall, Ellipsoid,
+  metric, radius,
+
+  # neighbordhood search
+  NeighborSearchMethod,
+  BoundedNeighborSearchMethod,
+  BallSearch,
+  KNearestSearch,
+  KBallSearch,
+  BoundedSearch,
+  search!, search,
+
+  # miscellaneous
+  supportfun,
+  laplacematrix,
+
   # connectivities
   Connectivity,
   paramdim, indices,
@@ -204,26 +222,6 @@ export
 
   # views
   DomainView, DataView,
-
-  # paths
-  Path,
-  LinearPath, RandomPath,
-  ShiftedPath, SourcePath,
-  traverse,
-
-  # neighborhoods
-  Neighborhood, MetricBall,
-  NormBall, Ellipsoid,
-  metric, radius,
-
-  # neighbordhood search
-  NeighborSearchMethod,
-  BoundedNeighborSearchMethod,
-  BallSearch,
-  KNearestSearch,
-  KBallSearch,
-  BoundedSearch,
-  search!, search,
 
   # partitions
   Partition,
@@ -291,9 +289,6 @@ export
 
   # bounding boxes
   boundingbox,
-
-  # support function
-  supportfun,
 
   # utililities
   signarea,
