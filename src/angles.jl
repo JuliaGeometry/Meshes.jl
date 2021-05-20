@@ -18,7 +18,11 @@ See https://en.wikipedia.org/wiki/Atan2.
 ```
 """
 function ∠(A::P, B::P, C::P) where {P<:Point{2}}
-  BA = A - B
-  BC = C - B
-  atan(BA × BC, BA ⋅ BC)
+  BA, BC = A - B, C - B
+  atan(BA × BC, BA ⋅ BC) # preserve orientation
+end
+
+function ∠(A::P, B::P, C::P) where {P<:Point{3}}
+  BA, BC = A - B, C - B
+  atan(norm(BA × BC), BA ⋅ BC) # discard orientation
 end
