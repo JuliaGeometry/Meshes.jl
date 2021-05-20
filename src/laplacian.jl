@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    laplacematrix(mesh, weights=:uniform)
+    laplacematrix(mesh; weights=:uniform, normalize=true)
 
 The Laplace-Beltrami (a.k.a. Laplacian) matrix of the `mesh`.
 Optionally specify the discretization `weights` as either
-`:uniform` or `:cotangent`.
+`:uniform` or `:cotangent` and `normalize` the rows by the
+diagonal value.
 
 ## References
 
@@ -17,11 +18,13 @@ Optionally specify the discretization `weights` as either
 * Zhang et al. 2007. [Spectral Methods for Mesh Processing and Analysis]
   (https://diglib.eg.org/handle/10.2312/egst.20071052.001-022)
 """
-function laplacematrix(mesh, weights=:uniform)
+function laplacematrix(mesh; weights=:uniform, normalize=true)
   t = topology(mesh)
   𝒩 = Adjacency{0}(t)
   n = nvertices(t)
   L = spzeros(n, n)
+
+  # fill matrix with weights
   if weights == :uniform
     for i in 1:n
       js = 𝒩(i)
@@ -47,5 +50,13 @@ function laplacematrix(mesh, weights=:uniform)
   else
     throw(ArgumentError("invalid discretization weights"))
   end
+
+  # normalize weights if necessary
+  if normalize
+    for i in 1:n
+      L[i,:] ./= L[i,i]
+    end
+  end
+
   L
 end
