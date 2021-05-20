@@ -38,8 +38,8 @@ function laplacematrix(mesh, weights=:uniform)
         j₋, j, j₊ = js[k-1], js[k], js[k+1]
         vᵢ, vⱼ =  v[i],  v[j]
         v₋, v₊ = v[j₋], v[j₊]
-        αᵢⱼ = ∠(vᵢ, v₋, vⱼ)
-        βᵢⱼ = ∠(vⱼ, v₊, vᵢ)
+        αᵢⱼ = ∠(vⱼ, v₋, vᵢ)
+        βᵢⱼ = ∠(vᵢ, v₊, vⱼ)
         L[i,j] = cot(αᵢⱼ) + cot(βᵢⱼ)
       end
       L[i,i] = -sum(L[i,:])
