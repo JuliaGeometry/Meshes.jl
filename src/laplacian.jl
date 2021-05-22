@@ -19,7 +19,9 @@ diagonal value.
   (https://diglib.eg.org/handle/10.2312/egst.20071052.001-022)
 """
 function laplacematrix(mesh; weights=:uniform, normalize=true)
-  t = topology(mesh)
+  m = convert(HalfEdgeTopology, mesh)
+
+  t = topology(m)
   𝒩 = Adjacency{0}(t)
   n = nvertices(t)
   L = spzeros(n, n)
@@ -34,7 +36,7 @@ function laplacematrix(mesh; weights=:uniform, normalize=true)
       L[i,i] = -sum(L[i,:])
     end
   elseif weights == :cotangent
-    v = vertices(mesh)
+    v = vertices(m)
     for i in 1:n
       js = CircularVector(𝒩(i))
       for k in 1:length(js)
@@ -54,7 +56,7 @@ function laplacematrix(mesh; weights=:uniform, normalize=true)
   # normalize weights if necessary
   if normalize
     for i in 1:n
-      L[i,:] ./= L[i,i]
+      L[i,:] ./= -L[i,i]
     end
   end
 

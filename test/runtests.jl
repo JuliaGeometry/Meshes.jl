@@ -73,7 +73,8 @@ testfiles = [
   "simplification.jl",
   "refinement.jl",
   "boundingboxes.jl",
-  "supportfun.jl"
+  "supportfun.jl",
+  "laplacian.jl"
 ]
 
 # --------------------------------
