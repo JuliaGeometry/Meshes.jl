@@ -55,16 +55,18 @@ testfiles = [
   "polytopes.jl",
   "primitives.jl",
   "collections.jl",
-  "distances.jl",
   "connectivities.jl",
   "topologies.jl",
   "toporelations.jl",
   "mesh.jl",
   "traits.jl",
-  "views.jl",
   "paths.jl",
+  "distances.jl",
   "neighborhoods.jl",
   "neighborsearch.jl",
+  "supportfun.jl",
+  "laplacian.jl",
+  "views.jl",
   "viewing.jl",
   "sampling.jl",
   "partitioning.jl",
@@ -72,9 +74,8 @@ testfiles = [
   "discretization.jl",
   "simplification.jl",
   "refinement.jl",
-  "boundingboxes.jl",
-  "supportfun.jl",
-  "laplacian.jl"
+  "smoothing.jl",
+  "boundingboxes.jl"
 ]
 
 # --------------------------------
