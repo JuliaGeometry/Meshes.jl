@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    TaubinSmoothing(n; λ=0.5, μ=-0.6, weights=:uniform)
+    TaubinSmoothing(n; λ=0.5, μ=-0.5, weights=:uniform)
 
 Perform `n` iterations of Taubin smoothing with parameters
 `λ` and `μ` and Laplacian `weights`.
@@ -20,9 +20,9 @@ struct TaubinSmoothing <: SmoothingMethod
   weights::Symbol
 end
 
-function TaubinSmoothing(n; λ=0.5, μ=-0.6, weights=:uniform)
+function TaubinSmoothing(n; λ=0.5, μ=-0.5, weights=:uniform)
   @assert n > 0 "invalid number of iterations"
-  @assert 0 < λ < -μ < 1 "invalid parameters λ and μ"
+  @assert 0 < λ ≤ -μ < 1 "invalid parameters λ and μ"
   TaubinSmoothing(n, λ, μ, weights)
 end
 
@@ -33,7 +33,7 @@ function smooth(mesh, method::TaubinSmoothing)
   weights = method.weights
 
   # Laplacian matrix with given weights
-  L = laplacematrix(mesh, weights=weights)
+  L = laplacematrix(mesh, weights=weights, normalize=true)
 
   # matrix with vertex coordinates (nvertices x ndims)
   V = reduce(hcat, coordinates.(vertices(mesh)))'
