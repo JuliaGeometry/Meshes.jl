@@ -82,6 +82,7 @@ include("intersections.jl")
 include("discretization.jl")
 include("simplification.jl")
 include("refinement.jl")
+include("smoothing.jl")
 include("boundingboxes.jl")
 
 # utilities
@@ -286,6 +287,11 @@ export
   RefinementMethod,
   CatmullClark,
   refine,
+
+  # smoothing
+  SmoothingMethod,
+  TaubinSmoothing,
+  smooth,
 
   # bounding boxes
   boundingbox,
