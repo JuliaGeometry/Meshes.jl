@@ -19,10 +19,14 @@ diagonal value.
   (https://diglib.eg.org/handle/10.2312/egst.20071052.001-022)
 """
 function laplacematrix(mesh; weights=:uniform, normalize=true)
+  # convert to half-edge topology
   m = convert(HalfEdgeTopology, mesh)
 
+  # retrieve adjacency relation
   t = topology(m)
   𝒩 = Adjacency{0}(t)
+
+  # initialize matrix
   n = nvertices(t)
   L = spzeros(n, n)
 
@@ -33,7 +37,13 @@ function laplacematrix(mesh; weights=:uniform, normalize=true)
       for j in js
         L[i,j] = 1.0
       end
-      L[i,i] = -sum(L[i,:])
+      L[i,i] = -1.0*length(js)
+      if normalize
+        for j in js
+          L[i,j] /= -L[i,i]
+        end
+        L[i,i] /= -L[i,i]
+      end
     end
   elseif weights == :cotangent
     v = vertices(m)
@@ -47,17 +57,16 @@ function laplacematrix(mesh; weights=:uniform, normalize=true)
         βᵢⱼ = ∠(vᵢ, v₊, vⱼ)
         L[i,j] = cot(αᵢⱼ) + cot(βᵢⱼ)
       end
-      L[i,i] = -sum(L[i,:])
+      L[i,i] = -sum(L[i,js])
+      if normalize
+        for j in js
+          L[i,j] /= -L[i,i]
+        end
+        L[i,i] /= -L[i,i]
+      end
     end
   else
     throw(ArgumentError("invalid discretization weights"))
-  end
-
-  # normalize weights if necessary
-  if normalize
-    for i in 1:n
-      L[i,:] ./= -L[i,i]
-    end
   end
 
   L
