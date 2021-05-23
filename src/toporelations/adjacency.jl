@@ -19,13 +19,15 @@ Adjacency{P}(topology::T) where {P,T} = Adjacency{P,T}(topology)
 
 function (𝒜::Adjacency{0,T})(vert::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(vert, 𝒜.topology)
-  v = [e.half.head]
+
+  # initialize result
+  vertices = [e.half.head]
 
   # search in CCW orientation
   p = e.prev
   h = p.half
   while !isnothing(h.elem) && h != e
-    push!(v, p.head)
+    push!(vertices, p.head)
     p = h.prev
     h = p.half
   end
@@ -33,16 +35,16 @@ function (𝒜::Adjacency{0,T})(vert::Integer) where {T<:HalfEdgeTopology}
   # if border edge is hit
   if isnothing(h.elem)
     # add last arm manually
-    push!(v, p.head)
+    push!(vertices, p.head)
 
     # search in CW orientation
     h = e.half
     while !isnothing(h.elem)
       n = h.next
       h = n.half
-      pushfirst!(v, h.head)
+      pushfirst!(vertices, h.head)
     end
   end
 
-  v
+  vertices
 end
