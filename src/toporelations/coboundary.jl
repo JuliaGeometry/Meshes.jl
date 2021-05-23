@@ -26,36 +26,31 @@ end
 
 function (𝒞::Coboundary{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(vert, 𝒞.topology)
-  h = e.half
-  if isnothing(h.elem) # border edge
-    # we are at the first arm of the star already
-    # there is no need to adjust the CCW loop
-  else # interior edge
-    # we are at an interior edge and may need to
-    # adjust the CCW loop so that it starts at
-    # the first arm of the star
-    n = h.next
-    h = n.half
-    while !isnothing(h.elem) && n != e
+
+  # initialize result
+  elements = [e.elem]
+
+  # search in CCW orientation
+  p = e.prev
+  h = p.half
+  while !isnothing(h.elem) && h != e
+    push!(elements, h.elem)
+    p = h.prev
+    h = p.half
+  end
+
+  # if border edge is hit
+  if isnothing(h.elem)
+    # search in CW orientation
+    h = e.half
+    while !isnothing(h.elem)
+      pushfirst!(elements, h.elem)
       n = h.next
       h = n.half
     end
-    e = n
   end
 
-  # edge e is now the first arm of the star
-  # we can follow the CCW loop until we find
-  # it again or hit a border edge
-  p = e.prev
-  o = p.half
-  elems = [e.elem]
-  while !isnothing(o.elem) && o != e
-    push!(elems, o.elem)
-    p = o.prev
-    o = p.half
-  end
-
-  elems
+  elements
 end
 
 function (𝒞::Coboundary{1,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
