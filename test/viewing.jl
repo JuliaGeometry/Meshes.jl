@@ -12,7 +12,6 @@
   end
 
   @testset "Data" begin
-    # dummy type implementing the Data trait
     g = CartesianGrid{T}(10,10)
     t = (a=1:100, b=1:100)
     d = dummydata(g, t)

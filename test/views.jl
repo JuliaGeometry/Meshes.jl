@@ -40,7 +40,6 @@
   end
 
   @testset "Data" begin
-    # dummy type implementing the Data trait
     dom = CartesianGrid{T}(2,2)
     dat = dummydata(dom, (a=[1,2,3,4], b=[5,6,7,8]))
 
