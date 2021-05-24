@@ -55,11 +55,14 @@ include("geometries.jl")
 # collections
 include("collections.jl")
 
-# connectivities and meshes
+# meshes
 include("connectivities.jl")
 include("topologies.jl")
 include("toporelations.jl")
 include("mesh.jl")
+
+# metadata
+include("metadata.jl")
 
 # miscellaneous
 include("conventions.jl")
@@ -225,6 +228,9 @@ export
   facet, nfacets,
   topoconvert,
   spacing,
+
+  # metadata
+  metadata,
 
   # views
   DomainView, DataView,
