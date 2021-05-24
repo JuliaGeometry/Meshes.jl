@@ -48,6 +48,8 @@ function readpoly(T, fname)
   end
 end
 
+include("dummy.jl")
+
 # list of tests
 testfiles = [
   "points.jl",
