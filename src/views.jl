@@ -33,8 +33,8 @@ centroid(v::DomainView, ind::Int) =
 # -----------
 
 function Base.show(io::IO, v::DomainView)
-  domain  = v.domain
-  nelms = length(v.inds)
+  domain = v.domain
+  nelms  = length(v.inds)
   print(io, "$nelms View{$domain}")
 end
 
@@ -43,51 +43,39 @@ end
 # -----------
 
 # helper function for table view
-function viewtable(table, rows, cols)
-  t = Tables.columns(table)
-  v = map(cols) do c
-    col = Tables.getcolumn(t, c)
-    c => view(col, rows)
-  end
-  (; v...)
-end
+viewtable(table, rows) =
+  view(Tables.rows(table) |> collect, rows) |> Tables.columns
 
 """
-    DataView(data, inds, vars)
+    DataView(data, inds)
 
-Return a view of `data` at indices `inds` and variables `vars`.
+Return a view of `data` at indices `inds`.
 """
-struct DataView{D<:Data,I,V} <: Data
+struct DataView{D<:Data,I} <: Data
   data::D
   inds::I
-  vars::V
 end
 
 # ---------------
 # DATA INTERFACE
 # ---------------
 
-domain(v::DataView) = view(domain(getfield(v, :data)),
-                           getfield(v, :inds))
+domain(v::DataView) = view(domain(getfield(v, :data)), getfield(v, :inds))
 
-values(v::DataView) = viewtable(values(getfield(v, :data)),
-                                getfield(v, :inds),
-                                getfield(v, :vars))
+values(v::DataView) = viewtable(values(getfield(v, :data)), getfield(v, :inds))
 
-function constructor(::Type{DataView{D,I,V}}) where {D<:Data,I,V}
+function constructor(::Type{DataView{D,I}}) where {D<:Data,I}
   function ctor(domain, table)
     data = constructor(D)(domain, table)
     inds = 1:nelements(domain)
-    vars = Tables.schema(table).names
-    DataView(data, inds, vars)
+    DataView(data, inds)
   end
 end
 
 # specialize methods for performance
 ==(v₁::DataView, v₂::DataView) =
   getfield(v₁, :data) == getfield(v₂, :data) &&
-  getfield(v₁, :inds) == getfield(v₂, :inds) &&
-  getfield(v₁, :vars) == getfield(v₂, :vars)
+  getfield(v₁, :inds) == getfield(v₂, :inds)
 
 # -----------
 # IO METHODS

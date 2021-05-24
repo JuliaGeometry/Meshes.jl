@@ -7,24 +7,11 @@
 # -------------------
 
 Base.view(domain::Domain, inds) = DomainView(domain, inds)
-Base.view(data::Data, inds, vars) = DataView(data, inds, vars)
-
-function Base.view(data::Data, inds)
-  vars = collect(Tables.schema(values(data)).names)
-  DataView(data, inds, vars)
-end
-function Base.view(data::Data, vars::AbstractVector{Symbol})
-  inds = 1:nelements(domain(data))
-  DataView(data, inds, vars)
-end
+Base.view(data::Data, inds) = DataView(data, inds)
 
 # specialize view to avoid infinite loops
-Base.view(v::DataView, inds, vars) =
-  DataView(getfield(v, :data), getfield(v, :inds)[inds], vars)
 Base.view(v::DataView, inds::AbstractVector{Int}) =
-  DataView(getfield(v, :data), getfield(v, :inds)[inds], getfield(v, :vars))
-Base.view(v::DataView, vars::AbstractVector{Symbol}) =
-  DataView(getfield(v, :data), getfield(v, :inds), vars)
+  DataView(getfield(v, :data), getfield(v, :inds)[inds])
 
 # ----------------------
 # VIEWS WITH GEOMETRIES
@@ -49,8 +36,7 @@ function Base.view(data::Data, geometry::Geometry)
 
   # retrieve subtable
   tinds  = _linear(dom, inds)
-  tvars  = Tables.schema(tab).names
-  subtab = viewtable(tab, tinds, tvars)
+  subtab = viewtable(tab, tinds)
 
   # constructor for data type
   ctor = constructor(typeof(data))
