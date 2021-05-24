@@ -20,21 +20,19 @@ end
 # DOMAIN INTERFACE
 # -----------------
 
-element(v::DomainView, ind::Int) =
-  element(v.domain, v.inds[ind])
+element(v::DomainView, ind::Int) = element(v.domain, v.inds[ind])
 
 nelements(v::DomainView) = length(v.inds)
 
-centroid(v::DomainView, ind::Int) = 
-  centroid(v.domain, v.inds[ind])
+centroid(v::DomainView, ind::Int) = centroid(v.domain, v.inds[ind])
 
 # -----------
 # IO METHODS
 # -----------
 
 function Base.show(io::IO, v::DomainView)
-  domain = v.domain
-  nelms  = length(v.inds)
+  domain = getfield(v, :domain)
+  nelms  = length(getfield(v, :inds))
   print(io, "$nelms View{$domain}")
 end
 

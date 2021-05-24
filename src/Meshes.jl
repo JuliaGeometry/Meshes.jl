@@ -219,6 +219,7 @@ export
   faces, elements, facets,
   element, nelements,
   facet, nfacets,
+  topoconvert,
   spacing,
 
   # views

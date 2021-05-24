@@ -20,7 +20,7 @@ diagonal value.
 """
 function laplacematrix(mesh; weights=:uniform, normalize=true)
   # convert to half-edge topology
-  m = convert(HalfEdgeTopology, mesh)
+  m = topoconvert(HalfEdgeTopology, mesh)
 
   # retrieve adjacency relation
   t = topology(m)

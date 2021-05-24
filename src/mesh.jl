@@ -97,6 +97,23 @@ Return the number of facets in the `mesh`.
 """
 nfacets(m::Mesh) = nfacets(topology(m))
 
+"""
+    topoconvert(T, mesh)
+
+Convert underlying topology of the `mesh` to topology of type `T`.
+
+## Example
+
+Convert underlying topology to [`HalfEdgeTopology`](@ref) for
+efficient topological relations.
+
+```julia
+newmesh = topoconvert(HalfEdgeTopology, mesh)
+```
+"""
+topoconvert(TP::Type{<:Topology}, m::Mesh) =
+  SimpleMesh(vertices(m), convert(TP, topology(m)))
+
 # ----------
 # FALLBACKS
 # ----------
@@ -104,13 +121,6 @@ nfacets(m::Mesh) = nfacets(topology(m))
 ==(m1::Mesh, m2::Mesh) =
   vertices(m1) == vertices(m2) &&
   topology(m1) == topology(m2)
-
-# ------------
-# CONVERSIONS
-# ------------
-
-Base.convert(TP::Type{<:Topology}, m::Mesh) =
-  SimpleMesh(vertices(m), convert(TP, topology(m)))
 
 # -----------
 # IO METHODS
