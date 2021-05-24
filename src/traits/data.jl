@@ -192,14 +192,17 @@ function Base.show(io::IO, data::Data)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", data::Data)
-  𝒟 = domain(data)
-  𝒯 = values(data)
-  ℛ = Tables.rows(𝒯)
-  s = Tables.schema(ℛ)
-  vars = zip(s.names, s.types)
   println(io, data)
-  println(io, "  variables")
-  varlines = ["    └─$var ($V)" for (var,V) in vars]
-  println(io, join(sort(varlines), "\n"))
-  print(  io, "  domain: ", 𝒟)
+  𝒟 = domain(data)
+  for rank in 0:paramdim(𝒟)
+    𝒯 = values(data, rank)
+    if !isnothing(𝒯)
+      sche = Tables.schema(Tables.rows(𝒯))
+      vars = zip(sche.names, sche.types)
+      println(io, "  variables (rank $rank)")
+      varlines = ["    └─$var ($V)" for (var,V) in vars]
+      println(io, join(sort(varlines), "\n"))
+    end
+  end
+  print(io, "  domain: ", 𝒟)
 end
