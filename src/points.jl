@@ -52,6 +52,14 @@ embeddim(::Type{Point{Dim,T}}) where {Dim,T} = Dim
 embeddim(p::Point) = embeddim(typeof(p))
 
 """
+    paramdim(point)
+
+Return the number of parametric dimensions of the `point`.
+"""
+paramdim(::Type{Point{Dim,T}}) where {Dim,T} = 0
+paramdim(p::Point) = paramdim(typeof(p))
+
+"""
     coordtype(point)
 
 Return the machine type of each coordinate used to describe the `point`.

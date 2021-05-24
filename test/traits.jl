@@ -40,32 +40,39 @@
 
   @testset "Data" begin
     # dummy type implementing the Data trait
-    struct DummyData{𝒟,𝒯} <: Data
+    struct DummyData{𝒟,𝒱} <: Data
       domain::𝒟
-      table::𝒯
+      values::𝒱
     end
     Meshes.domain(data::DummyData) = getfield(data, :domain)
-    Meshes.values(data::DummyData) = getfield(data, :table)
+    function Meshes.values(data::DummyData, rank=nothing)
+      domain = getfield(data, :domain)
+      values = getfield(data, :values)
+      r = isnothing(rank) ? paramdim(domain) : rank
+      haskey(values, r) ? values[r] : nothing
+    end
     Meshes.constructor(::Type{D}) where {D<:DummyData} = DummyData
+
+    dummydata(domain, table) = DummyData(domain, Dict(paramdim(domain) => table))
 
     # fallback constructor with spatial table
     dom = CartesianGrid{T}(2,2)
-    tab = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    tab = dummydata(dom, (a=[1,2,3,4], b=[5,6,7,8]))
     dat = DummyData(tab)
     @test domain(dat) == domain(tab)
     @test values(dat) == values(tab)
 
     # equality of data sets
-    data₁ = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-    data₂ = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-    data₃ = DummyData(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
+    data₁ = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    data₂ = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    data₃ = dummydata(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
     @test data₁ == data₂
     @test data₁ != data₃
     @test data₂ != data₃
 
     # Tables interface
     dom = CartesianGrid{T}(2,2)
-    dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    dat = dummydata(dom, (a=[1,2,3,4], b=[5,6,7,8]))
     @test Tables.istable(dat)
     @test Tables.rowaccess(dat)
     rows = Tables.rows(dat)
@@ -87,13 +94,13 @@
 
     # Query interface
     dom = CartesianGrid{T}(2,2)
-    dat = DummyData(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+    dat = dummydata(dom, (a=[1,2,3,4], b=[5,6,7,8]))
     new = dat |> @mutate(geometry=centroid(_.geometry)) |> DummyData
     @test domain(new) isa PointSet
     @test values(new) == values(dat)
 
     # column interface
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
+    data = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
     @test data[:a] == data["a"] == data.a == [1,2,3,4]
     @test isequal(data[:b], [5,missing,7,8])
     @test data[:geometry] == collect(CartesianGrid{T}(2,2))
@@ -101,18 +108,18 @@
     @test_throws ErrorException data[:c] 
 
     # variables interface
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
+    data = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
     @test variables(data) == (Variable(:a,Int), Variable(:b,Int))
     @test name.(variables(data)) == (:a,:b)
     @test mactype.(variables(data)) == (Int,Int)
-    data = DummyData(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
+    data = dummydata(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
     @test asarray(data, :a) == asarray(data, "a") == [1,2,3,4]
     @test asarray(data, :b) == asarray(data, "b") == [5,6,7,8]
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    data = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
     @test asarray(data, :a) == asarray(data, "a") == [1 3; 2 4]
     @test asarray(data, :b) == asarray(data, "b") == [5 7; 6 8]
 
-    data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+    data = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
     @test sprint(show, data) == "4 DummyData{2,$T}"
     if T == Float32
       @test sprint(show, MIME"text/plain"(), data) == "4 DummyData{2,Float32}\n  variables\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float32}"
@@ -121,9 +128,9 @@
     end
 
     if visualtests
-      data = DummyData(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
+      data = dummydata(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
       @test_reference "data/data-$T.png" plot(data)
-      data = DummyData(CartesianGrid{T}(2,2), (c=categorical([1,2,3,4]),))
+      data = dummydata(CartesianGrid{T}(2,2), (c=categorical([1,2,3,4]),))
       @test_reference "data/data-categorical-$T.png" plot(data)
     end
   end

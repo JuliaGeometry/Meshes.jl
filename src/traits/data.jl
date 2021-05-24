@@ -5,10 +5,7 @@
 """
     Data
 
-A domain together with a table of values for each element of the domain.
-The i-th row of the table is a vector of features associated with the
-i-th element of the domain. If the domain is a mesh, then the table
-stores all the properties of the elements.
+A domain together with tables of values for geometries of the domain.
 """
 abstract type Data end
 
@@ -20,18 +17,29 @@ Return underlying domain of the `data`.
 function domain end
 
 """
-    values(data)
+    values(data, [rank])
 
-Return the values of `data` as a table.
+Return the values of `data` for a given `rank` as a table.
+
+The rank is a non-negative integer that specifies the
+parametric dimension of the geometries of interest:
+
+* 0 - points
+* 1 - segments
+* 2 - triangles, quadrangles, ...
+* 3 - tetrahedrons, hexahedrons, ...
+
+If the rank is not specified, it is assumed to be the rank
+of the elements of the domain.
 """
-values(data::Data)
+function values end
 
 """
     constructor(D)
 
 Return the constructor of the data type `D` as a function.
-The function takes a `domain` and `table` as inputs and
-combines them into an instance of the data type.
+The function takes a domain and a dictionary of tables as
+inputs and combines them into an instance of the data type.
 """
 function constructor end
 
@@ -47,17 +55,31 @@ function (D::Type{<:Data})(stable)
 
   # build table from remaining columns
   vars = setdiff(Tables.columnnames(ctable), (:geometry,))
-  cols = map(vars) do var
-    var => Tables.getcolumn(ctable, var)
-  end
+  cols = [var => Tables.getcolumn(ctable, var) for var in vars]
   table = (; cols...)
 
+  # data table for elements
+  values = Dict(paramdim(domain) => table)
+
   # combine the two with constructor
-  constructor(D)(domain, table)
+  constructor(D)(domain, values)
 end
 
-==(data₁::Data, data₂::Data) =
-  domain(data₁) == domain(data₂) && values(data₁) == values(data₂)
+function ==(data₁::Data, data₂::Data)
+  # must have the same domain
+  if domain(data₁) != domain(data₂)
+    return false
+  end
+
+  # must have the same data tables
+  for rank in 0:paramdim(domain(data₁))
+    if values(data₁, rank) != values(data₂, rank)
+      return false
+    end
+  end
+
+  return true
+end
 
 # implement Domain traits for convenience
 embeddim(data::Data) = embeddim(domain(data))
@@ -172,7 +194,8 @@ end
 function Base.show(io::IO, ::MIME"text/plain", data::Data)
   𝒟 = domain(data)
   𝒯 = values(data)
-  s = Tables.schema(𝒯)
+  ℛ = Tables.rows(𝒯)
+  s = Tables.schema(ℛ)
   vars = zip(s.names, s.types)
   println(io, data)
   println(io, "  variables")

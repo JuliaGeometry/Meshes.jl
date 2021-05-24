@@ -101,7 +101,8 @@ export
   # points
   Point, Point1, Point2, Point3,
   Point1f, Point2f, Point3f,
-  embeddim, coordtype, coordinates,
+  embeddim, paramdim,
+  coordtype, coordinates,
   ⪯, ≺, ⪰, ≻,
 
   # vectors
@@ -110,10 +111,14 @@ export
   # angles
   ∠,
 
-  # domain/data traits
-  Domain, Data, Variable,
-  domain, constructor, asarray,
+  # domain traits
+  Domain,
+  embeddim, paramdim, coordtype,
   element, nelements,
+
+  # data traits
+  Data, Variable,
+  domain, constructor, asarray,
   variables, name, mactype,
 
   # optional traits
@@ -135,8 +140,7 @@ export
 
   # polytopes
   Polytope, Polygon, Polyhedron,
-  Segment,
-  Ngon, Triangle, Quadrangle,
+  Segment, Ngon, Triangle, Quadrangle,
   Pentagon, Hexagon, Heptagon,
   Octagon, Nonagon, Decagon,
   Chain, PolyArea,

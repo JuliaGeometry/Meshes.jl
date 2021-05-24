@@ -58,13 +58,24 @@ end
 # DATA INTERFACE
 # ---------------
 
-domain(v::DataView) = view(domain(getfield(v, :data)), getfield(v, :inds))
+function domain(v::DataView)
+  data = getfield(v, :data)
+  inds = getfield(v, :inds)
+  view(domain(data), inds)
+end
 
-values(v::DataView) = viewtable(values(getfield(v, :data)), getfield(v, :inds))
+function values(v::DataView, rank=nothing)
+  data = getfield(v, :data)
+  inds = getfield(v, :inds)
+  R = paramdim(domain(data))
+  r = isnothing(rank) ? R : rank
+  𝒯 = values(data, r)
+  r == R ? viewtable(𝒯, inds) : nothing
+end
 
 function constructor(::Type{DataView{D,I}}) where {D<:Data,I}
-  function ctor(domain, table)
-    data = constructor(D)(domain, table)
+  function ctor(domain, values)
+    data = constructor(D)(domain, values)
     inds = 1:nelements(domain)
     DataView(data, inds)
   end

@@ -38,10 +38,13 @@ function Base.view(data::Data, geometry::Geometry)
   tinds  = _linear(dom, inds)
   subtab = viewtable(tab, tinds)
 
+  # data table for elements
+  vals = Dict(paramdim(dom) => subtab)
+
   # constructor for data type
   ctor = constructor(typeof(data))
 
-  ctor(subdom, subtab)
+  ctor(subdom, vals)
 end
 
 # convert from Cartesian to linear indices if needed

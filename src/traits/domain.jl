@@ -59,6 +59,14 @@ embeddim(::Type{<:Domain{Dim,T}}) where {Dim,T} = Dim
 embeddim(domain::Domain) = embeddim(typeof(domain))
 
 """
+    paramdim(domain)
+
+Return the number of parametric dimensions of the `domain` as the number of
+parametric dimensions of its elements.
+"""
+paramdim(domain::Domain) = paramdim(first(domain))
+
+"""
     coordtype(domain)
 
 Return the machine type of each coordinate used to describe the `domain`.
