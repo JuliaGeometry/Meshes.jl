@@ -3,28 +3,28 @@
 # ------------------------------------------------------------------
 
 """
-    SpatialData(domain, values)
+    Metadata(domain, values)
 
 A `domain` together with a dictionary of data `values`. For each rank `r`
 (or parametric dimension) there can exist a corresponding Tables.jl table
 `values[r]`. The helper function [`metadata`](@ref) is recommended instead
 of the raw constructor of the type.
 """
-struct SpatialData{D<:Domain,V<:Dict} <: Data
+struct Metadata{D<:Domain,V<:Dict} <: Data
   domain::D
   values::V
 end
 
-domain(data::SpatialData) = getfield(data, :domain)
+domain(data::Metadata) = getfield(data, :domain)
 
-function values(data::SpatialData, rank=nothing)
+function values(data::Metadata, rank=nothing)
   domain = getfield(data, :domain)
   values = getfield(data, :values)
   r = isnothing(rank) ? paramdim(domain) : rank
   haskey(values, r) ? values[r] : nothing
 end
 
-constructor(::Type{D}) where {D<:SpatialData} = SpatialData
+constructor(::Type{D}) where {D<:Metadata} = Metadata
 
 # ----------------
 # HELPER FUNCTION
@@ -38,7 +38,7 @@ the [`Domain`](@ref) trait and a dictionary of data
 `values` where `values[r]` holds a Tables.jl table
 for the rank `r`.
 """
-metadata(domain::Domain, values::Dict) = SpatialData(domain, values)
+metadata(domain::Domain, values::Dict) = Metadata(domain, values)
 
 """
     metadata(vertices, elements, values)

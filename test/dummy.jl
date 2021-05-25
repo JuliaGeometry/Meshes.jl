@@ -14,5 +14,3 @@ function Meshes.values(data::DummyData, rank=nothing)
 end
 
 Meshes.constructor(::Type{D}) where {D<:DummyData} = DummyData
-
-dummydata(domain, table) = DummyData(domain, Dict(paramdim(domain) => table))

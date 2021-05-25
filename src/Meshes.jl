@@ -230,6 +230,7 @@ export
   spacing,
 
   # metadata
+  Metadata,
   metadata,
 
   # views
