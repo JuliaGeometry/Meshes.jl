@@ -291,3 +291,44 @@ and many geometries and meshes can be directly plotted with Plots.jl:
 ```@example overview
 plot(mesh, linecolor=:black, fillcolor=:gray90)
 ```
+
+### Metadata
+
+To attach metadata to the geometries of a mesh, we can use the
+`metadata` function. For example, we can attach metadata to the
+vertices and elements of the mesh as Tables.jl tables:
+
+```@example overview
+d = metadata(mesh,
+  vtable = (temperature=rand(6), pressure=rand(6)),
+  etable = (quality=["A","B"], state=[true,false])
+)
+```
+
+Other methods are available for attaching metadata to any rank of
+the mesh, e.g. rank 1 (segments), rank 3 (tetrahedrons, hexahedrons).
+
+We can retrieve any table for any rank from the metadata object
+using the `values` function:
+
+```@example overview
+values(d, 0)
+```
+
+```@example overview
+values(d, 2)
+```
+
+When metadata is not available for a given rank, the value `nothing`
+is returned instead:
+
+```@example overview
+values(d, 1) === nothing
+```
+
+The underlying domain where the metadata is defined can be retrieved
+with the `domain` function:
+
+```@example overview
+domain(d)
+```
