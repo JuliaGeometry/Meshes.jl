@@ -5,12 +5,9 @@
 """
     Domain{Dim,T}
 
-A domain is an indexable collection of geometries (i.e. mesh) or points
-where each element can be mapped to a feature vector. For example, a
-collection of polygonal areas representing the states of a country can
-be seen as a domain. In this case, the features can be the name of the
-state, the total population of the state, or any other quantity stored
-in each polygon.
+A domain is an indexable collection of geometries (e.g. mesh) or points
+For example, a collection of polygonal areas representing the states of
+a country can be seen as a domain.
 """
 abstract type Domain{Dim,T} end
 

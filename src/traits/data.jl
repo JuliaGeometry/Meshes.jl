@@ -5,7 +5,10 @@
 """
     Data
 
-A domain together with tables of values for geometries of the domain.
+A domain implementing the [`Domain`](@ref) trait together with tables
+of values for geometries of the domain.
+
+See also [`metadata`](@ref).
 """
 abstract type Data end
 
