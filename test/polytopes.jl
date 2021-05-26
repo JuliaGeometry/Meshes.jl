@@ -150,6 +150,12 @@
     poly = PolyArea(P2[(1,2),(2,3),(1,2)], [P2[(1.1, 2.54),(1.4,1.5),(1.1,2.54)]])
     @test vertices(poly) == CircularVector(P2[(1,2),(2,3),(1.1,2.54),(1.4,1.5)])
 
+    # test constructor with orientation fix
+    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)])
+    @test vertices(poly) == CircularVector(P2[(0,0),(1,0),(1,1),(0,1)])
+    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)], fixorientation=false)
+    @test vertices(poly) == CircularVector(P2[(0,0),(0,1),(1,1),(1,0)])
+
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]
