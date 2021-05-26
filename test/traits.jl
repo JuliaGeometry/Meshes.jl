@@ -40,9 +40,9 @@
 
   @testset "Data" begin
     dummydata(domain, table) = DummyData(domain, Dict(paramdim(domain) => table))
-    dummymeta(domain, table) = metadata(domain, Dict(paramdim(domain) => table))
+    dummymeta(domain, table) = meshdata(domain, Dict(paramdim(domain) => table))
 
-    for (dummy, DummyType) in [(dummydata, DummyData), (dummymeta, Metadata)]
+    for (dummy, DummyType) in [(dummydata, DummyData), (dummymeta, MeshData)]
       # fallback constructor with spatial table
       dom = CartesianGrid{T}(2,2)
       tab = dummydata(dom, (a=[1,2,3,4], b=[5,6,7,8]))

@@ -8,7 +8,7 @@
 A domain implementing the [`Domain`](@ref) trait together with tables
 of values for geometries of the domain.
 
-See also [`metadata`](@ref).
+See also [`meshdata`](@ref).
 """
 abstract type Data end
 

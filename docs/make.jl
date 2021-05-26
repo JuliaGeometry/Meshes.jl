@@ -42,7 +42,7 @@ makedocs(
         "geometries/polytopes.md"
       ],
       "Meshes" => "meshes.md",
-      "Metadata" => "metadata.md",
+      "Mesh data" => "meshdata.md",
       "Neighborhoods" => "neighborhoods.md",
       "Algorithms" => [
         "algorithms/sampling.md",

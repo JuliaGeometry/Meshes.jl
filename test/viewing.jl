@@ -13,7 +13,7 @@
 
   @testset "Data" begin
     dummydata(domain, table) = DummyData(domain, Dict(paramdim(domain) => table))
-    dummymeta(domain, table) = metadata(domain, Dict(paramdim(domain) => table))
+    dummymeta(domain, table) = meshdata(domain, Dict(paramdim(domain) => table))
 
     for dummy in [dummydata, dummymeta]
       g = CartesianGrid{T}(10,10)

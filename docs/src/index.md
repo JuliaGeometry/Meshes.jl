@@ -292,24 +292,30 @@ and many geometries and meshes can be directly plotted with Plots.jl:
 plot(mesh, linecolor=:black, fillcolor=:gray90)
 ```
 
-### Metadata
+### Mesh data
 
-To attach metadata to the geometries of a mesh, we can use the
-`metadata` function. For example, we can attach metadata to the
-vertices and elements of the mesh as Tables.jl tables:
+To attach data to the geometries of a mesh, we can use the
+[`meshdata`](@ref) function, which combines a mesh object
+with a collection of Tables.jl tables. For example, it is
+common to attach a table `vtable` to the vertices and a
+table `etable` to the elements of the mesh:
 
 ```@example overview
-d = metadata(mesh,
+d = meshdata(mesh,
   vtable = (temperature=rand(6), pressure=rand(6)),
   etable = (quality=["A","B"], state=[true,false])
 )
 ```
 
-Other methods are available for attaching metadata to any rank of
-the mesh, e.g. rank 1 (segments), rank 3 (tetrahedrons, hexahedrons).
+More generally, we can attach a table to any rank:
 
-We can retrieve any table for any rank from the metadata object
-using the `values` function:
+- 0 (vertices)
+- 1 (segments)
+- 2 (triangles, quadrangles, ...)
+- 3 (tetrahedrons, hexahedrons, ...)
+
+To retrieve the data table for a given rank we use
+the `values` function:
 
 ```@example overview
 values(d, 0)
@@ -319,15 +325,23 @@ values(d, 0)
 values(d, 2)
 ```
 
-When metadata is not available for a given rank, the value `nothing`
-is returned instead:
+If we ommit the rank, the function will return the `etable`
+of the mesh:
+
+```@example overview
+values(d)
+```
+
+When a table is not available for a given rank, the value
+`nothing` is returned instead:
 
 ```@example overview
 values(d, 1) === nothing
 ```
 
-The underlying domain where the metadata is defined can be retrieved
-with the `domain` function:
+Finally, we can use the `domain` function to retrieve the
+underlying domain of the data, which in this case is a
+`SimpleMesh`:
 
 ```@example overview
 domain(d)

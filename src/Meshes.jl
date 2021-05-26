@@ -61,8 +61,8 @@ include("topologies.jl")
 include("toporelations.jl")
 include("mesh.jl")
 
-# metadata
-include("metadata.jl")
+# mesh data
+include("meshdata.jl")
 
 # miscellaneous
 include("conventions.jl")
@@ -229,9 +229,9 @@ export
   topoconvert,
   spacing,
 
-  # metadata
-  Metadata,
-  metadata,
+  # mesh data
+  MeshData,
+  meshdata,
 
   # views
   DomainView, DataView,
