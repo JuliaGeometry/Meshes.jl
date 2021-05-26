@@ -27,6 +27,7 @@ Base.view(domain::Domain, geometry::Geometry) =
   view(domain, viewindices(domain, geometry))
 
 function Base.view(data::Data, geometry::Geometry)
+  D   = typeof(data)
   dom = domain(data)
   tab = values(data)
 
@@ -41,10 +42,7 @@ function Base.view(data::Data, geometry::Geometry)
   # data table for elements
   vals = Dict(paramdim(dom) => subtab)
 
-  # constructor for data type
-  ctor = constructor(typeof(data))
-
-  ctor(subdom, vals)
+  constructor(D)(subdom, vals)
 end
 
 # convert from Cartesian to linear indices if needed
