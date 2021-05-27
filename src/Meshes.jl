@@ -131,7 +131,7 @@ export
   Geometry,
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
-  centroid, isconvex,
+  centroid, isconvex, issimplex,
 
   # primitives
   Primitive,
@@ -202,6 +202,7 @@ export
   Connectivity,
   paramdim, indices,
   connect, materialize,
+  issimplex,
 
   # topologies
   Topology,

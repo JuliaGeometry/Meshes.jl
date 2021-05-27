@@ -40,6 +40,9 @@ const Octagon    = Ngon{8}
 const Nonagon    = Ngon{9}
 const Decagon    = Ngon{10}
 
+isconvex(::Type{<:Triangle}) = true
+issimplex(::Type{<:Triangle}) = true
+
 # number of vertices is known at compile time
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))

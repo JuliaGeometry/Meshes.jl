@@ -75,6 +75,14 @@ Tells whether or not the `geometry` is convex.
 """
 isconvex(g::Geometry) = isconvex(typeof(g))
 
+"""
+    issimplex(geometry)
+
+Tells whether or not the `geometry` is simplex.
+"""
+issimplex(::Type{<:Geometry}) = false
+issimplex(g::Geometry) = issimplex(typeof(g))
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

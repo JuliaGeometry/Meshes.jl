@@ -28,6 +28,14 @@ paramdim(::Type{Connectivity{PL,N}}) where {PL,N} = paramdim(PL)
 paramdim(c::Connectivity) = paramdim(typeof(c))
 
 """
+    issimplex(connectivity)
+
+Tells whether or not the `connectivity` is simplex.
+"""
+issimplex(::Type{Connectivity{PL,N}}) where {PL,N} = issimplex(PL)
+issimplex(c::Connectivity) = issimplex(typeof(c))
+
+"""
     indices(connectivity)
 
 Return the list of indices of the `connectivity`.
