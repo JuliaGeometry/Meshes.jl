@@ -32,20 +32,6 @@ abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 (::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
 
 """
-    Polygon{Dim,T}
-
-A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
-"""
-const Polygon = Polytope{2}
-
-"""
-    Polyhedron{Dim,T}
-
-A polygon is a 3-polytope, i.e. a polytope with parametric dimension 3.
-"""
-const Polyhedron = Polytope{3}
-
-"""
     paramdim(polytope)
 
 Return the parametric dimension or rank of the polytope.
@@ -80,20 +66,6 @@ Return the centroid of the `polytope`.
 """
 centroid(p::Polytope) = Point(sum(coordinates.(vertices(p))) / length(vertices(p)))
 
-"""
-    area(polygon)
-
-Return the area of the `polygon`.
-"""
-area(p::Polygon) = measure(p)
-
-"""
-   volume(polyhedron)
-
-Return the volume of the `polyhedron`.
-"""
-volume(p::Polyhedron) = measure(p)
-
 function Base.show(io::IO, p::Polytope)
   kind = prettyname(p)
   vert = join(vertices(p), ", ")
@@ -113,6 +85,34 @@ function prettyname(PL::Type{<:Polytope})
   i = findfirst('{', n)
   isnothing(i) ? n : n[1:i-1]
 end
+
+"""
+    Polygon{Dim,T}
+
+A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
+"""
+const Polygon = Polytope{2}
+
+"""
+    area(polygon)
+
+Return the area of the `polygon`.
+"""
+area(p::Polygon) = measure(p)
+
+"""
+    Polyhedron{Dim,T}
+
+A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
+"""
+const Polyhedron = Polytope{3}
+
+"""
+   volume(polyhedron)
+
+Return the volume of the `polyhedron`.
+"""
+volume(p::Polyhedron) = measure(p)
 
 # ----------------
 # IMPLEMENTATIONS
