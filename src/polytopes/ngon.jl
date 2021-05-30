@@ -43,7 +43,6 @@ const Decagon    = Ngon{10}
 isconvex(::Type{<:Triangle}) = true
 issimplex(::Type{<:Triangle}) = true
 
-# number of vertices is known at compile time
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
@@ -67,7 +66,7 @@ function Base.in(p::Point{2}, t::Triangle{2})
   bcp = signarea(b, c, p)
   cap = signarea(c, a, p)
   areas = (abp, bcp, cap)
-  all(areas .≥ 0) || all(areas .≤ 0)
+  all(≥(0), areas) || all(≤(0), areas)
 end
 
 function Base.in(p::Point, q::Quadrangle)
