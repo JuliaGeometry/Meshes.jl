@@ -41,6 +41,7 @@ const Nonagon    = Ngon{9}
 const Decagon    = Ngon{10}
 
 isconvex(::Type{<:Triangle}) = true
+
 issimplex(::Type{<:Triangle}) = true
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
@@ -59,6 +60,8 @@ function measure(ngon::Ngon{N}) where {N}
   v = ngon.vertices
   sum(i -> areaₜ(v[1], v[i], v[i+1]), 2:N-1)
 end
+
+chains(ngon::Ngon) = [Chain(ngon.vertices)]
 
 function Base.in(p::Point{2}, t::Triangle{2})
   a, b, c = t.vertices
