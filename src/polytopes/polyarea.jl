@@ -86,65 +86,6 @@ function Base.unique!(p::PolyArea)
   p
 end
 
-function bridge(p::PolyArea)
-  hasholes(p) || return first(chains(p))
-
-  # retrieve chains with coordinates
-  pchains = [coordinates.(vertices(c)) for c in chains(p)]
-
-  # sort vertices lexicographically
-  coords  = [coord for pchain in pchains for coord in pchain]
-  indices = sortperm(sortperm(coords))
-
-  # each chain has its own set of indices
-  pinds = Vector{Int}[]; offset = 0
-  for nvertex in length.(pchains)
-    push!(pinds, indices[offset+1:offset+nvertex])
-    offset += nvertex
-  end
-
-  # sort chains based on leftmost vertex
-  leftmost = argmin.(pinds)
-  minimums = getindex.(pinds, leftmost)
-  reorder  = sortperm(minimums)
-  leftmost = leftmost[reorder]
-  minimums = minimums[reorder]
-  pchains  = pchains[reorder]
-  pinds    = pinds[reorder]
-
-  # initialize outer boundary
-  outer = first(pchains)
-  oinds = first(pinds)
-
-  # merge islands into outer boundary
-  for i in 2:length(pchains)
-    l = leftmost[i]
-    m = minimums[i]
-    c = pchains[i]
-    o = pinds[i]
-
-    # find closest vertex in boundary
-    dmin, jmin = Inf, 0
-    for j in findall(oinds .≤ m)
-      d = sum(abs, outer[j] - c[l])
-      if d < dmin
-        dmin, jmin = d, j
-      end
-    end
-
-    # insert island at closest vertex
-    island = push!(circshift(c, -l+1), c[l])
-    iinds  = push!(circshift(o, -l+1), o[l])
-    outer = [outer[1:jmin]; island; outer[jmin:end]]
-    oinds = [oinds[1:jmin]; iinds;  oinds[jmin:end]]
-  end
-
-  # close boundary
-  push!(outer, first(outer))
-
-  Chain(Point.(outer))
-end
-
 function Base.in(point::Point, polyarea::PolyArea)
   sideof(point, polyarea.outer) == :INSIDE &&
   all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
