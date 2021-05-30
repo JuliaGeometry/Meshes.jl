@@ -184,6 +184,18 @@
       @test vertices(mesh) == [P2(0,0), P2(1,0), P2(1,1), P2(0,1)]
       @test eltype(elms) <: Triangle
       @test length(elms) == 2
+
+      q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+      t = Triangle(P2(1,0), P2(2,1), P2(1,1))
+      m = Multi([q, t])
+      mesh = discretize(m, method)
+      elms = collect(elements(mesh))
+      @test vertices(mesh) == [vertices(q); vertices(t)]
+      @test vertices(elms[1]) ⊆ vertices(q)
+      @test vertices(elms[2]) ⊆ vertices(q)
+      @test vertices(elms[3]) ⊆ vertices(t)
+      @test eltype(elms) <: Triangle
+      @test length(elms) == 3
     end
   end
 end

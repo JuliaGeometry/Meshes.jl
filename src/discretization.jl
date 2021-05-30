@@ -16,6 +16,9 @@ Discretize `geometry` with discretization `method`.
 """
 function discretize end
 
+discretize(multi::Multi, method::DiscretizationMethod) =
+  mapreduce(geometry -> discretize(geometry, method), merge, multi)
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
