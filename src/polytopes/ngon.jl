@@ -63,6 +63,9 @@ end
 
 chains(ngon::Ngon) = [Chain(ngon.vertices)]
 
+# N-gon already has unique vertices
+Base.unique!(ngon::Ngon) = ngon
+
 function Base.in(p::Point{2}, t::Triangle{2})
   a, b, c = t.vertices
   abp = signarea(a, b, p)
