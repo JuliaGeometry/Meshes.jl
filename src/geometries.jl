@@ -130,3 +130,8 @@ function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   G = eltype(multi.items)
   print(io, "$n Multi-$(nameof(G)){$Dim,$T}")
 end
+
+function Base.show(io::IO, ::MIME"text/plain", multi::Multi)
+  println(io, multi)
+  print(io, io_lines(multi, "  "))
+end
