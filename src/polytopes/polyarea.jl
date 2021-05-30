@@ -92,21 +92,22 @@ function Base.in(point::Point, polyarea::PolyArea)
 end
 
 function Base.show(io::IO, p::PolyArea)
-  outer = p.outer
-  inner = isempty(p.inners) ? "" : ", "*join(p.inners, ", ")
-  print(io, "PolyArea($outer$inner)")
+  nverts = [[nvertices(p.outer)]; nvertices.(p.inners)]
+  chains = join(["$n-chain" for n in nverts], ", ")
+  print(io, "PolyArea($chains)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
-  outer = "    └─$(p.outer)"
-  inner = ["    └─$v" for v in p.inners]
+  nverts = [[nvertices(p.outer)]; nvertices.(p.inners)]
+  chains = ["$n-chain" for n in nverts]
   println(io, "PolyArea{$Dim,$T}")
-  println(io, "  outer")
-  if isempty(inner)
-    print(io, outer)
+  if length(chains) == 1
+    println(io, "  outer")
+    print(io, io_lines(chains[1:1], "    "))
   else
-    println(io, outer)
+    println(io, "  outer")
+    println(io, io_lines(chains[1:1], "    "))
     println(io, "  inner")
-    print(io, join(inner, "\n"))
+    print(io, io_lines(chains[2:end], "    "))
   end
 end
