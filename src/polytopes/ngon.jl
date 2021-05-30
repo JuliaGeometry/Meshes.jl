@@ -61,6 +61,8 @@ function measure(ngon::Ngon{N}) where {N}
   sum(i -> areaₜ(v[1], v[i], v[i+1]), 2:N-1)
 end
 
+hasholes(::Ngon) = false
+
 chains(ngon::Ngon) = [Chain(ngon.vertices)]
 
 # N-gon already has unique vertices
