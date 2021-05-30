@@ -63,7 +63,7 @@ end
 
 hasholes(::Ngon) = false
 
-chains(ngon::Ngon) = [Chain(ngon.vertices)]
+chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
 # N-gon already has unique vertices
 Base.unique!(ngon::Ngon) = ngon
