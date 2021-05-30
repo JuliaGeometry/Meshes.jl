@@ -161,6 +161,9 @@ export
   WindingOrientation,
   TriangleOrientation,
 
+  # point or geometry alias
+  PointOrGeometry,
+
   # multi-types
   Multi,
 
