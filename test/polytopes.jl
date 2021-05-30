@@ -92,6 +92,11 @@
     @test c2 isa Chain{2,T,Vector{P2}}
     @test c1 == c2 == c3 == c4
 
+    # nvertices vs npoints
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test nvertices(c) == 4
+    @test Meshes.npoints(c) == 5
+
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])
     @test collect(segments(c)) == [Segment(P2(1,1),P2(2,2)),Segment(P2(2,2),P2(3,3))]

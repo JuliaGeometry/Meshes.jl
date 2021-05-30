@@ -18,7 +18,30 @@ Chain(vertices::Vararg{<:Point}) = Chain(collect(vertices))
 Chain(vertices::CircularVector) =
   Chain([collect(vertices); vertices[begin]])
 
-nvertices(c::Chain) = length(c.vertices) - isclosed(c)
+"""
+    npoints(chain)
+
+Return the total number of points used to represent the
+chain, no matter if it is closed or open.
+
+See also [`nvertices`](@ref).
+
+### Notes
+
+This function is provided for IO purposes. Most algorithms
+should be written in terms of `nvertices` and `vertices`
+as they are consistent with each other.
+"""
+npoints(c::Chain) = length(c.vertices)
+
+"""
+    nvertices(chain)
+
+Return the number of vertices of the `chain`. In the case
+that the chain is closed, the number of vertices is one
+less the total number of points used to represent the chain.
+"""
+nvertices(c::Chain) = npoints(c) - isclosed(c)
 
 """
     vertices(chain)
@@ -42,9 +65,9 @@ end
 Return the segments linking consecutive points of the `chain`.
 """
 function segments(c::Chain)
-  vs = c.vertices
-  n = length(vs)
-  (Segment(view(vs, [i,i+1])) for i in 1:n-1)
+  v = c.vertices
+  n = length(v)
+  (Segment(view(v, [i,i+1])) for i in 1:n-1)
 end
 
 """
@@ -265,7 +288,7 @@ end
 Base.view(c::Chain, inds) = Chain(view(vertices(c), inds))
 
 function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
-  N = length(c.vertices)
+  N = npoints(c)
   print(io, "$N-Chain{$Dim,$T}")
 end
 
