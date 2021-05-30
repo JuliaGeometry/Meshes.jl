@@ -66,6 +66,20 @@ Return the centroid of the `polytope`.
 """
 centroid(p::Polytope) = Point(sum(coordinates.(vertices(p))) / length(vertices(p)))
 
+"""
+    unique(polytope)
+
+Return a new `polytope` without duplicate vertices.
+"""
+Base.unique(p::Polytope) = unique!(deepcopy(p))
+
+"""
+    unique!(polytope)
+
+Remove duplicate vertices in `polytope`.
+"""
+function Base.unique!(::Polytope) end
+
 function Base.show(io::IO, p::Polytope)
   kind = prettyname(p)
   vert = join(vertices(p), ", ")
@@ -86,6 +100,10 @@ function prettyname(PL::Type{<:Polytope})
   isnothing(i) ? n : n[1:i-1]
 end
 
+# --------
+# POLYGON
+# --------
+
 """
     Polygon{Dim,T}
 
@@ -99,6 +117,60 @@ const Polygon = Polytope{2}
 Return the area of the `polygon`.
 """
 area(p::Polygon) = measure(p)
+
+"""
+    chains(polygon)
+
+Return the outer and inner chains of the polygon.
+"""
+function chains(::Polygon) end
+
+"""
+    hasholes(polygon)
+
+Tells whether or not the `polygon` contains holes.
+"""
+function hasholes(::Polygon) end
+
+"""
+    issimple(polygon)
+
+Tells whether or not the `polygon` is simple.
+See https://en.wikipedia.org/wiki/Simple_polygon.
+"""
+function issimple(::Polygon) end
+
+"""
+    windingnumber(point, polygon)
+
+Winding number of `point` with respect to the `polygon`.
+"""
+function windingnumber(::Point, ::Polygon) end
+
+"""
+    orientation(polygon)
+
+Returns the orientation of the rings of the `polygon`
+as either counter-clockwise (CCW) or clockwise (CW).
+"""
+function orientation(::Polygon) end
+
+"""
+    bridge(polygon)
+
+Transform `polygon` with holes into a single outer chain
+via bridges as described in Held 1998.
+
+## References
+
+* Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
+  (https://link.springer.com/article/10.1007/s00453-001-0028-4)
+"""
+function bridge(::Polygon) end
+
+# -----------
+# POLYHEDRON
+# -----------
 
 """
     Polyhedron{Dim,T}

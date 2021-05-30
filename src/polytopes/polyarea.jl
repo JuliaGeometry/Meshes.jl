@@ -68,76 +68,24 @@ nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, 
 
 centroid(p::PolyArea) = centroid(p.outer)
 
-"""
-    chains(polyarea)
-
-Return the outer and inner chains of the polygon.
-"""
 chains(p::PolyArea) = [p.outer; p.inners]
 
-"""
-    hasholes(polyarea)
-
-Tells whether or not the `polyarea` contains holes.
-"""
 hasholes(p::PolyArea) = !isempty(p.inners)
 
-"""
-    issimple(polyarea)
-
-Tells whether or not the `polyarea` is a simple polygon.
-See https://en.wikipedia.org/wiki/Simple_polygon.
-"""
 issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
 
-"""
-    windingnumber(point, polyarea)
-
-Winding number of `point` with respect to the `polyarea`.
-"""
 windingnumber(point::Point, p::PolyArea) =
   windingnumber(point, p.outer)
 
-"""
-    orientation(polyarea)
-
-Returns the orientation of the `polyarea` as either
-counter-clockwise (CCW) or clockwise (CW).
-
-For polygons with holes, returns a list of orientations.
-"""
 orientation(p::PolyArea, algo=WindingOrientation()) =
   orientation.([p.outer; p.inners], Ref(algo))
 
-"""
-    unique(polyarea)
-
-Return a new `polyarea` without duplicate vertices.
-"""
-Base.unique(p::PolyArea) = unique!(deepcopy(p))
-
-"""
-    unique!(polyarea)
-
-Remove duplicate vertices in `polyarea`.
-"""
 function Base.unique!(p::PolyArea)
   close!(unique!(open!(p.outer)))
   hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
   p
 end
 
-"""
-    bridge(polyarea)
-
-Transform `polyarea` with holes into a single
-outer chain via bridges.
-
-## References
-
-* Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
-  (https://link.springer.com/article/10.1007/s00453-001-0028-4)
-"""
 function bridge(p::PolyArea)
   hasholes(p) || return first(chains(p))
 
