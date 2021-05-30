@@ -114,13 +114,38 @@ newmesh = topoconvert(HalfEdgeTopology, mesh)
 topoconvert(TP::Type{<:Topology}, m::Mesh) =
   SimpleMesh(vertices(m), convert(TP, topology(m)))
 
-# ----------
-# FALLBACKS
-# ----------
+"""
+    merge(mesh₁, mesh₂)
 
-==(m1::Mesh, m2::Mesh) =
-  vertices(m1) == vertices(m2) &&
-  topology(m1) == topology(m2)
+Merge `mesh₁` with `mesh₂`, i.e. concatenate the vertices
+and adjust the connectivities accordingly.
+"""
+function Base.merge(m₁::Mesh, m₂::Mesh)
+  t₁ = topology(m₁)
+  t₂ = topology(m₂)
+  v₁ = collect(vertices(m₁))
+  v₂ = collect(vertices(m₂))
+  e₁ = collect(elements(t₁))
+  e₂ = collect(elements(t₂))
+
+  # concatenate vertices
+  points = [v₁; v₂]
+
+  # concatenate connectivities
+  connec = e₁
+  offset = length(v₁)
+  for e in e₂
+    c  = indices(e)
+    c′ = ntuple(i -> c[i] + offset, length(c))
+    push!(connec, connect(c′))
+  end
+
+  SimpleMesh(points, connec)
+end
+
+==(m₁::Mesh, m₂::Mesh) =
+  vertices(m₁) == vertices(m₂) &&
+  topology(m₁) == topology(m₂)
 
 # -----------
 # IO METHODS

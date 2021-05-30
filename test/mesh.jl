@@ -171,6 +171,13 @@
     @test centroid(mesh, 3) == centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)]))
     @test centroid(mesh, 4) == centroid(Triangle(P2[(0,1), (0,0), (0.5,0.5)]))
 
+    # merge operation
+    mesh₁ = SimpleMesh(P2[(0,0), (1,0), (0,1)], connect.([(1,2,3)]))
+    mesh₂ = SimpleMesh(P2[(1,0), (1,1), (0,1)], connect.([(1,2,3)]))
+    mesh  = merge(mesh₁, mesh₂)
+    @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
+    @test collect(elements(topology(mesh))) == connect.([(1,2,3),(4,5,6)])
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = SimpleMesh(points, connec)
