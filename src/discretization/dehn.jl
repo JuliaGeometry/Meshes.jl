@@ -19,7 +19,7 @@ with small number of vertices. Currently, the implementation does not support ho
 * Devadoss, S & Rourke, J. 2011. [Discrete and computational geometry]
   (https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
 """
-struct Dehn1899 end
+struct Dehn1899 <: DiscretizationMethod end
 
 function discretize(polygon::Polygon, ::Dehn1899)
   # build bridges in case the polygon has holes,
