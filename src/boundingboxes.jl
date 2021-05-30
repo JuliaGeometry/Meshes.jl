@@ -33,10 +33,7 @@ end
 
 Axis-aligned bounding box of the `domain`.
 """
-boundingbox(domain::Domain) =
-  boundingbox([centroid(domain, i) for i in 1:nelements(domain)])
-
-boundingbox(pset::PointSet) = boundingbox(collect(pset))
+boundingbox(domain::Domain) = boundingbox(collect(domain))
 
 boundingbox(grid::CartesianGrid) = Box(extrema(grid)...)
 
@@ -61,6 +58,8 @@ function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
   Box(Point(xmin), Point(xmax))
 end
 
-function boundingbox(geometries::AbstractVector{<:Geometry})
-  # TODO: implement in terms of boundingbox(geom) above
-end
+boundingbox(boxes::AbstractVector{<:Box{Dim}}) where {Dim} =
+  boundingbox([point for box in boxes for point in extrema(box)])
+
+boundingbox(geometries::AbstractVector{<:Geometry}) =
+  boundingbox(boundingbox.(geometries))
