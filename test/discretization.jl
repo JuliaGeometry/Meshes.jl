@@ -170,4 +170,20 @@
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
   end
+
+  @testset "Miscellaneous" begin
+    for method in [FIST(), Dehn1899()]
+      triangle = Triangle(P2(0,0), P2(1,0), P2(0,1))
+      mesh = discretize(triangle, method)
+      @test vertices(mesh) == [P2(0,0), P2(1,0), P2(0,1)]
+      @test collect(elements(mesh)) == [triangle]
+
+      quadrangle = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+      mesh = discretize(quadrangle, method)
+      elms = collect(elements(mesh))
+      @test vertices(mesh) == [P2(0,0), P2(1,0), P2(1,1), P2(0,1)]
+      @test eltype(elms) <: Triangle
+      @test length(elms) == 2
+    end
+  end
 end

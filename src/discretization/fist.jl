@@ -31,10 +31,10 @@ end
 
 FIST() = FIST(true)
 
-function discretize(polyarea::PolyArea, method::FIST)
-  # build bridges in case the polygonal area has
-  # holes, i.e. reduce to a single outer boundary
-  𝒫 = polyarea |> unique |> bridge
+function discretize(polygon::Polygon, method::FIST)
+  # build bridges in case the polygon has holes,
+  # i.e. reduce to a single outer boundary
+  𝒫 = polygon |> unique |> bridge
 
   # points of resulting mesh
   points = vertices(𝒫)
