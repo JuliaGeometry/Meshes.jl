@@ -125,6 +125,10 @@ function centroid(multi::Multi)
   Point(sum(cs) / length(cs))
 end
 
+==(multi₁::Multi, multi₂::Multi) =
+  length(multi₁) == length(multi₂) &&
+  all(g -> g[1] == g[2], zip(multi₁, multi₂))
+
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)
   G = eltype(multi.items)
