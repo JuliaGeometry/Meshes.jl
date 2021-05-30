@@ -21,11 +21,7 @@ with small number of vertices. Currently, the implementation does not support ho
 """
 struct Dehn1899 <: DiscretizationMethod end
 
-function discretize(polygon::Polygon, ::Dehn1899)
-  # build bridges in case the polygon has holes,
-  # i.e. reduce to a single outer boundary
-  𝒫 = polygon |> unique |> bridge
-
+function discretize(𝒫::Chain, ::Dehn1899)
   # points on resulting mesh
   points = collect(vertices(𝒫))
 
