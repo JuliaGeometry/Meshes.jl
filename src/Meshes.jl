@@ -35,6 +35,9 @@ import TableTraits
 import IteratorInterfaceExtensions
 const IIE = IteratorInterfaceExtensions
 
+# IO utils
+include("ioutils.jl")
+
 # numerical tolerances
 include("tolerances.jl")
 

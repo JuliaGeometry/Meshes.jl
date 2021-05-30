@@ -159,19 +159,9 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
   nelms = nelements(m)
   println(io, m)
   println(io, "  $nvert vertices")
-  println(io, _lines(verts, "    "))
+  println(io, io_lines(verts, "    "))
   println(io, "  $nelms elements")
-  print(  io, _lines(elems, "    "))
-end
-
-function _lines(itr, tab="  ")
-  vec = collect(itr)
-  N = length(vec)
-  I, J = N > 10 ? (5, N-4) : (N, N+1)
-  lines = [["$(tab)└─$(vec[i])" for i in 1:I]
-           (N > 10 ? ["$(tab)⋮"] : [])
-           ["$(tab)└─$(vec[i])" for i in J:N]]
-  join(lines, "\n")
+  print(  io, io_lines(elems, "    "))
 end
 
 # ----------------
