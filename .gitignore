@@ -7,3 +7,4 @@ Manifest.toml
 docs/build
 /.benchmarkci
 /benchmark/*.json
+docs/src/assets/themes/
