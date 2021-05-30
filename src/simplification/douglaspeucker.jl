@@ -18,15 +18,6 @@ struct DouglasPeucker{T} <: SimplificationMethod
   ϵ::T
 end
 
-function simplify(multi::Multi, method::DouglasPeucker)
-  Multi([simplify(geom, method) for geom in multi])
-end
-
-function simplify(polyarea::PolyArea, method::DouglasPeucker)
-  c = [simplify(chain, method) for chain in chains(polyarea)]
-  PolyArea(c[1], c[2:end])
-end
-
 function simplify(chain::Chain, method::DouglasPeucker)
   v = simplify(vertices(chain), method)
   isclosed(chain) ? Chain([v; first(v)]) : Chain(v)
