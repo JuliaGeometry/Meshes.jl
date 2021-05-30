@@ -129,6 +129,9 @@ end
   length(multi₁) == length(multi₂) &&
   all(g -> g[1] == g[2], zip(multi₁, multi₂))
 
+chains(multi::Multi{Dim,T,<:Polygon{Dim,T}}) where {Dim,T} =
+  [chain for geom in multi for chain in chains(geom)]
+
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)
   G = eltype(multi.items)

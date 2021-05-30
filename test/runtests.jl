@@ -56,6 +56,7 @@ testfiles = [
   "angles.jl",
   "polytopes.jl",
   "primitives.jl",
+  "multi.jl",
   "collections.jl",
   "connectivities.jl",
   "topologies.jl",
