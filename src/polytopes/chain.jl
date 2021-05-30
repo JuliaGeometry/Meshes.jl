@@ -266,7 +266,7 @@ Base.view(c::Chain, inds) = Chain(view(vertices(c), inds))
 
 function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
   N = length(c.vertices)
-  print(io, "$N-chain{$Dim,$T}")
+  print(io, "$N-Chain{$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
