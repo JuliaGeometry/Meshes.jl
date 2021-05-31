@@ -160,15 +160,15 @@
     @test paramdim(PolyArea) == 2
 
     # test accessor methods
-    poly = PolyArea(P2[(1,2),(2,3),(1,2)])
+    poly = PolyArea(P2[(1,2),(2,3),(1,2)], fix=false)
     @test vertices(poly) == CircularVector(P2[(1,2),(2,3)])
-    poly = PolyArea(P2[(1,2),(2,3),(1,2)], [P2[(1.1, 2.54),(1.4,1.5),(1.1,2.54)]])
+    poly = PolyArea(P2[(1,2),(2,3),(1,2)], [P2[(1.1, 2.54),(1.4,1.5),(1.1,2.54)]], fix=false)
     @test vertices(poly) == CircularVector(P2[(1,2),(2,3),(1.1,2.54),(1.4,1.5)])
 
     # test constructor with orientation fix
     poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)])
     @test vertices(poly) == CircularVector(P2[(0,0),(1,0),(1,1),(0,1)])
-    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)], fixorientation=false)
+    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)], fix=false)
     @test vertices(poly) == CircularVector(P2[(0,0),(0,1),(1,1),(1,0)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)

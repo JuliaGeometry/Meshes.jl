@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    PolyArea(outer, [inner1, inner2, ..., innerk]; [options])
+    PolyArea(outer, [inner1, inner2, ..., innerk]; fix=true)
 
 A polygonal area with `outer` chain, and optional inner
 chains `inner1`, `inner2`, ..., `innerk`.
@@ -11,49 +11,63 @@ chains `inner1`, `inner2`, ..., `innerk`.
 Chains can be a vector of [`Point`](@ref) or a
 vector of tuples with coordinates for convenience.
 
-## Options
+The option `fix` tries to correct issues with polygons
+in the real world, including issues with:
 
-* `fixorientation` - Most algorithms assume that the
-  outer chain is oriented counter-clockwise (CCW) and
-  that all inner chains are oriented clockwise (CW).
-  The constructor will fix the orientation by default,
-  but this behavior can be disabled with the option.
+* `orientation` - Most algorithms assume that the
+  outer ring is oriented counter-clockwise (CCW) and
+  that all inner rings are oriented clockwise (CW).
+
+* `degeneracy` - Sometimes data is shared with
+  degenerate rings (i.e. only 2 vertices).
 """
 struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   outer::C
   inners::Vector{C}
 
-  function PolyArea{Dim,T,C}(outer, inners, fixorientation) where {Dim,T,C}
+  function PolyArea{Dim,T,C}(outer, inners, fix) where {Dim,T,C}
     @assert isclosed(outer) "invalid outer chain"
     @assert all(isclosed.(inners)) "invalid inner chains"
 
-    if fixorientation
-      fix(c, o) = orientation(c) == o ? c : reverse(c)
-      ofixed = fix(outer, :CCW)
-      ifixed = map(c -> fix(c, :CW), inners)
-      new(ofixed, ifixed)
-    else
-      new(outer, inners)
+    if fix
+      # fix orientation
+      fix1(c, o) = orientation(c) == o ? c : reverse(c)
+      outer  = fix1(outer, :CCW)
+      inners = fix1.(inners, :CW)
+
+      # fix degeneracy
+      function fix2(c)
+        if nvertices(c) == 2
+          v = vertices(c)
+          A, B = v[1], v[2]
+          M = centroid(Segment(v[1], v[2]))
+          Chain([A, M, B, A])
+        else
+          c
+        end
+      end
+      outer  = fix2(outer)
+      inners = fix2.(inners)
     end
+
+    new(outer, inners)
   end
 end
 
-PolyArea(outer::C, inners=[]; fixorientation=true) where {Dim,T,C<:Chain{Dim,T}} =
-  PolyArea{Dim,T,Chain{Dim,T}}(outer, inners, fixorientation)
+PolyArea(outer::C, inners=[]; fix=true) where {Dim,T,C<:Chain{Dim,T}} =
+  PolyArea{Dim,T,Chain{Dim,T}}(outer, inners, fix)
 
-PolyArea(outer::AbstractVector{P}, inners=[]; fixorientation=true) where {P<:Point} =
-  PolyArea(Chain(outer), [Chain(inner) for inner in inners];
-           fixorientation=fixorientation)
+PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
+  PolyArea(Chain(outer), [Chain(inner) for inner in inners]; fix=fix)
 
-PolyArea(outer::AbstractVector{TP}, inners=[]; fixorientation=true) where {TP<:Tuple} =
-  PolyArea(Point.(outer), [Point.(inner) for inner in inners];
-           fixorientation=fixorientation)
+PolyArea(outer::AbstractVector{TP}, inners=[]; fix=true) where {TP<:Tuple} =
+  PolyArea(Point.(outer), [Point.(inner) for inner in inners]; fix=fix)
 
-PolyArea(outer::Vararg{P}; fixorientation=true) where {P<:Point} =
-  PolyArea(collect(outer); fixorientation=fixorientation)
+PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} =
+  PolyArea(collect(outer); fix=fix)
 
-PolyArea(outer::Vararg{TP}; fixorientation=true) where {TP<:Tuple} =
-  PolyArea(collect(Point.(outer)); fixorientation=fixorientation)
+PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} =
+  PolyArea(collect(Point.(outer)); fix=fix)
 
 ==(p1::PolyArea, p2::PolyArea) =
   p1.outer == p2.outer && p1.inners == p2.inners
