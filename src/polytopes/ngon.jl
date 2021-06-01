@@ -77,9 +77,11 @@ function Base.in(p::Point{2}, t::Triangle{2})
   all(≥(0), areas) || all(≤(0), areas)
 end
 
-function Base.in(p::Point, q::Quadrangle)
-  vs = q.vertices
-  Δ₁ = Triangle(view(vs, [1,2,3]))
-  Δ₂ = Triangle(view(vs, [3,4,1]))
-  p ∈ Δ₁ || p ∈ Δ₂
+function Base.in(p::Point, ngon::Ngon{N}) where {N}
+  # decompose n-gons into triangles by
+  # fan triangulation (assumes convexity)
+  # https://en.wikipedia.org/wiki/Fan_triangulation
+  v = ngon.vertices
+  Δ(i) = Triangle(view(v, [1,i,i+1]))
+  any(i -> p ∈ Δ(i), 2:N-1)
 end
