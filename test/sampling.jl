@@ -1,3 +1,4 @@
+using Base: need_full_hex
 @testset "Sampling" begin
   @testset "UniformSampling" begin
     Random.seed!(2021)
@@ -108,6 +109,16 @@
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, HomogeneousSampling(400))
     @test all(∈(mesh), ps)
+  end
+
+  @testset "MinDistanceSampling" begin
+    points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
+    connec = connect.([(3,1,5),(4,6,2),(1,2,6,5),(5,6,4,3)])
+    mesh = SimpleMesh(points, connec)
+    ps = sample(mesh, MinDistanceSampling(0.2))
+    n = length(ps)
+    @test all(∈(mesh), ps)
+    @test all(norm(ps[i] - ps[j]) ≥ 0.2 for i in 1:n for j in i+1:n)
   end
 
   @testset "Utilities" begin

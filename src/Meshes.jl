@@ -260,6 +260,7 @@ export
   BallSampling,
   RegularSampling,
   HomogeneousSampling,
+  MinDistanceSampling,
   sample,
 
   # partitioning
