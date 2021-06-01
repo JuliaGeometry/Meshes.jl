@@ -259,6 +259,7 @@ export
   WeightedSampling,
   BallSampling,
   RegularSampling,
+  HomogeneousSampling,
   sample,
 
   # partitioning

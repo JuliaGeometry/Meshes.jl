@@ -1,4 +1,41 @@
 @testset "Sampling" begin
+  @testset "UniformSampling" begin
+    Random.seed!(2021)
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, UniformSampling(100))
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    @test nelements(s) == 100
+    @test isapprox(μ, T[50.,50.], atol=T(10))
+  end
+
+  @testset "WeightedSampling" begin
+    # uniform weights => uniform sampler
+    Random.seed!(2020)
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, WeightedSampling(100))
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    @test nelements(s) == 100
+    @test isapprox(μ, T[50.,50.], atol=T(10))
+  end
+
+  @testset "BallSampling" begin
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, BallSampling(T(10)))
+    n = nelements(s)
+    x = coordinates(centroid(s, 1))
+    y = coordinates(centroid(s, 17))
+    @test n < 100
+    @test sqrt(sum((x - y).^2)) ≥ T(10)
+
+    d = CartesianGrid{T}(100,100)
+    s = sample(d, BallSampling(T(20)))
+    n = nelements(s)
+    x = coordinates(centroid(s, 1))
+    y = coordinates(centroid(s, 17))
+    @test n < 50
+    @test sqrt(sum((x - y).^2)) ≥ T(20)
+  end
+
   @testset "RegularSampling" begin
     b = Box(P2(0, 0), P2(2, 2))
     ps = sample(b, RegularSampling(3))
@@ -57,45 +94,10 @@
     end
   end
 
-  @testset "UniformSampling" begin
-    Random.seed!(2021)
-    d = CartesianGrid{T}(100,100)
-    s = sample(d, UniformSampling(100))
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
-    @test nelements(s) == 100
-    @test isapprox(μ, T[50.,50.], atol=T(10))
-
+  @testset "HomogeneousSampling" begin
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
-    ps = sample(t, UniformSampling(100))
+    ps = sample(t, HomogeneousSampling(100))
     @test all(∈(t), ps)
-  end
-
-  @testset "WeightedSampling" begin
-    # uniform weights => uniform sampler
-    Random.seed!(2020)
-    d = CartesianGrid{T}(100,100)
-    s = sample(d, WeightedSampling(100))
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
-    @test nelements(s) == 100
-    @test isapprox(μ, T[50.,50.], atol=T(10))
-  end
-
-  @testset "BallSampling" begin
-    d = CartesianGrid{T}(100,100)
-    s = sample(d, BallSampling(T(10)))
-    n = nelements(s)
-    x = coordinates(centroid(s, 1))
-    y = coordinates(centroid(s, 17))
-    @test n < 100
-    @test sqrt(sum((x - y).^2)) ≥ T(10)
-
-    d = CartesianGrid{T}(100,100)
-    s = sample(d, BallSampling(T(20)))
-    n = nelements(s)
-    x = coordinates(centroid(s, 1))
-    y = coordinates(centroid(s, 17))
-    @test n < 50
-    @test sqrt(sum((x - y).^2)) ≥ T(20)
   end
 
   @testset "Utilities" begin

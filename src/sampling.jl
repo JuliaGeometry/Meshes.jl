@@ -46,6 +46,7 @@ include("sampling/ball.jl")
 
 # continuous sampling
 include("sampling/regular.jl")
+include("sampling/homogeneous.jl")
 
 # ----------
 # UTILITIES
