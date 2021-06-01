@@ -64,6 +64,10 @@
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.,50.], atol=T(10))
+
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    ps = sample(t, UniformSampling(100))
+    @test all(∈(t), ps)
   end
 
   @testset "WeightedSampling" begin
