@@ -90,6 +90,13 @@ function centroid(domain::Domain)
   Point(sum(coords(ind) for ind in 1:nelm) / nelm)
 end
 
+"""
+    point ∈ domain
+
+Tells whether or not the `point` is in the `domain`.
+"""
+Base.in(p::Point, domain::Domain) = any(e -> p ∈ e, domain)
+
 # -----------
 # IO METHODS
 # -----------

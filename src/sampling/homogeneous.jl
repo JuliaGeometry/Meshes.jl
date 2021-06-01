@@ -12,6 +12,24 @@ struct HomogeneousSampling <: ContinuousSamplingMethod
   size::Int
 end
 
+function sample(object, method::HomogeneousSampling)
+  size    = method.size
+  weights = measure.(object)
+
+  # sample elements with weights proportial to measure
+  w = WeightedSampling(size, weights, replace=true)
+
+  # within each element sample a single point
+  h = HomogeneousSampling(1)
+
+  ivec(first(sample(e, h)) for e in sample(object, w))
+end
+
+function sample(polygon::Polygon, method::HomogeneousSampling)
+  mesh = discretize(polygon, Dehn1899())
+  sample(mesh, method)
+end
+
 function sample(triangle::Triangle, method::HomogeneousSampling)
   A, B, C = coordinates.(vertices(triangle))
   function randpoint()

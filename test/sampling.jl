@@ -98,6 +98,16 @@
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     ps = sample(t, HomogeneousSampling(100))
     @test all(∈(t), ps)
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    ps = sample(q, HomogeneousSampling(100))
+    @test all(∈(q), ps)
+
+    points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
+    connec = connect.([(3,1,5),(4,6,2),(1,2,6,5),(5,6,4,3)])
+    mesh = SimpleMesh(points, connec)
+    ps = sample(mesh, HomogeneousSampling(400))
+    @test all(∈(mesh), ps)
   end
 
   @testset "Utilities" begin
