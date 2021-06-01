@@ -13,7 +13,7 @@ according to a norm-ball of given `radius`.
 * `metric`  - Metric for the ball (default to `Euclidean()`)
 * `maxsize` - Maximum size of the resulting sample (default to none)
 """
-struct BallSampling{T,M} <: SamplingMethod
+struct BallSampling{T,M} <: DiscreteSamplingMethod
   radius::T
   metric::M
   maxsize::Union{Int,Nothing}

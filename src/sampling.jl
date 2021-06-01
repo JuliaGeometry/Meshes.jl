@@ -5,14 +5,33 @@
 """
     SamplingMethod
 
-A method for sampling from geometries.
+A method for sampling from geometric objects.
 """
 abstract type SamplingMethod end
 
 """
-    sample(geometry, method)
+    DiscreteSamplingMethod
 
-Sample elements from `geometry` with `method`.
+A method for sampling from discrete representations
+of geometric objects such as meshes or collections
+of geometries.
+"""
+abstract type DiscreteSamplingMethod end
+
+"""
+    ContinuousSamplingMethod
+
+A method for sampling from continuous representations
+of geometric objects. In this case, geometric objects
+are interpreted as a set of points in the embedding
+space.
+"""
+abstract type ContinuousSamplingMethod end
+
+"""
+    sample(object, method)
+
+Sample elements from `object` with `method`.
 """
 function sample end
 

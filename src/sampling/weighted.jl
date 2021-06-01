@@ -9,7 +9,7 @@ Sample elements from a given domain/data using `weights`. Produce a sample
 of given `size` with or without replacement depending on the `replace`
 option. By default weights are uniform.
 """
-struct WeightedSampling{W} <: SamplingMethod
+struct WeightedSampling{W} <: DiscreteSamplingMethod
   size::Int
   weights::W
   replace::Bool

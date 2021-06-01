@@ -17,7 +17,7 @@ Sample sphere regularly with 360 longitudes and 180 latitudes:
 sample(Sphere((0,0,0), 1), RegularSampling(360, 180))
 ```
 """
-struct RegularSampling{N} <: SamplingMethod
+struct RegularSampling{N} <: ContinuousSamplingMethod
   sizes::NTuple{N,Int}
 end
 

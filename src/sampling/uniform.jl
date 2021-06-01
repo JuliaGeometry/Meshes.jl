@@ -9,7 +9,7 @@ Sample elements uniformly from a given domain/data. Produce a
 sample of given `size` with or without replacement depending on
 the `replace` option.
 """
-struct UniformSampling <: SamplingMethod
+struct UniformSampling <: DiscreteSamplingMethod
   size::Int
   replace::Bool
 end
