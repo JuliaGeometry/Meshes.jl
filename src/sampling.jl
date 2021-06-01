@@ -39,10 +39,13 @@ function sample end
 # IMPLEMENTATIONS
 # ----------------
 
-include("sampling/regular.jl")
+# discrete sampling
 include("sampling/uniform.jl")
 include("sampling/weighted.jl")
 include("sampling/ball.jl")
+
+# continuous sampling
+include("sampling/regular.jl")
 
 # ----------
 # UTILITIES

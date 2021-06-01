@@ -3,28 +3,20 @@
 ```@docs
 sample
 SamplingMethod
+DiscreteSamplingMethod
+ContinuousSamplingMethod
 ```
 
-## Regular
-
-```@docs
-RegularSampling
-```
-
-## Uniform
+## Discrete sampling
 
 ```@docs
 UniformSampling
-```
-
-## Weighted
-
-```@docs
 WeightedSampling
+BallSampling
 ```
 
-## Ball
+## Continuous sampling
 
 ```@docs
-BallSampling
+RegularSampling
 ```

@@ -253,10 +253,12 @@ export
 
   # sampling
   SamplingMethod,
-  RegularSampling,
+  DiscreteSamplingMethod,
+  ContinuousSamplingMethod,
   UniformSampling,
   WeightedSampling,
   BallSampling,
+  RegularSampling,
   sample,
 
   # partitioning

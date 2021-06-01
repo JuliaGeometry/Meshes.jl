@@ -5,7 +5,7 @@
 """
     RegularSampling(n1, n2, ..., np)
 
-Sample geometry regularly using `n1` points along the first
+Generate samples regularly using `n1` points along the first
 parametric dimension, `n2` points along the second parametric
 dimension, ..., `np` poitns along the last parametric dimension.
 
