@@ -38,8 +38,8 @@ Return an iterator which yields all corners of the box.
 """
 function vertices(b::Box)
   coords = coordinates.((b.min, b.max))
-  idx_list = distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))
-  Base.Generator(idx_list) do idxs
+  idx_list = sort(collect(distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))))
+  map(idx_list) do idxs
     new_coords = (coords[idxs[i]][i] for i in eachindex(idxs))
     Point(new_coords...)
   end
