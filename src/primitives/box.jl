@@ -37,7 +37,7 @@ sides(b::Box) = b.max - b.min
 Return all corners of the box.
 """
 @generated function vertices(b::Box{Dim,T}) where {Dim,T}
-  list = CartesianIndices(Tuple(repeat([1:2], Dim)))
+  list = CartesianIndices(ntuple(i -> 2, Dim))
   P = Point{Dim,T}
   ex = Expr(:ref, P)
   map(list) do idxs
