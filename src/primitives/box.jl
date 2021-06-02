@@ -34,7 +34,7 @@ diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
 """
-Return an iterator which yields all corners of the box.
+Return all corners of the box.
 """
 @generated function vertices(b::Box)
   list = sort(collect(distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))))
