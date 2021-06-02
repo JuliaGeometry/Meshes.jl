@@ -36,7 +36,7 @@ sides(b::Box) = b.max - b.min
 """
 Return all corners of the box.
 """
-@generated function vertices(b::Box{Dim,T}) where {Dim,T}
+function _vertices(b::Box{Dim,T}) where {Dim,T}
   list = CartesianIndices(ntuple(i->2, Dim))
   tuples = map(list) do idxs
     coords = map(1:Dim) do i
@@ -49,6 +49,30 @@ Return all corners of the box.
     A, B = coordinates(b.min), coordinates(b.max)
     Point{$Dim,$T}[$(tuples...)]
   end
+end
+
+function vertices(b::Box{2,T}) where {T}
+  A, B = coordinates(b.min), coordinates(b.max)
+  Point{2,T}[
+    (A[1], A[2]),
+    (B[1], A[2]),
+    (A[1], B[2]),
+    (B[1], B[2]),
+  ]
+end
+
+function vertices(b::Box{3,T}) where {T}
+  A, B = coordinates(b.min), coordinates(b.max)
+  Point{3,T}[
+    (A[1], A[2], A[3]),
+    (B[1], A[2], A[3]),
+    (A[1], B[2], A[3]),
+    (B[1], B[2], A[3]),
+    (A[1], A[2], B[3]),
+    (B[1], A[2], B[3]),
+    (A[1], B[2], B[3]),
+    (B[1], B[2], B[3]),
+  ]
 end
 
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
