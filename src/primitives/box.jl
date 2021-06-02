@@ -38,15 +38,16 @@ Return all corners of the box.
 """
 @generated function vertices(b::Box{Dim,T}) where {Dim,T}
   list = CartesianIndices(ntuple(i->2, Dim))
-  P = Point{Dim,T}
-  ex = Expr(:ref, P)
-  map(list) do idxs
-    next_tuple = Expr(:tuple, (:(coords[$(idxs[i])][$i]) for i in 1:Dim)...)
-    push!(ex.args, next_tuple)
+  tuples = map(list) do idxs
+    coords = map(1:Dim) do i
+      point = idxs[i] == 1 ? :A : :B
+      :($point[$i])
+    end
+    Expr(:tuple, coords...)
   end
   quote
-    coords = coordinates(b.min), coordinates(b.max)
-    $ex
+    A, B = coordinates(b.min), coordinates(b.max)
+    Point{$Dim,$T}[$(tuples...)]
   end
 end
 
