@@ -36,12 +36,12 @@ sides(b::Box) = b.max - b.min
 """
 Return all corners of the box.
 """
-@generated function vertices(b::Box)
-  list = sort(collect(distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))))
-  P = Point{embeddim(b),coordtype(b)}
+@generated function vertices(b::Box{Dim,T}) where {Dim,T}
+  list = CartesianIndices(Tuple(repeat([1:2], Dim)))
+  P = Point{Dim,T}
   ex = Expr(:ref, P)
   map(list) do idxs
-    next_tuple = Expr(:tuple, (:(coords[$(idxs[i])][$i]) for i in eachindex(idxs))...)
+    next_tuple = Expr(:tuple, (:(coords[$(idxs[i])][$i]) for i in 1:Dim)...)
     push!(ex.args, next_tuple)
   end
   quote
