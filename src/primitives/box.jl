@@ -33,9 +33,12 @@ measure(b::Box) = prod(b.max - b.min)
 diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
+"""
+Return an iterator which yields all corners of the box.
+"""
 function vertices(b::Box)
   coords = coordinates.((b.min, b.max))
-  idx_list = distinct(subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))
+  idx_list = distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))
   Base.Generator(idx_list) do idxs
     new_coords = (coords[idxs[i]][i] for i in eachindex(idxs))
     Point(new_coords...)

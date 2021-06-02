@@ -13,7 +13,7 @@ using RecipesBase
 using LinearAlgebra
 using Random
 
-using IterTools: ivec, distinct, subsets
+using IterTools: IterTools, ivec, distinct
 using StatsBase: Weights
 using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
