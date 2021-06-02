@@ -33,6 +33,15 @@ measure(b::Box) = prod(b.max - b.min)
 diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
+function vertices(b::Box)
+  coords = coordinates.((b.min, b.max))
+  idx_list = distinct(subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))
+  Base.Generator(idx_list) do idxs
+    new_coords = (coords[idxs[i]][i] for i in eachindex(idxs))
+    Point(new_coords...)
+  end
+end
+
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   l, u = coordinates.((b.min, b.max))
   x = coordinates(p)
