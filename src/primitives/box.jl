@@ -36,12 +36,17 @@ sides(b::Box) = b.max - b.min
 """
 Return an iterator which yields all corners of the box.
 """
-function vertices(b::Box)
-  coords = coordinates.((b.min, b.max))
-  idx_list = sort(collect(distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))))
-  map(idx_list) do idxs
-    new_coords = (coords[idxs[i]][i] for i in eachindex(idxs))
-    Point(new_coords...)
+@generated function vertices(b::Box)
+  list = sort(collect(distinct(IterTools.subsets(repeat(1:2, paramdim(b)), Val{paramdim(b)}()))))
+  P = Point{embeddim(b),coordtype(b)}
+  ex = Expr(:ref, P)
+  map(list) do idxs
+    next_tuple = Expr(:tuple, (:(coords[$(idxs[i])][$i]) for i in eachindex(idxs))...)
+    push!(ex.args, next_tuple)
+  end
+  quote
+    coords = coordinates(b.min), coordinates(b.max)
+    $ex
   end
 end
 
