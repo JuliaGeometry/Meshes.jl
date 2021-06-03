@@ -33,9 +33,6 @@ measure(b::Box) = prod(b.max - b.min)
 diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
-"""
-Return all corners of a 2D box in CCW convention.
-"""
 function vertices(b::Box{2,T}) where {T}
   A, B = coordinates(b.min), coordinates(b.max)
   Point{2,T}[
