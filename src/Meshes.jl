@@ -308,6 +308,7 @@ export
 
   # refinement
   RefinementMethod,
+  QuadRefinement,
   CatmullClark,
   refine,
 

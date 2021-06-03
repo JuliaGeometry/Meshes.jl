@@ -20,4 +20,5 @@ function refine end
 # IMPLEMENTATIONS
 # ----------------
 
+include("refinement/quad.jl")
 include("refinement/catmullclark.jl")
