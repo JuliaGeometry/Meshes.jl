@@ -33,7 +33,7 @@ measure(b::Box) = prod(b.max - b.min)
 diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
-function vertices(b::Box{2,T}) where {T}
+function vertices(b::Box{2})
   A = coordinates(b.min)
   B = coordinates(b.max)
   Point.([
