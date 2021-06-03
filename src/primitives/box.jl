@@ -43,10 +43,6 @@ function vertices(b::Box{2,T}) where {T}
   ]
 end
 
-"""
-Return all corners of a 3D box with a
-cartesian ordering.
-"""
 function vertices(b::Box{3,T}) where {T}
   A, B = coordinates(b.min), coordinates(b.max)
   Point{3,T}[
