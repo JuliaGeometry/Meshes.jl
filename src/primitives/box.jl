@@ -44,9 +44,10 @@ function vertices(b::Box{2})
   ])
 end
 
-function vertices(b::Box{3,T}) where {T}
-  A, B = coordinates(b.min), coordinates(b.max)
-  Point{3,T}[
+function vertices(b::Box{3})
+  A = coordinates(b.min)
+  B = coordinates(b.max)
+  Point.([
     (A[1], A[2], A[3]),
     (B[1], A[2], A[3]),
     (A[1], B[2], A[3]),
@@ -55,7 +56,7 @@ function vertices(b::Box{3,T}) where {T}
     (B[1], A[2], B[3]),
     (A[1], B[2], B[3]),
     (B[1], B[2], B[3]),
-  ]
+  ])
 end
 
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
