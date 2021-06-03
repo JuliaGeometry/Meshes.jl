@@ -34,13 +34,14 @@ diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
 function vertices(b::Box{2,T}) where {T}
-  A, B = coordinates(b.min), coordinates(b.max)
-  Point{2,T}[
+  A = coordinates(b.min)
+  B = coordinates(b.max)
+  Point.([
     (A[1], A[2]),
     (B[1], A[2]),
     (B[1], B[2]),
     (A[1], B[2]),
-  ]
+  ])
 end
 
 function vertices(b::Box{3,T}) where {T}
