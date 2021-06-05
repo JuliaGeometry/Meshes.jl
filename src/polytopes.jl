@@ -215,8 +215,8 @@ function bridge(p::Polygon)
     # insert island at closest vertex
     island = push!(circshift(c, -l+1), c[l])
     iinds  = push!(circshift(o, -l+1), o[l])
-    outer = [outer[1:jmin]; island; outer[jmin:end]]
-    oinds = [oinds[1:jmin]; iinds;  oinds[jmin:end]]
+    outer = [outer[begin:jmin]; island; outer[jmin:end]]
+    oinds = [oinds[begin:jmin]; iinds;  oinds[jmin:end]]
   end
 
   # close boundary

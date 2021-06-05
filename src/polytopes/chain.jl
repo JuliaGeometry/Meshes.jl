@@ -15,8 +15,7 @@ end
 # specialize Polytope outer constructor to use standard vector
 Chain(vertices::Vararg{<:Point}) = Chain(collect(vertices))
 
-Chain(vertices::CircularVector) =
-  Chain([collect(vertices); vertices[begin]])
+Chain(vertices::CircularVector) = Chain([collect(vertices); first(vertices)])
 
 """
     npoints(chain)
