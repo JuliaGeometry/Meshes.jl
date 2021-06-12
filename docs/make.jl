@@ -1,8 +1,8 @@
-# Workaround for GR warnings
-ENV["GKSwstype"] = "100"
-
 using Documenter, Meshes
 using DocumenterTools: Themes
+
+# Workaround for GR warnings
+ENV["GKSwstype"] = "100"
 
 istravis = "TRAVIS" ∈ keys(ENV)
 
