@@ -37,6 +37,7 @@
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test !hasholes(t)
     @test unique(t) == t
+    @test boundary(t) == first(chains(t))
     @test chains(t) == [Chain(P2(0,0), P2(1,0), P2(0,1), P2(0,0))]
     @test bridge(t) == first(chains(t))
 
@@ -61,6 +62,7 @@
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test !hasholes(q)
     @test unique(q) == q
+    @test boundary(q) == first(chains(q))
     @test chains(q) == [Chain(P2(0,0), P2(1,0), P2(1,1), P2(0,1), P2(0,0))]
     @test bridge(q) == first(chains(q))
 
@@ -176,9 +178,10 @@
     fnames = ["poly$i.line" for i in 1:5]
     polys1 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys1
-      @test nvertices(first(chains(poly))) == 30
       @test !hasholes(poly)
       @test issimple(poly)
+      @test boundary(poly) == first(chains(poly))
+      @test nvertices(poly) == 30
       for algo in [WindingOrientation(), TriangleOrientation()]
         @test orientation(poly, algo) == [:CCW]
       end
@@ -190,9 +193,10 @@
     fnames = ["smooth$i.line" for i in 1:5]
     polys2 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys2
-      @test nvertices(first(chains(poly))) == 120
       @test !hasholes(poly)
       @test issimple(poly)
+      @test boundary(poly) == first(chains(poly))
+      @test nvertices(poly) == 120
       for algo in [WindingOrientation(), TriangleOrientation()]
         @test orientation(poly, algo) == [:CCW]
       end
@@ -205,10 +209,11 @@
     polys3 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys3
       rings = chains(poly)
-      @test nvertices(first(rings)) < 30
-      @test all(nvertices.(rings[2:end]) .< 18)
       @test hasholes(poly)
       @test !issimple(poly)
+      @test boundary(poly) == Multi(rings)
+      @test nvertices(first(rings)) < 30
+      @test all(nvertices.(rings[2:end]) .< 18)
       for algo in [WindingOrientation(), TriangleOrientation()]
         orients = orientation(poly, algo)
         @test orients[1] == :CCW

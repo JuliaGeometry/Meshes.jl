@@ -156,6 +156,13 @@ as either counter-clockwise (CCW) or clockwise (CW).
 function orientation(::Polygon) end
 
 """
+    boundary(polygon)
+
+Returns the boundary of the `polygon`.
+"""
+boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
+
+"""
     bridge(polygon)
 
 Transform `polygon` with holes into a single outer chain

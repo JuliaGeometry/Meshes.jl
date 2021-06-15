@@ -65,7 +65,6 @@ hasholes(::Ngon) = false
 
 chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
-# N-gon already has unique vertices
 Base.unique!(ngon::Ngon) = ngon
 
 function Base.in(p::Point{2}, t::Triangle{2})
