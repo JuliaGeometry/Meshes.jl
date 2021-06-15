@@ -34,6 +34,8 @@
     for p in P2[(-1,0),(0,-1),(0.5,1.)]
       @test p ∉ t
     end
+    t = Triangle(P2(0.4,0.4), P2(0.6,0.4), P2(0.8,0.4))
+    @test P2(0.2,0.4) ∉ t
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test !hasholes(t)
     @test unique(t) == t

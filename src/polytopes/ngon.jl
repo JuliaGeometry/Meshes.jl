@@ -67,13 +67,25 @@ chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
 Base.unique!(ngon::Ngon) = ngon
 
-function Base.in(p::Point{2}, t::Triangle{2})
+function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
+  # given coordinates
   a, b, c = t.vertices
-  abp = signarea(a, b, p)
-  bcp = signarea(b, c, p)
-  cap = signarea(c, a, p)
-  areas = (abp, bcp, cap)
-  all(≥(0), areas) || all(≤(0), areas)
+  x₁, y₁ = coordinates(a)
+  x₂, y₂ = coordinates(b)
+  x₃, y₃ = coordinates(c)
+  x , y  = coordinates(p)
+
+  # barycentric coordinates
+  λ₁ = ((y₂ - y₃)*(x  - x₃) + (x₃ - x₂)*(y  - y₃)) /
+       ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
+  λ₂ = ((y₃ - y₁)*(x  - x₃) + (x₁ - x₃)*(y  - y₃)) /
+       ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
+  λ₃ = one(T) - λ₁ - λ₂
+
+  # barycentric check
+  zero(T) ≤ λ₁ ≤ one(T) &&
+  zero(T) ≤ λ₂ ≤ one(T) &&
+  zero(T) ≤ λ₃ ≤ one(T)
 end
 
 function Base.in(p::Point, ngon::Ngon{N}) where {N}
