@@ -98,16 +98,19 @@ using Base: need_full_hex
   @testset "HomogeneousSampling" begin
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     ps = sample(t, HomogeneousSampling(100))
+    @test first(ps) isa P2
     @test all(∈(t), ps)
 
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     ps = sample(q, HomogeneousSampling(100))
+    @test first(ps) isa P2
     @test all(∈(q), ps)
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     connec = connect.([(3,1,5),(4,6,2),(1,2,6,5),(5,6,4,3)])
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, HomogeneousSampling(400))
+    @test first(ps) isa P2
     @test all(∈(mesh), ps)
   end
 
@@ -117,6 +120,7 @@ using Base: need_full_hex
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, MinDistanceSampling(0.2))
     n = length(ps)
+    @test first(ps) isa P2
     @test all(∈(mesh), ps)
     @test all(norm(ps[i] - ps[j]) ≥ 0.2 for i in 1:n for j in i+1:n)
   end

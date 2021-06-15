@@ -30,11 +30,11 @@ function sample(polygon::Polygon, method::HomogeneousSampling)
   sample(mesh, method)
 end
 
-function sample(triangle::Triangle, method::HomogeneousSampling)
+function sample(triangle::Triangle{Dim,T}, method::HomogeneousSampling) where {Dim,T}
   A, B, C = coordinates.(vertices(triangle))
   function randpoint()
     # sample barycentric coordinates
-    u₁, u₂ = rand(2)
+    u₁, u₂ = rand(T, 2)
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
     λ₃     = 1 - λ₁ - λ₂
     Point(λ₁ .* A + λ₂ .* B + λ₃ .* C)
