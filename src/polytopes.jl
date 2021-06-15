@@ -174,9 +174,10 @@ via bridges as described in Held 1998.
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
 function bridge(p::Polygon)
+  # polygons without holes are trivial
   hasholes(p) || return first(chains(p))
 
-  # retrieve chains with coordinates
+  # retrieve chains as vectors of coordinates
   pchains = [coordinates.(vertices(c)) for c in chains(p)]
 
   # sort vertices lexicographically
@@ -203,31 +204,33 @@ function bridge(p::Polygon)
   outer = first(pchains)
   oinds = first(pinds)
 
-  # merge islands into outer boundary
+  # merge holes into outer boundary
   for i in 2:length(pchains)
+    inner = pchains[i]
+    iinds = pinds[i]
     l = leftmost[i]
     m = minimums[i]
-    c = pchains[i]
-    o = pinds[i]
 
     # find closest vertex in boundary
     dmin, jmin = Inf, 0
     for j in findall(oinds .≤ m)
-      d = sum(abs, outer[j] - c[l])
+      d = sum(abs, outer[j] - inner[l])
       if d < dmin
         dmin, jmin = d, j
       end
     end
 
-    # insert island at closest vertex
-    island = push!(circshift(c, -l+1), c[l])
-    iinds  = push!(circshift(o, -l+1), o[l])
-    outer = [outer[begin:jmin]; island; outer[jmin:end]]
-    oinds = [oinds[begin:jmin]; iinds;  oinds[jmin:end]]
+    # insert hole at closest vertex
+    hole  = push!(circshift(inner, -l+1), inner[l])
+    hinds = push!(circshift(iinds, -l+1), iinds[l])
+
+    outer = [outer[begin:jmin]; hole;  outer[jmin:end]]
+    oinds = [oinds[begin:jmin]; hinds; oinds[jmin:end]]
   end
 
-  # close boundary
+  # close outer boundary
   push!(outer, first(outer))
+  push!(oinds, first(oinds))
 
   Chain(Point.(outer))
 end
