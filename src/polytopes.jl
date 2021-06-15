@@ -163,17 +163,17 @@ Returns the boundary of the `polygon`.
 boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
 
 """
-    bridge(polygon)
+    bridge(polygon; width=0)
 
 Transform `polygon` with holes into a single outer chain
-via bridges as described in Held 1998.
+via bridges of given `width` as described in Held 1998.
 
 ## References
 
 * Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-function bridge(p::Polygon)
+function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   # polygons without holes are trivial
   hasholes(p) || return first(chains(p))
 
@@ -220,12 +220,33 @@ function bridge(p::Polygon)
       end
     end
 
-    # insert hole at closest vertex
-    hole  = push!(circshift(inner, -l+1), inner[l])
-    hinds = push!(circshift(iinds, -l+1), iinds[l])
+    # create a bridge of given width δ
+    # from line segment A--B. The point
+    # A is split into A′ and A′′ and the
+    # point B is split into B′ and B′′
+    A = outer[jmin]
+    B = inner[l]
+    δ = width
+    v = B - A
+    u = Vec(-v[2], v[1])
+    n = u / norm(u)
+    A′  = A + δ/2 * n
+    A′′ = A - δ/2 * n
+    B′  = B + δ/2 * n
+    B′′ = B - δ/2 * n
 
-    outer = [outer[begin:jmin]; hole;  outer[jmin:end]]
-    oinds = [oinds[begin:jmin]; hinds; oinds[jmin:end]]
+    # insert hole at closest vertex
+    outer = [
+      outer[begin:jmin-1]; [A′, B′];
+      circshift(inner, -l+1)[2:end];
+      [B′′, A′′]; outer[jmin+1:end]
+    ]
+    oinds = [
+      oinds[begin:jmin];
+      circshift(iinds, -l+1);
+      [iinds[l]];
+      oinds[jmin:end]
+    ]
   end
 
   # close outer boundary
