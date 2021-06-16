@@ -88,7 +88,7 @@ function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
   zero(T) ≤ λ₃ ≤ one(T)
 end
 
-function Base.in(p::Point, ngon::Ngon{N}) where {N}
+function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
   # decompose n-gons into triangles by
   # fan triangulation (assumes convexity)
   # https://en.wikipedia.org/wiki/Fan_triangulation
