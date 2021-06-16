@@ -22,10 +22,10 @@ discretize(multi::Multi, method::DiscretizationMethod) =
 function discretize(polygon::Polygon, method::DiscretizationMethod)
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
-  𝒫 = polygon |> unique |> bridge
+  chain, dups = polygon |> unique |> bridge
 
   # discretize using outer boundary
-  discretize(𝒫, method)
+  discretize(chain, method)
 end
 
 # ----------------

@@ -167,6 +167,9 @@ boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
 
 Transform `polygon` with holes into a single outer chain
 via bridges of given `width` as described in Held 1998.
+Return the outer chain and a vector with pairs of indices
+for duplicate vertices. These indices can be used to undo
+the bridges.
 
 ## References
 
@@ -175,7 +178,11 @@ via bridges of given `width` as described in Held 1998.
 """
 function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   # polygons without holes are trivial
-  hasholes(p) || return first(chains(p))
+  if !hasholes(p)
+    outerchain = first(chains(p))
+    duplicates = Tuple{Int,Int}[]
+    return outerchain, duplicates
+  end
 
   # retrieve chains as vectors of coordinates
   pchains = [coordinates.(vertices(c)) for c in chains(p)]
@@ -249,11 +256,24 @@ function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
     ]
   end
 
+  # find duplicate vertices
+  duplicates = Tuple{Int,Int}[]
+  for i in 1:length(oinds)
+    indᵢ = oinds[i]
+    for j in i+1:length(oinds)
+      indⱼ = oinds[j]
+      if indᵢ == indⱼ
+        push!(duplicates, (i, j))
+      end
+    end
+  end
+
   # close outer boundary
   push!(outer, first(outer))
-  push!(oinds, first(oinds))
 
-  Chain(Point.(outer))
+  outerchain = Chain(Point.(outer))
+
+  outerchain, duplicates
 end
 
 # -----------

@@ -41,7 +41,7 @@
     @test unique(t) == t
     @test boundary(t) == first(chains(t))
     @test chains(t) == [Chain(P2(0,0), P2(1,0), P2(0,1), P2(0,0))]
-    @test bridge(t) == first(chains(t))
+    @test bridge(t) == (first(chains(t)), [])
 
     # Triangle in 3D space
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
@@ -66,7 +66,7 @@
     @test unique(q) == q
     @test boundary(q) == first(chains(q))
     @test chains(q) == [Chain(P2(0,0), P2(1,0), P2(1,1), P2(0,1), P2(0,0))]
-    @test bridge(q) == first(chains(q))
+    @test bridge(q) == (first(chains(q)), [])
 
     # Quadrangle in 3D space
     q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
@@ -226,7 +226,7 @@
 
     # test bridges
     for poly in [polys1; polys2; polys3]
-      b  = bridge(poly)
+      b, _ = bridge(poly)
       nb = nvertices(b)
       np = nvertices.(chains(poly))
       @test nb ≥ sum(np)
@@ -248,7 +248,7 @@
     @test vertices(poly) == P2[(0,0),(1,0),(1,1),(0,1),
                                (0.2,0.2),(0.2,0.4),(0.4,0.4),(0.4,0.2),
                                (0.6,0.2),(0.6,0.4),(0.8,0.4),(0.8,0.2)]
-    chain = bridge(poly)
+    chain, _ = bridge(poly)
     target = T[
       0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0
       0.0  0.2  0.4  0.4  0.2  0.2  0.4  0.4  0.2  0.2  0.2  0.2  0.0  0.0  1.0  1.0
@@ -263,7 +263,7 @@
 
     # unique and bridges
     poly = PolyArea(P2[(0,0),(1,0),(1,0),(1,1),(1,2),(0,2),(0,1),(0,1),(0,0)])
-    chain = poly |> unique |> bridge
+    chain, _ = poly |> unique |> bridge
     @test chain == Chain(P2[(0,0),(1,0),(1,1),(1,2),(0,2),(0,1),(0,0)])
 
     # centroid
