@@ -115,6 +115,15 @@
   end
 
   @testset "Dehn1899" begin
+    outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
+    hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
+    hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
+    poly  = PolyArea(outer, [hole1, hole2])
+    chain = bridge(poly, width=0.01)
+    mesh  = discretize(chain, Dehn1899())
+    @test nvertices(mesh) == 16
+    @test nelements(mesh) == 14
+
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
     mesh = discretize(poly, Dehn1899())
     @test Set(vertices(poly)) == Set(vertices(mesh))

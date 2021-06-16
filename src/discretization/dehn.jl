@@ -25,7 +25,7 @@ function discretize(𝒫::Chain, ::Dehn1899)
   # points on resulting mesh
   points = collect(vertices(𝒫))
 
-  # Devadoss-Rourke recursion
+  # Dehn's recursion
   connec = dehn1899(points, 1:length(points))
 
   SimpleMesh(points, connec)
@@ -36,15 +36,8 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
   n = length(I)
 
   if n > 3 # split chain
-    # find lowest vertex
-    i  = 1
-    yᵢ = last(coordinates(v[I[1]]))
-    for j in 2:n
-      yⱼ = last(coordinates(v[I[j]]))
-      if yⱼ < yᵢ
-        i, yᵢ = j, yⱼ
-      end
-    end
+    # find lowerleft vertex
+    i = first(sortperm(coordinates.(v[I])))
 
     # left/right chains
     linds = i-1:i+1
@@ -53,7 +46,7 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     # check if candidate diagonal is valid
     Δ = Triangle(v[I[linds]])
     intriangle = findall(j -> v[I[j]] ∈ Δ, rinds[2:end-1])
-    isdiag = signarea(Δ) > zero(T) && isempty(intriangle)
+    isdiag = signarea(Δ) > atol(T)^2 && isempty(intriangle)
 
     # adjust diagonal if necessary
     if !isdiag
