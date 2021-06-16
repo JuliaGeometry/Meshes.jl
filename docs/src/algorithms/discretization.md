@@ -12,9 +12,8 @@ Dehn1899
 ```
 
 ```@example discretization
-using Meshes
-using Plots
-gr(linecolor=:black, fillcolor=:gray90, size=(500,300)) # hide
+using Meshes, MeshViz
+import CairoMakie
 
 # polygonal area
 polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),
@@ -61,7 +60,10 @@ polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569
 
 mesh = discretize(polyarea, Dehn1899())
 
-plot(plot(polyarea), plot(mesh))
+fig = CairoMakie.Figure(resolution = (800, 400))
+viz(fig[1,1], polyarea, showfacets = true, decimation = 0.001)
+viz(fig[1,2], mesh, showfacets = true)
+fig
 ```
 
 ## FIST
@@ -73,10 +75,14 @@ FIST
 ```@example discretization
 mesh = discretize(polyarea, FIST())
 
-plot(plot(polyarea), plot(mesh))
+fig = CairoMakie.Figure(resolution = (800, 400))
+viz(fig[1,1], polyarea, showfacets = true, decimation = 0.001)
+viz(fig[1,2], mesh, showfacets = true)
+fig
 ```
 
-As can be seen in the following example, FIST is also suitable for polygonal areas with holes.
+As can be seen in the following example, all discretization methods
+for [`Polygon`](@ref) automatically work in the presence of holes:
 
 ```@example discretization
 outer = [(0.18142937, 0.54681134), (0.38282228, 0.107781954), (0.43220532, 0.013640274),
@@ -96,5 +102,8 @@ polyarea = PolyArea(outer, inners)
 
 mesh = discretize(polyarea, FIST())
 
-plot(plot(polyarea), plot(mesh))
+fig = CairoMakie.Figure(resolution = (800, 400))
+viz(fig[1,1], polyarea, showfacets = true, decimation = 0.001)
+viz(fig[1,2], mesh, showfacets = true)
+fig
 ```

@@ -24,6 +24,7 @@ materialize
 ```@docs
 Topology
 FullTopology
+GridTopology
 HalfEdgeTopology
 ```
 
@@ -37,10 +38,10 @@ grid = CartesianGrid(10, 10, 10)
 ```
 
 ```@example meshes
-using Plots
-gr(linecolor=:black, fillcolor=:gray90, size=(500,300)) # hide
+using MeshViz
+import CairoMakie
 
-plot(grid)
+viz(grid, showfacets = true)
 ```
 
 ```@example meshes
@@ -57,5 +58,5 @@ mesh = SimpleMesh(points, connec)
 ```
 
 ```@example meshes
-plot(mesh)
+viz(mesh, showfacets = true)
 ```

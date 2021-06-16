@@ -50,8 +50,8 @@ available functionality, please consult the [Reference guide](points.md) and the
 the package.
 
 ```@example overview
-using Meshes
-using Plots
+using Meshes, MeshViz
+import CairoMakie
 ```
 
 ### Points and vectors
@@ -155,7 +155,7 @@ Most commonly used polytopes are already defined in the project, including
 [`Pyramid`](@ref) and [`Hexahedron`](@ref).
 
 ```@example overview
-t = Triangle((0,0), (1,0), (0,1))
+t = Triangle((0.0, 0.0), (1.0, 0.0), (0.0, 1.0))
 ```
 
 Some of these geometries have additional functionality like the measure (or area):
@@ -286,10 +286,11 @@ like with the Cartesian grid:
 collect(elements(mesh))
 ```
 
-and many geometries and meshes can be directly plotted with Plots.jl:
+and all geometries and meshes can be visualized with
+[MeshViz.jl](https://github.com/JuliaGeometry/MeshViz.jl):
 
 ```@example overview
-plot(mesh, linecolor=:black, fillcolor=:gray90)
+viz(mesh, showfacets = true)
 ```
 
 ### Mesh data

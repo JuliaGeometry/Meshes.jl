@@ -12,9 +12,8 @@ QuadRefinement
 ```
 
 ```@example
-using Meshes # hide
-using Plots # hide
-gr(fillcolor=false) # hide
+using Meshes, MeshViz
+import CairoMakie
 
 # define a cube in R^3
 points = Point3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)]
@@ -26,12 +25,12 @@ ref1 = refine(mesh, QuadRefinement())
 ref2 = refine(ref1, QuadRefinement())
 ref3 = refine(ref2, QuadRefinement())
 
-p0 = plot(mesh, title="original")
-p1 = plot(ref1, title="refine 1")
-p2 = plot(ref2, title="refine 2")
-p3 = plot(ref3, title="refine 3")
-
-plot(p0, p1, p2, p3, size=(800,800))
+fig = CairoMakie.Figure(resolution = (800, 800))
+viz(fig[1,1], mesh, showfacets = true, axis = (title = "original",))
+viz(fig[1,2], ref1, showfacets = true, axis = (title = "refine 1",))
+viz(fig[2,1], ref2, showfacets = true, axis = (title = "refine 2",))
+viz(fig[2,2], ref3, showfacets = true, axis = (title = "refine 3",))
+fig
 ```
 
 ## Catmull-Clark
@@ -41,9 +40,8 @@ CatmullClark
 ```
 
 ```@example
-using Meshes # hide
-using Plots # hide
-gr(fillcolor=false) # hide
+using Meshes, MeshViz
+import CairoMakie
 
 # define a cube in R^3
 points = Point3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)]
@@ -55,10 +53,10 @@ ref1 = refine(mesh, CatmullClark())
 ref2 = refine(ref1, CatmullClark())
 ref3 = refine(ref2, CatmullClark())
 
-p0 = plot(mesh, title="original")
-p1 = plot(ref1, title="refine 1")
-p2 = plot(ref2, title="refine 2")
-p3 = plot(ref3, title="refine 3")
-
-plot(p0, p1, p2, p3, size=(800,800))
+fig = CairoMakie.Figure(resolution = (800, 800))
+viz(fig[1,1], mesh, showfacets = true, axis = (title = "original",))
+viz(fig[1,2], ref1, showfacets = true, axis = (title = "refine 1",))
+viz(fig[2,1], ref2, showfacets = true, axis = (title = "refine 2",))
+viz(fig[2,2], ref3, showfacets = true, axis = (title = "refine 3",))
+fig
 ```

@@ -2,6 +2,8 @@
 
 ```@docs
 Polytope
+Polygon
+Polyhedron
 Segment
 Ngon
 Chain

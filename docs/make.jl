@@ -55,6 +55,7 @@ makedocs(
         "algorithms/intersection.md",
         "algorithms/neighborsearch.md"
       ],
+      "Visualization" => "visualization.md",
       "Traits" => "traits.md"
   ],
     "Contributing" => [
