@@ -91,27 +91,27 @@
     poly = readpoly(T, joinpath(datadir, "hole1.line"))
     mesh = discretize(poly, FIST())
     @test Set(vertices(poly)) == Set(vertices(mesh))
-    @test nelements(mesh) == length(vertices(mesh)) - 2
+    @test nelements(mesh) == 32
 
     poly = readpoly(T, joinpath(datadir, "hole2.line"))
     mesh = discretize(poly, FIST())
     @test Set(vertices(poly)) == Set(vertices(mesh))
-    @test nelements(mesh) == length(vertices(mesh)) - 2
+    @test nelements(mesh) == 30
 
     poly = readpoly(T, joinpath(datadir, "hole3.line"))
     mesh = discretize(poly, FIST())
     @test Set(vertices(poly)) == Set(vertices(mesh))
-    @test nelements(mesh) == length(vertices(mesh)) - 2
+    @test nelements(mesh) == 32
 
     poly = readpoly(T, joinpath(datadir, "hole4.line"))
     mesh = discretize(poly, FIST())
     @test Set(vertices(poly)) == Set(vertices(mesh))
-    @test nelements(mesh) == length(vertices(mesh)) - 2
+    @test nelements(mesh) == 30
 
     poly = readpoly(T, joinpath(datadir, "hole5.line"))
     mesh = discretize(poly, FIST())
     @test Set(vertices(poly)) == Set(vertices(mesh))
-    @test nelements(mesh) == length(vertices(mesh)) - 2
+    @test nelements(mesh) == 32
   end
 
   @testset "Dehn1899" begin
