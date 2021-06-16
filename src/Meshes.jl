@@ -217,6 +217,7 @@ export
   element, nelements,
   facet, nfacets,
   FullTopology,
+  GridTopology,
   HalfEdgeTopology, HalfEdge,
   half4elem, half4vert,
   half4edge, half4pair,

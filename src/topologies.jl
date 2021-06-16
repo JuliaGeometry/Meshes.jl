@@ -101,4 +101,5 @@ function nfacets(::Topology) end
 # ----------------
 
 include("topologies/full.jl")
+include("topologies/grid.jl")
 include("topologies/halfedge.jl")
