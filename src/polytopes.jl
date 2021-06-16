@@ -258,13 +258,12 @@ function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
 
   # find duplicate vertices
   duplicates = Tuple{Int,Int}[]
-  for i in 1:length(oinds)
-    indᵢ = oinds[i]
-    for j in i+1:length(oinds)
-      indⱼ = oinds[j]
-      if indᵢ == indⱼ
-        push!(duplicates, (i, j))
-      end
+  occurred = Dict{Int,Int}()
+  for (i, ind) in enumerate(oinds)
+    if haskey(occurred, ind)
+      push!(duplicates, (occurred[ind], i))
+    else
+      occurred[ind] = i
     end
   end
 
