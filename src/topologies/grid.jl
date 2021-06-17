@@ -71,10 +71,36 @@ end
 nelements(t::GridTopology) = prod(t.dims)
 
 function facet(t::GridTopology{D}, ind) where {D}
+  l2c(ind) = CartesianIndices(t.dims)[ind].I
+  c2l(ind...) = LinearIndices(t.dims .+ 1)[ind...]
   if D == 1
     ind
   elseif D == 2
-    throw(ErrorException("not implemented"))
+    N = 2prod(t.dims)
+    if ind ≤ N
+      if isodd(ind)
+        i, j = l2c((ind + 1) ÷ 2)
+        i1 = c2l(i,   j)
+        i2 = c2l(i+1, j)
+      else
+        i, j = l2c(ind ÷ 2)
+        i1 = c2l(i,   j)
+        i2 = c2l(i, j+1)
+      end
+    else
+      if isodd(ind)
+        i = t.dims[1] + 1
+        j = ((ind - N) + 1) ÷ 2
+        i1 = c2l(i,   j)
+        i2 = c2l(i, j+1)
+      else
+        i = (ind - N) ÷ 2
+        j = t.dims[2] + 1
+        i1 = c2l(i,   j)
+        i2 = c2l(i+1, j)
+      end
+    end
+    connect((i1, i2), Segment)
   elseif D == 3
     throw(ErrorException("not implemented"))
   else
