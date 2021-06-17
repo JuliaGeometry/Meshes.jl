@@ -138,7 +138,7 @@ function hasholes(::Polygon) end
 Tells whether or not the `polygon` is simple.
 See https://en.wikipedia.org/wiki/Simple_polygon.
 """
-function issimple(::Polygon) end
+issimple(p::Polygon) = issimple(typeof(p))
 
 """
     windingnumber(point, polygon)
@@ -161,6 +161,14 @@ function orientation(::Polygon) end
 Returns the boundary of the `polygon`.
 """
 boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
+
+"""
+    isconvex(polygon)
+
+Tells whether or not the `polygon` is convex.
+"""
+isconvex(p::Polygon{Dim,T}) where {Dim,T} =
+  issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
 
 """
     bridge(polygon; width=0)

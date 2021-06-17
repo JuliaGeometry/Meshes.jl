@@ -40,9 +40,7 @@ const Octagon    = Ngon{8}
 const Nonagon    = Ngon{9}
 const Decagon    = Ngon{10}
 
-isconvex(::Type{<:Triangle}) = true
-
-issimplex(::Type{<:Triangle}) = true
+issimple(::Type{<:Ngon}) = true
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))
@@ -96,3 +94,7 @@ function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
   Δ(i) = Triangle(view(v, [1,i,i+1]))
   any(i -> p ∈ Δ(i), 2:N-1)
 end
+
+# triangles are special
+issimplex(::Type{<:Triangle}) = true
+isconvex(::Type{<:Triangle}) = true

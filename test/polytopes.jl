@@ -290,5 +290,16 @@
     hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
     poly  = PolyArea(outer, [hole1, hole2])
     @test area(poly) ≈ T(0.92)
+
+    # convexity
+    outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
+    hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
+    hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
+    poly1 = PolyArea(outer)
+    poly2 = PolyArea(outer, [hole1, hole2])
+    @test isconvex(poly1)
+    @test !isconvex(poly2)
+    poly  = PolyArea(P2[(0,0),(1,0),(1,1),(0.5,0.5),(0,1),(0,0)])
+    @test !isconvex(poly)
   end
 end
