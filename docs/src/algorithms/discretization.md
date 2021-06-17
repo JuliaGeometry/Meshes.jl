@@ -61,7 +61,7 @@ polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569
 mesh = discretize(polyarea, Dehn1899())
 
 fig = CairoMakie.Figure(resolution = (800, 400))
-viz(fig[1,1], polyarea, showfacets = true)
+viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showfacets = true)
 fig
 ```
@@ -76,7 +76,7 @@ FIST
 mesh = discretize(polyarea, FIST())
 
 fig = CairoMakie.Figure(resolution = (800, 400))
-viz(fig[1,1], polyarea, showfacets = true)
+viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showfacets = true)
 fig
 ```
@@ -103,7 +103,7 @@ polyarea = PolyArea(outer, inners)
 mesh = discretize(polyarea, FIST())
 
 fig = CairoMakie.Figure(resolution = (800, 400))
-viz(fig[1,1], polyarea, showfacets = true)
+viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showfacets = true)
 fig
 ```

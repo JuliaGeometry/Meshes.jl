@@ -63,9 +63,9 @@ simp2 = simplify(polyarea, DouglasPeucker(0.05))
 simp3 = simplify(polyarea, DouglasPeucker(0.10))
 
 fig = CairoMakie.Figure(resolution = (800, 800))
-viz(fig[1,1], polyarea, showfacets = true)
-viz(fig[1,2], simp1, showfacets = true)
-viz(fig[2,1], simp2, showfacets = true)
-viz(fig[2,2], simp3, showfacets = true)
+viz(fig[1,1], polyarea)
+viz(fig[1,2], simp1)
+viz(fig[2,1], simp2)
+viz(fig[2,2], simp3)
 fig
 ```
