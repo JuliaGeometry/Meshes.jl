@@ -1,3 +1,4 @@
+using Base: hash_integer
 @testset "Intersections" begin
   @testset "Segments" begin
     s1 = Segment(P2(0,0), P2(1,0))
@@ -158,5 +159,33 @@
     @test hasintersect(b, b)
     @test !hasintersect(t, b)
     @test !hasintersect(b, t)
+
+    outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
+    hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
+    hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
+    poly1 = PolyArea(outer)
+    poly2 = PolyArea(outer, [hole1, hole2])
+    ball1 = Ball(P2(0.5,0.5), T(0.05))
+    ball2 = Ball(P2(0.3,0.3), T(0.05))
+    ball3 = Ball(P2(0.7,0.3), T(0.05))
+    ball4 = Ball(P2(0.3,0.3), T(0.15))
+    @test hasintersect(poly1, poly1)
+    @test hasintersect(poly2, poly2)
+    @test hasintersect(poly1, poly2)
+    @test hasintersect(poly2, poly1)
+    @test hasintersect(poly1, ball1)
+    @test hasintersect(poly2, ball1)
+    @test hasintersect(poly1, ball2)
+    @test !hasintersect(poly2, ball2)
+    @test hasintersect(poly1, ball3)
+    @test !hasintersect(poly2, ball3)
+    @test hasintersect(poly1, ball4)
+    @test hasintersect(poly2, ball4)
+    mesh1 = discretize(poly1, Dehn1899())
+    mesh2 = discretize(poly2, Dehn1899())
+    @test hasintersect(mesh1, mesh1)
+    @test hasintersect(mesh2, mesh2)
+    @test hasintersect(mesh1, mesh2)
+    @test hasintersect(mesh2, mesh1)
   end
 end

@@ -104,6 +104,15 @@ The algorithm works with any geometry that has a well-defined [`supportfun`](@re
   (https://ieeexplore.ieee.org/document/2083)
 """
 function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
+  # handle non-convex geometries
+  if !isconvex(g1)
+    d1 = discretize(g1, Dehn1899())
+    return hasintersect(d1, g2)
+  elseif !isconvex(g2)
+    d2 = discretize(g2, Dehn1899())
+    return hasintersect(g1, d2)
+  end
+
   # initial direction
   c1, c2 = centroid(g1), centroid(g2)
   d = c1 == c2 ? rand(Vec{Dim,T}) : c2 - c1
@@ -150,6 +159,19 @@ function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
       end
     end
   end
+end
+
+hasintersect(d1::Domain, g2::Geometry) =
+  any(g1 -> hasintersect(g1, g2), d1)
+
+hasintersect(g1::Geometry, d2::Domain) =
+  hasintersect(d2, g1)
+
+function hasintersect(d1::Domain, d2::Domain)
+  for g1 in d1, g2 in d2
+    hasintersect(g1, g2) && return true
+  end
+  return false
 end
 
 # support point in Minkowski difference
