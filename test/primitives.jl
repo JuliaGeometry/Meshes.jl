@@ -68,6 +68,12 @@
     @test Meshes.center(b) == P2(1.5,1.5)
     @test diagonal(b) == √T(2)
 
+    b = Box(P2(1,2), P2(3,4))
+    @test vertices(b) == P2[(1,2),(3,2),(3,4),(1,4)]
+
+    b = Box(P3(1,2,3), P3(4,5,6))
+    @test vertices(b) == P3[(1,2,3),(4,2,3),(4,5,3),(1,5,3),(1,2,6),(4,2,6),(4,5,6),(1,5,6)]
+
     # subsetting with boxes
     b1 = Box(P2(0,0), P2(0.5,0.5))
     b2 = Box(P2(0.1,0.1), P2(0.5,0.5))

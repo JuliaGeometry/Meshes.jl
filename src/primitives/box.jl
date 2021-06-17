@@ -33,6 +33,32 @@ measure(b::Box) = prod(b.max - b.min)
 diagonal(b::Box) = norm(b.max - b.min)
 sides(b::Box) = b.max - b.min
 
+function vertices(b::Box{2})
+  A = coordinates(b.min)
+  B = coordinates(b.max)
+  Point.([
+    (A[1], A[2]),
+    (B[1], A[2]),
+    (B[1], B[2]),
+    (A[1], B[2]),
+  ])
+end
+
+function vertices(b::Box{3})
+  A = coordinates(b.min)
+  B = coordinates(b.max)
+  Point.([
+    (A[1], A[2], A[3]),
+    (B[1], A[2], A[3]),
+    (B[1], B[2], A[3]),
+    (A[1], B[2], A[3]),
+    (A[1], A[2], B[3]),
+    (B[1], A[2], B[3]),
+    (B[1], B[2], B[3]),
+    (A[1], B[2], B[3]),
+  ])
+end
+
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   l, u = coordinates.((b.min, b.max))
   x = coordinates(p)
