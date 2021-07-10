@@ -28,7 +28,7 @@ Suggestions as well as feature requests are very welcome.
 
 ## Code contribution
 
-If you have code that you would like to contribute to GeoStats.jl,
+If you have code that you would like to contribute to Meshes.jl,
 that is awesome! Please [open an issue](https://github.com/JuliaGeometry/Meshes.jl/issues)
 before you create the pull request on GitHub so that we make sure
 your idea is aligned with our goals for the project.
