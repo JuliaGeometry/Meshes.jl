@@ -21,3 +21,10 @@ function measure(t::Tetrahedron)
   a, b, c, d = t.vertices
   abs((a - d) ⋅ ((b - d) × (c - d))) / 6
 end
+
+function edges(c::Tetrahedron)
+  all_edges = ((c.vertices[1],c.vertices[2]), (c.vertices[2],c.vertices[3]),
+  (c.vertices[3],c.vertices[1]), (c.vertices[1],c.vertices[4]),
+  (c.vertices[2],c.vertices[4]), (c.vertices[3],c.vertices[4]))
+  return (Segment([all_edges[i]...]) for i in 1:6)
+end

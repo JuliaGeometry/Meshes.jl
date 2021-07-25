@@ -52,6 +52,17 @@ function signarea(ngon::Ngon{N,2}) where {N}
 end
 measure(ngon::Ngon{N,2}) where {N} = abs(signarea(ngon))
 
+function edges(c::Triangle)
+  all_edges = ((c.vertices[1],c.vertices[2]), (c.vertices[2],c.vertices[3]),
+  (c.vertices[3],c.vertices[1]))
+  return (Segment([all_edges[i]...]) for i in 1:3)
+end
+function edges(c::Quadrangle)
+  all_edges = ((c.vertices[1],c.vertices[2]), (c.vertices[2],c.vertices[3]),
+  (c.vertices[3],c.vertices[4]), (c.vertices[4],c.vertices[1]))
+  return (Segment([all_edges[i]...]) for i in 1:4)
+end
+
 # measure of N-gon embedded in higher dimension
 function measure(ngon::Ngon{N}) where {N}
   areaₜ(A, B, C) = norm((B - A) × (C - A)) / 2
