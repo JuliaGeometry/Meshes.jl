@@ -26,5 +26,5 @@ function edges(c::Tetrahedron)
   all_edges = ((c.vertices[1],c.vertices[2]), (c.vertices[2],c.vertices[3]),
   (c.vertices[3],c.vertices[1]), (c.vertices[1],c.vertices[4]),
   (c.vertices[2],c.vertices[4]), (c.vertices[3],c.vertices[4]))
-  return (Segment([all_edges[i]...]) for i in 1:6)
+  (Segment([all_edges[i]...]) for i in 1:6)
 end

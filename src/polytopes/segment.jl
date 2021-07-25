@@ -32,5 +32,5 @@ end
 
 function edges(c::Segment)
   all_edges = ((c.vertices[1],c.vertices[2]),)
-  return (Segment([all_edges[i]...]) for i in 1:1)
+  (Segment([all_edges[i]...]) for i in 1:1)
 end
