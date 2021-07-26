@@ -114,6 +114,15 @@
       @test_reference "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
       # @test_reference "data/grid3D-data.png" plot(RegularGrid(10,10,10),1:1000)
     end
+
+    # GridTopology from CartesianGrid
+    grid = CartesianGrid{T}(5,5)
+    topo = topology(grid)
+    vs = collect(Meshes.vertices(grid))
+    for i in 1:nelements(grid)
+      inds = [element(topo, i).indices...]
+      @test vs[inds] == element(grid, i).vertices
+    end
   end
 
   @testset "SimpleMesh" begin
