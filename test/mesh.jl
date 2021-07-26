@@ -99,6 +99,15 @@
     @test grid[1] == Quadrangle(P2[(0,0), (1,0), (1,1), (0,1)])
     @test grid[2] == Quadrangle(P2[(1,0), (2,0), (2,1), (1,1)])
 
+    # GridTopology from CartesianGrid
+    grid = CartesianGrid{T}(5,5)
+    topo = topology(grid)
+    vs = collect(Meshes.vertices(grid))
+    for i in 1:nelements(grid)
+      inds = indices(element(topo, i))
+      @test vs[[inds...]] == vertices(element(grid, i))
+    end
+    
     grid = CartesianGrid{T}(200,100)
     if T == Float32
       @test sprint(show, MIME"text/plain"(), grid) == "200×100 CartesianGrid{2,Float32}\n  minimum: Point(0.0f0, 0.0f0)\n  maximum: Point(200.0f0, 100.0f0)\n  spacing: (1.0f0, 1.0f0)"
@@ -113,15 +122,6 @@
       @test_reference "data/grid-1D-$T-data.png" plot(CartesianGrid{T}(10),[1,2,3,4,5,5,4,3,2,1])
       @test_reference "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
       # @test_reference "data/grid3D-data.png" plot(RegularGrid(10,10,10),1:1000)
-    end
-
-    # GridTopology from CartesianGrid
-    grid = CartesianGrid{T}(5,5)
-    topo = topology(grid)
-    vs = collect(Meshes.vertices(grid))
-    for i in 1:nelements(grid)
-      inds = indices(element(topo, i))
-      @test vs[[inds...]] == vertices(element(grid, i))
     end
   end
 
