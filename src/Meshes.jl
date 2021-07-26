@@ -155,7 +155,7 @@ export
   windingnumber, chains, segments,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
-  orientation, bridge, normal
+  orientation, bridge, normal,
 
   # orientation algorithms
   WindingOrientation,
