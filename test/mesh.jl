@@ -121,7 +121,7 @@
     vs = collect(Meshes.vertices(grid))
     for i in 1:nelements(grid)
       inds = indices(element(topo, i))
-      @test vs[inds] == element(grid, i).vertices
+      @test vs[[inds...]] == vertices(element(grid, i))
     end
   end
 
