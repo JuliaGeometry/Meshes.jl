@@ -36,18 +36,3 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
   w = windingnumber(p, c)
   ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
 end
-
-"""
-    normal(triangle)
-
-Determine the normalised normal of `triangle` in three
-dimensions
-"""
-function normal(t::Triangle{3})
-  a, b, c = t.vertices
-
-  # the normal of a Triangle is the cross product of two arbitrary edges
-  t_normal = (b - a) × (c - a)
-
-  t_normal / norm(t_normal)
-end

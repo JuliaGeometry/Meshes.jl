@@ -122,6 +122,18 @@ function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
   any(i -> p ∈ Δ(i), 2:N-1)
 end
 
+"""
+    normal(triangle)
+
+Determine the normalised normal of `triangle` in three
+dimensions
+"""
+function normal(t::Triangle{3})
+  a, b, c = t.vertices
+  n = (b - a) × (c - a)
+  n / norm(n)
+end
+
 # triangles are special
 issimplex(::Type{<:Triangle}) = true
 isconvex(::Type{<:Triangle}) = true

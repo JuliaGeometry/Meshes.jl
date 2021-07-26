@@ -54,6 +54,12 @@
     for p in P3[(-1,0,0),(1,2,0),(0,1,2)]
       @test p ∉ t
     end
+
+    t = Triangle(P3(0,0,0), P3(0,1,0), P3(0,0,1))
+    @test isapprox(normal(t), Vec(1,0,0))
+    t = Triangle(P3(0,0,0), P3(2,0,0), P3(0,2,2))
+    @test isapprox(normal(t), Vec(0,-1/sqrt(2),1/sqrt(2)))
+    
     # Quadrangle in 2D space
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test area(q) == T(1)

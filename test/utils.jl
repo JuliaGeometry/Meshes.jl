@@ -15,9 +15,4 @@
   @test sideof(p1, c) == :INSIDE
   @test sideof(p2, c) == :OUTSIDE
   @test sideof(p3, c) == :INSIDE
-
-  t = Triangle(P3(0,0,0), P3(0,1,0), P3(0,0,1))
-  @test isapprox(normal(t), Vec(1,0,0))
-  t = Triangle(P3(0,0,0), P3(2,0,0), P3(0,2,2))
-  @test isapprox(normal(t), Vec(0,-1/sqrt(2),1/sqrt(2)))
 end
