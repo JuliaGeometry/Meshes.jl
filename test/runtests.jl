@@ -79,7 +79,8 @@ testfiles = [
   "simplification.jl",
   "refinement.jl",
   "smoothing.jl",
-  "boundingboxes.jl"
+  "boundingboxes.jl",
+  "utils.jl"
 ]
 
 # --------------------------------
