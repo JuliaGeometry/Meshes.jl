@@ -86,6 +86,33 @@ function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
   zero(T) ≤ λ₃ ≤ one(T)
 end
 
+function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
+  # given coordinates
+  a, b, c = t.vertices
+  
+  # evaluate vectors defining geometry
+  v₁ = b - a
+  v₂ = c - a
+  v₃ = p - a
+
+  # calculate required dot products
+  d₁₁ = v₁ ⋅ v₁
+  d₁₂ = v₁ ⋅ v₂
+  d₂₂ = v₂ ⋅ v₂
+  d₃₁ = v₃ ⋅ v₁
+  d₃₂ = v₃ ⋅ v₂
+
+  # calculate reused denominator
+  d = d₁₁ * d₂₂ - d₁₂ * d₁₂
+
+  # barycentric coordinates
+  λ₂ = (d₂₂ * d₃₁ - d₁₂ * d₃₂) / d
+  λ₃ = (d₁₁ * d₃₂ - d₁₂ * d₃₁) / d
+  
+  # barycentric check
+  (λ₂ ≥ zero(T)) && (λ₃ ≥ zero(T)) && ((λ₂ + λ₃) ≤ one(T))
+end
+
 function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
   # decompose n-gons into triangles by
   # fan triangulation (assumes convexity)

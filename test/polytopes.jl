@@ -48,7 +48,12 @@
     @test area(t) == T(0.5)
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,1))
     @test area(t) > T(0.7)
-
+    for p in P3[(0,0,0),(1,0,0),(0,1,1),(0,0.2,0.2)]
+      @test p ∈ t
+    end
+    for p in P3[(-1,0,0),(1,2,0),(0,1,2)]
+      @test p ∉ t
+    end
     # Quadrangle in 2D space
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test area(q) == T(1)
