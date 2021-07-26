@@ -130,11 +130,8 @@ dimensions
 """
 function normal(t::Triangle{3})
   a, b, c = t.vertices
-
-  # the normal of a Triangle is the cross product of two arbitrary edges
-  t_normal = (b - a) × (c - a)
-
-  t_normal / norm(t_normal)
+  n = (b - a) × (c - a)
+  n / norm(n)
 end
 
 # triangles are special
