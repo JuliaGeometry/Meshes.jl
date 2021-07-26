@@ -120,7 +120,7 @@
     topo = topology(grid)
     vs = collect(Meshes.vertices(grid))
     for i in 1:nelements(grid)
-      inds = [element(topo, i).indices...]
+      inds = indices(element(topo, i))
       @test vs[inds] == element(grid, i).vertices
     end
   end
