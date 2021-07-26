@@ -323,6 +323,7 @@ export
 
   # utililities
   signarea,
-  sideof
+  sideof,
+  normal
 
 end # module
