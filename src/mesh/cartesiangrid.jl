@@ -93,7 +93,7 @@ end
 
 elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
 
-topology(grid::CartesianGrid) = GridTopology(size(grid))
+topology(g::CartesianGrid) = GridTopology(size(g))
 
 # -----------------
 # DOMAIN INTERFACE
