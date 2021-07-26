@@ -102,7 +102,7 @@
     # GridTopology from CartesianGrid
     grid = CartesianGrid{T}(5,5)
     topo = topology(grid)
-    vs = collect(Meshes.vertices(grid))
+    vs = collect(vertices(grid))
     for i in 1:nelements(grid)
       inds = indices(element(topo, i))
       @test vs[[inds...]] == vertices(element(grid, i))
