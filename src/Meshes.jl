@@ -155,7 +155,7 @@ export
   windingnumber, chains, segments,
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
-  orientation, bridge,
+  orientation, bridge, normal
 
   # orientation algorithms
   WindingOrientation,
@@ -323,7 +323,6 @@ export
 
   # utililities
   signarea,
-  sideof,
-  normal
+  sideof
 
 end # module
