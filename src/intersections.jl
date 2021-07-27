@@ -10,6 +10,20 @@ Return the intersection of two geometries `g1` and `g2`.
 Base.intersect(g1::Geometry, g2::Geometry) = get(intersecttype(g1, g2))
 
 """
+    g ∩ d
+
+Return the intersection of a geometry `g` and a domain `d`.
+"""
+Base.intersect(g::Geometry, d::Domain) = get(intersecttype(g, d))
+
+"""
+    d ∩ g
+
+Return the intersection of a geometry `g` and a domain `d`.
+"""
+Base.intersect(d::Domain, g::Geometry) = intersect(g, d)
+
+"""
     intersecttype(g1, g2)
 
 Return the intersection type of two geometries `g1` and `g2`.
