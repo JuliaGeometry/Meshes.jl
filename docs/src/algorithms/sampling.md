@@ -20,4 +20,5 @@ BallSampling
 ```@docs
 RegularSampling
 HomogeneousSampling
+MinDistanceSampling
 ```
