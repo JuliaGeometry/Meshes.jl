@@ -89,6 +89,60 @@ function intersecttype(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
   end
 end
 
+"""
+    intersecttype(s1, s2)
+
+Compute the intersection type of two line segments `s1` and `s2` in 3D.
+
+# https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect
+
+"""
+function intersecttype(s1::Segment{3,T}, s2::Segment{3,T}) where {T}
+  # get coordinates
+  p₁, p₂ = coordinates.(vertices(s1))
+  q₁, q₂ = coordinates.(vertices(s2))
+
+  # create matrices and vectors to allow for evaluation of intersection
+  A = [(p₂ - p₁) (q₁ - q₂)]
+  b = q₁ - p₁
+
+  λ = A \ b
+
+  # calculate the rank of the augmented matrix
+  rₐ = rank([A b])
+  # calculate the rank of the rectangular matrix
+  r = rank(A)
+
+  # use matrix rank to determine basic intersection properties
+  # segments are co-planar (but not co-linear)
+  if (rₐ == 2) && (r == 2)
+    # if either element is approximately 0 or 1, set them as so to prevent any domain errors
+    λ₁ = isapprox(λ[1], zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ[1], one(T), atol=atol(T)) ? one(T) : λ[1])
+    λ₂ = isapprox(λ[2], zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ[2], one(T), atol=atol(T)) ? one(T) : λ[2])
+
+    # if both λs are either 0 or 1, they are CornerTouchingSegments
+    if ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
+      return CornerTouchingSegments(s1(λ₁))
+    # if either λ is 0 or 1 then they are MidTouchingSegments
+    elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ > zero(T)) || (λ₂ < one(T)))
+      return MidTouchingSegments(s1(λ₁))
+    elseif ((λ₁ > zero(T)) || (λ₁ < one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
+      return MidTouchingSegments(s1(λ₁))
+    # otherwise they are simple CrossingSegments
+    elseif (λ₁ > zero(T)) && (λ₁ < one(T)) && (λ₂ > zero(T)) && (λ₂ < one(T))
+      return CrossingSegments(s1(λ₁))
+    # if any λs are outside the interval [0, 1], there is no intersection
+    else
+      return NoIntersection()
+    end
+  # segments are co-linear
+  elseif (rₐ == 1) && (r == 1)
+    return intersectcolinear(s1, s2)
+  else
+    return NoIntersection()
+  end
+end
+
 # compute the intersection of two line segments assuming that it is a point
 function intersectpoint(s1::Segment{2}, s2::Segment{2})
   x1, x2 = vertices(s1)
