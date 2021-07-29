@@ -1,6 +1,7 @@
 using Base: hash_integer
 @testset "Intersections" begin
   @testset "Segments" begin
+    # segments in 2D
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0.5,0.0), P2(2,0))
     @test s1 ∩ s2 == Segment(P2(0.5,0.0), P2(1,0))
@@ -91,6 +92,43 @@ using Base: hash_integer
     s1 = Segment(P2(0.94495744, 0.53224397), P2(0.94798386, 0.5344541))
     s2 = Segment(P2(0.94798386, 0.5344541), P2(0.9472896, 0.5340202))
     @test s1 ∩ s2 == s2 ∩ s1 == P2(0.94798386, 0.5344541) 
+
+    # segments in 3D
+    s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    s2 = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
+    s3 = Segment(P3(0.5, 0.0, 0.0), P3(1.5, 0.0, 0.0))
+    s4 = Segment(P3(0.0, 1.0, 0.0), P3(0.0, -2.0, 0.0))
+    s5 = Segment(P3(-1.0, 1.0, 0.0), P3(2.0, -2.0, 0.0))
+    s6 = Segment(P3(0.0, 0.0, 0.0), P3(0.0, 1.0, 0.0))
+    s7 = Segment(P3(-1.0, 1.0, 0.0), P3(-1.0, -1.0, 0.0))
+    s8 = Segment(P3(-1.0, 1.0, 1.0), P3(-1.0, -1.0, 1.0))
+    s9 = Segment(P3(0.5, 1.0, 1.0), P3(0.5, -1.0, 1.0))
+    s10 = Segment(P3(0.0, 1.0, 0.0), P3(1.0, 1.0, 0.0))
+    s11 = Segment(P3(1.5, 0.0, 0.0), P3(2.5, 0.0, 0.0))
+    s12 = Segment(P3(1.0, 0.0, 0.0), P3(2.0, 0.0, 0.0))
+
+    @test isa(intersecttype(s1, s2), CrossingSegments)        # CrossingSegments
+    @test s1 ∩ s2 == P3(0.5, 0.0, 0.0)
+    @test isa(intersecttype(s1, s3), OverlappingSegments)     # OverlappingSegments
+    @test s1 ∩ s3 == Segment(P3(0.5, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    @test isa(intersecttype(s1, s4), MidTouchingSegments)     # MidTouchingSegments (perpendicular)
+    @test s1 ∩ s4 == P3(0.0, 0.0, 0.0)
+    @test isa(intersecttype(s1, s5), MidTouchingSegments)     # MidTouchingSegments (obtuse)
+    @test s1 ∩ s5 == P3(0.0, 0.0, 0.0)
+    @test isa(intersecttype(s1, s6), CornerTouchingSegments)  # CornerTouchingSegments
+    @test s1 ∩ s6 == P3(0.0, 0.0, 0.0)
+    @test isa(intersecttype(s1, s7), NoIntersection)          # NoIntersection (but coplanar)
+    @test isnothing(s1 ∩ s7)
+    @test isa(intersecttype(s1, s8), NoIntersection)          # NoIntersection (non-coplanar)
+    @test isnothing(s1 ∩ s8)
+    @test isa(intersecttype(s1, s9), NoIntersection)          # NoIntersection (non-coplanar)
+    @test isnothing(s1 ∩ s9)
+    @test isa(intersecttype(s1, s10), NoIntersection)         # NoIntersection (parallel)
+    @test isnothing(s1 ∩ s10)
+    @test isa(intersecttype(s1, s11), NoIntersection)         # NoIntersection (colinear, not-overlapping)
+    @test isnothing(s1 ∩ s11)
+    @test isa(intersecttype(s1, s12), CornerTouchingSegments) # CornerTouchingSegments (colinear)
+    @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
   end
 
   @testset "Lines" begin
