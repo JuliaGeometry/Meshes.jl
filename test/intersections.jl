@@ -129,18 +129,6 @@ using Base: hash_integer
     @test isnothing(s1 ∩ s11)
     @test isa(intersecttype(s1, s12), CornerTouchingSegments) # CornerTouchingSegments (colinear)
     @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
   end
 
   @testset "Lines" begin
