@@ -93,9 +93,7 @@ end
     intersecttype(s1, s2)
 
 Compute the intersection type of two line segments `s1` and `s2` in 3D.
-
-# https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect
-
+See https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect.
 """
 function intersecttype(s1::Segment{3,T}, s2::Segment{3,T}) where {T}
   # get coordinates
