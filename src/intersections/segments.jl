@@ -120,18 +120,18 @@ function intersecttype(s1::Segment{3,T}, s2::Segment{3,T}) where {T}
     λ₁ = isapprox(λ[1], zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ[1], one(T), atol=atol(T)) ? one(T) : λ[1])
     λ₂ = isapprox(λ[2], zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ[2], one(T), atol=atol(T)) ? one(T) : λ[2])
 
+    # if λs are outside of the interval [0, 1], they do not intersect
+    if any((λ₁, λ₂) .< zero(T)) || any((λ₁, λ₂) .> one(T))
+      return NoIntersection()
     # if both λs are either 0 or 1, they are CornerTouchingSegments
-    if ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
+    elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
       return CornerTouchingSegments(s1(λ₁))
     # if either λ is 0 or 1 then they are MidTouchingSegments
     elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) ⊻ ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
       return MidTouchingSegments(s1(λ₁))
     # otherwise they are simple CrossingSegments
-    elseif (λ₁ > zero(T)) && (λ₁ < one(T)) && (λ₂ > zero(T)) && (λ₂ < one(T))
-      return CrossingSegments(s1(λ₁))
-    # if any λs are outside the interval [0, 1], there is no intersection
     else
-      return NoIntersection()
+      return CrossingSegments(s1(λ₁))
     end
   # segments are co-linear
   elseif (rₐ == 1) && (r == 1)
