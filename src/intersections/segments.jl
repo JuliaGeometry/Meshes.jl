@@ -124,9 +124,7 @@ function intersecttype(s1::Segment{3,T}, s2::Segment{3,T}) where {T}
     if ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
       return CornerTouchingSegments(s1(λ₁))
     # if either λ is 0 or 1 then they are MidTouchingSegments
-    elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ > zero(T)) || (λ₂ < one(T)))
-      return MidTouchingSegments(s1(λ₁))
-    elseif ((λ₁ > zero(T)) || (λ₁ < one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
+    elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) ⊻ ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
       return MidTouchingSegments(s1(λ₁))
     # otherwise they are simple CrossingSegments
     elseif (λ₁ > zero(T)) && (λ₁ < one(T)) && (λ₂ > zero(T)) && (λ₂ < one(T))
