@@ -95,6 +95,38 @@ struct NoIntersection <: Intersection end
 
 Base.get(::NoIntersection) = nothing
 
+# -------------------------------
+# SEGMENT-TRIANGLE INTERSECTIONS
+# -------------------------------
+
+struct IntersectingSegmentTri{P<:Point, T} <: Intersection
+  value::P
+  t::T
+end
+
+# ---------------------------
+# SEGMENT-MESH INTERSECTIONS
+# ---------------------------
+
+struct IntersectingSegmentMesh{P<:Point, T, N<:Integer} <: Intersection
+  value::P
+  t::T
+  i::N
+end
+
+# ----------------------------
+# SEGMENT-PLANE INTERSECTIONS
+# ----------------------------
+
+struct IntersectingSegmentPlane{P<:Point, T} <: Intersection
+  value::P
+  t::T
+end
+
+struct ContainedSegmentPlane <: Intersection end
+
+Base.get(::ContainedSegmentPlane) = nothing
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

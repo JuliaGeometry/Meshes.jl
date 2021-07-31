@@ -167,3 +167,64 @@ function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
     NoIntersection()
   end
 end
+
+function intersecttype(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim, T}
+  # get the triangle's edges and its normal
+  s_v = s.vertices
+  t_v = t.vertices
+  n = normal(t)
+
+  # for p ∈ t_v
+  #   for d ∈ 1:Dim
+  #     if (p.coords[d] < min(s_v[1].coords[d], s_v[2].coords[d])) || (p.coords[d] > max(s_v[1].coords[d], s_v[2].coords[d]))
+  #       return NoIntersection()
+  #     end
+  #   end
+  # end
+
+  # calculate the numerator and denominator to determine the intersection
+  # https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection  
+  a = (t_v[1] - s_v[1]) ⋅ n
+  b = (s_v[2] - s_v[1]) ⋅ n
+
+  # check if the segment and triangle are parallel
+  if isapprox(b, zero(T), atol=atol(T))
+    if isapprox(a, zero(T), atol=atol(T))
+      # segment is in the plane of the triangle
+      t_c = chains(t)
+
+      for edge ∈ Segment.(t_c[1:(end-1)], t_c[2:end])
+        edge_segment_intersect = edge ∩ s
+        if isa(edge_segment_intersect, Point)
+          return IntersectingSegmentTri(edge_segment_intersect)
+        elseif isa(edge_segment_intersect, Segment)
+          return IntersectingSegmentTri(edge_segment_intersect.vertices[1])
+        end
+      end
+    else
+        return NoIntersection()
+    end
+  else
+    # find segment parameter at intersection with triangle  
+  λ = a / b
+    
+    # if λ is approximately 0 or 1, set them as so to prevent any domain errors
+    λ = isapprox(λ, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ, one(T), atol=atol(T)) ? one(T) : λ)
+
+  # if t is less than zero or greater than one, the triangle and segment don't
+  # intersect
+  if (λ < zero(T)) || (λ > one(T))
+      return NoIntersection()                  
+  end 
+  
+  # evaluate the intersection point
+  p = s(λ)
+
+  # if the point is within the plane AND the triangle then it intersects
+  if p ∈ t
+      return IntersectingSegmentTri(p, λ)
+  else
+      return NoIntersection()
+  end
+end
+end
