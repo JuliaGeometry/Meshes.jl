@@ -177,21 +177,13 @@ function intersecttype(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim, T}
   s₁ = s_v[1]
   s₂ = s_v[2]
 
-  t_a = [t_v[1] t_v[2] t_v[3]]
+  t_a = reinterpret(reshape, T, t_v)
 
-  # sorted = any(s₁ .> s₂)
-  # s₁, s₂ = sorted ? (s₂, s₁) : (s₁, s₂)
-
-  # println(mapreduce(p -> ((s₁ .< p) .& (s₂ .< p)), .&, coordinates.(t_v)))
-
-  min_dim = minimum(t_a, dims=2)[:]
-  max_dim = maximum(t_a, dims=2)[:]
-
-  if any(i -> (((s₁[i] > max_dim[i]) && (s₂[i] > max_dim[i]))), 1:Dim)
+  if any(i -> all(j -> (s₁[i] > t_a[i, j]) && (s₂[i] > t_a[i, j]), 1:3), 1:Dim)
     return NoIntersection()
   end
 
-  if any(i -> (((s₁[i] < min_dim[i]) && (s₂[i] < min_dim[i]))), 1:Dim)
+  if any(i -> all(j -> (s₁[i] < t_a[i, j]) && (s₂[i] < t_a[i, j]), 1:3), 1:Dim)
     return NoIntersection()
   end
 
