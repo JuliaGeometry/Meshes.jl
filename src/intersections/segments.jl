@@ -175,13 +175,15 @@ function intersecttype(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim, T}
   n = normal(t)
 
   s₁, s₂ = coordinates.(vertices(s))
-  s₁, s₂ = any(s₁ .> s₂) ? (s₂, s₁) : (s₁, s₂)
+  # s₁, s₂ = any(s₁ .> s₂) ? (s₂, s₁) : (s₁, s₂)
 
-  if any(mapreduce(p -> (s₁ .< coordinates(p)) .& (s₂ .< coordinates(p)), .&, t_v))
+  # println(mapreduce(p -> ((s₁ .< p) .& (s₂ .< p)), .&, coordinates.(t_v)))
+
+  if any(mapreduce(p -> ((s₁ .< p) .& (s₂ .< p)), .&, coordinates.(t_v)))
     return NoIntersection()
   end
 
-  if any(mapreduce(p -> (s₁ .> coordinates(p)) .& (s₂ .> coordinates(p)), .&, t_v))
+  if any(mapreduce(p -> ((s₁ .> p) .& (s₂ .> p)), .&, coordinates.(t_v)))
     return NoIntersection()
   end
 
