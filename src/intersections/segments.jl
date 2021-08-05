@@ -174,13 +174,16 @@ function intersecttype(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim, T}
   t_v = t.vertices
   n = normal(t)
 
-  # for p ∈ t_v
-  #   for d ∈ 1:Dim
-  #     if (p.coords[d] < min(s_v[1].coords[d], s_v[2].coords[d])) || (p.coords[d] > max(s_v[1].coords[d], s_v[2].coords[d]))
-  #       return NoIntersection()
-  #     end
-  #   end
-  # end
+  s₁, s₂ = coordinates.(vertices(s))
+  s₁, s₂ = any(s₁ .> s₂) ? (s₂, s₁) : (s₁, s₂)
+
+  if any(mapreduce(p -> (s₁ .< coordinates(p)) .& (s₂ .< coordinates(p)), .&, t_v))
+    return NoIntersection()
+  end
+
+  if any(mapreduce(p -> (s₁ .> coordinates(p)) .& (s₂ .> coordinates(p)), .&, t_v))
+    return NoIntersection()
+  end
 
   # calculate the numerator and denominator to determine the intersection
   # https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection  
