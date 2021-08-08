@@ -2,7 +2,8 @@
   @test embeddim(Point(1)) == 1
   @test embeddim(Point(1, 2)) == 2
   @test embeddim(Point(1, 2, 3)) == 3
-  @test coordtype(Point(1, 1)) == Int
+  # @test coordtype(Point(1, 1)) == Int
+  @test coordtype(Point(1, 1)) == Float64  # Internal conversion to Float64
   @test coordtype(Point(1.,1.)) == Float64
   @test coordtype(Point(1f0, 1f0)) == Float32
   @test coordtype(Point1(1)) == Float64
@@ -67,7 +68,8 @@
   @test coordtype(Point([1.,2.,3.])) == Float64
   
   # check all 1D Point constructors, because those tend to make trouble
-  @test Point(1) == Point((1,)) == Point([1])
+  # @test Point(1) == Point((1,)) == Point([1])
+  @test Point(1) == Point((1,)) == Point([1.0]) # Internal conversion to Float64
   @test Point{1,Int}(-2) == Point{1,Int}((-2,)) == Point{1,Int}([-2])
   @test Point{1,T}(0) == Point{1,T}((0,)) == Point{1,T}([0])
  

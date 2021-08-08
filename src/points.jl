@@ -28,7 +28,7 @@ end
 Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(SVector{Dim,T}(coords...))
 Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
 Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
-Point(coords...) = Point(SVector(coords...))
+Point(coords...) = Point(float(SVector(coords...)))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
