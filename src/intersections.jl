@@ -10,20 +10,6 @@ Return the intersection of two geometries `g1` and `g2`.
 Base.intersect(g1::Geometry, g2::Geometry) = get(intersecttype(g1, g2))
 
 """
-    g ∩ d
-
-Return the intersection of a geometry `g` and a domain `d`.
-"""
-Base.intersect(g::Geometry, d::Domain) = get(intersecttype(g, d))
-
-"""
-    d ∩ g
-
-Return the intersection of a geometry `g` and a domain `d`.
-"""
-Base.intersect(d::Domain, g::Geometry) = intersect(g, d)
-
-"""
     intersecttype(g1, g2)
 
 Return the intersection type of two geometries `g1` and `g2`.
@@ -87,14 +73,6 @@ struct CornerTouchingBoxes{P<:Point} <: Intersection
   value::P
 end
 
-# ------------
-# CORNER CASE
-# ------------
-
-struct NoIntersection <: Intersection end
-
-Base.get(::NoIntersection) = nothing
-
 # -------------------------------
 # SEGMENT-TRIANGLE INTERSECTIONS
 # -------------------------------
@@ -104,28 +82,13 @@ struct IntersectingSegmentTri{P<:Point, T} <: Intersection
   t::T
 end
 
-# ---------------------------
-# SEGMENT-MESH INTERSECTIONS
-# ---------------------------
+# ------------
+# CORNER CASE
+# ------------
 
-struct IntersectingSegmentMesh{P<:Point, T, N<:Integer} <: Intersection
-  value::P
-  t::T
-  i::N
-end
+struct NoIntersection <: Intersection end
 
-# ----------------------------
-# SEGMENT-PLANE INTERSECTIONS
-# ----------------------------
-
-struct IntersectingSegmentPlane{P<:Point, T} <: Intersection
-  value::P
-  t::T
-end
-
-struct ContainedSegmentPlane <: Intersection end
-
-Base.get(::ContainedSegmentPlane) = nothing
+Base.get(::NoIntersection) = nothing
 
 # ----------------
 # IMPLEMENTATIONS
