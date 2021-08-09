@@ -136,12 +136,14 @@ using Base: hash_integer
     
     s1 = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
     s2 = Segment(P3(0.0, 0.0, 1.0), P3(0.0, 0.0, -1.0))
-    s3 = Segment(P3(-1.0, 0.0, 1.0), P3(-1.0, 0.0, -1.0))
+    s3 = Segment(P3(0.9, 0.9, 1.0), P3(0.9, 0.9, -1.0))
     s4 = Segment(P3(-0.2, 0.2, 0.0), P3(1.2, 0.2, 0.0))
     s5 = Segment(P3(-0.2, -0.2, 0.0), P3(1.2, -0.2, 0.0))
     s6 = Segment(P3(-0.2, 0.2, 1.0), P3(1.2, 0.2, 1.0))
-    s7 = Segment(P3(0.5, 0.5, 2.0), P3(0.5, 0.5, 1.8))
+    s7 = Segment(P3(0.5, 0.5, 1.9), P3(0.5, 0.5, 1.8))
     s8 = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
+    s9 = Segment(P3(-1.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    s10 = Segment(P3(0.7, 0.8, 0.0), P3(0.8, 0.7, 0.0))
 
 
     @test isa(intersecttype(s1, t1), IntersectingSegmentTri) # Passes through middle of t1
@@ -157,7 +159,8 @@ using Base: hash_integer
     @test isnothing(s6 ∩ t1)
     @test isa(intersecttype(s7, t2), NoIntersection) # Doesn't reach t2
     @test isa(intersecttype(s8, t2), NoIntersection) # Parallel, offset from t2
-    
+    @test isa(intersecttype(s9, t1), IntersectingSegmentTri) # Segment colinear with edge of t1   
+    @test isa(intersecttype(s10, t1), NoIntersection) # Co-planar, within bounding box of t, no intersection
   end
 
   @testset "Lines" begin
