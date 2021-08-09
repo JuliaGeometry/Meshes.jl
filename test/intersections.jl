@@ -129,6 +129,28 @@ using Base: hash_integer
     @test isnothing(s1 ∩ s11)
     @test isa(intersecttype(s1, s12), CornerTouchingSegments) # CornerTouchingSegments (colinear)
     @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
+
+    # segments and triangles in 3D
+    p1 = P3(0, 0, 0)
+    p2 = P3(1, 0, 0)
+    p3 = P3(0, 1, 0)
+    t = Triangle(p1, p2, p3)
+    
+    s1 = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
+    s2 = Segment(P3(0.0, 0.0, 1.0), P3(0.0, 0.0, -1.0))
+    s3 = Segment(P3(-1.0, 0.0, 1.0), P3(-1.0, 0.0, -1.0))
+    s4 = Segment(P3(-0.2, 0.2, 0.0), P3(1.2, 0.2, 0.0))
+    s5 = Segment(P3(-0.2, -0.2, 0.0), P3(1.2, -0.2, 0.0))
+
+    @test isa(intersecttype(s1, t), IntersectingSegmentTri) # Passes through middle of t
+    @test s1 ∩ t == P3(0.2, 0.2, 0.0)
+    @test isa(intersecttype(s2, t), IntersectingSegmentTri) # Passes through a vertex of t
+    @test s2 ∩ t == P3(0.0, 0.0, 0.0)
+    @test isa(intersecttype(s3, t), NoIntersection) # Normal to, doesn't intersect with t
+    @test isnothing(s3 ∩ t) 
+    @test isa(intersecttype(s4, t), IntersectingSegmentTri) # Co-planar, intersects with t
+    @test isa(intersecttype(s5, t), NoIntersection) # Co-planar, doesn't intersect with t
+    @test isnothing(s5 ∩ t)
   end
 
   @testset "Lines" begin

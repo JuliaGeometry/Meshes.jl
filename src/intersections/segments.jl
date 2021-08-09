@@ -168,55 +168,72 @@ function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   end
 end
 
-function intersecttype(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim, T}
-  # get the triangle's edges and its normal
-  s_v = coordinates.(vertices(s))
-  t_v = coordinates.(vertices(t))
-  n = normal(t)
+# intersection of Segment and Triangle
+function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
+  # get the triangle's and segment's vertices
+  s_v = s.vertices
+  t_v = t.vertices
 
   s₁ = s_v[1]
   s₂ = s_v[2]
 
-  t_a = reinterpret(reshape, T, t_v)
-
-  if any(i -> all(j -> (s₁[i] > t_a[i, j]) && (s₂[i] > t_a[i, j]), 1:3), 1:Dim)
+  # simple checks to see if the triangle overlaps with the bounding box of the segment
+  # this check is much faster than calculating an intersection
+  if any(i -> all(j -> (s₁.coords[i] > t_v[j].coords[i]) && (s₂.coords[i] > t_v[j].coords[i]), 1:3), 1:3)
     return NoIntersection()
   end
 
-  if any(i -> all(j -> (s₁[i] < t_a[i, j]) && (s₂[i] < t_a[i, j]), 1:3), 1:Dim)
+  if any(i -> all(j -> (s₁.coords[i] < t_v[j].coords[i]) && (s₂.coords[i] < t_v[j].coords[i]), 1:3), 1:3)
     return NoIntersection()
   end
 
-  # calculate the numerator and denominator to determine the intersection
-  # https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection  
+  # calculate the normal once it is needed
+  n = normal(t)
+
+  # code similar to Segment ∩ Plane
   a = (t_v[1] - s_v[1]) ⋅ n
   b = (s_v[2] - s_v[1]) ⋅ n
 
-  # check if the segment and triangle are parallel
+  # check if the Segment and Triangle are parallel
   if isapprox(b, zero(T), atol=atol(T))
+    # segment is in the plane of the triangle, so check for intersection with the edges
     if isapprox(a, zero(T), atol=atol(T))
-      # segment is in the plane of the triangle
       t_c = chains(t)
 
-      for edge ∈ Segment.(t_c[1:(end-1)], t_c[2:end])
-        edge_segment_intersect = edge ∩ s
-        if isa(edge_segment_intersect, Point)
-          return IntersectingSegmentTri(edge_segment_intersect)
-        elseif isa(edge_segment_intersect, Segment)
-          return IntersectingSegmentTri(edge_segment_intersect.vertices[1])
+      # loop through triangle's edges to check for intersection
+      for e ∈ segments(t_c[1])
+        e_s_intersect = e ∩ s
+
+        if isa(e_s_intersect, Point)
+          # get dimension of segment with largest span for higher accuracy of λ calculation
+          d = findmax(abs.(s₂.coords - s₁.coords))[2]
+
+          λ = (e_s_intersect.coords[d] - s₁.coords[d]) / (s₂.coords[d] - s₁.coords[d])
+
+          return IntersectingSegmentTri(e_s_intersect, λ)
+        elseif isa(e_s_intersect, Segment)
+          # get dimension of segment with largest span for higher accuracy of λ calculation
+          d = findmax(abs.(s₂.coords - s₁.coords))[2]
+
+          # just calculate a single λ, not a range, we only need a point
+          λ = (e_s_intersect.vertices[d].coords[d] - s₁.coords[d]) / (s₂.coords[d] - s₁.coords[d])
+
+          return IntersectingSegmentTri(e_s_intersect.vertices[1], λ)
         end
       end
+
+      return NoIntersection()
     else
         return NoIntersection()
     end
   else
-    # find segment parameter at intersection with triangle  
+    # find segment parameter at intersection with Triangle/Plane
   λ = a / b
     
-    # if λ is approximately 0 or 1, set them as so to prevent any domain errors
+    # if λ is approximately 0 or 1, set as so to prevent any domain errors
     λ = isapprox(λ, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ, one(T), atol=atol(T)) ? one(T) : λ)
 
-  # if t is less than zero or greater than one, the triangle and segment don't
+    # if λ is less than zero or greater than one, the triangle and segment don't
   # intersect
   if (λ < zero(T)) || (λ > one(T))
       return NoIntersection()                  
