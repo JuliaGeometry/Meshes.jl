@@ -131,26 +131,33 @@ using Base: hash_integer
     @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
 
     # segments and triangles in 3D
-    p1 = P3(0, 0, 0)
-    p2 = P3(1, 0, 0)
-    p3 = P3(0, 1, 0)
-    t = Triangle(p1, p2, p3)
+    t1 = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    t2 = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
     
     s1 = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
     s2 = Segment(P3(0.0, 0.0, 1.0), P3(0.0, 0.0, -1.0))
     s3 = Segment(P3(-1.0, 0.0, 1.0), P3(-1.0, 0.0, -1.0))
     s4 = Segment(P3(-0.2, 0.2, 0.0), P3(1.2, 0.2, 0.0))
     s5 = Segment(P3(-0.2, -0.2, 0.0), P3(1.2, -0.2, 0.0))
+    s6 = Segment(P3(-0.2, 0.2, 1.0), P3(1.2, 0.2, 1.0))
+    s7 = Segment(P3(0.5, 0.5, 2.0), P3(0.5, 0.5, 1.8))
+    s8 = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
 
-    @test isa(intersecttype(s1, t), IntersectingSegmentTri) # Passes through middle of t
-    @test s1 ∩ t == P3(0.2, 0.2, 0.0)
-    @test isa(intersecttype(s2, t), IntersectingSegmentTri) # Passes through a vertex of t
-    @test s2 ∩ t == P3(0.0, 0.0, 0.0)
-    @test isa(intersecttype(s3, t), NoIntersection) # Normal to, doesn't intersect with t
-    @test isnothing(s3 ∩ t) 
-    @test isa(intersecttype(s4, t), IntersectingSegmentTri) # Co-planar, intersects with t
-    @test isa(intersecttype(s5, t), NoIntersection) # Co-planar, doesn't intersect with t
-    @test isnothing(s5 ∩ t)
+
+    @test isa(intersecttype(s1, t1), IntersectingSegmentTri) # Passes through middle of t1
+    @test s1 ∩ t1 == P3(0.2, 0.2, 0.0)
+    @test isa(intersecttype(s2, t1), IntersectingSegmentTri) # Passes through a vertex of t1
+    @test s2 ∩ t1 == P3(0.0, 0.0, 0.0)
+    @test isa(intersecttype(s3, t1), NoIntersection) # Normal to, doesn't intersect with t1
+    @test isnothing(s3 ∩ t1) 
+    @test isa(intersecttype(s4, t1), IntersectingSegmentTri) # Co-planar, intersects with t1
+    @test isa(intersecttype(s5, t1), NoIntersection) # Co-planar, doesn't intersect with t1
+    @test isnothing(s5 ∩ t1)
+    @test isa(intersecttype(s6, t1), NoIntersection) # Parallel, doesn't intersect with t1
+    @test isnothing(s6 ∩ t1)
+    @test isa(intersecttype(s7, t2), NoIntersection) # Doesn't reach t2
+    @test isa(intersecttype(s8, t2), NoIntersection) # Parallel, offset from t2
+    
   end
 
   @testset "Lines" begin
