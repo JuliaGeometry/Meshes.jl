@@ -10,6 +10,14 @@ A method for sampling from geometric objects.
 abstract type SamplingMethod end
 
 """
+    sample(object, method)
+
+Sample elements or points from geometric `object`
+with `method`.
+"""
+function sample end
+
+"""
     DiscreteSamplingMethod
 
 A method for sampling from discrete representations
@@ -28,12 +36,10 @@ space.
 """
 abstract type ContinuousSamplingMethod end
 
-"""
-    sample(object, method)
-
-Sample elements from `object` with `method`.
-"""
-function sample end
+function sample(polygon::Polygon, method::ContinuousSamplingMethod)
+  mesh = discretize(polygon, FIST())
+  sample(mesh, method)
+end
 
 # ----------------
 # IMPLEMENTATIONS

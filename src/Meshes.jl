@@ -47,12 +47,9 @@ include("points.jl")
 include("angles.jl")
 
 # type traits
-include("traits/variable.jl")
-include("traits/domain.jl")
-include("traits/data.jl")
-include("traits/optional.jl")
+include("traits.jl")
 
-# basic geometries
+# geometries
 include("geometries.jl")
 
 # collections
@@ -129,6 +126,9 @@ export
 
   # optional traits
   IsGrid, isgrid,
+
+  # domain/data alias
+  DomainOrData,
 
   # geometries
   Geometry,

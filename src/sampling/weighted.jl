@@ -18,8 +18,8 @@ end
 WeightedSampling(size, weights=nothing; replace=false) =
   WeightedSampling(size, weights, replace)
 
-function sample(object, method::WeightedSampling)
-  n = nelements(object)
+function sample(Ω::DomainOrData, method::WeightedSampling)
+  n = nelements(Ω)
   s = method.size
   w = method.weights
   r = method.replace
@@ -29,5 +29,5 @@ function sample(object, method::WeightedSampling)
   ws = isnothing(w) ? fill(1/n, n) : collect(w)
   @assert length(ws) == n "invalid number of weights for object"
 
-  view(object, sample(1:n, Weights(ws), s, replace=r))
+  view(Ω, sample(1:n, Weights(ws), s, replace=r))
 end

@@ -34,7 +34,7 @@ end
 MinDistanceSampling(α; ρ=0.65, δ=100, metric=Euclidean()) =
   MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(object, method::MinDistanceSampling)
+function sample(Ω::DomainOrData, method::MinDistanceSampling)
   # retrive parameters
   α = method.α
   ρ = method.ρ
@@ -42,7 +42,7 @@ function sample(object, method::MinDistanceSampling)
   m = method.metric
 
   # total volume/area of the object
-  V = sum(measure, object)
+  V = sum(measure, Ω)
 
   # expected number of Poisson samples
   # for relative radius (Lagae & Dutré 2007)
@@ -52,7 +52,7 @@ function sample(object, method::MinDistanceSampling)
   O = round(Int, δ * N)
 
   # oversample the object
-  points = sample(object, HomogeneousSampling(O))
+  points = sample(Ω, HomogeneousSampling(O))
 
   # discard points that do not satisfy distance criterion
   sample(PointSet(collect(points)), BallSampling(α, metric=m))
