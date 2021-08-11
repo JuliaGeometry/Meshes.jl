@@ -246,7 +246,7 @@ export
 
   # partitions
   Partition,
-  subsets, metadata,
+  indices, metadata,
 
   # viewing
   viewindices,

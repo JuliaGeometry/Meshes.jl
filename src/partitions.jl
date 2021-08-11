@@ -18,12 +18,12 @@ Partition(object, subsets, metadata=Dict()) =
   Partition{typeof(object)}(object, subsets, metadata)
 
 """
-    subsets(partition)
+    indices(partition)
 
 Return the subsets of indices in spatial object
 that make up the `partition`.
 """
-subsets(partition::Partition) = partition.subsets
+indices(partition::Partition) = partition.subsets
 
 """
     metadata(partition)

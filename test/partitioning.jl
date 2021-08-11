@@ -11,13 +11,13 @@
 
     grid = CartesianGrid{T}(3,3)
     p = partition(grid, RandomPartition(3, false))
-    @test setify(subsets(p)) == setify([[1,2,3], [4,5,6], [7,8,9]])
+    @test setify(indices(p)) == setify([[1,2,3], [4,5,6], [7,8,9]])
     p = partition(grid, RandomPartition(3))
-    @test setify(subsets(p)) == setify([[8,6,9], [4,1,7], [2,3,5]])
+    @test setify(indices(p)) == setify([[8,6,9], [4,1,7], [2,3,5]])
 
     grid = CartesianGrid{T}(2,3)
     p = partition(grid, RandomPartition(3, false))
-    @test setify(subsets(p)) == setify([[1,2], [3,4], [5,6]])
+    @test setify(indices(p)) == setify([[1,2], [3,4], [5,6]])
   end
 
   @testset "DirectionPartition" begin
@@ -25,22 +25,22 @@
 
     # basic checks on small regular grid data
     p = partition(grid, DirectionPartition(T.((1,0))))
-    @test setify(subsets(p)) == setify([[1,2,3], [4,5,6], [7,8,9]])
+    @test setify(indices(p)) == setify([[1,2,3], [4,5,6], [7,8,9]])
 
     p = partition(grid, DirectionPartition(T.((0,1))))
-    @test setify(subsets(p)) == setify([[1,4,7], [2,5,8], [3,6,9]])
+    @test setify(indices(p)) == setify([[1,4,7], [2,5,8], [3,6,9]])
 
     p = partition(grid, DirectionPartition(T.((1,1))))
-    @test setify(subsets(p)) == setify([[1,5,9], [2,6], [3], [4,8], [7]])
+    @test setify(indices(p)) == setify([[1,5,9], [2,6], [3], [4,8], [7]])
 
     p = partition(grid, DirectionPartition(T.((1,-1))))
-    @test setify(subsets(p)) == setify([[1], [2,4], [3,5,7], [6,8], [9]])
+    @test setify(indices(p)) == setify([[1], [2,4], [3,5,7], [6,8], [9]])
 
     # opposite directions produce same partition
     dir1 = (rand(T), rand(T)); dir2 = .-dir1
     p1 = partition(grid, DirectionPartition(dir1))
     p2 = partition(grid, DirectionPartition(dir2))
-    @test setify(subsets(p1)) == setify(subsets(p2))
+    @test setify(indices(p1)) == setify(indices(p2))
 
     # partition of arbitrarily large regular grid always
     # returns the "lines" and "columns" of the grid
@@ -48,12 +48,12 @@
       grid = CartesianGrid{T}(n,n)
 
       p = partition(grid, DirectionPartition(T.((1,0))))
-      @test setify(subsets(p)) == setify([collect((i-1)*n+1:i*n) for i in 1:n])
+      @test setify(indices(p)) == setify([collect((i-1)*n+1:i*n) for i in 1:n])
       ns = [nelements(d) for d in p]
       @test all(ns .== n)
 
       p = partition(grid, DirectionPartition(T.((0,1))))
-      @test setify(subsets(p)) == setify([collect(i:n:n*n) for i in 1:n])
+      @test setify(indices(p)) == setify([collect(i:n:n*n) for i in 1:n])
       ns = [nelements(d) for d in p]
       @test all(ns .== n)
     end
@@ -163,23 +163,23 @@
     @test length(p) == 4
     @test count(i->i==1, n) == 3
     @test count(i->i==2, n) == 1
-    @test setify(subsets(p)) == setify([[1,5],[2],[3],[4]])
+    @test setify(indices(p)) == setify([[1,5],[2],[3],[4]])
 
     # 5 balls with 1 point each
     p = partition(pset, BallPartition(T(0.2)))
     @test length(p) == 5
     @test all(nelements.(p) .== 1)
-    @test setify(subsets(p)) == setify([[1],[2],[3],[4],[5]])
+    @test setify(indices(p)) == setify([[1],[2],[3],[4],[5]])
   end
 
   @testset "PlanePartition" begin
     grid = CartesianGrid((3,3), T.((-0.5,-0.5)), T.((1.0,1.0)))
     p = partition(grid, PlanePartition(T.((0,1))))
-    @test setify(subsets(p)) == setify([[1,2,3],[4,5,6],[7,8,9]])
+    @test setify(indices(p)) == setify([[1,2,3],[4,5,6],[7,8,9]])
 
     grid = CartesianGrid((4,4), T.((-0.5,-0.5)), T.((1.0,1.0)))
     p = partition(grid, PlanePartition(T.((0,1))))
-    @test setify(subsets(p)) == setify([1:4,5:8,9:12,13:16])
+    @test setify(indices(p)) == setify([1:4,5:8,9:12,13:16])
   end
 
   @testset "PredicatePartition" begin
@@ -188,7 +188,7 @@
     # partition even from odd locations
     pred(i,j) = iseven(i+j)
     p = partition(grid, PredicatePartition(pred))
-    @test setify(subsets(p)) == setify([1:2:9,2:2:8])
+    @test setify(indices(p)) == setify([1:2:9,2:2:8])
   end
 
   @testset "SpatialPredicatePartition" begin
@@ -196,7 +196,7 @@
 
     # check if there are 100 partitions, each one having only 1 point
     sp = SpatialPredicatePartition((x,y) -> norm(x-y) < T(1))
-    s = subsets(partition(g, sp))
+    s = indices(partition(g, sp))
     @test length(s) == 100
     nelms = [nelements(d) for d in partition(g, sp)]
     @test all(nelms .== 1)
@@ -205,7 +205,7 @@
     pred(x, y) = all(T[0,0] .<= x .<= T[5,5]) && all(T[0,0] .<= y .<= T[5,5])
     sp = SpatialPredicatePartition(pred)
     p = partition(g, sp)
-    s = subsets(p)
+    s = indices(p)
     n = nelements.(p)
 
     # There will be 65 subsets:
@@ -223,15 +223,15 @@
     bn = BlockPartition(T(5), T(5))
 
     # Bm x Bn = Bn with m > n
-    s1 = subsets(partition(g, bm*bn))
-    s2 = subsets(partition(g, bn))
+    s1 = indices(partition(g, bm*bn))
+    s2 = indices(partition(g, bn))
     @test setify(s1) == setify(s2)
 
     # pXp=p (for deterministic p)
     for p in [BlockPartition(T(10), T(10)),
               BisectFractionPartition(T.((0.1,0.1)))]
-      s1 = subsets(partition(g, p*p))
-      s2 = subsets(partition(g, p))
+      s1 = indices(partition(g, p*p))
+      s2 = indices(partition(g, p))
       @test setify(s1) == setify(s2)
     end
   end
@@ -242,8 +242,8 @@
     bn = BlockPartition(T(5), T(5))
 
     # Bn -> Bm = Bm with m > n
-    s1 = subsets(partition(g, bm → bn))
-    s2 = subsets(partition(g, bn))
+    s1 = indices(partition(g, bm → bn))
+    s2 = indices(partition(g, bn))
     @test setify(s1) == setify(s2)
   end
 
@@ -253,8 +253,8 @@
     bn = BlockPartition(T(5), T(5))
 
     # Bm*Bn = Bm->Bn
-    s1 = subsets(partition(g, bm * bn))
-    s2 = subsets(partition(g, bm → bn))
+    s1 = indices(partition(g, bm * bn))
+    s2 = indices(partition(g, bm → bn))
     @test setify(s1) == setify(s2)
   end
 

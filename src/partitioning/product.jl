@@ -16,8 +16,8 @@ end
 # general case
 function partition(object, method::ProductPartition)
   # individual partition results
-  s₁ = subsets(partition(object, method.p₁))
-  s₂ = subsets(partition(object, method.p₂))
+  s₁ = indices(partition(object, method.p₁))
+  s₂ = indices(partition(object, method.p₂))
 
   # label-based representation
   l₁ = Vector{Int}(undef, nelements(object))
