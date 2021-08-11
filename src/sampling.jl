@@ -36,8 +36,8 @@ space.
 """
 abstract type ContinuousSamplingMethod end
 
-function sample(polygon::Polygon, method::ContinuousSamplingMethod)
-  mesh = discretize(polygon, FIST())
+function sample(geometry::Union{Multi,Polygon}, method::ContinuousSamplingMethod)
+  mesh = discretize(geometry, FIST())
   sample(mesh, method)
 end
 

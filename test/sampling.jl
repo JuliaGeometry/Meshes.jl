@@ -106,6 +106,12 @@ using Base: need_full_hex
     @test first(ps) isa P2
     @test all(∈(q), ps)
 
+    poly1 = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    poly2 = PolyArea(P2[(1,1),(2,1),(2,2),(1,2),(1,1)])
+    multi = Multi([poly1, poly2])
+    ps = sample(multi, HomogeneousSampling(100))
+    @test all(p -> (P2(0,0) ⪯ p ⪯ P2(1,1)) || (P2(1,1) ⪯ p ⪯ P2(2,2)), ps)
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     connec = connect.([(3,1,5),(4,6,2),(1,2,6,5),(5,6,4,3)])
     mesh = SimpleMesh(points, connec)
@@ -115,6 +121,12 @@ using Base: need_full_hex
   end
 
   @testset "MinDistanceSampling" begin
+    poly1 = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    poly2 = PolyArea(P2[(1,1),(2,1),(2,2),(1,2),(1,1)])
+    multi = Multi([poly1, poly2])
+    ps = sample(multi, MinDistanceSampling(0.1))
+    @test all(p -> (P2(0,0) ⪯ p ⪯ P2(1,1)) || (P2(1,1) ⪯ p ⪯ P2(2,2)), ps)
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     connec = connect.([(3,1,5),(4,6,2),(1,2,6,5),(5,6,4,3)])
     mesh = SimpleMesh(points, connec)
