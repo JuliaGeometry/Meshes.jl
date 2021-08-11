@@ -24,7 +24,7 @@ Return a view of the `domain` containing all elements that
 are inside the `geometry`.
 """
 Base.view(domain::Domain, geometry::Geometry) =
-  view(domain, viewindices(domain, geometry))
+  view(domain, indices(domain, geometry))
 
 function Base.view(data::Data, geometry::Geometry)
   D   = typeof(data)
@@ -32,7 +32,7 @@ function Base.view(data::Data, geometry::Geometry)
   tab = values(data)
 
   # retrieve subdomain
-  inds   = viewindices(dom, geometry)
+  inds   = indices(dom, geometry)
   subdom = view(dom, inds)
 
   # retrieve subtable
@@ -51,11 +51,11 @@ end
 @traitfn _linear(domain::D, inds) where {D; !IsGrid{D}} = inds
 
 """
-    viewindices(domain, geometry)
+    indices(domain, geometry)
 
 Return the indices of the `domain` that are inside the `geometry`.
 """
-@traitfn function viewindices(domain::D, geometry::Geometry) where {D; !IsGrid{D}}
+@traitfn function indices(domain::D, geometry::Geometry) where {D; !IsGrid{D}}
   pred(i) = _isinside(domain[i], geometry)
   filter(pred, 1:nelements(domain))
 end
@@ -63,7 +63,7 @@ end
 _isinside(p::Point, geometry) = p ∈ geometry
 _isinside(g::Geometry, geometry) = g ⊆ geometry
 
-@traitfn function viewindices(domain::D, box::Box) where {D; IsGrid{D}}
+@traitfn function indices(domain::D, box::Box) where {D; IsGrid{D}}
   # grid properties
   or = coordinates(minimum(domain))
   sp = spacing(domain)

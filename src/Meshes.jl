@@ -249,8 +249,7 @@ export
   indices, metadata,
 
   # viewing
-  viewindices,
-  slice,
+  indices, slice,
 
   # sampling
   SamplingMethod,
