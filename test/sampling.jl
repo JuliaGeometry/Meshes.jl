@@ -121,14 +121,6 @@ using Base: need_full_hex
   end
 
   @testset "MinDistanceSampling" begin
-    segment = Segment(P2[(0,0),(1,1)])
-    ps = sample(segment, MinDistanceSampling(0.1))
-    @test all(p -> P2(0,0) ⪯ p ⪯ P2(1,1), ps)
-    @test length(ps) == 14
-    ps = sample(segment, MinDistanceSampling(0.2))
-    @test all(p -> P2(0,0) ⪯ p ⪯ P2(1,1), ps)
-    @test length(ps) == 7
-
     poly1 = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     poly2 = PolyArea(P2[(1,1),(2,1),(2,2),(1,2),(1,1)])
     multi = Multi([poly1, poly2])

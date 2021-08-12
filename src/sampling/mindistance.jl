@@ -57,27 +57,3 @@ function sample(Ω::DomainOrData, method::MinDistanceSampling)
   # discard points that do not satisfy distance criterion
   sample(PointSet(collect(points)), BallSampling(α, metric=m))
 end
-
-function sample(s::Segment{Dim,T}, method::MinDistanceSampling) where {Dim,T}
-  # retrive parameters
-  α = method.α
-
-  # number of points
-  μ = measure(s)
-  n = ceil(Int, μ / α)
-
-  if n > 1
-    # add points α units apart
-    t = α / 2
-    r = Point{Dim,T}[]
-    while t < μ
-      push!(r, s(t/μ))
-      t += α
-    end
-  else
-    # return midpoint
-    r = [s(0.5)]
-  end
-
-  r
-end
