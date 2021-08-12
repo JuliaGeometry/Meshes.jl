@@ -23,7 +23,16 @@ end
 
 RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 
-function sample(box::Box{Dim}, method::RegularSampling) where {Dim}
+function sample(segment::Segment, method::RegularSampling)
+  n = first(method.sizes)
+  a, b = extrema(segment)
+
+  δ = (b - a) / (n - 1)
+
+  (a + (i-1)*δ for i in 1:n)
+end
+
+function sample(box::Box, method::RegularSampling)
   sz = _adjust_sizes(method.sizes, paramdim(box))
   l, u = extrema(box)
 
