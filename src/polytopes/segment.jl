@@ -20,6 +20,9 @@ isconvex(::Type{<:Segment}) = true
 nvertices(::Type{<:Segment}) = 2
 nvertices(s::Segment) = nvertices(typeof(s))
 
+Base.minimum(s::Segment) = s.vertices[1]
+Base.maximum(s::Segment) = s.vertices[2]
+Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
 
 function (s::Segment)(t)
