@@ -65,6 +65,23 @@ chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
 Base.unique!(ngon::Ngon) = ngon
 
+function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
+  # decompose n-gons into triangles by
+  # fan triangulation (assumes convexity)
+  # https://en.wikipedia.org/wiki/Fan_triangulation
+  v = ngon.vertices
+  Δ(i) = Triangle(view(v, [1,i,i+1]))
+  any(i -> p ∈ Δ(i), 2:N-1)
+end
+
+# ----------
+# TRIANGLES
+# ----------
+
+# triangles are special
+issimplex(::Type{<:Triangle}) = true
+isconvex(::Type{<:Triangle}) = true
+
 function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
   # given coordinates
   a, b, c = t.vertices
@@ -113,15 +130,6 @@ function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
   (λ₂ ≥ zero(T)) && (λ₃ ≥ zero(T)) && ((λ₂ + λ₃) ≤ one(T))
 end
 
-function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
-  # decompose n-gons into triangles by
-  # fan triangulation (assumes convexity)
-  # https://en.wikipedia.org/wiki/Fan_triangulation
-  v = ngon.vertices
-  Δ(i) = Triangle(view(v, [1,i,i+1]))
-  any(i -> p ∈ Δ(i), 2:N-1)
-end
-
 """
     normal(triangle)
 
@@ -134,6 +142,12 @@ function normal(t::Triangle{3})
   n / norm(n)
 end
 
-# triangles are special
-issimplex(::Type{<:Triangle}) = true
-isconvex(::Type{<:Triangle}) = true
+# ------------
+# QUADRANGLES
+# ------------
+
+# Coons patch https://en.wikipedia.org/wiki/Coons_patch 
+function (q::Quadrangle)(s, t)
+  c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
+  Point(c₀₀*(1-s)*(1-t) + c₀₁*s*(1-t) + c₁₀*(1-s)*t + c₁₁*s*t)
+end

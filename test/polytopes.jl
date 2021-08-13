@@ -3,12 +3,12 @@
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
 
-    s = Segment(P2(0, 0), P2(1, 1))
-    @test minimum(s) == P2(0, 0)
-    @test maximum(s) == P2(1, 1)
-    @test extrema(s) == (P2(0, 0), P2(1, 1))
-    @test s(T(0)) == P2(0, 0)
-    @test s(T(1)) == P2(1, 1)
+    s = Segment(P2(0,0), P2(1,1))
+    @test minimum(s) == P2(0,0)
+    @test maximum(s) == P2(1,1)
+    @test extrema(s) == (P2(0,0), P2(1,1))
+    @test s(T(0)) == P2(0,0)
+    @test s(T(1)) == P2(1,1)
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
     @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(T(-0.5))
   end
@@ -57,7 +57,6 @@
     for p in P3[(-1,0,0),(1,2,0),(0,1,2)]
       @test p ∉ t
     end
-
     t = Triangle(P3(0,0,0), P3(0,1,0), P3(0,0,1))
     @test isapprox(normal(t), Vec(1,0,0))
     t = Triangle(P3(0,0,0), P3(2,0,0), P3(0,2,2))
@@ -81,12 +80,20 @@
     @test boundary(q) == first(chains(q))
     @test chains(q) == [Chain(P2(0,0), P2(1,0), P2(1,1), P2(0,1), P2(0,0))]
     @test bridge(q) == (first(chains(q)), [])
+    @test q(T(0),T(0)) == P2(0,0)
+    @test q(T(1),T(0)) == P2(1,0)
+    @test q(T(1),T(1)) == P2(1,1)
+    @test q(T(0),T(1)) == P2(0,1)
 
     # Quadrangle in 3D space
     q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
     @test area(q) == T(1)
     q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,1))
     @test area(q) > T(1)
+    @test q(T(0),T(0)) == P3(0,0,0)
+    @test q(T(1),T(0)) == P3(1,0,0)
+    @test q(T(1),T(1)) == P3(1,1,0)
+    @test q(T(0),T(1)) == P3(0,1,1)
   end
 
   @testset "N-hedrons" begin

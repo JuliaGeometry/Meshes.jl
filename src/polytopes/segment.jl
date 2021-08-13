@@ -29,6 +29,6 @@ function (s::Segment)(t)
   if t < 0 || t > 1
     throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
   end
-  p1, p2 = s.vertices
-  p1 + t * (p2 - p1)
+  a, b = s.vertices
+  a + t * (b - a)
 end

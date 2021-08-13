@@ -23,15 +23,6 @@ end
 
 RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 
-function sample(segment::Segment, method::RegularSampling)
-  n = first(method.sizes)
-  a, b = extrema(segment)
-
-  δ = (b - a) / (n - 1)
-
-  (a + (i-1)*δ for i in 1:n)
-end
-
 function sample(box::Box, method::RegularSampling)
   sz = _adjust_sizes(method.sizes, paramdim(box))
   l, u = extrema(box)
@@ -89,6 +80,19 @@ function sample(ball::Ball{Dim,T}, method::RegularSampling) where {Dim,T}
   scale(p, s) = Point(s * coordinates(p))
 
   ivec(scale(p, s) for p in points, s in srange)
+end
+
+function sample(seg::Segment{Dim,T}, method::RegularSampling) where {Dim,T}
+  sz = _adjust_sizes(method.sizes, paramdim(seg))
+  trange = range(T(0), T(1), length=sz[1])
+  (seg(t) for t in trange)
+end
+
+function sample(quad::Quadrangle{Dim,T}, method::RegularSampling) where {Dim,T}
+  sz = _adjust_sizes(method.sizes, paramdim(quad))
+  srange = range(T(0), T(1), length=sz[1])
+  trange = range(T(0), T(1), length=sz[2])
+  ivec(quad(s, t) for s in srange, t in trange)
 end
 
 # helper function to adjust sizes to a given length

@@ -38,12 +38,6 @@ using Base: need_full_hex
   end
 
   @testset "RegularSampling" begin
-    s = Segment(P2(0, 0), P2(1, 1))
-    ps = sample(s, RegularSampling(2))
-    @test collect(ps) == P2[(0,0), (1,1)]
-    ps = sample(s, RegularSampling(3))
-    @test collect(ps) == P2[(0,0), (0.5,0.5), (1,1)]
-
     b = Box(P2(0, 0), P2(2, 2))
     ps = sample(b, RegularSampling(3))
     @test collect(ps) == P2[(0,0),(1,0),(2,0),(0,1),(1,1),(2,1),(0,2),(1,2),(2,2)]
@@ -99,6 +93,20 @@ using Base: need_full_hex
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
+
+    s = Segment(P2(0, 0), P2(1, 1))
+    ps = sample(s, RegularSampling(2))
+    @test collect(ps) == P2[(0,0), (1,1)]
+    ps = sample(s, RegularSampling(3))
+    @test collect(ps) == P2[(0,0), (0.5,0.5), (1,1)]
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    ps = sample(q, RegularSampling(2,2))
+    @test collect(ps) == P2[(0,0), (1,0), (0,1), (1,1)]
+    ps = sample(q, RegularSampling(3,3))
+    @test collect(ps) == P2[(0,0), (0.5,0), (1,0),
+                            (0,0.5), (0.5,0.5), (1,0.5),
+                            (0,1), (0.5,1), (1,1)]
   end
 
   @testset "HomogeneousSampling" begin
