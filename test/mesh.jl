@@ -195,6 +195,15 @@
     @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
     @test collect(elements(topology(mesh))) == connect.([(1,2,3),(4,5,6)])
 
+    # convert any mesh to SimpleMesh
+    grid = CartesianGrid{T}(10,10)
+    mesh = convert(SimpleMesh, grid)
+    @test mesh isa SimpleMesh
+    @test topology(mesh) isa FullTopology
+    @test nvertices(mesh) == 121
+    @test nelements(mesh) == 100
+    @test eltype(mesh) <: Quadrangle
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = SimpleMesh(points, connec)
