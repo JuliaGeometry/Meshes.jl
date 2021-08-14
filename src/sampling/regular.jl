@@ -95,6 +95,14 @@ function sample(quad::Quadrangle{Dim,T}, method::RegularSampling) where {Dim,T}
   ivec(quad(u, v) for u in urange, v in vrange)
 end
 
+function sample(hex::Hexahedron{Dim,T}, method::RegularSampling) where {Dim,T}
+  sz = _adjust_sizes(method.sizes, paramdim(hex))
+  urange = range(T(0), T(1), length=sz[1])
+  vrange = range(T(0), T(1), length=sz[2])
+  wrange = range(T(0), T(1), length=sz[3])
+  ivec(hex(u, v, w) for u in urange, v in vrange, w in wrange)
+end
+
 # helper function to adjust sizes to a given length
 function _adjust_sizes(sizes, len)
   N, S = len, length(sizes)
