@@ -112,7 +112,7 @@ newmesh = topoconvert(HalfEdgeTopology, mesh)
 ```
 """
 topoconvert(TP::Type{<:Topology}, m::Mesh) =
-  SimpleMesh(vertices(m), convert(TP, topology(m)))
+  SimpleMesh(collect(vertices(m)), convert(TP, topology(m)))
 
 """
     merge(mesh₁, mesh₂)

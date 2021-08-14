@@ -107,6 +107,14 @@
       inds = indices(element(topo, i))
       @test vs[[inds...]] == vertices(element(grid, i))
     end
+
+    # convert topology
+    grid = CartesianGrid{T}(10,10)
+    mesh = topoconvert(HalfEdgeTopology, grid)
+    @test mesh isa SimpleMesh
+    @test nvertices(mesh) == 121
+    @test nelements(mesh) == 100
+    @test eltype(mesh) <: Quadrangle
     
     grid = CartesianGrid{T}(200,100)
     if T == Float32
