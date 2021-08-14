@@ -90,9 +90,9 @@ end
 
 function sample(quad::Quadrangle{Dim,T}, method::RegularSampling) where {Dim,T}
   sz = _adjust_sizes(method.sizes, paramdim(quad))
-  srange = range(T(0), T(1), length=sz[1])
-  trange = range(T(0), T(1), length=sz[2])
-  ivec(quad(s, t) for s in srange, t in trange)
+  urange = range(T(0), T(1), length=sz[1])
+  vrange = range(T(0), T(1), length=sz[2])
+  ivec(quad(u, v) for u in urange, v in vrange)
 end
 
 # helper function to adjust sizes to a given length

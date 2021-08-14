@@ -147,7 +147,7 @@ end
 # ------------
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch 
-function (q::Quadrangle)(s, t)
+function (q::Quadrangle)(u, v)
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
-  Point(c₀₀*(1-s)*(1-t) + c₀₁*s*(1-t) + c₁₀*(1-s)*t + c₁₁*s*t)
+  Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)
 end
