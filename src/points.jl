@@ -36,7 +36,7 @@ Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coor
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
 # type aliases for convenience
-const Point1 = Point{1,Float64}
+const Point1  = Point{1,Float64}
 const Point2  = Point{2,Float64}
 const Point3  = Point{3,Float64}
 const Point1f = Point{1,Float32}
