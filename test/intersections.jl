@@ -152,14 +152,16 @@ using Base: hash_integer
     @test s2 ∩ t1 == P3(0.0, 0.0, 0.0)
     @test isa(intersecttype(s3, t1), NoIntersection) # Normal to, doesn't intersect with t1
     @test isnothing(s3 ∩ t1) 
-    @test isa(intersecttype(s4, t1), IntersectingSegmentTri) # Co-planar, intersects with t1
+    @test isa(intersecttype(s4, t1), OverlappingSegmentTri) # Co-planar, intersects with t1
+    @test s4 ∩ t1 == Segment(P3(0.0, 0.2, 0.0), P3(0.8, 0.2, 0.0))
     @test isa(intersecttype(s5, t1), NoIntersection) # Co-planar, doesn't intersect with t1
     @test isnothing(s5 ∩ t1)
     @test isa(intersecttype(s6, t1), NoIntersection) # Parallel, doesn't intersect with t1
     @test isnothing(s6 ∩ t1)
     @test isa(intersecttype(s7, t2), NoIntersection) # Doesn't reach t2
     @test isa(intersecttype(s8, t2), NoIntersection) # Parallel, offset from t2
-    @test isa(intersecttype(s9, t1), IntersectingSegmentTri) # Segment colinear with edge of t1   
+    @test isa(intersecttype(s9, t1), OverlappingSegmentTri) # Segment colinear with edge of t1
+    @test s9 ∩ t1 == Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     @test isa(intersecttype(s10, t1), NoIntersection) # Co-planar, within bounding box of t, no intersection
   end
 
