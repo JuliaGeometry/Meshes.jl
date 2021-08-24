@@ -11,4 +11,7 @@
   m = Multi([p, p])
   s2 = simplify(m, DouglasPeucker(T(0.5)))
   @test s2 == Multi([s1, s1])
+  d = GeometrySet([p, p])
+  s3 = simplify(d, DouglasPeucker(T(0.5)))
+  @test s3 == GeometrySet([s1, s1])
 end

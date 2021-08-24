@@ -16,6 +16,10 @@ Simplify `geometry` with given `method`.
 """
 function simplify end
 
+function simplify(domain::Domain, method::SimplificationMethod)
+  GeometrySet([simplify(elem, method) for elem in domain])
+end
+
 function simplify(multi::Multi, method::SimplificationMethod)
   Multi([simplify(geom, method) for geom in multi])
 end
