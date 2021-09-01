@@ -127,7 +127,7 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
   if (λ < zero(T)) || (λ > one(T))
     NoIntersection()
   else
-    IntersectingSegmentTri(s(λ))
+    IntersectingSegmentTriangle(s(λ))
   end
 end
 
@@ -177,12 +177,12 @@ function intersectcoplanar(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim,T}
   # If both points of the segment are in the triangle, return the original Segment
   if (p₁ ∈ t) & (p₂ ∈ t)
     # Case 1, 2, 4
-    OverlappingSegmentTri(s)
+    OverlappingSegmentTriangle(s)
   elseif p₁ ∈ t
     # Segment is colinear with an edge
     if nₒ > 0
       # Case 5
-      OverlappingSegmentTri(get(iₒ[1]))
+      OverlappingSegmentTriangle(get(iₒ[1]))
     elseif nᵢ == 2
       # Get the edge intersections
       e₁ = get(iᵥ[1])
@@ -191,10 +191,10 @@ function intersectcoplanar(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim,T}
       if e₁ ≈ e₂
         # Segment meets at a vertex of the triangle
         # Case 6
-        IntersectingSegmentTri(e₁)
+        IntersectingSegmentTriangle(e₁)
       else
         # Case 5
-        OverlappingSegmentTri(Segment(e₁, e₂))
+        OverlappingSegmentTriangle(Segment(e₁, e₂))
       end
     elseif nᵢ == 1
       # Get the edge intersection
@@ -203,18 +203,18 @@ function intersectcoplanar(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim,T}
       # If eᵢ and p₁ are the same, then the intersection is a point on an edge
       if eᵢ ≈ p₁
         # Case 6
-        IntersectingSegmentTri(eᵢ)
+        IntersectingSegmentTriangle(eᵢ)
       # Otherwise p₁ is "properly" inside the triangle and the intersection is a segment
       else 
         # Case 3
-        OverlappingSegmentTri(Segment(p₁, eᵢ))
+        OverlappingSegmentTriangle(Segment(p₁, eᵢ))
       end
     end
   elseif p₂ ∈ t
     # Segment is colinear with an edge
     if nₒ > 0
       # Case 5
-      OverlappingSegmentTri(get(iₒ[1]))
+      OverlappingSegmentTriangle(get(iₒ[1]))
     elseif nᵢ == 2
       # Get the edge intersections
       e₁ = get(iᵥ[1])
@@ -223,10 +223,10 @@ function intersectcoplanar(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim,T}
       if e₁ ≈ e₂
         # Segment meets at a vertex of the triangle
         # Case 6
-        IntersectingSegmentTri(e₁)      
+        IntersectingSegmentTriangle(e₁)      
       else
         # Case 5
-        OverlappingSegmentTri(Segment(e₁, e₂))
+        OverlappingSegmentTriangle(Segment(e₁, e₂))
       end
     elseif nᵢ == 1
       # Get the edge intersection
@@ -235,11 +235,11 @@ function intersectcoplanar(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim,T}
       # If eᵢ and p₂ are the same, then the intersection is a point on an edge
       if eᵢ ≈ p₂
         # Case 6
-        IntersectingSegmentTri(eᵢ)
+        IntersectingSegmentTriangle(eᵢ)
       # Otherwise p₂ is "properly" inside the triangle and the intersection is a segment
       else 
         # Case 3
-        OverlappingSegmentTri(Segment(p₂, eᵢ))
+        OverlappingSegmentTriangle(Segment(p₂, eᵢ))
       end
     end
   else
@@ -255,10 +255,10 @@ function intersectcoplanar(s::Segment{Dim,T}, t::Triangle{Dim,T}) where {Dim,T}
       if e₁ ≈ e₂
         # Segment meets at a vertex of the triangle
         # Case 8
-        IntersectingSegmentTri(e₁)
+        IntersectingSegmentTriangle(e₁)
       else
         # Case 7
-        OverlappingSegmentTri(Segment(e₁, e₂))
+        OverlappingSegmentTriangle(Segment(e₁, e₂))
       end
     else
       # Shouldn't be possible, this serves as a "default"

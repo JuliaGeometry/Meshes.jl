@@ -146,13 +146,13 @@ using Base: hash_integer
     s10 = Segment(P3(0.7, 0.8, 0.0), P3(0.8, 0.7, 0.0))
 
 
-    @test isa(intersecttype(s1, t1), IntersectingSegmentTri) # Passes through middle of t1
+    @test isa(intersecttype(s1, t1), IntersectingSegmentTriangle) # Passes through middle of t1
     @test s1 ∩ t1 == P3(0.2, 0.2, 0.0)
-    @test isa(intersecttype(s2, t1), IntersectingSegmentTri) # Passes through a vertex of t1
+    @test isa(intersecttype(s2, t1), IntersectingSegmentTriangle) # Passes through a vertex of t1
     @test s2 ∩ t1 == P3(0.0, 0.0, 0.0)
     @test isa(intersecttype(s3, t1), NoIntersection) # Normal to, doesn't intersect with t1
     @test isnothing(s3 ∩ t1) 
-    @test isa(intersecttype(s4, t1), OverlappingSegmentTri) # Co-planar, intersects with t1
+    @test isa(intersecttype(s4, t1), OverlappingSegmentTriangle) # Co-planar, intersects with t1
     @test s4 ∩ t1 == Segment(P3(0.0, 0.2, 0.0), P3(0.8, 0.2, 0.0))
     @test isa(intersecttype(s5, t1), NoIntersection) # Co-planar, doesn't intersect with t1
     @test isnothing(s5 ∩ t1)
@@ -160,7 +160,7 @@ using Base: hash_integer
     @test isnothing(s6 ∩ t1)
     @test isa(intersecttype(s7, t2), NoIntersection) # Doesn't reach t2
     @test isa(intersecttype(s8, t2), NoIntersection) # Parallel, offset from t2
-    @test isa(intersecttype(s9, t1), OverlappingSegmentTri) # Segment colinear with edge of t1
+    @test isa(intersecttype(s9, t1), OverlappingSegmentTriangle) # Segment colinear with edge of t1
     @test s9 ∩ t1 == Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     @test isa(intersecttype(s10, t1), NoIntersection) # Co-planar, within bounding box of t, no intersection
   end

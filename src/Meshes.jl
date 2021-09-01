@@ -294,8 +294,8 @@ export
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
-  IntersectingSegmentTri,
-  OverlappingSegmentTri,
+  IntersectingSegmentTriangle,
+  OverlappingSegmentTriangle,
   intersecttype,
   hasintersect,
 

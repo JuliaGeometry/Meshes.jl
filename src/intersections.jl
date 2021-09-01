@@ -77,11 +77,11 @@ end
 # SEGMENT-TRIANGLE INTERSECTIONS
 # -------------------------------
 
-struct IntersectingSegmentTri{P<:Point} <: Intersection
+struct IntersectingSegmentTriangle{P<:Point} <: Intersection
   value::P
 end
 
-struct OverlappingSegmentTri{S<:Segment} <: Intersection
+struct OverlappingSegmentTriangle{S<:Segment} <: Intersection
   value::S
 end
 
