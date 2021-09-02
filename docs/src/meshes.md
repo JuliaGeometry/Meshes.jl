@@ -62,7 +62,7 @@ viz(mesh, showfacets = true)
 ```
 
 ```@example meshes
-# Convert topology to half edge topology for fast lookup
+# convert topology to half-edge topology for fast lookup
 ht = convert(HalfEdgeTopology, topology(mesh))
 # We can create the boundary facets of the first Ngon.
 # The boundary is parametrized on the dimension we are mapping from,
