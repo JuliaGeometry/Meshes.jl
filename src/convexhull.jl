@@ -10,7 +10,7 @@ This is a modification of the Graham's Scan algorithm, devised by A. M. Andrew, 
 See https://en.wikipedia.org/wiki/Graham_scan
 """
 function upperhull(pset::PointSet)
-  xs = sort(coordinates.(pset), by = first)
+  xs = sort(coordinates.(pset), by=first)
   upperHull = [xs[1],xs[2]]
   for i in 3:length(xs)
     push!(upperHull,xs[i])
