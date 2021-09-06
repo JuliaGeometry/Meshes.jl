@@ -11,7 +11,7 @@
 
 Axis-aligned bounding box of the `geometry`.
 """
-boundingbox(geom::Geometry) = boundingbox(vertices(geom))
+boundingbox(g::Geometry) = boundingbox(vertices(g))
 
 boundingbox(p::Primitive) = boundingbox(boundary(p))
 
