@@ -124,6 +124,9 @@ paramdim(multi::Multi) = maximum(paramdim, multi.items)
   length(multi₁) == length(multi₂) &&
   all(g -> g[1] == g[2], zip(multi₁, multi₂))
 
+vertices(multi::Multi) =
+  [vertex for geom in multi for vertex in vertices(geom)]
+
 function centroid(multi::Multi)
   cs = coordinates.(centroid.(multi.items))
   Point(sum(cs) / length(cs))
