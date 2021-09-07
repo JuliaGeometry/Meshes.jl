@@ -139,6 +139,8 @@ area(multi::Multi{Dim,T,<:Polygon}) where{Dim,T} = measure(multi)
 chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} =
   [chain for geom in multi for chain in chains(geom)]
 
+Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi)
+
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)
   G = eltype(multi.items)
