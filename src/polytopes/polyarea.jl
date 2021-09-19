@@ -54,8 +54,8 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolyArea(outer::C, inners=[]; fix=true) where {Dim,T,C<:Chain{Dim,T}} =
-  PolyArea{Dim,T,Chain{Dim,T}}(outer, inners, fix)
+PolyArea(outer::C, inners=C[]; fix=true) where {Dim,T,V,C<:Chain{Dim,T,V}} =
+  PolyArea{Dim,T,Chain{Dim,T,V}}(outer, inners, fix)
 
 PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
   PolyArea(Chain(outer), [Chain(inner) for inner in inners]; fix=fix)
