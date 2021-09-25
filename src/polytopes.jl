@@ -193,7 +193,7 @@ function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   end
 
   # retrieve chains as vectors of coordinates
-  pchains = [coordinates.(vertices(c)) for c in chains(p)]
+  pchains = [coordinates.(vertices(open(c))) for c in chains(p)]
 
   # sort vertices lexicographically
   coords  = [coord for pchain in pchains for coord in pchain]
