@@ -164,13 +164,6 @@ function orientation(c::Chain{Dim,T}, ::TriangleOrientation) where {Dim,T}
 end
 
 """
-    unique(chain)
-
-Return a new `chain` without duplicate vertices.
-"""
-Base.unique(c::Chain) = unique!(deepcopy(c))
-
-"""
     unique!(chain)
 
 Remove duplicate vertices in the `chain`.
@@ -201,6 +194,13 @@ function Base.unique!(c::Chain)
 end
 
 """
+    unique(chain)
+
+Return a new `chain` without duplicate vertices.
+"""
+Base.unique(c::Chain) = unique!(deepcopy(c))
+
+"""
     close!(chain)
 
 Close the `chain`, i.e. repeat the first vertex
@@ -212,6 +212,14 @@ function close!(c::Chain)
 end
 
 """
+    close(chain)
+
+Same as [`close!`](@ref) but operates on a copy
+of the original `chain`.
+"""
+Base.close(c::Chain) = close!(deepcopy(c))
+
+"""
     open!(chain)
 
 Open the `chain`, i.e. remove the last vertex.
@@ -220,6 +228,14 @@ function open!(c::Chain)
   pop!(c.vertices)
   c
 end
+
+"""
+    open(chain)
+
+Same as [`open!`](@ref) but operates on a copy
+of the original `chain`.
+"""
+Base.open(c::Chain) = open!(deepcopy(c))
 
 """
     reverse!(chain)
