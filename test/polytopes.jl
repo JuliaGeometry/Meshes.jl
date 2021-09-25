@@ -320,6 +320,10 @@
     @test P2(0.75,0.25) ∉ poly
     @test P2(0.75,0.75) ∈ poly
 
+    point = P2(0.5,0.5)
+    bytes = @allocated point ∈ poly
+    @test bytes == 0
+
     # area
     outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
     hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
