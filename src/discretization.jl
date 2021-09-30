@@ -61,6 +61,14 @@ function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where
   end
 end
 
+"""
+    triangulate(geometry)
+
+Discretize `geometry` of parametric dimension 2 into
+triangles using an appropriate discretization method.
+"""
+triangulate(geometry) = discretize(geometry, FIST())
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

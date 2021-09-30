@@ -161,4 +161,14 @@ using Base: datatype_haspadding
       @test nelements(mesh) == 32
     end
   end
+
+  @testset "Triangulate" begin
+    # triangulate is a helper function that calls an
+    # appropriate discretization method depending on
+    # the geometry type that is given to it
+    poly = readpoly(T, joinpath(datadir, "taubin.line"))
+    mesh = triangulate(poly)
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+  end
 end

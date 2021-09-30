@@ -300,6 +300,7 @@ export
   DiscretizationMethod,
   FIST, Dehn1899,
   discretize,
+  triangulate,
 
   # simplification
   SimplificationMethod,
