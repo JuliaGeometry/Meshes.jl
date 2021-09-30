@@ -306,6 +306,7 @@ export
   SimplificationMethod,
   DouglasPeucker,
   simplify,
+  decimate,
 
   # refinement
   RefinementMethod,

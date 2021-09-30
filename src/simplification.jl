@@ -29,6 +29,14 @@ function simplify(polygon::Polygon, method::SimplificationMethod)
   PolyArea(c[1], c[2:end])
 end
 
+"""
+    decimate(geometry, ϵ)
+
+Simplify `geometry` with an appropriate
+simplification method and tolerance `ϵ`.
+"""
+decimate(geometry, ϵ) = simplify(geometry, DouglasPeucker(ϵ))
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
