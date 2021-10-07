@@ -18,6 +18,6 @@ nvertices(::Type{<:Tetrahedron}) = 4
 nvertices(t::Tetrahedron) = nvertices(typeof(t))
 
 function measure(t::Tetrahedron)
-  a, b, c, d = t.vertices
-  abs((a - d) ⋅ ((b - d) × (c - d))) / 6
+  A, B, C, D = t.vertices
+  abs((A - D) ⋅ ((B - D) × (C - D))) / 6
 end
