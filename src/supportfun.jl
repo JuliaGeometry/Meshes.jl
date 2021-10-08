@@ -17,7 +17,7 @@ Support function of `geometry` for given `direction`.
 function supportfun(g::Geometry, d::Vec)
   v = vertices(g)
   c = centroid(g)
-  i = argmax([(vᵢ - c) ⋅ d for vᵢ in v])
+  i = argmax((vᵢ - c) ⋅ d for vᵢ in v)
   v[i]
 end
 
