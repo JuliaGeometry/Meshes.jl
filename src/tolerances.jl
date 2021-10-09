@@ -10,7 +10,7 @@ comparison with numbers of type `T`. It is used in the
 source code in calls to the [`isapprox`](@ref) function:
 
 ```julia
-isapprox(a::T, b::T, atol=tol(T))
+isapprox(a::T, b::T, atol=atol(T))
 ```
 """
 atol(::Type{Float64}) = 1e-10
