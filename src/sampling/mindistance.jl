@@ -49,7 +49,7 @@ function sample(Ω::DomainOrData, method::MinDistanceSampling)
   N = 2V/√3 * (ρ/α)^2
 
   # number of oversamples (Medeiros et al. 2014)
-  O = round(Int, δ * N)
+  O = ceil(Int, δ * N)
 
   # oversample the object
   points = sample(Ω, HomogeneousSampling(O))

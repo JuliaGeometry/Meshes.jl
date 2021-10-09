@@ -159,6 +159,15 @@ using Base: need_full_hex
     @test first(ps) isa P2
     @test all(∈(mesh), ps)
     @test all(norm(ps[i] - ps[j]) ≥ 0.2 for i in 1:n for j in i+1:n)
+
+    # geometries with almost zero measure
+    # can still be sampled (at least one point)
+    poly = PolyArea(P2[(-44.20065308, -21.12284851),
+                       (-44.20324135, -21.122799875),
+                       (-44.20582962, -21.12275124),
+                       (-44.20065308, -21.12284851)])
+    ps = sample(poly, MinDistanceSampling(3.2423333333753135e-5))
+    @test length(ps) > 0
   end
 
   @testset "Utilities" begin
