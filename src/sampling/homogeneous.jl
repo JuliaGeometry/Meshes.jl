@@ -23,7 +23,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData,
   # within each element sample a single point
   h = HomogeneousSampling(1)
 
-  ivec(first(sample(rng, e, h)) for e in sample(rng, Ω, w))
+  (first(sample(rng, e, h)) for e in sample(rng, Ω, w))
 end
 
 function sample(rng::AbstractRNG, triangle::Triangle{Dim,T},
@@ -36,5 +36,5 @@ function sample(rng::AbstractRNG, triangle::Triangle{Dim,T},
     λ₃     = 1 - λ₁ - λ₂
     Point(λ₁ .* A + λ₂ .* B + λ₃ .* C)
   end
-  ivec(randpoint() for _ in 1:method.size)
+  (randpoint() for _ in 1:method.size)
 end
