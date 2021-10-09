@@ -10,12 +10,13 @@ A method for sampling from geometric objects.
 abstract type SamplingMethod end
 
 """
-    sample(object, method)
+    sample([rng], object, method)
 
 Sample elements or points from geometric `object`
-with `method`.
+with `method`. Optionally, specify random number
+generator `rng`.
 """
-function sample end
+sample(object, method) = sample(Random.GLOBAL_RNG, object, method)
 
 """
     DiscreteSamplingMethod
@@ -36,9 +37,11 @@ space.
 """
 abstract type ContinuousSamplingMethod end
 
-function sample(geometry::Union{Multi,Polygon}, method::ContinuousSamplingMethod)
+function sample(rng::AbstractRNG,
+                geometry::Union{Multi,Polygon},
+                method::ContinuousSamplingMethod)
   mesh = discretize(geometry, FIST())
-  sample(mesh, method)
+  sample(rng, mesh, method)
 end
 
 # ----------------
@@ -60,17 +63,25 @@ include("sampling/mindistance.jl")
 # ----------
 
 """
-    sample(object, nsamples, [weights], replace=false)
+    sample([rng], object, nsamples, [weights], replace=false)
 
 Generate `nsamples` samples from spatial `object`
 uniformly or using `weights`, with or without
 replacement depending on `replace` option.
 """
-function sample(object::Union{Domain,Data}, nsamples::Int,
-                weights::AbstractVector=[]; replace=false)
-  if isempty(weights)
-    sample(object, UniformSampling(nsamples, replace))
+sample(object::DomainOrData, nsamples::Int,
+       weights::AbstractVector=[]; replace=false) =
+  sample(Random.GLOBAL_RNG, object, nsamples, weights, replace)
+
+function sample(rng::AbstractRNG,
+                object::DomainOrData,
+                nsamples::Int,
+                weights::AbstractVector,
+                replace::Bool)
+  method = if isempty(weights)
+    UniformSampling(nsamples, replace)
   else
-    sample(object, WeightedSampling(nsamples, weights, replace))
+    WeightedSampling(nsamples, weights, replace)
   end
+  sample(rng, object, method)
 end

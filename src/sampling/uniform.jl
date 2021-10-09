@@ -16,12 +16,12 @@ end
 
 UniformSampling(size::Int) = UniformSampling(size, false)
 
-function sample(Ω::DomainOrData, method::UniformSampling)
+function sample(rng::AbstractRNG, Ω::DomainOrData, method::UniformSampling)
   n = nelements(Ω)
   s = method.size
   r = method.replace
   if s > n && r == false
     @error "invalid sample size for sampling without replacement"
   end
-  view(Ω, sample(1:n, s, replace=r))
+  view(Ω, sample(rng, 1:n, s, replace=r))
 end

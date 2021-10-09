@@ -34,7 +34,7 @@ end
 MinDistanceSampling(α; ρ=0.65, δ=100, metric=Euclidean()) =
   MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(Ω::DomainOrData, method::MinDistanceSampling)
+function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
   # retrive parameters
   α = method.α
   ρ = method.ρ
@@ -52,8 +52,8 @@ function sample(Ω::DomainOrData, method::MinDistanceSampling)
   O = ceil(Int, δ * N)
 
   # oversample the object
-  points = sample(Ω, HomogeneousSampling(O))
+  points = sample(rng, Ω, HomogeneousSampling(O))
 
   # discard points that do not satisfy distance criterion
-  sample(PointSet(collect(points)), BallSampling(α, metric=m))
+  sample(rng, PointSet(collect(points)), BallSampling(α, metric=m))
 end

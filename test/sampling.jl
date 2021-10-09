@@ -183,4 +183,32 @@ using Base: need_full_hex
     @test nelements(s) == 100
     @test s[1] isa Hexahedron
   end
+
+  @testset "RNGs" begin
+    dom = CartesianGrid{T}(100,100)
+    for method in [UniformSampling(100),
+                   WeightedSampling(100),
+                   BallSampling(T(10))]
+      rng = MersenneTwister(2021)
+      s1  = sample(rng, dom, method)
+      rng = MersenneTwister(2021)
+      s2  = sample(rng, dom, method)
+      @test collect(s1) == collect(s2)
+    end
+
+    method = RegularSampling(10)
+    for geom in [Box(P2(0, 0), P2(2, 2))
+                 Sphere(P2(0, 0), T(2))
+                 Ball(P2(0, 0), T(2))
+                 Segment(P2(0, 0), P2(1, 1))
+                 Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+                 Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
+                               (0,0,1),(1,0,1),(1,1,1),(0,1,1)])]
+      rng = MersenneTwister(2021)
+      s1  = sample(rng, geom, method)
+      rng = MersenneTwister(2021)
+      s2  = sample(rng, geom, method)
+      @test collect(s1) == collect(s2)
+    end
+  end
 end
