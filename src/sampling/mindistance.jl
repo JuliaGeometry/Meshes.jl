@@ -54,6 +54,9 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
   # oversample the object
   points = sample(rng, Ω, HomogeneousSampling(O))
 
+  # collect points into point set
+  𝒫 = PointSet(collect(points))
+
   # discard points that do not satisfy distance criterion
-  sample(rng, PointSet(collect(points)), BallSampling(α, metric=m))
+  sample(rng, 𝒫, BallSampling(α, metric=m))
 end
