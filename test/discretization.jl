@@ -34,7 +34,7 @@ using Base: datatype_haspadding
     connec = connect.([(4,5,6),(3,4,6),(3,6,1),(1,2,3)], Triangle)
     target = SimpleMesh(points[1:end-1], connec)
     poly = PolyArea(points)
-    mesh = discretize(poly, FIST(false))
+    mesh = discretize(poly, FIST(shuffle=false))
     @test mesh == target
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
