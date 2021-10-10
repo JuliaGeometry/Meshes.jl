@@ -106,6 +106,7 @@ export
   Point1f, Point2f, Point3f,
   embeddim, paramdim,
   coordtype, coordinates,
+  center, centroid,
   ⪯, ≺, ⪰, ≻,
 
   # vectors
@@ -134,14 +135,14 @@ export
   Geometry,
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
-  centroid, isconvex, issimplex,
+  center, centroid, isconvex, issimplex,
 
   # primitives
   Primitive,
   Line, Ray, Plane, BezierCurve,
   Box, Ball, Sphere, Cylinder,
   ncontrols, degree, Horner, DeCasteljau,
-  center, radius, height, sides,
+  radius, height, sides,
   measure, diagonal,
 
   # polytopes
