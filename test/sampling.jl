@@ -196,6 +196,19 @@ using Base: need_full_hex
       @test collect(s1) == collect(s2)
     end
 
+    # cannot test some sampling methods with T = Float32
+    # because of https://github.com/JuliaStats/StatsBase.jl/issues/695
+    if T == Float64
+      for method in [HomogeneousSampling(100),
+                     MinDistanceSampling(T(5))]
+        rng = MersenneTwister(2021)
+        s1  = sample(rng, dom, method)
+        rng = MersenneTwister(2021)
+        s2  = sample(rng, dom, method)
+        @test collect(s1) == collect(s2)
+      end
+    end
+
     method = RegularSampling(10)
     for geom in [Box(P2(0, 0), P2(2, 2))
                  Sphere(P2(0, 0), T(2))
