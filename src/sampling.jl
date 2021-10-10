@@ -40,7 +40,7 @@ abstract type ContinuousSamplingMethod end
 function sample(rng::AbstractRNG,
                 geometry::Union{Multi,Polygon},
                 method::ContinuousSamplingMethod)
-  mesh = discretize(geometry, FIST())
+  mesh = discretize(geometry, FIST(rng))
   sample(rng, mesh, method)
 end
 
