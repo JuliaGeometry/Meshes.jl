@@ -37,10 +37,15 @@ space.
 """
 abstract type ContinuousSamplingMethod end
 
-function sample(rng::AbstractRNG,
-                geometry::Union{Multi,Polygon},
+function sample(rng::AbstractRNG, geometry::Union{Multi,Polygon},
                 method::ContinuousSamplingMethod)
   mesh = discretize(geometry, FIST(rng))
+  sample(rng, mesh, method)
+end
+
+function sample(rng::AbstractRNG, geometry::Ngon,
+                method::ContinuousSamplingMethod)
+  mesh = discretize(geometry, Dehn1899())
   sample(rng, mesh, method)
 end
 
