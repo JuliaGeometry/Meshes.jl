@@ -64,7 +64,7 @@ Tells whether or not polytopes `p1` and `p2` are equal.
 
 Return the centroid of the `polytope`.
 """
-centroid(p::Polytope) = Point(sum(coordinates.(vertices(p))) / length(vertices(p)))
+centroid(p::Polytope) = Point(sum(coordinates, vertices(p)) / length(vertices(p)))
 
 """
     unique(polytope)
