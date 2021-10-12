@@ -46,6 +46,12 @@
     @test chains(t) == [Chain(P2(0,0), P2(1,0), P2(0,1), P2(0,0))]
     @test bridge(t) == (first(chains(t)), [])
 
+    # test orientation
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test orientation(t) == :CCW
+    t = Triangle(P2(0,0), P2(0,1), P2(1,0))
+    @test orientation(t) == :CW
+
     # Triangle in 3D space
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
     @test area(t) == T(0.5)
@@ -232,7 +238,7 @@
       @test boundary(poly) == first(chains(poly))
       @test nvertices(poly) == 30
       for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == [:CCW]
+        @test orientation(poly, algo) == :CCW
       end
       @test unique(poly) == poly
     end
@@ -247,7 +253,7 @@
       @test boundary(poly) == first(chains(poly))
       @test nvertices(poly) == 120
       for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == [:CCW]
+        @test orientation(poly, algo) == :CCW
       end
       @test unique(poly) == poly
     end

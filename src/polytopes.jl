@@ -153,7 +153,12 @@ function windingnumber(::Point, ::Polygon) end
 Returns the orientation of the rings of the `polygon`
 as either counter-clockwise (CCW) or clockwise (CW).
 """
-function orientation(::Polygon) end
+orientation(p::Polygon) = orientation(p, WindingOrientation())
+
+function orientation(p::Polygon, algo)
+  o = [orientation(c, algo) for c in chains(p)]
+  hasholes(p) ? o : first(o)
+end
 
 """
     boundary(polygon)
