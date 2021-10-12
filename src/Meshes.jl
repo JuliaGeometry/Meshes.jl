@@ -87,6 +87,7 @@ include("simplification.jl")
 include("refinement.jl")
 include("smoothing.jl")
 include("boundingboxes.jl")
+include("hulls.jl")
 
 # utilities
 include("utils.jl")
@@ -322,6 +323,11 @@ export
 
   # bounding boxes
   boundingbox,
+
+  # hulls
+  HullMethod,
+  GrahamScan,
+  hull,
 
   # utililities
   signarea,

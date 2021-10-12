@@ -80,6 +80,7 @@ testfiles = [
   "refinement.jl",
   "smoothing.jl",
   "boundingboxes.jl",
+  "hulls.jl",
   "utils.jl"
 ]
 
