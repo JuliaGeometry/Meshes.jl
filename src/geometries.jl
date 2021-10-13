@@ -136,6 +136,8 @@ measure(multi::Multi) = sum(measure, multi.items)
 
 area(multi::Multi{Dim,T,<:Polygon}) where{Dim,T} = measure(multi)
 
+boundary(multi::Multi) = Multi([boundary(geom) for geom in multi])
+
 chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} =
   [chain for geom in multi for chain in chains(geom)]
 
