@@ -166,9 +166,13 @@ using Base: datatype_haspadding
     # triangulate is a helper function that calls an
     # appropriate discretization method depending on
     # the geometry type that is given to it
+    box  = Box(P2(0,0), P2(1,1))
+    ngon = Quadrangle(P2[(0,0),(1,0),(1,1),(0,1)])
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
-    mesh = triangulate(poly)
-    @test Set(vertices(poly)) == Set(vertices(mesh))
-    @test nelements(mesh) == length(vertices(mesh)) - 2
+    for geom in [box, ngon, poly]
+      mesh = triangulate(geom)
+      @test Set(vertices(geom)) == Set(vertices(mesh))
+      @test nelements(mesh) == length(vertices(mesh)) - 2
+    end
   end
 end
