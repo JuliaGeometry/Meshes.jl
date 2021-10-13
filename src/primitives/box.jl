@@ -44,6 +44,11 @@ function vertices(b::Box{2})
   ])
 end
 
+function boundary(b::Box{2})
+  v = vertices(b)
+  Chain([v; first(v)])
+end
+
 function vertices(b::Box{3})
   A = coordinates(b.min)
   B = coordinates(b.max)
