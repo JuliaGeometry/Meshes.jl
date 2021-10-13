@@ -136,7 +136,8 @@ function hasholes(::Polygon) end
     issimple(polygon)
 
 Tells whether or not the `polygon` is simple.
-See https://en.wikipedia.org/wiki/Simple_polygon.
+See [https://en.wikipedia.org/wiki/Simple_polygon]
+(https://en.wikipedia.org/wiki/Simple_polygon).
 """
 issimple(p::Polygon) = issimple(typeof(p))
 
