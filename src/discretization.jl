@@ -62,7 +62,7 @@ function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where
 end
 
 discretize(multi::Multi, method::DiscretizationMethod) =
-  mapreduce(geometry -> discretize(geometry, method), merge, multi)
+  mapreduce(geom -> discretize(geom, method), merge, multi)
 
 """
     triangulate(geometry)
@@ -73,6 +73,7 @@ triangles using an appropriate discretization method.
 triangulate(box::Box{2}) = discretize(box, Dehn1899())
 triangulate(ngon::Ngon) = discretize(ngon, Dehn1899())
 triangulate(poly::PolyArea) = discretize(poly, FIST())
+triangulate(multi::Multi) = mapreduce(triangulate, merge, multi)
 
 # ----------------
 # IMPLEMENTATIONS

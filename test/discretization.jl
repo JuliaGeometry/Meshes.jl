@@ -174,5 +174,13 @@ using Base: datatype_haspadding
       @test Set(vertices(geom)) == Set(vertices(mesh))
       @test nelements(mesh) == length(vertices(mesh)) - 2
     end
+
+    # triangulation of multi geometries
+    box1  = Box(P2(0,0), P2(1,1))
+    box2  = Box(P2(1,1), P2(2,2))
+    multi = Multi([box1, box2])
+    mesh  = triangulate(multi)
+    @test nvertices(mesh) == 8
+    @test nelements(mesh) == 4
   end
 end
