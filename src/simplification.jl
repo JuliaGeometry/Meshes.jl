@@ -5,23 +5,20 @@
 """
     SimplificationMethod
 
-A method for simplifying geometries.
+A method for simplifying geometric objects.
 """
 abstract type SimplificationMethod end
 
 """
-    simplify(geometry, method)
+    simplify(object, method)
 
-Simplify `geometry` with given `method`.
+Simplify `object` with given `method`.
 """
 function simplify end
 
-function simplify(domain::Domain, method::SimplificationMethod)
-  GeometrySet([simplify(elem, method) for elem in domain])
-end
-
-function simplify(multi::Multi, method::SimplificationMethod)
-  Multi([simplify(geom, method) for geom in multi])
+function simplify(box::Box{2}, method::SimplificationMethod)
+  c = simplify(boundary(box), method)
+  PolyArea(c)
 end
 
 function simplify(polygon::Polygon, method::SimplificationMethod)
@@ -29,13 +26,21 @@ function simplify(polygon::Polygon, method::SimplificationMethod)
   PolyArea(c[1], c[2:end])
 end
 
-"""
-    decimate(geometry, ϵ)
+function simplify(multi::Multi, method::SimplificationMethod)
+  Multi([simplify(geom, method) for geom in multi])
+end
 
-Simplify `geometry` with an appropriate
+function simplify(domain::Domain, method::SimplificationMethod)
+  GeometrySet([simplify(elem, method) for elem in domain])
+end
+
+"""
+    decimate(object, ϵ)
+
+Simplify `object` with an appropriate
 simplification method and tolerance `ϵ`.
 """
-decimate(geometry, ϵ) = simplify(geometry, DouglasPeucker(ϵ))
+decimate(object, ϵ) = simplify(object, DouglasPeucker(ϵ))
 
 # ----------------
 # IMPLEMENTATIONS
