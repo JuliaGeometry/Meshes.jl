@@ -134,6 +134,13 @@
                       (0,0,1),(1,0,1),(1,1,2),(0,1,1)])
     t = Tetrahedron(P3[(1,0,1),(1,1,1),(0,1,1),(1,1,2)])
     @test volume(h) ≈ T(1*1*1) + volume(t)
+
+    h = Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
+                      (0,0,1),(1,0,1),(1,1,1),(0,1,1)])
+    m = boundary(h)
+    @test m isa Mesh
+    @test nvertices(m) == 8
+    @test nelements(m) == 6
   end
 
   @testset "Chains" begin

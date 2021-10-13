@@ -77,6 +77,12 @@
     b = Box(P2(0,0), P2(1,1))
     @test boundary(b) == Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
 
+    b = Box(P3(0,0,0), P3(1,1,1))
+    m = boundary(b)
+    @test m isa Mesh
+    @test nvertices(m) == 8
+    @test nelements(m) == 6
+
     # subsetting with boxes
     b1 = Box(P2(0,0), P2(0.5,0.5))
     b2 = Box(P2(0.1,0.1), P2(0.5,0.5))
