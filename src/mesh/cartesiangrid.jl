@@ -13,6 +13,11 @@ and cell spacing `spacing`. The three arguments must have the same length.
 Alternatively, construct a Cartesian grid from a `start` point (lower left)
 to a `finish` point (upper right).
 
+    CartesianGrid(start, finish, spacing)
+
+Alternatively, construct a Cartesian grid from a `start` point to a `finish`
+point using a given `spacing`.
+
     CartesianGrid(dims)
     CartesianGrid(dim1, dim2, ...)
 
@@ -52,11 +57,23 @@ struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
   end
 end
 
-CartesianGrid(dims::Dims{Dim}, origin::Point{Dim,T}, spacing::SVector{Dim,T}) where {Dim,T} =
+CartesianGrid(dims::Dims{Dim}, origin::Point{Dim,T},
+              spacing::SVector{Dim,T}) where {Dim,T} =
   CartesianGrid{Dim,T}(dims, origin, spacing)
 
-CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T}, spacing::NTuple{Dim,T}) where {Dim,T} =
+CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T},
+              spacing::NTuple{Dim,T}) where {Dim,T} =
   CartesianGrid{Dim,T}(dims, Point(origin), SVector(spacing))
+
+function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T},
+                       spacing::SVector{Dim,T}) where {Dim,T}
+  dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
+  CartesianGrid{Dim,T}(dims, start, spacing)
+end
+
+CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T},
+              spacing::NTuple{Dim,T}) where {Dim,T} =
+  CartesianGrid(Point(start), Point(finish), SVector(spacing))
 
 CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
               dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
