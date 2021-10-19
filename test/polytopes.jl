@@ -112,6 +112,10 @@
 
     t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
     @test measure(t) == T(1/6)
+    m = boundary(t)
+    @test m isa Mesh
+    @test nvertices(m) == 4
+    @test nelements(m) == 4
 
     h = Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
                       (0,0,1),(1,0,1),(1,1,1),(0,1,1)])

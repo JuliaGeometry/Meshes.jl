@@ -21,3 +21,8 @@ function measure(t::Tetrahedron)
   A, B, C, D = t.vertices
   abs((A - D) ⋅ ((B - D) × (C - D))) / 6
 end
+
+function boundary(t::Tetrahedron)
+  indices = [(1,2,3),(2,1,4),(2,4,3),(3,4,1)]
+  SimpleMesh(t.vertices, connect.(indices))
+end
