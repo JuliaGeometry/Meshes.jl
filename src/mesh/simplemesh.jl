@@ -17,7 +17,7 @@ a topological data structure (e.g. `HalfEdgeTopology`).
 See also [`Topology`](@ref).
 """
 struct SimpleMesh{Dim,T,TP<:Topology} <: Mesh{Dim,T}
-  points::Vector{Point{Dim,T}}
+  points::AbstractVector{Point{Dim,T}}
   topology::TP
 end
 
