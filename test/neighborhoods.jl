@@ -82,6 +82,13 @@
     @test evaluate(euler, [0.,0.,1.], [0.,0.,0.]) ≈ evaluate(lpf, [0.,0.,1.], [0.,0.,0.])
     @test evaluate(euler, [0.,0.,1.], [0.,0.,0.]) - evaluate(gslib, [0.,0.,1.], [0.,0.,0.]) < 10^-3
 
+    # test for https://github.com/JuliaEarth/GeoStats.jl/issues/197
+    gslib = metric(Ellipsoid([1.0, 0.5, 0.3], [100., -10., -20.], convention = GSLIB))
+
+    @test evaluate(gslib, [1.,0.,0.], [0.,0.,0.]) ≈ 1.233956165693094
+    @test evaluate(gslib, [0.,1.,0.], [0.,0.,0.]) ≈ 2.14219475359467
+    @test evaluate(gslib, [0.,0.,1.], [0.,0.,0.]) ≈ 3.1621930570302914
+
     # test of extrinsic conventions
     xtait  = metric(Ellipsoid([50.,25.,5.], [π,0,π/2], convention=TaitBryanExtr))
     xeuler = metric(Ellipsoid([50.,25.,5.], [-π/2,-π/2,-π/2], convention=EulerExtr))
