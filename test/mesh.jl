@@ -184,8 +184,8 @@
     connec = connect.([(1,2,3,4),(3,4,1)], [Tetrahedron, Triangle])
     mesh = SimpleMesh(points, connec)
     topo = topology(mesh)
-    @test collect(faces(topo, 2)) == [connect((3,4,1), Triangle)
-    @test collect(faces(topo, 3)) == [connect((1,2,3,4), Tetrahedron)
+    @test collect(faces(topo, 2)) == [connect((3,4,1), Triangle)]
+    @test collect(faces(topo, 3)) == [connect((1,2,3,4), Tetrahedron)]
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
