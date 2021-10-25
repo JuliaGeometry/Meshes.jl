@@ -253,5 +253,5 @@ nfacets(t::HalfEdgeTopology) = length(t.halfedges) ÷ 2
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{<:HalfEdgeTopology}, t::Topology) =
+Base.convert(::Type{HalfEdgeTopology}, t::Topology) =
   HalfEdgeTopology(collect(elements(t)))
