@@ -34,7 +34,7 @@ using Base: datatype_haspadding
     connec = connect.([(4,5,6),(3,4,6),(3,6,1),(1,2,3)], Triangle)
     target = SimpleMesh(points[1:end-1], connec)
     poly = PolyArea(points)
-    mesh = discretize(poly, FIST(false))
+    mesh = discretize(poly, FIST(shuffle=false))
     @test mesh == target
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
@@ -160,5 +160,27 @@ using Base: datatype_haspadding
       @test Set(vertices(poly)) == Set(vertices(mesh))
       @test nelements(mesh) == 32
     end
+  end
+
+  @testset "Triangulate" begin
+    # triangulate is a helper function that calls an
+    # appropriate discretization method depending on
+    # the geometry type that is given to it
+    box  = Box(P2(0,0), P2(1,1))
+    ngon = Quadrangle(P2[(0,0),(1,0),(1,1),(0,1)])
+    poly = readpoly(T, joinpath(datadir, "taubin.line"))
+    for geom in [box, ngon, poly]
+      mesh = triangulate(geom)
+      @test Set(vertices(geom)) == Set(vertices(mesh))
+      @test nelements(mesh) == length(vertices(mesh)) - 2
+    end
+
+    # triangulation of multi geometries
+    box1  = Box(P2(0,0), P2(1,1))
+    box2  = Box(P2(1,1), P2(2,2))
+    multi = Multi([box1, box2])
+    mesh  = triangulate(multi)
+    @test nvertices(mesh) == 8
+    @test nelements(mesh) == 4
   end
 end

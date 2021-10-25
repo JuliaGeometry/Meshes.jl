@@ -2,6 +2,7 @@
 
 ```@docs
 simplify
+decimate
 SimplificationMethod
 ```
 

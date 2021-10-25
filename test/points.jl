@@ -97,4 +97,8 @@
   @test !(P2(1, 1) ≻ P2(1, 1))
   @test P2(3, 4) ⪰ P2(1, 2)
   @test P2(3, 4) ≻ P2(1, 2)
+
+  # center and centroid
+  Meshes.center(P2(1, 1)) == P2(1, 1)
+  Meshes.centroid(P2(1, 1)) == P2(1, 1)
 end

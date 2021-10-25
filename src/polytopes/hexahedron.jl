@@ -26,3 +26,21 @@ function (h::Hexahedron)(u, v, w)
                 (1-u)*v*w*A7 +
                     u*v*w*A8)
 end
+
+function measure(h::Hexahedron)
+  A1, A2, A4, A3,
+  A5, A6, A8, A7 = h.vertices
+  t1 = Tetrahedron(A1, A2, A5, A7)
+  t2 = Tetrahedron(A2, A6, A5, A7)
+  t3 = Tetrahedron(A2, A6, A7, A8)
+  t4 = Tetrahedron(A1, A2, A3, A7)
+  t5 = Tetrahedron(A2, A3, A4, A7)
+  t6 = Tetrahedron(A2, A3, A4, A8)
+  sum(measure, [t1,t2,t3,t4,t5,t6])
+end
+
+function boundary(h::Hexahedron)
+  indices = [(1,2,3,4),(2,1,5,6),(2,6,7,3),
+             (3,7,8,4),(4,8,5,1),(5,8,7,6)]
+  SimpleMesh(h.vertices, connect.(indices))
+end

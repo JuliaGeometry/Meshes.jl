@@ -16,8 +16,8 @@ Discretize `geometry` with discretization `method`.
 """
 function discretize end
 
-discretize(multi::Multi, method::DiscretizationMethod) =
-  mapreduce(geometry -> discretize(geometry, method), merge, multi)
+discretize(box::Box, method::DiscretizationMethod) =
+  discretize(boundary(box), method)
 
 function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where {Dim,T}
   # build bridges in case the polygon has holes,
@@ -60,6 +60,20 @@ function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where
     SimpleMesh(points, connec)
   end
 end
+
+discretize(multi::Multi, method::DiscretizationMethod) =
+  mapreduce(geom -> discretize(geom, method), merge, multi)
+
+"""
+    triangulate(geometry)
+
+Discretize `geometry` of parametric dimension 2 into
+triangles using an appropriate discretization method.
+"""
+triangulate(box::Box{2}) = discretize(box, Dehn1899())
+triangulate(ngon::Ngon) = discretize(ngon, Dehn1899())
+triangulate(poly::PolyArea) = discretize(poly, FIST())
+triangulate(multi::Multi) = mapreduce(triangulate, merge, multi)
 
 # ----------------
 # IMPLEMENTATIONS

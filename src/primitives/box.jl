@@ -59,6 +59,18 @@ function vertices(b::Box{3})
   ])
 end
 
+function boundary(b::Box{2})
+  v = vertices(b)
+  Chain([v; first(v)])
+end
+
+function boundary(b::Box{3})
+  v = vertices(b)
+  I = [(1,2,3,4),(2,1,5,6),(2,6,7,3),
+       (3,7,8,4),(4,8,5,1),(5,8,7,6)]
+  SimpleMesh(v, connect.(I))
+end
+
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   l, u = coordinates.((b.min, b.max))
   x = coordinates(p)

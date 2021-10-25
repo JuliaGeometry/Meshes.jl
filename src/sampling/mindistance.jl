@@ -31,10 +31,10 @@ struct MinDistanceSampling{T,M} <: ContinuousSamplingMethod
   metric::M
 end
 
-MinDistanceSampling(α; ρ=0.65, δ=100, metric=Euclidean()) =
+MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} =
   MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(Ω::DomainOrData, method::MinDistanceSampling)
+function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
   # retrive parameters
   α = method.α
   ρ = method.ρ
@@ -49,11 +49,14 @@ function sample(Ω::DomainOrData, method::MinDistanceSampling)
   N = 2V/√3 * (ρ/α)^2
 
   # number of oversamples (Medeiros et al. 2014)
-  O = round(Int, δ * N)
+  O = ceil(Int, δ * N)
 
   # oversample the object
-  points = sample(Ω, HomogeneousSampling(O))
+  points = sample(rng, Ω, HomogeneousSampling(O))
+
+  # collect points into point set
+  𝒫 = PointSet(collect(points))
 
   # discard points that do not satisfy distance criterion
-  sample(PointSet(collect(points)), BallSampling(α, metric=m))
+  sample(rng, 𝒫, BallSampling(α, metric=m))
 end

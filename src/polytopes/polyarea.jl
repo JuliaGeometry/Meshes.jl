@@ -93,9 +93,6 @@ issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
 windingnumber(point::Point, p::PolyArea) =
   windingnumber(point, p.outer)
 
-orientation(p::PolyArea, algo=WindingOrientation()) =
-  orientation.([p.outer; p.inners], Ref(algo))
-
 function Base.unique!(p::PolyArea)
   close!(unique!(open!(p.outer)))
   hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)

@@ -2,6 +2,7 @@
 
 ```@docs
 discretize
+triangulate
 DiscretizationMethod
 ```
 

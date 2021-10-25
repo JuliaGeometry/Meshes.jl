@@ -38,7 +38,7 @@ function Ellipsoid(semiaxes::S, angles::A; convention::C=TaitBryanExtr) where {S
   R = rotmat(angles, convention)
 
   # ellipsoid metric
-  metric = Mahalanobis(R'*Λ*R)
+  metric = Mahalanobis(Symmetric(R'*Λ*R))
 
   Ellipsoid{S,A,C,typeof(metric)}(semiaxes, angles, convention, metric)
 end

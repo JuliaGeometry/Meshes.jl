@@ -51,9 +51,10 @@ makedocs(
         "algorithms/refinement.md",
         "algorithms/smoothing.md",
         "algorithms/simplification.md",
-        "algorithms/boundingbox.md",
         "algorithms/intersection.md",
-        "algorithms/neighborsearch.md"
+        "algorithms/neighborsearch.md",
+        "algorithms/boundingbox.md",
+        "algorithms/hulls.md"
       ],
       "Visualization" => "visualization.md",
       "Traits" => "traits.md"

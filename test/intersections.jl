@@ -1,4 +1,3 @@
-using Base: hash_integer
 @testset "Intersections" begin
   @testset "Segments" begin
     # segments in 2D

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    FIST(shuffle=true)
+    FIST([rng]; shuffle=true)
 
 Fast Industrial-Strength Triangulation (FIST) of polygons.
 
@@ -15,7 +15,8 @@ to heuristics implemented in the algorithm.
 
 The option `shuffle` is used to shuffle the order in which ears
 are clipped. It improves the quality of the triangles, which can
-be very sliver otherwise.
+be very sliver otherwise. Optionally, specify the random number
+generator `rng`.
 
 ## References
 
@@ -25,13 +26,17 @@ be very sliver otherwise.
   constrained Delaunay triangulation of polygons]
   (https://www.sciencedirect.com/science/article/pii/S092577211830004X)
 """
-struct FIST <: DiscretizationMethod
+struct FIST{RNG<:AbstractRNG} <: DiscretizationMethod
+  rng::RNG
   shuffle::Bool
 end
 
-FIST() = FIST(true)
+FIST(rng=Random.GLOBAL_RNG; shuffle=true) = FIST(rng, shuffle)
 
 function discretize(𝒫::Chain, method::FIST)
+  # helper function to shuffle ears
+  earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
+
   # points of resulting mesh
   points = vertices(𝒫)
 
@@ -39,7 +44,7 @@ function discretize(𝒫::Chain, method::FIST)
   inds = CircularVector(1:nvertices(𝒫))
 
   # perform ear clipping
-  𝒬 = ears(𝒫); method.shuffle && shuffle!(𝒬)
+  𝒬 = ears(𝒫); earshuffle!(𝒬)
   n = nvertices(𝒫)
   𝒯 = Connectivity{Triangle,3}[]
   clipped = false
@@ -63,7 +68,7 @@ function discretize(𝒫::Chain, method::FIST)
       end
       clipped = true
     elseif clipped # recompute all ears
-      𝒬 = ears(𝒫); method.shuffle && shuffle!(𝒬)
+      𝒬 = ears(𝒫); earshuffle!(𝒬)
       clipped = false
     else # recovery process
       # check if consecutive edges vᵢ-1 -- vᵢ and vᵢ+1 -- vᵢ+2

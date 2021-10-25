@@ -37,6 +37,14 @@
     @test nelements(grid) == 200*100*50
     @test eltype(grid) <: Hexahedron{3,T}
 
+    grid = CartesianGrid(T.((0,0,0)), T.((1,1,1)), T.((0.1,0.1,0.1)))
+    @test embeddim(grid) == 3
+    @test coordtype(grid) == T
+    @test size(grid) == (10, 10, 10)
+    @test minimum(grid) == P3(0, 0, 0)
+    @test maximum(grid) == P3(1, 1, 1)
+    @test spacing(grid) == T[0.1, 0.1, 0.1]
+
     grid = CartesianGrid(T.((-1.,-1.)), T.((1.,1.)), dims=(200,100))
     @test embeddim(grid) == 2
     @test coordtype(grid) == T

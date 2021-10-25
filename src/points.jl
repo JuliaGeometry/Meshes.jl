@@ -125,6 +125,20 @@ Generalized inequality for non-negative orthant Rⁿ₊
 ≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .> zero(T))
 
 """
+    center(point)
+
+Return the `point` itself.
+"""
+center(p::Point) = p
+
+"""
+    centroid(point)
+
+Return the `point` itself.
+"""
+centroid(p::Point) = p
+
+"""
     rand(P::Type{<:Point}, n=1)
 
 Generates a random point of type `P`
