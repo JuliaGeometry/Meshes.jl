@@ -173,7 +173,7 @@
 
     points = P3[(0,0,0),(1,0,0),(1,1,1),(0,1,0)]
     elms = connect.([(1,2,3,4),(3,4,1)], [Tetrahedron, Triangle])
-    mesh = SimpleMesh(vertices, elms)
+    mesh = SimpleMesh(points, elms)
     @test [2, 3] ⊆ topology(mesh).ranks
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
