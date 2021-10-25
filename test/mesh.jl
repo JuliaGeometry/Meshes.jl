@@ -179,6 +179,7 @@
     end
     @test eltype(mesh) <: Polygon{2,T}
 
+    # test for https://github.com/JuliaGeometry/Meshes.jl/issues/177
     points = P3[(0,0,0),(1,0,0),(1,1,1),(0,1,0)]
     elms = connect.([(1,2,3,4),(3,4,1)], [Tetrahedron, Triangle])
     mesh = SimpleMesh(points, elms)
