@@ -38,3 +38,13 @@ function sample(rng::AbstractRNG, triangle::Triangle{Dim,T},
   end
   (randpoint() for _ in 1:method.size)
 end
+
+function sample(rng::AbstractRNG, s::Segment{Dim,T},
+                method::HomogeneousSampling) where {Dim,T}
+  A, B = vertices(s)
+  function randpoint()
+    t = rand(rng, T)
+    A + t * (B - A)
+  end
+  (randpoint() for _ in 1:method.size)
+ end
