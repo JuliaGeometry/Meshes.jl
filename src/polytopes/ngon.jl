@@ -65,6 +65,20 @@ chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
 Base.unique!(ngon::Ngon) = ngon
 
+"""
+    angles(ngon)
+
+Return the angles of the `ngon` in vertex order.
+"""
+angles(ngon::Ngon) = angles(boundary(ngon))
+
+"""
+    innerangles(ngon)
+
+Return inner angles of the `ngon` in vertex order.
+"""
+innerangles(ngon::Ngon) = innerangles(boundary(ngon))
+    
 function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
   # decompose n-gons into triangles by
   # fan triangulation (assumes convexity)
