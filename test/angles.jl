@@ -18,7 +18,7 @@
   @test ∠(P3(0,0,1),P3(0,0,0),P3(0,1,0)) ≈ T(π/2)
   
   # Ngon
-  t = Triangle(Point2(0,0), Point2(1,0), Point2(0,1))
-  @test all(isapprox.(rad2deg.(angles(t)), [-90.0, -45.0, -45.0], atol=8*eps(45.0)))
-  @test all(isapprox.(rad2deg.(innerangles(t)), [90.0, 45.0, 45.0], atol=8*eps(45.0)))     
+  t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+  @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=atol(T)))
+  @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=atol(T)))     
 end
