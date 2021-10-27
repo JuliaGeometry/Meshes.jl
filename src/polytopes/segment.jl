@@ -24,7 +24,7 @@ Base.minimum(s::Segment) = s.vertices[1]
 Base.maximum(s::Segment) = s.vertices[2]
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
-Base.length(s::Segment) = measure(s)
+Base.length(s::Segment)  = measure(s)
 
 function (s::Segment)(t)
   if t < 0 || t > 1
