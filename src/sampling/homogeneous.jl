@@ -47,4 +47,4 @@ function sample(rng::AbstractRNG, s::Segment{Dim,T},
     A + t * (B - A)
   end
   (randpoint() for _ in 1:method.size)
- end
+end
