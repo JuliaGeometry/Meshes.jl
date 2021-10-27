@@ -7,7 +7,7 @@
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
     @test extrema(s) == (P2(0,0), P2(1,1))
-    @test isapprox(length(s), sqrt(T(2)) 
+    @test isapprox(T(length(s)), sqrt(T(2))) 
     @test s(T(0)) == P2(0,0)
     @test s(T(1)) == P2(1,1)
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
