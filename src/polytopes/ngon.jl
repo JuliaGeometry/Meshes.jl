@@ -77,7 +77,9 @@ angles(ngon::Ngon) = angles(boundary(ngon))
 """
     innerangles(ngon)
 
-Return inner angles of the `ngon` in vertex order.
+Return inner angles of the boundary of the `ngon`.
+
+See also [`Chain`](@ref).
 """
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
     
