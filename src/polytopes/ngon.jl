@@ -68,7 +68,9 @@ Base.unique!(ngon::Ngon) = ngon
 """
     angles(ngon)
 
-Return the angles of the `ngon` in vertex order.
+Return the angles of the boundary of the `ngon`.
+
+See also [`Chain`](@ref).
 """
 angles(ngon::Ngon) = angles(boundary(ngon))
 
