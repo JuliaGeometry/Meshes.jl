@@ -120,7 +120,7 @@ using Base: need_full_hex
   end
 
   @testset "HomogeneousSampling" begin
-    s = Segment(P2(0,0), P2(1,0), P2(0,1))
+    s = Segment(P2(0,0), P2(1,0))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa P2
 
