@@ -52,6 +52,11 @@
     t = Triangle(P2(0,0), P2(0,1), P2(1,0))
     @test orientation(t) == :CW
 
+    # test angles
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8*eps(T)))
+    @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8*eps(T)))    
+    
     # Triangle in 3D space
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
     @test area(t) == T(0.5)
