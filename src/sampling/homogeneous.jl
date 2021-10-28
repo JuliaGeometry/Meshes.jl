@@ -41,5 +41,5 @@ end
 
 function sample(rng::AbstractRNG, segment::Segment{Dim,T},
                 method::HomogeneousSampling) where {Dim,T}
-  (segment(t) for t in rand(rng, method.size))
+  (segment(t) for t in rand(rng, T, method.size))
 end
