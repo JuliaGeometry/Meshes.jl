@@ -135,8 +135,7 @@ using Base: need_full_hex
     s = Segment(P2(0,0), P2(1,1))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa P2
-    @test all(0 ≤ pts[1] ≤ 1 for pts in coordinates.(ps))
-    @test all(0 ≤ pts[2] ≤ 1 for pts in coordinates.(ps))
+    @test all(coords[1] == coords[2] ≤ 1 for coords in coordinates.(ps))
 
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     ps = sample(t, HomogeneousSampling(100))
