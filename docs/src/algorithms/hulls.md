@@ -1,8 +1,8 @@
 # Hulls
 
 ```@docs
-HullMethod
 hull
+HullMethod
 ```
 
 ## Graham's scan
@@ -20,6 +20,6 @@ chul = hull(pset, GrahamScan())
 
 fig = CairoMakie.Figure(resolution = (800, 400))
 viz(fig[1,1], chul)
-viz!(fig[1,1], pset, elementcolor = :black)
+viz!(fig[1,1], pset, color = :black)
 fig
 ```
