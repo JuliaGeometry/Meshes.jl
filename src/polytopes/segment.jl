@@ -38,7 +38,7 @@ function Base.in(p::Point{2}, s::Segment{2})
   # get vertices and coordinates
   a, b = s.vertices
   p1, p2, p3 = coordinates.((a, b, p))
-  # i)  collinearity
+  # (i)  collinearity
   arecollinear = (p2[2] - p1[2]) * (p3[1] - p2[1]) - (p3[2] - p2[2]) *
     (p2[1] - p1[1]) == 0
   # (ii) compare dot product
