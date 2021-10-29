@@ -34,23 +34,20 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
-function collinear(p1::Point{2,T}, p2::Point{2,T}, p3::Point{2,T}) where {T}
-  p1, p2, p3 = coordinates.((p1, p2, p3))
-  # comparing the slopes p1 to p2, and p2 to p3
-  (p2[2] - p1[2]) * (p3[1] - p2[1]) - (p3[2] - p2[2]) * (p2[1] - p1[1]) == 0
-end
-
-function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
+function Base.in(p::Point{2}, s::Segment{2})
+  # get vertices and coordinates
   a, b = s.vertices
+  p1, p2, p3 = coordinates.((a, b, p))
   # i)  collinearity
-  arecollinear = collinear(a, p, b)
+  arecollinear = (p2[2] - p1[2]) * (p3[1] - p2[1]) - (p3[2] - p2[2]) *
+    (p2[1] - p1[1]) == 0
   # (ii) compare dot product
   if arecollinear
     kap = (b - a) ⋅ (p - a)
     kab = (b - a) ⋅ (b - a)
-    return 0 ≤ kap ≤ kab
+    0 ≤ kap ≤ kab
   else
-    return false
+    false
   end
 end
 
