@@ -50,4 +50,3 @@ function Base.in(p::Point{2}, s::Segment{2})
     false
   end
 end
-
