@@ -36,9 +36,8 @@ end
 
 function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
   a, b = s.vertices
-  # check collinearity between ab and ap
-  iscollinear = isapprox((b - a) × (p - a), zero(T), atol=atol(T)^2)
   # given collinear points (a, b, p), the point p intersects
-  # segment ab if and only if 0 ≤ ap ⋅ ab ≤ (b-a)²
-  iscollinear && 0 ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
+  # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
+  iscollinear = isapprox((b - a) × (p - a), zero(T), atol=atol(T)^2)
+  iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
 end
