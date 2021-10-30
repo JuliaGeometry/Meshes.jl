@@ -38,7 +38,7 @@ function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
   a, b = s.vertices
   # check collinearity between ab and ap
   iscollinear = isapprox((b - a) × (p - a), zero(T), atol=atol(T)^2)
-  # (ii) given collinear points (a, b, p), the point p intersects vector ab if the dot
-  # product of ap with ab is at least zero and at most the squared norm of vector ab.
+  # given collinear points (a, b, p), the point p intersects
+  # segment ab if and only if 0 ≤ ap ⋅ ab ≤ (b-a)²
   iscollinear && 0 ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
 end
