@@ -33,3 +33,11 @@ function (s::Segment)(t)
   a, b = s.vertices
   a + t * (b - a)
 end
+
+function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
+  a, b = s.vertices
+  # given collinear points (a, b, p), the point p intersects
+  # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
+  iscollinear = isapprox((b - a) × (p - a), zero(T), atol=atol(T)^2)
+  iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
+end

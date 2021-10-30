@@ -10,6 +10,8 @@
     @test isapprox(length(s), sqrt(T(2))) 
     @test s(T(0)) == P2(0,0)
     @test s(T(1)) == P2(1,1)
+    @test all(p ∈ s for p in [P2(0.11, 0.11), P2(0.5, 0.5), P2(0.87, 0.87)])
+    @test all(p ∉ s for p in [P2(-0.1, -0.1), P2(1.1, 1.1), P2(1, 2)])
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
     @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(T(-0.5))
   end
