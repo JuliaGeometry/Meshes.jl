@@ -34,19 +34,12 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
+
 function Base.in(p::Point{2}, s::Segment{2})
-  # get vertices and coordinates
   a, b = s.vertices
-  p1, p2, p3 = coordinates.((a, b, p))
-  # (i)  collinearity
-  arecollinear = (p2[2] - p1[2]) * (p3[1] - p2[1]) - (p3[2] - p2[2]) *
-    (p2[1] - p1[1]) == 0
-  # (ii) compare dot product
-  if arecollinear
-    kap = (b - a) ⋅ (p - a)
-    kab = (b - a) ⋅ (b - a)
-    0 ≤ kap ≤ kab
-  else
-    false
-  end
+  # (i)  collinearity between vectors ab and ap
+  arecollinear = (b - a) × (p - a) == 0
+  # (ii) given colliner points (a, b, p), the point p intersects vector ab if the dot
+  # product of ap with ab is at least zero and at most the squared norm of vector ab.
+  arecollinear && 0 ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
 end
