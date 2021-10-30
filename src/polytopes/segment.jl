@@ -34,7 +34,6 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
-
 function Base.in(p::Point{2}, s::Segment{2})
   a, b = s.vertices
   # (i)  collinearity between vectors ab and ap
