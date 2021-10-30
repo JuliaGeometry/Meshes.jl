@@ -38,7 +38,7 @@ function Base.in(p::Point{2}, s::Segment{2})
   a, b = s.vertices
   # (i)  collinearity between vectors ab and ap
   arecollinear = (b - a) × (p - a) == 0
-  # (ii) given colliner points (a, b, p), the point p intersects vector ab if the dot
+  # (ii) given collinear points (a, b, p), the point p intersects vector ab if the dot
   # product of ap with ab is at least zero and at most the squared norm of vector ab.
   arecollinear && 0 ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
 end
