@@ -34,7 +34,7 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
-function Base.in(p::Point{2}, s::Segment{2})
+function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
   a, b = s.vertices
   # (i)  collinearity between vectors ab and ap
   arecollinear = (b - a) × (p - a) == 0
