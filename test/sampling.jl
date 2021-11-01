@@ -1,4 +1,3 @@
-using Base: need_full_hex
 @testset "Sampling" begin
   @testset "UniformSampling" begin
     Random.seed!(2021)
