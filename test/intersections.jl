@@ -129,7 +129,9 @@ using Base: hash_integer
     @test isnothing(s1 ∩ s11)
     @test isa(intersecttype(s1, s12), CornerTouchingSegments) # CornerTouchingSegments (colinear)
     @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
-
+  end
+    
+  @testset "Triangles" begin
     # segments and triangles in 3D
     t1 = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     t2 = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
@@ -144,7 +146,6 @@ using Base: hash_integer
     s8 = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
     s9 = Segment(P3(-1.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     s10 = Segment(P3(0.7, 0.8, 0.0), P3(0.8, 0.7, 0.0))
-
 
     @test isa(intersecttype(s1, t1), IntersectingSegmentTriangle) # Passes through middle of t1
     @test s1 ∩ t1 == P3(0.2, 0.2, 0.0)
