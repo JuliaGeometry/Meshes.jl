@@ -32,5 +32,3 @@ function partition(object, method::HierarchicalPartition)
 
   Partition(object, result)
 end
-
-→(first, second) = HierarchicalPartition(first, second)
