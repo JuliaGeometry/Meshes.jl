@@ -133,7 +133,7 @@ using Base: hash_integer
     
   @testset "Triangles" begin
     # segments and triangles in 3D
-    t1 = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    t1 = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))  # Triangle lying in XY plane
     t2 = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
     
     s1 = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
@@ -146,6 +146,10 @@ using Base: hash_integer
     s8 = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
     s9 = Segment(P3(-1.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     s10 = Segment(P3(0.7, 0.8, 0.0), P3(0.8, 0.7, 0.0))
+
+    s11 = Segment(P3(1.0, 1.0, -1.0), P3(1.0, 1.0, 1.0))
+    s12 = Segment(P3(0.5, -1.0, -1.0), P3(0.5, -1.0, 1.0))
+    s13 = Segment(P3(-1.0, 0.5, -1.0), P3(-1.0, 0.5, 1.0))
 
     @test isa(intersecttype(s1, t1), IntersectingSegmentTriangle) # Passes through middle of t1
     @test s1 ∩ t1 == P3(0.2, 0.2, 0.0)
@@ -164,6 +168,14 @@ using Base: hash_integer
     @test isa(intersecttype(s9, t1), NoIntersection) # Segment colinear with edge of t1 (but should return NoIntersection)
     @test isnothing(s9 ∩ t1)
     @test isa(intersecttype(s10, t1), NoIntersection) # Co-planar, within bounding box of t, no intersection
+
+    # Trying to increase codecov
+    @test isa(intersecttype(s11, t1), NoIntersection) # Segment above and to right of triangle, no intersection
+    @test isnothing(s11 ∩ t1)    
+    @test isa(intersecttype(s12, t1), NoIntersection) # Segment below triangle, no intersection
+    @test isnothing(s12 ∩ t1)    
+    @test isa(intersecttype(s13, t1), NoIntersection) # Segment left of triangle, no intersection
+    @test isnothing(s13 ∩ t1)
   end
 
   @testset "Lines" begin
