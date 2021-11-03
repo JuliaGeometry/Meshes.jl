@@ -150,6 +150,9 @@ using Base: hash_integer
     s11 = Segment(P3(1.0, 1.0, -1.0), P3(1.0, 1.0, 1.0))
     s12 = Segment(P3(0.5, -1.0, -1.0), P3(0.5, -1.0, 1.0))
     s13 = Segment(P3(-1.0, 0.5, -1.0), P3(-1.0, 0.5, 1.0))
+    s14 = Segment(P3(1.0, 1.0, 1.0), P3(1.0, 1.0, -1.0))
+    s15 = Segment(P3(0.5, -1.0, 1.0), P3(0.5, -1.0, -1.0))
+    s16 = Segment(P3(-1.0, 0.5, 1.0), P3(-1.0, 0.5, -1.0))
 
     @test isa(intersecttype(s1, t1), IntersectingSegmentTriangle) # Passes through middle of t1
     @test s1 ∩ t1 == P3(0.2, 0.2, 0.0)
@@ -176,6 +179,14 @@ using Base: hash_integer
     @test isnothing(s12 ∩ t1)    
     @test isa(intersecttype(s13, t1), NoIntersection) # Segment left of triangle, no intersection
     @test isnothing(s13 ∩ t1)
+
+    # Same as tests with segments s11 - s13, but s14 - s16 are reversed
+    @test isa(intersecttype(s14, t1), NoIntersection) # Segment above and to right of triangle, no intersection
+    @test isnothing(s14 ∩ t1)    
+    @test isa(intersecttype(s15, t1), NoIntersection) # Segment below triangle, no intersection
+    @test isnothing(s15 ∩ t1)    
+    @test isa(intersecttype(s16, t1), NoIntersection) # Segment left of triangle, no intersection
+    @test isnothing(s16 ∩ t1)
   end
 
   @testset "Lines" begin
