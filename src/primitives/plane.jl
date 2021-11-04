@@ -31,3 +31,10 @@ end
 Return the origin of the `plane`.
 """
 origin(p::Plane) = p.pₒ
+
+"""
+    normal(plane)
+
+Normal vector to the `plane`.
+"""
+normal(p::Plane{3}) = p.v × p.w
