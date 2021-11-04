@@ -248,6 +248,30 @@
     @test isnothing(s ∩ t)
   end
 
+  @testset "Planes" begin
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+
+    # Intersecting segment and plane
+    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersecttype(s, p) isa IntersectingSegmentPlane
+    @test s ∩ p == P3(0, 1, 1)
+
+    # Segment contained within plane
+    s = Segment(P3(0, 0, 1), P3(0, -2, 1))
+    @test intersecttype(s, p) isa ContainedSegmentPlane
+    @test s ∩ p == s
+
+    # Segment below plane, non-intersecting
+    s = Segment(P3(0, 0, 0), P3(0, -2, -2))
+    @test intersecttype(s, p) isa NoIntersection
+    @test isnothing(s ∩ p)
+
+    # Segment parallel to plane, offset, non-intersecting
+    s = Segment(P3(0, 0, -1), P3(0, -2, -1))
+    @test intersecttype(s, p) isa NoIntersection
+    @test isnothing(s ∩ p)
+  end
+
   @testset "Lines" begin
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(-1,-1), P2(-1,1))
