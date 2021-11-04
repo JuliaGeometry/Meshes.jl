@@ -26,6 +26,13 @@ function (p::Plane)(s, t)
 end
 
 """
+    origin(plane)
+
+Return the origin of the `plane`.
+"""
+origin(p::Plane) = p.pₒ
+
+"""
     normal(plane)
 
 Normal vector to the `plane`.
