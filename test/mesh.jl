@@ -186,6 +186,12 @@
     topo = topology(mesh)
     @test collect(faces(topo, 2)) == [connect((3,4,1), Triangle)]
     @test collect(faces(topo, 3)) == [connect((1,2,3,4), Tetrahedron)]
+    
+    # test for https://github.com/JuliaGeometry/Meshes.jl/issues/187
+    tetra  = Tetrahedron(view(points, 4:-1:1))
+    facets = boundary(tetra)
+    @test facets[1] == Triangle(points[4,3,2])
+
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
