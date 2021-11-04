@@ -73,6 +73,14 @@ struct CornerTouchingBoxes{P<:Point} <: Intersection
   value::P
 end
 
+# -------------------------------
+# SEGMENT-TRIANGLE INTERSECTIONS
+# -------------------------------
+
+struct IntersectingSegmentTriangle{P<:Point} <: Intersection
+  value::P
+end
+
 # ------------
 # CORNER CASE
 # ------------
@@ -87,6 +95,7 @@ Base.get(::NoIntersection) = nothing
 
 include("intersections/lines.jl")
 include("intersections/segments.jl")
+include("intersections/triangles.jl")
 include("intersections/boxes.jl")
 
 """

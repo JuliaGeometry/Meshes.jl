@@ -295,6 +295,7 @@ export
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
+  IntersectingSegmentTriangle,
   intersecttype,
   hasintersect,
 
