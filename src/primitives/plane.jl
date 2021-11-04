@@ -26,19 +26,15 @@ function (p::Plane)(s, t)
 end
 
 """
-    origin(p)
+    origin(plane)
 
-Return the origin `p₀` for the plane `p`
+Return the origin of the `plane`.
 """
-function origin(p::Plane)
-  p.pₒ
-end
+origin(p::Plane) = p.pₒ
 
 """
-    normal(p)
+    normal(plane)
 
-Calculate a normal to the plane `p` in three dimensions
+Normal vector to the `plane`.
 """
-function normal(p::Plane{3})
-  p.v × p.w
-end
+normal(p::Plane{3}) = p.v × p.w
