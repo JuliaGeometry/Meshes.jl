@@ -81,6 +81,18 @@ struct IntersectingSegmentTriangle{P<:Point} <: Intersection
   value::P
 end
 
+# ---------------------------
+# SEGMENT-PLANE INTERSECTIONS
+# ---------------------------
+
+struct IntersectingSegmentPlane{P<:Point} <: Intersection
+  value::P
+end
+
+struct ContainedSegmentPlane{S<:Segment} <: Intersection
+  value::S
+end
+
 # ------------
 # CORNER CASE
 # ------------
