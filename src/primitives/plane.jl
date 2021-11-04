@@ -24,3 +24,12 @@ isconvex(::Type{<:Plane}) = true
 function (p::Plane)(s, t)
   p.pₒ + s*p.v + t*p.w
 end
+
+"""
+    normal(p)
+
+Calculate a normal to the plane `p` in three dimensions
+"""
+function normal(p::Plane{3})
+  p.v × p.w
+end
