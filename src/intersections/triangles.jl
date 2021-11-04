@@ -6,7 +6,11 @@
     intersecttype(s, t)
 
 Calculate the intersection of a segment and triangle in 3D.
-Algorithm from Jiménez et al 2009 (A robust segment/triangle intersection algorithm for interference tests. Efficiency study). 
+
+## References
+
+* Jiménez, J., Segura, R. and Feito, F. 2009. [A robust segment/triangle intersection algorithm for interference tests. Efficiency study]
+(https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
 """
 function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
   vₛ = vertices(s)
