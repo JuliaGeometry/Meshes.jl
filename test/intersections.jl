@@ -132,11 +132,12 @@ using Base: hash_integer
   end
     
   @testset "Triangles" begin
+    # Utility to reverse segments, to more fully test branches in the intersection algorithm
     reverse_segment(s) = Segment(vertices(s)[2], vertices(s)[1])
 
     # segments and triangles in 3D
     t₁ = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))  # Triangle lying in XY plane
-    t₂ = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
+    t₂ = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))  # Inclined triangle
     
     sᵥt₁ = [
       # Intersects through t₁
@@ -178,6 +179,7 @@ using Base: hash_integer
       (Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0)), nothing, NoIntersection)
     ]
 
+    # Evaluate intersections for t₁
     for s ∈ sᵥt₁
       @test isa(intersecttype(s[1], t₁), s[3])
       @test isa(intersecttype(reverse_segment(s[1]), t₁), s[3])
@@ -189,6 +191,7 @@ using Base: hash_integer
       end
     end
 
+    # Evaluate intersections for t₂
     for s ∈ sᵥt₂
       @test isa(intersecttype(s[1], t₂), s[3])
       @test isa(intersecttype(reverse_segment(s[1]), t₂), s[3])

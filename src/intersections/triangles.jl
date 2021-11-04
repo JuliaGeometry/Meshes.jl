@@ -122,6 +122,6 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
   # if λ is approximately 0 or 1, set as so to prevent any domain errors
   λ = isapprox(λ, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ, one(T), atol=atol(T)) ? one(T) : λ)
-
-    IntersectingSegmentTriangle(s(λ))
+  
+  IntersectingSegmentTriangle(s(λ))
 end
