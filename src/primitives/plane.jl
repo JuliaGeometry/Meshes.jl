@@ -24,3 +24,12 @@ isconvex(::Type{<:Plane}) = true
 function (p::Plane)(s, t)
   p.pₒ + s*p.v + t*p.w
 end
+
+"""
+    origin(p)
+
+Return the origin `p₀` for the plane `p`
+"""
+function origin(p::Plane)
+  p.pₒ
+end
