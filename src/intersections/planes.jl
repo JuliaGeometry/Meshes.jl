@@ -23,7 +23,7 @@ function intersecttype(s::Segment{3,T}, p::Plane{3,T}) where {T}
     # If ln is zero, the segment is parallel to the plane
     if isapprox(ln, zero(T))
         # If the numerator is zero, the segment is coincident
-        if isapprox(pₒn, sᵥ[1])
+        if isapprox((pₒ - sᵥ[1]) ⋅ n, zero(T), atol=atol(T))
             return ContainedSegmentPlane(s)
         else
             return NoIntersection()
