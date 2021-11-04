@@ -24,3 +24,10 @@ isconvex(::Type{<:Plane}) = true
 function (p::Plane)(s, t)
   p.pₒ + s*p.v + t*p.w
 end
+
+"""
+    normal(plane)
+
+Normal vector to the `plane`.
+"""
+normal(p::Plane{3}) = p.v × p.w
