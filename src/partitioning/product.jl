@@ -60,5 +60,3 @@ function partition(object, method::ProductPartition{P1,P2}) where {P1<:SPredicat
   pred(x, y) = method.p₁(x, y) * method.p₂(x, y)
   partition(object, SpatialPredicatePartition(pred))
 end
-
-*(p₁::PartitionMethod, p₂::PartitionMethod) = ProductPartition(p₁, p₂)

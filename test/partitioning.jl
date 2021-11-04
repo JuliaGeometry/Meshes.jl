@@ -219,18 +219,20 @@
 
   @testset "ProductPartition" begin
     g = CartesianGrid((100,100), T.((-0.5,-0.5)), T.((1.0,1.0)))
-    bm = BlockPartition(T(10), T(10))
-    bn = BlockPartition(T(5), T(5))
+    bm  = BlockPartition(T(10), T(10))
+    bn  = BlockPartition(T(5), T(5))
+    bmn = ProductPartition(bm, bn)
 
     # Bm x Bn = Bn with m > n
-    s1 = indices(partition(g, bm*bn))
+    s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, bn))
     @test setify(s1) == setify(s2)
 
     # pXp=p (for deterministic p)
     for p in [BlockPartition(T(10), T(10)),
               BisectFractionPartition(T.((0.1,0.1)))]
-      s1 = indices(partition(g, p*p))
+      pp = ProductPartition(p, p)
+      s1 = indices(partition(g, pp))
       s2 = indices(partition(g, p))
       @test setify(s1) == setify(s2)
     end
@@ -238,23 +240,26 @@
 
   @testset "HierarchicalPartition" begin
     g = CartesianGrid((100,100), T.((-0.5,-0.5)), T.((1.0,1.0)))
-    bm = BlockPartition(T(10), T(10))
-    bn = BlockPartition(T(5), T(5))
+    bm  = BlockPartition(T(10), T(10))
+    bn  = BlockPartition(T(5), T(5))
+    bmn = HierarchicalPartition(bm, bn)
 
     # Bn -> Bm = Bm with m > n
-    s1 = indices(partition(g, bm → bn))
+    s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, bn))
     @test setify(s1) == setify(s2)
   end
 
   @testset "Mixed Tests" begin
     g = CartesianGrid((100,100), T.((-0.5,-0.5)), T.((1.0,1.0)))
-    bm = BlockPartition(T(10), T(10))
-    bn = BlockPartition(T(5), T(5))
+    bm  = BlockPartition(T(10), T(10))
+    bn  = BlockPartition(T(5), T(5))
+    bmn = ProductPartition(bm, bn)
+    hmn = HierarchicalPartition(bm, bn)
 
     # Bm*Bn = Bm->Bn
-    s1 = indices(partition(g, bm * bn))
-    s2 = indices(partition(g, bm → bn))
+    s1 = indices(partition(g, bmn))
+    s2 = indices(partition(g, hmn))
     @test setify(s1) == setify(s2)
   end
 

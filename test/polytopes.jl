@@ -7,8 +7,11 @@
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
     @test extrema(s) == (P2(0,0), P2(1,1))
+    @test isapprox(length(s), sqrt(T(2))) 
     @test s(T(0)) == P2(0,0)
     @test s(T(1)) == P2(1,1)
+    @test all(p ∈ s for p in [P2(0.11, 0.11), P2(0.5, 0.5), P2(0.87, 0.87)])
+    @test all(p ∉ s for p in [P2(-0.1, -0.1), P2(1.1, 1.1), P2(1, 2)])
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
     @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(T(-0.5))
   end
@@ -52,6 +55,11 @@
     t = Triangle(P2(0,0), P2(0,1), P2(1,0))
     @test orientation(t) == :CW
 
+    # test angles
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8*eps(T)))
+    @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8*eps(T)))    
+    
     # Triangle in 3D space
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
     @test area(t) == T(0.5)

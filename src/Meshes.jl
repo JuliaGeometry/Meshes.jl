@@ -281,7 +281,7 @@ export
   SpatialPredicatePartition,
   ProductPartition,
   HierarchicalPartition,
-  partition, split, →,
+  partition, split,
 
   # intersections
   Intersection,

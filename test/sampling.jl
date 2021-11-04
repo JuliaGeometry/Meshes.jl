@@ -1,4 +1,3 @@
-using Base: need_full_hex
 @testset "Sampling" begin
   @testset "UniformSampling" begin
     Random.seed!(2021)
@@ -120,6 +119,29 @@ using Base: need_full_hex
   end
 
   @testset "HomogeneousSampling" begin
+    s = Segment(P2(0,0), P2(1,0))
+    ps = sample(s, HomogeneousSampling(100))
+    @test first(ps) isa P2
+    @test all(0 ≤ coords[1] ≤ 1 for coords in coordinates.(ps))
+    @test all(coords[2] == 0 for coords in coordinates.(ps))
+
+    s = Segment(P2(0,0), P2(0,1))
+    ps = sample(s, HomogeneousSampling(100))
+    @test first(ps) isa P2
+    @test all(coords[1] == 0 for coords in coordinates.(ps))
+    @test all(0 ≤ coords[2] ≤ 1 for coords in coordinates.(ps))
+
+    s = Segment(P2(0,0), P2(1,1))
+    ps = sample(s, HomogeneousSampling(100))
+    @test first(ps) isa P2
+    @test all(0 ≤ coords[1] == coords[2] ≤ 1 for coords in coordinates.(ps))
+
+    c = Chain(P2(0,0), P2(1,0), P2(0,1), P2(1,1))
+    ps = sample(c, HomogeneousSampling(100))
+    @test first(ps) isa P2
+    @test all(coords[1] + coords[2] == 1 || (0 ≤ coords[1] ≤ 1 && coords[2] ∈ [0, 1])
+              for coords in coordinates.(ps))
+
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     ps = sample(t, HomogeneousSampling(100))
     @test first(ps) isa P2
