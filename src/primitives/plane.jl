@@ -30,6 +30,4 @@ end
 
 Normal vector to the `plane`.
 """
-function normal(p::Plane{3})
-  p.v × p.w
-end
+normal(p::Plane{3}) = p.v × p.w
