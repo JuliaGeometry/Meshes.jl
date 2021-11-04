@@ -87,6 +87,7 @@ Base.get(::NoIntersection) = nothing
 
 include("intersections/lines.jl")
 include("intersections/segments.jl")
+include("intersections/planes.jl")
 include("intersections/boxes.jl")
 
 """
