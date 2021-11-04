@@ -31,5 +31,5 @@ end
 Return the origin `p₀` for the plane `p`
 """
 function origin(p::Plane)
-  p.p₀
+  p.pₒ
 end
