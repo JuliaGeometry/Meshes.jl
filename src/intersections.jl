@@ -81,10 +81,6 @@ struct IntersectingSegmentTriangle{P<:Point} <: Intersection
   value::P
 end
 
-struct OverlappingSegmentTriangle{S<:Segment} <: Intersection
-  value::S
-end
-
 # ------------
 # CORNER CASE
 # ------------

@@ -167,5 +167,3 @@ function intersectcolinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
     NoIntersection()
   end
 end
-
-
