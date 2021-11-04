@@ -26,10 +26,8 @@ function (p::Plane)(s, t)
 end
 
 """
-    origin(p)
+    origin(plane)
 
-Return the origin `p₀` for the plane `p`
+Return the origin of the `plane`.
 """
-function origin(p::Plane)
-  p.pₒ
-end
+origin(p::Plane) = p.pₒ
