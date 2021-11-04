@@ -33,3 +33,12 @@ Return the origin `p₀` for the plane `p`
 function origin(p::Plane)
   p.pₒ
 end
+
+"""
+    normal(p)
+
+Calculate a normal to the plane `p` in three dimensions
+"""
+function normal(p::Plane{3})
+  p.v × p.w
+end
