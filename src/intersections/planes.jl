@@ -6,10 +6,7 @@
     intersecttype(s, p)
 
 Compute the intersection of a segment `s` and a plane `p`
-
-## References
-
-* https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+See https://en.wikipedia.org/wiki/Line-plane_intersection
 """
 function intersecttype(s::Segment{3,T}, p::Plane{3,T}) where {T}
     # Convert the positions of the segment vertices and the plane origin to coordinates
