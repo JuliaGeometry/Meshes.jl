@@ -35,7 +35,7 @@ function measure(h::Hexahedron)
   t3 = Tetrahedron(A1, A4, A6, A7)
   t4 = Tetrahedron(A1, A2, A4, A6)
   t5 = Tetrahedron(A4, A6, A8, A7)
-  sum(measure.([t1,t2,t3,t4,t5]))
+  sum(measure, [t1,t2,t3,t4,t5])
 end
 
 function boundary(h::Hexahedron)
