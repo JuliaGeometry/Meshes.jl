@@ -28,7 +28,7 @@ function (h::Hexahedron)(u, v, w)
 end
 
 function measure(h::Hexahedron)
-  A1, A2, A4, A3, 
+  A1, A2, A4, A3,
   A5, A6, A8, A7 = h.vertices
   t1 = Tetrahedron(A1, A5, A6, A7)
   t2 = Tetrahedron(A1, A4, A3, A7)
