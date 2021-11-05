@@ -85,11 +85,11 @@ end
 # SEGMENT-PLANE INTERSECTIONS
 # ---------------------------
 
-struct IntersectingSegmentPlane{P<:Point} <: Intersection
+struct CrossingSegmentPlane{P<:Point} <: Intersection
   value::P
 end
 
-struct ContainedSegmentPlane{S<:Segment} <: Intersection
+struct OverlappingSegmentPlane{S<:Segment} <: Intersection
   value::S
 end
 

@@ -24,7 +24,7 @@ function intersecttype(s::Segment{3,T}, p::Plane{3,T}) where {T}
     if isapprox(ln, zero(T))
         # If the numerator is zero, the segment is coincident
         if isapprox((pₒ - sᵥ[1]) ⋅ n, zero(T), atol=atol(T))
-            return ContainedSegmentPlane(s)
+            return OverlappingSegmentPlane(s)
         else
             return NoIntersection()
         end
@@ -39,7 +39,7 @@ function intersecttype(s::Segment{3,T}, p::Plane{3,T}) where {T}
         if (λ < zero(T)) || (λ > one(T))
             return NoIntersection()
         else
-            return IntersectingSegmentPlane(s(λ))
+            return CrossingSegmentPlane(s(λ))
         end
     end
   end

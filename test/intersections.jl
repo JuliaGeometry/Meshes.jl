@@ -253,12 +253,12 @@
 
     # Intersecting segment and plane
     s = Segment(P3(0, 0, 0), P3(0, 2, 2))
-    @test intersecttype(s, p) isa IntersectingSegmentPlane
+    @test intersecttype(s, p) isa CrossingSegmentPlane
     @test s ∩ p == P3(0, 1, 1)
 
     # Segment contained within plane
     s = Segment(P3(0, 0, 1), P3(0, -2, 1))
-    @test intersecttype(s, p) isa ContainedSegmentPlane
+    @test intersecttype(s, p) isa OverlappingSegmentPlane
     @test s ∩ p == s
 
     # Segment below plane, non-intersecting
