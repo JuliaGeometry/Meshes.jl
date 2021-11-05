@@ -142,10 +142,13 @@
     h = Hexahedron(P3[(0,0,0),(2,0,0),(2,2,0),(0,2,0),
                       (0,0,2),(2,0,2),(2,2,2),(0,2,2)])
     @test volume(h) ≈ T(2*2*2)
-    h = Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
-                      (0,0,1),(1,0,1),(1,1,2),(0,1,1)])
-    t = Tetrahedron(P3[(1,0,1),(1,1,1),(0,1,1),(1,1,2)])
-    @test volume(h) ≈ T(1*1*1) + volume(t)
+
+    # volume formula of a frustum of a prism is V = 1/3*H*(S₁+S₂+sqrt(S₁*S₂))
+    # here we build a hexahedron which is a frustum of a prism with
+    # bottom area S₁= 4, top area S₂= 1, height H = 2
+    h = Hexahedron(P3[(0,0,0),(2,0,0),(2,2,0),(0,2,0),
+                      (0,0,2),(1,0,2),(1,1,2),(0,1,2)])
+    @test volume(h) ≈ T(1/3*2*(1 + 4 + sqrt(1*4)))
 
     h = Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
                       (0,0,1),(1,0,1),(1,1,1),(0,1,1)])

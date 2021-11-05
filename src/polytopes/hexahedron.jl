@@ -30,13 +30,12 @@ end
 function measure(h::Hexahedron)
   A1, A2, A4, A3,
   A5, A6, A8, A7 = h.vertices
-  t1 = Tetrahedron(A1, A2, A5, A7)
-  t2 = Tetrahedron(A2, A6, A5, A7)
-  t3 = Tetrahedron(A2, A6, A7, A8)
-  t4 = Tetrahedron(A1, A2, A3, A7)
-  t5 = Tetrahedron(A2, A3, A4, A7)
-  t6 = Tetrahedron(A2, A3, A4, A8)
-  sum(measure, [t1,t2,t3,t4,t5,t6])
+  t1 = Tetrahedron(A1, A5, A6, A7)
+  t2 = Tetrahedron(A1, A4, A3, A7)
+  t3 = Tetrahedron(A1, A4, A6, A7)
+  t4 = Tetrahedron(A1, A2, A4, A6)
+  t5 = Tetrahedron(A4, A6, A8, A7)
+  sum(measure, [t1,t2,t3,t4,t5])
 end
 
 function boundary(h::Hexahedron)
