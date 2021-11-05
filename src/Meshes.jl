@@ -144,7 +144,7 @@ export
   Box, Ball, Sphere, Cylinder,
   ncontrols, degree, Horner, DeCasteljau,
   radius, height, sides,
-  measure, diagonal,
+  measure, diagonal, origin,
 
   # polytopes
   Polytope, Polygon, Polyhedron,
@@ -295,6 +295,7 @@ export
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
+  IntersectingSegmentTriangle,
   intersecttype,
   hasintersect,
 

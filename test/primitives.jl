@@ -26,6 +26,8 @@
     @test paramdim(p) == 2
     @test embeddim(p) == 3
     @test isconvex(p)
+    @test origin(p) == P3(0, 0, 0)
+    @test normal(p) == Vec(0, 0, 1)
   end
 
   @testset "Bezier curves" begin
