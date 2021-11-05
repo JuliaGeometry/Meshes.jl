@@ -256,6 +256,16 @@
     @test intersecttype(s, p) isa CrossingSegmentPlane
     @test s ∩ p == P3(0, 1, 1)
 
+    # Intersecting segment and plane with λ ≈ 0
+    s = Segment(P3(0, 0, 1), P3(0, 2, 2))
+    @test intersecttype(s, p) isa TouchingSegmentPlane
+    @test s ∩ p == P3(0, 0, 1)
+
+    # Intersecting segment and plane with λ ≈ 1
+    s = Segment(P3(0, 0, 2), P3(0, 2, 1))
+    @test intersecttype(s, p) isa TouchingSegmentPlane
+    @test s ∩ p == P3(0, 2, 1)
+
     # Segment contained within plane
     s = Segment(P3(0, 0, 1), P3(0, -2, 1))
     @test intersecttype(s, p) isa OverlappingSegmentPlane

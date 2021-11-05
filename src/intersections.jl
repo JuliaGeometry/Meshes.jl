@@ -89,6 +89,10 @@ struct CrossingSegmentPlane{P<:Point} <: Intersection
   value::P
 end
 
+struct TouchingSegmentPlane{P<:Point} <: Intersection
+  value::P
+end
+
 struct OverlappingSegmentPlane{S<:Segment} <: Intersection
   value::S
 end

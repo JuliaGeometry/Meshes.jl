@@ -297,6 +297,7 @@ export
   CornerTouchingBoxes,
   IntersectingSegmentTriangle,
   CrossingSegmentPlane,
+  TouchingSegmentPlane,
   OverlappingSegmentPlane,
   intersecttype,
   hasintersect,

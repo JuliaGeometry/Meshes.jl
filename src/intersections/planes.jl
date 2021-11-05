@@ -33,7 +33,11 @@ function intersecttype(s::Segment{3,T}, p::Plane{3,T}) where {T}
         λ = ((pₒ - sᵥ[1]) ⋅ n) / ln
 
         # If λ is approximately 0 or 1, set as so to prevent any domain errors
-        λ = isapprox(λ, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ, one(T), atol=atol(T)) ? one(T) : λ)
+        if isapprox(λ, zero(T), atol=atol(T))
+            return TouchingSegmentPlane(s(zero(T)))
+        elseif isapprox(λ, one(T), atol=atol(T))
+            return TouchingSegmentPlane(s(one(T)))
+        end
 
         # If λ is out of bounds for the segment, then there is no intersection
         if (λ < zero(T)) || (λ > one(T))
