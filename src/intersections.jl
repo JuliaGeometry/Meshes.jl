@@ -81,9 +81,9 @@ struct IntersectingSegmentTriangle{P<:Point} <: Intersection
   value::P
 end
 
-# ---------------------------
+# ----------------------------
 # SEGMENT-PLANE INTERSECTIONS
-# ---------------------------
+# ----------------------------
 
 struct CrossingSegmentPlane{P<:Point} <: Intersection
   value::P
