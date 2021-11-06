@@ -28,7 +28,7 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
   sᵥ = D ⋅ W₁
 
   if wᵥ > atol(T)
-    # Rejection 2
+    # rejection 2
     if sᵥ > atol(T)
       return NoIntersection()
     end
@@ -36,24 +36,24 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
     W₂ = A × D
     tᵥ = W₂ ⋅ C
     
-    # Rejection 3
+    # rejection 3
     if tᵥ < -atol(T)
       return NoIntersection()
     end
 
     uᵥ = -(W₂ ⋅ B)
 
-    # Rejection 4
+    # rejection 4
     if uᵥ < -atol(T)
       return NoIntersection()
     end
 
-    # Rejection 5
+    # rejection 5
     if wᵥ < (sᵥ + tᵥ + uᵥ)
       return NoIntersection()
     end
   elseif wᵥ < -atol(T)
-    # Rejection 2
+    # rejection 2
     if sᵥ < -atol(T)
       return NoIntersection()
     end
@@ -61,19 +61,19 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
     W₂ = A × D
     tᵥ = W₂ ⋅ C
     
-    # Rejection 3
+    # rejection 3
     if tᵥ > atol(T)
       return NoIntersection()
     end
 
     uᵥ = -(W₂ ⋅ B)
 
-    # Rejection 4
+    # rejection 4
     if uᵥ > atol(T)
       return NoIntersection()
     end
 
-    # Rejection 5
+    # rejection 5
     if wᵥ > (sᵥ + tᵥ + uᵥ)
       return NoIntersection()
     end
@@ -82,18 +82,18 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
       W₂ = D × A
       tᵥ = W₂ ⋅ C
 
-      # Rejection 3
+      # rejection 3
       if tᵥ < -atol(T)
         return NoIntersection()
       end
 
       uᵥ = -(W₂ ⋅ B)
 
-      # Rejection 4
+      # rejection 4
       if uᵥ < -atol(T)
         return NoIntersection()
       end
-      # Rejection 5
+      # rejection 5
       if -sᵥ < (tᵥ + uᵥ)
         return NoIntersection()
       end
@@ -101,24 +101,24 @@ function intersecttype(s::Segment{3,T}, t::Triangle{3,T}) where {T}
       W₂ = D × A
       tᵥ = W₂ ⋅ C
 
-      # Rejection 3
+      # rejection 3
       if tᵥ > atol(T)
         return NoIntersection()
       end
 
       uᵥ = -(W₂ ⋅ B)
 
-      # Rejection 4
+      # rejection 4
       if uᵥ > atol(T)
         return NoIntersection()
       end
 
-      # Rejection 5
+      # rejection 5
       if -sᵥ > (tᵥ + uᵥ)
         return NoIntersection()
       end
     else
-      # Rejection 1, Coplanar segment
+      # rejection 1, coplanar segment
       return NoIntersection()
     end
   end      
