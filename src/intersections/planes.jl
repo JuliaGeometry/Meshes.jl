@@ -21,7 +21,7 @@ function intersecttype(s::Segment{3,T}, p::Plane{3,T}) where {T}
     pₒn = pₒ ⋅ n
   
     # if ln is zero, the segment is parallel to the plane
-    if isapprox(ln, zero(T))
+    if isapprox(ln, zero(T), atol=atol(T))
         # if the numerator is zero, the segment is coincident
         if isapprox((pₒ - sᵥ[1]) ⋅ n, zero(T), atol=atol(T))
             return OverlappingSegmentPlane(s)
