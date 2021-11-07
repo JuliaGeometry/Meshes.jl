@@ -64,8 +64,11 @@ include("mesh.jl")
 # mesh data
 include("meshdata.jl")
 
-# miscellaneous
+# conventions and utilities
 include("conventions.jl")
+include("utils.jl")
+
+# miscellaneous
 include("paths.jl")
 include("distances.jl")
 include("neighborhoods.jl")
@@ -88,9 +91,6 @@ include("refinement.jl")
 include("smoothing.jl")
 include("boundingboxes.jl")
 include("hulls.jl")
-
-# utilities
-include("utils.jl")
 
 # plot recipes
 include("plotrecipes/domain.jl")

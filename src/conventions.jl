@@ -19,7 +19,7 @@ function axesseq(::Type{<:RotationConvention}) end
 """
     orientation(convention) -> Tuple{Symbol,Symbol,Symbol}
 
-Informs for each of the three rotation if it is clockwise (`:CW`) or
+Informs for each of the three rotations if it is clockwise (`:CW`) or
 counter-clockwise (`:CCW`). Adopts right-hand rule: orientation defined
 looking towards the negative direction of the axis.
 """

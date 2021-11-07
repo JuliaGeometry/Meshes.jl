@@ -23,23 +23,7 @@ struct AnisotropicBall{V,A,C,M} <: MetricBall
 end
 
 function AnisotropicBall(radii::V, angles::A; convention::C=TaitBryanExtr) where {V,A,C}
-  Dim, nangles = length(radii), length(angles)
-  valid = (Dim == 3 && nangles == 3) || (Dim == 2 && nangles == 1)
-  @assert valid "invalid number of radii/angles"
-
-  # invert radii if necessary
-  invert = mainaxis(convention) == :Y
-  ranges = invert ? [radii[i] for i in reverse(1:Dim,1,2)] : radii
-
-  # scaling matrix
-  Λ = Diagonal(SVector{Dim}(one(eltype(ranges))./ranges.^2))
-
-  # rotation matrix
-  R = rotmat(angles, convention)
-
-  # ellipsoid metric
-  metric = Mahalanobis(Symmetric(R'*Λ*R))
-
+  metric = mahalanobis(radii, angles, convention=convention)
   AnisotropicBall{V,A,C,typeof(metric)}(radii, angles, convention, metric)
 end
 
