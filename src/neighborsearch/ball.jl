@@ -24,7 +24,7 @@ function BallSearch(domain::D, ball::B) where {D,B<:MetricBall}
 end
 
 function search(pₒ::Point, method::BallSearch; mask=nothing)
-  inds = searchinds(pₒ, method)
+  inds = inrange(method.tree, coordinates(pₒ), range(method.ball))
   if mask ≠ nothing
     neighbors = Vector{Int}()
     @inbounds for ind in inds
@@ -37,9 +37,3 @@ function search(pₒ::Point, method::BallSearch; mask=nothing)
     inds
   end
 end
-
-searchinds(pₒ, method::BallSearch{D,B,T}) where {D,B<:IsotropicBall,T} =
-  inrange(method.tree, coordinates(pₒ), first(radii(method.ball)))
-
-searchinds(pₒ, method::BallSearch{D,B,T}) where {D,B<:AnisotropicBall,T} =
-  inrange(method.tree, coordinates(pₒ), one(coordtype(pₒ)))

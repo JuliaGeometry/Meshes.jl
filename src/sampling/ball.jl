@@ -28,7 +28,7 @@ function sample(rng::AbstractRNG, object, method::BallSampling)
   msize  = method.maxsize ≠ nothing ? method.maxsize : Inf
 
   # neighborhood search with ball
-  ball = IsotropicBall(radius, metric)
+  ball = MetricBall(radius, metric)
   searcher = BallSearch(object, ball)
 
   locations = Vector{Int}()

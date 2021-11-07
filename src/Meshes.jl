@@ -182,6 +182,10 @@ export
   axesseq, orientation, angleunits,
   mainaxis, isextrinsic, rotmat,
 
+  # utililities
+  signarea,
+  sideof,
+
   # paths
   Path,
   LinearPath, RandomPath,
@@ -191,8 +195,6 @@ export
   # neighborhoods
   Neighborhood,
   MetricBall,
-  IsotropicBall,
-  AnisotropicBall,
   metric, radii,
 
   # neighbordhood search
@@ -333,10 +335,6 @@ export
   # hulls
   HullMethod,
   GrahamScan,
-  hull,
-
-  # utililities
-  signarea,
-  sideof
+  hull
 
 end # module

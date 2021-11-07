@@ -38,7 +38,7 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
 end
 
 """
-    mahalanobis(radii, angles; convention=TraitBryanExtr)
+    mahalanobis(radii, angles, convention)
 
 Return the Mahalanobis distance corresponding to an ellipsoid
 with `radii` rotated by given `angles` according to given `convention`.
@@ -52,7 +52,7 @@ The list of available conventions can be found with:
 julia> subtypes(RotationConvention)
 ```
 """
-function mahalanobis(radii, angles; convention=TraitBryanExtr)
+function mahalanobis(radii, angles, convention)
   ndims, nangles = length(radii), length(angles)
   valid = (ndims == 3 && nangles == 3) || (ndims == 2 && nangles == 1)
   @assert valid "invalid number of radii/angles"

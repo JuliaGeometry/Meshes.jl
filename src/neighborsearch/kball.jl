@@ -8,7 +8,7 @@
 A method that searches `k` nearest neighbors and then filters
 these neighbors using a norm `ball`.
 """
-struct KBallSearch{D,B,T} <: BoundedNeighborSearchMethod
+struct KBallSearch{D,B<:MetricBall,T} <: BoundedNeighborSearchMethod
   # input fields
   domain::D
   k::Int
@@ -29,7 +29,7 @@ maxneighbors(method::KBallSearch) = method.k
 
 function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
-  r = method.ball isa IsotropicBall ? first(radii(method.ball)) : one(coordtype(pₒ))
+  r = range(method.ball)
 
   inds, dists = knn(method.tree, coordinates(pₒ), k, true)
 
