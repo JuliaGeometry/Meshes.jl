@@ -18,6 +18,20 @@ of a metric and a set of radii.
 """
 abstract type MetricBall <: Neighborhood end
 
+"""
+    metric(ball)
+
+Return the metric of the metric `ball`.
+"""
+function metric end
+
+"""
+    radii(ball)
+
+Return the radii of the metric `ball`.
+"""
+function radii end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

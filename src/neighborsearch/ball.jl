@@ -39,7 +39,7 @@ function search(pₒ::Point, method::BallSearch; mask=nothing)
 end
 
 searchinds(pₒ, method::BallSearch{D,B,T}) where {D,B<:IsotropicBall,T} =
-  inrange(method.tree, coordinates(pₒ), radius(method.ball))
+  inrange(method.tree, coordinates(pₒ), first(radii(method.ball)))
 
 searchinds(pₒ, method::BallSearch{D,B,T}) where {D,B<:AnisotropicBall,T} =
   inrange(method.tree, coordinates(pₒ), one(coordtype(pₒ)))

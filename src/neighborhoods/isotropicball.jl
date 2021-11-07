@@ -22,12 +22,7 @@ end
 
 metric(ball::IsotropicBall) = ball.metric
 
-"""
-    radius(ball)
-
-Return the radius of the norm `ball`.
-"""
-radius(ball::IsotropicBall) = ball.radius
+radii(ball::IsotropicBall)  = SVector(ball.radius,)
 
 function Base.show(io::IO, ball::IsotropicBall{T}) where {T}
   r, d = ball.radius, ball.metric

@@ -193,8 +193,7 @@ export
   MetricBall,
   IsotropicBall,
   AnisotropicBall,
-  metric,
-  radius,
+  metric, radii,
 
   # neighbordhood search
   NeighborSearchMethod,

@@ -12,9 +12,9 @@ An anisotropic ball with `radii` and `angles` according to the rotation `convent
 
 The list of available conventions can be found with `subtypes(RotationConvention)`.
 """
-struct AnisotropicBall{T,A,C,M} <: MetricBall
+struct AnisotropicBall{V,A,C,M} <: MetricBall
   # input fields
-  radii::T
+  radii::V
   angles::A
   convention::C
 
@@ -22,7 +22,7 @@ struct AnisotropicBall{T,A,C,M} <: MetricBall
   metric::M
 end
 
-function AnisotropicBall(radii::T, angles::A; convention::C=TaitBryanExtr) where {T,A,C}
+function AnisotropicBall(radii::V, angles::A; convention::C=TaitBryanExtr) where {V,A,C}
   Dim, nangles = length(radii), length(angles)
   valid = (Dim == 3 && nangles == 3) || (Dim == 2 && nangles == 1)
   @assert valid "invalid number of radii/angles"
@@ -40,10 +40,12 @@ function AnisotropicBall(radii::T, angles::A; convention::C=TaitBryanExtr) where
   # ellipsoid metric
   metric = Mahalanobis(Symmetric(R'*Λ*R))
 
-  AnisotropicBall{T,A,C,typeof(metric)}(radii, angles, convention, metric)
+  AnisotropicBall{V,A,C,typeof(metric)}(radii, angles, convention, metric)
 end
 
 metric(ball::AnisotropicBall) = ball.metric
+
+radii(ball::AnisotropicBall) = ball.radii
 
 function Base.show(io::IO, ball::AnisotropicBall)
   r = ball.radii

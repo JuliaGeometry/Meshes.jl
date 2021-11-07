@@ -2,23 +2,23 @@
   @testset "IsotropicBall" begin
     # Euclidean metric
     ball = IsotropicBall(T(1/2))
-    @test evaluate(metric(ball), T[0], T[0]) ≤ radius(ball)
-    @test evaluate(metric(ball), T[0], T[1]) > radius(ball)
+    @test all(evaluate(metric(ball), T[0], T[0]) .≤ radii(ball))
+    @test all(evaluate(metric(ball), T[0], T[1]) .> radii(ball))
 
     ball = IsotropicBall(T(1))
-    @test evaluate(metric(ball), T[0,0], T[0,0]) ≤ radius(ball)
-    @test evaluate(metric(ball), T[0,0], T[1,0]) ≤ radius(ball)
-    @test evaluate(metric(ball), T[0,0], T[0,1]) ≤ radius(ball)
+    @test all(evaluate(metric(ball), T[0,0], T[0,0]) .≤ radii(ball))
+    @test all(evaluate(metric(ball), T[0,0], T[1,0]) .≤ radii(ball))
+    @test all(evaluate(metric(ball), T[0,0], T[0,1]) .≤ radii(ball))
 
     # Chebyshev metric
     ball = IsotropicBall(T(1/2), Chebyshev())
-    @test evaluate(metric(ball), T[0], T[0]) ≤ radius(ball)
-    @test evaluate(metric(ball), T[0], T[1]) > radius(ball)
+    @test all(evaluate(metric(ball), T[0], T[0]) .≤ radii(ball))
+    @test all(evaluate(metric(ball), T[0], T[1]) .> radii(ball))
 
     for r in [1.,2.,3.,4.,5.]
       ball = IsotropicBall(r, Chebyshev())
       for i in 0.0:1.0:r, j in 0.0:1.0:r
-        @test evaluate(metric(ball), T[0,0], T[i,j]) ≤ radius(ball)
+        @test all(evaluate(metric(ball), T[0,0], T[i,j]) .≤ radii(ball))
       end
     end
 

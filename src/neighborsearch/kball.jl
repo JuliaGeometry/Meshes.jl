@@ -29,7 +29,7 @@ maxneighbors(method::KBallSearch) = method.k
 
 function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
-  r = method.ball isa IsotropicBall ? radius(method.ball) : one(coordtype(pₒ))
+  r = method.ball isa IsotropicBall ? first(radii(method.ball)) : one(coordtype(pₒ))
 
   inds, dists = knn(method.tree, coordinates(pₒ), k, true)
 
