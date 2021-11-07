@@ -34,13 +34,11 @@ end
 
 function sample(rng::AbstractRNG, triangle::Triangle{Dim,T},
                 method::HomogeneousSampling) where {Dim,T}
-  A, B, C = coordinates.(vertices(triangle))
   function randpoint()
     # sample barycentric coordinates
     u₁, u₂ = rand(rng, T, 2)
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
-    λ₃     = 1 - λ₁ - λ₂
-    Point(λ₁ .* A + λ₂ .* B + λ₃ .* C)
+    triangle(λ₁, λ₂)
   end
   (randpoint() for _ in 1:method.size)
 end

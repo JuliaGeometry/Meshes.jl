@@ -82,7 +82,7 @@ Return inner angles of the boundary of the `ngon`.
 See also [`Chain`](@ref).
 """
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
-    
+
 function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
   # decompose n-gons into triangles by
   # fan triangulation (assumes convexity)
@@ -124,7 +124,7 @@ end
 function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
   # given coordinates
   a, b, c = t.vertices
-  
+
   # evaluate vectors defining geometry
   v₁ = b - a
   v₂ = c - a
@@ -143,7 +143,7 @@ function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
   # barycentric coordinates
   λ₂ = (d₂₂ * d₃₁ - d₁₂ * d₃₂) / d
   λ₃ = (d₁₁ * d₃₂ - d₁₂ * d₃₁) / d
-  
+
   # barycentric check
   (λ₂ ≥ zero(T)) && (λ₃ ≥ zero(T)) && ((λ₂ + λ₃) ≤ one(T))
 end
@@ -160,11 +160,22 @@ function normal(t::Triangle{3})
   n / norm(n)
 end
 
+function (t::Triangle)(u::T, v::T) where T
+    w = (one(T) - u - v)
+    if u < zero(T) || u > one(T) ||
+       v < zero(T) || v > one(T) ||
+       w < zero(T) || w > one(T)
+       throw(DomainError("barycentric coordinates out of range"))
+    end
+    v₁, v₂, v₃ = coordinates.(t.vertices)
+    Point(v₁*u + v₂*v + v₃*w)
+end
+
 # ------------
 # QUADRANGLES
 # ------------
 
-# Coons patch https://en.wikipedia.org/wiki/Coons_patch 
+# Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
   Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)
