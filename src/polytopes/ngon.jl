@@ -168,7 +168,7 @@ function (t::Triangle)(u::T, v::T) where T
        throw(DomainError("barycentric coordinates out of range"))
     end
     v₁, v₂, v₃ = coordinates.(t.vertices)
-    Point(v₁*u + v₂*v + v₃*w)
+    Point(v₁*w + v₂*u + v₃*v)
 end
 
 # ------------
