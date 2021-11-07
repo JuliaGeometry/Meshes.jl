@@ -7,7 +7,7 @@
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
     @test extrema(s) == (P2(0,0), P2(1,1))
-    @test isapprox(length(s), sqrt(T(2))) 
+    @test isapprox(length(s), sqrt(T(2)))
     @test s(T(0)) == P2(0,0)
     @test s(T(1)) == P2(1,1)
     @test all(p ∈ s for p in [P2(0.11, 0.11), P2(0.5, 0.5), P2(0.87, 0.87)])
@@ -43,6 +43,12 @@
     t = Triangle(P2(0.4,0.4), P2(0.6,0.4), P2(0.8,0.4))
     @test P2(0.2,0.4) ∉ t
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test t(T(0.0), T(0.0)) == P2(0,0)
+    @test t(T(1.0), T(0.0)) == P2(1,0)
+    @test t(T(0.0), T(1.0)) == P2(0,1)
+    @test t(T(0.5), T(0.5)) == P2(0.5,0.5)
+    @test_throws DomainError("barycentric coordinates out of range") t(T(-0.5), T(0.0))
+    @test_throws DomainError("barycentric coordinates out of range") t(T(1), T(1))
     @test !hasholes(t)
     @test unique(t) == t
     @test boundary(t) == first(chains(t))
@@ -58,8 +64,8 @@
     # test angles
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8*eps(T)))
-    @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8*eps(T)))    
-    
+    @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8*eps(T)))
+
     # Triangle in 3D space
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
     @test area(t) == T(0.5)
@@ -72,6 +78,12 @@
       @test p ∉ t
     end
     t = Triangle(P3(0,0,0), P3(0,1,0), P3(0,0,1))
+    @test t(T(0.0), T(0.0)) == P3(0,0,0)
+    @test t(T(1.0), T(0.0)) == P3(0,1,0)
+    @test t(T(0.0), T(1.0)) == P3(0,0,1)
+    @test t(T(0.5), T(0.5)) == P3(0,0.5,0.5)
+    @test_throws DomainError("barycentric coordinates out of range") t(T(-0.5), T(0.0))
+    @test_throws DomainError("barycentric coordinates out of range") t(T(1), T(1))
     @test isapprox(normal(t), Vec(1,0,0))
     t = Triangle(P3(0,0,0), P3(2,0,0), P3(0,2,2))
     @test isapprox(normal(t), Vec(0,-1/sqrt(2),1/sqrt(2)))
