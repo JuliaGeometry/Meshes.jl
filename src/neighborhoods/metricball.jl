@@ -66,8 +66,8 @@ metric(ball::MetricBall) = ball.metric
     range(ball)
 
 Return the range of the metric `ball`, i.e.
-the value `r` such that for any vector `v`
-`||v|| > r` implies `v ∉ ball`.
+the smallest value `r` such that `||v|| ≤ r`
+for any `v ∈ ball`.
 """
 Base.range(ball::MetricBall{<:Real}) = ball.radii
 Base.range(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
