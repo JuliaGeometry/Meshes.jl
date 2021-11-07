@@ -44,8 +44,8 @@
     @test P2(0.2,0.4) ∉ t
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test t(T(0.0), T(0.0)) == P2(0,0)
-    @test t(T(0.0), T(1.0)) == P2(0,1)
     @test t(T(1.0), T(0.0)) == P2(1,0)
+    @test t(T(0.0), T(1.0)) == P2(0,1)
     @test t(T(0.5), T(0.5)) == P2(0.5,0.5)
     @test_throws DomainError("barycentric coordinates out of range") t(T(-0.5), T(0.0))
     @test_throws DomainError("barycentric coordinates out of range") t(T(1), T(1))
