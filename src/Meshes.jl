@@ -189,9 +189,12 @@ export
   traverse,
 
   # neighborhoods
-  Neighborhood, MetricBall,
-  NormBall, Ellipsoid,
-  metric, radius,
+  Neighborhood,
+  MetricBall,
+  IsotropicBall,
+  AnisotropicBall,
+  metric,
+  radius,
 
   # neighbordhood search
   NeighborSearchMethod,
