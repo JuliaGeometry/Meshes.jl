@@ -41,3 +41,9 @@ function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
   iscollinear = isapprox((b - a) × (p - a), zero(T), atol=atol(T)^2)
   iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
 end
+
+function Base.in(p::Point{3,T}, s::Segment{3,T}) where {T}
+  a, b = s.vertices
+  iscollinear = isapprox((b - a) × (p - a), zeros(T, 3), atol = atol(T)^2)
+  iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
+end
