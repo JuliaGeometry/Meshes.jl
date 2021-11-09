@@ -34,16 +34,17 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
-function Base.in(p::Point{2,T}, s::Segment{2,T}) where {T}
+function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   a, b = s.vertices
+  if Dim == 2
+    zeros_compare = zero(T)
+  elseif Dim == 3
+    zeros_compare = zeros(T, 3)
+  else
+    throw(ErrorException("not implemented"))
+  end
   # given collinear points (a, b, p), the point p intersects
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
-  iscollinear = isapprox((b - a) × (p - a), zero(T), atol=atol(T)^2)
-  iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
-end
-
-function Base.in(p::Point{3,T}, s::Segment{3,T}) where {T}
-  a, b = s.vertices
-  iscollinear = isapprox((b - a) × (p - a), zeros(T, 3), atol = atol(T)^2)
+  iscollinear = isapprox((b - a) × (p - a), zeros_compare, atol = atol(T)^2)
   iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
 end
