@@ -39,7 +39,7 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   if Dim == 2
     _0 = zero(T)
   elseif Dim == 3
-    _0 = zeros(T, 3)
+    _0 = Vec{3,T}(0, 0, 0)
   else
     throw(ErrorException("not implemented"))
   end
