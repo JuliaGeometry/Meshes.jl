@@ -22,6 +22,7 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 struct Point{Dim,T}
   coords::SVector{Dim,T}
   Point{Dim,T}(coords::SVector) where {Dim,T} = new{Dim,T}(coords)
+  Point{Dim,T}(coords::SVector{Dim,T2}) where {Dim,T,T2<:Integer} = new{Dim,Float64}(coords)
 end
 
 # convenience constructors
@@ -29,7 +30,6 @@ Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(SVector{Dim,T}(coords...))
 Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
 Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
 Point(coords...) = Point(SVector(coords...))
-Point(coords::SVector{Dim,T}) where {Dim,T<:Integer} = Point(SVector{Dim, Float64}(coords))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
