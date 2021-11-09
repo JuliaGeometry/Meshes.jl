@@ -37,9 +37,9 @@ end
 function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   a, b = s.vertices
   if Dim == 2
-    zeros_compare = zero(T)
+    _0 = zero(T)
   elseif Dim == 3
-    zeros_compare = zeros(T, 3)
+    _0 = zeros(T, 3)
   else
     throw(ErrorException("not implemented"))
   end
