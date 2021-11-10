@@ -41,8 +41,8 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   # with respect to all possible pairs of coordinates are zero
   iscollinear = true
   for i in 1:Dim, j in (i+1):Dim
-    cp = Vec{2,T}(ab[[i, j]]) × Vec{2,T}(ap[[i, j]])
-    if !isapprox(cp, zero(T), atol=atol(T)^2)
+    v = Vec{2,T}(ab[i], ab[j]) × Vec{2,T}(ap[i], ap[j])
+    if !isapprox(v, zero(T), atol=atol(T)^2)
       iscollinear = false
       break
     end
