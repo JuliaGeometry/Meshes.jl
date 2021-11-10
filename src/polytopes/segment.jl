@@ -37,7 +37,7 @@ end
 function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   a, b = s.vertices
   ab, ap = b - a, p - a
-  # points a, b, p are collinear if and only if the cross-products (cp) for ab and ap
+  # points a, b, p are collinear if and only if the cross-products for ab and ap
   # with respect to all possible pairs of coordinates are zero
   iscollinear = true
   for i in 1:Dim, j in (i+1):Dim
