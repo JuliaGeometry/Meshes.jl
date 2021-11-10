@@ -36,15 +36,18 @@ end
 
 function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   a, b = s.vertices
-  if Dim == 2
-    _0 = zero(T)
-  elseif Dim == 3
-    _0 = Vec{3,T}(0, 0, 0)
-  else
-    throw(ErrorException("not implemented"))
+  ab, ap = b - a, p - a
+  # points a, b, p are collinear if and only if the cross-products for ab and ap
+  # with respect to all possible pairs of coordinates are zero
+  iscollinear = true
+  for i in 1:Dim, j in (i+1):Dim
+    v = Vec{2,T}(ab[i], ab[j]) × Vec{2,T}(ap[i], ap[j])
+    if !isapprox(v, zero(T), atol=atol(T)^2)
+      iscollinear = false
+      break
+    end
   end
   # given collinear points (a, b, p), the point p intersects
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
-  iscollinear = isapprox((b - a) × (p - a), _0, atol=atol(T)^2)
-  iscollinear && zero(T) ≤ (b - a) ⋅ (p - a) ≤ (b - a) ⋅ (b - a)
+  iscollinear && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end

@@ -3,6 +3,9 @@
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
 
+    s = Segment(Point(1.0,), Point(2.0,))
+    @test all(Point(x,) ∈ s for x in 1:0.01:2)
+    @test all(Point(x,) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
     s = Segment(P2(0,0), P2(1,1))
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
@@ -10,13 +13,18 @@
     @test isapprox(length(s), sqrt(T(2)))
     @test s(T(0)) == P2(0,0)
     @test s(T(1)) == P2(1,1)
-    @test all(p ∈ s for p in [P2(0.11, 0.11), P2(0.5, 0.5), P2(0.87, 0.87)])
-    @test all(p ∉ s for p in [P2(-0.1, -0.1), P2(1.1, 1.1), P2(1, 2)])
+    @test all(P2(x,x) ∈ s for x in 0:0.01:1)
+    @test all(p ∉ s for p in [P2(-0.1, -0.1), P2(1.1, 1.1), P2(0.5, 0.49), P2(1, 2)])
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
     @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(T(-0.5))
     s = Segment(P3(0,0,0), P3(1,1,1))
     @test all(P3(x, x, x) ∈ s for x in 0:0.01:1)
-    @test all(p ∉ s for p in [P3(-0.1, -0.1, -0.1), P3(1.1, 1.1, 1.1), P3(0.5, 0.5, 0.49)])
+    @test all(p ∉ s for p in [P3(-0.1, -0.1, -0.1), P3(1.1, 1.1, 1.1)])
+    @test all(p ∉ s for p in [P3(0.5, 0.5, 0.49), P3(1, 1, 2)])
+    s = Segment(Point(1.,1.,1.,1.), Point(2.,2.,2.,2.))
+    @test all(Point(x, x, x, x) ∈ s for x in 1:0.01:2)
+    @test all(p ∉ s for p in [Point(0.99, 0.99, 0.99, 0.99), Point(2.1, 2.1, 2.1, 2.1)])
+    @test all(p ∉ s for p in [Point(1.5, 1.5, 1.5, 1.49), Point(1, 1, 2, 1.0)])
   end
 
   @testset "N-gons" begin
