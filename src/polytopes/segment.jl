@@ -40,13 +40,11 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   # points a, b, p are collinear if and only if the cross-products (cp) for ab and ap
   # with respect to all possible pairs of coordinates are zero
   iscollinear = true
-  if Dim > 1
-    for i in 1:Dim, j in (i+1):Dim
-      cp = Vec{2,T}(ab[[i, j]]) × Vec{2,T}(ap[[i, j]])
-      if !isapprox(cp, zero(T), atol=atol(T)^2)
-        iscollinear = false
-        break
-      end
+  for i in 1:Dim, j in (i+1):Dim
+    cp = Vec{2,T}(ab[[i, j]]) × Vec{2,T}(ap[[i, j]])
+    if !isapprox(cp, zero(T), atol=atol(T)^2)
+      iscollinear = false
+      break
     end
   end
   # given collinear points (a, b, p), the point p intersects
