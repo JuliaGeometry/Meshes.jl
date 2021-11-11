@@ -101,7 +101,7 @@ include("plotrecipes/collections.jl")
 include("plotrecipes/cartesiangrids.jl")
 include("plotrecipes/partitions.jl")
 
-export 
+export
   # points
   Point, Point1, Point2, Point3,
   Point1f, Point2f, Point3f,
@@ -300,6 +300,7 @@ export
   FaceTouchingBoxes,
   CornerTouchingBoxes,
   IntersectingSegmentTriangle,
+  IntersectingRayTriangle,
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,

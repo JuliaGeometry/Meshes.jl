@@ -102,6 +102,14 @@ struct IntersectingSegmentTriangle{P<:Point} <: Intersection
   value::P
 end
 
+# ---------------------------
+# Ray-TRIANGLE INTERSECTIONS
+# ---------------------------
+
+struct IntersectingRayTriangle{P<:Point} <: Intersection
+  value::P
+end
+
 # ----------------------------
 # SEGMENT-PLANE INTERSECTIONS
 # ----------------------------
@@ -166,7 +174,7 @@ function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
 
   # first point in Minkowski difference
   P = minkowskipoint(g1, g2, d)
-  
+
   # origin of coordinate system
   O = minkowskiorigin(Dim, T)
 
