@@ -160,15 +160,15 @@ function normal(t::Triangle{3})
   n / norm(n)
 end
 
-function (t::Triangle)(u::T, v::T) where T
-    w = (one(T) - u - v)
-    if u < zero(T) || u > one(T) ||
-       v < zero(T) || v > one(T) ||
-       w < zero(T) || w > one(T)
-       throw(DomainError("barycentric coordinates out of range"))
-    end
-    v₁, v₂, v₃ = coordinates.(t.vertices)
-    Point(v₁*w + v₂*u + v₃*v)
+function (t::Triangle)(u::T, v::T) where {T}
+  w = (one(T) - u - v)
+  if u < zero(T) || u > one(T) ||
+     v < zero(T) || v > one(T) ||
+     w < zero(T) || w > one(T)
+     throw(DomainError("barycentric coordinates out of range"))
+  end
+  v₁, v₂, v₃ = coordinates.(t.vertices)
+  Point(v₁*w + v₂*u + v₃*v)
 end
 
 # ------------
