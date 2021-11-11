@@ -77,7 +77,8 @@ function discretize(𝒫::Chain, method::FIST)
       for i in 1:n
         s1 = Segment(v[i-1], v[i])
         s2 = Segment(v[i+1], v[i+2])
-        if intersecttype(s1, s2) isa CrossingSegments
+        λ(I) = I isa CrossingSegments
+        if intersecttype(λ, s1, s2)
           # 1. push a new triangle to 𝒯
           push!(𝒯, connect((inds[i], inds[i+1], inds[i+2]), Triangle))
           # 2. remove the vertex from 𝒫
@@ -144,8 +145,9 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   intersects = false
   for j in 1:nvertices(𝒫)
     sⱼ = Segment(v[j], v[j+1])
-    I = intersecttype(sᵢ, sⱼ)
-    if !(I isa CornerTouchingSegments || I isa NoIntersection)
+    λ(I) = !(I isa CornerTouchingSegments ||
+             I isa NoIntersection)
+    if intersecttype(λ, sᵢ, sⱼ)
       intersects = true
       break
     end
