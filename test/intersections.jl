@@ -1,4 +1,14 @@
 @testset "Intersections" begin
+  function someornone(g1, g2)
+    intersecttype(g1, g2) do I
+      if I isa NoIntersection
+        "None"
+      else
+        "Some"
+      end
+    end
+  end
+
   @testset "Segments" begin
     # segments in 2D
     s1 = Segment(P2(0,0), P2(1,0))
@@ -106,37 +116,45 @@
     s11 = Segment(P3(1.5, 0.0, 0.0), P3(2.5, 0.0, 0.0))
     s12 = Segment(P3(1.0, 0.0, 0.0), P3(2.0, 0.0, 0.0))
 
-    @test isa(intersecttype(s1, s2), CrossingSegments)        # CrossingSegments
+    @test intersecttype(s1, s2) isa CrossingSegments
     @test s1 ∩ s2 == P3(0.5, 0.0, 0.0)
-    @test isa(intersecttype(s1, s3), OverlappingSegments)     # OverlappingSegments
+    @test intersecttype(s1, s3) isa OverlappingSegments
     @test s1 ∩ s3 == Segment(P3(0.5, 0.0, 0.0), P3(1.0, 0.0, 0.0))
-    @test isa(intersecttype(s1, s4), MidTouchingSegments)     # MidTouchingSegments (perpendicular)
+    @test intersecttype(s1, s4) isa MidTouchingSegments
     @test s1 ∩ s4 == P3(0.0, 0.0, 0.0)
-    @test isa(intersecttype(s1, s5), MidTouchingSegments)     # MidTouchingSegments (obtuse)
+    @test intersecttype(s1, s5) isa MidTouchingSegments
     @test s1 ∩ s5 == P3(0.0, 0.0, 0.0)
-    @test isa(intersecttype(s1, s6), CornerTouchingSegments)  # CornerTouchingSegments
+    @test intersecttype(s1, s6) isa CornerTouchingSegments
     @test s1 ∩ s6 == P3(0.0, 0.0, 0.0)
-    @test isa(intersecttype(s1, s7), NoIntersection)          # NoIntersection (but coplanar)
+    @test intersecttype(s1, s7) isa NoIntersection
     @test isnothing(s1 ∩ s7)
-    @test isa(intersecttype(s1, s8), NoIntersection)          # NoIntersection (non-coplanar)
+    @test intersecttype(s1, s8) isa NoIntersection
     @test isnothing(s1 ∩ s8)
-    @test isa(intersecttype(s1, s9), NoIntersection)          # NoIntersection (non-coplanar)
+    @test intersecttype(s1, s9) isa NoIntersection
     @test isnothing(s1 ∩ s9)
-    @test isa(intersecttype(s1, s10), NoIntersection)         # NoIntersection (parallel)
+    @test intersecttype(s1, s10) isa NoIntersection
     @test isnothing(s1 ∩ s10)
-    @test isa(intersecttype(s1, s11), NoIntersection)         # NoIntersection (colinear, not-overlapping)
+    @test intersecttype(s1, s11) isa NoIntersection
     @test isnothing(s1 ∩ s11)
-    @test isa(intersecttype(s1, s12), CornerTouchingSegments) # CornerTouchingSegments (colinear)
+    @test intersecttype(s1, s12) isa CornerTouchingSegments
     @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
+
+    # type stability tests
+    s1 = Segment(P2(0,0), P2(1,0))
+    s2 = Segment(P2(0.5,0.0), P2(2,0))
+    @inferred someornone(s1, s2)
+
+    s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    s2 = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
+    @inferred someornone(s1, s2)
   end
     
   @testset "Triangles" begin
-    ## segments and triangles in 3D
     # utility to reverse segments, to more fully
     # test branches in the intersection algorithm
     reverse_segment(s) = Segment(vertices(s)[2], vertices(s)[1])
     
-    ## intersections with triangle lying in XY plane
+    # intersections with triangle lying in XY plane
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
 
     # intersects through t
@@ -247,6 +265,12 @@
     s = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
     @test intersecttype(s, t) isa NoIntersection
     @test isnothing(s ∩ t)
+
+    # triangle as first argument
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
+    @test intersecttype(t, s) isa IntersectingSegmentTriangle
+    @test s ∩ t == t ∩ s == P3(0.2, 0.2, 0.0)
   end
 
   @testset "Planes" begin
@@ -281,6 +305,12 @@
     s = Segment(P3(0, 0, -1), P3(0, -2, -1))
     @test intersecttype(s, p) isa NoIntersection
     @test isnothing(s ∩ p)
+
+    # plane as first argument
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersecttype(p, s) isa CrossingSegmentPlane
+    @test s ∩ p == p ∩ s == P3(0, 1, 1)
   end
 
   @testset "Lines" begin

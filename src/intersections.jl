@@ -34,7 +34,8 @@ return types, Julia is able to optimize the branches of the code
 and generate specialized code. This is not the case when
 `f === identity`.
 """
-intersecttype(g1, g2) = intersecttype(identity, g1, g2)
+intersecttype(f, g1, g2) = intersecttype(f, g2, g1)
+intersecttype(g1, g2)    = intersecttype(identity, g1, g2)
 
 """
     Intersection
