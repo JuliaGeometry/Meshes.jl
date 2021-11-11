@@ -22,6 +22,7 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 struct Point{Dim,T}
   coords::SVector{Dim,T}
   Point{Dim,T}(coords::SVector) where {Dim,T} = new{Dim,T}(coords)
+  Point{Dim,T}(coords::SVector{Dim,V}) where {Dim,T,V<:Integer} = new{Dim,Float64}(coords)
 end
 
 # convenience constructors

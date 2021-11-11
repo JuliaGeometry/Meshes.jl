@@ -2,7 +2,7 @@
   @test embeddim(Point(1)) == 1
   @test embeddim(Point(1, 2)) == 2
   @test embeddim(Point(1, 2, 3)) == 3
-  @test coordtype(Point(1, 1)) == Int
+  @test coordtype(Point(1, 1)) == Float64
   @test coordtype(Point(1.,1.)) == Float64
   @test coordtype(Point(1f0, 1f0)) == Float32
   @test coordtype(Point1(1)) == Float64
@@ -55,22 +55,22 @@
   @test P3(1, 2, 3) ≈ P3(1 + eps(T), T(2), T(3))
 
   @test embeddim(Point([1])) == 1
-  @test coordtype(Point([1])) == Int
+  @test coordtype(Point([1])) == Float64
   @test coordtype(Point([1.])) == Float64
-  
+
   @test embeddim(Point([1,2])) == 2
-  @test coordtype(Point([1,2])) == Int
+  @test coordtype(Point([1,2])) == Float64
   @test coordtype(Point([1.,2.])) == Float64
 
   @test embeddim(Point([1,2,3])) == 3
-  @test coordtype(Point([1,2,3])) == Int
+  @test coordtype(Point([1,2,3])) == Float64
   @test coordtype(Point([1.,2.,3.])) == Float64
-  
+
   # check all 1D Point constructors, because those tend to make trouble
   @test Point(1) == Point((1,)) == Point([1])
   @test Point{1,Int}(-2) == Point{1,Int}((-2,)) == Point{1,Int}([-2])
   @test Point{1,T}(0) == Point{1,T}((0,)) == Point{1,T}([0])
- 
+
   @test_throws DimensionMismatch Point{2,Int}(1)
   @test_throws DimensionMismatch Point{3,Int}((2,3))
   @test_throws DimensionMismatch Point{-3,T}([4,5,6])
@@ -79,7 +79,7 @@
   # `Point{1,Int}((2,3))` because it tries to take the tuple as a whole and convert to Int and:
   # `Point{1,Int}(2,3)` which does about the same.
   # I don't think this can reasonably be fixed here without hurting performance
-  
+
   # check that input of mixed coordinate types is allowed and works as expected
   @test Point(1, .2) == Point{2,Float64}(1., .2)
   @test Point((3., 4)) == Point{2,Float64}(3., 4.)
