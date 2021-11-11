@@ -1,4 +1,5 @@
 @testset "Intersections" begin
+  # helper function for type stability tests
   function someornone(g1, g2)
     intersecttype(g1, g2) do I
       if I isa NoIntersection
@@ -271,6 +272,11 @@
     s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
     @test intersecttype(t, s) isa IntersectingSegmentTriangle
     @test s ∩ t == t ∩ s == P3(0.2, 0.2, 0.0)
+
+    # type stability tests
+    s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    @inferred someornone(s, t)
   end
 
   @testset "Planes" begin
@@ -311,6 +317,11 @@
     s = Segment(P3(0, 0, 0), P3(0, 2, 2))
     @test intersecttype(p, s) isa CrossingSegmentPlane
     @test s ∩ p == p ∩ s == P3(0, 1, 1)
+
+    # type stability tests
+    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    @inferred someornone(s, p)
   end
 
   @testset "Lines" begin
@@ -326,6 +337,11 @@
     l2 = Line(P2(1,0), P2(2,0))
     @test l1 == l2
     @test l1 ∩ l2 == l2 ∩ l1 == l1
+
+    # type stability tests
+    l1 = Line(P2(0,0), P2(1,0))
+    l2 = Line(P2(-1,-1), P2(-1,1))
+    @inferred someornone(l1, l2)
   end
 
   @testset "Boxes" begin
@@ -342,9 +358,14 @@
     @test b1 ∩ b4 == P2(1,1)
     @test intersecttype(b1, b5) isa FaceTouchingBoxes
     @test b1 ∩ b5 == Box(P2(1.0,0.5), P2(1,1))
+
+    # type stability tests
+    b1 = Box(P2(0,0), P2(1,1))
+    b2 = Box(P2(0.5,0.5), P2(2,2))
+    @inferred someornone(b1, b2)
   end
 
-  @testset "Misc" begin
+  @testset "hasintersect" begin
     t = Triangle(P2[(0,0),(1,0),(0,1)])
     q = Quadrangle(P2[(1,1),(2,1),(2,2),(1,2)])
     @test hasintersect(t, t)
