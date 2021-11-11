@@ -103,7 +103,7 @@ struct IntersectingSegmentTriangle{P<:Point} <: Intersection
 end
 
 # ---------------------------
-# Ray-TRIANGLE INTERSECTIONS
+# RAY-TRIANGLE INTERSECTIONS
 # ---------------------------
 
 struct IntersectingRayTriangle{P<:Point} <: Intersection
