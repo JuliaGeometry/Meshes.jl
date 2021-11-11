@@ -13,6 +13,29 @@ function signarea(A::Point{2}, B::Point{2}, C::Point{2})
 end
 
 """
+    iscollinear(A, B, C)
+
+Tells whether or not the points
+`A`, `B` and `C` are collinear.
+"""
+function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {Dim,T}
+  # points A, B, C are collinear if and only if the
+  # cross-products for segments AB and AC with respect
+  # to all possible pairs of coordinates are zero
+  AB, AC = B - A, C - A
+  result = true
+  for i in 1:Dim, j in (i+1):Dim
+    u = Vec{2,T}(AB[i], AB[j])
+    v = Vec{2,T}(AC[i], AC[j])
+    if !isapprox(u × v, zero(T), atol=atol(T)^2)
+      result = false
+      break
+    end
+  end
+  result
+end
+
+"""
     sideof(point, segment)
 
 Determines on which side of the oriented `segment`
