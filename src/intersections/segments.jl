@@ -87,6 +87,8 @@ function intersecttype(f::Function, s1::Segment{2,T}, s2::Segment{2,T}) where {T
       # configuration (3), (4) or (5)
       return intersectcollinear(f, s1, s2)
     end
+  else
+    return NoIntersection() |> f
   end
 end
 
