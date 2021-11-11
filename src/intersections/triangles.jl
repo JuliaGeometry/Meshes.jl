@@ -158,7 +158,7 @@ function intersecttype(r::Ray{3,Type}, t::Triangle{3,Type}) where {Type}
     det = -det
   end
 
-  if det < -atol(Type)
+  if det < atol(Type)
       # This ray is parallel to the plane of the triangle.
       return NoIntersection()
   end
