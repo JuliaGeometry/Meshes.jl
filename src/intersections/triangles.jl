@@ -160,14 +160,14 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   end
 
   if det < atol(T)
-      # This ray is parallel to the plane of the triangle.
-      return NoIntersection() |> f
+    # This ray is parallel to the plane of the triangle.
+    return NoIntersection() |> f
   end
 
   # calculate u parameter and test bounds
   u = TT ⋅ P
   if u < -atol(T) || u > det
-      return NoIntersection() |> f
+    return NoIntersection() |> f
   end
 
   Q = TT × E₁
@@ -175,7 +175,7 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   # calculate v parameter and test bounds
   v = D ⋅ Q
   if v < -atol(T) || u + v > det
-      return NoIntersection() |> f
+    return NoIntersection() |> f
   end
 
   t = E₂ ⋅ Q
@@ -184,7 +184,7 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   t *= invdet
 
   if t < -atol(T)
-      return NoIntersection() |> f
+    return NoIntersection() |> f
   end
 
   return IntersectingRayTriangle(r(t)) |> f
