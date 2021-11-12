@@ -140,7 +140,7 @@ Calculate the intersection of a ray and triangle in 3D.
   intersection. Journal of graphics tools]
   (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
 """
-function intersecttype(r::Ray{3,Type}, t::Triangle{3,Type}) where {Type}
+function intersecttype(r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vₜ = vertices(t)
   origin = r.p
   D = r.v
@@ -151,38 +151,38 @@ function intersecttype(r::Ray{3,Type}, t::Triangle{3,Type}) where {Type}
   det = E₁ ⋅ P
 
   # keep det > 0, modify T accordingly
-  if det > atol(Type)
-    T = origin - vₜ[1]
+  if det > atol(T)
+    TT = origin - vₜ[1]
   else
-    T = vₜ[1] - origin
+    TT = vₜ[1] - origin
     det = -det
   end
 
-  if det < atol(Type)
+  if det < atol(T)
       # This ray is parallel to the plane of the triangle.
       return NoIntersection()
   end
 
   # calculate u parameter and test bounds
-  u = T ⋅ P
-  if u < -atol(Type) || u > det
+  u = TT ⋅ P
+  if u < -atol(T) || u > det
       return NoIntersection()
   end
 
-  Q = T × E₁
+  Q = TT × E₁
 
   # calculate v parameter and test bounds
   v = D ⋅ Q
-  if v < -atol(Type) || u + v > det
+  if v < -atol(T) || u + v > det
       return NoIntersection()
   end
 
   t = E₂ ⋅ Q
 
-  invdet = one(Type) / det
+  invdet = one(T) / det
   t *= invdet
 
-  if t < -atol(Type)
+  if t < -atol(T)
       return NoIntersection()
   end
 
