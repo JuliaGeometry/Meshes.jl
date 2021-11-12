@@ -1,61 +1,73 @@
 @testset "Neighborhoods" begin
   @testset "MetricBall" begin
     # Euclidean metric
-    ball = MetricBall(T(1/2))
-    @test all(evaluate(metric(ball), T[0], T[0]) .≤ radii(ball))
-    @test all(evaluate(metric(ball), T[0], T[1]) .> radii(ball))
+    b = MetricBall(T(1/2))
+    m = metric(b)
+    r = range(b)
+    @test evaluate(m, T[0], T[0]) ≤ r
+    @test evaluate(m, T[0], T[1]) > r
 
-    ball = MetricBall(T(1))
-    @test all(evaluate(metric(ball), T[0,0], T[0,0]) .≤ radii(ball))
-    @test all(evaluate(metric(ball), T[0,0], T[1,0]) .≤ radii(ball))
-    @test all(evaluate(metric(ball), T[0,0], T[0,1]) .≤ radii(ball))
+    b = MetricBall(T(1))
+    m = metric(b)
+    r = range(b)
+    @test evaluate(m, T[0,0], T[0,0]) ≤ r
+    @test evaluate(m, T[0,0], T[1,0]) ≤ r
+    @test evaluate(m, T[0,0], T[0,1]) ≤ r
 
     # Chebyshev metric
-    ball = MetricBall(T(1/2), Chebyshev())
-    @test all(evaluate(metric(ball), T[0], T[0]) .≤ radii(ball))
-    @test all(evaluate(metric(ball), T[0], T[1]) .> radii(ball))
+    b = MetricBall(T(1/2), Chebyshev())
+    m = metric(b)
+    r = range(b)
+    @test evaluate(m, T[0], T[0]) ≤ r
+    @test evaluate(m, T[0], T[1]) > r
 
     for r in [1.,2.,3.,4.,5.]
-      ball = MetricBall(r, Chebyshev())
+      b = MetricBall(r, Chebyshev())
+      m = metric(b)
+      r = range(b)
       for i in 0.0:1.0:r, j in 0.0:1.0:r
-        @test all(evaluate(metric(ball), T[0,0], T[i,j]) .≤ radii(ball))
+        @test evaluate(m, T[0,0], T[i,j]) ≤ r
       end
     end
 
     # 2D ellipsoid rotated 45 degrees in GSLIB convention
-    ellipsoid = MetricBall(T[2,1], T[45], convention=GSLIB)
+    b = MetricBall(T[2,1], T[45], convention=GSLIB)
+    m = metric(b)
+    r = range(b)
 
     # tests along main semiaxes, slightly below threshold
-    @test evaluate(metric(ellipsoid), T[0,0], T(1.9) * T[√2/2, √2/2]) ≤ T(1)
-    @test evaluate(metric(ellipsoid), T[0,0], T(0.9) * T[√2/2,-√2/2]) ≤ T(1)
+    @test evaluate(m, T[0,0], T(1.9) * T[√2/2, √2/2]) ≤ r
+    @test evaluate(m, T[0,0], T(0.9) * T[√2/2,-√2/2]) ≤ r
 
     # tests along main semiaxes, slightly above threshold
-    @test evaluate(metric(ellipsoid), T[0,0], T(2.1) * T[√2/2, √2/2]) > T(1)
-    @test evaluate(metric(ellipsoid), T[0,0], T(1.1) * T[√2/2,-√2/2]) > T(1)
+    @test evaluate(m, T[0,0], T(2.1) * T[√2/2, √2/2]) > r
+    @test evaluate(m, T[0,0], T(1.1) * T[√2/2,-√2/2]) > r
 
     # 3D ellipsoid rotated (45, -45, 0) in GSLIB convention
-    ellipsoid = MetricBall(T[3,2,1], T[45,-45,0], convention=GSLIB)
+    b = MetricBall(T[3,2,1], T[45,-45,0], convention=GSLIB)
+    m = metric(b)
+    r = range(b)
 
     # tests along main semiaxes, slightly below threshold
-    @test evaluate(metric(ellipsoid), T[0,0,0], T(2.9) * T[0.5,0.5,-√2/2]) ≤ T(1)
-    @test evaluate(metric(ellipsoid), T[0,0,0], T(1.9) * T[√2/2,-√2/2,0.0]) ≤ T(1)
-    @test evaluate(metric(ellipsoid), T[0,0,0], T(0.9) * T[0.5,0.5,√2/2]) ≤ T(1)
+    @test evaluate(m, T[0,0,0], T(2.9) * T[0.5,0.5,-√2/2]) ≤ r
+    @test evaluate(m, T[0,0,0], T(1.9) * T[√2/2,-√2/2,0.0]) ≤ r
+    @test evaluate(m, T[0,0,0], T(0.9) * T[0.5,0.5,√2/2]) ≤ r
 
     # Tests along main semiaxes, slightly above threshold
-    @test evaluate(metric(ellipsoid), T[0,0,0], T(3.1) * T[0.5,0.5,-√2/2]) > T(1)
-    @test evaluate(metric(ellipsoid), T[0,0,0], T(2.1) * T[√2/2,-√2/2,0.0]) > T(1)
-    @test evaluate(metric(ellipsoid), T[0,0,0], T(1.1) * T[0.5,0.5,√2/2]) > T(1)
+    @test evaluate(m, T[0,0,0], T(3.1) * T[0.5,0.5,-√2/2]) > r
+    @test evaluate(m, T[0,0,0], T(2.1) * T[√2/2,-√2/2,0.0]) > r
+    @test evaluate(m, T[0,0,0], T(1.1) * T[0.5,0.5,√2/2]) > r
 
     # 2D simple test of default convention
-    d₁ = metric(MetricBall([1.,1.], [0.]))
-    d₂ = metric(MetricBall([1.,2.], [0.]))
-    @test evaluate(d₁, [1.,0.], [0.,0.]) == evaluate(d₁, [0.,1.], [0.,0.])
-    @test evaluate(d₂, [1.,0.], [0.,0.]) != evaluate(d₂, [0.,1.], [0.,0.])
+    m₁ = metric(MetricBall([1.,1.], [0.]))
+    m₂ = metric(MetricBall([1.,2.], [0.]))
+    @test evaluate(m₁, [1.,0.], [0.,0.]) == evaluate(m₁, [0.,1.], [0.,0.])
+    @test evaluate(m₂, [1.,0.], [0.,0.]) != evaluate(m₂, [0.,1.], [0.,0.])
 
     # 3D simple test of default convention
-    d₃ = metric(MetricBall([1.,.5,.5], [π/4,0.,0.]))
-    @test evaluate(d₃, [1.,1.,0.], [0.,0.,0.]) ≈ √2
-    @test evaluate(d₃, [-1.,1.,0.], [0.,0.,0.]) ≈ √8
+    m₃ = metric(MetricBall([1.,.5,.5], [π/4,0.,0.]))
+    @test evaluate(m₃, [1.,1.,0.], [0.,0.,0.]) ≈ √2
+    @test evaluate(m₃, [-1.,1.,0.], [0.,0.,0.]) ≈ √8
 
     # test of intrinsic conventions
     gslib = metric(MetricBall([50.,25.,5.], [30.,-30.,30.], convention=GSLIB))
@@ -74,7 +86,7 @@
     @test evaluate(euler, [0.,0.,1.], [0.,0.,0.]) - evaluate(gslib, [0.,0.,1.], [0.,0.,0.]) < 10^-3
 
     # test for https://github.com/JuliaEarth/GeoStats.jl/issues/197
-    gslib = metric(MetricBall([1.0, 0.5, 0.3], [100., -10., -20.], convention = GSLIB))
+    gslib = metric(MetricBall([1.0,0.5,0.3], [100.,-10.,-20.], convention=GSLIB))
 
     @test evaluate(gslib, [1.,0.,0.], [0.,0.,0.]) ≈ 1.233956165693094
     @test evaluate(gslib, [0.,1.,0.], [0.,0.,0.]) ≈ 2.14219475359467
