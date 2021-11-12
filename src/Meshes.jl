@@ -17,7 +17,7 @@ using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
-using ReferenceFrameRotations: angle_to_dcm
+using ReferenceFrameRotations: EulerAngles, DCM, angle_to_dcm
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 # import categorical arrays as a temporary solution for plot recipes
@@ -46,6 +46,9 @@ include("vectors.jl")
 include("points.jl")
 include("angles.jl")
 
+# rotations
+include("rotations.jl")
+
 # type traits
 include("traits.jl")
 
@@ -64,8 +67,7 @@ include("mesh.jl")
 # mesh data
 include("meshdata.jl")
 
-# conventions and utilities
-include("conventions.jl")
+# utilities
 include("utils.jl")
 
 # miscellaneous
@@ -115,6 +117,13 @@ export
 
   # angles
   ∠,
+
+  # rotations
+  ClockwiseAngle,
+  CounterClockwiseAngle,
+  DatamineAngles,
+  LeapfrogAngles,
+  TaitBryanAngles,
 
   # domain traits
   Domain,
@@ -174,14 +183,6 @@ export
   PointSet,
   GeometrySet,
 
-  # rotation conventions
-  RotationConvention,
-  GSLIB, Leapfrog, Datamine,
-  TaitBryanExtr, TaitBryanIntr,
-  EulerExtr, EulerIntr,
-  axesseq, orientation, angleunits,
-  mainaxis, isextrinsic, rotmat,
-
   # utililities
   signarea,
   sideof,
@@ -196,6 +197,7 @@ export
   Neighborhood,
   MetricBall,
   metric, radii,
+  isisotropic,
 
   # neighbordhood search
   NeighborSearchMethod,

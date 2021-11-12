@@ -59,39 +59,3 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
   w = windingnumber(p, c)
   ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
 end
-
-"""
-    mahalanobis(radii, angles, convention)
-
-Return the Mahalanobis distance corresponding to an ellipsoid
-with `radii` rotated by given `angles` according to given `convention`.
-
-- For 2D ellipses, there are two radii and one rotation angle.
-- For 3D ellipsoids, there are three radii and three rotation angles.
-
-The list of available conventions can be found with:
-
-```julia
-julia> subtypes(RotationConvention)
-```
-"""
-function mahalanobis(radii, angles, convention)
-  ndims, nangles = length(radii), length(angles)
-  valid = (ndims == 3 && nangles == 3) || (ndims == 2 && nangles == 1)
-  @assert valid "invalid number of radii/angles"
-
-  # invert radii if necessary
-  invert = mainaxis(convention) == :Y
-  ranges = invert ? [radii[i] for i in reverse(1:ndims,1,2)] : vec(radii)
-
-  # scaling matrix
-  λ = one(eltype(ranges)) ./ ranges.^2
-  Λ = Diagonal(SVector{ndims}(λ))
-
-  # rotation matrix
-  R = rotmat(angles, convention)
-
-  # ellipsoid metric
-  W = Symmetric(R'*Λ*R)
-  Mahalanobis(W)
-end
