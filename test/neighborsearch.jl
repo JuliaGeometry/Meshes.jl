@@ -49,7 +49,7 @@
     n = search(P2(5,5), s)
     @test length(n) == 10
 
-    s = KBallSearch(𝒟, 10, MetricBall([100., 100.], [0.], convention=TaitBryanIntr))
+    s = KBallSearch(𝒟, 10, MetricBall([100., 100.], [0.]))
     n = search(P2(5,5), s)
     @test length(n) == 10
 
