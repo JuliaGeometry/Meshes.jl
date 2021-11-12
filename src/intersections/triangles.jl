@@ -132,7 +132,8 @@ end
 """
     intersecttype(s, t)
 
-Calculate the intersection of a ray and triangle in 3D.
+Calculate the intersection of a ray and triangle in 3D
+and apply function `f` to it.
 
 ## References
 
@@ -140,7 +141,7 @@ Calculate the intersection of a ray and triangle in 3D.
   intersection. Journal of graphics tools]
   (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
 """
-function intersecttype(r::Ray{3,T}, t::Triangle{3,T}) where {T}
+function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vₜ = vertices(t)
   origin = r.p
   D = r.v
@@ -160,13 +161,13 @@ function intersecttype(r::Ray{3,T}, t::Triangle{3,T}) where {T}
 
   if det < atol(T)
       # This ray is parallel to the plane of the triangle.
-      return NoIntersection()
+      return NoIntersection() |> f
   end
 
   # calculate u parameter and test bounds
   u = TT ⋅ P
   if u < -atol(T) || u > det
-      return NoIntersection()
+      return NoIntersection() |> f
   end
 
   Q = TT × E₁
@@ -174,7 +175,7 @@ function intersecttype(r::Ray{3,T}, t::Triangle{3,T}) where {T}
   # calculate v parameter and test bounds
   v = D ⋅ Q
   if v < -atol(T) || u + v > det
-      return NoIntersection()
+      return NoIntersection() |> f
   end
 
   t = E₂ ⋅ Q
@@ -183,8 +184,8 @@ function intersecttype(r::Ray{3,T}, t::Triangle{3,T}) where {T}
   t *= invdet
 
   if t < -atol(T)
-      return NoIntersection()
+      return NoIntersection() |> f
   end
 
-  return IntersectingRayTriangle(r(t))
+  return IntersectingRayTriangle(r(t)) |> f
 end
