@@ -278,7 +278,6 @@
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     @inferred someornone(s, t)
 
-
     # Intersection for a triangle and a ray
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
 
