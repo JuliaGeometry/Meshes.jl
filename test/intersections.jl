@@ -168,7 +168,7 @@
     # Special case: the direction vector is not length enough to cross triangle
     r = Ray(P3(0.2, 0.2, 1.0), V3(0.0, 0.0, -0.00001))
     @test intersecttype(r, t) isa IntersectingRayTriangle
-    @test r ∩ t == P3(0.2, 0.2, 0.0)
+    @test r ∩ t ≈ P3(0.2, 0.2, 0.0)
     # Special case: reverse direction vector should not hit the triangle
     r = Ray(P3(0.2, 0.2, 1.0), V3(0.0, 0.0, 1.0))
     @test intersecttype(r, t) isa NoIntersection
