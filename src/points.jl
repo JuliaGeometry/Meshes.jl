@@ -120,10 +120,10 @@ Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwar
 
 Generalized inequality for non-negative orthant Rⁿ₊
 """
-⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(B - A .≥ zero(T))
-⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .≥ zero(T))
-≺(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(B - A .> zero(T))
-≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(A - B .> zero(T))
+⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), B - A)
+⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), A - B)
+≺(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), B - A)
+≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), A - B)
 
 """
     center(point)
