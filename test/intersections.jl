@@ -162,6 +162,127 @@
     s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
     @test intersecttype(s, t) isa IntersectingSegmentTriangle
     @test s ∩ t == P3(0.2, 0.2, 0.0)
+
+    # intersects at a vertex of t
+    s = Segment(P3(0.0, 0.0, 1.0), P3(0.0, 0.0, -1.0))
+    @test intersecttype(s, t) isa IntersectingSegmentTriangle
+    @test s ∩ t == P3(0.0, 0.0, 0.0)
+
+    # normal to, doesn't intersect with t
+    s = Segment(P3(0.9, 0.9, 1.0), P3(0.9, 0.9, -1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # coplanar, intersects with t (but should return NoIntersection)
+    s = Segment(P3(-0.2, 0.2, 0.0), P3(1.2, 0.2, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # coplanar, doesn't intersect with t
+    s = Segment(P3(-0.2, -0.2, 0.0), P3(1.2, -0.2, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # parallel, above, doesn't intersect with t
+    s = Segment(P3(-0.2, 0.2, 1.0), P3(1.2, 0.2, 1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # parallel, below, doesn't intersect with t
+    s = Segment(P3(-0.2, 0.2, -1.0), P3(1.2, 0.2, -1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment colinear with edge of t (but should return NoIntersection)
+    s = Segment(P3(-1.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # coplanar, within bounding box of t, no intersection
+    s = Segment(P3(0.7, 0.8, 0.0), P3(0.8, 0.7, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment above and to right of t, no intersection
+    s = Segment(P3(1.0, 1.0, 0.0), P3(1.0, 1.0, 1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment below t, no intersection
+    s = Segment(P3(0.5, -1.0, 0.0), P3(0.5, -1.0, 1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment left of t, no intersection
+    s = Segment(P3(-1.0, 0.5, 0.0), P3(-1.0, 0.5, 1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment above and to right of t, no intersection
+    s = Segment(P3(1.0, 1.0, 0.0), P3(1.0, 1.0, -1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+    @test intersecttype(reverse_segment(s), t) isa NoIntersection
+    @test isnothing(reverse_segment(s) ∩ t)
+
+    # segment below t, no intersection
+    s = Segment(P3(0.5, -1.0, 0.0), P3(0.5, -1.0, -1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+    @test intersecttype(reverse_segment(s), t) isa NoIntersection
+    @test isnothing(reverse_segment(s) ∩ t)
+
+    # segment left of t, no intersection
+    s = Segment(P3(-1.0, 0.5, 0.0), P3(-1.0, 0.5, -1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+    @test intersecttype(reverse_segment(s), t) isa NoIntersection
+    @test isnothing(reverse_segment(s) ∩ t)
+
+    # segment above and to right of t, no intersection
+    s = Segment(P3(1.0, 1.0, 1.0), P3(1.0, 1.0, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment below t, no intersection
+    s = Segment(P3(0.5, -1.0, 1.0), P3(0.5, -1.0, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # segment left of t, no intersection
+    s = Segment(P3(-1.0, 0.5, 1.0), P3(-1.0, 0.5, 0.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # intersections with an inclined inclined triangle t
+    t = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
+
+    # doesn't reach t, no intersection
+    s = Segment(P3(0.5, 0.5, 1.9), P3(0.5, 0.5, 1.8))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # parallel, offset from t, no intersection
+    s = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
+    @test intersecttype(s, t) isa NoIntersection
+    @test isnothing(s ∩ t)
+
+    # triangle as first argument
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
+    @test intersecttype(t, s) isa IntersectingSegmentTriangle
+    @test s ∩ t == t ∩ s == P3(0.2, 0.2, 0.0)
+
+    # type stability tests
+    s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    @inferred someornone(s, t)
+
+
+    # Intersection for a triangle and a ray
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+
+    # intersects through t
     r = Ray(P3(0.2, 0.2, 1.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa IntersectingRayTriangle
     @test r ∩ t == P3(0.2, 0.2, 0.0)
@@ -174,145 +295,87 @@
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-
     # intersects at a vertex of t
-    s = Segment(P3(0.0, 0.0, 1.0), P3(0.0, 0.0, -1.0))
-    @test intersecttype(s, t) isa IntersectingSegmentTriangle
-    @test s ∩ t == P3(0.0, 0.0, 0.0)
     r = Ray(P3(0.0, 0.0, 1.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa IntersectingRayTriangle
-    @test r ∩ t == P3(0.0, 0.0, 0.0)
+    @test r ∩ t ≈ P3(0.0, 0.0, 0.0)
 
     # normal to, doesn't intersect with t
-    s = Segment(P3(0.9, 0.9, 1.0), P3(0.9, 0.9, -1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(0.9, 0.9, 1.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
     # coplanar, intersects with t (but should return NoIntersection)
-    s = Segment(P3(-0.2, 0.2, 0.0), P3(1.2, 0.2, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(-0.2, 0.2, 0.0), V3(1.0, 0.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
     # coplanar, doesn't intersect with t
-    s = Segment(P3(-0.2, -0.2, 0.0), P3(1.2, -0.2, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(-0.2, -0.2, 0.0), V3(1.0, 0.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
     # parallel, above, doesn't intersect with t
-    s = Segment(P3(-0.2, 0.2, 1.0), P3(1.2, 0.2, 1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(-0.2, 0.2, 1.0), V3(1.0, 0.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
     # parallel, below, doesn't intersect with t
-    s = Segment(P3(-0.2, 0.2, -1.0), P3(1.2, 0.2, -1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(-0.2, 0.2, -1.0), V3(1.0, 0.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment colinear with edge of t (but should return NoIntersection)
-    s = Segment(P3(-1.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray colinear with edge of t (but should return NoIntersection)
     r = Ray(P3(-1.0, 0.0, 0.0), V3(1.0, 0.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
     # coplanar, within bounding box of t, no intersection
-    s = Segment(P3(0.7, 0.8, 0.0), P3(0.8, 0.7, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(0.7, 0.8, 0.0), V3(1.0, -1.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment above and to right of t, no intersection
-    s = Segment(P3(1.0, 1.0, 0.0), P3(1.0, 1.0, 1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray above and to right of t, no intersection
     r = Ray(P3(1.0, 1.0, 0.0), V3(0.0, 0.0, 1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment below t, no intersection
-    s = Segment(P3(0.5, -1.0, 0.0), P3(0.5, -1.0, 1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray below t, no intersection
     r = Ray(P3(0.5, -1.0, 0.0), V3(0.0, 0.0, 1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment left of t, no intersection
-    s = Segment(P3(-1.0, 0.5, 0.0), P3(-1.0, 0.5, 1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray left of t, no intersection
     r = Ray(P3(-1.0, 0.5, 0.0), V3(0.0, 0.0, 1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment above and to right of t, no intersection
-    s = Segment(P3(1.0, 1.0, 0.0), P3(1.0, 1.0, -1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
-    @test intersecttype(reverse_segment(s), t) isa NoIntersection
-    @test isnothing(reverse_segment(s) ∩ t)
+    # ray above and to right of t, no intersection
     r = Ray(P3(1.0, 1.0, 0.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment below t, no intersection
-    s = Segment(P3(0.5, -1.0, 0.0), P3(0.5, -1.0, -1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
-    @test intersecttype(reverse_segment(s), t) isa NoIntersection
-    @test isnothing(reverse_segment(s) ∩ t)
+    # ray below t, no intersection
     r = Ray(P3(0.5, -1.0, 0.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment left of t, no intersection
-    s = Segment(P3(-1.0, 0.5, 0.0), P3(-1.0, 0.5, -1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
-    @test intersecttype(reverse_segment(s), t) isa NoIntersection
-    @test isnothing(reverse_segment(s) ∩ t)
+    # ray left of t, no intersection
     r = Ray(P3(-1.0, 0.5, 0.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment above and to right of t, no intersection
-    s = Segment(P3(1.0, 1.0, 1.0), P3(1.0, 1.0, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray above and to right of t, no intersection
     r = Ray(P3(1.0, 1.0, 1.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment below t, no intersection
-    s = Segment(P3(0.5, -1.0, 1.0), P3(0.5, -1.0, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray below t, no intersection
     r = Ray(P3(0.5, -1.0, 1.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
 
-    # segment left of t, no intersection
-    s = Segment(P3(-1.0, 0.5, 1.0), P3(-1.0, 0.5, 0.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
+    # ray left of t, no intersection
     r = Ray(P3(-1.0, 0.5, 1.0), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
@@ -320,33 +383,15 @@
     # intersections with an inclined inclined triangle t
     t = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
 
-    # doesn't reach t, no intersection
-    s = Segment(P3(0.5, 0.5, 1.9), P3(0.5, 0.5, 1.8))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
-    # but a ray can hit the triangle
+    # doesn't reach t, but a ray can hit the triangle
     r = Ray(P3(0.5, 0.5, 1.9), V3(0.0, 0.0, -1.0))
     @test intersecttype(r, t) isa IntersectingRayTriangle
-    @test r ∩ t == P3(0.5, 0.5, 0.5)
+    @test r ∩ t ≈ P3(0.5, 0.5, 0.5)
 
     # parallel, offset from t, no intersection
-    s = Segment(P3(0.0, 0.5, 1.0), P3(1.0, 0.5, 1.0))
-    @test intersecttype(s, t) isa NoIntersection
-    @test isnothing(s ∩ t)
     r = Ray(P3(0.0, 0.5, 1.0), V3(1.0, 0.0, 0.0))
     @test intersecttype(r, t) isa NoIntersection
     @test isnothing(r ∩ t)
-
-    # triangle as first argument
-    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
-    @test intersecttype(t, s) isa IntersectingSegmentTriangle
-    @test s ∩ t == t ∩ s == P3(0.2, 0.2, 0.0)
-
-    # type stability tests
-    s = Segment(P3(0.2, 0.2, 1.0), P3(0.2, 0.2, -1.0))
-    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    @inferred someornone(s, t)
   end
 
   @testset "Planes" begin
