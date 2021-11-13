@@ -7,12 +7,14 @@
 
 A point in `Dim`-dimensional space with coordinates of type `T`.
 The coordinates of the point provided upon construction are with
-respect to the canonical Euclidean basis.
+respect to the canonical Euclidean basis, and `Integer` coordinates
+are converted to `Float64`.
 
-## Example
+## Examples
 
 ```julia
-O = Point(0.0, 0.0) # origin of 2D Euclidean space
+Point(0.0, 0.0) # origin of 2D Euclidean space
+Point(0, 0) # same as above where Int is converted to Float64
 ```
 
 ### Notes
@@ -21,7 +23,7 @@ O = Point(0.0, 0.0) # origin of 2D Euclidean space
 """
 struct Point{Dim,T}
   coords::SVector{Dim,T}
-  Point{Dim,T}(coords::SVector) where {Dim,T} = new{Dim,T}(coords)
+  Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
   Point{Dim,T}(coords::SVector{Dim,V}) where {Dim,T,V<:Integer} = new{Dim,Float64}(coords)
 end
 
