@@ -8,7 +8,7 @@
 An axis-aligned box with `min` and `max` corners.
 See https://en.wikipedia.org/wiki/Hyperrectangle.
 
-## Example
+## Examples
 
 ```julia
 Box(Point(0,0,0), Point(1,1,1)) # unit cube

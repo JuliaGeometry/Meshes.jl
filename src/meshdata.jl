@@ -38,7 +38,7 @@ the [`Domain`](@ref) trait and a dictionary of data
 `values` where `values[r]` holds a Tables.jl table
 for the rank `r`.
 
-## Example
+## Examples
 
 ```julia
 # attach temperature and pressure to grid elements
@@ -56,7 +56,7 @@ Create spatial data from a [`SimpleMesh`](@ref) with
 `vertices` and `elements`, and a dictionary of data
 `values`.
 
-## Example
+## Examples
 
 ```julia
 # vertices and elements
@@ -82,7 +82,7 @@ Create spatial data from a `domain`, a table `vtable`
 with data for the vertices, and a table `etable` with
 data for the elements.
 
-## Example
+## Examples
 
 ```julia
 meshdata(CartesianGrid(10,10),
@@ -112,7 +112,7 @@ Create spatial data from a [`SimpleMesh`](@ref) with
 for the vertices, and a table `etable` with data for
 the elements.
 
-## Example
+## Examples
 
 ```julia
 # vertices and elements

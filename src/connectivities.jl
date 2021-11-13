@@ -54,7 +54,7 @@ the indices is used to identify the actual N-gon type (e.g. Triangle).
 Finally, the type `PL` can be ommitted. In this case, the indices are
 assumed to be connected as a [`Ngon`](@ref) or as a [`Segment`](@ref).
 
-## Example
+## Examples
 
 Connect indices into a Triangle:
 

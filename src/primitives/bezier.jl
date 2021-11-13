@@ -14,7 +14,7 @@ for accurate evaluation. Horner's method, faster with a
 large number of points but less precise, can be used via
 `b(t, Horner())`.
 
-## Example
+## Examples
 
 ```julia
 BezierCurve(Point2[(0.,0.),(1.,-1.)])

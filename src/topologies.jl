@@ -34,7 +34,7 @@ function nvertices(::Topology) end
 
 Return an iterator with `rank`-faces of the `topology`.
 
-## Example
+## Examples
 
 Consider a mesh of tetrahedrons embedded in a 3D space. We can loop over
 all 3-faces (a.k.a. elements) or over all 2-faces to handle the interfaces
@@ -53,7 +53,7 @@ function faces(::Topology, rank) end
 
 Return the top-faces (a.k.a. elements) of the `topology`.
 
-## Example
+## Examples
 
 The elements of a volume embedded in 3D space can be tetrahedrons, hexahedrons,
 or any 3-face. The elements of a surface embedded in 3D space can be triangles,

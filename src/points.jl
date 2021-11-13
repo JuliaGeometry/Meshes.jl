@@ -6,6 +6,7 @@
     Point{Dim,T}
 
 A point in `Dim`-dimensional space with coordinates of type `T`.
+
 The coordinates of the point provided upon construction are with
 respect to the canonical Euclidean basis, and `Integer` coordinates
 are converted to `Float64`.

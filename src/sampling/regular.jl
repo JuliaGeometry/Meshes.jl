@@ -9,7 +9,7 @@ Generate samples regularly using `n1` points along the first
 parametric dimension, `n2` points along the second parametric
 dimension, ..., `np` poitns along the last parametric dimension.
 
-## Example
+## Examples
 
 Sample sphere regularly with 360 longitudes and 180 latitudes:
 

@@ -48,7 +48,7 @@ A data structure for orientable 2-manifolds based on
 half-edges constructed from a vector of connectivity
 `elements` or from a vector of pairs of `halfedges`.
 
-## Example
+## Examples
 
 Construct half-edge topology from a list of top-faces:
 

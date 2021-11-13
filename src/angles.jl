@@ -11,7 +11,7 @@ See https://en.wikipedia.org/wiki/Angle.
 Uses the two-argument form of `atan`.
 See https://en.wikipedia.org/wiki/Atan2.
 
-## Example
+## Examples
 
 ```julia
 ∠(Point(1,0), Point(0,0), Point(0,1)) == π/2

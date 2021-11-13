@@ -5,11 +5,11 @@
 """
     Vec{Dim,T}
 
-A vector in `Dim`-dimensional space with coordinates of type `T`
-representing a direction with magnitude. A vector can be obtained
-by subtracting two [`Point`](@ref) objects:
+A vector in `Dim`-dimensional space with coordinates of type `T`.
 
-## Example
+A vector can be obtained by subtracting two [`Point`](@ref) objects.
+
+## Examples
 
 ```julia
 A = Point(0.0, 0.0)
