@@ -115,6 +115,9 @@ export
   # vectors
   Vec, Vec1, Vec2, Vec3, Vec1f, Vec2f, Vec3f,
 
+  # linear algebra
+  ⋅, ×,
+
   # angles
   ∠,
 
@@ -337,6 +340,9 @@ export
   # hulls
   HullMethod,
   GrahamScan,
-  hull
+  hull,
+
+  # tolerances
+  atol
 
 end # module
