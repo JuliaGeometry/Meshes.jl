@@ -25,10 +25,10 @@ N-dimensional Euclidean ball with radius `1.0`:
 julia> euclidean = MetricBall(1.0)
 ```
 
-Axis-aligned 3D ellispoid with radii `[3.0, 2.0, 1.0]`:
+Axis-aligned 3D ellispoid with radii `(3.0, 2.0, 1.0)`:
 
 ```julia
-julia> mahalanobis = MetricBall([3.0, 2.0, 1.0])
+julia> mahalanobis = MetricBall((3.0, 2.0, 1.0))
 ```
 """
 struct MetricBall{R,M} <: Neighborhood
@@ -38,11 +38,13 @@ end
 
 function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   # default rotation
-  rotspec = if isnothing(rotation)
+  rot = if isnothing(rotation)
     if Dim == 2
       ClockwiseAngle(zero(T))
-    else
+    elseif Dim == 3
       EulerAngles(zeros(T, Dim)...)
+    else
+      throw(ErrorException("not implemented"))
     end
   else
     rotation
@@ -52,7 +54,7 @@ function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
   # rotation matrix
-  R = convert(DCM{T}, rotspec)
+  R = convert(DCM{T}, rot)
 
   # sanity check
   @assert size(R) == (Dim, Dim) "invalid rotation for radii"
