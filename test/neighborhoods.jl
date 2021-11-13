@@ -2,29 +2,29 @@
   @testset "MetricBall" begin
     # Euclidean metric
     b = MetricBall(T(1/2))
+    r = boundaryvalue(b)
     m = metric(b)
-    r = range(b)
     @test evaluate(m, T[0], T[0]) ≤ r
     @test evaluate(m, T[0], T[1]) > r
 
     b = MetricBall(T(1))
+    r = boundaryvalue(b)
     m = metric(b)
-    r = range(b)
     @test evaluate(m, T[0,0], T[0,0]) ≤ r
     @test evaluate(m, T[0,0], T[1,0]) ≤ r
     @test evaluate(m, T[0,0], T[0,1]) ≤ r
 
     # Chebyshev metric
     b = MetricBall(T(1/2), Chebyshev())
+    r = boundaryvalue(b)
     m = metric(b)
-    r = range(b)
     @test evaluate(m, T[0], T[0]) ≤ r
     @test evaluate(m, T[0], T[1]) > r
 
     for r in [1.,2.,3.,4.,5.]
       b = MetricBall(r, Chebyshev())
+      r = boundaryvalue(b)
       m = metric(b)
-      r = range(b)
       for i in 0.0:1.0:r, j in 0.0:1.0:r
         @test evaluate(m, T[0,0], T[i,j]) ≤ r
       end

@@ -68,8 +68,10 @@ end
 MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} =
   MetricBall(SVector(radii), rotation)
 
-MetricBall(radius::T, metric=Euclidean()) where {T<:Real} =
-  MetricBall{typeof(radius),typeof(metric)}(radius, metric)
+function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
+  radii = SVector(radius)
+  MetricBall{typeof(radii),typeof(metric)}(radii, metric)
+end
 
 """
     radii(ball)
@@ -86,14 +88,14 @@ Return the metric of the metric `ball`.
 metric(ball::MetricBall) = ball.metric
 
 """
-    range(ball)
+    boundaryvalue(ball)
 
-Return the range of the metric `ball`, i.e.
-the smallest value `r` such that `||v|| ≤ r`
-for any `v ∈ ball`.
+Return the boundary value of the metric `ball`,
+i.e. the value `r` such that `||v|| ≤ r, ∀ v ∈ ball`
+and `||v|| > r, ∀ v ∉ ball``.
 """
-Base.range(ball::MetricBall{<:Real}) = ball.radii
-Base.range(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
+boundaryvalue(ball::MetricBall) = first(ball.radii)
+boundaryvalue(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
 
 """
     isisotropic(ball)
@@ -104,7 +106,8 @@ i.e. if all its radii are equal.
 isisotropic(ball::MetricBall) = length(unique(ball.radii)) == 1
 
 function Base.show(io::IO, ball::MetricBall)
-  r = length(ball.radii) > 1 ? Tuple(ball.radii) : ball.radii
+  n = length(ball.radii)
+  r = n > 1 ? Tuple(ball.radii) : first(ball.radii)
   m = nameof(typeof(ball.metric))
   print(io, "MetricBall($r, $m)")
 end

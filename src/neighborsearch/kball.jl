@@ -29,7 +29,7 @@ maxneighbors(method::KBallSearch) = method.k
 
 function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
-  r = range(method.ball)
+  r = boundaryvalue(method.ball)
 
   inds, dists = knn(method.tree, coordinates(pₒ), k, true)
 

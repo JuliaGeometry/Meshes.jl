@@ -200,6 +200,7 @@ export
   Neighborhood,
   MetricBall,
   metric, radii,
+  boundaryvalue,
   isisotropic,
 
   # neighbordhood search
