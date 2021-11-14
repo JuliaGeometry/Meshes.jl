@@ -199,8 +199,9 @@ export
   # neighborhoods
   Neighborhood,
   MetricBall,
-  metric, radii,
-  boundaryvalue,
+  metric,
+  radii,
+  radius,
   isisotropic,
 
   # neighbordhood search

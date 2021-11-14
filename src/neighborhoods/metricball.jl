@@ -88,14 +88,14 @@ Return the metric of the metric `ball`.
 metric(ball::MetricBall) = ball.metric
 
 """
-    boundaryvalue(ball)
+    radius(ball)
 
-Return the boundary value of the metric `ball`,
+Return the effective radius of the metric `ball`,
 i.e. the value `r` such that `||v|| ≤ r, ∀ v ∈ ball`
 and `||v|| > r, ∀ v ∉ ball``.
 """
-boundaryvalue(ball::MetricBall) = first(ball.radii)
-boundaryvalue(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
+radius(ball::MetricBall) = first(ball.radii)
+radius(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
 
 """
     isisotropic(ball)
