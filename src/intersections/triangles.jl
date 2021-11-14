@@ -153,9 +153,9 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
 
   # keep det > 0, modify T accordingly
   if det > atol(T)
-    t_ = o - vs[1]
+    τ = o - vs[1]
   else
-    t_ = vs[1] - o
+    τ = vs[1] - o
     det = -det
   end
 
@@ -165,12 +165,12 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   end
 
   # calculate u parameter and test bounds
-  u = t_ ⋅ p
+  u = τ ⋅ p
   if u < -atol(T) || u > det
     return NoIntersection() |> f
   end
 
-  q = t_ × e₁
+  q = τ × e₁
 
   # calculate v parameter and test bounds
   v = d ⋅ q
