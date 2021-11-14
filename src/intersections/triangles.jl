@@ -178,9 +178,7 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return NoIntersection() |> f
   end
 
-  λ = e₂ ⋅ q
-
-  λ *= one(T) / det
+  λ = (e₂ ⋅ q) * (one(T) / det)
 
   if λ < -atol(T)
     return NoIntersection() |> f
