@@ -178,14 +178,14 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return NoIntersection() |> f
   end
 
-  t = e₂ ⋅ q
+  λ = e₂ ⋅ q
 
   invdet = one(T) / det
-  t *= invdet
+  λ *= invdet
 
-  if t < -atol(T)
+  if λ < -atol(T)
     return NoIntersection() |> f
   end
 
-  return IntersectingRayTriangle(r(t)) |> f
+  return IntersectingRayTriangle(r(λ)) |> f
 end
