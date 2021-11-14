@@ -180,8 +180,7 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
 
   λ = e₂ ⋅ q
 
-  invdet = one(T) / det
-  λ *= invdet
+  λ *= one(T) / det
 
   if λ < -atol(T)
     return NoIntersection() |> f
