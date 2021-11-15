@@ -43,6 +43,8 @@ Base.getindex(partition::Partition, ind::Int) =
 Base.getindex(partition::Partition, inds::AbstractVector{Int}) =
   [getindex(partition, ind) for ind in inds]
 
+Base.eltype(partition::Partition) = typeof(first(partition))
+
 function Base.show(io::IO, partition::Partition)
   Dim = embeddim(partition.object)
   T   = coordtype(partition.object)
