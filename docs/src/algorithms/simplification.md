@@ -14,7 +14,7 @@ DouglasPeucker
 
 ```@example simplification
 using Meshes, MeshViz
-import CairoMakie
+import CairoMakie as Mke
 
 # polygonal area
 polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),
@@ -63,7 +63,7 @@ simp1 = simplify(polyarea, DouglasPeucker(0.01))
 simp2 = simplify(polyarea, DouglasPeucker(0.05))
 simp3 = simplify(polyarea, DouglasPeucker(0.10))
 
-fig = CairoMakie.Figure(resolution = (800, 800))
+fig = Mke.Figure(resolution = (800, 800))
 viz(fig[1,1], polyarea)
 viz(fig[1,2], simp1)
 viz(fig[2,1], simp2)
