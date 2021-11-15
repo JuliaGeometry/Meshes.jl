@@ -25,7 +25,7 @@ Point(0, 0) # same as above where Int is converted to Float64
 struct Point{Dim,T}
   coords::SVector{Dim,T}
   Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
-  Point{Dim,T}(coords::SVector{Dim,V}) where {Dim,T,V<:Integer} = new{Dim,Float64}(coords)
+  Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
 end
 
 # convenience constructors
