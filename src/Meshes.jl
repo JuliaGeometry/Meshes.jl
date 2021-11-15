@@ -124,6 +124,7 @@ export
   # rotations
   ClockwiseAngle,
   CounterClockwiseAngle,
+  EulerAngles,
   DatamineAngles,
   LeapfrogAngles,
   TaitBryanAngles,
