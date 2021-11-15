@@ -125,8 +125,6 @@ export
   ClockwiseAngle,
   CounterClockwiseAngle,
   EulerAngles,
-  DatamineAngles,
-  LeapfrogAngles,
   TaitBryanAngles,
 
   # domain traits

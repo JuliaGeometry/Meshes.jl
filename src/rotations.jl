@@ -32,10 +32,6 @@ Base.convert(::Type{<:DCM}, ccw::CounterClockwiseAngle) =
 # 3D ROTATIONS
 # -------------
 
-DatamineAngles(θs...) = EulerAngles((-1 .* deg2rad.(θs))..., :ZXZ)
-
-LeapfrogAngles(θs...) = EulerAngles((-1 .* deg2rad.(θs))..., :ZXZ)
-
 TaitBryanAngles(θs...) = EulerAngles((-1 .* θs)..., :ZXY) |> inv
 
 # temporary fix for https://github.com/JuliaSpace/ReferenceFrameRotations.jl/issues/18
