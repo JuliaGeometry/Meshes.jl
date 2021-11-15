@@ -7,6 +7,7 @@ using LinearAlgebra
 using CategoricalArrays
 using CircularArrays
 using StaticArrays
+using PlyIO
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
@@ -46,6 +47,17 @@ function readpoly(T, fname)
     # return polygonal area
     PolyArea(outer, inners)
   end
+end
+
+# helper function to read *.ply files containing meshes
+function readply(T, fname)
+  ply = load_ply(fname)
+  x = ply["vertex"]["x"]
+  y = ply["vertex"]["y"]
+  z = ply["vertex"]["z"]
+  points = Point{3,T}.(x, y, z)
+  connec = [connect(Tuple(c.+1)) for c in ply["face"]["vertex_indices"]]
+  SimpleMesh(points, connec)
 end
 
 include("dummy.jl")
