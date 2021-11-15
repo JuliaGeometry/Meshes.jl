@@ -1,6 +1,8 @@
 using Documenter, Meshes
 using DocumenterTools: Themes
 
+using MeshViz
+
 # Workaround for GR warnings
 ENV["GKSwstype"] = "100"
 
@@ -10,6 +12,7 @@ Themes.compile(joinpath(@__DIR__,"src/assets/meshes-light.scss"), joinpath(@__DI
 Themes.compile(joinpath(@__DIR__,"src/assets/meshes-dark.scss"), joinpath(@__DIR__,"src/assets/themes/documenter-dark.css"))
 
 makedocs(
+  modules = [Meshes, MeshViz],
   format = Documenter.HTML(
     assets = ["assets/favicon.ico", asset("https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap", class=:css)],
     prettyurls = istravis,
