@@ -2,6 +2,5 @@
 
 ```@docs
 Neighborhood
-NormBall
-Ellipsoid
+MetricBall
 ```

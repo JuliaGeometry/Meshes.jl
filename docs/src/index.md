@@ -59,22 +59,29 @@ import CairoMakie
 A [`Point`](@ref) is defined by its coordinates in a global reference system. The type of the
 coordinates is determined automatically based on the specified literals, or is forced
 to a specific type using helper constructors (e.g. `Point2`, `Point3`, `Point2f`, `Point3f`).
+`Integer` coordinates are converted to `Float64` to fulfill the requirements of most
+geometric processing algorithms, which would be undefined in a discrete scale.
 
 A vector [`Vec`](@ref) follows the same pattern. It can be constructed with the generic `Vec`
 constructor or with the variants `Vec2` and `Vec3` for double precision and `Vec2f`
 and `Vec3f` for single precision.
 
 ```@example overview
-A = Point(0, 0) # point with integer coordinates
-B = Point(1, 0) # another point in 2D space
-C = Point(0.0, 1.0) # double precision
-D = Point2(0, 1) # double precision from Int literal
-E = Point(1, 2, 3) # a point in 3D space
-F = Point3(1, 2, 3) # another point now with double precision
-G = Point(1f0, 2f0, 3f0) # single precision
-H = Point3f(1, 2, 3) # single precision from Int literal
+# 2D points
+A = Point(0.0, 1.0) # double precision as expected
+B = Point(0f0, 1f0) # single precision as expected
+C = Point(0, 0) # Integer is converted to Float64 by design
+D = Point2(0, 1) # explicitly ask for double precision
+E = Point2f(0, 1) # explicitly ask for single precision
 
-for P in (A,B,C,D,E,F,G,H)
+# 3D points
+F = Point(1.0, 2.0, 3.0) # double precision as expected
+G = Point(1f0, 2f0, 3f0) # single precision as expected
+H = Point(1, 2, 3) # Integer is converted to Float64 by design
+I = Point3(1, 2, 3) # explicitly ask for double precision
+J = Point3f(1, 2, 3) # explicitly ask for single precision
+
+for P in (A,B,C,D,E,F,G,H,I,J)
   println("Coordinate type: ", coordtype(P))
   println("Embedding dimension: ", embeddim(P))
 end
@@ -89,13 +96,13 @@ B - A
 They can't be added, but their coordinates can:
 
 ```@example overview
-coordinates(G) + coordinates(H)
+coordinates(F) + coordinates(H)
 ```
 
 We can add a point to a vector though, and get a new point:
 
 ```@example overview
-G + Vec3f(1,1,1)
+F + Vec(1, 1, 1)
 ```
 
 And finally, we can create points at random with:
@@ -112,11 +119,11 @@ in a computer without discretization. We can construct such geometries using
 clean syntax:
 
 ```@example overview
-b = Box((0,0), (1,1))
+b = Box((0.0, 0.0), (1.0, 1.0))
 ```
 
 ```@example overview
-s = Sphere((0,0), 1)
+s = Sphere((0.0, 0.0), 1.0)
 ```
 
 The parameters of these primitive geometries can be queried easily:
@@ -175,8 +182,8 @@ p ∈ t
 For line segments, for example, we have robust intersection algorithms:
 
 ```@example overview
-s1 = Segment((0.0,0.0), (1.0,0.0))
-s2 = Segment((0.5,0.0), (2.0,0.0))
+s1 = Segment((0.0, 0.0), (1.0, 0.0))
+s2 = Segment((0.5, 0.0), (2.0, 0.0))
 
 s1 ∩ s2
 ```
@@ -190,7 +197,7 @@ close the chain, create bridges between the various inner rings with the outer r
 other useful functionality:
 
 ```@example overview
-p = PolyArea(Point2[(0,0), (2,0), (2,2), (1,3), (0,2), (0,0)])
+p = PolyArea((0,0), (2,0), (2,2), (1,3), (0,2), (0,0))
 ```
 
 The orientation of the above polygonal area is counter-clockwise (CCW):
@@ -274,8 +281,8 @@ global vector of points:
 
 ```@example overview
 points = Point2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
-tris  = connect.([(1,5,3),(4,6,2)], Triangle)
-quads = connect.([(1,2,6,5),(4,3,5,6)], Quadrangle)
+tris  = connect.([(1,5,3), (4,6,2)], Triangle)
+quads = connect.([(1,2,6,5), (4,3,5,6)], Quadrangle)
 mesh = SimpleMesh(points, [tris; quads])
 ```
 
