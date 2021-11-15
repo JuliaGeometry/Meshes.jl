@@ -8,6 +8,11 @@
 
 # temporary fix for https://github.com/JuliaSpace/ReferenceFrameRotations.jl/issues/22 
 
+"""
+    ClockwiseAngle(θ)
+
+Clockwise rotation in 2D space by angle `θ`.
+"""
 struct ClockwiseAngle{T}
   θ::T
 end
@@ -19,6 +24,11 @@ function Base.convert(::Type{DCM{T}}, cw::ClockwiseAngle) where {T}
   SMatrix{2,2,T}([c s; -s c])
 end
 
+"""
+    ClockwiseAngle(θ)
+
+Counter-clockwise rotation in 2D space by angle `θ`.
+"""
 struct CounterClockwiseAngle{T}
   θ::T
 end
