@@ -62,7 +62,7 @@
     @test isconvex(b)
 
     b = Box(P2(0,0), P2(1,1))
-    @test measure(b) == T(1)
+    @test measure(b) == area(b) == T(1)
     @test P2(1,1) ∈ b
 
     b = Box(P2(1,1), P2(2,2))

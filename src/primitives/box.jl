@@ -26,12 +26,20 @@ paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 isconvex(::Type{<:Box}) = true
 
 Base.minimum(b::Box) = b.min
+
 Base.maximum(b::Box) = b.max
+
 Base.extrema(b::Box) = b.min, b.max
+
 center(b::Box) = Point((coordinates(b.max) + coordinates(b.min)) / 2)
+
 measure(b::Box) = prod(b.max - b.min)
+
 diagonal(b::Box) = norm(b.max - b.min)
+
 sides(b::Box) = b.max - b.min
+
+area(b::Box{2}) = measure(b)
 
 function vertices(b::Box{2})
   A = coordinates(b.min)
