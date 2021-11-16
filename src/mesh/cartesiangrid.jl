@@ -230,7 +230,5 @@ function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
   println(io, g)
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
-  println(io, "  spacing: ", Tuple(spacing(g)))
-  println(io, "  reference: ", g.reference)
-  print(  io, "  offset: ", Tuple(g.offset))
+  print(  io, "  spacing: ", Tuple(spacing(g)))
 end
