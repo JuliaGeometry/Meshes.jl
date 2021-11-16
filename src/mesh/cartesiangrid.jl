@@ -198,13 +198,13 @@ isgrid(::Type{<:CartesianGrid}) = true
 # ----------------------------
 # ADDITIONAL INDEXING METHODS
 # ----------------------------
-#
-# """
-#     grid[istart:iend,jstart:jend,...]
-#
-# Return a subgrid of the Cartesian `grid` using integer ranges
-# `istart:iend`, `jstart:jend`, ...
-# """
+
+"""
+    grid[istart:iend,jstart:jend,...]
+
+Return a subgrid of the Cartesian `grid` using integer ranges
+`istart:iend`, `jstart:jend`, ...
+"""
 Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
   getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
 
