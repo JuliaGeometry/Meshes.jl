@@ -54,7 +54,6 @@ struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
   function CartesianGrid{Dim,T}(dims, reference, spacing, offset) where {Dim,T}
     @assert all(dims .> 0) "dimensions must be positive"
     @assert all(spacing .> 0) "spacing must be positive"
-    # @assert all(offset .> 0) "offset must be positive"
     new(dims, reference, spacing, offset)
   end
 end
@@ -229,6 +228,5 @@ function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
   println(io, g)
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
-  println(io, "  reference: ", g.reference)
   print(  io, "  spacing: ", Tuple(spacing(g)))
 end
