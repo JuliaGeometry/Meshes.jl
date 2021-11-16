@@ -54,7 +54,7 @@ struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
   function CartesianGrid{Dim,T}(dims, reference, spacing, offset) where {Dim,T}
     @assert all(dims .> 0) "dimensions must be positive"
     @assert all(spacing .> 0) "spacing must be positive"
-    @assert all(offset .> 0) "offset must be positive"
+    # @assert all(offset .> 0) "offset must be positive"
     new(dims, reference, spacing, offset)
   end
 end
@@ -209,10 +209,9 @@ Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} 
   getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
-  start  = coordinates(g.reference) .+ (first(I).I .- 1) .* g.spacing
-  finish = coordinates(g.reference) .+ (last(I).I      ) .* g.spacing
+  offset = g.offset .- first(I).I .+ 1
   dims   = size(I)
-  CartesianGrid(Point(start), Point(finish), dims=dims)
+  CartesianGrid(dims, g.reference, g.spacing, offset)
 end
 
 Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
@@ -230,5 +229,6 @@ function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
   println(io, g)
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
+  println(io, "  reference: ", g.reference)
   print(  io, "  spacing: ", Tuple(spacing(g)))
 end
