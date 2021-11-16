@@ -205,17 +205,17 @@ isgrid(::Type{<:CartesianGrid}) = true
 # Return a subgrid of the Cartesian `grid` using integer ranges
 # `istart:iend`, `jstart:jend`, ...
 # """
-# Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
-#   getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
+Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
+  getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
 
-# function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
-#   start  = coordinates(g.reference) .+ (first(I).I .- 1) .* g.spacing
-#   finish = coordinates(g.reference) .+ (last(I).I      ) .* g.spacing
-#   dims   = size(I)
-#   CartesianGrid(Point(start), Point(finish), dims=dims)
-# end
-#
-# Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
+function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+  start  = coordinates(g.reference) .+ (first(I).I .- 1) .* g.spacing
+  finish = coordinates(g.reference) .+ (last(I).I      ) .* g.spacing
+  dims   = size(I)
+  CartesianGrid(Point(start), Point(finish), dims=dims)
+end
+
+Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
 
 # -----------
 # IO METHODS
