@@ -69,29 +69,25 @@ CartesianGrid(dims::Dims{Dim}, reference::NTuple{Dim,T},
   CartesianGrid{Dim,T}(dims, Point(reference), SVector(spacing), SVector(offset))
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T},
-                       spacing::SVector{Dim,T},
-                       offset::SVector{Dim,Int}=SVector(ntuple(i->1, Dim))) where {Dim,T}
+                       spacing::SVector{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
-  reference = start + (offset .- 1) .* spacing
-  CartesianGrid{Dim,T}(dims, reference, spacing, offset)
+  CartesianGrid{Dim,T}(dims, start, spacing)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T},
-              spacing::NTuple{Dim,T},
-              offset::NTuple{Dim,Int}=ntuple(i->1, Dim)) where {Dim,T} =
-  CartesianGrid(Point(start), Point(finish), SVector(spacing), SVector(offset))
+              spacing::NTuple{Dim,T}) where {Dim,T} =
+  CartesianGrid(Point(start), Point(finish), SVector(spacing))
 
 CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
               dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, start, (finish - start) ./ dims, SVector(ntuple(i->1, Dim)))
+  CartesianGrid{Dim,T}(dims, start, (finish - start) ./ dims)
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T};
               dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish); dims=dims)
 
 CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, ntuple(i->zero(T), Dim), ntuple(i->one(T), Dim),
-                       ntuple(i->1, Dim))
+  CartesianGrid{Dim,T}(dims, ntuple(i->zero(T), Dim), ntuple(i->one(T), Dim))
 
 CartesianGrid{T}(dims::Vararg{Int,Dim}) where {Dim,T} = CartesianGrid{T}(dims)
 
