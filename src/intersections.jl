@@ -110,6 +110,14 @@ struct IntersectingRayTriangle{P<:Point} <: Intersection
   value::P
 end
 
+# -------------------------------
+# RAY/SEGMENT-NGON INTERSECTIONS
+# -------------------------------
+
+struct IntersectingRaySegmentNgon{P<:Point} <: Intersection
+  value::P
+end
+
 # ----------------------------
 # SEGMENT-PLANE INTERSECTIONS
 # ----------------------------
@@ -142,6 +150,7 @@ include("intersections/lines.jl")
 include("intersections/segments.jl")
 include("intersections/planes.jl")
 include("intersections/triangles.jl")
+include("intersections/ngons.jl")
 include("intersections/boxes.jl")
 
 """

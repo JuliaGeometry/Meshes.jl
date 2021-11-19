@@ -393,6 +393,20 @@
     @test isnothing(r ∩ t)
   end
 
+  @testset "Ngons" begin
+    n = Ngon(P3(0, 1, 0), P3(1, 0, 0), P3(1, 0, 1), P3(0, 1, 1))
+
+    # With intersection
+    s = Segment(P3(1, 1, 0), P3(0, 0, 1))
+    @test intersecttype(n, s) isa IntersectingRaySegmentNgon
+    @test n ∩ s ≈ P3(0.5, 0.5, 0.5)
+
+    # Without intersection
+    s = Segment(P3(1, 1, 0), P3(1, 1, 1))
+    @test intersecttype(n, s) isa NoIntersection
+
+  end
+
   @testset "Planes" begin
     p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
 
