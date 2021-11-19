@@ -307,7 +307,7 @@ export
   CornerTouchingBoxes,
   IntersectingSegmentTriangle,
   IntersectingRayTriangle,
-  IntersectingRaySegmentNgon,
+  IntersectingRaySegmentQuadrangle,
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,

@@ -394,17 +394,41 @@
   end
 
   @testset "Ngons" begin
+    # Convex condition
     n = Ngon(P3(0, 1, 0), P3(1, 0, 0), P3(1, 0, 1), P3(0, 1, 1))
 
     # With intersection
     s = Segment(P3(1, 1, 0), P3(0, 0, 1))
-    @test intersecttype(n, s) isa IntersectingRaySegmentNgon
+    @test intersecttype(n, s) isa IntersectingRaySegmentQuadrangle
     @test n ∩ s ≈ P3(0.5, 0.5, 0.5)
 
     # Without intersection
     s = Segment(P3(1, 1, 0), P3(1, 1, 1))
     @test intersecttype(n, s) isa NoIntersection
 
+    # Concave condition
+    n = Ngon(P3(0, 1, 0.5), P3(0, 0, 0.5), P3(1, 0, 0.5), P3(0.2, 0.2, 0.5))
+
+    # With intersection
+    s = Segment(P3(0.1, 0.1, 0), P3(0.1, 0.1, 1))
+    @test intersecttype(n, s) isa IntersectingRaySegmentQuadrangle
+    @test n ∩ s ≈ P3(0.1, 0.1, 0.5)
+
+    # Without intersection
+    s = Segment(P3(0.5, 0.5, 0), (P3(0.5, 0.5, 1)))
+    @test intersecttype(n, s) isa NoIntersection
+
+    # Concave condition rotated
+    n = Ngon(P3(0, 0, 0.5), P3(1, 0, 0.5), P3(0.2, 0.2, 0.5), P3(0, 1, 0.5))
+
+    # With intersection
+    s = Segment(P3(0.1, 0.1, 0), P3(0.1, 0.1, 1))
+    @test intersecttype(n, s) isa IntersectingRaySegmentQuadrangle
+    @test n ∩ s ≈ P3(0.1, 0.1, 0.5)
+
+    # Without intersection
+    s = Segment(P3(0.5, 0.5, 0), (P3(0.5, 0.5, 1)))
+    @test intersecttype(n, s) isa NoIntersection
   end
 
   @testset "Planes" begin
