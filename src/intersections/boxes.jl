@@ -47,13 +47,13 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
   (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 """
 function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
-  sign = (x -> x < 0 ? 2 : 1).(r.v)
-  invdir = one(T) ./ r.v
+  sign = (x -> x < 0 ? 2 : 1).(direction(r))
+  invdir = one(T) ./ direction(r)
   bounds = (b.min, b.max)
 
-  tmin = maximum((bounds[sign[1]] - r.p) .* invdir)
+  tmin = maximum((bounds[sign[1]] - origin(r)) .* invdir)
   tmin = max(tmin, zero(T))
-  tmax = minimum((bounds[3 - sign[1]] - r.p) .* invdir)
+  tmax = minimum((bounds[3 - sign[1]] - origin(r)) .* invdir)
 
   if tmin < tmax
     return CrossingRayBox(Segment(r(tmin), r(tmax))) |> f
