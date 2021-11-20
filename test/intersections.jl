@@ -492,9 +492,9 @@
     r = Ray(P3(3.0,0.0,0.5), V3(-1.0,1.0,0.0))
     @test intersecttype(r, b) isa NoIntersection
 
-    r = Ray(P3(2.0,0.0,0.0), V3(-1.0,1.0,0.0))
+    r = Ray(P3(2.0,0.0,0.5), V3(-1.0,1.0,0.0))
     @test intersecttype(r, b) isa TouchingRayBox
-    @test r ∩ b == Point(P3(1.0,1.0,0.0))
+    @test r ∩ b == Point(P3(1.0,1.0,0.5))
   end
 
   @testset "hasintersect" begin
