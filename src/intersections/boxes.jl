@@ -78,6 +78,10 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   tmin = max(tmin, tzmin)
   tmax = min(tmax, tzmax)
 
+  if isnan(tmin) || isnan(tmax)
+    return NoIntersection() |> f
+  end
+
   if tmin ≈ tmax
     point = r(tmin)
     return TouchingRayBox(point) |> f
