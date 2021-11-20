@@ -143,19 +143,17 @@ and apply function `f` to it.
 """
 function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
-  o = r.p
-  d = r.v
 
   e₁ = vs[3] - vs[1]
   e₂ = vs[2] - vs[1]
-  p = d × e₂
+  p = direction(r) × e₂
   det = e₁ ⋅ p
 
   # keep det > 0, modify T accordingly
   if det > atol(T)
-    τ = o - vs[1]
+    τ = origin(r) - vs[1]
   else
-    τ = vs[1] - o
+    τ = vs[1] - origin(r)
     det = -det
   end
 
@@ -173,7 +171,7 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   q = τ × e₁
 
   # calculate v parameter and test bounds
-  v = d ⋅ q
+  v = direction(r) ⋅ q
   if v < -atol(T) || u + v > det
     return NoIntersection() |> f
   end
