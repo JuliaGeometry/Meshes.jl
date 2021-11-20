@@ -3,7 +3,7 @@
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
 
-    s = Segment(P2(1.0,), P2(2.0,))
+    s = Segment(P1(1.0,), P1(2.0,))
     @test all(Point(x,) ∈ s for x in 1:0.01:2)
     @test all(Point(x,) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
     @test s ≈ s
