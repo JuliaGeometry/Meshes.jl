@@ -34,3 +34,30 @@ function intersecttype(f::Function, b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T
     return FaceTouchingBoxes(Box(u, v)) |> f
   end
 end
+
+"""
+    intersecttype(function, ray, box)
+
+Calculate the intersection type of a `ray`` and a `box`` and apply function `f` to it.
+
+## References
+
+* Williams A, Barrus S, Morley R K, et al., 2005. [An efficient and robust ray-box
+  intersection algorithm]
+  (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
+"""
+function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
+  sign = (x -> x < 0 ? 2 : 1).(r.v)
+  invdir = one(T) ./ r.v
+  bounds = [b.min, b.max]
+
+  tmin = maximum((bounds[sign[1]] - r.p) .* invdir)
+  tmin = max(tmin, zero(T))
+  tmax = minimum((bounds[3 - sign[1]] - r.p) .* invdir)
+
+  if tmin < tmax
+    return RayCrossingBox(Segment(r(tmin), r(tmax))) |> f
+  else
+    return NoIntersection() |> f
+  end
+end
