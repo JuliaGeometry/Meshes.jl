@@ -35,8 +35,8 @@
     @test all(p ∉ s for p in [Point(0.99, 0.99, 0.99, 0.99), Point(2.1, 2.1, 2.1, 2.1)])
     @test all(p ∉ s for p in [Point(1.5, 1.5, 1.5, 1.49), Point(1, 1, 2, 1.0)])
     @test s ≈ s
-    @test !(s ≈ Segment(Point(2,2,2,2), Point(1,1,1,1)))
-    @test !(s ≈ Segment(Point(1,1,2,1), Point(0,0,0,0)))
+    @test !(s ≈ Segment(P2(2,2,2,2), P2(1,1,1,1)))
+    @test !(s ≈ Segment(P2(1,1,2,1), P2(0,0,0,0)))
   end
 
   @testset "N-gons" begin
