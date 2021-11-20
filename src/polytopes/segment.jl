@@ -41,3 +41,9 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   ab, ap = b - a, p - a
   iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
+
+function Base.isapprox(s1::Segment, s2::Segment)
+  v1 = s1.vertices
+  v2 = s2.vertices
+  isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
+end
