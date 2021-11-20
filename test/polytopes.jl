@@ -7,8 +7,8 @@
     @test all(Point(x,) ∈ s for x in 1:0.01:2)
     @test all(Point(x,) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
     @test s ≈ s
-    @test !(s ≈ Segment(Point(2.0,), Point(1.0,)))
-    @test !(s ≈ Segment(Point(-1.0,), Point(2.0,)))
+    @test !(s ≈ Segment(P2(2.0,), P2(1.0,)))
+    @test !(s ≈ Segment(P2(-1.0,), P2(2.0,)))
     s = Segment(P2(0,0), P2(1,1))
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
