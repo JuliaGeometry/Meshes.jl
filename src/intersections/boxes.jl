@@ -49,19 +49,40 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
 function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   sign = (x -> x < 0 ? 2 : 1).(direction(r))
   invdir = one(T) ./ direction(r)
-  bounds = (b.min, b.max)
+  bounds = (b.min.coords, b.max.coords)
+  ori = origin(r).coords
 
-  tmin = maximum((bounds[sign[1]] - origin(r)) .* invdir)
-  tmin = max(tmin, zero(T))
-  tmax = minimum((bounds[3 - sign[1]] - origin(r)) .* invdir)
+  # Use index access to avoid unnecessary compaations
+  # Avoid the following code:
+  # if (invdir[1] >= 0)
+  #   tmin = (b.min.coords[1] - ori[1]) * invdir[1]
+  #   tmax = (b.max.coords[1] - ori[1]) * invdir[1]
+  # else
+  #   tmax = (b.min.coords[1] - ori[1]) * invdir[1]
+  #   tmin = (b.max.coords[1] - ori[1]) * invdir[1]
+  # end
+  tmin = max((bounds[sign[1]][1] - ori[1]) * invdir[1], zero(T))
+  tmax = (bounds[3 - sign[1]][1] - ori[1]) * invdir[1]
+  tymin = (bounds[sign[2]][2] - ori[2]) * invdir[2]
+  tymax = (bounds[3 - sign[2]][2] - ori[2]) * invdir[2]
+  if tmin > tymax || tymin > tmax
+    return NoIntersection() |> f
+  end
+  tmin = max(tmin, tymin)
+  tmax = min(tmax, tymax)
+  tzmin = (bounds[sign[3]][3] - ori[3]) * invdir[3]
+  tzmax = (bounds[3 - sign[3]][3] - ori[3]) * invdir[3]
+  if tmin > tzmax || tzmin > tmax
+    return NoIntersection() |> f
+  end
+  tmin = max(tmin, tzmin)
+  tmax = min(tmax, tzmax)
 
-  if tmin < tmax
-    segment = Segment(r(tmin), r(tmax))
-    return CrossingRayBox(segment) |> f
-  elseif tmin ≈ tmax
+  if tmin ≈ tmax
     point = r(tmin)
     return TouchingRayBox(point) |> f
   else
-    return NoIntersection() |> f
+    segment = Segment(r(tmin), r(tmax))
+    return CrossingRayBox(segment) |> f
   end
 end
