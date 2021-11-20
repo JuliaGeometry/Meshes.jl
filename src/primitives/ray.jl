@@ -30,7 +30,7 @@ end
 """
     origin(ray)
 
-The endpoint of the ray.
+The starting point of the ray.
 """
 origin(r::Ray) = r.p
 
