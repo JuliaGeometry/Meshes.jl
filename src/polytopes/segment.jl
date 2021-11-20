@@ -45,7 +45,7 @@ end
 """
     isapprox(s1::Segment, s2::Segment)
 
-Tells whether or not the coordinates of segments `s1` and `s2 are approximately equal.
+Tells whether or not the segments `s1` and `s2 are approximately equal.
 """
 function Base.isapprox(s1::Segment, s2::Segment)
   v1 = s1.vertices
