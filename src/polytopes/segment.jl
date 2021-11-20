@@ -48,9 +48,5 @@ end
 Tells whether or not the coordinates of segments `s1` and `s2 are approximately equal.
 """
 function Base.isapprox(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
-  function reverse(s::Segment{Dim,T})
-    Segment(s.vertices[2], s.vertices[1])
-  end
-  return all(isapprox.(s1.vertices, s2.vertices)) ||
-    all(isapprox.(reverse(s1).vertices, s2.vertices))
+  return all(isapprox.(s1.vertices, s2.vertices))
 end
