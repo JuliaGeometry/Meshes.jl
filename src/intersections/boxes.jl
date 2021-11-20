@@ -49,7 +49,7 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
 function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   sign = (x -> x < 0 ? 2 : 1).(r.v)
   invdir = one(T) ./ r.v
-  bounds = [b.min, b.max]
+  bounds = (b.min, b.max)
 
   tmin = maximum((bounds[sign[1]] - r.p) .* invdir)
   tmin = max(tmin, zero(T))
