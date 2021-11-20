@@ -98,8 +98,12 @@ end
 # RAY-BOX INTERSECTIONS
 # ----------------------
 
-struct RayCrossingBox{S<:Segment} <: Intersection
+struct CrossingRayBox{S<:Segment} <: Intersection
   value::S
+end
+
+struct TouchingRayBox{P<:Point} <: Intersection
+  value::P
 end
 
 # -------------------------------

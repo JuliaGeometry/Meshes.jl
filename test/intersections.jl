@@ -482,11 +482,11 @@
     b = Box(P3(0,0,0), P3(1,1,1))
 
     r = Ray(P3(0,0,0), V3(1.0,1.0,1.0))
-    @test intersecttype(r, b) isa RayCrossingBox
+    @test intersecttype(r, b) isa CrossingRayBox
     @test r ∩ b == Segment(P3(0,0,0), P3(1,1,1))
 
     r = Ray(P3(-0.5,0,0), V3(1.0,1.0,1.0))
-    @test intersecttype(r, b) isa RayCrossingBox
+    @test intersecttype(r, b) isa CrossingRayBox
     @test r ∩ b == Segment(P3(0.0,0.5,0.5), P3(0.5,1.0,1.0))
 
     r = Ray(P3(3.0,0.0,0.5), V3(-1.0,1.0,0.0))
