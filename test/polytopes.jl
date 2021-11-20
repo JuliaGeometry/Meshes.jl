@@ -4,8 +4,8 @@
     @test nvertices(Segment) == 2
 
     s = Segment(P1(1.0,), P1(2.0,))
-    @test all(Point(x,) ∈ s for x in 1:0.01:2)
-    @test all(Point(x,) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
+    @test all(P1(x,) ∈ s for x in 1:0.01:2)
+    @test all(P1(x,) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
     @test s ≈ s
     @test !(s ≈ Segment(P1(2.0,), P1(1.0,)))
     @test !(s ≈ Segment(P1(-1.0,), P1(2.0,)))
