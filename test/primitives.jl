@@ -12,6 +12,8 @@
     r = Ray(P2(0,0), V2(1,1))
     @test paramdim(r) == 1
     @test isconvex(r)
+    @test origin(r) == P2(0,0)
+    @test direction(r) == V2(1,1)
 
     r = Ray(P2(0,0), V2(1,1))
     @test r(T(0.)) == P2(0,0)

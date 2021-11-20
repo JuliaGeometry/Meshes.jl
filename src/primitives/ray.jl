@@ -26,3 +26,17 @@ function (r::Ray)(t)
   end
   r.p + t * r.v
 end
+
+"""
+    origin(ray)
+
+The endpoint of the ray.
+"""
+origin(r::Ray) = r.p
+
+"""
+    direction(ray)
+
+The direction of the ray.
+"""
+direction(r::Ray) = r.v
