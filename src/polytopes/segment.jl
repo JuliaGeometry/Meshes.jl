@@ -42,11 +42,6 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
 
-"""
-    isapprox(s1::Segment, s2::Segment)
-
-Tells whether or not the segments `s1` and `s2 are approximately equal.
-"""
 function Base.isapprox(s1::Segment, s2::Segment)
   v1 = s1.vertices
   v2 = s2.vertices
