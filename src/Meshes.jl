@@ -155,7 +155,8 @@ export
   Box, Ball, Sphere, Cylinder,
   ncontrols, degree, Horner, DeCasteljau,
   radius, height, sides,
-  measure, diagonal, origin, direction,
+  measure, diagonal,
+  origin, direction,
 
   # polytopes
   Polytope, Polygon, Polyhedron,
