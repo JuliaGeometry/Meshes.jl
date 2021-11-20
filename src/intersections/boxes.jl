@@ -56,9 +56,11 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   tmax = minimum((bounds[3 - sign[1]] - origin(r)) .* invdir)
 
   if tmin < tmax
-    return CrossingRayBox(Segment(r(tmin), r(tmax))) |> f
+    segment = Segment(r(tmin), r(tmax))
+    return CrossingRayBox(segment) |> f
   elseif tmin ≈ tmax
-    return TouchingRayBox(r(tmin)) |> f
+    point = r(tmin)
+    return TouchingRayBox(point) |> f
   else
     return NoIntersection() |> f
   end
