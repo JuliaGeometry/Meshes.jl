@@ -53,21 +53,21 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
 
   # X slab
   if invdir[1] >= 0
-    tmin = (bounds[1,1] - orig[1]) * invdir[1]
-    tmax = (bounds[2,1] - orig[1]) * invdir[1]
+    tmin = (bounds[1][1] - orig[1]) * invdir[1]
+    tmax = (bounds[2][1] - orig[1]) * invdir[1]
   else
-    tmin = (bounds[2,1] - orig[1]) * invdir[1]
-    tmax = (bounds[1,1] - orig[1]) * invdir[1]
+    tmin = (bounds[2][1] - orig[1]) * invdir[1]
+    tmax = (bounds[1][1] - orig[1]) * invdir[1]
   end
   tmin = max.(tmin, zero(T))
 
   # Y slab
   if invdir[2] >= 0
-    tymin = (bounds[1,2] - orig[2]) * invdir[2]
-    tymax = (bounds[2,2] - orig[2]) * invdir[2]
+    tymin = (bounds[1][2] - orig[2]) * invdir[2]
+    tymax = (bounds[2][2] - orig[2]) * invdir[2]
   else
-    tymin = (bounds[2,2] - orig[2]) * invdir[2]
-    tymax = (bounds[1,2] - orig[2]) * invdir[2]
+    tymin = (bounds[2][2] - orig[2]) * invdir[2]
+    tymax = (bounds[1][2] - orig[2]) * invdir[2]
   end
   if tmin > tymax || tymin > tmax
     return NoIntersection() |> f
@@ -77,11 +77,11 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
 
   # Z slab
   if invdir[3] >= 0
-    tzmin = (bounds[1,3] - orig[3]) * invdir[3]
-    tzmax = (bounds[2,3] - orig[3]) * invdir[3]
+    tzmin = (bounds[1][3] - orig[3]) * invdir[3]
+    tzmax = (bounds[2][3] - orig[3]) * invdir[3]
   else
-    tzmin = (bounds[2,3] - orig[3]) * invdir[3]
-    tzmax = (bounds[1,3] - orig[3]) * invdir[3]
+    tzmin = (bounds[2][3] - orig[3]) * invdir[3]
+    tzmax = (bounds[1][3] - orig[3]) * invdir[3]
   end
   if tmin > tzmax || tzmin > tmax
     return NoIntersection() |> f
