@@ -47,46 +47,58 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
   (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 """
 function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
-  sign = (x -> x < 0 ? 2 : 1).(direction(r))
   invdir = one(T) ./ direction(r)
-  bounds = (coordinates(b.min), coordinates(b.max))
-  ori = coordinates(origin(r))
+  bounds = coordinates.(extrema(b))
+  orig = coordinates(origin(r))
 
-  # Use index access to avoid unnecessary comparitions.
-  # Avoid the following code:
-  # if (invdir[1] >= 0)
-  #   tmin = (coordinates(b.min)[1] - ori[1]) * invdir[1]
-  #   tmax = (coordinates(b.max)[1] - ori[1]) * invdir[1]
-  # else
-  #   tmax = (coordinates(b.min)[1] - ori[1]) * invdir[1]
-  #   tmin = (coordinates(b.max)[1] - ori[1]) * invdir[1]
-  # end
-  tmin = max((bounds[sign[1]][1] - ori[1]) * invdir[1], zero(T))
-  tmax = (bounds[3 - sign[1]][1] - ori[1]) * invdir[1]
-  tymin = (bounds[sign[2]][2] - ori[2]) * invdir[2]
-  tymax = (bounds[3 - sign[2]][2] - ori[2]) * invdir[2]
+  # X slab
+  if invdir[1] >= 0
+    tmin = (bounds[1,1] - orig[1]) * invdir[1]
+    tmax = (bounds[2,1] - orig[1]) * invdir[1]
+  else
+    tmin = (bounds[2,1] - orig[1]) * invdir[1]
+    tmax = (bounds[1,1] - orig[1]) * invdir[1]
+  end
+  tmin = max.(tmin, zero(T))
+
+  # Y slab
+  if invdir[2] >= 0
+    tymin = (bounds[1,2] - orig[2]) * invdir[2]
+    tymax = (bounds[2,2] - orig[2]) * invdir[2]
+  else
+    tymin = (bounds[2,2] - orig[2]) * invdir[2]
+    tymax = (bounds[1,2] - orig[2]) * invdir[2]
+  end
   if tmin > tymax || tymin > tmax
     return NoIntersection() |> f
   end
   tmin = max(tmin, tymin)
   tmax = min(tmax, tymax)
-  tzmin = (bounds[sign[3]][3] - ori[3]) * invdir[3]
-  tzmax = (bounds[3 - sign[3]][3] - ori[3]) * invdir[3]
+
+  # Z slab
+  if invdir[3] >= 0
+    tzmin = (bounds[1,3] - orig[3]) * invdir[3]
+    tzmax = (bounds[2,3] - orig[3]) * invdir[3]
+  else
+    tzmin = (bounds[2,3] - orig[3]) * invdir[3]
+    tzmax = (bounds[1,3] - orig[3]) * invdir[3]
+  end
   if tmin > tzmax || tzmin > tmax
     return NoIntersection() |> f
   end
   tmin = max(tmin, tzmin)
   tmax = min(tmax, tzmax)
 
-  if isnan(tmin) || isnan(tmax)
-    return NoIntersection() |> f
-  end
-
+  # Touching
   if tmin ≈ tmax
     point = r(tmin)
     return TouchingRayBox(point) |> f
-  else
+  # Crossing
+  elseif tmin < tmax
     segment = Segment(r(tmin), r(tmax))
     return CrossingRayBox(segment) |> f
+  # May got NaN
+  else
+    return NoIntersection() |> f
   end
 end
