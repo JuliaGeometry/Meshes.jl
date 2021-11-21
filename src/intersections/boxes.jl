@@ -49,17 +49,17 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
 function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   sign = (x -> x < 0 ? 2 : 1).(direction(r))
   invdir = one(T) ./ direction(r)
-  bounds = (b.min.coords, b.max.coords)
-  ori = origin(r).coords
+  bounds = (coordinates(b.min), coordinates(b.max))
+  ori = coordinates(origin(r))
 
-  # Use index access to avoid unnecessary compaations
+  # Use index access to avoid unnecessary comparitions.
   # Avoid the following code:
   # if (invdir[1] >= 0)
-  #   tmin = (b.min.coords[1] - ori[1]) * invdir[1]
-  #   tmax = (b.max.coords[1] - ori[1]) * invdir[1]
+  #   tmin = (coordinates(b.min)[1] - ori[1]) * invdir[1]
+  #   tmax = (coordinates(b.max)[1] - ori[1]) * invdir[1]
   # else
-  #   tmax = (b.min.coords[1] - ori[1]) * invdir[1]
-  #   tmin = (b.max.coords[1] - ori[1]) * invdir[1]
+  #   tmax = (coordinates(b.min)[1] - ori[1]) * invdir[1]
+  #   tmin = (coordinates(b.max)[1] - ori[1]) * invdir[1]
   # end
   tmin = max((bounds[sign[1]][1] - ori[1]) * invdir[1], zero(T))
   tmax = (bounds[3 - sign[1]][1] - ori[1]) * invdir[1]
