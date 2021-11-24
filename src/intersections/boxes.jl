@@ -55,7 +55,7 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   tmax = zero(T)  # We don't have inf(T)
 
   for axis in 1:3
-    if invdir[axis] >= 0
+    if invdir[axis] ≥ 0
       taxismin = (lo[axis] - orig[axis]) * invdir[axis]
       taxismax = (up[axis] - orig[axis]) * invdir[axis]
     else
