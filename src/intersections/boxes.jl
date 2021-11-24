@@ -48,46 +48,31 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
 """
 function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   invdir = one(T) ./ direction(r)
-  bounds = coordinates.(extrema(b))
+  lo, up = coordinates.(extrema(b))
   orig = coordinates(origin(r))
 
-  # X slab
-  if invdir[1] >= 0
-    tmin = (bounds[1][1] - orig[1]) * invdir[1]
-    tmax = (bounds[2][1] - orig[1]) * invdir[1]
-  else
-    tmin = (bounds[2][1] - orig[1]) * invdir[1]
-    tmax = (bounds[1][1] - orig[1]) * invdir[1]
-  end
-  tmin = max.(tmin, zero(T))
+  tmin = zero(T)
+  tmax = zero(T)  # We don't have inf(T)
 
-  # Y slab
-  if invdir[2] >= 0
-    tymin = (bounds[1][2] - orig[2]) * invdir[2]
-    tymax = (bounds[2][2] - orig[2]) * invdir[2]
-  else
-    tymin = (bounds[2][2] - orig[2]) * invdir[2]
-    tymax = (bounds[1][2] - orig[2]) * invdir[2]
+  for axis in 1:3
+    if invdir[axis] >= 0
+      taxismin = (lo[axis] - orig[axis]) * invdir[axis]
+      taxismax = (up[axis] - orig[axis]) * invdir[axis]
+    else
+      taxismin = (up[axis] - orig[axis]) * invdir[axis]
+      taxismax = (lo[axis] - orig[axis]) * invdir[axis]
+    end
+    # Have to jump the first compare because no inf(T) exists
+    # and the first compare is always false although inf(T) exists
+    if axis != 1
+      if tmin > taxismax || taxismin > tmax
+        return NoIntersection() |> f
+      end
+    end
+    tmin = max(tmin, taxismin)
+    # Have to jump the first compare because no inf(T) exists
+    tmax = axis == 1 ? taxismax : min(tmax, taxismax)
   end
-  if tmin > tymax || tymin > tmax
-    return NoIntersection() |> f
-  end
-  tmin = max(tmin, tymin)
-  tmax = min(tmax, tymax)
-
-  # Z slab
-  if invdir[3] >= 0
-    tzmin = (bounds[1][3] - orig[3]) * invdir[3]
-    tzmax = (bounds[2][3] - orig[3]) * invdir[3]
-  else
-    tzmin = (bounds[2][3] - orig[3]) * invdir[3]
-    tzmax = (bounds[1][3] - orig[3]) * invdir[3]
-  end
-  if tmin > tzmax || tzmin > tmax
-    return NoIntersection() |> f
-  end
-  tmin = max(tmin, tzmin)
-  tmax = min(tmax, tzmax)
 
   # Touching
   if tmin ≈ tmax
