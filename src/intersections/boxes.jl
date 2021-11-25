@@ -54,13 +54,13 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   tmin = zero(T)
   tmax = typemax(T)
 
-  for axis in 1:3
-    if invdir[axis] ≥ zero(T)
-      taxismin = (lo[axis] - orig[axis]) * invdir[axis]
-      taxismax = (up[axis] - orig[axis]) * invdir[axis]
+  for i in 1:3
+    if invdir[i] ≥ zero(T)
+      taxismin = (lo[i] - orig[i]) * invdir[i]
+      taxismax = (up[i] - orig[i]) * invdir[i]
     else
-      taxismin = (up[axis] - orig[axis]) * invdir[axis]
-      taxismax = (lo[axis] - orig[axis]) * invdir[axis]
+      taxismin = (up[i] - orig[i]) * invdir[i]
+      taxismax = (lo[i] - orig[i]) * invdir[i]
     end
     if tmin > taxismax || taxismin > tmax
       return NoIntersection() |> f
