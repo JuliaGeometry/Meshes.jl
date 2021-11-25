@@ -52,7 +52,7 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   orig = coordinates(origin(r))
 
   tmin = zero(T)
-  tmax = zero(T)  # We don't have inf(T)
+  tmax = typemax(T)
 
   for axis in 1:3
     if invdir[axis] ≥ 0
@@ -62,16 +62,11 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
       taxismin = (up[axis] - orig[axis]) * invdir[axis]
       taxismax = (lo[axis] - orig[axis]) * invdir[axis]
     end
-    # Have to jump the first compare because no inf(T) exists
-    # and the first compare is always false although inf(T) exists
-    if axis != 1
-      if tmin > taxismax || taxismin > tmax
-        return NoIntersection() |> f
-      end
+    if tmin > taxismax || taxismin > tmax
+      return NoIntersection() |> f
     end
     tmin = max(tmin, taxismin)
-    # Have to jump the first compare because no inf(T) exists
-    tmax = axis == 1 ? taxismax : min(tmax, taxismax)
+    tmax = min(tmax, taxismax)
   end
 
   # Touching
