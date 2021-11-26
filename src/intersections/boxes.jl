@@ -56,17 +56,17 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
 
   for i in 1:Dim
     if invdir[i] ≥ zero(T)
-      taxismin = (lo[i] - orig[i]) * invdir[i]
-      taxismax = (up[i] - orig[i]) * invdir[i]
+      imin = (lo[i] - orig[i]) * invdir[i]
+      imax = (up[i] - orig[i]) * invdir[i]
     else
-      taxismin = (up[i] - orig[i]) * invdir[i]
-      taxismax = (lo[i] - orig[i]) * invdir[i]
+      imin = (up[i] - orig[i]) * invdir[i]
+      imax = (lo[i] - orig[i]) * invdir[i]
     end
-    if tmin > taxismax || taxismin > tmax
+    if tmin > imax || imin > tmax
       return NoIntersection() |> f
     end
-    tmin = max(tmin, taxismin)
-    tmax = min(tmax, taxismax)
+    tmin = max(tmin, imin)
+    tmax = min(tmax, imax)
   end
 
   # Touching
