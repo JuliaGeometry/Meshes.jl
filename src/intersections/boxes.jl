@@ -46,7 +46,7 @@ Calculate the intersection type of a `ray`` and a `box`` and apply function `f` 
   intersection algorithm]
   (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 """
-function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
+function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
   invdir = one(T) ./ direction(r)
   lo, up = coordinates.(extrema(b))
   orig = coordinates(origin(r))
@@ -54,7 +54,7 @@ function intersecttype(f::Function, r::Ray{3,T}, b::Box{3,T}) where {T}
   tmin = zero(T)
   tmax = typemax(T)
 
-  for axis in 1:3
+  for axis in 1:Dim
     if invdir[axis] ≥ 0
       taxismin = (lo[axis] - orig[axis]) * invdir[axis]
       taxismax = (up[axis] - orig[axis]) * invdir[axis]
