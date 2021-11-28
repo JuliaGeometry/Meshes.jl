@@ -58,8 +58,10 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
   for i in 1:Dim
     imin = (lo[i] - orig[i]) * invdir[i]
     imax = (up[i] - orig[i]) * invdir[i]
+
     # swap if necessary
     invdir[i] < zero(T) && ((imin, imax) = (imax, imin))
+    
     if tmin > imax || imin > tmax
       return NoIntersection() |> f
     end
