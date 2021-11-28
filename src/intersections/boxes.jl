@@ -69,11 +69,9 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
   end
 
   if tmin ≈ tmax
-    point = r(tmin)
-    return TouchingRayBox(point) |> f
+    return TouchingRayBox(r(tmin)) |> f
   elseif tmin < tmax
-    segment = Segment(r(tmin), r(tmax))
-    return CrossingRayBox(segment) |> f
+    return CrossingRayBox(Segment(r(tmin), r(tmax))) |> f
   else
     return NoIntersection() |> f
   end
