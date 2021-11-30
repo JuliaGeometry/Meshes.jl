@@ -63,9 +63,7 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
     invdir[i] < zero(T) && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
-    if isnan(imin) || isnan(imax)
-      continue
-    end
+    (isnan(imin) || isnan(imax)) && continue
 
     (tmin > imax || imin > tmax) && return NoIntersection() |> f
     
