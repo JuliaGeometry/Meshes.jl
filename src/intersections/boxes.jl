@@ -58,26 +58,24 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
   for i in 1:Dim
     imin = (lo[i] - orig[i]) * invdir[i]
     imax = (up[i] - orig[i]) * invdir[i]
+
     # swap if necessary
     invdir[i] < zero(T) && ((imin, imax) = (imax, imin))
-    if tmin > imax || imin > tmax
-      return NoIntersection() |> f
-    end
+
     # the ray is on a face of the box, avoid NaN
     if isnan(imin) || isnan(imax)
       continue
     end
+
+    (tmin > imax || imin > tmax) && return NoIntersection() |> f
+    
     tmin = max(tmin, imin)
     tmax = min(tmax, imax)
   end
 
-  # Touching
   if tmin ≈ tmax
-    point = r(tmin)
-    return TouchingRayBox(point) |> f
-  # Crossing
-  else
-    segment = Segment(r(tmin), r(tmax))
-    return CrossingRayBox(segment) |> f
+    return TouchingRayBox(r(tmin)) |> f
+  elseif tmin < tmax
+    return CrossingRayBox(Segment(r(tmin), r(tmax))) |> f
   end
 end
