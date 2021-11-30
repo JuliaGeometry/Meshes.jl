@@ -306,6 +306,8 @@ export
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
+  CrossingRayBox,
+  TouchingRayBox,
   IntersectingSegmentTriangle,
   IntersectingRayTriangle,
   CrossingSegmentPlane,

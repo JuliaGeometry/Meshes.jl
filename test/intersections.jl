@@ -477,6 +477,29 @@
     b1 = Box(P2(0,0), P2(1,1))
     b2 = Box(P2(0.5,0.5), P2(2,2))
     @inferred someornone(b1, b2)
+
+    # Ray-Box intersection
+    b = Box(P3(0,0,0), P3(1,1,1))
+
+    r = Ray(P3(0,0,0), V3(1,1,1))
+    @test intersecttype(r, b) isa CrossingRayBox
+    @test r ∩ b == Segment(P3(0,0,0), P3(1,1,1))
+
+    r = Ray(P3(-0.5,0,0), V3(1.0,1.0,1.0))
+    @test intersecttype(r, b) isa CrossingRayBox
+    @test r ∩ b == Segment(P3(0.0,0.5,0.5), P3(0.5,1.0,1.0))
+
+    r = Ray(P3(3.0,0.0,0.5), V3(-1.0,1.0,0.0))
+    @test intersecttype(r, b) isa NoIntersection
+
+    r = Ray(P3(2.0,0.0,0.5), V3(-1.0,1.0,0.0))
+    @test intersecttype(r, b) isa TouchingRayBox
+    @test r ∩ b == P3(1.0,1.0,0.5)
+
+    # the ray on a face of the box, got NaN in calculation
+    r = Ray(P3(1.5,0.0,0.0), V3(-1.0,1.0,0.0))
+    @test intersecttype(r, b) isa CrossingRayBox
+    @test r ∩ b == Segment(P3(1.0,0.5,0.0), P3(0.5,1.0,0.0))
   end
 
   @testset "hasintersect" begin
