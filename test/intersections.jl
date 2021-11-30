@@ -481,7 +481,7 @@
     # Ray-Box intersection
     b = Box(P3(0,0,0), P3(1,1,1))
 
-    r = Ray(P3(0,0,0), V3(1.0,1.0,1.0))
+    r = Ray(P3(0,0,0), V3(1,1,1))
     @test intersecttype(r, b) isa CrossingRayBox
     @test r ∩ b == Segment(P3(0,0,0), P3(1,1,1))
 
