@@ -16,9 +16,6 @@ Discretize `geometry` with discretization `method`.
 """
 function discretize end
 
-discretize(box::Box{2}, method::DiscretizationMethod) =
-  discretize(boundary(box), method)
-
 function discretize(chain::Chain{3}, method::DiscretizationMethod)
   points = vertices(chain)
 
@@ -95,7 +92,11 @@ triangles using an appropriate discretization method.
 """
 function triangulate end
 
-triangulate(box::Box{2}) = discretize(box, Dehn1899())
+triangulate(box::Box{2}) = discretize(boundary(box), FanTriangulation())
+
+triangulate(tri::Triangle) = discretize(boundary(tri), FanTriangulation())
+
+triangulate(quad::Quadrangle) = discretize(boundary(quad), FanTriangulation())
 
 triangulate(ngon::Ngon) = discretize(ngon, Dehn1899())
 
@@ -140,5 +141,6 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("discretization/fan.jl")
 include("discretization/fist.jl")
 include("discretization/dehn.jl")
