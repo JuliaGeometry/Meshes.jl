@@ -18,7 +18,7 @@ sample(Sphere((0,0,0), 1), RegularSampling(360, 180))
 ```
 """
 struct RegularSampling{N} <: ContinuousSamplingMethod
-  sizes::NTuple{N,Int}
+  sizes::Dims{N}
 end
 
 RegularSampling(sizes::Vararg{Int,N}) where {N} =
