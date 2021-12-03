@@ -16,11 +16,17 @@ using Meshes, MeshViz
 import CairoMakie as Mke
 
 grid = CartesianGrid(10, 10)
-mesh = refine(grid, TriRefinement())
+
+# refine three times
+ref1 = refine(grid, TriRefinement())
+ref2 = refine(ref1, TriRefinement())
+ref3 = refine(ref2, TriRefinement())
 
 fig = Mke.Figure(resolution = (800, 800))
-viz(fig[1,1], grid, showfacets = true, axis = (title = "original grid",))
-viz(fig[1,2], mesh, showfacets = true, axis = (title = "triangle mesh",))
+viz(fig[1,1], grid, showfacets = true, axis = (title = "original",))
+viz(fig[1,2], ref1, showfacets = true, axis = (title = "refine 1",))
+viz(fig[2,1], ref2, showfacets = true, axis = (title = "refine 2",))
+viz(fig[2,2], ref3, showfacets = true, axis = (title = "refine 3",))
 fig
 ```
 

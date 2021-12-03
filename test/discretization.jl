@@ -182,5 +182,23 @@ using Base: datatype_haspadding
     mesh  = triangulate(multi)
     @test nvertices(mesh) == 8
     @test nelements(mesh) == 4
+
+    # triangulation of meshes
+    grid = CartesianGrid{T}(3, 3)
+    mesh = triangulate(grid)
+    gpts = vertices(grid)
+    mpts = vertices(mesh)
+    @test nvertices(mesh) == 16
+    @test nelements(mesh) == 18
+    @test collect(mpts) == collect(gpts)
+    @test eltype(mesh) <: Triangle
+    @test measure(mesh) == measure(grid)
+
+    if visualtests
+      p1 = plot(grid, fillcolor=false)
+      p2 = plot(mesh, fillcolor=false)
+      p = plot(p1, p2, layout=(1,2), size=(600,300))
+      @test_reference "data/triangulate-$T.png" p
+    end
   end
 end

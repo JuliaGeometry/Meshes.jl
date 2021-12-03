@@ -1,19 +1,14 @@
 @testset "Refinement" begin
   @testset "TriRefinement" begin
     grid = CartesianGrid{T}(3, 3)
-    mesh = refine(grid, TriRefinement())
-    gpts = vertices(grid)
-    mpts = vertices(mesh)
-    @test nvertices(mesh) == 16
-    @test nelements(mesh) == 18
-    @test collect(mpts) == collect(gpts)
-    @test eltype(mesh) <: Triangle
-    @test measure(mesh) == measure(grid)
+    ref1 = refine(grid, TriRefinement())
+    ref2 = refine(ref1, TriRefinement())
 
     if visualtests
       p1 = plot(grid, fillcolor=false)
-      p2 = plot(mesh, fillcolor=false)
-      p = plot(p1, p2, layout=(1,2), size=(600,300))
+      p2 = plot(ref1, fillcolor=false)
+      p3 = plot(ref2, fillcolor=false)
+      p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
       @test_reference "data/trirefine-$T.png" p
     end
   end
@@ -31,7 +26,7 @@
       p2 = plot(ref2, fillcolor=false)
       p3 = plot(ref3, fillcolor=false)
       p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
-      @test_reference "data/quadrefine-2-$T.png" p
+      @test_reference "data/quadrefine-$T.png" p
     end
   end
 

@@ -10,35 +10,52 @@ A n-gon is subdivided into n-2 triangles.
 """
 struct TriRefinement <: RefinementMethod end
 
-function refine(mesh, ::TriRefinement)
+function refine(mesh, method::TriRefinement)
+  if eltype(mesh) <: Triangle
+    # go ahead and refine
+    _refine(mesh, method)
+  else
+    # triangulate non-triangle elements
+    triangulate(mesh)
+  end
+end
+
+function _refine(mesh, ::TriRefinement)
+  # retrieve geometry and topology
   points = vertices(mesh)
-  elems  = elements(mesh)
-  topo   = topology(mesh)
-  connec = elements(topo)
+  connec = topology(mesh)
 
-  # initialize vector of global indices
-  ginds = Vector{Int}[]
+  # convert to half-edge structure
+  t = convert(HalfEdgeTopology, connec)
 
-  # triangulate each element and append global indices
-  for (e, c) in zip(elems, connec)
-    # triangulate single element
-    mesh′   = triangulate(e)
-    topo′   = topology(mesh′)
-    connec′ = elements(topo′)
-
-    # global indices
-    inds = indices(c)
-
-    # convert from local to global indices
-    einds = [[inds[i] for i in indices(c′)] for c′ in connec′]
-
-    # save global indices
-    append!(ginds, einds)
+  # add centroids of elements
+  ∂₂₀ = Boundary{2,0}(t)
+  epts = map(1:nelements(t)) do elem
+    ps = view(points, ∂₂₀(elem))
+    cₒ = sum(coordinates, ps) / length(ps)
+    Point(cₒ)
   end
 
-  # new points and connectivities
-  newpoints = collect(points)
-  newconnec = connect.(Tuple.(ginds), Triangle)
+  # original vertices
+  vpts = points
+
+  # new points in refined mesh
+  newpoints = [vpts; epts]
+
+  offset = length(vpts)
+
+  # connect vertices into new triangles
+  newconnec = Connectivity{Triangle,3}[]
+  for elem in 1:nelements(t)
+    verts = CircularVector(∂₂₀(elem))
+    for i in 1:length(verts)
+      u = elem + offset
+      v = verts[i]
+      w = verts[i+1]
+      tri = connect((u, v, w))
+      push!(newconnec, tri)
+    end
+  end
 
   SimpleMesh(newpoints, newconnec)
 end
