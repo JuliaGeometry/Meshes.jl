@@ -94,6 +94,18 @@ struct CornerTouchingBoxes{P<:Point} <: Intersection
   value::P
 end
 
+# ----------------------
+# RAY-BOX INTERSECTIONS
+# ----------------------
+
+struct CrossingRayBox{S<:Segment} <: Intersection
+  value::S
+end
+
+struct TouchingRayBox{P<:Point} <: Intersection
+  value::P
+end
+
 # -------------------------------
 # SEGMENT-TRIANGLE INTERSECTIONS
 # -------------------------------

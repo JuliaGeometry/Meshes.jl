@@ -1,7 +1,7 @@
 name = "Meshes"
 uuid = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 authors = ["Júlio Hoffimann and contributors"]
-version = "0.18.0"
+version = "0.18.1"
 
 [deps]
 CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
@@ -32,7 +32,7 @@ NearestNeighbors = "0.4"
 RecipesBase = "1.1"
 ReferenceFrameRotations = "0.5, 1.0, 2"
 SimpleTraits = "0.9"
-SpecialFunctions = "0.10, 1.1"
+SpecialFunctions = "0.10, 1.1, 2"
 StaticArrays = "0.12, 1.0"
 StatsBase = "0.33"
 TableTraits = "1.0"

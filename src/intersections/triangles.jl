@@ -143,8 +143,8 @@ and apply function `f` to it.
 """
 function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
-  o = r.p
-  d = r.v
+  o = origin(r)
+  d = direction(r)
 
   e₁ = vs[3] - vs[1]
   e₂ = vs[2] - vs[1]
