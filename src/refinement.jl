@@ -20,5 +20,6 @@ function refine end
 # IMPLEMENTATIONS
 # ----------------
 
+include("refinement/tri.jl")
 include("refinement/quad.jl")
 include("refinement/catmullclark.jl")

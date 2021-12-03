@@ -5,6 +5,25 @@ refine
 RefinementMethod
 ```
 
+## TriRefinement
+
+```@docs
+TriRefinement
+```
+
+```@example
+using Meshes, MeshViz
+import CairoMakie as Mke
+
+grid = CartesianGrid(10, 10)
+mesh = refine(grid, TriRefinement())
+
+fig = Mke.Figure(resolution = (800, 800))
+viz(fig[1,1], grid, showfacets = true, axis = (title = "original grid",))
+viz(fig[1,2], mesh, showfacets = true, axis = (title = "triangle mesh",))
+fig
+```
+
 ## QuadRefinement
 
 ```@docs

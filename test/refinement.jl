@@ -1,4 +1,23 @@
 @testset "Refinement" begin
+  @testset "TriRefinement" begin
+    grid = CartesianGrid{T}(3, 3)
+    mesh = refine(grid, TriRefinement())
+    gpts = vertices(grid)
+    mpts = vertices(mesh)
+    @test nvertices(mesh) == 16
+    @test nelements(mesh) == 18
+    @test collect(mpts) == collect(gpts)
+    @test eltype(mesh) <: Triangle
+    @test measure(mesh) == measure(grid)
+
+    if visualtests
+      p1 = plot(grid, fillcolor=false)
+      p2 = plot(mesh, fillcolor=false)
+      p = plot(p1, p2, layout=(1,2), size=(600,300))
+      @test_reference "data/trirefine-$T.png" p
+    end
+  end
+
   @testset "QuadRefinement" begin
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.25), (0.75,0.25), (0.5,0.75)]
     connec = connect.([(1,2,6,5),(1,5,7,3),(2,4,7,6),(3,7,4)])
