@@ -140,6 +140,5 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("discretization/regular.jl")
 include("discretization/fist.jl")
 include("discretization/dehn.jl")
