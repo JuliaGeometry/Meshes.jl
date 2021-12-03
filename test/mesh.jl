@@ -14,6 +14,7 @@
     @test spacing(grid) == T[1]
     @test nelements(grid) == 100
     @test eltype(grid) <: Segment{1,T}
+    @test measure(grid) ≈ T(100)
 
     grid = CartesianGrid{T}(200,100)
     @test embeddim(grid) == 2
@@ -25,6 +26,7 @@
     @test spacing(grid) == T[1, 1]
     @test nelements(grid) == 200*100
     @test eltype(grid) <: Quadrangle{2,T}
+    @test measure(grid) ≈ T(200*100)
 
     grid = CartesianGrid((200,100,50), T.((0,0,0)), T.((1,1,1)))
     @test embeddim(grid) == 3
@@ -36,6 +38,7 @@
     @test spacing(grid) == T[1, 1, 1]
     @test nelements(grid) == 200*100*50
     @test eltype(grid) <: Hexahedron{3,T}
+    @test measure(grid) ≈ T(200*100*50)
 
     grid = CartesianGrid(T.((0,0,0)), T.((1,1,1)), T.((0.1,0.1,0.1)))
     @test embeddim(grid) == 3
@@ -161,6 +164,7 @@
       @test mesh[i] == triangles[i]
     end
     @test eltype(mesh) <: Triangle{2,T}
+    @test measure(mesh) ≈ T(1)
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)

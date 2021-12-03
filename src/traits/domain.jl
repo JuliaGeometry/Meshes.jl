@@ -74,21 +74,28 @@ coordtype(domain::Domain) = coordtype(typeof(domain))
 """
     centroid(domain, ind)
 
-Compute the the centroid of the `ind`-th element in the `domain`.
+Return the centroid of the `ind`-th element in the `domain`.
 """
 centroid(domain::Domain, ind::Int) = centroid(domain[ind])
 
 """
     centroid(domain)
 
-Compute the centroid of the `domain` as the centroid of all its
-element's centroids.
+Return the centroid of the `domain`, i.e. the centroid of all
+its element's centroids.
 """
 function centroid(domain::Domain)
   nelm = nelements(domain)
   coords(ind) = coordinates(centroid(domain, ind))
   Point(sum(coords(ind) for ind in 1:nelm) / nelm)
 end
+
+"""
+    measure(domain)
+
+Return the measure of the `domain`, i.e. the length, area, or volume.
+"""
+measure(domain::Domain) = sum(measure, elements(domain))
 
 """
     point ∈ domain
