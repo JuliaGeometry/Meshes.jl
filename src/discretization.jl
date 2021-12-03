@@ -19,6 +19,29 @@ function discretize end
 discretize(box::Box, method::DiscretizationMethod) =
   discretize(boundary(box), method)
 
+function discretize(chain::Chain{3}, method::DiscretizationMethod)
+  points = vertices(chain)
+
+  # project points on 2D plane using SVD
+  # https://math.stackexchange.com/a/99317
+  X = mapreduce(coordinates, hcat, points)
+  μ = sum(X, dims=2) / size(X, 2)
+  Z = X .- μ
+  U = svd(Z).U
+  u = U[:,1]
+  v = U[:,2]
+
+  # projected points
+  projected = [Point(z⋅u, z⋅v) for z in eachcol(Z)]
+
+  # discretize 2D chain
+  chain2D = Chain([collect(projected); first(projected)])
+  mesh = discretize(chain2D, method)
+
+  # return mesh with original points
+  SimpleMesh(points, topology(mesh))
+end
+
 function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where {Dim,T}
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
@@ -65,14 +88,19 @@ discretize(multi::Multi, method::DiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, multi)
 
 """
-    triangulate(geometry)
+    triangulate(object)
 
-Discretize `geometry` of parametric dimension 2 into
+Discretize `object` of parametric dimension 2 into
 triangles using an appropriate discretization method.
 """
+function triangulate end
+
 triangulate(box::Box{2}) = discretize(box, Dehn1899())
+
 triangulate(ngon::Ngon) = discretize(ngon, Dehn1899())
+
 triangulate(poly::PolyArea) = discretize(poly, FIST())
+
 triangulate(multi::Multi) = mapreduce(triangulate, merge, multi)
 
 function triangulate(mesh::Mesh)
@@ -112,5 +140,6 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("discretization/regular.jl")
 include("discretization/fist.jl")
 include("discretization/dehn.jl")

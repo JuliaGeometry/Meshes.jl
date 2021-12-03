@@ -33,7 +33,7 @@ end
 
 FIST(rng=Random.GLOBAL_RNG; shuffle=true) = FIST(rng, shuffle)
 
-function discretize(𝒫::Chain, method::FIST)
+function discretize(𝒫::Chain{2}, method::FIST)
   # helper function to shuffle ears
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
 
