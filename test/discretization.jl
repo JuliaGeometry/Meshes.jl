@@ -75,6 +75,13 @@ using Base: datatype_haspadding
       @test nvertices(mesh) == 16
       @test nelements(mesh) == 14
       @test all(t -> area(t) > zero(T), mesh)
+
+      # 3D chains
+      chain = Chain(P3[(0,0,0), (1,0,0), (1,1,0), (0,1,1), (0,0,0)])
+      mesh  = discretize(chain, method)
+      @test vertices(mesh) == vertices(chain)
+      @test eltype(mesh) <: Triangle
+      @test nelements(mesh) == 2
     end
   end
 

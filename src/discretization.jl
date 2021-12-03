@@ -16,7 +16,7 @@ Discretize `geometry` with discretization `method`.
 """
 function discretize end
 
-discretize(box::Box, method::DiscretizationMethod) =
+discretize(box::Box{2}, method::DiscretizationMethod) =
   discretize(boundary(box), method)
 
 function discretize(chain::Chain{3}, method::DiscretizationMethod)
@@ -39,7 +39,7 @@ function discretize(chain::Chain{3}, method::DiscretizationMethod)
   mesh = discretize(chain2D, method)
 
   # return mesh with original points
-  SimpleMesh(points, topology(mesh))
+  SimpleMesh(collect(points), topology(mesh))
 end
 
 function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where {Dim,T}
