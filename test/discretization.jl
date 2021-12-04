@@ -1,5 +1,17 @@
 using Base: datatype_haspadding
 @testset "Discretization" begin
+  @testset "FanTriangulation" begin
+    pts  = P2[(0.,0.), (1.,0.), (1.,1.), (0.75,1.5), (0.25,1.5), (0.,1.)]
+    tris = [Triangle([pts[1], pts[i], pts[i+1]]) for i in 2:length(pts)-1]
+    hex  = Hexagon(pts)
+    mesh = discretize(hex, FanTriangulation())
+    @test nvertices(mesh) == 6
+    @test nelements(mesh) == 4
+    @test eltype(mesh) <: Triangle
+    @test vertices(mesh) == pts
+    @test collect(elements(mesh)) == tris
+  end
+
   @testset "FIST" begin
     𝒫 = Chain(P2[(0,0),(1,0),(1,1),(2,1),(2,2),(1,2),(0,0)])
     @test Meshes.ears(𝒫) == [2,4,5]
