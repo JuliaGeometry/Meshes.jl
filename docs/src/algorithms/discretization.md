@@ -6,6 +6,27 @@ triangulate
 DiscretizationMethod
 ```
 
+## FanTriangulation
+
+```@docs
+FanTriangulation
+```
+
+```@example discretization
+using Meshes, MeshViz
+import CairoMakie as Mke
+
+hexagon = Hexagon((0.,0.), (1.,0.), (1.,1.),
+                  (0.75,1.5), (0.25,1.5), (0.,1.))
+
+mesh = discretize(hexagon, FanTriangulation())
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], hexagon)
+viz(fig[1,2], mesh, showfacets = true)
+fig
+```
+
 ## Dehn1899
 
 ```@docs
@@ -13,9 +34,6 @@ Dehn1899
 ```
 
 ```@example discretization
-using Meshes, MeshViz
-import CairoMakie as Mke
-
 # polygonal area
 polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),
                      (0.3072999, 0.272418), (0.34814754, 0.18421611), (0.37949452, 0.11756973),
