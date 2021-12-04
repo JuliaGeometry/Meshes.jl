@@ -42,55 +42,24 @@ const Decagon    = Ngon{10}
 
 issimple(::Type{<:Ngon}) = true
 
-nvertices(::Type{<:Ngon{N}}) where {N} = N
-nvertices(ngon::Ngon) = nvertices(typeof(ngon))
-
-# measure of N-gon embedded in 2D
-function signarea(ngon::Ngon{N,2}) where {N}
-  v = ngon.vertices
-  sum(i -> signarea(v[1], v[i], v[i+1]), 2:N-1)
-end
-measure(ngon::Ngon{N,2}) where {N} = abs(signarea(ngon))
-
-# measure of N-gon embedded in higher dimension
-function measure(ngon::Ngon{N}) where {N}
-  areaₜ(A, B, C) = norm((B - A) × (C - A)) / 2
-  v = ngon.vertices
-  sum(i -> areaₜ(v[1], v[i], v[i+1]), 2:N-1)
-end
-
 hasholes(::Ngon) = false
-
-chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
 Base.unique!(ngon::Ngon) = ngon
 
-"""
-    angles(ngon)
+nvertices(::Type{<:Ngon{N}}) where {N} = N
+nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
-Return the angles of the boundary of the `ngon`.
+chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
 
-See also [`Chain`](@ref).
-"""
 angles(ngon::Ngon) = angles(boundary(ngon))
 
-"""
-    innerangles(ngon)
-
-Return inner angles of the boundary of the `ngon`.
-
-See also [`Chain`](@ref).
-"""
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
-function Base.in(p::Point{Dim,T}, ngon::Ngon{N,Dim,T}) where {N,Dim,T}
-  # decompose n-gons into triangles by
-  # fan triangulation (assumes convexity)
-  # https://en.wikipedia.org/wiki/Fan_triangulation
-  v = ngon.vertices
-  Δ(i) = Triangle(view(v, [1,i,i+1]))
-  any(i -> p ∈ Δ(i), 2:N-1)
-end
+signarea(ngon::Ngon) = sum(signarea, triangulate(ngon))
+
+measure(ngon::Ngon) = sum(measure, triangulate(ngon))
+
+Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, triangulate(ngon))
 
 # ----------
 # TRIANGLES
@@ -99,6 +68,18 @@ end
 # triangles are special
 issimplex(::Type{<:Triangle}) = true
 isconvex(::Type{<:Triangle}) = true
+
+function signarea(t::Triangle{2})
+  v = t.vertices
+  signarea(v[1], v[2], v[3])
+end
+
+measure(t::Triangle{2}) = abs(signarea(t))
+
+function measure(t::Triangle{3})
+  A, B, C = t.vertices
+  norm((B - A) × (C - A)) / 2
+end
 
 function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
   # given coordinates
@@ -148,12 +129,6 @@ function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
   (λ₂ ≥ zero(T)) && (λ₃ ≥ zero(T)) && ((λ₂ + λ₃) ≤ one(T))
 end
 
-"""
-    normal(triangle)
-
-Determine the normalised normal of `triangle` in three
-dimensions
-"""
 function normal(t::Triangle{3})
   a, b, c = t.vertices
   n = (b - a) × (c - a)
