@@ -137,6 +137,9 @@ function triangulate(mesh::Mesh)
   SimpleMesh(newpoints, newconnec)
 end
 
+triangulate(sphere::Sphere) =
+  discretize(sphere, RegularDiscretization(100)) |> triangulate
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

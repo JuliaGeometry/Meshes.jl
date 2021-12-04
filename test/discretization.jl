@@ -211,6 +211,13 @@ using Base: datatype_haspadding
     @test nvertices(mesh) == 8
     @test nelements(mesh) == 4
 
+    # triangulation of spheres
+    sphere = Sphere(P3(0,0,0), T(1))
+    mesh = triangulate(sphere)
+    @test eltype(mesh) <: Triangle
+    xs = coordinates.(vertices(mesh))
+    @test all(x -> norm(x) ≈ T(1), xs)
+
     # triangulation of meshes
     grid = CartesianGrid{T}(3, 3)
     mesh = triangulate(grid)
