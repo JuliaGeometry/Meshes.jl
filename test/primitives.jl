@@ -3,6 +3,7 @@
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
     @test isconvex(l)
+    @test isnothing(boundary(l))
 
     l = Line(P2(0,0), P2(1,1))
     @test (l(0), l(1)) == (P2(0,0), P2(1,1))
@@ -14,6 +15,7 @@
     @test isconvex(r)
     @test origin(r) == P2(0,0)
     @test direction(r) == V2(1,1)
+    @test boundary(r) == P2(0,0)
 
     r = Ray(P2(0,0), V2(1,1))
     @test r(T(0.)) == P2(0,0)
@@ -30,6 +32,7 @@
     @test isconvex(p)
     @test origin(p) == P3(0, 0, 0)
     @test normal(p) == Vec(0, 0, 1)
+    @test isnothing(boundary(p))
   end
 
   @testset "Bezier curves" begin

@@ -20,6 +20,8 @@ paramdim(::Type{<:Ray}) = 1
 
 isconvex(::Type{<:Ray}) = true
 
+boundary(r::Ray) = r.p
+
 function (r::Ray)(t)
   if t < 0
     throw(DomainError(t, "r(t) is not defined for t < 0."))

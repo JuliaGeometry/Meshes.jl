@@ -20,6 +20,8 @@ paramdim(::Type{<:Line}) = 1
 
 isconvex(::Type{<:Line}) = true
 
+boundary(::Line) = nothing
+
 (l::Line)(t) = l.a + t * (l.b - l.a)
 
 function Base.in(p::Point, l::Line)

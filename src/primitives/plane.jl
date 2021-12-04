@@ -21,6 +21,8 @@ paramdim(::Type{<:Plane}) = 2
 
 isconvex(::Type{<:Plane}) = true
 
+boundary(::Plane) = nothing
+
 function (p::Plane)(s, t)
   p.pₒ + s*p.v + t*p.w
 end
