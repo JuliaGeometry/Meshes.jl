@@ -12,6 +12,15 @@ using Base: datatype_haspadding
     @test collect(elements(mesh)) == tris
   end
 
+  @testset "RegularDiscretization" begin
+    sphere = Sphere(P3(0,0,0), T(1))
+    mesh = discretize(sphere, RegularDiscretization(10))
+    @test nvertices(mesh) == 10*10 + 2
+    @test nelements(mesh) == (10)*(10-1) + 2*(10)
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(elements(mesh)) ⊆ [3,4]
+  end
+
   @testset "FIST" begin
     𝒫 = Chain(P2[(0,0),(1,0),(1,1),(2,1),(2,2),(1,2),(0,0)])
     @test Meshes.ears(𝒫) == [2,4,5]

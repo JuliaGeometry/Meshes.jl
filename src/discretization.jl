@@ -142,5 +142,6 @@ end
 # ----------------
 
 include("discretization/fan.jl")
+include("discretization/regular.jl")
 include("discretization/fist.jl")
 include("discretization/dehn.jl")

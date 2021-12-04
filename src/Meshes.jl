@@ -319,6 +319,7 @@ export
   # discretization
   DiscretizationMethod,
   FanTriangulation,
+  RegularDiscretization,
   FIST, Dehn1899,
   discretize,
   triangulate,

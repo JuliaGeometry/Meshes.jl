@@ -3,6 +3,16 @@
 # ------------------------------------------------------------------
 
 """
+    fitdims(dims, D)
+
+Fit tuple `dims` to a given length `D`
+by repeating the last dimension.
+"""
+function fitdims(dims::Dims{N}, D) where {N}
+  ntuple(i -> i ≤ N ? dims[i] : last(dims), D)
+end
+
+"""
     signarea(A, B, C)
 
 Compute signed area of triangle formed

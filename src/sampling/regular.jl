@@ -26,7 +26,7 @@ RegularSampling(sizes::Vararg{Int,N}) where {N} =
 
 function sample(::AbstractRNG, box::Box,
                 method::RegularSampling)
-  sz = _adjust_sizes(method.sizes, paramdim(box))
+  sz = fitdims(method.sizes, paramdim(box))
   l, u = extrema(box)
 
   # origin and spacing
@@ -37,7 +37,7 @@ end
 
 function sample(::AbstractRNG, sphere::Sphere{2,T},
                 method::RegularSampling) where {T}
-  sz = _adjust_sizes(method.sizes, paramdim(sphere))
+  sz = fitdims(method.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
   V = T <: AbstractFloat ? T : Float64
@@ -53,7 +53,7 @@ end
 # spherical coordinates in ISO 80000-2:2019 convention
 function sample(::AbstractRNG, sphere::Sphere{3,T},
                 method::RegularSampling) where {T}
-  sz = _adjust_sizes(method.sizes, paramdim(sphere))
+  sz = fitdims(method.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
   V = T <: AbstractFloat ? T : Float64
@@ -71,7 +71,7 @@ end
 
 function sample(::AbstractRNG, ball::Ball{Dim,T},
                 method::RegularSampling) where {Dim,T}
-  sz = _adjust_sizes(method.sizes, paramdim(ball))
+  sz = fitdims(method.sizes, paramdim(ball))
   c, r = center(ball), radius(ball)
 
   V = T <: AbstractFloat ? T : Float64
@@ -89,14 +89,14 @@ end
 
 function sample(::AbstractRNG, seg::Segment{Dim,T},
                 method::RegularSampling) where {Dim,T}
-  sz = _adjust_sizes(method.sizes, paramdim(seg))
+  sz = fitdims(method.sizes, paramdim(seg))
   trange = range(T(0), T(1), length=sz[1])
   (seg(t) for t in trange)
 end
 
 function sample(::AbstractRNG, quad::Quadrangle{Dim,T},
                 method::RegularSampling) where {Dim,T}
-  sz = _adjust_sizes(method.sizes, paramdim(quad))
+  sz = fitdims(method.sizes, paramdim(quad))
   urange = range(T(0), T(1), length=sz[1])
   vrange = range(T(0), T(1), length=sz[2])
   ivec(quad(u, v) for u in urange, v in vrange)
@@ -104,15 +104,9 @@ end
 
 function sample(::AbstractRNG, hex::Hexahedron{Dim,T},
                 method::RegularSampling) where {Dim,T}
-  sz = _adjust_sizes(method.sizes, paramdim(hex))
+  sz = fitdims(method.sizes, paramdim(hex))
   urange = range(T(0), T(1), length=sz[1])
   vrange = range(T(0), T(1), length=sz[2])
   wrange = range(T(0), T(1), length=sz[3])
   ivec(hex(u, v, w) for u in urange, v in vrange, w in wrange)
-end
-
-# helper function to adjust sizes to a given length
-function _adjust_sizes(sizes, len)
-  N, S = len, length(sizes)
-  S != N ? ntuple(i -> i ≤ S ? sizes[i] : last(sizes), N) : sizes
 end

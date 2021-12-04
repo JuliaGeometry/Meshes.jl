@@ -27,6 +27,22 @@ viz(fig[1,2], mesh, showfacets = true)
 fig
 ```
 
+## RegularDiscretization
+
+```@docs
+RegularDiscretization
+```
+
+```@example discretization
+sphere = Sphere((0.,0.,0.), 1.)
+
+mesh = discretize(sphere, RegularDiscretization(10,10))
+
+fig = Mke.Figure(resolution = (400, 400))
+viz(fig[1,1], mesh, showfacets = true)
+fig
+```
+
 ## Dehn1899
 
 ```@docs
