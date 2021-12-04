@@ -135,6 +135,7 @@
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
     @test !isconvex(s)
+    @test isnothing(boundary(s))
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
