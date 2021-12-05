@@ -16,12 +16,29 @@ end
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} =
   RegularDiscretization(sizes)
 
+function discretize(sphere::Sphere{2,T},
+                    method::RegularDiscretization) where {T}
+  sz = fitdims(method.sizes, paramdim(sphere))
+  nx = sz[1]
+
+  # sample points regularly
+  sampler = RegularSampling(nx)
+  points  = collect(sample(sphere, sampler))
+
+  # connect regular samples with segments
+  topo   = GridTopology(nx-1)
+  connec = collect(elements(topo))
+  push!(connec, connect((nx,1)))
+
+  SimpleMesh(points, connec)
+end
+
 function discretize(sphere::Sphere{3,T},
                     method::RegularDiscretization) where {T}
   nx, ny = fitdims(method.sizes, paramdim(sphere))
 
   # sample points regularly
-  sampler = RegularSampling((nx, ny))
+  sampler = RegularSampling(nx, ny)
   points  = collect(sample(sphere, sampler))
 
   # connect regular samples with quadrangles
