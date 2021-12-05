@@ -103,8 +103,8 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
 end
 
 function boundary(curve::BezierCurve)
-  points = curve.controls
-  a = first(points)
-  b = last(points)
+  p = curve.controls
+  a = first(p)
+  b = last(p)
   a == b ? nothing : PointSet([a, b])
 end
