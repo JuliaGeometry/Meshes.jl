@@ -184,5 +184,7 @@ function intersecttype(f::Function, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return NoIntersection() |> f
   end
 
+  λ = clamp(λ, zero(T), typemax(T))
+
   return IntersectingRayTriangle(r(λ)) |> f
 end
