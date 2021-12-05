@@ -104,5 +104,7 @@ end
 
 function boundary(curve::BezierCurve)
   points = curve.controls
-  PointSet(unique([first(points), last(points)]))
+  a = first(points)
+  b = last(points)
+  a == b ? nothing : PointSet([a, b])
 end
