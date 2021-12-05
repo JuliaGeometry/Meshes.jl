@@ -19,14 +19,14 @@ struct Plane{T} <: Primitive{3,T}
   v::Vec{3,T}
 end
 
-function Plane(p::Point{3,T}, n::Vec{3,T}) where {T}
+function Plane{T}(p::Point{3,T}, n::Vec{3,T}) where {T}
   # origin of coordinate system
-  o = Vec{3,T}(0, 0, 0)
+  o = Vec{3,T}(zero(T), zero(T), zero(T))
 
   uv = Vec{3,T}[]
   for i in 1:3
     # subtract projection of Euclidean basis onto normal
-    e = Vec{3,T}(ntuple(j -> j == i ? 1 : 0, 3))
+    e = Vec{3,T}(ntuple(j -> j == i ? one(T) : zero(T), 3))
     v = e - (e⋅n)/(n⋅n) * n
 
     # check if it is a valid vector
@@ -36,14 +36,14 @@ function Plane(p::Point{3,T}, n::Vec{3,T}) where {T}
     length(uv) == 2 && break
   end
 
-  Plane(p, uv[1], uv[2])
+  Plane{T}(p, uv[1], uv[2])
 end
 
-Plane(p::Tuple, u::Tuple, v::Tuple) =
-  Plane(Point(p), Vec(u), Vec(v))
+Plane(p::Point{3,T}, n::Vec{3,T}) where {T} = Plane{T}(p, n)
 
-Plane(p::Tuple, n::Tuple) =
-  Plane(Point(p), Vec(n))
+Plane(p::Tuple, u::Tuple, v::Tuple) = Plane(Point(p), Vec(u), Vec(v))
+
+Plane(p::Tuple, n::Tuple) = Plane(Point(p), Vec(n))
 
 paramdim(::Type{<:Plane}) = 2
 
