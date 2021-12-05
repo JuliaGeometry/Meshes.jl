@@ -6,6 +6,8 @@
     Sphere(center, radius)
 
 A sphere with `center` and `radius`.
+
+See also [`Ball`](@ref).
 """
 struct Sphere{Dim,T} <: Primitive{Dim,T}
   center::Point{Dim,T}

@@ -6,6 +6,8 @@
     Ball(center, radius)
 
 A ball with `center` and `radius`.
+
+See also [`Sphere`](@ref).
 """
 struct Ball{Dim,T} <: Primitive{Dim,T}
   center::Point{Dim,T}
