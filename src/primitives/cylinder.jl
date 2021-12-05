@@ -3,15 +3,15 @@
 # ------------------------------------------------------------------
 
 """
-    Cylinder(radius, axis, bottom, top)
+    Cylinder(radius, bottom, top)
 
-A solid circular cylinder embedded in R³ with given `radius` around `axis`,
+A solid circular cylinder embedded in R³ with given `radius`,
 delimited by `bottom` and `top` planes.
 
     Cylinder(radius, segment)
 
 Alternatively, construct a right circular cylinder with given `radius`
-and `segment` of axis.
+and `segment` between origin of `bottom` and `top` planes.
 
     Cylinder(radius)
 
@@ -21,7 +21,6 @@ See https://en.wikipedia.org/wiki/Cylinder.
 """
 struct Cylinder{T} <: Primitive{3,T}
   radius::T
-  axis::Line{3,T}
   bot::Plane{T}
   top::Plane{T}
 end
@@ -29,10 +28,9 @@ end
 function Cylinder(radius::T, segment::Segment{3,T}) where {T}
   a, b = extrema(segment)
   v    = b - a
-  axis = Line(a, b)
   bot  = Plane(a, v)
   top  = Plane(b, v)
-  Cylinder(radius, axis, bot, top)
+  Cylinder(radius, bot, top)
 end
 
 function Cylinder(radius::T) where {T}
@@ -48,11 +46,10 @@ isconvex(::Type{<:Cylinder}) = true
 
 radius(c::Cylinder) = c.radius
 
-axis(c::Cylinder) = c.axis
+axis(c::Cylinder) = Line(origin(c.bot), origin(c.top))
 
 planes(c::Cylinder) = (c.bot, c.top)
 
 isright(c::Cylinder) = isright(boundary(c))
 
-boundary(c::Cylinder) =
-  CylinderSurface(c.radius, c.axis, c.bot, c.top)
+boundary(c::Cylinder) = CylinderSurface(c.radius, c.bot, c.top)

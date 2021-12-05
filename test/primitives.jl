@@ -185,7 +185,6 @@
 
   @testset "Cylinder" begin
     c = Cylinder(T(5),
-                 Line(P3(1,2,3), P3(4,5,6)),
                  Plane(P3(1,2,3), V3(0,0,1)),
                  Plane(P3(4,5,6), V3(0,0,1)))
     @test embeddim(c) == 3
