@@ -154,9 +154,8 @@ export
   Line, Ray, Plane, BezierCurve,
   Box, Ball, Sphere, Cylinder, CylinderSurface,
   ncontrols, degree, Horner, DeCasteljau,
-  radius, axis, height, sides,
-  measure, diagonal,
-  origin, direction,
+  radius, axis, height, isright, sides,
+  measure, diagonal, origin, direction,
 
   # polytopes
   Polytope, Polygon, Polyhedron,

@@ -193,10 +193,12 @@
     @test coordtype(c) == T
     @test radius(c) == T(5)
     @test isconvex(c)
+    @test !isright(c)
 
     c = Cylinder(T(1), Segment(P3(0,0,0), P3(0,0,1)))
     @test radius(c) == T(1)
     @test axis(c) == Line(P3(0,0,0), P3(0,0,1))
+    @test isright(c)
     @test boundary(c) == CylinderSurface(T(1), Segment(P3(0,0,0), P3(0,0,1)))
   end
 
@@ -207,6 +209,7 @@
     @test coordtype(c) == T
     @test radius(c) == T(2)
     @test isconvex(c)
+    @test isright(c)
     @test isnothing(boundary(c))
   end
 end

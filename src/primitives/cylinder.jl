@@ -36,8 +36,8 @@ function Cylinder(radius::T, segment::Segment{3,T}) where {T}
 end
 
 function Cylinder(radius::T) where {T}
-  _0 = (zero(T), zero(T), zero(T))
-  _1 = (zero(T), zero(T), one(T))
+  _0 = (T(0), T(0), T(0))
+  _1 = (T(0), T(0), T(1))
   segment = Segment(_0, _1)
   Cylinder(radius, segment)
 end
@@ -49,6 +49,8 @@ isconvex(::Type{<:Cylinder}) = true
 radius(c::Cylinder) = c.radius
 
 axis(c::Cylinder) = c.axis
+
+isright(c::Cylinder) = isright(boundary(c))
 
 boundary(c::Cylinder) =
   CylinderSurface(c.radius, c.axis, c.bot, c.top)

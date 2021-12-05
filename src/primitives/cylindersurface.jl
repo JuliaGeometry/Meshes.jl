@@ -36,8 +36,8 @@ function CylinderSurface(radius::T, segment::Segment{3,T}) where {T}
 end
 
 function CylinderSurface(radius::T) where {T}
-  _0 = (zero(T), zero(T), zero(T))
-  _1 = (zero(T), zero(T), one(T))
+  _0 = (T(0), T(0), T(0))
+  _1 = (T(0), T(0), T(1))
   segment = Segment(_0, _1)
   CylinderSurface(radius, segment)
 end
@@ -49,5 +49,16 @@ isconvex(::Type{<:CylinderSurface}) = true
 radius(c::CylinderSurface) = c.radius
 
 axis(c::CylinderSurface) = c.axis
+
+function isright(c::CylinderSurface{T}) where {T}
+  # cylinder is right if axis
+  # is aligned with plane normals
+  d = c.axis(T(1)) - c.axis(T(0))
+  v = normal(c.bot)
+  w = normal(c.top)
+  isparallelv = isapprox(norm(d × v), zero(T), atol=atol(T))
+  isparallelw = isapprox(norm(d × w), zero(T), atol=atol(T))
+  isparallelv && isparallelw
+end
 
 boundary(::CylinderSurface) = nothing
