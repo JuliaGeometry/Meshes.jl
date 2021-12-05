@@ -2,8 +2,10 @@
 
 ```@docs
 discretize
+discretizewithin
 triangulate
 DiscretizationMethod
+BoundaryDiscretizationMethod
 ```
 
 ## FanTriangulation

@@ -26,16 +26,19 @@ generator `rng`.
   constrained Delaunay triangulation of polygons]
   (https://www.sciencedirect.com/science/article/pii/S092577211830004X)
 """
-struct FIST{RNG<:AbstractRNG} <: DiscretizationMethod
+struct FIST{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
   rng::RNG
   shuffle::Bool
 end
 
 FIST(rng=Random.GLOBAL_RNG; shuffle=true) = FIST(rng, shuffle)
 
-function discretize(𝒫::Chain{2}, method::FIST)
+function discretizewithin(chain::Chain{2}, method::FIST)
   # helper function to shuffle ears
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
+
+  # input polygonal chain
+  𝒫 = chain
 
   # points of resulting mesh
   points = vertices(𝒫)

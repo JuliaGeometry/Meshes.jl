@@ -19,11 +19,11 @@ with small number of vertices. Currently, the implementation does not support ho
 * Devadoss, S & Rourke, J. 2011. [Discrete and computational geometry]
   (https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
 """
-struct Dehn1899 <: DiscretizationMethod end
+struct Dehn1899 <: BoundaryDiscretizationMethod end
 
-function discretize(𝒫::Chain{2}, ::Dehn1899)
+function discretizewithin(chain::Chain{2}, ::Dehn1899)
   # points on resulting mesh
-  points = collect(vertices(𝒫))
+  points = collect(vertices(chain))
 
   # Dehn's recursion
   connec = dehn1899(points, 1:length(points))

@@ -92,14 +92,14 @@ using Base: datatype_haspadding
       hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
       poly  = PolyArea(outer, [hole1, hole2])
       chain, _ = bridge(poly, width=0.01)
-      mesh  = discretize(chain, method)
+      mesh  = discretizewithin(chain, method)
       @test nvertices(mesh) == 16
       @test nelements(mesh) == 14
       @test all(t -> area(t) > zero(T), mesh)
 
       # 3D chains
       chain = Chain(P3[(0,0,0), (1,0,0), (1,1,0), (0,1,1), (0,0,0)])
-      mesh  = discretize(chain, method)
+      mesh  = discretizewithin(chain, method)
       @test vertices(mesh) == vertices(chain)
       @test eltype(mesh) <: Triangle
       @test nelements(mesh) == 2

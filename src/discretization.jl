@@ -16,36 +16,30 @@ Discretize `geometry` with discretization `method`.
 """
 function discretize end
 
-function discretize(chain::Chain{3}, method::DiscretizationMethod)
-  points = vertices(chain)
+"""
+    BoundaryDiscretizationMethod
 
-  # project points on 2D plane using SVD
-  # https://math.stackexchange.com/a/99317
-  X = mapreduce(coordinates, hcat, points)
-  μ = sum(X, dims=2) / size(X, 2)
-  Z = X .- μ
-  U = svd(Z).U
-  u = U[:,1]
-  v = U[:,2]
+A method for discretizing geometries based on their boundary.
+"""
+abstract type BoundaryDiscretizationMethod <: DiscretizationMethod end
 
-  # projected points
-  projected = [Point(z⋅u, z⋅v) for z in eachcol(Z)]
+"""
+    discretizewithin(boundary, method)
 
-  # discretize 2D chain
-  chain2D = Chain([collect(projected); first(projected)])
-  mesh = discretize(chain2D, method)
+Discretize geometry within `boundary` with boundary discretization `method`.
+"""
+function discretizewithin end
 
-  # return mesh with original points
-  SimpleMesh(collect(points), topology(mesh))
-end
+discretize(geometry, method::BoundaryDiscretizationMethod) =
+  discretizewithin(boundary(geometry), method)
 
-function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where {Dim,T}
+function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMethod) where {Dim,T}
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
   chain, dups = bridge(unique(polygon), width=2atol(T))
 
   # discretize using outer boundary
-  mesh = discretize(chain, method)
+  mesh = discretizewithin(chain, method)
 
   if isempty(dups)
     # nothing to be done, return mesh
@@ -81,22 +75,45 @@ function discretize(polygon::Polygon{Dim,T}, method::DiscretizationMethod) where
   end
 end
 
-discretize(multi::Multi, method::DiscretizationMethod) =
+discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, multi)
+
+function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
+  points = vertices(chain)
+
+  # project points on 2D plane using SVD
+  # https://math.stackexchange.com/a/99317
+  X = mapreduce(coordinates, hcat, points)
+  μ = sum(X, dims=2) / size(X, 2)
+  Z = X .- μ
+  U = svd(Z).U
+  u = U[:,1]
+  v = U[:,2]
+
+  # projected points
+  projected = [Point(z⋅u, z⋅v) for z in eachcol(Z)]
+
+  # discretize within 2D chain
+  chain2D = Chain([collect(projected); first(projected)])
+  mesh    = discretizewithin(chain2D, method)
+
+  # return mesh with original points
+  SimpleMesh(collect(points), topology(mesh))
+end
 
 """
     triangulate(object)
 
-Discretize `object` of parametric dimension 2 into
-triangles using an appropriate discretization method.
+Triangulate `object` of parametric dimension 2 into
+triangles using an appropriate triangulation method.
 """
 function triangulate end
 
-triangulate(box::Box{2}) = discretize(boundary(box), FanTriangulation())
+triangulate(box::Box{2}) = discretize(box, FanTriangulation())
 
-triangulate(tri::Triangle) = discretize(boundary(tri), FanTriangulation())
+triangulate(tri::Triangle) = discretize(tri, FanTriangulation())
 
-triangulate(quad::Quadrangle) = discretize(boundary(quad), FanTriangulation())
+triangulate(quad::Quadrangle) = discretize(quad, FanTriangulation())
 
 triangulate(ngon::Ngon) = discretize(ngon, Dehn1899())
 

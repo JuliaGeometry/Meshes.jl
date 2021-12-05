@@ -317,10 +317,12 @@ export
 
   # discretization
   DiscretizationMethod,
+  BoundaryDiscretizationMethod,
   FanTriangulation,
   RegularDiscretization,
   FIST, Dehn1899,
   discretize,
+  discretizewithin,
   triangulate,
 
   # simplification
