@@ -189,5 +189,9 @@
     @test coordtype(c) == T
     @test radius(c) == T(5)
     @test isconvex(c)
+
+    c = Cylinder(T(1), Segment(P3(0,0,0), P3(0,0,1)))
+    @test radius(c) == T(1)
+    @test axis(c) == Line(P3(0,0,0), P3(0,0,1))
   end
 end

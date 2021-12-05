@@ -87,8 +87,8 @@ issimplex(g::Geometry) = issimplex(typeof(g))
 # IMPLEMENTATIONS
 # ----------------
 
-include("primitives.jl")
 include("polytopes.jl")
+include("primitives.jl")
 
 """
     PointOrGeometry{Dim,T}

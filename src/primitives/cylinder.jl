@@ -24,13 +24,20 @@ struct Cylinder{T} <: Primitive{3,T}
   top::Plane{T}
 end
 
+function Cylinder(radius::T, segment::Segment{3,T}) where {T}
+  a, b = extrema(segment)
+  v    = b - a
+  axis = Line(a, b)
+  bot  = Plane(a, v)
+  top  = Plane(b, v)
+  Cylinder(radius, axis, bot, top)
+end
+
 function Cylinder(radius::T) where {T}
   _0   = (zero(T), zero(T), zero(T))
   _1   = (zero(T), zero(T), one(T))
-  axis = Line( _0, _1)
-  bot  = Plane(_0, _1)
-  top  = Plane(_1, _1)
-  Cylinder(radius, axis, bot, top)
+  segment = Segment(_0, _1)
+  Cylinder(radius, segment)
 end
 
 paramdim(::Type{<:Cylinder}) = 3
@@ -38,3 +45,5 @@ paramdim(::Type{<:Cylinder}) = 3
 isconvex(::Type{<:Cylinder}) = true
 
 radius(c::Cylinder) = c.radius
+
+axis(c::Cylinder) = c.axis
