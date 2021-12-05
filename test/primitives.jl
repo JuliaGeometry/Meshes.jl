@@ -26,13 +26,21 @@
 
   @testset "Planes" begin
     p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
-    @test p(T(1.0), T(0.0)) == P3(1, 0, 0)
+    @test p(T(1), T(0)) == P3(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
     @test isconvex(p)
     @test origin(p) == P3(0, 0, 0)
     @test normal(p) == Vec(0, 0, 1)
     @test isnothing(boundary(p))
+
+    p = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    @test p(T(1), T(0)) == P3(1, 0, 0)
+    @test p(T(0), T(1)) == P3(0, 1, 0)
+
+    p1 = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
+    p2 = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    @test p1 == p2
   end
 
   @testset "Bezier curves" begin

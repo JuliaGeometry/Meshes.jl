@@ -10,7 +10,7 @@ and apply function `f` to it. See
 [https://en.wikipedia.org/wiki/Line-plane_intersection]
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
 """
-function intersecttype(f::Function, s::Segment{3,T}, p::Plane{3,T}) where {T}
+function intersecttype(f::Function, s::Segment{3,T}, p::Plane{T}) where {T}
   sᵥ = coordinates.(vertices(s))
   pₒ = coordinates(origin(p))
   n  = normal(p)
