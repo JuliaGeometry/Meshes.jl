@@ -3,52 +3,51 @@
 # ------------------------------------------------------------------
 
 """
-    Cylinder(radius, axis, bottom, top)
+    CylinderSurface(radius, axis, bottom, top)
 
-A solid circular cylinder embedded in R³ with given `radius` around `axis`,
+A circular cylinder surface embedded in R³ with given `radius` around `axis`,
 delimited by `bottom` and `top` planes.
 
-    Cylinder(radius, segment)
+    CylinderSurface(radius, segment)
 
 Alternatively, construct a right circular cylinder with given `radius`
 and `segment` of axis.
 
-    Cylinder(radius)
+    CylinderSurface(radius)
 
 Finally, construct a right vertical circular cylinder with given `radius`.
 
 See https://en.wikipedia.org/wiki/Cylinder. 
 """
-struct Cylinder{T} <: Primitive{3,T}
+struct CylinderSurface{T} <: Primitive{3,T}
   radius::T
   axis::Line{3,T}
   bot::Plane{T}
   top::Plane{T}
 end
 
-function Cylinder(radius::T, segment::Segment{3,T}) where {T}
+function CylinderSurface(radius::T, segment::Segment{3,T}) where {T}
   a, b = extrema(segment)
   v    = b - a
   axis = Line(a, b)
   bot  = Plane(a, v)
   top  = Plane(b, v)
-  Cylinder(radius, axis, bot, top)
+  CylinderSurface(radius, axis, bot, top)
 end
 
-function Cylinder(radius::T) where {T}
+function CylinderSurface(radius::T) where {T}
   _0 = (zero(T), zero(T), zero(T))
   _1 = (zero(T), zero(T), one(T))
   segment = Segment(_0, _1)
-  Cylinder(radius, segment)
+  CylinderSurface(radius, segment)
 end
 
-paramdim(::Type{<:Cylinder}) = 3
+paramdim(::Type{<:CylinderSurface}) = 2
 
-isconvex(::Type{<:Cylinder}) = true
+isconvex(::Type{<:CylinderSurface}) = true
 
-radius(c::Cylinder) = c.radius
+radius(c::CylinderSurface) = c.radius
 
-axis(c::Cylinder) = c.axis
+axis(c::CylinderSurface) = c.axis
 
-boundary(c::Cylinder) =
-  CylinderSurface(c.radius, c.axis, c.bot, c.top)
+boundary(::CylinderSurface) = nothing

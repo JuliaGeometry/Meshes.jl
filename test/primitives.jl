@@ -193,5 +193,16 @@
     c = Cylinder(T(1), Segment(P3(0,0,0), P3(0,0,1)))
     @test radius(c) == T(1)
     @test axis(c) == Line(P3(0,0,0), P3(0,0,1))
+    @test boundary(c) == CylinderSurface(T(1), Segment(P3(0,0,0), P3(0,0,1)))
+  end
+
+  @testset "CylinderSurface" begin
+    c = CylinderSurface(T(2))
+    @test embeddim(c) == 3
+    @test paramdim(c) == 2
+    @test coordtype(c) == T
+    @test radius(c) == T(2)
+    @test isconvex(c)
+    @test isnothing(boundary(c))
   end
 end
