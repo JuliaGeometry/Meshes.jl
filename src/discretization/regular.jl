@@ -89,3 +89,43 @@ function discretize(sphere::Sphere{3,T},
 
   SimpleMesh(points, connec)
 end
+
+function discretize(ball::Ball{2,T},
+                    method::RegularDiscretization) where {T}
+  nx, ny = fitdims(method.sizes, paramdim(ball))
+
+  # sample points regularly
+  sampler = RegularSampling(nx, ny)
+  points  = collect(sample(ball, sampler))
+
+  # connect regular samples with quadrangles
+  topo   = GridTopology((nx-1, ny-1))
+  rings  = collect(elements(topo))
+  for j in 1:ny-1
+    u = (j  )*nx
+    v = (j-1)*nx + 1
+    w = (j  )*nx + 1
+    z = (j+1)*nx
+    quad = connect((u, v, w, z))
+    push!(rings, quad)
+  end
+
+  # add point at center
+  push!(points, center(ball))
+
+  # connect center with triangles
+  tris = map(1:nx-1) do i
+    u = nx*ny + 1
+    v = i + 1
+    w = i
+    connect((u, v, w))
+  end
+  u = nx*ny + 1
+  v = 1
+  w = nx
+  push!(tris, connect((u, v, w)))
+
+  connec = [rings; tris]
+
+  SimpleMesh(points, connec)
+end
