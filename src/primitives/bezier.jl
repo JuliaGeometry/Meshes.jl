@@ -101,3 +101,11 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   b₀ = bᵢ₋₁
   Point(b₀)
 end
+
+function boundary(curve::BezierCurve{Dim,T}) where {Dim,T}
+  return if ncontrols(curve) == 1
+    curve.controls[1]
+  else
+    PointSet(curve.controls[begin], curve.controls[end])
+  end
+end
