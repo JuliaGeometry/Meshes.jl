@@ -157,6 +157,9 @@ end
 triangulate(sphere::Sphere{3}) =
   discretize(sphere, RegularDiscretization(100)) |> triangulate
 
+triangulate(ball::Ball{2}) =
+  discretize(ball, RegularDiscretization(100)) |> triangulate
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

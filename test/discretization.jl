@@ -232,6 +232,13 @@ using Base: datatype_haspadding
     xs = coordinates.(vertices(mesh))
     @test all(x -> norm(x) ≈ T(1), xs)
 
+    # triangulation of balls
+    ball = Ball(P2(0,0), T(1))
+    mesh = triangulate(ball)
+    @test eltype(mesh) <: Triangle
+    xs = coordinates.(vertices(mesh))
+    @test all(x -> norm(x) ≤ T(1) + eps(T), xs)
+
     # triangulation of meshes
     grid = CartesianGrid{T}(3, 3)
     mesh = triangulate(grid)
