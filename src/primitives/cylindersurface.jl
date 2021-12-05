@@ -50,6 +50,8 @@ radius(c::CylinderSurface) = c.radius
 
 axis(c::CylinderSurface) = c.axis
 
+planes(c::CylinderSurface) = (c.bot, c.top)
+
 function isright(c::CylinderSurface{T}) where {T}
   # cylinder is right if axis
   # is aligned with plane normals

@@ -50,6 +50,8 @@ radius(c::Cylinder) = c.radius
 
 axis(c::Cylinder) = c.axis
 
+planes(c::Cylinder) = (c.bot, c.top)
+
 isright(c::Cylinder) = isright(boundary(c))
 
 boundary(c::Cylinder) =
