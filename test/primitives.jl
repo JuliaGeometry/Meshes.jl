@@ -50,8 +50,8 @@
     end
 
     @test boundary(b) == PointSet(P2(0,0),P2(1,0))
-    b = BezierCurve(P2(0,0))
-    @test boundary(b) == PointSet(P2(0,0))
+    b = BezierCurve(P2(0,0), P2(1,1))
+    @test boundary(b) == PointSet([P2(0,0), P2(1,1)])
 
     b = BezierCurve(P2.(randn(100), randn(100)))
     t1 = @timed b(T(0.2))
