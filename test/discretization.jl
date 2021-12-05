@@ -13,12 +13,26 @@ using Base: datatype_haspadding
   end
 
   @testset "RegularDiscretization" begin
+    sphere = Sphere(P2(0,0), T(1))
+    mesh = discretize(sphere, RegularDiscretization(10))
+    @test nvertices(mesh) == 10
+    @test nelements(mesh) == 10
+    @test eltype(mesh) <: Segment
+    @test nvertices.(mesh) ⊆ [2]
+
     sphere = Sphere(P3(0,0,0), T(1))
     mesh = discretize(sphere, RegularDiscretization(10))
     @test nvertices(mesh) == 10*10 + 2
     @test nelements(mesh) == (10)*(10-1) + 2*(10)
     @test eltype(mesh) <: Ngon
-    @test nvertices.(elements(mesh)) ⊆ [3,4]
+    @test nvertices.(mesh) ⊆ [3,4]
+
+    ball = Ball(P2(0,0), T(1))
+    mesh = discretize(ball, RegularDiscretization(10))
+    @test nvertices(mesh) == 10*10 + 1
+    @test nelements(mesh) == (10)*(10-1) + 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3,4]
   end
 
   @testset "FIST" begin
