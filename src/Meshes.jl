@@ -215,6 +215,7 @@ export
   # miscellaneous
   supportfun,
   laplacematrix,
+  measurematrix,
 
   # connectivities
   Connectivity,

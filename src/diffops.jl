@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    laplacematrix(mesh; weights=:uniform)
+    laplacematrix(mesh; weights=:cotangent)
 
 The Laplace-Beltrami (a.k.a. Laplacian) matrix of the `mesh`.
 Optionally specify the discretization `weights`.
@@ -20,7 +20,7 @@ Optionally specify the discretization `weights`.
 * Pinkall, U. & Polthier, K. 1993. [Computing discrete minimal surfaces and their conjugates]
   (https://projecteuclid.org/journals/experimental-mathematics/volume-2/issue-1/Computing-discrete-minimal-surfaces-and-their-conjugates/em/1062620735.full).
 """
-function laplacematrix(mesh; weights=:uniform)
+function laplacematrix(mesh; weights=:cotangent)
   # convert to half-edge topology
   ℳ = topoconvert(HalfEdgeTopology, mesh)
 
@@ -70,4 +70,38 @@ function cotangentlaplacian!(L, 𝒩, v)
     end
     L[i,i] = -sum(L[i,js])
   end
+end
+
+"""
+    measurematrix(mesh)
+
+The measure (or "mass") matrix of the `mesh`, i.e. a diagonal
+matrix with entries `Mᵢᵢ = 2Aᵢ` where `Aᵢ` is (one-third of) the
+sum of the areas of triangles sharing vertex `i`.
+
+The discrete cotagent Laplace-Beltrami operator can be written
+as `Δ = M⁻¹L`. When solving systems of the form `Δu = f`, it
+is useful to write `Lu = Mf` and exploit the symmetry of `L`.
+"""
+function measurematrix(mesh)
+  # convert to half-edge topology
+  ℳ = topoconvert(HalfEdgeTopology, mesh)
+
+  # retrieve coboundary relation
+  ∂ = Coboundary{0,2}(topology(ℳ))
+
+  # initialize matrix
+  n = nvertices(ℳ)
+  M = 1.0*I(n)
+
+  # pre-compute all measures
+  A = measure.(ℳ)
+
+  # fill matrix with measures
+  for i in 1:n
+    Aᵢ = sum(A[∂(i)]) / 3
+    M[i,i] = 2Aᵢ
+  end
+
+  M
 end

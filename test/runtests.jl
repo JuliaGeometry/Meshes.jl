@@ -7,6 +7,7 @@ using LinearAlgebra
 using CategoricalArrays
 using CircularArrays
 using StaticArrays
+using SparseArrays
 using PlyIO
 using Test, Random, Plots
 using ReferenceTests, ImageIO
