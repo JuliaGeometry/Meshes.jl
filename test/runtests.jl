@@ -81,7 +81,7 @@ testfiles = [
   "neighborhoods.jl",
   "neighborsearch.jl",
   "supportfun.jl",
-  "laplacian.jl",
+  "diffops.jl",
   "views.jl",
   "viewing.jl",
   "sampling.jl",
