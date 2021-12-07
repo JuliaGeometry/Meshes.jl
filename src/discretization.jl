@@ -46,7 +46,7 @@ function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMetho
     mesh
   else
     # remove duplicate vertices
-    points = collect(vertices(mesh))
+    points = vertices(mesh)
     for (i, j) in dups
       points[i] = centroid(Segment(points[i], points[j]))
     end
@@ -147,11 +147,10 @@ function triangulate(mesh::Mesh)
     append!(ginds, einds)
   end
 
-  # new points and connectivities
-  newpoints = collect(points)
+  # new connectivities
   newconnec = connect.(Tuple.(ginds), Triangle)
 
-  SimpleMesh(newpoints, newconnec)
+  SimpleMesh(points, newconnec)
 end
 
 triangulate(sphere::Sphere{3}) =
