@@ -226,7 +226,7 @@
     grid = CartesianGrid{T}(10,10)
     mesh = convert(SimpleMesh, grid)
     @test mesh isa SimpleMesh
-    @test topology(mesh) isa FullTopology
+    @test topology(mesh) == GridTopology(10,10)
     @test nvertices(mesh) == 121
     @test nelements(mesh) == 100
     @test eltype(mesh) <: Quadrangle

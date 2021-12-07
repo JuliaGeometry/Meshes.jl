@@ -36,4 +36,4 @@ Convert any `mesh` to a simple mesh with explicit
 list of points and [`FullTopology`](@ref).
 """
 Base.convert(::Type{<:SimpleMesh}, m::Mesh) =
-  topoconvert(FullTopology, m)
+  SimpleMesh(vertices(m), topology(m))

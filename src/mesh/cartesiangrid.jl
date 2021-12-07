@@ -105,7 +105,7 @@ spacing(g::CartesianGrid) = g.spacing
 
 function vertices(g::CartesianGrid)
   inds = CartesianIndices(g.dims .+ 1)
-  ivec(g.origin + (ind.I .- 1) .* g.spacing for ind in inds)
+  vec([g.origin + (ind.I .- 1) .* g.spacing for ind in inds])
 end
 
 elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))

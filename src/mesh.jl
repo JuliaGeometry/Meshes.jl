@@ -112,7 +112,7 @@ newmesh = topoconvert(HalfEdgeTopology, mesh)
 ```
 """
 topoconvert(TP::Type{<:Topology}, m::Mesh) =
-  SimpleMesh(collect(vertices(m)), convert(TP, topology(m)))
+  SimpleMesh(vertices(m), convert(TP, topology(m)))
 
 """
     merge(mesh₁, mesh₂)
@@ -123,8 +123,8 @@ and adjust the connectivities accordingly.
 function Base.merge(m₁::Mesh, m₂::Mesh)
   t₁ = topology(m₁)
   t₂ = topology(m₂)
-  v₁ = collect(vertices(m₁))
-  v₂ = collect(vertices(m₂))
+  v₁ = vertices(m₁)
+  v₂ = vertices(m₂)
   e₁ = collect(elements(t₁))
   e₂ = collect(elements(t₂))
 
