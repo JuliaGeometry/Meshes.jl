@@ -79,7 +79,8 @@ discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, multi)
 
 function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
-  points = vertices(chain)
+  # collect vertices to get rid of static containers
+  points = vertices(chain) |> collect
 
   # project points on 2D plane using SVD
   # https://math.stackexchange.com/a/99317
@@ -94,11 +95,11 @@ function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
   projected = [Point(z⋅u, z⋅v) for z in eachcol(Z)]
 
   # discretize within 2D chain
-  chain2D = Chain([collect(projected); first(projected)])
+  chain2D = Chain([projected; first(projected)])
   mesh    = discretizewithin(chain2D, method)
 
   # return mesh with original points
-  SimpleMesh(collect(points), topology(mesh))
+  SimpleMesh(points, topology(mesh))
 end
 
 """
