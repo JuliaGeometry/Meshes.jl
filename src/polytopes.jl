@@ -190,7 +190,13 @@ the bridges.
 * Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T} = bridge(chains(p), width=width)
+function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
+  if hasholes(p)
+    bridge(chains(p), width=width)
+  else
+    first(chains(p)), []
+  end
+end
 
 # -----------
 # POLYHEDRON
