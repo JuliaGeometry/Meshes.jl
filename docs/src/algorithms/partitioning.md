@@ -5,10 +5,10 @@ partition
 PartitionMethod
 ```
 
-## Random
+## Uniform
 
 ```@docs
-RandomPartition
+UniformPartition
 ```
 
 ## Fraction
