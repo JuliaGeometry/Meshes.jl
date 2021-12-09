@@ -69,3 +69,20 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
   w = windingnumber(p, c)
   ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
 end
+
+"""
+    proj2D(points)
+
+Convert a vector of 3D `points` into a vector of 2D
+points living in a plane of maximum variance using SVD.
+"""
+function proj2D(points::AbstractVector{Point{3,T}}) where {T}
+  # https://math.stackexchange.com/a/99317
+  X = mapreduce(coordinates, hcat, points)
+  μ = sum(X, dims=2) / size(X, 2)
+  Z = X .- μ
+  U = svd(Z).U
+  u = U[:,1]
+  v = U[:,2]
+  [Point(z⋅u, z⋅v) for z in eachcol(Z)]
+end

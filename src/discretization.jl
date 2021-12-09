@@ -82,19 +82,10 @@ function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
   points = vertices(chain) |> collect
 
-  # project points on 2D plane using SVD
-  # https://math.stackexchange.com/a/99317
-  X = mapreduce(coordinates, hcat, points)
-  μ = sum(X, dims=2) / size(X, 2)
-  Z = X .- μ
-  U = svd(Z).U
-  u = U[:,1]
-  v = U[:,2]
+  # project points on 2D plane of maximum variance
+  projected = proj2D(points)
 
-  # projected points
-  projected = [Point(z⋅u, z⋅v) for z in eachcol(Z)]
-
-  # discretize within 2D chain
+  # discretize within 2D chain with given method
   chain2D = Chain([projected; first(projected)])
   mesh    = discretizewithin(chain2D, method)
 
