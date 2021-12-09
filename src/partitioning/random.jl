@@ -3,20 +3,20 @@
 # ------------------------------------------------------------------
 
 """
-    RandomPartition(k, [shuffle])
+    UniformPartition(k, [shuffle])
 
 A method for partitioning spatial objects uniformly into `k` subsets
 of approximately equal size. Optionally `shuffle` the data (default
 to `true`).
 """
-struct RandomPartition <: PartitionMethod
+struct UniformPartition <: PartitionMethod
   k::Int
   shuffle::Bool
 end
 
-RandomPartition(k::Int) = RandomPartition(k, true)
+UniformPartition(k::Int) = UniformPartition(k, true)
 
-function partition(object, method::RandomPartition)
+function partition(object, method::UniformPartition)
   n = nelements(object)
   k = method.k
 

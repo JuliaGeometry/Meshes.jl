@@ -280,7 +280,7 @@ export
   PartitionMethod,
   PredicatePartitionMethod,
   SPredicatePartitionMethod,
-  RandomPartition,
+  UniformPartition,
   FractionPartition,
   BlockPartition,
   BisectPointPartition,

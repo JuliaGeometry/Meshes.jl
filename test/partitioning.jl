@@ -2,21 +2,21 @@
   setify(lists) = Set(Set.(lists))
 
   d = CartesianGrid{T}(10,10)
-  p = partition(d, RandomPartition(100))
+  p = partition(d, UniformPartition(100))
   @test sprint(show, p) == "100 Partition{2,$T}"
   @test sprint(show, MIME"text/plain"(), p) == "100 Partition{2,$T}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
 
-  @testset "RandomPartition" begin
+  @testset "UniformPartition" begin
     Random.seed!(123)
 
     grid = CartesianGrid{T}(3,3)
-    p = partition(grid, RandomPartition(3, false))
+    p = partition(grid, UniformPartition(3, false))
     @test setify(indices(p)) == setify([[1,2,3], [4,5,6], [7,8,9]])
-    p = partition(grid, RandomPartition(3))
+    p = partition(grid, UniformPartition(3))
     @test setify(indices(p)) == setify([[8,6,9], [4,1,7], [2,3,5]])
 
     grid = CartesianGrid{T}(2,3)
-    p = partition(grid, RandomPartition(3, false))
+    p = partition(grid, UniformPartition(3, false))
     @test setify(indices(p)) == setify([[1,2], [3,4], [5,6]])
   end
 
