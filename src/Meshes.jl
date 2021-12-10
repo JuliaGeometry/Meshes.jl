@@ -109,7 +109,7 @@ export
   Point1f, Point2f, Point3f,
   embeddim, paramdim,
   coordtype, coordinates,
-  center, centroid,
+  center, centroid, measure,
   ⪯, ≺, ⪰, ≻,
 
   # vectors

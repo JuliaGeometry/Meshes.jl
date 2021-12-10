@@ -156,6 +156,13 @@ Return the `point` itself.
 centroid(p::Point) = p
 
 """
+    measure(point)
+
+Return the measure of `point`, which is zero.
+"""
+measure(::Point{Dim,T}) where {Dim,T} = zero(T)
+
+"""
     rand(P::Type{<:Point}, n=1)
 
 Generates a random point of type `P`
