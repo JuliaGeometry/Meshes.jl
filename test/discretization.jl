@@ -1,4 +1,3 @@
-using Base: datatype_haspadding
 @testset "Discretization" begin
   @testset "FanTriangulation" begin
     pts  = P2[(0.,0.), (1.,0.), (1.,1.), (0.75,1.5), (0.25,1.5), (0.,1.)]
@@ -33,6 +32,22 @@ using Base: datatype_haspadding
     @test nelements(mesh) == (10)*(10-1) + 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3,4]
+  end
+
+  @testset "Dehn1899" begin
+    octa = Octagon(P2[(0.0,0.0), (0.5,-0.5), (1.0,0.0), (1.5,0.5),
+                      (1.0,1.0), (0.5,1.5), (0.0,1.0), (-0.5,0.5)])
+    mesh = discretize(octa, Dehn1899())
+    @test nvertices(mesh) == 8
+    @test nelements(mesh) == 6
+    @test eltype(mesh) <: Triangle
+
+    octa = Octagon(P3[(0.0,0.0,0.0), (0.5,-0.5,0.0), (1.0,0.0,0.0), (1.5,0.5,0.0),
+                      (1.0,1.0,0.0), (0.5,1.5,0.0), (0.0,1.0,0.0), (-0.5,0.5,0.0)])
+    mesh = discretize(octa, Dehn1899())
+    @test nvertices(mesh) == 8
+    @test nelements(mesh) == 6
+    @test eltype(mesh) <: Triangle
   end
 
   @testset "FIST" begin
