@@ -54,6 +54,8 @@ PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
 
 centroid(pset::PointSet, ind::Int) = pset[ind]
 
+centroid(pset::PointSet) = Point(sum(coordinates, pset) / nelements(pset))
+
 function Base.show(io::IO, pset::PointSet{Dim,T}) where {Dim,T}
   nelm = nelements(pset)
   print(io, "$nelm PointSet{$Dim,$T}")
