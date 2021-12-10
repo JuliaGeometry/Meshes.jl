@@ -75,7 +75,7 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("partitioning/random.jl")
+include("partitioning/uniform.jl")
 include("partitioning/fraction.jl")
 include("partitioning/block.jl")
 include("partitioning/bisect_point.jl")
