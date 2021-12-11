@@ -12,7 +12,7 @@ and is based on a theorem derived in 1899 by the German mathematician Max Dehn.
 See https://en.wikipedia.org/wiki/Two_ears_theorem.
 
 Because the algorithm relies on recursion, it is mostly appropriate for polygons
-with small number of vertices. Currently, the implementation does not support holes.
+with small number of vertices.
 
 ## References
 
