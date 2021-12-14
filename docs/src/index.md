@@ -119,11 +119,15 @@ in a computer without discretization. We can construct such geometries using
 clean syntax:
 
 ```@example overview
-b = Box((0.0, 0.0), (1.0, 1.0))
+b = Box((0.0, 0.0, 0.0), (1.0, 1.0, 1.0))
+
+viz(b)
 ```
 
 ```@example overview
-s = Sphere((0.0, 0.0), 1.0)
+s = Sphere((0.0, 0.0, 0.0), 1.0)
+
+viz(s)
 ```
 
 The parameters of these primitive geometries can be queried easily:
@@ -151,7 +155,7 @@ vs = sample(s, RegularSampling(10)) # 10 points over the sphere
 And collect the generator with:
 
 ```@example overview
-collect(vs)
+viz(collect(vs))
 ```
 
 ### Polytopes
@@ -163,6 +167,8 @@ Most commonly used polytopes are already defined in the project, including
 
 ```@example overview
 t = Triangle((0.0, 0.0), (1.0, 0.0), (0.0, 1.0))
+
+viz(t)
 ```
 
 Some of these geometries have additional functionality like the measure (or area):
@@ -198,6 +204,8 @@ other useful functionality:
 
 ```@example overview
 p = PolyArea((0,0), (2,0), (2,2), (1,3), (0,2), (0,0))
+
+viz(p)
 ```
 
 The orientation of the above polygonal area is counter-clockwise (CCW):
@@ -261,6 +269,8 @@ Efficient (lazy) mesh representations are provided, including
 
 ```@example overview
 g = CartesianGrid(100, 100)
+
+viz(g, showfacets = true)
 ```
 
 No memory is allocated:
@@ -286,18 +296,15 @@ quads = connect.([(1,2,6,5), (4,3,5,6)], Quadrangle)
 mesh = SimpleMesh(points, [tris; quads])
 ```
 
+```@example overview
+viz(mesh, showfacets = true)
+```
+
 The actual geometries of the elements are materialized in a lazy fashion
 like with the Cartesian grid:
 
 ```@example overview
 collect(elements(mesh))
-```
-
-and all geometries and meshes can be visualized with
-[MeshViz.jl](https://github.com/JuliaGeometry/MeshViz.jl):
-
-```@example overview
-viz(mesh, showfacets = true)
 ```
 
 ### Mesh data
