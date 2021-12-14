@@ -393,6 +393,19 @@
     @test isnothing(r ∩ t)
   end
 
+  @testset "Ngons" begin
+    o = Octagon([P3(0.0,0.0,1.0), P3(0.5,-0.5,0.0), P3(1.0,0.0,0.0), P3(1.5,0.5,-0.5),
+                 P3(1.0,1.0,0.0), P3(0.5,1.5,0.0), P3(0.0,1.0,0.0), P3(-0.5,0.5,0.0)])
+
+    r = Ray(P3(-1.0, -1.0, -1.0), V3(1.0, 1.0, 1.0))
+    @test intersecttype(r, o) isa IntersectingRayTriangle
+    @test r ∩ o ≈ P3(0.0, 0.0, 0.0)
+
+    r = Ray(P3(-1.0, -1.0, -1.0), V3(-1.0, -1.0, -1.0))
+    @test intersecttype(r, o) isa NoIntersection
+    @test isnothing(r ∩ o)
+  end
+
   @testset "Planes" begin
     p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
 
