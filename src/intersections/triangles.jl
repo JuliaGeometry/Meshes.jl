@@ -196,7 +196,7 @@ Calculate the intersection of a ray and polygon in 3D
 and apply function `f` to it.
 """
 function intersecttype(f::Function, r::Ray{3,T}, p::Ngon{N,3,T}) where {N,T}
-  for t in collect(triangulate(p))
+  for t in triangulate(p)
     res = intersecttype(identity, r, t)
     # A valid polygon has only one intersection with a ray.
     if res != NoIntersection()
