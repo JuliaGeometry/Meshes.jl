@@ -198,7 +198,6 @@ and apply function `f` to it.
 function intersecttype(f::Function, r::Ray{3,T}, p::Ngon{N,3,T}) where {N,T}
   for t in triangulate(p)
     res = intersecttype(identity, r, t)
-    # A valid polygon has only one intersection with a ray.
     if res != NoIntersection()
       return res |> f
     end
