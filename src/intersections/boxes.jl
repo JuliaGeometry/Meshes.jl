@@ -51,8 +51,8 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
   lo, up = coordinates.(extrema(b))
   orig = coordinates(origin(r))
 
-  tmin = zero(T)
-  tmax = typemax(T)
+  tmin = zero(T) / oneunit(T)
+  tmax = typemax(T) / oneunit(T)
 
   # check for intersection with slabs along with each axis
   for i in 1:Dim
@@ -60,7 +60,7 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
     imax = (up[i] - orig[i]) * invdir[i]
 
     # swap variables if necessary
-    invdir[i] < zero(T) && ((imin, imax) = (imax, imin))
+    invdir[i] < (zero(T) / oneunit(T)^2) && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue
