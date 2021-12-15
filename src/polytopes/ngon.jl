@@ -129,10 +129,10 @@ function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
   (λ₂ ≥ zero(T)) && (λ₃ ≥ zero(T)) && ((λ₂ + λ₃) ≤ one(T))
 end
 
-function normal(t::Triangle{3})
+function normal(t::Triangle{3,T}) where {T}
   a, b, c = t.vertices
   n = (b - a) × (c - a)
-  n / norm(n)
+  n / norm(n) * oneunit(T)
 end
 
 function (t::Triangle)(u::T, v::T) where {T}
