@@ -57,13 +57,15 @@
     end
 
     if visualtests
-      Random.seed!(2021)
-      @test_reference "data/pset-1D-$T.png" plot(PointSet(rand(P1,10)))
-      @test_reference "data/pset-2D-$T.png" plot(PointSet(rand(P2,10)))
-      @test_reference "data/pset-3D-$T.png" plot(PointSet(rand(P3,10)))
-      @test_reference "data/pset-1D-$T-data.png" plot(PointSet(rand(P1,10)),1:10)
-      @test_reference "data/pset-2D-$T-data.png" plot(PointSet(rand(P2,10)),1:10)
-      @test_reference "data/pset-3D-$T-data.png" plot(PointSet(rand(P3,10)),1:10)
+      ps1 = P1[0,1,1,2]
+      ps2 = P2[(0,1),(1,1),(1,2),(2,3)]
+      ps3 = P3[(0,1,1),(1,1,2),(1,2,3),(2,3,5)]
+      @test_reference "data/pset-1D-$T.png" plot(PointSet(ps1))
+      @test_reference "data/pset-2D-$T.png" plot(PointSet(ps2))
+      @test_reference "data/pset-3D-$T.png" plot(PointSet(ps3))
+      @test_reference "data/pset-1D-$T-data.png" plot(PointSet(ps1),1:10)
+      @test_reference "data/pset-2D-$T-data.png" plot(PointSet(ps2),1:10)
+      @test_reference "data/pset-3D-$T-data.png" plot(PointSet(ps3),1:10)
     end
   end
 

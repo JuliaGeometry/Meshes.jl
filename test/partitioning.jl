@@ -13,7 +13,11 @@
     p = partition(grid, UniformPartition(3, false))
     @test setify(indices(p)) == setify([[1,2,3], [4,5,6], [7,8,9]])
     p = partition(grid, UniformPartition(3))
-    @test setify(indices(p)) == setify([[8,6,9], [4,1,7], [2,3,5]])
+    if VERSION < v"1.7"
+      @test setify(indices(p)) == setify([[8,6,9], [4,1,7], [2,3,5]])
+    else
+      @test setify(indices(p)) == setify([[4,6,1], [9,8,3], [5,7,2]])
+    end
 
     grid = CartesianGrid{T}(2,3)
     p = partition(grid, UniformPartition(3, false))
