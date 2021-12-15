@@ -60,7 +60,7 @@ function intersecttype(f::Function, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
     imax = (up[i] - orig[i]) * invdir[i]
 
     # swap variables if necessary
-    invdir[i] < zero(T)^3 && ((imin, imax) = (imax, imin))
+    invdir[i] < zero(eltype(invdir)) && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue
