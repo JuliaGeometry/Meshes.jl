@@ -28,12 +28,12 @@ function ∠(A::P, B::P, C::P) where {P<:Point{3}}
 end
 
 """
-    ∠(A, B)
+    ∠(u, v)
 
-Angle between vectors A and B.
+Angle between vectors u and v.
 See https://en.wikipedia.org/wiki/Angle.
 
-Uses `acos` returning a value in the range [0, π].
+Uses [`acos`](@ref) returning a value in the range [0, π].
 
 ## Examples
 
@@ -41,6 +41,8 @@ Uses `acos` returning a value in the range [0, π].
 ∠(Vec(1,0), Vec(0,1)) == π/2
 ```
 """
-function ∠(A::V, B::V) where {V<:Vec}
-  acos(clamp((A ⋅ B) / (norm(A) * norm(B)), -1, 1))
+function ∠(u::Vec{Dim,T}, v::Vec{Dim,T}) where {Dim,T}
+  x = (u ⋅ v) / (norm(u) * norm(v))
+  x = clamp(x, -one(T), one(T))  # restrict domain in case of round-off error.
+  acos(x)
 end
