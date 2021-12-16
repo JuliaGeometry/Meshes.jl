@@ -17,15 +17,8 @@ See https://en.wikipedia.org/wiki/Atan2.
 ∠(Point(1,0), Point(0,0), Point(0,1)) == π/2
 ```
 """
-function ∠(A::P, B::P, C::P) where {P<:Point{2}}
-  BA, BC = A - B, C - B
-  atan(BA × BC, BA ⋅ BC) # preserve sign
-end
-
-function ∠(A::P, B::P, C::P) where {P<:Point{3}}
-  BA, BC = A - B, C - B
-  atan(norm(BA × BC), BA ⋅ BC) # discard sign
-end
+∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A-B, C-B)
+∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A-B, C-B)
 
 """
     ∠(u, v)
