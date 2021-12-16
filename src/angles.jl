@@ -8,7 +8,7 @@
 Angle ∠ABC between rays BA and BC.
 See https://en.wikipedia.org/wiki/Angle.
 
-Uses the two-argument form of `atan`.
+Uses the two-argument form of `atan` returning value in range [-π, π].
 See https://en.wikipedia.org/wiki/Atan2.
 
 ## Examples
@@ -33,7 +33,8 @@ end
 Angle between vectors u and v.
 See https://en.wikipedia.org/wiki/Angle.
 
-Uses [`acos`](@ref) returning a value in the range [0, π].
+Uses the two-argument form of `atan` returning value in range [-π, π].
+See https://en.wikipedia.org/wiki/Atan2.
 
 ## Examples
 
@@ -41,7 +42,10 @@ Uses [`acos`](@ref) returning a value in the range [0, π].
 ∠(Vec(1,0), Vec(0,1)) == π/2
 ```
 """
-function ∠(u::Vec{Dim,T}, v::Vec{Dim,T}) where {Dim,T}
-  cosθ = (u ⋅ v) / (norm(u) * norm(v))
-  acos(clamp(cosθ, -one(T), one(T)))
+function ∠(u::Vec{2,T}, v::Vec{2,T}) where T
+  atan(u × v, u ⋅ v)  # preserve sign
+end
+
+function ∠(u::Vec{3,T}, v::Vec{3,T}) where T
+  atan(norm(u × v), u ⋅ v)  # discard sign
 end
