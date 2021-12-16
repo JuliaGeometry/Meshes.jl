@@ -42,7 +42,6 @@ Uses [`acos`](@ref) returning a value in the range [0, π].
 ```
 """
 function ∠(u::Vec{Dim,T}, v::Vec{Dim,T}) where {Dim,T}
-  x = (u ⋅ v) / (norm(u) * norm(v))
-  x = clamp(x, -one(T), one(T))  # restrict domain in case of round-off error.
-  acos(x)
+  cosθ = (u ⋅ v) / (norm(u) * norm(v))
+  acos(clamp(cosθ, -one(T), one(T)))
 end
