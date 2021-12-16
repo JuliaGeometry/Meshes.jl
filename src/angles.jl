@@ -35,5 +35,5 @@ See https://en.wikipedia.org/wiki/Atan2.
 ∠(Vec(1,0), Vec(0,1)) == π/2
 ```
 """
-∠(u::Vec{2}, v::Vec{2}) = atan(u × v, u ⋅ v)  # preserve sign
-∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v)  # discard sign
+∠(u::V, v::V) where {V<:Vec{2}} = atan(u × v, u ⋅ v)  # preserve sign
+∠(u::V, v::V) where {V<:Vec{3}} = atan(norm(u × v), u ⋅ v)  # discard sign
