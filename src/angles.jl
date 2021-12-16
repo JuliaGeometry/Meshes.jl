@@ -26,3 +26,21 @@ function ∠(A::P, B::P, C::P) where {P<:Point{3}}
   BA, BC = A - B, C - B
   atan(norm(BA × BC), BA ⋅ BC) # discard sign
 end
+
+"""
+    ∠(A, B)
+
+Angle between vectors A and B.
+See https://en.wikipedia.org/wiki/Angle.
+
+Uses `acos` returning a value in the range [0, π].
+
+## Examples
+
+```julia
+∠(Vec(1,0), Vec(0,1)) == π/2
+```
+"""
+function ∠(A::V, B::V) where {V<:Vec}
+  acos(clamp((A ⋅ B) / (norm(A) * norm(B)), -1, 1))
+end
