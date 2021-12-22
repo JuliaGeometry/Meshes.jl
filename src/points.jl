@@ -60,8 +60,8 @@ const Point1f = Point{1,Float32}
 const Point2f = Point{2,Float32}
 const Point3f = Point{3,Float32}
 
-# Enable broadcasting behavior for Point
-Base.Broadcast.broadcastable(p::Point) = Ref(p)
+# enable broadcasting behavior for Point
+Broadcast.broadcastable(p::Point) = Ref(p)
 
 """
     embeddim(point)
