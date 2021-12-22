@@ -20,6 +20,6 @@ chul = hull(pset, GrahamScan())
 
 fig = Mke.Figure(resolution = (800, 400))
 viz(fig[1,1], chul)
-viz!(fig[1,1], pset)
+viz!(fig[1,1], pset, color = :black)
 fig
 ```
