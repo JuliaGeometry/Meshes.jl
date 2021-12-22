@@ -13,6 +13,6 @@ bbox = boundingbox(pset)
 
 fig = Mke.Figure(resolution = (800, 400))
 viz(fig[1,1], bbox)
-viz!(fig[1,1], pset)
+viz!(fig[1,1], pset, color = :black)
 fig
 ```
