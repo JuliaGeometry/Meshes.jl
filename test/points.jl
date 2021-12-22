@@ -110,4 +110,8 @@
   # measure of points is zero
   @test measure(P2(1, 2)) == zero(T)
   @test measure(P3(1, 2, 3)) == zero(T)
+  
+  # check broadcasting works as expected
+  @test P2(2, 2) .- [P2(2, 3), P2(3, 1)] == [[0., -1.], [-1., 1.]]
+  @test P3(2, 2, 2) .- [P3(2, 3, 1), P3(3, 1, 4)] == [[0., -1., 1.], [-1., 1., -2.]]
 end
