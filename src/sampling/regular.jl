@@ -133,5 +133,5 @@ function sample(::AbstractRNG, cyl::CylinderSurface{T},
   sample_point(θ) = Vec{3,V}(r * cos(θ), r * sin(θ), 0)
 
   # Iterator for sampling each point of each circle
-Meshes.ivec(c + sample_point(θ) for θ in θrange, c in c_range)
+  ivec(c + sample_point(θ) for θ in θrange, c in c_range)
 end
