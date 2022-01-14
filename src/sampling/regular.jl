@@ -110,3 +110,32 @@ function sample(::AbstractRNG, hex::Hexahedron{Dim,T},
   wrange = range(T(0), T(1), length=sz[3])
   ivec(hex(u, v, w) for u in urange, v in vrange, w in wrange)
 end
+
+
+function sample(::AbstractRNG, cyl::CylinderSurface{T}, 
+                method::RegularSampling) where {T}
+  # See http://www.songho.ca/opengl/gl_cylinder.html for a good introduction to this
+  # computation.
+
+  V = T <: AbstractFloat ? T : Float64
+  sz = fitdims(method.sizes, paramdim(cyl))
+  r = radius(cyl)
+  θmin, θmax = V(0), V(2π)
+
+  # Number of circles used for sampling along the cylinder:
+  cyl_segment = Segment(origin(cyl.bot), origin(cyl.top))
+  c_range = sample(cyl_segment, RegularSampling(sz[2]))
+
+  # Number of points sampling each circle:
+  θrange = range(θmin, stop = θmax, length = sz[1])
+
+  # Function to sample points along a circle
+  sample_point(θ) = Vec{3,V}(r * cos(θ), r * sin(θ), 0)
+
+  # Iterator for sampling each point of each circle
+Meshes.ivec(c + sample_point(θ) for θ in θrange, c in c_range)
+end
+
+function sample(::AbstractRNG, cyl::Cylinder{T}, method::RegularSampling) where {T}
+  sample(Random.GLOBAL_RNG, boundary(cyl), method)
+end
