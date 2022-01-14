@@ -135,7 +135,3 @@ function sample(::AbstractRNG, cyl::CylinderSurface{T},
   # Iterator for sampling each point of each circle
 Meshes.ivec(c + sample_point(θ) for θ in θrange, c in c_range)
 end
-
-function sample(::AbstractRNG, cyl::Cylinder{T}, method::RegularSampling) where {T}
-  sample(Random.GLOBAL_RNG, boundary(cyl), method)
-end
