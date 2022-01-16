@@ -112,7 +112,7 @@ function sample(::AbstractRNG, hex::Hexahedron{Dim,T},
 end
 
 
-function sample(::AbstractRNG, cyl::CylinderSurface{T}, 
+function sample(::AbstractRNG, cyl::CylinderSurface{T},
                 method::RegularSampling) where {T}
   # See http://www.songho.ca/opengl/gl_cylinder.html for a good introduction to this
   # computation.
@@ -123,15 +123,15 @@ function sample(::AbstractRNG, cyl::CylinderSurface{T},
   θmin, θmax = V(0), V(2π)
 
   # Number of circles used for sampling along the cylinder:
-  cyl_segment = Segment(origin(cyl.bot), origin(cyl.top))
-  c_range = sample(cyl_segment, RegularSampling(sz[2]))
+  c_range = range(V(0), V(1), length = sz[2])
 
   # Number of points sampling each circle:
   θrange = range(θmin, stop = θmax, length = sz[1])
 
-  # Function to sample points along a circle
-  sample_point(θ) = Vec{3,V}(r * cos(θ), r * sin(θ), 0)
+  # Sampling points along the bottom and top circles
+  top_circle = [origin(cyl.top) + r * cos(θ) * cyl.top.u + r * sin(θ) * cyl.top.v for θ in θrange]
+  bot_circle = [origin(cyl.bot) + r * cos(θ) * cyl.bot.u + r * sin(θ) * cyl.bot.v for θ in θrange]
 
   # Iterator for sampling each point of each circle
-  ivec(c + sample_point(θ) for θ in θrange, c in c_range)
+  ivec(Segment(bot_circle[i], top_circle[i])(t) for i in 1:length(top_circle) for t in c_range)
 end
