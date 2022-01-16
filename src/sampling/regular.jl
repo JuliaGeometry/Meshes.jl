@@ -129,8 +129,8 @@ function sample(::AbstractRNG, cyl::CylinderSurface{T},
   θrange = range(θmin, stop = θmax, length = sz[1])
 
   # Sampling points along the bottom and top circles
-  top_circle = [origin(cyl.top) + r * cos(θ) * cyl.top.u + r * sin(θ) * cyl.top.v for θ in θrange]
-  bot_circle = [origin(cyl.bot) + r * cos(θ) * cyl.bot.u + r * sin(θ) * cyl.bot.v for θ in θrange]
+  top_circle = [cyl.top(cos(θ), sin(θ)) for θ in θrange]
+  bot_circle = [cyl.bot(cos(θ), sin(θ)) for θ in θrange]
 
   # Iterator for sampling each point of each circle
   ivec(Segment(bot_circle[i], top_circle[i])(t) for i in 1:length(top_circle) for t in c_range)
