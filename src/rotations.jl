@@ -43,6 +43,3 @@ Base.convert(::Type{<:DCM}, ccw::CounterClockwiseAngle) =
 # -------------
 
 TaitBryanAngles(θs...) = EulerAngles((-1 .* θs)..., :ZXY) |> inv
-
-# temporary fix for https://github.com/JuliaSpace/ReferenceFrameRotations.jl/issues/18
-Base.convert(::Type{<:DCM}, ea::EulerAngles) = angle_to_dcm(ea)
