@@ -41,5 +41,9 @@
     m = metric(MetricBall(T.((1.0,0.5,0.5)), TaitBryanAngles(T(π/4),T(0),T(0))))
     @test evaluate(m, [1.,1.,0.], [0.,0.,0.]) ≈ √T(2)
     @test evaluate(m, [-1.,1.,0.], [0.,0.,0.]) ≈ √T(8)
+
+    # make sure the correct constructor is called
+    m = metric(MetricBall(T[1.0,0.5,0.2], EulerAngles(T(0), T(0), T(0))))
+    @test m isa Mahalanobis
   end
 end

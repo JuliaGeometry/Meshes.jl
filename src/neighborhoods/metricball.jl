@@ -68,6 +68,10 @@ end
 MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} =
   MetricBall(SVector(radii), rotation)
 
+# avoid silent calls to inner constructor
+MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} =
+  MetricBall(SVector{length(radii),T}(radii), rotation)
+
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
   radii = SVector(radius)
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
