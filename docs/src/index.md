@@ -318,7 +318,7 @@ table `etable` to the elements of the mesh:
 ```@example overview
 d = meshdata(mesh,
   vtable = (temperature=rand(6), pressure=rand(6)),
-  etable = (quality=["A","B"], state=[true,false])
+  etable = (quality=["A","B","C","D"], state=[true,false,true,false])
 )
 ```
 
