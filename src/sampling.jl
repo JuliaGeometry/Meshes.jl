@@ -16,7 +16,8 @@ Sample elements or points from geometric `object`
 with `method`. Optionally, specify random number
 generator `rng`.
 """
-sample(object, method) = sample(Random.GLOBAL_RNG, object, method)
+sample(object, method) =
+  sample(Random.GLOBAL_RNG, object, method)
 
 """
     DiscreteSamplingMethod
