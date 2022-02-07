@@ -25,7 +25,7 @@ BisectFractionPartition(normal::Vec{Dim,T}, fraction=0.5, maxiter=10) where {Dim
 BisectFractionPartition(normal::NTuple{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
   BisectFractionPartition(Vec(normal), fraction, maxiter)
 
-function partition(object, method::BisectFractionPartition)
+function partition(rng::AbstractRNG, object, method::BisectFractionPartition)
   bbox = boundingbox(object)
   n = method.normal
   f = method.fraction
@@ -41,7 +41,7 @@ function partition(object, method::BisectFractionPartition)
   while iter < maxiter
     m = (a + b) / 2
 
-    p = partition(object, BisectPointPartition(n, Point(m)))
+    p = partition(rng, object, BisectPointPartition(n, Point(m)))
     g = nelements(p[1]) / nelements(object)
 
     g ≈ f && break

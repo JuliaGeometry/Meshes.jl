@@ -14,7 +14,8 @@ abstract type PartitionMethod end
 
 Partition `object` with partition `method`.
 """
-function partition end
+partition(object, method) =
+  partition(Random.GLOBAL_RNG, object, method)
 
 """
     PredicatePartitionMethod
@@ -23,9 +24,11 @@ A method for partitioning domain/data objects with predicate functions.
 """
 abstract type PredicatePartitionMethod <: PartitionMethod end
 
-function partition(object, method::PredicatePartitionMethod)
+function partition(rng::AbstractRNG, object,
+                   method::PredicatePartitionMethod)
+  nelms = nelements(object)
   subsets = Vector{Int}[]
-  for i in randperm(nelements(object))
+  for i in randperm(rng, nelms)
     inserted = false
     for subset in subsets
       j = subset[1]
@@ -50,13 +53,17 @@ A method for partitioning domain/data objects with spatial predicate functions.
 """
 abstract type SPredicatePartitionMethod <: PartitionMethod end
 
-function partition(object, method::SPredicatePartitionMethod)
+function partition(rng::AbstractRNG, object,
+                   method::SPredicatePartitionMethod)
+  nelms = nelements(object)
   subsets = Vector{Int}[]
-  for i in randperm(nelements(object))
-    x = coordinates(centroid(object, i))
+  for i in randperm(rng, nelms)
+    p = centroid(object, i)
+    x = coordinates(p)
     inserted = false
     for subset in subsets
-      y = coordinates(centroid(object, subset[1]))
+      q = centroid(object, subset[1])
+      y = coordinates(q)
       if method(x, y)
         push!(subset, i)
         inserted = true

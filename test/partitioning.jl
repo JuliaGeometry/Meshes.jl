@@ -22,6 +22,14 @@
     grid = CartesianGrid{T}(2,3)
     p = partition(grid, UniformPartition(3, false))
     @test setify(indices(p)) == setify([[1,2], [3,4], [5,6]])
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, UniformPartition(3))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, UniformPartition(3))
+    @test p1 == p2
   end
 
   @testset "DirectionPartition" begin
@@ -61,6 +69,14 @@
       ns = [nelements(d) for d in p]
       @test all(ns .== n)
     end
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, DirectionPartition(T.((1,0))))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, DirectionPartition(T.((1,0))))
+    @test p1 == p2
   end
 
   @testset "FractionPartition" begin
@@ -77,6 +93,14 @@
     p = partition(grid, FractionPartition(T(0.3)))
     @test nelements(p[1]) == 30
     @test nelements(p[2]) == 70
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, FractionPartition(T(0.5)))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, FractionPartition(T(0.5)))
+    @test p1 == p2
   end
 
   @testset "BlockPartition" begin
@@ -103,6 +127,14 @@
     n = metadata(p)[:neighbors]
     @test length(n) == length(p)
     @test all(0 .< length.(n) .< 27) 
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, BlockPartition(T(5), T(2)))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, BlockPartition(T(5), T(2)))
+    @test p1 == p2
   end
 
   @testset "BisectPointPartition" begin
@@ -128,6 +160,14 @@
     p₂ = partition(grid, BisectPointPartition(T.((-1.0,0.0)), T.((5.1,5.0))))
     @test nelements(p₁[1]) == nelements(p₂[2]) == 60
     @test nelements(p₁[2]) == nelements(p₂[1]) == 40
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, BisectPointPartition(T.((1,0)), T.((5,5))))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, BisectPointPartition(T.((1,0)), T.((5,5))))
+    @test p1 == p2
   end
 
   @testset "BisectFractionPartition" begin
@@ -153,6 +193,14 @@
     p₂ = partition(grid, BisectFractionPartition(T.((-1.0,0.0)), T(0.8)))
     @test nelements(p₁[1]) == nelements(p₂[2]) == 20
     @test nelements(p₁[2]) == nelements(p₂[1]) == 80
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, BisectFractionPartition(T.((1,0)), T(0.5)))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, BisectFractionPartition(T.((1,0)), T(0.5)))
+    @test p1 == p2
   end
 
   @testset "BallPartition" begin
@@ -174,6 +222,14 @@
     @test length(p) == 5
     @test all(nelements.(p) .== 1)
     @test setify(indices(p)) == setify([[1],[2],[3],[4],[5]])
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, BallPartition(T(2)))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, BallPartition(T(2)))
+    @test p1 == p2
   end
 
   @testset "PlanePartition" begin
@@ -184,6 +240,14 @@
     grid = CartesianGrid((4,4), T.((-0.5,-0.5)), T.((1.0,1.0)))
     p = partition(grid, PlanePartition(T.((0,1))))
     @test setify(indices(p)) == setify([1:4,5:8,9:12,13:16])
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, PlanePartition(T.((1,0))))
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, PlanePartition(T.((1,0))))
+    @test p1 == p2
   end
 
   @testset "PredicatePartition" begin
@@ -191,8 +255,17 @@
 
     # partition even from odd locations
     pred(i,j) = iseven(i+j)
-    p = partition(grid, PredicatePartition(pred))
+    partitioner = PredicatePartition(pred)
+    p = partition(grid, partitioner)
     @test setify(indices(p)) == setify([1:2:9,2:2:8])
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, partitioner)
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, partitioner)
+    @test p1 == p2
   end
 
   @testset "SpatialPredicatePartition" begin
@@ -219,6 +292,14 @@
     @test maximum(length.(s)) == 36
     @test count(i->i==1, n) == 64
     @test count(i->i==36, n) == 1
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, sp)
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, sp)
+    @test p1 == p2
   end
 
   @testset "ProductPartition" begin
@@ -240,6 +321,14 @@
       s2 = indices(partition(g, p))
       @test setify(s1) == setify(s2)
     end
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, bmn)
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, bmn)
+    @test p1 == p2
   end
 
   @testset "HierarchicalPartition" begin
@@ -252,6 +341,14 @@
     s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, bn))
     @test setify(s1) == setify(s2)
+
+    # reproducible results with rng
+    rng  = MersenneTwister(123)
+    grid = CartesianGrid{T}(10,10)
+    p1   = partition(rng, grid, bmn)
+    rng  = MersenneTwister(123)
+    p2   = partition(rng, grid, bmn)
+    @test p1 == p2
   end
 
   @testset "Mixed Tests" begin

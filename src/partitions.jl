@@ -17,6 +17,9 @@ end
 Partition(object, subsets, metadata=Dict()) =
   Partition{typeof(object)}(object, subsets, metadata)
 
+==(p₁::Partition, p₂::Partition) =
+  p₁.object == p₂.object && p₁.subsets == p₂.subsets
+
 """
     indices(partition)
 

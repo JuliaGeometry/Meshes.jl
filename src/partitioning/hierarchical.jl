@@ -14,16 +14,16 @@ struct HierarchicalPartition <: PartitionMethod
   second::PartitionMethod
 end
 
-function partition(object, method::HierarchicalPartition)
+function partition(rng::AbstractRNG, object, method::HierarchicalPartition)
   result = Vector{Int}[]
 
   # use first partition method
-  p = partition(object, method.first)
+  p = partition(rng, object, method.first)
 
   # use second method to partition the first
   s = indices(p)
   for (i, d) in Iterators.enumerate(p)
-    q = partition(d, method.second)
+    q = partition(rng, d, method.second)
 
     for js in indices(q)
       push!(result, s[i][js])
