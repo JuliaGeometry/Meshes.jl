@@ -9,6 +9,11 @@ The adjacency relation of rank `P` for topology of type `T`.
 """
 struct Adjacency{P,T<:Topology} <: TopologicalRelation
   topology::T
+
+  function Adjacency{P,T}(topology) where {P,T}
+    @assert paramdim(topology) ≥ P "invalid adjacency relation"
+    new(topology)
+  end
 end
 
 Adjacency{P}(topology::T) where {P,T} = Adjacency{P,T}(topology)

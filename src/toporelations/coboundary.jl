@@ -10,6 +10,11 @@ topology of type `T`.
 """
 struct Coboundary{P,Q,T<:Topology} <: TopologicalRelation
   topology::T
+
+  function Coboundary{P,Q,T}(topology) where {P,Q,T}
+    @assert P < Q ≤ paramdim(topology) "invalid coboundary relation"
+    new(topology)
+  end
 end
 
 Coboundary{P,Q}(topology::T) where {P,Q,T} = Coboundary{P,Q,T}(topology)

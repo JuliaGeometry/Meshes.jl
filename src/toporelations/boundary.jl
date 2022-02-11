@@ -10,6 +10,11 @@ topology of type `T`.
 """
 struct Boundary{P,Q,T<:Topology} <: TopologicalRelation
   topology::T
+
+  function Boundary{P,Q,T}(topology) where {P,Q,T}
+    @assert paramdim(topology) ≥ P > Q "invalid boundary relation"
+    new(topology)
+  end
 end
 
 Boundary{P,Q}(topology::T) where {P,Q,T} = Boundary{P,Q,T}(topology)
