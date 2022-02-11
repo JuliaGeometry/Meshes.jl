@@ -31,6 +31,8 @@ end
 
 FullTopology(connec) = FullTopology{eltype(connec)}(connec)
 
+paramdim(t::FullTopology) = paramdim(t.connec[first(t.elms)])
+
 ==(t1::FullTopology, t2::FullTopology) = t1.connec == t2.connec
 
 # ---------------------

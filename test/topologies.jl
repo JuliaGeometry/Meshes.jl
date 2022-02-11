@@ -3,6 +3,7 @@
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])
     struc = FullTopology(elems)
+    @test paramdim(struc) == 2
     @test nvertices(struc) == 4
     @test nelements(struc) == 2
 
@@ -21,6 +22,7 @@
 
   @testset "GridTopology" begin
     t = GridTopology(3)
+    @test paramdim(t) == 1
     @test nvertices(t) == 4
     @test nelements(t) == 3
     @test nfacets(t) == 4
@@ -31,6 +33,7 @@
     @test faces(t, 1) == elements(t)
 
     t = GridTopology(3, 4)
+    @test paramdim(t) == 2
     @test nvertices(t) == 20
     @test nelements(t) == 12
     @test nfacets(t) == 31
@@ -45,6 +48,7 @@
     @test facet.(Ref(t), 25:31) == connect.([(4,8),(17,18),(8,12),(18,19),(12,16),(19,20),(16,20)])
 
     t = GridTopology(3, 4, 2)
+    @test paramdim(t) == 3
     @test nvertices(t) == 60
     @test nelements(t) == 24
     @test nfacets(t) == 3*24 + 3*4 + 4*2 + 3*2
@@ -109,6 +113,7 @@
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])
     struc = HalfEdgeTopology(elems)
+    @test paramdim(struc) == 2
     @test nvertices(struc) == 4
     @test nelements(struc) == 2
     @test nfacets(struc) == 5
@@ -117,6 +122,7 @@
     # 2 triangles + 2 quadrangles
     elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
     struc = HalfEdgeTopology(elems)
+    @test paramdim(struc) == 2
     @test nvertices(struc) == 6
     @test nelements(struc) == 4
     @test nfacets(struc) == 9
@@ -125,6 +131,7 @@
     # 1 triangle + 3 quadrangles + 1 triangle hole
     elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
     struc = HalfEdgeTopology(elems)
+    @test paramdim(struc) == 2
     @test nvertices(struc) == 7
     @test nelements(struc) == 4
     @test nfacets(struc) == 11

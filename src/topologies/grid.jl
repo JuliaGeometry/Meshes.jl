@@ -13,6 +13,8 @@ end
 
 GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology{D}(dims)
 
+paramdim(::GridTopology{D}) where {D} = D
+
 """
     size(t)
 

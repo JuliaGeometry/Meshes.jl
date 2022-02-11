@@ -174,6 +174,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   HalfEdgeTopology(halves)
 end
 
+paramdim(::HalfEdgeTopology) = 2
+
 """
     half4elem(e, t)
 
