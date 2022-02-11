@@ -23,6 +23,7 @@
   @testset "GridTopology" begin
     t = GridTopology(3)
     @test paramdim(t) == 1
+    @test size(t) == (3,)
     @test elem2cart(t, 1) == (1,)
     @test elem2cart(t, 2) == (2,)
     @test elem2cart(t, 3) == (3,)
@@ -32,7 +33,6 @@
     @test nvertices(t) == 4
     @test nelements(t) == 3
     @test nfacets(t) == 4
-    @test size(t) == (3,)
     @test element(t, 1) == connect((1,2))
     @test element(t, 2) == connect((2,3))
     @test element(t, 3) == connect((3,4))
@@ -40,6 +40,7 @@
 
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
+    @test size(t) == (3, 4)
     @test elem2cart(t, 1) == (1, 1)
     @test elem2cart(t, 2) == (2, 1)
     @test elem2cart(t, 3) == (3, 1)
@@ -67,7 +68,6 @@
     @test nvertices(t) == 20
     @test nelements(t) == 12
     @test nfacets(t) == 31
-    @test size(t) == (3, 4)
     @test element(t, 1) == connect((1,2,6,5))
     @test element(t, 5) == connect((6,7,11,10))
     @test faces(t, 2) == elements(t)
@@ -79,6 +79,7 @@
 
     t = GridTopology(3, 4, 2)
     @test paramdim(t) == 3
+    @test size(t) == (3, 4, 2)
     @test elem2cart(t, 1) == (1, 1, 1)
     @test elem2cart(t, 2) == (2, 1, 1)
     @test elem2cart(t, 3) == (3, 1, 1)
@@ -130,7 +131,6 @@
     @test nvertices(t) == 60
     @test nelements(t) == 24
     @test nfacets(t) == 3*24 + 3*4 + 4*2 + 3*2
-    @test size(t) == (3, 4, 2)
     @test element(t, 1) == connect((1,2,6,5,21,22,26,25), Hexahedron)
     @test element(t, 5) == connect((6,7,11,10,26,27,31,30), Hexahedron)
     @test faces(t, 3) == elements(t)
