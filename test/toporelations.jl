@@ -1,4 +1,14 @@
 @testset "TopologicalRelation" begin
+  @testset "GridTopology" begin
+    # invalid relations
+    struc = GridTopology(2, 3)
+    @test_throws AssertionError Boundary{3,0}(struc)
+    @test_throws AssertionError Coboundary{0,3}(struc)
+    @test_throws AssertionError Adjacency{3}(struc)
+    @test_throws AssertionError Boundary{0,2}(struc)
+    @test_throws AssertionError Coboundary{2,0}(struc)
+  end
+
   @testset "HalfEdgeTopology" begin
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])
@@ -95,16 +105,6 @@
     # invalid relations
     elems = connect.([(1,2,3),(4,3,2)])
     struc = HalfEdgeTopology(elems)
-    @test_throws AssertionError Boundary{3,0}(struc)
-    @test_throws AssertionError Coboundary{0,3}(struc)
-    @test_throws AssertionError Adjacency{3}(struc)
-    @test_throws AssertionError Boundary{0,2}(struc)
-    @test_throws AssertionError Coboundary{2,0}(struc)
-  end
-
-  @testset "GridTopology" begin
-    # invalid relations
-    struc = GridTopology(2, 3)
     @test_throws AssertionError Boundary{3,0}(struc)
     @test_throws AssertionError Coboundary{0,3}(struc)
     @test_throws AssertionError Adjacency{3}(struc)
