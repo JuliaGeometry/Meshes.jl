@@ -23,6 +23,12 @@
   @testset "GridTopology" begin
     t = GridTopology(3)
     @test paramdim(t) == 1
+    @test elem2cart(t, 1) == (1,)
+    @test elem2cart(t, 2) == (2,)
+    @test elem2cart(t, 3) == (3,)
+    @test cart2corner(t, 1) == 1
+    @test cart2corner(t, 2) == 2
+    @test cart2corner(t, 3) == 3
     @test nvertices(t) == 4
     @test nelements(t) == 3
     @test nfacets(t) == 4
@@ -34,6 +40,30 @@
 
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
+    @test elem2cart(t, 1) == (1, 1)
+    @test elem2cart(t, 2) == (2, 1)
+    @test elem2cart(t, 3) == (3, 1)
+    @test elem2cart(t, 4) == (1, 2)
+    @test elem2cart(t, 5) == (2, 2)
+    @test elem2cart(t, 6) == (3, 2)
+    @test elem2cart(t, 7) == (1, 3)
+    @test elem2cart(t, 8) == (2, 3)
+    @test elem2cart(t, 9) == (3, 3)
+    @test elem2cart(t, 10) == (1, 4)
+    @test elem2cart(t, 11) == (2, 4)
+    @test elem2cart(t, 12) == (3, 4)
+    @test cart2corner(t, 1, 1) == 1
+    @test cart2corner(t, 2, 1) == 2
+    @test cart2corner(t, 3, 1) == 3
+    @test cart2corner(t, 1, 2) == 5
+    @test cart2corner(t, 2, 2) == 6
+    @test cart2corner(t, 3, 2) == 7
+    @test cart2corner(t, 1, 3) == 9
+    @test cart2corner(t, 2, 3) == 10
+    @test cart2corner(t, 3, 3) == 11
+    @test cart2corner(t, 1, 4) == 13
+    @test cart2corner(t, 2, 4) == 14
+    @test cart2corner(t, 3, 4) == 15
     @test nvertices(t) == 20
     @test nelements(t) == 12
     @test nfacets(t) == 31
@@ -49,6 +79,54 @@
 
     t = GridTopology(3, 4, 2)
     @test paramdim(t) == 3
+    @test elem2cart(t, 1) == (1, 1, 1)
+    @test elem2cart(t, 2) == (2, 1, 1)
+    @test elem2cart(t, 3) == (3, 1, 1)
+    @test elem2cart(t, 4) == (1, 2, 1)
+    @test elem2cart(t, 5) == (2, 2, 1)
+    @test elem2cart(t, 6) == (3, 2, 1)
+    @test elem2cart(t, 7) == (1, 3, 1)
+    @test elem2cart(t, 8) == (2, 3, 1)
+    @test elem2cart(t, 9) == (3, 3, 1)
+    @test elem2cart(t, 10) == (1, 4, 1)
+    @test elem2cart(t, 11) == (2, 4, 1)
+    @test elem2cart(t, 12) == (3, 4, 1)
+    @test elem2cart(t, 13) == (1, 1, 2)
+    @test elem2cart(t, 14) == (2, 1, 2)
+    @test elem2cart(t, 15) == (3, 1, 2)
+    @test elem2cart(t, 16) == (1, 2, 2)
+    @test elem2cart(t, 17) == (2, 2, 2)
+    @test elem2cart(t, 18) == (3, 2, 2)
+    @test elem2cart(t, 19) == (1, 3, 2)
+    @test elem2cart(t, 20) == (2, 3, 2)
+    @test elem2cart(t, 21) == (3, 3, 2)
+    @test elem2cart(t, 22) == (1, 4, 2)
+    @test elem2cart(t, 23) == (2, 4, 2)
+    @test elem2cart(t, 24) == (3, 4, 2)
+    @test cart2corner(t, 1, 1, 1) == 1
+    @test cart2corner(t, 2, 1, 1) == 2
+    @test cart2corner(t, 3, 1, 1) == 3
+    @test cart2corner(t, 1, 2, 1) == 5
+    @test cart2corner(t, 2, 2, 1) == 6
+    @test cart2corner(t, 3, 2, 1) == 7
+    @test cart2corner(t, 1, 3, 1) == 9
+    @test cart2corner(t, 2, 3, 1) == 10
+    @test cart2corner(t, 3, 3, 1) == 11
+    @test cart2corner(t, 1, 4, 1) == 13
+    @test cart2corner(t, 2, 4, 1) == 14
+    @test cart2corner(t, 3, 4, 1) == 15
+    @test cart2corner(t, 1, 1, 2) == 21
+    @test cart2corner(t, 2, 1, 2) == 22
+    @test cart2corner(t, 3, 1, 2) == 23
+    @test cart2corner(t, 1, 2, 2) == 25
+    @test cart2corner(t, 2, 2, 2) == 26
+    @test cart2corner(t, 3, 2, 2) == 27
+    @test cart2corner(t, 1, 3, 2) == 29
+    @test cart2corner(t, 2, 3, 2) == 30
+    @test cart2corner(t, 3, 3, 2) == 31
+    @test cart2corner(t, 1, 4, 2) == 33
+    @test cart2corner(t, 2, 4, 2) == 34
+    @test cart2corner(t, 3, 4, 2) == 35
     @test nvertices(t) == 60
     @test nelements(t) == 24
     @test nfacets(t) == 3*24 + 3*4 + 4*2 + 3*2

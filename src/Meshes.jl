@@ -232,6 +232,7 @@ export
   FullTopology,
   GridTopology,
   HalfEdgeTopology, HalfEdge,
+  elem2cart, cart2corner,
   half4elem, half4vert,
   half4edge, half4pair,
   edge4pair,
