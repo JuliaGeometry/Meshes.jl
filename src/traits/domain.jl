@@ -107,6 +107,14 @@ Tells whether or not the `point` is in the `domain`.
 """
 Base.in(p::Point, domain::Domain) = any(e -> p ∈ e, domain)
 
+"""
+    extrema(domain)
+
+Return the top left and bottom right corners of the
+bounding box of the `domain`.
+"""
+Base.extrema(domain::Domain) = extrema(boundingbox(domain))
+
 # -----------
 # IO METHODS
 # -----------

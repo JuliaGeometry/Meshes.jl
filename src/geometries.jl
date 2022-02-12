@@ -48,6 +48,14 @@ Return the measure of the `geometry`, i.e. the length, area, or volume.
 function measure end
 
 """
+    extrema(geometry)
+
+Return the top left and bottom right corners of the
+bounding box of the `geometry`.
+"""
+Base.extrema(g::Geometry) = extrema(boundingbox(g))
+
+"""
     boundary(geometry)
 
 Return the boundary of the `geometry`.

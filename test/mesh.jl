@@ -165,6 +165,7 @@
     end
     @test eltype(mesh) <: Triangle{2,T}
     @test measure(mesh) ≈ T(1)
+    @test extrema(mesh) == (P2(0,0), P2(1,1))
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)

@@ -149,11 +149,13 @@
     @test coordtype(s) == T
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
+    @test extrema(s) == (P3(-1,-1,-1), P3(1,1,1))
     @test !isconvex(s)
     @test isnothing(boundary(s))
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
+    @test extrema(s) == (P2(-2,-2), P2(2,2))
     s = Sphere(P3(0,0,0), T(2))
     @test measure(s) ≈ 4π*(2^2)
 
