@@ -8,6 +8,20 @@
 A topological relation between faces of a [`Mesh`](@ref) implemented
 for a given [`Topology`](@ref).
 
+An object implementing this trait is a functor that can be evaluated
+at an integer index representing the face.
+
+## Examples
+
+```julia
+# create boundary relation mapping
+# 2-faces to 0-faces (i.e. vertices)
+∂ = Boundary{2,0}(topology)
+
+# list of vertices for first face
+∂(1)
+```
+
 ## References
 
 * Floriani, L. & Hui, A. 2007. [Shape representations
@@ -15,13 +29,6 @@ for a given [`Topology`](@ref).
   (https://diglib.eg.org/handle/10.2312/egst.20071055.063-087)
 """
 abstract type TopologicalRelation end
-
-"""
-    relation(face)
-
-Evaluate the topological `relation` at a `face` represented by an index.
-"""
-function (::TopologicalRelation)(::Integer) end
 
 # ----------------
 # IMPLEMENTATIONS
