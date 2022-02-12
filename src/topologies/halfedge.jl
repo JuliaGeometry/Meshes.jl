@@ -177,22 +177,22 @@ end
 paramdim(::HalfEdgeTopology) = 2
 
 """
-    half4elem(e, t)
+    half4elem(t, e)
 
 Return a half-edge of the half-edge topology `t` on the `e`-th elem.
 """
-half4elem(e::Integer, t::HalfEdgeTopology) = t.halfedges[t.half4elem[e]]
+half4elem(t::HalfEdgeTopology, e::Integer) = t.halfedges[t.half4elem[e]]
 
 """
-    half4vert(v, t)
+    half4vert(t, v)
 
 Return the half-edge of the half-edge topology `t` for which the
 head is the `v`-th index.
 """
-half4vert(v::Integer, t::HalfEdgeTopology) = t.halfedges[t.half4vert[v]]
+half4vert(t::HalfEdgeTopology, v::Integer) = t.halfedges[t.half4vert[v]]
 
 """
-    half4edge(e, t)
+    half4edge(t, e)
 
 Return the half-edge of the half-edge topology `t` for the edge `e`.
 
@@ -200,10 +200,10 @@ Return the half-edge of the half-edge topology `t` for the edge `e`.
 
 Always return the half-edge to the "left".
 """
-half4edge(e::Integer, t::HalfEdgeTopology) = t.halfedges[2e - 1]
+half4edge(t::HalfEdgeTopology, e::Integer) = t.halfedges[2e - 1]
 
 """
-    half4pair(uv, t)
+    half4pair(t, uv)
 
 Return the half-edge of the half-edge topology `t` for the pair of
 vertices `uv`.
@@ -212,14 +212,14 @@ vertices `uv`.
 
 Always return the half-edge to the "left".
 """
-half4pair(uv::Tuple{Int,Int}, t::HalfEdgeTopology) = half4edge(t.edge4pair[uv], t)
+half4pair(t::HalfEdgeTopology, uv::Tuple{Int,Int}) = half4edge(t, t.edge4pair[uv])
 
 """
-    edge4pair(uv, t)
+    edge4pair(t, uv)
 
 Return the edge of the half-edge topology `t` for the pair of vertices `uv`.
 """
-edge4pair(uv, t) = t.edge4pair[uv]
+edge4pair(t, uv) = t.edge4pair[uv]
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
@@ -238,14 +238,14 @@ function faces(t::HalfEdgeTopology, rank)
 end
 
 function element(t::HalfEdgeTopology, ind)
-  v = loop(half4elem(ind, t))
+  v = loop(half4elem(t, ind))
   connect(Tuple(v))
 end
 
 nelements(t::HalfEdgeTopology) = length(t.half4elem)
 
 function facet(t::HalfEdgeTopology, ind)
-  e = half4edge(ind, t)
+  e = half4edge(t, ind)
   connect((e.head, e.half.head))
 end
 

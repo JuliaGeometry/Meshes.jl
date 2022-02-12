@@ -61,16 +61,16 @@ end
 
 function (∂::Boundary{2,1,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
   t = ∂.topology
-  l = loop(half4elem(elem, t))
+  l = loop(half4elem(t, elem))
   v = CircularVector(l)
-  [edge4pair((v[i], v[i+1]), t) for i in 1:length(v)]
+  [edge4pair(t, (v[i], v[i+1])) for i in 1:length(v)]
 end
 
 function (∂::Boundary{2,0,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
-  loop(half4elem(elem, ∂.topology))
+  loop(half4elem(∂.topology, elem))
 end
 
 function (∂::Boundary{1,0,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
-  e = half4edge(edge, ∂.topology)
+  e = half4edge(∂.topology, edge)
   [e.head, e.half.head]
 end

@@ -28,11 +28,11 @@ end
 function (𝒞::Coboundary{0,1,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   t = 𝒞.topology
   𝒜 = Adjacency{0}(t)
-  [edge4pair((vert, other), t) for other in 𝒜(vert)]
+  [edge4pair(t, (vert, other)) for other in 𝒜(vert)]
 end
 
 function (𝒞::Coboundary{0,2,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
-  e = half4vert(vert, 𝒞.topology)
+  e = half4vert(𝒞.topology, vert)
 
   # initialize result
   elements = [e.elem]
@@ -61,6 +61,6 @@ function (𝒞::Coboundary{0,2,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
 end
 
 function (𝒞::Coboundary{1,2,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
-  e = half4edge(edge, 𝒞.topology)
+  e = half4edge(𝒞.topology, edge)
   isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
 end

@@ -149,7 +149,7 @@
     function test_halfedge(elems, structure)
       @test nelements(structure) == length(elems)
       for e in 1:nelements(structure)
-        he = half4elem(e, structure)
+        he = half4elem(structure, e)
         inds = indices(elems[e])
         @test he.elem == e
         @test he.head ∈ inds
@@ -180,22 +180,22 @@
     h9.prev = h7;  h9.next = h4
     halves  = [(h1,h2),(h3,h4),(h5,h6),(h7,h8),(h9,h10)]
     struc = HalfEdgeTopology(halves)
-    @test half4elem(1, struc) == h1
-    @test half4elem(2, struc) == h4
-    @test half4vert(1, struc) == h1
-    @test half4vert(2, struc) == h3
-    @test half4vert(3, struc) == h4
-    @test half4vert(4, struc) == h9
-    @test edge4pair((1,2), struc) == 1
-    @test edge4pair((2,1), struc) == 1
-    @test edge4pair((2,3), struc) == 2
-    @test edge4pair((3,2), struc) == 2
-    @test edge4pair((3,1), struc) == 3
-    @test edge4pair((1,3), struc) == 3
-    @test edge4pair((2,4), struc) == 4
-    @test edge4pair((4,2), struc) == 4
-    @test edge4pair((4,3), struc) == 5
-    @test edge4pair((3,4), struc) == 5
+    @test half4elem(struc, 1) == h1
+    @test half4elem(struc, 2) == h4
+    @test half4vert(struc, 1) == h1
+    @test half4vert(struc, 2) == h3
+    @test half4vert(struc, 3) == h4
+    @test half4vert(struc, 4) == h9
+    @test edge4pair(struc, (1,2)) == 1
+    @test edge4pair(struc, (2,1)) == 1
+    @test edge4pair(struc, (2,3)) == 2
+    @test edge4pair(struc, (3,2)) == 2
+    @test edge4pair(struc, (3,1)) == 3
+    @test edge4pair(struc, (1,3)) == 3
+    @test edge4pair(struc, (2,4)) == 4
+    @test edge4pair(struc, (4,2)) == 4
+    @test edge4pair(struc, (4,3)) == 5
+    @test edge4pair(struc, (3,4)) == 5
 
     # 2 triangles
     elems = connect.([(1,2,3),(4,3,2)])

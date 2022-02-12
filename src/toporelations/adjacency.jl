@@ -25,7 +25,7 @@ end
 # -------------------
 
 function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
-  e = half4vert(vert, 𝒜.topology)
+  e = half4vert(𝒜.topology, vert)
 
   # initialize result
   vertices = [e.half.head]
