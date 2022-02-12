@@ -225,10 +225,10 @@ export
 
   # topologies
   Topology,
-  vertices, nvertices,
-  faces, elements, facets,
-  element, nelements,
-  facet, nfacets,
+  vertices, elements, facets,
+  nvertices, nelements, nfacets,
+  element, facet,
+  faces, nfaces,
   FullTopology,
   GridTopology,
   HalfEdgeTopology, HalfEdge,
@@ -247,10 +247,11 @@ export
   # meshes
   Mesh,
   CartesianGrid, SimpleMesh,
-  vertices, nvertices, topology,
-  faces, elements, facets,
-  element, nelements,
-  facet, nfacets,
+  vertices, elements, facets,
+  nvertices, nelements, nfacets,
+  element, facet,
+  faces, nfaces,
+  topology,
   topoconvert,
   spacing,
 

@@ -25,7 +25,7 @@ vertices(t::Topology) = 1:nvertices(t)
 """
     nvertices(topology)
 
-Return the number of vertices in the `topology`.
+Return the number of vertices of the `topology`.
 """
 function nvertices(::Topology) end
 
@@ -47,6 +47,24 @@ segments     = faces(topology, 1)
 ```
 """
 function faces(::Topology, rank) end
+
+"""
+    nfaces(topology, rank)
+
+Return the number of `rank`-faces of the `topology`.
+"""
+function nfaces(t::Topology, rank)
+    D = paramdim(t)
+    if rank == D
+        nelements(t)
+    elseif rank == D - 1
+        nfacets(t)
+    elseif rank == 0
+        nvertices(t)
+    else
+        throw(ErrorException("not implemented"))
+    end
+end
 
 """
     elements(topology)
@@ -71,7 +89,7 @@ function element(::Topology, ind) end
 """
     nelements(topology)
 
-Return the number of elements in the `topology`.
+Return the number of elements of the `topology`.
 """
 function nelements(::Topology) end
 
@@ -92,7 +110,7 @@ function facet(::Topology, ind) end
 """
     nfacets(topology)
 
-Return the number of facets in the `topology`.
+Return the number of facets of the `topology`.
 """
 function nfacets(::Topology) end
 

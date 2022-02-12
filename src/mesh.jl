@@ -50,6 +50,13 @@ segments     = faces(mesh, 1)
 faces(m::Mesh, rank) = (materialize(f, vertices(m)) for f in faces(topology(m), rank))
 
 """
+    nfaces(mesh, rank)
+
+Return the number of `rank`-faces of the `mesh`.
+"""
+nfaces(m::Mesh, rank) = nfaces(topology(m), rank)
+
+"""
     elements(mesh)
 
 Return the top-faces (a.k.a. elements) of the `mesh`.
@@ -72,7 +79,7 @@ element(m::Mesh, ind) = materialize(element(topology(m), ind), vertices(m))
 """
     nelements(mesh)
 
-Return the number of elements in the `mesh`.
+Return the number of elements of the `mesh`.
 """
 nelements(m::Mesh) = nelements(topology(m))
 
@@ -93,7 +100,7 @@ facet(m::Mesh, ind) = materialize(facet(topology(m), ind), vertices(m))
 """
     nfacets(mesh)
 
-Return the number of facets in the `mesh`.
+Return the number of facets of the `mesh`.
 """
 nfacets(m::Mesh) = nfacets(topology(m))
 
