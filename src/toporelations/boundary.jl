@@ -21,6 +21,40 @@ function Boundary{P,Q}(topology) where {P,Q}
   Boundary{P,Q,D,T}(topology)
 end
 
+# --------------
+# GRID TOPOLOGY
+# --------------
+
+function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
+  t = ∂.topology
+  i, j, k = elem2cart(t, ind)
+  i1 = cart2corner(t, i  , j  , k  )
+  i2 = cart2corner(t, i+1, j  , k  )
+  i3 = cart2corner(t, i+1, j+1, k  )
+  i4 = cart2corner(t, i  , j+1, k  )
+  i5 = cart2corner(t, i  , j  , k+1)
+  i6 = cart2corner(t, i+1, j  , k+1)
+  i7 = cart2corner(t, i+1, j+1, k+1)
+  i8 = cart2corner(t, i  , j+1, k+1)
+  [i1, i2, i3, i4, i5, i6, i7, i8]
+end
+
+function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
+  t = ∂.topology
+  i, j = elem2cart(t, ind)
+  i1 = cart2corner(t, i  , j  )
+  i2 = cart2corner(t, i+1, j  )
+  i3 = cart2corner(t, i+1, j+1)
+  i4 = cart2corner(t, i  , j+1)
+  [i1, i2, i3, i4]
+end
+
+function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
+  i1 = ind
+  i2 = ind+1
+  [i1, i2]
+end
+
 # -------------------
 # HALF-EDGE TOPOLOGY
 # -------------------

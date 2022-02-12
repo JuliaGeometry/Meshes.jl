@@ -65,31 +65,9 @@ function faces(t::GridTopology{D}, rank) where {D}
 end
 
 function element(t::GridTopology{D}, ind) where {D}
-  if D == 1
-    i1 = ind
-    i2 = ind+1
-    connect((i1, i2), Segment)
-  elseif D == 2
-    i, j = elem2cart(t, ind)
-    i1 = cart2corner(t, i  , j  )
-    i2 = cart2corner(t, i+1, j  )
-    i3 = cart2corner(t, i+1, j+1)
-    i4 = cart2corner(t, i  , j+1)
-    connect((i1, i2, i3, i4), Quadrangle)
-  elseif D == 3
-    i, j, k = elem2cart(t, ind)
-    i1 = cart2corner(t, i  , j  , k  )
-    i2 = cart2corner(t, i+1, j  , k  )
-    i3 = cart2corner(t, i+1, j+1, k  )
-    i4 = cart2corner(t, i  , j+1, k  )
-    i5 = cart2corner(t, i  , j  , k+1)
-    i6 = cart2corner(t, i+1, j  , k+1)
-    i7 = cart2corner(t, i+1, j+1, k+1)
-    i8 = cart2corner(t, i  , j+1, k+1)
-    connect((i1, i2, i3, i4, i5, i6, i7, i8), Hexahedron)
-  else
-    throw(ErrorException("not implemented"))
-  end
+  ∂ = Boundary{D,0}(t)
+  T = rank2type(t, D)
+  connect(Tuple(∂(ind)), T)
 end
 
 nelements(t::GridTopology) = prod(t.dims)
