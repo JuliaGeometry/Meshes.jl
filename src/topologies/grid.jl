@@ -18,7 +18,7 @@ paramdim(::GridTopology{D}) where {D} = D
 Base.size(t::GridTopology) = t.dims
 
 """
-    i, j, k, ... = elem2cart(t, e)
+    elem2cart(t, e)
 
 Return the Cartesian indices of the `e`-th element of
 the grid topology `t`.
@@ -26,13 +26,46 @@ the grid topology `t`.
 elem2cart(t::GridTopology, e) = CartesianIndices(t.dims)[e].I
 
 """
+    cart2elem(t, i, j, k, ...)
+
+Return the linear index of the element of the
+grid topology `t` with Cartesian indices
+`i`, `j`, `k`, ...
+"""
+cart2elem(t::GridTopology, ijk...) = LinearIndices(t.dims)[ijk...]
+
+"""
+    corner2cart(t, v)
+
+Return the Cartesian indices of the element of the
+grid topology `t` with top left vertex `v`.
+"""
+corner2cart(t, v) = CartesianIndices(t.dims .+ 1)[v].I
+
+"""
     cart2corner(t, i, j, k, ...)
 
 Return the linear index of the top left vertex of the
-element of the topology `t` with Cartesian indices
+element of the grid topology `t` with Cartesian indices
 `i`, `j`, `k`, ...
 """
 cart2corner(t::GridTopology, ijk...) = LinearIndices(t.dims .+ 1)[ijk...]
+
+"""
+    elem2corner(t, e)
+
+Return the linear index of the top left vertex of the
+`e`-th element of the grid topology `t`.
+"""
+elem2corner(t::GridTopology, e) = cart2corner(t, elem2cart(t, e)...)
+
+"""
+    corner2elem(t, v)
+
+Return the linear index of the element of the grid
+topology `t` with top left vertex `v`
+"""
+corner2elem(t::GridTopology, v) = cart2elem(t, corner2cart(t, v)...)
 
 """
     rank2type(t, rank)

@@ -32,6 +32,12 @@
     @test cart2corner(t, 1) == 1
     @test cart2corner(t, 2) == 2
     @test cart2corner(t, 3) == 3
+    @test elem2corner(t, 1) == 1
+    @test elem2corner(t, 2) == 2
+    @test elem2corner(t, 3) == 3
+    @test corner2elem(t, 1) == 1
+    @test corner2elem(t, 2) == 2
+    @test corner2elem(t, 3) == 3
     @test nvertices(t) == 4
     @test nelements(t) == 3
     @test nfacets(t) == 4
@@ -70,6 +76,30 @@
     @test cart2corner(t, 1, 4) == 13
     @test cart2corner(t, 2, 4) == 14
     @test cart2corner(t, 3, 4) == 15
+    @test elem2corner(t, 1) == 1
+    @test elem2corner(t, 2) == 2
+    @test elem2corner(t, 3) == 3
+    @test elem2corner(t, 4) == 5
+    @test elem2corner(t, 5) == 6
+    @test elem2corner(t, 6) == 7
+    @test elem2corner(t, 7) == 9
+    @test elem2corner(t, 8) == 10
+    @test elem2corner(t, 9) == 11
+    @test elem2corner(t, 10) == 13
+    @test elem2corner(t, 11) == 14
+    @test elem2corner(t, 12) == 15
+    @test corner2elem(t, 1) == 1
+    @test corner2elem(t, 2) == 2
+    @test corner2elem(t, 3) == 3
+    @test corner2elem(t, 5) == 4
+    @test corner2elem(t, 6) == 5
+    @test corner2elem(t, 7) == 6
+    @test corner2elem(t, 9) == 7
+    @test corner2elem(t, 10) == 8
+    @test corner2elem(t, 11) == 9
+    @test corner2elem(t, 13) == 10
+    @test corner2elem(t, 14) == 11
+    @test corner2elem(t, 15) == 12
     @test nvertices(t) == 20
     @test nelements(t) == 12
     @test nfacets(t) == 31
@@ -137,6 +167,54 @@
     @test cart2corner(t, 1, 4, 2) == 33
     @test cart2corner(t, 2, 4, 2) == 34
     @test cart2corner(t, 3, 4, 2) == 35
+    @test elem2corner(t, 1) == 1
+    @test elem2corner(t, 2) == 2
+    @test elem2corner(t, 3) == 3
+    @test elem2corner(t, 4) == 5
+    @test elem2corner(t, 5) == 6
+    @test elem2corner(t, 6) == 7
+    @test elem2corner(t, 7) == 9
+    @test elem2corner(t, 8) == 10
+    @test elem2corner(t, 9) == 11
+    @test elem2corner(t, 10) == 13
+    @test elem2corner(t, 11) == 14
+    @test elem2corner(t, 12) == 15
+    @test elem2corner(t, 13) == 21
+    @test elem2corner(t, 14) == 22
+    @test elem2corner(t, 15) == 23
+    @test elem2corner(t, 16) == 25
+    @test elem2corner(t, 17) == 26
+    @test elem2corner(t, 18) == 27
+    @test elem2corner(t, 19) == 29
+    @test elem2corner(t, 20) == 30
+    @test elem2corner(t, 21) == 31
+    @test elem2corner(t, 22) == 33
+    @test elem2corner(t, 23) == 34
+    @test elem2corner(t, 24) == 35
+    @test corner2elem(t, 1) == 1
+    @test corner2elem(t, 2) == 2
+    @test corner2elem(t, 3) == 3
+    @test corner2elem(t, 5) == 4
+    @test corner2elem(t, 6) == 5
+    @test corner2elem(t, 7) == 6
+    @test corner2elem(t, 9) == 7
+    @test corner2elem(t, 10) == 8
+    @test corner2elem(t, 11) == 9
+    @test corner2elem(t, 13) == 10
+    @test corner2elem(t, 14) == 11
+    @test corner2elem(t, 15) == 12
+    @test corner2elem(t, 21) == 13
+    @test corner2elem(t, 22) == 14
+    @test corner2elem(t, 23) == 15
+    @test corner2elem(t, 25) == 16
+    @test corner2elem(t, 26) == 17
+    @test corner2elem(t, 27) == 18
+    @test corner2elem(t, 29) == 19
+    @test corner2elem(t, 30) == 20
+    @test corner2elem(t, 31) == 21
+    @test corner2elem(t, 33) == 22
+    @test corner2elem(t, 34) == 23
+    @test corner2elem(t, 35) == 24
     @test nvertices(t) == 60
     @test nelements(t) == 24
     @test nfacets(t) == 3*24 + 3*4 + 4*2 + 3*2
