@@ -106,39 +106,9 @@ end
 nelements(t::GridTopology) = prod(t.dims)
 
 function facet(t::GridTopology{D}, ind) where {D}
-  if D == 1
-    ind
-  elseif D == 2
-    N = 2prod(t.dims)
-    if ind ≤ N
-      if isodd(ind)
-        i, j = elem2cart(t, (ind + 1) ÷ 2)
-        i1 = cart2corner(t, i,   j)
-        i2 = cart2corner(t, i+1, j)
-      else
-        i, j = elem2cart(t, ind ÷ 2)
-        i1 = cart2corner(t, i,   j)
-        i2 = cart2corner(t, i, j+1)
-      end
-    else
-      if isodd(ind)
-        i = t.dims[1] + 1
-        j = ((ind - N) + 1) ÷ 2
-        i1 = cart2corner(t, i,   j)
-        i2 = cart2corner(t, i, j+1)
-      else
-        i = (ind - N) ÷ 2
-        j = t.dims[2] + 1
-        i1 = cart2corner(t, i,   j)
-        i2 = cart2corner(t, i+1, j)
-      end
-    end
-    connect((i1, i2), Segment)
-  elseif D == 3
-    throw(ErrorException("not implemented"))
-  else
-    throw(ErrorException("not implemented"))
-  end
+  ∂ = Boundary{D-1,0}(t)
+  T = rank2type(t, D-1)
+  connect(Tuple(∂(ind)), T)
 end
 
 function nfacets(t::GridTopology{D}) where {D}
