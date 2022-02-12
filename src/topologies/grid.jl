@@ -111,19 +111,16 @@ function facet(t::GridTopology{D}, ind) where {D}
   connect(Tuple(∂(ind)), T)
 end
 
-function nfacets(t::GridTopology{D}) where {D}
-  if D == 1
-    t.dims[1] + 1
-  elseif D == 2
-    2prod(t.dims) +
-    t.dims[1] +
-    t.dims[2]
-  elseif D == 3
-    3prod(t.dims) +
-    prod(t.dims[[1,2]]) +
-    prod(t.dims[[1,3]]) +
-    prod(t.dims[[2,3]])
-  else
-    throw(ErrorException("not implemented"))
-  end
-end
+nfacets(t::GridTopology{1}) =
+  t.dims[1] + 1
+
+nfacets(t::GridTopology{2}) =
+  2prod(t.dims) +
+  t.dims[1] +
+  t.dims[2]
+
+nfacets(t::GridTopology{3}) =
+  3prod(t.dims) +
+  prod(t.dims[[1,2]]) +
+  prod(t.dims[[1,3]]) +
+  prod(t.dims[[2,3]])
