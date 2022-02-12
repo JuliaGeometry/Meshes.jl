@@ -15,12 +15,6 @@ GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology{D}(dims)
 
 paramdim(::GridTopology{D}) where {D} = D
 
-"""
-    size(t)
-
-Return the size of the grid topology `t`, i.e. the
-number of elements along each dimension of the grid.
-"""
 Base.size(t::GridTopology) = t.dims
 
 """
@@ -39,6 +33,20 @@ element of the topology `t` with Cartesian indices
 `i`, `j`, `k`, ...
 """
 cart2corner(t::GridTopology, ijk...) = LinearIndices(t.dims .+ 1)[ijk...]
+
+"""
+    rank2type(t, rank)
+
+Return the polytope type of given `rank` for the grid
+topology `t`.
+"""
+function rank2type(::GridTopology{D}, rank::Integer) where {D}
+  @assert rank ≤ D "invalid rank for grid topology"
+  rank == 1 && return Segment
+  rank == 2 && return Quadrangle
+  rank == 3 && return Hexahedron
+  throw(ErrorException("not implemented"))
+end
 
 # ---------------------
 # HIGH-LEVEL INTERFACE

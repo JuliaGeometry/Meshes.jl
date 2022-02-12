@@ -24,6 +24,8 @@
     t = GridTopology(3)
     @test paramdim(t) == 1
     @test size(t) == (3,)
+    @test rank2type(t, 1) == Segment
+    @test_throws AssertionError rank2type(t, 2)
     @test elem2cart(t, 1) == (1,)
     @test elem2cart(t, 2) == (2,)
     @test elem2cart(t, 3) == (3,)
@@ -41,6 +43,9 @@
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
     @test size(t) == (3, 4)
+    @test rank2type(t, 1) == Segment
+    @test rank2type(t, 2) == Quadrangle
+    @test_throws AssertionError rank2type(t, 3)
     @test elem2cart(t, 1) == (1, 1)
     @test elem2cart(t, 2) == (2, 1)
     @test elem2cart(t, 3) == (3, 1)
@@ -80,6 +85,10 @@
     t = GridTopology(3, 4, 2)
     @test paramdim(t) == 3
     @test size(t) == (3, 4, 2)
+    @test rank2type(t, 1) == Segment
+    @test rank2type(t, 2) == Quadrangle
+    @test rank2type(t, 3) == Hexahedron
+    @test_throws AssertionError rank2type(t, 4)
     @test elem2cart(t, 1) == (1, 1, 1)
     @test elem2cart(t, 2) == (2, 1, 1)
     @test elem2cart(t, 3) == (3, 1, 1)
