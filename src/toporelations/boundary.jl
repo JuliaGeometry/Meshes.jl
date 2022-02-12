@@ -25,6 +25,7 @@ end
 # GRID TOPOLOGY
 # --------------
 
+# vertices of hexahedron on 3D grid
 function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
   i, j, k = elem2cart(t, ind)
@@ -39,6 +40,12 @@ function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   [i1, i2, i3, i4, i5, i6, i7, i8]
 end
 
+# vertices of quadrangle on 3D grid
+function (∂::Boundary{2,0,3,T})(ind::Integer) where {T<:GridTopology}
+  @error "not implemented"
+end
+
+# vertices of quadrangle on 2D grid
 function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
   i, j = elem2cart(t, ind)
@@ -49,9 +56,31 @@ function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   [i1, i2, i3, i4]
 end
 
+# vertices of segment on 2D grid
+function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
+  t = ∂.topology
+  nx, ny = size(t)
+
+  if ind ≤ nx*ny # vertical edges
+    i1 = elem2corner(t, ind)
+    i2 = i1 + 1
+  elseif ind ≤ nx*(ny+1) # last vertical edges
+    i, j = elem2cart(t, ind - nx)
+    i1 = cart2corner(t, i, j+1)
+    i2 = i1 + 1
+  else # horizontal edges
+    i1 = ind - nx*(ny+1)
+    i, j = corner2cart(t, i1)
+    i2 = cart2corner(t, i, j+1)
+  end
+
+  [i1, i2]
+end
+
+# vertices of segment on 1D grid
 function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
   i1 = ind
-  i2 = ind+1
+  i2 = ind + 1
   [i1, i2]
 end
 

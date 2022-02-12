@@ -1,5 +1,48 @@
 @testset "TopologicalRelation" begin
   @testset "GridTopology" begin
+    # 3 segments
+    t = GridTopology(3)
+    ∂ = Boundary{1,0}(t)
+    @test ∂(1) == [1,2]
+    @test ∂(2) == [2,3]
+    @test ∂(3) == [3,4]
+
+    # 2x3 quadrangles
+    t = GridTopology(2, 3)
+    ∂ = Boundary{2,0}(t)
+    @test ∂(1) == [1,2,5,4]
+    @test ∂(2) == [2,3,6,5]
+    @test ∂(3) == [4,5,8,7]
+    @test ∂(4) == [5,6,9,8]
+    @test ∂(5) == [7,8,11,10]
+    @test ∂(6) == [8,9,12,11]
+    ∂ = Boundary{1,0}(t)
+    @test ∂(1) == [1,2]
+    @test ∂(2) == [2,3]
+    @test ∂(3) == [4,5]
+    @test ∂(4) == [5,6]
+    @test ∂(5) == [7,8]
+    @test ∂(6) == [8,9]
+    @test ∂(7) == [10,11]
+    @test ∂(8) == [11,12]
+    @test ∂(9) == [1,4]
+    @test ∂(10) == [2,5]
+    @test ∂(11) == [3,6]
+    @test ∂(12) == [4,7]
+    @test ∂(13) == [5,8]
+    @test ∂(14) == [6,9]
+    @test ∂(15) == [7,10]
+    @test ∂(16) == [8,11]
+    @test ∂(17) == [9,12]
+
+    # 2x3x2 hexahedrons
+    t = GridTopology(2, 3, 2)
+    ∂ = Boundary{3,0}(t)
+    @test ∂(1) == [1,2,5,4,13,14,17,16]
+    @test ∂(2) == [2,3,6,5,14,15,18,17]
+    @test ∂(3) == [4,5,8,7,16,17,20,19]
+    @test ∂(12) == [20,21,24,23,32,33,36,35]
+
     # invalid relations
     t = GridTopology(2, 3)
     @test_throws AssertionError Boundary{3,0}(t)
