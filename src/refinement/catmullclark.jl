@@ -9,7 +9,7 @@ Catmull-Clark refinement of polygonal meshes.
 
 Strictly speaking, the Catmull-Clark algorithm
 is used for subdivision surface modeling, not
-just mesh refinement. At each step of refinment,
+just mesh refinement. At each step of refinement,
 the vertices are adjusted to approximate a smooth
 surface.
 
