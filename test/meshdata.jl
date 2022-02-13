@@ -35,4 +35,9 @@
   @test values(d, 0) == (temperature=[1.0,2.0,3.0,4.0], pressure=[4.0,3.0,2.0,1.0])
   @test values(d, 1) === nothing
   @test values(d, 2) == (quality=["A","B"], state=[true,false])
+
+  etable = [(a=1.,b=2.), (a=3.,b=4.), (a=5.,b=6.), (a=7.,b=8.)]
+  d = meshdata(CartesianGrid{T}(2,2), etable=etable)
+  @test d.a == [1.,3.,5.,7.]
+  @test d.b == [2.,4.,6.,8.]
 end

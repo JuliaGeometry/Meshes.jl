@@ -141,7 +141,8 @@ function Base.getindex(data::Data, col::Symbol)
   if col == :geometry
     collect(domain(data))
   else
-    Tables.getcolumn(values(data), col)
+    cols = Tables.columns(values(data))
+    Tables.getcolumn(cols, col)
   end
 end
 
