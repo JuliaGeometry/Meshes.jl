@@ -35,6 +35,14 @@ paramdim(t::FullTopology) = paramdim(t.connec[first(t.elms)])
 
 ==(t1::FullTopology, t2::FullTopology) = t1.connec == t2.connec
 
+"""
+    connec4elem(t, e)
+
+Return linear indices of vertices of `e`-th element of
+the full topology `t`.
+"""
+connec4elem(t::FullTopology, e) = indices(t.connec[t.elms[e]])
+
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------
@@ -42,7 +50,7 @@ paramdim(t::FullTopology) = paramdim(t.connec[first(t.elms)])
 nvertices(t::FullTopology) = maximum(i for c in t.connec for i in indices(c))
 
 function faces(t::FullTopology, rank)
-  cs, rs = t.connec, t.ranks
+  cs = t.connec
   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
 end
 

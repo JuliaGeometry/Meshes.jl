@@ -4,6 +4,8 @@
     elems = connect.([(1,2,3),(4,3,2)])
     t = FullTopology(elems)
     @test paramdim(t) == 2
+    @test connec4elem(t, 1) == (1,2,3)
+    @test connec4elem(t, 2) == (4,3,2)
     @test nvertices(t) == 4
     @test nelements(t) == 2
     @test nfaces(t, 2) == 2
@@ -13,6 +15,10 @@
     # 2 triangles + 2 quadrangles
     elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
     t = FullTopology(elems)
+    @test connec4elem(t, 1) == (1,2,6,5)
+    @test connec4elem(t, 2) == (2,4,6)
+    @test connec4elem(t, 3) == (4,3,5,6)
+    @test connec4elem(t, 4) == (1,5,3)
     @test nvertices(t) == 6
     @test nelements(t) == 4
     @test nfaces(t, 2) == 4
@@ -22,6 +28,10 @@
     # 1 triangle + 3 quadrangles + 1 triangle hole
     elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
     t = FullTopology(elems)
+    @test connec4elem(t, 1) == (1,2,6,5)
+    @test connec4elem(t, 2) == (2,4,7,6)
+    @test connec4elem(t, 3) == (4,3,7)
+    @test connec4elem(t, 4) == (3,1,5,7)
     @test nvertices(t) == 7
     @test nelements(t) == 4
     @test nfaces(t, 2) == 4

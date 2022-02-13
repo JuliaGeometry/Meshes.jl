@@ -22,6 +22,14 @@ function Boundary{P,Q}(topology) where {P,Q}
 end
 
 # --------------
+# FULL TOPOLOGY
+# --------------
+
+function (∂::Boundary{D,0,D,T})(ind::Integer) where {D,T<:FullTopology}
+  collect(connec4elem(∂.topology, ind))
+end
+
+# --------------
 # GRID TOPOLOGY
 # --------------
 

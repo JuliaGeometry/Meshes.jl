@@ -1,4 +1,12 @@
 @testset "TopologicalRelation" begin
+  @testset "FullTopology" begin
+    elems = connect.([(1,2,3),(4,3,2)])
+    t = FullTopology(elems)
+    ∂ = Boundary{2,0}(t)
+    @test ∂(1) == [1,2,3]
+    @test ∂(2) == [4,3,2]
+  end
+
   @testset "GridTopology" begin
     # 3 segments
     t = GridTopology(3)
