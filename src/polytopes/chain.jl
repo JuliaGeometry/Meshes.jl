@@ -13,7 +13,7 @@ struct Chain{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
 end
 
 # specialize Polytope outer constructor to use standard vector
-Chain(vertices::Vararg{<:Point}) = Chain(collect(vertices))
+Chain(vertices::Vararg{P}) where {P<:Point} = Chain(collect(vertices))
 
 Chain(vertices::CircularVector) = Chain([collect(vertices); first(vertices)])
 
