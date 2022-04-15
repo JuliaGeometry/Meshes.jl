@@ -3,10 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    intersecttype(f, s1, s2)
+    intersection(s1, s2)
 
-Compute the intersection type of two line segments `s1` and `s2`
-and apply function `f` to it.
+Compute the intersection of two line segments `s1` and `s2`.
 
 The intersection type can be one of five types according to
 Balbes, R. and Siegel, J. 1990:
@@ -23,7 +22,7 @@ Balbes, R. and Siegel, J. 1990:
   the simplicity and orientation of planar polygons]
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-function intersecttype(f::Function, s1::Segment{2,T}, s2::Segment{2,T}) where {T}
+function intersection(s1::Segment{2,T}, s2::Segment{2,T}) where {T}
   x̄ = centroid(s1)
   ȳ = centroid(s2)
   x1, x2 = vertices(s1)
@@ -61,46 +60,45 @@ function intersecttype(f::Function, s1::Segment{2,T}, s2::Segment{2,T}) where {T
   if determinatex && determinatey # CASE (I)
     if !wxzero && !wyzero
       # configuration (1)
-      return CrossingSegments(intersectpoint(s1, s2)) |> f
+      return @IT CrossingSegments intersectpoint(s1, s2)
     else
       # configuration (5)
-      return NoIntersection() |> f
+      return @IT NoIntersection nothing
     end
   elseif determinatex || determinatey # CASE (II)
     if !(determinatex ? wxzero : wyzero)
       if x1 ≈ y1 || x1 ≈ y2 || x2 ≈ y1 || x2 ≈ y2
         # configuration (3)
-        return CornerTouchingSegments(intersectpoint(s1, s2)) |> f
+        return @IT CornerTouchingSegments intersectpoint(s1, s2)
       else
         # configuration (2)
-        return MidTouchingSegments(intersectpoint(s1, s2)) |> f
+        return @IT MidTouchingSegments intersectpoint(s1, s2)
       end
     else
       # configuration (5)
-      return NoIntersection() |> f
+      return @IT NoIntersection nothing
     end
   elseif !determinatex && !determinatey # CASE (III)
     if !isapprox((x2 - x1) × (y2 - y1), zero(T), atol=atol(T)^2)
       # configuration (3)
-      return CornerTouchingSegments(intersectpoint(s1, s2)) |> f
+      return @IT CornerTouchingSegments intersectpoint(s1, s2)
     else
       # configuration (3), (4) or (5)
-      return intersectcollinear(f, s1, s2)
+      return intersectcollinear(s1, s2)
     end
   else
-    return NoIntersection() |> f
+    return @IT NoIntersection nothing
   end
 end
 
 """
-    intersecttype(f, s1, s2)
+    intersection(s1, s2)
 
-Compute the intersection type of two line segments `s1` and `s2`
-and apply function `f` to it. See
+Compute the intersection of two line segments `s1` and `s2`.
 [https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect]
 (https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect).
 """
-function intersecttype(f::Function, s1::Segment{3,T}, s2::Segment{3,T}) where {T}
+function intersection(s1::Segment{3,T}, s2::Segment{3,T}) where {T}
   # get coordinates
   p₁, p₂ = coordinates.(vertices(s1))
   q₁, q₂ = coordinates.(vertices(s2))
@@ -125,22 +123,22 @@ function intersecttype(f::Function, s1::Segment{3,T}, s2::Segment{3,T}) where {T
 
     # if λs are outside of the interval [0, 1], they do not intersect
     if any((λ₁, λ₂) .< zero(T)) || any((λ₁, λ₂) .> one(T))
-      return NoIntersection() |> f
+      return @IT NoIntersection nothing
     # if both λs are either 0 or 1, they are CornerTouchingSegments
     elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
-      return CornerTouchingSegments(s1(λ₁)) |> f
+      return @IT CornerTouchingSegments s1(λ₁)
     # if either λ is 0 or 1 then they are MidTouchingSegments
     elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) ⊻ ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
-      return MidTouchingSegments(s1(λ₁)) |> f
+      return @IT MidTouchingSegments s1(λ₁)
     # otherwise they are simple CrossingSegments
     else
-      return CrossingSegments(s1(λ₁)) |> f
+      return @IT CrossingSegments s1(λ₁)
     end
   # segments are co-linear
   elseif (rₐ == 1) && (r == 1)
-    return intersectcollinear(f, s1, s2)
+    return intersectcollinear(s1, s2)
   else
-    return NoIntersection() |> f
+    return @IT NoIntersection nothing
   end
 end
 
@@ -152,7 +150,7 @@ function intersectpoint(s1::Segment{2}, s2::Segment{2})
 end
 
 # intersection of two line segments assuming that they are collinear
-function intersectcollinear(f::Function, s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
+function intersectcollinear(s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
   m1, M1 = coordinates.(vertices(s1))
   m2, M2 = coordinates.(vertices(s2))
 
@@ -165,10 +163,10 @@ function intersectcollinear(f::Function, s1::Segment{Dim,T}, s2::Segment{Dim,T})
   v = Point(min.(M1, M2))
 
   if isapprox(u, v, atol=atol(T))
-    return CornerTouchingSegments(u)|> f
+    return @IT CornerTouchingSegments u
   elseif any(coordinates(u) .< coordinates(v))
-    return OverlappingSegments(Segment(u, v)) |> f
+    return @IT OverlappingSegments Segment(u, v)
   else
-    return NoIntersection() |> f
+    return @IT NoIntersection nothing
   end
 end

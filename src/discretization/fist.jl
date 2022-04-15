@@ -148,9 +148,8 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   intersects = false
   for j in 1:nvertices(𝒫)
     sⱼ = Segment(v[j], v[j+1])
-    λ(I) = !(I isa CornerTouchingSegments ||
-             I isa NoIntersection)
-    if intersecttype(λ, sᵢ, sⱼ)
+    I = intersection(sᵢ, sⱼ)
+    if !(I.type == CornerTouchingSegments || I.type == NoIntersection)
       intersects = true
       break
     end

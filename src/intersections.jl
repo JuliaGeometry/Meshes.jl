@@ -5,146 +5,79 @@
 """
     g1 ∩ g2
 
-Return the intersection of two geometries `g1` and `g2`.
+Return the intersection of two geometries `g1` and `g2` as a new geometry.
 """
-Base.intersect(g1::Geometry, g2::Geometry) = get(intersecttype(g1, g2))
-
-"""
-    intersecttype([f], g1, g2)
-
-Compute the intersection type of two geometries `g1` and `g2`
-and apply function `f` to it. Default function is [`identity`](@ref).
-
-## Examples
-
-```julia
-intersecttype(g1, g2) do I
-  if I isa CrossingLines
-    # do something
-  else
-    # do nothing
-  end
-end
-```
-
-### Notes
-
-When a custom function `f` is used that reduces the number of
-return types, Julia is able to optimize the branches of the code
-and generate specialized code. This is not the case when
-`f === identity`.
-"""
-intersecttype(f, g1, g2) = intersecttype(f, g2, g1)
-intersecttype(g1, g2)    = intersecttype(identity, g1, g2)
+Base.intersect(g1::Geometry, g2::Geometry) = get(intersection(g1, g2))
 
 """
-    Intersection
+    intersection(g1, g2)
 
-An intersection type (e.g. crossing line segments, overlapping boxes).
+Compute the intersection of two geometries `g1` and `g2`.
 """
-abstract type Intersection end
+intersection(g1, g2) = intersection(g2, g1)
 
-Base.get(I::Intersection) = I.value
+"""
+    IntersectionType
 
-# ------------------------
-# LINE-LINE INTERSECTIONS
-# ------------------------
+The different types of intersection that may occur between geometries.
+Type `IntersectionType` in a Julia session to see the full list.
+"""
+@enum IntersectionType begin
+  # segment-segment intersection
+  CrossingSegments
+  MidTouchingSegments
+  CornerTouchingSegments
+  OverlappingSegments
 
-struct CrossingLines{P<:Point} <: Intersection
-  value::P
+  # box-box intersection
+  OverlappingBoxes
+  FaceTouchingBoxes
+  CornerTouchingBoxes
+
+  # line-line intersection
+  CrossingLines
+  OverlappingLines
+
+  # ray-box intersection
+  CrossingRayBox
+  TouchingRayBox
+
+  # segment-triangle intersection
+  IntersectingSegmentTriangle
+
+  # ray-triangle intersection
+  IntersectingRayTriangle
+
+  # segment-plane intersection
+  CrossingSegmentPlane
+  TouchingSegmentPlane
+  OverlappingSegmentPlane
+
+  # no intersection
+  NoIntersection
 end
 
-struct OverlappingLines{L<:Line} <: Intersection
-  value::L
+"""
+    Intersection{G}
+
+An intersection between geometries holding a geometry of type `G`.
+"""
+struct Intersection{GeometryType}
+  type::IntersectionType
+  geom::GeometryType
 end
 
-# ------------------------------
-# SEGMENT-SEGMENT INTERSECTIONS
-# ------------------------------
+Intersection(type, geom) = Intersection{typeof(geom)}(type, geom)
 
-struct CrossingSegments{P<:Point} <: Intersection
-  value::P
+Base.get(I::Intersection) = I.geom
+
+# helper macro for developers in case we decide to
+# change the internal representation of Intersection
+macro IT(type, geom)
+  type = esc(type)
+  geom = esc(geom)
+  :(Intersection($type, $geom))
 end
-
-struct MidTouchingSegments{P<:Point} <: Intersection
-  value::P
-end
-
-struct CornerTouchingSegments{P<:Point} <: Intersection
-  value::P
-end
-
-struct OverlappingSegments{S<:Segment} <: Intersection
-  value::S
-end
-
-# ----------------------
-# BOX-BOX INTERSECTIONS
-# ----------------------
-
-struct OverlappingBoxes{B<:Box} <: Intersection
-  value::B
-end
-
-struct FaceTouchingBoxes{B<:Box} <: Intersection
-  value::B
-end
-
-struct CornerTouchingBoxes{P<:Point} <: Intersection
-  value::P
-end
-
-# ----------------------
-# RAY-BOX INTERSECTIONS
-# ----------------------
-
-struct CrossingRayBox{S<:Segment} <: Intersection
-  value::S
-end
-
-struct TouchingRayBox{P<:Point} <: Intersection
-  value::P
-end
-
-# -------------------------------
-# SEGMENT-TRIANGLE INTERSECTIONS
-# -------------------------------
-
-struct IntersectingSegmentTriangle{P<:Point} <: Intersection
-  value::P
-end
-
-# ---------------------------
-# RAY-TRIANGLE INTERSECTIONS
-# ---------------------------
-
-struct IntersectingRayTriangle{P<:Point} <: Intersection
-  value::P
-end
-
-# ----------------------------
-# SEGMENT-PLANE INTERSECTIONS
-# ----------------------------
-
-struct CrossingSegmentPlane{P<:Point} <: Intersection
-  value::P
-end
-
-struct TouchingSegmentPlane{P<:Point} <: Intersection
-  value::P
-end
-
-struct OverlappingSegmentPlane{S<:Segment} <: Intersection
-  value::S
-end
-
-# ------------
-# CORNER CASE
-# ------------
-
-struct NoIntersection <: Intersection end
-
-Base.get(::NoIntersection) = nothing
 
 # ----------------
 # IMPLEMENTATIONS
@@ -152,9 +85,16 @@ Base.get(::NoIntersection) = nothing
 
 include("intersections/lines.jl")
 include("intersections/segments.jl")
-include("intersections/planes.jl")
-include("intersections/triangles.jl")
 include("intersections/boxes.jl")
+include("intersections/raybox.jl")
+include("intersections/segmentplane.jl")
+include("intersections/segmenttriangle.jl")
+include("intersections/raytriangle.jl")
+include("intersections/geompolygon.jl")
+
+# -----------------
+# TRUE/FALSE CHECK
+# -----------------
 
 """
     hasintersect(g1, g2)

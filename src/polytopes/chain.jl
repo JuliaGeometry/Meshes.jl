@@ -90,8 +90,8 @@ function issimple(c::Chain)
   ss = collect(segments(c))
   for i in 1:length(ss)
     for j in i+1:length(ss)
-      I = intersecttype(ss[i], ss[j])
-      if !(I isa CornerTouchingSegments || I isa NoIntersection)
+      I = intersection(ss[i], ss[j])
+      if !(I.type == CornerTouchingSegments || I.type == NoIntersection)
         return false
       end
     end

@@ -3,10 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    intersecttype(f, l1, l2)
+    intersection(l1, l2)
 
-Compute the intersection type of two lines `l1` and `l2`
-and apply function `f` to it.
+Compute the intersection type of two lines `l1` and `l2`.
 
 The intersection type can be one of three types:
 
@@ -14,29 +13,29 @@ The intersection type can be one of three types:
 2. overlap at more than one point
 3. do not overlap nor intersect
 """
-function intersecttype(f::Function, l1::Line{3,T}, l2::Line{3,T}) where {T}
+function intersection(l1::Line{3,T}, l2::Line{3,T}) where {T}
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 
   if measure(Tetrahedron(a, b, c, d)) > 0
-    return NoIntersection() |> f
+    return @IT NoIntersection nothing
   elseif isapprox(abs((b - a) × (c - d)), zero(T), atol=atol(T)^2)
-    return OverlappingLines(l1) |> f
+    return @IT OverlappingLines l1 
   else
-    return CrossingLines(intersectpoint(l1, l2)) |> f
+    return @IT CrossingLines intersectpoint(l1, l2)
   end
 end
 
-function intersecttype(f::Function, l1::Line{2,T}, l2::Line{2,T}) where {T}
+function intersection(l1::Line{2,T}, l2::Line{2,T}) where {T}
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 
   if !isapprox(abs((b - a) × (c - d)), zero(T), atol=atol(T)^2)
-    return CrossingLines(intersectpoint(l1, l2)) |> f
+    return @IT CrossingLines intersectpoint(l1, l2)
   elseif isapprox(measure(Triangle(a, b, c)), zero(T), atol=atol(T)^2)
-    return OverlappingLines(l1) |> f
+    return @IT OverlappingLines l1
   else
-    return NoIntersection() |> f
+    return @IT NoIntersection nothing
   end
 end
 
