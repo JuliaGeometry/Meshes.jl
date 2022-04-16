@@ -10,11 +10,32 @@ Return the intersection of two geometries `g1` and `g2` as a new geometry.
 Base.intersect(g1::Geometry, g2::Geometry) = get(intersection(g1, g2))
 
 """
-    intersection(g1, g2)
+    intersection([f], g1, g2)
 
-Compute the intersection of two geometries `g1` and `g2`.
+Compute the intersection of two geometries `g1` and `g2`
+and apply function `f` to it. Default function is [`identity`](@ref).
+
+## Examples
+
+```julia
+intersecttype(g1, g2) do I
+  if I isa CrossingLines
+    # do something
+  else
+    # do nothing
+  end
+end
+```
+
+### Notes
+
+When a custom function `f` is used that reduces the number of
+return types, Julia is able to optimize the branches of the code
+and generate specialized code. This is not the case when
+`f === identity`.
 """
-intersection(g1, g2) = intersection(g2, g1)
+intersection(f, g1, g2) = intersection(f, g2, g1)
+intersection(g1, g2)    = intersection(identity, g1, g2)
 
 """
     IntersectionType
@@ -69,14 +90,27 @@ end
 
 Intersection(type, geom) = Intersection{typeof(geom)}(type, geom)
 
+"""
+    type(intersection)
+
+Return the type of intersection computed between geometries.
+"""
+type(I::Intersection) = I.type
+
+"""
+    get(intersection)
+
+Return the underlying geometry stored in the intersection object.
+"""
 Base.get(I::Intersection) = I.geom
 
 # helper macro for developers in case we decide to
 # change the internal representation of Intersection
-macro IT(type, geom)
+macro IT(type, geom, func)
   type = esc(type)
   geom = esc(geom)
-  :(Intersection($type, $geom))
+  func = esc(func)
+  :(Intersection($type, $geom) |> $func)
 end
 
 # ----------------

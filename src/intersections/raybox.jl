@@ -3,9 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    intersection(ray, box)
+    intersection(f, ray, box)
 
-Compute the intersection between a `ray` and a `box`.
+Compute the intersection between a `ray` and a `box`
+and apply function `f` to it.
 
 ## References
 
@@ -13,7 +14,7 @@ Compute the intersection between a `ray` and a `box`.
   intersection algorithm]
   (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 """
-function intersection(r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
+function intersection(f, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
   invdir = one(T) ./ direction(r)
   lo, up = coordinates.(extrema(b))
   orig = coordinates(origin(r))
@@ -32,13 +33,13 @@ function intersection(r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue
 
-    (tmin > imax || imin > tmax) && return @IT NoIntersection nothing
+    (tmin > imax || imin > tmax) && return @IT NoIntersection nothing f
     
     tmin = max(tmin, imin)
     tmax = min(tmax, imax)
   end
 
-  tmin ≈ tmax && return @IT TouchingRayBox r(tmin)
+  tmin ≈ tmax && return @IT TouchingRayBox r(tmin) f
   
-  return @IT CrossingRayBox Segment(r(tmin), r(tmax))
+  return @IT CrossingRayBox Segment(r(tmin), r(tmax)) f
 end

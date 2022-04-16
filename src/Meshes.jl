@@ -324,6 +324,7 @@ export
   Intersection,
   intersection,
   hasintersect,
+  type,
 
   # discretization
   DiscretizationMethod,

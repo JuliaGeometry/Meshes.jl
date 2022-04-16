@@ -144,12 +144,13 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
   isconvex = vexity(i) == :CONVEX
 
   # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
+  λ(I) = !(type(I) == CornerTouchingSegments ||
+           type(I) == NoIntersection)
   sᵢ = Segment(v[i-1], v[i+1])
   intersects = false
   for j in 1:nvertices(𝒫)
     sⱼ = Segment(v[j], v[j+1])
-    I = intersection(sᵢ, sⱼ)
-    if !(I.type == CornerTouchingSegments || I.type == NoIntersection)
+    if intersection(λ, sᵢ, sⱼ)
       intersects = true
       break
     end

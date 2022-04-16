@@ -3,9 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    intersection(segment, triangle)
+    intersection(f, segment, triangle)
 
-Compute the intersection type of `segment and `triangle`.
+Compute the intersection type of `segment and `triangle`
+and apply function `f` to it.
 
 ## References
 
@@ -13,7 +14,7 @@ Compute the intersection type of `segment and `triangle`.
   intersection algorithm for interference tests. Efficiency study]
   (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
 """
-function intersection(s::Segment{3,T}, t::Triangle{3,T}) where {T}
+function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
   vₛ = vertices(s)
   vₜ = vertices(t)
 
@@ -30,7 +31,7 @@ function intersection(s::Segment{3,T}, t::Triangle{3,T}) where {T}
   if wᵥ > atol(T)
     # rejection 2
     if sᵥ > atol(T)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
 
     W₂ = A × D
@@ -38,24 +39,24 @@ function intersection(s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
     # rejection 3
     if tᵥ < -atol(T)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
 
     uᵥ = -(W₂ ⋅ B)
 
     # rejection 4
     if uᵥ < -atol(T)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
 
     # rejection 5
     if wᵥ < (sᵥ + tᵥ + uᵥ)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
   elseif wᵥ < -atol(T)
     # rejection 2
     if sᵥ < -atol(T)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
 
     W₂ = A × D
@@ -63,19 +64,19 @@ function intersection(s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
     # rejection 3
     if tᵥ > atol(T)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
 
     uᵥ = -(W₂ ⋅ B)
 
     # rejection 4
     if uᵥ > atol(T)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
 
     # rejection 5
     if wᵥ > (sᵥ + tᵥ + uᵥ)
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
   else
     if sᵥ > atol(T)
@@ -84,18 +85,18 @@ function intersection(s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
       # rejection 3
       if tᵥ < -atol(T)
-        return @IT NoIntersection nothing
+        return @IT NoIntersection nothing f
       end
 
       uᵥ = -(W₂ ⋅ B)
 
       # rejection 4
       if uᵥ < -atol(T)
-        return @IT NoIntersection nothing
+        return @IT NoIntersection nothing f
       end
       # rejection 5
       if -sᵥ < (tᵥ + uᵥ)
-        return @IT NoIntersection nothing
+        return @IT NoIntersection nothing f
       end
     elseif sᵥ < -atol(T)
       W₂ = D × A
@@ -103,27 +104,27 @@ function intersection(s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
       # rejection 3
       if tᵥ > atol(T)
-        return @IT NoIntersection nothing
+        return @IT NoIntersection nothing f
       end
 
       uᵥ = -(W₂ ⋅ B)
 
       # rejection 4
       if uᵥ > atol(T)
-        return @IT NoIntersection nothing
+        return @IT NoIntersection nothing f
       end
 
       # rejection 5
       if -sᵥ > (tᵥ + uᵥ)
-        return @IT NoIntersection nothing
+        return @IT NoIntersection nothing f
       end
     else
       # rejection 1, coplanar segment
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
   end
 
   λ = clamp(wᵥ / (wᵥ - sᵥ), zero(T), one(T))
 
-  return @IT IntersectingSegmentTriangle s(λ)
+  return @IT IntersectingSegmentTriangle s(λ) f
 end

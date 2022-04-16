@@ -3,13 +3,14 @@
 # ------------------------------------------------------------------
 
 """
-    intersection(segment, plane)
+    intersection(f, segment, plane)
 
-Compute the intersection type of line `segment` and `plane`.
+Compute the intersection type of line `segment` and `plane`
+and apply function `f` to it.
 [https://en.wikipedia.org/wiki/Line-plane_intersection]
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
 """
-function intersection(s::Segment{3,T}, p::Plane{T}) where {T}
+function intersection(f, s::Segment{3,T}, p::Plane{T}) where {T}
   sᵥ = coordinates.(vertices(s))
   pₒ = coordinates(origin(p))
   n  = normal(p)
@@ -21,9 +22,9 @@ function intersection(s::Segment{3,T}, p::Plane{T}) where {T}
   if isapprox(ln, zero(T), atol=atol(T))
     # if the numerator is zero, the segment is coincident
     if isapprox((pₒ - sᵥ[1]) ⋅ n, zero(T), atol=atol(T))
-      return @IT OverlappingSegmentPlane s
+      return @IT OverlappingSegmentPlane s f
     else
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     end
   else
     # calculate the segment parameter
@@ -31,16 +32,16 @@ function intersection(s::Segment{3,T}, p::Plane{T}) where {T}
 
     # if λ is approximately 0 or 1, set as so to prevent any domain errors
     if isapprox(λ, zero(T), atol=atol(T))
-      return @IT TouchingSegmentPlane s(zero(T))
+      return @IT TouchingSegmentPlane s(zero(T)) f
     elseif isapprox(λ, one(T), atol=atol(T))
-      return @IT TouchingSegmentPlane s(one(T))
+      return @IT TouchingSegmentPlane s(one(T)) f
     end
 
     # if λ is out of bounds for the segment, then there is no intersection
     if (λ < zero(T)) || (λ > one(T))
-      return @IT NoIntersection nothing
+      return @IT NoIntersection nothing f
     else
-      return @IT CrossingSegmentPlane s(λ)
+      return @IT CrossingSegmentPlane s(λ) f
     end
   end
 end
