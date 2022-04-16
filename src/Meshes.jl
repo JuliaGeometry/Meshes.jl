@@ -300,11 +300,8 @@ export
   HierarchicalPartition,
   partition, split,
 
-  # intersections
-  Intersection,
-  NoIntersection,
-  CrossingLines,
-  OverlappingLines,
+  # intersection types
+  IntersectionType,
   CrossingSegments,
   MidTouchingSegments,
   CornerTouchingSegments,
@@ -312,6 +309,8 @@ export
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
+  CrossingLines,
+  OverlappingLines,
   CrossingRayBox,
   TouchingRayBox,
   IntersectingSegmentTriangle,
@@ -319,8 +318,13 @@ export
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,
-  intersecttype,
+  NoIntersection,
+
+  # intersections
+  Intersection,
+  intersection,
   hasintersect,
+  type,
 
   # discretization
   DiscretizationMethod,
