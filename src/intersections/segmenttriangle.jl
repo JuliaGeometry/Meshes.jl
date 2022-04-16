@@ -2,18 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    intersection(f, segment, triangle)
-
-Compute the intersection type of `segment and `triangle`
-and apply function `f` to it.
-
-## References
-
-* Jiménez, J., Segura, R. and Feito, F. 2009. [A robust segment/triangle
-  intersection algorithm for interference tests. Efficiency study]
-  (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-"""
+#=
+Jiménez, J., Segura, R. and Feito, F. 2009.
+(https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
+=#
 function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
   vₛ = vertices(s)
   vₜ = vertices(t)

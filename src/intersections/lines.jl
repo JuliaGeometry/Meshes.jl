@@ -2,18 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    intersection(f, l1, l2)
-
-Compute the intersection type of two lines `l1` and `l2`
-and apply function `f` to it.
-
+#=
 The intersection type can be one of three types:
 
 1. intersect at one point
 2. overlap at more than one point
 3. do not overlap nor intersect
-"""
+=#
 function intersection(f, l1::Line{3,T}, l2::Line{3,T}) where {T}
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)

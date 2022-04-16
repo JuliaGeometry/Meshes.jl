@@ -2,12 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    intersection(f, s1, s2)
-
-Compute the intersection of two line segments `s1` and `s2`
-and apply function `f` to it.
-
+#=
 The intersection type can be one of five types according to
 Balbes, R. and Siegel, J. 1990:
 
@@ -17,12 +12,9 @@ Balbes, R. and Siegel, J. 1990:
 4. overlap at more than one point
 5. do not overlap nor intersect
 
-## References
-
-* Balbes, R. and Siegel, J. 1990. [A robust method for calculating
-  the simplicity and orientation of planar polygons]
-  (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
-"""
+Balbes, R. and Siegel, J. 1990.
+(https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
+=#
 function intersection(f, s1::Segment{2,T}, s2::Segment{2,T}) where {T}
   x̄ = centroid(s1)
   ȳ = centroid(s2)
@@ -92,15 +84,9 @@ function intersection(f, s1::Segment{2,T}, s2::Segment{2,T}) where {T}
   end
 end
 
-"""
-    intersection(f, s1, s2)
-
-Compute the intersection of two line segments `s1` and `s2`
-and apply function `f` to it.
-
-[https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect]
-(https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect).
-"""
+#=
+(https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect)
+=#
 function intersection(f, s1::Segment{3,T}, s2::Segment{3,T}) where {T}
   # get coordinates
   p₁, p₂ = coordinates.(vertices(s1))

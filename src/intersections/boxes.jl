@@ -2,19 +2,14 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    intersection(f, b1, b2)
-
-Compute the intersection of two boxes `b1` and `b2`
-and apply function `f` to it.
-
+#=
 The intersection type can be one of four types:
 
 1. overlap with non-zero measure
 2. intersect at one of the boundaries
 3. intersect at corner point
 4. do not overlap nor intersect
-"""
+=#
 function intersection(f, b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T}
   m1, M1 = coordinates.(extrema(b1))
   m2, M2 = coordinates.(extrema(b2))

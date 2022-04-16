@@ -2,18 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    intersection(f, ray, triangle)
-
-Compute the intersection of a `ray` and `triangle`
-and apply function `f` to it.
-
-## References
-
-* Möller, T. and Trumbore, B., 1997. [Fast, minimum storage ray-triangle
-  intersection. Journal of graphics tools]
-  (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
-"""
+#=
+Möller, T. & Trumbore, B., 1997.
+(https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
+=#
 function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
   o = origin(r)

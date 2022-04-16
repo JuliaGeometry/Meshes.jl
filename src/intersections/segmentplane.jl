@@ -2,14 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    intersection(f, segment, plane)
-
-Compute the intersection type of line `segment` and `plane`
-and apply function `f` to it.
-[https://en.wikipedia.org/wiki/Line-plane_intersection]
+#=
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
-"""
+=#
 function intersection(f, s::Segment{3,T}, p::Plane{T}) where {T}
   sᵥ = coordinates.(vertices(s))
   pₒ = coordinates(origin(p))
