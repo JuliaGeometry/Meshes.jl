@@ -300,25 +300,54 @@ export
   HierarchicalPartition,
   partition, split,
 
+  #-------------------
   # intersection types
   IntersectionType,
+  
+  # no intersection
+  NoIntersection,
+  # segment-segment intersection
   CrossingSegments,
   MidTouchingSegments,
   CornerTouchingSegments,
   OverlappingSegments,
+  # ray-segment intersection
+  CrossingRaySegment,
+  CornerTouchingRaySegment,
+  MidTouchingRaySegment,
+  OverlappingRaySegment,
+  # line-ray intersection
+  CrossingLineRay,
+  MidTouchingLineRay,
+  OverlappingLineRay,
+  # line-segment intersection
+  CrossingLineSegment,
+  MidTouchingLineSegment,
+  OverlappingLineSegment,
+  # box-box intersection
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
+  # line-line intersection
   CrossingLines,
   OverlappingLines,
+  # ray-ray intersectpoint
+  CrossingRays,
+  CornerTouchingRays,
+  MidTouchingRays,
+  OverlappingCollidingRays,
+  OverlappingAlignedRays,
+  # ray-box intersection
   CrossingRayBox,
   TouchingRayBox,
+  # segment-triangle intersection
   IntersectingSegmentTriangle,
+  # ray-triangle intersection
   IntersectingRayTriangle,
+  # segment-plane intersection
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,
-  NoIntersection,
 
   # intersections
   Intersection,

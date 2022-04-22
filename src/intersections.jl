@@ -44,11 +44,30 @@ The different types of intersection that may occur between geometries.
 Type `IntersectionType` in a Julia session to see the full list.
 """
 @enum IntersectionType begin
+  # no intersection
+  NoIntersection
+
   # segment-segment intersection
   CrossingSegments
   MidTouchingSegments
   CornerTouchingSegments
   OverlappingSegments
+  
+  # ray-segment intersection
+  CrossingRaySegment
+  CornerTouchingRaySegment
+  MidTouchingRaySegment
+  OverlappingRaySegment
+
+  # line-ray intersection
+  CrossingLineRay
+  MidTouchingLineRay
+  OverlappingLineRay
+
+  # line-segment intersection
+  CrossingLineSegment
+  MidTouchingLineSegment
+  OverlappingLineSegment
 
   # box-box intersection
   OverlappingBoxes
@@ -58,6 +77,13 @@ Type `IntersectionType` in a Julia session to see the full list.
   # line-line intersection
   CrossingLines
   OverlappingLines
+
+  # ray-ray intersectpoint
+  CrossingRays
+  CornerTouchingRays
+  MidTouchingRays
+  OverlappingCollidingRays
+  OverlappingAlignedRays
 
   # ray-box intersection
   CrossingRayBox
@@ -74,8 +100,7 @@ Type `IntersectionType` in a Julia session to see the full list.
   TouchingSegmentPlane
   OverlappingSegmentPlane
 
-  # no intersection
-  NoIntersection
+
 end
 
 """
