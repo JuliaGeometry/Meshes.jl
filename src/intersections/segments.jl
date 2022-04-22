@@ -15,7 +15,7 @@ Balbes, R. and Siegel, J. 1990:
 Balbes, R. and Siegel, J. 1990.
 (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 =#
-function intersection(f, s1::Segment{2,T}, s2::Segment{2,T}) where {T}
+function intersection(f::Function, s1::Segment{2,T}, s2::Segment{2,T}) where {T}
   x̄ = centroid(s1)
   ȳ = centroid(s2)
   x1, x2 = vertices(s1)
@@ -87,7 +87,7 @@ end
 #=
 (https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect)
 =#
-function intersection(f, s1::Segment{3,T}, s2::Segment{3,T}) where {T}
+function intersection(f::Function, s1::Segment{3,T}, s2::Segment{3,T}) where {T}
   # get coordinates
   p₁, p₂ = coordinates.(vertices(s1))
   q₁, q₂ = coordinates.(vertices(s2))
