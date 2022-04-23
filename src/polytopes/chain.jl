@@ -87,11 +87,12 @@ A chain is simple when all its segments only
 intersect at end points.
 """
 function issimple(c::Chain)
+  λ(I) = !(type(I) == CornerTouchingSegments ||
+           type(I) == NoIntersection)
   ss = collect(segments(c))
   for i in 1:length(ss)
     for j in i+1:length(ss)
-      I = intersecttype(ss[i], ss[j])
-      if !(I isa CornerTouchingSegments || I isa NoIntersection)
+      if intersection(λ, ss[i], ss[j])
         return false
       end
     end
