@@ -57,7 +57,7 @@ function discretize(sphere::Sphere{3,T},
   # add north and south poles
   c = center(sphere)
   r = radius(sphere)
-  e⃗ = Vec{3,T}(0, 0, 1)
+  e⃗ = Vec{3,dropunits(T)}(0, 0, 1)
   push!(points, c + r*e⃗)
   push!(points, c - r*e⃗)
 
