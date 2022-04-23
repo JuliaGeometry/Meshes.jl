@@ -15,4 +15,7 @@
   @test sideof(p1, c) == :INSIDE
   @test sideof(p2, c) == :OUTSIDE
   @test sideof(p3, c) == :INSIDE
+
+  @test Meshes.dropunits(1.0u"mm") === Float64
+  @test Meshes.dropunits(typeof(1.0u"mm")) === Float64
 end

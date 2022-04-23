@@ -11,6 +11,7 @@ using SparseArrays
 using PlyIO
 using Test, Random, Plots
 using ReferenceTests, ImageIO
+using Unitful
 
 # workaround GR warnings
 ENV["GKSwstype"] = "100"
