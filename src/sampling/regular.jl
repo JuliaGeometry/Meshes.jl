@@ -64,7 +64,7 @@ function sample(::AbstractRNG, sphere::Sphere{3,T},
   θrange = range(θmin+δθ, stop=θmax-δθ, length=sz[1])
   φrange = range(φmin, stop=φmax-δφ, length=sz[2])
 
-  r⃗(θ, φ) = Vec{3,V}(r*sin(θ)*cos(φ), r*sin(θ)*sin(φ), r*cos(θ))
+  r⃗(θ, φ) = Vec{3,T}(r*sin(θ)*cos(φ), r*sin(θ)*sin(φ), r*cos(θ))
 
   ivec(c + r⃗(θ, φ) for θ in θrange, φ in φrange)
 end
