@@ -9,6 +9,7 @@ using CircularArrays
 using StaticArrays
 using SparseArrays
 using PlyIO
+using Unitful
 using Test, Random, Plots
 using ReferenceTests, ImageIO
 
