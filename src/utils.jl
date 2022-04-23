@@ -90,7 +90,7 @@ end
 """
     dropunits(T)
 
-Gets the dimensionless memory type representation of a variable or type.
+Returns the unitless type of a (unitful) type or value. See Unitful.jl.
 i.e. `dropunits(1u"mm") == Int`
 """
 dropunits(T) = typeof(one(T))
