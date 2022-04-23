@@ -86,3 +86,11 @@ function proj2D(points::AbstractVector{Point{3,T}}) where {T}
   v = U[:,2]
   [Point(z⋅u, z⋅v) for z in eachcol(Z)]
 end
+
+"""
+    dropunits(T)
+
+Gets the dimensionless memory type representation of a variable or type.
+i.e. `dropunits(1u"mm") == Int`
+"""
+dropunits(T) = typeof(one(T))
