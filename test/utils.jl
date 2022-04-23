@@ -16,6 +16,11 @@
   @test sideof(p2, c) == :OUTSIDE
   @test sideof(p3, c) == :INSIDE
 
-  @test Meshes.dropunits(1.0u"mm") === Float64
-  @test Meshes.dropunits(typeof(1.0u"mm")) === Float64
+  # drop units from unitful value and type
+  @test Meshes.dropunits(1.0u"mm") == Float64
+  @test Meshes.dropunits(typeof(1.0u"mm")) == Float64
+  
+  # return the same type in case of no units
+  @test Meshes.dropunits(1.0) == Float64
+  @test Meshes.dropunits(Float64) == Float64
 end
