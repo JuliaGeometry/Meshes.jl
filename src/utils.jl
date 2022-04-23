@@ -93,4 +93,4 @@ end
 Returns the unitless type of a (unitful) type or value. See Unitful.jl.
 i.e. `dropunits(1u"mm") == Int`
 """
-dropunits(T) = typeof(one(T))
+dropunits(v) = typeof(one(v))
