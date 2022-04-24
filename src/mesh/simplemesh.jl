@@ -27,6 +27,8 @@ SimpleMesh(points::AbstractVector{<:Point},
 
 vertices(m::SimpleMesh) = m.points
 
+nvertices(m::SimpleMesh) = length(m.points)
+
 topology(m::SimpleMesh) = m.topology
 
 """

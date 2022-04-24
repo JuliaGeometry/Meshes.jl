@@ -232,6 +232,12 @@
     @test nelements(mesh) == 100
     @test eltype(mesh) <: Quadrangle
 
+    # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
+    points = rand(P2, 5)
+    connec = [connect((1,2,3))]
+    mesh   = SimpleMesh(points, connec)
+    @test nvertices(mesh) == length(vertices(mesh)) == 5
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
     mesh = SimpleMesh(points, connec)
