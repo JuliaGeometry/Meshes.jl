@@ -126,6 +126,12 @@ include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
 include("intersections/geompolygon.jl")
 
+# ------------------------
+# MISSING IMPLEMENTATIONS
+# ------------------------
+
+intersection(f, ::Ball, ::Polygon) = throw(ErrorException("not implemented"))
+
 # -----------------
 # TRUE/FALSE CHECK
 # -----------------
