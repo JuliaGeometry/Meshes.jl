@@ -13,10 +13,14 @@ function intersection(f, l1::Line{3,T}, l2::Line{3,T}) where {T}
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 
-  if measure(Tetrahedron(a, b, c, d)) > 0
+  if measure(Tetrahedron(a, b, c, d)) > 0 # not in same plane
     return @IT NoIntersection nothing f
-  elseif isapprox(abs((b - a) × (c - d)), zero(T), atol=atol(T)^2)
-    return @IT OverlappingLines l1 f
+  elseif isapprox(norm((b - a) × (c - d)), zero(T), atol=atol(T)^2)
+    if a in l2
+      return @IT OverlappingLines l1 f
+    else # parallel lines
+      return @IT NoIntersection nothing f
+    end
   else
     return @IT CrossingLines intersectpoint(l1, l2) f
   end
@@ -36,7 +40,7 @@ function intersection(f, l1::Line{2,T}, l2::Line{2,T}) where {T}
 end
 
 # compute the intersection of two lines assuming that it is a point
-function intersectpoint(l1::Line{2}, l2::Line{2})
+function intersectpoint(l1::Line, l2::Line)
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 

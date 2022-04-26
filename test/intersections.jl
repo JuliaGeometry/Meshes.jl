@@ -496,6 +496,7 @@
   end
 
   @testset "Lines" begin
+    # lines in 2D
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(-1,-1), P2(-1,1))
     @test l1 ∩ l2 == l2 ∩ l1 == P2(-1,0)
@@ -508,6 +509,27 @@
     l2 = Line(P2(1,0), P2(2,0))
     @test l1 == l2
     @test l1 ∩ l2 == l2 ∩ l1 == l1
+
+    # lines in 3D
+    # not in same plane
+    l1 = Line(P3(0,0,0), P3(1,0,0))
+    l2 = Line(P3(1,1,1), P3(1,2,1))
+    @test l1 ∩ l2 == l2 ∩ l1 === nothing
+        
+    # in same plane but parallel
+    l1 = Line(P3(0,0,0), P3(1,0,0))
+    l2 = Line(P3(0,1,1), P3(1,1,1))
+    @test l1 ∩ l2 == l2 ∩ l1 === nothing
+
+    # in same plane and colinear
+    l1 = Line(P3(0,0,0), P3(1,0,0))
+    l2 = Line(P3(2,0,0), P3(3,0,0))
+    @test l1 ∩ l2 == l2 ∩ l1 == l1
+
+    # crossing in one point
+    l1 = Line(P3(1,2,3), P3(2,1,0))
+    l2 = Line(P3(1,2,3), P3(1,1,1))
+    @test l1 ∩ l2 == l2 ∩ l1 == P3(1,2,3)
 
     # type stability tests
     l1 = Line(P2(0,0), P2(1,0))
