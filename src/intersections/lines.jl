@@ -54,4 +54,3 @@ function intersectpoint(l1::Line, l2::Line)
 
   a - s*v1
 end
-
