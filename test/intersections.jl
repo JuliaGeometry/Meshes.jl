@@ -513,12 +513,12 @@
     # lines in 3D
     # not in same plane
     l1 = Line(P3(0,0,0), P3(1,0,0))
-    l2 = Line(P3(1,1,0), P3(1,2,0))
+    l2 = Line(P3(1,1,1), P3(1,2,1))
     @test l1 ∩ l2 == l2 ∩ l1 === nothing
         
     # in same plane but parallel
     l1 = Line(P3(0,0,0), P3(1,0,0))
-    l2 = Line(P3(0,1,0), P3(1,1,0))
+    l2 = Line(P3(0,1,1), P3(1,1,1))
     @test l1 ∩ l2 == l2 ∩ l1 === nothing
 
     # in same plane and colinear
