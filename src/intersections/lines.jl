@@ -26,7 +26,7 @@ function intersection(f, l1::Line{3,T}, l2::Line{3,T}) where {T}
   end
 end
 
-function intersection(f::Function, l1::Line{2,T}, l2::Line{2,T}) where {T}
+function intersection(f, l1::Line{2,T}, l2::Line{2,T}) where {T}
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 
