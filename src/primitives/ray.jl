@@ -42,3 +42,16 @@ origin(r::Ray) = r.p
 The direction of the ray.
 """
 direction(r::Ray) = r.v
+
+
+function Base.in(p::Point, r::Ray)
+	w = norm(r.v)
+	d = evaluate(Euclidean(), p, Line(r(0), r(1)))
+	if d+w ≈ w
+		return sum((p - r.p) .* r.v) >= 0 # return true if point is in ray
+	else
+		return false
+	end
+end
+
+==(r1::Ray, r2::Ray) = r1.p ∈ r2 && r2.p ∈ r1 && r1(1) ∈ r2 && r2(1) ∈ r1 
