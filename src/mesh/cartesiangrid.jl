@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    CartesianGrid(dims, reference, spacing)
+    CartesianGrid(dims, origin, spacing)
 
-A Cartesian grid with dimensions `dims`, lower left corner at `reference`
+A Cartesian grid with dimensions `dims`, lower left corner at `origin`
 and cell spacing `spacing`. The three arguments must have the same length.
 
     CartesianGrid(start, finish, dims=dims)
@@ -23,7 +23,7 @@ point using a given `spacing`.
 
 Finally, a Cartesian grid can be constructed by only passing the dimensions
 `dims` as a tuple, or by passing each dimension `dim1`, `dim2`, ... separately.
-In this case, the reference and spacing default to (0,0,...) and (1,1,...).
+In this case, the origin and spacing default to (0,0,...) and (1,1,...).
 
 ## Examples
 
@@ -33,7 +33,7 @@ Create a 3D grid with 100x100x50 locations:
 julia> CartesianGrid(100,100,50)
 ```
 
-Create a 2D grid with 100x100 locations and reference at (10.,20.) units:
+Create a 2D grid with 100x100 locations and origin at (10.,20.) units:
 
 ```julia
 julia> CartesianGrid((100,100),(10.,20.),(1.,1.))
@@ -47,47 +47,52 @@ julia> CartesianGrid((-1.,),(1.,), dims=(100,))
 """
 struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
   dims::Dims{Dim}
-  reference::Point{Dim,T}
+  origin::Point{Dim,T}
   spacing::SVector{Dim,T}
   offset::SVector{Dim,Int}
 
-  function CartesianGrid{Dim,T}(dims, reference, spacing, offset) where {Dim,T}
+  function CartesianGrid{Dim,T}(dims, origin, spacing, offset) where {Dim,T}
     @assert all(dims .> 0) "dimensions must be positive"
     @assert all(spacing .> 0) "spacing must be positive"
-    new(dims, reference, spacing, offset)
+    new(dims, origin, spacing, offset)
   end
 end
 
-CartesianGrid(dims::Dims{Dim}, reference::Point{Dim,T},
+CartesianGrid(dims::Dims{Dim}, origin::Point{Dim,T},
               spacing::SVector{Dim,T},
               offset::SVector{Dim,Int}=SVector(ntuple(i->1, Dim))) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, reference, spacing, offset)
+  CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 
-CartesianGrid(dims::Dims{Dim}, reference::NTuple{Dim,T},
+CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T},
               spacing::NTuple{Dim,T},
               offset::NTuple{Dim,Int}=ntuple(i->1, Dim)) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, Point(reference), SVector(spacing), SVector(offset))
+  CartesianGrid{Dim,T}(dims, Point(origin), SVector(spacing), SVector(offset))
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T},
                        spacing::SVector{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
-  CartesianGrid{Dim,T}(dims, start, spacing, SVector(ntuple(i->1, Dim)))
+  offset = SVector(ntuple(i->1, Dim))
+  CartesianGrid{Dim,T}(dims, start, spacing, offset)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T},
               spacing::NTuple{Dim,T}) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish), SVector(spacing))
 
-CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
-              dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, start, (finish - start) ./ dims, SVector(ntuple(i->1, Dim)))
+function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
+                       dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T}
+  offset = SVector(ntuple(i->1, Dim))
+  CartesianGrid{Dim,T}(dims, start, (finish - start) ./ dims, offset)
+end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T};
               dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish); dims=dims)
 
-CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, ntuple(i->zero(T), Dim), ntuple(i->one(T), Dim), ntuple(i->1, Dim))
+function CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T}
+  offset = ntuple(i->1, Dim)
+  CartesianGrid{Dim,T}(dims, ntuple(i->zero(T), Dim), ntuple(i->one(T), Dim), offset)
+end
 
 CartesianGrid{T}(dims::Vararg{Int,Dim}) where {Dim,T} = CartesianGrid{T}(dims)
 
@@ -97,20 +102,20 @@ CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 ==(g1::CartesianGrid, g2::CartesianGrid) =
   g1.dims    == g2.dims    &&
-  g1.reference  == g2.reference  &&
+  g1.origin  == g2.origin  &&
   g1.spacing == g2.spacing &&
   g1.offset == g2.offset
 
 Base.size(g::CartesianGrid) = g.dims
-Base.minimum(g::CartesianGrid) = g.reference - (g.offset .- 1) .* g.spacing
-Base.maximum(g::CartesianGrid) = g.reference + (g.dims .+ 1 .- g.offset) .* g.spacing
+Base.minimum(g::CartesianGrid) = g.origin - (g.offset .- 1) .* g.spacing
+Base.maximum(g::CartesianGrid) = g.origin + (g.dims .+ 1 .- g.offset) .* g.spacing
 Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
 spacing(g::CartesianGrid) = g.spacing
 
 function vertices(g::CartesianGrid)
   inds_ranges = map((dims,offset) -> (0:dims) .+ 1 .- offset, g.dims, g.offset.data)
   inds = CartesianIndices(inds_ranges)
-  vec([g.reference + ind.I .* g.spacing for ind in inds])
+  vec([g.origin + ind.I .* g.spacing for ind in inds])
 end
 
 elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
@@ -124,7 +129,7 @@ topology(g::CartesianGrid) = GridTopology(size(g))
 function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
   inds_ranges = map((dims,offset) -> (1:dims) .+ 1 .- offset, g.dims, g.offset.data)
   I = CartesianIndices(inds_ranges)[ind]
-  o = coordinates(g.reference)
+  o = coordinates(g.origin)
   s = g.spacing
   i = I.I
 
@@ -178,8 +183,8 @@ nelements(g::CartesianGrid) = prod(g.dims)
 function centroid(g::CartesianGrid{Dim}, ind::Int) where {Dim}
   inds_ranges = map((dims,offset) -> (1:dims) .+ 1 .- offset, g.dims, g.offset.data)
   intcoords = CartesianIndices(inds_ranges)[ind]
-  newreference = coordinates(g.reference) .+ g.spacing ./ 2
-  Point(ntuple(i -> newreference[i] + (intcoords[i] - 1)*g.spacing[i], Dim))
+  neworigin = coordinates(g.origin) .+ g.spacing ./ 2
+  Point(ntuple(i -> neworigin[i] + (intcoords[i] - 1)*g.spacing[i], Dim))
 end
 
 Base.eltype(g::CartesianGrid) = typeof(g[1])
@@ -206,7 +211,7 @@ Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
   offset = g.offset .- first(I).I .+ 1
   dims   = size(I)
-  CartesianGrid(dims, g.reference, g.spacing, offset)
+  CartesianGrid(dims, g.origin, g.spacing, offset)
 end
 
 Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
