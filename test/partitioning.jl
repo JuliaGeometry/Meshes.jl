@@ -390,6 +390,6 @@
 
     d = CartesianGrid{T}(10,10)
     s = slice(d, T(0.5):T(11), T(0.5):T(11))
-    @test s == CartesianGrid((9,9), P2(0,0), V2(1,1), Vec(0,0))
+    @test s == CartesianGrid((9,9), P2(0,0), V2(1,1), (0,0))
   end
 end
