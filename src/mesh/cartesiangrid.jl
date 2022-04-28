@@ -49,7 +49,7 @@ struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
   dims::Dims{Dim}
   origin::Point{Dim,T}
   spacing::SVector{Dim,T}
-  offset::SVector{Dim,Int}
+  offset::NTuple{Dim,Int}
 
   function CartesianGrid{Dim,T}(dims, origin, spacing, offset) where {Dim,T}
     @assert all(dims .> 0) "dimensions must be positive"
@@ -60,18 +60,18 @@ end
 
 CartesianGrid(dims::Dims{Dim}, origin::Point{Dim,T},
               spacing::SVector{Dim,T},
-              offset::SVector{Dim,Int}=SVector(ntuple(i->1, Dim))) where {Dim,T} =
+              offset::NTuple{Dim,Int}=ntuple(i->1, Dim)) where {Dim,T} =
   CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 
 CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T},
               spacing::NTuple{Dim,T},
               offset::NTuple{Dim,Int}=ntuple(i->1, Dim)) where {Dim,T} =
-  CartesianGrid{Dim,T}(dims, Point(origin), SVector(spacing), SVector(offset))
+  CartesianGrid{Dim,T}(dims, Point(origin), SVector(spacing), offset)
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T},
                        spacing::SVector{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
-  offset = SVector(ntuple(i->1, Dim))
+  offset = ntuple(i->1, Dim)
   CartesianGrid{Dim,T}(dims, start, spacing, offset)
 end
 
@@ -81,7 +81,7 @@ CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T},
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
                        dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T}
-  offset = SVector(ntuple(i->1, Dim))
+  offset = ntuple(i->1, Dim)
   CartesianGrid{Dim,T}(dims, start, (finish - start) ./ dims, offset)
 end
 
@@ -103,7 +103,7 @@ CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 ==(g1::CartesianGrid, g2::CartesianGrid) =
   g1.dims    == g2.dims    &&
   g1.spacing == g2.spacing &&
-  g1.origin - g2.origin == (g1.offset - g2.offset) .* g1.spacing
+  g1.origin - g2.origin == (g1.offset .- g2.offset) .* g1.spacing
 
 
 Base.size(g::CartesianGrid) = g.dims
