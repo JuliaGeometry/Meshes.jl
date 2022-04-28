@@ -8,6 +8,11 @@
 A Cartesian grid with dimensions `dims`, lower left corner at `origin`
 and cell spacing `spacing`. The three arguments must have the same length.
 
+    CartesianGrid(dims, origin, spacing, offset)
+
+A Cartesian grid with dimensions `dims`, with lower left corner of element
+`offset` at `origin` and cell spacing `spacing`.
+
     CartesianGrid(start, finish, dims=dims)
 
 Alternatively, construct a Cartesian grid from a `start` point (lower left)
