@@ -3,7 +3,7 @@
     g = CartesianGrid{T}(10,10)
     b = Box(P2(1,1), P2(5,5))
     v = view(g, b)
-    @test v == CartesianGrid((4,4), P2(0,0), V2(1,1), (0,0))
+    @test v == CartesianGrid(P2(1,1), P2(5,5), dims=(4,4))
 
     p = PointSet(collect(vertices(g)))
     v = view(p, b)
@@ -21,7 +21,7 @@
       d = dummy(g, t)
       b = Box(P2(1,1), P2(5,5))
       v = view(d, b)
-      @test domain(v) == CartesianGrid((4,4), P2(0,0), V2(1,1), (0,0))
+      @test domain(v) == CartesianGrid(P2(1,1), P2(5,5), dims=(4,4))
       @test Tables.columntable(values(v)) == (a=[12,13,14,15,22,23,24,25,32,33,34,35,42,43,44,45],
                                               b=[12,13,14,15,22,23,24,25,32,33,34,35,42,43,44,45])
 
