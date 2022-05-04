@@ -531,8 +531,6 @@
     l2 = Line(P3(1,2,3), P3(1,1,1))
     @test l1 ∩ l2 == l2 ∩ l1 == P3(1,2,3)
 
-
-
     # type stability tests
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(-1,-1), P2(-1,1))
