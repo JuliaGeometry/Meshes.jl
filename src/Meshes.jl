@@ -255,6 +255,7 @@ export
   topology,
   topoconvert,
   spacing,
+  offset,
 
   # mesh data
   MeshData,
