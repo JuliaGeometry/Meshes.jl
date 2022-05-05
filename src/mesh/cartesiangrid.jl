@@ -76,8 +76,9 @@ CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T},
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T},
                        spacing::SVector{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
+  origin = start
   offset = ntuple(i->1, Dim)
-  CartesianGrid{Dim,T}(dims, start, spacing, offset)
+  CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T},
