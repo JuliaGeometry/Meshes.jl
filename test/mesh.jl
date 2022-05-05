@@ -131,8 +131,8 @@
     # expand CartesianGrid with comparable vertices
     grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.,1.))
     left, right = (1,1), (1,1)
-    newdim = grid.dims .+ left .+ right
-    newoffset = grid.offset .+ left
+    newdim = size(grid) .+ left .+ right
+    newoffset = offset(grid) .+ left
     grid2 = CartesianGrid(newdim, minimum(grid), spacing(grid), newoffset)
     @test issubset(vertices(grid), vertices(grid2))
 
