@@ -106,7 +106,7 @@
     @test minimum(sub) == P2(2,3)
     @test maximum(sub) == P2(5,8)
 
-    # subgrid uses the same vertices of grid
+    # subgrid with comparable vertices of grid
     grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.2,1.2))
     sub = grid[2:4, 5:7]
     @test sub == CartesianGrid((3,3), P2(0.0,0.0), V2(1.2,1.2), (0,-3))
@@ -127,6 +127,15 @@
     @test eltype(grid) <: Quadrangle{2,T}
     @test grid[1] == Quadrangle(P2[(0,0), (1,0), (1,1), (0,1)])
     @test grid[2] == Quadrangle(P2[(1,0), (2,0), (2,1), (1,1)])
+
+    # expand CartesianGrid with comparable vertices
+    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.,1.))
+    left = (1,1)
+    right = (1,1)
+    newdim = grid.dims .+ left .+ right
+    newoffset = grid.offset .+ left
+    grid2 = CartesianGrid(newdim, grid.origin, grid.spacing, newoffset)
+    @test issubset(vertices(grid), vertices(grid2))
 
     # GridTopology from CartesianGrid
     grid = CartesianGrid{T}(5,5)
