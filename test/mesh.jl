@@ -71,6 +71,17 @@
     @test vertices(grid[1]) == P3[(0, 0, 0), (5, 0, 0), (5, 5, 0), (0, 5, 0), (0, 0, 5), (5, 0, 5), (5, 5, 5), (0, 5, 5)]
     @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
+    # contructor with offset
+    grid = CartesianGrid((10,10), T.((1.,1.)), T.((1.,1.)), (2,2))
+    @test embeddim(grid) == 2
+    @test coordtype(grid) == T
+    @test size(grid) == (10, 10)
+    @test minimum(grid) == P2(0., 0.)
+    @test maximum(grid) == P2(10., 10.)
+    @test spacing(grid) == T[1, 1]
+    @test nelements(grid) == 10*10
+    @test eltype(grid) <: Quadrangle{2,T}
+
     # indexing into a subgrid
     grid = CartesianGrid{T}(10,10)
     sub  = grid[1:2,1:2]
@@ -95,6 +106,13 @@
     @test minimum(sub) == P2(2,3)
     @test maximum(sub) == P2(5,8)
 
+    # subgrid with comparable vertices of grid
+    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.2,1.2))
+    sub = grid[2:4, 5:7]
+    @test sub == CartesianGrid((3,3), P2(0.0,0.0), V2(1.2,1.2), (0,-3))
+    ind = reshape(reshape(1:121, 11, 11)[2:5, 5:8], :)
+    @test vertices(grid)[ind] == vertices(sub)
+
     # subgrid from Cartesian ranges
     grid = CartesianGrid{T}(10,10)
     sub1 = grid[1:2,4:6]
@@ -109,6 +127,14 @@
     @test eltype(grid) <: Quadrangle{2,T}
     @test grid[1] == Quadrangle(P2[(0,0), (1,0), (1,1), (0,1)])
     @test grid[2] == Quadrangle(P2[(1,0), (2,0), (2,1), (1,1)])
+
+    # expand CartesianGrid with comparable vertices
+    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.,1.))
+    left, right = (1,1), (1,1)
+    newdim = size(grid) .+ left .+ right
+    newoffset = offset(grid) .+ left
+    grid2 = CartesianGrid(newdim, minimum(grid), spacing(grid), newoffset)
+    @test issubset(vertices(grid), vertices(grid2))
 
     # GridTopology from CartesianGrid
     grid = CartesianGrid{T}(5,5)
