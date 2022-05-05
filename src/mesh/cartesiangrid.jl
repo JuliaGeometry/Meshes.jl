@@ -121,6 +121,7 @@ Base.minimum(g::CartesianGrid) = g.origin - (g.offset .- 1) .* g.spacing
 Base.maximum(g::CartesianGrid) = g.origin + (g.dims .- g.offset .+ 1) .* g.spacing
 Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
 spacing(g::CartesianGrid) = g.spacing
+offset(g::CartesianGrid) = g.offset
 
 function vertices(g::CartesianGrid)
   inds = CartesianIndices(g.dims .+ 1)
