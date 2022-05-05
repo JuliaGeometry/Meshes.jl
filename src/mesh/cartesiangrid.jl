@@ -97,8 +97,10 @@ CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T};
   CartesianGrid(Point(start), Point(finish); dims=dims)
 
 function CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T}
-  offset = ntuple(i->1, Dim)
-  CartesianGrid{Dim,T}(dims, ntuple(i->zero(T), Dim), ntuple(i->one(T), Dim), offset)
+  origin  = ntuple(i->zero(T), Dim)
+  spacing = ntuple(i->one(T), Dim)
+  offset  = ntuple(i->1, Dim)
+  CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 end
 
 CartesianGrid{T}(dims::Vararg{Int,Dim}) where {Dim,T} = CartesianGrid{T}(dims)
