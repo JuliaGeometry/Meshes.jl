@@ -134,7 +134,7 @@
     right = (1,1)
     newdim = grid.dims .+ left .+ right
     newoffset = grid.offset .+ left
-    grid2 = CartesianGrid(newdim, grid.origin, grid.spacing, newoffset)
+    grid2 = CartesianGrid(newdim, origin(grid), spacing(grid), newoffset)
     @test issubset(vertices(grid), vertices(grid2))
 
     # GridTopology from CartesianGrid
