@@ -130,8 +130,7 @@
 
     # expand CartesianGrid with comparable vertices
     grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.,1.))
-    left = (1,1)
-    right = (1,1)
+    left, right = (1,1), (1,1)
     newdim = grid.dims .+ left .+ right
     newoffset = grid.offset .+ left
     grid2 = CartesianGrid(newdim, origin(grid), spacing(grid), newoffset)
