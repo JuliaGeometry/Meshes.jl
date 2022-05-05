@@ -216,7 +216,7 @@ Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} 
   getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
-  newoffset = g.offset .- first(I).I .+ 1
+  offset = g.offset .- first(I).I .+ 1
   dims   = size(I)
   CartesianGrid(dims, g.origin, g.spacing, newoffset)
 end
