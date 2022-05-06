@@ -45,14 +45,8 @@ direction(r::Ray) = r.v
 
 
 
-function Base.in(p::Point, r::Ray)
-	w = norm(r.v)
-	d = evaluate(Euclidean(), p, Line(r(0), r(1)))
-	if d+w ≈ w
-		return sum((p - r.p) .* r.v) >= 0 # return true if point is in ray
-	else
-		return false
-	end
+function Base.in(p::Point{Dim, T}, r::Ray{Dim, T}) where {Dim,T}
+	return p ∈ Line(r(zero(T)), r(one(T))) && sum((p - r.p) .* r.v) >= 0 # additional check
 end
 
-==(r1::Ray, r2::Ray) = r1.p == r2.p ∈ r1 && r1(1) ∈ r2 && r2(1) ∈ r1 
+==(r1::Ray{Dim, T}, r2::Ray{Dim, T}) where {Dim,T} = (r1.p == r2.p) && (r1(one(T)) ∈ r2) && (r2(one(T)) ∈ r1)
