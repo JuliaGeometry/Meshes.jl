@@ -18,7 +18,7 @@ and apply function `f` to it. Default function is [`identity`](@ref).
 ## Examples
 
 ```julia
-intersecttype(g1, g2) do I
+intersection(g1, g2) do I
   if I isa CrossingLines
     # do something
   else

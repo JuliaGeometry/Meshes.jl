@@ -81,7 +81,7 @@ function discretizewithin(chain::Chain{2}, method::FIST)
         s1 = Segment(v[i-1], v[i])
         s2 = Segment(v[i+1], v[i+2])
         λ(I) = I isa CrossingSegments
-        if intersecttype(λ, s1, s2)
+        if intersection(λ, s1, s2)
           # 1. push a new triangle to 𝒯
           push!(𝒯, connect((inds[i], inds[i+1], inds[i+2]), Triangle))
           # 2. remove the vertex from 𝒫
