@@ -43,8 +43,6 @@ The direction of the ray.
 """
 direction(r::Ray) = r.v
 
-function Base.in(p::Point{Dim, T}, r::Ray{Dim, T}) where {Dim,T}
-  p ∈ Line(r(zero(T)), r(one(T))) && sum((p - r.p) .* r.v) >= 0 # additional check
-end
+Base.in(p::Point, r::Ray) = p ∈ Line(r.p, r.p + r.v) && (p - r.p) ⋅ r.v ≥ 0
 
 ==(r1::Ray{Dim, T}, r2::Ray{Dim, T}) where {Dim,T} = (r1.p == r2.p) && (r1(one(T)) ∈ r2) && (r2(one(T)) ∈ r1)
