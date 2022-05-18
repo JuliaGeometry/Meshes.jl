@@ -23,9 +23,14 @@
     @test r(T(Inf)) == P2(Inf,Inf)
     @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
     
-    p = Point(3,3,3.)
+    p₁ = Point(3,3,3.)
+    p₂ = Point(-3,-3,-3.)
+    p₃ = Point(1,0,0)
     r = Ray((0,0,0), (1,1,1.))
-    @test p ∈ r
+    @test p₁ ∈ r
+    @test p₂ ∉ r
+    @test p₃ ∉ r
+
 
     r1 = Ray((0,0,0), (1,0,0.))
     r2 = Ray((1,1,1), (1,2,1.))
