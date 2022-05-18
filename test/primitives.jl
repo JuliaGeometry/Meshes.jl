@@ -23,9 +23,9 @@
     @test r(T(Inf)) == P2(Inf,Inf)
     @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
     
-    p1 = Point(3,3,3.)
-    r1 = Ray((0,0,0), (1,1,1.))
-    @test p1 ∈ r1
+    p = Point(3,3,3.)
+    r = Ray((0,0,0), (1,1,1.))
+    @test p ∈ r
 
     r1 = Ray((0,0,0), (1,0,0.))
     r2 = Ray((1,1,1), (1,2,1.))
@@ -35,8 +35,8 @@
     r2 = Ray((1,0,0), (-1,0,0.))
     @test r1 != r2
   
-    r1 = Ray((0,0,0), (1,0,0.))
-    @test r1 == r1
+    r = Ray((0,0,0), (1,0,0.))
+    @test r == r
   end
 
   @testset "Planes" begin
