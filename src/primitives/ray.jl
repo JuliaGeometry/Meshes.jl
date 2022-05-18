@@ -45,4 +45,4 @@ direction(r::Ray) = r.v
 
 Base.in(p::Point, r::Ray) = p ∈ Line(r.p, r.p + r.v) && (p - r.p) ⋅ r.v ≥ 0
 
-==(r1::Ray{Dim, T}, r2::Ray{Dim, T}) where {Dim,T} = (r1.p == r2.p) && (r1(one(T)) ∈ r2) && (r2(one(T)) ∈ r1)
+==(r₁::Ray, r₂::Ray) = (r₁.p == r₂.p) && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁
