@@ -39,8 +39,13 @@
     r2 = Ray(P3(1,0,0), V3(-1,0,0))
     @test r1 != r2
 
-    r = Ray(P3(0,0,0), V3(1,0,0))
-    @test r == r
+    r1 = Ray(P3(0,0,0), V3(1,0,0))
+    r2 = Ray(P3(1,0,0), V3(1,0,0))
+    @test r1 != r2
+
+    r1 = Ray(P3(0,0,0), V3(2,0,0))
+    r2 = Ray(P3(0,0,0), V3(1,0,0))
+    @test r1 == r2
   end
 
   @testset "Planes" begin
