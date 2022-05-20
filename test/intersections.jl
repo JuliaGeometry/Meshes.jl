@@ -156,14 +156,18 @@
     r₂ = Ray(P2(0,2), V2(2,-3))
     r₃ = Ray(P2(0.5,1), V2(1,-2))
     r₄ = Ray(P2(0,2), V2(1,-3))
-    r₅ = Ray(P2(3,1), V2(4,2))
-    r₆ = Ray(P2(2,0.5), V2(-1, -0.5))
+    r₅ = Ray(P2(4,1.5), V2(4,2))
+    r₆ = Ray(P2(2,0.5), V2(-0.5, -0.25))
+    r₇ = Ray(P2(4,0), V2(0,1))
     @test intersection(r₁, r₂) |> type == CrossingRays #CASE 1
     @test r₁ ∩ r₂ == P2(1.25,0.125)
+    @test r₁ ∩ r₇ == P2(4, 1.5)
     @test intersection(r₁, r₃) |> type == MidTouchingRays #CASE 2
     @test r₁ ∩ r₃ == r₁.p #origin of first ray
+    @test r₅ ∩ r₇ == r₅.p
     @test intersection(r₃, r₁) |> type == MidTouchingRays
     @test r₃ ∩ r₁ == r₁.p #origin of second ray
+    @test r₇ ∩ r₅ == r₅.p
     @test intersection(r₂, r₄) |> type == CornerTouchingRays #CASE 3
     @test r₂ ∩ r₄ == r₂.p == r₄.p
     @test intersection(r₅, r₁) |> type == OverlappingAlignedRays #CASE 4
