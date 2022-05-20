@@ -18,7 +18,7 @@ and apply function `f` to it. Default function is [`identity`](@ref).
 ## Examples
 
 ```julia
-intersecttype(g1, g2) do I
+intersection(g1, g2) do I
   if I isa CrossingLines
     # do something
   else
@@ -62,13 +62,6 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingLines
   OverlappingLines
 
-  # ray-ray intersectpoint
-  CrossingRays
-  CornerTouchingRays
-  MidTouchingRays
-  OverlappingCollidingRays
-  OverlappingAlignedRays
-
   # ray-box intersection
   CrossingRayBox
   TouchingRayBox
@@ -83,7 +76,6 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingSegmentPlane
   TouchingSegmentPlane
   OverlappingSegmentPlane
-
 end
 
 """
@@ -127,13 +119,18 @@ end
 
 include("intersections/lines.jl")
 include("intersections/segments.jl")
-include("intersections/rays.jl")
 include("intersections/boxes.jl")
 include("intersections/raybox.jl")
 include("intersections/segmentplane.jl")
 include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
 include("intersections/geompolygon.jl")
+
+# ------------------------
+# MISSING IMPLEMENTATIONS
+# ------------------------
+
+intersection(f, ::Ball, ::Polygon) = throw(ErrorException("not implemented"))
 
 # -----------------
 # TRUE/FALSE CHECK
