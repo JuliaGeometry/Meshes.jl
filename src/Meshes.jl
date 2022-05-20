@@ -302,23 +302,38 @@ export
 
   # intersection types
   IntersectionType,
+  
+  # no intersection
+  NoIntersection,
+  # segment-segment intersection
   CrossingSegments,
   MidTouchingSegments,
   CornerTouchingSegments,
   OverlappingSegments,
+  # box-box intersection
   OverlappingBoxes,
   FaceTouchingBoxes,
   CornerTouchingBoxes,
+  # line-line intersection
   CrossingLines,
   OverlappingLines,
+  # ray-ray intersection
+  CrossingRays,
+  CornerTouchingRays,
+  MidTouchingRays,
+  OverlappingCollidingRays,
+  OverlappingAlignedRays,
+  # ray-box intersection
   CrossingRayBox,
   TouchingRayBox,
+  # segment-triangle intersection
   IntersectingSegmentTriangle,
+  # ray-triangle intersection
   IntersectingRayTriangle,
+  # segment-plane intersection
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,
-  NoIntersection,
 
   # intersections
   Intersection,
