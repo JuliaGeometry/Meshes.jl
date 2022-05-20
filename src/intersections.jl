@@ -62,7 +62,7 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingLines
   OverlappingLines
 
-  # ray-ray intersectpoint
+  # ray-ray intersection
   CrossingRays
   MidTouchingRays
   CornerTouchingRays

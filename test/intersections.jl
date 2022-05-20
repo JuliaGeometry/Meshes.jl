@@ -163,19 +163,19 @@
     @test r₁ ∩ r₂ == P2(1.25,0.125)
     @test r₁ ∩ r₇ == P2(4, 1.5)
     @test intersection(r₁, r₃) |> type == MidTouchingRays #CASE 2
-    @test r₁ ∩ r₃ == r₁.p #origin of first ray
-    @test r₅ ∩ r₇ == r₅.p
+    @test r₁ ∩ r₃ == origin(r₁) #origin of first ray
+    @test r₅ ∩ r₇ == origin(r₅)
     @test intersection(r₃, r₁) |> type == MidTouchingRays
-    @test r₃ ∩ r₁ == r₁.p #origin of second ray
-    @test r₇ ∩ r₅ == r₅.p
+    @test r₃ ∩ r₁ == origin(r₁) #origin of second ray
+    @test r₇ ∩ r₅ == origin(r₅)
     @test intersection(r₂, r₄) |> type == CornerTouchingRays #CASE 3
-    @test r₂ ∩ r₄ == r₂.p == r₄.p
+    @test r₂ ∩ r₄ == origin(r₂) == origin(r₄)
     @test intersection(r₅, r₁) |> type == OverlappingAlignedRays #CASE 4
     @test r₅ ∩ r₁ == r₅ #first ray
     @test intersection(r₁, r₅) |> type == OverlappingAlignedRays #CASE 4
     @test r₁ ∩ r₅ == r₅ #second ray
     @test intersection(r₁, r₆) |> type == OverlappingCollidingRays #CASE 5
-    @test r₁ ∩ r₆ == Segment(r₁.p, r₆.p)
+    @test r₁ ∩ r₆ == Segment(origin(r₁), origin(r₆))
     @test intersection(r₁, r₄) |> type == NoIntersection #CASE 6
     @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
 
