@@ -6,6 +6,9 @@
     SimpleMesh(points, connec)
 
 A simple mesh with `points` and connectivities `connec`.
+Note: please make sure all the connectivity polygons have
+`orientation(polygon) === :CCW`.
+
 The i-th face of the mesh is lazily built based on
 the connectivity list `connec[i]`.
 
