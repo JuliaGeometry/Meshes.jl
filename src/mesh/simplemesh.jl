@@ -15,6 +15,11 @@ Alternatively, construct a simple mesh with `points` and
 a topological data structure (e.g. `HalfEdgeTopology`).
 
 See also [`Topology`](@ref).
+
+### Notes
+
+- Connectivities must be given with coherent orientation, i.e.
+  all faces must be counter-clockwise (CCW) or clockwise (CW).
 """
 struct SimpleMesh{Dim,T,V<:AbstractVector{Point{Dim,T}},TP<:Topology} <: Mesh{Dim,T}
   points::V
