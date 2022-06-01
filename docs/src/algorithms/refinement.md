@@ -76,9 +76,9 @@ ref2 = refine(ref1, CatmullClark())
 ref3 = refine(ref2, CatmullClark())
 
 fig = Mke.Figure(resolution = (800, 800))
-viz(fig[1,1], mesh, showfacets = true, axis = (title = "original",))
-viz(fig[1,2], ref1, showfacets = true, axis = (title = "refine 1",))
-viz(fig[2,1], ref2, showfacets = true, axis = (title = "refine 2",))
-viz(fig[2,2], ref3, showfacets = true, axis = (title = "refine 3",))
+viz(fig[1,1], mesh, showfacets = true, axis = (title = "original", type = Mke.Axis3))
+viz(fig[1,2], ref1, showfacets = true, axis = (title = "refine 1", type = Mke.Axis3))
+viz(fig[2,1], ref2, showfacets = true, axis = (title = "refine 2", type = Mke.Axis3))
+viz(fig[2,2], ref3, showfacets = true, axis = (title = "refine 3", type = Mke.Axis3))
 fig
 ```
