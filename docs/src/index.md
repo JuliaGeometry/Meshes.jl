@@ -51,7 +51,7 @@ the package.
 
 ```@example overview
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 ```
 
 ### Points and vectors

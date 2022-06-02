@@ -14,7 +14,7 @@ DouglasPeucker
 
 ```@example simplification
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 # polygonal area
 polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),

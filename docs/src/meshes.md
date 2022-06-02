@@ -22,7 +22,7 @@ grid = CartesianGrid(10, 10, 10)
 
 ```@example meshes
 using MeshViz
-import CairoMakie
+import WGLMakie
 
 viz(grid, showfacets = true)
 ```

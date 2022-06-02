@@ -13,7 +13,7 @@ TriRefinement
 
 ```@example
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 grid = CartesianGrid(10, 10)
 
@@ -38,7 +38,7 @@ QuadRefinement
 
 ```@example
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 grid = CartesianGrid(10, 10)
 
@@ -63,7 +63,7 @@ CatmullClark
 
 ```@example
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 # define a cube in R^3
 points = Point3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)]

@@ -16,7 +16,7 @@ FanTriangulation
 
 ```@example discretization
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 hexagon = Hexagon((0.,0.), (1.,0.), (1.,1.),
                   (0.75,1.5), (0.25,1.5), (0.,1.))

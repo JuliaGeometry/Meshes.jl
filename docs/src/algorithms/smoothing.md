@@ -16,7 +16,7 @@ using Meshes
 using MeshViz
 using PlyIO
 
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 # helper function to read *.ply files
 function readply(fname)

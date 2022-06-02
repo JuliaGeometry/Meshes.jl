@@ -13,7 +13,7 @@ GrahamScan
 
 ```@example hull
 using Meshes, MeshViz
-import CairoMakie as Mke
+import WGLMakie as Mke
 
 pset = PointSet(rand(Point2, 100))
 chul = hull(pset, GrahamScan())
