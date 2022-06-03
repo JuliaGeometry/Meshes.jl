@@ -99,7 +99,7 @@ coordinates(A::Point) = A.coords
     -(A::Point, B::Point)
 
 Return the [`Vec`](@ref) associated with the direction
-from point `A` to point `B`.
+from point `B` to point `A`.
 """
 -(A::Point, B::Point) = Vec(A.coords - B.coords)
 
