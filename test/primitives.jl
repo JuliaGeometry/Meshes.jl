@@ -167,7 +167,7 @@
   end
 
   @testset "Sphere" begin
-    s  = Sphere(P3(0,0,0), T(1))
+    s = Sphere(P3(0,0,0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
