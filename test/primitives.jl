@@ -167,7 +167,7 @@
   end
 
   @testset "Sphere" begin
-    s = Sphere(P3(0,0,0), T(1))
+    s  = Sphere(P3(0,0,0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
@@ -176,6 +176,11 @@
     @test extrema(s) == (P3(-1,-1,-1), P3(1,1,1))
     @test !isconvex(s)
     @test isnothing(boundary(s))
+
+    # Sphere constructor works with both float and integer radius
+    s  = Sphere(P3(1,2,3), T(4))
+    si = Sphere(P3(1,2,3), 4)
+    @test s == si
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
