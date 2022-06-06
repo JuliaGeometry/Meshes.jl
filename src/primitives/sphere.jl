@@ -14,6 +14,8 @@ struct Sphere{Dim,T} <: Primitive{Dim,T}
   radius::T
 end
 
+Sphere(center::Point{Dim,T}, radius) where {Dim,T} = Sphere(center, T(radius))
+
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 
 """
