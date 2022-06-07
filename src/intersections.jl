@@ -153,10 +153,10 @@ The algorithm works with any geometry that has a well-defined [`supportfun`](@re
 function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
   # handle non-convex geometries
   if !isconvex(g1)
-    d1 = discretize(g1, FIST())
+    d1 = triangulate(g1)
     return hasintersect(d1, g2)
   elseif !isconvex(g2)
-    d2 = discretize(g2, FIST())
+    d2 = triangulate(g2)
     return hasintersect(g1, d2)
   end
 

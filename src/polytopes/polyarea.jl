@@ -82,7 +82,7 @@ nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, 
 
 centroid(p::PolyArea) = centroid(p.outer)
 
-measure(p::PolyArea) = sum(measure, discretize(p, FIST()))
+measure(p::PolyArea) = sum(measure, triangulate(p))
 
 chains(p::PolyArea) = [p.outer; p.inners]
 
