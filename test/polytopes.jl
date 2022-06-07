@@ -156,9 +156,14 @@
     t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
     @test measure(t) == T(1/6)
     m = boundary(t)
+    n = normal.(m)
     @test m isa Mesh
     @test nvertices(m) == 4
     @test nelements(m) == 4
+    @test n[1] == T[0,0,-1]
+    @test n[2] == T[0,-1,0]
+    @test n[3] == T[-1,0,0]
+    @test all(>(0), n[4])
 
     h = Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
                       (0,0,1),(1,0,1),(1,1,1),(0,1,1)])

@@ -23,6 +23,6 @@ function measure(t::Tetrahedron)
 end
 
 function boundary(t::Tetrahedron)
-  indices = [(1,2,3),(2,1,4),(2,4,3),(3,4,1)]
+  indices = [(3,2,1),(4,1,2),(4,3,1),(4,2,3)]
   SimpleMesh(t.vertices, connect.(indices))
 end
