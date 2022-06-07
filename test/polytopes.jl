@@ -196,6 +196,16 @@
     @test m isa Mesh
     @test nvertices(m) == 8
     @test nelements(m) == 6
+
+    p = Pyramid(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)])
+    m = boundary(p)
+    @test m isa Mesh
+    @test nelements(m) == 5
+    @test m[1] isa Quadrangle
+    @test m[2] isa Triangle
+    @test m[3] isa Triangle
+    @test m[4] isa Triangle
+    @test m[5] isa Triangle
   end
 
   @testset "Chains" begin
