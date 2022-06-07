@@ -68,6 +68,7 @@ Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, triangulate(ngon))
 # triangles are special
 issimplex(::Type{<:Triangle}) = true
 isconvex(::Type{<:Triangle}) = true
+isconvex(::Triangle) = true
 
 function signarea(t::Triangle{2})
   v = t.vertices
