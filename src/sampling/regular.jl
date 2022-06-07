@@ -7,7 +7,7 @@
 
 Generate samples regularly using `n1` points along the first
 parametric dimension, `n2` points along the second parametric
-dimension, ..., `np` poitns along the last parametric dimension.
+dimension, ..., `np` points along the last parametric dimension.
 
 ## Examples
 
