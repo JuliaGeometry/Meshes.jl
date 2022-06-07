@@ -581,6 +581,14 @@
     @test !hasintersect(t, b)
     @test !hasintersect(b, t)
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/250
+    t1 = Triangle(P3[(0,0,0), (2,0,0), (1,2,0)])
+    t2 = Triangle(P3[(1,0,0), (3,0,0), (2,2,0)])
+    t3 = Triangle(P3[(3,0,0), (5,0,0), (4,2,0)])
+    @test hasintersect(t1, t2)
+    @test hasintersect(t2, t3)
+    @test !hasintersect(t1, t3)
+
     outer = P2[(0,0),(1,0),(1,1),(0,1),(0,0)]
     hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
     hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
