@@ -49,6 +49,13 @@ available functionality, please consult the [Reference guide](points.md) and the
 [suite of tests](https://github.com/JuliaGeometry/Meshes.jl/tree/master/test) in
 the package.
 
+In all examples we assume the following packages are loaded:
+
+```@example overview
+using JSServe: Page # hide
+Page(exportable=true, offline=true) # hide
+```
+
 ```@example overview
 using Meshes, MeshViz
 import WGLMakie as Mke

@@ -1,5 +1,15 @@
 # Smoothing
 
+```@example smoothing
+using JSServe: Page # hide
+Page(exportable=true, offline=true) # hide
+```
+
+```@example smoothing
+using Meshes, MeshViz # hide
+import WGLMakie as Mke # hide
+```
+
 ```@docs
 smooth
 SmoothingMethod
@@ -11,12 +21,8 @@ SmoothingMethod
 TaubinSmoothing
 ```
 
-```@example taubin
-using Meshes
-using MeshViz
+```@example smoothing
 using PlyIO
-
-import WGLMakie as Mke
 
 # helper function to read *.ply files
 function readply(fname)

@@ -1,5 +1,15 @@
 # Discretization
 
+```@example discretization
+using JSServe: Page # hide
+Page(exportable=true, offline=true) # hide
+```
+
+```@example discretization
+using Meshes, MeshViz # hide
+import WGLMakie as Mke # hide
+```
+
 ```@docs
 discretize
 discretizewithin
@@ -15,9 +25,6 @@ FanTriangulation
 ```
 
 ```@example discretization
-using Meshes, MeshViz
-import WGLMakie as Mke
-
 hexagon = Hexagon((0.,0.), (1.,0.), (1.,1.),
                   (0.75,1.5), (0.25,1.5), (0.,1.))
 

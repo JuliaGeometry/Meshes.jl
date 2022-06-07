@@ -1,5 +1,15 @@
 # Refinement
 
+```@example refinement
+using JSServe: Page # hide
+Page(exportable=true, offline=true) # hide
+```
+
+```@example refinement
+using Meshes, MeshViz # hide
+import WGLMakie as Mke # hide
+```
+
 ```@docs
 refine
 RefinementMethod
@@ -11,10 +21,7 @@ RefinementMethod
 TriRefinement
 ```
 
-```@example
-using Meshes, MeshViz
-import WGLMakie as Mke
-
+```@example refinement
 grid = CartesianGrid(10, 10)
 
 # refine three times
@@ -36,10 +43,7 @@ fig
 QuadRefinement
 ```
 
-```@example
-using Meshes, MeshViz
-import WGLMakie as Mke
-
+```@example refinement
 grid = CartesianGrid(10, 10)
 
 # refine three times
@@ -61,10 +65,7 @@ fig
 CatmullClark
 ```
 
-```@example
-using Meshes, MeshViz
-import WGLMakie as Mke
-
+```@example refinement
 # define a cube in R^3
 points = Point3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)]
 connec = connect.([(1,4,3,2),(5,6,7,8),(1,2,6,5),(3,4,8,7),(1,5,8,4),(2,3,7,6)])

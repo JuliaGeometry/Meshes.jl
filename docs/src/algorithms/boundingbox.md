@@ -1,13 +1,20 @@
 # Bounding box
 
+```@example boundingbox
+using JSServe: Page # hide
+Page(exportable=true, offline=true) # hide
+```
+
+```@example boundingbox
+using Meshes, MeshViz # hide
+import WGLMakie as Mke # hide
+```
+
 ```@docs
 boundingbox
 ```
 
-```@example bbox
-using Meshes, MeshViz
-import WGLMakie as Mke
-
+```@example boundingbox
 pset = PointSet(rand(Point2, 100))
 bbox = boundingbox(pset)
 

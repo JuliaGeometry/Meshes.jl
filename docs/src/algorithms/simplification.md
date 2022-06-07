@@ -1,5 +1,15 @@
 # Simplification
 
+```@example simplification
+using JSServe: Page # hide
+Page(exportable=true, offline=true) # hide
+```
+
+```@example simplification
+using Meshes, MeshViz # hide
+import WGLMakie as Mke # hide
+```
+
 ```@docs
 simplify
 decimate
@@ -13,9 +23,6 @@ DouglasPeucker
 ```
 
 ```@example simplification
-using Meshes, MeshViz
-import WGLMakie as Mke
-
 # polygonal area
 polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),
                      (0.3072999, 0.272418), (0.34814754, 0.18421611), (0.37949452, 0.11756973),
