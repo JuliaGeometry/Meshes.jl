@@ -62,6 +62,7 @@ function intersection(f, r1::Ray{3,T}, r2::Ray{3,T}) where {T}
     end
   end
 end
+
 #=
 The intersection type can be one of six types:
 
