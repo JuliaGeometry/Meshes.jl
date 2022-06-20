@@ -170,11 +170,11 @@
     @test r₇ ∩ r₅ == origin(r₅)
     @test intersection(r₂, r₄) |> type == CornerTouchingRays #CASE 3
     @test r₂ ∩ r₄ == origin(r₂) == origin(r₄)
-    @test intersection(r₅, r₁) |> type == OverlappingAlignedRays #CASE 4
+    @test intersection(r₅, r₁) |> type == OverlappingAgreeingRays #CASE 4
     @test r₅ ∩ r₁ == r₅ #first ray
-    @test intersection(r₁, r₅) |> type == OverlappingAlignedRays #CASE 4
+    @test intersection(r₁, r₅) |> type == OverlappingAgreeingRays #CASE 4
     @test r₁ ∩ r₅ == r₅ #second ray
-    @test intersection(r₁, r₆) |> type == OverlappingCollidingRays #CASE 5
+    @test intersection(r₁, r₆) |> type == OverlappingOpposingRays #CASE 5
     @test r₁ ∩ r₆ == Segment(origin(r₁), origin(r₆))
     @test intersection(r₁, r₄) |> type == NoIntersection #CASE 6
     @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
