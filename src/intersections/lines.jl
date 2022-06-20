@@ -57,7 +57,7 @@ function intersectparameters(a::Point, b::Point, c::Point, d::Point)
 end
 
 function intersectparameters(l1::Line, l2::Line)
-  a = l1(0), b = l1(1)
-  c = l2(0), d = l2(1)
+  a, b = l1(0), l1(1)
+  c, d = l2(0), l2(1)
   intersectparameters(a,b,c,d)
 end

@@ -52,7 +52,7 @@ function intersection(f, r1::Ray{3,T}, r2::Ray{3,T}) where {T}
       if isapprox(p2, zero(T), atol=atol(T))
         return @IT MidTouchingRays c f # CASE 2: origin of r2
       else
-        return @IT CrossingRays (a-p1*v1) f #CASE 1: equal to c - p2 * v2
+        return @IT CrossingRays (a+p1*r1.v) f #CASE 1: equal to c - p2 * v2
       end
     end
   end
@@ -106,7 +106,7 @@ function intersection(f, r1::Ray{2,T}, r2::Ray{2,T}) where {T}
       if isapprox(p2, zero(T), atol=atol(T))
         return @IT MidTouchingRays c f #CASE 2: origin of r2
       else
-        return @IT CrossingRays (a-p1*v1) f #CASE 1: equal to c - p2 * v2
+        return @IT CrossingRays (a+p1*r1.v) f #CASE 1: equal to c - p2 * v2
       end
     end
   end
