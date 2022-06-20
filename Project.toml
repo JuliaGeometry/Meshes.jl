@@ -1,7 +1,7 @@
 name = "Meshes"
 uuid = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 authors = ["Júlio Hoffimann and contributors"]
-version = "0.22.8"
+version = "0.22.9"
 
 [deps]
 CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
