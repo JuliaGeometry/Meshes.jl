@@ -39,12 +39,7 @@ function intersection(f, r1::Ray{3,T}, r2::Ray{3,T}) where {T}
       return @IT NoIntersection nothing f #CASE 6
     end
   else # in same plane, not parallel
-    v1  = a - b
-    v2  = c - d
-    v12 = a - c
-    #TODO: find better way to calculate parameters in 3D including third component
-    p1 = (v12[1] * v2[2] - v12[2] * v2[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
-    p2 = (v12[1] * v1[2] - v12[2] * v1[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
+    p1, p2 = intersectparameters(a,b,c,d)
     if p1 < 0 || p2 < 0
       return @IT NoIntersection nothing f #CASE 6
     elseif isapprox(p1, zero(T), atol=atol(T))
@@ -98,11 +93,7 @@ function intersection(f, r1::Ray{2,T}, r2::Ray{2,T}) where {T}
       return @IT NoIntersection nothing f #CASE 6
     end
   else
-    v1  = a - b
-    v2  = c - d
-    v12 = a - c
-    p1 = (v12[1] * v2[2] - v12[2] * v2[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
-    p2 = (v12[1] * v1[2] - v12[2] * v1[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
+    p1, p2 = intersectparameters(a,b,c,d)
     if p1 < 0 || p2 < 0
       return @IT NoIntersection nothing f
     elseif isapprox(p1, zero(T), atol=atol(T))

@@ -41,16 +41,23 @@ end
 
 # compute the intersection of two lines assuming that it is a point
 function intersectpoint(l1::Line, l2::Line)
-  a, b = l1(0), l1(1)
-  c, d = l2(0), l2(1)
+  p1 = first(intersectparameters(l1, l2))
+  l1(0) + p1 * (l1(1) - l1(0))
+ end
 
+# compute the intersection parameters of the lines defined by the points a -> b and c -> d 
+function intersectparameters(a::Point, b::Point, c::Point, d::Point) 
   v1  = a - b
   v2  = c - d
   v12 = a - c
 
-  # the intersection point lies in between a and b at a fraction s
-  # (https://en.wikipedia.org/wiki/Line-line_intersection#Formulas)
-  s = (v12[1] * v2[2] - v12[2] * v2[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
+  p1 = (v12[1] * v2[2] - v12[2] * v2[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
+  p2 = (v12[1] * v1[2] - v12[2] * v1[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
+  p1, p2
+end
 
-  a - s*v1
+function intersectparameters(l1::Line, l2::Line)
+  a = l1(0), b = l1(1)
+  c = l2(0), d = l2(1)
+  intersectparameters(a,b,c,d)
 end
