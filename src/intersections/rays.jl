@@ -8,8 +8,8 @@ The intersection type can be one of six types:
 1. intersect at one inner point (CrossingRays -> Point)
 2. intersect at origin of one ray (MidTouchingRays -> Point)
 3. intersect at origin of both rays (CornerTouchingRays -> Point)
-4. overlap with aligned vectors (OverlappingAlignedRays -> Ray)
-5. overlap with colliding vectors (OverlappingCollidingRays -> Segment)
+4. overlap with aligned vectors (OverlappingAgreeingRays -> Ray)
+5. overlap with colliding vectors (OverlappingOpposingRays -> Segment)
 6. do not overlap nor intersect (NoIntersection)
 =#
 function intersection(f, r1::Ray{3,T}, r2::Ray{3,T}) where {T}
@@ -20,11 +20,11 @@ function intersection(f, r1::Ray{3,T}, r2::Ray{3,T}) where {T}
     return @IT NoIntersection nothing f #CASE 6
   elseif isapprox(norm((b - a) × (c - d)), zero(T), atol=atol(T)^2) # parallel
     if isapprox(measure(Triangle(a, b, c)), zero(T), atol=atol(T)^2) # collinear
-      if r1.v ⋅ r2.v ≥ 0 #aligned rays
+      if r1.v ⋅ r2.v ≥ 0 #rays aligned in same direction
         if (r1.p - r2.p) ⋅ r1.v ≥ 0 # origin of r1 ∈ r2
-          return @IT OverlappingAlignedRays r1 f #CASE 4: r1
+          return @IT OverlappingAgreeingRays r1 f #CASE 4: r1
         else
-          return @IT OverlappingAlignedRays r2 f #CASE 4: r2
+          return @IT OverlappingAgreeingRays r2 f #CASE 4: r2
         end
       else #colliding rays
         if r1.p ∉ r2
@@ -32,7 +32,7 @@ function intersection(f, r1::Ray{3,T}, r2::Ray{3,T}) where {T}
         elseif r1.p == r2.p
           return @IT CornerTouchingRays a f #CASE 3
         else
-          return @IT OverlappingCollidingRays Segment(r1.p, r2.p) f #CASE 5
+          return @IT OverlappingOpposingRays Segment(r1.p, r2.p) f #CASE 5
         end
       end
     else # parallel lines, d > 0
@@ -69,8 +69,8 @@ The intersection type can be one of six types:
 1. intersect at one inner point (CrossingRays -> Point)
 2. intersect at origin of one ray (MidTouchingRays -> Point)
 3. intersect at origin of both rays (CornerTouchingRays -> Point)
-4. overlap with aligned vectors (OverlappingAlignedRays -> Ray)
-5. overlap with colliding vectors (OverlappingCollidingRays -> Segment)
+4. overlap with aligned vectors (OverlappingAgreeingRays -> Ray)
+5. overlap with colliding vectors (OverlappingOpposingRays -> Segment)
 6. do not overlap nor intersect (NoIntersection)
 =#
 function intersection(f, r1::Ray{2,T}, r2::Ray{2,T}) where {T}
@@ -81,9 +81,9 @@ function intersection(f, r1::Ray{2,T}, r2::Ray{2,T}) where {T}
     if isapprox(measure(Triangle(a, b, c)), zero(T), atol=atol(T)^2) # collinear
       if r1.v ⋅ r2.v ≥ 0 #aligned rays
         if (r1.p - r2.p) ⋅ r1.v ≥ 0 # origin of r1 ∈ r2
-          return @IT OverlappingAlignedRays r1 f #CASE 4: r1
+          return @IT OverlappingAgreeingRays r1 f #CASE 4: r1
         else
-          return @IT OverlappingAlignedRays r2 f #CASE 4: r2
+          return @IT OverlappingAgreeingRays r2 f #CASE 4: r2
         end
       else #colliding rays
         if r1.p ∉ r2 
@@ -91,7 +91,7 @@ function intersection(f, r1::Ray{2,T}, r2::Ray{2,T}) where {T}
         elseif r1.p == r2.p
           return @IT CornerTouchingRays a f #CASE 3
         else
-          return @IT OverlappingCollidingRays Segment(r1.p, r2.p) f #CASE 5
+          return @IT OverlappingOpposingRays Segment(r1.p, r2.p) f #CASE 5
         end
       end
     else # parallel lines, d > 0
@@ -109,11 +109,11 @@ function intersection(f, r1::Ray{2,T}, r2::Ray{2,T}) where {T}
       if isapprox(p2, zero(T), atol=atol(T))
         return @IT CornerTouchingRays a f #CASE 3
       else
-        return @IT MidTouchingRays a f #CASE 4: origin of r1
+        return @IT MidTouchingRays a f #CASE 2: origin of r1
       end
     else
       if isapprox(p2, zero(T), atol=atol(T))
-        return @IT MidTouchingRays c f #CASE 4: origin of r2
+        return @IT MidTouchingRays c f #CASE 2: origin of r2
       else
         return @IT CrossingRays (a-p1*v1) f #CASE 1: equal to c - p2 * v2
       end

@@ -66,8 +66,8 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingRays
   MidTouchingRays
   CornerTouchingRays
-  OverlappingAlignedRays
-  OverlappingCollidingRays
+  OverlappingAgreeingRays
+  OverlappingOpposingRays
 
   # ray-box intersection
   CrossingRayBox
