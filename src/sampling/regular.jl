@@ -35,6 +35,30 @@ function sample(::AbstractRNG, box::Box,
   ivec(or + (ind.I .- 1) .* sp for ind in CartesianIndices(sz))
 end
 
+function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
+                method::RegularSampling) where {T}
+  sz = fitdims(method.sizes, paramdim(cylsurf))
+  (;radius,bot,top) = cylsurf
+
+  V = T <: AbstractFloat ? T : Float64
+
+  θmin, θmax = V(0), V(2π)
+  δθ = (θmax - θmin) / sz[1]
+  θrange = range(θmin, stop=θmax-δθ, length=sz[1])
+
+  (;u,v) = bot
+  w = u×v
+  v = w×u
+  u /= norm(u)
+  v /= norm(v)
+  w /= norm(w)
+  h = V(length(Segment(bot.p,top.p)))
+  o(δh) = bot.p + δh*w
+  hrange = range(0, stop=h, length=sz[2])
+
+  ivec(o(δh) + radius*cos(θ)*u + radius*sin(θ)*v for δh in hrange for θ in θrange)
+end
+
 function sample(::AbstractRNG, sphere::Sphere{2,T},
                 method::RegularSampling) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))

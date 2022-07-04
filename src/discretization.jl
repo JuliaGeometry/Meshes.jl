@@ -151,6 +151,8 @@ triangulate(sphere::Sphere{3}) =
 triangulate(ball::Ball{2}) =
   discretize(ball, RegularDiscretization(100)) |> triangulate
 
+triangulate(cylsurf::CylinderSurface) =
+  discretize(cylsurf, RegularDiscretization(10,3)) |> triangulate
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

@@ -16,6 +16,62 @@ end
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} =
   RegularDiscretization(sizes)
 
+
+function discretize(cylsurf::CylinderSurface{T},
+                    method::RegularDiscretization) where {T}
+  sz = fitdims(method.sizes, paramdim(cylsurf))
+  nx, ny = sz[1:2]
+
+  # sample points regularly
+  sampler = RegularSampling(nx, ny)
+  points  = collect(sample(cylsurf, sampler))
+
+  # side
+  topo   = GridTopology((nx-1,ny-1))
+  side_connec = collect(elements(topo))
+  for j in 1:ny-1
+  	offset = nx*(j-1)
+  	u = offset + nx
+  	v = offset + 1
+  	w = offset + nx + 1
+  	z = offset + nx + nx
+  	push!(side_connec, connect((u,v,w,z)))
+  end
+
+  # add point at bot & top center
+  push!(points, cylsurf.bot.p)
+  push!(points, cylsurf.top.p)
+
+  # top plane
+  offset = (ny-1)*nx
+  top_connec = map(1:nx-1) do j
+    u = offset + j
+    v = offset + j + 1
+    w = offset + nx + 2
+    connect((u, v, w))
+  end
+  u = offset + nx
+  v = offset + 1
+  w = offset + nx + 2
+  push!(top_connec, connect((u, v, w)))
+
+  # bottom plane
+  bot_connec = map(1:nx-1) do j
+    u = j + 1
+    v = j
+    w = offset + nx + 1
+    connect((u, v, w))
+  end
+  u = nx
+  v = 1
+  w = offset + nx + 1
+  push!(bot_connec, connect((u, v, w)))
+
+  connec = [side_connec; top_connec; bot_connec]
+  SimpleMesh(points, connec)
+
+end
+
 function discretize(sphere::Sphere{2,T},
                     method::RegularDiscretization) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))
