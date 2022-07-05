@@ -19,24 +19,22 @@ struct Plane{T} <: Primitive{3,T}
   v::Vec{3,T}
 end
 
+# D. S. Lopes, M. T. Silva, and J. A. Ambrósio, “Tangent vectors to a 3-D surface normal: A geometric tool to find orthogonal vectors based on the Householder transformation,” Computer-Aided Design, vol. 45, no. 3, pp. 683–694, Mar. 2013, doi: 10.1016/j.cad.2012.11.003.
+function HouseholderOrthogonalization(n)
+    n̄ = norm(n)
+    h1 = max(n[1]-n̄,n[1]+n̄)
+    h2 = n[2]
+    h3 = n[3]
+    h = SVector(h1,h2,h3)
+    H = I - 2h*transpose(h)/(transpose(h)*h)
+    t = H[1:3,2]
+    b = H[1:3,3]
+    t,b
+end
+
 function Plane{T}(p::Point{3,T}, n::Vec{3,T}) where {T}
-  # origin of coordinate system
-  o = Vec{3,T}(zero(T), zero(T), zero(T))
-
-  uv = Vec{3,T}[]
-  for i in 1:3
-    # subtract projection of Euclidean basis onto normal
-    e = Vec{3,T}(ntuple(j -> j == i ? one(T) : zero(T), 3))
-    v = e - (e⋅n)/(n⋅n) * n
-
-    # check if it is a valid vector
-    isapprox(v, o, atol=atol(T)) || push!(uv, v)
-
-    # we need two vectors
-    length(uv) == 2 && break
-  end
-
-  Plane{T}(p, uv[1], uv[2])
+  u, v = HouseholderOrthogonalization(n)
+  Plane{T}(p, u, v)
 end
 
 Plane(p::Point{3,T}, n::Vec{3,T}) where {T} = Plane{T}(p, n)
