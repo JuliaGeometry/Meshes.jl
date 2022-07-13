@@ -35,6 +35,6 @@
   ]
   for n in normals    
     u, v = householderbasis(n)
-    @test u×v ≈ n./norm(n)
+    @test u × v ≈ n ./ norm(n)
   end
 end
