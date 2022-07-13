@@ -19,21 +19,8 @@ struct Plane{T} <: Primitive{3,T}
   v::Vec{3,T}
 end
 
-# D. S. Lopes, M. T. Silva, and J. A. Ambrósio, “Tangent vectors to a 3-D surface normal: A geometric tool to find orthogonal vectors based on the Householder transformation,” Computer-Aided Design, vol. 45, no. 3, pp. 683–694, Mar. 2013, doi: 10.1016/j.cad.2012.11.003.
-function HouseholderOrthogonalization(n)
-    n̄ = norm(n)
-    h1 = max(n[1]-n̄,n[1]+n̄)
-    h2 = n[2]
-    h3 = n[3]
-    h = SVector(h1,h2,h3)
-    H = I - 2h*transpose(h)/(transpose(h)*h)
-    t = H[1:3,2]
-    b = H[1:3,3]
-    t,b
-end
-
 function Plane{T}(p::Point{3,T}, n::Vec{3,T}) where {T}
-  u, v = HouseholderOrthogonalization(n)
+  u, v = householderbasis(n)
   Plane{T}(p, u, v)
 end
 

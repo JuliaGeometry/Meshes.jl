@@ -94,3 +94,24 @@ Returns the unitless type of a (unitful) type or value. See Unitful.jl.
 i.e. `dropunits(1u"mm") == Int`
 """
 dropunits(v) = typeof(one(v))
+
+"""
+    householderbasis(n)
+
+Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`, 
+such that `u`, `v`, and `n` form a right-hand orthogonal system.
+
+Reference: ["Tangent vectors to a 3-D surface normal: A geometric tool to find orthogonal vectors based on the Householder transformation"](https://doi.org/10.1016/j.cad.2012.11.003)
+"""
+function householderbasis(n)
+  norm_n = norm(n)
+  _, i = findmax(n.+norm_n)
+  ei = 1:3 .== i
+  h = n + norm_n*ei
+  H = I - 2h*transpose(h)/(transpose(h)*h)
+  u, v  = [H[:,j] for j = 1:3 if j != i]
+  if i == 2
+      u, v = v, u
+  end
+  u, v
+end

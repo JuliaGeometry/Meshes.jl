@@ -58,16 +58,9 @@
     @test normal(p) == Vec(0, 0, 1)
     @test isnothing(boundary(p))
 
-    n = V3(1, 1, 0)
-    p = Plane(P3(0, 0, 0), n)
-    @test abs(p.u⋅p.v) < eps(T)
-    @test abs(p.u⋅n) < eps(T)
-    @test abs(p.v⋅n) < eps(T)
-
-    p1 = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
-    p2 = Plane(P3(0, 0, 0), V3(0, 0, 1))
-    @test abs(p1.u⋅normal(p2)) < eps(T)
-    @test abs(p1.v⋅normal(p2)) < eps(T)
+    p = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    @test p(T(1), T(0)) == P3(1, 0, 0)
+    @test p(T(0), T(1)) == P3(0, 1, 0)
   end
 
   @testset "Bezier curves" begin
