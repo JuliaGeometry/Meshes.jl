@@ -25,16 +25,16 @@
   @test Meshes.dropunits(Float64) == Float64
 
   normals = [
-    [ 1, 0, 0],
-    [ 0, 1, 0],
-    [ 0, 0, 1],
-    [-1, 0, 0],
-    [ 0,-1, 0],
-    [ 0, 0,-1],
-    rand(3).-0.5
+    V3( 1, 0, 0),
+    V3( 0, 1, 0),
+    V3( 0, 0, 1),
+    V3(-1, 0, 0),
+    V3( 0,-1, 0),
+    V3( 0, 0,-1),
+    V3(rand(3).-0.5)
   ]
   for n in normals    
-    u, v = Meshes.householderbasis(n)
+    u, v = householderbasis(n)
     @test u×v ≈ n./norm(n)
   end
 end
