@@ -101,13 +101,17 @@ dropunits(v) = typeof(one(v))
 Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`, 
 such that `u`, `v`, and `n` form a right-hand orthogonal system.
 
-Reference: ["Tangent vectors to a 3-D surface normal: A geometric tool to find orthogonal vectors based on the Householder transformation"](https://doi.org/10.1016/j.cad.2012.11.003)
+## References
+
+* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool 
+  to find orthogonal vectors based on the Householder transformation"]
+  (https://doi.org/10.1016/j.cad.2012.11.003)
 """
 function householderbasis(n)
-  norm_n = norm(n)
-  _, i = findmax(n.+norm_n)
+  n̂ = norm(n)
+  _, i = findmax(n.+n̂)
   ei = 1:3 .== i
-  h = n + norm_n*ei
+  h = n + n̂*ei
   H = I - 2h*transpose(h)/(transpose(h)*h)
   u, v  = [H[:,j] for j = 1:3 if j != i]
   if i == 2

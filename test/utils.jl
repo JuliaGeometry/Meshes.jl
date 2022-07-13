@@ -23,4 +23,18 @@
   # return the same type in case of no units
   @test Meshes.dropunits(1.0) == Float64
   @test Meshes.dropunits(Float64) == Float64
+
+  normals = [
+    [ 1, 0, 0],
+    [ 0, 1, 0],
+    [ 0, 0, 1],
+    [-1, 0, 0],
+    [ 0,-1, 0],
+    [ 0, 0,-1],
+    rand(3).-0.5
+  ]
+  for n in normals    
+    u, v = Meshes.householderbasis(n)
+    @test u×v ≈ n./norm(n)
+  end
 end
