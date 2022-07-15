@@ -32,9 +32,8 @@ function intersectpoint(l1::Line, l2::Line)
   a + p₁ * (b - a)
  end
 
-# compute the parameters of the lines defined by the points a -> b and c -> d 
-# so that the resulting points have minimal distance
-# the ranks help to identify the different types of intersection
+# compute the intersection parameters of the lines a--b and c--d 
+# returned ranks help to identify the different types of intersection
 function intersectparameters(a::Point{N,T}, b::Point{N,T}, c::Point{N,T}, d::Point{N,T}) where {N,T}
   # solves the equation (approximately): a + λ₁ ⋅ v⃗₁ = c + λ₂ ⋅ v⃗₂, v⃗₁ = b - a, v⃗₂ = d - c
   A = [(b - a) (c - d)]
