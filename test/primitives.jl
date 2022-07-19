@@ -61,10 +61,6 @@
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     @test p(T(1), T(0)) == P3(1, 0, 0)
     @test p(T(0), T(1)) == P3(0, 1, 0)
-
-    p1 = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
-    p2 = Plane(P3(0, 0, 0), V3(0, 0, 1))
-    @test p1 == p2
   end
 
   @testset "Bezier curves" begin

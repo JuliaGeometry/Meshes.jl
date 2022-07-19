@@ -20,23 +20,8 @@ struct Plane{T} <: Primitive{3,T}
 end
 
 function Plane{T}(p::Point{3,T}, n::Vec{3,T}) where {T}
-  # origin of coordinate system
-  o = Vec{3,T}(zero(T), zero(T), zero(T))
-
-  uv = Vec{3,T}[]
-  for i in 1:3
-    # subtract projection of Euclidean basis onto normal
-    e = Vec{3,T}(ntuple(j -> j == i ? one(T) : zero(T), 3))
-    v = e - (e⋅n)/(n⋅n) * n
-
-    # check if it is a valid vector
-    isapprox(v, o, atol=atol(T)) || push!(uv, v)
-
-    # we need two vectors
-    length(uv) == 2 && break
-  end
-
-  Plane{T}(p, uv[1], uv[2])
+  u, v = householderbasis(n)
+  Plane{T}(p, u, v)
 end
 
 Plane(p::Point{3,T}, n::Vec{3,T}) where {T} = Plane{T}(p, n)

@@ -188,6 +188,7 @@ export
   # utililities
   signarea,
   sideof,
+  householderbasis,
 
   # paths
   Path,
