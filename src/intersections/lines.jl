@@ -45,9 +45,9 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
   QR = qr([A y])
 
   # calculate the rank of the augmented matrix
-  rₐ = sum(abs.(diag(QR.R)) .> atol(T))
+  rₐ = sum(sum(abs.(QR.R), dims = 2) .> atol(T))
   # calculate the rank of the rectangular matrix
-  r = sum(abs.(diag(QR.R)[1:2]) .> atol(T))
+  r = sum(sum(abs.(QR.R), dims = 2)[1:2] .> atol(T))
 
   if r >= 2 # calculate parameters of intersection or closest point
     QR = qr(A)
