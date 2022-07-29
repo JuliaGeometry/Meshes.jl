@@ -535,6 +535,18 @@
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(-1,-1), P2(-1,1))
     @inferred someornone(l1, l2)
+
+    p1, p2 = P2(0,0), P2(1,1)
+    p3, p4 = P2(1,0), P2(0,1)
+    @inferred intersectparameters(p1, p2, p3, p4)
+    @inferred intersectparameters(p1, p3, p2, p4)
+    @inferred intersectparameters(p1, p2, p1, p2)
+
+    p1, p2 = P3(0,0,0), P3(1,1,1)
+    p3, p4 = P3(1,0,0), P3(0,1,1)
+    @inferred intersectparameters(p1, p2, p3, p4)
+    @inferred intersectparameters(p1, p3, p2, p4)
+    @inferred intersectparameters(p1, p2, p1, p2)
   end
 
   @testset "missing" begin

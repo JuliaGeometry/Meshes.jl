@@ -32,9 +32,18 @@ function intersectpoint(l1::Line, l2::Line)
   a + λ₁ * (b - a)
  end
 
-# compute the parameters of the lines defined by the points a -> b and c -> d 
-# so that the resulting points have minimal distance
-# the ranks help to identify the different types of intersection
+#= 
+Compute the parameters of the lines defined by the points a -> b and c -> d 
+so that the resulting points have minimal distance.
+
+The ranks help to identify the different types of intersection:
+
+Intersection: r == rₐ == 2
+Collinear: r == rₐ == 1
+No intersection: r != rₐ
+  No intersection and parallel:  r == 1, rₐ == 2
+  No intersection, skew lines: r == 2, rₐ == 3
+=#
 function intersectparameters(a::Point{N,T}, b::Point{N,T}, 
                              c::Point{N,T}, d::Point{N,T}) where {N,T}
   # solves the equation (approximately):
@@ -42,12 +51,13 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
   # with v⃗₁ = b - a, v⃗₂ = d - c
   A = [(b - a) (c - d)]
   y = c - a
-  QR = qr([A y])
+  QRₐ  = qr([A y])
 
   # calculate the rank of the augmented matrix
-  rₐ = sum(sum(abs.(QR.R), dims = 2) .> atol(T))
+  rₐ = N == 2 ? sum(sum(abs, QRₐ.R; dims = 2) .> atol(T)) :
+                sum(abs.(diag(QRₐ.R)) .> atol(T))
   # calculate the rank of the rectangular matrix
-  r = sum(abs.(diag(QR.R)[1:2]) .> atol(T))
+  r = sum(abs.(diag(QRₐ.R)[1:2]) .> atol(T))
 
   if r >= 2 # calculate parameters of intersection or closest point
     QR = qr(A)
@@ -57,9 +67,4 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
     return zero(T), zero(T), r, rₐ
   end
 
-  # Intersection r == rₐ == 2
-  # Collinear: r == rₐ == 1
-  # no intersection: r != rₐ
-  #   no intersection and parallel:  r == 1, rₐ == 2
-  #   no intersection, skew lines: r == 2, rₐ == 3
 end
