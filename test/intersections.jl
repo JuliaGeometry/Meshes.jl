@@ -510,6 +510,15 @@
     @test l1 == l2
     @test l1 ∩ l2 == l2 ∩ l1 == l1
 
+    # rounding errors
+    l1 = Line(P2(3.0,1.0), P2(2.0,2.0))
+    for k = 1:1000
+      Δ = k * atol(T)
+      l2 = Line(P2(1.5,1.5 + Δ), P2(3.0, 1.5 + Δ))
+      pᵢ = P2(2.5 - Δ, 1.5 + Δ)
+      @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ pᵢ
+    end
+
     # lines in 3D
     # not in same plane
     l1 = Line(P3(0,0,0), P3(1,0,0))
