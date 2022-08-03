@@ -51,7 +51,7 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
   # with v⃗₁ = b - a, v⃗₂ = d - c
   A = [(b - a) (c - d)]
   y = c - a
-  QRₐ  = qr([A y])
+  QRₐ = qr([A y])
 
   # calculate the rank of the augmented matrix
   rₐ = N == 2 ? sum(sum(abs, QRₐ.R; dims = 2) .> atol(T)) :
