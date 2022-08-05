@@ -49,25 +49,30 @@
   end
 
   @testset "Planes" begin
-    p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
-    @test p(T(1), T(0)) == P3(1, 0, 0)
+    p = Plane(P3(0,0,0), V3(1,0,0), V3(0,1,0))
+    @test p(T(1), T(0)) == P3(1,0,0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
     @test isconvex(p)
-    @test origin(p) == P3(0, 0, 0)
-    @test normal(p) == Vec(0, 0, 1)
+    @test origin(p) == P3(0,0,0)
+    @test normal(p) == Vec(0,0,1)
     @test isnothing(boundary(p))
 
-    p = Plane(P3(0, 0, 0), V3(0, 0, 1))
-    @test p(T(1), T(0)) == P3(1, 0, 0)
-    @test p(T(0), T(1)) == P3(0, 1, 0)
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    @test p(T(1), T(0)) == P3(1,0,0)
+    @test p(T(0), T(1)) == P3(0,1,0)
 
-    p₁ = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
-    p₂ = Plane(P3(0, 0, 0), V3(0, 1, 0), V3(1, 0, 0))
+    p₁ = Plane(P3(0,0,0), V3(1,0,0), V3(0,1,0))
+    p₂ = Plane(P3(0,0,0), V3(0,1,0), V3(1,0,0))
     @test p₁ == p₂
-    p₁ = Plane(P3(0, 0, 0), V3(1, 1, 0))
-    p₂ = Plane(P3(0, 0, 0), -V3(1, 1, 0))
+    p₁ = Plane(P3(0,0,0),  V3(1,1,0))
+    p₂ = Plane(P3(0,0,0), -V3(1,1,0))
     @test p₁ == p₂
+
+    # normal to plane has norm one regardless of basis
+    p = Plane(P3(0,0,0), V3(2,0,0), V3(0,3,0))
+    n = normal(p)
+    @test isapprox(norm(n), T(1), atol=atol(T))
   end
 
   @testset "Bezier curves" begin
