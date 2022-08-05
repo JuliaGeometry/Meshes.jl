@@ -263,14 +263,15 @@ export
   meshdata,
 
   # views
-  DomainView, DataView,
+  DomainView,
+  DataView,
 
   # partitions
   Partition,
   indices, metadata,
 
   # viewing
-  indices, slice,
+  unview, indices, slice,
 
   # sampling
   SamplingMethod,

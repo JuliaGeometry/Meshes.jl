@@ -15,6 +15,21 @@ Base.view(v::DomainView, inds::AbstractVector{Int}) =
 Base.view(v::DataView, inds::AbstractVector{Int}) =
   DataView(getfield(v, :data), getfield(v, :inds)[inds])
 
+# ---------------------
+# UNVIEWS WITH INDICES
+# ---------------------
+
+"""
+    unview(object)
+
+Return the underlying domain/data of the `object` and
+the indices of the view. If the `object` is not a view,
+then return the `object` with all its indices as a fallback.
+"""
+unview(object) = object, 1:nelements(object)
+unview(v::DomainView) = getfield(v, :domain), getfield(v, :inds)
+unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
+
 # ----------------------
 # VIEWS WITH GEOMETRIES
 # ----------------------
