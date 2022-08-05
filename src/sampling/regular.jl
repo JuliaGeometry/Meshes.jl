@@ -87,6 +87,40 @@ function sample(::AbstractRNG, ball::Ball{Dim,T},
   ivec(scale(p, s) for p in points, s in srange)
 end
 
+function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
+                method::RegularSampling) where {T}
+  sz = fitdims(method.sizes, paramdim(cylsurf))
+  bot, top = planes(cylsurf)
+  r  = radius(cylsurf)
+  nᵦ = normal(bot)
+  nₜ = normal(top)
+
+  V = T <: AbstractFloat ? T : Float64
+  φmin, φmax = V(0), V(2π)
+  zmin, zmax = V(0), V(1)
+  δφ = (φmax - φmin) / sz[1]
+  δz = (zmax - zmin) / sz[2]
+  φrange = range(φmin, stop=φmax-δφ, length=sz[1])
+  zrange = range(zmin, stop=zmax,    length=sz[2])
+
+  # pick a basis at the bottom plane
+  uᵦ, vᵦ = householderbasis(nᵦ)
+  oᵦ = origin(bot)
+
+  # project the basis on the top plane
+  uₜ = uᵦ - (uᵦ ⋅ nₜ)*nₜ
+  vₜ = vᵦ - (vᵦ ⋅ nₜ)*nₜ
+  oₜ = origin(top)
+
+  function point(φ, z)
+    pᵦ = oᵦ + r*cos(φ)*uᵦ + r*sin(φ)*vᵦ
+    pₜ = oₜ + r*cos(φ)*uₜ + r*sin(φ)*vₜ
+    pᵦ + z*(pₜ - pᵦ)
+  end
+
+  ivec(point(φ, z) for φ in φrange, z in zrange)
+end
+
 function sample(::AbstractRNG, seg::Segment{Dim,T},
                 method::RegularSampling) where {Dim,T}
   sz = fitdims(method.sizes, paramdim(seg))
