@@ -10,6 +10,8 @@ Base.view(domain::Domain, inds) = DomainView(domain, inds)
 Base.view(data::Data, inds) = DataView(data, inds)
 
 # specialize view to avoid infinite loops
+Base.view(v::DomainView, inds::AbstractVector{Int}) =
+  DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
 Base.view(v::DataView, inds::AbstractVector{Int}) =
   DataView(getfield(v, :data), getfield(v, :inds)[inds])
 
