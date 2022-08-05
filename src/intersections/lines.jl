@@ -49,22 +49,26 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
   # solves the equation (approximately):
   # a + λ₁ ⋅ v⃗₁ = c + λ₂ ⋅ v⃗₂,
   # with v⃗₁ = b - a, v⃗₂ = d - c
+  # A = [v⃗₁ -v⃗₂]
   A = [(b - a) (c - d)]
   y = c - a
   QRₐ = qr([A y])
 
   # calculate the rank of the augmented matrix
+  # by checking the zero entries of the diagonal of R
+  # for N == 2 one has to check the L1 norm of rows as 
+  # there are more columns than rows
   rₐ = N == 2 ? sum(sum(abs, QRₐ.R; dims = 2) .> atol(T)) :
                 sum(abs.(diag(QRₐ.R)) .> atol(T))
   # calculate the rank of the rectangular matrix
-  r = sum(abs.(diag(QRₐ.R)[1:2]) .> atol(T))
+  r = sum(sum(abs, QRₐ.R[:,1:2]; dims = 2) .> atol(T))
 
-  if r >= 2 # calculate parameters of intersection or closest point
+  if r ≥ 2 # calculate parameters of intersection or closest point
     QR = qr(A)
     λ = QR.R \ QR.Q' * y
-    return λ[1], λ[2], r, rₐ
   else # parallel or collinear
-    return zero(T), zero(T), r, rₐ
+    λ = [zero(T), zero(T)]
   end
+  λ[1], λ[2], r, rₐ
 
 end
