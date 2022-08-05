@@ -51,3 +51,7 @@ origin(p::Plane) = p.p
 Normal vector to the `plane`.
 """
 normal(p::Plane) = p.u × p.v
+
+==(p₁::Plane{T}, p₂::Plane{T}) where {T} =
+  isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
+  isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
