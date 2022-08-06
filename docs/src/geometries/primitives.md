@@ -34,8 +34,20 @@ Plane
 Box
 ```
 
+```@example primitives
+b = Box((0.,0.,0.), (1.,1.,1.))
+
+viz(b)
+```
+
 ```@docs
 Cylinder
+```
+
+```@example primitives
+c = Cylinder(1.0) # aligned with z axis
+
+viz(c)
 ```
 
 ```@docs
@@ -48,4 +60,10 @@ Ball
 
 ```@docs
 Sphere
+```
+
+```@example primitives
+s = Sphere((0.,0.,0.), 1.)
+
+viz(s)
 ```
