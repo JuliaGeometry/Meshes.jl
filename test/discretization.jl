@@ -256,6 +256,15 @@
     xs = coordinates.(vertices(mesh))
     @test all(x -> norm(x) ≈ T(1), xs)
 
+    # triangulation of cylinder surfaces
+    cylsurf = CylinderSurface(T(1))
+    mesh = triangulate(cylsurf)
+    @test eltype(mesh) <: Triangle
+    xs = coordinates.(vertices(mesh))
+    @test all(x -> T(-1) ≤ x[1] ≤ T(1), xs)
+    @test all(x -> T(-1) ≤ x[2] ≤ T(1), xs)
+    @test all(x ->  T(0) ≤ x[3] ≤ T(1), xs)
+
     # triangulation of balls
     ball = Ball(P2(0,0), T(1))
     mesh = triangulate(ball)
