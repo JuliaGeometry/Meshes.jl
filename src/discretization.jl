@@ -146,13 +146,13 @@ function triangulate(mesh::Mesh)
 end
 
 triangulate(sphere::Sphere{3}) =
-  discretize(sphere, RegularDiscretization(100)) |> triangulate
+  discretize(sphere, RegularDiscretization(50)) |> triangulate
 
 triangulate(ball::Ball{2}) =
-  discretize(ball, RegularDiscretization(100)) |> triangulate
+  discretize(ball, RegularDiscretization(50)) |> triangulate
 
 triangulate(cylsurf::CylinderSurface) =
-  discretize(cylsurf, RegularDiscretization(100)) |> triangulate
+  discretize(cylsurf, RegularDiscretization(50, 2)) |> triangulate
 
 # ----------------
 # IMPLEMENTATIONS
