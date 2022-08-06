@@ -110,6 +110,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   # project the basis on the top plane
   uₜ = uᵦ - (uᵦ ⋅ nₜ)*nₜ
   vₜ = vᵦ - (vᵦ ⋅ nₜ)*nₜ
+  uₜ = uₜ / norm(uₜ)
+  vₜ = vₜ / norm(vₜ)
   oₜ = origin(top)
 
   function point(φ, z)
