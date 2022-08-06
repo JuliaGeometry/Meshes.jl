@@ -90,9 +90,10 @@ end
 function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
                 method::RegularSampling) where {T}
   sz = fitdims(method.sizes, paramdim(cylsurf))
-  bot, top = planes(cylsurf)
-  l = axis(cylsurf)
-  r = radius(cylsurf)
+  r  = radius(cylsurf)
+  b  = bottom(cylsurf)
+  t  = top(cylsurf)
+  a  = axis(cylsurf)
 
   V = T <: AbstractFloat ? T : Float64
   φmin, φmax = V(0), V(2π)
@@ -103,10 +104,10 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   zrange = range(zmin, stop=zmax,    length=sz[2])
 
   # centers and normals of planes
-  oᵦ = origin(bot)
-  oₜ = origin(top)
-  nᵦ = normal(bot)
-  nₜ = normal(top)
+  oᵦ = origin(b)
+  oₜ = origin(t)
+  nᵦ = normal(b)
+  nₜ = normal(t)
 
   # pick a basis at the bottom plane
   uᵦ, vᵦ = householderbasis(nᵦ)
@@ -118,7 +119,7 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   vₜ = vₜ / norm(vₜ)
 
   # effective radius for given angle
-  d  = l(1) - l(0)
+  d  = a(1) - a(0)
   rᵦ = r / cos(∠(nᵦ, d))
   rₜ = r / cos(∠(nₜ, d))
 
