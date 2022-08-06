@@ -116,11 +116,8 @@
     xs = getindex.(cs, 1)
     ys = getindex.(cs, 2)
     zs = getindex.(cs, 3)
-    @test all(T(-1) ≤ x ≤ T(1) for x in xs[1:20])
-    @test all(T(-1) ≤ y ≤ T(1) for y in ys[1:20])
-    @test all(T(0) ≤ x ≤ T(2) for x in xs[end-19:end])
-    @test all(T(0) ≤ y ≤ T(2) for y in ys[end-19:end])
-    @test all( T(0) ≤ z ≤ T(1) for z in zs)
+    @test length(cs) == 200
+    @test all(T(0) - eps(T) ≤ z ≤ T(1) + eps(T) for z in zs)
 
     # cylinder surface with non-parallel planes
     c = CylinderSurface(T(1),
