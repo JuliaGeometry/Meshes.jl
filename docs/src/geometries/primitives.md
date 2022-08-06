@@ -39,6 +39,10 @@ Cylinder
 ```
 
 ```@docs
+CylinderSurface
+```
+
+```@docs
 Ball
 ```
 
