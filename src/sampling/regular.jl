@@ -91,9 +91,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
                 method::RegularSampling) where {T}
   sz = fitdims(method.sizes, paramdim(cylsurf))
   bot, top = planes(cylsurf)
-  r  = radius(cylsurf)
-  nᵦ = normal(bot)
-  nₜ = normal(top)
+  l = axis(cylsurf)
+  r = radius(cylsurf)
 
   V = T <: AbstractFloat ? T : Float64
   φmin, φmax = V(0), V(2π)
@@ -103,20 +102,29 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   φrange = range(φmin, stop=φmax-δφ, length=sz[1])
   zrange = range(zmin, stop=zmax,    length=sz[2])
 
+  # centers and normals of planes
+  oᵦ = origin(bot)
+  oₜ = origin(top)
+  nᵦ = normal(bot)
+  nₜ = normal(top)
+
   # pick a basis at the bottom plane
   uᵦ, vᵦ = householderbasis(nᵦ)
-  oᵦ = origin(bot)
 
   # project the basis on the top plane
   uₜ = uᵦ - (uᵦ ⋅ nₜ)*nₜ
   vₜ = vᵦ - (vᵦ ⋅ nₜ)*nₜ
   uₜ = uₜ / norm(uₜ)
   vₜ = vₜ / norm(vₜ)
-  oₜ = origin(top)
+
+  # effective radius for given angle
+  d  = l(1) - l(0)
+  rᵦ = r / cos(∠(nᵦ, d))
+  rₜ = r / cos(∠(nₜ, d))
 
   function point(φ, z)
-    pᵦ = oᵦ + r*cos(φ)*uᵦ + r*sin(φ)*vᵦ
-    pₜ = oₜ + r*cos(φ)*uₜ + r*sin(φ)*vₜ
+    pᵦ = oᵦ + rᵦ*cos(φ)*uᵦ + rᵦ*sin(φ)*vᵦ
+    pₜ = oₜ + rₜ*cos(φ)*uₜ + rₜ*sin(φ)*vₜ
     pᵦ + z*(pₜ - pᵦ)
   end
 
