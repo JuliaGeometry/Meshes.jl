@@ -129,3 +129,58 @@ function discretize(ball::Ball{2,T},
 
   SimpleMesh(points, connec)
 end
+
+function discretize(cylsurf::CylinderSurface{T},
+                    method::RegularDiscretization) where {T}
+  nx, ny = fitdims(method.sizes, paramdim(cylsurf))
+
+  # sample points regularly
+  sampler = RegularSampling(nx, ny)
+  points  = collect(sample(cylsurf, sampler))
+
+  # connect regular samples with quadrangles
+  topo   = GridTopology((nx-1, ny-1))
+  middle = collect(elements(topo))
+  for j in 1:ny-1
+    u = (j  )*nx
+    v = (j-1)*nx + 1
+    w = (j  )*nx + 1
+    z = (j+1)*nx
+    quad = connect((u, v, w, z))
+    push!(middle, quad)
+  end
+
+  # add south and north poles
+  bot, top = planes(cylsurf)
+  push!(points, origin(bot))
+  push!(points, origin(top))
+
+  # connect south pole with triangles
+  south = map(1:nx-1) do i
+    u = nx*ny + 1
+    v = i + 1
+    w = i
+    connect((u, v, w))
+  end
+  u = nx*ny + 1
+  v = 1
+  w = nx
+  push!(south, connect((u, v, w)))
+
+  # connect north pole with triangles
+  offset = nx*ny - nx
+  north = map(1:nx-1) do i
+    u = nx*ny + 2
+    v = offset + i + 1
+    w = offset + i
+    connect((u, w, v))
+  end
+  u = nx*ny + 2
+  v = nx*ny - nx + 1
+  w = nx*ny
+  push!(north, connect((u, w, v)))
+
+  connec = [middle; south; north]
+
+  SimpleMesh(points, connec)
+end
