@@ -99,34 +99,34 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   φmin, φmax = V(0), V(2π)
   zmin, zmax = V(0), V(1)
   δφ = (φmax - φmin) / sz[1]
-  δz = (zmax - zmin) / sz[2]
   φrange = range(φmin, stop=φmax-δφ, length=sz[1])
   zrange = range(zmin, stop=zmax,    length=sz[2])
 
+  # rotation to align z axis with cylinder axis
+  d  = normalize(a(1) - a(0))
+  e₃ = Vec(V(0), V(0), V(1))
+  θ = ∠(d, e₃)
+  w = d × e₃
+  R = convert(DCM, EulerAngleAxis(-θ, w))
+
   # centers and normals of planes
-  oᵦ = origin(b)
-  oₜ = origin(t)
-  nᵦ = normal(b)
-  nₜ = normal(t)
+  oᵦ = R * coordinates(origin(b))
+  oₜ = R * coordinates(origin(t))
+  nᵦ = R * normal(b)
+  nₜ = R * normal(t)
 
-  # pick a basis at the bottom plane
-  uᵦ, vᵦ = householderbasis(nᵦ)
-
-  # project the basis on the top plane
-  uₜ = uᵦ - (uᵦ ⋅ nₜ)*nₜ
-  vₜ = vᵦ - (vᵦ ⋅ nₜ)*nₜ
-  uₜ = uₜ / norm(uₜ)
-  vₜ = vₜ / norm(vₜ)
-
-  # effective radius for given angle
-  d  = a(1) - a(0)
-  rᵦ = r / cos(∠(nᵦ, d))
-  rₜ = r / cos(∠(nₜ, d))
+  # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
+  # equation of the plane, we can solve for z and find all points
+  # along the ellipse obtained by intersection
+  zᵦ(φ) = oᵦ[3] - ((r*cos(φ) - oᵦ[1])*nᵦ[1] + (r*sin(φ) - oᵦ[2])*nᵦ[2]) / nᵦ[3]
+  zₜ(φ) = oₜ[3] - ((r*cos(φ) - oₜ[1])*nₜ[1] + (r*sin(φ) - oₜ[2])*nₜ[2]) / nₜ[3]
+  cᵦ(φ) = Point(r*cos(φ), r*sin(φ), zᵦ(φ))
+  cₜ(φ) = Point(r*cos(φ), r*sin(φ), zₜ(φ))
 
   function point(φ, z)
-    pᵦ = oᵦ + rᵦ*cos(φ)*uᵦ + rᵦ*sin(φ)*vᵦ
-    pₜ = oₜ + rₜ*cos(φ)*uₜ + rₜ*sin(φ)*vₜ
-    pᵦ + z*(pₜ - pᵦ)
+    pᵦ, pₜ = cᵦ(φ), cₜ(φ)
+    p = pᵦ + z*(pₜ - pᵦ)
+    Point(R' * coordinates(p))
   end
 
   ivec(point(φ, z) for φ in φrange, z in zrange)

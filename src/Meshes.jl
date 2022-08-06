@@ -17,7 +17,7 @@ using IterTools: ivec
 using StatsBase: Weights
 using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
-using ReferenceFrameRotations: EulerAngles, DCM, angle_to_dcm
+using ReferenceFrameRotations: EulerAngles, EulerAngleAxis, DCM
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 # import categorical arrays as a temporary solution for plot recipes
