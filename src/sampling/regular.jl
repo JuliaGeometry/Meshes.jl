@@ -103,30 +103,34 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   zrange = range(zmin, stop=zmax,    length=sz[2])
 
   # rotation to align z axis with cylinder axis
-  d  = normalize(a(1) - a(0))
-  e₃ = Vec(V(0), V(0), V(1))
-  θ = ∠(d, e₃)
-  w = d × e₃
-  R = convert(DCM, EulerAngleAxis(-θ, w))
+  e₃ = Vec{3,V}(0, 0, 1)
+  d  = a(1) - a(0)
+  l  = norm(d)
+  θ  = ∠(d, e₃)
+  w  = d × e₃
+  R  = convert(DCM, EulerAngleAxis(-θ, w))
 
-  # centers and normals of planes
-  oᵦ = R * coordinates(origin(b))
-  oₜ = R * coordinates(origin(t))
+  # new normals of planes in new rotated system
   nᵦ = R * normal(b)
   nₜ = R * normal(t)
 
   # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
   # equation of the plane, we can solve for z and find all points
   # along the ellipse obtained by intersection
-  zᵦ(φ) = oᵦ[3] - ((r*cos(φ) - oᵦ[1])*nᵦ[1] + (r*sin(φ) - oᵦ[2])*nᵦ[2]) / nᵦ[3]
-  zₜ(φ) = oₜ[3] - ((r*cos(φ) - oₜ[1])*nₜ[1] + (r*sin(φ) - oₜ[2])*nₜ[2]) / nₜ[3]
+  zᵦ(φ) = -l/2 - (r*cos(φ)*nᵦ[1] + r*sin(φ)*nᵦ[2]) / nᵦ[3]
+  zₜ(φ) = +l/2 - (r*cos(φ)*nₜ[1] + r*sin(φ)*nₜ[2]) / nₜ[3]
   cᵦ(φ) = Point(r*cos(φ), r*sin(φ), zᵦ(φ))
   cₜ(φ) = Point(r*cos(φ), r*sin(φ), zₜ(φ))
+
+  # center of cylinder for final translation
+  oᵦ = coordinates(origin(b))
+  oₜ = coordinates(origin(t))
+  oₘ = @. (oᵦ + oₜ) / 2
 
   function point(φ, z)
     pᵦ, pₜ = cᵦ(φ), cₜ(φ)
     p = pᵦ + z*(pₜ - pᵦ)
-    Point(R' * coordinates(p))
+    Point((R' * coordinates(p)) + oₘ)
   end
 
   ivec(point(φ, z) for φ in φrange, z in zrange)
