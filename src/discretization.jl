@@ -106,6 +106,32 @@ when the `object` has parametric dimension 2.
 """
 function simplexify end
 
+# -----------------------
+# PARAMETRIC DIMENSION 1
+# -----------------------
+
+simplexify(box::Box{1}) = SimpleMesh(vertices(box), [connect((1,2))])
+
+simplexify(seg::Segment) = SimpleMesh(vertices(seg), [connect((1,2))])
+
+function simplexify(chain::Chain)
+  nverts = nvertices(chain)
+
+  verts  = collect(vertices(chain))
+  connec = [connect((i,i+1)) for i in 1:nverts-1]
+  isclosed(chain) && push!(connec, connect((nverts,1)))
+
+  SimpleMesh(verts, connec)
+end
+
+simplexify(sphere::Sphere{2}) = discretize(sphere, RegularDiscretization(50))
+
+simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
+
+# -----------------------
+# PARAMETRIC DIMENSION 2
+# -----------------------
+
 simplexify(box::Box{2}) = discretize(box, FanTriangulation())
 
 simplexify(tri::Triangle) = discretize(tri, FanTriangulation())

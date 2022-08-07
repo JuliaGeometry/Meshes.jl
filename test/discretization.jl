@@ -239,9 +239,52 @@
   end
 
   @testset "Simplexify" begin
+    # fix import conflict with Plots
+    BezierCurve = Meshes.BezierCurve
+
     # simplexify is a helper function that calls an
     # appropriate discretization method depending on
     # the geometry type that is given to it
+    box = Box(P1(0), P1(1))
+    msh = simplexify(box)
+    @test eltype(msh) <: Segment
+    @test nvertices(msh) == 2
+    @test nelements(msh) == 1
+    @test msh[1] == Segment(P1(0), P1(1))
+
+    seg = Segment(P1(0), P1(1))
+    msh = simplexify(seg)
+    @test eltype(msh) <: Segment
+    @test nvertices(msh) == 2
+    @test nelements(msh) == 1
+    @test msh[1] == Segment(P1(0), P1(1))
+
+    chn = Chain(P2[(0,0), (1,0), (1,1)])
+    msh = simplexify(chn)
+    @test eltype(msh) <: Segment
+    @test nvertices(msh) == 3
+    @test nelements(msh) == 2
+    @test msh[1] == Segment(P2(0,0), P2(1,0))
+    @test msh[2] == Segment(P2(1,0), P2(1,1))
+    chn = Chain(P2[(0,0), (1,0), (1,1), (0,0)])
+    msh = simplexify(chn)
+    @test eltype(msh) <: Segment
+    @test nvertices(msh) == 3
+    @test nelements(msh) == 3
+    @test msh[1] == Segment(P2(0,0), P2(1,0))
+    @test msh[2] == Segment(P2(1,0), P2(1,1))
+    @test msh[3] == Segment(P2(1,1), P2(0,0))
+
+    sph = Sphere(P2(0,0), T(1))
+    msh = simplexify(sph)
+    @test eltype(msh) <: Segment
+    @test nvertices(msh) == nelements(msh)
+
+    bez = BezierCurve(P2[(0,0),(1,0),(1,1)])
+    msh = simplexify(bez)
+    @test eltype(msh) <: Segment
+    @test nvertices(msh) == nelements(msh) + 1
+
     box  = Box(P2(0,0), P2(1,1))
     ngon = Quadrangle(P2[(0,0),(1,0),(1,1),(0,1)])
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
