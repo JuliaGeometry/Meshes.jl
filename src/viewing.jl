@@ -63,9 +63,9 @@ function Base.view(data::Data, geometry::Geometry)
 end
 
 # convert from Cartesian to linear indices if needed
-@traitfn _linear(domain::D, inds) where {D; IsGrid{D}} =
-  vec(LinearIndices(size(domain))[inds])
-@traitfn _linear(domain::D, inds) where {D; !IsGrid{D}} = inds
+_linear(domain::Domain, inds) = inds
+_linear(grid::CartesianGrid, inds) =
+  vec(LinearIndices(size(grid))[inds])
 
 """
     indices(domain, geometry)
@@ -77,14 +77,14 @@ function indices(domain::Domain, geometry::Geometry)
   filter(pred, 1:nelements(domain))
 end
 
-@traitfn function indices(domain::D, box::Box) where {D<:Domain; IsGrid{D}}
+function indices(grid::CartesianGrid, box::Box)
   # grid properties
-  or = coordinates(minimum(domain))
-  sp = spacing(domain)
-  sz = size(domain)
+  or = coordinates(minimum(grid))
+  sp = spacing(grid)
+  sz = size(grid)
 
   # intersection of boxes
-  □ = boundingbox(domain) ∩ box
+  □ = boundingbox(grid) ∩ box
   lo, up = coordinates.(extrema(□))
 
   # Cartesian indices of new corners
@@ -92,11 +92,6 @@ end
   iup = @. min(floor(Int, (up - or) / sp)    , sz)
 
   CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
-end
-
-@traitfn function indices(domain::D, box::Box) where {D<:Domain; !IsGrid{D}}
-  pred(i) = _isinside(domain[i], box)
-  filter(pred, 1:nelements(domain))
 end
 
 _isinside(p::Point, geometry) = p ∈ geometry

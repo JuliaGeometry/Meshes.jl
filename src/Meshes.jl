@@ -8,7 +8,6 @@ using Tables
 using StaticArrays
 using SparseArrays
 using CircularArrays
-using SimpleTraits
 using RecipesBase
 using LinearAlgebra
 using Random
@@ -136,9 +135,6 @@ export
   Data, Variable,
   domain, constructor, asarray,
   variables, name, mactype,
-
-  # optional traits
-  IsGrid, isgrid,
 
   # domain/data alias
   DomainOrData,

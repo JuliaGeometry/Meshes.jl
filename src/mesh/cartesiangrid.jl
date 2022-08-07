@@ -197,12 +197,6 @@ end
 
 Base.eltype(g::CartesianGrid) = typeof(g[1])
 
-# ----------------
-# OPTIONAL TRAITS
-# ----------------
-
-isgrid(::Type{<:CartesianGrid}) = true
-
 # ----------------------------
 # ADDITIONAL INDEXING METHODS
 # ----------------------------

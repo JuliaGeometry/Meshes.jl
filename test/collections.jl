@@ -1,9 +1,5 @@
 @testset "Collections" begin
   @testset "PointSet" begin
-    @test !isgrid(PointSet{1,T})
-    @test !isgrid(PointSet{2,T})
-    @test !isgrid(PointSet{3,T})
-
     pset = PointSet(rand(P1, 100))
     @test embeddim(pset) == 1
     @test coordtype(pset) == T
@@ -70,8 +66,6 @@
   end
 
   @testset "GeometrySet" begin
-    @test !isgrid(GeometrySet)
-
     s = Segment(P2(0,0), P2(1,1))
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     p = PolyArea(P2[(0,0), (1,0), (1,1), (0,1), (0,0)])
