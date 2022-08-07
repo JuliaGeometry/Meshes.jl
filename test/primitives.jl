@@ -80,6 +80,7 @@
     BezierCurve = Meshes.BezierCurve
 
     b = BezierCurve(P2(0,0),P2(0.5,1),P2(1,0))
+    @test embeddim(b) == 2
     @test paramdim(b) == 1
 
     b = BezierCurve(P2(0,0),P2(0.5,1),P2(1,0))
