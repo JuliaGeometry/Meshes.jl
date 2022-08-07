@@ -19,7 +19,7 @@ v = B - A
 
 ### Notes
 
-- A `Vec` is a `SVector` from StaticArrays.jl
+- A `Vec` is a type of `FieldVector` from StaticArrays.jl
 - Type aliases are `Vec1`, `Vec2`, `Vec3`, `Vec1f`, `Vec2f`, `Vec3f`
 """
 const Vec = SVector
