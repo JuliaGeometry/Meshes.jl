@@ -36,16 +36,16 @@ function intersectpoint(l1::Line, l2::Line)
     intersectparameters(a, b, c, d)
 
 Compute the parameters `λ₁` and `λ₂` of the lines 
-`a + λ₁ ⋅ v⃗₁`, with ` v⃗₁ = b - a` and
-`c + λ₂ ⋅ v⃗₂`, with ` v⃗₂ = d - c`
-spanned by the input points `a`, `b` resp. `c`, `d`
-such that to yield line points with minimal distance 
-or the intersection point (if lines intersect).
+`a + λ₁ ⋅ v⃗₁`, with `v⃗₁ = b - a` and
+`c + λ₂ ⋅ v⃗₂`, with `v⃗₂ = d - c` spanned by the input
+points `a`, `b` resp. `c`, `d` such that to yield line
+points with minimal distance or the intersection point
+(if lines intersect).
 
-Furthermore the ranks `r` of the matrix of the linear system 
-`A ⋅ λ⃗ = y⃗`, with `A = [v⃗₁ -v⃗₂], y⃗ = c - a`
-and the rank `rₐ` of the augmented matrix `[A y⃗]` are calculated in order to 
-identify the intersection type:
+Furthermore, the ranks `r` of the matrix of the linear
+system `A ⋅ λ⃗ = y⃗`, with `A = [v⃗₁ -v⃗₂], y⃗ = c - a`
+and the rank `rₐ` of the augmented matrix `[A y⃗]` are
+calculated in order to identify the intersection type:
 
 - Intersection: r == rₐ == 2
 - Collinear: r == rₐ == 1
@@ -65,15 +65,17 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
   # there are more columns than rows
   rₐ = N == 2 ? sum(sum(abs, R; dims = 2) .> atol(T)) :
                 sum(abs.(diag(R)) .> atol(T))
+
   # calculate the rank of the rectangular matrix
   r = sum(sum(abs, R[:,1:2]; dims = 2) .> atol(T))
 
-  if r ≥ 2 # calculate parameters of intersection or closest point
+  # calculate parameters of intersection or closest point
+  if r ≥ 2
     QR = qr(A)
     λ = QR.R \ QR.Q' * y
   else # parallel or collinear
     λ = [zero(T), zero(T)]
   end
-  λ[1], λ[2], r, rₐ
 
+  λ[1], λ[2], r, rₐ
 end
