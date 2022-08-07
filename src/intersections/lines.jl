@@ -32,24 +32,29 @@ function intersectpoint(l1::Line, l2::Line)
   a + λ₁ * (b - a)
  end
 
-#= 
-Compute the parameters of the lines defined by the points a -> b and c -> d 
-so that the resulting points have minimal distance.
+ """
+    intersectparameters(a, b, c, d)
 
-The ranks help to identify the different types of intersection:
+Compute the parameters `λ₁` and `λ₂` of the lines 
+`a + λ₁ ⋅ v⃗₁`, with ` v⃗₁ = b - a` and
+`c + λ₂ ⋅ v⃗₂`, with ` v⃗₂ = d - c`
+spanned by the input points `a`, `b` resp. `c`, `d`
+such that to yield line points with minimal distance 
+or the intersection point (if lines intersect).
 
-Intersection: r == rₐ == 2
-Collinear: r == rₐ == 1
-No intersection: r != rₐ
-  No intersection and parallel:  r == 1, rₐ == 2
-  No intersection, skew lines: r == 2, rₐ == 3
-=#
+Furthermore the ranks `r` of the matrix of the linear system 
+`A ⋅ λ⃗ = y⃗`, with `A = [v⃗₁ -v⃗₂], y⃗ = c - a`
+and the rank `rₐ` of the augmented matrix `[A y⃗]` are calculated in order to 
+identify the intersection type:
+
+- Intersection: r == rₐ == 2
+- Collinear: r == rₐ == 1
+- No intersection: r != rₐ
+  - No intersection and parallel:  r == 1, rₐ == 2
+  - No intersection, skew lines: r == 2, rₐ == 3
+"""
 function intersectparameters(a::Point{N,T}, b::Point{N,T}, 
-                             c::Point{N,T}, d::Point{N,T}) where {N,T}
-  # solves the equation (approximately):
-  # a + λ₁ ⋅ v⃗₁ = c + λ₂ ⋅ v⃗₂,
-  # with v⃗₁ = b - a, v⃗₂ = d - c
-  # A = [v⃗₁ -v⃗₂]
+                          c::Point{N,T}, d::Point{N,T}) where {N,T}
   A = [(b - a) (c - d)]
   y = c - a
   QRₐ = qr([A y])
