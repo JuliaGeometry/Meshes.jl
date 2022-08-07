@@ -27,6 +27,8 @@ end
 BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
 BezierCurve(points::Vararg) = BezierCurve(collect(points))
 
+paramdim(::Type{<:BezierCurve}) = 1
+
 ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1

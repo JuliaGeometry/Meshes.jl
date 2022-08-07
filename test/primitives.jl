@@ -75,9 +75,12 @@
     @test isapprox(norm(n), T(1), atol=atol(T))
   end
 
-  @testset "Bezier curves" begin
+  @testset "BezierCurve" begin
     # fix import conflict with Plots
     BezierCurve = Meshes.BezierCurve
+
+    b = BezierCurve(P2(0,0),P2(0.5,1),P2(1,0))
+    @test paramdim(b) == 1
 
     b = BezierCurve(P2(0,0),P2(0.5,1),P2(1,0))
     for method in [DeCasteljau(), Horner()]
