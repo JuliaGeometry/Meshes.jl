@@ -101,6 +101,24 @@
   end
 
   @testset "Boxes" begin
+    b = Box(P1(0), P1(1))
+    @test embeddim(b) == 1
+    @test paramdim(b) == 1
+    @test coordtype(b) == T
+    @test minimum(b) == P1(0)
+    @test maximum(b) == P1(1)
+    @test extrema(b) == (P1(0), P1(1))
+    @test isconvex(b)
+
+    b = Box(P1(0), P1(1))
+    @test vertices(b) == [P1(0), P1(1)]
+    @test measure(b) == T(1)
+    @test P1(0) ∈ b
+    @test P1(1) ∈ b
+    @test P1(0.5) ∈ b
+    @test P1(-0.5) ∉ b
+    @test P1(1.5) ∉ b
+
     b = Box(P2(0,0), P2(1,1))
     @test embeddim(b) == 2
     @test paramdim(b) == 2

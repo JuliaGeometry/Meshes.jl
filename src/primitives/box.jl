@@ -41,6 +41,8 @@ sides(b::Box) = b.max - b.min
 
 area(b::Box{2}) = measure(b)
 
+vertices(b::Box{1}) = [b.min, b.max]
+
 function vertices(b::Box{2})
   A = coordinates(b.min)
   B = coordinates(b.max)
