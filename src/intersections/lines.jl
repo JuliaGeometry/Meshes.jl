@@ -9,30 +9,15 @@ The intersection type can be one of three types:
 2. overlap at more than one point
 3. do not overlap nor intersect
 =#
-function intersection(f, l1::Line{3,T}, l2::Line{3,T}) where {T}
+function intersection(f, l1::Line{N,T}, l2::Line{N,T}) where {N,T}
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 
-  if measure(Tetrahedron(a, b, c, d)) > 0 # not in same plane
-    return @IT NoIntersection nothing f
-  elseif isapprox(norm((b - a) × (c - d)), zero(T), atol=atol(T)^2)
-    if a in l2
-      return @IT OverlappingLines l1 f
-    else # parallel lines
-      return @IT NoIntersection nothing f
-    end
-  else
-    return @IT CrossingLines intersectpoint(l1, l2) f
-  end
-end
+  λ₁, _, r, rₐ = intersectparameters(a, b, c, d)
 
-function intersection(f, l1::Line{2,T}, l2::Line{2,T}) where {T}
-  a, b = l1(0), l1(1)
-  c, d = l2(0), l2(1)
-
-  if !isapprox(abs((b - a) × (c - d)), zero(T), atol=atol(T)^2)
-    return @IT CrossingLines intersectpoint(l1, l2) f
-  elseif isapprox(measure(Triangle(a, b, c)), zero(T), atol=atol(T)^2)
+  if r == rₐ == 2
+    return @IT CrossingLines (a + λ₁ * (b - a)) f
+  elseif r == rₐ == 1
     return @IT OverlappingLines l1 f
   else
     return @IT NoIntersection nothing f
@@ -43,14 +28,52 @@ end
 function intersectpoint(l1::Line, l2::Line)
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
+  λ₁, _ = intersectparameters(a, b, c, d)
+  a + λ₁ * (b - a)
+ end
 
-  v1  = a - b
-  v2  = c - d
-  v12 = a - c
+ """
+    intersectparameters(a, b, c, d)
 
-  # the intersection point lies in between a and b at a fraction s
-  # (https://en.wikipedia.org/wiki/Line-line_intersection#Formulas)
-  s = (v12[1] * v2[2] - v12[2] * v2[1]) / (v1[1] * v2[2] - v1[2] * v2[1])
+Compute the parameters `λ₁` and `λ₂` of the lines 
+`a + λ₁ ⋅ v⃗₁`, with ` v⃗₁ = b - a` and
+`c + λ₂ ⋅ v⃗₂`, with ` v⃗₂ = d - c`
+spanned by the input points `a`, `b` resp. `c`, `d`
+such that to yield line points with minimal distance 
+or the intersection point (if lines intersect).
 
-  a - s*v1
+Furthermore the ranks `r` of the matrix of the linear system 
+`A ⋅ λ⃗ = y⃗`, with `A = [v⃗₁ -v⃗₂], y⃗ = c - a`
+and the rank `rₐ` of the augmented matrix `[A y⃗]` are calculated in order to 
+identify the intersection type:
+
+- Intersection: r == rₐ == 2
+- Collinear: r == rₐ == 1
+- No intersection: r != rₐ
+  - No intersection and parallel:  r == 1, rₐ == 2
+  - No intersection, skew lines: r == 2, rₐ == 3
+"""
+function intersectparameters(a::Point{N,T}, b::Point{N,T}, 
+                             c::Point{N,T}, d::Point{N,T}) where {N,T}
+  A = [(b - a) (c - d)]
+  y = c - a
+  Q, R = qr([A y])
+
+  # calculate the rank of the augmented matrix
+  # by checking the zero entries of the diagonal of R
+  # for N == 2 one has to check the L1 norm of rows as 
+  # there are more columns than rows
+  rₐ = N == 2 ? sum(sum(abs, R; dims = 2) .> atol(T)) :
+                sum(abs.(diag(R)) .> atol(T))
+  # calculate the rank of the rectangular matrix
+  r = sum(sum(abs, R[:,1:2]; dims = 2) .> atol(T))
+
+  if r ≥ 2 # calculate parameters of intersection or closest point
+    QR = qr(A)
+    λ = QR.R \ QR.Q' * y
+  else # parallel or collinear
+    λ = [zero(T), zero(T)]
+  end
+  λ[1], λ[2], r, rₐ
+
 end

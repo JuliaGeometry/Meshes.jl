@@ -19,23 +19,23 @@
 
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0,0), P2(0,1))
-    @test s1 ∩ s2 == P2(0,0)
-    @test s2 ∩ s1 == P2(0,0)
+    @test s1 ∩ s2 ≈ P2(0,0)
+    @test s2 ∩ s1 ≈ P2(0,0)
 
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0,0), P2(-1,0))
-    @test s1 ∩ s2 == P2(0,0)
-    @test s2 ∩ s1 == P2(0,0)
+    @test s1 ∩ s2 ≈ P2(0,0)
+    @test s2 ∩ s1 ≈ P2(0,0)
 
     s1 = Segment(P2(0,0), P2(0,1))
     s2 = Segment(P2(0,0), P2(0,-1))
-    @test s1 ∩ s2 == P2(0,0)
-    @test s2 ∩ s1 == P2(0,0)
+    @test s1 ∩ s2 ≈ P2(0,0)
+    @test s2 ∩ s1 ≈ P2(0,0)
 
     s1 = Segment(P2(1,1), P2(1,2))
     s2 = Segment(P2(1,1), P2(1,0))
-    @test s1 ∩ s2 == P2(1,1)
-    @test s2 ∩ s1 == P2(1,1)
+    @test s1 ∩ s2 ≈ P2(1,1)
+    @test s2 ∩ s1 ≈ P2(1,1)
 
     s1 = Segment(P2(1,1), P2(2,1))
     s2 = Segment(P2(1,0), P2(3,0))
@@ -61,7 +61,7 @@
 
     s1 = Segment(P2(-1,0), P2(0,0))
     s2 = Segment(P2(0,0), P2(2,0))
-    @test s1 ∩ s2 == s2 ∩ s1 == P2(0,0)
+    @test s1 ∩ s2 ≈ s2 ∩ s1 ≈ P2(0,0)
 
     s1 = Segment(P2(-1,0), P2(1,0))
     s2 = Segment(P2(0,0), P2(3,0))
@@ -85,7 +85,7 @@
 
     s1 = Segment(P2(0,0), P2(2,0))
     s2 = Segment(P2(2,0), P2(3,0))
-    @test s1 ∩ s2 == s2 ∩ s1 == P2(2,0)
+    @test s1 ∩ s2 ≈ s2 ∩ s1 ≈ P2(2,0)
 
     s1 = Segment(P2(0,0), P2(2,0))
     s2 = Segment(P2(3,0), P2(4,0))
@@ -97,11 +97,11 @@
 
     s1 = Segment(P2(1.5,1.5), P2(3.0,1.5))
     s2 = Segment(P2(3.0,1.0), P2(2.0,2.0))
-    @test s1 ∩ s2 == s2 ∩ s1 == P2(2.5,1.5)
+    @test s1 ∩ s2 ≈ s2 ∩ s1 ≈ P2(2.5,1.5)
 
     s1 = Segment(P2(0.94495744, 0.53224397), P2(0.94798386, 0.5344541))
     s2 = Segment(P2(0.94798386, 0.5344541), P2(0.9472896, 0.5340202))
-    @test s1 ∩ s2 == s2 ∩ s1 == P2(0.94798386, 0.5344541)
+    @test s1 ∩ s2 ≈ s2 ∩ s1 ≈ P2(0.94798386, 0.5344541)
 
     # segments in 3D
     s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
@@ -118,15 +118,15 @@
     s12 = Segment(P3(1.0, 0.0, 0.0), P3(2.0, 0.0, 0.0))
 
     @test intersection(s1, s2) |> type == CrossingSegments
-    @test s1 ∩ s2 == P3(0.5, 0.0, 0.0)
+    @test s1 ∩ s2 ≈ P3(0.5, 0.0, 0.0)
     @test intersection(s1, s3) |> type == OverlappingSegments
     @test s1 ∩ s3 == Segment(P3(0.5, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     @test intersection(s1, s4) |> type == MidTouchingSegments
-    @test s1 ∩ s4 == P3(0.0, 0.0, 0.0)
+    @test s1 ∩ s4 ≈ P3(0.0, 0.0, 0.0)
     @test intersection(s1, s5) |> type == MidTouchingSegments
-    @test s1 ∩ s5 == P3(0.0, 0.0, 0.0)
+    @test s1 ∩ s5 ≈ P3(0.0, 0.0, 0.0)
     @test intersection(s1, s6) |> type == CornerTouchingSegments
-    @test s1 ∩ s6 == P3(0.0, 0.0, 0.0)
+    @test s1 ∩ s6 ≈ P3(0.0, 0.0, 0.0)
     @test intersection(s1, s7) |> type == NoIntersection
     @test isnothing(s1 ∩ s7)
     @test intersection(s1, s8) |> type == NoIntersection
@@ -138,7 +138,7 @@
     @test intersection(s1, s11) |> type == NoIntersection
     @test isnothing(s1 ∩ s11)
     @test intersection(s1, s12) |> type == CornerTouchingSegments
-    @test s1 ∩ s12 == P3(1.0, 0.0, 0.0)
+    @test s1 ∩ s12 ≈ P3(1.0, 0.0, 0.0)
 
     # type stability tests
     s1 = Segment(P2(0,0), P2(1,0))
@@ -499,7 +499,7 @@
     # lines in 2D
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(-1,-1), P2(-1,1))
-    @test l1 ∩ l2 == l2 ∩ l1 == P2(-1,0)
+    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ P2(-1,0)
 
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(0,1), P2(1,1))
@@ -509,6 +509,15 @@
     l2 = Line(P2(1,0), P2(2,0))
     @test l1 == l2
     @test l1 ∩ l2 == l2 ∩ l1 == l1
+
+    # rounding errors
+    l1 = Line(P2(3.0,1.0), P2(2.0,2.0))
+    for k = 1:1000
+      Δ = k * atol(T)
+      l2 = Line(P2(1.5,1.5 + Δ), P2(3.0, 1.5 + Δ))
+      p = P2(2.5 - Δ, 1.5 + Δ)
+      @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ p
+    end
 
     # lines in 3D
     # not in same plane
@@ -529,12 +538,24 @@
     # crossing in one point
     l1 = Line(P3(1,2,3), P3(2,1,0))
     l2 = Line(P3(1,2,3), P3(1,1,1))
-    @test l1 ∩ l2 == l2 ∩ l1 == P3(1,2,3)
+    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ P3(1,2,3)
 
     # type stability tests
     l1 = Line(P2(0,0), P2(1,0))
     l2 = Line(P2(-1,-1), P2(-1,1))
     @inferred someornone(l1, l2)
+
+    p1, p2 = P2(0,0), P2(1,1)
+    p3, p4 = P2(1,0), P2(0,1)
+    @inferred Meshes.intersectparameters(p1, p2, p3, p4)
+    @inferred Meshes.intersectparameters(p1, p3, p2, p4)
+    @inferred Meshes.intersectparameters(p1, p2, p1, p2)
+
+    p1, p2 = P3(0,0,0), P3(1,1,1)
+    p3, p4 = P3(1,0,0), P3(0,1,1)
+    @inferred Meshes.intersectparameters(p1, p2, p3, p4)
+    @inferred Meshes.intersectparameters(p1, p3, p2, p4)
+    @inferred Meshes.intersectparameters(p1, p2, p1, p2)
   end
 
   @testset "missing" begin
