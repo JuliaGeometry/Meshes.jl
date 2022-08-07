@@ -57,16 +57,16 @@ function intersectparameters(a::Point{N,T}, b::Point{N,T},
                              c::Point{N,T}, d::Point{N,T}) where {N,T}
   A = [(b - a) (c - d)]
   y = c - a
-  QRₐ = qr([A y])
+  Q, R = qr([A y])
 
   # calculate the rank of the augmented matrix
   # by checking the zero entries of the diagonal of R
   # for N == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
-  rₐ = N == 2 ? sum(sum(abs, QRₐ.R; dims = 2) .> atol(T)) :
-                sum(abs.(diag(QRₐ.R)) .> atol(T))
+  rₐ = N == 2 ? sum(sum(abs, R; dims = 2) .> atol(T)) :
+                sum(abs.(diag(R)) .> atol(T))
   # calculate the rank of the rectangular matrix
-  r = sum(sum(abs, QRₐ.R[:,1:2]; dims = 2) .> atol(T))
+  r = sum(sum(abs, R[:,1:2]; dims = 2) .> atol(T))
 
   if r ≥ 2 # calculate parameters of intersection or closest point
     QR = qr(A)
