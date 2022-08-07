@@ -54,7 +54,7 @@ identify the intersection type:
   - No intersection, skew lines: r == 2, rₐ == 3
 """
 function intersectparameters(a::Point{N,T}, b::Point{N,T}, 
-                          c::Point{N,T}, d::Point{N,T}) where {N,T}
+                             c::Point{N,T}, d::Point{N,T}) where {N,T}
   A = [(b - a) (c - d)]
   y = c - a
   QRₐ = qr([A y])
