@@ -12,6 +12,16 @@
   end
 
   @testset "RegularDiscretization" begin
+    # fix import conflict with Plots
+    BezierCurve = Meshes.BezierCurve
+
+    bezier = BezierCurve([P2(0,0), P2(1,0), P2(1,1)])
+    mesh = discretize(bezier, RegularDiscretization(10))
+    @test nvertices(mesh) == 10
+    @test nelements(mesh) == 9
+    @test eltype(mesh) <: Segment
+    @test nvertices.(mesh) ⊆ [2]
+
     sphere = Sphere(P2(0,0), T(1))
     mesh = discretize(sphere, RegularDiscretization(10))
     @test nvertices(mesh) == 10

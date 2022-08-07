@@ -16,6 +16,22 @@ end
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} =
   RegularDiscretization(sizes)
 
+function discretize(bezier::BezierCurve,
+                    method::RegularDiscretization)
+  sz = fitdims(method.sizes, paramdim(bezier))
+  nx = sz[1]
+
+  # sample points regularly
+  sampler = RegularSampling(nx)
+  points  = collect(sample(bezier, sampler))
+
+  # connect regular samples with segments
+  topo   = GridTopology(nx-1)
+  connec = collect(elements(topo))
+
+  SimpleMesh(points, connec)
+end
+
 function discretize(sphere::Sphere{2,T},
                     method::RegularDiscretization) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))
