@@ -20,7 +20,7 @@
 
   # full Laplace-Beltrami operator
   sphere = Sphere(P3(0,0,0), T(1))
-  mesh = triangulate(sphere)
+  mesh = simplexify(sphere)
   L = laplacematrix(mesh)
   M = measurematrix(mesh)
   @test issymmetric(L)

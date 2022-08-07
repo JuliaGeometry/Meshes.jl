@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 function intersection(f, g::Geometry, p::Polygon)
-  for t in triangulate(p)
+  for t in simplexify(p)
     I = intersection(g, t)
     if type(I) != NoIntersection
       return I

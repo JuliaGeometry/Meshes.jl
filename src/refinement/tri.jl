@@ -15,8 +15,8 @@ function refine(mesh, method::TriRefinement)
     # go ahead and refine
     _refine(mesh, method)
   else
-    # triangulate non-triangle elements
-    triangulate(mesh)
+    # simplexify non-triangle elements
+    simplexify(mesh)
   end
 end
 

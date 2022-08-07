@@ -13,7 +13,7 @@ import WGLMakie as Mke # hide
 ```@docs
 discretize
 discretizewithin
-triangulate
+simplexify
 DiscretizationMethod
 BoundaryDiscretizationMethod
 ```

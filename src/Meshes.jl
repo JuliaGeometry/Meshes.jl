@@ -333,7 +333,7 @@ export
   FIST, Dehn1899,
   discretize,
   discretizewithin,
-  triangulate,
+  simplexify,
 
   # simplification
   SimplificationMethod,

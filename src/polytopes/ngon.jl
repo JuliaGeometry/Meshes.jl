@@ -55,11 +55,11 @@ angles(ngon::Ngon) = angles(boundary(ngon))
 
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
-signarea(ngon::Ngon) = sum(signarea, triangulate(ngon))
+signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
-measure(ngon::Ngon) = sum(measure, triangulate(ngon))
+measure(ngon::Ngon) = sum(measure, simplexify(ngon))
 
-Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, triangulate(ngon))
+Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 
 # ----------
 # TRIANGLES
