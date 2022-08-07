@@ -37,11 +37,24 @@
   end
 
   @testset "RegularSampling" begin
+    # fix import conflict with Plots
+    BezierCurve = Meshes.BezierCurve
+
     b = Box(P2(0, 0), P2(2, 2))
     ps = sample(b, RegularSampling(3))
     @test collect(ps) == P2[(0,0),(1,0),(2,0),(0,1),(1,1),(2,1),(0,2),(1,2),(2,2)]
     ps = sample(b, RegularSampling(2, 3))
     @test collect(ps) == P2[(0,0),(2,0),(0,1),(2,1),(0,2),(2,2)]
+
+    b = BezierCurve([P2(0,0), P2(1,0), P2(1,1)])
+    ps = sample(b, RegularSampling(4))
+    ts = P2[(0.0, 0.0),
+            (0.5555555555555556, 0.1111111111111111),
+            (0.8888888888888888, 0.4444444444444444),
+            (1.0, 1.0)]
+    for (p, t) in zip(ps, ts)
+      @test p ≈ t
+    end
 
     s = Sphere(P2(0, 0), T(2))
     ps = sample(s, RegularSampling(4))

@@ -35,6 +35,16 @@ function sample(::AbstractRNG, box::Box,
   ivec(or + (ind.I .- 1) .* sp for ind in CartesianIndices(sz))
 end
 
+function sample(::AbstractRNG, bezier::BezierCurve{Dim,T},
+                method::RegularSampling) where {Dim,T}
+  sz = fitdims(method.sizes, paramdim(bezier))
+
+  V = T <: AbstractFloat ? T : Float64
+  trange = range(V(0), stop=V(1), length=sz[1])
+
+  (bezier(t) for t in trange)
+end
+
 function sample(::AbstractRNG, sphere::Sphere{2,T},
                 method::RegularSampling) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))
