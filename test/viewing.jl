@@ -14,6 +14,16 @@
     v = view(p, b)
     @test centroid(v, 1) == P2(1,1)
     @test centroid(v, nelements(v)) == P2(5,5)
+
+    g = CartesianGrid{T}(10,10)
+    p = PointSet(collect(vertices(g)))
+    b = Ball(P2(0,0), T(2))
+    v = view(g, b)
+    @test nelements(v) == 1
+    @test v[1] == g[1]
+    v = view(p, b)
+    @test nelements(v) == 6
+    @test coordinates.(v) == V2[(0,0),(1,0),(2,0),(0,1),(1,1),(0,2)]
   end
 
   @testset "Data" begin

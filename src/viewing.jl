@@ -72,15 +72,12 @@ end
 
 Return the indices of the `domain` that are inside the `geometry`.
 """
-@traitfn function indices(domain::D, geometry::Geometry) where {D; !IsGrid{D}}
+function indices(domain::Domain, geometry::Geometry)
   pred(i) = _isinside(domain[i], geometry)
   filter(pred, 1:nelements(domain))
 end
 
-_isinside(p::Point, geometry) = p ∈ geometry
-_isinside(g::Geometry, geometry) = g ⊆ geometry
-
-@traitfn function indices(domain::D, box::Box) where {D; IsGrid{D}}
+@traitfn function indices(domain::D, box::Box) where {D<:Domain; IsGrid{D}}
   # grid properties
   or = coordinates(minimum(domain))
   sp = spacing(domain)
@@ -96,6 +93,14 @@ _isinside(g::Geometry, geometry) = g ⊆ geometry
 
   CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
 end
+
+@traitfn function indices(domain::D, box::Box) where {D<:Domain; !IsGrid{D}}
+  pred(i) = _isinside(domain[i], box)
+  filter(pred, 1:nelements(domain))
+end
+
+_isinside(p::Point, geometry) = p ∈ geometry
+_isinside(g::Geometry, geometry) = g ⊆ geometry
 
 # ----------
 # UTILITIES
