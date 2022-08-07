@@ -9,7 +9,7 @@ The intersection type can be one of three types:
 2. overlap at more than one point
 3. do not overlap nor intersect
 =#
-function intersection(f, l1::Line{N,T}, l2::Line{N,T}) where {N,T}
+function intersection(f, l1::Line, l2::Line)
   a, b = l1(0), l1(1)
   c, d = l2(0), l2(1)
 
@@ -53,28 +53,29 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(a::Point{N,T}, b::Point{N,T}, 
-                             c::Point{N,T}, d::Point{N,T}) where {N,T}
+function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, 
+                             c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
   A = [(b - a) (c - d)]
   y = c - a
-  Q, R = qr([A y])
 
-  # calculate the rank of the augmented matrix
-  # by checking the zero entries of the diagonal of R
-  # for N == 2 one has to check the L1 norm of rows as 
+  # calculate the rank of the augmented matrix by checking
+  # the zero entries of the diagonal of R
+  _, R = qr([A y])
+  
+  # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
-  rₐ = N == 2 ? sum(sum(abs, R; dims = 2) .> atol(T)) :
-                sum(abs.(diag(R)) .> atol(T))
+  rₐ = Dim == 2 ? sum(sum(abs, R, dims=2) .> atol(T)) :
+                  sum(abs.(diag(R)) .> atol(T))
 
   # calculate the rank of the rectangular matrix
-  r = sum(sum(abs, R[:,1:2]; dims = 2) .> atol(T))
+  r = sum(sum(abs, R[:,1:2], dims=2) .> atol(T))
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
     QR = qr(A)
     λ = QR.R \ QR.Q' * y
   else # parallel or collinear
-    λ = [zero(T), zero(T)]
+    λ = SVector(zero(T), zero(T))
   end
 
   λ[1], λ[2], r, rₐ
