@@ -106,6 +106,9 @@ when the `object` has parametric dimension 2.
 """
 function simplexify end
 
+# fallback method for all geometries
+simplexify(geometry) = discretize(geometry, RegularDiscretization(50))
+
 # -----------------------
 # PARAMETRIC DIMENSION 1
 # -----------------------
@@ -116,14 +119,13 @@ simplexify(seg::Segment) = SimpleMesh(vertices(seg), GridTopology(1))
 
 function simplexify(chain::Chain)
   np = npoints(chain)
-  vs = collect(vertices(chain))
-  tp = GridTopology((np-1,), isperiodic(chain))
-  SimpleMesh(vs, tp)
+  ip = isperiodic(chain)
+
+  points = collect(vertices(chain))
+  topo   = GridTopology((np-1,), ip)
+
+  SimpleMesh(points, topo)
 end
-
-simplexify(sphere::Sphere{2}) = discretize(sphere, RegularDiscretization(50))
-
-simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
 # -----------------------
 # PARAMETRIC DIMENSION 2

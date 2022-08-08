@@ -5,9 +5,11 @@
 """
     RegularDiscretization(n1, n2, ..., np)
 
-A method to discretize primitive geometries using regular
-samples along each parametric dimension. The number of
-samples `n1`, `n2`, ..., `np` is passed to [`RegularSampling`](@ref).
+A method to discretize primitive geometries with
+`n1×n2×...×np` elements sampled regularly along
+each parametric dimensions. The adequate number
+of points is calculated for each type of geometry
+and passed to [`RegularSampling`](@ref).
 """
 struct RegularDiscretization{N} <: DiscretizationMethod
   sizes::Dims{N}
@@ -16,34 +18,16 @@ end
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} =
   RegularDiscretization(sizes)
 
-function discretize(bezier::BezierCurve,
+function discretize(geometry::Geometry,
                     method::RegularDiscretization)
-  sz = fitdims(method.sizes, paramdim(bezier))
-  nx = sz[1]
+  sz = fitdims(method.sizes, paramdim(geometry))
+  ip = isperiodic(geometry)
+  np = @. sz + !ip
 
-  # sample points regularly
-  sampler = RegularSampling(nx)
-  points  = collect(sample(bezier, sampler))
+  points = sample(geometry, RegularSampling(np))
+  topo   = GridTopology(sz, ip)
 
-  # connect regular samples with segments
-  topo = GridTopology(nx-1)
-
-  SimpleMesh(points, topo)
-end
-
-function discretize(sphere::Sphere{2,T},
-                    method::RegularDiscretization) where {T}
-  sz = fitdims(method.sizes, paramdim(sphere))
-  op = isperiodic(sphere)
-
-  # sample points regularly
-  sampler = RegularSampling(sz)
-  points  = collect(sample(sphere, sampler))
-
-  # connect regular samples with segments
-  topo = GridTopology(sz, op)
-
-  SimpleMesh(points, topo)
+  SimpleMesh(collect(points), topo)
 end
 
 function discretize(sphere::Sphere{3,T},

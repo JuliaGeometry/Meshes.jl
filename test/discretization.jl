@@ -17,8 +17,8 @@
 
     bezier = BezierCurve([P2(0,0), P2(1,0), P2(1,1)])
     mesh = discretize(bezier, RegularDiscretization(10))
-    @test nvertices(mesh) == 10
-    @test nelements(mesh) == 9
+    @test nvertices(mesh) == 11
+    @test nelements(mesh) == 10
     @test eltype(mesh) <: Segment
     @test nvertices.(mesh) ⊆ [2]
 
