@@ -248,6 +248,7 @@
     box = Box(P1(0), P1(1))
     msh = simplexify(box)
     @test eltype(msh) <: Segment
+    @test topology(msh) == GridTopology(1)
     @test nvertices(msh) == 2
     @test nelements(msh) == 1
     @test msh[1] == Segment(P1(0), P1(1))
@@ -255,6 +256,7 @@
     seg = Segment(P1(0), P1(1))
     msh = simplexify(seg)
     @test eltype(msh) <: Segment
+    @test topology(msh) == GridTopology(1)
     @test nvertices(msh) == 2
     @test nelements(msh) == 1
     @test msh[1] == Segment(P1(0), P1(1))

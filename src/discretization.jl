@@ -110,9 +110,9 @@ function simplexify end
 # PARAMETRIC DIMENSION 1
 # -----------------------
 
-simplexify(box::Box{1}) = SimpleMesh(vertices(box), [connect((1,2))])
+simplexify(box::Box{1}) = SimpleMesh(vertices(box), GridTopology(1))
 
-simplexify(seg::Segment) = SimpleMesh(vertices(seg), [connect((1,2))])
+simplexify(seg::Segment) = SimpleMesh(vertices(seg), GridTopology(1))
 
 function simplexify(chain::Chain)
   nverts = nvertices(chain)
