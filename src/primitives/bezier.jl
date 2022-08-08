@@ -29,7 +29,7 @@ BezierCurve(points::Vararg) = BezierCurve(collect(points))
 
 paramdim(::Type{<:BezierCurve}) = 1
 
-isclosed(::Type{<:BezierCurve}) = (true,)
+isperiodic(b::BezierCurve) = (first(b.controls) == last(b.controls),)
 
 ncontrols(b::BezierCurve) = length(b.controls)
 

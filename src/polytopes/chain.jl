@@ -78,6 +78,8 @@ A closed chain is also known as a ring.
 """
 isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
 
+isperiodic(c::Chain) = (isclosed(c),)
+
 """
    issimple(chain)
 

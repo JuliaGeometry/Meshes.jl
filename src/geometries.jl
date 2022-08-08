@@ -92,12 +92,12 @@ issimplex(::Type{<:Geometry}) = false
 issimplex(g::Geometry) = issimplex(typeof(g))
 
 """
-    isclosed(geometry)
+    isperiodic(geometry)
 
-Tells whether or not the `geometry` is closed
+Tells whether or not the `geometry` is periodic
 along each parametric dimension.
 """
-isclosed(g::Geometry) = isclosed(typeof(g))
+isperiodic(g::Geometry) = isperiodic(typeof(g))
 
 # ----------------
 # IMPLEMENTATIONS

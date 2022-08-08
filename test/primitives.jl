@@ -206,7 +206,7 @@
     @test extrema(s) == (P3(-1,-1,-1), P3(1,1,1))
     @test !isconvex(s)
     @test isnothing(boundary(s))
-    @test isclosed(s) == (true, true)
+    @test isperiodic(s) == (true, true)
 
     s = Sphere(P2(0,0), T(1))
     @test embeddim(s) == 2
@@ -217,7 +217,7 @@
     @test extrema(s) == (P2(-1,-1), P2(1,1))
     @test !isconvex(s)
     @test isnothing(boundary(s))
-    @test isclosed(s) == (true,)
+    @test isperiodic(s) == (true,)
 
     # Sphere constructor works with both float and integer radius
     s  = Sphere(P3(1,2,3), T(4))

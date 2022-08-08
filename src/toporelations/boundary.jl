@@ -36,7 +36,7 @@ end
 # vertices of hexahedron on 3D grid
 function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
-  cx, cy, cz = isclosed(t)
+  cx, cy, cz = isperiodic(t)
   nx, ny, nz = size(t)
 
   i, j, k = elem2cart(t, ind)
@@ -63,7 +63,7 @@ end
 # vertices of quadrangle on 2D grid
 function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
-  cx, cy = isclosed(t)
+  cx, cy = isperiodic(t)
   nx, ny = size(t)
 
   i, j = elem2cart(t, ind)
@@ -80,7 +80,7 @@ end
 # vertices of segment on 2D grid
 function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
-  cx, cy = isclosed(t)
+  cx, cy = isperiodic(t)
   nx, ny = size(t)
 
   @assert !(cx || cy) "not implemented"
@@ -104,7 +104,7 @@ end
 # vertices of segment on 1D grid
 function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
-  c = first(isclosed(t))
+  c = first(isperiodic(t))
   n = first(size(t))
 
   i  = ind

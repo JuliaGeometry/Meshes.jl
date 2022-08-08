@@ -34,7 +34,7 @@ end
 function discretize(sphere::Sphere{2,T},
                     method::RegularDiscretization) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))
-  op = .!isclosed(sphere)
+  op = .!isperiodic(sphere)
 
   # sample points regularly
   sampler = RegularSampling(sz)

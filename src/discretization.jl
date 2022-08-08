@@ -117,7 +117,7 @@ simplexify(seg::Segment) = SimpleMesh(vertices(seg), GridTopology(1))
 function simplexify(chain::Chain)
   np = npoints(chain)
   vs = collect(vertices(chain))
-  tp = GridTopology((np-1,), (!isclosed(chain),))
+  tp = GridTopology((np-1,), .!isperiodic(chain))
   SimpleMesh(vs, tp)
 end
 

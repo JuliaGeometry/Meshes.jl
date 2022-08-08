@@ -41,7 +41,7 @@ paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
 isconvex(::Type{<:Sphere}) = false
 
-isclosed(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i->true, Dim - 1)
+isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i->true, Dim - 1)
 
 center(s::Sphere) = s.center
 

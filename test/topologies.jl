@@ -252,7 +252,7 @@
     @test faces(t, 3) == elements(t)
 
     t = GridTopology((3,), (false,))
-    @test isclosed(t) == (true,)
+    @test isperiodic(t) == (true,)
     @test nvertices(t) == 3
     @test nelements(t) == 3
     @test nfacets(t) == 3
@@ -261,7 +261,7 @@
     @test element(t, 3) == connect((3,1))
 
     t = GridTopology((2,3), (false,false))
-    @test isclosed(t) == (true,true)
+    @test isperiodic(t) == (true,true)
     @test nvertices(t) == 2*3
     @test nelements(t) == 6
     @test nfacets(t) == 12
@@ -273,7 +273,7 @@
     @test element(t, 6) == connect((6,5,1,2))
 
     t = GridTopology((2,3), (true,false))
-    @test isclosed(t) == (false,true)
+    @test isperiodic(t) == (false,true)
     @test nvertices(t) == 3*3
     @test nelements(t) == 6
     @test nfacets(t) == 15
@@ -285,7 +285,7 @@
     @test element(t, 6) == connect((8,9,3,2))
 
     t = GridTopology((2,3), (false,true))
-    @test isclosed(t) == (true,false)
+    @test isperiodic(t) == (true,false)
     @test nvertices(t) == 2*4
     @test nelements(t) == 6
     @test nfacets(t) == 14
@@ -297,7 +297,7 @@
     @test element(t, 6) == connect((6,5,7,8))
 
     t = GridTopology((2,3,4), (false,false,false))
-    @test isclosed(t) == (true,true,true)
+    @test isperiodic(t) == (true,true,true)
     @test nvertices(t) == 2*3*4
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4)
@@ -306,7 +306,7 @@
     @test element(t, 24) == connect((24,23,19,20,6,5,1,2), Hexahedron)
 
     t = GridTopology((2,3,4), (true,false,false))
-    @test isclosed(t) == (false,true,true)
+    @test isperiodic(t) == (false,true,true)
     @test nvertices(t) == 3*3*4
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4) + 3*4
@@ -315,7 +315,7 @@
     @test element(t, 24) == connect((35,36,30,29,8,9,3,2), Hexahedron)
 
     t = GridTopology((2,3,4), (false,true,false))
-    @test isclosed(t) == (true,false,true)
+    @test isperiodic(t) == (true,false,true)
     @test nvertices(t) == 2*4*4
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4) + 2*4
@@ -324,7 +324,7 @@
     @test element(t, 24) == connect((30,29,31,32,6,5,7,8), Hexahedron)
 
     t = GridTopology((2,3,4), (false,false,true))
-    @test isclosed(t) == (true,true,false)
+    @test isperiodic(t) == (true,true,false)
     @test nvertices(t) == 2*3*5
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4) + 2*3
@@ -333,7 +333,7 @@
     @test element(t, 24) == connect((24,23,19,20,30,29,25,26), Hexahedron)
 
     t = GridTopology((2,3,4), (false,true,true))
-    @test isclosed(t) == (true,false,false)
+    @test isperiodic(t) == (true,false,false)
     @test nvertices(t) == 2*4*5
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4) + 2*4 + 2*3
@@ -342,7 +342,7 @@
     @test element(t, 24) == connect((30,29,31,32,38,37,39,40), Hexahedron)
 
     t = GridTopology((2,3,4), (true,false,true))
-    @test isclosed(t) == (false,true,false)
+    @test isperiodic(t) == (false,true,false)
     @test nvertices(t) == 3*3*5
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4) + 3*4 + 2*3
@@ -351,7 +351,7 @@
     @test element(t, 24) == connect((35,36,30,29,44,45,39,38), Hexahedron)
 
     t = GridTopology((2,3,4), (true,true,false))
-    @test isclosed(t) == (false,false,true)
+    @test isperiodic(t) == (false,false,true)
     @test nvertices(t) == 3*4*4
     @test nelements(t) == 2*3*4
     @test nfacets(t) == 3*(2*3*4) + 3*4 + 2*4
