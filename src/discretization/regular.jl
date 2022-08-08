@@ -26,27 +26,24 @@ function discretize(bezier::BezierCurve,
   points  = collect(sample(bezier, sampler))
 
   # connect regular samples with segments
-  topo   = GridTopology(nx-1)
-  connec = collect(elements(topo))
+  topo = GridTopology(nx-1)
 
-  SimpleMesh(points, connec)
+  SimpleMesh(points, topo)
 end
 
 function discretize(sphere::Sphere{2,T},
                     method::RegularDiscretization) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))
-  nx = sz[1]
+  op = .!isclosed(sphere)
 
   # sample points regularly
-  sampler = RegularSampling(nx)
+  sampler = RegularSampling(sz)
   points  = collect(sample(sphere, sampler))
 
   # connect regular samples with segments
-  topo   = GridTopology(nx-1)
-  connec = collect(elements(topo))
-  push!(connec, connect((nx,1)))
+  topo = GridTopology(sz, op)
 
-  SimpleMesh(points, connec)
+  SimpleMesh(points, topo)
 end
 
 function discretize(sphere::Sphere{3,T},

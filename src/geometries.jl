@@ -91,6 +91,14 @@ Tells whether or not the `geometry` is simplex.
 issimplex(::Type{<:Geometry}) = false
 issimplex(g::Geometry) = issimplex(typeof(g))
 
+"""
+    isclosed(geometry)
+
+Tells whether or not the `geometry` is closed
+along each parametric dimension.
+"""
+isclosed(g::Geometry) = isclosed(typeof(g))
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

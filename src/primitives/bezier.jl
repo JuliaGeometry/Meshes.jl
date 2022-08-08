@@ -29,6 +29,8 @@ BezierCurve(points::Vararg) = BezierCurve(collect(points))
 
 paramdim(::Type{<:BezierCurve}) = 1
 
+isclosed(::Type{<:BezierCurve}) = (true,)
+
 ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1

@@ -143,7 +143,8 @@ export
   Geometry,
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
-  center, centroid, isconvex, issimplex,
+  isconvex, issimplex, isclosed,
+  center, centroid,
 
   # primitives
   Primitive,
@@ -162,7 +163,7 @@ export
   Tetrahedron, Pyramid, Hexahedron,
   vertices, nvertices,
   windingnumber, chains, segments,
-  isclosed, issimple, hasholes,
+  issimple, hasholes,
   angles, innerangles, close!, open!,
   orientation, bridge, normal,
 

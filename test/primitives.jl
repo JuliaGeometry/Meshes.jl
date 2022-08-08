@@ -206,6 +206,18 @@
     @test extrema(s) == (P3(-1,-1,-1), P3(1,1,1))
     @test !isconvex(s)
     @test isnothing(boundary(s))
+    @test isclosed(s) == (true, true)
+
+    s = Sphere(P2(0,0), T(1))
+    @test embeddim(s) == 2
+    @test paramdim(s) == 1
+    @test coordtype(s) == T
+    @test Meshes.center(s) == P2(0, 0)
+    @test radius(s) == T(1)
+    @test extrema(s) == (P2(-1,-1), P2(1,1))
+    @test !isconvex(s)
+    @test isnothing(boundary(s))
+    @test isclosed(s) == (true,)
 
     # Sphere constructor works with both float and integer radius
     s  = Sphere(P3(1,2,3), T(4))

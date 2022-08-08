@@ -115,13 +115,10 @@ simplexify(box::Box{1}) = SimpleMesh(vertices(box), GridTopology(1))
 simplexify(seg::Segment) = SimpleMesh(vertices(seg), GridTopology(1))
 
 function simplexify(chain::Chain)
-  nverts = nvertices(chain)
-
-  verts  = collect(vertices(chain))
-  connec = [connect((i,i+1)) for i in 1:nverts-1]
-  isclosed(chain) && push!(connec, connect((nverts,1)))
-
-  SimpleMesh(verts, connec)
+  np = npoints(chain)
+  vs = collect(vertices(chain))
+  tp = GridTopology((np-1,), (!isclosed(chain),))
+  SimpleMesh(vs, tp)
 end
 
 simplexify(sphere::Sphere{2}) = discretize(sphere, RegularDiscretization(50))
