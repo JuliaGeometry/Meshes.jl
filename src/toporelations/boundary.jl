@@ -80,7 +80,10 @@ end
 # vertices of segment on 2D grid
 function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
+  cx, cy = isclosed(t)
   nx, ny = size(t)
+
+  @assert !(cx || cy) "not implemented"
 
   if ind ≤ nx*ny # vertical edges
     i1 = elem2corner(t, ind)
