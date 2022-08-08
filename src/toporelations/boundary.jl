@@ -87,8 +87,12 @@ end
 
 # vertices of segment on 1D grid
 function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
+  t = ∂.topology
+  c = first(isclosed(t))
+  n = first(size(t))
+
   i1 = ind
-  i2 = ind + 1
+  i2 = c && (ind == n) ? 1 : ind + 1
   [i1, i2]
 end
 

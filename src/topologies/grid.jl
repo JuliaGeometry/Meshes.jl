@@ -3,19 +3,40 @@
 # ------------------------------------------------------------------
 
 """
-    GridTopology(dims)
+    GridTopology(dims, [open])
 
 A data structure for grid topologies with `dims` elements.
+Optionally, specify which dimensions are `open` and which
+are closed, i.e. do not wrap around.
+
+## Examples
+
+```julia
+julia> GridTopology((10,20)) # 10x20 elements in a grid
+julia> GridTopology((10,20), (true,false)) # cylinder topology
+julia> GridTopology((10,20), (false,false)) # sphere topology
+```
 """
 struct GridTopology{D} <: Topology
   dims::Dims{D}
+  open::NTuple{D,Bool}
 end
 
-GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology{D}(dims)
+GridTopology(dims::Dims{D}) where {D} = GridTopology{D}(dims, ntuple(i->true, D))
+
+GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology(dims)
 
 paramdim(::GridTopology{D}) where {D} = D
 
 Base.size(t::GridTopology) = t.dims
+
+"""
+    isclosed(t)
+
+Tells whether or not the grid topology `t` is closed
+along each dimension.
+"""
+isclosed(t::GridTopology) = .!t.open
 
 """
     elem2cart(t, e)
@@ -85,7 +106,7 @@ end
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-nvertices(t::GridTopology) = prod(t.dims .+ 1)
+nvertices(t::GridTopology) = prod(t.dims .+ t.open)
 
 function faces(t::GridTopology{D}, rank) where {D}
   if rank == D
@@ -112,15 +133,15 @@ function facet(t::GridTopology{D}, ind) where {D}
 end
 
 nfacets(t::GridTopology{1}) =
-  t.dims[1] + 1
+  t.dims[1] + t.open[1]
 
 nfacets(t::GridTopology{2}) =
   2prod(t.dims) +
-  t.dims[1] +
-  t.dims[2]
+  t.open[1]*t.dims[1] +
+  t.open[2]*t.dims[2]
 
 nfacets(t::GridTopology{3}) =
   3prod(t.dims) +
-  prod(t.dims[[1,2]]) +
-  prod(t.dims[[1,3]]) +
-  prod(t.dims[[2,3]])
+  (t.open[1]*t.open[2])*(t.dims[1]*t.dims[2]) +
+  (t.open[1]*t.open[3])*(t.dims[1]*t.dims[3]) +
+  (t.open[2]*t.open[3])*(t.dims[2]*t.dims[3])

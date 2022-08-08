@@ -250,6 +250,21 @@
     @test element(t, 1) == connect((1,2,6,5,21,22,26,25), Hexahedron)
     @test element(t, 5) == connect((6,7,11,10,26,27,31,30), Hexahedron)
     @test faces(t, 3) == elements(t)
+
+    t = GridTopology((3,), (false,))
+    @test all(isclosed(t))
+    @test nvertices(t) == 3
+    @test nelements(t) == 3
+    @test nfacets(t) == 3
+    @test element(t, 1) == connect((1,2))
+    @test element(t, 2) == connect((2,3))
+    @test element(t, 3) == connect((3,1))
+
+    t = GridTopology((2,3), (false,false))
+    @test all(isclosed(t))
+    @test nvertices(t) == 6
+    @test nelements(t) == 6
+    @test nfacets(t) == 12
   end
 
   @testset "HalfEdgeTopology" begin

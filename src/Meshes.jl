@@ -233,7 +233,7 @@ export
   elem2cart, cart2elem,
   corner2cart, cart2corner,
   elem2corner, corner2elem,
-  rank2type,
+  rank2type, isclosed,
   half4elem, half4vert,
   half4edge, half4pair,
   edge4pair,
