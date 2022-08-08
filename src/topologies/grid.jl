@@ -3,28 +3,37 @@
 # ------------------------------------------------------------------
 
 """
-    GridTopology(dims, [open])
+    GridTopology(dims, [periodic])
 
 A data structure for grid topologies with `dims` elements.
-Optionally, specify which dimensions are `open` and which
-are closed, i.e. do not wrap around.
+Optionally, specify which dimensions are `periodic`. Default
+to aperiodic dimensions.
 
 ## Examples
 
 ```julia
 julia> GridTopology((10,20)) # 10x20 elements in a grid
 julia> GridTopology((10,20), (true,false)) # cylinder topology
-julia> GridTopology((10,20), (false,false)) # sphere topology
+julia> GridTopology((10,20), (true,true)) # sphere topology
 ```
 """
 struct GridTopology{D} <: Topology
   dims::Dims{D}
   open::NTuple{D,Bool}
+
+  function GridTopology{D}(dims, periodic) where {D}
+    new(dims, .!periodic)
+  end
 end
 
-GridTopology(dims::Dims{D}) where {D} = GridTopology{D}(dims, ntuple(i->true, D))
+GridTopology(dims, periodic) =
+  GridTopology{length(dims)}(dims, periodic)
 
-GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology(dims)
+GridTopology(dims::Dims{D}) where {D} =
+  GridTopology(dims, ntuple(i->false, D))
+
+GridTopology(dims::Vararg{Int,D}) where {D} =
+  GridTopology(dims)
 
 paramdim(::GridTopology{D}) where {D} = D
 
@@ -145,3 +154,14 @@ nfacets(t::GridTopology{3}) =
   t.open[3]*(t.dims[1]*t.dims[2]) +
   t.open[2]*(t.dims[1]*t.dims[3]) +
   t.open[1]*(t.dims[2]*t.dims[3])
+
+# -----------
+# IO METHODS
+# -----------
+
+function Base.show(io::IO, t::GridTopology)
+  dims = join(t.dims, "×")
+  strs = replace(t.open, true => "aperiodic", false => "periodic")
+  peri = join(strs, ", ")
+  print(io, "$dims GridTopology($peri)")
+end
