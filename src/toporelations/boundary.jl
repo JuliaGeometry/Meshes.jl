@@ -36,15 +36,22 @@ end
 # vertices of hexahedron on 3D grid
 function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
+  cx, cy, cz = isclosed(t)
+  nx, ny, nz = size(t)
+
   i, j, k = elem2cart(t, ind)
-  i1 = cart2corner(t, i  , j  , k  )
-  i2 = cart2corner(t, i+1, j  , k  )
-  i3 = cart2corner(t, i+1, j+1, k  )
-  i4 = cart2corner(t, i  , j+1, k  )
-  i5 = cart2corner(t, i  , j  , k+1)
-  i6 = cart2corner(t, i+1, j  , k+1)
-  i7 = cart2corner(t, i+1, j+1, k+1)
-  i8 = cart2corner(t, i  , j+1, k+1)
+  i₊ = cx && (i == nx) ? 1 : i + 1
+  j₊ = cy && (j == ny) ? 1 : j + 1
+  k₊ = cz && (k == nz) ? 1 : k + 1
+
+  i1 = cart2corner(t, i , j , k )
+  i2 = cart2corner(t, i₊, j , k )
+  i3 = cart2corner(t, i₊, j₊, k )
+  i4 = cart2corner(t, i , j₊, k )
+  i5 = cart2corner(t, i , j , k₊)
+  i6 = cart2corner(t, i₊, j , k₊)
+  i7 = cart2corner(t, i₊, j₊, k₊)
+  i8 = cart2corner(t, i , j₊, k₊)
   [i1, i2, i3, i4, i5, i6, i7, i8]
 end
 
