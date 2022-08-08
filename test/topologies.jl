@@ -331,6 +331,33 @@
     @test element(t, 1) == connect((1,2,4,3,7,8,10,9), Hexahedron)
     @test element(t, 2) == connect((2,1,3,4,8,7,9,10), Hexahedron)
     @test element(t, 24) == connect((24,23,19,20,30,29,25,26), Hexahedron)
+
+    t = GridTopology((2,3,4), (false,true,true))
+    @test isclosed(t) == (true,false,false)
+    @test nvertices(t) == 2*4*5
+    @test nelements(t) == 2*3*4
+    @test nfacets(t) == 3*(2*3*4) + 2*4 + 2*3
+    @test element(t, 1) == connect((1,2,4,3,9,10,12,11), Hexahedron)
+    @test element(t, 2) == connect((2,1,3,4,10,9,11,12), Hexahedron)
+    @test element(t, 24) == connect((30,29,31,32,38,37,39,40), Hexahedron)
+
+    t = GridTopology((2,3,4), (true,false,true))
+    @test isclosed(t) == (false,true,false)
+    @test nvertices(t) == 3*3*5
+    @test nelements(t) == 2*3*4
+    @test nfacets(t) == 3*(2*3*4) + 3*4 + 2*3
+    @test element(t, 1) == connect((1,2,5,4,10,11,14,13), Hexahedron)
+    @test element(t, 2) == connect((2,3,6,5,11,12,15,14), Hexahedron)
+    @test element(t, 24) == connect((35,36,30,29,44,45,39,38), Hexahedron)
+
+    t = GridTopology((2,3,4), (true,true,false))
+    @test isclosed(t) == (false,false,true)
+    @test nvertices(t) == 3*4*4
+    @test nelements(t) == 2*3*4
+    @test nfacets(t) == 3*(2*3*4) + 3*4 + 2*4
+    @test element(t, 1) == connect((1,2,5,4,13,14,17,16), Hexahedron)
+    @test element(t, 2) == connect((2,3,6,5,14,15,18,17), Hexahedron)
+    @test element(t, 24) == connect((44,45,48,47,8,9,12,11), Hexahedron)
   end
 
   @testset "HalfEdgeTopology" begin
