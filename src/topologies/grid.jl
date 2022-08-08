@@ -61,7 +61,7 @@ cart2elem(t::GridTopology, ijk...) = LinearIndices(t.dims)[ijk...]
 Return the Cartesian indices of the element of the
 grid topology `t` with top left vertex `v`.
 """
-corner2cart(t, v) = CartesianIndices(t.dims .+ 1)[v].I
+corner2cart(t, v) = CartesianIndices(t.dims .+ t.open)[v].I
 
 """
     cart2corner(t, i, j, k, ...)
@@ -70,7 +70,7 @@ Return the linear index of the top left vertex of the
 element of the grid topology `t` with Cartesian indices
 `i`, `j`, `k`, ...
 """
-cart2corner(t::GridTopology, ijk...) = LinearIndices(t.dims .+ 1)[ijk...]
+cart2corner(t::GridTopology, ijk...) = LinearIndices(t.dims .+ t.open)[ijk...]
 
 """
     elem2corner(t, e)
@@ -137,11 +137,11 @@ nfacets(t::GridTopology{1}) =
 
 nfacets(t::GridTopology{2}) =
   2prod(t.dims) +
-  t.open[1]*t.dims[1] +
-  t.open[2]*t.dims[2]
+  t.open[2]*t.dims[1] +
+  t.open[1]*t.dims[2]
 
 nfacets(t::GridTopology{3}) =
   3prod(t.dims) +
-  (t.open[1]*t.open[2])*(t.dims[1]*t.dims[2]) +
-  (t.open[1]*t.open[3])*(t.dims[1]*t.dims[3]) +
-  (t.open[2]*t.open[3])*(t.dims[2]*t.dims[3])
+  t.open[3]*(t.dims[1]*t.dims[2]) +
+  t.open[2]*(t.dims[1]*t.dims[3]) +
+  t.open[1]*(t.dims[2]*t.dims[3])

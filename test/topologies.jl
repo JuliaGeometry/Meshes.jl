@@ -252,7 +252,7 @@
     @test faces(t, 3) == elements(t)
 
     t = GridTopology((3,), (false,))
-    @test all(isclosed(t))
+    @test isclosed(t) == (true,)
     @test nvertices(t) == 3
     @test nelements(t) == 3
     @test nfacets(t) == 3
@@ -261,10 +261,40 @@
     @test element(t, 3) == connect((3,1))
 
     t = GridTopology((2,3), (false,false))
-    @test all(isclosed(t))
+    @test isclosed(t) == (true,true)
     @test nvertices(t) == 6
     @test nelements(t) == 6
     @test nfacets(t) == 12
+    @test element(t, 1) == connect((1,2,4,3))
+    @test element(t, 2) == connect((2,1,3,4))
+    @test element(t, 3) == connect((3,4,6,5))
+    @test element(t, 4) == connect((4,3,5,6))
+    @test element(t, 5) == connect((5,6,2,1))
+    @test element(t, 6) == connect((6,5,1,2))
+
+    t = GridTopology((2,3), (true,false))
+    @test isclosed(t) == (false,true)
+    @test nvertices(t) == 9
+    @test nelements(t) == 6
+    @test nfacets(t) == 15
+    @test element(t, 1) == connect((1,2,5,4))
+    @test element(t, 2) == connect((2,3,6,5))
+    @test element(t, 3) == connect((4,5,8,7))
+    @test element(t, 4) == connect((5,6,9,8))
+    @test element(t, 5) == connect((7,8,2,1))
+    @test element(t, 6) == connect((8,9,3,2))
+
+    t = GridTopology((2,3), (false,true))
+    @test isclosed(t) == (true,false)
+    @test nvertices(t) == 8
+    @test nelements(t) == 6
+    @test nfacets(t) == 14
+    @test element(t, 1) == connect((1,2,4,3))
+    @test element(t, 2) == connect((2,1,3,4))
+    @test element(t, 3) == connect((3,4,6,5))
+    @test element(t, 4) == connect((4,3,5,6))
+    @test element(t, 5) == connect((5,6,8,7))
+    @test element(t, 6) == connect((6,5,7,8))
   end
 
   @testset "HalfEdgeTopology" begin

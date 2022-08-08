@@ -56,11 +56,17 @@ end
 # vertices of quadrangle on 2D grid
 function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
+  cx, cy = isclosed(t)
+  nx, ny = size(t)
+
   i, j = elem2cart(t, ind)
-  i1 = cart2corner(t, i  , j  )
-  i2 = cart2corner(t, i+1, j  )
-  i3 = cart2corner(t, i+1, j+1)
-  i4 = cart2corner(t, i  , j+1)
+  i₊ = cx && (i == nx) ? 1 : i + 1
+  j₊ = cy && (j == ny) ? 1 : j + 1
+
+  i1 = cart2corner(t, i , j )
+  i2 = cart2corner(t, i₊, j )
+  i3 = cart2corner(t, i₊, j₊)
+  i4 = cart2corner(t, i , j₊)
   [i1, i2, i3, i4]
 end
 
@@ -91,8 +97,11 @@ function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
   c = first(isclosed(t))
   n = first(size(t))
 
-  i1 = ind
-  i2 = c && (ind == n) ? 1 : ind + 1
+  i  = ind
+  i₊ = c && (i == n) ? 1 : i + 1
+
+  i1 = i
+  i2 = i₊
   [i1, i2]
 end
 
