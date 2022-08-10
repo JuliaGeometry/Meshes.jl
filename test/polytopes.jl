@@ -291,6 +291,12 @@
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test view(c, 1:3) == Chain(P2[(0,0),(1,0),(1,1)])
     @test view(c, 4:6) == Chain(P2[(0,1),(0,0),(1,0)])
+
+    # boundary
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1)])
+    @test boundary(c) == PointSet(P2[(0,0),(0,1)])
+    c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
+    @test isnothing(boundary(c))
   end
 
   @testset "PolyAreas" begin

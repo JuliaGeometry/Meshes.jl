@@ -70,6 +70,21 @@ function segments(c::Chain)
 end
 
 """
+    boundary(chain)
+
+Return the boundary of the `chain`.
+"""
+function boundary(c::Chain)
+  if isclosed(c)
+    nothing
+  else
+    vs = c.vertices
+    bs = [first(vs), last(vs)]
+    PointSet(bs)
+  end
+end
+
+"""
     isclosed(chain)
 
 Tells whether or not the chain is closed.
@@ -78,6 +93,12 @@ A closed chain is also known as a ring.
 """
 isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
 
+"""
+    isperiodic(chain)
+
+Tells whether or not the `chain` is periodic
+along each parametric dimension.
+"""
 isperiodic(c::Chain) = (isclosed(c),)
 
 """
