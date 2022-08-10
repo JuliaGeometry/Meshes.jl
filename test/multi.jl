@@ -18,4 +18,12 @@
   @test P2(1.5,1.5) ∈ multi
   @test P2(1.5,0.5) ∉ multi
   @test P2(0.5,1.5) ∉ multi
+
+  box1 = Box(P2(0,0), P2(1,1))
+  box2 = Box(P2(1,1), P2(2,2))
+  mbox = Multi([box1, box2])
+  mchn = boundary(mbox)
+  noth = boundary(mchn)
+  @test mchn isa Multi
+  @test isnothing(noth)
 end
