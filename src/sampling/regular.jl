@@ -113,12 +113,11 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   zrange = range(zmin, stop=zmax,    length=sz[2])
 
   # rotation to align z axis with cylinder axis
-  e₃ = Vec{3,V}(0, 0, 1)
-  d  = a(1) - a(0)
-  l  = norm(d)
-  θ  = ∠(d, e₃)
-  w  = d × e₃
-  R  = convert(DCM, EulerAngleAxis(-θ, w))
+  d₃  = a(1) - a(0)
+  l  = norm(d₃)
+  d₃ /= l
+  d₁, d₂ = householderbasis(d₃)
+  R = transpose([d₁ d₂ d₃])
 
   # new normals of planes in new rotated system
   nᵦ = R * normal(b)
