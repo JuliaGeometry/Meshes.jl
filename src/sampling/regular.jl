@@ -113,7 +113,6 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   zrange = range(zmin, stop=zmax,    length=sz[2])
 
   # rotation to align z axis with cylinder axis
-  e₃ = Vec{3,V}(0, 0, 1)
   d₃  = a(1) - a(0)
   l  = norm(d₃)
   d₃ /= l
