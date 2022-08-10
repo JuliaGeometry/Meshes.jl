@@ -166,6 +166,13 @@ Return the measure of `point`, which is zero.
 measure(::Point{Dim,T}) where {Dim,T} = zero(T)
 
 """
+    boundary(point)
+
+Return the boundary of the `point`.
+"""
+boundary(::Point) = nothing
+
+"""
     rand(P::Type{<:Point}, n=1)
 
 Generates a random point of type `P`

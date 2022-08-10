@@ -110,6 +110,11 @@
   # measure of points is zero
   @test measure(P2(1, 2)) == zero(T)
   @test measure(P3(1, 2, 3)) == zero(T)
+
+  # boundary of points is nothing
+  @test isnothing(boundary(rand(P1)))
+  @test isnothing(boundary(rand(P2)))
+  @test isnothing(boundary(rand(P3)))
   
   # check broadcasting works as expected
   @test P2(2, 2) .- [P2(2, 3), P2(3, 1)] == [[0., -1.], [-1., 1.]]
