@@ -287,6 +287,12 @@
     @test eltype(msh) <: Segment
     @test nvertices(msh) == nelements(msh) + 1
 
+    grid = CartesianGrid(10)
+    msh  = simplexify(grid)
+    @test msh == grid
+    @test nvertices(msh) == 11
+    @test nelements(msh) == 10
+
     box  = Box(P2(0,0), P2(1,1))
     ngon = Quadrangle(P2[(0,0),(1,0),(1,1),(0,1)])
     poly = readpoly(T, joinpath(datadir, "taubin.line"))

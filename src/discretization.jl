@@ -127,6 +127,8 @@ function simplexify(chain::Chain)
   SimpleMesh(points, topo)
 end
 
+simplexify(grid::CartesianGrid{1}) = grid
+
 # -----------------------
 # PARAMETRIC DIMENSION 2
 # -----------------------
