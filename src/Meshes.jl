@@ -102,6 +102,8 @@ include("plotrecipes/collections.jl")
 include("plotrecipes/cartesiangrids.jl")
 include("plotrecipes/partitions.jl")
 
+@deprecate triangulate(x) simplexify(x)
+
 export
   # points
   Point, Point1, Point2, Point3,
