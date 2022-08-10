@@ -118,8 +118,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   l  = norm(d₃)
   d₃ /= l
   d₁, d₂ = householderbasis(d₃)
-  R = transpose([d₁;;d₂;;d₃])
-  
+  R = transpose([d₁ d₂ d₃])
+
   # new normals of planes in new rotated system
   nᵦ = R * normal(b)
   nₜ = R * normal(t)
