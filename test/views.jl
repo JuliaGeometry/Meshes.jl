@@ -43,7 +43,7 @@
     if visualtests
       d = CartesianGrid{T}(10, 10)
       v = view(d, 1:50)
-      @test_reference "data/domain-view-$T.png" plot(v)
+      @test_reference "data/domain-view-$T.png" viz(v)
     end
   end
 

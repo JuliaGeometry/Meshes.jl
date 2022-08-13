@@ -10,11 +10,10 @@ using StaticArrays
 using SparseArrays
 using PlyIO
 using Unitful
-using Test, Random, Plots
+using MeshViz
+import CairoMakie as Mke
+using Test, Random
 using ReferenceTests, ImageIO
-
-# workaround GR warnings
-ENV["GKSwstype"] = "100"
 
 # environment settings
 isCI = "CI" ∈ keys(ENV)

@@ -5,11 +5,11 @@
     ref2 = refine(ref1, TriRefinement())
 
     if visualtests
-      p1 = plot(grid, fillcolor=false)
-      p2 = plot(ref1, fillcolor=false)
-      p3 = plot(ref2, fillcolor=false)
-      p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
-      @test_reference "data/trirefine-$T.png" p
+      fig = Mke.Figure(resolution=(900, 300))
+      viz(fig[1,1], grid, showfacets=true)
+      viz(fig[1,2], ref1, showfacets=true)
+      viz(fig[1,3], ref2, showfacets=true)
+      @test_reference "data/trirefine-$T.png" fig
     end
   end
 
@@ -22,11 +22,11 @@
     ref3   = refine(ref2, QuadRefinement())
 
     if visualtests
-      p1 = plot(ref1, fillcolor=false)
-      p2 = plot(ref2, fillcolor=false)
-      p3 = plot(ref3, fillcolor=false)
-      p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
-      @test_reference "data/quadrefine-$T.png" p
+      fig = Mke.Figure(resolution=(900, 300))
+      viz(fig[1,1], ref1, showfacets=true)
+      viz(fig[1,2], ref2, showfacets=true)
+      viz(fig[1,3], ref3, showfacets=true)
+      @test_reference "data/quadrefine-$T.png" fig
     end
   end
 
@@ -39,11 +39,11 @@
     ref3   = refine(ref2, CatmullClark())
 
     if visualtests
-      p1 = plot(ref1, fillcolor=false)
-      p2 = plot(ref2, fillcolor=false)
-      p3 = plot(ref3, fillcolor=false)
-      p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
-      @test_reference "data/catmullclark-1-$T.png" p
+      fig = Mke.Figure(resolution=(900, 300))
+      viz(fig[1,1], ref1, showfacets=true)
+      viz(fig[1,2], ref2, showfacets=true)
+      viz(fig[1,3], ref3, showfacets=true)
+      @test_reference "data/catmullclark-1-$T.png" fig
     end
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.25), (0.75,0.25), (0.5,0.75)]
@@ -54,11 +54,11 @@
     ref3   = refine(ref2, CatmullClark())
 
     if visualtests
-      p1 = plot(ref1, fillcolor=false)
-      p2 = plot(ref2, fillcolor=false)
-      p3 = plot(ref3, fillcolor=false)
-      p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
-      @test_reference "data/catmullclark-2-$T.png" p
+      fig = Mke.Figure(resolution=(900, 300))
+      viz(fig[1,1], ref1, showfacets=true)
+      viz(fig[1,2], ref2, showfacets=true)
+      viz(fig[1,3], ref3, showfacets=true)
+      @test_reference "data/catmullclark-2-$T.png" fig
     end
 
     points = P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)]
@@ -69,11 +69,11 @@
     ref3   = refine(ref2, CatmullClark())
 
     if visualtests
-      p1 = plot(ref1, fillcolor=false)
-      p2 = plot(ref2, fillcolor=false)
-      p3 = plot(ref3, fillcolor=false)
-      p = plot(p1, p2, p3, layout=(1,3), size=(900,300))
-      @test_reference "data/catmullclark-3-$T.png" p
+      fig = Mke.Figure(resolution=(900, 300))
+      viz(fig[1,1], ref1, showfacets=true)
+      viz(fig[1,2], ref2, showfacets=true)
+      viz(fig[1,3], ref3, showfacets=true)
+      @test_reference "data/catmullclark-3-$T.png" fig
     end
   end
 end

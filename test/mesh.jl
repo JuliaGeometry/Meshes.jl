@@ -157,11 +157,11 @@
     end
 
     if visualtests
-      @test_reference "data/grid-1D-$T.png" plot(CartesianGrid{T}(10))
-      @test_reference "data/grid-2D-$T.png" plot(CartesianGrid{T}(10,20))
-      @test_reference "data/grid-3D-$T.png" plot(CartesianGrid{T}(10,20,30))
-      @test_reference "data/grid-1D-$T-data.png" plot(CartesianGrid{T}(10),[1,2,3,4,5,5,4,3,2,1])
-      @test_reference "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
+      # @test_reference "data/grid-1D-$T.png" viz(CartesianGrid{T}(10), showfacets=true) # not implemented
+      @test_reference "data/grid-2D-$T.png" viz(CartesianGrid{T}(10, 20), showfacets=true)
+      @test_reference "data/grid-3D-$T.png" viz(CartesianGrid{T}(10, 20, 30), showfacets=true)
+      # @test_reference "data/grid-1D-$T-data.png" plot(CartesianGrid{T}(10),[1,2,3,4,5,5,4,3,2,1])
+      # @test_reference "data/grid-2D-$T-data.png" plot(CartesianGrid{T}(10,10),1:100)
       # @test_reference "data/grid3D-data.png" plot(RegularGrid(10,10,10),1:1000)
     end
   end

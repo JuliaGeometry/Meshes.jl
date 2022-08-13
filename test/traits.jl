@@ -117,9 +117,9 @@
 
       if visualtests
         data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-        @test_reference "data/$DummyType-$T.png" plot(data)
+        @test_reference "data/$DummyType-$T.png" viz(data, showfacets=true)
         data = dummydata(CartesianGrid{T}(2,2), (c=categorical([1,2,3,4]),))
-        @test_reference "data/$DummyType-categorical-$T.png" plot(data)
+        @test_reference "data/$DummyType-categorical-$T.png" viz(data, showfacets=true)
       end
     end
   end
