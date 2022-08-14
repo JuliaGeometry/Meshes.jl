@@ -39,12 +39,6 @@
     @test v[1] == g[11]
     @test v[2] == g[12]
     @test v[3] == g[13]
-
-    if visualtests
-      d = CartesianGrid{T}(10, 10)
-      v = view(d, 1:50)
-      @test_reference "data/domain-view-$T.png" plot(v)
-    end
   end
 
   @testset "Data" begin
