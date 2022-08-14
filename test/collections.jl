@@ -51,18 +51,6 @@
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), pset) == "2 PointSet{2,Float64}\n  └─Point(1.0, 0.0)\n  └─Point(0.0, 1.0)"
     end
-
-    if visualtests
-      ps1 = P1[0,1,1,2]
-      ps2 = P2[(0,1),(1,1),(1,2),(2,3)]
-      ps3 = P3[(0,1,1),(1,1,2),(1,2,3),(2,3,5)]
-      @test_reference "data/pset-1D-$T.png" viz(PointSet(ps1))
-      @test_reference "data/pset-2D-$T.png" viz(PointSet(ps2))
-      @test_reference "data/pset-3D-$T.png" viz(PointSet(ps3))
-      # @test_reference "data/pset-1D-$T-data.png" plot(PointSet(ps1),1:10)
-      # @test_reference "data/pset-2D-$T-data.png" plot(PointSet(ps2),1:10)
-      # @test_reference "data/pset-3D-$T-data.png" plot(PointSet(ps3),1:10)
-    end
   end
 
   @testset "GeometrySet" begin

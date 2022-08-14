@@ -114,13 +114,6 @@
       elseif T == Float64
         @test sprint(show, MIME"text/plain"(), data) == "4 $DummyType{2,Float64}\n  variables (rank 2)\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float64}"
       end
-
-      if visualtests
-        data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-        @test_reference "data/$DummyType-$T.png" viz(data, showfacets=true)
-        data = dummydata(CartesianGrid{T}(2,2), (c=categorical([1,2,3,4]),))
-        @test_reference "data/$DummyType-categorical-$T.png" viz(data, showfacets=true)
-      end
     end
   end
 end
