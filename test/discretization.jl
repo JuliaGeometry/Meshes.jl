@@ -345,10 +345,10 @@
     @test measure(mesh) == measure(grid)
 
     if visualtests
-      p1 = plot(grid, fillcolor=false)
-      p2 = plot(mesh, fillcolor=false)
-      p = plot(p1, p2, layout=(1,2), size=(600,300))
-      @test_reference "data/triangulate-$T.png" p
+      fig = Mke.Figure(resolution=(600, 300))
+      viz(fig[1,1], grid, showfacets=true)
+      viz(fig[1,2], mesh, showfacets=true)
+      @test_reference "data/triangulate-$T.png" fig
     end
   end
 end
