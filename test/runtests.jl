@@ -11,9 +11,10 @@ using SparseArrays
 using PlyIO
 using Unitful
 using MeshViz
-import CairoMakie as Mke
 using Test, Random
 using ReferenceTests, ImageIO
+
+import CairoMakie as Mke
 
 # environment settings
 isCI = "CI" ∈ keys(ENV)
