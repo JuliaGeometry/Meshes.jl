@@ -197,7 +197,9 @@ export
   KNearestSearch,
   KBallSearch,
   BoundedSearch,
+  GlobalSearch,
   search!, search,
+  maxneighbors,
 
   # miscellaneous
   supportfun,

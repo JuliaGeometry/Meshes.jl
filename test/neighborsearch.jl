@@ -81,4 +81,18 @@
     n = search(p, B2)
     @test length(n) == 5
   end
+
+  @testset "GlobalSearch" begin
+    𝒟 = CartesianGrid(10, 10)
+    S = GlobalSearch(𝒟)
+    p = centroid(𝒟, rand(1:100))
+    n = search(p, S)
+    @test n == 1:100
+    mask = falses(nelements(𝒟))
+    mask[15] = true
+    mask[50] = true
+    mask[90] = true
+    n = search(p, S, mask=mask)
+    @test n == [15,50,90]
+  end
 end
