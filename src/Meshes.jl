@@ -8,7 +8,6 @@ using Tables
 using StaticArrays
 using SparseArrays
 using CircularArrays
-using RecipesBase
 using LinearAlgebra
 using Random
 
@@ -18,9 +17,6 @@ using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: EulerAngles, DCM
 using NearestNeighbors: KDTree, BallTree, knn, inrange
-
-# import categorical arrays as a temporary solution for plot recipes
-using CategoricalArrays: CategoricalValue, levelcode
 
 import Tables
 import Random
@@ -92,15 +88,6 @@ include("refinement.jl")
 include("smoothing.jl")
 include("boundingboxes.jl")
 include("hulls.jl")
-
-# plot recipes
-include("plotrecipes/domain.jl")
-include("plotrecipes/data.jl")
-include("plotrecipes/points.jl")
-include("plotrecipes/geometries.jl")
-include("plotrecipes/collections.jl")
-include("plotrecipes/cartesiangrids.jl")
-include("plotrecipes/partitions.jl")
 
 @deprecate triangulate(x) simplexify(x)
 
@@ -210,7 +197,9 @@ export
   KNearestSearch,
   KBallSearch,
   BoundedSearch,
+  GlobalSearch,
   search!, search,
+  maxneighbors,
 
   # miscellaneous
   supportfun,
