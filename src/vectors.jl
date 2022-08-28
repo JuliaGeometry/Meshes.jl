@@ -43,11 +43,13 @@ struct Vec{Dim,T} <: StaticVector{Dim,T}
 end
 
 # convenience constructors
-Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords...))
-Vec{Dim}(coords::T...) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords...))
+Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
+Vec{Dim,T}(coords::Tuple) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
+Vec{Dim,T}(coords::AbstractVector) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
+Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::SVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::AbstractVector{T}) where {T} = Vec{length(coords),T}(coords)
-Vec(coords...) = Vec(SVector(coords...))
+Vec(coords...) = Vec(SVector(coords))
 
 # type aliases for convenience
 const Vec1  = Vec{1,Float64}
@@ -58,7 +60,10 @@ const Vec2f = Vec{2,Float32}
 const Vec3f = Vec{3,Float32}
 
 # StaticVector interface
-Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec(SVector{Dim,T}(coords))
 Base.getindex(v::Vec, i::Int) = getindex(v.coords, i)
 Base.Tuple(v::Vec) = Tuple(v.coords)
-StaticArrays.similar_type(::Type{<:Vec}, ::Type, ::Size) = Vec
+function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
+  L = prod(S)
+  N = length(S)
+  N == 1 ? Vec{L,T} : SArray{Tuple{S...}, T, N, L}
+end
