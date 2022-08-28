@@ -60,8 +60,8 @@ const Vec2f = Vec{2,Float32}
 const Vec3f = Vec{3,Float32}
 
 # StaticVector interface
-Base.getindex(v::Vec, i::Int) = getindex(v.coords, i)
 Base.Tuple(v::Vec) = Tuple(v.coords)
+Base.getindex(v::Vec, i::Int) = getindex(v.coords, i)
 function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
