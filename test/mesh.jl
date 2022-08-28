@@ -103,9 +103,9 @@
     @test maximum(sub) == P2(5,8)
 
     # subgrid with comparable vertices of grid
-    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.2,1.2))
+    grid = CartesianGrid((10,10), P2(0.0,0.0), SVector{2,T}(1.2,1.2))
     sub = grid[2:4, 5:7]
-    @test sub == CartesianGrid((3,3), P2(0.0,0.0), V2(1.2,1.2), (0,-3))
+    @test sub == CartesianGrid((3,3), P2(0.0,0.0), SVector{2,T}(1.2,1.2), (0,-3))
     ind = reshape(reshape(1:121, 11, 11)[2:5, 5:8], :)
     @test vertices(grid)[ind] == vertices(sub)
 
@@ -125,7 +125,7 @@
     @test grid[2] == Quadrangle(P2[(1,0), (2,0), (2,1), (1,1)])
 
     # expand CartesianGrid with comparable vertices
-    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.,1.))
+    grid = CartesianGrid((10,10), P2(0.0,0.0), SVector{2,T}(1.,1.))
     left, right = (1,1), (1,1)
     newdim = size(grid) .+ left .+ right
     newoffset = offset(grid) .+ left
