@@ -117,15 +117,15 @@ CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 
 Base.size(g::CartesianGrid) = g.dims
-Base.minimum(g::CartesianGrid) = Point(g.origin.coords - (g.offset .- 1) .* g.spacing)
-Base.maximum(g::CartesianGrid) = Point(g.origin.coords + (g.dims .- g.offset .+ 1) .* g.spacing)
+Base.minimum(g::CartesianGrid) = Point(coordinates(g.origin) - (g.offset .- 1) .* g.spacing)
+Base.maximum(g::CartesianGrid) = Point(coordinates(g.origin) + (g.dims .- g.offset .+ 1) .* g.spacing)
 Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
 spacing(g::CartesianGrid) = g.spacing
 offset(g::CartesianGrid) = g.offset
 
 function vertices(g::CartesianGrid)
   inds = CartesianIndices(g.dims .+ 1)
-  vec([Point(g.origin.coords + (ind.I .- g.offset) .* g.spacing) for ind in inds])
+  vec([Point(coordinates(g.origin) + (ind.I .- g.offset) .* g.spacing) for ind in inds])
 end
 
 elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
