@@ -17,18 +17,18 @@ B = Point(1.0, 0.0)
 v = B - A
 
 # 2D vectors
-A = Vec(0.0, 1.0) # double precision as expected
-B = Vec(0f0, 1f0) # single precision as expected
-C = Vec(0, 0) # Integer is converted to Float64 by design
-D = Vec2(0, 1) # explicitly ask for double precision
-E = Vec2f(0, 1) # explicitly ask for single precision
+Vec(0.0, 1.0) # double precision as expected
+Vec(0f0, 1f0) # single precision as expected
+Vec(0, 0) # Integer is converted to Float64 by design
+Vec2(0, 1) # explicitly ask for double precision
+Vec2f(0, 1) # explicitly ask for single precision
 
 # 3D vectors
-F = Vec(1.0, 2.0, 3.0) # double precision as expected
-G = Vec(1f0, 2f0, 3f0) # single precision as expected
-H = Vec(1, 2, 3) # Integer is converted to Float64 by design
-I = Vec3(1, 2, 3) # explicitly ask for double precision
-J = Vec3f(1, 2, 3) # explicitly ask for single precision
+Vec(1.0, 2.0, 3.0) # double precision as expected
+Vec(1f0, 2f0, 3f0) # single precision as expected
+Vec(1, 2, 3) # Integer is converted to Float64 by design
+Vec3(1, 2, 3) # explicitly ask for double precision
+Vec3f(1, 2, 3) # explicitly ask for single precision
 ```
 
 ### Notes
