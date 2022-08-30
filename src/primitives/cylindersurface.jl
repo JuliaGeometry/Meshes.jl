@@ -50,6 +50,12 @@ bottom(c::CylinderSurface) = c.bot
 
 top(c::CylinderSurface) = c.top
 
+function center(c::CylinderSurface)
+  a = coordinates(origin(c.bot))
+  b = coordinates(origin(c.top))
+  Point((a .+ b) ./ 2)
+end
+
 axis(c::CylinderSurface) = Line(origin(c.bot), origin(c.top))
 
 function isright(c::CylinderSurface{T}) where {T}
