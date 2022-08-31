@@ -76,14 +76,20 @@ connect((1,2,3)) # Triangle
 connect((1,2,3,4)) # Quadrangle
 ```
 """
-connect(indices::NTuple{N,Int}, PL::Type{<:Polytope}) where {N} =
+connect(indices::SVector{N,Int}, PL::Type{<:Polytope}) where {N} =
   Connectivity{PL,N}(indices)
 
-connect(indices::NTuple{N,Int}, ::Type{Ngon}) where {N} =
+connect(indices::SVector{N,Int}, ::Type{Ngon}) where {N} =
   Connectivity{Ngon{N},N}(indices)
 
-connect(indices::NTuple{N,Int}) where {N} =
+connect(indices::SVector{N,Int}) where {N} =
   N > 2 ? connect(indices, Ngon) : connect(indices, Segment)
+
+connect(indices::NTuple{N,Int}, PL::Type{<:Polytope}) where {N} =
+  connect(SVector{N,Int}(indices), PL)
+
+connect(indices::NTuple{N,Int}) where {N} =
+  connect(SVector{N,Int}(indices))
 
 """
     materialize(connec, points)
@@ -97,6 +103,6 @@ end
 
 function Base.show(io::IO, c::Connectivity{PL}) where {PL}
   name = prettyname(PL)
-  inds = c.indices
-  print(io, "$name($(join(inds, ", ")))")
+  inds = Tuple(c.indices)
+  print(io, "$name$inds")
 end
