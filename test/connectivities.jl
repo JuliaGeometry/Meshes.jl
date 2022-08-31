@@ -3,13 +3,13 @@
   c = connect((1,2,3), Triangle)
   @test issimplex(c)
   @test paramdim(c) == 2
-  @test indices(c) == (1,2,3)
+  @test indices(c) == [1,2,3]
   @test materialize(c, P2[(0,0),(1,0),(0,1)]) == Triangle(P2(0,0), P2(1,0), P2(0,1))
 
   # tuple from other collections
   c = connect(Tuple([1,2,3]), Triangle)
   @test paramdim(c) == 2
-  @test indices(c) == (1,2,3)
+  @test indices(c) == [1,2,3]
   @test materialize(c, P2[(0,0),(1,0),(0,1)]) == Triangle(P2(0,0), P2(1,0), P2(0,1))
 
   # incorrect number of vertices for polytope
@@ -35,7 +35,7 @@
   c = connect((1,2,3,4), Tetrahedron)
   @test issimplex(c)
   @test paramdim(c) == 3
-  @test indices(c) == (1,2,3,4)
+  @test indices(c) == [1,2,3,4]
   points = P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)]
   @test materialize(c, points) == Tetrahedron(points...)
 end
