@@ -53,10 +53,13 @@ end
 Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
 Vec{Dim,T}(coords::Tuple) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
 Vec{Dim,T}(coords::AbstractVector) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
+
 Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::SVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::AbstractVector{T}) where {T} = Vec{length(coords),T}(coords)
+
 Vec(coords...) = Vec(SVector(coords))
+Vec(coords::Tuple) = Vec(SVector(coords))
 
 # type aliases for convenience
 const Vec1  = Vec{1,Float64}
