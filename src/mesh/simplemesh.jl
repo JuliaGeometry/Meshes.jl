@@ -47,11 +47,11 @@ Base.convert(::Type{<:SimpleMesh}, m::Mesh) =
 
 
 """
-    point ∈ mesh
+    isinside(point, mesh)
 
 Tells whether a `point` is inside a surface `mesh`. Must be a surface mesh with only triangles as elements. Points that coincide with vertices of the mesh or lies on the face of a triangle return true.
 """
-function Base.in(testpoint::Point{3,T}, mesh::Mesh{3,T}) where T
+function isinside(testpoint::Point{3,T}, mesh::Mesh{3,T}) where T
   if !(eltype(mesh) <: Triangle)
     error("This function only works for surface meshes with triangles as elements.")
   end

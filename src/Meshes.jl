@@ -245,6 +245,7 @@ export
   topoconvert,
   spacing,
   offset,
+  isinside,
 
   # mesh data
   MeshData,
