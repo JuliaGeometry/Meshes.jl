@@ -36,16 +36,16 @@ J = Point3f(1, 2, 3) # explicitly ask for single precision
   `InexactError` and other unexpected results.
 """
 struct Point{Dim,T}
-  coords::SVector{Dim,T}
-  Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
-  Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
+  coords::Vec{Dim,T}
+  Point{Dim,T}(coords) where {Dim,T} = new{Dim,T}(coords)
+  Point{Dim,T}(coords) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
 end
 
 # convenience constructors
-Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(SVector{Dim,T}(coords...))
-Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
-Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
-Point(coords...) = Point(SVector(coords...))
+Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
+Point(coords::Vec{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
+Point(coords...) = Point(coords)
+Point(coords) = Point(Vec(coords))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
@@ -101,7 +101,7 @@ coordinates(A::Point) = A.coords
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point, B::Point) = Vec(A.coords - B.coords)
+-(A::Point, B::Point) = A.coords - B.coords
 
 """
     +(A::Point, v::Vec)
@@ -179,7 +179,7 @@ Generates a random point of type `P`
 """
 Random.rand(rng::Random.AbstractRNG,
             ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
-  Point(rand(rng, SVector{Dim,T}))
+  Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)
   print(io, "Point$(Tuple(point.coords))")
