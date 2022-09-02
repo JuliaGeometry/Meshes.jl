@@ -57,7 +57,7 @@ function Base.in(testpoint::Point{3,T}, mesh::Mesh{3,T}) where T
   end
   ex = testpoint .- extrema(mesh)
   direction = ex[argmax(norm.(ex))]
-  r = Ray(testpoint, Vec{3,T}(direction*2))
+  r = Ray(testpoint, direction*2)
   
   intersects = false
   for elem in mesh
