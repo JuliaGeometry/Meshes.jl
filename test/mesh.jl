@@ -234,6 +234,16 @@
     @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
     @test collect(elements(topology(mesh))) == connect.([(1,2,3),(4,5,6)])
 
+    # point in mesh
+    points = P3[(0,0,0), (1,0,0), (0,1,0), (0,0,1)]
+    connec = connect.([(1,3,2), (1,2,4), (1,4,3), (2,3,4)], Triangle)
+    mesh = SimpleMesh(points, connec)
+    @test (P3(0.2, 0.2, 0.1) ∈ mesh) == true
+    @test (P3(0.1, 0.1, 0.1) ∈ mesh) == true # ray goes through vertex
+    @test (P3(-0.1, 0.1, 0) ∈ mesh) == false
+    @test (P3(0.1, 0.1, 0) ∈ mesh) == true # on face of triangle
+    @test (P3(1, 0, 0) ∈ mesh) == true # on exisitng vertex
+
     # convert any mesh to SimpleMesh
     grid = CartesianGrid{T}(10,10)
     mesh = convert(SimpleMesh, grid)
