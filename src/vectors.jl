@@ -66,6 +66,10 @@ Vec(coords::Tuple) = Vec(promote(coords...))
 Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::AbstractVector{T}) where {T} = Vec{length(coords),T}(coords)
 
+# StaticVector constructors
+Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
+Vec{Dim,T}(coords::StaticVector) where {Dim,T} = Vec{Dim,T}(Tuple(coords))
+
 # type aliases for convenience
 const Vec1  = Vec{1,Float64}
 const Vec2  = Vec{2,Float64}
