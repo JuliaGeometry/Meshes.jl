@@ -50,9 +50,16 @@ struct Vec{Dim,T} <: StaticVector{Dim,T}
 end
 
 # convenience constructors
-Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(NTuple{Dim,T}(coords))
-Vec{Dim,T}(coords::Tuple) where {Dim,T} = Vec{Dim,T}(NTuple{Dim,T}(coords))
-Vec{Dim,T}(coords::AbstractVector) where {Dim,T} = Vec{Dim,T}(NTuple{Dim,T}(coords))
+Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(coords)
+function Vec{Dim,T}(coords::Tuple) where {Dim,T}
+  checkdim(Vec{Dim,T}, coords)
+  Vec{Dim,T}(NTuple{Dim,T}(coords))
+end
+
+function Vec{Dim,T}(coords::AbstractVector) where {Dim,T}
+  checkdim(Vec{Dim,T}, coords)
+  Vec{Dim,T}(NTuple{Dim,T}(coords))
+end
 
 Vec(coords...) = Vec(coords)
 Vec(coords::Tuple) = Vec(promote(coords...))
@@ -74,4 +81,11 @@ function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T
   L = prod(S)
   N = length(S)
   N == 1 ? Vec{L,T} : SArray{Tuple{S...}, T, N, L}
+end
+
+# utils
+function checkdim(::Type{Vec{Dim,T}}, coords) where {Dim,T}
+  if Dim ≠ length(coords)
+    throw(DimensionMismatch("Invalid dimension."))
+  end
 end
