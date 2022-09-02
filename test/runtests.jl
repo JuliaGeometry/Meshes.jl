@@ -66,6 +66,7 @@ include("dummy.jl")
 
 # list of tests
 testfiles = [
+  "vectors.jl",
   "points.jl",
   "angles.jl",
   "polytopes.jl",

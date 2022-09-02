@@ -7,7 +7,7 @@
     @test minimum(grid) == P1(0)
     @test maximum(grid) == P1(100)
     @test extrema(grid) == (P1(0), P1(100))
-    @test spacing(grid) == T[1]
+    @test spacing(grid) == T.((1,))
     @test nelements(grid) == 100
     @test eltype(grid) <: Segment{1,T}
     @test measure(grid) ≈ T(100)
@@ -19,7 +19,7 @@
     @test minimum(grid) == P2(0, 0)
     @test maximum(grid) == P2(200, 100)
     @test extrema(grid) == (P2(0, 0), P2(200, 100))
-    @test spacing(grid) == T[1, 1]
+    @test spacing(grid) == T.((1, 1))
     @test nelements(grid) == 200*100
     @test eltype(grid) <: Quadrangle{2,T}
     @test measure(grid) ≈ T(200*100)
@@ -31,7 +31,7 @@
     @test minimum(grid) == P3(0, 0, 0)
     @test maximum(grid) == P3(200, 100, 50)
     @test extrema(grid) == (P3(0, 0, 0), P3(200, 100, 50))
-    @test spacing(grid) == T[1, 1, 1]
+    @test spacing(grid) == T.((1, 1, 1))
     @test nelements(grid) == 200*100*50
     @test eltype(grid) <: Hexahedron{3,T}
     @test measure(grid) ≈ T(200*100*50)
@@ -42,7 +42,7 @@
     @test size(grid) == (10, 10, 10)
     @test minimum(grid) == P3(0, 0, 0)
     @test maximum(grid) == P3(1, 1, 1)
-    @test spacing(grid) == T[0.1, 0.1, 0.1]
+    @test spacing(grid) == T.((0.1, 0.1, 0.1))
 
     grid = CartesianGrid(T.((-1.,-1.)), T.((1.,1.)), dims=(200,100))
     @test embeddim(grid) == 2
@@ -50,7 +50,7 @@
     @test size(grid) == (200, 100)
     @test minimum(grid) == P2(-1., -1.)
     @test maximum(grid) == P2(1., 1.)
-    @test spacing(grid) == T[2/200, 2/100]
+    @test spacing(grid) == T.((2/200, 2/100))
     @test nelements(grid) == 200*100
     @test eltype(grid) <: Quadrangle{2,T}
 
@@ -61,7 +61,7 @@
     @test minimum(grid) == P3(0, 0, 0)
     @test maximum(grid) == P3(100, 50, 25)
     @test extrema(grid) == (P3(0, 0, 0), P3(100, 50, 25))
-    @test spacing(grid) == T[5, 5, 5]
+    @test spacing(grid) == T.((5, 5, 5))
     @test nelements(grid) == 20*10*5
     @test eltype(grid) <: Hexahedron{3,T}
     @test vertices(grid[1]) == P3[(0, 0, 0), (5, 0, 0), (5, 5, 0), (0, 5, 0), (0, 0, 5), (5, 0, 5), (5, 5, 5), (0, 5, 5)]
@@ -74,7 +74,7 @@
     @test size(grid) == (10, 10)
     @test minimum(grid) == P2(0., 0.)
     @test maximum(grid) == P2(10., 10.)
-    @test spacing(grid) == T[1, 1]
+    @test spacing(grid) == T.((1, 1))
     @test nelements(grid) == 10*10
     @test eltype(grid) <: Quadrangle{2,T}
 
@@ -103,9 +103,9 @@
     @test maximum(sub) == P2(5,8)
 
     # subgrid with comparable vertices of grid
-    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.2,1.2))
+    grid = CartesianGrid((10,10), P2(0.0,0.0), T.((1.2,1.2)))
     sub = grid[2:4, 5:7]
-    @test sub == CartesianGrid((3,3), P2(0.0,0.0), V2(1.2,1.2), (0,-3))
+    @test sub == CartesianGrid((3,3), P2(0.0,0.0), T.((1.2,1.2)), (0,-3))
     ind = reshape(reshape(1:121, 11, 11)[2:5, 5:8], :)
     @test vertices(grid)[ind] == vertices(sub)
 
@@ -125,7 +125,7 @@
     @test grid[2] == Quadrangle(P2[(1,0), (2,0), (2,1), (1,1)])
 
     # expand CartesianGrid with comparable vertices
-    grid = CartesianGrid((10,10), P2(0.0,0.0), V2(1.,1.))
+    grid = CartesianGrid((10,10), P2(0.0,0.0), T.((1.,1.)))
     left, right = (1,1), (1,1)
     newdim = size(grid) .+ left .+ right
     newoffset = offset(grid) .+ left
