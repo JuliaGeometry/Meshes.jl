@@ -43,14 +43,14 @@ Vec3f(1, 2, 3) # explicitly ask for single precision
 - A `Vec` is a subtype of `StaticVector` from StaticArrays.jl
 - Type aliases are `Vec1`, `Vec2`, `Vec3`, `Vec1f`, `Vec2f`, `Vec3f`
 """
-struct Vec{Dim,T} <: StaticVector{Dim,T}
+struct Vec{Dim,T<:Real} <: StaticVector{Dim,T}
   coords::NTuple{Dim,T}
-  Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
+  Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T<:Real} = new{Dim,T}(coords)
   Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
 end
 
 # convenience constructors
-Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(coords)
+Vec{Dim,T}(coords::Real...) where {Dim,T} = Vec{Dim,T}(coords)
 function Vec{Dim,T}(coords::Tuple) where {Dim,T}
   checkdim(Vec{Dim,T}, coords)
   Vec{Dim,T}(NTuple{Dim,T}(coords))
@@ -61,14 +61,10 @@ function Vec{Dim,T}(coords::AbstractVector) where {Dim,T}
   Vec{Dim,T}(NTuple{Dim,T}(coords))
 end
 
-Vec(coords...) = Vec(coords)
+Vec(coords::Real...) = Vec(coords)
 Vec(coords::Tuple) = Vec(promote(coords...))
 Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::AbstractVector{T}) where {T} = Vec{length(coords),T}(coords)
-
-# StaticVector constructors
-Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
-Vec{Dim,T}(coords::StaticVector) where {Dim,T} = Vec{Dim,T}(Tuple(coords))
 
 # type aliases for convenience
 const Vec1  = Vec{1,Float64}
