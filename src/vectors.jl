@@ -87,6 +87,12 @@ function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T
   N == 1 ? Vec{L,T} : SArray{Tuple{S...},T,N,L}
 end
 
+function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T<:Integer,S}
+  L = prod(S)
+  N = length(S)
+  SArray{Tuple{S...},T,N,L}
+end
+
 # utils
 function checkdim(::Type{Vec{Dim,T}}, coords) where {Dim,T}
   if Dim ≠ length(coords)
