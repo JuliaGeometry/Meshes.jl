@@ -83,12 +83,7 @@ Base.getindex(v::Vec, i::Int) = getindex(getfield(v, :coords), i)
 function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
-  N == 1 ? Vec{L,T} : SArray{Tuple{S...},T,N,L}
-end
-function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T<:Integer,S}
-  L = prod(S)
-  N = length(S)
-  SArray{Tuple{S...},T,N,L}
+  isone(N) && !(T<:Integer) ? Vec{L,T} : SArray{Tuple{S...},T,N,L}
 end
 
 # utils
