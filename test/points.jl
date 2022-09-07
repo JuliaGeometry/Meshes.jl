@@ -19,9 +19,9 @@
   @test coordinates(P2(1, 2)) == [1.0, 2.0]
   @test coordinates(P3(1, 2, 3)) == [1.0, 2.0, 3.0]
 
-  @test P1(1) - P1(1) == T[0]
-  @test P2(1, 2) - P2(1, 1) == T[0, 1]
-  @test P3(1, 2, 3) - P3(1, 1, 1) == T[0, 1, 2]
+  @test P1(1) - P1(1) == V1(0)
+  @test P2(1, 2) - P2(1, 1) == V2(0, 1)
+  @test P3(1, 2, 3) - P3(1, 1, 1) == V3(0, 1, 2)
   @test_throws DimensionMismatch P2(1, 2) - P3(1, 2, 3)
 
   @test P1(1) + V1(0) == P1(1)
@@ -117,6 +117,6 @@
   @test isnothing(boundary(rand(P3)))
   
   # check broadcasting works as expected
-  @test P2(2, 2) .- [P2(2, 3), P2(3, 1)] == [[0., -1.], [-1., 1.]]
-  @test P3(2, 2, 2) .- [P3(2, 3, 1), P3(3, 1, 4)] == [[0., -1., 1.], [-1., 1., -2.]]
+  @test P2(2, 2) .- [P2(2, 3), P2(3, 1)] == [V2(0., -1.), V2(-1., 1.)]
+  @test P3(2, 2, 2) .- [P3(2, 3, 1), P3(3, 1, 4)] == [V3(0., -1., 1.), V3(-1., 1., -2.)]
 end

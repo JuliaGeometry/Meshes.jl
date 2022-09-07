@@ -110,7 +110,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point, v::Vec) = Point(A.coords + v)
++(A::Point, v::Vec) = Point(A.coords + v.coords)
 +(v::Vec, A::Point) = A + v
 
 """
@@ -120,7 +120,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point, v::Vec) = Point(A.coords - v)
+-(A::Point, v::Vec) = Point(A.coords - v.coords)
 -(v::Vec, A::Point) = A - v
 
 """
@@ -139,10 +139,10 @@ Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwar
 
 Generalized inequality for non-negative orthant Rⁿ₊
 """
-⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), B - A)
-⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), A - B)
-≺(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), B - A)
-≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), A - B)
+⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), coordinates(B - A))
+⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), coordinates(A - B))
+≺(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), coordinates(B - A))
+≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), coordinates(A - B))
 
 """
     center(point)
