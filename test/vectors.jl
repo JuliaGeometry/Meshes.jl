@@ -1,41 +1,41 @@
 @testset "Vectors" begin
   # vararg constructors
-  @test eltype(Vec(1, 1)) == Float64
-  @test eltype(Vec(1.0, 1.0)) == Float64
-  @test eltype(Vec(1.0f0, 1.0f0)) == Float32
-  @test eltype(Vec1(1)) == Float64
-  @test eltype(Vec2(1, 1)) == Float64
-  @test eltype(Vec3(1, 1, 1)) == Float64
-  @test eltype(Vec1f(1)) == Float32
-  @test eltype(Vec2f(1, 1)) == Float32
-  @test eltype(Vec3f(1, 1, 1)) == Float32
+  @test coordtype(Vec(1, 1)) == Float64
+  @test coordtype(Vec(1.0, 1.0)) == Float64
+  @test coordtype(Vec(1.0f0, 1.0f0)) == Float32
+  @test coordtype(Vec1(1)) == Float64
+  @test coordtype(Vec2(1, 1)) == Float64
+  @test coordtype(Vec3(1, 1, 1)) == Float64
+  @test coordtype(Vec1f(1)) == Float32
+  @test coordtype(Vec2f(1, 1)) == Float32
+  @test coordtype(Vec3f(1, 1, 1)) == Float32
 
   # tuple constructors
-  @test eltype(Vec((1, 1))) == Float64
-  @test eltype(Vec((1.0, 1.0))) == Float64
-  @test eltype(Vec((1.0f0, 1.0f0))) == Float32
-  @test eltype(Vec1((1,))) == Float64
-  @test eltype(Vec2((1, 1))) == Float64
-  @test eltype(Vec3((1, 1, 1))) == Float64
-  @test eltype(Vec1f((1,))) == Float32
-  @test eltype(Vec2f((1, 1))) == Float32
-  @test eltype(Vec3f((1, 1, 1))) == Float32
+  @test coordtype(Vec((1, 1))) == Float64
+  @test coordtype(Vec((1.0, 1.0))) == Float64
+  @test coordtype(Vec((1.0f0, 1.0f0))) == Float32
+  @test coordtype(Vec1((1,))) == Float64
+  @test coordtype(Vec2((1, 1))) == Float64
+  @test coordtype(Vec3((1, 1, 1))) == Float64
+  @test coordtype(Vec1f((1,))) == Float32
+  @test coordtype(Vec2f((1, 1))) == Float32
+  @test coordtype(Vec3f((1, 1, 1))) == Float32
 
   # vector constructors
-  @test eltype(Vec([1, 1])) == Float64
-  @test eltype(Vec([1.0, 1.0])) == Float64
-  @test eltype(Vec([1.0f0, 1.0f0])) == Float32
-  @test eltype(Vec1([1])) == Float64
-  @test eltype(Vec2([1, 1])) == Float64
-  @test eltype(Vec3([1, 1, 1])) == Float64
-  @test eltype(Vec1f([1])) == Float32
-  @test eltype(Vec2f([1, 1])) == Float32
-  @test eltype(Vec3f([1, 1, 1])) == Float32  
+  @test coordtype(Vec([1, 1])) == Float64
+  @test coordtype(Vec([1.0, 1.0])) == Float64
+  @test coordtype(Vec([1.0f0, 1.0f0])) == Float32
+  @test coordtype(Vec1([1])) == Float64
+  @test coordtype(Vec2([1, 1])) == Float64
+  @test coordtype(Vec3([1, 1, 1])) == Float64
+  @test coordtype(Vec1f([1])) == Float32
+  @test coordtype(Vec2f([1, 1])) == Float32
+  @test coordtype(Vec3f([1, 1, 1])) == Float32  
 
   # parametric constructors 
-  @test eltype(Vec{2,T}(1, 1)) == T
-  @test eltype(Vec{2,T}((1, 1))) == T
-  @test eltype(Vec{2,T}([1, 1])) == T
+  @test coordtype(Vec{2,T}(1, 1)) == T
+  @test coordtype(Vec{2,T}((1, 1))) == T
+  @test coordtype(Vec{2,T}([1, 1])) == T
 
   # check all 1D Vec constructors, because those tend to make trouble
   @test Vec(1) == Vec((1,)) == Vec([1])
@@ -51,12 +51,12 @@
   @test Vec{4,T}([0, -1.0, +2, -4.0]) == Vec{4,T}((0.0f0, -1.0f0, +2.0f0, -4.0f0))
 
   # Integer coordinates converted to Float64
-  @test eltype(Vec(1)) == Float64
-  @test eltype(Vec(1, 2)) == Float64
-  @test eltype(Vec(1, 2, 3)) == Float64
-  @test Tuple(Vec(1)) == (1.0,)
-  @test Tuple(Vec(1, 2)) == (1.0, 2.0)
-  @test Tuple(Vec(1, 2, 3)) == (1.0, 2.0, 3.0)
+  @test coordtype(Vec(1)) == Float64
+  @test coordtype(Vec(1, 2)) == Float64
+  @test coordtype(Vec(1, 2, 3)) == Float64
+  @test coordinates(Vec(1)) == [1.0]
+  @test coordinates(Vec(1, 2)) == [1.0, 2.0]
+  @test coordinates(Vec(1, 2, 3)) == [1.0, 2.0, 3.0]
 
   # throws
   @test_throws DimensionMismatch Vec{2,T}(1)
