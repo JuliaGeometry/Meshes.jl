@@ -50,7 +50,7 @@ origin(p::Plane) = p.p
 
 Normal vector to the `plane`.
 """
-normal(p::Plane) = normalize(p.u × p.v)
+normal(p::Plane) = normalize(coordinates(p.u × p.v))
 
 ==(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&

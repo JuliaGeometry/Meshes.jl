@@ -55,8 +55,8 @@ calculated in order to identify the intersection type:
 """
 function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, 
                              c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
-  A = [(b - a) (c - d)]
-  y = c - a
+  A = [coordinates(b - a) coordinates(c - d)]
+  y = coordinates(c - a)
 
   # calculate the rank of the augmented matrix by checking
   # the zero entries of the diagonal of R

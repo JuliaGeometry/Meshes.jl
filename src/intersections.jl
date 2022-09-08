@@ -223,8 +223,8 @@ end
 
 # support point in Minkowski difference
 function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
-  n = Vec{Dim,T}(d[1:Dim])
-  v = supportfun(g1, n) - supportfun(g2, -n)
+  n = Vec{Dim,T}(coordinates(d)[1:Dim])
+  v = coordinates(supportfun(g1, n) - supportfun(g2, -n))
   Point(ntuple(i-> i ≤ Dim ? v[i] : zero(T), max(Dim, 3)))
 end
 

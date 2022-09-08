@@ -82,8 +82,11 @@ canonical Euclidean basis.
 """
 coordinates(v::Vec) = v.coords
 
+
++(a::Vec) = a
 +(a::Vec, b::Vec) = Vec(a.coords + b.coords)
 
+-(a::Vec) = Vec(-a.coords)
 -(a::Vec, b::Vec) = Vec(a.coords - b.coords)
 
 *(k::Number, a::Vec) = Vec(k * a.coords)
@@ -95,7 +98,11 @@ coordinates(v::Vec) = v.coords
 LinearAlgebra.norm(v::Vec) = norm(v.coords)
 LinearAlgebra.dot(a::Vec{Dim}, b::Vec{Dim}) where {Dim} = dot(a.coords, b.coords)
 LinearAlgebra.cross(a::Vec{2}, b::Vec{2}) = cross(a.coords, b.coords)
-LinearAlgebra.cross(a::Vec{3}, b::Vec{3}) = cross(a.coords, b.coords)
+LinearAlgebra.cross(a::Vec{3}, b::Vec{3}) = Vec(cross(a.coords, b.coords))
+
+Random.rand(rng::Random.AbstractRNG,
+            ::Random.SamplerType{Vec{Dim,T}}) where {Dim,T} =
+  Vec(rand(rng, SVector{Dim,T}))
 
 function Base.show(io::IO, v::Vec)
   print(io, "Vec$(Tuple(v.coords))")

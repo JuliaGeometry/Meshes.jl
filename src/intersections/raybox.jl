@@ -7,7 +7,7 @@ Williams A, Barrus S, Morley R K, et al., 2005.
 (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 =#
 function intersection(f, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
-  invdir = one(T) ./ direction(r)
+  invdir = one(T) ./ coordinates(direction(r))
   lo, up = coordinates.(extrema(b))
   orig = coordinates(origin(r))
 
