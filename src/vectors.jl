@@ -91,6 +91,12 @@ coordinates(v::Vec) = v.coords
 
 ==(a::Vec, b::Vec) = a.coords == b.coords
 
+# Linear Algebra
+LinearAlgebra.norm(v::Vec) = norm(v.coords)
+LinearAlgebra.dot(a::Vec{Dim}, b::Vec{Dim}) where {Dim} = dot(a.coords, b.coords)
+LinearAlgebra.cross(a::Vec{2}, b::Vec{2}) = cross(a.coords, b.coords)
+LinearAlgebra.cross(a::Vec{3}, b::Vec{3}) = cross(a.coords, b.coords)
+
 function Base.show(io::IO, v::Vec)
   print(io, "Vec$(Tuple(v.coords))")
 end
