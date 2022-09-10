@@ -41,30 +41,18 @@ J = Point3f(1, 2, 3) # explicitly ask for single precision
   `InexactError` and other unexpected results.
 """
 struct Point{Dim,T}
-  coords::NTuple{Dim,T}
-  Point{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
-  Point{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
+  coords::Vec{Dim,T}
+  Point{Dim,T}(coords::Vec{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
 end
 
 # convenience constructors
 Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
-function Point{Dim,T}(coords::Tuple) where {Dim,T}
-  checkdim(Point{Dim,T}, coords)
-  Point{Dim,T}(NTuple{Dim,T}(coords))
-end
-function Point{Dim,T}(coords::AbstractVector) where {Dim,T}
-  checkdim(Point{Dim,T}, coords)
-  Point{Dim,T}(NTuple{Dim,T}(coords))
-end
+Point{Dim,T}(coords) where {Dim,T} = Point{Dim,T}(Vec{Dim,T}(coords))
+Point{Dim,T}(coords) where {Dim,T<:Integer} = Point{Dim,Float64}(coords)
 
 Point(coords...) = Point(coords)
-Point(coords::Tuple) = Point(promote(coords...))
-Point(coords::NTuple{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
-Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
-
-# StaticVector constructors
-Point(coords::StaticVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
-Point{Dim,T}(coords::StaticVector) where {Dim,T} = Point{Dim,T}(Tuple(coords))
+Point(coords) = Point(Vec(coords))
+Point(coords::Vec{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
@@ -120,7 +108,7 @@ coordinates(A::Point) = A.coords
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point, B::Point) = Vec(A.coords) - Vec(B.coords)
+-(A::Point, B::Point) = A.coords - B.coords
 
 """
     +(A::Point, v::Vec)
@@ -129,7 +117,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point, v::Vec) = Point(Vec(A.coords) + v)
++(A::Point, v::Vec) = Point(A.coords + v)
 +(v::Vec, A::Point) = A + v
 
 """
@@ -139,7 +127,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point, v::Vec) = Point(Vec(A.coords) - v)
+-(A::Point, v::Vec) = Point(A.coords - v)
 -(v::Vec, A::Point) = A - v
 
 """
@@ -148,7 +136,7 @@ at a reference (or start) point `A`.
 Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
-Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(Vec(A.coords), Vec(B.coords); kwargs...)
+Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
 
 """
     ⪯(A::Point, B::Point)
@@ -198,15 +186,8 @@ Generates a random point of type `P`
 """
 Random.rand(rng::Random.AbstractRNG,
             ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
-  Point(ntuple(i -> rand(rng, T), Val(Dim)))
+  Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)
   print(io, "Point$(Tuple(point.coords))")
-end
-
-# utils
-function checkdim(::Type{Point{Dim,T}}, coords) where {Dim,T}
-  if Dim ≠ length(coords)
-    throw(DimensionMismatch("Invalid dimension."))
-  end
 end

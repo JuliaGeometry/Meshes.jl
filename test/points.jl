@@ -15,9 +15,9 @@
   @test coordtype(Point{2,T}((1, 1))) == T
   @test coordtype(Point{2,T}(1, 1)) == T
 
-  @test coordinates(P1(1)) == T.((1.0,))
-  @test coordinates(P2(1, 2)) == T.((1.0, 2.0))
-  @test coordinates(P3(1, 2, 3)) == T.((1.0, 2.0, 3.0))
+  @test coordinates(P1(1)) == T[1.0]
+  @test coordinates(P2(1, 2)) == T[1.0, 2.0]
+  @test coordinates(P3(1, 2, 3)) == T[1.0, 2.0, 3.0]
 
   @test P1(1) - P1(1) == T[0]
   @test P2(1, 2) - P2(1, 1) == T[0, 1]
