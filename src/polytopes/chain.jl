@@ -333,7 +333,8 @@ Build bridges of given `width` between `chains` of a polygon.
 - Please read the docstring of the corresponding method for
   [`Polygon`](@ref) for additional details and references.
 """
-function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
+bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T} = bridge(chains, convert(T, width))
+function bridge(chains::AbstractVector{<:Chain{2,T}}, width::T) where {T}
   # retrieve chains as vectors of coordinates
   pchains = [coordinates.(vertices(open(c))) for c in chains]
 
