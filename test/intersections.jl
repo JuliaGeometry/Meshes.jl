@@ -150,6 +150,38 @@
     @inferred someornone(s1, s2)
   end
 
+  @testset "Rays" begin
+    # rays in 2D
+    r₁ = Ray(P2(1,0), V2(2,1))
+    r₂ = Ray(P2(0,2), V2(2,-3))
+    r₃ = Ray(P2(0.5,1), V2(1,-2))
+    r₄ = Ray(P2(0,2), V2(1,-3))
+    r₅ = Ray(P2(4,1.5), V2(4,2))
+    r₆ = Ray(P2(2,0.5), V2(-0.5, -0.25))
+    r₇ = Ray(P2(4,0), V2(0,1))
+    @test intersection(r₁, r₂) |> type == CrossingRays #CASE 1
+    @test r₁ ∩ r₂ ≈ P2(1.25,0.125)
+    @test r₁ ∩ r₇ ≈ P2(4, 1.5)
+    @test intersection(r₁, r₃) |> type == MidTouchingRays #CASE 2
+    @test r₁ ∩ r₃ ≈ origin(r₁) #origin of first ray
+    @test r₅ ∩ r₇ ≈ origin(r₅)
+    @test intersection(r₃, r₁) |> type == MidTouchingRays
+    @test r₃ ∩ r₁ ≈ origin(r₁) #origin of second ray
+    @test r₇ ∩ r₅ ≈ origin(r₅)
+    @test intersection(r₂, r₄) |> type == CornerTouchingRays #CASE 3
+    @test r₂ ∩ r₄ ≈ origin(r₂) ≈ origin(r₄)
+    @test intersection(r₅, r₁) |> type == OverlappingAgreeingRays #CASE 4
+    @test r₅ ∩ r₁ == r₅ #first ray
+    @test intersection(r₁, r₅) |> type == OverlappingAgreeingRays #CASE 4
+    @test r₁ ∩ r₅ == r₅ #second ray
+    @test intersection(r₁, r₆) |> type == OverlappingOpposingRays #CASE 5
+    @test r₁ ∩ r₆ == Segment(origin(r₁), origin(r₆))
+    @test intersection(r₁, r₄) |> type == NoIntersection #CASE 6
+    @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
+
+    # rays in 3D
+  end
+
   @testset "Triangles" begin
     # utility to reverse segments, to more fully
     # test branches in the intersection algorithm
@@ -524,7 +556,7 @@
     l1 = Line(P3(0,0,0), P3(1,0,0))
     l2 = Line(P3(1,1,1), P3(1,2,1))
     @test l1 ∩ l2 == l2 ∩ l1 === nothing
-        
+
     # in same plane but parallel
     l1 = Line(P3(0,0,0), P3(1,0,0))
     l2 = Line(P3(0,1,1), P3(1,1,1))
