@@ -100,6 +100,8 @@ Tables.rowaccess(::Type{<:Data}) = true
 
 Tables.rows(data::Data) = DataRows(domain(data), Tables.rows(values(data)))
 
+Tables.schema(data::Data) = Tables.schema(Tables.rows(data))
+
 # wrapper type for rows of the data table
 # so that we can easily inform the schema
 struct DataRows{𝒟,𝒯}
@@ -206,7 +208,7 @@ function Base.show(io::IO, ::MIME"text/plain", data::Data)
   for rank in 0:paramdim(𝒟)
     𝒯 = values(data, rank)
     if !isnothing(𝒯)
-      sche = Tables.schema(Tables.rows(𝒯))
+      sche = Tables.schema(𝒯)
       vars = zip(sche.names, sche.types)
       println(io, "  variables (rank $rank)")
       varlines = ["    └─$var ($V)" for (var,V) in vars]
