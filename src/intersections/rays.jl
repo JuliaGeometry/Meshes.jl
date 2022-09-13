@@ -38,17 +38,19 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
       end
     end
   # in same plane, not parallel
-  else 
+  else
+    λ₁ = isapprox(λ₁, zero(T), atol=atol(T)) ? zero(T) : λ₁
+    λ₂ = isapprox(λ₂, zero(T), atol=atol(T)) ? zero(T) : λ₂
     if λ₁ < 0 || λ₂ < 0
       return @IT NoIntersection nothing f # CASE 6
-    elseif isapprox(λ₁, zero(T), atol=atol(T))
-      if isapprox(λ₂, zero(T), atol=atol(T))
+    elseif λ₁ == 0
+      if λ₂ == 0
         return @IT CornerTouchingRays a f # CASE 3
       else
         return @IT MidTouchingRays a f # CASE 2: origin of r1
       end
     else
-      if isapprox(λ₂, zero(T), atol=atol(T))
+      if λ₂ == 0
         return @IT MidTouchingRays c f # CASE 2: origin of r2
       else
         return @IT CrossingRays (a+λ₁*r1.v) f # CASE 1: equal to c + λ₂ * r2.v
