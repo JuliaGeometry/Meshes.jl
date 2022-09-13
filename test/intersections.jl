@@ -178,8 +178,6 @@
     @test r₁ ∩ r₆ == Segment(origin(r₁), origin(r₆))
     @test intersection(r₁, r₄) |> type == NoIntersection #CASE 6
     @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
-
-    # rays in 3D
   end
 
   @testset "Triangles" begin
