@@ -11,9 +11,9 @@ using CircularArrays
 using LinearAlgebra
 using Random
 
+using Bessels: gamma
 using IterTools: ivec
 using StatsBase: Weights
-using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: EulerAngles, DCM
 using NearestNeighbors: KDTree, BallTree, knn, inrange
