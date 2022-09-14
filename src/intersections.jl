@@ -53,6 +53,13 @@ Type `IntersectionType` in a Julia session to see the full list.
   CornerTouchingSegments
   OverlappingSegments
 
+  # ray-ray intersection
+  CrossingRays
+  MidTouchingRays
+  CornerTouchingRays
+  OverlappingAgreeingRays
+  OverlappingOpposingRays
+  
   # box-box intersection
   OverlappingBoxes
   FaceTouchingBoxes
@@ -61,13 +68,6 @@ Type `IntersectionType` in a Julia session to see the full list.
   # line-line intersection
   CrossingLines
   OverlappingLines
-
-  # ray-ray intersection
-  CrossingRays
-  MidTouchingRays
-  CornerTouchingRays
-  OverlappingAgreeingRays
-  OverlappingOpposingRays
 
   # ray-box intersection
   CrossingRayBox
