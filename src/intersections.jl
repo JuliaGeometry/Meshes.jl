@@ -47,20 +47,27 @@ Type `IntersectionType` in a Julia session to see the full list.
   # no intersection
   NoIntersection
 
-  # segment-segment intersection
-  CrossingSegments
-  MidTouchingSegments
-  CornerTouchingSegments
-  OverlappingSegments
+  # line-line intersection
+  CrossingLines
+  OverlappingLines
 
   # box-box intersection
   OverlappingBoxes
   FaceTouchingBoxes
   CornerTouchingBoxes
 
-  # line-line intersection
-  CrossingLines
-  OverlappingLines
+  # segment-segment intersection
+  CrossingSegments
+  MidTouchingSegments
+  CornerTouchingSegments
+  OverlappingSegments
+
+  # ray-ray intersection
+  CrossingRays
+  MidTouchingRays
+  CornerTouchingRays
+  OverlappingAgreeingRays
+  OverlappingOpposingRays
 
   # ray-box intersection
   CrossingRayBox
@@ -118,8 +125,9 @@ end
 # ----------------
 
 include("intersections/lines.jl")
-include("intersections/segments.jl")
 include("intersections/boxes.jl")
+include("intersections/segments.jl")
+include("intersections/rays.jl")
 include("intersections/raybox.jl")
 include("intersections/segmentplane.jl")
 include("intersections/segmenttriangle.jl")

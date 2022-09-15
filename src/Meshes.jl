@@ -11,9 +11,9 @@ using CircularArrays
 using LinearAlgebra
 using Random
 
+using Bessels: gamma
 using IterTools: ivec
 using StatsBase: Weights
-using SpecialFunctions: gamma
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: EulerAngles, DCM
 using NearestNeighbors: KDTree, BallTree, knn, inrange
@@ -293,15 +293,20 @@ export
 
   # intersection types
   IntersectionType,
+  CrossingLines,
+  OverlappingLines,
+  OverlappingBoxes,
+  FaceTouchingBoxes,
+  CornerTouchingBoxes,
   CrossingSegments,
   MidTouchingSegments,
   CornerTouchingSegments,
   OverlappingSegments,
-  OverlappingBoxes,
-  FaceTouchingBoxes,
-  CornerTouchingBoxes,
-  CrossingLines,
-  OverlappingLines,
+  CrossingRays,
+  MidTouchingRays,
+  CornerTouchingRays,
+  OverlappingAgreeingRays,
+  OverlappingOpposingRays,
   CrossingRayBox,
   TouchingRayBox,
   IntersectingSegmentTriangle,
