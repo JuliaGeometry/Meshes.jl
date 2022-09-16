@@ -17,8 +17,19 @@ struct WeightedSampling{W} <: DiscreteSamplingMethod
   ordered::Bool
 end
 
-WeightedSampling(size, weights=nothing; replace=false, ordered=false) =
+WeightedSampling(size; replace=false, ordered=false) =
+  WeightedSampling(size, nothing, replace, ordered)
+
+WeightedSampling(size, weights::AbstractWeights;
+                 replace=false, ordered=false) =
   WeightedSampling(size, weights, replace, ordered)
+
+WeightedSampling(size, weights::Nothing;
+                 replace=false, ordered=false) =
+  WeightedSampling(size, weights, replace, ordered)
+
+WeightedSampling(size, weights; replace=false, ordered=false) =
+  WeightedSampling(size, Weights(collect(weights)), replace, ordered)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
   n = nelements(Ω)
@@ -34,12 +45,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
   inds = if isnothing(w)
     sample(rng, 1:n, s, replace=r, ordered=o)
   else
-    wv = Weights(collect(w))
-    nw = length(wv)
-    if nw != n
-      throw(ArgumentError("invalid number of weights for object"))
-    end
-    sample(rng, 1:n, wv, s, replace=r, ordered=o)
+    sample(rng, 1:n, w, s, replace=r, ordered=o)
   end
 
   view(Ω, inds)

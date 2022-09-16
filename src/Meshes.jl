@@ -13,7 +13,7 @@ using Random
 
 using Bessels: gamma
 using IterTools: ivec
-using StatsBase: Weights
+using StatsBase: AbstractWeights, Weights
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: EulerAngles, DCM
 using NearestNeighbors: KDTree, BallTree, knn, inrange

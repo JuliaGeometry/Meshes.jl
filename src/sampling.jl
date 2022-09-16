@@ -78,6 +78,8 @@ the `object`.
 """
 function sample(object::DomainOrData, size::Int, weights=nothing;
                 replace=false, ordered=false)
-  method = WeightedSampling(size, weights, replace, ordered)
+  method = WeightedSampling(size, weights;
+                            replace=replace,
+                            ordered=ordered)
   sample(Random.GLOBAL_RNG, object, method)
 end
