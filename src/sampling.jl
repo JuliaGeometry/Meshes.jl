@@ -69,14 +69,15 @@ include("sampling/mindistance.jl")
 # ----------
 
 """
-    sample([rng], object, n, [weights]; replace=false, ordered=false)
+    sample([rng], object, size, [weights]; replace=false, ordered=false)
 
-Generate `n` samples from `object` uniformly or using `weights`,
+Generate `size` samples from `object` uniformly or using `weights`,
 with or without replacement depending on the `replace` option. The
 option `ordered` can be used to return samples in the same order of
 the `object`.
 """
-sample(object::DomainOrData, n::Int, weights=[];
-       replace=false, ordered=false) =
-  sample(Random.GLOBAL_RNG, object,
-         WeightedSampling(n, weights, replace, ordered))
+function sample(object::DomainOrData, size::Int, weights=nothing;
+                replace=false, ordered=false)
+  method = WeightedSampling(size, weights, replace, ordered)
+  sample(Random.GLOBAL_RNG, object, method)
+end

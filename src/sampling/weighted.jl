@@ -17,7 +17,7 @@ struct WeightedSampling{W} <: DiscreteSamplingMethod
   ordered::Bool
 end
 
-WeightedSampling(size, weights=[]; replace=false, ordered=false) =
+WeightedSampling(size, weights=nothing; replace=false, ordered=false) =
   WeightedSampling(size, weights, replace, ordered)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
@@ -31,7 +31,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
     throw(ArgumentError("invalid sample size for sampling without replacement"))
   end
 
-  inds = if isempty(w)
+  inds = if isnothing(w)
     sample(rng, 1:n, s, replace=r, ordered=o)
   else
     wv = Weights(collect(w))
