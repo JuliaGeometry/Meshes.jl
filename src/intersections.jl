@@ -69,6 +69,12 @@ Type `IntersectionType` in a Julia session to see the full list.
   OverlappingAgreeingRays
   OverlappingOpposingRays
 
+  # ray-segment intersection
+  CrossingRaySegment
+  MidTouchingRaySegment
+  CornerTouchingRaySegment
+  OverlappingRaySegment
+
   # ray-box intersection
   CrossingRayBox
   TouchingRayBox
@@ -128,6 +134,7 @@ include("intersections/lines.jl")
 include("intersections/boxes.jl")
 include("intersections/segments.jl")
 include("intersections/rays.jl")
+include("intersections/raysegment.jl")
 include("intersections/raybox.jl")
 include("intersections/segmentplane.jl")
 include("intersections/segmenttriangle.jl")
