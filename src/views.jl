@@ -40,10 +40,6 @@ end
 # DATA VIEWS
 # -----------
 
-# helper function for table view
-viewtable(table, rows) =
-  view(Tables.rows(table) |> collect, rows) |> Tables.columns
-
 """
     DataView(data, inds)
 
@@ -70,7 +66,7 @@ function values(v::DataView, rank=nothing)
   R = paramdim(domain(data))
   r = isnothing(rank) ? R : rank
   𝒯 = values(data, r)
-  r == R ? viewtable(𝒯, inds) : nothing
+  r == R ? Tables.subset(𝒯, inds) : nothing
 end
 
 function constructor(::Type{DataView{D,I}}) where {D<:Data,I}
