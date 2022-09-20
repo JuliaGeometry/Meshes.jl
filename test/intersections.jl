@@ -233,12 +233,12 @@
     @test r₂ ∩ s₁₅ === s₁₅ ∩ r₂ === nothing
 
     # type stability tests
-    r₁ = Ray(P2(0,0), Vec(1,0))
+    r₁ = Ray(P2(0,0), V2(1,0))
     s₁ = Segment(P2(-1,-1), P2(-1,1))
     @inferred someornone(r₁, s₁)
 
     # 3D test
-    r₁ = Ray(P3(1,2,3), Vec(1,2,3))
+    r₁ = Ray(P3(1,2,3), V3(1,2,3))
     s₁ = Segment(P3(1, 3, 5), P3(3,5,7))
     @test intersection(r₁, s₁) |> type === CrossingRaySegment # CASE 1
     @test r₁ ∩ s₁ ≈ s₁ ∩ r₁ ≈ P3(2,4,6)
