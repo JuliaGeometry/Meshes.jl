@@ -76,7 +76,9 @@ function ==(data₁::Data, data₂::Data)
 
   # must have the same data tables
   for rank in 0:paramdim(domain(data₁))
-    if values(data₁, rank) != values(data₂, rank)
+    vals₁ = values(data₁, rank)
+    vals₂ = values(data₂, rank)
+    if !isequal(vals₁, vals₂)
       return false
     end
   end
