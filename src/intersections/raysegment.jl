@@ -22,26 +22,26 @@ function intersection(f, r1::Ray{N,T}, s1::Segment{N,T}) where {N,T}
     return @IT NoIntersection nothing f # CASE 5
   # collinear
   elseif r == rₐ == 1
-    r_c = sum((c - a) ./ r1.v)/N
-    r_d = sum((d - a) ./ r1.v)/N
-    r_c = isapprox(r_c, zero(T), atol=atol(T)) ? zero(T) : r_c
-    r_d = isapprox(r_d, zero(T), atol=atol(T)) ? zero(T) : r_d
-    if r_c > 0 # c ∈ r1
-      if r_d ≥ 0
+    rc  = sum((c - a) ./ direction(r1))/N
+    rd = sum((d - a) ./ direction(r1))/N
+    rc = isapprox(rc, zero(T), atol=atol(T)) ? zero(T) : rc
+    rd = isapprox(rd, zero(T), atol=atol(T)) ? zero(T) : rd
+    if rc > 0 # c ∈ r1
+      if rd ≥ 0
         return @IT OverlappingRaySegment s1 f # CASE 4
       else
-        return @IT OverlappingRaySegment Segment(r1.p, c) f # CASE 4
+        return @IT OverlappingRaySegment Segment(origin(r1), c) f # CASE 4
       end
-    elseif r_c == 0
-      if r_d > 0
+    elseif rc == 0
+      if rd > 0
         return @IT OverlappingRaySegment s1 f # CASE 4
       else
         return @IT CornerTouchingRaySegment a f # CASE 3
       end
-    else # r_c < 0
-      if r_d > 0
-        return @IT OverlappingRaySegment (Segment(r1.p, d)) f # CASE 4
-      elseif r_d == 0
+    else # rc < 0
+      if rd > 0
+        return @IT OverlappingRaySegment (Segment(origin(r1), d)) f # CASE 4
+      elseif rd == 0
         return @IT CornerTouchingRaySegment a f # CASE 3
       else
         return @IT NoIntersection nothing f
@@ -51,7 +51,7 @@ function intersection(f, r1::Ray{N,T}, s1::Segment{N,T}) where {N,T}
   else
     λ₁ = isapprox(λ₁, zero(T), atol=atol(T)) ? zero(T) : λ₁
     λ₂ = isapprox(λ₂, zero(T), atol=atol(T)) ? zero(T) : λ₂
-    λ₂ = isapprox(λ₂, one(T), atol = atol(T)) ? one(T) : λ₂
+    λ₂ = isapprox(λ₂, one(T), atol=atol(T)) ? one(T) : λ₂
     if λ₁ < 0 || (λ₂ < 0 || λ₂ > 1)
       return @IT NoIntersection nothing f
     elseif λ₁ == 0
@@ -72,4 +72,4 @@ end
 
 # for 2D and 3D use lines.jl implementation
 # NOTE: no check whether resulting point is in ray and segment
-intersectpoint(r1::Ray, s1::Segment) = intersectpoint(Line(r1.p, r1.p + r1.v), Line(s1(0), s1(1)))
+intersectpoint(r1::Ray, s1::Segment) = intersectpoint(Line(origin(r1), origin(r1) + direction(r1)), Line(s1(0), s1(1)))

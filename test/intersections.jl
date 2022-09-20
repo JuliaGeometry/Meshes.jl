@@ -215,6 +215,7 @@
     s₁₃ = Segment(P2(3,2), P2(3.1, 2.1)) # Overlapping s(0) = r(0)
     s₁₄ = Segment(P2(3.2,2.2), P2(3,2)) # Overlapping s(1) = r(0)
     s₁₅ = Segment(P2(2,1), P2(1.6,0.6)) # No Intersection, colinear
+    s₁₆ = Segment(P2(3,1), P2(4,2)) # No Intersection, parallel
     @test intersection(r₂, s₈) |> type == OverlappingRaySegment # CASE 4
     @test r₂ ∩ s₈ === s₈ ∩ r₂ === s₈
     @test intersection(r₂, s₉) |> type == OverlappingRaySegment # CASE 4
@@ -229,8 +230,10 @@
     @test r₂ ∩ s₁₃ === s₁₃ ∩ r₂ === s₁₃
     @test intersection(r₂, s₁₄) |> type == OverlappingRaySegment # CASE 4
     @test r₂ ∩ s₁₄ === s₁₄ ∩ r₂ === s₁₄
-    @test intersection(r₂, s₁₅) |> type == NoIntersection # CASE 3
+    @test intersection(r₂, s₁₅) |> type == NoIntersection # CASE 5
     @test r₂ ∩ s₁₅ === s₁₅ ∩ r₂ === nothing
+    @test intersection(r₂, s₁₆) |> type == NoIntersection # CASE 5
+	  @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
 
     # type stability tests
     r₁ = Ray(P2(0,0), V2(1,0))
