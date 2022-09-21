@@ -184,10 +184,10 @@
     # rays and segments in 2D
     r₁ = Ray(P2(1,0), V2(2,1))
     s₁ = Segment(P2(0,2), P2(2,-1)) # Crossing
-	  s₂ = Segment(P2(0,2), P2(1, 0.5)) # No Intersection
-	  s₃ = Segment(P2(0,2), P2(0.5, -0.5)) # No Intersection
+    s₂ = Segment(P2(0,2), P2(1, 0.5)) # No Intersection
+    s₃ = Segment(P2(0,2), P2(0.5, -0.5)) # No Intersection
     s₄ = Segment(P2(0.5,1), P2(1.5,-1)) # MidTouchingRaySegment
-	  s₅ = Segment(P2(1.5,0.25), P2(1.5, 2)) # MidTouchingRaySegment
+    s₅ = Segment(P2(1.5,0.25), P2(1.5, 2)) # MidTouchingRaySegment
     s₆ = Segment(P2(1,0), P2(1, -1)) # CornerTouchingRaySegment
     s₇ = Segment(P2(0.5,-1), P2(1,0)) # CournerTouchingRaySegment
 
