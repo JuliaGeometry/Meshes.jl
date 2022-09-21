@@ -180,6 +180,95 @@
     @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
   end
 
+  @testset "RaySegment" begin
+    # rays and segments in 2D
+    r₁ = Ray(P2(1,0), V2(2,1))
+    s₁ = Segment(P2(0,2), P2(2,-1)) # Crossing
+    s₂ = Segment(P2(0,2), P2(1, 0.5)) # No Intersection
+    s₃ = Segment(P2(0,2), P2(0.5, -0.5)) # No Intersection
+    s₄ = Segment(P2(0.5,1), P2(1.5,-1)) # MidTouchingRaySegment
+    s₅ = Segment(P2(1.5,0.25), P2(1.5, 2)) # MidTouchingRaySegment
+    s₆ = Segment(P2(1,0), P2(1, -1)) # CornerTouchingRaySegment
+    s₇ = Segment(P2(0.5,-1), P2(1,0)) # CournerTouchingRaySegment
+
+    @test intersection(r₁, s₁) |> type == CrossingRaySegment #CASE 1
+    @test r₁ ∩ s₁ ≈ s₁ ∩ r₁ ≈ P2(1.25,0.125)
+    @test intersection(r₁, s₂) |> type == NoIntersection # CASE 5
+    @test r₁ ∩ s₂ === s₂ ∩ r₁ === nothing
+    @test intersection(r₁, s₃) |> type == NoIntersection # CASE 5
+    @test r₁ ∩ s₃ === s₃ ∩ r₁ === nothing
+    @test intersection(r₁, s₄) |> type == MidTouchingRaySegment # CASE 2
+    @test r₁ ∩ s₄ ≈ s₄ ∩ r₁ ≈ origin(r₁)
+    @test intersection(r₁, s₅) |> type == MidTouchingRaySegment # CASE 2
+    @test r₁ ∩ s₅ ≈ s₅ ∩ r₁ ≈ P2(1.5,0.25)
+    @test intersection(r₁, s₆) |> type == CornerTouchingRaySegment # CASE 3
+    @test r₁ ∩ s₆ ≈ s₆ ∩ r₁ ≈ origin(r₁)
+    @test intersection(r₁, s₇) |> type == CornerTouchingRaySegment # CASE 3
+    @test r₁ ∩ s₇ ≈ s₇ ∩ r₁ ≈ origin(r₁)
+
+    r₂ = Ray(P2(3,2), V2(1,1))
+    s₈ = Segment(P2(4,3), P2(5,4)) # Overlapping
+    s₉ = Segment(P2(2.5, 1.5), P2(3.3,2.3)) # Overlapping s(1)
+    s₁₀ = Segment(P2(3.6, 2.6), P2(2.6, 1.6)) # Overlapping s(0)
+    s₁₁ = Segment(P2(2.2,1.2), P2(3,2)) # CornerTouching, colinear, s(1)
+    s₁₂ = Segment(P2(3,2), P2(2.4, 1.4)) # CornerTouching, colinear, s(0)
+    s₁₃ = Segment(P2(3,2), P2(3.1, 2.1)) # Overlapping s(0) = r(0)
+    s₁₄ = Segment(P2(3.2,2.2), P2(3,2)) # Overlapping s(1) = r(0)
+    s₁₅ = Segment(P2(2,1), P2(1.6,0.6)) # No Intersection, colinear
+    s₁₆ = Segment(P2(3,1), P2(4,2)) # No Intersection, parallel
+    @test intersection(r₂, s₈) |> type == OverlappingRaySegment # CASE 4
+    @test r₂ ∩ s₈ === s₈ ∩ r₂ === s₈
+    @test intersection(r₂, s₉) |> type == OverlappingRaySegment # CASE 4
+    @test r₂ ∩ s₉ === s₉ ∩ r₂ === Segment(origin(r₂), s₉(1))
+    @test intersection(r₂, s₁₀) |> type == OverlappingRaySegment # CASE 4
+    @test r₂ ∩ s₁₀ === s₁₀ ∩ r₂ === Segment(origin(r₂), s₁₀(0))
+    @test intersection(r₂, s₁₁) |> type == CornerTouchingRaySegment # CASE 3
+    @test r₂ ∩ s₁₁ ≈ s₁₁ ∩ r₂ ≈ origin(r₂)
+    @test intersection(r₂, s₁₂) |> type == CornerTouchingRaySegment # CASE 3
+    @test r₂ ∩ s₁₂ ≈ s₁₂ ∩ r₂ ≈ origin(r₂)
+    @test intersection(r₂, s₁₃) |> type == OverlappingRaySegment # CASE 4
+    @test r₂ ∩ s₁₃ === s₁₃ ∩ r₂ === s₁₃
+    @test intersection(r₂, s₁₄) |> type == OverlappingRaySegment # CASE 4
+    @test r₂ ∩ s₁₄ === s₁₄ ∩ r₂ === s₁₄
+    @test intersection(r₂, s₁₅) |> type == NoIntersection # CASE 5
+    @test r₂ ∩ s₁₅ === s₁₅ ∩ r₂ === nothing
+    @test intersection(r₂, s₁₆) |> type == NoIntersection # CASE 5
+    @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
+
+    # intersectpoint
+    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P2(1.25,0.125)
+
+    # type stability tests
+    r₁ = Ray(P2(0,0), V2(1,0))
+    s₁ = Segment(P2(-1,-1), P2(-1,1))
+    @inferred someornone(r₁, s₁)
+
+    # 3D test
+    r₁ = Ray(P3(1,2,3), V3(1,2,3))
+    s₁ = Segment(P3(1, 3, 5), P3(3,5,7))
+    @test intersection(r₁, s₁) |> type === CrossingRaySegment # CASE 1
+    @test r₁ ∩ s₁ ≈ s₁ ∩ r₁ ≈ P3(2,4,6)
+
+    s₂ = Segment(P3(0, 1, 2), P3(2,3,4))
+    @test intersection(r₁, s₂) |> type === MidTouchingRaySegment # CASE 2
+    @test r₁ ∩ s₂ == s₂ ∩ r₁ == origin(r₁)
+
+    s₃ = Segment(P3(0.23, 1, 2.3), P3(1,2,3))
+    @test intersection(r₁, s₃) |> type === CornerTouchingRaySegment # CASE 3
+    @test r₁ ∩ s₃ == s₃ ∩ r₁ == origin(r₁)
+
+    s₄ = Segment(P3(0,0,0), P3(2,4,6))
+    @test intersection(r₁, s₄) |> type === OverlappingRaySegment # CASE 4
+    @test r₁ ∩ s₄ === s₄ ∩ r₁ === Segment(P3(1,2,3), P3(2,4,6))
+
+    s₅ = Segment(P3(0,0,0), P3(0.5, 1, 1.5))
+    @test intersection(r₁, s₅) |> type === NoIntersection # CASE 5
+    @test r₁ ∩ s₅ === s₅ ∩ r₁ === nothing
+
+    # intersectpoint
+    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P3(2,4,6)
+  end
+
   @testset "Triangles" begin
     # utility to reverse segments, to more fully
     # test branches in the intersection algorithm
