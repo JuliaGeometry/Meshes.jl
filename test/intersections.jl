@@ -235,6 +235,9 @@
     @test intersection(r₂, s₁₆) |> type == NoIntersection # CASE 5
     @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
 
+    # intersectpoint
+    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P2(1.25,0.125)
+
     # type stability tests
     r₁ = Ray(P2(0,0), V2(1,0))
     s₁ = Segment(P2(-1,-1), P2(-1,1))
@@ -261,6 +264,9 @@
     s₅ = Segment(P3(0,0,0), P3(0.5, 1, 1.5))
     @test intersection(r₁, s₅) |> type === NoIntersection # CASE 5
     @test r₁ ∩ s₅ === s₅ ∩ r₁ === nothing
+
+    # intersectpoint
+    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P3(2,4,6)
   end
 
   @testset "Triangles" begin
