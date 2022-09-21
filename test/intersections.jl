@@ -233,7 +233,7 @@
     @test intersection(r₂, s₁₅) |> type == NoIntersection # CASE 5
     @test r₂ ∩ s₁₅ === s₁₅ ∩ r₂ === nothing
     @test intersection(r₂, s₁₆) |> type == NoIntersection # CASE 5
-	  @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
+    @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
 
     # type stability tests
     r₁ = Ray(P2(0,0), V2(1,0))
