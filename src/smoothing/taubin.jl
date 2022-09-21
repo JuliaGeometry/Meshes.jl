@@ -29,11 +29,14 @@ function smooth(mesh, method::TaubinSmoothing)
   λ = method.λ
   μ = method.μ
 
+  # collect coordinates of vertices
+  coords = coordinates.(vertices(mesh))
+
   # Laplacian matrix with uniform weights
   L = laplacematrix(mesh, weights=:uniform)
 
-  # matrix with vertex coordinates (nvertices x ndims)
-  V = reduce(hcat, coordinates.(vertices(mesh))) |> transpose
+  # matrix with coordinates (nvertices x ndims)
+  V = reduce(hcat, coords) |> transpose
 
   # Taubin updates
   for _ in 1:n
