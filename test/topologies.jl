@@ -19,8 +19,9 @@
     @test connec4elem(t, 2) == (2,4,6)
     @test connec4elem(t, 3) == (4,3,5,6)
     @test connec4elem(t, 4) == (1,5,3)
-    @test nvertices(t) == 6
     @test nelements(t) == 4
+    @test nfacets(t)   == 0
+    @test nvertices(t) == 6
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 0
     @test nfaces(t, 0) == 6
@@ -32,11 +33,22 @@
     @test connec4elem(t, 2) == (2,4,7,6)
     @test connec4elem(t, 3) == (4,3,7)
     @test connec4elem(t, 4) == (3,1,5,7)
-    @test nvertices(t) == 7
     @test nelements(t) == 4
+    @test nfacets(t)   == 0
+    @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 0
     @test nfaces(t, 0) == 7
+
+    # convert from other topologies
+    g = GridTopology(2, 2)
+    t = convert(FullTopology, g)
+    @test nelements(t) == 4
+    @test nfacets(t)   == 12
+    @test nvertices(t) == 9
+    @test nfaces(t, 2) == 4
+    @test nfaces(t, 1) == 12
+    @test nfaces(t, 0) == 9
   end
 
   @testset "GridTopology" begin

@@ -67,6 +67,8 @@ nfacets(t::FullTopology) = count(==(maximum(t.ranks) - 1), t.ranks)
 # ------------
 
 function Base.convert(::Type{FullTopology}, t::Topology)
-  # TODO: add all faces, not just the elements
-  FullTopology(collect(elements(t)))
+  ranksₜ    = 1:paramdim(t)
+  facesₜ(r) = collect(faces(t, r))
+  connec    = mapreduce(facesₜ, vcat, reverse(ranksₜ))
+  FullTopology(connec)
 end
