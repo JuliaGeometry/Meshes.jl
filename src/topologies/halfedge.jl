@@ -124,9 +124,6 @@ end
 function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge topology"
 
-  # number of vertices is the maximum index in connectivities
-  nvertices = maximum(i for e in elems for i in indices(e))
-
   # initialization step
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
   for (e, elem) in Iterators.enumerate(elems)
