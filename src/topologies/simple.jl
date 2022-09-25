@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    FullTopology(connectivities)
+    SimpleTopology(connectivities)
 
 A data structure that stores *all* `connectivities` of a mesh.
 
@@ -14,7 +14,7 @@ It does *not* support topological relations and is therefore incompatible
 with algorithms that rely on neighborhood search. It is still useful for
 mesh visualization and IO operations.
 """
-struct FullTopology{C<:Connectivity} <: Topology
+struct SimpleTopology{C<:Connectivity} <: Topology
   # input fields
   connec::Vector{C}
 
@@ -22,18 +22,18 @@ struct FullTopology{C<:Connectivity} <: Topology
   ranks::Vector{Int}
   elems::Vector{Int}
 
-  function FullTopology{C}(connec) where {C}
+  function SimpleTopology{C}(connec) where {C}
     ranks = [paramdim(c) for c in connec]
     elems = findall(isequal(maximum(ranks)), ranks)
     new(connec, ranks, elems)
   end
 end
 
-FullTopology(connec) = FullTopology{eltype(connec)}(connec)
+SimpleTopology(connec) = SimpleTopology{eltype(connec)}(connec)
 
-paramdim(t::FullTopology) = paramdim(t.connec[first(t.elems)])
+paramdim(t::SimpleTopology) = paramdim(t.connec[first(t.elems)])
 
-==(t1::FullTopology, t2::FullTopology) = t1.connec == t2.connec
+==(t1::SimpleTopology, t2::SimpleTopology) = t1.connec == t2.connec
 
 """
     connec4elem(t, e)
@@ -41,34 +41,34 @@ paramdim(t::FullTopology) = paramdim(t.connec[first(t.elems)])
 Return linear indices of vertices of `e`-th element of
 the full topology `t`.
 """
-connec4elem(t::FullTopology, e) = indices(t.connec[t.elems[e]])
+connec4elem(t::SimpleTopology, e) = indices(t.connec[t.elems[e]])
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-nvertices(t::FullTopology) = maximum(i for c in t.connec for i in indices(c))
+nvertices(t::SimpleTopology) = maximum(i for c in t.connec for i in indices(c))
 
-function faces(t::FullTopology, rank)
+function faces(t::SimpleTopology, rank)
   cs = t.connec
   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
 end
 
-element(t::FullTopology, ind) = t.connec[t.elems[ind]]
+element(t::SimpleTopology, ind) = t.connec[t.elems[ind]]
 
-nelements(t::FullTopology) = length(t.elems)
+nelements(t::SimpleTopology) = length(t.elems)
 
-facets(t::FullTopology) = faces(t, maximum(t.ranks) - 1)
+facets(t::SimpleTopology) = faces(t, maximum(t.ranks) - 1)
 
-nfacets(t::FullTopology) = count(==(maximum(t.ranks) - 1), t.ranks)
+nfacets(t::SimpleTopology) = count(==(maximum(t.ranks) - 1), t.ranks)
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{FullTopology}, t::Topology)
+function Base.convert(::Type{SimpleTopology}, t::Topology)
   ranksₜ    = 1:paramdim(t)
   facesₜ(r) = collect(faces(t, r))
   connec    = mapreduce(facesₜ, vcat, reverse(ranksₜ))
-  FullTopology(connec)
+  SimpleTopology(connec)
 end

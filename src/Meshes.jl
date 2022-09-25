@@ -218,10 +218,9 @@ export
   nvertices, nelements, nfacets,
   element, facet,
   faces, nfaces,
-  FullTopology,
   GridTopology,
   HalfEdgeTopology, HalfEdge,
-  connec4elem,
+  SimpleTopology,
   elem2cart, cart2elem,
   corner2cart, cart2corner,
   elem2corner, corner2elem,
@@ -229,6 +228,7 @@ export
   half4elem, half4vert,
   half4edge, half4pair,
   edge4pair,
+  connec4elem,
 
   # topological relations
   TopologicalRelation,
