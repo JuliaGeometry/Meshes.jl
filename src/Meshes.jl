@@ -94,7 +94,9 @@ include("hulls.jl")
 # transforms
 include("transforms.jl")
 
+# deprecations
 @deprecate FullTopology(x) SimpleTopology(x)
+@deprecate smooth(mesh, method) method(mesh)
 
 export
   # points
