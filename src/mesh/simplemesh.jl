@@ -7,15 +7,17 @@
 
 A simple mesh with `points` and `topology`.
 
-    SimpleMesh(points, connec)
+    SimpleMesh(points, connectivities; relations=false)
 
 Alternatively, construct a simple mesh with `points` and
-connectivities `connec` in a [`SimpleTopology`](@ref).
+`connectivities`. The option `relations` can be used to
+build topological relations assuming that the `connectivities`
+represent the elements of the mesh.
 
 ## Examples
 
 ```julia
-julia> points = Point2[(0,0),(1,0),(1,1)]
+julia> points = [(0,0),(1,0),(1,1)]
 julia> connec = [connect((1,2,3))]
 julia> mesh   = SimpleMesh(points, connec)
 ```
@@ -27,6 +29,10 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
 
 - Connectivities must be given with coherent orientation, i.e.
   all faces must be counter-clockwise (CCW) or clockwise (CW).
+
+- The option `relations=true` changes the underlying topology
+  of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
+  [`SimpleTopology`](@ref).
 """
 struct SimpleMesh{Dim,T,V<:AbstractVector{Point{Dim,T}},TP<:Topology} <: Mesh{Dim,T}
   points::V
@@ -36,8 +42,11 @@ end
 SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) =
   SimpleMesh(Point.(coords), topology)
 
-SimpleMesh(points, connec::AbstractVector{<:Connectivity}) =
-  SimpleMesh(points, SimpleTopology(connec))
+function SimpleMesh(points, connec::AbstractVector{<:Connectivity}; relations=false)
+  topology = relations ? HalfEdgeTopology(connec) :
+                         SimpleTopology(connec)
+  SimpleMesh(points, topology)
+end
 
 vertices(m::SimpleMesh) = m.points
 

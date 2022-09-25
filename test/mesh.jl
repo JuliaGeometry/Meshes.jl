@@ -191,6 +191,11 @@
     @test topology(mesh) isa SimpleTopology
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 4
+    mesh = SimpleMesh(coords, connec, relations=true)
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa HalfEdgeTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)
