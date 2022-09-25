@@ -1,7 +1,8 @@
-@testset "Smoothing" begin
+@testset "Transforms" begin
   @testset "TaubinSmoothing" begin
     mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
-    smesh = smooth(mesh, TaubinSmoothing(30))
+    trans = TaubinSmoothing(30)
+    smesh = trans(mesh)
     # smoothing doesn't change the topology
     @test nvertices(smesh) == nvertices(mesh)
     @test nelements(smesh) == nelements(mesh)

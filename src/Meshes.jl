@@ -30,6 +30,9 @@ import TableTraits
 import IteratorInterfaceExtensions
 const IIE = IteratorInterfaceExtensions
 
+# Transforms API
+import TransformsAPI as TAPI
+
 # IO utils
 include("ioutils.jl")
 
@@ -85,9 +88,11 @@ include("intersections.jl")
 include("discretization.jl")
 include("simplification.jl")
 include("refinement.jl")
-include("smoothing.jl")
 include("boundingboxes.jl")
 include("hulls.jl")
+
+# transforms
+include("transforms.jl")
 
 @deprecate FullTopology(x) SimpleTopology(x)
 
@@ -352,11 +357,6 @@ export
   CatmullClark,
   refine,
 
-  # smoothing
-  SmoothingMethod,
-  TaubinSmoothing,
-  smooth,
-
   # bounding boxes
   boundingbox,
 
@@ -364,6 +364,11 @@ export
   HullMethod,
   GrahamScan,
   hull,
+
+  # transforms
+  GeometricTransform,
+  StatelessGeometricTransform,
+  TaubinSmoothing,
 
   # tolerances
   atol

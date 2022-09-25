@@ -93,9 +93,9 @@ testfiles = [
   "discretization.jl",
   "simplification.jl",
   "refinement.jl",
-  "smoothing.jl",
   "boundingboxes.jl",
   "hulls.jl",
+  "transforms.jl",
   "utils.jl"
 ]
 
