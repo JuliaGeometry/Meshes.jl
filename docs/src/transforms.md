@@ -1,27 +1,31 @@
-# Smoothing
+# Transforms
 
-```@example smoothing
+```@example transforms
 using JSServe: Page # hide
 Page(exportable=true, offline=true) # hide
 ```
 
-```@example smoothing
+```@example transforms
 using Meshes, MeshViz # hide
 import WGLMakie as Mke # hide
 ```
 
+Geometric (e.g. coordinates) transforms are implemented according to the
+[TransformsAPI.jl](https://github.com/JuliaML/TransformsAPI.jl). Please
+read their documentation for more details.
+
 ```@docs
-smooth
-SmoothingMethod
+GeometricTransform
+StatelessGeometricTransform
 ```
 
-## Taubin
+## TaubinSmoothing
 
 ```@docs
 TaubinSmoothing
 ```
 
-```@example smoothing
+```@example transforms
 using PlyIO
 
 # helper function to read *.ply files
@@ -44,7 +48,8 @@ file = download(
 mesh = readply(file)
 
 # smooth mesh with 30 iterations
-smesh = smooth(mesh, TaubinSmoothing(30))
+trans = TaubinSmoothing(30)
+smesh = trans(mesh)
 
 fig = Mke.Figure(resolution = (800, 1200))
 viz(fig[1,1], mesh)
