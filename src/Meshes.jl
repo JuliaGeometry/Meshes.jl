@@ -89,11 +89,12 @@ include("smoothing.jl")
 include("boundingboxes.jl")
 include("hulls.jl")
 
-@deprecate triangulate(x) simplexify(x)
+@deprecate FullTopology(x) SimpleTopology(x)
 
 export
   # points
-  Point, Point1, Point2, Point3,
+  Point,
+  Point1, Point2, Point3,
   Point1f, Point2f, Point3f,
   embeddim, paramdim,
   coordtype, coordinates,
@@ -101,7 +102,9 @@ export
   ⪯, ≺, ⪰, ≻,
 
   # vectors
-  Vec, Vec1, Vec2, Vec3, Vec1f, Vec2f, Vec3f,
+  Vec,
+  Vec1, Vec2, Vec3,
+  Vec1f, Vec2f, Vec3f,
 
   # linear algebra
   ⋅, ×,
