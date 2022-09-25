@@ -227,16 +227,6 @@ edge4pair(t, uv) = t.edge4pair[uv]
 
 nvertices(t::HalfEdgeTopology) = length(t.half4vert)
 
-function faces(t::HalfEdgeTopology, rank)
-  if rank == 2
-    elements(t)
-  elseif rank == 1
-    facets(t)
-  else
-    throw(ArgumentError("invalid rank for half-edge topology"))
-  end
-end
-
 function element(t::HalfEdgeTopology, ind)
   v = loop(half4elem(t, ind))
   connect(Tuple(v))

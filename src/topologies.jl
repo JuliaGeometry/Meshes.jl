@@ -46,7 +46,18 @@ triangles    = faces(topology, 2)
 segments     = faces(topology, 1)
 ```
 """
-function faces(::Topology, rank) end
+function faces(t::Topology, rank)
+  D = paramdim(t)
+  if rank == D
+    elements(t)
+  elseif rank == D - 1
+    facets(t)
+  elseif rank == 0
+    vertices(t)
+  else
+    throw(ErrorException("not implemented"))
+  end
+end
 
 """
     nfaces(topology, rank)
@@ -54,16 +65,16 @@ function faces(::Topology, rank) end
 Return the number of `rank`-faces of the `topology`.
 """
 function nfaces(t::Topology, rank)
-    D = paramdim(t)
-    if rank == D
-        nelements(t)
-    elseif rank == D - 1
-        nfacets(t)
-    elseif rank == 0
-        nvertices(t)
-    else
-        throw(ErrorException("not implemented"))
-    end
+  D = paramdim(t)
+  if rank == D
+    nelements(t)
+  elseif rank == D - 1
+    nfacets(t)
+  elseif rank == 0
+    nvertices(t)
+  else
+    throw(ErrorException("not implemented"))
+  end
 end
 
 """

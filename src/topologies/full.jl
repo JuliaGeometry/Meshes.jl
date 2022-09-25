@@ -20,18 +20,18 @@ struct FullTopology{C<:Connectivity} <: Topology
 
   # state fields
   ranks::Vector{Int}
-  elms::Vector{Int}
+  elems::Vector{Int}
 
   function FullTopology{C}(connec) where {C}
     ranks = [paramdim(c) for c in connec]
-    elms  = findall(isequal(maximum(ranks)), ranks)
-    new(connec, ranks, elms)
+    elems = findall(isequal(maximum(ranks)), ranks)
+    new(connec, ranks, elems)
   end
 end
 
 FullTopology(connec) = FullTopology{eltype(connec)}(connec)
 
-paramdim(t::FullTopology) = paramdim(t.connec[first(t.elms)])
+paramdim(t::FullTopology) = paramdim(t.connec[first(t.elems)])
 
 ==(t1::FullTopology, t2::FullTopology) = t1.connec == t2.connec
 
@@ -41,7 +41,7 @@ paramdim(t::FullTopology) = paramdim(t.connec[first(t.elms)])
 Return linear indices of vertices of `e`-th element of
 the full topology `t`.
 """
-connec4elem(t::FullTopology, e) = indices(t.connec[t.elms[e]])
+connec4elem(t::FullTopology, e) = indices(t.connec[t.elems[e]])
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
@@ -54,9 +54,9 @@ function faces(t::FullTopology, rank)
   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
 end
 
-element(t::FullTopology, ind) = t.connec[t.elms[ind]]
+element(t::FullTopology, ind) = t.connec[t.elems[ind]]
 
-nelements(t::FullTopology) = length(t.elms)
+nelements(t::FullTopology) = length(t.elems)
 
 facets(t::FullTopology) = faces(t, maximum(t.ranks) - 1)
 
