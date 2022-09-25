@@ -16,8 +16,8 @@ connectivities `connec` in a [`SimpleTopology`](@ref).
 
 ```julia
 julia> points = Point2[(0,0),(1,0),(1,1)]
-julia> connec = connect.([(1,2,3)])
-julia> SimpleMesh(points, connec)
+julia> connec = [connect((1,2,3))]
+julia> mesh   = SimpleMesh(points, connec)
 ```
 
 See also [`Topology`](@ref), [`GridTopology`](@ref),
@@ -33,8 +33,10 @@ struct SimpleMesh{Dim,T,V<:AbstractVector{Point{Dim,T}},TP<:Topology} <: Mesh{Di
   topology::TP
 end
 
-SimpleMesh(points::AbstractVector{<:Point},
-           connec::AbstractVector{<:Connectivity}) =
+SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) =
+  SimpleMesh(Point.(coords), topology)
+
+SimpleMesh(points, connec::AbstractVector{<:Connectivity}) =
   SimpleMesh(points, SimpleTopology(connec))
 
 vertices(m::SimpleMesh) = m.points
