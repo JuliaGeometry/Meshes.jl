@@ -17,13 +17,13 @@ abstract type GeometricTransform <: TAPI.Transform end
 A stateless [`GeometricTransform`](@ref) as defined in
 [TransformsAPI.jl](https://github.com/JuliaML/TransformsAPI.jl).
 """
-abstract type StatelessGeometricTransform <: TAPI.StatelessTransform end
+abstract type StatelessGeometricTransform <: GeometricTransform end
 
 """
     newpoints, pcache = applypoint(transform, points, prep)
 
 Implementation of [`apply`](@ref) for points of object.
-This function is intended for developers of new transforms.
+This function is intended for developers of new transform types.
 """
 function applypoint end
 
@@ -31,16 +31,21 @@ function applypoint end
     points = revertpoint(transform, newpoints, pcache)
 
 Implementation of [`revert`](@ref) for points of object.
-This function is intended for developers of new transforms.
+This function is intended for developers of new transform types.
 """
 function revertpoint end
 
-# --------------------
-# TRANSFORM FALLBACKS
-# --------------------
+"""
+    newpoints = reapplypoint(transform, points, pcache)
 
-# helper type for fallback definitions
-const StatefulOrStateless = Union{GeometricTransform,StatelessGeometricTransform}
+Implementation of [`reapply`](@ref) for points of object.
+This function is intended for developers of new transform types.
+"""
+function reapplypoint end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
 
 # convert objects into lists of points
 _points(p::Point)      = [p]
@@ -54,19 +59,36 @@ _reconstruct(points, ::Point) = first(points)
 _reconstruct(points, ::G) where {G<:Geometry} = G(points)
 _reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 
-function TAPI.apply(transform::StatefulOrStateless, object)
+# --------------------
+# TRANSFORM FALLBACKS
+# --------------------
+
+function TAPI.apply(transform::GeometricTransform, object)
   prep = TAPI.preprocess(transform, object)
   newpoints, pcache = applypoint(transform, _points(object), prep)
   _reconstruct(newpoints, object), pcache
 end
 
-function TAPI.revert(transform::StatefulOrStateless, newobject, cache)
+function TAPI.revert(transform::GeometricTransform, newobject, cache)
   points = revertpoint(transform, _points(newobject), cache)
   _reconstruct(points, newobject)
 end
+
+function TAPI.reapply(transform::GeometricTransform, object, cache)
+  newpoints = reapplypoint(transform, _points(object), cache)
+  _reconstruct(newpoints, object)
+end
+
+# --------------------
+# STATELESS FALLBACKS
+# --------------------
+
+TAPI.reapply(transform::StatelessGeometricTransform, object, cache) =
+  TAPI.apply(transform, object) |> first
 
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
+include("transforms/stdcoords.jl")
 include("transforms/taubin.jl")

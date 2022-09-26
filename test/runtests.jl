@@ -14,6 +14,7 @@ using MeshViz
 using Test, Random
 using ReferenceTests, ImageIO
 
+import TransformsAPI as TAPI
 import CairoMakie as Mke
 
 # environment settings

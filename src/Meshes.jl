@@ -370,6 +370,7 @@ export
   # transforms
   GeometricTransform,
   StatelessGeometricTransform,
+  StdCoords,
   TaubinSmoothing,
 
   # tolerances
