@@ -3,17 +3,19 @@
 # ------------------------------------------------------------------
 
 """
-    GeometricTransform <: Transform
+    GeometricTransform
 
 A method to transform the geometry (e.g. coordinates) of objects.
-See https://en.wikipedia.org/wiki/Geometric_transformation.
+See [https://en.wikipedia.org/wiki/Geometric_transformation]
+(https://en.wikipedia.org/wiki/Geometric_transformation).
 """
 abstract type GeometricTransform <: TAPI.Transform end
 
 """
-    StatelessGeometricTransform <: StatelessTransform
+    StatelessGeometricTransform
 
-A stateless [`GeometricTransform`](@ref) as defined in TransformsAPI.jl.
+A stateless [`GeometricTransform`](@ref) as defined in
+[TransformsAPI.jl](https://github.com/JuliaML/TransformsAPI.jl).
 """
 abstract type StatelessGeometricTransform <: TAPI.StatelessTransform end
 
@@ -32,8 +34,6 @@ Implementation of [`revert`](@ref) for points of object.
 This function is intended for developers of new transforms.
 """
 function revertpoint end
-
-function __preprocess end
 
 # --------------------
 # TRANSFORM FALLBACKS
@@ -55,7 +55,7 @@ _reconstruct(points, ::G) where {G<:Geometry} = G(points)
 _reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 
 function TAPI.apply(transform::StatefulOrStateless, object)
-  prep = __preprocess(transform, object)
+  prep = TAPI.preprocess(transform, object)
   newpoints, pcache = applypoint(transform, _points(object), prep)
   _reconstruct(newpoints, object), pcache
 end
