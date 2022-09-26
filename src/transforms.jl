@@ -17,12 +17,30 @@ A stateless [`GeometricTransform`](@ref) as defined in TransformsAPI.jl.
 """
 abstract type StatelessGeometricTransform <: TAPI.StatelessTransform end
 
-# helper type for fallback definitions
-const StatefulOrStateless = Union{GeometricTransform,StatelessGeometricTransform}
+"""
+    newpoints, pcache = applypoint(transform, points, prep)
+
+Implementation of [`apply`](@ref) for points of object.
+This function is intended for developers of new transforms.
+"""
+function applypoint end
+
+"""
+    points = revertpoint(transform, newpoints, pcache)
+
+Implementation of [`revert`](@ref) for points of object.
+This function is intended for developers of new transforms.
+"""
+function revertpoint end
+
+function __preprocess end
 
 # --------------------
 # TRANSFORM FALLBACKS
 # --------------------
+
+# helper type for fallback definitions
+const StatefulOrStateless = Union{GeometricTransform,StatelessGeometricTransform}
 
 # convert objects into lists of points
 _points(p::Point)      = [p]
@@ -34,10 +52,17 @@ _points(p::PointSet)   = collect(p)
 # convert lists of points into objects
 _reconstruct(points, ::Point) = first(points)
 _reconstruct(points, ::G) where {G<:Geometry} = G(points)
+_reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 
 function TAPI.apply(transform::StatefulOrStateless, object)
-  newpoints, pcache = applypoints(transform, _points(object))
+  prep = __preprocess(transform, object)
+  newpoints, pcache = applypoint(transform, _points(object), prep)
   _reconstruct(newpoints, object), pcache
+end
+
+function TAPI.revert(transform::StatefulOrStateless, newobject, cache)
+  points = revertpoint(transform, _points(newobject), cache)
+  _reconstruct(points, newobject)
 end
 
 # ----------------

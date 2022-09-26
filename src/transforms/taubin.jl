@@ -31,34 +31,27 @@ end
 
 TAPI.isrevertible(::Type{<:TaubinSmoothing}) = true
 
-function TAPI.apply(transform::TaubinSmoothing, mesh)
+__preprocess(::TaubinSmoothing, mesh) =
+  laplacematrix(mesh, weights=:uniform)
+
+function applypoint(transform::TaubinSmoothing, points, prep)
   n = transform.n
   λ = transform.λ
   μ = transform.μ
-
-  # Laplacian matrix with uniform weights
-  L = laplacematrix(mesh, weights=:uniform)
+  L = prep
 
   # perform Taubin updates
-  newpoints = _taubin(vertices(mesh), L, n, λ, μ)
-
-  # new mesh with same topology
-  newmesh = SimpleMesh(newpoints, topology(mesh))
-
-  newmesh, L
+  _taubin(points, L, n, λ, μ), L
 end
 
-function TAPI.revert(transform::TaubinSmoothing, newmesh, cache)
+function revertpoint(transform::TaubinSmoothing, newpoints, pcache)
   n = transform.n
   λ = transform.λ
   μ = transform.μ
-  L = cache
+  L = pcache
 
   # reverse Taubin updates
-  points = _taubin(vertices(newmesh), L, n, λ, μ, revert=true)
-
-  # mesh with same topology
-  SimpleMesh(points, topology(newmesh))
+  _taubin(newpoints, L, n, λ, μ, revert=true)
 end
 
 function _taubin(points, L, n, λ, μ; revert=false)
