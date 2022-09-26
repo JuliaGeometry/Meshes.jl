@@ -19,6 +19,25 @@ GeometricTransform
 StatelessGeometricTransform
 ```
 
+## StdCoords
+
+```@docs
+StdCoords
+```
+
+```@example transforms
+# Cartesian grid with coordinates [0,10] x [0,10]
+grid = CartesianGrid(10, 10)
+
+# scale coordinates to [-1,1] x [-1,1]
+mesh = grid |> StdCoords()
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
+```
+
 ## TaubinSmoothing
 
 ```@docs
@@ -48,8 +67,7 @@ file = download(
 mesh = readply(file)
 
 # smooth mesh with 30 iterations
-trans = TaubinSmoothing(30)
-smesh = trans(mesh)
+smesh = mesh |> TaubinSmoothing(30)
 
 fig = Mke.Figure(resolution = (800, 1200))
 viz(fig[1,1], mesh)
