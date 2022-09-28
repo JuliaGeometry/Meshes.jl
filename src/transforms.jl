@@ -9,7 +9,7 @@ A method to transform the geometry (e.g. coordinates) of objects.
 See [https://en.wikipedia.org/wiki/Geometric_transformation]
 (https://en.wikipedia.org/wiki/Geometric_transformation).
 """
-abstract type GeometricTransform <: TAPI.Transform end
+abstract type GeometricTransform <: Transform end
 
 """
     StatelessGeometricTransform
@@ -63,18 +63,18 @@ _reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 # TRANSFORM FALLBACKS
 # --------------------
 
-function TAPI.apply(transform::GeometricTransform, object)
-  prep = TAPI.preprocess(transform, object)
+function apply(transform::GeometricTransform, object)
+  prep = preprocess(transform, object)
   newpoints, pcache = applypoint(transform, _points(object), prep)
   _reconstruct(newpoints, object), pcache
 end
 
-function TAPI.revert(transform::GeometricTransform, newobject, cache)
+function revert(transform::GeometricTransform, newobject, cache)
   points = revertpoint(transform, _points(newobject), cache)
   _reconstruct(points, newobject)
 end
 
-function TAPI.reapply(transform::GeometricTransform, object, cache)
+function reapply(transform::GeometricTransform, object, cache)
   newpoints = reapplypoint(transform, _points(object), cache)
   _reconstruct(newpoints, object)
 end
@@ -83,8 +83,8 @@ end
 # STATELESS FALLBACKS
 # --------------------
 
-TAPI.reapply(transform::StatelessGeometricTransform, object, cache) =
-  TAPI.apply(transform, object) |> first
+reapply(transform::StatelessGeometricTransform, object, cache) =
+  apply(transform, object) |> first
 
 # ----------------
 # IMPLEMENTATIONS

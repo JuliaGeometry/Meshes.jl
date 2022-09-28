@@ -10,9 +10,9 @@ unitary sides centered at the origin.
 """
 struct StdCoords <: GeometricTransform end
 
-TAPI.isrevertible(::Type{<:StdCoords}) = true
+isrevertible(::Type{<:StdCoords}) = true
 
-function TAPI.preprocess(::StdCoords, object)
+function preprocess(::StdCoords, object)
   pset = PointSet(_points(object))
   bbox = boundingbox(pset)
   center(bbox), sides(bbox)

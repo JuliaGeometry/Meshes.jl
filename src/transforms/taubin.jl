@@ -29,9 +29,9 @@ function TaubinSmoothing(n; λ=0.5, μ=-0.5)
   TaubinSmoothing{typeof(λ′)}(n, λ, μ)
 end
 
-TAPI.isrevertible(::Type{<:TaubinSmoothing}) = true
+isrevertible(::Type{<:TaubinSmoothing}) = true
 
-TAPI.preprocess(::TaubinSmoothing, mesh) =
+preprocess(::TaubinSmoothing, mesh) =
   laplacematrix(mesh, weights=:uniform)
 
 function applypoint(transform::TaubinSmoothing, points, prep)
