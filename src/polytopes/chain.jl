@@ -333,8 +333,7 @@ Build bridges of given `width` between `chains` of a polygon.
 - Please read the docstring of the corresponding method for
   [`Polygon`](@ref) for additional details and references.
 """
-bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T} = bridge(chains, convert(T, width))
-function bridge(chains::AbstractVector{<:Chain{2,T}}, width::T) where {T}
+function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
   # retrieve chains as vectors of coordinates
   pchains = [coordinates.(vertices(open(c))) for c in chains]
 
@@ -363,6 +362,7 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}, width::T) where {T}
   oinds = first(pinds)
 
   # merge holes into outer boundary
+  δ = convert(T, width) # avoid promotion
   for i in 2:length(pchains)
     inner = pchains[i]
     iinds = pinds[i]
@@ -384,7 +384,6 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}, width::T) where {T}
     # point B is split into B′ and B′′
     A = outer[jmin]
     B = inner[l]
-    δ = width
     v = B - A
     u = Vec(-v[2], v[1])
     n = u / norm(u)
