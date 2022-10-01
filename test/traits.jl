@@ -58,15 +58,21 @@
       @test data₁ != data₃
       @test data₂ != data₃
 
+      # equality with missing data
+      data₁ = dummy(PointSet(T[1 2 3; 4 5 6]), (a=[1,missing,3], b=[3,2,1]))
+      data₂ = dummy(PointSet(T[1 2 3; 4 5 6]), (a=[1,missing,3], b=[3,2,1]))
+      @test data₁ == data₂
+
       # Tables interface
       dom = CartesianGrid{T}(2,2)
       dat = dummy(dom, (a=[1,2,3,4], b=[5,6,7,8]))
       @test Tables.istable(dat)
+      sch = Tables.schema(dat)
+      @test sch.names == (:a,:b,:geometry)
+      @test sch.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
       @test Tables.rowaccess(dat)
       rows = Tables.rows(dat)
-      schema = Tables.schema(rows)
-      @test schema.names == (:a,:b,:geometry)
-      @test schema.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
+      @test Tables.schema(rows) == sch
       @test collect(rows) == [
         (a=1, b=5, geometry=dom[1]),
         (a=2, b=6, geometry=dom[2]),

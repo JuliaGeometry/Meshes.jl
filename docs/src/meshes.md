@@ -59,9 +59,9 @@ materialize
 
 ```@docs
 Topology
-FullTopology
 GridTopology
 HalfEdgeTopology
+SimpleTopology
 ```
 
 ## Relations

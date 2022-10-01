@@ -25,12 +25,12 @@ struct CylinderSurface{T} <: Primitive{3,T}
   top::Plane{T}
 end
 
-function CylinderSurface(radius::T, segment::Segment{3,T}) where {T}
+function CylinderSurface(radius, segment::Segment{3,T}) where {T}
   a, b = extrema(segment)
   v    = b - a
   bot  = Plane(a, v)
   top  = Plane(b, v)
-  CylinderSurface(radius, bot, top)
+  CylinderSurface(T(radius), bot, top)
 end
 
 function CylinderSurface(radius::T) where {T}

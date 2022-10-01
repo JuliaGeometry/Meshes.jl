@@ -14,6 +14,7 @@ using MeshViz
 using Test, Random
 using ReferenceTests, ImageIO
 
+import TransformsAPI as TAPI
 import CairoMakie as Mke
 
 # environment settings
@@ -93,9 +94,9 @@ testfiles = [
   "discretization.jl",
   "simplification.jl",
   "refinement.jl",
-  "smoothing.jl",
   "boundingboxes.jl",
   "hulls.jl",
+  "transforms.jl",
   "utils.jl"
 ]
 
