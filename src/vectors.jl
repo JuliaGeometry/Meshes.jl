@@ -2,8 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const StaticVector = StaticArraysCore.StaticVector
-
 """
     Vec(x₁, x₂, ..., xₙ)
     Vec((x₁, x₂, ..., xₙ))
@@ -82,7 +80,7 @@ const Vec3f = Vec{3,Float32}
 # StaticVector interface
 Base.Tuple(v::Vec) = getfield(v, :coords)
 Base.getindex(v::Vec, i::Int) = getindex(getfield(v, :coords), i)
-function StaticArraysCore.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
+function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
   isone(N) && !(T<:Integer) ? Vec{L,T} : SArray{Tuple{S...},T,N,L}

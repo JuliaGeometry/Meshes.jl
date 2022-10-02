@@ -5,7 +5,7 @@
 module Meshes
 
 using Tables
-using StaticArraysCore
+using StaticArrays
 using SparseArrays
 using CircularArrays
 using LinearAlgebra
