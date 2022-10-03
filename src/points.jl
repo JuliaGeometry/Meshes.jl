@@ -136,7 +136,23 @@ at a reference (or start) point `A`.
 Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
-Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
+Base.isapprox(A::Point, B::Point; kwargs...) =
+  isapprox(A.coords, B.coords; kwargs...)
+
+"""
+    ==(A::Point, B::Point)
+
+Tells whether or not points `A` and `B` represent the same point
+regardless of floating point errors.
+
+### Notes
+
+- Implemented in terms of `isapprox(A, B, atol=atol(coordtype(A))`
+"""
+==(A::Point, B::Point) =
+  embeddim(A) == embeddim(B) &&
+  coordtype(A) == coordtype(B) &&
+  isapprox(A, B, atol=atol(coordtype(A)))
 
 """
     ⪯(A::Point, B::Point)
