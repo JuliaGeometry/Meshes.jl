@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    RandomPath
+    RandomPath()
 
 Traverse an object with `N` elements in a random
 permutation of `1:N`.
