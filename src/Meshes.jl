@@ -31,9 +31,9 @@ import IteratorInterfaceExtensions
 const IIE = IteratorInterfaceExtensions
 
 # Transforms API
-import TransformsAPI: Transform
-import TransformsAPI: isrevertible, preprocess
-import TransformsAPI: apply, revert, reapply
+import TransformsBase: Transform
+import TransformsBase: isrevertible, preprocess
+import TransformsBase: apply, revert, reapply
 
 # IO utils
 include("ioutils.jl")
