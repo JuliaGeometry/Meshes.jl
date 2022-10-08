@@ -27,9 +27,6 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
 
 ### Notes
 
-- Connectivities must be given with coherent orientation, i.e.
-  all faces must be counter-clockwise (CCW) or clockwise (CW).
-
 - The option `relations=true` changes the underlying topology
   of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
   [`SimpleTopology`](@ref).
