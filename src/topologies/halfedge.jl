@@ -124,21 +124,55 @@ end
 function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge topology"
 
-  # initialization step
+  # start assuming that all elements are
+  # oriented consistently as CCW
+  CCW = trues(length(elems))
+
+  # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
-  for (e, elem) in Iterators.enumerate(elems)
+  elem = first(elems)
+  inds = collect(indices(elem))
+  v = CircularVector(inds)
+  n = length(v)
+  for i in 1:n
+    half4pair[(v[i], v[i+1])] = HalfEdge(v[i], 1)
+  end
+
+  # insert all other elements
+  for e in 2:length(elems)
+    elem = elems[e]
     inds = collect(indices(elem))
     v = CircularVector(inds)
     n = length(v)
     for i in 1:n
-      half4pair[(v[i], v[i+1])] = HalfEdge(v[i], e)
+      # if pair of vertices is already in the
+      # dictionary this means that the current
+      # polygon has inconsistent orientation
+      if haskey(half4pair, (v[i], v[i+1]))
+        # delete inserted pairs so far
+        CCW[e] = false
+        for j in 1:i-1
+          delete!(half4pair, (v[j], v[j+1]))
+        end
+        break
+      else
+        # insert pair in consistent orientation
+        half4pair[(v[i], v[i+1])] = HalfEdge(v[i], e)
+      end
+    end
+
+    if !CCW[e]
+      # reinsert pairs in CCW orientation
+      for i in 1:n
+        half4pair[(v[i+1], v[i])] = HalfEdge(v[i+1], e)
+      end
     end
   end
 
   # add missing pointers
-  for elem in elems
-    inds = collect(indices(elem))
-    v = CircularVector(inds)
+  for (e, elem) in Iterators.enumerate(elems)
+    inds = CCW[e] ? indices(elem) : reverse(indices(elem))
+    v = CircularVector(collect(inds))
     n = length(v)
     for i in 1:n
       # update pointers prev and next

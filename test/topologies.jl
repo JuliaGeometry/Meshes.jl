@@ -407,6 +407,15 @@
     @test nfaces(t, 1) == 11
     @test nfaces(t, 0) == 7
     test_halfedge(elems, t)
+
+    # correct construction from inconsistent orientation
+    e = connect.([(1,2,3),(3,4,2),(4,3,5),(6,3,1)])
+    t = HalfEdgeTopology(e)
+    n = collect(elements(t))
+    @test n[1] == e[1]
+    @test n[2] != e[2]
+    @test n[3] != e[3]
+    @test n[4] != e[4]
   end
 
   @testset "SimpleTopology" begin
