@@ -43,7 +43,7 @@
     @test ∂(3) == [4,5,8,7,16,17,20,19]
     @test ∂(12) == [20,21,24,23,32,33,36,35]
 
-    # adjacency relation in 2D
+    # quadrangles in 2D grid
     t = GridTopology(2, 3)
     𝒜 = Adjacency{2}(t)
     @test 𝒜(1) == [2,3]
@@ -53,7 +53,7 @@
     @test 𝒜(5) == [6,3]
     @test 𝒜(6) == [5,4]
 
-    # adjacency relation in 2D
+    # quadrangles in 2D grid
     t = GridTopology(3, 3)
     𝒜 = Adjacency{2}(t)
     @test 𝒜(1) == [2,4]
@@ -66,7 +66,7 @@
     @test 𝒜(8) == [7,9,5]
     @test 𝒜(9) == [8,6]
 
-    # adjacency relation in 2D with periodicity
+    # quadrangles in 2D grid with periodicity
     t = GridTopology((3, 3), (true, false))
     𝒜 = Adjacency{2}(t)
     @test 𝒜(1) == [3,2,4]
@@ -79,7 +79,7 @@
     @test 𝒜(8) == [7,9,5]
     @test 𝒜(9) == [8,7,6]
 
-    # adjacency relation in 2D with periodicity
+    # quadrangles in 2D grid with periodicity
     t = GridTopology((3, 3), (true, true))
     𝒜 = Adjacency{2}(t)
     @test 𝒜(1) == [3,2,7,4]
@@ -92,7 +92,7 @@
     @test 𝒜(8) == [7,9,5,2]
     @test 𝒜(9) == [8,7,6,3]
 
-    # adjacency relation in 3D
+    # quadrangles in 3D grid
     t = GridTopology(2, 2, 2)
     𝒜 = Adjacency{3}(t)
     @test 𝒜(1) == [2,3,5]
@@ -104,7 +104,7 @@
     @test 𝒜(7) == [8,5,3]
     @test 𝒜(8) == [7,6,4]
 
-    # adjacency relation in 3D
+    # quadrangles in 3D grid
     t = GridTopology(3, 2, 2)
     𝒜 = Adjacency{3}(t)
     @test 𝒜(1)  == [2,4,7]
@@ -120,7 +120,7 @@
     @test 𝒜(11) == [10,12,8,5]
     @test 𝒜(12) == [11,9,6]
 
-    # adjacency relation in 3D
+    # quadrangles in 3D grid with periodicity
     t = GridTopology((3, 2, 2), (true, false, false))
     𝒜 = Adjacency{3}(t)
     @test 𝒜(1)  == [3,2,4,7]
@@ -135,6 +135,19 @@
     @test 𝒜(10) == [12,11,7,4]
     @test 𝒜(11) == [10,12,8,5]
     @test 𝒜(12) == [11,10,9,6]
+
+    # vertices in 2D grid
+    t = GridTopology(2, 2)
+    𝒜 = Adjacency{0}(t)
+    @test 𝒜(1) == [2,4]
+    @test 𝒜(2) == [1,3,5]
+    @test 𝒜(3) == [2,6]
+    @test 𝒜(4) == [5,1,7]
+    @test 𝒜(5) == [4,6,2,8]
+    @test 𝒜(6) == [5,3,9]
+    @test 𝒜(7) == [8,4]
+    @test 𝒜(8) == [7,9,5]
+    @test 𝒜(9) == [8,6]
 
     # invalid relations
     t = GridTopology(2, 3)
