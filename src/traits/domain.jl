@@ -39,13 +39,13 @@ Base.firstindex(domain::Domain) = 1
 
 Base.lastindex(domain::Domain) = nelements(domain)
 
+Base.length(domain::Domain) = nelements(domain)
+
 Base.iterate(domain::Domain, state=1) =
   state > nelements(domain) ? nothing : (domain[state], state+1)
 
 Base.eltype(domain::Domain) =
   eltype([domain[i] for i in 1:nelements(domain)])
-
-Base.length(domain::Domain) = nelements(domain)
 
 """
     embeddim(domain)

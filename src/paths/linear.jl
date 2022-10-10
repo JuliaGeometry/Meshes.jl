@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    LinearPath
+    LinearPath()
 
 Traverse an object with `N` elements in order `1:N`.
 """

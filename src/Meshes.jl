@@ -30,6 +30,11 @@ import TableTraits
 import IteratorInterfaceExtensions
 const IIE = IteratorInterfaceExtensions
 
+# Transforms API
+import TransformsBase: Transform
+import TransformsBase: isrevertible, preprocess
+import TransformsBase: apply, revert, reapply
+
 # IO utils
 include("ioutils.jl")
 
@@ -85,15 +90,20 @@ include("intersections.jl")
 include("discretization.jl")
 include("simplification.jl")
 include("refinement.jl")
-include("smoothing.jl")
 include("boundingboxes.jl")
 include("hulls.jl")
 
-@deprecate triangulate(x) simplexify(x)
+# transforms
+include("transforms.jl")
+
+# deprecations
+@deprecate FullTopology(x) SimpleTopology(x)
+@deprecate smooth(mesh, method) method(mesh)
 
 export
   # points
-  Point, Point1, Point2, Point3,
+  Point,
+  Point1, Point2, Point3,
   Point1f, Point2f, Point3f,
   embeddim, paramdim,
   coordtype, coordinates,
@@ -101,7 +111,9 @@ export
   ⪯, ≺, ⪰, ≻,
 
   # vectors
-  Vec, Vec1, Vec2, Vec3, Vec1f, Vec2f, Vec3f,
+  Vec,
+  Vec1, Vec2, Vec3,
+  Vec1f, Vec2f, Vec3f,
 
   # linear algebra
   ⋅, ×,
@@ -218,10 +230,9 @@ export
   nvertices, nelements, nfacets,
   element, facet,
   faces, nfaces,
-  FullTopology,
   GridTopology,
   HalfEdgeTopology, HalfEdge,
-  connec4elem,
+  SimpleTopology,
   elem2cart, cart2elem,
   corner2cart, cart2corner,
   elem2corner, corner2elem,
@@ -229,6 +240,7 @@ export
   half4elem, half4vert,
   half4edge, half4pair,
   edge4pair,
+  connec4elem,
 
   # topological relations
   TopologicalRelation,
@@ -349,11 +361,6 @@ export
   CatmullClark,
   refine,
 
-  # smoothing
-  SmoothingMethod,
-  TaubinSmoothing,
-  smooth,
-
   # bounding boxes
   boundingbox,
 
@@ -361,6 +368,12 @@ export
   HullMethod,
   GrahamScan,
   hull,
+
+  # transforms
+  GeometricTransform,
+  StatelessGeometricTransform,
+  StdCoords,
+  TaubinSmoothing,
 
   # tolerances
   atol

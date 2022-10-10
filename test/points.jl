@@ -16,8 +16,8 @@
   @test coordtype(Point{2,T}(1, 1)) == T
 
   @test coordinates(P1(1)) == T[1]
-  @test coordinates(P2(1, 2)) == [1.0, 2.0]
-  @test coordinates(P3(1, 2, 3)) == [1.0, 2.0, 3.0]
+  @test coordinates(P2(1, 2)) == T[1, 2]
+  @test coordinates(P3(1, 2, 3)) == T[1, 2, 3]
 
   @test P1(1) - P1(1) == T[0]
   @test P2(1, 2) - P2(1, 1) == T[0, 1]
@@ -53,6 +53,10 @@
   @test P1(1) ≈ P1(1 + eps(T))
   @test P2(1, 2) ≈ P2(1 + eps(T), T(2))
   @test P3(1, 2, 3) ≈ P3(1 + eps(T), T(2), T(3))
+
+  @test P1(1) == P1(1 + eps(T))
+  @test P2(1, 2) == P2(1 + eps(T), T(2))
+  @test P3(1, 2, 3) == P3(1 + eps(T), T(2), T(3))
 
   @test embeddim(Point([1])) == 1
   @test coordtype(Point([1])) == Float64

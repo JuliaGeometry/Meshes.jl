@@ -175,6 +175,10 @@
     @test collect(ps) == P3[(0,0,0),(0.5,0,0),(1,0,0),(0,1,0),
                             (0.5,1,0),(1,1,0),(0,0,1),(0.5,0,1),
                             (1,0,1),(0,1,1),(0.5,1,1),(1,1,1)]
+    
+    grid = CartesianGrid{T}(10, 10)
+    points = sample(grid, RegularSampling(100, 200))
+    @test length(collect(points)) == 20000
   end
 
   @testset "HomogeneousSampling" begin

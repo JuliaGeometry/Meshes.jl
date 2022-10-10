@@ -117,16 +117,6 @@ end
 
 nvertices(t::GridTopology) = prod(t.dims .+ t.open)
 
-function faces(t::GridTopology{D}, rank) where {D}
-  if rank == D
-    elements(t)
-  elseif rank == D - 1
-    facets(t)
-  else
-    throw(ErrorException("not implemented"))
-  end
-end
-
 function element(t::GridTopology{D}, ind) where {D}
   ∂ = Boundary{D,0}(t)
   T = rank2type(t, D)

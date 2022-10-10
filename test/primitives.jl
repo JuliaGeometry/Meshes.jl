@@ -137,7 +137,7 @@
     @test P2(1,1) ∈ b
 
     b = Box(P2(1,1), P2(2,2))
-    @test sides(b) == T[1,1]
+    @test sides(b) == T.((1,1))
     @test Meshes.center(b) == P2(1.5,1.5)
     @test diagonal(b) == √T(2)
 
