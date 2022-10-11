@@ -3,25 +3,26 @@
 # ------------------------------------------------------------------
 
 """
-    UniformSampling(size, replace=false)
+    UniformSampling(size, replace=false, ordered=false)
 
 Sample elements uniformly from a given domain/data. Produce a
 sample of given `size` with or without replacement depending on
-the `replace` option.
+the `replace` option. The option `ordered` can be used to return
+samples in the same order of the domain/data.
 """
 struct UniformSampling <: DiscreteSamplingMethod
   size::Int
   replace::Bool
+  ordered::Bool
 end
 
-UniformSampling(size::Int) = UniformSampling(size, false)
+UniformSampling(size; replace=false, ordered=false) =
+  UniformSampling(size, replace, ordered)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::UniformSampling)
-  n = nelements(Ω)
   s = method.size
   r = method.replace
-  if s > n && r == false
-    @error "invalid sample size for sampling without replacement"
-  end
-  view(Ω, sample(rng, 1:n, s, replace=r))
+  o = method.ordered
+  m = WeightedSampling(s; replace=r, ordered=o)
+  sample(rng, Ω, m)
 end

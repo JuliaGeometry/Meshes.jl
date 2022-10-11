@@ -3,7 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Point{Dim,T}
+    Point(x₁, x₂, ..., xₙ)
+    Point((x₁, x₂, ..., xₙ))
+    Point([x₁, x₂, ..., xₙ])
+    Point{Dim,T}(x₁, x₂, ..., xₙ)
+    Point{Dim,T}((x₁, x₂, ..., xₙ))
+    Point{Dim,T}([x₁, x₂, ..., xₙ])
 
 A point in `Dim`-dimensional space with coordinates of type `T`.
 
@@ -36,16 +41,18 @@ J = Point3f(1, 2, 3) # explicitly ask for single precision
   `InexactError` and other unexpected results.
 """
 struct Point{Dim,T}
-  coords::SVector{Dim,T}
-  Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
-  Point{Dim,T}(coords::SVector{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
+  coords::Vec{Dim,T}
+  Point{Dim,T}(coords::Vec{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
 end
 
 # convenience constructors
-Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(SVector{Dim,T}(coords...))
-Point(coords::SVector{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
-Point(coords::AbstractVector{T}) where {T} = Point{length(coords),T}(coords)
-Point(coords...) = Point(SVector(coords...))
+Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
+Point{Dim,T}(coords) where {Dim,T} = Point{Dim,T}(Vec{Dim,T}(coords))
+Point{Dim,T}(coords) where {Dim,T<:Integer} = Point{Dim,Float64}(coords)
+
+Point(coords...) = Point(coords)
+Point(coords) = Point(Vec(coords))
+Point(coords::Vec{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
@@ -101,7 +108,7 @@ coordinates(A::Point) = A.coords
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point, B::Point) = Vec(A.coords - B.coords)
+-(A::Point, B::Point) = A.coords - B.coords
 
 """
     +(A::Point, v::Vec)
@@ -129,7 +136,23 @@ at a reference (or start) point `A`.
 Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
-Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
+Base.isapprox(A::Point, B::Point; kwargs...) =
+  isapprox(A.coords, B.coords; kwargs...)
+
+"""
+    ==(A::Point, B::Point)
+
+Tells whether or not points `A` and `B` represent the same point
+regardless of floating point errors.
+
+### Notes
+
+- Implemented in terms of `isapprox(A, B, atol=atol(coordtype(A))`
+"""
+==(A::Point, B::Point) =
+  embeddim(A) == embeddim(B) &&
+  coordtype(A) == coordtype(B) &&
+  isapprox(A, B, atol=atol(coordtype(A)))
 
 """
     ⪯(A::Point, B::Point)
@@ -179,7 +202,7 @@ Generates a random point of type `P`
 """
 Random.rand(rng::Random.AbstractRNG,
             ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
-  Point(rand(rng, SVector{Dim,T}))
+  Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)
   print(io, "Point$(Tuple(point.coords))")

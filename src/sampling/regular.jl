@@ -168,3 +168,8 @@ function sample(::AbstractRNG, hex::Hexahedron{Dim,T},
   wrange = range(T(0), T(1), length=sz[3])
   ivec(hex(u, v, w) for u in urange, v in vrange, w in wrange)
 end
+
+function sample(rng::AbstractRNG, grid::CartesianGrid,
+                method::RegularSampling)
+  sample(rng, boundingbox(grid), method)
+end

@@ -37,7 +37,7 @@ measure(b::Box) = prod(b.max - b.min)
 
 diagonal(b::Box) = norm(b.max - b.min)
 
-sides(b::Box) = b.max - b.min
+sides(b::Box) = Tuple(b.max - b.min)
 
 area(b::Box{2}) = measure(b)
 

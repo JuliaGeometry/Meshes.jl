@@ -44,22 +44,30 @@ Vec3f(1, 2, 3) # explicitly ask for single precision
 - Type aliases are `Vec1`, `Vec2`, `Vec3`, `Vec1f`, `Vec2f`, `Vec3f`
 """
 struct Vec{Dim,T} <: StaticVector{Dim,T}
-  coords::SVector{Dim,T}
-  Vec{Dim,T}(coords::SVector{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
-  Vec{Dim,T}(coords::SVector{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
+  coords::NTuple{Dim,T}
+  Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
+  Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
 end
 
 # convenience constructors
-Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
-Vec{Dim,T}(coords::Tuple) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
-Vec{Dim,T}(coords::AbstractVector) where {Dim,T} = Vec{Dim,T}(SVector{Dim,T}(coords))
+Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(coords)
+function Vec{Dim,T}(coords::Tuple) where {Dim,T}
+  checkdim(Vec{Dim,T}, coords)
+  Vec{Dim,T}(NTuple{Dim,T}(coords))
+end
+function Vec{Dim,T}(coords::AbstractVector) where {Dim,T}
+  checkdim(Vec{Dim,T}, coords)
+  Vec{Dim,T}(NTuple{Dim,T}(coords))
+end
 
+Vec(coords...) = Vec(coords)
+Vec(coords::Tuple) = Vec(promote(coords...))
 Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
-Vec(coords::SVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
 Vec(coords::AbstractVector{T}) where {T} = Vec{length(coords),T}(coords)
 
-Vec(coords...) = Vec(SVector(coords))
-Vec(coords::Tuple) = Vec(SVector(coords))
+# StaticVector constructors
+Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
+Vec{Dim,T}(coords::StaticVector) where {Dim,T} = Vec{Dim,T}(Tuple(coords))
 
 # type aliases for convenience
 const Vec1  = Vec{1,Float64}
@@ -70,10 +78,17 @@ const Vec2f = Vec{2,Float32}
 const Vec3f = Vec{3,Float32}
 
 # StaticVector interface
-Base.Tuple(v::Vec) = Tuple(v.coords)
-Base.getindex(v::Vec, i::Int) = getindex(v.coords, i)
+Base.Tuple(v::Vec) = getfield(v, :coords)
+Base.getindex(v::Vec, i::Int) = getindex(getfield(v, :coords), i)
 function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
-  N == 1 ? Vec{L,T} : SArray{Tuple{S...}, T, N, L}
+  isone(N) && !(T<:Integer) ? Vec{L,T} : SArray{Tuple{S...},T,N,L}
+end
+
+# utils
+function checkdim(::Type{Vec{Dim,T}}, coords) where {Dim,T}
+  if Dim ≠ length(coords)
+    throw(DimensionMismatch("Invalid dimension."))
+  end
 end

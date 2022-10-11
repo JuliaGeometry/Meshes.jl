@@ -14,6 +14,8 @@ struct Ball{Dim,T} <: Primitive{Dim,T}
   radius::T
 end
 
+Ball(center::Point{Dim,T}, radius) where {Dim,T} = Ball(center, T(radius))
+
 Ball(center::Tuple, radius) = Ball(Point(center), radius)
 
 paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim

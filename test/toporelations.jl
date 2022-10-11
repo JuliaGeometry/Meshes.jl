@@ -1,12 +1,4 @@
 @testset "TopologicalRelation" begin
-  @testset "FullTopology" begin
-    elems = connect.([(1,2,3),(4,3,2)])
-    t = FullTopology(elems)
-    ∂ = Boundary{2,0}(t)
-    @test ∂(1) == [1,2,3]
-    @test ∂(2) == [4,3,2]
-  end
-
   @testset "GridTopology" begin
     # 3 segments
     t = GridTopology(3)
@@ -50,6 +42,112 @@
     @test ∂(2) == [2,3,6,5,14,15,18,17]
     @test ∂(3) == [4,5,8,7,16,17,20,19]
     @test ∂(12) == [20,21,24,23,32,33,36,35]
+
+    # quadrangles in 2D grid
+    t = GridTopology(2, 3)
+    𝒜 = Adjacency{2}(t)
+    @test 𝒜(1) == [2,3]
+    @test 𝒜(2) == [1,4]
+    @test 𝒜(3) == [4,1,5]
+    @test 𝒜(4) == [3,2,6]
+    @test 𝒜(5) == [6,3]
+    @test 𝒜(6) == [5,4]
+
+    # quadrangles in 2D grid
+    t = GridTopology(3, 3)
+    𝒜 = Adjacency{2}(t)
+    @test 𝒜(1) == [2,4]
+    @test 𝒜(2) == [1,3,5]
+    @test 𝒜(3) == [2,6]
+    @test 𝒜(4) == [5,1,7]
+    @test 𝒜(5) == [4,6,2,8]
+    @test 𝒜(6) == [5,3,9]
+    @test 𝒜(7) == [8,4]
+    @test 𝒜(8) == [7,9,5]
+    @test 𝒜(9) == [8,6]
+
+    # quadrangles in 2D grid with periodicity
+    t = GridTopology((3, 3), (true, false))
+    𝒜 = Adjacency{2}(t)
+    @test 𝒜(1) == [3,2,4]
+    @test 𝒜(2) == [1,3,5]
+    @test 𝒜(3) == [2,1,6]
+    @test 𝒜(4) == [6,5,1,7]
+    @test 𝒜(5) == [4,6,2,8]
+    @test 𝒜(6) == [5,4,3,9]
+    @test 𝒜(7) == [9,8,4]
+    @test 𝒜(8) == [7,9,5]
+    @test 𝒜(9) == [8,7,6]
+
+    # quadrangles in 2D grid with periodicity
+    t = GridTopology((3, 3), (true, true))
+    𝒜 = Adjacency{2}(t)
+    @test 𝒜(1) == [3,2,7,4]
+    @test 𝒜(2) == [1,3,8,5]
+    @test 𝒜(3) == [2,1,9,6]
+    @test 𝒜(4) == [6,5,1,7]
+    @test 𝒜(5) == [4,6,2,8]
+    @test 𝒜(6) == [5,4,3,9]
+    @test 𝒜(7) == [9,8,4,1]
+    @test 𝒜(8) == [7,9,5,2]
+    @test 𝒜(9) == [8,7,6,3]
+
+    # quadrangles in 3D grid
+    t = GridTopology(2, 2, 2)
+    𝒜 = Adjacency{3}(t)
+    @test 𝒜(1) == [2,3,5]
+    @test 𝒜(2) == [1,4,6]
+    @test 𝒜(3) == [4,1,7]
+    @test 𝒜(4) == [3,2,8]
+    @test 𝒜(5) == [6,7,1]
+    @test 𝒜(6) == [5,8,2]
+    @test 𝒜(7) == [8,5,3]
+    @test 𝒜(8) == [7,6,4]
+
+    # quadrangles in 3D grid
+    t = GridTopology(3, 2, 2)
+    𝒜 = Adjacency{3}(t)
+    @test 𝒜(1)  == [2,4,7]
+    @test 𝒜(2)  == [1,3,5,8]
+    @test 𝒜(3)  == [2,6,9]
+    @test 𝒜(4)  == [5,1,10]
+    @test 𝒜(5)  == [4,6,2,11]
+    @test 𝒜(6)  == [5,3,12]
+    @test 𝒜(7)  == [8,10,1]
+    @test 𝒜(8)  == [7,9,11,2]
+    @test 𝒜(9)  == [8,12,3]
+    @test 𝒜(10) == [11,7,4]
+    @test 𝒜(11) == [10,12,8,5]
+    @test 𝒜(12) == [11,9,6]
+
+    # quadrangles in 3D grid with periodicity
+    t = GridTopology((3, 2, 2), (true, false, false))
+    𝒜 = Adjacency{3}(t)
+    @test 𝒜(1)  == [3,2,4,7]
+    @test 𝒜(2)  == [1,3,5,8]
+    @test 𝒜(3)  == [2,1,6,9]
+    @test 𝒜(4)  == [6,5,1,10]
+    @test 𝒜(5)  == [4,6,2,11]
+    @test 𝒜(6)  == [5,4,3,12]
+    @test 𝒜(7)  == [9,8,10,1]
+    @test 𝒜(8)  == [7,9,11,2]
+    @test 𝒜(9)  == [8,7,12,3]
+    @test 𝒜(10) == [12,11,7,4]
+    @test 𝒜(11) == [10,12,8,5]
+    @test 𝒜(12) == [11,10,9,6]
+
+    # vertices in 2D grid
+    t = GridTopology(2, 2)
+    𝒜 = Adjacency{0}(t)
+    @test 𝒜(1) == [2,4]
+    @test 𝒜(2) == [1,3,5]
+    @test 𝒜(3) == [2,6]
+    @test 𝒜(4) == [5,1,7]
+    @test 𝒜(5) == [4,6,2,8]
+    @test 𝒜(6) == [5,3,9]
+    @test 𝒜(7) == [8,4]
+    @test 𝒜(8) == [7,9,5]
+    @test 𝒜(9) == [8,6]
 
     # invalid relations
     t = GridTopology(2, 3)
@@ -161,5 +259,13 @@
     @test_throws AssertionError Adjacency{3}(t)
     @test_throws AssertionError Boundary{0,2}(t)
     @test_throws AssertionError Coboundary{2,0}(t)
+  end
+
+  @testset "SimpleTopology" begin
+    elems = connect.([(1,2,3),(4,3,2)])
+    t = SimpleTopology(elems)
+    ∂ = Boundary{2,0}(t)
+    @test ∂(1) == [1,2,3]
+    @test ∂(2) == [4,3,2]
   end
 end

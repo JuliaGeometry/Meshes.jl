@@ -20,10 +20,56 @@ function Adjacency{P}(topology) where {P}
   Adjacency{P,D,T}(topology)
 end
 
+# --------------
+# GRID TOPOLOGY
+# --------------
+
+# adjacent vertices in a D-dimensional grid topology
+function (𝒜::Adjacency{0,D,T})(ind::Integer) where {D,T<:GridTopology}
+  # retrieve topology info
+  topo = 𝒜.topology
+  dims = size(topo)
+  cycl = isperiodic(topo)
+
+  # construct topology for vertices
+  vtopo = GridTopology(dims .+ 1, cycl)
+  𝒜vert = Adjacency{D}(vtopo)
+  𝒜vert(ind)
+end
+
+# adjacent elements in a D-dimensional grid topology
+function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
+  topo = 𝒜.topology
+  dims = size(topo)
+  cycl = isperiodic(topo)
+  cind = elem2cart(topo, ind)
+
+  # offsets along each dimension
+  offsets = [ntuple(i -> i == d ? s : 0, D) for d in 1:D for s in (-1,1)]
+
+  ninds = NTuple{D,Int}[]
+  for offset in offsets
+    # apply offset to center index
+    sind = cind .+ offset
+
+    # wrap indices in case of periodic dimension
+    wrap(i) = mod1(sind[i], dims[i])
+    wind = ntuple(i -> cycl[i] ? wrap(i) : sind[i], D)
+
+    # discard invalid indices
+    valid(i) = 1 ≤ wind[i] ≤ dims[i]
+    all(valid, 1:D) && push!(ninds, wind)
+  end
+
+  # return linear index of element
+  [cart2elem(topo, ind...) for ind in ninds]
+end
+
 # -------------------
 # HALF-EDGE TOPOLOGY
 # -------------------
 
+# adjacent vertices in a 2D half-edge topology
 function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(𝒜.topology, vert)
 

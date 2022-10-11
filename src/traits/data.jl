@@ -76,7 +76,9 @@ function ==(data₁::Data, data₂::Data)
 
   # must have the same data tables
   for rank in 0:paramdim(domain(data₁))
-    if values(data₁, rank) != values(data₂, rank)
+    vals₁ = values(data₁, rank)
+    vals₂ = values(data₂, rank)
+    if !isequal(vals₁, vals₂)
       return false
     end
   end
@@ -100,28 +102,40 @@ Tables.rowaccess(::Type{<:Data}) = true
 
 Tables.rows(data::Data) = DataRows(domain(data), Tables.rows(values(data)))
 
+Tables.schema(data::Data) = Tables.schema(Tables.rows(data))
+
 # wrapper type for rows of the data table
 # so that we can easily inform the schema
-struct DataRows{𝒟,𝒯}
+struct DataRows{𝒟,ℛ}
   domain::𝒟
-  rtable::𝒯
+  trows::ℛ
 end
 
+function Base.getindex(rows::DataRows, ind)
+  row = rows.trows[ind]
+  elm = rows.domain[ind]
+  (; NamedTuple(row)..., geometry=elm)
+end
+
+Base.firstindex(row::DataRows) = 1
+
+Base.lastindex(rows::DataRows) = length(rows)
+
+Base.length(rows::DataRows) = nelements(rows.domain)
+
 function Base.iterate(rows::DataRows, state=1)
-  if state > nelements(rows.domain)
+  if state > length(rows)
     nothing
   else
-    row, _ = iterate(rows.rtable, state)
+    row, _ = iterate(rows.trows, state)
     elm, _ = iterate(rows.domain, state)
     (; NamedTuple(row)..., geometry=elm), state + 1
   end
 end
 
-Base.length(rows::DataRows) = nelements(rows.domain)
-
 function Tables.schema(rows::DataRows)
   geomtype = eltype(rows.domain)
-  schema = Tables.schema(rows.rtable)
+  schema = Tables.schema(rows.trows)
   names, types = schema.names, schema.types
   Tables.Schema((names..., :geometry), (types..., geomtype))
 end
@@ -206,7 +220,7 @@ function Base.show(io::IO, ::MIME"text/plain", data::Data)
   for rank in 0:paramdim(𝒟)
     𝒯 = values(data, rank)
     if !isnothing(𝒯)
-      sche = Tables.schema(Tables.rows(𝒯))
+      sche = Tables.schema(𝒯)
       vars = zip(sche.names, sche.types)
       println(io, "  variables (rank $rank)")
       varlines = ["    └─$var ($V)" for (var,V) in vars]

@@ -137,7 +137,7 @@
     @test P2(1,1) ∈ b
 
     b = Box(P2(1,1), P2(2,2))
-    @test sides(b) == T[1,1]
+    @test sides(b) == T.((1,1))
     @test Meshes.center(b) == P2(1.5,1.5)
     @test diagonal(b) == √T(2)
 
@@ -176,6 +176,9 @@
     @test radius(b) == T(5)
     @test isconvex(b)
 
+    b = Ball(P3(1,2,3), 4)
+    @test coordtype(b) == T
+
     b = Ball(P2(0,0), T(2))
     @test measure(b) ≈ π*(2^2)
     b = Ball(P3(0,0,0), T(2))
@@ -208,6 +211,9 @@
     @test isnothing(boundary(s))
     @test isperiodic(s) == (true, true)
 
+    s = Sphere(P3(1,2,3), 4)
+    @test coordtype(s) == T
+
     s = Sphere(P2(0,0), T(1))
     @test embeddim(s) == 2
     @test paramdim(s) == 1
@@ -218,11 +224,6 @@
     @test !isconvex(s)
     @test isnothing(boundary(s))
     @test isperiodic(s) == (true,)
-
-    # Sphere constructor works with both float and integer radius
-    s  = Sphere(P3(1,2,3), T(4))
-    si = Sphere(P3(1,2,3), 4)
-    @test s == si
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
@@ -270,6 +271,13 @@
     @test isconvex(c)
     @test !isright(c)
 
+    c = Cylinder(1.0)
+    @test coordtype(c) == Float64
+    c = Cylinder(1f0)
+    @test coordtype(c) == Float32
+    c = Cylinder(1)
+    @test coordtype(c) == Float64
+
     c = Cylinder(T(1), Segment(P3(0,0,0), P3(0,0,1)))
     @test radius(c) == T(1)
     @test bottom(c) == Plane(P3(0,0,0), V3(0,0,1))
@@ -295,5 +303,12 @@
     @test isconvex(c)
     @test isright(c)
     @test isnothing(boundary(c))
+
+    c = CylinderSurface(1.0)
+    @test coordtype(c) == Float64
+    c = CylinderSurface(1f0)
+    @test coordtype(c) == Float32
+    c = CylinderSurface(1)
+    @test coordtype(c) == Float64
   end
 end

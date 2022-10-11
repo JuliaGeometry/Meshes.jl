@@ -178,6 +178,25 @@
     @test measure(mesh) ≈ T(1)
     @test extrema(mesh) == (P2(0,0), P2(1,1))
 
+    # test constructors
+    coords = [T.((0,0)), T.((1,0)), T.((0,1)), T.((1,1)), T.((0.5,0.5))]
+    connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
+    mesh = SimpleMesh(coords, SimpleTopology(connec))
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa SimpleTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
+    mesh = SimpleMesh(coords, connec)
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa SimpleTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
+    mesh = SimpleMesh(coords, connec, relations=true)
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa HalfEdgeTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)
     □s = connect.([(1,2,6,5),(5,6,4,3)], Quadrangle)
