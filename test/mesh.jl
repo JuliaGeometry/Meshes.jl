@@ -148,7 +148,7 @@
     @test nvertices(mesh) == 121
     @test nelements(mesh) == 100
     @test eltype(mesh) <: Quadrangle
-    
+
     grid = CartesianGrid{T}(200,100)
     if T == Float32
       @test sprint(show, MIME"text/plain"(), grid) == "200×100 CartesianGrid{2,Float32}\n  minimum: Point(0.0f0, 0.0f0)\n  maximum: Point(200.0f0, 100.0f0)\n  spacing: (1.0f0, 1.0f0)"
@@ -246,12 +246,19 @@
     @test centroid(mesh, 3) == centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)]))
     @test centroid(mesh, 4) == centroid(Triangle(P2[(0,1), (0,0), (0.5,0.5)]))
 
-    # merge operation
+    # merge operation with 2D geometries
     mesh₁ = SimpleMesh(P2[(0,0), (1,0), (0,1)], connect.([(1,2,3)]))
     mesh₂ = SimpleMesh(P2[(1,0), (1,1), (0,1)], connect.([(1,2,3)]))
     mesh  = merge(mesh₁, mesh₂)
     @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
     @test collect(elements(topology(mesh))) == connect.([(1,2,3),(4,5,6)])
+
+    # merge operation with 3D geometries
+    mesh₁ = SimpleMesh(P3[(0,0,0), (1,0,0), (0,1,0), (0,0,1)], connect.([(1,2,3,4)], Tetrahedron))
+    mesh₂ = SimpleMesh(P3[(1,0,0), (1,1,0), (0,1,0), (1,1,1)], connect.([(1,2,3,4)], Tetrahedron))
+    mesh  = merge(mesh₁, mesh₂)
+    @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
+    @test collect(elements(topology(mesh))) == connect.([(1,2,3,4),(5,6,7,8)], Tetrahedron)
 
     # convert any mesh to SimpleMesh
     grid = CartesianGrid{T}(10,10)

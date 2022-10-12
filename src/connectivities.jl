@@ -20,6 +20,14 @@ struct Connectivity{PL<:Polytope,N}
 end
 
 """
+    pltype(connectivity)
+
+Return the polytope type that the connectivity represents.
+"""
+pltype(::Type{Connectivity{PL,N}}) where {PL,N} = PL
+pltype(c::Connectivity) = pltype(typeof(c))
+
+"""
     paramdim(connectivity)
 
 Return the parametric dimension of the `connectivity`.

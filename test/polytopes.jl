@@ -206,6 +206,7 @@
     @test nelements(m) == 6
 
     p = Pyramid(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)])
+    @test volume(p) ≈ T(1/3)
     m = boundary(p)
     @test m isa Mesh
     @test nelements(m) == 5

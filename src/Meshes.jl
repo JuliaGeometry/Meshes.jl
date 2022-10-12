@@ -222,7 +222,7 @@ export
   Connectivity,
   paramdim, indices,
   connect, materialize,
-  issimplex,
+  issimplex, pltype,
 
   # topologies
   Topology,
@@ -344,6 +344,7 @@ export
   FanTriangulation,
   RegularDiscretization,
   FIST, Dehn1899,
+  Tetrahedralization,
   discretize,
   discretizewithin,
   simplexify,
