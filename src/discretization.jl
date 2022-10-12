@@ -198,8 +198,11 @@ function simplexify(mesh::Mesh)
     append!(ginds, einds)
   end
 
+  # simplex type for parametric dimension
+  PL = paramdim(mesh) == 2 ? Triangle : Tetrahedron
+
   # new connectivities
-  newconnec = connect.(Tuple.(ginds), Triangle)
+  newconnec = connect.(Tuple.(ginds), PL)
 
   SimpleMesh(points, newconnec)
 end
