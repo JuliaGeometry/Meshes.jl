@@ -10,9 +10,12 @@ A method for discretizing geometries into meshes.
 abstract type DiscretizationMethod end
 
 """
-    discretize(geometry, method)
+    discretize(geometry, [method])
 
 Discretize `geometry` with discretization `method`.
+
+If the `method` is ommitted, a default algorithm is
+used with a specific number of elements.
 """
 function discretize end
 
@@ -93,6 +96,26 @@ function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
   SimpleMesh(points, topology(mesh))
 end
 
+# ----------------
+# DEFAULT METHODS
+# ----------------
+
+discretize(geometry) = simplexify(geometry)
+
+discretize(ball::Ball{2}) =
+  discretize(ball, RegularDiscretization(50))
+
+discretize(sphere::Sphere{3}) =
+  discretize(sphere, RegularDiscretization(50))
+
+discretize(cylsurf::CylinderSurface) =
+  discretize(cylsurf, RegularDiscretization(50, 2))
+
+discretize(multi::Multi) =
+  mapreduce(discretize, merge, multi)
+
+discretize(mesh::Mesh) = mesh
+
 """
     simplexify(object)
 
@@ -106,16 +129,14 @@ when the `object` has parametric dimension 2.
 """
 function simplexify end
 
-# fallback method for all geometries
-simplexify(geometry) = discretize(geometry, RegularDiscretization(50))
+simplexify(geometry) =
+  simplexify(discretize(geometry))
 
-# -----------------------
-# PARAMETRIC DIMENSION 1
-# -----------------------
+simplexify(box::Box{1}) =
+  SimpleMesh(vertices(box), GridTopology(1))
 
-simplexify(box::Box{1}) = SimpleMesh(vertices(box), GridTopology(1))
-
-simplexify(seg::Segment) = SimpleMesh(vertices(seg), GridTopology(1))
+simplexify(seg::Segment) =
+  SimpleMesh(vertices(seg), GridTopology(1))
 
 function simplexify(chain::Chain)
   np = npoints(chain)
@@ -127,23 +148,29 @@ function simplexify(chain::Chain)
   SimpleMesh(points, topo)
 end
 
-simplexify(grid::CartesianGrid{1}) = grid
+simplexify(bezier::BezierCurve) =
+  discretize(bezier, RegularDiscretization(50))
 
-# -----------------------
-# PARAMETRIC DIMENSION 2
-# -----------------------
+simplexify(sphere::Sphere{2}) =
+  discretize(sphere, RegularDiscretization(50))
 
-simplexify(box::Box{2}) = discretize(box, FanTriangulation())
+simplexify(box::Box{2}) =
+  discretize(box, FanTriangulation())
 
-simplexify(tri::Triangle) = discretize(tri, FanTriangulation())
+simplexify(tri::Triangle) =
+  discretize(tri, FanTriangulation())
 
-simplexify(quad::Quadrangle) = discretize(quad, FanTriangulation())
+simplexify(quad::Quadrangle) =
+  discretize(quad, FanTriangulation())
 
-simplexify(ngon::Ngon) = discretize(ngon, Dehn1899())
+simplexify(ngon::Ngon) =
+  discretize(ngon, Dehn1899())
 
-simplexify(poly::PolyArea) = discretize(poly, FIST())
+simplexify(poly::PolyArea) =
+  discretize(poly, FIST())
 
-simplexify(multi::Multi) = mapreduce(simplexify, merge, multi)
+simplexify(multi::Multi) =
+  mapreduce(simplexify, merge, multi)
 
 function simplexify(mesh::Mesh)
   points = vertices(mesh)
@@ -176,15 +203,6 @@ function simplexify(mesh::Mesh)
 
   SimpleMesh(points, newconnec)
 end
-
-simplexify(sphere::Sphere{3}) =
-  discretize(sphere, RegularDiscretization(50)) |> simplexify
-
-simplexify(ball::Ball{2}) =
-  discretize(ball, RegularDiscretization(50)) |> simplexify
-
-simplexify(cylsurf::CylinderSurface) =
-  discretize(cylsurf, RegularDiscretization(50, 2)) |> simplexify
 
 # ----------------
 # IMPLEMENTATIONS
