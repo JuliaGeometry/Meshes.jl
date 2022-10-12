@@ -222,7 +222,7 @@ export
   Connectivity,
   paramdim, indices,
   connect, materialize,
-  issimplex,
+  issimplex, pltype,
 
   # topologies
   Topology,
