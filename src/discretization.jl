@@ -169,6 +169,9 @@ simplexify(ngon::Ngon) =
 simplexify(poly::PolyArea) =
   discretize(poly, FIST())
 
+simplexify(poly::Polyhedron) =
+  discretize(poly, Tetrahedralization())
+
 simplexify(multi::Multi) =
   mapreduce(simplexify, merge, multi)
 
@@ -215,3 +218,4 @@ include("discretization/fan.jl")
 include("discretization/regular.jl")
 include("discretization/fist.jl")
 include("discretization/dehn.jl")
+include("discretization/tetra.jl")

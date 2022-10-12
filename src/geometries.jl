@@ -45,7 +45,7 @@ centroid(g::Geometry) = center(g)
 
 Return the measure of the `geometry`, i.e. the length, area, or volume.
 """
-function measure end
+measure(g::Geometry) = sum(measure, discretize(g))
 
 """
     extrema(geometry)

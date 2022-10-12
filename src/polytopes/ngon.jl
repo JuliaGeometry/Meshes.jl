@@ -57,8 +57,6 @@ innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
 signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
-measure(ngon::Ngon) = sum(measure, simplexify(ngon))
-
 Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 
 # ----------

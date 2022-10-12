@@ -27,17 +27,6 @@ function (h::Hexahedron)(u, v, w)
                     u*v*w*A8)
 end
 
-function measure(h::Hexahedron)
-  A1, A2, A4, A3,
-  A5, A6, A8, A7 = h.vertices
-  t1 = Tetrahedron(A1, A5, A6, A7)
-  t2 = Tetrahedron(A1, A4, A3, A7)
-  t3 = Tetrahedron(A1, A4, A6, A7)
-  t4 = Tetrahedron(A1, A2, A4, A6)
-  t5 = Tetrahedron(A4, A6, A8, A7)
-  sum(measure, [t1,t2,t3,t4,t5])
-end
-
 function boundary(h::Hexahedron)
   indices = [(4,3,2,1),(6,5,1,2),(3,7,6,2),
              (4,8,7,3),(1,5,8,4),(6,7,8,5)]

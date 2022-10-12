@@ -344,6 +344,7 @@ export
   FanTriangulation,
   RegularDiscretization,
   FIST, Dehn1899,
+  Tetrahedralization,
   discretize,
   discretizewithin,
   simplexify,
