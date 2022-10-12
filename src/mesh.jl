@@ -128,23 +128,22 @@ Merge `mesh₁` with `mesh₂`, i.e. concatenate the vertices
 and adjust the connectivities accordingly.
 """
 function Base.merge(m₁::Mesh, m₂::Mesh)
-  t₁ = topology(m₁)
-  t₂ = topology(m₂)
   v₁ = vertices(m₁)
   v₂ = vertices(m₂)
-  e₁ = collect(elements(t₁))
-  e₂ = collect(elements(t₂))
+  t₁ = topology(m₁)
+  t₂ = topology(m₂)
 
   # concatenate vertices
   points = [v₁; v₂]
 
   # concatenate connectivities
-  connec = e₁
   offset = length(v₁)
-  for e in e₂
+  connec = collect(elements(t₁))
+  for e in elements(t₂)
+    PL = pltype(e)
     c  = indices(e)
     c′ = ntuple(i -> c[i] + offset, length(c))
-    push!(connec, connect(c′))
+    push!(connec, connect(c′, PL))
   end
 
   SimpleMesh(points, connec)
