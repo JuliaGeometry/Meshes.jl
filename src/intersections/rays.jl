@@ -58,6 +58,3 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
     end
   end
 end
-
-# compute the intersection of two rays assuming that it is a point
-intersectpoint(r1::Ray, r2::Ray) = intersectpoint(Line(r1(0), r1(1)), Line(r2(0), r2(1)))

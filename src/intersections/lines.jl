@@ -24,14 +24,6 @@ function intersection(f, l1::Line, l2::Line)
   end
 end
 
-# compute the intersection of two lines assuming that it is a point
-function intersectpoint(l1::Line, l2::Line)
-  a, b = l1(0), l1(1)
-  c, d = l2(0), l2(1)
-  λ₁, _ = intersectparameters(a, b, c, d)
-  a + λ₁ * (b - a)
- end
-
  """
     intersectparameters(a, b, c, d)
 
@@ -64,8 +56,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T},
   
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
-  rₐ = Dim == 2 ? sum(sum(abs, R, dims=2) .> atol(T)) :
-                  sum(abs.(diag(R)) .> atol(T))
+  rₐ = sum(sum(abs, R, dims=2) .> atol(T))
 
   # calculate the rank of the rectangular matrix
   r = sum(sum(abs, R[:,1:2], dims=2) .> atol(T))

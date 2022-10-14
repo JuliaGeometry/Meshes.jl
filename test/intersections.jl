@@ -17,6 +17,10 @@
     @test s1 ∩ s2 == Segment(P2(0.5,0.0), P2(1,0))
     @test s2 ∩ s1 == Segment(P2(0.5,0.0), P2(1,0))
 
+    s1 = Segment((0,0), (1,-1))
+    s2 = Segment((0.5,-0.5), (1.5,-1.5))
+    @test s1 ∩ s2 == s2 ∩ s1 == Segment(P2(0.5,-0.5), P2(1,-1))
+
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0,0), P2(0,1))
     @test s1 ∩ s2 ≈ P2(0,0)
@@ -234,9 +238,6 @@
     @test r₂ ∩ s₁₅ === s₁₅ ∩ r₂ === nothing
     @test intersection(r₂, s₁₆) |> type == NoIntersection # CASE 5
     @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
-
-    # intersectpoint
-    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P2(1.25,0.125)
 
     # type stability tests
     r₁ = Ray(P2(0,0), V2(1,0))

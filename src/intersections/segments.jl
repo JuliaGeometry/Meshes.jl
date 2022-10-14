@@ -3,159 +3,64 @@
 # ------------------------------------------------------------------
 
 #=
-The intersection type can be one of five types according to
-Balbes, R. and Siegel, J. 1990:
-
-1. intersect at point interior to both segments
-2. intersect at end point of one and an interior point of the other
-3. intersect at end point of both segments
-4. overlap at more than one point
-5. do not overlap nor intersect
-
-Balbes, R. and Siegel, J. 1990.
-(https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
+The intersection type can be one of six types:
+1. intersect at one inner point (CrossingSegments-> Point)
+2. intersect at one endpoint of one segment (MidTouchingSegments-> Point)
+3. intersect at one endpoint of both segments (CornerTouchingSegments -> Point)
+4. overlap of segments (OverlappingSegments -> Segments)
+5. do not overlap nor intersect (NoIntersection)
 =#
-function intersection(f, s1::Segment{2,T}, s2::Segment{2,T}) where {T}
-  x̄ = centroid(s1)
-  ȳ = centroid(s2)
-  x1, x2 = vertices(s1)
-  y1, y2 = vertices(s2)
-  Q = [x1, y1, x2, y2, x1]
+function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
+  a, b = s1(0), s1(1)
+  c, d = s2(0), s2(1)
 
-  # winding number of x̄
-  windingx = zero(T)
-  determinatex = true
-  for j in 1:length(Q)-1
-    α = ∠(Q[j], x̄, Q[j+1])
-    if α ≈ 0 || α ≈ π || α ≈ -π
-      determinatex = false
-    end
-    windingx += α
-  end
+  λ₁, λ₂, r, rₐ = intersectparameters(a, b, c, d)
 
-  # winding number of ȳ
-  windingy = zero(T)
-  determinatey = true
-  for j in 1:length(Q)-1
-    β = ∠(Q[j], ȳ, Q[j+1])
-    if β ≈ 0 || β ≈ π || β ≈ -π
-      determinatey = false
-    end
-    windingy += β
-  end
-
-  # winding number ≈ 0?
-  wxzero = isapprox(windingx, zero(T), atol=atol(T))
-  wyzero = isapprox(windingy, zero(T), atol=atol(T))
-
-  # there are three cases to consider
-  # Balbes, R. and Siegel, J. 1990.
-  if determinatex && determinatey # CASE (I)
-    if !wxzero && !wyzero
-      # configuration (1)
-      return @IT CrossingSegments intersectpoint(s1, s2) f
-    else
-      # configuration (5)
+  # not in same plane or parallel
+  if r ≠ rₐ
+    return @IT NoIntersection nothing f #CASE 5
+  # collinear
+  elseif r == rₐ == 1
+    # find parameters λc and λd for points c and d in s1
+    # use dimension with largest vector component to avoid division by zero
+    ix = argmax(abs.(b-a))
+    v₁ = (b-a)[ix]
+    λc, λd = ((c-a)[ix], (d-a)[ix]) ./ v₁
+    λc = isapprox(λc, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λc, one(T), atol=atol(T)) ? one(T) : λc)
+    λd = isapprox(λd, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λd, one(T), atol=atol(T)) ? zero(T) : λd)
+    if (λc > 1 && λd > 1) || (λc < 0 && λd < 0)
       return @IT NoIntersection nothing f
+    elseif (λc == 0 && λd < 0) ||  (λd == 0 && λc < 0)
+      return @IT CornerTouchingSegments a f # CASE 3
+    elseif (λc == 1 && λd > 1) || (λd == 1 && λc > 1)
+      return @IT CornerTouchingSegments b f # CASE 3
+    else
+      p = sort([0,1,λc,λd])
+      return @IT OverlappingSegments Segment(s1(maximum(p[1:2])), s1(minimum(p[3:4]))) f # CASE 4
     end
-  elseif determinatex || determinatey # CASE (II)
-    if !(determinatex ? wxzero : wyzero)
-      if x1 ≈ y1 || x1 ≈ y2 || x2 ≈ y1 || x2 ≈ y2
-        # configuration (3)
-        return @IT CornerTouchingSegments intersectpoint(s1, s2) f
+  # in same plane, not parallel
+  else
+    λ₁ = isapprox(λ₁, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ₁, one(T), atol=atol(T)) ? one(T) : λ₁)
+    λ₂ = isapprox(λ₂, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ₂, one(T), atol=atol(T)) ? one(T) : λ₂)
+    if λ₁ < 0 || λ₂ < 0 || λ₁ > 1 || λ₂ > 1
+      return @IT NoIntersection nothing f # CASE 5
+    # 8 cases remain
+    elseif λ₁ == 0
+      if λ₂ == 0 || λ₂ == 1
+        return @IT CornerTouchingSegments a f # CASE 3
       else
-        # configuration (2)
-        return @IT MidTouchingSegments intersectpoint(s1, s2) f
+        return @IT MidTouchingSegments a f # CASE 2
       end
+    elseif λ₁ == 1
+      if λ₂ == 0 || λ₂ == 1
+        return @IT CornerTouchingSegments b f # CASE 3
+      else
+        return @IT MidTouchingSegments b f # CASE 2
+      end
+    elseif λ₂ == 0 || λ₂ == 1
+      return @IT MidTouchingSegments (λ₂ == 0 ? c : d) f # CASE 2
     else
-      # configuration (5)
-      return @IT NoIntersection nothing f
+      return @IT CrossingSegments s1(λ₁) f # CASE 1: equal to s2(λ₂)
     end
-  elseif !determinatex && !determinatey # CASE (III)
-    if !isapprox((x2 - x1) × (y2 - y1), zero(T), atol=atol(T)^2)
-      # configuration (3)
-      return @IT CornerTouchingSegments intersectpoint(s1, s2) f
-    else
-      # configuration (3), (4) or (5)
-      return intersectcollinear(f, s1, s2)
-    end
-  else
-    return @IT NoIntersection nothing f
-  end
-end
-
-#=
-(https://stackoverflow.com/questions/55220355/how-to-detect-whether-two-segmentin-3d-spaceintersect)
-=#
-function intersection(f, s1::Segment{3,T}, s2::Segment{3,T}) where {T}
-  # get coordinates
-  p₁, p₂ = coordinates.(vertices(s1))
-  q₁, q₂ = coordinates.(vertices(s2))
-
-  # create matrices and vectors to allow for evaluation of intersection
-  A = [(p₂ - p₁) (q₁ - q₂)]
-  b = q₁ - p₁
-
-  λ = A \ b
-
-  # calculate the rank of the augmented matrix
-  rₐ = rank([A b])
-  # calculate the rank of the rectangular matrix
-  r = rank(A)
-
-  # use matrix rank to determine basic intersection properties
-  # segments are co-planar (but not co-linear)
-  if (rₐ == 2) && (r == 2)
-    # if either element is approximately 0 or 1, set them as so to prevent any domain errors
-    λ₁ = isapprox(λ[1], zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ[1], one(T), atol=atol(T)) ? one(T) : λ[1])
-    λ₂ = isapprox(λ[2], zero(T), atol=atol(T)) ? zero(T) : (isapprox(λ[2], one(T), atol=atol(T)) ? one(T) : λ[2])
-
-    # if λs are outside of the interval [0, 1], they do not intersect
-    if any((λ₁, λ₂) .< zero(T)) || any((λ₁, λ₂) .> one(T))
-      return @IT NoIntersection nothing f
-    # if both λs are either 0 or 1, they are CornerTouchingSegments
-    elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) && ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
-      return @IT CornerTouchingSegments s1(λ₁) f
-    # if either λ is 0 or 1 then they are MidTouchingSegments
-    elseif ((λ₁ ≈ zero(T)) || (λ₁ ≈ one(T))) ⊻ ((λ₂ ≈ zero(T)) || (λ₂ ≈ one(T)))
-      return @IT MidTouchingSegments s1(λ₁) f
-    # otherwise they are simple CrossingSegments
-    else
-      return @IT CrossingSegments s1(λ₁) f
-    end
-  # segments are co-linear
-  elseif (rₐ == 1) && (r == 1)
-    return intersectcollinear(f, s1, s2)
-  else
-    return @IT NoIntersection nothing f
-  end
-end
-
-# compute the intersection of two line segments assuming that it is a point
-function intersectpoint(s1::Segment{2}, s2::Segment{2})
-  x1, x2 = vertices(s1)
-  y1, y2 = vertices(s2)
-  intersectpoint(Line(x1, x2), Line(y1, y2))
-end
-
-# intersection of two line segments assuming that they are collinear
-function intersectcollinear(f, s1::Segment{Dim,T}, s2::Segment{Dim,T}) where {Dim,T}
-  m1, M1 = coordinates.(vertices(s1))
-  m2, M2 = coordinates.(vertices(s2))
-
-  # make sure that segment vertices are "ordered"
-  m1, M1 = any(m1 .> M1) ? (M1, m1) : (m1, M1)
-  m2, M2 = any(m2 .> M2) ? (M2, m2) : (m2, M2)
-
-  # relevant vertices
-  u = Point(max.(m1, m2))
-  v = Point(min.(M1, M2))
-
-  if isapprox(u, v, atol=atol(T))
-    return @IT CornerTouchingSegments u f
-  elseif any(coordinates(u) .< coordinates(v))
-    return @IT OverlappingSegments Segment(u, v) f
-  else
-    return @IT NoIntersection nothing f
   end
 end
