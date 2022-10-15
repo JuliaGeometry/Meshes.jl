@@ -59,7 +59,29 @@ end
 
 # segment faces making up quadrangles in 2D grid
 function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
-  @error "not implemented"
+  t = ∂.topology
+  cx, cy = isperiodic(t)
+  nx, ny = size(t)
+
+  # index in flipped grid
+  i, j = elem2cart(t, ind)
+  flip = GridTopology(ny, nx)
+  find = cart2elem(flip, j, i)
+
+  # vertical edges
+  i1 = ind
+  i2 = cy ? mod1(i1 + nx, nx*ny) : i1 + nx
+
+  # horizontal edges
+  i3 = find
+  i4 = cx ? mod1(i3 + ny, nx*ny) : i3 + ny
+
+  # horizontal edges come after vertical edges
+  offset = nx*ny + !cy*nx
+  i3 += offset
+  i4 += offset
+
+  [i1, i2, i3, i4]
 end
 
 # vertices of quadrangle on 2D grid
