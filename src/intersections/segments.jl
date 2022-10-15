@@ -4,8 +4,8 @@
 
 #=
 The intersection type can be one of six types:
-1. intersect at one inner point (CrossingSegments-> Point)
-2. intersect at one endpoint of one segment (MidTouchingSegments-> Point)
+1. intersect at one inner point (CrossingSegments -> Point)
+2. intersect at one endpoint of one segment (MidTouchingSegments -> Point)
 3. intersect at one endpoint of both segments (CornerTouchingSegments -> Point)
 4. overlap of segments (OverlappingSegments -> Segments)
 5. do not overlap nor intersect (NoIntersection)
@@ -27,9 +27,9 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
     v₁ = (b-a)[ix]
     λc, λd = ((c-a)[ix], (d-a)[ix]) ./ v₁
     λc = isapprox(λc, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λc, one(T), atol=atol(T)) ? one(T) : λc)
-    λd = isapprox(λd, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λd, one(T), atol=atol(T)) ? zero(T) : λd)
+    λd = isapprox(λd, zero(T), atol=atol(T)) ? zero(T) : (isapprox(λd, one(T), atol=atol(T)) ? one(T) : λd)
     if (λc > 1 && λd > 1) || (λc < 0 && λd < 0)
-      return @IT NoIntersection nothing f
+      return @IT NoIntersection nothing f # CASE 5
     elseif (λc == 0 && λd < 0) ||  (λd == 0 && λc < 0)
       return @IT CornerTouchingSegments a f # CASE 3
     elseif (λc == 1 && λd > 1) || (λd == 1 && λc > 1)

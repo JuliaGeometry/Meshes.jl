@@ -17,8 +17,8 @@
     @test s1 ∩ s2 == Segment(P2(0.5,0.0), P2(1,0))
     @test s2 ∩ s1 == Segment(P2(0.5,0.0), P2(1,0))
 
-    s1 = Segment((0,0), (1,-1))
-    s2 = Segment((0.5,-0.5), (1.5,-1.5))
+    s1 = Segment(P2(0,0), P2(1,-1))
+    s2 = Segment(P2(0.5,-0.5), P2(1.5,-1.5))
     @test s1 ∩ s2 == s2 ∩ s1 == Segment(P2(0.5,-0.5), P2(1,-1))
 
     s1 = Segment(P2(0,0), P2(1,0))
@@ -55,7 +55,8 @@
 
     s1 = Segment(P2(1,2), P2(1,0))
     s2 = Segment(P2(1,0), P2(1,1))
-    @test s1 ∩ s2 == Segment(P2(1,0), P2(1,1))
+    @test s1 ∩ s2 == Segment(P2(1,1), P2(1,0))
+    @test s2 ∩ s1 == Segment(P2(1,0), P2(1,1))
 
     s1 = Segment(P2(0,0), P2(2,0))
     s2 = Segment(P2(-2,0), P2(-1,0))
@@ -265,9 +266,6 @@
     s₅ = Segment(P3(0,0,0), P3(0.5, 1, 1.5))
     @test intersection(r₁, s₅) |> type === NoIntersection # CASE 5
     @test r₁ ∩ s₅ === s₅ ∩ r₁ === nothing
-
-    # intersectpoint
-    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P3(2,4,6)
   end
 
   @testset "Triangles" begin
