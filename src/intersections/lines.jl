@@ -63,8 +63,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T},
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
-    QR = qr(A)
-    λ = QR.R \ QR.Q' * y
+    λ = A \ y
   else # parallel or collinear
     λ = SVector(zero(T), zero(T))
   end
