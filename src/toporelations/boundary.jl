@@ -27,7 +27,43 @@ end
 
 # quadrangle faces making up hexahedrons in 3D grid
 function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
-  @error "not implemented"
+  t = ∂.topology
+  cx, cy, cz = isperiodic(t)
+  nx, ny, nz = size(t)
+
+  i, j, k = elem2cart(t, ind)
+  i₊ = cx ? mod1(i + 1, nx) : i + 1
+  j₊ = cy ? mod1(j + 1, ny) : j + 1
+  k₊ = cz ? mod1(k + 1, nz) : k + 1
+
+  # faces perpendicular to x
+  tx = GridTopology(nx + 1, ny, nz)
+  i1 = cart2elem(tx, i , j, k) - cx*(j-1)*(k-1)
+  i2 = cart2elem(tx, i₊, j, k) - cx*(j-1)*(k-1)
+
+  # faces perpendicular to y
+  ty = GridTopology(ny + 1, nx, nz)
+  i3 = cart2elem(ty, j , i, k) - cy*(i-1)*(k-1)
+  i4 = cart2elem(ty, j₊, i, k) - cy*(i-1)*(k-1)
+
+  # faces perpendicular to z
+  tz = GridTopology(nz + 1, nx, ny)
+  i5 = cart2elem(tz, k , i, j) - cz*(i-1)*(j-1)
+  i6 = cart2elem(tz, k₊, i, j) - cz*(i-1)*(j-1)
+
+  # offsets
+  ox = 0
+  oy = nx*ny*nz + !cx*ny*nz
+  oz = oy + nx*ny*nz + !cy*nx*nz
+
+  i1 += ox
+  i2 += ox
+  i3 += oy
+  i4 += oy
+  i5 += oz
+  i6 += oz
+
+  [i1, i2, i3, i4, i5, i6]
 end
 
 # vertices of hexahedron on 3D grid
@@ -64,25 +100,27 @@ function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
   nx, ny = size(t)
 
   i, j = elem2cart(t, ind)
-
-  # advance index in both dimensions
   i₊ = cx ? mod1(i + 1, nx) : i + 1
   j₊ = cy ? mod1(j + 1, ny) : j + 1
 
-  # horizontal edges
-  th = GridTopology(nx + 1, ny)
-  i1 = cart2elem(th, i , j) - cx*(j-1)
-  i2 = cart2elem(th, i₊, j) - cx*(j-1)
+  # edges perpendicular to x
+  tx = GridTopology(nx + 1, ny)
+  i1 = cart2elem(tx, i , j) - cx*(j-1)
+  i2 = cart2elem(tx, i₊, j) - cx*(j-1)
 
-  # vertical edges
-  tv = GridTopology(ny + 1, nx)
-  i3 = cart2elem(tv, j , i) - cy*(i-1)
-  i4 = cart2elem(tv, j₊, i) - cy*(i-1)
+  # edges perpendicular to y
+  ty = GridTopology(ny + 1, nx)
+  i3 = cart2elem(ty, j , i) - cy*(i-1)
+  i4 = cart2elem(ty, j₊, i) - cy*(i-1)
 
-  # vertical edges come after horizontal edges
-  nh  = nx*ny + !cx*ny
-  i3 += nh
-  i4 += nh
+  # offsets
+  ox = 0
+  oy = nx*ny + !cx*ny
+
+  i1 += ox
+  i2 += ox
+  i3 += oy
+  i4 += oy
 
   [i1, i2, i3, i4]
 end
