@@ -38,18 +38,18 @@ function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
 
   # faces perpendicular to x
   tx = GridTopology(nx + 1, ny, nz)
-  i1 = cart2elem(tx, i , j, k) - cx*(j-1)*(k-1)
-  i2 = cart2elem(tx, i₊, j, k) - cx*(j-1)*(k-1)
+  i1 = cart2elem(tx, i , j, k) - cx*((j-1) + ny*(k-1))
+  i2 = cart2elem(tx, i₊, j, k) - cx*((j-1) + ny*(k-1))
 
   # faces perpendicular to y
   ty = GridTopology(ny + 1, nx, nz)
-  i3 = cart2elem(ty, j , i, k) - cy*(i-1)*(k-1)
-  i4 = cart2elem(ty, j₊, i, k) - cy*(i-1)*(k-1)
+  i3 = cart2elem(ty, j , i, k) - cy*((i-1) + nx*(k-1))
+  i4 = cart2elem(ty, j₊, i, k) - cy*((i-1) + nx*(k-1))
 
   # faces perpendicular to z
   tz = GridTopology(nz + 1, nx, ny)
-  i5 = cart2elem(tz, k , i, j) - cz*(i-1)*(j-1)
-  i6 = cart2elem(tz, k₊, i, j) - cz*(i-1)*(j-1)
+  i5 = cart2elem(tz, k , i, j) - cz*((i-1) + nx*(j-1))
+  i6 = cart2elem(tz, k₊, i, j) - cz*((i-1) + nx*(j-1))
 
   # offsets
   ox = 0

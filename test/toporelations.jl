@@ -47,6 +47,90 @@
     @test ∂(7) == [10,11,20,21,32,33]
     @test ∂(8) == [11,12,23,24,35,36]
 
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (true, false, false))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,9,10,21,22]
+    @test ∂(2) == [2,1,12,13,24,25]
+    @test ∂(3) == [3,4,10,11,27,28]
+    @test ∂(4) == [4,3,13,14,30,31]
+    @test ∂(5) == [5,6,15,16,22,23]
+    @test ∂(6) == [6,5,18,19,25,26]
+    @test ∂(7) == [7,8,16,17,28,29]
+    @test ∂(8) == [8,7,19,20,31,32]
+
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (false, true, false))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,13,14,21,22]
+    @test ∂(2) == [2,3,15,16,24,25]
+    @test ∂(3) == [4,5,14,13,27,28]
+    @test ∂(4) == [5,6,16,15,30,31]
+    @test ∂(5) == [7,8,17,18,22,23]
+    @test ∂(6) == [8,9,19,20,25,26]
+    @test ∂(7) == [10,11,18,17,28,29]
+    @test ∂(8) == [11,12,20,19,31,32]
+
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (false, false, true))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,13,14,25,26]
+    @test ∂(2) == [2,3,16,17,27,28]
+    @test ∂(3) == [4,5,14,15,29,30]
+    @test ∂(4) == [5,6,17,18,31,32]
+    @test ∂(5) == [7,8,19,20,26,25]
+    @test ∂(6) == [8,9,22,23,28,27]
+    @test ∂(7) == [10,11,20,21,30,29]
+    @test ∂(8) == [11,12,23,24,32,31]
+
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (true, true, false))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,9,10,17,18]
+    @test ∂(2) == [2,1,11,12,20,21]
+    @test ∂(3) == [3,4,10,9,23,24]
+    @test ∂(4) == [4,3,12,11,26,27]
+    @test ∂(5) == [5,6,13,14,18,19]
+    @test ∂(6) == [6,5,15,16,21,22]
+    @test ∂(7) == [7,8,14,13,24,25]
+    @test ∂(8) == [8,7,16,15,27,28]
+
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (true, false, true))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,9,10,21,22]
+    @test ∂(2) == [2,1,12,13,23,24]
+    @test ∂(3) == [3,4,10,11,25,26]
+    @test ∂(4) == [4,3,13,14,27,28]
+    @test ∂(5) == [5,6,15,16,22,21]
+    @test ∂(6) == [6,5,18,19,24,23]
+    @test ∂(7) == [7,8,16,17,26,25]
+    @test ∂(8) == [8,7,19,20,28,27]
+
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (false, true, true))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,13,14,21,22]
+    @test ∂(2) == [2,3,15,16,23,24]
+    @test ∂(3) == [4,5,14,13,25,26]
+    @test ∂(4) == [5,6,16,15,27,28]
+    @test ∂(5) == [7,8,17,18,22,21]
+    @test ∂(6) == [8,9,19,20,24,23]
+    @test ∂(7) == [10,11,18,17,26,25]
+    @test ∂(8) == [11,12,20,19,28,27]
+
+    # quadrangles of hexahedrons in 3D (periodic) grid
+    t = GridTopology((2, 2, 2), (true, true, true))
+    ∂ = Boundary{3,2}(t)
+    @test ∂(1) == [1,2,9,10,17,18]
+    @test ∂(2) == [2,1,11,12,19,20]
+    @test ∂(3) == [3,4,10,9,21,22]
+    @test ∂(4) == [4,3,12,11,23,24]
+    @test ∂(5) == [5,6,13,14,18,17]
+    @test ∂(6) == [6,5,15,16,20,19]
+    @test ∂(7) == [7,8,14,13,22,21]
+    @test ∂(8) == [8,7,16,15,24,23]
+
     # edges of quadrangles in 2D grid
     t = GridTopology(3, 4)
     ∂ = Boundary{2,1}(t)
