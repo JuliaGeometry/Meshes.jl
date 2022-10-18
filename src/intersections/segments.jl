@@ -18,8 +18,7 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
 
   if r ≠ rₐ # not in same plane or parallel
     return @IT NoIntersection nothing f #CASE 5
-  # collinear
-  elseif r == rₐ == 1
+  elseif r == rₐ == 1 # collinear
     # find parameters λc and λd for points c and d in s1
     # use dimension with largest vector component to avoid division by zero
     ix = argmax(abs.(b-a))
