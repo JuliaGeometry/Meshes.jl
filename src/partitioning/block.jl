@@ -4,10 +4,13 @@
 
 """
     BlockPartition(sides; neighbors=false)
-    BlockPartition(side₁, side₂, ...; neighbors=false)
 
 A method for partitioning spatial objects into blocks of given `sides`.
 Optionally, compute the `neighbors` of a block as the metadata.
+
+    BlockPartition(side₁, side₂, ..., sideₙ; neighbors=false)
+
+Alternatively, specify the sides `side₁`, `side₂`, ..., `sideₙ`.
 """
 struct BlockPartition{Dim,T} <: PartitionMethod
   sides::SVector{Dim,T}

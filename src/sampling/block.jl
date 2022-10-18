@@ -3,11 +3,14 @@
 # ------------------------------------------------------------------
 
 """
-    BlockSampling(sides; neighbors=false)
-    BlockSampling(side₁, side₂, ...; neighbors=false)
+    BlockSampling(sides)
 
-A method for sampling objects that are `sides` apart
-using a [`BlockPartition`](@ref).
+A method for sampling objects that are `sides` apart using a
+[`BlockPartition`](@ref).
+
+    BlockSampling(side₁, side₂, ..., sideₙ)
+
+Alternatively, specify the sides `side₁`, `side₂`, ..., `sideₙ`.
 """
 struct BlockSampling{Dim,T} <: DiscreteSamplingMethod
   sides::SVector{Dim,T}
