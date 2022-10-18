@@ -54,7 +54,7 @@ function Base.view(data::Data, geometry::Geometry)
 
   # retrieve subtable
   tinds  = _linear(dom, inds)
-  subtab = viewtable(tab, tinds)
+  subtab = Tables.subset(tab, tinds)
 
   # data table for elements
   vals = Dict(paramdim(dom) => subtab)

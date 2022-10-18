@@ -6,6 +6,12 @@
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.,50.], atol=T(10))
+
+    # availability of option ordered
+    s = sample(d, UniformSampling(100, ordered=true))
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    @test nelements(s) == 100
+    @test isapprox(μ, T[50.,50.], atol=T(10))
   end
 
   @testset "WeightedSampling" begin
@@ -13,6 +19,12 @@
     Random.seed!(2020)
     d = CartesianGrid{T}(100,100)
     s = sample(d, WeightedSampling(100))
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    @test nelements(s) == 100
+    @test isapprox(μ, T[50.,50.], atol=T(10))
+
+    # availability of option ordered
+    s = sample(d, WeightedSampling(100, ordered=true))
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.,50.], atol=T(10))
@@ -34,6 +46,16 @@
     y = coordinates(centroid(s, 17))
     @test n < 50
     @test sqrt(sum((x - y).^2)) ≥ T(20)
+  end
+
+  @testset "BlockSampling" begin
+    g = CartesianGrid{T}(100,100)
+    s = sample(g, BlockSampling(T(10)))
+    @test nelements(s) == 100
+    x = coordinates.(centroid.(s))
+    D = pairwise(Euclidean(), x)
+    d = [D[i,j] for i in 1:length(x) for j in 1:i-1]
+    @test all(≥(T(10)), d)
   end
 
   @testset "RegularSampling" begin
@@ -163,6 +185,10 @@
     @test collect(ps) == P3[(0,0,0),(0.5,0,0),(1,0,0),(0,1,0),
                             (0.5,1,0),(1,1,0),(0,0,1),(0.5,0,1),
                             (1,0,1),(0,1,1),(0.5,1,1),(1,1,1)]
+    
+    grid = CartesianGrid{T}(10, 10)
+    points = sample(grid, RegularSampling(100, 200))
+    @test length(collect(points)) == 20000
   end
 
   @testset "HomogeneousSampling" begin
@@ -249,6 +275,12 @@
     # weighted sampling
     d = CartesianGrid{T}(10,10,10)
     s = sample(d, 100, rand([1,2], 1000))
+    @test nelements(s) == 100
+    @test s[1] isa Hexahedron
+
+    # ordered sampling
+    d = CartesianGrid{T}(10,10,10)
+    s = sample(d, 100, rand([1,2], 1000), ordered=true)
     @test nelements(s) == 100
     @test s[1] isa Hexahedron
   end

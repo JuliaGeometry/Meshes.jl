@@ -58,6 +58,7 @@ end
 include("sampling/uniform.jl")
 include("sampling/weighted.jl")
 include("sampling/ball.jl")
+include("sampling/block.jl")
 
 # continuous sampling
 include("sampling/regular.jl")
@@ -69,25 +70,17 @@ include("sampling/mindistance.jl")
 # ----------
 
 """
-    sample([rng], object, nsamples, [weights], replace=false)
+    sample([rng], object, size, [weights]; replace=false, ordered=false)
 
-Generate `nsamples` samples from spatial `object`
-uniformly or using `weights`, with or without
-replacement depending on `replace` option.
+Generate `size` samples from `object` uniformly or using `weights`,
+with or without replacement depending on the `replace` option. The
+option `ordered` can be used to return samples in the same order of
+the `object`.
 """
-sample(object::DomainOrData, nsamples::Int,
-       weights::AbstractVector=[]; replace=false) =
-  sample(Random.GLOBAL_RNG, object, nsamples, weights, replace)
-
-function sample(rng::AbstractRNG,
-                object::DomainOrData,
-                nsamples::Int,
-                weights::AbstractVector,
-                replace::Bool)
-  method = if isempty(weights)
-    UniformSampling(nsamples, replace)
-  else
-    WeightedSampling(nsamples, weights, replace)
-  end
-  sample(rng, object, method)
+function sample(object::DomainOrData, size::Int, weights=nothing;
+                replace=false, ordered=false)
+  method = WeightedSampling(size, weights;
+                            replace=replace,
+                            ordered=ordered)
+  sample(Random.GLOBAL_RNG, object, method)
 end

@@ -22,16 +22,49 @@ function Boundary{P,Q}(topology) where {P,Q}
 end
 
 # --------------
-# FULL TOPOLOGY
-# --------------
-
-function (∂::Boundary{D,0,D,T})(ind::Integer) where {D,T<:FullTopology}
-  collect(connec4elem(∂.topology, ind))
-end
-
-# --------------
 # GRID TOPOLOGY
 # --------------
+
+# quadrangle faces making up hexahedrons in 3D grid
+function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
+  t = ∂.topology
+  cx, cy, cz = isperiodic(t)
+  nx, ny, nz = size(t)
+
+  i, j, k = elem2cart(t, ind)
+  i₊ = cx ? mod1(i + 1, nx) : i + 1
+  j₊ = cy ? mod1(j + 1, ny) : j + 1
+  k₊ = cz ? mod1(k + 1, nz) : k + 1
+
+  # faces perpendicular to x
+  tx = GridTopology(nx + 1, ny, nz)
+  i1 = cart2elem(tx, i , j, k) - cx*((j-1) + ny*(k-1))
+  i2 = cart2elem(tx, i₊, j, k) - cx*((j-1) + ny*(k-1))
+
+  # faces perpendicular to y
+  ty = GridTopology(ny + 1, nx, nz)
+  i3 = cart2elem(ty, j , i, k) - cy*((i-1) + nx*(k-1))
+  i4 = cart2elem(ty, j₊, i, k) - cy*((i-1) + nx*(k-1))
+
+  # faces perpendicular to z
+  tz = GridTopology(nz + 1, nx, ny)
+  i5 = cart2elem(tz, k , i, j) - cz*((i-1) + nx*(j-1))
+  i6 = cart2elem(tz, k₊, i, j) - cz*((i-1) + nx*(j-1))
+
+  # offsets
+  ox = 0
+  oy = nx*ny*nz + !cx*ny*nz
+  oz = oy + nx*ny*nz + !cy*nx*nz
+
+  i1 += ox
+  i2 += ox
+  i3 += oy
+  i4 += oy
+  i5 += oz
+  i6 += oz
+
+  [i1, i2, i3, i4, i5, i6]
+end
 
 # vertices of hexahedron on 3D grid
 function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
@@ -40,9 +73,9 @@ function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   nx, ny, nz = size(t)
 
   i, j, k = elem2cart(t, ind)
-  i₊ = cx && (i == nx) ? 1 : i + 1
-  j₊ = cy && (j == ny) ? 1 : j + 1
-  k₊ = cz && (k == nz) ? 1 : k + 1
+  i₊ = cx ? mod1(i + 1, nx) : i + 1
+  j₊ = cy ? mod1(j + 1, ny) : j + 1
+  k₊ = cz ? mod1(k + 1, nz) : k + 1
 
   i1 = cart2corner(t, i , j , k )
   i2 = cart2corner(t, i₊, j , k )
@@ -60,6 +93,38 @@ function (∂::Boundary{2,0,3,T})(ind::Integer) where {T<:GridTopology}
   @error "not implemented"
 end
 
+# segments making up quadrangles in 2D grid
+function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
+  t = ∂.topology
+  cx, cy = isperiodic(t)
+  nx, ny = size(t)
+
+  i, j = elem2cart(t, ind)
+  i₊ = cx ? mod1(i + 1, nx) : i + 1
+  j₊ = cy ? mod1(j + 1, ny) : j + 1
+
+  # edges perpendicular to x
+  tx = GridTopology(nx + 1, ny)
+  i1 = cart2elem(tx, i , j) - cx*(j-1)
+  i2 = cart2elem(tx, i₊, j) - cx*(j-1)
+
+  # edges perpendicular to y
+  ty = GridTopology(ny + 1, nx)
+  i3 = cart2elem(ty, j , i) - cy*(i-1)
+  i4 = cart2elem(ty, j₊, i) - cy*(i-1)
+
+  # offsets
+  ox = 0
+  oy = nx*ny + !cx*ny
+
+  i1 += ox
+  i2 += ox
+  i3 += oy
+  i4 += oy
+
+  [i1, i2, i3, i4]
+end
+
 # vertices of quadrangle on 2D grid
 function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology
@@ -67,8 +132,8 @@ function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   nx, ny = size(t)
 
   i, j = elem2cart(t, ind)
-  i₊ = cx && (i == nx) ? 1 : i + 1
-  j₊ = cy && (j == ny) ? 1 : j + 1
+  i₊ = cx ? mod1(i + 1, nx) : i + 1
+  j₊ = cy ? mod1(j + 1, ny) : j + 1
 
   i1 = cart2corner(t, i , j )
   i2 = cart2corner(t, i₊, j )
@@ -107,11 +172,9 @@ function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
   c = first(isperiodic(t))
   n = first(size(t))
 
-  i  = ind
-  i₊ = c && (i == n) ? 1 : i + 1
+  i1 = ind
+  i2 = c ? mod1(ind + 1, n) : ind + 1
 
-  i1 = i
-  i2 = i₊
   [i1, i2]
 end
 
@@ -133,4 +196,12 @@ end
 function (∂::Boundary{1,0,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
   e = half4edge(∂.topology, edge)
   [e.head, e.half.head]
+end
+
+# ----------------
+# SIMPLE TOPOLOGY
+# ----------------
+
+function (∂::Boundary{D,0,D,T})(ind::Integer) where {D,T<:SimpleTopology}
+  collect(connec4elem(∂.topology, ind))
 end

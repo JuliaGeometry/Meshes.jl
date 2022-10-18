@@ -139,7 +139,7 @@
       hole1 = P2[(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
       hole2 = P2[(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
       poly  = PolyArea(outer, [hole1, hole2])
-      chain, _ = bridge(poly, width=0.01)
+      chain, _ = bridge(poly, width=T(0.01))
       mesh  = discretizewithin(chain, method)
       @test nvertices(mesh) == 16
       @test nelements(mesh) == 14
@@ -238,6 +238,32 @@
     end
   end
 
+  @testset "Discretize" begin
+    ball = Ball(P2(0,0), T(1))
+    mesh = discretize(ball)
+    @test !(eltype(mesh) <: Triangle)
+    @test !(eltype(mesh) <: Quadrangle)
+    @test nelements(mesh) == 2500
+
+    sphere = Sphere(P3(0,0,0), T(1))
+    mesh = discretize(ball)
+    @test !(eltype(mesh) <: Triangle)
+    @test !(eltype(mesh) <: Quadrangle)
+    @test nelements(mesh) == 2500
+
+    cylsurf = CylinderSurface(T(1))
+    mesh = discretize(cylsurf)
+    @test !(eltype(mesh) <: Triangle)
+    @test !(eltype(mesh) <: Quadrangle)
+    @test nelements(mesh) == 150
+
+    grid = CartesianGrid(10)
+    @test discretize(grid) == grid
+
+    mesh = SimpleMesh(rand(P2, 3), connect.([(1,2,3)]))
+    @test discretize(mesh) == mesh
+  end
+
   @testset "Simplexify" begin
     # fix import conflict with Plots
     BezierCurve = Meshes.BezierCurve
@@ -286,12 +312,6 @@
     msh = simplexify(bez)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == nelements(msh) + 1
-
-    grid = CartesianGrid(10)
-    msh  = simplexify(grid)
-    @test msh == grid
-    @test nvertices(msh) == 11
-    @test nelements(msh) == 10
 
     box  = Box(P2(0,0), P2(1,1))
     ngon = Quadrangle(P2[(0,0),(1,0),(1,1),(0,1)])

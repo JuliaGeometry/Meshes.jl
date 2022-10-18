@@ -148,7 +148,7 @@
     @test nvertices(mesh) == 121
     @test nelements(mesh) == 100
     @test eltype(mesh) <: Quadrangle
-    
+
     grid = CartesianGrid{T}(200,100)
     if T == Float32
       @test sprint(show, MIME"text/plain"(), grid) == "200×100 CartesianGrid{2,Float32}\n  minimum: Point(0.0f0, 0.0f0)\n  maximum: Point(200.0f0, 100.0f0)\n  spacing: (1.0f0, 1.0f0)"
@@ -178,6 +178,25 @@
     @test measure(mesh) ≈ T(1)
     @test extrema(mesh) == (P2(0,0), P2(1,1))
 
+    # test constructors
+    coords = [T.((0,0)), T.((1,0)), T.((0,1)), T.((1,1)), T.((0.5,0.5))]
+    connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
+    mesh = SimpleMesh(coords, SimpleTopology(connec))
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa SimpleTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
+    mesh = SimpleMesh(coords, connec)
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa SimpleTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
+    mesh = SimpleMesh(coords, connec, relations=true)
+    @test eltype(mesh) <: Triangle{2,T}
+    @test topology(mesh) isa HalfEdgeTopology
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 4
+
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
     Δs = connect.([(3,1,5),(4,6,2)], Triangle)
     □s = connect.([(1,2,6,5),(5,6,4,3)], Quadrangle)
@@ -205,7 +224,7 @@
 
     # use above mesh with tetrahedron for testing isinside() error
     @test_throws ErrorException("This function only works for surface meshes with triangles as elements.") isinside(P3(0,0,0), mesh)
-    
+
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/187
     points  = P3[(0,0,0),(1,0,0),(1,1,1),(0,1,0)]
     connec  = connect.([(1,2,3,4),(3,4,1)], [Tetrahedron, Triangle])
@@ -230,7 +249,7 @@
     @test centroid(mesh, 3) == centroid(Triangle(P2[(1,1), (0,1), (0.5,0.5)]))
     @test centroid(mesh, 4) == centroid(Triangle(P2[(0,1), (0,0), (0.5,0.5)]))
 
-    # merge operation
+    # merge operation with 2D geometries
     mesh₁ = SimpleMesh(P2[(0,0), (1,0), (0,1)], connect.([(1,2,3)]))
     mesh₂ = SimpleMesh(P2[(1,0), (1,1), (0,1)], connect.([(1,2,3)]))
     mesh  = merge(mesh₁, mesh₂)
@@ -246,6 +265,13 @@
     @test isinside(P3(-0.1, 0.1, 0), mesh) == false
     @test isinside(P3(0.1, 0.1, 0), mesh) == true # on face of triangle
     @test isinside(P3(1, 0, 0), mesh) == true # on exisitng vertex
+
+    # merge operation with 3D geometries
+    mesh₁ = SimpleMesh(P3[(0,0,0), (1,0,0), (0,1,0), (0,0,1)], connect.([(1,2,3,4)], Tetrahedron))
+    mesh₂ = SimpleMesh(P3[(1,0,0), (1,1,0), (0,1,0), (1,1,1)], connect.([(1,2,3,4)], Tetrahedron))
+    mesh  = merge(mesh₁, mesh₂)
+    @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
+    @test collect(elements(topology(mesh))) == connect.([(1,2,3,4),(5,6,7,8)], Tetrahedron)
 
     # convert any mesh to SimpleMesh
     grid = CartesianGrid{T}(10,10)

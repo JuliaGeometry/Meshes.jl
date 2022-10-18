@@ -21,25 +21,26 @@ BlockPartition(sides::Vararg{T}; neighbors=false) where {T<:Number} =
   BlockPartition(SVector(sides), neighbors)
 
 function partition(::AbstractRNG, object, method::BlockPartition)
-  Dim = embeddim(object)
-
+  Dim    = embeddim(object)
   psides = method.sides
+
   bbox = boundingbox(object)
 
   @assert all(psides .≤ sides(bbox)) "invalid block sides"
 
   # bounding box properties
-  lo, up = coordinates.(extrema(bbox))
-  ce = coordinates(center(bbox))
+  ce = centroid(bbox)
+  lo, up = extrema(bbox)
 
   # find number of blocks to left and right
-  nleft  = @. ceil(Int, (ce - lo) / psides)
-  nright = @. ceil(Int, (up - ce) / psides)
-
-  start   = @. ce - nleft * psides
+  nleft   = ceil.(Int, (ce - lo) ./ psides)
+  nright  = ceil.(Int, (up - ce) ./ psides)
   nblocks = @. nleft + nright
 
-  subsets   = [Int[] for i in 1:prod(nblocks)]
+  # top left corner of first block
+  start   = coordinates(ce) .- nleft .* psides
+
+  subsets = [Int[] for i in 1:prod(nblocks)]
 
   # Cartesian to linear indices
   linear = LinearIndices(Dims(nblocks))
