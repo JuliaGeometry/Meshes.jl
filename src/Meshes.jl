@@ -280,6 +280,7 @@ export
   UniformSampling,
   WeightedSampling,
   BallSampling,
+  BlockSampling,
   RegularSampling,
   HomogeneousSampling,
   MinDistanceSampling,

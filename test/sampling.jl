@@ -48,6 +48,16 @@
     @test sqrt(sum((x - y).^2)) ≥ T(20)
   end
 
+  @testset "BlockSampling" begin
+    g = CartesianGrid{T}(100,100)
+    s = sample(g, BlockSampling(T(10)))
+    @test nelements(s) == 100
+    x = coordinates.(centroid.(s))
+    D = pairwise(Euclidean(), x)
+    d = [D[i,j] for i in 1:length(x) for j in 1:i-1]
+    @test all(≥(T(10)), d)
+  end
+
   @testset "RegularSampling" begin
     # fix import conflict with Plots
     BezierCurve = Meshes.BezierCurve

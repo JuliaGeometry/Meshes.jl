@@ -58,6 +58,7 @@ end
 include("sampling/uniform.jl")
 include("sampling/weighted.jl")
 include("sampling/ball.jl")
+include("sampling/block.jl")
 
 # continuous sampling
 include("sampling/regular.jl")
