@@ -16,8 +16,7 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b, c, d)
 
-  # not in same plane or parallel
-  if r ≠ rₐ
+  if r ≠ rₐ # not in same plane or parallel
     return @IT NoIntersection nothing f #CASE 5
   # collinear
   elseif r == rₐ == 1
