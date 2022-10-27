@@ -76,7 +76,7 @@ include("distances.jl")
 include("neighborhoods.jl")
 include("neighborsearch.jl")
 include("supportfun.jl")
-include("diffops.jl")
+include("matrices.jl")
 
 # views and partitions
 include("views.jl")
