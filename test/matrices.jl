@@ -26,4 +26,15 @@
   @test issymmetric(L)
   @test issparse(L)
   @test isdiag(M)
+
+  # adjacency of CartesianGrid
+  grid = CartesianGrid{T}(100, 100)
+  A = adjacencymatrix(grid)
+  d = sum(A, dims=2)
+  @test size(A) == (10000, 10000)
+  @test issymmetric(A)
+  @test issparse(A)
+  @test minimum(d) == 2
+  @test maximum(d) == 4
+  @test length(findall(==(2), d)) == 4
 end

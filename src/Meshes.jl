@@ -217,6 +217,7 @@ export
   supportfun,
   laplacematrix,
   measurematrix,
+  adjacencymatrix,
 
   # connectivities
   Connectivity,
