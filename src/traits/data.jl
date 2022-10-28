@@ -97,55 +97,125 @@ centroid(data::Data, ind) = centroid(domain(data), ind)
 # -----------------
 
 Tables.istable(::Type{<:Data}) = true
-
+Tables.columnaccess(::Type{<:Data}) = true
+Tables.columns(data::Data) = DataCols(data)
 Tables.rowaccess(::Type{<:Data}) = true
+Tables.rows(data::Data) = DataRows(DataCols(data))
+Tables.schema(data::Data) = Tables.schema(DataCols(data))
+Tables.materializer(::Type{D}) where {D<:Data} = constructor(D)
 
-Tables.rows(data::Data) = DataRows(domain(data), Tables.rows(values(data)))
+# wrapper type for cols of the data table
+struct DataCols{D<:Data,C,G}
+  tcols::C
+  ncols::Int
+  names::Vector{Symbol}
+  domain::Vector{G}
 
-Tables.schema(data::Data) = Tables.schema(Tables.rows(data))
-
-# wrapper type for rows of the data table
-# so that we can easily inform the schema
-struct DataRows{𝒟,ℛ}
-  domain::𝒟
-  trows::ℛ
-end
-
-function Base.getindex(rows::DataRows, ind)
-  row = rows.trows[ind]
-  elm = rows.domain[ind]
-  (; NamedTuple(row)..., geometry=elm)
-end
-
-Base.firstindex(row::DataRows) = 1
-
-Base.lastindex(rows::DataRows) = length(rows)
-
-Base.length(rows::DataRows) = nelements(rows.domain)
-
-function Base.iterate(rows::DataRows, state=1)
-  if state > length(rows)
-    nothing
-  else
-    row, _ = iterate(rows.trows, state)
-    elm, _ = iterate(rows.domain, state)
-    (; NamedTuple(row)..., geometry=elm), state + 1
+  function DataCols(data::D) where {D<:Data}
+    tcols = Tables.columns(values(data))
+    names = [Tables.columnnames(tcols)..., :geometry]
+    dom   = collect(domain(data))
+    new{D,typeof(tcols),eltype(dom)}(tcols, length(names), names, dom)
   end
 end
 
-function Tables.schema(rows::DataRows)
-  geomtype = eltype(rows.domain)
-  schema = Tables.schema(rows.trows)
-  names, types = schema.names, schema.types
-  Tables.Schema((names..., :geometry), (types..., geomtype))
+Tables.istable(::Type{<:DataCols}) = true
+Tables.columnaccess(::Type{<:DataCols}) = true
+Tables.columns(cols::DataCols) = cols
+Tables.rowaccess(::Type{<:DataCols}) = true
+Tables.rows(cols::DataCols) = DataRows(cols)
+Tables.columnnames(cols::DataCols) = cols.names
+
+function Tables.getcolumn(cols::DataCols, i::Int)
+  1 ≤ i ≤ cols.ncols || error("Table has no column with index $i.")
+  Tables.getcolumn(cols, cols.names[i])
 end
+
+function Tables.getcolumn(cols::DataCols, nm::Symbol)
+  nm ∉ cols.names && error("Table has no column $nm.")
+  nm == :geometry ? cols.domain : Tables.getcolumn(cols.tcols, nm)
+end
+
+function Tables.schema(cols::DataCols)
+  types   = Tables.schema(cols.tcols).types
+  geotype = eltype(cols.domain)
+  Tables.Schema(cols.names, [types..., geotype])
+end
+
+Tables.materializer(::Type{DataCols{D,C,G}}) where {D<:Data,C,G} =
+  constructor(D)
+
+# wrapper type for row of the data table
+struct DataRow{C<:DataCols}
+  cols::C
+  ind::Int
+  ncols::Int
+
+  function DataRow(cols::C, ind::Int) where {C<:DataCols}
+    new{C}(cols, ind, cols.ncols)
+  end
+end
+
+# Iteration interface
+Base.iterate(row::DataRow, state::Int=1) =
+  state > row.ncols ? nothing : (row[state], state + 1)
+
+Base.length(row::DataRow) = row.ncols
+Base.IteratorSize(::Type{<:DataRow}) = Base.HasLength()
+Base.IteratorEltype(::Type{<:DataRow}) = Base.EltypeUnknown()
+
+# Indexing interface
+Base.firstindex(::DataRow) = 1
+Base.lastindex(row::DataRow) = row.ncols
+Base.eachindex(row::DataRow) = 1:row.ncols
+Base.getindex(row::DataRow, i::Int) = Tables.getcolumn(row, i)
+
+# Tables.jl row interface
+Tables.columnnames(row::DataRow) = Tables.columnnames(row.cols)
+Tables.getcolumn(row::DataRow, i::Int) =
+  Tables.getcolumn(row.cols, i)[row.ind]
+Tables.getcolumn(row::DataRow, nm::Symbol) =
+  Tables.getcolumn(row.cols, nm)[row.ind]
+
+# wrapper type for rows of the data table
+struct DataRows{C<:DataCols}
+  cols::C
+  nrows::Int
+
+  function DataRows(cols::C) where {C<:DataCols}
+    new{C}(cols, length(cols.domain))
+  end
+end
+
+# Iteration interface
+Base.iterate(rows::DataRows, state::Int=1) =
+  state > rows.nrows ? nothing : (rows[state], state + 1)
+
+Base.length(rows::DataRows) = rows.nrows
+Base.eltype(::Type{DataRows{T}}) where {T} = DataRow{T}
+Base.IteratorSize(::Type{<:DataRows}) = Base.HasLength()
+Base.IteratorEltype(::Type{<:DataRows}) = Base.HasEltype()
+
+# Indexing interface
+Base.firstindex(::DataRows) = 1
+Base.lastindex(rows::DataRows) = rows.nrows
+Base.eachindex(rows::DataRows) = 1:rows.nrows
+Base.getindex(rows::DataRows, i::Int) = DataRow(rows.cols, i)
+
+# Tables.jl interface
+Tables.isrowtable(::Type{<:DataRows}) = true
+Tables.columnaccess(::Type{<:DataRows}) = true
+Tables.columns(rows::DataRows) = Tables.columns(rows.cols)
+Tables.columnnames(rows::DataRows) = Tables.columnnames(rows.cols)
+Tables.getcolumn(rows::DataRows, i::Int) = Tables.getcolumn(rows.cols, i)
+Tables.getcolumn(rows::DataRows, nm::Symbol) = Tables.getcolumn(rows.cols, nm)
+Tables.materializer(::Type{DataRows{C}}) where {C<:DataCols} = Tables.materializer(C)
+Tables.schema(rows::DataRows) = Tables.schema(rows.cols)
 
 # data table is compatible with the Queryverse
 TableTraits.isiterabletable(data::Data) = true
 IIE.getiterator(data::Data) = Tables.datavaluerows(Tables.rows(data))
 IIE.isiterable(data::Data) = true
-
-Tables.materializer(D::Type{<:Data}) = D
 
 # -----------------
 # COLUMN INTERFACE
