@@ -100,20 +100,25 @@ Tables.istable(::Type{<:Data}) = true
 
 Tables.rowaccess(::Type{<:Data}) = true
 
-Tables.rows(data::Data) = DataRows(domain(data), Tables.rows(values(data)))
+function Tables.rows(data::Data)
+  table = values(data)
+  trows = Tables.rows(table)
+  DataRows(domain(data), table, trows)
+end
 
 Tables.schema(data::Data) = Tables.schema(Tables.rows(data))
 
 # wrapper type for rows of the data table
 # so that we can easily inform the schema
-struct DataRows{𝒟,ℛ}
+struct DataRows{𝒟,𝒯,ℛ}
   domain::𝒟
+  table::𝒯
   trows::ℛ
 end
 
 function Base.getindex(rows::DataRows, ind)
-  row   = rows.trows[ind]
   elm   = rows.domain[ind]
+  row   = Tables.subset(rows.table, ind)
   names = Tables.columnnames(row)
   pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
   (; pairs..., geometry=elm)
