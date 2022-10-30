@@ -112,9 +112,11 @@ struct DataRows{𝒟,ℛ}
 end
 
 function Base.getindex(rows::DataRows, ind)
-  row = rows.trows[ind]
-  elm = rows.domain[ind]
-  (; NamedTuple(row)..., geometry=elm)
+  row   = rows.trows[ind]
+  elm   = rows.domain[ind]
+  names = Tables.columnnames(row)
+  pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
+  (; pairs..., geometry=elm)
 end
 
 Base.firstindex(row::DataRows) = 1
@@ -129,7 +131,9 @@ function Base.iterate(rows::DataRows, state=1)
   else
     row, _ = iterate(rows.trows, state)
     elm, _ = iterate(rows.domain, state)
-    (; NamedTuple(row)..., geometry=elm), state + 1
+    names  = Tables.columnnames(row)
+    pairs  = (nm => Tables.getcolumn(row, nm) for nm in names)
+    (; pairs..., geometry=elm), state + 1
   end
 end
 
