@@ -5,7 +5,7 @@
 """
     Domain{Dim,T}
 
-A domain is an indexable collection of geometries (e.g. mesh) or points
+A domain is an indexable collection of geometries (e.g. mesh) or points.
 For example, a collection of polygonal areas representing the states of
 a country can be seen as a domain.
 """
@@ -42,7 +42,7 @@ Base.lastindex(domain::Domain) = nelements(domain)
 Base.length(domain::Domain) = nelements(domain)
 
 Base.iterate(domain::Domain, state=1) =
-  state > nelements(domain) ? nothing : (domain[state], state+1)
+  state > nelements(domain) ? nothing : (domain[state], state + 1)
 
 Base.eltype(domain::Domain) =
   eltype([domain[i] for i in 1:nelements(domain)])
@@ -128,9 +128,9 @@ end
 function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
   println(io, domain)
   N = nelements(domain)
-  I, J = N > 10 ? (5, N-4) : (N, N+1)
+  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
   lines = [["  └─$(domain[i])" for i in 1:I]
-           (N > 10 ? ["  ⋮"] : [])
-           ["  └─$(domain[i])" for i in J:N]]
+    (N > 10 ? ["  ⋮"] : [])
+    ["  └─$(domain[i])" for i in J:N]]
   print(io, join(lines, "\n"))
 end
