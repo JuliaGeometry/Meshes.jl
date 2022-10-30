@@ -104,8 +104,9 @@ Tables.rows(data::Data) = DataRows(DataCols(data))
 Tables.schema(data::Data) = Tables.schema(DataCols(data))
 Tables.materializer(::Type{D}) where {D<:Data} = constructor(D)
 
-# wrapper type for cols of the data table
+# wrapper type for columns of the data table
 struct DataCols{D<:Data,C,G}
+  data::D
   tcols::C
   ncols::Int
   names::Vector{Symbol}
@@ -115,9 +116,11 @@ struct DataCols{D<:Data,C,G}
     tcols = Tables.columns(values(data))
     names = [Tables.columnnames(tcols)..., :geometry]
     dom   = collect(domain(data))
-    new{D,typeof(tcols),eltype(dom)}(tcols, length(names), names, dom)
+    new{D,typeof(tcols),eltype(dom)}(data, tcols, length(names), names, dom)
   end
 end
+
+Base.show(io::IO, cols::DataCols) = print(io, "DataCols of: $(cols.data)")
 
 Tables.istable(::Type{<:DataCols}) = true
 Tables.columnaccess(::Type{<:DataCols}) = true
@@ -156,6 +159,20 @@ struct DataRow{C<:DataCols}
   end
 end
 
+function Base.show(io::IO, row::DataRow)
+  ind = row.ind
+  if ind % 10 == 1
+    suffix = "st"
+  elseif ind % 10 == 2
+    suffix = "nd"
+  elseif ind % 10 == 3
+    suffix = "rd"
+  else
+    suffix = "th"
+  end
+  print(io, "$(ind)$(suffix) DataRow of: $(row.cols.data)")
+end
+
 # Iteration interface
 Base.iterate(row::DataRow, state::Int=1) =
   state > row.ncols ? nothing : (row[state], state + 1)
@@ -186,6 +203,8 @@ struct DataRows{C<:DataCols}
     new{C}(cols, length(cols.domain))
   end
 end
+
+Base.show(io::IO, rows::DataRows) = print(io, "DataRows of: $(rows.cols.data)")
 
 # Iteration interface
 Base.iterate(rows::DataRows, state::Int=1) =
