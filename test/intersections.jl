@@ -242,50 +242,50 @@
     @test intersection(s₃, s₁₀) |> type == NoIntersection
 
     # segments in 3D
-    s₁ = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
-    s₂ = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
-    s₃ = Segment(P3(0.5, 0.0, 0.0), P3(1.5, 0.0, 0.0))
-    s₄ = Segment(P3(0.0, 1.0, 0.0), P3(0.0, -2.0, 0.0))
-    s₅ = Segment(P3(-1.0, 1.0, 0.0), P3(2.0, -2.0, 0.0))
-    s₆ = Segment(P3(0.0, 0.0, 0.0), P3(0.0, 1.0, 0.0))
-    s₇ = Segment(P3(-1.0, 1.0, 0.0), P3(-1.0, -1.0, 0.0))
-    s₈ = Segment(P3(-1.0, 1.0, 1.0), P3(-1.0, -1.0, 1.0))
-    s₉ = Segment(P3(0.5, 1.0, 1.0), P3(0.5, -1.0, 1.0))
-    s₁₀ = Segment(P3(0.0, 1.0, 0.0), P3(1.0, 1.0, 0.0))
-    s₁₁ = Segment(P3(1.5, 0.0, 0.0), P3(2.5, 0.0, 0.0))
-    s₁₂ = Segment(P3(1.0, 0.0, 0.0), P3(2.0, 0.0, 0.0))
+    s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    s2 = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
+    s3 = Segment(P3(0.5, 0.0, 0.0), P3(1.5, 0.0, 0.0))
+    s4 = Segment(P3(0.0, 1.0, 0.0), P3(0.0, -2.0, 0.0))
+    s5 = Segment(P3(-1.0, 1.0, 0.0), P3(2.0, -2.0, 0.0))
+    s6 = Segment(P3(0.0, 0.0, 0.0), P3(0.0, 1.0, 0.0))
+    s7 = Segment(P3(-1.0, 1.0, 0.0), P3(-1.0, -1.0, 0.0))
+    s8 = Segment(P3(-1.0, 1.0, 1.0), P3(-1.0, -1.0, 1.0))
+    s9 = Segment(P3(0.5, 1.0, 1.0), P3(0.5, -1.0, 1.0))
+    s10 = Segment(P3(0.0, 1.0, 0.0), P3(1.0, 1.0, 0.0))
+    s11 = Segment(P3(1.5, 0.0, 0.0), P3(2.5, 0.0, 0.0))
+    s12 = Segment(P3(1.0, 0.0, 0.0), P3(2.0, 0.0, 0.0))
 
-    @test intersection(s₁, s₂) |> type == CrossingSegments
-    @test s₁ ∩ s₂ ≈ P3(0.5, 0.0, 0.0)
-    @test intersection(s₁, s₃) |> type == OverlappingSegments
-    @test s₁ ∩ s₃ == Segment(P3(0.5, 0.0, 0.0), P3(1.0, 0.0, 0.0))
-    @test intersection(s₁, s₄) |> type == MidTouchingSegments
-    @test s₁ ∩ s₄ ≈ P3(0.0, 0.0, 0.0)
-    @test intersection(s₁, s₅) |> type == MidTouchingSegments
-    @test s₁ ∩ s₅ ≈ P3(0.0, 0.0, 0.0)
-    @test intersection(s₁, s₆) |> type == CornerTouchingSegments
-    @test s₁ ∩ s₆ ≈ P3(0.0, 0.0, 0.0)
-    @test intersection(s₁, s₇) |> type == NoIntersection
-    @test isnothing(s₁ ∩ s₇)
-    @test intersection(s₁, s₈) |> type == NoIntersection
-    @test isnothing(s₁ ∩ s₈)
-    @test intersection(s₁, s₉) |> type == NoIntersection
-    @test isnothing(s₁ ∩ s₉)
-    @test intersection(s₁, s₁₀) |> type == NoIntersection
-    @test isnothing(s₁ ∩ s₁₀)
-    @test intersection(s₁, s₁₁) |> type == NoIntersection
-    @test isnothing(s₁ ∩ s₁₁)
-    @test intersection(s₁, s₁₂) |> type == CornerTouchingSegments
-    @test s₁ ∩ s₁₂ ≈ P3(1.0, 0.0, 0.0)
+    @test intersection(s1, s2) |> type == CrossingSegments
+    @test s1 ∩ s2 ≈ P3(0.5, 0.0, 0.0)
+    @test intersection(s1, s3) |> type == OverlappingSegments
+    @test s1 ∩ s3 == Segment(P3(0.5, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    @test intersection(s1, s4) |> type == MidTouchingSegments
+    @test s1 ∩ s4 ≈ P3(0.0, 0.0, 0.0)
+    @test intersection(s1, s5) |> type == MidTouchingSegments
+    @test s1 ∩ s5 ≈ P3(0.0, 0.0, 0.0)
+    @test intersection(s1, s6) |> type == CornerTouchingSegments
+    @test s1 ∩ s6 ≈ P3(0.0, 0.0, 0.0)
+    @test intersection(s1, s7) |> type == NoIntersection
+    @test isnothing(s1 ∩ s7)
+    @test intersection(s1, s8) |> type == NoIntersection
+    @test isnothing(s1 ∩ s8)
+    @test intersection(s1, s9) |> type == NoIntersection
+    @test isnothing(s1 ∩ s9)
+    @test intersection(s1, s10) |> type == NoIntersection
+    @test isnothing(s1 ∩ s10)
+    @test intersection(s1, s11) |> type == NoIntersection
+    @test isnothing(s1 ∩ s11)
+    @test intersection(s1, s12) |> type == CornerTouchingSegments
+    @test s1 ∩ s12 ≈ P3(1.0, 0.0, 0.0)
 
     # type stability tests
-    s₁ = Segment(P2(0,0), P2(1,0))
-    s₂ = Segment(P2(0.5,0.0), P2(2,0))
-    @inferred someornone(s₁, s₂)
+    s1 = Segment(P2(0,0), P2(1,0))
+    s2 = Segment(P2(0.5,0.0), P2(2,0))
+    @inferred someornone(s1, s2)
 
-    s₁ = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
-    s₂ = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
-    @inferred someornone(s₁, s₂)
+    s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
+    s2 = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
+    @inferred someornone(s1, s2)
   end
 
   @testset "Rays" begin
