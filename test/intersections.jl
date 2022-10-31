@@ -17,6 +17,10 @@
     @test s1 ∩ s2 == Segment(P2(0.5,0.0), P2(1,0))
     @test s2 ∩ s1 == Segment(P2(0.5,0.0), P2(1,0))
 
+    s1 = Segment(P2(0,0), P2(1,-1))
+    s2 = Segment(P2(0.5,-0.5), P2(1.5,-1.5))
+    @test s1 ∩ s2 == s2 ∩ s1 == Segment(P2(0.5,-0.5), P2(1,-1))
+
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0,0), P2(0,1))
     @test s1 ∩ s2 ≈ P2(0,0)
@@ -51,7 +55,8 @@
 
     s1 = Segment(P2(1,2), P2(1,0))
     s2 = Segment(P2(1,0), P2(1,1))
-    @test s1 ∩ s2 == Segment(P2(1,0), P2(1,1))
+    @test s1 ∩ s2 == Segment(P2(1,1), P2(1,0))
+    @test s2 ∩ s1 == Segment(P2(1,0), P2(1,1))
 
     s1 = Segment(P2(0,0), P2(2,0))
     s2 = Segment(P2(-2,0), P2(-1,0))
@@ -102,6 +107,139 @@
     s1 = Segment(P2(0.94495744, 0.53224397), P2(0.94798386, 0.5344541))
     s2 = Segment(P2(0.94798386, 0.5344541), P2(0.9472896, 0.5340202))
     @test s1 ∩ s2 ≈ s2 ∩ s1 ≈ P2(0.94798386, 0.5344541)
+
+    s₁ = Segment(P2(0,0), P2(3,4))
+    s₂ = Segment(P2(1,2), P2(3,-2))
+    s₃ = Segment(P2(2,0), P2(-2,0))
+    s₄ = Segment(P2(0,0), P2(1,2))
+    s₅ = Segment(P2(1,2), P2(3,4))
+    s₆ = Segment(P2(-1,-4/3), P2(0,0))
+    s₇ = Segment(P2(1,2), P2(0,4))
+    s₈ = Segment(P2(4,16/3), P2(3,4))
+
+    s₉ = Segment(P2(-1,5), P2(1,4))
+    s₁₀ = Segment(P2(1,4), P2(-1,5))
+    s₁₁ = Segment(P2(-2, 5.5), P2(-0.8, 4.9))
+    s₁₂ = Segment(P2(-0.8, 4.9), P2(-2, 5.5))
+    s₁₃ = Segment(P2(-0.5, 4.75), P2(0.2, 4.4))
+    s₁₄ = Segment(P2(0.2, 4.4), P2(-0.5, 4.75))
+    s₁₅ = Segment(P2(0.5, 4.25), P2(1,4))
+    s₁₆ = Segment(P2(1,4), P2(0.5, 4.25))
+    s₁₇ = Segment(P2(2,3.5), P2(1.5, 3.75))
+    s₁₈ = Segment(P2(1.5, 3.75), P2(2,3.5))
+
+    @test s₁ ∩ s₂ ≈ s₂ ∩ s₁ ≈ P2(1.2, 1.6) # CASE 1: Crossing Segments
+    @test intersection(s₁, s₂) |> type == CrossingSegments
+    @test intersection(s₂, s₁) |> type == CrossingSegments
+
+    @test s₁ ∩ s₃ ≈ s₃ ∩ s₁ ≈ P2(0,0) # CASE 2: MidTouchingSegments (s₁(0))
+    @test intersection(s₁, s₃) |> type == MidTouchingSegments
+    @test intersection(s₃, s₁) |> type == MidTouchingSegments
+
+    @test s₂ ∩ s₃ ≈ s₃ ∩ s₂ ≈ P2(2,0) # CASE 2: MidTouchingSegments (s₃(1))
+    @test intersection(s₂, s₃) |> type == MidTouchingSegments
+    @test intersection(s₃, s₂) |> type == MidTouchingSegments
+
+    @test s₁ ∩ s₄ ≈ s₄ ∩ s₁ ≈ P2(0,0) # CASE 3: CornerTouchingSegments (s₁(0), s₄(0))
+    @test intersection(s₁, s₄) |> type == CornerTouchingSegments
+    @test intersection(s₄, s₁) |> type == CornerTouchingSegments
+
+    @test s₂ ∩ s₄ ≈ s₄ ∩ s₂ ≈ P2(1,2) # CASE 3: CornerTouchingSegments (s₂(0), s₄(1))
+    @test intersection(s₂, s₄) |> type == CornerTouchingSegments
+    @test intersection(s₄, s₂) |> type == CornerTouchingSegments
+
+    @test s₁ ∩ s₅ ≈ s₅ ∩ s₁ ≈ P2(3,4) # CASE 3: CornerTouchingSegments (s₁(1), s₅(1))
+    @test intersection(s₂, s₄) |> type == CornerTouchingSegments
+    @test intersection(s₄, s₂) |> type == CornerTouchingSegments
+
+    @test s₁ ∩ s₆ ≈ s₆ ∩ s₁ ≈ P2(0,0) # CASE 3: CornerTouchingSegments (s₁(0), s₆(1)), collinear
+    @test intersection(s₁, s₆) |> type == CornerTouchingSegments
+    @test intersection(s₆, s₁) |> type == CornerTouchingSegments
+
+    @test s₂ ∩ s₇ ≈ s₇ ∩ s₂ ≈ P2(1,2) # CASE 3: CornerTouchingSegments (s₂(0), s₇(0)), collinear
+    @test intersection(s₂, s₇) |> type == CornerTouchingSegments
+    @test intersection(s₇, s₂) |> type == CornerTouchingSegments
+
+    @test s₁ ∩ s₈ ≈ s₈ ∩ s₁ ≈ P2(3,4) # CASE 3: CornerTouchingSegments (s₁(1), s₈(1)), collinear
+    @test intersection(s₁, s₈) |> type == CornerTouchingSegments
+    @test intersection(s₈, s₁) |> type == CornerTouchingSegments
+
+    @test s₉ ∩ s₉ == s₉ # CASE 4: OverlappingSegments (same segment)
+    @test intersection(s₉, s₉) |> type == OverlappingSegments
+
+    @test s₉ ∩ s₁₀ == s₉ # CASE 4: OverlappingSegments (same segment, flipped points)
+    @test s₁₀ ∩ s₉ == s₁₀
+    @test intersection(s₉, s₁₀) |> type == OverlappingSegments
+    @test intersection(s₁₀, s₉) |> type == OverlappingSegments
+
+    @test s₉ ∩ s₁₁ == s₁₁ ∩ s₉ == Segment(P2(-1,5), P2(-0.8, 4.9)) # CASE 4: OverlappingSegments (same alignment)
+    @test intersection(s₉, s₁₁) |> type == OverlappingSegments
+    @test intersection(s₁₁, s₉) |> type == OverlappingSegments
+
+    @test s₉ ∩ s₁₂ == Segment(P2(-1,5), P2(-0.8, 4.9)) # CASE 4: OverlappingSegments (opposite alignment, λ = 0 involved)
+    @test s₁₂ ∩ s₉ == Segment(P2(-0.8, 4.9), P2(-1,5)) # flipped Points in Segment
+    @test intersection(s₉, s₁₂) |> type == OverlappingSegments
+    @test intersection(s₁₂, s₉) |> type == OverlappingSegments
+
+    @test s₁₀ ∩ s₁₁ == Segment(P2(-0.8, 4.9), P2(-1,5)) # CASE 4: OverlappingSegments (opposite alignment, λ = 1 involved)
+    @test s₁₁ ∩ s₁₀ == Segment(P2(-1,5), P2(-0.8, 4.9)) # flipped Points in Segment
+    @test intersection(s₁₀, s₁₁) |> type == OverlappingSegments
+    @test intersection(s₁₁, s₁₀) |> type == OverlappingSegments
+
+    @test s₉ ∩ s₁₃ == s₁₃ ∩ s₉ == s₁₃ # CASE 4: OverlappingSegments (same alignment)
+    @test intersection(s₉, s₁₃) |> type == OverlappingSegments
+    @test intersection(s₁₃, s₉) |> type == OverlappingSegments
+
+    @test s₁₄ ∩ s₉ == s₁₄ # CASE 4: OverlappingSegments (opposite alignment)
+    @test s₉ ∩ s₁₄ == s₁₃ # flipped Points in Segment
+    @test intersection(s₉, s₁₄) |> type == OverlappingSegments
+    @test intersection(s₁₄, s₉) |> type == OverlappingSegments
+
+    @test s₉ ∩ s₁₅ == s₁₅ ∩ s₉ == s₁₅ # CASE 4: OverlappingSegments (same alignment, corner case)
+    @test intersection(s₉, s₁₅) |> type == OverlappingSegments
+    @test intersection(s₁₅, s₉) |> type == OverlappingSegments
+
+    @test s₁₅ ∩ s₁₀ == s₁₅ # CASE 4: OverlappingSegments (same alignment, corner case)
+    @test s₁₀ ∩ s₁₅ == s₁₆ # flipped Points in Segment
+    @test intersection(s₁₀, s₁₅) |> type == OverlappingSegments
+    @test intersection(s₁₅, s₁₀) |> type == OverlappingSegments
+
+    @test s₁₆ ∩ s₉ == s₁₆ # CASE 4: OverlappingSegments (opposite alignment, corner case)
+    @test s₉ ∩ s₁₆ == s₁₅ # flipped Points in Segment
+    @test intersection(s₉, s₁₆) |> type == OverlappingSegments
+    @test intersection(s₁₆, s₉) |> type == OverlappingSegments
+
+    @test s₁₀ ∩ s₁₆ == s₁₆ ∩ s₁₀ == s₁₆ # CASE 4: OverlappingSegments (same alignment, corner case)
+    @test intersection(s₁₀, s₁₆) |> type == OverlappingSegments
+    @test intersection(s₁₆, s₁₀) |> type == OverlappingSegments
+
+    @test s₉ ∩ s₁₇ == s₁₇ ∩ s₉ === nothing # CASE 5: NoIntersection (collinear, same alignment)
+    @test intersection(s₉, s₁₇) |> type == NoIntersection
+    @test intersection(s₁₇, s₉) |> type == NoIntersection
+
+    @test s₁₀ ∩ s₁₇ == s₁₇ ∩ s₁₀ === nothing # CASE 5: NoIntersection (collinear, opposite alignment)
+    @test intersection(s₁₀, s₁₇) |> type == NoIntersection
+    @test intersection(s₁₇, s₁₀) |> type == NoIntersection
+
+    @test s₉ ∩ s₁₈ == s₁₈ ∩ s₉ === nothing # CASE 5: NoIntersection (collinear, opposite alignment)
+    @test intersection(s₉, s₁₈) |> type == NoIntersection
+    @test intersection(s₁₈, s₉) |> type == NoIntersection
+
+    @test s₁ ∩ s₉ == s₉ ∩ s₁ === nothing # CASE 5: NoIntersection, one λ in range
+    @test intersection(s₉, s₁) |> type == NoIntersection
+    @test intersection(s₁, s₉) |> type == NoIntersection
+
+    @test s₁ ∩ s₁₀ == s₁₀ ∩ s₁ === nothing # CASE 5: NoIntersection, one λ in range
+    @test intersection(s₁₀, s₁) |> type == NoIntersection
+    @test intersection(s₁, s₁₀) |> type == NoIntersection
+
+    @test s₃ ∩ s₉ == s₉ ∩ s₃ === nothing # CASE 5: NoIntersection
+    @test intersection(s₉, s₁) |> type == NoIntersection
+    @test intersection(s₁, s₉) |> type == NoIntersection
+
+    @test s₃ ∩ s₁₀ == s₁₀ ∩ s₃ === nothing # CASE 5: NoIntersection
+    @test intersection(s₁₀, s₃) |> type == NoIntersection
+    @test intersection(s₃, s₁₀) |> type == NoIntersection
 
     # segments in 3D
     s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
@@ -235,9 +373,6 @@
     @test intersection(r₂, s₁₆) |> type == NoIntersection # CASE 5
     @test r₂ ∩ s₁₆ === s₁₆ ∩ r₂ === nothing
 
-    # intersectpoint
-    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P2(1.25,0.125)
-
     # type stability tests
     r₁ = Ray(P2(0,0), V2(1,0))
     s₁ = Segment(P2(-1,-1), P2(-1,1))
@@ -264,9 +399,6 @@
     s₅ = Segment(P3(0,0,0), P3(0.5, 1, 1.5))
     @test intersection(r₁, s₅) |> type === NoIntersection # CASE 5
     @test r₁ ∩ s₅ === s₅ ∩ r₁ === nothing
-
-    # intersectpoint
-    @test Meshes.intersectpoint(r₁, s₁) ≈ Meshes.intersectpoint(s₁, r₁) ≈ P3(2,4,6)
   end
 
   @testset "Triangles" begin

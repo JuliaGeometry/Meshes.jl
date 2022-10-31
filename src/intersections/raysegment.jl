@@ -70,7 +70,3 @@ function intersection(f, r1::Ray{N,T}, s1::Segment{N,T}) where {N,T}
   end
 end
 
-# for 2D and 3D use lines.jl implementation
-# NOTE: no check whether resulting point is in ray and segment
-intersectpoint(r1::Ray, s1::Segment) = intersectpoint(Line(r1(0), r1(1)), Line(s1(0), s1(1)))
-intersectpoint(r, s) = intersectpoint(s, r)
