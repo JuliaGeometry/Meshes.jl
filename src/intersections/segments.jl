@@ -34,8 +34,10 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
     elseif (λc == 1 && λd > 1) || (λd == 1 && λc > 1)
       return @IT CornerTouchingSegments b f # CASE 3
     else
-      parameters = sort([0,1,λc,λd])
-      return @IT OverlappingSegments Segment(s1(parameters[2]), s1(parameters[3])) f # CASE 4
+      params = sort([0,1,λc,λd])
+      p1 = s1(params[2])
+      p2 = s1(params[3])
+      return @IT OverlappingSegments Segment(p1, p2) f # CASE 4
     end
   else # in same plane, not parallel
     λ₁ = mayberound(mayberound(λ₁, 0), 1)
