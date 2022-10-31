@@ -15,18 +15,18 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b, c, d)
   # helper function to round values close to x (one or zero)
-  approx(λ, x) = isapprox(λ, x, atol=atol(T)) ? x : λ
+  mayberound(λ, x) = isapprox(λ, x, atol=atol(T)) ? x : λ
 
   if r ≠ rₐ # not in same plane or parallel
     return @IT NoIntersection nothing f #CASE 5
   elseif r == rₐ == 1 # collinear
     # find parameters λc and λd for points c and d in s1
     # use dimension with largest vector component to avoid division by zero
-    v₁ = b-a
-    i = argmax(abs.(v₁))
-    λc, λd = ((c-a)[i], (d-a)[i]) ./ v₁[i]
-    λc = approx(approx(λc, 0), 1)
-    λd = approx(approx(λd, 0), 1)
+    v = b - a
+    i = argmax(abs.(v))
+    λc, λd = ((c - a)[i], (d - a)[i]) ./ v[i]
+    λc = mayberound(mayberound(λc, 0), 1)
+    λd = mayberound(mayberound(λd, 0), 1)
     if (λc > 1 && λd > 1) || (λc < 0 && λd < 0)
       return @IT NoIntersection nothing f # CASE 5
     elseif (λc == 0 && λd < 0) ||  (λd == 0 && λc < 0)
@@ -38,8 +38,8 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
       return @IT OverlappingSegments Segment(s1(parameters[2]), s1(parameters[3])) f # CASE 4
     end
   else # in same plane, not parallel
-    λ₁ = approx(approx(λ₁, 0), 1)
-    λ₂ = approx(approx(λ₂, 0), 1)
+    λ₁ = mayberound(mayberound(λ₁, 0), 1)
+    λ₂ = mayberound(mayberound(λ₂, 0), 1)
     if λ₁ < 0 || λ₂ < 0 || λ₁ > 1 || λ₂ > 1
       return @IT NoIntersection nothing f # CASE 5
     # 8 cases remain
