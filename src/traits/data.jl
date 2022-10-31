@@ -111,18 +111,6 @@ struct DataRows{𝒟,ℛ}
   trows::ℛ
 end
 
-function Base.getindex(rows::DataRows, ind)
-  row   = rows.trows[ind]
-  elm   = rows.domain[ind]
-  names = Tables.columnnames(row)
-  pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
-  (; pairs..., geometry=elm)
-end
-
-Base.firstindex(row::DataRows) = 1
-
-Base.lastindex(rows::DataRows) = length(rows)
-
 Base.length(rows::DataRows) = nelements(rows.domain)
 
 function Base.iterate(rows::DataRows, state=1)

@@ -101,16 +101,6 @@
       @test data[:geometry] == data["geometry"] == data.geometry
       @test_throws ErrorException data[:c] 
 
-      # rows are indexable when feature table is indexable
-      dom = CartesianGrid{T}(2,2)
-      tab = Tables.rowtable((a=[1,2,3,4], b=[5,6,7,8]))
-      dat = dummy(dom, tab)
-      rows = Tables.rows(dat)
-      @test rows[1] == (a=1, b=5, geometry=dom[1])
-      @test rows[2] == (a=2, b=6, geometry=dom[2])
-      @test rows[3] == (a=3, b=7, geometry=dom[3])
-      @test rows[4] == (a=4, b=8, geometry=dom[4])
-
       # variables interface
       data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
       @test variables(data) == (Variable(:a,Int), Variable(:b,Int))
