@@ -401,6 +401,63 @@
     @test r₁ ∩ s₅ === s₅ ∩ r₁ === nothing
   end
 
+  @testset "LineRay" begin
+    # lines and rays in 2D
+    l₁ = Line(P2(0,0), P2(4,5))
+    r₁ = Ray(P2(3,4), V2(1,-2)) # crossing ray
+    r₂ = Ray(P2(1, 1.25), V2(1,0.3)) # touching ray
+    r₃ = Ray(P2(-1, -1.25), V2(-1,-1.25)) # overlapping ray
+    r₄ = Ray(P2(1,3), V2(1,1.25)) # parallel ray
+    r₅ = Ray(P2(1,1), V2(1,-1)) # no Intersection
+
+    @test l₁ ∩ r₁ ≈ r₁ ∩ l₁ ≈ P2(3.0769230769230766, 3.846153846153846) # CASE 1
+    @test intersection(l₁, r₁) |> type === CrossingLineRay 
+
+    @test l₁ ∩ r₂ == r₂ ∩ l₁ == origin(r₂) # CASE 2
+    @test intersection(l₁, r₂) |> type === TouchingLineRay
+
+    @test l₁ ∩ r₃ == r₃ ∩ l₁ == r₃ # CASE 3
+    @test intersection(l₁, r₃) |> type === OverlappingLineRay
+
+    @test l₁ ∩ r₄ == r₄ ∩ l₁ === nothing # CASE 4 parallel
+    @test intersection(l₁, r₄) |> type === NoIntersection
+
+    @test l₁ ∩ r₅ == r₅ ∩ l₁ === nothing # CASE 4 no intersection
+    @test intersection(l₁, r₅) |> type === NoIntersection
+
+    # type stability tests
+    @inferred someornone(l₁, r₁)
+    @inferred someornone(l₁, r₅)
+
+    # 3D tests
+     # lines and rays in 2D
+     l₁ = Line(P3(0,0,0.1), P3(4,5,0.1))
+     r₁ = Ray(P3(3,4,0.1), V3(1,-2,0)) # crossing ray
+     r₂ = Ray(P3(1,1.25,0.1), V3(1,0.3,0)) # touching ray
+     r₃ = Ray(P3(-1,-1.25,0.1), V3(-1,-1.25,0)) # overlapping ray
+     r₄ = Ray(P3(1,3,0.1), V3(1,1.25,0)) # parallel ray
+     r₅ = Ray(P3(1,1,0.1), V3(1,-1,0)) # no Intersection
+     r₆ = Ray(P3(3,4,0), V3(1,-2,1)) # crossing ray
+
+     @test l₁ ∩ r₁ ≈ r₁ ∩ l₁ ≈ P3(3.0769230769230766, 3.846153846153846, 0.1) # CASE 1
+     @test intersection(l₁, r₁) |> type === CrossingLineRay 
+ 
+     @test l₁ ∩ r₂ == r₂ ∩ l₁ == origin(r₂) # CASE 2
+     @test intersection(l₁, r₂) |> type === TouchingLineRay
+ 
+     @test l₁ ∩ r₃ == r₃ ∩ l₁ == r₃ # CASE 3
+     @test intersection(l₁, r₃) |> type === OverlappingLineRay
+ 
+     @test l₁ ∩ r₄ == r₄ ∩ l₁ === nothing # CASE 4 parallel
+     @test intersection(l₁, r₄) |> type === NoIntersection
+ 
+     @test l₁ ∩ r₅ == r₅ ∩ l₁ === nothing # CASE 4 no intersection
+     @test intersection(l₁, r₅) |> type === NoIntersection
+
+     @test l₁ ∩ r₆ == r₆ ∩ l₁ === nothing # CASE 4 no intersection
+     @test intersection(l₁, r₆) |> type === NoIntersection
+  end
+
   @testset "Triangles" begin
     # utility to reverse segments, to more fully
     # test branches in the intersection algorithm
