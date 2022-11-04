@@ -147,7 +147,7 @@ Tables.materializer(D::Type{<:Data}) = D
 Base.getindex(data::Data, col::Symbol) =
   getproperty(data, col)
 
-Base.getindex(data::Data, col::String) =
+Base.getindex(data::Data, col::AbstractString) =
   getindex(data, Symbol(col))
 
 function Base.getproperty(data::Data, col::Symbol)
@@ -159,7 +159,7 @@ function Base.getproperty(data::Data, col::Symbol)
   end
 end
 
-Base.getproperty(data::Data, col::String) =
+Base.getproperty(data::Data, col::AbstractString) =
   getproperty(data, Symbol(col))
 
 # -------------------
@@ -190,7 +190,7 @@ function asarray(data::Data, var::Symbol)
   hassize ? reshape(data[var], size(D)) : data[var]
 end
 
-asarray(data::Data, var::String) =
+asarray(data::Data, var::AbstractString) =
   asarray(data, Symbol(var))
 
 # -----------
