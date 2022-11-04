@@ -119,3 +119,24 @@ function householderbasis(n)
   end
   u, v
 end
+
+
+"""
+    mayberound(λ, x, tol)
+
+Round `λ` to `x` if it is within the tolerance `tol`
+"""
+function mayberound(λ::Number, x, tol) 
+  L = isapprox.(λ, x, atol = tol)
+  if any(L)
+    if sum(L) > 1
+      error("Tolerances too large for ")
+    else
+      return x[findfirst(L)]
+    end
+  else
+    return λ
+  end
+end
+
+mayberound(λ::Vector, x, tol) = [mayberound(i, x, tol) for i in λ]
