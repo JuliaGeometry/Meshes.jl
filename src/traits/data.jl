@@ -86,6 +86,7 @@ function ==(data₁::Data, data₂::Data)
   return true
 end
 
+# TODO: remove these definitions
 # implement Domain traits for convenience
 embeddim(data::Data) = embeddim(domain(data))
 coordtype(data::Data) = coordtype(domain(data))
@@ -139,11 +140,17 @@ IIE.isiterable(data::Data) = true
 
 Tables.materializer(D::Type{<:Data}) = D
 
-# -----------------
-# COLUMN INTERFACE
-# -----------------
+# --------------------
+# DATAFRAME INTERFACE
+# --------------------
 
-function Base.getindex(data::Data, col::Symbol)
+Base.getindex(data::Data, col::Symbol) =
+  getproperty(data, col)
+
+Base.getindex(data::Data, col::String) =
+  getindex(data, Symbol(col))
+
+function Base.getproperty(data::Data, col::Symbol)
   if col == :geometry
     collect(domain(data))
   else
@@ -152,11 +159,8 @@ function Base.getindex(data::Data, col::Symbol)
   end
 end
 
-Base.getindex(data::Data, col::String) =
-  getindex(data, Symbol(col))
-
-Base.getproperty(data::Data, col::Symbol) =
-  getindex(data, col)
+Base.getproperty(data::Data, col::String) =
+  getproperty(data, Symbol(col))
 
 # -------------------
 # VARIABLE INTERFACE
