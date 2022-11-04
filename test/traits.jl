@@ -93,13 +93,12 @@
       @test domain(new) isa PointSet
       @test values(new) == values(dat)
 
-      # column interface
+      # dataframe interface
       data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
-      @test data[:a] == data["a"] == data.a == [1,2,3,4]
-      @test isequal(data[:b], [5,missing,7,8])
-      @test data[:geometry] == collect(CartesianGrid{T}(2,2))
-      @test data[:geometry] == data["geometry"] == data.geometry
-      @test_throws ErrorException data[:c] 
+      @test isequal(data.a, [1,2,3,4])
+      @test isequal(data.b, [5,missing,7,8])
+      @test data.geometry == CartesianGrid{T}(2,2)
+      @test_throws ErrorException data.c 
 
       # variables interface
       data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))

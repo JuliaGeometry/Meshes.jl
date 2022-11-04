@@ -152,7 +152,7 @@ Base.getindex(data::Data, col::AbstractString) =
 
 function Base.getproperty(data::Data, col::Symbol)
   if col == :geometry
-    collect(domain(data))
+    domain(data)
   else
     cols = Tables.columns(values(data))
     Tables.getcolumn(cols, col)
