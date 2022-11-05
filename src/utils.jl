@@ -125,7 +125,7 @@ end
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-function mayberound(λ::Number, x, tol) 
+function mayberound(λ, x, tol) 
   L = isapprox.(λ, x, atol = tol)
   if any(L)
     if sum(L) > 1
@@ -137,5 +137,3 @@ function mayberound(λ::Number, x, tol)
     return λ
   end
 end
-
-mayberound(λ::Vector, x, tol) = [mayberound(i, x, tol) for i in λ]
