@@ -125,15 +125,4 @@ end
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-function mayberound(λ, x, tol) 
-  L = isapprox.(λ, x, atol = tol)
-  if any(L)
-    if sum(L) > 1
-      error("Tolerances too large for ")
-    else
-      return x[findfirst(L)]
-    end
-  else
-    return λ
-  end
-end
+mayberound(λ, x, tol) = isapprox(λ, x, atol = tol) ? x : λ

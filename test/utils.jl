@@ -42,8 +42,4 @@
   @test mayberound(1.1, 1, 0.10000000000000001) ≈ 1.1
   @test mayberound(1.1, 1, 0.05) ≈ 1.1
 
-  @test mayberound(1.1, 1:5, 0.2) ≈ 1
-
-  @test all(mayberound.([1.1, 3.3, 3.1, 4.3], Ref(1:5), 0.2) .≈ [1, 3.3, 3, 4.3])
-
 end
