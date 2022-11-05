@@ -120,7 +120,6 @@ function householderbasis(n)
   u, v
 end
 
-
 """
     mayberound(λ, x, tol)
 
