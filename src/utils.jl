@@ -123,7 +123,7 @@ end
 """
     mayberound(λ, x, tol)
 
-Round `λ` to `x` if it is within the tolerance `tol`
+Round `λ` to `x` if it is within the tolerance `tol`.
 """
 function mayberound(λ::Number, x, tol) 
   L = isapprox.(λ, x, atol = tol)
