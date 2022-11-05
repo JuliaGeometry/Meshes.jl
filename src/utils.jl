@@ -125,4 +125,4 @@ end
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-mayberound(λ, x, tol) = isapprox(λ, x, atol = tol) ? x : λ
+mayberound(λ::T, x, atol = atol(T)) = isapprox(λ, x, atol = atol) ? x : λ
