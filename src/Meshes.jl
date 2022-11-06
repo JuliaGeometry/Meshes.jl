@@ -249,14 +249,15 @@ export
   Boundary, Coboundary, Adjacency,
 
   # meshes
-  Mesh,
-  CartesianGrid, SimpleMesh,
+  Mesh, Grid,
+  SimpleMesh, CartesianGrid,
   vertices, elements, facets,
   nvertices, nelements, nfacets,
   element, facet,
   faces, nfaces,
   topology,
   topoconvert,
+  cart2vert,
   spacing,
   offset,
 

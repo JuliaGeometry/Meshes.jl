@@ -50,7 +50,7 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.,),(1.,), dims=(100,))
 ```
 """
-struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
+struct CartesianGrid{Dim,T} <: Grid{Dim,T}
   origin::Point{Dim,T}
   spacing::NTuple{Dim,T}
   offset::Dims{Dim}
@@ -111,52 +111,22 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
-Base.size(g::CartesianGrid) = size(g.topology)
-spacing(g::CartesianGrid)   = g.spacing
-offset(g::CartesianGrid)    = g.offset
-
-cart2vert(g::CartesianGrid, ind::CartesianIndex) = cart2vert(g, ind.I)
-cart2vert(g::CartesianGrid, ijk) =
+cart2vert(g::CartesianGrid, ijk::Tuple) =
   Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
 
-Base.minimum(g::CartesianGrid{Dim}) where {Dim} = cart2vert(g, ntuple(i->1, Dim))
-Base.maximum(g::CartesianGrid{Dim}) where {Dim} = cart2vert(g, size(g) .+ 1)
-Base.extrema(g::CartesianGrid{Dim}) where {Dim} = minimum(g), maximum(g)
+spacing(g::CartesianGrid) = g.spacing
+
+offset(g::CartesianGrid)  = g.offset
 
 ==(g1::CartesianGrid, g2::CartesianGrid) =
   g1.topology == g2.topology && g1.spacing  == g2.spacing &&
   Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
 
-# -----------------
-# DOMAIN INTERFACE
-# -----------------
-
-function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  topo = g.topology
-  inds = CartesianIndices(size(topo) .+ 1)
-  elem = element(topo, ind)
-  type = pltype(elem)
-  vert = [cart2vert(g, inds[i]) for i in indices(elem)]
-  type(vert)
-end
-
-function centroid(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  dims = size(g.topology)
-  intcoords = CartesianIndices(dims)[ind]
-  neworigin = coordinates(g.origin) .+ g.spacing ./ 2
-  Point(ntuple(i -> neworigin[i] + (intcoords[i] - g.offset[i])*g.spacing[i], Dim))
-end
-
-Base.eltype(g::CartesianGrid) = typeof(g[1])
-
-# ---------------
-# MESH INTERFACE
-# ---------------
-
-function vertices(g::CartesianGrid)
-  dims = size(g.topology)
-  inds = CartesianIndices(dims .+ 1)
-  vec([cart2vert(g, ind) for ind in inds])
+function centroid(g::CartesianGrid, ind::Int)
+  ijk = elem2cart(topology(g), ind)
+  p = cart2vert(g, ijk)
+  δ = Vec(spacing(g) ./ 2)
+  p + δ
 end
 
 # ----------------------------

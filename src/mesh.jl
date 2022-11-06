@@ -153,10 +153,6 @@ end
   vertices(m₁) == vertices(m₂) &&
   topology(m₁) == topology(m₂)
 
-# -----------
-# IO METHODS
-# -----------
-
 function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
   t = topology(m)
   verts = vertices(m)
@@ -170,9 +166,47 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
   print(  io, io_lines(elems, "    "))
 end
 
+"""
+    Grid{Dim,T}
+
+A grid embedded in a `Dim`-dimensional space with coordinates of type `T`.
+"""
+abstract type Grid{Dim,T} <: Mesh{Dim,T} end
+
+"""
+    cart2vert(grid, ijk)
+
+Convert Cartesian index `ijk` to vertex on `grid`.
+"""
+cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
+
+# ----------
+# FALLBACKS
+# ----------
+
+Base.size(g::Grid) = size(topology(g))
+
+Base.minimum(g::Grid{Dim}) where {Dim} = cart2vert(g, ntuple(i->1, Dim))
+Base.maximum(g::Grid{Dim}) where {Dim} = cart2vert(g, size(g) .+ 1)
+Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
+
+function vertices(g::Grid)
+  inds = CartesianIndices(size(g) .+ 1)
+  vec([cart2vert(g, ind) for ind in inds])
+end
+
+function element(g::Grid, ind::Int)
+  inds = CartesianIndices(size(g) .+ 1)
+  elem = element(topology(g), ind)
+  type = pltype(elem)
+  type([cart2vert(g, inds[i]) for i in indices(elem)])
+end
+
+Base.eltype(g::Grid) = typeof(first(g))
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
-include("mesh/cartesiangrid.jl")
 include("mesh/simplemesh.jl")
+include("mesh/cartesiangrid.jl")
