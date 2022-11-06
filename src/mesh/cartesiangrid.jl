@@ -51,15 +51,16 @@ julia> CartesianGrid((-1.,),(1.,), dims=(100,))
 ```
 """
 struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
-  topology::GridTopology{Dim}
   origin::Point{Dim,T}
   spacing::NTuple{Dim,T}
   offset::Dims{Dim}
+  topology::GridTopology{Dim}
 
   function CartesianGrid{Dim,T}(dims, origin, spacing, offset) where {Dim,T}
     @assert all(>(0), dims) "dimensions must be positive"
     @assert all(>(0), spacing) "spacing must be positive"
-    new(GridTopology(dims), origin, spacing, offset)
+    topology = GridTopology(dims)
+    new(origin, spacing, offset, topology)
   end
 end
 
