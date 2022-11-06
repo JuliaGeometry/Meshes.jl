@@ -118,10 +118,6 @@ spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid)  = g.offset
 
-==(g1::CartesianGrid, g2::CartesianGrid) =
-  g1.topology == g2.topology && g1.spacing  == g2.spacing &&
-  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
-
 function centroid(g::CartesianGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p = cart2vert(g, ijk)
@@ -129,26 +125,15 @@ function centroid(g::CartesianGrid, ind::Int)
   p + δ
 end
 
-# ----------------------------
-# ADDITIONAL INDEXING METHODS
-# ----------------------------
-
-"""
-    grid[istart:iend,jstart:jend,...]
-
-Return a subgrid of the Cartesian `grid` using integer ranges
-`istart:iend`, `jstart:jend`, ...
-"""
-Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
-  getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
-
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
   dims   = size(I)
   offset = g.offset .- first(I).I .+ 1
   CartesianGrid(dims, g.origin, g.spacing, offset)
 end
 
-Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
+==(g1::CartesianGrid, g2::CartesianGrid) =
+  g1.topology == g2.topology && g1.spacing  == g2.spacing &&
+  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
 
 # -----------
 # IO METHODS
