@@ -54,8 +54,8 @@
       @test centroid(v, 1) == P2(1.5,0.5)
       @test centroid(v, 2) == P2(0.5,1.5)
       @test centroid(v, 3) == P2(1.5,1.5)
-      @test v[:a] == v["a"] == v.a == [2,3,4]
-      @test v[:b] == v["b"] == v.b == [6,7,8]
+      @test v.a == v."a" == [2,3,4]
+      @test v.b == v."b" == [6,7,8]
     end
   end
 end
