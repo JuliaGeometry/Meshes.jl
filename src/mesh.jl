@@ -14,7 +14,7 @@ abstract type Mesh{Dim,T} <: Domain{Dim,T} end
 
 Return the topological structure of the `mesh`.
 """
-function topology end
+topology(m::Mesh) = m.topology
 
 """
     vertices(mesh)

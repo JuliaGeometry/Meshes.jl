@@ -51,7 +51,7 @@ julia> CartesianGrid((-1.,),(1.,), dims=(100,))
 ```
 """
 struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
-  dims::Dims{Dim}
+  topology::GridTopology{Dim}
   origin::Point{Dim,T}
   spacing::NTuple{Dim,T}
   offset::Dims{Dim}
@@ -59,7 +59,7 @@ struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
   function CartesianGrid{Dim,T}(dims, origin, spacing, offset) where {Dim,T}
     @assert all(>(0), dims) "dimensions must be positive"
     @assert all(>(0), spacing) "spacing must be positive"
-    new(dims, origin, spacing, offset)
+    new(GridTopology(dims), origin, spacing, offset)
   end
 end
 
@@ -110,34 +110,24 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
-==(g1::CartesianGrid, g2::CartesianGrid) =
-  g1.dims    == g2.dims    &&
-  g1.spacing == g2.spacing &&
-  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
-
-
-Base.size(g::CartesianGrid) = g.dims
+Base.size(g::CartesianGrid) = size(g.topology)
 Base.minimum(g::CartesianGrid) = Point(coordinates(g.origin) .- (g.offset .- 1) .* g.spacing)
-Base.maximum(g::CartesianGrid) = Point(coordinates(g.origin) .+ (g.dims .- g.offset .+ 1) .* g.spacing)
+Base.maximum(g::CartesianGrid) = Point(coordinates(g.origin) .+ (size(g.topology) .- g.offset .+ 1) .* g.spacing)
 Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
 spacing(g::CartesianGrid) = g.spacing
 offset(g::CartesianGrid) = g.offset
 
-function vertices(g::CartesianGrid)
-  inds = CartesianIndices(g.dims .+ 1)
-  vec([Point(coordinates(g.origin) .+ (ind.I .- g.offset) .* g.spacing) for ind in inds])
-end
-
-elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
-
-topology(g::CartesianGrid) = GridTopology(size(g))
+==(g1::CartesianGrid, g2::CartesianGrid) =
+  g1.topology == g2.topology && g1.spacing  == g2.spacing &&
+  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
 
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
 
 function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  I = CartesianIndices(g.dims)[ind]
+  dims = size(g.topology)
+  I = CartesianIndices(dims)[ind]
   o = coordinates(g.origin)
   s = g.spacing
   i = I.I .- g.offset .+ 1
@@ -187,15 +177,24 @@ function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
   end
 end
 
-nelements(g::CartesianGrid) = prod(g.dims)
-
 function centroid(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  intcoords = CartesianIndices(g.dims)[ind]
+  dims = size(g.topology)
+  intcoords = CartesianIndices(dims)[ind]
   neworigin = coordinates(g.origin) .+ g.spacing ./ 2
   Point(ntuple(i -> neworigin[i] + (intcoords[i] - g.offset[i])*g.spacing[i], Dim))
 end
 
 Base.eltype(g::CartesianGrid) = typeof(g[1])
+
+# ---------------
+# MESH INTERFACE
+# ---------------
+
+function vertices(g::CartesianGrid)
+  dims = size(g.topology)
+  inds = CartesianIndices(dims .+ 1)
+  vec([Point(coordinates(g.origin) .+ (ind.I .- g.offset) .* g.spacing) for ind in inds])
+end
 
 # ----------------------------
 # ADDITIONAL INDEXING METHODS
@@ -223,7 +222,7 @@ Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getinde
 # -----------
 
 function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
-  dims = join(g.dims, "×")
+  dims = join(size(g.topology), "×")
   print(io, "$dims CartesianGrid{$Dim,$T}")
 end
 
