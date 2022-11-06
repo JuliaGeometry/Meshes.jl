@@ -17,6 +17,7 @@ constructs such as connectivity lists and topological structures (e.g. [`SimpleM
 
 ```@docs
 Mesh
+Grid
 ```
 
 ```@docs
