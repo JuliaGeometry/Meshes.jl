@@ -112,11 +112,16 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 Base.size(g::CartesianGrid) = size(g.topology)
-Base.minimum(g::CartesianGrid) = Point(coordinates(g.origin) .- (g.offset .- 1) .* g.spacing)
-Base.maximum(g::CartesianGrid) = Point(coordinates(g.origin) .+ (size(g.topology) .- g.offset .+ 1) .* g.spacing)
-Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
-spacing(g::CartesianGrid) = g.spacing
-offset(g::CartesianGrid) = g.offset
+spacing(g::CartesianGrid)   = g.spacing
+offset(g::CartesianGrid)    = g.offset
+
+cart2vert(g::CartesianGrid, ind::CartesianIndex) = cart2vert(g, ind.I)
+cart2vert(g::CartesianGrid, ijk) =
+  Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
+
+Base.minimum(g::CartesianGrid{Dim}) where {Dim} = cart2vert(g, ntuple(i->1, Dim))
+Base.maximum(g::CartesianGrid{Dim}) where {Dim} = cart2vert(g, size(g) .+ 1)
+Base.extrema(g::CartesianGrid{Dim}) where {Dim} = minimum(g), maximum(g)
 
 ==(g1::CartesianGrid, g2::CartesianGrid) =
   g1.topology == g2.topology && g1.spacing  == g2.spacing &&
@@ -127,55 +132,12 @@ offset(g::CartesianGrid) = g.offset
 # -----------------
 
 function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  dims = size(g.topology)
-  I = CartesianIndices(dims)[ind]
-  o = coordinates(g.origin)
-  s = g.spacing
-  i = I.I .- g.offset .+ 1
-
-  if Dim == 1 # segment
-    p1 = (o[1] + (i[1] - 1) * s[1],)
-    p2 = (o[1] + (    i[1]) * s[1],)
-    Segment(p1, p2)
-  elseif Dim == 2 # quadrangle
-    p1 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2] - 1) * s[2])
-    p2 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2] - 1) * s[2])
-    p3 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2]    ) * s[2])
-    p4 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2]    ) * s[2])
-    Quadrangle(p1, p2, p3, p4)
-  elseif Dim == 3 # hexahedron
-    p1 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p2 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p3 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p4 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p5 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    p6 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    p7 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    p8 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    Hexahedron(p1, p2, p3, p4, p5, p6, p7, p8)
-  else
-    throw(ErrorException("not implemented"))
-  end
+  topo = g.topology
+  inds = CartesianIndices(size(topo) .+ 1)
+  elem = element(topo, ind)
+  type = pltype(elem)
+  vert = [cart2vert(g, inds[i]) for i in indices(elem)]
+  type(vert)
 end
 
 function centroid(g::CartesianGrid{Dim}, ind::Int) where {Dim}
@@ -194,7 +156,7 @@ Base.eltype(g::CartesianGrid) = typeof(g[1])
 function vertices(g::CartesianGrid)
   dims = size(g.topology)
   inds = CartesianIndices(dims .+ 1)
-  vec([Point(coordinates(g.origin) .+ (ind.I .- g.offset) .* g.spacing) for ind in inds])
+  vec([cart2vert(g, ind) for ind in inds])
 end
 
 # ----------------------------
