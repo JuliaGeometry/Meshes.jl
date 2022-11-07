@@ -187,6 +187,7 @@ export
   signarea,
   sideof,
   householderbasis,
+  mayberound,
 
   # paths
   Path,

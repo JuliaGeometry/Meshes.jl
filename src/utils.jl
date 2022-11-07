@@ -119,3 +119,12 @@ function householderbasis(n)
   end
   u, v
 end
+
+"""
+    mayberound(λ, x, tol)
+
+Round `λ` to `x` if it is within the tolerance `tol`.
+"""
+function mayberound(λ::T, x, atol = atol(T)) where {T}
+  isapprox(λ, x, atol = atol) ? x : λ
+end
