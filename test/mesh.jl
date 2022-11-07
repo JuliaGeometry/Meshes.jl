@@ -157,6 +157,25 @@
     end
   end
 
+  @testset "RectilinearGrid" begin
+    x = range(zero(T), stop=one(T), length=6)
+    y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+    grid = RectilinearGrid(x, y)
+    @test embeddim(grid) == 2
+    @test coordtype(grid) == T
+    @test size(grid) == (5,5)
+    @test minimum(grid) == P2(0, 0)
+    @test maximum(grid) == P2(1, 1)
+    @test extrema(grid) == (P2(0, 0), P2(1, 1))
+    @test nelements(grid) == 25
+    @test eltype(grid) <: Quadrangle{2,T}
+    @test measure(grid) ≈ T(1)
+    @test centroid(grid, 1) == P2(0.1, 0.05)
+    @test centroid(grid[1]) == P2(0.1, 0.05)
+    @test centroid(grid, 2) == P2(0.3, 0.05)
+    @test centroid(grid[2]) == P2(0.3, 0.05)
+  end
+
   @testset "SimpleMesh" begin
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)

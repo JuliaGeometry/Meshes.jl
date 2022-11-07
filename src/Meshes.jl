@@ -251,7 +251,9 @@ export
 
   # meshes
   Mesh, Grid,
-  SimpleMesh, CartesianGrid,
+  SimpleMesh,
+  RectilinearGrid,
+  CartesianGrid,
   vertices, elements, facets,
   nvertices, nelements, nfacets,
   element, facet,
