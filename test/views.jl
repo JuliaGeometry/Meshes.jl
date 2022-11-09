@@ -39,6 +39,11 @@
     @test v[1] == g[11]
     @test v[2] == g[12]
     @test v[3] == g[13]
+
+    # centroid of view of PointSet
+    points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
+    pview  = view(PointSet(points), 1:4)
+    @test centroid(pview) == P2(0.5, 0.5)
   end
 
   @testset "Data" begin

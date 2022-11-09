@@ -84,12 +84,13 @@ centroid(domain::Domain, ind::Int) = centroid(domain[ind])
 Return the centroid of the `domain`, i.e. the centroid of all
 its element's centroids.
 """
-function centroid(domain::Domain)
+function centroid(domain::Domain{Dim,T}) where {Dim,T}
   coords(i) = coordinates(centroid(domain, i))
   volume(i) = measure(element(domain, i))
   n = nelements(domain)
   x = coords.(1:n)
   w = volume.(1:n)
+  all(iszero, w) && (w = ones(T, n))
   Point(sum(w .* x) / sum(w))
 end
 
