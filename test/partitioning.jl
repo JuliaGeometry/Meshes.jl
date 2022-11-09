@@ -3,6 +3,7 @@
 
   d = CartesianGrid{T}(10,10)
   p = partition(d, UniformPartition(100))
+  @test parent(p) == d
   @test sprint(show, p) == "100 Partition{2,$T}"
   @test sprint(show, MIME"text/plain"(), p) == "100 Partition{2,$T}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
 

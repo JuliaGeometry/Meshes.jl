@@ -20,6 +20,8 @@ Partition(object, subsets, metadata=Dict()) =
 ==(p₁::Partition, p₂::Partition) =
   p₁.object == p₂.object && p₁.subsets == p₂.subsets
 
+Base.parent(p::Partition) = p.object
+
 """
     indices(partition)
 
