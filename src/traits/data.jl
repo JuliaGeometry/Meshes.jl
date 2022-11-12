@@ -144,12 +144,6 @@ Tables.materializer(D::Type{<:Data}) = D
 # DATAFRAME INTERFACE
 # --------------------
 
-Base.getindex(data::Data, col::Symbol) =
-  getproperty(data, col)
-
-Base.getindex(data::Data, col::AbstractString) =
-  getindex(data, Symbol(col))
-
 function Base.getproperty(data::Data, col::Symbol)
   if col == :geometry
     domain(data)
@@ -187,7 +181,8 @@ defined, otherwise returns a vector.
 function asarray(data::Data, var::Symbol)
   D = domain(data)
   hassize = hasmethod(size, (typeof(D),))
-  hassize ? reshape(data[var], size(D)) : data[var]
+  dataval = getproperty(data, var)
+  hassize ? reshape(dataval, size(D)) : dataval
 end
 
 asarray(data::Data, var::AbstractString) =

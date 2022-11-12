@@ -98,18 +98,22 @@ topology `t` with top left vertex `v`
 corner2elem(t::GridTopology, v) = cart2elem(t, corner2cart(t, v)...)
 
 """
-    rank2type(t, rank)
+    elementtype(t)
 
-Return the polytope type of given `rank` for the grid
-topology `t`.
+Return the element type of the grid topology `t`.
 """
-function rank2type(::GridTopology{D}, rank::Integer) where {D}
-  @assert rank ≤ D "invalid rank for grid topology"
-  rank == 1 && return Segment
-  rank == 2 && return Quadrangle
-  rank == 3 && return Hexahedron
-  throw(ErrorException("not implemented"))
-end
+elementtype(::GridTopology{1}) = Segment
+elementtype(::GridTopology{2}) = Quadrangle
+elementtype(::GridTopology{3}) = Hexahedron
+
+"""
+    facettype(t)
+
+Return the facet type of the grid topology `t`.
+"""
+facettype(::GridTopology{1}) = Point
+facettype(::GridTopology{2}) = Segment
+facettype(::GridTopology{3}) = Quadrangle
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
@@ -119,7 +123,7 @@ nvertices(t::GridTopology) = prod(t.dims .+ t.open)
 
 function element(t::GridTopology{D}, ind) where {D}
   ∂ = Boundary{D,0}(t)
-  T = rank2type(t, D)
+  T = elementtype(t)
   connect(Tuple(∂(ind)), T)
 end
 
@@ -127,7 +131,7 @@ nelements(t::GridTopology) = prod(t.dims)
 
 function facet(t::GridTopology{D}, ind) where {D}
   ∂ = Boundary{D-1,0}(t)
-  T = rank2type(t, D-1)
+  T = facettype(t)
   connect(Tuple(∂(ind)), T)
 end
 
