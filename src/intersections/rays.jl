@@ -15,7 +15,12 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
   a, b = r1(0), r1(1)
   c, d = r2(0), r2(1)
 
-  λ₁, λ₂, r, rₐ = intersectparameters(a, b, c, d)
+  # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
+  len1, len2 = norm(b - a), norm(d - c)
+  b₀ = a + 1/len1 * (b - a)
+  d₀ = c + 1/len2 * (d - c)
+
+  λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
   
   # not in same plane or parallel
   if r ≠ rₐ 
@@ -39,8 +44,8 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
     end
   # in same plane, not parallel
   else
-    λ₁ = isapprox(λ₁, zero(T), atol=atol(T)) ? zero(T) : λ₁
-    λ₂ = isapprox(λ₂, zero(T), atol=atol(T)) ? zero(T) : λ₂
+    λ₁ = mayberound(λ₁, zero(T))
+    λ₂ = mayberound(λ₂, zero(T))
     if λ₁ < 0 || λ₂ < 0
       return @IT NoIntersection nothing f # CASE 6
     elseif λ₁ == 0
@@ -53,7 +58,7 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
       if λ₂ == 0
         return @IT MidTouchingRays c f # CASE 2: origin of r2
       else
-        return @IT CrossingRays r1(λ₁) f # CASE 1: equal to r2(λ₂)
+        return @IT CrossingRays r1(λ₁/len1) f # CASE 1: equal to r2(λ₂)
       end
     end
   end
