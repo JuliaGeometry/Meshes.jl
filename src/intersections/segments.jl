@@ -28,8 +28,8 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
     v = b₀ - a
     i = argmax(abs.(v))
     λc, λd = ((c - a)[i], (d - a)[i]) ./ v[i]
-    λc = mayberound(mayberound(λc, 0, atol(T)), len1, atol(T))
-    λd = mayberound(mayberound(λd, 0, atol(T)), len1, atol(T))
+    λc = mayberound(mayberound(λc, zero(T)), len1)
+    λd = mayberound(mayberound(λd, zero(T)), len1)
     if (λc > len1 && λd > len1) || (λc < 0 && λd < 0)
       return @IT NoIntersection nothing f # CASE 5
     elseif (λc == 0 && λd < 0) ||  (λd == 0 && λc < 0)
@@ -43,8 +43,8 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
       return @IT OverlappingSegments Segment(p1, p2) f # CASE 4
     end
   else # in same plane, not parallel
-    λ₁ = mayberound(mayberound(λ₁, 0, atol(T)), len1, atol(T))
-    λ₂ = mayberound(mayberound(λ₂, 0, atol(T)), len2, atol(T))
+    λ₁ = mayberound(mayberound(λ₁, zero(T)), len1)
+    λ₂ = mayberound(mayberound(λ₂, zero(T)), len2)
     if λ₁ < 0 || λ₂ < 0 || λ₁ > len1 || λ₂ > len2
       return @IT NoIntersection nothing f # CASE 5
     # 8 cases remain
