@@ -11,12 +11,12 @@ The intersection type can be one of five types:
 4. overlap at more than one point (OverlappingRaySegment -> Segment)
 5. do not overlap nor intersect (NoIntersection)
 =#
-function intersection(f, r1::Ray{N,T}, s1::Segment{N,T}) where {N,T}
-  a, b = r1(0), r1(1)
-  c, d = s1(0), s1(1)
+function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
+  a, b = ray(0), ray(1)
+  c, d = seg(0), seg(1)
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
-  len1, len2 = norm(b - a), length(s1)
+  len1, len2 = norm(b - a), length(seg)
   b₀ = a + 1/len1 * (b - a)
   d₀ = c + 1/len2 * (d - c)
 
@@ -27,25 +27,25 @@ function intersection(f, r1::Ray{N,T}, s1::Segment{N,T}) where {N,T}
     return @IT NoIntersection nothing f # CASE 5
   # collinear
   elseif r == rₐ == 1
-    rc  = sum((c - a) ./ direction(r1))/N
-    rd = sum((d - a) ./ direction(r1))/N
+    rc  = sum((c - a) ./ direction(ray))/N
+    rd = sum((d - a) ./ direction(ray))/N
     rc = mayberound(rc, zero(T))
     rd = mayberound(rd, zero(T))
-    if rc > 0 # c ∈ r1
+    if rc > 0 # c ∈ ray
       if rd ≥ 0
-        return @IT OverlappingRaySegment s1 f # CASE 4
+        return @IT OverlappingRaySegment seg f # CASE 4
       else
-        return @IT OverlappingRaySegment Segment(origin(r1), c) f # CASE 4
+        return @IT OverlappingRaySegment Segment(origin(ray), c) f # CASE 4
       end
     elseif rc == 0
       if rd > 0
-        return @IT OverlappingRaySegment s1 f # CASE 4
+        return @IT OverlappingRaySegment seg f # CASE 4
       else
         return @IT CornerTouchingRaySegment a f # CASE 3
       end
     else # rc < 0
       if rd > 0
-        return @IT OverlappingRaySegment (Segment(origin(r1), d)) f # CASE 4
+        return @IT OverlappingRaySegment (Segment(origin(ray), d)) f # CASE 4
       elseif rd == 0
         return @IT CornerTouchingRaySegment a f # CASE 3
       else
@@ -68,7 +68,7 @@ function intersection(f, r1::Ray{N,T}, s1::Segment{N,T}) where {N,T}
       if λ₂ == 0 || λ₂ == len2
         return @IT MidTouchingRaySegment (λ₂ < len2/2 ? c : d)  f # CASE 2
       else
-        return @IT CrossingRaySegment r1(λ₁/len1) f # CASE 1, equal to s1(λ₂)
+        return @IT CrossingRaySegment ray(λ₁/len1) f # CASE 1, equal to seg(λ₂/len2)
       end
     end
   end

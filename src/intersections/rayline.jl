@@ -10,9 +10,9 @@ The intersection type can be one of four types:
 3. overlap of line and ray (OverlappingRayLine -> Ray)
 4. do not overlap nor intersect (NoIntersection)
 =#
-function intersection(f, r1::Ray{N,T}, l1::Line{N,T}) where {N,T}
-  a, b = r1(0), r1(1)
-  c, d = l1(0), l1(1)
+function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
+  a, b = ray(0), ray(1)
+  c, d = line(0), line(1)
 
   # use a normalized point for ray parameter λ₁
   len1 = norm(b - a)
@@ -23,13 +23,13 @@ function intersection(f, r1::Ray{N,T}, l1::Line{N,T}) where {N,T}
   if r ≠ rₐ # not in same plane or parallel
     return @IT NoIntersection nothing f # CASE 4
   elseif r == rₐ == 1 # collinear
-    return @IT OverlappingRayLine r1 f # CASE 3
+    return @IT OverlappingRayLine ray f # CASE 3
   else # in same plane, not parallel
     λ₁ = mayberound(λ₁, zero(T))
     if λ₁ > 0
-      return @IT CrossingRayLine r1(λ₁/len1) f # CASE 1
+      return @IT CrossingRayLine ray(λ₁/len1) f # CASE 1
     elseif λ₁ == 0
-      return @IT TouchingRayLine origin(r1) f # CASE 2
+      return @IT TouchingRayLine origin(ray) f # CASE 2
     else
       return @IT NoIntersection nothing f # CASE 4
     end

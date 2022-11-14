@@ -11,9 +11,9 @@ The intersection type can be one of six types:
 5. overlap with colliding vectors (OverlappingOpposingRays -> Segment)
 6. do not overlap nor intersect (NoIntersection)
 =#
-function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
-  a, b = r1(0), r1(1)
-  c, d = r2(0), r2(1)
+function intersection(f, ray1::Ray{N,T}, ray2::Ray{N,T}) where {N,T}
+  a, b = ray1(0), ray1(1)
+  c, d = ray2(0), ray2(1)
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
   len1, len2 = norm(b - a), norm(d - c)
@@ -27,19 +27,19 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
     return @IT NoIntersection nothing f #CASE 6
   # collinear
   elseif r == rₐ == 1 
-    if direction(r1) ⋅ direction(r2) ≥ 0 # rays aligned in same direction
-      if (origin(r1) - origin(r2)) ⋅ direction(r1) ≥ 0 # origin of r1 ∈ r2
-        return @IT OverlappingAgreeingRays r1 f # CASE 4: r1
+    if direction(ray1) ⋅ direction(ray2) ≥ 0 # rays aligned in same direction
+      if (origin(ray1) - origin(ray2)) ⋅ direction(ray1) ≥ 0 # origin of ray1 ∈ ray2
+        return @IT OverlappingAgreeingRays ray1 f # CASE 4: ray1
       else
-        return @IT OverlappingAgreeingRays r2 f # CASE 4: r2
+        return @IT OverlappingAgreeingRays ray2 f # CASE 4: ray2
       end
     else # colliding rays
-      if origin(r1) ∉ r2
+      if origin(ray1) ∉ ray2
         return @IT NoIntersection nothing f # CASE 6
-      elseif origin(r1) == origin(r2)
+      elseif origin(ray1) == origin(ray2)
         return @IT CornerTouchingRays a f # CASE 3
       else
-        return @IT OverlappingOpposingRays Segment(origin(r1), origin(r2)) f # CASE 5
+        return @IT OverlappingOpposingRays Segment(origin(ray1), origin(ray2)) f # CASE 5
       end
     end
   # in same plane, not parallel
@@ -52,13 +52,13 @@ function intersection(f, r1::Ray{N,T}, r2::Ray{N,T}) where {N,T}
       if λ₂ == 0
         return @IT CornerTouchingRays a f # CASE 3
       else
-        return @IT MidTouchingRays a f # CASE 2: origin of r1
+        return @IT MidTouchingRays a f # CASE 2: origin of ray1
       end
     else
       if λ₂ == 0
-        return @IT MidTouchingRays c f # CASE 2: origin of r2
+        return @IT MidTouchingRays c f # CASE 2: origin of ray2
       else
-        return @IT CrossingRays r1(λ₁/len1) f # CASE 1: equal to r2(λ₂)
+        return @IT CrossingRays ray1(λ₁/len1) f # CASE 1: equal to ray2(λ₂/len2)
       end
     end
   end
