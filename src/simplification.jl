@@ -27,7 +27,7 @@ function simplify(polygon::Polygon, method::SimplificationMethod)
 end
 
 function simplify(multi::Multi, method::SimplificationMethod)
-  Multi([simplify(geom, method) for geom in multi])
+  Multi([simplify(geom, method) for geom in collect(multi)])
 end
 
 function simplify(domain::Domain, method::SimplificationMethod)

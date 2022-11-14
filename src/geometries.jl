@@ -126,22 +126,10 @@ struct Multi{Dim,T,I<:PointOrGeometry{Dim,T}} <: Geometry{Dim,T}
   items::Vector{I}
 end
 
-Base.getindex(multi::Multi, ind) = getindex(multi.items, ind)
-Base.length(multi::Multi) = length(multi.items)
-Base.eltype(multi::Multi) = eltype(multi.items)
-Base.firstindex(multi::Multi) = firstindex(multi.items)
-Base.lastindex(multi::Multi) = lastindex(multi.items)
-Base.iterate(multi::Multi, state=1) =
-  state > length(multi) ? nothing : (multi[state], state+1)
-
 paramdim(multi::Multi) = maximum(paramdim, multi.items)
 
-==(multi₁::Multi, multi₂::Multi) =
-  length(multi₁) == length(multi₂) &&
-  all(g -> g[1] == g[2], zip(multi₁, multi₂))
-
 vertices(multi::Multi) =
-  [vertex for geom in multi for vertex in vertices(geom)]
+  [vertex for geom in multi.items for vertex in vertices(geom)]
 
 function centroid(multi::Multi)
   cs = coordinates.(centroid.(multi.items))
@@ -153,15 +141,21 @@ measure(multi::Multi) = sum(measure, multi.items)
 area(multi::Multi{Dim,T,<:Polygon}) where{Dim,T} = measure(multi)
 
 function boundary(multi::Multi)
-  bounds = [boundary(geom) for geom in multi]
+  bounds = [boundary(geom) for geom in multi.items]
   valid  = filter(!isnothing, bounds)
   isempty(valid) ? nothing : Multi(valid)
 end
 
 chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} =
-  [chain for geom in multi for chain in chains(geom)]
+  [chain for geom in multi.items for chain in chains(geom)]
 
-Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi)
+Base.collect(multi::Multi) = multi.items
+
+Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi.items)
+
+==(multi₁::Multi, multi₂::Multi) =
+  length(multi₁.items) == length(multi₂.items) &&
+  all(g -> g[1] == g[2], zip(multi₁.items, multi₂.items))
 
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)
