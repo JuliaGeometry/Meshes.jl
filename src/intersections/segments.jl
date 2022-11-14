@@ -13,11 +13,11 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
   a, b = s1(0), s1(1)
   c, d = s2(0), s2(1)
 
-  len1, len2 = length(s1), length(s2)
-  b₀ = a + 1/len1 * (b - a) # corresponds to s1(1/length)
-  d₀ = c + 1/len2 * (d - c)
+  len₁, len₂ = length(s1), length(s2)
+  b₀ = a + 1/len₁ * (b - a) # corresponds to s1(1/length)
+  d₀ = c + 1/len₂ * (d - c)
 
-  # arc length parameters λ₁ ∈ [0, len1], λ₂ ∈ [0, len2]: 
+  # arc length parameters λ₁ ∈ [0, len₁], λ₂ ∈ [0, len₂]: 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
 
   if r ≠ rₐ # not in same plane or parallel
@@ -28,42 +28,42 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
     v = b₀ - a
     i = argmax(abs.(v))
     λc, λd = ((c - a)[i], (d - a)[i]) ./ v[i]
-    λc = mayberound(mayberound(λc, zero(T)), len1)
-    λd = mayberound(mayberound(λd, zero(T)), len1)
-    if (λc > len1 && λd > len1) || (λc < 0 && λd < 0)
+    λc = mayberound(mayberound(λc, zero(T)), len₁)
+    λd = mayberound(mayberound(λd, zero(T)), len₁)
+    if (λc > len₁ && λd > len₁) || (λc < 0 && λd < 0)
       return @IT NoIntersection nothing f # CASE 5
     elseif (λc == 0 && λd < 0) ||  (λd == 0 && λc < 0)
       return @IT CornerTouchingSegments a f # CASE 3
-    elseif (λc == len1 && λd > len1) || (λd == len1 && λc > len1)
+    elseif (λc == len₁ && λd > len₁) || (λd == len₁ && λc > len₁)
       return @IT CornerTouchingSegments b f # CASE 3
     else
-      params = sort([0,1,λc/len1,λd/len1])
-      p1 = s1(params[2])
-      p2 = s1(params[3])
-      return @IT OverlappingSegments Segment(p1, p2) f # CASE 4
+      params = sort([0, 1, λc/len₁, λd/len₁])
+      p₁ = s1(params[2])
+      p₂ = s1(params[3])
+      return @IT OverlappingSegments Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel
-    λ₁ = mayberound(mayberound(λ₁, zero(T)), len1)
-    λ₂ = mayberound(mayberound(λ₂, zero(T)), len2)
-    if λ₁ < 0 || λ₂ < 0 || λ₁ > len1 || λ₂ > len2
+    λ₁ = mayberound(mayberound(λ₁, zero(T)), len₁)
+    λ₂ = mayberound(mayberound(λ₂, zero(T)), len₂)
+    if λ₁ < 0 || λ₂ < 0 || λ₁ > len₁ || λ₂ > len₂
       return @IT NoIntersection nothing f # CASE 5
     # 8 cases remain
     elseif λ₁ == 0
-      if λ₂ == 0 || λ₂ == len2
+      if λ₂ == 0 || λ₂ == len₂
         return @IT CornerTouchingSegments a f # CASE 3
       else
         return @IT MidTouchingSegments a f # CASE 2
       end
-    elseif λ₁ == len1
-      if λ₂ == 0 || λ₂ == len2
+    elseif λ₁ == len₁
+      if λ₂ == 0 || λ₂ == len₂
         return @IT CornerTouchingSegments b f # CASE 3
       else
         return @IT MidTouchingSegments b f # CASE 2
       end
-    elseif λ₂ == 0 || λ₂ == len2
+    elseif λ₂ == 0 || λ₂ == len₂
       return @IT MidTouchingSegments (λ₂ == 0 ? c : d) f # CASE 2
     else
-      return @IT CrossingSegments s1(λ₁/len1) f # CASE 1: equal to s2(λ₂/len2)
+      return @IT CrossingSegments s1(λ₁/len₁) f # CASE 1: equal to s2(λ₂/len₂)
     end
   end
 end

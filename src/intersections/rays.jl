@@ -11,14 +11,14 @@ The intersection type can be one of six types:
 5. overlap with colliding vectors (OverlappingOpposingRays -> Segment)
 6. do not overlap nor intersect (NoIntersection)
 =#
-function intersection(f, ray1::Ray{N,T}, ray2::Ray{N,T}) where {N,T}
-  a, b = ray1(0), ray1(1)
-  c, d = ray2(0), ray2(1)
+function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
+  a, b = ray₁(0), ray₁(1)
+  c, d = ray₂(0), ray₂(1)
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
-  len1, len2 = norm(b - a), norm(d - c)
-  b₀ = a + 1/len1 * (b - a)
-  d₀ = c + 1/len2 * (d - c)
+  len₁, len₂ = norm(b - a), norm(d - c)
+  b₀ = a + 1/len₁ * (b - a)
+  d₀ = c + 1/len₂ * (d - c)
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
   
@@ -27,19 +27,19 @@ function intersection(f, ray1::Ray{N,T}, ray2::Ray{N,T}) where {N,T}
     return @IT NoIntersection nothing f #CASE 6
   # collinear
   elseif r == rₐ == 1 
-    if direction(ray1) ⋅ direction(ray2) ≥ 0 # rays aligned in same direction
-      if (origin(ray1) - origin(ray2)) ⋅ direction(ray1) ≥ 0 # origin of ray1 ∈ ray2
-        return @IT OverlappingAgreeingRays ray1 f # CASE 4: ray1
+    if direction(ray₁) ⋅ direction(ray₂) ≥ 0 # rays aligned in same direction
+      if (origin(ray₁) - origin(ray₂)) ⋅ direction(ray₁) ≥ 0 # origin of ray₁ ∈ ray₂
+        return @IT OverlappingAgreeingRays ray₁ f # CASE 4: ray₁
       else
-        return @IT OverlappingAgreeingRays ray2 f # CASE 4: ray2
+        return @IT OverlappingAgreeingRays ray₂ f # CASE 4: ray₂
       end
     else # colliding rays
-      if origin(ray1) ∉ ray2
+      if origin(ray₁) ∉ ray₂
         return @IT NoIntersection nothing f # CASE 6
-      elseif origin(ray1) == origin(ray2)
+      elseif origin(ray₁) == origin(ray₂)
         return @IT CornerTouchingRays a f # CASE 3
       else
-        return @IT OverlappingOpposingRays Segment(origin(ray1), origin(ray2)) f # CASE 5
+        return @IT OverlappingOpposingRays Segment(origin(ray₁), origin(ray₂)) f # CASE 5
       end
     end
   # in same plane, not parallel
@@ -52,13 +52,13 @@ function intersection(f, ray1::Ray{N,T}, ray2::Ray{N,T}) where {N,T}
       if λ₂ == 0
         return @IT CornerTouchingRays a f # CASE 3
       else
-        return @IT MidTouchingRays a f # CASE 2: origin of ray1
+        return @IT MidTouchingRays a f # CASE 2: origin of ray₁
       end
     else
       if λ₂ == 0
-        return @IT MidTouchingRays c f # CASE 2: origin of ray2
+        return @IT MidTouchingRays c f # CASE 2: origin of ray₂
       else
-        return @IT CrossingRays ray1(λ₁/len1) f # CASE 1: equal to ray2(λ₂/len2)
+        return @IT CrossingRays ray₁(λ₁/len₁) f # CASE 1: equal to ray₂(λ₂/len₂)
       end
     end
   end

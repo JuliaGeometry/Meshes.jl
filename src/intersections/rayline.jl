@@ -14,11 +14,10 @@ function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
   a, b = ray(0), ray(1)
   c, d = line(0), line(1)
 
-  # use a normalized point for ray parameter λ₁
-  len1 = norm(b - a)
-  b₀ = a + 1/len1 * (b - a)
+  # rescaling of point b necessary to gain a parameter λ₁ representing the arc length
+  b₀ = a + 1/len₁ * (b - a)
 
-  λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d)
+  λ₁, _, r, rₐ = intersectparameters(a, b₀, c, d)
 
   if r ≠ rₐ # not in same plane or parallel
     return @IT NoIntersection nothing f # CASE 4
@@ -27,7 +26,7 @@ function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
   else # in same plane, not parallel
     λ₁ = mayberound(λ₁, zero(T))
     if λ₁ > 0
-      return @IT CrossingRayLine ray(λ₁/len1) f # CASE 1
+      return @IT CrossingRayLine ray(λ₁/len₁) f # CASE 1
     elseif λ₁ == 0
       return @IT TouchingRayLine origin(ray) f # CASE 2
     else
