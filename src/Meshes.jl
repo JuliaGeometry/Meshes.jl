@@ -384,6 +384,8 @@ export
   GeometricTransform,
   StatelessGeometricTransform,
   StdCoords,
+  LambdaMuSmoothing,
+  LaplaceSmoothing,
   TaubinSmoothing,
 
   # tolerances
