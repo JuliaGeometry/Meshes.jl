@@ -9,12 +9,12 @@ The intersection type can be one of six types:
 4. overlap of segments (OverlappingSegments -> Segments)
 5. do not overlap nor intersect (NoIntersection)
 =#
-function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
-  a, b = s1(0), s1(1)
-  c, d = s2(0), s2(1)
+function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
+  a, b = seg₁(0), seg₁(1)
+  c, d = seg₂(0), seg₂(1)
 
-  len₁, len₂ = length(s1), length(s2)
-  b₀ = a + 1/len₁ * (b - a) # corresponds to s1(1/length)
+  len₁, len₂ = length(seg₁), length(seg₂)
+  b₀ = a + 1/len₁ * (b - a) # corresponds to seg₁(1/length)
   d₀ = c + 1/len₂ * (d - c)
 
   # arc length parameters λ₁ ∈ [0, len₁], λ₂ ∈ [0, len₂]: 
@@ -23,7 +23,7 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
   if r ≠ rₐ # not in same plane or parallel
     return @IT NoIntersection nothing f #CASE 5
   elseif r == rₐ == 1 # collinear
-    # find parameters λc and λd for points c and d in s1
+    # find parameters λc and λd for points c and d in seg₁
     # use dimension with largest vector component to avoid division by zero
     v = b₀ - a
     i = argmax(abs.(v))
@@ -38,8 +38,8 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
       return @IT CornerTouchingSegments b f # CASE 3
     else
       params = sort([0, 1, λc/len₁, λd/len₁])
-      p₁ = s1(params[2])
-      p₂ = s1(params[3])
+      p₁ = seg₁(params[2])
+      p₂ = seg₁(params[3])
       return @IT OverlappingSegments Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel
@@ -63,7 +63,7 @@ function intersection(f, s1::Segment{N,T}, s2::Segment{N,T}) where {N,T}
     elseif λ₂ == 0 || λ₂ == len₂
       return @IT MidTouchingSegments (λ₂ == 0 ? c : d) f # CASE 2
     else
-      return @IT CrossingSegments s1(λ₁/len₁) f # CASE 1: equal to s2(λ₂/len₂)
+      return @IT CrossingSegments seg₁(λ₁/len₁) f # CASE 1: equal to seg₂(λ₂/len₂)
     end
   end
 end

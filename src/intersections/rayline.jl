@@ -15,6 +15,7 @@ function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
   c, d = line(0), line(1)
 
   # rescaling of point b necessary to gain a parameter λ₁ representing the arc length
+  len₁ = norm(b - a)
   b₀ = a + 1/len₁ * (b - a)
 
   λ₁, _, r, rₐ = intersectparameters(a, b₀, c, d)
