@@ -385,6 +385,7 @@ export
   StatelessGeometricTransform,
   StdCoords,
   TaubinSmoothing,
+  LaplacianSmoothing,
 
   # tolerances
   atol

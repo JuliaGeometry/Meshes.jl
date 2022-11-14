@@ -33,4 +33,16 @@
     @test nelements(smesh) == nelements(mesh)
     @test topology(smesh) == topology(mesh)
   end
+
+  @testset "LaplacianSmoothing" begin
+    trans = LaplacianSmoothing(30)
+    @test TB.isrevertible(trans)
+
+    # smoothing doesn't change the topology
+    mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
+    smesh = trans(mesh)
+    @test nvertices(smesh) == nvertices(mesh)
+    @test nelements(smesh) == nelements(mesh)
+    @test topology(smesh) == topology(mesh)
+  end
 end
