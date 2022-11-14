@@ -230,6 +230,7 @@
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test nvertices(c) == 4
     @test Meshes.npoints(c) == 5
+    @test length(c) == T(4)
 
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])

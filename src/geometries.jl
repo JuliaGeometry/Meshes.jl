@@ -138,7 +138,9 @@ end
 
 measure(multi::Multi) = sum(measure, multi.items)
 
+Base.length(multi::Multi{Dim,T,<:Polytope{1}}) where {Dim,T} = measure(multi)
 area(multi::Multi{Dim,T,<:Polygon}) where{Dim,T} = measure(multi)
+volume(multi::Multi{Dim,T,<:Polyhedron}) where{Dim,T} = measure(multi)
 
 function boundary(multi::Multi)
   bounds = [boundary(geom) for geom in multi.items]
