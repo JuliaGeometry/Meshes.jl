@@ -34,7 +34,7 @@
 
 Get the latest stable release with Julia's package manager:
 
-```julia
+```
 ] add Meshes
 ```
 

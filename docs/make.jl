@@ -63,8 +63,7 @@ makedocs(
       "Traits" => "traits.md"
   ],
     "Contributing" => [
-      "contributing/guidelines.md",
-      "contributing/devguide.md"
+      "contributing/guidelines.md"
     ],
     "About" => [
       "License" => "about/license.md"
