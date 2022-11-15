@@ -17,9 +17,11 @@ struct BlockPartition{S} <: PartitionMethod
   neighbors::Bool
 end
 
-BlockPartition(sides) = BlockPartition(sides, false)
-BlockPartition(sides::Vararg{T}; neighbors=false) where {T<:Number} =
+BlockPartition(sides; neighbors=false) =
   BlockPartition(sides, neighbors)
+
+BlockPartition(sides...; neighbors=false) =
+  BlockPartition(sides; neighbors=neighbors)
 
 function partition(::AbstractRNG, object, method::BlockPartition)
   psides = method.sides

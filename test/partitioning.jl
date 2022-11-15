@@ -136,6 +136,15 @@
     rng  = MersenneTwister(123)
     p2   = partition(rng, grid, BlockPartition(T(5), T(2)))
     @test p1 == p2
+
+    m1 = BlockPartition((T(5), T(2)))
+    m2 = BlockPartition(T(5), T(2))
+    m3 = BlockPartition((T(5), T(2)), neighbors = false)
+    m4 = BlockPartition(T(5), T(2), neighbors = false)
+    @test m1 == m2 == m3 == m4
+    m1 = BlockPartition(T(1))
+    m2 = BlockPartition(T(1), neighbors = false)
+    @test m1 == m2
   end
 
   @testset "BisectPointPartition" begin
