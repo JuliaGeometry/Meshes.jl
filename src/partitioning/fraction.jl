@@ -20,12 +20,12 @@ end
 
 FractionPartition(fraction) = FractionPartition(fraction, true)
 
-function partition(rng::AbstractRNG, object, method::FractionPartition)
-  n = nelements(object)
+function partsubsets(rng::AbstractRNG, domain, method::FractionPartition)
+  n = nelements(domain)
   f = round(Int, method.fraction * n)
 
   locs = method.shuffle ? randperm(rng, n) : 1:n
   subsets = [locs[1:f], locs[f+1:n]]
 
-  Partition(object, subsets)
+  subsets, Dict()
 end

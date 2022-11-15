@@ -14,10 +14,10 @@ struct UniformPartition <: PartitionMethod
   shuffle::Bool
 end
 
-UniformPartition(k::Int) = UniformPartition(k, true)
+UniformPartition(k) = UniformPartition(k, true)
 
-function partition(rng::AbstractRNG, object, method::UniformPartition)
-  n = nelements(object)
+function partsubsets(rng::AbstractRNG, domain, method::UniformPartition)
+  n = nelements(domain)
   k = method.k
 
   @assert k ≤ n "number of subsets must be smaller than number of points"
@@ -25,5 +25,5 @@ function partition(rng::AbstractRNG, object, method::UniformPartition)
   inds = method.shuffle ? shuffle(rng, 1:n) : collect(1:n)
   subsets = collect(Iterators.partition(inds, n ÷ k))
 
-  Partition(object, subsets)
+  subsets, Dict()
 end

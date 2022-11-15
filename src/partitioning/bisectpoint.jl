@@ -23,19 +23,19 @@ BisectPointPartition(normal::Vec{Dim,T}, point::Point{Dim,T}) where {Dim,T} =
 BisectPointPartition(normal::NTuple{Dim,T}, point::NTuple{Dim,T}) where {Dim,T} =
  BisectPointPartition(Vec(normal), Point(point))
 
-function partition(::AbstractRNG, object, method::BisectPointPartition)
+function partsubsets(::AbstractRNG, domain, method::BisectPointPartition)
   n = method.normal
   p = method.point
 
   left, right = Int[], Int[]
-  for location in 1:nelements(object)
-    pₒ = centroid(object, location)
-    if (pₒ - p) ⋅ n < zero(coordtype(object))
+  for location in 1:nelements(domain)
+    pₒ = centroid(domain, location)
+    if (pₒ - p) ⋅ n < zero(coordtype(domain))
       push!(left, location)
     else
       push!(right, location)
     end
   end
 
-  Partition(object, [left,right])
+  [left,right], Dict()
 end

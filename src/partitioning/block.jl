@@ -23,10 +23,10 @@ BlockPartition(sides; neighbors=false) =
 BlockPartition(sides...; neighbors=false) =
   BlockPartition(sides; neighbors=neighbors)
 
-function partition(::AbstractRNG, object, method::BlockPartition)
+function partsubsets(::AbstractRNG, domain, method::BlockPartition)
   psides = method.sides
 
-  bbox   = boundingbox(object)
+  bbox   = boundingbox(domain)
   bsides = sides(bbox)
   Dim    = length(bsides)
 
@@ -49,8 +49,8 @@ function partition(::AbstractRNG, object, method::BlockPartition)
   # Cartesian to linear indices
   linear = LinearIndices(Dims(nblocks))
 
-  for j in 1:nelements(object)
-    coords = coordinates(centroid(object, j))
+  for j in 1:nelements(domain)
+    coords = coordinates(centroid(domain, j))
 
     # find block coordinates
     c = @. floor(Int, (coords - start) / psides) + 1
@@ -93,5 +93,5 @@ function partition(::AbstractRNG, object, method::BlockPartition)
     end
   end
 
-  Partition(object, subsets, metadata)
+  subsets, metadata
 end

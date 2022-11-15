@@ -10,12 +10,27 @@ A method for partitioning domain/data objects.
 abstract type PartitionMethod end
 
 """
-    partition(object, method)
+    partition([rng], object, method)
 
 Partition `object` with partition `method`.
+Optionally, specify random number generator `rng`.
 """
-partition(object, method) =
+partition(object, method::PartitionMethod) =
   partition(Random.GLOBAL_RNG, object, method)
+
+function partition(rng::AbstractRNG, object, method::PartitionMethod)
+  subsets, metadata = partsubsets(rng, object, method)
+  Partition(object, subsets, metadata)
+end
+
+"""
+    partsubsets(rng, object, method)
+
+Return subsets and metadata for the partition `method`
+applied to the `object` with random number generator `rng`.
+"""
+partsubsets(rng::AbstractRNG, object, method::PartitionMethod) =
+  partsubsets(rng, domain(object), method)
 
 """
     PredicatePartitionMethod
@@ -24,9 +39,9 @@ A method for partitioning domain/data objects with predicate functions.
 """
 abstract type PredicatePartitionMethod <: PartitionMethod end
 
-function partition(rng::AbstractRNG, object,
-                   method::PredicatePartitionMethod)
-  nelms = nelements(object)
+function partsubsets(rng::AbstractRNG, domain,
+                     method::PredicatePartitionMethod)
+  nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
     inserted = false
@@ -43,7 +58,7 @@ function partition(rng::AbstractRNG, object,
     end
   end
 
-  Partition(object, subsets)
+  subsets, Dict()
 end
 
 """
@@ -53,16 +68,16 @@ A method for partitioning domain/data objects with spatial predicate functions.
 """
 abstract type SPredicatePartitionMethod <: PartitionMethod end
 
-function partition(rng::AbstractRNG, object,
-                   method::SPredicatePartitionMethod)
-  nelms = nelements(object)
+function partsubsets(rng::AbstractRNG, domain,
+                     method::SPredicatePartitionMethod)
+  nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
-    p = centroid(object, i)
+    p = centroid(domain, i)
     x = coordinates(p)
     inserted = false
     for subset in subsets
-      q = centroid(object, subset[1])
+      q = centroid(domain, subset[1])
       y = coordinates(q)
       if method(x, y)
         push!(subset, i)
@@ -75,7 +90,7 @@ function partition(rng::AbstractRNG, object,
     end
   end
 
-  Partition(object, subsets)
+  subsets, Dict()
 end
 
 # ----------------
