@@ -439,32 +439,84 @@
     @inferred someornone(l₁, r₅)
 
     # 3D tests
-     # lines and rays in 2D
-     l₁ = Line(P3(0,0,0.1), P3(4,5,0.1))
-     r₁ = Ray(P3(3,4,0.1), V3(1,-2,0)) # crossing ray
-     r₂ = Ray(P3(1,1.25,0.1), V3(1,0.3,0)) # touching ray
-     r₃ = Ray(P3(-1,-1.25,0.1), V3(-1,-1.25,0)) # overlapping ray
-     r₄ = Ray(P3(1,3,0.1), V3(1,1.25,0)) # parallel ray
-     r₅ = Ray(P3(1,1,0.1), V3(1,-1,0)) # no Intersection
-     r₆ = Ray(P3(3,4,0), V3(1,-2,1)) # crossing ray
+    # lines and rays in 3D
+    l₁ = Line(P3(0,0,0.1), P3(4,5,0.1))
+    r₁ = Ray(P3(3,4,0.1), V3(1,-2,0)) # crossing ray
+    r₂ = Ray(P3(1,1.25,0.1), V3(1,0.3,0)) # touching ray
+    r₃ = Ray(P3(-1,-1.25,0.1), V3(-1,-1.25,0)) # overlapping ray
+    r₄ = Ray(P3(1,3,0.1), V3(1,1.25,0)) # parallel ray
+    r₅ = Ray(P3(1,1,0.1), V3(1,-1,0)) # no Intersection
+    r₆ = Ray(P3(3,4,0), V3(1,-2,1)) # crossing ray
 
-     @test l₁ ∩ r₁ ≈ r₁ ∩ l₁ ≈ P3(3.0769230769230766, 3.846153846153846, 0.1) # CASE 1
-     @test intersection(l₁, r₁) |> type === CrossingRayLine
- 
-     @test l₁ ∩ r₂ == r₂ ∩ l₁ == origin(r₂) # CASE 2
-     @test intersection(l₁, r₂) |> type === TouchingRayLine
- 
-     @test l₁ ∩ r₃ == r₃ ∩ l₁ == r₃ # CASE 3
-     @test intersection(l₁, r₃) |> type === OverlappingRayLine
- 
-     @test l₁ ∩ r₄ == r₄ ∩ l₁ === nothing # CASE 4 parallel
-     @test intersection(l₁, r₄) |> type === NoIntersection
- 
-     @test l₁ ∩ r₅ == r₅ ∩ l₁ === nothing # CASE 4 no intersection
-     @test intersection(l₁, r₅) |> type === NoIntersection
+    @test l₁ ∩ r₁ ≈ r₁ ∩ l₁ ≈ P3(3.0769230769230766, 3.846153846153846, 0.1) # CASE 1
+    @test intersection(l₁, r₁) |> type === CrossingRayLine
 
-     @test l₁ ∩ r₆ == r₆ ∩ l₁ === nothing # CASE 4 no intersection
-     @test intersection(l₁, r₆) |> type === NoIntersection
+    @test l₁ ∩ r₂ == r₂ ∩ l₁ == origin(r₂) # CASE 2
+    @test intersection(l₁, r₂) |> type === TouchingRayLine
+
+    @test l₁ ∩ r₃ == r₃ ∩ l₁ == r₃ # CASE 3
+    @test intersection(l₁, r₃) |> type === OverlappingRayLine
+
+    @test l₁ ∩ r₄ == r₄ ∩ l₁ === nothing # CASE 4 parallel
+    @test intersection(l₁, r₄) |> type === NoIntersection
+
+    @test l₁ ∩ r₅ == r₅ ∩ l₁ === nothing # CASE 4 no intersection
+    @test intersection(l₁, r₅) |> type === NoIntersection
+
+    @test l₁ ∩ r₆ == r₆ ∩ l₁ === nothing # CASE 4 no intersection
+    @test intersection(l₁, r₆) |> type === NoIntersection
+  end
+
+  @testset "LineSegment" begin
+    l₁ = Line(P2(1,0), P2(3,1))
+    s₁ = Segment(P2(0,2), P2(2,-1)) # CrossingLineSegment
+	  s₂ = Segment(P2(0.5,1), P2(0,0)) # No Intersection
+	  s₃ = Segment(P2(0,2), P2(-2, 1)) # No Intersection
+    s₄ = Segment(P2(0.5,-1), P2(1, 0)) # TouchingLineSegment
+	  s₅ = Segment(P2(1.5,0.25), P2(1.5, 2)) # TouchingLineSegment
+    s₆ = Segment(P2(-3, -2), P2(4, 1.5)) # OverlappingLineSegment
+
+    @test intersection(l₁, s₁) |> type == CrossingLineSegment #CASE 1
+    @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P2(1.25,0.125)
+    @test intersection(l₁, s₂) |> type == NoIntersection # CASE 4
+    @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
+    @test intersection(l₁, s₃) |> type == NoIntersection # CASE 4
+    @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
+    @test intersection(l₁, s₄) |> type == TouchingLineSegment # CASE 2
+    @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
+    @test intersection(l₁, s₅) |> type == TouchingLineSegment # CASE 2
+    @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
+    @test intersection(l₁, s₆) |> type == OverlappingLineSegment # CASE 3
+    @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
+    
+    # type stability tests
+    @inferred someornone(l₁, s₁)
+    @inferred someornone(l₁, s₂)
+
+    # 3d tests
+    l₁ = Line(P3(1,0,1), P3(3,1,1))
+    s₁ = Segment(P3(0,2,1), P3(2,-1,1)) # CrossingLineSegment
+	  s₂ = Segment(P3(0.5,1,1), P3(0,0,1)) # No Intersection
+	  s₃ = Segment(P3(0,2,1), P3(-2,1,1)) # No Intersection
+    s₄ = Segment(P3(0.5,-1,1), P3(1,0,1)) # TouchingLineSegment
+	  s₅ = Segment(P3(1.5,0.25,1), P3(1.5,2,1)) # TouchingLineSegment
+    s₆ = Segment(P3(-3,-2,1), P3(4,1.5,1)) # OverlappingLineSegment
+    s₇ = Segment(P3(0,2,1), P3(2,-1,1.1)) # No Intersection
+
+    @test intersection(l₁, s₁) |> type == CrossingLineSegment #CASE 1
+    @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P3(1.25,0.125,1)
+    @test intersection(l₁, s₂) |> type == NoIntersection # CASE 4
+    @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
+    @test intersection(l₁, s₃) |> type == NoIntersection # CASE 4
+    @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
+    @test intersection(l₁, s₄) |> type == TouchingLineSegment # CASE 2
+    @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
+    @test intersection(l₁, s₅) |> type == TouchingLineSegment # CASE 2
+    @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
+    @test intersection(l₁, s₆) |> type == OverlappingLineSegment # CASE 3
+    @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
+    @test intersection(l₁, s₇) |> type == NoIntersection # CASE 4
+    @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing
   end
 
   @testset "Triangles" begin
