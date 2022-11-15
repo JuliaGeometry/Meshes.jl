@@ -24,10 +24,10 @@ BlockPartition(sides::Vararg{T}; neighbors=false) where {T<:Number} =
   BlockPartition(SVector(sides), neighbors)
 
 function partition(::AbstractRNG, object, method::BlockPartition)
-  Dim    = embeddim(object)
   psides = method.sides
 
   bbox = boundingbox(object)
+  Dim  = embeddim(bbox)
 
   @assert all(psides .≤ sides(bbox)) "invalid block sides"
 
