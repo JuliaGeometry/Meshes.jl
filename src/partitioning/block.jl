@@ -23,7 +23,7 @@ BlockPartition(sides; neighbors=false) =
 BlockPartition(sides...; neighbors=false) =
   BlockPartition(sides; neighbors=neighbors)
 
-function partsubsets(::AbstractRNG, domain, method::BlockPartition)
+function partsubsets(::AbstractRNG, domain::Domain, method::BlockPartition)
   psides = method.sides
 
   bbox   = boundingbox(domain)

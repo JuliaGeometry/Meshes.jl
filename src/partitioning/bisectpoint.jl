@@ -23,7 +23,7 @@ BisectPointPartition(normal::Vec{Dim,T}, point::Point{Dim,T}) where {Dim,T} =
 BisectPointPartition(normal::NTuple{Dim,T}, point::NTuple{Dim,T}) where {Dim,T} =
  BisectPointPartition(Vec(normal), Point(point))
 
-function partsubsets(::AbstractRNG, domain, method::BisectPointPartition)
+function partsubsets(::AbstractRNG, domain::Domain, method::BisectPointPartition)
   n = method.normal
   p = method.point
 

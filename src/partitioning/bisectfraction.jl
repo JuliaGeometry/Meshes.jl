@@ -25,7 +25,7 @@ BisectFractionPartition(normal::Vec{Dim,T}, fraction=0.5, maxiter=10) where {Dim
 BisectFractionPartition(normal::NTuple{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
   BisectFractionPartition(Vec(normal), fraction, maxiter)
 
-function partsubsets(rng::AbstractRNG, domain, method::BisectFractionPartition)
+function partsubsets(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)
   bbox = boundingbox(domain)
   n = method.normal
   f = method.fraction
