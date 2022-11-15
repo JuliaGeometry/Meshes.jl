@@ -374,6 +374,23 @@
     @test setify(s1) == setify(s2)
   end
 
+  @testset "Data trait" begin
+    data = meshdata(CartesianGrid{T}(10,10), etable=(a=rand(100), b=rand(100)))
+    for method in [UniformPartition(2), FractionPartition(T(0.5)),
+                    BlockPartition(T(2)), BallPartition(T(2)),
+                    BisectPointPartition(V2(1,1), P2(5,5)),
+                    BisectFractionPartition(V2(1,1), T(0.5)),
+                    PlanePartition(V2(1,1)), DirectionPartition(V2(1,1)),
+                    PredicatePartition((i,j) -> iseven(i+j)),
+                    SpatialPredicatePartition((x,y) -> norm(x+y) < T(5)),
+                    ProductPartition(UniformPartition(2), UniformPartition(2)),
+                    HierarchicalPartition(UniformPartition(2), UniformPartition(2))]
+      Π = partition(data, method)
+      inds = reduce(vcat, indices(Π))
+      @test sort(inds) == 1:100
+    end
+  end
+
   @testset "Utilities" begin
     d = CartesianGrid{T}(10,10)
     l, r = split(d, T(0.5))

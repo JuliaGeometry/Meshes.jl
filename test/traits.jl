@@ -119,20 +119,6 @@
       elseif T == Float64
         @test sprint(show, MIME"text/plain"(), data) == "4 $DummyType{2,Float64}\n  variables (rank 2)\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float64}"
       end
-
-      # partition methods
-      data = dummy(CartesianGrid{T}(10,10), (a=rand(100), b=rand(100)))
-      for method in [UniformPartition(2), FractionPartition(T(0.5)),
-                     BlockPartition(T(2)), BallPartition(T(2)),
-                     BisectPointPartition(V2(1,1), P2(5,5)),
-                     BisectFractionPartition(V2(1,1), T(0.5)),
-                     PlanePartition(V2(1,1)), DirectionPartition(V2(1,1)),
-                     PredicatePartition((i,j) -> iseven(i+j)),
-                     SpatialPredicatePartition((x,y) -> norm(x+y) < T(5))]
-        Π = partition(data, method)
-        inds = reduce(vcat, indices(Π))
-        @test sort(inds) == 1:100
-      end
     end
   end
 end

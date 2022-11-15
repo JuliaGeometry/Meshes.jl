@@ -20,8 +20,8 @@ function partition(rng::AbstractRNG, object, method::ProductPartition)
   s₂ = indices(partition(rng, object, method.p₂))
 
   # label-based representation
-  l₁ = Vector{Int}(undef, nelements(object))
-  l₂ = Vector{Int}(undef, nelements(object))
+  l₁ = Vector{Int}(undef, nitems(object))
+  l₂ = Vector{Int}(undef, nitems(object))
   for (i, inds) in enumerate(s₁)
     l₁[inds] .= i
   end
@@ -32,8 +32,8 @@ function partition(rng::AbstractRNG, object, method::ProductPartition)
   # product of labels
   counter = 0
   d = Dict{Tuple{Int,Int},Int}()
-  l = Vector{Int}(undef, nelements(object))
-  for i in 1:nelements(object)
+  l = Vector{Int}(undef, nitems(object))
+  for i in 1:nitems(object)
     t = (l₁[i], l₂[i])
     if t ∉ keys(d)
       counter += 1
