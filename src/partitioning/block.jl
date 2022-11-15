@@ -12,24 +12,23 @@ Optionally, compute the `neighbors` of a block as the metadata.
 
 Alternatively, specify the sides `side₁`, `side₂`, ..., `sideₙ`.
 """
-struct BlockPartition{Dim,T} <: PartitionMethod
-  sides::SVector{Dim,T}
+struct BlockPartition{S} <: PartitionMethod
+  sides::S
   neighbors::Bool
 end
 
 BlockPartition(sides) = BlockPartition(sides, false)
-BlockPartition(sides::NTuple; neighbors=false) =
-  BlockPartition(SVector(sides), neighbors)
 BlockPartition(sides::Vararg{T}; neighbors=false) where {T<:Number} =
-  BlockPartition(SVector(sides), neighbors)
+  BlockPartition(sides, neighbors)
 
 function partition(::AbstractRNG, object, method::BlockPartition)
   psides = method.sides
 
-  bbox = boundingbox(object)
-  Dim  = embeddim(bbox)
+  bbox   = boundingbox(object)
+  bsides = sides(bbox)
+  Dim    = length(bsides)
 
-  @assert all(psides .≤ sides(bbox)) "invalid block sides"
+  @assert all(psides .≤ bsides) "invalid block sides"
 
   # bounding box properties
   ce = centroid(bbox)

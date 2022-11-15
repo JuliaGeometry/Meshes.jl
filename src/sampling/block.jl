@@ -12,12 +12,11 @@ A method for sampling objects that are `sides` apart using a
 
 Alternatively, specify the sides `side₁`, `side₂`, ..., `sideₙ`.
 """
-struct BlockSampling{Dim,T} <: DiscreteSamplingMethod
-  sides::SVector{Dim,T}
+struct BlockSampling{S} <: DiscreteSamplingMethod
+  sides::S
 end
 
-BlockSampling(sides::NTuple) = BlockSampling(SVector(sides))
-BlockSampling(sides::Vararg) = BlockSampling(SVector(sides))
+BlockSampling(sides...) = BlockSampling(sides)
 
 function sample(::AbstractRNG, object, method::BlockSampling)
   Π = partition(object, BlockPartition(method.sides))
