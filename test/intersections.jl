@@ -278,6 +278,15 @@
     @test intersection(s1, s12) |> type == CornerTouchingSegments
     @test s1 ∩ s12 ≈ P3(1.0, 0.0, 0.0)
 
+    # precission test
+    s1 = Segment(P2(2.0, 2.0), P2(3.0, 1.0))
+    s2 = Segment(P2(2.12505,1.87503), P2(50000.0,30000.0))
+    s3 = Segment(P2(2.125005,1.875003), P2(50000.0,30000.0))
+    s4 = Segment(P2(2.125005,1.875003), P2(50002.125005,30001.875003))      
+    @test s1 ∩ s2 == s2 ∩ s1 === nothing
+    @test s1 ∩ s3 == s3 ∩ s1 === ((T == Float32) ? P2(2.125005, 1.875003) : nothing)
+    @test s1 ∩ s4 == s4 ∩ s1 === ((T == Float32) ? P2(2.125005, 1.875003) : nothing)
+      
     # type stability tests
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0.5,0.0), P2(2,0))
