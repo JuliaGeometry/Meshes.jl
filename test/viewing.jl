@@ -55,20 +55,22 @@
       @test centroid(dd, nelements(dd)) == P2(5,5)
       tt = Tables.columntable(values(v))
       @test tt == (a=[13,14,15,16,17,24,25,26,27,28,35,36,37,38,39,46,47,48,49,50,57,58,59,60,61],
-                  b=[13,14,15,16,17,24,25,26,27,28,35,36,37,38,39,46,47,48,49,50,57,58,59,60,61])
+                   b=[13,14,15,16,17,24,25,26,27,28,35,36,37,38,39,46,47,48,49,50,57,58,59,60,61])
       
       g = CartesianGrid{T}(250,250)
       t = (a=rand(250*250), b=rand(250*250))
       d = dummy(g, t)
       s1 = slice(d, T(50.5):T(100.2), T(41.7):T(81.3))
-      pts1 = [centroid(s1, i) for i in 1:nelements(s1)]
+      d1 = domain(s1)
+      pts1 = [centroid(d1, i) for i in 1:nelements(d1)]
       X1 = reduce(hcat, coordinates.(pts1))
       @test all(T[50.5,41.7] .≤ minimum(X1, dims=2))
       @test all(maximum(X1, dims=2) .≤ T[100.2,81.3])
 
       p = sample(d, 100)
       s2 = slice(p, T(50.5):T(150.7), T(175.2):T(250.3))
-      pts2 = [centroid(s2, i) for i in 1:nelements(s2)]
+      d2 = domain(s2)
+      pts2 = [centroid(d2, i) for i in 1:nelements(d2)]
       X2 = reduce(hcat, coordinates.(pts2))
       @test all(T[50.5,175.2] .≤ minimum(X2, dims=2))
       @test all(maximum(X2, dims=2) .≤ T[150.7,250.3])

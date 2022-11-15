@@ -3,10 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    RectilinearGrid(x, y, z, ...; periodic=(false,false,false,...))
+    RectilinearGrid(x, y, z, ...)
 
 A rectilinear grid with vertices at coordinates `x`, `y`, `z`, ...
-Optionally, specify which dimensions are `periodic`.
 
 ## Examples
 
@@ -24,14 +23,13 @@ struct RectilinearGrid{Dim,T,V<:AbstractVector{T}} <: Grid{Dim,T}
   topology::GridTopology{Dim}
 end
 
-function RectilinearGrid(xyz::Tuple; periodic=ntuple(i->false, length(xyz)))
+function RectilinearGrid(xyz::Tuple)
   coords   = promote(collect.(xyz)...)
-  topology = GridTopology(length.(coords) .- 1, periodic)
+  topology = GridTopology(length.(coords) .- 1)
   RectilinearGrid(coords, topology)
 end
 
-RectilinearGrid(xyz...; periodic=ntuple(i->false, length(xyz))) =
-  RectilinearGrid(xyz; periodic=periodic)
+RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
 cart2vert(g::RectilinearGrid, ijk::Tuple) = Point(getindex.(g.xyz, ijk))
 

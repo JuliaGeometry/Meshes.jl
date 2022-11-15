@@ -139,6 +139,7 @@ export
 
   # domain/data alias
   DomainOrData,
+  nitems,
 
   # geometries
   Geometry,
@@ -251,9 +252,9 @@ export
 
   # meshes
   Mesh, Grid,
-  SimpleMesh,
-  RectilinearGrid,
   CartesianGrid,
+  RectilinearGrid,
+  SimpleMesh,
   vertices, elements, facets,
   nvertices, nelements, nfacets,
   element, facet,
@@ -384,6 +385,8 @@ export
   GeometricTransform,
   StatelessGeometricTransform,
   StdCoords,
+  LambdaMuSmoothing,
+  LaplaceSmoothing,
   TaubinSmoothing,
 
   # tolerances

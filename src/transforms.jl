@@ -94,4 +94,4 @@ reapply(transform::StatelessGeometricTransform, object, cache) =
 # ----------------
 
 include("transforms/stdcoords.jl")
-include("transforms/taubin.jl")
+include("transforms/smoothing.jl")

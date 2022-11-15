@@ -100,9 +100,20 @@ function prettyname(PL::Type{<:Polytope})
   isnothing(i) ? n : n[1:i-1]
 end
 
-# --------
-# POLYGON
-# --------
+# -----------
+# 1-POLYTOPE
+# -----------
+
+"""
+   length(polytope)
+
+Return the length of the 1-`polytope`.
+"""
+Base.length(p::Polytope{1}) = measure(p)
+
+# ---------------------
+# 2-POLYTOPE (POLYGON)
+# ---------------------
 
 """
     Polygon{Dim,T}
@@ -198,9 +209,9 @@ function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   end
 end
 
-# -----------
-# POLYHEDRON
-# -----------
+# ------------------------
+# 3-POLYTOPE (POLYHEDRON)
+# ------------------------
 
 """
     Polyhedron{Dim,T}

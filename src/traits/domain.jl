@@ -33,6 +33,8 @@ function nelements end
   nelements(d1) == nelements(d2) &&
   all(d1[i] == d2[i] for i in 1:nelements(d1))
 
+nitems(domain::Domain) = nelements(domain)
+
 Base.getindex(domain::Domain, ind) = element(domain, ind)
 
 Base.firstindex(domain::Domain) = 1

@@ -32,7 +32,7 @@ WeightedSampling(size, weights; replace=false, ordered=false) =
   WeightedSampling(size, Weights(collect(weights)), replace, ordered)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
-  n = nelements(Ω)
+  n = nitems(Ω)
   s = method.size
   w = method.weights
   r = method.replace

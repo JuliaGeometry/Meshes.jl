@@ -18,13 +18,12 @@ end
 isconvex(::Type{<:Segment}) = true
 
 nvertices(::Type{<:Segment}) = 2
-nvertices(s::Segment) = nvertices(typeof(s))
 
 Base.minimum(s::Segment) = s.vertices[1]
 Base.maximum(s::Segment) = s.vertices[2]
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
+
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
-Base.length(s::Segment) = measure(s)
 
 function (s::Segment)(t)
   if t < 0 || t > 1
@@ -43,7 +42,6 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
 end
 
 function Base.isapprox(s1::Segment, s2::Segment)
-  v1 = s1.vertices
-  v2 = s2.vertices
+  v1, v2 = s1.vertices, s2.vertices
   isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
 end

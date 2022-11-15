@@ -38,9 +38,11 @@ viz(fig[1,2], mesh)
 fig
 ```
 
-## TaubinSmoothing
+## Smoothing
 
 ```@docs
+LambdaMuSmoothing
+LaplaceSmoothing
 TaubinSmoothing
 ```
 

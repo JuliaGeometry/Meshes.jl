@@ -22,11 +22,19 @@
     @test vnew == vnew2
   end
 
-  @testset "TaubinSmoothing" begin
-    trans = TaubinSmoothing(30)
+  @testset "Smoothing" begin
+    # smoothing doesn't change the topology
+    trans = LaplaceSmoothing(30)
     @test TB.isrevertible(trans)
+    mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
+    smesh = trans(mesh)
+    @test nvertices(smesh) == nvertices(mesh)
+    @test nelements(smesh) == nelements(mesh)
+    @test topology(smesh) == topology(mesh)
 
     # smoothing doesn't change the topology
+    trans = TaubinSmoothing(30)
+    @test TB.isrevertible(trans)
     mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
     smesh = trans(mesh)
     @test nvertices(smesh) == nvertices(mesh)

@@ -26,4 +26,5 @@
   noth = boundary(mchn)
   @test mchn isa Multi
   @test isnothing(noth)
+  @test length(mchn) == T(8)
 end
