@@ -139,6 +139,7 @@ export
 
   # domain/data alias
   DomainOrData,
+  nitems,
 
   # geometries
   Geometry,

@@ -86,12 +86,7 @@ function ==(data₁::Data, data₂::Data)
   return true
 end
 
-# TODO: remove these definitions
-# implement Domain traits for convenience
-embeddim(data::Data) = embeddim(domain(data))
-coordtype(data::Data) = coordtype(domain(data))
-nelements(data::Data) = nelements(domain(data))
-centroid(data::Data, ind) = centroid(domain(data), ind)
+nitems(data::Data) = nelements(domain(data))
 
 # -----------------
 # TABLES INTERFACE

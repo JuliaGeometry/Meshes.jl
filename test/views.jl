@@ -56,9 +56,9 @@
       v = view(dat, 2:4)
       @test domain(v) == view(dom, 2:4)
       @test Tables.columntable(values(v)) == (a=[2,3,4], b=[6,7,8])
-      @test centroid(v, 1) == P2(1.5,0.5)
-      @test centroid(v, 2) == P2(0.5,1.5)
-      @test centroid(v, 3) == P2(1.5,1.5)
+      @test centroid(domain(v), 1) == P2(1.5,0.5)
+      @test centroid(domain(v), 2) == P2(0.5,1.5)
+      @test centroid(domain(v), 3) == P2(1.5,1.5)
       @test v.a == v."a" == [2,3,4]
       @test v.b == v."b" == [6,7,8]
     end
