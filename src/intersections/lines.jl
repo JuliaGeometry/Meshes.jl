@@ -54,7 +54,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T},
   # the zero entries of the diagonal of R
   _, R = qr([A y])
   
-  # for Dim == 2 one has to check the line₁ norm of rows as 
+  # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
   rₐ = sum(sum(abs, R, dims=2) .> atol(T))
 
