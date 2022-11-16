@@ -3,6 +3,8 @@
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
     @test isconvex(l)
+    @test measure(l) == T(Inf)
+    @test length(l) == T(Inf)
     @test isnothing(boundary(l))
 
     l = Line(P2(0,0), P2(1,1))
@@ -13,6 +15,8 @@
     r = Ray(P2(0,0), V2(1,1))
     @test paramdim(r) == 1
     @test isconvex(r)
+    @test measure(r) == T(Inf)
+    @test length(r) == T(Inf)
     @test origin(r) == P2(0,0)
     @test direction(r) == V2(1,1)
     @test boundary(r) == P2(0,0)
@@ -54,6 +58,8 @@
     @test paramdim(p) == 2
     @test embeddim(p) == 3
     @test isconvex(p)
+    @test measure(p) == T(Inf)
+    @test area(p) == T(Inf)
     @test origin(p) == P3(0,0,0)
     @test normal(p) == Vec(0,0,1)
     @test isnothing(boundary(p))

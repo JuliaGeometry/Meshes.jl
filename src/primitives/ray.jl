@@ -20,6 +20,9 @@ paramdim(::Type{<:Ray}) = 1
 
 isconvex(::Type{<:Ray}) = true
 
+measure(::Ray{Dim,T}) where {Dim,T} = T(Inf)
+Base.length(r::Ray) = measure(r)
+
 boundary(r::Ray) = r.p
 
 function (r::Ray)(t)

@@ -20,6 +20,9 @@ paramdim(::Type{<:Line}) = 1
 
 isconvex(::Type{<:Line}) = true
 
+measure(::Line{Dim,T}) where {Dim,T} = T(Inf)
+Base.length(l::Line) = measure(l)
+
 boundary(::Line) = nothing
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
