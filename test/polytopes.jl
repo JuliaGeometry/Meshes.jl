@@ -140,6 +140,9 @@
     @test q(T(1),T(1)) == P2(1,1)
     @test q(T(0),T(1)) == P2(0,1)
 
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    @test_throws DomainError((T(1.2),T(1.2)), "q(u,v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
+
     # Quadrangle in 3D space
     q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
     @test area(q) == T(1)

@@ -151,6 +151,9 @@ end
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
+  if (u < 0 || u > 1) || (v < 0 || v > 1)
+    throw(DomainError((u,v), "q(u,v) is not defined for u, v outside [0, 1]²."))
+  end
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
   Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)
 end
