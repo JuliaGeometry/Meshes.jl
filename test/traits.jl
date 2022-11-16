@@ -86,13 +86,6 @@
       ]
       @test Tables.materializer(dat) <: DummyType
 
-      # Query interface
-      dom = CartesianGrid{T}(2,2)
-      dat = dummy(dom, (a=[1,2,3,4], b=[5,6,7,8]))
-      new = dat |> @mutate(geometry=centroid(_.geometry)) |> DummyType
-      @test domain(new) isa PointSet
-      @test values(new) == values(dat)
-
       # dataframe interface
       data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
       @test isequal(data.a, [1,2,3,4])

@@ -128,11 +128,6 @@ function Tables.schema(rows::DataRows)
   Tables.Schema((names..., :geometry), (types..., geomtype))
 end
 
-# data table is compatible with the Queryverse
-TableTraits.isiterabletable(data::Data) = true
-IIE.getiterator(data::Data) = Tables.datavaluerows(Tables.rows(data))
-IIE.isiterable(data::Data) = true
-
 Tables.materializer(D::Type{<:Data}) = D
 
 # --------------------

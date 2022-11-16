@@ -25,11 +25,6 @@ import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
-# Queryverse compatibility
-import TableTraits
-import IteratorInterfaceExtensions
-const IIE = IteratorInterfaceExtensions
-
 # Transforms API
 import TransformsBase: Transform
 import TransformsBase: isrevertible, preprocess
