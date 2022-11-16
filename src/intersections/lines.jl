@@ -9,16 +9,16 @@ The intersection type can be one of three types:
 2. overlap at more than one point
 3. do not overlap nor intersect
 =#
-function intersection(f, l1::Line, l2::Line)
-  a, b = l1(0), l1(1)
-  c, d = l2(0), l2(1)
+function intersection(f, line₁::Line, line₂::Line)
+  a, b = line₁(0), line₁(1)
+  c, d = line₂(0), line₂(1)
 
   λ₁, _, r, rₐ = intersectparameters(a, b, c, d)
 
   if r == rₐ == 2
     return @IT CrossingLines (a + λ₁ * (b - a)) f
   elseif r == rₐ == 1
-    return @IT OverlappingLines l1 f
+    return @IT OverlappingLines line₁ f
   else
     return @IT NoIntersection nothing f
   end
