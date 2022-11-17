@@ -233,7 +233,7 @@
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
-    @test area(s) ≈ 2π*2
+    @test length(s) ≈ 2π*2
     @test extrema(s) == (P2(-2,-2), P2(2,2))
     s = Sphere(P3(0,0,0), T(2))
     @test measure(s) ≈ 4π*(2^2)

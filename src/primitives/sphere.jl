@@ -55,7 +55,9 @@ function measure(s::Sphere{Dim}) where {Dim}
   2π^(n/2)*r^(n-1) / gamma(n/2)
 end
 
-area(s::Sphere) = measure(s)
+Base.length(s::Sphere{2}) = measure(s)
+
+area(s::Sphere{3}) = measure(s)
 
 function Base.in(p::Point, s::Sphere)
   x = coordinates(p)

@@ -35,6 +35,7 @@ paramdim(::Type{<:Plane}) = 2
 isconvex(::Type{<:Plane}) = true
 
 measure(::Plane{T}) where {T} = T(Inf)
+
 area(p::Plane) = measure(p)
 
 boundary(::Plane) = nothing
