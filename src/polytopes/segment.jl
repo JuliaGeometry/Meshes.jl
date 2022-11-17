@@ -20,10 +20,14 @@ isconvex(::Type{<:Segment}) = true
 nvertices(::Type{<:Segment}) = 2
 
 Base.minimum(s::Segment) = s.vertices[1]
+
 Base.maximum(s::Segment) = s.vertices[2]
+
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
+
+boundary(s::Segment) = PointSet(s.vertices)
 
 function (s::Segment)(t)
   if t < 0 || t > 1

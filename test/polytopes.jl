@@ -9,6 +9,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(P1(2.0,), P1(1.0,)))
     @test !(s ≈ Segment(P1(-1.0,), P1(2.0,)))
+
     s = Segment(P2(0,0), P2(1,1))
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
@@ -23,6 +24,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(P2(1,1), P2(0,0)))
     @test !(s ≈ Segment(P2(1,2), P2(0,0)))
+
     s = Segment(P3(0,0,0), P3(1,1,1))
     @test all(P3(x, x, x) ∈ s for x in 0:0.01:1)
     @test all(p ∉ s for p in [P3(-0.1, -0.1, -0.1), P3(1.1, 1.1, 1.1)])
@@ -30,6 +32,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(P3(1,1,1), P3(0,0,0)))
     @test !(s ≈ Segment(P3(1,1,1), P3(0,1,0)))
+
     s = Segment(Point(1.,1.,1.,1.), Point(2.,2.,2.,2.))
     @test all(Point(x, x, x, x) ∈ s for x in 1:0.01:2)
     @test all(p ∉ s for p in [Point(0.99, 0.99, 0.99, 0.99), Point(2.1, 2.1, 2.1, 2.1)])
@@ -37,6 +40,9 @@
     @test s ≈ s
     @test !(s ≈ Segment(Point(2,2,2,2), Point(1,1,1,1)))
     @test !(s ≈ Segment(Point(1,1,2,1), Point(0,0,0,0)))
+
+    s = Segment(P3(0,0,0), P3(1,1,1))
+    @test boundary(s) == PointSet([P3(0,0,0), P3(1,1,1)])
   end
 
   @testset "N-gons" begin
