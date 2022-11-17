@@ -43,6 +43,7 @@
 
     s = Segment(P3(0,0,0), P3(1,1,1))
     @test boundary(s) == PointSet([P3(0,0,0), P3(1,1,1)])
+    @test perimeter(s) == zero(T)
   end
 
   @testset "N-gons" begin
@@ -83,6 +84,9 @@
     @test boundary(t) == first(chains(t))
     @test chains(t) == [Chain(P2(0,0), P2(1,0), P2(0,1), P2(0,0))]
     @test bridge(t) == (first(chains(t)), [])
+
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test perimeter(t) ≈ T(1 + 1 + √2)
 
     # test orientation
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
@@ -148,6 +152,9 @@
 
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test_throws DomainError((T(1.2),T(1.2)), "q(u,v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    @test perimeter(q) ≈ T(4)
 
     # Quadrangle in 3D space
     q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))

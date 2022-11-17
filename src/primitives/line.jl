@@ -26,6 +26,8 @@ Base.length(l::Line) = measure(l)
 
 boundary(::Line) = nothing
 
+perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
+
 (l::Line)(t) = l.a + t * (l.b - l.a)
 
 function Base.in(p::Point, l::Line)

@@ -40,6 +40,8 @@ area(p::Plane) = measure(p)
 
 boundary(::Plane) = nothing
 
+perimeter(::Plane{T}) where {T} = zero(T)
+
 (p::Plane)(s, t) = p.p + s*p.u + t*p.v
 
 """

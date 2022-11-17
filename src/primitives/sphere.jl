@@ -47,8 +47,6 @@ center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
-boundary(::Sphere) = nothing
-
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
 function measure(s::Sphere{Dim}) where {Dim}
   r, n = s.radius, Dim
@@ -58,6 +56,10 @@ end
 Base.length(s::Sphere{2}) = measure(s)
 
 area(s::Sphere{3}) = measure(s)
+
+boundary(::Sphere) = nothing
+
+perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
 
 function Base.in(p::Point, s::Sphere)
   x = coordinates(p)

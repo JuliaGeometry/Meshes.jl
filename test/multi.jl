@@ -14,6 +14,7 @@
   multi = Multi([poly1, poly2])
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
   @test area(multi) == area(poly1) + area(poly2)
+  @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
   @test P2(0.5,0.5) ∈ multi
   @test P2(1.5,1.5) ∈ multi
   @test P2(1.5,0.5) ∉ multi

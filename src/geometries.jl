@@ -48,6 +48,13 @@ Return the measure of the `geometry`, i.e. the length, area, or volume.
 measure(g::Geometry) = sum(measure, discretize(g))
 
 """
+    perimeter(geometry)
+
+Return the perimeter of the `geometry`, i.e. the measure of its boundary.
+"""
+perimeter(g::Geometry) = measure(boundary(g))
+
+"""
     extrema(geometry)
 
 Return the top left and bottom right corners of the

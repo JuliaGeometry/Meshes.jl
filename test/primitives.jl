@@ -6,6 +6,7 @@
     @test measure(l) == T(Inf)
     @test length(l) == T(Inf)
     @test isnothing(boundary(l))
+    @test perimeter(l) == zero(T)
 
     l = Line(P2(0,0), P2(1,1))
     @test (l(0), l(1)) == (P2(0,0), P2(1,1))
@@ -20,6 +21,7 @@
     @test origin(r) == P2(0,0)
     @test direction(r) == V2(1,1)
     @test boundary(r) == P2(0,0)
+    @test perimeter(r) == zero(T)
 
     r = Ray(P2(0,0), V2(1,1))
     @test r(T(0.)) == P2(0,0)
@@ -63,6 +65,7 @@
     @test origin(p) == P3(0,0,0)
     @test normal(p) == Vec(0,0,1)
     @test isnothing(boundary(p))
+    @test perimeter(p) == zero(T)
 
     p = Plane(P3(0,0,0), V3(0,0,1))
     @test p(T(1), T(0)) == P3(1,0,0)
@@ -102,6 +105,7 @@
     @test boundary(b) == PointSet(P2(0,0), P2(1,0))
     b = BezierCurve(P2(0,0), P2(1,1))
     @test boundary(b) == PointSet([P2(0,0), P2(1,1)])
+    @test perimeter(b) == zero(T)
 
     b = BezierCurve(P2.(randn(100), randn(100)))
     t1 = @timed b(T(0.2))
@@ -141,6 +145,7 @@
     b = Box(P2(0,0), P2(1,1))
     @test measure(b) == area(b) == T(1)
     @test P2(1,1) ∈ b
+    @test perimeter(b) ≈ T(4)
 
     b = Box(P2(1,1), P2(2,2))
     @test sides(b) == T.((1,1))
@@ -196,6 +201,7 @@
     @test P2(2,0) ∈ b
     @test P2(0,2) ∈ b
     @test P2(3,5) ∉ b
+    @test perimeter(b) ≈ T(4π)
 
     b = Ball(P3(0,0,0), T(2))
     @test P3(1,0,0) ∈ b
@@ -216,6 +222,7 @@
     @test !isconvex(s)
     @test isnothing(boundary(s))
     @test isperiodic(s) == (true, true)
+    @test perimeter(s) == zero(T)
 
     s = Sphere(P3(1,2,3), 4)
     @test coordtype(s) == T
