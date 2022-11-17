@@ -44,6 +44,9 @@
     @test centroid(pset, 1) == P2(1, 0)
     @test centroid(pset, 2) == P2(0, 1)
 
+    pset = PointSet(P2[(0,0), (1,0), (0,1)])
+    @test measure(pset) == zero(T)
+
     pset = PointSet(P2[(1,0), (0,1)])
     @test sprint(show, pset) == "2 PointSet{2,$T}"
     if T == Float32
