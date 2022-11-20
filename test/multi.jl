@@ -28,4 +28,9 @@
   @test mchn isa Multi
   @test isnothing(noth)
   @test length(mchn) == T(8)
+
+  # constructor with iterator
+  grid  = CartesianGrid{T}(10, 10)
+  multi = Multi(grid)
+  @test collect(multi) == collect(grid)
 end

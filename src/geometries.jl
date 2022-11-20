@@ -133,6 +133,9 @@ struct Multi{Dim,T,I<:PointOrGeometry{Dim,T}} <: Geometry{Dim,T}
   items::Vector{I}
 end
 
+# constructor with iterator of items
+Multi(items) = Multi(collect(items))
+
 paramdim(multi::Multi) = maximum(paramdim, multi.items)
 
 vertices(multi::Multi) =
