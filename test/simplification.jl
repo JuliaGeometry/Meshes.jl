@@ -40,5 +40,13 @@
     s2 = decimate(c, T(0.5))
     @test s1 == Chain(P2[(0,0),(1,0),(1.5,0.5),(1,1),(0,1),(0,0)])
     @test s2 == Chain(P2[(0,0),(1.5,0.5),(0,1),(0,0)])
+
+    c = Chain(P2[(0,0),(1,0),(1.5,0.5),(1,1),(0,1),(0,0)])
+    s1 = decimate(c, T(0.1))
+    s2 = decimate(c, max=6)
+    @test s1 == s2
+    s1 = decimate(c, T(0.5))
+    s2 = decimate(c, max=4)
+    @test s1 == s2
   end
 end
