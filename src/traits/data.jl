@@ -156,7 +156,7 @@ function Base.getindex(data::Data, names::AbstractVector{Symbol}, row::Int)
   (; pairs..., geometry=dom[row])
 end
 
-function Base.getindex(data::D, names::AbstractVector{Symbol}, rows::AbstractVector{Int}) where {D<:Data}
+function Base.getindex(data::Data, names::AbstractVector{Symbol}, rows::AbstractVector{Int})
   dom   = domain(data)
   table = values(data)
   cols  = Tables.columns(table)
@@ -172,7 +172,7 @@ function Base.getindex(data::D, names::AbstractVector{Symbol}, rows::AbstractVec
   newtable = 𝒯 |> Tables.materializer(table)
 
   vals = Dict(paramdim(newdom) => newtable)
-  constructor(D)(newdom, vals)
+  constructor(data)(newdom, vals)
 end
 
 Base.getindex(data::Data, names::AbstractVector{<:AbstractString}, row::Int) =
