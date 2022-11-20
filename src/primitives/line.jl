@@ -20,7 +20,7 @@ paramdim(::Type{<:Line}) = 1
 
 isconvex(::Type{<:Line}) = true
 
-measure(::Line{Dim,T}) where {Dim,T} = T(Inf)
+measure(::Line{Dim,T}) where {Dim,T} = typemax(T)
 
 Base.length(l::Line) = measure(l)
 
