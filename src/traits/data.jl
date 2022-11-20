@@ -146,6 +146,63 @@ end
 Base.getproperty(data::Data, col::AbstractString) =
   getproperty(data, Symbol(col))
 
+function Base.getindex(data::Data, names::AbstractVector{Symbol}, row::Int)
+  dom   = domain(data)
+  cols  = Tables.columns(values(data))
+
+  pairs = (nm => Tables.getcolumn(cols, nm)[row] for nm in names)
+  (; pairs..., geometry=dom[row])
+end
+
+function Base.getindex(data::D, names::AbstractVector{Symbol}, rows::AbstractVector{Int}) where {D<:Data}
+  dom   = domain(data)
+  table = values(data)
+  cols  = Tables.columns(table)
+
+  newdom = Collection([dom[row] for row in rows])
+
+  function getrows(nm)
+    column = Tables.getcolumn(cols, nm)
+    [column[row] for row in rows]
+  end
+
+  𝒯 = (; nm => getrows(nm) for nm in names)
+  newtable = 𝒯 |> Tables.materializer(table)
+
+  vals = Dict(paramdim(newdom) => newtable)
+  constructor(D)(newdom, vals)
+end
+
+Base.getindex(data::Data, names::AbstractVector{<:AbstractString}, row::Int) =
+  getindex(data, Symbol.(names), row)
+
+Base.getindex(data::Data, names::AbstractVector{<:AbstractString}, rows::AbstractVector{Int}) =
+  getindex(data, Symbol.(names), rows)
+
+function Base.getindex(data::Data, ::Colon, row::Int)
+  cols  = Tables.columns(values(data))
+  names = Tables.columnnames(cols)
+  getindex(data, names, row)
+end
+
+function Base.getindex(data::Data, ::Colon, rows::AbstractVector{Int})
+  cols  = Tables.columns(values(data))
+  names = Tables.columnnames(cols)
+  getindex(data, names, rows)
+end
+
+Base.getindex(data::Data, names::AbstractVector{Symbol}, ::Colon) =
+  getindex(data, names, 1:nelements(domain(data)))
+
+Base.getindex(data::Data, names::AbstractVector{<:AbstractString}, ::Colon) =
+  getindex(data, Symbol.(names), 1:nelements(domain(data)))
+
+Base.getindex(data::Data, col::Symbol, ::Colon) =
+  getproperty(data, col)
+
+Base.getindex(data::Data, col::AbstractString, ::Colon) =
+  getproperty(data, Symbol(col))
+
 # -------------------
 # VARIABLE INTERFACE
 # -------------------
