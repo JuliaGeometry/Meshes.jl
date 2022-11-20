@@ -161,7 +161,7 @@ function Base.getindex(data::Data, rows::AbstractVector{Int}, names::AbstractVec
   table = values(data)
   cols  = Tables.columns(table)
 
-  newdom = Collection([dom[row] for row in rows])
+  newdom = Collection(dom[row] for row in rows)
 
   function getrows(nm)
     column = Tables.getcolumn(cols, nm)
@@ -205,7 +205,7 @@ Base.getindex(data::Data, row::Int, col::Symbol) =
 function Base.getindex(data::Data, rows::AbstractVector{Int}, col::Symbol)
   if col == :geometry
     dom = domain(data)
-    Collection([dom[row] for row in rows])
+    Collection(dom[row] for row in rows)
   else
     cols = Tables.columns(values(data))
     column = Tables.getcolumn(cols, col)

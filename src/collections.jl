@@ -11,6 +11,9 @@ struct Collection{Dim,T,I<:PointOrGeometry{Dim,T}} <: Domain{Dim,T}
   items::Vector{I}
 end
 
+# constructor with iterator of items
+Collection(items) = Collection(collect(items))
+
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
@@ -52,6 +55,9 @@ PointSet(coords::AbstractVector{V}) where {V<:AbstractVector} = PointSet(Point.(
 PointSet(coords::Vararg{V}) where {V<:AbstractVector} = PointSet(collect(coords))
 PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
 
+# constructor with iterator of points
+PointSet(points) = PointSet(collect(points))
+
 centroid(pset::PointSet, ind::Int) = pset[ind]
 
 centroid(pset::PointSet) = Point(sum(coordinates, pset) / nelements(pset))
@@ -74,8 +80,11 @@ const GeometrySet{Dim,T,G<:Geometry{Dim,T}} = Collection{Dim,T,G}
 
 A set of `geometries` seen as a single domain.
 """
-GeometrySet(geometries::AbstractVector{G}) where {G<:Geometry} =
-  GeometrySet{embeddim(G),coordtype(G),G}(geometries)
+GeometrySet(geoms::AbstractVector{G}) where {G<:Geometry} =
+  GeometrySet{embeddim(G),coordtype(G),G}(geoms)
+
+# constructor with iterator of geometries
+GeometrySet(geoms) = GeometrySet(collect(geoms))
 
 function Base.show(io::IO, gset::GeometrySet{Dim,T}) where {Dim,T}
   nelm = nelements(gset)
