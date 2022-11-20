@@ -51,17 +51,9 @@ Base.getindex(partition::Partition, inds::AbstractVector{Int}) =
 Base.eltype(partition::Partition) = typeof(first(partition))
 
 function Base.show(io::IO, partition::Partition)
-  obj = partition.object
-  sub = partition.subsets
-  dom = _domain(obj)
-  Dim = embeddim(dom)
-  T   = coordtype(dom)
-  N   = length(sub)
-  print(io, "$N Partition{$Dim,$T}")
+  N = length(partition.subsets)
+  print(io, "$N Partition")
 end
-
-_domain(object) = domain(object)
-_domain(domain::Domain) = domain
 
 function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
   subs = partition.subsets
