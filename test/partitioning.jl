@@ -372,6 +372,16 @@
     s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, hmn))
     @test setify(s1) == setify(s2)
+
+    # test IO methods
+    d = meshdata(CartesianGrid{T}(10,10), etable=(a=rand(100),))
+    p = partition(d, BlockPartition(T(5)))
+    @test sprint(show, p) == "4 Partition{2,$T}"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition{2,Float32}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}"
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition{2,Float64}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}" 
+    end
   end
 
   @testset "Data trait" begin
