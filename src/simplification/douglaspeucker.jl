@@ -19,13 +19,12 @@ struct DouglasPeucker{T} <: SimplificationMethod
 end
 
 function simplify(chain::Chain, method::DouglasPeucker)
-  v = simplify(vertices(chain), method)
+  v = _simplify(vertices(chain), method.ϵ)
   isclosed(chain) ? Chain([v; first(v)]) : Chain(v)
 end
 
 # simplify chain assuming it is open
-function simplify(v::AbstractVector{Point{Dim,T}},
-                  method::DouglasPeucker) where {Dim,T}
+function _simplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
   # find vertex with maximum distance
   imax, dmax = 0, zero(T)
   for i in 2:length(v)-1
@@ -36,11 +35,11 @@ function simplify(v::AbstractVector{Point{Dim,T}},
     end
   end
 
-  if dmax < method.ϵ
+  if dmax < ϵ
     [first(v), last(v)]
   else
-    v₁ = simplify(v[begin:imax], method)
-    v₂ = simplify(v[imax:end],   method)
+    v₁ = _simplify(v[begin:imax], ϵ)
+    v₂ = _simplify(v[imax:end],   ϵ)
     [v₁[begin:end-1]; v₂]
   end
 end
