@@ -40,7 +40,8 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
         if nvertices(c) == 2
           v = vertices(c)
           A, B = v[1], v[2]
-          M = centroid(Segment(v[1], v[2]))
+          s = Segment(A, B)
+          M = centroid(s)
           Chain([A, M, B, A])
         else
           c
