@@ -26,29 +26,17 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   inners::Vector{C}
 
   function PolyArea{Dim,T,C}(outer, inners, fix) where {Dim,T,C}
-    @assert isclosed(outer) "invalid outer chain"
-    @assert all(isclosed.(inners)) "invalid inner chains"
+    @assert isclosed(outer) && nvertices(outer) > 2 "invalid outer chain"
+    @assert all(isclosed, inners) "invalid inner chains"
 
     if fix
       # fix orientation
-      fix1(c, o) = orientation(c) == o ? c : reverse(c)
-      outer  = fix1(outer, :CCW)
-      inners = fix1.(inners, :CW)
+      ofix(c, o) = orientation(c) == o ? c : reverse(c)
+      outer  = ofix(outer, :CCW)
+      inners = ofix.(inners, :CW)
 
       # fix degeneracy
-      function fix2(c)
-        if nvertices(c) == 2
-          v = vertices(c)
-          A, B = v[1], v[2]
-          s = Segment(A, B)
-          M = centroid(s)
-          Chain([A, M, B, A])
-        else
-          c
-        end
-      end
-      outer  = fix2(outer)
-      inners = fix2.(inners)
+      inners = filter(c -> nvertices(c) > 2, inners)
     end
 
     new(outer, inners)
