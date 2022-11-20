@@ -50,6 +50,8 @@ function constructor end
 # FALLBACKS
 # ----------
 
+constructor(data::D) where {D<:Data} = constructor(D)
+
 function (D::Type{<:Data})(stable)
   # build domain from geometry column
   ctable = Tables.columns(stable)
