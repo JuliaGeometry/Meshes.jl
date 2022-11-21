@@ -148,50 +148,71 @@ end
 Base.getproperty(data::Data, col::AbstractString) =
   getproperty(data, Symbol(col))
 
-function Base.getindex(data::Data, row::Int, names::AbstractVector{Symbol})
-  dom   = domain(data)
-  cols  = Tables.columns(values(data))
-
-  pairs = (nm => Tables.getcolumn(cols, nm)[row] for nm in names)
-  (; pairs..., geometry=dom[row])
-end
-
-function Base.getindex(data::Data, rows::AbstractVector{Int}, names::AbstractVector{Symbol})
+function Base.getindex(data::Data, ind::Int, names::AbstractVector{Symbol})
+  _rmgeometry!(names)
   dom   = domain(data)
   table = values(data)
-  cols  = Tables.columns(table)
+  row   = Tables.subset(table, ind)
+  pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
+  (; pairs..., geometry=dom[ind])
+end
 
-  newdom = Collection(dom[row] for row in rows)
+Base.getindex(data::Data, ind::Int, names::AbstractVector{<:AbstractString}) =
+  getindex(data, ind, Symbol.(names))
 
-  function getrows(nm)
-    column = Tables.getcolumn(cols, nm)
-    [column[row] for row in rows]
-  end
+function Base.getindex(data::Data, ind::Int, ::Colon)
+  dom   = domain(data)
+  table = values(data)
+  row   = Tables.subset(table, ind)
+  names = Tables.columnnames(row)
+  pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
+  (; pairs..., geometry=dom[ind])
+end
 
-  𝒯 = NamedTuple(nm => getrows(nm) for nm in names)
+Base.getindex(data::Data, ind::Int, col::Symbol) =
+  getproperty(data, col)[ind]
+
+Base.getindex(data::Data, ind::Int, col::AbstractString) =
+  getindex(data, ind, Symbol(col))
+
+function Base.getindex(data::Data, inds::AbstractVector{Int}, names::AbstractVector{Symbol})
+  _rmgeometry!(names)
+  table = values(data)
+
+  newdom = view(domain(data), inds)
+  subset = Tables.subset(table, inds)
+  𝒯 = NamedTuple(nm => Tables.getcolumn(subset, nm) for nm in names)
   newtable = 𝒯 |> Tables.materializer(table)
 
   vals = Dict(paramdim(newdom) => newtable)
   constructor(data)(newdom, vals)
 end
 
-Base.getindex(data::Data, row::Int, names::AbstractVector{<:AbstractString}) =
-  getindex(data, row, Symbol.(names))
+Base.getindex(data::Data, inds::AbstractVector{Int}, names::AbstractVector{<:AbstractString}) =
+  getindex(data, inds, Symbol.(names))
 
-Base.getindex(data::Data, rows::AbstractVector{Int}, names::AbstractVector{<:AbstractString}) =
-  getindex(data, rows, Symbol.(names))
+function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
+  table = values(data)
 
-function Base.getindex(data::Data, row::Int, ::Colon)
-  cols  = Tables.columns(values(data))
-  names = Tables.columnnames(cols)
-  getindex(data, row, names)
+  newdom   = view(domain(data), inds)
+  newtable = Tables.subset(table, inds)
+
+  vals = Dict(paramdim(newdom) => newtable)
+  constructor(data)(newdom, vals)
 end
 
-function Base.getindex(data::Data, rows::AbstractVector{Int}, ::Colon)
-  cols  = Tables.columns(values(data))
-  names = Tables.columnnames(cols)
-  getindex(data, rows, names)
+function Base.getindex(data::Data, inds::AbstractVector{Int}, col::Symbol)
+  if col == :geometry
+    view(domain(data), inds)
+  else
+    table  = values(data)
+    subset = Tables.subset(table, inds)
+    Tables.getcolumn(subset, col)
+  end
 end
+
+Base.getindex(data::Data, inds::AbstractVector{Int}, col::AbstractString) =
+  getindex(data, inds, Symbol(col))
 
 Base.getindex(data::Data, ::Colon, names::AbstractVector{Symbol}) =
   getindex(data, 1:nelements(domain(data)), names)
@@ -199,31 +220,19 @@ Base.getindex(data::Data, ::Colon, names::AbstractVector{Symbol}) =
 Base.getindex(data::Data, ::Colon, names::AbstractVector{<:AbstractString}) =
   getindex(data, 1:nelements(domain(data)), Symbol.(names))
 
-Base.getindex(data::Data, row::Int, col::Symbol) =
-  getproperty(data, col)[row]
-
-function Base.getindex(data::Data, rows::AbstractVector{Int}, col::Symbol)
-  if col == :geometry
-    dom = domain(data)
-    Collection(dom[row] for row in rows)
-  else
-    cols = Tables.columns(values(data))
-    column = Tables.getcolumn(cols, col)
-    [column[row] for row in rows]
-  end
-end
-
-Base.getindex(data::Data, row::Int, col::AbstractString) =
-  getindex(data, row, Symbol(col))
-
-Base.getindex(data::Data, rows::AbstractVector{Int}, col::AbstractString) =
-  getindex(data, rows, Symbol(col))
-
 Base.getindex(data::Data, ::Colon, col::Symbol) =
   getproperty(data, col)
 
 Base.getindex(data::Data, ::Colon, col::AbstractString) =
   getproperty(data, Symbol(col))
+
+# utils
+function _rmgeometry!(names)
+  ind = findfirst(==(:geometry), names)
+  if !isnothing(ind)
+    popat!(names, ind)
+  end
+end
 
 # -------------------
 # VARIABLE INTERFACE
