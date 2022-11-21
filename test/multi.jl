@@ -6,6 +6,7 @@
   multi = Multi([poly, poly])
   @test multi == multi
   @test vertices(multi) == [vertices(poly); vertices(poly)]
+  @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test boundary(multi) == Multi([boundary(poly), boundary(poly)])
   @test chains(multi) == [chains(poly); chains(poly)]
 
@@ -13,6 +14,7 @@
   poly2 = PolyArea(P2[(1,1),(2,1),(2,2),(1,2),(1,1)])
   multi = Multi([poly1, poly2])
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
+  @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
   @test P2(0.5,0.5) ∈ multi

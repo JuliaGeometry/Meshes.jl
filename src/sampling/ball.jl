@@ -25,7 +25,7 @@ BallSampling(radius; metric=Euclidean(), maxsize=nothing) =
 function sample(rng::AbstractRNG, object, method::BallSampling)
   radius = method.radius
   metric = method.metric
-  msize  = method.maxsize ≠ nothing ? method.maxsize : Inf
+  msize  = isnothing(method.maxsize) ? Inf : method.maxsize
 
   # neighborhood search with ball
   ball = MetricBall(radius, metric)

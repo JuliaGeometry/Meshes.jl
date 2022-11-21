@@ -4,8 +4,8 @@
   d = CartesianGrid{T}(10,10)
   p = partition(d, UniformPartition(100))
   @test parent(p) == d
-  @test sprint(show, p) == "100 Partition{2,$T}"
-  @test sprint(show, MIME"text/plain"(), p) == "100 Partition{2,$T}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
+  @test sprint(show, p) == "100 Partition"
+  @test sprint(show, MIME"text/plain"(), p) == "100 Partition\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
 
   @testset "UniformPartition" begin
     Random.seed!(123)
@@ -372,6 +372,16 @@
     s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, hmn))
     @test setify(s1) == setify(s2)
+
+    # test IO methods
+    d = meshdata(CartesianGrid{T}(10,10), etable=(a=rand(100),))
+    p = partition(d, BlockPartition(T(5)))
+    @test sprint(show, p) == "4 Partition"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}"
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}" 
+    end
   end
 
   @testset "Data trait" begin

@@ -141,6 +141,8 @@ paramdim(multi::Multi) = maximum(paramdim, multi.items)
 vertices(multi::Multi) =
   [vertex for geom in multi.items for vertex in vertices(geom)]
 
+nvertices(multi::Multi) = sum(nvertices, multi.items)
+
 function centroid(multi::Multi)
   cs = coordinates.(centroid.(multi.items))
   Point(sum(cs) / length(cs))
@@ -172,7 +174,7 @@ Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi.items)
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)
   G = eltype(multi.items)
-  print(io, "$n Multi-$(nameof(G)){$Dim,$T}")
+  print(io, "$n Multi$(nameof(G)){$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", multi::Multi)
