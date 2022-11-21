@@ -50,18 +50,18 @@ function constructor end
 # FALLBACKS
 # ----------
 
-constructor(data::D) where {D<:Data} = constructor(D)
+constructor(::D) where {D<:Data} = constructor(D)
 
-function (D::Type{<:Data})(stable)
+function (D::Type{<:Data})(geotable)
   # build domain from geometry column
-  ctable = Tables.columns(stable)
-  elms   = Tables.getcolumn(ctable, :geometry)
+  cols   = Tables.columns(geotable)
+  elms   = Tables.getcolumn(cols, :geometry)
   domain = Collection(elms)
 
-  # build table from remaining columns
-  vars = setdiff(Tables.columnnames(ctable), (:geometry,))
-  cols = [var => Tables.getcolumn(ctable, var) for var in vars]
-  table = (; cols...)
+  # build table of features from remaining columns
+  vars  = setdiff(Tables.columnnames(cols), (:geometry,))
+  ncols = [var => Tables.getcolumn(cols, var) for var in vars]
+  table = (; ncols...)
 
   # data table for elements
   values = Dict(paramdim(domain) => table)
