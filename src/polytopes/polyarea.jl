@@ -36,6 +36,13 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
       inners = ofix.(inners, :CW)
 
       # fix degeneracy
+      if nvertices(outer) == 2
+        v = vertices(outer)
+        A, B = v[1], v[2]
+        s = Segment(A, B)
+        M = centroid(s)
+        outer = Chain([A, M, B, A])
+      end
       inners = filter(c -> nvertices(c) > 2, inners)
     end
 
