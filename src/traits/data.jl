@@ -136,63 +136,63 @@ Tables.materializer(D::Type{<:Data}) = D
 # DATAFRAME INTERFACE
 # --------------------
 
-function Base.getproperty(data::Data, col::Symbol)
-  if col == :geometry
+function Base.getproperty(data::Data, var::Symbol)
+  if var == :geometry
     domain(data)
   else
     cols = Tables.columns(values(data))
-    Tables.getcolumn(cols, col)
+    Tables.getcolumn(cols, var)
   end
 end
 
-Base.getproperty(data::Data, col::AbstractString) =
-  getproperty(data, Symbol(col))
+Base.getproperty(data::Data, var::AbstractString) =
+  getproperty(data, Symbol(var))
 
-function Base.getindex(data::Data, ind::Int, names::AbstractVector{Symbol})
-  _checknames(names)
-  _rmgeometry!(names)
+function Base.getindex(data::Data, ind::Int, vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
   dom   = domain(data)
   table = values(data)
   row   = Tables.subset(table, ind)
-  pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
+  pairs = (var => Tables.getcolumn(row, var) for var in vars)
   (; pairs..., geometry=dom[ind])
 end
 
-Base.getindex(data::Data, ind::Int, names::AbstractVector{<:AbstractString}) =
-  getindex(data, ind, Symbol.(names))
+Base.getindex(data::Data, ind::Int, vars::AbstractVector{<:AbstractString}) =
+  getindex(data, ind, Symbol.(vars))
 
 function Base.getindex(data::Data, ind::Int, ::Colon)
   dom   = domain(data)
   table = values(data)
   row   = Tables.subset(table, ind)
-  names = Tables.columnnames(row)
-  pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
+  vars  = Tables.columnnames(row)
+  pairs = (var => Tables.getcolumn(row, var) for var in vars)
   (; pairs..., geometry=dom[ind])
 end
 
-Base.getindex(data::Data, ind::Int, col::Symbol) =
-  getproperty(data, col)[ind]
+Base.getindex(data::Data, ind::Int, var::Symbol) =
+  getproperty(data, var)[ind]
 
-Base.getindex(data::Data, ind::Int, col::AbstractString) =
-  getindex(data, ind, Symbol(col))
+Base.getindex(data::Data, ind::Int, var::AbstractString) =
+  getindex(data, ind, Symbol(var))
 
-function Base.getindex(data::Data, inds::AbstractVector{Int}, names::AbstractVector{Symbol})
-  _checknames(names)
-  _rmgeometry!(names)
+function Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
   table = values(data)
 
   newdom = view(domain(data), inds)
   subset = Tables.subset(table, inds)
   cols   = Tables.columns(subset)
-  𝒯 = NamedTuple(nm => Tables.getcolumn(cols, nm) for nm in names)
+  𝒯 = NamedTuple(var => Tables.getcolumn(cols, var) for var in vars)
   newtable = 𝒯 |> Tables.materializer(table)
 
   vals = Dict(paramdim(newdom) => newtable)
   constructor(data)(newdom, vals)
 end
 
-Base.getindex(data::Data, inds::AbstractVector{Int}, names::AbstractVector{<:AbstractString}) =
-  getindex(data, inds, Symbol.(names))
+Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{<:AbstractString}) =
+  getindex(data, inds, Symbol.(vars))
 
 function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
   table = values(data)
@@ -204,43 +204,43 @@ function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
   constructor(data)(newdom, vals)
 end
 
-function Base.getindex(data::Data, inds::AbstractVector{Int}, col::Symbol)
-  if col == :geometry
+function Base.getindex(data::Data, inds::AbstractVector{Int}, var::Symbol)
+  if var == :geometry
     view(domain(data), inds)
   else
     table  = values(data)
     subset = Tables.subset(table, inds)
     cols   = Tables.columns(subset)
-    Tables.getcolumn(cols, col)
+    Tables.getcolumn(cols, var)
   end
 end
 
-Base.getindex(data::Data, inds::AbstractVector{Int}, col::AbstractString) =
-  getindex(data, inds, Symbol(col))
+Base.getindex(data::Data, inds::AbstractVector{Int}, var::AbstractString) =
+  getindex(data, inds, Symbol(var))
 
-Base.getindex(data::Data, ::Colon, names::AbstractVector{Symbol}) =
-  getindex(data, 1:nelements(domain(data)), names)
+Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol}) =
+  getindex(data, 1:nelements(domain(data)), vars)
 
-Base.getindex(data::Data, ::Colon, names::AbstractVector{<:AbstractString}) =
-  getindex(data, 1:nelements(domain(data)), Symbol.(names))
+Base.getindex(data::Data, ::Colon, vars::AbstractVector{<:AbstractString}) =
+  getindex(data, 1:nelements(domain(data)), Symbol.(vars))
 
-Base.getindex(data::Data, ::Colon, col::Symbol) =
-  getproperty(data, col)
+Base.getindex(data::Data, ::Colon, var::Symbol) =
+  getproperty(data, var)
 
-Base.getindex(data::Data, ::Colon, col::AbstractString) =
-  getproperty(data, Symbol(col))
+Base.getindex(data::Data, ::Colon, var::AbstractString) =
+  getproperty(data, Symbol(var))
 
 # utils
-function _checknames(names)
-  if !allunique(names)
-    throw(ArgumentError("The column names must be unique"))
+function _checkvars(vars)
+  if !allunique(vars)
+    throw(ArgumentError("The variable names must be unique"))
   end
 end
 
-function _rmgeometry!(names)
-  ind = findfirst(==(:geometry), names)
+function _rmgeometry!(vars)
+  ind = findfirst(==(:geometry), vars)
   if !isnothing(ind)
-    popat!(names, ind)
+    popat!(vars, ind)
   end
 end
 
