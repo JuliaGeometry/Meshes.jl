@@ -218,11 +218,22 @@ end
 Base.getindex(data::Data, inds::AbstractVector{Int}, var::AbstractString) =
   getindex(data, inds, Symbol(var))
 
-Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol}) =
-  getindex(data, 1:nelements(domain(data)), vars)
+function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom   = domain(data)
+  table = values(data)
+
+  cols = Tables.columns(table)
+  𝒯 = NamedTuple(var => Tables.getcolumn(cols, var) for var in vars)
+  newtable = 𝒯 |> Tables.materializer(table)
+
+  vals = Dict(paramdim(dom) => newtable)
+  constructor(data)(dom, vals)
+end
 
 Base.getindex(data::Data, ::Colon, vars::AbstractVector{<:AbstractString}) =
-  getindex(data, 1:nelements(domain(data)), Symbol.(vars))
+  getindex(data, :, Symbol.(vars))
 
 Base.getindex(data::Data, ::Colon, var::Symbol) =
   getproperty(data, var)
