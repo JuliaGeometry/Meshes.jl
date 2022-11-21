@@ -70,10 +70,8 @@ function initeps(v::AbstractVector{Point{Dim,T}}) where {Dim,T}
   n = length(v)
   ϵ = typemax(T)
   l = Line(first(v), last(v))
-  for i in 2:n-1
-    d = evaluate(Euclidean(), v[i], l)
-    d < ϵ && (ϵ = d)
-  end
+  d = [evaluate(Euclidean(), v[i], l) for i in 2:n-1]
+  ϵ = quantile(d, 0.25)
   2ϵ
 end
 
