@@ -149,6 +149,7 @@ Base.getproperty(data::Data, col::AbstractString) =
   getproperty(data, Symbol(col))
 
 function Base.getindex(data::Data, ind::Int, names::AbstractVector{Symbol})
+  _checknames(names)
   _rmgeometry!(names)
   dom   = domain(data)
   table = values(data)
@@ -176,12 +177,14 @@ Base.getindex(data::Data, ind::Int, col::AbstractString) =
   getindex(data, ind, Symbol(col))
 
 function Base.getindex(data::Data, inds::AbstractVector{Int}, names::AbstractVector{Symbol})
+  _checknames(names)
   _rmgeometry!(names)
   table = values(data)
 
   newdom = view(domain(data), inds)
   subset = Tables.subset(table, inds)
-  𝒯 = NamedTuple(nm => Tables.getcolumn(subset, nm) for nm in names)
+  cols   = Tables.columns(subset)
+  𝒯 = NamedTuple(nm => Tables.getcolumn(cols, nm) for nm in names)
   newtable = 𝒯 |> Tables.materializer(table)
 
   vals = Dict(paramdim(newdom) => newtable)
@@ -207,7 +210,8 @@ function Base.getindex(data::Data, inds::AbstractVector{Int}, col::Symbol)
   else
     table  = values(data)
     subset = Tables.subset(table, inds)
-    Tables.getcolumn(subset, col)
+    cols   = Tables.columns(subset)
+    Tables.getcolumn(cols, col)
   end
 end
 
@@ -227,6 +231,12 @@ Base.getindex(data::Data, ::Colon, col::AbstractString) =
   getproperty(data, Symbol(col))
 
 # utils
+function _checknames(names)
+  if !allunique(names)
+    throw(ArgumentError("The column names must be unique"))
+  end
+end
+
 function _rmgeometry!(names)
   ind = findfirst(==(:geometry), names)
   if !isnothing(ind)
