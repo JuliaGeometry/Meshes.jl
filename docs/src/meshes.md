@@ -118,3 +118,21 @@ topo = convert(HalfEdgeTopology, topology(mesh))
 # show n-gons that share edge 3
 𝒞₁₂(3)
 ```
+
+```@example meshes
+
+function f(X)
+
+    return (X[1], X[2], X[1]^2 - X[2]^2)
+
+end
+
+
+x = LinRange(-1,1,20)
+y = LinRange(-1,1,50)
+grid = RectilinearGrid(x, y)
+new_coordinates = map(Point∘f, coordinates.(vertices(grid)))
+
+new_mesh = SimpleMesh(new_coordinates, topology(grid))
+
+```
