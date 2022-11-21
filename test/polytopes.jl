@@ -320,8 +320,11 @@
   @testset "PolyAreas" begin
     @test paramdim(PolyArea) == 2
 
-    # invalid outer chain
-    @test_throws AssertionError PolyArea(P2[(1,2),(2,3),(1,2)])
+    # test accessor methods
+    poly = PolyArea(P2[(1,2),(2,3),(1,2)], fix=false)
+    @test vertices(poly) == CircularVector(P2[(1,2),(2,3)])
+    poly = PolyArea(P2[(1,2),(2,3),(1,2)], [P2[(1.1, 2.54),(1.4,1.5),(1.1,2.54)]], fix=false)
+    @test vertices(poly) == CircularVector(P2[(1,2),(2,3),(1.1,2.54),(1.4,1.5)])
 
     # inner chain with 2 vertices is removed by default
     poly = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)], [P2[(1,2),(2,3),(1,2)]])

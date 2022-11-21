@@ -26,7 +26,7 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   inners::Vector{C}
 
   function PolyArea{Dim,T,C}(outer, inners, fix) where {Dim,T,C}
-    @assert isclosed(outer) && nvertices(outer) > 2 "invalid outer chain"
+    @assert isclosed(outer) "invalid outer chain"
     @assert all(isclosed, inners) "invalid inner chains"
 
     if fix
