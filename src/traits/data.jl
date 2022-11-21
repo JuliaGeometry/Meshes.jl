@@ -293,29 +293,22 @@ asarray(data::Data, var::AbstractString) =
 
 function Base.show(io::IO, data::Data)
   name = nameof(typeof(data))
-  𝒟    = domain(data)
-  n    = nelements(𝒟)
-  Dim  = embeddim(𝒟)
-  T    = coordtype(𝒟)
-  print(io, "$n $name{$Dim,$T}")
+  nelm = nelements(domain(data))
+  print(io, "$nelm $name")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", data::Data)
-  name = nameof(typeof(data))
-  𝒟    = domain(data)
-  n    = nelements(𝒟)
-  Dim  = embeddim(𝒟)
-  T    = coordtype(𝒟)
-  println(io, "$n $name{$Dim,$T}")
+  l = []
+  𝒟 = domain(data)
   for rank in 0:paramdim(𝒟)
     𝒯 = values(data, rank)
     if !isnothing(𝒯)
       sche = Tables.schema(𝒯)
       vars = zip(sche.names, sche.types)
-      println(io, "  variables (rank $rank)")
-      varlines = ["    └─$var ($V)" for (var,V) in vars]
-      println(io, join(sort(varlines), "\n"))
+      push!(l, "  variables (rank $rank)")
+      append!(l, ["    └─$var ($V)" for (var,V) in vars])
     end
   end
-  print(io, "  domain: ", 𝒟)
+  println(io, 𝒟)
+  print(io, join(l, "\n"))
 end

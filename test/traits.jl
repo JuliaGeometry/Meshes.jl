@@ -106,11 +106,11 @@
       @test asarray(data, :b) == asarray(data, "b") == [5 7; 6 8]
 
       data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,6,7,8]))
-      @test sprint(show, data) == "4 $DummyType{2,$T}"
+      @test sprint(show, data) == "4 $DummyType"
       if T == Float32
-        @test sprint(show, MIME"text/plain"(), data) == "4 $DummyType{2,Float32}\n  variables (rank 2)\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float32}"
+        @test sprint(show, MIME"text/plain"(), data) == "2×2 CartesianGrid{2,Float32}\n  variables (rank 2)\n    └─a (Int64)\n    └─b (Int64)"
       elseif T == Float64
-        @test sprint(show, MIME"text/plain"(), data) == "4 $DummyType{2,Float64}\n  variables (rank 2)\n    └─a (Int64)\n    └─b (Int64)\n  domain: 2×2 CartesianGrid{2,Float64}"
+        @test sprint(show, MIME"text/plain"(), data) == "2×2 CartesianGrid{2,Float64}\n  variables (rank 2)\n    └─a (Int64)\n    └─b (Int64)"
       end
     end
   end

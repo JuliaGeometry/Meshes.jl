@@ -378,9 +378,9 @@
     p = partition(d, BlockPartition(T(5)))
     @test sprint(show, p) == "4 Partition"
     if T == Float32
-      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}\n  └─25 View{100 MeshData{2,Float32}}"
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}"
     elseif T == Float64
-      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}\n  └─25 View{100 MeshData{2,Float64}}" 
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}" 
     end
   end
 
