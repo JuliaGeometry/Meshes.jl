@@ -215,15 +215,12 @@ end
 Base.getindex(data::Data, ::Colon, var::Symbol) =
   getproperty(data, var)
 
-# methods with variables as strings
-
 Base.getindex(data::Data, inds, vars::AbstractVector{<:AbstractString}) =
   getindex(data, inds, Symbol.(vars))
 
 Base.getindex(data::Data, inds, var::AbstractString) =
   getindex(data, inds, Symbol(var))
 
-# utils
 function _checkvars(vars)
   if !allunique(vars)
     throw(ArgumentError("The variable names must be unique"))
