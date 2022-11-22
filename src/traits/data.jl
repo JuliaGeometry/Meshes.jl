@@ -172,8 +172,11 @@ Base.getindex(data::Data,
 function Base.getindex(data::Data,
                        inds::AbstractVector{Int},
                        ::Colon)
-  dview = view(data, inds)
-  constructor(data)(domain(dview), values(dview))
+  dview  = view(data, inds)
+  newdom = domain(dview)
+  newtab = values(dview)
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newval)
 end
 
 function Base.getindex(data::Data,
