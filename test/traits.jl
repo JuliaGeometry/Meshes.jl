@@ -92,24 +92,26 @@
       @test isequal(data.a, [1,2,3,4])
       @test isequal(data.b, [5,missing,7,8])
       @test data.geometry == grid
-      @test_throws ErrorException data.c 
-      @test data[1:2,[:a,:b]] == dummy(view(grid, 1:2), (a=[1,2], b=[5,missing]))
-      @test data[1:2,[:a,:b,:geometry]] == dummy(view(grid, 1:2), (a=[1,2], b=[5,missing]))
-      @test isequal(data[1:2,:a], [1,2])
-      @test isequal(data[1:2,:b], [5,missing])
-      @test isequal(data[1:2,:geometry], view(grid, 1:2))
-      @test data[1:2,:] == dummy(view(grid, 1:2), (a=[1,2], b=[5,missing]))
-      @test isequal(data[1,[:a,:b]], (a=1, b=5, geometry=grid[1]))
-      @test isequal(data[1,[:a,:b,:geometry]], (a=1, b=5, geometry=grid[1]))
-      @test isequal(data[1,:a], 1)
-      @test isequal(data[1,:b], 5)
-      @test isequal(data[1,:geometry], grid[1])
-      @test isequal(data[1,:], (a=1, b=5, geometry=grid[1]))
-      @test data[:,[:a,:b]] == data
-      @test data[:,[:a,:b,:geometry]] == data
-      @test isequal(data[:,:a], [1,2,3,4])
-      @test isequal(data[:,:b], [5,missing,7,8])
-      @test isequal(data[:,:geometry], grid)
+      @test_throws ErrorException data.c
+      for (a,b,geometry) in [(:a,:b,:geometry), ("a","b","geometry")]
+        @test data[1:2,[a,b]] == dummy(view(grid, 1:2), (a=[1,2], b=[5,missing]))
+        @test data[1:2,[a,b,geometry]] == dummy(view(grid, 1:2), (a=[1,2], b=[5,missing]))
+        @test isequal(data[1:2,a], [1,2])
+        @test isequal(data[1:2,b], [5,missing])
+        @test isequal(data[1:2,geometry], view(grid, 1:2))
+        @test data[1:2,:] == dummy(view(grid, 1:2), (a=[1,2], b=[5,missing]))
+        @test isequal(data[1,[a,b]], (a=1, b=5, geometry=grid[1]))
+        @test isequal(data[1,[a,b,geometry]], (a=1, b=5, geometry=grid[1]))
+        @test isequal(data[1,a], 1)
+        @test isequal(data[1,b], 5)
+        @test isequal(data[1,geometry], grid[1])
+        @test isequal(data[1,:], (a=1, b=5, geometry=grid[1]))
+        @test data[:,[a,b]] == data
+        @test data[:,[a,b,geometry]] == data
+        @test isequal(data[:,a], [1,2,3,4])
+        @test isequal(data[:,b], [5,missing,7,8])
+        @test isequal(data[:,geometry], grid)
+      end
 
       # variables interface
       data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
