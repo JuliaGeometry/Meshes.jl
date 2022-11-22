@@ -136,17 +136,106 @@ Tables.materializer(D::Type{<:Data}) = D
 # DATAFRAME INTERFACE
 # --------------------
 
-function Base.getproperty(data::Data, col::Symbol)
-  if col == :geometry
+function Base.getproperty(data::Data, var::Symbol)
+  if var == :geometry
     domain(data)
   else
     cols = Tables.columns(values(data))
-    Tables.getcolumn(cols, col)
+    Tables.getcolumn(cols, var)
   end
 end
 
-Base.getproperty(data::Data, col::AbstractString) =
-  getproperty(data, Symbol(col))
+Base.getproperty(data::Data, var::AbstractString) =
+  getproperty(data, Symbol(var))
+
+function Base.getindex(data::Data,
+                       inds::AbstractVector{Int},
+                       vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom    = domain(data)
+  tab    = values(data)
+  newdom = view(dom, inds)
+  subset = Tables.subset(tab, inds)
+  cols   = Tables.columns(subset)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtab = (; pairs...) |> Tables.materializer(tab)
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newval)
+end
+
+Base.getindex(data::Data,
+              inds::AbstractVector{Int},
+              var::Symbol) =
+  getproperty(view(data, inds), var)
+
+function Base.getindex(data::Data,
+                       inds::AbstractVector{Int},
+                       ::Colon)
+  dview  = view(data, inds)
+  newdom = domain(dview)
+  newtab = values(dview)
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newval)
+end
+
+function Base.getindex(data::Data,
+                       ind::Int,
+                       vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom   = domain(data)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
+  pairs = (var => Tables.getcolumn(row, var) for var in vars)
+  (; pairs..., geometry=dom[ind])
+end
+
+Base.getindex(data::Data, ind::Int, var::Symbol) =
+  getproperty(data, var)[ind]
+
+function Base.getindex(data::Data, ind::Int, ::Colon)
+  dom   = domain(data)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
+  vars  = Tables.columnnames(row)
+  pairs = (var => Tables.getcolumn(row, var) for var in vars)
+  (; pairs..., geometry=dom[ind])
+end
+
+function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom    = domain(data)
+  tab    = values(data)
+  cols   = Tables.columns(tab)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtab = (; pairs...) |> Tables.materializer(tab)
+  newval = Dict(paramdim(dom) => newtab)
+  constructor(data)(dom, newval)
+end
+
+Base.getindex(data::Data, ::Colon, var::Symbol) =
+  getproperty(data, var)
+
+Base.getindex(data::Data, inds, vars::AbstractVector{<:AbstractString}) =
+  getindex(data, inds, Symbol.(vars))
+
+Base.getindex(data::Data, inds, var::AbstractString) =
+  getindex(data, inds, Symbol(var))
+
+function _checkvars(vars)
+  if !allunique(vars)
+    throw(ArgumentError("The variable names must be unique"))
+  end
+end
+
+function _rmgeometry!(vars)
+  ind = findfirst(==(:geometry), vars)
+  if !isnothing(ind)
+    popat!(vars, ind)
+  end
+end
 
 # -------------------
 # VARIABLE INTERFACE
