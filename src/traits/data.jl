@@ -151,16 +151,16 @@ Base.getproperty(data::Data, var::AbstractString) =
 function Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  table = values(data)
+  tab = values(data)
 
-  newdom   = view(domain(data), inds)
-  subset   = Tables.subset(table, inds)
-  cols     = Tables.columns(subset)
-  pairs    = (var => Tables.getcolumn(cols, var) for var in vars)
-  newtable = (; pairs...) |> Tables.materializer(table)
+  newdom = view(domain(data), inds)
+  subset = Tables.subset(tab, inds)
+  cols   = Tables.columns(subset)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtab = (; pairs...) |> Tables.materializer(tab)
 
-  vals = Dict(paramdim(newdom) => newtable)
-  constructor(data)(newdom, vals)
+  newvals = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newvals)
 end
 
 Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{<:AbstractString}) =
@@ -181,8 +181,8 @@ function Base.getindex(data::Data, ind::Int, vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
   dom   = domain(data)
-  table = values(data)
-  row   = Tables.subset(table, ind)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
   pairs = (var => Tables.getcolumn(row, var) for var in vars)
   (; pairs..., geometry=dom[ind])
 end
@@ -198,8 +198,8 @@ Base.getindex(data::Data, ind::Int, var::AbstractString) =
 
 function Base.getindex(data::Data, ind::Int, ::Colon)
   dom   = domain(data)
-  table = values(data)
-  row   = Tables.subset(table, ind)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
   vars  = Tables.columnnames(row)
   pairs = (var => Tables.getcolumn(row, var) for var in vars)
   (; pairs..., geometry=dom[ind])
@@ -208,15 +208,15 @@ end
 function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  dom   = domain(data)
-  table = values(data)
+  dom = domain(data)
+  tab = values(data)
 
-  cols     = Tables.columns(table)
-  pairs    = (var => Tables.getcolumn(cols, var) for var in vars)
-  newtable = (; pairs...) |> Tables.materializer(table)
+  cols   = Tables.columns(tab)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtab = (; pairs...) |> Tables.materializer(tab)
 
-  vals = Dict(paramdim(dom) => newtable)
-  constructor(data)(dom, vals)
+  newvals = Dict(paramdim(dom) => newtab)
+  constructor(data)(dom, newvals)
 end
 
 Base.getindex(data::Data, ::Colon, vars::AbstractVector{<:AbstractString}) =
