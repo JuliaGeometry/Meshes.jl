@@ -160,15 +160,9 @@ function Base.getindex(data::Data,
   cols   = Tables.columns(subset)
   pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
   newtab = (; pairs...) |> Tables.materializer(tab)
-
-  newvals = Dict(paramdim(newdom) => newtab)
-  constructor(data)(newdom, newvals)
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newval)
 end
-
-Base.getindex(data::Data,
-              inds::AbstractVector{Int},
-              vars::AbstractVector{<:AbstractString}) =
-  getindex(data, inds, Symbol.(vars))
 
 Base.getindex(data::Data,
               inds::AbstractVector{Int},
@@ -182,11 +176,6 @@ function Base.getindex(data::Data,
   constructor(data)(domain(dview), values(dview))
 end
 
-Base.getindex(data::Data,
-              inds::AbstractVector{Int},
-              var::AbstractString) =
-  getindex(data, inds, Symbol(var))
-
 function Base.getindex(data::Data,
                        ind::Int,
                        vars::AbstractVector{Symbol})
@@ -199,16 +188,8 @@ function Base.getindex(data::Data,
   (; pairs..., geometry=dom[ind])
 end
 
-Base.getindex(data::Data,
-              ind::Int,
-              vars::AbstractVector{<:AbstractString}) =
-  getindex(data, ind, Symbol.(vars))
-
 Base.getindex(data::Data, ind::Int, var::Symbol) =
   getproperty(data, var)[ind]
-
-Base.getindex(data::Data, ind::Int, var::AbstractString) =
-  getindex(data, ind, Symbol(var))
 
 function Base.getindex(data::Data, ind::Int, ::Colon)
   dom   = domain(data)
@@ -227,19 +208,20 @@ function Base.getindex(data::Data,::Colon, vars::AbstractVector{Symbol})
   cols   = Tables.columns(tab)
   pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
   newtab = (; pairs...) |> Tables.materializer(tab)
-
-  newvals = Dict(paramdim(dom) => newtab)
-  constructor(data)(dom, newvals)
+  newval = Dict(paramdim(dom) => newtab)
+  constructor(data)(dom, newval)
 end
-
-Base.getindex(data::Data, ::Colon, vars::AbstractVector{<:AbstractString}) =
-  getindex(data, :, Symbol.(vars))
 
 Base.getindex(data::Data, ::Colon, var::Symbol) =
   getproperty(data, var)
 
-Base.getindex(data::Data, ::Colon, var::AbstractString) =
-  getproperty(data, Symbol(var))
+# methods with variables as strings
+
+Base.getindex(data::Data, inds, vars::AbstractVector{<:AbstractString}) =
+  getindex(data, inds, Symbol.(vars))
+
+Base.getindex(data::Data, inds, var::AbstractString) =
+  getindex(data, inds, Symbol(var))
 
 # utils
 function _checkvars(vars)
