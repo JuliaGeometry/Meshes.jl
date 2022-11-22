@@ -242,17 +242,6 @@ end
 # -------------------
 
 """
-    variables(data)
-
-Returns the variables stored in `data` as a vector of
-[`Variable`](@ref).
-"""
-function variables(data::Data)
-  s = Tables.schema(values(data))
-  @. Variable(s.names, nonmissingtype(s.types))
-end
-
-"""
     asarray(data, var)
 
 Returns the data for the variable `var` in `data` as a Julia array

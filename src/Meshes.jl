@@ -124,9 +124,8 @@ export
   element, nelements,
 
   # data traits
-  Data, Variable,
+  Data,
   domain, constructor, asarray,
-  variables, name, mactype,
 
   # domain/data alias
   DomainOrData,

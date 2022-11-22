@@ -114,10 +114,6 @@
       end
 
       # variables interface
-      data = dummy(CartesianGrid{T}(2,2), (a=[1,2,3,4], b=[5,missing,7,8]))
-      @test variables(data) == (Variable(:a,Int), Variable(:b,Int))
-      @test name.(variables(data)) == (:a,:b)
-      @test mactype.(variables(data)) == (Int,Int)
       data = dummy(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
       @test asarray(data, :a) == asarray(data, "a") == [1,2,3,4]
       @test asarray(data, :b) == asarray(data, "b") == [5,6,7,8]
