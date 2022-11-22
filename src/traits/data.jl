@@ -148,12 +148,14 @@ end
 Base.getproperty(data::Data, var::AbstractString) =
   getproperty(data, Symbol(var))
 
-function Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{Symbol})
+function Base.getindex(data::Data,
+                       inds::AbstractVector{Int},
+                       vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  tab = values(data)
-
-  newdom = view(domain(data), inds)
+  dom    = domain(data)
+  tab    = values(data)
+  newdom = view(dom, inds)
   subset = Tables.subset(tab, inds)
   cols   = Tables.columns(subset)
   pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
@@ -163,21 +165,31 @@ function Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVect
   constructor(data)(newdom, newvals)
 end
 
-Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{<:AbstractString}) =
+Base.getindex(data::Data,
+              inds::AbstractVector{Int},
+              vars::AbstractVector{<:AbstractString}) =
   getindex(data, inds, Symbol.(vars))
 
-Base.getindex(data::Data, inds::AbstractVector{Int}, var::Symbol) =
+Base.getindex(data::Data,
+              inds::AbstractVector{Int},
+              var::Symbol) =
   getproperty(view(data, inds), var)
 
-function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
-  dataview = view(data, inds)
-  constructor(data)(domain(dataview), values(dataview))
+function Base.getindex(data::Data,
+                       inds::AbstractVector{Int},
+                       ::Colon)
+  dview = view(data, inds)
+  constructor(data)(domain(dview), values(dview))
 end
 
-Base.getindex(data::Data, inds::AbstractVector{Int}, var::AbstractString) =
+Base.getindex(data::Data,
+              inds::AbstractVector{Int},
+              var::AbstractString) =
   getindex(data, inds, Symbol(var))
 
-function Base.getindex(data::Data, ind::Int, vars::AbstractVector{Symbol})
+function Base.getindex(data::Data,
+                       ind::Int,
+                       vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
   dom   = domain(data)
@@ -187,7 +199,9 @@ function Base.getindex(data::Data, ind::Int, vars::AbstractVector{Symbol})
   (; pairs..., geometry=dom[ind])
 end
 
-Base.getindex(data::Data, ind::Int, vars::AbstractVector{<:AbstractString}) =
+Base.getindex(data::Data,
+              ind::Int,
+              vars::AbstractVector{<:AbstractString}) =
   getindex(data, ind, Symbol.(vars))
 
 Base.getindex(data::Data, ind::Int, var::Symbol) =
@@ -205,12 +219,11 @@ function Base.getindex(data::Data, ind::Int, ::Colon)
   (; pairs..., geometry=dom[ind])
 end
 
-function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
+function Base.getindex(data::Data,::Colon, vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  dom = domain(data)
-  tab = values(data)
-
+  dom    = domain(data)
+  tab    = values(data)
   cols   = Tables.columns(tab)
   pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
   newtab = (; pairs...) |> Tables.materializer(tab)
