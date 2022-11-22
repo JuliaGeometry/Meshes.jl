@@ -200,7 +200,7 @@ function Base.getindex(data::Data, ind::Int, ::Colon)
   (; pairs..., geometry=dom[ind])
 end
 
-function Base.getindex(data::Data,::Colon, vars::AbstractVector{Symbol})
+function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
   dom    = domain(data)
