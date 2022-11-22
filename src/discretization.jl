@@ -163,11 +163,8 @@ simplexify(tri::Triangle) =
 simplexify(quad::Quadrangle) =
   discretize(quad, FanTriangulation())
 
-simplexify(ngon::Ngon) =
+simplexify(ngon::Polygon) =
   discretize(ngon, Dehn1899())
-
-simplexify(poly::PolyArea) =
-  discretize(poly, FIST())
 
 simplexify(poly::Polyhedron) =
   discretize(poly, Tetrahedralization())
