@@ -181,11 +181,11 @@ function Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVect
   _rmgeometry!(vars)
   table = values(data)
 
-  newdom = view(domain(data), inds)
-  subset = Tables.subset(table, inds)
-  cols   = Tables.columns(subset)
-  𝒯 = NamedTuple(var => Tables.getcolumn(cols, var) for var in vars)
-  newtable = 𝒯 |> Tables.materializer(table)
+  newdom   = view(domain(data), inds)
+  subset   = Tables.subset(table, inds)
+  cols     = Tables.columns(subset)
+  pairs    = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtable = (; pairs...) |> Tables.materializer(table)
 
   vals = Dict(paramdim(newdom) => newtable)
   constructor(data)(newdom, vals)
@@ -195,24 +195,13 @@ Base.getindex(data::Data, inds::AbstractVector{Int}, vars::AbstractVector{<:Abst
   getindex(data, inds, Symbol.(vars))
 
 function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
-  table = values(data)
-
-  newdom   = view(domain(data), inds)
-  newtable = Tables.subset(table, inds)
-
-  vals = Dict(paramdim(newdom) => newtable)
-  constructor(data)(newdom, vals)
+  dataview = view(data, inds)
+  constructor(data)(domain(dataview), values(dataview))
 end
 
 function Base.getindex(data::Data, inds::AbstractVector{Int}, var::Symbol)
-  if var == :geometry
-    view(domain(data), inds)
-  else
-    table  = values(data)
-    subset = Tables.subset(table, inds)
-    cols   = Tables.columns(subset)
-    Tables.getcolumn(cols, var)
-  end
+  dataview = view(data, inds)
+  getproperty(dataview, var)
 end
 
 Base.getindex(data::Data, inds::AbstractVector{Int}, var::AbstractString) =
@@ -224,9 +213,9 @@ function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
   dom   = domain(data)
   table = values(data)
 
-  cols = Tables.columns(table)
-  𝒯 = NamedTuple(var => Tables.getcolumn(cols, var) for var in vars)
-  newtable = 𝒯 |> Tables.materializer(table)
+  cols     = Tables.columns(table)
+  pairs    = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtable = (; pairs...) |> Tables.materializer(table)
 
   vals = Dict(paramdim(dom) => newtable)
   constructor(data)(dom, vals)
