@@ -16,7 +16,6 @@ represent the elements of the mesh.
 
 ## Examples
 
-
 ```julia
 julia> points = [(0,0),(1,0),(1,1)]
 julia> connec = [connect((1,2,3))]
