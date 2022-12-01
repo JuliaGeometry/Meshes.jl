@@ -88,6 +88,11 @@
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test perimeter(t) ≈ T(1 + 1 + √2)
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/333
+    t = Triangle((0.0f0,0.0f0),(1.0f0,0.0f0),(0.5f0,1.0f0))
+    @test Point(0.5f0,0.5f0) ∈ t
+    @test Point(0.5e0,0.5e0) ∈ t
+
     # test orientation
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
     @test orientation(t) == :CCW
