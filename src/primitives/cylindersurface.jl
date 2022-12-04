@@ -71,3 +71,5 @@ function isright(c::CylinderSurface{T}) where {T}
 end
 
 boundary(::CylinderSurface) = nothing
+
+measure(c::CylinderSurface) = (norm(origin(c.bot) - origin(c.top)) + c.radius) * 2 * c.radius * pi
