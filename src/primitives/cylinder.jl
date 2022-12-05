@@ -59,3 +59,5 @@ isright(c::Cylinder) = isright(boundary(c))
 boundary(c::Cylinder) = CylinderSurface(c.radius, c.bot, c.top)
 
 measure(c::Cylinder) = norm(origin(c.bot) - origin(c.top)) * c.radius^2 * pi
+
+volume(c::Cylinder) = measure(c)
