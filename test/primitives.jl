@@ -285,7 +285,7 @@
     @test axis(c) == Line(P3(1,2,3), P3(4,5,6))
     @test isconvex(c)
     @test !isright(c)
-    @test measure(c) ≈ T(5)^2 * pi * T(3)*sqrt(T(3))
+    @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3)*sqrt(T(3))
 
     c = Cylinder(1.0)
     @test coordtype(c) == Float64
@@ -303,7 +303,7 @@
     @test axis(c) == Line(P3(0,0,0), P3(0,0,1))
     @test isright(c)
     @test boundary(c) == CylinderSurface(T(1), Segment(P3(0,0,0), P3(0,0,1)))
-    @test measure(c) ≈ pi 
+    @test measure(c) == volume(c) ≈ pi 
   end
 
   @testset "CylinderSurface" begin
@@ -320,12 +320,12 @@
     @test isconvex(c)
     @test isright(c)
     @test isnothing(boundary(c))
-    @test measure(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi 
+    @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi 
 
     c = CylinderSurface(T(5),
                  Plane(P3(1,2,3), V3(0,0,1)),
                  Plane(P3(4,5,6), V3(0,0,1)))
-    @test measure(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3*T(3)^2)
+    @test measure(c) == area(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3*T(3)^2)
 
     c = CylinderSurface(1.0)
     @test coordtype(c) == Float64
