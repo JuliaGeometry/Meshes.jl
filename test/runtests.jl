@@ -87,6 +87,7 @@ testfiles = [
   "matrices.jl",
   "views.jl",
   "viewing.jl",
+  "merging.jl",
   "sampling.jl",
   "partitioning.jl",
   "intersections.jl",

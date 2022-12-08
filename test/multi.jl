@@ -7,7 +7,7 @@
   @test multi == multi
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
-  @test boundary(multi) == Multi([boundary(poly), boundary(poly)])
+  @test boundary(multi) == merge(boundary(poly), boundary(poly))
   @test chains(multi) == [chains(poly); chains(poly)]
 
   poly1 = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])

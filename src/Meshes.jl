@@ -79,6 +79,7 @@ include("partitions.jl")
 
 # algorithms
 include("viewing.jl")
+include("merging.jl")
 include("sampling.jl")
 include("partitioning.jl")
 include("intersections.jl")

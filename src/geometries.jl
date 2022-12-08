@@ -121,13 +121,13 @@ A union type that can represent either a point or a geometry.
 const PointOrGeometry{Dim,T} = Union{Point{Dim,T},Geometry{Dim,T}}
 
 """
-    Multi(entities)
+    Multi(items)
 
-A collection of points or geometries seen as a single entity.
+A collection of points or geometries seen as a single item.
 
 In geographic information systems (GIS) it is common to represent
-multiple polygons as a single entity. In this case the polygons
-refer to the same object in the real world (e.g. country with islands).
+multiple polygons as a single item. In this case the polygons refer
+to the same object in the real world (e.g. country with islands).
 """
 struct Multi{Dim,T,I<:PointOrGeometry{Dim,T}} <: Geometry{Dim,T}
   items::Vector{I}
@@ -157,7 +157,7 @@ volume(multi::Multi{Dim,T,<:Polyhedron}) where{Dim,T} = measure(multi)
 function boundary(multi::Multi)
   bounds = [boundary(geom) for geom in multi.items]
   valid  = filter(!isnothing, bounds)
-  isempty(valid) ? nothing : Multi(valid)
+  isempty(valid) ? nothing : reduce(merge, valid)
 end
 
 chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} =
