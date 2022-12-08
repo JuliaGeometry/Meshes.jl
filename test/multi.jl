@@ -35,4 +35,13 @@
   grid  = CartesianGrid{T}(10, 10)
   multi = Multi(grid)
   @test collect(multi) == collect(grid)
+
+  # boundary of multi-3D-geometry
+  box1 = Box(P3(0,0,0), P3(1,1,1))
+  box2 = Box(P3(1,1,1), P3(2,2,2))
+  mbox = Multi([box1, box2])
+  mesh = boundary(mbox)
+  @test mesh isa Mesh
+  @test nvertices(mesh) == 16
+  @test nelements(mesh) == 12
 end
