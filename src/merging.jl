@@ -19,13 +19,14 @@ function Base.merge(m₁::Mesh, m₂::Mesh)
 
   # concatenate connectivities
   offset = length(v₁)
-  connec = collect(elements(t₁))
-  for e in elements(t₂)
+  connec₁ = collect(elements(t₁))
+  connec₂ = map(elements(t₂)) do e
     PL = pltype(e)
     c  = indices(e)
     c′ = ntuple(i -> c[i] + offset, length(c))
-    push!(connec, connect(c′, PL))
+    connect(c′, PL)
   end
+  connec = [connec₁; connec₂]
 
   SimpleMesh(points, connec)
 end

@@ -13,4 +13,10 @@
   m = merge(ms, mb)
   @test m isa Multi
   @test eltype(collect(m)) <: Primitive
+
+  m1 = SimpleMesh(rand(P3, 3), [connect((1,2,3))])
+  m2 = SimpleMesh(rand(P3, 4), [connect((1,2,3,4))])
+  m  = merge(m1, m2)
+  @test m isa Mesh
+  @test eltype(m) <: Ngon
 end
