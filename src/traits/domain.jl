@@ -101,7 +101,7 @@ end
 
 Return the measure of the `domain`, i.e. the length, area, or volume.
 """
-measure(domain::Domain) = sum(measure, elements(domain))
+measure(domain::Domain) = sum(measure, domain)
 
 """
     point ∈ domain

@@ -44,6 +44,11 @@
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     pview  = view(PointSet(points), 1:4)
     @test centroid(pview) == P2(0.5, 0.5)
+
+    # measure of view
+    g = CartesianGrid{T}(10, 10)
+    v = view(g, 1:3)
+    @test measure(v) ≈ T(3)
   end
 
   @testset "Data" begin
