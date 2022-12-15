@@ -11,8 +11,8 @@ import WGLMakie as Mke # hide
 ```
 
 Geometric (e.g. coordinates) transforms are implemented according to the
-[TransformsAPI.jl](https://github.com/JuliaML/TransformsAPI.jl). Please
-read their documentation for more details.
+[TransformsBase.jl](https://github.com/JuliaML/TransformsBase.jl) interface.
+Please read their documentation for more details.
 
 ```@docs
 GeometricTransform
