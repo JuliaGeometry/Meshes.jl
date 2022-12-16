@@ -49,10 +49,9 @@ function sample(::AbstractRNG, torus::Torus{T},
                 method::RegularSampling) where {T}
   sz = fitdims(method.sizes, paramdim(torus))
   R, r = majorRadius(torus), minorRadius(torus)
-  s = R / r
-  h = sqrt(s^2 + 1)
-  kxy = h*R
-  kz = h*r
+  kxy = R^2 - r^2
+  kz = sqrt(kxy) * r
+  s = sqrt(kxy) / r 
 
   V = T <: AbstractFloat ? T : Float64
   umin, umax = V(-s * π), V(s * π)
@@ -60,7 +59,7 @@ function sample(::AbstractRNG, torus::Torus{T},
   urange = range(umin, stop=umax, length=sz[1])
   vrange = range(vmin, stop=vmax, length=sz[2])
 
-  r⃗(u, v) = Vec{3,T}(kxy*sin(u/s)/(h-cos(v)), kxy*cos(u/s)/(h-cos(v)), kz*sin(v)/(h-cos(v)))
+  r⃗(u, v) = Vec{3,T}(kxy * sin(u/s), kxy * cos(u/s), kz * sin(v)) / (R - r*cos(v))
 
   ivec(r⃗(u, v) for u in urange, v in vrange)
 end
