@@ -41,4 +41,16 @@
     @test nelements(smesh) == nelements(mesh)
     @test topology(smesh) == topology(mesh)
   end
+
+  @testset "Rotation" begin
+    # a rotation doesn't change the topology
+    trans = Rotation([1, 1, 1], 45)
+    @test TB.isrevertible(trans)
+    mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
+    smesh = trans(mesh)
+    @test nvertices(smesh) == nvertices(mesh)
+    @test nelements(smesh) == nelements(mesh)
+    @test topology(smesh) == topology(mesh)
+  end
+
 end
