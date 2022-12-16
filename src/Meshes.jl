@@ -335,6 +335,9 @@ export
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,
+  CrossingRayPlane,
+  TouchingRayPlane,
+  OverlappingRayPlane,
   NoIntersection,
 
   # intersections

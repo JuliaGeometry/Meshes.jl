@@ -99,6 +99,11 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingSegmentPlane
   TouchingSegmentPlane
   OverlappingSegmentPlane
+
+  # ray-plane intersection
+  CrossingRayPlane
+  TouchingRayPlane
+  OverlappingRayPlane
 end
 
 """
@@ -149,6 +154,7 @@ include("intersections/rayline.jl")
 include("intersections/linesegment.jl")
 include("intersections/raybox.jl")
 include("intersections/segmentplane.jl")
+include("intersections/rayplane.jl")
 include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
 include("intersections/geompolygon.jl")
