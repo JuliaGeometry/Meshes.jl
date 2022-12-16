@@ -45,6 +45,26 @@ function sample(::AbstractRNG, bezier::BezierCurve{Dim,T},
   (bezier(t) for t in trange)
 end
 
+function sample(::AbstractRNG, torus::Torus{T},
+                method::RegularSampling) where {T}
+  sz = fitdims(method.sizes, paramdim(torus))
+  R, r = majorRadius(torus), minorRadius(torus)
+  s = R / r
+  h = sqrt(s^2 + 1)
+  kxy = h*R
+  kz = h*r
+
+  V = T <: AbstractFloat ? T : Float64
+  umin, umax = V(-s * π), V(s * π)
+  vmin, vmax = V(-π), V(π)
+  urange = range(umin, stop=umax, length=sz[1])
+  vrange = range(vmin, stop=vmax, length=sz[2])
+
+  r⃗(u, v) = Vec{3,T}(kxy*sin(u/s)/(h-cos(v)), kxy*cos(u/s)/(h-cos(v)), kz*sin(v)/(h-cos(v)))
+
+  ivec(r⃗(u, v) for u in urange, v in vrange)
+end
+
 function sample(::AbstractRNG, sphere::Sphere{2,T},
                 method::RegularSampling) where {T}
   sz = fitdims(method.sizes, paramdim(sphere))
