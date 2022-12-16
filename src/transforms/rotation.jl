@@ -3,22 +3,19 @@
 # ------------------------------------------------------------------
 
 """
-    Rotation(rotation)
+    Rotation(rot)
 
-Perform the rotation represented by `rotation`, a
-`ReferenceFrameRotation` object from the `ReferenceFrameRotations` 
-library.
+Rotate geometry or mesh with rotation `rot` from ReferenceFrameRotations.jl. 
 
 ## Examples
 
 ```julia
-using ReferenceFrameRotations
 Rotation(ReferenceFrameRotations.EulerAngleAxis(pi/4, [1, 0, 0]))
 ```
 
 """
-struct Rotation{R} <: Meshes.GeometricTransform
-  rotation::R
+struct Rotation{R} <: GeometricTransform
+  rot::R
 end
 
 """
@@ -30,7 +27,7 @@ otherwise in radians.
 
 """
 function Rotation(axis::Vector{Real}, α::Real; degrees::Bool = true)
-  axisNorm = LinearAlgebra.norm2(axis)
+  axisNorm = norm2(axis)
   if axisNorm == 0
     error("The `axis` vector is null.")
   end
@@ -38,31 +35,22 @@ function Rotation(axis::Vector{Real}, α::Real; degrees::Bool = true)
   if degrees
     α = α * pi / 180
   end
-  R = ReferenceFrameRotations.EulerAngleAxis
-  rotation = R(α, v)
-  Rotation{R}(rotation)
+  Rotation(EulerAngleAxis(α, v))
 end
 
 isrevertible(::Type{<:Rotation}) = true
 
 function preprocess(transform::Rotation, object)
-  rotation = transform.rotation
-  rtype = typeof(rotation)
-  local M, invM
-  if rtype <: ReferenceFrameRotations.DCM
-    M = rotation
-    invM = ReferenceFrameRotations.inv_rotation(M)
-  elseif rtype <: ReferenceFrameRotations.EulerAngleAxis
-    M = ReferenceFrameRotations.angleaxis_to_dcm(rotation)
-    invM = ReferenceFrameRotations.inv(rotation)
-  elseif rtype <: ReferenceFrameRotations.EulerAngles
-    M = ReferenceFrameRotations.angle_to_dcm(rotation)
-    invM = ReferenceFrameRotations.inv(rotation)
-  elseif rtype <: ReferenceFrameRotations.Quaternion
-    M = ReferenceFrameRotations.quat_to_dcm(rotation)
-    invM = ReferenceFrameRotations.inv(rotation)
+  rot = transform.rot
+  local M, M⁻¹
+  if typeof(rot) <: DCM
+    M = rot
+    M⁻¹ = inv_rotation(M)
+  else
+    M = convert(DCM, rot)
+    M⁻¹ = convert(DCM, inv(rot))
   end
-  M, invM
+  M, M⁻¹
 end
 
 function applypoint(::Rotation, points, prep)
@@ -72,8 +60,8 @@ function applypoint(::Rotation, points, prep)
 end
 
 function revertpoint(::Rotation, newpoints, cache)
-  _, invM = cache
-  [Point(invM * p) for p in newpoints]
+  _, M⁻¹ = cache
+  [Point(M⁻¹ * p) for p in newpoints]
 end
 
 function reapplypoint(::Rotation, points, cache)

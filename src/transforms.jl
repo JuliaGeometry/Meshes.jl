@@ -95,4 +95,4 @@ reapply(transform::StatelessGeometricTransform, object, cache) =
 
 include("transforms/stdcoords.jl")
 include("transforms/smoothing.jl")
-include("rotations.jl")
+include("rotation.jl")
