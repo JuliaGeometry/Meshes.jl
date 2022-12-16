@@ -849,7 +849,7 @@
     @test isnothing(r ∩ p)
 
     # ray parallel to plane, offset, non-intersecting
-    r = Ray(P3(0, 0, -1), V3(0, -2, -1))
+    r = Ray(P3(0, 0, -1), V3(0, -2, 0))
     @test intersection(r, p) |> type == NoIntersection
     @test isnothing(r ∩ p)
 
