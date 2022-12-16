@@ -12,9 +12,9 @@ function Meshes.intersection(f, r::Ray{3,T}, p::Plane{T}) where {T}
   # calculate components
   ln = direction(r) ⋅ n
   
-  # if ln is zero, the segment is parallel to the plane
+  # if ln is zero, the ray is parallel to the plane
   if isapprox(ln, zero(T), atol=atol(T))
-    # if the numerator is zero, the segment is coincident
+    # if the numerator is zero, the ray is coincident
     if isapprox(coordinates(pₒ - origin(r)) ⋅ n, zero(T), atol=atol(T))
       return @IT OverlappingRayPlane r f
     else
