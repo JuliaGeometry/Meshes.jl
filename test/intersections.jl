@@ -820,6 +820,46 @@
     @inferred someornone(s, p)
   end
 
+  @testset "RayPlanes" begin
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+
+    # intersecting ray and plane
+    r = Ray(P3(0, 0, 0), V3(0, 2, 2))
+    @test intersection(r, p) |> type == CrossingRayPlane
+    @test r ∩ p == P3(0, 1, 1)
+
+    # intersecting ray and plane with λ ≈ 0
+    r = Ray(P3(0, 0, 1), V3(0, 2, 1))
+    @test intersection(r, p) |> type == TouchingRayPlane
+    @test r ∩ p == P3(0, 0, 1)
+
+    # intersecting ray and plane with λ ≈ 1 (only case where Ray different to Segment)
+    r = Ray(P3(0, 0, 2), V3(0, 2, -1))
+    @test intersection(r, p) |> type == CrossingRayPlane
+    @test r ∩ p == P3(0, 2, 1)
+
+    # ray contained within plane
+    r = Ray(P3(0, 0, 1), V3(0, -2, 0))
+    @test intersection(r, p) |> type == OverlappingRayPlane
+    @test r ∩ p == r
+
+    # ray below plane, non-intersecting
+    r = Ray(P3(0, 0, 0), V3(0, -2, -2))
+    @test intersection(r, p) |> type == NoIntersection
+    @test isnothing(r ∩ p)
+
+    # ray parallel to plane, offset, non-intersecting
+    r = Ray(P3(0, 0, -1), V3(0, -2, -1))
+    @test intersection(r, p) |> type == NoIntersection
+    @test isnothing(r ∩ p)
+
+    # plane as first argument
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    r = Ray(P3(0, 0, 0), V3(0, 2, 2))
+    @test intersection(p, r) |> type == CrossingRayPlane
+    @test r ∩ p == p ∩ r == P3(0, 1, 1)
+  end
+
   @testset "Boxes" begin
     b1 = Box(P2(0,0), P2(1,1))
     b2 = Box(P2(0.5,0.5), P2(2,2))
