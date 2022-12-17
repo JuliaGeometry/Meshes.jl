@@ -37,6 +37,36 @@ end
 
 Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3))
 
+"""
+    Sphere(p1, p2, p3, p4)
+
+A 3D sphere passing through points `p1`, `p2`, `p3` and `p4`.
+"""
+function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
+  v1 = coordinates(p1)
+  v2 = coordinates(p2)
+  v3 = coordinates(p3)
+  v4 = coordinates(p4)
+  M = hcat(v1, v2, v3, v4)
+  a = 2 * det(vcat(M, ones((1, 4))))
+  if a == 0
+    error("The four points are coplanar.")
+  end
+  q = [norm_sqr(v1), norm_sqr(v2), norm_sqr(v3), norm_sqr(v4)] / a
+  x = M[1, :]
+  y = M[2, :]
+  z = M[3, :]
+  dx = det(hcat(q, y, z, ones(4)))
+  dy = -det(hcat(q, x, z, ones(4)))
+  dz = det(hcat(q, x, y, ones(4)))
+  c = det(hcat(q, x, y, z))
+  radius = sqrt(dx^2 + dy^2 + dz^2 - 2 * c) 
+  center = Point(dx, dy, dz)
+  Sphere(center, radius)
+end
+
+Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
+
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
 isconvex(::Type{<:Sphere}) = false
