@@ -5,7 +5,7 @@
 #=
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
 =#
-function Meshes.intersection(f, r::Ray{3,T}, p::Plane{T}) where {T}
+function intersection(f, r::Ray{3,T}, p::Plane{T}) where {T}
   pₒ = coordinates(origin(p))
   n  = normal(p)
   
