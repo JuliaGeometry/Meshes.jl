@@ -366,9 +366,9 @@
     @test intersection(r₂, s₈) |> type == OverlappingRaySegment # CASE 4
     @test r₂ ∩ s₈ === s₈ ∩ r₂ === s₈
     @test intersection(r₂, s₉) |> type == OverlappingRaySegment # CASE 4
-    @test r₂ ∩ s₉ === s₉ ∩ r₂ === Segment(origin(r₂), s₉(1))
+    @test r₂ ∩ s₉ == s₉ ∩ r₂ == Segment(origin(r₂), s₉(1))
     @test intersection(r₂, s₁₀) |> type == OverlappingRaySegment # CASE 4
-    @test r₂ ∩ s₁₀ === s₁₀ ∩ r₂ === Segment(origin(r₂), s₁₀(0))
+    @test r₂ ∩ s₁₀ == s₁₀ ∩ r₂ == Segment(origin(r₂), s₁₀(0))
     @test intersection(r₂, s₁₁) |> type == CornerTouchingRaySegment # CASE 3
     @test r₂ ∩ s₁₁ ≈ s₁₁ ∩ r₂ ≈ origin(r₂)
     @test intersection(r₂, s₁₂) |> type == CornerTouchingRaySegment # CASE 3
@@ -403,7 +403,7 @@
 
     s₄ = Segment(P3(0,0,0), P3(2,4,6))
     @test intersection(r₁, s₄) |> type === OverlappingRaySegment # CASE 4
-    @test r₁ ∩ s₄ === s₄ ∩ r₁ === Segment(P3(1,2,3), P3(2,4,6))
+    @test r₁ ∩ s₄ == s₄ ∩ r₁ == Segment(P3(1,2,3), P3(2,4,6))
 
     s₅ = Segment(P3(0,0,0), P3(0.5, 1, 1.5))
     @test intersection(r₁, s₅) |> type === NoIntersection # CASE 5
