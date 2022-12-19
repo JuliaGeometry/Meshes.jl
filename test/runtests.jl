@@ -10,6 +10,7 @@ using SparseArrays
 using PlyIO
 using Unitful
 using MeshViz
+using ReferenceFrameRotations
 using Test, Random
 using ReferenceTests, ImageIO
 

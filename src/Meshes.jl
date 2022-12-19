@@ -382,6 +382,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  Rotation,
 
   # tolerances
   atol
