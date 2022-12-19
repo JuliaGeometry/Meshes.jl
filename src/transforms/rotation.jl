@@ -21,14 +21,8 @@ isrevertible(::Type{<:Rotation}) = true
 
 function preprocess(transform::Rotation, object)
   rot = transform.rot
-  if typeof(rot) <: DCM
-    M = rot
-    M⁻¹ = inv_rotation(M)
-  else
-    M = convert(DCM, rot)
-    M⁻¹ = convert(DCM, inv(rot))
-  end
-  M, M⁻¹
+  R, R⁻¹ = rot, inv_rotation(rot)
+  convert.(DCM, (R, R⁻¹))
 end
 
 function applypoint(::Rotation, points, prep)

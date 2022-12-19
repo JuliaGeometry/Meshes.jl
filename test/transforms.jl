@@ -53,12 +53,13 @@
     @test topology(rmesh) == topology(mesh)
 
     # check rotation on a triangle
-    triangle = Triangle(Point(0,0,0), Point(1,0,0), Point(0,1,0))
+    triangle = Triangle(Point(0, 0, 0), Point(1, 0, 0), Point(0, 1, 0))
     trans = Rotation(EulerAngleAxis(-pi/2, [0, 0, 1]))
     rtriangle = trans(triangle)
-    @test in(Point(0,0,0), rtriangle)
-    @test in(Point(-0.01,0.9,0), rtriangle)
-    @test in(Point(-0.9,0.01,0), rtriangle)
+    rpoints = vertices(rtriangle)
+    @test rpoints[1] == Point(0, 0, 0)
+    @test rpoints[2] == Point(0, 1, 0)
+    @test rpoints[3] == Point(-1, 0, 0)
   end
 
 end
