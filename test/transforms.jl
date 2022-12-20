@@ -41,4 +41,25 @@
     @test nelements(smesh) == nelements(mesh)
     @test topology(smesh) == topology(mesh)
   end
+
+  @testset "Scaling" begin
+    # a scaling doesn't change the topology
+    trans = Scaling(T(1), T(2), T(3))
+    @test TB.isrevertible(trans)
+    mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
+    smesh = trans(mesh)
+    @test nvertices(smesh) == nvertices(mesh)
+    @test nelements(smesh) == nelements(mesh)
+    @test topology(smesh) == topology(mesh)
+
+    # check scaling on a triangle
+    triangle = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    trans = Scaling(T(1), T(2), T(3))
+    striangle = trans(triangle)
+    spoints = vertices(striangle)
+    @test spoints[1] == P3(0, 0, 0)
+    @test spoints[2] == P3(1, 0, 0)
+    @test spoints[3] == P3(0, 2, 3)
+  end
+
 end
