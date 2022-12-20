@@ -25,7 +25,7 @@ function Base.convert(::Type{DCM{T}}, cw::ClockwiseAngle) where {T}
 end
 
 """
-    ClockwiseAngle(θ)
+    CounterClockwiseAngle(θ)
 
 Counter-clockwise rotation in 2D space by angle `θ`.
 """
