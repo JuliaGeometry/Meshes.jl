@@ -21,7 +21,7 @@ isrevertible(::Type{<:Rotation}) = true
 
 function preprocess(transform::Rotation, object)
   rot = transform.rot
-  R, R⁻¹ = rot, inv_rotation(rot)
+  R, R⁻¹ = rot, inv(rot)
   convert.(DCM, (R, R⁻¹))
 end
 

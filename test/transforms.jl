@@ -44,7 +44,7 @@
 
   @testset "Rotation" begin
     # a rotation doesn't change the topology
-    trans = Rotation(EulerAngleAxis(pi/4, [1, 0, 0]))
+    trans = Rotation(EulerAngleAxis(T(pi/4), [1, 0, 0]))
     @test TB.isrevertible(trans)
     mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
     rmesh = trans(mesh)
@@ -53,13 +53,13 @@
     @test topology(rmesh) == topology(mesh)
 
     # check rotation on a triangle
-    triangle = Triangle(Point(0, 0, 0), Point(1, 0, 0), Point(0, 1, 0))
-    trans = Rotation(EulerAngleAxis(-pi/2, [0, 0, 1]))
+    triangle = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    trans = Rotation(EulerAngleAxis(T(-pi/2), [0, 0, 1]))
     rtriangle = trans(triangle)
     rpoints = vertices(rtriangle)
-    @test rpoints[1] == Point(0, 0, 0)
-    @test rpoints[2] == Point(0, 1, 0)
-    @test rpoints[3] == Point(-1, 0, 0)
+    @test rpoints[1] == P3(0, 0, 0)
+    @test rpoints[2] == P3(0, 1, 0)
+    @test rpoints[3] == P3(-1, 0, 0)
   end
 
 end
