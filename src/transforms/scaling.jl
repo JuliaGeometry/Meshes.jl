@@ -22,20 +22,19 @@ ScaleCoords(1, 2, 3)
 """
 struct ScaleCoords{T<:Real} <: GeometricTransform
   factors::AbstractVector{T}
+  function ScaleCoords{T}(factors::AbstractVector{T}) where {T<:Real}
+    if any(factors .≤ 0)
+      error("The scaling factors must be nonnegative.")
+    end
+    new(factors)
+  end
 end
 
-function ScaleCoords(sx::T1, sy::T2, sz::T3) where {T1<:Real,T2<:Real,T3<:Real}
-  if sx ≤ 0 || sy ≤ 0 || sz ≤ 0
-    error("The scaling factors must be nonnegative.")
-  end
-  ScaleCoords([sx, sy, sz])
-end
+ScaleCoords(factors...) = ScaleCoords{eltype(factors)}([factors...])
 
 isrevertible(::Type{<:ScaleCoords}) = true
 
-function preprocess(transform::ScaleCoords, object)
-  transform.factors
-end
+preprocess(transform::ScaleCoords, object) = transform.factors
 
 function applypoint(::ScaleCoords, points, prep)
   scale_vector = prep
