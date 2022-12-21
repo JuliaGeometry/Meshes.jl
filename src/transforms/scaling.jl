@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Scaling(sx, sy, sz)
+    ScaleCoords(sx, sy, sz)
 
 Transform geometry or mesh by scaling each coordinate of the vertices by 
 the corresponding factor. 
@@ -17,42 +17,39 @@ the corresponding factor.
 ## Examples
 
 ```julia
-Scaling(1, 2, 3)
+ScaleCoords(1, 2, 3)
 ```
 """
-struct Scaling{T<:Real} <: GeometricTransform
-  sx::T
-  sy::T
-  sz::T
+struct ScaleCoords{T<:Real} <: GeometricTransform
+  factors::AbstractVector{T}
 end
 
-function Scaling(sx::T1, sy::T2, sz::T3) where {T1<:Real,T2<:Real,T3<:Real}
-  if sx <= 0 || sy <= 0 || sz <= 0
+function ScaleCoords(sx::T1, sy::T2, sz::T3) where {T1<:Real,T2<:Real,T3<:Real}
+  if sx ≤ 0 || sy ≤ 0 || sz ≤ 0
     error("The scaling factors must be nonnegative.")
   end
-  T = promote(sx, sy, sz)
-  Scaling(T(sx), T(sy), T(sz))
+  ScaleCoords([sx, sy, sz])
 end
 
-isrevertible(::Type{<:Scaling}) = true
+isrevertible(::Type{<:ScaleCoords}) = true
 
-function preprocess(transform::Scaling, object)
-  [transform.sx, transform.sy, transform.sz]
+function preprocess(transform::ScaleCoords, object)
+  transform.factors
 end
 
-function applypoint(::Scaling, points, prep)
+function applypoint(::ScaleCoords, points, prep)
   scale_vector = prep
   newpoints = [Point(scale_vector .* coordinates(p)) for p in points]
   newpoints, prep
 end
 
-function revertpoint(::Scaling, newpoints, cache)
+function revertpoint(::ScaleCoords, newpoints, cache)
   scale_vector = cache
   iscale_vector = 1 ./ scale_vector
   [Point(iscale_vector .* coordinates(p)) for p in newpoints]
 end
 
-function reapplypoint(::Scaling, points, cache)
+function reapplypoint(::ScaleCoords, points, cache)
   scale_vector = cache
   [Point(scale_vector .* coordinates(p)) for p in points]
 end

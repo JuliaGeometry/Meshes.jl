@@ -42,9 +42,9 @@
     @test topology(smesh) == topology(mesh)
   end
 
-  @testset "Scaling" begin
+  @testset "ScaleCoords" begin
     # a scaling doesn't change the topology
-    trans = Scaling(T(1), T(2), T(3))
+    trans = ScaleCoords(T(1), T(2), T(3))
     @test TB.isrevertible(trans)
     mesh  = readply(T, joinpath(datadir,"beethoven.ply"))
     smesh = trans(mesh)
@@ -54,7 +54,7 @@
 
     # check scaling on a triangle
     triangle = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
-    trans = Scaling(T(1), T(2), T(3))
+    trans = ScaleCoords(T(1), T(2), T(3))
     striangle = trans(triangle)
     spoints = vertices(striangle)
     @test spoints[1] == P3(0, 0, 0)
