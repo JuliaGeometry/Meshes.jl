@@ -61,5 +61,4 @@
     @test spoints[2] == P3(1, 0, 0)
     @test spoints[3] == P3(0, 2, 3)
   end
-
 end

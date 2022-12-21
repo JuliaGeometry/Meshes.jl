@@ -20,35 +20,34 @@ the corresponding factor.
 ScaleCoords(1, 2, 3)
 ```
 """
-struct ScaleCoords{T<:Real} <: GeometricTransform
-  factors::AbstractVector{T}
-  function ScaleCoords{T}(factors::AbstractVector{T}) where {T<:Real}
-    if any(factors .≤ 0)
-      error("The scaling factors must be nonnegative.")
+struct ScaleCoords{T} <: GeometricTransform
+  factors::Vector{T}
+  function ScaleCoords{T}(factors) where {T}
+    if any(≤(0), factors)
+      throw(ArgumentError("Scaling factors must be positive."))
     end
     new(factors)
   end
 end
 
-ScaleCoords(factors...) = ScaleCoords{eltype(factors)}([factors...])
+ScaleCoords(factors...) = ScaleCoords{eltype(factors)}(collect(factors))
 
 isrevertible(::Type{<:ScaleCoords}) = true
 
 preprocess(transform::ScaleCoords, object) = transform.factors
 
 function applypoint(::ScaleCoords, points, prep)
-  scale_vector = prep
-  newpoints = [Point(scale_vector .* coordinates(p)) for p in points]
+  factors = prep
+  newpoints = [Point(factors .* coordinates(p)) for p in points]
   newpoints, prep
 end
 
 function revertpoint(::ScaleCoords, newpoints, cache)
-  scale_vector = cache
-  iscale_vector = 1 ./ scale_vector
-  [Point(iscale_vector .* coordinates(p)) for p in newpoints]
+  factors = cache
+  [Point((1 ./ factors) .* coordinates(p)) for p in newpoints]
 end
 
 function reapplypoint(::ScaleCoords, points, cache)
-  scale_vector = cache
-  [Point(scale_vector .* coordinates(p)) for p in points]
+  factors = cache
+  [Point(factors .* coordinates(p)) for p in points]
 end
