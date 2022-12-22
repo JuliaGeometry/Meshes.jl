@@ -43,16 +43,16 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3)
 A 3D sphere passing through points `p1`, `p2`, `p3` and `p4`.
 """
 function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
+  vol = volume(Tetrahedron(p1, p2, p3, p4))
+  T = typeof(vol)
+  if isapprox(vol, zero(T); atol = atol(T))
+    throw(ArgumentError("The four points are coplanar."))
+  end
   v1 = p1 - p4
   v2 = p2 - p4
   v3 = p3 - p4
-  d = det(hcat(v1, v2, v3))
-  T = typeof(d)
-  if isapprox(d, zero(T); atol = atol(T))
-    error("The four points are coplanar.")
-  end
-  x = (v3 ⋅ v3) * cross(v1, v2) + (v2 ⋅ v2) * cross(v3, v1) + (v1 ⋅ v1) * cross(v2, v3)
-  r⃗ = x / 2 / d
+  u = (v3 ⋅ v3) * (v1 × v2) + (v2 ⋅ v2) * (v3 × v1) + (v1 ⋅ v1) * (v2 × v3)
+  r⃗ = u / 12 / vol
   radius = norm(r⃗)
   center = p4 + r⃗
   Sphere(center, radius)
