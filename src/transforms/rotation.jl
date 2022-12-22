@@ -26,17 +26,17 @@ function preprocess(transform::RotateCoords, object)
 end
 
 function applypoint(::RotateCoords, points, prep)
-  M, _ = prep
-  newpoints = [Point(M * coordinates(p)) for p in points]
+  R, _ = prep
+  newpoints = [Point(R * coordinates(p)) for p in points]
   newpoints, prep
 end
 
 function revertpoint(::RotateCoords, newpoints, cache)
-  _, M⁻¹ = cache
-  [Point(M⁻¹ * coordinates(p)) for p in newpoints]
+  _, R⁻¹ = cache
+  [Point(R⁻¹ * coordinates(p)) for p in newpoints]
 end
 
 function reapplypoint(::RotateCoords, points, cache)
-  M, _ = cache
-  [Point(M * coordinates(p)) for p in points]
+  R, _ = cache
+  [Point(R * coordinates(p)) for p in points]
 end
