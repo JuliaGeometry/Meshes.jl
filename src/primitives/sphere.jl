@@ -43,26 +43,18 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3)
 A 3D sphere passing through points `p1`, `p2`, `p3` and `p4`.
 """
 function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
-  x1 = coordinates(p1)
-  x2 = coordinates(p2)
-  x3 = coordinates(p3)
-  x4 = coordinates(p4)
-  X = hcat(x1, x2, x3, x4)
-  a = 2 * det(vcat(X, ones((1, 4))))
-  T = typeof(a)
-  if isapprox(a, zero(T); atol = atol(T))
+  v1 = p1 - p4
+  v2 = p2 - p4
+  v3 = p3 - p4
+  d = det(hcat(v1, v2, v3))
+  T = typeof(d)
+  if isapprox(d, zero(T); atol = atol(T))
     error("The four points are coplanar.")
   end
-  q = [x1 ⋅ x1, x2 ⋅ x2, x3 ⋅ x3, x4 ⋅ x4] / a
-  y1 = X[1, :]
-  y2 = X[2, :]
-  y3 = X[3, :]
-  d1 = det(hcat(q, y2, y3, ones(4)))
-  d2 = -det(hcat(q, y1, y3, ones(4)))
-  d3 = det(hcat(q, y1, y2, ones(4)))
-  c = det(hcat(q, y1, y2, y3))
-  radius = sqrt(d1^2 + d2^2 + d3^2 - 2 * c) 
-  center = Point(d1, d2, d3)
+  x = (v3 ⋅ v3) * cross(v1, v2) + (v2 ⋅ v2) * cross(v3, v1) + (v1 ⋅ v1) * cross(v2, v3)
+  r⃗ = x / 2 / d
+  radius = norm(r⃗)
+  center = p4 + r⃗
   Sphere(center, radius)
 end
 
