@@ -21,8 +21,7 @@ isrevertible(::Type{<:RotateCoords}) = true
 
 function preprocess(transform::RotateCoords, object)
   rot = transform.rot
-  R, R⁻¹ = inv(rot), rot
-  convert.(DCM, (R, R⁻¹))
+  convert.(DCM, (inv(rot), rot))
 end
 
 function applypoint(::RotateCoords, points, prep)
