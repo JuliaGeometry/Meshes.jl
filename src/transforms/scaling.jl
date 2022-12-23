@@ -37,17 +37,17 @@ isrevertible(::Type{<:ScaleCoords}) = true
 preprocess(transform::ScaleCoords, object) = transform.factors
 
 function applypoint(::ScaleCoords, points, prep)
-  factors = prep
-  newpoints = [Point(factors .* coordinates(p)) for p in points]
+  s = prep
+  newpoints = [Point(s .* coordinates(p)) for p in points]
   newpoints, prep
 end
 
 function revertpoint(::ScaleCoords, newpoints, cache)
-  factors = cache
-  [Point((1 ./ factors) .* coordinates(p)) for p in newpoints]
+  s = cache
+  [Point((1 ./ s) .* coordinates(p)) for p in newpoints]
 end
 
 function reapplypoint(::ScaleCoords, points, cache)
-  factors = cache
-  [Point(factors .* coordinates(p)) for p in points]
+  s = cache
+  [Point(s .* coordinates(p)) for p in points]
 end
