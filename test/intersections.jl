@@ -775,7 +775,52 @@
     @test isnothing(r ∩ o)
   end
 
-  @testset "Planes" begin
+  @testset "LinePlanes" begin
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+
+    # intersecting line and plane
+    l = Line(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersection(l, p) |> type == CrossingLinePlane
+    @test l ∩ p == P3(0, 1, 1)
+
+    # intersecting line and plane with λ ≈ 0
+    l = Line(P3(0, 0, 1), P3(0, 2, 2))
+    @test intersection(l, p) |> type == CrossingLinePlane
+    @test l ∩ p == P3(0, 0, 1)
+
+    # intersecting line and plane with λ ≈ 1
+    l = Line(P3(0, 0, 2), P3(0, 2, 1))
+    @test intersection(l, p) |> type == CrossingLinePlane
+    @test l ∩ p == P3(0, 2, 1)
+
+    # line contained within plane
+    l = Line(P3(0, 0, 1), P3(0, -2, 1))
+    @test intersection(l, p) |> type == OverlappingLinePlane
+    @test l ∩ p == l
+
+    # line below plane, non-intersecting
+    l = Line(P3(0, 0, 0), P3(0, -2, -2))
+    @test intersection(l, p) |> type == NoIntersection
+    @test isnothing(l ∩ p)
+
+    # line parallel to plane, offset, non-intersecting
+    l = Line(P3(0, 0, -1), P3(0, -2, -1))
+    @test intersection(l, p) |> type == NoIntersection
+    @test isnothing(l ∩ p)
+
+    # plane as first argument
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    l = Line(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersection(p, l) |> type == CrossingLinePlane
+    @test l ∩ p == p ∩ l == P3(0, 1, 1)
+
+    # type stability tests
+    l = Line(P3(0, 0, 0), P3(0, 2, 2))
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    @inferred someornone(l, p)
+  end
+
+  @testset "SegmentPlanes" begin
     p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
 
     # intersecting segment and plane
