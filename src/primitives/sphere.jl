@@ -54,8 +54,8 @@ function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
   r⃗ = ((v3 ⋅ v3) * (v1 × v2) +
         (v2 ⋅ v2) * (v3 × v1) +
         (v1 ⋅ v1) * (v2 × v3)) / 12vol
-  radius = norm(r⃗)
   center = p4 + r⃗
+  radius = norm(r⃗)
   Sphere(center, radius)
 end
 
