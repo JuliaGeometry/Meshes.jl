@@ -270,6 +270,16 @@
     s = Sphere(P2(0,0), P2(1,0), P2(1,1))
     @test Meshes.center(s) == P2(0.5, 0.5)
     @test radius(s) == T(0.7071067811865476)
+
+    # 3D sphere passing through 4 points
+    s = Sphere(P3(0,0,0), P3(5,0,1), P3(1,1,1), P3(3,2,1))
+    @test P3(0,0,0) ∈ s
+    @test P3(5,0,1) ∈ s
+    @test P3(1,1,1) ∈ s
+    @test P3(3,2,1) ∈ s
+    O = Meshes.center(s)
+    r = radius(s)
+    @test isapprox(r, norm(P3(0,0,0) - O))    
   end
 
   @testset "Cylinder" begin
