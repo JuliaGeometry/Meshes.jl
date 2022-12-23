@@ -332,12 +332,14 @@ export
   TouchingRayBox,
   IntersectingSegmentTriangle,
   IntersectingRayTriangle,
-  CrossingSegmentPlane,
-  TouchingSegmentPlane,
-  OverlappingSegmentPlane,
+  CrossingLinePlane,
+  OverlappingLinePlane,
   CrossingRayPlane,
   TouchingRayPlane,
   OverlappingRayPlane,
+  CrossingSegmentPlane,
+  TouchingSegmentPlane,
+  OverlappingSegmentPlane,
   NoIntersection,
 
   # intersections

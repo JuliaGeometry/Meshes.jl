@@ -95,15 +95,19 @@ Type `IntersectionType` in a Julia session to see the full list.
   # ray-triangle intersection
   IntersectingRayTriangle
 
-  # segment-plane intersection
-  CrossingSegmentPlane
-  TouchingSegmentPlane
-  OverlappingSegmentPlane
+  # line-plane intersection
+  CrossingLinePlane
+  OverlappingLinePlane
 
   # ray-plane intersection
   CrossingRayPlane
   TouchingRayPlane
   OverlappingRayPlane
+
+  # segment-plane intersection
+  CrossingSegmentPlane
+  TouchingSegmentPlane
+  OverlappingSegmentPlane
 end
 
 """
