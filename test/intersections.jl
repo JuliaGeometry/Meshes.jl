@@ -800,8 +800,8 @@
 
     # line below plane, non-intersecting
     l = Line(P3(0, 0, 0), P3(0, -2, -2))
-    @test intersection(l, p) |> type == NoIntersection
-    @test isnothing(l ∩ p)
+    @test intersection(l, p) |> type == CrossingLinePlane
+    @test l ∩ p == P3(0, 1, 1)
 
     # line parallel to plane, offset, non-intersecting
     l = Line(P3(0, 0, -1), P3(0, -2, -1))
