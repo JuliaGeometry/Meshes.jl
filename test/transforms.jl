@@ -43,6 +43,11 @@
   end
 
   @testset "ScaleCoords" begin
+    # test constructors
+    trans1 = ScaleCoords(T[1,2,3])
+    trans2 = ScaleCoords(T(1), T(2), T(3))
+    @test trans1 == trans2
+    
     # a scaling doesn't change the topology
     trans = ScaleCoords(T(1), T(2), T(3))
     @test TB.isrevertible(trans)
