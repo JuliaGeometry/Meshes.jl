@@ -413,6 +413,12 @@
     @test n[2] != e[2]
     @test n[3] != e[3]
     @test n[4] != e[4]
+
+    # more challenging case with incosistent orientation
+    e = connect.([(4,1,5), (2,6,4), (3,5,6), (4,5,6)])
+    t = HalfEdgeTopology(e)
+    n = collect(elements(t))
+    @test n == connect.([(5,4,1), (6,2,4), (6,5,3), (4,5,6)])
   end
 
   @testset "SimpleTopology" begin
