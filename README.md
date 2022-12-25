@@ -1,7 +1,7 @@
 <p align="center">
   <img src="docs/src/assets/logo-text.svg" height="200"><br>
   <a href="https://github.com/JuliaGeometry/Meshes.jl/actions">
-    <img src="https://img.shields.io/github/workflow/status/JuliaGeometry/Meshes.jl/CI?style=flat-square">
+    <img src="https://img.shields.io/github/actions/workflow/status/JuliaGeometry/Meshes.jl/CI.yml?branch=master&style=flat-square">
   </a>
   <a href="https://codecov.io/gh/JuliaGeometry/Meshes.jl">
     <img src="https://img.shields.io/codecov/c/github/JuliaGeometry/Meshes.jl?style=flat-square">
