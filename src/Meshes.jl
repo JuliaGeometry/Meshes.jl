@@ -379,10 +379,11 @@ export
   GeometricTransform,
   StatelessGeometricTransform,
   StdCoords,
+  ScaleCoords,
+  RotateCoords,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
-  RotateCoords,
 
   # tolerances
   atol
