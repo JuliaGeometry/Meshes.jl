@@ -92,6 +92,9 @@ include("hulls.jl")
 # transforms
 include("transforms.jl")
 
+# cleaning
+include("cleaning.jl")
+
 export
   # points
   Point,
@@ -385,6 +388,9 @@ export
   RotateCoords,
 
   # tolerances
-  atol
+  atol,
+
+  # cleaning
+  clean
 
 end # module

@@ -98,7 +98,8 @@ testfiles = [
   "boundingboxes.jl",
   "hulls.jl",
   "transforms.jl",
-  "utils.jl"
+  "utils.jl",
+  "cleaning.jl"
 ]
 
 # --------------------------------
