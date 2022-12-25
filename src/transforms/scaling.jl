@@ -11,6 +11,7 @@ Transform geometry or mesh by scaling coordinates
 """
 struct ScaleCoords{T} <: GeometricTransform
   factors::Vector{T}
+  
   function ScaleCoords{T}(factors) where {T}
     if any(≤(0), factors)
       throw(ArgumentError("Scaling factors must be positive."))
