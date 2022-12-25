@@ -124,23 +124,28 @@ end
 function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge topology"
 
+  # sort elements to make sure that they
+  # are traversed in adjacent-first order
+  adjelems = adjsort(elems)
+  eleminds = indexin(adjelems, elems)
+
   # start assuming that all elements are
   # oriented consistently as CCW
-  CCW = trues(length(elems))
+  CCW = trues(length(adjelems))
 
   # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
-  elem = first(elems)
+  elem = first(adjelems)
   inds = collect(indices(elem))
   v = CircularVector(inds)
   n = length(v)
   for i in 1:n
-    half4pair[(v[i], v[i+1])] = HalfEdge(v[i], 1)
+    half4pair[(v[i], v[i+1])] = HalfEdge(v[i], eleminds[1])
   end
 
   # insert all other elements
-  for e in 2:length(elems)
-    elem = elems[e]
+  for e in 2:length(adjelems)
+    elem = adjelems[e]
     inds = collect(indices(elem))
     v = CircularVector(inds)
     n = length(v)
@@ -157,20 +162,20 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
         break
       else
         # insert pair in consistent orientation
-        half4pair[(v[i], v[i+1])] = HalfEdge(v[i], e)
+        half4pair[(v[i], v[i+1])] = HalfEdge(v[i], eleminds[e])
       end
     end
 
     if !CCW[e]
       # reinsert pairs in CCW orientation
       for i in 1:n
-        half4pair[(v[i+1], v[i])] = HalfEdge(v[i+1], e)
+        half4pair[(v[i+1], v[i])] = HalfEdge(v[i+1], eleminds[e])
       end
     end
   end
 
   # add missing pointers
-  for (e, elem) in Iterators.enumerate(elems)
+  for (e, elem) in Iterators.enumerate(adjelems)
     inds = CCW[e] ? indices(elem) : reverse(indices(elem))
     v = CircularVector(collect(inds))
     n = length(v)
@@ -203,6 +208,40 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   end
 
   HalfEdgeTopology(halves)
+end
+
+function adjsort(elems::AbstractVector{<:Connectivity})
+  # initialize list of adjacent elements
+  # with first element from original list
+  list = indices.(elems)
+  adjs = Tuple[popat!(list, 1)]
+
+  # the loop will terminate if the mesh
+  # is manifold, and that is always true
+  # with half-edge topology
+  while !isempty(list)
+    # lookup all elements that share at least
+    # one vertex with the last adjacent element
+    vinds = last(adjs)
+    for i in vinds
+      einds = findall(e -> i ∈ e, list)
+      if isempty(einds)
+        # we are done with this connected component
+        # pop a new element from the original list
+        isempty(list) || push!(adjs, popat!(list, 1))
+      else
+        # lookup all elements that share at
+        # least two vertices (i.e. edge)
+        for j in sort(einds, rev=true)
+          if length(vinds ∩ list[j]) > 1
+            push!(adjs, popat!(list, j))
+          end
+        end
+      end
+    end
+  end
+
+  connect.(adjs)
 end
 
 paramdim(::HalfEdgeTopology) = 2
