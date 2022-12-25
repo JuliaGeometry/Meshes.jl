@@ -6,7 +6,8 @@
     ScaleCoords([s1, s2, ...])
     ScaleCoords(s1, s2, ...)
 
-Transform geometry or mesh by scaling coordinates `(x1, x2, ...) ↦ (s1*x1, s2*x2, ...)`. 
+Transform geometry or mesh by scaling coordinates
+`(x1, x2, ...) ↦ (s1*x1, s2*x2, ...)`. 
 """
 struct ScaleCoords{T} <: GeometricTransform
   factors::Vector{T}
