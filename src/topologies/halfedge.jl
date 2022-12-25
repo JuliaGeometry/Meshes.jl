@@ -220,9 +220,9 @@ function adjsort(elems::AbstractVector{<:Connectivity})
   # is manifold, and that is always true
   # with half-edge topology
   while !isempty(list)
-    found = false
     # lookup all elements that share at least
     # one vertex with the last adjacent element
+    found = false
     vinds = last(adjs)
     for i in vinds
       einds = findall(e -> i ∈ e, list)
