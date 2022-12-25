@@ -214,22 +214,20 @@ function adjsort(elems::AbstractVector{<:Connectivity})
   # initialize list of adjacent elements
   # with first element from original list
   list = indices.(elems)
-  adjs = Tuple[popat!(list, 1)]
+  adjs = Tuple[popfirst!(list)]
 
   # the loop will terminate if the mesh
   # is manifold, and that is always true
   # with half-edge topology
   while !isempty(list)
+    found = false
     # lookup all elements that share at least
     # one vertex with the last adjacent element
     vinds = last(adjs)
     for i in vinds
       einds = findall(e -> i ∈ e, list)
-      if isempty(einds)
-        # we are done with this connected component
-        # pop a new element from the original list
-        isempty(list) || push!(adjs, popat!(list, 1))
-      else
+      if !isempty(einds)
+        found = true
         # lookup all elements that share at
         # least two vertices (i.e. edge)
         for j in sort(einds, rev=true)
@@ -238,6 +236,12 @@ function adjsort(elems::AbstractVector{<:Connectivity})
           end
         end
       end
+    end
+
+    if !found && !isempty(list)
+      # we are done with this connected component
+      # pop a new element from the original list
+      push!(adjs, popfirst!(list))
     end
   end
 
