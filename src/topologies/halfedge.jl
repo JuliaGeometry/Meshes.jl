@@ -227,11 +227,11 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     for i in vinds
       einds = findall(e -> i ∈ e, list)
       if !isempty(einds)
-        found = true
         # lookup all elements that share at
         # least two vertices (i.e. edge)
         for j in sort(einds, rev=true)
           if length(vinds ∩ list[j]) > 1
+            found = true
             push!(adjs, popat!(list, j))
           end
         end
