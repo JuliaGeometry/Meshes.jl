@@ -8,10 +8,10 @@
 Transform geometry or mesh by scaling coordinates
 `(x1, x2, ...) ↦ (s1*x1, s2*x2, ...)`. 
 """
-struct ScaleCoords{T} <: StatelessGeometricTransform
-  factors::Vector{T}
+struct ScaleCoords{Dim,T} <: StatelessGeometricTransform
+  factors::NTuple{Dim,T}
   
-  function ScaleCoords{T}(factors) where {T}
+  function ScaleCoords{Dim,T}(factors) where {Dim,T}
     if any(≤(0), factors)
       throw(ArgumentError("Scaling factors must be positive."))
     end
@@ -19,11 +19,10 @@ struct ScaleCoords{T} <: StatelessGeometricTransform
   end
 end
 
-ScaleCoords(factors::AbstractVector) =
-  ScaleCoords{eltype(factors)}(factors)
+ScaleCoords(factors::NTuple{Dim,T}) where {Dim,T} =
+  ScaleCoords{Dim,T}(factors)
 
-ScaleCoords(factors...) =
-  ScaleCoords(collect(factors))
+ScaleCoords(factors...) = ScaleCoords(factors)
 
 isrevertible(::Type{<:ScaleCoords}) = true
 
