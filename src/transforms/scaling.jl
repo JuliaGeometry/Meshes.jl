@@ -19,7 +19,11 @@ struct ScaleCoords{T} <: GeometricTransform
   end
 end
 
-ScaleCoords(factors...) = ScaleCoords{eltype(factors)}(collect(factors))
+ScaleCoords(factors::AbstractVector) =
+  ScaleCoords{eltype(factors)}(factors)
+
+ScaleCoords(factors...) =
+  ScaleCoords(collect(factors))
 
 isrevertible(::Type{<:ScaleCoords}) = true
 
