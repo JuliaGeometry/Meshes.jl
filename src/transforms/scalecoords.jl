@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    ScaleCoords(s1, s2, ...)
+    ScaleCoords(s₁, s₂, ...)
 
-Transform geometry or mesh by scaling coordinates
-`(x1, x2, ...) ↦ (s1*x1, s2*x2, ...)`. 
+Scale coordinates of geometry or mesh by
+given factors `s₁, s₂, ...`.
 """
 struct ScaleCoords{Dim,T} <: StatelessGeometricTransform
   factors::NTuple{Dim,T}
