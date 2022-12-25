@@ -96,4 +96,5 @@ reapply(transform::StatelessGeometricTransform, object, cache) =
 include("transforms/stdcoords.jl")
 include("transforms/scalecoords.jl")
 include("transforms/rotatecoords.jl")
+include("transforms/translatecoords.jl")
 include("transforms/smoothing.jl")

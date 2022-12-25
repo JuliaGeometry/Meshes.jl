@@ -381,6 +381,7 @@ export
   StdCoords,
   ScaleCoords,
   RotateCoords,
+  TranslateCoords,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
