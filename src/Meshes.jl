@@ -365,6 +365,7 @@ export
   TriRefinement,
   QuadRefinement,
   CatmullClark,
+  PTQ,
   refine,
 
   # bounding boxes
