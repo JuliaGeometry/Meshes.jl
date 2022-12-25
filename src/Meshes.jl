@@ -391,6 +391,7 @@ export
   atol,
 
   # cleaning
-  clean
+  clean,
+  gather
 
 end # module
