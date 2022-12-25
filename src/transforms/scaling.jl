@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------
 
 """
-    ScaleCoords([s1, s2, ...])
     ScaleCoords(s1, s2, ...)
 
 Transform geometry or mesh by scaling coordinates
