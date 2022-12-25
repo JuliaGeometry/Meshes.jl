@@ -13,7 +13,7 @@ Rotate geometry or mesh with rotation `rot` from ReferenceFrameRotations.jl.
 RotateCoords(EulerAngleAxis(pi/4, [1, 0, 0]))
 ```
 """
-struct RotateCoords{R} <: GeometricTransform
+struct RotateCoords{R} <: StatelessGeometricTransform
   rot::R
 end
 
@@ -33,9 +33,4 @@ end
 function revertpoint(::RotateCoords, newpoints, cache)
   _, R⁻¹ = cache
   [Point(R⁻¹ * coordinates(p)) for p in newpoints]
-end
-
-function reapplypoint(::RotateCoords, points, cache)
-  R, _ = cache
-  [Point(R * coordinates(p)) for p in points]
 end

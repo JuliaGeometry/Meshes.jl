@@ -8,7 +8,7 @@
 Transform geometry or mesh by scaling coordinates
 `(x1, x2, ...) ↦ (s1*x1, s2*x2, ...)`. 
 """
-struct ScaleCoords{T} <: GeometricTransform
+struct ScaleCoords{T} <: StatelessGeometricTransform
   factors::Vector{T}
   
   function ScaleCoords{T}(factors) where {T}
@@ -38,9 +38,4 @@ end
 function revertpoint(::ScaleCoords, newpoints, cache)
   s = cache
   [Point((1 ./ s) .* coordinates(p)) for p in newpoints]
-end
-
-function reapplypoint(::ScaleCoords, points, cache)
-  s = cache
-  [Point(s .* coordinates(p)) for p in points]
 end
