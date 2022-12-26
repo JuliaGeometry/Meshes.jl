@@ -13,7 +13,7 @@
     # triangle in the plane z=0
     tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     # rotate to the plane x=0
-    rtri = tri |> Rotate((0, 0, 1), (1, 0, 0))
+    rtri = tri |> Rotate(V3(0, 0, 1), V3(1, 0, 0))
     # check that the rotated triangle is in the x=0 plane
     rpts = coordinates.(vertices(rtri))
     @test isapprox(rpts[1][1], 0; atol = atol(T))

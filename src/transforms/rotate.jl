@@ -31,9 +31,9 @@ vector `u` to the plane passing through the origin with normal vector `v`.
 Rotate((1, 0, 0), (1, 1, 1))
 ```
 """
-function Rotate(u::Tuple, v::Tuple)
-  u⃗ = normalize(Vec(u))
-  v⃗ = normalize(Vec(v))
+function Rotate(u::Vec, v::Vec)
+  u⃗ = normalize(u)
+  v⃗ = normalize(v)
   re = √((1 + u⃗ ⋅ v⃗)/2)
   im = (u⃗ × v⃗) / 2re
   Rotate(Quaternion(re, im...))
