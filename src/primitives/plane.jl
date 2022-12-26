@@ -30,6 +30,15 @@ Plane(p::Tuple, u::Tuple, v::Tuple) = Plane(Point(p), Vec(u), Vec(v))
 
 Plane(p::Tuple, n::Tuple) = Plane(Point(p), Vec(n))
 
+function Plane(p1::Point{3,T1}, p2::Point{3,T2}, p3::Point{3,T3}) where {T1,T2,T3}
+  T = promote_type(T1, T2, T3)
+  n⃗ = Vec{3,T}((p2 - p1) × (p3 - p1))
+  if isapprox(norm(n⃗), zero(T); atol = atol(T))
+    throw(ArgumentError("The three points are colinear."))
+  end
+  Plane(convert(Point{3,T}, p1), n⃗)
+end
+
 paramdim(::Type{<:Plane}) = 2
 
 isconvex(::Type{<:Plane}) = true
@@ -61,3 +70,10 @@ normal(p::Plane) = normalize(p.u × p.v)
 ==(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
   isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
+
+function Base.in(pt::Point, pl::Plane)
+  dotprod = normal(pl) ⋅ (pt - origin(pl))
+  T = typeof(dotprod)
+  isapprox(dotprod, zero(T); atol=atol(T))
+end
+  

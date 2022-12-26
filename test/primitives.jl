@@ -82,6 +82,15 @@
     p = Plane(P3(0,0,0), V3(2,0,0), V3(0,3,0))
     n = normal(p)
     @test isapprox(norm(n), T(1), atol=atol(T))
+
+    # plane passing through three points
+    p₁ = P3(0,0,0)
+    p₂ = P3(1,2,3)
+    p₃ = P3(3,2,1)
+    p = Plane(p₁, p₂, p₃)
+    @test p₁ ∈ p
+    @test p₂ ∈ p
+    @test p₃ ∈ p
   end
 
   @testset "BezierCurve" begin
