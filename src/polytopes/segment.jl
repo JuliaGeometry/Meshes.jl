@@ -37,6 +37,8 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
+center(s::Segment) = s(0.5)
+
 function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   # given collinear points (a, b, p), the point p intersects
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²

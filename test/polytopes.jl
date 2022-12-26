@@ -44,6 +44,7 @@
     s = Segment(P3(0,0,0), P3(1,1,1))
     @test boundary(s) == PointSet([P3(0,0,0), P3(1,1,1)])
     @test perimeter(s) == zero(T)
+    @test center(s) == Point(0.5, 0.5, 0.5)
   end
 
   @testset "N-gons" begin
