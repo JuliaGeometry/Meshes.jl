@@ -25,16 +25,49 @@ StatelessGeometricTransform
 Rotate
 ```
 
+```@example transforms
+grid = CartesianGrid(10, 10)
+
+mesh = grid |> Rotate(ClockwiseAngle(π/4))
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
+```
+
 ## Translate
 
 ```@docs
 Translate
 ```
 
+```@example transforms
+grid = CartesianGrid(10, 10)
+
+mesh = grid |> Translate(10., 20.)
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
+```
+
 ## Stretch
 
 ```@docs
 Stretch
+```
+
+```@example transforms
+grid = CartesianGrid(10, 10)
+
+mesh = grid |> Stretch(2., 3.)
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
 ```
 
 ## StdCoords
