@@ -90,7 +90,7 @@
       viz(fig[1,1], ref1, showfacets=true)
       viz(fig[1,2], ref2, showfacets=true)
       viz(fig[1,3], ref3, showfacets=true)
-      @test_reference "data/ptqrefine-$T.png" fig
+      @test_reference "data/triquadrefine-$T.png" fig
     end
   end
 end
