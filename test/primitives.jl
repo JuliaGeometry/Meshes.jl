@@ -82,15 +82,6 @@
     p = Plane(P3(0,0,0), V3(2,0,0), V3(0,3,0))
     n = normal(p)
     @test isapprox(norm(n), T(1), atol=atol(T))
-
-    # plane passing through three points
-    p₁ = P3(0,0,0)
-    p₂ = P3(1,2,3)
-    p₃ = P3(3,2,1)
-    p = Plane(p₁, p₂, p₃)
-    @test p₁ ∈ p
-    @test p₂ ∈ p
-    @test p₃ ∈ p
   end
 
   @testset "BezierCurve" begin
@@ -352,5 +343,14 @@
     @test coordtype(c) == Float32
     c = CylinderSurface(1)
     @test coordtype(c) == Float64
+  end
+
+  @testset "Torus" begin
+    # check the `in` function
+    t = Torus(T.((1,1,1)), T.((1,0,0)), 2, 1)
+    @test P3(1,1,-1) ∈ t
+    @test P3(1,1,1) ∉ t
+    # torus passing through three points
+    
   end
 end
