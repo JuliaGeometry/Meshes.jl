@@ -70,8 +70,6 @@ normal(p::Plane) = normalize(p.u × p.v)
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
   isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
 
-function Base.in(pt::Point{3,T}, pl::Plane{T}) where {T}
-  d = normal(pl) ⋅ (pt - origin(pl))
-  isapprox(d, zero(T), atol = atol(T))
-end
+Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} =
+  isapprox(normal(pl) ⋅ (pt - origin(pl)), zero(T), atol = atol(T))
   
