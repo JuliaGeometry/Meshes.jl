@@ -17,11 +17,7 @@ then subdividing each triangle into four triangles.
 struct TriQuadrisection <: RefinementMethod end
 
 function refine(mesh, ::TriQuadrisection)
-  if !(eltype(mesh) <: Triangle)
-    tmesh = simplexify(mesh)
-  else
-    tmesh = mesh
-  end
+  tmesh = eltype(mesh) <: Triangle ? mesh : simplexify(mesh)
 
   # retrieve vertices
   points = vertices(tmesh)
@@ -31,16 +27,15 @@ function refine(mesh, ::TriQuadrisection)
   t = convert(HalfEdgeTopology, topology(tmesh))
   ntriangles = nelements(t)
 
-  # add middle points of edges
-  middles = Dict{Tuple{Int,Int},Int}()
+  # add midpoints of edges
+  midpoints = Dict{Tuple{Int,Int},Int}()
   ∂₁₀ = Boundary{1,0}(t)
   for eind in 1:nfacets(t)
-    e1, e2 = ∂₁₀(eind)
-    p1, p2 = points[e1], points[e2]
-    midpoint = Point((coordinates(p1) + coordinates(p2))/2)
+    i, j = sort(∂₁₀(eind))
+    midpoint = Segment(points[i], points[j])(0.5)
     push!(points, midpoint)
     npoints = npoints + 1
-    middles[_ordered_pair(e1, e2)] = npoints
+    midpoints[(i, j)] = npoints
   end
 
   # construct subtriangles of faces
@@ -48,9 +43,9 @@ function refine(mesh, ::TriQuadrisection)
   triangles = Vector{Tuple{Int,Int,Int}}(undef, 4 * ntriangles)
   for tind in 1:ntriangles
     v1, v2, v3 = ∂₂₀(tind)
-    m12 = middles[_ordered_pair(v1, v2)]
-    m23 = middles[_ordered_pair(v2, v3)]
-    m31 = middles[_ordered_pair(v3, v1)]
+    m12 = midpoints[_ordered_pair(v1, v2)]
+    m23 = midpoints[_ordered_pair(v2, v3)]
+    m31 = midpoints[_ordered_pair(v3, v1)]
     k = 4 * (tind - 1)
     triangles[k + 1] = (v1, m12, m31)
     triangles[k + 2] = (v2, m23, m12)
