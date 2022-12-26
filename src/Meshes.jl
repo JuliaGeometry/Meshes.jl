@@ -141,11 +141,11 @@ export
 
   # primitives
   Primitive,
-  Line, Ray, Plane, BezierCurve,
+  Line, Ray, Plane, BezierCurve, Cone, 
   Box, Ball, Sphere, Cylinder, CylinderSurface,
   ncontrols, degree, Horner, DeCasteljau,
   radius, bottom, top, axis, isright, sides,
-  measure, diagonal, origin, direction,
+  measure, diagonal, origin, direction, 
 
   # polytopes
   Polytope, Polygon, Polyhedron,
