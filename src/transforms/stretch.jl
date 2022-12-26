@@ -3,15 +3,21 @@
 # ------------------------------------------------------------------
 
 """
-    ScaleCoords(s₁, s₂, ...)
+    Stretch(s₁, s₂, ...)
 
 Scale coordinates of geometry or mesh by
 given factors `s₁, s₂, ...`.
+
+## Examples
+
+```julia
+Stretch(1.0, 2.0, 3.0)
+```
 """
-struct ScaleCoords{Dim,T} <: StatelessGeometricTransform
+struct Stretch{Dim,T} <: StatelessGeometricTransform
   factors::NTuple{Dim,T}
   
-  function ScaleCoords{Dim,T}(factors) where {Dim,T}
+  function Stretch{Dim,T}(factors) where {Dim,T}
     if any(≤(0), factors)
       throw(ArgumentError("Scaling factors must be positive."))
     end
@@ -19,22 +25,22 @@ struct ScaleCoords{Dim,T} <: StatelessGeometricTransform
   end
 end
 
-ScaleCoords(factors::NTuple{Dim,T}) where {Dim,T} =
-  ScaleCoords{Dim,T}(factors)
+Stretch(factors::NTuple{Dim,T}) where {Dim,T} =
+  Stretch{Dim,T}(factors)
 
-ScaleCoords(factors...) = ScaleCoords(factors)
+Stretch(factors...) = Stretch(factors)
 
-isrevertible(::Type{<:ScaleCoords}) = true
+isrevertible(::Type{<:Stretch}) = true
 
-preprocess(transform::ScaleCoords, object) = transform.factors
+preprocess(transform::Stretch, object) = transform.factors
 
-function applypoint(::ScaleCoords, points, prep)
+function applypoint(::Stretch, points, prep)
   s = prep
   newpoints = [Point(s .* coordinates(p)) for p in points]
   newpoints, prep
 end
 
-function revertpoint(::ScaleCoords, newpoints, cache)
+function revertpoint(::Stretch, newpoints, cache)
   s = cache
   [Point((1 ./ s) .* coordinates(p)) for p in newpoints]
 end

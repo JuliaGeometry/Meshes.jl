@@ -1,4 +1,34 @@
 @testset "Transforms" begin
+  @testset "Rotate" begin
+    # check rotation on a triangle
+    tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    rtri = tri |> Rotate(EulerAngleAxis(T(pi/2), T[0, 0, 1]))
+    rpts = vertices(rtri)
+    @test rpts[1] == P3(0, 0, 0)
+    @test rpts[2] == P3(0, 1, 0)
+    @test rpts[3] == P3(-1, 0, 0)
+  end
+
+  @testset "Translate" begin
+    # check translation on a triangle
+    tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    ttri = tri |> Translate(T(1), T(2), T(3))
+    tpts = vertices(ttri)
+    @test tpts[1] == P3(1, 2, 3)
+    @test tpts[2] == P3(2, 2, 3)
+    @test tpts[3] == P3(1, 3, 4)
+  end
+
+  @testset "Stretch" begin
+    # check scaling on a triangle
+    tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    stri = tri |> Stretch(T(1), T(2), T(3))
+    spts = vertices(stri)
+    @test spts[1] == P3(0, 0, 0)
+    @test spts[2] == P3(1, 0, 0)
+    @test spts[3] == P3(0, 2, 3)
+  end
+  
   @testset "StdCoords" begin
     trans = StdCoords()
     @test TB.isrevertible(trans)
@@ -22,36 +52,6 @@
     @test vnew == vnew2
   end
   
-  @testset "ScaleCoords" begin
-    # check scaling on a triangle
-    tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
-    stri = tri |> ScaleCoords(T(1), T(2), T(3))
-    spts = vertices(stri)
-    @test spts[1] == P3(0, 0, 0)
-    @test spts[2] == P3(1, 0, 0)
-    @test spts[3] == P3(0, 2, 3)
-  end
-  
-  @testset "RotateCoords" begin
-    # check rotation on a triangle
-    tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    rtri = tri |> RotateCoords(EulerAngleAxis(T(pi/2), T[0, 0, 1]))
-    rpts = vertices(rtri)
-    @test rpts[1] == P3(0, 0, 0)
-    @test rpts[2] == P3(0, 1, 0)
-    @test rpts[3] == P3(-1, 0, 0)
-  end
-
-  @testset "TranslateCoords" begin
-    # check translation on a triangle
-    tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
-    ttri = tri |> TranslateCoords(T(1), T(2), T(3))
-    tpts = vertices(ttri)
-    @test tpts[1] == P3(1, 2, 3)
-    @test tpts[2] == P3(2, 2, 3)
-    @test tpts[3] == P3(1, 3, 4)
-  end
-
   @testset "Smoothing" begin
     # smoothing doesn't change the topology
     trans = LaplaceSmoothing(30)

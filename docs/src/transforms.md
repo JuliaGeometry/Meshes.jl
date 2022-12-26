@@ -19,6 +19,24 @@ GeometricTransform
 StatelessGeometricTransform
 ```
 
+## Rotate
+
+```@docs
+Rotate
+```
+
+## Translate
+
+```@docs
+Translate
+```
+
+## Stretch
+
+```@docs
+Stretch
+```
+
 ## StdCoords
 
 ```@docs

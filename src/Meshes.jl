@@ -378,10 +378,10 @@ export
   # transforms
   GeometricTransform,
   StatelessGeometricTransform,
+  Rotate,
+  Translate,
+  Stretch,
   StdCoords,
-  ScaleCoords,
-  RotateCoords,
-  TranslateCoords,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
