@@ -344,4 +344,10 @@
     c = CylinderSurface(1)
     @test coordtype(c) == Float64
   end
+
+  @testset "Torus" begin
+    t = Torus(T.((1,1,1)), T.((1,0,0)), 2, 1)
+    @test P3(1,1,-1) ∈ t
+    @test P3(1,1,1) ∉ t
+  end
 end
