@@ -28,7 +28,7 @@ vector `u` to the plane passing through the origin with normal vector `v`.
 ## Examples
 
 ```julia
-Rotate((1, 0, 0), (1, 1, 1))
+Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 ```
 """
 function Rotate(u::Vec, v::Vec)
