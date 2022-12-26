@@ -7,9 +7,7 @@
     @test rpts[1] == P3(0, 0, 0)
     @test rpts[2] == P3(0, 1, 0)
     @test rpts[3] == P3(-1, 0, 0)
-  end
-
-  @testset "Rotate between two planes" begin
+    
     # triangle in the plane z=0
     tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     # rotate to the plane x=0
