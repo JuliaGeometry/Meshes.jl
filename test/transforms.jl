@@ -14,9 +14,9 @@
     rtri = tri |> Rotate(V3(0, 0, 1), V3(1, 0, 0))
     # check that the rotated triangle is in the x=0 plane
     rpts = coordinates.(vertices(rtri))
-    @test isapprox(rpts[1][1], 0; atol = atol(T))
-    @test isapprox(rpts[2][1], 0; atol = atol(T))
-    @test isapprox(rpts[3][1], 0; atol = atol(T))
+    @test isapprox(rpts[1][1], zero(T); atol = atol(T))
+    @test isapprox(rpts[2][1], zero(T); atol = atol(T))
+    @test isapprox(rpts[3][1], zero(T); atol = atol(T))
   end
 
   @testset "Translate" begin
