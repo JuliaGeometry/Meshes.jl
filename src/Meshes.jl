@@ -17,6 +17,7 @@ using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using ReferenceFrameRotations: EulerAngles, DCM
 using NearestNeighbors: KDTree, BallTree, knn, inrange
+using Graphs: SimpleGraph, add_edge!
 
 import Tables
 import Random
@@ -24,6 +25,7 @@ import Base: values, ==, +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
+import Graphs: connected_components
 
 # Transforms API
 import TransformsBase: Transform
@@ -91,6 +93,9 @@ include("hulls.jl")
 
 # transforms
 include("transforms.jl")
+
+# connected_components
+include("connected_components.jl")
 
 export
   # points
@@ -385,6 +390,9 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+
+  # connected components
+  connected_components,
 
   # tolerances
   atol
