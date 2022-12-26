@@ -18,6 +18,28 @@ struct Rotate{R} <: StatelessGeometricTransform
   rot::R
 end
 
+"""
+  Rotate(u, v)
+
+Rotation mapping the axis directed by `u` to the axis directed by `v`. 
+More precisely, it maps the plane passing through the origin with normal 
+vector `u` to the plane passing through the origin with normal vector `v`.
+
+## Examples
+
+```julia
+Rotate((1, 0, 0), (1, 1, 1))
+```
+"""
+function Rotate(u::Tuple, v::Tuple)
+  u⃗ = normalize(Vec(u))
+  v⃗ = normalize(Vec(v))
+  realpart = √((1 + u⃗ ⋅ v⃗)/2)
+  imagpart = (u⃗ × v⃗) / 2realpart
+  q = Quaternion(realpart, imagpart...)
+  Rotate(q)
+end
+
 isrevertible(::Type{<:Rotate}) = true
 
 function preprocess(transform::Rotate, object)
