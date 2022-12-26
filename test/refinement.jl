@@ -77,13 +77,13 @@
     end
   end
 
-  @testset "PTQ" begin
+  @testset "TriQuadrisection" begin
     points = P3[(-1,-1,-1),(1,1,-1),(1,-1,1),(-1,1,1)]
     connec = connect.([(1,2,3),(3,2,4),(4,2,1),(1,3,4)])
     mesh   = SimpleMesh(points, connec)
-    ref1   = refine(mesh, PTQ())
-    ref2   = refine(ref1, PTQ())
-    ref3   = refine(ref2, PTQ())
+    ref1   = refine(mesh, TriQuadrisection())
+    ref2   = refine(ref1, TriQuadrisection())
+    ref3   = refine(ref2, TriQuadrisection())
 
     if visualtests
       fig = Mke.Figure(resolution=(900, 300))
