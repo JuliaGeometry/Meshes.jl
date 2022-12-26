@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    TriQuadrisection()
+  LoopSubdivision()
 
 Refinement of a mesh by preliminarly triangulating it if needed and
 then subdividing each triangle into four triangles.
@@ -14,9 +14,9 @@ then subdividing each triangle into four triangles.
   triangles](https://charlesloop.com/thesis.pdf). 
   Master's thesis, University of Utah.
 """
-struct TriQuadrisection <: RefinementMethod end
+struct LoopSubdivision <: RefinementMethod end
 
-function refine(mesh, ::TriQuadrisection)
+function refine(mesh, ::LoopSubdivision)
   tmesh = eltype(mesh) <: Triangle ? mesh : simplexify(mesh)
 
   # retrieve vertices

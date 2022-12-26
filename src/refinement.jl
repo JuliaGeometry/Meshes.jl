@@ -23,4 +23,4 @@ function refine end
 include("refinement/tri.jl")
 include("refinement/quad.jl")
 include("refinement/catmullclark.jl")
-include("refinement/triquadrisection.jl")
+include("refinement/loopsubdivision.jl")

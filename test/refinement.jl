@@ -77,20 +77,20 @@
     end
   end
 
-  @testset "TriQuadrisection" begin
+  @testset "LoopSubdivision" begin
     points = P3[(-1,-1,-1),(1,1,-1),(1,-1,1),(-1,1,1)]
     connec = connect.([(1,2,3),(3,2,4),(4,2,1),(1,3,4)])
     mesh   = SimpleMesh(points, connec)
-    ref1   = refine(mesh, TriQuadrisection())
-    ref2   = refine(ref1, TriQuadrisection())
-    ref3   = refine(ref2, TriQuadrisection())
+    ref1   = refine(mesh, LoopSubdivision())
+    ref2   = refine(ref1, LoopSubdivision())
+    ref3   = refine(ref2, LoopSubdivision())
 
     if visualtests
       fig = Mke.Figure(resolution=(900, 300))
       viz(fig[1,1], ref1, showfacets=true)
       viz(fig[1,2], ref2, showfacets=true)
       viz(fig[1,3], ref3, showfacets=true)
-      @test_reference "data/triquadrefine-$T.png" fig
+      @test_reference "data/loopsubdivision-$T.png" fig
     end
   end
 end
