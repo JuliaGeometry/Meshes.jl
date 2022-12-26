@@ -72,4 +72,3 @@ normal(p::Plane) = normalize(p.u × p.v)
 
 Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} =
   isapprox(normal(pl) ⋅ (pt - origin(pl)), zero(T), atol = atol(T))
-  
