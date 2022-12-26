@@ -2,7 +2,7 @@
 
 *Computational geometry and meshing algorithms in Julia.*
 
-[![Build Status](https://img.shields.io/github/workflow/status/JuliaGeometry/Meshes.jl/CI?style=flat-square)](https://github.com/JuliaGeometry/Meshes.jl/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/JuliaGeometry/Meshes.jl/CI.yml?branch=master&style=flat-square)](https://github.com/JuliaGeometry/Meshes.jl/actions)
 [![Coverage Status](https://img.shields.io/codecov/c/github/JuliaGeometry/Meshes.jl?style=flat-square)](https://codecov.io/gh/JuliaGeometry/Meshes.jl)
 [![Stable Documentation](https://img.shields.io/badge/docs-stable-blue?style=flat-square)](https://JuliaGeometry.github.io/Meshes.jl/stable)
 [![Latest Documentation](https://img.shields.io/badge/docs-latest-blue?style=flat-square)](https://JuliaGeometry.github.io/Meshes.jl/dev)
