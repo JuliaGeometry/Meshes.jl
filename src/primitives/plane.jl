@@ -30,13 +30,13 @@ Plane(p::Tuple, u::Tuple, v::Tuple) = Plane(Point(p), Vec(u), Vec(v))
 
 Plane(p::Tuple, n::Tuple) = Plane(Point(p), Vec(n))
 
-function Plane(p1::Point{3,T1}, p2::Point{3,T2}, p3::Point{3,T3}) where {T1,T2,T3}
-  T = promote_type(T1, T2, T3)
-  n⃗ = Vec{3,T}((p2 - p1) × (p3 - p1))
-  if isapprox(area(Triangle(p1, p2, p3)), zero(T), atol = atol(T))
+function Plane(p1::Point{3,T}, p2::Point{3,T}, p3::Point{3,T}) where {T}
+  t = Triangle(p1, p2, p3)
+  n = normal(t)
+  if isapprox(area(t), zero(T), atol = atol(T))
     throw(ArgumentError("The three points are colinear."))
   end
-  Plane(convert(Point{3,T}, p1), n⃗)
+  Plane(p1, n)
 end
 
 paramdim(::Type{<:Plane}) = 2
