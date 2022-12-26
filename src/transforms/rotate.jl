@@ -34,10 +34,9 @@ Rotate((1, 0, 0), (1, 1, 1))
 function Rotate(u::Tuple, v::Tuple)
   u⃗ = normalize(Vec(u))
   v⃗ = normalize(Vec(v))
-  realpart = √((1 + u⃗ ⋅ v⃗)/2)
-  imagpart = (u⃗ × v⃗) / 2realpart
-  q = Quaternion(realpart, imagpart...)
-  Rotate(q)
+  re = √((1 + u⃗ ⋅ v⃗)/2)
+  im = (u⃗ × v⃗) / 2re
+  Rotate(Quaternion(re, im...))
 end
 
 isrevertible(::Type{<:Rotate}) = true
