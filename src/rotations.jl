@@ -19,8 +19,9 @@ end
 
 Base.inv(cw::ClockwiseAngle) = CounterClockwiseAngle(cw.θ)
 
-function Base.convert(::Type{DCM{T}}, cw::ClockwiseAngle) where {T}
+function Base.convert(::Type{<:DCM}, cw::ClockwiseAngle)
   s, c = sincos(cw.θ)
+  T = typeof(s)
   SMatrix{2,2,T}([c s; -s c])
 end
 

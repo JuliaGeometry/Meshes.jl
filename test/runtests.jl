@@ -70,6 +70,7 @@ testfiles = [
   "vectors.jl",
   "points.jl",
   "angles.jl",
+  "rotations.jl",
   "polytopes.jl",
   "primitives.jl",
   "multi.jl",
