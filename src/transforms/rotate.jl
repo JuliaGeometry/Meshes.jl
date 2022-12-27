@@ -31,13 +31,7 @@ vector `u` to the plane passing through the origin with normal vector `v`.
 Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 ```
 """
-function Rotate(u::Vec, v::Vec)
-  u⃗ = normalize(u)
-  v⃗ = normalize(v)
-  re = √((1 + u⃗ ⋅ v⃗)/2)
-  im = (u⃗ × v⃗) / 2re
-  Rotate(Quaternion(re, im...))
-end
+Rotate(u::Vec, v::Vec) = Rotate(uvrotation(u, v))
 
 isrevertible(::Type{<:Rotate}) = true
 

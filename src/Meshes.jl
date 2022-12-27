@@ -180,6 +180,7 @@ export
   sideof,
   householderbasis,
   mayberound,
+  uvrotation,
 
   # paths
   Path,
