@@ -134,10 +134,14 @@ end
 
 Return rotation matrix from vector `u` to vector `v`.
 """
+function uvrotation(u::Vec{2}, v::Vec{2})
+  convert(DCM, CounterClockwiseAngle(∠(u, v)))
+end
+
 function uvrotation(u::Vec{3}, v::Vec{3})
   u⃗ = normalize(u)
   v⃗ = normalize(v)
-  re = √((1 + u⃗ ⋅ v⃗)/2)
+  re = √((1 + u⃗ ⋅ v⃗) / 2)
   im = (u⃗ × v⃗) / 2re
   convert(DCM, Quaternion(re, im...))
 end

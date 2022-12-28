@@ -42,7 +42,7 @@
   @test mayberound(1.1, 1, 0.10000000000000001) ≈ 1.1
   @test mayberound(1.1, 1, 0.05) ≈ 1.1
 
-  @test uvrotation(V3(1,0,0), V3(0,1,0)) ≈ T[ 0 1 0
-                                             -1 0 0
-                                              0 0 1]
+  @test uvrotation(V2(1,0), V2(0,1)) ≈ T[0 -1; 1 0]
+  @test uvrotation(V2(0,1), V2(1,0)) ≈ T[0 1; -1 0]
+  @test uvrotation(V3(1,0,0), V3(0,1,0)) ≈ T[0 1 0; -1 0 0; 0 0 1]
 end
