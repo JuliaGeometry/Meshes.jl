@@ -38,6 +38,7 @@ function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor)
   A = transpose(hcat(n⃗, v12, v13))
   b = [offset, p12 ⋅ v12, p13 ⋅ v13]
   c = Point(inv(A) * b)
+  # circumradius
   major = norm(p1 - c)
   #
   T = typeof(major)
@@ -52,6 +53,8 @@ isperiodic(::Type{<:Torus}) = (true, true)
 
 center(t::Torus) = t.center
 
+normal(t::Torus) = t.normal
+
 radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
@@ -65,11 +68,9 @@ end
 area(t::Torus) = measure(t)
 
 function Base.in(p::Point, t::Torus)
-  R, r = radii(t)
-  c = center(t)
-  n⃗ = t.normal
-  rotation = Rotate(n⃗, Vec(0, 0, 1))
-  M = convert(DCM, rotation.rot)
+  c, n⃗ = t.center, t.normal
+  R, r = t.major, t.minor
+  M = uvrotation(Vec(0, 0, 1), n⃗)
   x, y, z = M * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end

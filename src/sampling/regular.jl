@@ -185,13 +185,14 @@ function sample(::AbstractRNG, torus::Torus{T},
   V = T <: AbstractFloat ? T : Float64
   umin, umax = V(-s * π), V(s * π)
   vmin, vmax = V(-π), V(π)
-  urange = range(umin, stop=umax, length=sz[1]+1)[1:sz[1]]
-  vrange = range(vmin, stop=vmax, length=sz[2]+1)[1:sz[2]]
+  δu = (umax - umin) / sz[1]
+  δv = (vmax - vmin) / sz[2]
+  urange = range(umin, stop=umax-δu, length=sz[1])
+  vrange = range(vmin, stop=vmax-δv, length=sz[2])
 
   c = center(torus)
-  normal = torus.normal
-  rotation = Rotate(Vec(0, 0, 1), normal)
-  M = convert(DCM, rotation.rot)
+  n⃗ = normal(torus)
+  M = uvrotation(n⃗, Vec(0, 0, 1))
 
   r⃗(u, v) = Vec{3,T}(kxy * cos(u/s), kxy * sin(u/s), kz * sin(v)) / (R - r*cos(v))
 
