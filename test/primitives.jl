@@ -364,7 +364,7 @@
     p₁ = P3(0,0,0)
     p₂ = P3(1,2,3)
     p₃ = P3(3,2,1)
-    t = Torus(p₁, p₂, p₃, 1)
+    t = Torus(p₁, p₂, p₃, T(1))
     c = center(t)
     R, r = radii(t)
     @test r == 1
