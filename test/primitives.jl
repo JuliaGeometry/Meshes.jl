@@ -356,7 +356,7 @@
 
   @testset "Torus" begin
     # basic tests
-    t = Torus(T.((1,1,1)), T.((1,0,0)), 2, 1)
+    t = Torus(P3(1,1,1), V3(1,0,0), T(2), T(1))
     @test P3(1,1,-1) ∈ t
     @test P3(1,1,1) ∉ t
     
