@@ -145,6 +145,32 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   ivec(point(φ, z) for φ in φrange, z in zrange)
 end
 
+function sample(::AbstractRNG, torus::Torus{T},
+                method::RegularSampling) where {T}
+  sz = fitdims(method.sizes, paramdim(torus))
+  R, r = radii(torus)
+  c = center(torus)
+  n⃗ = normal(torus)
+  kxy = R^1 - r^2
+  kz = √kxy * r
+  s = √kxy / r
+
+  V = T <: AbstractFloat ? T : Float64
+  umin, umax = V(-s * π), V(s * π)
+  vmin, vmax = V(-π), V(π)
+  δu = (umax - umin) / sz[1]
+  δv = (vmax - vmin) / sz[2]
+  urange = range(umin, stop=umax-δu, length=sz[1])
+  vrange = range(vmin, stop=vmax-δv, length=sz[2])
+
+  # rotation to align n with direction (-1, 0, 1)
+  Q = uvrotation(n⃗, Vec{3,V}(-1, 0, 1))
+
+  r⃗(u, v) = Vec{3,V}(kxy * cos(u/s), kxy * sin(u/s), kz * sin(v)) / (R - r*cos(v))
+
+  ivec(c + Q * r⃗(u, v) for u in urange, v in vrange)
+end
+
 function sample(::AbstractRNG, seg::Segment{Dim,T},
                 method::RegularSampling) where {Dim,T}
   sz = fitdims(method.sizes, paramdim(seg))
@@ -172,29 +198,4 @@ end
 function sample(rng::AbstractRNG, grid::CartesianGrid,
                 method::RegularSampling)
   sample(rng, boundingbox(grid), method)
-end
-
-function sample(::AbstractRNG, torus::Torus{T},
-                method::RegularSampling) where {T}
-  sz = fitdims(method.sizes, paramdim(torus))
-  R, r = radii(torus)
-  kxy = R^2 - r^2
-  kz = √kxy * r
-  s = √kxy / r 
-
-  V = T <: AbstractFloat ? T : Float64
-  umin, umax = V(-s * π), V(s * π)
-  vmin, vmax = V(-π), V(π)
-  δu = (umax - umin) / sz[1]
-  δv = (vmax - vmin) / sz[2]
-  urange = range(umin, stop=umax-δu, length=sz[1])
-  vrange = range(vmin, stop=vmax-δv, length=sz[2])
-
-  c = center(torus)
-  n⃗ = normal(torus)
-  M = uvrotation(n⃗, Vec(0, 0, 1))
-
-  r⃗(u, v) = Vec{3,T}(kxy * cos(u/s), kxy * sin(u/s), kz * sin(v)) / (R - r*cos(v))
-
-  ivec(c + M * r⃗(u, v) for u in urange, v in vrange)
 end
