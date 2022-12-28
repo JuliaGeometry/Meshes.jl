@@ -359,6 +359,7 @@
     t = Torus(T.((1,1,1)), T.((1,0,0)), 2, 1)
     @test P3(1,1,-1) ∈ t
     @test P3(1,1,1) ∉ t
+    
     # torus passing through three points
     p₁ = P3(0,0,0)
     p₂ = P3(1,2,3)
