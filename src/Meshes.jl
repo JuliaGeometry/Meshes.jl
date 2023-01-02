@@ -178,6 +178,8 @@ export
   # utililities
   signarea,
   sideof,
+  iscollinear,
+  iscoplanar,
   householderbasis,
   mayberound,
   uvrotation,

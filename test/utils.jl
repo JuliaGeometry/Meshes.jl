@@ -16,6 +16,9 @@
   @test sideof(p2, c) == :OUTSIDE
   @test sideof(p3, c) == :INSIDE
 
+  @test iscollinear(P2(0,0), P2(1,1), P2(2,2))
+  @test iscoplanar(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
+
   # drop units from unitful value and type
   @test Meshes.dropunits(1.0u"mm") == Float64
   @test Meshes.dropunits(typeof(1.0u"mm")) == Float64

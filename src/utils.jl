@@ -5,8 +5,7 @@
 """
     fitdims(dims, D)
 
-Fit tuple `dims` to a given length `D`
-by repeating the last dimension.
+Fit tuple `dims` to a given length `D` by repeating the last dimension.
 """
 function fitdims(dims::Dims{N}, D) where {N}
   ntuple(i -> i ≤ N ? dims[i] : last(dims), D)
@@ -15,8 +14,7 @@ end
 """
     signarea(A, B, C)
 
-Compute signed area of triangle formed
-by points `A`, `B` and `C`.
+Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
 function signarea(A::Point{2}, B::Point{2}, C::Point{2})
   ((B - A) × (C - A)) / 2
@@ -25,8 +23,7 @@ end
 """
     iscollinear(A, B, C)
 
-Tells whether or not the points
-`A`, `B` and `C` are collinear.
+Tells whether or not the points `A`, `B` and `C` are collinear.
 """
 function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {Dim,T}
   # points A, B, C are collinear if and only if the
@@ -43,6 +40,16 @@ function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {D
     end
   end
   result
+end
+
+"""
+    iscoplanar(A, B, C, D)
+
+Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
+"""
+function iscoplanar(A::Point{3,T}, B::Point{3,T}, C::Point{3,T}, D::Point{3,T}) where {T}
+  vol = volume(Tetrahedron(A, B, C, D))
+  isapprox(vol, zero(T), atol = atol(T))
 end
 
 """
