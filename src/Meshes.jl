@@ -141,7 +141,7 @@ export
 
   # primitives
   Primitive,
-  Line, Ray, Plane, BezierCurve, Cone, 
+  Line, Ray, Plane, BezierCurve, Cone,
   Box, Ball, Sphere, Cylinder, CylinderSurface,
   ncontrols, degree, Horner, DeCasteljau,
   radius, bottom, top, axis, isright, sides,
