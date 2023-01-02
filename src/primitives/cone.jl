@@ -8,11 +8,11 @@
 Cone with `vertex` and base with `center` and `radius` made of `nsides` 
 segments. If `closed`, the base is included.
 """
-struct Cone{T,I<:Integer} <: Primitive{3,T}
+struct Cone{T} <: Primitive{3,T}
   vertex::Point{3,T}
   center::Point{3,T}
   radius::T
-  nsides::I
+  nsides::Int
   closed::Bool
 end
 
