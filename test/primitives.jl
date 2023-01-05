@@ -200,9 +200,9 @@
     @test coordtype(b) == T
 
     b = Ball(P2(0,0), T(2))
-    @test measure(b) ≈ π*(2^2)
+    @test measure(b) ≈ T(π)*(T(2)^2)
     b = Ball(P3(0,0,0), T(2))
-    @test measure(b) ≈ (4/3)*π*(2^3)
+    @test measure(b) ≈ T(4/3)*T(π)*(T(2)^3)
 
     b = Ball(P2(0,0), T(2))
     @test P2(1,0) ∈ b
@@ -289,6 +289,39 @@
     O = Meshes.center(s)
     r = radius(s)
     @test isapprox(r, norm(P3(0,0,0) - O))    
+  end
+
+  @testset "Disk" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    d = Disk(p, T(2))
+    @test embeddim(d) == 3
+    @test paramdim(d) == 2
+    @test coordtype(d) == T
+    @test Meshes.center(d) == P3(0,0,0)
+    @test radius(d) == T(2)
+    @test isconvex(d)
+    @test measure(d) == T(π)*T(2)^2
+    @test area(d) == measure(d)
+    @test P3(0,0,0) ∈ d
+    @test P3(0,0,1) ∉ d
+    @test boundary(d) == Circle(p, T(2))
+  end
+
+  @testset "Circle" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    c = Circle(p, T(2))
+    @test embeddim(c) == 3
+    @test paramdim(c) == 1
+    @test coordtype(c) == T
+    @test Meshes.center(c) == P3(0,0,0)
+    @test radius(c) == T(2)
+    @test !isconvex(c)
+    @test measure(c) == 2*T(π)*T(2)
+    @test length(c) == measure(c)
+    @test P3(2,0,0) ∈ c
+    @test P3(0,2,0) ∈ c
+    @test P3(0,0,0) ∉ c
+    @test isnothing(boundary(c))
   end
 
   @testset "Cylinder" begin

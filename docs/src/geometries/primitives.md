@@ -19,11 +19,15 @@ Primitive
 ## Concrete
 
 ```@docs
+Ray
+```
+
+```@docs
 Line
 ```
 
 ```@docs
-Ray
+BezierCurve
 ```
 
 ```@docs
@@ -41,20 +45,6 @@ viz(b)
 ```
 
 ```@docs
-Cylinder
-```
-
-```@example primitives
-c = Cylinder(1.0) # aligned with z axis
-
-viz(c)
-```
-
-```@docs
-CylinderSurface
-```
-
-```@docs
 Ball
 ```
 
@@ -66,4 +56,26 @@ Sphere
 s = Sphere((0.,0.,0.), 1.)
 
 viz(s)
+```
+
+```@docs
+Disk
+```
+
+```@docs
+Circle
+```
+
+```@docs
+Cylinder
+```
+
+```@example primitives
+c = Cylinder(1.0) # aligned with z axis
+
+viz(c)
+```
+
+```@docs
+CylinderSurface
 ```
