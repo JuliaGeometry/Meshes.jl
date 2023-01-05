@@ -79,3 +79,11 @@ viz(c)
 ```@docs
 CylinderSurface
 ```
+
+```@docs
+Cone
+```
+
+```@docs
+ConeSurface
+```

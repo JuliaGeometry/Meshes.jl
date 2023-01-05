@@ -386,4 +386,28 @@
     c = CylinderSurface(1)
     @test coordtype(c) == Float64
   end
+
+  @testset "Cone" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    d = Disk(p, T(2))
+    a = P3(0,0,1)
+    c = Cone(d, a)
+    @test embeddim(c) == 3
+    @test paramdim(c) == 3
+    @test coordtype(c) == T
+    @test isconvex(c)
+    @test boundary(c) == ConeSurface(d, a)
+  end
+
+  @testset "ConeSurface" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    d = Disk(p, T(2))
+    a = P3(0,0,1)
+    s = ConeSurface(d, a)
+    @test embeddim(s) == 3
+    @test paramdim(s) == 2
+    @test coordtype(s) == T
+    @test !isconvex(s)
+    @test isnothing(boundary(s))
+  end
 end
