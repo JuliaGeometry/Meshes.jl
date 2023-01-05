@@ -2,45 +2,29 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    Return appropriate type for a geometry overlapping with a `Plane`
+#=
+Return appropriate type for a geometry overlapping with a `Plane`.
+Ideally this would be a macro, but the geometry type isn't known at parse time, so it is implemented via multiple-dispatch instead
+=#
+_overlapping(::Line) = OverlappingLinePlane
+_overlapping(::Ray) = OverlappingRayPlane
+_overlapping(::Segment) = OverlappingSegmentPlane
 
-### Notes
+#=
+Intersection of a `Plane` and non-parallel `Line` given a line parameter `λ`.
+As a line is infinite, a `CrossingLinePlane` will always be returned.
+=#
+_intersection(f, l::Line, λ) = @IT CrossingLinePlane l(λ) f
 
-- Ideally this would be a macro, but the geometry type isn't known at parse time, so it is implemented with multiple-dispatch instead
-"""
-function planeintersectionoverlapping(::Line)
-  return OverlappingLinePlane
-end
+#=
+Intersection of a `Plane` and non-parallel `Ray` given ray parameter `λ`.
 
-function planeintersectionoverlapping(::Ray)
-  return OverlappingRayPlane
-end
-
-function planeintersectionoverlapping(::Segment)
-  return OverlappingSegmentPlane
-end
-
-"""
-    checkparameterplaneintersection(f, l::Line, λ)
-
-Return the intersection for a `Plane` and non-parallel `Line`, `l` given a line parameter `λ`. As a line is infinite, a `CrossingLinePlane` will always be returned.
-"""
-function checkparameterplaneintersection(f, l::Line, λ)
-  return @IT CrossingLinePlane l(λ) f
-end
-
-"""
-    checkparameterplaneintersection(f, r::Ray, λ)
-
-Return the intersection for a `Plane` and non-parallel `Ray`, `r` given a ray parameter `λ`.
-
-Return type:
+Return types:
   λ < 0 ⟹ NoIntersection
   λ ≈ 0 ⟹ TouchingRayPlane
   λ > 0 ⟹ CrossingRayPlane
-"""
-function checkparameterplaneintersection(f, r::Ray{3,T}, λ) where {T}
+=#
+function _intersection(f, r::Ray{3,T}, λ) where {T}
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapprox(λ, zero(T), atol=atol(T))
     return @IT TouchingRayPlane r(zero(T)) f
@@ -54,17 +38,15 @@ function checkparameterplaneintersection(f, r::Ray{3,T}, λ) where {T}
   end
 end
 
-"""
-    checkparameterplaneintersection(f, s::Segment, λ)
+#=
+Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
 
-Return the intersection for a `Plane` and non-parallel `Segment`, `s` given a segment parameter `λ`.
-
-Return type:
+Return types:
   λ < 0 or  λ > 1 ⟹ NoIntersection
   λ ≈ 0 or  λ ≈ 1 ⟹ TouchingSegmentPlane
   λ > 0 and λ < 1 ⟹ CrossingSegmentPlane
-"""
-function checkparameterplaneintersection(f, s::Segment{3,T}, λ) where {T}
+=#
+function _intersection(f, s::Segment{3,T}, λ) where {T}
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapprox(λ, zero(T), atol=atol(T))
     return @IT TouchingSegmentPlane s(zero(T)) f
@@ -86,29 +68,29 @@ end
 #=
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
 =#
-function Meshes.intersection(f, g::G, p::Plane{T}) where {T, G<:Union{Line{3,T}, Ray{3,T}, Segment{3,T}}}
+function intersection(f, g::G, p::Plane{T}) where {T, G<:Union{Line{3,T}, Ray{3,T}, Segment{3,T}}}
   p₀ = coordinates(origin(p))
   n  = normal(p)
 
-  # Get the origin and direction of geometry g
+  # get the origin and direction of geometry g
   g₀ = g(0)
-  gdir = g(1) - g(0)
+  d = g(1) - g(0)
   
-  # calculate components
-  ln = gdir ⋅ n
+  # evaluate denominator
+  a = d ⋅ n
   
-  # if ln is zero, then g is parallel to the plane
-  if isapprox(ln, zero(T), atol=atol(T))
+  # if a is zero, then g is parallel to p
+  if isapprox(a, zero(T), atol=atol(T))
     # if the numerator is zero, then g is overlapping
     if isapprox(coordinates(p₀ - g₀) ⋅ n, zero(T), atol=atol(T))
-      return @IT planeintersectionoverlapping(g) g f
+      return @IT _overlapping(g) g f
     else
       return @IT NoIntersection nothing f
     end
   else
     # calculate the length parameter
-    λ = -(n ⋅ coordinates(g₀ - p₀)) / ln
+    λ = -(n ⋅ coordinates(g₀ - p₀)) / a
 
-    return checkparameterplaneintersection(f, g, λ)
+    return _intersection(f, g, λ)
   end
 end
