@@ -4,7 +4,8 @@
 
 #=
 Return appropriate type for a geometry overlapping with a `Plane`.
-Ideally this would be a macro, but the geometry type isn't known at parse time, so it is implemented via multiple-dispatch instead
+Ideally this would be a macro, but the geometry type isn't known at parse time,
+so it is implemented via multiple-dispatch instead
 =#
 _overlapping(::Line) = OverlappingLinePlane
 _overlapping(::Ray) = OverlappingRayPlane
