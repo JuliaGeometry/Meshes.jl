@@ -79,7 +79,7 @@ function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
   p₀ = origin(p)
   n  = normal(p)
   
-  # evaluate numerator and denominator separately
+  # auxiliary parameters
   a = (p₀ - l₀) ⋅ n
   b = d ⋅ n
   
