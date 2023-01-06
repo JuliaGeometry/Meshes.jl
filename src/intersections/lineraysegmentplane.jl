@@ -70,10 +70,10 @@ end
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
 =#
 const LineLike{T} = Union{Line{3,T}, Ray{3,T}, Segment{3,T}}
-function intersection(f, g::LineLike{T}, p::Plane{T}) where {T}
-  # origin and direction of geometry
-  g₀ = g(0)
-  d  = g(1) - g(0)
+function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
+  # origin and direction of line
+  l₀ = l(0)
+  d  = l(1) - l(0)
   
   # origin and normal of plane
   p₀ = origin(p)
