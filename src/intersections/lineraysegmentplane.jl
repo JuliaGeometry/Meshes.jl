@@ -80,14 +80,14 @@ function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
   n  = normal(p)
   
   # evaluate numerator and denominator seperately
-  a = (p₀ - g₀) ⋅ n
+  a = (p₀ - l₀) ⋅ n
   b = d ⋅ n
   
   # if a is zero, then g is parallel to p
   if isapprox(b, zero(T), atol=atol(T))
     # if the numerator is zero, then g is overlapping
     if isapprox(a, zero(T), atol=atol(T))
-      return @IT _overlapping(g) g f
+      return @IT _overlapping(l) l f
     else
       return @IT NoIntersection nothing f
     end
@@ -95,6 +95,6 @@ function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
     # calculate the length parameter
     λ = a / b
 
-    return _intersection(f, g, λ)
+    return _intersection(f, l, λ)
   end
 end
