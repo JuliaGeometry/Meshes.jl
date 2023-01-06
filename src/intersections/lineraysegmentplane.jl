@@ -71,7 +71,7 @@ end
 =#
 const LineLike{T} = Union{Line{3,T}, Ray{3,T}, Segment{3,T}}
 function intersection(f, g::LineLike{T}, p::Plane{T}) where {T}
-  p₀ = coordinates(origin(p))
+  p₀ = origin(p)
   n  = normal(p)
 
   # get the origin and direction of geometry g
