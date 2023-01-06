@@ -15,8 +15,6 @@ struct Cone{T} <: Primitive{3,T}
   apex::Point{3,T}
 end
 
-Cone(disk::Disk{T}, apex::Point{3,T}) where {T} = Cone{T}(disk, apex)
-
 Cone(disk::Disk, apex::Tuple) = Cone(disk, Point(apex))
 
 paramdim(::Type{<:Cone}) = 3
