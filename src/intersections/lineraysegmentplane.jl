@@ -71,13 +71,13 @@ end
 =#
 const LineLike{T} = Union{Line{3,T}, Ray{3,T}, Segment{3,T}}
 function intersection(f, g::LineLike{T}, p::Plane{T}) where {T}
- # origin and normal of plane
-  p₀ = origin(p)
-  n  = normal(p)
-
   # origin and direction of geometry
   g₀ = g(0)
   d  = g(1) - g(0)
+  
+ # origin and normal of plane
+  p₀ = origin(p)
+  n  = normal(p)
   
   # evaluate denominator
   a = d ⋅ n
