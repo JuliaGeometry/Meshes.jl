@@ -68,7 +68,8 @@ end
 #=
 (https://en.wikipedia.org/wiki/Line-plane_intersection)
 =#
-function intersection(f, g::G, p::Plane{T}) where {T, G<:Union{Line{3,T}, Ray{3,T}, Segment{3,T}}}
+const LineLike{T} = Union{Line{3,T}, Ray{3,T}, Segment{3,T}}
+function intersection(f, g::LineLike{T}, p::Plane{T}) where {T}
   p₀ = coordinates(origin(p))
   n  = normal(p)
 
