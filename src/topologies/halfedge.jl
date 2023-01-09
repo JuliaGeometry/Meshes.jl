@@ -114,8 +114,8 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
   edge4pair = Dict{Tuple{Int,Int},Int}()
   for (i, (h₁, h₂)) in enumerate(ordered)
     u, v = h₁.head, h₂.head
-    edge4pair[(u, v)] = i
-    edge4pair[(v, u)] = i
+    edge4pair[(u, v)] = i * 2
+    edge4pair[(v, u)] = i * 2
   end
 
   HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
