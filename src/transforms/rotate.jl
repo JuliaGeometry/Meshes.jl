@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-  Rotate(rot)
+    Rotate(rot)
 
 Rotate geometry or mesh with rotation `rot`
 from ReferenceFrameRotations.jl. 
@@ -19,7 +19,7 @@ struct Rotate{R} <: StatelessGeometricTransform
 end
 
 """
-  Rotate(u, v)
+    Rotate(u, v)
 
 Rotation mapping the axis directed by `u` to the axis directed by `v`. 
 More precisely, it maps the plane passing through the origin with normal 
