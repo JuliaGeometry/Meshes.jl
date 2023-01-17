@@ -70,7 +70,7 @@ cart2elem(t::GridTopology, ijk...) = LinearIndices(t.dims)[ijk...]
 Return the Cartesian indices of the element of the
 grid topology `t` with top left vertex `v`.
 """
-corner2cart(t, v) = CartesianIndices(t.dims .+ t.open)[v].I
+corner2cart(t::GridTopology, v) = CartesianIndices(t.dims .+ t.open)[v].I
 
 """
     cart2corner(t, i, j, k, ...)
