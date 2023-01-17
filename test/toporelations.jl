@@ -7,7 +7,7 @@
     @test ∂(2) == [2,3]
     @test ∂(3) == [3,4]
 
-    # 2x3 quadrangles
+    # quadrangles in 2D grid
     t = GridTopology(2, 3)
     ∂ = Boundary{2,0}(t)
     @test ∂(1) == [1,2,5,4]
@@ -16,24 +16,27 @@
     @test ∂(4) == [5,6,9,8]
     @test ∂(5) == [7,8,11,10]
     @test ∂(6) == [8,9,12,11]
+
+    # segments of quadrangles in 2D grid
+    t = GridTopology(2, 3)
     ∂ = Boundary{1,0}(t)
-    @test ∂(1) == [1,2]
-    @test ∂(2) == [2,3]
-    @test ∂(3) == [4,5]
-    @test ∂(4) == [5,6]
-    @test ∂(5) == [7,8]
-    @test ∂(6) == [8,9]
-    @test ∂(7) == [10,11]
-    @test ∂(8) == [11,12]
-    @test ∂(9) == [1,4]
-    @test ∂(10) == [2,5]
-    @test ∂(11) == [3,6]
-    @test ∂(12) == [4,7]
-    @test ∂(13) == [5,8]
-    @test ∂(14) == [6,9]
-    @test ∂(15) == [7,10]
-    @test ∂(16) == [8,11]
-    @test ∂(17) == [9,12]
+    @test ∂(1) == [1, 4]
+    @test ∂(2) == [2, 5]
+    @test ∂(3) == [3, 6]
+    @test ∂(4) == [4, 7]
+    @test ∂(5) == [5, 8]
+    @test ∂(6) == [6, 9]
+    @test ∂(7) == [7, 10]
+    @test ∂(8) == [8, 11]
+    @test ∂(9) == [9, 12]
+    @test ∂(10) == [1, 2]
+    @test ∂(11) == [4, 5]
+    @test ∂(12) == [7, 8]
+    @test ∂(13) == [10, 11]
+    @test ∂(14) == [2, 3]
+    @test ∂(15) == [5, 6]
+    @test ∂(16) == [8, 9]
+    @test ∂(17) == [11, 12]
 
     # quadrangles of hexahedrons in 3D grid
     t = GridTopology(2, 2, 2)

@@ -148,19 +148,21 @@ function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
   cx, cy = isperiodic(t)
   nx, ny = size(t)
 
-  @assert !(cx || cy) "not implemented"
+  mx = cx ? nx : nx + 1
+  my = cy ? ny : ny + 1
 
-  if ind ≤ nx*ny # vertical edges
-    i1 = elem2corner(t, ind)
-    i2 = i1 + 1
-  elseif ind ≤ nx*(ny+1) # last vertical edges
-    i, j = elem2cart(t, ind - nx)
-    i1 = cart2corner(t, i, j+1)
-    i2 = i1 + 1
-  else # horizontal edges
-    i1 = ind - nx*(ny+1)
-    i, j = corner2cart(t, i1)
-    i2 = cart2corner(t, i, j+1)
+  if ind ≤ mx*ny # edges perpendicular to x
+    tx = GridTopology(nx, ny)
+    i, j = corner2cart(tx, ind)
+    j₊ = cy ? mod1(j + 1, ny) : j + 1
+    i1 = ind
+    i2 = cart2corner(tx, i, j₊)
+  else # edges perpendicular to y
+    ty = GridTopology(my, nx)
+    j, i = elem2cart(ty, ind - mx*ny)
+    i₊ = cx ? mod1(i + 1, nx) : i + 1
+    i1 = cart2corner(t, i, j)
+    i2 = cart2corner(t, i₊, j)
   end
 
   [i1, i2]
