@@ -152,11 +152,10 @@ function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
   my = cy ? ny : ny + 1
 
   if ind ≤ mx*ny # edges perpendicular to x
-    tx = GridTopology(nx, ny)
-    i, j = corner2cart(tx, ind)
+    i, j = corner2cart(t, ind)
     j₊ = cy ? mod1(j + 1, ny) : j + 1
     i1 = ind
-    i2 = cart2corner(tx, i, j₊)
+    i2 = cart2corner(t, i, j₊)
   else # edges perpendicular to y
     ty = GridTopology(my, nx)
     j, i = elem2cart(ty, ind - mx*ny)

@@ -20,23 +20,66 @@
     # segments of quadrangles in 2D grid
     t = GridTopology(2, 3)
     ∂ = Boundary{1,0}(t)
-    @test ∂(1) == [1, 4]
-    @test ∂(2) == [2, 5]
-    @test ∂(3) == [3, 6]
-    @test ∂(4) == [4, 7]
-    @test ∂(5) == [5, 8]
-    @test ∂(6) == [6, 9]
-    @test ∂(7) == [7, 10]
-    @test ∂(8) == [8, 11]
-    @test ∂(9) == [9, 12]
-    @test ∂(10) == [1, 2]
-    @test ∂(11) == [4, 5]
-    @test ∂(12) == [7, 8]
-    @test ∂(13) == [10, 11]
-    @test ∂(14) == [2, 3]
-    @test ∂(15) == [5, 6]
-    @test ∂(16) == [8, 9]
-    @test ∂(17) == [11, 12]
+    @test ∂(1) == [1,4]
+    @test ∂(2) == [2,5]
+    @test ∂(3) == [3,6]
+    @test ∂(4) == [4,7]
+    @test ∂(5) == [5,8]
+    @test ∂(6) == [6,9]
+    @test ∂(7) == [7,10]
+    @test ∂(8) == [8,11]
+    @test ∂(9) == [9,12]
+    @test ∂(10) == [1,2]
+    @test ∂(11) == [4,5]
+    @test ∂(12) == [7,8]
+    @test ∂(13) == [10,11]
+    @test ∂(14) == [2,3]
+    @test ∂(15) == [5,6]
+    @test ∂(16) == [8,9]
+    @test ∂(17) == [11,12]
+
+    # segments of quadrangles in 2D (periodic) grid
+    t = GridTopology((2, 2), (true,false))
+    ∂ = Boundary{1,0}(t)
+    @test nfacets(t) == 10
+    @test ∂(1) == [1,3]
+    @test ∂(2) == [2,4]
+    @test ∂(3) == [3,5]
+    @test ∂(4) == [4,6]
+    @test ∂(5) == [1,2]
+    @test ∂(6) == [3,4]
+    @test ∂(7) == [5,6]
+    @test ∂(8) == [2,1]
+    @test ∂(9) == [4,3]
+    @test ∂(10) == [6,5]
+
+    # segments of quadrangles in 2D (periodic) grid
+    t = GridTopology((2, 2), (false,true))
+    ∂ = Boundary{1,0}(t)
+    @test nfacets(t) == 10
+    @test ∂(1) == [1,4]
+    @test ∂(2) == [2,5]
+    @test ∂(3) == [3,6]
+    @test ∂(4) == [4,1]
+    @test ∂(5) == [5,2]
+    @test ∂(6) == [6,3]
+    @test ∂(7) == [1,2]
+    @test ∂(8) == [4,5]
+    @test ∂(9) == [2,3]
+    @test ∂(10) == [5,6]
+
+    # segments of quadrangles in 2D (periodic) grid
+    t = GridTopology((2, 2), (true,true))
+    ∂ = Boundary{1,0}(t)
+    @test nfacets(t) == 8
+    @test ∂(1) == [1,3]
+    @test ∂(2) == [2,4]
+    @test ∂(3) == [3,1]
+    @test ∂(4) == [4,2]
+    @test ∂(5) == [1,2]
+    @test ∂(6) == [3,4]
+    @test ∂(7) == [2,1]
+    @test ∂(8) == [4,3]
 
     # quadrangles of hexahedrons in 3D grid
     t = GridTopology(2, 2, 2)
