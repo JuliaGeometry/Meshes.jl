@@ -61,3 +61,12 @@ boundary(c::Cylinder) = CylinderSurface(c.radius, c.bot, c.top)
 measure(c::Cylinder) = norm(origin(c.bot) - origin(c.top)) * c.radius^2 * pi
 
 volume(c::Cylinder) = measure(c)
+
+function Base.in(p::Point{3}, c::Cylinder)
+  b = origin(c.bot)
+  t = origin(c.top)
+  a = t - b
+  (p - b) ⋅ a ≥ 0 || return false
+  (p - t) ⋅ a ≤ 0 || return false
+  norm((p - b) × a) / norm(a) ≤ c.radius
+end
