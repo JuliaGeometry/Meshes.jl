@@ -67,7 +67,6 @@ function Base.in(p::Point{3}, c::Cylinder)
   t = origin(c.top)
   a = t - b
 
-  # test if lies between bottom-top planes of the cylinder
   (p-b) ⋅ a ≥ 0 || return false
   (p-t) ⋅ a ≤ 0 || return false
   norm((p-b) × a) / norm(a) ≤ c.radius
