@@ -338,6 +338,10 @@
     @test isconvex(c)
     @test !isright(c)
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3)*sqrt(T(3))
+    @test P3(1,2,3) ∈ c
+    @test P3(4,5,6) ∈ c
+    @test P3(0.99,1.99,2.99) ∉ c
+    @test P3(4.01,5.01,6.01) ∉ c
 
     c = Cylinder(1.0)
     @test coordtype(c) == Float64
@@ -356,6 +360,14 @@
     @test isright(c)
     @test boundary(c) == CylinderSurface(T(1), Segment(P3(0,0,0), P3(0,0,1)))
     @test measure(c) == volume(c) ≈ pi 
+    @test P3(0,0,0) ∈ c
+    @test P3(0,0,1) ∈ c
+    @test P3(1,0,0) ∈ c
+    @test P3(0,1,0) ∈ c
+    @test P3(cosd(60),sind(60),0.5) ∈ c
+    @test P3(0,0,-0.001) ∉ c
+    @test P3(0,0,1.001) ∉ c
+    @test P3(1,1,1) ∉ c
   end
 
   @testset "CylinderSurface" begin

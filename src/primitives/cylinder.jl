@@ -61,3 +61,14 @@ boundary(c::Cylinder) = CylinderSurface(c.radius, c.bot, c.top)
 measure(c::Cylinder) = norm(origin(c.bot) - origin(c.top)) * c.radius^2 * pi
 
 volume(c::Cylinder) = measure(c)
+
+function Base.in(p::Point{3}, c::Cylinder)
+  bot = origin(c.bot)
+  top = origin(c.top)
+  axis = top - bot
+  # test if lies between bottom-top planes of the cylinder
+  dot(p-bot, axis) ≥ 0 || return false
+  dot(p-top, axis) ≤ 0 || return false
+  # test if lies inside the curvature surface of the cylinder
+  return norm((p-bot) × axis) / norm(axis) ≤ c.radius
+end
