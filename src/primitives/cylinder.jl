@@ -65,12 +65,10 @@ volume(c::Cylinder) = measure(c)
 function Base.in(p::Point{3}, c::Cylinder)
   b = origin(c.bot)
   t = origin(c.top)
-  axis = t - b
+  a = t - b
 
   # test if lies between bottom-top planes of the cylinder
-  (p-b) ⋅ axis ≥ 0 || return false
-  (p-t) ⋅ axis ≤ 0 || return false
-  
-  # test if lies inside the curvature surface of the cylinder
-  norm((p-b) × axis) / norm(axis) ≤ c.radius
+  (p-b) ⋅ a ≥ 0 || return false
+  (p-t) ⋅ a ≤ 0 || return false
+  norm((p-b) × a) / norm(a) ≤ c.radius
 end
