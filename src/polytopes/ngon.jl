@@ -80,6 +80,20 @@ function measure(t::Triangle{3})
   norm((B - A) × (C - A)) / 2
 end
 
+function circumcenter(t::Triangle{2})
+  A, B, C = t.vertices
+  sin2A = sin(2 * ∠(C, A, B))
+  sin2B = sin(2 * ∠(A, B, C))
+  sin2C = sin(2 * ∠(B, C, A))
+  sines = [sin2A, sin2B, sin2C]
+  x₁, y₁ = coordinates(A)
+  x₂, y₂ = coordinates(B)
+  x₃, y₃ = coordinates(C)
+  x = [x₁, x₂, x₃]
+  y = [y₁, y₂, y₃]
+  Point((x ⋅ sines) / sum(sines), (y ⋅ sines) / sum(sines))
+end
+
 function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
   a, b, c = t.vertices

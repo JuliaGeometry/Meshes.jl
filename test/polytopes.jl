@@ -105,6 +105,15 @@
     @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8*eps(T)))
     @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8*eps(T)))
 
+    # test circumcenter
+    A = P2(0,0)
+    B = P2(1,0)
+    C = P2(0,1)
+    t = Triangle(A, B, C)
+    O = circumcenter(t)
+    @test norm(A - O) ≈ norm(B - O) 
+    @test norm(A - O) ≈ norm(C - O) 
+
     # Triangle in 3D space
     t = Triangle(P3(0,0,0), P3(1,0,0), P3(0,1,0))
     @test area(t) == T(0.5)

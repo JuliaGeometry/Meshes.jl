@@ -163,6 +163,7 @@ export
   isclosed, issimple, hasholes,
   angles, innerangles, close!, open!,
   orientation, bridge, normal,
+  circumcenter,
 
   # orientation algorithms
   WindingOrientation,
