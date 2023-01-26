@@ -105,10 +105,19 @@
     @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8*eps(T)))
     @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8*eps(T)))
 
-    # test circumcenter
+    # test circumcenter 2D
     A = P2(0,0)
     B = P2(1,0)
     C = P2(0,1)
+    t = Triangle(A, B, C)
+    O = circumcenter(t)
+    @test norm(A - O) ≈ norm(B - O) 
+    @test norm(A - O) ≈ norm(C - O) 
+
+    # test circumcenter 3D
+    A = P3(0,0,0)
+    B = P3(1,0,0)
+    C = P3(0,1,1)
     t = Triangle(A, B, C)
     O = circumcenter(t)
     @test norm(A - O) ≈ norm(B - O) 
@@ -141,7 +150,7 @@
     @test isconvex(t)
     t = Triangle(P3[(0,0,0),(1,0,0),(0,1,0)])
     @test isconvex(t)
-
+    
     # Quadrangle in 2D space
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test area(q) == T(1)

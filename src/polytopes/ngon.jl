@@ -94,6 +94,19 @@ function circumcenter(t::Triangle{2})
   Point((x ⋅ sines) / sum(sines), (y ⋅ sines) / sum(sines))
 end
 
+function circumcenter(t::Triangle{3})
+  A, B, C = t.vertices
+  vAB = B - A
+  vAC = C - A
+  mAB = coordinates(A + vAB/2)
+  mAC = coordinates(A + vAC/2)
+  n⃗ = normal(t)
+  offset = coordinates(A) ⋅ n⃗
+  M = transpose(hcat(n⃗, vAB, vAC))
+  u = [offset, mAB ⋅ vAB, mAC ⋅ vAC]
+  Point(inv(M) * u)
+end
+
 function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
   a, b, c = t.vertices
