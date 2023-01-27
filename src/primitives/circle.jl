@@ -22,7 +22,7 @@ isconvex(::Type{<:Circle}) = false
 
 isperiodic(::Type{<:Circle}) = (true,)
 
-center(c::Circle) = origin(c.plane)
+center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius
 

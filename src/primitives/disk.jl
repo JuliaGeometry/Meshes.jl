@@ -20,7 +20,7 @@ paramdim(::Type{<:Disk}) = 2
 
 isconvex(::Type{<:Disk}) = true
 
-center(d::Disk) = origin(d.plane)
+center(d::Disk) = d.plane(0, 0)
 
 radius(d::Disk) = d.radius
 

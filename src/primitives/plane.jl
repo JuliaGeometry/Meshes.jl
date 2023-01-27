@@ -53,13 +53,6 @@ perimeter(::Plane{T}) where {T} = zero(T)
 (p::Plane)(s, t) = p.p + s*p.u + t*p.v
 
 """
-    origin(plane)
-
-Return the origin of the `plane`.
-"""
-origin(p::Plane) = p.p
-
-"""
     normal(plane)
 
 Normal vector to the `plane`.
@@ -71,4 +64,4 @@ normal(p::Plane) = normalize(p.u × p.v)
   isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
 
 Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} =
-  isapprox(normal(pl) ⋅ (pt - origin(pl)), zero(T), atol = atol(T))
+  isapprox(normal(pl) ⋅ (pt - pl(0, 0)), zero(T), atol = atol(T))

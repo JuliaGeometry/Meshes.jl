@@ -62,7 +62,7 @@
     @test isconvex(p)
     @test measure(p) == T(Inf)
     @test area(p) == T(Inf)
-    @test origin(p) == P3(0,0,0)
+    @test p(0, 0) == P3(0,0,0)
     @test normal(p) == Vec(0,0,1)
     @test isnothing(boundary(p))
     @test perimeter(p) == zero(T)

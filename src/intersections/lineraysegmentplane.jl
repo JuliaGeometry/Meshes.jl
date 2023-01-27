@@ -4,29 +4,23 @@
 
 const LineLike{T} = Union{Line{3,T}, Ray{3,T}, Segment{3,T}}
 
-#=
-Return appropriate type for a geometry overlapping with a `Plane`.
-Ideally this would be a macro, but the geometry type isn't known at parse time,
-so it is implemented via multiple-dispatch instead
-=#
+# Return appropriate type for a geometry overlapping with a `Plane`.
+# Ideally this would be a macro, but the geometry type isn't known at parse time,
+# so it is implemented via multiple-dispatch instead
 _overlapping(::Line) = OverlappingLinePlane
 _overlapping(::Ray) = OverlappingRayPlane
 _overlapping(::Segment) = OverlappingSegmentPlane
 
-#=
-Intersection of a `Plane` and non-parallel `Line` given a line parameter `λ`.
-As a line is infinite, a `CrossingLinePlane` will always be returned.
-=#
+# Intersection of a `Plane` and non-parallel `Line` given a line parameter `λ`.
+# As a line is infinite, a `CrossingLinePlane` will always be returned.
 _intersection(f, l::Line, λ) = @IT CrossingLinePlane l(λ) f
 
-#=
-Intersection of a `Plane` and non-parallel `Ray` given ray parameter `λ`.
-
-Return types:
-  λ < 0 ⟹ NoIntersection
-  λ ≈ 0 ⟹ TouchingRayPlane
-  λ > 0 ⟹ CrossingRayPlane
-=#
+# Intersection of a `Plane` and non-parallel `Ray` given ray parameter `λ`.
+# 
+# Return types:
+#   λ < 0 ⟹ NoIntersection
+#   λ ≈ 0 ⟹ TouchingRayPlane
+#   λ > 0 ⟹ CrossingRayPlane
 function _intersection(f, r::Ray{3,T}, λ) where {T}
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapprox(λ, zero(T), atol=atol(T))
@@ -41,14 +35,12 @@ function _intersection(f, r::Ray{3,T}, λ) where {T}
   end
 end
 
-#=
-Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
-
-Return types:
-  λ < 0 or  λ > 1 ⟹ NoIntersection
-  λ ≈ 0 or  λ ≈ 1 ⟹ TouchingSegmentPlane
-  λ > 0 and λ < 1 ⟹ CrossingSegmentPlane
-=#
+# Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
+# 
+# Return types:
+#   λ < 0 or  λ > 1 ⟹ NoIntersection
+#   λ ≈ 0 or  λ ≈ 1 ⟹ TouchingSegmentPlane
+#   λ > 0 and λ < 1 ⟹ CrossingSegmentPlane
 function _intersection(f, s::Segment{3,T}, λ) where {T}
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapprox(λ, zero(T), atol=atol(T))
@@ -68,16 +60,14 @@ function _intersection(f, s::Segment{3,T}, λ) where {T}
   end
 end
 
-#=
-(https://en.wikipedia.org/wiki/Line-plane_intersection)
-=#
+# (https://en.wikipedia.org/wiki/Line-plane_intersection)
 function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
   # origin and direction of line
   l₀ = l(0)
   d  = l(1) - l(0)
   
   # origin and normal of plane
-  p₀ = origin(p)
+  p₀ = p(0, 0)
   n  = normal(p)
   
   # auxiliary parameters
