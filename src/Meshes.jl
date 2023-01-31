@@ -369,6 +369,7 @@ export
   # simplification
   SimplificationMethod,
   DouglasPeucker,
+  Selinger,
   simplify,
   decimate,
 

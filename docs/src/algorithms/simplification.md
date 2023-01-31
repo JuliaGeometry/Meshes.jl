@@ -77,3 +77,22 @@ viz(fig[2,1], simp2)
 viz(fig[2,2], simp3)
 fig
 ```
+
+## Selinger
+
+```@docs
+Selinger
+```
+
+```@example simplification
+simp1 = simplify(polyarea, Selinger(0.01))
+simp2 = simplify(polyarea, Selinger(0.05))
+simp3 = simplify(polyarea, Selinger(0.10))
+
+fig = Mke.Figure(resolution = (800, 800))
+viz(fig[1,1], polyarea)
+viz(fig[1,2], simp1)
+viz(fig[2,1], simp2)
+viz(fig[2,2], simp3)
+fig
+```

@@ -26,6 +26,14 @@
     @test s1 == s2
   end
 
+  @testset "Selinger" begin
+    c = Chain(P2[(0,0),(1,0),(1,1),(2,1),(2,2),(1,2),(0,2),(0,1),(0,0)])
+    s1 = simplify(c, Selinger(0.1))
+    s2 = simplify(c, Selinger(0.5))
+    @test s1 == Chain(P2[(1,0),(1,1),(2,1),(2,2),(0,2),(0,0),(1,0)])
+    @test s2 == Chain(P2[(1,0),(2,2),(0,2),(0,0),(1,0)])
+  end
+
   @testset "Utilities" begin
     # decimate is a helper function to simplify
     # geometries with an appropriate method

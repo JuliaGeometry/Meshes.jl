@@ -41,6 +41,7 @@ end
 # ----------------
 
 include("simplification/douglaspeucker.jl")
+include("simplification/selinger.jl")
 
 # ----------
 # UTILITIES
