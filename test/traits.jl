@@ -112,6 +112,10 @@
         @test isequal(data[:,b], [5,missing,7,8])
         @test isequal(data[:,geometry], grid)
       end
+      # regex
+      @test data[3, r"a"] == (a=3, geometry=grid[3])
+      @test data[3:4, r"b"] == dummy(view(grid, 3:4), (b=[7,8],))
+      @test data[:, r"[ab]"] == data
 
       # variables interface
       data = dummy(PointSet(rand(P2,4)), (a=[1,2,3,4], b=[5,6,7,8]))
