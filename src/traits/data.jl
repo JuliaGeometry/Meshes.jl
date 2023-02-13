@@ -224,6 +224,14 @@ Base.getindex(data::Data, inds, vars::AbstractVector{<:AbstractString}) =
 Base.getindex(data::Data, inds, var::AbstractString) =
   getindex(data, inds, Symbol(var))
 
+function Base.getindex(data::Data, inds, var::Regex)
+  tab    = values(data)
+  cols   = Tables.columns(tab)
+  names  = Tables.columnnames(cols) |> collect
+  snames = filter(nm -> occursin(var, String(nm)), names)
+  getindex(data, inds, snames)
+end
+
 function _checkvars(vars)
   if !allunique(vars)
     throw(ArgumentError("The variable names must be unique"))
