@@ -5,22 +5,27 @@
 """
     Disk(plane, radius)
 
-A disk on a `plane` with given `radius`.
+A disk on a `plane` with given `center` and `radius`.
 
 See also [`Circle`](@ref).
 """
 struct Disk{T} <: Primitive{3,T}
   plane::Plane{T}
+  center::Point{3,T}
   radius::T
 end
 
-Disk(plane::Plane{T}, radius) where {T} = Disk(plane, T(radius))
+Disk(plane::Plane{T}, center::Point{3,T}, radius) where {T} = 
+  Disk(plane, center, T(radius))
+
+Disk(plane::Plane{T}, center::Tuple, radius) where {T} = 
+  Disk(plane, Point(center), radius)
 
 paramdim(::Type{<:Disk}) = 2
 
 isconvex(::Type{<:Disk}) = true
 
-center(d::Disk) = d.plane(0, 0)
+center(d::Disk) = d.center
 
 radius(d::Disk) = d.radius
 
@@ -35,4 +40,4 @@ function Base.in(p::Point, d::Disk)
   s² ≤ r²
 end
 
-boundary(d::Disk) = Circle(d.plane, d.radius)
+boundary(d::Disk) = Circle(d.plane, d.center, d.radius)

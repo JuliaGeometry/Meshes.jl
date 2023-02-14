@@ -293,7 +293,7 @@
 
   @testset "Disk" begin
     p = Plane(P3(0,0,0), V3(0,0,1))
-    d = Disk(p, T(2))
+    d = Disk(p, P3(0,0,0), T(2))
     @test embeddim(d) == 3
     @test paramdim(d) == 2
     @test coordtype(d) == T
@@ -304,12 +304,12 @@
     @test area(d) == measure(d)
     @test P3(0,0,0) ∈ d
     @test P3(0,0,1) ∉ d
-    @test boundary(d) == Circle(p, T(2))
+    @test boundary(d) == Circle(p, P3(0,0,0), T(2))
   end
 
   @testset "Circle" begin
     p = Plane(P3(0,0,0), V3(0,0,1))
-    c = Circle(p, T(2))
+    c = Circle(p, P3(0,0,0), T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 1
     @test coordtype(c) == T
@@ -322,6 +322,15 @@
     @test P3(0,2,0) ∈ c
     @test P3(0,0,0) ∉ c
     @test isnothing(boundary(c))
+
+    # 3D circumcircle
+    p1 = P3(0,4,0)
+    p2 = P3(0,-4,0)
+    p3 = P3(0,0,4)
+    c = Circle(p1, p2, p3)
+    @test p1 ∈ c
+    @test p2 ∈ c
+    @test p3 ∈ c
   end
 
   @testset "Cylinder" begin
@@ -401,7 +410,7 @@
 
   @testset "Cone" begin
     p = Plane(P3(0,0,0), V3(0,0,1))
-    d = Disk(p, T(2))
+    d = Disk(p, P3(0,0,0), T(2))
     a = P3(0,0,1)
     c = Cone(d, a)
     @test embeddim(c) == 3
@@ -413,7 +422,7 @@
 
   @testset "ConeSurface" begin
     p = Plane(P3(0,0,0), V3(0,0,1))
-    d = Disk(p, T(2))
+    d = Disk(p, P3(0,0,0), T(2))
     a = P3(0,0,1)
     s = ConeSurface(d, a)
     @test embeddim(s) == 3
