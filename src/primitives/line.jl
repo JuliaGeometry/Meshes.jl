@@ -20,7 +20,13 @@ paramdim(::Type{<:Line}) = 1
 
 isconvex(::Type{<:Line}) = true
 
+measure(::Line{Dim,T}) where {Dim,T} = typemax(T)
+
+Base.length(l::Line) = measure(l)
+
 boundary(::Line) = nothing
+
+perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
 

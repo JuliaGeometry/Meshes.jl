@@ -369,7 +369,7 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
     m = minimums[i]
 
     # find closest vertex in boundary
-    dmin, jmin = Inf, 0
+    dmin, jmin = typemax(T), 0
     for j in findall(oinds .≤ m)
       d = sum(abs, outer[j] - inner[l])
       if d < dmin

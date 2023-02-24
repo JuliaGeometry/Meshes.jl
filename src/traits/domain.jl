@@ -33,6 +33,8 @@ function nelements end
   nelements(d1) == nelements(d2) &&
   all(d1[i] == d2[i] for i in 1:nelements(d1))
 
+nitems(domain::Domain) = nelements(domain)
+
 Base.getindex(domain::Domain, ind) = element(domain, ind)
 
 Base.firstindex(domain::Domain) = 1
@@ -84,12 +86,13 @@ centroid(domain::Domain, ind::Int) = centroid(domain[ind])
 Return the centroid of the `domain`, i.e. the centroid of all
 its element's centroids.
 """
-function centroid(domain::Domain)
+function centroid(domain::Domain{Dim,T}) where {Dim,T}
   coords(i) = coordinates(centroid(domain, i))
   volume(i) = measure(element(domain, i))
   n = nelements(domain)
   x = coords.(1:n)
   w = volume.(1:n)
+  all(iszero, w) && (w = ones(T, n))
   Point(sum(w .* x) / sum(w))
 end
 
@@ -98,7 +101,7 @@ end
 
 Return the measure of the `domain`, i.e. the length, area, or volume.
 """
-measure(domain::Domain) = sum(measure, elements(domain))
+measure(domain::Domain) = sum(measure, domain)
 
 """
     point ∈ domain

@@ -48,6 +48,13 @@ Return the measure of the `geometry`, i.e. the length, area, or volume.
 measure(g::Geometry) = sum(measure, discretize(g))
 
 """
+    perimeter(geometry)
+
+Return the perimeter of the `geometry`, i.e. the measure of its boundary.
+"""
+perimeter(g::Geometry) = measure(boundary(g))
+
+"""
     extrema(geometry)
 
 Return the top left and bottom right corners of the
@@ -114,34 +121,27 @@ A union type that can represent either a point or a geometry.
 const PointOrGeometry{Dim,T} = Union{Point{Dim,T},Geometry{Dim,T}}
 
 """
-    Multi(entities)
+    Multi(items)
 
-A collection of points or geometries seen as a single entity.
+A collection of points or geometries seen as a single item.
 
 In geographic information systems (GIS) it is common to represent
-multiple polygons as a single entity. In this case the polygons
-refer to the same object in the real world (e.g. country with islands).
+multiple polygons as a single item. In this case the polygons refer
+to the same object in the real world (e.g. country with islands).
 """
 struct Multi{Dim,T,I<:PointOrGeometry{Dim,T}} <: Geometry{Dim,T}
   items::Vector{I}
 end
 
-Base.getindex(multi::Multi, ind) = getindex(multi.items, ind)
-Base.length(multi::Multi) = length(multi.items)
-Base.eltype(multi::Multi) = eltype(multi.items)
-Base.firstindex(multi::Multi) = firstindex(multi.items)
-Base.lastindex(multi::Multi) = lastindex(multi.items)
-Base.iterate(multi::Multi, state=1) =
-  state > length(multi) ? nothing : (multi[state], state+1)
+# constructor with iterator of items
+Multi(items) = Multi(collect(items))
 
 paramdim(multi::Multi) = maximum(paramdim, multi.items)
 
-==(multi₁::Multi, multi₂::Multi) =
-  length(multi₁) == length(multi₂) &&
-  all(g -> g[1] == g[2], zip(multi₁, multi₂))
-
 vertices(multi::Multi) =
-  [vertex for geom in multi for vertex in vertices(geom)]
+  [vertex for geom in multi.items for vertex in vertices(geom)]
+
+nvertices(multi::Multi) = sum(nvertices, multi.items)
 
 function centroid(multi::Multi)
   cs = coordinates.(centroid.(multi.items))
@@ -150,23 +150,31 @@ end
 
 measure(multi::Multi) = sum(measure, multi.items)
 
+Base.length(multi::Multi{Dim,T,<:Polytope{1}}) where {Dim,T} = measure(multi)
 area(multi::Multi{Dim,T,<:Polygon}) where{Dim,T} = measure(multi)
+volume(multi::Multi{Dim,T,<:Polyhedron}) where{Dim,T} = measure(multi)
 
 function boundary(multi::Multi)
-  bounds = [boundary(geom) for geom in multi]
+  bounds = [boundary(geom) for geom in multi.items]
   valid  = filter(!isnothing, bounds)
-  isempty(valid) ? nothing : Multi(valid)
+  isempty(valid) ? nothing : reduce(merge, valid)
 end
 
 chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} =
-  [chain for geom in multi for chain in chains(geom)]
+  [chain for geom in multi.items for chain in chains(geom)]
 
-Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi)
+Base.collect(multi::Multi) = multi.items
+
+Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi.items)
+
+==(multi₁::Multi, multi₂::Multi) =
+  length(multi₁.items) == length(multi₂.items) &&
+  all(g -> g[1] == g[2], zip(multi₁.items, multi₂.items))
 
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)
   G = eltype(multi.items)
-  print(io, "$n Multi-$(nameof(G)){$Dim,$T}")
+  print(io, "$n Multi$(nameof(G)){$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", multi::Multi)

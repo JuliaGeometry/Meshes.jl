@@ -15,6 +15,9 @@ Base.view(v::DomainView, inds::AbstractVector{Int}) =
 Base.view(v::DataView, inds::AbstractVector{Int}) =
   DataView(getfield(v, :data), getfield(v, :inds)[inds])
 
+# specialize view for grids and Cartesian indices
+Base.view(grid::Grid, inds::CartesianIndices) = getindex(grid, inds)
+
 # ---------------------
 # UNVIEWS WITH INDICES
 # ---------------------
@@ -26,7 +29,7 @@ Return the underlying domain/data of the `object` and
 the indices of the view. If the `object` is not a view,
 then return the `object` with all its indices as a fallback.
 """
-unview(object) = object, 1:nelements(object)
+unview(object) = object, 1:nitems(object)
 unview(v::DomainView) = getfield(v, :domain), getfield(v, :inds)
 unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
 
@@ -64,8 +67,7 @@ end
 
 # convert from Cartesian to linear indices if needed
 _linear(domain::Domain, inds) = inds
-_linear(grid::CartesianGrid, inds) =
-  vec(LinearIndices(size(grid))[inds])
+_linear(grid::Grid, inds) = vec(LinearIndices(size(grid))[inds])
 
 """
     indices(domain, geometry)

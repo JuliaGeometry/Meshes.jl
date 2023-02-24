@@ -3,7 +3,10 @@
     l = Line(P2(0,0), P2(1,1))
     @test paramdim(l) == 1
     @test isconvex(l)
+    @test measure(l) == T(Inf)
+    @test length(l) == T(Inf)
     @test isnothing(boundary(l))
+    @test perimeter(l) == zero(T)
 
     l = Line(P2(0,0), P2(1,1))
     @test (l(0), l(1)) == (P2(0,0), P2(1,1))
@@ -13,9 +16,12 @@
     r = Ray(P2(0,0), V2(1,1))
     @test paramdim(r) == 1
     @test isconvex(r)
+    @test measure(r) == T(Inf)
+    @test length(r) == T(Inf)
     @test origin(r) == P2(0,0)
     @test direction(r) == V2(1,1)
     @test boundary(r) == P2(0,0)
+    @test perimeter(r) == zero(T)
 
     r = Ray(P2(0,0), V2(1,1))
     @test r(T(0.)) == P2(0,0)
@@ -54,9 +60,12 @@
     @test paramdim(p) == 2
     @test embeddim(p) == 3
     @test isconvex(p)
-    @test origin(p) == P3(0,0,0)
+    @test measure(p) == T(Inf)
+    @test area(p) == T(Inf)
+    @test p(0, 0) == P3(0,0,0)
     @test normal(p) == Vec(0,0,1)
     @test isnothing(boundary(p))
+    @test perimeter(p) == zero(T)
 
     p = Plane(P3(0,0,0), V3(0,0,1))
     @test p(T(1), T(0)) == P3(1,0,0)
@@ -73,6 +82,15 @@
     p = Plane(P3(0,0,0), V3(2,0,0), V3(0,3,0))
     n = normal(p)
     @test isapprox(norm(n), T(1), atol=atol(T))
+
+    # plane passing through three points
+    p₁ = P3(0,0,0)
+    p₂ = P3(1,2,3)
+    p₃ = P3(3,2,1)
+    p = Plane(p₁, p₂, p₃)
+    @test p₁ ∈ p
+    @test p₂ ∈ p
+    @test p₃ ∈ p
   end
 
   @testset "BezierCurve" begin
@@ -96,6 +114,7 @@
     @test boundary(b) == PointSet(P2(0,0), P2(1,0))
     b = BezierCurve(P2(0,0), P2(1,1))
     @test boundary(b) == PointSet([P2(0,0), P2(1,1)])
+    @test perimeter(b) == zero(T)
 
     b = BezierCurve(P2.(randn(100), randn(100)))
     t1 = @timed b(T(0.2))
@@ -135,6 +154,7 @@
     b = Box(P2(0,0), P2(1,1))
     @test measure(b) == area(b) == T(1)
     @test P2(1,1) ∈ b
+    @test perimeter(b) ≈ T(4)
 
     b = Box(P2(1,1), P2(2,2))
     @test sides(b) == T.((1,1))
@@ -180,9 +200,9 @@
     @test coordtype(b) == T
 
     b = Ball(P2(0,0), T(2))
-    @test measure(b) ≈ π*(2^2)
+    @test measure(b) ≈ T(π)*(T(2)^2)
     b = Ball(P3(0,0,0), T(2))
-    @test measure(b) ≈ (4/3)*π*(2^3)
+    @test measure(b) ≈ T(4/3)*T(π)*(T(2)^3)
 
     b = Ball(P2(0,0), T(2))
     @test P2(1,0) ∈ b
@@ -190,6 +210,7 @@
     @test P2(2,0) ∈ b
     @test P2(0,2) ∈ b
     @test P2(3,5) ∉ b
+    @test perimeter(b) ≈ T(4π)
 
     b = Ball(P3(0,0,0), T(2))
     @test P3(1,0,0) ∈ b
@@ -210,6 +231,7 @@
     @test !isconvex(s)
     @test isnothing(boundary(s))
     @test isperiodic(s) == (true, true)
+    @test perimeter(s) == zero(T)
 
     s = Sphere(P3(1,2,3), 4)
     @test coordtype(s) == T
@@ -227,9 +249,11 @@
 
     s = Sphere(P2(0,0), T(2))
     @test measure(s) ≈ 2π*2
+    @test length(s) ≈ 2π*2
     @test extrema(s) == (P2(-2,-2), P2(2,2))
     s = Sphere(P3(0,0,0), T(2))
     @test measure(s) ≈ 4π*(2^2)
+    @test area(s) ≈ 4π*(2^2)
 
     s = Sphere(P2(0,0), T(2))
     @test P2(1,0) ∉ s
@@ -255,6 +279,49 @@
     s = Sphere(P2(0,0), P2(1,0), P2(1,1))
     @test Meshes.center(s) == P2(0.5, 0.5)
     @test radius(s) == T(0.7071067811865476)
+
+    # 3D sphere passing through 4 points
+    s = Sphere(P3(0,0,0), P3(5,0,1), P3(1,1,1), P3(3,2,1))
+    @test P3(0,0,0) ∈ s
+    @test P3(5,0,1) ∈ s
+    @test P3(1,1,1) ∈ s
+    @test P3(3,2,1) ∈ s
+    O = Meshes.center(s)
+    r = radius(s)
+    @test isapprox(r, norm(P3(0,0,0) - O))    
+  end
+
+  @testset "Disk" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    d = Disk(p, T(2))
+    @test embeddim(d) == 3
+    @test paramdim(d) == 2
+    @test coordtype(d) == T
+    @test Meshes.center(d) == P3(0,0,0)
+    @test radius(d) == T(2)
+    @test isconvex(d)
+    @test measure(d) == T(π)*T(2)^2
+    @test area(d) == measure(d)
+    @test P3(0,0,0) ∈ d
+    @test P3(0,0,1) ∉ d
+    @test boundary(d) == Circle(p, T(2))
+  end
+
+  @testset "Circle" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    c = Circle(p, T(2))
+    @test embeddim(c) == 3
+    @test paramdim(c) == 1
+    @test coordtype(c) == T
+    @test Meshes.center(c) == P3(0,0,0)
+    @test radius(c) == T(2)
+    @test !isconvex(c)
+    @test measure(c) == 2*T(π)*T(2)
+    @test length(c) == measure(c)
+    @test P3(2,0,0) ∈ c
+    @test P3(0,2,0) ∈ c
+    @test P3(0,0,0) ∉ c
+    @test isnothing(boundary(c))
   end
 
   @testset "Cylinder" begin
@@ -270,6 +337,11 @@
     @test axis(c) == Line(P3(1,2,3), P3(4,5,6))
     @test isconvex(c)
     @test !isright(c)
+    @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3)*sqrt(T(3))
+    @test P3(1,2,3) ∈ c
+    @test P3(4,5,6) ∈ c
+    @test P3(0.99,1.99,2.99) ∉ c
+    @test P3(4.01,5.01,6.01) ∉ c
 
     c = Cylinder(1.0)
     @test coordtype(c) == Float64
@@ -287,6 +359,15 @@
     @test axis(c) == Line(P3(0,0,0), P3(0,0,1))
     @test isright(c)
     @test boundary(c) == CylinderSurface(T(1), Segment(P3(0,0,0), P3(0,0,1)))
+    @test measure(c) == volume(c) ≈ pi 
+    @test P3(0,0,0) ∈ c
+    @test P3(0,0,1) ∈ c
+    @test P3(1,0,0) ∈ c
+    @test P3(0,1,0) ∈ c
+    @test P3(cosd(60),sind(60),0.5) ∈ c
+    @test P3(0,0,-0.001) ∉ c
+    @test P3(0,0,1.001) ∉ c
+    @test P3(1,1,1) ∉ c
   end
 
   @testset "CylinderSurface" begin
@@ -303,6 +384,12 @@
     @test isconvex(c)
     @test isright(c)
     @test isnothing(boundary(c))
+    @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi 
+
+    c = CylinderSurface(T(5),
+                 Plane(P3(1,2,3), V3(0,0,1)),
+                 Plane(P3(4,5,6), V3(0,0,1)))
+    @test measure(c) == area(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3*T(3)^2)
 
     c = CylinderSurface(1.0)
     @test coordtype(c) == Float64
@@ -310,5 +397,29 @@
     @test coordtype(c) == Float32
     c = CylinderSurface(1)
     @test coordtype(c) == Float64
+  end
+
+  @testset "Cone" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    d = Disk(p, T(2))
+    a = P3(0,0,1)
+    c = Cone(d, a)
+    @test embeddim(c) == 3
+    @test paramdim(c) == 3
+    @test coordtype(c) == T
+    @test isconvex(c)
+    @test boundary(c) == ConeSurface(d, a)
+  end
+
+  @testset "ConeSurface" begin
+    p = Plane(P3(0,0,0), V3(0,0,1))
+    d = Disk(p, T(2))
+    a = P3(0,0,1)
+    s = ConeSurface(d, a)
+    @test embeddim(s) == 3
+    @test paramdim(s) == 2
+    @test coordtype(s) == T
+    @test !isconvex(s)
+    @test isnothing(boundary(s))
   end
 end

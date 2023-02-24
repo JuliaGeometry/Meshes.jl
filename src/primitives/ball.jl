@@ -23,6 +23,7 @@ paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 isconvex(::Type{<:Ball}) = true
 
 center(b::Ball) = b.center
+
 radius(b::Ball) = b.radius
 
 # https://en.wikipedia.org/wiki/Volume_of_an_n-ball
@@ -30,6 +31,10 @@ function measure(b::Ball{Dim}) where {Dim}
   r, n = b.radius, Dim
   (π^(n/2) * r^n) / gamma(n/2 + 1)
 end
+
+area(b::Ball{2}) = measure(b)
+
+volume(b::Ball{3}) = measure(b)
 
 function Base.in(p::Point, b::Ball)
   x = coordinates(p)

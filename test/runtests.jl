@@ -1,6 +1,5 @@
 using Meshes
 using Tables
-using Query
 using Distances
 using Statistics
 using LinearAlgebra
@@ -11,6 +10,7 @@ using SparseArrays
 using PlyIO
 using Unitful
 using MeshViz
+using ReferenceFrameRotations
 using Test, Random
 using ReferenceTests, ImageIO
 
@@ -70,6 +70,7 @@ testfiles = [
   "vectors.jl",
   "points.jl",
   "angles.jl",
+  "rotations.jl",
   "polytopes.jl",
   "primitives.jl",
   "multi.jl",
@@ -85,9 +86,10 @@ testfiles = [
   "neighborhoods.jl",
   "neighborsearch.jl",
   "supportfun.jl",
-  "diffops.jl",
+  "matrices.jl",
   "views.jl",
   "viewing.jl",
+  "merging.jl",
   "sampling.jl",
   "partitioning.jl",
   "intersections.jl",

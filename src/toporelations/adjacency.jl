@@ -101,3 +101,8 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
 
   vertices
 end
+
+# adjacent elements in a 2D half-edge topology
+function (𝒜::Adjacency{2,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
+  @error "not implemented"
+end

@@ -25,8 +25,8 @@ BisectFractionPartition(normal::Vec{Dim,T}, fraction=0.5, maxiter=10) where {Dim
 BisectFractionPartition(normal::NTuple{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
   BisectFractionPartition(Vec(normal), fraction, maxiter)
 
-function partition(rng::AbstractRNG, object, method::BisectFractionPartition)
-  bbox = boundingbox(object)
+function partsubsets(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)
+  bbox = boundingbox(domain)
   n = method.normal
   f = method.fraction
   c = coordinates(center(bbox))
@@ -35,14 +35,18 @@ function partition(rng::AbstractRNG, object, method::BisectFractionPartition)
   # maximum number of bisections
   maxiter = method.maxiter
 
-  iter = 0; p = 0
+  iter = 0
   a = c - d/2 * n
   b = c + d/2 * n
+  subsets  = Vector{Int}[]
+  metadata = Dict()
   while iter < maxiter
     m = (a + b) / 2
 
-    p = partition(rng, object, BisectPointPartition(n, Point(m)))
-    g = nelements(p[1]) / nelements(object)
+    bisectpoint       = BisectPointPartition(n, Point(m))
+    subsets, metadata = partsubsets(rng, domain, bisectpoint)
+
+    g = length(subsets[1]) / nelements(domain)
 
     g ≈ f && break
     g > f && (b = m)
@@ -51,5 +55,5 @@ function partition(rng::AbstractRNG, object, method::BisectFractionPartition)
     iter += 1
   end
 
-  p
+  subsets, metadata
 end

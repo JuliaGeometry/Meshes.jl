@@ -9,28 +9,20 @@ The intersection type can be one of three types:
 2. overlap at more than one point
 3. do not overlap nor intersect
 =#
-function intersection(f, l1::Line, l2::Line)
-  a, b = l1(0), l1(1)
-  c, d = l2(0), l2(1)
+function intersection(f, line₁::Line, line₂::Line)
+  a, b = line₁(0), line₁(1)
+  c, d = line₂(0), line₂(1)
 
   λ₁, _, r, rₐ = intersectparameters(a, b, c, d)
 
   if r == rₐ == 2
     return @IT CrossingLines (a + λ₁ * (b - a)) f
   elseif r == rₐ == 1
-    return @IT OverlappingLines l1 f
+    return @IT OverlappingLines line₁ f
   else
     return @IT NoIntersection nothing f
   end
 end
-
-# compute the intersection of two lines assuming that it is a point
-function intersectpoint(l1::Line, l2::Line)
-  a, b = l1(0), l1(1)
-  c, d = l2(0), l2(1)
-  λ₁, _ = intersectparameters(a, b, c, d)
-  a + λ₁ * (b - a)
- end
 
  """
     intersectparameters(a, b, c, d)
@@ -64,16 +56,14 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T},
   
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
-  rₐ = Dim == 2 ? sum(sum(abs, R, dims=2) .> atol(T)) :
-                  sum(abs.(diag(R)) .> atol(T))
+  rₐ = sum(sum(abs, R, dims=2) .> atol(T))
 
   # calculate the rank of the rectangular matrix
   r = sum(sum(abs, R[:,1:2], dims=2) .> atol(T))
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
-    QR = qr(A)
-    λ = QR.R \ QR.Q' * y
+    λ = A \ y
   else # parallel or collinear
     λ = SVector(zero(T), zero(T))
   end

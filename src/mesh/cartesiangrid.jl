@@ -50,16 +50,17 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.,),(1.,), dims=(100,))
 ```
 """
-struct CartesianGrid{Dim,T} <: Mesh{Dim,T}
-  dims::Dims{Dim}
+struct CartesianGrid{Dim,T} <: Grid{Dim,T}
   origin::Point{Dim,T}
   spacing::NTuple{Dim,T}
   offset::Dims{Dim}
+  topology::GridTopology{Dim}
 
   function CartesianGrid{Dim,T}(dims, origin, spacing, offset) where {Dim,T}
     @assert all(>(0), dims) "dimensions must be positive"
     @assert all(>(0), spacing) "spacing must be positive"
-    new(dims, origin, spacing, offset)
+    topology = GridTopology(dims)
+    new(origin, spacing, offset, topology)
   end
 end
 
@@ -110,105 +111,19 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
-==(g1::CartesianGrid, g2::CartesianGrid) =
-  g1.dims    == g2.dims    &&
-  g1.spacing == g2.spacing &&
-  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
+cart2vert(g::CartesianGrid, ijk::Tuple) =
+  Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
 
-
-Base.size(g::CartesianGrid) = g.dims
-Base.minimum(g::CartesianGrid) = Point(coordinates(g.origin) .- (g.offset .- 1) .* g.spacing)
-Base.maximum(g::CartesianGrid) = Point(coordinates(g.origin) .+ (g.dims .- g.offset .+ 1) .* g.spacing)
-Base.extrema(g::CartesianGrid) = minimum(g), maximum(g)
 spacing(g::CartesianGrid) = g.spacing
-offset(g::CartesianGrid) = g.offset
 
-function vertices(g::CartesianGrid)
-  inds = CartesianIndices(g.dims .+ 1)
-  vec([Point(coordinates(g.origin) .+ (ind.I .- g.offset) .* g.spacing) for ind in inds])
+offset(g::CartesianGrid)  = g.offset
+
+function centroid(g::CartesianGrid, ind::Int)
+  ijk = elem2cart(topology(g), ind)
+  p = cart2vert(g, ijk)
+  δ = Vec(spacing(g) ./ 2)
+  p + δ
 end
-
-elements(g::CartesianGrid) = (g[i] for i in 1:nelements(g))
-
-topology(g::CartesianGrid) = GridTopology(size(g))
-
-# -----------------
-# DOMAIN INTERFACE
-# -----------------
-
-function element(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  I = CartesianIndices(g.dims)[ind]
-  o = coordinates(g.origin)
-  s = g.spacing
-  i = I.I .- g.offset .+ 1
-
-  if Dim == 1 # segment
-    p1 = (o[1] + (i[1] - 1) * s[1],)
-    p2 = (o[1] + (    i[1]) * s[1],)
-    Segment(p1, p2)
-  elseif Dim == 2 # quadrangle
-    p1 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2] - 1) * s[2])
-    p2 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2] - 1) * s[2])
-    p3 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2]    ) * s[2])
-    p4 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2]    ) * s[2])
-    Quadrangle(p1, p2, p3, p4)
-  elseif Dim == 3 # hexahedron
-    p1 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p2 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p3 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p4 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3] - 1) * s[3])
-    p5 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    p6 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2] - 1) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    p7 = (o[1] + (i[1]    ) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    p8 = (o[1] + (i[1] - 1) * s[1],
-          o[2] + (i[2]    ) * s[2],
-          o[3] + (i[3]    ) * s[3])
-    Hexahedron(p1, p2, p3, p4, p5, p6, p7, p8)
-  else
-    throw(ErrorException("not implemented"))
-  end
-end
-
-nelements(g::CartesianGrid) = prod(g.dims)
-
-function centroid(g::CartesianGrid{Dim}, ind::Int) where {Dim}
-  intcoords = CartesianIndices(g.dims)[ind]
-  neworigin = coordinates(g.origin) .+ g.spacing ./ 2
-  Point(ntuple(i -> neworigin[i] + (intcoords[i] - g.offset[i])*g.spacing[i], Dim))
-end
-
-Base.eltype(g::CartesianGrid) = typeof(g[1])
-
-# ----------------------------
-# ADDITIONAL INDEXING METHODS
-# ----------------------------
-
-"""
-    grid[istart:iend,jstart:jend,...]
-
-Return a subgrid of the Cartesian `grid` using integer ranges
-`istart:iend`, `jstart:jend`, ...
-"""
-Base.getindex(g::CartesianGrid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
-  getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
   dims   = size(I)
@@ -216,14 +131,16 @@ function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {D
   CartesianGrid(dims, g.origin, g.spacing, offset)
 end
 
-Base.view(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} = getindex(g, I)
+==(g1::CartesianGrid, g2::CartesianGrid) =
+  g1.topology == g2.topology && g1.spacing  == g2.spacing &&
+  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
 
 # -----------
 # IO METHODS
 # -----------
 
 function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
-  dims = join(g.dims, "×")
+  dims = join(size(g.topology), "×")
   print(io, "$dims CartesianGrid{$Dim,$T}")
 end
 

@@ -17,6 +17,7 @@ constructs such as connectivity lists and topological structures (e.g. [`SimpleM
 
 ```@docs
 Mesh
+Grid
 ```
 
 ```@docs
@@ -26,6 +27,19 @@ CartesianGrid
 ```@example meshes
 # 3D Cartesian grid
 grid = CartesianGrid(10, 10, 10)
+
+viz(grid, showfacets = true)
+```
+
+```@docs
+RectilinearGrid
+```
+
+```@example meshes
+# 2D rectilinear grid
+x = 0.0:0.2:1.0
+y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+grid = RectilinearGrid(x, y)
 
 viz(grid, showfacets = true)
 ```

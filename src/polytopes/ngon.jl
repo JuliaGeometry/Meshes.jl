@@ -80,7 +80,7 @@ function measure(t::Triangle{3})
   norm((B - A) × (C - A)) / 2
 end
 
-function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
+function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
   a, b, c = t.vertices
   x₁, y₁ = coordinates(a)
@@ -93,15 +93,13 @@ function Base.in(p::Point{2,T}, t::Triangle{2,T}) where {T}
        ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
   λ₂ = ((y₃ - y₁)*(x  - x₃) + (x₁ - x₃)*(y  - y₃)) /
        ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
-  λ₃ = one(T) - λ₁ - λ₂
+  λ₃ = 1 - λ₁ - λ₂
 
   # barycentric check
-  zero(T) ≤ λ₁ ≤ one(T) &&
-  zero(T) ≤ λ₂ ≤ one(T) &&
-  zero(T) ≤ λ₃ ≤ one(T)
+  0 ≤ λ₁ ≤ 1 && 0 ≤ λ₂ ≤ 1 && 0 ≤ λ₃ ≤ 1
 end
 
-function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
+function Base.in(p::Point{3}, t::Triangle{3})
   # given coordinates
   a, b, c = t.vertices
 
@@ -125,7 +123,7 @@ function Base.in(p::Point{3,T}, t::Triangle{3,T}) where {T}
   λ₃ = (d₁₁ * d₃₂ - d₁₂ * d₃₁) / d
 
   # barycentric check
-  (λ₂ ≥ zero(T)) && (λ₃ ≥ zero(T)) && ((λ₂ + λ₃) ≤ one(T))
+  λ₂ ≥ 0 && λ₃ ≥ 0 && (λ₂ + λ₃) ≤ 1
 end
 
 function normal(t::Triangle{3})
@@ -151,6 +149,9 @@ end
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
+  if (u < 0 || u > 1) || (v < 0 || v > 1)
+    throw(DomainError((u,v), "q(u,v) is not defined for u, v outside [0, 1]²."))
+  end
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
   Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)
 end

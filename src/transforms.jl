@@ -93,5 +93,8 @@ reapply(transform::StatelessGeometricTransform, object, cache) =
 # IMPLEMENTATIONS
 # ----------------
 
+include("transforms/rotate.jl")
+include("transforms/translate.jl")
+include("transforms/stretch.jl")
 include("transforms/stdcoords.jl")
-include("transforms/taubin.jl")
+include("transforms/smoothing.jl")

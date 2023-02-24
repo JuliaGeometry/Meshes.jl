@@ -7,7 +7,7 @@
 
 Compute the convex hull of a set of points or geometries using the
 Graham's scan method. See [https://en.wikipedia.org/wiki/Graham_scan]
-(https://www.pnas.org/content/117/52/33711).
+(https://en.wikipedia.org/wiki/Graham_scan).
 
 The method has complexity `O(n*log(n))` where `n` is the number of points.
 
