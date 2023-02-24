@@ -11,12 +11,11 @@
 ## Overview
 
 [Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl) provides efficient
-implementations of concepts from computational geometry and finite element
-analysis. It promotes rigorous mathematical definitions of spatial discretizations
-(a.k.a. meshes) that are adequate for describing general manifolds embedded in $\R^n$,
-including surfaces described with spherical coordinates, and geometries described
-with multiple coordinate reference systems. Our ambitious goal is to provide all the
-features of the [CGAL](https://www.cgal.org) project in pure Julia.
+implementations of concepts from computational geometry. It promotes rigorous
+mathematical definitions of spatial discretizations (a.k.a. meshes) that are
+adequate for describing general manifolds embedded in $\R^n$, including surfaces
+described with spherical coordinates, and geometries described with multiple
+coordinate reference systems.
 
 Unlike other existing efforts in the Julia ecosystem, this project is being carefully
 designed to facilitate the use of *meshes across different scientific domains*. We
@@ -37,6 +36,9 @@ For advanced data science with geospatial data (i.e., tables over meshes), consi
 [GeoStats.jl](https://github.com/JuliaEarth/GeoStats.jl) framework. It provides sophisticated
 methods for estimating (interpolating), simulating and learning geospatial functions over
 [Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl) meshes.
+
+If you have questions or would like to brainstorm ideas in general, don't hesitate to start
+a thread in our [zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
 
 ## Installation
 
