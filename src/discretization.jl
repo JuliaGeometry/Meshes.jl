@@ -108,6 +108,9 @@ discretize(ball::Ball{2}) =
 discretize(sphere::Sphere{3}) =
   discretize(sphere, RegularDiscretization(50))
 
+discretize(torus::Torus) =
+  discretize(torus, RegularDiscretization(50))
+
 discretize(cylsurf::CylinderSurface) =
   discretize(cylsurf, RegularDiscretization(50, 2))
 
