@@ -144,11 +144,11 @@ export
   Ray, Line,
   BezierCurve,
   Plane, Box,
-  Ball, Sphere, Disk, Circle,
+  Ball, Sphere, Disk, Circle, Torus,
   Cylinder, CylinderSurface,
   Cone, ConeSurface,
   ncontrols, degree, Horner, DeCasteljau,
-  radius, bottom, top, axis, isright, sides,
+  radius, radii, bottom, top, axis, isright, sides,
   measure, diagonal, origin, direction,
 
   # polytopes

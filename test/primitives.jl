@@ -431,4 +431,25 @@
     @test !isconvex(s)
     @test isnothing(boundary(s))
   end
+
+  @testset "Torus" begin
+    # basic tests
+    t = Torus(T.((1,1,1)), T.((1,0,0)), 2, 1)
+    @test P3(1,1,-1) ∈ t
+    @test P3(1,1,1) ∉ t
+    # torus passing through three points
+    p₁ = P3(0,0,0)
+    p₂ = P3(1,2,3)
+    p₃ = P3(3,2,1)
+    t = Torus(p₁, p₂, p₃, 1)
+    c = center(t)
+    R, r = radii(t)
+    @test r == 1
+    @test norm(p₁ - c) ≈ R
+    @test norm(p₂ - c) ≈ R
+    @test norm(p₃ - c) ≈ R
+    @test p₁ ∈ t
+    @test p₂ ∈ t
+    @test p₃ ∈ t
+  end
 end
