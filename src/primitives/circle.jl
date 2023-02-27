@@ -26,7 +26,7 @@ function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   m13 = coordinates(p1 + v13/2)
   n⃗ = normal(Plane(p1, p2, p3))
   F = coordinates(p1) ⋅ n⃗
-  M = transpose(hcat(n⃗, v12, v13))
+  M = transpose([n⃗ v12 v13])
   u = [F, m12 ⋅ v12, m13 ⋅ v13]
   O = Point(inv(M) * u)
   r = norm(p1 - O)
