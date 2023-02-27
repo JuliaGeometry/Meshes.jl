@@ -36,7 +36,6 @@ end
 Circle(p1::Tuple, p2::Tuple, p3::Tuple) =
   Circle(Point(p1), Point(p2), Point(p3))
 
-
 Circle(plane::Plane{T}, radius) where {T} = Circle(plane, T(radius))
 
 paramdim(::Type{<:Circle}) = 1
