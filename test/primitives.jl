@@ -322,6 +322,15 @@
     @test P3(0,2,0) ∈ c
     @test P3(0,0,0) ∉ c
     @test isnothing(boundary(c))
+
+    # 3D circumcircle
+    p1 = P3(0,4,0)
+    p2 = P3(0,-4,0)
+    p3 = P3(0,0,4)
+    c = Circle(p1, p2, p3)
+    @test p1 ∈ c
+    @test p2 ∈ c
+    @test p3 ∈ c
   end
 
   @testset "Cylinder" begin
