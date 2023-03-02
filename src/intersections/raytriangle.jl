@@ -60,7 +60,7 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
 
   λ ≈ zero(T) && (return @IT EdgeOriginTouchingRayTriangle r(λ) f)
 
-  @show coords = (u, v, det - u - v)
+  coords = (u, v, det - u - v)
   count(x -> x ≈ zero(T), coords) == 1 && (return @IT EdgeTouchingRayTriangle r(λ) f)
   count(x -> x ≈ det, coords) == 1 && (return @IT CornerTouchingRayTriangle r(λ) f)
 
