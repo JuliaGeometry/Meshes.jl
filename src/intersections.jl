@@ -93,7 +93,11 @@ Type `IntersectionType` in a Julia session to see the full list.
   IntersectingSegmentTriangle
 
   # ray-triangle intersection
-  IntersectingRayTriangle
+  CrossingRayTriangle
+  CornerTouchingRayTriangle
+  CornerOriginTouchingRayTriangle
+  EdgeTouchingRayTriangle
+  EdgeOriginTouchingRayTriangle
 
   # line-plane intersection
   CrossingLinePlane

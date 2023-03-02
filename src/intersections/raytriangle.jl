@@ -5,6 +5,13 @@
 #=
 Möller, T. & Trumbore, B., 1997.
 (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
+
+Cases
+1. CrossingRayTriangle - middle of ray intersects middle of triangle
+2. CornerOriginTouchingRayTriangle - origin of ray intersects corner of triangle
+3. EdgeOriginTouchingRayTriangle - origin of ray intersects edge of triangle
+4. EdgeTouchingRayTriangle - middle of ray intersects edge of triangle
+5. CornerTouchingRayTriangle - middle of ray intersects corner of triangle
 =#
 function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
@@ -49,7 +56,15 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return @IT NoIntersection nothing f
   end
 
+  any(o .≈ vs) && (return @IT CornerOriginTouchingRayTriangle r(λ) f)
+
+  λ ≈ zero(T) && (return @IT EdgeOriginTouchingRayTriangle r(λ) f)
+
+  coords = (u, v, det - u - v)
+  count(x -> x ≈ zero(T), coords) == 1 && (return @IT EdgeTouchingRayTriangle r(λ) f)
+  count(x -> x ≈ det, coords) == 1 && (return @IT CornerTouchingRayTriangle r(λ) f)
+
   λ = clamp(λ, zero(T), typemax(T))
 
-  return @IT IntersectingRayTriangle r(λ) f
+  return @IT CrossingRayTriangle r(λ) f
 end

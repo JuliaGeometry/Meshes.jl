@@ -282,11 +282,11 @@
     s1 = Segment(P2(2.0, 2.0), P2(3.0, 1.0))
     s2 = Segment(P2(2.12505,1.87503), P2(50000.0,30000.0))
     s3 = Segment(P2(2.125005,1.875003), P2(50000.0,30000.0))
-    s4 = Segment(P2(2.125005,1.875003), P2(50002.125005,30001.875003))      
+    s4 = Segment(P2(2.125005,1.875003), P2(50002.125005,30001.875003))
     @test s1 ∩ s2 == s2 ∩ s1 === nothing
     @test s1 ∩ s3 == s3 ∩ s1 === ((T == Float32) ? P2(2.125005, 1.875003) : nothing)
     @test s1 ∩ s4 == s4 ∩ s1 === ((T == Float32) ? P2(2.125005, 1.875003) : nothing)
-      
+
     # type stability tests
     s1 = Segment(P2(0,0), P2(1,0))
     s2 = Segment(P2(0.5,0.0), P2(2,0))
@@ -488,7 +488,7 @@
     @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
     @test intersection(l₁, s₆) |> type == OverlappingLineSegment # CASE 3
     @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
-    
+
     # type stability tests
     @inferred someornone(l₁, s₁)
     @inferred someornone(l₁, s₂)
@@ -652,11 +652,11 @@
 
     # intersects through t
     r = Ray(P3(0.2, 0.2, 1.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == IntersectingRayTriangle
+    @test intersection(r, t) |> type == CrossingRayTriangle
     @test r ∩ t == P3(0.2, 0.2, 0.0)
     # Special case: the direction vector is not length enough to cross triangle
     r = Ray(P3(0.2, 0.2, 1.0), V3(0.0, 0.0, -0.00001))
-    @test intersection(r, t) |> type == IntersectingRayTriangle
+    @test intersection(r, t) |> type == CrossingRayTriangle
     @test r ∩ t ≈ P3(0.2, 0.2, 0.0)
     # Special case: reverse direction vector should not hit the triangle
     r = Ray(P3(0.2, 0.2, 1.0), V3(0.0, 0.0, 1.0))
@@ -665,7 +665,7 @@
 
     # intersects at a vertex of t
     r = Ray(P3(0.0, 0.0, 1.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == IntersectingRayTriangle
+    @test intersection(r, t) |> type == CornerTouchingRayTriangle
     @test r ∩ t ≈ P3(0.0, 0.0, 0.0)
 
     # normal to, doesn't intersect with t
@@ -753,13 +753,23 @@
 
     # doesn't reach t, but a ray can hit the triangle
     r = Ray(P3(0.5, 0.5, 1.9), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == IntersectingRayTriangle
+    @test intersection(r, t) |> type == EdgeTouchingRayTriangle
     @test r ∩ t ≈ P3(0.5, 0.5, 0.5)
 
     # parallel, offset from t, no intersection
     r = Ray(P3(0.0, 0.5, 1.0), V3(1.0, 0.0, 0.0))
     @test intersection(r, t) |> type == NoIntersection
     @test isnothing(r ∩ t)
+
+    # origin of ray intersects with vertex of triangle
+    r = Ray(P3(0.0, 0.0, 0.0), V3(0.0, 0.0, -1.0))
+    @test intersection(r, t) |> type == CornerOriginTouchingRayTriangle
+    @test r ∩ t ≈ P3(0.0, 0.0, 0.0)
+
+    # origin of ray intersects with edge of triangle
+    r = Ray(P3(0.5, 0.0, 0.0), V3(0.0, 0.0, -1.0))
+    @test intersection(r, t) |> type == EdgeOriginTouchingRayTriangle
+    @test r ∩ t ≈ P3(0.5, 0.0, 0.0)
   end
 
   @testset "Ngons" begin
@@ -767,7 +777,7 @@
                  P3(1.0,1.0,0.0), P3(0.5,1.5,0.0), P3(0.0,1.0,0.0), P3(-0.5,0.5,0.0)])
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(1.0, 1.0, 1.0))
-    @test intersection(r, o) |> type == IntersectingRayTriangle
+    @test intersection(r, o) |> type == CrossingRayTriangle
     @test r ∩ o ≈ P3(0.0, 0.0, 0.0)
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(-1.0, -1.0, -1.0))
