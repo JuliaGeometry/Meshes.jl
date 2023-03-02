@@ -753,7 +753,7 @@
 
     # doesn't reach t, but a ray can hit the triangle
     r = Ray(P3(0.5, 0.5, 1.9), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == EdgeTouchingRayTriangle
+    @test intersection(r, t) |> type == CrossingRayTriangle
     @test r ∩ t ≈ P3(0.5, 0.5, 0.5)
 
     # parallel, offset from t, no intersection
@@ -770,6 +770,11 @@
     r = Ray(P3(0.5, 0.0, 0.0), V3(0.0, 0.0, -1.0))
     @test intersection(r, t) |> type == EdgeOriginTouchingRayTriangle
     @test r ∩ t ≈ P3(0.5, 0.0, 0.0)
+
+    # ray intersects with edge of triangle
+    r = Ray(P3(0.5, 0.0, 1.0), V3(0.0, 0.0, -1.0))
+    @test intersection(r, t) |> type == EdgeTouchingRayTriangle
+    @test r ∩ t ≈ P3(0.5, 0.0, 0.5)
   end
 
   @testset "Ngons" begin
@@ -777,7 +782,7 @@
                  P3(1.0,1.0,0.0), P3(0.5,1.5,0.0), P3(0.0,1.0,0.0), P3(-0.5,0.5,0.0)])
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(1.0, 1.0, 1.0))
-    @test intersection(r, o) |> type == CrossingRayTriangle
+    @test intersection(r, o) |> type == EdgeTouchingRayTriangle
     @test r ∩ o ≈ P3(0.0, 0.0, 0.0)
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(-1.0, -1.0, -1.0))
