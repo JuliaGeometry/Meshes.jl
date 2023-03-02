@@ -20,6 +20,8 @@ Partition(object, subsets, metadata=Dict()) =
 ==(p₁::Partition, p₂::Partition) =
   p₁.object == p₂.object && p₁.subsets == p₂.subsets
 
+Base.parent(p::Partition) = p.object
+
 """
     indices(partition)
 
@@ -49,10 +51,8 @@ Base.getindex(partition::Partition, inds::AbstractVector{Int}) =
 Base.eltype(partition::Partition) = typeof(first(partition))
 
 function Base.show(io::IO, partition::Partition)
-  Dim = embeddim(partition.object)
-  T   = coordtype(partition.object)
-  N   = length(partition.subsets)
-  print(io, "$N Partition{$Dim,$T}")
+  N = length(partition.subsets)
+  print(io, "$N Partition")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", partition::Partition)

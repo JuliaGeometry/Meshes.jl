@@ -9,6 +9,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(P1(2.0,), P1(1.0,)))
     @test !(s ≈ Segment(P1(-1.0,), P1(2.0,)))
+
     s = Segment(P2(0,0), P2(1,1))
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
@@ -23,6 +24,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(P2(1,1), P2(0,0)))
     @test !(s ≈ Segment(P2(1,2), P2(0,0)))
+
     s = Segment(P3(0,0,0), P3(1,1,1))
     @test all(P3(x, x, x) ∈ s for x in 0:0.01:1)
     @test all(p ∉ s for p in [P3(-0.1, -0.1, -0.1), P3(1.1, 1.1, 1.1)])
@@ -30,6 +32,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(P3(1,1,1), P3(0,0,0)))
     @test !(s ≈ Segment(P3(1,1,1), P3(0,1,0)))
+
     s = Segment(Point(1.,1.,1.,1.), Point(2.,2.,2.,2.))
     @test all(Point(x, x, x, x) ∈ s for x in 1:0.01:2)
     @test all(p ∉ s for p in [Point(0.99, 0.99, 0.99, 0.99), Point(2.1, 2.1, 2.1, 2.1)])
@@ -37,6 +40,11 @@
     @test s ≈ s
     @test !(s ≈ Segment(Point(2,2,2,2), Point(1,1,1,1)))
     @test !(s ≈ Segment(Point(1,1,2,1), Point(0,0,0,0)))
+
+    s = Segment(P3(0,0,0), P3(1,1,1))
+    @test boundary(s) == PointSet([P3(0,0,0), P3(1,1,1)])
+    @test perimeter(s) == zero(T)
+    @test center(s) == Point(0.5, 0.5, 0.5)
   end
 
   @testset "N-gons" begin
@@ -77,6 +85,14 @@
     @test boundary(t) == first(chains(t))
     @test chains(t) == [Chain(P2(0,0), P2(1,0), P2(0,1), P2(0,0))]
     @test bridge(t) == (first(chains(t)), [])
+
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test perimeter(t) ≈ T(1 + 1 + √2)
+
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/333
+    t = Triangle((0.0f0,0.0f0),(1.0f0,0.0f0),(0.5f0,1.0f0))
+    @test Point(0.5f0,0.5f0) ∈ t
+    @test Point(0.5e0,0.5e0) ∈ t
 
     # test orientation
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
@@ -139,6 +155,12 @@
     @test q(T(1),T(0)) == P2(1,0)
     @test q(T(1),T(1)) == P2(1,1)
     @test q(T(0),T(1)) == P2(0,1)
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    @test_throws DomainError((T(1.2),T(1.2)), "q(u,v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
+
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    @test perimeter(q) ≈ T(4)
 
     # Quadrangle in 3D space
     q = Quadrangle(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
@@ -230,6 +252,7 @@
     c = Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])
     @test nvertices(c) == 4
     @test Meshes.npoints(c) == 5
+    @test length(c) == T(4)
 
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])
@@ -303,17 +326,25 @@
   @testset "PolyAreas" begin
     @test paramdim(PolyArea) == 2
 
+    # outer chain with 2 vertices is fixed by default
+    poly = PolyArea(P2[(0,0),(1,0),(0,0)])
+    @test chains(poly) == [Chain(P2[(0,0),(0.5,0.),(1,0),(0,0)])]
+
+    # inner chain with 2 vertices is removed by default
+    poly = PolyArea(P2[(0,0),(1,0),(1,1),(0,1),(0,0)], [P2[(1,2),(2,3),(1,2)]])
+    @test chains(poly) == [Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])]
+
+    # orientation of chains is fixed by default
+    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)])
+    @test vertices(poly) == CircularVector(P2[(0,0),(1,0),(1,1),(0,1)])
+    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)], fix=false)
+    @test vertices(poly) == CircularVector(P2[(0,0),(0,1),(1,1),(1,0)])
+
     # test accessor methods
     poly = PolyArea(P2[(1,2),(2,3),(1,2)], fix=false)
     @test vertices(poly) == CircularVector(P2[(1,2),(2,3)])
     poly = PolyArea(P2[(1,2),(2,3),(1,2)], [P2[(1.1, 2.54),(1.4,1.5),(1.1,2.54)]], fix=false)
     @test vertices(poly) == CircularVector(P2[(1,2),(2,3),(1.1,2.54),(1.4,1.5)])
-
-    # test constructor with orientation fix
-    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)])
-    @test vertices(poly) == CircularVector(P2[(0,0),(1,0),(1,1),(0,1)])
-    poly = PolyArea(P2[(0,0),(0,1),(1,1),(1,0),(0,0)], fix=false)
-    @test vertices(poly) == CircularVector(P2[(0,0),(0,1),(1,1),(1,0)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1

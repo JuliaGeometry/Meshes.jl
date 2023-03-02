@@ -13,9 +13,9 @@ using Random
 
 using Bessels: gamma
 using IterTools: ivec
-using StatsBase: AbstractWeights, Weights
+using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
-using ReferenceFrameRotations: EulerAngles, DCM
+using ReferenceFrameRotations: EulerAngles, DCM, Quaternion
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
@@ -24,11 +24,6 @@ import Base: values, ==, +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
-
-# Queryverse compatibility
-import TableTraits
-import IteratorInterfaceExtensions
-const IIE = IteratorInterfaceExtensions
 
 # Transforms API
 import TransformsBase: Transform
@@ -76,7 +71,7 @@ include("distances.jl")
 include("neighborhoods.jl")
 include("neighborsearch.jl")
 include("supportfun.jl")
-include("diffops.jl")
+include("matrices.jl")
 
 # views and partitions
 include("views.jl")
@@ -84,6 +79,7 @@ include("partitions.jl")
 
 # algorithms
 include("viewing.jl")
+include("merging.jl")
 include("sampling.jl")
 include("partitioning.jl")
 include("intersections.jl")
@@ -95,10 +91,6 @@ include("hulls.jl")
 
 # transforms
 include("transforms.jl")
-
-# deprecations
-@deprecate FullTopology(x) SimpleTopology(x)
-@deprecate smooth(mesh, method) method(mesh)
 
 export
   # points
@@ -133,24 +125,28 @@ export
   element, nelements,
 
   # data traits
-  Data, Variable,
+  Data,
   domain, constructor, asarray,
-  variables, name, mactype,
 
   # domain/data alias
   DomainOrData,
+  nitems,
 
   # geometries
   Geometry,
   embeddim, paramdim, coordtype,
   measure, area, volume, boundary,
   isconvex, issimplex, isperiodic,
-  center, centroid,
+  center, centroid, perimeter,
 
   # primitives
   Primitive,
-  Line, Ray, Plane, BezierCurve,
-  Box, Ball, Sphere, Cylinder, CylinderSurface,
+  Ray, Line,
+  BezierCurve,
+  Plane, Box,
+  Ball, Sphere, Disk, Circle,
+  Cylinder, CylinderSurface,
+  Cone, ConeSurface,
   ncontrols, degree, Horner, DeCasteljau,
   radius, bottom, top, axis, isright, sides,
   measure, diagonal, origin, direction,
@@ -186,7 +182,11 @@ export
   # utililities
   signarea,
   sideof,
+  iscollinear,
+  iscoplanar,
   householderbasis,
+  mayberound,
+  uvrotation,
 
   # paths
   Path,
@@ -217,6 +217,7 @@ export
   supportfun,
   laplacematrix,
   measurematrix,
+  adjacencymatrix,
 
   # connectivities
   Connectivity,
@@ -236,7 +237,8 @@ export
   elem2cart, cart2elem,
   corner2cart, cart2corner,
   elem2corner, corner2elem,
-  rank2type, isperiodic,
+  elementtype, facettype,
+  isperiodic,
   half4elem, half4vert,
   half4edge, half4pair,
   edge4pair,
@@ -247,14 +249,17 @@ export
   Boundary, Coboundary, Adjacency,
 
   # meshes
-  Mesh,
-  CartesianGrid, SimpleMesh,
+  Mesh, Grid,
+  CartesianGrid,
+  RectilinearGrid,
+  SimpleMesh,
   vertices, elements, facets,
   nvertices, nelements, nfacets,
   element, facet,
   faces, nfaces,
   topology,
   topoconvert,
+  cart2vert,
   spacing,
   offset,
   isinside,
@@ -325,10 +330,21 @@ export
   MidTouchingRaySegment,
   CornerTouchingRaySegment,
   OverlappingRaySegment,
+  CrossingRayLine,
+  TouchingRayLine,
+  OverlappingRayLine,
+  CrossingLineSegment,
+  TouchingLineSegment,
+  OverlappingLineSegment,
   CrossingRayBox,
   TouchingRayBox,
   IntersectingSegmentTriangle,
   IntersectingRayTriangle,
+  CrossingLinePlane,
+  OverlappingLinePlane,
+  CrossingRayPlane,
+  TouchingRayPlane,
+  OverlappingRayPlane,
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,
@@ -354,6 +370,7 @@ export
   # simplification
   SimplificationMethod,
   DouglasPeucker,
+  Selinger,
   simplify,
   decimate,
 
@@ -375,7 +392,12 @@ export
   # transforms
   GeometricTransform,
   StatelessGeometricTransform,
+  Rotate,
+  Translate,
+  Stretch,
   StdCoords,
+  LambdaMuSmoothing,
+  LaplaceSmoothing,
   TaubinSmoothing,
 
   # tolerances

@@ -132,8 +132,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   cₜ(φ) = Point(r*cos(φ), r*sin(φ), zₜ(φ))
 
   # center of cylinder for final translation
-  oᵦ = coordinates(origin(b))
-  oₜ = coordinates(origin(t))
+  oᵦ = coordinates(b(0, 0))
+  oₜ = coordinates(t(0, 0))
   oₘ = @. (oᵦ + oₜ) / 2
 
   function point(φ, z)

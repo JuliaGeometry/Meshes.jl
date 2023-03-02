@@ -54,7 +54,7 @@ function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
   # rotation matrix
-  R = convert(DCM{T}, rot)
+  R = convert(DCM, rot)
 
   # sanity check
   @assert size(R) == (Dim, Dim) "invalid rotation for radii"

@@ -12,12 +12,16 @@ See https://en.wikipedia.org/wiki/Geometric_primitive.
 """
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
-include("primitives/line.jl")
 include("primitives/ray.jl")
+include("primitives/line.jl")
+include("primitives/bezier.jl")
 include("primitives/plane.jl")
 include("primitives/box.jl")
 include("primitives/ball.jl")
 include("primitives/sphere.jl")
+include("primitives/disk.jl")
+include("primitives/circle.jl")
 include("primitives/cylinder.jl")
 include("primitives/cylindersurface.jl")
-include("primitives/bezier.jl")
+include("primitives/cone.jl")
+include("primitives/conesurface.jl")

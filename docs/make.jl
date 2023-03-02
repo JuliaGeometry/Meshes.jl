@@ -8,8 +8,8 @@ ENV["GKSwstype"] = "100"
 
 istravis = "TRAVIS" ∈ keys(ENV)
 
-Themes.compile(joinpath(@__DIR__,"src/assets/meshes-light.scss"), joinpath(@__DIR__,"src/assets/themes/documenter-light.css"))
-Themes.compile(joinpath(@__DIR__,"src/assets/meshes-dark.scss"), joinpath(@__DIR__,"src/assets/themes/documenter-dark.css"))
+Themes.compile(joinpath(@__DIR__,"src/assets/light.scss"), joinpath(@__DIR__,"src/assets/themes/documenter-light.css"))
+Themes.compile(joinpath(@__DIR__,"src/assets/dark.scss"), joinpath(@__DIR__,"src/assets/themes/documenter-dark.css"))
 
 makedocs(
   modules = [Meshes, MeshViz],
@@ -63,8 +63,7 @@ makedocs(
       "Traits" => "traits.md"
   ],
     "Contributing" => [
-      "contributing/guidelines.md",
-      "contributing/devguide.md"
+      "contributing/guidelines.md"
     ],
     "About" => [
       "License" => "about/license.md"

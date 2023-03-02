@@ -75,6 +75,16 @@ Type `IntersectionType` in a Julia session to see the full list.
   CornerTouchingRaySegment
   OverlappingRaySegment
 
+  # ray-line intersection
+  CrossingRayLine
+  TouchingRayLine
+  OverlappingRayLine
+
+  # line-segment intersection
+  CrossingLineSegment
+  TouchingLineSegment
+  OverlappingLineSegment
+
   # ray-box intersection
   CrossingRayBox
   TouchingRayBox
@@ -84,6 +94,15 @@ Type `IntersectionType` in a Julia session to see the full list.
 
   # ray-triangle intersection
   IntersectingRayTriangle
+
+  # line-plane intersection
+  CrossingLinePlane
+  OverlappingLinePlane
+
+  # ray-plane intersection
+  CrossingRayPlane
+  TouchingRayPlane
+  OverlappingRayPlane
 
   # segment-plane intersection
   CrossingSegmentPlane
@@ -135,8 +154,10 @@ include("intersections/boxes.jl")
 include("intersections/segments.jl")
 include("intersections/rays.jl")
 include("intersections/raysegment.jl")
+include("intersections/rayline.jl")
+include("intersections/linesegment.jl")
 include("intersections/raybox.jl")
-include("intersections/segmentplane.jl")
+include("intersections/lineraysegmentplane.jl")
 include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
 include("intersections/geompolygon.jl")

@@ -148,8 +148,8 @@ function discretize(cylsurf::CylinderSurface{T},
   end
 
   # add south and north poles
-  push!(points, origin(bottom(cylsurf)))
-  push!(points, origin(top(cylsurf)))
+  push!(points, bottom(cylsurf)(0, 0))
+  push!(points, top(cylsurf)(0, 0))
 
   # connect south pole with triangles
   south = map(1:nx-1) do i

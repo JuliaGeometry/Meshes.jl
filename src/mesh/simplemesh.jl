@@ -3,13 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    SimpleMesh(points, topology)
+    SimpleMesh(vertices, topology)
 
-A simple mesh with `points` and `topology`.
+A simple mesh with `vertices` and `topology`.
 
-    SimpleMesh(points, connectivities; relations=false)
+    SimpleMesh(vertices, connectivities; relations=false)
 
-Alternatively, construct a simple mesh with `points` and
+Alternatively, construct a simple mesh with `vertices` and
 `connectivities`. The option `relations` can be used to
 build topological relations assuming that the `connectivities`
 represent the elements of the mesh.
@@ -32,30 +32,28 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
   [`SimpleTopology`](@ref).
 """
 struct SimpleMesh{Dim,T,V<:AbstractVector{Point{Dim,T}},TP<:Topology} <: Mesh{Dim,T}
-  points::V
+  vertices::V
   topology::TP
 end
 
 SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) =
   SimpleMesh(Point.(coords), topology)
 
-function SimpleMesh(points, connec::AbstractVector{<:Connectivity}; relations=false)
+function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=false)
   topology = relations ? HalfEdgeTopology(connec) :
                          SimpleTopology(connec)
-  SimpleMesh(points, topology)
+  SimpleMesh(vertices, topology)
 end
 
-vertices(m::SimpleMesh) = m.points
+vertices(m::SimpleMesh) = m.vertices
 
-nvertices(m::SimpleMesh) = length(m.points)
-
-topology(m::SimpleMesh) = m.topology
+nvertices(m::SimpleMesh) = length(m.vertices)
 
 """
     convert(SimpleMesh, mesh)
 
 Convert any `mesh` to a simple mesh with explicit
-list of points and [`SimpleTopology`](@ref).
+list of vertices and [`SimpleTopology`](@ref).
 """
 Base.convert(::Type{<:SimpleMesh}, m::Mesh) =
   SimpleMesh(vertices(m), topology(m))

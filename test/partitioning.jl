@@ -3,8 +3,9 @@
 
   d = CartesianGrid{T}(10,10)
   p = partition(d, UniformPartition(100))
-  @test sprint(show, p) == "100 Partition{2,$T}"
-  @test sprint(show, MIME"text/plain"(), p) == "100 Partition{2,$T}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
+  @test parent(p) == d
+  @test sprint(show, p) == "100 Partition"
+  @test sprint(show, MIME"text/plain"(), p) == "100 Partition\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
 
   @testset "UniformPartition" begin
     Random.seed!(123)
@@ -135,6 +136,15 @@
     rng  = MersenneTwister(123)
     p2   = partition(rng, grid, BlockPartition(T(5), T(2)))
     @test p1 == p2
+
+    m1 = BlockPartition((T(5), T(2)))
+    m2 = BlockPartition(T(5), T(2))
+    m3 = BlockPartition((T(5), T(2)), neighbors = false)
+    m4 = BlockPartition(T(5), T(2), neighbors = false)
+    @test m1 == m2 == m3 == m4
+    m1 = BlockPartition(T(1))
+    m2 = BlockPartition(T(1), neighbors = false)
+    @test m1 == m2
   end
 
   @testset "BisectPointPartition" begin
@@ -362,6 +372,33 @@
     s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, hmn))
     @test setify(s1) == setify(s2)
+
+    # test IO methods
+    d = meshdata(CartesianGrid{T}(10,10), etable=(a=rand(100),))
+    p = partition(d, BlockPartition(T(5)))
+    @test sprint(show, p) == "4 Partition"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}"
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), p) == "4 Partition\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}" 
+    end
+  end
+
+  @testset "Data trait" begin
+    data = meshdata(CartesianGrid{T}(10,10), etable=(a=rand(100), b=rand(100)))
+    for method in [UniformPartition(2), FractionPartition(T(0.5)),
+                    BlockPartition(T(2)), BallPartition(T(2)),
+                    BisectPointPartition(V2(1,1), P2(5,5)),
+                    BisectFractionPartition(V2(1,1), T(0.5)),
+                    PlanePartition(V2(1,1)), DirectionPartition(V2(1,1)),
+                    PredicatePartition((i,j) -> iseven(i+j)),
+                    SpatialPredicatePartition((x,y) -> norm(x+y) < T(5)),
+                    ProductPartition(UniformPartition(2), UniformPartition(2)),
+                    HierarchicalPartition(UniformPartition(2), UniformPartition(2))]
+      Π = partition(data, method)
+      inds = reduce(vcat, indices(Π))
+      @test sort(inds) == 1:100
+    end
   end
 
   @testset "Utilities" begin

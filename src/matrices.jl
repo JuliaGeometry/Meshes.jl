@@ -105,3 +105,26 @@ function measurematrix(mesh)
 
   M
 end
+
+"""
+    adjacencymatrix(mesh)
+
+Return the adjacency matrix of the elements of the `mesh`
+using the adjacency relation of the underlying topology.
+"""
+function adjacencymatrix(mesh)
+  t = topology(mesh)
+  D = paramdim(mesh)
+  𝒜 = Adjacency{D}(t)
+
+  # initialize matrix
+  n = nelements(mesh)
+  A = spzeros(Int, n, n)
+
+  # fill in matrix
+  for i in 1:n, j in 𝒜(i)
+    A[i,j] = 1
+  end
+
+  A
+end

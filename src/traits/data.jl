@@ -50,16 +50,18 @@ function constructor end
 # FALLBACKS
 # ----------
 
-function (D::Type{<:Data})(stable)
+constructor(::D) where {D<:Data} = constructor(D)
+
+function (D::Type{<:Data})(geotable)
   # build domain from geometry column
-  ctable = Tables.columns(stable)
-  elms   = Tables.getcolumn(ctable, :geometry)
+  cols   = Tables.columns(geotable)
+  elms   = Tables.getcolumn(cols, :geometry)
   domain = Collection(elms)
 
-  # build table from remaining columns
-  vars = setdiff(Tables.columnnames(ctable), (:geometry,))
-  cols = [var => Tables.getcolumn(ctable, var) for var in vars]
-  table = (; cols...)
+  # build table of features from remaining columns
+  vars  = setdiff(Tables.columnnames(cols), (:geometry,))
+  ncols = [var => Tables.getcolumn(cols, var) for var in vars]
+  table = (; ncols...)
 
   # data table for elements
   values = Dict(paramdim(domain) => table)
@@ -86,11 +88,7 @@ function ==(data₁::Data, data₂::Data)
   return true
 end
 
-# implement Domain traits for convenience
-embeddim(data::Data) = embeddim(domain(data))
-coordtype(data::Data) = coordtype(domain(data))
-nelements(data::Data) = nelements(domain(data))
-centroid(data::Data, ind) = centroid(domain(data), ind)
+nitems(data::Data) = nelements(domain(data))
 
 # -----------------
 # TABLES INTERFACE
@@ -111,16 +109,6 @@ struct DataRows{𝒟,ℛ}
   trows::ℛ
 end
 
-function Base.getindex(rows::DataRows, ind)
-  row = rows.trows[ind]
-  elm = rows.domain[ind]
-  (; NamedTuple(row)..., geometry=elm)
-end
-
-Base.firstindex(row::DataRows) = 1
-
-Base.lastindex(rows::DataRows) = length(rows)
-
 Base.length(rows::DataRows) = nelements(rows.domain)
 
 function Base.iterate(rows::DataRows, state=1)
@@ -129,7 +117,9 @@ function Base.iterate(rows::DataRows, state=1)
   else
     row, _ = iterate(rows.trows, state)
     elm, _ = iterate(rows.domain, state)
-    (; NamedTuple(row)..., geometry=elm), state + 1
+    names  = Tables.columnnames(row)
+    pairs  = (nm => Tables.getcolumn(row, nm) for nm in names)
+    (; pairs..., geometry=elm), state + 1
   end
 end
 
@@ -140,46 +130,124 @@ function Tables.schema(rows::DataRows)
   Tables.Schema((names..., :geometry), (types..., geomtype))
 end
 
-# data table is compatible with the Queryverse
-TableTraits.isiterabletable(data::Data) = true
-IIE.getiterator(data::Data) = Tables.datavaluerows(Tables.rows(data))
-IIE.isiterable(data::Data) = true
-
 Tables.materializer(D::Type{<:Data}) = D
 
-# -----------------
-# COLUMN INTERFACE
-# -----------------
+# --------------------
+# DATAFRAME INTERFACE
+# --------------------
 
-function Base.getindex(data::Data, col::Symbol)
-  if col == :geometry
-    collect(domain(data))
+function Base.getproperty(data::Data, var::Symbol)
+  if var == :geometry
+    domain(data)
   else
     cols = Tables.columns(values(data))
-    Tables.getcolumn(cols, col)
+    Tables.getcolumn(cols, var)
   end
 end
 
-Base.getindex(data::Data, col::String) =
-  getindex(data, Symbol(col))
+Base.getproperty(data::Data, var::AbstractString) =
+  getproperty(data, Symbol(var))
 
-Base.getproperty(data::Data, col::Symbol) =
-  getindex(data, col)
+function Base.getindex(data::Data,
+                       inds::AbstractVector{Int},
+                       vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom    = domain(data)
+  tab    = values(data)
+  newdom = view(dom, inds)
+  subset = Tables.subset(tab, inds)
+  cols   = Tables.columns(subset)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtab = (; pairs...) |> Tables.materializer(tab)
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newval)
+end
+
+Base.getindex(data::Data,
+              inds::AbstractVector{Int},
+              var::Symbol) =
+  getproperty(view(data, inds), var)
+
+function Base.getindex(data::Data,
+                       inds::AbstractVector{Int},
+                       ::Colon)
+  dview  = view(data, inds)
+  newdom = domain(dview)
+  newtab = values(dview)
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data)(newdom, newval)
+end
+
+function Base.getindex(data::Data,
+                       ind::Int,
+                       vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom   = domain(data)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
+  pairs = (var => Tables.getcolumn(row, var) for var in vars)
+  (; pairs..., geometry=dom[ind])
+end
+
+Base.getindex(data::Data, ind::Int, var::Symbol) =
+  getproperty(data, var)[ind]
+
+function Base.getindex(data::Data, ind::Int, ::Colon)
+  dom   = domain(data)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
+  vars  = Tables.columnnames(row)
+  pairs = (var => Tables.getcolumn(row, var) for var in vars)
+  (; pairs..., geometry=dom[ind])
+end
+
+function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
+  _checkvars(vars)
+  _rmgeometry!(vars)
+  dom    = domain(data)
+  tab    = values(data)
+  cols   = Tables.columns(tab)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
+  newtab = (; pairs...) |> Tables.materializer(tab)
+  newval = Dict(paramdim(dom) => newtab)
+  constructor(data)(dom, newval)
+end
+
+Base.getindex(data::Data, ::Colon, var::Symbol) =
+  getproperty(data, var)
+
+Base.getindex(data::Data, inds, vars::AbstractVector{<:AbstractString}) =
+  getindex(data, inds, Symbol.(vars))
+
+Base.getindex(data::Data, inds, var::AbstractString) =
+  getindex(data, inds, Symbol(var))
+
+function Base.getindex(data::Data, inds, var::Regex)
+  tab    = values(data)
+  cols   = Tables.columns(tab)
+  names  = Tables.columnnames(cols) |> collect
+  snames = filter(nm -> occursin(var, String(nm)), names)
+  getindex(data, inds, snames)
+end
+
+function _checkvars(vars)
+  if !allunique(vars)
+    throw(ArgumentError("The variable names must be unique"))
+  end
+end
+
+function _rmgeometry!(vars)
+  ind = findfirst(==(:geometry), vars)
+  if !isnothing(ind)
+    popat!(vars, ind)
+  end
+end
 
 # -------------------
 # VARIABLE INTERFACE
 # -------------------
-
-"""
-    variables(data)
-
-Returns the variables stored in `data` as a vector of
-[`Variable`](@ref).
-"""
-function variables(data::Data)
-  s = Tables.schema(values(data))
-  @. Variable(s.names, nonmissingtype(s.types))
-end
 
 """
     asarray(data, var)
@@ -191,10 +259,11 @@ defined, otherwise returns a vector.
 function asarray(data::Data, var::Symbol)
   D = domain(data)
   hassize = hasmethod(size, (typeof(D),))
-  hassize ? reshape(data[var], size(D)) : data[var]
+  dataval = getproperty(data, var)
+  hassize ? reshape(dataval, size(D)) : dataval
 end
 
-asarray(data::Data, var::String) =
+asarray(data::Data, var::AbstractString) =
   asarray(data, Symbol(var))
 
 # -----------
@@ -203,29 +272,22 @@ asarray(data::Data, var::String) =
 
 function Base.show(io::IO, data::Data)
   name = nameof(typeof(data))
-  𝒟    = domain(data)
-  n    = nelements(𝒟)
-  Dim  = embeddim(𝒟)
-  T    = coordtype(𝒟)
-  print(io, "$n $name{$Dim,$T}")
+  nelm = nelements(domain(data))
+  print(io, "$nelm $name")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", data::Data)
-  name = nameof(typeof(data))
-  𝒟    = domain(data)
-  n    = nelements(𝒟)
-  Dim  = embeddim(𝒟)
-  T    = coordtype(𝒟)
-  println(io, "$n $name{$Dim,$T}")
+  l = []
+  𝒟 = domain(data)
   for rank in 0:paramdim(𝒟)
     𝒯 = values(data, rank)
     if !isnothing(𝒯)
       sche = Tables.schema(𝒯)
       vars = zip(sche.names, sche.types)
-      println(io, "  variables (rank $rank)")
-      varlines = ["    └─$var ($V)" for (var,V) in vars]
-      println(io, join(sort(varlines), "\n"))
+      push!(l, "  variables (rank $rank)")
+      append!(l, ["    └─$var ($V)" for (var,V) in vars])
     end
   end
-  print(io, "  domain: ", 𝒟)
+  println(io, 𝒟)
+  print(io, join(l, "\n"))
 end

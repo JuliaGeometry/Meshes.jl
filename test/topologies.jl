@@ -3,8 +3,8 @@
     t = GridTopology(3)
     @test paramdim(t) == 1
     @test size(t) == (3,)
-    @test rank2type(t, 1) == Segment
-    @test_throws AssertionError rank2type(t, 2)
+    @test elementtype(t) == Segment
+    @test facettype(t) == Point
     @test elem2cart(t, 1) == (1,)
     @test elem2cart(t, 2) == (2,)
     @test elem2cart(t, 3) == (3,)
@@ -30,9 +30,8 @@
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
     @test size(t) == (3, 4)
-    @test rank2type(t, 1) == Segment
-    @test rank2type(t, 2) == Quadrangle
-    @test_throws AssertionError rank2type(t, 3)
+    @test elementtype(t) == Quadrangle
+    @test facettype(t) == Segment
     @test elem2cart(t, 1) == (1, 1)
     @test elem2cart(t, 2) == (2, 1)
     @test elem2cart(t, 3) == (3, 1)
@@ -90,21 +89,18 @@
     @test element(t, 1) == connect((1,2,6,5))
     @test element(t, 5) == connect((6,7,11,10))
     @test faces(t, 2) == elements(t)
-    @test facet.(Ref(t), 1:31) == connect.([(1, 2), (2, 3), (3, 4), (5, 6), (6, 7),
-                                            (7, 8), (9, 10), (10, 11), (11, 12), (13, 14),
-                                            (14, 15), (15, 16), (17, 18), (18, 19), (19, 20),
-                                            (1, 5), (2, 6), (3, 7), (4, 8), (5, 9),
-                                            (6, 10), (7, 11), (8, 12), (9, 13), (10, 14),
-                                            (11, 15), (12, 16), (13, 17), (14, 18), (15, 19),
-                                            (16, 20)])
+    @test facet.(Ref(t), 1:31) == connect.([(1, 5), (2, 6), (3, 7), (4, 8), (5, 9), (6, 10),
+                                            (7, 11), (8, 12), (9, 13), (10, 14), (11, 15),
+                                            (12, 16), (13, 17), (14, 18), (15, 19), (16, 20),
+                                            (1, 2), (5, 6), (9, 10), (13, 14), (17, 18), (2, 3),
+                                            (6, 7), (10, 11), (14, 15), (18, 19), (3, 4), (7, 8),
+                                            (11, 12), (15, 16), (19, 20)])
 
     t = GridTopology(3, 4, 2)
     @test paramdim(t) == 3
     @test size(t) == (3, 4, 2)
-    @test rank2type(t, 1) == Segment
-    @test rank2type(t, 2) == Quadrangle
-    @test rank2type(t, 3) == Hexahedron
-    @test_throws AssertionError rank2type(t, 4)
+    @test elementtype(t) == Hexahedron
+    @test facettype(t) == Quadrangle
     @test elem2cart(t, 1) == (1, 1, 1)
     @test elem2cart(t, 2) == (2, 1, 1)
     @test elem2cart(t, 3) == (3, 1, 1)
@@ -416,6 +412,12 @@
     @test n[2] != e[2]
     @test n[3] != e[3]
     @test n[4] != e[4]
+
+    # more challenging case with incosistent orientation
+    e = connect.([(4,1,5), (2,6,4), (3,5,6), (4,5,6)])
+    t = HalfEdgeTopology(e)
+    n = collect(elements(t))
+    @test n == connect.([(5,4,1), (6,2,4), (6,5,3), (4,5,6)])
   end
 
   @testset "SimpleTopology" begin

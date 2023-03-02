@@ -16,6 +16,9 @@
   @test sideof(p2, c) == :OUTSIDE
   @test sideof(p3, c) == :INSIDE
 
+  @test iscollinear(P2(0,0), P2(1,1), P2(2,2))
+  @test iscoplanar(P3(0,0,0), P3(1,0,0), P3(1,1,0), P3(0,1,0))
+
   # drop units from unitful value and type
   @test Meshes.dropunits(1.0u"mm") == Float64
   @test Meshes.dropunits(typeof(1.0u"mm")) == Float64
@@ -37,4 +40,12 @@
     u, v = householderbasis(n)
     @test u × v ≈ n ./ norm(n)
   end
+
+  @test mayberound(1.1, 1, 0.2) ≈ 1
+  @test mayberound(1.1, 1, 0.10000000000000001) ≈ 1.1
+  @test mayberound(1.1, 1, 0.05) ≈ 1.1
+
+  @test uvrotation(V2(1,0), V2(0,1)) ≈ T[0 -1; 1 0]
+  @test uvrotation(V2(0,1), V2(1,0)) ≈ T[0 1; -1 0]
+  @test uvrotation(V3(1,0,0), V3(0,1,0)) ≈ T[0 1 0; -1 0 0; 0 0 1]
 end

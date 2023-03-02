@@ -11,7 +11,7 @@ delimited by `bottom` and `top` planes.
     CylinderSurface(radius, segment)
 
 Alternatively, construct a right circular cylinder with given `radius`
-and `segment` between origin of `bottom` and `top` planes.
+and `segment` between `bottom` and `top` planes.
 
     CylinderSurface(radius)
 
@@ -51,12 +51,12 @@ bottom(c::CylinderSurface) = c.bot
 top(c::CylinderSurface) = c.top
 
 function center(c::CylinderSurface)
-  a = coordinates(origin(c.bot))
-  b = coordinates(origin(c.top))
+  a = coordinates(c.bot(0, 0))
+  b = coordinates(c.top(0, 0))
   Point((a .+ b) ./ 2)
 end
 
-axis(c::CylinderSurface) = Line(origin(c.bot), origin(c.top))
+axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
 function isright(c::CylinderSurface{T}) where {T}
   # cylinder is right if axis
@@ -71,3 +71,8 @@ function isright(c::CylinderSurface{T}) where {T}
 end
 
 boundary(::CylinderSurface) = nothing
+
+measure(c::CylinderSurface{T}) where {T} =
+  (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
+
+area(c::CylinderSurface) = measure(c)

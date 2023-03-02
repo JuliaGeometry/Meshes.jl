@@ -44,6 +44,15 @@
     @test centroid(pset, 1) == P2(1, 0)
     @test centroid(pset, 2) == P2(0, 1)
 
+    pset = PointSet(P2[(0,0), (1,0), (0,1)])
+    @test measure(pset) == zero(T)
+
+    # constructor with iterator
+    points = P2[(1,0), (0,1)]
+    pset1  = PointSet(points)
+    pset2  = PointSet(p for p in points)
+    @test pset1 == pset2
+
     pset = PointSet(P2[(1,0), (0,1)])
     @test sprint(show, pset) == "2 PointSet{2,$T}"
     if T == Float32
@@ -59,5 +68,12 @@
     p = PolyArea(P2[(0,0), (1,0), (1,1), (0,1), (0,0)])
     gset = GeometrySet([s, t, p])
     @test [centroid(gset, i) for i in 1:3] == P2[(1/2,1/2), (1/3,1/3), (1/2,1/2)]
+
+    s = Segment(P2(0,0), P2(1,1))
+    t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    geoms = [s, t]
+    gset1 = GeometrySet(geoms)
+    gset2 = GeometrySet(g for g in geoms)
+    @test gset1 == gset2
   end
 end

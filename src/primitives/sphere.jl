@@ -35,7 +35,29 @@ function Sphere(p1::Point{2}, p2::Point{2}, p3::Point{2})
   Sphere(center, radius)
 end
 
-Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3))
+Sphere(p1::Tuple, p2::Tuple, p3::Tuple) =
+  Sphere(Point(p1), Point(p2), Point(p3))
+
+"""
+    Sphere(p1, p2, p3, p4)
+
+A 3D sphere passing through points `p1`, `p2`, `p3` and `p4`.
+"""
+function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
+  v1 = p1 - p4
+  v2 = p2 - p4
+  v3 = p3 - p4
+  V  = volume(Tetrahedron(p1, p2, p3, p4))
+  r⃗  = ((v3 ⋅ v3) * (v1 × v2) +
+        (v2 ⋅ v2) * (v3 × v1) +
+        (v1 ⋅ v1) * (v2 × v3)) / 12V
+  center = p4 + r⃗
+  radius = norm(r⃗)
+  Sphere(center, radius)
+end
+
+Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = 
+  Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
@@ -47,13 +69,19 @@ center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
-boundary(::Sphere) = nothing
-
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
 function measure(s::Sphere{Dim}) where {Dim}
   r, n = s.radius, Dim
   2π^(n/2)*r^(n-1) / gamma(n/2)
 end
+
+Base.length(s::Sphere{2}) = measure(s)
+
+area(s::Sphere{3}) = measure(s)
+
+boundary(::Sphere) = nothing
+
+perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
 
 function Base.in(p::Point, s::Sphere)
   x = coordinates(p)
