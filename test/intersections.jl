@@ -768,7 +768,7 @@
 
     # origin of ray intersects with edge of triangle
     r = Ray(P3(0.5, 0.0, 0.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == EdgeOriginRayTriangle
+    @test intersection(r, t) |> type == EdgeTouchingRayTriangle
     @test r ∩ t ≈ P3(0.5, 0.0, 0.0)
 
     # ray intersects with edge of triangle
