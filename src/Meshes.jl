@@ -342,7 +342,7 @@ export
   CornerTouchingRayTriangle,
   CornerCrossingRayTriangle,
   EdgeCrossingRayTriangle,
-  EdgeOriginRayTriangle,
+  EdgeTouchingRayTriangle,
   CrossingLinePlane,
   OverlappingLinePlane,
   CrossingRayPlane,
