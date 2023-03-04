@@ -24,9 +24,9 @@ struct RectilinearGrid{Dim,T,V<:AbstractVector{T}} <: Grid{Dim,T}
 end
 
 function RectilinearGrid(xyz::Tuple)
-  coords   = promote(collect.(xyz)...)
+  coords = promote(collect.(xyz)...)
   topology = GridTopology(length.(coords) .- 1)
-  RectilinearGrid(coords, topology)
+  return RectilinearGrid(coords, topology)
 end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
@@ -37,5 +37,5 @@ function centroid(g::RectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p1 = cart2vert(g, ijk)
   p2 = cart2vert(g, ijk .+ 1)
-  Point((coordinates(p1) + coordinates(p2)) / 2)
+  return Point((coordinates(p1) + coordinates(p2)) / 2)
 end

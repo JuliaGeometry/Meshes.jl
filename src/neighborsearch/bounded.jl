@@ -34,5 +34,5 @@ function search!(neighbors, pₒ::Point, method::BoundedSearch; mask=nothing)
     end
   end
 
-  nneigh
+  return nneigh
 end

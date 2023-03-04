@@ -19,13 +19,14 @@ struct BallSampling{T,M} <: DiscreteSamplingMethod
   maxsize::Union{Int,Nothing}
 end
 
-BallSampling(radius; metric=Euclidean(), maxsize=nothing) =
-  BallSampling(radius, metric, maxsize)
+function BallSampling(radius; metric=Euclidean(), maxsize=nothing)
+  return BallSampling(radius, metric, maxsize)
+end
 
 function sample(rng::AbstractRNG, object, method::BallSampling)
   radius = method.radius
   metric = method.metric
-  msize  = isnothing(method.maxsize) ? Inf : method.maxsize
+  msize = isnothing(method.maxsize) ? Inf : method.maxsize
 
   # neighborhood search with ball
   ball = MetricBall(radius, metric)
@@ -44,5 +45,5 @@ function sample(rng::AbstractRNG, object, method::BallSampling)
     notviewed[neighbors] .= false
   end
 
-  view(object, locations)
+  return view(object, locations)
 end

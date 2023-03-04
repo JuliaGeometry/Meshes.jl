@@ -15,12 +15,11 @@ abstract type PartitionMethod end
 Partition `object` with partition `method`.
 Optionally, specify random number generator `rng`.
 """
-partition(object, method::PartitionMethod) =
-  partition(Random.GLOBAL_RNG, object, method)
+partition(object, method::PartitionMethod) = partition(Random.GLOBAL_RNG, object, method)
 
 function partition(rng::AbstractRNG, object, method::PartitionMethod)
   subsets, metadata = partsubsets(rng, object, method)
-  Partition(object, subsets, metadata)
+  return Partition(object, subsets, metadata)
 end
 
 """
@@ -29,8 +28,9 @@ end
 Return subsets and metadata for the partition `method`
 applied to the `object` with random number generator `rng`.
 """
-partsubsets(rng::AbstractRNG, object, method::PartitionMethod) =
-  partsubsets(rng, domain(object), method)
+function partsubsets(rng::AbstractRNG, object, method::PartitionMethod)
+  return partsubsets(rng, domain(object), method)
+end
 
 """
     PredicatePartitionMethod
@@ -39,8 +39,7 @@ A method for partitioning domain/data objects with predicate functions.
 """
 abstract type PredicatePartitionMethod <: PartitionMethod end
 
-function partsubsets(rng::AbstractRNG, domain::Domain,
-                     method::PredicatePartitionMethod)
+function partsubsets(rng::AbstractRNG, domain::Domain, method::PredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
@@ -58,7 +57,7 @@ function partsubsets(rng::AbstractRNG, domain::Domain,
     end
   end
 
-  subsets, Dict()
+  return subsets, Dict()
 end
 
 """
@@ -68,8 +67,7 @@ A method for partitioning domain/data objects with spatial predicate functions.
 """
 abstract type SPredicatePartitionMethod <: PartitionMethod end
 
-function partsubsets(rng::AbstractRNG, domain::Domain,
-                     method::SPredicatePartitionMethod)
+function partsubsets(rng::AbstractRNG, domain::Domain, method::SPredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
@@ -90,7 +88,7 @@ function partsubsets(rng::AbstractRNG, domain::Domain,
     end
   end
 
-  subsets, Dict()
+  return subsets, Dict()
 end
 
 # ----------------

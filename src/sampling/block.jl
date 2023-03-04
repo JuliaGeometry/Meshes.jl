@@ -20,5 +20,5 @@ BlockSampling(sides...) = BlockSampling(sides)
 
 function sample(::AbstractRNG, object, method::BlockSampling)
   Π = partition(object, BlockPartition(method.sides))
-  view(object, first.(indices(Π)))
+  return view(object, first.(indices(Π)))
 end

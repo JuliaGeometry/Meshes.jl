@@ -21,7 +21,7 @@ function values(data::MeshData, rank=nothing)
   domain = getfield(data, :domain)
   values = getfield(data, :values)
   r = isnothing(rank) ? paramdim(domain) : rank
-  haskey(values, r) ? values[r] : nothing
+  return haskey(values, r) ? values[r] : nothing
 end
 
 constructor(::Type{D}) where {D<:MeshData} = MeshData
@@ -72,8 +72,7 @@ meshdata(vertices, elements,
 )
 ```
 """
-meshdata(vertices, elements, values) =
-  meshdata(SimpleMesh(vertices, elements), values)
+meshdata(vertices, elements, values) = meshdata(SimpleMesh(vertices, elements), values)
 
 """
     meshdata(domain; vtable, etable)
@@ -101,7 +100,7 @@ function meshdata(domain; vtable=nothing, etable=nothing)
   else
     throw(ArgumentError("missing data tables"))
   end
-  meshdata(domain, values)
+  return meshdata(domain, values)
 end
 
 """
@@ -126,5 +125,6 @@ meshdata(vertices, elements,
 )
 ```
 """
-meshdata(vertices, elements; vtable=nothing, etable=nothing) =
-  meshdata(SimpleMesh(vertices, elements); vtable=vtable, etable=etable)
+function meshdata(vertices, elements; vtable=nothing, etable=nothing)
+  return meshdata(SimpleMesh(vertices, elements); vtable=vtable, etable=etable)
+end

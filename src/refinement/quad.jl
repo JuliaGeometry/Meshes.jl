@@ -50,14 +50,14 @@ function refine(mesh, ::QuadRefinement)
     verts = CircularVector(∂₂₀(elem))
     edges = CircularVector(∂₂₁(elem))
     for i in 1:length(edges)
-      u = elem       + offset₁
-      v = edges[i]   + offset₂
-      w = verts[i+1]
-      z = edges[i+1] + offset₂
+      u = elem + offset₁
+      v = edges[i] + offset₂
+      w = verts[i + 1]
+      z = edges[i + 1] + offset₂
       quad = connect((u, v, w, z))
       push!(newconnec, quad)
     end
   end
 
-  SimpleMesh(newpoints, newconnec)
+  return SimpleMesh(newpoints, newconnec)
 end

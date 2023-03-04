@@ -29,7 +29,7 @@ radius(b::Ball) = b.radius
 # https://en.wikipedia.org/wiki/Volume_of_an_n-ball
 function measure(b::Ball{Dim}) where {Dim}
   r, n = b.radius, Dim
-  (π^(n/2) * r^n) / gamma(n/2 + 1)
+  return (π^(n / 2) * r^n) / gamma(n / 2 + 1)
 end
 
 area(b::Ball{2}) = measure(b)
@@ -40,12 +40,12 @@ function Base.in(p::Point, b::Ball)
   x = coordinates(p)
   c = coordinates(b.center)
   r = b.radius
-  sum(abs2, x - c) ≤ r^2
+  return sum(abs2, x - c) ≤ r^2
 end
 
 boundary(b::Ball) = Sphere(b.center, b.radius)
 
 function Base.show(io::IO, b::Ball{Dim,T}) where {Dim,T}
   c, r = b.center, b.radius
-  print(io, "Ball{$Dim,$T}($c, $r))")
+  return print(io, "Ball{$Dim,$T}($c, $r))")
 end

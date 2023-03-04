@@ -21,10 +21,10 @@ preprocess(transform::Translate, object) = transform.offsets
 function applypoint(::Translate, points, prep)
   o = prep
   newpoints = [Point(coordinates(p) .+ o) for p in points]
-  newpoints, prep
+  return newpoints, prep
 end
 
 function revertpoint(::Translate, newpoints, cache)
   o = cache
-  [Point(coordinates(p) .- o) for p in newpoints]
+  return [Point(coordinates(p) .- o) for p in newpoints]
 end

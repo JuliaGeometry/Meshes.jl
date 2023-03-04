@@ -24,21 +24,23 @@ struct Ngon{N,Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
   vertices::V
 end
 
-Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} =
-  Ngon{N,Dim,T,typeof(vertices)}(vertices)
+function Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
+  return Ngon{N,Dim,T,typeof(vertices)}(vertices)
+end
 
-Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} =
-  Ngon{length(vertices)}(vertices)
+function Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
+  return Ngon{length(vertices)}(vertices)
+end
 
 # type aliases for convenience
-const Triangle   = Ngon{3}
+const Triangle = Ngon{3}
 const Quadrangle = Ngon{4}
-const Pentagon   = Ngon{5}
-const Hexagon    = Ngon{6}
-const Heptagon   = Ngon{7}
-const Octagon    = Ngon{8}
-const Nonagon    = Ngon{9}
-const Decagon    = Ngon{10}
+const Pentagon = Ngon{5}
+const Hexagon = Ngon{6}
+const Heptagon = Ngon{7}
+const Octagon = Ngon{8}
+const Nonagon = Ngon{9}
+const Decagon = Ngon{10}
 
 issimple(::Type{<:Ngon}) = true
 
@@ -70,14 +72,14 @@ isconvex(::Triangle) = true
 
 function signarea(t::Triangle{2})
   v = t.vertices
-  signarea(v[1], v[2], v[3])
+  return signarea(v[1], v[2], v[3])
 end
 
 measure(t::Triangle{2}) = abs(signarea(t))
 
 function measure(t::Triangle{3})
   A, B, C = t.vertices
-  norm((B - A) × (C - A)) / 2
+  return norm((B - A) × (C - A)) / 2
 end
 
 function Base.in(p::Point{2}, t::Triangle{2})
@@ -86,17 +88,19 @@ function Base.in(p::Point{2}, t::Triangle{2})
   x₁, y₁ = coordinates(a)
   x₂, y₂ = coordinates(b)
   x₃, y₃ = coordinates(c)
-  x , y  = coordinates(p)
+  x, y = coordinates(p)
 
   # barycentric coordinates
-  λ₁ = ((y₂ - y₃)*(x  - x₃) + (x₃ - x₂)*(y  - y₃)) /
-       ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
-  λ₂ = ((y₃ - y₁)*(x  - x₃) + (x₁ - x₃)*(y  - y₃)) /
-       ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
+  λ₁ =
+    ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) /
+    ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
+  λ₂ =
+    ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) /
+    ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
   λ₃ = 1 - λ₁ - λ₂
 
   # barycentric check
-  0 ≤ λ₁ ≤ 1 && 0 ≤ λ₂ ≤ 1 && 0 ≤ λ₃ ≤ 1
+  return 0 ≤ λ₁ ≤ 1 && 0 ≤ λ₂ ≤ 1 && 0 ≤ λ₃ ≤ 1
 end
 
 function Base.in(p::Point{3}, t::Triangle{3})
@@ -123,24 +127,22 @@ function Base.in(p::Point{3}, t::Triangle{3})
   λ₃ = (d₁₁ * d₃₂ - d₁₂ * d₃₁) / d
 
   # barycentric check
-  λ₂ ≥ 0 && λ₃ ≥ 0 && (λ₂ + λ₃) ≤ 1
+  return λ₂ ≥ 0 && λ₃ ≥ 0 && (λ₂ + λ₃) ≤ 1
 end
 
 function normal(t::Triangle{3})
   a, b, c = t.vertices
   n = (b - a) × (c - a)
-  n / norm(n)
+  return n / norm(n)
 end
 
 function (t::Triangle)(u::T, v::T) where {T}
   w = (one(T) - u - v)
-  if u < zero(T) || u > one(T) ||
-     v < zero(T) || v > one(T) ||
-     w < zero(T) || w > one(T)
-     throw(DomainError("barycentric coordinates out of range"))
+  if u < zero(T) || u > one(T) || v < zero(T) || v > one(T) || w < zero(T) || w > one(T)
+    throw(DomainError("barycentric coordinates out of range"))
   end
   v₁, v₂, v₃ = coordinates.(t.vertices)
-  Point(v₁*w + v₂*u + v₃*v)
+  return Point(v₁ * w + v₂ * u + v₃ * v)
 end
 
 # ------------
@@ -150,8 +152,10 @@ end
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
   if (u < 0 || u > 1) || (v < 0 || v > 1)
-    throw(DomainError((u,v), "q(u,v) is not defined for u, v outside [0, 1]²."))
+    throw(DomainError((u, v), "q(u,v) is not defined for u, v outside [0, 1]²."))
   end
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
-  Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)
+  return Point(
+    c₀₀ * (1 - u) * (1 - v) + c₀₁ * u * (1 - v) + c₁₀ * (1 - u) * v + c₁₁ * u * v
+  )
 end

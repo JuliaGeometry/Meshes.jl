@@ -18,10 +18,10 @@ function supportfun(g::Geometry, d::Vec)
   v = vertices(g)
   c = centroid(g)
   _, i = findmax(vᵢ -> (vᵢ - c) ⋅ d, v)
-  v[i]
+  return v[i]
 end
 
 function supportfun(b::Ball, d::Vec)
   r = (radius(b) / norm(d)) * d
-  center(b) + r
+  return center(b) + r
 end

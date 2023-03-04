@@ -25,23 +25,25 @@ struct DouglasPeucker{T} <: SimplificationMethod
   maxiter::Int
 end
 
-DouglasPeucker(ϵ=nothing; min=3, max=typemax(Int), maxiter=10) =
-  DouglasPeucker(ϵ, min, max, maxiter)
+function DouglasPeucker(ϵ=nothing; min=3, max=typemax(Int), maxiter=10)
+  return DouglasPeucker(ϵ, min, max, maxiter)
+end
 
 function simplify(chain::Chain, method::DouglasPeucker)
-  v = if isnothing(method.ϵ)
-    # perform binary search with other parameters
-    βsimplify(vertices(chain), method.min, method.max, method.maxiter)
-  else
-    # perform Douglas-Peucker ϵ-simplification
-    ϵsimplify(vertices(chain), method.ϵ)
-  end |> collect
-  isclosed(chain) ? Chain([v; first(v)]) : Chain(v)
+  v = collect(
+    if isnothing(method.ϵ)
+      # perform binary search with other parameters
+      βsimplify(vertices(chain), method.min, method.max, method.maxiter)
+    else
+      # perform Douglas-Peucker ϵ-simplification
+      ϵsimplify(vertices(chain), method.ϵ)
+    end,
+  )
+  return isclosed(chain) ? Chain([v; first(v)]) : Chain(v)
 end
 
 # simplification by means of binary search
-function βsimplify(v::AbstractVector{Point{Dim,T}},
-                   min, max, maxiter) where {Dim,T}
+function βsimplify(v::AbstractVector{Point{Dim,T}}, min, max, maxiter) where {Dim,T}
   i = 0
   u = v
   n = length(u)
@@ -62,7 +64,7 @@ function βsimplify(v::AbstractVector{Point{Dim,T}},
     i += 1
   end
 
-  u
+  return u
 end
 
 # initial ϵ guess for a given chain
@@ -70,9 +72,9 @@ function initeps(v::AbstractVector{Point{Dim,T}}) where {Dim,T}
   n = length(v)
   ϵ = typemax(T)
   l = Line(first(v), last(v))
-  d = [evaluate(Euclidean(), v[i], l) for i in 2:n-1]
+  d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
   ϵ = quantile(d, 0.25)
-  2ϵ
+  return 2ϵ
 end
 
 # simplify chain assuming it is open
@@ -81,7 +83,7 @@ function ϵsimplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
   # to reference line
   l = Line(first(v), last(v))
   imax, dmax = 0, zero(T)
-  for i in 2:length(v)-1
+  for i in 2:(length(v) - 1)
     d = evaluate(Euclidean(), v[i], l)
     if d > dmax
       imax = i
@@ -93,7 +95,7 @@ function ϵsimplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
     [first(v), last(v)]
   else
     v₁ = ϵsimplify(v[begin:imax], ϵ)
-    v₂ = ϵsimplify(v[imax:end],   ϵ)
-    [v₁[begin:end-1]; v₂]
+    v₂ = ϵsimplify(v[imax:end], ϵ)
+    [v₁[begin:(end - 1)]; v₂]
   end
 end

@@ -8,7 +8,7 @@
 Fit tuple `dims` to a given length `D` by repeating the last dimension.
 """
 function fitdims(dims::Dims{N}, D) where {N}
-  ntuple(i -> i ≤ N ? dims[i] : last(dims), D)
+  return ntuple(i -> i ≤ N ? dims[i] : last(dims), D)
 end
 
 """
@@ -17,7 +17,7 @@ end
 Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
 function signarea(A::Point{2}, B::Point{2}, C::Point{2})
-  ((B - A) × (C - A)) / 2
+  return ((B - A) × (C - A)) / 2
 end
 
 """
@@ -31,15 +31,15 @@ function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {D
   # to all possible pairs of coordinates are zero
   AB, AC = B - A, C - A
   result = true
-  for i in 1:Dim, j in (i+1):Dim
+  for i in 1:Dim, j in (i + 1):Dim
     u = Vec{2,T}(AB[i], AB[j])
     v = Vec{2,T}(AC[i], AC[j])
-    if !isapprox(u × v, zero(T), atol=atol(T)^2)
+    if !isapprox(u × v, zero(T); atol=atol(T)^2)
       result = false
       break
     end
   end
-  result
+  return result
 end
 
 """
@@ -49,7 +49,7 @@ Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
 """
 function iscoplanar(A::Point{3,T}, B::Point{3,T}, C::Point{3,T}, D::Point{3,T}) where {T}
   vol = volume(Tetrahedron(A, B, C, D))
-  isapprox(vol, zero(T), atol = atol(T))
+  return isapprox(vol, zero(T); atol=atol(T))
 end
 
 """
@@ -62,7 +62,7 @@ the `point` lies. Possible results are `:LEFT`,
 function sideof(p::Point{2,T}, s::Segment{2,T}) where {T}
   a, b = vertices(s)
   area = signarea(p, a, b)
-  ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
+  return ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
 end
 
 """
@@ -74,7 +74,7 @@ Determines on which side of the closed `chain` the
 """
 function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
   w = windingnumber(p, c)
-  ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
+  return ifelse(isapprox(w, zero(T); atol=atol(T)), :OUTSIDE, :INSIDE)
 end
 
 """
@@ -86,12 +86,12 @@ points living in a plane of maximum variance using SVD.
 function proj2D(points::AbstractVector{Point{3,T}}) where {T}
   # https://math.stackexchange.com/a/99317
   X = mapreduce(coordinates, hcat, points)
-  μ = sum(X, dims=2) / size(X, 2)
+  μ = sum(X; dims=2) / size(X, 2)
   Z = X .- μ
   U = svd(Z).U
-  u = U[:,1]
-  v = U[:,2]
-  [Point(z⋅u, z⋅v) for z in eachcol(Z)]
+  u = U[:, 1]
+  v = U[:, 2]
+  return [Point(z ⋅ u, z ⋅ v) for z in eachcol(Z)]
 end
 
 """
@@ -116,15 +116,15 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
 """
 function householderbasis(n)
   n̂ = norm(n)
-  _, i = findmax(n.+n̂)
+  _, i = findmax(n .+ n̂)
   ei = 1:3 .== i
-  h = n + n̂*ei
-  H = I - 2h*transpose(h)/(transpose(h)*h)
-  u, v  = [H[:,j] for j = 1:3 if j != i]
+  h = n + n̂ * ei
+  H = I - 2h * transpose(h) / (transpose(h) * h)
+  u, v = [H[:, j] for j in 1:3 if j != i]
   if i == 2
-      u, v = v, u
+    u, v = v, u
   end
-  u, v
+  return u, v
 end
 
 """
@@ -132,8 +132,8 @@ end
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-function mayberound(λ::T, x, atol = atol(T)) where {T}
-  isapprox(λ, x, atol = atol) ? x : λ
+function mayberound(λ::T, x, atol=atol(T)) where {T}
+  return isapprox(λ, x; atol=atol) ? x : λ
 end
 
 """
@@ -142,7 +142,7 @@ end
 Return rotation matrix from vector `u` to vector `v`.
 """
 function uvrotation(u::Vec{2}, v::Vec{2})
-  convert(DCM, CounterClockwiseAngle(∠(u, v)))
+  return convert(DCM, CounterClockwiseAngle(∠(u, v)))
 end
 
 function uvrotation(u::Vec{3}, v::Vec{3})
@@ -150,5 +150,5 @@ function uvrotation(u::Vec{3}, v::Vec{3})
   v⃗ = normalize(v)
   re = √((1 + u⃗ ⋅ v⃗) / 2)
   im = (u⃗ × v⃗) / 2re
-  convert(DCM, Quaternion(re, im...))
+  return convert(DCM, Quaternion(re, im...))
 end

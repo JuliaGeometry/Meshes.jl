@@ -23,7 +23,7 @@ function intersection(f, b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T}
     return @IT OverlappingBoxes Box(u, v) f
   elseif u ≻ v
     return @IT NoIntersection nothing f
-  elseif isapprox(u, v, atol=atol(T))
+  elseif isapprox(u, v; atol=atol(T))
     return @IT CornerTouchingBoxes u f
   else
     return @IT FaceTouchingBoxes Box(u, v) f

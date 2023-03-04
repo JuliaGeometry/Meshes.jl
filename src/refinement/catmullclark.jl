@@ -45,7 +45,7 @@ function refine(mesh, ::CatmullClark)
     qs = view(points, ∂₁₀(edge))
     ∑p = sum(coordinates, ps)
     ∑q = sum(coordinates, qs)
-    M  = length(ps) + length(qs)
+    M = length(ps) + length(qs)
     Point((∑p + ∑q) / M)
   end
 
@@ -58,13 +58,13 @@ function refine(mesh, ::CatmullClark)
 
     # average of centroids
     ps = view(epts, ∂₀₂(u))
-    F  = sum(coordinates, ps) / length(ps)
+    F = sum(coordinates, ps) / length(ps)
 
     # average of midpoints
     vs = ∂₀₀(u)
-    n  = length(vs)
-    R  = sum(vs) do v
-      uv = view(points, [u,v])
+    n = length(vs)
+    R = sum(vs) do v
+      uv = view(points, [u, v])
       sum(coordinates, uv) / 2
     end / n
 
@@ -84,14 +84,14 @@ function refine(mesh, ::CatmullClark)
     verts = CircularVector(∂₂₀(elem))
     edges = CircularVector(∂₂₁(elem))
     for i in 1:length(edges)
-      u = elem       + offset₁
-      v = edges[i]   + offset₂
-      w = verts[i+1]
-      z = edges[i+1] + offset₂
+      u = elem + offset₁
+      v = edges[i] + offset₂
+      w = verts[i + 1]
+      z = edges[i + 1] + offset₂
       quad = connect((u, v, w, z))
       push!(newconnec, quad)
     end
   end
 
-  SimpleMesh(newpoints, newconnec)
+  return SimpleMesh(newpoints, newconnec)
 end

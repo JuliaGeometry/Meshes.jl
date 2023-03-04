@@ -30,7 +30,7 @@
   @test eltype(Vec3([1, 1, 1])) == Float64
   @test eltype(Vec1f([1])) == Float32
   @test eltype(Vec2f([1, 1])) == Float32
-  @test eltype(Vec3f([1, 1, 1])) == Float32  
+  @test eltype(Vec3f([1, 1, 1])) == Float32
 
   # parametric constructors 
   @test eltype(Vec{2,T}(1, 1)) == T

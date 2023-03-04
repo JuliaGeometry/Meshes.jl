@@ -22,15 +22,14 @@ end
 
 isrevertible(::Type{<:LambdaMuSmoothing}) = true
 
-preprocess(::LambdaMuSmoothing, mesh) =
-  laplacematrix(mesh, weights=:uniform)
+preprocess(::LambdaMuSmoothing, mesh) = laplacematrix(mesh; weights=:uniform)
 
 function applypoint(transform::LambdaMuSmoothing, points, prep)
   n = transform.n
   λ = transform.λ
   μ = transform.μ
   L = prep
-  _smooth(points, L, n, λ, μ), L
+  return _smooth(points, L, n, λ, μ), L
 end
 
 function revertpoint(transform::LambdaMuSmoothing, newpoints, pcache)
@@ -38,24 +37,24 @@ function revertpoint(transform::LambdaMuSmoothing, newpoints, pcache)
   λ = transform.λ
   μ = transform.μ
   L = pcache
-  _smooth(newpoints, L, n, λ, μ, revert=true)
+  return _smooth(newpoints, L, n, λ, μ; revert=true)
 end
 
 function _smooth(points, L, n, λ, μ; revert=false)
   # matrix with coordinates (nvertices x ndims)
-  X = reduce(hcat, coordinates.(points)) |> transpose
+  X = transpose(reduce(hcat, coordinates.(points)))
 
   # choose between apply and revert mode
   λ₁, λ₂ = revert ? (-μ, -λ) : (λ, μ)
 
   # Taubin updates
   for _ in 1:n
-    X = X + λ₁*L*X
-    X = X + λ₂*L*X
+    X = X + λ₁ * L * X
+    X = X + λ₂ * L * X
   end
 
   # new points
-  Point.(eachrow(X))
+  return Point.(eachrow(X))
 end
 
 """

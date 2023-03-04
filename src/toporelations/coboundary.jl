@@ -18,7 +18,7 @@ function Coboundary{P,Q}(topology) where {P,Q}
 
   @assert P < Q ≤ D "invalid coboundary relation"
 
-  Coboundary{P,Q,D,T}(topology)
+  return Coboundary{P,Q,D,T}(topology)
 end
 
 # -------------------
@@ -28,7 +28,7 @@ end
 function (𝒞::Coboundary{0,1,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   t = 𝒞.topology
   𝒜 = Adjacency{0}(t)
-  [edge4pair(t, (vert, other)) for other in 𝒜(vert)]
+  return [edge4pair(t, (vert, other)) for other in 𝒜(vert)]
 end
 
 function (𝒞::Coboundary{0,2,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
@@ -57,10 +57,10 @@ function (𝒞::Coboundary{0,2,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
     end
   end
 
-  elements
+  return elements
 end
 
 function (𝒞::Coboundary{1,2,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
   e = half4edge(𝒞.topology, edge)
-  isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
+  return isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
 end

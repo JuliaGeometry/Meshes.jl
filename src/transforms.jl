@@ -48,17 +48,16 @@ function reapplypoint end
 # -----------------
 
 # convert objects into lists of points
-_points(p::Point)      = [p]
-_points(g::Geometry)   = vertices(g)
-_points(d::Domain)     = mapreduce(_points, vcat, d)
-_points(m::Mesh)       = vertices(m)
-_points(p::PointSet)   = collect(p)
+_points(p::Point) = [p]
+_points(g::Geometry) = vertices(g)
+_points(d::Domain) = mapreduce(_points, vcat, d)
+_points(m::Mesh) = vertices(m)
+_points(p::PointSet) = collect(p)
 
 # convert lists of points into objects
 _reconstruct(points, ::Point) = first(points)
 _reconstruct(points, ::G) where {G<:Geometry} = G(points)
-_reconstruct(points, domain::Domain) =
-  _reconstruct(points, Collection(collect(domain)))
+_reconstruct(points, domain::Domain) = _reconstruct(points, Collection(collect(domain)))
 _reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 _reconstruct(points, ::PointSet) = PointSet(points)
 
@@ -69,25 +68,26 @@ _reconstruct(points, ::PointSet) = PointSet(points)
 function apply(transform::GeometricTransform, object)
   prep = preprocess(transform, object)
   newpoints, pcache = applypoint(transform, _points(object), prep)
-  _reconstruct(newpoints, object), pcache
+  return _reconstruct(newpoints, object), pcache
 end
 
 function revert(transform::GeometricTransform, newobject, cache)
   points = revertpoint(transform, _points(newobject), cache)
-  _reconstruct(points, newobject)
+  return _reconstruct(points, newobject)
 end
 
 function reapply(transform::GeometricTransform, object, cache)
   newpoints = reapplypoint(transform, _points(object), cache)
-  _reconstruct(newpoints, object)
+  return _reconstruct(newpoints, object)
 end
 
 # --------------------
 # STATELESS FALLBACKS
 # --------------------
 
-reapply(transform::StatelessGeometricTransform, object, cache) =
-  apply(transform, object) |> first
+function reapply(transform::StatelessGeometricTransform, object, cache)
+  return first(apply(transform, object))
+end
 
 # ----------------
 # IMPLEMENTATIONS

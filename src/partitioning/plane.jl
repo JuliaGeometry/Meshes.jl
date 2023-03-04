@@ -14,14 +14,16 @@ struct PlanePartition{Dim,T} <: SPredicatePartitionMethod
   tol::Float64
 
   function PlanePartition{Dim,T}(normal, tol) where {Dim,T}
-    new(normalize(normal), tol)
+    return new(normalize(normal), tol)
   end
 end
 
-PlanePartition(normal::Vec{Dim,T}; tol=1e-6) where {Dim,T} =
-  PlanePartition{Dim,T}(normal, tol)
+function PlanePartition(normal::Vec{Dim,T}; tol=1e-6) where {Dim,T}
+  return PlanePartition{Dim,T}(normal, tol)
+end
 
-PlanePartition(normal::NTuple{Dim,T},; tol=1e-6) where {Dim,T} =
-  PlanePartition(Vec(normal), tol=tol)
+function PlanePartition(normal::NTuple{Dim,T}, ; tol=1e-6) where {Dim,T}
+  return PlanePartition(Vec(normal); tol=tol)
+end
 
 (p::PlanePartition)(x, y) = abs((x - y) ⋅ p.normal) < p.tol

@@ -32,8 +32,8 @@ centroid(v::DomainView, ind::Int) = centroid(v.domain, v.inds[ind])
 
 function Base.show(io::IO, v::DomainView)
   domain = getfield(v, :domain)
-  nelms  = length(getfield(v, :inds))
-  print(io, "$nelms View{$domain}")
+  nelms = length(getfield(v, :inds))
+  return print(io, "$nelms View{$domain}")
 end
 
 # -----------
@@ -57,7 +57,7 @@ end
 function domain(v::DataView)
   data = getfield(v, :data)
   inds = getfield(v, :inds)
-  view(domain(data), inds)
+  return view(domain(data), inds)
 end
 
 function values(v::DataView, rank=nothing)
@@ -66,28 +66,29 @@ function values(v::DataView, rank=nothing)
   R = paramdim(domain(data))
   r = isnothing(rank) ? R : rank
   𝒯 = values(data, r)
-  r == R ? Tables.subset(𝒯, inds) : nothing
+  return r == R ? Tables.subset(𝒯, inds) : nothing
 end
 
 function constructor(::Type{DataView{D,I}}) where {D<:Data,I}
   function ctor(domain, values)
     data = constructor(D)(domain, values)
     inds = 1:nelements(domain)
-    DataView(data, inds)
+    return DataView(data, inds)
   end
 end
 
 # specialize methods for performance
-==(v₁::DataView, v₂::DataView) =
-  getfield(v₁, :data) == getfield(v₂, :data) &&
-  getfield(v₁, :inds) == getfield(v₂, :inds)
+function ==(v₁::DataView, v₂::DataView)
+  return getfield(v₁, :data) == getfield(v₂, :data) &&
+         getfield(v₁, :inds) == getfield(v₂, :inds)
+end
 
 # -----------
 # IO METHODS
 # -----------
 
 function Base.show(io::IO, v::DataView)
-  data  = getfield(v, :data)
+  data = getfield(v, :data)
   nelms = length(getfield(v, :inds))
-  print(io, "$nelms View{$data}")
+  return print(io, "$nelms View{$data}")
 end

@@ -20,10 +20,10 @@ struct GrahamScan <: HullMethod end
 
 function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
   # remove duplicates
-  Q = coordinates.(pset) |> unique
+  Q = unique(coordinates.(pset))
 
   # sort by y then by x
-  sort!(Q, by=reverse)
+  sort!(Q; by=reverse)
 
   # corner cases
   n = length(Q)
@@ -32,7 +32,7 @@ function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
   if n == 3
     p₀, p₁, p₂ = Q
     θ = ∠(Point(p₁), Point(p₀), Point(p₂))
-    if isapprox(θ, zero(T), atol=atol(T))
+    if isapprox(θ, zero(T); atol=atol(T))
       return Segment(Point(p₀), Point(p₂))
     else
       c = Chain(Point(p₀), Point(p₁), Point(p₂), Point(p₀))
@@ -43,15 +43,15 @@ function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
 
   # sort by polar angle
   p₀ = Point(Q[1])
-  p  = Point.(Q[2:n])
-  x  = p₀ + Vec{2,T}(1, 0)
-  θ  = [∠(x, p₀, pᵢ) for pᵢ in p]
-  p  = p[sortperm(θ)]
+  p = Point.(Q[2:n])
+  x = p₀ + Vec{2,T}(1, 0)
+  θ = [∠(x, p₀, pᵢ) for pᵢ in p]
+  p = p[sortperm(θ)]
 
   # rotational sweep
   c = [p₀, p[1], p[2]]
   for pᵢ in p[3:end]
-    while ∠(c[end-1], c[end], pᵢ) > atol(T)
+    while ∠(c[end - 1], c[end], pᵢ) > atol(T)
       pop!(c)
     end
     push!(c, pᵢ)
@@ -60,5 +60,5 @@ function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
   # close chain
   push!(c, c[1])
 
-  PolyArea(c)
+  return PolyArea(c)
 end

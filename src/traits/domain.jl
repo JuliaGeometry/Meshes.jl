@@ -29,9 +29,9 @@ function nelements end
 # FALLBACKS
 # ----------
 
-==(d1::Domain, d2::Domain) =
-  nelements(d1) == nelements(d2) &&
-  all(d1[i] == d2[i] for i in 1:nelements(d1))
+function ==(d1::Domain, d2::Domain)
+  return nelements(d1) == nelements(d2) && all(d1[i] == d2[i] for i in 1:nelements(d1))
+end
 
 nitems(domain::Domain) = nelements(domain)
 
@@ -43,11 +43,11 @@ Base.lastindex(domain::Domain) = nelements(domain)
 
 Base.length(domain::Domain) = nelements(domain)
 
-Base.iterate(domain::Domain, state=1) =
-  state > nelements(domain) ? nothing : (domain[state], state+1)
+function Base.iterate(domain::Domain, state=1)
+  return state > nelements(domain) ? nothing : (domain[state], state + 1)
+end
 
-Base.eltype(domain::Domain) =
-  eltype([domain[i] for i in 1:nelements(domain)])
+Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
 
 """
     embeddim(domain)
@@ -93,7 +93,7 @@ function centroid(domain::Domain{Dim,T}) where {Dim,T}
   x = coords.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(T, n))
-  Point(sum(w .* x) / sum(w))
+  return Point(sum(w .* x) / sum(w))
 end
 
 """
@@ -125,15 +125,17 @@ Base.extrema(domain::Domain) = extrema(boundingbox(domain))
 function Base.show(io::IO, domain::Domain{Dim,T}) where {Dim,T}
   nelm = nelements(domain)
   name = nameof(typeof(domain))
-  print(io, "$nelm $name{$Dim,$T}")
+  return print(io, "$nelm $name{$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
   println(io, domain)
   N = nelements(domain)
-  I, J = N > 10 ? (5, N-4) : (N, N+1)
-  lines = [["  └─$(domain[i])" for i in 1:I]
-           (N > 10 ? ["  ⋮"] : [])
-           ["  └─$(domain[i])" for i in J:N]]
-  print(io, join(lines, "\n"))
+  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
+  lines = [
+    ["  └─$(domain[i])" for i in 1:I]
+    (N > 10 ? ["  ⋮"] : [])
+    ["  └─$(domain[i])" for i in J:N]
+  ]
+  return print(io, join(lines, "\n"))
 end

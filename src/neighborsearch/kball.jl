@@ -19,10 +19,10 @@ struct KBallSearch{D,B<:MetricBall,T} <: BoundedNeighborSearchMethod
 end
 
 function KBallSearch(domain::D, k::Int, ball::B) where {D,B}
-  m  = metric(ball)
+  m = metric(ball)
   xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
-  KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
+  return KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
 end
 
 maxneighbors(method::KBallSearch) = method.k
@@ -47,5 +47,5 @@ function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
     end
   end
 
-  nneigh
+  return nneigh
 end

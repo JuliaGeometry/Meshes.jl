@@ -34,7 +34,7 @@ function (s::Segment)(t)
     throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
   end
   a, b = s.vertices
-  a + t * (b - a)
+  return a + t * (b - a)
 end
 
 center(s::Segment) = s(0.5)
@@ -44,10 +44,10 @@ function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = s.vertices
   ab, ap = b - a, p - a
-  iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
+  return iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
 
 function Base.isapprox(s1::Segment, s2::Segment)
   v1, v2 = s1.vertices, s2.vertices
-  isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
+  return isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
 end

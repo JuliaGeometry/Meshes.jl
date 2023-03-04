@@ -30,7 +30,7 @@ function (r::Ray)(t)
   if t < 0
     throw(DomainError(t, "r(t) is not defined for t < 0."))
   end
-  r.p + t * r.v
+  return r.p + t * r.v
 end
 
 """

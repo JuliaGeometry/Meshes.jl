@@ -33,11 +33,11 @@ function loop(e::HalfEdge)
     push!(v, n.head)
     n = n.next
   end
-  v
+  return v
 end
 
 function Base.show(io::IO, e::HalfEdge)
-  print(io, "HalfEdge($(e.head), $(e.elem))")
+  return print(io, "HalfEdge($(e.head), $(e.elem))")
 end
 
 """
@@ -118,7 +118,7 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
     edge4pair[(v, u)] = i
   end
 
-  HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
+  return HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
 end
 
 function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
@@ -140,7 +140,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   v = CircularVector(inds)
   n = length(v)
   for i in 1:n
-    half4pair[(v[i], v[i+1])] = HalfEdge(v[i], eleminds[1])
+    half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[1])
   end
 
   # insert all other elements
@@ -153,23 +153,23 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
       # if pair of vertices is already in the
       # dictionary this means that the current
       # polygon has inconsistent orientation
-      if haskey(half4pair, (v[i], v[i+1]))
+      if haskey(half4pair, (v[i], v[i + 1]))
         # delete inserted pairs so far
         CCW[e] = false
-        for j in 1:i-1
-          delete!(half4pair, (v[j], v[j+1]))
+        for j in 1:(i - 1)
+          delete!(half4pair, (v[j], v[j + 1]))
         end
         break
       else
         # insert pair in consistent orientation
-        half4pair[(v[i], v[i+1])] = HalfEdge(v[i], eleminds[e])
+        half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[e])
       end
     end
 
     if !CCW[e]
       # reinsert pairs in CCW orientation
       for i in 1:n
-        half4pair[(v[i+1], v[i])] = HalfEdge(v[i+1], eleminds[e])
+        half4pair[(v[i + 1], v[i])] = HalfEdge(v[i + 1], eleminds[e])
       end
     end
   end
@@ -181,15 +181,15 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
     n = length(v)
     for i in 1:n
       # update pointers prev and next
-      he = half4pair[(v[i], v[i+1])]
-      he.prev = half4pair[(v[i-1],   v[i])]
-      he.next = half4pair[(v[i+1], v[i+2])]
+      he = half4pair[(v[i], v[i + 1])]
+      he.prev = half4pair[(v[i - 1], v[i])]
+      he.next = half4pair[(v[i + 1], v[i + 2])]
 
       # if not a border element, update half
-      if haskey(half4pair, (v[i+1], v[i]))
-        he.half = half4pair[(v[i+1], v[i])]
+      if haskey(half4pair, (v[i + 1], v[i]))
+        he.half = half4pair[(v[i + 1], v[i])]
       else # create half-edge for border
-        be = HalfEdge(v[i+1], nothing)
+        be = HalfEdge(v[i + 1], nothing)
         be.half = he
         he.half = be
       end
@@ -197,17 +197,17 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
   end
 
   # save halfedges in a vector of pairs
-  halves  = Vector{Tuple{HalfEdge,HalfEdge}}()
+  halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
     if (u, v) ∉ visited
-      push!(halves,  (he, he.half))
+      push!(halves, (he, he.half))
       push!(visited, (u, v))
       push!(visited, (v, u))
     end
   end
 
-  HalfEdgeTopology(halves)
+  return HalfEdgeTopology(halves)
 end
 
 function adjsort(elems::AbstractVector{<:Connectivity})
@@ -229,7 +229,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
       if !isempty(einds)
         # lookup all elements that share at
         # least two vertices (i.e. edge)
-        for j in sort(einds, rev=true)
+        for j in sort(einds; rev=true)
           if length(vinds ∩ list[j]) > 1
             found = true
             push!(adjs, popat!(list, j))
@@ -245,7 +245,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  connect.(adjs)
+  return connect.(adjs)
 end
 
 paramdim(::HalfEdgeTopology) = 2
@@ -303,14 +303,14 @@ nvertices(t::HalfEdgeTopology) = length(t.half4vert)
 
 function element(t::HalfEdgeTopology, ind)
   v = loop(half4elem(t, ind))
-  connect(Tuple(v))
+  return connect(Tuple(v))
 end
 
 nelements(t::HalfEdgeTopology) = length(t.half4elem)
 
 function facet(t::HalfEdgeTopology, ind)
   e = half4edge(t, ind)
-  connect((e.head, e.half.head))
+  return connect((e.head, e.half.head))
 end
 
 nfacets(t::HalfEdgeTopology) = length(t.halfedges) ÷ 2
@@ -319,5 +319,4 @@ nfacets(t::HalfEdgeTopology) = length(t.halfedges) ÷ 2
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{HalfEdgeTopology}, t::Topology) =
-  HalfEdgeTopology(collect(elements(t)))
+Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(elements(t)))

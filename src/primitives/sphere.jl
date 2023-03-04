@@ -32,11 +32,10 @@ function Sphere(p1::Point{2}, p2::Point{2}, p3::Point{2})
   l2 = Line(c2, c2 + Vec(y2, -x2))
   center = l1 ∩ l2
   radius = norm(center - p2)
-  Sphere(center, radius)
+  return Sphere(center, radius)
 end
 
-Sphere(p1::Tuple, p2::Tuple, p3::Tuple) =
-  Sphere(Point(p1), Point(p2), Point(p3))
+Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3))
 
 """
     Sphere(p1, p2, p3, p4)
@@ -47,23 +46,22 @@ function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
   v1 = p1 - p4
   v2 = p2 - p4
   v3 = p3 - p4
-  V  = volume(Tetrahedron(p1, p2, p3, p4))
-  r⃗  = ((v3 ⋅ v3) * (v1 × v2) +
-        (v2 ⋅ v2) * (v3 × v1) +
-        (v1 ⋅ v1) * (v2 × v3)) / 12V
+  V = volume(Tetrahedron(p1, p2, p3, p4))
+  r⃗ = ((v3 ⋅ v3) * (v1 × v2) + (v2 ⋅ v2) * (v3 × v1) + (v1 ⋅ v1) * (v2 × v3)) / 12V
   center = p4 + r⃗
   radius = norm(r⃗)
-  Sphere(center, radius)
+  return Sphere(center, radius)
 end
 
-Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = 
-  Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
+function Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple)
+  return Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
+end
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
 isconvex(::Type{<:Sphere}) = false
 
-isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i->true, Dim - 1)
+isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i -> true, Dim - 1)
 
 center(s::Sphere) = s.center
 
@@ -72,7 +70,7 @@ radius(s::Sphere) = s.radius
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
 function measure(s::Sphere{Dim}) where {Dim}
   r, n = s.radius, Dim
-  2π^(n/2)*r^(n-1) / gamma(n/2)
+  return 2π^(n / 2) * r^(n - 1) / gamma(n / 2)
 end
 
 Base.length(s::Sphere{2}) = measure(s)
@@ -87,5 +85,5 @@ function Base.in(p::Point, s::Sphere)
   x = coordinates(p)
   c = coordinates(s.center)
   r = s.radius
-  sum(abs2, x - c) ≈ r^2
+  return sum(abs2, x - c) ≈ r^2
 end

@@ -60,21 +60,23 @@ function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   @assert size(R) == (Dim, Dim) "invalid rotation for radii"
 
   # Mahalanobis metric
-  metric = Mahalanobis(Symmetric(R'*Λ*R))
+  metric = Mahalanobis(Symmetric(R' * Λ * R))
 
-  MetricBall{typeof(radii),typeof(metric)}(radii, metric)
+  return MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
 
-MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} =
-  MetricBall(SVector(radii), rotation)
+function MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T}
+  return MetricBall(SVector(radii), rotation)
+end
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} =
-  MetricBall(SVector{length(radii),T}(radii), rotation)
+function MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T}
+  return MetricBall(SVector{length(radii),T}(radii), rotation)
+end
 
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
   radii = SVector(radius)
-  MetricBall{typeof(radii),typeof(metric)}(radii, metric)
+  return MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
 
 """
@@ -113,5 +115,5 @@ function Base.show(io::IO, ball::MetricBall)
   n = length(ball.radii)
   r = n > 1 ? Tuple(ball.radii) : first(ball.radii)
   m = nameof(typeof(ball.metric))
-  print(io, "MetricBall($r, $m)")
+  return print(io, "MetricBall($r, $m)")
 end

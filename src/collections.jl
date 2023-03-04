@@ -47,7 +47,9 @@ julia> PointSet([1,2,3], [4,5,6])
 julia> PointSet([1 4; 2 5; 3 6])
 ```
 """
-PointSet(points::AbstractVector{P}) where {P<:Point} = PointSet{embeddim(P),coordtype(P)}(points)
+function PointSet(points::AbstractVector{P}) where {P<:Point}
+  return PointSet{embeddim(P),coordtype(P)}(points)
+end
 PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
 PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords))
 PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))
@@ -66,7 +68,7 @@ measure(::PointSet{Dim,T}) where {Dim,T} = zero(T)
 
 function Base.show(io::IO, pset::PointSet{Dim,T}) where {Dim,T}
   nelm = nelements(pset)
-  print(io, "$nelm PointSet{$Dim,$T}")
+  return print(io, "$nelm PointSet{$Dim,$T}")
 end
 
 # ---------------------------
@@ -80,13 +82,14 @@ const GeometrySet{Dim,T,G<:Geometry{Dim,T}} = Collection{Dim,T,G}
 
 A set of `geometries` seen as a single domain.
 """
-GeometrySet(geoms::AbstractVector{G}) where {G<:Geometry} =
-  GeometrySet{embeddim(G),coordtype(G),G}(geoms)
+function GeometrySet(geoms::AbstractVector{G}) where {G<:Geometry}
+  return GeometrySet{embeddim(G),coordtype(G),G}(geoms)
+end
 
 # constructor with iterator of geometries
 GeometrySet(geoms) = GeometrySet(collect(geoms))
 
 function Base.show(io::IO, gset::GeometrySet{Dim,T}) where {Dim,T}
   nelm = nelements(gset)
-  print(io, "$nelm GeometrySet{$Dim,$T}")
+  return print(io, "$nelm GeometrySet{$Dim,$T}")
 end

@@ -16,13 +16,14 @@ struct UniformSampling <: DiscreteSamplingMethod
   ordered::Bool
 end
 
-UniformSampling(size; replace=false, ordered=false) =
-  UniformSampling(size, replace, ordered)
+function UniformSampling(size; replace=false, ordered=false)
+  return UniformSampling(size, replace, ordered)
+end
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::UniformSampling)
   s = method.size
   r = method.replace
   o = method.ordered
   m = WeightedSampling(s; replace=r, ordered=o)
-  sample(rng, Ω, m)
+  return sample(rng, Ω, m)
 end

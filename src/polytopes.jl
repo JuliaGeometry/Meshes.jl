@@ -28,7 +28,9 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
 (::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(collect(vertices))
-(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
+function (::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple}
+  return PL(Point.(vertices))
+end
 (::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
 
 """
@@ -83,21 +85,21 @@ function Base.unique!(::Polytope) end
 function Base.show(io::IO, p::Polytope)
   kind = prettyname(p)
   vert = join(vertices(p), ", ")
-  print(io, "$kind($vert)")
+  return print(io, "$kind($vert)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
   kind = prettyname(p)
   lines = ["  └─$v" for v in vertices(p)]
   println(io, "$kind{$Dim,$T}")
-  print(io, join(lines, "\n"))
+  return print(io, join(lines, "\n"))
 end
 
 prettyname(p::Polytope) = prettyname(typeof(p))
 function prettyname(PL::Type{<:Polytope})
   n = string(PL)
   i = findfirst('{', n)
-  isnothing(i) ? n : n[1:i-1]
+  return isnothing(i) ? n : n[1:(i - 1)]
 end
 
 # -----------
@@ -169,7 +171,7 @@ orientation(p::Polygon) = orientation(p, WindingOrientation())
 
 function orientation(p::Polygon, algo)
   o = [orientation(c, algo) for c in chains(p)]
-  hasholes(p) ? o : first(o)
+  return hasholes(p) ? o : first(o)
 end
 
 """
@@ -184,8 +186,9 @@ boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
 
 Tells whether or not the `polygon` is convex.
 """
-isconvex(p::Polygon{Dim,T}) where {Dim,T} =
-  issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
+function isconvex(p::Polygon{Dim,T}) where {Dim,T}
+  return issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
+end
 
 """
     bridge(polygon; width=0)
@@ -203,7 +206,7 @@ the bridges.
 """
 function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   if hasholes(p)
-    bridge(chains(p), width=width)
+    bridge(chains(p); width=width)
   else
     first(chains(p)), []
   end

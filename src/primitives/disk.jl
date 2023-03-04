@@ -32,7 +32,7 @@ function Base.in(p::Point, d::Disk)
   p ∉ d.plane && return false
   s² = sum(abs2, p - center(d))
   r² = radius(d)^2
-  s² ≤ r²
+  return s² ≤ r²
 end
 
 boundary(d::Disk) = Circle(d.plane, d.radius)

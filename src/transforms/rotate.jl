@@ -37,16 +37,16 @@ isrevertible(::Type{<:Rotate}) = true
 
 function preprocess(transform::Rotate, object)
   rot = transform.rot
-  convert.(DCM, (inv(rot), rot))
+  return convert.(DCM, (inv(rot), rot))
 end
 
 function applypoint(::Rotate, points, prep)
   R, _ = prep
   newpoints = [Point(R * coordinates(p)) for p in points]
-  newpoints, prep
+  return newpoints, prep
 end
 
 function revertpoint(::Rotate, newpoints, cache)
   _, R⁻¹ = cache
-  [Point(R⁻¹ * coordinates(p)) for p in newpoints]
+  return [Point(R⁻¹ * coordinates(p)) for p in newpoints]
 end

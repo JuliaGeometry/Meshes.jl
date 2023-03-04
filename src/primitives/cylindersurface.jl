@@ -27,17 +27,17 @@ end
 
 function CylinderSurface(radius, segment::Segment{3,T}) where {T}
   a, b = extrema(segment)
-  v    = b - a
-  bot  = Plane(a, v)
-  top  = Plane(b, v)
-  CylinderSurface(T(radius), bot, top)
+  v = b - a
+  bot = Plane(a, v)
+  top = Plane(b, v)
+  return CylinderSurface(T(radius), bot, top)
 end
 
 function CylinderSurface(radius::T) where {T}
   _0 = (T(0), T(0), T(0))
   _1 = (T(0), T(0), T(1))
   segment = Segment(_0, _1)
-  CylinderSurface(radius, segment)
+  return CylinderSurface(radius, segment)
 end
 
 paramdim(::Type{<:CylinderSurface}) = 2
@@ -53,7 +53,7 @@ top(c::CylinderSurface) = c.top
 function center(c::CylinderSurface)
   a = coordinates(c.bot(0, 0))
   b = coordinates(c.top(0, 0))
-  Point((a .+ b) ./ 2)
+  return Point((a .+ b) ./ 2)
 end
 
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
@@ -65,14 +65,15 @@ function isright(c::CylinderSurface{T}) where {T}
   d = a(T(1)) - a(T(0))
   v = normal(c.bot)
   w = normal(c.top)
-  isparallelv = isapprox(norm(d × v), zero(T), atol=atol(T))
-  isparallelw = isapprox(norm(d × w), zero(T), atol=atol(T))
-  isparallelv && isparallelw
+  isparallelv = isapprox(norm(d × v), zero(T); atol=atol(T))
+  isparallelw = isapprox(norm(d × w), zero(T); atol=atol(T))
+  return isparallelv && isparallelw
 end
 
 boundary(::CylinderSurface) = nothing
 
-measure(c::CylinderSurface{T}) where {T} =
-  (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
+function measure(c::CylinderSurface{T}) where {T}
+  return (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
+end
 
 area(c::CylinderSurface) = measure(c)

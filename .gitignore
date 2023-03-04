@@ -4,6 +4,7 @@
 .DS_Store
 Manifest.toml
 .vscode
+*.code-workspace
 docs/build
 /.benchmarkci
 /benchmark/*.json

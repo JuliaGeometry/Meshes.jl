@@ -10,10 +10,12 @@ Base.view(domain::Domain, inds) = DomainView(domain, inds)
 Base.view(data::Data, inds) = DataView(data, inds)
 
 # specialize view to avoid infinite loops
-Base.view(v::DomainView, inds::AbstractVector{Int}) =
-  DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
-Base.view(v::DataView, inds::AbstractVector{Int}) =
-  DataView(getfield(v, :data), getfield(v, :inds)[inds])
+function Base.view(v::DomainView, inds::AbstractVector{Int})
+  return DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
+end
+function Base.view(v::DataView, inds::AbstractVector{Int})
+  return DataView(getfield(v, :data), getfield(v, :inds)[inds])
+end
 
 # specialize view for grids and Cartesian indices
 Base.view(grid::Grid, inds::CartesianIndices) = getindex(grid, inds)
@@ -43,26 +45,25 @@ unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
 Return a view of the `domain` containing all elements that
 are inside the `geometry`.
 """
-Base.view(domain::Domain, geometry::Geometry) =
-  view(domain, indices(domain, geometry))
+Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
 
 function Base.view(data::Data, geometry::Geometry)
-  D   = typeof(data)
+  D = typeof(data)
   dom = domain(data)
   tab = values(data)
 
   # retrieve subdomain
-  inds   = indices(dom, geometry)
+  inds = indices(dom, geometry)
   subdom = view(dom, inds)
 
   # retrieve subtable
-  tinds  = _linear(dom, inds)
+  tinds = _linear(dom, inds)
   subtab = Tables.subset(tab, tinds)
 
   # data table for elements
   vals = Dict(paramdim(dom) => subtab)
 
-  constructor(D)(subdom, vals)
+  return constructor(D)(subdom, vals)
 end
 
 # convert from Cartesian to linear indices if needed
@@ -76,7 +77,7 @@ Return the indices of the `domain` that are inside the `geometry`.
 """
 function indices(domain::Domain, geometry::Geometry)
   pred(i) = _isinside(domain[i], geometry)
-  filter(pred, 1:nelements(domain))
+  return filter(pred, 1:nelements(domain))
 end
 
 function indices(grid::CartesianGrid, box::Box)
@@ -90,10 +91,10 @@ function indices(grid::CartesianGrid, box::Box)
   lo, up = coordinates.(extrema(□))
 
   # Cartesian indices of new corners
-  ilo = @. max(ceil(Int,  (lo - or) / sp) + 1,  1)
-  iup = @. min(floor(Int, (up - or) / sp)    , sz)
+  ilo = @. max(ceil(Int, (lo - or) / sp) + 1, 1)
+  iup = @. min(floor(Int, (up - or) / sp), sz)
 
-  CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
+  return CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
 end
 
 _isinside(p::Point, geometry) = p ∈ geometry

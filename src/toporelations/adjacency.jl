@@ -17,7 +17,7 @@ function Adjacency{P}(topology) where {P}
 
   @assert D ≥ P "invalid adjacency relation"
 
-  Adjacency{P,D,T}(topology)
+  return Adjacency{P,D,T}(topology)
 end
 
 # --------------
@@ -34,7 +34,7 @@ function (𝒜::Adjacency{0,D,T})(ind::Integer) where {D,T<:GridTopology}
   # construct topology for vertices
   vtopo = GridTopology(dims .+ 1, cycl)
   𝒜vert = Adjacency{D}(vtopo)
-  𝒜vert(ind)
+  return 𝒜vert(ind)
 end
 
 # adjacent elements in a D-dimensional grid topology
@@ -45,7 +45,7 @@ function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
   cind = elem2cart(topo, ind)
 
   # offsets along each dimension
-  offsets = [ntuple(i -> i == d ? s : 0, D) for d in 1:D for s in (-1,1)]
+  offsets = [ntuple(i -> i == d ? s : 0, D) for d in 1:D for s in (-1, 1)]
 
   ninds = NTuple{D,Int}[]
   for offset in offsets
@@ -62,7 +62,7 @@ function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
   end
 
   # return linear index of element
-  [cart2elem(topo, ind...) for ind in ninds]
+  return [cart2elem(topo, ind...) for ind in ninds]
 end
 
 # -------------------
@@ -99,7 +99,7 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
     end
   end
 
-  vertices
+  return vertices
 end
 
 # adjacent elements in a 2D half-edge topology

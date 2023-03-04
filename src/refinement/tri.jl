@@ -51,11 +51,11 @@ function _refine(mesh, ::TriRefinement)
     for i in 1:length(verts)
       u = elem + offset
       v = verts[i]
-      w = verts[i+1]
+      w = verts[i + 1]
       tri = connect((u, v, w))
       push!(newconnec, tri)
     end
   end
 
-  SimpleMesh(newpoints, newconnec)
+  return SimpleMesh(newpoints, newconnec)
 end

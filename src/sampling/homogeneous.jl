@@ -12,38 +12,40 @@ struct HomogeneousSampling <: ContinuousSamplingMethod
   size::Int
 end
 
-function sample(rng::AbstractRNG, Ω::DomainOrData,
-                method::HomogeneousSampling)
-  size    = method.size
+function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
+  size = method.size
   weights = measure.(Ω)
 
   # sample elements with weights proportial to measure
-  w = WeightedSampling(size, weights, replace=true)
+  w = WeightedSampling(size, weights; replace=true)
 
   # within each element sample a single point
   h = HomogeneousSampling(1)
 
-  (first(sample(rng, e, h)) for e in sample(rng, Ω, w))
+  return (first(sample(rng, e, h)) for e in sample(rng, Ω, w))
 end
 
-function sample(rng::AbstractRNG, chain::Chain{Dim,T},
-                method::HomogeneousSampling) where {Dim,T}
+function sample(
+  rng::AbstractRNG, chain::Chain{Dim,T}, method::HomogeneousSampling
+) where {Dim,T}
   segs = collect(segments(chain))
-  sample(rng, Collection(segs), method)
+  return sample(rng, Collection(segs), method)
 end
 
-function sample(rng::AbstractRNG, triangle::Triangle{Dim,T},
-                method::HomogeneousSampling) where {Dim,T}
+function sample(
+  rng::AbstractRNG, triangle::Triangle{Dim,T}, method::HomogeneousSampling
+) where {Dim,T}
   function randpoint()
     # sample barycentric coordinates
     u₁, u₂ = rand(rng, T, 2)
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
-    triangle(λ₁, λ₂)
+    return triangle(λ₁, λ₂)
   end
-  (randpoint() for _ in 1:method.size)
+  return (randpoint() for _ in 1:(method.size))
 end
 
-function sample(rng::AbstractRNG, segment::Segment{Dim,T},
-                method::HomogeneousSampling) where {Dim,T}
-  (segment(t) for t in rand(rng, T, method.size))
+function sample(
+  rng::AbstractRNG, segment::Segment{Dim,T}, method::HomogeneousSampling
+) where {Dim,T}
+  return (segment(t) for t in rand(rng, T, method.size))
 end

@@ -60,9 +60,9 @@ Base.convert(::Type{Point{Dim,T}}, p::Point) where {Dim,T} = Point{Dim,T}(p.coor
 Base.convert(::Type{Point}, coords) = Point{length(coords),eltype(coords)}(coords)
 
 # type aliases for convenience
-const Point1  = Point{1,Float64}
-const Point2  = Point{2,Float64}
-const Point3  = Point{3,Float64}
+const Point1 = Point{1,Float64}
+const Point2 = Point{2,Float64}
+const Point3 = Point{3,Float64}
 const Point1f = Point{1,Float32}
 const Point2f = Point{2,Float32}
 const Point3f = Point{3,Float32}
@@ -91,7 +91,7 @@ paramdim(p::Point) = paramdim(typeof(p))
 
 Return the machine type of each coordinate used to describe the `point`.
 """
-coordtype(::Type{Point{Dim,T}}) where {Dim,T}  = T
+coordtype(::Type{Point{Dim,T}}) where {Dim,T} = T
 coordtype(p::Point) = coordtype(typeof(p))
 
 """
@@ -136,8 +136,7 @@ at a reference (or start) point `A`.
 Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
-Base.isapprox(A::Point, B::Point; kwargs...) =
-  isapprox(A.coords, B.coords; kwargs...)
+Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
 
 """
     ==(A::Point, B::Point)
@@ -149,10 +148,11 @@ regardless of floating point errors.
 
 - Implemented in terms of `isapprox(A, B, atol=atol(coordtype(A))`
 """
-==(A::Point, B::Point) =
-  embeddim(A) == embeddim(B) &&
-  coordtype(A) == coordtype(B) &&
-  isapprox(A, B, atol=atol(coordtype(A)))
+function ==(A::Point, B::Point)
+  return embeddim(A) == embeddim(B) &&
+         coordtype(A) == coordtype(B) &&
+         isapprox(A, B; atol=atol(coordtype(A)))
+end
 
 """
     ⪯(A::Point, B::Point)
@@ -200,10 +200,12 @@ boundary(::Point) = nothing
 
 Generates a random point of type `P`
 """
-Random.rand(rng::Random.AbstractRNG,
-            ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
-  Point(rand(rng, Vec{Dim,T}))
+function Random.rand(
+  rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}
+) where {Dim,T}
+  return Point(rand(rng, Vec{Dim,T}))
+end
 
 function Base.show(io::IO, point::Point)
-  print(io, "Point$(Tuple(point.coords))")
+  return print(io, "Point$(Tuple(point.coords))")
 end

@@ -13,18 +13,20 @@ struct DirectionPartition{Dim,T} <: SPredicatePartitionMethod
   tol::Float64
 
   function DirectionPartition{Dim,T}(direction, tol) where {Dim,T}
-    new(normalize(direction), tol)
+    return new(normalize(direction), tol)
   end
 end
 
-DirectionPartition(direction::Vec{Dim,T}; tol=1e-6) where {Dim,T} =
-  DirectionPartition{Dim,T}(direction, tol)
+function DirectionPartition(direction::Vec{Dim,T}; tol=1e-6) where {Dim,T}
+  return DirectionPartition{Dim,T}(direction, tol)
+end
 
-DirectionPartition(direction::NTuple{Dim,T}; tol=1e-6) where {Dim,T} =
-  DirectionPartition(Vec(direction), tol=tol)
+function DirectionPartition(direction::NTuple{Dim,T}; tol=1e-6) where {Dim,T}
+  return DirectionPartition(Vec(direction); tol=tol)
+end
 
 function (p::DirectionPartition)(x, y)
   δ = x - y
   d = p.direction
-  norm(δ - (δ⋅d)*d) < p.tol
+  return norm(δ - (δ ⋅ d) * d) < p.tol
 end

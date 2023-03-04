@@ -15,15 +15,19 @@ struct BisectFractionPartition{Dim,T} <: PartitionMethod
   maxiter::Int
 
   function BisectFractionPartition{Dim,T}(normal, fraction, maxiter) where {Dim,T}
-    new(normalize(normal), fraction, maxiter)
+    return new(normalize(normal), fraction, maxiter)
   end
 end
 
-BisectFractionPartition(normal::Vec{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
-  BisectFractionPartition{Dim,T}(normal, fraction, maxiter)
+function BisectFractionPartition(normal::Vec{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T}
+  return BisectFractionPartition{Dim,T}(normal, fraction, maxiter)
+end
 
-BisectFractionPartition(normal::NTuple{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
-  BisectFractionPartition(Vec(normal), fraction, maxiter)
+function BisectFractionPartition(
+  normal::NTuple{Dim,T}, fraction=0.5, maxiter=10
+) where {Dim,T}
+  return BisectFractionPartition(Vec(normal), fraction, maxiter)
+end
 
 function partsubsets(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)
   bbox = boundingbox(domain)
@@ -36,14 +40,14 @@ function partsubsets(rng::AbstractRNG, domain::Domain, method::BisectFractionPar
   maxiter = method.maxiter
 
   iter = 0
-  a = c - d/2 * n
-  b = c + d/2 * n
-  subsets  = Vector{Int}[]
+  a = c - d / 2 * n
+  b = c + d / 2 * n
+  subsets = Vector{Int}[]
   metadata = Dict()
   while iter < maxiter
     m = (a + b) / 2
 
-    bisectpoint       = BisectPointPartition(n, Point(m))
+    bisectpoint = BisectPointPartition(n, Point(m))
     subsets, metadata = partsubsets(rng, domain, bisectpoint)
 
     g = length(subsets[1]) / nelements(domain)
@@ -55,5 +59,5 @@ function partsubsets(rng::AbstractRNG, domain::Domain, method::BisectFractionPar
     iter += 1
   end
 
-  subsets, metadata
+  return subsets, metadata
 end

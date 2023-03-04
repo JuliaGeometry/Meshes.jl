@@ -17,19 +17,21 @@ struct WeightedSampling{W} <: DiscreteSamplingMethod
   ordered::Bool
 end
 
-WeightedSampling(size; replace=false, ordered=false) =
-  WeightedSampling(size, nothing, replace, ordered)
+function WeightedSampling(size; replace=false, ordered=false)
+  return WeightedSampling(size, nothing, replace, ordered)
+end
 
-WeightedSampling(size, weights::AbstractWeights;
-                 replace=false, ordered=false) =
-  WeightedSampling(size, weights, replace, ordered)
+function WeightedSampling(size, weights::AbstractWeights; replace=false, ordered=false)
+  return WeightedSampling(size, weights, replace, ordered)
+end
 
-WeightedSampling(size, weights::Nothing;
-                 replace=false, ordered=false) =
-  WeightedSampling(size, weights, replace, ordered)
+function WeightedSampling(size, weights::Nothing; replace=false, ordered=false)
+  return WeightedSampling(size, weights, replace, ordered)
+end
 
-WeightedSampling(size, weights; replace=false, ordered=false) =
-  WeightedSampling(size, Weights(collect(weights)), replace, ordered)
+function WeightedSampling(size, weights; replace=false, ordered=false)
+  return WeightedSampling(size, Weights(collect(weights)), replace, ordered)
+end
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
   n = nitems(Ω)
@@ -43,10 +45,10 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
   end
 
   inds = if isnothing(w)
-    sample(rng, 1:n, s, replace=r, ordered=o)
+    sample(rng, 1:n, s; replace=r, ordered=o)
   else
-    sample(rng, 1:n, w, s, replace=r, ordered=o)
+    sample(rng, 1:n, w, s; replace=r, ordered=o)
   end
 
-  view(Ω, inds)
+  return view(Ω, inds)
 end

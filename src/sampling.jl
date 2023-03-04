@@ -16,8 +16,7 @@ Sample elements or points from geometric `object`
 with `method`. Optionally, specify random number
 generator `rng`.
 """
-sample(object, method) =
-  sample(Random.GLOBAL_RNG, object, method)
+sample(object, method) = sample(Random.GLOBAL_RNG, object, method)
 
 """
     DiscreteSamplingMethod
@@ -38,16 +37,16 @@ space.
 """
 abstract type ContinuousSamplingMethod end
 
-function sample(rng::AbstractRNG, geometry::Union{Multi,Polygon},
-                method::ContinuousSamplingMethod)
+function sample(
+  rng::AbstractRNG, geometry::Union{Multi,Polygon}, method::ContinuousSamplingMethod
+)
   mesh = discretize(geometry, FIST(rng))
-  sample(rng, mesh, method)
+  return sample(rng, mesh, method)
 end
 
-function sample(rng::AbstractRNG, geometry::Ngon,
-                method::ContinuousSamplingMethod)
+function sample(rng::AbstractRNG, geometry::Ngon, method::ContinuousSamplingMethod)
   mesh = discretize(geometry, Dehn1899())
-  sample(rng, mesh, method)
+  return sample(rng, mesh, method)
 end
 
 # ----------------
@@ -77,10 +76,9 @@ with or without replacement depending on the `replace` option. The
 option `ordered` can be used to return samples in the same order of
 the `object`.
 """
-function sample(object::DomainOrData, size::Int, weights=nothing;
-                replace=false, ordered=false)
-  method = WeightedSampling(size, weights;
-                            replace=replace,
-                            ordered=ordered)
-  sample(Random.GLOBAL_RNG, object, method)
+function sample(
+  object::DomainOrData, size::Int, weights=nothing; replace=false, ordered=false
+)
+  method = WeightedSampling(size, weights; replace=replace, ordered=ordered)
+  return sample(Random.GLOBAL_RNG, object, method)
 end

@@ -30,5 +30,5 @@ function partition(rng::AbstractRNG, object, method::HierarchicalPartition)
     end
   end
 
-  Partition(object, result)
+  return Partition(object, result)
 end

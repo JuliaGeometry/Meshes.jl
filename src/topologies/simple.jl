@@ -25,7 +25,7 @@ struct SimpleTopology{C<:Connectivity} <: Topology
   function SimpleTopology{C}(connec) where {C}
     ranks = [paramdim(c) for c in connec]
     elems = findall(isequal(maximum(ranks)), ranks)
-    new(connec, ranks, elems)
+    return new(connec, ranks, elems)
   end
 end
 
@@ -51,7 +51,7 @@ nvertices(t::SimpleTopology) = maximum(i for c in t.connec for i in indices(c))
 
 function faces(t::SimpleTopology, rank)
   cs = t.connec
-  (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
+  return (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
 end
 
 element(t::SimpleTopology, ind) = t.connec[t.elems[ind]]
@@ -67,8 +67,8 @@ nfacets(t::SimpleTopology) = count(==(maximum(t.ranks) - 1), t.ranks)
 # ------------
 
 function Base.convert(::Type{SimpleTopology}, t::Topology)
-  ranksₜ    = 1:paramdim(t)
+  ranksₜ = 1:paramdim(t)
   facesₜ(r) = collect(faces(t, r))
-  connec    = mapreduce(facesₜ, vcat, reverse(ranksₜ))
-  SimpleTopology(connec)
+  connec = mapreduce(facesₜ, vcat, reverse(ranksₜ))
+  return SimpleTopology(connec)
 end

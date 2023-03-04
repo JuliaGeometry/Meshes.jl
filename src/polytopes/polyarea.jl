@@ -32,7 +32,7 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
     if fix
       # fix orientation
       ofix(c, o) = orientation(c) == o ? c : reverse(c)
-      outer  = ofix(outer, :CCW)
+      outer = ofix(outer, :CCW)
       inners = ofix.(inners, :CW)
 
       # fix degeneracy
@@ -46,35 +46,37 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
       inners = filter(c -> nvertices(c) > 2, inners)
     end
 
-    new(outer, inners)
+    return new(outer, inners)
   end
 end
 
-PolyArea(outer::C, inners=C[]; fix=true) where {Dim,T,V,C<:Chain{Dim,T,V}} =
-  PolyArea{Dim,T,Chain{Dim,T,V}}(outer, inners, fix)
+function PolyArea(outer::C, inners=C[]; fix=true) where {Dim,T,V,C<:Chain{Dim,T,V}}
+  return PolyArea{Dim,T,Chain{Dim,T,V}}(outer, inners, fix)
+end
 
-PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
-  PolyArea(Chain(outer), [Chain(inner) for inner in inners]; fix=fix)
+function PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point}
+  return PolyArea(Chain(outer), [Chain(inner) for inner in inners]; fix=fix)
+end
 
-PolyArea(outer::AbstractVector{TP}, inners=[]; fix=true) where {TP<:Tuple} =
-  PolyArea(Point.(outer), [Point.(inner) for inner in inners]; fix=fix)
+function PolyArea(outer::AbstractVector{TP}, inners=[]; fix=true) where {TP<:Tuple}
+  return PolyArea(Point.(outer), [Point.(inner) for inner in inners]; fix=fix)
+end
 
-PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} =
-  PolyArea(collect(outer); fix=fix)
+PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} = PolyArea(collect(outer); fix=fix)
 
-PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} =
-  PolyArea(collect(Point.(outer)); fix=fix)
+function PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple}
+  return PolyArea(collect(Point.(outer)); fix=fix)
+end
 
-==(p1::PolyArea, p2::PolyArea) =
-  p1.outer == p2.outer && p1.inners == p2.inners
+==(p1::PolyArea, p2::PolyArea) = p1.outer == p2.outer && p1.inners == p2.inners
 
 function vertices(p::PolyArea{Dim,T}) where {Dim,T}
   vo = vertices(p.outer)
   vi = reduce(vcat, vertices(inner) for inner in p.inners; init=Point{Dim,T}[])
-  [vo; vi]
+  return [vo; vi]
 end
 
-nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
+nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners; init=0)
 
 centroid(p::PolyArea) = centroid(p.outer)
 
@@ -84,24 +86,23 @@ hasholes(p::PolyArea) = !isempty(p.inners)
 
 issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
 
-windingnumber(point::Point, p::PolyArea) =
-  windingnumber(point, p.outer)
+windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 
 function Base.unique!(p::PolyArea)
   close!(unique!(open!(p.outer)))
-  hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
-  p
+  hasholes(p) && foreach(c -> close!(unique!(open!(c))), p.inners)
+  return p
 end
 
 function Base.in(point::Point, polyarea::PolyArea)
-  sideof(point, polyarea.outer) == :INSIDE &&
-  all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
+  return sideof(point, polyarea.outer) == :INSIDE &&
+         all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
 end
 
 function Base.show(io::IO, p::PolyArea)
   nverts = [[npoints(p.outer)]; npoints.(p.inners)]
   chains = join(["$n-chain" for n in nverts], ", ")
-  print(io, "PolyArea($chains)")
+  return print(io, "PolyArea($chains)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}

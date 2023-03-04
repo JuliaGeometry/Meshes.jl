@@ -15,7 +15,7 @@ struct Connectivity{PL<:Polytope,N}
 
   function Connectivity{PL,N}(indices) where {PL,N}
     @assert nvertices(PL) == N "invalid connectivity list"
-    new(indices)
+    return new(indices)
   end
 end
 
@@ -84,17 +84,16 @@ connect((1,2,3)) # Triangle
 connect((1,2,3,4)) # Quadrangle
 ```
 """
-connect(indices::Tuple, PL::Type{<:Polytope}) =
-  Connectivity{PL,length(indices)}(indices)
+connect(indices::Tuple, PL::Type{<:Polytope}) = Connectivity{PL,length(indices)}(indices)
 
 function connect(indices::Tuple, ::Type{Ngon})
   N = length(indices)
-  Connectivity{Ngon{N},N}(indices)
+  return Connectivity{Ngon{N},N}(indices)
 end
 
 function connect(indices::Tuple)
   N = length(indices)
-  N > 2 ? connect(indices, Ngon) : connect(indices, Segment)
+  return N > 2 ? connect(indices, Ngon) : connect(indices, Segment)
 end
 
 """
@@ -102,13 +101,14 @@ end
 
 Materialize a face using the `connec` list and a global vector of `points`.
 """
-function materialize(connec::Connectivity{PL},
-                     points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
-  PL(view(points, SVector(connec.indices...)))
+function materialize(
+  connec::Connectivity{PL}, points::AbstractVector{P}
+) where {PL<:Polytope,P<:Point}
+  return PL(view(points, SVector(connec.indices...)))
 end
 
 function Base.show(io::IO, c::Connectivity{PL}) where {PL}
   name = prettyname(PL)
   inds = c.indices
-  print(io, "$name$inds")
+  return print(io, "$name$inds")
 end

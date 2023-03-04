@@ -27,17 +27,17 @@ end
 
 function Cylinder(radius, segment::Segment{3,T}) where {T}
   a, b = extrema(segment)
-  v    = b - a
-  bot  = Plane(a, v)
-  top  = Plane(b, v)
-  Cylinder(T(radius), bot, top)
+  v = b - a
+  bot = Plane(a, v)
+  top = Plane(b, v)
+  return Cylinder(T(radius), bot, top)
 end
 
 function Cylinder(radius::T) where {T}
   _0 = (T(0), T(0), T(0))
   _1 = (T(0), T(0), T(1))
   segment = Segment(_0, _1)
-  Cylinder(radius, segment)
+  return Cylinder(radius, segment)
 end
 
 paramdim(::Type{<:Cylinder}) = 3
@@ -58,8 +58,7 @@ isright(c::Cylinder) = isright(boundary(c))
 
 boundary(c::Cylinder) = CylinderSurface(c.radius, c.bot, c.top)
 
-measure(c::Cylinder{T}) where {T} =
-  norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2
+measure(c::Cylinder{T}) where {T} = norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2
 
 volume(c::Cylinder) = measure(c)
 
@@ -69,5 +68,5 @@ function Base.in(p::Point{3}, c::Cylinder)
   a = t - b
   (p - b) ⋅ a ≥ 0 || return false
   (p - t) ⋅ a ≤ 0 || return false
-  norm((p - b) × a) / norm(a) ≤ c.radius
+  return norm((p - b) × a) / norm(a) ≤ c.radius
 end

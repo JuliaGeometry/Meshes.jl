@@ -20,5 +20,5 @@ function traverse(object, path::ShiftedPath)
   s = o ≥ 0 ? o : abs((n + o) % n)
   i1 = Iterators.cycle(p)
   i2 = Iterators.drop(i1, s % n)
-  Iterators.take(i2, n)
+  return Iterators.take(i2, n)
 end

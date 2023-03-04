@@ -16,7 +16,7 @@ end
 SourcePath(sources) = SourcePath(sources, 10^3)
 
 function traverse(object, path::SourcePath)
-  sources   = path.sources
+  sources = path.sources
   batchsize = path.batchsize
   @assert allunique(sources) "non-unique sources"
   @assert all(1 .≤ sources .≤ nelements(object)) "sources must be valid locations"
@@ -39,5 +39,5 @@ function traverse(object, path::SourcePath)
     append!(dists, ds)
   end
 
-  [sources; view(others, sortperm(dists))]
+  return [sources; view(others, sortperm(dists))]
 end

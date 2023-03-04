@@ -22,7 +22,7 @@ Base.inv(cw::ClockwiseAngle) = CounterClockwiseAngle(cw.θ)
 function Base.convert(::Type{<:DCM}, cw::ClockwiseAngle)
   s, c = sincos(cw.θ)
   T = typeof(s)
-  SMatrix{2,2,T}([c s; -s c])
+  return SMatrix{2,2,T}([c s; -s c])
 end
 
 """
@@ -36,11 +36,12 @@ end
 
 Base.inv(ccw::CounterClockwiseAngle) = ClockwiseAngle(ccw.θ)
 
-Base.convert(::Type{<:DCM}, ccw::CounterClockwiseAngle) =
-  convert(DCM, ClockwiseAngle(-ccw.θ))
+function Base.convert(::Type{<:DCM}, ccw::CounterClockwiseAngle)
+  return convert(DCM, ClockwiseAngle(-ccw.θ))
+end
 
 # -------------
 # 3D ROTATIONS
 # -------------
 
-TaitBryanAngles(θs...) = EulerAngles((-1 .* θs)..., :ZXY) |> inv
+TaitBryanAngles(θs...) = inv(EulerAngles((-1 .* θs)..., :ZXY))

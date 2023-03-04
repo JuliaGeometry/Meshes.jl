@@ -25,5 +25,5 @@ function partsubsets(rng::AbstractRNG, domain::Domain, method::UniformPartition)
   inds = method.shuffle ? shuffle(rng, 1:n) : collect(1:n)
   subsets = collect(Iterators.partition(inds, n ÷ k))
 
-  subsets, Dict()
+  return subsets, Dict()
 end

@@ -13,15 +13,17 @@ struct BisectPointPartition{Dim,T} <: PartitionMethod
   point::Point{Dim,T}
 
   function BisectPointPartition{Dim,T}(normal, point) where {Dim,T}
-    new(normalize(normal), point)
+    return new(normalize(normal), point)
   end
 end
 
-BisectPointPartition(normal::Vec{Dim,T}, point::Point{Dim,T}) where {Dim,T} =
-  BisectPointPartition{Dim,T}(normal, point)
+function BisectPointPartition(normal::Vec{Dim,T}, point::Point{Dim,T}) where {Dim,T}
+  return BisectPointPartition{Dim,T}(normal, point)
+end
 
-BisectPointPartition(normal::NTuple{Dim,T}, point::NTuple{Dim,T}) where {Dim,T} =
- BisectPointPartition(Vec(normal), Point(point))
+function BisectPointPartition(normal::NTuple{Dim,T}, point::NTuple{Dim,T}) where {Dim,T}
+  return BisectPointPartition(Vec(normal), Point(point))
+end
 
 function partsubsets(::AbstractRNG, domain::Domain, method::BisectPointPartition)
   n = method.normal
@@ -37,5 +39,5 @@ function partsubsets(::AbstractRNG, domain::Domain, method::BisectPointPartition
     end
   end
 
-  [left,right], Dict()
+  return [left, right], Dict()
 end

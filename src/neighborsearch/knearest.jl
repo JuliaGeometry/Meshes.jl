@@ -20,13 +20,13 @@ end
 function KNearestSearch(domain::D, k::Int; metric=Euclidean()) where {D}
   xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = metric isa MinkowskiMetric ? KDTree(xs, metric) : BallTree(xs, metric)
-  KNearestSearch{D,typeof(tree)}(domain, k, tree)
+  return KNearestSearch{D,typeof(tree)}(domain, k, tree)
 end
 
 maxneighbors(method::KNearestSearch) = method.k
 
 function search!(neighbors, pₒ::Point, method::KNearestSearch; mask=nothing)
-  k       = method.k
+  k = method.k
   inds, _ = knn(method.tree, coordinates(pₒ), k, true)
 
   if mask ≠ nothing
@@ -44,5 +44,5 @@ function search!(neighbors, pₒ::Point, method::KNearestSearch; mask=nothing)
     end
   end
 
-  nneigh
+  return nneigh
 end
