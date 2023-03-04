@@ -763,7 +763,7 @@
 
     # origin of ray intersects with vertex of triangle
     r = Ray(P3(0.0, 0.0, 0.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == CornerOriginRayTriangle
+    @test intersection(r, t) |> type == CornerTouchingRayTriangle
     @test r ∩ t ≈ P3(0.0, 0.0, 0.0)
 
     # origin of ray intersects with edge of triangle
