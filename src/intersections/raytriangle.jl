@@ -8,10 +8,10 @@ Möller, T. & Trumbore, B., 1997.
 
 Cases
 1. CrossingRayTriangle - middle of ray intersects middle of triangle
-2. CornerOriginTouchingRayTriangle - origin of ray intersects corner of triangle
-3. EdgeOriginTouchingRayTriangle - origin of ray intersects edge of triangle
-4. EdgeTouchingRayTriangle - middle of ray intersects edge of triangle
-5. CornerTouchingRayTriangle - middle of ray intersects corner of triangle
+2. CornerOriginRayTriangle - origin of ray intersects corner of triangle
+3. EdgeOriginRayTriangle - origin of ray intersects edge of triangle
+4. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
+5. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
 =#
 function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
@@ -56,13 +56,18 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return @IT NoIntersection nothing f
   end
 
-  any(o .≈ vs) && (return @IT CornerOriginTouchingRayTriangle r(λ) f)
+  if any(isapprox.(o, vs, atol=atol(T)))
+    return @IT CornerOriginRayTriangle r(λ) f
+  elseif isapprox(λ, zero(T), atol=atol(T))
+    return @IT EdgeOriginRayTriangle r(λ) f
+  end
 
-  λ ≈ zero(T) && (return @IT EdgeOriginTouchingRayTriangle r(λ) f)
-
-  coords = (u, v, det - u - v)
-  count(x -> x ≈ zero(T), coords) == 1 && (return @IT EdgeTouchingRayTriangle r(λ) f)
-  count(x -> x ≈ det, coords) == 1 && (return @IT CornerTouchingRayTriangle r(λ) f)
+  coords = Vec(u, v, det - u - v)
+  if count(x -> isapprox(x, zero(T), atol=atol(T)), coords) == 1
+    return @IT EdgeCrossingRayTriangle r(λ) f
+  elseif count(x -> isapprox(x, det, atol=atol(T)), coords) == 1
+    return @IT CornerCrossingRayTriangle r(λ) f
+  end
 
   λ = clamp(λ, zero(T), typemax(T))
 

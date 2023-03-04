@@ -665,7 +665,7 @@
 
     # intersects at a vertex of t
     r = Ray(P3(0.0, 0.0, 1.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == CornerTouchingRayTriangle
+    @test intersection(r, t) |> type == CornerCrossingRayTriangle
     @test r ∩ t ≈ P3(0.0, 0.0, 0.0)
 
     # normal to, doesn't intersect with t
@@ -763,17 +763,17 @@
 
     # origin of ray intersects with vertex of triangle
     r = Ray(P3(0.0, 0.0, 0.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == CornerOriginTouchingRayTriangle
+    @test intersection(r, t) |> type == CornerOriginRayTriangle
     @test r ∩ t ≈ P3(0.0, 0.0, 0.0)
 
     # origin of ray intersects with edge of triangle
     r = Ray(P3(0.5, 0.0, 0.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == EdgeOriginTouchingRayTriangle
+    @test intersection(r, t) |> type == EdgeOriginRayTriangle
     @test r ∩ t ≈ P3(0.5, 0.0, 0.0)
 
     # ray intersects with edge of triangle
     r = Ray(P3(0.5, 0.0, 1.0), V3(0.0, 0.0, -1.0))
-    @test intersection(r, t) |> type == EdgeTouchingRayTriangle
+    @test intersection(r, t) |> type == EdgeCrossingRayTriangle
     @test r ∩ t ≈ P3(0.5, 0.0, 0.0)
   end
 
@@ -782,7 +782,7 @@
                  P3(1.0,1.0,0.0), P3(0.5,1.5,0.0), P3(0.0,1.0,0.0), P3(-0.5,0.5,0.0)])
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(1.0, 1.0, 1.0))
-    @test intersection(r, o) |> type == EdgeTouchingRayTriangle
+    @test intersection(r, o) |> type == EdgeCrossingRayTriangle
     @test r ∩ o ≈ P3(0.0, 0.0, 0.0)
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(-1.0, -1.0, -1.0))
