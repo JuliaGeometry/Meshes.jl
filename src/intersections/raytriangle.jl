@@ -9,7 +9,7 @@ Möller, T. & Trumbore, B., 1997.
 Cases
 1. CrossingRayTriangle - middle of ray intersects middle of triangle
 2. CornerTouchingRayTriangle - origin of ray intersects corner of triangle
-3. EdgeOriginRayTriangle - origin of ray intersects edge of triangle
+3. EdgeTouchingRayTriangle - origin of ray intersects edge of triangle
 4. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
 5. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
 =#
