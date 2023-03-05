@@ -55,28 +55,4 @@ nvertices(m::SimpleMesh) = length(m.vertices)
 Convert any `mesh` to a simple mesh with explicit
 list of vertices and [`SimpleTopology`](@ref).
 """
-Base.convert(::Type{<:SimpleMesh}, m::Mesh) =
-  SimpleMesh(vertices(m), topology(m))
-
-
-"""
-    isinside(point, mesh)
-
-Tells whether a `point` is inside a surface `mesh`. Must be a surface mesh with only triangles as elements. Points that coincide with vertices of the mesh or lies on the face of a triangle return true.
-"""
-function isinside(testpoint::Point{3,T}, mesh::Mesh{3,T}) where T
-  if !(eltype(mesh) <: Triangle)
-    error("This function only works for surface meshes with triangles as elements.")
-  end
-  ex = testpoint .- extrema(mesh)
-  direction = ex[argmax(norm.(ex))]
-  r = Ray(testpoint, direction*2)
-  
-  intersects = false
-  for elem in mesh
-    if intersection(x -> x.type == NoIntersection ? false : true, r, elem)
-      intersects = !intersects
-    end
-  end
-  intersects
-end
+Base.convert(::Type{<:SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))

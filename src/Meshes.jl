@@ -95,20 +95,36 @@ include("transforms.jl")
 export
   # points
   Point,
-  Point1, Point2, Point3,
-  Point1f, Point2f, Point3f,
-  embeddim, paramdim,
-  coordtype, coordinates,
-  center, centroid, measure,
-  ⪯, ≺, ⪰, ≻,
+  Point1,
+  Point2,
+  Point3,
+  Point1f,
+  Point2f,
+  Point3f,
+  embeddim,
+  paramdim,
+  coordtype,
+  coordinates,
+  center,
+  centroid,
+  measure,
+  ⪯,
+  ≺,
+  ⪰,
+  ≻,
 
   # vectors
   Vec,
-  Vec1, Vec2, Vec3,
-  Vec1f, Vec2f, Vec3f,
+  Vec1,
+  Vec2,
+  Vec3,
+  Vec1f,
+  Vec2f,
+  Vec3f,
 
   # linear algebra
-  ⋅, ×,
+  ⋅,
+  ×,
 
   # angles
   ∠,
@@ -121,8 +137,11 @@ export
 
   # domain traits
   Domain,
-  embeddim, paramdim, coordtype,
-  element, nelements,
+  embeddim,
+  paramdim,
+  coordtype,
+  element,
+  nelements,
 
   # data traits
   Data,
@@ -152,17 +171,39 @@ export
   measure, diagonal, origin, direction,
 
   # polytopes
-  Polytope, Polygon, Polyhedron,
-  Segment, Ngon, Triangle, Quadrangle,
-  Pentagon, Hexagon, Heptagon,
-  Octagon, Nonagon, Decagon,
-  Chain, PolyArea,
-  Tetrahedron, Pyramid, Hexahedron,
-  vertices, nvertices,
-  windingnumber, chains, segments,
-  isclosed, issimple, hasholes,
-  angles, innerangles, close!, open!,
-  orientation, bridge, normal,
+  Polytope,
+  Polygon,
+  Polyhedron,
+  Segment,
+  Ngon,
+  Triangle,
+  Quadrangle,
+  Pentagon,
+  Hexagon,
+  Heptagon,
+  Octagon,
+  Nonagon,
+  Decagon,
+  Chain,
+  PolyArea,
+  Tetrahedron,
+  Pyramid,
+  Hexahedron,
+  vertices,
+  nvertices,
+  windingnumber,
+  chains,
+  segments,
+  isclosed,
+  issimple,
+  hasholes,
+  angles,
+  innerangles,
+  close!,
+  open!,
+  orientation,
+  bridge,
+  normal,
 
   # orientation algorithms
   WindingOrientation,
@@ -184,14 +225,17 @@ export
   sideof,
   iscollinear,
   iscoplanar,
+  isinside,
   householderbasis,
   mayberound,
   uvrotation,
 
   # paths
   Path,
-  LinearPath, RandomPath,
-  ShiftedPath, SourcePath,
+  LinearPath,
+  RandomPath,
+  ShiftedPath,
+  SourcePath,
   traverse,
 
   # neighborhoods
@@ -210,7 +254,8 @@ export
   KBallSearch,
   BoundedSearch,
   GlobalSearch,
-  search!, search,
+  search!,
+  search,
   maxneighbors,
 
   # miscellaneous
@@ -221,18 +266,28 @@ export
 
   # connectivities
   Connectivity,
-  paramdim, indices,
-  connect, materialize,
-  issimplex, pltype,
+  paramdim,
+  indices,
+  connect,
+  materialize,
+  issimplex,
+  pltype,
 
   # topologies
   Topology,
-  vertices, elements, facets,
-  nvertices, nelements, nfacets,
-  element, facet,
-  faces, nfaces,
+  vertices,
+  elements,
+  facets,
+  nvertices,
+  nelements,
+  nfacets,
+  element,
+  facet,
+  faces,
+  nfaces,
   GridTopology,
-  HalfEdgeTopology, HalfEdge,
+  HalfEdgeTopology,
+  HalfEdge,
   SimpleTopology,
   elem2cart, cart2elem,
   corner2cart, cart2corner,
@@ -246,7 +301,9 @@ export
 
   # topological relations
   TopologicalRelation,
-  Boundary, Coboundary, Adjacency,
+  Boundary,
+  Coboundary,
+  Adjacency,
 
   # meshes
   Mesh, Grid,
@@ -262,7 +319,6 @@ export
   cart2vert,
   spacing,
   offset,
-  isinside,
 
   # mesh data
   MeshData,
@@ -274,10 +330,13 @@ export
 
   # partitions
   Partition,
-  indices, metadata,
+  indices,
+  metadata,
 
   # viewing
-  unview, indices, slice,
+  unview,
+  indices,
+  slice,
 
   # sampling
   SamplingMethod,
@@ -308,7 +367,8 @@ export
   SpatialPredicatePartition,
   ProductPartition,
   HierarchicalPartition,
-  partition, split,
+  partition,
+  split,
 
   # intersection types
   IntersectionType,
@@ -365,7 +425,8 @@ export
   BoundaryDiscretizationMethod,
   FanTriangulation,
   RegularDiscretization,
-  FIST, Dehn1899,
+  FIST,
+  Dehn1899,
   Tetrahedralization,
   discretize,
   discretizewithin,

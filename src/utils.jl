@@ -31,10 +31,10 @@ function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {D
   # to all possible pairs of coordinates are zero
   AB, AC = B - A, C - A
   result = true
-  for i in 1:Dim, j in (i+1):Dim
+  for i = 1:Dim, j = (i+1):Dim
     u = Vec{2,T}(AB[i], AB[j])
     v = Vec{2,T}(AC[i], AC[j])
-    if !isapprox(u × v, zero(T), atol=atol(T)^2)
+    if !isapprox(u × v, zero(T), atol = atol(T)^2)
       result = false
       break
     end
@@ -74,7 +74,38 @@ Determines on which side of the closed `chain` the
 """
 function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
   w = windingnumber(p, c)
-  ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
+  ifelse(isapprox(w, zero(T), atol = atol(T)), :OUTSIDE, :INSIDE)
+end
+
+"""
+    isinside(point, mesh)
+
+Determines whether a `point` is inside or outside the surface of a `mesh`.
+"""
+function isinside(point::Point, mesh::Mesh)
+  if !(eltype(mesh) <: Triangle)
+    throw(
+      ArgumentError(
+        "This function only works for surface meshes with triangles as elements.",
+      ),
+    )
+  end
+  z = last.(coordinates.(extrema(mesh)))
+  r = Ray(point, Vec(0.0, 0.0, z[2] - z[1]) * 2)
+
+  intersects = false
+  for elem in mesh
+    @show I = intersection(r, elem)
+    if type(I) ∈ (IntersectingRayTriangle, MidTouchingRaySegment, CrossingRaySegment)
+      intersects = !intersects
+    elseif type(I) == CornerTouchingRaySegment
+      topo = convert(HalfEdgeTopology, topology(mesh))
+      id = findfirst(p -> p ≈ point, vertices(mesh))
+      num_shared_elems = length(Coboundary{0,2}(topo)(id))
+      isodd(num_shared_elems) && (intersects = !intersects)
+    end
+  end
+  intersects
 end
 
 """
@@ -86,12 +117,12 @@ points living in a plane of maximum variance using SVD.
 function proj2D(points::AbstractVector{Point{3,T}}) where {T}
   # https://math.stackexchange.com/a/99317
   X = mapreduce(coordinates, hcat, points)
-  μ = sum(X, dims=2) / size(X, 2)
+  μ = sum(X, dims = 2) / size(X, 2)
   Z = X .- μ
   U = svd(Z).U
-  u = U[:,1]
-  v = U[:,2]
-  [Point(z⋅u, z⋅v) for z in eachcol(Z)]
+  u = U[:, 1]
+  v = U[:, 2]
+  [Point(z ⋅ u, z ⋅ v) for z in eachcol(Z)]
 end
 
 """
@@ -105,27 +136,28 @@ dropunits(v) = typeof(one(v))
 """
     householderbasis(n)
 
-Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`, 
+Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`,
 such that `u`, `v`, and `n` form a right-hand orthogonal system.
 
 ## References
 
-* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool 
+* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
 function householderbasis(n)
   n̂ = norm(n)
-  _, i = findmax(n.+n̂)
+  _, i = findmax(n .+ n̂)
   ei = 1:3 .== i
-  h = n + n̂*ei
-  H = I - 2h*transpose(h)/(transpose(h)*h)
-  u, v  = [H[:,j] for j = 1:3 if j != i]
+  h = n + n̂ * ei
+  H = I - 2h * transpose(h) / (transpose(h) * h)
+  u, v = [H[:, j] for j = 1:3 if j != i]
   if i == 2
-      u, v = v, u
+    u, v = v, u
   end
   u, v
 end
+
 
 """
     mayberound(λ, x, tol)

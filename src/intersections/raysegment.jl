@@ -52,7 +52,7 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
         return @IT NoIntersection nothing f
       end
     end
-  # in same plane, not parallel
+    # in same plane, not parallel
   else
     λ₁ = mayberound(λ₁, zero(T))
     λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
@@ -62,7 +62,7 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
       if λ₂ == 0 || λ₂ == l₂
         return @IT CornerTouchingRaySegment a f # CASE 3
       else
-        return @IT MidTouchingRaySegment a f # CASE 2
+        return @IT MidTouchingOriginRaySegment a f # CASE 2
       end
     else
       if λ₂ == 0 || λ₂ == l₂
