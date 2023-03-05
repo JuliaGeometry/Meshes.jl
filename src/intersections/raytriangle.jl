@@ -62,10 +62,10 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return @IT EdgeTouchingRayTriangle r(λ) f
   end
 
-  coords = Vec(u, v, det - u - v)
-  if count(x -> isapprox(x, zero(T), atol=atol(T)), coords) == 1
+  w = Vec(u, v, det - u - v)
+  if count(x -> isapprox(x, zero(T), atol=atol(T)), w) == 1
     return @IT EdgeCrossingRayTriangle r(λ) f
-  elseif count(x -> isapprox(x, det, atol=atol(T)), coords) == 1
+  elseif count(x -> isapprox(x, det, atol=atol(T)), w) == 1
     return @IT CornerCrossingRayTriangle r(λ) f
   end
 
