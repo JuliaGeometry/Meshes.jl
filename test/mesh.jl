@@ -253,11 +253,6 @@
     @test collect(faces(topo, 2)) == [connect((3, 4, 1), Triangle)]
     @test collect(faces(topo, 3)) == [connect((1, 2, 3, 4), Tetrahedron)]
 
-    # use above mesh with tetrahedron for testing isinside() error
-    @test_throws ErrorException(
-      "This function only works for surface meshes with triangles as elements.",
-    ) isinside(P3(0, 0, 0), mesh)
-
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/187
     points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
     connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])

@@ -78,11 +78,11 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
 end
 
 """
-    isinside(point, mesh)
+    sideof(point, mesh)
 
-Determines whether a `point` is inside or outside the surface of a `mesh`.
+Determines whether a `point` is inside, outside the surface of a `mesh`. returns :INSIDE, :OUTSIDE, or :ON. Uses a ray-casting algorithm.
 """
-function isinside(point::Point, mesh::Mesh)
+function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   if !(eltype(mesh) <: Triangle)
     throw(
       ArgumentError(
@@ -91,21 +91,32 @@ function isinside(point::Point, mesh::Mesh)
     )
   end
   z = last.(coordinates.(extrema(mesh)))
-  r = Ray(point, Vec(0.0, 0.0, z[2] - z[1]) * 2)
+  r = Ray(point, Vec(zero(T), zero(T), 2*(z[2] - z[1])))
+  vs = vertices(mesh)
+  touching_types = (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
 
   intersects = false
+  edge_crosses = 0
+  corners_crossing = Point{3,T}[]
   for elem in mesh
-    @show I = intersection(r, elem)
-    if type(I) ∈ (IntersectingRayTriangle, MidTouchingRaySegment, CrossingRaySegment)
+    I = intersection(r, elem)
+    if type(I) == CrossingRayTriangle
       intersects = !intersects
-    elseif type(I) == CornerTouchingRaySegment
-      topo = convert(HalfEdgeTopology, topology(mesh))
-      id = findfirst(p -> p ≈ point, vertices(mesh))
-      num_shared_elems = length(Coboundary{0,2}(topo)(id))
-      isodd(num_shared_elems) && (intersects = !intersects)
+    elseif type(I) ∈ touching_types
+        return :ON
+    elseif type(I) == EdgeCrossingRayTriangle
+        edge_crosses += 1
+    elseif type(I) == CornerCrossingRayTriangle
+      id = findfirst(p -> p ≈ I.geom, vs)
+      if vs[id] ∉ corners_crossing
+        push!(corners_crossing, vs[id])
+        intersects = !intersects
+      end
     end
   end
-  intersects
+  # check how many edges we crossed
+  isodd(edge_crosses /2) && (intersects = !intersects)
+  intersects == true ? (return :INSIDE) : (return :OUTSIDE)
 end
 
 """

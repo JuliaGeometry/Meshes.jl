@@ -62,7 +62,7 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
       if λ₂ == 0 || λ₂ == l₂
         return @IT CornerTouchingRaySegment a f # CASE 3
       else
-        return @IT MidTouchingOriginRaySegment a f # CASE 2
+        return @IT MidTouchingRaySegment a f # CASE 2
       end
     else
       if λ₂ == 0 || λ₂ == l₂

@@ -51,20 +51,42 @@
 
   @testset "Point in mesh 3D" begin
     # point in mesh
-    points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
+    points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, .25, 1)]
     connec = connect.([(1, 3, 2), (1, 2, 4), (1, 4, 3), (2, 3, 4)], Triangle)
     mesh = SimpleMesh(points, connec)
-    @test isinside(P3(0.2, 0.2, 0.1), mesh) == true
-    @test isinside(P3(0.1, 0.1, 0.1), mesh) == true # ray goes through vertex
-    @test isinside(P3(-0.1, 0.1, 0), mesh) == false
-    @test isinside(P3(0.1, 0.1, 0), mesh) == true # on face of triangle
-    @test isinside(P3(1, 0, 0), mesh) == true # on exisitng vertex
-    # construct test mesh with tetrahedron for which this function should error
+    @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
+    @test sideof(P3(0.25, 0.25, -0.1), mesh) == :OUTSIDE
+
+    # ray goes through vertex
+    @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
+    @test sideof(P3(0.25, 0.25, -0.1), mesh) == :OUTSIDE
+
+    # ray goes through edge of triangle
+    @test sideof(P3(0.1, 0.1, 0.1), mesh) == :INSIDE
+    @test sideof(P3(0.1, 0.1, -0.1), mesh) == :OUTSIDE
+
+    # point coincides with edge of triangle
+    @test sideof(P3(0.5, 0.0, 0.0), mesh) == :ON
+
+    # point coincides with corner of triangle
+    @test sideof(P3(0.0, 0.0, 0.0), mesh) == :ON
+
+    # point on face of triangle
+    @test sideof(P3(0.1, 0.1, 0.0), mesh) == :ON
+
+    points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
+    mesh = SimpleMesh(points, connec)
+    # ray collinear with edge
+    @test sideof(P3(0.0, 0.0, 0.1), mesh) == :INSIDE
+    @test sideof(P3(0.0, 0.0, -0.1), mesh) == :OUTSIDE
+
+    # construct test mesh with tetrahedron for which this function should error as it only
+    #   tests for triangle meshes
     points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
     connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
     mesh = SimpleMesh(points, connec)
     @test_throws ArgumentError(
       "This function only works for surface meshes with triangles as elements.",
-    ) isinside(P3(0, 0, 0), mesh)
+    ) sideof(P3(0, 0, 0), mesh)
   end
 end

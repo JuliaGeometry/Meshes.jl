@@ -72,7 +72,6 @@ Type `IntersectionType` in a Julia session to see the full list.
   # ray-segment intersection
   CrossingRaySegment
   MidTouchingRaySegment
-  MidTouchingOriginRaySegment
   CornerTouchingRaySegment
   OverlappingRaySegment
 
@@ -95,6 +94,7 @@ Type `IntersectionType` in a Julia session to see the full list.
 
   # ray-triangle intersection
   CrossingRayTriangle
+  TouchingRayTriangle
   CornerTouchingRayTriangle
   CornerCrossingRayTriangle
   EdgeCrossingRayTriangle
