@@ -63,7 +63,7 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   if any(isapprox.(o, vs, atol=atol(T)))
     return @IT CornerTouchingRayTriangle r(λ) f
   elseif isapprox(λ, zero(T), atol=atol(T))
-    if all(>(0), w)
+    if all(>(zero(T)), w)
       return @IT TouchingRayTriangle r(λ) f
     else
       return @IT EdgeTouchingRayTriangle r(λ) f
