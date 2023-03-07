@@ -8,10 +8,11 @@ Möller, T. & Trumbore, B., 1997.
 
 Cases
 1. CrossingRayTriangle - middle of ray intersects middle of triangle
-2. CornerTouchingRayTriangle - origin of ray intersects corner of triangle
-3. EdgeTouchingRayTriangle - origin of ray intersects edge of triangle
-4. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
-5. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
+2. TouchingRayTriangle - origin of ray intersects middle of triangle
+3. CornerTouchingRayTriangle - origin of ray intersects corner of triangle
+4. EdgeTouchingRayTriangle - origin of ray intersects edge of triangle
+5. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
+6. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
 =#
 function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
@@ -56,13 +57,19 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
     return @IT NoIntersection nothing f
   end
 
+  # assemble barycentric weights
+  w = Vec(u, v, det - u - v)
+
   if any(isapprox.(o, vs, atol=atol(T)))
     return @IT CornerTouchingRayTriangle r(λ) f
   elseif isapprox(λ, zero(T), atol=atol(T))
-    return @IT EdgeTouchingRayTriangle r(λ) f
+    if all(w .> zero(T))
+      return @IT TouchingRayTriangle r(λ) f
+    else
+      return @IT EdgeTouchingRayTriangle r(λ) f
+    end
   end
 
-  w = Vec(u, v, det - u - v)
   if count(x -> isapprox(x, zero(T), atol=atol(T)), w) == 1
     return @IT EdgeCrossingRayTriangle r(λ) f
   elseif count(x -> isapprox(x, det, atol=atol(T)), w) == 1

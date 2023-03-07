@@ -339,6 +339,7 @@ export
   TouchingRayBox,
   IntersectingSegmentTriangle,
   CrossingRayTriangle,
+  TouchingRayTriangle,
   CornerTouchingRayTriangle,
   CornerCrossingRayTriangle,
   EdgeCrossingRayTriangle,
