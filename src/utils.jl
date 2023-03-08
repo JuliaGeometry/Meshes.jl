@@ -111,7 +111,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     end
   end
   # check how many edges we crossed
-  isodd(edge_crosses / 2) && (intersects = !intersects)
+  isodd(edge_crosses // 2) && (intersects = !intersects)
   intersects == true ? (return :INSIDE) : (return :OUTSIDE)
 end
 
