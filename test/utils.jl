@@ -80,8 +80,7 @@
     @test sideof(P3(0.0, 0.0, 0.1), mesh) == :INSIDE
     @test sideof(P3(0.0, 0.0, -0.1), mesh) == :OUTSIDE
 
-    # construct test mesh with tetrahedron for which this function should error as it only
-    #   tests for triangle meshes
+    # sideof only defined for triangle meshes
     points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
     connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
     mesh = SimpleMesh(points, connec)
