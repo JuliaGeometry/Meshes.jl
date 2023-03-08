@@ -98,8 +98,8 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   vs = vertices(mesh)
 
   intersects = false
-  edge_crosses = 0
-  corners_crossing = Point{3,T}[]
+  edgecrosses = 0
+  cornerscrossing = Point{3,T}[]
   for elem in mesh
     I = intersection(r, elem)
     if type(I) == CrossingRayTriangle
@@ -107,18 +107,18 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     elseif type(I) ∈ (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
       return :ON
     elseif type(I) == EdgeCrossingRayTriangle
-      edge_crosses += 1
+      edgecrosses += 1
     elseif type(I) == CornerCrossingRayTriangle
       id = findfirst(p -> p ≈ I.geom, vs)
-      if vs[id] ∉ corners_crossing
-          push!(corners_crossing, vs[id])
+      if vs[id] ∉ cornerscrossing
+          push!(cornerscrossing, vs[id])
           intersects = !intersects
       end
     end
   end
 
   # check how many edges we crossed
-  isodd(round(Int, edge_crosses / 2)) && (intersects = !intersects)
+  isodd(round(Int, edgecrosses / 2)) && (intersects = !intersects)
   intersects == true ? (return :INSIDE) : (return :OUTSIDE)
 end
 
