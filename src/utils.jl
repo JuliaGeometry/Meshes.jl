@@ -79,7 +79,13 @@ end
 
 """
     sideof(point, mesh)
-Determines whether a `point` is inside, outside the surface of a `mesh`. returns :INSIDE, :OUTSIDE, or :ON. Uses a ray-casting algorithm.
+
+Determines whether a `point` is inside, outside or on the surface of a `mesh`.
+Possible results are `:INSIDE`, `:OUTSIDE`, or `:ON`.
+
+## Notes
+
+Uses a ray-casting algorithm.
 """
 function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   if !(eltype(mesh) <: Triangle)
