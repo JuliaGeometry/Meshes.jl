@@ -92,11 +92,10 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     throw(ArgumentError(
           "This function only works for surface meshes with triangles as elements."))
   end
-  
+
   z = last.(coordinates.(extrema(mesh)))
   r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
   vs = vertices(mesh)
-  touching_types = (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
 
   intersects = false
   edge_crosses = 0
@@ -105,7 +104,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     I = intersection(r, elem)
     if type(I) == CrossingRayTriangle
       intersects = !intersects
-    elseif type(I) ∈ touching_types
+    elseif type(I) ∈ (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
       return :ON
     elseif type(I) == EdgeCrossingRayTriangle
       edge_crosses += 1
@@ -117,7 +116,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
       end
     end
   end
-  
+
   # check how many edges we crossed
   isodd(round(Int, edge_crosses / 2)) && (intersects = !intersects)
   intersects == true ? (return :INSIDE) : (return :OUTSIDE)

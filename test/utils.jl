@@ -49,43 +49,41 @@
   @test uvrotation(V2(0,1), V2(1,0)) ≈ T[0 1; -1 0]
   @test uvrotation(V3(1,0,0), V3(0,1,0)) ≈ T[0 1 0; -1 0 0; 0 0 1]
 
-  @testset "Point in mesh 3D" begin
-    # point in mesh
-    points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, 0.25, 1)]
-    connec = connect.([(1, 3, 2), (1, 2, 4), (1, 4, 3), (2, 3, 4)], Triangle)
-    mesh = SimpleMesh(points, connec)
-    @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
-    @test sideof(P3(0.25, 0.25, -0.1), mesh) == :OUTSIDE
+  # point in mesh
+  points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, 0.25, 1)]
+  connec = connect.([(1, 3, 2), (1, 2, 4), (1, 4, 3), (2, 3, 4)], Triangle)
+  mesh = SimpleMesh(points, connec)
+  @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
+  @test sideof(P3(0.25, 0.25, -0.1), mesh) == :OUTSIDE
 
-    # ray goes through vertex
-    @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
-    @test sideof(P3(0.25, 0.25, -0.1), mesh) == :OUTSIDE
+  # ray goes through vertex
+  @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
+  @test sideof(P3(0.25, 0.25, -0.1), mesh) == :OUTSIDE
 
-    # ray goes through edge of triangle
-    @test sideof(P3(0.1, 0.1, 0.1), mesh) == :INSIDE
-    @test sideof(P3(0.1, 0.1, -0.1), mesh) == :OUTSIDE
+  # ray goes through edge of triangle
+  @test sideof(P3(0.1, 0.1, 0.1), mesh) == :INSIDE
+  @test sideof(P3(0.1, 0.1, -0.1), mesh) == :OUTSIDE
 
-    # point coincides with edge of triangle
-    @test sideof(P3(0.5, 0.0, 0.0), mesh) == :ON
+  # point coincides with edge of triangle
+  @test sideof(P3(0.5, 0.0, 0.0), mesh) == :ON
 
-    # point coincides with corner of triangle
-    @test sideof(P3(0.0, 0.0, 0.0), mesh) == :ON
+  # point coincides with corner of triangle
+  @test sideof(P3(0.0, 0.0, 0.0), mesh) == :ON
 
-    # point on face of triangle
-    @test sideof(P3(0.1, 0.1, 0.0), mesh) == :ON
+  # point on face of triangle
+  @test sideof(P3(0.1, 0.1, 0.0), mesh) == :ON
 
-    points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
-    mesh = SimpleMesh(points, connec)
-    # ray collinear with edge
-    @test sideof(P3(0.0, 0.0, 0.1), mesh) == :INSIDE
-    @test sideof(P3(0.0, 0.0, -0.1), mesh) == :OUTSIDE
+  points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
+  mesh = SimpleMesh(points, connec)
+  # ray collinear with edge
+  @test sideof(P3(0.0, 0.0, 0.1), mesh) == :INSIDE
+  @test sideof(P3(0.0, 0.0, -0.1), mesh) == :OUTSIDE
 
-    # sideof only defined for triangle meshes
-    points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
-    connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
-    mesh = SimpleMesh(points, connec)
-    @test_throws ArgumentError(
-        "This function only works for surface meshes with triangles as elements.",
-    ) sideof(P3(0, 0, 0), mesh)
-  end
+  # sideof only defined for triangle meshes
+  points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
+  connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
+  mesh = SimpleMesh(points, connec)
+  @test_throws ArgumentError(
+      "This function only works for surface meshes with triangles as elements.",
+  ) sideof(P3(0, 0, 0), mesh)
 end
