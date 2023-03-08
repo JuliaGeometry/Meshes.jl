@@ -92,6 +92,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     throw(ArgumentError(
           "This function only works for surface meshes with triangles as elements."))
   end
+  
   z = last.(coordinates.(extrema(mesh)))
   r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
   vs = vertices(mesh)
