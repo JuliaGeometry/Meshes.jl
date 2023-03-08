@@ -78,6 +78,44 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
 end
 
 """
+    sideof(point, mesh)
+Determines whether a `point` is inside, outside the surface of a `mesh`. returns :INSIDE, :OUTSIDE, or :ON. Uses a ray-casting algorithm.
+"""
+function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
+  if !(eltype(mesh) <: Triangle)
+    throw(ArgumentError(
+          "This function only works for surface meshes with triangles as elements."))
+  end
+  z = last.(coordinates.(extrema(mesh)))
+  r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
+  vs = vertices(mesh)
+  touching_types = (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
+
+  intersects = false
+  edge_crosses = 0
+  corners_crossing = Point{3,T}[]
+  for elem in mesh
+    I = intersection(r, elem)
+    if type(I) == CrossingRayTriangle
+      intersects = !intersects
+    elseif type(I) ∈ touching_types
+      return :ON
+    elseif type(I) == EdgeCrossingRayTriangle
+      edge_crosses += 1
+    elseif type(I) == CornerCrossingRayTriangle
+      id = findfirst(p -> p ≈ I.geom, vs)
+      if vs[id] ∉ corners_crossing
+          push!(corners_crossing, vs[id])
+          intersects = !intersects
+      end
+    end
+  end
+  # check how many edges we crossed
+  isodd(edge_crosses / 2) && (intersects = !intersects)
+  intersects == true ? (return :INSIDE) : (return :OUTSIDE)
+end
+
+"""
     proj2D(points)
 
 Convert a vector of 3D `points` into a vector of 2D
@@ -105,12 +143,12 @@ dropunits(v) = typeof(one(v))
 """
     householderbasis(n)
 
-Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`, 
+Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`,
 such that `u`, `v`, and `n` form a right-hand orthogonal system.
 
 ## References
 
-* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool 
+* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
