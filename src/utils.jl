@@ -83,7 +83,7 @@ end
 Determines whether a `point` is inside, outside or on the surface of a `mesh`.
 Possible results are `:INSIDE`, `:OUTSIDE`, or `:ON`.
 
-## Notes
+### Notes
 
 Uses a ray-casting algorithm.
 """
