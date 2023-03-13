@@ -83,7 +83,7 @@ end
 Determines whether a `point` is inside, outside or on the surface of a `mesh`.
 Possible results are `:INSIDE`, `:OUTSIDE`, or `:ON`.
 
-## Notes
+### Notes
 
 Uses a ray-casting algorithm.
 """
@@ -101,25 +101,27 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   edgecrosses = 0
   cornerscrossing = Point{3,T}[]
   for elem in mesh
-    I = intersection(r, elem)
-    if type(I) == CrossingRayTriangle
-      intersects = !intersects
-    elseif type(I) ∈ (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
-      return :ON
-    elseif type(I) == EdgeCrossingRayTriangle
-      edgecrosses += 1
-    elseif type(I) == CornerCrossingRayTriangle
-      id = findfirst(p -> p ≈ I.geom, vs)
-      if vs[id] ∉ cornerscrossing
-          push!(cornerscrossing, vs[id])
-          intersects = !intersects
+    intersection(r, elem) do I
+      if type(I) == CrossingRayTriangle
+        intersects = !intersects
+      elseif type(I) ∈ (EdgeTouchingRayTriangle, CornerTouchingRayTriangle,
+                        TouchingRayTriangle)
+        return :ON
+      elseif type(I) == EdgeCrossingRayTriangle
+        edgecrosses += 1
+      elseif type(I) == CornerCrossingRayTriangle
+        id = findfirst(p -> p ≈ get(I), vs)
+        if vs[id] ∉ cornerscrossing
+            push!(cornerscrossing, vs[id])
+            intersects = !intersects
+        end
       end
     end
   end
 
   # check how many edges we crossed
   isodd(round(Int, edgecrosses / 2)) && (intersects = !intersects)
-  intersects == true ? (return :INSIDE) : (return :OUTSIDE)
+  intersects ? (return :INSIDE) : (return :OUTSIDE)
 end
 
 """
