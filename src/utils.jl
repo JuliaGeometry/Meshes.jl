@@ -101,7 +101,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   edgecrosses = 0
   cornerscrossing = Point{3,T}[]
   for elem in mesh
-    intersection(r, elem) do I
+    result = intersection(r, elem) do I
       if type(I) == CrossingRayTriangle
         intersects = !intersects
       elseif type(I) ∈ (EdgeTouchingRayTriangle, CornerTouchingRayTriangle,
@@ -116,7 +116,9 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
             intersects = !intersects
         end
       end
+      return nothing
     end
+    result !== nothing && (return :ON)
   end
 
   # check how many edges we crossed
