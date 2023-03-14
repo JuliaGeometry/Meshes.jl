@@ -95,7 +95,6 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
 
   z = last.(coordinates.(extrema(mesh)))
   r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
-  #vs = vertices(mesh)
 
   intersects = false
   edgecrosses = 0
@@ -111,7 +110,6 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
       elseif type(I) == EdgeCrossingRayTriangle
         edgecrosses += 1
       elseif type(I) == CornerCrossingRayTriangle
-        #id = findfirst(p -> p ≈ get(I), vs)
         p = get(I)
         if !any(isapprox.(p, cornerscrossing, atol=atol(T)))
             push!(cornerscrossing, p)
