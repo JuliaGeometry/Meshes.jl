@@ -119,7 +119,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
       end
       return nothing
     end
-    !isnothing(result && return :ON
+    !isnothing(result) && return :ON
   end
 
   # check how many edges we crossed
