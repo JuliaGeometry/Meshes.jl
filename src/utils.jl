@@ -98,7 +98,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
 
   intersects = false
   edgecrosses = 0
-  cornerscrossing = Point{3,T}[]
+  ps = Point{3,T}[]
   for e in mesh
     result = intersection(r, e) do I
       if type(I) == CrossingRayTriangle
@@ -111,8 +111,8 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
         edgecrosses += 1
       elseif type(I) == CornerCrossingRayTriangle
         p = get(I)
-        if !any(isapprox.(p, cornerscrossing, atol=atol(T)))
-            push!(cornerscrossing, p)
+        if !any(==(p), ps)
+            push!(ps, p)
             intersects = !intersects
         end
       end
