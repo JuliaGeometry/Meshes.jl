@@ -99,8 +99,8 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   intersects = false
   edgecrosses = 0
   ps = Point{3,T}[]
-  for e in mesh
-    result = intersection(r, e) do I
+  for t in mesh
+    result = intersection(r, t) do I
       if type(I) == CrossingRayTriangle
         intersects = !intersects
       elseif type(I) ∈ (EdgeTouchingRayTriangle,
