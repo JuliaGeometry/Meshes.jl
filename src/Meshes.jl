@@ -147,8 +147,9 @@ export
   Ball, Sphere, Disk, Circle,
   Cylinder, CylinderSurface,
   Cone, ConeSurface,
+  Torus,
   ncontrols, degree, Horner, DeCasteljau,
-  radius, bottom, top, axis, isright, sides,
+  radius, radii, bottom, top, axis, isright, sides,
   measure, diagonal, origin, direction,
 
   # polytopes

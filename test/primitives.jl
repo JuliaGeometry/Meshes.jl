@@ -431,4 +431,17 @@
     @test !isconvex(s)
     @test isnothing(boundary(s))
   end
+
+  @testset "Torus" begin
+    t = Torus(T.((1,1,1)), T.((1,0,0)), 2, 1)
+    @test P3(1,1,-1) ∈ t
+    @test P3(1,1,1) ∉ t
+    @test paramdim(t) == 2
+    @test !isconvex(t)
+    @test isperiodic(t) == (true, true)
+    @test Meshes.center(t) == P3(1,1,1)
+    @test normal(t) == V3(1,0,0)
+    @test radii(t) == (T(2), T(1))
+    @test axis(t) == Line(P3(1,1,1), P3(2,1,1))
+  end
 end
