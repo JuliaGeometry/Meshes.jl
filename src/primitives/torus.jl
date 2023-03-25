@@ -19,9 +19,8 @@ end
 Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} = 
   Torus(center, normal, T(major), T(minor))
 
-function Torus(center::Tuple, normal::Tuple, major, minor)
+Torus(center::Tuple, normal::Tuple, major, minor) = 
   Torus(Point(center), Vec(normal), major, minor)
-end
 
 paramdim(::Type{<:Torus}) = 2
 
