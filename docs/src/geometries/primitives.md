@@ -87,3 +87,7 @@ Cone
 ```@docs
 ConeSurface
 ```
+
+```@docs
+Torus
+```
