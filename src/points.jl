@@ -142,17 +142,9 @@ Base.isapprox(A::Point, B::Point; kwargs...) =
 """
     ==(A::Point, B::Point)
 
-Tells whether or not points `A` and `B` represent the same point
-regardless of floating point errors.
-
-### Notes
-
-- Implemented in terms of `isapprox(A, B, atol=atol(coordtype(A))`
+Tells whether or not points `A` and `B` represent the same point.
 """
-==(A::Point, B::Point) =
-  embeddim(A) == embeddim(B) &&
-  coordtype(A) == coordtype(B) &&
-  isapprox(A, B, atol=atol(coordtype(A)))
+==(A::Point, B::Point) = A.coords == B.coords
 
 """
     ⪯(A::Point, B::Point)
@@ -160,7 +152,7 @@ regardless of floating point errors.
     ≺(A::Point, B::Point)
     ≻(A::Point, B::Point)
 
-Generalized inequality for non-negative orthant Rⁿ₊
+Generalized inequality for non-negative orthant Rⁿ₊.
 """
 ⪯(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), B - A)
 ⪰(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(≥(zero(T)), A - B)
