@@ -28,13 +28,10 @@ Torus(center::Tuple, normal::Tuple, major, minor) =
 The torus whose equator passes through points `p1`, `p2` and `p3` and with
 minor radius `minor`.
 """
-function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor)
+function Torus(p1::Point{3,T}, p2::Point{3,T}, p3::Point{3,T}, minor) where {T}
   c = Circle(p1, p2, p3)
-  O = center(c)
-  major = radius(c)
-  n⃗ = normal(Plane(p1, p2, p3))
-  T = typeof(major)
-  Torus(O, Vec{3,T}(n⃗), major, T(minor))
+  p = Plane(p1, p2, p3)
+  Torus(center(c), normal(p), radius(c), T(minor))
 end
 
 paramdim(::Type{<:Torus}) = 2
