@@ -443,6 +443,7 @@
     @test normal(t) == V3(1,0,0)
     @test radii(t) == (T(2), T(1))
     @test axis(t) == Line(P3(1,1,1), P3(2,1,1))
+
     # torus passing through three points
     p₁ = P3(0,0,0)
     p₂ = P3(1,2,3)
@@ -457,5 +458,12 @@
     @test p₁ ∈ t
     @test p₂ ∈ t
     @test p₃ ∈ t
+    
+    # constructor with tuples
+    c₁ = T.((0,0,0))
+    c₂ = T.((1,2,3))
+    c₃ = T.((3,2,1))
+    q = Torus(c₁, c₂, c₃, 1)
+    @test q == t
   end
 end

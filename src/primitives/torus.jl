@@ -34,6 +34,9 @@ function Torus(p1::Point{3,T}, p2::Point{3,T}, p3::Point{3,T}, minor) where {T}
   Torus(center(c), normal(p), radius(c), T(minor))
 end
 
+Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) =
+  Torus(Point(p1), Point(p2), Point(p3), minor)
+
 paramdim(::Type{<:Torus}) = 2
 
 isconvex(::Type{<:Torus}) = false
