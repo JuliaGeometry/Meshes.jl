@@ -443,5 +443,19 @@
     @test normal(t) == V3(1,0,0)
     @test radii(t) == (T(2), T(1))
     @test axis(t) == Line(P3(1,1,1), P3(2,1,1))
+    # torus passing through three points
+    p₁ = P3(0,0,0)
+    p₂ = P3(1,2,3)
+    p₃ = P3(3,2,1)
+    t = Torus(p₁, p₂, p₃, 1)
+    c = center(t)
+    R, r = radii(t)
+    @test r == 1
+    @test norm(p₁ - c) ≈ R
+    @test norm(p₂ - c) ≈ R
+    @test norm(p₃ - c) ≈ R
+    @test p₁ ∈ t
+    @test p₂ ∈ t
+    @test p₃ ∈ t
   end
 end

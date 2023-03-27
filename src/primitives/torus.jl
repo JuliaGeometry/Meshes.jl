@@ -22,6 +22,21 @@ Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} =
 Torus(center::Tuple, normal::Tuple, major, minor) = 
   Torus(Point(center), Vec(normal), major, minor)
 
+"""
+    Torus(p1, p2, p3)
+
+The torus whose equator passes through points `p1`, `p2` and `p3` and with
+minor radius `minor`.
+"""
+function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor)
+  c = Circle(p1, p2, p3)
+  O = center(c)
+  major = radius(c)
+  n⃗ = normal(Plane(p1, p2, p3))
+  T = typeof(major)
+  Torus(O, Vec{3,T}(n⃗), major, T(minor))
+end
+
 paramdim(::Type{<:Torus}) = 2
 
 isconvex(::Type{<:Torus}) = false
