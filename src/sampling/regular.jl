@@ -173,3 +173,27 @@ function sample(rng::AbstractRNG, grid::CartesianGrid,
                 method::RegularSampling)
   sample(rng, boundingbox(grid), method)
 end
+
+function sample(::AbstractRNG, torus::Torus{T},
+                method::RegularSampling) where {T}
+  sz = fitdims(method.sizes, paramdim(torus))
+  R, r = radii(torus)
+  kxy = R^2 - r^2
+  kz = √kxy * r
+
+  V = T <: AbstractFloat ? T : Float64
+  umin, umax = V(-π), V(π)
+  vmin, vmax = V(-π), V(π)
+  δu = (umax - umin) / sz[1]
+  δv = (vmax - vmin) / sz[2]
+  urange = range(umin, stop=umax-δu, length=sz[1])
+  vrange = range(vmin, stop=vmax-δv, length=sz[2])
+
+  c = center(torus)
+  n⃗ = normal(torus)
+  M = uvrotation(n⃗, Vec(0, 0, 1))
+
+  r⃗(u, v) = Vec{3,T}(kxy * cos(u), kxy * sin(u), kz * sin(v)) / (R - r*cos(v))
+
+  ivec(c + M * r⃗(u, v) for u in urange, v in vrange)
+end

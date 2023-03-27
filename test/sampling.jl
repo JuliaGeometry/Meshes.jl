@@ -189,6 +189,22 @@
     grid = CartesianGrid{T}(10, 10)
     points = sample(grid, RegularSampling(100, 200))
     @test length(collect(points)) == 20000
+
+    torus = Torus(P3(0, 0, 0), V3(1, 0, 0), T(2), T(1))
+    ps = sample(torus, RegularSampling(3, 3))
+    ts = P3[(0, 0, 1), 
+            (0, -0.8660254037844387, -0.5), 
+            (0, 0.8660254037844387, -0.5), 
+            (-1, 0, 2), 
+            (-1, -1.7320508075688774, -1), 
+            (-1, 1.7320508075688774, -1), 
+            (1, 0, 2), 
+            (1, -1.7320508075688774, -1), 
+            (1, 1.7320508075688774, -1)]
+    for (p, t) in zip(ps, ts)
+      @test p ≈ t
+    end
+
   end
 
   @testset "HomogeneousSampling" begin
