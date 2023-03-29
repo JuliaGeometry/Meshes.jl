@@ -57,7 +57,7 @@
     vnew, cache = TB.apply(trans, vset)
     @test all(sides(boundingbox(vnew)) .≤ T(1))
     vini = TB.revert(trans, vnew, cache)
-    @test all(isapprox.(vini, vset))
+    @test all(vini .≈ vset)
     vnew2 = TB.reapply(trans, vset, cache)
     @test vnew == vnew2
   end
