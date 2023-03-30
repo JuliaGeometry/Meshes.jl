@@ -136,8 +136,8 @@ at a reference (or start) point `A`.
 Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
-Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T};
-              atol=atol(T), kwargs...) where {Dim,T} =
+Base.isapprox(A::Point{Dim,T}, B::Point{Dim,V};
+              atol=atol(promote_type(T,V)), kwargs...) where {Dim,T,V} =
   isapprox(A.coords, B.coords; atol, kwargs...)
 
 """
