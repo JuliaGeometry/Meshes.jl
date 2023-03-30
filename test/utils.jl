@@ -85,7 +85,7 @@
   mesh = SimpleMesh(points, connec)
   @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
 
-  # sideof only defined for triangle meshes
+  # sideof only defined for surface meshes
   points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
   connec = connect.([(1, 2, 3, 4)], [Tetrahedron])
   mesh = SimpleMesh(points, connec)
