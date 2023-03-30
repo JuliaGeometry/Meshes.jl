@@ -76,4 +76,21 @@
       @test_reference "data/catmullclark-3-$T.png" fig
     end
   end
+
+  @testset "TriSubdivision" begin
+    points = P3[(-1,-1,-1),(1,1,-1),(1,-1,1),(-1,1,1)]
+    connec = connect.([(1,2,3),(3,2,4),(4,2,1),(1,3,4)])
+    mesh   = SimpleMesh(points, connec)
+    ref1   = refine(mesh, TriSubdivision())
+    ref2   = refine(ref1, TriSubdivision())
+    ref3   = refine(ref2, TriSubdivision())
+
+    if visualtests
+      fig = Mke.Figure(resolution=(900, 300))
+      viz(fig[1,1], ref1, showfacets=true)
+      viz(fig[1,2], ref2, showfacets=true)
+      viz(fig[1,3], ref3, showfacets=true)
+      @test_reference "data/trisubdivision-$T.png" fig
+    end
+  end
 end

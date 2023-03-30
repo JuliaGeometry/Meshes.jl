@@ -83,3 +83,25 @@ viz(fig[2,1], ref2, showfacets = true)
 viz(fig[2,2], ref3, showfacets = true)
 fig
 ```
+
+## TriSubdivision
+
+```@docs
+TriSubdivision
+```
+
+```@example refinement
+grid = CartesianGrid(10, 10)
+
+# refine three times
+ref1 = refine(grid, TriSubdivision())
+ref2 = refine(ref1, TriSubdivision())
+ref3 = refine(ref2, TriSubdivision())
+
+fig = Mke.Figure(resolution = (800, 800))
+viz(fig[1,1], grid, showfacets = true)
+viz(fig[1,2], ref1, showfacets = true)
+viz(fig[2,1], ref2, showfacets = true)
+viz(fig[2,2], ref3, showfacets = true)
+fig
+```
