@@ -365,7 +365,7 @@ export
   TriRefinement,
   QuadRefinement,
   CatmullClark,
-  LoopSubdivision,
+  TriSubdivision,
   refine,
 
   # bounding boxes

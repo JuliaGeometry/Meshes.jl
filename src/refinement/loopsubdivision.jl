@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-  LoopSubdivision()
+  TriSubdivision()
 
 Refinement of a mesh by preliminarly triangulating it if needed and
 then subdividing each triangle into four triangles.
@@ -14,10 +14,10 @@ then subdividing each triangle into four triangles.
   triangles](https://charlesloop.com/thesis.pdf). 
   Master's thesis, University of Utah.
 """
-struct LoopSubdivision <: RefinementMethod end
+struct TriSubdivision <: RefinementMethod end
 
-function refine(mesh, ::LoopSubdivision)
-  @assert paramdim(mesh) == 2 "LoopSubdivision only defined for surface meshes"
+function refine(mesh, ::TriSubdivision)
+  @assert paramdim(mesh) == 2 "TriSubdivision only defined for surface meshes"
   
   # triangulate mesh if necessary
   tmesh = eltype(mesh) <: Triangle ? mesh : simplexify(mesh)
