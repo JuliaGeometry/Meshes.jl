@@ -87,7 +87,7 @@
 
   # sideof only defined for triangle meshes
   points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
-  connec = connect((1, 2, 3, 4), Tetrahedron)
+  connec = connect.([(1, 2, 3, 4)], [Tetrahedron])
   mesh = SimpleMesh(points, connec)
   @test_throws AssertionError(
         "sideof only defined for surface meshes",
