@@ -6,21 +6,14 @@
     TriRefinement()
 
 Refinement of polygonal meshes into triangles.
-A n-gon is subdivided into n-2 triangles.
+A n-gon is subdivided into n triangles.
 """
 struct TriRefinement <: RefinementMethod end
 
-function refine(mesh, method::TriRefinement)
-  if eltype(mesh) <: Triangle
-    # go ahead and refine
-    _refine(mesh, method)
-  else
-    # simplexify non-triangle elements
-    simplexify(mesh)
-  end
-end
-
-function _refine(mesh, ::TriRefinement)
+function refine(mesh, ::TriRefinement)
+  @assert paramdim(mesh) == 2 "TriRefinement only defined for surface meshes"
+  (eltype(mesh) <: Triangle) || return simplexify(mesh)
+        
   # retrieve geometry and topology
   points = vertices(mesh)
   connec = topology(mesh)
