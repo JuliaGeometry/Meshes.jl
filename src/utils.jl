@@ -78,6 +78,50 @@ function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
 end
 
 """
+    sideof(point, mesh)
+
+Determines whether a `point` is inside, outside or on the surface of a `mesh`.
+Possible results are `:INSIDE`, `:OUTSIDE`, or `:ON`.
+
+### Notes
+
+Uses a ray-casting algorithm.
+"""
+function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
+  @assert paramdim(mesh) == 2 "sideof only defined for surface meshes"
+  (eltype(mesh) <: Triangle) || return sideof(point, simplexify(mesh))
+
+  z = last.(coordinates.(extrema(mesh)))
+  r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
+
+  intersects = false
+  edgecrosses = 0
+  ps = Point{3,T}[]
+  for t in mesh
+    I = intersection(r, t)
+    if type(I) == CrossingRayTriangle
+      intersects = !intersects
+    elseif type(I) ∈ (EdgeTouchingRayTriangle,
+                      CornerTouchingRayTriangle,
+                      TouchingRayTriangle)
+      return :ON
+    elseif type(I) == EdgeCrossingRayTriangle
+      edgecrosses += 1
+    elseif type(I) == CornerCrossingRayTriangle
+      p = get(I)
+      if !any(==(p), ps)
+          push!(ps, p)
+          intersects = !intersects
+      end
+    end
+  end
+
+  # check how many edges we crossed
+  isodd(edgecrosses ÷ 2) && (intersects = !intersects)
+  intersects ? (return :INSIDE) : (return :OUTSIDE)
+end
+
+"""
     proj2D(points)
 
 Convert a vector of 3D `points` into a vector of 2D
@@ -105,12 +149,12 @@ dropunits(v) = typeof(one(v))
 """
     householderbasis(n)
 
-Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`, 
+Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`,
 such that `u`, `v`, and `n` form a right-hand orthogonal system.
 
 ## References
 
-* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool 
+* D.S. Lopes et al. 2013. ["Tangent vectors to a 3-D surface normal: A geometric tool
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
