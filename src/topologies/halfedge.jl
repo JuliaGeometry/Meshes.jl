@@ -41,12 +41,16 @@ function Base.show(io::IO, e::HalfEdge)
 end
 
 """
-    HalfEdgeTopology(elements)
+    HalfEdgeTopology(elements; sort=true)
     HalfEdgeTopology(halfedges)
 
 A data structure for orientable 2-manifolds based on
 half-edges constructed from a vector of connectivity
 `elements` or from a vector of pairs of `halfedges`.
+
+The option `sort` can be used to sort the elements in
+adjacent-first order in case of incosistent orientation
+(i.e. mix of clockwise and counter-clockwise).
 
 ## Examples
 
@@ -81,6 +85,10 @@ See also [`Topology`](@ref).
   Additionally, a dictionary `edge4pair` returns the
   index of the edge (i.e. two halves) for a given
   pair of vertices.
+
+- If the `elements` of the mesh already have consistent
+  orientation, then the `sort` option can be disabled
+  for maximum performance.
 """
 struct HalfEdgeTopology <: Topology
   halfedges::Vector{HalfEdge}
@@ -121,13 +129,13 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
   HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
 end
 
-function HalfEdgeTopology(elems::AbstractVector{<:Connectivity})
+function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge topology"
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  adjelems = adjsort(elems)
-  eleminds = indexin(adjelems, elems)
+  adjelems = sort ? adjsort(elems) : elems
+  eleminds = sort ? indexin(adjelems, elems) : 1:length(elems)
 
   # start assuming that all elements are
   # oriented consistently as CCW

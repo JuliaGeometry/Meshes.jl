@@ -404,6 +404,18 @@
     @test nfaces(t, 0) == 7
     test_halfedge(elems, t)
 
+    # no need to sort elements with consistent orientation
+    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
+    t = HalfEdgeTopology(elems, sort=false)
+    @test paramdim(t) == 2
+    @test nelements(t) == 4
+    @test nfacets(t) == 11
+    @test nvertices(t) == 7
+    @test nfaces(t, 2) == 4
+    @test nfaces(t, 1) == 11
+    @test nfaces(t, 0) == 7
+    test_halfedge(elems, t)
+
     # correct construction from inconsistent orientation
     e = connect.([(1,2,3),(3,4,2),(4,3,5),(6,3,1)])
     t = HalfEdgeTopology(e)
