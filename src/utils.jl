@@ -88,10 +88,8 @@ Possible results are `:INSIDE`, `:OUTSIDE`, or `:ON`.
 Uses a ray-casting algorithm.
 """
 function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
-  if !(eltype(mesh) <: Triangle)
-    throw(ArgumentError(
-          "This function only works for surface meshes with triangles as elements."))
-  end
+  @assert paramdim(mesh) == 2 "sideof only defined for surface meshes"
+  (eltype(mesh) <: Triangle) || return sideof(point, simplexify(mesh))
 
   z = last.(coordinates.(extrema(mesh)))
   r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))

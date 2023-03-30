@@ -79,11 +79,17 @@
   @test sideof(P3(0.0, 0.0, 0.1), mesh) == :INSIDE
   @test sideof(P3(0.0, 0.0, -0.1), mesh) == :OUTSIDE
 
+  # sideof for meshes that have elements > 3-gons.
+  points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, 0.25, 1), (1, 1, 0)]
+  connec = connect.([(1, 2, 4), (1, 4, 3), (2, 3, 4), (1, 2, 5, 3)])
+  mesh = SimpleMesh(points, connec)
+  @test sideof(P3(0.25, 0.25, 0.1), mesh) == :INSIDE
+
   # sideof only defined for triangle meshes
   points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
-  connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
+  connec = connect((1, 2, 3, 4), Tetrahedron)
   mesh = SimpleMesh(points, connec)
-  @test_throws ArgumentError(
-      "This function only works for surface meshes with triangles as elements.",
+  @test_throws AssertionError(
+        "sideof only defined for surface meshes",
   ) sideof(P3(0, 0, 0), mesh)
 end
