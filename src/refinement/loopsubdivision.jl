@@ -17,6 +17,8 @@ then subdividing each triangle into four triangles.
 struct LoopSubdivision <: RefinementMethod end
 
 function refine(mesh, ::LoopSubdivision)
+  @assert paramdim(mesh) == 2 "LoopSubdivision only defined for surface meshes"
+  
   # triangulate mesh if necessary
   tmesh = eltype(mesh) <: Triangle ? mesh : simplexify(mesh)
 
