@@ -203,7 +203,7 @@ function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
 
   # initial direction
   c1, c2 = centroid(g1), centroid(g2)
-  d = c1 == c2 ? rand(Vec{Dim,T}) : c2 - c1
+  d = c1 ≈ c2 ? rand(Vec{Dim,T}) : c2 - c1
 
   # first point in Minkowski difference
   P = minkowskipoint(g1, g2, d)
