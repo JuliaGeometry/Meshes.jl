@@ -92,7 +92,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   (eltype(mesh) <: Triangle) || return sideof(point, simplexify(mesh))
 
   z = last.(coordinates.(extrema(mesh)))
-  r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
+  r = Ray(point, Vec{3,T}(zero(T), zero(T), 2 * (z[2] - z[1])))
 
   intersects = false
   edgecrosses = 0
@@ -109,9 +109,9 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
       edgecrosses += 1
     elseif type(I) == CornerCrossingRayTriangle
       p = get(I)
-      if !any(==(p), ps)
-          push!(ps, p)
-          intersects = !intersects
+      if !any(≈(p), ps)
+        push!(ps, p)
+        intersects = !intersects
       end
     end
   end
