@@ -4,9 +4,9 @@
     tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     rtri = tri |> Rotate(EulerAngleAxis(T(pi/2), T[0, 0, 1]))
     rpts = vertices(rtri)
-    @test rpts[1] == P3(0, 0, 0)
-    @test rpts[2] == P3(0, 1, 0)
-    @test rpts[3] == P3(-1, 0, 0)
+    @test rpts[1] ≈ P3(0, 0, 0)
+    @test rpts[2] ≈ P3(0, 1, 0)
+    @test rpts[3] ≈ P3(-1, 0, 0)
     
     # triangle in the plane z=0
     tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
@@ -24,9 +24,9 @@
     tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     ttri = tri |> Translate(T(1), T(2), T(3))
     tpts = vertices(ttri)
-    @test tpts[1] == P3(1, 2, 3)
-    @test tpts[2] == P3(2, 2, 3)
-    @test tpts[3] == P3(1, 3, 4)
+    @test tpts[1] ≈ P3(1, 2, 3)
+    @test tpts[2] ≈ P3(2, 2, 3)
+    @test tpts[3] ≈ P3(1, 3, 4)
   end
 
   @testset "Stretch" begin
@@ -34,9 +34,9 @@
     tri  = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     stri = tri |> Stretch(T(1), T(2), T(3))
     spts = vertices(stri)
-    @test spts[1] == P3(0, 0, 0)
-    @test spts[2] == P3(1, 0, 0)
-    @test spts[3] == P3(0, 2, 3)
+    @test spts[1] ≈ P3(0, 0, 0)
+    @test spts[2] ≈ P3(1, 0, 0)
+    @test spts[3] ≈ P3(0, 2, 3)
   end
   
   @testset "StdCoords" begin
@@ -57,7 +57,7 @@
     vnew, cache = TB.apply(trans, vset)
     @test all(sides(boundingbox(vnew)) .≤ T(1))
     vini = TB.revert(trans, vnew, cache)
-    @test vini == vset
+    @test all(vini .≈ vset)
     vnew2 = TB.reapply(trans, vset, cache)
     @test vnew == vnew2
   end

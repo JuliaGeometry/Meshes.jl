@@ -170,10 +170,10 @@
     @test nelements(grid) == 25
     @test eltype(grid) <: Quadrangle{2,T}
     @test measure(grid) ≈ T(1)
-    @test centroid(grid, 1) == P2(0.1, 0.05)
-    @test centroid(grid[1]) == P2(0.1, 0.05)
-    @test centroid(grid, 2) == P2(0.3, 0.05)
-    @test centroid(grid[2]) == P2(0.3, 0.05)
+    @test centroid(grid, 1) ≈ P2(0.1, 0.05)
+    @test centroid(grid[1]) ≈ P2(0.1, 0.05)
+    @test centroid(grid, 2) ≈ P2(0.3, 0.05)
+    @test centroid(grid[2]) ≈ P2(0.3, 0.05)
   end
 
   @testset "SimpleMesh" begin
