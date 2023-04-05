@@ -32,8 +32,8 @@ function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {D
   AB, AC = B - A, C - A
   result = true
   for i in 1:Dim, j in (i+1):Dim
-    u = Vec{2,T}(AB[i], AB[j])
-    v = Vec{2,T}(AC[i], AC[j])
+    u = Vec(AB[i], AB[j])
+    v = Vec(AC[i], AC[j])
     if !isapprox(u × v, zero(T), atol=atol(T)^2)
       result = false
       break
@@ -92,7 +92,7 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   (eltype(mesh) <: Triangle) || return sideof(point, simplexify(mesh))
 
   z = last.(coordinates.(extrema(mesh)))
-  r = Ray(point, Vec{3,T}(zero(T), zero(T), 2 * (z[2] - z[1])))
+  r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
 
   intersects = false
   edgecrosses = 0
