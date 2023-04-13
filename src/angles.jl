@@ -56,7 +56,7 @@ end
 @inline norm2(u::V) where {V<:Vec} = sqrt(foldl(+, abs2.(u.coords)))
 @inline unitize(u::V) where {V<:Vec} = u.coords ./ norm2(u)
 
-@inline isnegangle(u::V, v::V) where {V<:Vec3) = false
+@inline isnegangle(u::V, v::V) where {V<:Vec3} = false
 @inline isnegangle(u::V, v::V) where {V<:Vec2} =
     u.coords[1] * v.coords[2] < u.coords[2] * v.coords[1]
 
