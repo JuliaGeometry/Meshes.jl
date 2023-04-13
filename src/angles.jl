@@ -8,8 +8,8 @@
 Angle ∠ABC between rays BA and BC.
 See https://en.wikipedia.org/wiki/Angle.
 
-Uses the two-argument form of `atan` returning value in range [-π, π].
-See https://en.wikipedia.org/wiki/Atan2.
+Vec2 angles return a value in range [-π, π].
+Vec3 angles return a value in range [0, π].
 
 ## Examples
 
@@ -26,14 +26,37 @@ See https://en.wikipedia.org/wiki/Atan2.
 Angle between vectors u and v.
 See https://en.wikipedia.org/wiki/Angle.
 
-Uses the two-argument form of `atan` returning value in range [-π, π].
-See https://en.wikipedia.org/wiki/Atan2.
+Vec2 angles return a value in range [-π, π].
+Vec3 angles return a value in range [0, π].
 
 ## Examples
 
 ```julia
 ∠(Vec(1,0), Vec(0,1)) == π/2
 ```
+
+Thank you Jeffrey Sarnoff for contributing this work.
 """
-∠(u::V, v::V) where {V<:Vec{2}} = atan(u × v, u ⋅ v)  # preserve sign
-∠(u::V, v::V) where {V<:Vec{3}} = atan(norm(u × v), u ⋅ v)  # discard sign
+function ∠(u::V, v::V) where {V<:Vec}
+    T = eltype(u.coords)
+
+    u_unit = unitize(u)
+    v_unit = unitize(v)
+
+    y = norm2(u_unit .- v_unit)
+    x = norm2(u_unit .+ v_unit)
+
+    a = 2 * atan(y, x)
+
+    a = !(signbit(a) || signbit(pi - a)) ? a : (signbit(a) ? zero(T) : (T)(pi))
+
+    ifelse(isnegangle(u_unit, v_unit), -a, a)
+end
+
+@inline norm2(u::V) where {V<:Vec} = sqrt(foldl(+, abs2.(u.coords)))
+@inline unitize(u::V) where {V<:Vec} = u.coords ./ norm2(u)
+
+@inline isnegangle(u::V, v::V) where {V<:Vec3) = false
+@inline isnegangle(u::V, v::V) where {V<:Vec2} =
+    u.coords[1] * v.coords[2] < u.coords[2] * v.coords[1]
+
