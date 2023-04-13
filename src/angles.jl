@@ -54,9 +54,16 @@ function ∠(u::V, v::V) where {V<:Vec}
 end
 
 @inline norm2(u::V) where {V<:Vec} = sqrt(foldl(+, abs2.(u.coords)))
+@inline norm2(u::NTuple) = sqrt(foldl(+, abs2.(u)))
+
 @inline unitize(u::V) where {V<:Vec} = u.coords ./ norm2(u)
+@inline unitize(u::NTuple) = u ./ norm2(u)
 
 @inline isnegangle(u::V, v::V) where {V<:Vec3} = false
 @inline isnegangle(u::V, v::V) where {V<:Vec2} =
+    u.coords[1] * v.coords[2] < u.coords[2] * v.coords[1]
+
+@inline isnegangle(u::NTuple{3,T}, v::NTuple{3,T}) where {T} = false
+@inline isnegangle(u::NTuple{2,T}, v::NTuple{2,T}) where {T} =
     u.coords[1] * v.coords[2] < u.coords[2] * v.coords[1]
 
