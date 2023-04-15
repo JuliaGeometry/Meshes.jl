@@ -56,5 +56,5 @@ end
 
 @inline unitize(u::Vec) = u ./ norm2(u)
 
-@inline isnegangle(u::Vec{3,T}, v::Vec{3,T}) where {T} = false
-@inline isnegangle(u::Vec{2,T}, v::Vec{2,T}) where {T} = u[1] * v[2] < u[2] * v[1]
+@inline isnegangle(u::Vec{2}, v::Vec{2}) = u[1] * v[2] < u[2] * v[1]
+@inline isnegangle(u::Vec{3}, v::Vec{3}) = false
