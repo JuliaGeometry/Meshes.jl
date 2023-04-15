@@ -37,19 +37,19 @@ angles and a value in range [0, π] for
 ```
 """
 function ∠(u::Vec, v::Vec)
-    T = eltype(u)
+  T = eltype(u)
 
-    uunit = unitize(u)
-    vunit = unitize(v)
+  uunit = unitize(u)
+  vunit = unitize(v)
 
-    y = norm2(uunit .- vunit)
-    x = norm2(uunit .+ vunit)
+  y = norm2(uunit .- vunit)
+  x = norm2(uunit .+ vunit)
 
-    a = 2 * atan(y, x)
+  a = 2 * atan(y, x)
 
-    a = !(signbit(a) || signbit(pi - a)) ? a : (signbit(a) ? zero(T) : (T)(pi))
+  a = !(signbit(a) || signbit(pi - a)) ? a : (signbit(a) ? zero(T) : (T)(pi))
 
-    ifelse(isnegangle(uunit, vunit), -a, a)
+  ifelse(isnegangle(uunit, vunit), -a, a)
 end
 
 @inline norm2(u::Vec) = sqrt(foldl(+, abs2.(u)))
