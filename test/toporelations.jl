@@ -457,6 +457,24 @@
     @test 𝒜(5) == [6,3,1]
     @test 𝒜(6) == [2,4,5]
 
+    # 2 triangles + 2 quadrangles
+    elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
+    t = HalfEdgeTopology(elems)
+    𝒜 = Adjacency{2}(t)
+    @test 𝒜(1) == [2,3,4]
+    @test 𝒜(2) == [1,3]
+    @test 𝒜(3) == [2,4,1]
+    @test 𝒜(4) == [1,3]
+
+    # 4 quadrangles in a grid
+    elems = connect.([(1,2,5,4),(2,3,6,5),(4,5,8,7),(5,6,9,8)])
+    t = HalfEdgeTopology(elems)
+    𝒜 = Adjacency{2}(t)
+    @test 𝒜(1) == [3,2]
+    @test 𝒜(2) == [1,4]
+    @test 𝒜(3) == [1,4]
+    @test 𝒜(4) == [3,2]
+
     # invalid relations
     elems = connect.([(1,2,3),(4,3,2)])
     t = HalfEdgeTopology(elems)

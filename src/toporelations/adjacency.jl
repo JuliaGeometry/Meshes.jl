@@ -103,6 +103,19 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
 end
 
 # adjacent elements in a 2D half-edge topology
-function (𝒜::Adjacency{2,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
-  @error "not implemented"
+function (𝒜::Adjacency{2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
+  inds = Int[]
+
+  e = half4elem(𝒜.topology, ind)
+  i = e.half.elem
+  isnothing(i) || push!(inds, i)
+
+  n = e.next
+  while n != e
+    i = n.half.elem
+    isnothing(i) || push!(inds, i)
+    n = n.next
+  end
+
+  inds
 end

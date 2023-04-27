@@ -37,4 +37,11 @@
   @test minimum(d) == 2
   @test maximum(d) == 4
   @test length(findall(==(2), d)) == 4
+
+  # adjacency of SimpleMesh
+  points = P2[(0,0),(1,-1),(1,1),(2,-1),(2,1)]
+  connec = connect.([(1,2,3),(3,2,4,5)])
+  mesh = SimpleMesh(points, connec, relations=true)
+  A = adjacencymatrix(mesh)
+  @test A == [0 1; 1 0]
 end
