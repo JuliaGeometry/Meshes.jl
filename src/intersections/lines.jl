@@ -48,7 +48,7 @@ calculated in order to identify the intersection type:
 function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, 
                              c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
   A = [(b - a) (c - d)]
-  y = c - a
+  y = SVector(c - a)
 
   # calculate the rank of the augmented matrix by checking
   # the zero entries of the diagonal of R
@@ -63,7 +63,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T},
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
-    λ = A \ SVector(y.coords)
+    λ = A \ y
   else # parallel or collinear
     λ = SVector(zero(T), zero(T))
   end
