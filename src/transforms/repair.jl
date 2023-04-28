@@ -25,7 +25,7 @@ function apply(transform::Repair{1}, mesh)
   # get the faces
   topo = convert(HalfEdgeTopology, topology(mesh))
   ∂₂₀ = Boundary{2,0}(topo)
-  nfaces = nelements(topo)
+  nelem = nelements(topo)
 
   # indices of used vertices will be stored in this vector
   used = Vector{Int}(undef, 0)
@@ -34,25 +34,26 @@ function apply(transform::Repair{1}, mesh)
   newindices = Dict{Int,Int}()
 
   # to store the connectivities of the cleaned mesh
-  connectivities = Vector{Connectivity}(undef, 0)
+  connec = Vector{Connectivity}(undef, 0)
 
-  # l = length(used) will be incremented
-  l = 0
+  # nused = length(used) will be incremented
+  nused = 0
 
-  # iterate over faces
-  for f in 1:nfaces
-    face = ∂₂₀(f)
+  # iterate over elements
+  for e in 1:nelem
+    face = ∂₂₀(e)
     for index in face
-      if !in(index, used)
+      if index ∉ used
         push!(used, index)
-        l = l + 1
-        newindices[index] = l
+        nused = nused + 1
+        newindices[index] = nused
       end
     end
-    connec = connect(tuple([newindices[i] for i in face]...))
-    push!(connectivities, connec)
+    c = connect(tuple([newindices[i] for i in face]...))
+    push!(connec, c)
   end
 
   # output mesh
-  SimpleMesh(vertices(mesh)[used], connectivities)
+  points = vertices(mesh)[used]
+  SimpleMesh(points, connec)
 end
