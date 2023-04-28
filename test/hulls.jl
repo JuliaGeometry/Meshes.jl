@@ -44,6 +44,6 @@
     s = similar(h)
     u = hull_simple(p, h, s, v)
     #s = s[1:u]
-    @test zeroInside(p, s)
+    @test zeroInside(p, s, u)
   end
 end
