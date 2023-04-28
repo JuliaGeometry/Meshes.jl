@@ -65,7 +65,7 @@
   @testset "Repair{1}" begin
     # a tetrahedron with an unused vertex
     verts = P3.([(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)])
-    mesh = SimpleMesh(verts, connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)], Triangle))
+    mesh  = SimpleMesh(verts, connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)], Triangle))
     rmesh = mesh |> Repair{1}()
     @test nvertices(rmesh) == nvertices(mesh) - 1
     @test nelements(rmesh) == nelements(mesh)
