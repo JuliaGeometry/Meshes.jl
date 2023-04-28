@@ -53,6 +53,11 @@ function apply(transform::Repair{1}, mesh)
     push!(connectivities, connec)
   end
 
-  # output mesh
-  SimpleMesh(vertices(mesh)[used], connectivities)
+  # unique vertices
+  points = vertices(mesh)[used]
+
+  # repaired mesh
+  rmesh = SimpleMesh(points, connectivities)
+
+  rmesh, nothing
 end
