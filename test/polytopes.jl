@@ -424,7 +424,8 @@
       0.0  0.2  0.2  0.4  0.4  0.6  0.6  0.8  0.8  0.6  0.4  0.2  0.0  1.0  1.0  0.0
       0.0  0.2  0.4  0.4  0.2  0.2  0.4  0.4  0.2  0.2  0.2  0.2  0.0  0.0  1.0  1.0
     ]
-    @test vertices(chain) == Point.(eachcol(target))
+    # @test vertices(chain) == Point.(eachcol(target))
+    @test vertices(chain) == Point.(NTuple{2, T}.(eachcol(target)))
 
     # test uniqueness
     points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]
