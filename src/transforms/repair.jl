@@ -36,24 +36,26 @@ function apply(transform::Repair{1}, mesh)
   # to store the connectivities of the cleaned mesh
   connec = Vector{Connectivity}(undef, 0)
 
-  # nused = length(used) will be incremented
-  nused = 0
-
   # iterate over elements
+  nused = 0
   for e in 1:nelem
-    face = ∂₂₀(e)
-    for index in face
-      if index ∉ used
-        push!(used, index)
-        nused = nused + 1
-        newindices[index] = nused
+    elem = ∂₂₀(e)
+    for i in elem
+      if i ∉ used
+        push!(used, i)
+        nused += 1
+        newindices[i] = nused
       end
     end
-    c = connect(tuple([newindices[i] for i in face]...))
+    c = connect(tuple([newindices[i] for i in elem]...))
     push!(connec, c)
   end
 
-  # output mesh
+  # unique vertices
   points = vertices(mesh)[used]
-  SimpleMesh(points, connec)
+
+  # repaired mesh
+  rmesh = SimpleMesh(points, connec)
+
+  rmesh, nothing
 end
