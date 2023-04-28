@@ -54,31 +54,19 @@
   @test P2(1, 2) ≈ P2(1 + eps(T), T(2))
   @test P3(1, 2, 3) ≈ P3(1 + eps(T), T(2), T(3))
 
-  # @test embeddim(Point([1])) == 1
-  # @test coordtype(Point([1])) == Float64
-  # @test coordtype(Point([1.])) == Float64
   @test embeddim(Point((1,))) == 1
   @test coordtype(Point((1,))) == Float64
   @test coordtype(Point((1.,))) == Float64
 
-  # @test embeddim(Point([1,2])) == 2
-  # @test coordtype(Point([1,2])) == Float64
-  # @test coordtype(Point([1.,2.])) == Float64
   @test embeddim(Point((1,2))) == 2
   @test coordtype(Point((1,2))) == Float64
   @test coordtype(Point((1.,2.))) == Float64
 
-  # @test embeddim(Point([1,2,3])) == 3
-  # @test coordtype(Point([1,2,3])) == Float64
-  # @test coordtype(Point([1.,2.,3.])) == Float64
   @test embeddim(Point((1,2,3))) == 3
   @test coordtype(Point((1,2,3))) == Float64
   @test coordtype(Point((1.,2.,3.))) == Float64
 
   # check all 1D Point constructors, because those tend to make trouble
-  # @test Point(1) == Point((1,)) == Point([1])
-  # @test Point{1,T}(-2) == Point{1,T}((-2,)) == Point{1,T}([-2])
-  # @test Point{1,T}(0) == Point{1,T}((0,)) == Point{1,T}([0])
   @test Point(1) == Point((1,))
   @test Point{1,T}(-2) == Point{1,T}((-2,))
   @test Point{1,T}(0) == Point{1,T}((0,))
