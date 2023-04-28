@@ -402,10 +402,10 @@ export
   Translate,
   Stretch,
   StdCoords,
+  Repair,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
-  Repair,
 
   # tolerances
   atol
