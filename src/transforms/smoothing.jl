@@ -55,7 +55,7 @@ function _smooth(points, L, n, λ, μ; revert=false)
   end
 
   # new points
-    Point.(Tuple.(eachrow(X)))
+  Point.(Tuple.(eachrow(X)))
 end
 
 """
