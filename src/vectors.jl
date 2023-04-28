@@ -55,6 +55,10 @@ function Vec{Dim,T}(coords::Tuple) where {Dim,T}
   checkdim(Vec{Dim,T}, coords)
   Vec{Dim,T}(NTuple{Dim,T}(coords))
 end
+function Vec{Dim,T}(coords::AbstractVector) where {Dim,T}
+  checkdim(Vec{Dim,T}, coords)
+  Vec{Dim,T}(NTuple{Dim,T}(coords))
+end
 
 Vec(coords...) = Vec(coords)
 Vec(coords::Tuple) = Vec(promote(coords...))
