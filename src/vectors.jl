@@ -5,10 +5,8 @@
 """
     Vec(x₁, x₂, ..., xₙ)
     Vec((x₁, x₂, ..., xₙ))
-    Vec([x₁, x₂, ..., xₙ])
     Vec{Dim,T}(x₁, x₂, ..., xₙ)
     Vec{Dim,T}((x₁, x₂, ..., xₙ))
-    Vec{Dim,T}([x₁, x₂, ..., xₙ])
 
 A vector in `Dim`-dimensional space with coordinates of type `T`.
 

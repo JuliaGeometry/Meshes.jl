@@ -5,10 +5,8 @@
 """
     Point(x₁, x₂, ..., xₙ)
     Point((x₁, x₂, ..., xₙ))
-    Point([x₁, x₂, ..., xₙ])
     Point{Dim,T}(x₁, x₂, ..., xₙ)
     Point{Dim,T}((x₁, x₂, ..., xₙ))
-    Point{Dim,T}([x₁, x₂, ..., xₙ])
 
 A point in `Dim`-dimensional space with coordinates of type `T`.
 
