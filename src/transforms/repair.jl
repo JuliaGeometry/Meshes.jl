@@ -36,7 +36,7 @@ function apply(transform::Repair{1}, mesh)
   # to store the connectivities of the cleaned mesh
   connectivities = Vector{Connectivity}(undef, 0)
 
-  # iterate over faces
+  # iterate over elements
   nused = 0
   for e in 1:nelem
     elem = ∂₂₀(e)
