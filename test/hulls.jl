@@ -35,4 +35,15 @@
     verts = vertices(boundary(chul))
     @test verts == P2[(0.5,-1),(1,0),(1,1),(0,1),(0,0)]
   end
+  @testset "GrahamScan_simple" begin
+    p = randn(2, 25)
+    #p .+= [2.0, 0.5]
+    _, n = size(p)
+    h = zeros(Int32, n)
+    v = zeros(Float64, n)
+    s = similar(h)
+    u = hull_simple(p, h, s, v)
+    #s = s[1:u]
+    @test zeroInside(p, s)
+  end
 end
