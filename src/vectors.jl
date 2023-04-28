@@ -55,27 +55,10 @@ function Vec{Dim,T}(coords::Tuple) where {Dim,T}
   checkdim(Vec{Dim,T}, coords)
   Vec{Dim,T}(NTuple{Dim,T}(coords))
 end
-function Vec{Dim,T}(coords::AbstractVector) where {Dim,T}
-  checkdim(Vec{Dim,T}, coords)
-  Vec{Dim,T}(NTuple{Dim,T}(coords))
-end
 
 Vec(coords...) = Vec(coords)
 Vec(coords::Tuple) = Vec(promote(coords...))
 Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
-
-function Vec(coords::AbstractVector{T}) where {T}
-    n = length(coords)
-    if n == 1
-        Vec{1,T}(coords)
-    elseif n == 2
-        Vec{2,T}(coords)
-    elseif n == 3
-        Vec{3,T}(coords)
-    else
-        throw(ErrorException("not implemented"))
-    end
-end
 
 # StaticVector constructors
 Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
