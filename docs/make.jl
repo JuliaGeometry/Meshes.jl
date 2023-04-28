@@ -59,6 +59,7 @@ makedocs(
         "algorithms/hulls.md"
       ],
       "Transforms" => "transforms.md",
+      "Miscellaneous" => "miscellaneous.md",
       "Visualization" => "visualization.md",
       "Traits" => "traits.md"
   ],
