@@ -405,6 +405,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  Repair,
 
   # tolerances
   atol
