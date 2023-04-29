@@ -1,0 +1,49 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
+"""
+    Repair{K}
+
+Perform repairing operation with code `K`.
+
+## Available operations
+
+- K = 0: duplicated vertices and faces are removed
+- K = 1: unused vertices are removed
+- K = 2: non-manifold faces are removed
+- K = 3: degenerate faces are removed
+- K = 4: non-manifold vertices are removed
+- K = 5: non-manifold vertices are split by threshold
+- K = 6: close vertices are merged (given a radius)
+- K = 7: faces are coherently oriented
+"""
+struct Repair{K} <: StatelessGeometricTransform end
+
+function apply(transform::Repair{1}, mesh)
+  topo = convert(HalfEdgeTopology, topology(mesh))
+  ∂₂₀  = Boundary{2,0}(topo)
+
+  count = 0
+  seen  = Int[]
+  inds  = Dict{Int,Int}()
+  elems = map(1:nelements(mesh)) do e
+    elem = ∂₂₀(e)
+    for v in elem
+      if v ∉ seen
+        push!(seen, v)
+        count += 1
+        inds[v] = count
+      end
+    end
+    ntuple(i -> inds[elem[i]], length(elem))
+  end
+
+  points = vertices(mesh)[seen]
+
+  connec = connect.(elems)
+
+  rmesh = SimpleMesh(points, connec)
+
+  rmesh, nothing
+end

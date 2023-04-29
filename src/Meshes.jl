@@ -402,6 +402,7 @@ export
   Translate,
   Stretch,
   StdCoords,
+  Repair,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,

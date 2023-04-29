@@ -89,6 +89,21 @@ viz(fig[1,2], mesh)
 fig
 ```
 
+## Repair
+
+```@docs
+Repair
+```
+
+```@example transforms
+# mesh with unreferenced point
+points = Point3[(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)]
+connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
+mesh   = SimpleMesh(points, connec)
+
+rmesh = mesh |> Repair{1}()
+```
+
 ## Smoothing
 
 ```@docs

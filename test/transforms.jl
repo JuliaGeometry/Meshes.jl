@@ -61,7 +61,18 @@
     vnew2 = TB.reapply(trans, vset, cache)
     @test vnew == vnew2
   end
-  
+
+  @testset "Repair{1}" begin
+    # a tetrahedron with an unused vertex
+    verts = P3[(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)]
+    connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
+    mesh  = SimpleMesh(verts, connec)
+    rmesh = mesh |> Repair{1}()
+    @test nvertices(rmesh) == nvertices(mesh) - 1
+    @test nelements(rmesh) == nelements(mesh)
+    @test P3(5, 5, 5) ∉ vertices(rmesh)
+  end
+
   @testset "Smoothing" begin
     # smoothing doesn't change the topology
     trans = LaplaceSmoothing(30)
