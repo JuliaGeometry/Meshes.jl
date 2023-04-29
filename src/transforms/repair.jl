@@ -20,41 +20,29 @@ Perform repairing operation with code `K`.
 """
 struct Repair{K} <: StatelessGeometricTransform end
 
-# implement operation K = 1
 function apply(transform::Repair{1}, mesh)
-  # get the faces
   topo = convert(HalfEdgeTopology, topology(mesh))
-  ∂₂₀ = Boundary{2,0}(topo)
-  nelem = nelements(topo)
+  ∂₂₀  = Boundary{2,0}(topo)
 
-  # indices of used vertices will be stored in this vector
-  used = Vector{Int}(undef, 0)
-
-  # initialize dictionary to map old indices to new indices
-  inds = Dict{Int,Int}()
-
-  # to store the connectivities of the cleaned mesh
-  connec = Vector{Connectivity}(undef, 0)
-
-  # iterate over elements
-  nused = 0
-  for e in 1:nelem
+  count = 0
+  seen  = Int[]
+  inds  = Dict{Int,Int}()
+  elems = map(1:nelements(mesh)) do e
     elem = ∂₂₀(e)
-    for i in elem
-      if i ∉ used
-        push!(used, i)
-        nused += 1
-        inds[i] = nused
+    for v in elem
+      if v ∉ seen
+        push!(seen, v)
+        count += 1
+        inds[v] = count
       end
     end
-    c = connect(tuple([inds[i] for i in elem]...))
-    push!(connec, c)
+    ntuple(i -> inds[elem[i]], length(elem))
   end
 
-  # unique vertices
-  points = vertices(mesh)[used]
+  points = vertices(mesh)[seen]
 
-  # repaired mesh
+  connec = connect.(elems)
+
   rmesh = SimpleMesh(points, connec)
 
   rmesh, nothing
