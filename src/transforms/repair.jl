@@ -20,7 +20,11 @@ Perform repairing operation with code `K`.
 """
 struct Repair{K} <: StatelessGeometricTransform end
 
-function apply(transform::Repair{1}, mesh)
+# --------------
+# OPERATION (1)
+# --------------
+
+function apply(::Repair{1}, mesh)
   topo = convert(HalfEdgeTopology, topology(mesh))
   ∂₂₀  = Boundary{2,0}(topo)
 
@@ -44,6 +48,18 @@ function apply(transform::Repair{1}, mesh)
   connec = connect.(elems)
 
   rmesh = SimpleMesh(points, connec)
+
+  rmesh, nothing
+end
+
+# --------------
+# OPERATION (7)
+# --------------
+
+function apply(::Repair{7}, mesh)
+  # HalfEdgeTopology constructor already
+  # performs orientation of faces
+  rmesh = topoconvert(HalfEdgeTopology, mesh)
 
   rmesh, nothing
 end
