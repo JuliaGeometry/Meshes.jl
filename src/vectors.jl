@@ -5,10 +5,8 @@
 """
     Vec(x₁, x₂, ..., xₙ)
     Vec((x₁, x₂, ..., xₙ))
-    Vec([x₁, x₂, ..., xₙ])
     Vec{Dim,T}(x₁, x₂, ..., xₙ)
     Vec{Dim,T}((x₁, x₂, ..., xₙ))
-    Vec{Dim,T}([x₁, x₂, ..., xₙ])
 
 A vector in `Dim`-dimensional space with coordinates of type `T`.
 
@@ -63,7 +61,6 @@ end
 Vec(coords...) = Vec(coords)
 Vec(coords::Tuple) = Vec(promote(coords...))
 Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
-Vec(coords::AbstractVector{T}) where {T} = Vec{length(coords),T}(coords)
 
 # StaticVector constructors
 Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)

@@ -53,7 +53,7 @@ PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords)
 PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))
 PointSet(coords::AbstractVector{V}) where {V<:AbstractVector} = PointSet(Point.(coords))
 PointSet(coords::Vararg{V}) where {V<:AbstractVector} = PointSet(collect(coords))
-PointSet(coords::AbstractMatrix) = PointSet(Point.(eachcol(coords)))
+PointSet(coords::AbstractMatrix) = PointSet(Tuple.(eachcol(coords)))
 
 # constructor with iterator of points
 PointSet(points) = PointSet(collect(points))
