@@ -31,7 +31,7 @@ function apply(transform::Repair{1}, mesh)
   used = Vector{Int}(undef, 0)
 
   # initialize dictionary to map old indices to new indices
-  newindices = Dict{Int,Int}()
+  inds = Dict{Int,Int}()
 
   # to store the connectivities of the cleaned mesh
   connec = Vector{Connectivity}(undef, 0)
@@ -44,10 +44,10 @@ function apply(transform::Repair{1}, mesh)
       if i ∉ used
         push!(used, i)
         nused += 1
-        newindices[i] = nused
+        inds[i] = nused
       end
     end
-    c = connect(tuple([newindices[i] for i in elem]...))
+    c = connect(tuple([inds[i] for i in elem]...))
     push!(connec, c)
   end
 
