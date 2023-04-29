@@ -36,6 +36,29 @@ area(b::Ball{2}) = measure(b)
 
 volume(b::Ball{3}) = measure(b)
 
+function (b::Ball{2,T})(ρ, φ) where {T}
+  if !all(x -> zero(T) ≤ x ≤ one(T), (ρ, φ))
+    throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0,1]."))
+  end
+  c = b.center
+  r = b.radius
+  x = ρ*r*cos(φ*T(2π))
+  y = ρ*r*sin(φ*T(2π))
+  c + Vec(x, y)
+end
+
+function (b::Ball{3,T})(ρ, θ, φ) where {T}
+  if !all(x -> zero(T) ≤ x ≤ one(T), (ρ, θ, φ))
+    throw(DomainError((ρ, θ, φ), "b(ρ, θ, φ) is not defined for ρ, θ, φ outside [0,1]."))
+  end
+  c = b.center
+  r = b.radius
+  x = ρ*r*sin(θ*T(2π))*cos(φ*T(π))
+  y = ρ*r*sin(θ*T(2π))*sin(φ*T(π))
+  z = ρ*r*cos(θ*T(2π))
+  c + Vec(x, y, z)
+end
+
 function Base.in(p::Point, b::Ball)
   x = coordinates(p)
   c = coordinates(b.center)

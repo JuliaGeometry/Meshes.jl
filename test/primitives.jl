@@ -62,7 +62,7 @@
     @test isconvex(p)
     @test measure(p) == T(Inf)
     @test area(p) == T(Inf)
-    @test p(0, 0) == P3(0,0,0)
+    @test p(T(0), T(0)) == P3(0,0,0)
     @test normal(p) == Vec(0,0,1)
     @test isnothing(boundary(p))
     @test perimeter(p) == zero(T)
@@ -185,6 +185,17 @@
     @test !(b1 ⊆ b2)
     @test !(b3 ⊆ b1)
     @test !(b3 ⊆ b1)
+
+    b = Box(P2(0,0), P2(10,20))
+    @test b(T(0.0), T(0.0)) == P2(0,0)
+    @test b(T(0.5), T(0.0)) == P2(5,0)
+    @test b(T(1.0), T(0.0)) == P2(10,0)
+    @test b(T(0.0), T(0.5)) == P2(0,10)
+    @test b(T(0.0), T(1.0)) == P2(0,20)
+
+    b = Box(P3(0,0,0), P3(10,20,30))
+    @test b(T(0.0), T(0.0), T(0.0)) == P3(0,0,0)
+    @test b(T(1.0), T(1.0), T(1.0)) == P3(10,20,30)
   end
 
   @testset "Ball" begin
@@ -218,6 +229,14 @@
     @test P3(2,0,0) ∈ b
     @test P3(0,0,2) ∈ b
     @test P3(3,5,2) ∉ b
+
+    b = Ball(P2(0,0), T(2))
+    @test b(T(0), T(0)) == P2(0, 0)
+    @test b(T(1), T(0)) == P2(2, 0)
+
+    b = Ball(P3(0,0,0), T(2))
+    @test b(T(0), T(0), T(0)) == P3(0, 0, 0)
+    @test b(T(1), T(0), T(0)) == P3(0, 0, 2)
   end
 
   @testset "Sphere" begin

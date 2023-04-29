@@ -50,7 +50,7 @@ boundary(::Plane) = nothing
 
 perimeter(::Plane{T}) where {T} = zero(T)
 
-(p::Plane)(s, t) = p.p + s*p.u + t*p.v
+(p::Plane)(u, v) = p.p + u*p.u + v*p.v
 
 """
     normal(plane)
