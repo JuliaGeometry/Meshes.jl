@@ -80,8 +80,8 @@ Base.length(s::Sphere{2}) = measure(s)
 area(s::Sphere{3}) = measure(s)
 
 function (s::Sphere{2,T})(φ) where {T}
-  if !(zero(T) ≤ φ ≤ one(T))
-    throw(DomainError(φ, "s(φ) is not defined for φ outside [0,1]."))
+  if (φ < 0 || φ > 1)
+    throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
   end
   c = s.center
   r = s.radius
@@ -91,8 +91,8 @@ function (s::Sphere{2,T})(φ) where {T}
 end
 
 function (s::Sphere{3,T})(θ, φ) where {T}
-  if !all(x -> zero(T) ≤ x ≤ one(T), (θ, φ))
-    throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0,1]."))
+  if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
+    throw(DomainError((ρ, φ), "s(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
   c = s.center
   r = s.radius
