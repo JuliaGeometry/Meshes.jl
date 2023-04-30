@@ -79,6 +79,29 @@ Base.length(s::Sphere{2}) = measure(s)
 
 area(s::Sphere{3}) = measure(s)
 
+function (s::Sphere{2,T})(φ) where {T}
+  if !(zero(T) ≤ φ ≤ one(T))
+    throw(DomainError(φ, "s(φ) is not defined for φ outside [0,1]."))
+  end
+  c = s.center
+  r = s.radius
+  x = r*cos(φ*T(2π))
+  y = r*sin(φ*T(2π))
+  c + Vec(x, y)
+end
+
+function (s::Sphere{3,T})(θ, φ) where {T}
+  if !all(x -> zero(T) ≤ x ≤ one(T), (θ, φ))
+    throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0,1]."))
+  end
+  c = s.center
+  r = s.radius
+  x = r*sin(θ*T(2π))*cos(φ*T(π))
+  y = r*sin(θ*T(2π))*sin(φ*T(π))
+  z = r*cos(θ*T(2π))
+  c + Vec(x, y, z)
+end
+
 boundary(::Sphere) = nothing
 
 perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)

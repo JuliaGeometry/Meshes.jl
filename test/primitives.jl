@@ -231,12 +231,12 @@
     @test P3(3,5,2) ∉ b
 
     b = Ball(P2(0,0), T(2))
-    @test b(T(0), T(0)) == P2(0, 0)
-    @test b(T(1), T(0)) == P2(2, 0)
+    @test b(T(0), T(0)) ≈ P2(0, 0)
+    @test b(T(1), T(0)) ≈ P2(2, 0)
 
     b = Ball(P3(0,0,0), T(2))
-    @test b(T(0), T(0), T(0)) == P3(0, 0, 0)
-    @test b(T(1), T(0), T(0)) == P3(0, 0, 2)
+    @test b(T(0), T(0), T(0)) ≈ P3(0, 0, 0)
+    @test b(T(1), T(0), T(0)) ≈ P3(0, 0, 2)
   end
 
   @testset "Sphere" begin
@@ -308,6 +308,14 @@
     O = Meshes.center(s)
     r = radius(s)
     @test isapprox(r, norm(P3(0,0,0) - O))    
+
+    s = Sphere(P2(0,0), T(2))
+    @test s(T(0)) ≈ P2(2, 0)
+    @test s(T(0.5)) ≈ P2(-2, 0)
+
+    s = Sphere(P3(0,0,0), T(2))
+    @test s(T(0), T(0)) ≈ P3(0, 0, 2)
+    @test s(T(0.5), T(0.5)) ≈ P3(0, 0, -2)
   end
 
   @testset "Disk" begin
