@@ -20,6 +20,72 @@ Perform repairing operation with code `K`.
 """
 struct Repair{K} <: StatelessGeometricTransform end
 
+
+# --------------
+# OPERATION (0)
+# --------------
+
+function apply(::Repair{0}, mesh)
+  # get mesh vertices
+  points  = vertices(mesh)
+  npoints = length(points)
+
+  # Boolean vector indicating the duplicated vertices
+  duplicated = fill(false, npoints)
+
+  # dictionary to map the old indices to the new indices
+  inds = Dict{Int,Int}()
+
+  # `newindex` will be the variable vertex to add to `inds`
+  newindex = 1
+
+  # iterate over vertices
+  for v in 1:(npoints-1)
+    if !duplicated[v]
+      # current point
+      pt = points[v]
+      # points after `pt`
+      tail = points[(v+1):npoints]
+      # indices of points equal to `pt` in `tail`
+      duplicates = v .+ findall(==(pt), tail)
+      duplicated[duplicates] .= true
+      push!(duplicates, v)
+      for i in duplicates
+        inds[i] = newindex
+      end
+      newindex += 1
+    end
+  end
+  
+  # if last vertex is not a duplicate, add it to the dictionary
+  if npoints ∉ keys(inds) 
+    inds[npoints] = newindex
+  end
+
+  # get the elements (faces)
+  topo = convert(HalfEdgeTopology, topology(mesh))
+  ∂₂₀ = Boundary{2,0}(topo)
+  nelems = nelements(topo)
+
+  # vector to store the connectivities
+  connec = Vector{Connectivity}(undef, 0)
+
+  # iterate over the elements
+  for e in 1:nelems
+    elem = ∂₂₀(e)
+    toconnect = [inds[i] for i in elem]
+    c = connect(tuple(toconnect...))
+    push!(connec, c)
+  end
+
+  # unique points
+  upoints = points[.!duplicated]
+
+  rmesh = SimpleMesh(upoints, connec)
+
+  rmesh, nothing
+end
+
 # --------------
 # OPERATION (1)
 # --------------

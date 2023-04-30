@@ -62,6 +62,20 @@
     @test vnew == vnew2
   end
 
+  @testset "Repair{0}" begin
+    # a tetrahedron with duplicated vertices
+    p1 = P3(0, 1, 1)
+    p2 = P3(-1, 2, 3)
+    p3 = P3(0, 3, 2)
+    p4 = P3(2, 2, 2)
+    points = [p1, p2, p3, p3, p2, p4, p4, p2, p1, p1, p3, p4]
+    connec = connect.([(1, 2, 3), (4, 5, 6), (7, 8, 9), (10, 11, 12)])
+    mesh = SimpleMesh(points, connec)
+    rmesh = mesh |> Repair{0}()
+    @test nvertices(rmesh) == 4
+    @test nelements(rmesh) == 4
+  end
+
   @testset "Repair{1}" begin
     # a tetrahedron with an unused vertex
     points = P3[(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)]
