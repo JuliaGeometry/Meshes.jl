@@ -25,8 +25,7 @@ struct Repair{K} <: StatelessGeometricTransform end
 # --------------
 
 function apply(::Repair{1}, mesh)
-  topo = convert(HalfEdgeTopology, topology(mesh))
-  ∂₂₀  = Boundary{2,0}(topo)
+  ∂₂₀ = Boundary{2,0}(topology(mesh))
 
   count = 0
   seen  = Int[]
