@@ -25,6 +25,8 @@ paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
 isconvex(::Type{<:Box}) = true
 
+isperiodic(::Type{<:Box{Dim}}) where {Dim} = ntuple(i->false, Dim)
+
 Base.minimum(b::Box) = b.min
 
 Base.maximum(b::Box) = b.max
@@ -47,7 +49,7 @@ sides(b::Box) = Tuple(b.max - b.min)
 
 function (b::Box{Dim,T})(uv...) where {Dim,T}
   if !all(x -> zero(T) ≤ x ≤ one(T), uv)
-    throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0,1]."))
+    throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
   end
   b.min + uv .* (b.max - b.min)
 end

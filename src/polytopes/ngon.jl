@@ -147,6 +147,8 @@ end
 # QUADRANGLES
 # ------------
 
+isperiodic(::Type{<:Quadrangle}) = (false, false)
+
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
   if (u < 0 || u > 1) || (v < 0 || v > 1)

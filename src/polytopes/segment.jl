@@ -17,6 +17,8 @@ end
 
 isconvex(::Type{<:Segment}) = true
 
+isperiodic(::Type{<:Segment}) = (false,)
+
 nvertices(::Type{<:Segment}) = 2
 
 Base.minimum(s::Segment) = s.vertices[1]

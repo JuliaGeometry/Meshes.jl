@@ -2,6 +2,8 @@
   @testset "Segment" begin
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
+    @test isconvex(Segment)
+    @test isperiodic(Segment) == (false,)
 
     s = Segment(P1(1.0,), P1(2.0,))
     @test all(P1(x,) ∈ s for x in 1:0.01:2)
@@ -11,6 +13,8 @@
     @test !(s ≈ Segment(P1(-1.0,), P1(2.0,)))
 
     s = Segment(P2(0,0), P2(1,1))
+    @test isconvex(s)
+    @test isperiodic(s) == (false,)
     @test minimum(s) == P2(0,0)
     @test maximum(s) == P2(1,1)
     @test extrema(s) == (P2(0,0), P2(1,1))
@@ -133,6 +137,11 @@
     t = Triangle(P3[(0,0,0),(1,0,0),(0,1,0)])
     @test isconvex(t)
 
+    # test periodicity of Quadrangle
+    q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
+    @test isperiodic(Quadrangle) == (false, false)
+    @test isperiodic(q) == (false, false)
+
     # Quadrangle in 2D space
     q = Quadrangle(P2(0,0), P2(1,0), P2(1,1), P2(0,1))
     @test area(q) == T(1)
@@ -176,10 +185,6 @@
   @testset "N-hedrons" begin
     @test paramdim(Tetrahedron) == 3
     @test nvertices(Tetrahedron) == 4
-    @test paramdim(Pyramid) == 3
-    @test nvertices(Pyramid) == 5
-    @test paramdim(Hexahedron) == 3
-    @test nvertices(Hexahedron) == 8
 
     t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
     @test issimplex(t)
@@ -195,8 +200,13 @@
     @test n[3] == T[-1,0,0]
     @test all(>(0), n[4])
 
+    @test paramdim(Hexahedron) == 3
+    @test nvertices(Hexahedron) == 8
+    @test isperiodic(Hexahedron) == (false, false, false)
+
     h = Hexahedron(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),
                       (0,0,1),(1,0,1),(1,1,1),(0,1,1)])
+    @test isperiodic(h) == (false, false, false)
     @test h(T(0),T(0),T(0)) == P3(0,0,0)
     @test h(T(0),T(0),T(1)) == P3(0,0,1)
     @test h(T(0),T(1),T(0)) == P3(0,1,0)
@@ -226,6 +236,9 @@
     @test m isa Mesh
     @test nvertices(m) == 8
     @test nelements(m) == 6
+
+    @test paramdim(Pyramid) == 3
+    @test nvertices(Pyramid) == 5
 
     p = Pyramid(P3[(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)])
     @test volume(p) ≈ T(1/3)

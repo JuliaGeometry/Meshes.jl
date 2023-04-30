@@ -124,14 +124,40 @@
   end
 
   @testset "Boxes" begin
+    @test isconvex(Box)
+    @test isperiodic(Box{1}) == (false,)
+    @test isperiodic(Box{2}) == (false, false)
+    @test isperiodic(Box{3}) == (false, false, false)
+
     b = Box(P1(0), P1(1))
     @test embeddim(b) == 1
     @test paramdim(b) == 1
     @test coordtype(b) == T
+    @test isconvex(b)
+    @test isperiodic(b) == (false,)
     @test minimum(b) == P1(0)
     @test maximum(b) == P1(1)
     @test extrema(b) == (P1(0), P1(1))
+
+    b = Box(P2(0,0), P2(1,1))
+    @test embeddim(b) == 2
+    @test paramdim(b) == 2
+    @test coordtype(b) == T
     @test isconvex(b)
+    @test isperiodic(b) == (false, false)
+    @test minimum(b) == P2(0,0)
+    @test maximum(b) == P2(1,1)
+    @test extrema(b) == (P2(0,0), P2(1,1))
+
+    b = Box(P3(0,0,0), P3(1,1,1))
+    @test embeddim(b) == 3
+    @test paramdim(b) == 3
+    @test coordtype(b) == T
+    @test isconvex(b)
+    @test isperiodic(b) == (false, false, false)
+    @test minimum(b) == P3(0,0,0)
+    @test maximum(b) == P3(1,1,1)
+    @test extrema(b) == (P3(0,0,0), P3(1,1,1))
 
     b = Box(P1(0), P1(1))
     @test vertices(b) == [P1(0), P1(1)]
@@ -141,15 +167,6 @@
     @test P1(0.5) ∈ b
     @test P1(-0.5) ∉ b
     @test P1(1.5) ∉ b
-
-    b = Box(P2(0,0), P2(1,1))
-    @test embeddim(b) == 2
-    @test paramdim(b) == 2
-    @test coordtype(b) == T
-    @test minimum(b) == P2(0,0)
-    @test maximum(b) == P2(1,1)
-    @test extrema(b) == (P2(0,0), P2(1,1))
-    @test isconvex(b)
 
     b = Box(P2(0,0), P2(1,1))
     @test measure(b) == area(b) == T(1)
