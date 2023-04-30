@@ -53,9 +53,9 @@ function (b::Ball{3,T})(ρ, θ, φ) where {T}
   end
   c = b.center
   r = b.radius
-  x = ρ*r*sin(θ*T(2π))*cos(φ*T(π))
-  y = ρ*r*sin(θ*T(2π))*sin(φ*T(π))
-  z = ρ*r*cos(θ*T(2π))
+  x = ρ*r*sin(θ*T(π))*cos(φ*T(2π))
+  y = ρ*r*sin(θ*T(π))*sin(φ*T(2π))
+  z = ρ*r*cos(θ*T(π))
   c + Vec(x, y, z)
 end
 

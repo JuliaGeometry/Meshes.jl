@@ -92,13 +92,13 @@ end
 
 function (s::Sphere{3,T})(θ, φ) where {T}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
-    throw(DomainError((ρ, φ), "s(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
+    throw(DomainError((ρ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   c = s.center
   r = s.radius
-  x = r*sin(θ*T(2π))*cos(φ*T(π))
-  y = r*sin(θ*T(2π))*sin(φ*T(π))
-  z = r*cos(θ*T(2π))
+  x = r*sin(θ*T(π))*cos(φ*T(2π))
+  y = r*sin(θ*T(π))*sin(φ*T(2π))
+  z = r*cos(θ*T(π))
   c + Vec(x, y, z)
 end
 

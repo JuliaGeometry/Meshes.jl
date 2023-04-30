@@ -332,7 +332,7 @@
 
     s = Sphere(P3(0,0,0), T(2))
     @test s(T(0), T(0)) ≈ P3(0, 0, 2)
-    @test s(T(0.5), T(0.5)) ≈ P3(0, 0, -2)
+    @test s(T(0.5), T(0.5)) ≈ P3(-2, 0, 0)
   end
 
   @testset "Disk" begin
