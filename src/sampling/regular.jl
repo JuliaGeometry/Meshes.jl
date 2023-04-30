@@ -24,31 +24,20 @@ end
 RegularSampling(sizes::Vararg{Int,N}) where {N} =
   RegularSampling(sizes)
 
-function sample(::AbstractRNG, box::Box,
-                method::RegularSampling)
-  sz = fitdims(method.sizes, paramdim(box))
-  l, u = extrema(box)
-
-  # origin and spacing
-  or, sp = l, (u - l) ./ (sz .- 1)
-
-  ivec(or + (ind.I .- 1) .* sp for ind in CartesianIndices(sz))
-end
-
-function sample(::AbstractRNG, bezier::BezierCurve{Dim,T},
+function sample(::AbstractRNG, geom::Geometry{Dim,T},
                 method::RegularSampling) where {Dim,T}
   V  = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(bezier))
-  ts = range(V(0), stop=V(1), length=sz[1])
-  (bezier(t) for t in ts)
+  sz = fitdims(method.sizes, paramdim(geom))
+  rs = (range(V(0), V(1), length=s) for s in sz)
+  ivec(geom(uv...) for uv in Iterators.product(rs...))
 end
 
 function sample(::AbstractRNG, sphere::Sphere{2,T},
                 method::RegularSampling) where {T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
-  V = T <: AbstractFloat ? T : Float64
   θmin, θmax = V(0), V(2π)
   δθ = (θmax - θmin) / sz[1]
   θrange = range(θmin, stop=θmax-δθ, length=sz[1])
@@ -97,13 +86,13 @@ end
 
 function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
                 method::RegularSampling) where {T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(cylsurf))
   r  = radius(cylsurf)
   b  = bottom(cylsurf)
   t  = top(cylsurf)
   a  = axis(cylsurf)
 
-  V = T <: AbstractFloat ? T : Float64
   φmin, φmax = V(0), V(2π)
   zmin, zmax = V(0), V(1)
   δφ = (φmax - φmin) / sz[1]
@@ -141,33 +130,6 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   end
 
   ivec(point(φ, z) for φ in φrange, z in zrange)
-end
-
-function sample(::AbstractRNG, seg::Segment{Dim,T},
-                method::RegularSampling) where {Dim,T}
-  V  = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(seg))
-  ts = range(V(0), V(1), length=sz[1])
-  (seg(t) for t in ts)
-end
-
-function sample(::AbstractRNG, quad::Quadrangle{Dim,T},
-                method::RegularSampling) where {Dim,T}
-  V  = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(quad))
-  us = range(V(0), V(1), length=sz[1])
-  vs = range(V(0), V(1), length=sz[2])
-  ivec(quad(u, v) for u in us, v in vs)
-end
-
-function sample(::AbstractRNG, hex::Hexahedron{Dim,T},
-                method::RegularSampling) where {Dim,T}
-  V  = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(hex))
-  us = range(V(0), V(1), length=sz[1])
-  vs = range(V(0), V(1), length=sz[2])
-  ws = range(V(0), V(1), length=sz[3])
-  ivec(hex(u, v, w) for u in us, v in vs, w in ws)
 end
 
 function sample(rng::AbstractRNG, grid::CartesianGrid,
