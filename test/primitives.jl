@@ -216,13 +216,17 @@
   end
 
   @testset "Ball" begin
+    @test isperiodic(Ball{2}) == (false, true)
+    @test isperiodic(Ball{3}) == (false, true, true)
+
     b = Ball(P3(1,2,3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
+    @test isconvex(b)
+    @test isperiodic(b) == (false, true, true)
     @test Meshes.center(b) == P3(1,2,3)
     @test radius(b) == T(5)
-    @test isconvex(b)
 
     b = Ball(P3(1,2,3), 4)
     @test coordtype(b) == T
@@ -257,16 +261,19 @@
   end
 
   @testset "Sphere" begin
+    @test isperiodic(Sphere{2}) == (true,)
+    @test isperiodic(Sphere{3}) == (true, true)
+
     s = Sphere(P3(0,0,0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
+    @test !isconvex(s)
+    @test isperiodic(s) == (true, true)
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
     @test extrema(s) == (P3(-1,-1,-1), P3(1,1,1))
-    @test !isconvex(s)
     @test isnothing(boundary(s))
-    @test isperiodic(s) == (true, true)
     @test perimeter(s) == zero(T)
 
     s = Sphere(P3(1,2,3), 4)

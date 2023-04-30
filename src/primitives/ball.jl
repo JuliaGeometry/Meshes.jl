@@ -22,6 +22,8 @@ paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 
 isconvex(::Type{<:Ball}) = true
 
+isperiodic(::Type{<:Ball{Dim}}) where {Dim} = ntuple(i -> i != 1, Dim)
+
 center(b::Ball) = b.center
 
 radius(b::Ball) = b.radius
