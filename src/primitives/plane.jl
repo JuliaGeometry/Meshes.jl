@@ -50,13 +50,6 @@ boundary(::Plane) = nothing
 
 perimeter(::Plane{T}) where {T} = zero(T)
 
-(p::Plane)(u, v) = p.p + u*p.u + v*p.v
-
-"""
-    normal(plane)
-
-Normal vector to the `plane`.
-"""
 normal(p::Plane) = normalize(p.u × p.v)
 
 ==(p₁::Plane{T}, p₂::Plane{T}) where {T} =
@@ -65,3 +58,5 @@ normal(p::Plane) = normalize(p.u × p.v)
 
 Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} =
   isapprox(normal(pl) ⋅ (pt - pl(0, 0)), zero(T), atol = atol(T))
+
+(p::Plane)(u, v) = p.p + u*p.u + v*p.v

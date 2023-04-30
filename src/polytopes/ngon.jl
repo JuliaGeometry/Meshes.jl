@@ -132,12 +132,10 @@ function normal(t::Triangle{3})
   n / norm(n)
 end
 
-function (t::Triangle)(u::T, v::T) where {T}
-  w = (one(T) - u - v)
-  if u < zero(T) || u > one(T) ||
-     v < zero(T) || v > one(T) ||
-     w < zero(T) || w > one(T)
-     throw(DomainError("barycentric coordinates out of range"))
+function (t::Triangle)(u, v)
+  w = (1 - u - v)
+  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1 )
+    throw(DomainError((u, v), "invalid barycentric coordinates for triangle."))
   end
   v₁, v₂, v₃ = coordinates.(t.vertices)
   Point(v₁*w + v₂*u + v₃*v)
@@ -152,7 +150,7 @@ isperiodic(::Type{<:Quadrangle}) = (false, false)
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
   if (u < 0 || u > 1) || (v < 0 || v > 1)
-    throw(DomainError((u,v), "q(u,v) is not defined for u, v outside [0, 1]²."))
+    throw(DomainError((u, v), "q(u, v) is not defined for u, v outside [0, 1]²."))
   end
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
   Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)

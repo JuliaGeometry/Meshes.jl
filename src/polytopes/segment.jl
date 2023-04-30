@@ -31,14 +31,6 @@ measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
 
 boundary(s::Segment) = PointSet(s.vertices)
 
-function (s::Segment)(t)
-  if t < 0 || t > 1
-    throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
-  end
-  a, b = s.vertices
-  a + t * (b - a)
-end
-
 center(s::Segment) = s(0.5)
 
 function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
@@ -52,4 +44,12 @@ end
 function Base.isapprox(s1::Segment, s2::Segment)
   v1, v2 = s1.vertices, s2.vertices
   isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
+end
+
+function (s::Segment)(t)
+  if t < 0 || t > 1
+    throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
+  end
+  a, b = s.vertices
+  a + t * (b - a)
 end

@@ -28,8 +28,6 @@ boundary(::Line) = nothing
 
 perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
 
-(l::Line)(t) = l.a + t * (l.b - l.a)
-
 function Base.in(p::Point, l::Line)
   w = norm(l.b-l.a)
   d = evaluate(Euclidean(), p, l)
@@ -38,3 +36,5 @@ function Base.in(p::Point, l::Line)
 end
 
 ==(l1::Line, l2::Line) = l1.a ∈ l2 && l1.b ∈ l2 && l2.a ∈ l1 && l2.b ∈ l1
+
+(l::Line)(t) = l.a + t * (l.b - l.a)

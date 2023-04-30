@@ -38,6 +38,15 @@ area(b::Ball{2}) = measure(b)
 
 volume(b::Ball{3}) = measure(b)
 
+function Base.in(p::Point, b::Ball)
+  x = coordinates(p)
+  c = coordinates(b.center)
+  r = b.radius
+  sum(abs2, x - c) ≤ r^2
+end
+
+boundary(b::Ball) = Sphere(b.center, b.radius)
+
 function (b::Ball{2,T})(ρ, φ) where {T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
@@ -60,15 +69,6 @@ function (b::Ball{3,T})(ρ, θ, φ) where {T}
   z = ρ*r*cos(θ*T(π))
   c + Vec(x, y, z)
 end
-
-function Base.in(p::Point, b::Ball)
-  x = coordinates(p)
-  c = coordinates(b.center)
-  r = b.radius
-  sum(abs2, x - c) ≤ r^2
-end
-
-boundary(b::Ball) = Sphere(b.center, b.radius)
 
 function Base.show(io::IO, b::Ball{Dim,T}) where {Dim,T}
   c, r = b.center, b.radius

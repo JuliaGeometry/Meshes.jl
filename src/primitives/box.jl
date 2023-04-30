@@ -47,13 +47,6 @@ diagonal(b::Box) = norm(b.max - b.min)
 
 sides(b::Box) = Tuple(b.max - b.min)
 
-function (b::Box{Dim,T})(uv...) where {Dim,T}
-  if !all(x -> zero(T) ≤ x ≤ one(T), uv)
-    throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
-  end
-  b.min + uv .* (b.max - b.min)
-end
-
 vertices(b::Box{1}) = [b.min, b.max]
 
 function vertices(b::Box{2})
@@ -105,3 +98,10 @@ end
 
 Base.issubset(b1::Box{Dim}, b2::Box{Dim}) where {Dim} =
   b1.min ∈ b2 && b1.max ∈ b2
+
+function (b::Box{Dim,T})(uv...) where {Dim,T}
+  if !all(x -> zero(T) ≤ x ≤ one(T), uv)
+    throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
+  end
+  b.min + uv .* (b.max - b.min)
+end

@@ -79,6 +79,17 @@ Base.length(s::Sphere{2}) = measure(s)
 
 area(s::Sphere{3}) = measure(s)
 
+boundary(::Sphere) = nothing
+
+perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
+
+function Base.in(p::Point, s::Sphere)
+  x = coordinates(p)
+  c = coordinates(s.center)
+  r = s.radius
+  sum(abs2, x - c) ≈ r^2
+end
+
 function (s::Sphere{2,T})(φ) where {T}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
@@ -100,15 +111,4 @@ function (s::Sphere{3,T})(θ, φ) where {T}
   y = r*sin(θ*T(π))*sin(φ*T(2π))
   z = r*cos(θ*T(π))
   c + Vec(x, y, z)
-end
-
-boundary(::Sphere) = nothing
-
-perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
-
-function Base.in(p::Point, s::Sphere)
-  x = coordinates(p)
-  c = coordinates(s.center)
-  r = s.radius
-  sum(abs2, x - c) ≈ r^2
 end
