@@ -27,24 +27,13 @@ RegularSampling(sizes::Vararg{Int,N}) where {N} =
 function sample(::AbstractRNG, geom::Geometry{Dim,T},
                 method::RegularSampling) where {Dim,T}
   V  = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(geom))
-  rs = (range(V(0), V(1), length=s) for s in sz)
+  D  = paramdim(geom)
+  pr = isperiodic(geom)
+  sz = fitdims(method.sizes, D)
+  tₛ = ntuple(i -> V(0), D)
+  tₑ = ntuple(i -> pr[i] ? V(1 - 1/sz[i]) : V(1), D)
+  rs = (range(tₛ[i], tₑ[i], sz[i]) for i in 1:D)
   ivec(geom(uv...) for uv in Iterators.product(rs...))
-end
-
-function sample(::AbstractRNG, sphere::Sphere{2,T},
-                method::RegularSampling) where {T}
-  V  = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(sphere))
-  c, r = center(sphere), radius(sphere)
-
-  θmin, θmax = V(0), V(2π)
-  δθ = (θmax - θmin) / sz[1]
-  θrange = range(θmin, stop=θmax-δθ, length=sz[1])
-
-  r⃗(θ) = Vec{2,V}(r*cos(θ), r*sin(θ))
-
-  ivec(c + r⃗(θ) for θ in θrange)
 end
 
 # spherical coordinates in ISO 80000-2:2019 convention
