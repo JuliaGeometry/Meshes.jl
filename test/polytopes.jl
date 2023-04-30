@@ -199,6 +199,11 @@
     @test n[2] == T[0,-1,0]
     @test n[3] == T[-1,0,0]
     @test all(>(0), n[4])
+    @test t(T(0), T(0), T(0)) ≈ P3(0, 0, 0)
+    @test t(T(1), T(0), T(0)) ≈ P3(1, 0, 0)
+    @test t(T(0), T(1), T(0)) ≈ P3(0, 1, 0)
+    @test t(T(0), T(0), T(1)) ≈ P3(0, 0, 1)
+    @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
 
     @test paramdim(Hexahedron) == 3
     @test nvertices(Hexahedron) == 8
