@@ -37,12 +37,10 @@ end
 
 function sample(::AbstractRNG, bezier::BezierCurve{Dim,T},
                 method::RegularSampling) where {Dim,T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(bezier))
-
-  V = T <: AbstractFloat ? T : Float64
-  trange = range(V(0), stop=V(1), length=sz[1])
-
-  (bezier(t) for t in trange)
+  ts = range(V(0), stop=V(1), length=sz[1])
+  (bezier(t) for t in ts)
 end
 
 function sample(::AbstractRNG, sphere::Sphere{2,T},
@@ -63,10 +61,10 @@ end
 # spherical coordinates in ISO 80000-2:2019 convention
 function sample(::AbstractRNG, sphere::Sphere{3,T},
                 method::RegularSampling) where {T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(sphere))
   c, r = center(sphere), radius(sphere)
 
-  V = T <: AbstractFloat ? T : Float64
   θmin, θmax = V(0), V(π)
   φmin, φmax = V(0), V(2π)
   δθ = (θmax - θmin) / (sz[1] + 1)
@@ -81,10 +79,10 @@ end
 
 function sample(::AbstractRNG, ball::Ball{Dim,T},
                 method::RegularSampling) where {Dim,T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(ball))
   c, r = center(ball), radius(ball)
 
-  V = T <: AbstractFloat ? T : Float64
   smin, smax = V(0), V(1)
   δs = (smax - smin) / (last(sz) - 1)
   srange = range(smin+δs, stop=smax, length=last(sz))
@@ -147,26 +145,29 @@ end
 
 function sample(::AbstractRNG, seg::Segment{Dim,T},
                 method::RegularSampling) where {Dim,T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(seg))
-  trange = range(T(0), T(1), length=sz[1])
-  (seg(t) for t in trange)
+  ts = range(V(0), V(1), length=sz[1])
+  (seg(t) for t in ts)
 end
 
 function sample(::AbstractRNG, quad::Quadrangle{Dim,T},
                 method::RegularSampling) where {Dim,T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(quad))
-  urange = range(T(0), T(1), length=sz[1])
-  vrange = range(T(0), T(1), length=sz[2])
-  ivec(quad(u, v) for u in urange, v in vrange)
+  us = range(V(0), V(1), length=sz[1])
+  vs = range(V(0), V(1), length=sz[2])
+  ivec(quad(u, v) for u in us, v in vs)
 end
 
 function sample(::AbstractRNG, hex::Hexahedron{Dim,T},
                 method::RegularSampling) where {Dim,T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(hex))
-  urange = range(T(0), T(1), length=sz[1])
-  vrange = range(T(0), T(1), length=sz[2])
-  wrange = range(T(0), T(1), length=sz[3])
-  ivec(hex(u, v, w) for u in urange, v in vrange, w in wrange)
+  us = range(V(0), V(1), length=sz[1])
+  vs = range(V(0), V(1), length=sz[2])
+  ws = range(V(0), V(1), length=sz[3])
+  ivec(hex(u, v, w) for u in us, v in vs, w in ws)
 end
 
 function sample(rng::AbstractRNG, grid::CartesianGrid,
@@ -176,12 +177,13 @@ end
 
 function sample(::AbstractRNG, torus::Torus{T},
                 method::RegularSampling) where {T}
+  V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(torus))
   R, r = radii(torus)
+
   kxy = R^2 - r^2
   kz = √kxy * r
 
-  V = T <: AbstractFloat ? T : Float64
   umin, umax = V(-π), V(π)
   vmin, vmax = V(-π), V(π)
   δu = (umax - umin) / sz[1]
