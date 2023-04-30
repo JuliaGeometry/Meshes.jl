@@ -36,23 +36,15 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T},
   ivec(geom(uv...) for uv in Iterators.product(rs...))
 end
 
-# spherical coordinates in ISO 80000-2:2019 convention
 function sample(::AbstractRNG, sphere::Sphere{3,T},
                 method::RegularSampling) where {T}
   V  = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(sphere))
-  c, r = center(sphere), radius(sphere)
-
-  θmin, θmax = V(0), V(π)
-  φmin, φmax = V(0), V(2π)
-  δθ = (θmax - θmin) / (sz[1] + 1)
-  δφ = (φmax - φmin) / (sz[2]    )
-  θrange = range(θmin+δθ, stop=θmax-δθ, length=sz[1])
-  φrange = range(φmin, stop=φmax-δφ, length=sz[2])
-
-  r⃗(θ, φ) = Vec{3,T}(r*sin(θ)*cos(φ), r*sin(θ)*sin(φ), r*cos(θ))
-
-  ivec(c + r⃗(θ, φ) for θ in θrange, φ in φrange)
+  δθ = 1 / (sz[1] + 1)
+  δφ = 1 / (sz[2]    )
+  θs = range(V(0 + δθ), V(1 - δθ), sz[1])
+  φs = range(V(0     ), V(1 - δφ), sz[2])
+  ivec(sphere(θ, φ) for θ in θs, φ in φs)
 end
 
 function sample(::AbstractRNG, ball::Ball{Dim,T},
@@ -63,7 +55,7 @@ function sample(::AbstractRNG, ball::Ball{Dim,T},
 
   smin, smax = V(0), V(1)
   δs = (smax - smin) / (last(sz) - 1)
-  srange = range(smin+δs, stop=smax, length=last(sz))
+  srange = range(smin+δs, smax, last(sz))
 
   # reuse samples on the boundary
   points = sample(Sphere(c, r), RegularSampling(sz[1:Dim-1]))
@@ -85,8 +77,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   φmin, φmax = V(0), V(2π)
   zmin, zmax = V(0), V(1)
   δφ = (φmax - φmin) / sz[1]
-  φrange = range(φmin, stop=φmax-δφ, length=sz[1])
-  zrange = range(zmin, stop=zmax,    length=sz[2])
+  φs = range(φmin, φmax-δφ, sz[1])
+  zs = range(zmin, zmax,    sz[2])
 
   # rotation to align z axis with cylinder axis
   d₃  = a(1) - a(0)
@@ -118,7 +110,7 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
     Point((R' * coordinates(p)) + oₘ)
   end
 
-  ivec(point(φ, z) for φ in φrange, z in zrange)
+  ivec(point(φ, z) for φ in φs, z in zs)
 end
 
 function sample(rng::AbstractRNG, grid::CartesianGrid,
@@ -139,8 +131,8 @@ function sample(::AbstractRNG, torus::Torus{T},
   vmin, vmax = V(-π), V(π)
   δu = (umax - umin) / sz[1]
   δv = (vmax - vmin) / sz[2]
-  urange = range(umin, stop=umax-δu, length=sz[1])
-  vrange = range(vmin, stop=vmax-δv, length=sz[2])
+  us = range(umin, umax-δu, sz[1])
+  vs = range(vmin, vmax-δv, sz[2])
 
   c = center(torus)
   n⃗ = normal(torus)
@@ -148,5 +140,5 @@ function sample(::AbstractRNG, torus::Torus{T},
 
   r⃗(u, v) = Vec{3,T}(kxy * cos(u), kxy * sin(u), kz * sin(v)) / (R - r*cos(v))
 
-  ivec(c + M * r⃗(u, v) for u in urange, v in vrange)
+  ivec(c + M * r⃗(u, v) for u in us, v in vs)
 end
