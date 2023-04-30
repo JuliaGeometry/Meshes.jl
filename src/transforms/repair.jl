@@ -25,13 +25,12 @@ struct Repair{K} <: StatelessGeometricTransform end
 # --------------
 
 function apply(::Repair{1}, mesh)
-  ∂₂₀ = Boundary{2,0}(topology(mesh))
-
   count = 0
   seen  = Int[]
   inds  = Dict{Int,Int}()
-  elems = map(1:nelements(mesh)) do e
-    elem = ∂₂₀(e)
+  topo  = topology(mesh)
+  elems = map(elements(topo)) do e
+    elem = indices(e)
     for v in elem
       if v ∉ seen
         push!(seen, v)
