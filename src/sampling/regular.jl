@@ -32,7 +32,7 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T},
   sz = fitdims(method.sizes, D)
   tₛ = ntuple(i -> V(0), D)
   tₑ = ntuple(i -> pr[i] ? V(1 - 1/sz[i]) : V(1), D)
-  rs = (range(tₛ[i], tₑ[i], sz[i]) for i in 1:D)
+  rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
   ivec(geom(uv...) for uv in Iterators.product(rs...))
 end
 
@@ -42,8 +42,8 @@ function sample(::AbstractRNG, sphere::Sphere{3,T},
   sz = fitdims(method.sizes, paramdim(sphere))
   δθ = 1 / (sz[1] + 1)
   δφ = 1 / (sz[2]    )
-  θs = range(V(0 + δθ), V(1 - δθ), sz[1])
-  φs = range(V(0     ), V(1 - δφ), sz[2])
+  θs = range(V(0 + δθ), stop=V(1 - δθ), length=sz[1])
+  φs = range(V(0     ), stop=V(1 - δφ), length=sz[2])
   ivec(sphere(θ, φ) for θ in θs, φ in φs)
 end
 
@@ -55,7 +55,7 @@ function sample(::AbstractRNG, ball::Ball{Dim,T},
 
   smin, smax = V(0), V(1)
   δs = (smax - smin) / (last(sz) - 1)
-  srange = range(smin+δs, smax, last(sz))
+  srange = range(smin+δs, stop=smax, length=last(sz))
 
   # reuse samples on the boundary
   points = sample(Sphere(c, r), RegularSampling(sz[1:Dim-1]))
@@ -77,8 +77,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
   φmin, φmax = V(0), V(2π)
   zmin, zmax = V(0), V(1)
   δφ = (φmax - φmin) / sz[1]
-  φs = range(φmin, φmax-δφ, sz[1])
-  zs = range(zmin, zmax,    sz[2])
+  φs = range(φmin, stop=φmax-δφ, length=sz[1])
+  zs = range(zmin, stop=zmax,    length=sz[2])
 
   # rotation to align z axis with cylinder axis
   d₃  = a(1) - a(0)
@@ -131,8 +131,8 @@ function sample(::AbstractRNG, torus::Torus{T},
   vmin, vmax = V(-π), V(π)
   δu = (umax - umin) / sz[1]
   δv = (vmax - vmin) / sz[2]
-  us = range(umin, umax-δu, sz[1])
-  vs = range(vmin, vmax-δv, sz[2])
+  us = range(umin, stop=umax-δu, length=sz[1])
+  vs = range(vmin, stop=vmax-δv, length=sz[2])
 
   c = center(torus)
   n⃗ = normal(torus)
