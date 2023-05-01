@@ -63,13 +63,13 @@
   end
 
   @testset "Repair{0}" begin
-    # a tetrahedron with duplicated vertices
+    # a tetrahedron with duplicated vertices and faces
     p1 = P3(0, 1, 1)
     p2 = P3(-1, 2, 3)
     p3 = P3(0, 3, 2)
     p4 = P3(2, 2, 2)
     points = [p1, p2, p3, p3, p2, p4, p4, p2, p1, p1, p3, p4]
-    connec = connect.([(1, 2, 3), (4, 5, 6), (7, 8, 9), (10, 11, 12)])
+    connec = connect.([(1, 2, 3), (4, 5, 6), (3, 2, 1), (7, 8, 9), (10, 11, 12)])
     mesh = SimpleMesh(points, connec)
     rmesh = mesh |> Repair{0}()
     @test nvertices(rmesh) == 4
