@@ -26,44 +26,41 @@ struct Repair{K} <: StatelessGeometricTransform end
 # --------------
 
 function apply(::Repair{0}, mesh)
-  # get mesh vertices
   points  = vertices(mesh)
-  npoints = length(points)
+  npoints = nvertices(mesh)
 
-  # Boolean vector indicating the duplicated vertices
-  duplicated = fill(false, npoints)
+  # store indicators of duplicated vertices
+  dups = fill(false, npoints)
 
-  # dictionary to map the old indices to the new indices
+  # dictionary mapping old to new indices
   inds = Dict{Int,Int}()
 
-  # `newindex` will be the variable vertex to add to `inds`
-  newindex = 1
+  count = 0
 
-  # iterate over vertices
   for v in 1:(npoints-1)
-    if !duplicated[v]
+    if !dups[v]
       # current point
       pt = points[v]
       # points after `pt`
       tail = points[(v+1):npoints]
       # indices of points equal to `pt` in `tail`
       duplicates = v .+ findall(==(pt), tail)
-      duplicated[duplicates] .= true
+      dups[duplicates] .= true
       push!(duplicates, v)
+      count += 1
       for i in duplicates
-        inds[i] = newindex
+        inds[i] = count
       end
-      newindex += 1
     end
   end
   
   # if last vertex is not a duplicate, add it to the dictionary
   if npoints ∉ keys(inds) 
-    inds[npoints] = newindex
+    inds[npoints] = count
   end
 
   # get the elements (faces)
-  topo = convert(HalfEdgeTopology, topology(mesh))
+  topo = topology(mesh)
   ∂₂₀ = Boundary{2,0}(topo)
   nelems = nelements(topo)
 
@@ -74,14 +71,20 @@ function apply(::Repair{0}, mesh)
   for e in 1:nelems
     elem = ∂₂₀(e)
     toconnect = [inds[i] for i in elem]
-    c = connect(tuple(toconnect...))
+    c = connect(ntuple(i -> toconnect[i], length(toconnect)))
     push!(connec, c)
   end
 
   # unique points
-  upoints = points[.!duplicated]
+  upoints = points[.!dups]
 
-  rmesh = SimpleMesh(upoints, connec)
+  # indices of non-duplicates faces
+  uinds = unique(i -> Set{Int}([indices(connec[i])...]), 1:nelems)
+
+  # unique connectivities
+  uconnec = connec[uinds]
+
+  rmesh = SimpleMesh(upoints, uconnec)
 
   rmesh, nothing
 end
