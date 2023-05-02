@@ -39,11 +39,24 @@ Return the parametric dimension or rank of the polytope.
 paramdim(::Type{<:Polytope{K}}) where {K} = K
 
 """
+    vertex(polytope, ind)
+
+Return the vertex of a `polytope` at index `ind`.
+"""
+vertex(p::Polytope, ind) = vertices(p)[ind]
+
+"""
     vertices(polytope)
 
 Return the vertices of a `polytope`.
 """
-vertices(p::Polytope) = p.vertices
+function vertices(p::Polytope)
+  if hasfield(typeof(p), :vertices)
+    p.vertices
+  else
+    collect(vertex(p, ind) for ind in 1:nvertices(p))
+  end
+end
 
 """
     nvertices(polytope)

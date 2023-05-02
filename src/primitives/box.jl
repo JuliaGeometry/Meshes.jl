@@ -47,32 +47,23 @@ diagonal(b::Box) = norm(b.max - b.min)
 
 sides(b::Box) = Tuple(b.max - b.min)
 
-vertices(b::Box{1}) = [b.min, b.max]
+nvertices(b::Box{Dim}) where Dim = 2^Dim
 
-function vertices(b::Box{2})
-  A = coordinates(b.min)
-  B = coordinates(b.max)
-  Point.([
-    (A[1], A[2]),
-    (B[1], A[2]),
-    (B[1], B[2]),
-    (A[1], B[2]),
-  ])
-end
+vertices(b::Box) = collect(vertex(b, ind) for ind in 1:nvertices(b))
 
-function vertices(b::Box{3})
-  A = coordinates(b.min)
-  B = coordinates(b.max)
-  Point.([
-    (A[1], A[2], A[3]),
-    (B[1], A[2], A[3]),
-    (B[1], B[2], A[3]),
-    (A[1], B[2], A[3]),
-    (A[1], A[2], B[3]),
-    (B[1], A[2], B[3]),
-    (B[1], B[2], B[3]),
-    (A[1], B[2], B[3]),
-  ])
+function vertex(b::Box{Dim}, ind) where Dim
+  1 <= ind <= nvertices(b) ||
+    throw(ArgumentError("attempted to access vertex $ind of $(typeof(b))"))
+  xmin, xmax = coordinates.(extrema(b))
+  ind -= 1 # zero-based index
+  coords = ntuple(Dim) do d
+    low = iszero(ind & (1 << (d-1)))
+    if d == 1 && !iszero(ind & 2)
+      low = !low
+    end
+    low ? xmin[d] : xmax[d]
+  end
+  Point(coords)
 end
 
 function boundary(b::Box{2})
