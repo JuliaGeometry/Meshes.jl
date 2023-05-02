@@ -6,6 +6,8 @@
     @test isperiodic(Segment) == (false,)
 
     s = Segment(P1(1.0,), P1(2.0,))
+    @test vertex(s, 1) == P1(1.0)
+    @test vertex(s, 2) == P1(2.0)
     @test all(P1(x,) ∈ s for x in 1:0.01:2)
     @test all(P1(x,) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
     @test s ≈ s
@@ -63,6 +65,9 @@
 
     # Triangle in 2D space
     t = Triangle(P2(0,0), P2(1,0), P2(0,1))
+    @test vertex(t, 1) == P2(0,0)
+    @test vertex(t, 2) == P2(1,0)
+    @test vertex(t, 3) == P2(0,1)
     @test signarea(t) == T(0.5)
     @test area(t) == T(0.5)
     t = Triangle(P2(0,0), P2(0,1), P2(1,0))
@@ -187,6 +192,10 @@
     @test nvertices(Tetrahedron) == 4
 
     t = Tetrahedron(P3[(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
+    @test vertex(t, 1) == P3(0,0,0)
+    @test vertex(t, 2) == P3(1,0,0)
+    @test vertex(t, 3) == P3(0,1,0)
+    @test vertex(t, 4) == P3(0,0,1)
     @test issimplex(t)
     @test isconvex(t)
     @test measure(t) == T(1/6)
@@ -271,6 +280,17 @@
     @test nvertices(c) == 4
     @test Meshes.npoints(c) == 5
     @test length(c) == T(4)
+
+    # vertex indexing
+    c = Chain(P2[(1,1),(2,2),(1,1)])
+    @test vertex(c, 0) == P2(2,2)
+    @test vertex(c, 1) == P2(1,1)
+    @test vertex(c, 2) == P2(2,2)
+    @test vertex(c, 3) == P2(1,1)
+    @test vertex(c, 4) == P2(2,2)
+    c = Chain(P2[(1,1),(2,2)])
+    @test vertex(c, 1) == P2(1,1)
+    @test vertex(c, 2) == P2(2,2)
 
     # segments
     c = Chain(P2[(1,1),(2,2),(3,3)])

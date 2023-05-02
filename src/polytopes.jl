@@ -39,6 +39,13 @@ Return the parametric dimension or rank of the polytope.
 paramdim(::Type{<:Polytope{K}}) where {K} = K
 
 """
+    vertex(polytope, ind)
+
+Return the vertex of a `polytope` at index `ind`.
+"""
+vertex(p::Polytope, ind) = vertices(p)[ind]
+
+"""
     vertices(polytope)
 
 Return the vertices of a `polytope`.
