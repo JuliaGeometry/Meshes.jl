@@ -29,27 +29,18 @@ function apply(::Repair{0}, mesh)
   points  = vertices(mesh)
   npoints = nvertices(mesh)
 
-  # store indicators of duplicated vertices
+  count = 0
   dups = fill(false, npoints)
-
-  # dictionary mapping old to new indices
   inds = Dict{Int,Int}()
 
-  count = 0
-
-  for v in 1:(npoints-1)
-    if !dups[v]
-      # current point
-      pt = points[v]
-      # points after `pt`
-      tail = points[(v+1):npoints]
-      # indices of points equal to `pt` in `tail`
-      duplicates = v .+ findall(==(pt), tail)
-      dups[duplicates] .= true
-      push!(duplicates, v)
+  for i in 1:(npoints-1)
+    if !dups[i]
+      # find duplicates
+      js = i .+ findall(==(points[i]), points[i+1:npoints])
+      dups[js] .= true
       count += 1
-      for i in duplicates
-        inds[i] = count
+      for k in [js; i]
+        inds[k] = count
       end
     end
   end
