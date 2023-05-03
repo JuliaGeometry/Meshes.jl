@@ -37,6 +37,8 @@ function apply(::Repair{0}, mesh)
       # find duplicates
       js = i .+ findall(==(points[i]), points[i+1:npoints])
       dups[js] .= true
+
+      # update indices
       count += 1
       for k in [js; i]
         inds[k] = count
@@ -44,7 +46,8 @@ function apply(::Repair{0}, mesh)
     end
   end
   
-  # if last vertex is not a duplicate, add it to the dictionary
+  # if last vertex is not a duplicate,
+  # add it to the dictionary
   if npoints ∉ keys(inds) 
     inds[npoints] = count
   end
