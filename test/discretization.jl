@@ -317,8 +317,9 @@
     ngon = Quadrangle(P2[(0,0),(1,0),(1,1),(0,1)])
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
     for geom in [box, ngon, poly]
-      mesh = simplexify(geom)
-      @test Set(vertices(geom)) == Set(vertices(mesh))
+      bound = boundary(geom)
+      mesh  = simplexify(geom)
+      @test Set(vertices(bound)) == Set(vertices(mesh))
       @test nelements(mesh) == length(vertices(mesh)) - 2
     end
 

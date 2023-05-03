@@ -160,7 +160,7 @@
     @test extrema(b) == (P3(0,0,0), P3(1,1,1))
 
     b = Box(P1(0), P1(1))
-    @test vertices(b) == [P1(0), P1(1)]
+    @test boundary(b) == PointSet([P1(0), P1(1)])
     @test measure(b) == T(1)
     @test P1(0) ∈ b
     @test P1(1) ∈ b
@@ -179,10 +179,13 @@
     @test diagonal(b) == √T(2)
 
     b = Box(P2(1,2), P2(3,4))
-    @test vertices(b) == P2[(1,2),(3,2),(3,4),(1,4)]
+    v = P2[(1,2),(3,2),(3,4),(1,4)]
+    @test boundary(b) == Chain([v; first(v)])
 
     b = Box(P3(1,2,3), P3(4,5,6))
-    @test vertices(b) == P3[(1,2,3),(4,2,3),(4,5,3),(1,5,3),(1,2,6),(4,2,6),(4,5,6),(1,5,6)]
+    v = P3[(1,2,3),(4,2,3),(4,5,3),(1,5,3),(1,2,6),(4,2,6),(4,5,6),(1,5,6)]
+    c = connect.([(4,3,2,1),(6,5,1,2),(3,7,6,2), (4,8,7,3),(1,5,8,4),(6,7,8,5)])
+    @test boundary(b) == SimpleMesh(v, c)
 
     b = Box(P2(0,0), P2(1,1))
     @test boundary(b) == Chain(P2[(0,0),(1,0),(1,1),(0,1),(0,0)])

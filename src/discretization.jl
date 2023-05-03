@@ -136,7 +136,7 @@ simplexify(geometry) =
   simplexify(discretize(geometry))
 
 simplexify(box::Box{1}) =
-  SimpleMesh(vertices(box), GridTopology(1))
+  SimpleMesh(collect(extrema(box)), GridTopology(1))
 
 simplexify(seg::Segment) =
   SimpleMesh(vertices(seg), GridTopology(1))
