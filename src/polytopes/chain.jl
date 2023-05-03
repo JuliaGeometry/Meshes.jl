@@ -137,7 +137,7 @@ See https://en.wikipedia.org/wiki/Winding_number.
   the simplicity and orientation of planar polygons]
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-function windingnumber(p::Point{Dim,T}, c::Chain{Dim,T}) where {Dim,T}
+function windingnumber(p::Point{2,T}, c::Chain{2,T}) where {T}
   vₒ, vs = p, c.vertices
   ∑ = sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
   ∑ / T(2π)
@@ -172,7 +172,7 @@ Default method is `WindingOrientation()`.
 """
 orientation(c::Chain) = orientation(c, WindingOrientation())
 
-function orientation(c::Chain{Dim,T}, ::WindingOrientation) where {Dim,T}
+function orientation(c::Chain{2,T}, ::WindingOrientation) where {T}
   # pick any segment
   x1, x2 = c.vertices[1:2]
   x̄ = centroid(Segment(x1, x2))
@@ -180,7 +180,7 @@ function orientation(c::Chain{Dim,T}, ::WindingOrientation) where {Dim,T}
   isapprox(w, T(π), atol=atol(T)) ? :CCW : :CW
 end
 
-function orientation(c::Chain{Dim,T}, ::TriangleOrientation) where {Dim,T}
+function orientation(c::Chain{2,T}, ::TriangleOrientation) where {T}
   v = vertices(c)
   Δ(i) = signarea(v[1], v[i], v[i+1])
   a = mapreduce(Δ, +, 2:length(v)-1)
@@ -314,7 +314,7 @@ Return inner angles of the *closed* `chain`. Inner
 angles are always positive, and unlike `angles`
 they can be greater than `π`.
 """
-function innerangles(c::Chain{Dim,T}) where {Dim,T}
+function innerangles(c::Chain{2,T}) where {T}
   @assert isclosed(c) "Inner angles only defined for closed chains"
 
   # correct sign of angles in case orientation is CW
