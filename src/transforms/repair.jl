@@ -32,7 +32,6 @@ function apply(::Repair{0}, mesh)
   count = 0
   dups = fill(false, npoints)
   inds = Dict{Int,Int}()
-
   for i in 1:(npoints-1)
     if !dups[i]
       # find duplicates
