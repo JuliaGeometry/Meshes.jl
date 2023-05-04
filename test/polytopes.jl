@@ -287,11 +287,6 @@
 
     # closing/opening chains
     c = Chain(P2[(1,1),(2,2),(3,3)])
-    close!(c)
-    @test c == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
-    open!(c)
-    @test c == Chain(P2[(1,1),(2,2),(3,3)])
-    c = Chain(P2[(1,1),(2,2),(3,3)])
     @test close(c) == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
     c = Chain(P2[(1,1),(2,2),(3,3),(1,1)])
     @test open(c) == Chain(P2[(1,1),(2,2),(3,3)])
@@ -448,7 +443,7 @@
     points = P2[(1,1),(2,2),(2,2),(3,3),(1,1)]
     poly   = PolyArea(points)
     unique!(poly)
-    @test first(chains(poly)) == Chain(points)
+    @test first(chains(poly)) == Chain(P2[(1,1),(2,2),(3,3),(1,1)])
 
     # unique and bridges
     poly = PolyArea(P2[(0,0),(1,0),(1,0),(1,1),(1,2),(0,2),(0,1),(0,1),(0,0)])
