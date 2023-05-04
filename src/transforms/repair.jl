@@ -45,7 +45,8 @@ function apply(::Repair{0}, mesh)
     end
   end
   
-  # if last vertex is not a duplicate, add it to the dictionary
+  # if last vertex is not a duplicate,
+  # add it to the dictionary
   if npoints ∉ keys(inds) 
     inds[npoints] = count
   end
