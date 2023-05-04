@@ -30,14 +30,15 @@ function apply(::Repair{0}, mesh)
   npoints = nvertices(mesh)
 
   count = 0
-  dups = fill(false, npoints)
-  inds = Dict{Int,Int}()
-
+  dups  = fill(false, npoints)
+  inds  = Dict{Int,Int}()
   for i in 1:(npoints-1)
     if !dups[i]
       # find duplicates
       js = i .+ findall(==(points[i]), points[i+1:npoints])
       dups[js] .= true
+
+      # update indices
       count += 1
       for k in [js; i]
         inds[k] = count
@@ -45,35 +46,22 @@ function apply(::Repair{0}, mesh)
     end
   end
   
-  # if last vertex is not a duplicate, add it to the dictionary
+  # if last vertex is not a duplicate,
+  # add it to the dictionary
   if npoints ∉ keys(inds) 
     inds[npoints] = count
   end
 
-  # get the elements (faces)
-  topo = topology(mesh)
-  ∂₂₀ = Boundary{2,0}(topo)
-  nelems = nelements(topo)
-
-  # vector to store the connectivities
-  connec = Vector{Connectivity}(undef, 0)
-
-  # iterate over the elements
-  for e in 1:nelems
-    elem = ∂₂₀(e)
-    toconnect = [inds[i] for i in elem]
-    c = connect(ntuple(i -> toconnect[i], length(toconnect)))
-    push!(connec, c)
+  # update connectivities
+  topo  = topology(mesh)
+  elems = map(elements(topo)) do e
+    elem = indices(e)
+    ntuple(i -> inds[elem[i]], length(elem))
   end
 
-  # unique points
   upoints = points[.!dups]
 
-  # indices of non-duplicates faces
-  uinds = unique(i -> Set{Int}([indices(connec[i])...]), 1:nelems)
-
-  # unique connectivities
-  uconnec = connec[uinds]
+  uconnec = connect.(elems)
 
   rmesh = SimpleMesh(upoints, uconnec)
 
