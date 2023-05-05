@@ -40,12 +40,8 @@ end
 Cylinder(segment::Segment{3,T}) where {T} =
   Cylinder(segment, T(1))
 
-function Cylinder(radius::T) where {T}
-  _0 = (T(0), T(0), T(0))
-  _1 = (T(0), T(0), T(1))
-  segment = Segment(_0, _1)
-  Cylinder(segment, radius)
-end
+Cylinder(radius::T) where {T} =
+  Cylinder(Segment((T(0),T(0),T(0)), (T(0),T(0),T(1))), radius)
 
 paramdim(::Type{<:Cylinder}) = 3
 

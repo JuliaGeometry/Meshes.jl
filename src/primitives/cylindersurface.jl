@@ -40,12 +40,8 @@ end
 CylinderSurface(segment::Segment{3,T}) where {T} =
   CylinderSurface(segment, T(1))
 
-function CylinderSurface(radius::T) where {T}
-  _0 = (T(0), T(0), T(0))
-  _1 = (T(0), T(0), T(1))
-  segment = Segment(_0, _1)
-  CylinderSurface(segment, radius)
-end
+CylinderSurface(radius::T) where {T} =
+  CylinderSurface(Segment((T(0),T(0),T(0)), (T(0),T(0),T(1))), radius)
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
