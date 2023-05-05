@@ -44,12 +44,9 @@ function _default_rotation(::Val{3}, T)
   one(QuatRotation{T})
 end
 
-function MetricBall(radii::SVector{Dim,T}, rotation::Rotation{Dim}=_default_rotation(Val{Dim}(), T)) where {Dim,T}
+function MetricBall(radii::SVector{Dim,T}, R::Rotation{Dim}=_default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
   Λ = Diagonal(one(T) ./ radii .^ 2)
-
-  # rotation matrix
-  R = convert(DCM, rotation)
 
   # Mahalanobis metric
   metric = Mahalanobis(Symmetric(R'*Λ*R))
@@ -57,11 +54,11 @@ function MetricBall(radii::SVector{Dim,T}, rotation::Rotation{Dim}=_default_rota
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
 
-MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} =
+MetricBall(radii::NTuple{Dim,T}, rotation=_default_rotation(Val{Dim}(), T)) where {Dim,T} =
   MetricBall(SVector(radii), rotation)
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} =
+MetricBall(radii::AbstractVector{T}, rotation=_default_rotation(Val{Dim}(), T)) where {T} =
   MetricBall(SVector{length(radii),T}(radii), rotation)
 
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
