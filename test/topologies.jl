@@ -21,11 +21,13 @@
     @test nfacets(t) == 4
     @test nvertices(t) == 4
     @test nfaces(t, 1) == 3
-    @test nfaces(t, 0) == 4
     @test element(t, 1) == connect((1,2))
     @test element(t, 2) == connect((2,3))
     @test element(t, 3) == connect((3,4))
     @test faces(t, 1) == elements(t)
+    @test vertices(t) == 1:4
+    @test vertex(t, 1) == 1
+    @test vertex(t, 4) == 4
 
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
@@ -85,10 +87,12 @@
     @test nvertices(t) == 20
     @test nfaces(t, 2) == 12
     @test nfaces(t, 1) == 31
-    @test nfaces(t, 0) == 20
     @test element(t, 1) == connect((1,2,6,5))
     @test element(t, 5) == connect((6,7,11,10))
     @test faces(t, 2) == elements(t)
+    @test vertices(t) == 1:20
+    @test vertex(t, 1) == 1
+    @test vertex(t, 20) == 20
     @test facet.(Ref(t), 1:31) == connect.([(1, 5), (2, 6), (3, 7), (4, 8), (5, 9), (6, 10),
                                             (7, 11), (8, 12), (9, 13), (10, 14), (11, 15),
                                             (12, 16), (13, 17), (14, 18), (15, 19), (16, 20),
@@ -202,10 +206,12 @@
     @test nvertices(t) == 60
     @test nfaces(t, 3) == 24
     @test nfaces(t, 2) == 3*24 + 3*4 + 4*2 + 3*2
-    @test nfaces(t, 0) == 60
     @test element(t, 1) == connect((1,2,6,5,21,22,26,25), Hexahedron)
     @test element(t, 5) == connect((6,7,11,10,26,27,31,30), Hexahedron)
     @test faces(t, 3) == elements(t)
+    @test vertices(t) == 1:60
+    @test vertex(t, 1) == 1
+    @test vertex(t, 60) == 60
 
     t = GridTopology((3,), (true,))
     @test isperiodic(t) == (true,)
@@ -377,7 +383,6 @@
     @test nvertices(t) == 4
     @test nfaces(t, 2) == 2
     @test nfaces(t, 1) == 5
-    @test nfaces(t, 0) == 4
     test_halfedge(elems, t)
 
     # 2 triangles + 2 quadrangles
@@ -389,7 +394,6 @@
     @test nvertices(t) == 6
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 9
-    @test nfaces(t, 0) == 6
     test_halfedge(elems, t)
 
     # 1 triangle + 3 quadrangles + 1 triangle hole
@@ -401,7 +405,9 @@
     @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 11
-    @test nfaces(t, 0) == 7
+    @test vertices(t) == 1:7
+    @test vertex(t, 1) == 1
+    @test vertex(t, 7) == 7
     test_halfedge(elems, t)
 
     # no need to sort elements with consistent orientation
@@ -413,7 +419,6 @@
     @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 11
-    @test nfaces(t, 0) == 7
     test_halfedge(elems, t)
 
     # correct construction from inconsistent orientation
@@ -441,9 +446,11 @@
     @test connec4elem(t, 2) == (4,3,2)
     @test nvertices(t) == 4
     @test nelements(t) == 2
+    @test vertices(t) == 1:4
+    @test vertex(t, 1) == 1
+    @test vertex(t, 4) == 4
     @test nfaces(t, 2) == 2
     @test nfaces(t, 1) == 0
-    @test nfaces(t, 0) == 4
 
     # 2 triangles + 2 quadrangles
     elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
@@ -457,7 +464,6 @@
     @test nvertices(t) == 6
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 0
-    @test nfaces(t, 0) == 6
 
     # 1 triangle + 3 quadrangles + 1 triangle hole
     elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
@@ -471,7 +477,6 @@
     @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 0
-    @test nfaces(t, 0) == 7
 
     # convert from other topologies
     g = GridTopology(2, 2)
@@ -481,6 +486,5 @@
     @test nvertices(t) == 9
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 12
-    @test nfaces(t, 0) == 9
   end
 end

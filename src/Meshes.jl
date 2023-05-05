@@ -228,9 +228,9 @@ export
 
   # topologies
   Topology,
-  vertices, elements, facets,
-  nvertices, nelements, nfacets,
-  element, facet,
+  vertex, vertices, nvertices,
+  element, elements, nelements,
+  facet, facets, nfacets,
   faces, nfaces,
   GridTopology,
   HalfEdgeTopology, HalfEdge,
