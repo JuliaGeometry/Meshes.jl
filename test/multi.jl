@@ -5,6 +5,8 @@
   poly  = PolyArea(outer, [hole1, hole2])
   multi = Multi([poly, poly])
   @test multi == multi
+  @test paramdim(multi) == 2
+  @test vertex(multi, 1) == vertex(poly, 1)
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
@@ -17,6 +19,7 @@
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
+  @test centroid(multi) == P2(1,1)
   @test P2(0.5,0.5) ∈ multi
   @test P2(1.5,1.5) ∈ multi
   @test P2(1.5,0.5) ∉ multi

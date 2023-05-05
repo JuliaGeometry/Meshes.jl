@@ -138,6 +138,8 @@ Multi(items) = Multi(collect(items))
 
 paramdim(multi::Multi) = maximum(paramdim, multi.items)
 
+vertex(multi::Multi, ind) = vertices(multi)[ind]
+
 vertices(multi::Multi) =
   [vertex for geom in multi.items for vertex in vertices(geom)]
 
