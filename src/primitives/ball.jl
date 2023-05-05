@@ -69,8 +69,3 @@ function (b::Ball{3,T})(ρ, θ, φ) where {T}
   z = ρ*r*cos(θ*T(π))
   c + Vec(x, y, z)
 end
-
-function Base.show(io::IO, b::Ball{Dim,T}) where {Dim,T}
-  c, r = b.center, b.radius
-  print(io, "Ball{$Dim,$T}($c, $r))")
-end
