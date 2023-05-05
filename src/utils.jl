@@ -190,9 +190,5 @@ function uvrotation(u::Vec{2}, v::Vec{2})
 end
 
 function uvrotation(u::Vec{3}, v::Vec{3})
-  u⃗ = normalize(u)
-  v⃗ = normalize(v)
-  re = √((1 + u⃗ ⋅ v⃗) / 2)
-  im = (u⃗ × v⃗) / 2re
-  convert(DCM, Quaternion(re, im...))
+  return rotation_between(v, u)
 end

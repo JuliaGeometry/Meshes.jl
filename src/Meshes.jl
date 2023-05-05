@@ -15,7 +15,8 @@ using Bessels: gamma
 using IterTools: ivec
 using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
-using ReferenceFrameRotations: EulerAngles, DCM, Quaternion
+using ReferenceFrameRotations: EulerAngles, DCM
+using Rotations: rotation_between
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
