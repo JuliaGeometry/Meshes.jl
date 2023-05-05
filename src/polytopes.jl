@@ -141,14 +141,14 @@ area(p::Polygon) = measure(p)
 
 Return the outer and inner chains of the polygon.
 """
-function chains(::Polygon) end
+function chains end
 
 """
     hasholes(polygon)
 
 Tells whether or not the `polygon` contains holes.
 """
-function hasholes(::Polygon) end
+function hasholes end
 
 """
     issimple(polygon)
@@ -164,7 +164,7 @@ issimple(p::Polygon) = issimple(typeof(p))
 
 Winding number of `point` with respect to the `polygon`.
 """
-function windingnumber(::Point, ::Polygon) end
+function windingnumber end
 
 """
     orientation(polygon)
