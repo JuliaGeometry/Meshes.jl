@@ -312,7 +312,7 @@
     @test vertex(mesh, 2) == points[2]
     @test vertex(mesh, 3) == points[3]
     @test vertex(mesh, 4) == points[4]
-    @test vertex(grid, 5) == points[5]
+    @test vertex(mesh, 5) == points[5]
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
