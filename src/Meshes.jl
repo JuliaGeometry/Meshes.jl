@@ -15,7 +15,7 @@ using Bessels: gamma
 using IterTools: ivec
 using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
-using ReferenceFrameRotations: EulerAngles, DCM
+using ReferenceFrameRotations: DCM
 using Rotations: rotation_between, Angle2d, QuatRotation, Rotation
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
@@ -117,8 +117,6 @@ export
   # rotations
   ClockwiseAngle,
   CounterClockwiseAngle,
-  EulerAngles,
-  TaitBryanAngles,
 
   # domain traits
   Domain,
