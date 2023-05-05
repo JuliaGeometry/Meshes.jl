@@ -17,6 +17,13 @@ Return the topological structure of the `mesh`.
 topology(m::Mesh) = m.topology
 
 """
+    vertex(mesh, ind)
+
+Return the vertex of a `mesh` at index `ind`.
+"""
+vertex(m::Mesh, ind) = vertices(m)[ind]
+
+"""
     vertices(mesh)
 
 Return the vertices of the `mesh`.
