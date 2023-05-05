@@ -11,10 +11,10 @@ from ReferenceFrameRotations.jl.
 ## Examples
 
 ```julia
-Rotate(EulerAngleAxis(pi/4, [1, 0, 0]))
+Rotate(rand(QuatRotation{Float64}))
 ```
 """
-struct Rotate{R} <: StatelessGeometricTransform
+struct Rotate{R<:Rotation} <: StatelessGeometricTransform
   rot::R
 end
 
