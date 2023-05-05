@@ -36,28 +36,20 @@ struct MetricBall{R,M} <: Neighborhood
   metric::M
 end
 
-function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
-  # default rotation
-  rot = if isnothing(rotation)
-    if Dim == 2
-      ClockwiseAngle(zero(T))
-    elseif Dim == 3
-      EulerAngles(zeros(T, Dim)...)
-    else
-      throw(ErrorException("not implemented"))
-    end
-  else
-    rotation
-  end
+function _default_rotation(::Val{2}, T)
+  one(Angle2d{T})
+end
 
+function _default_rotation(::Val{3}, T)
+  one(QuatRotation{T})
+end
+
+function MetricBall(radii::SVector{Dim,T}, rotation::Rotation{Dim}=_default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
   # rotation matrix
-  R = convert(DCM, rot)
-
-  # sanity check
-  @assert size(R) == (Dim, Dim) "invalid rotation for radii"
+  R = convert(DCM, rotation)
 
   # Mahalanobis metric
   metric = Mahalanobis(Symmetric(R'*Λ*R))
