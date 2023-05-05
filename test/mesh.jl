@@ -152,7 +152,7 @@
     # single vertex access
     grid = CartesianGrid{T}(10,10)
     @test vertex(grid, 1) == P2(0, 0)
-    @test vertex(grid, 100) == P2(0, 9)
+    @test vertex(grid, 121) == P2(10, 10)
 
     grid = CartesianGrid{T}(200,100)
     if T == Float32
@@ -181,9 +181,9 @@
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
 
     # single vertex access
-    grid = RectilinearGrid(T.(0:9),T.(0:9))
+    grid = RectilinearGrid(T.(0:10),T.(0:10))
     @test vertex(grid, 1) == P2(0, 0)
-    @test vertex(grid, 100) == P2(0, 9)
+    @test vertex(grid, 121) == P2(10, 10)
   end
 
   @testset "SimpleMesh" begin
