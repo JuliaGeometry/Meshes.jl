@@ -129,9 +129,9 @@
     end
 
     # cylinder surface with parallel planes
-    c = CylinderSurface(T(1),
-                        Plane(P3(0,0,0), V3(0,0,1)),
-                        Plane(P3(0,0,1), V3(0,0,1)))
+    c = CylinderSurface(Plane(P3(0,0,0), V3(0,0,1)),
+                        Plane(P3(0,0,1), V3(0,0,1)),
+                        T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
     xs = getindex.(cs, 1)
@@ -143,9 +143,9 @@
     @test all( T(0) ≤ z ≤ T(1) for z in zs)
 
     # cylinder surface with parallel shifted planes
-    c = CylinderSurface(T(1),
-                        Plane(P3(0,0,0), V3(0,0,1)),
-                        Plane(P3(1,1,1), V3(0,0,1)))
+    c = CylinderSurface(Plane(P3(0,0,0), V3(0,0,1)),
+                        Plane(P3(1,1,1), V3(0,0,1)),
+                        T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
     xs = getindex.(cs, 1)
@@ -155,9 +155,9 @@
     @test all(T(0) - eps(T) ≤ z ≤ T(1) + eps(T) for z in zs)
 
     # cylinder surface with non-parallel planes
-    c = CylinderSurface(T(1),
-                        Plane(P3(0,0,0), V3(1,0,1)),
-                        Plane(P3(1,1,1), V3(0,1,1)))
+    c = CylinderSurface(Plane(P3(0,0,0), V3(1,0,1)),
+                        Plane(P3(1,1,1), V3(0,1,1)),
+                        T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
     @test length(cs) == 200

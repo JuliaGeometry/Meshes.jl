@@ -43,9 +43,9 @@
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3,4]
 
-    cylsurf = CylinderSurface(T(1),
-                              Plane(P3(0,0,0), V3(0,0,1)),
-                              Plane(P3(1,1,1), V3(0,0,1)))
+    cylsurf = CylinderSurface(Plane(P3(0,0,0), V3(0,0,1)),
+                              Plane(P3(1,1,1), V3(0,0,1)),
+                              T(1))
     mesh = discretize(cylsurf, RegularDiscretization(10))
     @test nvertices(mesh) == 10*10 + 2
     @test nelements(mesh) == 10*(10-1) + 2*10

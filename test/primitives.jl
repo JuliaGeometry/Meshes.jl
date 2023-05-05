@@ -388,9 +388,9 @@
   end
 
   @testset "Cylinder" begin
-    c = Cylinder(T(5),
-                 Plane(P3(1,2,3), V3(0,0,1)),
-                 Plane(P3(4,5,6), V3(0,0,1)))
+    c = Cylinder(Plane(P3(1,2,3), V3(0,0,1)),
+                 Plane(P3(4,5,6), V3(0,0,1)),
+                 T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
     @test coordtype(c) == T
@@ -406,14 +406,17 @@
     @test P3(0.99,1.99,2.99) ∉ c
     @test P3(4.01,5.01,6.01) ∉ c
 
-    c = Cylinder(1.0)
-    @test coordtype(c) == Float64
-    c = Cylinder(1f0)
-    @test coordtype(c) == Float32
+    c1 = Cylinder(Segment(P3(0,0,0), P3(0,0,1)), T(1))
+    c2 = Cylinder(Segment(P3(0,0,0), P3(0,0,1)))
+    c3 = Cylinder(T(1))
+    @test c1 == c2 == c3
+
+    c = Cylinder(T(1))
+    @test coordtype(c) == T
     c = Cylinder(1)
     @test coordtype(c) == Float64
 
-    c = Cylinder(T(1), Segment(P3(0,0,0), P3(0,0,1)))
+    c = Cylinder(Segment(P3(0,0,0), P3(0,0,1)), T(1))
     @test radius(c) == T(1)
     @test bottom(c) == Plane(P3(0,0,0), V3(0,0,1))
     @test top(c) == Plane(P3(0,0,1), V3(0,0,1))
@@ -421,7 +424,7 @@
     @test centroid(c) == P3(0.0,0.0,0.5)
     @test axis(c) == Line(P3(0,0,0), P3(0,0,1))
     @test isright(c)
-    @test boundary(c) == CylinderSurface(T(1), Segment(P3(0,0,0), P3(0,0,1)))
+    @test boundary(c) == CylinderSurface(Segment(P3(0,0,0), P3(0,0,1)), T(1))
     @test measure(c) == volume(c) ≈ pi 
     @test P3(0,0,0) ∈ c
     @test P3(0,0,1) ∈ c
@@ -449,9 +452,14 @@
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi 
 
-    c = CylinderSurface(T(5),
-                 Plane(P3(1,2,3), V3(0,0,1)),
-                 Plane(P3(4,5,6), V3(0,0,1)))
+    c1 = CylinderSurface(Segment(P3(0,0,0), P3(0,0,1)), T(1))
+    c2 = CylinderSurface(Segment(P3(0,0,0), P3(0,0,1)))
+    c3 = CylinderSurface(T(1))
+    @test c1 == c2 == c3
+
+    c = CylinderSurface(Plane(P3(1,2,3), V3(0,0,1)),
+                        Plane(P3(4,5,6), V3(0,0,1)),
+                        T(5))
     @test measure(c) == area(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3*T(3)^2)
 
     c = CylinderSurface(1.0)

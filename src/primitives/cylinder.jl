@@ -3,15 +3,19 @@
 # ------------------------------------------------------------------
 
 """
-    Cylinder(radius, bottom, top)
+    Cylinder(bottom, top, radius)
 
 A solid circular cylinder embedded in R³ with given `radius`,
 delimited by `bottom` and `top` planes.
 
-    Cylinder(radius, segment)
+    Cylinder(segment, radius)
 
 Alternatively, construct a right circular cylinder with given `radius`
 and `segment` between `bottom` and `top` planes.
+
+    Cylinder(segment)
+
+Or construct a right circular cylinder with unit radius along the `segment`.
 
     Cylinder(radius)
 
@@ -20,24 +24,27 @@ Finally, construct a right vertical circular cylinder with given `radius`.
 See https://en.wikipedia.org/wiki/Cylinder. 
 """
 struct Cylinder{T} <: Primitive{3,T}
-  radius::T
   bot::Plane{T}
   top::Plane{T}
+  radius::T
 end
 
-function Cylinder(radius, segment::Segment{3,T}) where {T}
+function Cylinder(segment::Segment{3,T}, radius) where {T}
   a, b = extrema(segment)
   v    = b - a
   bot  = Plane(a, v)
   top  = Plane(b, v)
-  Cylinder(T(radius), bot, top)
+  Cylinder(bot, top, T(radius))
 end
+
+Cylinder(segment::Segment{3,T}) where {T} =
+  Cylinder(segment, T(1))
 
 function Cylinder(radius::T) where {T}
   _0 = (T(0), T(0), T(0))
   _1 = (T(0), T(0), T(1))
   segment = Segment(_0, _1)
-  Cylinder(radius, segment)
+  Cylinder(segment, radius)
 end
 
 paramdim(::Type{<:Cylinder}) = 3
@@ -56,7 +63,7 @@ axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
 
-boundary(c::Cylinder) = CylinderSurface(c.radius, c.bot, c.top)
+boundary(c::Cylinder) = CylinderSurface(c.bot, c.top, c.radius)
 
 measure(c::Cylinder{T}) where {T} =
   norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2

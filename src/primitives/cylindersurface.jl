@@ -3,41 +3,48 @@
 # ------------------------------------------------------------------
 
 """
-    CylinderSurface(radius, bottom, top)
+    CylinderSurface(bottom, top, radius)
 
 A circular cylinder surface embedded in R³ with given `radius`,
 delimited by `bottom` and `top` planes.
 
-    CylinderSurface(radius, segment)
+    CylinderSurface(segment, radius)
 
-Alternatively, construct a right circular cylinder with given `radius`
+Alternatively, construct a right circular cylinder surface with given `radius`
 and `segment` between `bottom` and `top` planes.
+
+    CylinderSurface(segment)
+
+Or construct a right circular cylinder surface with unit radius along the `segment`.
 
     CylinderSurface(radius)
 
-Finally, construct a right vertical circular cylinder with given `radius`.
+Finally, construct a right vertical circular cylinder surface with given `radius`.
 
 See https://en.wikipedia.org/wiki/Cylinder. 
 """
 struct CylinderSurface{T} <: Primitive{3,T}
-  radius::T
   bot::Plane{T}
   top::Plane{T}
+  radius::T
 end
 
-function CylinderSurface(radius, segment::Segment{3,T}) where {T}
+function CylinderSurface(segment::Segment{3,T}, radius) where {T}
   a, b = extrema(segment)
   v    = b - a
   bot  = Plane(a, v)
   top  = Plane(b, v)
-  CylinderSurface(T(radius), bot, top)
+  CylinderSurface(bot, top, T(radius))
 end
+
+CylinderSurface(segment::Segment{3,T}) where {T} =
+  CylinderSurface(segment, T(1))
 
 function CylinderSurface(radius::T) where {T}
   _0 = (T(0), T(0), T(0))
   _1 = (T(0), T(0), T(1))
   segment = Segment(_0, _1)
-  CylinderSurface(radius, segment)
+  CylinderSurface(segment, radius)
 end
 
 paramdim(::Type{<:CylinderSurface}) = 2
