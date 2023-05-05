@@ -149,6 +149,11 @@
     @test nelements(mesh) == 100
     @test eltype(mesh) <: Quadrangle
 
+    # single vertex access
+    grid = CartesianGrid{T}(10,10)
+    @test vertex(grid, 1) == P2(0, 0)
+    @test vertex(grid, 100) == P2(0, 9)
+
     grid = CartesianGrid{T}(200,100)
     if T == Float32
       @test sprint(show, MIME"text/plain"(), grid) == "200×100 CartesianGrid{2,Float32}\n  minimum: Point(0.0f0, 0.0f0)\n  maximum: Point(200.0f0, 100.0f0)\n  spacing: (1.0f0, 1.0f0)"
@@ -174,6 +179,11 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
+
+    # single vertex access
+    grid = RectilinearGrid(T.(0:9),T.(0:9))
+    @test vertex(grid, 1) == P2(0, 0)
+    @test vertex(grid, 100) == P2(0, 9)
   end
 
   @testset "SimpleMesh" begin
@@ -293,6 +303,16 @@
     connec = [connect((1,2,3))]
     mesh   = SimpleMesh(points, connec)
     @test nvertices(mesh) == length(vertices(mesh)) == 5
+
+    # single vertex access
+    points = rand(P2, 5)
+    connec = [connect((1,2,3))]
+    mesh   = SimpleMesh(points, connec)
+    @test vertex(mesh, 1) == points[1]
+    @test vertex(mesh, 2) == points[2]
+    @test vertex(mesh, 3) == points[3]
+    @test vertex(mesh, 4) == points[4]
+    @test vertex(grid, 5) == points[5]
 
     points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
     connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
