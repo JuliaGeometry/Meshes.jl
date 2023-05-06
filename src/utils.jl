@@ -190,5 +190,5 @@ function uvrotation(u::Vec{2}, v::Vec{2})
 end
 
 function uvrotation(u::Vec{3}, v::Vec{3})
-  return rotation_between(v, u)
+  return rotation_between(u, v)
 end
