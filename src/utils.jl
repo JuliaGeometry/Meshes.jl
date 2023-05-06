@@ -186,7 +186,7 @@ end
 Return rotation matrix from vector `u` to vector `v`.
 """
 function uvrotation(u::Vec{2}, v::Vec{2})
-  Angle2d(∠(u,v))
+  Angle2d(∠(u, v))
 end
 
 function uvrotation(u::Vec{3}, v::Vec{3})
