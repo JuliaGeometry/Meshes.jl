@@ -111,10 +111,6 @@ export
   # angles
   ∠,
 
-  # rotations
-  ClockwiseAngle,
-  CounterClockwiseAngle,
-
   # domain traits
   Domain,
   embeddim, paramdim, coordtype,
