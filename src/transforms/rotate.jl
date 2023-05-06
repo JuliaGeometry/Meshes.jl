@@ -6,7 +6,7 @@
     Rotate(rot)
 
 Rotate geometry or mesh with rotation `rot`
-from ReferenceFrameRotations.jl. 
+from Rotations.jl.
 
 ## Examples
 

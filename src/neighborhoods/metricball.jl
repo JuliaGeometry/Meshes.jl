@@ -11,8 +11,8 @@ of a metric and a set of `radii`. The two main examples are the
 Euclidean ball an the Mahalanobis (ellipsoid) ball.
 
 When multiple `radii` are provided, they can be rotated by a
-`rotation` specification from the [ReferenceFrameRotations.jl]
-(https://github.com/JuliaSpace/ReferenceFrameRotations.jl)
+`rotation` specification from the [Rotations.jl]
+(https://github.com/JuliaGeometry/Rotations.jl)
 package. Alternatively, a metric from the [Distances.jl]
 (https://github.com/JuliaStats/Distances.jl) package can
 be specified together with a single `radius`.
