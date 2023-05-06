@@ -28,7 +28,7 @@ Rotate
 ```@example transforms
 grid = CartesianGrid(10, 10)
 
-mesh = grid |> Rotate(ClockwiseAngle(π/4))
+mesh = grid |> Rotate(Angle2d(π/4))
 
 fig = Mke.Figure(resolution = (800, 400))
 viz(fig[1,1], grid)
