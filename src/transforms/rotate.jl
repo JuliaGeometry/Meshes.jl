@@ -31,7 +31,7 @@ vector `u` to the plane passing through the origin with normal vector `v`.
 Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 ```
 """
-Rotate(u::Vec, v::Vec) = Rotate(uvrotation(u, v))
+Rotate(u::Vec, v::Vec) = Rotate(uvrotation(v, u))
 
 isrevertible(::Type{<:Rotate}) = true
 

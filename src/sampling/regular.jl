@@ -136,7 +136,7 @@ function sample(::AbstractRNG, torus::Torus{T},
 
   c = center(torus)
   n⃗ = normal(torus)
-  M = uvrotation(n⃗, Vec{3,T}(0, 0, 1))
+  M = uvrotation(Vec{3,T}(0, 0, 1), n⃗)
 
   r⃗(u, v) = Vec{3,T}(kxy * cos(u), kxy * sin(u), kz * sin(v)) / (R - r*cos(v))
 

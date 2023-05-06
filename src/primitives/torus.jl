@@ -62,7 +62,7 @@ area(t::Torus) = measure(t)
 function Base.in(p::Point, t::Torus)
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
-  M = uvrotation(Vec(0, 0, 1), n⃗)
+  M = uvrotation(n⃗, Vec(0, 0, 1))
   x, y, z = M * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
