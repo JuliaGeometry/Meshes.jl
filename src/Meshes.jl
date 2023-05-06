@@ -42,9 +42,6 @@ include("vectors.jl")
 include("points.jl")
 include("angles.jl")
 
-# rotations
-include("rotations.jl")
-
 # type traits
 include("traits.jl")
 
