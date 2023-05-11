@@ -54,7 +54,7 @@
     @test nelements(s) == 100
     x = coordinates.(centroid.(s))
     D = pairwise(Euclidean(), x)
-    d = [D[i, j] for i in 1:length(x) for j in 1:i-1]
+    d = [D[i, j] for i in 1:length(x) for j in 1:(i - 1)]
     @test all(≥(T(10)), d)
   end
 
@@ -333,7 +333,7 @@
     n = length(ps)
     @test first(ps) isa P2
     @test all(∈(mesh), ps)
-    @test all(norm(ps[i] - ps[j]) ≥ 0.2 for i in 1:n for j in i+1:n)
+    @test all(norm(ps[i] - ps[j]) ≥ 0.2 for i in 1:n for j in (i + 1):n)
 
     # geometries with almost zero measure
     # can still be sampled (at least one point)

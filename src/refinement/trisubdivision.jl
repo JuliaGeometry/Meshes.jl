@@ -51,10 +51,10 @@ function refine(mesh, ::TriSubdivision)
     m1 = midpoints[_ordered(i, j)]
     m2 = midpoints[_ordered(j, k)]
     m3 = midpoints[_ordered(k, i)]
-    triangles[t+1] = (i, m1, m3)
-    triangles[t+2] = (j, m2, m1)
-    triangles[t+3] = (k, m3, m2)
-    triangles[t+4] = (m1, m2, m3)
+    triangles[t + 1] = (i, m1, m3)
+    triangles[t + 2] = (j, m2, m1)
+    triangles[t + 3] = (k, m3, m2)
+    triangles[t + 4] = (m1, m2, m3)
   end
 
   SimpleMesh(points, connect.(triangles))

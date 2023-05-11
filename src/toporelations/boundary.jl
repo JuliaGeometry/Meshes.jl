@@ -187,7 +187,7 @@ function (∂::Boundary{2,1,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
   t = ∂.topology
   l = loop(half4elem(t, elem))
   v = CircularVector(l)
-  [edge4pair(t, (v[i], v[i+1])) for i in 1:length(v)]
+  [edge4pair(t, (v[i], v[i + 1])) for i in 1:length(v)]
 end
 
 function (∂::Boundary{2,0,2,T})(elem::Integer) where {T<:HalfEdgeTopology}

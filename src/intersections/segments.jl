@@ -27,7 +27,7 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     # use dimension with largest vector component to avoid division by zero
     v = b₀ - a
     i = argmax(abs.(v))
-    λc, λd = ((c-a)[i], (d-a)[i]) ./ v[i]
+    λc, λd = ((c - a)[i], (d - a)[i]) ./ v[i]
     λc = mayberound(mayberound(λc, zero(T)), l₁)
     λd = mayberound(mayberound(λd, zero(T)), l₁)
     if (λc > l₁ && λd > l₁) || (λc < 0 && λd < 0)

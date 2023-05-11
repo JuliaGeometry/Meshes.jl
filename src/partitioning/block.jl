@@ -71,7 +71,7 @@ function partsubsets(::AbstractRNG, domain::Domain, method::BlockPartition)
     boffset = CartesianIndex(ntuple(i -> 1, Dim))
     bfinish = CartesianIndex(Dims(nblocks))
     for (i, bcoords) in enumerate(bstart:bfinish)
-      for b in (bcoords-boffset):(bcoords+boffset)
+      for b in (bcoords - boffset):(bcoords + boffset)
         if all(Tuple(bstart) .≤ Tuple(b) .≤ Tuple(bfinish)) && b ≠ bcoords
           push!(neighbors[i], linear[b])
         end

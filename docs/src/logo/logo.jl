@@ -13,7 +13,7 @@ function meshes(s)
   # build point array
   pts = polysample(box(O, 600, 600, vertices=true), 16)
   for pt in ngon(O, 100, 3, π / 6, vertices=true)
-    for θ in 0:π/8:6π
+    for θ in 0:(π / 8):(6π)
       for i in 160:40:265
         push!(pts, pt + polar(i, θ))
       end

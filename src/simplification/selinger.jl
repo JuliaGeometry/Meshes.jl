@@ -29,7 +29,7 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
   # penalty for each possible segment
   n = length(p)
   P = Dict{Tuple{Int,Int},T}()
-  for i in 1:n, o in 1:n-2
+  for i in 1:n, o in 1:(n - 2)
     j = i + o
     i₊ = i + 1
     j₋ = j - 1
@@ -53,7 +53,7 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
   bestpath = dijkstra(I, 2, 1)
   bestlen = length(bestpath)
   bestpen = penalty(P, bestpath)
-  for i in 2:n-1
+  for i in 2:(n - 1)
     path = dijkstra(I, i + 1, i)
     len = length(path)
     if len ≤ bestlen
@@ -104,4 +104,4 @@ function buildpath(parentof, j)
   reverse(p)
 end
 
-penalty(P, path) = sum(P[(path[k], path[k+1])] for k in 1:length(path)-1)
+penalty(P, path) = sum(P[(path[k], path[k + 1])] for k in 1:(length(path) - 1))

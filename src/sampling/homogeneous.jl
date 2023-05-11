@@ -45,7 +45,7 @@ function sample(
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
     triangle(λ₁, λ₂)
   end
-  (randpoint() for _ in 1:method.size)
+  (randpoint() for _ in 1:(method.size))
 end
 
 function sample(

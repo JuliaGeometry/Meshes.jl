@@ -86,8 +86,8 @@ function refine(mesh, ::CatmullClark)
     for i in 1:length(edges)
       u = elem + offset₁
       v = edges[i] + offset₂
-      w = verts[i+1]
-      z = edges[i+1] + offset₂
+      w = verts[i + 1]
+      z = edges[i + 1] + offset₂
       quad = connect((u, v, w, z))
       push!(newconnec, quad)
     end

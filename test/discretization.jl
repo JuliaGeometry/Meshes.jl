@@ -1,7 +1,7 @@
 @testset "Discretization" begin
   @testset "FanTriangulation" begin
     pts = P2[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.75, 1.5), (0.25, 1.5), (0.0, 1.0)]
-    tris = [Triangle([pts[1], pts[i], pts[i+1]]) for i in 2:length(pts)-1]
+    tris = [Triangle([pts[1], pts[i], pts[i + 1]]) for i in 2:(length(pts) - 1)]
     hex = Hexagon(pts)
     mesh = discretize(hex, FanTriangulation())
     @test nvertices(mesh) == 6
@@ -127,7 +127,7 @@
 
     points = P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 0)]
     connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
-    target = SimpleMesh(points[1:end-1], connec)
+    target = SimpleMesh(points[1:(end - 1)], connec)
     poly = PolyArea(points)
     mesh = discretize(poly, FIST(shuffle=false))
     @test mesh == target

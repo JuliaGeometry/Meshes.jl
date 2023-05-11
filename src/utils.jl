@@ -31,7 +31,7 @@ function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {D
   # to all possible pairs of coordinates are zero
   AB, AC = B - A, C - A
   result = true
-  for i in 1:Dim, j in (i+1):Dim
+  for i in 1:Dim, j in (i + 1):Dim
     u = Vec(AB[i], AB[j])
     v = Vec(AC[i], AC[j])
     if !isapprox(u × v, zero(T), atol=atol(T)^2)

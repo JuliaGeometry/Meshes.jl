@@ -56,9 +56,9 @@ function discretizewithin(chain::Chain{2}, method::FIST)
     if !isempty(𝒬) # clip an ear
       # 0. select candidate ear
       i = pop!(𝒬)
-      𝒬[𝒬.>i] .-= 1
+      𝒬[𝒬 .> i] .-= 1
       # 1. push a new triangle to 𝒯
-      push!(𝒯, connect((inds[i-1], inds[i], inds[i+1]), Triangle))
+      push!(𝒯, connect((inds[i - 1], inds[i], inds[i + 1]), Triangle))
       # 2. remove the vertex from 𝒫
       inds = inds[setdiff(1:n, mod1(i, n))]
       𝒫 = Chain(points[inds])
@@ -81,12 +81,12 @@ function discretizewithin(chain::Chain{2}, method::FIST)
       # intersect and fix the issue by clipping ear (vᵢ, vᵢ+1, vᵢ+2)
       v = vertices(𝒫)
       for i in 1:n
-        s1 = Segment(v[i-1], v[i])
-        s2 = Segment(v[i+1], v[i+2])
+        s1 = Segment(v[i - 1], v[i])
+        s2 = Segment(v[i + 1], v[i + 2])
         λ(I) = type(I) == CrossingSegments
         if intersection(λ, s1, s2)
           # 1. push a new triangle to 𝒯
-          push!(𝒯, connect((inds[i], inds[i+1], inds[i+2]), Triangle))
+          push!(𝒯, connect((inds[i], inds[i + 1], inds[i + 2]), Triangle))
           # 2. remove the vertex from 𝒫
           inds = inds[setdiff(1:n, mod1(i + 1, n))]
           𝒫 = Chain(points[inds])
@@ -127,15 +127,15 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
 
   # helper function to compute the vexity of vertex i
   function vexity(i)
-    α = ∠(v[i-1], v[i], v[i+1]) # oriented angle
+    α = ∠(v[i - 1], v[i], v[i + 1]) # oriented angle
     θ = α > 0 ? 2 * T(π) - α : -α # inner angle
     θ < π ? :CONVEX : :REFLEX
   end
 
   # helper function to check if vertex j is inside cone i
   function incone(j, i)
-    s1 = sideof(v[j], Segment(v[i], v[i-1]))
-    s2 = sideof(v[j], Segment(v[i], v[i+1]))
+    s1 = sideof(v[j], Segment(v[i], v[i - 1]))
+    s2 = sideof(v[j], Segment(v[i], v[i + 1]))
     if vexity(i) == :CONVEX
       s1 != :LEFT && s2 != :RIGHT
     else
@@ -148,10 +148,10 @@ function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
 
   # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
   λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
-  sᵢ = Segment(v[i-1], v[i+1])
+  sᵢ = Segment(v[i - 1], v[i + 1])
   intersects = false
   for j in 1:nvertices(𝒫)
-    sⱼ = Segment(v[j], v[j+1])
+    sⱼ = Segment(v[j], v[j + 1])
     if intersection(λ, sᵢ, sⱼ)
       intersects = true
       break

@@ -58,7 +58,7 @@ function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where
   srange = range(smin + δs, stop=smax, length=last(sz))
 
   # reuse samples on the boundary
-  points = sample(Sphere(c, r), RegularSampling(sz[1:Dim-1]))
+  points = sample(Sphere(c, r), RegularSampling(sz[1:(Dim - 1)]))
 
   scale(p, s) = Point(s * coordinates(p))
 

@@ -61,7 +61,7 @@ function cotangentlaplacian!(L, 𝒩, v)
   for i in 1:n
     js = CircularVector(𝒩(i))
     for k in 1:length(js)
-      j₋, j, j₊ = js[k-1], js[k], js[k+1]
+      j₋, j, j₊ = js[k - 1], js[k], js[k + 1]
       vᵢ, vⱼ = v[i], v[j]
       v₋, v₊ = v[j₋], v[j₊]
       αᵢⱼ = ∠(vⱼ, v₋, vᵢ)

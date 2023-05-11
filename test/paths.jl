@@ -8,7 +8,7 @@
 
   @testset "LinearPath" begin
     p = traverse(grid, LinearPath())
-    @test p == 1:100*100
+    @test p == 1:(100 * 100)
   end
 
   @testset "RandomPath" begin

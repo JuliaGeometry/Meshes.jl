@@ -51,7 +51,7 @@ be indexed with arbitrarily negative or positive indices.
 """
 function vertices(c::Chain)
   if isclosed(c)
-    vs = @view c.vertices[begin:end-1]
+    vs = @view c.vertices[begin:(end - 1)]
     CircularVector(vs)
   else
     c.vertices
@@ -66,7 +66,7 @@ Return the segments linking consecutive points of the `chain`.
 function segments(c::Chain)
   v = c.vertices
   n = length(v)
-  (Segment(view(v, [i, i + 1])) for i in 1:n-1)
+  (Segment(view(v, [i, i + 1])) for i in 1:(n - 1))
 end
 
 """
@@ -113,7 +113,7 @@ function issimple(c::Chain)
   λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
   ss = collect(segments(c))
   for i in 1:length(ss)
-    for j in i+1:length(ss)
+    for j in (i + 1):length(ss)
       if intersection(λ, ss[i], ss[j])
         return false
       end
@@ -138,7 +138,7 @@ See https://en.wikipedia.org/wiki/Winding_number.
 """
 function windingnumber(p::Point{2,T}, c::Chain{2,T}) where {T}
   vₒ, vs = p, c.vertices
-  ∑ = sum(∠(vs[i], vₒ, vs[i+1]) for i in 1:length(vs)-1)
+  ∑ = sum(∠(vs[i], vₒ, vs[i + 1]) for i in 1:(length(vs) - 1))
   ∑ / T(2π)
 end
 
@@ -181,8 +181,8 @@ end
 
 function orientation(c::Chain{2,T}, ::TriangleOrientation) where {T}
   v = vertices(c)
-  Δ(i) = signarea(v[1], v[i], v[i+1])
-  a = mapreduce(Δ, +, 2:length(v)-1)
+  Δ(i) = signarea(v[1], v[i], v[i + 1])
+  a = mapreduce(Δ, +, 2:(length(v) - 1))
   a ≥ zero(T) ? :CCW : :CW
 end
 
@@ -199,8 +199,8 @@ function Base.unique!(c::Chain)
   # remove true duplicates
   keep = Int[]
   sorted = @view verts[perms]
-  for i in 1:length(sorted)-1
-    if sorted[i] != sorted[i+1]
+  for i in 1:(length(sorted) - 1)
+    if sorted[i] != sorted[i + 1]
       # save index in the original vector
       push!(keep, perms[i])
     end
@@ -289,15 +289,15 @@ absolute value of the angles returned is never
 greater than `π`.
 """
 function angles(c::Chain)
-  θs = map(2:length(c.vertices)-1) do i
-    p1 = c.vertices[i-1]
+  θs = map(2:(length(c.vertices) - 1)) do i
+    p1 = c.vertices[i - 1]
     p2 = c.vertices[i]
-    p3 = c.vertices[i+1]
+    p3 = c.vertices[i + 1]
     ∠(p1, p2, p3)
   end
 
   if isclosed(c)
-    p1 = c.vertices[end-1]
+    p1 = c.vertices[end - 1]
     p2 = c.vertices[1]
     p3 = c.vertices[2]
     pushfirst!(θs, ∠(p1, p2, p3))
@@ -344,7 +344,7 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
   pinds = Vector{Int}[]
   offset = 0
   for nvertex in length.(pchains)
-    push!(pinds, indices[offset+1:offset+nvertex])
+    push!(pinds, indices[(offset + 1):(offset + nvertex)])
     offset += nvertex
   end
 
@@ -394,11 +394,11 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
 
     # insert hole at closest vertex
     outer = [
-      outer[begin:jmin-1]
+      outer[begin:(jmin - 1)]
       [A′, B′]
       circshift(inner, -l + 1)[2:end]
       [B′′, A′′]
-      outer[jmin+1:end]
+      outer[(jmin + 1):end]
     ]
     oinds = [
       oinds[begin:jmin]

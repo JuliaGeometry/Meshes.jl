@@ -69,7 +69,7 @@ function initeps(v::AbstractVector{Point{Dim,T}}) where {Dim,T}
   n = length(v)
   ϵ = typemax(T)
   l = Line(first(v), last(v))
-  d = [evaluate(Euclidean(), v[i], l) for i in 2:n-1]
+  d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
   ϵ = quantile(d, 0.25)
   2ϵ
 end
@@ -80,7 +80,7 @@ function ϵsimplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
   # to reference line
   l = Line(first(v), last(v))
   imax, dmax = 0, zero(T)
-  for i in 2:length(v)-1
+  for i in 2:(length(v) - 1)
     d = evaluate(Euclidean(), v[i], l)
     if d > dmax
       imax = i
@@ -93,6 +93,6 @@ function ϵsimplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
   else
     v₁ = ϵsimplify(v[begin:imax], ϵ)
     v₂ = ϵsimplify(v[imax:end], ϵ)
-    [v₁[begin:end-1]; v₂]
+    [v₁[begin:(end - 1)]; v₂]
   end
 end

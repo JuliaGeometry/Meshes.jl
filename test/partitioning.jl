@@ -63,12 +63,13 @@
       grid = CartesianGrid{T}(n, n)
 
       p = partition(grid, DirectionPartition(T.((1, 0))))
-      @test setify(indices(p)) == setify([collect((i-1)*n+1:i*n) for i in 1:n])
+      @test setify(indices(p)) ==
+            setify([collect(((i - 1) * n + 1):(i * n)) for i in 1:n])
       ns = [nelements(d) for d in p]
       @test all(ns .== n)
 
       p = partition(grid, DirectionPartition(T.((0, 1))))
-      @test setify(indices(p)) == setify([collect(i:n:n*n) for i in 1:n])
+      @test setify(indices(p)) == setify([collect(i:n:(n * n)) for i in 1:n])
       ns = [nelements(d) for d in p]
       @test all(ns .== n)
     end

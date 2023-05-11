@@ -39,7 +39,7 @@ function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T
   topo = GridTopology((nx - 1, ny - 1))
   middle = collect(elements(topo))
   offset = nx * ny - nx
-  for i in 1:nx-1
+  for i in 1:(nx - 1)
     u = offset + i
     v = offset + i + 1
     w = i + 1
@@ -56,7 +56,7 @@ function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T
   push!(points, c - r * e⃗)
 
   # connect north pole with triangles
-  north = map(1:ny-1) do j
+  north = map(1:(ny - 1)) do j
     u = nx * ny + 1
     v = 1 + (j - 1) * nx
     w = 1 + (j) * nx
@@ -68,7 +68,7 @@ function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T
   push!(north, connect((u, v, w)))
 
   # connect south pole with triangles
-  south = map(1:ny-1) do j
+  south = map(1:(ny - 1)) do j
     u = nx * ny + 2
     v = (j) * nx
     w = (j + 1) * nx
@@ -94,7 +94,7 @@ function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
   # connect regular samples with quadrangles
   topo = GridTopology((nx - 1, ny - 1))
   rings = collect(elements(topo))
-  for j in 1:ny-1
+  for j in 1:(ny - 1)
     u = (j) * nx
     v = (j - 1) * nx + 1
     w = (j) * nx + 1
@@ -107,7 +107,7 @@ function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
   push!(points, center(ball))
 
   # connect center with triangles
-  tris = map(1:nx-1) do i
+  tris = map(1:(nx - 1)) do i
     u = nx * ny + 1
     v = i + 1
     w = i
@@ -133,7 +133,7 @@ function discretize(cylsurf::CylinderSurface{T}, method::RegularDiscretization) 
   # connect regular samples with quadrangles
   topo = GridTopology((nx - 1, ny - 1))
   middle = collect(elements(topo))
-  for j in 1:ny-1
+  for j in 1:(ny - 1)
     u = (j) * nx
     v = (j - 1) * nx + 1
     w = (j) * nx + 1
@@ -147,7 +147,7 @@ function discretize(cylsurf::CylinderSurface{T}, method::RegularDiscretization) 
   push!(points, top(cylsurf)(0, 0))
 
   # connect south pole with triangles
-  south = map(1:nx-1) do i
+  south = map(1:(nx - 1)) do i
     u = nx * ny + 1
     v = i + 1
     w = i
@@ -160,7 +160,7 @@ function discretize(cylsurf::CylinderSurface{T}, method::RegularDiscretization) 
 
   # connect north pole with triangles
   offset = nx * ny - nx
-  north = map(1:nx-1) do i
+  north = map(1:(nx - 1)) do i
     u = nx * ny + 2
     v = offset + i + 1
     w = offset + i

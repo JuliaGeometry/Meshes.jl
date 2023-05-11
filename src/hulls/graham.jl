@@ -51,7 +51,7 @@ function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
   # rotational sweep
   c = [p₀, p[1], p[2]]
   for pᵢ in p[3:end]
-    while ∠(c[end-1], c[end], pᵢ) > atol(T)
+    while ∠(c[end - 1], c[end], pᵢ) > atol(T)
       pop!(c)
     end
     push!(c, pᵢ)
