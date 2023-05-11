@@ -190,7 +190,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
     for i in 1:n
       # update pointers prev and next
       he = half4pair[(v[i], v[i+1])]
-      he.prev = half4pair[(v[i-1],   v[i])]
+      he.prev = half4pair[(v[i-1], v[i])]
       he.next = half4pair[(v[i+1], v[i+2])]
 
       # if not a border element, update half
@@ -205,11 +205,11 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   end
 
   # save halfedges in a vector of pairs
-  halves  = Vector{Tuple{HalfEdge,HalfEdge}}()
+  halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
     if (u, v) ∉ visited
-      push!(halves,  (he, he.half))
+      push!(halves, (he, he.half))
       push!(visited, (u, v))
       push!(visited, (v, u))
     end
@@ -282,7 +282,7 @@ Return the half-edge of the half-edge topology `t` for the edge `e`.
 
 Always return the half-edge to the "left".
 """
-half4edge(t::HalfEdgeTopology, e::Integer) = t.halfedges[2e - 1]
+half4edge(t::HalfEdgeTopology, e::Integer) = t.halfedges[2e-1]
 
 """
     half4pair(t, uv)

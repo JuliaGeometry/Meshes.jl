@@ -31,17 +31,16 @@ end
 
 function Cylinder(segment::Segment{3,T}, radius) where {T}
   a, b = extrema(segment)
-  v    = b - a
-  bot  = Plane(a, v)
-  top  = Plane(b, v)
+  v = b - a
+  bot = Plane(a, v)
+  top = Plane(b, v)
   Cylinder(bot, top, T(radius))
 end
 
-Cylinder(segment::Segment{3,T}) where {T} =
-  Cylinder(segment, T(1))
+Cylinder(segment::Segment{3,T}) where {T} = Cylinder(segment, T(1))
 
 Cylinder(radius::T) where {T} =
-  Cylinder(Segment((T(0),T(0),T(0)), (T(0),T(0),T(1))), radius)
+  Cylinder(Segment((T(0), T(0), T(0)), (T(0), T(0), T(1))), radius)
 
 paramdim(::Type{<:Cylinder}) = 3
 
@@ -61,8 +60,7 @@ isright(c::Cylinder) = isright(boundary(c))
 
 boundary(c::Cylinder) = CylinderSurface(c.bot, c.top, c.radius)
 
-measure(c::Cylinder{T}) where {T} =
-  norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2
+measure(c::Cylinder{T}) where {T} = norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2
 
 volume(c::Cylinder) = measure(c)
 

@@ -28,7 +28,8 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
 (::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(collect(vertices))
-(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
+(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} =
+  PL(Point.(vertices))
 (::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
 
 """

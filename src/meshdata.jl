@@ -72,8 +72,7 @@ meshdata(vertices, elements,
 )
 ```
 """
-meshdata(vertices, elements, values) =
-  meshdata(SimpleMesh(vertices, elements), values)
+meshdata(vertices, elements, values) = meshdata(SimpleMesh(vertices, elements), values)
 
 """
     meshdata(domain; vtable, etable)

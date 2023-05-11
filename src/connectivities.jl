@@ -84,8 +84,7 @@ connect((1,2,3)) # Triangle
 connect((1,2,3,4)) # Quadrangle
 ```
 """
-connect(indices::Tuple, PL::Type{<:Polytope}) =
-  Connectivity{PL,length(indices)}(indices)
+connect(indices::Tuple, PL::Type{<:Polytope}) = Connectivity{PL,length(indices)}(indices)
 
 function connect(indices::Tuple, ::Type{Ngon})
   N = length(indices)
@@ -102,8 +101,10 @@ end
 
 Materialize a face using the `connec` list and a global vector of `points`.
 """
-function materialize(connec::Connectivity{PL},
-                     points::AbstractVector{P}) where {PL<:Polytope,P<:Point}
+function materialize(
+  connec::Connectivity{PL},
+  points::AbstractVector{P}
+) where {PL<:Polytope,P<:Point}
   PL(view(points, SVector(connec.indices...)))
 end
 

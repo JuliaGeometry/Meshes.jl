@@ -3,7 +3,7 @@ using Luxor, Random
 Random.seed!(2021)
 
 function meshes(s)
-  Δ = s/600 # scale factor, original design was 600units
+  Δ = s / 600 # scale factor, original design was 600units
   scale(Δ)
   # background
   squircle(O, 285, 285, :clip, rt=0.2)
@@ -12,10 +12,10 @@ function meshes(s)
 
   # build point array
   pts = polysample(box(O, 600, 600, vertices=true), 16)
-  for pt in ngon(O, 100, 3, π/6, vertices=true)
+  for pt in ngon(O, 100, 3, π / 6, vertices=true)
     for θ in 0:π/8:6π
       for i in 160:40:265
-        push!(pts, pt  + polar(i, θ))
+        push!(pts, pt + polar(i, θ))
       end
     end
   end
@@ -24,7 +24,7 @@ function meshes(s)
   tris = polytriangulate(pts)
 
   # draw triangles
-  setline(.5)
+  setline(0.5)
   for tri in tris
     sethue("grey")
     poly(tri, :stroke, close=true)
@@ -32,7 +32,7 @@ function meshes(s)
 
   # clipping for julia circles
   @layer begin
-    for pt in ngon(O + (0, 35), 150, 3, π/6, vertices=true)
+    for pt in ngon(O + (0, 35), 150, 3, π / 6, vertices=true)
       circlepath(pt, 110, :path)
     end
     sethue("white")
@@ -83,7 +83,7 @@ function logotext(w, h, fname)
     sethue("black")
     # find all fonts available on Linux with `fc-list | -f 2 -d ":"`
     fontface("Julius Sans One")
-    fontsize(h/2.5)
+    fontsize(h / 2.5)
     text("Meshes.jl", halign=:center, valign=:middle)
   end
   @layer begin
@@ -95,6 +95,6 @@ function logotext(w, h, fname)
 end
 
 for ext in [".svg", ".png"]
-  logo(240, "../assets/logo"*ext)
-  logotext(600, 200, "../assets/logo-text"*ext)
+  logo(240, "../assets/logo" * ext)
+  logotext(600, 200, "../assets/logo-text" * ext)
 end

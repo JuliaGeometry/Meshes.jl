@@ -66,7 +66,7 @@ Return the segments linking consecutive points of the `chain`.
 function segments(c::Chain)
   v = c.vertices
   n = length(v)
-  (Segment(view(v, [i,i+1])) for i in 1:n-1)
+  (Segment(view(v, [i, i + 1])) for i in 1:n-1)
 end
 
 """
@@ -110,8 +110,7 @@ A chain is simple when all its segments only
 intersect at end points.
 """
 function issimple(c::Chain)
-  λ(I) = !(type(I) == CornerTouchingSegments ||
-           type(I) == NoIntersection)
+  λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
   ss = collect(segments(c))
   for i in 1:length(ss)
     for j in i+1:length(ss)
@@ -176,7 +175,7 @@ function orientation(c::Chain{2,T}, ::WindingOrientation) where {T}
   # pick any segment
   x1, x2 = c.vertices[1:2]
   x̄ = centroid(Segment(x1, x2))
-  w = T(2π)*windingnumber(x̄, c) - ∠(x1, x̄, x2)
+  w = T(2π) * windingnumber(x̄, c) - ∠(x1, x̄, x2)
   isapprox(w, T(π), atol=atol(T)) ? :CCW : :CW
 end
 
@@ -292,7 +291,7 @@ greater than `π`.
 function angles(c::Chain)
   θs = map(2:length(c.vertices)-1) do i
     p1 = c.vertices[i-1]
-    p2 = c.vertices[i  ]
+    p2 = c.vertices[i]
     p3 = c.vertices[i+1]
     ∠(p1, p2, p3)
   end
@@ -320,7 +319,7 @@ function innerangles(c::Chain{2,T}) where {T}
   # correct sign of angles in case orientation is CW
   θs = orientation(c) == :CW ? -angles(c) : angles(c)
 
-  [θ > 0 ? 2*T(π) - θ : -θ for θ in θs]
+  [θ > 0 ? 2 * T(π) - θ : -θ for θ in θs]
 end
 
 """
@@ -338,11 +337,12 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
   pchains = [coordinates.(vertices(open(c))) for c in chains]
 
   # sort vertices lexicographically
-  coords  = [coord for pchain in pchains for coord in pchain]
+  coords = [coord for pchain in pchains for coord in pchain]
   indices = sortperm(sortperm(coords))
 
   # each chain has its own set of indices
-  pinds = Vector{Int}[]; offset = 0
+  pinds = Vector{Int}[]
+  offset = 0
   for nvertex in length.(pchains)
     push!(pinds, indices[offset+1:offset+nvertex])
     offset += nvertex
@@ -351,11 +351,11 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
   # sort chains based on leftmost vertex
   leftmost = argmin.(pinds)
   minimums = getindex.(pinds, leftmost)
-  reorder  = sortperm(minimums)
+  reorder = sortperm(minimums)
   leftmost = leftmost[reorder]
   minimums = minimums[reorder]
-  pchains  = pchains[reorder]
-  pinds    = pinds[reorder]
+  pchains = pchains[reorder]
+  pinds = pinds[reorder]
 
   # initialize outer boundary
   outer = first(pchains)
@@ -387,21 +387,23 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
     v = B - A
     u = Vec(-v[2], v[1])
     n = u / norm(u)
-    A′  = A + δ/2 * n
-    A′′ = A - δ/2 * n
-    B′  = B + δ/2 * n
-    B′′ = B - δ/2 * n
+    A′ = A + δ / 2 * n
+    A′′ = A - δ / 2 * n
+    B′ = B + δ / 2 * n
+    B′′ = B - δ / 2 * n
 
     # insert hole at closest vertex
     outer = [
-      outer[begin:jmin-1]; [A′, B′];
-      circshift(inner, -l+1)[2:end];
-      [B′′, A′′]; outer[jmin+1:end]
+      outer[begin:jmin-1]
+      [A′, B′]
+      circshift(inner, -l + 1)[2:end]
+      [B′′, A′′]
+      outer[jmin+1:end]
     ]
     oinds = [
-      oinds[begin:jmin];
-      circshift(iinds, -l+1);
-      [iinds[l]];
+      oinds[begin:jmin]
+      circshift(iinds, -l + 1)
+      [iinds[l]]
       oinds[jmin:end]
     ]
   end

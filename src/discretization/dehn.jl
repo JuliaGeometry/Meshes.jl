@@ -50,10 +50,10 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
 
     # adjust diagonal if necessary
     if !isdiag
-      l  = Line(v[I[i-1]], v[I[i+1]])
-      js = rinds[intriangle .+ 1]
-      k  = argmax([evaluate(Euclidean(), l, v[I[j]]) for j in js])
-      j  = js[k]
+      l = Line(v[I[i-1]], v[I[i+1]])
+      js = rinds[intriangle.+1]
+      k = argmax([evaluate(Euclidean(), l, v[I[j]]) for j in js])
+      j = js[k]
       linds = i:j
       rinds = j:i+n
     end
@@ -61,11 +61,11 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     # we adjust the circular indices and
     # use `inds` instead of `I` in the
     # recursion to avoid memory copies
-    linds = [mod1(ind,n) for ind in linds]
-    rinds = [mod1(ind,n) for ind in rinds]
+    linds = [mod1(ind, n) for ind in linds]
+    rinds = [mod1(ind, n) for ind in rinds]
 
     # perform recursion
-    left  = dehn1899(v, inds[linds])
+    left = dehn1899(v, inds[linds])
     right = dehn1899(v, inds[rinds])
     [left; right]
   else

@@ -43,20 +43,19 @@ unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
 Return a view of the `domain` containing all elements that
 are inside the `geometry`.
 """
-Base.view(domain::Domain, geometry::Geometry) =
-  view(domain, indices(domain, geometry))
+Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
 
 function Base.view(data::Data, geometry::Geometry)
-  D   = typeof(data)
+  D = typeof(data)
   dom = domain(data)
   tab = values(data)
 
   # retrieve subdomain
-  inds   = indices(dom, geometry)
+  inds = indices(dom, geometry)
   subdom = view(dom, inds)
 
   # retrieve subtable
-  tinds  = _linear(dom, inds)
+  tinds = _linear(dom, inds)
   subtab = Tables.subset(tab, tinds)
 
   # data table for elements
@@ -90,8 +89,8 @@ function indices(grid::CartesianGrid, box::Box)
   lo, up = coordinates.(extrema(□))
 
   # Cartesian indices of new corners
-  ilo = @. max(ceil(Int,  (lo - or) / sp) + 1,  1)
-  iup = @. min(floor(Int, (up - or) / sp)    , sz)
+  ilo = @. max(ceil(Int, (lo - or) / sp) + 1, 1)
+  iup = @. min(floor(Int, (up - or) / sp), sz)
 
   CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
 end

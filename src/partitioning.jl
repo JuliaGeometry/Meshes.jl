@@ -15,8 +15,7 @@ abstract type PartitionMethod end
 Partition `object` with partition `method`.
 Optionally, specify random number generator `rng`.
 """
-partition(object, method::PartitionMethod) =
-  partition(Random.GLOBAL_RNG, object, method)
+partition(object, method::PartitionMethod) = partition(Random.GLOBAL_RNG, object, method)
 
 function partition(rng::AbstractRNG, object, method::PartitionMethod)
   subsets, metadata = partsubsets(rng, object, method)
@@ -39,8 +38,7 @@ A method for partitioning domain/data objects with predicate functions.
 """
 abstract type PredicatePartitionMethod <: PartitionMethod end
 
-function partsubsets(rng::AbstractRNG, domain::Domain,
-                     method::PredicatePartitionMethod)
+function partsubsets(rng::AbstractRNG, domain::Domain, method::PredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
@@ -68,8 +66,7 @@ A method for partitioning domain/data objects with spatial predicate functions.
 """
 abstract type SPredicatePartitionMethod <: PartitionMethod end
 
-function partsubsets(rng::AbstractRNG, domain::Domain,
-                     method::SPredicatePartitionMethod)
+function partsubsets(rng::AbstractRNG, domain::Domain, method::SPredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)

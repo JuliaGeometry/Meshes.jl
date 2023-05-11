@@ -38,23 +38,23 @@ function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
 
   # faces perpendicular to x
   tx = GridTopology(nx + 1, ny, nz)
-  i1 = cart2elem(tx, i , j, k) - cx*((j-1) + ny*(k-1))
-  i2 = cart2elem(tx, i₊, j, k) - cx*((j-1) + ny*(k-1))
+  i1 = cart2elem(tx, i, j, k) - cx * ((j - 1) + ny * (k - 1))
+  i2 = cart2elem(tx, i₊, j, k) - cx * ((j - 1) + ny * (k - 1))
 
   # faces perpendicular to y
   ty = GridTopology(ny + 1, nx, nz)
-  i3 = cart2elem(ty, j , i, k) - cy*((i-1) + nx*(k-1))
-  i4 = cart2elem(ty, j₊, i, k) - cy*((i-1) + nx*(k-1))
+  i3 = cart2elem(ty, j, i, k) - cy * ((i - 1) + nx * (k - 1))
+  i4 = cart2elem(ty, j₊, i, k) - cy * ((i - 1) + nx * (k - 1))
 
   # faces perpendicular to z
   tz = GridTopology(nz + 1, nx, ny)
-  i5 = cart2elem(tz, k , i, j) - cz*((i-1) + nx*(j-1))
-  i6 = cart2elem(tz, k₊, i, j) - cz*((i-1) + nx*(j-1))
+  i5 = cart2elem(tz, k, i, j) - cz * ((i - 1) + nx * (j - 1))
+  i6 = cart2elem(tz, k₊, i, j) - cz * ((i - 1) + nx * (j - 1))
 
   # offsets
   ox = 0
-  oy = nx*ny*nz + !cx*ny*nz
-  oz = oy + nx*ny*nz + !cy*nx*nz
+  oy = nx * ny * nz + !cx * ny * nz
+  oz = oy + nx * ny * nz + !cy * nx * nz
 
   i1 += ox
   i2 += ox
@@ -77,14 +77,14 @@ function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   j₊ = cy ? mod1(j + 1, ny) : j + 1
   k₊ = cz ? mod1(k + 1, nz) : k + 1
 
-  i1 = cart2corner(t, i , j , k )
-  i2 = cart2corner(t, i₊, j , k )
-  i3 = cart2corner(t, i₊, j₊, k )
-  i4 = cart2corner(t, i , j₊, k )
-  i5 = cart2corner(t, i , j , k₊)
-  i6 = cart2corner(t, i₊, j , k₊)
+  i1 = cart2corner(t, i, j, k)
+  i2 = cart2corner(t, i₊, j, k)
+  i3 = cart2corner(t, i₊, j₊, k)
+  i4 = cart2corner(t, i, j₊, k)
+  i5 = cart2corner(t, i, j, k₊)
+  i6 = cart2corner(t, i₊, j, k₊)
   i7 = cart2corner(t, i₊, j₊, k₊)
-  i8 = cart2corner(t, i , j₊, k₊)
+  i8 = cart2corner(t, i, j₊, k₊)
   [i1, i2, i3, i4, i5, i6, i7, i8]
 end
 
@@ -105,17 +105,17 @@ function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
 
   # edges perpendicular to x
   tx = GridTopology(nx + 1, ny)
-  i1 = cart2elem(tx, i , j) - cx*(j-1)
-  i2 = cart2elem(tx, i₊, j) - cx*(j-1)
+  i1 = cart2elem(tx, i, j) - cx * (j - 1)
+  i2 = cart2elem(tx, i₊, j) - cx * (j - 1)
 
   # edges perpendicular to y
   ty = GridTopology(ny + 1, nx)
-  i3 = cart2elem(ty, j , i) - cy*(i-1)
-  i4 = cart2elem(ty, j₊, i) - cy*(i-1)
+  i3 = cart2elem(ty, j, i) - cy * (i - 1)
+  i4 = cart2elem(ty, j₊, i) - cy * (i - 1)
 
   # offsets
   ox = 0
-  oy = nx*ny + !cx*ny
+  oy = nx * ny + !cx * ny
 
   i1 += ox
   i2 += ox
@@ -135,10 +135,10 @@ function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   i₊ = cx ? mod1(i + 1, nx) : i + 1
   j₊ = cy ? mod1(j + 1, ny) : j + 1
 
-  i1 = cart2corner(t, i , j )
-  i2 = cart2corner(t, i₊, j )
+  i1 = cart2corner(t, i, j)
+  i2 = cart2corner(t, i₊, j)
   i3 = cart2corner(t, i₊, j₊)
-  i4 = cart2corner(t, i , j₊)
+  i4 = cart2corner(t, i, j₊)
   [i1, i2, i3, i4]
 end
 
@@ -151,14 +151,14 @@ function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
   mx = cx ? nx : nx + 1
   my = cy ? ny : ny + 1
 
-  if ind ≤ mx*ny # edges perpendicular to x
+  if ind ≤ mx * ny # edges perpendicular to x
     i, j = corner2cart(t, ind)
     j₊ = cy ? mod1(j + 1, ny) : j + 1
     i1 = ind
     i2 = cart2corner(t, i, j₊)
   else # edges perpendicular to y
     ty = GridTopology(my, nx)
-    j, i = elem2cart(ty, ind - mx*ny)
+    j, i = elem2cart(ty, ind - mx * ny)
     i₊ = cx ? mod1(i + 1, nx) : i + 1
     i1 = cart2corner(t, i, j)
     i2 = cart2corner(t, i₊, j)

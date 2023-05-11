@@ -40,8 +40,7 @@ function simplify(chain::Chain, method::DouglasPeucker)
 end
 
 # simplification by means of binary search
-function βsimplify(v::AbstractVector{Point{Dim,T}},
-                   min, max, maxiter) where {Dim,T}
+function βsimplify(v::AbstractVector{Point{Dim,T}}, min, max, maxiter) where {Dim,T}
   i = 0
   u = v
   n = length(u)
@@ -93,7 +92,7 @@ function ϵsimplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
     [first(v), last(v)]
   else
     v₁ = ϵsimplify(v[begin:imax], ϵ)
-    v₂ = ϵsimplify(v[imax:end],   ϵ)
+    v₂ = ϵsimplify(v[imax:end], ϵ)
     [v₁[begin:end-1]; v₂]
   end
 end

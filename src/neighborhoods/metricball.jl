@@ -60,7 +60,7 @@ function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   @assert size(R) == (Dim, Dim) "invalid rotation for radii"
 
   # Mahalanobis metric
-  metric = Mahalanobis(Symmetric(R'*Λ*R))
+  metric = Mahalanobis(Symmetric(R' * Λ * R))
 
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
