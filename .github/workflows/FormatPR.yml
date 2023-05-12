@@ -1,5 +1,4 @@
-# https://github.com/julia-actions/julia-format/blob/master/workflows/format_pr.yml
-name: format-pr
+name: FormatPR
 on:
   push:
     branches:
@@ -13,8 +12,6 @@ jobs:
         run: |
           julia -e 'import Pkg; Pkg.add("JuliaFormatter")'
           julia -e 'using JuliaFormatter; format(".")'
-      # https://github.com/marketplace/actions/create-pull-request
-      # https://github.com/peter-evans/create-pull-request#reference-example
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v5
