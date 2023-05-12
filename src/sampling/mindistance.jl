@@ -46,7 +46,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
 
   # expected number of Poisson samples
   # for relative radius (Lagae & Dutré 2007)
-  N = 2V/√3 * (ρ/α)^2
+  N = 2V / √3 * (ρ / α)^2
 
   # number of oversamples (Medeiros et al. 2014)
   O = ceil(Int, δ * N)

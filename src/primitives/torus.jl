@@ -16,10 +16,10 @@ struct Torus{T} <: Primitive{3,T}
   minor::T
 end
 
-Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} = 
+Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} =
   Torus(center, normal, T(major), T(minor))
 
-Torus(center::Tuple, normal::Tuple, major, minor) = 
+Torus(center::Tuple, normal::Tuple, major, minor) =
   Torus(Point(center), Vec(normal), major, minor)
 
 """

@@ -26,9 +26,9 @@ BlockPartition(sides...; neighbors=false) =
 function partsubsets(::AbstractRNG, domain::Domain, method::BlockPartition)
   psides = method.sides
 
-  bbox   = boundingbox(domain)
+  bbox = boundingbox(domain)
   bsides = sides(bbox)
-  Dim    = length(bsides)
+  Dim = length(bsides)
 
   @assert all(psides .≤ bsides) "invalid block sides"
 
@@ -37,12 +37,12 @@ function partsubsets(::AbstractRNG, domain::Domain, method::BlockPartition)
   lo, up = extrema(bbox)
 
   # find number of blocks to left and right
-  nleft   = ceil.(Int, (ce - lo) ./ psides)
-  nright  = ceil.(Int, (up - ce) ./ psides)
+  nleft = ceil.(Int, (ce - lo) ./ psides)
+  nright = ceil.(Int, (up - ce) ./ psides)
   nblocks = @. nleft + nright
 
   # top left corner of first block
-  start   = coordinates(ce) .- nleft .* psides
+  start = coordinates(ce) .- nleft .* psides
 
   subsets = [Int[] for i in 1:prod(nblocks)]
 
@@ -62,14 +62,14 @@ function partsubsets(::AbstractRNG, domain::Domain, method::BlockPartition)
 
     append!(subsets[i], j)
   end
-  
+
   # intitialize metadata
   metadata = Dict()
   neighbors = [Int[] for i in 1:prod(nblocks)]
 
   # neighboring blocks metadata
   if method.neighbors == true
-    bstart  = CartesianIndex(ntuple(i -> 1, Dim))
+    bstart = CartesianIndex(ntuple(i -> 1, Dim))
     boffset = CartesianIndex(ntuple(i -> 1, Dim))
     bfinish = CartesianIndex(Dims(nblocks))
     for (i, bcoords) in enumerate(bstart:bfinish)
