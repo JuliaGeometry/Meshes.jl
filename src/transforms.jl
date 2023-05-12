@@ -57,7 +57,8 @@ _points(p::PointSet) = collect(p)
 # convert lists of points into objects
 _reconstruct(points, ::Point) = first(points)
 _reconstruct(points, ::G) where {G<:Geometry} = G(points)
-_reconstruct(points, domain::Domain) = _reconstruct(points, Collection(collect(domain)))
+_reconstruct(points, domain::Domain) =
+  _reconstruct(points, Collection(collect(domain)))
 _reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 _reconstruct(points, ::PointSet) = PointSet(points)
 

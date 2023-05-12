@@ -22,7 +22,8 @@ end
 
 isrevertible(::Type{<:LambdaMuSmoothing}) = true
 
-preprocess(::LambdaMuSmoothing, mesh) = laplacematrix(mesh, weights=:uniform)
+preprocess(::LambdaMuSmoothing, mesh) =
+  laplacematrix(mesh, weights=:uniform)
 
 function applypoint(transform::LambdaMuSmoothing, points, prep)
   n = transform.n

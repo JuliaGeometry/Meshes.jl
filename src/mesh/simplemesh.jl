@@ -40,7 +40,8 @@ SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) =
   SimpleMesh(Point.(coords), topology)
 
 function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=false)
-  topology = relations ? HalfEdgeTopology(connec) : SimpleTopology(connec)
+  topology = relations ? HalfEdgeTopology(connec) :
+             SimpleTopology(connec)
   SimpleMesh(vertices, topology)
 end
 
@@ -54,4 +55,5 @@ nvertices(m::SimpleMesh) = length(m.vertices)
 Convert any `mesh` to a simple mesh with explicit
 list of vertices and [`SimpleTopology`](@ref).
 """
-Base.convert(::Type{<:SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
+Base.convert(::Type{<:SimpleMesh}, m::Mesh) =
+  SimpleMesh(vertices(m), topology(m))

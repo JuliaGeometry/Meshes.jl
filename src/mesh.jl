@@ -128,7 +128,9 @@ newmesh = topoconvert(HalfEdgeTopology, mesh)
 topoconvert(TP::Type{<:Topology}, m::Mesh) =
   SimpleMesh(vertices(m), convert(TP, topology(m)))
 
-==(m₁::Mesh, m₂::Mesh) = vertices(m₁) == vertices(m₂) && topology(m₁) == topology(m₂)
+==(m₁::Mesh, m₂::Mesh) =
+  vertices(m₁) == vertices(m₂) &&
+  topology(m₁) == topology(m₂)
 
 function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
   t = topology(m)

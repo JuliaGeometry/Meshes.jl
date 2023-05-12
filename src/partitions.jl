@@ -17,7 +17,8 @@ end
 Partition(object, subsets, metadata=Dict()) =
   Partition{typeof(object)}(object, subsets, metadata)
 
-==(p₁::Partition, p₂::Partition) = p₁.object == p₂.object && p₁.subsets == p₂.subsets
+==(p₁::Partition, p₂::Partition) =
+  p₁.object == p₂.object && p₁.subsets == p₂.subsets
 
 Base.parent(p::Partition) = p.object
 
@@ -60,11 +61,9 @@ function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
   println(io, partition)
   N = length(subs)
   I, J = N > 10 ? (5, N - 4) : (N, N + 1)
-  lines = [
-    ["  └─$(partition[i])" for i in 1:I]
+  lines = [["  └─$(partition[i])" for i in 1:I]
     (N > 10 ? ["  ⋮"] : [])
-    ["  └─$(partition[i])" for i in J:N]
-  ]
+    ["  └─$(partition[i])" for i in J:N]]
   print(io, join(lines, "\n"))
   !isempty(meta) && print(io, "\n  metadata: ", join(keys(meta), ", "))
 end

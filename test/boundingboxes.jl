@@ -20,8 +20,7 @@
   # cartesian grid
   @test boundingbox(CartesianGrid{T}(10, 10)) == Box(P2(0, 0), P2(10, 10))
   @test boundingbox(CartesianGrid{T}(100, 200)) == Box(P2(0, 0), P2(100, 200))
-  @test boundingbox(CartesianGrid((10, 10), T.((1, 1)), T.((1, 1)))) ==
-        Box(P2(1, 1), P2(11, 11))
+  @test boundingbox(CartesianGrid((10, 10), T.((1, 1)), T.((1, 1)))) == Box(P2(1, 1), P2(11, 11))
 
   # point set views
   d = PointSet(T[0 1 2; 0 2 1])

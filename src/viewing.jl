@@ -43,7 +43,8 @@ unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
 Return a view of the `domain` containing all elements that
 are inside the `geometry`.
 """
-Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
+Base.view(domain::Domain, geometry::Geometry) =
+  view(domain, indices(domain, geometry))
 
 function Base.view(data::Data, geometry::Geometry)
   D = typeof(data)

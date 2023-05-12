@@ -12,20 +12,14 @@ Themes.compile(
   joinpath(@__DIR__, "src/assets/light.scss"),
   joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
 )
-Themes.compile(
-  joinpath(@__DIR__, "src/assets/dark.scss"),
-  joinpath(@__DIR__, "src/assets/themes/documenter-dark.css")
-)
+Themes.compile(joinpath(@__DIR__, "src/assets/dark.scss"), joinpath(@__DIR__, "src/assets/themes/documenter-dark.css"))
 
 makedocs(
   modules=[Meshes, MeshViz],
   format=Documenter.HTML(
     assets=[
       "assets/favicon.ico",
-      asset(
-        "https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap",
-        class=:css
-      )
+      asset("https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap", class=:css)
     ],
     prettyurls=istravis,
     mathengine=KaTeX(
@@ -54,7 +48,10 @@ makedocs(
       "Points" => "points.md",
       "Vectors" => "vectors.md",
       "Angles" => "angles.md",
-      "Geometries" => ["geometries/primitives.md", "geometries/polytopes.md"],
+      "Geometries" => [
+        "geometries/primitives.md",
+        "geometries/polytopes.md"
+      ],
       "Meshes" => "meshes.md",
       "Mesh data" => "meshdata.md",
       "Neighborhoods" => "neighborhoods.md",
@@ -75,8 +72,12 @@ makedocs(
       "Visualization" => "visualization.md",
       "Traits" => "traits.md"
     ],
-    "Contributing" => ["contributing/guidelines.md"],
-    "About" => ["License" => "about/license.md"],
+    "Contributing" => [
+      "contributing/guidelines.md"
+    ],
+    "About" => [
+      "License" => "about/license.md"
+    ],
     "Index" => "links.md"
   ]
 )

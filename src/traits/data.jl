@@ -145,13 +145,12 @@ function Base.getproperty(data::Data, var::Symbol)
   end
 end
 
-Base.getproperty(data::Data, var::AbstractString) = getproperty(data, Symbol(var))
+Base.getproperty(data::Data, var::AbstractString) =
+  getproperty(data, Symbol(var))
 
-function Base.getindex(
-  data::Data,
+function Base.getindex(data::Data,
   inds::AbstractVector{Int},
-  vars::AbstractVector{Symbol}
-)
+  vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
   dom = domain(data)
@@ -165,10 +164,14 @@ function Base.getindex(
   constructor(data)(newdom, newval)
 end
 
-Base.getindex(data::Data, inds::AbstractVector{Int}, var::Symbol) =
+Base.getindex(data::Data,
+  inds::AbstractVector{Int},
+  var::Symbol) =
   getproperty(view(data, inds), var)
 
-function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
+function Base.getindex(data::Data,
+  inds::AbstractVector{Int},
+  ::Colon)
   dview = view(data, inds)
   newdom = domain(dview)
   newtab = values(dview)
@@ -176,7 +179,9 @@ function Base.getindex(data::Data, inds::AbstractVector{Int}, ::Colon)
   constructor(data)(newdom, newval)
 end
 
-function Base.getindex(data::Data, ind::Int, vars::AbstractVector{Symbol})
+function Base.getindex(data::Data,
+  ind::Int,
+  vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
   dom = domain(data)
@@ -186,7 +191,8 @@ function Base.getindex(data::Data, ind::Int, vars::AbstractVector{Symbol})
   (; pairs..., geometry=dom[ind])
 end
 
-Base.getindex(data::Data, ind::Int, var::Symbol) = getproperty(data, var)[ind]
+Base.getindex(data::Data, ind::Int, var::Symbol) =
+  getproperty(data, var)[ind]
 
 function Base.getindex(data::Data, ind::Int, ::Colon)
   dom = domain(data)
@@ -209,12 +215,14 @@ function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
   constructor(data)(dom, newval)
 end
 
-Base.getindex(data::Data, ::Colon, var::Symbol) = getproperty(data, var)
+Base.getindex(data::Data, ::Colon, var::Symbol) =
+  getproperty(data, var)
 
 Base.getindex(data::Data, inds, vars::AbstractVector{<:AbstractString}) =
   getindex(data, inds, Symbol.(vars))
 
-Base.getindex(data::Data, inds, var::AbstractString) = getindex(data, inds, Symbol(var))
+Base.getindex(data::Data, inds, var::AbstractString) =
+  getindex(data, inds, Symbol(var))
 
 function Base.getindex(data::Data, inds, var::Regex)
   tab = values(data)
@@ -255,7 +263,8 @@ function asarray(data::Data, var::Symbol)
   hassize ? reshape(dataval, size(D)) : dataval
 end
 
-asarray(data::Data, var::AbstractString) = asarray(data, Symbol(var))
+asarray(data::Data, var::AbstractString) =
+  asarray(data, Symbol(var))
 
 # -----------
 # IO METHODS

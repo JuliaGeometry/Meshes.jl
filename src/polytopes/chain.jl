@@ -110,7 +110,8 @@ A chain is simple when all its segments only
 intersect at end points.
 """
 function issimple(c::Chain)
-  λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
+  λ(I) = !(type(I) == CornerTouchingSegments ||
+           type(I) == NoIntersection)
   ss = collect(segments(c))
   for i in 1:length(ss)
     for j in (i + 1):length(ss)
@@ -394,11 +395,9 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
 
     # insert hole at closest vertex
     outer = [
-      outer[begin:(jmin - 1)]
-      [A′, B′]
+      outer[begin:(jmin - 1)] [A′, B′]
       circshift(inner, -l + 1)[2:end]
-      [B′′, A′′]
-      outer[(jmin + 1):end]
+      [B′′, A′′] outer[(jmin + 1):end]
     ]
     oinds = [
       oinds[begin:jmin]

@@ -21,13 +21,11 @@ struct RegularSampling{N} <: ContinuousSamplingMethod
   sizes::Dims{N}
 end
 
-RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
+RegularSampling(sizes::Vararg{Int,N}) where {N} =
+  RegularSampling(sizes)
 
-function sample(
-  ::AbstractRNG,
-  geom::Geometry{Dim,T},
-  method::RegularSampling
-) where {Dim,T}
+function sample(::AbstractRNG, geom::Geometry{Dim,T},
+  method::RegularSampling) where {Dim,T}
   V = T <: AbstractFloat ? T : Float64
   D = paramdim(geom)
   pr = isperiodic(geom)
@@ -38,7 +36,8 @@ function sample(
   ivec(geom(uv...) for uv in Iterators.product(rs...))
 end
 
-function sample(::AbstractRNG, sphere::Sphere{3,T}, method::RegularSampling) where {T}
+function sample(::AbstractRNG, sphere::Sphere{3,T},
+  method::RegularSampling) where {T}
   V = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(sphere))
   δθ = 1 / (sz[1] + 1)
@@ -48,7 +47,8 @@ function sample(::AbstractRNG, sphere::Sphere{3,T}, method::RegularSampling) whe
   ivec(sphere(θ, φ) for θ in θs, φ in φs)
 end
 
-function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where {Dim,T}
+function sample(::AbstractRNG, ball::Ball{Dim,T},
+  method::RegularSampling) where {Dim,T}
   V = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(ball))
   c, r = center(ball), radius(ball)
@@ -65,11 +65,8 @@ function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where
   ivec(scale(p, s) for p in points, s in srange)
 end
 
-function sample(
-  ::AbstractRNG,
-  cylsurf::CylinderSurface{T},
-  method::RegularSampling
-) where {T}
+function sample(::AbstractRNG, cylsurf::CylinderSurface{T},
+  method::RegularSampling) where {T}
   V = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(cylsurf))
   r = radius(cylsurf)
@@ -116,11 +113,13 @@ function sample(
   ivec(point(φ, z) for φ in φs, z in zs)
 end
 
-function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
+function sample(rng::AbstractRNG, grid::CartesianGrid,
+  method::RegularSampling)
   sample(rng, boundingbox(grid), method)
 end
 
-function sample(::AbstractRNG, torus::Torus{T}, method::RegularSampling) where {T}
+function sample(::AbstractRNG, torus::Torus{T},
+  method::RegularSampling) where {T}
   V = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(torus))
   R, r = radii(torus)

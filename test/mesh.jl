@@ -64,16 +64,8 @@
     @test spacing(grid) == T.((5, 5, 5))
     @test nelements(grid) == 20 * 10 * 5
     @test eltype(grid) <: Hexahedron{3,T}
-    @test vertices(grid[1]) == P3[
-      (0, 0, 0),
-      (5, 0, 0),
-      (5, 5, 0),
-      (0, 5, 0),
-      (0, 0, 5),
-      (5, 0, 5),
-      (5, 5, 5),
-      (0, 5, 5)
-    ]
+    @test vertices(grid[1]) ==
+          P3[(0, 0, 0), (5, 0, 0), (5, 5, 0), (0, 5, 0), (0, 0, 5), (5, 0, 5), (5, 5, 5), (0, 5, 5)]
     @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
     # contructor with offset
@@ -295,18 +287,11 @@
     @test collect(elements(topology(mesh))) == connect.([(1, 2, 3), (4, 5, 6)])
 
     # merge operation with 3D geometries
-    mesh₁ = SimpleMesh(
-      P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)],
-      connect.([(1, 2, 3, 4)], Tetrahedron)
-    )
-    mesh₂ = SimpleMesh(
-      P3[(1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1)],
-      connect.([(1, 2, 3, 4)], Tetrahedron)
-    )
+    mesh₁ = SimpleMesh(P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)], connect.([(1, 2, 3, 4)], Tetrahedron))
+    mesh₂ = SimpleMesh(P3[(1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1)], connect.([(1, 2, 3, 4)], Tetrahedron))
     mesh = merge(mesh₁, mesh₂)
     @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
-    @test collect(elements(topology(mesh))) ==
-          connect.([(1, 2, 3, 4), (5, 6, 7, 8)], Tetrahedron)
+    @test collect(elements(topology(mesh))) == connect.([(1, 2, 3, 4), (5, 6, 7, 8)], Tetrahedron)
 
     # convert any mesh to SimpleMesh
     grid = CartesianGrid{T}(10, 10)

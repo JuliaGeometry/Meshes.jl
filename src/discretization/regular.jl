@@ -15,9 +15,11 @@ struct RegularDiscretization{N} <: DiscretizationMethod
   sizes::Dims{N}
 end
 
-RegularDiscretization(sizes::Vararg{Int,N}) where {N} = RegularDiscretization(sizes)
+RegularDiscretization(sizes::Vararg{Int,N}) where {N} =
+  RegularDiscretization(sizes)
 
-function discretize(geometry::Geometry, method::RegularDiscretization)
+function discretize(geometry::Geometry,
+  method::RegularDiscretization)
   sz = fitdims(method.sizes, paramdim(geometry))
   ip = isperiodic(geometry)
   np = @. sz + !ip
@@ -28,7 +30,8 @@ function discretize(geometry::Geometry, method::RegularDiscretization)
   SimpleMesh(collect(points), topo)
 end
 
-function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T}
+function discretize(sphere::Sphere{3,T},
+  method::RegularDiscretization) where {T}
   nx, ny = fitdims(method.sizes, paramdim(sphere))
 
   # sample points regularly
@@ -84,7 +87,8 @@ function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T
   SimpleMesh(points, connec)
 end
 
-function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
+function discretize(ball::Ball{2,T},
+  method::RegularDiscretization) where {T}
   nx, ny = fitdims(method.sizes, paramdim(ball))
 
   # sample points regularly
@@ -123,7 +127,8 @@ function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
   SimpleMesh(points, connec)
 end
 
-function discretize(cylsurf::CylinderSurface{T}, method::RegularDiscretization) where {T}
+function discretize(cylsurf::CylinderSurface{T},
+  method::RegularDiscretization) where {T}
   nx, ny = fitdims(method.sizes, paramdim(cylsurf))
 
   # sample points regularly

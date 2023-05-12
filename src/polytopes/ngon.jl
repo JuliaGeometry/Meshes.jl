@@ -89,12 +89,10 @@ function Base.in(p::Point{2}, t::Triangle{2})
   x, y = coordinates(p)
 
   # barycentric coordinates
-  λ₁ =
-    ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) /
-    ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₂ =
-    ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) /
-    ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
+  λ₁ = ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) /
+       ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
+  λ₂ = ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) /
+       ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
   λ₃ = 1 - λ₁ - λ₂
 
   # barycentric check

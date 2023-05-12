@@ -45,12 +45,8 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(
-  a::Point{Dim,T},
-  b::Point{Dim,T},
-  c::Point{Dim,T},
-  d::Point{Dim,T}
-) where {Dim,T}
+function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T},
+  c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
   A = [(b - a) (c - d)]
   y = c - a
 

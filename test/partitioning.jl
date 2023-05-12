@@ -63,8 +63,7 @@
       grid = CartesianGrid{T}(n, n)
 
       p = partition(grid, DirectionPartition(T.((1, 0))))
-      @test setify(indices(p)) ==
-            setify([collect(((i - 1) * n + 1):(i * n)) for i in 1:n])
+      @test setify(indices(p)) == setify([collect(((i - 1) * n + 1):(i * n)) for i in 1:n])
       ns = [nelements(d) for d in p]
       @test all(ns .== n)
 
@@ -327,7 +326,8 @@
     @test setify(s1) == setify(s2)
 
     # pXp=p (for deterministic p)
-    for p in [BlockPartition(T(10), T(10)), BisectFractionPartition(T.((0.1, 0.1)))]
+    for p in [BlockPartition(T(10), T(10)),
+      BisectFractionPartition(T.((0.1, 0.1)))]
       pp = ProductPartition(p, p)
       s1 = indices(partition(g, pp))
       s2 = indices(partition(g, p))
@@ -390,20 +390,15 @@
 
   @testset "Data trait" begin
     data = meshdata(CartesianGrid{T}(10, 10), etable=(a=rand(100), b=rand(100)))
-    for method in [
-      UniformPartition(2),
-      FractionPartition(T(0.5)),
-      BlockPartition(T(2)),
-      BallPartition(T(2)),
+    for method in [UniformPartition(2), FractionPartition(T(0.5)),
+      BlockPartition(T(2)), BallPartition(T(2)),
       BisectPointPartition(V2(1, 1), P2(5, 5)),
       BisectFractionPartition(V2(1, 1), T(0.5)),
-      PlanePartition(V2(1, 1)),
-      DirectionPartition(V2(1, 1)),
+      PlanePartition(V2(1, 1)), DirectionPartition(V2(1, 1)),
       PredicatePartition((i, j) -> iseven(i + j)),
       SpatialPredicatePartition((x, y) -> norm(x + y) < T(5)),
       ProductPartition(UniformPartition(2), UniformPartition(2)),
-      HierarchicalPartition(UniformPartition(2), UniformPartition(2))
-    ]
+      HierarchicalPartition(UniformPartition(2), UniformPartition(2))]
       Π = partition(data, method)
       inds = reduce(vcat, indices(Π))
       @test sort(inds) == 1:100

@@ -79,7 +79,8 @@ end
 
 # specialize methods for performance
 ==(v₁::DataView, v₂::DataView) =
-  getfield(v₁, :data) == getfield(v₂, :data) && getfield(v₁, :inds) == getfield(v₂, :inds)
+  getfield(v₁, :data) == getfield(v₂, :data) &&
+  getfield(v₁, :inds) == getfield(v₂, :inds)
 
 # -----------
 # IO METHODS

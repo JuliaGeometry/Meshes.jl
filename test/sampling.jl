@@ -64,19 +64,16 @@
 
     b = Box(P2(0, 0), P2(2, 2))
     ps = sample(b, RegularSampling(3))
-    @test collect(ps) ==
-          P2[(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
+    @test collect(ps) == P2[(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
     ps = sample(b, RegularSampling(2, 3))
     @test collect(ps) == P2[(0, 0), (2, 0), (0, 1), (2, 1), (0, 2), (2, 2)]
 
     b = BezierCurve([P2(0, 0), P2(1, 0), P2(1, 1)])
     ps = sample(b, RegularSampling(4))
-    ts = P2[
-      (0.0, 0.0),
+    ts = P2[(0.0, 0.0),
       (0.5555555555555556, 0.1111111111111111),
       (0.8888888888888888, 0.4444444444444444),
-      (1.0, 1.0)
-    ]
+      (1.0, 1.0)]
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
@@ -90,40 +87,26 @@
 
     s = Sphere(P3(0, 0, 0), T(2))
     ps = sample(s, RegularSampling(2, 2))
-    ts = P3[
-      (1.7320508075688772, 0.0, 1.0),
+    ts = P3[(1.7320508075688772, 0.0, 1.0),
       (1.7320508075688772, 0.0, -1.0),
       (-1.7320508075688772, 0.0, 1.0),
-      (-1.7320508075688772, 0.0, -1.0)
-    ]
+      (-1.7320508075688772, 0.0, -1.0)]
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
 
     b = Ball(P2(0, 0), T(2))
     ps = sample(b, RegularSampling(4, 3))
-    ts = P2[
-      (1.0, 0.0),
-      (0.0, 1.0),
-      (-1.0, 0.0),
-      (0.0, -1.0),
-      (1.5, 0.0),
-      (0.0, 1.5),
-      (-1.5, 0.0),
-      (0.0, -1.5),
-      (2.0, 0.0),
-      (0.0, 2.0),
-      (-2.0, 0.0),
-      (0.0, -2.0)
-    ]
+    ts = P2[(1.0, 0.0), (0.0, 1.0), (-1.0, 0.0), (0.0, -1.0),
+      (1.5, 0.0), (0.0, 1.5), (-1.5, 0.0), (0.0, -1.5),
+      (2.0, 0.0), (0.0, 2.0), (-2.0, 0.0), (0.0, -2.0)]
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
 
     b = Ball(P3(0, 0, 0), T(2))
     ps = sample(b, RegularSampling(3, 2, 3))
-    ts = P3[
-      (0.7071067811865475, 0.0, 0.7071067811865476),
+    ts = P3[(0.7071067811865475, 0.0, 0.7071067811865476),
       (1.0, 0.0, 6.123233995736766e-17),
       (0.7071067811865476, 0.0, -0.7071067811865475),
       (-0.7071067811865475, 8.659560562354932e-17, 0.7071067811865476),
@@ -140,18 +123,15 @@
       (1.4142135623730951, 0.0, -1.414213562373095),
       (-1.414213562373095, 1.7319121124709863e-16, 1.4142135623730951),
       (-2.0, 2.4492935982947064e-16, 1.2246467991473532e-16),
-      (-1.4142135623730951, 1.7319121124709868e-16, -1.414213562373095)
-    ]
+      (-1.4142135623730951, 1.7319121124709868e-16, -1.414213562373095)]
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
 
     # cylinder surface with parallel planes
-    c = CylinderSurface(
-      Plane(P3(0, 0, 0), V3(0, 0, 1)),
+    c = CylinderSurface(Plane(P3(0, 0, 0), V3(0, 0, 1)),
       Plane(P3(0, 0, 1), V3(0, 0, 1)),
-      T(1)
-    )
+      T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
     xs = getindex.(cs, 1)
@@ -163,11 +143,9 @@
     @test all(T(0) ≤ z ≤ T(1) for z in zs)
 
     # cylinder surface with parallel shifted planes
-    c = CylinderSurface(
-      Plane(P3(0, 0, 0), V3(0, 0, 1)),
+    c = CylinderSurface(Plane(P3(0, 0, 0), V3(0, 0, 1)),
       Plane(P3(1, 1, 1), V3(0, 0, 1)),
-      T(1)
-    )
+      T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
     xs = getindex.(cs, 1)
@@ -177,11 +155,9 @@
     @test all(T(0) - eps(T) ≤ z ≤ T(1) + eps(T) for z in zs)
 
     # cylinder surface with non-parallel planes
-    c = CylinderSurface(
-      Plane(P3(0, 0, 0), V3(1, 0, 1)),
+    c = CylinderSurface(Plane(P3(0, 0, 0), V3(1, 0, 1)),
       Plane(P3(1, 1, 1), V3(0, 1, 1)),
-      T(1)
-    )
+      T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
     @test length(cs) == 200
@@ -196,56 +172,19 @@
     ps = sample(q, RegularSampling(2, 2))
     @test collect(ps) == P2[(0, 0), (1, 0), (0, 1), (1, 1)]
     ps = sample(q, RegularSampling(3, 3))
-    @test collect(ps) == P2[
-      (0, 0),
-      (0.5, 0),
-      (1, 0),
-      (0, 0.5),
-      (0.5, 0.5),
-      (1, 0.5),
-      (0, 1),
-      (0.5, 1),
-      (1, 1)
-    ]
+    @test collect(ps) == P2[(0, 0), (0.5, 0), (1, 0),
+      (0, 0.5), (0.5, 0.5), (1, 0.5),
+      (0, 1), (0.5, 1), (1, 1)]
 
-    h = Hexahedron(
-      P3[
-        (0, 0, 0),
-        (1, 0, 0),
-        (1, 1, 0),
-        (0, 1, 0),
-        (0, 0, 1),
-        (1, 0, 1),
-        (1, 1, 1),
-        (0, 1, 1)
-      ]
-    )
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+      (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
     ps = sample(h, RegularSampling(2, 2, 2))
-    @test collect(ps) == P3[
-      (0, 0, 0),
-      (1, 0, 0),
-      (0, 1, 0),
-      (1, 1, 0),
-      (0, 0, 1),
-      (1, 0, 1),
-      (0, 1, 1),
-      (1, 1, 1)
-    ]
+    @test collect(ps) == P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0),
+      (0, 0, 1), (1, 0, 1), (0, 1, 1), (1, 1, 1)]
     ps = sample(h, RegularSampling(3, 2, 2))
-    @test collect(ps) == P3[
-      (0, 0, 0),
-      (0.5, 0, 0),
-      (1, 0, 0),
-      (0, 1, 0),
-      (0.5, 1, 0),
-      (1, 1, 0),
-      (0, 0, 1),
-      (0.5, 0, 1),
-      (1, 0, 1),
-      (0, 1, 1),
-      (0.5, 1, 1),
-      (1, 1, 1)
-    ]
+    @test collect(ps) == P3[(0, 0, 0), (0.5, 0, 0), (1, 0, 0), (0, 1, 0),
+      (0.5, 1, 0), (1, 1, 0), (0, 0, 1), (0.5, 0, 1),
+      (1, 0, 1), (0, 1, 1), (0.5, 1, 1), (1, 1, 1)]
 
     grid = CartesianGrid{T}(10, 10)
     points = sample(grid, RegularSampling(100, 200))
@@ -253,8 +192,7 @@
 
     torus = Torus(P3(0, 0, 0), V3(1, 0, 0), T(2), T(1))
     ps = sample(torus, RegularSampling(3, 3))
-    ts = P3[
-      (0, 0, 1),
+    ts = P3[(0, 0, 1),
       (0, -0.8660254037844387, -0.5),
       (0, 0.8660254037844387, -0.5),
       (-1, 0, 2),
@@ -262,8 +200,7 @@
       (-1, 1.7320508075688774, -1),
       (1, 0, 2),
       (1, -1.7320508075688774, -1),
-      (1, 1.7320508075688774, -1)
-    ]
+      (1, 1.7320508075688774, -1)]
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
@@ -290,10 +227,8 @@
     c = Chain(P2(0, 0), P2(1, 0), P2(0, 1), P2(1, 1))
     ps = sample(c, HomogeneousSampling(100))
     @test first(ps) isa P2
-    @test all(
-      coords[1] + coords[2] == 1 || (0 ≤ coords[1] ≤ 1 && coords[2] ∈ [0, 1]) for
-      coords in coordinates.(ps)
-    )
+    @test all(coords[1] + coords[2] == 1 || (0 ≤ coords[1] ≤ 1 && coords[2] ∈ [0, 1])
+              for coords in coordinates.(ps))
 
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     ps = sample(t, HomogeneousSampling(100))
@@ -338,12 +273,10 @@
     # geometries with almost zero measure
     # can still be sampled (at least one point)
     poly = PolyArea(
-      P2[
-        (-44.20065308, -21.12284851),
+      P2[(-44.20065308, -21.12284851),
         (-44.20324135, -21.122799875),
         (-44.20582962, -21.12275124),
-        (-44.20065308, -21.12284851)
-      ]
+        (-44.20065308, -21.12284851)]
     )
     ps = sample(poly, MinDistanceSampling(3.2423333333753135e-5))
     @test length(ps) > 0
@@ -371,7 +304,9 @@
 
   @testset "RNGs" begin
     dom = CartesianGrid{T}(100, 100)
-    for method in [UniformSampling(100), WeightedSampling(100), BallSampling(T(10))]
+    for method in [UniformSampling(100),
+      WeightedSampling(100),
+      BallSampling(T(10))]
       rng = MersenneTwister(2021)
       s1 = sample(rng, dom, method)
       rng = MersenneTwister(2021)
@@ -382,7 +317,8 @@
     # cannot test some sampling methods with T = Float32
     # because of https://github.com/JuliaStats/StatsBase.jl/issues/695
     if T == Float64
-      for method in [HomogeneousSampling(100), MinDistanceSampling(T(5))]
+      for method in [HomogeneousSampling(100),
+        MinDistanceSampling(T(5))]
         rng = MersenneTwister(2021)
         s1 = sample(rng, dom, method)
         rng = MersenneTwister(2021)
@@ -392,25 +328,13 @@
     end
 
     method = RegularSampling(10)
-    for geom in [
-      Box(P2(0, 0), P2(2, 2))
+    for geom in [Box(P2(0, 0), P2(2, 2))
       Sphere(P2(0, 0), T(2))
       Ball(P2(0, 0), T(2))
       Segment(P2(0, 0), P2(1, 1))
       Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
-      Hexahedron(
-        P3[
-          (0, 0, 0),
-          (1, 0, 0),
-          (1, 1, 0),
-          (0, 1, 0),
-          (0, 0, 1),
-          (1, 0, 1),
-          (1, 1, 1),
-          (0, 1, 1)
-        ]
-      )
-    ]
+      Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+        (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])]
       rng = MersenneTwister(2021)
       s1 = sample(rng, geom, method)
       rng = MersenneTwister(2021)

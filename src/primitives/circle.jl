@@ -33,7 +33,8 @@ function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   Circle(Plane(O, n⃗), r)
 end
 
-Circle(p1::Tuple, p2::Tuple, p3::Tuple) = Circle(Point(p1), Point(p2), Point(p3))
+Circle(p1::Tuple, p2::Tuple, p3::Tuple) =
+  Circle(Point(p1), Point(p2), Point(p3))
 
 Circle(plane::Plane{T}, radius) where {T} = Circle(plane, T(radius))
 

@@ -25,12 +25,8 @@
     @test s(T(1)) == P2(1, 1)
     @test all(P2(x, x) ∈ s for x in 0:0.01:1)
     @test all(p ∉ s for p in [P2(-0.1, -0.1), P2(1.1, 1.1), P2(0.5, 0.49), P2(1, 2)])
-    @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(
-      T(1.2)
-    )
-    @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(
-      T(-0.5)
-    )
+    @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
+    @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(T(-0.5))
     @test s ≈ s
     @test !(s ≈ Segment(P2(1, 1), P2(0, 0)))
     @test !(s ≈ Segment(P2(1, 2), P2(0, 0)))
@@ -59,7 +55,8 @@
 
   @testset "N-gons" begin
     @test paramdim(Ngon) == 2
-    NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
+    NGONS = [Triangle, Quadrangle, Pentagon, Hexagon,
+      Heptagon, Octagon, Nonagon, Decagon]
     NVERT = 3:10
     for i in 1:length(NGONS)
       @test paramdim(NGONS[i]) == 2
@@ -90,14 +87,8 @@
     @test t(T(1.0), T(0.0)) == P2(1, 0)
     @test t(T(0.0), T(1.0)) == P2(0, 1)
     @test t(T(0.5), T(0.5)) == P2(0.5, 0.5)
-    @test_throws DomainError(
-      (T(-0.5), T(0.0)),
-      "invalid barycentric coordinates for triangle."
-    ) t(T(-0.5), T(0.0))
-    @test_throws DomainError(
-      (T(1), T(1)),
-      "invalid barycentric coordinates for triangle."
-    ) t(T(1), T(1))
+    @test_throws DomainError((T(-0.5), T(0.0)), "invalid barycentric coordinates for triangle.") t(T(-0.5), T(0.0))
+    @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
     @test !hasholes(t)
     @test unique(t) == t
     @test boundary(t) == first(chains(t))
@@ -139,14 +130,8 @@
     @test t(T(1.0), T(0.0)) == P3(0, 1, 0)
     @test t(T(0.0), T(1.0)) == P3(0, 0, 1)
     @test t(T(0.5), T(0.5)) == P3(0, 0.5, 0.5)
-    @test_throws DomainError(
-      (T(-0.5), T(0.0)),
-      "invalid barycentric coordinates for triangle."
-    ) t(T(-0.5), T(0.0))
-    @test_throws DomainError(
-      (T(1), T(1)),
-      "invalid barycentric coordinates for triangle."
-    ) t(T(1), T(1))
+    @test_throws DomainError((T(-0.5), T(0.0)), "invalid barycentric coordinates for triangle.") t(T(-0.5), T(0.0))
+    @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
     @test isapprox(normal(t), Vec(1, 0, 0))
     t = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
     @test isapprox(normal(t), Vec(0, -1 / sqrt(2), 1 / sqrt(2)))
@@ -190,10 +175,7 @@
     @test q(T(0), T(1)) == P2(0, 1)
 
     q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
-    @test_throws DomainError(
-      (T(1.2), T(1.2)),
-      "q(u, v) is not defined for u, v outside [0, 1]²."
-    ) q(T(1.2), T(1.2))
+    @test_throws DomainError((T(1.2), T(1.2)), "q(u, v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
 
     q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
     @test perimeter(q) ≈ T(4)
@@ -234,27 +216,14 @@
     @test t(T(1), T(0), T(0)) ≈ P3(1, 0, 0)
     @test t(T(0), T(1), T(0)) ≈ P3(0, 1, 0)
     @test t(T(0), T(0), T(1)) ≈ P3(0, 0, 1)
-    @test_throws DomainError(
-      (T(1), T(1), T(1)),
-      "invalid barycentric coordinates for tetrahedron."
-    ) t(T(1), T(1), T(1))
+    @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
 
     @test paramdim(Hexahedron) == 3
     @test nvertices(Hexahedron) == 8
     @test isperiodic(Hexahedron) == (false, false, false)
 
-    h = Hexahedron(
-      P3[
-        (0, 0, 0),
-        (1, 0, 0),
-        (1, 1, 0),
-        (0, 1, 0),
-        (0, 0, 1),
-        (1, 0, 1),
-        (1, 1, 1),
-        (0, 1, 1)
-      ]
-    )
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+      (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
     @test vertex(h, 1) == P3(0, 0, 0)
     @test vertex(h, 8) == P3(0, 1, 1)
     @test isperiodic(h) == (false, false, false)
@@ -267,62 +236,22 @@
     @test h(T(1), T(1), T(0)) == P3(1, 1, 0)
     @test h(T(1), T(1), T(1)) == P3(1, 1, 1)
 
-    h = Hexahedron(
-      P3[
-        (0, 0, 0),
-        (1, 0, 0),
-        (1, 1, 0),
-        (0, 1, 0),
-        (0, 0, 1),
-        (1, 0, 1),
-        (1, 1, 1),
-        (0, 1, 1)
-      ]
-    )
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+      (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
     @test volume(h) ≈ T(1 * 1 * 1)
-    h = Hexahedron(
-      P3[
-        (0, 0, 0),
-        (2, 0, 0),
-        (2, 2, 0),
-        (0, 2, 0),
-        (0, 0, 2),
-        (2, 0, 2),
-        (2, 2, 2),
-        (0, 2, 2)
-      ]
-    )
+    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0),
+      (0, 0, 2), (2, 0, 2), (2, 2, 2), (0, 2, 2)])
     @test volume(h) ≈ T(2 * 2 * 2)
 
     # volume formula of a frustum of a prism is V = 1/3*H*(S₁+S₂+sqrt(S₁*S₂))
     # here we build a hexahedron which is a frustum of a prism with
     # bottom area S₁= 4, top area S₂= 1, height H = 2
-    h = Hexahedron(
-      P3[
-        (0, 0, 0),
-        (2, 0, 0),
-        (2, 2, 0),
-        (0, 2, 0),
-        (0, 0, 2),
-        (1, 0, 2),
-        (1, 1, 2),
-        (0, 1, 2)
-      ]
-    )
+    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0),
+      (0, 0, 2), (1, 0, 2), (1, 1, 2), (0, 1, 2)])
     @test volume(h) ≈ T(1 / 3 * 2 * (1 + 4 + sqrt(1 * 4)))
 
-    h = Hexahedron(
-      P3[
-        (0, 0, 0),
-        (1, 0, 0),
-        (1, 1, 0),
-        (0, 1, 0),
-        (0, 0, 1),
-        (1, 0, 1),
-        (1, 1, 1),
-        (0, 1, 1)
-      ]
-    )
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+      (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
     m = boundary(h)
     @test m isa Mesh
     @test nvertices(m) == 8
@@ -371,14 +300,10 @@
 
     # segments
     c = Chain(P2[(1, 1), (2, 2), (3, 3)])
-    @test collect(segments(c)) ==
-          [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3))]
+    @test collect(segments(c)) == [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3))]
     c = Chain(P2[(1, 1), (2, 2), (3, 3), (1, 1)])
-    @test collect(segments(c)) == [
-      Segment(P2(1, 1), P2(2, 2)),
-      Segment(P2(2, 2), P2(3, 3)),
-      Segment(P2(3, 3), P2(1, 1))
-    ]
+    @test collect(segments(c)) ==
+          [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3)), Segment(P2(3, 3), P2(1, 1))]
 
     # unique vertices
     c = Chain(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
@@ -451,8 +376,7 @@
     @test chains(poly) == [Chain(P2[(0, 0), (0.5, 0.0), (1, 0), (0, 0)])]
 
     # inner chain with 2 vertices is removed by default
-    poly =
-      PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)], [P2[(1, 2), (2, 3), (1, 2)]])
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)], [P2[(1, 2), (2, 3), (1, 2)]])
     @test chains(poly) == [Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])]
 
     # orientation of chains is fixed by default
@@ -464,11 +388,7 @@
     # test accessor methods
     poly = PolyArea(P2[(1, 2), (2, 3), (1, 2)], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3)])
-    poly = PolyArea(
-      P2[(1, 2), (2, 3), (1, 2)],
-      [P2[(1.1, 2.54), (1.4, 1.5), (1.1, 2.54)]],
-      fix=false
-    )
+    poly = PolyArea(P2[(1, 2), (2, 3), (1, 2)], [P2[(1.1, 2.54), (1.4, 1.5), (1.1, 2.54)]], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -541,20 +461,9 @@
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4), (0.2, 0.2)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4), (0.6, 0.2)]
     poly = PolyArea(outer, [hole1, hole2])
-    @test vertices(poly) == P2[
-      (0, 0),
-      (1, 0),
-      (1, 1),
-      (0, 1),
-      (0.2, 0.2),
-      (0.2, 0.4),
-      (0.4, 0.4),
-      (0.4, 0.2),
-      (0.6, 0.2),
-      (0.6, 0.4),
-      (0.8, 0.4),
-      (0.8, 0.2)
-    ]
+    @test vertices(poly) == P2[(0, 0), (1, 0), (1, 1), (0, 1),
+      (0.2, 0.2), (0.2, 0.4), (0.4, 0.4), (0.4, 0.2),
+      (0.6, 0.2), (0.6, 0.4), (0.8, 0.4), (0.8, 0.2)]
     chain, _ = bridge(poly)
     target = T[
       0.0 0.2 0.2 0.4 0.4 0.6 0.6 0.8 0.8 0.6 0.4 0.2 0.0 1.0 1.0 0.0
@@ -569,8 +478,7 @@
     @test first(chains(poly)) == Chain(points)
 
     # unique and bridges
-    poly =
-      PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1), (0, 0)])
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1), (0, 0)])
     chain, _ = poly |> unique |> bridge
     @test chain == Chain(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 0)])
 

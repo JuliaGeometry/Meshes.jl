@@ -1,7 +1,9 @@
 @testset "Paths" begin
   grid = CartesianGrid{T}(100, 100)
 
-  for path in [LinearPath(), RandomPath(), ShiftedPath(LinearPath(), 0), SourcePath(1:3)]
+  for path in [LinearPath(), RandomPath(),
+    ShiftedPath(LinearPath(), 0),
+    SourcePath(1:3)]
     p = traverse(grid, path)
     @test length(p) == 100 * 100
   end

@@ -25,7 +25,8 @@ struct Stretch{Dim,T} <: StatelessGeometricTransform
   end
 end
 
-Stretch(factors::NTuple{Dim,T}) where {Dim,T} = Stretch{Dim,T}(factors)
+Stretch(factors::NTuple{Dim,T}) where {Dim,T} =
+  Stretch{Dim,T}(factors)
 
 Stretch(factors...) = Stretch(factors)
 

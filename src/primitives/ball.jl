@@ -60,9 +60,7 @@ end
 
 function (b::Ball{3,T})(ρ, θ, φ) where {T}
   if (ρ < 0 || ρ > 1) || (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
-    throw(
-      DomainError((ρ, θ, φ), "b(ρ, θ, φ) is not defined for ρ, θ, φ outside [0, 1]³.")
-    )
+    throw(DomainError((ρ, θ, φ), "b(ρ, θ, φ) is not defined for ρ, θ, φ outside [0, 1]³."))
   end
   c = b.center
   r = b.radius

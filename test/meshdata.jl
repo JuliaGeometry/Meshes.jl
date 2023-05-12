@@ -8,9 +8,7 @@
 
   vertices = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
   elements = connect.([(1, 2, 3), (3, 4, 1)])
-  d = meshdata(
-    vertices,
-    elements,
+  d = meshdata(vertices, elements,
     Dict(
       0 => (temperature=[1.0, 2.0, 3.0, 4.0], pressure=[4.0, 3.0, 2.0, 1.0]),
       2 => (quality=["A", "B"], state=[true, false])
@@ -29,9 +27,7 @@
 
   vertices = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
   elements = connect.([(1, 2, 3), (3, 4, 1)])
-  d = meshdata(
-    vertices,
-    elements,
+  d = meshdata(vertices, elements,
     vtable=(temperature=[1.0, 2.0, 3.0, 4.0], pressure=[4.0, 3.0, 2.0, 1.0]),
     etable=(quality=["A", "B"], state=[true, false])
   )

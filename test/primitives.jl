@@ -107,14 +107,8 @@
       @test b(T(1), method) == P2(1, 0)
       @test b(T(0.5), method) == P2(0.5, 0.5)
       @test b(T(0.5), method) == P2(0.5, 0.5)
-      @test_throws DomainError(T(-0.1), "b(t) is not defined for t outside [0, 1].") b(
-        T(-0.1),
-        method
-      )
-      @test_throws DomainError(T(1.2), "b(t) is not defined for t outside [0, 1].") b(
-        T(1.2),
-        method
-      )
+      @test_throws DomainError(T(-0.1), "b(t) is not defined for t outside [0, 1].") b(T(-0.1), method)
+      @test_throws DomainError(T(1.2), "b(t) is not defined for t outside [0, 1].") b(T(1.2), method)
     end
 
     @test boundary(b) == PointSet(P2(0, 0), P2(1, 0))
@@ -189,25 +183,8 @@
     @test boundary(b) == Chain([v; first(v)])
 
     b = Box(P3(1, 2, 3), P3(4, 5, 6))
-    v = P3[
-      (1, 2, 3),
-      (4, 2, 3),
-      (4, 5, 3),
-      (1, 5, 3),
-      (1, 2, 6),
-      (4, 2, 6),
-      (4, 5, 6),
-      (1, 5, 6)
-    ]
-    c =
-      connect.([
-        (4, 3, 2, 1),
-        (6, 5, 1, 2),
-        (3, 7, 6, 2),
-        (4, 8, 7, 3),
-        (1, 5, 8, 4),
-        (6, 7, 8, 5)
-      ])
+    v = P3[(1, 2, 3), (4, 2, 3), (4, 5, 3), (1, 5, 3), (1, 2, 6), (4, 2, 6), (4, 5, 6), (1, 5, 6)]
+    c = connect.([(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)])
     @test boundary(b) == SimpleMesh(v, c)
 
     b = Box(P2(0, 0), P2(1, 1))
@@ -411,7 +388,9 @@
   end
 
   @testset "Cylinder" begin
-    c = Cylinder(Plane(P3(1, 2, 3), V3(0, 0, 1)), Plane(P3(4, 5, 6), V3(0, 0, 1)), T(5))
+    c = Cylinder(Plane(P3(1, 2, 3), V3(0, 0, 1)),
+      Plane(P3(4, 5, 6), V3(0, 0, 1)),
+      T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
     @test coordtype(c) == T
@@ -478,11 +457,9 @@
     c3 = CylinderSurface(T(1))
     @test c1 == c2 == c3
 
-    c = CylinderSurface(
-      Plane(P3(1, 2, 3), V3(0, 0, 1)),
+    c = CylinderSurface(Plane(P3(1, 2, 3), V3(0, 0, 1)),
       Plane(P3(4, 5, 6), V3(0, 0, 1)),
-      T(5)
-    )
+      T(5))
     @test measure(c) == area(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3 * T(3)^2)
 
     c = CylinderSurface(1.0)

@@ -26,11 +26,14 @@ struct GridTopology{D} <: Topology
   end
 end
 
-GridTopology(dims, periodic) = GridTopology{length(dims)}(dims, periodic)
+GridTopology(dims, periodic) =
+  GridTopology{length(dims)}(dims, periodic)
 
-GridTopology(dims::Dims{D}) where {D} = GridTopology(dims, ntuple(i -> false, D))
+GridTopology(dims::Dims{D}) where {D} =
+  GridTopology(dims, ntuple(i -> false, D))
 
-GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology(dims)
+GridTopology(dims::Vararg{Int,D}) where {D} =
+  GridTopology(dims)
 
 paramdim(::GridTopology{D}) where {D} = D
 
@@ -132,10 +135,13 @@ function facet(t::GridTopology{D}, ind) where {D}
   connect(Tuple(∂(ind)), T)
 end
 
-nfacets(t::GridTopology{1}) = t.dims[1] + t.open[1]
+nfacets(t::GridTopology{1}) =
+  t.dims[1] + t.open[1]
 
 nfacets(t::GridTopology{2}) =
-  2prod(t.dims) + t.open[2] * t.dims[1] + t.open[1] * t.dims[2]
+  2prod(t.dims) +
+  t.open[2] * t.dims[1] +
+  t.open[1] * t.dims[2]
 
 nfacets(t::GridTopology{3}) =
   3prod(t.dims) +

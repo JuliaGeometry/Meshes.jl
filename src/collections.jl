@@ -47,8 +47,7 @@ julia> PointSet([1,2,3], [4,5,6])
 julia> PointSet([1 4; 2 5; 3 6])
 ```
 """
-PointSet(points::AbstractVector{P}) where {P<:Point} =
-  PointSet{embeddim(P),coordtype(P)}(points)
+PointSet(points::AbstractVector{P}) where {P<:Point} = PointSet{embeddim(P),coordtype(P)}(points)
 PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
 PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords))
 PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))

@@ -101,8 +101,9 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     I = intersection(r, t)
     if type(I) == CrossingRayTriangle
       intersects = !intersects
-    elseif type(I) ∈
-           (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
+    elseif type(I) ∈ (EdgeTouchingRayTriangle,
+      CornerTouchingRayTriangle,
+      TouchingRayTriangle)
       return :ON
     elseif type(I) == EdgeCrossingRayTriangle
       edgecrosses += 1

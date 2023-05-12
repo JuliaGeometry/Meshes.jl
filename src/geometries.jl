@@ -140,7 +140,8 @@ paramdim(multi::Multi) = maximum(paramdim, multi.items)
 
 vertex(multi::Multi, ind) = vertices(multi)[ind]
 
-vertices(multi::Multi) = [vertex for geom in multi.items for vertex in vertices(geom)]
+vertices(multi::Multi) =
+  [vertex for geom in multi.items for vertex in vertices(geom)]
 
 nvertices(multi::Multi) = sum(nvertices, multi.items)
 

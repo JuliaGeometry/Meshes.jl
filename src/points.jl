@@ -134,7 +134,8 @@ at a reference (or start) point `A`.
 Tells whether or not the coordinates of points `A` and `B`
 are approximately equal.
 """
-Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T}; atol=atol(T), kwargs...) where {Dim,T} =
+Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T};
+  atol=atol(T), kwargs...) where {Dim,T} =
   isapprox(A.coords, B.coords; atol, kwargs...)
 
 """
@@ -190,7 +191,8 @@ boundary(::Point) = nothing
 
 Generates a random point of type `P`
 """
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
+Random.rand(rng::Random.AbstractRNG,
+  ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} =
   Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)
