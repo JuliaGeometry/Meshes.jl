@@ -5,7 +5,6 @@ always_use_return = false
 whitespace_typedefs = false
 whitespace_in_kwargs = false
 whitespace_ops_in_indices = true
-join_lines_based_on_source = true
 remove_extra_newlines = true
 trailing_comma = false
 normalize_line_endings = "unix"
