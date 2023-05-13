@@ -65,43 +65,43 @@ struct CartesianGrid{Dim,T} <: Grid{Dim,T}
 end
 
 CartesianGrid(dims::Dims{Dim}, origin::Point{Dim,T},
-              spacing::NTuple{Dim,T},
-              offset::Dims{Dim}=ntuple(i->1, Dim)) where {Dim,T} =
+  spacing::NTuple{Dim,T},
+  offset::Dims{Dim}=ntuple(i -> 1, Dim)) where {Dim,T} =
   CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 
 CartesianGrid(dims::Dims{Dim}, origin::NTuple{Dim,T},
-              spacing::NTuple{Dim,T},
-              offset::Dims{Dim}=ntuple(i->1, Dim)) where {Dim,T} =
+  spacing::NTuple{Dim,T},
+  offset::Dims{Dim}=ntuple(i -> 1, Dim)) where {Dim,T} =
   CartesianGrid{Dim,T}(dims, Point(origin), spacing, offset)
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T},
-                       spacing::NTuple{Dim,T}) where {Dim,T}
+  spacing::NTuple{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
   origin = start
-  offset = ntuple(i->1, Dim)
+  offset = ntuple(i -> 1, Dim)
   CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T},
-              spacing::NTuple{Dim,T}) where {Dim,T} =
+  spacing::NTuple{Dim,T}) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish), spacing)
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T};
-                       dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T}
-  origin  = start
+  dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim,T}
+  origin = start
   spacing = Tuple((finish - start) ./ dims)
-  offset  = ntuple(i->1, Dim)
+  offset = ntuple(i -> 1, Dim)
   CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T};
-              dims::Dims{Dim}=ntuple(i->100, Dim)) where {Dim,T} =
+  dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish); dims=dims)
 
 function CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T}
-  origin  = ntuple(i->zero(T), Dim)
-  spacing = ntuple(i->one(T), Dim)
-  offset  = ntuple(i->1, Dim)
+  origin = ntuple(i -> zero(T), Dim)
+  spacing = ntuple(i -> one(T), Dim)
+  offset = ntuple(i -> 1, Dim)
   CartesianGrid{Dim,T}(dims, origin, spacing, offset)
 end
 
@@ -116,7 +116,7 @@ cart2vert(g::CartesianGrid, ijk::Tuple) =
 
 spacing(g::CartesianGrid) = g.spacing
 
-offset(g::CartesianGrid)  = g.offset
+offset(g::CartesianGrid) = g.offset
 
 function centroid(g::CartesianGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
@@ -126,13 +126,13 @@ function centroid(g::CartesianGrid, ind::Int)
 end
 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
-  dims   = size(I)
+  dims = size(I)
   offset = g.offset .- first(I).I .+ 1
   CartesianGrid(dims, g.origin, g.spacing, offset)
 end
 
 ==(g1::CartesianGrid, g2::CartesianGrid) =
-  g1.topology == g2.topology && g1.spacing  == g2.spacing &&
+  g1.topology == g2.topology && g1.spacing == g2.spacing &&
   Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
 
 # -----------
@@ -148,5 +148,5 @@ function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
   println(io, g)
   println(io, "  minimum: ", minimum(g))
   println(io, "  maximum: ", maximum(g))
-  print(  io, "  spacing: ", spacing(g))
+  print(io, "  spacing: ", spacing(g))
 end

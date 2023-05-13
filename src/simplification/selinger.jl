@@ -29,8 +29,8 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
   # penalty for each possible segment
   n = length(p)
   P = Dict{Tuple{Int,Int},T}()
-  for i in 1:n, o in 1:n-2
-    j  = i + o
+  for i in 1:n, o in 1:(n - 2)
+    j = i + o
     i₊ = i + 1
     j₋ = j - 1
     jₙ = mod1(j, n)
@@ -51,16 +51,16 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
 
   # shortest path with minimum penalty
   bestpath = dijkstra(I, 2, 1)
-  bestlen  = length(bestpath)
-  bestpen  = penalty(P, bestpath)
-  for i in 2:n-1
-    path = dijkstra(I, i+1, i)
-    len  = length(path)
+  bestlen = length(bestpath)
+  bestpen = penalty(P, bestpath)
+  for i in 2:(n - 1)
+    path = dijkstra(I, i + 1, i)
+    len = length(path)
     if len ≤ bestlen
       pen = penalty(P, path)
       if pen < bestpen
         bestpath = path
-        bestlen  = len
+        bestlen = len
       end
     end
   end
@@ -69,7 +69,7 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
 end
 
 function dijkstra(I, s, t)
-  score    = Dict(s => 0)
+  score = Dict(s => 0)
   frontier = Dict(s => 0)
   parentof = Dict(s => 0)
 
@@ -77,10 +77,10 @@ function dijkstra(I, s, t)
     f, i = findmin(frontier)
     pop!(frontier, i)
     i == t && break
-    for j in findall(I[i,:] .== 1)
-      if j ∉ keys(score) || f+1 < score[j]
-        score[j]    = f+1
-        frontier[j] = f+1
+    for j in findall(I[i, :] .== 1)
+      if j ∉ keys(score) || f + 1 < score[j]
+        score[j] = f + 1
+        frontier[j] = f + 1
         parentof[j] = i
       end
     end
@@ -104,4 +104,4 @@ function buildpath(parentof, j)
   reverse(p)
 end
 
-penalty(P, path) = sum(P[(path[k], path[k+1])] for k in 1:length(path)-1)
+penalty(P, path) = sum(P[(path[k], path[k + 1])] for k in 1:(length(path) - 1))

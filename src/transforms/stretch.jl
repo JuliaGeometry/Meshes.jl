@@ -16,7 +16,7 @@ Stretch(1.0, 2.0, 3.0)
 """
 struct Stretch{Dim,T} <: StatelessGeometricTransform
   factors::NTuple{Dim,T}
-  
+
   function Stretch{Dim,T}(factors) where {Dim,T}
     if any(≤(0), factors)
       throw(ArgumentError("Scaling factors must be positive."))
