@@ -20,7 +20,7 @@ boundingbox(b::Box) = b
 function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   c = center(s)
   r = radius(s)
-  r⃗ = Vec(ntuple(i -> r, Dim))
+  r⃗ = Vec(ntuple(i->r, Dim))
   Box(c - r⃗, c + r⃗)
 end
 
@@ -48,8 +48,8 @@ boundingbox(data::Data) = boundingbox(domain(data))
 # --------
 
 function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
-  xmin = MVector(ntuple(i -> typemax(T), Dim))
-  xmax = MVector(ntuple(i -> typemin(T), Dim))
+  xmin = MVector(ntuple(i->typemax(T), Dim))
+  xmax = MVector(ntuple(i->typemin(T), Dim))
   for p in points
     x = coordinates(p)
     @. xmin = min(x, xmin)

@@ -48,11 +48,11 @@ function reapplypoint end
 # -----------------
 
 # convert objects into lists of points
-_points(p::Point) = [p]
-_points(g::Geometry) = vertices(g)
-_points(d::Domain) = mapreduce(_points, vcat, d)
-_points(m::Mesh) = vertices(m)
-_points(p::PointSet) = collect(p)
+_points(p::Point)      = [p]
+_points(g::Geometry)   = vertices(g)
+_points(d::Domain)     = mapreduce(_points, vcat, d)
+_points(m::Mesh)       = vertices(m)
+_points(p::PointSet)   = collect(p)
 
 # convert lists of points into objects
 _reconstruct(points, ::Point) = first(points)

@@ -36,14 +36,14 @@ function partsubsets(rng::AbstractRNG, domain::Domain, method::BisectFractionPar
   maxiter = method.maxiter
 
   iter = 0
-  a = c - d / 2 * n
-  b = c + d / 2 * n
-  subsets = Vector{Int}[]
+  a = c - d/2 * n
+  b = c + d/2 * n
+  subsets  = Vector{Int}[]
   metadata = Dict()
   while iter < maxiter
     m = (a + b) / 2
 
-    bisectpoint = BisectPointPartition(n, Point(m))
+    bisectpoint       = BisectPointPartition(n, Point(m))
     subsets, metadata = partsubsets(rng, domain, bisectpoint)
 
     g = length(subsets[1]) / nelements(domain)

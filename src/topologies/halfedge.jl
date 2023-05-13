@@ -148,7 +148,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   v = CircularVector(inds)
   n = length(v)
   for i in 1:n
-    half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[1])
+    half4pair[(v[i], v[i+1])] = HalfEdge(v[i], eleminds[1])
   end
 
   # insert all other elements
@@ -161,23 +161,23 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
       # if pair of vertices is already in the
       # dictionary this means that the current
       # polygon has inconsistent orientation
-      if haskey(half4pair, (v[i], v[i + 1]))
+      if haskey(half4pair, (v[i], v[i+1]))
         # delete inserted pairs so far
         CCW[e] = false
-        for j in 1:(i - 1)
-          delete!(half4pair, (v[j], v[j + 1]))
+        for j in 1:i-1
+          delete!(half4pair, (v[j], v[j+1]))
         end
         break
       else
         # insert pair in consistent orientation
-        half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[e])
+        half4pair[(v[i], v[i+1])] = HalfEdge(v[i], eleminds[e])
       end
     end
 
     if !CCW[e]
       # reinsert pairs in CCW orientation
       for i in 1:n
-        half4pair[(v[i + 1], v[i])] = HalfEdge(v[i + 1], eleminds[e])
+        half4pair[(v[i+1], v[i])] = HalfEdge(v[i+1], eleminds[e])
       end
     end
   end
@@ -189,15 +189,15 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
     n = length(v)
     for i in 1:n
       # update pointers prev and next
-      he = half4pair[(v[i], v[i + 1])]
-      he.prev = half4pair[(v[i - 1], v[i])]
-      he.next = half4pair[(v[i + 1], v[i + 2])]
+      he = half4pair[(v[i], v[i+1])]
+      he.prev = half4pair[(v[i-1],   v[i])]
+      he.next = half4pair[(v[i+1], v[i+2])]
 
       # if not a border element, update half
-      if haskey(half4pair, (v[i + 1], v[i]))
-        he.half = half4pair[(v[i + 1], v[i])]
+      if haskey(half4pair, (v[i+1], v[i]))
+        he.half = half4pair[(v[i+1], v[i])]
       else # create half-edge for border
-        be = HalfEdge(v[i + 1], nothing)
+        be = HalfEdge(v[i+1], nothing)
         be.half = he
         he.half = be
       end
@@ -205,11 +205,11 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   end
 
   # save halfedges in a vector of pairs
-  halves = Vector{Tuple{HalfEdge,HalfEdge}}()
+  halves  = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
     if (u, v) ∉ visited
-      push!(halves, (he, he.half))
+      push!(halves,  (he, he.half))
       push!(visited, (u, v))
       push!(visited, (v, u))
     end

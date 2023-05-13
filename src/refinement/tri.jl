@@ -13,7 +13,7 @@ struct TriRefinement <: RefinementMethod end
 function refine(mesh, ::TriRefinement)
   @assert paramdim(mesh) == 2 "TriRefinement only defined for surface meshes"
   (eltype(mesh) <: Triangle) || return simplexify(mesh)
-
+        
   # retrieve geometry and topology
   points = vertices(mesh)
   connec = topology(mesh)
@@ -44,7 +44,7 @@ function refine(mesh, ::TriRefinement)
     for i in 1:length(verts)
       u = elem + offset
       v = verts[i]
-      w = verts[i + 1]
+      w = verts[i+1]
       tri = connect((u, v, w))
       push!(newconnec, tri)
     end

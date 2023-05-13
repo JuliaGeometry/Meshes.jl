@@ -24,7 +24,7 @@ struct RectilinearGrid{Dim,T,V<:AbstractVector{T}} <: Grid{Dim,T}
 end
 
 function RectilinearGrid(xyz::Tuple)
-  coords = promote(collect.(xyz)...)
+  coords   = promote(collect.(xyz)...)
   topology = GridTopology(length.(coords) .- 1)
   RectilinearGrid(coords, topology)
 end

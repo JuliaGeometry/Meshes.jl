@@ -32,7 +32,7 @@ centroid(v::DomainView, ind::Int) = centroid(v.domain, v.inds[ind])
 
 function Base.show(io::IO, v::DomainView)
   domain = getfield(v, :domain)
-  nelms = length(getfield(v, :inds))
+  nelms  = length(getfield(v, :inds))
   print(io, "$nelms View{$domain}")
 end
 
@@ -87,7 +87,7 @@ end
 # -----------
 
 function Base.show(io::IO, v::DataView)
-  data = getfield(v, :data)
+  data  = getfield(v, :data)
   nelms = length(getfield(v, :inds))
   print(io, "$nelms View{$data}")
 end

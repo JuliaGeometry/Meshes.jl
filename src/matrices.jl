@@ -50,9 +50,9 @@ function uniformlaplacian!(L, 𝒩)
   for i in 1:n
     js = 𝒩(i)
     for j in js
-      L[i, j] = 1 / length(js)
+      L[i,j] = 1 / length(js)
     end
-    L[i, i] = -1
+    L[i,i] = -1
   end
 end
 
@@ -61,14 +61,14 @@ function cotangentlaplacian!(L, 𝒩, v)
   for i in 1:n
     js = CircularVector(𝒩(i))
     for k in 1:length(js)
-      j₋, j, j₊ = js[k - 1], js[k], js[k + 1]
-      vᵢ, vⱼ = v[i], v[j]
+      j₋, j, j₊ = js[k-1], js[k], js[k+1]
+      vᵢ, vⱼ =  v[i],  v[j]
       v₋, v₊ = v[j₋], v[j₊]
       αᵢⱼ = ∠(vⱼ, v₋, vᵢ)
       βᵢⱼ = ∠(vᵢ, v₊, vⱼ)
-      L[i, j] = cot(αᵢⱼ) + cot(βᵢⱼ)
+      L[i,j] = cot(αᵢⱼ) + cot(βᵢⱼ)
     end
-    L[i, i] = -sum(L[i, js])
+    L[i,i] = -sum(L[i,js])
   end
 end
 
@@ -92,7 +92,7 @@ function measurematrix(mesh)
 
   # initialize matrix
   n = nvertices(ℳ)
-  M = 1.0 * I(n)
+  M = 1.0*I(n)
 
   # pre-compute all measures
   A = measure.(ℳ)
@@ -100,7 +100,7 @@ function measurematrix(mesh)
   # fill matrix with measures
   for i in 1:n
     Aᵢ = sum(A[∂(i)]) / 3
-    M[i, i] = 2Aᵢ
+    M[i,i] = 2Aᵢ
   end
 
   M
@@ -123,7 +123,7 @@ function adjacencymatrix(mesh)
 
   # fill in matrix
   for i in 1:n, j in 𝒜(i)
-    A[i, j] = 1
+    A[i,j] = 1
   end
 
   A

@@ -45,7 +45,7 @@ function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
   cind = elem2cart(topo, ind)
 
   # offsets along each dimension
-  offsets = [ntuple(i -> i == d ? s : 0, D) for d in 1:D for s in (-1, 1)]
+  offsets = [ntuple(i -> i == d ? s : 0, D) for d in 1:D for s in (-1,1)]
 
   ninds = NTuple{D,Int}[]
   for offset in offsets
