@@ -31,14 +31,14 @@ Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} =
   Ngon{length(vertices)}(vertices)
 
 # type aliases for convenience
-const Triangle   = Ngon{3}
+const Triangle = Ngon{3}
 const Quadrangle = Ngon{4}
-const Pentagon   = Ngon{5}
-const Hexagon    = Ngon{6}
-const Heptagon   = Ngon{7}
-const Octagon    = Ngon{8}
-const Nonagon    = Ngon{9}
-const Decagon    = Ngon{10}
+const Pentagon = Ngon{5}
+const Hexagon = Ngon{6}
+const Heptagon = Ngon{7}
+const Octagon = Ngon{8}
+const Nonagon = Ngon{9}
+const Decagon = Ngon{10}
 
 issimple(::Type{<:Ngon}) = true
 
@@ -86,13 +86,13 @@ function Base.in(p::Point{2}, t::Triangle{2})
   x₁, y₁ = coordinates(a)
   x₂, y₂ = coordinates(b)
   x₃, y₃ = coordinates(c)
-  x , y  = coordinates(p)
+  x, y = coordinates(p)
 
   # barycentric coordinates
-  λ₁ = ((y₂ - y₃)*(x  - x₃) + (x₃ - x₂)*(y  - y₃)) /
-       ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
-  λ₂ = ((y₃ - y₁)*(x  - x₃) + (x₁ - x₃)*(y  - y₃)) /
-       ((y₂ - y₃)*(x₁ - x₃) + (x₃ - x₂)*(y₁ - y₃))
+  λ₁ = ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) /
+       ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
+  λ₂ = ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) /
+       ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
   λ₃ = 1 - λ₁ - λ₂
 
   # barycentric check
@@ -134,11 +134,11 @@ end
 
 function (t::Triangle)(u, v)
   w = (1 - u - v)
-  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1 )
+  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v), "invalid barycentric coordinates for triangle."))
   end
   v₁, v₂, v₃ = coordinates.(t.vertices)
-  Point(v₁*w + v₂*u + v₃*v)
+  Point(v₁ * w + v₂ * u + v₃ * v)
 end
 
 # ------------
@@ -153,5 +153,5 @@ function (q::Quadrangle)(u, v)
     throw(DomainError((u, v), "q(u, v) is not defined for u, v outside [0, 1]²."))
   end
   c₀₀, c₀₁, c₁₁, c₁₀ = coordinates.(q.vertices)
-  Point(c₀₀*(1-u)*(1-v) + c₀₁*u*(1-v) + c₁₀*(1-u)*v + c₁₁*u*v)
+  Point(c₀₀ * (1 - u) * (1 - v) + c₀₁ * u * (1 - v) + c₁₀ * (1 - u) * v + c₁₁ * u * v)
 end

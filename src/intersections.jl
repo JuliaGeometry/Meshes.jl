@@ -35,7 +35,7 @@ and generate specialized code. This is not the case when
 `f === identity`.
 """
 intersection(f, g1, g2) = intersection(f, g2, g1)
-intersection(g1, g2)    = intersection(identity, g1, g2)
+intersection(g1, g2) = intersection(identity, g1, g2)
 
 """
     IntersectionType
@@ -228,12 +228,12 @@ function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
       B, A = points
       AB = B - A
       AO = O - A
-      d  = AB × AO × AB
+      d = AB × AO × AB
     else # simplex case
       C, B, A = points
-      AB  = B - A
-      AC  = C - A
-      AO  = O - A
+      AB = B - A
+      AC = C - A
+      AO = O - A
       ABᵀ = AC × AB × AB
       ACᵀ = AB × AC × AC
       if ABᵀ ⋅ AO > zero(T)
@@ -266,8 +266,8 @@ end
 function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
   n = Vec{Dim,T}(d[1:Dim])
   v = supportfun(g1, n) - supportfun(g2, -n)
-  Point(ntuple(i-> i ≤ Dim ? v[i] : zero(T), max(Dim, 3)))
+  Point(ntuple(i -> i ≤ Dim ? v[i] : zero(T), max(Dim, 3)))
 end
 
 # origin of coordinate system
-minkowskiorigin(Dim, T) = Point(ntuple(i->zero(T), max(Dim, 3)))
+minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), max(Dim, 3)))

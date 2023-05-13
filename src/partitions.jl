@@ -60,10 +60,10 @@ function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
   meta = partition.metadata
   println(io, partition)
   N = length(subs)
-  I, J = N > 10 ? (5, N-4) : (N, N+1)
+  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
   lines = [["  └─$(partition[i])" for i in 1:I]
-           (N > 10 ? ["  ⋮"] : [])
-           ["  └─$(partition[i])" for i in J:N]]
+    (N > 10 ? ["  ⋮"] : [])
+    ["  └─$(partition[i])" for i in J:N]]
   print(io, join(lines, "\n"))
   !isempty(meta) && print(io, "\n  metadata: ", join(keys(meta), ", "))
 end

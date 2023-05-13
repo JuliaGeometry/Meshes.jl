@@ -15,7 +15,7 @@ function evaluate(::Euclidean, p::Point, l::Line)
   u = p - a
   v = b - a
   α = (u ⋅ v) / (v ⋅ v)
-  norm(u - α*v)
+  norm(u - α * v)
 end
 
 """

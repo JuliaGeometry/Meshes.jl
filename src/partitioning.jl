@@ -40,7 +40,7 @@ A method for partitioning domain/data objects with predicate functions.
 abstract type PredicatePartitionMethod <: PartitionMethod end
 
 function partsubsets(rng::AbstractRNG, domain::Domain,
-                     method::PredicatePartitionMethod)
+  method::PredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
@@ -69,7 +69,7 @@ A method for partitioning domain/data objects with spatial predicate functions.
 abstract type SPredicatePartitionMethod <: PartitionMethod end
 
 function partsubsets(rng::AbstractRNG, domain::Domain,
-                     method::SPredicatePartitionMethod)
+  method::SPredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)

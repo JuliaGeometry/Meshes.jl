@@ -58,8 +58,8 @@ function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMetho
 
     # adjust connectivities
     elems = elements(topology(mesh))
-    twin  = Dict(reverse.(dups))
-    rrep  = reverse(repeated)
+    twin = Dict(reverse.(dups))
+    rrep = reverse(repeated)
     einds = map(elems) do elem
       inds = indices(elem)
       [get(twin, ind, ind) for ind in inds]
@@ -90,7 +90,7 @@ function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
 
   # discretize within 2D chain with given method
   chain2D = Chain([projected; first(projected)])
-  mesh    = discretizewithin(chain2D, method)
+  mesh = discretizewithin(chain2D, method)
 
   # return mesh with original points
   SimpleMesh(points, topology(mesh))
@@ -146,7 +146,7 @@ function simplexify(chain::Chain)
   ip = isperiodic(chain)
 
   points = collect(vertices(chain))
-  topo   = GridTopology((np-1,), ip)
+  topo = GridTopology((np - 1,), ip)
 
   SimpleMesh(points, topo)
 end
@@ -177,8 +177,8 @@ simplexify(multi::Multi) =
 
 function simplexify(mesh::Mesh)
   points = vertices(mesh)
-  elems  = elements(mesh)
-  topo   = topology(mesh)
+  elems = elements(mesh)
+  topo = topology(mesh)
   connec = elements(topo)
 
   # initialize vector of global indices
@@ -187,8 +187,8 @@ function simplexify(mesh::Mesh)
   # simplexify each element and append global indices
   for (e, c) in zip(elems, connec)
     # simplexify single element
-    mesh′   = simplexify(e)
-    topo′   = topology(mesh′)
+    mesh′ = simplexify(e)
+    topo′ = topology(mesh′)
     connec′ = elements(topo′)
 
     # global indices

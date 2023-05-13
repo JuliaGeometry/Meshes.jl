@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const LineLike{T} = Union{Line{3,T}, Ray{3,T}, Segment{3,T}}
+const LineLike{T} = Union{Line{3,T},Ray{3,T},Segment{3,T}}
 
 # Return appropriate type for a geometry overlapping with a `Plane`.
 # Ideally this would be a macro, but the geometry type isn't known at parse time,
@@ -64,16 +64,16 @@ end
 function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
   # origin and direction of line
   l₀ = l(0)
-  d  = l(1) - l(0)
-  
+  d = l(1) - l(0)
+
   # origin and normal of plane
   p₀ = p(0, 0)
-  n  = normal(p)
-  
+  n = normal(p)
+
   # auxiliary parameters
   a = (p₀ - l₀) ⋅ n
   b = d ⋅ n
-  
+
   if isapprox(b, zero(T), atol=atol(T))
     if isapprox(a, zero(T), atol=atol(T))
       return @IT _overlapping(l) l f

@@ -39,7 +39,7 @@ space.
 abstract type ContinuousSamplingMethod end
 
 sample(rng::AbstractRNG, geom::Geometry,
-       method::ContinuousSamplingMethod) =
+  method::ContinuousSamplingMethod) =
   sample(rng, discretize(geom), method)
 
 # ----------------
@@ -70,9 +70,9 @@ option `ordered` can be used to return samples in the same order of
 the `object`.
 """
 function sample(object::DomainOrData, size::Int, weights=nothing;
-                replace=false, ordered=false)
+  replace=false, ordered=false)
   method = WeightedSampling(size, weights;
-                            replace=replace,
-                            ordered=ordered)
+    replace=replace,
+    ordered=ordered)
   sample(Random.GLOBAL_RNG, object, method)
 end

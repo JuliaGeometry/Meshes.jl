@@ -50,8 +50,8 @@ function _smooth(points, L, n, λ, μ; revert=false)
 
   # Taubin updates
   for _ in 1:n
-    X = X + λ₁*L*X
-    X = X + λ₂*L*X
+    X = X + λ₁ * L * X
+    X = X + λ₂ * L * X
   end
 
   # new points

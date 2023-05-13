@@ -41,7 +41,7 @@ SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) =
 
 function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=false)
   topology = relations ? HalfEdgeTopology(connec) :
-                         SimpleTopology(connec)
+             SimpleTopology(connec)
   SimpleMesh(vertices, topology)
 end
 

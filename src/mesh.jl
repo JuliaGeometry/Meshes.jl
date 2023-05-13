@@ -142,7 +142,7 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
   println(io, "  $nvert vertices")
   println(io, io_lines(verts, "    "))
   println(io, "  $nelms elements")
-  print(  io, io_lines(elems, "    "))
+  print(io, io_lines(elems, "    "))
 end
 
 """
@@ -165,7 +165,7 @@ cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
 
 Base.size(g::Grid) = size(topology(g))
 
-Base.minimum(g::Grid{Dim}) where {Dim} = cart2vert(g, ntuple(i->1, Dim))
+Base.minimum(g::Grid{Dim}) where {Dim} = cart2vert(g, ntuple(i -> 1, Dim))
 Base.maximum(g::Grid{Dim}) where {Dim} = cart2vert(g, size(g) .+ 1)
 Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
 
