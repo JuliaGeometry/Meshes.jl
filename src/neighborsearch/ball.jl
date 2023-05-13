@@ -17,7 +17,7 @@ struct BallSearch{D,B<:MetricBall,T} <: NeighborSearchMethod
 end
 
 function BallSearch(domain::D, ball::B) where {D,B<:MetricBall}
-  m = metric(ball)
+  m  = metric(ball)
   xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   BallSearch{D,B,typeof(tree)}(domain, ball, tree)

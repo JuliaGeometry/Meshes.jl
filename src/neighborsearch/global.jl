@@ -23,7 +23,7 @@ function search!(neighbors, pₒ::Point, method::GlobalSearch; mask=nothing)
     end
   else
     nneigh = 0
-    nmax = sum(mask)
+    nmax   = sum(mask)
     @inbounds for ind in 1:nelem
       if mask[ind]
         nneigh += 1

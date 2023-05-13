@@ -40,32 +40,32 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     i = first(sortperm(coordinates.(v[I])))
 
     # left/right chains
-    linds = (i - 1):(i + 1)
-    rinds = (i + 1):(i + n - 1)
+    linds = i-1:i+1
+    rinds = i+1:i+n-1
 
     # check if candidate diagonal is valid
     Δ = Triangle(v[I[linds]])
-    intriangle = findall(j -> v[I[j]] ∈ Δ, rinds[2:(end - 1)])
+    intriangle = findall(j -> v[I[j]] ∈ Δ, rinds[2:end-1])
     isdiag = isempty(intriangle) && area(Δ) > atol(T)^2
 
     # adjust diagonal if necessary
     if !isdiag
-      l = Line(v[I[i - 1]], v[I[i + 1]])
+      l  = Line(v[I[i-1]], v[I[i+1]])
       js = rinds[intriangle .+ 1]
-      k = argmax([evaluate(Euclidean(), l, v[I[j]]) for j in js])
-      j = js[k]
+      k  = argmax([evaluate(Euclidean(), l, v[I[j]]) for j in js])
+      j  = js[k]
       linds = i:j
-      rinds = j:(i + n)
+      rinds = j:i+n
     end
 
     # we adjust the circular indices and
     # use `inds` instead of `I` in the
     # recursion to avoid memory copies
-    linds = [mod1(ind, n) for ind in linds]
-    rinds = [mod1(ind, n) for ind in rinds]
+    linds = [mod1(ind,n) for ind in linds]
+    rinds = [mod1(ind,n) for ind in rinds]
 
     # perform recursion
-    left = dehn1899(v, inds[linds])
+    left  = dehn1899(v, inds[linds])
     right = dehn1899(v, inds[rinds])
     [left; right]
   else

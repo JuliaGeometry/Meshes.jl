@@ -32,7 +32,7 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
     if fix
       # fix orientation
       ofix(c, o) = orientation(c) == o ? c : reverse(c)
-      outer = ofix(outer, :CCW)
+      outer  = ofix(outer, :CCW)
       inners = ofix.(inners, :CW)
 
       # fix degeneracy
@@ -89,13 +89,13 @@ windingnumber(point::Point, p::PolyArea) =
 
 function Base.unique!(p::PolyArea)
   close!(unique!(open!(p.outer)))
-  hasholes(p) && foreach(c -> close!(unique!(open!(c))), p.inners)
+  hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
   p
 end
 
 function Base.in(point::Point, polyarea::PolyArea)
   sideof(point, polyarea.outer) == :INSIDE &&
-    all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
+  all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
 end
 
 function Base.show(io::IO, p::PolyArea)

@@ -47,8 +47,8 @@ function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
   v1 = p1 - p4
   v2 = p2 - p4
   v3 = p3 - p4
-  V = volume(Tetrahedron(p1, p2, p3, p4))
-  r⃗ = ((v3 ⋅ v3) * (v1 × v2) +
+  V  = volume(Tetrahedron(p1, p2, p3, p4))
+  r⃗  = ((v3 ⋅ v3) * (v1 × v2) +
         (v2 ⋅ v2) * (v3 × v1) +
         (v1 ⋅ v1) * (v2 × v3)) / 12V
   center = p4 + r⃗
@@ -56,7 +56,7 @@ function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
   Sphere(center, radius)
 end
 
-Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) =
+Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = 
   Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
@@ -72,7 +72,7 @@ radius(s::Sphere) = s.radius
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
 function measure(s::Sphere{Dim}) where {Dim}
   r, n = s.radius, Dim
-  2π^(n / 2) * r^(n - 1) / gamma(n / 2)
+  2π^(n/2)*r^(n-1) / gamma(n/2)
 end
 
 Base.length(s::Sphere{2}) = measure(s)
@@ -96,8 +96,8 @@ function (s::Sphere{2,T})(φ) where {T}
   end
   c = s.center
   r = s.radius
-  x = r * cos(φ * T(2π))
-  y = r * sin(φ * T(2π))
+  x = r*cos(φ*T(2π))
+  y = r*sin(φ*T(2π))
   c + Vec(x, y)
 end
 
@@ -107,8 +107,8 @@ function (s::Sphere{3,T})(θ, φ) where {T}
   end
   c = s.center
   r = s.radius
-  x = r * sin(θ * T(π)) * cos(φ * T(2π))
-  y = r * sin(θ * T(π)) * sin(φ * T(2π))
-  z = r * cos(θ * T(π))
+  x = r*sin(θ*T(π))*cos(φ*T(2π))
+  y = r*sin(θ*T(π))*sin(φ*T(2π))
+  z = r*cos(θ*T(π))
   c + Vec(x, y, z)
 end

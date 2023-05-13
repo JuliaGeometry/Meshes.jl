@@ -26,5 +26,5 @@ DirectionPartition(direction::NTuple{Dim,T}; tol=1e-6) where {Dim,T} =
 function (p::DirectionPartition)(x, y)
   δ = x - y
   d = p.direction
-  norm(δ - (δ ⋅ d) * d) < p.tol
+  norm(δ - (δ⋅d)*d) < p.tol
 end

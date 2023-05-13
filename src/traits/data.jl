@@ -54,12 +54,12 @@ constructor(::D) where {D<:Data} = constructor(D)
 
 function (D::Type{<:Data})(geotable)
   # build domain from geometry column
-  cols = Tables.columns(geotable)
-  elms = Tables.getcolumn(cols, :geometry)
+  cols   = Tables.columns(geotable)
+  elms   = Tables.getcolumn(cols, :geometry)
   domain = Collection(elms)
 
   # build table of features from remaining columns
-  vars = setdiff(Tables.columnnames(cols), (:geometry,))
+  vars  = setdiff(Tables.columnnames(cols), (:geometry,))
   ncols = [var => Tables.getcolumn(cols, var) for var in vars]
   table = (; ncols...)
 
@@ -117,8 +117,8 @@ function Base.iterate(rows::DataRows, state=1)
   else
     row, _ = iterate(rows.trows, state)
     elm, _ = iterate(rows.domain, state)
-    names = Tables.columnnames(row)
-    pairs = (nm => Tables.getcolumn(row, nm) for nm in names)
+    names  = Tables.columnnames(row)
+    pairs  = (nm => Tables.getcolumn(row, nm) for nm in names)
     (; pairs..., geometry=elm), state + 1
   end
 end
@@ -149,30 +149,30 @@ Base.getproperty(data::Data, var::AbstractString) =
   getproperty(data, Symbol(var))
 
 function Base.getindex(data::Data,
-  inds::AbstractVector{Int},
-  vars::AbstractVector{Symbol})
+                       inds::AbstractVector{Int},
+                       vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  dom = domain(data)
-  tab = values(data)
+  dom    = domain(data)
+  tab    = values(data)
   newdom = view(dom, inds)
   subset = Tables.subset(tab, inds)
-  cols = Tables.columns(subset)
-  pairs = (var => Tables.getcolumn(cols, var) for var in vars)
+  cols   = Tables.columns(subset)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
   newtab = (; pairs...) |> Tables.materializer(tab)
   newval = Dict(paramdim(newdom) => newtab)
   constructor(data)(newdom, newval)
 end
 
 Base.getindex(data::Data,
-  inds::AbstractVector{Int},
-  var::Symbol) =
+              inds::AbstractVector{Int},
+              var::Symbol) =
   getproperty(view(data, inds), var)
 
 function Base.getindex(data::Data,
-  inds::AbstractVector{Int},
-  ::Colon)
-  dview = view(data, inds)
+                       inds::AbstractVector{Int},
+                       ::Colon)
+  dview  = view(data, inds)
   newdom = domain(dview)
   newtab = values(dview)
   newval = Dict(paramdim(newdom) => newtab)
@@ -180,13 +180,13 @@ function Base.getindex(data::Data,
 end
 
 function Base.getindex(data::Data,
-  ind::Int,
-  vars::AbstractVector{Symbol})
+                       ind::Int,
+                       vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  dom = domain(data)
-  tab = values(data)
-  row = Tables.subset(tab, ind)
+  dom   = domain(data)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
   pairs = (var => Tables.getcolumn(row, var) for var in vars)
   (; pairs..., geometry=dom[ind])
 end
@@ -195,10 +195,10 @@ Base.getindex(data::Data, ind::Int, var::Symbol) =
   getproperty(data, var)[ind]
 
 function Base.getindex(data::Data, ind::Int, ::Colon)
-  dom = domain(data)
-  tab = values(data)
-  row = Tables.subset(tab, ind)
-  vars = Tables.columnnames(row)
+  dom   = domain(data)
+  tab   = values(data)
+  row   = Tables.subset(tab, ind)
+  vars  = Tables.columnnames(row)
   pairs = (var => Tables.getcolumn(row, var) for var in vars)
   (; pairs..., geometry=dom[ind])
 end
@@ -206,10 +206,10 @@ end
 function Base.getindex(data::Data, ::Colon, vars::AbstractVector{Symbol})
   _checkvars(vars)
   _rmgeometry!(vars)
-  dom = domain(data)
-  tab = values(data)
-  cols = Tables.columns(tab)
-  pairs = (var => Tables.getcolumn(cols, var) for var in vars)
+  dom    = domain(data)
+  tab    = values(data)
+  cols   = Tables.columns(tab)
+  pairs  = (var => Tables.getcolumn(cols, var) for var in vars)
   newtab = (; pairs...) |> Tables.materializer(tab)
   newval = Dict(paramdim(dom) => newtab)
   constructor(data)(dom, newval)
@@ -225,9 +225,9 @@ Base.getindex(data::Data, inds, var::AbstractString) =
   getindex(data, inds, Symbol(var))
 
 function Base.getindex(data::Data, inds, var::Regex)
-  tab = values(data)
-  cols = Tables.columns(tab)
-  names = Tables.columnnames(cols) |> collect
+  tab    = values(data)
+  cols   = Tables.columns(tab)
+  names  = Tables.columnnames(cols) |> collect
   snames = filter(nm -> occursin(var, String(nm)), names)
   getindex(data, inds, snames)
 end
@@ -285,7 +285,7 @@ function Base.show(io::IO, ::MIME"text/plain", data::Data)
       sche = Tables.schema(𝒯)
       vars = zip(sche.names, sche.types)
       push!(l, "  variables (rank $rank)")
-      append!(l, ["    └─$var ($V)" for (var, V) in vars])
+      append!(l, ["    └─$var ($V)" for (var,V) in vars])
     end
   end
   println(io, 𝒟)

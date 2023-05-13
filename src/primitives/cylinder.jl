@@ -31,9 +31,9 @@ end
 
 function Cylinder(segment::Segment{3,T}, radius) where {T}
   a, b = extrema(segment)
-  v = b - a
-  bot = Plane(a, v)
-  top = Plane(b, v)
+  v    = b - a
+  bot  = Plane(a, v)
+  top  = Plane(b, v)
   Cylinder(bot, top, T(radius))
 end
 
@@ -41,7 +41,7 @@ Cylinder(segment::Segment{3,T}) where {T} =
   Cylinder(segment, T(1))
 
 Cylinder(radius::T) where {T} =
-  Cylinder(Segment((T(0), T(0), T(0)), (T(0), T(0), T(1))), radius)
+  Cylinder(Segment((T(0),T(0),T(0)), (T(0),T(0),T(1))), radius)
 
 paramdim(::Type{<:Cylinder}) = 3
 

@@ -26,9 +26,9 @@ struct Repair{K} <: StatelessGeometricTransform end
 
 function apply(::Repair{1}, mesh)
   count = 0
-  seen = Int[]
-  inds = Dict{Int,Int}()
-  topo = topology(mesh)
+  seen  = Int[]
+  inds  = Dict{Int,Int}()
+  topo  = topology(mesh)
   elems = map(elements(topo)) do e
     elem = indices(e)
     for v in elem

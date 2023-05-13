@@ -31,7 +31,7 @@ function iscollinear(A::Point{Dim,T}, B::Point{Dim,T}, C::Point{Dim,T}) where {D
   # to all possible pairs of coordinates are zero
   AB, AC = B - A, C - A
   result = true
-  for i in 1:Dim, j in (i + 1):Dim
+  for i in 1:Dim, j in (i+1):Dim
     u = Vec(AB[i], AB[j])
     v = Vec(AC[i], AC[j])
     if !isapprox(u × v, zero(T), atol=atol(T)^2)
@@ -49,7 +49,7 @@ Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
 """
 function iscoplanar(A::Point{3,T}, B::Point{3,T}, C::Point{3,T}, D::Point{3,T}) where {T}
   vol = volume(Tetrahedron(A, B, C, D))
-  isapprox(vol, zero(T), atol=atol(T))
+  isapprox(vol, zero(T), atol = atol(T))
 end
 
 """
@@ -102,8 +102,8 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
     if type(I) == CrossingRayTriangle
       intersects = !intersects
     elseif type(I) ∈ (EdgeTouchingRayTriangle,
-      CornerTouchingRayTriangle,
-      TouchingRayTriangle)
+                      CornerTouchingRayTriangle,
+                      TouchingRayTriangle)
       return :ON
     elseif type(I) == EdgeCrossingRayTriangle
       edgecrosses += 1
@@ -133,9 +133,9 @@ function proj2D(points::AbstractVector{Point{3,T}}) where {T}
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
   U = svd(Z).U
-  u = U[:, 1]
-  v = U[:, 2]
-  [Point(z ⋅ u, z ⋅ v) for z in eachcol(Z)]
+  u = U[:,1]
+  v = U[:,2]
+  [Point(z⋅u, z⋅v) for z in eachcol(Z)]
 end
 
 """
@@ -160,13 +160,13 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
 """
 function householderbasis(n)
   n̂ = norm(n)
-  _, i = findmax(n .+ n̂)
+  _, i = findmax(n.+n̂)
   ei = 1:3 .== i
-  h = n + n̂ * ei
-  H = I - 2h * transpose(h) / (transpose(h) * h)
-  u, v = [H[:, j] for j in 1:3 if j != i]
+  h = n + n̂*ei
+  H = I - 2h*transpose(h)/(transpose(h)*h)
+  u, v  = [H[:,j] for j = 1:3 if j != i]
   if i == 2
-    u, v = v, u
+      u, v = v, u
   end
   u, v
 end
@@ -176,8 +176,8 @@ end
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-function mayberound(λ::T, x, atol=atol(T)) where {T}
-  isapprox(λ, x, atol=atol) ? x : λ
+function mayberound(λ::T, x, atol = atol(T)) where {T}
+  isapprox(λ, x, atol = atol) ? x : λ
 end
 
 """
