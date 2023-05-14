@@ -17,14 +17,12 @@ struct DirectionPartition{Dim,T} <: SPredicatePartitionMethod
   end
 end
 
-DirectionPartition(direction::Vec{Dim,T}; tol=1e-6) where {Dim,T} =
-  DirectionPartition{Dim,T}(direction, tol)
+DirectionPartition(direction::Vec{Dim,T}; tol=1e-6) where {Dim,T} = DirectionPartition{Dim,T}(direction, tol)
 
-DirectionPartition(direction::NTuple{Dim,T}; tol=1e-6) where {Dim,T} =
-  DirectionPartition(Vec(direction), tol=tol)
+DirectionPartition(direction::NTuple{Dim,T}; tol=1e-6) where {Dim,T} = DirectionPartition(Vec(direction), tol=tol)
 
 function (p::DirectionPartition)(x, y)
   δ = x - y
   d = p.direction
-  norm(δ - (δ⋅d)*d) < p.tol
+  norm(δ - (δ ⋅ d) * d) < p.tol
 end

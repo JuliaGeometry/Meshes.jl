@@ -13,7 +13,6 @@ struct BallPartition{T,M} <: SPredicatePartitionMethod
   metric::M
 end
 
-BallPartition(radius::T; metric::M=Euclidean()) where {T,M} =
-  BallPartition{T,M}(radius, metric)
+BallPartition(radius::T; metric::M=Euclidean()) where {T,M} = BallPartition{T,M}(radius, metric)
 
 (p::BallPartition)(x, y) = evaluate(p.metric, x, y) < p.radius

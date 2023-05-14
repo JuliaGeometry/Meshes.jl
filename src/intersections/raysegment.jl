@@ -17,8 +17,8 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
   l₁, l₂ = norm(b - a), length(seg)
-  b₀ = a + 1/l₁ * (b - a)
-  d₀ = c + 1/l₂ * (d - c)
+  b₀ = a + 1 / l₁ * (b - a)
+  d₀ = c + 1 / l₂ * (d - c)
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
 
@@ -27,8 +27,8 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
     return @IT NoIntersection nothing f # CASE 5
   # collinear
   elseif r == rₐ == 1
-    rc  = sum((c - a) ./ direction(ray))/N
-    rd = sum((d - a) ./ direction(ray))/N
+    rc = sum((c - a) ./ direction(ray)) / N
+    rd = sum((d - a) ./ direction(ray)) / N
     rc = mayberound(rc, zero(T))
     rd = mayberound(rd, zero(T))
     if rc > 0 # c ∈ ray
@@ -52,7 +52,7 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
         return @IT NoIntersection nothing f
       end
     end
-  # in same plane, not parallel
+    # in same plane, not parallel
   else
     λ₁ = mayberound(λ₁, zero(T))
     λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
@@ -66,9 +66,9 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
       end
     else
       if λ₂ == 0 || λ₂ == l₂
-        return @IT MidTouchingRaySegment (λ₂ < l₂/2 ? c : d)  f # CASE 2
+        return @IT MidTouchingRaySegment (λ₂ < l₂ / 2 ? c : d) f # CASE 2
       else
-        return @IT CrossingRaySegment ray(λ₁/l₁) f # CASE 1, equal to seg(λ₂/l₂)
+        return @IT CrossingRaySegment ray(λ₁ / l₁) f # CASE 1, equal to seg(λ₂/l₂)
       end
     end
   end

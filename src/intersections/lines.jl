@@ -24,7 +24,7 @@ function intersection(f, line₁::Line, line₂::Line)
   end
 end
 
- """
+"""
     intersectparameters(a, b, c, d)
 
 Compute the parameters `λ₁` and `λ₂` of the lines 
@@ -45,21 +45,20 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, 
-                             c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
+function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
   A = [(b - a) (c - d)]
   y = c - a
 
   # calculate the rank of the augmented matrix by checking
   # the zero entries of the diagonal of R
   _, R = qr([A y])
-  
+
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
   rₐ = sum(sum(abs, R, dims=2) .> atol(T))
 
   # calculate the rank of the rectangular matrix
-  r = sum(sum(abs, R[:,1:2], dims=2) .> atol(T))
+  r = sum(sum(abs, R[:, 1:2], dims=2) .> atol(T))
 
   # calculate parameters of intersection or closest point
   if r ≥ 2

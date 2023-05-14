@@ -14,11 +14,9 @@ struct Partition{O}
   metadata::Dict
 end
 
-Partition(object, subsets, metadata=Dict()) =
-  Partition{typeof(object)}(object, subsets, metadata)
+Partition(object, subsets, metadata=Dict()) = Partition{typeof(object)}(object, subsets, metadata)
 
-==(p₁::Partition, p₂::Partition) =
-  p₁.object == p₂.object && p₁.subsets == p₂.subsets
+==(p₁::Partition, p₂::Partition) = p₁.object == p₂.object && p₁.subsets == p₂.subsets
 
 Base.parent(p::Partition) = p.object
 
@@ -37,16 +35,13 @@ Return the metadata dictionary saved in the partition.
 """
 metadata(partition::Partition) = partition.metadata
 
-Base.iterate(partition::Partition, state=1) =
-  state > length(partition) ? nothing : (partition[state], state + 1)
+Base.iterate(partition::Partition, state=1) = state > length(partition) ? nothing : (partition[state], state + 1)
 
 Base.length(partition::Partition) = length(partition.subsets)
 
-Base.getindex(partition::Partition, ind::Int) =
-  view(partition.object, partition.subsets[ind])
+Base.getindex(partition::Partition, ind::Int) = view(partition.object, partition.subsets[ind])
 
-Base.getindex(partition::Partition, inds::AbstractVector{Int}) =
-  [getindex(partition, ind) for ind in inds]
+Base.getindex(partition::Partition, inds::AbstractVector{Int}) = [getindex(partition, ind) for ind in inds]
 
 Base.eltype(partition::Partition) = typeof(first(partition))
 
@@ -60,10 +55,12 @@ function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
   meta = partition.metadata
   println(io, partition)
   N = length(subs)
-  I, J = N > 10 ? (5, N-4) : (N, N+1)
-  lines = [["  └─$(partition[i])" for i in 1:I]
-           (N > 10 ? ["  ⋮"] : [])
-           ["  └─$(partition[i])" for i in J:N]]
+  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
+  lines = [
+    ["  └─$(partition[i])" for i in 1:I]
+    (N > 10 ? ["  ⋮"] : [])
+    ["  └─$(partition[i])" for i in J:N]
+  ]
   print(io, join(lines, "\n"))
   !isempty(meta) && print(io, "\n  metadata: ", join(keys(meta), ", "))
 end

@@ -21,7 +21,7 @@ import CairoMakie as Mke
 isCI = "CI" ∈ keys(ENV)
 islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
-datadir = joinpath(@__DIR__,"data")
+datadir = joinpath(@__DIR__, "data")
 
 # helper function to read *.line files containing polygons
 # generated with RPG (https://github.com/cgalab/genpoly-rpg)
@@ -59,7 +59,7 @@ function readply(T, fname)
   y = ply["vertex"]["y"]
   z = ply["vertex"]["z"]
   points = Point{3,T}.(x, y, z)
-  connec = [connect(Tuple(c.+1)) for c in ply["face"]["vertex_indices"]]
+  connec = [connect(Tuple(c .+ 1)) for c in ply["face"]["vertex_indices"]]
   SimpleMesh(points, connec)
 end
 

@@ -31,17 +31,15 @@ end
 
 function CylinderSurface(segment::Segment{3,T}, radius) where {T}
   a, b = extrema(segment)
-  v    = b - a
-  bot  = Plane(a, v)
-  top  = Plane(b, v)
+  v = b - a
+  bot = Plane(a, v)
+  top = Plane(b, v)
   CylinderSurface(bot, top, T(radius))
 end
 
-CylinderSurface(segment::Segment{3,T}) where {T} =
-  CylinderSurface(segment, T(1))
+CylinderSurface(segment::Segment{3,T}) where {T} = CylinderSurface(segment, T(1))
 
-CylinderSurface(radius::T) where {T} =
-  CylinderSurface(Segment((T(0),T(0),T(0)), (T(0),T(0),T(1))), radius)
+CylinderSurface(radius::T) where {T} = CylinderSurface(Segment((T(0), T(0), T(0)), (T(0), T(0), T(1))), radius)
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
@@ -75,7 +73,6 @@ end
 
 boundary(::CylinderSurface) = nothing
 
-measure(c::CylinderSurface{T}) where {T} =
-  (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
+measure(c::CylinderSurface{T}) where {T} = (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
 
 area(c::CylinderSurface) = measure(c)

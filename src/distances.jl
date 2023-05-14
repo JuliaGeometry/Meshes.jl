@@ -15,7 +15,7 @@ function evaluate(::Euclidean, p::Point, l::Line)
   u = p - a
   v = b - a
   α = (u ⋅ v) / (v ⋅ v)
-  norm(u - α*v)
+  norm(u - α * v)
 end
 
 """
@@ -23,5 +23,4 @@ end
 
 Evaluate pre-metric between coordinates of `point2` and `point2`.
 """
-evaluate(d::PreMetric, p1::Point, p2::Point) =
-  evaluate(d, coordinates(p1), coordinates(p2))
+evaluate(d::PreMetric, p1::Point, p2::Point) = evaluate(d, coordinates(p1), coordinates(p2))

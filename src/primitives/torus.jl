@@ -16,11 +16,9 @@ struct Torus{T} <: Primitive{3,T}
   minor::T
 end
 
-Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} = 
-  Torus(center, normal, T(major), T(minor))
+Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} = Torus(center, normal, T(major), T(minor))
 
-Torus(center::Tuple, normal::Tuple, major, minor) = 
-  Torus(Point(center), Vec(normal), major, minor)
+Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(normal), major, minor)
 
 """
     Torus(p1, p2, p3, minor)
@@ -34,8 +32,7 @@ function Torus(p1::Point{3,T}, p2::Point{3,T}, p3::Point{3,T}, minor) where {T}
   Torus(center(c), normal(p), radius(c), T(minor))
 end
 
-Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) =
-  Torus(Point(p1), Point(p2), Point(p3), minor)
+Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Point(p3), minor)
 
 paramdim(::Type{<:Torus}) = 2
 
