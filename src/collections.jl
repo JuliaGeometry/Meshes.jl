@@ -80,8 +80,7 @@ const GeometrySet{Dim,T,G<:Geometry{Dim,T}} = Collection{Dim,T,G}
 
 A set of `geometries` seen as a single domain.
 """
-GeometrySet(geoms::AbstractVector{G}) where {G<:Geometry} =
-  GeometrySet{embeddim(G),coordtype(G),G}(geoms)
+GeometrySet(geoms::AbstractVector{G}) where {G<:Geometry} = GeometrySet{embeddim(G),coordtype(G),G}(geoms)
 
 # constructor with iterator of geometries
 GeometrySet(geoms) = GeometrySet(collect(geoms))

@@ -36,8 +36,7 @@ end
 
 Base.inv(ccw::CounterClockwiseAngle) = ClockwiseAngle(ccw.θ)
 
-Base.convert(::Type{<:DCM}, ccw::CounterClockwiseAngle) =
-  convert(DCM, ClockwiseAngle(-ccw.θ))
+Base.convert(::Type{<:DCM}, ccw::CounterClockwiseAngle) = convert(DCM, ClockwiseAngle(-ccw.θ))
 
 # -------------
 # 3D ROTATIONS

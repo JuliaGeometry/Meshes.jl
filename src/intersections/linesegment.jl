@@ -15,7 +15,7 @@ function intersection(f, line::Line{N,T}, seg::Segment{N,T}) where {N,T}
 
   # normalize points to gain parameter λ₂ corresponding to arc lengths
   l₂ = length(seg)
-  d₀ = c + 1/l₂ * (d - c)
+  d₀ = c + 1 / l₂ * (d - c)
 
   _, λ₂, r, rₐ = intersectparameters(a, b, c, d₀)
 
@@ -29,7 +29,7 @@ function intersection(f, line::Line{N,T}, seg::Segment{N,T}) where {N,T}
   else
     λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
     if λ₂ > 0 && λ₂ < l₂
-      return @IT CrossingLineSegment seg(λ₂/l₂) f # CASE 1, equal to line(λ₁)
+      return @IT CrossingLineSegment seg(λ₂ / l₂) f # CASE 1, equal to line(λ₁)
     elseif λ₂ == 0 || λ₂ == l₂
       return @IT TouchingLineSegment ((λ₂ == 0) ? c : d) f # CASE 2
     else

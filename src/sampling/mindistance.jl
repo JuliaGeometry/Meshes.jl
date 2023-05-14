@@ -31,8 +31,7 @@ struct MinDistanceSampling{T,M} <: ContinuousSamplingMethod
   metric::M
 end
 
-MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} =
-  MinDistanceSampling(α, ρ, δ, metric)
+MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
   # retrive parameters
@@ -46,7 +45,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
 
   # expected number of Poisson samples
   # for relative radius (Lagae & Dutré 2007)
-  N = 2V/√3 * (ρ/α)^2
+  N = 2V / √3 * (ρ / α)^2
 
   # number of oversamples (Medeiros et al. 2014)
   O = ceil(Int, δ * N)

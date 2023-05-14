@@ -60,17 +60,15 @@ function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   @assert size(R) == (Dim, Dim) "invalid rotation for radii"
 
   # Mahalanobis metric
-  metric = Mahalanobis(Symmetric(R'*Λ*R))
+  metric = Mahalanobis(Symmetric(R' * Λ * R))
 
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
 
-MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} =
-  MetricBall(SVector(radii), rotation)
+MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} = MetricBall(SVector(radii), rotation)
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} =
-  MetricBall(SVector{length(radii),T}(radii), rotation)
+MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} = MetricBall(SVector{length(radii),T}(radii), rotation)
 
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
   radii = SVector(radius)

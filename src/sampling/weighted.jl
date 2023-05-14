@@ -17,15 +17,12 @@ struct WeightedSampling{W} <: DiscreteSamplingMethod
   ordered::Bool
 end
 
-WeightedSampling(size; replace=false, ordered=false) =
-  WeightedSampling(size, nothing, replace, ordered)
+WeightedSampling(size; replace=false, ordered=false) = WeightedSampling(size, nothing, replace, ordered)
 
-WeightedSampling(size, weights::AbstractWeights;
-                 replace=false, ordered=false) =
+WeightedSampling(size, weights::AbstractWeights; replace=false, ordered=false) =
   WeightedSampling(size, weights, replace, ordered)
 
-WeightedSampling(size, weights::Nothing;
-                 replace=false, ordered=false) =
+WeightedSampling(size, weights::Nothing; replace=false, ordered=false) =
   WeightedSampling(size, weights, replace, ordered)
 
 WeightedSampling(size, weights; replace=false, ordered=false) =

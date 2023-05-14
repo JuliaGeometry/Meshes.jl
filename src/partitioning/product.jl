@@ -48,17 +48,21 @@ function partition(rng::AbstractRNG, object, method::ProductPartition)
 end
 
 # predicate partition method
-function partition(rng::AbstractRNG, object,
-                   method::ProductPartition{P1,P2}) where {P1<:PredicatePartitionMethod,
-                                                           P2<:PredicatePartitionMethod}
+function partition(
+  rng::AbstractRNG,
+  object,
+  method::ProductPartition{P1,P2}
+) where {P1<:PredicatePartitionMethod,P2<:PredicatePartitionMethod}
   pred(i, j) = method.p₁(i, j) * method.p₂(i, j)
   partition(rng, object, PredicatePartition(pred))
 end
 
 # spatial predicate partition method
-function partition(rng, object,
-                   method::ProductPartition{P1,P2}) where {P1<:SPredicatePartitionMethod,
-                                                           P2<:SPredicatePartitionMethod}
+function partition(
+  rng,
+  object,
+  method::ProductPartition{P1,P2}
+) where {P1<:SPredicatePartitionMethod,P2<:SPredicatePartitionMethod}
   pred(x, y) = method.p₁(x, y) * method.p₂(x, y)
   partition(rng, object, SpatialPredicatePartition(pred))
 end

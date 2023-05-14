@@ -104,7 +104,7 @@ prettyname(p::Polytope) = prettyname(typeof(p))
 function prettyname(PL::Type{<:Polytope})
   n = string(PL)
   i = findfirst('{', n)
-  isnothing(i) ? n : n[1:i-1]
+  isnothing(i) ? n : n[1:(i - 1)]
 end
 
 # -----------
@@ -191,8 +191,7 @@ boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
 
 Tells whether or not the `polygon` is convex.
 """
-isconvex(p::Polygon{Dim,T}) where {Dim,T} =
-  issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
+isconvex(p::Polygon{Dim,T}) where {Dim,T} = issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
 
 """
     bridge(polygon; width=0)
