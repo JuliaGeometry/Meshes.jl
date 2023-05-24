@@ -2,11 +2,11 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-struct MidPointPath <: Path end
+struct FarthestPath <: Path end
 
 sumofdists(point, points) = sum(evaluate(Euclidean(), point, p) for p in points)
 
-function traverse(object, ::MidPointPath)
+function traverse(object, ::FarthestPath)
   path = [1]
   nelms = nelements(object)
   points = [centroid(object, i) for i in 1:nelms]
