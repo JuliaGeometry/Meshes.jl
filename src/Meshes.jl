@@ -267,6 +267,7 @@ export
   RandomPath,
   ShiftedPath,
   SourcePath,
+  MidPointPath,
   traverse,
 
   # neighborhoods
