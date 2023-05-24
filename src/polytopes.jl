@@ -39,6 +39,13 @@ Return the parametric dimension or rank of the polytope.
 paramdim(::Type{<:Polytope{K}}) where {K} = K
 
 """
+    vertex(polytope, ind)
+
+Return the vertex of a `polytope` at index `ind`.
+"""
+vertex(p::Polytope, ind) = vertices(p)[ind]
+
+"""
     vertices(polytope)
 
 Return the vertices of a `polytope`.
@@ -97,7 +104,7 @@ prettyname(p::Polytope) = prettyname(typeof(p))
 function prettyname(PL::Type{<:Polytope})
   n = string(PL)
   i = findfirst('{', n)
-  isnothing(i) ? n : n[1:i-1]
+  isnothing(i) ? n : n[1:(i - 1)]
 end
 
 # -----------
@@ -134,14 +141,14 @@ area(p::Polygon) = measure(p)
 
 Return the outer and inner chains of the polygon.
 """
-function chains(::Polygon) end
+function chains end
 
 """
     hasholes(polygon)
 
 Tells whether or not the `polygon` contains holes.
 """
-function hasholes(::Polygon) end
+function hasholes end
 
 """
     issimple(polygon)
@@ -157,7 +164,7 @@ issimple(p::Polygon) = issimple(typeof(p))
 
 Winding number of `point` with respect to the `polygon`.
 """
-function windingnumber(::Point, ::Polygon) end
+function windingnumber end
 
 """
     orientation(polygon)
@@ -184,8 +191,7 @@ boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
 
 Tells whether or not the `polygon` is convex.
 """
-isconvex(p::Polygon{Dim,T}) where {Dim,T} =
-  issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
+isconvex(p::Polygon{Dim,T}) where {Dim,T} = issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
 
 """
     bridge(polygon; width=0)

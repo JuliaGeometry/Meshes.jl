@@ -16,8 +16,7 @@ struct UniformSampling <: DiscreteSamplingMethod
   ordered::Bool
 end
 
-UniformSampling(size; replace=false, ordered=false) =
-  UniformSampling(size, replace, ordered)
+UniformSampling(size; replace=false, ordered=false) = UniformSampling(size, replace, ordered)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::UniformSampling)
   s = method.size

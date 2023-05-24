@@ -16,6 +16,13 @@ A data structure for constructing topological relations in a [`Mesh`](@ref).
 abstract type Topology end
 
 """
+    vertex(topology, ind)
+
+Return the vertex of a `topology` at index `ind`.
+"""
+vertex(::Topology, ind) = ind
+
+"""
     vertices(topology)
 
 Return the vertices of the `topology`.
@@ -27,7 +34,7 @@ vertices(t::Topology) = 1:nvertices(t)
 
 Return the number of vertices of the `topology`.
 """
-function nvertices(::Topology) end
+function nvertices end
 
 """
     faces(topology, rank)
@@ -52,8 +59,6 @@ function faces(t::Topology, rank)
     elements(t)
   elseif rank == D - 1
     facets(t)
-  elseif rank == 0
-    vertices(t)
   else
     throw(ErrorException("not implemented"))
   end
@@ -70,8 +75,6 @@ function nfaces(t::Topology, rank)
     nelements(t)
   elseif rank == D - 1
     nfacets(t)
-  elseif rank == 0
-    nvertices(t)
   else
     throw(ErrorException("not implemented"))
   end

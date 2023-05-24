@@ -32,7 +32,7 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
     if fix
       # fix orientation
       ofix(c, o) = orientation(c) == o ? c : reverse(c)
-      outer  = ofix(outer, :CCW)
+      outer = ofix(outer, :CCW)
       inners = ofix.(inners, :CW)
 
       # fix degeneracy
@@ -59,14 +59,11 @@ PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
 PolyArea(outer::AbstractVector{TP}, inners=[]; fix=true) where {TP<:Tuple} =
   PolyArea(Point.(outer), [Point.(inner) for inner in inners]; fix=fix)
 
-PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} =
-  PolyArea(collect(outer); fix=fix)
+PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} = PolyArea(collect(outer); fix=fix)
 
-PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} =
-  PolyArea(collect(Point.(outer)); fix=fix)
+PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} = PolyArea(collect(Point.(outer)); fix=fix)
 
-==(p1::PolyArea, p2::PolyArea) =
-  p1.outer == p2.outer && p1.inners == p2.inners
+==(p1::PolyArea, p2::PolyArea) = p1.outer == p2.outer && p1.inners == p2.inners
 
 function vertices(p::PolyArea{Dim,T}) where {Dim,T}
   vo = vertices(p.outer)
@@ -84,18 +81,16 @@ hasholes(p::PolyArea) = !isempty(p.inners)
 
 issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
 
-windingnumber(point::Point, p::PolyArea) =
-  windingnumber(point, p.outer)
+windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 
 function Base.unique!(p::PolyArea)
   close!(unique!(open!(p.outer)))
-  hasholes(p) && foreach(c->close!(unique!(open!(c))), p.inners)
+  hasholes(p) && foreach(c -> close!(unique!(open!(c))), p.inners)
   p
 end
 
 function Base.in(point::Point, polyarea::PolyArea)
-  sideof(point, polyarea.outer) == :INSIDE &&
-  all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
+  sideof(point, polyarea.outer) == :INSIDE && all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
 end
 
 function Base.show(io::IO, p::PolyArea)

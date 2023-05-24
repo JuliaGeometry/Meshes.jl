@@ -16,8 +16,7 @@ Sample elements or points from geometric `object`
 with `method`. Optionally, specify random number
 generator `rng`.
 """
-sample(object, method) =
-  sample(Random.GLOBAL_RNG, object, method)
+sample(object, method) = sample(Random.GLOBAL_RNG, object, method)
 
 """
     DiscreteSamplingMethod
@@ -38,9 +37,7 @@ space.
 """
 abstract type ContinuousSamplingMethod end
 
-sample(rng::AbstractRNG, geom::Geometry,
-       method::ContinuousSamplingMethod) =
-  sample(rng, discretize(geom), method)
+sample(rng::AbstractRNG, geom::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(geom), method)
 
 # ----------------
 # IMPLEMENTATIONS
@@ -69,10 +66,7 @@ with or without replacement depending on the `replace` option. The
 option `ordered` can be used to return samples in the same order of
 the `object`.
 """
-function sample(object::DomainOrData, size::Int, weights=nothing;
-                replace=false, ordered=false)
-  method = WeightedSampling(size, weights;
-                            replace=replace,
-                            ordered=ordered)
+function sample(object::DomainOrData, size::Int, weights=nothing; replace=false, ordered=false)
+  method = WeightedSampling(size, weights; replace=replace, ordered=ordered)
   sample(Random.GLOBAL_RNG, object, method)
 end

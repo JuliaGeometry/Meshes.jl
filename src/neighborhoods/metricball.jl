@@ -49,7 +49,7 @@ function MetricBall(radii::SVector{Dim,T}, R::Rotation{Dim}=_default_rotation(Va
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
   # Mahalanobis metric
-  metric = Mahalanobis(Symmetric(R'*Λ*R))
+  metric = Mahalanobis(Symmetric(R' * Λ * R))
 
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end

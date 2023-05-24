@@ -21,11 +21,13 @@
     @test nfacets(t) == 4
     @test nvertices(t) == 4
     @test nfaces(t, 1) == 3
-    @test nfaces(t, 0) == 4
-    @test element(t, 1) == connect((1,2))
-    @test element(t, 2) == connect((2,3))
-    @test element(t, 3) == connect((3,4))
+    @test element(t, 1) == connect((1, 2))
+    @test element(t, 2) == connect((2, 3))
+    @test element(t, 3) == connect((3, 4))
     @test faces(t, 1) == elements(t)
+    @test vertices(t) == 1:4
+    @test vertex(t, 1) == 1
+    @test vertex(t, 4) == 4
 
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
@@ -85,16 +87,46 @@
     @test nvertices(t) == 20
     @test nfaces(t, 2) == 12
     @test nfaces(t, 1) == 31
-    @test nfaces(t, 0) == 20
-    @test element(t, 1) == connect((1,2,6,5))
-    @test element(t, 5) == connect((6,7,11,10))
+    @test element(t, 1) == connect((1, 2, 6, 5))
+    @test element(t, 5) == connect((6, 7, 11, 10))
     @test faces(t, 2) == elements(t)
-    @test facet.(Ref(t), 1:31) == connect.([(1, 5), (2, 6), (3, 7), (4, 8), (5, 9), (6, 10),
-                                            (7, 11), (8, 12), (9, 13), (10, 14), (11, 15),
-                                            (12, 16), (13, 17), (14, 18), (15, 19), (16, 20),
-                                            (1, 2), (5, 6), (9, 10), (13, 14), (17, 18), (2, 3),
-                                            (6, 7), (10, 11), (14, 15), (18, 19), (3, 4), (7, 8),
-                                            (11, 12), (15, 16), (19, 20)])
+    @test vertices(t) == 1:20
+    @test vertex(t, 1) == 1
+    @test vertex(t, 20) == 20
+    @test facet.(Ref(t), 1:31) ==
+          connect.([
+      (1, 5),
+      (2, 6),
+      (3, 7),
+      (4, 8),
+      (5, 9),
+      (6, 10),
+      (7, 11),
+      (8, 12),
+      (9, 13),
+      (10, 14),
+      (11, 15),
+      (12, 16),
+      (13, 17),
+      (14, 18),
+      (15, 19),
+      (16, 20),
+      (1, 2),
+      (5, 6),
+      (9, 10),
+      (13, 14),
+      (17, 18),
+      (2, 3),
+      (6, 7),
+      (10, 11),
+      (14, 15),
+      (18, 19),
+      (3, 4),
+      (7, 8),
+      (11, 12),
+      (15, 16),
+      (19, 20)
+    ])
 
     t = GridTopology(3, 4, 2)
     @test paramdim(t) == 3
@@ -198,122 +230,124 @@
     @test corner2elem(t, 34) == 23
     @test corner2elem(t, 35) == 24
     @test nelements(t) == 24
-    @test nfacets(t) == 3*24 + 3*4 + 4*2 + 3*2
+    @test nfacets(t) == 3 * 24 + 3 * 4 + 4 * 2 + 3 * 2
     @test nvertices(t) == 60
     @test nfaces(t, 3) == 24
-    @test nfaces(t, 2) == 3*24 + 3*4 + 4*2 + 3*2
-    @test nfaces(t, 0) == 60
-    @test element(t, 1) == connect((1,2,6,5,21,22,26,25), Hexahedron)
-    @test element(t, 5) == connect((6,7,11,10,26,27,31,30), Hexahedron)
+    @test nfaces(t, 2) == 3 * 24 + 3 * 4 + 4 * 2 + 3 * 2
+    @test element(t, 1) == connect((1, 2, 6, 5, 21, 22, 26, 25), Hexahedron)
+    @test element(t, 5) == connect((6, 7, 11, 10, 26, 27, 31, 30), Hexahedron)
     @test faces(t, 3) == elements(t)
+    @test vertices(t) == 1:60
+    @test vertex(t, 1) == 1
+    @test vertex(t, 60) == 60
 
     t = GridTopology((3,), (true,))
     @test isperiodic(t) == (true,)
     @test nvertices(t) == 3
     @test nelements(t) == 3
     @test nfacets(t) == 3
-    @test element(t, 1) == connect((1,2))
-    @test element(t, 2) == connect((2,3))
-    @test element(t, 3) == connect((3,1))
+    @test element(t, 1) == connect((1, 2))
+    @test element(t, 2) == connect((2, 3))
+    @test element(t, 3) == connect((3, 1))
 
-    t = GridTopology((2,3), (true,true))
-    @test isperiodic(t) == (true,true)
-    @test nvertices(t) == 2*3
+    t = GridTopology((2, 3), (true, true))
+    @test isperiodic(t) == (true, true)
+    @test nvertices(t) == 2 * 3
     @test nelements(t) == 6
     @test nfacets(t) == 12
-    @test element(t, 1) == connect((1,2,4,3))
-    @test element(t, 2) == connect((2,1,3,4))
-    @test element(t, 3) == connect((3,4,6,5))
-    @test element(t, 4) == connect((4,3,5,6))
-    @test element(t, 5) == connect((5,6,2,1))
-    @test element(t, 6) == connect((6,5,1,2))
+    @test element(t, 1) == connect((1, 2, 4, 3))
+    @test element(t, 2) == connect((2, 1, 3, 4))
+    @test element(t, 3) == connect((3, 4, 6, 5))
+    @test element(t, 4) == connect((4, 3, 5, 6))
+    @test element(t, 5) == connect((5, 6, 2, 1))
+    @test element(t, 6) == connect((6, 5, 1, 2))
 
-    t = GridTopology((2,3), (false,true))
-    @test isperiodic(t) == (false,true)
-    @test nvertices(t) == 3*3
+    t = GridTopology((2, 3), (false, true))
+    @test isperiodic(t) == (false, true)
+    @test nvertices(t) == 3 * 3
     @test nelements(t) == 6
     @test nfacets(t) == 15
-    @test element(t, 1) == connect((1,2,5,4))
-    @test element(t, 2) == connect((2,3,6,5))
-    @test element(t, 3) == connect((4,5,8,7))
-    @test element(t, 4) == connect((5,6,9,8))
-    @test element(t, 5) == connect((7,8,2,1))
-    @test element(t, 6) == connect((8,9,3,2))
+    @test element(t, 1) == connect((1, 2, 5, 4))
+    @test element(t, 2) == connect((2, 3, 6, 5))
+    @test element(t, 3) == connect((4, 5, 8, 7))
+    @test element(t, 4) == connect((5, 6, 9, 8))
+    @test element(t, 5) == connect((7, 8, 2, 1))
+    @test element(t, 6) == connect((8, 9, 3, 2))
 
-    t = GridTopology((2,3), (true,false))
-    @test isperiodic(t) == (true,false)
-    @test nvertices(t) == 2*4
+    t = GridTopology((2, 3), (true, false))
+    @test isperiodic(t) == (true, false)
+    @test nvertices(t) == 2 * 4
     @test nelements(t) == 6
     @test nfacets(t) == 14
-    @test element(t, 1) == connect((1,2,4,3))
-    @test element(t, 2) == connect((2,1,3,4))
-    @test element(t, 3) == connect((3,4,6,5))
-    @test element(t, 4) == connect((4,3,5,6))
-    @test element(t, 5) == connect((5,6,8,7))
-    @test element(t, 6) == connect((6,5,7,8))
+    @test element(t, 1) == connect((1, 2, 4, 3))
+    @test element(t, 2) == connect((2, 1, 3, 4))
+    @test element(t, 3) == connect((3, 4, 6, 5))
+    @test element(t, 4) == connect((4, 3, 5, 6))
+    @test element(t, 5) == connect((5, 6, 8, 7))
+    @test element(t, 6) == connect((6, 5, 7, 8))
 
-    t = GridTopology((2,3,4), (true,true,true))
-    @test isperiodic(t) == (true,true,true)
-    @test nvertices(t) == 2*3*4
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4)
-    @test element(t, 1) == connect((1,2,4,3,7,8,10,9), Hexahedron)
-    @test element(t, 2) == connect((2,1,3,4,8,7,9,10), Hexahedron)
-    @test element(t, 24) == connect((24,23,19,20,6,5,1,2), Hexahedron)
+    t = GridTopology((2, 3, 4), (true, true, true))
+    @test isperiodic(t) == (true, true, true)
+    @test nvertices(t) == 2 * 3 * 4
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4)
+    @test element(t, 1) == connect((1, 2, 4, 3, 7, 8, 10, 9), Hexahedron)
+    @test element(t, 2) == connect((2, 1, 3, 4, 8, 7, 9, 10), Hexahedron)
+    @test element(t, 24) == connect((24, 23, 19, 20, 6, 5, 1, 2), Hexahedron)
 
-    t = GridTopology((2,3,4), (false,true,true))
-    @test isperiodic(t) == (false,true,true)
-    @test nvertices(t) == 3*3*4
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4) + 3*4
-    @test element(t, 1) == connect((1,2,5,4,10,11,14,13), Hexahedron)
-    @test element(t, 2) == connect((2,3,6,5,11,12,15,14), Hexahedron)
-    @test element(t, 24) == connect((35,36,30,29,8,9,3,2), Hexahedron)
+    t = GridTopology((2, 3, 4), (false, true, true))
+    @test isperiodic(t) == (false, true, true)
+    @test nvertices(t) == 3 * 3 * 4
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4) + 3 * 4
+    @test element(t, 1) == connect((1, 2, 5, 4, 10, 11, 14, 13), Hexahedron)
+    @test element(t, 2) == connect((2, 3, 6, 5, 11, 12, 15, 14), Hexahedron)
+    @test element(t, 24) == connect((35, 36, 30, 29, 8, 9, 3, 2), Hexahedron)
 
-    t = GridTopology((2,3,4), (true,false,true))
-    @test isperiodic(t) == (true,false,true)
-    @test nvertices(t) == 2*4*4
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4) + 2*4
-    @test element(t, 1) == connect((1,2,4,3,9,10,12,11), Hexahedron)
-    @test element(t, 2) == connect((2,1,3,4,10,9,11,12), Hexahedron)
-    @test element(t, 24) == connect((30,29,31,32,6,5,7,8), Hexahedron)
+    t = GridTopology((2, 3, 4), (true, false, true))
+    @test isperiodic(t) == (true, false, true)
+    @test nvertices(t) == 2 * 4 * 4
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4) + 2 * 4
+    @test element(t, 1) == connect((1, 2, 4, 3, 9, 10, 12, 11), Hexahedron)
+    @test element(t, 2) == connect((2, 1, 3, 4, 10, 9, 11, 12), Hexahedron)
+    @test element(t, 24) == connect((30, 29, 31, 32, 6, 5, 7, 8), Hexahedron)
 
-    t = GridTopology((2,3,4), (true,true,false))
-    @test isperiodic(t) == (true,true,false)
-    @test nvertices(t) == 2*3*5
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4) + 2*3
-    @test element(t, 1) == connect((1,2,4,3,7,8,10,9), Hexahedron)
-    @test element(t, 2) == connect((2,1,3,4,8,7,9,10), Hexahedron)
-    @test element(t, 24) == connect((24,23,19,20,30,29,25,26), Hexahedron)
+    t = GridTopology((2, 3, 4), (true, true, false))
+    @test isperiodic(t) == (true, true, false)
+    @test nvertices(t) == 2 * 3 * 5
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4) + 2 * 3
+    @test element(t, 1) == connect((1, 2, 4, 3, 7, 8, 10, 9), Hexahedron)
+    @test element(t, 2) == connect((2, 1, 3, 4, 8, 7, 9, 10), Hexahedron)
+    @test element(t, 24) == connect((24, 23, 19, 20, 30, 29, 25, 26), Hexahedron)
 
-    t = GridTopology((2,3,4), (true,false,false))
-    @test isperiodic(t) == (true,false,false)
-    @test nvertices(t) == 2*4*5
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4) + 2*4 + 2*3
-    @test element(t, 1) == connect((1,2,4,3,9,10,12,11), Hexahedron)
-    @test element(t, 2) == connect((2,1,3,4,10,9,11,12), Hexahedron)
-    @test element(t, 24) == connect((30,29,31,32,38,37,39,40), Hexahedron)
+    t = GridTopology((2, 3, 4), (true, false, false))
+    @test isperiodic(t) == (true, false, false)
+    @test nvertices(t) == 2 * 4 * 5
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4) + 2 * 4 + 2 * 3
+    @test element(t, 1) == connect((1, 2, 4, 3, 9, 10, 12, 11), Hexahedron)
+    @test element(t, 2) == connect((2, 1, 3, 4, 10, 9, 11, 12), Hexahedron)
+    @test element(t, 24) == connect((30, 29, 31, 32, 38, 37, 39, 40), Hexahedron)
 
-    t = GridTopology((2,3,4), (false,true,false))
-    @test isperiodic(t) == (false,true,false)
-    @test nvertices(t) == 3*3*5
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4) + 3*4 + 2*3
-    @test element(t, 1) == connect((1,2,5,4,10,11,14,13), Hexahedron)
-    @test element(t, 2) == connect((2,3,6,5,11,12,15,14), Hexahedron)
-    @test element(t, 24) == connect((35,36,30,29,44,45,39,38), Hexahedron)
+    t = GridTopology((2, 3, 4), (false, true, false))
+    @test isperiodic(t) == (false, true, false)
+    @test nvertices(t) == 3 * 3 * 5
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4) + 3 * 4 + 2 * 3
+    @test element(t, 1) == connect((1, 2, 5, 4, 10, 11, 14, 13), Hexahedron)
+    @test element(t, 2) == connect((2, 3, 6, 5, 11, 12, 15, 14), Hexahedron)
+    @test element(t, 24) == connect((35, 36, 30, 29, 44, 45, 39, 38), Hexahedron)
 
-    t = GridTopology((2,3,4), (false,false,true))
-    @test isperiodic(t) == (false,false,true)
-    @test nvertices(t) == 3*4*4
-    @test nelements(t) == 2*3*4
-    @test nfacets(t) == 3*(2*3*4) + 3*4 + 2*4
-    @test element(t, 1) == connect((1,2,5,4,13,14,17,16), Hexahedron)
-    @test element(t, 2) == connect((2,3,6,5,14,15,18,17), Hexahedron)
-    @test element(t, 24) == connect((44,45,48,47,8,9,12,11), Hexahedron)
+    t = GridTopology((2, 3, 4), (false, false, true))
+    @test isperiodic(t) == (false, false, true)
+    @test nvertices(t) == 3 * 4 * 4
+    @test nelements(t) == 2 * 3 * 4
+    @test nfacets(t) == 3 * (2 * 3 * 4) + 3 * 4 + 2 * 4
+    @test element(t, 1) == connect((1, 2, 5, 4, 13, 14, 17, 16), Hexahedron)
+    @test element(t, 2) == connect((2, 3, 6, 5, 14, 15, 18, 17), Hexahedron)
+    @test element(t, 24) == connect((44, 45, 48, 47, 8, 9, 12, 11), Hexahedron)
   end
 
   @testset "HalfEdgeTopology" begin
@@ -328,28 +362,39 @@
     end
 
     # 2 triangles as a list of half-edges
-    h1  = HalfEdge(1, 1)
-    h2  = HalfEdge(2, nothing)
-    h3  = HalfEdge(2, 1)
-    h4  = HalfEdge(3, 2)
-    h5  = HalfEdge(3, 1)
-    h6  = HalfEdge(1, nothing)
-    h7  = HalfEdge(2, 2)
-    h8  = HalfEdge(4, nothing)
-    h9  = HalfEdge(4, 2)
+    h1 = HalfEdge(1, 1)
+    h2 = HalfEdge(2, nothing)
+    h3 = HalfEdge(2, 1)
+    h4 = HalfEdge(3, 2)
+    h5 = HalfEdge(3, 1)
+    h6 = HalfEdge(1, nothing)
+    h7 = HalfEdge(2, 2)
+    h8 = HalfEdge(4, nothing)
+    h9 = HalfEdge(4, 2)
     h10 = HalfEdge(3, nothing)
-    h1.half =  h2; h2.half  = h1
-    h3.half =  h4; h4.half  = h3
-    h5.half =  h6; h6.half  = h5
-    h7.half =  h8; h8.half  = h7
-    h9.half = h10; h10.half = h9
-    h1.prev = h5;  h1.next = h3
-    h3.prev = h1;  h3.next = h5
-    h4.prev = h9;  h4.next = h7
-    h5.prev = h3;  h5.next = h1
-    h7.prev = h4;  h7.next = h9
-    h9.prev = h7;  h9.next = h4
-    halves  = [(h1,h2),(h3,h4),(h5,h6),(h7,h8),(h9,h10)]
+    h1.half = h2
+    h2.half = h1
+    h3.half = h4
+    h4.half = h3
+    h5.half = h6
+    h6.half = h5
+    h7.half = h8
+    h8.half = h7
+    h9.half = h10
+    h10.half = h9
+    h1.prev = h5
+    h1.next = h3
+    h3.prev = h1
+    h3.next = h5
+    h4.prev = h9
+    h4.next = h7
+    h5.prev = h3
+    h5.next = h1
+    h7.prev = h4
+    h7.next = h9
+    h9.prev = h7
+    h9.next = h4
+    halves = [(h1, h2), (h3, h4), (h5, h6), (h7, h8), (h9, h10)]
     struc = HalfEdgeTopology(halves)
     @test half4elem(struc, 1) == h1
     @test half4elem(struc, 2) == h4
@@ -357,19 +402,19 @@
     @test half4vert(struc, 2) == h3
     @test half4vert(struc, 3) == h4
     @test half4vert(struc, 4) == h9
-    @test edge4pair(struc, (1,2)) == 1
-    @test edge4pair(struc, (2,1)) == 1
-    @test edge4pair(struc, (2,3)) == 2
-    @test edge4pair(struc, (3,2)) == 2
-    @test edge4pair(struc, (3,1)) == 3
-    @test edge4pair(struc, (1,3)) == 3
-    @test edge4pair(struc, (2,4)) == 4
-    @test edge4pair(struc, (4,2)) == 4
-    @test edge4pair(struc, (4,3)) == 5
-    @test edge4pair(struc, (3,4)) == 5
+    @test edge4pair(struc, (1, 2)) == 1
+    @test edge4pair(struc, (2, 1)) == 1
+    @test edge4pair(struc, (2, 3)) == 2
+    @test edge4pair(struc, (3, 2)) == 2
+    @test edge4pair(struc, (3, 1)) == 3
+    @test edge4pair(struc, (1, 3)) == 3
+    @test edge4pair(struc, (2, 4)) == 4
+    @test edge4pair(struc, (4, 2)) == 4
+    @test edge4pair(struc, (4, 3)) == 5
+    @test edge4pair(struc, (3, 4)) == 5
 
     # 2 triangles
-    elems = connect.([(1,2,3),(4,3,2)])
+    elems = connect.([(1, 2, 3), (4, 3, 2)])
     t = HalfEdgeTopology(elems)
     @test paramdim(t) == 2
     @test nelements(t) == 2
@@ -377,11 +422,10 @@
     @test nvertices(t) == 4
     @test nfaces(t, 2) == 2
     @test nfaces(t, 1) == 5
-    @test nfaces(t, 0) == 4
     test_halfedge(elems, t)
 
     # 2 triangles + 2 quadrangles
-    elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
+    elems = connect.([(1, 2, 6, 5), (2, 4, 6), (4, 3, 5, 6), (1, 5, 3)])
     t = HalfEdgeTopology(elems)
     @test paramdim(t) == 2
     @test nelements(t) == 4
@@ -389,11 +433,10 @@
     @test nvertices(t) == 6
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 9
-    @test nfaces(t, 0) == 6
     test_halfedge(elems, t)
 
     # 1 triangle + 3 quadrangles + 1 triangle hole
-    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
+    elems = connect.([(1, 2, 6, 5), (2, 4, 7, 6), (4, 3, 7), (3, 1, 5, 7)])
     t = HalfEdgeTopology(elems)
     @test paramdim(t) == 2
     @test nelements(t) == 4
@@ -401,11 +444,13 @@
     @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 11
-    @test nfaces(t, 0) == 7
+    @test vertices(t) == 1:7
+    @test vertex(t, 1) == 1
+    @test vertex(t, 7) == 7
     test_halfedge(elems, t)
 
     # no need to sort elements with consistent orientation
-    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
+    elems = connect.([(1, 2, 6, 5), (2, 4, 7, 6), (4, 3, 7), (3, 1, 5, 7)])
     t = HalfEdgeTopology(elems, sort=false)
     @test paramdim(t) == 2
     @test nelements(t) == 4
@@ -413,11 +458,10 @@
     @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 11
-    @test nfaces(t, 0) == 7
     test_halfedge(elems, t)
 
     # correct construction from inconsistent orientation
-    e = connect.([(1,2,3),(3,4,2),(4,3,5),(6,3,1)])
+    e = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
     t = HalfEdgeTopology(e)
     n = collect(elements(t))
     @test n[1] == e[1]
@@ -426,61 +470,60 @@
     @test n[4] != e[4]
 
     # more challenging case with incosistent orientation
-    e = connect.([(4,1,5), (2,6,4), (3,5,6), (4,5,6)])
+    e = connect.([(4, 1, 5), (2, 6, 4), (3, 5, 6), (4, 5, 6)])
     t = HalfEdgeTopology(e)
     n = collect(elements(t))
-    @test n == connect.([(5,4,1), (6,2,4), (6,5,3), (4,5,6)])
+    @test n == connect.([(5, 4, 1), (6, 2, 4), (6, 5, 3), (4, 5, 6)])
   end
 
   @testset "SimpleTopology" begin
     # 2 triangles
-    elems = connect.([(1,2,3),(4,3,2)])
+    elems = connect.([(1, 2, 3), (4, 3, 2)])
     t = SimpleTopology(elems)
     @test paramdim(t) == 2
-    @test connec4elem(t, 1) == (1,2,3)
-    @test connec4elem(t, 2) == (4,3,2)
+    @test connec4elem(t, 1) == (1, 2, 3)
+    @test connec4elem(t, 2) == (4, 3, 2)
     @test nvertices(t) == 4
     @test nelements(t) == 2
+    @test vertices(t) == 1:4
+    @test vertex(t, 1) == 1
+    @test vertex(t, 4) == 4
     @test nfaces(t, 2) == 2
     @test nfaces(t, 1) == 0
-    @test nfaces(t, 0) == 4
 
     # 2 triangles + 2 quadrangles
-    elems = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(1,5,3)])
+    elems = connect.([(1, 2, 6, 5), (2, 4, 6), (4, 3, 5, 6), (1, 5, 3)])
     t = SimpleTopology(elems)
-    @test connec4elem(t, 1) == (1,2,6,5)
-    @test connec4elem(t, 2) == (2,4,6)
-    @test connec4elem(t, 3) == (4,3,5,6)
-    @test connec4elem(t, 4) == (1,5,3)
+    @test connec4elem(t, 1) == (1, 2, 6, 5)
+    @test connec4elem(t, 2) == (2, 4, 6)
+    @test connec4elem(t, 3) == (4, 3, 5, 6)
+    @test connec4elem(t, 4) == (1, 5, 3)
     @test nelements(t) == 4
-    @test nfacets(t)   == 0
+    @test nfacets(t) == 0
     @test nvertices(t) == 6
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 0
-    @test nfaces(t, 0) == 6
 
     # 1 triangle + 3 quadrangles + 1 triangle hole
-    elems = connect.([(1,2,6,5),(2,4,7,6),(4,3,7),(3,1,5,7)])
+    elems = connect.([(1, 2, 6, 5), (2, 4, 7, 6), (4, 3, 7), (3, 1, 5, 7)])
     t = SimpleTopology(elems)
-    @test connec4elem(t, 1) == (1,2,6,5)
-    @test connec4elem(t, 2) == (2,4,7,6)
-    @test connec4elem(t, 3) == (4,3,7)
-    @test connec4elem(t, 4) == (3,1,5,7)
+    @test connec4elem(t, 1) == (1, 2, 6, 5)
+    @test connec4elem(t, 2) == (2, 4, 7, 6)
+    @test connec4elem(t, 3) == (4, 3, 7)
+    @test connec4elem(t, 4) == (3, 1, 5, 7)
     @test nelements(t) == 4
-    @test nfacets(t)   == 0
+    @test nfacets(t) == 0
     @test nvertices(t) == 7
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 0
-    @test nfaces(t, 0) == 7
 
     # convert from other topologies
     g = GridTopology(2, 2)
     t = convert(SimpleTopology, g)
     @test nelements(t) == 4
-    @test nfacets(t)   == 12
+    @test nfacets(t) == 12
     @test nvertices(t) == 9
     @test nfaces(t, 2) == 4
     @test nfaces(t, 1) == 12
-    @test nfaces(t, 0) == 9
   end
 end

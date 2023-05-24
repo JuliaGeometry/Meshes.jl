@@ -25,7 +25,7 @@ function partsubsets(rng::AbstractRNG, domain::Domain, method::FractionPartition
   f = round(Int, method.fraction * n)
 
   locs = method.shuffle ? randperm(rng, n) : 1:n
-  subsets = [locs[1:f], locs[f+1:n]]
+  subsets = [locs[1:f], locs[(f + 1):n]]
 
   subsets, Dict()
 end

@@ -67,8 +67,8 @@ nfacets(t::SimpleTopology) = count(==(maximum(t.ranks) - 1), t.ranks)
 # ------------
 
 function Base.convert(::Type{SimpleTopology}, t::Topology)
-  ranksₜ    = 1:paramdim(t)
+  ranksₜ = 1:paramdim(t)
   facesₜ(r) = collect(faces(t, r))
-  connec    = mapreduce(facesₜ, vcat, reverse(ranksₜ))
+  connec = mapreduce(facesₜ, vcat, reverse(ranksₜ))
   SimpleTopology(connec)
 end

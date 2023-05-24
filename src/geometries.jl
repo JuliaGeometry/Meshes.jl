@@ -138,8 +138,9 @@ Multi(items) = Multi(collect(items))
 
 paramdim(multi::Multi) = maximum(paramdim, multi.items)
 
-vertices(multi::Multi) =
-  [vertex for geom in multi.items for vertex in vertices(geom)]
+vertex(multi::Multi, ind) = vertices(multi)[ind]
+
+vertices(multi::Multi) = [vertex for geom in multi.items for vertex in vertices(geom)]
 
 nvertices(multi::Multi) = sum(nvertices, multi.items)
 
@@ -151,25 +152,23 @@ end
 measure(multi::Multi) = sum(measure, multi.items)
 
 Base.length(multi::Multi{Dim,T,<:Polytope{1}}) where {Dim,T} = measure(multi)
-area(multi::Multi{Dim,T,<:Polygon}) where{Dim,T} = measure(multi)
-volume(multi::Multi{Dim,T,<:Polyhedron}) where{Dim,T} = measure(multi)
+area(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} = measure(multi)
+volume(multi::Multi{Dim,T,<:Polyhedron}) where {Dim,T} = measure(multi)
 
 function boundary(multi::Multi)
   bounds = [boundary(geom) for geom in multi.items]
-  valid  = filter(!isnothing, bounds)
+  valid = filter(!isnothing, bounds)
   isempty(valid) ? nothing : reduce(merge, valid)
 end
 
-chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} =
-  [chain for geom in multi.items for chain in chains(geom)]
+chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} = [chain for geom in multi.items for chain in chains(geom)]
 
 Base.collect(multi::Multi) = multi.items
 
 Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi.items)
 
 ==(multi₁::Multi, multi₂::Multi) =
-  length(multi₁.items) == length(multi₂.items) &&
-  all(g -> g[1] == g[2], zip(multi₁.items, multi₂.items))
+  length(multi₁.items) == length(multi₂.items) && all(g -> g[1] == g[2], zip(multi₁.items, multi₂.items))
 
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
   n = length(multi.items)

@@ -20,8 +20,8 @@
       @test centroid(v, i) == centroid(e)
     end
 
-    points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
-    connec = connect.([(1,2,5),(2,4,5),(4,3,5),(3,1,5)], Triangle)
+    points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     inds = rand(1:4, 3)
     v = view(mesh, inds)
@@ -41,8 +41,8 @@
     @test v[3] == g[13]
 
     # centroid of view of PointSet
-    points = P2[(0,0), (1,0), (0,1), (1,1), (0.5,0.5)]
-    pview  = view(PointSet(points), 1:4)
+    points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    pview = view(PointSet(points), 1:4)
     @test centroid(pview) == P2(0.5, 0.5)
 
     # measure of view
@@ -56,16 +56,16 @@
     dummymeta(domain, table) = meshdata(domain, Dict(paramdim(domain) => table))
 
     for dummy in [dummydata, dummymeta]
-      dom = CartesianGrid{T}(2,2)
-      dat = dummy(dom, (a=[1,2,3,4], b=[5,6,7,8]))
+      dom = CartesianGrid{T}(2, 2)
+      dat = dummy(dom, (a=[1, 2, 3, 4], b=[5, 6, 7, 8]))
       v = view(dat, 2:4)
       @test domain(v) == view(dom, 2:4)
-      @test Tables.columntable(values(v)) == (a=[2,3,4], b=[6,7,8])
-      @test centroid(domain(v), 1) == P2(1.5,0.5)
-      @test centroid(domain(v), 2) == P2(0.5,1.5)
-      @test centroid(domain(v), 3) == P2(1.5,1.5)
-      @test v.a == v."a" == [2,3,4]
-      @test v.b == v."b" == [6,7,8]
+      @test Tables.columntable(values(v)) == (a=[2, 3, 4], b=[6, 7, 8])
+      @test centroid(domain(v), 1) == P2(1.5, 0.5)
+      @test centroid(domain(v), 2) == P2(0.5, 1.5)
+      @test centroid(domain(v), 3) == P2(1.5, 1.5)
+      @test v.a == v."a" == [2, 3, 4]
+      @test v.b == v."b" == [6, 7, 8]
     end
   end
 end

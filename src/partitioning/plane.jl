@@ -18,10 +18,8 @@ struct PlanePartition{Dim,T} <: SPredicatePartitionMethod
   end
 end
 
-PlanePartition(normal::Vec{Dim,T}; tol=1e-6) where {Dim,T} =
-  PlanePartition{Dim,T}(normal, tol)
+PlanePartition(normal::Vec{Dim,T}; tol=1e-6) where {Dim,T} = PlanePartition{Dim,T}(normal, tol)
 
-PlanePartition(normal::NTuple{Dim,T},; tol=1e-6) where {Dim,T} =
-  PlanePartition(Vec(normal), tol=tol)
+PlanePartition(normal::NTuple{Dim,T}; tol=1e-6) where {Dim,T} = PlanePartition(Vec(normal), tol=tol)
 
 (p::PlanePartition)(x, y) = abs((x - y) ⋅ p.normal) < p.tol

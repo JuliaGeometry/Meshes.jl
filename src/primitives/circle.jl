@@ -22,8 +22,8 @@ A 3D circle passing through points `p1`, `p2` and `p3`.
 function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   v12 = p2 - p1
   v13 = p3 - p1
-  m12 = coordinates(p1 + v12/2)
-  m13 = coordinates(p1 + v13/2)
+  m12 = coordinates(p1 + v12 / 2)
+  m13 = coordinates(p1 + v13 / 2)
   n⃗ = normal(Plane(p1, p2, p3))
   F = coordinates(p1) ⋅ n⃗
   M = transpose([n⃗ v12 v13])
@@ -33,8 +33,7 @@ function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   Circle(Plane(O, n⃗), r)
 end
 
-Circle(p1::Tuple, p2::Tuple, p3::Tuple) =
-  Circle(Point(p1), Point(p2), Point(p3))
+Circle(p1::Tuple, p2::Tuple, p3::Tuple) = Circle(Point(p1), Point(p2), Point(p3))
 
 Circle(plane::Plane{T}, radius) where {T} = Circle(plane, T(radius))
 
@@ -56,7 +55,7 @@ function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
   p ∉ c.plane && return false
   s² = sum(abs2, p - center(c))
   r² = radius(c)^2
-  isapprox(s², r², atol = atol(T)^2)
+  isapprox(s², r², atol=atol(T)^2)
 end
 
 boundary(::Circle) = nothing
