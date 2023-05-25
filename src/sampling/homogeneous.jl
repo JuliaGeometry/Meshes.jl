@@ -40,6 +40,20 @@ function sample(rng::AbstractRNG, triangle::Triangle{Dim,T}, method::Homogeneous
   (randpoint() for _ in 1:(method.size))
 end
 
+function sample(rng::AbstractRNG, ball::Ball{Dim,T}, method::HomogeneousSampling) where {Dim,T}
+  if Dim == 2
+    function randpoint()
+      # sample polar coordinates
+      u₁, u₂ = rand(rng, T, 2)
+      l, θ = radius(ball) * sqrt(u₁), 2π * u₂
+      center(ball) + Vec(l * cos(θ), l * sin(θ))
+    end
+  (randpoint() for _ in 1:(method.size))
+  else
+    throw(ErrorException("not implemented"))
+  end
+end
+
 function sample(rng::AbstractRNG, segment::Segment{Dim,T}, method::HomogeneousSampling) where {Dim,T}
   (segment(t) for t in rand(rng, T, method.size))
 end
