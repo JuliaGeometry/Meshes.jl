@@ -3,7 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    Rotate(rot)
+    Rotate <: StatelessGeometricTransform
+    Rotate(rot::Rotations.Rotation)
 
 Rotate geometry or mesh with rotation `rot`
 from Rotations.jl.
