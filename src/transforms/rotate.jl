@@ -12,7 +12,8 @@ from Rotations.jl.
 ## Examples
 
 ```julia
-Rotate(rand(QuatRotation{Float64}))
+Rotate(one(RotXYZ{Float64}))  # Generate identity rotation
+Rotate(rand(QuatRotation{Float64}))  # Generate random rotation
 ```
 """
 struct Rotate{R<:Rotation} <: StatelessGeometricTransform
