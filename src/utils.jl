@@ -177,16 +177,3 @@ Round `λ` to `x` if it is within the tolerance `tol`.
 function mayberound(λ::T, x, atol=atol(T)) where {T}
   isapprox(λ, x, atol=atol) ? x : λ
 end
-
-"""
-    uvrotation(u, v)
-
-Return rotation matrix from vector `u` to vector `v`.
-"""
-function uvrotation(u::Vec{2}, v::Vec{2})
-  Angle2d(∠(u, v))
-end
-
-function uvrotation(u::Vec{3}, v::Vec{3})
-  return rotation_between(u, v)
-end

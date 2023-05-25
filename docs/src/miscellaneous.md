@@ -5,7 +5,6 @@ can be useful to end-users.
 
 ```@docs
 householderbasis
-uvrotation
 iscollinear
 iscoplanar
 sideof

@@ -250,7 +250,6 @@ export
   iscoplanar,
   householderbasis,
   mayberound,
-  uvrotation,
 
   # paths
   Path,
