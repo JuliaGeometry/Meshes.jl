@@ -136,6 +136,12 @@ Tables.materializer(D::Type{<:Data}) = D
 # DATAFRAME INTERFACE
 # --------------------
 
+function Base.propertynames(data::Data, private::Bool=false)
+  cols = Tables.columns(values(data))
+  vars = Tables.columnnames(cols)
+  [collect(vars); :geometry]
+end
+
 function Base.getproperty(data::Data, var::Symbol)
   if var == :geometry
     domain(data)
