@@ -71,9 +71,9 @@
   @testset "Miscellaneous" begin
     if visualtests
       paths = [
-        LinearPath(), 
-        RandomPath(MersenneTwister(123)), 
-        ShiftedPath(LinearPath(), 10), 
+        LinearPath(),
+        RandomPath(MersenneTwister(123)),
+        ShiftedPath(LinearPath(), 10),
         SourcePath(1:3),
         MultiGridPath()
       ]
