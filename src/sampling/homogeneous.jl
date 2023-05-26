@@ -43,7 +43,7 @@ end
 function sample(rng::AbstractRNG, ball::Ball{2,T}, method::HomogeneousSampling) where {T}
   function randpoint()
     u₁, u₂ = rand(rng, T, 2)
-    ball(sqrt(u₁), u₂)
+    ball(√u₁, u₂)
   end
   (randpoint() for _ in 1:(method.size))
 end
@@ -51,7 +51,7 @@ end
 function sample(rng::AbstractRNG, ball::Ball{3,T}, method::HomogeneousSampling) where {T}
   function randpoint()
     u₁, u₂, u₃ = rand(rng, T, 3)
-    ball(u₁^(1/3), acos(1 - 2u₂) / π, u₃)
+    ball(∛u₁, acos(1 - 2u₂) / T(π), u₃)
   end
   (randpoint() for _ in 1:(method.size))
 end
