@@ -254,6 +254,16 @@
     @test first(ps) isa P2
     @test all(∈(q), ps)
 
+    b = Ball(P2(10, 10), T(3))
+    ps = sample(b, HomogeneousSampling(100))
+    @test first(ps) isa P2
+    @test all(∈(b), ps)
+
+    b = Ball(P3(10, 10, 10), T(10))
+    ps = sample(b, HomogeneousSampling(100))
+    @test first(ps) isa P3
+    @test all(∈(b), ps)
+
     poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
     poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2), (1, 1)])
     multi = Multi([poly1, poly2])
