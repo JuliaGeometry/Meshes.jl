@@ -63,12 +63,12 @@
       grid = CartesianGrid{T}(7, 7)
       elems = [grid[i] for i in traverse(grid, path)]
       fig = viz(elems, color=1:length(elems))
-      Mke.save("./data/multi-grid-path-7x7.png", fig)
+      @test_reference "data/multi-grid-path-7x7.png" fig
 
       grid = CartesianGrid{T}(6, 6)
       elems = [grid[i] for i in traverse(grid, path)]
       fig = viz(elems, color=1:length(elems))
-      Mke.save("./data/multi-grid-path-6x6.png", fig)
+      @test_reference "data/multi-grid-path-6x6.png" fig
     end
   end
 end
