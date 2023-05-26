@@ -6,14 +6,14 @@
     Path
 
 A path is a sequence of indices that can be
-used to traverse a given domain/data object.
+used to traverse a given [`Domain`](@ref).
 """
 abstract type Path end
 
 """
-    traverse(object, path)
+    traverse(domain, path)
 
-Traverse `object` with `path`.
+Traverse `domain` with `path`.
 """
 function traverse end
 
@@ -25,3 +25,4 @@ include("paths/linear.jl")
 include("paths/random.jl")
 include("paths/source.jl")
 include("paths/shifted.jl")
+include("paths/multigrid.jl")

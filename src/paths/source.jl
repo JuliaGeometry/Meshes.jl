@@ -5,7 +5,7 @@
 """
     SourcePath(sources, batchsize=10^3)
 
-Traverse an object from `sources` and outwards.
+Traverse a domain from `sources` and outwards.
 Optionally pass a `batchsize` for KD-tree evaluations.
 """
 struct SourcePath <: Path
@@ -15,18 +15,18 @@ end
 
 SourcePath(sources) = SourcePath(sources, 10^3)
 
-function traverse(object, path::SourcePath)
+function traverse(domain, path::SourcePath)
   sources = path.sources
   batchsize = path.batchsize
   @assert allunique(sources) "non-unique sources"
-  @assert all(1 .≤ sources .≤ nelements(object)) "sources must be valid locations"
-  @assert length(sources) ≤ nelements(object) "more sources than points in object"
+  @assert all(1 .≤ sources .≤ nelements(domain)) "sources must be valid locations"
+  @assert length(sources) ≤ nelements(domain) "more sources than points in object"
 
   # fit search tree
-  kdtree = KDTree(coordinates.([centroid(object, s) for s in sources]))
+  kdtree = KDTree(coordinates.([centroid(domain, s) for s in sources]))
 
   # other locations that are not sources
-  others = setdiff(1:nelements(object), sources)
+  others = setdiff(1:nelements(domain), sources)
 
   # process points in batches
   batches = Iterators.partition(others, batchsize)
@@ -34,7 +34,7 @@ function traverse(object, path::SourcePath)
   # compute distances to sources
   dists = []
   for batch in batches
-    coords = coordinates.([centroid(object, b) for b in batch])
+    coords = coordinates.([centroid(domain, b) for b in batch])
     _, ds = knn(kdtree, coords, length(sources), true)
     append!(dists, ds)
   end
