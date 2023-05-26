@@ -8,6 +8,10 @@
 Traverse a domain with `N` elements in a random
 permutation of `1:N`.
 """
-struct RandomPath <: Path end
+struct RandomPath{R<:AbstractRNG} <: Path
+  rng::R
+end
 
-traverse(domain, ::RandomPath) = randperm(nelements(domain))
+RandomPath() = RandomPath(Random.GLOBAL_RNG)
+
+traverse(domain, path::RandomPath) = randperm(path.rng, nelements(domain))

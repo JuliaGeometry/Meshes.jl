@@ -14,6 +14,10 @@
   @testset "RandomPath" begin
     p = traverse(grid, RandomPath())
     @test all(1 .≤ collect(p) .≤ 100 * 100)
+
+    path = RandomPath(MersenneTwister(123))
+    grid = CartesianGrid{T}(3, 3)
+    @test traverse(grid, path) == [8, 7, 5, 3, 4, 1, 6, 9, 2]
   end
 
   @testset "SourcePath" begin
