@@ -43,12 +43,16 @@ end
 function sample(rng::AbstractRNG, ball::Ball{Dim,T}, method::HomogeneousSampling) where {Dim,T}
   if Dim == 2
     function randpoint()
-      # sample polar coordinates
       u₁, u₂ = rand(rng, T, 2)
-      l, θ = radius(ball) * sqrt(u₁), 2π * u₂
-      center(ball) + Vec(l * cos(θ), l * sin(θ))
+      ball(sqrt(u₁), u₂)
     end
-  (randpoint() for _ in 1:(method.size))
+    (randpoint() for _ in 1:(method.size))
+  elseif Dim == 3
+    function randpoint2()
+      u₁, u₂, u₃ = rand(rng, T, 3)
+      ball(sqrt(u₁), u₂, u₃)
+    end
+    (randpoint2() for _ in 1:(method.size))
   else
     throw(ErrorException("not implemented"))
   end
