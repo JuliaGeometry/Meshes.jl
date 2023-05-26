@@ -5,8 +5,8 @@
 """
     LinearPath()
 
-Traverse an object with `N` elements in order `1:N`.
+Traverse a domain with `N` elements in order `1:N`.
 """
 struct LinearPath <: Path end
 
-traverse(object, ::LinearPath) = 1:nelements(object)
+traverse(domain, ::LinearPath) = 1:nelements(domain)
