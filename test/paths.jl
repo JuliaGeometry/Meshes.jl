@@ -59,6 +59,10 @@
     grid = RectilinearGrid(T.(0:0.5:2), T.(0:0.5:2))
     @test traverse(grid, path) == [1, 4, 13, 16, 3, 9, 11, 2, 5, 6, 7, 8, 10, 12, 14, 15]
 
+    cgrid = CartesianGrid{T}(4, 4)
+    rgrid = RectilinearGrid(T.(0:4), T.(0:4))
+    @test traverse(cgrid, path) == traverse(rgrid, path)
+
     if visualtests
       grid = CartesianGrid{T}(7, 7)
       elems = [grid[i] for i in traverse(grid, path)]
