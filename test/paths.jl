@@ -40,4 +40,19 @@
       @test collect(sp) == circshift(p, -offset)
     end
   end
+
+  @testset "MultiGridPath" begin
+    path = MultiGridPath()
+    grid = CartesianGrid{T}(3, 3)
+    @test traverse(grid, path) == [1, 3, 7, 9, 2, 4, 5, 6, 8]
+
+    if visualtests
+      for d in (5, 7, 9)
+        grid = CartesianGrid{T}(d, d)
+        quads = [grid[i] for i in traverse(grid, path)]
+        fig = viz(quads, color=1:length(quads))
+        @test_reference "data/multi-grid-$(d)x$(d).png" fig
+      end
+    end
+  end
 end
