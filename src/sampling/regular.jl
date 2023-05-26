@@ -56,7 +56,7 @@ function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where
   # reuse samples on the boundary
   points = sample(Sphere(c, r), RegularSampling(sz[1:(Dim - 1)]))
 
-  scale(p, s) = Point(s * coordinates(p))
+  scale(p, s) = c + s * (p - c)
 
   ivec(scale(p, s) for p in points, s in srange)
 end
