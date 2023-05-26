@@ -10,18 +10,25 @@ to-do
 struct MultiGridPath <: Path end
 
 function traverse(grid::Grid{Dim}, ::MultiGridPath) where {Dim}
-  path = Int[]
   dims = size(grid)
-  nelem = prod(dims)
-  
-  steps = dims .- 1
+  nelems = prod(dims)
   linear = LinearIndices(dims)
-  while length(path) < nelem
+
+  path = Int[]
+  steps = dims .- 1
+  while length(path) < nelems
     ranges = ntuple(d -> 1:steps[d]:dims[d], Dim)
     cinds = CartesianIndices(ranges)
-    linds = [linear[cind] for cind in cinds]
-    append!(path, setdiff(linds, path))
+
+    for cind in cinds
+      lind = linear[cind]
+      if lind ∉ path
+        push!(path, lind)
+      end
+    end
+
     steps = ceil.(Int, steps ./ 2)
   end
+  
   path
 end
