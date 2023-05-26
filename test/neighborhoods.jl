@@ -38,12 +38,12 @@
     @test evaluate(m, T[1, 0], T[0, 0]) != evaluate(m, T[0, 1], T[0, 0])
 
     # 3D simple test of default convention
-    m = metric(MetricBall(T.((1.0, 0.5, 0.5)), TaitBryanAngles(T(π / 4), T(0), T(0))))
+    m = metric(MetricBall(T.((1.0, 0.5, 0.5)), RotZYX(T(-π / 4), T(0), T(0))))
     @test evaluate(m, [1.0, 1.0, 0.0], [0.0, 0.0, 0.0]) ≈ √T(2)
     @test evaluate(m, [-1.0, 1.0, 0.0], [0.0, 0.0, 0.0]) ≈ √T(8)
 
     # make sure the correct constructor is called
-    m = metric(MetricBall(T[1.0, 0.5, 0.2], EulerAngles(T(0), T(0), T(0))))
+    m = metric(MetricBall(T[1.0, 0.5, 0.2], RotXYX(T(0), T(0), T(0))))
     @test m isa Mahalanobis
   end
 end

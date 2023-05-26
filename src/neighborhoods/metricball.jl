@@ -2,6 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+default_rotation(::Val{2}, T) = one(Angle2d{T})
+default_rotation(::Val{3}, T) = one(QuatRotation{T})
+
 """
     MetricBall(radii, rotation=nothing)
     MetricBall(radius, metric=Euclidean())
@@ -11,8 +14,8 @@ of a metric and a set of `radii`. The two main examples are the
 Euclidean ball an the Mahalanobis (ellipsoid) ball.
 
 When multiple `radii` are provided, they can be rotated by a
-`rotation` specification from the [ReferenceFrameRotations.jl]
-(https://github.com/JuliaSpace/ReferenceFrameRotations.jl)
+`rotation` specification from the [Rotations.jl]
+(https://github.com/JuliaGeometry/Rotations.jl)
 package. Alternatively, a metric from the [Distances.jl]
 (https://github.com/JuliaStats/Distances.jl) package can
 be specified together with a single `radius`.
@@ -36,28 +39,9 @@ struct MetricBall{R,M} <: Neighborhood
   metric::M
 end
 
-function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
-  # default rotation
-  rot = if isnothing(rotation)
-    if Dim == 2
-      ClockwiseAngle(zero(T))
-    elseif Dim == 3
-      EulerAngles(zeros(T, Dim)...)
-    else
-      throw(ErrorException("not implemented"))
-    end
-  else
-    rotation
-  end
-
+function MetricBall(radii::SVector{Dim,T}, R=default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
   Λ = Diagonal(one(T) ./ radii .^ 2)
-
-  # rotation matrix
-  R = convert(DCM, rot)
-
-  # sanity check
-  @assert size(R) == (Dim, Dim) "invalid rotation for radii"
 
   # Mahalanobis metric
   metric = Mahalanobis(Symmetric(R' * Λ * R))
@@ -65,10 +49,12 @@ function MetricBall(radii::SVector{Dim,T}, rotation=nothing) where {Dim,T}
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
 
-MetricBall(radii::NTuple{Dim,T}, rotation=nothing) where {Dim,T} = MetricBall(SVector(radii), rotation)
+MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where {Dim,T} =
+  MetricBall(SVector(radii), rotation)
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} = MetricBall(SVector{length(radii),T}(radii), rotation)
+MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{Dim}(), T)) where {T} =
+  MetricBall(SVector{length(radii),T}(radii), rotation)
 
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
   radii = SVector(radius)

@@ -2,7 +2,7 @@
   @testset "Rotate" begin
     # check rotation on a triangle
     tri = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    rtri = tri |> Rotate(EulerAngleAxis(T(pi / 2), T[0, 0, 1]))
+    rtri = tri |> Rotate(AngleAxis(T(pi / 2), 0, 0, -1))
     rpts = vertices(rtri)
     @test rpts[1] ≈ P3(0, 0, 0)
     @test rpts[2] ≈ P3(0, 1, 0)

@@ -15,7 +15,7 @@ using Bessels: gamma
 using IterTools: ivec
 using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
-using ReferenceFrameRotations: EulerAngles, DCM, Quaternion
+using Rotations: Rotation, QuatRotation, Angle2d, rotation_between
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
@@ -40,9 +40,6 @@ include("tolerances.jl")
 include("vectors.jl")
 include("points.jl")
 include("angles.jl")
-
-# rotations
-include("rotations.jl")
 
 # type traits
 include("traits.jl")
@@ -128,12 +125,6 @@ export
 
   # angles
   ∠,
-
-  # rotations
-  ClockwiseAngle,
-  CounterClockwiseAngle,
-  EulerAngles,
-  TaitBryanAngles,
 
   # domain traits
   Domain,
@@ -259,7 +250,6 @@ export
   iscoplanar,
   householderbasis,
   mayberound,
-  uvrotation,
 
   # paths
   Path,

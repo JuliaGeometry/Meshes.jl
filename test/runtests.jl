@@ -10,7 +10,7 @@ using SparseArrays
 using PlyIO
 using Unitful
 using MeshViz
-using ReferenceFrameRotations
+using Rotations
 using Test, Random
 using ReferenceTests, ImageIO
 
@@ -70,7 +70,6 @@ testfiles = [
   "vectors.jl",
   "points.jl",
   "angles.jl",
-  "rotations.jl",
   "polytopes.jl",
   "primitives.jl",
   "multi.jl",

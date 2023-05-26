@@ -6,15 +6,17 @@
     Rotate(rot)
 
 Rotate geometry or mesh with rotation `rot`
-from ReferenceFrameRotations.jl. 
+from Rotations.jl.
 
 ## Examples
 
 ```julia
-Rotate(EulerAngleAxis(pi/4, [1, 0, 0]))
+Rotate(one(RotXYZ{Float64}))  # Generate identity rotation
+Rotate(AngleAxis(0.2, 1.0, 0.0, 0.0))  # Rotate 0.2 radians around X-axis
+Rotate(rand(QuatRotation{Float64}))  # Generate random rotation
 ```
 """
-struct Rotate{R} <: StatelessGeometricTransform
+struct Rotate{R<:Rotation} <: StatelessGeometricTransform
   rot::R
 end
 
@@ -31,13 +33,13 @@ vector `u` to the plane passing through the origin with normal vector `v`.
 Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 ```
 """
-Rotate(u::Vec, v::Vec) = Rotate(uvrotation(u, v))
+Rotate(u::Vec, v::Vec) = Rotate(rotation_between(u, v))
 
 isrevertible(::Type{<:Rotate}) = true
 
 function preprocess(transform::Rotate, object)
   rot = transform.rot
-  convert.(DCM, (inv(rot), rot))
+  inv(rot), rot
 end
 
 function applypoint(::Rotate, points, prep)
