@@ -49,8 +49,8 @@
     if visualtests
       for d in (5, 7, 9)
         grid = CartesianGrid{T}(d, d)
-        vgrid = view(grid, traverse(grid, path))
-        fig = viz(vgrid, color=1:nelements(vgrid))
+        quads = [grid[i] for i in traverse(grid, path)]
+        fig = viz(quads, color=1:length(quads))
         @test_reference "data/multi-grid-$(d)x$(d).png" fig
       end
     end
