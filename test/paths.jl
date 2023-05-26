@@ -47,7 +47,7 @@
     grid = CartesianGrid{T}(3, 3)
     @test traverse(grid, path) == [1, 3, 7, 9, 2, 4, 5, 6, 8]
 
-    grid = CartesianGrid{T}(4, 3)
+    grid = CartesianGrid{T}(3, 4)
     @test traverse(grid, path) == [1, 3, 10, 12, 2, 7, 8, 9, 4, 5, 6, 11]
 
     grid = CartesianGrid(3, 3, 2)
