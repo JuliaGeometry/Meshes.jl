@@ -29,6 +29,6 @@ function traverse(grid::Grid{Dim}, ::MultiGridPath) where {Dim}
 
     steps = ceil.(Int, steps ./ 2)
   end
-  
+
   path
 end
