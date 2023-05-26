@@ -5,7 +5,7 @@
 """
     ShiftedPath(path, offset)
 
-Traverse an object with the `path` shifted by an `offset`
+Traverse a domain with the `path` shifted by an `offset`
 that can be positive or negative.
 """
 struct ShiftedPath{P<:Path} <: Path
@@ -13,8 +13,8 @@ struct ShiftedPath{P<:Path} <: Path
   offset::Int
 end
 
-function traverse(object, path::ShiftedPath)
-  p = traverse(object, path.path)
+function traverse(domain, path::ShiftedPath)
+  p = traverse(domain, path.path)
   n = length(p)
   o = path.offset
   s = o ≥ 0 ? o : abs((n + o) % n)

@@ -5,9 +5,9 @@
 """
     RandomPath()
 
-Traverse an object with `N` elements in a random
+Traverse a domain with `N` elements in a random
 permutation of `1:N`.
 """
 struct RandomPath <: Path end
 
-traverse(object, ::RandomPath) = randperm(nelements(object))
+traverse(domain, ::RandomPath) = randperm(nelements(domain))

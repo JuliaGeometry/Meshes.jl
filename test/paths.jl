@@ -40,4 +40,39 @@
       @test collect(sp) == circshift(p, -offset)
     end
   end
+
+  @testset "MultiGridPath" begin
+    path = MultiGridPath()
+
+    grid = CartesianGrid{T}(3, 3)
+    @test traverse(grid, path) == [1, 3, 7, 9, 2, 4, 5, 6, 8]
+
+    grid = CartesianGrid{T}(3, 4)
+    @test traverse(grid, path) == [1, 3, 10, 12, 2, 7, 8, 9, 4, 5, 6, 11]
+
+    grid = CartesianGrid(3, 3, 2)
+    @test traverse(grid, path) == [1, 3, 7, 9, 10, 12, 16, 18, 2, 4, 5, 6, 8, 11, 13, 14, 15, 17]
+
+    grid = RectilinearGrid(T.(0:3), T.(0:3))
+    @test traverse(grid, path) == [1, 3, 7, 9, 2, 4, 5, 6, 8]
+
+    grid = RectilinearGrid(T.(0:0.5:2), T.(0:0.5:2))
+    @test traverse(grid, path) == [1, 4, 13, 16, 3, 9, 11, 2, 5, 6, 7, 8, 10, 12, 14, 15]
+
+    cgrid = CartesianGrid{T}(4, 4)
+    rgrid = RectilinearGrid(T.(0:4), T.(0:4))
+    @test traverse(cgrid, path) == traverse(rgrid, path)
+
+    if visualtests
+      grid = CartesianGrid{T}(7, 7)
+      elems = [grid[i] for i in traverse(grid, path)]
+      fig = viz(elems, color=1:length(elems))
+      @test_reference "data/multi-grid-path-7x7.png" fig
+
+      grid = CartesianGrid{T}(6, 6)
+      elems = [grid[i] for i in traverse(grid, path)]
+      fig = viz(elems, color=1:length(elems))
+      @test_reference "data/multi-grid-path-6x6.png" fig
+    end
+  end
 end
