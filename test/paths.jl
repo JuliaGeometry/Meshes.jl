@@ -66,17 +66,26 @@
     cgrid = CartesianGrid{T}(4, 4)
     rgrid = RectilinearGrid(T.(0:4), T.(0:4))
     @test traverse(cgrid, path) == traverse(rgrid, path)
+  end
 
-    if visualtests
-      grid = CartesianGrid{T}(7, 7)
-      elems = [grid[i] for i in traverse(grid, path)]
-      fig = viz(elems, color=1:length(elems))
-      @test_reference "data/multi-grid-path-7x7.png" fig
+  @testset "visual tests" begin
+    paths = [
+      LinearPath(), 
+      RandomPath(MersenneTwister(123)), 
+      ShiftedPath(LinearPath(), 10), 
+      SourcePath(1:3),
+      MultiGridPath()
+    ]
 
-      grid = CartesianGrid{T}(6, 6)
-      elems = [grid[i] for i in traverse(grid, path)]
-      fig = viz(elems, color=1:length(elems))
-      @test_reference "data/multi-grid-path-6x6.png" fig
+    filenames = ["linear-path", "random-path", "shifted-path", "source-path", "multi-grid-path"]
+
+    for (path, filename) in zip(paths, filenames)
+      for d in (6, 7)
+        grid = CartesianGrid{T}(d, d)
+        elems = [grid[i] for i in traverse(grid, path)]
+        fig = viz(elems, color=1:length(elems))
+        @test_reference "data/$filename-$(d)x$(d).png" fig
+      end
     end
   end
 end
