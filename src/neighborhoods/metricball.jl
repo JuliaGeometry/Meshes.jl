@@ -2,6 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+default_rotation(::Val{2}, T) = one(Angle2d{T})
+default_rotation(::Val{3}, T) = one(QuatRotation{T})
+
 """
     MetricBall(radii, rotation=nothing)
     MetricBall(radius, metric=Euclidean())
@@ -36,12 +39,7 @@ struct MetricBall{R,M} <: Neighborhood
   metric::M
 end
 
-default_rotation(::Val{2}, T) = one(Angle2d{T})
-
-default_rotation(::Val{3}, T) = one(QuatRotation{T})
-
-function MetricBall(radii::SVector{Dim,T},
-                    R=default_rotation(Val{Dim}(), T)) where {Dim,T}
+function MetricBall(radii::SVector{Dim,T}, R=default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
