@@ -5,7 +5,13 @@
 """
     MultiGridPath()
 
-to-do
+Traverse a grid using a nested grid system where the path starts at
+the coarsest scale and moves to progressively finer scales.
+
+## References
+
+* Nussbaumer et al. 2017. [Which Path to Choose in Sequential Gaussian Simulation]
+  (https://link.springer.com/article/10.1007/s11004-017-9699-5)
 """
 struct MultiGridPath <: Path end
 
