@@ -68,23 +68,25 @@
     @test traverse(cgrid, path) == traverse(rgrid, path)
   end
 
-  @testset "Visual tests" begin
-    paths = [
-      LinearPath(), 
-      RandomPath(MersenneTwister(123)), 
-      ShiftedPath(LinearPath(), 10), 
-      SourcePath(1:3),
-      MultiGridPath()
-    ]
+  @testset "Miscellaneous" begin
+    if visualtests
+      paths = [
+        LinearPath(), 
+        RandomPath(MersenneTwister(123)), 
+        ShiftedPath(LinearPath(), 10), 
+        SourcePath(1:3),
+        MultiGridPath()
+      ]
 
-    fnames = ["linear-path", "random-path", "shifted-path", "source-path", "multi-grid-path"]
+      fnames = ["linear-path", "random-path", "shifted-path", "source-path", "multi-grid-path"]
 
-    for (path, fname) in zip(paths, fnames)
-      for d in (6, 7)
-        grid = CartesianGrid{T}(d, d)
-        elems = [grid[i] for i in traverse(grid, path)]
-        fig = viz(elems, color=1:length(elems))
-        @test_reference "data/$fname-$(d)x$(d).png" fig
+      for (path, fname) in zip(paths, fnames)
+        for d in (6, 7)
+          grid = CartesianGrid{T}(d, d)
+          elems = [grid[i] for i in traverse(grid, path)]
+          fig = viz(elems, color=1:length(elems))
+          @test_reference "data/$fname-$(d)x$(d).png" fig
+        end
       end
     end
   end
