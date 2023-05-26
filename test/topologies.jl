@@ -3,6 +3,7 @@
     t = GridTopology(3)
     @test paramdim(t) == 1
     @test size(t) == (3,)
+    @test size(t, 1) == 3
     @test elementtype(t) == Segment
     @test facettype(t) == Point
     @test elem2cart(t, 1) == (1,)
@@ -32,6 +33,8 @@
     t = GridTopology(3, 4)
     @test paramdim(t) == 2
     @test size(t) == (3, 4)
+    @test size(t, 1) == 3
+    @test size(t, 2) == 4
     @test elementtype(t) == Quadrangle
     @test facettype(t) == Segment
     @test elem2cart(t, 1) == (1, 1)
@@ -131,6 +134,9 @@
     t = GridTopology(3, 4, 2)
     @test paramdim(t) == 3
     @test size(t) == (3, 4, 2)
+    @test size(t, 1) == 3
+    @test size(t, 2) == 4
+    @test size(t, 3) == 2
     @test elementtype(t) == Hexahedron
     @test facettype(t) == Quadrangle
     @test elem2cart(t, 1) == (1, 1, 1)

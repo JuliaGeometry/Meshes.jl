@@ -161,6 +161,7 @@ cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
 # ----------
 
 Base.size(g::Grid) = size(topology(g))
+Base.size(g::Grid, dim::Int) = size(topology(g), dim)
 
 Base.minimum(g::Grid{Dim}) where {Dim} = cart2vert(g, ntuple(i -> 1, Dim))
 Base.maximum(g::Grid{Dim}) where {Dim} = cart2vert(g, size(g) .+ 1)

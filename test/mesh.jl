@@ -4,6 +4,7 @@
     @test embeddim(grid) == 1
     @test coordtype(grid) == T
     @test size(grid) == (100,)
+    @test size(grid, 1) == 100
     @test minimum(grid) == P1(0)
     @test maximum(grid) == P1(100)
     @test extrema(grid) == (P1(0), P1(100))
@@ -16,6 +17,8 @@
     @test embeddim(grid) == 2
     @test coordtype(grid) == T
     @test size(grid) == (200, 100)
+    @test size(grid, 1) == 200
+    @test size(grid, 2) == 100
     @test minimum(grid) == P2(0, 0)
     @test maximum(grid) == P2(200, 100)
     @test extrema(grid) == (P2(0, 0), P2(200, 100))
@@ -28,6 +31,9 @@
     @test embeddim(grid) == 3
     @test coordtype(grid) == T
     @test size(grid) == (200, 100, 50)
+    @test size(grid, 1) == 200
+    @test size(grid, 2) == 100
+    @test size(grid, 3) == 50
     @test minimum(grid) == P3(0, 0, 0)
     @test maximum(grid) == P3(200, 100, 50)
     @test extrema(grid) == (P3(0, 0, 0), P3(200, 100, 50))
@@ -172,6 +178,8 @@
     @test embeddim(grid) == 2
     @test coordtype(grid) == T
     @test size(grid) == (5, 5)
+    @test size(grid, 1) == 5
+    @test size(grid, 2) == 5
     @test minimum(grid) == P2(0, 0)
     @test maximum(grid) == P2(1, 1)
     @test extrema(grid) == (P2(0, 0), P2(1, 1))

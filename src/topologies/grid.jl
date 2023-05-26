@@ -35,6 +35,7 @@ GridTopology(dims::Vararg{Int,D}) where {D} = GridTopology(dims)
 paramdim(::GridTopology{D}) where {D} = D
 
 Base.size(t::GridTopology) = t.dims
+Base.size(t::GridTopology, dim::Int) = t.dims[dim]
 
 """
     isperiodic(t)
