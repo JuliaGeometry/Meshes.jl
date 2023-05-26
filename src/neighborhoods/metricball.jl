@@ -36,15 +36,12 @@ struct MetricBall{R,M} <: Neighborhood
   metric::M
 end
 
-function _default_rotation(::Val{2}, T)
-  one(Angle2d{T})
-end
+default_rotation(::Val{2}, T) = one(Angle2d{T})
 
-function _default_rotation(::Val{3}, T)
-  one(QuatRotation{T})
-end
+default_rotation(::Val{3}, T) = one(QuatRotation{T})
 
-function MetricBall(radii::SVector{Dim,T}, R::Rotation{Dim}=_default_rotation(Val{Dim}(), T)) where {Dim,T}
+function MetricBall(radii::SVector{Dim,T},
+                    R=default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
@@ -54,11 +51,11 @@ function MetricBall(radii::SVector{Dim,T}, R::Rotation{Dim}=_default_rotation(Va
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
 
-MetricBall(radii::NTuple{Dim,T}, rotation=_default_rotation(Val{Dim}(), T)) where {Dim,T} =
+MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where {Dim,T} =
   MetricBall(SVector(radii), rotation)
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=_default_rotation(Val{Dim}(), T)) where {T} =
+MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{Dim}(), T)) where {T} =
   MetricBall(SVector{length(radii),T}(radii), rotation)
 
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}

@@ -3,8 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Rotate <: StatelessGeometricTransform
-    Rotate(rot::Rotations.Rotation)
+    Rotate(rot)
 
 Rotate geometry or mesh with rotation `rot`
 from Rotations.jl.
@@ -40,7 +39,7 @@ isrevertible(::Type{<:Rotate}) = true
 
 function preprocess(transform::Rotate, object)
   rot = transform.rot
-  return inv(rot), rot
+  inv(rot), rot
 end
 
 function applypoint(::Rotate, points, prep)
