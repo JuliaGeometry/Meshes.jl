@@ -18,9 +18,8 @@ function traverse(grid::Grid{Dim}, ::MultiGridPath) where {Dim}
   steps = dims .- 1
   while length(path) < nelems
     ranges = ntuple(d -> 1:steps[d]:dims[d], Dim)
-    cinds = CartesianIndices(ranges)
 
-    for cind in cinds
+    for cind in CartesianIndices(ranges)
       lind = linear[cind]
       if lind ∉ path
         push!(path, lind)
