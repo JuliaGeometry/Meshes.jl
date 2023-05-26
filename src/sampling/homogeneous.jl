@@ -40,22 +40,20 @@ function sample(rng::AbstractRNG, triangle::Triangle{Dim,T}, method::Homogeneous
   (randpoint() for _ in 1:(method.size))
 end
 
-function sample(rng::AbstractRNG, ball::Ball{Dim,T}, method::HomogeneousSampling) where {Dim,T}
-  if Dim == 2
-    function randpoint2()
-      u₁, u₂ = rand(rng, T, 2)
-      ball(sqrt(u₁), u₂)
-    end
-    (randpoint2() for _ in 1:(method.size))
-  elseif Dim == 3
-    function randpoint3()
-      u₁, u₂, u₃ = rand(rng, T, 3)
-      ball(u₁^(1/3), acos(1 - 2u₂) / π, u₃)
-    end
-    (randpoint3() for _ in 1:(method.size))
-  else
-    throw(ErrorException("not implemented"))
+function sample(rng::AbstractRNG, ball::Ball{2,T}, method::HomogeneousSampling) where {T}
+  function randpoint()
+    u₁, u₂ = rand(rng, T, 2)
+    ball(sqrt(u₁), u₂)
   end
+  (randpoint() for _ in 1:(method.size))
+end
+
+function sample(rng::AbstractRNG, ball::Ball{3,T}, method::HomogeneousSampling) where {T}
+  function randpoint()
+    u₁, u₂, u₃ = rand(rng, T, 3)
+    ball(u₁^(1/3), acos(1 - 2u₂) / π, u₃)
+  end
+  (randpoint() for _ in 1:(method.size))
 end
 
 function sample(rng::AbstractRNG, segment::Segment{Dim,T}, method::HomogeneousSampling) where {Dim,T}
