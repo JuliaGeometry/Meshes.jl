@@ -258,9 +258,17 @@
     @test b(T(0), T(0)) ≈ P2(0, 0)
     @test b(T(1), T(0)) ≈ P2(2, 0)
 
+    b = Ball(P2(7, 7), T(1.5))
+    ps = b.(1, rand(T, 100))
+    all(∈(b), ps)
+
     b = Ball(P3(0, 0, 0), T(2))
     @test b(T(0), T(0), T(0)) ≈ P3(0, 0, 0)
     @test b(T(1), T(0), T(0)) ≈ P3(0, 0, 2)
+
+    b = Ball(P3(7, 7, 7), T(1.5))
+    ps = b.(1, rand(T, 100), rand(T, 100))
+    all(∈(b), ps)
   end
 
   @testset "Sphere" begin
