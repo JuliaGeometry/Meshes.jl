@@ -114,6 +114,27 @@
       @test p ≈ t
     end
 
+    b = Ball(P2(10, 10), T(2))
+    ps = sample(b, RegularSampling(4, 3))
+    @test all(∈(b), ps)
+    ts = P2[
+      (11.0, 10.0),
+      (10.0, 11.0),
+      (9.0, 10.0),
+      (10.0, 9.0),
+      (11.5, 10.0),
+      (10.0, 11.5),
+      (8.5, 10.0),
+      (10.0, 8.5),
+      (12.0, 10.0),
+      (10.0, 12.0),
+      (8.0, 10.0),
+      (10.0, 8.0)
+    ]
+    for (p, t) in zip(ps, ts)
+        @test p ≈ t
+    end
+
     b = Ball(P3(0, 0, 0), T(2))
     ps = sample(b, RegularSampling(3, 2, 3))
     ts = P3[
@@ -139,6 +160,10 @@
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
+
+    b = Ball(P3(10, 10, 10), T(2))
+    ps = sample(b, RegularSampling(3, 2, 3))
+    @test all(∈(b), ps)
 
     # cylinder surface with parallel planes
     c = CylinderSurface(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(0, 0, 1), V3(0, 0, 1)), T(1))
