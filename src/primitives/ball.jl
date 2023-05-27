@@ -42,7 +42,7 @@ function Base.in(p::Point{Dim,T}, b::Ball{Dim,T}) where {Dim,T}
   c = b.center
   r = b.radius
   s = norm(p - c)
-  s < r || isapprox(s, r, atol = atol(T))
+  s < r || isapprox(s, r, atol=atol(T))
 end
 
 boundary(b::Ball) = Sphere(b.center, b.radius)

@@ -132,7 +132,7 @@
       (10.0, 8.0)
     ]
     for (p, t) in zip(ps, ts)
-        @test p ≈ t
+      @test p ≈ t
     end
 
     b = Ball(P3(0, 0, 0), T(2))
