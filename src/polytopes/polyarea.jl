@@ -9,7 +9,9 @@ A polygonal area with `outer` chain, and optional inner
 chains `inner1`, `inner2`, ..., `innerk`.
 
 Chains can be a vector of [`Point`](@ref) or a
-vector of tuples with coordinates for convenience.
+vector of tuples with coordinates for convenience,
+in which case the first point should *not* be repeated
+at the end of the list.
 
 The option `fix` tries to correct issues with polygons
 in the real world, including issues with:
@@ -41,7 +43,7 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
         A, B = v[1], v[2]
         s = Segment(A, B)
         M = centroid(s)
-        outer = Chain([A, M, B, A])
+        outer = Ring(A, M, B)
       end
       inners = filter(c -> nvertices(c) > 2, inners)
     end
@@ -50,11 +52,11 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolyArea(outer::C, inners=C[]; fix=true) where {Dim,T,V,C<:Chain{Dim,T,V}} =
-  PolyArea{Dim,T,Chain{Dim,T,V}}(outer, inners, fix)
+PolyArea(outer::C, inners=C[]; fix=true) where {Dim,T,V,C<:Ring{Dim,T,V}} =
+  PolyArea{Dim,T,Ring{Dim,T,V}}(outer, inners, fix)
 
 PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
-  PolyArea(Chain(outer), [Chain(inner) for inner in inners]; fix=fix)
+  PolyArea(Ring(outer), [Ring(inner) for inner in inners]; fix=fix)
 
 PolyArea(outer::AbstractVector{TP}, inners=[]; fix=true) where {TP<:Tuple} =
   PolyArea(Point.(outer), [Point.(inner) for inner in inners]; fix=fix)
@@ -84,8 +86,8 @@ issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
 windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 
 function Base.unique!(p::PolyArea)
-  close!(unique!(open!(p.outer)))
-  hasholes(p) && foreach(c -> close!(unique!(open!(c))), p.inners)
+  unique!(p.outer)
+  hasholes(p) && foreach(c -> unique!(c), p.inners)
   p
 end
 
@@ -94,14 +96,14 @@ function Base.in(point::Point, polyarea::PolyArea)
 end
 
 function Base.show(io::IO, p::PolyArea)
-  nverts = [[npoints(p.outer)]; npoints.(p.inners)]
-  chains = join(["$n-chain" for n in nverts], ", ")
+  nverts = nvertices.([p.outer; p.inners])
+  chains = join(["$n-Ring" for n in nverts], ", ")
   print(io, "PolyArea($chains)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
-  nverts = [[npoints(p.outer)]; npoints.(p.inners)]
-  chains = ["$n-chain" for n in nverts]
+  nverts = nvertices.([p.outer; p.inners])
+  chains = ["$n-Ring" for n in nverts]
   println(io, "PolyArea{$Dim,$T}")
   if length(chains) == 1
     println(io, "  outer")

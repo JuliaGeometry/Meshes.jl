@@ -180,7 +180,7 @@
 
     b = Box(P2(1, 2), P2(3, 4))
     v = P2[(1, 2), (3, 2), (3, 4), (1, 4)]
-    @test boundary(b) == Chain([v; first(v)])
+    @test boundary(b) == Ring(v)
 
     b = Box(P3(1, 2, 3), P3(4, 5, 6))
     v = P3[(1, 2, 3), (4, 2, 3), (4, 5, 3), (1, 5, 3), (1, 2, 6), (4, 2, 6), (4, 5, 6), (1, 5, 6)]
@@ -188,7 +188,7 @@
     @test boundary(b) == SimpleMesh(v, c)
 
     b = Box(P2(0, 0), P2(1, 1))
-    @test boundary(b) == Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    @test boundary(b) == Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
 
     b = Box(P3(0, 0, 0), P3(1, 1, 1))
     m = boundary(b)

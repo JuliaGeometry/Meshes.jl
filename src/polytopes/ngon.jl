@@ -47,7 +47,7 @@ Base.unique!(ngon::Ngon) = ngon
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
-chains(ngon::Ngon{N}) where {N} = [Chain(ngon.vertices[[1:N; 1]])]
+chains(ngon::Ngon{N}) where {N} = [Ring(ngon.vertices)]
 
 angles(ngon::Ngon) = angles(boundary(ngon))
 

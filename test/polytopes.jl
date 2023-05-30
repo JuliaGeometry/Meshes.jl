@@ -91,7 +91,7 @@
     @test !hasholes(t)
     @test unique(t) == t
     @test boundary(t) == first(chains(t))
-    @test chains(t) == [Chain(P2(0, 0), P2(1, 0), P2(0, 1), P2(0, 0))]
+    @test chains(t) == [Ring(P2(0, 0), P2(1, 0), P2(0, 1))]
     @test bridge(t) == (first(chains(t)), [])
 
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
@@ -166,7 +166,7 @@
     @test !hasholes(q)
     @test unique(q) == q
     @test boundary(q) == first(chains(q))
-    @test chains(q) == [Chain(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1), P2(0, 0))]
+    @test chains(q) == [Ring(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))]
     @test bridge(q) == (first(chains(q)), [])
     @test q(T(0), T(0)) == P2(0, 0)
     @test q(T(1), T(0)) == P2(1, 0)
@@ -268,21 +268,21 @@
 
   @testset "Chains" begin
     # constructors
-    c1 = Chain(P2[(1, 1), (2, 2), (1, 1)])
-    c2 = Chain(P2(1, 1), P2(2, 2), P2(1, 1))
+    c1 = Ring(P2[(1, 1), (2, 2)])
+    c2 = Ring(P2(1, 1), P2(2, 2))
     c3 = Chain(CircularVector(P2[(1, 1), (2, 2)]))
-    c4 = Chain(T.((1, 1.0)), T.((2.0, 2.0)), T.((1.0, 1.0)))
-    @test c2 isa Chain{2,T,Vector{P2}}
+    c4 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
+    @test c2 isa Chain{2,T,CircularVector{P2,Vector{P2}}}
     @test c1 == c2 == c3 == c4
 
     # nvertices vs npoints
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test nvertices(c) == 4
     @test Meshes.npoints(c) == 5
     @test length(c) == T(4)
 
     # vertex indexing
-    c = Chain(P2[(1, 1), (2, 2), (1, 1)])
+    c = Ring(P2[(1, 1), (2, 2)])
     @test vertex(c, 0) == P2(2, 2)
     @test vertex(c, 1) == P2(1, 1)
     @test vertex(c, 2) == P2(2, 2)
@@ -295,7 +295,7 @@
     # segments
     c = Chain(P2[(1, 1), (2, 2), (3, 3)])
     @test collect(segments(c)) == [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3))]
-    c = Chain(P2[(1, 1), (2, 2), (3, 3), (1, 1)])
+    c = Ring(P2[(1, 1), (2, 2), (3, 3)])
     @test collect(segments(c)) ==
           [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3)), Segment(P2(3, 3), P2(1, 1))]
 
@@ -308,13 +308,8 @@
 
     # closing/opening chains
     c = Chain(P2[(1, 1), (2, 2), (3, 3)])
-    close!(c)
-    @test c == Chain(P2[(1, 1), (2, 2), (3, 3), (1, 1)])
-    open!(c)
-    @test c == Chain(P2[(1, 1), (2, 2), (3, 3)])
-    c = Chain(P2[(1, 1), (2, 2), (3, 3)])
-    @test close(c) == Chain(P2[(1, 1), (2, 2), (3, 3), (1, 1)])
-    c = Chain(P2[(1, 1), (2, 2), (3, 3), (1, 1)])
+    @test close(c) == Ring(P2[(1, 1), (2, 2), (3, 3)])
+    c = Ring(P2[(1, 1), (2, 2), (3, 3)])
     @test open(c) == Chain(P2[(1, 1), (2, 2), (3, 3)])
 
     # reversing chains
@@ -325,40 +320,40 @@
     @test reverse(c) == Chain(P2[(3, 3), (2, 2), (1, 1)])
 
     # angles and inner angles
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test angles(c) ≈ [-π / 2, -π / 2, -π / 2, -π / 2]
     c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test angles(c) ≈ [-π / 2, -π / 2]
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
     @test angles(c) ≈ [-atan(2), -π / 2, +π / 2, -π / 2, -π / 2, -(π - atan(2))]
     @test innerangles(c) ≈ [atan(2), π / 2, 3π / 2, π / 2, π / 2, π - atan(2)]
 
     # winding numbers
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test windingnumber(P2(0.5, 0.5), c) ≈ 1
     @test windingnumber(P2(0.5, 0.5), reverse(c)) ≈ -1
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0), (1, 0), (1, 1), (0, 1)])
     @test windingnumber(P2(0.5, 0.5), c) ≈ 2
     @test windingnumber(P2(0.5, 0.5), reverse(c)) ≈ -2
 
     # reconstruct chain from vertices
-    c1 = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
-    c2 = Chain(vertices(c1))
+    c1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    c2 = Ring(vertices(c1))
     @test c1 == c2
 
     # centroid
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test centroid(c) == P2(0.5, 0.5)
 
     # views
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test view(c, 1:3) == Chain(P2[(0, 0), (1, 0), (1, 1)])
     @test view(c, 4:6) == Chain(P2[(0, 1), (0, 0), (1, 0)])
 
     # boundary
     c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test boundary(c) == PointSet(P2[(0, 0), (0, 1)])
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test isnothing(boundary(c))
   end
 
@@ -366,23 +361,23 @@
     @test paramdim(PolyArea) == 2
 
     # outer chain with 2 vertices is fixed by default
-    poly = PolyArea(P2[(0, 0), (1, 0), (0, 0)])
-    @test chains(poly) == [Chain(P2[(0, 0), (0.5, 0.0), (1, 0), (0, 0)])]
+    poly = PolyArea(P2[(0, 0), (1, 0)])
+    @test chains(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
 
     # inner chain with 2 vertices is removed by default
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)], [P2[(1, 2), (2, 3), (1, 2)]])
-    @test chains(poly) == [Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])]
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)], [P2[(1, 2), (2, 3)]])
+    @test chains(poly) == [Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])]
 
     # orientation of chains is fixed by default
-    poly = PolyArea(P2[(0, 0), (0, 1), (1, 1), (1, 0), (0, 0)])
+    poly = PolyArea(P2[(0, 0), (0, 1), (1, 1), (1, 0)])
     @test vertices(poly) == CircularVector(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    poly = PolyArea(P2[(0, 0), (0, 1), (1, 1), (1, 0), (0, 0)], fix=false)
+    poly = PolyArea(P2[(0, 0), (0, 1), (1, 1), (1, 0)], fix=false)
     @test vertices(poly) == CircularVector(P2[(0, 0), (0, 1), (1, 1), (1, 0)])
 
     # test accessor methods
-    poly = PolyArea(P2[(1, 2), (2, 3), (1, 2)], fix=false)
+    poly = PolyArea(P2[(1, 2), (2, 3)], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3)])
-    poly = PolyArea(P2[(1, 2), (2, 3), (1, 2)], [P2[(1.1, 2.54), (1.4, 1.5), (1.1, 2.54)]], fix=false)
+    poly = PolyArea(P2[(1, 2), (2, 3)], [P2[(1.1, 2.54), (1.4, 1.5)]], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -451,9 +446,9 @@
     end
 
     # bridges between holes
-    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
-    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4), (0.2, 0.2)]
-    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4), (0.6, 0.2)]
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
     poly = PolyArea(outer, [hole1, hole2])
     @test vertices(poly) == P2[
       (0, 0),
@@ -477,29 +472,29 @@
     @test vertices(chain) == Point.(Tuple.(eachcol(target)))
 
     # test uniqueness
-    points = P2[(1, 1), (2, 2), (2, 2), (3, 3), (1, 1)]
+    points = P2[(1, 1), (2, 2), (2, 2), (3, 3)]
     poly = PolyArea(points)
     unique!(poly)
-    @test first(chains(poly)) == Chain(points)
+    @test first(chains(poly)) == Ring(P2[(1, 1), (2, 2), (3, 3)])
 
     # unique and bridges
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1), (0, 0)])
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)])
     chain, _ = poly |> unique |> bridge
-    @test chain == Chain(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 0)])
+    @test chain == Ring(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)])
 
     # centroid
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test centroid(poly) == P2(0.5, 0.5)
 
     # single vertex access
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test vertex(poly, 1) == P2(0, 0)
     @test vertex(poly, 4) == P2(0, 1)
 
     # point in polygonal area
-    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
-    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4), (0.2, 0.2)]
-    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4), (0.6, 0.2)]
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
     poly = PolyArea(outer, [hole1, hole2])
     @test all(p ∈ poly for p in outer)
     @test P2(0.5, 0.5) ∈ poly
@@ -514,21 +509,21 @@
     @test bytes == 0
 
     # area
-    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
-    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4), (0.2, 0.2)]
-    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4), (0.6, 0.2)]
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
     poly = PolyArea(outer, [hole1, hole2])
     @test area(poly) ≈ T(0.92)
 
     # convexity
-    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
-    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4), (0.2, 0.2)]
-    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4), (0.6, 0.2)]
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
     poly1 = PolyArea(outer)
     poly2 = PolyArea(outer, [hole1, hole2])
     @test isconvex(poly1)
     @test !isconvex(poly2)
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1), (0, 0)])
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)])
     @test !isconvex(poly)
   end
 end

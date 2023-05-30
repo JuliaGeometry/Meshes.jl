@@ -35,7 +35,7 @@ function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
     if isapprox(θ, zero(T), atol=atol(T))
       return Segment(Point(p₀), Point(p₂))
     else
-      c = Chain(Point(p₀), Point(p₁), Point(p₂), Point(p₀))
+      c = Ring(Point(p₀), Point(p₁), Point(p₂))
       c = orientation(c) == :CCW ? c : reverse(c)
       return PolyArea(c)
     end
@@ -57,8 +57,5 @@ function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
     push!(c, pᵢ)
   end
 
-  # close chain
-  push!(c, c[1])
-
-  PolyArea(c)
+  PolyArea(Ring(c))
 end

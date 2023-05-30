@@ -88,7 +88,7 @@ function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
   projected = proj2D(points)
 
   # discretize within 2D chain with given method
-  chain2D = Chain([projected; first(projected)])
+  chain2D = Ring(projected)
   mesh = discretizewithin(chain2D, method)
 
   # return mesh with original points

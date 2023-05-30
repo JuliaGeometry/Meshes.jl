@@ -48,7 +48,9 @@ function readpoly(T, fname)
     end
 
     # return polygonal area
-    PolyArea(outer, inners)
+    @assert first(outer) == last(outer)
+    @assert all(first(i) == last(i) for i in inners)
+    PolyArea(outer[begin:(end - 1)], [i[begin:(end - 1)] for i in inners])
   end
 end
 
@@ -67,6 +69,7 @@ include("dummy.jl")
 
 # list of tests
 testfiles = [
+  "polytopes.jl",
   "vectors.jl",
   "points.jl",
   "angles.jl",
