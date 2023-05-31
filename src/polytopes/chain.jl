@@ -8,7 +8,7 @@
 A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 See https://en.wikipedia.org/wiki/Polygonal_chain.
 
-See [`Ring`](@ref) for closed chains.
+See also [`Ring`](@ref).
 """
 struct Chain{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
