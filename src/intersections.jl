@@ -13,7 +13,7 @@ Base.intersect(g1::Geometry, g2::Geometry) = get(intersection(g1, g2))
     intersection([f], g1, g2)
 
 Compute the intersection of two geometries `g1` and `g2`
-and apply function `f` to it. Default function is [`identity`](@ref).
+and apply function `f` to it. Default function is `identity`.
 
 ## Examples
 
