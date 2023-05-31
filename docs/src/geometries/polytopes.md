@@ -25,9 +25,7 @@ Segment
 ```
 
 ```@example polytopes
-s = Segment((0., 0.), (1.,1.))
-
-viz(s)
+Segment((0., 0.), (1.,1.)) |> viz
 ```
 
 ```@docs
@@ -35,9 +33,7 @@ Ngon
 ```
 
 ```@example polytopes
-t = Triangle((0.,0.), (1.,0.), (0.,1.))
-
-viz(t)
+Triangle((0.,0.), (1.,0.), (0.,1.)) |> viz
 ```
 
 ```@docs
@@ -45,9 +41,15 @@ Chain
 ```
 
 ```@example polytopes
-c = Chain((0.,0.), (1.,0.5), (1.,1.), (2.,0.))
+Chain((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
+```
 
-viz(c)
+```@docs
+Ring
+```
+
+```@example polytopes
+Ring((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
 ```
 
 ```@docs
@@ -58,9 +60,7 @@ PolyArea
 outer = [(0.0,0.0),(1.0,0.0),(1.0,1.0),(0.0,1.0),(0.0,0.0)]
 hole1 = [(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4),(0.2,0.2)]
 hole2 = [(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4),(0.6,0.2)]
-poly  = PolyArea(outer, [hole1, hole2])
-
-viz(poly)
+poly  = PolyArea(outer, [hole1, hole2]) |> viz
 ```
 
 ```@docs
@@ -68,9 +68,7 @@ Tetrahedron
 ```
 
 ```@example polytopes
-t = Tetrahedron([(0,0,0),(1,0,0),(0,1,0),(0,0,1)])
-
-viz(t)
+Tetrahedron([(0,0,0),(1,0,0),(0,1,0),(0,0,1)]) |> viz
 ```
 
 ```@docs
@@ -78,10 +76,8 @@ Hexahedron
 ```
 
 ```@example polytopes
-h = Hexahedron([(0,0,0),(1,0,0),(1,1,0),(0,1,0),
-                (0,0,1),(1,0,1),(1,1,1),(0,1,1)])
-
-viz(h)
+Hexahedron([(0,0,0),(1,0,0),(1,1,0),(0,1,0),
+            (0,0,1),(1,0,1),(1,1,1),(0,1,1)]) |> viz
 ```
 
 ```@docs
@@ -89,7 +85,5 @@ Pyramid
 ```
 
 ```@example polytopes
-p = Pyramid([(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)])
-
-viz(p)
+Pyramid([(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)]) |> viz
 ```

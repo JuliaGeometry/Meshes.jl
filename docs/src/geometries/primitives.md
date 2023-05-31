@@ -30,6 +30,10 @@ Line
 BezierCurve
 ```
 
+```@example primitives
+BezierCurve((0.,0.), (1.,0.), (1.,1.)) |> viz
+```
+
 ```@docs
 Plane
 ```
@@ -39,13 +43,15 @@ Box
 ```
 
 ```@example primitives
-b = Box((0.,0.,0.), (1.,1.,1.))
-
-viz(b)
+Box((0.,0.,0.), (1.,1.,1.)) |> viz
 ```
 
 ```@docs
 Ball
+```
+
+```@example primitives
+Ball((0.,0.,0.), 1.) |> viz
 ```
 
 ```@docs
@@ -53,9 +59,7 @@ Sphere
 ```
 
 ```@example primitives
-s = Sphere((0.,0.,0.), 1.)
-
-viz(s)
+Sphere((0.,0.,0.), 1.) |> viz
 ```
 
 ```@docs
@@ -71,13 +75,15 @@ Cylinder
 ```
 
 ```@example primitives
-c = Cylinder(1.0) # aligned with z axis
-
-viz(c)
+Cylinder(1.0) |> viz
 ```
 
 ```@docs
 CylinderSurface
+```
+
+```@example primitives
+CylinderSurface(1.0) |> viz
 ```
 
 ```@docs
@@ -90,4 +96,8 @@ ConeSurface
 
 ```@docs
 Torus
+```
+
+```@example primitives
+Torus((0.,0.,0.), (1.,0.,0.), (0.,1.,0.), 0.2) |> viz
 ```

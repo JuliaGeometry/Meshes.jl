@@ -26,6 +26,8 @@ Rotate
 ```
 
 ```@example transforms
+using Rotations: Angle2d
+
 grid = CartesianGrid(10, 10)
 
 mesh = grid |> Rotate(Angle2d(π/4))
