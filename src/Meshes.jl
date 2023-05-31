@@ -223,8 +223,6 @@ export
   hasholes,
   angles,
   innerangles,
-  close!,
-  open!,
   orientation,
   bridge,
   normal,
