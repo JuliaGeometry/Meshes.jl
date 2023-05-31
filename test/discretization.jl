@@ -77,19 +77,19 @@
   end
 
   @testset "FIST" begin
-    𝒫 = Chain(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 0)])
+    𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
     @test Meshes.ears(𝒫) == [2, 4, 5]
 
-    𝒫 = Chain(P2[(0, 0), (1, 0), (1, 1), (2, 1), (1, 2), (0, 0)])
+    𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (1, 2)])
     @test Meshes.ears(𝒫) == [2, 4]
 
-    𝒫 = Chain(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 0)])
+    𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (1, 2)])
     @test Meshes.ears(𝒫) == [2, 4]
 
-    𝒫 = Chain(P2[(0, 0), (1, 1), (1, 2), (0, 0)])
+    𝒫 = Ring(P2[(0, 0), (1, 1), (1, 2)])
     @test Meshes.ears(𝒫) == []
 
-    𝒫 = Chain(
+    𝒫 = Ring(
       P2[
         (0.443339268495331, 0.283757618605357),
         (0.497822414616971, 0.398142813114205),
@@ -104,15 +104,14 @@
         (0.424085089823892, 0.493532112641353),
         (0.209843417261654, 0.590030658255966),
         (0.27993878548962, 0.525162463476181),
-        (0.385557753911967, 0.322338556632868),
-        (0.443339268495331, 0.283757618605357)
+        (0.385557753911967, 0.322338556632868)
       ]
     )
     @test Meshes.ears(𝒫) == [1, 3, 5, 6, 8, 10, 12, 14]
 
-    points = P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 0)]
+    points = P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]
     connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
-    target = SimpleMesh(points[1:(end - 1)], connec)
+    target = SimpleMesh(points, connec)
     poly = PolyArea(points)
     mesh = discretize(poly, FIST(shuffle=false))
     @test mesh == target
@@ -146,9 +145,9 @@
       @test eltype(elms) <: Triangle
       @test length(elms) == 3
 
-      outer = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)]
-      hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4), (0.2, 0.2)]
-      hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4), (0.6, 0.2)]
+      outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+      hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+      hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
       poly = PolyArea(outer, [hole1, hole2])
       chain, _ = bridge(poly, width=T(0.01))
       mesh = discretizewithin(chain, method)
@@ -157,7 +156,7 @@
       @test all(t -> area(t) > zero(T), mesh)
 
       # 3D chains
-      chain = Chain(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 1), (0, 0, 0)])
+      chain = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 1)])
       mesh = discretizewithin(chain, method)
       @test vertices(mesh) == vertices(chain)
       @test eltype(mesh) <: Triangle
@@ -305,7 +304,7 @@
     @test nelements(msh) == 2
     @test msh[1] == Segment(P2(0, 0), P2(1, 0))
     @test msh[2] == Segment(P2(1, 0), P2(1, 1))
-    chn = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
+    chn = Ring(P2[(0, 0), (1, 0), (1, 1)])
     msh = simplexify(chn)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == 3

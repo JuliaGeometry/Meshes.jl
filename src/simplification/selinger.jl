@@ -65,7 +65,8 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
     end
   end
 
-  Chain(collect(v[bestpath]))
+  @assert first(bestpath) == last(bestpath)
+  Ring(collect(v[bestpath[begin:(end - 1)]]))
 end
 
 function dijkstra(I, s, t)

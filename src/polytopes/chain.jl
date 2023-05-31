@@ -7,15 +7,22 @@
 
 A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 See https://en.wikipedia.org/wiki/Polygonal_chain.
+
+See [`Ring`](@ref) for closed chains.
 """
 struct Chain{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
   vertices::V
 end
 
-# specialize Polytope outer constructor to use standard vector
-Chain(vertices::Vararg{P}) where {P<:Point} = Chain(collect(vertices))
+"""
+    Ring(p1, p2, ..., pn)
 
-Chain(vertices::CircularVector) = Chain([collect(vertices); first(vertices)])
+A closed polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
+"""
+const Ring = Chain{Dim,T,V} where {Dim,T,V<:CircularVector{Point{Dim,T}}}
+
+Ring(vertices::AbstractVector{P}) where {P<:Point} = Chain(CircularVector(vertices))
+Ring(vertices::CircularVector{P}) where {P<:Point} = Chain(vertices)
 
 """
     npoints(chain)
@@ -31,32 +38,8 @@ This function is provided for IO purposes. Most algorithms
 should be written in terms of `nvertices` and `vertices`
 as they are consistent with each other.
 """
-npoints(c::Chain) = length(c.vertices)
-
-"""
-    nvertices(chain)
-
-Return the number of vertices of the `chain`. In the case
-that the chain is closed, the number of vertices is one
-less the total number of points used to represent the chain.
-"""
-nvertices(c::Chain) = npoints(c) - isclosed(c)
-
-"""
-    vertices(chain)
-
-Return the vertices of the `chain`. In the case that the
-chain is closed, the returned vector is circular and can
-be indexed with arbitrarily negative or positive indices.
-"""
-function vertices(c::Chain)
-  if isclosed(c)
-    vs = @view c.vertices[begin:(end - 1)]
-    CircularVector(vs)
-  else
-    c.vertices
-  end
-end
+npoints(c::Chain) = nvertices(c)
+npoints(c::Ring) = nvertices(c) + 1
 
 """
     segments(chain)
@@ -65,8 +48,8 @@ Return the segments linking consecutive points of the `chain`.
 """
 function segments(c::Chain)
   v = c.vertices
-  n = length(v)
-  (Segment(view(v, [i, i + 1])) for i in 1:(n - 1))
+  n = length(v) - !isclosed(c)
+  (Segment(view(v, [i, i + 1])) for i in 1:n)
 end
 
 """
@@ -75,14 +58,11 @@ end
 Return the boundary of the `chain`.
 """
 function boundary(c::Chain)
-  if isclosed(c)
-    nothing
-  else
-    vs = c.vertices
-    bs = [first(vs), last(vs)]
-    PointSet(bs)
-  end
+  vs = c.vertices
+  bs = [first(vs), last(vs)]
+  PointSet(bs)
 end
+boundary(::Ring) = nothing
 
 """
     isclosed(chain)
@@ -91,7 +71,8 @@ Tells whether or not the chain is closed.
 
 A closed chain is also known as a ring.
 """
-isclosed(c::Chain) = first(c.vertices) == last(c.vertices)
+isclosed(c::Chain) = false
+isclosed(c::Ring) = true
 
 """
     isperiodic(chain)
@@ -136,9 +117,10 @@ See https://en.wikipedia.org/wiki/Winding_number.
   the simplicity and orientation of planar polygons]
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-function windingnumber(p::Point{2,T}, c::Chain{2,T}) where {T}
+function windingnumber(p::Point{2,T}, c::Ring{2,T}) where {T}
   vₒ, vs = p, c.vertices
-  ∑ = sum(∠(vs[i], vₒ, vs[i + 1]) for i in 1:(length(vs) - 1))
+  n = length(vs) - !isclosed(c)
+  ∑ = sum(∠(vs[i], vₒ, vs[i + 1]) for i in 1:n)
   ∑ / T(2π)
 end
 
@@ -169,9 +151,9 @@ Default method is `WindingOrientation()`.
 * Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-orientation(c::Chain) = orientation(c, WindingOrientation())
+orientation(c::Ring) = orientation(c, WindingOrientation())
 
-function orientation(c::Chain{2,T}, ::WindingOrientation) where {T}
+function orientation(c::Ring{2,T}, ::WindingOrientation) where {T}
   # pick any segment
   x1, x2 = c.vertices[1:2]
   x̄ = centroid(Segment(x1, x2))
@@ -179,7 +161,7 @@ function orientation(c::Chain{2,T}, ::WindingOrientation) where {T}
   isapprox(w, T(π), atol=atol(T)) ? :CCW : :CW
 end
 
-function orientation(c::Chain{2,T}, ::TriangleOrientation) where {T}
+function orientation(c::Ring{2,T}, ::TriangleOrientation) where {T}
   v = vertices(c)
   Δ(i) = signarea(v[1], v[i], v[i + 1])
   a = mapreduce(Δ, +, 2:(length(v) - 1))
@@ -189,11 +171,11 @@ end
 """
     unique!(chain)
 
-Remove duplicate vertices in the `chain`.
+Remove duplicate vertices in the `chain`. Closed chains remain closed.
 """
 function Base.unique!(c::Chain)
   # sort vertices lexicographically
-  verts = c.vertices
+  verts = open(c).vertices # work with underlying array, even for closed chains
   perms = sortperm(coordinates.(verts))
 
   # remove true duplicates
@@ -219,56 +201,35 @@ end
 """
     unique(chain)
 
-Return a new `chain` without duplicate vertices.
+Return a new `chain` without duplicate vertices. Closed chains remain closed.
 """
 Base.unique(c::Chain) = unique!(deepcopy(c))
 
 """
-    close!(chain)
-
-Close the `chain`, i.e. repeat the first vertex
-at the end of the vertex list.
-"""
-function close!(c::Chain)
-  push!(c.vertices, first(c.vertices))
-  c
-end
-
-"""
     close(chain)
 
-Same as [`close!`](@ref) but operates on a copy
-of the original `chain`.
+Close the `chain`, i.e. add a segment going from the last to the first vertex.
 """
-Base.close(c::Chain) = close!(deepcopy(c))
-
-"""
-    open!(chain)
-
-Open the `chain`, i.e. remove the last vertex.
-"""
-function open!(c::Chain)
-  pop!(c.vertices)
-  c
-end
+Base.close(c::Chain) = Ring(c.vertices)
+Base.close(c::Ring) = c
 
 """
     open(chain)
 
-Same as [`open!`](@ref) but operates on a copy
-of the original `chain`.
+Open the `chain`, i.e. remove the segment going from the last to the first vertex.
 """
-Base.open(c::Chain) = open!(deepcopy(c))
+# call `open` again to avoid issues in case of nested CircularVector
+Base.open(c::Ring) = open(Chain(parent(c.vertices)))
+Base.open(c::Chain) = c
 
 """
     reverse!(chain)
 
 Reverse the `chain` vertices in place.
 """
-function Base.reverse!(c::Chain)
-  reverse!(c.vertices)
-  c
-end
+Base.reverse!(c::Chain) = (reverse!(c.vertices); c)
+# do not change which vertex comes first for closed chains
+Base.reverse!(c::Ring) = (reverse!(@view c.vertices[(begin + 1):end]); c)
 
 """
     reverse(chain)
@@ -289,21 +250,10 @@ absolute value of the angles returned is never
 greater than `π`.
 """
 function angles(c::Chain)
-  θs = map(2:(length(c.vertices) - 1)) do i
-    p1 = c.vertices[i - 1]
-    p2 = c.vertices[i]
-    p3 = c.vertices[i + 1]
-    ∠(p1, p2, p3)
-  end
-
-  if isclosed(c)
-    p1 = c.vertices[end - 1]
-    p2 = c.vertices[1]
-    p3 = c.vertices[2]
-    pushfirst!(θs, ∠(p1, p2, p3))
-  end
-
-  θs
+  vs = vertices(c)
+  i1 = firstindex(vs) + !isclosed(c)
+  i2 = lastindex(vs) - !isclosed(c)
+  map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
 end
 
 """
@@ -313,9 +263,7 @@ Return inner angles of the *closed* `chain`. Inner
 angles are always positive, and unlike `angles`
 they can be greater than `π`.
 """
-function innerangles(c::Chain{2,T}) where {T}
-  @assert isclosed(c) "Inner angles only defined for closed chains"
-
+function innerangles(c::Ring{2,T}) where {T}
   # correct sign of angles in case orientation is CW
   θs = orientation(c) == :CW ? -angles(c) : angles(c)
 
@@ -420,9 +368,7 @@ function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
   end
 
   # close outer boundary
-  push!(outer, first(outer))
-
-  outerchain = Chain(Point.(outer))
+  outerchain = Ring(Point.(outer))
 
   outerchain, duplicates
 end
@@ -430,12 +376,12 @@ end
 Base.view(c::Chain, inds) = Chain(view(vertices(c), inds))
 
 function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
-  N = npoints(c)
-  print(io, "$N-Chain{$Dim,$T}")
+  n = nvertices(c)
+  name = c isa Ring ? "Ring" : "Chain"
+  print(io, "$n-$name{$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
-  v = c.vertices
   println(io, c)
-  print(io, io_lines(v, "  "))
+  print(io, io_lines(c.vertices, "  "))
 end

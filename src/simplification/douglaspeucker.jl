@@ -35,7 +35,7 @@ function simplify(chain::Chain, method::DouglasPeucker)
     # perform Douglas-Peucker ϵ-simplification
     ϵsimplify(vertices(chain), method.ϵ)
   end |> collect
-  isclosed(chain) ? Chain([v; first(v)]) : Chain(v)
+  isclosed(chain) ? Ring(v) : Chain(v)
 end
 
 # simplification by means of binary search
