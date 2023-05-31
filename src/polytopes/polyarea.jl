@@ -49,8 +49,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolyArea(outer::R, inners=R[]; fix=true) where {Dim,T,V,R<:Ring{Dim,T,V}} =
-  PolyArea{Dim,T,R}(outer, inners, fix)
+PolyArea(outer::R, inners=R[]; fix=true) where {Dim,T,V,R<:Ring{Dim,T,V}} = PolyArea{Dim,T,R}(outer, inners, fix)
 
 PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
   PolyArea(Ring(outer), [Ring(inner) for inner in inners]; fix=fix)
