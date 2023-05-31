@@ -5,13 +5,13 @@
 """
     PolyArea(outer, [inner1, inner2, ..., innerk]; fix=true)
 
-A polygonal area with `outer` chain, and optional inner
-chains `inner1`, `inner2`, ..., `innerk`.
+A polygonal area with `outer` ring, and optional inner
+rings `inner1`, `inner2`, ..., `innerk`.
 
-Chains can be a vector of [`Point`](@ref) or a
+Rings can be a vector of [`Point`](@ref) or a
 vector of tuples with coordinates for convenience,
 in which case the first point should *not* be repeated
-at the end of the list.
+at the end of the vector.
 
 The option `fix` tries to correct issues with polygons
 in the real world, including issues with:
@@ -23,17 +23,14 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (i.e. only 2 vertices).
 """
-struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
-  outer::C
-  inners::Vector{C}
+struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
+  outer::R
+  inners::Vector{R}
 
-  function PolyArea{Dim,T,C}(outer, inners, fix) where {Dim,T,C}
-    @assert isclosed(outer) "invalid outer chain"
-    @assert all(isclosed, inners) "invalid inner chains"
-
+  function PolyArea{Dim,T,R}(outer, inners, fix) where {Dim,T,R}
     if fix
       # fix orientation
-      ofix(c, o) = orientation(c) == o ? c : reverse(c)
+      ofix(r, o) = orientation(r) == o ? r : reverse(r)
       outer = ofix(outer, :CCW)
       inners = ofix.(inners, :CW)
 
@@ -52,8 +49,8 @@ struct PolyArea{Dim,T,C<:Chain{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolyArea(outer::C, inners=C[]; fix=true) where {Dim,T,V,C<:Ring{Dim,T,V}} =
-  PolyArea{Dim,T,Ring{Dim,T,V}}(outer, inners, fix)
+PolyArea(outer::R, inners=R[]; fix=true) where {Dim,T,V,R<:Ring{Dim,T,V}} =
+  PolyArea{Dim,T,R}(outer, inners, fix)
 
 PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
   PolyArea(Ring(outer), [Ring(inner) for inner in inners]; fix=fix)
