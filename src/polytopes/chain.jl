@@ -256,18 +256,18 @@ function innerangles(c::Ring{2,T}) where {T}
 end
 
 """
-    bridge(chains; width=0)
+    bridge(rings; width=0)
 
-Build bridges of given `width` between `chains` of a polygon.
+Build bridges of given `width` between `rings` of a polygon.
 
 ### Notes
 
 - Please read the docstring of the corresponding method for
   [`Polygon`](@ref) for additional details and references.
 """
-function bridge(chains::AbstractVector{<:Chain{2,T}}; width=zero(T)) where {T}
+function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
   # retrieve chains as vectors of coordinates
-  pchains = [coordinates.(vertices(open(c))) for c in chains]
+  pchains = [coordinates.(vertices(open(r))) for r in rings]
 
   # sort vertices lexicographically
   coords = [coord for pchain in pchains for coord in pchain]

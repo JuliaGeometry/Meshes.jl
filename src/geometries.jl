@@ -161,7 +161,7 @@ function boundary(multi::Multi)
   isempty(valid) ? nothing : reduce(merge, valid)
 end
 
-chains(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} = [chain for geom in multi.items for chain in chains(geom)]
+rings(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} = [ring for poly in multi.items for ring in rings(poly)]
 
 Base.collect(multi::Multi) = multi.items
 

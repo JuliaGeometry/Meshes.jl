@@ -10,7 +10,7 @@
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
-  @test chains(multi) == [chains(poly); chains(poly)]
+  @test rings(multi) == [rings(poly); rings(poly)]
 
   poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
   poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2)])

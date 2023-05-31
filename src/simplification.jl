@@ -24,8 +24,8 @@ function simplify(box::Box{2}, method::SimplificationMethod)
 end
 
 function simplify(polygon::Polygon, method::SimplificationMethod)
-  c = [simplify(chain, method) for chain in chains(polygon)]
-  PolyArea(c[1], c[2:end])
+  r = [simplify(ring, method) for ring in rings(polygon)]
+  PolyArea(r[begin], r[begin+1:end])
 end
 
 function simplify(multi::Multi, method::SimplificationMethod)

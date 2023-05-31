@@ -216,7 +216,7 @@ export
   vertices,
   nvertices,
   windingnumber,
-  chains,
+  rings,
   segments,
   isclosed,
   issimple,

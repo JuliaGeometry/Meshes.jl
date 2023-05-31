@@ -137,11 +137,11 @@ Return the area of the `polygon`.
 area(p::Polygon) = measure(p)
 
 """
-    chains(polygon)
+    rings(polygon)
 
-Return the outer and inner chains of the polygon.
+Return the outer and inner rings of the polygon.
 """
-function chains end
+function rings end
 
 """
     hasholes(polygon)
@@ -175,7 +175,7 @@ as either counter-clockwise (CCW) or clockwise (CW).
 orientation(p::Polygon) = orientation(p, WindingOrientation())
 
 function orientation(p::Polygon, algo)
-  o = [orientation(c, algo) for c in chains(p)]
+  o = [orientation(ring, algo) for ring in rings(p)]
   hasholes(p) ? o : first(o)
 end
 
@@ -184,7 +184,7 @@ end
 
 Returns the boundary of the `polygon`.
 """
-boundary(p::Polygon) = hasholes(p) ? Multi(chains(p)) : first(chains(p))
+boundary(p::Polygon) = hasholes(p) ? Multi(rings(p)) : first(rings(p))
 
 """
     isconvex(polygon)
@@ -209,9 +209,9 @@ the bridges.
 """
 function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   if hasholes(p)
-    bridge(chains(p), width=width)
+    bridge(rings(p), width=width)
   else
-    first(chains(p)), []
+    first(rings(p)), []
   end
 end
 

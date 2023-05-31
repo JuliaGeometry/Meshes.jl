@@ -73,7 +73,7 @@ nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, 
 
 centroid(p::PolyArea) = centroid(p.outer)
 
-chains(p::PolyArea) = [p.outer; p.inners]
+rings(p::PolyArea) = [p.outer; p.inners]
 
 hasholes(p::PolyArea) = !isempty(p.inners)
 
@@ -93,21 +93,21 @@ end
 
 function Base.show(io::IO, p::PolyArea)
   nverts = nvertices.([p.outer; p.inners])
-  chains = join(["$n-Ring" for n in nverts], ", ")
-  print(io, "PolyArea($chains)")
+  rings = join(["$n-Ring" for n in nverts], ", ")
+  print(io, "PolyArea($rings)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
   nverts = nvertices.([p.outer; p.inners])
-  chains = ["$n-Ring" for n in nverts]
+  rings = ["$n-Ring" for n in nverts]
   println(io, "PolyArea{$Dim,$T}")
-  if length(chains) == 1
+  if length(rings) == 1
     println(io, "  outer")
-    print(io, io_lines(chains[1:1], "    "))
+    print(io, io_lines(rings[1:1], "    "))
   else
     println(io, "  outer")
-    println(io, io_lines(chains[1:1], "    "))
+    println(io, io_lines(rings[1:1], "    "))
     println(io, "  inner")
-    print(io, io_lines(chains[2:end], "    "))
+    print(io, io_lines(rings[2:end], "    "))
   end
 end

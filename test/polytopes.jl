@@ -90,9 +90,9 @@
     @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
     @test !hasholes(t)
     @test unique(t) == t
-    @test boundary(t) == first(chains(t))
-    @test chains(t) == [Ring(P2(0, 0), P2(1, 0), P2(0, 1))]
-    @test bridge(t) == (first(chains(t)), [])
+    @test boundary(t) == first(rings(t))
+    @test rings(t) == [Ring(P2(0, 0), P2(1, 0), P2(0, 1))]
+    @test bridge(t) == (first(rings(t)), [])
 
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     @test perimeter(t) ≈ T(1 + 1 + √2)
@@ -165,9 +165,9 @@
     q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
     @test !hasholes(q)
     @test unique(q) == q
-    @test boundary(q) == first(chains(q))
-    @test chains(q) == [Ring(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))]
-    @test bridge(q) == (first(chains(q)), [])
+    @test boundary(q) == first(rings(q))
+    @test rings(q) == [Ring(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))]
+    @test bridge(q) == (first(rings(q)), [])
     @test q(T(0), T(0)) == P2(0, 0)
     @test q(T(1), T(0)) == P2(1, 0)
     @test q(T(1), T(1)) == P2(1, 1)
@@ -356,11 +356,11 @@
 
     # outer chain with 2 vertices is fixed by default
     poly = PolyArea(P2[(0, 0), (1, 0)])
-    @test chains(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
+    @test rings(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
 
     # inner chain with 2 vertices is removed by default
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)], [P2[(1, 2), (2, 3)]])
-    @test chains(poly) == [Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])]
+    @test rings(poly) == [Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])]
 
     # orientation of chains is fixed by default
     poly = PolyArea(P2[(0, 0), (0, 1), (1, 1), (1, 0)])
@@ -381,7 +381,7 @@
     for poly in polys1
       @test !hasholes(poly)
       @test issimple(poly)
-      @test boundary(poly) == first(chains(poly))
+      @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 30
       for algo in [WindingOrientation(), TriangleOrientation()]
         @test orientation(poly, algo) == :CCW
@@ -396,7 +396,7 @@
     for poly in polys2
       @test !hasholes(poly)
       @test issimple(poly)
-      @test boundary(poly) == first(chains(poly))
+      @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 120
       for algo in [WindingOrientation(), TriangleOrientation()]
         @test orientation(poly, algo) == :CCW
@@ -409,12 +409,12 @@
     fnames = ["hole$i.line" for i in 1:5]
     polys3 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys3
-      rings = chains(poly)
+      rs = rings(poly)
       @test hasholes(poly)
       @test !issimple(poly)
-      @test boundary(poly) == Multi(rings)
-      @test nvertices(first(rings)) < 30
-      @test all(nvertices.(rings[2:end]) .< 18)
+      @test boundary(poly) == Multi(rs)
+      @test nvertices(first(rs)) < 30
+      @test all(nvertices.(rs[2:end]) .< 18)
       for algo in [WindingOrientation(), TriangleOrientation()]
         orients = orientation(poly, algo)
         @test orients[1] == :CCW
@@ -427,7 +427,7 @@
     for poly in [polys1; polys2; polys3]
       b, _ = bridge(poly)
       nb = nvertices(b)
-      np = nvertices.(chains(poly))
+      np = nvertices.(rings(poly))
       @test nb ≥ sum(np)
       # triangle orientation always works even
       # in the presence of self-intersections
@@ -469,7 +469,7 @@
     points = P2[(1, 1), (2, 2), (2, 2), (3, 3)]
     poly = PolyArea(points)
     unique!(poly)
-    @test first(chains(poly)) == Ring(P2[(1, 1), (2, 2), (3, 3)])
+    @test first(rings(poly)) == Ring(P2[(1, 1), (2, 2), (3, 3)])
 
     # unique and bridges
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)])
