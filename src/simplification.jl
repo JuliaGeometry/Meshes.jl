@@ -25,7 +25,7 @@ end
 
 function simplify(polygon::Polygon, method::SimplificationMethod)
   r = [simplify(ring, method) for ring in rings(polygon)]
-  PolyArea(r[begin], r[begin+1:end])
+  PolyArea(r[begin], r[(begin + 1):end])
 end
 
 function simplify(multi::Multi, method::SimplificationMethod)
