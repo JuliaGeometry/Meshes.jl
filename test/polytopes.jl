@@ -275,12 +275,6 @@
     @test c2 isa Chain{2,T,CircularVector{P2,Vector{P2}}}
     @test c1 == c2 == c3 == c4
 
-    # nvertices vs npoints
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test nvertices(c) == 4
-    @test Meshes.npoints(c) == 5
-    @test length(c) == T(4)
-
     # vertex indexing
     c = Ring(P2[(1, 1), (2, 2)])
     @test vertex(c, 0) == P2(2, 2)

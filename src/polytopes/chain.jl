@@ -25,23 +25,6 @@ Ring(vertices::AbstractVector{P}) where {P<:Point} = Chain(CircularVector(vertic
 Ring(vertices::CircularVector{P}) where {P<:Point} = Chain(vertices)
 
 """
-    npoints(chain)
-
-Return the total number of points used to represent the
-chain, no matter if it is closed or open.
-
-See also [`nvertices`](@ref).
-
-### Notes
-
-This function is provided for IO purposes. Most algorithms
-should be written in terms of `nvertices` and `vertices`
-as they are consistent with each other.
-"""
-npoints(c::Chain) = nvertices(c)
-npoints(c::Ring) = nvertices(c) + 1
-
-"""
     segments(chain)
 
 Return the segments linking consecutive points of the `chain`.
