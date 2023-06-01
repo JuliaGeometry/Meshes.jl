@@ -3,16 +3,6 @@
 # ------------------------------------------------------------------
 
 """
-    Chain(p1, p2, ..., pn)
-
-A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
-See https://en.wikipedia.org/wiki/Polygonal_chain.
-
-See also [`Rope`](@ref) and [`Ring`](@ref).
-"""
-abstract type Chain{Dim,T} <: Polytope{1,Dim,T} end
-
-"""
     Rope(p1, p2, ..., pn)
 
 An open polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
@@ -37,17 +27,6 @@ end
 Ring(vertices::AbstractVector{P}) where {P<:Point} = Ring(CircularVector(vertices))
 
 """
-    segments(chain)
-
-Return the segments linking consecutive points of the `chain`.
-"""
-function segments(c::Chain)
-  v = c.vertices
-  n = length(v) - !isclosed(c)
-  (Segment(view(v, [i, i + 1])) for i in 1:n)
-end
-
-"""
     boundary(chain)
 
 Return the boundary of the `chain`.
@@ -58,44 +37,8 @@ function boundary(r::Rope)
 end
 boundary(::Ring) = nothing
 
-"""
-    isclosed(chain)
-
-Tells whether or not the chain is closed.
-
-A closed chain is also known as a ring.
-"""
-isclosed(c::Rope) = false
-isclosed(c::Ring) = true
-
-"""
-    isperiodic(chain)
-
-Tells whether or not the `chain` is periodic
-along each parametric dimension.
-"""
-isperiodic(c::Chain) = (isclosed(c),)
-
-"""
-   issimple(chain)
-
-Tells whether or not the `chain` is simple.
-
-A chain is simple when all its segments only
-intersect at end points.
-"""
-function issimple(c::Chain)
-  λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
-  ss = collect(segments(c))
-  for i in 1:length(ss)
-    for j in (i + 1):length(ss)
-      if intersection(λ, ss[i], ss[j])
-        return false
-      end
-    end
-  end
-  true
-end
+isclosed(::Type{<:Rope}) = false
+isclosed(::Type{<:Ring}) = true
 
 """
     windingnumber(point, ring)
@@ -163,45 +106,6 @@ function orientation(r::Ring{2,T}, ::TriangleOrientation) where {T}
 end
 
 """
-    unique!(chain)
-
-Remove duplicate vertices in the `chain`.
-Closed chains remain closed.
-"""
-function Base.unique!(c::Chain)
-  # sort vertices lexicographically
-  verts = open(c).vertices # work with underlying array, even for closed chains
-  perms = sortperm(coordinates.(verts))
-
-  # remove true duplicates
-  keep = Int[]
-  sorted = @view verts[perms]
-  for i in 1:(length(sorted) - 1)
-    if sorted[i] != sorted[i + 1]
-      # save index in the original vector
-      push!(keep, perms[i])
-    end
-  end
-  push!(keep, last(perms))
-
-  # preserve chain order
-  sort!(keep)
-
-  # update vertices in place
-  copy!(verts, verts[keep])
-
-  c
-end
-
-"""
-    unique(chain)
-
-Return a new `chain` without duplicate vertices.
-Closed chains remain closed.
-"""
-Base.unique(c::Chain) = unique!(deepcopy(c))
-
-"""
     close(chain)
 
 Close the `chain`, i.e. add a segment going from the last to the first vertex.
@@ -226,31 +130,6 @@ Reverse the `chain` vertices in place.
 # do not change which vertex comes first for closed chains
 Base.reverse!(r::Rope) = (reverse!(r.vertices); r)
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
-
-"""
-    reverse(chain)
-
-Reverse the `chain` vertices.
-"""
-Base.reverse(c::Chain) = reverse!(deepcopy(c))
-
-"""
-    angles(chain)
-
-Return angles `∠(vᵢ-₁, vᵢ, vᵢ+₁)` at all vertices
-`vᵢ` of the `chain`. If the chain is open, the first
-and last vertices have no angles. Positive angles
-represent a CCW rotation whereas negative angles
-represent a CW rotation. In either case, the
-absolute value of the angles returned is never
-greater than `π`.
-"""
-function angles(c::Chain)
-  vs = vertices(c)
-  i1 = firstindex(vs) + !isclosed(c)
-  i2 = lastindex(vs) - !isclosed(c)
-  map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
-end
 
 """
     innerangles(ring)
@@ -366,15 +245,4 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
   outerring = Ring(Point.(outer))
 
   outerring, duplicates
-end
-
-function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
-  n = nvertices(c)
-  name = nameof(typeof(c))
-  print(io, "$n-$name{$Dim,$T}")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
-  println(io, c)
-  print(io, io_lines(c.vertices, "  "))
 end

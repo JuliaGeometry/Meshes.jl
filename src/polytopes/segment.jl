@@ -9,15 +9,15 @@ An oriented line segment with end points `p1`, `p2`.
 The segment can be called as `s(t)` with `t` between
 `0` and `1` to interpolate linearly between its endpoints.
 
-See also [`Line`](@ref).
+See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
+struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Chain{Dim,T}
   vertices::V
 end
 
 isconvex(::Type{<:Segment}) = true
 
-isperiodic(::Type{<:Segment}) = (false,)
+isclosed(::Type{<:Segment}) = false
 
 nvertices(::Type{<:Segment}) = 2
 

@@ -112,11 +112,145 @@ end
 # -----------
 
 """
+    Chain{Dim,T}
+
+A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
+See https://en.wikipedia.org/wiki/Polygonal_chain.
+
+See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
+"""
+const Chain = Polytope{1}
+
+"""
    length(polytope)
 
 Return the length of the 1-`polytope`.
 """
-Base.length(p::Polytope{1}) = measure(p)
+Base.length(c::Chain) = measure(c)
+
+"""
+    segments(chain)
+
+Return the segments linking consecutive points of the `chain`.
+"""
+function segments(c::Chain)
+  v = c.vertices
+  n = length(v) - !isclosed(c)
+  (Segment(view(v, [i, i + 1])) for i in 1:n)
+end
+
+"""
+    isperiodic(chain)
+
+Tells whether or not the `chain` is periodic
+along each parametric dimension.
+"""
+isperiodic(C::Type{<:Chain}) = (isclosed(C),)
+
+"""
+    isclosed(chain)
+
+Tells whether or not the chain is closed.
+
+A closed chain is also known as a ring.
+"""
+isclosed(c::Chain) = isclosed(typeof(c))
+
+"""
+   issimple(chain)
+
+Tells whether or not the `chain` is simple.
+
+A chain is simple when all its segments only
+intersect at end points.
+"""
+function issimple(c::Chain)
+  λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
+  ss = collect(segments(c))
+  for i in 1:length(ss)
+    for j in (i + 1):length(ss)
+      if intersection(λ, ss[i], ss[j])
+        return false
+      end
+    end
+  end
+  true
+end
+
+"""
+    unique!(chain)
+
+Remove duplicate vertices in the `chain`.
+Closed chains remain closed.
+"""
+function Base.unique!(c::Chain)
+  # sort vertices lexicographically
+  verts = vertices(open(c))
+  perms = sortperm(coordinates.(verts))
+
+  # remove true duplicates
+  keep = Int[]
+  sorted = @view verts[perms]
+  for i in 1:(length(sorted) - 1)
+    if sorted[i] != sorted[i + 1]
+      # save index in the original vector
+      push!(keep, perms[i])
+    end
+  end
+  push!(keep, last(perms))
+
+  # preserve chain order
+  sort!(keep)
+
+  # update vertices in place
+  copy!(verts, verts[keep])
+
+  c
+end
+
+"""
+    unique(chain)
+
+Return a new `chain` without duplicate vertices.
+Closed chains remain closed.
+"""
+Base.unique(c::Chain) = unique!(deepcopy(c))
+
+"""
+    reverse(chain)
+
+Reverse the `chain` vertices.
+"""
+Base.reverse(c::Chain) = reverse!(deepcopy(c))
+
+"""
+    angles(chain)
+
+Return angles `∠(vᵢ-₁, vᵢ, vᵢ+₁)` at all vertices
+`vᵢ` of the `chain`. If the chain is open, the first
+and last vertices have no angles. Positive angles
+represent a CCW rotation whereas negative angles
+represent a CW rotation. In either case, the
+absolute value of the angles returned is never
+greater than `π`.
+"""
+function angles(c::Chain)
+  vs = vertices(c)
+  i1 = firstindex(vs) + !isclosed(c)
+  i2 = lastindex(vs) - !isclosed(c)
+  map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
+end
+
+function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
+  n = nvertices(c)
+  name = nameof(typeof(c))
+  print(io, "$n-$name{$Dim,$T}")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
+  println(io, c)
+  print(io, io_lines(c.vertices, "  "))
+end
 
 # ---------------------
 # 2-POLYTOPE (POLYGON)
