@@ -6,10 +6,10 @@
     Polytope{K,Dim,T}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
-that constitue a `K`-dimensional subspace. They are called polygon and polyhedron
-respectively for 2D (`K=2`) and 3D (`K=3`) subspaces, embedded in a `Dim`-dimensional
-space. The parameter `K` is also known as the rank or parametric dimension of the
-polytope: https://en.wikipedia.org/wiki/Abstract_polytope.
+that constitue a `K`-dimensional subspace. They are called chain, polygon and
+polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
+embedded in a `Dim`-dimensional space. The parameter `K` is also known as the
+rank or parametric dimension of the polytope: https://en.wikipedia.org/wiki/Abstract_polytope.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into
@@ -254,6 +254,11 @@ function angles(c::Chain)
   map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
 end
 
+# implementations of Chain
+include("polytopes/segment.jl")
+include("polytopes/rope.jl")
+include("polytopes/ring.jl")
+
 # ---------------------
 # 2-POLYTOPE (POLYGON)
 # ---------------------
@@ -262,6 +267,8 @@ end
     Polygon{Dim,T}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
+
+See also [`Ngon`](@ref) and [`PolyArea`](@ref).
 """
 const Polygon = Polytope{2}
 
@@ -351,6 +358,10 @@ function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
   end
 end
 
+# implementations of Polygon
+include("polytopes/ngon.jl")
+include("polytopes/polyarea.jl")
+
 # ------------------------
 # 3-POLYTOPE (POLYHEDRON)
 # ------------------------
@@ -359,6 +370,8 @@ end
     Polyhedron{Dim,T}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
+
+See also [`Tetrahedron`](@ref), [`Hexahedron`](@ref) and [`Pyramid`](@ref).
 """
 const Polyhedron = Polytope{3}
 
@@ -369,15 +382,7 @@ Return the volume of the `polyhedron`.
 """
 volume(p::Polyhedron) = measure(p)
 
-# ----------------
-# IMPLEMENTATIONS
-# ----------------
-
-include("polytopes/segment.jl")
-include("polytopes/rope.jl")
-include("polytopes/ring.jl")
-include("polytopes/ngon.jl")
-include("polytopes/polyarea.jl")
+# implementations of Polyhedron
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
 include("polytopes/pyramid.jl")
