@@ -268,55 +268,57 @@
 
   @testset "Chains" begin
     # constructors
+    c1 = Rope(P2[(1, 1), (2, 2)])
+    c2 = Rope(P2(1, 1), P2(2, 2))
+    c3 = Rope(T.((1, 1.0)), T.((2.0, 2.0)))
+    @test c1 == c2 == c3
     c1 = Ring(P2[(1, 1), (2, 2)])
     c2 = Ring(P2(1, 1), P2(2, 2))
-    c3 = Chain(CircularVector(P2[(1, 1), (2, 2)]))
-    c4 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
-    @test c2 isa Chain{2,T,CircularVector{P2,Vector{P2}}}
-    @test c1 == c2 == c3 == c4
+    c3 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
+    @test c1 == c2 == c3
 
     # vertex indexing
+    c = Rope(P2[(1, 1), (2, 2)])
+    @test vertex(c, 1) == P2(1, 1)
+    @test vertex(c, 2) == P2(2, 2)
     c = Ring(P2[(1, 1), (2, 2)])
     @test vertex(c, 0) == P2(2, 2)
     @test vertex(c, 1) == P2(1, 1)
     @test vertex(c, 2) == P2(2, 2)
     @test vertex(c, 3) == P2(1, 1)
     @test vertex(c, 4) == P2(2, 2)
-    c = Chain(P2[(1, 1), (2, 2)])
-    @test vertex(c, 1) == P2(1, 1)
-    @test vertex(c, 2) == P2(2, 2)
 
     # segments
-    c = Chain(P2[(1, 1), (2, 2), (3, 3)])
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
     @test collect(segments(c)) == [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3))]
     c = Ring(P2[(1, 1), (2, 2), (3, 3)])
     @test collect(segments(c)) ==
           [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3)), Segment(P2(3, 3), P2(1, 1))]
 
     # unique vertices
-    c = Chain(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
-    @test unique(c) == Chain(P2[(1, 1), (2, 2), (3, 3)])
-    @test c == Chain(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
+    c = Rope(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
+    @test unique(c) == Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test c == Rope(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
     unique!(c)
-    @test c == Chain(P2[(1, 1), (2, 2), (3, 3)])
+    @test c == Rope(P2[(1, 1), (2, 2), (3, 3)])
 
     # closing/opening chains
-    c = Chain(P2[(1, 1), (2, 2), (3, 3)])
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
     @test close(c) == Ring(P2[(1, 1), (2, 2), (3, 3)])
     c = Ring(P2[(1, 1), (2, 2), (3, 3)])
-    @test open(c) == Chain(P2[(1, 1), (2, 2), (3, 3)])
+    @test open(c) == Rope(P2[(1, 1), (2, 2), (3, 3)])
 
     # reversing chains
-    c = Chain(P2[(1, 1), (2, 2), (3, 3)])
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
     reverse!(c)
-    @test c == Chain(P2[(3, 3), (2, 2), (1, 1)])
-    c = Chain(P2[(1, 1), (2, 2), (3, 3)])
-    @test reverse(c) == Chain(P2[(3, 3), (2, 2), (1, 1)])
+    @test c == Rope(P2[(3, 3), (2, 2), (1, 1)])
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test reverse(c) == Rope(P2[(3, 3), (2, 2), (1, 1)])
 
     # angles and inner angles
     c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test angles(c) ≈ [-π / 2, -π / 2, -π / 2, -π / 2]
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test angles(c) ≈ [-π / 2, -π / 2]
     c = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
     @test angles(c) ≈ [-atan(2), -π / 2, +π / 2, -π / 2, -π / 2, -(π - atan(2))]
@@ -339,13 +341,8 @@
     c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test centroid(c) == P2(0.5, 0.5)
 
-    # views
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test view(c, 1:3) == Chain(P2[(0, 0), (1, 0), (1, 1)])
-    @test view(c, 4:6) == Chain(P2[(0, 1), (0, 0), (1, 0)])
-
     # boundary
-    c = Chain(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test boundary(c) == PointSet(P2[(0, 0), (0, 1)])
     c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test isnothing(boundary(c))

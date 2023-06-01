@@ -8,9 +8,18 @@
 A polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 See https://en.wikipedia.org/wiki/Polygonal_chain.
 
-See also [`Ring`](@ref).
+See also [`Rope`](@ref) and [`Ring`](@ref).
 """
-struct Chain{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polytope{1,Dim,T}
+abstract type Chain{Dim,T} <: Polytope{1,Dim,T} end
+
+"""
+    Rope(p1, p2, ..., pn)
+
+An open polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
+
+See also [`Chain`](@ref) and [`Ring`](@ref).
+"""
+struct Rope{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Chain{Dim,T}
   vertices::V
 end
 
@@ -19,12 +28,13 @@ end
 
 A closed polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
-See also [`Chain`](@ref).
+See also [`Chain`](@ref) and [`Rope`](@ref).
 """
-const Ring = Chain{Dim,T,V} where {Dim,T,V<:CircularVector{Point{Dim,T}}}
+struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
+  vertices::V
+end
 
-Ring(vertices::AbstractVector{P}) where {P<:Point} = Chain(CircularVector(vertices))
-Ring(vertices::CircularVector{P}) where {P<:Point} = Chain(vertices)
+Ring(vertices::AbstractVector{P}) where {P<:Point} = Ring(CircularVector(vertices))
 
 """
     segments(chain)
@@ -42,10 +52,9 @@ end
 
 Return the boundary of the `chain`.
 """
-function boundary(c::Chain)
-  vs = c.vertices
-  bs = [first(vs), last(vs)]
-  PointSet(bs)
+function boundary(r::Rope)
+  v = r.vertices
+  PointSet([first(v), last(v)])
 end
 boundary(::Ring) = nothing
 
@@ -56,7 +65,7 @@ Tells whether or not the chain is closed.
 
 A closed chain is also known as a ring.
 """
-isclosed(c::Chain) = false
+isclosed(c::Rope) = false
 isclosed(c::Ring) = true
 
 """
@@ -89,11 +98,11 @@ function issimple(c::Chain)
 end
 
 """
-    windingnumber(point, chain)
+    windingnumber(point, ring)
 
-Winding number of `point` with respect to the `chain`.
+Winding number of `point` with respect to the `ring`.
 The winding number is the total number of times that
-the chain travels counterclockwise around the point.
+the ring travels counterclockwise around the point.
 See https://en.wikipedia.org/wiki/Winding_number.
 
 ## References
@@ -102,10 +111,10 @@ See https://en.wikipedia.org/wiki/Winding_number.
   the simplicity and orientation of planar polygons]
   (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-function windingnumber(p::Point{2,T}, c::Ring{2,T}) where {T}
-  vₒ, vs = p, c.vertices
-  n = length(vs) - !isclosed(c)
-  ∑ = sum(∠(vs[i], vₒ, vs[i + 1]) for i in 1:n)
+function windingnumber(p::Point{2,T}, r::Ring{2,T}) where {T}
+  v = r.vertices
+  n = length(v)
+  ∑ = sum(∠(v[i], p, v[i + 1]) for i in 1:n)
   ∑ / T(2π)
 end
 
@@ -116,9 +125,9 @@ struct WindingOrientation <: OrientationMethod end
 struct TriangleOrientation <: OrientationMethod end
 
 """
-    orientation(chain, [method])
+    orientation(ring, [method])
 
-Returns the orientation of the `chain` as either
+Returns the orientation of the `ring` as either
 counter-clockwise (CCW) or clockwise (CW).
 
 Optionally, specify the orientation `method`:
@@ -136,18 +145,18 @@ Default method is `WindingOrientation()`.
 * Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-orientation(c::Ring) = orientation(c, WindingOrientation())
+orientation(r::Ring) = orientation(r, WindingOrientation())
 
-function orientation(c::Ring{2,T}, ::WindingOrientation) where {T}
+function orientation(r::Ring{2,T}, ::WindingOrientation) where {T}
   # pick any segment
-  x1, x2 = c.vertices[1:2]
+  x1, x2 = r.vertices[1:2]
   x̄ = centroid(Segment(x1, x2))
-  w = T(2π) * windingnumber(x̄, c) - ∠(x1, x̄, x2)
+  w = T(2π) * windingnumber(x̄, r) - ∠(x1, x̄, x2)
   isapprox(w, T(π), atol=atol(T)) ? :CCW : :CW
 end
 
-function orientation(c::Ring{2,T}, ::TriangleOrientation) where {T}
-  v = vertices(c)
+function orientation(r::Ring{2,T}, ::TriangleOrientation) where {T}
+  v = vertices(r)
   Δ(i) = signarea(v[1], v[i], v[i + 1])
   a = mapreduce(Δ, +, 2:(length(v) - 1))
   a ≥ zero(T) ? :CCW : :CW
@@ -156,7 +165,8 @@ end
 """
     unique!(chain)
 
-Remove duplicate vertices in the `chain`. Closed chains remain closed.
+Remove duplicate vertices in the `chain`.
+Closed chains remain closed.
 """
 function Base.unique!(c::Chain)
   # sort vertices lexicographically
@@ -186,7 +196,8 @@ end
 """
     unique(chain)
 
-Return a new `chain` without duplicate vertices. Closed chains remain closed.
+Return a new `chain` without duplicate vertices.
+Closed chains remain closed.
 """
 Base.unique(c::Chain) = unique!(deepcopy(c))
 
@@ -195,8 +206,8 @@ Base.unique(c::Chain) = unique!(deepcopy(c))
 
 Close the `chain`, i.e. add a segment going from the last to the first vertex.
 """
-Base.close(c::Chain) = Ring(c.vertices)
-Base.close(c::Ring) = c
+Base.close(r::Rope) = Ring(r.vertices)
+Base.close(r::Ring) = r
 
 """
     open(chain)
@@ -204,17 +215,17 @@ Base.close(c::Ring) = c
 Open the `chain`, i.e. remove the segment going from the last to the first vertex.
 """
 # call `open` again to avoid issues in case of nested CircularVector
-Base.open(c::Ring) = open(Chain(parent(c.vertices)))
-Base.open(c::Chain) = c
+Base.open(r::Rope) = r
+Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 
 """
     reverse!(chain)
 
 Reverse the `chain` vertices in place.
 """
-Base.reverse!(c::Chain) = (reverse!(c.vertices); c)
 # do not change which vertex comes first for closed chains
-Base.reverse!(c::Ring) = (reverse!(@view c.vertices[(begin + 1):end]); c)
+Base.reverse!(r::Rope) = (reverse!(r.vertices); r)
+Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
 """
     reverse(chain)
@@ -242,16 +253,15 @@ function angles(c::Chain)
 end
 
 """
-    innerangles(chain)
+    innerangles(ring)
 
-Return inner angles of the *closed* `chain`. Inner
-angles are always positive, and unlike `angles`
-they can be greater than `π`.
+Return inner angles of the `ring`. Inner
+angles are always positive, and unlike
+`angles` they can be greater than `π`.
 """
-function innerangles(c::Ring{2,T}) where {T}
+function innerangles(r::Ring{2,T}) where {T}
   # correct sign of angles in case orientation is CW
-  θs = orientation(c) == :CW ? -angles(c) : angles(c)
-
+  θs = orientation(r) == :CW ? -angles(r) : angles(r)
   [θ > 0 ? 2 * T(π) - θ : -θ for θ in θs]
 end
 
@@ -353,16 +363,14 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
   end
 
   # close outer boundary
-  outerchain = Ring(Point.(outer))
+  outerring = Ring(Point.(outer))
 
-  outerchain, duplicates
+  outerring, duplicates
 end
-
-Base.view(c::Chain, inds) = Chain(view(vertices(c), inds))
 
 function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
   n = nvertices(c)
-  name = c isa Ring ? "Ring" : "Chain"
+  name = nameof(typeof(c))
   print(io, "$n-$name{$Dim,$T}")
 end
 

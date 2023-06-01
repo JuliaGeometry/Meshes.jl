@@ -38,10 +38,10 @@ discretize(geometry, method::BoundaryDiscretizationMethod) = discretizewithin(bo
 function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMethod) where {Dim,T}
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
-  chain, dups = bridge(unique(polygon), width=2atol(T))
+  ring, dups = bridge(unique(polygon), width=2atol(T))
 
   # discretize using outer boundary
-  mesh = discretizewithin(chain, method)
+  mesh = discretizewithin(ring, method)
 
   if isempty(dups)
     # nothing to be done, return mesh
@@ -80,16 +80,16 @@ end
 discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, collect(multi))
 
-function discretizewithin(chain::Chain{3}, method::BoundaryDiscretizationMethod)
+function discretizewithin(ring::Ring{3}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
-  points = vertices(chain) |> collect
+  points = collect(vertices(ring))
 
   # project points on 2D plane of maximum variance
   projected = proj2D(points)
 
-  # discretize within 2D chain with given method
-  chain2D = Ring(projected)
-  mesh = discretizewithin(chain2D, method)
+  # discretize within 2D ring with given method
+  ring2D = Ring(projected)
+  mesh = discretizewithin(ring2D, method)
 
   # return mesh with original points
   SimpleMesh(points, topology(mesh))

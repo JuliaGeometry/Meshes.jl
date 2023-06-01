@@ -207,6 +207,7 @@ export
   Nonagon,
   Decagon,
   Chain,
+  Rope,
   Ring,
   PolyArea,
   Tetrahedron,

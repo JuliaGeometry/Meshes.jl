@@ -33,12 +33,12 @@ end
 
 FIST(rng=Random.GLOBAL_RNG; shuffle=true) = FIST(rng, shuffle)
 
-function discretizewithin(chain::Chain{2}, method::FIST)
+function discretizewithin(ring::Ring{2}, method::FIST)
   # helper function to shuffle ears
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
 
-  # input polygonal chain
-  𝒫 = chain
+  # input ring
+  𝒫 = ring
 
   # points of resulting mesh
   points = vertices(𝒫)
@@ -61,7 +61,7 @@ function discretizewithin(chain::Chain{2}, method::FIST)
       push!(𝒯, connect((inds[i - 1], inds[i], inds[i + 1]), Triangle))
       # 2. remove the vertex from 𝒫
       inds = inds[setdiff(1:n, mod1(i, n))]
-      𝒫 = Chain(points[inds])
+      𝒫 = Ring(points[inds])
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
       for j in (i - 1, i)
@@ -89,7 +89,7 @@ function discretizewithin(chain::Chain{2}, method::FIST)
           push!(𝒯, connect((inds[i], inds[i + 1], inds[i + 2]), Triangle))
           # 2. remove the vertex from 𝒫
           inds = inds[setdiff(1:n, mod1(i + 1, n))]
-          𝒫 = Chain(points[inds])
+          𝒫 = Ring(points[inds])
           n = nvertices(𝒫)
           clipped = true
           break
@@ -122,7 +122,7 @@ end
 
 # tells whether or not vertex i is an ear of 𝒫
 # assuming that 𝒫 has counter-clockwise orientation
-function isearccw(𝒫::Chain{Dim,T}, i) where {Dim,T}
+function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
   v = vertices(𝒫)
 
   # helper function to compute the vexity of vertex i

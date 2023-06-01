@@ -66,14 +66,13 @@ function sideof(p::Point{2,T}, s::Segment{2,T}) where {T}
 end
 
 """
-    sideof(point, chain)
+    sideof(point, ring)
 
-Determines on which side of the closed `chain` the
-`point` lies. Possible results are `:INSIDE` or
-`:OUTSIDE` the chain.
+Determines on which side of the `ring` the `point` lies.
+Possible results are `:INSIDE` or `:OUTSIDE` the ring.
 """
-function sideof(p::Point{2,T}, c::Chain{2,T}) where {T}
-  w = windingnumber(p, c)
+function sideof(p::Point{2,T}, r::Ring{2,T}) where {T}
+  w = windingnumber(p, r)
   ifelse(isapprox(w, zero(T), atol=atol(T)), :OUTSIDE, :INSIDE)
 end
 

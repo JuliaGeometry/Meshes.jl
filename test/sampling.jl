@@ -264,7 +264,7 @@
     @test first(ps) isa P2
     @test all(0 ≤ coords[1] == coords[2] ≤ 1 for coords in coordinates.(ps))
 
-    c = Chain(P2(0, 0), P2(1, 0), P2(0, 1), P2(1, 1))
+    c = Rope(P2(0, 0), P2(1, 0), P2(0, 1), P2(1, 1))
     ps = sample(c, HomogeneousSampling(100))
     @test first(ps) isa P2
     @test all(coords[1] + coords[2] == 1 || (0 ≤ coords[1] ≤ 1 && coords[2] ∈ [0, 1]) for coords in coordinates.(ps))

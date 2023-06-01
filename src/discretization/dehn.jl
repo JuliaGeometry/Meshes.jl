@@ -21,9 +21,9 @@ with small number of vertices.
 """
 struct Dehn1899 <: BoundaryDiscretizationMethod end
 
-function discretizewithin(chain::Chain{2}, ::Dehn1899)
+function discretizewithin(ring::Ring{2}, ::Dehn1899)
   # points on resulting mesh
-  points = collect(vertices(chain))
+  points = collect(vertices(ring))
 
   # Dehn's recursion
   connec = dehn1899(points, 1:length(points))

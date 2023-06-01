@@ -11,12 +11,12 @@ See [https://en.wikipedia.org/wiki/Fan_triangulation]
 """
 struct FanTriangulation <: BoundaryDiscretizationMethod end
 
-discretizewithin(chain::Chain{2}, ::FanTriangulation) = fan(chain)
+discretizewithin(ring::Ring{2}, ::FanTriangulation) = fan(ring)
 
-discretizewithin(chain::Chain{3}, ::FanTriangulation) = fan(chain)
+discretizewithin(ring::Ring{3}, ::FanTriangulation) = fan(ring)
 
-function fan(chain::Chain)
-  points = vertices(chain)
-  connec = [connect((1, i, i + 1)) for i in 2:(nvertices(chain) - 1)]
-  SimpleMesh(collect(points), connec)
+function fan(ring::Ring)
+  points = collect(vertices(ring))
+  connec = [connect((1, i, i + 1)) for i in 2:(nvertices(ring) - 1)]
+  SimpleMesh(points, connec)
 end

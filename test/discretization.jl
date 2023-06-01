@@ -297,7 +297,7 @@
     @test nelements(msh) == 1
     @test msh[1] == Segment(P1(0), P1(1))
 
-    chn = Chain(P2[(0, 0), (1, 0), (1, 1)])
+    chn = Rope(P2[(0, 0), (1, 0), (1, 1)])
     msh = simplexify(chn)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == 3
