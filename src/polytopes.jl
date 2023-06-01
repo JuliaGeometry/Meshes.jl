@@ -88,23 +88,15 @@ Remove duplicate vertices in `polytope`.
 function Base.unique!(::Polytope) end
 
 function Base.show(io::IO, p::Polytope)
-  kind = prettyname(p)
+  name = prettyname(p)
   vert = join(vertices(p), ", ")
-  print(io, "$kind($vert)")
+  print(io, "$name($vert)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
-  kind = prettyname(p)
-  lines = ["  └─$v" for v in vertices(p)]
-  println(io, "$kind{$Dim,$T}")
-  print(io, join(lines, "\n"))
-end
-
-prettyname(p::Polytope) = prettyname(typeof(p))
-function prettyname(PL::Type{<:Polytope})
-  n = string(PL)
-  i = findfirst('{', n)
-  isnothing(i) ? n : n[1:(i - 1)]
+  name = prettyname(p)
+  println(io, "$name{$Dim,$T}")
+  print(io, io_lines(vertices(p), "  "))
 end
 
 # -----------
@@ -239,17 +231,6 @@ function angles(c::Chain)
   i1 = firstindex(vs) + !isclosed(c)
   i2 = lastindex(vs) - !isclosed(c)
   map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
-end
-
-function Base.show(io::IO, c::Chain{Dim,T}) where {Dim,T}
-  n = nvertices(c)
-  name = nameof(typeof(c))
-  print(io, "$n-$name{$Dim,$T}")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", c::Chain{Dim,T}) where {Dim,T}
-  println(io, c)
-  print(io, io_lines(c.vertices, "  "))
 end
 
 # ---------------------
