@@ -171,9 +171,8 @@ Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi.items)
   length(multi₁.items) == length(multi₂.items) && all(g -> g[1] == g[2], zip(multi₁.items, multi₂.items))
 
 function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
-  n = length(multi.items)
-  G = eltype(multi.items)
-  print(io, "$n Multi$(nameof(G)){$Dim,$T}")
+  name = prettyname(eltype(multi.items))
+  print(io, "Multi$name{$Dim,$T}")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", multi::Multi)
