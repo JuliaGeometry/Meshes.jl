@@ -14,8 +14,9 @@ import WGLMakie as Mke # hide
 
 ```@docs
 Polytope
-Polygon
 Polyhedron
+Polygon
+Chain
 ```
 
 ## Concrete
@@ -29,19 +30,11 @@ Segment((0., 0.), (1.,1.)) |> viz
 ```
 
 ```@docs
-Ngon
+Rope
 ```
 
 ```@example polytopes
-Triangle((0.,0.), (1.,0.), (0.,1.)) |> viz
-```
-
-```@docs
-Chain
-```
-
-```@example polytopes
-Chain((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
+Rope((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
 ```
 
 ```@docs
@@ -50,6 +43,14 @@ Ring
 
 ```@example polytopes
 Ring((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
+```
+
+```@docs
+Ngon
+```
+
+```@example polytopes
+Triangle((0.,0.), (1.,0.), (0.,1.)) |> viz
 ```
 
 ```@docs

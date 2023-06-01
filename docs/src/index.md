@@ -228,22 +228,22 @@ The orientation of the above polygonal area is counter-clockwise (CCW):
 orientation(p)
 ```
 
-We can get the outer polygonal chain, and reverse it:
+We can get the outer ring, and reverse it:
 
 ```@example overview
-c = chains(p)[1]
+r = rings(p) |> first
 
-reverse(c)
+reverse(r)
 ```
 
-A closed chain (a.k.a. ring) has circular vertices:
+A ring has circular vertices:
 
 ```@example overview
-v = vertices(c)
+v = vertices(r)
 ```
 
 This means that we can index the vertices with indices that go
-beyond the range `1:nvertices(c)`. This is very useful for
+beyond the range `1:nvertices(r)`. This is very useful for
 writing algorithms:
 
 ```@example overview
@@ -254,19 +254,19 @@ We can also compute angles of any given chain, no matter if it
 is open or closed:
 
 ```@example overview
-angles(c) * 180 / pi
+angles(r) * 180 / pi
 ```
 
 The sign of these angles is a function of the orientation:
 
 ```@example overview
-angles(reverse(c)) * 180 / pi
+angles(reverse(r)) * 180 / pi
 ```
 
-In case of closed chains, we can compute inner angles as well:
+In case of rings (i.e. closed chains), we can compute inner angles as well:
 
 ```@example overview
-innerangles(c) * 180 / pi
+innerangles(r) * 180 / pi
 ```
 
 And there is a lot more functionality available like for instance
