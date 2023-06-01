@@ -1,5 +1,5 @@
 @testset "Polytopes" begin
-  @testset "Segment" begin
+  @testset "Segments" begin
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
     @test isconvex(Segment)
@@ -53,7 +53,78 @@
     @test center(s) == Point(0.5, 0.5, 0.5)
   end
 
-  @testset "N-gons" begin
+  @testset "Ropes/Rings" begin
+    c1 = Rope(P2[(1, 1), (2, 2)])
+    c2 = Rope(P2(1, 1), P2(2, 2))
+    c3 = Rope(T.((1, 1.0)), T.((2.0, 2.0)))
+    @test c1 == c2 == c3
+    c1 = Ring(P2[(1, 1), (2, 2)])
+    c2 = Ring(P2(1, 1), P2(2, 2))
+    c3 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
+    @test c1 == c2 == c3
+
+    c = Rope(P2[(1, 1), (2, 2)])
+    @test vertex(c, 1) == P2(1, 1)
+    @test vertex(c, 2) == P2(2, 2)
+    c = Ring(P2[(1, 1), (2, 2)])
+    @test vertex(c, 0) == P2(2, 2)
+    @test vertex(c, 1) == P2(1, 1)
+    @test vertex(c, 2) == P2(2, 2)
+    @test vertex(c, 3) == P2(1, 1)
+    @test vertex(c, 4) == P2(2, 2)
+
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test collect(segments(c)) == [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3))]
+    c = Ring(P2[(1, 1), (2, 2), (3, 3)])
+    @test collect(segments(c)) ==
+          [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3)), Segment(P2(3, 3), P2(1, 1))]
+
+    c = Rope(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
+    @test unique(c) == Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test c == Rope(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
+    unique!(c)
+    @test c == Rope(P2[(1, 1), (2, 2), (3, 3)])
+
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test close(c) == Ring(P2[(1, 1), (2, 2), (3, 3)])
+    c = Ring(P2[(1, 1), (2, 2), (3, 3)])
+    @test open(c) == Rope(P2[(1, 1), (2, 2), (3, 3)])
+
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
+    reverse!(c)
+    @test c == Rope(P2[(3, 3), (2, 2), (1, 1)])
+    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test reverse(c) == Rope(P2[(3, 3), (2, 2), (1, 1)])
+
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test angles(c) ≈ [-π / 2, -π / 2, -π / 2, -π / 2]
+    c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test angles(c) ≈ [-π / 2, -π / 2]
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
+    @test angles(c) ≈ [-atan(2), -π / 2, +π / 2, -π / 2, -π / 2, -(π - atan(2))]
+    @test innerangles(c) ≈ [atan(2), π / 2, 3π / 2, π / 2, π / 2, π - atan(2)]
+
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test windingnumber(P2(0.5, 0.5), c) ≈ 1
+    @test windingnumber(P2(0.5, 0.5), reverse(c)) ≈ -1
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0), (1, 0), (1, 1), (0, 1)])
+    @test windingnumber(P2(0.5, 0.5), c) ≈ 2
+    @test windingnumber(P2(0.5, 0.5), reverse(c)) ≈ -2
+
+    c1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    c2 = Ring(vertices(c1))
+    @test c1 == c2
+
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test centroid(c) == P2(0.5, 0.5)
+
+    c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test boundary(c) == PointSet(P2[(0, 0), (0, 1)])
+    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test isnothing(boundary(c))
+  end
+
+  @testset "Ngons" begin
     @test paramdim(Ngon) == 2
     NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
     NVERT = 3:10
@@ -188,164 +259,6 @@
     @test q(T(1), T(0)) == P3(1, 0, 0)
     @test q(T(1), T(1)) == P3(1, 1, 0)
     @test q(T(0), T(1)) == P3(0, 1, 1)
-  end
-
-  @testset "N-hedrons" begin
-    @test paramdim(Tetrahedron) == 3
-    @test nvertices(Tetrahedron) == 4
-
-    t = Tetrahedron(P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
-    @test vertex(t, 1) == P3(0, 0, 0)
-    @test vertex(t, 2) == P3(1, 0, 0)
-    @test vertex(t, 3) == P3(0, 1, 0)
-    @test vertex(t, 4) == P3(0, 0, 1)
-    @test issimplex(t)
-    @test isconvex(t)
-    @test measure(t) == T(1 / 6)
-    m = boundary(t)
-    n = normal.(m)
-    @test m isa Mesh
-    @test nvertices(m) == 4
-    @test nelements(m) == 4
-    @test n[1] == T[0, 0, -1]
-    @test n[2] == T[0, -1, 0]
-    @test n[3] == T[-1, 0, 0]
-    @test all(>(0), n[4])
-    @test t(T(0), T(0), T(0)) ≈ P3(0, 0, 0)
-    @test t(T(1), T(0), T(0)) ≈ P3(1, 0, 0)
-    @test t(T(0), T(1), T(0)) ≈ P3(0, 1, 0)
-    @test t(T(0), T(0), T(1)) ≈ P3(0, 0, 1)
-    @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
-
-    @test paramdim(Hexahedron) == 3
-    @test nvertices(Hexahedron) == 8
-    @test isperiodic(Hexahedron) == (false, false, false)
-
-    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
-    @test vertex(h, 1) == P3(0, 0, 0)
-    @test vertex(h, 8) == P3(0, 1, 1)
-    @test isperiodic(h) == (false, false, false)
-    @test h(T(0), T(0), T(0)) == P3(0, 0, 0)
-    @test h(T(0), T(0), T(1)) == P3(0, 0, 1)
-    @test h(T(0), T(1), T(0)) == P3(0, 1, 0)
-    @test h(T(0), T(1), T(1)) == P3(0, 1, 1)
-    @test h(T(1), T(0), T(0)) == P3(1, 0, 0)
-    @test h(T(1), T(0), T(1)) == P3(1, 0, 1)
-    @test h(T(1), T(1), T(0)) == P3(1, 1, 0)
-    @test h(T(1), T(1), T(1)) == P3(1, 1, 1)
-
-    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
-    @test volume(h) ≈ T(1 * 1 * 1)
-    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (2, 0, 2), (2, 2, 2), (0, 2, 2)])
-    @test volume(h) ≈ T(2 * 2 * 2)
-
-    # volume formula of a frustum of a prism is V = 1/3*H*(S₁+S₂+sqrt(S₁*S₂))
-    # here we build a hexahedron which is a frustum of a prism with
-    # bottom area S₁= 4, top area S₂= 1, height H = 2
-    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (1, 0, 2), (1, 1, 2), (0, 1, 2)])
-    @test volume(h) ≈ T(1 / 3 * 2 * (1 + 4 + sqrt(1 * 4)))
-
-    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
-    m = boundary(h)
-    @test m isa Mesh
-    @test nvertices(m) == 8
-    @test nelements(m) == 6
-
-    @test paramdim(Pyramid) == 3
-    @test nvertices(Pyramid) == 5
-
-    p = Pyramid(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1)])
-    @test volume(p) ≈ T(1 / 3)
-    m = boundary(p)
-    @test m isa Mesh
-    @test nelements(m) == 5
-    @test m[1] isa Quadrangle
-    @test m[2] isa Triangle
-    @test m[3] isa Triangle
-    @test m[4] isa Triangle
-    @test m[5] isa Triangle
-  end
-
-  @testset "Chains" begin
-    # constructors
-    c1 = Rope(P2[(1, 1), (2, 2)])
-    c2 = Rope(P2(1, 1), P2(2, 2))
-    c3 = Rope(T.((1, 1.0)), T.((2.0, 2.0)))
-    @test c1 == c2 == c3
-    c1 = Ring(P2[(1, 1), (2, 2)])
-    c2 = Ring(P2(1, 1), P2(2, 2))
-    c3 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
-    @test c1 == c2 == c3
-
-    # vertex indexing
-    c = Rope(P2[(1, 1), (2, 2)])
-    @test vertex(c, 1) == P2(1, 1)
-    @test vertex(c, 2) == P2(2, 2)
-    c = Ring(P2[(1, 1), (2, 2)])
-    @test vertex(c, 0) == P2(2, 2)
-    @test vertex(c, 1) == P2(1, 1)
-    @test vertex(c, 2) == P2(2, 2)
-    @test vertex(c, 3) == P2(1, 1)
-    @test vertex(c, 4) == P2(2, 2)
-
-    # segments
-    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
-    @test collect(segments(c)) == [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3))]
-    c = Ring(P2[(1, 1), (2, 2), (3, 3)])
-    @test collect(segments(c)) ==
-          [Segment(P2(1, 1), P2(2, 2)), Segment(P2(2, 2), P2(3, 3)), Segment(P2(3, 3), P2(1, 1))]
-
-    # unique vertices
-    c = Rope(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
-    @test unique(c) == Rope(P2[(1, 1), (2, 2), (3, 3)])
-    @test c == Rope(P2[(1, 1), (2, 2), (2, 2), (3, 3)])
-    unique!(c)
-    @test c == Rope(P2[(1, 1), (2, 2), (3, 3)])
-
-    # closing/opening chains
-    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
-    @test close(c) == Ring(P2[(1, 1), (2, 2), (3, 3)])
-    c = Ring(P2[(1, 1), (2, 2), (3, 3)])
-    @test open(c) == Rope(P2[(1, 1), (2, 2), (3, 3)])
-
-    # reversing chains
-    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
-    reverse!(c)
-    @test c == Rope(P2[(3, 3), (2, 2), (1, 1)])
-    c = Rope(P2[(1, 1), (2, 2), (3, 3)])
-    @test reverse(c) == Rope(P2[(3, 3), (2, 2), (1, 1)])
-
-    # angles and inner angles
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test angles(c) ≈ [-π / 2, -π / 2, -π / 2, -π / 2]
-    c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test angles(c) ≈ [-π / 2, -π / 2]
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
-    @test angles(c) ≈ [-atan(2), -π / 2, +π / 2, -π / 2, -π / 2, -(π - atan(2))]
-    @test innerangles(c) ≈ [atan(2), π / 2, 3π / 2, π / 2, π / 2, π - atan(2)]
-
-    # winding numbers
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test windingnumber(P2(0.5, 0.5), c) ≈ 1
-    @test windingnumber(P2(0.5, 0.5), reverse(c)) ≈ -1
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0), (1, 0), (1, 1), (0, 1)])
-    @test windingnumber(P2(0.5, 0.5), c) ≈ 2
-    @test windingnumber(P2(0.5, 0.5), reverse(c)) ≈ -2
-
-    # reconstruct chain from vertices
-    c1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    c2 = Ring(vertices(c1))
-    @test c1 == c2
-
-    # centroid
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test centroid(c) == P2(0.5, 0.5)
-
-    # boundary
-    c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test boundary(c) == PointSet(P2[(0, 0), (0, 1)])
-    c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test isnothing(boundary(c))
   end
 
   @testset "PolyAreas" begin
@@ -516,5 +429,81 @@
     @test !isconvex(poly2)
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)])
     @test !isconvex(poly)
+  end
+
+  @testset "Polyhedra" begin
+    @test paramdim(Tetrahedron) == 3
+    @test nvertices(Tetrahedron) == 4
+
+    t = Tetrahedron(P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+    @test vertex(t, 1) == P3(0, 0, 0)
+    @test vertex(t, 2) == P3(1, 0, 0)
+    @test vertex(t, 3) == P3(0, 1, 0)
+    @test vertex(t, 4) == P3(0, 0, 1)
+    @test issimplex(t)
+    @test isconvex(t)
+    @test measure(t) == T(1 / 6)
+    m = boundary(t)
+    n = normal.(m)
+    @test m isa Mesh
+    @test nvertices(m) == 4
+    @test nelements(m) == 4
+    @test n[1] == T[0, 0, -1]
+    @test n[2] == T[0, -1, 0]
+    @test n[3] == T[-1, 0, 0]
+    @test all(>(0), n[4])
+    @test t(T(0), T(0), T(0)) ≈ P3(0, 0, 0)
+    @test t(T(1), T(0), T(0)) ≈ P3(1, 0, 0)
+    @test t(T(0), T(1), T(0)) ≈ P3(0, 1, 0)
+    @test t(T(0), T(0), T(1)) ≈ P3(0, 0, 1)
+    @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
+
+    @test paramdim(Hexahedron) == 3
+    @test nvertices(Hexahedron) == 8
+    @test isperiodic(Hexahedron) == (false, false, false)
+
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
+    @test vertex(h, 1) == P3(0, 0, 0)
+    @test vertex(h, 8) == P3(0, 1, 1)
+    @test isperiodic(h) == (false, false, false)
+    @test h(T(0), T(0), T(0)) == P3(0, 0, 0)
+    @test h(T(0), T(0), T(1)) == P3(0, 0, 1)
+    @test h(T(0), T(1), T(0)) == P3(0, 1, 0)
+    @test h(T(0), T(1), T(1)) == P3(0, 1, 1)
+    @test h(T(1), T(0), T(0)) == P3(1, 0, 0)
+    @test h(T(1), T(0), T(1)) == P3(1, 0, 1)
+    @test h(T(1), T(1), T(0)) == P3(1, 1, 0)
+    @test h(T(1), T(1), T(1)) == P3(1, 1, 1)
+
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
+    @test volume(h) ≈ T(1 * 1 * 1)
+    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (2, 0, 2), (2, 2, 2), (0, 2, 2)])
+    @test volume(h) ≈ T(2 * 2 * 2)
+
+    # volume formula of a frustum of a prism is V = 1/3*H*(S₁+S₂+sqrt(S₁*S₂))
+    # here we build a hexahedron which is a frustum of a prism with
+    # bottom area S₁= 4, top area S₂= 1, height H = 2
+    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (1, 0, 2), (1, 1, 2), (0, 1, 2)])
+    @test volume(h) ≈ T(1 / 3 * 2 * (1 + 4 + sqrt(1 * 4)))
+
+    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
+    m = boundary(h)
+    @test m isa Mesh
+    @test nvertices(m) == 8
+    @test nelements(m) == 6
+
+    @test paramdim(Pyramid) == 3
+    @test nvertices(Pyramid) == 5
+
+    p = Pyramid(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1)])
+    @test volume(p) ≈ T(1 / 3)
+    m = boundary(p)
+    @test m isa Mesh
+    @test nelements(m) == 5
+    @test m[1] isa Quadrangle
+    @test m[2] isa Triangle
+    @test m[3] isa Triangle
+    @test m[4] isa Triangle
+    @test m[5] isa Triangle
   end
 end
