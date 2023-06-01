@@ -170,6 +170,20 @@ function issimple(c::Chain)
 end
 
 """
+    close(chain)
+
+Close the `chain`, i.e. add a segment going from the last to the first vertex.
+"""
+function Base.close(::Chain) end
+
+"""
+    open(chain)
+
+Open the `chain`, i.e. remove the segment going from the last to the first vertex.
+"""
+function Base.open(::Chain) end
+
+"""
     unique!(chain)
 
 Remove duplicate vertices in the `chain`.
@@ -207,6 +221,13 @@ Return a new `chain` without duplicate vertices.
 Closed chains remain closed.
 """
 Base.unique(c::Chain) = unique!(deepcopy(c))
+
+"""
+    reverse!(chain)
+
+Reverse the `chain` vertices in place.
+"""
+function Base.reverse!(::Chain) end
 
 """
     reverse(chain)
@@ -353,8 +374,9 @@ volume(p::Polyhedron) = measure(p)
 # ----------------
 
 include("polytopes/segment.jl")
+include("polytopes/rope.jl")
+include("polytopes/ring.jl")
 include("polytopes/ngon.jl")
-include("polytopes/chain.jl")
 include("polytopes/polyarea.jl")
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
