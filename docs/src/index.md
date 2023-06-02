@@ -217,7 +217,7 @@ close the chain, create bridges between the various inner rings with the outer r
 other useful functionality:
 
 ```@example overview
-p = PolyArea((0,0), (2,0), (2,2), (1,3), (0,2), (0,0))
+p = PolyArea((0,0), (2,0), (2,2), (1,3), (0,2))
 
 viz(p)
 ```
