@@ -122,6 +122,9 @@
     @test boundary(c) == PointSet(P2[(0, 0), (0, 1)])
     c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test isnothing(boundary(c))
+
+    # should not repeat the first vertex manually
+    @test_throws ArgumentError Ring(P2[(0,0), (1,0), (1,1), (0,0)])
   end
 
   @testset "Ngons" begin
@@ -429,6 +432,9 @@
     @test !isconvex(poly2)
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)])
     @test !isconvex(poly)
+
+    # should not repeat the first vertex manually
+    @test_throws ArgumentError PolyArea(P2[(0,0), (1,0), (1,1), (0,0)])
   end
 
   @testset "Polyhedra" begin
