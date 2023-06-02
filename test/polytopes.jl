@@ -124,7 +124,7 @@
     @test isnothing(boundary(c))
 
     # should not repeat the first vertex manually
-    @test_throws ArgumentError Ring(P2[(0,0), (1,0), (1,1), (0,0)])
+    @test_throws ArgumentError Ring(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
   end
 
   @testset "Ngons" begin
@@ -434,7 +434,7 @@
     @test !isconvex(poly)
 
     # should not repeat the first vertex manually
-    @test_throws ArgumentError PolyArea(P2[(0,0), (1,0), (1,1), (0,0)])
+    @test_throws ArgumentError PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
   end
 
   @testset "Polyhedra" begin
