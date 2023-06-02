@@ -24,5 +24,4 @@ Base.close(r::Rope) = Ring(r.vertices)
 
 Base.open(r::Rope) = r
 
-# do not change which vertex comes first for closed chains
 Base.reverse!(r::Rope) = (reverse!(r.vertices); r)
