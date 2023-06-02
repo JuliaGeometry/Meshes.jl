@@ -289,8 +289,8 @@
     @test first(ps) isa P3
     @test all(∈(b), ps)
 
-    poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
-    poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2), (1, 1)])
+    poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2)])
     multi = Multi([poly1, poly2])
     ps = sample(multi, HomogeneousSampling(100))
     @test all(p -> (P2(0, 0) ⪯ p ⪯ P2(1, 1)) || (P2(1, 1) ⪯ p ⪯ P2(2, 2)), ps)
@@ -304,8 +304,8 @@
   end
 
   @testset "MinDistanceSampling" begin
-    poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
-    poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2), (1, 1)])
+    poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2)])
     multi = Multi([poly1, poly2])
     ps = sample(multi, MinDistanceSampling(0.1))
     @test all(p -> (P2(0, 0) ⪯ p ⪯ P2(1, 1)) || (P2(1, 1) ⪯ p ⪯ P2(2, 2)), ps)
@@ -326,7 +326,6 @@
         (-44.20065308, -21.12284851),
         (-44.20324135, -21.122799875),
         (-44.20582962, -21.12275124),
-        (-44.20065308, -21.12284851)
       ]
     )
     ps = sample(poly, MinDistanceSampling(3.2423333333753135e-5))

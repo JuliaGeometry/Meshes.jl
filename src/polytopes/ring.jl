@@ -11,8 +11,20 @@ See also [`Chain`](@ref) and [`Rope`](@ref).
 """
 struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
   vertices::V
+
+  function Ring{Dim,T,V}(vertices) where {Dim,T,V}
+    if first(vertices) == last(vertices)
+      throw(ArgumentError("""
+      First and last vertices of `Ring` constructor must be different
+      in the latest version of Meshes.jl. The type itself now holds
+      this connectivity information.
+      """))
+    end
+    new(vertices)
+  end
 end
 
+Ring(vertices::CircularVector{P}) where {P<:Point} = Ring{embeddim(P),coordtype(P),typeof(vertices)}(vertices)
 Ring(vertices::AbstractVector{P}) where {P<:Point} = Ring(CircularVector(vertices))
 
 boundary(::Ring) = nothing
