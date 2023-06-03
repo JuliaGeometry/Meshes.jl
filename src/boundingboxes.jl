@@ -2,18 +2,32 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# -----------
-# GEOMETRIES
-# -----------
-
 """
-    boundingbox(geometry)
+    boundingbox(object)
 
-Axis-aligned bounding box of the `geometry`.
+Axis-aligned bounding box of `object`.
 """
-boundingbox(g::Geometry) = boundingbox(vertices(g))
+function boundingbox end
+
+# ----------
+# FALLBACKS
+# ----------
+
+boundingbox(p::Polytope) = boundingbox(vertices(p))
 
 boundingbox(p::Primitive) = boundingbox(boundary(p))
+
+boundingbox(m::Multi) = boundingbox(collect(m))
+
+boundingbox(d::Domain) = boundingbox(collect(d))
+
+boundingbox(d::Data) = boundingbox(domain(d))
+
+# ----------------
+# SPECIALIZATIONS
+# ----------------
+
+boundingbox(p::Point) = Box(p, p)
 
 boundingbox(b::Box) = b
 
@@ -24,28 +38,11 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   Box(c - r⃗, c + r⃗)
 end
 
-# --------
-# DOMAINS
-# --------
+boundingbox(g::Grid) = Box(extrema(g)...)
 
-"""
-    boundingbox(domain)
-
-Axis-aligned bounding box of the `domain`.
-"""
-boundingbox(domain::Domain) = boundingbox(collect(domain))
-
-boundingbox(grid::CartesianGrid) = Box(extrema(grid)...)
-
-# -----
-# DATA
-# -----
-
-boundingbox(data::Data) = boundingbox(domain(data))
-
-# --------
-# VECTORS
-# --------
+# ---------------
+# IMPLEMENTATION
+# ---------------
 
 function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
   xmin = MVector(ntuple(i -> typemax(T), Dim))
@@ -61,4 +58,4 @@ end
 boundingbox(boxes::AbstractVector{<:Box{Dim}}) where {Dim} =
   boundingbox([point for box in boxes for point in extrema(box)])
 
-boundingbox(geometries::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geometries))
+boundingbox(geoms::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geoms))
