@@ -54,8 +54,7 @@
 
     b1 = Ball(P2(0, 0), T(1))
     b2 = Box(P2(-1, -1), P2(0, 0))
-    m = Multi([b1, b2])
-    h = hull(m)
+    h = hull(Multi([b1, b2]))
     @test P2(-0.8, -0.8) ∈ h
     @test P2(0.2, 0.2) ∈ h
   end
