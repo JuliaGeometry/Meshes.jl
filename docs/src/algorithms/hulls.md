@@ -30,3 +30,16 @@ viz(fig[1,1], chul)
 viz!(fig[1,1], pset, color = :black)
 fig
 ```
+
+```@example hull
+box  = Box((-1, -1), (0, 0))
+ball = Ball((0, 0), (1))
+gset = GeometrySet([box, ball])
+chul = hull(gset)
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], chul)
+viz!(fig[1,1], boundary(box), color = :gray)
+viz!(fig[1,1], boundary(ball), color = :gray)
+fig
+```
