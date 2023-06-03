@@ -36,7 +36,7 @@
     @test verts == P2[(0.5, -1), (1, 0), (1, 1), (0, 1), (0, 0)]
   end
 
-  @testset "Miscelanneous" begin
+  @testset "Miscellaneous" begin
     @test hull(P2(0, 0)) == Box(P2(0, 0), P2(0, 0))
 
     @test hull(Box(P2(0, 0), P2(1, 1))) == Box(P2(0, 0), P2(1, 1))
@@ -51,5 +51,12 @@
     b2 = Box(P2(-1, -1), P2(0.5, 0.5))
     @test hull(Multi([b1, b2])) == PolyArea(P2[(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)])
     @test hull(Collection([b1, b2])) == PolyArea(P2[(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)])
+
+    b1 = Ball(P2(0, 0), T(1))
+    b2 = Box(P2(-1, -1), P2(0, 0))
+    m = Multi([b1, b2])
+    h = hull(m)
+    @test P2(-0.8, -0.8) ∈ h
+    @test P2(0.2, 0.2) ∈ h
   end
 end
