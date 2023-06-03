@@ -18,9 +18,9 @@ The method has complexity `O(n*log(n))` where `n` is the number of points.
 """
 struct GrahamScan <: HullMethod end
 
-function hull(pset::PointSet{2,T}, ::GrahamScan) where {T}
+function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
   # remove duplicates
-  Q = coordinates.(pset) |> unique
+  Q = coordinates.(points) |> unique
 
   # sort by y then by x
   sort!(Q, by=reverse)
