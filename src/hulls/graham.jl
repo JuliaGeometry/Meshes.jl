@@ -36,7 +36,7 @@ function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
       return Segment(Point(p₀), Point(p₂))
     else
       c = Ring(Point(p₀), Point(p₁), Point(p₂))
-      c = orientation(c) == :CCW ? c : reverse(c)
+      orientation(c) == :CCW || reverse!(c)
       return PolyArea(c)
     end
   end
