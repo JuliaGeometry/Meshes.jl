@@ -44,6 +44,11 @@ boundingbox(g::Grid) = Box(extrema(g)...)
 # IMPLEMENTATION
 # ---------------
 
+boundingbox(geoms::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geoms))
+
+boundingbox(boxes::AbstractVector{<:Box{Dim}}) where {Dim} =
+  boundingbox([point for box in boxes for point in extrema(box)])
+
 function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
   xmin = MVector(ntuple(i -> typemax(T), Dim))
   xmax = MVector(ntuple(i -> typemin(T), Dim))
@@ -54,8 +59,3 @@ function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
   end
   Box(Point(xmin), Point(xmax))
 end
-
-boundingbox(boxes::AbstractVector{<:Box{Dim}}) where {Dim} =
-  boundingbox([point for box in boxes for point in extrema(box)])
-
-boundingbox(geoms::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geoms))
