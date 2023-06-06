@@ -21,7 +21,7 @@ in the real world, including issues with:
   that all inner rings are oriented clockwise (CW).
 
 * `degeneracy` - Sometimes data is shared with
-  degenerate rings (i.e. only 2 vertices).
+  degenerate rings (e.g. only 2 vertices).
 """
 struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   outer::R
@@ -35,12 +35,6 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
       inners = ofix.(inners, :CW)
 
       # fix degeneracy
-      if nvertices(outer) == 2
-        v = vertices(outer)
-        A, B = v[1], v[2]
-        M = centroid(Segment(A, B))
-        outer = Ring(A, M, B)
-      end
       inners = filter(c -> nvertices(c) > 2, inners)
     end
 
