@@ -12,6 +12,12 @@
     @test nelements(pset) == 100
     @test eltype(pset) <: P2
 
+    pset = PointSet{2,T}(nothing)
+    @test embeddim(pset) == 2
+    @test coordtype(pset) == T
+    @test nelements(pset) == 0
+    @test eltype(pset) <: P2
+
     pset = PointSet(rand(P3, 100))
     @test embeddim(pset) == 3
     @test coordtype(pset) == T
@@ -60,6 +66,12 @@
   end
 
   @testset "GeometrySet" begin
+    gset = GeometrySet{2,T,Geometry{2,T}}(nothing)
+    @test embeddim(gset) == 2
+    @test coordtype(gset) == T
+    @test nelements(gset) == 0
+    @test eltype(gset) <: P2
+
     s = Segment(P2(0, 0), P2(1, 1))
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     p = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
