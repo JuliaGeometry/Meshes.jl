@@ -70,7 +70,7 @@
     @test embeddim(gset) == 2
     @test coordtype(gset) == T
     @test nelements(gset) == 0
-    @test eltype(gset) <: P2
+    @test eltype(gset) <: Geometry{2, T}
 
     s = Segment(P2(0, 0), P2(1, 1))
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
