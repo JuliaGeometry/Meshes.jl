@@ -38,8 +38,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
       if nvertices(outer) == 2
         v = vertices(outer)
         A, B = v[1], v[2]
-        s = Segment(A, B)
-        M = centroid(s)
+        M = centroid(Segment(A, B))
         outer = Ring(A, M, B)
       end
       inners = filter(c -> nvertices(c) > 2, inners)
