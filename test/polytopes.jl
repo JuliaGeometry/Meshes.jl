@@ -124,6 +124,7 @@
     @test isnothing(boundary(c))
 
     # should not repeat the first vertex manually
+    @test_throws ArgumentError Ring(P2[(0, 0), (0, 0)])
     @test_throws ArgumentError Ring(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
 
     # degenerate rings with 1 or 2 vertices are allowed
@@ -135,7 +136,6 @@
     @test isclosed(r)
     @test nvertices(r) == 2
     @test collect(segments(r)) == [Segment(P2(0, 0), P2(1, 1)), Segment(P2(1, 1), P2(0, 0))]
-    @test Ring(P2[(0, 0), (0, 0)]) == Ring(P2[(0, 0)])
   end
 
   @testset "Ngons" begin
@@ -278,9 +278,9 @@
   @testset "PolyAreas" begin
     @test paramdim(PolyArea) == 2
 
-    # outer chain with 2 vertices is fixed by default
+    # degenerate outer chain with 2 vertices is allowed
     poly = PolyArea(P2[(0, 0), (1, 0)])
-    @test rings(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
+    @test rings(poly) == [Ring(P2[(0, 0), (1, 0)])]
 
     # inner chain with 2 vertices is removed by default
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)], [P2[(1, 2), (2, 3)]])
@@ -445,6 +445,7 @@
     @test !isconvex(poly)
 
     # should not repeat the first vertex manually
+    @test_throws ArgumentError PolyArea(P2[(0, 0), (0, 0)])
     @test_throws ArgumentError PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
   end
 
