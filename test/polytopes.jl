@@ -125,6 +125,16 @@
 
     # should not repeat the first vertex manually
     @test_throws ArgumentError Ring(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
+
+    # degenerate rings with 1 or 2 vertices are allowed
+    r = Ring(P2[(0, 0)])
+    @test isclosed(r)
+    @test nvertices(r) == 1
+    @test collect(segments(r)) == [Segment(P2(0, 0), P2(0, 0))]
+    r = Ring(P2[(0, 0), (1, 1)])
+    @test isclosed(r)
+    @test nvertices(r) == 2
+    @test collect(segments(r)) == [Segment(P2(0, 0), P2(1, 1)), Segment(P2(1, 1), P2(0, 0))]
   end
 
   @testset "Ngons" begin

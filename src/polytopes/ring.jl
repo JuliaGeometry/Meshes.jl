@@ -13,14 +13,20 @@ struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
   vertices::V
 
   function Ring{Dim,T,V}(vertices) where {Dim,T,V}
-    if first(vertices) == last(vertices)
+    nv = length(vertices)
+    eq = first(vertices) == last(vertices)
+    if eq && nv > 2
       throw(ArgumentError("""
       First and last vertices of `Ring` constructor must be different
       in the latest version of Meshes.jl. The type itself now holds
       this connectivity information.
       """))
     end
-    new(vertices)
+    if eq && nv == 2
+      new(vertices[begin:(end-1)])
+    else
+      new(vertices)
+    end
   end
 end
 
