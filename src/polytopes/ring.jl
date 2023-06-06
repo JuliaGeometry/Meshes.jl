@@ -23,7 +23,7 @@ struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
       """))
     end
     if eq && nv == 2
-      new(vertices[begin:(end-1)])
+      new(vertices[begin:(end - 1)])
     else
       new(vertices)
     end
