@@ -35,6 +35,12 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
       inners = ofix.(inners, :CW)
 
       # fix degeneracy
+      if nvertices(outer) == 2
+        v = vertices(outer)
+        A, B = v[1], v[2]
+        M = centroid(Segment(A, B))
+        outer = Ring(A, M, B)
+      end
       inners = filter(c -> nvertices(c) > 2, inners)
     end
 

@@ -278,9 +278,9 @@
   @testset "PolyAreas" begin
     @test paramdim(PolyArea) == 2
 
-    # degenerate outer chain with 2 vertices is allowed
+    # outer chain with 2 vertices is fixed by default
     poly = PolyArea(P2[(0, 0), (1, 0)])
-    @test rings(poly) == [Ring(P2[(0, 0), (1, 0)])]
+    @test rings(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
 
     # inner chain with 2 vertices is removed by default
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)], [P2[(1, 2), (2, 3)]])
