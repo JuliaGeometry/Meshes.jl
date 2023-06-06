@@ -8,7 +8,7 @@
 A collection of `items` (points or geometries) seen as a single domain.
 """
 struct Collection{Dim,T,I<:PointOrGeometry{Dim,T}} <: Domain{Dim,T}
-  items::Vector{I}
+    items::Union{Nothing,Vector{I}}
 end
 
 # constructor with iterator of items
@@ -20,7 +20,7 @@ Collection(items) = Collection(collect(items))
 
 element(c::Collection, ind::Int) = c.items[ind]
 
-nelements(c::Collection) = length(c.items)
+nelements(c::Collection) = isnothing(c.items) ? 0 : length(c.items)
 
 # ------------------------
 # SPECIAL CASE: POINT SET
