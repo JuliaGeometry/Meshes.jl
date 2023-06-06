@@ -135,6 +135,7 @@
     @test isclosed(r)
     @test nvertices(r) == 2
     @test collect(segments(r)) == [Segment(P2(0, 0), P2(1, 1)), Segment(P2(1, 1), P2(0, 0))]
+    @test Ring(P2[(0, 0), (0, 0)]) == Ring(P2[(0, 0)])
   end
 
   @testset "Ngons" begin
