@@ -25,6 +25,19 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
   (first(sample(rng, e, h)) for e in sample(rng, Ω, w))
 end
 
+function sample(rng::AbstractRNG, geom::Geometry{Dim,T}, method::HomogeneousSampling) where {Dim,T}
+  if isparametrized(geom)
+    randpoint() = geom(rand(rng, T, paramdim(geom))...)
+    (randpoint() for _ in 1:method.size)
+  else
+    sample(rng, discretize(geom), method)
+  end
+end
+
+# --------------
+# SPECIAL CASES
+# --------------
+
 function sample(rng::AbstractRNG, triangle::Triangle{Dim,T}, method::HomogeneousSampling) where {Dim,T}
   function randpoint()
     # sample barycentric coordinates
@@ -33,6 +46,10 @@ function sample(rng::AbstractRNG, triangle::Triangle{Dim,T}, method::Homogeneous
     triangle(λ₁, λ₂)
   end
   (randpoint() for _ in 1:(method.size))
+end
+
+function sample(rng::AbstractRNG, tetrahedron::Tetrahedron{Dim,T}, method::HomogeneousSampling) where {Dim,T}
+  @error "not implemented"
 end
 
 function sample(rng::AbstractRNG, ball::Ball{2,T}, method::HomogeneousSampling) where {T}
@@ -49,12 +66,4 @@ function sample(rng::AbstractRNG, ball::Ball{3,T}, method::HomogeneousSampling) 
     ball(∛u₁, acos(1 - 2u₂) / T(π), u₃)
   end
   (randpoint() for _ in 1:(method.size))
-end
-
-function sample(rng::AbstractRNG, segment::Segment{Dim,T}, method::HomogeneousSampling) where {Dim,T}
-  (segment(t) for t in rand(rng, T, method.size))
-end
-
-function sample(rng::AbstractRNG, box::Box{Dim,T}, method::HomogeneousSampling) where {Dim,T}
-  (box(rand(rng, T, Dim)...) for _ in 1:(method.size))
 end
