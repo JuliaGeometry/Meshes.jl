@@ -25,11 +25,6 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
   (first(sample(rng, e, h)) for e in sample(rng, Ω, w))
 end
 
-function sample(rng::AbstractRNG, chain::Chain{Dim,T}, method::HomogeneousSampling) where {Dim,T}
-  segs = collect(segments(chain))
-  sample(rng, Collection(segs), method)
-end
-
 function sample(rng::AbstractRNG, triangle::Triangle{Dim,T}, method::HomogeneousSampling) where {Dim,T}
   function randpoint()
     # sample barycentric coordinates
