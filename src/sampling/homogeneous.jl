@@ -28,7 +28,7 @@ end
 function sample(rng::AbstractRNG, geom::Geometry{Dim,T}, method::HomogeneousSampling) where {Dim,T}
   if isparametrized(geom)
     randpoint() = geom(rand(rng, T, paramdim(geom))...)
-    (randpoint() for _ in 1:method.size)
+    (randpoint() for _ in 1:(method.size))
   else
     sample(rng, discretize(geom), method)
   end
