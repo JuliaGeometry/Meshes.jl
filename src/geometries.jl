@@ -21,7 +21,9 @@ embeddim(g::Geometry) = embeddim(typeof(g))
     paramdim(geometry)
 
 Return the number of parametric dimensions of the `geometry`. For example, a
-sphere embedded in 3D has 2 parametric dimension (polar and azimuthal angles).
+sphere embedded in 3D has 2 parametric dimensions (polar and azimuthal angles).
+
+See also [`isparametrized`](@ref).
 """
 paramdim(g::Geometry) = paramdim(typeof(g))
 
@@ -105,6 +107,19 @@ Tells whether or not the `geometry` is periodic
 along each parametric dimension.
 """
 isperiodic(g::Geometry) = isperiodic(typeof(g))
+
+"""
+    isparametrized(geometry)
+
+Tells whether or not the `geometry` is parametrized,
+i.e. can be called as `geometry(u₁, u₂, ..., uₙ)` with
+local coordinates `(u₁, u₂, ..., uₙ) ∈ [0,1]ⁿ` where
+`n` is the parametric dimension.
+
+See also [`paramdim`](@ref).
+"""
+isparametrized(::Type{<:Geometry}) = false
+isparametrized(g::Geometry) = isparametrized(typeof(g))
 
 # ----------------
 # IMPLEMENTATIONS

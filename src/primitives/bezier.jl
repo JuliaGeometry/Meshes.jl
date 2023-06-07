@@ -31,6 +31,8 @@ paramdim(::Type{<:BezierCurve}) = 1
 
 isperiodic(b::BezierCurve) = (first(b.controls) == last(b.controls),)
 
+isparametrized(::Type{<:BezierCurve}) = true
+
 ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1

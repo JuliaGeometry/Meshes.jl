@@ -20,6 +20,8 @@ paramdim(::Type{<:Ray}) = 1
 
 isconvex(::Type{<:Ray}) = true
 
+isparametrized(::Type{<:Ray}) = true
+
 measure(::Ray{Dim,T}) where {Dim,T} = typemax(T)
 
 Base.length(r::Ray) = measure(r)

@@ -12,7 +12,10 @@ struct Tetrahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
 end
 
 issimplex(::Type{<:Tetrahedron}) = true
+
 isconvex(::Type{<:Tetrahedron}) = true
+
+isparametrized(::Type{<:Tetrahedron}) = true
 
 nvertices(::Type{<:Tetrahedron}) = 4
 nvertices(t::Tetrahedron) = nvertices(typeof(t))

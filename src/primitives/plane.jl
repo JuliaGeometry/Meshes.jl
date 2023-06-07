@@ -42,6 +42,8 @@ paramdim(::Type{<:Plane}) = 2
 
 isconvex(::Type{<:Plane}) = true
 
+isparametrized(::Type{<:Plane}) = true
+
 measure(::Plane{T}) where {T} = typemax(T)
 
 area(p::Plane) = measure(p)

@@ -19,6 +19,8 @@ isconvex(::Type{<:Segment}) = true
 
 isclosed(::Type{<:Segment}) = false
 
+isparametrized(::Type{<:Segment}) = true
+
 nvertices(::Type{<:Segment}) = 2
 
 Base.minimum(s::Segment) = s.vertices[1]

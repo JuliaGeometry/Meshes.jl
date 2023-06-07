@@ -1,8 +1,11 @@
 @testset "Primitives" begin
   @testset "Lines" begin
+    @test isparametrized(Line)
+
     l = Line(P2(0, 0), P2(1, 1))
     @test paramdim(l) == 1
     @test isconvex(l)
+    @test isparametrized(l)
     @test measure(l) == T(Inf)
     @test length(l) == T(Inf)
     @test isnothing(boundary(l))
@@ -13,9 +16,12 @@
   end
 
   @testset "Rays" begin
+    @test isparametrized(Ray)
+
     r = Ray(P2(0, 0), V2(1, 1))
     @test paramdim(r) == 1
     @test isconvex(r)
+    @test isparametrized(r)
     @test measure(r) == T(Inf)
     @test length(r) == T(Inf)
     @test origin(r) == P2(0, 0)
@@ -55,11 +61,14 @@
   end
 
   @testset "Planes" begin
+    @test isparametrized(Plane)
+
     p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
     @test p(T(1), T(0)) == P3(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
     @test isconvex(p)
+    @test isparametrized(p)
     @test measure(p) == T(Inf)
     @test area(p) == T(Inf)
     @test p(T(0), T(0)) == P3(0, 0, 0)
@@ -97,9 +106,12 @@
     # fix import conflict with Plots
     BezierCurve = Meshes.BezierCurve
 
+    @test isparametrized(BezierCurve)
+
     b = BezierCurve(P2(0, 0), P2(0.5, 1), P2(1, 0))
     @test embeddim(b) == 2
     @test paramdim(b) == 1
+    @test isparametrized(b)
 
     b = BezierCurve(P2(0, 0), P2(0.5, 1), P2(1, 0))
     for method in [DeCasteljau(), Horner()]
@@ -125,6 +137,7 @@
 
   @testset "Boxes" begin
     @test isconvex(Box)
+    @test isparametrized(Box)
     @test isperiodic(Box{1}) == (false,)
     @test isperiodic(Box{2}) == (false, false)
     @test isperiodic(Box{3}) == (false, false, false)
@@ -135,6 +148,7 @@
     @test coordtype(b) == T
     @test isconvex(b)
     @test isperiodic(b) == (false,)
+    @test isparametrized(b)
     @test minimum(b) == P1(0)
     @test maximum(b) == P1(1)
     @test extrema(b) == (P1(0), P1(1))
@@ -145,6 +159,7 @@
     @test coordtype(b) == T
     @test isconvex(b)
     @test isperiodic(b) == (false, false)
+    @test isparametrized(b)
     @test minimum(b) == P2(0, 0)
     @test maximum(b) == P2(1, 1)
     @test extrema(b) == (P2(0, 0), P2(1, 1))
@@ -155,6 +170,7 @@
     @test coordtype(b) == T
     @test isconvex(b)
     @test isperiodic(b) == (false, false, false)
+    @test isparametrized(b)
     @test minimum(b) == P3(0, 0, 0)
     @test maximum(b) == P3(1, 1, 1)
     @test extrema(b) == (P3(0, 0, 0), P3(1, 1, 1))
@@ -222,12 +238,15 @@
     @test isperiodic(Ball{2}) == (false, true)
     @test isperiodic(Ball{3}) == (false, true, true)
 
+    @test isparametrized(Ball)
+
     b = Ball(P3(1, 2, 3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
     @test isconvex(b)
     @test isperiodic(b) == (false, true, true)
+    @test isparametrized(b)
     @test Meshes.center(b) == P3(1, 2, 3)
     @test radius(b) == T(5)
 
@@ -275,12 +294,15 @@
     @test isperiodic(Sphere{2}) == (true,)
     @test isperiodic(Sphere{3}) == (true, true)
 
+    @test isparametrized(Sphere)
+
     s = Sphere(P3(0, 0, 0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
     @test !isconvex(s)
     @test isperiodic(s) == (true, true)
+    @test isparametrized(s)
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
     @test extrema(s) == (P3(-1, -1, -1), P3(1, 1, 1))

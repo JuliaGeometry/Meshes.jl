@@ -156,6 +156,7 @@ export
   isconvex,
   issimplex,
   isperiodic,
+  isparametrized,
   center,
   centroid,
   perimeter,

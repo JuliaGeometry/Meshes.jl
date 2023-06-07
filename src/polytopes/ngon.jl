@@ -61,10 +61,14 @@ Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 # TRIANGLES
 # ----------
 
-# triangles are special
 issimplex(::Type{<:Triangle}) = true
+
 isconvex(::Type{<:Triangle}) = true
+
+# specialize for performance
 isconvex(::Triangle) = true
+
+isparametrized(::Type{<:Triangle}) = true
 
 function signarea(t::Triangle{2})
   v = t.vertices
@@ -142,6 +146,8 @@ end
 # ------------
 
 isperiodic(::Type{<:Quadrangle}) = (false, false)
+
+isparametrized(::Type{<:Quadrangle}) = true
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)
