@@ -365,21 +365,16 @@ Return a new `polytope` without duplicate vertices.
 """
 Base.unique(p::Polytope) = unique!(deepcopy(p))
 
-"""
-    unique!(polytope)
-
-Remove duplicate vertices in `polytope`.
-"""
-function Base.unique!(::Polytope) end
-
 function Base.show(io::IO, p::Polytope)
   name = prettyname(p)
   vert = join(vertices(p), ", ")
   print(io, "$name($vert)")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", p::Polytope)
   name = prettyname(p)
+  Dim = embeddim(p)
+  T = coordtype(p)
   println(io, "$name{$Dim,$T}")
   print(io, io_lines(vertices(p), "  "))
 end
