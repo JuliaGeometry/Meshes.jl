@@ -74,7 +74,7 @@ testfiles = [
   "angles.jl",
   "polytopes.jl",
   "primitives.jl",
-  "multi.jl",
+  "multigeom.jl",
   "collections.jl",
   "connectivities.jl",
   "topologies.jl",
