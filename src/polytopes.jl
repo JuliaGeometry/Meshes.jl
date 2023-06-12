@@ -23,85 +23,13 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 
 ### Notes
 
-- Type aliases are `Polygon`, `Polyhedron`.
+- Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
-(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(collect(vertices))
-(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
-(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
-
-"""
-    paramdim(polytope)
-
-Return the parametric dimension or rank of the polytope.
-"""
-paramdim(::Type{<:Polytope{K}}) where {K} = K
-
-"""
-    vertex(polytope, ind)
-
-Return the vertex of a `polytope` at index `ind`.
-"""
-vertex(p::Polytope, ind) = vertices(p)[ind]
-
-"""
-    vertices(polytope)
-
-Return the vertices of a `polytope`.
-"""
-vertices(p::Polytope) = p.vertices
-
-"""
-    nvertices(polytope)
-
-Return the number of vertices in the `polytope`.
-"""
-nvertices(p::Polytope) = length(vertices(p))
-
-"""
-    p1 == p2
-
-Tells whether or not polytopes `p1` and `p2` are equal.
-"""
-==(p1::Polytope, p2::Polytope) = vertices(p1) == vertices(p2)
-
-"""
-    centroid(polytope)
-
-Return the centroid of the `polytope`.
-"""
-centroid(p::Polytope) = Point(sum(coordinates, vertices(p)) / length(vertices(p)))
-
-"""
-    unique(polytope)
-
-Return a new `polytope` without duplicate vertices.
-"""
-Base.unique(p::Polytope) = unique!(deepcopy(p))
-
-"""
-    unique!(polytope)
-
-Remove duplicate vertices in `polytope`.
-"""
-function Base.unique!(::Polytope) end
-
-function Base.show(io::IO, p::Polytope)
-  name = prettyname(p)
-  vert = join(vertices(p), ", ")
-  print(io, "$name($vert)")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
-  name = prettyname(p)
-  println(io, "$name{$Dim,$T}")
-  print(io, io_lines(vertices(p), "  "))
-end
-
-# -----------
-# 1-POLYTOPE
-# -----------
+# -------------------
+# 1-POLYTOPE (CHAIN)
+# -------------------
 
 """
     Chain{Dim,T}
@@ -114,9 +42,9 @@ See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
 const Chain = Polytope{1}
 
 """
-   length(polytope)
+   length(chain)
 
-Return the length of the 1-`polytope`.
+Return the length of the `chain`.
 """
 Base.length(c::Chain) = measure(c)
 
@@ -213,14 +141,6 @@ function Base.unique!(c::Chain)
 
   c
 end
-
-"""
-    unique(chain)
-
-Return a new `chain` without duplicate vertices.
-Closed chains remain closed.
-"""
-Base.unique(c::Chain) = unique!(deepcopy(c))
 
 """
     reverse!(chain)
@@ -386,3 +306,80 @@ volume(p::Polyhedron) = measure(p)
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
 include("polytopes/pyramid.jl")
+
+# -----------------------
+# N-POLYTOPE (FALLBACKS)
+# -----------------------
+
+# constructors with lists of points
+(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(collect(vertices))
+(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
+(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
+
+"""
+    paramdim(polytope)
+
+Return the parametric dimension or rank of the polytope.
+"""
+paramdim(::Type{<:Polytope{K}}) where {K} = K
+
+"""
+    vertex(polytope, ind)
+
+Return the vertex of a `polytope` at index `ind`.
+"""
+vertex(p::Polytope, ind) = vertices(p)[ind]
+
+"""
+    vertices(polytope)
+
+Return the vertices of a `polytope`.
+"""
+vertices(p::Polytope) = p.vertices
+
+"""
+    nvertices(polytope)
+
+Return the number of vertices in the `polytope`.
+"""
+nvertices(p::Polytope) = length(vertices(p))
+
+"""
+    p1 == p2
+
+Tells whether or not polytopes `p1` and `p2` are equal.
+"""
+==(p1::Polytope, p2::Polytope) = vertices(p1) == vertices(p2)
+
+"""
+    centroid(polytope)
+
+Return the centroid of the `polytope`.
+"""
+centroid(p::Polytope) = Point(sum(coordinates, vertices(p)) / length(vertices(p)))
+
+"""
+    unique(polytope)
+
+Return a new `polytope` without duplicate vertices.
+"""
+Base.unique(p::Polytope) = unique!(deepcopy(p))
+
+"""
+    unique!(polytope)
+
+Remove duplicate vertices in `polytope`.
+"""
+function Base.unique!(::Polytope) end
+
+function Base.show(io::IO, p::Polytope)
+  name = prettyname(p)
+  vert = join(vertices(p), ", ")
+  print(io, "$name($vert)")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", p::Polytope{K,Dim,T}) where {K,Dim,T}
+  name = prettyname(p)
+  println(io, "$name{$Dim,$T}")
+  print(io, io_lines(vertices(p), "  "))
+end
