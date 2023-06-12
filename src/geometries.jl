@@ -134,4 +134,4 @@ const PointOrGeometry{Dim,T} = Union{Point{Dim,T},Geometry{Dim,T}}
 
 include("polytopes.jl")
 include("primitives.jl")
-include("multigeom.jl")
+include("multigeoms.jl")
