@@ -71,10 +71,12 @@ include("partitioning.jl")
 # domain traversal
 include("traversing.jl")
 
-# miscellaneous
-include("distances.jl")
+# neighbor search
 include("neighborhoods.jl")
 include("neighborsearch.jl")
+
+# miscellaneous
+include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
 
@@ -473,25 +475,19 @@ export
   GrahamScan,
   hull,
 
-  # utililities
+  # miscellaneous
+  WindingOrientation,
+  TriangleOrientation,
   signarea,
   sideof,
   iscollinear,
   iscoplanar,
   householderbasis,
   mayberound,
-
-  # orientation algorithms
-  WindingOrientation,
-  TriangleOrientation,
-
-  # miscellaneous
   supportfun,
   laplacematrix,
   measurematrix,
   adjacencymatrix,
-
-  # tolerances
   atol
 
 end # module
