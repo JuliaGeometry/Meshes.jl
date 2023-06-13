@@ -38,7 +38,7 @@ J = Point3f(1, 2, 3) # explicitly ask for single precision
   algorithms assume a continuous space. The conversion to `Float64` avoids
   `InexactError` and other unexpected results.
 """
-struct Point{Dim,T}
+struct Point{Dim,T} <: Geometry{Dim,T}
   coords::Vec{Dim,T}
   Point{Dim,T}(coords::Vec{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
 end
@@ -158,18 +158,30 @@ Generalized inequality for non-negative orthant Rⁿ₊.
 ≻(A::Point{Dim,T}, B::Point{Dim,T}) where {Dim,T} = all(>(zero(T)), A - B)
 
 """
+    ∠(A, B, C)
+
+Angle ∠ABC between rays BA and BC.
+See https://en.wikipedia.org/wiki/Angle.
+
+Uses the two-argument form of `atan` returning value in range [-π, π]
+in 2D and [0, π] in 3D.
+See https://en.wikipedia.org/wiki/Atan2.
+
+## Examples
+
+```julia
+∠(Point(1,0), Point(0,0), Point(0,1)) == π/2
+```
+"""
+∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A - B, C - B)
+∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
+
+"""
     center(point)
 
 Return the `point` itself.
 """
 center(p::Point) = p
-
-"""
-    centroid(point)
-
-Return the `point` itself.
-"""
-centroid(p::Point) = p
 
 """
     measure(point)

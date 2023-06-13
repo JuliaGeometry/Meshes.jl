@@ -36,19 +36,17 @@ include("ioutils.jl")
 # numerical tolerances
 include("tolerances.jl")
 
-# basic types
+# basic vector type
 include("vectors.jl")
-include("points.jl")
-include("angles.jl")
-
-# type traits
-include("traits.jl")
 
 # geometries
 include("geometries.jl")
 
-# collections
-include("collections.jl")
+# type traits
+include("traits.jl")
+
+# geometry sets
+include("geomsets.jl")
 
 # meshes
 include("connectivities.jl")
@@ -90,26 +88,6 @@ include("hulls.jl")
 include("transforms.jl")
 
 export
-  # points
-  Point,
-  Point1,
-  Point2,
-  Point3,
-  Point1f,
-  Point2f,
-  Point3f,
-  embeddim,
-  paramdim,
-  coordtype,
-  coordinates,
-  center,
-  centroid,
-  measure,
-  ⪯,
-  ≺,
-  ⪰,
-  ≻,
-
   # vectors
   Vec,
   Vec1,
@@ -118,31 +96,9 @@ export
   Vec1f,
   Vec2f,
   Vec3f,
-
-  # linear algebra
+  ∠,
   ⋅,
   ×,
-
-  # angles
-  ∠,
-
-  # domain traits
-  Domain,
-  embeddim,
-  paramdim,
-  coordtype,
-  element,
-  nelements,
-
-  # data traits
-  Data,
-  domain,
-  constructor,
-  asarray,
-
-  # domain/data alias
-  DomainOrData,
-  nitems,
 
   # geometries
   Geometry,
@@ -160,6 +116,55 @@ export
   center,
   centroid,
   perimeter,
+
+  # polytopes
+  Polytope,
+  Monon,
+  Point,
+  Point1,
+  Point2,
+  Point3,
+  Point1f,
+  Point2f,
+  Point3f,
+  Chain,
+  Segment,
+  Rope,
+  Ring,
+  Polygon,
+  Ngon,
+  Triangle,
+  Quadrangle,
+  Pentagon,
+  Hexagon,
+  Heptagon,
+  Octagon,
+  Nonagon,
+  Decagon,
+  PolyArea,
+  Polyhedron,
+  Tetrahedron,
+  Pyramid,
+  Hexahedron,
+  coordinates,
+  vertex,
+  vertices,
+  nvertices,
+  windingnumber,
+  rings,
+  segments,
+  isclosed,
+  issimple,
+  hasholes,
+  angles,
+  innerangles,
+  orientation,
+  bridge,
+  normal,
+  ⪯,
+  ≺,
+  ⪰,
+  ≻,
 
   # primitives
   Primitive,
@@ -193,99 +198,30 @@ export
   origin,
   direction,
 
-  # polytopes
-  Polytope,
-  Chain,
-  Segment,
-  Rope,
-  Ring,
-  Polygon,
-  Ngon,
-  Triangle,
-  Quadrangle,
-  Pentagon,
-  Hexagon,
-  Heptagon,
-  Octagon,
-  Nonagon,
-  Decagon,
-  PolyArea,
-  Polyhedron,
-  Tetrahedron,
-  Pyramid,
-  Hexahedron,
-  vertex,
-  vertices,
-  nvertices,
-  windingnumber,
-  rings,
-  segments,
-  isclosed,
-  issimple,
-  hasholes,
-  angles,
-  innerangles,
-  orientation,
-  bridge,
-  normal,
-
-  # orientation algorithms
-  WindingOrientation,
-  TriangleOrientation,
-
-  # point or geometry alias
-  PointOrGeometry,
-
-  # multi-types
+  # multi-geometries
   Multi,
 
+  # domain traits
+  Domain,
+  embeddim,
+  paramdim,
+  coordtype,
+  element,
+  nelements,
+
+  # data traits
+  Data,
+  domain,
+  constructor,
+  asarray,
+
+  # domain/data alias
+  DomainOrData,
+  nitems,
+
   # collections
-  Collection,
-  PointSet,
   GeometrySet,
-
-  # utililities
-  signarea,
-  sideof,
-  iscollinear,
-  iscoplanar,
-  householderbasis,
-  mayberound,
-
-  # paths
-  Path,
-  LinearPath,
-  RandomPath,
-  ShiftedPath,
-  SourcePath,
-  MultiGridPath,
-  traverse,
-
-  # neighborhoods
-  Neighborhood,
-  MetricBall,
-  metric,
-  radii,
-  radius,
-  isisotropic,
-
-  # neighbordhood search
-  NeighborSearchMethod,
-  BoundedNeighborSearchMethod,
-  BallSearch,
-  KNearestSearch,
-  KBallSearch,
-  BoundedSearch,
-  GlobalSearch,
-  search!,
-  search,
-  maxneighbors,
-
-  # miscellaneous
-  supportfun,
-  laplacematrix,
-  measurematrix,
-  adjacencymatrix,
+  PointSet,
 
   # connectivities
   Connectivity,
@@ -364,15 +300,39 @@ export
   DomainView,
   DataView,
 
-  # partitions
-  Partition,
-  indices,
-  metadata,
-
   # viewing
   unview,
   indices,
   slice,
+
+  # traversing
+  Path,
+  LinearPath,
+  RandomPath,
+  ShiftedPath,
+  SourcePath,
+  MultiGridPath,
+  traverse,
+
+  # neighborhoods
+  Neighborhood,
+  MetricBall,
+  metric,
+  radii,
+  radius,
+  isisotropic,
+
+  # neighbordhood search
+  NeighborSearchMethod,
+  BoundedNeighborSearchMethod,
+  BallSearch,
+  KNearestSearch,
+  KBallSearch,
+  BoundedSearch,
+  GlobalSearch,
+  search!,
+  search,
+  maxneighbors,
 
   # sampling
   SamplingMethod,
@@ -386,6 +346,11 @@ export
   HomogeneousSampling,
   MinDistanceSampling,
   sample,
+
+  # partitions
+  Partition,
+  indices,
+  metadata,
 
   # partitioning
   PartitionMethod,
@@ -406,7 +371,7 @@ export
   partition,
   split,
 
-  # intersection types
+  # intersections
   IntersectionType,
   CrossingLines,
   OverlappingLines,
@@ -451,7 +416,7 @@ export
   OverlappingSegmentPlane,
   NoIntersection,
 
-  # intersections
+  # intersecting
   Intersection,
   intersection,
   hasintersect,
@@ -484,14 +449,6 @@ export
   TriSubdivision,
   refine,
 
-  # bounding boxes
-  boundingbox,
-
-  # hulls
-  HullMethod,
-  GrahamScan,
-  hull,
-
   # transforms
   GeometricTransform,
   StatelessGeometricTransform,
@@ -503,6 +460,32 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+
+  # bounding boxes
+  boundingbox,
+
+  # hulls
+  HullMethod,
+  GrahamScan,
+  hull,
+
+  # utililities
+  signarea,
+  sideof,
+  iscollinear,
+  iscoplanar,
+  householderbasis,
+  mayberound,
+
+  # orientation algorithms
+  WindingOrientation,
+  TriangleOrientation,
+
+  # miscellaneous
+  supportfun,
+  laplacematrix,
+  measurematrix,
+  adjacencymatrix,
 
   # tolerances
   atol

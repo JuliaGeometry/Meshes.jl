@@ -3,30 +3,31 @@
 # ------------------------------------------------------------------
 
 """
-    Collection(items)
+    GeometrySet(geoms)
 
-A collection of `items` (points or geometries) seen as a single domain.
+A collection of geometries `geoms` seen as a single [`Domain`](@ref).
 """
-struct Collection{Dim,T,I<:PointOrGeometry{Dim,T}} <: Domain{Dim,T}
-  items::Vector{I}
+struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Domain{Dim,T}
+  geoms::Vector{G}
 end
 
-# constructor with iterator of items
-Collection(items) = Collection(collect(items))
+# constructor with iterator of geometries
+GeometrySet(geoms) = GeometrySet(collect(geoms))
 
-# -----------------
-# DOMAIN INTERFACE
-# -----------------
+element(gset::GeometrySet, ind::Int) = gset.geoms[ind]
 
-element(c::Collection, ind::Int) = c.items[ind]
+nelements(gset::GeometrySet) = length(gset.geoms)
 
-nelements(c::Collection) = length(c.items)
+function Base.show(io::IO, gset::GeometrySet{Dim,T}) where {Dim,T}
+  n = nelements(gset)
+  print(io, "$n GeometrySet{$Dim,$T}")
+end
 
 # ------------------------
 # SPECIAL CASE: POINT SET
 # ------------------------
 
-const PointSet{Dim,T} = Collection{Dim,T,Point{Dim,T}}
+const PointSet{Dim,T} = GeometrySet{Dim,T,Point{Dim,T}}
 
 """
     PointSet(points)
@@ -65,27 +66,6 @@ centroid(pset::PointSet) = Point(sum(coordinates, pset) / nelements(pset))
 measure(::PointSet{Dim,T}) where {Dim,T} = zero(T)
 
 function Base.show(io::IO, pset::PointSet{Dim,T}) where {Dim,T}
-  nelm = nelements(pset)
-  print(io, "$nelm PointSet{$Dim,$T}")
-end
-
-# ---------------------------
-# SPECIAL CASE: GEOMETRY SET
-# ---------------------------
-
-const GeometrySet{Dim,T,G<:Geometry{Dim,T}} = Collection{Dim,T,G}
-
-"""
-    GeometrySet(geometries)
-
-A set of `geometries` seen as a single domain.
-"""
-GeometrySet(geoms::AbstractVector{G}) where {G<:Geometry} = GeometrySet{embeddim(G),coordtype(G),G}(geoms)
-
-# constructor with iterator of geometries
-GeometrySet(geoms) = GeometrySet(collect(geoms))
-
-function Base.show(io::IO, gset::GeometrySet{Dim,T}) where {Dim,T}
-  nelm = nelements(gset)
-  print(io, "$nelm GeometrySet{$Dim,$T}")
+  n = nelements(pset)
+  print(io, "$n PointSet{$Dim,$T}")
 end
