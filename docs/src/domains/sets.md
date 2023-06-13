@@ -10,7 +10,7 @@ using Meshes, MeshViz # hide
 import WGLMakie as Mke # hide
 ```
 
-Geometry sets represent an ordered collection of geometries without
+Geometry sets represent a collection of geometries without
 any connectivity information (a.k.a., "soup of geometries").
 
 ```@docs
