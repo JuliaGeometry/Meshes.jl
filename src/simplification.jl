@@ -33,7 +33,7 @@ function simplify(multi::Multi, method::SimplificationMethod)
 end
 
 function simplify(domain::Domain, method::SimplificationMethod)
-  Collection([simplify(elem, method) for elem in domain])
+  GeometrySet([simplify(elem, method) for elem in domain])
 end
 
 # ----------------

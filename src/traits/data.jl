@@ -56,7 +56,7 @@ function (D::Type{<:Data})(geotable)
   # build domain from geometry column
   cols = Tables.columns(geotable)
   elms = Tables.getcolumn(cols, :geometry)
-  domain = Collection(elms)
+  domain = GeometrySet(elms)
 
   # build table of features from remaining columns
   vars = setdiff(Tables.columnnames(cols), (:geometry,))

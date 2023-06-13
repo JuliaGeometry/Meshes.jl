@@ -12,12 +12,12 @@
   b = Box(P2(-3, -1), P2(0.5, 0.5))
   s = Sphere(P2(0, 0), T(2))
   @test boundingbox(Multi([b, s])) == Box(P2(-3, -2), P2(2, 2))
-  @test boundingbox(Collection([b, s])) == Box(P2(-3, -2), P2(2, 2))
+  @test boundingbox(GeometrySet([b, s])) == Box(P2(-3, -2), P2(2, 2))
 
   b1 = Box(P2(0, 0), P2(1, 1))
   b2 = Box(P2(-1, -1), P2(0.5, 0.5))
   @test boundingbox(Multi([b1, b2])) == Box(P2(-1, -1), P2(1, 1))
-  @test boundingbox(Collection([b1, b2])) == Box(P2(-1, -1), P2(1, 1))
+  @test boundingbox(GeometrySet([b1, b2])) == Box(P2(-1, -1), P2(1, 1))
 
   @test boundingbox(PointSet(T[0 1 2; 0 2 1])) == Box(P2(0, 0), P2(2, 2))
   @test boundingbox(PointSet(T[1 2; 2 1])) == Box(P2(1, 1), P2(2, 2))

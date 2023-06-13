@@ -50,4 +50,22 @@
   @test_throws DimensionMismatch Vec{2,T}(1)
   @test_throws DimensionMismatch Vec{3,T}((2, 3))
   @test_throws DimensionMismatch Vec{-3,T}((4, 5, 6))
+
+  # angles between 2D vectors
+  @test ∠(V2(1, 0), V2(0, 1)) ≈ T(π / 2)
+  @test ∠(V2(1, 0), V2(0, -1)) ≈ T(-π / 2)
+  @test ∠(V2(1, 0), V2(-1, 0)) ≈ T(π)
+  @test ∠(V2(0, 1), V2(-1, 0)) ≈ T(π / 2)
+  @test ∠(V2(0, 1), V2(0, -1)) ≈ T(-π)
+  @test ∠(V2(0, 1), V2(1, 1)) ≈ T(-π / 4)
+  @test ∠(V2(0, -1), V2(1, 1)) ≈ T(π * 3 / 4)
+  @test ∠(V2(-1, -1), V2(1, 1)) ≈ T(π)
+
+  # angles between 3D vectors
+  @test ∠(V3(0, 0, 1), V3(1, 1, 0)) ≈ T(π / 2)
+  @test ∠(V3(1, 0, 1), V3(1, 1, 0)) ≈ T(π / 3)
+  @test ∠(V3(-1, -1, 0), V3(1, 1, 0)) ≈ T(π)
+  @test ∠(V3(0, -1, -1), V3(0, 1, 1)) ≈ T(π)
+  @test ∠(V3(0, -1, -1), V3(0, 1, 0)) ≈ T(π * 3 / 4)
+  @test ∠(V3(0, 1, 1), V3(1, 1, 0)) ≈ T(π / 3)
 end
