@@ -118,7 +118,6 @@ isparametrized(g::Geometry) = isparametrized(typeof(g))
 # IMPLEMENTATIONS
 # ----------------
 
-include("points.jl")
-include("polytopes.jl")
 include("primitives.jl")
+include("polytopes.jl")
 include("multigeoms.jl")

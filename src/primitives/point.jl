@@ -38,7 +38,7 @@ J = Point3f(1, 2, 3) # explicitly ask for single precision
   algorithms assume a continuous space. The conversion to `Float64` avoids
   `InexactError` and other unexpected results.
 """
-struct Point{Dim,T} <: Geometry{Dim,T}
+struct Point{Dim,T} <: Primitive{Dim,T}
   coords::Vec{Dim,T}
   Point{Dim,T}(coords::Vec{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
 end

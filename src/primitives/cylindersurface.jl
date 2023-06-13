@@ -29,17 +29,20 @@ struct CylinderSurface{T} <: Primitive{3,T}
   radius::T
 end
 
-function CylinderSurface(segment::Segment{3,T}, radius) where {T}
-  a, b = extrema(segment)
-  v = b - a
-  bot = Plane(a, v)
-  top = Plane(b, v)
+function CylinderSurface(start::Point{3,T}, finish::Point{3,T}, radius) where {T}
+  dir = finish - start
+  bot = Plane(start, dir)
+  top = Plane(finish, dir)
   CylinderSurface(bot, top, T(radius))
 end
 
-CylinderSurface(segment::Segment{3,T}) where {T} = CylinderSurface(segment, T(1))
+CylinderSurface(start::Tuple, finish::Tuple, radius) = CylinderSurface(Point(start), Point(finish), radius)
 
-CylinderSurface(radius::T) where {T} = CylinderSurface(Segment((T(0), T(0), T(0)), (T(0), T(0), T(1))), radius)
+CylinderSurface(start::Point{3,T}, finish::Point{3,T}) where {T} = CylinderSurface(start, finish, T(1))
+
+CylinderSurface(start::Tuple, finish::Tuple) = CylinderSurface(Point(start), Point(finish))
+
+CylinderSurface(radius::T) where {T} = CylinderSurface(Point(T(0), T(0), T(0)), Point(T(0), T(0), T(1)), radius)
 
 paramdim(::Type{<:CylinderSurface}) = 2
 

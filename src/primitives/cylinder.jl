@@ -29,17 +29,20 @@ struct Cylinder{T} <: Primitive{3,T}
   radius::T
 end
 
-function Cylinder(segment::Segment{3,T}, radius) where {T}
-  a, b = extrema(segment)
-  v = b - a
-  bot = Plane(a, v)
-  top = Plane(b, v)
+function Cylinder(start::Point{3,T}, finish::Point{3,T}, radius) where {T}
+  dir = finish - start
+  bot = Plane(start, dir)
+  top = Plane(finish, dir)
   Cylinder(bot, top, T(radius))
 end
 
-Cylinder(segment::Segment{3,T}) where {T} = Cylinder(segment, T(1))
+Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
 
-Cylinder(radius::T) where {T} = Cylinder(Segment((T(0), T(0), T(0)), (T(0), T(0), T(1))), radius)
+Cylinder(start::Point{3,T}, finish::Point{3,T}) where {T} = Cylinder(start, finish, T(1))
+
+Cylinder(start::Tuple, finish::Tuple) = Cylinder(Point(start), Point(finish))
+
+Cylinder(radius::T) where {T} = Cylinder(Point(T(0), T(0), T(0)), Point(T(0), T(0), T(1)), radius)
 
 paramdim(::Type{<:Cylinder}) = 3
 

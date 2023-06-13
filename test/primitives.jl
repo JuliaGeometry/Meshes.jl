@@ -1,18 +1,143 @@
 @testset "Primitives" begin
-  @testset "Lines" begin
-    @test isparametrized(Line)
+  @testset "Points" begin
+    @test embeddim(Point(1)) == 1
+    @test embeddim(Point(1, 2)) == 2
+    @test embeddim(Point(1, 2, 3)) == 3
+    @test coordtype(Point(1, 1)) == Float64
+    @test coordtype(Point(1.0, 1.0)) == Float64
+    @test coordtype(Point(1.0f0, 1.0f0)) == Float32
+    @test coordtype(Point1(1)) == Float64
+    @test coordtype(Point2(1, 1)) == Float64
+    @test coordtype(Point3(1, 1, 1)) == Float64
+    @test coordtype(Point1f(1)) == Float32
+    @test coordtype(Point2f(1, 1)) == Float32
+    @test coordtype(Point3f(1, 1, 1)) == Float32
 
-    l = Line(P2(0, 0), P2(1, 1))
-    @test paramdim(l) == 1
-    @test isconvex(l)
-    @test isparametrized(l)
-    @test measure(l) == T(Inf)
-    @test length(l) == T(Inf)
-    @test isnothing(boundary(l))
-    @test perimeter(l) == zero(T)
+    @test coordtype(Point{2,T}((1, 1))) == T
+    @test coordtype(Point{2,T}(1, 1)) == T
 
-    l = Line(P2(0, 0), P2(1, 1))
-    @test (l(0), l(1)) == (P2(0, 0), P2(1, 1))
+    @test coordinates(P1(1)) == T[1]
+    @test coordinates(P2(1, 2)) == T[1, 2]
+    @test coordinates(P3(1, 2, 3)) == T[1, 2, 3]
+
+    @test P1(1) - P1(1) == T[0]
+    @test P2(1, 2) - P2(1, 1) == T[0, 1]
+    @test P3(1, 2, 3) - P3(1, 1, 1) == T[0, 1, 2]
+    @test_throws DimensionMismatch P2(1, 2) - P3(1, 2, 3)
+
+    @test P1(1) + V1(0) == P1(1)
+    @test P1(2) + V1(2) == P1(4)
+    @test P2(1, 2) + V2(0, 0) == P2(1, 2)
+    @test P2(2, 3) + V2(2, 1) == P2(4, 4)
+    @test P3(1, 2, 3) + V3(0, 0, 0) == P3(1, 2, 3)
+    @test P3(2, 3, 4) + V3(2, 1, 0) == P3(4, 4, 4)
+    @test_throws DimensionMismatch P2(1, 2) + V3(1, 2, 3)
+
+    @test P1(1) - V1(0) == P1(1)
+    @test P1(2) - V1(2) == P1(0)
+    @test P2(1, 2) - V2(0, 0) == P2(1, 2)
+    @test P2(2, 3) - V2(2, 1) == P2(0, 2)
+    @test P3(1, 2, 3) - V3(0, 0, 0) == P3(1, 2, 3)
+    @test P3(2, 3, 4) - V3(2, 1, 0) == P3(0, 2, 4)
+
+    @test embeddim(rand(P1)) == 1
+    @test embeddim(rand(P2)) == 2
+    @test embeddim(rand(P3)) == 3
+    @test coordtype(rand(P1)) == T
+    @test coordtype(rand(P2)) == T
+    @test coordtype(rand(P3)) == T
+
+    @test eltype(rand(P1, 3)) == P1
+    @test eltype(rand(P2, 3)) == P2
+    @test eltype(rand(P3, 3)) == P3
+
+    @test P1(1) ≈ P1(1 + eps(T))
+    @test P2(1, 2) ≈ P2(1 + eps(T), T(2))
+    @test P3(1, 2, 3) ≈ P3(1 + eps(T), T(2), T(3))
+
+    @test embeddim(Point((1,))) == 1
+    @test coordtype(Point((1,))) == Float64
+    @test coordtype(Point((1.0,))) == Float64
+
+    @test embeddim(Point((1, 2))) == 2
+    @test coordtype(Point((1, 2))) == Float64
+    @test coordtype(Point((1.0, 2.0))) == Float64
+
+    @test embeddim(Point((1, 2, 3))) == 3
+    @test coordtype(Point((1, 2, 3))) == Float64
+    @test coordtype(Point((1.0, 2.0, 3.0))) == Float64
+
+    # check all 1D Point constructors, because those tend to make trouble
+    @test Point(1) == Point((1,))
+    @test Point{1,T}(-2) == Point{1,T}((-2,))
+    @test Point{1,T}(0) == Point{1,T}((0,))
+
+    @test_throws DimensionMismatch Point{2,T}(1)
+    @test_throws DimensionMismatch Point{3,T}((2, 3))
+    @test_throws DimensionMismatch Point{-3,T}((4, 5, 6))
+
+    # There are 2 cases that throw a MethodError instead of a DimensionMismatch:
+    # `Point{1,T}((2,3))` because it tries to take the tuple as a whole and convert to T and:
+    # `Point{1,T}(2,3)` which does about the same.
+    # I don't think this can reasonably be fixed here without hurting performance
+
+    # check that input of mixed coordinate types is allowed and works as expected
+    @test Point(1, 0.2) == Point{2,Float64}(1.0, 0.2)
+    @test Point((3.0, 4)) == Point{2,Float64}(3.0, 4.0)
+    @test Point((5.0, 6.0, 7)) == Point{3,Float64}(5.0, 6.0, 7.0)
+    @test Point{2,T}(8, 9.0) == Point{2,T}((8.0, 9.0))
+    @test Point{2,T}((-1.0, -2)) == Point{2,T}((-1, -2))
+    @test Point{4,T}((0, -1.0, +2, -4.0)) == Point{4,T}((0.0f0, -1.0f0, +2.0f0, -4.0f0))
+
+    # Integer coordinates converted to Float64
+    @test coordtype(Point(1)) == Float64
+    @test coordtype(Point(1, 2)) == Float64
+    @test coordtype(Point(1, 2, 3)) == Float64
+
+    # generalized inequality
+    @test P2(1, 1) ⪯ P2(1, 1)
+    @test !(P2(1, 1) ≺ P2(1, 1))
+    @test P2(1, 2) ⪯ P2(3, 4)
+    @test P2(1, 2) ≺ P2(3, 4)
+    @test P2(1, 1) ⪰ P2(1, 1)
+    @test !(P2(1, 1) ≻ P2(1, 1))
+    @test P2(3, 4) ⪰ P2(1, 2)
+    @test P2(3, 4) ≻ P2(1, 2)
+
+    # center and centroid
+    @test Meshes.center(P2(1, 1)) == P2(1, 1)
+    @test centroid(P2(1, 1)) == P2(1, 1)
+
+    # measure of points is zero
+    @test measure(P2(1, 2)) == zero(T)
+    @test measure(P3(1, 2, 3)) == zero(T)
+
+    # boundary of points is nothing
+    @test isnothing(boundary(rand(P1)))
+    @test isnothing(boundary(rand(P2)))
+    @test isnothing(boundary(rand(P3)))
+
+    # check broadcasting works as expected
+    @test P2(2, 2) .- [P2(2, 3), P2(3, 1)] == [[0.0, -1.0], [-1.0, 1.0]]
+    @test P3(2, 2, 2) .- [P3(2, 3, 1), P3(3, 1, 4)] == [[0.0, -1.0, 1.0], [-1.0, 1.0, -2.0]]
+
+    # angles between 2D points
+    @test ∠(P2(0, 1), P2(0, 0), P2(1, 0)) ≈ T(-π / 2)
+    @test ∠(P2(1, 0), P2(0, 0), P2(0, 1)) ≈ T(π / 2)
+    @test ∠(P2(-1, 0), P2(0, 0), P2(0, 1)) ≈ T(-π / 2)
+    @test ∠(P2(0, 1), P2(0, 0), P2(-1, 0)) ≈ T(π / 2)
+    @test ∠(P2(0, -1), P2(0, 0), P2(1, 0)) ≈ T(π / 2)
+    @test ∠(P2(1, 0), P2(0, 0), P2(0, -1)) ≈ T(-π / 2)
+    @test ∠(P2(0, -1), P2(0, 0), P2(-1, 0)) ≈ T(-π / 2)
+    @test ∠(P2(-1, 0), P2(0, 0), P2(0, -1)) ≈ T(π / 2)
+
+    # angles between 3D points
+    @test ∠(P3(1, 0, 0), P3(0, 0, 0), P3(0, 1, 0)) ≈ T(π / 2)
+    @test ∠(P3(1, 0, 0), P3(0, 0, 0), P3(0, 0, 1)) ≈ T(π / 2)
+    @test ∠(P3(0, 1, 0), P3(0, 0, 0), P3(1, 0, 0)) ≈ T(π / 2)
+    @test ∠(P3(0, 1, 0), P3(0, 0, 0), P3(0, 0, 1)) ≈ T(π / 2)
+    @test ∠(P3(0, 0, 1), P3(0, 0, 0), P3(1, 0, 0)) ≈ T(π / 2)
+    @test ∠(P3(0, 0, 1), P3(0, 0, 0), P3(0, 1, 0)) ≈ T(π / 2)
   end
 
   @testset "Rays" begin
@@ -58,6 +183,22 @@
     r1 = Ray(P3(0, 0, 0), V3(2, 0, 0))
     r2 = Ray(P3(0, 0, 0), V3(1, 0, 0))
     @test r1 == r2
+  end
+
+  @testset "Lines" begin
+    @test isparametrized(Line)
+
+    l = Line(P2(0, 0), P2(1, 1))
+    @test paramdim(l) == 1
+    @test isconvex(l)
+    @test isparametrized(l)
+    @test measure(l) == T(Inf)
+    @test length(l) == T(Inf)
+    @test isnothing(boundary(l))
+    @test perimeter(l) == zero(T)
+
+    l = Line(P2(0, 0), P2(1, 1))
+    @test (l(0), l(1)) == (P2(0, 0), P2(1, 1))
   end
 
   @testset "Planes" begin
@@ -434,8 +575,8 @@
     @test P3(0.99, 1.99, 2.99) ∉ c
     @test P3(4.01, 5.01, 6.01) ∉ c
 
-    c1 = Cylinder(Segment(P3(0, 0, 0), P3(0, 0, 1)), T(1))
-    c2 = Cylinder(Segment(P3(0, 0, 0), P3(0, 0, 1)))
+    c1 = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
+    c2 = Cylinder(P3(0, 0, 0), P3(0, 0, 1))
     c3 = Cylinder(T(1))
     @test c1 == c2 == c3
 
@@ -444,7 +585,7 @@
     c = Cylinder(1)
     @test coordtype(c) == Float64
 
-    c = Cylinder(Segment(P3(0, 0, 0), P3(0, 0, 1)), T(1))
+    c = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
     @test radius(c) == T(1)
     @test bottom(c) == Plane(P3(0, 0, 0), V3(0, 0, 1))
     @test top(c) == Plane(P3(0, 0, 1), V3(0, 0, 1))
@@ -452,7 +593,7 @@
     @test centroid(c) == P3(0.0, 0.0, 0.5)
     @test axis(c) == Line(P3(0, 0, 0), P3(0, 0, 1))
     @test isright(c)
-    @test boundary(c) == CylinderSurface(Segment(P3(0, 0, 0), P3(0, 0, 1)), T(1))
+    @test boundary(c) == CylinderSurface(P3(0, 0, 0), P3(0, 0, 1), T(1))
     @test measure(c) == volume(c) ≈ pi
     @test P3(0, 0, 0) ∈ c
     @test P3(0, 0, 1) ∈ c
@@ -480,8 +621,8 @@
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi
 
-    c1 = CylinderSurface(Segment(P3(0, 0, 0), P3(0, 0, 1)), T(1))
-    c2 = CylinderSurface(Segment(P3(0, 0, 0), P3(0, 0, 1)))
+    c1 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1), T(1))
+    c2 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1))
     c3 = CylinderSurface(T(1))
     @test c1 == c2 == c3
 

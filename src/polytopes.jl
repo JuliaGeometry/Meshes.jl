@@ -28,22 +28,6 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
 # -------------------
-# 0-POLYTOPE (MONON)
-# -------------------
-
-"""
-    Monon{Dim,T}
-
-A monon is a 0-polytope, i.e. a polytope with parametric dimension 0.
-
-See also [`Point`](@ref).
-"""
-const Monon = Polytope{0}
-
-# implementations of Monon
-# TODO: include("points.jl")
-
-# -------------------
 # 1-POLYTOPE (CHAIN)
 # -------------------
 
