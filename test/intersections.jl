@@ -1116,5 +1116,12 @@
     @test hasintersect(mesh2, mesh2)
     @test hasintersect(mesh1, mesh2)
     @test hasintersect(mesh2, mesh1)
+
+    point = P2(0.5, 0.5)
+    ball = Ball(P2(0, 0), T(1))
+    @test hasintersect(point, ball)
+    @test hasintersect(ball, point)
+    @test hasintersect(point, point)
+    @test !hasintersect(point, point + V2(1, 1))
   end
 end
