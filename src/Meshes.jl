@@ -45,38 +45,42 @@ include("geometries.jl")
 # type traits
 include("traits.jl")
 
-# geometry sets
+# sets of geometries
 include("geomsets.jl")
 
-# meshes
+# meshes of geometries
 include("connectivities.jl")
 include("topologies.jl")
 include("toporelations.jl")
 include("mesh.jl")
 
-# mesh data
+# data over domains
 include("meshdata.jl")
 
 # utilities
 include("utils.jl")
 
+# lazy views
+include("views.jl")
+include("viewing.jl")
+
+# lazy partitions
+include("partitions.jl")
+include("partitioning.jl")
+
+# domain traversal
+include("traversing.jl")
+
 # miscellaneous
-include("paths.jl")
 include("distances.jl")
 include("neighborhoods.jl")
 include("neighborsearch.jl")
 include("supportfun.jl")
 include("matrices.jl")
 
-# views and partitions
-include("views.jl")
-include("partitions.jl")
-
 # algorithms
-include("viewing.jl")
 include("merging.jl")
 include("sampling.jl")
-include("partitioning.jl")
 include("intersections.jl")
 include("discretization.jl")
 include("simplification.jl")
@@ -305,6 +309,30 @@ export
   indices,
   slice,
 
+  # partitions
+  Partition,
+  indices,
+  metadata,
+
+  # partitioning
+  PartitionMethod,
+  PredicatePartitionMethod,
+  SPredicatePartitionMethod,
+  UniformPartition,
+  FractionPartition,
+  BlockPartition,
+  BisectPointPartition,
+  BisectFractionPartition,
+  BallPartition,
+  PlanePartition,
+  DirectionPartition,
+  PredicatePartition,
+  SpatialPredicatePartition,
+  ProductPartition,
+  HierarchicalPartition,
+  partition,
+  split,
+
   # traversing
   Path,
   LinearPath,
@@ -346,30 +374,6 @@ export
   HomogeneousSampling,
   MinDistanceSampling,
   sample,
-
-  # partitions
-  Partition,
-  indices,
-  metadata,
-
-  # partitioning
-  PartitionMethod,
-  PredicatePartitionMethod,
-  SPredicatePartitionMethod,
-  UniformPartition,
-  FractionPartition,
-  BlockPartition,
-  BisectPointPartition,
-  BisectFractionPartition,
-  BallPartition,
-  PlanePartition,
-  DirectionPartition,
-  PredicatePartition,
-  SpatialPredicatePartition,
-  ProductPartition,
-  HierarchicalPartition,
-  partition,
-  split,
 
   # intersections
   IntersectionType,

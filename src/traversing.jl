@@ -26,8 +26,8 @@ function traverse end
 # IMPLEMENTATIONS
 # ----------------
 
-include("paths/linear.jl")
-include("paths/random.jl")
-include("paths/source.jl")
-include("paths/shifted.jl")
-include("paths/multigrid.jl")
+include("traversing/linear.jl")
+include("traversing/random.jl")
+include("traversing/source.jl")
+include("traversing/shifted.jl")
+include("traversing/multigrid.jl")
