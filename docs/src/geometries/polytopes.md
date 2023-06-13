@@ -14,12 +14,14 @@ import WGLMakie as Mke # hide
 
 ```@docs
 Polytope
-Polyhedron
-Polygon
 Chain
+Polygon
+Polyhedron
 ```
 
 ## Concrete
+
+### Segment
 
 ```@docs
 Segment
@@ -29,6 +31,8 @@ Segment
 Segment((0., 0.), (1.,1.)) |> viz
 ```
 
+### Rope
+
 ```@docs
 Rope
 ```
@@ -36,6 +40,8 @@ Rope
 ```@example polytopes
 Rope((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
 ```
+
+### Ring
 
 ```@docs
 Ring
@@ -45,6 +51,8 @@ Ring
 Ring((0.,0.), (1.,0.5), (1.,1.), (2.,0.)) |> viz
 ```
 
+## Ngon
+
 ```@docs
 Ngon
 ```
@@ -52,6 +60,8 @@ Ngon
 ```@example polytopes
 Triangle((0.,0.), (1.,0.), (0.,1.)) |> viz
 ```
+
+### PolyArea
 
 ```@docs
 PolyArea
@@ -64,6 +74,8 @@ hole2 = [(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4)]
 poly  = PolyArea(outer, [hole1, hole2]) |> viz
 ```
 
+### Tetrahedron
+
 ```@docs
 Tetrahedron
 ```
@@ -71,6 +83,8 @@ Tetrahedron
 ```@example polytopes
 Tetrahedron([(0,0,0),(1,0,0),(0,1,0),(0,0,1)]) |> viz
 ```
+
+### Hexahedron
 
 ```@docs
 Hexahedron
@@ -80,6 +94,8 @@ Hexahedron
 Hexahedron([(0,0,0),(1,0,0),(1,1,0),(0,1,0),
             (0,0,1),(1,0,1),(1,1,1),(0,1,1)]) |> viz
 ```
+
+### Pyramid
 
 ```@docs
 Pyramid

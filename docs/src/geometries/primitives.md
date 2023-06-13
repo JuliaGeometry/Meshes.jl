@@ -18,13 +18,36 @@ Primitive
 
 ## Concrete
 
+### Point
+
+```@docs
+Point
+```
+
+```@example primitives
+rand(Point3, 100) |> viz
+```
+
+```@docs
+coordinates(::Point)
+-(::Point, ::Point)
++(::Point, ::Vec)
+-(::Point, ::Vec)
+```
+
+### Ray
+
 ```@docs
 Ray
 ```
 
+### Line
+
 ```@docs
 Line
 ```
+
+### BezierCurve
 
 ```@docs
 BezierCurve
@@ -34,9 +57,13 @@ BezierCurve
 BezierCurve((0.,0.), (1.,0.), (1.,1.)) |> viz
 ```
 
+### Plane
+
 ```@docs
 Plane
 ```
+
+### Box
 
 ```@docs
 Box
@@ -46,6 +73,8 @@ Box
 Box((0.,0.,0.), (1.,1.,1.)) |> viz
 ```
 
+### Ball
+
 ```@docs
 Ball
 ```
@@ -53,6 +82,8 @@ Ball
 ```@example primitives
 Ball((0.,0.,0.), 1.) |> viz
 ```
+
+### Sphere
 
 ```@docs
 Sphere
@@ -62,13 +93,19 @@ Sphere
 Sphere((0.,0.,0.), 1.) |> viz
 ```
 
+### Disk
+
 ```@docs
 Disk
 ```
 
+### Circle
+
 ```@docs
 Circle
 ```
+
+### Cylinder
 
 ```@docs
 Cylinder
@@ -78,6 +115,8 @@ Cylinder
 Cylinder(1.0) |> viz
 ```
 
+### CylinderSurface
+
 ```@docs
 CylinderSurface
 ```
@@ -86,13 +125,19 @@ CylinderSurface
 CylinderSurface(1.0) |> viz
 ```
 
+### Cone
+
 ```@docs
 Cone
 ```
 
+### ConeSurface
+
 ```@docs
 ConeSurface
 ```
+
+### Torus
 
 ```@docs
 Torus

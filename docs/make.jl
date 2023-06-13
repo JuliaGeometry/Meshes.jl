@@ -45,13 +45,10 @@ makedocs(
   pages=[
     "Home" => "index.md",
     "Reference guide" => [
-      "Points" => "points.md",
       "Vectors" => "vectors.md",
-      "Angles" => "angles.md",
       "Geometries" => ["geometries/primitives.md", "geometries/polytopes.md"],
-      "Meshes" => "meshes.md",
-      "Mesh data" => "meshdata.md",
-      "Neighborhoods" => "neighborhoods.md",
+      "Domains" => ["domains/sets.md", "domains/meshes.md"],
+      "Data" => "data.md",
       "Algorithms" => [
         "algorithms/sampling.md",
         "algorithms/partitioning.md",

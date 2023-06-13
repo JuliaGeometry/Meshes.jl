@@ -1,6 +1,8 @@
 # Neighbor search
 
 ```@docs
+Neighborhood
+MetricBall
 search
 NeighborSearchMethod
 BallSearch

@@ -1,4 +1,4 @@
-# Mesh data
+# Data
 
 Data can be attached to any type implementing the [`Domain`](@ref) trait.
 In particular, it is common to attach data to geometries of a mesh.

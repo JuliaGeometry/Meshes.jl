@@ -52,7 +52,7 @@ Get the latest stable release with Julia's package manager:
 
 Although we didn't have time to document the functionality of the package properly,
 we still would like to illustrate some important features. For more information on
-available functionality, please consult the [Reference guide](points.md) and the
+available functionality, please consult the [Reference guide](vectors.md) and the
 [suite of tests](https://github.com/JuliaGeometry/Meshes.jl/tree/master/test) in
 the package.
 

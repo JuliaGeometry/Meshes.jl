@@ -1,6 +1,0 @@
-# Neighborhoods
-
-```@docs
-Neighborhood
-MetricBall
-```
