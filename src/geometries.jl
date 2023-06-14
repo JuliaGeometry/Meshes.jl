@@ -9,6 +9,8 @@ A geometry embedded in a `Dim`-dimensional space with coordinates of type `T`.
 """
 abstract type Geometry{Dim,T} end
 
+Broadcast.broadcastable(g::Geometry) = Ref(g)
+
 """
     embeddim(geometry)
 

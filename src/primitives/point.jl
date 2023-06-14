@@ -65,9 +65,6 @@ const Point1f = Point{1,Float32}
 const Point2f = Point{2,Float32}
 const Point3f = Point{3,Float32}
 
-# broadcast behavior
-Broadcast.broadcastable(p::Point) = Ref(p)
-
 paramdim(::Type{Point{Dim,T}}) where {Dim,T} = 0
 
 center(p::Point) = p
