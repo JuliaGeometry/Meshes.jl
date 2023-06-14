@@ -68,6 +68,7 @@ struct Horner <: BezierEvalMethod end
 
 (curve::BezierCurve)(t) = curve(t, DeCasteljau())
 
+# Apply DeCasteljau's method
 function (curve::BezierCurve)(t, ::DeCasteljau)
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
@@ -81,13 +82,11 @@ function (curve::BezierCurve)(t, ::DeCasteljau)
   end
 end
 
-"""
-Apply Horner's method on the monomial representation of the
-Bézier curve B = ∑ᵢ aᵢtⁱ with i ∈ [0, n], n the degree of the
-curve, aᵢ = binomial(n, i) * pᵢ * t̄ⁿ⁻ⁱ and t̄ = (1 - t).
-Horner's rule recursively reconstructs B from a sequence bᵢ
-with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
-"""
+# Apply Horner's method on the monomial representation of the
+# Bézier curve B = ∑ᵢ aᵢtⁱ with i ∈ [0, n], n the degree of the
+# curve, aᵢ = binomial(n, i) * pᵢ * t̄ⁿ⁻ⁱ and t̄ = (1 - t).
+# Horner's rule recursively reconstructs B from a sequence bᵢ
+# with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
 function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))

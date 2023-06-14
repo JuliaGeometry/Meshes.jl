@@ -68,34 +68,23 @@ const Point3f = Point{3,Float32}
 # broadcast behavior
 Broadcast.broadcastable(p::Point) = Ref(p)
 
-"""
-    embeddim(point)
-
-Return the number of dimensions of the space where the `point` is embedded.
-"""
-embeddim(::Type{Point{Dim,T}}) where {Dim,T} = Dim
-embeddim(p::Point) = embeddim(typeof(p))
-
-"""
-    paramdim(point)
-
-Return the number of parametric dimensions of the `point`.
-"""
 paramdim(::Type{Point{Dim,T}}) where {Dim,T} = 0
-paramdim(p::Point) = paramdim(typeof(p))
+
+center(p::Point) = p
+
+measure(::Point{Dim,T}) where {Dim,T} = zero(T)
+
+boundary(::Point) = nothing
+
+Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T}; atol=atol(T), kwargs...) where {Dim,T} =
+  isapprox(A.coords, B.coords; atol, kwargs...)
+
+==(A::Point, B::Point) = A.coords == B.coords
 
 """
-    coordtype(point)
+    coordinates(point)
 
-Return the machine type of each coordinate used to describe the `point`.
-"""
-coordtype(::Type{Point{Dim,T}}) where {Dim,T} = T
-coordtype(p::Point) = coordtype(typeof(p))
-
-"""
-    coordinates(A::Point)
-
-Return the coordinates of the point with respect to the
+Return the coordinates of the `point` with respect to the
 canonical Euclidean basis.
 """
 coordinates(A::Point) = A.coords
@@ -129,22 +118,6 @@ at a reference (or start) point `A`.
 -(v::Vec, A::Point) = A - v
 
 """
-    isapprox(A::Point, B::Point)
-
-Tells whether or not the coordinates of points `A` and `B`
-are approximately equal.
-"""
-Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T}; atol=atol(T), kwargs...) where {Dim,T} =
-  isapprox(A.coords, B.coords; atol, kwargs...)
-
-"""
-    ==(A::Point, B::Point)
-
-Tells whether or not points `A` and `B` represent the same point.
-"""
-==(A::Point, B::Point) = A.coords == B.coords
-
-"""
     ⪯(A::Point, B::Point)
     ⪰(A::Point, B::Point)
     ≺(A::Point, B::Point)
@@ -175,27 +148,6 @@ See https://en.wikipedia.org/wiki/Atan2.
 """
 ∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A - B, C - B)
 ∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
-
-"""
-    center(point)
-
-Return the `point` itself.
-"""
-center(p::Point) = p
-
-"""
-    measure(point)
-
-Return the measure of `point`, which is zero.
-"""
-measure(::Point{Dim,T}) where {Dim,T} = zero(T)
-
-"""
-    boundary(point)
-
-Return the boundary of the `point`.
-"""
-boundary(::Point) = nothing
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} = Point(rand(rng, Vec{Dim,T}))
 
