@@ -43,7 +43,8 @@ include("vectors.jl")
 include("geometries.jl")
 
 # type traits
-include("traits.jl")
+include("domains.jl")
+include("data.jl")
 
 # sets of geometries
 include("geomsets.jl")

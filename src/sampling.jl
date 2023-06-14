@@ -2,6 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# type alias for convenience
+const DomainOrData = Union{Domain,Data}
+
 """
     SamplingMethod
 
