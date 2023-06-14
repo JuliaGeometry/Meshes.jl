@@ -114,4 +114,5 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   Point(b₀)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim,T}}) where {Dim,T} = BezierCurve(rand(rng, Point{Dim,T}, 5))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim,T}}) where {Dim,T} =
+  BezierCurve(rand(rng, Point{Dim,T}, 5))

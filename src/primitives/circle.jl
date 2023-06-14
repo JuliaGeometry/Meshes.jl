@@ -60,4 +60,5 @@ end
 
 boundary(::Circle) = nothing
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Circle{T}}) where {T} = Circle(rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Circle{T}}) where {T} =
+  Circle(rand(rng, Plane{T}), rand(rng, T))

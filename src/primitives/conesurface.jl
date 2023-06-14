@@ -23,4 +23,5 @@ isconvex(::Type{<:ConeSurface}) = false
 
 boundary(::ConeSurface) = nothing
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface{T}}) where {T} = ConeSurface(rand(rng, Disk{T}), rand(rng, Point{3,T}))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface{T}}) where {T} =
+  ConeSurface(rand(rng, Disk{T}), rand(rng, Point{3,T}))
