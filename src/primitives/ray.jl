@@ -52,3 +52,5 @@ function (r::Ray)(t)
   end
   r.p + t * r.v
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ray{Dim,T}}) where {Dim,T} = Ray(rand(rng, Point{Dim,T}), rand(rng, Vec{Dim,T}))

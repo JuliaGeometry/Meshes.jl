@@ -110,3 +110,5 @@ function (s::Sphere{3,T})(θ, φ) where {T}
   z = r * cos(θ * T(π))
   c + Vec(x, y, z)
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Sphere{Dim,T}}) where {Dim,T} = Sphere(rand(rng, Point{Dim,T}), rand(rng, T))

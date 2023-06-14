@@ -183,6 +183,13 @@
     r1 = Ray(P3(0, 0, 0), V3(2, 0, 0))
     r2 = Ray(P3(0, 0, 0), V3(1, 0, 0))
     @test r1 == r2
+
+    r2 = rand(Ray{2,T})
+    r3 = rand(Ray{3,T})
+    @test r2 isa Ray
+    @test r3 isa Ray
+    @test embeddim(r2) == 2
+    @test embeddim(r3) == 3
   end
 
   @testset "Lines" begin
@@ -199,6 +206,13 @@
 
     l = Line(P2(0, 0), P2(1, 1))
     @test (l(0), l(1)) == (P2(0, 0), P2(1, 1))
+
+    l2 = rand(Line{2,T})
+    l3 = rand(Line{3,T})
+    @test l2 isa Line
+    @test l3 isa Line
+    @test embeddim(l2) == 2
+    @test embeddim(l3) == 3
   end
 
   @testset "Planes" begin
@@ -241,6 +255,10 @@
     @test p₁ ∈ p
     @test p₂ ∈ p
     @test p₃ ∈ p
+
+    p = rand(Plane{T})
+    @test p isa Plane
+    @test embeddim(p) == 3
   end
 
   @testset "BezierCurve" begin
@@ -274,6 +292,13 @@
     t2 = @timed b(T(0.2), Horner())
     @test t1.time > t2.time
     @test t2.bytes < 100
+
+    b2 = rand(BezierCurve{2,T})
+    b3 = rand(BezierCurve{3,T})
+    @test b2 isa BezierCurve
+    @test b3 isa BezierCurve
+    @test embeddim(b2) == 2
+    @test embeddim(b3) == 3
   end
 
   @testset "Boxes" begin
@@ -373,6 +398,16 @@
     b = Box(P3(0, 0, 0), P3(10, 20, 30))
     @test b(T(0.0), T(0.0), T(0.0)) == P3(0, 0, 0)
     @test b(T(1.0), T(1.0), T(1.0)) == P3(10, 20, 30)
+
+    b1 = rand(Box{1,T})
+    b2 = rand(Box{2,T})
+    b3 = rand(Box{3,T})
+    @test b1 isa Box
+    @test b2 isa Box
+    @test b3 isa Box
+    @test embeddim(b1) == 1
+    @test embeddim(b2) == 2
+    @test embeddim(b3) == 3
   end
 
   @testset "Ball" begin
@@ -429,6 +464,16 @@
     b = Ball(P3(7, 7, 7), T(1.5))
     ps = b.(1, rand(T, 100), rand(T, 100))
     all(∈(b), ps)
+
+    b1 = rand(Ball{1,T})
+    b2 = rand(Ball{2,T})
+    b3 = rand(Ball{3,T})
+    @test b1 isa Ball
+    @test b2 isa Ball
+    @test b3 isa Ball
+    @test embeddim(b1) == 1
+    @test embeddim(b2) == 2
+    @test embeddim(b3) == 3
   end
 
   @testset "Sphere" begin
@@ -514,6 +559,16 @@
     s = Sphere(P3(0, 0, 0), T(2))
     @test s(T(0), T(0)) ≈ P3(0, 0, 2)
     @test s(T(0.5), T(0.5)) ≈ P3(-2, 0, 0)
+
+    s1 = rand(Sphere{1,T})
+    s2 = rand(Sphere{2,T})
+    s3 = rand(Sphere{3,T})
+    @test s1 isa Sphere
+    @test s2 isa Sphere
+    @test s3 isa Sphere
+    @test embeddim(s1) == 1
+    @test embeddim(s2) == 2
+    @test embeddim(s3) == 3
   end
 
   @testset "Disk" begin
@@ -530,6 +585,10 @@
     @test P3(0, 0, 0) ∈ d
     @test P3(0, 0, 1) ∉ d
     @test boundary(d) == Circle(p, T(2))
+
+    d = rand(Disk{T})
+    @test d isa Disk
+    @test embeddim(d) == 3
   end
 
   @testset "Circle" begin
@@ -556,6 +615,10 @@
     @test p1 ∈ c
     @test p2 ∈ c
     @test p3 ∈ c
+
+    c = rand(Circle{T})
+    @test c isa Circle
+    @test embeddim(c) == 3
   end
 
   @testset "Cylinder" begin
@@ -603,6 +666,10 @@
     @test P3(0, 0, -0.001) ∉ c
     @test P3(0, 0, 1.001) ∉ c
     @test P3(1, 1, 1) ∉ c
+
+    c = rand(Cylinder{T})
+    @test c isa Cylinder
+    @test embeddim(c) == 3
   end
 
   @testset "CylinderSurface" begin
@@ -635,6 +702,10 @@
     @test coordtype(c) == Float32
     c = CylinderSurface(1)
     @test coordtype(c) == Float64
+
+    c = rand(CylinderSurface{T})
+    @test c isa CylinderSurface
+    @test embeddim(c) == 3
   end
 
   @testset "Cone" begin
@@ -647,6 +718,10 @@
     @test coordtype(c) == T
     @test isconvex(c)
     @test boundary(c) == ConeSurface(d, a)
+
+    c = rand(Cone{T})
+    @test c isa Cone
+    @test embeddim(c) == 3
   end
 
   @testset "ConeSurface" begin
@@ -659,6 +734,10 @@
     @test coordtype(s) == T
     @test !isconvex(s)
     @test isnothing(boundary(s))
+
+    c = rand(ConeSurface{T})
+    @test c isa ConeSurface
+    @test embeddim(c) == 3
   end
 
   @testset "Torus" begin
@@ -694,5 +773,9 @@
     c₃ = T.((3, 2, 1))
     q = Torus(c₁, c₂, c₃, 1)
     @test q == t
+
+    t = rand(Torus{T})
+    @test t isa Torus
+    @test embeddim(t) == 3
   end
 end

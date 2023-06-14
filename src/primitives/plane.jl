@@ -61,3 +61,5 @@ normal(p::Plane) = normalize(p.u × p.v)
 Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (pt - pl(0, 0)), zero(T), atol=atol(T))
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Plane{T}}) where {T} = Plane(rand(rng, Point{3,T}), rand(rng, Vec{3,T}))

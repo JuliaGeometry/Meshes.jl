@@ -79,3 +79,5 @@ boundary(::CylinderSurface) = nothing
 measure(c::CylinderSurface{T}) where {T} = (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
 
 area(c::CylinderSurface) = measure(c)
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface{T}}) where {T} = CylinderSurface(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))

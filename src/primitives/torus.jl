@@ -63,3 +63,5 @@ function Base.in(p::Point, t::Torus)
   x, y, z = M * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} = Torus(rand(rng, Point{3,T}), rand(rng, Vec{3,T}), rand(rng, T), rand(rng, T))

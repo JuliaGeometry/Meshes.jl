@@ -59,3 +59,5 @@ function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
 end
 
 boundary(::Circle) = nothing
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Circle{T}}) where {T} = Circle(rand(rng, Plane{T}), rand(rng, T))

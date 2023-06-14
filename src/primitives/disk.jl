@@ -36,3 +36,5 @@ function Base.in(p::Point, d::Disk)
 end
 
 boundary(d::Disk) = Circle(d.plane, d.radius)
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Disk{T}}) where {T} = Disk(rand(rng, Plane{T}), rand(rng, T))

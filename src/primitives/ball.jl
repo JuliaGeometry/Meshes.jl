@@ -71,3 +71,5 @@ function (b::Ball{3,T})(ρ, θ, φ) where {T}
   z = ρ * r * cos(θ * T(π))
   c + Vec(x, y, z)
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ball{Dim,T}}) where {Dim,T} = Ball(rand(rng, Point{Dim,T}), rand(rng, T))

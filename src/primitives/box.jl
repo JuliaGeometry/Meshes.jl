@@ -93,3 +93,5 @@ function (b::Box{Dim,T})(uv...) where {Dim,T}
   end
   b.min + uv .* (b.max - b.min)
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim,T}}) where {Dim,T} = Box(rand(rng, Point{Dim,T}, 2)...)

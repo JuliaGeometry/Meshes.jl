@@ -197,11 +197,6 @@ Return the boundary of the `point`.
 """
 boundary(::Point) = nothing
 
-"""
-    rand(P::Type{<:Point}, n=1)
-
-Generates a random point of type `P`
-"""
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} = Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)

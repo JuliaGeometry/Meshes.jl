@@ -40,3 +40,5 @@ end
 ==(l1::Line, l2::Line) = l1.a ∈ l2 && l1.b ∈ l2 && l2.a ∈ l1 && l2.b ∈ l1
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Line{Dim,T}}) where {Dim,T} = Line(rand(rng, Point{Dim,T}, 2)...)
