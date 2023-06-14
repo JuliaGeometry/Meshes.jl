@@ -202,28 +202,6 @@ export
   # multi-geometries
   Multi,
 
-  # domain traits
-  Domain,
-  embeddim,
-  paramdim,
-  coordtype,
-  element,
-  nelements,
-
-  # data traits
-  Data,
-  domain,
-  constructor,
-  asarray,
-
-  # domain/data alias
-  DomainOrData,
-  nitems,
-
-  # collections
-  GeometrySet,
-  PointSet,
-
   # connectivities
   Connectivity,
   paramdim,
@@ -272,6 +250,18 @@ export
   Coboundary,
   Adjacency,
 
+  # domain traits
+  Domain,
+  embeddim,
+  paramdim,
+  coordtype,
+  element,
+  nelements,
+
+  # sets
+  GeometrySet,
+  PointSet,
+
   # meshes
   Mesh,
   Grid,
@@ -293,9 +283,19 @@ export
   spacing,
   offset,
 
+  # data traits
+  Data,
+  domain,
+  constructor,
+  asarray,
+
   # mesh data
   MeshData,
   meshdata,
+
+  # domain/data alias
+  DomainOrData,
+  nitems,
 
   # views
   DomainView,
