@@ -135,3 +135,10 @@ function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
   ]
   print(io, join(lines, "\n"))
 end
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+include("sets.jl")
+include("mesh.jl")

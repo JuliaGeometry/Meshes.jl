@@ -42,21 +42,16 @@ include("vectors.jl")
 # geometries
 include("geometries.jl")
 
-# type traits
-include("domains.jl")
-include("data.jl")
-
-# sets of geometries
-include("geomsets.jl")
-
-# meshes of geometries
+# topological objects
 include("connectivities.jl")
 include("topologies.jl")
 include("toporelations.jl")
-include("mesh.jl")
+
+# domains
+include("domains.jl")
 
 # data over domains
-include("meshdata.jl")
+include("data.jl")
 
 # utilities
 include("utils.jl")

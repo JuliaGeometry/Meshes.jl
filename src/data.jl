@@ -282,3 +282,9 @@ function Base.show(io::IO, ::MIME"text/plain", data::Data)
   println(io, 𝒟)
   print(io, join(l, "\n"))
 end
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+include("meshdata.jl")
