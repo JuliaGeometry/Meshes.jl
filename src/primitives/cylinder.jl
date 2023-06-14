@@ -75,4 +75,5 @@ function Base.in(p::Point{3}, c::Cylinder)
   norm((p - b) × a) / norm(a) ≤ c.radius
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} = Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
+  Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))

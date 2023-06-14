@@ -62,4 +62,5 @@ Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (pt - 
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Plane{T}}) where {T} = Plane(rand(rng, Point{3,T}), rand(rng, Vec{3,T}))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Plane{T}}) where {T} =
+  Plane(rand(rng, Point{3,T}), rand(rng, Vec{3,T}))
