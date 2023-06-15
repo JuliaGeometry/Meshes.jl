@@ -36,25 +36,25 @@
     @test verts == P2[(0.5, -1), (1, 0), (1, 1), (0, 1), (0, 0)]
   end
 
-  @testset "Miscellaneous" begin
-    @test hull(P2(0, 0)) == Box(P2(0, 0), P2(0, 0))
+  @testset "convexhull" begin
+    @test convexhull(P2(0, 0)) == P2(0, 0)
 
-    @test hull(Box(P2(0, 0), P2(1, 1))) == Box(P2(0, 0), P2(1, 1))
+    @test convexhull(Box(P2(0, 0), P2(1, 1))) == Box(P2(0, 0), P2(1, 1))
 
-    @test hull(Ball(P2(0, 0), T(1))) == Ball(P2(0, 0), T(1))
-    @test hull(Ball(P2(1, 1), T(1))) == Ball(P2(1, 1), T(1))
+    @test convexhull(Ball(P2(0, 0), T(1))) == Ball(P2(0, 0), T(1))
+    @test convexhull(Ball(P2(1, 1), T(1))) == Ball(P2(1, 1), T(1))
 
-    @test hull(Sphere(P2(0, 0), T(1))) == Ball(P2(0, 0), T(1))
-    @test hull(Sphere(P2(1, 1), T(1))) == Ball(P2(1, 1), T(1))
+    @test convexhull(Sphere(P2(0, 0), T(1))) == Ball(P2(0, 0), T(1))
+    @test convexhull(Sphere(P2(1, 1), T(1))) == Ball(P2(1, 1), T(1))
 
     b1 = Box(P2(0, 0), P2(1, 1))
     b2 = Box(P2(-1, -1), P2(0.5, 0.5))
-    @test hull(Multi([b1, b2])) == PolyArea(P2[(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)])
-    @test hull(GeometrySet([b1, b2])) == PolyArea(P2[(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)])
+    @test convexhull(Multi([b1, b2])) == PolyArea(P2[(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)])
+    @test convexhull(GeometrySet([b1, b2])) == PolyArea(P2[(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)])
 
     b1 = Ball(P2(0, 0), T(1))
     b2 = Box(P2(-1, -1), P2(0, 0))
-    h = hull(Multi([b1, b2]))
+    h = convexhull(Multi([b1, b2]))
     @test P2(-0.8, -0.8) ∈ h
     @test P2(0.2, 0.2) ∈ h
   end

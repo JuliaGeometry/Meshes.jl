@@ -473,6 +473,7 @@ export
   HullMethod,
   GrahamScan,
   hull,
+  convexhull,
 
   # miscellaneous
   WindingOrientation,

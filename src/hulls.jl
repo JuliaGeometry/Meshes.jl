@@ -11,57 +11,54 @@ collections of geometries.
 abstract type HullMethod end
 
 """
-    hull(object, [method])
+    hull(object, method)
 
 Compute the hull of the `object` with given `method`.
 """
 function hull end
 
-# ----------
-# FALLBACKS
-# ----------
-
-hull(g::Polytope, method) = hull(vertices(g), method)
-
-hull(p::Primitive, method) = hull(boundary(p), method)
-
-hull(m::Multi, method) = hull(collect(m), method)
-
-hull(d::Domain, method) = hull(collect(d), method)
-
-hull(d::Data, method) = hull(domain(d), method)
-
-# ---------
-# DEFAULTS
-# ---------
-
-hull(g::Geometry{2}) = hull(g, GrahamScan())
-
-hull(d::Domain{2}) = hull(d, GrahamScan())
-
-# ----------------
-# SPECIALIZATIONS
-# ----------------
-
-hull(p::Point) = boundingbox(p)
-
-hull(b::Box) = b
-
-hull(b::Ball) = b
-
-hull(s::Sphere) = Ball(center(s), radius(s))
-
-hull(t::Triangle) = t
-
-hull(g::Grid) = boundingbox(g)
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
-function hull(geoms::AbstractVector{<:Geometry}, method)
-  verts(geom) = vertices(discretize(boundary(geom)))
-  hull(mapreduce(verts, vcat, geoms), method)
-end
-
 include("hulls/graham.jl")
+
+# ----------
+# UTILITIES
+# ----------
+
+"""
+    convexhull(object)
+
+Compute the convex hull of the `object` with an appropriate method.
+"""
+function convexhull end
+
+convexhull(p::Point) = p
+
+convexhull(b::Box) = b
+
+convexhull(b::Ball) = b
+
+convexhull(s::Sphere) = Ball(center(s), radius(s))
+
+convexhull(t::Triangle) = t
+
+convexhull(p::Primitive) = convexhull(boundary(p))
+
+convexhull(p::Polytope) = convexhull(vertices(p))
+
+convexhull(m::Multi) = convexhull(collect(m))
+
+convexhull(g::Geometry) = convexhull([g])
+
+convexhull(g::Grid) = boundingbox(g)
+
+convexhull(d::Domain) = convexhull(collect(d))
+
+convexhull(d::Data) = convexhull(domain(d))
+
+convexhull(p::AbstractVector{<:Point{2}}) = hull(p, GrahamScan())
+
+convexhull(g::AbstractVector{<:Geometry{2}}) =
+  mapreduce(pointify, vcat, g) |> unique |> convexhull
