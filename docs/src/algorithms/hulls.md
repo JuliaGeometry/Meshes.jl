@@ -12,6 +12,7 @@ import WGLMakie as Mke # hide
 
 ```@docs
 hull
+convexhull
 HullMethod
 ```
 
@@ -23,7 +24,7 @@ GrahamScan
 
 ```@example hull
 pset = PointSet(rand(Point2, 100))
-chul = hull(pset, GrahamScan())
+chul = convexhull(pset, GrahamScan())
 
 fig = Mke.Figure(resolution = (800, 400))
 viz(fig[1,1], chul)
@@ -35,7 +36,7 @@ fig
 box  = Box((-1, -1), (0, 0))
 ball = Ball((0, 0), (1))
 gset = GeometrySet([box, ball])
-chul = hull(gset)
+chul = convexhull(gset)
 
 fig = Mke.Figure(resolution = (800, 400))
 viz(fig[1,1], chul)
