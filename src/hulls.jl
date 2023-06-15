@@ -60,5 +60,4 @@ convexhull(d::Data) = convexhull(domain(d))
 
 convexhull(p::AbstractVector{<:Point{2}}) = hull(p, GrahamScan())
 
-convexhull(g::AbstractVector{<:Geometry{2}}) =
-  mapreduce(pointify, vcat, g) |> unique |> convexhull
+convexhull(g::AbstractVector{<:Geometry{2}}) = mapreduce(pointify, vcat, g) |> unique |> convexhull
