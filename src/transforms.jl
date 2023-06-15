@@ -47,13 +47,6 @@ function reapplypoint end
 # HELPER FUNCTIONS
 # -----------------
 
-# convert objects into lists of points
-_points(p::Point) = [p]
-_points(g::Geometry) = vertices(g)
-_points(d::Domain) = mapreduce(_points, vcat, d)
-_points(m::Mesh) = vertices(m)
-_points(p::PointSet) = collect(p)
-
 # convert lists of points into objects
 _reconstruct(points, ::Point) = first(points)
 _reconstruct(points, ::G) where {G<:Geometry} = G(points)
@@ -67,17 +60,17 @@ _reconstruct(points, ::PointSet) = PointSet(points)
 
 function apply(transform::GeometricTransform, object)
   prep = preprocess(transform, object)
-  newpoints, pcache = applypoint(transform, _points(object), prep)
+  newpoints, pcache = applypoint(transform, pointify(object), prep)
   _reconstruct(newpoints, object), pcache
 end
 
 function revert(transform::GeometricTransform, newobject, cache)
-  points = revertpoint(transform, _points(newobject), cache)
+  points = revertpoint(transform, pointify(newobject), cache)
   _reconstruct(points, newobject)
 end
 
 function reapply(transform::GeometricTransform, object, cache)
-  newpoints = reapplypoint(transform, _points(object), cache)
+  newpoints = reapplypoint(transform, pointify(object), cache)
   _reconstruct(newpoints, object)
 end
 

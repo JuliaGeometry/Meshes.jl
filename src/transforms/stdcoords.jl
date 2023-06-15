@@ -13,7 +13,7 @@ struct StdCoords <: GeometricTransform end
 isrevertible(::Type{<:StdCoords}) = true
 
 function preprocess(::StdCoords, object)
-  pset = PointSet(_points(object))
+  pset = PointSet(pointify(object))
   bbox = boundingbox(pset)
   center(bbox), sides(bbox)
 end

@@ -80,6 +80,7 @@ include("matrices.jl")
 include("merging.jl")
 include("sampling.jl")
 include("intersections.jl")
+include("pointification.jl")
 include("discretization.jl")
 include("simplification.jl")
 include("refinement.jl")
@@ -422,6 +423,9 @@ export
   intersection,
   hasintersect,
   type,
+
+  # pointification
+  pointify,
 
   # discretization
   DiscretizationMethod,
