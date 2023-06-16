@@ -94,6 +94,7 @@ testfiles = [
   "merging.jl",
   "sampling.jl",
   "intersections.jl",
+  "pointification.jl",
   "discretization.jl",
   "simplification.jl",
   "refinement.jl",

@@ -17,10 +17,13 @@ pointify(p::Primitive) = pointify(boundary(p))
 
 pointify(p::Polytope) = vertices(p)
 
+pointify(m::Multi) = pointify(collect(m))
+
 pointify(p::PointSet) = collect(p)
 
 pointify(m::Mesh) = vertices(m)
 
-pointify(d::Domain) = mapreduce(pointify, vcat, d)
-
 pointify(d::Data) = pointify(domain(d))
+
+# fallback with iterator of geometries
+pointify(geoms) = mapreduce(pointify, vcat, geoms)
