@@ -23,8 +23,8 @@ function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
   p = unique(points)
   n = length(p)
 
-  # sort by y then by x
-  p = p[sortperm(reverse.(coordinates.(p)))]
+  # sort points lexicographically
+  p = p[sortperm(coordinates.(p))]
 
   # corner cases
   n == 1 && return p[1]
@@ -37,21 +37,21 @@ function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
     end
   end
 
-  # sort by polar angle
-  p₀ = p[1]
+  # sort points by polar angle
+  O = p[1]
   q = p[2:n]
-  x = p₀ + Vec{2,T}(1, 0)
-  θ = [∠(x, p₀, pᵢ) for pᵢ in q]
+  A = O + Vec{2,T}(0, -1)
+  θ = [∠(A, O, B) for B in q]
   q = q[sortperm(θ)]
 
   # rotational sweep
-  c = [p₀, q[1], q[2]]
-  for pᵢ in q[3:end]
-    while ∠(c[end - 1], c[end], pᵢ) > atol(T)
-      pop!(c)
+  r = [O, q[1], q[2]]
+  for B in q[3:end]
+    while ∠(r[end - 1], r[end], B) > atol(T)
+      pop!(r)
     end
-    push!(c, pᵢ)
+    push!(r, B)
   end
 
-  PolyArea(c)
+  PolyArea(r)
 end
