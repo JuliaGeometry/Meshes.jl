@@ -84,11 +84,8 @@ function discretizewithin(ring::Ring{3}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
   points = collect(vertices(ring))
 
-  # project points on 2D plane of maximum variance
-  projected = proj2D(points)
-
   # discretize within 2D ring with given method
-  ring2D = Ring(projected)
+  ring2D = Ring(proj2D(points))
   mesh = discretizewithin(ring2D, method)
 
   # return mesh with original points
