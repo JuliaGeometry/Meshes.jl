@@ -20,42 +20,38 @@ struct GrahamScan <: HullMethod end
 
 function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
   # remove duplicates
-  Q = coordinates.(points) |> unique
+  p = unique(points)
+  n = length(p)
 
   # sort by y then by x
-  sort!(Q, by=reverse)
+  p = p[sortperm(reverse.(coordinates.(p)))]
 
   # corner cases
-  n = length(Q)
-  n == 1 && return Point(Q[1])
-  n == 2 && return Segment(Point(Q[1]), Point(Q[2]))
+  n == 1 && return p[1]
+  n == 2 && return Segment(p[1], p[2])
   if n == 3
-    p₀, p₁, p₂ = Q
-    θ = ∠(Point(p₁), Point(p₀), Point(p₂))
-    if isapprox(θ, zero(T), atol=atol(T))
-      return Segment(Point(p₀), Point(p₂))
+    if iscollinear(p...)
+      return Segment(first(p), last(p))
     else
-      c = Ring(Point(p₀), Point(p₁), Point(p₂))
-      orientation(c) == :CCW || reverse!(c)
-      return PolyArea(c)
+      return PolyArea(p)
     end
   end
 
   # sort by polar angle
-  p₀ = Point(Q[1])
-  p = Point.(Q[2:n])
+  p₀ = p[1]
+  q = p[2:n]
   x = p₀ + Vec{2,T}(1, 0)
-  θ = [∠(x, p₀, pᵢ) for pᵢ in p]
-  p = p[sortperm(θ)]
+  θ = [∠(x, p₀, pᵢ) for pᵢ in q]
+  q = q[sortperm(θ)]
 
   # rotational sweep
-  c = [p₀, p[1], p[2]]
-  for pᵢ in p[3:end]
+  c = [p₀, q[1], q[2]]
+  for pᵢ in q[3:end]
     while ∠(c[end - 1], c[end], pᵢ) > atol(T)
       pop!(c)
     end
     push!(c, pᵢ)
   end
 
-  PolyArea(Ring(c))
+  PolyArea(c)
 end
