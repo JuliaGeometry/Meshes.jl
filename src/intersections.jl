@@ -3,22 +3,22 @@
 # ------------------------------------------------------------------
 
 """
-    g1 ∩ g2
+    g₁ ∩ g₂
 
-Return the intersection of two geometries `g1` and `g2` as a new geometry.
+Return the intersection of two geometries `g₁` and `g₂` as a new geometry.
 """
-Base.intersect(g1::Geometry, g2::Geometry) = get(intersection(g1, g2))
+Base.intersect(g₁::Geometry, g₂::Geometry) = get(intersection(g₁, g₂))
 
 """
-    intersection([f], g1, g2)
+    intersection([f], g₁, g₂)
 
-Compute the intersection of two geometries `g1` and `g2`
+Compute the intersection of two geometries `g₁` and `g₂`
 and apply function `f` to it. Default function is `identity`.
 
 ## Examples
 
 ```julia
-intersection(g1, g2) do I
+intersection(g₁, g₂) do I
   if I isa CrossingLines
     # do something
   else
@@ -34,8 +34,8 @@ return types, Julia is able to optimize the branches of the code
 and generate specialized code. This is not the case when
 `f === identity`.
 """
-intersection(f, g1, g2) = intersection(f, g2, g1)
-intersection(g1, g2) = intersection(identity, g1, g2)
+intersection(f, g₁, g₂) = intersection(f, g₂, g₁)
+intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 
 """
     IntersectionType
@@ -178,9 +178,9 @@ intersection(f, ::Ball, ::Polygon) = throw(ErrorException("not implemented"))
 # -----------------
 
 """
-    hasintersect(g1, g2)
+    hasintersect(g₁, g₂)
 
-Return `true` if geometries `g1` and `g2` intersect and `false` otherwise.
+Return `true` if geometries `g₁` and `g₂` intersect and `false` otherwise.
 
 The algorithm works with any geometry that has a well-defined [`supportfun`](@ref).
 
@@ -191,22 +191,22 @@ The algorithm works with any geometry that has a well-defined [`supportfun`](@re
   Objects in Three-Dimensional Space]
   (https://ieeexplore.ieee.org/document/2083)
 """
-function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
+function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   # handle non-convex geometries
-  if !isconvex(g1)
-    d1 = simplexify(g1)
-    return hasintersect(d1, g2)
-  elseif !isconvex(g2)
-    d2 = simplexify(g2)
-    return hasintersect(g1, d2)
+  if !isconvex(g₁)
+    d₁ = simplexify(g₁)
+    return hasintersect(d₁, g₂)
+  elseif !isconvex(g₂)
+    d₂ = simplexify(g₂)
+    return hasintersect(g₁, d₂)
   end
 
   # initial direction
-  c1, c2 = centroid(g1), centroid(g2)
-  d = c1 ≈ c2 ? rand(Vec{Dim,T}) : c2 - c1
+  c₁, c₂ = centroid(g₁), centroid(g₂)
+  d = c₁ ≈ c₂ ? rand(Vec{Dim,T}) : c₂ - c₁
 
   # first point in Minkowski difference
-  P = minkowskipoint(g1, g2, d)
+  P = minkowskipoint(g₁, g₂, d)
 
   # origin of coordinate system
   O = minkowskiorigin(Dim, T)
@@ -217,7 +217,7 @@ function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
   # move towards the origin
   d = O - P
   while true
-    P = minkowskipoint(g1, g2, d)
+    P = minkowskipoint(g₁, g₂, d)
     if (P - O) ⋅ d < zero(T)
       return false
     end
@@ -253,15 +253,15 @@ hasintersect(p::Point, g::Geometry) = p ∈ g
 
 hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
 
-hasintersect(p1::Point, p2::Point) = p1 == p2
+hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
 
 hasintersect(d::Domain, g::Geometry) = any(gᵢ -> hasintersect(gᵢ, g), d)
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
-function hasintersect(d1::Domain, d2::Domain)
-  for g1 in d1, g2 in d2
-    hasintersect(g1, g2) && return true
+function hasintersect(d₁::Domain, d₂::Domain)
+  for g₁ in d₁, g₂ in d₂
+    hasintersect(g₁, g₂) && return true
   end
   return false
 end
@@ -269,9 +269,9 @@ end
 hasintersect(g) = Base.Fix2(hasintersect, g)
 
 # support point in Minkowski difference
-function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
+function minkowskipoint(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}, d) where {Dim,T}
   n = Vec{Dim,T}(d[1:Dim])
-  v = supportfun(g1, n) - supportfun(g2, -n)
+  v = supportfun(g₁, n) - supportfun(g₂, -n)
   Point(ntuple(i -> i ≤ Dim ? v[i] : zero(T), max(Dim, 3)))
 end
 
