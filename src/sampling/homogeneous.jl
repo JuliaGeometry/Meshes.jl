@@ -12,11 +12,13 @@ struct HomogeneousSampling <: ContinuousSamplingMethod
   size::Int
 end
 
-function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
-  size = method.size
-  weights = measure.(Ω)
+sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling) =
+  _sampleweights(rng, Ω, method::HomogeneousSampling, measure.(Ω))
 
-  # sample elements with weights proportial to measure
+function _sampleweights(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling, weights::AbstractVector)
+  size = method.size
+
+  # sample elements with weights
   w = WeightedSampling(size, weights, replace=true)
 
   # within each element sample a single point
