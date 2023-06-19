@@ -132,6 +132,10 @@ function proj2D(points::AbstractVector{Point{3,T}}) where {T}
   U = svd(Z).U
   u = U[:, 1]
   v = U[:, 2]
+  n = T[0, 0, 1]
+  if (u × v) ⋅ n < 0
+    u, v = v, u
+  end
   [Point(z ⋅ u, z ⋅ v) for z in eachcol(Z)]
 end
 

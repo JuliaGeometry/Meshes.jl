@@ -139,10 +139,10 @@
     @test nvertices(r) == 2
     @test collect(segments(r)) == [Segment(P2(0, 0), P2(1, 1)), Segment(P2(1, 1), P2(0, 0))]
 
-    # orientation of 3D rings
+    # orientation of 3D rings in X-Y plane
     r1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     r2 = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
-    @test_broken orientation(r1) == orientation(r2)
+    @test orientation(r1) == orientation(r2)
   end
 
   @testset "Ngons" begin
