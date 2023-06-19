@@ -280,7 +280,7 @@ check = hasintersect(geom)
 check(g)
 ```
 """
-hasintersect(g::Geometry) = Base.Fix2(hasintersect, g)
+hasintersect(g) = Base.Fix2(hasintersect, g)
 
 # support point in Minkowski difference
 function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
