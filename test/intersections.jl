@@ -1127,7 +1127,7 @@
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     box = Box(P2(0, 0), P2(2, 2))
     @test hasintersect(poly, box)
-    
+
     # partial application
     points = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     poly = PolyArea(points)
