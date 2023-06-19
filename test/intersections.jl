@@ -1123,5 +1123,9 @@
     @test hasintersect(ball, point)
     @test hasintersect(point, point)
     @test !hasintersect(point, point + V2(1, 1))
+
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    box = Box(P2(0, 0), P2(2, 2))
+    @test hasintersect(poly, box)
   end
 end

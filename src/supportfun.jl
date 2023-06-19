@@ -15,7 +15,7 @@ Support function of `geometry` for given `direction`.
   (https://ieeexplore.ieee.org/document/2083)
 """
 function supportfun(g::Geometry, d::Vec)
-  v = vertices(g)
+  v = pointify(g)
   c = centroid(g)
   _, i = findmax(vᵢ -> (vᵢ - c) ⋅ d, v)
   v[i]
