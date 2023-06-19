@@ -104,6 +104,9 @@ function orientation(r::Ring{2,T}, ::TriangleOrientation) where {T}
   a ≥ zero(T) ? :CCW : :CW
 end
 
+orientation(r::Ring{3}, method::OrientationMethod) =
+  orientation(Ring(proj2D(vertices(r))), method)
+
 """
     innerangles(ring)
 
