@@ -8,9 +8,9 @@
 Generate sample of given `size` from geometric object
 according to a homogeneous density.
 """
-struct HomogeneousSampling <: ContinuousSamplingMethod
+struct HomogeneousSampling{W} <: ContinuousSamplingMethod
   size::Int
-  weights::Union{AbstractVector, Nothing}
+  weights::W
 end
 
 HomogeneousSampling(size::Int) = HomogeneousSampling(size, nothing)
