@@ -266,6 +266,8 @@ function hasintersect(d1::Domain, d2::Domain)
   return false
 end
 
+hasintersect(g) = Base.Fix2(hasintersect, g)
+
 # support point in Minkowski difference
 function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
   n = Vec{Dim,T}(d[1:Dim])
