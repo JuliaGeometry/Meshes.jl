@@ -10,13 +10,14 @@ according to a homogeneous density.
 """
 struct HomogeneousSampling <: ContinuousSamplingMethod
   size::Int
+  weights::Union{AbstractVector, Nothing}
 end
 
-sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling) =
-  _sampleweights(rng, Ω, method::HomogeneousSampling, measure.(Ω))
+HomogeneousSampling(size::Int) = HomogeneousSampling(size, nothing)
 
-function _sampleweights(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling, weights::AbstractVector)
+function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
   size = method.size
+  weights = isnothing(method.weights) ? measure.(Ω) : method.weights
 
   # sample elements with weights
   w = WeightedSampling(size, weights, replace=true)
