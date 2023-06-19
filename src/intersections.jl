@@ -249,15 +249,15 @@ function hasintersect(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}) where {Dim,T}
   end
 end
 
-hasintersect(p1::Point, g2::Geometry) = p1 ∈ g2
+hasintersect(p::Point, g::Geometry) = p ∈ g
 
-hasintersect(g1::Geometry, p2::Point) = hasintersect(p2, g1)
+hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
 
 hasintersect(p1::Point, p2::Point) = p1 == p2
 
-hasintersect(d1::Domain, g2::Geometry) = any(g1 -> hasintersect(g1, g2), d1)
+hasintersect(d::Domain, g::Geometry) = any(gᵢ -> hasintersect(gᵢ, g), d)
 
-hasintersect(g1::Geometry, d2::Domain) = hasintersect(d2, g1)
+hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
 function hasintersect(d1::Domain, d2::Domain)
   for g1 in d1, g2 in d2
