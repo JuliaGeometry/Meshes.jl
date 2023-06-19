@@ -3,20 +3,24 @@
 # ------------------------------------------------------------------
 
 """
-    HomogeneousSampling(size)
+    HomogeneousSampling(size, [weights])
 
 Generate sample of given `size` from geometric object
-according to a homogeneous density.
+according to a homogeneous density. Optionally, provide `weights`
+to specify custom sampling weights for the elements of a domain.
 """
-struct HomogeneousSampling <: ContinuousSamplingMethod
+struct HomogeneousSampling{W} <: ContinuousSamplingMethod
   size::Int
+  weights::W
 end
+
+HomogeneousSampling(size::Int) = HomogeneousSampling(size, nothing)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
   size = method.size
-  weights = measure.(Ω)
+  weights = isnothing(method.weights) ? measure.(Ω) : method.weights
 
-  # sample elements with weights proportial to measure
+  # sample elements with weights
   w = WeightedSampling(size, weights, replace=true)
 
   # within each element sample a single point

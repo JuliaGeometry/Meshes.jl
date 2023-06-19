@@ -301,6 +301,9 @@
     ps = sample(mesh, HomogeneousSampling(400))
     @test first(ps) isa P2
     @test all(∈(mesh), ps)
+    ps = sample(mesh, HomogeneousSampling(400, 1:nelements(mesh)))
+    @test first(ps) isa P2
+    @test all(∈(mesh), ps)
   end
 
   @testset "MinDistanceSampling" begin
