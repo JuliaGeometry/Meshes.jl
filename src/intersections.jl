@@ -266,6 +266,22 @@ function hasintersect(d1::Domain, d2::Domain)
   return false
 end
 
+"""
+    hasintersect(g)
+
+Returns a partially applied function that checks if a geometry intersects the geometry `g`.
+The returned function is equivalent to: `x -> hasintersect(x, g)`.
+
+# Examples
+
+```julia
+findall(hasintersect(geom), geoms)
+check = hasintersect(geom)
+check(g)
+```
+"""
+hasintersect(g::Geometry) = Base.Fix2(hasintersect, g)
+
 # support point in Minkowski difference
 function minkowskipoint(g1::Geometry{Dim,T}, g2::Geometry{Dim,T}, d) where {Dim,T}
   n = Vec{Dim,T}(d[1:Dim])
