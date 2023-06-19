@@ -1060,6 +1060,15 @@
     @test hasintersect(t, q)
     @test hasintersect(q, t)
 
+    t = Triangle(P2[(1, 0), (2, 0), (1, 1)])
+    q = Quadrangle(P2[(1.3, 0.5), (2.3, 0.5), (2.3, 1.5), (1.3, 1.5)])
+    m = Multi([t, q])
+    @test hasintersect(m, t)
+    @test hasintersect(t, m)
+    @test hasintersect(m, q)
+    @test hasintersect(q, m)
+    @test hasintersect(m, m)
+
     t = Triangle(P2[(0, 0), (1, 0), (0, 1)])
     b = Ball(P2(0, 0), T(1))
     @test hasintersect(t, t)

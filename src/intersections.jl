@@ -255,12 +255,18 @@ hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
 
 hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
 
-hasintersect(d::Domain, g::Geometry) = any(gᵢ -> hasintersect(gᵢ, g), d)
+hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])
+
+hasintersect(g::Geometry, m::Multi) = hasintersect(m, g)
+
+hasintersect(m₁::Multi, m₂::Multi) = hasintersect(collect(m₁), collect(m₂))
+
+hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
-function hasintersect(d₁::Domain, d₂::Domain)
-  for g₁ in d₁, g₂ in d₂
+function hasintersect(geoms₁, geoms₂)
+  for g₁ in geoms₁, g₂ in geoms₂
     hasintersect(g₁, g₂) && return true
   end
   return false
