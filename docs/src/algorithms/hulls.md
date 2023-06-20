@@ -15,7 +15,7 @@ hull
 convexhull
 HullMethod
 GrahamScan
-JavisMarch
+JarvisMarch
 ```
 
 ```@example hull
