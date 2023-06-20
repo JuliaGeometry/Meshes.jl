@@ -20,7 +20,7 @@ JarvisMarch
 
 ```@example hull
 pset = PointSet(rand(Point2, 100))
-chul = convexhull(pset, GrahamScan())
+chul = convexhull(pset)
 
 fig = Mke.Figure(resolution = (800, 400))
 viz(fig[1,1], chul)
