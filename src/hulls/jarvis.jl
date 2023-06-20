@@ -32,7 +32,7 @@ function hull(points::AbstractVector{Point{2,T}}, ::JarvisMarch) where {T}
   i = argmin(l -> coordinates(p[l]), 1:n)
 
   # candidates for next point
-  𝒞 = [1:i-1; i+1:n]
+  𝒞 = [1:(i - 1); (i + 1):n]
 
   # find next point with smallest angle
   O = p[i]
@@ -60,5 +60,5 @@ function hull(points::AbstractVector{Point{2,T}}, ::JarvisMarch) where {T}
     push!(ℐ, j)
   end
 
-  PolyArea(p[ℐ[begin:end-1]])
+  PolyArea(p[ℐ[begin:(end - 1)]])
 end
