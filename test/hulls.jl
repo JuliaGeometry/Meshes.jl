@@ -1,39 +1,41 @@
 @testset "Hulls" begin
-  @testset "GrahamScan" begin
-    # basic test
-    pset = rand(P2, 100)
-    chul = hull(pset, GrahamScan())
-    @test all(pset .∈ Ref(chul))
+  @testset "Basic" begin
+    for method in [GrahamScan(), JarvisMarch()]
+      # basic test
+      pts = rand(P2, 100)
+      chul = hull(pts, method)
+      @test all(pts .∈ Ref(chul))
 
-    # duplicated points
-    pset = [rand(P2, 100); rand(P2, 100)]
-    chul = hull(pset, GrahamScan())
-    @test all(pset .∈ Ref(chul))
+      # duplicated points
+      pts = [rand(P2, 100); rand(P2, 100)]
+      chul = hull(pts, method)
+      @test all(pts .∈ Ref(chul))
 
-    # corner cases
-    pset = P2[(0, 0)]
-    chul = hull(pset, GrahamScan())
-    @test chul == P2(0, 0)
-    pset = P2[(0, 1), (1, 0)]
-    chul = hull(pset, GrahamScan())
-    @test chul == Segment(P2(0, 1), P2(1, 0))
-    pset = P2[(1, 0), (0, 0), (0, 1)]
-    chul = hull(pset, GrahamScan())
-    @test vertices(chul) == P2[(0, 0), (1, 0), (0, 1)]
+      # corner cases
+      pts = P2[(0, 0)]
+      chul = hull(pts, method)
+      @test chul == P2(0, 0)
+      pts = P2[(0, 1), (1, 0)]
+      chul = hull(pts, method)
+      @test chul == Segment(P2(0, 1), P2(1, 0))
+      pts = P2[(1, 0), (0, 0), (0, 1)]
+      chul = hull(pts, method)
+      @test vertices(chul) == P2[(0, 0), (1, 0), (0, 1)]
 
-    # original point set is already in hull
-    pset = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]
-    chul = hull(pset, GrahamScan())
-    verts = vertices(chul)
-    @test verts == P2[(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]
+      # original point set is already in hull
+      pts = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]
+      chul = hull(pts, method)
+      verts = vertices(chul)
+      @test verts == P2[(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]
 
-    # random points in interior do not affect result
-    p1 = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]
-    p2 = P2[0.5 .* (rand(), rand()) .+ 0.5 for _ in 1:10]
-    pset = [p1; p2]
-    chul = hull(pset, GrahamScan())
-    verts = vertices(chul)
-    @test verts == P2[(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]
+      # random points in interior do not affect result
+      p1 = P2[(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]
+      p2 = P2[0.5 .* (rand(), rand()) .+ 0.5 for _ in 1:10]
+      pts = [p1; p2]
+      chul = hull(pts, method)
+      verts = vertices(chul)
+      @test verts == P2[(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]
+    end
   end
 
   @testset "convexhull" begin

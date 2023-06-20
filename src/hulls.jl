@@ -22,6 +22,7 @@ function hull end
 # ----------------
 
 include("hulls/graham.jl")
+include("hulls/jarvis.jl")
 
 # ----------
 # UTILITIES

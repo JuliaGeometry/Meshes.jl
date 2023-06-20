@@ -14,12 +14,8 @@ import WGLMakie as Mke # hide
 hull
 convexhull
 HullMethod
-```
-
-## Graham's scan
-
-```@docs
 GrahamScan
+JavisMarch
 ```
 
 ```@example hull

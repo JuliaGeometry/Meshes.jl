@@ -472,6 +472,7 @@ export
   # hulls
   HullMethod,
   GrahamScan,
+  JarvisMarch,
   hull,
   convexhull,
 

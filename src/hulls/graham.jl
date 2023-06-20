@@ -23,19 +23,12 @@ function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
   p = unique(points)
   n = length(p)
 
-  # sort points lexicographically
-  p = p[sortperm(coordinates.(p))]
-
   # corner cases
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
-  if n == 3
-    if iscollinear(p...)
-      return Segment(first(p), last(p))
-    else
-      return PolyArea(p)
-    end
-  end
+
+  # sort points lexicographically
+  p = p[sortperm(coordinates.(p))]
 
   # sort points by polar angle
   O = p[1]
