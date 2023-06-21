@@ -6,7 +6,7 @@
     Polytope{K,Dim,T}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
-that constitue a `K`-dimensional subspace. They are called chain, polygon and
+that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
 embedded in a `Dim`-dimensional space. The parameter `K` is also known as the
 rank or parametric dimension of the polytope: https://en.wikipedia.org/wiki/Abstract_polytope.

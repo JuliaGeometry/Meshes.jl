@@ -5,7 +5,7 @@
 """
     Selinger()
 
-Simplify geometries with Selinger algorithm, which attemps to
+Simplify geometries with Selinger algorithm, which attempts to
 minimize the number of vertices and the deviation of vertices
 to the resulting segments.
 

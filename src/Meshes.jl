@@ -348,7 +348,7 @@ export
   radius,
   isisotropic,
 
-  # neighbordhood search
+  # neighborhood search
   NeighborSearchMethod,
   BoundedNeighborSearchMethod,
   BallSearch,

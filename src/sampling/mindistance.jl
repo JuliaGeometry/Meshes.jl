@@ -34,7 +34,7 @@ end
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
 function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
-  # retrive parameters
+  # retrieve parameters
   α = method.α
   ρ = method.ρ
   δ = method.δ
