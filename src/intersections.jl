@@ -253,6 +253,10 @@ hasintersect(p::Point, g::Geometry) = p ∈ g
 
 hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
 
+hasintersect(p::Point, m::Multi) = p ∈ m
+
+hasintersect(m::Multi, p::Point) = hasintersect(p, m)
+
 hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
 
 hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])

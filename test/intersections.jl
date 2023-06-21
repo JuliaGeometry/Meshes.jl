@@ -1137,6 +1137,16 @@
     box = Box(P2(0, 0), P2(2, 2))
     @test hasintersect(poly, box)
 
+    b1 = Box(P2(0, 0), P2(2, 2))
+    b2 = Box(P2(2, 0), P2(4, 4))
+    p1 = P2(1, 1)
+    p2 = P2(3, 3)
+    m = Multi([b1, b2])
+    @test hasintersect(m, p1)
+    @test hasintersect(p1, m)
+    @test hasintersect(m, p2)
+    @test hasintersect(p2, m)
+
     # partial application
     points = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     poly = PolyArea(points)
