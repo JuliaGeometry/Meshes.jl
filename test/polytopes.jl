@@ -143,6 +143,22 @@
     r1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     r2 = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
     @test orientation(r1) == orientation(r2)
+
+    p1 = P2(1, 1)
+    p2 = P2(3, 1)
+    p3 = P2(1, 0)
+    p4 = P2(3, 0)
+    pts = P2[(0, 0), (2, 2), (4, 0)]
+    r = Ring(pts)
+    @test p1 ∈ r
+    @test p2 ∈ r
+    @test p3 ∈ r
+    @test p4 ∈ r
+    r = Rope(pts)
+    @test p1 ∈ r
+    @test p2 ∈ r
+    @test p3 ∉ r
+    @test p4 ∉ r
   end
 
   @testset "Ngons" begin
