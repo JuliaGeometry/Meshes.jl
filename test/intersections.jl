@@ -1151,6 +1151,28 @@
     @test hasintersect(m, p2)
     @test hasintersect(p2, m)
 
+    s1 = Segment(P2(0, 0), P2(4, 4))
+    s2 = Segment(P2(4, 0), P2(0, 4))
+    s3 = Segment(P2(2, 0), P2(4, 2))
+    @test hasintersect(s1, s2)
+    @test hasintersect(s2, s3)
+    @test !hasintersect(s1, s3)
+
+    s1 = Segment(P2(2, 0), P2(0, 2))
+    s2 = Segment(P2(2, 0), P2(4, 2))
+    s3 = Segment(P2(0, 4), P2(4, 4))
+    r = Ring(P2[(0, 0), (2, 2), (4, 0)])
+    @test hasintersect(s1, r)
+    @test hasintersect(s2, r)
+    @test !hasintersect(s3, r)
+
+    r1 = Rope(P2[(0, 0), (2, 2), (4, 0)])
+    r2 = Rope(P2[(3, 0), (5, 2), (7, 0)])
+    r3 = Rope(P2[(6, 0), (8, 2), (10, 0)])
+    @test hasintersect(r1, r2)
+    @test hasintersect(r2, r3)
+    @test !hasintersect(r1, r3)
+
     # partial application
     points = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     poly = PolyArea(points)
