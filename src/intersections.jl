@@ -269,6 +269,14 @@ hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
+hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
+
+hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
+
+hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
+
+hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
+
 function hasintersect(geoms₁, geoms₂)
   for g₁ in geoms₁, g₂ in geoms₂
     hasintersect(g₁, g₂) && return true
