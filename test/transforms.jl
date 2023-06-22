@@ -74,7 +74,7 @@
   end
 
   @testset "Repair{7}" begin
-    # mesh with incosistent orientation
+    # mesh with inconsistent orientation
     points = rand(P3, 6)
     connec = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
     mesh = SimpleMesh(points, connec)

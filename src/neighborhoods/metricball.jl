@@ -28,7 +28,7 @@ N-dimensional Euclidean ball with radius `1.0`:
 julia> euclidean = MetricBall(1.0)
 ```
 
-Axis-aligned 3D ellispoid with radii `(3.0, 2.0, 1.0)`:
+Axis-aligned 3D ellipsoid with radii `(3.0, 2.0, 1.0)`:
 
 ```julia
 julia> mahalanobis = MetricBall((3.0, 2.0, 1.0))

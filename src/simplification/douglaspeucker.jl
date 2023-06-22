@@ -6,7 +6,7 @@
     DouglasPeucker([ϵ]; min=3, max=typemax(Int), maxiter=10)
 
 Simplify geometries with Douglas-Peucker algorithm. The higher
-is the tolerance `ϵ`, the more agressive is the simplification.
+is the tolerance `ϵ`, the more aggressive is the simplification.
 
 If the tolerance `ϵ` is not provided, perform binary search until
 the number of vertices is between `min` and `max` or until the

@@ -40,7 +40,7 @@ and the rank `rₐ` of the augmented matrix `[A y⃗]` are
 calculated in order to identify the intersection type:
 
 - Intersection: r == rₐ == 2
-- Collinear: r == rₐ == 1
+- Colinear: r == rₐ == 1
 - No intersection: r != rₐ
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3

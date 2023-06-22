@@ -68,7 +68,7 @@
           P3[(0, 0, 0), (5, 0, 0), (5, 5, 0), (0, 5, 0), (0, 0, 5), (5, 0, 5), (5, 5, 5), (0, 5, 5)]
     @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
-    # contructor with offset
+    # constructor with offset
     grid = CartesianGrid((10, 10), T.((1.0, 1.0)), T.((1.0, 1.0)), (2, 2))
     @test embeddim(grid) == 2
     @test coordtype(grid) == T

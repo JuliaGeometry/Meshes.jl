@@ -49,7 +49,7 @@ half-edges constructed from a vector of connectivity
 `elements` or from a vector of pairs of `halfedges`.
 
 The option `sort` can be used to sort the elements in
-adjacent-first order in case of incosistent orientation
+adjacent-first order in case of inconsistent orientation
 (i.e. mix of clockwise and counter-clockwise).
 
 ## Examples

@@ -276,7 +276,7 @@
     @test intersection(s1, s12) |> type == CornerTouchingSegments
     @test s1 ∩ s12 ≈ P3(1.0, 0.0, 0.0)
 
-    # precission test
+    # precision test
     s1 = Segment(P2(2.0, 2.0), P2(3.0, 1.0))
     s2 = Segment(P2(2.12505, 1.87503), P2(50000.0, 30000.0))
     s3 = Segment(P2(2.125005, 1.875003), P2(50000.0, 30000.0))
