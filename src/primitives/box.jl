@@ -11,13 +11,21 @@ See https://en.wikipedia.org/wiki/Hyperrectangle.
 ## Examples
 
 ```julia
-Box(Point(0,0,0), Point(1,1,1)) # unit cube
+Box(Point(0, 0, 0), Point(1, 1, 1))
+Box((0, 0), (1, 1))
 ```
 """
 struct Box{Dim,T} <: Primitive{Dim,T}
   min::Point{Dim,T}
   max::Point{Dim,T}
+
+  function Box{Dim,T}(min, max) where {Dim,T}
+    @assert min ⪯ max "`min` must be less than or equal to `max`"
+    new(min, max)
+  end
 end
+
+Box(min::Point{Dim,T}, max::Point{Dim,T}) where {Dim,T} = Box{Dim,T}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
@@ -94,5 +102,8 @@ function (b::Box{Dim,T})(uv...) where {Dim,T}
   b.min + uv .* (b.max - b.min)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim,T}}) where {Dim,T} =
-  Box(rand(rng, Point{Dim,T}, 2)...)
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim,T}}) where {Dim,T}
+  min = rand(rng, Point{Dim,T})
+  max = min + rand(rng, Vec{Dim,T})
+  Box(min, max)
+end
