@@ -11,7 +11,7 @@ See https://en.wikipedia.org/wiki/Hyperrectangle.
 ## Examples
 
 ```julia
-Box(Point(0, 0, 0), Point(1, 1, 1)) # unit cube
+Box(Point(0, 0, 0), Point(1, 1, 1))
 Box((0, 0), (1, 1))
 ```
 """
