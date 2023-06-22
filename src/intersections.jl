@@ -249,6 +249,14 @@ function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T
   end
 end
 
+# --------------
+# SPECIAL CASES
+# --------------
+
+hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
+
+hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
+
 hasintersect(p::Point, g::Geometry) = p ∈ g
 
 hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
@@ -257,7 +265,11 @@ hasintersect(p::Point, m::Multi) = p ∈ m
 
 hasintersect(m::Multi, p::Point) = hasintersect(p, m)
 
-hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
+hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
+
+hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
+
+hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
 
 hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])
 
@@ -269,14 +281,7 @@ hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
-hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
-
-hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
-
-hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
-
-hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
-
+# fallback with iterators of geometries
 function hasintersect(geoms₁, geoms₂)
   for g₁ in geoms₁, g₂ in geoms₂
     hasintersect(g₁, g₂) && return true
