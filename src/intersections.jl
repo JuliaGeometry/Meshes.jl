@@ -271,6 +271,10 @@ hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
 
 hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
 
+hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
+
+hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
+
 hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])
 
 hasintersect(g::Geometry, m::Multi) = hasintersect(m, g)
@@ -280,10 +284,6 @@ hasintersect(m₁::Multi, m₂::Multi) = hasintersect(collect(m₁), collect(m�
 hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
-
-hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
-
-hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
 
 # fallback with iterators of geometries
 function hasintersect(geoms₁, geoms₂)
