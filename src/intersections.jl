@@ -281,11 +281,7 @@ hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
-hasintersect(s::Segment, g::Geometry) = any(∈(g), vertices(s)) || hasintersect(s, boundary(g))
-
-hasintersect(g::Geometry, s::Segment) = hasintersect(s, g)
-
-hasintersect(c::Chain, g::Geometry) = hasintersect(segments(c), [g])
+hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
 
 hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
 
