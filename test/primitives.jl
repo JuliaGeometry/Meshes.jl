@@ -408,6 +408,10 @@
     @test embeddim(b1) == 1
     @test embeddim(b2) == 2
     @test embeddim(b3) == 3
+
+    @test_throws AssertionError Box(P1(1), P1(0))
+    @test_throws AssertionError Box(P2(1, 1), P2(0, 0))
+    @test_throws AssertionError Box(P3(1, 1, 1), P3(0, 0, 0))
   end
 
   @testset "Ball" begin
