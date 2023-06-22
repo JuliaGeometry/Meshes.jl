@@ -281,6 +281,14 @@ hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
+hasintersect(s::Segment, g::Geometry) = any(∈(g), vertices(s)) || hasintersect(s, boundary(g))
+
+hasintersect(g::Geometry, s::Segment) = hasintersect(s, g)
+
+hasintersect(c::Chain, g::Geometry) = hasintersect(segments(c), [g])
+
+hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
+
 # fallback with iterators of geometries
 function hasintersect(geoms₁, geoms₂)
   for g₁ in geoms₁, g₂ in geoms₂
