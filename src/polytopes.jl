@@ -360,6 +360,11 @@ Return the centroid of the `polytope`.
 """
 centroid(p::Polytope) = Point(sum(coordinates, vertices(p)) / length(vertices(p)))
 
+"""
+    unique(polytope)
+
+Return a new `polytope` without duplicate vertices.
+"""
 Base.unique(p::Polytope) = unique!(deepcopy(p))
 
 function Base.show(io::IO, p::Polytope)
