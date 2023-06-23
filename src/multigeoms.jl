@@ -55,8 +55,7 @@ Base.collect(m::Multi) = m.geoms
 
 Base.in(point::Point, m::Multi) = any(geom -> point ∈ geom, m.geoms)
 
-==(m₁::Multi, m₂::Multi) =
-  length(m₁.geoms) == length(m₂.geoms) && all(g -> g[1] == g[2], zip(m₁.geoms, m₂.geoms))
+==(m₁::Multi, m₂::Multi) = length(m₁.geoms) == length(m₂.geoms) && all(g -> g[1] == g[2], zip(m₁.geoms, m₂.geoms))
 
 function Base.show(io::IO, m::Multi{Dim,T}) where {Dim,T}
   name = prettyname(eltype(m.geoms))
