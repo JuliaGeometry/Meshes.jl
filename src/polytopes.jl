@@ -117,7 +117,7 @@ function Base.open(::Chain) end
 Remove duplicate vertices in the `chain`.
 Closed chains remain closed.
 """
-function Base.unique!(c::Chain)
+function Base.unique!(c::Chain{Dim,T}) where {Dim,T}
   # sort vertices lexicographically
   verts = vertices(open(c))
   perms = sortperm(coordinates.(verts))
@@ -126,7 +126,7 @@ function Base.unique!(c::Chain)
   keep = Int[]
   sorted = @view verts[perms]
   for i in 1:(length(sorted) - 1)
-    if !isapprox(sorted[i], sorted[i + 1])
+    if !isapprox(sorted[i], sorted[i + 1], atol=atol(T))
       # save index in the original vector
       push!(keep, perms[i])
     end
