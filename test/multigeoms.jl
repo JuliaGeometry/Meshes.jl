@@ -47,4 +47,10 @@
   @test mesh isa Mesh
   @test nvertices(mesh) == 16
   @test nelements(mesh) == 12
+
+  # unique vertices
+  poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+  quad = Quadrangle(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+  multi = Multi([poly, quad])
+  @test unique(multi) == multi
 end

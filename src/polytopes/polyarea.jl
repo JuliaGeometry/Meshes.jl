@@ -82,7 +82,7 @@ windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 
 function Base.unique!(p::PolyArea)
   unique!(p.outer)
-  hasholes(p) && foreach(c -> unique!(c), p.inners)
+  hasholes(p) && foreach(unique!, p.inners)
   p
 end
 

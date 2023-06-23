@@ -17,46 +17,53 @@ end
 # constructor with iterator of geometries
 Multi(geoms) = Multi(collect(geoms))
 
-paramdim(multi::Multi) = maximum(paramdim, multi.geoms)
+paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
-vertex(multi::Multi, ind) = vertices(multi)[ind]
+vertex(m::Multi, ind) = vertices(m)[ind]
 
-vertices(multi::Multi) = [vertex for geom in multi.geoms for vertex in vertices(geom)]
+vertices(m::Multi) = [vertex for geom in m.geoms for vertex in vertices(geom)]
 
-nvertices(multi::Multi) = sum(nvertices, multi.geoms)
+nvertices(m::Multi) = sum(nvertices, m.geoms)
 
-function centroid(multi::Multi)
-  cs = coordinates.(centroid.(multi.geoms))
+Base.unique(m::Multi) = unique!(deepcopy(m))
+
+function Base.unique!(m::Multi)
+  foreach(unique!, m.geoms)
+  m
+end
+
+function centroid(m::Multi)
+  cs = coordinates.(centroid.(m.geoms))
   Point(sum(cs) / length(cs))
 end
 
-measure(multi::Multi) = sum(measure, multi.geoms)
+measure(m::Multi) = sum(measure, m.geoms)
 
-Base.length(multi::Multi{Dim,T,<:Chain}) where {Dim,T} = measure(multi)
-area(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} = measure(multi)
-volume(multi::Multi{Dim,T,<:Polyhedron}) where {Dim,T} = measure(multi)
+Base.length(m::Multi{Dim,T,<:Chain}) where {Dim,T} = measure(m)
+area(m::Multi{Dim,T,<:Polygon}) where {Dim,T} = measure(m)
+volume(m::Multi{Dim,T,<:Polyhedron}) where {Dim,T} = measure(m)
 
-function boundary(multi::Multi)
-  bounds = [boundary(geom) for geom in multi.geoms]
+function boundary(m::Multi)
+  bounds = [boundary(geom) for geom in m.geoms]
   valid = filter(!isnothing, bounds)
   isempty(valid) ? nothing : reduce(merge, valid)
 end
 
-rings(multi::Multi{Dim,T,<:Polygon}) where {Dim,T} = [ring for poly in multi.geoms for ring in rings(poly)]
+rings(m::Multi{Dim,T,<:Polygon}) where {Dim,T} = [ring for poly in m.geoms for ring in rings(poly)]
 
-Base.collect(multi::Multi) = multi.geoms
+Base.collect(m::Multi) = m.geoms
 
-Base.in(point::Point, multi::Multi) = any(geom -> point ∈ geom, multi.geoms)
+Base.in(point::Point, m::Multi) = any(geom -> point ∈ geom, m.geoms)
 
-==(multi₁::Multi, multi₂::Multi) =
-  length(multi₁.geoms) == length(multi₂.geoms) && all(g -> g[1] == g[2], zip(multi₁.geoms, multi₂.geoms))
+==(m₁::Multi, m₂::Multi) =
+  length(m₁.geoms) == length(m₂.geoms) && all(g -> g[1] == g[2], zip(m₁.geoms, m₂.geoms))
 
-function Base.show(io::IO, multi::Multi{Dim,T}) where {Dim,T}
-  name = prettyname(eltype(multi.geoms))
+function Base.show(io::IO, m::Multi{Dim,T}) where {Dim,T}
+  name = prettyname(eltype(m.geoms))
   print(io, "Multi$name{$Dim,$T}")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", multi::Multi)
-  println(io, multi)
-  print(io, io_lines(multi, "  "))
+function Base.show(io::IO, ::MIME"text/plain", m::Multi)
+  println(io, m)
+  print(io, io_lines(m, "  "))
 end
