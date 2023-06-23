@@ -126,7 +126,7 @@ function Base.unique!(c::Chain)
   keep = Int[]
   sorted = @view verts[perms]
   for i in 1:(length(sorted) - 1)
-    if sorted[i] != sorted[i + 1]
+    if !isapprox(sorted[i], sorted[i + 1])
       # save index in the original vector
       push!(keep, perms[i])
     end
