@@ -4,7 +4,7 @@
 
 function intersection(f, p::Point{Dim,T}, g::Geometry{Dim,T}) where {Dim,T}
   if p ∈ g
-    @IT PertainingPoint p f
+    @IT IntersectingPoint p f
   else
     @IT NoIntersection nothing f
   end

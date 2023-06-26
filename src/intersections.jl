@@ -48,7 +48,7 @@ Type `IntersectionType` in a Julia session to see the full list.
   NoIntersection
 
   # point-geometry intersection
-  PertainingPoint
+  IntersectingPoint
 
   # line-line intersection
   CrossingLines
