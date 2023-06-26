@@ -47,6 +47,9 @@ Type `IntersectionType` in a Julia session to see the full list.
   # no intersection
   NoIntersection
 
+  # point-geometry intersection
+  PertainingPoint
+
   # line-line intersection
   CrossingLines
   OverlappingLines
@@ -154,6 +157,7 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("intersections/points.jl")
 include("intersections/lines.jl")
 include("intersections/boxes.jl")
 include("intersections/segments.jl")

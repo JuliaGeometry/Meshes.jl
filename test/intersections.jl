@@ -10,6 +10,13 @@
     end
   end
 
+  @testset "Points" begin
+    p = P2(0, 0)
+    b = Box(P2(0, 0), P2(1, 1))
+    @test p ∩ b == b ∩ p == p
+    @test isnothing(P2(-1, -1) ∩ b)
+  end
+
   @testset "Segments" begin
     # segments in 2D
     s1 = Segment(P2(0, 0), P2(1, 0))
