@@ -2,10 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function intersection(f, p::Point{Dim,T}, g::Geometry{Dim,T}) where {Dim,T}
-  if p ∈ g
-    @IT IntersectingPoint p f
-  else
-    @IT NoIntersection nothing f
-  end
-end
+intersection(f, p::Point, g::Geometry) =
+  p ∈ g ? (@IT IntersectingPoint p f) : (@IT NoIntersection nothing f)
+
+intersection(f, p::Point, g::Polygon) =
+  p ∈ g ? (@IT IntersectingPoint p f) : (@IT NoIntersection nothing f)

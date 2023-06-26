@@ -1044,14 +1044,6 @@
     @inferred Meshes.intersectparameters(p1, p2, p1, p2)
   end
 
-  @testset "missing" begin
-    # https://github.com/JuliaGeometry/Meshes.jl/issues/246
-    b = Ball(P2(0, 0), T(1))
-    t = Triangle(P2(0, 0), P2(2, 0), P2(0, 2))
-    @test_throws ErrorException("not implemented") b ∩ t
-    @test_throws ErrorException("not implemented") t ∩ b
-  end
-
   @testset "hasintersect" begin
     t = Triangle(P2[(0, 0), (1, 0), (0, 1)])
     q = Quadrangle(P2[(1, 1), (2, 1), (2, 2), (1, 2)])

@@ -3,41 +3,6 @@
 # ------------------------------------------------------------------
 
 """
-    g₁ ∩ g₂
-
-Return the intersection of two geometries `g₁` and `g₂` as a new geometry.
-"""
-Base.intersect(g₁::Geometry, g₂::Geometry) = get(intersection(g₁, g₂))
-
-"""
-    intersection([f], g₁, g₂)
-
-Compute the intersection of two geometries `g₁` and `g₂`
-and apply function `f` to it. Default function is `identity`.
-
-## Examples
-
-```julia
-intersection(g₁, g₂) do I
-  if I isa CrossingLines
-    # do something
-  else
-    # do nothing
-  end
-end
-```
-
-### Notes
-
-When a custom function `f` is used that reduces the number of
-return types, Julia is able to optimize the branches of the code
-and generate specialized code. This is not the case when
-`f === identity`.
-"""
-intersection(f, g₁, g₂) = intersection(f, g₂, g₁)
-intersection(g₁, g₂) = intersection(identity, g₁, g₂)
-
-"""
     IntersectionType
 
 The different types of intersection that may occur between geometries.
@@ -116,6 +81,9 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingSegmentPlane
   TouchingSegmentPlane
   OverlappingSegmentPlane
+
+  # domain intersection
+  IntersectingGeometries
 end
 
 """
@@ -153,6 +121,42 @@ macro IT(type, geom, func)
   :(Intersection($type, $geom) |> $func)
 end
 
+"""
+    g₁ ∩ g₂
+
+Return the intersection of two geometries or domains `g₁` and `g₂`
+as a new (multi-)geometry.
+"""
+Base.intersect(g₁::Union{Geometry,Domain}, g₂::Union{Geometry,Domain}) = get(intersection(g₁, g₂))
+
+"""
+    intersection([f], g₁, g₂)
+
+Compute the intersection of two geometries or domains `g₁` and `g₂`
+and apply function `f` to it. Default function is `identity`.
+
+## Examples
+
+```julia
+intersection(g₁, g₂) do I
+  if I isa CrossingLines
+    # do something
+  else
+    # do nothing
+  end
+end
+```
+
+### Notes
+
+When a custom function `f` is used that reduces the number of
+return types, Julia is able to optimize the branches of the code
+and generate specialized code. This is not the case when
+`f === identity`.
+"""
+intersection(f, g₁, g₂) = intersection(f, g₂, g₁)
+intersection(g₁, g₂) = intersection(identity, g₁, g₂)
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
@@ -171,11 +175,20 @@ include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
 include("intersections/geompolygon.jl")
 
-# ------------------------
-# MISSING IMPLEMENTATIONS
-# ------------------------
+# fallback for domains with multiple geometries
+function intersection(f, d₁::Domain{Dim,T}, d₂::Domain{Dim,T}) where {Dim,T}
+  gs = Geometry{Dim,T}[]
+  for g₁ in d₁, g₂ in d₂
+    g = g₁ ∩ g₂
+    isnothing(g) || push!(gs, g)
+  end
 
-intersection(f, ::Ball, ::Polygon) = throw(ErrorException("not implemented"))
+  if isempty(gs)
+    @IT NoIntersection nothing f
+  else
+    @IT IntersectingGeometries Multi(gs) f
+  end
+end
 
 # -----------------
 # TRUE/FALSE CHECK
