@@ -3,6 +3,7 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of six types:
+#
 # 1. intersect at one inner point (CrossingRays -> Point)
 # 2. intersect at origin of one ray (MidTouchingRays -> Point)
 # 3. intersect at origin of both rays (CornerTouchingRays -> Point)

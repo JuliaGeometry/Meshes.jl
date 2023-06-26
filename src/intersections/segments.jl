@@ -2,7 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# The intersection type can be one of six types:
+# The intersection type can be one of five types:
+#
 # 1. intersect at one inner point (CrossingSegments -> Point)
 # 2. intersect at one endpoint of one segment (MidTouchingSegments -> Point)
 # 3. intersect at one endpoint of both segments (CornerTouchingSegments -> Point)
