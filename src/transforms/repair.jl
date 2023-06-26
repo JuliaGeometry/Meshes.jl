@@ -75,7 +75,7 @@ function apply(::Repair{8}, poly::Polygon)
   repair(ring) = apply(Repair{8}(), ring) |> first
   r = repair.(rings(poly))
   p = if hasholes(poly)
-    PolyArea(r[begin], r[begin+1:end])
+    PolyArea(r[begin], r[(begin + 1):end])
   else
     PolyArea(r[begin])
   end
@@ -89,7 +89,7 @@ function apply(::Repair{8}, ring::Ring{Dim,T}) where {Dim,T}
   # keep subset of vertices
   keep = Int[]
   for i in 1:n
-    t = Triangle(v[i-1], v[i], v[i+1])
+    t = Triangle(v[i - 1], v[i], v[i + 1])
     area(t) > atol(T)^2 && push!(keep, i)
   end
   v′ = v[keep]
