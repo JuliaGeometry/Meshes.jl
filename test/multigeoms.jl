@@ -5,6 +5,7 @@
   poly = PolyArea(outer, [hole1, hole2])
   multi = Multi([poly, poly])
   @test multi == multi
+  @test multi ≈ multi
   @test paramdim(multi) == 2
   @test vertex(multi, 1) == vertex(poly, 1)
   @test vertices(multi) == [vertices(poly); vertices(poly)]
