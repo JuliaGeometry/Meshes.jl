@@ -375,6 +375,8 @@ export
 
   # intersections
   IntersectionType,
+  NoIntersection,
+  IntersectingPoint,
   CrossingLines,
   OverlappingLines,
   OverlappingBoxes,
@@ -416,7 +418,7 @@ export
   CrossingSegmentPlane,
   TouchingSegmentPlane,
   OverlappingSegmentPlane,
-  NoIntersection,
+  IntersectingGeometries,
 
   # intersecting
   Intersection,
