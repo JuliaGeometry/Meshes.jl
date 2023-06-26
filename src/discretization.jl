@@ -149,6 +149,8 @@ simplexify(sphere::Sphere{2}) = discretize(sphere, RegularDiscretization(50))
 
 simplexify(box::Box{2}) = discretize(box, FanTriangulation())
 
+simplexify(box::Box{3}) = discretize(box, Tetrahedralization())
+
 simplexify(tri::Triangle) = discretize(tri, FanTriangulation())
 
 simplexify(quad::Quadrangle) = discretize(quad, FanTriangulation())

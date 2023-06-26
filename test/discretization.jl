@@ -248,6 +248,16 @@
     end
   end
 
+  @testset "Tetrahedralization" begin
+    box = Box(P3(0, 0, 0), P3(1, 1, 1))
+    hexa = Hexahedron(pointify(box))
+    bmesh = discretize(box, Tetrahedralization())
+    hmesh = discretize(hexa, Tetrahedralization())
+    @test bmesh == hmesh
+    @test nvertices(bmesh) == 8
+    @test nelements(bmesh) == 5
+  end
+
   @testset "Discretize" begin
     ball = Ball(P2(0, 0), T(1))
     mesh = discretize(ball)
