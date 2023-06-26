@@ -173,28 +173,7 @@ include("intersections/raybox.jl")
 include("intersections/lineraysegmentplane.jl")
 include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
-
-intersection(f, r::Ray, g::Geometry) = intersection(f, GeometrySet([r]), discretize(g))
-
-# fallback for domains uses brute force
-function intersection(f, d₁::Domain{Dim,T}, d₂::Domain{Dim,T}) where {Dim,T}
-  # loop over all geometries
-  gs = Geometry{Dim,T}[]
-  for g₁ in d₁, g₂ in d₂
-    g = g₁ ∩ g₂
-    isnothing(g) || push!(gs, g)
-  end
-
-  # handle intersection at shared facets
-  unique!(gs)
-
-  # return intersection
-  if isempty(gs)
-    @IT NoIntersection nothing f
-  else
-    @IT IntersectingGeometries Multi(gs) f
-  end
-end
+include("intersections/fallbacks.jl")
 
 # -----------------
 # TRUE/FALSE CHECK
