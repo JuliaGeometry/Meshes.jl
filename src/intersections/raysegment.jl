@@ -2,15 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-#=
-The intersection type can be one of five types:
-
-1. intersect at one inner point (CrossingRaySegment -> Point)
-2. intersect at one corner point of segment xor origin of ray (MidTouchingRaySegment -> Point)
-3. intersects at one corner point of segment and origin of ray (CornerTouchingRaySegment -> Point)
-4. overlap at more than one point (OverlappingRaySegment -> Segment)
-5. do not overlap nor intersect (NoIntersection)
-=#
+# The intersection type can be one of five types:
+# 
+# 1. intersect at one inner point (CrossingRaySegment -> Point)
+# 2. intersect at one corner point of segment xor origin of ray (MidTouchingRaySegment -> Point)
+# 3. intersects at one corner point of segment and origin of ray (CornerTouchingRaySegment -> Point)
+# 4. overlap at more than one point (OverlappingRaySegment -> Segment)
+# 5. do not overlap nor intersect (NoIntersection)
 function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
   a, b = ray(0), ray(1)
   c, d = seg(0), seg(1)

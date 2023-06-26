@@ -180,3 +180,49 @@ Round `λ` to `x` if it is within the tolerance `tol`.
 function mayberound(λ::T, x, atol=atol(T)) where {T}
   isapprox(λ, x, atol=atol) ? x : λ
 end
+
+"""
+    intersectparameters(a, b, c, d)
+
+Compute the parameters `λ₁` and `λ₂` of the lines 
+`a + λ₁ ⋅ v⃗₁`, with `v⃗₁ = b - a` and
+`c + λ₂ ⋅ v⃗₂`, with `v⃗₂ = d - c` spanned by the input
+points `a`, `b` resp. `c`, `d` such that to yield line
+points with minimal distance or the intersection point
+(if lines intersect).
+
+Furthermore, the ranks `r` of the matrix of the linear
+system `A ⋅ λ⃗ = y⃗`, with `A = [v⃗₁ -v⃗₂], y⃗ = c - a`
+and the rank `rₐ` of the augmented matrix `[A y⃗]` are
+calculated in order to identify the intersection type:
+
+- Intersection: r == rₐ == 2
+- Colinear: r == rₐ == 1
+- No intersection: r != rₐ
+  - No intersection and parallel:  r == 1, rₐ == 2
+  - No intersection, skew lines: r == 2, rₐ == 3
+"""
+function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
+  A = [(b - a) (c - d)]
+  y = c - a
+
+  # calculate the rank of the augmented matrix by checking
+  # the zero entries of the diagonal of R
+  _, R = qr([A y])
+
+  # for Dim == 2 one has to check the L1 norm of rows as 
+  # there are more columns than rows
+  rₐ = sum(sum(abs, R, dims=2) .> atol(T))
+
+  # calculate the rank of the rectangular matrix
+  r = sum(sum(abs, R[:, 1:2], dims=2) .> atol(T))
+
+  # calculate parameters of intersection or closest point
+  if r ≥ 2
+    λ = A \ y
+  else # parallel or collinear
+    λ = SVector(zero(T), zero(T))
+  end
+
+  λ[1], λ[2], r, rₐ
+end

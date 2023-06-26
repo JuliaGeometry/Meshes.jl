@@ -1,14 +1,13 @@
 # ------------------------------------------------------------------
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
-#=
-The intersection type can be one of six types:
-1. intersect at one inner point (CrossingSegments -> Point)
-2. intersect at one endpoint of one segment (MidTouchingSegments -> Point)
-3. intersect at one endpoint of both segments (CornerTouchingSegments -> Point)
-4. overlap of segments (OverlappingSegments -> Segments)
-5. do not overlap nor intersect (NoIntersection)
-=#
+
+# The intersection type can be one of six types:
+# 1. intersect at one inner point (CrossingSegments -> Point)
+# 2. intersect at one endpoint of one segment (MidTouchingSegments -> Point)
+# 3. intersect at one endpoint of both segments (CornerTouchingSegments -> Point)
+# 4. overlap of segments (OverlappingSegments -> Segments)
+# 5. do not overlap nor intersect (NoIntersection)
 function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
   a, b = seg₁(0), seg₁(1)
   c, d = seg₂(0), seg₂(1)

@@ -2,18 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-#=
-Möller, T. & Trumbore, B., 1997.
-(https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
-
-Cases
-1. CrossingRayTriangle - middle of ray intersects middle of triangle
-2. TouchingRayTriangle - origin of ray intersects middle of triangle
-3. CornerTouchingRayTriangle - origin of ray intersects corner of triangle
-4. EdgeTouchingRayTriangle - origin of ray intersects edge of triangle
-5. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
-6. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
-=#
+# Möller, T. & Trumbore, B., 1997.
+# (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
+# 
+# Cases
+# 1. CrossingRayTriangle - middle of ray intersects middle of triangle
+# 2. TouchingRayTriangle - origin of ray intersects middle of triangle
+# 3. CornerTouchingRayTriangle - origin of ray intersects corner of triangle
+# 4. EdgeTouchingRayTriangle - origin of ray intersects edge of triangle
+# 5. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
+# 6. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
 function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
   o = origin(r)

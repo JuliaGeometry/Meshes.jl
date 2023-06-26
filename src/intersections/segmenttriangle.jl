@@ -2,10 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-#=
-Jiménez, J., Segura, R. and Feito, F. 2009.
-(https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-=#
+# Jiménez, J., Segura, R. and Feito, F. 2009.
+# (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
 function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
   vₛ = vertices(s)
   vₜ = vertices(t)
