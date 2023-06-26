@@ -163,21 +163,11 @@ intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 
 include("intersections/points.jl")
 include("intersections/lines.jl")
+include("intersections/lineplane.jl")
 include("intersections/boxes.jl")
-include("intersections/segments.jl")
-include("intersections/rays.jl")
-include("intersections/raysegment.jl")
-include("intersections/rayline.jl")
-include("intersections/linesegment.jl")
 include("intersections/raybox.jl")
-include("intersections/lineraysegmentplane.jl")
-include("intersections/segmenttriangle.jl")
-include("intersections/raytriangle.jl")
+include("intersections/linetriangle.jl")
 include("intersections/fallbacks.jl")
-
-# -----------------
-# TRUE/FALSE CHECK
-# -----------------
 
 """
     hasintersect(g₁, g₂)
