@@ -175,7 +175,7 @@ include("intersections/segmenttriangle.jl")
 include("intersections/raytriangle.jl")
 include("intersections/geompolygon.jl")
 
-# fallback for domains with multiple geometries
+# fallback for domains uses brute force
 function intersection(f, d₁::Domain{Dim,T}, d₂::Domain{Dim,T}) where {Dim,T}
   gs = Geometry{Dim,T}[]
   for g₁ in d₁, g₂ in d₂
@@ -197,9 +197,7 @@ end
 """
     hasintersect(g₁, g₂)
 
-Return `true` if geometries `g₁` and `g₂` intersect and `false` otherwise.
-
-The algorithm works with any geometry that has a well-defined [`supportfun`](@ref).
+Return `true` if geometries or domains `g₁` and `g₂` intersect and `false` otherwise.
 
 ## References
 
@@ -207,7 +205,41 @@ The algorithm works with any geometry that has a well-defined [`supportfun`](@re
   Procedure for Computing the Distance Between Complex
   Objects in Three-Dimensional Space]
   (https://ieeexplore.ieee.org/document/2083)
+
+### Notes
+
+* The algorithm works with any geometry that has a well-defined [`supportfun`](@ref).
 """
+function hasintersect end
+
+hasintersect(g) = Base.Fix2(hasintersect, g)
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
+
+hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
+
+hasintersect(p::Point, g::Geometry) = p ∈ g
+
+hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
+
+hasintersect(p::Point, m::Multi) = p ∈ m
+
+hasintersect(m::Multi, p::Point) = hasintersect(p, m)
+
+hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
+
+hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
+
+hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
+
+hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
+
+hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
+
 function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   # handle non-convex geometries
   if !isconvex(g₁)
@@ -266,32 +298,6 @@ function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T
   end
 end
 
-# --------------
-# SPECIAL CASES
-# --------------
-
-hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
-
-hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
-
-hasintersect(p::Point, g::Geometry) = p ∈ g
-
-hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
-
-hasintersect(p::Point, m::Multi) = p ∈ m
-
-hasintersect(m::Multi, p::Point) = hasintersect(p, m)
-
-hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
-
-hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
-
-hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
-
-hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
-
-hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
-
 hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])
 
 hasintersect(g::Geometry, m::Multi) = hasintersect(m, g)
@@ -309,8 +315,6 @@ function hasintersect(geoms₁, geoms₂)
   end
   return false
 end
-
-hasintersect(g) = Base.Fix2(hasintersect, g)
 
 # support point in Minkowski difference
 function minkowskipoint(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}, d) where {Dim,T}
