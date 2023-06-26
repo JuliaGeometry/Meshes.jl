@@ -336,30 +336,30 @@
     @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
   end
 
-  @testset "RaySegment" begin
+  @testset "SegmentRay" begin
     # rays and segments in 2D
     r₁ = Ray(P2(1, 0), V2(2, 1))
     s₁ = Segment(P2(0, 2), P2(2, -1)) # Crossing
     s₂ = Segment(P2(0, 2), P2(1, 0.5)) # No Intersection
     s₃ = Segment(P2(0, 2), P2(0.5, -0.5)) # No Intersection
-    s₄ = Segment(P2(0.5, 1), P2(1.5, -1)) # MidTouchingRaySegment
-    s₅ = Segment(P2(1.5, 0.25), P2(1.5, 2)) # MidTouchingRaySegment
-    s₆ = Segment(P2(1, 0), P2(1, -1)) # CornerTouchingRaySegment
-    s₇ = Segment(P2(0.5, -1), P2(1, 0)) # CournerTouchingRaySegment
+    s₄ = Segment(P2(0.5, 1), P2(1.5, -1)) # MidTouchingSegmentRay
+    s₅ = Segment(P2(1.5, 0.25), P2(1.5, 2)) # MidTouchingSegmentRay
+    s₆ = Segment(P2(1, 0), P2(1, -1)) # CornerTouchingSegmentRay
+    s₇ = Segment(P2(0.5, -1), P2(1, 0)) # CournerTouchingSegmentRay
 
-    @test intersection(r₁, s₁) |> type == CrossingRaySegment #CASE 1
+    @test intersection(r₁, s₁) |> type == CrossingSegmentRay #CASE 1
     @test r₁ ∩ s₁ ≈ s₁ ∩ r₁ ≈ P2(1.25, 0.125)
     @test intersection(r₁, s₂) |> type == NoIntersection # CASE 5
     @test r₁ ∩ s₂ === s₂ ∩ r₁ === nothing
     @test intersection(r₁, s₃) |> type == NoIntersection # CASE 5
     @test r₁ ∩ s₃ === s₃ ∩ r₁ === nothing
-    @test intersection(r₁, s₄) |> type == MidTouchingRaySegment # CASE 2
+    @test intersection(r₁, s₄) |> type == MidTouchingSegmentRay # CASE 2
     @test r₁ ∩ s₄ ≈ s₄ ∩ r₁ ≈ origin(r₁)
-    @test intersection(r₁, s₅) |> type == MidTouchingRaySegment # CASE 2
+    @test intersection(r₁, s₅) |> type == MidTouchingSegmentRay # CASE 2
     @test r₁ ∩ s₅ ≈ s₅ ∩ r₁ ≈ P2(1.5, 0.25)
-    @test intersection(r₁, s₆) |> type == CornerTouchingRaySegment # CASE 3
+    @test intersection(r₁, s₆) |> type == CornerTouchingSegmentRay # CASE 3
     @test r₁ ∩ s₆ ≈ s₆ ∩ r₁ ≈ origin(r₁)
-    @test intersection(r₁, s₇) |> type == CornerTouchingRaySegment # CASE 3
+    @test intersection(r₁, s₇) |> type == CornerTouchingSegmentRay # CASE 3
     @test r₁ ∩ s₇ ≈ s₇ ∩ r₁ ≈ origin(r₁)
 
     r₂ = Ray(P2(3, 2), V2(1, 1))
@@ -372,19 +372,19 @@
     s₁₄ = Segment(P2(3.2, 2.2), P2(3, 2)) # Overlapping s(1) = r(0)
     s₁₅ = Segment(P2(2, 1), P2(1.6, 0.6)) # No Intersection, colinear
     s₁₆ = Segment(P2(3, 1), P2(4, 2)) # No Intersection, parallel
-    @test intersection(r₂, s₈) |> type == OverlappingRaySegment # CASE 4
+    @test intersection(r₂, s₈) |> type == OverlappingSegmentRay # CASE 4
     @test r₂ ∩ s₈ === s₈ ∩ r₂ === s₈
-    @test intersection(r₂, s₉) |> type == OverlappingRaySegment # CASE 4
+    @test intersection(r₂, s₉) |> type == OverlappingSegmentRay # CASE 4
     @test r₂ ∩ s₉ == s₉ ∩ r₂ == Segment(origin(r₂), s₉(1))
-    @test intersection(r₂, s₁₀) |> type == OverlappingRaySegment # CASE 4
+    @test intersection(r₂, s₁₀) |> type == OverlappingSegmentRay # CASE 4
     @test r₂ ∩ s₁₀ == s₁₀ ∩ r₂ == Segment(origin(r₂), s₁₀(0))
-    @test intersection(r₂, s₁₁) |> type == CornerTouchingRaySegment # CASE 3
+    @test intersection(r₂, s₁₁) |> type == CornerTouchingSegmentRay # CASE 3
     @test r₂ ∩ s₁₁ ≈ s₁₁ ∩ r₂ ≈ origin(r₂)
-    @test intersection(r₂, s₁₂) |> type == CornerTouchingRaySegment # CASE 3
+    @test intersection(r₂, s₁₂) |> type == CornerTouchingSegmentRay # CASE 3
     @test r₂ ∩ s₁₂ ≈ s₁₂ ∩ r₂ ≈ origin(r₂)
-    @test intersection(r₂, s₁₃) |> type == OverlappingRaySegment # CASE 4
+    @test intersection(r₂, s₁₃) |> type == OverlappingSegmentRay # CASE 4
     @test r₂ ∩ s₁₃ === s₁₃ ∩ r₂ === s₁₃
-    @test intersection(r₂, s₁₄) |> type == OverlappingRaySegment # CASE 4
+    @test intersection(r₂, s₁₄) |> type == OverlappingSegmentRay # CASE 4
     @test r₂ ∩ s₁₄ === s₁₄ ∩ r₂ === s₁₄
     @test intersection(r₂, s₁₅) |> type == NoIntersection # CASE 5
     @test r₂ ∩ s₁₅ === s₁₅ ∩ r₂ === nothing
@@ -399,19 +399,19 @@
     # 3D test
     r₁ = Ray(P3(1, 2, 3), V3(1, 2, 3))
     s₁ = Segment(P3(1, 3, 5), P3(3, 5, 7))
-    @test intersection(r₁, s₁) |> type === CrossingRaySegment # CASE 1
+    @test intersection(r₁, s₁) |> type === CrossingSegmentRay # CASE 1
     @test r₁ ∩ s₁ ≈ s₁ ∩ r₁ ≈ P3(2, 4, 6)
 
     s₂ = Segment(P3(0, 1, 2), P3(2, 3, 4))
-    @test intersection(r₁, s₂) |> type === MidTouchingRaySegment # CASE 2
+    @test intersection(r₁, s₂) |> type === MidTouchingSegmentRay # CASE 2
     @test r₁ ∩ s₂ == s₂ ∩ r₁ == origin(r₁)
 
     s₃ = Segment(P3(0.23, 1, 2.3), P3(1, 2, 3))
-    @test intersection(r₁, s₃) |> type === CornerTouchingRaySegment # CASE 3
+    @test intersection(r₁, s₃) |> type === CornerTouchingSegmentRay # CASE 3
     @test r₁ ∩ s₃ == s₃ ∩ r₁ == origin(r₁)
 
     s₄ = Segment(P3(0, 0, 0), P3(2, 4, 6))
-    @test intersection(r₁, s₄) |> type === OverlappingRaySegment # CASE 4
+    @test intersection(r₁, s₄) |> type === OverlappingSegmentRay # CASE 4
     @test r₁ ∩ s₄ == s₄ ∩ r₁ == Segment(P3(1, 2, 3), P3(2, 4, 6))
 
     s₅ = Segment(P3(0, 0, 0), P3(0.5, 1, 1.5))
@@ -476,26 +476,26 @@
     @test intersection(l₁, r₆) |> type === NoIntersection
   end
 
-  @testset "LineSegment" begin
+  @testset "SegmentLine" begin
     l₁ = Line(P2(1, 0), P2(3, 1))
-    s₁ = Segment(P2(0, 2), P2(2, -1)) # CrossingLineSegment
+    s₁ = Segment(P2(0, 2), P2(2, -1)) # CrossingSegmentLine
     s₂ = Segment(P2(0.5, 1), P2(0, 0)) # No Intersection
     s₃ = Segment(P2(0, 2), P2(-2, 1)) # No Intersection
-    s₄ = Segment(P2(0.5, -1), P2(1, 0)) # TouchingLineSegment
-    s₅ = Segment(P2(1.5, 0.25), P2(1.5, 2)) # TouchingLineSegment
-    s₆ = Segment(P2(-3, -2), P2(4, 1.5)) # OverlappingLineSegment
+    s₄ = Segment(P2(0.5, -1), P2(1, 0)) # TouchingSegmentLine
+    s₅ = Segment(P2(1.5, 0.25), P2(1.5, 2)) # TouchingSegmentLine
+    s₆ = Segment(P2(-3, -2), P2(4, 1.5)) # OverlappingSegmentLine
 
-    @test intersection(l₁, s₁) |> type == CrossingLineSegment #CASE 1
+    @test intersection(l₁, s₁) |> type == CrossingSegmentLine #CASE 1
     @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P2(1.25, 0.125)
     @test intersection(l₁, s₂) |> type == NoIntersection # CASE 4
     @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
     @test intersection(l₁, s₃) |> type == NoIntersection # CASE 4
     @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
-    @test intersection(l₁, s₄) |> type == TouchingLineSegment # CASE 2
+    @test intersection(l₁, s₄) |> type == TouchingSegmentLine # CASE 2
     @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
-    @test intersection(l₁, s₅) |> type == TouchingLineSegment # CASE 2
+    @test intersection(l₁, s₅) |> type == TouchingSegmentLine # CASE 2
     @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
-    @test intersection(l₁, s₆) |> type == OverlappingLineSegment # CASE 3
+    @test intersection(l₁, s₆) |> type == OverlappingSegmentLine # CASE 3
     @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
 
     # type stability tests
@@ -504,25 +504,25 @@
 
     # 3d tests
     l₁ = Line(P3(1, 0, 1), P3(3, 1, 1))
-    s₁ = Segment(P3(0, 2, 1), P3(2, -1, 1)) # CrossingLineSegment
+    s₁ = Segment(P3(0, 2, 1), P3(2, -1, 1)) # CrossingSegmentLine
     s₂ = Segment(P3(0.5, 1, 1), P3(0, 0, 1)) # No Intersection
     s₃ = Segment(P3(0, 2, 1), P3(-2, 1, 1)) # No Intersection
-    s₄ = Segment(P3(0.5, -1, 1), P3(1, 0, 1)) # TouchingLineSegment
-    s₅ = Segment(P3(1.5, 0.25, 1), P3(1.5, 2, 1)) # TouchingLineSegment
-    s₆ = Segment(P3(-3, -2, 1), P3(4, 1.5, 1)) # OverlappingLineSegment
+    s₄ = Segment(P3(0.5, -1, 1), P3(1, 0, 1)) # TouchingSegmentLine
+    s₅ = Segment(P3(1.5, 0.25, 1), P3(1.5, 2, 1)) # TouchingSegmentLine
+    s₆ = Segment(P3(-3, -2, 1), P3(4, 1.5, 1)) # OverlappingSegmentLine
     s₇ = Segment(P3(0, 2, 1), P3(2, -1, 1.1)) # No Intersection
 
-    @test intersection(l₁, s₁) |> type == CrossingLineSegment #CASE 1
+    @test intersection(l₁, s₁) |> type == CrossingSegmentLine #CASE 1
     @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P3(1.25, 0.125, 1)
     @test intersection(l₁, s₂) |> type == NoIntersection # CASE 4
     @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
     @test intersection(l₁, s₃) |> type == NoIntersection # CASE 4
     @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
-    @test intersection(l₁, s₄) |> type == TouchingLineSegment # CASE 2
+    @test intersection(l₁, s₄) |> type == TouchingSegmentLine # CASE 2
     @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
-    @test intersection(l₁, s₅) |> type == TouchingLineSegment # CASE 2
+    @test intersection(l₁, s₅) |> type == TouchingSegmentLine # CASE 2
     @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
-    @test intersection(l₁, s₆) |> type == OverlappingLineSegment # CASE 3
+    @test intersection(l₁, s₆) |> type == OverlappingSegmentLine # CASE 3
     @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
     @test intersection(l₁, s₇) |> type == NoIntersection # CASE 4
     @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing

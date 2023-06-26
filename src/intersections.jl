@@ -15,20 +15,22 @@ Type `IntersectionType` in a Julia session to see the full list.
   # point-geometry intersection
   IntersectingPoint
 
-  # line-line intersection
-  CrossingLines
-  OverlappingLines
-
-  # box-box intersection
-  OverlappingBoxes
-  FaceTouchingBoxes
-  CornerTouchingBoxes
-
   # segment-segment intersection
   CrossingSegments
   MidTouchingSegments
   CornerTouchingSegments
   OverlappingSegments
+
+  # segment-ray intersection
+  CrossingSegmentRay
+  MidTouchingSegmentRay
+  CornerTouchingSegmentRay
+  OverlappingSegmentRay
+
+  # segment-line intersection
+  CrossingSegmentLine
+  TouchingSegmentLine
+  OverlappingSegmentLine
 
   # ray-ray intersection
   CrossingRays
@@ -37,21 +39,14 @@ Type `IntersectionType` in a Julia session to see the full list.
   OverlappingAgreeingRays
   OverlappingOpposingRays
 
-  # ray-segment intersection
-  CrossingRaySegment
-  MidTouchingRaySegment
-  CornerTouchingRaySegment
-  OverlappingRaySegment
-
   # ray-line intersection
   CrossingRayLine
   TouchingRayLine
   OverlappingRayLine
 
-  # line-segment intersection
-  CrossingLineSegment
-  TouchingLineSegment
-  OverlappingLineSegment
+  # line-line intersection
+  CrossingLines
+  OverlappingLines
 
   # ray-box intersection
   CrossingRayBox
@@ -81,6 +76,11 @@ Type `IntersectionType` in a Julia session to see the full list.
   CrossingSegmentPlane
   TouchingSegmentPlane
   OverlappingSegmentPlane
+
+  # box-box intersection
+  OverlappingBoxes
+  FaceTouchingBoxes
+  CornerTouchingBoxes
 
   # domain intersection
   IntersectingGeometries
@@ -164,9 +164,9 @@ intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 include("intersections/points.jl")
 include("intersections/lines.jl")
 include("intersections/lineplane.jl")
-include("intersections/boxes.jl")
-include("intersections/raybox.jl")
 include("intersections/linetriangle.jl")
+include("intersections/raybox.jl")
+include("intersections/boxes.jl")
 include("intersections/fallbacks.jl")
 
 """

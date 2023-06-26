@@ -70,12 +70,12 @@ end
 
 # The intersection type can be one of five types:
 # 
-# 1. intersect at one inner point (CrossingRaySegment -> Point)
-# 2. intersect at one corner point of segment xor origin of ray (MidTouchingRaySegment -> Point)
-# 3. intersects at one corner point of segment and origin of ray (CornerTouchingRaySegment -> Point)
-# 4. overlap at more than one point (OverlappingRaySegment -> Segment)
+# 1. intersect at one inner point (CrossingSegmentRay -> Point)
+# 2. intersect at one corner point of segment xor origin of ray (MidTouchingSegmentRay -> Point)
+# 3. intersects at one corner point of segment and origin of ray (CornerTouchingSegmentRay -> Point)
+# 4. overlap at more than one point (OverlappingSegmentRay -> Segment)
 # 5. do not overlap nor intersect (NoIntersection)
-function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
+function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
   a, b = ray(0), ray(1)
   c, d = seg(0), seg(1)
 
@@ -97,21 +97,21 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
     rd = mayberound(rd, zero(T))
     if rc > 0 # c ∈ ray
       if rd ≥ 0
-        return @IT OverlappingRaySegment seg f # CASE 4
+        return @IT OverlappingSegmentRay seg f # CASE 4
       else
-        return @IT OverlappingRaySegment Segment(origin(ray), c) f # CASE 4
+        return @IT OverlappingSegmentRay Segment(origin(ray), c) f # CASE 4
       end
     elseif rc == 0
       if rd > 0
-        return @IT OverlappingRaySegment seg f # CASE 4
+        return @IT OverlappingSegmentRay seg f # CASE 4
       else
-        return @IT CornerTouchingRaySegment a f # CASE 3
+        return @IT CornerTouchingSegmentRay a f # CASE 3
       end
     else # rc < 0
       if rd > 0
-        return @IT OverlappingRaySegment (Segment(origin(ray), d)) f # CASE 4
+        return @IT OverlappingSegmentRay (Segment(origin(ray), d)) f # CASE 4
       elseif rd == 0
-        return @IT CornerTouchingRaySegment a f # CASE 3
+        return @IT CornerTouchingSegmentRay a f # CASE 3
       else
         return @IT NoIntersection nothing f
       end
@@ -124,15 +124,15 @@ function intersection(f, ray::Ray{N,T}, seg::Segment{N,T}) where {N,T}
       return @IT NoIntersection nothing f
     elseif λ₁ == 0
       if λ₂ == 0 || λ₂ == l₂
-        return @IT CornerTouchingRaySegment a f # CASE 3
+        return @IT CornerTouchingSegmentRay a f # CASE 3
       else
-        return @IT MidTouchingRaySegment a f # CASE 2
+        return @IT MidTouchingSegmentRay a f # CASE 2
       end
     else
       if λ₂ == 0 || λ₂ == l₂
-        return @IT MidTouchingRaySegment (λ₂ < l₂ / 2 ? c : d) f # CASE 2
+        return @IT MidTouchingSegmentRay (λ₂ < l₂ / 2 ? c : d) f # CASE 2
       else
-        return @IT CrossingRaySegment ray(λ₁ / l₁) f # CASE 1, equal to seg(λ₂/l₂)
+        return @IT CrossingSegmentRay ray(λ₁ / l₁) f # CASE 1, equal to seg(λ₂/l₂)
       end
     end
   end
@@ -200,11 +200,11 @@ function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
 end
 
 # The intersection type can be one of six types:
-# 1. intersect at one inner point (CrossingLineSegment -> Point)
-# 2. intersect at an end point of segment (TouchingLineSegment -> Point)
-# 3. overlap of line and segment (OverlappingLineSegment -> Segment)
+# 1. intersect at one inner point (CrossingSegmentLine -> Point)
+# 2. intersect at an end point of segment (TouchingSegmentLine -> Point)
+# 3. overlap of line and segment (OverlappingSegmentLine -> Segment)
 # 4. do not overlap nor intersect (NoIntersection)
-function intersection(f, line::Line{N,T}, seg::Segment{N,T}) where {N,T}
+function intersection(f, seg::Segment{N,T}, line::Line{N,T}) where {N,T}
   a, b = line(0), line(1)
   c, d = seg(0), seg(1)
 
@@ -219,14 +219,14 @@ function intersection(f, line::Line{N,T}, seg::Segment{N,T}) where {N,T}
     return @IT NoIntersection nothing f # CASE 4
   # collinear
   elseif r == rₐ == 1
-    return @IT OverlappingLineSegment seg f # CASE 3
+    return @IT OverlappingSegmentLine seg f # CASE 3
   # in same plane, not parallel
   else
     λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
     if λ₂ > 0 && λ₂ < l₂
-      return @IT CrossingLineSegment seg(λ₂ / l₂) f # CASE 1, equal to line(λ₁)
+      return @IT CrossingSegmentLine seg(λ₂ / l₂) f # CASE 1, equal to line(λ₁)
     elseif λ₂ == 0 || λ₂ == l₂
-      return @IT TouchingLineSegment ((λ₂ == 0) ? c : d) f # CASE 2
+      return @IT TouchingSegmentLine ((λ₂ == 0) ? c : d) f # CASE 2
     else
       return @IT NoIntersection nothing f # CASE 4
     end
