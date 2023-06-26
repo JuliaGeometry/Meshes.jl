@@ -355,6 +355,14 @@
   @testset "PolyAreas" begin
     @test paramdim(PolyArea) == 2
 
+    # equality and approximate equality
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
+    poly = PolyArea(outer, [hole1, hole2])
+    @test poly == poly
+    @test poly ≈ poly
+
     # outer chain with 2 vertices is fixed by default
     poly = PolyArea(P2[(0, 0), (1, 0)])
     @test rings(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
