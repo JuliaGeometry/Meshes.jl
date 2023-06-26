@@ -246,6 +246,24 @@
       @test Set(vertices(poly)) == Set(vertices(mesh))
       @test nelements(mesh) == 32
     end
+
+    if T == Float64
+      poly = PolyArea(
+        P2[
+          (-48.03012478813999, -18.323912004531923),
+          (-48.030125176275845, -18.323904748608573),
+          (-48.03017873307118, -18.323925747019675),
+          (-48.03017945243984, -18.32393728592407),
+          (-48.030185785831904, -18.32394021501982),
+          (-48.03017951837907, -18.323938343610457),
+          (-48.030124261780436, -18.32392184444903),
+          (-48.0301218833633, -18.323910661117687)
+        ]
+      )
+      mesh = discretize(poly)
+      @test nvertices(mesh) == 8
+      @test nelements(mesh) == 6
+    end
   end
 
   @testset "Tetrahedralization" begin
@@ -391,5 +409,14 @@
       viz(fig[1, 2], mesh, showfacets=true)
       @test_reference "data/triangulate-$T.png" fig
     end
+
+    # tetrahedralization
+    box = Box(P3(0, 0, 0), P3(1, 1, 1))
+    hex = Hexahedron(pointify(box))
+    bmesh = simplexify(box)
+    hmesh = simplexify(hex)
+    @test bmesh == hmesh
+    @test nvertices(bmesh) == 8
+    @test nelements(bmesh) == 5
   end
 end
