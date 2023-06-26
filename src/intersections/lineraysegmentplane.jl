@@ -4,6 +4,31 @@
 
 const LineLike{T} = Union{Line{3,T},Ray{3,T},Segment{3,T}}
 
+# (https://en.wikipedia.org/wiki/Line-plane_intersection)
+function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
+  # origin and direction of line
+  l₀ = l(0)
+  d = l(1) - l(0)
+
+  # origin and normal of plane
+  p₀ = p(0, 0)
+  n = normal(p)
+
+  # auxiliary parameters
+  a = (p₀ - l₀) ⋅ n
+  b = d ⋅ n
+
+  if isapprox(b, zero(T), atol=atol(T))
+    if isapprox(a, zero(T), atol=atol(T))
+      return @IT _overlapping(l) l f
+    else
+      return @IT NoIntersection nothing f
+    end
+  else
+    return _intersection(f, l, a / b)
+  end
+end
+
 # Return appropriate type for a geometry overlapping with a `Plane`.
 # Ideally this would be a macro, but the geometry type isn't known at parse time,
 # so it is implemented via multiple-dispatch instead
@@ -57,30 +82,5 @@ function _intersection(f, s::Segment{3,T}, λ) where {T}
     return @IT NoIntersection nothing f
   else
     return @IT CrossingSegmentPlane s(λ) f
-  end
-end
-
-# (https://en.wikipedia.org/wiki/Line-plane_intersection)
-function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
-  # origin and direction of line
-  l₀ = l(0)
-  d = l(1) - l(0)
-
-  # origin and normal of plane
-  p₀ = p(0, 0)
-  n = normal(p)
-
-  # auxiliary parameters
-  a = (p₀ - l₀) ⋅ n
-  b = d ⋅ n
-
-  if isapprox(b, zero(T), atol=atol(T))
-    if isapprox(a, zero(T), atol=atol(T))
-      return @IT _overlapping(l) l f
-    else
-      return @IT NoIntersection nothing f
-    end
-  else
-    return _intersection(f, l, a / b)
   end
 end
