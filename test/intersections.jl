@@ -12,9 +12,13 @@
 
   @testset "Points" begin
     p = P2(0, 0)
+    q = P2(-1, -1)
     b = Box(P2(0, 0), P2(1, 1))
+    @test p ∩ p == p
+    @test q ∩ q == q
     @test p ∩ b == b ∩ p == p
-    @test isnothing(P2(-1, -1) ∩ b)
+    @test isnothing(p ∩ q)
+    @test isnothing(q ∩ b)
   end
 
   @testset "Segments" begin
