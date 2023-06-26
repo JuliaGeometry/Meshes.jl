@@ -62,6 +62,13 @@
     @test vnew == vnew2
   end
 
+  @testset "Repair{0}" begin
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)])
+    rpoly = poly |> Repair{0}()
+    @test nvertices(rpoly) == 4
+    @test vertices(rpoly) == P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+  end
+
   @testset "Repair{1}" begin
     # a tetrahedron with an unused vertex
     points = P3[(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)]
@@ -87,6 +94,13 @@
     @test n[2] != e[2]
     @test n[3] != e[3]
     @test n[4] != e[4]
+  end
+
+  @testset "Repair{8}" begin
+    poly = PolyArea(P2[(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
+    rpoly = poly |> Repair{8}()
+    @test nvertices(rpoly) == 4
+    @test vertices(rpoly) == P2[(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)]
   end
 
   @testset "Smoothing" begin
