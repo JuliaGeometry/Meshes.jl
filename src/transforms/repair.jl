@@ -17,14 +17,23 @@ Perform repairing operation with code `K`.
 - K = 5: non-manifold vertices are split by threshold
 - K = 6: close vertices are merged (given a radius)
 - K = 7: faces are coherently oriented
+- K = 8: zero-area ears are removed
 """
 struct Repair{K} <: StatelessGeometricTransform end
+
+# --------------
+# OPERATION (0)
+# --------------
+
+apply(::Repair{0}, geom::Polytope) = unique(geom), nothing
+
+apply(::Repair{0}, mesh::Mesh) = @error "not implemented"
 
 # --------------
 # OPERATION (1)
 # --------------
 
-function apply(::Repair{1}, mesh)
+function apply(::Repair{1}, mesh::Mesh)
   count = 0
   seen = Int[]
   inds = Dict{Int,Int}()
@@ -54,10 +63,37 @@ end
 # OPERATION (7)
 # --------------
 
-function apply(::Repair{7}, mesh)
-  # HalfEdgeTopology constructor already
-  # performs orientation of faces
-  rmesh = topoconvert(HalfEdgeTopology, mesh)
+# HalfEdgeTopology constructor
+# performs orientation of faces
+apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 
-  rmesh, nothing
+# --------------
+# OPERATION (8)
+# --------------
+
+function apply(::Repair{8}, poly::Polygon)
+  repair(ring) = apply(Repair{8}(), ring) |> first
+  r = repair.(rings(poly))
+  p = if hasholes(poly)
+    PolyArea(r[begin], r[begin+1:end])
+  else
+    PolyArea(r[begin])
+  end
+  p, nothing
+end
+
+function apply(::Repair{8}, ring::Ring{Dim,T}) where {Dim,T}
+  v = vertices(ring)
+  n = nvertices(ring)
+
+  # keep subset of vertices
+  keep = Int[]
+  for i in 1:n
+    t = Triangle(v[i-1], v[i], v[i+1])
+    area(t) > atol(T)^2 && push!(keep, i)
+  end
+  v′ = v[keep]
+
+  # new ring with subset of vertices
+  Ring(v′), nothing
 end

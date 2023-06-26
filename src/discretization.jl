@@ -36,9 +36,13 @@ function discretizewithin end
 discretize(geometry, method::BoundaryDiscretizationMethod) = discretizewithin(boundary(geometry), method)
 
 function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMethod) where {Dim,T}
+  # clean up polygon if necessary
+  clean = Repair{0}() → Repair{8}()
+  cpoly = clean(polygon)
+
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
-  ring, dups = bridge(unique(polygon), width=2atol(T))
+  ring, dups = bridge(cpoly, width=2atol(T))
 
   # discretize using outer boundary
   mesh = discretizewithin(ring, method)

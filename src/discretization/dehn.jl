@@ -46,7 +46,7 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     # check if candidate diagonal is valid
     Δ = Triangle(v[I[linds]])
     intriangle = findall(j -> v[I[j]] ∈ Δ, rinds[2:(end - 1)])
-    isdiag = isempty(intriangle) && area(Δ) > atol(T)^2
+    isdiag = isempty(intriangle)
 
     # adjust diagonal if necessary
     if !isdiag

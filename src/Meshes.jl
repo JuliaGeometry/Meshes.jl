@@ -26,7 +26,7 @@ import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # Transforms API
-import TransformsBase: Transform
+import TransformsBase: Transform, →
 import TransformsBase: isrevertible, preprocess
 import TransformsBase: apply, revert, reapply
 
