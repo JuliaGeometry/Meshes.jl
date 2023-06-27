@@ -146,6 +146,8 @@ See https://en.wikipedia.org/wiki/Atan2.
 ∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A - B, C - B)
 ∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
 
+Base.in(A::Point, B::Point) = A == B
+
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} = Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)

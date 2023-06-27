@@ -138,6 +138,20 @@
     @test ∠(P3(0, 1, 0), P3(0, 0, 0), P3(0, 0, 1)) ≈ T(π / 2)
     @test ∠(P3(0, 0, 1), P3(0, 0, 0), P3(1, 0, 0)) ≈ T(π / 2)
     @test ∠(P3(0, 0, 1), P3(0, 0, 0), P3(0, 1, 0)) ≈ T(π / 2)
+
+    # a point pertains to itself
+    p = P2(0, 0)
+    q = P2(1, 1)
+    @test p ∈ p
+    @test q ∈ q
+    @test p ∉ q
+    @test q ∉ p
+    p = P3(0, 0, 0)
+    q = P3(1, 1, 1)
+    @test p ∈ p
+    @test q ∈ q
+    @test p ∉ q
+    @test q ∉ p
   end
 
   @testset "Rays" begin
