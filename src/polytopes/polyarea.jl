@@ -41,7 +41,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
         M = centroid(Segment(A, B))
         outer = Ring(A, M, B)
       end
-      inners = filter(c -> nvertices(c) > 2, inners)
+      inners = filter(r -> nvertices(r) > 2, inners)
     end
 
     new(outer, inners)
@@ -83,6 +83,8 @@ windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 function Base.unique!(p::PolyArea)
   unique!(p.outer)
   hasholes(p) && foreach(unique!, p.inners)
+  rminds = findall(r -> nvertices(r) ≤ 2, p.inners)
+  isempty(rminds) || deleteat!(p.inners, rminds)
   p
 end
 

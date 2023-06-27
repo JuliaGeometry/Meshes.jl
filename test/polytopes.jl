@@ -517,6 +517,15 @@
       @test nvertices(upoly) == 17
     end
 
+    # invalid inner
+    outer = rand(P2, 10)
+    v1, v2 = rand(V2, 2)
+    inner = [Point(v1), Point(v1), Point(v2)]
+    poly = PolyArea(outer, [inner])
+    upoly = unique(poly)
+    @test hasholes(poly)
+    @test !hasholes(upoly)
+
     # centroid
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test centroid(poly) == P2(0.5, 0.5)
