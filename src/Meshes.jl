@@ -157,8 +157,6 @@ export
   sides,
   measure,
   diagonal,
-  origin,
-  direction,
   ⪯,
   ≺,
   ⪰,

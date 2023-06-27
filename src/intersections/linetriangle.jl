@@ -15,8 +15,8 @@
 # (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
 function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   vs = vertices(t)
-  o = origin(r)
-  d = direction(r)
+  o = r(0)
+  d = r(1) - r(0)
 
   e₁ = vs[3] - vs[1]
   e₂ = vs[2] - vs[1]

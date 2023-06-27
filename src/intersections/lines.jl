@@ -91,15 +91,15 @@ function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
     return @IT NotIntersecting nothing f # CASE 5
   # collinear
   elseif r == rₐ == 1
-    rc = sum((c - a) ./ direction(ray)) / N
-    rd = sum((d - a) ./ direction(ray)) / N
+    rc = sum((c - a) ./ (b - a)) / N
+    rd = sum((d - a) ./ (b - a)) / N
     rc = mayberound(rc, zero(T))
     rd = mayberound(rd, zero(T))
     if rc > 0 # c ∈ ray
       if rd ≥ 0
         return @IT Overlapping seg f # CASE 4
       else
-        return @IT Overlapping Segment(origin(ray), c) f # CASE 4
+        return @IT Overlapping Segment(ray(0), c) f # CASE 4
       end
     elseif rc == 0
       if rd > 0
@@ -109,7 +109,7 @@ function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
       end
     else # rc < 0
       if rd > 0
-        return @IT Overlapping (Segment(origin(ray), d)) f # CASE 4
+        return @IT Overlapping (Segment(ray(0), d)) f # CASE 4
       elseif rd == 0
         return @IT CornerTouching a f # CASE 3
       else
@@ -162,19 +162,19 @@ function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
     return @IT NotIntersecting nothing f #CASE 6
   # collinear
   elseif r == rₐ == 1
-    if direction(ray₁) ⋅ direction(ray₂) ≥ 0 # rays aligned in same direction
-      if (origin(ray₁) - origin(ray₂)) ⋅ direction(ray₁) ≥ 0 # origin of ray₁ ∈ ray₂
+    if (b - a) ⋅ (d - c) ≥ 0 # rays aligned in same direction
+      if (a - c) ⋅ (b - a) ≥ 0 # origin of ray₁ ∈ ray₂
         return @IT PosOverlapping ray₁ f # CASE 4: ray₁
       else
         return @IT PosOverlapping ray₂ f # CASE 4: ray₂
       end
     else # colliding rays
-      if origin(ray₁) ∉ ray₂
+      if a ∉ ray₂
         return @IT NotIntersecting nothing f # CASE 6
-      elseif origin(ray₁) == origin(ray₂)
+      elseif a == c
         return @IT CornerTouching a f # CASE 3
       else
-        return @IT NegOverlapping Segment(origin(ray₁), origin(ray₂)) f # CASE 5
+        return @IT NegOverlapping Segment(a, c) f # CASE 5
       end
     end
     # in same plane, not parallel
@@ -258,7 +258,7 @@ function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
     if λ₁ > 0
       return @IT Crossing ray(λ₁ / l₁) f # CASE 1
     elseif λ₁ == 0
-      return @IT Touching origin(ray) f # CASE 2
+      return @IT Touching a f # CASE 2
     else
       return @IT NotIntersecting nothing f # CASE 4
     end

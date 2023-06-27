@@ -149,8 +149,6 @@
     @test isparametrized(r)
     @test measure(r) == T(Inf)
     @test length(r) == T(Inf)
-    @test origin(r) == P2(0, 0)
-    @test direction(r) == V2(1, 1)
     @test boundary(r) == P2(0, 0)
     @test perimeter(r) == zero(T)
 
@@ -158,6 +156,7 @@
     @test r(T(0.0)) == P2(0, 0)
     @test r(T(1.0)) == P2(1, 1)
     @test r(T(Inf)) == P2(Inf, Inf)
+    @test r(T(1.0)) - r(T(0.0)) == V2(1, 1)
     @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
 
     p₁ = P3(3, 3, 3)

@@ -28,20 +28,6 @@ Base.length(r::Ray) = measure(r)
 
 boundary(r::Ray) = r.p
 
-"""
-    origin(ray)
-
-The starting point of the ray.
-"""
-origin(r::Ray) = r.p
-
-"""
-    direction(ray)
-
-The direction of the ray.
-"""
-direction(r::Ray) = r.v
-
 Base.in(p::Point, r::Ray) = p ∈ Line(r.p, r.p + r.v) && (p - r.p) ⋅ r.v ≥ 0
 
 ==(r₁::Ray, r₂::Ray) = (r₁.p ≈ r₂.p) && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁
