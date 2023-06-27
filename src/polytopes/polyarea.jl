@@ -83,6 +83,8 @@ windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 function Base.unique!(p::PolyArea)
   unique!(p.outer)
   hasholes(p) && foreach(unique!, p.inners)
+  rminds = findall(r -> nvertices(r) ≤ 2, p.inners)
+  isempty(rminds) || deleteat!(p.inners, rminds)
   p
 end
 
