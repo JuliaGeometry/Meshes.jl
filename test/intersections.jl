@@ -304,39 +304,7 @@
     s1 = Segment(P3(0.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     s2 = Segment(P3(0.5, 1.0, 0.0), P3(0.5, -1.0, 0.0))
     @inferred someornone(s1, s2)
-  end
 
-  @testset "Rays" begin
-    # rays in 2D
-    r₁ = Ray(P2(1, 0), V2(2, 1))
-    r₂ = Ray(P2(0, 2), V2(2, -3))
-    r₃ = Ray(P2(0.5, 1), V2(1, -2))
-    r₄ = Ray(P2(0, 2), V2(1, -3))
-    r₅ = Ray(P2(4, 1.5), V2(4, 2))
-    r₆ = Ray(P2(2, 0.5), V2(-0.5, -0.25))
-    r₇ = Ray(P2(4, 0), V2(0, 1))
-    @test intersection(r₁, r₂) |> type == Crossing #CASE 1
-    @test r₁ ∩ r₂ ≈ P2(1.25, 0.125)
-    @test r₁ ∩ r₇ ≈ P2(4, 1.5)
-    @test intersection(r₁, r₃) |> type == EdgeTouching #CASE 2
-    @test r₁ ∩ r₃ ≈ r₁(0) # origin of first ray
-    @test r₅ ∩ r₇ ≈ r₅(0)
-    @test intersection(r₃, r₁) |> type == EdgeTouching
-    @test r₃ ∩ r₁ ≈ r₁(0) # origin of second ray
-    @test r₇ ∩ r₅ ≈ r₅(0)
-    @test intersection(r₂, r₄) |> type == CornerTouching #CASE 3
-    @test r₂ ∩ r₄ ≈ r₂(0) ≈ r₄(0)
-    @test intersection(r₅, r₁) |> type == PosOverlapping #CASE 4
-    @test r₅ ∩ r₁ == r₅ # first ray
-    @test intersection(r₁, r₅) |> type == PosOverlapping #CASE 4
-    @test r₁ ∩ r₅ == r₅ # second ray
-    @test intersection(r₁, r₆) |> type == NegOverlapping #CASE 5
-    @test r₁ ∩ r₆ == Segment(r₁(0), r₆(0))
-    @test intersection(r₁, r₄) |> type == NotIntersecting #CASE 6
-    @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
-  end
-
-  @testset "SegmentRay" begin
     # rays and segments in 2D
     r₁ = Ray(P2(1, 0), V2(2, 1))
     s₁ = Segment(P2(0, 2), P2(2, -1)) # Crossing
@@ -417,9 +385,87 @@
     s₅ = Segment(P3(0, 0, 0), P3(0.5, 1, 1.5))
     @test intersection(r₁, s₅) |> type === NotIntersecting # CASE 5
     @test r₁ ∩ s₅ === s₅ ∩ r₁ === nothing
+
+    l₁ = Line(P2(1, 0), P2(3, 1))
+    s₁ = Segment(P2(0, 2), P2(2, -1)) # Crossing
+    s₂ = Segment(P2(0.5, 1), P2(0, 0)) # NotIntersecting
+    s₃ = Segment(P2(0, 2), P2(-2, 1)) # NotIntersecting
+    s₄ = Segment(P2(0.5, -1), P2(1, 0)) # Touching
+    s₅ = Segment(P2(1.5, 0.25), P2(1.5, 2)) # Touching
+    s₆ = Segment(P2(-3, -2), P2(4, 1.5)) # Overlapping
+
+    @test intersection(l₁, s₁) |> type == Crossing #CASE 1
+    @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P2(1.25, 0.125)
+    @test intersection(l₁, s₂) |> type == NotIntersecting # CASE 4
+    @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
+    @test intersection(l₁, s₃) |> type == NotIntersecting # CASE 4
+    @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
+    @test intersection(l₁, s₄) |> type == Touching # CASE 2
+    @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
+    @test intersection(l₁, s₅) |> type == Touching # CASE 2
+    @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
+    @test intersection(l₁, s₆) |> type == Overlapping # CASE 3
+    @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
+
+    # type stability tests
+    @inferred someornone(l₁, s₁)
+    @inferred someornone(l₁, s₂)
+
+    # 3d tests
+    l₁ = Line(P3(1, 0, 1), P3(3, 1, 1))
+    s₁ = Segment(P3(0, 2, 1), P3(2, -1, 1)) # Crossing
+    s₂ = Segment(P3(0.5, 1, 1), P3(0, 0, 1)) # NotIntersecting
+    s₃ = Segment(P3(0, 2, 1), P3(-2, 1, 1)) # NotIntersecting
+    s₄ = Segment(P3(0.5, -1, 1), P3(1, 0, 1)) # Touching
+    s₅ = Segment(P3(1.5, 0.25, 1), P3(1.5, 2, 1)) # Touching
+    s₆ = Segment(P3(-3, -2, 1), P3(4, 1.5, 1)) # Overlapping
+    s₇ = Segment(P3(0, 2, 1), P3(2, -1, 1.1)) # NotIntersecting
+
+    @test intersection(l₁, s₁) |> type == Crossing #CASE 1
+    @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P3(1.25, 0.125, 1)
+    @test intersection(l₁, s₂) |> type == NotIntersecting # CASE 4
+    @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
+    @test intersection(l₁, s₃) |> type == NotIntersecting # CASE 4
+    @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
+    @test intersection(l₁, s₄) |> type == Touching # CASE 2
+    @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
+    @test intersection(l₁, s₅) |> type == Touching # CASE 2
+    @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
+    @test intersection(l₁, s₆) |> type == Overlapping # CASE 3
+    @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
+    @test intersection(l₁, s₇) |> type == NotIntersecting # CASE 4
+    @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing
   end
 
-  @testset "RayLine" begin
+  @testset "Rays" begin
+    # rays in 2D
+    r₁ = Ray(P2(1, 0), V2(2, 1))
+    r₂ = Ray(P2(0, 2), V2(2, -3))
+    r₃ = Ray(P2(0.5, 1), V2(1, -2))
+    r₄ = Ray(P2(0, 2), V2(1, -3))
+    r₅ = Ray(P2(4, 1.5), V2(4, 2))
+    r₆ = Ray(P2(2, 0.5), V2(-0.5, -0.25))
+    r₇ = Ray(P2(4, 0), V2(0, 1))
+    @test intersection(r₁, r₂) |> type == Crossing #CASE 1
+    @test r₁ ∩ r₂ ≈ P2(1.25, 0.125)
+    @test r₁ ∩ r₇ ≈ P2(4, 1.5)
+    @test intersection(r₁, r₃) |> type == EdgeTouching #CASE 2
+    @test r₁ ∩ r₃ ≈ r₁(0) # origin of first ray
+    @test r₅ ∩ r₇ ≈ r₅(0)
+    @test intersection(r₃, r₁) |> type == EdgeTouching
+    @test r₃ ∩ r₁ ≈ r₁(0) # origin of second ray
+    @test r₇ ∩ r₅ ≈ r₅(0)
+    @test intersection(r₂, r₄) |> type == CornerTouching #CASE 3
+    @test r₂ ∩ r₄ ≈ r₂(0) ≈ r₄(0)
+    @test intersection(r₅, r₁) |> type == PosOverlapping #CASE 4
+    @test r₅ ∩ r₁ == r₅ # first ray
+    @test intersection(r₁, r₅) |> type == PosOverlapping #CASE 4
+    @test r₁ ∩ r₅ == r₅ # second ray
+    @test intersection(r₁, r₆) |> type == NegOverlapping #CASE 5
+    @test r₁ ∩ r₆ == Segment(r₁(0), r₆(0))
+    @test intersection(r₁, r₄) |> type == NotIntersecting #CASE 6
+    @test r₁ ∩ r₄ === r₄ ∩ r₁ === nothing
+
     # lines and rays in 2D
     l₁ = Line(P2(0, 0), P2(4, 5))
     r₁ = Ray(P2(3, 4), V2(1, -2)) # crossing ray
@@ -476,56 +522,237 @@
     @test intersection(l₁, r₆) |> type === NotIntersecting
   end
 
-  @testset "SegmentLine" begin
-    l₁ = Line(P2(1, 0), P2(3, 1))
-    s₁ = Segment(P2(0, 2), P2(2, -1)) # Crossing
-    s₂ = Segment(P2(0.5, 1), P2(0, 0)) # NotIntersecting
-    s₃ = Segment(P2(0, 2), P2(-2, 1)) # NotIntersecting
-    s₄ = Segment(P2(0.5, -1), P2(1, 0)) # Touching
-    s₅ = Segment(P2(1.5, 0.25), P2(1.5, 2)) # Touching
-    s₆ = Segment(P2(-3, -2), P2(4, 1.5)) # Overlapping
+  @testset "Lines" begin
+    # lines in 2D
+    l1 = Line(P2(0, 0), P2(1, 0))
+    l2 = Line(P2(-1, -1), P2(-1, 1))
+    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ P2(-1, 0)
 
-    @test intersection(l₁, s₁) |> type == Crossing #CASE 1
-    @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P2(1.25, 0.125)
-    @test intersection(l₁, s₂) |> type == NotIntersecting # CASE 4
-    @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
-    @test intersection(l₁, s₃) |> type == NotIntersecting # CASE 4
-    @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
-    @test intersection(l₁, s₄) |> type == Touching # CASE 2
-    @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
-    @test intersection(l₁, s₅) |> type == Touching # CASE 2
-    @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
-    @test intersection(l₁, s₆) |> type == Overlapping # CASE 3
-    @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
+    l1 = Line(P2(0, 0), P2(1, 0))
+    l2 = Line(P2(0, 1), P2(1, 1))
+    @test l1 ∩ l2 === l2 ∩ l1 === nothing
+
+    l1 = Line(P2(0, 0), P2(1, 0))
+    l2 = Line(P2(1, 0), P2(2, 0))
+    @test l1 == l2
+    @test l1 ∩ l2 == l2 ∩ l1 == l1
+
+    # rounding errors
+    l1 = Line(P2(3.0, 1.0), P2(2.0, 2.0))
+    for k in 1:1000
+      Δ = k * atol(T)
+      l2 = Line(P2(1.5, 1.5 + Δ), P2(3.0, 1.5 + Δ))
+      p = P2(2.5 - Δ, 1.5 + Δ)
+      @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ p
+    end
+
+    # lines in 3D
+    # not in same plane
+    l1 = Line(P3(0, 0, 0), P3(1, 0, 0))
+    l2 = Line(P3(1, 1, 1), P3(1, 2, 1))
+    @test l1 ∩ l2 == l2 ∩ l1 === nothing
+
+    # in same plane but parallel
+    l1 = Line(P3(0, 0, 0), P3(1, 0, 0))
+    l2 = Line(P3(0, 1, 1), P3(1, 1, 1))
+    @test l1 ∩ l2 == l2 ∩ l1 === nothing
+
+    # in same plane and colinear
+    l1 = Line(P3(0, 0, 0), P3(1, 0, 0))
+    l2 = Line(P3(2, 0, 0), P3(3, 0, 0))
+    @test l1 ∩ l2 == l2 ∩ l1 == l1
+
+    # crossing in one point
+    l1 = Line(P3(1, 2, 3), P3(2, 1, 0))
+    l2 = Line(P3(1, 2, 3), P3(1, 1, 1))
+    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ P3(1, 2, 3)
 
     # type stability tests
-    @inferred someornone(l₁, s₁)
-    @inferred someornone(l₁, s₂)
+    l1 = Line(P2(0, 0), P2(1, 0))
+    l2 = Line(P2(-1, -1), P2(-1, 1))
+    @inferred someornone(l1, l2)
+  end
 
-    # 3d tests
-    l₁ = Line(P3(1, 0, 1), P3(3, 1, 1))
-    s₁ = Segment(P3(0, 2, 1), P3(2, -1, 1)) # Crossing
-    s₂ = Segment(P3(0.5, 1, 1), P3(0, 0, 1)) # NotIntersecting
-    s₃ = Segment(P3(0, 2, 1), P3(-2, 1, 1)) # NotIntersecting
-    s₄ = Segment(P3(0.5, -1, 1), P3(1, 0, 1)) # Touching
-    s₅ = Segment(P3(1.5, 0.25, 1), P3(1.5, 2, 1)) # Touching
-    s₆ = Segment(P3(-3, -2, 1), P3(4, 1.5, 1)) # Overlapping
-    s₇ = Segment(P3(0, 2, 1), P3(2, -1, 1.1)) # NotIntersecting
+  @testset "Planes" begin
+    # ---------
+    # SEGMENTS
+    # ---------
 
-    @test intersection(l₁, s₁) |> type == Crossing #CASE 1
-    @test l₁ ∩ s₁ ≈ s₁ ∩ l₁ ≈ P3(1.25, 0.125, 1)
-    @test intersection(l₁, s₂) |> type == NotIntersecting # CASE 4
-    @test l₁ ∩ s₂ === s₂ ∩ l₁ === nothing
-    @test intersection(l₁, s₃) |> type == NotIntersecting # CASE 4
-    @test l₁ ∩ s₃ === s₃ ∩ l₁ === nothing
-    @test intersection(l₁, s₄) |> type == Touching # CASE 2
-    @test l₁ ∩ s₄ ≈ s₄ ∩ l₁ ≈ s₄(1)
-    @test intersection(l₁, s₅) |> type == Touching # CASE 2
-    @test l₁ ∩ s₅ ≈ s₅ ∩ l₁ ≈ s₅(0)
-    @test intersection(l₁, s₆) |> type == Overlapping # CASE 3
-    @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
-    @test intersection(l₁, s₇) |> type == NotIntersecting # CASE 4
-    @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+
+    # intersecting segment and plane
+    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersection(s, p) |> type == Crossing
+    @test s ∩ p == P3(0, 1, 1)
+
+    # intersecting segment and plane with λ ≈ 0
+    s = Segment(P3(0, 0, 1), P3(0, 2, 2))
+    @test intersection(s, p) |> type == Touching
+    @test s ∩ p == P3(0, 0, 1)
+
+    # intersecting segment and plane with λ ≈ 1
+    s = Segment(P3(0, 0, 2), P3(0, 2, 1))
+    @test intersection(s, p) |> type == Touching
+    @test s ∩ p == P3(0, 2, 1)
+
+    # segment contained within plane
+    s = Segment(P3(0, 0, 1), P3(0, -2, 1))
+    @test intersection(s, p) |> type == Overlapping
+    @test s ∩ p == s
+
+    # segment below plane, non-intersecting
+    s = Segment(P3(0, 0, 0), P3(0, -2, -2))
+    @test intersection(s, p) |> type == NotIntersecting
+    @test isnothing(s ∩ p)
+
+    # segment parallel to plane, offset, non-intersecting
+    s = Segment(P3(0, 0, -1), P3(0, -2, -1))
+    @test intersection(s, p) |> type == NotIntersecting
+    @test isnothing(s ∩ p)
+
+    # plane as first argument
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersection(p, s) |> type == Crossing
+    @test s ∩ p == p ∩ s == P3(0, 1, 1)
+
+    # type stability tests
+    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    @inferred someornone(s, p)
+
+    # -----
+    # RAYS
+    # -----
+
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+
+    # intersecting ray and plane
+    r = Ray(P3(0, 0, 0), V3(0, 2, 2))
+    @test intersection(r, p) |> type == Crossing
+    @test r ∩ p == P3(0, 1, 1)
+
+    # intersecting ray and plane with λ ≈ 0
+    r = Ray(P3(0, 0, 1), V3(0, 2, 1))
+    @test intersection(r, p) |> type == Touching
+    @test r ∩ p == P3(0, 0, 1)
+
+    # intersecting ray and plane with λ ≈ 1 (only case where Ray different to Segment)
+    r = Ray(P3(0, 0, 2), V3(0, 2, -1))
+    @test intersection(r, p) |> type == Crossing
+    @test r ∩ p == P3(0, 2, 1)
+
+    # ray contained within plane
+    r = Ray(P3(0, 0, 1), V3(0, -2, 0))
+    @test intersection(r, p) |> type == Overlapping
+    @test r ∩ p == r
+
+    # ray below plane, non-intersecting
+    r = Ray(P3(0, 0, 0), V3(0, -2, -2))
+    @test intersection(r, p) |> type == NotIntersecting
+    @test isnothing(r ∩ p)
+
+    # ray parallel to plane, offset, non-intersecting
+    r = Ray(P3(0, 0, -1), V3(0, -2, 0))
+    @test intersection(r, p) |> type == NotIntersecting
+    @test isnothing(r ∩ p)
+
+    # plane as first argument
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    r = Ray(P3(0, 0, 0), V3(0, 2, 2))
+    @test intersection(p, r) |> type == Crossing
+    @test r ∩ p == p ∩ r == P3(0, 1, 1)
+
+    # ------
+    # LINES
+    # ------
+
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+
+    # intersecting line and plane
+    l = Line(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersection(l, p) |> type == Crossing
+    @test l ∩ p == P3(0, 1, 1)
+
+    # intersecting line and plane with λ ≈ 0
+    l = Line(P3(0, 0, 1), P3(0, 2, 2))
+    @test intersection(l, p) |> type == Crossing
+    @test l ∩ p == P3(0, 0, 1)
+
+    # intersecting line and plane with λ ≈ 1
+    l = Line(P3(0, 0, 2), P3(0, 2, 1))
+    @test intersection(l, p) |> type == Crossing
+    @test l ∩ p == P3(0, 2, 1)
+
+    # line contained within plane
+    l = Line(P3(0, 0, 1), P3(0, -2, 1))
+    @test intersection(l, p) |> type == Overlapping
+    @test l ∩ p == l
+
+    # line below plane, non-intersecting
+    l = Line(P3(0, 0, 0), P3(0, -2, -2))
+    @test intersection(l, p) |> type == Crossing
+    @test l ∩ p == P3(0, 1, 1)
+
+    # line parallel to plane, offset, non-intersecting
+    l = Line(P3(0, 0, -1), P3(0, -2, -1))
+    @test intersection(l, p) |> type == NotIntersecting
+    @test isnothing(l ∩ p)
+
+    # plane as first argument
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    l = Line(P3(0, 0, 0), P3(0, 2, 2))
+    @test intersection(p, l) |> type == Crossing
+    @test l ∩ p == p ∩ l == P3(0, 1, 1)
+
+    # type stability tests
+    l = Line(P3(0, 0, 0), P3(0, 2, 2))
+    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
+    @inferred someornone(l, p)
+  end
+
+  @testset "Boxes" begin
+    b1 = Box(P2(0, 0), P2(1, 1))
+    b2 = Box(P2(0.5, 0.5), P2(2, 2))
+    b3 = Box(P2(2, 2), P2(3, 3))
+    b4 = Box(P2(1, 1), P2(2, 2))
+    b5 = Box(P2(1.0, 0.5), P2(2, 2))
+    @test intersection(b1, b2) |> type == Overlapping
+    @test b1 ∩ b2 == Box(P2(0.5, 0.5), P2(1, 1))
+    @test intersection(b1, b3) |> type == NotIntersecting
+    @test b1 ∩ b3 === nothing
+    @test intersection(b1, b4) |> type == CornerTouching
+    @test b1 ∩ b4 == P2(1, 1)
+    @test intersection(b1, b5) |> type == Touching
+    @test b1 ∩ b5 == Box(P2(1.0, 0.5), P2(1, 1))
+
+    # type stability tests
+    b1 = Box(P2(0, 0), P2(1, 1))
+    b2 = Box(P2(0.5, 0.5), P2(2, 2))
+    @inferred someornone(b1, b2)
+
+    # Ray-Box intersection
+    b = Box(P3(0, 0, 0), P3(1, 1, 1))
+
+    r = Ray(P3(0, 0, 0), V3(1, 1, 1))
+    @test intersection(r, b) |> type == Crossing
+    @test r ∩ b == Segment(P3(0, 0, 0), P3(1, 1, 1))
+
+    r = Ray(P3(-0.5, 0, 0), V3(1.0, 1.0, 1.0))
+    @test intersection(r, b) |> type == Crossing
+    @test r ∩ b == Segment(P3(0.0, 0.5, 0.5), P3(0.5, 1.0, 1.0))
+
+    r = Ray(P3(3.0, 0.0, 0.5), V3(-1.0, 1.0, 0.0))
+    @test intersection(r, b) |> type == NotIntersecting
+
+    r = Ray(P3(2.0, 0.0, 0.5), V3(-1.0, 1.0, 0.0))
+    @test intersection(r, b) |> type == Touching
+    @test r ∩ b == P3(1.0, 1.0, 0.5)
+
+    # the ray on a face of the box, got NaN in calculation
+    r = Ray(P3(1.5, 0.0, 0.0), V3(-1.0, 1.0, 0.0))
+    @test intersection(r, b) |> type == Crossing
+    @test r ∩ b == Segment(P3(1.0, 0.5, 0.0), P3(0.5, 1.0, 0.0))
   end
 
   @testset "Triangles" begin
@@ -811,243 +1038,6 @@
     r = Ray(P3(-1.0, -1.0, -1.0), V3(-1.0, -1.0, -1.0))
     @test intersection(r, o) |> type == NotIntersecting
     @test isnothing(r ∩ o)
-  end
-
-  @testset "LinePlanes" begin
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-
-    # intersecting line and plane
-    l = Line(P3(0, 0, 0), P3(0, 2, 2))
-    @test intersection(l, p) |> type == Crossing
-    @test l ∩ p == P3(0, 1, 1)
-
-    # intersecting line and plane with λ ≈ 0
-    l = Line(P3(0, 0, 1), P3(0, 2, 2))
-    @test intersection(l, p) |> type == Crossing
-    @test l ∩ p == P3(0, 0, 1)
-
-    # intersecting line and plane with λ ≈ 1
-    l = Line(P3(0, 0, 2), P3(0, 2, 1))
-    @test intersection(l, p) |> type == Crossing
-    @test l ∩ p == P3(0, 2, 1)
-
-    # line contained within plane
-    l = Line(P3(0, 0, 1), P3(0, -2, 1))
-    @test intersection(l, p) |> type == Overlapping
-    @test l ∩ p == l
-
-    # line below plane, non-intersecting
-    l = Line(P3(0, 0, 0), P3(0, -2, -2))
-    @test intersection(l, p) |> type == Crossing
-    @test l ∩ p == P3(0, 1, 1)
-
-    # line parallel to plane, offset, non-intersecting
-    l = Line(P3(0, 0, -1), P3(0, -2, -1))
-    @test intersection(l, p) |> type == NotIntersecting
-    @test isnothing(l ∩ p)
-
-    # plane as first argument
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-    l = Line(P3(0, 0, 0), P3(0, 2, 2))
-    @test intersection(p, l) |> type == Crossing
-    @test l ∩ p == p ∩ l == P3(0, 1, 1)
-
-    # type stability tests
-    l = Line(P3(0, 0, 0), P3(0, 2, 2))
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-    @inferred someornone(l, p)
-  end
-
-  @testset "RayPlanes" begin
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-
-    # intersecting ray and plane
-    r = Ray(P3(0, 0, 0), V3(0, 2, 2))
-    @test intersection(r, p) |> type == Crossing
-    @test r ∩ p == P3(0, 1, 1)
-
-    # intersecting ray and plane with λ ≈ 0
-    r = Ray(P3(0, 0, 1), V3(0, 2, 1))
-    @test intersection(r, p) |> type == Touching
-    @test r ∩ p == P3(0, 0, 1)
-
-    # intersecting ray and plane with λ ≈ 1 (only case where Ray different to Segment)
-    r = Ray(P3(0, 0, 2), V3(0, 2, -1))
-    @test intersection(r, p) |> type == Crossing
-    @test r ∩ p == P3(0, 2, 1)
-
-    # ray contained within plane
-    r = Ray(P3(0, 0, 1), V3(0, -2, 0))
-    @test intersection(r, p) |> type == Overlapping
-    @test r ∩ p == r
-
-    # ray below plane, non-intersecting
-    r = Ray(P3(0, 0, 0), V3(0, -2, -2))
-    @test intersection(r, p) |> type == NotIntersecting
-    @test isnothing(r ∩ p)
-
-    # ray parallel to plane, offset, non-intersecting
-    r = Ray(P3(0, 0, -1), V3(0, -2, 0))
-    @test intersection(r, p) |> type == NotIntersecting
-    @test isnothing(r ∩ p)
-
-    # plane as first argument
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-    r = Ray(P3(0, 0, 0), V3(0, 2, 2))
-    @test intersection(p, r) |> type == Crossing
-    @test r ∩ p == p ∩ r == P3(0, 1, 1)
-  end
-
-  @testset "SegmentPlanes" begin
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-
-    # intersecting segment and plane
-    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
-    @test intersection(s, p) |> type == Crossing
-    @test s ∩ p == P3(0, 1, 1)
-
-    # intersecting segment and plane with λ ≈ 0
-    s = Segment(P3(0, 0, 1), P3(0, 2, 2))
-    @test intersection(s, p) |> type == Touching
-    @test s ∩ p == P3(0, 0, 1)
-
-    # intersecting segment and plane with λ ≈ 1
-    s = Segment(P3(0, 0, 2), P3(0, 2, 1))
-    @test intersection(s, p) |> type == Touching
-    @test s ∩ p == P3(0, 2, 1)
-
-    # segment contained within plane
-    s = Segment(P3(0, 0, 1), P3(0, -2, 1))
-    @test intersection(s, p) |> type == Overlapping
-    @test s ∩ p == s
-
-    # segment below plane, non-intersecting
-    s = Segment(P3(0, 0, 0), P3(0, -2, -2))
-    @test intersection(s, p) |> type == NotIntersecting
-    @test isnothing(s ∩ p)
-
-    # segment parallel to plane, offset, non-intersecting
-    s = Segment(P3(0, 0, -1), P3(0, -2, -1))
-    @test intersection(s, p) |> type == NotIntersecting
-    @test isnothing(s ∩ p)
-
-    # plane as first argument
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
-    @test intersection(p, s) |> type == Crossing
-    @test s ∩ p == p ∩ s == P3(0, 1, 1)
-
-    # type stability tests
-    s = Segment(P3(0, 0, 0), P3(0, 2, 2))
-    p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
-    @inferred someornone(s, p)
-  end
-
-  @testset "Boxes" begin
-    b1 = Box(P2(0, 0), P2(1, 1))
-    b2 = Box(P2(0.5, 0.5), P2(2, 2))
-    b3 = Box(P2(2, 2), P2(3, 3))
-    b4 = Box(P2(1, 1), P2(2, 2))
-    b5 = Box(P2(1.0, 0.5), P2(2, 2))
-    @test intersection(b1, b2) |> type == Overlapping
-    @test b1 ∩ b2 == Box(P2(0.5, 0.5), P2(1, 1))
-    @test intersection(b1, b3) |> type == NotIntersecting
-    @test b1 ∩ b3 === nothing
-    @test intersection(b1, b4) |> type == CornerTouching
-    @test b1 ∩ b4 == P2(1, 1)
-    @test intersection(b1, b5) |> type == Touching
-    @test b1 ∩ b5 == Box(P2(1.0, 0.5), P2(1, 1))
-
-    # type stability tests
-    b1 = Box(P2(0, 0), P2(1, 1))
-    b2 = Box(P2(0.5, 0.5), P2(2, 2))
-    @inferred someornone(b1, b2)
-
-    # Ray-Box intersection
-    b = Box(P3(0, 0, 0), P3(1, 1, 1))
-
-    r = Ray(P3(0, 0, 0), V3(1, 1, 1))
-    @test intersection(r, b) |> type == Crossing
-    @test r ∩ b == Segment(P3(0, 0, 0), P3(1, 1, 1))
-
-    r = Ray(P3(-0.5, 0, 0), V3(1.0, 1.0, 1.0))
-    @test intersection(r, b) |> type == Crossing
-    @test r ∩ b == Segment(P3(0.0, 0.5, 0.5), P3(0.5, 1.0, 1.0))
-
-    r = Ray(P3(3.0, 0.0, 0.5), V3(-1.0, 1.0, 0.0))
-    @test intersection(r, b) |> type == NotIntersecting
-
-    r = Ray(P3(2.0, 0.0, 0.5), V3(-1.0, 1.0, 0.0))
-    @test intersection(r, b) |> type == Touching
-    @test r ∩ b == P3(1.0, 1.0, 0.5)
-
-    # the ray on a face of the box, got NaN in calculation
-    r = Ray(P3(1.5, 0.0, 0.0), V3(-1.0, 1.0, 0.0))
-    @test intersection(r, b) |> type == Crossing
-    @test r ∩ b == Segment(P3(1.0, 0.5, 0.0), P3(0.5, 1.0, 0.0))
-  end
-
-  @testset "Lines" begin
-    # lines in 2D
-    l1 = Line(P2(0, 0), P2(1, 0))
-    l2 = Line(P2(-1, -1), P2(-1, 1))
-    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ P2(-1, 0)
-
-    l1 = Line(P2(0, 0), P2(1, 0))
-    l2 = Line(P2(0, 1), P2(1, 1))
-    @test l1 ∩ l2 === l2 ∩ l1 === nothing
-
-    l1 = Line(P2(0, 0), P2(1, 0))
-    l2 = Line(P2(1, 0), P2(2, 0))
-    @test l1 == l2
-    @test l1 ∩ l2 == l2 ∩ l1 == l1
-
-    # rounding errors
-    l1 = Line(P2(3.0, 1.0), P2(2.0, 2.0))
-    for k in 1:1000
-      Δ = k * atol(T)
-      l2 = Line(P2(1.5, 1.5 + Δ), P2(3.0, 1.5 + Δ))
-      p = P2(2.5 - Δ, 1.5 + Δ)
-      @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ p
-    end
-
-    # lines in 3D
-    # not in same plane
-    l1 = Line(P3(0, 0, 0), P3(1, 0, 0))
-    l2 = Line(P3(1, 1, 1), P3(1, 2, 1))
-    @test l1 ∩ l2 == l2 ∩ l1 === nothing
-
-    # in same plane but parallel
-    l1 = Line(P3(0, 0, 0), P3(1, 0, 0))
-    l2 = Line(P3(0, 1, 1), P3(1, 1, 1))
-    @test l1 ∩ l2 == l2 ∩ l1 === nothing
-
-    # in same plane and colinear
-    l1 = Line(P3(0, 0, 0), P3(1, 0, 0))
-    l2 = Line(P3(2, 0, 0), P3(3, 0, 0))
-    @test l1 ∩ l2 == l2 ∩ l1 == l1
-
-    # crossing in one point
-    l1 = Line(P3(1, 2, 3), P3(2, 1, 0))
-    l2 = Line(P3(1, 2, 3), P3(1, 1, 1))
-    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ P3(1, 2, 3)
-
-    # type stability tests
-    l1 = Line(P2(0, 0), P2(1, 0))
-    l2 = Line(P2(-1, -1), P2(-1, 1))
-    @inferred someornone(l1, l2)
-
-    p1, p2 = P2(0, 0), P2(1, 1)
-    p3, p4 = P2(1, 0), P2(0, 1)
-    @inferred Meshes.intersectparameters(p1, p2, p3, p4)
-    @inferred Meshes.intersectparameters(p1, p3, p2, p4)
-    @inferred Meshes.intersectparameters(p1, p2, p1, p2)
-
-    p1, p2 = P3(0, 0, 0), P3(1, 1, 1)
-    p3, p4 = P3(1, 0, 0), P3(0, 1, 1)
-    @inferred Meshes.intersectparameters(p1, p2, p3, p4)
-    @inferred Meshes.intersectparameters(p1, p3, p2, p4)
-    @inferred Meshes.intersectparameters(p1, p2, p1, p2)
   end
 
   @testset "hasintersect" begin
