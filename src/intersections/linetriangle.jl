@@ -4,12 +4,12 @@
 
 # The intersection type can be one of six types:
 # 
-# 1. CrossingRayTriangle - middle of ray intersects middle of triangle
-# 2. TouchingRayTriangle - origin of ray intersects middle of triangle
-# 3. CornerTouchingRayTriangle - origin of ray intersects corner of triangle
-# 4. EdgeTouchingRayTriangle - origin of ray intersects edge of triangle
-# 5. EdgeCrossingRayTriangle - middle of ray intersects edge of triangle
-# 6. CornerCrossingRayTriangle - middle of ray intersects corner of triangle
+# 1. Touching - origin of ray intersects middle of triangle
+# 2. EdgeTouching - origin of ray intersects edge of triangle
+# 3. CornerTouching - origin of ray intersects corner of triangle
+# 4. Crossing - middle of ray intersects middle of triangle
+# 5. EdgeCrossing - middle of ray intersects edge of triangle
+# 6. CornerCrossing - middle of ray intersects corner of triangle
 #
 # Möller, T. & Trumbore, B., 1997.
 # (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
@@ -33,13 +33,13 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
 
   if det < atol(T)
     # This ray is parallel to the plane of the triangle.
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   end
 
   # calculate u parameter and test bounds
   u = τ ⋅ p
   if u < -atol(T) || u > det
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   end
 
   q = τ × e₁
@@ -47,37 +47,37 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   # calculate v parameter and test bounds
   v = d ⋅ q
   if v < -atol(T) || u + v > det
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   end
 
   λ = (e₂ ⋅ q) * (one(T) / det)
 
   if λ < -atol(T)
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   end
 
   # assemble barycentric weights
   w = Vec(u, v, det - u - v)
 
   if any(isapprox.(o, vs, atol=atol(T)))
-    return @IT CornerTouchingRayTriangle r(λ) f
+    return @IT CornerTouching r(λ) f
   elseif isapprox(λ, zero(T), atol=atol(T))
     if all(>(zero(T)), w)
-      return @IT TouchingRayTriangle r(λ) f
+      return @IT Touching r(λ) f
     else
-      return @IT EdgeTouchingRayTriangle r(λ) f
+      return @IT EdgeTouching r(λ) f
     end
   end
 
   if count(x -> isapprox(x, zero(T), atol=atol(T)), w) == 1
-    return @IT EdgeCrossingRayTriangle r(λ) f
+    return @IT EdgeCrossing r(λ) f
   elseif count(x -> isapprox(x, det, atol=atol(T)), w) == 1
-    return @IT CornerCrossingRayTriangle r(λ) f
+    return @IT CornerCrossing r(λ) f
   end
 
   λ = clamp(λ, zero(T), typemax(T))
 
-  return @IT CrossingRayTriangle r(λ) f
+  return @IT Crossing r(λ) f
 end
 
 # Jiménez, J., Segura, R. and Feito, F. 2009.
@@ -99,7 +99,7 @@ function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
   if wᵥ > atol(T)
     # rejection 2
     if sᵥ > atol(T)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
 
     W₂ = A × D
@@ -107,24 +107,24 @@ function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
     # rejection 3
     if tᵥ < -atol(T)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
 
     uᵥ = -(W₂ ⋅ B)
 
     # rejection 4
     if uᵥ < -atol(T)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
 
     # rejection 5
     if wᵥ < (sᵥ + tᵥ + uᵥ)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
   elseif wᵥ < -atol(T)
     # rejection 2
     if sᵥ < -atol(T)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
 
     W₂ = A × D
@@ -132,19 +132,19 @@ function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
     # rejection 3
     if tᵥ > atol(T)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
 
     uᵥ = -(W₂ ⋅ B)
 
     # rejection 4
     if uᵥ > atol(T)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
 
     # rejection 5
     if wᵥ > (sᵥ + tᵥ + uᵥ)
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
   else
     if sᵥ > atol(T)
@@ -153,18 +153,18 @@ function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
       # rejection 3
       if tᵥ < -atol(T)
-        return @IT NoIntersection nothing f
+        return @IT NotIntersecting nothing f
       end
 
       uᵥ = -(W₂ ⋅ B)
 
       # rejection 4
       if uᵥ < -atol(T)
-        return @IT NoIntersection nothing f
+        return @IT NotIntersecting nothing f
       end
       # rejection 5
       if -sᵥ < (tᵥ + uᵥ)
-        return @IT NoIntersection nothing f
+        return @IT NotIntersecting nothing f
       end
     elseif sᵥ < -atol(T)
       W₂ = D × A
@@ -172,27 +172,27 @@ function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
       # rejection 3
       if tᵥ > atol(T)
-        return @IT NoIntersection nothing f
+        return @IT NotIntersecting nothing f
       end
 
       uᵥ = -(W₂ ⋅ B)
 
       # rejection 4
       if uᵥ > atol(T)
-        return @IT NoIntersection nothing f
+        return @IT NotIntersecting nothing f
       end
 
       # rejection 5
       if -sᵥ > (tᵥ + uᵥ)
-        return @IT NoIntersection nothing f
+        return @IT NotIntersecting nothing f
       end
     else
       # rejection 1, coplanar segment
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
   end
 
   λ = clamp(wᵥ / (wᵥ - sᵥ), zero(T), one(T))
 
-  return @IT IntersectingSegmentTriangle s(λ) f
+  return @IT Intersecting s(λ) f
 end

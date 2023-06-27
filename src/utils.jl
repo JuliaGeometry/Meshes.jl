@@ -98,13 +98,13 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   ps = Point{3,T}[]
   for t in mesh
     I = intersection(r, t)
-    if type(I) == CrossingRayTriangle
+    if type(I) == Crossing
       intersects = !intersects
-    elseif type(I) ∈ (EdgeTouchingRayTriangle, CornerTouchingRayTriangle, TouchingRayTriangle)
+    elseif type(I) ∈ (EdgeTouching, CornerTouching, Touching)
       return :ON
-    elseif type(I) == EdgeCrossingRayTriangle
+    elseif type(I) == EdgeCrossing
       edgecrosses += 1
-    elseif type(I) == CornerCrossingRayTriangle
+    elseif type(I) == CornerCrossing
       p = get(I)
       if !any(≈(p), ps)
         push!(ps, p)

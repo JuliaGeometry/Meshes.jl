@@ -20,67 +20,60 @@ function intersection(f, l::LineLike{T}, p::Plane{T}) where {T}
 
   if isapprox(b, zero(T), atol=atol(T))
     if isapprox(a, zero(T), atol=atol(T))
-      return @IT _overlapping(l) l f
+      return @IT Overlapping l f
     else
-      return @IT NoIntersection nothing f
+      return @IT NotIntersecting nothing f
     end
   else
     return _intersection(f, l, a / b)
   end
 end
 
-# Return appropriate type for a geometry overlapping with a `Plane`.
-# Ideally this would be a macro, but the geometry type isn't known at parse time,
-# so it is implemented via multiple-dispatch instead
-_overlapping(::Line) = OverlappingLinePlane
-_overlapping(::Ray) = OverlappingRayPlane
-_overlapping(::Segment) = OverlappingSegmentPlane
-
 # Intersection of a `Plane` and non-parallel `Line` given a line parameter `λ`.
-# As a line is infinite, a `CrossingLinePlane` will always be returned.
-_intersection(f, l::Line, λ) = @IT CrossingLinePlane l(λ) f
+# As a line is infinite, a `Crossing` will always be returned.
+_intersection(f, l::Line, λ) = @IT Crossing l(λ) f
 
 # Intersection of a `Plane` and non-parallel `Ray` given ray parameter `λ`.
 # 
 # Return types:
-#   λ < 0 ⟹ NoIntersection
-#   λ ≈ 0 ⟹ TouchingRayPlane
-#   λ > 0 ⟹ CrossingRayPlane
+#   λ < 0 ⟹ NotIntersecting
+#   λ ≈ 0 ⟹ Touching
+#   λ > 0 ⟹ Crossing
 function _intersection(f, r::Ray{3,T}, λ) where {T}
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapprox(λ, zero(T), atol=atol(T))
-    return @IT TouchingRayPlane r(zero(T)) f
+    return @IT Touching r(zero(T)) f
   end
 
   # if λ is out of bounds for the ray, then there is no intersection
   if (λ < zero(T))
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   else
-    return @IT CrossingRayPlane r(λ) f
+    return @IT Crossing r(λ) f
   end
 end
 
 # Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
 # 
 # Return types:
-#   λ < 0 or  λ > 1 ⟹ NoIntersection
-#   λ ≈ 0 or  λ ≈ 1 ⟹ TouchingSegmentPlane
-#   λ > 0 and λ < 1 ⟹ CrossingSegmentPlane
+#   λ < 0 or  λ > 1 ⟹ NotIntersecting
+#   λ ≈ 0 or  λ ≈ 1 ⟹ Touching
+#   λ > 0 and λ < 1 ⟹ Crossing
 function _intersection(f, s::Segment{3,T}, λ) where {T}
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapprox(λ, zero(T), atol=atol(T))
-    return @IT TouchingSegmentPlane s(zero(T)) f
+    return @IT Touching s(zero(T)) f
   end
 
   # if λ is approximately 1, set as so to prevent any domain errors
   if isapprox(λ, one(T), atol=atol(T))
-    return @IT TouchingSegmentPlane s(one(T)) f
+    return @IT Touching s(one(T)) f
   end
 
   # if λ is out of bounds for the segment, then there is no intersection
   if (λ < zero(T) || λ > one(T))
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   else
-    return @IT CrossingSegmentPlane s(λ) f
+    return @IT Crossing s(λ) f
   end
 end

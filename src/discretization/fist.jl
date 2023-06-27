@@ -83,7 +83,7 @@ function discretizewithin(ring::Ring{2}, method::FIST)
       for i in 1:n
         s1 = Segment(v[i - 1], v[i])
         s2 = Segment(v[i + 1], v[i + 2])
-        λ(I) = type(I) == CrossingSegments
+        λ(I) = type(I) == Crossing
         if intersection(λ, s1, s2)
           # 1. push a new triangle to 𝒯
           push!(𝒯, connect((inds[i], inds[i + 1], inds[i + 2]), Triangle))
@@ -147,7 +147,7 @@ function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
   isconvex = vexity(i) == :CONVEX
 
   # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
-  λ(I) = !(type(I) == CornerTouchingSegments || type(I) == NoIntersection)
+  λ(I) = !(type(I) == CornerTouching || type(I) == NotIntersecting)
   sᵢ = Segment(v[i - 1], v[i + 1])
   intersects = false
   for j in 1:nvertices(𝒫)

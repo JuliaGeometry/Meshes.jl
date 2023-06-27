@@ -4,10 +4,10 @@
 
 # The intersection type can be one of four types:
 # 
-# 1. overlap with non-zero measure
-# 2. intersect at one of the boundaries
-# 3. intersect at corner point
-# 4. do not overlap nor intersect
+# 1. overlap with non-zero measure (Overlapping -> Box)
+# 2. intersect at one of the facets (Touching -> Box)
+# 3. intersect at corner point (CornerTouching -> Point)
+# 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T}
   m1, M1 = coordinates.(extrema(b1))
   m2, M2 = coordinates.(extrema(b2))
@@ -18,12 +18,12 @@ function intersection(f, b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T}
 
   # branch on possible configurations
   if u ≺ v
-    return @IT OverlappingBoxes Box(u, v) f
+    return @IT Overlapping Box(u, v) f
   elseif u ≻ v
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   elseif isapprox(u, v, atol=atol(T))
-    return @IT CornerTouchingBoxes u f
+    return @IT CornerTouching u f
   else
-    return @IT FaceTouchingBoxes Box(u, v) f
+    return @IT Touching Box(u, v) f
   end
 end

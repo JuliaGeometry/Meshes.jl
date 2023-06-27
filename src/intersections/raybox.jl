@@ -23,13 +23,13 @@ function intersection(f, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue
 
-    (tmin > imax || imin > tmax) && return @IT NoIntersection nothing f
+    (tmin > imax || imin > tmax) && return @IT NotIntersecting nothing f
 
     tmin = max(tmin, imin)
     tmax = min(tmax, imax)
   end
 
-  tmin ≈ tmax && return @IT TouchingRayBox r(tmin) f
+  tmin ≈ tmax && return @IT Touching r(tmin) f
 
-  return @IT CrossingRayBox Segment(r(tmin), r(tmax)) f
+  return @IT Crossing Segment(r(tmin), r(tmax)) f
 end

@@ -9,81 +9,24 @@ The different types of intersection that may occur between geometries.
 Type `IntersectionType` in a Julia session to see the full list.
 """
 @enum IntersectionType begin
-  # no intersection
-  NoIntersection
+  # crossing types
+  Crossing
+  CornerCrossing
+  EdgeCrossing
 
-  # point-geometry intersection
-  IntersectingPoint
+  # touching types
+  Touching
+  CornerTouching
+  EdgeTouching
 
-  # segment-segment intersection
-  CrossingSegments
-  MidTouchingSegments
-  CornerTouchingSegments
-  OverlappingSegments
+  # overlapping types
+  Overlapping
+  PosOverlapping
+  NegOverlapping
 
-  # segment-ray intersection
-  CrossingSegmentRay
-  MidTouchingSegmentRay
-  CornerTouchingSegmentRay
-  OverlappingSegmentRay
-
-  # segment-line intersection
-  CrossingSegmentLine
-  TouchingSegmentLine
-  OverlappingSegmentLine
-
-  # ray-ray intersection
-  CrossingRays
-  MidTouchingRays
-  CornerTouchingRays
-  OverlappingAgreeingRays
-  OverlappingOpposingRays
-
-  # ray-line intersection
-  CrossingRayLine
-  TouchingRayLine
-  OverlappingRayLine
-
-  # line-line intersection
-  CrossingLines
-  OverlappingLines
-
-  # ray-box intersection
-  CrossingRayBox
-  TouchingRayBox
-
-  # segment-triangle intersection
-  IntersectingSegmentTriangle
-
-  # ray-triangle intersection
-  CrossingRayTriangle
-  TouchingRayTriangle
-  CornerTouchingRayTriangle
-  CornerCrossingRayTriangle
-  EdgeCrossingRayTriangle
-  EdgeTouchingRayTriangle
-
-  # line-plane intersection
-  CrossingLinePlane
-  OverlappingLinePlane
-
-  # ray-plane intersection
-  CrossingRayPlane
-  TouchingRayPlane
-  OverlappingRayPlane
-
-  # segment-plane intersection
-  CrossingSegmentPlane
-  TouchingSegmentPlane
-  OverlappingSegmentPlane
-
-  # box-box intersection
-  OverlappingBoxes
-  FaceTouchingBoxes
-  CornerTouchingBoxes
-
-  # domain intersection
-  IntersectingGeometries
+  # no much information
+  NotIntersecting
+  Intersecting
 end
 
 """
@@ -161,6 +104,8 @@ intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 # IMPLEMENTATIONS
 # ----------------
 
+# order of geometries according to following convention:
+# https://github.com/JuliaGeometry/Meshes.jl/issues/325
 include("intersections/points.jl")
 include("intersections/lines.jl")
 include("intersections/lineplane.jl")

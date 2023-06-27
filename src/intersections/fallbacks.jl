@@ -17,8 +17,8 @@ function intersection(f, d₁::Domain{Dim,T}, d₂::Domain{Dim,T}) where {Dim,T}
 
   # return intersection
   if isempty(gs)
-    return @IT NoIntersection nothing f
+    return @IT NotIntersecting nothing f
   else
-    return @IT IntersectingGeometries Multi(gs) f
+    return @IT Intersecting Multi(gs) f
   end
 end
