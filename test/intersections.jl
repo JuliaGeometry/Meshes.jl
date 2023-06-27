@@ -806,7 +806,7 @@
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(1.0, 1.0, 1.0))
     @test intersection(r, o) |> type == Intersecting
-    @test r ∩ o ≈ Multi([P3(0.0, 0.0, 0.0)])
+    @test r ∩ o == PointSet([P3(0.0, 0.0, 0.0)])
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(-1.0, -1.0, -1.0))
     @test intersection(r, o) |> type == NotIntersecting
