@@ -2,6 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-intersection(f, p₁::Point, p₂::Point) = p₁ == p₂ ? (@IT Intersecting p₁ f) : (@IT NotIntersecting nothing f)
+intersection(f, point₁::Point, point₂::Point) = point₁ == point₂ ? (@IT Intersecting point₁ f) : (@IT NotIntersecting nothing f)
 
-intersection(f, p::Point, g::Geometry) = p ∈ g ? (@IT Intersecting p f) : (@IT NotIntersecting nothing f)
+intersection(f, point::Point, geom::Geometry) = point ∈ geom ? (@IT Intersecting point f) : (@IT NotIntersecting nothing f)

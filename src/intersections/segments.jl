@@ -174,9 +174,9 @@ end
 
 # Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
-  vₛ = vertices(s)
-  vₜ = vertices(t)
+function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
+  vₛ = vertices(seg)
+  vₜ = vertices(tri)
 
   A = vₛ[1] - vₜ[3]
   B = vₜ[1] - vₜ[3]
@@ -286,5 +286,5 @@ function intersection(f, s::Segment{3,T}, t::Triangle{3,T}) where {T}
 
   λ = clamp(wᵥ / (wᵥ - sᵥ), zero(T), one(T))
 
-  return @IT Intersecting s(λ) f
+  return @IT Intersecting seg(λ) f
 end

@@ -97,10 +97,10 @@ end
 
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
-function intersection(f, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
-  invdir = one(T) ./ (r(1) - r(0))
-  lo, up = coordinates.(extrema(b))
-  orig = coordinates(r(0))
+function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
+  invdir = one(T) ./ (ray(1) - ray(0))
+  lo, up = coordinates.(extrema(box))
+  orig = coordinates(ray(0))
 
   tmin = zero(T)
   tmax = typemax(T)
@@ -122,9 +122,9 @@ function intersection(f, r::Ray{Dim,T}, b::Box{Dim,T}) where {Dim,T}
     tmax = min(tmax, imax)
   end
 
-  tmin ≈ tmax && return @IT Touching r(tmin) f
+  tmin ≈ tmax && return @IT Touching ray(tmin) f
 
-  return @IT Crossing Segment(r(tmin), r(tmax)) f
+  return @IT Crossing Segment(ray(tmin), ray(tmax)) f
 end
 
 # The intersection type can be one of six types:
@@ -138,10 +138,10 @@ end
 #
 # Möller, T. & Trumbore, B., 1997.
 # (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
-function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
-  vs = vertices(t)
-  o = r(0)
-  d = r(1) - r(0)
+function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
+  vs = vertices(tri)
+  o = ray(0)
+  d = ray(1) - ray(0)
 
   e₁ = vs[3] - vs[1]
   e₂ = vs[2] - vs[1]
@@ -185,24 +185,24 @@ function intersection(f, r::Ray{3,T}, t::Triangle{3,T}) where {T}
   w = Vec(u, v, det - u - v)
 
   if any(isapprox.(o, vs, atol=atol(T)))
-    return @IT CornerTouching r(λ) f
+    return @IT CornerTouching ray(λ) f
   elseif isapprox(λ, zero(T), atol=atol(T))
     if all(>(zero(T)), w)
-      return @IT Touching r(λ) f
+      return @IT Touching ray(λ) f
     else
-      return @IT EdgeTouching r(λ) f
+      return @IT EdgeTouching ray(λ) f
     end
   end
 
   if count(x -> isapprox(x, zero(T), atol=atol(T)), w) == 1
-    return @IT EdgeCrossing r(λ) f
+    return @IT EdgeCrossing ray(λ) f
   elseif count(x -> isapprox(x, det, atol=atol(T)), w) == 1
-    return @IT CornerCrossing r(λ) f
+    return @IT CornerCrossing ray(λ) f
   end
 
   λ = clamp(λ, zero(T), typemax(T))
 
-  return @IT Crossing r(λ) f
+  return @IT Crossing ray(λ) f
 end
 
-intersection(f, r::Ray, p::Polygon) = intersection(f, GeometrySet([r]), discretize(p))
+intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), discretize(p))

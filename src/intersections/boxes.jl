@@ -8,9 +8,9 @@
 # 2. intersect at one of the facets (Touching -> Box)
 # 3. intersect at corner point (CornerTouching -> Point)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, b1::Box{Dim,T}, b2::Box{Dim,T}) where {Dim,T}
-  m1, M1 = coordinates.(extrema(b1))
-  m2, M2 = coordinates.(extrema(b2))
+function intersection(f, box₁::Box{Dim,T}, box₂::Box{Dim,T}) where {Dim,T}
+  m1, M1 = coordinates.(extrema(box₁))
+  m2, M2 = coordinates.(extrema(box₂))
 
   # relevant vertices
   u = Point(max.(m1, m2))
