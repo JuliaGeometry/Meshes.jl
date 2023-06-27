@@ -1,7 +1,7 @@
 # Intersection
 
-Intersections are implemented for various geometries such
-as [`Segment`](@ref), [`Line`](@ref), and [`Box`](@ref):
+Intersections are implemented for various geometries and domains
+with the ∩ (`\cap`) operator:
 
 ```@example intersection
 using Meshes
@@ -40,9 +40,9 @@ in all cases:
 
 ```@example intersection
 intersection(s1, s2) do I
-  if type(I) == CrossingSegments
+  if type(I) == Crossing
     return 1
-  elseif type(I) == OverlappingSegments
+  elseif type(I) == Overlapping
     return 2
   else
     return 3
