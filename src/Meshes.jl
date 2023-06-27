@@ -372,6 +372,7 @@ export
   sample,
 
   # intersections
+  IntersectionType,
   Crossing,
   CornerCrossing,
   EdgeCrossing,
