@@ -41,7 +41,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
         M = centroid(Segment(A, B))
         outer = Ring(A, M, B)
       end
-      inners = filter(c -> nvertices(c) > 2, inners)
+      inners = filter(r -> nvertices(r) > 2, inners)
     end
 
     new(outer, inners)
