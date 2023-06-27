@@ -107,12 +107,12 @@ intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 # order of geometries according to following convention:
 # https://github.com/JuliaGeometry/Meshes.jl/issues/325
 include("intersections/points.jl")
+include("intersections/segments.jl")
+include("intersections/rays.jl")
 include("intersections/lines.jl")
-include("intersections/lineplane.jl")
-include("intersections/linetriangle.jl")
-include("intersections/raybox.jl")
+include("intersections/planes.jl")
 include("intersections/boxes.jl")
-include("intersections/fallbacks.jl")
+include("intersections/domains.jl")
 
 """
     hasintersect(g₁, g₂)

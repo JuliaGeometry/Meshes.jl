@@ -2,8 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-intersection(f, r::Ray, p::Polygon) = intersection(f, GeometrySet([r]), discretize(p))
-
 function intersection(f, d₁::Domain{Dim,T}, d₂::Domain{Dim,T}) where {Dim,T}
   # loop over all geometries
   gs = Geometry{Dim,T}[]
