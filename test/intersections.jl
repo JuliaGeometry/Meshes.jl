@@ -1040,6 +1040,15 @@
     @test isnothing(r ∩ o)
   end
 
+  @testset "Domains" begin
+    grid = CartesianGrid{T}(4, 4)
+    pset = PointSet(centroid.(grid))
+    ball = Ball(P2(0, 0), T(1))
+    @test pset ∩ pset == pset
+    @test pset ∩ grid == grid ∩ pset == pset
+    @test pset ∩ ball == ball ∩ pset == PointSet(P2(0.5, 0.5))
+  end
+
   @testset "hasintersect" begin
     t = Triangle(P2[(0, 0), (1, 0), (0, 1)])
     q = Quadrangle(P2[(1, 1), (2, 1), (2, 2), (1, 2)])
