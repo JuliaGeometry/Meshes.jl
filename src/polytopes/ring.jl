@@ -39,8 +39,11 @@ Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 # do not change which vertex comes first for closed chains
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ring{Dim,T}}) where {Dim,T} =
-  Ring(rand(rng, Point{Dim,T}, rand(3:50)))
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ring{Dim,T}}) where {Dim,T}
+  v = rand(rng, Point{Dim,T}, rand(3:50))
+  first(v) == last(v) && pop!(v)
+  Ring(v)
+end
 
 """
     windingnumber(point, ring)
