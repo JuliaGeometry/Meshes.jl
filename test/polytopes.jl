@@ -647,6 +647,11 @@
     @test t(T(0), T(0), T(1)) ≈ P3(0, 0, 1)
     @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
 
+    t = rand(Tetrahedron{3,T})
+    @test t isa Tetrahedron
+    @test embeddim(t) == 3
+    @test coordtype(t) === T
+
     @test paramdim(Hexahedron) == 3
     @test nvertices(Hexahedron) == 8
     @test isperiodic(Hexahedron) == (false, false, false)
@@ -683,6 +688,11 @@
     @test nvertices(m) == 8
     @test nelements(m) == 6
 
+    h = rand(Hexahedron{3,T})
+    @test h isa Hexahedron
+    @test embeddim(h) == 3
+    @test coordtype(h) === T
+
     @test paramdim(Pyramid) == 3
     @test nvertices(Pyramid) == 5
 
@@ -696,5 +706,10 @@
     @test m[3] isa Triangle
     @test m[4] isa Triangle
     @test m[5] isa Triangle
+
+    p = rand(Pyramid{3,T})
+    @test p isa Pyramid
+    @test embeddim(p) == 3
+    @test coordtype(p) === T
   end
 end

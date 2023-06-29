@@ -39,3 +39,6 @@ function (h::Hexahedron)(u, v, w)
     u * v * w * A8
   )
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Hexahedron{Dim,T}}) where {Dim,T} =
+  Hexahedron(rand(rng, Point{Dim,T}, 8))
