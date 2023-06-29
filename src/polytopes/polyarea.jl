@@ -112,3 +112,6 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
     print(io, io_lines(rings[2:end], "    "))
   end
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim,T}}) where {Dim,T} =
+  PolyArea(rand(rng, Ring{Dim,T}))
