@@ -53,6 +53,15 @@
     @test boundary(s) == PointSet([P3(0, 0, 0), P3(1, 1, 1)])
     @test perimeter(s) == zero(T)
     @test center(s) == Point(0.5, 0.5, 0.5)
+
+    s = rand(Segment{2,T})
+    @test s isa Segment
+    @test embeddim(s) == 2
+    @test coordtype(s) === T
+    s = rand(Segment{3,T})
+    @test s isa Segment
+    @test embeddim(s) == 3
+    @test coordtype(s) === T
   end
 
   @testset "Ropes/Rings" begin
@@ -195,15 +204,42 @@
       @test nvertices(ur1) == 17
       @test nvertices(ur2) == 17
     end
+
+    r = rand(Rope{2,T})
+    @test r isa Rope
+    @test embeddim(r) == 2
+    @test coordtype(r) === T
+    r = rand(Rope{3,T})
+    @test r isa Rope
+    @test embeddim(r) == 3
+    @test coordtype(r) === T
+
+    r = rand(Ring{2,T})
+    @test r isa Ring
+    @test embeddim(r) == 2
+    @test coordtype(r) === T
+    r = rand(Ring{3,T})
+    @test r isa Ring
+    @test embeddim(r) == 3
+    @test coordtype(r) === T
   end
 
   @testset "Ngons" begin
     @test paramdim(Ngon) == 2
     NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
     NVERT = 3:10
-    for i in 1:length(NGONS)
-      @test paramdim(NGONS[i]) == 2
-      @test nvertices(NGONS[i]) == NVERT[i]
+    for (i, NGON) in enumerate(NGONS)
+      @test paramdim(NGON) == 2
+      @test nvertices(NGON) == NVERT[i]
+
+      n = rand(NGON{2,T})
+      @test n isa NGON
+      @test embeddim(n) == 2
+      @test coordtype(n) === T
+      n = rand(NGON{3,T})
+      @test n isa NGON
+      @test embeddim(n) == 3
+      @test coordtype(n) === T
     end
 
     # ---------
@@ -569,6 +605,15 @@
     @test !isconvex(poly2)
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)])
     @test !isconvex(poly)
+
+    p = rand(PolyArea{2,T})
+    @test p isa PolyArea
+    @test embeddim(p) == 2
+    @test coordtype(p) === T
+    p = rand(PolyArea{3,T})
+    @test p isa PolyArea
+    @test embeddim(p) == 3
+    @test coordtype(p) === T
 
     # should not repeat the first vertex manually
     @test_throws ArgumentError PolyArea(P2[(0, 0), (0, 0)])
