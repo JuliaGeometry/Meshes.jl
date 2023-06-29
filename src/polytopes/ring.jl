@@ -41,7 +41,9 @@ Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
 function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ring{Dim,T}}) where {Dim,T}
   v = rand(rng, Point{Dim,T}, rand(3:50))
-  first(v) == last(v) && pop!(v)
+  while first(v) == last(v)
+    v = rand(rng, Point{Dim,T}, rand(3:50))
+  end
   Ring(v)
 end
 
