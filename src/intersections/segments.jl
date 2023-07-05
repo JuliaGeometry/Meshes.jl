@@ -40,9 +40,9 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     elseif (λc == l₁ && λd > l₁) || (λd == l₁ && λc > l₁)
       return @IT CornerTouching b f # CASE 3
     else
-      s₁, s₂ = _sort4vals(zero(T), one(T), λc / l₁, λd / l₁)
-      p₁ = seg₁(s₁)
-      p₂ = seg₁(s₂)
+      t₁, t₂ = _sort4vals(zero(T), one(T), λc / l₁, λd / l₁)
+      p₁ = seg₁(t₁)
+      p₂ = seg₁(t₂)
       return @IT Overlapping Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel
