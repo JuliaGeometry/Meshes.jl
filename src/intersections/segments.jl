@@ -292,13 +292,13 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
   return @IT Intersecting seg(λ) f
 end
 
-# sorts four numbers and returns the 2nd and 3rd
-function _sort4vals(a::T, b::T, c::T, d::T) where {T}
-  temp = zero(T)
-  a > b && (temp = a; a = b; b = temp)
-  c > d && (temp = c; c = d; d = temp)
-  a > c && (temp = a; a = c; c = temp)
-  b > d && (temp = b; b = d; d = temp)
-  b > c && (temp = b; b = c; c = temp)
+# sorts four numbers using a sorting network 
+# and returns the 2nd and 3rd
+function _sort4vals(a, b, c, d)
+  a > c && ((a, c) = (c, a))
+  b > d && ((b, d) = (d, b))
+  a > b && ((a, b) = (b, a))
+  c > d && ((c, d) = (d, c))
+  b > c && ((b, c) = (c, b))
   b, c
 end

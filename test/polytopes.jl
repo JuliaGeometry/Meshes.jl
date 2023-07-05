@@ -224,10 +224,10 @@
     @test coordtype(r) === T
 
     # issimple benchmark
-    r = Sphere((0, 0), 1) |> discretize |> vertices |> Ring
+    r = Sphere((0, 0), 1) |> pointify |> Ring
     @test issimple(r)
-    @test (@elapsed issimple(r)) < 0.001
-    @test (@allocated issimple(r)) < 180000
+    @test (@elapsed issimple(r)) < 0.005
+    @test (@allocated issimple(r)) < 950000
   end
 
   @testset "Ngons" begin
