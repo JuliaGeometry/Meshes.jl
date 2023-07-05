@@ -224,7 +224,7 @@
     @test coordtype(r) === T
 
     # issimple benchmark
-    r = Sphere((0, 0), 1) |> pointify |> Ring
+    r = Sphere(P2(0, 0), T(1)) |> pointify |> Ring
     @test issimple(r)
     @test @elapsed(issimple(r)) < 0.02
     @test @allocated(issimple(r)) < 950000
