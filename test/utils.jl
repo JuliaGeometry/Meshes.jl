@@ -33,9 +33,9 @@
     @test u × v ≈ n ./ norm(n)
   end
 
-  @test mayberound(1.1, 1, 0.2) ≈ 1
-  @test mayberound(1.1, 1, 0.10000000000000001) ≈ 1.1
-  @test mayberound(1.1, 1, 0.05) ≈ 1.1
+  @test mayberound(1.1, 1.0, 0.2) ≈ 1.0
+  @test mayberound(1.1, 1.0, 0.10000000000000001) ≈ 1.1
+  @test mayberound(1.1, 1.0, 0.05) ≈ 1.1
 
   # point in mesh
   points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, 0.25, 1)]

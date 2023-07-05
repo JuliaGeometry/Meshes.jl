@@ -26,9 +26,9 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     # find parameters λc and λd for points c and d in seg₁
     # use dimension with largest vector component to avoid division by zero
     v = b₀ - a
+    i = last(findmax(abs, v))
     vc = c - a
     vd = d - a
-    _, i = findmax(abs, v)
     λc = vc[i] / v[i]
     λd = vd[i] / v[i]
     λc = mayberound(mayberound(λc, zero(T)), l₁)
