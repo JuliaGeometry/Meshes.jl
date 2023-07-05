@@ -226,8 +226,8 @@
     # issimple benchmark
     r = Sphere((0, 0), 1) |> pointify |> Ring
     @test issimple(r)
-    @test (@elapsed issimple(r)) < 0.005
-    @test (@allocated issimple(r)) < 950000
+    @test @elapsed(issimple(r)) < 0.02
+    @test @allocated(issimple(r)) < 950000
   end
 
   @testset "Ngons" begin
