@@ -435,6 +435,11 @@
     @test l₁ ∩ s₆ ≈ s₆ ∩ l₁ ≈ s₆
     @test intersection(l₁, s₇) |> type == NotIntersecting # CASE 4
     @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing
+
+    # utils
+    @test Meshes._sort4vals(2.5, 1.4, 1.1, 2.0) == (1.4, 2.0)
+    @test Meshes._sort4vals(2.0, 1.1, 1.4, 2.5) == (1.4, 2.0)
+    @test Meshes._sort4vals(2.0, 2.5, 1.1, 1.4) == (1.4, 2.0)
   end
 
   @testset "Rays" begin

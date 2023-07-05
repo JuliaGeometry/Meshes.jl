@@ -212,11 +212,11 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
-  tol = atol(T)
-  rₐ = sum(>(tol), sum(abs, R, dims=2))
+  τ = atol(T)
+  rₐ = sum(>(τ), sum(abs, R, dims=2))
 
   # calculate the rank of the rectangular matrix
-  r = sum(>(tol), sum(abs, @view(R[:, 1:2]), dims=2))
+  r = sum(>(τ), sum(abs, @view(R[:, 1:2]), dims=2))
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
@@ -227,19 +227,4 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
   end
 
   λ₁, λ₂, r, rₐ
-end
-
-"""
-    overlapparameters(a, b, c, d)
-
-Sorts four numbers and returns the 2nd and 3rd.
-"""
-function overlapparameters(a::T, b::T, c::T, d::T) where {T}
-  temp = zero(T)
-  a > b && (temp = a; a = b; b = temp)
-  c > d && (temp = c; c = d; d = temp)
-  a > c && (temp = a; a = c; c = temp)
-  b > d && (temp = b; b = d; d = temp)
-  b > c && (temp = b; b = c; c = temp)
-  b, c
 end

@@ -40,9 +40,9 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     elseif (λc == l₁ && λd > l₁) || (λd == l₁ && λc > l₁)
       return @IT CornerTouching b f # CASE 3
     else
-      o₁, o₂ = overlapparameters(zero(T), one(T), λc / l₁, λd / l₁)
-      p₁ = seg₁(o₁)
-      p₂ = seg₁(o₂)
+      s₁, s₂ = _sort4vals(zero(T), one(T), λc / l₁, λd / l₁)
+      p₁ = seg₁(s₁)
+      p₂ = seg₁(s₂)
       return @IT Overlapping Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel
@@ -290,4 +290,15 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
   λ = clamp(wᵥ / (wᵥ - sᵥ), zero(T), one(T))
 
   return @IT Intersecting seg(λ) f
+end
+
+# sorts four numbers and returns the 2nd and 3rd
+function _sort4vals(a::T, b::T, c::T, d::T) where {T}
+  temp = zero(T)
+  a > b && (temp = a; a = b; b = temp)
+  c > d && (temp = c; c = d; d = temp)
+  a > c && (temp = a; a = c; c = temp)
+  b > d && (temp = b; b = d; d = temp)
+  b > c && (temp = b; b = c; c = temp)
+  b, c
 end
