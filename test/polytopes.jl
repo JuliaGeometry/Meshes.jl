@@ -227,7 +227,7 @@
     r = Sphere((0, 0), 1) |> discretize |> vertices |> Ring
     @test issimple(r)
     @test (@elapsed issimple(r)) < 0.001
-    @test (@allocations issimple(r)) < 5100
+    @test (@allocated issimple(r)) < 180000
   end
 
   @testset "Ngons" begin
