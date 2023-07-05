@@ -26,8 +26,11 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     # find parameters λc and λd for points c and d in seg₁
     # use dimension with largest vector component to avoid division by zero
     v = b₀ - a
-    i = argmax(abs.(v))
-    λc, λd = ((c - a)[i], (d - a)[i]) ./ v[i]
+    i = argmax(abs, v)
+    vc = c - a
+    vd = d - a
+    λc = vc[i] / v[i]
+    λd = vd[i] / v[i]
     λc = mayberound(mayberound(λc, zero(T)), l₁)
     λd = mayberound(mayberound(λd, zero(T)), l₁)
     if (λc > l₁ && λd > l₁) || (λc < 0 && λd < 0)
@@ -37,9 +40,9 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     elseif (λc == l₁ && λd > l₁) || (λd == l₁ && λc > l₁)
       return @IT CornerTouching b f # CASE 3
     else
-      params = sort([0, 1, λc / l₁, λd / l₁])
-      p₁ = seg₁(params[2])
-      p₂ = seg₁(params[3])
+      o₁, o₂ = overlapparameters(zero(T), one(T), λc / l₁, λd / l₁)
+      p₁ = seg₁(o₁)
+      p₂ = seg₁(o₂)
       return @IT Overlapping Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel

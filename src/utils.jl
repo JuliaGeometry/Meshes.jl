@@ -177,7 +177,7 @@ end
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-function mayberound(λ::T, x, atol=atol(T)) where {T}
+function mayberound(λ::T, x::T, atol=atol(T)) where {T}
   isapprox(λ, x, atol=atol) ? x : λ
 end
 
@@ -212,17 +212,34 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
-  rₐ = sum(sum(abs, R, dims=2) .> atol(T))
+  tol = atol(T)
+  rₐ = sum(>(tol), sum(abs, R, dims=2))
 
   # calculate the rank of the rectangular matrix
-  r = sum(sum(abs, R[:, 1:2], dims=2) .> atol(T))
+  r = sum(>(tol), sum(abs, @view(R[:, 1:2]), dims=2))
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
     λ = A \ y
+    λ₁, λ₂ = λ[1], λ[2]
   else # parallel or collinear
-    λ = SVector(zero(T), zero(T))
+    λ₁, λ₂ = zero(T), zero(T)
   end
 
-  λ[1], λ[2], r, rₐ
+  λ₁, λ₂, r, rₐ
+end
+
+"""
+    overlapparameters(a, b, c, d)
+
+Sorts four numbers and returns the 2nd and 3rd.
+"""
+function overlapparameters(a::T, b::T, c::T, d::T) where {T}
+  temp = zero(T)
+  a > b && (temp = a; a = b; b = temp)
+  c > d && (temp = c; c = d; d = temp)
+  a > c && (temp = a; a = c; c = temp)
+  b > d && (temp = b; b = d; d = temp)
+  b > c && (temp = b; b = c; c = temp)
+  b, c
 end

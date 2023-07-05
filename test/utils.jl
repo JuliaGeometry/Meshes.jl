@@ -91,4 +91,9 @@
   @inferred Meshes.intersectparameters(p1, p2, p3, p4)
   @inferred Meshes.intersectparameters(p1, p3, p2, p4)
   @inferred Meshes.intersectparameters(p1, p2, p1, p2)
+
+  # overlap parameters
+  @test Meshes.overlapparameters(2.5, 1.4, 1.1, 2.0) == (1.4, 2.0)
+  @test Meshes.overlapparameters(2.0, 1.1, 1.4, 2.5) == (1.4, 2.0)
+  @test Meshes.overlapparameters(2.0, 2.5, 1.1, 1.4) == (1.4, 2.0)
 end
