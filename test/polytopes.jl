@@ -222,6 +222,12 @@
     @test r isa Ring
     @test embeddim(r) == 3
     @test coordtype(r) === T
+
+    # issimple benchmark
+    r = Sphere(P2(0, 0), T(1)) |> pointify |> Ring
+    @test issimple(r)
+    @test @elapsed(issimple(r)) < 0.02
+    @test @allocated(issimple(r)) < 950000
   end
 
   @testset "Ngons" begin

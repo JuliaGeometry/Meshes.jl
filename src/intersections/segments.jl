@@ -26,8 +26,11 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     # find parameters λc and λd for points c and d in seg₁
     # use dimension with largest vector component to avoid division by zero
     v = b₀ - a
-    i = argmax(abs.(v))
-    λc, λd = ((c - a)[i], (d - a)[i]) ./ v[i]
+    i = last(findmax(abs, v))
+    vc = c - a
+    vd = d - a
+    λc = vc[i] / v[i]
+    λd = vd[i] / v[i]
     λc = mayberound(mayberound(λc, zero(T)), l₁)
     λd = mayberound(mayberound(λd, zero(T)), l₁)
     if (λc > l₁ && λd > l₁) || (λc < 0 && λd < 0)
@@ -37,9 +40,9 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
     elseif (λc == l₁ && λd > l₁) || (λd == l₁ && λc > l₁)
       return @IT CornerTouching b f # CASE 3
     else
-      params = sort([0, 1, λc / l₁, λd / l₁])
-      p₁ = seg₁(params[2])
-      p₂ = seg₁(params[3])
+      t₁, t₂ = _sort4vals(zero(T), one(T), λc / l₁, λd / l₁)
+      p₁ = seg₁(t₁)
+      p₂ = seg₁(t₂)
       return @IT Overlapping Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel
@@ -287,4 +290,15 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
   λ = clamp(wᵥ / (wᵥ - sᵥ), zero(T), one(T))
 
   return @IT Intersecting seg(λ) f
+end
+
+# sorts four numbers using a sorting network 
+# and returns the 2nd and 3rd
+function _sort4vals(a, b, c, d)
+  a > c && ((a, c) = (c, a))
+  b > d && ((b, d) = (d, b))
+  a > b && ((a, b) = (b, a))
+  c > d && ((c, d) = (d, c))
+  b > c && ((b, c) = (c, b))
+  b, c
 end
