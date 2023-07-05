@@ -222,6 +222,12 @@
     @test r isa Ring
     @test embeddim(r) == 3
     @test coordtype(r) === T
+
+    # issimple benchmark
+    r = Sphere((0, 0), 1) |> discretize |> vertices |> Ring
+    @test issimple(r)
+    @test (@elapsed issimple(r)) < 0.001
+    @test (@allocations issimple(r)) < 5100
   end
 
   @testset "Ngons" begin
