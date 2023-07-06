@@ -87,14 +87,16 @@ intersect at end points.
 function issimple(c::Chain)
   λ(I) = !(type(I) == CornerTouching || type(I) == NotIntersecting)
   ss = collect(segments(c))
-  for i in 1:length(ss)
+  result = Threads.Atomic{Bool}(true)
+  Threads.@threads for i in 1:length(ss)
     for j in (i + 1):length(ss)
       if intersection(λ, ss[i], ss[j])
-        return false
+        result[] || break
+        result[] = false
       end
     end
   end
-  true
+  result[]
 end
 
 """
