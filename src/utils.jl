@@ -216,7 +216,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
   rₐ = sum(>(τ), sum(abs, R, dims=2))
 
   # calculate the rank of the rectangular matrix
-  r = sum(>(τ), sum(abs, @view(R[:, 1:2]), dims=2))
+  r = sum(>(τ), sum(abs, view(R, :, 1:2), dims=2))
 
   # calculate parameters of intersection or closest point
   if r ≥ 2
