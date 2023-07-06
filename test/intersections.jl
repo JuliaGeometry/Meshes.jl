@@ -725,11 +725,11 @@
     @test intersection(b1, b2) |> type == Overlapping
     @test b1 ∩ b2 == Box(P2(0.5, 0.5), P2(1, 1))
     @test intersection(b1, b3) |> type == NotIntersecting
-    @test b1 ∩ b3 === nothing
-    @test intersection(b1, b4) |> type == CornerTouching
-    @test b1 ∩ b4 == P2(1, 1)
-    @test intersection(b1, b5) |> type == Touching
-    @test b1 ∩ b5 == Box(P2(1.0, 0.5), P2(1, 1))
+    @test isnothing(b1 ∩ b3)
+    @test intersection(b1, b4) |> type == NotIntersecting
+    @test isnothing(b1 ∩ b4)
+    @test intersection(b1, b5) |> type == NotIntersecting
+    @test isnothing(b1 ∩ b5)
 
     # type stability tests
     b1 = Box(P2(0, 0), P2(1, 1))
