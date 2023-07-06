@@ -761,6 +761,12 @@
     @test intersection(b1, b5) |> type == Touching
     @test b1 ∩ b5 == Box(P2(0.5, 0.0), P2(1.0, 0.0))
 
+    # tricky example with zero volume 3D boxes
+    b1 = Box(P3(0, 0, 0), P3(2, 2, 0))
+    b2 = Box(P3(3, 0, 0), P3(5, 2, 0))
+    @test intersection(b1, b2) |> type == NotIntersecting
+    @test isnothing(b1 ∩ b2)
+
     # type stability tests
     b1 = Box(P2(0, 0), P2(1, 1))
     b2 = Box(P2(0.5, 0.5), P2(2, 2))
