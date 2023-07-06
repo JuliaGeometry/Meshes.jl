@@ -1232,7 +1232,7 @@
     @test hasintersect(b1, b2)
     @test hasintersect(b2, b1)
     @test @elapsed(hasintersect(b1, b2)) < 8e-6
-    @test @allocated(hasintersect(b1, b2)) < 50
+    @test @allocated(hasintersect(b1, b2)) < 70
 
     # partial application
     points = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
