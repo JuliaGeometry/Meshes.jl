@@ -160,7 +160,11 @@ hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c
 
 hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
 
+hasintersect(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
+
 function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
+  hasintersect(boundingbox(g₁), boundingbox(g₂)) || return false
+
   # handle non-convex geometries
   if !isconvex(g₁)
     d₁ = simplexify(g₁)
