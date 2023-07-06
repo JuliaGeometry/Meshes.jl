@@ -722,14 +722,29 @@
     b3 = Box(P2(2, 2), P2(3, 3))
     b4 = Box(P2(1, 1), P2(2, 2))
     b5 = Box(P2(1.0, 0.5), P2(2, 2))
+    b6 = Box(P2(0, 2), P2(1, 3))
+    b7 = Box(P2(0, 1), P2(1, 2))
+    b8 = Box(P2(0, -1), P2(1, 0))
+    b9 = Box(P2(1, 0), P2(2, 1))
+    b10 = Box(P2(-1, 0), P2(0, 1))
     @test intersection(b1, b2) |> type == Overlapping
     @test b1 ∩ b2 == Box(P2(0.5, 0.5), P2(1, 1))
     @test intersection(b1, b3) |> type == NotIntersecting
     @test isnothing(b1 ∩ b3)
-    @test intersection(b1, b4) |> type == NotIntersecting
-    @test isnothing(b1 ∩ b4)
-    @test intersection(b1, b5) |> type == NotIntersecting
-    @test isnothing(b1 ∩ b5)
+    @test intersection(b1, b4) |> type == CornerTouching
+    @test b1 ∩ b4 == P2(1, 1)
+    @test intersection(b1, b5) |> type == Touching
+    @test b1 ∩ b5 == Box(P2(1.0, 0.5), P2(1, 1))
+    @test intersection(b1, b6) |> type == NotIntersecting
+    @test isnothing(b1 ∩ b6)
+    @test intersection(b1, b7) |> type == Touching
+    @test b1 ∩ b7 == Box(P2(0, 1), P2(1, 1))
+    @test intersection(b1, b8) |> type == Touching
+    @test b1 ∩ b8 == Box(P2(0, 0), P2(1, 0))
+    @test intersection(b1, b9) |> type == Touching
+    @test b1 ∩ b9 == Box(P2(1, 0), P2(1, 1))
+    @test intersection(b1, b10) |> type == Touching
+    @test b1 ∩ b10 == Box(P2(0, 0), P2(0, 1))
 
     # type stability tests
     b1 = Box(P2(0, 0), P2(1, 1))
