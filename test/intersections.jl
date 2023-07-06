@@ -746,6 +746,21 @@
     @test intersection(b1, b10) |> type == Touching
     @test b1 ∩ b10 == Box(P2(0, 0), P2(0, 1))
 
+    # more touching examples
+    b1 = Box(P2(0, 0), P2(1, 1))
+    b2 = Box(P2(1.0, 0.5), P2(2, 1))
+    b3 = Box(P2(-1, 0), P2(0.0, 0.5))
+    b4 = Box(P2(0, 1), P2(0.5, 2.0))
+    b5 = Box(P2(0.5, -1.0), P2(1, 0))
+    @test intersection(b1, b2) |> type == Touching
+    @test b1 ∩ b2 == Box(P2(1.0, 0.5), P2(1, 1))
+    @test intersection(b1, b3) |> type == Touching
+    @test b1 ∩ b3 == Box(P2(0.0, 0.0), P2(0.0, 0.5))
+    @test intersection(b1, b4) |> type == Touching
+    @test b1 ∩ b4 == Box(P2(0.0, 1.0), P2(0.5, 1.0))
+    @test intersection(b1, b5) |> type == Touching
+    @test b1 ∩ b5 == Box(P2(0.5, 0.0), P2(1.0, 0.0))
+
     # type stability tests
     b1 = Box(P2(0, 0), P2(1, 1))
     b2 = Box(P2(0.5, 0.5), P2(2, 2))
