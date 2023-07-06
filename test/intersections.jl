@@ -1226,6 +1226,7 @@
     @test hasintersect(r1, b)
     @test hasintersect(r2, b)
 
+    # performance test
     b1 = Box(P2(0, 0), P2(3, 3))
     b2 = Box(P2(2, 2), P2(5, 5))
     @test hasintersect(b1, b2)
