@@ -403,7 +403,14 @@
     @test eltype(mesh) <: Triangle
     @test measure(mesh) == measure(grid)
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/499
+    quad = Quadrangle(P3[(0, 1, -1), (0, 1, 1), (0, -1, 1), (0, -1, -1)])
+    mesh = simplexify(quad)
+    @test vertices(mesh) == vertices(quad)
+
     if visualtests
+      grid = CartesianGrid{T}(3, 3)
+      mesh = simplexify(grid)
       fig = Mke.Figure(resolution=(600, 300))
       viz(fig[1, 1], grid, showfacets=true)
       viz(fig[1, 2], mesh, showfacets=true)
