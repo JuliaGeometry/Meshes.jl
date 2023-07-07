@@ -71,29 +71,34 @@ apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 # OPERATION (8)
 # --------------
 
-function apply(::Repair{8}, poly::Polygon)
-  repair(ring) = apply(Repair{8}(), ring) |> first
-  r = repair.(rings(poly))
+function apply(::Repair{8}, poly::PolyArea)
+  v = poly |> rings .|> vertices .|> repair8
   p = if hasholes(poly)
-    PolyArea(r[begin], r[(begin + 1):end])
+    PolyArea(v[begin], v[(begin + 1):end])
   else
-    PolyArea(r[begin])
+    PolyArea(v[begin])
   end
   p, nothing
 end
 
-function apply(::Repair{8}, ring::Ring{Dim,T}) where {Dim,T}
-  v = vertices(ring)
-  n = nvertices(ring)
+function apply(::Repair{8}, poly::Ngon)
+  v = poly |> vertices |> repair8
+  Ngon(v), nothing
+end
 
-  # keep subset of vertices
+function apply(::Repair{8}, ring::Ring)
+  v = ring |> vertices |> repair8
+  Ring(v), nothing
+end
+
+repair8(v::AbstractVector) = repair8(CircularVector(v))
+
+function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
+  n = length(v)
   keep = Int[]
   for i in 1:n
     t = Triangle(v[i - 1], v[i], v[i + 1])
     area(t) > atol(T)^2 && push!(keep, i)
   end
-  v′ = v[keep]
-
-  # new ring with subset of vertices
-  Ring(v′), nothing
+  v[keep]
 end
