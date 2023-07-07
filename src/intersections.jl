@@ -142,6 +142,8 @@ hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
 
 hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
 
+hasintersect(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
+
 hasintersect(p::Point, g::Geometry) = p ∈ g
 
 hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
@@ -161,6 +163,9 @@ hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c
 hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
 
 function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
+  # must have intersection of bounding boxes
+  hasintersect(boundingbox(g₁), boundingbox(g₂)) || return false
+
   # handle non-convex geometries
   if !isconvex(g₁)
     d₁ = simplexify(g₁)

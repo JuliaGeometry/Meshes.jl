@@ -1265,6 +1265,14 @@
     @test hasintersect(r1, b)
     @test hasintersect(r2, b)
 
+    # performance test
+    b1 = Box(P2(0, 0), P2(3, 3))
+    b2 = Box(P2(2, 2), P2(5, 5))
+    @test hasintersect(b1, b2)
+    @test hasintersect(b2, b1)
+    @test @elapsed(hasintersect(b1, b2)) < 10e-6
+    @test @allocated(hasintersect(b1, b2)) < 100
+
     # partial application
     points = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     poly = PolyArea(points)
