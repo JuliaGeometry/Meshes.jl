@@ -40,6 +40,17 @@ end
 
 boundingbox(g::Grid) = Box(extrema(g)...)
 
+boundingbox(m::SimpleMesh) = boundingbox(vertices(m))
+
+function boundingbox(p::PolyArea)
+  box = boundingbox(p.outer)
+  for inner in p.inners
+      box = boundingbox(inner, coordinates(box.min), coordinates(box.max))
+  end
+  box
+end
+
+
 # ---------------
 # IMPLEMENTATION
 # ---------------
@@ -49,13 +60,12 @@ boundingbox(geoms::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geoms)
 boundingbox(boxes::AbstractVector{<:Box{Dim}}) where {Dim} =
   boundingbox([point for box in boxes for point in extrema(box)])
 
-function boundingbox(points::AbstractVector{Point{Dim,T}}) where {Dim,T}
-  xmin = MVector(ntuple(i -> typemax(T), Dim))
-  xmax = MVector(ntuple(i -> typemin(T), Dim))
+function boundingbox(points::AbstractVector{Point{Dim,T}}, xmin::Vec{Dim, T} = Vec(ntuple(i -> typemax(T), Dim)), xmax::Vec{Dim, T} = Vec(ntuple(i -> typemin(T), Dim))) where {Dim,T}
   for p in points
     x = coordinates(p)
-    @. xmin = min(x, xmin)
-    @. xmax = max(x, xmax)
+    xmin = min.(x, xmin)
+    xmax = max.(x, xmax)
   end
   Box(Point(xmin), Point(xmax))
 end
+  
