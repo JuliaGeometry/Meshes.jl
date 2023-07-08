@@ -140,7 +140,7 @@ end
 # RUN TESTS WITH DOUBLE PRECISION
 # --------------------------------
 module TestsDoublePrecision
-  using ..Main: run_setup
+  using ..Main: run_setup, DummyData
 
   eval(run_setup)
 
