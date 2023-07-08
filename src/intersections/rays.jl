@@ -64,7 +64,7 @@ function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
 end
 
 # The intersection type can be one of four types:
-# 
+#
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
@@ -128,7 +128,7 @@ function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
 end
 
 # The intersection type can be one of six types:
-# 
+#
 # 1. Touching - origin of ray intersects middle of triangle
 # 2. EdgeTouching - origin of ray intersects edge of triangle
 # 3. CornerTouching - origin of ray intersects corner of triangle
@@ -203,6 +203,15 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
   λ = clamp(λ, zero(T), typemax(T))
 
   return @IT Crossing ray(λ) f
+end
+
+function intersection(f, r::Ray{3,T}, p::Polyhedron{3,T}) where {T}
+  mesh = boundary(p)
+  intersections = intersection.((r,), elements(mesh))
+  filter!(I -> type(I) != NoIntersection, intersections)
+  isempty(intersections) && (return @IT NoIntersection nothing f)
+  length(intersections) == 1 && (return only(intersections))
+  return intersections
 end
 
 intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), discretize(p))
