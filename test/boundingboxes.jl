@@ -45,6 +45,10 @@
     poly = PolyArea(Ring(P2(0,0), P2(1,0), P2(1,1)))
     @testnoallocations boundingbox(poly)
 
+    poly = PolyArea(Ring(P2(0,0), P2(1,0), P2(1,1)), [Ring(P2(0.1,0.1), P2(0.9,0.1), P2(0.9,0.9))])
+    @testnoallocations boundingbox(poly)
+
+
     mesh = SimpleMesh([P2(0,0), P2(1,0), P2(1,1)], connect.([(1,2,3)], Ngon))
     @testnoallocations boundingbox(vertices(mesh))
     @testnoallocations boundingbox(mesh)

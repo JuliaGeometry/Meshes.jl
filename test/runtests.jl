@@ -70,7 +70,6 @@ run_setup = quote
     SimpleMesh(points, connec)
   end
 
-  include("dummy.jl")
   include("allocation_macros.jl")
 
   # list of tests
@@ -111,12 +110,16 @@ run_setup = quote
 
 end # end quote
 
+# Setup for global scope
+eval(run_setup)
+include("dummy.jl")
+
 
 # --------------------------------
 # RUN TESTS WITH SINGLE PRECISION
 # --------------------------------
 module TestsSinglePrecision
-  using ..Main: run_setup
+  using ..Main: run_setup, DummyData
 
   eval(run_setup)
 

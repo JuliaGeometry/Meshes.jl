@@ -43,9 +43,9 @@ boundingbox(g::Grid) = Box(extrema(g)...)
 boundingbox(m::SimpleMesh) = boundingbox(vertices(m))
 
 function boundingbox(p::PolyArea)
-  box = boundingbox(p.outer)
+  box = boundingbox(vertices(p.outer))
   for inner in p.inners
-      box = boundingbox(inner, coordinates(box.min), coordinates(box.max))
+      box = boundingbox(vertices(inner), coordinates(box.min), coordinates(box.max))
   end
   box
 end
