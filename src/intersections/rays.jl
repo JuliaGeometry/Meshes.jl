@@ -205,12 +205,13 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
   return @IT Crossing ray(λ) f
 end
 
-function intersection(f, r::Ray{3,T}, p::Polyhedron{3,T}) where {T}
+function intersection(f, r::Ray{3,T}, p::Tetrahedron{3,T}) where {T}
   mesh = boundary(p)
   intersections = intersection.((r,), elements(mesh))
-  filter!(I -> type(I) != NoIntersection, intersections)
-  isempty(intersections) && (return @IT NoIntersection nothing f)
+  filter!(I -> type(I) != NotIntersecting, intersections)
+  isempty(intersections) && (return @IT NotIntersecting nothing f)
   length(intersections) == 1 && (return only(intersections))
+  #return Multi(intersections)
   return intersections
 end
 

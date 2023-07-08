@@ -1084,6 +1084,21 @@
     @test isnothing(r ∩ o)
   end
 
+  @testset "Tetrahedron" begin
+    t = Tetrahedron([
+      P3(0.0, 0.0, 1.0),
+      P3(1.0, 0.0, 0.0),
+      P3(0.0, 1.0, 0.0),
+      P3(0.0, 0.0, 0.0)
+    ])
+
+    r = Ray(P3(0.1,0.1,-1.0), V3(0.0, 0.0, 1.0))
+    I = intersection(r, t)
+    @test length(I) == 2
+    @test Intersection(Crossing, Point(0.1,0.1,0.0)) in I
+    @test Intersection(Crossing, Point(0.1,0.1,0.8)) in I
+  end
+
   @testset "Domains" begin
     grid = CartesianGrid{T}(4, 4)
     pset = PointSet(centroid.(grid))
