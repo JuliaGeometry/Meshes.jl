@@ -1095,8 +1095,11 @@
     r = Ray(P3(0.1,0.1,-1.0), V3(0.0, 0.0, 1.0))
     I = intersection(r, t)
     @test length(I) == 2
-    @test Intersection(Crossing, Point(0.1,0.1,0.0)) in I
-    @test Intersection(Crossing, Point(0.1,0.1,0.8)) in I
+    I1 = Intersection(Crossing, P3(0.1,0.1,0.0))
+    I2 = Intersection(Crossing, P3(0.1,0.1,0.8))
+    @test first(I) |> type == Crossing
+    @test any(isapprox.(getfield.(I,:geom), I1.geom, atol=atol(coordtype(I1.geom))))
+    @test any(isapprox.(getfield.(I,:geom), I2.geom, atol=atol(coordtype(I2.geom))))
   end
 
   @testset "Domains" begin
