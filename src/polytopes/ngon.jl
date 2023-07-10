@@ -25,12 +25,14 @@ struct Ngon{N,Dim,T} <: Polygon{Dim,T}
   Ngon{N,Dim,T}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = new(vertices)
 end
 
-function Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
+function Ngon{N,Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
   nv = length(vertices)
   nv == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $nv."))
   v = ntuple(i -> @inbounds(vertices[i]), N)
   Ngon{N,Dim,T}(v)
 end
+
+Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
 
 Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ngon{length(vertices)}(vertices)
 

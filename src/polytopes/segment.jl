@@ -16,12 +16,14 @@ struct Segment{Dim,T} <: Chain{Dim,T}
   Segment{Dim,T}(vertices::NTuple{2,Point{Dim,T}}) where {Dim,T} = new(vertices)
 end
 
-function Segment(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
+function Segment{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
   N = length(vertices)
   N == 2 || throw(ArgumentError("Invalid number of vertices for Segment. Expected 2, got $N."))
   v = @inbounds (vertices[1], vertices[2])
   Segment{Dim,T}(v)
 end
+
+Segment(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Segment{Dim,T}(vertices)
 
 isconvex(::Type{<:Segment}) = true
 
