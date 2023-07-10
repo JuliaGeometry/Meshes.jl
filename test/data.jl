@@ -29,7 +29,7 @@
     @test Tables.istable(dat)
     sch = Tables.schema(dat)
     @test sch.names == (:a, :b, :geometry)
-    @test sch.types == (Int, Int, Quadrangle{2,T,Vector{P2}})
+    @test sch.types == (Int, Int, Quadrangle{2,T})
     @test Tables.rowaccess(dat)
     rows = Tables.rows(dat)
     @test Tables.schema(rows) == sch
