@@ -20,11 +20,17 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
-  vertices::V
+struct Ngon{N,Dim,T} <: Polygon{Dim,T}
+  vertices::NTuple{N,Point{Dim,T}}
+  Ngon{N,Dim,T}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = new(vertices)
 end
 
-Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T,typeof(vertices)}(vertices)
+function Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
+  nv = length(vertices)
+  nv == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $nv."))
+  v = ntuple(i -> @inbounds(vertices[i]), N)
+  Ngon{N,Dim,T}(v)
+end
 
 Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ngon{length(vertices)}(vertices)
 
@@ -47,7 +53,9 @@ Base.unique!(ngon::Ngon) = ngon
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
-rings(ngon::Ngon{N}) where {N} = [Ring(ngon.vertices)]
+vertices(ngon::Ngon) = collect(ngon.vertices)
+
+rings(ngon::Ngon{N}) where {N} = [Ring(vertices(ngon))]
 
 angles(ngon::Ngon) = angles(boundary(ngon))
 
