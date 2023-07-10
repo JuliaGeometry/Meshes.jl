@@ -11,8 +11,16 @@ The segment can be called as `s(t)` with `t` between
 
 See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Chain{Dim,T}
-  vertices::V
+struct Segment{Dim,T} <: Chain{Dim,T}
+  vertices::NTuple{2,Point{Dim,T}}
+  Segment{Dim,T}(vertices::NTuple{2,Point{Dim,T}}) where {Dim,T} = new(vertices)
+end
+
+function Segment(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
+  if length(vertices) ≠ 2
+    throw(ArgumentError("The number of vertices must be 2"))
+  end
+  Segment{Dim,T}((first(vertices), last(vertices)))
 end
 
 isconvex(::Type{<:Segment}) = true
@@ -23,7 +31,7 @@ isparametrized(::Type{<:Segment}) = true
 
 nvertices(::Type{<:Segment}) = 2
 
-Base.minimum(s::Segment) = s.vertices[1]
+# vertices(s::Segment) = collect(s.vertices)
 
 Base.maximum(s::Segment) = s.vertices[2]
 

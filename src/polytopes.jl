@@ -39,7 +39,7 @@ See https://en.wikipedia.org/wiki/Polygonal_chain.
 
 See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
 """
-const Chain = Polytope{1}
+const Chain{Dim,T} = Polytope{1,Dim,T}
 
 """
    length(chain)
@@ -194,7 +194,7 @@ A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
 See also [`Ngon`](@ref) and [`PolyArea`](@ref).
 """
-const Polygon = Polytope{2}
+const Polygon{Dim,T} = Polytope{2,Dim,T}
 
 """
     area(polygon)
@@ -297,7 +297,7 @@ A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 
 See also [`Tetrahedron`](@ref), [`Hexahedron`](@ref) and [`Pyramid`](@ref).
 """
-const Polyhedron = Polytope{3}
+const Polyhedron{Dim,T} = Polytope{3,Dim,T}
 
 """
    volume(polyhedron)
