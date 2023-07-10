@@ -24,8 +24,11 @@ struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
   end
 end
 
-Ring(vertices::CircularVector{P}) where {P<:Point} = Ring{embeddim(P),coordtype(P),typeof(vertices)}(vertices)
-Ring(vertices::AbstractVector{P}) where {P<:Point} = Ring(CircularVector(vertices))
+Ring(vertices::CircularVector{Point{Dim,T}}) where {Dim,T} = Ring{Dim,T,typeof(vertices)}(vertices)
+Ring(vertices::Vararg{Tuple}) = Ring([Point(v) for v in vertices])
+Ring(vertices::Vararg{Point{Dim,T}}) where {Dim,T} = Ring(collect(vertices))
+Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
+Ring(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ring(CircularVector(vertices))
 
 boundary(::Ring) = nothing
 

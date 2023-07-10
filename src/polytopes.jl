@@ -315,11 +315,6 @@ include("polytopes/pyramid.jl")
 # N-POLYTOPE (FALLBACKS)
 # -----------------------
 
-# constructors with lists of points
-(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(collect(vertices))
-(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
-(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
-
 """
     paramdim(polytope)
 

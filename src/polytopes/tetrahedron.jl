@@ -9,9 +9,11 @@ A tetrahedron with points `p1`, `p2`, `p3`, `p4`.
 """
 struct Tetrahedron{Dim,T} <: Polyhedron{Dim,T}
   vertices::NTuple{4,Point{Dim,T}}
-  Tetrahedron{Dim,T}(vertices::NTuple{4,Point{Dim,T}}) where {Dim,T} = new(vertices)
 end
 
+Tetrahedron{Dim,T}(vertices::Vararg{Tuple,4}) where {Dim,T} = Tetrahedron{Dim,T}(Point.(vertices))
+Tetrahedron{Dim,T}(vertices::Vararg{Point{Dim,T},4}) where {Dim,T} = Tetrahedron{Dim,T}(vertices)
+Tetrahedron{Dim,T}(vertices::AbstractVector{<:Tuple}) where {Dim,T} = Tetrahedron{Dim,T}(Point.(vertices))
 function Tetrahedron{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
   N = length(vertices)
   N == 4 || throw(ArgumentError("Invalid number of vertices for Tetrahedron. Expected 4, got $N."))
@@ -19,6 +21,9 @@ function Tetrahedron{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T
   Tetrahedron{Dim,T}(v)
 end
 
+Tetrahedron(vertices::Vararg{Tuple,4}) = Tetrahedron(Point.(vertices))
+Tetrahedron(vertices::Vararg{Point{Dim,T},4}) where {Dim,T} = Tetrahedron{Dim,T}(vertices)
+Tetrahedron(vertices::AbstractVector{<:Tuple}) = Tetrahedron(Point.(vertices))
 Tetrahedron(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Tetrahedron{Dim,T}(vertices)
 
 issimplex(::Type{<:Tetrahedron}) = true

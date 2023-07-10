@@ -13,9 +13,11 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
 struct Segment{Dim,T} <: Chain{Dim,T}
   vertices::NTuple{2,Point{Dim,T}}
-  Segment{Dim,T}(vertices::NTuple{2,Point{Dim,T}}) where {Dim,T} = new(vertices)
 end
 
+Segment{Dim,T}(vertices::Vararg{Tuple,2}) where {Dim,T} = Segment{Dim,T}(Point.(vertices))
+Segment{Dim,T}(vertices::Vararg{Point{Dim,T},2}) where {Dim,T} = Segment{Dim,T}(vertices)
+Segment{Dim,T}(vertices::AbstractVector{<:Tuple}) where {Dim,T} = Segment{Dim,T}(Point.(vertices))
 function Segment{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
   N = length(vertices)
   N == 2 || throw(ArgumentError("Invalid number of vertices for Segment. Expected 2, got $N."))
@@ -23,6 +25,9 @@ function Segment{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
   Segment{Dim,T}(v)
 end
 
+Segment(vertices::Vararg{Tuple,2}) = Segment(Point.(vertices))
+Segment(vertices::Vararg{Point{Dim,T},2}) where {Dim,T} = Segment{Dim,T}(vertices)
+Segment(vertices::AbstractVector{<:Tuple}) = Segment(Point.(vertices))
 Segment(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Segment{Dim,T}(vertices)
 
 isconvex(::Type{<:Segment}) = true

@@ -22,9 +22,11 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 """
 struct Ngon{N,Dim,T} <: Polygon{Dim,T}
   vertices::NTuple{N,Point{Dim,T}}
-  Ngon{N,Dim,T}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = new(vertices)
 end
 
+Ngon{N,Dim,T}(vertices::Vararg{Tuple,N}) where {N,Dim,T} = Ngon{N,Dim,T}(Point.(vertices))
+Ngon{N,Dim,T}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon{N,Dim,T}(vertices::AbstractVector{<:Tuple}) where {N,Dim,T} = Ngon{N,Dim,T}(Point.(vertices))
 function Ngon{N,Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
   P = length(vertices)
   P == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $P."))
@@ -32,9 +34,15 @@ function Ngon{N,Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
   Ngon{N,Dim,T}(v)
 end
 
+Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
+Ngon{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon{N}(vertices::AbstractVector{<:Tuple}) where {N} = Ngon{N}(Point.(vertices))
 Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
 
-Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ngon{length(vertices)}(vertices)
+Ngon(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
+Ngon(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon(vertices::AbstractVector{<:Tuple}) = Ngon(Point.(vertices))
+Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ngon{length(vertices),Dim,T}(vertices)
 
 # type aliases for convenience
 const Triangle = Ngon{3}
