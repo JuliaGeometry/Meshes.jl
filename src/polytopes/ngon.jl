@@ -26,8 +26,8 @@ struct Ngon{N,Dim,T} <: Polygon{Dim,T}
 end
 
 function Ngon{N,Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
-  nv = length(vertices)
-  nv == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $nv."))
+  P = length(vertices)
+  P == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $P."))
   v = ntuple(i -> @inbounds(vertices[i]), N)
   Ngon{N,Dim,T}(v)
 end
@@ -57,7 +57,7 @@ nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
 vertices(ngon::Ngon) = collect(ngon.vertices)
 
-rings(ngon::Ngon{N}) where {N} = [Ring(vertices(ngon))]
+rings(ngon::Ngon) = [Ring(vertices(ngon))]
 
 angles(ngon::Ngon) = angles(boundary(ngon))
 
