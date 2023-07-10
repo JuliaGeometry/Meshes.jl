@@ -17,10 +17,11 @@ struct Segment{Dim,T} <: Chain{Dim,T}
 end
 
 function Segment(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
-  if length(vertices) ≠ 2
-    throw(ArgumentError("The number of vertices must be 2"))
+  n = length(vertices)
+  if n ≠ 2
+    throw(ArgumentError("Invalid number of vertices for Segment. Expected 2, got $n"))
   end
-  Segment{Dim,T}((first(vertices), last(vertices)))
+  Segment{Dim,T}(NTuple{2,Point{Dim,T}}(vertices))
 end
 
 isconvex(::Type{<:Segment}) = true
