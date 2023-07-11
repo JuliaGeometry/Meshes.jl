@@ -27,6 +27,28 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 """
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
+# heper macro to define polytopes
+macro polytope(type, N, K)
+  expr = quote
+    struct $type{Dim,T} <: Polytope{$K,Dim,T}
+      vertices::NTuple{$N,Point{Dim,T}}
+    end
+
+    function $type{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
+      P = length(vertices)
+      P == $N || throw(ArgumentError($("Invalid number of vertices for $type. Expected $N") * ", got $P."))
+      v = ntuple(i -> @inbounds(vertices[i]), $N)
+      $type{Dim,T}(v)
+    end
+    
+    $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
+    $type(vertices::Vararg{Point{Dim,T},$N}) where {Dim,T} = $type{Dim,T}(vertices)
+    $type(vertices::AbstractVector{<:Tuple}) = $type(Point.(vertices))
+    $type(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = $type{Dim,T}(vertices)
+  end
+  esc(expr)
+end
+
 # -------------------
 # 1-POLYTOPE (CHAIN)
 # -------------------

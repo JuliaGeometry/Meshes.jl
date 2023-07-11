@@ -25,8 +25,8 @@ struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
 end
 
 Ring(vertices::CircularVector{Point{Dim,T}}) where {Dim,T} = Ring{Dim,T,typeof(vertices)}(vertices)
-Ring(vertices::Vararg{Tuple}) = Ring([Point(v) for v in vertices])
-Ring(vertices::Vararg{Point{Dim,T}}) where {Dim,T} = Ring(collect(vertices))
+Ring(vertices::Tuple...) = Ring([Point(v) for v in vertices])
+Ring(vertices::Point{Dim,T}...) where {Dim,T} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
 Ring(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ring(CircularVector(vertices))
 

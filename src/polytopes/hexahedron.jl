@@ -7,24 +7,9 @@
 
 A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Hexahedron{Dim,T} <: Polyhedron{Dim,T}
-  vertices::NTuple{8,Point{Dim,T}}
-end
+Hexahedron
 
-Hexahedron{Dim,T}(vertices::Vararg{Tuple,8}) where {Dim,T} = Hexahedron{Dim,T}(Point.(vertices))
-Hexahedron{Dim,T}(vertices::Vararg{Point{Dim,T},8}) where {Dim,T} = Hexahedron{Dim,T}(vertices)
-Hexahedron{Dim,T}(vertices::AbstractVector{<:Tuple}) where {Dim,T} = Hexahedron{Dim,T}(Point.(vertices))
-function Hexahedron{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
-  N = length(vertices)
-  N == 8 || throw(ArgumentError("Invalid number of vertices for Hexahedron. Expected 8, got $N."))
-  v = ntuple(i -> @inbounds(vertices[i]), 8)
-  Hexahedron{Dim,T}(v)
-end
-
-Hexahedron(vertices::Vararg{Tuple,8}) = Hexahedron(Point.(vertices))
-Hexahedron(vertices::Vararg{Point{Dim,T},8}) where {Dim,T} = Hexahedron{Dim,T}(vertices)
-Hexahedron(vertices::AbstractVector{<:Tuple}) = Hexahedron(Point.(vertices))
-Hexahedron(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Hexahedron{Dim,T}(vertices)
+@polytope Hexahedron 8 3
 
 isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 
