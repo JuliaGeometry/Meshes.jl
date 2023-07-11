@@ -76,9 +76,9 @@ Base.length(c::Chain) = measure(c)
 Return the segments linking consecutive points of the `chain`.
 """
 function segments(c::Chain)
-  v = c.vertices
+  v = vertices(c)
   n = length(v) - !isclosed(c)
-  (Segment(view(v, [i, i + 1])) for i in 1:n)
+  @inbounds (Segment(v[i], v[i + 1]) for i in 1:n)
 end
 
 """
