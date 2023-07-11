@@ -13,7 +13,7 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
 Segment
 
-@polytope Segment 2 1
+@polytope Segment 1 2
 
 isconvex(::Type{<:Segment}) = true
 

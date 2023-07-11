@@ -28,7 +28,7 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
 # heper macro to define polytopes
-macro polytope(type, N, K)
+macro polytope(type, K, N)
   expr = quote
     struct $type{Dim,T} <: Polytope{$K,Dim,T}
       vertices::NTuple{$N,Point{Dim,T}}

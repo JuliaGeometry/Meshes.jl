@@ -9,7 +9,7 @@ A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
 Pyramid
 
-@polytope Pyramid 5 3
+@polytope Pyramid 3 5
 
 nvertices(::Type{<:Pyramid}) = 5
 nvertices(p::Pyramid) = nvertices(typeof(p))

@@ -9,7 +9,7 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
 Hexahedron
 
-@polytope Hexahedron 8 3
+@polytope Hexahedron 3 8
 
 isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 
