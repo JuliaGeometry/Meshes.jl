@@ -82,7 +82,7 @@ function apply(::Repair{8}, poly::PolyArea)
 end
 
 function apply(::Repair{8}, poly::Ngon)
-  v = poly |> vertices |> collect |> repair8
+  v = poly |> vertices |> repair8
   Ngon(v), nothing
 end
 
@@ -91,6 +91,7 @@ function apply(::Repair{8}, ring::Ring)
   Ring(v), nothing
 end
 
+repair8(itr) = repair8(collect(itr))
 repair8(v::AbstractVector) = repair8(CircularVector(v))
 
 function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
