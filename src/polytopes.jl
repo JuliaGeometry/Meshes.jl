@@ -40,7 +40,7 @@ macro polytope(type, K, N)
       v = ntuple(i -> @inbounds(vertices[i]), $N)
       $type{Dim,T}(v)
     end
-    
+
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
     $type(vertices::Vararg{Point{Dim,T},$N}) where {Dim,T} = $type{Dim,T}(vertices)
     $type(vertices::AbstractVector{<:Tuple}) = $type(Point.(vertices))
