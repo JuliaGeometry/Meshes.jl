@@ -16,7 +16,6 @@ isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 isparametrized(::Type{<:Hexahedron}) = true
 
 nvertices(::Type{<:Hexahedron}) = 8
-nvertices(h::Hexahedron) = nvertices(typeof(h))
 
 vertices(h::Hexahedron) = collect(h.vertices)
 

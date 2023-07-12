@@ -22,7 +22,6 @@ isclosed(::Type{<:Segment}) = false
 isparametrized(::Type{<:Segment}) = true
 
 nvertices(::Type{<:Segment}) = 2
-nvertices(s::Segment) = nvertices(typeof(s))
 
 vertices(s::Segment) = collect(s.vertices)
 

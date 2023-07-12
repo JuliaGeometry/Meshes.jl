@@ -34,6 +34,8 @@ boundary(::Ring) = nothing
 
 isclosed(::Type{<:Ring}) = true
 
+nvertices(r::Ring) = length(r.vertices)
+
 Base.close(r::Ring) = r
 
 # call `open` again to avoid issues in case of nested CircularVector

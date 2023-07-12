@@ -24,6 +24,8 @@ end
 
 isclosed(::Type{<:Rope}) = false
 
+nvertices(r::Rope) = length(r.vertices)
+
 Base.close(r::Rope) = Ring(r.vertices)
 
 Base.open(r::Rope) = r

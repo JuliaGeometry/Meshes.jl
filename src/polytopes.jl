@@ -363,7 +363,7 @@ vertices(p::Polytope) = p.vertices
 
 Return the number of vertices in the `polytope`.
 """
-nvertices(p::Polytope) = length(vertices(p))
+nvertices(p::Polytope) = nvertices(typeof(p))
 
 """
     p₁ == p₂

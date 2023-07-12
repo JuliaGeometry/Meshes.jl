@@ -18,7 +18,6 @@ isconvex(::Type{<:Tetrahedron}) = true
 isparametrized(::Type{<:Tetrahedron}) = true
 
 nvertices(::Type{<:Tetrahedron}) = 4
-nvertices(t::Tetrahedron) = nvertices(typeof(t))
 
 vertices(t::Tetrahedron) = collect(t.vertices)
 

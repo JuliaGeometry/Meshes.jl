@@ -58,7 +58,6 @@ hasholes(::Ngon) = false
 Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
-nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
 vertices(ngon::Ngon) = collect(ngon.vertices)
 

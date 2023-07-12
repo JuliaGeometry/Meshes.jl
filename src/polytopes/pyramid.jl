@@ -12,7 +12,6 @@ Pyramid
 @polytope Pyramid 3 5
 
 nvertices(::Type{<:Pyramid}) = 5
-nvertices(p::Pyramid) = nvertices(typeof(p))
 
 vertices(p::Pyramid) = collect(p.vertices)
 
