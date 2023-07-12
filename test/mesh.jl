@@ -139,8 +139,7 @@
     vs = vertices(grid)
     for i in 1:nelements(grid)
       inds = indices(element(topo, i))
-      v = vertices(element(grid, i))
-      @test vs[[inds...]] == collect(v)
+      @test vs[[inds...]] == pointify(element(grid, i))
     end
 
     # convert topology

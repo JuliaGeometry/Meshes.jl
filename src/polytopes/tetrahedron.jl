@@ -26,7 +26,7 @@ end
 
 function boundary(t::Tetrahedron)
   indices = [(3, 2, 1), (4, 1, 2), (4, 3, 1), (4, 2, 3)]
-  SimpleMesh(collect(t.vertices), connect.(indices))
+  SimpleMesh(pointify(t), connect.(indices))
 end
 
 function (t::Tetrahedron)(u, v, w)

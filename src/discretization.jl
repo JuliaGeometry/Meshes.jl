@@ -131,7 +131,7 @@ simplexify(geometry) = simplexify(discretize(geometry))
 
 simplexify(box::Box{1}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
 
-simplexify(seg::Segment) = SimpleMesh(collect(vertices(seg)), GridTopology(1))
+simplexify(seg::Segment) = SimpleMesh(pointify(seg), GridTopology(1))
 
 function simplexify(chain::Chain)
   np = nvertices(chain) + isclosed(chain)

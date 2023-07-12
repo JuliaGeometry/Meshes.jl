@@ -138,7 +138,7 @@
       m = Multi([q, t])
       mesh = discretize(m, method)
       elms = collect(elements(mesh))
-      @test vertices(mesh) == [collect(vertices(q)); collect(vertices(t))]
+      @test vertices(mesh) == [pointify(q); pointify(t)]
       @test vertices(elms[1]) ⊆ vertices(q)
       @test vertices(elms[2]) ⊆ vertices(q)
       @test vertices(elms[3]) ⊆ vertices(t)
@@ -406,7 +406,7 @@
     # https://github.com/JuliaGeometry/Meshes.jl/issues/499
     quad = Quadrangle(P3[(0, 1, -1), (0, 1, 1), (0, -1, 1), (0, -1, -1)])
     mesh = simplexify(quad)
-    @test vertices(mesh) == collect(vertices(quad))
+    @test vertices(mesh) == pointify(quad)
 
     if visualtests
       grid = CartesianGrid{T}(3, 3)
