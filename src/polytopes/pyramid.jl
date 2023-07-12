@@ -7,16 +7,17 @@
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
-struct Pyramid{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
-  vertices::V
-end
+Pyramid
+
+@polytope Pyramid 3 5
 
 nvertices(::Type{<:Pyramid}) = 5
-nvertices(p::Pyramid) = nvertices(typeof(p))
+
+vertices(p::Pyramid) = collect(p.vertices)
 
 function boundary(p::Pyramid)
   indices = [(4, 3, 2, 1), (5, 1, 2), (5, 4, 1), (5, 3, 4), (5, 2, 3)]
-  SimpleMesh(p.vertices, connect.(indices))
+  SimpleMesh(vertices(p), connect.(indices))
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Pyramid{Dim,T}}) where {Dim,T} =

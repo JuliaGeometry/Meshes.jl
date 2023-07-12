@@ -20,13 +20,26 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polygon{Dim,T}
-  vertices::V
+struct Ngon{N,Dim,T} <: Polygon{Dim,T}
+  vertices::NTuple{N,Point{Dim,T}}
 end
 
-Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T,typeof(vertices)}(vertices)
+function Ngon{N,Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
+  P = length(vertices)
+  P == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $P."))
+  v = ntuple(i -> @inbounds(vertices[i]), N)
+  Ngon{N,Dim,T}(v)
+end
 
+Ngon(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
+Ngon(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
+Ngon{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+
+Ngon(vertices::AbstractVector{<:Tuple}) = Ngon(Point.(vertices))
 Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ngon{length(vertices)}(vertices)
+Ngon{N}(vertices::AbstractVector{<:Tuple}) where {N} = Ngon{N}(Point.(vertices))
+Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
 
 # type aliases for convenience
 const Triangle = Ngon{3}
@@ -45,9 +58,10 @@ hasholes(::Ngon) = false
 Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
-nvertices(ngon::Ngon) = nvertices(typeof(ngon))
 
-rings(ngon::Ngon{N}) where {N} = [Ring(ngon.vertices)]
+vertices(ngon::Ngon) = collect(ngon.vertices)
+
+rings(ngon::Ngon) = [Ring(vertices(ngon))]
 
 angles(ngon::Ngon) = angles(boundary(ngon))
 

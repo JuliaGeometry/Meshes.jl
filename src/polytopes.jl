@@ -27,6 +27,28 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 """
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
+# heper macro to define polytopes
+macro polytope(type, K, N)
+  expr = quote
+    struct $type{Dim,T} <: Polytope{$K,Dim,T}
+      vertices::NTuple{$N,Point{Dim,T}}
+    end
+
+    function $type{Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T}
+      P = length(vertices)
+      P == $N || throw(ArgumentError($("Invalid number of vertices for $type. Expected $N") * ", got $P."))
+      v = ntuple(i -> @inbounds(vertices[i]), $N)
+      $type{Dim,T}(v)
+    end
+    
+    $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
+    $type(vertices::Vararg{Point{Dim,T},$N}) where {Dim,T} = $type{Dim,T}(vertices)
+    $type(vertices::AbstractVector{<:Tuple}) = $type(Point.(vertices))
+    $type(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = $type{Dim,T}(vertices)
+  end
+  esc(expr)
+end
+
 # -------------------
 # 1-POLYTOPE (CHAIN)
 # -------------------
@@ -54,9 +76,9 @@ Base.length(c::Chain) = measure(c)
 Return the segments linking consecutive points of the `chain`.
 """
 function segments(c::Chain)
-  v = c.vertices
+  v = vertices(c)
   n = length(v) - !isclosed(c)
-  (Segment(view(v, [i, i + 1])) for i in 1:n)
+  @inbounds (Segment(v[i], v[i + 1]) for i in 1:n)
 end
 
 """
@@ -315,11 +337,6 @@ include("polytopes/pyramid.jl")
 # N-POLYTOPE (FALLBACKS)
 # -----------------------
 
-# constructors with lists of points
-(::Type{PL})(vertices::Vararg{P}) where {PL<:Polytope,P<:Point} = PL(collect(vertices))
-(::Type{PL})(vertices::AbstractVector{TP}) where {PL<:Polytope,TP<:Tuple} = PL(Point.(vertices))
-(::Type{PL})(vertices::Vararg{TP}) where {PL<:Polytope,TP<:Tuple} = PL(collect(vertices))
-
 """
     paramdim(polytope)
 
@@ -346,7 +363,7 @@ vertices(p::Polytope) = p.vertices
 
 Return the number of vertices in the `polytope`.
 """
-nvertices(p::Polytope) = length(vertices(p))
+nvertices(p::Polytope) = nvertices(typeof(p))
 
 """
     p₁ == p₂

@@ -7,20 +7,21 @@
 
 A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
-struct Hexahedron{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Polyhedron{Dim,T}
-  vertices::V
-end
+Hexahedron
+
+@polytope Hexahedron 3 8
 
 isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 
 isparametrized(::Type{<:Hexahedron}) = true
 
 nvertices(::Type{<:Hexahedron}) = 8
-nvertices(h::Hexahedron) = nvertices(typeof(h))
+
+vertices(h::Hexahedron) = collect(h.vertices)
 
 function boundary(h::Hexahedron)
   indices = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
-  SimpleMesh(h.vertices, connect.(indices))
+  SimpleMesh(vertices(h), connect.(indices))
 end
 
 function (h::Hexahedron)(u, v, w)

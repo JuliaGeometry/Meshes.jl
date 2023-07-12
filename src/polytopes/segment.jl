@@ -11,9 +11,9 @@ The segment can be called as `s(t)` with `t` between
 
 See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
-struct Segment{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Chain{Dim,T}
-  vertices::V
-end
+Segment
+
+@polytope Segment 1 2
 
 isconvex(::Type{<:Segment}) = true
 
@@ -23,6 +23,8 @@ isparametrized(::Type{<:Segment}) = true
 
 nvertices(::Type{<:Segment}) = 2
 
+vertices(s::Segment) = collect(s.vertices)
+
 Base.minimum(s::Segment) = s.vertices[1]
 
 Base.maximum(s::Segment) = s.vertices[2]
@@ -31,7 +33,7 @@ Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
 
-boundary(s::Segment) = PointSet(s.vertices)
+boundary(s::Segment) = PointSet(vertices(s))
 
 center(s::Segment) = s(0.5)
 

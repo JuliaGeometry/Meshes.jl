@@ -13,12 +13,18 @@ struct Rope{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Chain{Dim,T}
   vertices::V
 end
 
+Rope(vertices::Tuple...) = Rope([Point(v) for v in vertices])
+Rope(vertices::Point{Dim,T}...) where {Dim,T} = Rope(collect(vertices))
+Rope(vertices::AbstractVector{<:Tuple}) = Rope(Point.(vertices))
+
 function boundary(r::Rope)
   v = r.vertices
   PointSet([first(v), last(v)])
 end
 
 isclosed(::Type{<:Rope}) = false
+
+nvertices(r::Rope) = length(r.vertices)
 
 Base.close(r::Rope) = Ring(r.vertices)
 
