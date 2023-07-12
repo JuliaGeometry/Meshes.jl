@@ -46,7 +46,7 @@ boundingbox(g::Grid) = Box(extrema(g)...)
 
 boundingbox(geoms::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geoms))
 
-boundingbox(boxes::AbstractVector{Box{Dim,T}}) where {Dim,T} =
+boundingbox(boxes::AbstractVector{<:Box}) =
   boundingbox(point for box in boxes for point in extrema(box))
 
 function boundingbox(points)
