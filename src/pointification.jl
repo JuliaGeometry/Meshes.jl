@@ -15,7 +15,7 @@ pointify(s::Sphere) = pointify(discretize(s))
 
 pointify(p::Primitive) = pointify(boundary(p))
 
-pointify(p::Polytope) = vertices(p)
+pointify(p::Polytope) = _asvector(vertices(p))
 
 pointify(m::Multi) = pointify(collect(m))
 
@@ -27,3 +27,7 @@ pointify(d::Data) = pointify(domain(d))
 
 # fallback with iterator of geometries
 pointify(geoms) = mapreduce(pointify, vcat, geoms)
+
+# utils
+_asvector(itr) = collect(itr)
+_asvector(vector::AbstractVector) = vector

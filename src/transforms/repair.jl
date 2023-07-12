@@ -82,7 +82,7 @@ function apply(::Repair{8}, poly::PolyArea)
 end
 
 function apply(::Repair{8}, poly::Ngon)
-  v = poly |> vertices |> repair8
+  v = poly |> vertices |> collect |> repair8
   Ngon(v), nothing
 end
 

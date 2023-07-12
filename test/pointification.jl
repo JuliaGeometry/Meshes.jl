@@ -29,13 +29,13 @@
   quad = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
   multi = Multi([tri, quad])
   points = pointify(multi)
-  @test points == [vertices(tri); vertices(quad)]
+  @test points == [collect(vertices(tri)); collect(vertices(quad))]
 
   tri = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
   quad = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
   gset = GeometrySet([tri, quad])
   points = pointify(gset)
-  @test points == [vertices(tri); vertices(quad)]
+  @test points == [collect(vertices(tri)); collect(vertices(quad))]
 
   pts = rand(P2, 100)
   pset = PointSet(pts)

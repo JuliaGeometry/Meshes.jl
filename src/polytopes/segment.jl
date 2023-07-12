@@ -23,8 +23,6 @@ isparametrized(::Type{<:Segment}) = true
 
 nvertices(::Type{<:Segment}) = 2
 
-vertices(s::Segment) = collect(s.vertices)
-
 Base.minimum(s::Segment) = s.vertices[1]
 
 Base.maximum(s::Segment) = s.vertices[2]
@@ -33,7 +31,7 @@ Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
 measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
 
-boundary(s::Segment) = PointSet(vertices(s))
+boundary(s::Segment) = PointSet(collect(s.vertices))
 
 center(s::Segment) = s(0.5)
 

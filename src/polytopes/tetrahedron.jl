@@ -19,8 +19,6 @@ isparametrized(::Type{<:Tetrahedron}) = true
 
 nvertices(::Type{<:Tetrahedron}) = 4
 
-vertices(t::Tetrahedron) = collect(t.vertices)
-
 function measure(t::Tetrahedron)
   A, B, C, D = t.vertices
   abs((A - D) ⋅ ((B - D) × (C - D))) / 6
@@ -28,7 +26,7 @@ end
 
 function boundary(t::Tetrahedron)
   indices = [(3, 2, 1), (4, 1, 2), (4, 3, 1), (4, 2, 3)]
-  SimpleMesh(vertices(t), connect.(indices))
+  SimpleMesh(collect(t.vertices), connect.(indices))
 end
 
 function (t::Tetrahedron)(u, v, w)
