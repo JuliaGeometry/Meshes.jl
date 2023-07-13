@@ -83,8 +83,7 @@ end
 
 function apply(::Repair{8}, poly::Ngon)
   v = poly |> vertices |> repair8
-  N = length(v)
-  Ngon(ntuple(i -> @inbounds(v[i]), N)), nothing
+  Ngon(ntuple(i -> @inbounds(v[i]), length(v))), nothing
 end
 
 function apply(::Repair{8}, ring::Ring)
