@@ -101,9 +101,8 @@ end
 
 Materialize a face using the `connec` list and a global vector of `points`.
 """
-function materialize(connec::Connectivity{PL,N}, points::AbstractVector{P}) where {PL<:Polytope,N,P<:Point}
+materialize(connec::Connectivity{PL,N}, points::AbstractVector{P}) where {PL<:Polytope,N,P<:Point} =
   PL(ntuple(i -> @inbounds(points[connec.indices[i]]), N))
-end
 
 function Base.show(io::IO, c::Connectivity{PL}) where {PL}
   name = prettyname(PL)
