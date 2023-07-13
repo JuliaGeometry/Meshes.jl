@@ -56,7 +56,5 @@ function (s::Segment)(t)
   a + t * (b - a)
 end
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Segment{Dim,T}}) where {Dim,T}
-  v = ntuple(i -> rand(rng, Point{Dim,T}), 2)
-  Segment(v)
-end
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Segment{Dim,T}}) where {Dim,T} =
+  Segment(ntuple(i -> rand(rng, Point{Dim,T}), 2))

@@ -18,7 +18,5 @@ function boundary(p::Pyramid)
   SimpleMesh(pointify(p), connect.(indices))
 end
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Pyramid{Dim,T}}) where {Dim,T}
-  v = ntuple(i -> rand(rng, Point{Dim,T}), 5)
-  Pyramid(v)
-end
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Pyramid{Dim,T}}) where {Dim,T} =
+  Pyramid(ntuple(i -> rand(rng, Point{Dim,T}), 5))

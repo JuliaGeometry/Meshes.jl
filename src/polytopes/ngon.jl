@@ -71,10 +71,8 @@ signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
 Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ngon{N,Dim,T}}) where {N,Dim,T}
-  v = ntuple(i -> rand(rng, Point{Dim,T}), N)
-  Ngon(v)
-end
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ngon{N,Dim,T}}) where {N,Dim,T} =
+  Ngon(ntuple(i -> rand(rng, Point{Dim,T}), N))
 
 # ----------
 # TRIANGLES
