@@ -56,11 +56,7 @@ _reconstruct(points, ::PointSet) = PointSet(points)
 _reconstruct(points, ::PolyArea) = PolyArea(points)
 _reconstruct(points, ::Ring) = Ring(points)
 _reconstruct(points, ::Rope) = Rope(points)
-function _reconstruct(points, ::PL) where {PL<:Polytope}
-  N = nvertices(PL)
-  v = ntuple(i -> @inbounds(points[i]), N)
-  PL(v)
-end
+_reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(points[i]), nvertices(PL)))
 
 # --------------------
 # TRANSFORM FALLBACKS
