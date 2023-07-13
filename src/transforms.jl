@@ -53,6 +53,14 @@ _reconstruct(points, ::G) where {G<:Geometry} = G(points)
 _reconstruct(points, domain::Domain) = _reconstruct(points, GeometrySet(domain))
 _reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
 _reconstruct(points, ::PointSet) = PointSet(points)
+_reconstruct(points, ::PolyArea) = PolyArea(points)
+_reconstruct(points, ::Ring) = Ring(points)
+_reconstruct(points, ::Rope) = Rope(points)
+function _reconstruct(points, ::PL) where {PL<:Polytope}
+  N = nvertices(PL)
+  v = ntuple(i -> @inbounds(points[i]), N)
+  PL(v)
+end
 
 # --------------------
 # TRANSFORM FALLBACKS

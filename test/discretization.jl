@@ -1,8 +1,8 @@
 @testset "Discretization" begin
   @testset "FanTriangulation" begin
     pts = P2[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.75, 1.5), (0.25, 1.5), (0.0, 1.0)]
-    tris = [Triangle([pts[1], pts[i], pts[i + 1]]) for i in 2:(length(pts) - 1)]
-    hex = Hexagon(pts)
+    tris = [Triangle(pts[1], pts[i], pts[i + 1]) for i in 2:(length(pts) - 1)]
+    hex = Hexagon(pts...)
     mesh = discretize(hex, FanTriangulation())
     @test nvertices(mesh) == 6
     @test nelements(mesh) == 4
@@ -52,23 +52,30 @@
   end
 
   @testset "Dehn1899" begin
-    octa = Octagon(P2[(0.2, 0.2), (0.5, -0.5), (0.8, 0.2), (1.5, 0.5), (0.8, 0.8), (0.5, 1.5), (0.2, 0.8), (-0.5, 0.5)])
+    octa = Octagon(
+      P2(0.2, 0.2),
+      P2(0.5, -0.5),
+      P2(0.8, 0.2),
+      P2(1.5, 0.5),
+      P2(0.8, 0.8),
+      P2(0.5, 1.5),
+      P2(0.2, 0.8),
+      P2(-0.5, 0.5)
+    )
     mesh = discretize(octa, Dehn1899())
     @test nvertices(mesh) == 8
     @test nelements(mesh) == 6
     @test eltype(mesh) <: Triangle
 
     octa = Octagon(
-      P3[
-        (0.2, 0.2, 0.0),
-        (0.5, -0.5, 0.0),
-        (0.8, 0.2, 0.0),
-        (1.5, 0.5, 0.0),
-        (0.8, 0.8, 0.0),
-        (0.5, 1.5, 0.0),
-        (0.2, 0.8, 0.0),
-        (-0.5, 0.5, 0.0)
-      ]
+      P3(0.2, 0.2, 0.0),
+      P3(0.5, -0.5, 0.0),
+      P3(0.8, 0.2, 0.0),
+      P3(1.5, 0.5, 0.0),
+      P3(0.8, 0.8, 0.0),
+      P3(0.5, 1.5, 0.0),
+      P3(0.2, 0.8, 0.0),
+      P3(-0.5, 0.5, 0.0)
     )
     mesh = discretize(octa, Dehn1899())
     @test nvertices(mesh) == 8
@@ -268,7 +275,7 @@
 
   @testset "Tetrahedralization" begin
     box = Box(P3(0, 0, 0), P3(1, 1, 1))
-    hexa = Hexahedron(pointify(box))
+    hexa = Hexahedron(pointify(box)...)
     bmesh = discretize(box, Tetrahedralization())
     hmesh = discretize(hexa, Tetrahedralization())
     @test bmesh == hmesh
@@ -352,7 +359,7 @@
     @test nvertices(msh) == nelements(msh) + 1
 
     box = Box(P2(0, 0), P2(1, 1))
-    ngon = Quadrangle(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    ngon = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
     for geom in [box, ngon, poly]
       bound = boundary(geom)
@@ -404,7 +411,7 @@
     @test measure(mesh) == measure(grid)
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/499
-    quad = Quadrangle(P3[(0, 1, -1), (0, 1, 1), (0, -1, 1), (0, -1, -1)])
+    quad = Quadrangle(P3(0, 1, -1), P3(0, 1, 1), P3(0, -1, 1), P3(0, -1, -1))
     mesh = simplexify(quad)
     @test vertices(mesh) == pointify(quad)
 
@@ -419,7 +426,7 @@
 
     # tetrahedralization
     box = Box(P3(0, 0, 0), P3(1, 1, 1))
-    hex = Hexahedron(pointify(box))
+    hex = Hexahedron(pointify(box)...)
     bmesh = simplexify(box)
     hmesh = simplexify(hex)
     @test bmesh == hmesh

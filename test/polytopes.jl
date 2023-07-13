@@ -333,9 +333,9 @@
     @test isapprox(normal(t), Vec(0, -1 / sqrt(2), 1 / sqrt(2)))
 
     # test convexity of Triangle
-    t = Triangle(P2[(0, 0), (1, 0), (0, 1)])
+    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     @test isconvex(t)
-    t = Triangle(P3[(0, 0, 0), (1, 0, 0), (0, 1, 0)])
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     @test isconvex(t)
 
     # -----------
@@ -630,7 +630,7 @@
     @test paramdim(Tetrahedron) == 3
     @test nvertices(Tetrahedron) == 4
 
-    t = Tetrahedron(P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+    t = Tetrahedron(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0), P3(0, 0, 1))
     @test vertex(t, 1) == P3(0, 0, 0)
     @test vertex(t, 2) == P3(1, 0, 0)
     @test vertex(t, 3) == P3(0, 1, 0)
@@ -663,7 +663,7 @@
     @test isperiodic(Hexahedron) == (false, false, false)
     @test isparametrized(Hexahedron)
 
-    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
+    h = Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     @test vertex(h, 1) == P3(0, 0, 0)
     @test vertex(h, 8) == P3(0, 1, 1)
     @test isperiodic(h) == (false, false, false)
@@ -677,18 +677,18 @@
     @test h(T(1), T(1), T(0)) == P3(1, 1, 0)
     @test h(T(1), T(1), T(1)) == P3(1, 1, 1)
 
-    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
+    h = Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     @test volume(h) ≈ T(1 * 1 * 1)
-    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (2, 0, 2), (2, 2, 2), (0, 2, 2)])
+    h = Hexahedron(P3(0, 0, 0), P3(2, 0, 0), P3(2, 2, 0), P3(0, 2, 0), P3(0, 0, 2), P3(2, 0, 2), P3(2, 2, 2), P3(0, 2, 2))
     @test volume(h) ≈ T(2 * 2 * 2)
 
     # volume formula of a frustum of a prism is V = 1/3*H*(S₁+S₂+sqrt(S₁*S₂))
     # here we build a hexahedron which is a frustum of a prism with
     # bottom area S₁= 4, top area S₂= 1, height H = 2
-    h = Hexahedron(P3[(0, 0, 0), (2, 0, 0), (2, 2, 0), (0, 2, 0), (0, 0, 2), (1, 0, 2), (1, 1, 2), (0, 1, 2)])
+    h = Hexahedron(P3(0, 0, 0), P3(2, 0, 0), P3(2, 2, 0), P3(0, 2, 0), P3(0, 0, 2), P3(1, 0, 2), P3(1, 1, 2), P3(0, 1, 2))
     @test volume(h) ≈ T(1 / 3 * 2 * (1 + 4 + sqrt(1 * 4)))
 
-    h = Hexahedron(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
+    h = Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     m = boundary(h)
     @test m isa Mesh
     @test nvertices(m) == 8
@@ -702,7 +702,7 @@
     @test paramdim(Pyramid) == 3
     @test nvertices(Pyramid) == 5
 
-    p = Pyramid(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1)])
+    p = Pyramid(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1))
     @test volume(p) ≈ T(1 / 3)
     m = boundary(p)
     @test m isa Mesh

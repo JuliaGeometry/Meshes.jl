@@ -172,10 +172,12 @@ function vertices(g::Grid)
 end
 
 function element(g::Grid, ind::Int)
-  inds = CartesianIndices(size(g) .+ 1)
   elem = element(topology(g), ind)
   type = pltype(elem)
-  type([cart2vert(g, inds[i]) for i in indices(elem)])
+  einds = indices(elem)
+  cinds = CartesianIndices(size(g) .+ 1)
+  v = ntuple(i -> cart2vert(g, cinds[einds[i]]), nvertices(type))
+  type(v)
 end
 
 Base.eltype(g::Grid) = typeof(first(g))
