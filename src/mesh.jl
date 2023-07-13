@@ -176,8 +176,8 @@ function element(g::Grid, ind::Int)
   type = pltype(elem)
   einds = indices(elem)
   cinds = CartesianIndices(size(g) .+ 1)
-  v = ntuple(i -> cart2vert(g, cinds[einds[i]]), nvertices(type))
-  type(v)
+  verts = ntuple(i -> cart2vert(g, cinds[einds[i]]), nvertices(type))
+  type(verts)
 end
 
 Base.eltype(g::Grid) = typeof(first(g))
