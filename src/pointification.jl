@@ -15,7 +15,13 @@ pointify(s::Sphere) = pointify(discretize(s))
 
 pointify(p::Primitive) = pointify(boundary(p))
 
-pointify(p::Polytope) = vertices(p)
+pointify(p::Polytope) = collect(vertices(p))
+
+pointify(p::PolyArea) = vertices(p)
+
+pointify(r::Ring) = vertices(r)
+
+pointify(r::Rope) = vertices(r)
 
 pointify(m::Multi) = pointify(collect(m))
 
