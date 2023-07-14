@@ -663,7 +663,8 @@
     @test isperiodic(Hexahedron) == (false, false, false)
     @test isparametrized(Hexahedron)
 
-    h = Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
+    h =
+      Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     @test vertex(h, 1) == P3(0, 0, 0)
     @test vertex(h, 8) == P3(0, 1, 1)
     @test isperiodic(h) == (false, false, false)
@@ -677,18 +678,22 @@
     @test h(T(1), T(1), T(0)) == P3(1, 1, 0)
     @test h(T(1), T(1), T(1)) == P3(1, 1, 1)
 
-    h = Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
+    h =
+      Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     @test volume(h) ≈ T(1 * 1 * 1)
-    h = Hexahedron(P3(0, 0, 0), P3(2, 0, 0), P3(2, 2, 0), P3(0, 2, 0), P3(0, 0, 2), P3(2, 0, 2), P3(2, 2, 2), P3(0, 2, 2))
+    h =
+      Hexahedron(P3(0, 0, 0), P3(2, 0, 0), P3(2, 2, 0), P3(0, 2, 0), P3(0, 0, 2), P3(2, 0, 2), P3(2, 2, 2), P3(0, 2, 2))
     @test volume(h) ≈ T(2 * 2 * 2)
 
     # volume formula of a frustum of a prism is V = 1/3*H*(S₁+S₂+sqrt(S₁*S₂))
     # here we build a hexahedron which is a frustum of a prism with
     # bottom area S₁= 4, top area S₂= 1, height H = 2
-    h = Hexahedron(P3(0, 0, 0), P3(2, 0, 0), P3(2, 2, 0), P3(0, 2, 0), P3(0, 0, 2), P3(1, 0, 2), P3(1, 1, 2), P3(0, 1, 2))
+    h =
+      Hexahedron(P3(0, 0, 0), P3(2, 0, 0), P3(2, 2, 0), P3(0, 2, 0), P3(0, 0, 2), P3(1, 0, 2), P3(1, 1, 2), P3(0, 1, 2))
     @test volume(h) ≈ T(1 / 3 * 2 * (1 + 4 + sqrt(1 * 4)))
 
-    h = Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
+    h =
+      Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     m = boundary(h)
     @test m isa Mesh
     @test nvertices(m) == 8
