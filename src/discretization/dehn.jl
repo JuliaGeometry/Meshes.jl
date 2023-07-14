@@ -44,7 +44,7 @@ function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
     rinds = (i + 1):(i + n - 1)
 
     # check if candidate diagonal is valid
-    Δ = Triangle(v[I[linds]])
+    Δ = Triangle(v[I[i - 1]], v[I[i]], v[I[i + 1]])
     intriangle = findall(j -> v[I[j]] ∈ Δ, rinds[2:(end - 1)])
     isdiag = isempty(intriangle)
 

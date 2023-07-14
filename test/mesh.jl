@@ -122,8 +122,8 @@
     @test centroid(grid, 200 * 100) == P2(199.5, 99.5)
     @test nelements(grid) == 200 * 100
     @test eltype(grid) <: Quadrangle{2,T}
-    @test grid[1] == Quadrangle(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test grid[2] == Quadrangle(P2[(1, 0), (2, 0), (2, 1), (1, 1)])
+    @test grid[1] == Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    @test grid[2] == Quadrangle(P2(1, 0), P2(2, 0), P2(2, 1), P2(1, 1))
 
     # expand CartesianGrid with comparable vertices
     grid = CartesianGrid((10, 10), P2(0.0, 0.0), T.((1.0, 1.0)))
@@ -195,10 +195,10 @@
     mesh = SimpleMesh(points, connec)
     triangles =
       Triangle.([
-        P2[(0.0, 0.0), (1.0, 0.0), (0.5, 0.5)],
-        P2[(1.0, 0.0), (1.0, 1.0), (0.5, 0.5)],
-        P2[(1.0, 1.0), (0.0, 1.0), (0.5, 0.5)],
-        P2[(0.0, 1.0), (0.0, 0.0), (0.5, 0.5)]
+        (P2(0.0, 0.0), P2(1.0, 0.0), P2(0.5, 0.5)),
+        (P2(1.0, 0.0), P2(1.0, 1.0), P2(0.5, 0.5)),
+        (P2(1.0, 1.0), P2(0.0, 1.0), P2(0.5, 0.5)),
+        (P2(0.0, 1.0), P2(0.0, 0.0), P2(0.5, 0.5))
       ])
     @test vertices(mesh) == points
     @test collect(faces(mesh, 2)) == triangles
@@ -235,10 +235,10 @@
     □s = connect.([(1, 2, 6, 5), (5, 6, 4, 3)], Quadrangle)
     mesh = SimpleMesh(points, [Δs; □s])
     elms = [
-      Triangle(P2[(0.0, 1.0), (0.0, 0.0), (0.25, 0.5)]),
-      Triangle(P2[(1.0, 1.0), (0.75, 0.5), (1.0, 0.0)]),
-      Quadrangle(P2[(0.0, 0.0), (1.0, 0.0), (0.75, 0.5), (0.25, 0.5)]),
-      Quadrangle(P2[(0.25, 0.5), (0.75, 0.5), (1.0, 1.0), (0.0, 1.0)])
+      Triangle(P2(0.0, 1.0), P2(0.0, 0.0), P2(0.25, 0.5)),
+      Triangle(P2(1.0, 1.0), P2(0.75, 0.5), P2(1.0, 0.0)),
+      Quadrangle(P2(0.0, 0.0), P2(1.0, 0.0), P2(0.75, 0.5), P2(0.25, 0.5)),
+      Quadrangle(P2(0.25, 0.5), P2(0.75, 0.5), P2(1.0, 1.0), P2(0.0, 1.0))
     ]
     @test collect(elements(mesh)) == elms
     @test nelements(mesh) == 4
@@ -274,10 +274,10 @@
     points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
-    @test centroid(mesh, 1) == centroid(Triangle(P2[(0, 0), (1, 0), (0.5, 0.5)]))
-    @test centroid(mesh, 2) == centroid(Triangle(P2[(1, 0), (1, 1), (0.5, 0.5)]))
-    @test centroid(mesh, 3) == centroid(Triangle(P2[(1, 1), (0, 1), (0.5, 0.5)]))
-    @test centroid(mesh, 4) == centroid(Triangle(P2[(0, 1), (0, 0), (0.5, 0.5)]))
+    @test centroid(mesh, 1) == centroid(Triangle(P2(0, 0), P2(1, 0), P2(0.5, 0.5)))
+    @test centroid(mesh, 2) == centroid(Triangle(P2(1, 0), P2(1, 1), P2(0.5, 0.5)))
+    @test centroid(mesh, 3) == centroid(Triangle(P2(1, 1), P2(0, 1), P2(0.5, 0.5)))
+    @test centroid(mesh, 4) == centroid(Triangle(P2(0, 1), P2(0, 0), P2(0.5, 0.5)))
 
     # merge operation with 2D geometries
     mesh₁ = SimpleMesh(P2[(0, 0), (1, 0), (0, 1)], connect.([(1, 2, 3)]))
