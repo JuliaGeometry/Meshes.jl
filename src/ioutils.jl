@@ -7,7 +7,8 @@
 prettyname(geom) = prettyname(typeof(geom))
 function prettyname(G::Type)
   name = string(G)
-  replace(name, r".+\." => "", r"{.*}" => "")
+  name = replace(name, r"{.*" => "")
+  replace(name, r".+\." => "")
 end
 
 # helper function to print a large iterator
