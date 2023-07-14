@@ -81,7 +81,7 @@ Tetrahedron
 ```
 
 ```@example polytopes
-Tetrahedron([(0,0,0),(1,0,0),(0,1,0),(0,0,1)]) |> viz
+Tetrahedron((0,0,0),(1,0,0),(0,1,0),(0,0,1)) |> viz
 ```
 
 ### Hexahedron
@@ -91,8 +91,7 @@ Hexahedron
 ```
 
 ```@example polytopes
-Hexahedron([(0,0,0),(1,0,0),(1,1,0),(0,1,0),
-            (0,0,1),(1,0,1),(1,1,1),(0,1,1)]) |> viz
+Hexahedron((0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1),(1,0,1),(1,1,1),(0,1,1)) |> viz
 ```
 
 ### Pyramid
@@ -102,5 +101,5 @@ Pyramid
 ```
 
 ```@example polytopes
-Pyramid([(0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)]) |> viz
+Pyramid((0,0,0),(1,0,0),(1,1,0),(0,1,0),(0,0,1)) |> viz
 ```
