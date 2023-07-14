@@ -25,6 +25,9 @@
   @test P2(1.5, 1.5) ∈ multi
   @test P2(1.5, 0.5) ∉ multi
   @test P2(0.5, 1.5) ∉ multi
+  @test sprint(show, multi) == "MultiPolyArea{2,Float64}"
+  @test sprint(show, MIME"text/plain"(), multi) ==
+        "MultiPolyArea{2,Float64}\n  └─PolyArea(4-Ring)\n  └─PolyArea(4-Ring)"
 
   box1 = Box(P2(0, 0), P2(1, 1))
   box2 = Box(P2(1, 1), P2(2, 2))
@@ -34,6 +37,9 @@
   @test mchn isa Multi
   @test isnothing(noth)
   @test length(mchn) == T(8)
+  @test sprint(show, mbox) == "MultiBox{2,Float64}"
+  @test sprint(show, MIME"text/plain"(), mbox) ==
+        "MultiBox{2,Float64}\n  └─Box{2, Float64}(Point(0.0, 0.0), Point(1.0, 1.0))\n  └─Box{2, Float64}(Point(1.0, 1.0), Point(2.0, 2.0))"
 
   # constructor with iterator
   grid = CartesianGrid{T}(10, 10)
@@ -54,4 +60,7 @@
   quad = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
   multi = Multi([poly, quad])
   @test unique(multi) == multi
+  @test sprint(show, multi) == "MultiPolygon{2,Float64}"
+  @test sprint(show, MIME"text/plain"(), multi) ==
+        "MultiPolygon{2,Float64}\n  └─PolyArea(4-Ring)\n  └─Quadrangle(Point(0.0, 0.0), Point(1.0, 0.0), Point(1.0, 1.0), Point(0.0, 1.0))"
 end
