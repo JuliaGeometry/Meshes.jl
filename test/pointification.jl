@@ -11,17 +11,17 @@
   @test all(∈(boundary(ball)), points)
 
   verts = [P2(0, 0), P2(1, 1)]
-  segment = Segment(verts)
+  segment = Segment(verts...)
   points = pointify(segment)
   @test points == verts
 
   verts = [P2(0, 0), P2(1, 0), P2(1, 1)]
-  triangle = Triangle(verts)
+  triangle = Triangle(verts...)
   points = pointify(triangle)
   @test points == verts
 
   verts = [P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1)]
-  quadrangle = Quadrangle(verts)
+  quadrangle = Quadrangle(verts...)
   points = pointify(quadrangle)
   @test points == verts
 

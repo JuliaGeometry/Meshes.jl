@@ -24,22 +24,12 @@ struct Ngon{N,Dim,T} <: Polygon{Dim,T}
   vertices::NTuple{N,Point{Dim,T}}
 end
 
-function Ngon{N,Dim,T}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T}
-  P = length(vertices)
-  P == N || throw(ArgumentError("Invalid number of vertices for Ngon. Expected $N, got $P."))
-  v = ntuple(i -> @inbounds(vertices[i]), N)
-  Ngon{N,Dim,T}(v)
-end
-
 Ngon(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
 Ngon(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+
 Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
 Ngon{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
-
-Ngon(vertices::AbstractVector{<:Tuple}) = Ngon(Point.(vertices))
-Ngon(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ngon{length(vertices)}(vertices)
-Ngon{N}(vertices::AbstractVector{<:Tuple}) where {N} = Ngon{N}(Point.(vertices))
-Ngon{N}(vertices::AbstractVector{Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon{N}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
 
 # type aliases for convenience
 const Triangle = Ngon{3}
@@ -68,9 +58,6 @@ innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
 Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
-
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ngon{N,Dim,T}}) where {N,Dim,T} =
-  Ngon{N}(rand(rng, Point{Dim,T}, N))
 
 # ----------
 # TRIANGLES

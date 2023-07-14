@@ -1064,7 +1064,7 @@
   end
 
   @testset "Ngons" begin
-    o = Octagon([
+    o = Octagon(
       P3(0.0, 0.0, 1.0),
       P3(0.5, -0.5, 0.0),
       P3(1.0, 0.0, 0.0),
@@ -1073,7 +1073,7 @@
       P3(0.5, 1.5, 0.0),
       P3(0.0, 1.0, 0.0),
       P3(-0.5, 0.5, 0.0)
-    ])
+    )
 
     r = Ray(P3(-1.0, -1.0, -1.0), V3(1.0, 1.0, 1.0))
     @test intersection(r, o) |> type == Intersecting
@@ -1094,22 +1094,22 @@
   end
 
   @testset "hasintersect" begin
-    t = Triangle(P2[(0, 0), (1, 0), (0, 1)])
-    q = Quadrangle(P2[(1, 1), (2, 1), (2, 2), (1, 2)])
+    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
+    q = Quadrangle(P2(1, 1), P2(2, 1), P2(2, 2), P2(1, 2))
     @test hasintersect(t, t)
     @test hasintersect(q, q)
     @test !hasintersect(t, q)
     @test !hasintersect(q, t)
 
-    t = Triangle(P2[(1, 0), (2, 0), (1, 1)])
-    q = Quadrangle(P2[(1.3, 0.5), (2.3, 0.5), (2.3, 1.5), (1.3, 1.5)])
+    t = Triangle(P2(1, 0), P2(2, 0), P2(1, 1))
+    q = Quadrangle(P2(1.3, 0.5), P2(2.3, 0.5), P2(2.3, 1.5), P2(1.3, 1.5))
     @test hasintersect(t, t)
     @test hasintersect(q, q)
     @test hasintersect(t, q)
     @test hasintersect(q, t)
 
-    t = Triangle(P2[(1, 0), (2, 0), (1, 1)])
-    q = Quadrangle(P2[(1.3, 0.5), (2.3, 0.5), (2.3, 1.5), (1.3, 1.5)])
+    t = Triangle(P2(1, 0), P2(2, 0), P2(1, 1))
+    q = Quadrangle(P2(1.3, 0.5), P2(2.3, 0.5), P2(2.3, 1.5), P2(1.3, 1.5))
     m = Multi([t, q])
     @test hasintersect(m, t)
     @test hasintersect(t, m)
@@ -1117,21 +1117,21 @@
     @test hasintersect(q, m)
     @test hasintersect(m, m)
 
-    t = Triangle(P2[(0, 0), (1, 0), (0, 1)])
+    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     b = Ball(P2(0, 0), T(1))
     @test hasintersect(t, t)
     @test hasintersect(b, b)
     @test hasintersect(t, b)
     @test hasintersect(b, t)
 
-    t = Triangle(P2[(1, 0), (2, 0), (1, 1)])
+    t = Triangle(P2(1, 0), P2(2, 0), P2(1, 1))
     b = Ball(P2(0, 0), T(1))
     @test hasintersect(t, t)
     @test hasintersect(b, b)
     @test hasintersect(t, b)
     @test hasintersect(b, t)
 
-    t = Triangle(P2[(1, 0), (2, 0), (1, 1)])
+    t = Triangle(P2(1, 0), P2(2, 0), P2(1, 1))
     b = Ball(P2(-0.01, 0), T(1))
     @test hasintersect(t, t)
     @test hasintersect(b, b)
@@ -1139,9 +1139,9 @@
     @test !hasintersect(b, t)
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/250
-    t1 = Triangle(P3[(0, 0, 0), (2, 0, 0), (1, 2, 0)])
-    t2 = Triangle(P3[(1, 0, 0), (3, 0, 0), (2, 2, 0)])
-    t3 = Triangle(P3[(3, 0, 0), (5, 0, 0), (4, 2, 0)])
+    t1 = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(1, 2, 0))
+    t2 = Triangle(P3(1, 0, 0), P3(3, 0, 0), P3(2, 2, 0))
+    t3 = Triangle(P3(3, 0, 0), P3(5, 0, 0), P3(4, 2, 0))
     @test hasintersect(t1, t2)
     @test hasintersect(t2, t3)
     @test !hasintersect(t1, t3)
@@ -1233,8 +1233,8 @@
     @test hasintersect(r2, r3)
     @test !hasintersect(r1, r3)
 
-    t = Triangle(P2[(3, 1), (7, 5), (11, 1)])
-    q = Quadrangle(P2[(2, 0), (2, 7), (12, 7), (12, 0)])
+    t = Triangle(P2(3, 1), P2(7, 5), P2(11, 1))
+    q = Quadrangle(P2(2, 0), P2(2, 7), P2(12, 7), P2(12, 0))
     b = Box(P2(2, 0), P2(12, 7))
     s1 = Segment(P2(5, 2), P2(9, 2))
     s2 = Segment(P2(0, 3), P2(5, 3))
