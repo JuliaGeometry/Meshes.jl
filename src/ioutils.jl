@@ -6,9 +6,9 @@
 # the geometry inside a deep type hierarchy
 prettyname(geom) = prettyname(typeof(geom))
 function prettyname(G::Type)
-  n = string(G)
-  i = findfirst('{', n)
-  isnothing(i) ? n : n[1:(i - 1)]
+  name = string(G)
+  name = replace(name, r"{.*" => "")
+  replace(name, r".+\." => "")
 end
 
 # helper function to print a large iterator
