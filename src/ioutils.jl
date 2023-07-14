@@ -5,7 +5,10 @@
 # helper function to print the actual name of
 # the geometry inside a deep type hierarchy
 prettyname(geom) = prettyname(typeof(geom))
-prettyname(::Type{G}) where {G} = String(nameof(G))
+function prettyname(G::Type)
+  name = string(G)
+  replace(name, r".+\." => "", r"{.*}" => "")
+end
 
 # helper function to print a large iterator
 # in multiple lines with a given tabulation
