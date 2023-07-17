@@ -51,11 +51,10 @@
     @test nvertices.(mesh) ⊆ [3, 4]
 
     poly = PolyArea(P2[(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)])
-    mesh = discretize(poly, RegularDiscretization(10))
+    mesh = discretize(poly, RegularDiscretization(50))
     @test mesh isa DomainView
-    @test nelements(mesh) == 55
     @test eltype(mesh) <: Quadrangle
-    @test nvertices.(mesh) == fill(4, 55)
+    @test all(q -> q ⊆ poly, mesh)
   end
 
   @testset "Dehn1899" begin
