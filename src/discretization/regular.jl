@@ -18,14 +18,20 @@ end
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} = RegularDiscretization(sizes)
 
 function discretize(geometry::Geometry, method::RegularDiscretization)
-  sz = fitdims(method.sizes, paramdim(geometry))
-  ip = isperiodic(geometry)
-  np = @. sz + !ip
+  if isparametrized(geometry)
+    sz = fitdims(method.sizes, paramdim(geometry))
+    ip = isperiodic(geometry)
+    np = @. sz + !ip
 
-  points = sample(geometry, RegularSampling(np))
-  topo = GridTopology(sz, ip)
+    points = sample(geometry, RegularSampling(np))
+    topo = GridTopology(sz, ip)
 
-  SimpleMesh(collect(points), topo)
+    SimpleMesh(collect(points), topo)
+  else
+    box = boundingbox(geometry)
+    grid = discretize(box, method)
+    view(grid, geometry)
+  end
 end
 
 function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T}
