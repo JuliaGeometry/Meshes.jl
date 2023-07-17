@@ -52,9 +52,17 @@
 
     poly = readpoly(T, joinpath(datadir, "poly1.line"))
     mesh = discretize(poly, RegularDiscretization(10))
+    @test mesh isa DomainView
     @test nelements(mesh) == 9
     @test eltype(mesh) <: Quadrangle
     @test nvertices.(mesh) == fill(4, 9)
+
+    poly = readpoly(T, joinpath(datadir, "poly2.line"))
+    mesh = discretize(poly, RegularDiscretization(10))
+    @test mesh isa DomainView
+    @test nelements(mesh) == 6
+    @test eltype(mesh) <: Quadrangle
+    @test nvertices.(mesh) == fill(4, 6)
   end
 
   @testset "Dehn1899" begin
