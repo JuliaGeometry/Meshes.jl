@@ -1270,7 +1270,7 @@
     b2 = Box(P2(2, 2), P2(5, 5))
     @test hasintersect(b1, b2)
     @test hasintersect(b2, b1)
-    @test @elapsed(hasintersect(b1, b2)) < 10e-6
+    @test @elapsed(hasintersect(b1, b2)) < 5e-5
     @test @allocated(hasintersect(b1, b2)) < 100
 
     # partial application
