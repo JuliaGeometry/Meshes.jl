@@ -33,7 +33,13 @@ Discretize geometry within `boundary` with boundary discretization `method`.
 """
 function discretizewithin end
 
-discretize(geometry, method::BoundaryDiscretizationMethod) = discretizewithin(boundary(geometry), method)
+function discretize(geometry::Geometry, method::DiscretizationMethod)
+  box = boundingbox(geometry)
+  grid = discretize(box, method)
+  view(grid, geometry)
+end
+
+discretize(geometry::Geometry, method::BoundaryDiscretizationMethod) = discretizewithin(boundary(geometry), method)
 
 function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMethod) where {Dim,T}
   # clean up polygon if necessary
