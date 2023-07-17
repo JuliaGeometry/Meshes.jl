@@ -49,6 +49,13 @@
     @test nelements(mesh) == 10 * (10 - 1) + 2 * 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
+
+    poly = readpoly(T, joinpath(datadir, "poly1.line"))
+    mesh = discretize(poly, RegularDiscretization(10))
+    @test nvertices(mesh) == 10 * 10 + 2
+    @test nelements(mesh) == 10 * (10 - 1) + 2 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
   end
 
   @testset "Dehn1899" begin
