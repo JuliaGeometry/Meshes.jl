@@ -17,18 +17,21 @@ end
 
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} = RegularDiscretization(sizes)
 
-# optimized implementation for types that implement the isperiodic function
-for type in (:Ball, :BezierCurve, :Box, :Chain, :Circle, :Hexahedron, :Quadrangle, :Sphere, :Torus)
-  @eval function discretize(geometry::$type, method::RegularDiscretization)
-    sz = fitdims(method.sizes, paramdim(geometry))
-    ip = isperiodic(geometry)
-    np = @. sz + !ip
+function discretize(geometry::Geometry, method::RegularDiscretization)
+  box = boundingbox(geometry)
+  grid = discretize(box, method)
+  view(grid, geometry)
+end
 
-    points = sample(geometry, RegularSampling(np))
-    topo = GridTopology(sz, ip)
+function discretize(box::Box, method::RegularDiscretization)
+  sz = fitdims(method.sizes, paramdim(box))
+  ip = isperiodic(box)
+  np = @. sz + !ip
 
-    SimpleMesh(collect(points), topo)
-  end
+  points = sample(box, RegularSampling(np))
+  topo = GridTopology(sz, ip)
+
+  SimpleMesh(collect(points), topo)
 end
 
 function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T}
