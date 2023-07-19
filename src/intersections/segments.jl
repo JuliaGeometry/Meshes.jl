@@ -10,8 +10,8 @@
 # 4. overlap of segments (Overlapping -> Segments)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
-  a, b = seg₁(0), seg₁(1)
-  c, d = seg₂(0), seg₂(1)
+  a, b = vertices(seg₁)
+  c, d = vertices(seg₂)
 
   l₁ = length(seg₁)
   l₂ = length(seg₂)
