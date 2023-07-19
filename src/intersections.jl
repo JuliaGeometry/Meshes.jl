@@ -238,9 +238,9 @@ hasintersect(p::Point, m::Multi) = p ∈ m
 
 hasintersect(m::Multi, p::Point) = hasintersect(p, m)
 
-hasintersect(m::Multi, c::Chain) = hasintersect(collect(m), segments(c))
+hasintersect(c::Chain, m::Multi) = hasintersect(segments(c), collect(m))
 
-hasintersect(c::Chain, m::Multi) = hasintersect(m, c)
+hasintersect(m::Multi, c::Chain) = hasintersect(c, m)
 
 # fallback with iterators of geometries
 function hasintersect(geoms₁, geoms₂)

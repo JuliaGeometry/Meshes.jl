@@ -1279,5 +1279,19 @@
     box = Box(P2(0, 0), P2(2, 2))
     @test hasintersect(box)(poly)
     @test all(hasintersect(box), points)
+
+    # method ambiguities
+    point = P2(3, 1)
+    ring = Ring(P2(0, 0), P2(2, 2), P2(4, 0))
+    rope = Rope(P2(2, 0), P2(4, 2), P2(6, 0))
+    seg = Segment(P2(0, 1), P2(6, 1))
+    multi = Multi([ring])
+    @test hasintersect(point, ring)
+    @test hasintersect(point, rope)
+    @test hasintersect(point, seg)
+    @test hasintersect(point, multi)
+    @test hasintersect(ring, multi)
+    @test hasintersect(rope, multi)
+    @test hasintersect(seg, multi)
   end
 end
