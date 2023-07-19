@@ -13,8 +13,9 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
   a, b = seg₁(0), seg₁(1)
   c, d = seg₂(0), seg₂(1)
 
-  l₁, l₂ = length(seg₁), length(seg₂)
-  b₀ = a + 1 / l₁ * (b - a) # corresponds to seg₁(1/length)
+  l₁ = length(seg₁)
+  l₂ = length(seg₂)
+  b₀ = a + 1 / l₁ * (b - a)
   d₀ = c + 1 / l₂ * (d - c)
 
   # arc length parameters λ₁ ∈ [0, l₁], λ₂ ∈ [0, l₂]: 
