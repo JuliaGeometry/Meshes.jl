@@ -243,11 +243,11 @@ function _vcat(data1, data2)
   columns = map(names) do name
     column1 = Tables.getcolumn(cols1, name)
     column2 = Tables.getcolumn(cols2, name)
-    vcat(column1, column2)
+    [column1; column2]
   end
 
   newtab = (; zip(names, columns)...)
-  newdom = GeometrySet(vcat(collect(dom1), collect(dom2)))
+  newdom = GeometrySet([collect(dom1), collect(dom2)])
   newval = Dict(paramdim(newdom) => newtab)
   constructor(data1)(newdom, newval)
 end
