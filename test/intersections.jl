@@ -1282,8 +1282,8 @@
 
     # method ambiguities
     point = P2(3, 1)
-    ring = Ring(P2(0, 0), P2(2, 2), P2(4, 0))
-    rope = Rope(P2(2, 0), P2(4, 2), P2(6, 0))
+    ring = Ring(P2[(0, 0), (2, 2), (4, 0)])
+    rope = Rope(P2[(2, 0), (4, 2), (6, 0)])
     seg = Segment(P2(0, 1), P2(6, 1))
     multi = Multi([ring])
     @test hasintersect(point, ring)
