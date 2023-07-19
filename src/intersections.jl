@@ -229,7 +229,18 @@ hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
 hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
 
+# fallback with iterators of geometries
+function hasintersect(geoms₁, geoms₂)
+  for g₁ in geoms₁, g₂ in geoms₂
+    hasintersect(g₁, g₂) && return true
+  end
+  return false
+end
+
+# -------------------------
 # solve method ambiguities
+# -------------------------
+
 hasintersect(p::Point, c::Chain) = p ∈ c
 
 hasintersect(c::Chain, p::Point) = hasintersect(p, c)
@@ -242,13 +253,9 @@ hasintersect(c::Chain, m::Multi) = hasintersect(segments(c), collect(m))
 
 hasintersect(m::Multi, c::Chain) = hasintersect(c, m)
 
-# fallback with iterators of geometries
-function hasintersect(geoms₁, geoms₂)
-  for g₁ in geoms₁, g₂ in geoms₂
-    hasintersect(g₁, g₂) && return true
-  end
-  return false
-end
+# ------------------
+# utility functions
+# ------------------
 
 # support point in Minkowski difference
 function minkowskipoint(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}, d) where {Dim,T}
