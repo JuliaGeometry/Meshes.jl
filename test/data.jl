@@ -74,6 +74,24 @@
     @test data[3:4, r"b"] == dummy(view(grid, 3:4), (b=[7, 8],))
     @test data[:, r"[ab]"] == data
 
+    # vcat
+    data₁ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
+    data₂ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
+    data₃ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
+    @test vcat(data₁) == data₁
+    vdata = vcat(data₁, data₂)
+    @test vdata.a == [data₁.a; data₂.a]
+    @test vdata.b == [data₁.b; data₂.b]
+    @test vdata.geometry == PointSet([collect(data₁.geometry); collect(data₂.geometry)])
+    vdata = vcat(data₁, data₂, data₃)
+    @test vdata.a == [data₁.a; data₂.a; data₃.a]
+    @test vdata.b == [data₁.b; data₂.b; data₃.b]
+    @test vdata.geometry == PointSet([collect(data₁.geometry); collect(data₂.geometry); collect(data₃.geometry)])
+    # throws
+    data₁ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
+    data₂ = dummy(PointSet(rand(P2, 10)), (a=rand(10), c=rand(10)))
+    @test_throws ArgumentError vcat(data₁, data₂)
+
     # variables interface
     data = dummy(PointSet(rand(P2, 4)), (a=[1, 2, 3, 4], b=[5, 6, 7, 8]))
     @test asarray(data, :a) == asarray(data, "a") == [1, 2, 3, 4]

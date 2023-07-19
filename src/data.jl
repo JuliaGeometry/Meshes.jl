@@ -224,6 +224,34 @@ function Base.getindex(data::Data, inds, var::Regex)
   getindex(data, inds, snames)
 end
 
+Base.vcat(data::Data...) = reduce(_vcat, data)
+
+function _vcat(data1, data2)
+  tab1 = values(data1)
+  tab2 = values(data2)
+  dom1 = domain(data1)
+  dom2 = domain(data2)
+
+  cols1 = Tables.columns(tab1)
+  cols2 = Tables.columns(tab2)
+  names = Tables.columnnames(cols1)
+  
+  if Set(names) ≠ Set(Tables.columnnames(cols2))
+    throw(ArgumentError("All data must have the same variables"))
+  end
+
+  columns = map(names) do name
+    column1 = Tables.getcolumn(cols1, name)
+    column2 = Tables.getcolumn(cols2, name)
+    [column1; column2]
+  end
+
+  newtab = (; zip(names, columns)...)
+  newdom = GeometrySet([collect(dom1); collect(dom2)])
+  newval = Dict(paramdim(newdom) => newtab)
+  constructor(data1)(newdom, newval)
+end
+
 function _checkvars(vars)
   if !allunique(vars)
     throw(ArgumentError("The variable names must be unique"))
