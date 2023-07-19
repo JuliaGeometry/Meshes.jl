@@ -436,6 +436,33 @@
     @test intersection(l₁, s₇) |> type == NotIntersecting # CASE 4
     @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing
 
+    # degenerate segments
+    A = P2(0.0, 0.0)
+    B = P2(0.5, 0.0)
+    C = P2(1.0, 0.0)
+    s₀ = Segment(A, C)
+    s₁ = Segment(A, A)
+    s₂ = Segment(B, B)
+    s₃ = Segment(C, C)
+    @test s₀ ∩ s₁ ≈ s₁ ∩ s₀ ≈ A
+    @test s₀ ∩ s₂ ≈ s₂ ∩ s₀ ≈ B
+    @test s₀ ∩ s₃ ≈ s₃ ∩ s₀ ≈ C
+    @test intersection(s₀, s₁) |> type == CornerTouching
+    @test intersection(s₀, s₂) |> type == EdgeTouching
+    @test intersection(s₀, s₃) |> type == CornerTouching
+    @test s₁ ∩ s₂ === s₂ ∩ s₁ === nothing
+    @test s₁ ∩ s₃ === s₃ ∩ s₁ === nothing
+    @test s₂ ∩ s₃ === s₃ ∩ s₂ === nothing
+    @test intersection(s₁, s₂) |> type == NotIntersecting
+    @test intersection(s₁, s₃) |> type == NotIntersecting
+    @test intersection(s₂, s₃) |> type == NotIntersecting
+    @test s₁ ∩ s₁ ≈ A
+    @test s₂ ∩ s₂ ≈ B
+    @test s₃ ∩ s₃ ≈ C
+    @test intersection(s₁, s₁) |> type == CornerTouching
+    @test intersection(s₂, s₂) |> type == CornerTouching
+    @test intersection(s₃, s₃) |> type == CornerTouching
+
     # utils
     @test Meshes._sort4vals(2.5, 1.4, 1.1, 2.0) == (1.4, 2.0)
     @test Meshes._sort4vals(2.0, 1.1, 1.4, 2.5) == (1.4, 2.0)

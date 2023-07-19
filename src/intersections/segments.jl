@@ -13,6 +13,31 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
   a, b = vertices(seg₁)
   c, d = vertices(seg₂)
 
+  # handle degenerate segments
+  if a == b && c == d
+    if a ≈ c
+      return @IT CornerTouching a f
+    else
+      return @IT NotIntersecting nothing f
+    end
+  elseif a == b
+    if a ≈ c || a ≈ d
+      return @IT CornerTouching a f
+    elseif a ∈ seg₂
+      return @IT EdgeTouching a f
+    else
+      return @IT NotIntersecting nothing f
+    end
+  elseif c == d
+    if c ≈ a || c ≈ b
+      return @IT CornerTouching c f
+    elseif c ∈ seg₁
+      return @IT EdgeTouching c f
+    else
+      return @IT NotIntersecting nothing f
+    end
+  end
+
   l₁ = length(seg₁)
   l₂ = length(seg₂)
   b₀ = a + 1 / l₁ * (b - a)
