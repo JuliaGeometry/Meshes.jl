@@ -144,23 +144,11 @@ hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
 
 hasintersect(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
 
-hasintersect(p::Point, g::Geometry) = p ∈ g
-
-hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
-
-hasintersect(p::Point, m::Multi) = p ∈ m
-
-hasintersect(m::Multi, p::Point) = hasintersect(p, m)
-
 hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
 
 hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
 
 hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
-
-hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
-
-hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
 
 function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   # must have intersection of bounding boxes
@@ -223,11 +211,31 @@ function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T
   end
 end
 
-hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])
+const GEOMTYPES = [nameof.(subtypes(Primitive)); nameof.(subtypes(Polytope)); :Multi]
 
-hasintersect(g::Geometry, m::Multi) = hasintersect(m, g)
+for GeomType in setdiff(GEOMTYPES, [:Point])
+  @eval begin
+    hasintersect(p::Point, g::$GeomType) = p ∈ g
 
-hasintersect(m₁::Multi, m₂::Multi) = hasintersect(collect(m₁), collect(m₂))
+    hasintersect(g::$GeomType, p::Point) = hasintersect(p, g)
+  end
+end
+
+for GeomType in setdiff(GEOMTYPES, [:Point, :Multi])
+  @eval begin
+    hasintersect(m::Multi, g::$GeomType) = hasintersect(collect(m), [g])
+
+    hasintersect(g::$GeomType, m::Multi) = hasintersect(m, g)
+  end
+end
+
+for GeomType in setdiff(GEOMTYPES, [:Point; :Multi; nameof.(subtypes(Chain))])
+  @eval begin
+    hasintersect(c::Chain, g::$GeomType) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
+
+    hasintersect(g::$GeomType, c::Chain) = hasintersect(c, g)
+  end
+end
 
 hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
 
