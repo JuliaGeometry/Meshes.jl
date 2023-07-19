@@ -247,7 +247,7 @@ function _vcat(data1, data2)
   end
 
   newtab = (; zip(names, columns)...)
-  newdom = GeometrySet([collect(dom1), collect(dom2)])
+  newdom = GeometrySet([collect(dom1); collect(dom2)])
   newval = Dict(paramdim(newdom) => newtab)
   constructor(data1)(newdom, newval)
 end
