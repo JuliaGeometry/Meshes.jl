@@ -235,7 +235,7 @@ function _vcat(data1, data2)
   cols1 = Tables.columns(tab1)
   cols2 = Tables.columns(tab2)
   names = Tables.columnnames(cols1)
-  
+
   if Set(names) ≠ Set(Tables.columnnames(cols2))
     throw(ArgumentError("All data must have the same variables"))
   end
