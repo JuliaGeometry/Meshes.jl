@@ -34,6 +34,15 @@ function discretize(geometry::Geometry, method::RegularDiscretization)
   end
 end
 
+# --------------
+# SPECIAL CASES
+# --------------
+
+function discretize(box::Box, method::RegularDiscretization)
+  sz = fitdims(method.sizes, paramdim(box))
+  CartesianGrid(extrema(box)..., dims=sz)
+end
+
 function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T}
   nx, ny = fitdims(method.sizes, paramdim(sphere))
 

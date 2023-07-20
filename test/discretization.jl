@@ -22,6 +22,14 @@
     @test eltype(mesh) <: Segment
     @test nvertices.(mesh) ⊆ [2]
 
+    box = Box(P2(0, 0), P2(2, 2))
+    mesh = discretize(box, RegularDiscretization(10))
+    @test mesh isa CartesianGrid
+    @test nvertices(mesh) == 121
+    @test nelements(mesh) == 100
+    @test eltype(mesh) <: Quadrangle
+    @test nvertices.(mesh) ⊆ [4]
+
     sphere = Sphere(P2(0, 0), T(1))
     mesh = discretize(sphere, RegularDiscretization(10))
     @test nvertices(mesh) == 10
@@ -53,6 +61,8 @@
     poly = PolyArea(P2[(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)])
     mesh = discretize(poly, RegularDiscretization(50))
     @test mesh isa DomainView
+    grid, inds = unview(mesh)
+    @test grid isa CartesianGrid
     @test eltype(mesh) <: Quadrangle
     @test all(q -> q ⊆ poly, mesh)
   end
