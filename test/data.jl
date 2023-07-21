@@ -74,6 +74,34 @@
     @test data[3:4, r"b"] == dummy(view(grid, 3:4), (b=[7, 8],))
     @test data[:, r"[ab]"] == data
 
+    # hcat
+    dom = PointSet(rand(P2, 10))
+    data₁ = dummy(dom, (a=rand(10), b=rand(10)))
+    data₂ = dummy(dom, (c=rand(10), d=rand(10)))
+    data₃ = dummy(dom, (e=rand(10), f=rand(10)))
+    @test hcat(data₁) == data₁
+    hdata = hcat(data₁, data₂)
+    @test hdata.a == data₁.a
+    @test hdata.b == data₁.b
+    @test hdata.c == data₂.c
+    @test hdata.d == data₂.d
+    @test hdata.geometry == dom
+    hdata = hcat(data₁, data₂, data₃)
+    @test hdata.a == data₁.a
+    @test hdata.b == data₁.b
+    @test hdata.c == data₂.c
+    @test hdata.d == data₂.d
+    @test hdata.e == data₃.e
+    @test hdata.f == data₃.f
+    @test hdata.geometry == dom
+    # throws
+    data₁ = dummy(dom, (a=rand(10), b=rand(10)))
+    data₂ = dummy(dom, (a=rand(10), c=rand(10)))
+    @test_throws ArgumentError hcat(data₁, data₂)
+    data₁ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
+    data₂ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
+    @test_throws ArgumentError hcat(data₁, data₂)
+
     # vcat
     data₁ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
     data₂ = dummy(PointSet(rand(P2, 10)), (a=rand(10), b=rand(10)))
