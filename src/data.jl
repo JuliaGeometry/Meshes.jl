@@ -224,14 +224,42 @@ function Base.getindex(data::Data, inds, var::Regex)
   getindex(data, inds, snames)
 end
 
+Base.hcat(data::Data...) = reduce(_hcat, data)
+
 Base.vcat(data::Data...) = reduce(_vcat, data)
 
-function _vcat(data1, data2)
+function _hcat(data1, data2)
+  dom = domain(data1)
+  if dom ≠ domain(data2)
+    throw(ArgumentError("All data must have the same domain"))
+  end
+
   tab1 = values(data1)
   tab2 = values(data2)
+  cols1 = Tables.columns(tab1)
+  cols2 = Tables.columns(tab2)
+  names1 = Tables.columnnames(cols1)
+  names2 = Tables.columnnames(cols2)
+  names = [collect(names1); collect(names2)]
+
+  if !allunique(names)
+    throw(ArgumentError("All data must have different variables"))
+  end
+
+  columns1 = [Tables.getcolumn(cols1, name) for name in names1]
+  columns2 = [Tables.getcolumn(cols2, name) for name in names2]
+  columns = [columns1; columns2]
+
+  newtab = (; zip(names, columns)...)
+  newval = Dict(paramdim(dom) => newtab)
+  constructor(data1)(dom, newval)
+end
+
+function _vcat(data1, data2)
   dom1 = domain(data1)
   dom2 = domain(data2)
-
+  tab1 = values(data1)
+  tab2 = values(data2)
   cols1 = Tables.columns(tab1)
   cols2 = Tables.columns(tab2)
   names = Tables.columnnames(cols1)
