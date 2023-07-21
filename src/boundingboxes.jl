@@ -13,13 +13,13 @@ function boundingbox end
 # FALLBACKS
 # ----------
 
-boundingbox(p::Polytope) = boundingbox(vertices(p))
+boundingbox(p::Polytope) = _pboxes(vertices(p))
 
 boundingbox(p::Primitive) = boundingbox(boundary(p))
 
-boundingbox(m::Multi) = boundingbox(collect(m))
+boundingbox(m::Multi) = _bboxes(boundingbox(g) for g in collect(m))
 
-boundingbox(d::Domain) = boundingbox(collect(d))
+boundingbox(geoms) = _bboxes(boundingbox(g) for g in geoms)
 
 # ----------------
 # SPECIALIZATIONS
@@ -38,17 +38,15 @@ end
 
 boundingbox(g::Grid) = Box(extrema(g)...)
 
-boundingbox(m::Mesh) = boundingbox(vertices(m))
+boundingbox(m::Mesh) = _pboxes(vertices(m))
 
 # ---------------
 # IMPLEMENTATION
 # ---------------
 
-boundingbox(geoms::AbstractVector{<:Geometry}) = boundingbox(boundingbox.(geoms))
+_bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
-boundingbox(boxes::AbstractVector{<:Box}) = boundingbox(point for box in boxes for point in extrema(box))
-
-function boundingbox(points)
+function _pboxes(points)
   p = first(points)
   T = coordtype(p)
   Dim = embeddim(p)
