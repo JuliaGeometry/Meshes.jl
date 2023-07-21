@@ -31,7 +31,4 @@ pointify(p::PointSet) = collect(p)
 
 pointify(m::Mesh) = vertices(m)
 
-pointify(d::Data) = pointify(domain(d))
-
-# fallback with iterator of geometries
 pointify(geoms) = mapreduce(pointify, vcat, geoms)

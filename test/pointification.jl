@@ -49,9 +49,4 @@
   points = pointify(mesh)
   @test points == vertices(mesh)
   @test points == vertices(grid)
-
-  grid = CartesianGrid{T}(10, 10)
-  data = meshdata(grid, etable=(A=rand(100), B=rand(100)))
-  points = pointify(data)
-  @test points == vertices(grid)
 end
