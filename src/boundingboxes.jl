@@ -40,9 +40,9 @@ boundingbox(g::Grid) = Box(extrema(g)...)
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
 
-# ---------------
-# IMPLEMENTATION
-# ---------------
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
 
 _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
