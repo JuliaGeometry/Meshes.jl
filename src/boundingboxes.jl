@@ -21,8 +21,6 @@ boundingbox(m::Multi) = boundingbox(collect(m))
 
 boundingbox(d::Domain) = boundingbox(collect(d))
 
-boundingbox(d::Data) = boundingbox(domain(d))
-
 # ----------------
 # SPECIALIZATIONS
 # ----------------
@@ -39,6 +37,8 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
 end
 
 boundingbox(g::Grid) = Box(extrema(g)...)
+
+boundingbox(m::Mesh) = boundingbox(vertices(m))
 
 # ---------------
 # IMPLEMENTATION
