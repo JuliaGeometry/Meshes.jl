@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    JarvisMarch
+    JarvisMarch()
 
 Compute the convex hull of a set of points or geometries using the
 Jarvis's march algorithm. See [https://en.wikipedia.org/wiki/Gift_wrapping_algorithm]
@@ -19,7 +19,13 @@ and `h` is the number of points in the hull.
 """
 struct JarvisMarch <: HullMethod end
 
-function hull(points::AbstractVector{Point{2,T}}, ::JarvisMarch) where {T}
+function hull(points, ::JarvisMarch)
+  pₒ = first(points)
+  Dim = embeddim(pₒ)
+  T = coordtype(pₒ)
+
+  @assert Dim == 2 "Jarvis's march only defined in 2D"
+
   # remove duplicates
   p = unique(points)
   n = length(p)

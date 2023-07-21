@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    GrahamScan
+    GrahamScan()
 
 Compute the convex hull of a set of points or geometries using the
 Graham's scan algorithm. See [https://en.wikipedia.org/wiki/Graham_scan]
@@ -18,7 +18,13 @@ The algorithm has complexity `O(n*log(n))` where `n` is the number of points.
 """
 struct GrahamScan <: HullMethod end
 
-function hull(points::AbstractVector{Point{2,T}}, ::GrahamScan) where {T}
+function hull(points, ::GrahamScan)
+  pₒ = first(points)
+  Dim = embeddim(pₒ)
+  T = coordtype(pₒ)
+
+  @assert Dim == 2 "Graham's scan only defined in 2D"
+
   # remove duplicates
   p = unique(points)
   n = length(p)
