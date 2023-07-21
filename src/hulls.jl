@@ -38,15 +38,13 @@ function convexhull end
 # FALLBACKS
 # ----------
 
-convexhull(p::Polytope) = convexhull(vertices(p))
+convexhull(p::Polytope) = _pconvexhull(vertices(p))
 
 convexhull(p::Primitive) = convexhull(boundary(p))
 
-convexhull(m::Multi) = convexhull(collect(m))
+convexhull(m::Multi) = _gconvexhull(collect(m))
 
-convexhull(g::Geometry) = convexhull([g])
-
-convexhull(d::Domain) = convexhull(collect(d))
+convexhull(geoms) = _gconvexhull(geoms)
 
 # ----------------
 # SPECIALIZATIONS
@@ -64,12 +62,12 @@ convexhull(t::Triangle) = t
 
 convexhull(g::Grid) = Box(extrema(g)...)
 
-convexhull(m::Mesh) = convexhull(vertices(m))
+convexhull(m::Mesh) = _pconvexhull(vertices(m))
 
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
-convexhull(p::AbstractVector{<:Point{2}}) = hull(p, GrahamScan())
+_gconvexhull(geoms) = _pconvexhull(p for g in geoms for p in pointify(g))
 
-convexhull(g::AbstractVector{<:Geometry{2}}) = mapreduce(pointify, vcat, g) |> unique |> convexhull
+_pconvexhull(points) = hull(points, GrahamScan())
