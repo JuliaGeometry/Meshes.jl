@@ -50,7 +50,7 @@ convexhull(geoms) = _gconvexhull(geoms)
 # SPECIALIZATIONS
 # ----------------
 
-convexhull(p::Point) = Box(p, p)
+convexhull(p::Point) = p
 
 convexhull(b::Box) = b
 

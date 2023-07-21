@@ -39,7 +39,7 @@
   end
 
   @testset "convexhull" begin
-    @test convexhull(P2(0, 0)) == Box(P2(0, 0), P2(0, 0))
+    @test convexhull(P2(0, 0)) == P2(0, 0)
 
     @test convexhull(Box(P2(0, 0), P2(1, 1))) == Box(P2(0, 0), P2(1, 1))
 
