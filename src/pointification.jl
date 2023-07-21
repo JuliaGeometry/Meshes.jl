@@ -13,6 +13,8 @@ pointify(p::Point) = [p]
 
 pointify(s::Sphere) = pointify(discretize(s))
 
+pointify(t::Torus) = pointify(discretize(t))
+
 pointify(p::Primitive) = pointify(boundary(p))
 
 pointify(p::Polytope) = collect(vertices(p))

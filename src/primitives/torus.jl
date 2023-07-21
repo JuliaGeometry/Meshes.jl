@@ -40,6 +40,8 @@ isconvex(::Type{<:Torus}) = false
 
 isperiodic(::Type{<:Torus}) = (true, true)
 
+isparametrized(::Type{<:Torus}) = true
+
 center(t::Torus) = t.center
 
 normal(t::Torus) = t.normal
@@ -47,6 +49,8 @@ normal(t::Torus) = t.normal
 radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
+
+boundary(::Torus) = nothing
 
 # https://en.wikipedia.org/wiki/Torus
 function measure(t::Torus)
@@ -62,6 +66,13 @@ function Base.in(p::Point, t::Torus)
   M = rotation_between(n⃗, Vec(0, 0, 1))
   x, y, z = M * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
+end
+
+function (t::Torus{T})(u, v) where {T}
+  if (u < 0 || u > 1) || (v < 0 || v > 1)
+    throw(DomainError((u, v), "t(u, v) is not defined for u, v outside [0, 1]²."))
+  end
+  @error "not implemented"
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} =

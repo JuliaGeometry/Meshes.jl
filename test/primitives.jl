@@ -764,6 +764,7 @@
     @test paramdim(t) == 2
     @test !isconvex(t)
     @test isperiodic(t) == (true, true)
+    @test isparametrized(t)
     @test Meshes.center(t) == P3(1, 1, 1)
     @test normal(t) == V3(1, 0, 0)
     @test radii(t) == (T(2), T(1))
@@ -794,5 +795,8 @@
     t = rand(Torus{T})
     @test t isa Torus
     @test embeddim(t) == 3
+    @test coordtype(t) == T
+    @test isparametrized(t)
+    @test isnothing(boundary(t))
   end
 end

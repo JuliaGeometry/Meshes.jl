@@ -36,6 +36,8 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   Box(c - r⃗, c + r⃗)
 end
 
+boundingbox(t::Torus) = _pboxes(pointify(t))
+
 boundingbox(g::Grid) = Box(extrema(g)...)
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
