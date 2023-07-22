@@ -72,4 +72,4 @@ makedocs(
   ]
 )
 
-deploydocs(repo="github.com/JuliaGeometry/Meshes.jl.git")
+deploydocs(repo="github.com/JuliaGeometry/MeshesDocs.git")
