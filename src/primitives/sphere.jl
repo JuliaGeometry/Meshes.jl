@@ -18,6 +18,10 @@ Sphere(center::Point{Dim,T}, radius) where {Dim,T} = Sphere(center, T(radius))
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 
+Sphere(center::Point{Dim,T}) where {Dim,T} = Sphere(center, T(1))
+
+Sphere(center::Tuple) = Sphere(Point(center))
+
 """
     Sphere(p1, p2, p3)
 

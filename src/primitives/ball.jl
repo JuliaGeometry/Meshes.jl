@@ -18,6 +18,10 @@ Ball(center::Point{Dim,T}, radius) where {Dim,T} = Ball(center, T(radius))
 
 Ball(center::Tuple, radius) = Ball(Point(center), radius)
 
+Ball(center::Point{Dim,T}) where {Dim,T} = Ball(center, T(1))
+
+Ball(center::Tuple) = Ball(Point(center))
+
 paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 
 isconvex(::Type{<:Ball}) = true

@@ -446,6 +446,11 @@
     b = Ball(P3(1, 2, 3), 4)
     @test coordtype(b) == T
 
+    b1 = Ball(P2(0, 0), T(1))
+    b2 = Ball(P2(0, 0))
+    b3 = Ball(T.((0, 0)))
+    @test b1 == b2 == b3
+
     b = Ball(P2(0, 0), T(2))
     @test measure(b) ≈ T(π) * (T(2)^2)
     b = Ball(P3(0, 0, 0), T(2))
@@ -525,6 +530,11 @@
     @test !isconvex(s)
     @test isnothing(boundary(s))
     @test isperiodic(s) == (true,)
+
+    s1 = Sphere(P2(0, 0), T(1))
+    s2 = Sphere(P2(0, 0))
+    s3 = Sphere(T.((0, 0)))
+    @test s1 == s2 == s3
 
     s = Sphere(P2(0, 0), T(2))
     @test measure(s) ≈ 2π * 2
