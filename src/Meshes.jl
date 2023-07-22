@@ -12,7 +12,6 @@ using LinearAlgebra
 using Random
 
 using Bessels: gamma
-using IterTools: ivec
 using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using Rotations: Rotation, QuatRotation, Angle2d, rotation_between

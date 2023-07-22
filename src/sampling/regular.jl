@@ -93,7 +93,7 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
     Point(R' * coordinates(p) + coordinates(c))
   end
 
-  ivec(point(φ, z) for φ in φs, z in zs)
+  (point(φ, z) for z in zs for φ in φs)
 end
 
 function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
