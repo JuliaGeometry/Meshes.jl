@@ -61,6 +61,8 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
   b = bottom(cylsurf)
   t = top(cylsurf)
   a = axis(cylsurf)
+  d = a(1) - a(0)
+  l = norm(d)
 
   φmin, φmax = V(0), V(2π)
   zmin, zmax = V(0), V(1)
@@ -69,15 +71,11 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
   zs = range(zmin, stop=zmax, length=sz[2])
 
   # rotation to align z axis with cylinder axis
-  d₃ = a(1) - a(0)
-  l = norm(d₃)
-  d₃ /= l
-  d₁, d₂ = householderbasis(d₃)
-  R = transpose([d₁ d₂ d₃])
+  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
 
   # new normals of planes in new rotated system
-  nᵦ = R * normal(b)
-  nₜ = R * normal(t)
+  nᵦ = Q * normal(b)
+  nₜ = Q * normal(t)
 
   # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
   # equation of the plane, we can solve for z and find all points
@@ -90,7 +88,7 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
   function point(φ, z)
     pᵦ, pₜ = cᵦ(φ), cₜ(φ)
     p = pᵦ + z * (pₜ - pᵦ)
-    Point(R' * coordinates(p) + coordinates(c))
+    Point(Q' * coordinates(p) + coordinates(c))
   end
 
   iᵣ = (point(φ, z) for z in zs for φ in φs)
