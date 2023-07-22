@@ -63,13 +63,6 @@ function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T
     push!(middle, quad)
   end
 
-  # add north and south poles
-  c = center(sphere)
-  r = radius(sphere)
-  e⃗ = Vec{3,dropunits(T)}(0, 0, 1)
-  push!(points, c + r * e⃗)
-  push!(points, c - r * e⃗)
-
   # connect north pole with triangles
   north = map(1:(ny - 1)) do j
     u = nx * ny + 1

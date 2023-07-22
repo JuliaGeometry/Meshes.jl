@@ -41,7 +41,10 @@ function sample(::AbstractRNG, sphere::Sphere{3,T}, method::RegularSampling) whe
   δφ = 1 / (sz[2])
   θs = range(V(0 + δθ), stop=V(1 - δθ), length=sz[1])
   φs = range(V(0), stop=V(1 - δφ), length=sz[2])
-  ivec(sphere(θ, φ) for θ in θs, φ in φs)
+  poles = ((V(0), V(0)), (V(1), V(0)))
+  iiter = ivec(sphere(θ, φ) for θ in θs, φ in φs)
+  piter = ivec(sphere(θ, φ) for (θ, φ) in poles)
+  Iterators.flatmap(identity, (iiter, piter))
 end
 
 function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where {Dim,T}
