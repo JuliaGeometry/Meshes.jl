@@ -107,7 +107,7 @@ function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
   tris = map(1:(ny - 1)) do j
     u = nx * ny + 1
     v = 1 + (j - 1) * nx
-    w = 1 + (j    ) * nx
+    w = 1 + (j) * nx
     connect((u, v, w))
   end
   u = nx * ny + 1
