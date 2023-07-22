@@ -28,7 +28,7 @@ A method for sampling from discrete representations
 of geometric objects such as meshes or collections
 of geometries.
 """
-abstract type DiscreteSamplingMethod end
+abstract type DiscreteSamplingMethod <: SamplingMethod end
 
 """
     ContinuousSamplingMethod
@@ -38,7 +38,7 @@ of geometric objects. In this case, geometric objects
 are interpreted as a set of points in the embedding
 space.
 """
-abstract type ContinuousSamplingMethod end
+abstract type ContinuousSamplingMethod <: SamplingMethod end
 
 sample(rng::AbstractRNG, geom::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(geom), method)
 

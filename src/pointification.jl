@@ -27,6 +27,8 @@ pointify(geoms) = mapreduce(pointify, vcat, geoms)
 
 pointify(p::Point) = [p]
 
+pointify(s::Sphere{2}) = _rsample(s)
+
 pointify(s::Sphere) = pointify(discretize(s))
 
 pointify(t::Torus) = pointify(discretize(t))
@@ -40,3 +42,9 @@ pointify(r::Rope) = vertices(r)
 pointify(p::PointSet) = collect(p)
 
 pointify(m::Mesh) = vertices(m)
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+_rsample(g::Geometry) = collect(sample(g, RegularSampling(50)))
