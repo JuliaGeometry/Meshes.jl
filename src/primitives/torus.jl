@@ -53,18 +53,18 @@ axis(t::Torus) = Line(t.center, t.center + t.normal)
 boundary(::Torus) = nothing
 
 # https://en.wikipedia.org/wiki/Torus
-function measure(t::Torus)
+function measure(t::Torus{T}) where {T}
   R, r = t.major, t.minor
-  4π^2 * R * r
+  4T(π)^2 * R * r
 end
 
 area(t::Torus) = measure(t)
 
-function Base.in(p::Point, t::Torus)
+function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
-  M = rotation_between(n⃗, Vec(0, 0, 1))
-  x, y, z = M * (p - c)
+  Q = rotation_between(n⃗, Vec{3,T}(0, 0, 1))
+  x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
@@ -72,7 +72,18 @@ function (t::Torus{T})(u, v) where {T}
   if (u < 0 || u > 1) || (v < 0 || v > 1)
     throw(DomainError((u, v), "t(u, v) is not defined for u, v outside [0, 1]²."))
   end
-  @error "not implemented"
+  c, n⃗ = t.center, t.normal
+  R, r = t.major, t.minor
+  Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
+  kxy = R^2 - r^2
+  kz = √kxy * r
+  uₛ = T(π) * (2 * u - 1)
+  vₛ = T(π) * (2 * v - 1)
+  k = R - r * cos(vₛ)
+  x = kxy * cos(uₛ) / k
+  y = kxy * sin(uₛ) / k
+  z = kz * sin(vₛ) / k
+  c + Q * Vec{3,T}(x, y, z)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} =
