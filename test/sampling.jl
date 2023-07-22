@@ -232,10 +232,6 @@
       (1, 1, 1)
     ]
 
-    grid = CartesianGrid{T}(10, 10)
-    points = sample(grid, RegularSampling(100, 200))
-    @test length(collect(points)) == 20000
-
     torus = Torus(P3(0, 0, 0), V3(1, 0, 0), T(2), T(1))
     ps = sample(torus, RegularSampling(3, 3))
     ts = P3[

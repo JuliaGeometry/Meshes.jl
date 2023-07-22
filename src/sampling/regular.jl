@@ -39,20 +39,14 @@ end
 
 soffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
 eoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
+extrapoints(::Sphere{3}) = ((0, 0), (1, 0))
 
 soffset(b::Ball) = (n -> inv(n + 1), soffset(boundary(b))...)
 eoffset(b::Ball) = (n -> zero(n), eoffset(boundary(b))...)
-
-soffset(::Torus) = (n -> zero(n), n -> zero(n))
-eoffset(::Torus) = (n -> inv(n), n -> inv(n))
+extrapoints(b::Ball) = (ntuple(i -> 0, paramdim(b)),)
 
 soffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
 eoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
-
-extrapoints(::Sphere{3}) = ((0, 0), (1, 0))
-
-extrapoints(b::Ball) = (ntuple(i -> 0, paramdim(b)),)
-
 extrapoints(::Geometry) = ()
 
 # --------------
@@ -104,8 +98,4 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
   end
 
   ivec(point(φ, z) for φ in φs, z in zs)
-end
-
-function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
-  sample(rng, boundingbox(grid), method)
 end
