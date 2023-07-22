@@ -27,8 +27,8 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) w
   V = T <: AbstractFloat ? T : Float64
   D = paramdim(geom)
   sz = fitdims(method.sizes, D)
-  δₛ = soffset(geom)
-  δₑ = eoffset(geom)
+  δₛ = firstoffset(geom)
+  δₑ = lastoffset(geom)
   tₛ = ntuple(i -> V(0 + δₛ[i](sz[i])), D)
   tₑ = ntuple(i -> V(1 - δₑ[i](sz[i])), D)
   rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
@@ -37,20 +37,20 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) w
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
-soffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
-eoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
+firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
+lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
 extrapoints(s::Sphere{3}) = (s(0, 0), s(1, 0))
 
-soffset(b::Ball) = (n -> inv(n + 1), soffset(boundary(b))...)
-eoffset(b::Ball) = (n -> zero(n), eoffset(boundary(b))...)
+firstoffset(b::Ball) = (n -> inv(n + 1), firstoffset(boundary(b))...)
+lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
 extrapoints(b::Ball) = (center(b),)
 
-soffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
-eoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
+firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
+lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::CylinderSurface) = (bottom(c)(0, 0), top(c)(0, 0))
 
-soffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
-eoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
+firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
+lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
 extrapoints(::Geometry) = ()
 
 # --------------
