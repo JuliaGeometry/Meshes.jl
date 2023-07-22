@@ -27,40 +27,30 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) w
   V = T <: AbstractFloat ? T : Float64
   D = paramdim(geom)
   sz = fitdims(method.sizes, D)
-  δₛ = _soffset(geom)
-  δₑ = _eoffset(geom)
+  δₛ = soffset(geom)
+  δₑ = eoffset(geom)
   tₛ = ntuple(i -> V(0 + δₛ[i](sz[i])), D)
   tₑ = ntuple(i -> V(1 - δₑ[i](sz[i])), D)
   rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
   iᵣ = (geom(uv...) for uv in Iterators.product(rs...))
-  iₚ = (geom(uv...) for uv in _extrapoints(geom))
+  iₚ = (geom(uv...) for uv in extrapoints(geom))
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
-_soffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
-_eoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
-_soffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
-_eoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
+soffset(b::Ball) = (n -> inv(n + 1), soffset(boundary(b))...)
+eoffset(b::Ball) = (n -> zero(n), eoffset(boundary(b))...)
+soffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
+eoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
+soffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
+eoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
 
-_extrapoints(::Sphere{3}) = ((0, 0), (1, 0))
-_extrapoints(::Geometry) = ()
+extrapoints(b::Ball) = (ntuple(i -> 0, paramdim(b)),)
+extrapoints(::Sphere{3}) = ((0, 0), (1, 0))
+extrapoints(::Geometry) = ()
 
-function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where {Dim,T}
-  V = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(ball))
-  c, r = center(ball), radius(ball)
-
-  smin, smax = V(0), V(1)
-  δs = (smax - smin) / (last(sz) - 1)
-  srange = range(smin + δs, stop=smax, length=last(sz))
-
-  # reuse samples on the boundary
-  points = sample(Sphere(c, r), RegularSampling(sz[1:(Dim - 1)]))
-
-  scale(p, s) = c + s * (p - c)
-
-  ivec(scale(p, s) for p in points, s in srange)
-end
+# --------------
+# SPECIAL CASES
+# --------------
 
 function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampling) where {T}
   V = T <: AbstractFloat ? T : Float64
@@ -109,10 +99,6 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
   ivec(point(φ, z) for φ in φs, z in zs)
 end
 
-function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
-  sample(rng, boundingbox(grid), method)
-end
-
 function sample(::AbstractRNG, torus::Torus{T}, method::RegularSampling) where {T}
   V = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(torus))
@@ -135,4 +121,8 @@ function sample(::AbstractRNG, torus::Torus{T}, method::RegularSampling) where {
   r⃗(u, v) = Vec{3,T}(kxy * cos(u), kxy * sin(u), kz * sin(v)) / (R - r * cos(v))
 
   ivec(c + M * r⃗(u, v) for u in us, v in vs)
+end
+
+function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
+  sample(rng, boundingbox(grid), method)
 end

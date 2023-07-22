@@ -100,33 +100,22 @@ function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
   points = collect(sample(ball, sampler))
 
   # connect regular samples with quadrangles
-  topo = GridTopology((nx - 1, ny - 1))
-  rings = collect(elements(topo))
-  for j in 1:(ny - 1)
-    u = (j) * nx
-    v = (j - 1) * nx + 1
-    w = (j) * nx + 1
-    z = (j + 1) * nx
-    quad = connect((u, v, w, z))
-    push!(rings, quad)
-  end
-
-  # add point at center
-  push!(points, center(ball))
+  topo = GridTopology((nx - 1, ny), (false, true))
+  quads = collect(elements(topo))
 
   # connect center with triangles
-  tris = map(1:(nx - 1)) do i
+  tris = map(1:(ny - 1)) do j
     u = nx * ny + 1
-    v = i + 1
-    w = i
+    v = 1 + (j - 1) * nx
+    w = 1 + (j    ) * nx
     connect((u, v, w))
   end
   u = nx * ny + 1
-  v = 1
-  w = nx
+  v = 1 + (ny - 1) * nx
+  w = 1
   push!(tris, connect((u, v, w)))
 
-  connec = [rings; tris]
+  connec = [quads; tris]
 
   SimpleMesh(points, connec)
 end
