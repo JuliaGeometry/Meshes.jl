@@ -29,7 +29,7 @@ pointify(p::Point) = [p]
 
 pointify(s::Sphere) = _rsample(s)
 
-pointify(t::Torus) = pointify(discretize(t))
+pointify(t::Torus) = _rsample(t)
 
 pointify(p::PolyArea) = vertices(p)
 
