@@ -93,7 +93,9 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
     Point(R' * coordinates(p) + coordinates(c))
   end
 
-  (point(φ, z) for z in zs for φ in φs)
+  iᵣ = (point(φ, z) for z in zs for φ in φs)
+  iₚ = (b(0, 0), t(0, 0))
+  Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
 function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)

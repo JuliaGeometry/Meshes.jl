@@ -179,7 +179,7 @@
     xs = getindex.(cs, 1)
     ys = getindex.(cs, 2)
     zs = getindex.(cs, 3)
-    @test length(cs) == 200
+    @test length(cs) == 200 + 2
     @test all(T(-1) ≤ x ≤ T(1) for x in xs)
     @test all(T(-1) ≤ y ≤ T(1) for y in ys)
     @test all(T(0) ≤ z ≤ T(1) for z in zs)
@@ -191,14 +191,14 @@
     xs = getindex.(cs, 1)
     ys = getindex.(cs, 2)
     zs = getindex.(cs, 3)
-    @test length(cs) == 200
+    @test length(cs) == 200 + 2
     @test all(T(0) - eps(T) ≤ z ≤ T(1) + eps(T) for z in zs)
 
     # cylinder surface with non-parallel planes
     c = CylinderSurface(Plane(P3(0, 0, 0), V3(1, 0, 1)), Plane(P3(1, 1, 1), V3(0, 1, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = coordinates.(ps)
-    @test length(cs) == 200
+    @test length(cs) == 200 + 2
 
     s = Segment(P2(0, 0), P2(1, 1))
     ps = sample(s, RegularSampling(2))
