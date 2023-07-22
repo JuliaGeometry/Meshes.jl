@@ -56,6 +56,7 @@ extrapoints(::Geometry) = ()
 function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampling) where {T}
   V = T <: AbstractFloat ? T : Float64
   sz = fitdims(method.sizes, paramdim(cylsurf))
+  c = center(cylsurf)
   r = radius(cylsurf)
   b = bottom(cylsurf)
   t = top(cylsurf)
@@ -86,15 +87,10 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
   cᵦ(φ) = Point(r * cos(φ), r * sin(φ), zᵦ(φ))
   cₜ(φ) = Point(r * cos(φ), r * sin(φ), zₜ(φ))
 
-  # center of cylinder for final translation
-  oᵦ = coordinates(b(0, 0))
-  oₜ = coordinates(t(0, 0))
-  oₘ = @. (oᵦ + oₜ) / 2
-
   function point(φ, z)
     pᵦ, pₜ = cᵦ(φ), cₜ(φ)
     p = pᵦ + z * (pₜ - pᵦ)
-    Point((R' * coordinates(p)) + oₘ)
+    Point(R' * coordinates(p) + coordinates(c))
   end
 
   ivec(point(φ, z) for φ in φs, z in zs)
