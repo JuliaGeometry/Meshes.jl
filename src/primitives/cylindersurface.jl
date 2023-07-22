@@ -48,6 +48,8 @@ paramdim(::Type{<:CylinderSurface}) = 2
 
 isconvex(::Type{<:CylinderSurface}) = true
 
+isparametrized(::Type{<:CylinderSurface}) = true
+
 radius(c::CylinderSurface) = c.radius
 
 bottom(c::CylinderSurface) = c.bot
@@ -79,6 +81,41 @@ boundary(::CylinderSurface) = nothing
 measure(c::CylinderSurface{T}) where {T} = (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
 
 area(c::CylinderSurface) = measure(c)
+
+function (c::CylinderSurface{T})(φ, z) where {T}
+  if (φ < 0 || φ > 1) || (z < 0 || z > 1)
+    throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
+  end
+  o = center(c)
+  r = radius(c)
+  b = bottom(c)
+  t = top(c)
+  a = axis(c)
+  d = a(1) - a(0)
+  l = norm(d)
+
+  # rotation to align z axis with cylinder axis
+  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
+
+  # new normals of planes in new rotated system
+  nᵦ = Q * normal(b)
+  nₜ = Q * normal(t)
+
+  # scale coordinates
+  φₛ = 2T(π) * φ
+  zₛ = z
+
+  # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
+  # equation of the plane, we can solve for z and find all points
+  # along the ellipse obtained by intersection
+  zᵦ = -l / 2 - (r * cos(φₛ) * nᵦ[1] + r * sin(φₛ) * nᵦ[2]) / nᵦ[3]
+  zₜ = +l / 2 - (r * cos(φₛ) * nₜ[1] + r * sin(φₛ) * nₜ[2]) / nₜ[3]
+  pᵦ = Point(r * cos(φₛ), r * sin(φₛ), zᵦ)
+  pₜ = Point(r * cos(φₛ), r * sin(φₛ), zₜ)
+
+  p = pᵦ + zₛ * (pₜ - pᵦ)
+  o + Q' * coordinates(p)
+end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface{T}}) where {T} =
   CylinderSurface(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))

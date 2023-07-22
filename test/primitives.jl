@@ -711,6 +711,7 @@
     @test centroid(c) == P3(0.0, 0.0, 0.5)
     @test axis(c) == Line(P3(0, 0, 0), P3(0, 0, 1))
     @test isconvex(c)
+    @test isparametrized(c)
     @test isright(c)
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi
@@ -722,6 +723,12 @@
 
     c = CylinderSurface(Plane(P3(1, 2, 3), V3(0, 0, 1)), Plane(P3(4, 5, 6), V3(0, 0, 1)), T(5))
     @test measure(c) == area(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3 * T(3)^2)
+
+    c = CylinderSurface(T(1))
+    @test c(T(0), T(0)) ≈ P3(1, 0, 0)
+    @test c(T(0.5), T(0)) ≈ P3(-1, 0, 0)
+    @test c(T(0), T(1)) ≈ P3(1, 0, 1)
+    @test c(T(0.5), T(1)) ≈ P3(-1, 0, 1)
 
     c = CylinderSurface(1.0)
     @test coordtype(c) == Float64
