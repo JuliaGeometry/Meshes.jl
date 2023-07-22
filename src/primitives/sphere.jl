@@ -101,7 +101,7 @@ end
 
 function (s::Sphere{3,T})(θ, φ) where {T}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
-    throw(DomainError((ρ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
+    throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   c = s.center
   r = s.radius
