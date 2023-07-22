@@ -33,17 +33,17 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) w
   tₑ = ntuple(i -> V(1 - δₑ[i](sz[i])), D)
   rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
   iᵣ = (geom(uv...) for uv in Iterators.product(rs...))
-  iₚ = (geom(uv...) for uv in extrapoints(geom))
+  iₚ = (p for p in extrapoints(geom))
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
 soffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
 eoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
-extrapoints(::Sphere{3}) = ((0, 0), (1, 0))
+extrapoints(s::Sphere{3}) = (s(0, 0), s(1, 0))
 
 soffset(b::Ball) = (n -> inv(n + 1), soffset(boundary(b))...)
 eoffset(b::Ball) = (n -> zero(n), eoffset(boundary(b))...)
-extrapoints(b::Ball) = (ntuple(i -> 0, paramdim(b)),)
+extrapoints(b::Ball) = (center(b),)
 
 soffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
 eoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
