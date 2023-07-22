@@ -248,6 +248,10 @@
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
+
+    grid = CartesianGrid{T}(10, 10)
+    points = sample(grid, RegularSampling(100, 200))
+    @test length(collect(points)) == 20000
   end
 
   @testset "HomogeneousSampling" begin

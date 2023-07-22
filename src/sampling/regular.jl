@@ -99,3 +99,7 @@ function sample(::AbstractRNG, cylsurf::CylinderSurface{T}, method::RegularSampl
 
   ivec(point(φ, z) for φ in φs, z in zs)
 end
+
+function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
+  sample(rng, boundingbox(grid), method)
+end
