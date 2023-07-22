@@ -16,9 +16,9 @@ end
 
 HomogeneousSampling(size::Int) = HomogeneousSampling(size, nothing)
 
-function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
+function sample(rng::AbstractRNG, d::Domain, method::HomogeneousSampling)
   size = method.size
-  weights = isnothing(method.weights) ? measure.(Ω) : method.weights
+  weights = isnothing(method.weights) ? measure.(d) : method.weights
 
   # sample elements with weights
   w = WeightedSampling(size, weights, replace=true)
@@ -26,7 +26,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::HomogeneousSampling)
   # within each element sample a single point
   h = HomogeneousSampling(1)
 
-  (first(sample(rng, e, h)) for e in sample(rng, Ω, w))
+  (first(sample(rng, e, h)) for e in sample(rng, d, w))
 end
 
 function sample(rng::AbstractRNG, geom::Geometry{Dim,T}, method::HomogeneousSampling) where {Dim,T}

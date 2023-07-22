@@ -33,7 +33,7 @@ end
 
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
+function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
   # retrieve parameters
   α = method.α
   ρ = method.ρ
@@ -41,7 +41,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
   m = method.metric
 
   # total volume/area of the object
-  V = sum(measure, Ω)
+  V = sum(measure, d)
 
   # expected number of Poisson samples
   # for relative radius (Lagae & Dutré 2007)
@@ -51,7 +51,7 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::MinDistanceSampling)
   O = ceil(Int, δ * N)
 
   # oversample the object
-  points = sample(rng, Ω, HomogeneousSampling(O))
+  points = sample(rng, d, HomogeneousSampling(O))
 
   # collect points into point set
   𝒫 = PointSet(collect(points))
