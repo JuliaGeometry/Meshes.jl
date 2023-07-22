@@ -26,26 +26,24 @@ RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) where {Dim,T}
   V = T <: AbstractFloat ? T : Float64
   D = paramdim(geom)
-  pr = isperiodic(geom)
   sz = fitdims(method.sizes, D)
-  tₛ = ntuple(i -> V(0), D)
-  tₑ = ntuple(i -> pr[i] ? V(1 - 1 / sz[i]) : V(1), D)
+  δₛ = _soffset(geom)
+  δₑ = _eoffset(geom)
+  tₛ = ntuple(i -> V(0 + δₛ[i](sz[i])), D)
+  tₑ = ntuple(i -> V(1 - δₑ[i](sz[i])), D)
   rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
-  ivec(geom(uv...) for uv in Iterators.product(rs...))
+  iᵣ = (geom(uv...) for uv in Iterators.product(rs...))
+  iₚ = (geom(uv...) for uv in _poles(geom))
+  Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
-function sample(::AbstractRNG, sphere::Sphere{3,T}, method::RegularSampling) where {T}
-  V = T <: AbstractFloat ? T : Float64
-  sz = fitdims(method.sizes, paramdim(sphere))
-  δθ = 1 / (sz[1] + 1)
-  δφ = 1 / (sz[2])
-  θs = range(V(0 + δθ), stop=V(1 - δθ), length=sz[1])
-  φs = range(V(0), stop=V(1 - δφ), length=sz[2])
-  poles = ((V(0), V(0)), (V(1), V(0)))
-  iiter = ivec(sphere(θ, φ) for θ in θs, φ in φs)
-  piter = ivec(sphere(θ, φ) for (θ, φ) in poles)
-  Iterators.flatmap(identity, (iiter, piter))
-end
+_soffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
+_eoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
+_soffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
+_eoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
+
+_poles(::Sphere{3}) = [(0, 0), (1, 0)]
+_poles(::Geometry) = []
 
 function sample(::AbstractRNG, ball::Ball{Dim,T}, method::RegularSampling) where {Dim,T}
   V = T <: AbstractFloat ? T : Float64
