@@ -368,6 +368,7 @@ export
   RegularSampling,
   HomogeneousSampling,
   MinDistanceSampling,
+  sampleinds,
   sample,
 
   # intersections

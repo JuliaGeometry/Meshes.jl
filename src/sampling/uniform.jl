@@ -18,10 +18,10 @@ end
 
 UniformSampling(size; replace=false, ordered=false) = UniformSampling(size, replace, ordered)
 
-function sample(rng::AbstractRNG, Ω::DomainOrData, method::UniformSampling)
+function sampleinds(rng::AbstractRNG, d::Domain, method::UniformSampling)
   s = method.size
   r = method.replace
   o = method.ordered
   m = WeightedSampling(s; replace=r, ordered=o)
-  sample(rng, Ω, m)
+  sampleinds(rng, d, m)
 end

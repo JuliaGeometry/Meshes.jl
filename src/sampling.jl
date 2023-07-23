@@ -31,6 +31,23 @@ of geometries.
 abstract type DiscreteSamplingMethod <: SamplingMethod end
 
 """
+    sampleinds(rng, domain, method)
+
+Sample indices of elements in `domain` with discrete
+sampling `method` and random number generator `rng`.
+"""
+function sampleinds end
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+include("sampling/uniform.jl")
+include("sampling/weighted.jl")
+include("sampling/ball.jl")
+include("sampling/block.jl")
+
+"""
     ContinuousSamplingMethod
 
 A method for sampling from continuous representations
@@ -40,22 +57,23 @@ space.
 """
 abstract type ContinuousSamplingMethod <: SamplingMethod end
 
-sample(rng::AbstractRNG, geom::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(geom), method)
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
-# discrete sampling
-include("sampling/uniform.jl")
-include("sampling/weighted.jl")
-include("sampling/ball.jl")
-include("sampling/block.jl")
-
-# continuous sampling
 include("sampling/regular.jl")
 include("sampling/homogeneous.jl")
 include("sampling/mindistance.jl")
+
+# ----------
+# FALLBACKS
+# ----------
+
+sample(rng::AbstractRNG, d::Data, method::DiscreteSamplingMethod) = view(d, sampleinds(rng, domain(d), method))
+
+sample(rng::AbstractRNG, d::Domain, method::DiscreteSamplingMethod) = view(d, sampleinds(rng, d, method))
+
+sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(g), method)
 
 # ----------
 # UTILITIES

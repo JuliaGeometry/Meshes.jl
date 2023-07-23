@@ -28,8 +28,8 @@ WeightedSampling(size, weights::Nothing; replace=false, ordered=false) =
 WeightedSampling(size, weights; replace=false, ordered=false) =
   WeightedSampling(size, Weights(collect(weights)), replace, ordered)
 
-function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
-  n = nitems(Ω)
+function sampleinds(rng::AbstractRNG, d::Domain, method::WeightedSampling)
+  n = nelements(d)
   s = method.size
   w = method.weights
   r = method.replace
@@ -39,11 +39,9 @@ function sample(rng::AbstractRNG, Ω::DomainOrData, method::WeightedSampling)
     throw(ArgumentError("invalid sample size for sampling without replacement"))
   end
 
-  inds = if isnothing(w)
+  if isnothing(w)
     sample(rng, 1:n, s, replace=r, ordered=o)
   else
     sample(rng, 1:n, w, s, replace=r, ordered=o)
   end
-
-  view(Ω, inds)
 end
