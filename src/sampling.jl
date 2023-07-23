@@ -2,9 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# type alias for convenience
-const DomainOrData = Union{Domain,Data}
-
 """
     SamplingMethod
 
@@ -87,7 +84,7 @@ with or without replacement depending on the `replace` option. The
 option `ordered` can be used to return samples in the same order of
 the `object`.
 """
-function sample(object::DomainOrData, size::Int, weights=nothing; replace=false, ordered=false)
+function sample(object::Union{Domain,Data}, size::Int, weights=nothing; replace=false, ordered=false)
   method = WeightedSampling(size, weights; replace=replace, ordered=ordered)
   sample(Random.GLOBAL_RNG, object, method)
 end

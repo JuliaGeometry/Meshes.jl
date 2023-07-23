@@ -291,8 +291,7 @@ export
   MeshData,
   meshdata,
 
-  # domain/data alias
-  DomainOrData,
+  # domain/data traits
   nitems,
 
   # views
