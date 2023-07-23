@@ -1,11 +1,11 @@
 # Sets
 
-```@example geomsets
+```@example sets
 using JSServe: Page # hide
 Page(exportable=true, offline=true) # hide
 ```
 
-```@example geomsets
+```@example sets
 using Meshes, MeshViz # hide
 import WGLMakie as Mke # hide
 ```
@@ -15,13 +15,16 @@ any connectivity information (a.k.a., "soup of geometries").
 
 ```@docs
 GeometrySet
+```
+
+```@example sets
+GeometrySet(rand(Ball{3,Float64}, 3)) |> viz
+```
+
+```@docs
 PointSet
 ```
 
-```@example geomsets
-GeometrySet([Point(0, 0), Ball((0, 0), 1), Box((0, 0), (1, 1))])
-```
-
-```@example geomsets
-GeometrySet(rand(Point2, 10))
+```@example sets
+PointSet(rand(Point2, 100)) |> viz
 ```
