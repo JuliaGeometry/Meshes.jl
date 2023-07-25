@@ -136,7 +136,9 @@ Tables.materializer(D::Type{<:Data}) = D
 # DATAFRAME INTERFACE
 # --------------------
 
-function Base.propertynames(data::Data, private::Bool=false)
+Base.names(data::Data) = string.(propertynames(data))
+
+function Base.propertynames(data::Data)
   cols = Tables.columns(values(data))
   vars = Tables.columnnames(cols)
   [collect(vars); :geometry]

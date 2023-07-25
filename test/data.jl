@@ -46,6 +46,7 @@
     grid = CartesianGrid{T}(2, 2)
     data = dummy(grid, (a=[1, 2, 3, 4], b=[5, missing, 7, 8]))
     @test propertynames(data) == [:a, :b, :geometry]
+    @test names(data) == ["a", "b", "geometry"]
     @test isequal(data.a, [1, 2, 3, 4])
     @test isequal(data.b, [5, missing, 7, 8])
     @test data.geometry == grid
