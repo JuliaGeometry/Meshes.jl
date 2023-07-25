@@ -14,7 +14,7 @@ given factors `s₁, s₂, ...`.
 Stretch(1.0, 2.0, 3.0)
 ```
 """
-struct Stretch{Dim,T} <: StatelessGeometricTransform
+struct Stretch{Dim,T} <: PointwiseGeometricTransform
   factors::NTuple{Dim,T}
 
   function Stretch{Dim,T}(factors) where {Dim,T}
@@ -29,17 +29,8 @@ Stretch(factors::NTuple{Dim,T}) where {Dim,T} = Stretch{Dim,T}(factors)
 
 Stretch(factors...) = Stretch(factors)
 
+Base.inv(t::Stretch) = Stretch(1 ./ t.factors)
+
 isrevertible(::Type{<:Stretch}) = true
 
-preprocess(transform::Stretch, object) = transform.factors
-
-function applypoint(::Stretch, points, prep)
-  s = prep
-  newpoints = [Point(s .* coordinates(p)) for p in points]
-  newpoints, prep
-end
-
-function revertpoint(::Stretch, newpoints, cache)
-  s = cache
-  [Point((1 ./ s) .* coordinates(p)) for p in newpoints]
-end
+_apply(t::Stretch, v::Vec) = t.factors .* v

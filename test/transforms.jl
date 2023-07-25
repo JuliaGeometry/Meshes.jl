@@ -20,14 +20,12 @@
     # TRIANGLE
     # ---------
 
-    # rotate around z axis
     f = Rotate(AngleAxis(T(π / 2), T(0), T(0), T(1)))
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(0, 0, 0), P3(0, 1, 0), P3(-1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
 
-    # rotate from plane z=0 to plane x=0
     f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     r, c = TB.apply(f, g)
@@ -38,8 +36,8 @@
     # POLYAREA
     # ---------
 
-    f = Rotate(Angle2d(T(π / 2)))
-    p = PolyArea(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    #f = Rotate(Angle2d(T(π / 2)))
+    #p = PolyArea(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
     #r, c = TB.apply(f, p)
     #@test r ≈ PolyArea(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
     #@test TB.revert(f, r, c) ≈ p
@@ -48,31 +46,91 @@
     # PLANE
     # ------
 
-    # rotate plane
     f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
     g = Plane(P3(0, 0, 0), V3(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Plane(P3(0, 0, 0), V3(1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # CYLINDER
+    # ---------
+
+    f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
+    g = Cylinder(T(1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Cylinder(P3(0, 0, 0), P3(1, 0, 0))
+    @test TB.revert(f, r, c) ≈ g
   end
 
   @testset "Translate" begin
-    tri = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
-    ttri = tri |> Translate(T(1), T(2), T(3))
-    tpts = vertices(ttri)
-    @test tpts[1] ≈ P3(1, 2, 3)
-    @test tpts[2] ≈ P3(2, 2, 3)
-    @test tpts[3] ≈ P3(1, 3, 4)
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = Translate(T(1), T(2), T(3))
+    g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Triangle(P3(1, 2, 3), P3(2, 2, 3), P3(1, 3, 4))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ------
+    # PLANE
+    # ------
+
+    f = Translate(T(0), T(0), T(1))
+    g = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Plane(P3(0, 0, 0), V3(0, 0, 1))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # CYLINDER
+    # ---------
+
+    f = Translate(T(0), T(0), T(1))
+    g = Cylinder(T(1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Cylinder(P3(0, 0, 1), P3(0, 0, 2))
+    @test TB.revert(f, r, c) ≈ g
   end
 
   @testset "Stretch" begin
-    # check scaling on a triangle
-    tri = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
-    stri = tri |> Stretch(T(1), T(2), T(3))
-    spts = vertices(stri)
-    @test spts[1] ≈ P3(0, 0, 0)
-    @test spts[2] ≈ P3(1, 0, 0)
-    @test spts[3] ≈ P3(0, 2, 3)
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = Stretch(T(1), T(2), T(3))
+    g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 2, 3))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ------
+    # PLANE
+    # ------
+
+    f = Stretch(T(1), T(1), T(2))
+    g = Plane(P3(1, 1, 1), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ g
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Stretch(T(2), T(1), T(1))
+    g = Plane(P3(1, 1, 1), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ g
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # CYLINDER
+    # ---------
+
+    f = Stretch(T(1), T(1), T(2))
+    g = Cylinder(T(1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Cylinder(P3(0, 0, 1), P3(0, 0, 2))
+    @test TB.revert(f, r, c) ≈ g
   end
 
   @testset "StdCoords" begin

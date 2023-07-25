@@ -8,23 +8,14 @@
 Translate coordinates of geometry or mesh by
 given offsets `o₁, o₂, ...`.
 """
-struct Translate{Dim,T} <: StatelessGeometricTransform
+struct Translate{Dim,T} <: PointwiseGeometricTransform
   offsets::NTuple{Dim,T}
 end
 
 Translate(offsets...) = Translate(offsets)
 
+Base.inv(t::Translate) = Translate(-1 .* t.offsets)
+
 isrevertible(::Type{<:Translate}) = true
 
-preprocess(transform::Translate, object) = transform.offsets
-
-function applypoint(::Translate, points, prep)
-  o = prep
-  newpoints = [Point(coordinates(p) .+ o) for p in points]
-  newpoints, prep
-end
-
-function revertpoint(::Translate, newpoints, cache)
-  o = cache
-  [Point(coordinates(p) .- o) for p in newpoints]
-end
+_apply(t::Translate, v::Vec) = v + Vec(t.offsets)

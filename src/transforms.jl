@@ -20,6 +20,15 @@ A stateless [`GeometricTransform`](@ref) as defined in
 abstract type StatelessGeometricTransform <: GeometricTransform end
 
 """
+    PointwiseGeometricTransform
+
+A pointwise [`GeometricTransform`](@ref) defined in terms of a
+single point. Pointwise transforms can be easily applied to
+all types of geometries and meshes using fallback methods.
+"""
+abstract type PointwiseGeometricTransform <: GeometricTransform end
+
+"""
     newpoints, pcache = applypoint(transform, points, prep)
 
 Implementation of [`apply`](@ref) for points of object.
@@ -43,21 +52,6 @@ This function is intended for developers of new transform types.
 """
 function reapplypoint end
 
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-# convert lists of points into objects
-_reconstruct(points, ::Point) = first(points)
-_reconstruct(points, ::G) where {G<:Geometry} = G(points)
-_reconstruct(points, domain::Domain) = _reconstruct(points, GeometrySet(domain))
-_reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
-_reconstruct(points, ::PointSet) = PointSet(points)
-_reconstruct(points, ::PolyArea) = PolyArea(points)
-_reconstruct(points, ::Ring) = Ring(points)
-_reconstruct(points, ::Rope) = Rope(points)
-_reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(points[i]), nvertices(PL)))
-
 # --------------------
 # TRANSFORM FALLBACKS
 # --------------------
@@ -78,11 +72,43 @@ function reapply(transform::GeometricTransform, object, cache)
   _reconstruct(newpoints, object)
 end
 
+# convert lists of points into objects
+_reconstruct(points, ::Point) = first(points)
+_reconstruct(points, ::G) where {G<:Geometry} = G(points)
+_reconstruct(points, domain::Domain) = _reconstruct(points, GeometrySet(domain))
+_reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
+_reconstruct(points, ::PointSet) = PointSet(points)
+_reconstruct(points, ::PolyArea) = PolyArea(points)
+_reconstruct(points, ::Ring) = Ring(points)
+_reconstruct(points, ::Rope) = Rope(points)
+_reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(points[i]), nvertices(PL)))
+
 # --------------------
 # STATELESS FALLBACKS
 # --------------------
 
 reapply(transform::StatelessGeometricTransform, object, cache) = apply(transform, object) |> first
+
+# --------------------
+# POINTWISE FALLBACKS
+# --------------------
+
+function apply(t::PointwiseGeometricTransform, g::G) where {G}
+  g′ = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
+  g′, nothing
+end
+
+revert(t::PointwiseGeometricTransform, g::G, cache) where {G} =
+  G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
+
+# apply transform recursively
+_apply(t, p::Point) = Point(_apply(t, coordinates(p)))
+_apply(t, p::NTuple) = ntuple(i -> _apply(t, p[i]), length(p))
+_apply(t, p::AbstractVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
+_apply(t, p::CircularVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
+_apply(t, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
+_apply(t, g::Plane) = apply(t, g) |> first
+_apply(t, o) = o # do nothing with other types
 
 # ----------------
 # IMPLEMENTATIONS

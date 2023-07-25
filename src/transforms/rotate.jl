@@ -16,7 +16,7 @@ Rotate(AngleAxis(0.2, 1.0, 0.0, 0.0))  # Rotate 0.2 radians around X-axis
 Rotate(rand(QuatRotation{Float64}))  # Generate random rotation
 ```
 """
-struct Rotate{R<:Rotation} <: StatelessGeometricTransform
+struct Rotate{R<:Rotation} <: PointwiseGeometricTransform
   rot::R
 end
 
@@ -39,17 +39,4 @@ Base.inv(t::Rotate) = Rotate(inv(t.rot))
 
 isrevertible(::Type{<:Rotate}) = true
 
-function apply(t::Rotate, g::G) where {G<:Geometry}
-  g′ = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
-  g′, nothing
-end
-
-revert(t::Rotate, g::G, cache) where {G<:Geometry} = G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
-
-_apply(t, v::Vec) = t.rot * v
-_apply(t, p::Point) = Point(_apply(t, coordinates(p)))
-_apply(t, p::NTuple) = ntuple(i -> _apply(t, p[i]), length(p))
-_apply(t, p::AbstractVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
-_apply(t, p::CircularVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
-_apply(t, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
-_apply(t, o) = o
+_apply(t::Rotate, v::Vec) = t.rot * v
