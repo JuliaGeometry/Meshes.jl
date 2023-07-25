@@ -101,11 +101,12 @@ revert(t::PointwiseGeometricTransform, g, cache) = _apply(inv(t), g)
 _apply(t::PointwiseGeometricTransform, g::G) where {G} =
   G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
   
-# stop recursion at numeric fields (e.g. radius)
-_apply(t::PointwiseGeometricTransform, o::Number) = o
+# stop recursion at specific field types
+_apply(::PointwiseGeometricTransform, x::Number) = x
+_apply(::PointwiseGeometricTransform, x::Topology) = x
 
 # fallbacks for lists of geometries
-_apply(t::PointwiseGeometricTransform, g::NTuple{N,<:Geometry}) where {N} = ntuple(i -> _apply(t, g[i]), N)
+_apply(t::PointwiseGeometricTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
 _apply(t::PointwiseGeometricTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
 
 # ----------------
