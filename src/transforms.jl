@@ -93,22 +93,21 @@ reapply(transform::StatelessGeometricTransform, object, cache) = apply(transform
 # POINTWISE FALLBACKS
 # --------------------
 
-function apply(t::PointwiseGeometricTransform, g::G) where {G}
-  g′ = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
-  g′, nothing
-end
+apply(t::PointwiseGeometricTransform, g) = _apply(t, g), nothing
 
-revert(t::PointwiseGeometricTransform, g::G, cache) where {G} =
-  G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
+revert(t::PointwiseGeometricTransform, g, cache) = _apply(inv(t), g)
 
 # apply transform recursively
-_apply(t, p::Point) = Point(_apply(t, coordinates(p)))
-_apply(t, p::NTuple) = ntuple(i -> _apply(t, p[i]), length(p))
-_apply(t, p::AbstractVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
-_apply(t, p::CircularVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
-_apply(t, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
-_apply(t, g::Plane) = apply(t, g) |> first
-_apply(t, o) = o # do nothing with other types
+_apply(t::PointwiseGeometricTransform, g::G) where {G<:Geometry} =
+  G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
+  
+# fallbacks for lists of geometries
+_apply(t::PointwiseGeometricTransform, p::NTuple) = ntuple(i -> _apply(t, p[i]), length(p))
+_apply(t::PointwiseGeometricTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
+_apply(t::PointwiseGeometricTransform, p::CircularVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
+
+# stop recursion at specific types
+_apply(t::PointwiseGeometricTransform, o::Number) = o
 
 # ----------------
 # IMPLEMENTATIONS
