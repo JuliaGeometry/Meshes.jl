@@ -48,6 +48,9 @@ revert(t::Rotate, g::G, cache) where {G<:Geometry} =
   G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
 
 _apply(t, v::Vec) = t.rot * v
-_apply(t, p::Point) = _apply(t, coordinates(p))
+_apply(t, p::Point) = Point(_apply(t, coordinates(p)))
 _apply(t, p::NTuple) = ntuple(i -> _apply(t, p[i]), length(p))
+_apply(t, p::AbstractVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
+_apply(t, p::CircularVector{<:Point}) = map(pᵢ -> _apply(t, pᵢ), p)
+_apply(t, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
 _apply(t, o) = o

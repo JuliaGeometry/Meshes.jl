@@ -1,25 +1,59 @@
 @testset "Transforms" begin
   @testset "Rotate" begin
+    # ------
+    # CHAIN
+    # ------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    g = Rope(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Rope(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Rotate(Angle2d(T(π / 2)))
+    g = Ring(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Ring(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # TRIANGLE
+    # ---------
+
     # rotate around z axis
-    f = Rotate(AngleAxis(T(pi / 2), T(0), T(0), T(1)))
-    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    r, c = TB.apply(f, t)
+    f = Rotate(AngleAxis(T(π / 2), T(0), T(0), T(1)))
+    g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(0, 0, 0), P3(0, 1, 0), P3(-1, 0, 0))
-    @test TB.revert(f, r, c) ≈ t
+    @test TB.revert(f, r, c) ≈ g
 
     # rotate from plane z=0 to plane x=0
     f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
-    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    r, c = TB.apply(f, t)
+    g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(0, 0, 0), P3(0, 0, -1), P3(0, 1, 0))
-    @test TB.revert(f, r, c) ≈ t
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # POLYAREA
+    # ---------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    p = PolyArea(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    #r, c = TB.apply(f, p)
+    #@test r ≈ PolyArea(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
+    #@test TB.revert(f, r, c) ≈ p
+
+    # ------
+    # PLANE
+    # ------
 
     # rotate plane
     f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
-    p = Plane(P3(0, 0, 0), V3(0, 0, 1))
-    r, c = TB.apply(f, p)
+    g = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
     @test r ≈ Plane(P3(0, 0, 0), V3(1, 0, 0))
-    @test TB.revert(f, r, c) ≈ p
+    @test TB.revert(f, r, c) ≈ g
   end
 
   @testset "Translate" begin
