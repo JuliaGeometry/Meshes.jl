@@ -250,10 +250,10 @@
 
     p₁ = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
     p₂ = Plane(P3(0, 0, 0), V3(0, 1, 0), V3(1, 0, 0))
-    @test p₁ == p₂
+    @test p₁ ≈ p₂
     p₁ = Plane(P3(0, 0, 0), V3(1, 1, 0))
     p₂ = Plane(P3(0, 0, 0), -V3(1, 1, 0))
-    @test p₁ == p₂
+    @test p₁ ≈ p₂
 
     # normal to plane has norm one regardless of basis
     p = Plane(P3(0, 0, 0), V3(2, 0, 0), V3(0, 3, 0))

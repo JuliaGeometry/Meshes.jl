@@ -54,7 +54,7 @@ perimeter(::Plane{T}) where {T} = zero(T)
 
 normal(p::Plane) = normalize(p.u × p.v)
 
-==(p₁::Plane{T}, p₂::Plane{T}) where {T} =
+Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
   isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
 

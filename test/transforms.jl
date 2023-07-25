@@ -1,26 +1,28 @@
 @testset "Transforms" begin
   @testset "Rotate" begin
-    # check rotation on a triangle
-    tri = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    rtri = tri |> Rotate(AngleAxis(T(pi / 2), 0, 0, -1))
-    rpts = vertices(rtri)
-    @test rpts[1] ≈ P3(0, 0, 0)
-    @test rpts[2] ≈ P3(0, 1, 0)
-    @test rpts[3] ≈ P3(-1, 0, 0)
+    # rotate around z axis
+    f = Rotate(AngleAxis(T(pi / 2), T(0), T(0), T(1)))
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    r, c = TB.apply(f, t)
+    @test r ≈ Triangle(P3(0, 0, 0), P3(0, 1, 0), P3(-1, 0, 0))
+    @test TB.revert(f, r, c) ≈ t
 
-    # triangle in the plane z=0
-    tri = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    # rotate to the plane x=0
-    rtri = tri |> Rotate(V3(0, 0, 1), V3(1, 0, 0))
-    # check that the rotated triangle is in the x=0 plane
-    rpts = coordinates.(vertices(rtri))
-    @test isapprox(rpts[1][1], zero(T); atol=atol(T))
-    @test isapprox(rpts[2][1], zero(T); atol=atol(T))
-    @test isapprox(rpts[3][1], zero(T); atol=atol(T))
+    # rotate from plane z=0 to plane x=0
+    f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    r, c = TB.apply(f, t)
+    @test r ≈ Triangle(P3(0, 0, 0), P3(0, 0, -1), P3(0, 1, 0))
+    @test TB.revert(f, r, c) ≈ t
+
+    # rotate plane
+    f = Rotate(V3(0, 0, 1), V3(1, 0, 0))
+    p = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    r, c = TB.apply(f, p)
+    @test r ≈ Plane(P3(0, 0, 0), V3(1, 0, 0))
+    @test TB.revert(f, r, c) ≈ p
   end
 
   @testset "Translate" begin
-    # check translation on a triangle
     tri = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     ttri = tri |> Translate(T(1), T(2), T(3))
     tpts = vertices(ttri)

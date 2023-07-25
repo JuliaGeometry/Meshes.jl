@@ -39,7 +39,7 @@ isrevertible(::Type{<:Rotate}) = true
 
 function preprocess(transform::Rotate, object)
   rot = transform.rot
-  inv(rot), rot
+  rot, inv(rot)
 end
 
 function applypoint(::Rotate, points, prep)
@@ -51,4 +51,22 @@ end
 function revertpoint(::Rotate, newpoints, cache)
   _, R⁻¹ = cache
   [Point(R⁻¹ * coordinates(p)) for p in newpoints]
+end
+
+# --------------
+# SPECIAL CASES
+# --------------
+
+function apply(transform::Rotate, plane::Plane)
+  o = plane(0, 0)
+  n = normal(plane)
+  R = transform.rot
+  Plane(o, R * n), inv(R)
+end
+
+function revert(::Rotate, plane::Plane, cache)
+  o = plane(0, 0)
+  n = normal(plane)
+  R⁻¹ = cache
+  Plane(o, R⁻¹ * n)
 end
