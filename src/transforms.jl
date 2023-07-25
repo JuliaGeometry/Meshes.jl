@@ -98,9 +98,8 @@ apply(t::PointwiseGeometricTransform, g) = _apply(t, g), nothing
 revert(t::PointwiseGeometricTransform, g, c) = _apply(inv(t), g)
 
 # apply transform recursively
-_apply(t::PointwiseGeometricTransform, g::G) where {G} =
-  G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
-  
+_apply(t::PointwiseGeometricTransform, g::G) where {G} = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
+
 # stop recursion at specific field types
 _apply(::PointwiseGeometricTransform, x::Number) = x
 _apply(::PointwiseGeometricTransform, x::Topology) = x
