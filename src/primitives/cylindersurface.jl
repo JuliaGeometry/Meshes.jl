@@ -82,6 +82,9 @@ measure(c::CylinderSurface{T}) where {T} = (norm(c.bot(0, 0) - c.top(0, 0)) + c.
 
 area(c::CylinderSurface) = measure(c)
 
+Base.isapprox(c₁::CylinderSurface{T}, c₂::CylinderSurface{T}) where {T} =
+  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(T))
+
 function (c::CylinderSurface{T})(φ, z) where {T}
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))

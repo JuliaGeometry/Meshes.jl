@@ -1,5 +1,5 @@
 @testset "Primitives" begin
-  @testset "Points" begin
+  @testset "Point" begin
     @test embeddim(Point(1)) == 1
     @test embeddim(Point(1, 2)) == 2
     @test embeddim(Point(1, 2, 3)) == 3
@@ -154,7 +154,7 @@
     @test q ∉ p
   end
 
-  @testset "Rays" begin
+  @testset "Ray" begin
     @test isparametrized(Ray)
 
     r = Ray(P2(0, 0), V2(1, 1))
@@ -205,7 +205,7 @@
     @test embeddim(r3) == 3
   end
 
-  @testset "Lines" begin
+  @testset "Line" begin
     @test isparametrized(Line)
 
     l = Line(P2(0, 0), P2(1, 1))
@@ -228,7 +228,7 @@
     @test embeddim(l3) == 3
   end
 
-  @testset "Planes" begin
+  @testset "Plane" begin
     @test isparametrized(Plane)
 
     p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
@@ -314,7 +314,7 @@
     @test embeddim(b3) == 3
   end
 
-  @testset "Boxes" begin
+  @testset "Box" begin
     @test isconvex(Box)
     @test isparametrized(Box)
     @test isperiodic(Box{1}) == (false,)
@@ -669,6 +669,7 @@
     c2 = Cylinder(P3(0, 0, 0), P3(0, 0, 1))
     c3 = Cylinder(T(1))
     @test c1 == c2 == c3
+    @test c1 ≈ c2 ≈ c3
 
     c = Cylinder(T(1))
     @test coordtype(c) == T
@@ -720,6 +721,7 @@
     c2 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1))
     c3 = CylinderSurface(T(1))
     @test c1 == c2 == c3
+    @test c1 ≈ c2 ≈ c3
 
     c = CylinderSurface(Plane(P3(1, 2, 3), V3(0, 0, 1)), Plane(P3(4, 5, 6), V3(0, 0, 1)), T(5))
     @test measure(c) == area(c) ≈ 2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3 * T(3)^2)

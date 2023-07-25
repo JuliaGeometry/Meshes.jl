@@ -66,6 +66,8 @@ measure(c::Cylinder{T}) where {T} = norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.
 
 volume(c::Cylinder) = measure(c)
 
+Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
+
 function Base.in(p::Point{3}, c::Cylinder)
   b = c.bot(0, 0)
   t = c.top(0, 0)
