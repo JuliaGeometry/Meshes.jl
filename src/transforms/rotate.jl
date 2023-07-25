@@ -39,29 +39,15 @@ Base.inv(t::Rotate) = Rotate(inv(t.rot))
 
 isrevertible(::Type{<:Rotate}) = true
 
-function applypoint(t::Rotate, points, prep)
-  R = t.rot
-  newpoints = [Point(R * coordinates(p)) for p in points]
-  newpoints, inv(R)
+function apply(t::Rotate, g::G) where {G<:Geometry}
+  g′ = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
+  g′, nothing
 end
 
-function revertpoint(::Rotate, newpoints, cache)
-  R⁻¹ = cache
-  [Point(R⁻¹ * coordinates(p)) for p in newpoints]
-end
+revert(t::Rotate, g::G, cache) where {G<:Geometry} =
+  G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
 
-# --------------
-# SPECIAL CASES
-# --------------
-
-function apply(t::Rotate, p::P) where {P<:Primitive}
-  p′ = P((_rotate(t, getfield(p, f)) for f in fieldnames(P))...)
-  p′, nothing
-end
-
-revert(t::Rotate, p::P, cache) where {P<:Primitive} =
-  P((_rotate(inv(t), getfield(p, f)) for f in fieldnames(P))...)
-
-_rotate(t, v::Vec) = t.rot * v
-_rotate(t, p::Point) = _rotate(t, coordinates(p))
-_rotate(t, p) = p
+_apply(t, v::Vec) = t.rot * v
+_apply(t, p::Point) = _apply(t, coordinates(p))
+_apply(t, p::NTuple) = ntuple(i -> _apply(t, p[i]), length(p))
+_apply(t, o) = o
