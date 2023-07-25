@@ -44,8 +44,7 @@ function apply(t::Rotate, g::G) where {G<:Geometry}
   g′, nothing
 end
 
-revert(t::Rotate, g::G, cache) where {G<:Geometry} =
-  G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
+revert(t::Rotate, g::G, cache) where {G<:Geometry} = G((_apply(inv(t), getfield(g, n)) for n in fieldnames(G))...)
 
 _apply(t, v::Vec) = t.rot * v
 _apply(t, p::Point) = Point(_apply(t, coordinates(p)))
