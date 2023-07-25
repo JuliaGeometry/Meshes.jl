@@ -56,20 +56,20 @@ function reapplypoint end
 # TRANSFORM FALLBACKS
 # --------------------
 
-function apply(transform::GeometricTransform, object)
-  prep = preprocess(transform, object)
-  newpoints, pcache = applypoint(transform, pointify(object), prep)
-  _reconstruct(newpoints, object), pcache
+function apply(t::GeometricTransform, o)
+  prep = preprocess(t, o)
+  p, c = applypoint(t, pointify(o), prep)
+  _reconstruct(p, o), c
 end
 
-function revert(transform::GeometricTransform, newobject, cache)
-  points = revertpoint(transform, pointify(newobject), cache)
-  _reconstruct(points, newobject)
+function revert(t::GeometricTransform, o, c)
+  p = revertpoint(t, pointify(o), c)
+  _reconstruct(p, o)
 end
 
-function reapply(transform::GeometricTransform, object, cache)
-  newpoints = reapplypoint(transform, pointify(object), cache)
-  _reconstruct(newpoints, object)
+function reapply(t::GeometricTransform, o, c)
+  p = reapplypoint(t, pointify(o), c)
+  _reconstruct(p, o)
 end
 
 # convert lists of points into objects
@@ -87,7 +87,7 @@ _reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(point
 # STATELESS FALLBACKS
 # --------------------
 
-reapply(transform::StatelessGeometricTransform, object, cache) = apply(transform, object) |> first
+reapply(t::StatelessGeometricTransform, o, c) = apply(t, o) |> first
 
 # --------------------
 # POINTWISE FALLBACKS
@@ -95,7 +95,7 @@ reapply(transform::StatelessGeometricTransform, object, cache) = apply(transform
 
 apply(t::PointwiseGeometricTransform, g) = _apply(t, g), nothing
 
-revert(t::PointwiseGeometricTransform, g, cache) = _apply(inv(t), g)
+revert(t::PointwiseGeometricTransform, g, c) = _apply(inv(t), g)
 
 # apply transform recursively
 _apply(t::PointwiseGeometricTransform, g::G) where {G} =
