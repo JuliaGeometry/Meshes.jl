@@ -35,12 +35,12 @@ Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 """
 Rotate(u::Vec, v::Vec) = Rotate(rotation_between(u, v))
 
+Base.inv(t::Rotate) = Rotate(inv(t.rot))
+
 isrevertible(::Type{<:Rotate}) = true
 
-Base.inv(transform::Rotate) = Rotate(inv(transform.rot))
-
-function applypoint(transform::Rotate, points, prep)
-  R = transform.rot
+function applypoint(t::Rotate, points, prep)
+  R = t.rot
   newpoints = [Point(R * coordinates(p)) for p in points]
   newpoints, inv(R)
 end
@@ -54,32 +54,14 @@ end
 # SPECIAL CASES
 # --------------
 
-function apply(transform::Rotate, plane::Plane)
-  R = transform.rot
-  o = plane(0, 0)
-  n = normal(plane)
-  Plane(o, R * n), inv(R)
+function apply(t::Rotate, p::P) where {P<:Primitive}
+  p′ = P((_rotate(t, getfield(p, f)) for f in fieldnames(P))...)
+  p′, nothing
 end
 
-function revert(::Rotate, plane::Plane, cache)
-  R⁻¹ = cache
-  o = plane(0, 0)
-  n = normal(plane)
-  Plane(o, R⁻¹ * n)
-end
+revert(t::Rotate, p::P, cache) where {P<:Primitive} =
+  P((_rotate(inv(t), getfield(p, f)) for f in fieldnames(P))...)
 
-function apply(transform::Rotate, cylinder::Cylinder)
-  bot, top = _rcylinder(transform, cylinder)
-  Cylinder(bot, top, radius(cylinder)), nothing
-end
-
-function revert(transform::Rotate, cylinder::Cylinder, cache)
-  bot, top = _rcylinder(inv(transform), cylinder)
-  Cylinder(bot, top, radius(cylinder))
-end
-
-function _rcylinder(transform, cylinder)
-  b = bottom(cylinder)
-  t = top(cylinder)
-  transform(b), transform(t)
-end
+_rotate(t, v::Vec) = t.rot * v
+_rotate(t, p::Point) = _rotate(t, coordinates(p))
+_rotate(t, p) = p
