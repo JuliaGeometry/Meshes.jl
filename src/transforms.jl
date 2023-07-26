@@ -38,13 +38,13 @@ apply(t::CoordinateTransform, g) = applycoord(t, g), nothing
 revert(t::CoordinateTransform, g, c) = applycoord(inv(t), g)
 
 # apply transform recursively
-applycoord(t::CoordinateTransform, g::G) where {G} = G((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
+applycoord(t::CoordinateTransform, g::G) where {G<:Union{Geometry,Domain}} =
+  G((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
 
-# stop recursion at specific field types
-applycoord(::CoordinateTransform, x::Number) = x
-applycoord(::CoordinateTransform, x::Topology) = x
+# stop recursion at non-geometric types
+applycoord(::CoordinateTransform, x) = x
 
-# fallbacks for lists of geometries
+# special treatment for lists of geometries
 applycoord(t::CoordinateTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
 applycoord(t::CoordinateTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
 

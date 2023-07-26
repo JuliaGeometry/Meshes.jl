@@ -21,3 +21,15 @@ isinvertible(::Type{<:Translate}) = true
 Base.inv(t::Translate) = Translate(-1 .* t.offsets)
 
 applycoord(t::Translate, v::Vec) = v + Vec(t.offsets)
+
+# --------------
+# SPECIAL CASES
+# --------------
+
+function applycoord(t::Translate, g::CartesianGrid)
+  dims = size(g)
+  orig = applycoord(t, minimum(g))
+  spac = spacing(g)
+  offs = offset(g)
+  CartesianGrid(dims, orig, spac, offs)
+end

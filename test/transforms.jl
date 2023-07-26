@@ -104,6 +104,16 @@
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
 
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    d = CartesianGrid{T}(10, 10)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
+
     # -----------
     # SIMPLEMESH
     # -----------
@@ -188,6 +198,17 @@
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ d
+
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = Translate(T(1), T(1))
+    d = CartesianGrid{T}(10, 10)
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r ≈ CartesianGrid(P2(1, 1), P2(11, 11), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
     # -----------
