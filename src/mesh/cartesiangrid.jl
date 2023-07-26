@@ -55,34 +55,31 @@ struct CartesianGrid{Dim,T} <: Grid{Dim,T}
   spacing::NTuple{Dim,T}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
-
-  function CartesianGrid{Dim,T}(dims, origin, spacing, offset) where {Dim,T}
-    @assert all(>(0), dims) "dimensions must be positive"
-    @assert all(>(0), spacing) "spacing must be positive"
-    topology = GridTopology(dims)
-    new(origin, spacing, offset, topology)
-  end
 end
 
-CartesianGrid(
+function CartesianGrid(
   dims::Dims{Dim},
   origin::Point{Dim,T},
   spacing::NTuple{Dim,T},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim,T} = CartesianGrid{Dim,T}(dims, origin, spacing, offset)
+) where {Dim,T}
+  @assert all(>(0), dims) "dimensions must be positive"
+  @assert all(>(0), spacing) "spacing must be positive"
+  CartesianGrid{Dim,T}(origin, spacing, offset, GridTopology(dims))
+end
 
 CartesianGrid(
   dims::Dims{Dim},
   origin::NTuple{Dim,T},
   spacing::NTuple{Dim,T},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim,T} = CartesianGrid{Dim,T}(dims, Point(origin), spacing, offset)
+) where {Dim,T} = CartesianGrid(dims, Point(origin), spacing, offset)
 
 function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T}, spacing::NTuple{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
   origin = start
   offset = ntuple(i -> 1, Dim)
-  CartesianGrid{Dim,T}(dims, origin, spacing, offset)
+  CartesianGrid(dims, origin, spacing, offset)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T}, spacing::NTuple{Dim,T}) where {Dim,T} =
@@ -92,7 +89,7 @@ function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T}; dims::Dims{Dim
   origin = start
   spacing = Tuple((finish - start) ./ dims)
   offset = ntuple(i -> 1, Dim)
-  CartesianGrid{Dim,T}(dims, origin, spacing, offset)
+  CartesianGrid(dims, origin, spacing, offset)
 end
 
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim,T} =
@@ -102,7 +99,7 @@ function CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T}
   origin = ntuple(i -> zero(T), Dim)
   spacing = ntuple(i -> one(T), Dim)
   offset = ntuple(i -> 1, Dim)
-  CartesianGrid{Dim,T}(dims, origin, spacing, offset)
+  CartesianGrid(dims, origin, spacing, offset)
 end
 
 CartesianGrid{T}(dims::Vararg{Int,Dim}) where {Dim,T} = CartesianGrid{T}(dims)
