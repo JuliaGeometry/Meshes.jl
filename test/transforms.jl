@@ -2,7 +2,6 @@
   @testset "Rotate" begin
     @test TB.isrevertible(Rotate)
     @test TB.isinvertible(Rotate)
-
     @test inv(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
 
     # ------
@@ -15,9 +14,19 @@
     @test r ≈ P2(0, 1)
     @test TB.revert(f, r, c) ≈ g
 
-    # ------
-    # CHAIN
-    # ------
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(0, 0), P2(0, 1))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ----------
+    # ROPE/RING
+    # ----------
 
     f = Rotate(Angle2d(T(π / 2)))
     g = Rope(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
@@ -51,11 +60,11 @@
     # POLYAREA
     # ---------
 
-    #f = Rotate(Angle2d(T(π / 2)))
-    #p = PolyArea(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
-    #r, c = TB.apply(f, p)
-    #@test r ≈ PolyArea(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
-    #@test TB.revert(f, r, c) ≈ p
+    f = Rotate(Angle2d(T(π / 2)))
+    p = PolyArea(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    r, c = TB.apply(f, p)
+    @test r ≈ PolyArea(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
+    @test TB.revert(f, r, c) ≈ p
 
     # ----------
     # MULTIGEOM
@@ -135,7 +144,6 @@
   @testset "Translate" begin
     @test TB.isrevertible(Translate)
     @test TB.isinvertible(Translate)
-
     @test inv(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
 
     # ------
@@ -237,7 +245,6 @@
   @testset "Stretch" begin
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
-
     @test inv(Stretch(T(1), T(2))) == Stretch(T(1), T(1/2))
 
     # ------
