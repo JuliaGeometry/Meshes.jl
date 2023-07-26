@@ -14,7 +14,7 @@ given factors `s₁, s₂, ...`.
 Stretch(1.0, 2.0, 3.0)
 ```
 """
-struct Stretch{Dim,T} <: PointwiseGeometricTransform
+struct Stretch{Dim,T} <: CoordinateTransform
   factors::NTuple{Dim,T}
 
   function Stretch{Dim,T}(factors) where {Dim,T}

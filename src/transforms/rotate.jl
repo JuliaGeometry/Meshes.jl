@@ -16,7 +16,7 @@ Rotate(AngleAxis(0.2, 1.0, 0.0, 0.0))  # Rotate 0.2 radians around X-axis
 Rotate(rand(QuatRotation{Float64}))  # Generate random rotation
 ```
 """
-struct Rotate{R<:Rotation} <: PointwiseGeometricTransform
+struct Rotate{R<:Rotation} <: CoordinateTransform
   rot::R
 end
 

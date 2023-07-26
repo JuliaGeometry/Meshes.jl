@@ -12,13 +12,13 @@ See [https://en.wikipedia.org/wiki/Geometric_transformation]
 abstract type GeometricTransform <: Transform end
 
 """
-    PointwiseGeometricTransform
+    CoordinateTransform
 
-A pointwise [`GeometricTransform`](@ref) defined in terms of a
-single point. Pointwise transforms can be easily applied to
-all types of geometries and meshes using fallback methods.
+A method to transform the coordinates of objects.
+See [https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations]
+(https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations).
 """
-abstract type PointwiseGeometricTransform <: GeometricTransform end
+abstract type CoordinateTransform <: GeometricTransform end
 
 """
     newpoints, pcache = applypoint(transform, points, prep)
@@ -79,20 +79,20 @@ _reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(point
 # POINTWISE FALLBACKS
 # --------------------
 
-apply(t::PointwiseGeometricTransform, g) = _apply(t, g), nothing
+apply(t::CoordinateTransform, g) = _apply(t, g), nothing
 
-revert(t::PointwiseGeometricTransform, g, c) = _apply(inv(t), g)
+revert(t::CoordinateTransform, g, c) = _apply(inv(t), g)
 
 # apply transform recursively
-_apply(t::PointwiseGeometricTransform, g::G) where {G} = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
+_apply(t::CoordinateTransform, g::G) where {G} = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
 
 # stop recursion at specific field types
-_apply(::PointwiseGeometricTransform, x::Number) = x
-_apply(::PointwiseGeometricTransform, x::Topology) = x
+_apply(::CoordinateTransform, x::Number) = x
+_apply(::CoordinateTransform, x::Topology) = x
 
 # fallbacks for lists of geometries
-_apply(t::PointwiseGeometricTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
-_apply(t::PointwiseGeometricTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
+_apply(t::CoordinateTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
+_apply(t::CoordinateTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
 
 # ----------------
 # IMPLEMENTATIONS

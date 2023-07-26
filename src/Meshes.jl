@@ -422,7 +422,7 @@ export
 
   # transforms
   GeometricTransform,
-  PointwiseGeometricTransform,
+  CoordinateTransform,
   Rotate,
   Translate,
   Stretch,

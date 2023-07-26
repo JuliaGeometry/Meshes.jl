@@ -8,7 +8,7 @@
 Translate coordinates of geometry or mesh by
 given offsets `o₁, o₂, ...`.
 """
-struct Translate{Dim,T} <: PointwiseGeometricTransform
+struct Translate{Dim,T} <: CoordinateTransform
   offsets::NTuple{Dim,T}
 end
 
