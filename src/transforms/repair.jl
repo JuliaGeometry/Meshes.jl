@@ -19,7 +19,7 @@ Perform repairing operation with code `K`.
 - K = 7: faces are coherently oriented
 - K = 8: zero-area ears are removed
 """
-struct Repair{K} <: StatelessGeometricTransform end
+struct Repair{K} <: GeometricTransform end
 
 # --------------
 # OPERATION (0)

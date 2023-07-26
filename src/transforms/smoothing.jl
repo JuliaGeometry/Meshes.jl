@@ -14,7 +14,7 @@ See also [`LaplaceSmoothing`](@ref), [`TaubinSmoothing`](@ref).
 * Taubin, G. 1995. [Curve and Surface Smoothing without Shrinkage]
   (https://ieeexplore.ieee.org/document/466848)
 """
-struct LambdaMuSmoothing{T} <: StatelessGeometricTransform
+struct LambdaMuSmoothing{T} <: GeometricTransform
   n::Int
   λ::T
   μ::T

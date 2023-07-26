@@ -12,14 +12,6 @@ See [https://en.wikipedia.org/wiki/Geometric_transformation]
 abstract type GeometricTransform <: Transform end
 
 """
-    StatelessGeometricTransform
-
-A stateless [`GeometricTransform`](@ref) as defined in
-[TransformsAPI.jl](https://github.com/JuliaML/TransformsAPI.jl).
-"""
-abstract type StatelessGeometricTransform <: GeometricTransform end
-
-"""
     PointwiseGeometricTransform
 
 A pointwise [`GeometricTransform`](@ref) defined in terms of a
@@ -82,12 +74,6 @@ _reconstruct(points, ::PolyArea) = PolyArea(points)
 _reconstruct(points, ::Ring) = Ring(points)
 _reconstruct(points, ::Rope) = Rope(points)
 _reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(points[i]), nvertices(PL)))
-
-# --------------------
-# STATELESS FALLBACKS
-# --------------------
-
-reapply(t::StatelessGeometricTransform, o, c) = apply(t, o) |> first
 
 # --------------------
 # POINTWISE FALLBACKS
