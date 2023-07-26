@@ -49,4 +49,8 @@ applycoord(t::Rotate, v::Vec) = t.rot * v
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Rotate, b::Box{2}) = applycoord(t, convert(Quadrangle, b))
+
+applycoord(t::Rotate, b::Box{3}) = applycoord(t, convert(Hexahedron, b))
+
 applycoord(t::Rotate, g::Grid) = applycoord(t, convert(SimpleMesh, g))

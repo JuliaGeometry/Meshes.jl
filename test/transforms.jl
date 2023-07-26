@@ -24,6 +24,28 @@
     @test r ≈ Segment(P2(0, 0), P2(0, 1))
     @test TB.revert(f, r, c) ≈ g
 
+    # ----
+    # BOX
+    # ----
+
+    f = Rotate(Angle2d(T(π / 2)))
+    g = Box(P2(0, 0), P2(1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Quadrangle
+    @test r ≈ Quadrangle(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
+    q = TB.revert(f, r, c)
+    @test q isa Quadrangle
+    @test q ≈ convert(Quadrangle, g)
+
+    f = Rotate(V3(1, 0, 0), V3(0, 1, 0))
+    g = Box(P3(0, 0, 0), P3(1, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Hexahedron
+    @test r ≈ Hexahedron(P3(0, 0, 0), P3(0, 1, 0), P3(-1, 1, 0), P3(-1, 0, 0), P3(0, 0, 1), P3(0, 1, 1), P3(-1, 1, 1), P3(-1, 0, 1))
+    h = TB.revert(f, r, c)
+    @test h isa Hexahedron
+    @test h ≈ convert(Hexahedron, g)
+
     # ----------
     # ROPE/RING
     # ----------
