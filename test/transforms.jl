@@ -41,7 +41,16 @@
     g = Box(P3(0, 0, 0), P3(1, 1, 1))
     r, c = TB.apply(f, g)
     @test r isa Hexahedron
-    @test r ≈ Hexahedron(P3(0, 0, 0), P3(0, 1, 0), P3(-1, 1, 0), P3(-1, 0, 0), P3(0, 0, 1), P3(0, 1, 1), P3(-1, 1, 1), P3(-1, 0, 1))
+    @test r ≈ Hexahedron(
+      P3(0, 0, 0),
+      P3(0, 1, 0),
+      P3(-1, 1, 0),
+      P3(-1, 0, 0),
+      P3(0, 0, 1),
+      P3(0, 1, 1),
+      P3(-1, 1, 1),
+      P3(-1, 0, 1)
+    )
     h = TB.revert(f, r, c)
     @test h isa Hexahedron
     @test h ≈ convert(Hexahedron, g)
@@ -288,7 +297,7 @@
   @testset "Stretch" begin
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
-    @test inv(Stretch(T(1), T(2))) == Stretch(T(1), T(1/2))
+    @test inv(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
 
     # ------
     # POINT
