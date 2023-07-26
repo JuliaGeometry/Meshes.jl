@@ -39,4 +39,4 @@ Base.inv(t::Rotate) = Rotate(inv(t.rot))
 
 isrevertible(::Type{<:Rotate}) = true
 
-_apply(t::Rotate, v::Vec) = t.rot * v
+applycoord(t::Rotate, v::Vec) = t.rot * v

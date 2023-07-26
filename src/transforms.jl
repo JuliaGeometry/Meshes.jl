@@ -79,20 +79,20 @@ _reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(point
 # POINTWISE FALLBACKS
 # --------------------
 
-apply(t::CoordinateTransform, g) = _apply(t, g), nothing
+apply(t::CoordinateTransform, g) = applycoord(t, g), nothing
 
-revert(t::CoordinateTransform, g, c) = _apply(inv(t), g)
+revert(t::CoordinateTransform, g, c) = applycoord(inv(t), g)
 
 # apply transform recursively
-_apply(t::CoordinateTransform, g::G) where {G} = G((_apply(t, getfield(g, n)) for n in fieldnames(G))...)
+applycoord(t::CoordinateTransform, g::G) where {G} = G((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
 
 # stop recursion at specific field types
-_apply(::CoordinateTransform, x::Number) = x
-_apply(::CoordinateTransform, x::Topology) = x
+applycoord(::CoordinateTransform, x::Number) = x
+applycoord(::CoordinateTransform, x::Topology) = x
 
 # fallbacks for lists of geometries
-_apply(t::CoordinateTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
-_apply(t::CoordinateTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> _apply(t, gᵢ), g)
+applycoord(t::CoordinateTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
+applycoord(t::CoordinateTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
 
 # ----------------
 # IMPLEMENTATIONS

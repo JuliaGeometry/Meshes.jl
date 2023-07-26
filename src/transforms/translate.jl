@@ -18,4 +18,4 @@ Base.inv(t::Translate) = Translate(-1 .* t.offsets)
 
 isrevertible(::Type{<:Translate}) = true
 
-_apply(t::Translate, v::Vec) = v + Vec(t.offsets)
+applycoord(t::Translate, v::Vec) = v + Vec(t.offsets)
