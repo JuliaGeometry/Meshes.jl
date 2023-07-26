@@ -1,6 +1,16 @@
 @testset "Transforms" begin
   @testset "Rotate" begin
     # ------
+    # POINT
+    # ------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    g = P2(1, 0)
+    r, c = TB.apply(f, g)
+    @test r ≈ P2(0, 1)
+    @test TB.revert(f, r, c) ≈ g
+
+    # ------
     # CHAIN
     # ------
 
@@ -93,9 +103,31 @@
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    p = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "Translate" begin
+    # ------
+    # POINT
+    # ------
+
+    f = Translate(T(1), T(1))
+    g = P2(1, 0)
+    r, c = TB.apply(f, g)
+    @test r ≈ P2(2, 1)
+    @test TB.revert(f, r, c) ≈ g
+
     # ---------
     # TRIANGLE
     # ---------
@@ -157,9 +189,31 @@
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = Translate(T(1), T(1))
+    p = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "Stretch" begin
+    # ------
+    # POINT
+    # ------
+
+    f = Stretch(T(1), T(2))
+    g = P2(1, 1)
+    r, c = TB.apply(f, g)
+    @test r ≈ P2(1, 2)
+    @test TB.revert(f, r, c) ≈ g
+
     # ---------
     # TRIANGLE
     # ---------
@@ -226,6 +280,18 @@
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ d
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = Stretch(T(1), T(2))
+    p = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
   end
 
