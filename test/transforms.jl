@@ -156,6 +156,16 @@
     @test r ≈ P2(2, 1)
     @test TB.revert(f, r, c) ≈ g
 
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Translate(T(1), T(1))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(1, 1), P2(2, 1))
+    @test TB.revert(f, r, c) ≈ g
+
     # ---------
     # TRIANGLE
     # ---------
@@ -255,6 +265,22 @@
     g = P2(1, 1)
     r, c = TB.apply(f, g)
     @test r ≈ P2(1, 2)
+    @test TB.revert(f, r, c) ≈ g
+
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Stretch(T(1), T(2))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(0, 0), P2(1, 0))
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Stretch(T(2), T(1))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(0, 0), P2(2, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------

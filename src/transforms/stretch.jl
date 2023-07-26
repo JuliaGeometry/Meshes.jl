@@ -6,7 +6,7 @@
     Stretch(s₁, s₂, ...)
 
 Scale coordinates of geometry or mesh by
-given factors `s₁, s₂, ...`.
+given strictly positive factors `s₁, s₂, ...`.
 
 ## Examples
 
@@ -18,9 +18,7 @@ struct Stretch{Dim,T} <: CoordinateTransform
   factors::NTuple{Dim,T}
 
   function Stretch{Dim,T}(factors) where {Dim,T}
-    if any(≤(0), factors)
-      throw(ArgumentError("Scaling factors must be positive."))
-    end
+    any(≤(0), factors) && throw(ArgumentError("Scaling factors must be positive."))
     new(factors)
   end
 end
