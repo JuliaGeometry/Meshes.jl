@@ -22,25 +22,28 @@ end
 
 isrevertible(::Type{<:LambdaMuSmoothing}) = true
 
-preprocess(::LambdaMuSmoothing, mesh) = laplacematrix(mesh, weights=:uniform)
-
-function applypoint(transform::LambdaMuSmoothing, points, prep)
+function apply(transform::LambdaMuSmoothing, mesh)
   n = transform.n
   λ = transform.λ
   μ = transform.μ
-  L = prep
-  _smooth(points, L, n, λ, μ), L
+  L = _laplacian(mesh)
+  _smooth(mesh, L, n, λ, μ), L
 end
 
-function revertpoint(transform::LambdaMuSmoothing, newpoints, pcache)
+function revert(transform::LambdaMuSmoothing, mesh, cache)
   n = transform.n
   λ = transform.λ
   μ = transform.μ
-  L = pcache
-  _smooth(newpoints, L, n, λ, μ, revert=true)
+  L = cache
+  _smooth(mesh, L, n, λ, μ, revert=true)
 end
 
-function _smooth(points, L, n, λ, μ; revert=false)
+_laplacian(mesh) = laplacematrix(mesh, weights=:uniform)
+
+function _smooth(mesh, L, n, λ, μ; revert=false)
+  # retrieve vertices
+  points = vertices(mesh)
+
   # matrix with coordinates (nvertices x ndims)
   X = reduce(hcat, coordinates.(points)) |> transpose
 
@@ -54,7 +57,10 @@ function _smooth(points, L, n, λ, μ; revert=false)
   end
 
   # new points
-  Point.(Tuple.(eachrow(X)))
+  newpoints = Point.(Tuple.(eachrow(X)))
+
+  # new mesh
+  SimpleMesh(newpoints, topology(mesh))
 end
 
 """
