@@ -46,11 +46,3 @@ end
 vertices(m::SimpleMesh) = m.vertices
 
 nvertices(m::SimpleMesh) = length(m.vertices)
-
-"""
-    convert(SimpleMesh, mesh)
-
-Convert any `mesh` to a simple mesh with explicit
-list of vertices and [`SimpleTopology`](@ref).
-"""
-Base.convert(::Type{<:SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))

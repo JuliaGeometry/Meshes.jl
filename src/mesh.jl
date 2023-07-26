@@ -197,3 +197,9 @@ Base.getindex(g::Grid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
 include("mesh/cartesiangrid.jl")
 include("mesh/rectilineargrid.jl")
 include("mesh/simplemesh.jl")
+
+# ------------
+# CONVERSIONS
+# ------------
+
+Base.convert(::Type{<:SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))

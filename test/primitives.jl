@@ -425,6 +425,25 @@
     @test_throws AssertionError Box(P1(1), P1(0))
     @test_throws AssertionError Box(P2(1, 1), P2(0, 0))
     @test_throws AssertionError Box(P3(1, 1, 1), P3(0, 0, 0))
+
+    b = Box(P2(0, 0), P2(1, 1))
+    q = convert(Quadrangle, b)
+    @test q isa Quadrangle
+    @test q == Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+
+    b = Box(P3(0, 0, 0), P3(1, 1, 1))
+    h = convert(Hexahedron, b)
+    @test h isa Hexahedron
+    @test h == Hexahedron(
+      P3(0, 0, 0),
+      P3(1, 0, 0),
+      P3(1, 1, 0),
+      P3(0, 1, 0),
+      P3(0, 0, 1),
+      P3(1, 0, 1),
+      P3(1, 1, 1),
+      P3(0, 1, 1)
+    )
   end
 
   @testset "Ball" begin
