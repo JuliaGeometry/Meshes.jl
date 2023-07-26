@@ -42,6 +42,17 @@
     #@test r ≈ PolyArea(P2(0, 0), P2(0, 1), P2(-1, 1), P2(-1, 0))
     #@test TB.revert(f, r, c) ≈ p
 
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ g
+
     # ------
     # PLANE
     # ------
@@ -71,6 +82,17 @@
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([P2(0, 0), P2(0, 1), P2(-1, 1)])
     @test TB.revert(f, r, c) ≈ d
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "Translate" begin
@@ -82,6 +104,17 @@
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(1, 2, 3), P3(2, 2, 3), P3(1, 3, 4))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = Translate(T(1), T(1))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ g
 
     # ------
@@ -113,6 +146,17 @@
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([P2(1, 1), P2(2, 1), P2(2, 2)])
     @test TB.revert(f, r, c) ≈ d
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Translate(T(1), T(1))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "Stretch" begin
@@ -124,6 +168,17 @@
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 2, 3))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+    f = Stretch(T(1), T(2))
+    f = Translate(T(1), T(1))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ g
 
     # ------
@@ -160,6 +215,17 @@
     d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([P2(0, 0), P2(1, 0), P2(1, 2)])
+    @test TB.revert(f, r, c) ≈ d
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Stretch(T(1), T(2))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
   end
 
