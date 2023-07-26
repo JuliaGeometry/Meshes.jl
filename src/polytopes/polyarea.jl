@@ -26,29 +26,29 @@ in the real world, including issues with:
 struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   outer::R
   inners::Vector{R}
-
-  function PolyArea{Dim,T,R}(outer, inners, fix) where {Dim,T,R}
-    if fix
-      # fix orientation
-      ofix(r, o) = orientation(r) == o ? r : reverse(r)
-      outer = ofix(outer, :CCW)
-      inners = ofix.(inners, :CW)
-
-      # fix degeneracy
-      if nvertices(outer) == 2
-        v = vertices(outer)
-        A, B = v[1], v[2]
-        M = centroid(Segment(A, B))
-        outer = Ring(A, M, B)
-      end
-      inners = filter(r -> nvertices(r) > 2, inners)
-    end
-
-    new(outer, inners)
-  end
 end
 
-PolyArea(outer::R, inners=R[]; fix=true) where {Dim,T,V,R<:Ring{Dim,T,V}} = PolyArea{Dim,T,R}(outer, inners, fix)
+function PolyArea(outer::R, inners, fix) where {Dim,T,R<:Ring{Dim,T}}
+  if fix
+    # fix orientation
+    ofix(r, o) = orientation(r) == o ? r : reverse(r)
+    outer = ofix(outer, :CCW)
+    inners = ofix.(inners, :CW)
+
+    # fix degeneracy
+    if nvertices(outer) == 2
+      v = vertices(outer)
+      A, B = v[1], v[2]
+      M = centroid(Segment(A, B))
+      outer = Ring(A, M, B)
+    end
+    inners = filter(r -> nvertices(r) > 2, inners)
+  end
+
+  PolyArea{Dim,T,R}(outer, inners)
+end
+
+PolyArea(outer::R, inners=R[]; fix=true) where {R<:Ring} = PolyArea(outer, inners, fix)
 
 PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
   PolyArea(Ring(outer), [Ring(inner) for inner in inners]; fix=fix)
