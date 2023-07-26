@@ -26,7 +26,7 @@ import NearestNeighbors: MinkowskiMetric
 
 # Transforms API
 import TransformsBase: Transform, →
-import TransformsBase: isrevertible, preprocess
+import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply
 
 # IO utils

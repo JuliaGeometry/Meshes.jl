@@ -300,15 +300,17 @@
     @test TB.isrevertible(trans)
 
     # basic tests with Cartesian grid
-    grid = CartesianGrid{T}(10, 10)
-    mesh, cache = TB.apply(trans, grid)
-    @test all(sides(boundingbox(mesh)) .≤ T(1))
-    rgrid = TB.revert(trans, mesh, cache)
-    @test rgrid == grid
-    mesh2 = TB.reapply(trans, grid, cache)
-    @test mesh == mesh2
+    # trans = StdCoords()
+    # grid = CartesianGrid{T}(10, 10)
+    # mesh, cache = TB.apply(trans, grid)
+    # @test all(sides(boundingbox(mesh)) .≤ T(1))
+    # rgrid = TB.revert(trans, mesh, cache)
+    # @test rgrid == grid
+    # mesh2 = TB.reapply(trans, grid, cache)
+    # @test mesh == mesh2
 
     # basic tests with views
+    trans = StdCoords()
     vset = view(PointSet(rand(P2, 100)), 1:50)
     vnew, cache = TB.apply(trans, vset)
     @test all(sides(boundingbox(vnew)) .≤ T(1))

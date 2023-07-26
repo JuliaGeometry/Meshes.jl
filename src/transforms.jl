@@ -21,62 +21,16 @@ See [https://en.wikipedia.org/wiki/List_of_common_coordinate_transformations]
 abstract type CoordinateTransform <: GeometricTransform end
 
 """
-    newpoints, pcache = applypoint(transform, points, prep)
+    applycoord(transform, object)
 
-Implementation of [`apply`](@ref) for points of object.
-This function is intended for developers of new transform types.
+Recursively apply coordinate `transform` on `object`.
+This function is intended for developers of new
+[`CoordinateTransform`](@ref).
 """
-function applypoint end
-
-"""
-    points = revertpoint(transform, newpoints, pcache)
-
-Implementation of [`revert`](@ref) for points of object.
-This function is intended for developers of new transform types.
-"""
-function revertpoint end
-
-"""
-    newpoints = reapplypoint(transform, points, pcache)
-
-Implementation of [`reapply`](@ref) for points of object.
-This function is intended for developers of new transform types.
-"""
-function reapplypoint end
+function applycoord end
 
 # --------------------
 # TRANSFORM FALLBACKS
-# --------------------
-
-function apply(t::GeometricTransform, o)
-  prep = preprocess(t, o)
-  p, c = applypoint(t, pointify(o), prep)
-  _reconstruct(p, o), c
-end
-
-function revert(t::GeometricTransform, o, c)
-  p = revertpoint(t, pointify(o), c)
-  _reconstruct(p, o)
-end
-
-function reapply(t::GeometricTransform, o, c)
-  p = reapplypoint(t, pointify(o), c)
-  _reconstruct(p, o)
-end
-
-# convert lists of points into objects
-_reconstruct(points, ::Point) = first(points)
-_reconstruct(points, ::G) where {G<:Geometry} = G(points)
-_reconstruct(points, domain::Domain) = _reconstruct(points, GeometrySet(domain))
-_reconstruct(points, mesh::Mesh) = SimpleMesh(points, topology(mesh))
-_reconstruct(points, ::PointSet) = PointSet(points)
-_reconstruct(points, ::PolyArea) = PolyArea(points)
-_reconstruct(points, ::Ring) = Ring(points)
-_reconstruct(points, ::Rope) = Rope(points)
-_reconstruct(points, ::PL) where {PL<:Polytope} = PL(ntuple(i -> @inbounds(points[i]), nvertices(PL)))
-
-# --------------------
-# POINTWISE FALLBACKS
 # --------------------
 
 apply(t::CoordinateTransform, g) = applycoord(t, g), nothing

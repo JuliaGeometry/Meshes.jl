@@ -35,8 +35,10 @@ Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 """
 Rotate(u::Vec, v::Vec) = Rotate(rotation_between(u, v))
 
-Base.inv(t::Rotate) = Rotate(inv(t.rot))
-
 isrevertible(::Type{<:Rotate}) = true
+
+isinvertible(::Type{<:Rotate}) = true
+
+Base.inv(t::Rotate) = Rotate(inv(t.rot))
 
 applycoord(t::Rotate, v::Vec) = t.rot * v

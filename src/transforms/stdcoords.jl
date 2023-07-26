@@ -12,25 +12,15 @@ struct StdCoords <: GeometricTransform end
 
 isrevertible(::Type{<:StdCoords}) = true
 
-function preprocess(::StdCoords, object)
-  pset = PointSet(pointify(object))
-  bbox = boundingbox(pset)
-  center(bbox), sides(bbox)
+function apply(::StdCoords, g)
+  box = boundingbox(g)
+  c, s = center(box), sides(box)
+  tr = Translate(coordinates(c)...)
+  ts = Stretch(s)
+  t = inv(tr) → inv(ts)
+  t(g), t
 end
 
-function applypoint(::StdCoords, points, prep)
-  pₒ, s = prep
-  newpoints = [Point((p - pₒ) ./ s) for p in points]
-  newpoints, prep
-end
+revert(::StdCoords, g, t) = inv(t)(g)
 
-function revertpoint(::StdCoords, newpoints, pcache)
-  pₒ, s = pcache
-  cₒ = coordinates(pₒ)
-  [Point(s .* coordinates(p) + cₒ) for p in newpoints]
-end
-
-function reapplypoint(::StdCoords, points, pcache)
-  pₒ, s = pcache
-  [Point((p - pₒ) ./ s) for p in points]
-end
+reapply(::StdCoords, g, t) = t(g)
