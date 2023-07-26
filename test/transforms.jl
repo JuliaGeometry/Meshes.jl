@@ -1,5 +1,10 @@
 @testset "Transforms" begin
   @testset "Rotate" begin
+    @test TB.isrevertible(Rotate)
+    @test TB.isinvertible(Rotate)
+
+    @test inv(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
+
     # ------
     # POINT
     # ------
@@ -128,6 +133,11 @@
   end
 
   @testset "Translate" begin
+    @test TB.isrevertible(Translate)
+    @test TB.isinvertible(Translate)
+
+    @test inv(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
+
     # ------
     # POINT
     # ------
@@ -225,6 +235,11 @@
   end
 
   @testset "Stretch" begin
+    @test TB.isrevertible(Stretch)
+    @test TB.isinvertible(Stretch)
+
+    @test inv(Stretch(T(1), T(2))) == Stretch(T(1), T(1/2))
+
     # ------
     # POINT
     # ------
@@ -303,6 +318,17 @@
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
 
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = Stretch(T(1), T(2))
+    d = CartesianGrid(P2(1, 1), P2(11, 11), dims=(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r ≈ CartesianGrid(P2(1, 2), P2(11, 22), dims=(10, 10))
+    @test TB.revert(f, r, c) ≈ d
+
     # -----------
     # SIMPLEMESH
     # -----------
@@ -317,28 +343,38 @@
   end
 
   @testset "StdCoords" begin
-    trans = StdCoords()
-    @test TB.isrevertible(trans)
+    @test TB.isrevertible(StdCoords)
 
-    # basic tests with Cartesian grid
-    # trans = StdCoords()
-    # grid = CartesianGrid{T}(10, 10)
-    # mesh, cache = TB.apply(trans, grid)
-    # @test all(sides(boundingbox(mesh)) .≤ T(1))
-    # rgrid = TB.revert(trans, mesh, cache)
-    # @test rgrid == grid
-    # mesh2 = TB.reapply(trans, grid, cache)
-    # @test mesh == mesh2
+    # ---------
+    # POINTSET
+    # ---------
 
-    # basic tests with views
-    trans = StdCoords()
-    vset = view(PointSet(rand(P2, 100)), 1:50)
-    vnew, cache = TB.apply(trans, vset)
-    @test all(sides(boundingbox(vnew)) .≤ T(1))
-    vini = TB.revert(trans, vnew, cache)
-    @test all(vini .≈ vset)
-    vnew2 = TB.reapply(trans, vset, cache)
-    @test vnew == vnew2
+    f = StdCoords()
+    d = view(PointSet(rand(P2, 100)), 1:50)
+    r, c = TB.apply(f, d)
+    @test all(sides(boundingbox(r)) .≤ T(1))
+    @test TB.revert(f, r, c) ≈ d
+    r2 = TB.reapply(f, d, c)
+    @test r == r2
+
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = StdCoords()
+    d = CartesianGrid(P2(1, 1), P2(11, 11), dims=(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r ≈ CartesianGrid(P2(-0.5, -0.5), P2(0.5, 0.5), dims=(10, 10))
+    @test TB.revert(f, r, c) ≈ d
+
+    f = StdCoords()
+    d = CartesianGrid{T}(10, 20)
+    r, c = TB.apply(f, d)
+    @test r ≈ CartesianGrid(P2(-0.5, -0.5), P2(0.5, 0.5), dims=(10, 20))
+    @test TB.revert(f, r, c) ≈ d
+    r2 = TB.reapply(f, d, c)
+    @test r == r2
   end
 
   @testset "Repair{0}" begin

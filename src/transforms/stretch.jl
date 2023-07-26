@@ -36,3 +36,15 @@ isinvertible(::Type{<:Stretch}) = true
 Base.inv(t::Stretch) = Stretch(1 ./ t.factors)
 
 applycoord(t::Stretch, v::Vec) = t.factors .* v
+
+# --------------
+# SPECIAL CASES
+# --------------
+
+function applycoord(t::Stretch, g::CartesianGrid)
+  dims = size(g)
+  orig = applycoord(t, minimum(g))
+  spac = t.factors .* spacing(g)
+  offs = offset(g)
+  CartesianGrid(dims, orig, spac, offs)
+end
