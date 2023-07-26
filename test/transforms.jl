@@ -61,6 +61,16 @@
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(P3(0, 0, 0), P3(1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([P2(0, 0), P2(0, 1), P2(-1, 1)])
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "Translate" begin
@@ -93,6 +103,16 @@
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(P3(0, 0, 1), P3(0, 0, 2))
     @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Translate(T(1), T(1))
+    d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([P2(1, 1), P2(2, 1), P2(2, 2)])
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "Stretch" begin
@@ -131,6 +151,16 @@
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(P3(0, 0, 1), P3(0, 0, 2))
     @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Stretch(T(1), T(2))
+    d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([P2(0, 0), P2(1, 0), P2(1, 2)])
+    @test TB.revert(f, r, c) ≈ d
   end
 
   @testset "StdCoords" begin
