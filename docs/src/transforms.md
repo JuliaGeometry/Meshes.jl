@@ -16,7 +16,7 @@ Please read their documentation for more details.
 
 ```@docs
 GeometricTransform
-StatelessGeometricTransform
+CoordinateTransform
 ```
 
 ## Rotate
