@@ -9,7 +9,7 @@
   <a href="https://JuliaGeometry.github.io/Meshes.jl/stable">
     <img src="https://img.shields.io/badge/docs-stable-blue?style=flat-square">
   </a>
-  <a href="https://JuliaGeometry.github.io/Meshes.jl/dev">
+  <a href="https://JuliaGeometry.github.io/MeshesDocs/dev">
     <img src="https://img.shields.io/badge/docs-latest-blue?style=flat-square">
   </a>
   <a href="LICENSE">
@@ -70,4 +70,4 @@ As ideas become concrete, they can be converted into GitHub issues for further a
 [docs-stable-url]: https://JuliaGeometry.github.io/Meshes.jl/stable
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue?style=flat-square
-[docs-latest-url]: https://JuliaGeometry.github.io/Meshes.jl/dev
+[docs-latest-url]: https://JuliaGeometry.github.io/MeshesDocs/dev
