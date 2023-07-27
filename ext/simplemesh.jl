@@ -24,9 +24,9 @@ function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
 end
 
 function vizmesh1D!(plot)
-  mesh        = plot[:object]
-  color       = plot[:color]
-  alpha       = plot[:alpha]
+  mesh = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
   segmentsize = plot[:segmentsize]
 
@@ -44,26 +44,23 @@ function vizmesh1D!(plot)
   colors = Makie.@lift let
     if $colorant isa AbstractVector
       c = [$colorant[e] for e in 1:nelements($mesh) for _ in 1:3]
-      c[begin:end-1]
+      c[begin:(end - 1)]
     else
       $colorant
     end
   end
 
   # visualize segments
-  Makie.lines!(plot, coords,
-    color = colors,
-    linewidth = segmentsize
-  )
+  Makie.lines!(plot, coords, color=colors, linewidth=segmentsize)
 end
 
 function vizmesh2D!(plot)
-  mesh        = plot[:object]
-  color       = plot[:color]
-  alpha       = plot[:alpha]
+  mesh = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
-  facetcolor  = plot[:facetcolor]
-  showfacets  = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+  showfacets = plot[:showfacets]
   segmentsize = plot[:segmentsize]
 
   # process color spec into colorant
@@ -72,11 +69,11 @@ function vizmesh2D!(plot)
   # retrieve triangle mesh parameters
   tparams = Makie.@lift let
     # relevant settings
-    dim   = embeddim($mesh)
+    dim = embeddim($mesh)
     nvert = nvertices($mesh)
     nelem = nelements($mesh)
     verts = vertices($mesh)
-    topo  = topology($mesh)
+    topo = topology($mesh)
     elems = elements(topo)
 
     # coordinates of vertices
@@ -85,7 +82,7 @@ function vizmesh2D!(plot)
     # fan triangulation (assume convexity)
     tris4elem = map(elems) do elem
       I = indices(elem)
-      [[I[1], I[i], I[i+1]] for i in 2:length(I)-1]
+      [[I[1], I[i], I[i + 1]] for i in 2:(length(I) - 1)]
     end
 
     # flatten vector of triangles
@@ -111,7 +108,7 @@ function vizmesh2D!(plot)
         tcoords = [coords[i] for tri in tris for i in tri]
         tconnec = [collect(I) for I in Iterators.partition(1:nv, 3)]
         tcolors = map(1:nv) do i
-          t = ceil(Int, i/3)
+          t = ceil(Int, i / 3)
           e = elem4tri[t]
           $colorant[e]
         end
@@ -130,9 +127,9 @@ function vizmesh2D!(plot)
       end
     else # single color
       # nothing needs to be done
-      tcoords  = coords
-      tconnec  = tris
-      tcolors  = $colorant
+      tcoords = coords
+      tconnec = tris
+      tcolors = $colorant
     end
 
     # convert connectivities to matrix format
@@ -145,24 +142,21 @@ function vizmesh2D!(plot)
   end
 
   # unpack observable of parameters
-  tcoords  = Makie.@lift $tparams[1]
-  tmatrix  = Makie.@lift $tparams[2]
-  tcolors  = Makie.@lift $tparams[3]
+  tcoords = Makie.@lift $tparams[1]
+  tmatrix = Makie.@lift $tparams[2]
+  tcolors = Makie.@lift $tparams[3]
   tshading = Makie.@lift $tparams[4]
 
-  Makie.mesh!(plot, tcoords, tmatrix,
-    color = tcolors,
-    shading = tshading, 
-  )
+  Makie.mesh!(plot, tcoords, tmatrix, color=tcolors, shading=tshading)
 
   if showfacets[]
     # retrieve coordinates parameters
     xparams = Makie.@lift let
       # relevant settings
-      dim    = embeddim($mesh)
-      topo   = topology($mesh)
-      nvert  = nvertices($mesh)
-      verts  = vertices($mesh)
+      dim = embeddim($mesh)
+      topo = topology($mesh)
+      nvert = nvertices($mesh)
+      verts = vertices($mesh)
       coords = coordinates.(verts)
 
       # use a sophisticated data structure
@@ -175,11 +169,11 @@ function vizmesh2D!(plot)
       inds = Int[]
       for i in 1:nfacets(t)
         append!(inds, ∂(i))
-        push!(inds, nvert+1)
+        push!(inds, nvert + 1)
       end
 
       # fill sentinel index with NaN coordinates
-      push!(coords, Vec(ntuple(i->NaN, dim)))
+      push!(coords, Vec(ntuple(i -> NaN, dim)))
 
       # extract incident vertices
       coords = coords[inds]
@@ -193,17 +187,14 @@ function vizmesh2D!(plot)
       Makie.@lift $xparams[i]
     end
 
-    Makie.lines!(plot, xyz...,
-      color = facetcolor,
-      linewidth = segmentsize
-    )
+    Makie.lines!(plot, xyz..., color=facetcolor, linewidth=segmentsize)
   end
 end
 
 function vizmesh3D!(plot)
-  mesh   = plot[:object]
+  mesh = plot[:object]
   meshes = Makie.@lift let
-    geoms  = elements($mesh)
+    geoms = elements($mesh)
     bounds = boundary.(geoms)
     discretize.(bounds)
   end
@@ -212,15 +203,15 @@ end
 
 function segmentsof(topo, vert)
   dim = embeddim(first(vert))
-  nan = Vec(ntuple(i->NaN, dim))
-  xs  = coordinates.(vert)
+  nan = Vec(ntuple(i -> NaN, dim))
+  xs = coordinates.(vert)
 
   coords = map(elements(topo)) do e
     inds = indices(e)
     xs[collect(inds)]
   end
 
-  reduce((x,y) -> [x; [nan]; y], coords)
+  reduce((x, y) -> [x; [nan]; y], coords)
 end
 
 function segmentsof(topo::GridTopology, vert)

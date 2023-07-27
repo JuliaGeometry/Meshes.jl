@@ -14,15 +14,15 @@ using Makie.ColorSchemes: colorschemes
 import Meshes: viz, viz!
 import Makie
 
-@Makie.recipe(Viz, object) do scene
+Makie.@recipe(Viz, object) do scene
   Makie.Attributes(
-    color       = :slategray3,
-    alpha       = 1.0,
-    colorscheme = nothing,
-    facetcolor  = :gray30,
-    showfacets  = false,
-    pointsize   = 12,
-    segmentsize = 1.5
+    color=:slategray3,
+    alpha=1.0,
+    colorscheme=nothing,
+    facetcolor=:gray30,
+    showfacets=false,
+    pointsize=12,
+    segmentsize=1.5
   )
 end
 
