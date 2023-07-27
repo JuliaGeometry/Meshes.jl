@@ -89,6 +89,9 @@ include("hulls.jl")
 # transforms
 include("transforms.jl")
 
+# visualization
+include("viz.jl")
+
 export
   # vectors
   Vec,
@@ -455,6 +458,10 @@ export
   laplacematrix,
   measurematrix,
   adjacencymatrix,
-  atol
+  atol,
+
+  # visualization
+  viz,
+  viz!
 
 end # module

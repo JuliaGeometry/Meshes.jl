@@ -64,7 +64,7 @@ Page(exportable=true, offline=true) # hide
 ```
 
 ```@example overview
-using Meshes, MeshViz
+using Meshes
 import WGLMakie as Mke
 ```
 

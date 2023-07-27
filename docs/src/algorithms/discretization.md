@@ -6,7 +6,7 @@ Page(exportable=true, offline=true) # hide
 ```
 
 ```@example discretization
-using Meshes, MeshViz # hide
+using Meshes # hide
 import WGLMakie as Mke # hide
 ```
 

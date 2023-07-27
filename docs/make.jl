@@ -1,7 +1,8 @@
 using Documenter, Meshes
 using DocumenterTools: Themes
 
-using MeshViz
+# load viz recipes
+import WGLMakie as Mke
 
 # Workaround for GR warnings
 ENV["GKSwstype"] = "100"
@@ -15,7 +16,7 @@ Themes.compile(
 Themes.compile(joinpath(@__DIR__, "src/assets/dark.scss"), joinpath(@__DIR__, "src/assets/themes/documenter-dark.css"))
 
 makedocs(
-  modules=[Meshes, MeshViz],
+  modules=[Meshes],
   format=Documenter.HTML(
     assets=[
       "assets/favicon.ico",

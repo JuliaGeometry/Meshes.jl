@@ -9,7 +9,6 @@ using StaticArrays
 using SparseArrays
 using PlyIO
 using Unitful
-using MeshViz
 using Rotations
 using Test, Random
 using ReferenceTests, ImageIO
