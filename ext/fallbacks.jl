@@ -9,8 +9,7 @@ Makie.convert_arguments(P::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) =
 
 Makie.plottype(::Geometry) = Viz
 
-Makie.convert_arguments(P::Type{<:Viz}, geom::Geometry) =
-  Makie.convert_arguments(P, GeometrySet([geom]))
+Makie.convert_arguments(P::Type{<:Viz}, geom::Geometry) = Makie.convert_arguments(P, GeometrySet([geom]))
 
 Makie.plottype(::Domain) = Viz
 
@@ -19,13 +18,15 @@ function Makie.plot!(plot::Viz{<:Tuple{Domain}})
   domain = plot[:object]
 
   # fallback to vector recipe
-  viz!(plot, (Makie.@lift collect($domain)),
-    color       = plot[:color],
-    alpha       = plot[:alpha],
-    colorscheme = plot[:colorscheme],
-    facetcolor  = plot[:facetcolor],
-    showfacets  = plot[:showfacets],
-    pointsize   = plot[:pointsize],
-    segmentsize = plot[:segmentsize]
+  viz!(
+    plot,
+    (Makie.@lift collect($domain)),
+    color=plot[:color],
+    alpha=plot[:alpha],
+    colorscheme=plot[:colorscheme],
+    facetcolor=plot[:facetcolor],
+    showfacets=plot[:showfacets],
+    pointsize=plot[:pointsize],
+    segmentsize=plot[:segmentsize]
   )
 end

@@ -12,13 +12,15 @@ function Makie.plot!(plot::Viz{<:Tuple{Partition}})
 
   for (i, subset) in Iterators.enumerate(partition)
     # fallback to collection recipe
-    viz!(plot, subset,
-      color       = colors[i],
-      alpha       = plot[:alpha],
-      facetcolor  = plot[:facetcolor],
-      showfacets  = plot[:showfacets],
-      pointsize   = plot[:pointsize],
-      segmentsize = plot[:segmentsize]
+    viz!(
+      plot,
+      subset,
+      color=colors[i],
+      alpha=plot[:alpha],
+      facetcolor=plot[:facetcolor],
+      showfacets=plot[:showfacets],
+      pointsize=plot[:pointsize],
+      segmentsize=plot[:segmentsize]
     )
   end
 end

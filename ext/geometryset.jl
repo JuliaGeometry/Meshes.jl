@@ -5,13 +5,13 @@
 Makie.plottype(::GeometrySet) = Viz{<:Tuple{GeometrySet}}
 
 function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
-  collection  = plot[:object]
-  color       = plot[:color]
-  alpha       = plot[:alpha]
+  collection = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
-  facetcolor  = plot[:facetcolor]
-  showfacets  = plot[:showfacets]
-  pointsize   = plot[:pointsize]
+  facetcolor = plot[:facetcolor]
+  showfacets = plot[:showfacets]
+  pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
 
   # process color spec into colorant
@@ -26,10 +26,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   if all(ranks[] .== 0)
     # visualize point set
     coords = Makie.@lift coordinates.($geoms)
-    Makie.scatter!(plot, coords,
-      color = colorant,
-      markersize = pointsize,
-    )
+    Makie.scatter!(plot, coords, color=colorant, markersize=pointsize)
   elseif all(ranks[] .== 1)
     meshes = Makie.@lift discretize.($geoms)
     vizmany!(plot, meshes)
@@ -50,7 +47,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
         else
           cset = colorant
         end
-        viz!(plot, gset, color = cset)
+        viz!(plot, gset, color=cset)
       end
     end
   end
@@ -62,18 +59,10 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     elseif all(ranks[] .== 1)
       # all boundaries are point sets
       points = Makie.@lift mapreduce(collect, vcat, $bounds)
-      viz!(plot, (Makie.@lift GeometrySet($points)),
-        color = facetcolor,
-        showfacets = false,
-        pointsize = pointsize
-      )
+      viz!(plot, (Makie.@lift GeometrySet($points)), color=facetcolor, showfacets=false, pointsize=pointsize)
     elseif all(ranks[] .== 2)
       # all boundaries are geometries
-      viz!(plot, (Makie.@lift GeometrySet($bounds)),
-        color = facetcolor,
-        showfacets = false,
-        segmentsize = segmentsize
-      )
+      viz!(plot, (Makie.@lift GeometrySet($bounds)), color=facetcolor, showfacets=false, segmentsize=segmentsize)
     elseif all(ranks[] .== 3)
       # we already visualized the boundaries because
       # that is all we can do with 3D geometries
