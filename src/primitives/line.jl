@@ -26,9 +26,9 @@ measure(::Line{Dim,T}) where {Dim,T} = typemax(T)
 
 Base.length(l::Line) = measure(l)
 
-boundary(::Line) = nothing
-
 perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
+
+boundary(::Line) = nothing
 
 ==(l1::Line, l2::Line) = l1.a ∈ l2 && l1.b ∈ l2 && l2.a ∈ l1 && l2.b ∈ l1
 

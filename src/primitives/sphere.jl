@@ -81,9 +81,9 @@ Base.length(s::Sphere{2}) = measure(s)
 
 area(s::Sphere{3}) = measure(s)
 
-boundary(::Sphere) = nothing
-
 perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
+
+boundary(::Sphere) = nothing
 
 function Base.in(p::Point, s::Sphere)
   x = coordinates(p)

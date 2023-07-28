@@ -5,7 +5,8 @@
 """
     Circle(plane, radius)
 
-A circle on a `plane` with given `radius`.
+A circle embedded in 3-dimensional space on a
+given `plane` with given `radius`.
 
 See also [`Disk`](@ref).
 """
@@ -17,7 +18,7 @@ end
 """
     Circle(p1, p2, p3)
 
-A 3D circle passing through points `p1`, `p2` and `p3`.
+A circle passing through points `p1`, `p2` and `p3`.
 """
 function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   v12 = p2 - p1
@@ -43,6 +44,8 @@ isconvex(::Type{<:Circle}) = false
 
 isperiodic(::Type{<:Circle}) = (true,)
 
+isparametrized(::Type{<:Circle}) = true
+
 center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius
@@ -51,6 +54,8 @@ measure(c::Circle{T}) where {T} = 2 * T(π) * c.radius
 
 Base.length(c::Circle) = measure(c)
 
+boundary(::Circle) = nothing
+
 function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
   p ∉ c.plane && return false
   s² = sum(abs2, p - center(c))
@@ -58,7 +63,15 @@ function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
   isapprox(s², r², atol=atol(T)^2)
 end
 
-boundary(::Circle) = nothing
+function (c::Circle{T})(φ) where {T}
+  if (φ < 0 || φ > 1)
+    throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))
+  end
+  r = c.radius
+  u = r * cos(φ * T(2π))
+  v = r * sin(φ * T(2π))
+  c.plane(u, v)
+end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Circle{T}}) where {T} =
   Circle(rand(rng, Plane{T}), rand(rng, T))

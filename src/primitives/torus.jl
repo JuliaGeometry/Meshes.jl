@@ -50,8 +50,6 @@ radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
-boundary(::Torus) = nothing
-
 # https://en.wikipedia.org/wiki/Torus
 function measure(t::Torus{T}) where {T}
   R, r = t.major, t.minor
@@ -59,6 +57,8 @@ function measure(t::Torus{T}) where {T}
 end
 
 area(t::Torus) = measure(t)
+
+boundary(::Torus) = nothing
 
 function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   c, n⃗ = t.center, t.normal

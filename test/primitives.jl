@@ -155,6 +155,7 @@
   end
 
   @testset "Ray" begin
+    @test isconvex(Ray)
     @test isparametrized(Ray)
 
     r = Ray(P2(0, 0), V2(1, 1))
@@ -206,6 +207,7 @@
   end
 
   @testset "Line" begin
+    @test isconvex(Line)
     @test isparametrized(Line)
 
     l = Line(P2(0, 0), P2(1, 1))
@@ -229,6 +231,7 @@
   end
 
   @testset "Plane" begin
+    @test isconvex(Plane)
     @test isparametrized(Plane)
 
     p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
@@ -447,18 +450,18 @@
   end
 
   @testset "Ball" begin
+    @test isconvex(Ball)
+    @test isparametrized(Ball)
     @test isperiodic(Ball{2}) == (false, true)
     @test isperiodic(Ball{3}) == (false, true, true)
-
-    @test isparametrized(Ball)
 
     b = Ball(P3(1, 2, 3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
     @test isconvex(b)
-    @test isperiodic(b) == (false, true, true)
     @test isparametrized(b)
+    @test isperiodic(b) == (false, true, true)
     @test Meshes.center(b) == P3(1, 2, 3)
     @test radius(b) == T(5)
 
@@ -518,18 +521,18 @@
   end
 
   @testset "Sphere" begin
+    @test !isconvex(Sphere)
+    @test isparametrized(Sphere)
     @test isperiodic(Sphere{2}) == (true,)
     @test isperiodic(Sphere{3}) == (true, true)
-
-    @test isparametrized(Sphere)
 
     s = Sphere(P3(0, 0, 0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
     @test !isconvex(s)
-    @test isperiodic(s) == (true, true)
     @test isparametrized(s)
+    @test isperiodic(s) == (true, true)
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
     @test extrema(s) == (P3(-1, -1, -1), P3(1, 1, 1))
@@ -638,6 +641,9 @@
   end
 
   @testset "Circle" begin
+    @test !isconvex(Circle)
+    @test isparametrized(Circle)
+
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     c = Circle(p, T(2))
     @test embeddim(c) == 3
@@ -646,6 +652,7 @@
     @test Meshes.center(c) == P3(0, 0, 0)
     @test radius(c) == T(2)
     @test !isconvex(c)
+    @test isparametrized(c)
     @test measure(c) == 2 * T(π) * T(2)
     @test length(c) == measure(c)
     @test P3(2, 0, 0) ∈ c
@@ -662,12 +669,24 @@
     @test p2 ∈ c
     @test p3 ∈ c
 
+    # circle parametrization
+    p = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    c = Circle(p, T(2))
+    @test c(T(0)) ≈ P3(2, 0, 0)
+    @test c(T(0.25)) ≈ P3(0, 2, 0)
+    @test c(T(0.5)) ≈ P3(-2, 0, 0)
+    @test c(T(0.75)) ≈ P3(0, -2, 0)
+    @test c(T(1)) ≈ P3(2, 0, 0)
+
     c = rand(Circle{T})
     @test c isa Circle
     @test embeddim(c) == 3
   end
 
   @testset "Cylinder" begin
+    @test isconvex(Cylinder)
+    @test isparametrized(Cylinder)
+
     c = Cylinder(Plane(P3(1, 2, 3), V3(0, 0, 1)), Plane(P3(4, 5, 6), V3(0, 0, 1)), T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
@@ -677,6 +696,7 @@
     @test top(c) == Plane(P3(4, 5, 6), V3(0, 0, 1))
     @test axis(c) == Line(P3(1, 2, 3), P3(4, 5, 6))
     @test isconvex(c)
+    @test isparametrized(c)
     @test !isright(c)
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3))
     @test P3(1, 2, 3) ∈ c
@@ -720,18 +740,21 @@
   end
 
   @testset "CylinderSurface" begin
+    @test !isconvex(CylinderSurface)
+    @test isparametrized(CylinderSurface)
+
     c = CylinderSurface(T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 2
     @test coordtype(c) == T
+    @test !isconvex(c)
+    @test isparametrized(c)
     @test radius(c) == T(2)
     @test bottom(c) == Plane(P3(0, 0, 0), V3(0, 0, 1))
     @test top(c) == Plane(P3(0, 0, 1), V3(0, 0, 1))
     @test center(c) == P3(0.0, 0.0, 0.5)
     @test centroid(c) == P3(0.0, 0.0, 0.5)
     @test axis(c) == Line(P3(0, 0, 0), P3(0, 0, 1))
-    @test isconvex(c)
-    @test isparametrized(c)
     @test isright(c)
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi
@@ -796,13 +819,17 @@
   end
 
   @testset "Torus" begin
+    @test !isconvex(Torus)
+    @test isparametrized(Torus)
+    @test isperiodic(Torus) == (true, true)
+
     t = Torus(T.((1, 1, 1)), T.((1, 0, 0)), 2, 1)
     @test P3(1, 1, -1) ∈ t
     @test P3(1, 1, 1) ∉ t
     @test paramdim(t) == 2
     @test !isconvex(t)
-    @test isperiodic(t) == (true, true)
     @test isparametrized(t)
+    @test isperiodic(t) == (true, true)
     @test Meshes.center(t) == P3(1, 1, 1)
     @test normal(t) == V3(1, 0, 0)
     @test radii(t) == (T(2), T(1))

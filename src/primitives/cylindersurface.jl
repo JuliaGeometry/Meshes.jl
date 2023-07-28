@@ -46,7 +46,7 @@ CylinderSurface(radius::T) where {T} = CylinderSurface(Point(T(0), T(0), T(0)), 
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
-isconvex(::Type{<:CylinderSurface}) = true
+isconvex(::Type{<:CylinderSurface}) = false
 
 isparametrized(::Type{<:CylinderSurface}) = true
 
@@ -76,11 +76,11 @@ function isright(c::CylinderSurface{T}) where {T}
   isparallelv && isparallelw
 end
 
-boundary(::CylinderSurface) = nothing
-
 measure(c::CylinderSurface{T}) where {T} = (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
 
 area(c::CylinderSurface) = measure(c)
+
+boundary(::CylinderSurface) = nothing
 
 Base.isapprox(c₁::CylinderSurface{T}, c₂::CylinderSurface{T}) where {T} =
   c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(T))

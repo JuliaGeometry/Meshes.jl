@@ -73,10 +73,10 @@ measure(::Point{Dim,T}) where {Dim,T} = zero(T)
 
 boundary(::Point) = nothing
 
+==(A::Point, B::Point) = A.coords == B.coords
+
 Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T}; atol=atol(T), kwargs...) where {Dim,T} =
   isapprox(A.coords, B.coords; atol, kwargs...)
-
-==(A::Point, B::Point) = A.coords == B.coords
 
 """
     coordinates(point)

@@ -44,15 +44,15 @@ isconvex(::Type{<:Plane}) = true
 
 isparametrized(::Type{<:Plane}) = true
 
+normal(p::Plane) = normalize(p.u × p.v)
+
 measure(::Plane{T}) where {T} = typemax(T)
 
 area(p::Plane) = measure(p)
 
-boundary(::Plane) = nothing
-
 perimeter(::Plane{T}) where {T} = zero(T)
 
-normal(p::Plane) = normalize(p.u × p.v)
+boundary(::Plane) = nothing
 
 Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&

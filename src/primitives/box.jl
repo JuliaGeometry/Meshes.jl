@@ -43,6 +43,12 @@ Base.maximum(b::Box) = b.max
 
 Base.extrema(b::Box) = b.min, b.max
 
+center(b::Box) = Point((coordinates(b.max) + coordinates(b.min)) / 2)
+
+diagonal(b::Box) = norm(b.max - b.min)
+
+sides(b::Box) = Tuple(b.max - b.min)
+
 measure(b::Box) = prod(b.max - b.min)
 
 Base.length(b::Box{1}) = measure(b)
@@ -50,14 +56,6 @@ Base.length(b::Box{1}) = measure(b)
 area(b::Box{2}) = measure(b)
 
 volume(b::Box{3}) = measure(b)
-
-center(b::Box) = Point((coordinates(b.max) + coordinates(b.min)) / 2)
-
-diagonal(b::Box) = norm(b.max - b.min)
-
-sides(b::Box) = Tuple(b.max - b.min)
-
-Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
 boundary(b::Box{1}) = PointSet([b.min, b.max])
 
@@ -85,6 +83,8 @@ function boundary(b::Box{3})
   c = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
   SimpleMesh(v, connect.(c))
 end
+
+Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
   l, u = coordinates.((b.min, b.max))

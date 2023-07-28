@@ -48,6 +48,8 @@ paramdim(::Type{<:Cylinder}) = 3
 
 isconvex(::Type{<:Cylinder}) = true
 
+isparametrized(::Type{<:Cylinder}) = true
+
 radius(c::Cylinder) = c.radius
 
 bottom(c::Cylinder) = c.bot
@@ -60,11 +62,11 @@ axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
 
-boundary(c::Cylinder) = CylinderSurface(c.bot, c.top, c.radius)
-
 measure(c::Cylinder{T}) where {T} = norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2
 
 volume(c::Cylinder) = measure(c)
+
+boundary(c::Cylinder) = CylinderSurface(c.bot, c.top, c.radius)
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 

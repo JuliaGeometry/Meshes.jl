@@ -44,14 +44,14 @@ area(b::Ball{2}) = measure(b)
 
 volume(b::Ball{3}) = measure(b)
 
+boundary(b::Ball) = Sphere(b.center, b.radius)
+
 function Base.in(p::Point{Dim,T}, b::Ball{Dim,T}) where {Dim,T}
   c = b.center
   r = b.radius
   s = norm(p - c)
   s < r || isapprox(s, r, atol=atol(T))
 end
-
-boundary(b::Ball) = Sphere(b.center, b.radius)
 
 function (b::Ball{2,T})(ρ, φ) where {T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
