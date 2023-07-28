@@ -104,6 +104,8 @@ discretize(geometry) = simplexify(geometry)
 
 discretize(ball::Ball{2}) = discretize(ball, RegularDiscretization(50))
 
+discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
+
 discretize(sphere::Sphere{3}) = discretize(sphere, RegularDiscretization(50))
 
 discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
@@ -146,6 +148,8 @@ end
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
 simplexify(sphere::Sphere{2}) = discretize(sphere, RegularDiscretization(50))
+
+simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
 simplexify(box::Box{2}) = discretize(box, FanTriangulation())
 
