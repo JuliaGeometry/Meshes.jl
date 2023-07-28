@@ -43,7 +43,7 @@ function discretize(box::Box, method::RegularDiscretization)
   CartesianGrid(extrema(box)..., dims=sz)
 end
 
-function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T}
+function discretize(sphere::Sphere{3}, method::RegularDiscretization)
   nx, ny = fitdims(method.sizes, paramdim(sphere))
 
   # sample points regularly
@@ -92,7 +92,11 @@ function discretize(sphere::Sphere{3,T}, method::RegularDiscretization) where {T
   SimpleMesh(points, connec)
 end
 
-function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
+discretize(ball::Ball{2}, method::RegularDiscretization) = _rball(ball, method)
+
+discretize(disk::Disk, method::RegularDiscretization) = _rball(disk, method)
+
+function _rball(ball, method::RegularDiscretization)
   nx, ny = fitdims(method.sizes, paramdim(ball))
 
   # sample points regularly
@@ -120,7 +124,7 @@ function discretize(ball::Ball{2,T}, method::RegularDiscretization) where {T}
   SimpleMesh(points, connec)
 end
 
-function discretize(cylsurf::CylinderSurface{T}, method::RegularDiscretization) where {T}
+function discretize(cylsurf::CylinderSurface, method::RegularDiscretization)
   nx, ny = fitdims(method.sizes, paramdim(cylsurf))
 
   # sample points regularly

@@ -45,6 +45,10 @@ firstoffset(b::Ball) = (n -> inv(n + 1), firstoffset(boundary(b))...)
 lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
 extrapoints(b::Ball) = (center(b),)
 
+firstoffset(d::Disk) = (n -> inv(n + 1), firstoffset(boundary(d))...)
+lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
+extrapoints(d::Disk) = (center(d),)
+
 firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::CylinderSurface) = (bottom(c)(0, 0), top(c)(0, 0))
