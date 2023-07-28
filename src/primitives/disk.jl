@@ -21,6 +21,8 @@ paramdim(::Type{<:Disk}) = 2
 
 isconvex(::Type{<:Disk}) = true
 
+isperiodic(::Type{<:Disk}) = (false, true)
+
 isparametrized(::Type{<:Disk}) = true
 
 center(d::Disk) = d.plane(0, 0)
@@ -38,6 +40,16 @@ function Base.in(p::Point, d::Disk)
   s² = sum(abs2, p - center(d))
   r² = radius(d)^2
   s² ≤ r²
+end
+
+function (d::Disk{T})(ρ, φ) where {T}
+  if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
+    throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
+  end
+  r = d.radius
+  u = ρ * r * cos(φ * T(2π))
+  v = ρ * r * sin(φ * T(2π))
+  d.plane(u, v)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Disk{T}}) where {T} = Disk(rand(rng, Plane{T}), rand(rng, T))
