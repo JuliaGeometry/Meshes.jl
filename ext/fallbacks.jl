@@ -2,16 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plottype(::AbstractVector{<:Geometry}) = Viz
+Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
 
 Makie.convert_arguments(P::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) =
   Makie.convert_arguments(P, GeometrySet(geoms))
 
-Makie.plottype(::Geometry) = Viz
+Makie.plottype(::Geometry) = Viz{<:Tuple{Geometry}}
 
 Makie.convert_arguments(P::Type{<:Viz}, geom::Geometry) = Makie.convert_arguments(P, GeometrySet([geom]))
 
-Makie.plottype(::Domain) = Viz
+Makie.plottype(::Domain) = Viz{<:Tuple{Domain}}
 
 function Makie.plot!(plot::Viz{<:Tuple{Domain}})
   # retrieve domain object
