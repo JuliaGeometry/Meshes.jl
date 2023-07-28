@@ -38,7 +38,7 @@ apply(t::CoordinateTransform, g::GeometryOrDomain) = applycoord(t, g), nothing
 revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inv(t), g)
 
 # apply transform recursively
-applycoord(t::CoordinateTransform, g::G) where {G<:Union{Geometry,Domain}} =
+applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
   G((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
 
 # stop recursion at non-geometric types
