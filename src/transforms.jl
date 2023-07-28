@@ -33,9 +33,9 @@ function applycoord end
 # TRANSFORM FALLBACKS
 # --------------------
 
-apply(t::CoordinateTransform, g) = applycoord(t, g), nothing
+apply(t::CoordinateTransform, g::GeometryOrDomain) = applycoord(t, g), nothing
 
-revert(t::CoordinateTransform, g, c) = applycoord(inv(t), g)
+revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inv(t), g)
 
 # apply transform recursively
 applycoord(t::CoordinateTransform, g::G) where {G<:Union{Geometry,Domain}} =
