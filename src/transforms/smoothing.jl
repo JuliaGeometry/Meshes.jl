@@ -22,7 +22,7 @@ end
 
 isrevertible(::Type{<:LambdaMuSmoothing}) = true
 
-function apply(transform::LambdaMuSmoothing, mesh)
+function apply(transform::LambdaMuSmoothing, mesh::Mesh)
   n = transform.n
   λ = transform.λ
   μ = transform.μ
@@ -30,7 +30,7 @@ function apply(transform::LambdaMuSmoothing, mesh)
   _smooth(mesh, L, n, λ, μ), L
 end
 
-function revert(transform::LambdaMuSmoothing, mesh, cache)
+function revert(transform::LambdaMuSmoothing, mesh::Mesh, cache)
   n = transform.n
   λ = transform.λ
   μ = transform.μ

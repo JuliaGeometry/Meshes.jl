@@ -12,7 +12,7 @@ struct StdCoords <: GeometricTransform end
 
 isrevertible(::Type{<:StdCoords}) = true
 
-function apply(::StdCoords, g)
+function apply(::StdCoords, g::GeometryOrDomain)
   box = boundingbox(g)
   c, s = center(box), sides(box)
   tr = Translate(coordinates(c)...)
@@ -21,6 +21,6 @@ function apply(::StdCoords, g)
   t(g), t
 end
 
-revert(::StdCoords, g, t) = inv(t)(g)
+revert(::StdCoords, g::GeometryOrDomain, t) = inv(t)(g)
 
-reapply(::StdCoords, g, t) = t(g)
+reapply(::StdCoords, g::GeometryOrDomain, t) = t(g)

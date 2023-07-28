@@ -2,6 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# auxiliary type for dispatch purposes
+const GeometryOrDomain = Union{Geometry,Domain}
+
 """
     fitdims(dims, D)
 
