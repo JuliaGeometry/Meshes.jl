@@ -61,3 +61,17 @@ Visualize Meshes.jl `object` in an existing
 scene with `options` forwarded to [`viz`](@ref).
 """
 function viz! end
+
+"""
+    ascolors(objects, colorscheme)
+
+Convert vector of Julia `objects` to Colors.jl,
+using `colorscheme` from ColorSchemes.jl.
+
+### Notes
+
+This function is intended for developers who
+wish to visualize their types as colors with
+the [`viz`](@ref) function.
+"""
+function ascolors end
