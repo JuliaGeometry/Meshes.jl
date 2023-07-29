@@ -63,15 +63,30 @@ scene with `options` forwarded to [`viz`](@ref).
 function viz! end
 
 """
-    ascolors(objects, colorscheme)
+    ascolors(values, colorscheme)
 
-Convert vector of Julia `objects` to Colors.jl,
+Convert vector of `values` to Colors.jl,
 using `colorscheme` from ColorSchemes.jl.
 
 ### Notes
 
-This function is intended for developers who
-wish to visualize their types as colors with
-the [`viz`](@ref) function.
+This function is intended for developers
+who may be interested in the visualization
+of custom Julia objects in the `color`
+argument of the [`viz`](@ref) function.
 """
 function ascolors end
+
+"""
+    defaultscheme(values)
+
+Return default colorscheme for `values`.
+
+### Notes
+
+This function is intended for developers
+who may be interested in the automatic
+selection of colorschemes from ColorSchemes.jl
+for custom Julia objects.
+"""
+function defaultscheme end

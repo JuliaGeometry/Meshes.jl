@@ -16,6 +16,9 @@ ascolorscheme(name::Symbol) = colorschemes[name]
 ascolorscheme(name::AbstractString) = ascolorscheme(Symbol(name))
 ascolorscheme(scheme) = scheme
 
+# default colorscheme for vector of values
+defaultscheme(values) = colorschemes[:viridis]
+
 # --------------------------------
 # PROCESS COLORS PROVIDED BY USER
 # --------------------------------
@@ -30,8 +33,9 @@ function tocolors(values, scheme)
   icolors = parse(Colorant, "rgba(0,0,0,0)")
 
   # valid values are assigned colors from scheme
-  vscheme = isnothing(scheme) ? colorschemes[:viridis] : ascolorscheme(scheme)
-  vcolors = ascolors(coalesce.(values[vinds]), vscheme)
+  vals = coalesce.(values[vinds])
+  vscheme = isnothing(scheme) ? defaultscheme(vals) : ascolorscheme(scheme)
+  vcolors = ascolors(vals, vscheme)
 
   # build final vector of colors
   colors = Vector{Colorant}(undef, length(values))
