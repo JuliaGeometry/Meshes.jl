@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    viz(object, [options])
+    viz(object; [options])
 
 Visualize Meshes.jl `object` with various `options`.
 
@@ -55,7 +55,7 @@ viz!(boundary(polygon))
 function viz end
 
 """
-    viz!(object, [options])
+    viz!(object; [options])
 
 Visualize Meshes.jl `object` in an existing
 scene with `options` forwarded to [`viz`](@ref).
