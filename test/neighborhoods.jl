@@ -39,11 +39,17 @@
 
     # 3D simple test of default convention
     m = metric(MetricBall(T.((1.0, 0.5, 0.5)), RotZYX(T(-π / 4), T(0), T(0))))
-    @test evaluate(m, [1.0, 1.0, 0.0], [0.0, 0.0, 0.0]) ≈ √T(2)
-    @test evaluate(m, [-1.0, 1.0, 0.0], [0.0, 0.0, 0.0]) ≈ √T(8)
+    @test evaluate(m, [1.0, 1.0, 0.0], [0.0, 0.0, 0.0]) ≈ √T(8)
+    @test evaluate(m, [-1.0, 1.0, 0.0], [0.0, 0.0, 0.0]) ≈ √T(2)
 
     # make sure the correct constructor is called
     m = metric(MetricBall(T[1.0, 0.5, 0.2], RotXYX(T(0), T(0), T(0))))
     @test m isa Mahalanobis
+
+    # make sure the angle is clockwise
+    m = metric(MetricBall(T[20.0, 5.0], Angle2d(T(π/2))))
+    @test m isa Mahalanobis
+    @test evaluate(m, [1.0, 0.0], [0.0, 0.0]) ≈ T(0.2)
+    @test evaluate(m, [0.0, 1.0], [0.0, 0.0]) ≈ T(0.05)
   end
 end

@@ -44,7 +44,7 @@ function MetricBall(radii::SVector{Dim,T}, R=default_rotation(Val{Dim}(), T)) wh
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
   # Mahalanobis metric
-  metric = Mahalanobis(Symmetric(R' * Λ * R))
+  metric = Mahalanobis(Symmetric(R * Λ * R'))
 
   MetricBall{typeof(radii),typeof(metric)}(radii, metric)
 end
@@ -53,7 +53,7 @@ MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where
   MetricBall(SVector(radii), rotation)
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{Dim}(), T)) where {T} =
+MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{length(radii)}(), T)) where {T} =
   MetricBall(SVector{length(radii),T}(radii), rotation)
 
 function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
