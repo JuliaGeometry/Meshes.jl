@@ -76,8 +76,6 @@ rings(p::PolyArea) = [p.outer; p.inners]
 
 hasholes(p::PolyArea) = !isempty(p.inners)
 
-issimple(p::PolyArea) = !hasholes(p) && issimple(p.outer)
-
 windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 
 function Base.unique!(p::PolyArea)

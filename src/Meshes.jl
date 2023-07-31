@@ -117,7 +117,6 @@ export
   area,
   volume,
   boundary,
-  isconvex,
   issimplex,
   isperiodic,
   isparametrized,
@@ -195,7 +194,6 @@ export
   rings,
   segments,
   isclosed,
-  issimple,
   hasholes,
   angles,
   innerangles,
@@ -361,6 +359,10 @@ export
   search!,
   search,
   maxneighbors,
+
+  # predicates
+  isconvex,
+  issimple,
 
   # sampling
   SamplingMethod,

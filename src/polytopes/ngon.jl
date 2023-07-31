@@ -41,8 +41,6 @@ const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
 
-issimple(::Type{<:Ngon}) = true
-
 hasholes(::Ngon) = false
 
 Base.unique!(ngon::Ngon) = ngon
