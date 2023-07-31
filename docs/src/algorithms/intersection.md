@@ -61,7 +61,7 @@ More generally, when the geometries are not convex nor simple,
 it is still possible to know whether or not they have an intersection:
 
 ```@docs
-hasintersect
+intersects
 supportfun
 ```
 
@@ -75,17 +75,17 @@ ball2 = Ball((0.3,0.3), 0.05)
 ball3 = Ball((0.7,0.3), 0.05)
 ball4 = Ball((0.3,0.3), 0.15)
 
-hasintersect(poly, ball1)
+intersects(poly, ball1)
 ```
 
 ```@example intersection
-hasintersect(poly, ball2)
+intersects(poly, ball2)
 ```
 
 ```@example intersection
-hasintersect(poly, ball3)
+intersects(poly, ball3)
 ```
 
 ```@example intersection
-hasintersect(poly, ball4)
+intersects(poly, ball4)
 ```

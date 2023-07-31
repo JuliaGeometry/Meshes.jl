@@ -16,7 +16,6 @@ Themes.compile(
 Themes.compile(joinpath(@__DIR__, "src/assets/dark.scss"), joinpath(@__DIR__, "src/assets/themes/documenter-dark.css"))
 
 makedocs(
-  modules=[Meshes],
   format=Documenter.HTML(
     assets=[
       "assets/favicon.ico",
