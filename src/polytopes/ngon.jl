@@ -160,8 +160,7 @@ end
 
 function isconvex(q::Quadrangle{3})
   v = q.vertices
-  iscoplanar(v...) &&
-  isconvex(Quadrangle(proj2D(collect(v))...))
+  iscoplanar(v...) && isconvex(Quadrangle(proj2D(collect(v))...))
 end
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
