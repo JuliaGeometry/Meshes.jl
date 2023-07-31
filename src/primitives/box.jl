@@ -33,8 +33,6 @@ paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
 isperiodic(::Type{<:Box{Dim}}) where {Dim} = ntuple(i -> false, Dim)
 
-isparametrized(::Type{<:Box}) = true
-
 Base.minimum(b::Box) = b.min
 
 Base.maximum(b::Box) = b.max

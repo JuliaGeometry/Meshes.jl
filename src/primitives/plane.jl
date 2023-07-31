@@ -40,8 +40,6 @@ end
 
 paramdim(::Type{<:Plane}) = 2
 
-isparametrized(::Type{<:Plane}) = true
-
 normal(p::Plane) = normalize(p.u × p.v)
 
 measure(::Plane{T}) where {T} = typemax(T)

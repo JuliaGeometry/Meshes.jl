@@ -81,19 +81,6 @@ along each parametric dimension.
 """
 isperiodic(g::Geometry) = isperiodic(typeof(g))
 
-"""
-    isparametrized(geometry)
-
-Tells whether or not the `geometry` is parametrized,
-i.e. can be called as `geometry(u₁, u₂, ..., uₙ)` with
-local coordinates `(u₁, u₂, ..., uₙ) ∈ [0,1]ⁿ` where
-`n` is the parametric dimension.
-
-See also [`paramdim`](@ref).
-"""
-isparametrized(::Type{<:Geometry}) = false
-isparametrized(g::Geometry) = isparametrized(typeof(g))
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

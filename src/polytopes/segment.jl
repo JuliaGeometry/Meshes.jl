@@ -15,8 +15,6 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 
 isclosed(::Type{<:Segment}) = false
 
-isparametrized(::Type{<:Segment}) = true
-
 nvertices(::Type{<:Segment}) = 2
 
 Base.minimum(s::Segment) = s.vertices[1]

@@ -9,8 +9,6 @@ A tetrahedron with points `p1`, `p2`, `p3`, `p4`.
 """
 @polytope Tetrahedron 3 4
 
-isparametrized(::Type{<:Tetrahedron}) = true
-
 nvertices(::Type{<:Tetrahedron}) = 4
 
 function measure(t::Tetrahedron)

@@ -21,8 +21,6 @@ paramdim(::Type{<:Disk}) = 2
 
 isperiodic(::Type{<:Disk}) = (false, true)
 
-isparametrized(::Type{<:Disk}) = true
-
 center(d::Disk) = d.plane(0, 0)
 
 radius(d::Disk) = d.radius

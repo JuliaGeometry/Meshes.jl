@@ -42,8 +42,6 @@ paramdim(::Type{<:Circle}) = 1
 
 isperiodic(::Type{<:Circle}) = (true,)
 
-isparametrized(::Type{<:Circle}) = true
-
 center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius

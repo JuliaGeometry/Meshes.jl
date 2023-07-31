@@ -118,7 +118,6 @@ export
   volume,
   boundary,
   isperiodic,
-  isparametrized,
   center,
   centroid,
   perimeter,
@@ -359,6 +358,7 @@ export
   maxneighbors,
 
   # predicates
+  isparametrized,
   issimplex,
   isconvex,
   issimple,

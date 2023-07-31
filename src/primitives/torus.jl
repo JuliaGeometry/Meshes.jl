@@ -38,8 +38,6 @@ paramdim(::Type{<:Torus}) = 2
 
 isperiodic(::Type{<:Torus}) = (true, true)
 
-isparametrized(::Type{<:Torus}) = true
-
 center(t::Torus) = t.center
 
 normal(t::Torus) = t.normal

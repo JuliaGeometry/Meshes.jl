@@ -63,8 +63,6 @@ paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
 isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i -> true, Dim - 1)
 
-isparametrized(::Type{<:Sphere}) = true
-
 center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius

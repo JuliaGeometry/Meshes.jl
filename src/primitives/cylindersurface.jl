@@ -46,8 +46,6 @@ CylinderSurface(radius::T) where {T} = CylinderSurface(Point(T(0), T(0), T(0)), 
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
-isparametrized(::Type{<:CylinderSurface}) = true
-
 radius(c::CylinderSurface) = c.radius
 
 bottom(c::CylinderSurface) = c.bot

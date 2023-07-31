@@ -11,8 +11,6 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 
 isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 
-isparametrized(::Type{<:Hexahedron}) = true
-
 nvertices(::Type{<:Hexahedron}) = 8
 
 function boundary(h::Hexahedron)
