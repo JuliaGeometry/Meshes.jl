@@ -61,8 +61,6 @@ Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 # TRIANGLES
 # ----------
 
-issimplex(::Type{<:Triangle}) = true
-
 isparametrized(::Type{<:Triangle}) = true
 
 function signarea(t::Triangle{2})

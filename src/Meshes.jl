@@ -117,7 +117,6 @@ export
   area,
   volume,
   boundary,
-  issimplex,
   isperiodic,
   isparametrized,
   center,
@@ -210,7 +209,6 @@ export
   indices,
   connect,
   materialize,
-  issimplex,
   pltype,
 
   # topologies
@@ -361,6 +359,7 @@ export
   maxneighbors,
 
   # predicates
+  issimplex,
   isconvex,
   issimple,
 

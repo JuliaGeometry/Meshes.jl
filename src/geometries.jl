@@ -74,14 +74,6 @@ Return the boundary of the `geometry`.
 function boundary end
 
 """
-    issimplex(geometry)
-
-Tells whether or not the `geometry` is simplex.
-"""
-issimplex(::Type{<:Geometry}) = false
-issimplex(g::Geometry) = issimplex(typeof(g))
-
-"""
     isperiodic(geometry)
 
 Tells whether or not the `geometry` is periodic
