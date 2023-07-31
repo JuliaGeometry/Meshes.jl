@@ -11,8 +11,6 @@ The segment can be called as `s(t)` with `t` between
 
 See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
-Segment
-
 @polytope Segment 1 2
 
 isconvex(::Type{<:Segment}) = true
