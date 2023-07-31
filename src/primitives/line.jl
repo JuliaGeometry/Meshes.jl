@@ -18,8 +18,6 @@ Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
 
 paramdim(::Type{<:Line}) = 1
 
-isconvex(::Type{<:Line}) = true
-
 isparametrized(::Type{<:Line}) = true
 
 measure(::Line{Dim,T}) where {Dim,T} = typemax(T)

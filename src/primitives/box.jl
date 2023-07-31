@@ -31,8 +31,6 @@ Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
-isconvex(::Type{<:Box}) = true
-
 isperiodic(::Type{<:Box{Dim}}) where {Dim} = ntuple(i -> false, Dim)
 
 isparametrized(::Type{<:Box}) = true

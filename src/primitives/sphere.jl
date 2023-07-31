@@ -61,8 +61,6 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2)
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
-isconvex(::Type{<:Sphere}) = false
-
 isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i -> true, Dim - 1)
 
 isparametrized(::Type{<:Sphere}) = true

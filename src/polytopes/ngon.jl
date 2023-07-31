@@ -65,11 +65,6 @@ Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 
 issimplex(::Type{<:Triangle}) = true
 
-isconvex(::Type{<:Triangle}) = true
-
-# specialize for performance
-isconvex(::Triangle) = true
-
 isparametrized(::Type{<:Triangle}) = true
 
 function signarea(t::Triangle{2})
@@ -150,19 +145,6 @@ end
 isperiodic(::Type{<:Quadrangle}) = (false, false)
 
 isparametrized(::Type{<:Quadrangle}) = true
-
-function isconvex(q::Quadrangle{2})
-  v = q.vertices
-  d1 = Segment(v[1], v[3])
-  d2 = Segment(v[2], v[4])
-  hasintersect(d1, d2)
-end
-
-function isconvex(q::Quadrangle{3})
-  v = q.vertices
-  iscoplanar(v...) &&
-  isconvex(Quadrangle(proj2D(collect(v))...))
-end
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
 function (q::Quadrangle)(u, v)

@@ -40,8 +40,6 @@ Circle(plane::Plane{T}, radius) where {T} = Circle(plane, T(radius))
 
 paramdim(::Type{<:Circle}) = 1
 
-isconvex(::Type{<:Circle}) = false
-
 isperiodic(::Type{<:Circle}) = (true,)
 
 isparametrized(::Type{<:Circle}) = true

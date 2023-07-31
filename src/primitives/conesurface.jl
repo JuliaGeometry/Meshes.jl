@@ -19,8 +19,6 @@ ConeSurface(disk::Disk, apex::Tuple) = ConeSurface(disk, Point(apex))
 
 paramdim(::Type{<:ConeSurface}) = 2
 
-isconvex(::Type{<:ConeSurface}) = false
-
 boundary(::ConeSurface) = nothing
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface{T}}) where {T} =

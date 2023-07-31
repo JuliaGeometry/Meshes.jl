@@ -19,8 +19,6 @@ Disk(plane::Plane{T}, radius) where {T} = Disk(plane, T(radius))
 
 paramdim(::Type{<:Disk}) = 2
 
-isconvex(::Type{<:Disk}) = true
-
 isperiodic(::Type{<:Disk}) = (false, true)
 
 isparametrized(::Type{<:Disk}) = true

@@ -15,8 +15,6 @@ Segment
 
 @polytope Segment 1 2
 
-isconvex(::Type{<:Segment}) = true
-
 isclosed(::Type{<:Segment}) = false
 
 isparametrized(::Type{<:Segment}) = true

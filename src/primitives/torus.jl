@@ -36,8 +36,6 @@ Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Poin
 
 paramdim(::Type{<:Torus}) = 2
 
-isconvex(::Type{<:Torus}) = false
-
 isperiodic(::Type{<:Torus}) = (true, true)
 
 isparametrized(::Type{<:Torus}) = true

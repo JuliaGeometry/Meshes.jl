@@ -24,8 +24,6 @@ Ball(center::Tuple) = Ball(Point(center))
 
 paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 
-isconvex(::Type{<:Ball}) = true
-
 isperiodic(::Type{<:Ball{Dim}}) where {Dim} = ntuple(i -> i != 1, Dim)
 
 isparametrized(::Type{<:Ball}) = true

@@ -46,8 +46,6 @@ Cylinder(radius::T) where {T} = Cylinder(Point(T(0), T(0), T(0)), Point(T(0), T(
 
 paramdim(::Type{<:Cylinder}) = 3
 
-isconvex(::Type{<:Cylinder}) = true
-
 isparametrized(::Type{<:Cylinder}) = true
 
 radius(c::Cylinder) = c.radius

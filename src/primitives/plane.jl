@@ -40,8 +40,6 @@ end
 
 paramdim(::Type{<:Plane}) = 2
 
-isconvex(::Type{<:Plane}) = true
-
 isparametrized(::Type{<:Plane}) = true
 
 normal(p::Plane) = normalize(p.u × p.v)

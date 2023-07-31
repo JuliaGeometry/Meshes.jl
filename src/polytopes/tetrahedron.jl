@@ -13,8 +13,6 @@ Tetrahedron
 
 issimplex(::Type{<:Tetrahedron}) = true
 
-isconvex(::Type{<:Tetrahedron}) = true
-
 isparametrized(::Type{<:Tetrahedron}) = true
 
 nvertices(::Type{<:Tetrahedron}) = 4

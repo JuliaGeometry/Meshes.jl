@@ -3,3 +3,4 @@
 # ------------------------------------------------------------------
 
 include("predicates/issubset.jl")
+include("predicates/isconvex.jl")

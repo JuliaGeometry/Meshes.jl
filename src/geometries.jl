@@ -74,13 +74,6 @@ Return the boundary of the `geometry`.
 function boundary end
 
 """
-    isconvex(geometry)
-
-Tells whether or not the `geometry` is convex.
-"""
-isconvex(g::Geometry) = isconvex(typeof(g))
-
-"""
     issimplex(geometry)
 
 Tells whether or not the `geometry` is simplex.

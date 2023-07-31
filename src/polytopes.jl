@@ -267,13 +267,6 @@ Returns the boundary of the `polygon`.
 boundary(p::Polygon) = hasholes(p) ? Multi(rings(p)) : first(rings(p))
 
 """
-    isconvex(polygon)
-
-Tells whether or not the `polygon` is convex.
-"""
-isconvex(p::Polygon{Dim,T}) where {Dim,T} = issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
-
-"""
     bridge(polygon; width=0)
 
 Transform `polygon` with holes into a single outer chain
