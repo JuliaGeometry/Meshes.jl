@@ -71,8 +71,7 @@ _linear(grid::Grid, inds) = vec(LinearIndices(size(grid))[inds])
 
 Return the indices of the `domain` that are inside the `geometry`.
 """
-indices(domain::Domain, geometry::Geometry) =
-  filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
+indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
