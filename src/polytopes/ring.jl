@@ -32,8 +32,6 @@ Ring(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ring(CircularVector
 
 boundary(::Ring) = nothing
 
-isclosed(::Type{<:Ring}) = true
-
 nvertices(r::Ring) = length(r.vertices)
 
 Base.close(r::Ring) = r

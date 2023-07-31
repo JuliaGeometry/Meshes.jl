@@ -36,7 +36,7 @@ paramdim(::GridTopology{D}) where {D} = D
 
 Base.size(t::GridTopology) = t.dims
 
-isclosed(t::GridTopology) = .!t.open
+isopen(t::GridTopology) = t.open
 
 """
     elem2cart(t, e)

@@ -13,8 +13,6 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
 @polytope Segment 1 2
 
-isclosed(::Type{<:Segment}) = false
-
 nvertices(::Type{<:Segment}) = 2
 
 Base.minimum(s::Segment) = s.vertices[1]

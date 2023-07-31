@@ -22,8 +22,6 @@ function boundary(r::Rope)
   PointSet([first(v), last(v)])
 end
 
-isclosed(::Type{<:Rope}) = false
-
 nvertices(r::Rope) = length(r.vertices)
 
 Base.close(r::Rope) = Ring(r.vertices)

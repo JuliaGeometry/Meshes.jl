@@ -73,15 +73,6 @@ function segments(c::Chain)
 end
 
 """
-    isclosed(chain)
-
-Tells whether or not the chain is closed.
-
-A closed chain is also known as a ring.
-"""
-isclosed(c::Chain) = isclosed(typeof(c))
-
-"""
     close(chain)
 
 Close the `chain`, i.e. add a segment going from the last to the first vertex.
