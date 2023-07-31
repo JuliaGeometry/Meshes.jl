@@ -362,6 +362,7 @@ export
   issimplex,
   isconvex,
   issimple,
+  hasintersect,
 
   # sampling
   SamplingMethod,
@@ -394,7 +395,6 @@ export
   # intersecting
   Intersection,
   intersection,
-  hasintersect,
   type,
 
   # pointification
