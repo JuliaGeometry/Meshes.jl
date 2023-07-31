@@ -54,14 +54,6 @@ area(t::Torus) = measure(t)
 
 boundary(::Torus) = nothing
 
-function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
-  c, n⃗ = t.center, t.normal
-  R, r = t.major, t.minor
-  Q = rotation_between(n⃗, Vec{3,T}(0, 0, 1))
-  x, y, z = Q * (p - c)
-  (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
-end
-
 function (t::Torus{T})(u, v) where {T}
   if (u < 0 || u > 1) || (v < 0 || v > 1)
     throw(DomainError((u, v), "t(u, v) is not defined for u, v outside [0, 1]²."))

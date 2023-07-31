@@ -86,10 +86,6 @@ function Base.unique!(p::PolyArea)
   p
 end
 
-function Base.in(point::Point, polyarea::PolyArea)
-  sideof(point, polyarea.outer) == :INSIDE && all(sideof(point, inner) == :OUTSIDE for inner in polyarea.inners)
-end
-
 function Base.show(io::IO, p::PolyArea)
   nverts = nvertices.([p.outer; p.inners])
   rings = join(["$n-Ring" for n in nverts], ", ")

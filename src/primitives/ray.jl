@@ -26,8 +26,6 @@ boundary(r::Ray) = r.p
 
 ==(r₁::Ray, r₂::Ray) = (r₁.p ≈ r₂.p) && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁
 
-Base.in(p::Point, r::Ray) = p ∈ Line(r.p, r.p + r.v) && (p - r.p) ⋅ r.v ≥ 0
-
 function (r::Ray)(t)
   if t < 0
     throw(DomainError(t, "r(t) is not defined for t < 0."))

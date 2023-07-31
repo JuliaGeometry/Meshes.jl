@@ -53,8 +53,6 @@ rings(m::Multi{Dim,T,<:Polygon}) where {Dim,T} = [ring for poly in m.geoms for r
 
 Base.collect(m::Multi) = m.geoms
 
-Base.in(point::Point, m::Multi) = any(geom -> point ∈ geom, m.geoms)
-
 ==(m₁::Multi, m₂::Multi) = length(m₁.geoms) == length(m₂.geoms) && all(g -> g[1] == g[2], zip(m₁.geoms, m₂.geoms))
 
 Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms, m₂.geoms))

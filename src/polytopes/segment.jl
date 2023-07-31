@@ -27,14 +27,6 @@ boundary(s::Segment) = PointSet(pointify(s))
 
 center(s::Segment) = s(0.5)
 
-function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
-  # given collinear points (a, b, p), the point p intersects
-  # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
-  a, b = s.vertices
-  ab, ap = b - a, p - a
-  iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
-end
-
 function Base.isapprox(s1::Segment, s2::Segment)
   v1, v2 = s1.vertices, s2.vertices
   isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])

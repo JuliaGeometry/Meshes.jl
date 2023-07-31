@@ -80,17 +80,6 @@ end
 
 Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
-function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
-  l, u = coordinates.((b.min, b.max))
-  x = coordinates(p)
-  for i in 1:Dim
-    l[i] ≤ x[i] && x[i] ≤ u[i] || return false
-  end
-  true
-end
-
-Base.issubset(b1::Box{Dim}, b2::Box{Dim}) where {Dim} = b1.min ∈ b2 && b1.max ∈ b2
-
 function (b::Box{Dim,T})(uv...) where {Dim,T}
   if !all(x -> zero(T) ≤ x ≤ one(T), uv)
     throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))

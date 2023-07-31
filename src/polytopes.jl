@@ -149,8 +149,6 @@ function angles(c::Chain)
   map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
 end
 
-Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
-
 # implementations of Chain
 include("polytopes/segment.jl")
 include("polytopes/rope.jl")

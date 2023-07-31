@@ -79,13 +79,6 @@ perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
 
 boundary(::Sphere) = nothing
 
-function Base.in(p::Point, s::Sphere)
-  x = coordinates(p)
-  c = coordinates(s.center)
-  r = s.radius
-  sum(abs2, x - c) ≈ r^2
-end
-
 function (s::Sphere{2,T})(φ) where {T}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))

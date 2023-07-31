@@ -54,8 +54,6 @@ Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
   isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
 
-Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (pt - pl(0, 0)), zero(T), atol=atol(T))
-
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Plane{T}}) where {T} =

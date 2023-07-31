@@ -55,8 +55,6 @@ innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
 signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
-Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
-
 # ----------
 # TRIANGLES
 # ----------
@@ -71,50 +69,6 @@ measure(t::Triangle{2}) = abs(signarea(t))
 function measure(t::Triangle{3})
   A, B, C = t.vertices
   norm((B - A) × (C - A)) / 2
-end
-
-function Base.in(p::Point{2}, t::Triangle{2})
-  # given coordinates
-  a, b, c = t.vertices
-  x₁, y₁ = coordinates(a)
-  x₂, y₂ = coordinates(b)
-  x₃, y₃ = coordinates(c)
-  x, y = coordinates(p)
-
-  # barycentric coordinates
-  λ₁ = ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₂ = ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₃ = 1 - λ₁ - λ₂
-
-  # barycentric check
-  0 ≤ λ₁ ≤ 1 && 0 ≤ λ₂ ≤ 1 && 0 ≤ λ₃ ≤ 1
-end
-
-function Base.in(p::Point{3}, t::Triangle{3})
-  # given coordinates
-  a, b, c = t.vertices
-
-  # evaluate vectors defining geometry
-  v₁ = b - a
-  v₂ = c - a
-  v₃ = p - a
-
-  # calculate required dot products
-  d₁₁ = v₁ ⋅ v₁
-  d₁₂ = v₁ ⋅ v₂
-  d₂₂ = v₂ ⋅ v₂
-  d₃₁ = v₃ ⋅ v₁
-  d₃₂ = v₃ ⋅ v₂
-
-  # calculate reused denominator
-  d = d₁₁ * d₂₂ - d₁₂ * d₁₂
-
-  # barycentric coordinates
-  λ₂ = (d₂₂ * d₃₁ - d₁₂ * d₃₂) / d
-  λ₃ = (d₁₁ * d₃₂ - d₁₂ * d₃₁) / d
-
-  # barycentric check
-  λ₂ ≥ 0 && λ₃ ≥ 0 && (λ₂ + λ₃) ≤ 1
 end
 
 function normal(t::Triangle{3})

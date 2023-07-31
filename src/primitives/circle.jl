@@ -50,13 +50,6 @@ Base.length(c::Circle) = measure(c)
 
 boundary(::Circle) = nothing
 
-function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
-  p ∉ c.plane && return false
-  s² = sum(abs2, p - center(c))
-  r² = radius(c)^2
-  isapprox(s², r², atol=atol(T)^2)
-end
-
 function (c::Circle{T})(φ) where {T}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))

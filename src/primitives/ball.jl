@@ -40,13 +40,6 @@ volume(b::Ball{3}) = measure(b)
 
 boundary(b::Ball) = Sphere(b.center, b.radius)
 
-function Base.in(p::Point{Dim,T}, b::Ball{Dim,T}) where {Dim,T}
-  c = b.center
-  r = b.radius
-  s = norm(p - c)
-  s < r || isapprox(s, r, atol=atol(T))
-end
-
 function (b::Ball{2,T})(ρ, φ) where {T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))

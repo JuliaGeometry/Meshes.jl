@@ -101,13 +101,6 @@ Return the measure of the `domain`, i.e. the length, area, or volume.
 measure(domain::Domain) = sum(measure, domain)
 
 """
-    point ∈ domain
-
-Tells whether or not the `point` is in the `domain`.
-"""
-Base.in(p::Point, domain::Domain) = any(e -> p ∈ e, domain)
-
-"""
     extrema(domain)
 
 Return the top left and bottom right corners of the
