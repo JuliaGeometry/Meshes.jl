@@ -19,8 +19,6 @@ Disk(plane::Plane{T}, radius) where {T} = Disk(plane, T(radius))
 
 paramdim(::Type{<:Disk}) = 2
 
-isperiodic(::Type{<:Disk}) = (false, true)
-
 center(d::Disk) = d.plane(0, 0)
 
 radius(d::Disk) = d.radius

@@ -73,14 +73,6 @@ function segments(c::Chain)
 end
 
 """
-    isperiodic(chain)
-
-Tells whether or not the `chain` is periodic
-along each parametric dimension.
-"""
-isperiodic(C::Type{<:Chain}) = (isclosed(C),)
-
-"""
     isclosed(chain)
 
 Tells whether or not the chain is closed.

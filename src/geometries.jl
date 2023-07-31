@@ -73,14 +73,6 @@ Return the boundary of the `geometry`.
 """
 function boundary end
 
-"""
-    isperiodic(geometry)
-
-Tells whether or not the `geometry` is periodic
-along each parametric dimension.
-"""
-isperiodic(g::Geometry) = isperiodic(typeof(g))
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

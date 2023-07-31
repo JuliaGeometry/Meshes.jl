@@ -31,8 +31,6 @@ Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
-isperiodic(::Type{<:Box{Dim}}) where {Dim} = ntuple(i -> false, Dim)
-
 Base.minimum(b::Box) = b.min
 
 Base.maximum(b::Box) = b.max

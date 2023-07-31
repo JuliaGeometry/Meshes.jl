@@ -117,7 +117,6 @@ export
   area,
   volume,
   boundary,
-  isperiodic,
   center,
   centroid,
   perimeter,
@@ -145,6 +144,7 @@ export
   Cone,
   ConeSurface,
   Torus,
+  controls,
   ncontrols,
   degree,
   Horner,
@@ -235,7 +235,6 @@ export
   corner2elem,
   elementtype,
   facettype,
-  isperiodic,
   half4elem,
   half4vert,
   half4edge,
@@ -359,6 +358,7 @@ export
 
   # predicates
   isparametrized,
+  isperiodic,
   issimplex,
   isconvex,
   issimple,

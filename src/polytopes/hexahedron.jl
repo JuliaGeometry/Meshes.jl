@@ -9,8 +9,6 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
 @polytope Hexahedron 3 8
 
-isperiodic(::Type{<:Hexahedron}) = (false, false, false)
-
 nvertices(::Type{<:Hexahedron}) = 8
 
 function boundary(h::Hexahedron)

@@ -4,6 +4,7 @@
 
 # unary predicates
 include("predicates/isparametrized.jl")
+include("predicates/isperiodic.jl")
 include("predicates/issimplex.jl")
 include("predicates/isconvex.jl")
 include("predicates/issimple.jl")
