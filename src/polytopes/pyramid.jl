@@ -7,8 +7,6 @@
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
-Pyramid
-
 @polytope Pyramid 3 5
 
 nvertices(::Type{<:Pyramid}) = 5

@@ -13,10 +13,7 @@ Base.issubset(s::Segment, b::Ball) = all(∈(b), vertices(s))
 Base.issubset(t₁::Triangle, t₂::Triangle) = all(∈(t₂), vertices(t₁))
 
 Base.issubset(t::Triangle, p::Polygon) =
-  all(∈(p), vertices(t)) && (
-    !hasintersect(boundary(t), boundary(p)) ||
-    vertices(t) ⊆ boundary(p)
-  )
+  all(∈(p), vertices(t)) && (!hasintersect(boundary(t), boundary(p)) || vertices(t) ⊆ boundary(p))
 
 Base.issubset(t::Triangle, b::Box) = all(∈(b), vertices(t))
 
