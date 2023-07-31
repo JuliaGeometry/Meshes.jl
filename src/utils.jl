@@ -96,13 +96,13 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
   z = last.(coordinates.(extrema(mesh)))
   r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
 
-  intersects = false
+  hasintersect = false
   edgecrosses = 0
   ps = Point{3,T}[]
   for t in mesh
     I = intersection(r, t)
     if type(I) == Crossing
-      intersects = !intersects
+      hasintersect = !hasintersect
     elseif type(I) ∈ (EdgeTouching, CornerTouching, Touching)
       return :ON
     elseif type(I) == EdgeCrossing
@@ -111,14 +111,14 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
       p = get(I)
       if !any(≈(p), ps)
         push!(ps, p)
-        intersects = !intersects
+        hasintersect = !hasintersect
       end
     end
   end
 
   # check how many edges we crossed
-  isodd(edgecrosses ÷ 2) && (intersects = !intersects)
-  intersects ? (return :INSIDE) : (return :OUTSIDE)
+  isodd(edgecrosses ÷ 2) && (hasintersect = !hasintersect)
+  hasintersect ? (return :INSIDE) : (return :OUTSIDE)
 end
 
 """

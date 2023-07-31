@@ -362,7 +362,7 @@ export
   issimplex,
   isconvex,
   issimple,
-  hasintersect,
+  intersects,
 
   # sampling
   SamplingMethod,

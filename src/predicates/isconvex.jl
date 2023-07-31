@@ -57,7 +57,7 @@ function isconvex(q::Quadrangle{2})
   v = vertices(q)
   d1 = Segment(v[1], v[3])
   d2 = Segment(v[2], v[4])
-  hasintersect(d1, d2)
+  intersects(d1, d2)
 end
 
 function isconvex(q::Quadrangle{3})

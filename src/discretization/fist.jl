@@ -149,11 +149,11 @@ function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
   # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
   λ(I) = !(type(I) == CornerTouching || type(I) == NotIntersecting)
   sᵢ = Segment(v[i - 1], v[i + 1])
-  intersects = false
+  hasintersect = false
   for j in 1:nvertices(𝒫)
     sⱼ = Segment(v[j], v[j + 1])
     if intersection(λ, sᵢ, sⱼ)
-      intersects = true
+      hasintersect = true
       break
     end
   end
@@ -161,5 +161,5 @@ function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
   # CE1.3: check if vᵢ-1 ∈ C(vᵢ, vᵢ+1, vᵢ+2) and vᵢ+1 ∈ C(vᵢ-2, vᵢ-1, vᵢ)
   incones = incone(i - 1, i + 1) && incone(i + 1, i - 1)
 
-  isconvex && !intersects && incones
+  isconvex && !hasintersect && incones
 end

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    hasintersect(g₁, g₂)
+    intersects(g₁, g₂)
 
 Tells whether or not geometries `g₁` and `g₂` intersect.
 
@@ -19,41 +19,41 @@ Tells whether or not geometries `g₁` and `g₂` intersect.
 * The fallback algorithm works with any geometry that has
   a well-defined [`supportfun`](@ref).
 """
-function hasintersect end
+function intersects end
 
-hasintersect(g) = Base.Fix2(hasintersect, g)
+intersects(g) = Base.Fix2(intersects, g)
 
-hasintersect(p₁::Point, p₂::Point) = p₁ == p₂
+intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
-hasintersect(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
+intersects(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
 
-hasintersect(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
+intersects(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
 
-hasintersect(p::Point, g::Geometry) = p ∈ g
+intersects(p::Point, g::Geometry) = p ∈ g
 
-hasintersect(g::Geometry, p::Point) = hasintersect(p, g)
+intersects(g::Geometry, p::Point) = intersects(p, g)
 
-hasintersect(c::Chain, s::Segment) = hasintersect(segments(c), [s])
+intersects(c::Chain, s::Segment) = intersects(segments(c), [s])
 
-hasintersect(s::Segment, c::Chain) = hasintersect(c, s)
+intersects(s::Segment, c::Chain) = intersects(c, s)
 
-hasintersect(c₁::Chain, c₂::Chain) = hasintersect(segments(c₁), segments(c₂))
+intersects(c₁::Chain, c₂::Chain) = intersects(segments(c₁), segments(c₂))
 
-hasintersect(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || hasintersect(c, boundary(g))
+intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, boundary(g))
 
-hasintersect(g::Geometry, c::Chain) = hasintersect(c, g)
+intersects(g::Geometry, c::Chain) = intersects(c, g)
 
-function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
+function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   # must have intersection of bounding boxes
-  hasintersect(boundingbox(g₁), boundingbox(g₂)) || return false
+  intersects(boundingbox(g₁), boundingbox(g₂)) || return false
 
   # handle non-convex geometries
   if !isconvex(g₁)
     d₁ = simplexify(g₁)
-    return hasintersect(d₁, g₂)
+    return intersects(d₁, g₂)
   elseif !isconvex(g₂)
     d₂ = simplexify(g₂)
-    return hasintersect(g₁, d₂)
+    return intersects(g₁, d₂)
   end
 
   # initial direction
@@ -104,20 +104,20 @@ function hasintersect(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T
   end
 end
 
-hasintersect(m::Multi, g::Geometry) = hasintersect(collect(m), [g])
+intersects(m::Multi, g::Geometry) = intersects(collect(m), [g])
 
-hasintersect(g::Geometry, m::Multi) = hasintersect(m, g)
+intersects(g::Geometry, m::Multi) = intersects(m, g)
 
-hasintersect(m₁::Multi, m₂::Multi) = hasintersect(collect(m₁), collect(m₂))
+intersects(m₁::Multi, m₂::Multi) = intersects(collect(m₁), collect(m₂))
 
-hasintersect(d::Domain, g::Geometry) = hasintersect(d, [g])
+intersects(d::Domain, g::Geometry) = intersects(d, [g])
 
-hasintersect(g::Geometry, d::Domain) = hasintersect(d, g)
+intersects(g::Geometry, d::Domain) = intersects(d, g)
 
 # fallback with iterators of geometries
-function hasintersect(geoms₁, geoms₂)
+function intersects(geoms₁, geoms₂)
   for g₁ in geoms₁, g₂ in geoms₂
-    hasintersect(g₁, g₂) && return true
+    intersects(g₁, g₂) && return true
   end
   return false
 end
@@ -126,17 +126,17 @@ end
 # solve method ambiguities
 # -------------------------
 
-hasintersect(p::Point, c::Chain) = p ∈ c
+intersects(p::Point, c::Chain) = p ∈ c
 
-hasintersect(c::Chain, p::Point) = hasintersect(p, c)
+intersects(c::Chain, p::Point) = intersects(p, c)
 
-hasintersect(p::Point, m::Multi) = p ∈ m
+intersects(p::Point, m::Multi) = p ∈ m
 
-hasintersect(m::Multi, p::Point) = hasintersect(p, m)
+intersects(m::Multi, p::Point) = intersects(p, m)
 
-hasintersect(c::Chain, m::Multi) = hasintersect(segments(c), collect(m))
+intersects(c::Chain, m::Multi) = intersects(segments(c), collect(m))
 
-hasintersect(m::Multi, c::Chain) = hasintersect(c, m)
+intersects(m::Multi, c::Chain) = intersects(c, m)
 
 # ------------------
 # utility functions
