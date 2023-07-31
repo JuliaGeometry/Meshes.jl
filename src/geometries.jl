@@ -74,13 +74,6 @@ Return the boundary of the `geometry`.
 function boundary end
 
 """
-    g₁ ⊆ g₂
-
-Tells whether or not the geometry `g₁` is a subset of geometry `g₂`.
-"""
-Base.issubset(g₁::Geometry, g₂::Geometry) = all(p ∈ g₂ for p in vertices(g₁))
-
-"""
     isconvex(geometry)
 
 Tells whether or not the `geometry` is convex.

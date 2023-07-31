@@ -228,6 +228,11 @@
     @test issimple(r)
     @test @elapsed(issimple(r)) < 0.02
     @test @allocated(issimple(r)) < 950000
+
+    # innerangles in 3D is obtained via projection
+    r1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    r2 = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
+    @test innerangles(r1) ≈ innerangles(r2)
   end
 
   @testset "Ngons" begin
@@ -392,6 +397,30 @@
     @test q(T(1), T(0)) == P3(1, 0, 0)
     @test q(T(1), T(1)) == P3(1, 1, 0)
     @test q(T(0), T(1)) == P3(0, 1, 1)
+
+    # isconvex in 2D
+    q1 = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    q2 = Quadrangle(P2(0.8, 0.8), P2(1, 0), P2(1, 1), P2(0, 1))
+    q3 = Quadrangle(P2(0, 0), P2(0.2, 0.8), P2(1, 1), P2(0, 1))
+    q4 = Quadrangle(P2(0, 0), P2(1, 0), P2(0.2, 0.2), P2(0, 1))
+    q5 = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0.8, 0.2))
+    @test isconvex(q1)
+    @test !isconvex(q2)
+    @test !isconvex(q3)
+    @test !isconvex(q4)
+    @test !isconvex(q5)
+
+    # isconvex in 3D
+    q1 = Quadrangle(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0))
+    q2 = Quadrangle(P3(0.8, 0.8, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0))
+    q3 = Quadrangle(P3(0, 0, 0), P3(0.2, 0.8, 0), P3(1, 1, 0), P3(0, 1, 0))
+    q4 = Quadrangle(P3(0, 0, 0), P3(1, 0, 0), P3(0.2, 0.2, 0), P3(0, 1, 0))
+    q5 = Quadrangle(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0.8, 0.2, 0))
+    @test isconvex(q1)
+    @test !isconvex(q2)
+    @test !isconvex(q3)
+    @test !isconvex(q4)
+    @test !isconvex(q5)
   end
 
   @testset "PolyAreas" begin

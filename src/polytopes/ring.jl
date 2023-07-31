@@ -132,6 +132,8 @@ function innerangles(r::Ring{2,T}) where {T}
   [θ > 0 ? 2 * T(π) - θ : -θ for θ in θs]
 end
 
+innerangles(r::Ring{3}) = innerangles(Ring(proj2D(vertices(r))))
+
 """
     bridge(rings; width=0)
 

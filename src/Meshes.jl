@@ -55,11 +55,11 @@ include("data.jl")
 # utilities
 include("utils.jl")
 
-# lazy views
+# domain views
 include("views.jl")
 include("viewing.jl")
 
-# lazy partitions
+# domain partitions
 include("partitions.jl")
 include("partitioning.jl")
 
@@ -74,6 +74,9 @@ include("neighborsearch.jl")
 include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
+
+# predicates
+include("predicates.jl")
 
 # algorithms
 include("merging.jl")

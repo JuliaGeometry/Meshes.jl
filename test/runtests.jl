@@ -90,6 +90,7 @@ testfiles = [
   "distances.jl",
   "supportfun.jl",
   "matrices.jl",
+  "predicates.jl",
   "merging.jl",
   "sampling.jl",
   "intersections.jl",
