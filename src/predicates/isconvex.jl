@@ -62,6 +62,5 @@ end
 
 function isconvex(q::Quadrangle{3})
   v = vertices(q)
-  iscoplanar(v...) &&
-  isconvex(Quadrangle(proj2D(collect(v))...))
+  iscoplanar(v...) && isconvex(Quadrangle(proj2D(collect(v))...))
 end
