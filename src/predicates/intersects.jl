@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    intersects(g₁, g₂)
+    intersects(geometry₁, geometry₂)
 
-Tells whether or not geometries `g₁` and `g₂` intersect.
+Tells whether or not `geometry₁` and `geometry₂` intersect.
 
 ## References
 
