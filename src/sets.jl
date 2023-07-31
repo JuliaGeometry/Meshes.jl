@@ -5,7 +5,7 @@
 """
     GeometrySet(geoms)
 
-A collection of geometries `geoms` seen as a single [`Domain`](@ref).
+A set of geometries `geoms` representing a [`Domain`](@ref).
 """
 struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Domain{Dim,T}
   geoms::Vector{G}
@@ -32,7 +32,7 @@ const PointSet{Dim,T} = GeometrySet{Dim,T,Point{Dim,T}}
 """
     PointSet(points)
 
-A set of `points` (a.k.a. point cloud) seen as a single domain.
+A set of `points` (a.k.a. point cloud) representing a [`Domain`](@ref).
 
 ## Examples
 

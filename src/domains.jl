@@ -3,11 +3,10 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{Dim,T}
+    Domain
 
-A domain is an indexable collection of geometries (e.g. mesh) or points
-For example, a collection of polygonal areas representing the states of
-a country can be seen as a domain.
+A domain is an indexable collection of geometries (e.g. mesh).
+``
 """
 abstract type Domain{Dim,T} end
 
