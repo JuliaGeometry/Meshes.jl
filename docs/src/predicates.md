@@ -14,7 +14,7 @@ This section lists predicates that can be used to check properties of geometric 
 both of themselves and relative to other geometric objects. 
 
 One important note to make is that these predicates are not necessarily exact. For example, rather than checking if
-a point `p` is exactly in a sphere of radius `r` centered at `c`, we check if `norm(p-c) < r` or if `s ≈ r` with an absolute tolerance depending on the point type, so `p` might
+a point `p` is exactly in a sphere of radius `r` centered at `c`, we check if `norm(p-c) < r` or if `norm(p -c) ≈ r` with an absolute tolerance depending on the point type, so `p` might
 be slightly outside the sphere but still considered as being inside. Exact arithmetic is expensive to apply and approximations are typically sufficient; exact predicates are available in [ExactPredicates.jl](https://github.com/lairez/ExactPredicates.jl) if you need them, although not with direct Meshes.jl support.
 
 ## isparametrized
