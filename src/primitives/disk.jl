@@ -19,6 +19,8 @@ Disk(plane::Plane{T}, radius) where {T} = Disk(plane, T(radius))
 
 paramdim(::Type{<:Disk}) = 2
 
+plane(d::Disk) = d.plane
+
 center(d::Disk) = d.plane(0, 0)
 
 radius(d::Disk) = d.radius

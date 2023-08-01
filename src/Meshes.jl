@@ -152,6 +152,7 @@ export
   coordinates,
   radius,
   radii,
+  plane,
   bottom,
   top,
   axis,

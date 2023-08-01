@@ -621,11 +621,15 @@
   end
 
   @testset "Disk" begin
+    @test isconvex(Disk)
+    @test isparametrized(Disk)
+
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     d = Disk(p, T(2))
     @test embeddim(d) == 3
     @test paramdim(d) == 2
     @test coordtype(d) == T
+    @test plane(d) == p
     @test Meshes.center(d) == P3(0, 0, 0)
     @test radius(d) == T(2)
     @test isconvex(d)
@@ -649,6 +653,7 @@
     @test embeddim(c) == 3
     @test paramdim(c) == 1
     @test coordtype(c) == T
+    @test plane(c) == p
     @test Meshes.center(c) == P3(0, 0, 0)
     @test radius(c) == T(2)
     @test !isconvex(c)

@@ -47,8 +47,8 @@ function Base.in(p::Point{Dim,T}, s::Sphere{Dim,T}) where {Dim,T}
   isapprox(s, r, atol=atol(T))
 end
 
-function Base.in(p::Point, d::Disk)
-  p ∉ d.plane && return false
+function Base.in(p::Point{3,T}, d::Disk{T}) where {T}
+  p ∉ plane(d) && return false
   c = center(d)
   r = radius(d)
   s = norm(p - c)
@@ -56,7 +56,7 @@ function Base.in(p::Point, d::Disk)
 end
 
 function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
-  p ∉ c.plane && return false
+  p ∉ plane(c) && return false
   o = center(c)
   r = radius(c)
   s = norm(p - o)

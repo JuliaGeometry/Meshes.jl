@@ -40,6 +40,8 @@ Circle(plane::Plane{T}, radius) where {T} = Circle(plane, T(radius))
 
 paramdim(::Type{<:Circle}) = 1
 
+plane(c::Circle) = c.plane
+
 center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius
