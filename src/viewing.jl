@@ -75,17 +75,17 @@ indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
-  or = coordinates(minimum(grid))
+  or = minimum(grid)
   sp = spacing(grid)
   sz = size(grid)
 
   # intersection of boxes
   □ = boundingbox(grid) ∩ box
-  lo, up = coordinates.(extrema(□))
+  lo, up = extrema(□)
 
   # Cartesian indices of new corners
-  ilo = @. max(ceil(Int, (lo - or) / sp) + 1, 1)
-  iup = @. min(floor(Int, (up - or) / sp), sz)
+  ilo = max.(ceil.(Int, (lo - or) ./ sp) .+ 1, 1)
+  iup = min.(floor.(Int, (up - or) ./ sp), sz)
 
   CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
 end
