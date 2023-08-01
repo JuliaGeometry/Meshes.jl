@@ -41,7 +41,7 @@ isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 """
     isperiodic(topology)
 
-Tells whether or not the topology `t` is periodic
+Tells whether or not the `topology` is periodic
 along each parametric dimension.
 """
 isperiodic(t::GridTopology) = isclosed(t)
