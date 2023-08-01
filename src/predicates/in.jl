@@ -14,26 +14,25 @@ Base.in(p₁::Point, p₂::Point) = p₁ == p₂
 function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
   # given collinear points (a, b, p), the point p intersects
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
-  a, b = s.vertices
+  a, b = vertices(s)
   ab, ap = b - a, p - a
   iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
 
-Base.in(p::Point, r::Ray) = p ∈ Line(r.p, r.p + r.v) && (p - r.p) ⋅ r.v ≥ 0
+Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ 0
 
 function Base.in(p::Point, l::Line)
-  w = norm(l.b - l.a)
+  w = norm(l(1) - l(0))
   d = evaluate(Euclidean(), p, l)
-  # d ≈ 0.0 will be too precise, and d < atol{T} can't scale.
-  d + w ≈ w
+  d + w ≈ w # d ≈ 0.0 will be too precise, and d < atol{T} can't scale.
 end
 
 Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
-Base.in(pt::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (pt - pl(0, 0)), zero(T), atol=atol(T))
+Base.in(p::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (p - pl(0, 0)), zero(T), atol=atol(T))
 
 function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
-  l, u = coordinates.((b.min, b.max))
+  l, u = coordinates.(extrema(b))
   x = coordinates(p)
   for i in 1:Dim
     l[i] ≤ x[i] && x[i] ≤ u[i] || return false
@@ -42,53 +41,56 @@ function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
 end
 
 function Base.in(p::Point{Dim,T}, b::Ball{Dim,T}) where {Dim,T}
-  c = b.center
-  r = b.radius
+  c = center(b)
+  r = radius(b)
   s = norm(p - c)
   s < r || isapprox(s, r, atol=atol(T))
 end
 
-function Base.in(p::Point, s::Sphere)
-  x = coordinates(p)
-  c = coordinates(s.center)
-  r = s.radius
-  sum(abs2, x - c) ≈ r^2
+function Base.in(p::Point{Dim,T}, s::Sphere{Dim,T}) where {Dim,T}
+  c = center(s)
+  r = radius(s)
+  s = norm(p - c)
+  isapprox(s, r, atol=atol(T))
 end
 
 function Base.in(p::Point, d::Disk)
   p ∉ d.plane && return false
-  s² = sum(abs2, p - center(d))
-  r² = radius(d)^2
-  s² ≤ r²
+  c = center(d)
+  r = radius(d)
+  s = norm(p - c)
+  s < r || isapprox(s, r, atol=atol(T))
 end
 
 function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
   p ∉ c.plane && return false
-  s² = sum(abs2, p - center(c))
-  r² = radius(c)^2
-  isapprox(s², r², atol=atol(T)^2)
+  o = center(c)
+  r = radius(c)
+  s = norm(p - o)
+  isapprox(s, r, atol=atol(T))
 end
 
 function Base.in(p::Point{3}, c::Cylinder)
-  b = c.bot(0, 0)
-  t = c.top(0, 0)
+  b = bottom(c)(0, 0)
+  t = top(c)(0, 0)
+  r = radius(c)
   a = t - b
   (p - b) ⋅ a ≥ 0 || return false
   (p - t) ⋅ a ≤ 0 || return false
-  norm((p - b) × a) / norm(a) ≤ c.radius
+  norm((p - b) × a) / norm(a) ≤ r
 end
 
 function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
-  c, n⃗ = t.center, t.normal
-  R, r = t.major, t.minor
-  Q = rotation_between(n⃗, Vec{3,T}(0, 0, 1))
+  R, r = radii(t)
+  c, n = center(t), normal(t)
+  Q = rotation_between(n, Vec{3,T}(0, 0, 1))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
 function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
-  a, b, c = t.vertices
+  a, b, c = vertices(t)
   x₁, y₁ = coordinates(a)
   x₂, y₂ = coordinates(b)
   x₃, y₃ = coordinates(c)
@@ -105,7 +107,7 @@ end
 
 function Base.in(p::Point{3}, t::Triangle{3})
   # given coordinates
-  a, b, c = t.vertices
+  a, b, c = vertices(t)
 
   # evaluate vectors defining geometry
   v₁ = b - a
@@ -143,7 +145,7 @@ function Base.in(p::Point, poly::PolyArea)
   end
 end
 
-Base.in(p::Point, m::Multi) = any(g -> p ∈ g, m.geoms)
+Base.in(p::Point, m::Multi) = any(g -> p ∈ g, collect(m))
 
 """
     point ∈ domain
