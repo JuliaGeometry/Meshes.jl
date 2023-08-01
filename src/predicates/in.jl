@@ -31,14 +31,7 @@ Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
 Base.in(p::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (p - pl(0, 0)), zero(T), atol=atol(T))
 
-function Base.in(p::Point{Dim}, b::Box{Dim}) where {Dim}
-  l, u = coordinates.(extrema(b))
-  x = coordinates(p)
-  for i in 1:Dim
-    l[i] ≤ x[i] && x[i] ≤ u[i] || return false
-  end
-  true
-end
+Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
 function Base.in(p::Point{Dim,T}, b::Ball{Dim,T}) where {Dim,T}
   c = center(b)
