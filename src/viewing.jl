@@ -74,33 +74,30 @@ Return the indices of the `domain` that are inside the `geometry`.
 indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
 function indices(grid::Grid{2}, polygon::Polygon{2})
-  mask = zeros(Int, size(grid))
+  mask = falses(size(grid))
   linds = LinearIndices(size(grid))
 
+  boundinds = CartesianIndex[]
   for (n, ring) in enumerate(rings(polygon))
     for seg in segments(ring)
       p1, p2 = vertices(seg)
       inds = bresenham(grid, p1, p2)
+      n > 1 && append!(boundinds, inds)
       mask[inds] .= n
-    end
-
-    # fill external ring and unfill internal rings
-    f = n > 1 : 0 : 1
-    for col in eachcol(mask)
-      find = findfirst(==(n), col)
-      if !isnothing(find)
-        lind = findlast(==(n), col)
-        if find ≠ lind # skip single vertice
-          for i in find:lind
-            # don't fill horizontal lines
-            col[i] ≠ n && (col[i] = f)
-          end
-        end
+      if n == 1
+        _fillmask!(mask, n, true)
+      else
+        _fillmask!(mask, n, false)
       end
     end
   end
 
-  linds[mask .> 0]
+  # fill inner polygons boundary
+  if !isempty(boundinds)
+    mask[boundinds] .= true
+  end
+
+  linds[mask]
 end
 
 function indices(grid::CartesianGrid, box::Box)
@@ -138,3 +135,15 @@ necessarily include the right value. This behavior is different than the more
 intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
 """
 slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
+
+function _fillmask!(mask, n, v)
+  for col in eachcol(mask)
+    find = findfirst(==(n), col)
+    lind = findlast(==(n), col)
+    if !isnothing(find) && !isnothing(lind)
+      for i in find:lind
+        col[i] = v
+      end
+    end
+  end
+end
