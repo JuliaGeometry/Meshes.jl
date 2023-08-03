@@ -77,26 +77,21 @@ function indices(grid::Grid{2}, triangle::Triangle{2})
   mask = falses(size(grid))
   linds = LinearIndices(size(grid))
 
-  v = vertices(triangle)
-  inds1 = bresenham(grid, v[1], v[2])
-  inds2 = bresenham(grid, v[2], v[3])
-  inds3 = bresenham(grid, v[3], v[1])
-  mask[inds1] .= true
-  mask[inds2] .= true
-  mask[inds3] .= true
-
-  for col in eachcol(mask)
-    i = findfirst(col)
-    j = findlast(col)
-    if !isnothing(i) && !isnothing(j)
-      col[i:j] .= true
-    end
-  end
+  _indices!(mask, grid, triangle)
 
   linds[mask]
 end
 
-indices(grid::Grid{2}, polygon::Polygon{2}) = mapreduce(t -> indices(grid, t), vcat, simplexify(polygon))
+function indices(grid::Grid{2}, polygon::Polygon{2})
+  mask = falses(size(grid))
+  linds = LinearIndices(size(grid))
+
+  for triangle in simplexify(polygon)
+    _indices!(mask, grid, triangle)
+  end
+
+  linds[mask]
+end
 
 indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
 
@@ -135,3 +130,21 @@ necessarily include the right value. This behavior is different than the more
 intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
 """
 slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
+
+function _indices!(mask, grid, triangle)
+  v = vertices(triangle)
+  inds1 = bresenham(grid, v[1], v[2])
+  inds2 = bresenham(grid, v[2], v[3])
+  inds3 = bresenham(grid, v[3], v[1])
+  mask[inds1] .= true
+  mask[inds2] .= true
+  mask[inds3] .= true
+
+  for col in eachcol(mask)
+    i = findfirst(col)
+    j = findlast(col)
+    if !isnothing(i) && !isnothing(j)
+      col[i:j] .= true
+    end
+  end
+end
