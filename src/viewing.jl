@@ -98,7 +98,7 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
         if find ≠ lind # skip single vertice
           for i in find:lind
             # don't fill horizontal lines
-            col[i] ≠ n && col[i] = f
+            col[i] ≠ n && (col[i] = f)
           end
         end
       end
