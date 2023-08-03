@@ -99,8 +99,8 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
   linds[mask .> 0]
 end
 
-indices(grid::Grid{2}, multi::Multi{Dim,T,<:Polygon{2}}) where {Dim,T} =
-  mapreduce(poly -> indices(grid, poly), vcat, collect(multi)) |> unique
+indices(domain::Domain, multi::Multi) =
+  mapreduce(geom -> indices(grid, geom), vcat, collect(multi)) |> unique
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
