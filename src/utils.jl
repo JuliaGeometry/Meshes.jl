@@ -233,7 +233,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 end
 
 """
-bresenham(ind1::CartesianIndex{2}, ind2::CartesianIndex{2})
+bresenham(grid::Grid{2}, point1::Point{2}, point2::Point{2})
 
 Compute the Bresenham's line algorithm.
 
@@ -241,9 +241,10 @@ Compute the Bresenham's line algorithm.
 
 * Bresenham's line algorithm - Wikipedia (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 """
-function bresenham(ind1::CartesianIndex{2}, ind2::CartesianIndex{2})
-  x1, y1 = ind1.I
-  x2, y2 = ind2.I
+function bresenham(grid::Grid{2}, point1::Point{2}, point2::Point{2})
+  s = spacing(grid)
+  x1, y1 = ceil.(Int, coordinates(point1) ./ s)
+  x2, y2 = ceil.(Int, coordinates(point2) ./ s)
 
   if abs(y2 - y1) < abs(x2 - x1)
     if x1 > x2

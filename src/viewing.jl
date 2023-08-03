@@ -79,13 +79,8 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
 
   for (n, ring) in enumerate(rings(polygon))
     for seg in segments(ring)
-      s = spacing(grid)
       p1, p2 = vertices(seg)
-      x1, y1 = ceil.(Int, coordinates(p1) ./ s)
-      x2, y2 = ceil.(Int, coordinates(p2) ./ s)
-      cind1 = CartesianIndex(x1, y1)
-      cind2 = CartesianIndex(x2, y2)
-      inds = bresenham(cind1, cind2)
+      inds = bresenham(grid, p1, p2)
       mask[inds] .= n
     end
 
