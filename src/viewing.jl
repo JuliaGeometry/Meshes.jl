@@ -93,7 +93,9 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
   end
 
   # fill inner polygons boundary
-  mask[boundinds] .= true
+  if !isempty(boundinds)
+    mask[boundinds] .= true
+  end
 
   linds[mask]
 end
