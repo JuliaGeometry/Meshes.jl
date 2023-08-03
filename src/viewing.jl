@@ -77,12 +77,14 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
   mask = zeros(Int, size(grid))
   linds = LinearIndices(size(grid))
 
+  # keep track of inner boundaries
   innerbounds = CartesianIndex{2}[]
+
   for (n, ring) in enumerate(rings(polygon))
     for seg in segments(ring)
       # draw segments on mask
       inds = bresenham(grid, vertices(seg)...)
-      @inbounds mask[inds] .= n
+      mask[inds] .= n
 
       # if inner ring, save boundary
       n > 1 && append!(innerbounds, inds)
@@ -97,11 +99,14 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
 
   # refill boundaries of inner rings with 1
   if !isempty(innerbounds)
-    @inbounds mask[innerbounds] .= 1
+    mask[innerbounds] .= 1
   end
 
-  @inbounds linds[mask .> 0]
+  linds[mask .> 0]
 end
+
+indices(grid::Grid{2}, multi::Multi{Dim,T,<:Polygon{2}}) where {Dim,T} =
+  mapreduce(poly -> indices(grid, poly), vcat, collect(multi)) |> unique
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
@@ -141,10 +146,10 @@ slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
 
 function _fillmask!(mask, n, v)
   for col in eachcol(mask)
-    find = findfirst(==(n), col)
-    lind = findlast(==(n), col)
-    if !isnothing(find) && !isnothing(lind)
-      @inbounds col[find:lind] .= v
+    i = findfirst(==(n), col)
+    j = findlast(==(n), col)
+    if !isnothing(i) && !isnothing(j)
+      col[i:j] .= v
     end
   end
 end

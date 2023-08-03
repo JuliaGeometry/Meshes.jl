@@ -236,14 +236,17 @@ end
     bresenham(grid, point₁, point₂)
 
 The Bresenham's line algorithm returns the indices of
-the `grid` connecting the element with `point₁` to the element
-with `point₂`.
+the `grid` connecting the element with `point₁` to the
+element with `point₂`. It approximates the continuous
+line segment between the two points.
 
-See https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+See [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham's_line_algorithm).
 """
 function bresenham(g::Grid{2}, p₁::Point{2}, p₂::Point{2})
   o = minimum(g)
   s = spacing(g)
+
+  # integer coordinates
   x₁, y₁ = ceil.(Int, (p₁ - o) ./ s)
   x₂, y₂ = ceil.(Int, (p₂ - o) ./ s)
 
