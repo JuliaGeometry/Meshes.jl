@@ -76,30 +76,24 @@ indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry
 function indices(grid::Grid{2}, polygon::Polygon{2})
   mask = zeros(Int, size(grid))
   linds = LinearIndices(size(grid))
+  prings = rings(polygon)
 
-  # keep track of inner boundaries
-  innerbounds = CartesianIndex{2}[]
-
-  for (n, ring) in enumerate(rings(polygon))
-    for seg in segments(ring)
-      # draw segments on mask
-      inds = bresenham(grid, vertices(seg)...)
-      mask[inds] .= n
-
-      # if inner ring, save boundary
-      n > 1 && append!(innerbounds, inds)
-
-      if n == 1 # fill interior of outer ring with 1
-        _fillmask!(mask, n, 1)
-      else # fill interior of inner ring with 0
-        _fillmask!(mask, n, 0)
-      end
+  for (n, ring) in enumerate(prings)
+    if n == 1 # fill interior of outer ring with 1
+      _fillmask!(mask, grid, ring, 1)
+    else # fill interior of inner ring with 0
+      _fillmask!(mask, grid, ring, 0)
     end
   end
 
   # refill boundaries of inner rings with 1
-  if !isempty(innerbounds)
-    mask[innerbounds] .= 1
+  if hasholes(polygon)
+    for ring in prings[2:end]
+      for seg in segments(ring)
+        inds = bresenham(grid, vertices(seg)...)
+        mask[inds] .= 1
+      end
+    end
   end
 
   linds[mask .> 0]
@@ -144,12 +138,23 @@ intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
 """
 slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
 
-function _fillmask!(mask, n, v)
-  for col in eachcol(mask)
-    i = findfirst(==(n), col)
-    j = findlast(==(n), col)
-    if !isnothing(i) && !isnothing(j)
-      col[i:j] .= v
+function _fillmask!(mask, grid, ring, v)
+  poly = PolyArea(ring)
+  for triangle in simplexify(poly)
+    tring = first(rings(triangle))
+    # fill ring segments with 2
+    for seg in segments(tring)
+      inds = bresenham(grid, vertices(seg)...)
+      mask[inds] .= 2
+    end
+    # fill ring with v
+    for col in eachcol(mask)
+      # find segment indices
+      i = findfirst(==(2), col)
+      j = findlast(==(2), col)
+      if !isnothing(i) && !isnothing(j)
+        col[i:j] .= v
+      end
     end
   end
 end
