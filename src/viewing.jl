@@ -133,12 +133,9 @@ slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
 
 function _fill!(mask, grid, triangle)
   v = vertices(triangle)
-  inds1 = bresenham(grid, v[1], v[2])
-  inds2 = bresenham(grid, v[2], v[3])
-  inds3 = bresenham(grid, v[3], v[1])
-  mask[inds1] .= true
-  mask[inds2] .= true
-  mask[inds3] .= true
+  mask[bresenham(grid, v[1], v[2])] .= true
+  mask[bresenham(grid, v[2], v[3])] .= true
+  mask[bresenham(grid, v[3], v[1])] .= true
 
   j1 = findfirst(mask).I[2]
   j2 = findlast(mask).I[2]
