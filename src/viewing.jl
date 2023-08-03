@@ -77,24 +77,27 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
   mask = zeros(Int, size(grid))
   linds = LinearIndices(size(grid))
 
-  boundinds = CartesianIndex{2}[]
+  innerbounds = CartesianIndex{2}[]
   for (n, ring) in enumerate(rings(polygon))
     for seg in segments(ring)
-      p1, p2 = vertices(seg)
-      inds = bresenham(grid, p1, p2)
-      n > 1 && append!(boundinds, inds)
+      # draw segments on mask
+      inds = bresenham(grid, vertices(seg)...)
       mask[inds] .= n
-      if n == 1
+
+      # if inner ring, save boundary
+      n > 1 && append!(innerbounds, inds)
+
+      if n == 1 # fill interior of outer ring with 1
         _fillmask!(mask, n, 1)
-      else
+      else # fill interior of inner ring with 0
         _fillmask!(mask, n, 0)
       end
     end
   end
 
-  # fill inner polygons boundary
-  if !isempty(boundinds)
-    mask[boundinds] .= 1
+  # refill boundaries of inner rings with 1
+  if !isempty(innerbounds)
+    mask[innerbounds] .= 1
   end
 
   linds[mask .> 0]
