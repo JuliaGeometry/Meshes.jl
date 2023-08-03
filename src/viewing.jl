@@ -73,20 +73,11 @@ Return the indices of the `domain` that are inside the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
-function indices(grid::Grid{2}, triangle::Triangle{2})
+function indices(grid::Grid{2}, poly::Polygon{2})
   mask = falses(size(grid))
   linds = LinearIndices(size(grid))
 
-  _fill!(mask, grid, triangle)
-
-  linds[mask]
-end
-
-function indices(grid::Grid{2}, polygon::Polygon{2})
-  mask = falses(size(grid))
-  linds = LinearIndices(size(grid))
-
-  for triangle in simplexify(polygon)
+  for triangle in simplexify(poly)
     _fill!(mask, grid, triangle)
   end
 
@@ -133,6 +124,8 @@ slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
 
 function _fill!(mask, grid, triangle)
   v = vertices(triangle)
+  
+  # fill edges of triangle
   _bresenham!(mask, grid, v[1], v[2])
   _bresenham!(mask, grid, v[2], v[3])
   _bresenham!(mask, grid, v[3], v[1])
