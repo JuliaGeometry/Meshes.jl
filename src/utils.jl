@@ -233,13 +233,13 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 end
 
 """
-bresenham(grid::Grid{2}, point1::Point{2}, point2::Point{2})
+    bresenham(grid, point₁, point₂)
 
-Compute the Bresenham's line algorithm.
+The Bresenham's line algorithm returns the indices of
+the `grid` connecting the element with `point₁` to the element
+with `point₂`.
 
-## References
-
-* Bresenham's line algorithm - Wikipedia (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
+See https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
 """
 function bresenham(g::Grid{2}, p₁::Point{2}, p₂::Point{2})
   o = minimum(g)
