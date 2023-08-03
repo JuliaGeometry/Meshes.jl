@@ -82,7 +82,7 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
     for seg in segments(ring)
       # draw segments on mask
       inds = bresenham(grid, vertices(seg)...)
-      mask[inds] .= n
+      @inbounds mask[inds] .= n
 
       # if inner ring, save boundary
       n > 1 && append!(innerbounds, inds)
@@ -97,10 +97,10 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
 
   # refill boundaries of inner rings with 1
   if !isempty(innerbounds)
-    mask[innerbounds] .= 1
+    @inbounds mask[innerbounds] .= 1
   end
 
-  linds[mask .> 0]
+  @inbounds linds[mask .> 0]
 end
 
 function indices(grid::CartesianGrid, box::Box)
@@ -144,7 +144,7 @@ function _fillmask!(mask, n, v)
     find = findfirst(==(n), col)
     lind = findlast(==(n), col)
     if !isnothing(find) && !isnothing(lind)
-      col[find:lind] .= v
+      @inbounds col[find:lind] .= v
     end
   end
 end
