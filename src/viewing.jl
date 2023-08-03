@@ -133,9 +133,9 @@ slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
 
 function _fill!(mask, grid, triangle)
   v = vertices(triangle)
-  mask[bresenham(grid, v[1], v[2])] .= true
-  mask[bresenham(grid, v[2], v[3])] .= true
-  mask[bresenham(grid, v[3], v[1])] .= true
+  _bresenham!(mask, grid, v[1], v[2])
+  _bresenham!(mask, grid, v[2], v[3])
+  _bresenham!(mask, grid, v[3], v[1])
 
   j1 = findfirst(mask).I[2]
   j2 = findlast(mask).I[2]
@@ -143,5 +143,77 @@ function _fill!(mask, grid, triangle)
     i1 = findfirst(mask[:, j])
     i2 = findlast(mask[:, j])
     mask[i1:i2, j] .= true
+  end
+end
+
+# Bresenham's line algorithm: https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+function _bresenham!(mask, grid, p₁, p₂)
+  o = minimum(grid)
+  s = spacing(grid)
+
+  # integer coordinates
+  x₁, y₁ = ceil.(Int, (p₁ - o) ./ s)
+  x₂, y₂ = ceil.(Int, (p₂ - o) ./ s)
+
+  if abs(y₂ - y₁) < abs(x₂ - x₁)
+    if x₁ > x₂
+      _bresenhamlow!(mask, x₂, y₂, x₁, y₁)
+    else
+      _bresenhamlow!(mask, x₁, y₁, x₂, y₂)
+    end
+  else
+    if y₁ > y₂
+      _bresenhamhigh!(mask, x₂, y₂, x₁, y₁)
+    else
+      _bresenhamhigh!(mask, x₁, y₁, x₂, y₂)
+    end
+  end
+end
+
+function _bresenhamlow!(mask, x₁, y₁, x₂, y₂)
+  dx = x₂ - x₁
+  dy = y₂ - y₁
+  yi = 1
+  if dy < 0
+    yi = -1
+    dy = -dy
+  end
+
+  D = 2dy - dx
+  y = y₁
+
+  for x in x₁:x₂
+    mask[x, y] = true
+
+    if D > 0
+      y = y + yi
+      D = D + 2dy - 2dx
+    else
+      D = D + 2dy
+    end
+  end
+end
+
+function _bresenhamhigh!(mask, x₁, y₁, x₂, y₂)
+  dx = x₂ - x₁
+  dy = y₂ - y₁
+  xi = 1
+  if dx < 0
+    xi = -1
+    dx = -dx
+  end
+
+  D = 2dx - dy
+  x = x₁
+
+  for y in y₁:y₂
+    mask[x, y] = true
+
+    if D > 0
+      x = x + xi
+      D = D + 2dx - 2dy
+    else
+      D = D + 2dx
+    end
   end
 end
