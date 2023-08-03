@@ -274,15 +274,19 @@ function _bresenhamlow(x₁, y₁, x₂, y₂)
   D = 2dy - dx
   y = y₁
 
-  map(x₁:x₂) do x
+  inds = CartesianIndex{2}[]
+  for x in x₁:x₂
+    push!(inds, CartesianIndex(x, y))
+
     if D > 0
       y = y + yi
       D = D + 2dy - 2dx
     else
       D = D + 2dy
     end
-    CartesianIndex(x, y)
   end
+
+  inds
 end
 
 function _bresenhamhigh(x₁, y₁, x₂, y₂)
@@ -297,13 +301,17 @@ function _bresenhamhigh(x₁, y₁, x₂, y₂)
   D = 2dx - dy
   x = x₁
 
-  map(y₁:y₂) do y
+  inds = CartesianIndex{2}[]
+  for y in y₁:y₂
+    push!(inds, CartesianIndex(x, y))
+
     if D > 0
       x = x + xi
       D = D + 2dx - 2dy
     else
       D = D + 2dx
     end
-    CartesianIndex(x, y)
   end
+
+  inds
 end

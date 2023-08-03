@@ -74,10 +74,10 @@ Return the indices of the `domain` that are inside the `geometry`.
 indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
 function indices(grid::Grid{2}, polygon::Polygon{2})
-  mask = falses(size(grid))
+  mask = zeros(Int, size(grid))
   linds = LinearIndices(size(grid))
 
-  boundinds = CartesianIndex[]
+  boundinds = CartesianIndex{2}[]
   for (n, ring) in enumerate(rings(polygon))
     for seg in segments(ring)
       p1, p2 = vertices(seg)
@@ -85,19 +85,19 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
       n > 1 && append!(boundinds, inds)
       mask[inds] .= n
       if n == 1
-        _fillmask!(mask, n, true)
+        _fillmask!(mask, n, 1)
       else
-        _fillmask!(mask, n, false)
+        _fillmask!(mask, n, 0)
       end
     end
   end
 
   # fill inner polygons boundary
   if !isempty(boundinds)
-    mask[boundinds] .= true
+    mask[boundinds] .= 1
   end
 
-  linds[mask]
+  linds[mask .> 0]
 end
 
 function indices(grid::CartesianGrid, box::Box)
