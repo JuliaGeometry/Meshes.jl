@@ -73,6 +73,41 @@ Return the indices of the `domain` that are inside the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
+function indices(grid::Grid{2}, polygon::Polygon{2})
+  mask = zeros(Int, size(grid))
+  linds = LinearIndices(size(grid))
+
+  for (n, ring) in enumerate(rings(polygon))
+    for seg in segments(ring)
+      s = spacing(grid)
+      p1, p2 = vertices(seg)
+      x1, y1 = ceil.(Int, coordinates(p1) ./ s)
+      x2, y2 = ceil.(Int, coordinates(p2) ./ s)
+      cind1 = CartesianIndex(x1, y1)
+      cind2 = CartesianIndex(x2, y2)
+      inds = bresenham(cind1, cind2)
+      mask[inds] .= n
+    end
+
+    # fill external ring and unfill internal rings
+    f = n > 1 : 0 : 1
+    for col in eachcol(mask)
+      find = findfirst(==(n), col)
+      if !isnothing(find)
+        lind = findlast(==(n), col)
+        if find ≠ lind # skip single vertice
+          for i in find:lind
+            # don't fill horizontal lines
+            col[i] ≠ n && col[i] = f
+          end
+        end
+      end
+    end
+  end
+
+  linds[mask .> 0]
+end
+
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
   or = minimum(grid)

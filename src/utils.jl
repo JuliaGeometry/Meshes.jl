@@ -231,3 +231,77 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   λ₁, λ₂, r, rₐ
 end
+
+"""
+bresenham(ind1::CartesianIndex{2}, ind2::CartesianIndex{2})
+
+Compute the Bresenham's line algorithm.
+
+## References
+
+* Bresenham's line algorithm - Wikipedia (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
+"""
+function bresenham(ind1::CartesianIndex{2}, ind2::CartesianIndex{2})
+  x1, y1 = ind1.I
+  x2, y2 = ind2.I
+
+  if abs(y2 - y1) < abs(x2 - x1)
+    if x1 > x2
+      _bresenhamlow(x2, y2, x1, y1)
+    else
+      _bresenhamlow(x1, y1, x2, y2)
+    end
+  else
+    if y1 > y2
+      _bresenhamhigh(x2, y2, x1, y1)
+    else
+      _bresenhamhigh(x1, y1, x2, y2)
+    end
+  end
+end
+
+function _bresenhamlow(x1, y1, x2, y2)
+  dx = x2 - x1
+  dy = y2 - y1
+  yi = 1
+  if dy < 0
+    yi = -1
+    dy = -dy
+  end
+
+  D = (2 * dy) - dx
+  y = y1
+
+  map(x1:x2) do x
+    if D > 0
+      y = y + yi
+      D = D + (2 * (dy - dx))
+    else
+      D = D + 2 * dy
+    end
+    CartesianIndex(x, y)
+  end
+end
+
+function _bresenhamhigh(x1, y1, x2, y2)
+  dx = x2 - x1
+  dy = y2 - y1
+  xi = 1
+  if dx < 0
+    xi = -1
+    dx = -dx
+  end
+
+  D = (2 * dx) - dy
+  x = x1
+
+  map(y1:y2) do y
+    if D > 0
+      x = x + xi
+      D = D + (2 * (dx - dy))
+    else
+      D = D + 2 * dx
+    end
+    CartesianIndex(x, y)
+  end
+end
