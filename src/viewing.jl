@@ -78,11 +78,12 @@ function indices(grid::Grid{2}, triangle::Triangle{2})
   linds = LinearIndices(size(grid))
 
   v = vertices(triangle)
-  for i in 1:3
-    j = i < 3 ? i + 1 : 1 
-    inds = bresenham(grid, v[i], v[j])
-    mask[inds] .= true
-  end
+  inds1 = bresenham(grid, v[1], v[2])
+  inds2 = bresenham(grid, v[2], v[3])
+  inds3 = bresenham(grid, v[3], v[1])
+  mask[inds1] .= true
+  mask[inds2] .= true
+  mask[inds3] .= true
 
   for col in eachcol(mask)
     i = findfirst(col)
