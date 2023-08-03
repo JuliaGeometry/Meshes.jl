@@ -77,7 +77,7 @@ function indices(grid::Grid{2}, triangle::Triangle{2})
   mask = falses(size(grid))
   linds = LinearIndices(size(grid))
 
-  _indices!(mask, grid, triangle)
+  _fill!(mask, grid, triangle)
 
   linds[mask]
 end
@@ -87,7 +87,7 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
   linds = LinearIndices(size(grid))
 
   for triangle in simplexify(polygon)
-    _indices!(mask, grid, triangle)
+    _fill!(mask, grid, triangle)
   end
 
   linds[mask]
@@ -131,7 +131,7 @@ intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
 """
 slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
 
-function _indices!(mask, grid, triangle)
+function _fill!(mask, grid, triangle)
   v = vertices(triangle)
   inds1 = bresenham(grid, v[1], v[2])
   inds2 = bresenham(grid, v[2], v[3])
@@ -140,11 +140,9 @@ function _indices!(mask, grid, triangle)
   mask[inds2] .= true
   mask[inds3] .= true
 
-  for col in eachcol(mask)
-    i = findfirst(col)
-    j = findlast(col)
-    if !isnothing(i) && !isnothing(j)
-      col[i:j] .= true
-    end
+  for j in findfirst(mask).I[2]:findlast(mask).I[2]
+    i1 = findfirst(mask[:, j])
+    i2 = findlast(mask[:, j])
+    mask[i1:i2, j] .= true
   end
 end
