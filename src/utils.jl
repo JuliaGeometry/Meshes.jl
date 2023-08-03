@@ -242,9 +242,10 @@ Compute the Bresenham's line algorithm.
 * Bresenham's line algorithm - Wikipedia (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 """
 function bresenham(grid::Grid{2}, point1::Point{2}, point2::Point{2})
+  o = minimum(grid)
   s = spacing(grid)
-  x1, y1 = ceil.(Int, coordinates(point1) ./ s)
-  x2, y2 = ceil.(Int, coordinates(point2) ./ s)
+  x1, y1 = ceil.(Int, (point1 - o) ./ s)
+  x2, y2 = ceil.(Int, (point2 - o) ./ s)
 
   if abs(y2 - y1) < abs(x2 - x1)
     if x1 > x2
