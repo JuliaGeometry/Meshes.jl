@@ -73,34 +73,31 @@ Return the indices of the `domain` that are inside the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
-function indices(grid::Grid{2}, polygon::Polygon{2})
-  mask = zeros(Int, size(grid))
+function indices(grid::Grid{2}, triangle::Triangle{2})
+  mask = falses(size(grid))
   linds = LinearIndices(size(grid))
-  prings = rings(polygon)
 
-  for (n, ring) in enumerate(prings)
-    if n == 1 # fill interior of outer ring with 1
-      _fillmask!(mask, grid, ring, 1)
-    else # fill interior of inner ring with 0
-      _fillmask!(mask, grid, ring, 0)
+  for ring in rings(triangle)
+    for seg in segments(ring)
+      inds = bresenham(grid, vertices(seg)...)
+      mask[inds] .= true
     end
   end
 
-  # refill boundaries of inner rings with 1
-  if hasholes(polygon)
-    for ring in prings[2:end]
-      for seg in segments(ring)
-        inds = bresenham(grid, vertices(seg)...)
-        mask[inds] .= 1
-      end
+  for col in eachcol(mask)
+    i = findfirst(col)
+    j = findlast(col)
+    if !isnothing(i) && !isnothing(j)
+      col[i:j] .= true
     end
   end
 
-  linds[mask .> 0]
+  linds[mask]
 end
 
-indices(domain::Domain, multi::Multi) =
-  mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
+indices(grid::Grid{2}, polygon::Polygon{2}) = mapreduce(t -> indices(grid, t), vcat, simplexify(polygon))
+
+indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
@@ -137,24 +134,3 @@ necessarily include the right value. This behavior is different than the more
 intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
 """
 slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))
-
-function _fillmask!(mask, grid, ring, v)
-  poly = PolyArea(ring)
-  for triangle in simplexify(poly)
-    tring = first(rings(triangle))
-    # fill ring segments with 2
-    for seg in segments(tring)
-      inds = bresenham(grid, vertices(seg)...)
-      mask[inds] .= 2
-    end
-    # fill ring with v
-    for col in eachcol(mask)
-      # find segment indices
-      i = findfirst(==(2), col)
-      j = findlast(==(2), col)
-      if !isnothing(i) && !isnothing(j)
-        col[i:j] .= v
-      end
-    end
-  end
-end
