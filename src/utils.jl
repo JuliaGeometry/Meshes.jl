@@ -241,68 +241,68 @@ Compute the Bresenham's line algorithm.
 
 * Bresenham's line algorithm - Wikipedia (https://en.wikipedia.org/wiki/Bresenham's_line_algorithm)
 """
-function bresenham(grid::Grid{2}, point1::Point{2}, point2::Point{2})
-  o = minimum(grid)
-  s = spacing(grid)
-  x1, y1 = ceil.(Int, (point1 - o) ./ s)
-  x2, y2 = ceil.(Int, (point2 - o) ./ s)
+function bresenham(g::Grid{2}, p₁::Point{2}, p₂::Point{2})
+  o = minimum(g)
+  s = spacing(g)
+  x₁, y₁ = ceil.(Int, (p₁ - o) ./ s)
+  x₂, y₂ = ceil.(Int, (p₂ - o) ./ s)
 
-  if abs(y2 - y1) < abs(x2 - x1)
-    if x1 > x2
-      _bresenhamlow(x2, y2, x1, y1)
+  if abs(y₂ - y₁) < abs(x₂ - x₁)
+    if x₁ > x₂
+      _bresenhamlow(x₂, y₂, x₁, y₁)
     else
-      _bresenhamlow(x1, y1, x2, y2)
+      _bresenhamlow(x₁, y₁, x₂, y₂)
     end
   else
-    if y1 > y2
-      _bresenhamhigh(x2, y2, x1, y1)
+    if y₁ > y₂
+      _bresenhamhigh(x₂, y₂, x₁, y₁)
     else
-      _bresenhamhigh(x1, y1, x2, y2)
+      _bresenhamhigh(x₁, y₁, x₂, y₂)
     end
   end
 end
 
-function _bresenhamlow(x1, y1, x2, y2)
-  dx = x2 - x1
-  dy = y2 - y1
+function _bresenhamlow(x₁, y₁, x₂, y₂)
+  dx = x₂ - x₁
+  dy = y₂ - y₁
   yi = 1
   if dy < 0
     yi = -1
     dy = -dy
   end
 
-  D = (2 * dy) - dx
-  y = y1
+  D = 2dy - dx
+  y = y₁
 
-  map(x1:x2) do x
+  map(x₁:x₂) do x
     if D > 0
       y = y + yi
-      D = D + (2 * (dy - dx))
+      D = D + 2dy - 2dx
     else
-      D = D + 2 * dy
+      D = D + 2dy
     end
     CartesianIndex(x, y)
   end
 end
 
-function _bresenhamhigh(x1, y1, x2, y2)
-  dx = x2 - x1
-  dy = y2 - y1
+function _bresenhamhigh(x₁, y₁, x₂, y₂)
+  dx = x₂ - x₁
+  dy = y₂ - y₁
   xi = 1
   if dx < 0
     xi = -1
     dx = -dx
   end
 
-  D = (2 * dx) - dy
-  x = x1
+  D = 2dx - dy
+  x = x₁
 
-  map(y1:y2) do y
+  map(y₁:y₂) do y
     if D > 0
       x = x + xi
-      D = D + (2 * (dx - dy))
+      D = D + 2dx - 2dy
     else
-      D = D + 2 * dx
+      D = D + 2dx
     end
     CartesianIndex(x, y)
   end

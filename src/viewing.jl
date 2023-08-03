@@ -93,9 +93,7 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
   end
 
   # fill inner polygons boundary
-  if !isempty(boundinds)
-    mask[boundinds] .= true
-  end
+  mask[boundinds] .= true
 
   linds[mask]
 end
@@ -141,9 +139,7 @@ function _fillmask!(mask, n, v)
     find = findfirst(==(n), col)
     lind = findlast(==(n), col)
     if !isnothing(find) && !isnothing(lind)
-      for i in find:lind
-        col[i] = v
-      end
+      col[find:lind] .= v
     end
   end
 end
