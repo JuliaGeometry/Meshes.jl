@@ -74,14 +74,14 @@ Return the indices of the `domain` that are inside the `geometry`.
 indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
 
 function indices(grid::Grid{2}, poly::Polygon{2})
-  mask = falses(size(grid))
-  linds = LinearIndices(size(grid))
-
+  dims = size(grid)
+  mask = falses(dims)
   for triangle in simplexify(poly)
     _fill!(mask, grid, triangle)
   end
 
-  linds[mask]
+  # convert to linear indices
+  LinearIndices(dims)[mask]
 end
 
 indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
