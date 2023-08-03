@@ -77,11 +77,11 @@ function indices(grid::Grid{2}, triangle::Triangle{2})
   mask = falses(size(grid))
   linds = LinearIndices(size(grid))
 
-  for ring in rings(triangle)
-    for seg in segments(ring)
-      inds = bresenham(grid, vertices(seg)...)
-      mask[inds] .= true
-    end
+  v = vertices(triangle)
+  for i in 1:3
+    j = i < 3 ? i + 1 : 1 
+    inds = bresenham(grid, v[i], v[j])
+    mask[inds] .= true
   end
 
   for col in eachcol(mask)
