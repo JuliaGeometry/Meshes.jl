@@ -100,7 +100,7 @@ function indices(grid::Grid{2}, polygon::Polygon{2})
 end
 
 indices(domain::Domain, multi::Multi) =
-  mapreduce(geom -> indices(grid, geom), vcat, collect(multi)) |> unique
+  mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
