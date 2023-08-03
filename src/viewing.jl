@@ -140,7 +140,9 @@ function _fill!(mask, grid, triangle)
   mask[inds2] .= true
   mask[inds3] .= true
 
-  for j in findfirst(mask).I[2]:findlast(mask).I[2]
+  j1 = findfirst(mask).I[2]
+  j2 = findlast(mask).I[2]
+  for j in j1:j2
     i1 = findfirst(mask[:, j])
     i2 = findlast(mask[:, j])
     mask[i1:i2, j] .= true
