@@ -6,7 +6,7 @@
   <a href="https://codecov.io/gh/JuliaGeometry/Meshes.jl">
     <img src="https://img.shields.io/codecov/c/github/JuliaGeometry/Meshes.jl?style=flat-square">
   </a>
-  <a href="https://JuliaGeometry.github.io/Meshes.jl/stable">
+  <a href="https://JuliaGeometry.github.io/MeshesDocs/stable">
     <img src="https://img.shields.io/badge/docs-stable-blue?style=flat-square">
   </a>
   <a href="https://JuliaGeometry.github.io/MeshesDocs/dev">
@@ -67,7 +67,7 @@ don't hesitate to start a thread in our
 As ideas become concrete, they can be converted into GitHub issues for further action.
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue?style=flat-square
-[docs-stable-url]: https://JuliaGeometry.github.io/Meshes.jl/stable
+[docs-stable-url]: https://JuliaGeometry.github.io/MeshesDocs/stable
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue?style=flat-square
 [docs-latest-url]: https://JuliaGeometry.github.io/MeshesDocs/dev
