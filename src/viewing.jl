@@ -130,6 +130,7 @@ function _fill!(mask, grid, triangle)
   _bresenham!(mask, grid, v[2], v[3])
   _bresenham!(mask, grid, v[3], v[1])
 
+  # fill interior of triangle
   j1 = findfirst(mask).I[2]
   j2 = findlast(mask).I[2]
   for j in j1:j2
