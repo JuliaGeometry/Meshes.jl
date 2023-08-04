@@ -30,62 +30,32 @@
     pent = Pentagon(P2(6, 1), P2(2, 10), P2(10, 16), P2(18, 10), P2(14, 1))
 
     grid = CartesianGrid{T}(20, 20)
-    vtri = view(grid, tri)
-    vpent = view(grid, pent)
-    for (poly, vpoly) in [(tri, vtri), (pent, vpent)]
-      for point in vertices(poly)
-        @test grid[point2ind(grid, point)] ∈ vpoly
-      end
-    end
+    @test [189, 190, 191] ⊆ indices(grid, tri)
+    @test [109, 110, 111] ⊆ indices(grid, pent)
 
     grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    vtri = view(grid, tri)
-    vpent = view(grid, pent)
-    for (poly, vpoly) in [(tri, vtri), (pent, vpent)]
-      for point in vertices(poly)
-        @test grid[point2ind(grid, point)] ∈ vpoly
-      end
-    end
+    @test [37, 36, 37] ⊆ indices(grid, tri)
+    @test [34, 35, 36] ⊆ indices(grid, pent)
 
     grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
-    vtri = view(grid, tri)
-    vpent = view(grid, pent)
-    for (poly, vpoly) in [(tri, vtri), (pent, vpent)]
-      for point in vertices(poly)
-        @test grid[point2ind(grid, point)] ∈ vpoly
-      end
-    end
+    @test [284, 285, 286] ⊆ indices(grid, tri)
+    @test [152, 153, 154] ⊆ indices(grid, pent)
 
     # non-convex polygons
     poly1 = PolyArea(P2[(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)])
     poly2 = PolyArea(pointify(pent), [pointify(tri)])
 
     grid = CartesianGrid{T}(20, 20)
-    vpoly1 = view(grid, poly1)
-    vpoly2 = view(grid, poly2)
-    for (poly, vpoly) in [(poly1, vpoly1), (poly2, vpoly2)]
-      for point in vertices(poly)
-        @test grid[point2ind(grid, point)] ∈ vpoly
-      end
-    end
+    @test [111, 112, 113] ⊆ indices(grid, poly1)
+    @test [49, 50, 51] ⊆ indices(grid, poly2)
 
     grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    vpoly1 = view(grid, poly1)
-    vpoly2 = view(grid, poly2)
-    for (poly, vpoly) in [(poly1, vpoly1), (poly2, vpoly2)]
-      for point in vertices(poly)
-        @test grid[point2ind(grid, point)] ∈ vpoly
-      end
-    end
+    @test [36, 37, 38] ⊆ indices(grid, poly1)
+    @test [24, 25, 26] ⊆ indices(grid, poly2)
 
     grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
-    vpoly1 = view(grid, poly1)
-    vpoly2 = view(grid, poly2)
-    for (poly, vpoly) in [(poly1, vpoly1), (poly2, vpoly2)]
-      for point in vertices(poly)
-        @test grid[point2ind(grid, point)] ∈ vpoly
-      end
-    end
+    @test [241, 242, 243] ⊆ indices(grid, poly1)
+    @test [148, 149, 150] ⊆ indices(grid, poly2)
   end
 
   @testset "Data" begin
