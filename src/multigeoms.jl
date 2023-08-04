@@ -9,6 +9,11 @@ A collection of geometries `geoms` seen as a single [`Geometry`](@ref).
 
 In geographic information systems (GIS) it is common to represent
 multiple polygons as a single entity (e.g. country with islands).
+
+### Notes
+
+- Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
+  [`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
 """
 struct Multi{Dim,T,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
   geoms::Vector{G}
@@ -16,6 +21,13 @@ end
 
 # constructor with iterator of geometries
 Multi(geoms) = Multi(collect(geoms))
+
+# type aliases for convenience
+const MultiPoint{Dim,T} = Multi{Dim,T,<:Point{Dim,T}}
+const MultiSegment{Dim,T} = Multi{Dim,T,<:Segment{Dim,T}}
+const MultiRope{Dim,T} = Multi{Dim,T,<:Rope{Dim,T}}
+const MultiRing{Dim,T} = Multi{Dim,T,<:Ring{Dim,T}}
+const MultiPolygon{Dim,T} = Multi{Dim,T,<:Polygon{Dim,T}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 

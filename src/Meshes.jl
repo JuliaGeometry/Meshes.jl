@@ -202,6 +202,11 @@ export
 
   # multi-geometries
   Multi,
+  MultiPoint,
+  MultiSegment,
+  MultiRope,
+  MultiRing,
+  MultiPolygon,
 
   # connectivities
   Connectivity,
