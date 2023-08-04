@@ -1,4 +1,17 @@
 @testset "Predicates" begin
+  @testset "isconvex" begin
+    outer = P2[(6, 1), (2, 10), (10, 16), (18, 10), (14, 1)]
+    inner = P2[(5, 7), (10, 12), (15, 7)]
+    pent = Pentagon(outer...)
+    tri = Triangle(inner...)
+    poly = PolyArea(outer, [inner])
+    multi = Multi([poly, tri])
+    @test isconvex(pent)
+    @test isconvex(tri)
+    @test !isconvex(poly)
+    @test isconvex(multi)
+  end
+
   @testset "issubset" begin
     point = P2(0.5, 0.5)
     box = Box(P2(0, 0), P2(1, 1))

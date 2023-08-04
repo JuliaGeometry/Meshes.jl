@@ -45,9 +45,8 @@ isconvex(::Tetrahedron) = true
 
 isconvex(p::Polygon{2}) = Set(vertices(convexhull(p))) == Set(vertices(p))
 
-isconvex(p::Polygon{3}) = isconvex(proj2D(p))
-
-isconvex(m::Multi) = Set(vertices(convexhull(m))) == Set(vertices(m))
+# TODO: fix this with simplexify
+isconvex(m::Multi{Dim,T}) where {Dim,T} = isapprox(measure(convexhull(m)), measure(m), atol=atol(T))
 
 # --------------
 # OPTIMIZATIONS
@@ -60,7 +59,5 @@ function isconvex(q::Quadrangle{2})
   intersects(d1, d2)
 end
 
-function isconvex(q::Quadrangle{3})
-  v = vertices(q)
-  iscoplanar(v...) && isconvex(proj2D(q))
-end
+# temporary workaround in 3D
+isconvex(p::Polygon{3}) = isconvex(proj2D(p))
