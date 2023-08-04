@@ -19,7 +19,9 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
 import Random
-import Base: values, ==, +, -, *
+import Base: values
+import Base: ==, !
+import Base: +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
@@ -192,7 +194,6 @@ export
   windingnumber,
   rings,
   segments,
-  hasholes,
   angles,
   innerangles,
   orientation,
@@ -363,6 +364,7 @@ export
   isclosed,
   isconvex,
   issimple,
+  hasholes,
   intersects,
 
   # sampling

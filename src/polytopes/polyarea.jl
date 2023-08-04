@@ -74,8 +74,6 @@ centroid(p::PolyArea) = centroid(p.outer)
 
 rings(p::PolyArea) = [p.outer; p.inners]
 
-hasholes(p::PolyArea) = !isempty(p.inners)
-
 windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
 
 function Base.unique!(p::PolyArea)

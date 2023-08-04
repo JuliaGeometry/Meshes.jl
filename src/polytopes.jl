@@ -182,13 +182,6 @@ Return the outer and inner rings of the polygon.
 function rings end
 
 """
-    hasholes(polygon)
-
-Tells whether or not the `polygon` contains holes.
-"""
-function hasholes end
-
-"""
     windingnumber(point, polygon)
 
 Winding number of `point` with respect to the `polygon`.

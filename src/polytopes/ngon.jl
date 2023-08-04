@@ -41,8 +41,6 @@ const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
 
-hasholes(::Ngon) = false
-
 Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
