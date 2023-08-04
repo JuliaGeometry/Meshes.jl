@@ -70,6 +70,20 @@
     @test pent ⊆ poly1
     @test pent ⊈ poly2
     @test pent ⊆ multi
+
+    poly1 = PolyArea(P2[(4, 12), (11, 11), (16, 8), (16, 1), (13, -2), (2, -2), (-3, 4), (-2, 8)])
+    poly2 = PolyArea(P2[(3, 0), (1, 2), (3, 4), (1, 6), (4, 7), (10, 7), (11, 4), (9, 0)])
+    poly3 = PolyArea(P2[(3, 2), (4, 4), (3, 8), (12, 8), (14, 4), (12, 1)])
+    poly4 = PolyArea(P2[(8, 2), (5, 4), (5, 6), (9, 6), (10, 4)])
+    poly5 = PolyArea(P2[(3, 9), (6, 11), (10, 10), (10, 9)])
+    @test poly2 ⊆ poly1
+    @test poly3 ⊆ poly1
+    @test poly4 ⊆ poly1
+    @test poly5 ⊆ poly1
+    @test poly4 ⊆ poly2
+    @test poly4 ⊆ poly3
+    @test poly5 ⊈ poly2
+    @test poly5 ⊈ poly3
   end
 
   @testset "intersects" begin
