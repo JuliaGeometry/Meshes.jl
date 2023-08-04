@@ -149,6 +149,12 @@ function _bresenham!(mask, grid, n, p₁, p₂)
   x₁, y₁ = ceil.(Int, (p₁ - o) ./ s)
   x₂, y₂ = ceil.(Int, (p₂ - o) ./ s)
 
+  # fix coordinates of points that are on the grid border
+  x₁ = iszero(x₁) ? 1 : x₁
+  y₁ = iszero(y₁) ? 1 : y₁
+  x₂ = iszero(x₂) ? 1 : x₂
+  y₂ = iszero(y₂) ? 1 : y₂
+
   if abs(y₂ - y₁) < abs(x₂ - x₁)
     if x₁ > x₂
       _bresenhamlow!(mask, n, x₂, y₂, x₁, y₁)
