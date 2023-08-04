@@ -77,12 +77,12 @@
     p1 = P2(-1.0, 0.0)
     p2 = P2(0.0, 0.0)
     p3 = P2(1.0, 0.0)
-    L1 = Line(p1, p3)
-    L2 = Line(p2, p3)
-    @test L1 ⊆ L2
-    @test L2 ⊆ L1 
-    @test L1 ⊆ L1 
-    @test L2 ⊆ L2
+    l1 = Line(p1, p3)
+    l2 = Line(p2, p3)
+    @test l1 ⊆ l2
+    @test l2 ⊆ l1 
+    @test l1 ⊆ l1 
+    @test l2 ⊆ l2
   end
 
   @testset "intersects" begin
