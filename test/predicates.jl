@@ -57,6 +57,19 @@
     @test !(quad2 ⊆ poly)
     @test quad1 ⊆ multi
     @test !(quad2 ⊆ multi)
+
+    tri = Triangle(P2(5, 7), P2(10, 12), P2(15, 7))
+    pent = Pentagon(P2(6, 1), P2(2, 10), P2(10, 16), P2(18, 10), P2(14, 1))
+    poly1 = PolyArea(pointify(pent))
+    poly2 = PolyArea(pointify(pent), [pointify(tri)])
+    multi = Multi([poly2, tri])
+    @test tri ⊆ pent
+    @test tri ⊆ poly1
+    @test tri ⊈ poly2
+    @test tri ⊆ multi
+    @test pent ⊆ poly1
+    @test pent ⊈ poly2
+    @test pent ⊆ multi
   end
 
   @testset "intersects" begin
