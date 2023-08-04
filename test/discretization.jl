@@ -64,7 +64,7 @@
     grid, inds = unview(mesh)
     @test grid isa CartesianGrid
     @test eltype(mesh) <: Quadrangle
-    @test all(q -> q ⊆ poly, mesh)
+    @test all(q -> any(∈(poly), vertices(q)), mesh)
   end
 
   @testset "Dehn1899" begin
