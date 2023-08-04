@@ -150,10 +150,9 @@ function _bresenham!(mask, grid, n, p₁, p₂)
   x₂, y₂ = ceil.(Int, (p₂ - o) ./ s)
 
   # fix coordinates of points that are on the grid border
-  x₁ = iszero(x₁) ? 1 : x₁
-  y₁ = iszero(y₁) ? 1 : y₁
-  x₂ = iszero(x₂) ? 1 : x₂
-  y₂ = iszero(y₂) ? 1 : y₂
+  xmax, ymax = size(grid)
+  x₁, y₁ = _fixcoords(x₁, y₁, xmax, ymax)
+  x₂, y₂ = _fixcoords(x₂, y₂, xmax, ymax)
 
   if abs(y₂ - y₁) < abs(x₂ - x₁)
     if x₁ > x₂
@@ -216,4 +215,10 @@ function _bresenhamhigh!(mask, n, x₁, y₁, x₂, y₂)
       D = D + 2dx
     end
   end
+end
+
+function _fixcoords(x, y, xmax, ymax)
+  x = x < 1 ? 1 : (x > xmax ? xmax : x)
+  y = y < 1 ? 1 : (y > ymax ? ymax : y)
+  x, y
 end
