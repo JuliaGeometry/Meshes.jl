@@ -17,6 +17,19 @@ isconvex(::Ray) = true
 
 isconvex(::Line) = true
 
+function isconvex(b::BezierCurve)
+  if ncontrols(b) ≤ 2
+    return true
+  else
+    ps = controls(b)
+    p₁, p₂ = ps[begin], ps[begin + 1]
+    for i in (firstindex(ps) + 2):lastindex(ps)
+      !iscollinear(p₁, p₂, ps[i]) && return false
+    end
+  end
+  return true
+end
+
 isconvex(::Plane) = true
 
 isconvex(::Box) = true
@@ -45,7 +58,6 @@ isconvex(::Tetrahedron) = true
 
 isconvex(p::Polygon{2}) = Set(vertices(convexhull(p))) == Set(vertices(p))
 
-# TODO: fix this with simplexify
 isconvex(m::Multi{Dim,T}) where {Dim,T} = isapprox(measure(convexhull(m)), measure(m), atol=atol(T))
 
 # --------------
