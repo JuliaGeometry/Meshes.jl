@@ -74,9 +74,9 @@
     @test quad1 ⊆ multi
     @test !(quad2 ⊆ multi)
 
-    p1 = Point2(-1.0, 0.0)
-    p2 = Point2(0.0, 0.0)
-    p3 = Point2(1.0, 0.0)
+    p1 = P2(-1.0, 0.0)
+    p2 = P2(0.0, 0.0)
+    p3 = P2(1.0, 0.0)
     L1 = Line(p1, p3)
     L2 = Line(p2, p3)
     @test L1 ⊆ L2
