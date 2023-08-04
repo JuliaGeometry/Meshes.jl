@@ -76,6 +76,7 @@ include("neighborsearch.jl")
 include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
+include("projecting.jl")
 
 # predicates
 include("predicates.jl")
@@ -83,6 +84,7 @@ include("predicates.jl")
 # algorithms
 include("merging.jl")
 include("sampling.jl")
+include("complement.jl")
 include("intersections.jl")
 include("pointification.jl")
 include("discretization.jl")

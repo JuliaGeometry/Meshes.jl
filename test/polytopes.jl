@@ -2,7 +2,6 @@
   @testset "Segments" begin
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
-    @test isconvex(Segment)
     @test isperiodic(Segment) == (false,)
     @test isparametrized(Segment)
 
@@ -258,7 +257,6 @@
     # ---------
 
     @test issimplex(Triangle)
-    @test isconvex(Triangle)
     @test isparametrized(Triangle)
 
     # Triangle in 2D space

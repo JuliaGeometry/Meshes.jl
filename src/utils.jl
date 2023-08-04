@@ -122,27 +122,6 @@ function sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
 end
 
 """
-    proj2D(points)
-
-Convert a vector of 3D `points` into a vector of 2D
-points living in a plane of maximum variance using SVD.
-"""
-function proj2D(points::AbstractVector{Point{3,T}}) where {T}
-  # https://math.stackexchange.com/a/99317
-  X = mapreduce(coordinates, hcat, points)
-  μ = sum(X, dims=2) / size(X, 2)
-  Z = X .- μ
-  U = svd(Z).U
-  u = U[:, 1]
-  v = U[:, 2]
-  n = T[0, 0, 1]
-  if (u × v) ⋅ n < 0
-    u, v = v, u
-  end
-  [Point(z ⋅ u, z ⋅ v) for z in eachcol(Z)]
-end
-
-"""
     dropunits(T)
 
 Returns the unitless type of a (unitful) type or value. See Unitful.jl.

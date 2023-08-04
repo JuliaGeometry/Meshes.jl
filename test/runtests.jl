@@ -93,6 +93,7 @@ testfiles = [
   "predicates.jl",
   "merging.jl",
   "sampling.jl",
+  "complement.jl",
   "intersections.jl",
   "pointification.jl",
   "discretization.jl",
