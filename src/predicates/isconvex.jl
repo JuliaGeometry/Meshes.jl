@@ -9,49 +9,49 @@ Tells whether or not the `geometry` is convex.
 """
 function isconvex end
 
-isconvex(g::Geometry) = isconvex(typeof(g))
+isconvex(::Point) = true
 
-isconvex(::Type{<:Point}) = true
+isconvex(::Segment) = true
 
-isconvex(::Type{<:Segment}) = true
+isconvex(::Ray) = true
 
-isconvex(::Type{<:Ray}) = true
+isconvex(::Line) = true
 
-isconvex(::Type{<:Line}) = true
+isconvex(::Plane) = true
 
-isconvex(::Type{<:Plane}) = true
+isconvex(::Box) = true
 
-isconvex(::Type{<:Box}) = true
+isconvex(::Ball) = true
 
-isconvex(::Type{<:Ball}) = true
+isconvex(::Sphere) = false
 
-isconvex(::Type{<:Sphere}) = false
+isconvex(::Disk) = true
 
-isconvex(::Type{<:Disk}) = true
+isconvex(::Circle) = false
 
-isconvex(::Type{<:Circle}) = false
+isconvex(::Cone) = true
 
-isconvex(::Type{<:Cone}) = true
+isconvex(::ConeSurface) = false
 
-isconvex(::Type{<:ConeSurface}) = false
+isconvex(::Cylinder) = true
 
-isconvex(::Type{<:Cylinder}) = true
+isconvex(::CylinderSurface) = false
 
-isconvex(::Type{<:CylinderSurface}) = false
+isconvex(::Torus) = false
 
-isconvex(::Type{<:Torus}) = false
+isconvex(::Triangle) = true
 
-isconvex(p::Polygon{Dim,T}) where {Dim,T} = issimple(p) && all(≤(T(π)), innerangles(boundary(p)))
+isconvex(::Tetrahedron) = true
 
-isconvex(::Type{<:Triangle}) = true
+isconvex(p::Polygon{2}) = Set(vertices(convexhull(p))) == Set(vertices(p))
 
-isconvex(::Type{<:Tetrahedron}) = true
+isconvex(p::Polygon{3}) = isconvex(proj2D(p))
+
+isconvex(m::Multi) = Set(vertices(convexhull(m))) == Set(vertices(m))
 
 # --------------
 # OPTIMIZATIONS
 # --------------
-
-isconvex(::Triangle) = true
 
 function isconvex(q::Quadrangle{2})
   v = vertices(q)
@@ -62,5 +62,5 @@ end
 
 function isconvex(q::Quadrangle{3})
   v = vertices(q)
-  iscoplanar(v...) && isconvex(Quadrangle(proj2D(collect(v))...))
+  iscoplanar(v...) && isconvex(proj2D(q))
 end

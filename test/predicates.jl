@@ -48,6 +48,15 @@
     @test !(poly ⊆ tri)
     @test quad ⊆ poly
     @test poly ⊆ quad
+
+    quad1 = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    quad2 = Quadrangle(P2(0, 0), P2(1.1, 0), P2(1, 1), P2(0, 1))
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    multi = Multi([poly])
+    @test quad1 ⊆ poly
+    @test !(quad2 ⊆ poly)
+    @test quad1 ⊆ multi
+    @test !(quad2 ⊆ multi)
   end
 
   @testset "intersects" begin
