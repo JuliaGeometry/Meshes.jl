@@ -22,12 +22,15 @@
     @test point ⊆ ball
     @test point ⊆ tri
     @test point ⊆ quad
+    @test point ⊆ point 
+    @test quad ⊆ quad
 
     s1 = Segment(P2(0, 0), P2(1, 1))
     s2 = Segment(P2(0.5, 0.5), P2(1, 1))
     s3 = Segment(P2(0, 0), P2(0.5, 0.5))
     @test s2 ⊆ s1
     @test s3 ⊆ s1
+    @test s1 ⊆ s1
 
     seg = Segment(P2(0, 0), P2(1, 1))
     box = Box(P2(0, 0), P2(1, 1))
@@ -70,6 +73,16 @@
     @test !(quad2 ⊆ poly)
     @test quad1 ⊆ multi
     @test !(quad2 ⊆ multi)
+
+    p1 = Point2(-1.0, 0.0)
+    p2 = Point2(0.0, 0.0)
+    p3 = Point2(1.0, 0.0)
+    L1 = Line(p1, p3)
+    L2 = Line(p2, p3)
+    @test L1 ⊆ L2
+    @test L2 ⊆ L1 
+    @test L1 ⊆ L1 
+    @test L2 ⊆ L2
   end
 
   @testset "intersects" begin

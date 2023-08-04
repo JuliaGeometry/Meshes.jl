@@ -8,7 +8,9 @@
 Tells whether or not `geometry₁` is contained in `geometry₂`.
 """
 function Base.issubset(g₁::Geometry, g₂::Geometry)
-  if isconvex(g₁) && isconvex(g₂)
+  if g₁ == g₂
+    return true
+  elseif isconvex(g₁) && isconvex(g₂)
     return _boundarypoints(g₁) ⊆ g₂
   elseif isconvex(g₁)
     return _boundarypoints(g₁) ⊆ g₂ && !intersects(g₁, !g₂)
