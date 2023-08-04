@@ -41,8 +41,8 @@
 
     grid = CartesianGrid(P2(-100, -100), P2(20, 20), T.((2, 2)))
     linds = LinearIndices(size(grid))
-    @test linds[57, 54] ∈ indices(grid, poly1)
-    @test linds[55, 53] ∈ indices(grid, poly2)
+    @test linds[57, 54] ∈ indices(grid, tri)
+    @test linds[55, 53] ∈ indices(grid, pent)
 
     # non-convex polygons
     poly1 = PolyArea(P2[(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)])
