@@ -81,4 +81,18 @@
     @test sprint(show, MIME"text/plain"(), multi) ==
           "MultiPolygon{2,Float64}\n  └─PolyArea(4-Ring)\n  └─Quadrangle(Point(0.0, 0.0), Point(1.0, 0.0), Point(1.0, 1.0), Point(0.0, 1.0))"
   end
+
+  # type aliases
+  point = P2(0, 0)
+  segm = Segment(P2(0, 0), P2(1, 1))
+  rope = Rope(P2[(0, 0), (1, 0), (1, 1)])
+  ring = Ring(P2[(0, 0), (1, 0), (1, 1)])
+  tri = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+  poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test Multi([point, point]) isa MultiPoint
+  @test Multi([segm, segm]) isa MultiSegment
+  @test Multi([rope, rope]) isa MultiRope
+  @test Multi([ring, ring]) isa MultiRing
+  @test Multi([tri, tri]) isa MultiPolygon
+  @test Multi([poly, poly]) isa MultiPolygon
 end

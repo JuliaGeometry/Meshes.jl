@@ -19,7 +19,9 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
 import Random
-import Base: values, ==, +, -, *
+import Base: values
+import Base: ==, !
+import Base: +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
@@ -74,14 +76,18 @@ include("neighborsearch.jl")
 include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
+include("projecting.jl")
 
 # predicates
 include("predicates.jl")
 
-# algorithms
+# operations
 include("merging.jl")
-include("sampling.jl")
 include("intersections.jl")
+include("complement.jl")
+
+# algorithms
+include("sampling.jl")
 include("pointification.jl")
 include("discretization.jl")
 include("simplification.jl")
@@ -192,7 +198,6 @@ export
   windingnumber,
   rings,
   segments,
-  hasholes,
   angles,
   innerangles,
   orientation,
@@ -201,6 +206,11 @@ export
 
   # multi-geometries
   Multi,
+  MultiPoint,
+  MultiSegment,
+  MultiRope,
+  MultiRing,
+  MultiPolygon,
 
   # connectivities
   Connectivity,
@@ -363,6 +373,7 @@ export
   isclosed,
   isconvex,
   issimple,
+  hasholes,
   intersects,
 
   # sampling

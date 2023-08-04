@@ -60,6 +60,12 @@ isconvex
 issimple
 ```
 
+## hasholes
+
+```@docs
+hasholes
+```
+
 ## point ∈ geometry
 
 ```@docs

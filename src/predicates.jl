@@ -9,6 +9,7 @@ include("predicates/issimplex.jl")
 include("predicates/isclosed.jl")
 include("predicates/isconvex.jl")
 include("predicates/issimple.jl")
+include("predicates/hasholes.jl")
 
 # binary predicates
 include("predicates/in.jl")

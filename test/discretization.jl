@@ -287,6 +287,14 @@
       @test nvertices(mesh) == 8
       @test nelements(mesh) == 6
     end
+
+    # degenerate triangle
+    poly = PolyArea(P2[(0, 0), (1, 1), (1, 1)])
+    mesh = discretize(poly)
+    @test nvertices(mesh) == 3
+    @test nelements(mesh) == 1
+    @test vertices(mesh) == [P2(0, 0), P2(0, 0), P2(0, 0)]
+    @test mesh[1] == Triangle(P2(0, 0), P2(0, 0), P2(0, 0))
   end
 
   @testset "Tetrahedralization" begin

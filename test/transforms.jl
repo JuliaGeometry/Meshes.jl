@@ -503,6 +503,13 @@
     rpoly = poly |> Repair{8}()
     @test nvertices(rpoly) == 4
     @test vertices(rpoly) == P2[(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)]
+
+    # degenerate triangle with repeated vertices
+    poly = PolyArea(P2[(0, 0), (1, 1), (1, 1)])
+    rpoly = poly |> Repair{8}()
+    @test !hasholes(rpoly)
+    @test rings(rpoly) == [Ring(P2(0, 0))]
+    @test vertices(rpoly) == [P2(0, 0)]
   end
 
   @testset "Smoothing" begin

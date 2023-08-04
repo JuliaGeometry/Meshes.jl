@@ -7,29 +7,30 @@
 
 Tells whether or not `geometry₁` is contained in `geometry₂`.
 """
-Base.issubset(g₁::Geometry, g₂::Geometry) = all(g -> g ⊆ g₂, simplexify(g₁))
+function Base.issubset(g₁::Geometry, g₂::Geometry)
+  if isconvex(g₁) && isconvex(g₂)
+    return _boundarypoints(g₁) ⊆ g₂
+  elseif isconvex(g₁)
+    return _boundarypoints(g₁) ⊆ g₂ && !intersects(g₁, !g₂)
+  else
+    return all(g -> g ⊆ g₂, simplexify(g₁))
+  end
+end
+
+_boundarypoints(p::Primitive) = pointify(p)
+
+_boundarypoints(p::Polytope) = vertices(p)
+
+# --------------
+# OPTIMIZATIONS
+# --------------
 
 Base.issubset(p::Point, g::Geometry) = p ∈ g
 
-Base.issubset(s₁::Segment, s₂::Segment) = all(∈(s₂), vertices(s₁))
-
 Base.issubset(b₁::Box, b₂::Box) = minimum(b₁) ∈ b₂ && maximum(b₁) ∈ b₂
 
-Base.issubset(s::Segment, b::Box) = all(∈(b), vertices(s))
+# ---------------
+# IMPLEMENTATION
+# ---------------
 
-Base.issubset(s::Segment, b::Ball) = all(∈(b), vertices(s))
-
-Base.issubset(t₁::Triangle, t₂::Triangle) = all(∈(t₂), vertices(t₁))
-
-Base.issubset(t::Triangle, p::Polygon) =
-  all(∈(p), vertices(t)) && (!intersects(boundary(t), boundary(p)) || vertices(t) ⊆ boundary(p))
-
-Base.issubset(t::Triangle, b::Box) = all(∈(b), vertices(t))
-
-Base.issubset(t::Triangle, b::Ball) = all(∈(b), vertices(t))
-
-Base.issubset(t₁::Tetrahedron, t₂::Tetrahedron) = all(∈(t₂), vertices(t₁))
-
-Base.issubset(t::Tetrahedron, b::Box) = all(∈(b), vertices(t))
-
-Base.issubset(t::Tetrahedron, b::Ball) = all(∈(b), vertices(t))
+Base.issubset(points, geom::Geometry) = all(∈(geom), points)

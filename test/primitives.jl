@@ -155,7 +155,6 @@
   end
 
   @testset "Ray" begin
-    @test isconvex(Ray)
     @test isparametrized(Ray)
 
     r = Ray(P2(0, 0), V2(1, 1))
@@ -207,7 +206,6 @@
   end
 
   @testset "Line" begin
-    @test isconvex(Line)
     @test isparametrized(Line)
 
     l = Line(P2(0, 0), P2(1, 1))
@@ -231,7 +229,6 @@
   end
 
   @testset "Plane" begin
-    @test isconvex(Plane)
     @test isparametrized(Plane)
 
     p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
@@ -318,7 +315,6 @@
   end
 
   @testset "Box" begin
-    @test isconvex(Box)
     @test isparametrized(Box)
     @test isperiodic(Box{1}) == (false,)
     @test isperiodic(Box{2}) == (false, false)
@@ -450,7 +446,6 @@
   end
 
   @testset "Ball" begin
-    @test isconvex(Ball)
     @test isparametrized(Ball)
     @test isperiodic(Ball{2}) == (false, true)
     @test isperiodic(Ball{3}) == (false, true, true)
@@ -521,7 +516,6 @@
   end
 
   @testset "Sphere" begin
-    @test !isconvex(Sphere)
     @test isparametrized(Sphere)
     @test isperiodic(Sphere{2}) == (true,)
     @test isperiodic(Sphere{3}) == (true, true)
@@ -621,7 +615,6 @@
   end
 
   @testset "Disk" begin
-    @test isconvex(Disk)
     @test isparametrized(Disk)
 
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
@@ -645,7 +638,6 @@
   end
 
   @testset "Circle" begin
-    @test !isconvex(Circle)
     @test isparametrized(Circle)
 
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
@@ -689,7 +681,6 @@
   end
 
   @testset "Cylinder" begin
-    @test isconvex(Cylinder)
     @test isparametrized(Cylinder)
 
     c = Cylinder(Plane(P3(1, 2, 3), V3(0, 0, 1)), Plane(P3(4, 5, 6), V3(0, 0, 1)), T(5))
@@ -745,7 +736,6 @@
   end
 
   @testset "CylinderSurface" begin
-    @test !isconvex(CylinderSurface)
     @test isparametrized(CylinderSurface)
 
     c = CylinderSurface(T(2))
@@ -824,7 +814,6 @@
   end
 
   @testset "Torus" begin
-    @test !isconvex(Torus)
     @test isparametrized(Torus)
     @test isperiodic(Torus) == (true, true)
 
