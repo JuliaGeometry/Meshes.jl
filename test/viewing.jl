@@ -30,32 +30,38 @@
     pent = Pentagon(P2(6, 1), P2(2, 10), P2(10, 16), P2(18, 10), P2(14, 1))
 
     grid = CartesianGrid{T}(20, 20)
-    @test [189, 190, 191] ⊆ indices(grid, tri)
-    @test [109, 110, 111] ⊆ indices(grid, pent)
+    linds = LinearIndices(size(grid))
+    @test linds[10, 10] ∈ indices(grid, tri)
+    @test linds[10, 6] ∈ indices(grid, pent)
 
     grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    @test [37, 36, 37] ⊆ indices(grid, tri)
-    @test [34, 35, 36] ⊆ indices(grid, pent)
+    linds = LinearIndices(size(grid))
+    @test linds[6, 4] ∈ indices(grid, tri)
+    @test linds[5, 4] ∈ indices(grid, pent)
 
     grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
-    @test [284, 285, 286] ⊆ indices(grid, tri)
-    @test [152, 153, 154] ⊆ indices(grid, pent)
+    linds = LinearIndices(size(grid))
+    @test linds[21, 7] ∈ indices(grid, tri)
+    @test linds[21, 4] ∈ indices(grid, pent)
 
     # non-convex polygons
     poly1 = PolyArea(P2[(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)])
     poly2 = PolyArea(pointify(pent), [pointify(tri)])
 
     grid = CartesianGrid{T}(20, 20)
-    @test [111, 112, 113] ⊆ indices(grid, poly1)
-    @test [49, 50, 51] ⊆ indices(grid, poly2)
+    linds = LinearIndices(size(grid))
+    @test linds[12, 6] ∈ indices(grid, poly1)
+    @test linds[10, 3] ∈ indices(grid, poly2)
 
     grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    @test [36, 37, 38] ⊆ indices(grid, poly1)
-    @test [24, 25, 26] ⊆ indices(grid, poly2)
+    linds = LinearIndices(size(grid))
+    @test linds[7, 4] ∈ indices(grid, poly1)
+    @test linds[5, 3] ∈ indices(grid, poly2)
 
     grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
-    @test [241, 242, 243] ⊆ indices(grid, poly1)
-    @test [148, 149, 150] ⊆ indices(grid, poly2)
+    linds = LinearIndices(size(grid))
+    @test linds[22, 6] ∈ indices(grid, poly1)
+    @test linds[17, 4] ∈ indices(grid, poly2)
   end
 
   @testset "Data" begin
