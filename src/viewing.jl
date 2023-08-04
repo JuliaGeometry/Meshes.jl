@@ -75,13 +75,14 @@ indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry
 
 function indices(grid::Grid{2}, poly::Polygon{2})
   dims = size(grid)
-  mask = spzeros(Int, dims)
+  mask = zeros(Int, dims)
   for (n, triangle) in enumerate(simplexify(poly))
     _fill!(mask, grid, triangle, n)
   end
 
   # convert to linear indices
-  LinearIndices(dims)[mask .> 0]
+  linds = LinearIndices(dims)
+  @view linds[mask .> 0]
 end
 
 indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
@@ -134,8 +135,8 @@ function _fill!(mask, grid, triangle, n)
   j1 = findfirst(==(n), mask).I[2]
   j2 = findlast(==(n), mask).I[2]
   for j in j1:j2
-    i1 = findfirst(==(n), mask[:, j])
-    i2 = findlast(==(n), mask[:, j])
+    i1 = findfirst(==(n), @view(mask[:, j]))
+    i2 = findlast(==(n), @view(mask[:, j]))
     mask[i1:i2, j] .= n
   end
 end
