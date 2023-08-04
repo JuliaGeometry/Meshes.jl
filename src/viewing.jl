@@ -75,7 +75,7 @@ indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry
 
 function indices(grid::Grid{2}, poly::Polygon{2})
   dims = size(grid)
-  mask = zeros(Int, dims)
+  mask = spzeros(Int, dims)
   for (n, triangle) in enumerate(simplexify(poly))
     _fill!(mask, grid, triangle, n)
   end

@@ -64,6 +64,13 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
+function point2ind(grid, p)
+  o = minimum(grid)
+  s = spacing(grid)
+  x, y = ceil.(Int, (p - o) ./ s)
+  LinearIndices(size(grid))[x, y]
+end
+
 include("dummy.jl")
 
 # list of tests

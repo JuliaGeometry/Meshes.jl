@@ -26,33 +26,66 @@
     @test coordinates.(v) == V2[(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)]
 
     # convex polygons
-    t = Triangle(P2(5, 7), P2(10, 12), P2(15, 7))
-    q = Pentagon(P2(6, 1), P2(2, 10), P2(10, 16), P2(18, 10), P2(14, 1))
-    p = PolyArea(pointify(q), [pointify(t)])
+    tri = Triangle(P2(5, 7), P2(10, 12), P2(15, 7))
+    pent = Pentagon(P2(6, 1), P2(2, 10), P2(10, 16), P2(18, 10), P2(14, 1))
 
-    g = CartesianGrid{T}(20, 20)
-    vt = view(g, t)
-    vq = view(g, q)
-    vp = view(g, p)
-    @test nelements(vt) == 36
-    @test nelements(vq) == 162
-    @test nelements(vp) == 178
+    grid = CartesianGrid{T}(20, 20)
+    vtri = view(grid, tri)
+    vpent = view(grid, pent)
+    for (poly, vpoly) in [(tri, vtri), (pent, vpent)]
+      for point in vertices(poly)
+        @test grid[point2ind(grid, point)] ∈ vpoly
+      end
+    end
 
-    g = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    vt = view(g, t)
-    vq = view(g, q)
-    vp = view(g, p)
-    @test nelements(vt) == 11
-    @test nelements(vq) == 45
-    @test nelements(vp) == 44
+    grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
+    vtri = view(grid, tri)
+    vpent = view(grid, pent)
+    for (poly, vpoly) in [(tri, vtri), (pent, vpent)]
+      for point in vertices(poly)
+        @test grid[point2ind(grid, point)] ∈ vpoly
+      end
+    end
 
-    g = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
-    vt = view(g, t)
-    vq = view(g, q)
-    vp = view(g, p)
-    @test nelements(vt) == 61
-    @test nelements(vq) == 241
-    @test nelements(vp) == 218
+    grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
+    vtri = view(grid, tri)
+    vpent = view(grid, pent)
+    for (poly, vpoly) in [(tri, vtri), (pent, vpent)]
+      for point in vertices(poly)
+        @test grid[point2ind(grid, point)] ∈ vpoly
+      end
+    end
+
+    # non-convex polygons
+    poly1 = PolyArea(P2[(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)])
+    poly2 = PolyArea(pointify(pent), [pointify(tri)])
+
+    grid = CartesianGrid{T}(20, 20)
+    vpoly1 = view(grid, poly1)
+    vpoly2 = view(grid, poly2)
+    for (poly, vpoly) in [(poly1, vpoly1), (poly2, vpoly2)]
+      for point in vertices(poly)
+        @test grid[point2ind(grid, point)] ∈ vpoly
+      end
+    end
+
+    grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
+    vpoly1 = view(grid, poly1)
+    vpoly2 = view(grid, poly2)
+    for (poly, vpoly) in [(poly1, vpoly1), (poly2, vpoly2)]
+      for point in vertices(poly)
+        @test grid[point2ind(grid, point)] ∈ vpoly
+      end
+    end
+
+    grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
+    vpoly1 = view(grid, poly1)
+    vpoly2 = view(grid, poly2)
+    for (poly, vpoly) in [(poly1, vpoly1), (poly2, vpoly2)]
+      for point in vertices(poly)
+        @test grid[point2ind(grid, point)] ∈ vpoly
+      end
+    end
   end
 
   @testset "Data" begin
