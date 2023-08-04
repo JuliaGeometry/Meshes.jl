@@ -10,6 +10,21 @@
     @test isconvex(tri)
     @test !isconvex(poly)
     @test isconvex(multi)
+
+    b = BezierCurve(P2[(0, 0), (1, 0), (2, 0)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0), (1, 1), (2, 2)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0), (1, 0)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0), (5, 3), (-10, 3), (17, 20)])
+    @test !isconvex(b) 
+    b = BezierCurve(P2[(5, 5), (5,6), (5,7), (5,8), (5,9), (5,10), (5,11)])
+    @test isconvex(b)
+    b = BezierCurve(P2[])
+    @test isconvex(b)
   end
 
   @testset "issubset" begin

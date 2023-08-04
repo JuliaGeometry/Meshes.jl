@@ -59,5 +59,18 @@ function isconvex(q::Quadrangle{2})
   intersects(d1, d2)
 end
 
+function isconvex(b::BezierCurve)
+  if ncontrols(b) ≤ 2
+    return true
+  else
+    ps = controls(b)
+    p₁, p₂ = ps[begin], ps[begin + 1]
+    for i in (firstindex(ps) + 2):lastindex(ps)
+      !iscollinear(p₁, p₂, ps[i]) && return false
+    end
+  end
+  return true
+end
+
 # temporary workaround in 3D
 isconvex(p::Polygon{3}) = isconvex(proj2D(p))
