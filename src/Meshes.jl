@@ -81,11 +81,13 @@ include("projecting.jl")
 # predicates
 include("predicates.jl")
 
-# algorithms
+# operations
 include("merging.jl")
-include("sampling.jl")
-include("complement.jl")
 include("intersections.jl")
+include("complement.jl")
+
+# algorithms
+include("sampling.jl")
 include("pointification.jl")
 include("discretization.jl")
 include("simplification.jl")
