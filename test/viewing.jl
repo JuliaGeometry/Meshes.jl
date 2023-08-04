@@ -34,15 +34,15 @@
     @test linds[10, 10] ∈ indices(grid, tri)
     @test linds[10, 6] ∈ indices(grid, pent)
 
-    grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    linds = LinearIndices(size(grid))
-    @test linds[6, 4] ∈ indices(grid, tri)
-    @test linds[5, 4] ∈ indices(grid, pent)
-
     grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
     linds = LinearIndices(size(grid))
     @test linds[21, 7] ∈ indices(grid, tri)
     @test linds[21, 4] ∈ indices(grid, pent)
+
+    grid = CartesianGrid(P2(-100, -100), P2(20, 20), T.((2, 2)))
+    linds = LinearIndices(size(grid))
+    @test linds[57, 54] ∈ indices(grid, poly1)
+    @test linds[55, 53] ∈ indices(grid, poly2)
 
     # non-convex polygons
     poly1 = PolyArea(P2[(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)])
@@ -53,15 +53,15 @@
     @test linds[12, 6] ∈ indices(grid, poly1)
     @test linds[10, 3] ∈ indices(grid, poly2)
 
-    grid = CartesianGrid((10, 10), T.((0, 0)), T.((2, 2)))
-    linds = LinearIndices(size(grid))
-    @test linds[7, 4] ∈ indices(grid, poly1)
-    @test linds[5, 3] ∈ indices(grid, poly2)
-
     grid = CartesianGrid(P2(-2, -2), P2(20, 20), T.((0.5, 1.5)))
     linds = LinearIndices(size(grid))
     @test linds[22, 6] ∈ indices(grid, poly1)
     @test linds[17, 4] ∈ indices(grid, poly2)
+
+    grid = CartesianGrid(P2(-100, -100), P2(20, 20), T.((2, 2)))
+    linds = LinearIndices(size(grid))
+    @test linds[57, 54] ∈ indices(grid, poly1)
+    @test linds[55, 53] ∈ indices(grid, poly2)
   end
 
   @testset "Data" begin
