@@ -102,5 +102,5 @@ function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
     t = Triangle(v[i - 1], v[i], v[i + 1])
     area(t) > atol(T)^2 && push!(keep, i)
   end
-  v[keep]
+  isempty(keep) ? v[begin] : v[keep]
 end

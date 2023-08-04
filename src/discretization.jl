@@ -40,6 +40,14 @@ function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMetho
   clean = Repair{0}() → Repair{8}()
   cpoly = clean(polygon)
 
+  # handle degenerate polygons
+  if nvertices(cpoly) == 1
+    v = first(vertices(cpoly))
+    points = [v, v, v]
+    connec = [connect((1, 2, 3))]
+    return SimpleMesh(points, connec)
+  end
+
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
   ring, dups = bridge(cpoly, width=2atol(T))
