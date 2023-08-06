@@ -13,9 +13,6 @@ Base.view(data::Data, inds) = DataView(data, inds)
 Base.view(v::DomainView, inds::AbstractVector{Int}) = DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
 Base.view(v::DataView, inds::AbstractVector{Int}) = DataView(getfield(v, :data), getfield(v, :inds)[inds])
 
-# specialize view for grids and Cartesian indices
-Base.view(grid::Grid, inds::CartesianIndices) = getindex(grid, inds)
-
 # ---------------------
 # UNVIEWS WITH INDICES
 # ---------------------
@@ -53,8 +50,7 @@ function Base.view(data::Data, geometry::Geometry)
   subdom = view(dom, inds)
 
   # retrieve subtable
-  tinds = _linear(dom, inds)
-  subtab = Tables.subset(tab, tinds)
+  subtab = Tables.subset(tab, inds)
 
   # data table for elements
   vals = Dict(paramdim(dom) => subtab)
@@ -62,16 +58,12 @@ function Base.view(data::Data, geometry::Geometry)
   constructor(D)(subdom, vals)
 end
 
-# convert from Cartesian to linear indices if needed
-_linear(domain::Domain, inds) = inds
-_linear(grid::Grid, inds) = vec(LinearIndices(size(grid))[inds])
-
 """
     indices(domain, geometry)
 
-Return the indices of the `domain` that are inside the `geometry`.
+Return the indices of the `domain` that intersect with the `geometry`.
 """
-indices(domain::Domain, geometry::Geometry) = filter(i -> domain[i] ⊆ geometry, 1:nelements(domain))
+indices(domain::Domain, geometry::Geometry) = filter(i -> intersects(domain[i], geometry), 1:nelements(domain))
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
@@ -80,31 +72,15 @@ function indices(grid::CartesianGrid, box::Box)
   sz = size(grid)
 
   # intersection of boxes
-  □ = boundingbox(grid) ∩ box
-  lo, up = extrema(□)
+  lo, up = extrema(boundingbox(grid) ∩ box)
 
   # Cartesian indices of new corners
-  ilo = max.(ceil.(Int, (lo - or) ./ sp) .+ 1, 1)
-  iup = min.(floor.(Int, (up - or) ./ sp), sz)
+  ilo = max.(ceil.(Int, (lo - or) ./ sp), 1)
+  iup = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
 
-  CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
+  # Cartesian range from corner to corner
+  range = CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
+
+  # convert to linear indices
+  LinearIndices(sz)[range] |> vec
 end
-
-# ----------
-# UTILITIES
-# ----------
-
-"""
-    slice(object, xmin:xmax, ymin:ymax, ...)
-
-Slice the `object` using real coordinate ranges `xmin:xmax`, `ymin:ymax`, ...
-
-### Notes
-
-This function is equivalent to `view(object, Box(first.(ranges), last.(ranges))`.
-
-In Julia the range `0.5:10.0` is materialized as `[0.5, ..., 9.5]` so it won't
-necessarily include the right value. This behavior is different than the more
-intuitive behavior of `view(object, Box((0.5,0.5), (10.0,10.0))`.
-"""
-slice(object, ranges...) = view(object, Box(first.(ranges), last.(ranges)))

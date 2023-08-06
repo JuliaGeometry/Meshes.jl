@@ -8,7 +8,7 @@
     g = CartesianGrid{T}(10, 10)
     b = Box(P2(1, 1), P2(5, 5))
     v = view(g, b)
-    @test v == CartesianGrid(P2(1, 1), P2(5, 5), dims=(4, 4))
+    @test v == CartesianGrid(P2(0, 0), P2(6, 6), dims=(6, 6))
 
     p = PointSet(collect(vertices(g)))
     v = view(p, b)
@@ -19,7 +19,7 @@
     p = PointSet(collect(vertices(g)))
     b = Ball(P2(0, 0), T(2))
     v = view(g, b)
-    @test nelements(v) == 1
+    @test nelements(v) == 4
     @test v[1] == g[1]
     v = view(p, b)
     @test nelements(v) == 6
@@ -43,11 +43,9 @@
       d = dummy(g, t)
       b = Box(P2(1, 1), P2(5, 5))
       v = view(d, b)
-      @test domain(v) == CartesianGrid(P2(1, 1), P2(5, 5), dims=(4, 4))
-      @test Tables.columntable(values(v)) == (
-        a=[12, 13, 14, 15, 22, 23, 24, 25, 32, 33, 34, 35, 42, 43, 44, 45],
-        b=[12, 13, 14, 15, 22, 23, 24, 25, 32, 33, 34, 35, 42, 43, 44, 45]
-      )
+      @test domain(v) == CartesianGrid(P2(0, 0), P2(6, 6), dims=(6, 6))
+      x = [collect(1:6); collect(11:16); collect(21:26); collect(31:36); collect(41:46); collect(51:56)]
+      @test Tables.columntable(values(v)) == (a=x, b=x)
 
       p = PointSet(collect(vertices(g)))
       d = dummy(p, t)
@@ -60,24 +58,6 @@
         a=[13, 14, 15, 16, 17, 24, 25, 26, 27, 28, 35, 36, 37, 38, 39, 46, 47, 48, 49, 50, 57, 58, 59, 60, 61],
         b=[13, 14, 15, 16, 17, 24, 25, 26, 27, 28, 35, 36, 37, 38, 39, 46, 47, 48, 49, 50, 57, 58, 59, 60, 61]
       )
-
-      g = CartesianGrid{T}(250, 250)
-      t = (a=rand(250 * 250), b=rand(250 * 250))
-      d = dummy(g, t)
-      s1 = slice(d, T(50.5):T(100.2), T(41.7):T(81.3))
-      d1 = domain(s1)
-      pts1 = [centroid(d1, i) for i in 1:nelements(d1)]
-      X1 = reduce(hcat, coordinates.(pts1))
-      @test all(T[50.5, 41.7] .≤ minimum(X1, dims=2))
-      @test all(maximum(X1, dims=2) .≤ T[100.2, 81.3])
-
-      p = sample(d, 100)
-      s2 = slice(p, T(50.5):T(150.7), T(175.2):T(250.3))
-      d2 = domain(s2)
-      pts2 = [centroid(d2, i) for i in 1:nelements(d2)]
-      X2 = reduce(hcat, coordinates.(pts2))
-      @test all(T[50.5, 175.2] .≤ minimum(X2, dims=2))
-      @test all(maximum(X2, dims=2) .≤ T[150.7, 250.3])
     end
   end
 end

@@ -311,7 +311,6 @@ export
   # viewing
   unview,
   indices,
-  slice,
 
   # partitions
   Partition,
