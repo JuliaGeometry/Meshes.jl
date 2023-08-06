@@ -64,7 +64,7 @@ end
 Return the indices of the elements of the `domain`
 that intersect with the `geometry`.
 """
-indices(domain::Domain, geometry::Geometry) = filter(i -> intersects(domain[i], geometry), 1:nelements(domain))
+indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
