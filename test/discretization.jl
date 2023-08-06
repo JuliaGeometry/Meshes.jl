@@ -101,16 +101,16 @@
 
   @testset "FIST" begin
     𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
-    @test Meshes.ears(𝒫) == [2, 4, 5]
+    @test Meshes.earsccw(𝒫) == [2, 4, 5]
 
     𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (1, 2)])
-    @test Meshes.ears(𝒫) == [2, 4]
+    @test Meshes.earsccw(𝒫) == [2, 4]
 
     𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (1, 2)])
-    @test Meshes.ears(𝒫) == [2, 4]
+    @test Meshes.earsccw(𝒫) == [2, 4]
 
     𝒫 = Ring(P2[(0, 0), (1, 1), (1, 2)])
-    @test Meshes.ears(𝒫) == []
+    @test Meshes.earsccw(𝒫) == []
 
     𝒫 = Ring(
       P2[
@@ -130,7 +130,7 @@
         (0.385557753911967, 0.322338556632868)
       ]
     )
-    @test Meshes.ears(𝒫) == [1, 3, 5, 6, 8, 10, 12, 14]
+    @test Meshes.earsccw(𝒫) == [1, 3, 5, 6, 8, 10, 12, 14]
 
     points = P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]
     connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)

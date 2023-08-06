@@ -38,7 +38,8 @@ function discretizewithin(ring::Ring{2}, method::FIST)
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
 
   # input ring
-  𝒫 = ring
+  O = orientation(ring, TriangleOrientation())
+  𝒫 = O == :CCW ? ring : reverse(ring)
 
   # points of resulting mesh
   points = vertices(𝒫)
@@ -47,7 +48,7 @@ function discretizewithin(ring::Ring{2}, method::FIST)
   inds = CircularVector(1:nvertices(𝒫))
 
   # perform ear clipping
-  𝒬 = ears(𝒫)
+  𝒬 = earsccw(𝒫)
   earshuffle!(𝒬)
   n = nvertices(𝒫)
   𝒯 = Connectivity{Triangle,3}[]
@@ -65,7 +66,7 @@ function discretizewithin(ring::Ring{2}, method::FIST)
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
       for j in (i - 1, i)
-        if isear(𝒫, j)
+        if isearccw(𝒫, j)
           𝒬 = 𝒬 ∪ [mod1(j, n)]
         else
           setdiff!(𝒬, [mod1(j, n)])
@@ -73,7 +74,7 @@ function discretizewithin(ring::Ring{2}, method::FIST)
       end
       clipped = true
     elseif clipped # recompute all ears
-      𝒬 = ears(𝒫)
+      𝒬 = earsccw(𝒫)
       earshuffle!(𝒬)
       clipped = false
     else # recovery process
@@ -103,22 +104,9 @@ function discretizewithin(ring::Ring{2}, method::FIST)
   SimpleMesh(collect(points), 𝒯)
 end
 
-# return index of all ears of 𝒫
-ears(𝒫) = filter(i -> isear(𝒫, i), 1:nvertices(𝒫))
-
-# tell whether or not vertex i is an ear of 𝒫
-function isear(𝒫, i)
-  O = orientation(𝒫, TriangleOrientation())
-  if O == :CCW
-    isearccw(𝒫, i)
-  else
-    # reverse chain and index
-    n = nvertices(𝒫)
-    ℛ = reverse(𝒫)
-    j = n - i - 1
-    isearccw(ℛ, j)
-  end
-end
+# return index of all ears of 𝒫 assuming that 𝒫 is
+# has counter-clockwise orientation
+earsccw(𝒫) = filter(i -> isearccw(𝒫, i), 1:nvertices(𝒫))
 
 # tells whether or not vertex i is an ear of 𝒫
 # assuming that 𝒫 has counter-clockwise orientation
