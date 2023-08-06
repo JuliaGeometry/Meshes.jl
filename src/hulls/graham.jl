@@ -46,7 +46,7 @@ function hull(points, ::GrahamScan)
   # rotational sweep
   r = [O, q[1], q[2]]
   for B in q[3:end]
-    while ∠(r[end - 1], r[end], B) > atol(T)
+    while ∠(r[end - 1], r[end], B) > atol(T) && length(r) ≥ 3
       pop!(r)
     end
     push!(r, B)
