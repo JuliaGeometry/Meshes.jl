@@ -36,7 +36,7 @@ unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
     view(domain, geometry)
 
 Return a view of the `domain` containing all elements that
-are inside the `geometry`.
+intersect with the `geometry`.
 """
 Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
 
@@ -61,7 +61,8 @@ end
 """
     indices(domain, geometry)
 
-Return the indices of the `domain` that intersect with the `geometry`.
+Return the indices of the elements of the `domain`
+that intersect with the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = filter(i -> intersects(domain[i], geometry), 1:nelements(domain))
 
