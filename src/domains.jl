@@ -6,7 +6,6 @@
     Domain
 
 A domain is an indexable collection of geometries (e.g. mesh).
-``
 """
 abstract type Domain{Dim,T} end
 
