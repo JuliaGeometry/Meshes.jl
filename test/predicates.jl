@@ -317,4 +317,12 @@
     @test intersects(rope, multi)
     @test intersects(seg, multi)
   end
+
+  @testset "iscollinear" begin
+    @test iscollinear(P2(0, 0), P2(1, 1), P2(2, 2))
+  end
+
+  @testset "iscoplanar" begin
+    @test iscoplanar(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0))
+  end
 end

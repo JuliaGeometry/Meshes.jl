@@ -373,6 +373,8 @@ export
   issimple,
   hasholes,
   intersects,
+  iscollinear,
+  iscoplanar,
 
   # clipping
   ClippingMethod,
@@ -469,8 +471,6 @@ export
   TriangleOrientation,
   signarea,
   sideof,
-  iscollinear,
-  iscoplanar,
   householderbasis,
   supportfun,
   laplacematrix,

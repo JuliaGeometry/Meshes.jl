@@ -109,3 +109,15 @@ intersects(poly, ball3)
 ```@example intersects
 intersects(poly, ball4)
 ```
+
+## iscollinear 
+
+```@docs 
+iscollinear 
+``` 
+
+## iscoplanar 
+
+```@docs 
+iscoplanar 
+```
