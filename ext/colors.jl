@@ -19,12 +19,16 @@ ascolorscheme(scheme) = scheme
 # default colorscheme for vector of values
 defaultscheme(values) = colorschemes[:viridis]
 
+# add transparency to colors
+setalpha(colors, alphas) = coloralpha.(colors, alphas)
+setalpha(colors, ::Nothing) = colors
+
 # --------------------------------
 # PROCESS COLORS PROVIDED BY USER
 # --------------------------------
 
-# STEP 1: convert user input to colors
-function tocolors(values, scheme)
+# convert user input to colors
+function process(values::V, scheme, alphas)
   # find invalid and valid indices
   iinds = findall(ismissing, values)
   vinds = setdiff(1:length(values), iinds)
@@ -35,7 +39,7 @@ function tocolors(values, scheme)
   # valid values are assigned colors from scheme
   vals = coalesce.(values[vinds])
   vscheme = isnothing(scheme) ? defaultscheme(vals) : ascolorscheme(scheme)
-  vcolors = ascolors(vals, vscheme)
+  vcolors = setalpha(ascolors(vals, vscheme), alphas)
 
   # build final vector of colors
   colors = Vector{Colorant}(undef, length(values))
@@ -45,10 +49,4 @@ function tocolors(values, scheme)
   colors
 end
 
-# STEP 2: add transparency to colors
-setalpha(colors, alphas) = coloralpha.(colors, alphas)
-setalpha(colors, alpha::Number) = coloralpha.(colors, alpha)
-setalpha(colors, ::Nothing) = colors
-
 process(value, scheme, alphas) = process([value], scheme, alphas) |> first
-process(values::V, scheme, alphas) = setalpha(tocolors(values, scheme), alphas)
