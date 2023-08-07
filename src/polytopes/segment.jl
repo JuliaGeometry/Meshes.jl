@@ -13,8 +13,6 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
 @polytope Segment 1 2
 
-nvertices(::Type{<:Segment}) = 2
-
 Base.minimum(s::Segment) = s.vertices[1]
 
 Base.maximum(s::Segment) = s.vertices[2]
@@ -26,11 +24,6 @@ measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
 boundary(s::Segment) = PointSet(pointify(s))
 
 center(s::Segment) = s(0.5)
-
-function Base.isapprox(s1::Segment, s2::Segment)
-  v1, v2 = s1.vertices, s2.vertices
-  isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
-end
 
 function (s::Segment)(t)
   if t < 0 || t > 1

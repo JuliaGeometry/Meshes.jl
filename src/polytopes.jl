@@ -28,15 +28,25 @@ have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
 abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
 
 # heper macro to define polytopes
-macro polytope(type, K, N)
+macro polytope(Type, K, N)
+  reducer(expr₁, expr₂) = :($expr₁ && $expr₂)
+  makeexpr(i) = :(isapprox(p₁.vertices[$i], p₂.vertices[$i]; kwargs...))
+
   expr = quote
-    $Base.@__doc__ struct $type{Dim,T} <: Polytope{$K,Dim,T}
+    $Base.@__doc__ struct $Type{Dim,T} <: Polytope{$K,Dim,T}
       vertices::NTuple{$N,Point{Dim,T}}
     end
 
-    $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
-    $type(vertices::Vararg{Point{Dim,T},$N}) where {Dim,T} = $type{Dim,T}(vertices)
+    $Type(vertices::Vararg{Tuple,$N}) = $Type(Point.(vertices))
+    $Type(vertices::Vararg{Point{Dim,T},$N}) where {Dim,T} = $Type{Dim,T}(vertices)
+
+    nvertices(::Type{<:$Type}) = $N
+
+    ==(p₁::$Type, p₂::$Type) = p₁.vertices == p₂.vertices
+
+    Base.isapprox(p₁::$Type, p₂::$Type; kwargs...) = $(mapfoldr(makeexpr, reducer, 1:N))
   end
+
   esc(expr)
 end
 
@@ -290,20 +300,6 @@ vertices(p::Polytope) = p.vertices
 Return the number of vertices in the `polytope`.
 """
 nvertices(p::Polytope) = nvertices(typeof(p))
-
-"""
-    p₁ == p₂
-
-Tells whether or not polytopes `p₁` and `p₂` are equal.
-"""
-==(p₁::Polytope, p₂::Polytope) = vertices(p₁) == vertices(p₂)
-
-"""
-    p₁ ≈ p₂
-
-Tells whether or not polytopes `p₁` and `p₂` are approximately equal.
-"""
-Base.isapprox(p₁::Polytope, p₂::Polytope) = all(v -> v[1] ≈ v[2], zip(vertices(p₁), vertices(p₂)))
 
 """
     centroid(polytope)

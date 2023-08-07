@@ -60,7 +60,10 @@ PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} = PolyArea(collect(outer);
 
 PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} = PolyArea(collect(Point.(outer)); fix=fix)
 
-==(p1::PolyArea, p2::PolyArea) = p1.outer == p2.outer && p1.inners == p2.inners
+==(p₁::PolyArea, p₂::PolyArea) = p₁.outer == p₂.outer && p₁.inners == p₂.inners
+
+Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...) = 
+  isapprox(p₁.outer, p₂.outer; kwargs...) && isapprox(p₁.inners, p₂.inners; kwargs...)
 
 function vertices(p::PolyArea{Dim,T}) where {Dim,T}
   vo = vertices(p.outer)

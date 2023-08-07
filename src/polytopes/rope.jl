@@ -24,6 +24,10 @@ end
 
 nvertices(r::Rope) = length(r.vertices)
 
+==(r₁::Rope, r₂::Rope) = r₁.vertices == r₂.vertices
+
+Base.isapprox(r₁::Rope, r₂::Rope; kwargs...) = isapprox(r₁.vertices, r₂.vertices; kwargs...)
+
 Base.close(r::Rope) = Ring(r.vertices)
 
 Base.open(r::Rope) = r
