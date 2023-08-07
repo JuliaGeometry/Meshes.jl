@@ -19,6 +19,7 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
 import Random
+import Base: sort
 import Base: values
 import Base: ==, !
 import Base: +, -, *
@@ -64,6 +65,9 @@ include("viewing.jl")
 # domain partitions
 include("partitions.jl")
 include("partitioning.jl")
+
+# domain sorting
+include("sorting.jl")
 
 # domain traversal
 include("traversing.jl")
@@ -334,6 +338,11 @@ export
   HierarchicalPartition,
   partition,
   split,
+
+  # sorting
+  SortingMethod,
+  DirectionSort,
+  sortinds,
 
   # traversing
   Path,
