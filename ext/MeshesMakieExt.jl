@@ -19,7 +19,7 @@ import Makie
 Makie.@recipe(Viz, object) do scene
   Makie.Attributes(
     color=:slategray3,
-    alpha=1.0,
+    alpha=nothing,
     colorscheme=nothing,
     facetcolor=:gray30,
     showfacets=false,

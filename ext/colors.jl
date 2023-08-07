@@ -47,7 +47,8 @@ end
 
 # STEP 2: add transparency to colors
 setalpha(colors, alphas) = coloralpha.(colors, alphas)
-setalpha(colors, alpha::Number) = coloralpha.(colors, Ref(alpha))
+setalpha(colors, alpha::Number) = coloralpha.(colors, alpha)
+setalpha(colors, ::Nothing) = colors
 
 process(value, scheme, alphas) = process([value], scheme, alphas) |> first
 process(values::V, scheme, alphas) = setalpha(tocolors(values, scheme), alphas)
