@@ -83,6 +83,7 @@ include("predicates.jl")
 
 # operations
 include("merging.jl")
+include("clipping.jl")
 include("intersections.jl")
 include("complement.jl")
 include("simplification.jl")
@@ -372,6 +373,11 @@ export
   issimple,
   hasholes,
   intersects,
+
+  # clipping
+  ClippingMethod,
+  SutherlandHodgman,
+  clip,
 
   # intersections
   IntersectionType,
