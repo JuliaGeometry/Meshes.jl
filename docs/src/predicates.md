@@ -54,6 +54,18 @@ isclosed
 isconvex
 ```
 
+## iscollinear 
+
+```@docs 
+iscollinear 
+``` 
+
+## iscoplanar 
+
+```@docs 
+iscoplanar 
+```
+
 ## issimple
 
 ```@docs
