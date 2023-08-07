@@ -371,10 +371,12 @@ export
   isperiodic,
   issimplex,
   isclosed,
-  isconvex,
+  isconvex
   issimple,
   hasholes,
   intersects,
+  iscollinear,
+  iscoplanar,
 
   # sampling
   SamplingMethod,
@@ -466,8 +468,6 @@ export
   TriangleOrientation,
   signarea,
   sideof,
-  iscollinear,
-  iscoplanar,
   householderbasis,
   mayberound,
   supportfun,
