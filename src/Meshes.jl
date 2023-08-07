@@ -371,7 +371,7 @@ export
   isperiodic,
   issimplex,
   isclosed,
-  isconvex
+  isconvex,
   issimple,
   hasholes,
   intersects,
