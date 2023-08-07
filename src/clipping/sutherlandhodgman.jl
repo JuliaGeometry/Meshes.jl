@@ -9,7 +9,7 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 
 ## References
 
-- Sutherland, I.E. & Hodgman, G.W. 1974. [Reentrant Polygon Clipping]
+* Sutherland, I.E. & Hodgman, G.W. 1974. [Reentrant Polygon Clipping]
   (https://dl.acm.org/doi/pdf/10.1145/360767.360802)
 """
 struct SutherlandHodgman <: ClippingMethod end
