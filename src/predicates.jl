@@ -15,7 +15,5 @@ include("predicates/hasholes.jl")
 include("predicates/in.jl")
 include("predicates/issubset.jl")
 include("predicates/intersects.jl")
-
-# other predicates 
 include("predicates/iscollinear.jl")
 include("predicates/iscoplanar.jl")
