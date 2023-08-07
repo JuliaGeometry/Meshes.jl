@@ -14,8 +14,7 @@ abstract type SortingMethod end
 
 Sort the elements of the `domain` with given sorting `method`.
 """
-sort(domain::Domain, method::SortingMethod) =
-  view(domain, sortinds(domain, method))
+sort(domain::Domain, method::SortingMethod) = view(domain, sortinds(domain, method))
 
 # ----------------
 # IMPLEMENTATIONS
