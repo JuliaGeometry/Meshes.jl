@@ -94,13 +94,13 @@ testfiles = [
   "merging.jl",
   "intersections.jl",
   "complement.jl",
+  "simplification.jl",
+  "boundingboxes.jl",
+  "hulls.jl",
   "sampling.jl",
   "pointification.jl",
   "discretization.jl",
-  "simplification.jl",
   "refinement.jl",
-  "boundingboxes.jl",
-  "hulls.jl",
   "transforms.jl"
 ]
 

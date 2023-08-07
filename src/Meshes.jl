@@ -85,15 +85,13 @@ include("predicates.jl")
 include("merging.jl")
 include("intersections.jl")
 include("complement.jl")
-
-# algorithms
+include("simplification.jl")
+include("boundingboxes.jl")
+include("hulls.jl")
 include("sampling.jl")
 include("pointification.jl")
 include("discretization.jl")
-include("simplification.jl")
 include("refinement.jl")
-include("boundingboxes.jl")
-include("hulls.jl")
 
 # transforms
 include("transforms.jl")
@@ -375,20 +373,6 @@ export
   hasholes,
   intersects,
 
-  # sampling
-  SamplingMethod,
-  DiscreteSamplingMethod,
-  ContinuousSamplingMethod,
-  UniformSampling,
-  WeightedSampling,
-  BallSampling,
-  BlockSampling,
-  RegularSampling,
-  HomogeneousSampling,
-  MinDistanceSampling,
-  sampleinds,
-  sample,
-
   # intersections
   IntersectionType,
   Crossing,
@@ -408,6 +392,37 @@ export
   intersection,
   type,
 
+  # simplification
+  SimplificationMethod,
+  DouglasPeucker,
+  Selinger,
+  simplify,
+  decimate,
+
+  # bounding boxes
+  boundingbox,
+
+  # hulls
+  HullMethod,
+  GrahamScan,
+  JarvisMarch,
+  hull,
+  convexhull,
+
+  # sampling
+  SamplingMethod,
+  DiscreteSamplingMethod,
+  ContinuousSamplingMethod,
+  UniformSampling,
+  WeightedSampling,
+  BallSampling,
+  BlockSampling,
+  RegularSampling,
+  HomogeneousSampling,
+  MinDistanceSampling,
+  sampleinds,
+  sample,
+
   # pointification
   pointify,
 
@@ -422,13 +437,6 @@ export
   discretize,
   discretizewithin,
   simplexify,
-
-  # simplification
-  SimplificationMethod,
-  DouglasPeucker,
-  Selinger,
-  simplify,
-  decimate,
 
   # refinement
   RefinementMethod,
@@ -450,16 +458,6 @@ export
   LaplaceSmoothing,
   TaubinSmoothing,
 
-  # bounding boxes
-  boundingbox,
-
-  # hulls
-  HullMethod,
-  GrahamScan,
-  JarvisMarch,
-  hull,
-  convexhull,
-
   # miscellaneous
   WindingOrientation,
   TriangleOrientation,
@@ -468,7 +466,6 @@ export
   iscollinear,
   iscoplanar,
   householderbasis,
-  mayberound,
   supportfun,
   laplacematrix,
   measurematrix,
