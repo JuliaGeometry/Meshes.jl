@@ -18,7 +18,7 @@ used in geosciences to represent drill holes.
 CylindricalTrajectory
 ```
 
-```@example sets
+```@example trajec
 # construct centroids along Bezier curve
 b = BezierCurve([(0, 0, 0), (3, 3, 0), (3, 0, 7)])
 c = [b(t) for t in range(0, stop=1, length=20)]
