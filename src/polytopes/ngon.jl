@@ -45,6 +45,16 @@ Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 
+function ==(ngon1::Ngon, ngon2::Ngon)
+  nvertices(ngon1) ≠ nvertices(ngon2) && return false
+  ngon1.vertices == ngon2.vertices
+end
+
+function Base.isapprox(ngon1::Ngon, ngon2::Ngon; kwargs...)
+  nvertices(ngon1) ≠ nvertices(ngon2) && return false
+  all(isapprox(v1, v2; kwargs...) for (v1, v2) in zip(ngon1.vertices, ngon2.vertices))
+end
+
 rings(ngon::Ngon) = [Ring(pointify(ngon))]
 
 angles(ngon::Ngon) = angles(boundary(ngon))
