@@ -111,6 +111,13 @@ bounding box of the `domain`.
 """
 Base.extrema(domain::Domain) = extrema(boundingbox(domain))
 
+"""
+    topology(domain)
+
+Return the topological structure of the `domain`.
+"""
+topology(domain::Domain) = domain.topology
+
 # -----------
 # IO METHODS
 # -----------

@@ -17,6 +17,8 @@ CylindricalTrajectory(centroids::AbstractVector{Point{3,T}}, radius) where {T} =
 
 CylindricalTrajectory(centroids) = CylindricalTrajectory(centroids, 1)
 
+topology(t::CylindricalTrajectory) = GridTopology(length(t.centroids))
+
 function element(t::CylindricalTrajectory, ind::Int)
   c = t.centroids
   r = t.radius
