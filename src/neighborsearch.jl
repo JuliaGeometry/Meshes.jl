@@ -19,13 +19,13 @@ all indices of the domain.
 function search! end
 
 """
-    searchwithdist!(neighbors, pₒ, method; mask=nothing)
+    searchdists!(neighbors, distances, pₒ, method; mask=nothing)
 
-Update neighbors of point pₒ using method and return
-number of neighbors found and distances of each one from the point pₒ. 
-Optionally, specify a mask for all indices of the domain.
+Update neighbors and distances of point pₒ using method and return
+number of neighbors found. Optionally, specify a `mask` for 
+all indices of the domain.
 """
-function searchwithdist! end
+function searchdists! end
 
 """
     search(pₒ, method, mask=nothing)

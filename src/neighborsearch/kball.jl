@@ -27,9 +27,12 @@ end
 
 maxneighbors(method::KBallSearch) = method.k
 
-search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing) = first(searchwithdist!(neighbors, pₒ, method; mask))
+function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
+  distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
+  searchdists!(neighbors, distances, pₒ, method; mask)
+end
 
-function searchwithdist!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
+function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
   r = radius(method.ball)
 
@@ -42,14 +45,13 @@ function searchwithdist!(neighbors, pₒ::Point, method::KBallSearch; mask=nothi
   isnothing(mask) || (keep .*= mask[inds])
 
   nneigh = 0
-  neighdists = empty(dists)
   @inbounds for i in 1:k
     if keep[i]
       nneigh += 1
       neighbors[nneigh] = inds[i]
-      push!(neighdists, dists[i])
+      distances[nneigh] = dists[i]
     end
   end
 
-  nneigh, neighdists
+  nneigh
 end

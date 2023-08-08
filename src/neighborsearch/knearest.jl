@@ -25,29 +25,31 @@ end
 
 maxneighbors(method::KNearestSearch) = method.k
 
-search!(neighbors, pₒ::Point, method::KNearestSearch; mask=nothing) = first(searchwithdist!(neighbors, pₒ, method; mask))
+function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
+  distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
+  searchdists!(neighbors, distances, pₒ, method; mask)
+end
 
-function searchwithdist!(neighbors, pₒ::Point, method::KNearestSearch; mask=nothing)
+function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
   inds, dists = knn(method.tree, coordinates(pₒ), k, true)
 
   if isnothing(mask)
     nneigh = k
-    neighdists = dists
     @inbounds for i in 1:k
       neighbors[i] = inds[i]
+      distances[nneigh] = dists[i]
     end
   else
     nneigh = 0
-    neighdists = empty(dists)
     @inbounds for i in 1:k
       if mask[inds[i]]
         nneigh += 1
         neighbors[nneigh] = inds[i]
-        push!(neighdists, dists[i])
+        distances[nneigh] = dists[i]
       end
     end
   end
 
-  nneigh, neighdists
+  nneigh
 end
