@@ -6,6 +6,14 @@
     GeometrySet(geoms)
 
 A set of geometries `geoms` representing a [`Domain`](@ref).
+
+## Examples
+
+Set containing two balls centered at `(0.0, 0.0)` and `(1.0, 1.0)`:
+
+```julia
+julia> GeometrySet([Ball((0.0, 0.0)), Ball((1.0, 1.0))])
+```
 """
 struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Domain{Dim,T}
   geoms::Vector{G}
