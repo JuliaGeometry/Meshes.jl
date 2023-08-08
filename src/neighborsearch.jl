@@ -19,6 +19,15 @@ all indices of the domain.
 function search! end
 
 """
+    searchwithdist!(neighbors, pₒ, method; mask=nothing)
+
+Update neighbors of point pₒ using method and return
+number of neighbors found and distances of each one from the point pₒ. 
+Optionally, specify a mask for all indices of the domain.
+"""
+function searchwithdist! end
+
+"""
     search(pₒ, method, mask=nothing)
 
 Return neighbors of point `pₒ` using `method`. Optionally,
