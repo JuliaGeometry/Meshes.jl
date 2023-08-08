@@ -12,7 +12,8 @@ import WGLMakie as Mke # hide
 
 Trajectories of geometries are special geometry sets
 with one-dimensional grid topology. They are often
-used in geosciences to represent drill holes.
+used in geosciences to represent drill holes, wells,
+etc.
 
 ```@docs
 CylindricalTrajectory
