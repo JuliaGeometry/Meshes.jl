@@ -27,7 +27,7 @@ end
 
 maxneighbors(method::KBallSearch) = method.k
 
-function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
+function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
   r = radius(method.ball)
 
@@ -44,6 +44,7 @@ function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
     if keep[i]
       nneigh += 1
       neighbors[nneigh] = inds[i]
+      distances[nneigh] = dists[i]
     end
   end
 

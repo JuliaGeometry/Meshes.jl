@@ -372,7 +372,9 @@ export
   KBallSearch,
   GlobalSearch,
   search!,
+  searchdists!,
   search,
+  searchdists,
   maxneighbors,
 
   # predicates
