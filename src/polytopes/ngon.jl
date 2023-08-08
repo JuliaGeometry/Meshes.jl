@@ -45,10 +45,15 @@ Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 
-==(ngon1::Ngon{N}, ngon2::Ngon{N}) where {N} = ngon1.vertices == ngon2.vertices
+function ==(ngon1::Ngon{N1}, ngon2::Ngon{N2}) where {N1, N2}
+  N1 ≠ N2 && return false
+  ngon1.vertices == ngon2.vertices
+end
 
-Base.isapprox(ngon1::Ngon{N}, ngon2::Ngon{N}; kwargs...) where {N} =
+function Base.isapprox(ngon1::Ngon{N1}, ngon2::Ngon{N2}; kwargs...) where {N1, N2}
+  N1 ≠ N2 && return false
   all(isapprox(v1, v2; kwargs...) for (v1, v2) in zip(ngon1.vertices, ngon2.vertices))
+end
 
 rings(ngon::Ngon) = [Ring(pointify(ngon))]
 
