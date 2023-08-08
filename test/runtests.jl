@@ -78,6 +78,7 @@ testfiles = [
   "domains.jl",
   "sets.jl",
   "mesh.jl",
+  "trajectories.jl",
   "data.jl",
   "meshdata.jl",
   "utils.jl",

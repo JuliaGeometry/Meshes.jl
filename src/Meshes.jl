@@ -294,6 +294,9 @@ export
   spacing,
   offset,
 
+  # trajectories
+  CylindricalTrajectory,
+
   # data traits
   Data,
   domain,

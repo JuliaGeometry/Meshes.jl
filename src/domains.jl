@@ -139,3 +139,4 @@ end
 
 include("sets.jl")
 include("mesh.jl")
+include("trajectories.jl")
