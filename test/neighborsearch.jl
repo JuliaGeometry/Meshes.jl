@@ -68,20 +68,6 @@
     @test length(n) == 0
   end
 
-  @testset "BoundedSearch" begin
-    𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
-    S1 = BallSearch(𝒟, MetricBall(T(5)))
-    S2 = KNearestSearch(𝒟, 10)
-    B1 = BoundedSearch(S1, 5)
-    B2 = BoundedSearch(S2, 5)
-    p = centroid(𝒟, rand(1:100))
-    n = search(p, B1)
-    @test length(n) == 5
-    p = centroid(𝒟, rand(1:100))
-    n = search(p, B2)
-    @test length(n) == 5
-  end
-
   @testset "GlobalSearch" begin
     𝒟 = CartesianGrid(10, 10)
     S = GlobalSearch(𝒟)

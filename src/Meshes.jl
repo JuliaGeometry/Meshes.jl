@@ -370,7 +370,6 @@ export
   BallSearch,
   KNearestSearch,
   KBallSearch,
-  BoundedSearch,
   GlobalSearch,
   search!,
   search,

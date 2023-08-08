@@ -8,5 +8,4 @@ NeighborSearchMethod
 BallSearch
 KNearestSearch
 KBallSearch
-BoundedSearch
 ```
