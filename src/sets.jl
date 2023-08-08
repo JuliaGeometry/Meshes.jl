@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    GeometrySet(geoms)
+    GeometrySet(geometries)
 
-A set of geometries `geoms` representing a [`Domain`](@ref).
+A set of `geometries` representing a [`Domain`](@ref).
 
 ## Examples
 
@@ -25,11 +25,6 @@ GeometrySet(geoms) = GeometrySet(collect(geoms))
 element(gset::GeometrySet, ind::Int) = gset.geoms[ind]
 
 nelements(gset::GeometrySet) = length(gset.geoms)
-
-function Base.show(io::IO, gset::GeometrySet{Dim,T}) where {Dim,T}
-  n = nelements(gset)
-  print(io, "$n GeometrySet{$Dim,$T}")
-end
 
 # ------------------------
 # SPECIAL CASE: POINT SET
