@@ -25,11 +25,6 @@ end
 
 maxneighbors(method::KNearestSearch) = method.k
 
-function search!(neighbors, pₒ::Point, method::KNearestSearch; mask=nothing)
-  distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
-  searchdists!(neighbors, distances, pₒ, method; mask)
-end
-
 function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; mask=nothing)
   k = method.k
   inds, dists = knn(method.tree, coordinates(pₒ), k, true)

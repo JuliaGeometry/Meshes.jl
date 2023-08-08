@@ -40,6 +40,9 @@
     @test Set(n) == Set([91, 81, 92])
     n = search(P2(9, 9), S)
     @test Set(n) == Set([100, 99, 90])
+    n, d = searchdists(P2(9, 9), S)
+    @test Set(n) == Set([100, 99, 90])
+    @test length(d) == 3
   end
 
   @testset "KBallSearch" begin
@@ -58,6 +61,11 @@
     @test length(n) == 5
     @test n[1] == 56
 
+    s = KBallSearch(𝒟, 10, MetricBall(T(1)))
+    n, d = searchdists(P2(5, 5), s)
+    @test length(n) == 5
+    @test length(d) == 5
+
     mask = trues(nelements(𝒟))
     mask[56] = false
     n = search(P2(5, 5), s, mask=mask)
@@ -66,6 +74,9 @@
     @test length(n) == 1
     n = search(P2(-10, -10), s)
     @test length(n) == 0
+    n, d = searchdists(P2(5, 5), s, mask=mask)
+    @test length(n) == 4
+    @test length(d) == 4
   end
 
   @testset "GlobalSearch" begin

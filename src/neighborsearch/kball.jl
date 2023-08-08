@@ -27,11 +27,6 @@ end
 
 maxneighbors(method::KBallSearch) = method.k
 
-function search!(neighbors, pₒ::Point, method::KBallSearch; mask=nothing)
-  distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
-  searchdists!(neighbors, distances, pₒ, method; mask)
-end
-
 function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
   k = method.k
   r = radius(method.ball)
