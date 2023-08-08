@@ -105,11 +105,17 @@
     p = centroid(𝒟, rand(1:100))
     n = search(p, S)
     @test n == 1:100
+    n = Vector{Int}(undef, maxneighbors(S))
+    nn = search!(n, p, S)
+    @test nn == 100
     mask = falses(nelements(𝒟))
     mask[15] = true
     mask[50] = true
     mask[90] = true
     n = search(p, S, mask=mask)
     @test n == [15, 50, 90]
+    n = Vector{Int}(undef, maxneighbors(S))
+    nn = search!(n, p, S, mask=mask)
+    @test nn == 3
   end
 end
