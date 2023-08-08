@@ -33,7 +33,7 @@ function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch;
     nneigh = k
     @inbounds for i in 1:k
       neighbors[i] = inds[i]
-      distances[nneigh] = dists[i]
+      distances[i] = dists[i]
     end
   else
     nneigh = 0
