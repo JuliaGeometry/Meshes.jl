@@ -43,6 +43,15 @@
     n, d = searchdists(P2(9, 9), S)
     @test Set(n) == Set([100, 99, 90])
     @test length(d) == 3
+    n = Vector{Int}(undef, maxneighbors(S))
+    nn = search!(n, P2(9, 9), S)
+    @test nn == 3
+    @test Set(n[1:nn]) == Set([100, 99, 90])
+    n = Vector{Int}(undef, maxneighbors(S))
+    d = Vector{T}(undef, maxneighbors(S))
+    nn = searchdists!(n, d, P2(9, 9), S)
+    @test nn == 3
+    @test Set(n[1:nn]) == Set([100, 99, 90])
   end
 
   @testset "KBallSearch" begin
@@ -65,6 +74,17 @@
     n, d = searchdists(P2(5, 5), s)
     @test length(n) == 5
     @test length(d) == 5
+
+    s = KBallSearch(𝒟, 10, MetricBall(T(1)))
+    n = Vector{Int}(undef, maxneighbors(s))
+    nn = search!(n, P2(5, 5), s)
+    @test nn == 5
+
+    s = KBallSearch(𝒟, 10, MetricBall(T(1)))
+    n = Vector{Int}(undef, maxneighbors(s))
+    d = Vector{T}(undef, maxneighbors(s))
+    nn = searchdists!(n, d, P2(5, 5), s)
+    @test nn == 5
 
     mask = trues(nelements(𝒟))
     mask[56] = false
