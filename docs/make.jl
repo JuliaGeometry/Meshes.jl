@@ -64,8 +64,7 @@ makedocs(
       ],
       "Transforms" => "transforms.md",
       "Miscellaneous" => "miscellaneous.md",
-      "Visualization" => "visualization.md",
-      "Traits" => "traits.md"
+      "Visualization" => "visualization.md"
     ],
     "Contributing" => ["contributing/guidelines.md"],
     "About" => ["License" => "about/license.md"],
