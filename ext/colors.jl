@@ -12,12 +12,12 @@ ascolors(values::V{Number}, scheme) = get(scheme, values, :extrema)
 ascolors(values::V{Colorant}, scheme) = values
 
 # convert color scheme name to color scheme object
-ascolorscheme(name::Symbol) = colorschemes[name]
+ascolorscheme(name::Symbol) = cgrad(name)
 ascolorscheme(name::AbstractString) = ascolorscheme(Symbol(name))
 ascolorscheme(scheme) = scheme
 
 # default colorscheme for vector of values
-defaultscheme(values) = colorschemes[:viridis]
+defaultscheme(values) = cgrad(:viridis)
 
 # add transparency to colors
 setalpha(colors, alphas) = coloralpha.(colors, alphas)

@@ -6,10 +6,8 @@ module MeshesMakieExt
 
 using Meshes
 
+using Makie: cgrad
 using Makie.Colors: Colorant
-using Makie.Colors: protanopic, coloralpha
-using Makie.Colors: distinguishable_colors
-using Makie.ColorSchemes: colorschemes
 
 import Meshes: viz, viz!
 import Meshes: ascolors
