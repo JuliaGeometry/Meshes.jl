@@ -57,7 +57,7 @@
     s = KNearestSearch(𝒟, 3)
     skipfun(i) = i == 1 || i == 2 || i == 11
     n = search(P2(0, 0), s, skip=skipfun)
-    @test Set(n) == Set([12,21,3])
+    @test Set(n) == Set([12, 21, 3])
   end
 
   @testset "KBallSearch" begin

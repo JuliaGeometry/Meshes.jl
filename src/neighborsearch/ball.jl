@@ -23,7 +23,7 @@ function BallSearch(domain::D, ball::B) where {D,B<:MetricBall}
   BallSearch{D,B,typeof(tree)}(domain, ball, tree)
 end
 
-function search(pₒ::Point, method::BallSearch; skip=i->false)
+function search(pₒ::Point, method::BallSearch; skip=i -> false)
   tree = method.tree
   dmax = radius(method.ball)
 
