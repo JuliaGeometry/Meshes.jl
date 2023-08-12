@@ -51,8 +51,7 @@ perimeter(::Plane{T}) where {T} = zero(T)
 boundary(::Plane) = nothing
 
 ==(p₁::Plane, p₂::Plane) =
-  p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ &&
-  p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁
+  p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ && p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁
 
 Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
