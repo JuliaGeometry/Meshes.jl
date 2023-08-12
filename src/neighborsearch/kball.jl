@@ -27,7 +27,7 @@ end
 
 maxneighbors(method::KBallSearch) = method.k
 
-function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; skip=i->false)
+function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; skip=i -> false)
   tree = method.tree
   dmax = radius(method.ball)
   k = method.k

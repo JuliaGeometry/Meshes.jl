@@ -63,18 +63,18 @@ function maxneighbors end
 # FALLBACKS
 # ----------
 
-function search!(neighbors, pₒ::Point, method::BoundedNeighborSearchMethod; skip=i->false)
+function search!(neighbors, pₒ::Point, method::BoundedNeighborSearchMethod; skip=i -> false)
   distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
   searchdists!(neighbors, distances, pₒ, method; skip)
 end
 
-function search(pₒ::Point, method::BoundedNeighborSearchMethod; skip=i->false)
+function search(pₒ::Point, method::BoundedNeighborSearchMethod; skip=i -> false)
   neighbors = Vector{Int}(undef, maxneighbors(method))
   nneigh = search!(neighbors, pₒ, method; skip)
   view(neighbors, 1:nneigh)
 end
 
-function searchdists(pₒ::Point, method::BoundedNeighborSearchMethod; skip=i->false)
+function searchdists(pₒ::Point, method::BoundedNeighborSearchMethod; skip=i -> false)
   neighbors = Vector{Int}(undef, maxneighbors(method))
   distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
   nneigh = searchdists!(neighbors, distances, pₒ, method; skip)
