@@ -37,12 +37,15 @@
     @test point ⊆ ball
     @test point ⊆ tri
     @test point ⊆ quad
+    @test point ⊆ point 
+    @test quad ⊆ quad
 
     s1 = Segment(P2(0, 0), P2(1, 1))
     s2 = Segment(P2(0.5, 0.5), P2(1, 1))
     s3 = Segment(P2(0, 0), P2(0.5, 0.5))
     @test s2 ⊆ s1
     @test s3 ⊆ s1
+    @test s1 ⊆ s1
 
     seg = Segment(P2(0, 0), P2(1, 1))
     box = Box(P2(0, 0), P2(1, 1))
@@ -85,6 +88,17 @@
     @test !(quad2 ⊆ poly)
     @test quad1 ⊆ multi
     @test !(quad2 ⊆ multi)
+
+
+    p1 = P2(-1.0, 0.0)
+    p2 = P2(0.0, 0.0)
+    p3 = P2(1.0, 0.0)
+    l1 = Line(p1, p3)
+    l2 = Line(p2, p3)
+    @test l1 ⊆ l2
+    @test l2 ⊆ l1 
+    @test l1 ⊆ l1 
+    @test l2 ⊆ l2
 
     pts1 = P2[(5, 7), (10, 12), (15, 7)]
     pts2 = P2[(6, 1), (2, 10), (10, 16), (18, 10), (14, 1)]
