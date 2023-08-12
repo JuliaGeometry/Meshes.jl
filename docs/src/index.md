@@ -279,7 +279,12 @@ issimple(p)
 ### Meshes
 
 Efficient (lazy) mesh representations are provided, including
-[`CartesianGrid`](@ref) and [`SimpleMesh`](@ref):
+[`CartesianGrid`](@ref) and [`SimpleMesh`](@ref), which are
+specific types of [`Domain`](@ref):
+
+```@docs
+Domain
+```
 
 ```@example overview
 g = CartesianGrid(100, 100)

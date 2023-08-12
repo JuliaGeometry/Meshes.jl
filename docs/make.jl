@@ -47,7 +47,7 @@ makedocs(
     "Reference guide" => [
       "Vectors" => "vectors.md",
       "Geometries" => ["geometries/primitives.md", "geometries/polytopes.md"],
-      "Domains" => ["domains/sets.md", "domains/meshes.md"],
+      "Domains" => ["domains/sets.md", "domains/meshes.md", "domains/trajectories.md"],
       "Data" => "data.md",
       "Predicates" => "predicates.md",
       "Algorithms" => [
@@ -64,8 +64,7 @@ makedocs(
       ],
       "Transforms" => "transforms.md",
       "Miscellaneous" => "miscellaneous.md",
-      "Visualization" => "visualization.md",
-      "Traits" => "traits.md"
+      "Visualization" => "visualization.md"
     ],
     "Contributing" => ["contributing/guidelines.md"],
     "About" => ["License" => "about/license.md"],

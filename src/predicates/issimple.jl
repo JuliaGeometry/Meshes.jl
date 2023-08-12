@@ -16,7 +16,7 @@ issimple(p::PolyArea) = !hasholes(p) && issimple(first(rings(p)))
 issimple(::Type{<:Ngon}) = true
 
 """
-   issimple(chain)
+    issimple(chain)
 
 Tells whether or not the `chain` is simple.
 

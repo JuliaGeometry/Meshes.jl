@@ -19,6 +19,7 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 
 import Tables
 import Random
+import Base: sort
 import Base: values
 import Base: ==, !
 import Base: +, -, *
@@ -65,6 +66,9 @@ include("viewing.jl")
 include("partitions.jl")
 include("partitioning.jl")
 
+# domain sorting
+include("sorting.jl")
+
 # domain traversal
 include("traversing.jl")
 
@@ -83,17 +87,16 @@ include("predicates.jl")
 
 # operations
 include("merging.jl")
+include("clipping.jl")
 include("intersections.jl")
 include("complement.jl")
-
-# algorithms
+include("simplification.jl")
+include("boundingboxes.jl")
+include("hulls.jl")
 include("sampling.jl")
 include("pointification.jl")
 include("discretization.jl")
-include("simplification.jl")
 include("refinement.jl")
-include("boundingboxes.jl")
-include("hulls.jl")
 
 # transforms
 include("transforms.jl")
@@ -291,6 +294,9 @@ export
   spacing,
   offset,
 
+  # trajectories
+  CylindricalTrajectory,
+
   # data traits
   Data,
   domain,
@@ -311,7 +317,6 @@ export
   # viewing
   unview,
   indices,
-  slice,
 
   # partitions
   Partition,
@@ -337,6 +342,11 @@ export
   partition,
   split,
 
+  # sorting
+  SortingMethod,
+  DirectionSort,
+  sortinds,
+
   # traversing
   Path,
   LinearPath,
@@ -360,10 +370,10 @@ export
   BallSearch,
   KNearestSearch,
   KBallSearch,
-  BoundedSearch,
-  GlobalSearch,
   search!,
+  searchdists!,
   search,
+  searchdists,
   maxneighbors,
 
   # predicates
@@ -375,20 +385,13 @@ export
   issimple,
   hasholes,
   intersects,
+  iscollinear,
+  iscoplanar,
 
-  # sampling
-  SamplingMethod,
-  DiscreteSamplingMethod,
-  ContinuousSamplingMethod,
-  UniformSampling,
-  WeightedSampling,
-  BallSampling,
-  BlockSampling,
-  RegularSampling,
-  HomogeneousSampling,
-  MinDistanceSampling,
-  sampleinds,
-  sample,
+  # clipping
+  ClippingMethod,
+  SutherlandHodgman,
+  clip,
 
   # intersections
   IntersectionType,
@@ -409,6 +412,37 @@ export
   intersection,
   type,
 
+  # simplification
+  SimplificationMethod,
+  DouglasPeucker,
+  Selinger,
+  simplify,
+  decimate,
+
+  # bounding boxes
+  boundingbox,
+
+  # hulls
+  HullMethod,
+  GrahamScan,
+  JarvisMarch,
+  hull,
+  convexhull,
+
+  # sampling
+  SamplingMethod,
+  DiscreteSamplingMethod,
+  ContinuousSamplingMethod,
+  UniformSampling,
+  WeightedSampling,
+  BallSampling,
+  BlockSampling,
+  RegularSampling,
+  HomogeneousSampling,
+  MinDistanceSampling,
+  sampleinds,
+  sample,
+
   # pointification
   pointify,
 
@@ -423,13 +457,6 @@ export
   discretize,
   discretizewithin,
   simplexify,
-
-  # simplification
-  SimplificationMethod,
-  DouglasPeucker,
-  Selinger,
-  simplify,
-  decimate,
 
   # refinement
   RefinementMethod,
@@ -451,25 +478,12 @@ export
   LaplaceSmoothing,
   TaubinSmoothing,
 
-  # bounding boxes
-  boundingbox,
-
-  # hulls
-  HullMethod,
-  GrahamScan,
-  JarvisMarch,
-  hull,
-  convexhull,
-
   # miscellaneous
   WindingOrientation,
   TriangleOrientation,
   signarea,
   sideof,
-  iscollinear,
-  iscoplanar,
   householderbasis,
-  mayberound,
   supportfun,
   laplacematrix,
   measurematrix,

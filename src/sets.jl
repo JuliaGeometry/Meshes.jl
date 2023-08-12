@@ -3,9 +3,17 @@
 # ------------------------------------------------------------------
 
 """
-    GeometrySet(geoms)
+    GeometrySet(geometries)
 
-A set of geometries `geoms` representing a [`Domain`](@ref).
+A set of `geometries` representing a [`Domain`](@ref).
+
+## Examples
+
+Set containing two balls centered at `(0.0, 0.0)` and `(1.0, 1.0)`:
+
+```julia
+julia> GeometrySet([Ball((0.0, 0.0)), Ball((1.0, 1.0))])
+```
 """
 struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Domain{Dim,T}
   geoms::Vector{G}
@@ -17,11 +25,6 @@ GeometrySet(geoms) = GeometrySet(collect(geoms))
 element(gset::GeometrySet, ind::Int) = gset.geoms[ind]
 
 nelements(gset::GeometrySet) = length(gset.geoms)
-
-function Base.show(io::IO, gset::GeometrySet{Dim,T}) where {Dim,T}
-  n = nelements(gset)
-  print(io, "$n GeometrySet{$Dim,$T}")
-end
 
 # ------------------------
 # SPECIAL CASE: POINT SET

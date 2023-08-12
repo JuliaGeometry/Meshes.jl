@@ -25,12 +25,10 @@ measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
 
 boundary(s::Segment) = PointSet(pointify(s))
 
-center(s::Segment) = s(0.5)
+center(s::Segment{Dim,T}) where {Dim,T} = s(T(0.5))
 
-function Base.isapprox(s1::Segment, s2::Segment)
-  v1, v2 = s1.vertices, s2.vertices
-  isapprox(v1[1], v2[1]) && isapprox(v1[2], v2[2])
-end
+Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
 function (s::Segment)(t)
   if t < 0 || t > 1

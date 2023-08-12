@@ -6,7 +6,6 @@
     Domain
 
 A domain is an indexable collection of geometries (e.g. mesh).
-``
 """
 abstract type Domain{Dim,T} end
 
@@ -34,7 +33,9 @@ Base.isapprox(d1::Domain, d2::Domain) = nelements(d1) == nelements(d2) && all(d1
 
 nitems(domain::Domain) = nelements(domain)
 
-Base.getindex(domain::Domain, ind) = element(domain, ind)
+Base.getindex(domain::Domain, ind::Int) = element(domain, ind)
+
+Base.getindex(domain::Domain, inds::AbstractVector) = [element(domain, ind) for ind in inds]
 
 Base.firstindex(domain::Domain) = 1
 
@@ -45,6 +46,8 @@ Base.length(domain::Domain) = nelements(domain)
 Base.iterate(domain::Domain, state=1) = state > nelements(domain) ? nothing : (domain[state], state + 1)
 
 Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
+
+Base.keys(domain::Domain) = 1:nelements(domain)
 
 """
     embeddim(domain)
@@ -108,6 +111,13 @@ bounding box of the `domain`.
 """
 Base.extrema(domain::Domain) = extrema(boundingbox(domain))
 
+"""
+    topology(domain)
+
+Return the topological structure of the `domain`.
+"""
+topology(domain::Domain) = domain.topology
+
 # -----------
 # IO METHODS
 # -----------
@@ -136,3 +146,4 @@ end
 
 include("sets.jl")
 include("mesh.jl")
+include("trajectories.jl")

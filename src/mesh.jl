@@ -10,13 +10,6 @@ A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`.
 abstract type Mesh{Dim,T} <: Domain{Dim,T} end
 
 """
-    topology(mesh)
-
-Return the topological structure of the `mesh`.
-"""
-topology(m::Mesh) = m.topology
-
-"""
     vertex(mesh, ind)
 
 Return the vertex of a `mesh` at index `ind`.

@@ -10,6 +10,21 @@
     @test isconvex(tri)
     @test !isconvex(poly)
     @test isconvex(multi)
+
+    b = BezierCurve(P2[(0, 0), (1, 0), (2, 0)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0), (1, 1), (2, 2)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0), (1, 0)])
+    @test isconvex(b)
+    b = BezierCurve(P2[(0, 0), (5, 3), (-10, 3), (17, 20)])
+    @test !isconvex(b)
+    b = BezierCurve(P2[(5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (5, 10), (5, 11)])
+    @test isconvex(b)
+    b = BezierCurve(P2[])
+    @test isconvex(b)
   end
 
   @testset "issubset" begin
@@ -74,6 +89,7 @@
     @test quad1 ⊆ multi
     @test !(quad2 ⊆ multi)
 
+
     p1 = P2(-1.0, 0.0)
     p2 = P2(0.0, 0.0)
     p3 = P2(1.0, 0.0)
@@ -83,6 +99,35 @@
     @test l2 ⊆ l1 
     @test l1 ⊆ l1 
     @test l2 ⊆ l2
+
+    pts1 = P2[(5, 7), (10, 12), (15, 7)]
+    pts2 = P2[(6, 1), (2, 10), (10, 16), (18, 10), (14, 1)]
+    pent = Pentagon(pts2...)
+    tri = Triangle(pts1...)
+    poly1 = PolyArea(pts2)
+    poly2 = PolyArea(pts2, [pts1])
+    multi = Multi([poly2, tri])
+    @test tri ⊆ pent
+    @test tri ⊆ poly1
+    @test tri ⊈ poly2
+    @test tri ⊆ multi
+    @test pent ⊆ poly1
+    @test pent ⊈ poly2
+    @test pent ⊆ multi
+
+    poly1 = PolyArea(P2[(4, 12), (11, 11), (16, 8), (16, 1), (13, -2), (2, -2), (-3, 4), (-2, 8)])
+    poly2 = PolyArea(P2[(3, 0), (1, 2), (3, 4), (1, 6), (4, 7), (10, 7), (11, 4), (9, 0)])
+    poly3 = PolyArea(P2[(3, 2), (4, 4), (3, 8), (12, 8), (14, 4), (12, 1)])
+    poly4 = PolyArea(P2[(8, 2), (5, 4), (5, 6), (9, 6), (10, 4)])
+    poly5 = PolyArea(P2[(3, 9), (6, 11), (10, 10), (10, 9)])
+    @test poly2 ⊆ poly1
+    @test poly3 ⊆ poly1
+    @test poly4 ⊆ poly1
+    @test poly5 ⊆ poly1
+    @test poly4 ⊆ poly2
+    @test poly4 ⊆ poly3
+    @test poly5 ⊈ poly2
+    @test poly5 ⊈ poly3
   end
 
   @testset "intersects" begin
@@ -285,5 +330,13 @@
     @test intersects(ring, multi)
     @test intersects(rope, multi)
     @test intersects(seg, multi)
+  end
+
+  @testset "iscollinear" begin
+    @test iscollinear(P2(0, 0), P2(1, 1), P2(2, 2))
+  end
+
+  @testset "iscoplanar" begin
+    @test iscoplanar(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0))
   end
 end

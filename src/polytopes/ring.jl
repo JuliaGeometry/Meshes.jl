@@ -34,6 +34,13 @@ boundary(::Ring) = nothing
 
 nvertices(r::Ring) = length(r.vertices)
 
+==(r₁::Ring, r₂::Ring) = r₁.vertices == r₂.vertices
+
+function Base.isapprox(r₁::Ring, r₂::Ring; kwargs...)
+  nvertices(r₁) ≠ nvertices(r₂) && return false
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
+end
+
 Base.close(r::Ring) = r
 
 # call `open` again to avoid issues in case of nested CircularVector

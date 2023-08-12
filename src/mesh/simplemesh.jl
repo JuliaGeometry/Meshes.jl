@@ -17,7 +17,7 @@ represent the elements of the mesh.
 ## Examples
 
 ```julia
-julia> points = [(0,0),(1,0),(1,1)]
+julia> points = [(0.0, 0.0),(1.0, 0.0), (1.0, 1.0)]
 julia> connec = [connect((1,2,3))]
 julia> mesh   = SimpleMesh(points, connec)
 ```

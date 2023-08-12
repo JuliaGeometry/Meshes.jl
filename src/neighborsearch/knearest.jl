@@ -25,22 +25,26 @@ end
 
 maxneighbors(method::KNearestSearch) = method.k
 
-function search!(neighbors, pₒ::Point, method::KNearestSearch; mask=nothing)
+function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; mask=nothing)
+  tree = method.tree
   k = method.k
-  inds, _ = knn(method.tree, coordinates(pₒ), k, true)
 
-  if mask ≠ nothing
+  inds, dists = knn(tree, coordinates(pₒ), k, true)
+
+  if isnothing(mask)
+    nneigh = k
+    @inbounds for i in 1:k
+      neighbors[i] = inds[i]
+      distances[i] = dists[i]
+    end
+  else
     nneigh = 0
     @inbounds for i in 1:k
       if mask[inds[i]]
         nneigh += 1
         neighbors[nneigh] = inds[i]
+        distances[nneigh] = dists[i]
       end
-    end
-  else
-    nneigh = k
-    @inbounds for i in 1:k
-      neighbors[i] = inds[i]
     end
   end
 

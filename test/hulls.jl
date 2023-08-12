@@ -35,6 +35,42 @@
       chul = hull(pts, method)
       verts = vertices(chul)
       @test verts == P2[(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]
+
+      pts = P2[
+        (0, 5),
+        (1, 5),
+        (1, 4),
+        (2, 4),
+        (2, 3),
+        (3, 3),
+        (4, 3),
+        (5, 3),
+        (5, 4),
+        (6, 4),
+        (6, 5),
+        (7, 5),
+        (7, 6),
+        (7, 7),
+        (6, 7),
+        (6, 8),
+        (5, 8),
+        (5, 9),
+        (4, 9),
+        (3, 9),
+        (2, 9),
+        (2, 8),
+        (1, 8),
+        (1, 7),
+        (0, 7),
+        (0, 6)
+      ]
+      chul = hull(pts, method)
+      @test nvertices(chul) < length(pts)
+
+      poly = readpoly(T, joinpath(datadir, "hull.line"))
+      pts = vertices(poly)
+      chul = hull(pts, method)
+      @test nvertices(chul) < length(pts)
     end
   end
 

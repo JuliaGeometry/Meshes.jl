@@ -11,6 +11,9 @@ A tetrahedron with points `p1`, `p2`, `p3`, `p4`.
 
 nvertices(::Type{<:Tetrahedron}) = 4
 
+Base.isapprox(t₁::Tetrahedron, t₂::Tetrahedron; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
+
 function measure(t::Tetrahedron)
   A, B, C, D = t.vertices
   abs((A - D) ⋅ ((B - D) × (C - D))) / 6

@@ -292,20 +292,6 @@ Return the number of vertices in the `polytope`.
 nvertices(p::Polytope) = nvertices(typeof(p))
 
 """
-    p₁ == p₂
-
-Tells whether or not polytopes `p₁` and `p₂` are equal.
-"""
-==(p₁::Polytope, p₂::Polytope) = vertices(p₁) == vertices(p₂)
-
-"""
-    p₁ ≈ p₂
-
-Tells whether or not polytopes `p₁` and `p₂` are approximately equal.
-"""
-Base.isapprox(p₁::Polytope, p₂::Polytope) = all(v -> v[1] ≈ v[2], zip(vertices(p₁), vertices(p₂)))
-
-"""
     centroid(polytope)
 
 Return the centroid of the `polytope`.

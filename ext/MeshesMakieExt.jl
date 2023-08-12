@@ -6,10 +6,8 @@ module MeshesMakieExt
 
 using Meshes
 
+using Makie: cgrad
 using Makie.Colors: Colorant
-using Makie.Colors: protanopic, coloralpha
-using Makie.Colors: distinguishable_colors
-using Makie.ColorSchemes: colorschemes
 
 import Meshes: viz, viz!
 import Meshes: ascolors
@@ -19,7 +17,7 @@ import Makie
 Makie.@recipe(Viz, object) do scene
   Makie.Attributes(
     color=:slategray3,
-    alpha=1.0,
+    alpha=nothing,
     colorscheme=nothing,
     facetcolor=:gray30,
     showfacets=false,

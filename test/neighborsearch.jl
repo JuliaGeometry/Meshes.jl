@@ -40,6 +40,18 @@
     @test Set(n) == Set([91, 81, 92])
     n = search(P2(9, 9), S)
     @test Set(n) == Set([100, 99, 90])
+    n, d = searchdists(P2(9, 9), S)
+    @test Set(n) == Set([100, 99, 90])
+    @test length(d) == 3
+    n = Vector{Int}(undef, maxneighbors(S))
+    nn = search!(n, P2(9, 9), S)
+    @test nn == 3
+    @test Set(n[1:nn]) == Set([100, 99, 90])
+    n = Vector{Int}(undef, maxneighbors(S))
+    d = Vector{T}(undef, maxneighbors(S))
+    nn = searchdists!(n, d, P2(9, 9), S)
+    @test nn == 3
+    @test Set(n[1:nn]) == Set([100, 99, 90])
   end
 
   @testset "KBallSearch" begin
@@ -58,6 +70,22 @@
     @test length(n) == 5
     @test n[1] == 56
 
+    s = KBallSearch(𝒟, 10, MetricBall(T(1)))
+    n, d = searchdists(P2(5, 5), s)
+    @test length(n) == 5
+    @test length(d) == 5
+
+    s = KBallSearch(𝒟, 10, MetricBall(T(1)))
+    n = Vector{Int}(undef, maxneighbors(s))
+    nn = search!(n, P2(5, 5), s)
+    @test nn == 5
+
+    s = KBallSearch(𝒟, 10, MetricBall(T(1)))
+    n = Vector{Int}(undef, maxneighbors(s))
+    d = Vector{T}(undef, maxneighbors(s))
+    nn = searchdists!(n, d, P2(5, 5), s)
+    @test nn == 5
+
     mask = trues(nelements(𝒟))
     mask[56] = false
     n = search(P2(5, 5), s, mask=mask)
@@ -66,33 +94,8 @@
     @test length(n) == 1
     n = search(P2(-10, -10), s)
     @test length(n) == 0
-  end
-
-  @testset "BoundedSearch" begin
-    𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
-    S1 = BallSearch(𝒟, MetricBall(T(5)))
-    S2 = KNearestSearch(𝒟, 10)
-    B1 = BoundedSearch(S1, 5)
-    B2 = BoundedSearch(S2, 5)
-    p = centroid(𝒟, rand(1:100))
-    n = search(p, B1)
-    @test length(n) == 5
-    p = centroid(𝒟, rand(1:100))
-    n = search(p, B2)
-    @test length(n) == 5
-  end
-
-  @testset "GlobalSearch" begin
-    𝒟 = CartesianGrid(10, 10)
-    S = GlobalSearch(𝒟)
-    p = centroid(𝒟, rand(1:100))
-    n = search(p, S)
-    @test n == 1:100
-    mask = falses(nelements(𝒟))
-    mask[15] = true
-    mask[50] = true
-    mask[90] = true
-    n = search(p, S, mask=mask)
-    @test n == [15, 50, 90]
+    n, d = searchdists(P2(5, 5), s, mask=mask)
+    @test length(n) == 4
+    @test length(d) == 4
   end
 end

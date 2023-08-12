@@ -35,19 +35,19 @@ In this case, the origin and spacing default to (0,0,...) and (1,1,...).
 Create a 3D grid with 100x100x50 hexahedrons:
 
 ```julia
-julia> CartesianGrid(100,100,50)
+julia> CartesianGrid(100, 100, 50)
 ```
 
-Create a 2D grid with 100x100 quadrangles and origin at (10.,20.) units:
+Create a 2D grid with 100 x 100 quadrangles and origin at (10.0, 20.0):
 
 ```julia
-julia> CartesianGrid((100,100),(10.,20.),(1.,1.))
+julia> CartesianGrid((100, 100), (10.0, 20.0), (1.0, 1.0))
 ```
 
 Create a 1D grid from -1 to 1 with 100 segments:
 
 ```julia
-julia> CartesianGrid((-1.,),(1.,), dims=(100,))
+julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
 struct CartesianGrid{Dim,T} <: Grid{Dim,T}

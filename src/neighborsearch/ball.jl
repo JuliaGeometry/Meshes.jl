@@ -24,8 +24,14 @@ function BallSearch(domain::D, ball::B) where {D,B<:MetricBall}
 end
 
 function search(pₒ::Point, method::BallSearch; mask=nothing)
-  inds = inrange(method.tree, coordinates(pₒ), radius(method.ball))
-  if mask ≠ nothing
+  tree = method.tree
+  dmax = radius(method.ball)
+
+  inds = inrange(tree, coordinates(pₒ), dmax)
+
+  if isnothing(mask)
+    inds
+  else
     neighbors = Vector{Int}()
     @inbounds for ind in inds
       if mask[ind]
@@ -33,7 +39,5 @@ function search(pₒ::Point, method::BallSearch; mask=nothing)
       end
     end
     neighbors
-  else
-    inds
   end
 end
