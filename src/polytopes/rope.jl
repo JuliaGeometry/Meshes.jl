@@ -24,11 +24,11 @@ end
 
 nvertices(r::Rope) = length(r.vertices)
 
-==(r1::Rope, r2::Rope) = r1.vertices == r2.vertices
+==(r₁::Rope, r₂::Rope) = r₁.vertices == r₂.vertices
 
-function Base.isapprox(r1::Rope, r2::Rope; kwargs...)
-  nvertices(r1) ≠ nvertices(r2) && return false
-  all(isapprox(v1, v2; kwargs...) for (v1, v2) in zip(r1.vertices, r2.vertices))
+function Base.isapprox(r₁::Rope, r₂::Rope; kwargs...)
+  nvertices(r₁) ≠ nvertices(r₂) && return false
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
 end
 
 Base.close(r::Rope) = Ring(r.vertices)

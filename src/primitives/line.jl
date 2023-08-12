@@ -26,7 +26,7 @@ perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
 
 boundary(::Line) = nothing
 
-==(l1::Line, l2::Line) = l1.a ∈ l2 && l1.b ∈ l2 && l2.a ∈ l1 && l2.b ∈ l1
+==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
 

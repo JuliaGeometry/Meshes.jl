@@ -27,10 +27,8 @@ boundary(s::Segment) = PointSet(pointify(s))
 
 center(s::Segment{Dim,T}) where {Dim,T} = s(T(0.5))
 
-==(s1::Segment, s2::Segment) = s1.vertices == s2.vertices
-
-Base.isapprox(s1::Segment, s2::Segment; kwargs...) =
-  all(isapprox(v1, v2; kwargs...) for (v1, v2) in zip(s1.vertices, s2.vertices))
+Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
 function (s::Segment)(t)
   if t < 0 || t > 1

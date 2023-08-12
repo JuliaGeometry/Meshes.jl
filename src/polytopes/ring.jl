@@ -34,11 +34,11 @@ boundary(::Ring) = nothing
 
 nvertices(r::Ring) = length(r.vertices)
 
-==(r1::Ring, r2::Ring) = r1.vertices == r2.vertices
+==(r₁::Ring, r₂::Ring) = r₁.vertices == r₂.vertices
 
-function Base.isapprox(r1::Ring, r2::Ring; kwargs...)
-  nvertices(r1) ≠ nvertices(r2) && return false
-  all(isapprox(v1, v2; kwargs...) for (v1, v2) in zip(r1.vertices, r2.vertices))
+function Base.isapprox(r₁::Ring, r₂::Ring; kwargs...)
+  nvertices(r₁) ≠ nvertices(r₂) && return false
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
 end
 
 Base.close(r::Ring) = r

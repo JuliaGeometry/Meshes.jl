@@ -11,10 +11,8 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 
 nvertices(::Type{<:Hexahedron}) = 8
 
-==(h1::Hexahedron, h2::Hexahedron) = h1.vertices == h2.vertices
-
-Base.isapprox(h1::Hexahedron, h2::Hexahedron; kwargs...) =
-  all(isapprox(v1, v2; kwargs...) for (v1, v2) in zip(h1.vertices, h2.vertices))
+Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(h₁.vertices, h₂.vertices))
 
 function boundary(h::Hexahedron)
   indices = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]

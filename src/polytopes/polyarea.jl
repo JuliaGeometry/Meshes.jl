@@ -60,11 +60,11 @@ PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} = PolyArea(collect(outer);
 
 PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} = PolyArea(collect(Point.(outer)); fix=fix)
 
-==(p1::PolyArea, p2::PolyArea) = p1.outer == p2.outer && p1.inners == p2.inners
+==(p₁::PolyArea, p₂::PolyArea) = p₁.outer == p₂.outer && p₁.inners == p₂.inners
 
-function Base.isapprox(p1::PolyArea, p2::PolyArea; kwargs...)
-  length(p1.inners) ≠ length(p2.inners) && return false
-  isapprox(p1.outer, p2.outer; kwargs...) && all(isapprox(r1, r2; kwargs...) for (r1, r2) in zip(p1.inners, p2.inners))
+function Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...)
+  length(p₁.inners) ≠ length(p₂.inners) && return false
+  isapprox(p₁.outer, p₂.outer; kwargs...) && all(isapprox(r₁, r₂; kwargs...) for (r₁, r₂) in zip(p₁.inners, p₂.inners))
 end
 
 function vertices(p::PolyArea{Dim,T}) where {Dim,T}
