@@ -25,11 +25,7 @@ end
 
 maxneighbors(method::KNearestSearch) = method.k
 
-<<<<<<< HEAD
-function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; skip=i -> false)
-=======
 function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; mask=nothing)
->>>>>>> parent of 5ad647c (Refactor search methods)
   tree = method.tree
   k = method.k
 

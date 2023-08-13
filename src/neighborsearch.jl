@@ -62,30 +62,18 @@ function maxneighbors end
 # FALLBACKS
 # ----------
 
-<<<<<<< HEAD
-function search!(neighbors, pₒ::Point, method::BoundedNeighborSearchMethod; skip=i -> false)
-=======
 function search!(neighbors, pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
->>>>>>> parent of 5ad647c (Refactor search methods)
   distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
   searchdists!(neighbors, distances, pₒ, method; mask)
 end
 
-<<<<<<< HEAD
-function search(pₒ::Point, method::BoundedNeighborSearchMethod; skip=i -> false)
-=======
 function search(pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
->>>>>>> parent of 5ad647c (Refactor search methods)
   neighbors = Vector{Int}(undef, maxneighbors(method))
   nneigh = search!(neighbors, pₒ, method; mask=mask)
   view(neighbors, 1:nneigh)
 end
 
-<<<<<<< HEAD
-function searchdists(pₒ::Point, method::BoundedNeighborSearchMethod; skip=i -> false)
-=======
 function searchdists(pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
->>>>>>> parent of 5ad647c (Refactor search methods)
   neighbors = Vector{Int}(undef, maxneighbors(method))
   distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
   nneigh = searchdists!(neighbors, distances, pₒ, method; mask)
