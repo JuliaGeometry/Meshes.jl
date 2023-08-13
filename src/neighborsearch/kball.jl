@@ -27,18 +27,21 @@ end
 
 maxneighbors(method::KBallSearch) = method.k
 
-function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; skip=i -> false)
+function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
   tree = method.tree
   dmax = radius(method.ball)
   k = method.k
 
-  inds, dists = knn(tree, coordinates(pₒ), k, true, skip)
+  inds, dists = knn(tree, coordinates(pₒ), k, true)
 
   # keep neighbors inside ball
   keep = dists .≤ dmax
 
+  # possibly mask some of the neighbors
+  isnothing(mask) || (keep .*= mask[inds])
+
   nneigh = 0
-  @inbounds for i in 1:length(keep)
+  @inbounds for i in 1:k
     if keep[i]
       nneigh += 1
       neighbors[nneigh] = inds[i]
