@@ -14,8 +14,7 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-
-clip(poly::T, window::Polygon, ::SutherlandHodgman) where {T <: Polygon} = T(clip(vertices(poly), segments(window)))
+clip(poly::T, window::Polygon, ::SutherlandHodgman) where {T <: Polygon} = T(clip(vertices(poly), segments(window), ::SutherlandHodgman))
 
 function clip(poly::PolyArea, window::Polygon, ::SutherlandHodgman)
   r = map(rings(poly)) do ring
@@ -29,7 +28,7 @@ end
 # ---------------
 
 function clip(v::AbstractVector{Point}, window::AbstractVector{Segment}, ::SutherlandHodgman)
-  # clip each segment of the window one per time
+  # clip one segment of the window at a time
   for s in window
     v = clip(v, s, ::SutherlandHodgman)
   end
