@@ -18,24 +18,25 @@ function clip(poly::Polygon, other::Polygon, ::SutherlandHodgman)
   v = vertices(poly)
 
   for s₁ in segments(other)
-    newv = []
+    l₁ = Line(vertices(s₁)...)
     n = length(v)
-
+    newv = []
+    
     for i in 1:n
       p₁, p₂ = v[i], v[i%n + 1]
-      s₂ = Segment(p₁, p₂)
+      l₂ = Line(p₁, p₂)
 
       # assuming convex clockwise other
-      isp₁inside = (sideof(p₁, s₁) != :LEFT)
-      isp₂inside = (sideof(p₂, s₁) != :LEFT)
+      isp₁inside = (sideof(p₁, l₁) != :LEFT)
+      isp₂inside = (sideof(p₂, l₁) != :LEFT)
 
       if isp₁inside && isp₂inside
         push!(newv, p₁)
       elseif isp₁inside && !isp₂inside
         push!(newv, p₁)
-        push!(newv, s₁ ∩ s₂)
+        push!(newv, l₁ ∩ l₂)
       elseif !isp₁inside && isp₂inside
-        push!(newv, s₁ ∩ s₂)
+        push!(newv, l₁ ∩ l₂)
       end
     end
     v = newv
