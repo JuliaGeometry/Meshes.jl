@@ -27,15 +27,15 @@ function clip(poly::Polygon, other::Polygon, ::SutherlandHodgman)
       l₂ = Line(p₁, p₂)
 
       # assuming convex clockwise other
-      isp₁inside = (sideof(p₁, l₁) != :LEFT)
-      isp₂inside = (sideof(p₂, l₁) != :LEFT)
+      isinside_1 = (sideof(p₁, l₁) != :LEFT)
+      isinside_2 = (sideof(p₂, l₁) != :LEFT)
 
-      if isp₁inside && isp₂inside
+      if isinside_1 && isinside_2
         push!(newv, p₁)
-      elseif isp₁inside && !isp₂inside
+      elseif isinside_1 && !isinside_2
         push!(newv, p₁)
         push!(newv, l₁ ∩ l₂)
-      elseif !isp₁inside && isp₂inside
+      elseif !isinside_1 && isinside_2
         push!(newv, l₁ ∩ l₂)
       end
     end
