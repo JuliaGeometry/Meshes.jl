@@ -37,6 +37,19 @@ function sideof(p::Point{2,T}, s::Segment{2,T}) where {T}
 end
 
 """
+    sideof(point, line)
+
+Determines on which side of the oriented `line`
+the `point` lies. Possible results are `:LEFT`,
+`:RIGHT` or `:ON` the line.
+"""
+function sideof(p::Point{2,T}, l::Line{2,T}) where {T}
+  a, b = l.a, l.b
+  area = signarea(p, a, b)
+  ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
+end
+
+"""
     sideof(point, ring)
 
 Determines on which side of the `ring` the `point` lies.
