@@ -122,8 +122,8 @@ function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
 
   # helper function to check if vertex j is inside cone i
   function incone(j, i)
-    s1 = sideof(v[j], Segment(v[i], v[i - 1]))
-    s2 = sideof(v[j], Segment(v[i], v[i + 1]))
+    s1 = sideof(v[j], Line(v[i], v[i - 1]))
+    s2 = sideof(v[j], Line(v[i], v[i + 1]))
     if vexity(i) == :CONVEX
       s1 != :LEFT && s2 != :RIGHT
     else
