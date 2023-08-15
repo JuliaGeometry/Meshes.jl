@@ -31,8 +31,7 @@ from the `line`. Possible results are `:LEFT`, `:RIGHT` or `:ON`
 the segment.
 """
 function sideof(p::Point{2,T}, l::Line{2,T}) where {T}
-  a, b = l.a, l.b
-  area = signarea(p, a, b)
+  area = signarea(p, l.a, l.b)
   ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
 end
 
