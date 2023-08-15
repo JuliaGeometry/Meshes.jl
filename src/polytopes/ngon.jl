@@ -66,7 +66,7 @@ Return the segments linking consecutive points of the `ngon`.
 function segments(ngon::Ngon)
   v = vertices(ngon)
   n = length(v)
-  @inbounds (Segment(v[i], v[i%n + 1]) for i in 1:n)
+  @inbounds (Segment(v[i], v[mod1(n, i+1)]) for i in 1:n)
 end
 
 # ----------
