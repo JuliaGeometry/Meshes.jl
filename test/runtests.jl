@@ -103,7 +103,8 @@ testfiles = [
   "pointification.jl",
   "discretization.jl",
   "refinement.jl",
-  "transforms.jl"
+  "transforms.jl",
+  "clipping.jl"
 ]
 
 # --------------------------------
