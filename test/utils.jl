@@ -10,7 +10,7 @@
   @test sideof(p2, s) == :RIGHT
   @test sideof(p3, s) == :ON
 
-  p1, p2, p3 = P2(0, 0), P2(1, 1), P2(2, 4)
+  p1, p2, p3 = P2(0, 0), P2(1, 1), P2(-1, 3)
   l = Line(P2(0.5, 0.0), P2(0.0, 1.0))
   @test sideof(p1, l) == :LEFT
   @test sideof(p2, l) == :RIGHT
