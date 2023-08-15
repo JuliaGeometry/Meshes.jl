@@ -23,7 +23,7 @@ function clip(poly::Polygon, other::Polygon, ::SutherlandHodgman)
     newv = []
     
     for i in 1:n
-      p₁, p₂ = v[i], v[mod1(n, i+1)]
+      p₁, p₂ = v[i], v[mod1(i+1, n)]
       l₂ = Line(p₁, p₂)
 
       # assuming convex clockwise other
