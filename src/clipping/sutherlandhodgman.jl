@@ -14,11 +14,13 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-clip(poly::T, window::Polygon, ::SutherlandHodgman) where {T <: Polygon} = T(clip(vertices(poly), segments(window), ::SutherlandHodgman))
+clip(poly::T, window::Geometry, ::SutherlandHodgman) where {T <: Polygon} = T(clip(vertices(poly), segments(window), SutherlandHodgman()))
 
-function clip(poly::PolyArea, window::Polygon, ::SutherlandHodgman)
+function clip(poly::PolyArea, window::Geometry, ::SutherlandHodgman)
   r = map(rings(poly)) do ring
-    clip(ring, window, ::SutherlandHodgman)
+    v = vertices(ring) |> collect
+    w = segments(window) |> collect
+    Ring(clip(v, w, SutherlandHodgman())...)
   end
   PolyArea(first(r), r[2:end])
 end
@@ -27,24 +29,24 @@ end
 # IMPLEMENTATION
 # ---------------
 
-function clip(v::AbstractVector{Point}, window::AbstractVector{Segment}, ::SutherlandHodgman)
+function clip(v::AbstractVector{P}, window::AbstractVector{S}, ::SutherlandHodgman) where {P<:Point,S<:Segment}
   # clip one segment of the window at a time
   for s in window
-    v = clip(v, s, ::SutherlandHodgman)
+    v = clip(v, s, SutherlandHodgman())
   end
   v
 end
 
-function clip(v::AbstractVector{Point}, window::Segment, ::SutherlandHodgman)
+function clip(v::AbstractVector{<:Point}, window::Segment, ::SutherlandHodgman)
   n = length(v)
-  new_v = []
+  new_v::AbstractVector{P} = []
 
   for i in 1:n
     p1 = v[i]
     p2 = v[(i%n)+1]
 
     # assuming convex clockwise window
-    p1_visible = (sideof(p1, window) != :LEFT) 
+    p1_visible = (sideof(p1, window) != :LEFT)
     p2_visible = (sideof(p2, window) != :LEFT)
 
     if p1_visible && p2_visible
