@@ -14,51 +14,31 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-clip(poly::T, window::Geometry, ::SutherlandHodgman) where {T <: Polygon} = T(clip(vertices(poly), segments(window), SutherlandHodgman()))
+function clip(poly::Polygon, other::Polygon, ::SutherlandHodgman)
+  v = vertices(poly)
 
-function clip(poly::PolyArea, window::Geometry, ::SutherlandHodgman)
-  r = map(rings(poly)) do ring
-    v = vertices(ring) |> collect
-    w = segments(window) |> collect
-    Ring(clip(v, w, SutherlandHodgman())...)
-  end
-  PolyArea(first(r), r[2:end])
-end
+  for s1 in segments(other)
+    n = length(v)
+    newv = []
 
-# ---------------
-# IMPLEMENTATION
-# ---------------
+    for i in 1:n
+      v₁, v₂ = v[i], v[i%n+1]
+      s2 = Segment(v₁, v₂)
 
-function clip(v::AbstractVector{P}, window::AbstractVector{S}, ::SutherlandHodgman) where {P<:Point,S<:Segment}
-  # clip one segment of the window at a time
-  for s in window
-    v = clip(v, s, SutherlandHodgman())
+      # assuming convex clockwise other
+      isv₁inside = (sideof(v₁, s1) != :LEFT)
+      isv₂inside = (sideof(v₂, s1) != :LEFT)
+
+      if isv₁inside && isv₂inside
+        push!(newv, v₁)
+      elseif isv₁inside && !isv₂inside
+        push!(newv, v₁)
+        push!(newv, s1 ∩ s2)
+      elseif !isv₁inside && isv₂inside
+        push!(newv, s1 ∩ s2)
+      end
+    end
+    v = newv
   end
   v
-end
-
-function clip(v::AbstractVector{<:Point}, window::Segment, ::SutherlandHodgman)
-  n = length(v)
-  new_v::AbstractVector{P} = []
-
-  for i in 1:n
-    p1 = v[i]
-    p2 = v[(i%n)+1]
-
-    # assuming convex clockwise window
-    p1_visible = (sideof(p1, window) != :LEFT)
-    p2_visible = (sideof(p2, window) != :LEFT)
-
-    if p1_visible && p2_visible
-      push!(new_v, p1)
-    elseif p1_visible && !p2_visible
-      p_intersection = Segment(p1, p2) ∩ window
-      push!(new_v, p1)
-      push!(new_v, p_intersection)
-    elseif !p1_visible && p2_visible
-      p_intersection = Segment(p1, p2) ∩ window
-      push!(new_v, p_intersection)
-    end
-  end
-  new_v
 end
