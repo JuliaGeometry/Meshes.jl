@@ -58,6 +58,17 @@ innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
 signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
+"""
+    segments(ngon)
+
+Return the segments linking consecutive points of the `ngon`.
+"""
+function segments(ngon::Ngon)
+  v = vertices(ngon)
+  n = length(v)
+  @inbounds (Segment(v[i], v[i%n + 1]) for i in 1:n)
+end
+
 # ----------
 # TRIANGLES
 # ----------
