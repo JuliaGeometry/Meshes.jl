@@ -26,9 +26,9 @@ end
 """
     sideof(point, line)
 
-Determines on which side the `point` is in relation to the vector (a,b)
-from the `line`. Possible results are `:LEFT`, `:RIGHT` or `:ON`
-the segment.
+Determines on which side the `point` is in relation to the vector formed
+by the points a and b from the `line`. Possible results are `:LEFT`,
+`:RIGHT` or `:ON` the line.
 """
 function sideof(p::Point{2,T}, l::Line{2,T}) where {T}
   area = signarea(p, l.a, l.b)
