@@ -17,28 +17,28 @@ struct SutherlandHodgman <: ClippingMethod end
 function clip(poly::Polygon, other::Polygon, ::SutherlandHodgman)
   v = vertices(poly)
 
-  for s1 in segments(other)
-    n = length(v)
+  for s₁ in segments(other)
     newv = []
+    n = length(v)
 
     for i in 1:n
-      v₁, v₂ = v[i], v[i%n+1]
-      s2 = Segment(v₁, v₂)
+      p₁, p₂ = v[i], v[i%n + 1]
+      s₂ = Segment(p₁, p₂)
 
       # assuming convex clockwise other
-      isv₁inside = (sideof(v₁, s1) != :LEFT)
-      isv₂inside = (sideof(v₂, s1) != :LEFT)
+      isp₁inside = (sideof(p₁, s₁) != :LEFT)
+      isp₂inside = (sideof(p₂, s₁) != :LEFT)
 
-      if isv₁inside && isv₂inside
-        push!(newv, v₁)
-      elseif isv₁inside && !isv₂inside
-        push!(newv, v₁)
-        push!(newv, s1 ∩ s2)
-      elseif !isv₁inside && isv₂inside
-        push!(newv, s1 ∩ s2)
+      if isp₁inside && isp₂inside
+        push!(newv, p₁)
+      elseif isp₁inside && !isp₂inside
+        push!(newv, p₁)
+        push!(newv, s₁ ∩ s₂)
+      elseif !isp₁inside && isp₂inside
+        push!(newv, s₁ ∩ s₂)
       end
     end
     v = newv
   end
-  v
+  poly = PolyArea(Ring(v...))
 end
