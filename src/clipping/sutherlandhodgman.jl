@@ -15,15 +15,18 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 struct SutherlandHodgman <: ClippingMethod end
 
 function clip(poly::Polygon{Dim,T}, other::Polygon, ::SutherlandHodgman) where {Dim,T}
+  vother = vertices(other)
+  n = length(vother)
   v = vertices(poly)
 
-  for s₁ in segments(other)
-    l₁ = Line(vertices(s₁)...)
-    n = length(v)
+  for i in 1:n
+    l₁ = Line(vother[i], vother[mod1(i+1, n)])
+
+    m = length(v)
     newv::Vector{Point{Dim,T}} = []
     
-    for i in 1:n
-      p₁, p₂ = v[i], v[mod1(i+1, n)]
+    for j in 1:m
+      p₁, p₂ = v[j], v[mod1(j+1, m)]
       l₂ = Line(p₁, p₂)
 
       # assuming convex clockwise other
@@ -41,5 +44,10 @@ function clip(poly::Polygon{Dim,T}, other::Polygon, ::SutherlandHodgman) where {
     end
     v = newv
   end
-  poly = PolyArea(Ring(v))
+
+  if isempty(v)
+    nothing
+  else
+    PolyArea(Ring(v))
+  end
 end
