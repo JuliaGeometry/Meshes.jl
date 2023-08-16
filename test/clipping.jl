@@ -51,10 +51,28 @@
     newpoly = clip(poly, other, SutherlandHodgman())
     v = vertices(newpoly)
 
-    @test newpoly isa PolyArea
     @test length(rings(newpoly)) == 1
     @test v ⊆ other
     @test inpoints ⊆ v
     @test isempty(outpoints ∩ v)
+  end
+
+  @testset "Inside" begin
+    poly = Quadrangle(P2(0, 0), P2(0, 1), P2(1, 1), P2(1, 0))
+    other = Quadrangle(P2(0, 0), P2(0, 4), P2(5, 4), P2(5, 0))
+
+    newpoly = clip(poly, other, SutherlandHodgman())
+
+    @test length(rings(newpoly)) == 1
+    @test first(rings(newpoly)) ≈ Ring(P2(0, 0), P2(0, 1), P2(1, 1), P2(1, 0))
+  end
+
+  @testset "Outside" begin
+    poly = Quadrangle(P2(6, 6), P2(6, 7), P2(7, 7), P2(7, 6))
+    other = Quadrangle(P2(0, 0), P2(0, 4), P2(5, 4), P2(5, 0))
+
+    newpoly = clip(poly, other, SutherlandHodgman())
+
+    @test isnothing(newpoly)
   end
 end
