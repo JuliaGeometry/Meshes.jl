@@ -23,7 +23,7 @@ function clip(poly::Polygon{Dim,T}, other::Polygon, ::SutherlandHodgman) where {
     l₁ = Line(vother[i], vother[mod1(i+1, n)])
 
     m = length(v)
-    newv::Vector{Point{Dim,T}} = []
+    newv = Point{Dim,T}[]
     
     for j in 1:m
       p₁, p₂ = v[j], v[mod1(j+1, m)]
