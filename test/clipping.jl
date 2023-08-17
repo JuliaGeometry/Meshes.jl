@@ -3,10 +3,10 @@
     poly = Triangle(P2(0, 2), P2(3, 5), P2(6, 2))
     other = Quadrangle(P2(0, 0), P2(0, 4), P2(5, 4), P2(5, 0))
 
-    newpoly = clip(poly, other, SutherlandHodgman())
+    clipped = clip(poly, other, SutherlandHodgman())
 
-    @test length(rings(newpoly)) == 1
-    @test first(rings(newpoly)) ≈ Ring(P2[(0, 2), (2, 4), (4, 4), (5, 3), (5, 2)])
+    @test length(rings(clipped)) == 1
+    @test first(rings(clipped)) ≈ Ring(P2[(0, 2), (2, 4), (4, 4), (5, 3), (5, 2)])
   end
 
   @testset "Octagon" begin
@@ -35,10 +35,10 @@
       P2(5, 0)
     )
 
-    newpoly = clip(poly, other, SutherlandHodgman())
+    clipped = clip(poly, other, SutherlandHodgman())
 
-    @test length(rings(newpoly)) == 1
-    @test first(rings(newpoly)) ≈ expected
+    @test length(rings(clipped)) == 1
+    @test first(rings(clipped)) ≈ expected
   end
 
   @testset "Random" begin
@@ -48,10 +48,10 @@
     inpoints = filter(p -> p ∈ other, vertices(poly))
     outpoints = filter(p -> p ∉ other, vertices(poly))
 
-    newpoly = clip(poly, other, SutherlandHodgman())
-    v = vertices(newpoly)
+    clipped = clip(poly, other, SutherlandHodgman())
+    v = vertices(clipped)
 
-    @test length(rings(newpoly)) == 1
+    @test length(rings(clipped)) == 1
     @test v ⊆ other
     @test inpoints ⊆ v
     @test isempty(outpoints ∩ v)
@@ -61,18 +61,18 @@
     poly = Quadrangle(P2(0, 0), P2(0, 1), P2(1, 1), P2(1, 0))
     other = Quadrangle(P2(0, 0), P2(0, 4), P2(5, 4), P2(5, 0))
 
-    newpoly = clip(poly, other, SutherlandHodgman())
+    clipped = clip(poly, other, SutherlandHodgman())
 
-    @test length(rings(newpoly)) == 1
-    @test first(rings(newpoly)) ≈ Ring(P2(0, 0), P2(0, 1), P2(1, 1), P2(1, 0))
+    @test length(rings(clipped)) == 1
+    @test first(rings(clipped)) ≈ Ring(P2(0, 0), P2(0, 1), P2(1, 1), P2(1, 0))
   end
 
   @testset "Outside" begin
     poly = Quadrangle(P2(6, 6), P2(6, 7), P2(7, 7), P2(7, 6))
     other = Quadrangle(P2(0, 0), P2(0, 4), P2(5, 4), P2(5, 0))
 
-    newpoly = clip(poly, other, SutherlandHodgman())
+    clipped = clip(poly, other, SutherlandHodgman())
 
-    @test isnothing(newpoly)
+    @test isnothing(clipped)
   end
 end
