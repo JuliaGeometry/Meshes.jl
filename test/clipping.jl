@@ -5,9 +5,7 @@
     # triangle
     poly = Triangle(P2(6, 2), P2(3, 5), P2(0, 2))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
-
     clipped = clip(poly, other, SutherlandHodgman())
-    
     @test all(vertices(clipped) .≈ [
       P2(5, 3),
       P2(4, 4),
@@ -27,7 +25,6 @@
       P2(2, 1),
       P2(2,-2)
     )
-
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
     @test all(vertices(clipped) .≈ [
@@ -92,7 +89,6 @@
     @test all(vertices(clipped) .≈ vertices(other))
 
     # PolyArea with box
-
     outer = Ring(
       P2(8, 0),
       P2(4, 8),
