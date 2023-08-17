@@ -14,7 +14,7 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-function clip(poly, other, algo) 
+function clip(poly::Polygon, other::Geometry, method::ClippingMethod) 
   r = [clip(ring, boundary(other), algo) for ring in rings(poly)]
   r = filter(!isnothing, r)
 
