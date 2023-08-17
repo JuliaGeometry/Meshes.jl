@@ -28,33 +28,31 @@ function clip(poly::Polygon, other::Geometry, method::ClippingMethod)
 end
 
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
-  o = vertices(other)
+  # other must be a convex CCW ring
+  o = orientation(other) == :CCW ? vertices(other) : reverse(vertices(other)) 
   n = length(o)
   v = vertices(ring)
 
-  outside = orientation(other) == :CW ? :LEFT : :RIGHT
-
   for i in 1:n
-    l₁ = Line(o[i], o[mod1(i+1, n)])
+    lₒ = Line(o[i], o[mod1(i+1, n)])
 
     m = length(v)
     u = Point{Dim,T}[]
     
     for j in 1:m
       p₁, p₂ = v[j], v[mod1(j+1, m)]
-      l₂ = Line(p₁, p₂)
+      lᵣ = Line(p₁, p₂)
 
-      # assuming convex clockwise other
-      isinside₁ = (sideof(p₁, l₁) != outside)
-      isinside₂ = (sideof(p₂, l₁) != outside)
+      isinside₁ = (sideof(p₁, lₒ) != :RIGHT)
+      isinside₂ = (sideof(p₂, lₒ) != :RIGHT)
 
       if isinside₁ && isinside₂
         push!(u, p₁)
       elseif isinside₁ && !isinside₂
         push!(u, p₁)
-        push!(u, l₁ ∩ l₂)
+        push!(u, lₒ ∩ lᵣ)
       elseif !isinside₁ && isinside₂
-        push!(u, l₁ ∩ l₂)
+        push!(u, lₒ ∩ lᵣ)
       end
     end
     v = u
