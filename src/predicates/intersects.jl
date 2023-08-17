@@ -29,6 +29,10 @@ intersects(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
 
 intersects(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
 
+intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
+
+intersects(t::Triangle, r::Ray) = intersects(r, t)
+
 intersects(p::Point, g::Geometry) = p ∈ g
 
 intersects(g::Geometry, p::Point) = intersects(p, g)
@@ -42,10 +46,6 @@ intersects(c₁::Chain, c₂::Chain) = intersects(segments(c₁), segments(c₂)
 intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, boundary(g))
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
-
-intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
-
-intersects(t::Triangle, r::Ray) = intersects(r, t)
 
 function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   # must have intersection of bounding boxes
