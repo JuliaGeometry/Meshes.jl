@@ -76,4 +76,28 @@
 
     @test isnothing(clipped)
   end
+
+  @testset "Surrounded" begin
+    poly = Hexangon(
+      P2(0, 2),
+      P2(-2, 2),
+      P2(-2, 0),
+      P2(0, -2),
+      P2(2, -2),
+      P2(2, 0)
+    )
+
+    other = Hexangon(
+      P2(0, 1),
+      P2(-1, 1),
+      P2(-1, 0),
+      P2(0, -1),
+      P2(1, -1),
+      P2(1, 0)
+    )
+
+    clipped = clip(poly, other, SutherlandHodgman())
+
+    @test all(vertices(clipped) .≈ vertices(poly))
+  end
 end
