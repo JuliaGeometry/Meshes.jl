@@ -16,18 +16,21 @@ struct SutherlandHodgman <: ClippingMethod end
 
 function clip(poly, other, algo) 
   r = [clip(ring, boundary(other), algo) for ring in rings(poly)]
-  # TODO: filter nothing rings
-  if hasholes(poly)
+  r = filter(!isnothing, r)
+
+  if isempty(r)
+    nothing
+  elseif hasholes(poly)
     PolyArea(r[1], r[2:end])
   else
     PolyArea(r[1])
   end
 end
 
-function clip(poly::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
+function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
   o = vertices(other)
   n = length(o)
-  v = vertices(poly)
+  v = vertices(ring)
 
   for i in 1:n
     l₁ = Line(o[i], o[mod1(i+1, n)])
