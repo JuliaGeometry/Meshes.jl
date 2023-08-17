@@ -24,15 +24,18 @@ function signarea(A::Point{2}, B::Point{2}, C::Point{2})
 end
 
 """
-    sideof(point, segment)
+    sideof(point, line)
 
-Determines on which side of the oriented `segment`
-the `point` lies. Possible results are `:LEFT`,
-`:RIGHT` or `:ON` the segment.
+Determines on which side the `point` is in relation to the `line`.
+Possible results are `:LEFT`, `:RIGHT` or `:ON` the line.
+
+### Notes
+
+* For a line `l` this method assumes the orientation
+  of the line segment formed by the points `l(0)` and `l(1)`.
 """
-function sideof(p::Point{2,T}, s::Segment{2,T}) where {T}
-  a, b = vertices(s)
-  area = signarea(p, a, b)
+function sideof(p::Point{2,T}, l::Line{2,T}) where {T}
+  area = signarea(p, l(0), l(1))
   ifelse(area > atol(T), :LEFT, ifelse(area < -atol(T), :RIGHT, :ON))
 end
 
