@@ -23,7 +23,9 @@
 
     other = Quadrangle(P2(0, 0), P2(0, 4), P2(5, 4), P2(5, 0))
     
-    expected = Ring(
+    clipped = clip(poly, other, SutherlandHodgman())
+
+    @test vertices(clipped) ≈ [
       P2(2, 0),
       P2(2, 1),
       P2(4, 1),
@@ -34,24 +36,18 @@
       P2(5, 4),
       P2(5, 0)
     )
-
-    clipped = clip(poly, other, SutherlandHodgman())
-
-    @test length(rings(clipped)) == 1
-    @test first(rings(clipped)) ≈ expected
   end
 
   @testset "Random" begin
     poly = Ngon(rand(P2, 10)...)
     other = Quadrangle(P2(0, 0), P2(0, 1/2), P2(1/2, 1/2), P2(1/2, 0))
 
-    inpoints = filter(p -> p ∈ other, vertices(poly))
-    outpoints = filter(p -> p ∉ other, vertices(poly))
+    inverts = filter(p -> p ∈ other, vertices(poly))
+    outverts = filter(p -> p ∉ other, vertices(poly))
 
     clipped = clip(poly, other, SutherlandHodgman())
-    v = vertices(clipped)
+    clipverts = vertices(clipped)
 
-    @test length(rings(clipped)) == 1
     @test v ⊆ other
     @test inpoints ⊆ v
     @test isempty(outpoints ∩ v)
