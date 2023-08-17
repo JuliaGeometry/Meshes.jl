@@ -58,5 +58,5 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where 
     v = u
   end
 
-  isempty(v) ? nothing : Ring(v)
+  isempty(v) ? nothing : Ring(unique(v))
 end
