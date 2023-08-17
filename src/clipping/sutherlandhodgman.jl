@@ -14,16 +14,26 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-function clip(poly::Polygon{Dim,T}, other::Polygon{Dim,T}, ::SutherlandHodgman) where {Dim,T}
-  vother = vertices(other)
-  n = length(vother)
+function clip(poly, other, algo) 
+  r = [clip(ring, boundary(other), algo) for ring in rings(poly)]
+  # TODO: filter nothing rings
+  if hasholes(poly)
+    PolyArea(r[1], r[2:end])
+  else
+    PolyArea(r[1])
+  end
+end
+
+function clip(poly::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
+  o = vertices(other)
+  n = length(o)
   v = vertices(poly)
 
   for i in 1:n
-    l₁ = Line(vother[i], vother[mod1(i+1, n)])
+    l₁ = Line(o[i], o[mod1(i+1, n)])
 
     m = length(v)
-    newv = Point{Dim,T}[]
+    u = Point{Dim,T}[]
     
     for j in 1:m
       p₁, p₂ = v[j], v[mod1(j+1, m)]
@@ -34,16 +44,16 @@ function clip(poly::Polygon{Dim,T}, other::Polygon{Dim,T}, ::SutherlandHodgman) 
       isinside₂ = (sideof(p₂, l₁) != :LEFT)
 
       if isinside₁ && isinside₂
-        push!(newv, p₁)
+        push!(u, p₁)
       elseif isinside₁ && !isinside₂
-        push!(newv, p₁)
-        push!(newv, l₁ ∩ l₂)
+        push!(u, p₁)
+        push!(u, l₁ ∩ l₂)
       elseif !isinside₁ && isinside₂
-        push!(newv, l₁ ∩ l₂)
+        push!(u, l₁ ∩ l₂)
       end
     end
-    v = newv
+    v = u
   end
 
-  isempty(v) ? nothing : PolyArea(Ring(v))
+  isempty(v) ? nothing : Ring(v)
 end
