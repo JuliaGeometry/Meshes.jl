@@ -44,7 +44,7 @@
   end
 
   @testset "Random" begin
-    poly = Ngon(rand(P2, 10)...)
+    poly = Ngon(P2(0, 0), rand(P2, 10)...)
     other = Quadrangle(P2(0, 0), P2(0, 1/2), P2(1/2, 1/2), P2(1/2, 0))
 
     inverts = filter(p -> p ∈ other, vertices(poly))
@@ -78,7 +78,7 @@
   end
 
   @testset "Surrounded" begin
-    poly = Hexangon(
+    poly = Hexagon(
       P2(0, 2),
       P2(-2, 2),
       P2(-2, 0),
@@ -87,7 +87,7 @@
       P2(2, 0)
     )
 
-    other = Hexangon(
+    other = Hexagon(
       P2(0, 1),
       P2(-1, 1),
       P2(-1, 0),
@@ -98,6 +98,6 @@
 
     clipped = clip(poly, other, SutherlandHodgman())
 
-    @test all(vertices(clipped) .≈ vertices(poly))
+    @test all(vertices(clipped) .≈ vertices(other))
   end
 end
