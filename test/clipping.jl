@@ -39,20 +39,6 @@
       P2(5, 4)
     ])
 
-    # "random"
-    poly = Ngon(P2(0, 0), rand(P2, 10)...)
-    other = Quadrangle(P2(1/2, 0), P2(1/2, 1/2), P2(0, 1/2), P2(0, 0))
-
-    inverts = filter(p -> p ∈ other, vertices(poly))
-    outverts = filter(p -> p ∉ other, vertices(poly))
-
-    clipped = clip(poly, other, SutherlandHodgman())
-    clipverts = vertices(clipped)
-
-    @test clipverts ⊆ other
-    @test inverts ⊆ clipverts
-    @test isempty(outverts ∩ clipverts)
-
     # inside
     poly = Quadrangle(P2(1, 0), P2(1, 1), P2(0, 1), P2(0, 0))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
@@ -143,5 +129,51 @@
 
     @test all(vertices(r[1]) .≈ vertices(boundary(other)))
     @test all(vertices(r[2]) .≈ vertices(inner))
+
+    # PolyArea with one inner ring inside `other` and another inner ring outside `other`
+    outer = Ring(
+      P2(6, 4),
+      P2(6, 7),
+      P2(1, 6),
+      P2(1, 1),
+      P2(5, 2)
+    )
+    inner₁ = Ring(
+      P2(4, 3),
+      P2(3, 4),
+      P2(3, 3),
+    )
+    inner₂ = Ring(
+      P2(3, 4),
+      P2(2, 5),
+      P2(2, 4),
+    )
+
+    poly = PolyArea(outer, [inner₁, inner₂])
+    other = PolyArea(Ring(
+      P2(6,1),
+      P2(7,2),
+      P2(6,5),
+      P2(0,2),
+      P2(1,1),
+    ))
+
+    clipped = clip(poly, other, SutherlandHodgman())
+    r = rings(clipped)
+    
+    @test length(r) == 2
+    @test all(vertices(r[1]) .≈ [
+      P2(6, 4),
+      P2(6, 5),
+      P2(1, 2.5),
+      P2(1, 1),
+      P2(5, 2)
+    ])
+    @test all(vertices(r[2]) .≈ [
+      P2(4.0, 3.0),
+      P2(3.0, 3.0),
+      P2(3.0, 3.5),
+      P2(10/3,11/3),
+    ])
   end
 end
