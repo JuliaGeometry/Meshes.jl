@@ -182,6 +182,13 @@
     @test intersects(t2, t3)
     @test !intersects(t1, t3)
 
+    t = Triangle((0, 0, 0), (2, 0, 0), (1, 2, 0))
+    r1 = Ray((1, 1, 1), (0, 0, -1))
+    r2 = Ray((1, 1, 1), (0, 0, 1))
+    @test intersects(r1, t) == true
+    @test intersects(t, r1) == true
+    @test intersects(r2, t) == false
+
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]

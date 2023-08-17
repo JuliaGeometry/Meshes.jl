@@ -43,6 +43,10 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
+intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
+
+intersects(t::Triangle, r::Ray) = intersects(r, t)
+
 function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   # must have intersection of bounding boxes
   intersects(boundingbox(g₁), boundingbox(g₂)) || return false
