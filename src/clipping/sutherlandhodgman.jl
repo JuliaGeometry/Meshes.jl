@@ -45,9 +45,5 @@ function clip(poly::Polygon{Dim,T}, other::Polygon{Dim,T}, ::SutherlandHodgman) 
     v = newv
   end
 
-  if isempty(v)
-    nothing
-  else
-    PolyArea(Ring(v))
-  end
+  isempty(v) ? nothing : PolyArea(Ring(v))
 end
