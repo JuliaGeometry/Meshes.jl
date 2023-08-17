@@ -32,6 +32,8 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where 
   n = length(o)
   v = vertices(ring)
 
+  outside = orientation(other) == :CW ? :LEFT : :RIGHT
+
   for i in 1:n
     l₁ = Line(o[i], o[mod1(i+1, n)])
 
@@ -43,8 +45,8 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where 
       l₂ = Line(p₁, p₂)
 
       # assuming convex clockwise other
-      isinside₁ = (sideof(p₁, l₁) != :LEFT)
-      isinside₂ = (sideof(p₂, l₁) != :LEFT)
+      isinside₁ = (sideof(p₁, l₁) != outside)
+      isinside₂ = (sideof(p₂, l₁) != outside)
 
       if isinside₁ && isinside₂
         push!(u, p₁)
