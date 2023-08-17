@@ -5,8 +5,13 @@
 
     clipped = clip(poly, other, SutherlandHodgman())
 
-    @test length(rings(clipped)) == 1
-    @test first(rings(clipped)) ≈ Ring(P2[(0, 2), (2, 4), (4, 4), (5, 3), (5, 2)])
+    @test all(vertices(clipped) .≈ [
+      P2(0, 2),
+      P2(2, 4),
+      P2(4, 4),
+      P2(5, 3),
+      P2(5, 2)
+    ])
   end
 
   @testset "Octagon" begin
@@ -25,7 +30,7 @@
     
     clipped = clip(poly, other, SutherlandHodgman())
 
-    @test vertices(clipped) ≈ [
+    @test all(vertices(clipped) .≈ [
       P2(2, 0),
       P2(2, 1),
       P2(4, 1),
@@ -35,7 +40,7 @@
       P2(3, 4),
       P2(5, 4),
       P2(5, 0)
-    )
+    ])
   end
 
   @testset "Random" begin
@@ -48,9 +53,9 @@
     clipped = clip(poly, other, SutherlandHodgman())
     clipverts = vertices(clipped)
 
-    @test v ⊆ other
-    @test inpoints ⊆ v
-    @test isempty(outpoints ∩ v)
+    @test clipverts ⊆ other
+    @test inverts ⊆ clipverts
+    @test isempty(outverts ∩ clipverts)
   end
 
   @testset "Inside" begin
