@@ -14,7 +14,7 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-function clip(poly::Polygon{Dim,T}, other::Polygon, ::SutherlandHodgman) where {Dim,T}
+function clip(poly::Polygon{Dim,T}, other::Polygon{Dim,T}, ::SutherlandHodgman) where {Dim,T}
   vother = vertices(other)
   n = length(vother)
   v = vertices(poly)
