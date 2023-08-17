@@ -90,5 +90,62 @@
     )
     clipped = clip(poly, other, SutherlandHodgman())
     @test all(vertices(clipped) .≈ vertices(other))
+
+    # PolyArea with box
+
+    outer = Ring(
+      P2(8, 0),
+      P2(4, 8),
+      P2(2, 8),
+      P2(-2, 0),
+      P2(0, 0),
+      P2(1, 2),
+      P2(5, 2),
+      P2(6, 0)
+    )
+    inner = Ring(
+      P2(4, 4),
+      P2(2, 4),
+      P2(3, 6)
+    )
+
+    poly = PolyArea(outer, [inner])
+    other = Box(P2(0,1), P2(3,7))
+
+    clipped = clip(poly, other, SutherlandHodgman())
+    r = rings(clipped)
+
+    @test all(vertices(r[1]) .≈ [
+      P2(1.5, 7.0),
+      P2(0.0, 4.0),
+      P2(0.0, 1.0),
+      P2(0.5, 1.0),
+      P2(1.0, 2.0),
+      P2(3.0, 2.0),
+      P2(3.0, 7.0)
+    ])
+    @test all(vertices(r[2]) .≈ [P2(3.0, 4.0), P2(2.0, 4.0), P2(3.0, 6.0)])
+
+    # PolyArea with outer ring outside and inner ring inside
+    outer = Ring(
+      P2(8, 0),
+      P2(2, 6),
+      P2(-4, 0),
+    )
+    inner = Ring(
+      P2(1, 1),
+      P2(3, 1),
+      P2(3, 3),
+      P2(1, 3),
+    )
+
+    poly = PolyArea(outer, [inner])
+    other = Quadrangle(P2(4, 4), P2(0, 4), P2(0, 0), P2(4, 0))
+
+    clipped = clip(poly, other, SutherlandHodgman())
+    r = rings(clipped)
+
+    @test all(vertices(r[1]) .≈ vertices(boundary(other)))
+    @test all(vertices(r[2]) .≈ vertices(inner))
   end
 end
