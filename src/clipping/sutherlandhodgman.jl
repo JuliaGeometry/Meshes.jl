@@ -14,19 +14,6 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, method::ClippingMethod) 
-  c = [clip(ring, boundary(other), method) for ring in rings(poly)]
-  r = filter(!isnothing, c)
-
-  if isempty(r)
-    nothing
-  elseif hasholes(poly)
-    PolyArea(r[1], r[2:end])
-  else
-    PolyArea(r[1])
-  end
-end
-
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
   # other must be a convex CCW ring
   o = orientation(other) == :CCW ? vertices(other) : reverse(vertices(other)) 
