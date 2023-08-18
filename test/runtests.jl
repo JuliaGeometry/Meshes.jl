@@ -92,6 +92,7 @@ testfiles = [
   "predicates.jl",
   "sideof.jl",
   "merging.jl",
+  "clipping.jl",
   "intersections.jl",
   "complement.jl",
   "simplification.jl",
@@ -104,8 +105,7 @@ testfiles = [
   "transforms.jl",
   "distances.jl",
   "supportfun.jl",
-  "matrices.jl",
-  "clipping.jl"
+  "matrices.jl"
 ]
 
 # --------------------------------
