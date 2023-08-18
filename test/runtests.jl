@@ -89,9 +89,6 @@ testfiles = [
   "traversing.jl",
   "neighborhoods.jl",
   "neighborsearch.jl",
-  "distances.jl",
-  "supportfun.jl",
-  "matrices.jl",
   "predicates.jl",
   "merging.jl",
   "intersections.jl",
@@ -103,7 +100,11 @@ testfiles = [
   "pointification.jl",
   "discretization.jl",
   "refinement.jl",
-  "transforms.jl"
+  "transforms.jl",
+  "distances.jl",
+  "supportfun.jl",
+  "matrices.jl",
+  "sideof.jl"
 ]
 
 # --------------------------------

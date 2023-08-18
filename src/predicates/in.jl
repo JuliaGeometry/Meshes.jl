@@ -129,9 +129,9 @@ Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
 
 function Base.in(p::Point, poly::PolyArea)
   r = rings(poly)
-  inside = sideof(p, first(r)) == :INSIDE
+  inside = sideof(p, first(r)) == :IN
   if hasholes(poly)
-    outside = all(sideof(p, r[i]) == :OUTSIDE for i in 2:length(r))
+    outside = all(sideof(p, r[i]) == :OUT for i in 2:length(r))
     inside && outside
   else
     inside

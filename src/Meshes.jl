@@ -76,12 +76,6 @@ include("traversing.jl")
 include("neighborhoods.jl")
 include("neighborsearch.jl")
 
-# miscellaneous
-include("distances.jl")
-include("supportfun.jl")
-include("matrices.jl")
-include("projecting.jl")
-
 # predicates
 include("predicates.jl")
 
@@ -100,6 +94,13 @@ include("refinement.jl")
 
 # transforms
 include("transforms.jl")
+
+# miscellaneous
+include("distances.jl")
+include("supportfun.jl")
+include("matrices.jl")
+include("projecting.jl")
+include("sideof.jl")
 
 # visualization
 include("viz.jl")
