@@ -11,7 +11,7 @@
     poly = Octagon(P2(8,-2), P2(8, 5), P2(2, 5), P2(4, 3), P2(6, 3), P2(4, 1), P2(2, 1), P2(2,-2))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
-    @test issimple(clipped)
+    @test !issimple(clipped)
     @test all(vertices(clipped) .≈ [P2(3, 4), P2(4, 3), P2(5, 3), P2(5, 2), P2(4, 1), P2(2, 1), P2(2, 0), P2(5, 0), P2(5, 4)])
 
     # inside
