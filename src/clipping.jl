@@ -12,7 +12,7 @@ abstract type ClippingMethod end
 """
     clip(geometry, other, method)
 """
-function clip(poly::Polygon, other::Geometry, method::ClippingMethod) 
+function clip(poly::Polygon, other::Geometry, method::ClippingMethod)
   c = [clip(ring, boundary(other), method) for ring in rings(poly)]
   r = filter(!isnothing, c)
 
