@@ -30,8 +30,8 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where 
       p₁, p₂ = v[j], v[mod1(j+1, m)]
       lᵣ = Line(p₁, p₂)
 
-      isinside₁ = (sideof(p₁, lₒ) != :RIGHT)
-      isinside₂ = (sideof(p₂, lₒ) != :RIGHT)
+      isinside₁ = (sideof(p₁, lₒ) != RIGHT)
+      isinside₂ = (sideof(p₂, lₒ) != RIGHT)
 
       if isinside₁ && isinside₂
         push!(u, p₁)
