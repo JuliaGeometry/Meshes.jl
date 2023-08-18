@@ -54,20 +54,20 @@
 
     # surrounded
     poly = Hexagon(
-      P2(2, 0),
-      P2(2, -2),
-      P2(0, -2),
-      P2(-2, 0),
+      P2(0, 2),
       P2(-2, 2),
-      P2(0, 2)
+      P2(-2, 0),
+      P2(0, -2),
+      P2(2, -2),
+      P2(2, 0)
     )
     other = Hexagon(
-      P2(1, -1),
-      P2(0, -1),
-      P2(-1, 0),
-      P2(-1, 1),
-      P2(0, 1),
       P2(1, 0),
+      P2(0, 1),
+      P2(-1, 1),
+      P2(-1, 0),
+      P2(0, -1),
+      P2(1, -1)
     )
     clipped = clip(poly, other, SutherlandHodgman())
     @test all(vertices(clipped) .≈ vertices(other))
@@ -113,10 +113,10 @@
       P2(-4, 0),
     )
     inner = Ring(
-      P2(1, 1),
-      P2(3, 1),
-      P2(3, 3),
       P2(1, 3),
+      P2(3, 3),
+      P2(3, 1),
+      P2(1, 1)
     )
 
     poly = PolyArea(outer, [inner])
@@ -137,14 +137,14 @@
       P2(5, 2)
     )
     inner₁ = Ring(
-      P2(4, 3),
-      P2(3, 4),
       P2(3, 3),
+      P2(3, 4),
+      P2(4, 3)
     )
     inner₂ = Ring(
-      P2(3, 4),
       P2(2, 5),
-      P2(2, 4),
+      P2(2, 6),
+      P2(3, 5)
     )
 
     poly = PolyArea(outer, [inner₁, inner₂])
@@ -168,10 +168,10 @@
       P2(5, 2)
     ])
     @test all(vertices(r[2]) .≈ [
-      P2(4.0, 3.0),
       P2(3.0, 3.0),
       P2(3.0, 3.5),
       P2(10/3,11/3),
+      P2(4.0, 3.0),
     ])
   end
 end
