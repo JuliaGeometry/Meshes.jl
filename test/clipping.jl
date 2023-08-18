@@ -1,5 +1,3 @@
-
-
 @testset "Clipping" begin
   @testset "SutherlandHodgman" begin
     # triangle
