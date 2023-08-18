@@ -92,6 +92,7 @@ testfiles = [
   "predicates.jl",
   "sideof.jl",
   "merging.jl",
+  "clipping.jl",
   "intersections.jl",
   "complement.jl",
   "simplification.jl",

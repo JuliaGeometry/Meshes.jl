@@ -14,6 +14,37 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 """
 struct SutherlandHodgman <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, ::SutherlandHodgman)
-  @error "not implemented"
+function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
+  # other must be a convex CCW ring
+  o = orientation(other) == :CCW ? vertices(other) : reverse(vertices(other)) 
+  n = length(o)
+  v = vertices(ring)
+
+  for i in 1:n
+    lₒ = Line(o[i], o[mod1(i+1, n)])
+
+    m = length(v)
+    u = Point{Dim,T}[]
+    
+    for j in 1:m
+      p₁, p₂ = v[j], v[mod1(j+1, m)]
+      lᵣ = Line(p₁, p₂)
+
+      isinside₁ = (sideof(p₁, lₒ) != RIGHT)
+      isinside₂ = (sideof(p₂, lₒ) != RIGHT)
+
+      if isinside₁ && isinside₂
+        push!(u, p₁)
+      elseif isinside₁ && !isinside₂
+        push!(u, p₁)
+        push!(u, lₒ ∩ lᵣ)
+      elseif !isinside₁ && isinside₂
+        push!(u, lₒ ∩ lᵣ)
+      end
+    end
+
+    v = u
+  end
+
+  isempty(v) ? nothing : Ring(unique(v))
 end
