@@ -80,6 +80,7 @@ include("neighborsearch.jl")
 include("predicates.jl")
 
 # operations
+include("sideof.jl")
 include("merging.jl")
 include("clipping.jl")
 include("intersections.jl")
@@ -100,7 +101,6 @@ include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
 include("projecting.jl")
-include("sideof.jl")
 
 # visualization
 include("viz.jl")
@@ -389,6 +389,15 @@ export
   iscollinear,
   iscoplanar,
 
+  # sideof
+  SideType,
+  IN,
+  OUT,
+  ON,
+  LEFT,
+  RIGHT,
+  sideof,
+
   # clipping
   ClippingMethod,
   SutherlandHodgman,
@@ -483,7 +492,6 @@ export
   WindingOrientation,
   TriangleOrientation,
   signarea,
-  sideof,
   householderbasis,
   supportfun,
   laplacematrix,

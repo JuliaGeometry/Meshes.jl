@@ -1,0 +1,6 @@
+# Sideof
+
+```@docs
+SideType
+sideof
+```

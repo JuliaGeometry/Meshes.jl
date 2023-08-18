@@ -90,6 +90,7 @@ testfiles = [
   "neighborhoods.jl",
   "neighborsearch.jl",
   "predicates.jl",
+  "sideof.jl",
   "merging.jl",
   "intersections.jl",
   "complement.jl",
@@ -103,8 +104,7 @@ testfiles = [
   "transforms.jl",
   "distances.jl",
   "supportfun.jl",
-  "matrices.jl",
-  "sideof.jl"
+  "matrices.jl"
 ]
 
 # --------------------------------
