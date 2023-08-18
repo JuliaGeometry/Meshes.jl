@@ -29,6 +29,10 @@ intersects(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
 
 intersects(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
 
+intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
+
+intersects(t::Triangle, r::Ray) = intersects(r, t)
+
 intersects(p::Point, g::Geometry) = p ∈ g
 
 intersects(g::Geometry, p::Point) = intersects(p, g)

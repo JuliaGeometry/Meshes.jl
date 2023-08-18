@@ -58,6 +58,7 @@ makedocs(
         "algorithms/simplification.md",
         "algorithms/intersection.md",
         "algorithms/merging.md",
+        "algorithms/sideof.md",
         "algorithms/neighborsearch.md",
         "algorithms/boundingbox.md",
         "algorithms/hulls.md"
