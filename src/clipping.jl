@@ -30,3 +30,4 @@ end
 # ----------------
 
 include("clipping/sutherlandhodgman.jl")
+include("clipping/weileratherton.jl")
