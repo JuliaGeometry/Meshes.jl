@@ -4,6 +4,7 @@
     poly = Triangle(P2(6, 2), P2(3, 5), P2(0, 2))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
+    @test issimple(clipped)
     @test all(vertices(clipped) .≈ [
       P2(5, 3),
       P2(4, 4),
@@ -42,6 +43,7 @@
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
 
     clipped = clip(poly, other, SutherlandHodgman())
+    @test issimple(clipped)
     @test all(vertices(clipped) .≈ vertices(poly))
 
     # outside
@@ -49,7 +51,6 @@
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
 
     clipped = clip(poly, other, SutherlandHodgman())
-
     @test isnothing(clipped)
 
     # surrounded
@@ -70,6 +71,7 @@
       P2(1, -1)
     )
     clipped = clip(poly, other, SutherlandHodgman())
+    @test issimple(clipped)
     @test all(vertices(clipped) .≈ vertices(other))
 
     # PolyArea with box
@@ -95,6 +97,7 @@
     clipped = clip(poly, other, SutherlandHodgman())
     r = rings(clipped)
 
+    @test !issimple(clipped)
     @test all(vertices(r[1]) .≈ [
       P2(1.5, 7.0),
       P2(0.0, 4.0),
@@ -125,6 +128,7 @@
     clipped = clip(poly, other, SutherlandHodgman())
     r = rings(clipped)
 
+    @test !issimple(clipped)
     @test all(vertices(r[1]) .≈ vertices(boundary(other)))
     @test all(vertices(r[2]) .≈ vertices(inner))
 
@@ -159,6 +163,7 @@
     clipped = clip(poly, other, SutherlandHodgman())
     r = rings(clipped)
     
+    @test !issimple(clipped)
     @test length(r) == 2
     @test all(vertices(r[1]) .≈ [
       P2(6, 4),
