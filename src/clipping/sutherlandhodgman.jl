@@ -42,6 +42,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where 
         push!(u, lₒ ∩ lᵣ)
       end
     end
+
     v = u
   end
 
