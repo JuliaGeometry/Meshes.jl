@@ -106,6 +106,28 @@ mesh   = SimpleMesh(points, connec)
 rmesh = mesh |> Repair{1}()
 ```
 
+## Bridge
+
+```@docs
+Bridge
+```
+
+```@example transforms
+# polygon with two holes
+outer = [(0, 0), (1, 0), (1, 1), (0, 1)]
+hole1 = [(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+hole2 = [(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
+poly = PolyArea(outer, [hole1, hole2])
+
+# polygon with single outer ring
+bpoly = poly |> Bridge(0.01)
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], poly)
+viz(fig[1,2], bpoly)
+fig
+```
+
 ## Smoothing
 
 ```@docs
