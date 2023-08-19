@@ -118,8 +118,13 @@ end
 # --------------
 
 function apply(::Repair{9}, poly::Polygon)
-  verts, _ = poly |> rings |> repair9
-  Ring.(verts), nothing
+  newrings, indices = poly |> rings |> repair9
+  newpoly = if hasholes(poly)
+    PolyArea(newrings[1], newrings[2:end])
+  else
+    PolyArea(newrings[1])
+  end
+  newpoly, indices
 end
 
 function repair9(r::AbstractVector{<:Ring})
@@ -141,12 +146,13 @@ function repair9(r::AbstractVector{<:Ring})
   # circ shift rings based on leftmost vertex
   leftmost = argmin.(indices)
   newverts = [circshift(verts[i], -l + 1) for (i, l) in enumerate(leftmost)]
+  newrings = Ring.(newverts)
 
   # sort rings based on leftmost vertex
   minimums = getindex.(indices, leftmost)
   neworder = sortperm(minimums)
-  newverts = newverts[neworder]
+  newrings = newrings[neworder]
   indices = indices[neworder]
 
-  newverts, indices
+  newrings, indices
 end
