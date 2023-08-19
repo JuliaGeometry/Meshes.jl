@@ -512,6 +512,68 @@
     @test vertices(rpoly) == [P2(0, 0)]
   end
 
+  @testset "Bridge" begin
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/566
+    outer = Ring(P2(6, 4), P2(6, 7), P2(1, 6), P2(1, 1), P2(5, 2))
+    inner₁ = Ring( P2(3, 3), P2(3, 4), P2(4, 3))
+    inner₂ = Ring( P2(2, 5), P2(2, 6), P2(3, 5))
+    poly = PolyArea(outer, [inner₁, inner₂])
+    bpoly = poly |> Bridge(T(0.1))
+    @test !hasholes(bpoly)
+    @test nvertices(bpoly) == 15
+
+    # unique and bridges
+    poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)])
+    cpoly = poly |> Repair{0}() |> Bridge()
+    @test cpoly == PolyArea(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)])
+
+    # basic ngon tests
+    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
+    @test (t |> Bridge() |> boundary) == boundary(t)
+    q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    @test (q |> Bridge() |> boundary) == boundary(q)
+
+    # bridges between holes
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
+    poly = PolyArea(outer, [hole1, hole2])
+    @test vertices(poly) == P2[
+      (0, 0),
+      (1, 0),
+      (1, 1),
+      (0, 1),
+      (0.2, 0.2),
+      (0.2, 0.4),
+      (0.4, 0.4),
+      (0.4, 0.2),
+      (0.6, 0.2),
+      (0.6, 0.4),
+      (0.8, 0.4),
+      (0.8, 0.2)
+    ]
+    bpoly = poly |> Bridge()
+    target = P2[
+      (0.0, 0.0),
+      (0.2, 0.2),
+      (0.2, 0.4),
+      (0.4, 0.4),
+      (0.6, 0.4),
+      (0.8, 0.4),
+      (0.8, 0.2),
+      (0.6, 0.2),
+      (0.6, 0.4),
+      (0.4, 0.4),
+      (0.4, 0.2),
+      (0.2, 0.2),
+      (0.0, 0.0),
+      (1.0, 0.0),
+      (1.0, 1.0),
+      (0.0, 1.0)
+    ]
+    @test vertices(bpoly) == target
+  end
+
   @testset "Smoothing" begin
     # smoothing doesn't change the topology
     trans = LaplaceSmoothing(30)
