@@ -481,20 +481,15 @@
     @test P3(5, 5, 5) ∉ vertices(rmesh)
   end
 
-  @testset "Repair{2}" begin
-  end
+  @testset "Repair{2}" begin end
 
-  @testset "Repair{3}" begin
-  end
+  @testset "Repair{3}" begin end
 
-  @testset "Repair{4}" begin
-  end
+  @testset "Repair{4}" begin end
 
-  @testset "Repair{5}" begin
-  end
+  @testset "Repair{5}" begin end
 
-  @testset "Repair{6}" begin
-  end
+  @testset "Repair{6}" begin end
 
   @testset "Repair{7}" begin
     # mesh with inconsistent orientation
@@ -527,8 +522,7 @@
     @test vertices(rpoly) == [P2(0, 0)]
   end
 
-  @testset "Repair{9}" begin
-  end
+  @testset "Repair{9}" begin end
 
   @testset "Bridge" begin
     # https://github.com/JuliaGeometry/Meshes.jl/issues/566
