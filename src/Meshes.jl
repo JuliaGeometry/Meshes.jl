@@ -205,7 +205,6 @@ export
   angles,
   innerangles,
   orientation,
-  bridge,
   normal,
 
   # multi-geometries
@@ -484,6 +483,7 @@ export
   Stretch,
   StdCoords,
   Repair,
+  Bridge,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,

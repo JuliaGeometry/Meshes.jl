@@ -172,7 +172,7 @@
       hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
       hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
       poly = PolyArea(outer, [hole1, hole2])
-      chain, _ = bridge(poly, width=T(0.01))
+      chain = poly |> Bridge(T(0.01))
       mesh = discretizewithin(chain, method)
       @test nvertices(mesh) == 16
       @test nelements(mesh) == 14

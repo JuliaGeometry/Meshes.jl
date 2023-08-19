@@ -50,7 +50,7 @@ function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMetho
 
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
-  ring, dups = bridge(cpoly, width=2atol(T))
+  ring, dups = apply(Bridge(2atol(T)), cpoly)
 
   # discretize using outer boundary
   mesh = discretizewithin(ring, method)

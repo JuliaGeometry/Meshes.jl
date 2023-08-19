@@ -18,6 +18,7 @@ Perform repairing operation with code `K`.
 - K = 6: close vertices are merged (given a radius)
 - K = 7: faces are coherently oriented
 - K = 8: zero-area ears are removed
+- K = 9: rings of polygon are sorted
 
 ## Examples
 
@@ -110,4 +111,42 @@ function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
     area(t) > atol(T)^2 && push!(keep, i)
   end
   isempty(keep) ? v[begin] : v[keep]
+end
+
+# --------------
+# OPERATION (9)
+# --------------
+
+function apply(::Repair{9}, poly::Polygon)
+  verts, _ = poly |> rings |> repair9
+  Ring.(verts), nothing
+end
+
+function repair9(r::AbstractVector{<:Ring})
+  # sort vertices lexicographically
+  verts = vertices.(r)
+  coord = coordinates.(reduce(vcat, verts))
+  vperm = sortperm(sortperm(coord))
+
+  # each ring has its own set of indices
+  offset = 0
+  indices = Vector{Int}[]
+  for vert in verts
+    nvert = length(vert)
+    range = (offset + 1):(offset + nvert)
+    push!(indices, vperm[range])
+    offset += nvert
+  end
+
+  # circ shift rings based on leftmost vertex
+  leftmost = argmin.(indices)
+  newverts = [circshift(verts[i], -l + 1) for (i, l) in enumerate(leftmost)]
+
+  # sort rings based on leftmost vertex
+  minimums = getindex.(indices, leftmost)
+  neworder = sortperm(minimums)
+  newverts = newverts[neworder]
+  indices = indices[neworder]
+
+  newverts, indices
 end

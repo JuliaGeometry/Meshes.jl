@@ -293,7 +293,7 @@
     @test unique(t) == t
     @test boundary(t) == first(rings(t))
     @test rings(t) == [Ring(P2(0, 0), P2(1, 0), P2(0, 1))]
-    @test bridge(t) == (first(rings(t)), [])
+    @test Bridge()(t) == first(rings(t))
 
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     @test perimeter(t) ≈ T(1 + 1 + √2)
@@ -375,7 +375,7 @@
     @test unique(q) == q
     @test boundary(q) == first(rings(q))
     @test rings(q) == [Ring(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))]
-    @test bridge(q) == (first(rings(q)), [])
+    @test Bridge()(q) == first(rings(q))
     @test q(T(0), T(0)) == P2(0, 0)
     @test q(T(1), T(0)) == P2(1, 0)
     @test q(T(1), T(1)) == P2(1, 1)
@@ -504,7 +504,7 @@
 
     # test bridges
     for poly in [polys1; polys2; polys3]
-      b, _ = bridge(poly)
+      b = poly |> Bridge()
       nb = nvertices(b)
       np = nvertices.(rings(poly))
       @test nb ≥ sum(np)
@@ -537,12 +537,26 @@
       (0.8, 0.4),
       (0.8, 0.2)
     ]
-    chain, _ = bridge(poly)
-    target = T[
-      0.0 0.2 0.2 0.4 0.4 0.6 0.6 0.8 0.8 0.6 0.4 0.2 0.0 1.0 1.0 0.0
-      0.0 0.2 0.4 0.4 0.2 0.2 0.4 0.4 0.2 0.2 0.2 0.2 0.0 0.0 1.0 1.0
+    chain = poly |> Bridge()
+    target = P2[
+      (0.0, 0.0),
+      (0.2, 0.2),
+      (0.2, 0.4),
+      (0.4, 0.4),
+      (0.6, 0.4),
+      (0.8, 0.4),
+      (0.8, 0.2),
+      (0.6, 0.2),
+      (0.6, 0.4),
+      (0.4, 0.4),
+      (0.4, 0.2),
+      (0.2, 0.2),
+      (0.0, 0.0),
+      (1.0, 0.0),
+      (1.0, 1.0),
+      (0.0, 1.0)
     ]
-    @test vertices(chain) == Point.(Tuple.(eachcol(target)))
+    @test vertices(chain) == target
 
     # test uniqueness
     points = P2[(1, 1), (2, 2), (2, 2), (3, 3)]
@@ -552,7 +566,7 @@
 
     # unique and bridges
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)])
-    chain, _ = poly |> unique |> bridge
+    chain = poly |> Repair{0}() |> Bridge()
     @test chain == Ring(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)])
 
     # approximately equal vertices
