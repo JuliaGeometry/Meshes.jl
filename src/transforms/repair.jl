@@ -18,6 +18,13 @@ Perform repairing operation with code `K`.
 - K = 6: close vertices are merged (given a radius)
 - K = 7: faces are coherently oriented
 - K = 8: zero-area ears are removed
+
+## Examples
+
+```
+# remove duplicates and degenerates
+mesh |> Repair{0}() |> Repair{3}()
+```
 """
 struct Repair{K} <: GeometricTransform end
 
