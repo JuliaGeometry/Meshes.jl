@@ -152,11 +152,11 @@ See also [`rings`](@ref).
   [`Polygon`](@ref) for additional details and references.
 """
 function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
-  # retrieve chains as vectors of coordinates
-  pchains = [coordinates.(vertices(r)) for r in rings]
+  # retrieve chains as vectors of vertices
+  pchains = vertices.(rings)
 
   # sort vertices lexicographically
-  coords = [coord for pchain in pchains for coord in pchain]
+  coords = [coordinates(point) for pchain in pchains for point in pchain]
   indices = sortperm(sortperm(coords))
 
   # each chain has its own set of indices
@@ -207,10 +207,10 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
     v = B - A
     u = Vec(-v[2], v[1])
     n = u / norm(u)
-    A′ = A + δ / 2 * n
-    A′′ = A - δ / 2 * n
-    B′ = B + δ / 2 * n
-    B′′ = B - δ / 2 * n
+    A′ = A + (δ / 2) * n
+    A′′ = A - (δ / 2) * n
+    B′ = B + (δ / 2) * n
+    B′′ = B - (δ / 2) * n
 
     # insert hole at closest vertex
     outer = [
@@ -239,5 +239,5 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
     end
   end
 
-  Ring(Point.(outer)), duplicates
+  Ring(outer), duplicates
 end
