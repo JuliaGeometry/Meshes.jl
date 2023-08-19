@@ -144,6 +144,8 @@ innerangles(r::Ring{3}) = innerangles(Ring(proj2D(vertices(r))))
 
 Build bridges of given `width` between `rings` of a polygon.
 
+See also [`rings`](@ref).
+
 ### Notes
 
 - Please read the docstring of the corresponding method for
