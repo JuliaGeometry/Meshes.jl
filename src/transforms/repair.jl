@@ -143,16 +143,12 @@ function repair9(r::AbstractVector{<:Ring})
     offset += nvert
   end
 
-  # circ shift rings based on leftmost vertex
-  leftmost = argmin.(indices)
-  newverts = [circshift(verts[i], -l + 1) for (i, l) in enumerate(leftmost)]
-  newrings = Ring.(newverts)
-
   # sort rings based on leftmost vertex
+  leftmost = argmin.(indices)
   minimums = getindex.(indices, leftmost)
   neworder = sortperm(minimums)
-  newrings = newrings[neworder]
-  indices = indices[neworder]
+  newverts = verts[neworder]
+  newinds = indices[neworder]
 
-  newrings, indices
+  Ring.(newverts), newinds
 end

@@ -20,18 +20,26 @@ end
 Bridge() = Bridge(nothing)
 
 function apply(transform::Bridge, poly::Polygon{Dim,T}) where {Dim,T}
+  # sort rings lexicographically
+  rpoly, rinds = apply(Repair{9}(), poly)
+
+  # retrieve bridge width
   δ = isnothing(transform.δ) ? zero(T) : transform.δ
-  if hasholes(poly)
-    bridge(rings(poly), δ)
+
+  if hasholes(rpoly)
+    bridge(rings(rpoly), rinds, δ)
   else
-    first(rings(poly)), []
+    first(rings(rpoly)), []
   end
 end
 
-function bridge(r::AbstractVector{<:Ring{2,T}}, δ) where {T}
-  # sort rings lexicographically
-  rings, vinds = repair9(r)
+function bridge(rings, rinds, δ)
+  # extract vertices and indices
   verts = vertices.(rings)
+  vinds = rinds
+
+  # retrieve coordinate type
+  T = coordtype(first(rings))
 
   # initialize outer boundary
   outer = verts[1]
