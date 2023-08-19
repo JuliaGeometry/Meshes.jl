@@ -8,7 +8,17 @@
 Return the complement of the `geometry` with
 respect to its bounding box.
 """
-!(g::Geometry) = _complement(boundary(boundingbox(g)), boundary(g))
+!(g::Geometry) = _complement(_boxboundary(g), boundary(g))
+
+function _boxboundary(g)
+  T = coordtype(g)
+  b = boundingbox(g)
+  c = coordinates(center(b))
+  l = sides(b)
+  α = (l .+ 2atol(T)) ./ l
+  t = Translate(-c...) → Stretch(α) → Translate(c...)
+  boundary(t(b))
+end
 
 _complement(b, r::Ring) = PolyArea(b, [reverse(r)])
 
