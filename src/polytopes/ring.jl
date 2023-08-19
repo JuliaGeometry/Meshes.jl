@@ -151,17 +151,18 @@ Build bridges of given `width` between `rings` of a polygon.
 """
 function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
   # retrieve chains as vectors of coordinates
-  pchains = [coordinates.(vertices(open(r))) for r in rings]
+  pchains = [coordinates.(vertices(r)) for r in rings]
 
   # sort vertices lexicographically
   coords = [coord for pchain in pchains for coord in pchain]
   indices = sortperm(sortperm(coords))
 
   # each chain has its own set of indices
-  pinds = Vector{Int}[]
   offset = 0
+  pinds = Vector{Int}[]
   for nvertex in length.(pchains)
-    push!(pinds, indices[(offset + 1):(offset + nvertex)])
+    range = (offset + 1):(offset + nvertex)
+    push!(pinds, indices[range])
     offset += nvertex
   end
 
@@ -186,11 +187,11 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
     m = minimums[i]
 
     # find closest vertex in boundary
-    dmin, jmin = typemax(T), 0
+    dmin, k = typemax(T), 0
     for j in findall(oinds .≤ m)
       d = sum(abs, outer[j] - inner[l])
       if d < dmin
-        dmin, jmin = d, j
+        dmin, k = d, j
       end
     end
 
@@ -198,7 +199,7 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
     # from line segment A--B. The point
     # A is split into A′ and A′′ and the
     # point B is split into B′ and B′′
-    A = outer[jmin]
+    A = outer[k]
     B = inner[l]
     δ = width
     v = B - A
@@ -211,17 +212,17 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
 
     # insert hole at closest vertex
     outer = [
-      outer[begin:(jmin - 1)]
+      outer[begin:(k - 1)]
       [A′, B′]
       circshift(inner, -l + 1)[2:end]
       [B′′, A′′]
-      outer[(jmin + 1):end]
+      outer[(k + 1):end]
     ]
     oinds = [
-      oinds[begin:jmin]
+      oinds[begin:k]
       circshift(iinds, -l + 1)
       [iinds[l]]
-      oinds[jmin:end]
+      oinds[k:end]
     ]
   end
 
@@ -236,8 +237,5 @@ function bridge(rings::AbstractVector{<:Ring{2,T}}; width=zero(T)) where {T}
     end
   end
 
-  # close outer boundary
-  outerring = Ring(Point.(outer))
-
-  outerring, duplicates
+  Ring(Point.(outer)), duplicates
 end
