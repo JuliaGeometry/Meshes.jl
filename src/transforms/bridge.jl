@@ -26,11 +26,13 @@ function apply(transform::Bridge, poly::Polygon{Dim,T}) where {Dim,T}
   # retrieve bridge width
   δ = isnothing(transform.δ) ? zero(T) : transform.δ
 
-  if hasholes(rpoly)
+  ring, dups = if hasholes(rpoly)
     bridge(rings(rpoly), rinds, δ)
   else
     first(rings(rpoly)), []
   end
+
+  PolyArea(ring), dups
 end
 
 function bridge(rings, rinds, δ)
