@@ -148,11 +148,6 @@
     @test nvertices(r) == 2
     @test collect(segments(r)) == [Segment(P2(0, 0), P2(1, 1)), Segment(P2(1, 1), P2(0, 0))]
 
-    # orientation of 3D rings in X-Y plane
-    r1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    r2 = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
-    @test orientation(r1) == orientation(r2)
-
     p1 = P2(1, 1)
     p2 = P2(3, 1)
     p3 = P2(1, 0)
@@ -301,12 +296,6 @@
     t = Triangle((0.0f0, 0.0f0), (1.0f0, 0.0f0), (0.5f0, 1.0f0))
     @test Point(0.5f0, 0.5f0) ∈ t
     @test Point(0.5e0, 0.5e0) ∈ t
-
-    # test orientation
-    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
-    @test orientation(t) == :CCW
-    t = Triangle(P2(0, 0), P2(0, 1), P2(1, 0))
-    @test orientation(t) == :CW
 
     # test angles
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
@@ -461,7 +450,7 @@
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 30
       for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == :CCW
+        @test orientation(poly, algo) == CCW
       end
       @test unique(poly) == poly
     end
@@ -476,7 +465,7 @@
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 120
       for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == :CCW
+        @test orientation(poly, algo) == CCW
       end
       @test unique(poly) == poly
     end
@@ -494,8 +483,8 @@
       @test all(nvertices.(rs[2:end]) .< 18)
       for algo in [WindingOrientation(), TriangleOrientation()]
         orients = orientation(poly, algo)
-        @test orients[1] == :CCW
-        @test all(orients[2:end] .== :CW)
+        @test orients[1] == CCW
+        @test all(orients[2:end] .== CW)
       end
       @test unique(poly) == poly
     end
@@ -508,11 +497,11 @@
       @test nb ≥ sum(np)
       # triangle orientation always works even
       # in the presence of self-intersections
-      @test orientation(b, TriangleOrientation()) == :CCW
+      @test orientation(b, TriangleOrientation()) == CCW
       # winding orientation is only suitable
       # for simple polygonal chains
       if issimple(b)
-        @test orientation(b, WindingOrientation()) == :CCW
+        @test orientation(b, WindingOrientation()) == CCW
       end
     end
 

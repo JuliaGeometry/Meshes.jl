@@ -39,7 +39,7 @@ function discretizewithin(ring::Ring{2}, method::FIST)
 
   # input ring
   O = orientation(ring, TriangleOrientation())
-  𝒫 = O == :CCW ? ring : reverse(ring)
+  𝒫 = O == CCW ? ring : reverse(ring)
 
   # points of resulting mesh
   points = vertices(𝒫)

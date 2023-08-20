@@ -78,52 +78,6 @@ function windingnumber(p::Point{2,T}, r::Ring{2,T}) where {T}
   ∑ / T(2π)
 end
 
-abstract type OrientationMethod end
-
-struct WindingOrientation <: OrientationMethod end
-
-struct TriangleOrientation <: OrientationMethod end
-
-"""
-    orientation(ring, [method])
-
-Returns the orientation of the `ring` as either
-counter-clockwise (CCW) or clockwise (CW).
-
-Optionally, specify the orientation `method`:
-
-* `WindingOrientation()` - Balbes, R. and Siegel, J. 1990.
-* `TriangleOrientation()` - Held, M. 1998.
-
-Default method is `WindingOrientation()`.
-
-## References
-
-* Balbes, R. and Siegel, J. 1990. [A robust method for calculating
-  the simplicity and orientation of planar polygons]
-  (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
-* Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
-  (https://link.springer.com/article/10.1007/s00453-001-0028-4)
-"""
-orientation(r::Ring) = orientation(r, WindingOrientation())
-
-function orientation(r::Ring{2,T}, ::WindingOrientation) where {T}
-  # pick any segment
-  x1, x2 = r.vertices[1:2]
-  x̄ = centroid(Segment(x1, x2))
-  w = T(2π) * windingnumber(x̄, r) - ∠(x1, x̄, x2)
-  isapprox(w, T(π), atol=atol(T)) ? :CCW : :CW
-end
-
-function orientation(r::Ring{2,T}, ::TriangleOrientation) where {T}
-  v = vertices(r)
-  Δ(i) = signarea(v[1], v[i], v[i + 1])
-  a = mapreduce(Δ, +, 2:(length(v) - 1))
-  a ≥ zero(T) ? :CCW : :CW
-end
-
-orientation(r::Ring{3}, method::OrientationMethod) = orientation(proj2D(r), method)
-
 """
     innerangles(ring)
 
@@ -133,7 +87,7 @@ angles are always positive, and unlike
 """
 function innerangles(r::Ring{2,T}) where {T}
   # correct sign of angles in case orientation is CW
-  θs = orientation(r) == :CW ? -angles(r) : angles(r)
+  θs = orientation(r) == CW ? -angles(r) : angles(r)
   [θ > 0 ? 2 * T(π) - θ : -θ for θ in θs]
 end
 

@@ -32,8 +32,8 @@ function PolyArea(outer::R, inners, fix) where {Dim,T,R<:Ring{Dim,T}}
   if fix
     # fix orientation
     ofix(r, o) = orientation(r) == o ? r : reverse(r)
-    outer = ofix(outer, :CCW)
-    inners = ofix.(inners, :CW)
+    outer = ofix(outer, CCW)
+    inners = ofix.(inners, CW)
 
     # fix degeneracy
     if nvertices(outer) == 2

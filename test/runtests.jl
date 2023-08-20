@@ -91,6 +91,7 @@ testfiles = [
   "neighborsearch.jl",
   "predicates.jl",
   "sideof.jl",
+  "orientation.jl",
   "merging.jl",
   "clipping.jl",
   "intersections.jl",

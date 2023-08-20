@@ -16,7 +16,7 @@ struct SutherlandHodgman <: ClippingMethod end
 
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
   # other must be a convex CCW ring
-  o = orientation(other) == :CCW ? vertices(other) : reverse(vertices(other))
+  o = orientation(other) == CCW ? vertices(other) : reverse(vertices(other))
   n = length(o)
   v = vertices(ring)
 

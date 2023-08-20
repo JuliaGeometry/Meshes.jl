@@ -189,19 +189,6 @@ Winding number of `point` with respect to the `polygon`.
 function windingnumber end
 
 """
-    orientation(polygon)
-
-Returns the orientation of the rings of the `polygon`
-as either counter-clockwise (CCW) or clockwise (CW).
-"""
-orientation(p::Polygon) = orientation(p, WindingOrientation())
-
-function orientation(p::Polygon, algo)
-  o = [orientation(ring, algo) for ring in rings(p)]
-  hasholes(p) ? o : first(o)
-end
-
-"""
     boundary(polygon)
 
 Returns the boundary of the `polygon`.
