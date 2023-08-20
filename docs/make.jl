@@ -60,12 +60,12 @@ makedocs(
         "algorithms/clipping.md",
         "algorithms/merging.md",
         "algorithms/sideof.md",
+        "algorithms/orientation.md",
         "algorithms/neighborsearch.md",
         "algorithms/boundingbox.md",
         "algorithms/hulls.md"
       ],
       "Transforms" => "transforms.md",
-      "Miscellaneous" => "miscellaneous.md",
       "Visualization" => "visualization.md"
     ],
     "Contributing" => ["contributing/guidelines.md"],
