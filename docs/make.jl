@@ -57,6 +57,7 @@ makedocs(
         "algorithms/refinement.md",
         "algorithms/simplification.md",
         "algorithms/intersection.md",
+        "algorithms/clipping.md",
         "algorithms/merging.md",
         "algorithms/sideof.md",
         "algorithms/neighborsearch.md",
