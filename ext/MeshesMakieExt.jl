@@ -7,6 +7,7 @@ module MeshesMakieExt
 using Meshes
 
 using Makie: cgrad
+using Makie: coloralpha
 using Makie.Colors: Colorant
 
 import Meshes: viz, viz!
