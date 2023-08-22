@@ -74,4 +74,14 @@
     @test all(vertices(crings[1]) .≈ [P2(6, 4), P2(6, 5), P2(1, 2.5), P2(1, 1), P2(5, 2)])
     @test all(vertices(crings[2]) .≈ [P2(3.0, 3.0), P2(3.0, 3.5), P2(10 / 3, 11 / 3), P2(4.0, 3.0)])
   end
+
+  @testset "WeilerAtherton" begin
+    # triangle
+    poly = Triangle(P2(6, 2), P2(3, 5), P2(3, 2))
+    other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
+    clipped = clip(poly, other, WeilerAtherton())
+    
+    @test issimple(clipped)
+    @test all(vertices(clipped) .≈ [P2(5, 3), P2(4, 4), P2(3, 4), P2(3, 2), P2(5,2)])
+  end
 end

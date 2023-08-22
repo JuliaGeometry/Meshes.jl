@@ -409,6 +409,7 @@ export
   # clipping
   ClippingMethod,
   SutherlandHodgman,
+  WeilerAtherton,
   clip,
 
   # intersections
