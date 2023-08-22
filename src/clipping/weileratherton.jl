@@ -37,10 +37,10 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
   # TODO: Corner case with colinear segments with intersections
   # TODO: Poly point on boundary
   # TODO: PolyArea with holes
-  # TODO: Optimize findpointindex
+  # TODO: Optimize _pointindex
 
-  vᵣ, kindᵣ = verticesswithintersections(ring, other)
-  vₒ, kindₒ = verticesswithintersections(other, ring)
+  vᵣ, kindᵣ = _pairwiseintersections(ring, other)
+  vₒ, kindₒ = _pairwiseintersections(other, ring)
   nᵣ = length(vᵣ)
   nₒ = length(vₒ)
 
@@ -70,7 +70,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
         end
 
         push!(vᵤ, vᵣ[j])
-        j = findpointindex(vᵣ[j], vₒ)
+        j = _pointindex(vᵣ[j], vₒ)
         j = mod1(j+1, nₒ)
         
         while(kindₒ[j] != :INTERSECTION)
@@ -82,7 +82,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
           break
         end
 
-        j = findpointindex(vₒ[j], vᵣ)
+        j = _pointindex(vₒ[j], vᵣ)
       end
       push!(u, Ring(vᵤ))
     end
@@ -95,7 +95,7 @@ end
 # HELPER FUNCTIONS
 # ----------------
 
-function verticesswithintersections(ring::Ring{Dim,T}, other::Ring{Dim,T}) where {Dim,T}
+function _pairwiseintersections(ring::Ring{Dim,T}, other::Ring{Dim,T}) where {Dim,T}
   vᵣ = vertices(ring)
   nᵣ = length(vᵣ)
   vₒ = vertices(other)
@@ -136,7 +136,7 @@ function verticesswithintersections(ring::Ring{Dim,T}, other::Ring{Dim,T}) where
   vᵢ, kind
 end
 
-function findpointindex(p, points)
+function _pointindex(p, points)
   for i in eachindex(points)
     if points[i] ≈ p
       return i
