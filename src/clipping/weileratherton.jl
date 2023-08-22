@@ -14,6 +14,23 @@ The Weiler-Atherton algorithm for clipping polygons.
 """
 struct WeilerAtherton <: ClippingMethod end
 
+function clip(poly::Polygon, other::Geometry, method::WeilerAtherton)
+  if hasholes(poly)
+    @error "not implemented"
+  end
+
+  c = [clip(ring, boundary(other), method) for ring in rings(poly)]
+  r = filter(!isnothing, vcat(c...))
+
+  if isempty(r)
+    nothing
+  elseif length(r) > 1
+    Multi(PolyArea.(r))
+  else
+    PolyArea(r[1])
+  end
+end
+
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Dim,T}
   # assumes both ring and other are CCW
   # TODO: Corner case without intersection
@@ -39,7 +56,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
   end
 
   isvisitedᵣ = fill(false, length(vᵣ))
-  u = []
+  u = Ring{Dim,T}[]
 
   for i in 1:nᵣ
     if kindᵣ[i] == :INTERSECTION_ENTER && !isvisitedᵣ[i]
