@@ -148,11 +148,6 @@
     @test nvertices(r) == 2
     @test collect(segments(r)) == [Segment(P2(0, 0), P2(1, 1)), Segment(P2(1, 1), P2(0, 0))]
 
-    # orientation of 3D rings in X-Y plane
-    r1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    r2 = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
-    @test orientation(r1) == orientation(r2)
-
     p1 = P2(1, 1)
     p2 = P2(3, 1)
     p3 = P2(1, 0)
@@ -293,7 +288,6 @@
     @test unique(t) == t
     @test boundary(t) == first(rings(t))
     @test rings(t) == [Ring(P2(0, 0), P2(1, 0), P2(0, 1))]
-    @test bridge(t) == (first(rings(t)), [])
 
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     @test perimeter(t) ≈ T(1 + 1 + √2)
@@ -302,12 +296,6 @@
     t = Triangle((0.0f0, 0.0f0), (1.0f0, 0.0f0), (0.5f0, 1.0f0))
     @test Point(0.5f0, 0.5f0) ∈ t
     @test Point(0.5e0, 0.5e0) ∈ t
-
-    # test orientation
-    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
-    @test orientation(t) == :CCW
-    t = Triangle(P2(0, 0), P2(0, 1), P2(1, 0))
-    @test orientation(t) == :CW
 
     # test angles
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
@@ -375,7 +363,6 @@
     @test unique(q) == q
     @test boundary(q) == first(rings(q))
     @test rings(q) == [Ring(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))]
-    @test bridge(q) == (first(rings(q)), [])
     @test q(T(0), T(0)) == P2(0, 0)
     @test q(T(1), T(0)) == P2(1, 0)
     @test q(T(1), T(1)) == P2(1, 1)
@@ -463,7 +450,7 @@
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 30
       for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == :CCW
+        @test orientation(poly, algo) == CCW
       end
       @test unique(poly) == poly
     end
@@ -478,7 +465,7 @@
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 120
       for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == :CCW
+        @test orientation(poly, algo) == CCW
       end
       @test unique(poly) == poly
     end
@@ -496,64 +483,33 @@
       @test all(nvertices.(rs[2:end]) .< 18)
       for algo in [WindingOrientation(), TriangleOrientation()]
         orients = orientation(poly, algo)
-        @test orients[1] == :CCW
-        @test all(orients[2:end] .== :CW)
+        @test orients[1] == CCW
+        @test all(orients[2:end] .== CW)
       end
       @test unique(poly) == poly
     end
 
     # test bridges
     for poly in [polys1; polys2; polys3]
-      b, _ = bridge(poly)
+      b = poly |> Bridge()
       nb = nvertices(b)
       np = nvertices.(rings(poly))
       @test nb ≥ sum(np)
       # triangle orientation always works even
       # in the presence of self-intersections
-      @test orientation(b, TriangleOrientation()) == :CCW
+      @test orientation(b, TriangleOrientation()) == CCW
       # winding orientation is only suitable
       # for simple polygonal chains
       if issimple(b)
-        @test orientation(b, WindingOrientation()) == :CCW
+        @test orientation(b, WindingOrientation()) == CCW
       end
     end
-
-    # bridges between holes
-    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
-    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
-    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly = PolyArea(outer, [hole1, hole2])
-    @test vertices(poly) == P2[
-      (0, 0),
-      (1, 0),
-      (1, 1),
-      (0, 1),
-      (0.2, 0.2),
-      (0.2, 0.4),
-      (0.4, 0.4),
-      (0.4, 0.2),
-      (0.6, 0.2),
-      (0.6, 0.4),
-      (0.8, 0.4),
-      (0.8, 0.2)
-    ]
-    chain, _ = bridge(poly)
-    target = T[
-      0.0 0.2 0.2 0.4 0.4 0.6 0.6 0.8 0.8 0.6 0.4 0.2 0.0 1.0 1.0 0.0
-      0.0 0.2 0.4 0.4 0.2 0.2 0.4 0.4 0.2 0.2 0.2 0.2 0.0 0.0 1.0 1.0
-    ]
-    @test vertices(chain) == Point.(Tuple.(eachcol(target)))
 
     # test uniqueness
     points = P2[(1, 1), (2, 2), (2, 2), (3, 3)]
     poly = PolyArea(points)
     unique!(poly)
     @test first(rings(poly)) == Ring(P2[(1, 1), (2, 2), (3, 3)])
-
-    # unique and bridges
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)])
-    chain, _ = poly |> unique |> bridge
-    @test chain == Ring(P2[(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)])
 
     # approximately equal vertices
     poly = PolyArea(

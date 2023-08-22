@@ -189,46 +189,11 @@ Winding number of `point` with respect to the `polygon`.
 function windingnumber end
 
 """
-    orientation(polygon)
-
-Returns the orientation of the rings of the `polygon`
-as either counter-clockwise (CCW) or clockwise (CW).
-"""
-orientation(p::Polygon) = orientation(p, WindingOrientation())
-
-function orientation(p::Polygon, algo)
-  o = [orientation(ring, algo) for ring in rings(p)]
-  hasholes(p) ? o : first(o)
-end
-
-"""
     boundary(polygon)
 
 Returns the boundary of the `polygon`.
 """
 boundary(p::Polygon) = hasholes(p) ? Multi(rings(p)) : first(rings(p))
-
-"""
-    bridge(polygon; width=0)
-
-Transform `polygon` with holes into a single outer chain
-via bridges of given `width` as described in Held 1998.
-Return the outer chain and a vector with pairs of indices
-for duplicate vertices. These indices can be used to undo
-the bridges.
-
-## References
-
-* Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
-  (https://link.springer.com/article/10.1007/s00453-001-0028-4)
-"""
-function bridge(p::Polygon{Dim,T}; width=zero(T)) where {Dim,T}
-  if hasholes(p)
-    bridge(rings(p), width=width)
-  else
-    first(rings(p)), []
-  end
-end
 
 # implementations of Polygon
 include("polytopes/ngon.jl")

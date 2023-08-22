@@ -18,6 +18,14 @@ Perform repairing operation with code `K`.
 - K = 6: close vertices are merged (given a radius)
 - K = 7: faces are coherently oriented
 - K = 8: zero-area ears are removed
+- K = 9: rings of polygon are sorted
+
+## Examples
+
+```
+# remove duplicates and degenerates
+mesh |> Repair{0}() |> Repair{3}()
+```
 """
 struct Repair{K} <: GeometricTransform end
 
@@ -103,4 +111,44 @@ function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
     area(t) > atol(T)^2 && push!(keep, i)
   end
   isempty(keep) ? v[begin] : v[keep]
+end
+
+# --------------
+# OPERATION (9)
+# --------------
+
+function apply(::Repair{9}, poly::Polygon)
+  newrings, indices = poly |> rings |> repair9
+  newpoly = if hasholes(poly)
+    PolyArea(newrings[1], newrings[2:end])
+  else
+    PolyArea(newrings[1])
+  end
+  newpoly, indices
+end
+
+function repair9(r::AbstractVector{<:Ring})
+  # sort vertices lexicographically
+  verts = vertices.(r)
+  coord = coordinates.(reduce(vcat, verts))
+  vperm = sortperm(sortperm(coord))
+
+  # each ring has its own set of indices
+  offset = 0
+  indices = Vector{Int}[]
+  for vert in verts
+    nvert = length(vert)
+    range = (offset + 1):(offset + nvert)
+    push!(indices, vperm[range])
+    offset += nvert
+  end
+
+  # sort rings based on leftmost vertex
+  leftmost = argmin.(indices)
+  minimums = getindex.(indices, leftmost)
+  neworder = sortperm(minimums)
+  newverts = verts[neworder]
+  newinds = indices[neworder]
+
+  Ring.(newverts), newinds
 end

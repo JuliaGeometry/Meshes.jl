@@ -81,6 +81,7 @@ include("predicates.jl")
 
 # operations
 include("sideof.jl")
+include("orientation.jl")
 include("merging.jl")
 include("clipping.jl")
 include("intersections.jl")
@@ -204,8 +205,6 @@ export
   segments,
   angles,
   innerangles,
-  orientation,
-  bridge,
   normal,
 
   # multi-geometries
@@ -390,13 +389,22 @@ export
   iscoplanar,
 
   # sideof
+  sideof,
   SideType,
   IN,
   OUT,
   ON,
   LEFT,
   RIGHT,
-  sideof,
+
+  # orientation
+  OrientationMethod,
+  WindingOrientation,
+  TriangleOrientation,
+  orientation,
+  OrientationType,
+  CW,
+  CCW,
 
   # clipping
   ClippingMethod,
@@ -484,13 +492,12 @@ export
   Stretch,
   StdCoords,
   Repair,
+  Bridge,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
 
   # miscellaneous
-  WindingOrientation,
-  TriangleOrientation,
   signarea,
   householderbasis,
   supportfun,
