@@ -20,6 +20,8 @@ function clip(poly::Polygon, other::Geometry, method::ClippingMethod)
     nothing
   elseif hasholes(poly)
     PolyArea(r[1], r[2:end])
+  else if length(r) > 1
+    Multi(PolyArea.(r))
   else
     PolyArea(r[1])
   end
