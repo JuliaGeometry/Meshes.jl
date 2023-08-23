@@ -437,7 +437,7 @@
     # test accessor methods
     poly = PolyArea(P2[(1, 2), (2, 3)], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3)])
-    poly = PolyArea(P2[(1, 2), (2, 3)], [P2[(1.1, 2.54), (1.4, 1.5)]], fix=false)
+    poly = PolyArea([P2[(1, 2), (2, 3)], P2[(1.1, 2.54), (1.4, 1.5)]], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
