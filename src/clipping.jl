@@ -14,7 +14,7 @@ abstract type ClippingMethod end
 """
 function clip(poly::Polygon, other::Geometry, method::ClippingMethod)
   c = [clip(ring, boundary(other), method) for ring in rings(poly)]
-  r = filter(!isnothing, c)
+  r = identity.(filter(!isnothing, c))
 
   if isempty(r)
     nothing
