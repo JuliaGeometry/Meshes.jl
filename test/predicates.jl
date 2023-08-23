@@ -4,7 +4,7 @@
     inner = P2[(5, 7), (10, 12), (15, 7)]
     pent = Pentagon(outer...)
     tri = Triangle(inner...)
-    poly = PolyArea(outer, [inner])
+    poly = PolyArea([outer, inner])
     multi = Multi([poly, tri])
     @test isconvex(pent)
     @test isconvex(tri)
@@ -104,7 +104,7 @@
     pent = Pentagon(pts2...)
     tri = Triangle(pts1...)
     poly1 = PolyArea(pts2)
-    poly2 = PolyArea(pts2, [pts1])
+    poly2 = PolyArea([pts2, pts1])
     multi = Multi([poly2, tri])
     @test tri ⊆ pent
     @test tri ⊆ poly1
@@ -193,7 +193,7 @@
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
     poly1 = PolyArea(outer)
-    poly2 = PolyArea(outer, [hole1, hole2])
+    poly2 = PolyArea([outer, hole1, hole2])
     ball1 = Ball(P2(0.5, 0.5), T(0.05))
     ball2 = Ball(P2(0.3, 0.3), T(0.05))
     ball3 = Ball(P2(0.7, 0.3), T(0.05))

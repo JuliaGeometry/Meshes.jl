@@ -529,7 +529,7 @@
     outer = Ring(P2(6, 4), P2(6, 7), P2(1, 6), P2(1, 1), P2(5, 2))
     inner₁ = Ring(P2(3, 3), P2(3, 4), P2(4, 3))
     inner₂ = Ring(P2(2, 5), P2(2, 6), P2(3, 5))
-    poly = PolyArea(outer, [inner₁, inner₂])
+    poly = PolyArea([outer, inner₁, inner₂])
     bpoly = poly |> Bridge(T(0.1))
     @test !hasholes(bpoly)
     @test nvertices(bpoly) == 15
@@ -549,7 +549,7 @@
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly = PolyArea(outer, [hole1, hole2])
+    poly = PolyArea([outer, hole1, hole2])
     @test vertices(poly) == P2[
       (0, 0),
       (1, 0),

@@ -18,10 +18,8 @@ function clip(poly::Polygon, other::Geometry, method::ClippingMethod)
 
   if isempty(r)
     nothing
-  elseif hasholes(poly)
-    PolyArea(r[1], r[2:end])
   else
-    PolyArea(r[1])
+    PolyArea(r)
   end
 end
 
