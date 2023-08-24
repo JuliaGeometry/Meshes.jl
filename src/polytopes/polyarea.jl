@@ -27,7 +27,7 @@ in the real world, including issues with:
 struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   rings::Vector{R}
 
-  function PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}}
+  function PolyArea{Dim,T,R}(rings; fix=true) where {Dim,T,R<:Ring{Dim,T}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -53,9 +53,11 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
       rings = [outer; inners]
     end
   
-    new{Dim,T,R}(rings)
+    new(rings)
   end
 end
+
+PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}} = PolyArea{Dim,T,R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
