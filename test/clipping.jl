@@ -117,5 +117,10 @@
     @test all(vertices(clippedgeoms[1]) .≈ [P2(3, 2), P2(3, 1), P2(5, 0), P2(6, 0), P2(5, 1), P2(7, 1), P2(6, 2)])
     @test all(vertices(clippedgeoms[2]) .≈ [P2(7, 3), P2(8, 3), P2(7, 4)])
 
+    # outside
+    poly = Quadrangle(P2(7, 6), P2(7, 7), P2(6, 7), P2(6, 6))
+    other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
+    clipped = clip(poly, other, SutherlandHodgman())
+    @test isnothing(clipped)
   end
 end

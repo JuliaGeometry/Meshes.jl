@@ -45,6 +45,16 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
   vᵣ = vertices(ring)
   vₒ = vertices(other)
 
+  if isempty(I)
+    # ring is totally inside or totally outside other
+    
+    if sideof(vᵣ[1], other) == IN 
+      return [ring]
+    else
+      return nothing
+    end
+  end
+
   #TODO: not assume that the first point is not in poly boundary
   isentering = (sideof(vᵣ[pᵣ[1][2]], other) != IN)
 
@@ -62,6 +72,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
     end
   end
 
+  # specify intersection type
   for i in eachindex(pᵣ)
     if pᵣ[i][1] == :INTERSECTION
       kind = isentering ? :INTERSECTION_ENTER : :INTERSECTION_EXIT
@@ -70,35 +81,45 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
     end
   end
 
+  # mark intersection of type INTERSECTION_ENTER
   isvisitedᵣ = fill(false, length(pᵣ))
   u = Ring{Dim,T}[]
 
+  # iterate over all intersections of type INTERSECTION_ENTER
   for i in 1:nᵣ
     if pᵣ[i][1] == :INTERSECTION_ENTER && !isvisitedᵣ[i]
       vᵤ = Point{Dim,T}[]
       j = i
       while(true)
         isvisitedᵣ[j] = true
+        
+        # add current ring intersection
         push!(vᵤ, I[pᵣ[j][2]])
         j = mod1(j+1, nᵣ)
-  
+        
+        # collect all points of ring until find a intersection
         while(pᵣ[j][1] == :POINT)
           push!(vᵤ, vᵣ[pᵣ[j][2]])
           j = mod1(j+1, nᵣ)
         end
 
+        # add intersection to ring and swap j to other
         push!(vᵤ, I[pᵣ[j][2]])
         j = Iposₒ[pᵣ[j][2]]
         j = mod1(j+1, nₒ)
 
+        # collect all points of other until find a intersection
         while(pₒ[j][1] == :POINT)
           push!(vᵤ, vₒ[pₒ[j][2]])
           j = mod1(j+1, nₒ)
         end
 
+        # stop if reach initial intersection 
         if I[pₒ[j][2]] == I[pᵣ[i][2]]
           break
         end
+        
+        # swap j back to ring
         j = Iposᵣ[pₒ[j][2]]
       end
       push!(u, Ring(unique(vᵤ)))
@@ -161,13 +182,4 @@ function _pairwiseintersections(ring::Ring{Dim,T}, other::Ring{Dim,T}) where {Di
   end
 
   I, pᵣ, pₒ
-end
-
-function _pointindex(p, points)
-  for i in eachindex(points)
-    if points[i][1] != :POINT && points[i][2] == p
-      return i
-    end
-  end
-  nothing
 end
