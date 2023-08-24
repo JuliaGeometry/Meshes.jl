@@ -32,22 +32,17 @@ function clip(poly::Polygon, other::Geometry, method::WeilerAtherton)
 end
 
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Dim,T}
-  # assumes both ring and other are CCW
-  # TODO: Corner case without intersection
-  # TODO: Corner case with colinear segments with intersections
-  # TODO: Poly point on boundary
   # TODO: PolyArea with holes
 
   I, pᵣ, pₒ = _pairwiseintersections(ring, other)
   nᵣ = length(pᵣ)
   nₒ = length(pₒ)
 
-  vᵣ = vertices(ring)
-  vₒ = vertices(other)
+  vᵣ = orientation(ring) == CCW ? vertices(ring) : reverse(vertices(ring))
+  vₒ = orientation(other) == CCW ? vertices(other) : reverse(vertices(other))
 
   if isempty(I)
     # ring is totally inside or totally outside other
-    
     if sideof(vᵣ[1], other) == IN 
       return [ring]
     else
@@ -55,7 +50,6 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
     end
   end
 
-  #TODO: not assume that the first point is not in poly boundary
   isentering = (sideof(vᵣ[pᵣ[1][2]], other) != IN)
 
   Iposᵣ = zeros(Int, length(I))
@@ -122,7 +116,8 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
         # swap j back to ring
         j = Iposᵣ[pₒ[j][2]]
       end
-      push!(u, Ring(unique(vᵤ)))
+      rᵤ = orientation(ring) == CCW ? Ring(unique(vᵤ)) : Ring(reverse(unique(vᵤ)))
+      push!(u, rᵤ)
     end
   end
   u
