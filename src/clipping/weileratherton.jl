@@ -143,12 +143,14 @@ function _pairwiseintersections(ring::Ring{Dim,T}, other::Ring{Dim,T}) where {Di
   vᵣI = [Int[] for i=1:nᵣ]
   vₒI = [Int[] for i=1:nₒ]
   for i in 1:nᵣ
+    p₁, p₂ = vᵣ[i], vᵣ[i+1]
+    sᵣ = Segment(p₁, p₂)
     for j in 1:nₒ
-      sᵣ = Segment(vᵣ[i], vᵣ[i+1])
       sₒ = Segment(vₒ[j], vₒ[j+1])
+      lₒ = Line(vₒ[j], vₒ[j+1])
       sI = sᵣ ∩ sₒ
 
-      if !isnothing(sI)
+      if !isnothing(sI) && ((sideof(p₁, lₒ) == RIGHT) ⊻ (sideof(p₂, lₒ) == RIGHT))
         push!(I, sI)
         id = length(I)
         push!(vᵣI[i], id)

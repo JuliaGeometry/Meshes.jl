@@ -122,5 +122,17 @@
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
     @test isnothing(clipped)
+
+    # inside
+    poly = Pentagon(P2(3,1), P2(3,2), P2(2,3), P2(1,2), P2(1,1))
+    other = Quadrangle(P2(4,0), P2(4,4), P2(0,4), P2(0,0))
+    clipped = clip(poly, other, WeilerAtherton())
+    @test all(vertices(clipped) .≈ [P2(3, 1), P2(3, 2), P2(2, 3), P2(1, 2), P2(1, 1)])
+
+    # intersection 
+    poly = Triangle(P2(3,1), P2(1,1), P2(1,3))
+    other = Triangle(P2(4,0), P2(0,4), P2(0,0))
+    clipped = clip(poly, other, WeilerAtherton())
+    @test all(vertices(clipped) .≈ [P2(3.0, 1.0), P2(1.0, 1.0), P2(1.0, 3.0)])
   end
 end
