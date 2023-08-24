@@ -27,38 +27,34 @@ in the real world, including issues with:
 struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   rings::Vector{R}
 
-  function PolyArea{Dim,T,R}(rings::Vector{R}) where {Dim,T,R<:Ring{Dim,T}}
+  function PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
-    new(rings)
-  end
-end
 
-function PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}}
-  N = length(rings)
-  if fix && N > 0
-    outer = rings[begin]
-    inners = N > 1 ? rings[(begin + 1):end] : R[]
-
-    # fix orientation
-    ofix(r, o) = orientation(r) == o ? r : reverse(r)
-    outer = ofix(outer, CCW)
-    inners = ofix.(inners, CW)
-
-    # fix degeneracy
-    if nvertices(outer) == 2
-      v = vertices(outer)
-      A, B = v[1], v[2]
-      M = centroid(Segment(A, B))
-      outer = Ring(A, M, B)
+    if fix
+      outer = rings[begin]
+      inners = length(rings) > 1 ? rings[(begin + 1):end] : R[]
+  
+      # fix orientation
+      ofix(r, o) = orientation(r) == o ? r : reverse(r)
+      outer = ofix(outer, CCW)
+      inners = ofix.(inners, CW)
+  
+      # fix degeneracy
+      if nvertices(outer) == 2
+        v = vertices(outer)
+        A, B = v[1], v[2]
+        M = centroid(Segment(A, B))
+        outer = Ring(A, M, B)
+      end
+      inners = filter(r -> nvertices(r) > 2, inners)
+  
+      rings = [outer; inners]
     end
-    inners = filter(r -> nvertices(r) > 2, inners)
-
-    rings = [outer; inners]
+  
+    PolyArea{Dim,T,R}(rings)
   end
-
-  PolyArea{Dim,T,R}(rings)
 end
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
@@ -89,8 +85,7 @@ windingnumber(point::Point, p::PolyArea) = windingnumber(point, first(p.rings))
 function Base.unique!(p::PolyArea)
   foreach(unique!, p.rings)
   inds = findall(r -> nvertices(r) ≤ 2, p.rings)
-  # don't remove first ring (outer)
-  setdiff!(inds, 1)
+  setdiff!(inds, 1) # don't remove first ring (outer)
   isempty(inds) || deleteat!(p.rings, inds)
   p
 end
