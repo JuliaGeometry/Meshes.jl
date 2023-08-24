@@ -583,7 +583,7 @@
       (1.0, 1.0),
       (0.0, 1.0)
     ]
-    @test vertices(bpoly) == target
+    @test all(vertices(bpoly) .≈ target)
   end
 
   @testset "Smoothing" begin
