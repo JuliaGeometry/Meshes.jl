@@ -49,7 +49,8 @@ function readpoly(T, fname)
     # return polygonal area
     @assert first(outer) == last(outer)
     @assert all(first(i) == last(i) for i in inners)
-    PolyArea(outer[begin:(end - 1)], [i[begin:(end - 1)] for i in inners])
+    rings = [outer, inners...]
+    PolyArea([r[begin:(end - 1)] for r in rings])
   end
 end
 

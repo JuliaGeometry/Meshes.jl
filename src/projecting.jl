@@ -16,14 +16,7 @@ proj2D(r::Ring) = Ring(proj2D(vertices(r)))
 
 proj2D(p::Ngon) = Ngon(proj2D(collect(vertices(p)))...)
 
-function proj2D(p::PolyArea)
-  r = proj2D.(rings(p))
-  if hasholes(p)
-    PolyArea(first(r), r[2:end])
-  else
-    PolyArea(first(r))
-  end
-end
+proj2D(p::PolyArea) = PolyArea(proj2D.(rings(p)))
 
 # ---------------
 # IMPLEMENTATION

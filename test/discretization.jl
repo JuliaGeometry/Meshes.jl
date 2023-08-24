@@ -171,7 +171,7 @@
       outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
       hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
       hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-      poly = PolyArea(outer, [hole1, hole2])
+      poly = PolyArea([outer, hole1, hole2])
       bpoly = poly |> Bridge(T(0.01))
       mesh = discretizewithin(boundary(bpoly), method)
       @test nvertices(mesh) == 16
