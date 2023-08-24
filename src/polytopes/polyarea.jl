@@ -45,7 +45,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
       if nvertices(outer) == 2
         v = vertices(outer)
         A, B = v[1], v[2]
-        M = centroid(Segment(A, B))
+        M = center(Segment(A, B))
         outer = Ring(A, M, B)
       end
       inners = filter(r -> nvertices(r) > 2, inners)
@@ -87,7 +87,7 @@ windingnumber(point::Point, p::PolyArea) = windingnumber(point, first(p.rings))
 function Base.unique!(p::PolyArea)
   foreach(unique!, p.rings)
   inds = findall(r -> nvertices(r) ≤ 2, p.rings)
-  setdiff!(inds, 1) # don't remove first ring (outer)
+  setdiff!(inds, 1) # don't remove outer ring
   isempty(inds) || deleteat!(p.rings, inds)
   p
 end
