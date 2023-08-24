@@ -114,8 +114,7 @@ end
 
 function apply(::Repair{9}, poly::Polygon)
   newrings, indices = poly |> rings |> repair9
-  newpoly = PolyArea(newrings)
-  newpoly, indices
+  PolyArea(newrings), indices
 end
 
 function repair9(r::AbstractVector{<:Ring})
