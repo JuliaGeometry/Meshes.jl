@@ -81,8 +81,7 @@ apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 
 function apply(::Repair{8}, poly::PolyArea)
   v = poly |> rings .|> vertices .|> repair8
-  p = PolyArea(v)
-  p, nothing
+  PolyArea(v), nothing
 end
 
 function apply(::Repair{8}, poly::Ngon)
