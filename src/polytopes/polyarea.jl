@@ -72,7 +72,7 @@ function Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...)
   all(isapprox(r₁, r₂; kwargs...) for (r₁, r₂) in zip(p₁.rings, p₂.rings))
 end
 
-vertices(p::PolyArea) = mapreduce(r -> collect(vertices(r)), vcat, p.rings)
+vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
 
 nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 
