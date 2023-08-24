@@ -76,12 +76,46 @@
   end
 
   @testset "WeilerAtherton" begin
-    # triangle
-    poly = Triangle(P2(6, 2), P2(3, 5), P2(3, 2))
-    other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
+    # Triangle
+    poly = Triangle(P2(4,2), P2(8,2), P2(6,4))
+    other = Triangle(P2(0,0), P2(8,0), P2(4,4))
     clipped = clip(poly, other, WeilerAtherton())
-    
-    @test issimple(clipped)
-    @test all(vertices(clipped) .≈ [P2(5, 3), P2(4, 4), P2(3, 4), P2(3, 2), P2(5,2)])
+
+    @test all(vertices(clipped) .≈ [P2(5,3), P2(4, 2), P2(6, 2)])
+
+    # Hexagon
+    poly = Hexagon(P2(2,10), P2(0,10), P2(5,5), P2(0,0), P2(2,0), P2(7,5))
+    other = Hexagon(P2(0,5), P2(5,0), P2(7,0), P2(2,5), P2(7,10), P2(5,10))
+    clipped = clip(poly, other, WeilerAtherton())
+    clippedgeoms = clipped |> collect
+
+    @test all(vertices(clippedgeoms[1]) .≈ [P2(2.5, 7.5), P2(3.5, 6.5), P2(4.5, 7.5), P2(3.5, 8.5)])
+    @test all(vertices(clippedgeoms[2]) .≈ [P2(3.5, 3.5), P2(2.5, 2.5), P2(3.5, 1.5), P2(4.5, 2.5)])
+
+    # PolyArea
+    poly = PolyArea(P2(3,13), P2(1,13), P2(1,1), P2(3,1))
+    other = PolyArea(P2(8, 14), P2(0, 14), P2(0, 0), P2(8, 0), P2(8, 2), P2(2, 2), P2(2, 6), P2(8, 6), P2(8, 8), P2(2, 8), P2(2, 12), P2(8, 12),)
+    clipped = clip(poly, other, WeilerAtherton())
+
+    @test all(vertices(clipped) .≈ [P2(3, 6), P2(3, 8), P2(2, 8), P2(2, 12), P2(3, 12), P2(3, 13), P2(1, 13), P2(1, 1), P2(3, 1), P2(3, 2), P2(2, 2), P2(2, 6)])
+
+    # Petagon with PolyArea
+    poly = Pentagon(P2(7,13), P2(1,10), P2(1,1), P2(7,1), P2(2,7))
+    other = PolyArea(P2(8, 14), P2(0, 14), P2(0, 0), P2(8, 0), P2(8, 2), P2(2, 2), P2(2, 6), P2(8, 6), P2(8, 8), P2(2, 8), P2(2, 12), P2(8, 12))
+    clipped = clip(poly, other, WeilerAtherton())
+    clippedgeoms = clipped |> collect
+
+    @test all(vertices(clippedgeoms[1]) .≈ [P2(2, 10.5), P2(1, 10), P2(1, 1), P2(7, 1), P2(37/6, 2), P2(2, 2), P2(2, 6), P2(17/6, 6), P2(2, 7), P2(17/6, 8), P2(2, 8)])
+    @test all(vertices(clippedgeoms[2]) .≈ [P2(37/6, 12), P2(7, 13), P2(5, 12)])
+
+    # PolyArea
+    poly = PolyArea(P2(8,3), P2(5,6), P2(3,4), P2(3,1), P2(7,-1), P2(5,1), P2(7,1), P2(5,3))
+    other = PolyArea(P2(10, 3), P2(7, 6), P2(7, 2), P2(2, 2), P2(0, 0), P2(7, 0))
+    clipped = clip(poly, other, WeilerAtherton())
+    clippedgeoms = clipped |> collect
+
+    @test all(vertices(clippedgeoms[1]) .≈ [P2(3, 2), P2(3, 1), P2(5, 0), P2(6, 0), P2(5, 1), P2(7, 1), P2(6, 2)])
+    @test all(vertices(clippedgeoms[2]) .≈ [P2(7, 3), P2(8, 3), P2(7, 4)])
+
   end
 end
