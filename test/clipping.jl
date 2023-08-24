@@ -39,7 +39,7 @@
     # PolyArea with box
     outer = Ring(P2(8, 0), P2(4, 8), P2(2, 8), P2(-2, 0), P2(0, 0), P2(1, 2), P2(5, 2), P2(6, 0))
     inner = Ring(P2(4, 4), P2(2, 4), P2(3, 6))
-    poly = PolyArea(outer, [inner])
+    poly = PolyArea([outer, inner])
     other = Box(P2(0, 1), P2(3, 7))
     clipped = clip(poly, other, SutherlandHodgman())
     crings = rings(clipped)
@@ -53,7 +53,7 @@
     # PolyArea with outer ring outside and inner ring inside
     outer = Ring(P2(8, 0), P2(2, 6), P2(-4, 0))
     inner = Ring(P2(1, 3), P2(3, 3), P2(3, 1), P2(1, 1))
-    poly = PolyArea(outer, [inner])
+    poly = PolyArea([outer, inner])
     other = Quadrangle(P2(4, 4), P2(0, 4), P2(0, 0), P2(4, 0))
     clipped = clip(poly, other, SutherlandHodgman())
     @test !issimple(clipped)
@@ -65,7 +65,7 @@
     outer = Ring(P2(6, 4), P2(6, 7), P2(1, 6), P2(1, 1), P2(5, 2))
     inner₁ = Ring(P2(3, 3), P2(3, 4), P2(4, 3))
     inner₂ = Ring(P2(2, 5), P2(2, 6), P2(3, 5))
-    poly = PolyArea(outer, [inner₁, inner₂])
+    poly = PolyArea([outer, inner₁, inner₂])
     other = PolyArea(Ring(P2(6, 1), P2(7, 2), P2(6, 5), P2(0, 2), P2(1, 1)))
     clipped = clip(poly, other, SutherlandHodgman())
     crings = rings(clipped)

@@ -3,10 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    PolyArea(outer, [inner1, inner2, ..., innerk]; fix=true)
+    PolyArea(outer; fix=true)
+    PolyArea([outer, inner₁, inner₂, ..., innerₖ]; fix=true)
 
 A polygonal area with `outer` ring, and optional inner
-rings `inner1`, `inner2`, ..., `innerk`.
+rings `inner₁`, `inner₂`, ..., `innerₖ`.
 
 Rings can be a vector of [`Point`](@ref) or a
 vector of tuples with coordinates for convenience,
@@ -24,79 +25,81 @@ in the real world, including issues with:
   degenerate rings (e.g. only 2 vertices).
 """
 struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
-  outer::R
-  inners::Vector{R}
-end
+  rings::Vector{R}
 
-function PolyArea(outer::R, inners, fix) where {Dim,T,R<:Ring{Dim,T}}
-  if fix
-    # fix orientation
-    ofix(r, o) = orientation(r) == o ? r : reverse(r)
-    outer = ofix(outer, CCW)
-    inners = ofix.(inners, CW)
-
-    # fix degeneracy
-    if nvertices(outer) == 2
-      v = vertices(outer)
-      A, B = v[1], v[2]
-      M = centroid(Segment(A, B))
-      outer = Ring(A, M, B)
+  function PolyArea{Dim,T,R}(rings; fix=true) where {Dim,T,R<:Ring{Dim,T}}
+    if isempty(rings)
+      throw(ArgumentError("cannot create PolyArea without rings"))
     end
-    inners = filter(r -> nvertices(r) > 2, inners)
-  end
 
-  PolyArea{Dim,T,R}(outer, inners)
+    if fix
+      outer = rings[begin]
+      inners = length(rings) > 1 ? rings[(begin + 1):end] : R[]
+  
+      # fix orientation
+      ofix(r, o) = orientation(r) == o ? r : reverse(r)
+      outer = ofix(outer, CCW)
+      inners = ofix.(inners, CW)
+  
+      # fix degeneracy
+      if nvertices(outer) == 2
+        v = vertices(outer)
+        A, B = v[1], v[2]
+        M = center(Segment(A, B))
+        outer = Ring(A, M, B)
+      end
+      inners = filter(r -> nvertices(r) > 2, inners)
+  
+      rings = [outer; inners]
+    end
+  
+    new(rings)
+  end
 end
 
-PolyArea(outer::R, inners=R[]; fix=true) where {R<:Ring} = PolyArea(outer, inners, fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}} = PolyArea{Dim,T,R}(rings; fix)
 
-PolyArea(outer::AbstractVector{P}, inners=[]; fix=true) where {P<:Point} =
-  PolyArea(Ring(outer), [Ring(inner) for inner in inners]; fix=fix)
+PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
-PolyArea(outer::AbstractVector{TP}, inners=[]; fix=true) where {TP<:Tuple} =
-  PolyArea(Point.(outer), [Point.(inner) for inner in inners]; fix=fix)
+PolyArea(outer::Ring; fix=true) = PolyArea([outer]; fix)
 
-PolyArea(outer::Vararg{P}; fix=true) where {P<:Point} = PolyArea(collect(outer); fix=fix)
+PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
-PolyArea(outer::Vararg{TP}; fix=true) where {TP<:Tuple} = PolyArea(collect(Point.(outer)); fix=fix)
+PolyArea(outer...; fix=true)  = PolyArea(collect(outer); fix)
 
-==(p₁::PolyArea, p₂::PolyArea) = p₁.outer == p₂.outer && p₁.inners == p₂.inners
+==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 
 function Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...)
-  length(p₁.inners) ≠ length(p₂.inners) && return false
-  isapprox(p₁.outer, p₂.outer; kwargs...) && all(isapprox(r₁, r₂; kwargs...) for (r₁, r₂) in zip(p₁.inners, p₂.inners))
+  length(p₁.rings) ≠ length(p₂.rings) && return false
+  all(isapprox(r₁, r₂; kwargs...) for (r₁, r₂) in zip(p₁.rings, p₂.rings))
 end
 
-function vertices(p::PolyArea{Dim,T}) where {Dim,T}
-  vo = vertices(p.outer)
-  vi = reduce(vcat, vertices(inner) for inner in p.inners; init=Point{Dim,T}[])
-  [vo; vi]
-end
+vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
 
-nvertices(p::PolyArea) = nvertices(p.outer) + mapreduce(nvertices, +, p.inners, init=0)
+nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 
-centroid(p::PolyArea) = centroid(p.outer)
+centroid(p::PolyArea) = centroid(first(p.rings))
 
-rings(p::PolyArea) = [p.outer; p.inners]
+rings(p::PolyArea) = p.rings
 
-windingnumber(point::Point, p::PolyArea) = windingnumber(point, p.outer)
+windingnumber(point::Point, p::PolyArea) = windingnumber(point, first(p.rings))
 
 function Base.unique!(p::PolyArea)
-  unique!(p.outer)
-  hasholes(p) && foreach(unique!, p.inners)
-  rminds = findall(r -> nvertices(r) ≤ 2, p.inners)
-  isempty(rminds) || deleteat!(p.inners, rminds)
+  foreach(unique!, p.rings)
+  inds = findall(r -> nvertices(r) ≤ 2, p.rings)
+  setdiff!(inds, 1) # don't remove outer ring
+  isempty(inds) || deleteat!(p.rings, inds)
   p
 end
 
 function Base.show(io::IO, p::PolyArea)
-  nverts = nvertices.([p.outer; p.inners])
+  nverts = nvertices.(p.rings)
   rings = join(["$n-Ring" for n in nverts], ", ")
   print(io, "PolyArea($rings)")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
-  nverts = nvertices.([p.outer; p.inners])
+  nverts = nvertices.(p.rings)
   rings = ["$n-Ring" for n in nverts]
   println(io, "PolyArea{$Dim,$T}")
   if length(rings) == 1

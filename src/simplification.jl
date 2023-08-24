@@ -18,23 +18,13 @@ See also [`decimate`](@ref).
 """
 function simplify end
 
-function simplify(box::Box{2}, method::SimplificationMethod)
-  c = simplify(boundary(box), method)
-  PolyArea(c)
-end
+simplify(box::Box{2}, method::SimplificationMethod) = PolyArea(simplify(boundary(box), method))
 
-function simplify(polygon::Polygon, method::SimplificationMethod)
-  r = [simplify(ring, method) for ring in rings(polygon)]
-  PolyArea(r[begin], r[(begin + 1):end])
-end
+simplify(polygon::Polygon, method::SimplificationMethod) = PolyArea([simplify(ring, method) for ring in rings(polygon)])
 
-function simplify(multi::Multi, method::SimplificationMethod)
-  Multi([simplify(geom, method) for geom in collect(multi)])
-end
+simplify(multi::Multi, method::SimplificationMethod) = Multi([simplify(geom, method) for geom in collect(multi)])
 
-function simplify(domain::Domain, method::SimplificationMethod)
-  GeometrySet([simplify(elem, method) for elem in domain])
-end
+simplify(domain::Domain, method::SimplificationMethod) = GeometrySet([simplify(elem, method) for elem in domain])
 
 # ----------------
 # IMPLEMENTATIONS

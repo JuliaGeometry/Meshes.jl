@@ -416,7 +416,7 @@
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly = PolyArea(outer, [hole1, hole2])
+    poly = PolyArea([outer, hole1, hole2])
     @test poly == poly
     @test poly ≈ poly
 
@@ -425,7 +425,7 @@
     @test rings(poly) == [Ring(P2[(0, 0), (0.5, 0.0), (1, 0)])]
 
     # inner chain with 2 vertices is removed by default
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)], [P2[(1, 2), (2, 3)]])
+    poly = PolyArea([P2[(0, 0), (1, 0), (1, 1), (0, 1)], P2[(1, 2), (2, 3)]])
     @test rings(poly) == [Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])]
 
     # orientation of chains is fixed by default
@@ -437,7 +437,7 @@
     # test accessor methods
     poly = PolyArea(P2[(1, 2), (2, 3)], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3)])
-    poly = PolyArea(P2[(1, 2), (2, 3)], [P2[(1.1, 2.54), (1.4, 1.5)]], fix=false)
+    poly = PolyArea([P2[(1, 2), (2, 3)], P2[(1.1, 2.54), (1.4, 1.5)]], fix=false)
     @test vertices(poly) == CircularVector(P2[(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)])
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
@@ -547,7 +547,7 @@
     outer = rand(P2, 10)
     v1, v2 = rand(V2, 2)
     inner = [Point(v1), Point(v1), Point(v2)]
-    poly = PolyArea(outer, [inner])
+    poly = PolyArea([outer, inner])
     upoly = unique(poly)
     @test hasholes(poly)
     @test !hasholes(upoly)
@@ -565,7 +565,7 @@
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly = PolyArea(outer, [hole1, hole2])
+    poly = PolyArea([outer, hole1, hole2])
     @test all(p ∈ poly for p in outer)
     @test P2(0.5, 0.5) ∈ poly
     @test P2(0.2, 0.6) ∈ poly
@@ -579,7 +579,7 @@
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly = PolyArea(outer, [hole1, hole2])
+    poly = PolyArea([outer, hole1, hole2])
     @test area(poly) ≈ T(0.92)
 
     # convexity
@@ -587,7 +587,7 @@
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
     poly1 = PolyArea(outer)
-    poly2 = PolyArea(outer, [hole1, hole2])
+    poly2 = PolyArea([outer, hole1, hole2])
     @test isconvex(poly1)
     @test !isconvex(poly2)
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)])

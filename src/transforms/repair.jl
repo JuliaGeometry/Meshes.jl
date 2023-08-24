@@ -81,12 +81,7 @@ apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 
 function apply(::Repair{8}, poly::PolyArea)
   v = poly |> rings .|> vertices .|> repair8
-  p = if hasholes(poly)
-    PolyArea(v[begin], v[(begin + 1):end])
-  else
-    PolyArea(v[begin])
-  end
-  p, nothing
+  PolyArea(v), nothing
 end
 
 function apply(::Repair{8}, poly::Ngon)
@@ -119,12 +114,7 @@ end
 
 function apply(::Repair{9}, poly::Polygon)
   newrings, indices = poly |> rings |> repair9
-  newpoly = if hasholes(poly)
-    PolyArea(newrings[1], newrings[2:end])
-  else
-    PolyArea(newrings[1])
-  end
-  newpoly, indices
+  PolyArea(newrings), indices
 end
 
 function repair9(r::AbstractVector{<:Ring})
