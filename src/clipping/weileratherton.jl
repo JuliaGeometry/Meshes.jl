@@ -48,6 +48,20 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
   #TODO: not assume that the first point is not in poly boundary
   isentering = (sideof(vᵣ[pᵣ[1][2]], other) != IN)
 
+  Iposᵣ = zeros(Int, length(I))
+  for i in 1:nᵣ
+    if pᵣ[i][1] == :INTERSECTION
+      Iposᵣ[pᵣ[i][2]] = i
+    end
+  end
+
+  Iposₒ = zeros(Int, length(I))
+  for i in 1:nₒ
+    if pₒ[i][1] == :INTERSECTION
+      Iposₒ[pₒ[i][2]] = i
+    end
+  end
+
   for i in eachindex(pᵣ)
     if pᵣ[i][1] == :INTERSECTION
       kind = isentering ? :INTERSECTION_ENTER : :INTERSECTION_EXIT
@@ -74,7 +88,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
         end
 
         push!(vᵤ, I[pᵣ[j][2]])
-        j = _pointindex(pᵣ[j][2], pₒ)
+        j = Iposₒ[pᵣ[j][2]]
         j = mod1(j+1, nₒ)
 
         while(pₒ[j][1] == :POINT)
@@ -85,7 +99,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
         if I[pₒ[j][2]] == I[pᵣ[i][2]]
           break
         end
-        j = _pointindex(pₒ[j][2], pᵣ)
+        j = Iposᵣ[pₒ[j][2]]
       end
       push!(u, Ring(unique(vᵤ)))
     end
