@@ -90,7 +90,7 @@ function Base.unique!(p::PolyArea)
   foreach(unique!, p.rings)
   inds = findall(r -> nvertices(r) ≤ 2, p.rings)
   # don't remove first ring (outer)
-  setdiff!(inds, first(eachindex(p.rings)))
+  setdiff!(inds, 1)
   isempty(inds) || deleteat!(p.rings, inds)
   p
 end
