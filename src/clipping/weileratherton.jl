@@ -8,45 +8,57 @@
 The Weiler-Atherton algorithm for clipping polygons.
 
 ## References
- 
+
 * Weiler, Kevin and Atherton, Peter. 1977. [Hidden surface removal using polygon area sorting]
   (https://dl.acm.org/doi/10.1145/563858.563896)
 """
 struct WeilerAtherton <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, method::WeilerAtherton)
+function clip(poly::Polygon{Dim,T}, other::Geometry{Dim,T}, method::WeilerAtherton) where {Dim, T}
   if hasholes(poly)
-    @error "not implemented"
-  end
+    outers = clip(rings(poly)[1], boundary(other), method)
+    inners = vcat([clip(r, boundary(other), method) for r in rings(poly)[2:end]]...)
+    if isempty(outers)
+      return nothing
+    end
 
-  c = [clip(ring, boundary(other), method) for ring in rings(poly)]
-  r = filter(!isnothing, vcat(c...))
-
-  if isempty(r)
-    nothing
-  elseif length(r) > 1
-    Multi(PolyArea.(r))
+    g = PolyArea{Dim,T}[]
+    # build a PolyArea to each outer ring generated
+    for o in outers
+      ringsₒ = [o]
+      # find inner rings inside the outer ring o 
+      for i in inners
+        if any([sideof(v, o) == IN for v in vertices(i)])
+          push!(ringsₒ, i)
+        end
+      end
+      push!(g, PolyArea(ringsₒ))
+    end
+    Multi(g)
   else
-    PolyArea(r[1])
+    outers = clip(rings(poly)[1], boundary(other), method)
+    if isempty(outers)
+      nothing
+    else
+      Multi(PolyArea.(outers))
+    end
   end
 end
 
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Dim,T}
-  # TODO: PolyArea with holes
-
-  I, pᵣ, pₒ = _pairwiseintersections(ring, other)
-  nᵣ = length(pᵣ)
-  nₒ = length(pₒ)
-
   vᵣ = orientation(ring) == CCW ? vertices(ring) : reverse(vertices(ring))
   vₒ = orientation(other) == CCW ? vertices(other) : reverse(vertices(other))
+
+  I, pᵣ, pₒ = _pairwiseintersections(vᵣ, vₒ)
+  nᵣ = length(pᵣ)
+  nₒ = length(pₒ)
 
   if isempty(I)
     # ring is totally inside or totally outside other
     if sideof(vᵣ[1], other) == IN 
       return [ring]
     else
-      return nothing
+      return []
     end
   end
 
@@ -86,11 +98,11 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
       j = i
       while(true)
         isvisitedᵣ[j] = true
-        
+
         # add current ring intersection
         push!(vᵤ, I[pᵣ[j][2]])
         j = mod1(j+1, nᵣ)
-        
+
         # collect all points of ring until find a intersection
         while(pᵣ[j][1] == :POINT)
           push!(vᵤ, vᵣ[pᵣ[j][2]])
@@ -128,10 +140,8 @@ end
 # HELPER FUNCTIONS
 # ----------------
 
-function _pairwiseintersections(ring::Ring{Dim,T}, other::Ring{Dim,T}) where {Dim,T}
-  vᵣ = vertices(ring)
+function _pairwiseintersections(vᵣ, vₒ)
   nᵣ = length(vᵣ)
-  vₒ = vertices(other)
   nₒ = length(vₒ)
 
   I = []
