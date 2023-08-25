@@ -35,12 +35,12 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
     if fix
       outer = rings[begin]
       inners = length(rings) > 1 ? rings[(begin + 1):end] : R[]
-  
+
       # fix orientation
       ofix(r, o) = orientation(r) == o ? r : reverse(r)
       outer = ofix(outer, CCW)
       inners = ofix.(inners, CW)
-  
+
       # fix degeneracy
       if nvertices(outer) == 2
         v = vertices(outer)
@@ -49,10 +49,10 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
         outer = Ring(A, M, B)
       end
       inners = filter(r -> nvertices(r) > 2, inners)
-  
+
       rings = [outer; inners]
     end
-  
+
     new(rings)
   end
 end
@@ -65,7 +65,7 @@ PolyArea(outer::Ring; fix=true) = PolyArea([outer]; fix)
 
 PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
-PolyArea(outer...; fix=true)  = PolyArea(collect(outer); fix)
+PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
 
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 
