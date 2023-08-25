@@ -160,7 +160,7 @@ function _pairwiseintersections(vᵣ, vₒ)
       lₒ = Line(vₒ[j], vₒ[j+1])
       sI = sᵣ ∩ sₒ
 
-      if !isnothing(sI) && ((sideof(p₁, lₒ) == RIGHT) ⊻ (sideof(p₂, lₒ) == RIGHT))
+      if sI isa Point && ((sideof(p₁, lₒ) == RIGHT) ⊻ (sideof(p₂, lₒ) == RIGHT))
         push!(I, sI)
         id = length(I)
         push!(vᵣI[i], id)

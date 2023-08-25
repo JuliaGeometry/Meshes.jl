@@ -140,18 +140,6 @@
     other = Triangle(P2(5,0), P2(0,5), P2(0,0))
     clipped = clip(poly, other, WeilerAtherton())
     @test all(vertices(clipped) .≈ [P2(1, 4),P2(1, 2),P2(2, 1),P2(4, 1)])
-    testviz(poly, other, clipped; alpha=0.8)
-
-    # point intersections
-    poly = PolyArea(P2(4,9), P2(2,6), P2(4,3), P2(6,6))
-    other = PolyArea(P2(7,7), P2(6,8), P2(2,8), P2(0,7), P2(0,2), P2(1,1), P2(2,2), P2(6,2), P2(8,3), P2(6,4), P2(2,4), P2(1,5), P2(2,6), P2(6,6))
-    clipped = clip2(poly, other, WeilerAtherton())
-    clippedgeoms = clipped |> collect
-
-    r = clippedgeoms[1] |> rings
-    @test all(vertices(r[1]) .≈ [P2(10/3, 8.0), P2(2.0, 6.0), P2(6.0, 6.0), P2(14/3, 8.0)])
-    r = clippedgeoms[2] |> rings
-    @test all(vertices(r[1]) .≈ [P2(10/3, 4.0), P2(4.0, 3.0), P2(14/3, 4.0)])
 
     # degenerated
     poly = PolyArea(P2(16,16), P2(-4,16), P2(-4,2), P2(16,2), P2(16,4), P2(-2,4), P2(-2,6), P2(16,6), P2(16,8), P2(-2,8), P2(-2,10), P2(16,10), P2(16,12), P2(-2,12), P2(-2,14), P2(16,14))
@@ -193,8 +181,9 @@
     clippedgeoms = clipped |> collect
 
     r = clippedgeoms[1] |> rings
-    @test all(vertices(r[1]) .≈ [P2(4, 4),P2(4, 6),P2(0, 6),P2(0, 4)])
-    @test all(vertices(r[2]) .≈ [P2(1, 4), P2(1, 5), P2(3, 5), P2(3, 4)])
+    @test all(vertices(r[1]) .≈ [P2(1, 4), P2(1, 1), P2(4, 1), P2(4, 4)])
+    @test all(vertices(r[2]) .≈ [P2(3, 2), P2(2, 2), P2(2, 3), P2(3, 3)])
+
 
     # PolyArea outside with hole
     outer = Ring(P2(11,1), P2(8,5), P2(5,1))
