@@ -133,6 +133,36 @@
     poly = Triangle(P2(3,1), P2(1,1), P2(1,3))
     other = Triangle(P2(4,0), P2(0,4), P2(0,0))
     clipped = clip(poly, other, WeilerAtherton())
-    @test all(vertices(clipped) .≈ [P2(3.0, 1.0), P2(1.0, 1.0), P2(1.0, 3.0)])
+    @test all(vertices(clipped) .≈ [P2(3, 1), P2(1, 3), P2(1, 1)])
+
+    # degenerated
+    poly = PolyArea(P2(16,16), P2(-4,16), P2(-4,2), P2(16,2), P2(16,4), P2(-2,4), P2(-2,6), P2(16,6), P2(16,8), P2(-2,8), P2(-2,10), P2(16,10), P2(16,12), P2(-2,12), P2(-2,14), P2(16,14))
+    other = PolyArea(P2(12,16), P2(8,16), P2(8,10), P2(4,10), P2(4,16), P2(0,16), P2(0,0), P2(4,0), P2(4,6), P2(8,6), P2(8,0), P2(12,0))
+    clipped = clip(poly, other, WeilerAtherton())
+    clippedgeoms = clipped |> collect
+
+    @test all(vertices(clippedgeoms[1]) .≈ [P2(12, 16), P2(8, 16), P2(8, 14), P2(12, 14)])
+    @test all(vertices(clippedgeoms[2]) .≈ [P2(4, 16), P2(0, 16), P2(0, 14), P2(4, 14)])
+    @test all(vertices(clippedgeoms[3]) .≈ [P2(0, 2), P2(4, 2), P2(4, 4), P2(0, 4)])
+    @test all(vertices(clippedgeoms[4]) .≈ [P2(8, 2), P2(12, 2), P2(12, 4), P2(8, 4)])
+    @test all(vertices(clippedgeoms[5]) .≈ [P2(0, 6), P2(4, 6), P2(8, 6), P2(12, 6), P2(12, 8), P2(0, 8)])
+    @test all(vertices(clippedgeoms[6]) .≈ [P2(0, 10),P2(4, 10),P2(4, 12),P2(0, 12)])
+    @test all(vertices(clippedgeoms[7]) .≈ [P2(8, 10),P2(12, 10),P2(12, 12),P2(8, 12)])
+
+    # PolyArea with hole
+    outer = Ring(P2(4,6), P2(0,6), P2(0,0), P2(4,0))
+    inner = Ring(P2(3,1), P2(1,1), P2(1,5), P2(3,5))
+    poly = PolyArea(outer, inner)
+    other = PolyArea(P2(7,6), P2(-1,6), P2(-1,4), P2(5,4), P2(5,2), P2(-1,2), P2(-1,0), P2(7,0))
+    clipped = clip(poly, other, WeilerAtherton())
+    clippedgeoms = clipped |> collect
+
+    r = clippedgeoms[1] |> rings
+    @test all(vertices(r[1]) .≈ [P2(0, 2), P2(0, 0), P2(4, 0), P2(4, 2)])
+    @test all(vertices(r[2]) .≈ [P2(3, 2), P2(3, 1), P2(1, 1), P2(1, 2)])
+
+    r = clippedgeoms[2] |> rings
+    @test all(vertices(r[1]) .≈ [P2(4, 4), P2(4, 6), P2(0, 6), P2(0, 4)])
+    @test all(vertices(r[2]) .≈ [P2(1, 4), P2(1, 5), P2(3, 5), P2(3, 4)])
   end
 end
