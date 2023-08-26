@@ -56,7 +56,7 @@ function boundary(m::Multi)
   isempty(valid) ? nothing : reduce(merge, valid)
 end
 
-rings(m::Multi{Dim,T,<:Polygon}) where {Dim,T} = [ring for poly in m.geoms for ring in rings(poly)]
+rings(m::MultiPolygon{Dim,T}) where {Dim,T} = [ring for poly in m.geoms for ring in rings(poly)]
 
 Base.collect(m::Multi) = m.geoms
 
