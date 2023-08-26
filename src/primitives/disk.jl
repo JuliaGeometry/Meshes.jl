@@ -25,8 +25,6 @@ center(d::Disk) = d.plane(0, 0)
 
 radius(d::Disk) = d.radius
 
-boundary(d::Disk) = Circle(d.plane, d.radius)
-
 function (d::Disk{T})(ρ, φ) where {T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))

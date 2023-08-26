@@ -82,6 +82,7 @@ include("predicates.jl")
 # operations
 include("sideof.jl")
 include("measures.jl")
+include("boundary.jl")
 include("orientation.jl")
 include("merging.jl")
 include("clipping.jl")
@@ -125,7 +126,6 @@ export
   embeddim,
   paramdim,
   coordtype,
-  boundary,
   center,
   centroid,
 
@@ -164,6 +164,8 @@ export
   bottom,
   top,
   axis,
+  base,
+  apex,
   isright,
   sides,
   diagonal,
@@ -399,6 +401,9 @@ export
   area,
   volume,
   perimeter,
+
+  # boundary
+  boundary,
 
   # orientation
   OrientationMethod,

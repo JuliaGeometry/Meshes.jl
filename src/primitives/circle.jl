@@ -46,8 +46,6 @@ center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius
 
-boundary(::Circle) = nothing
-
 function (c::Circle{T})(φ) where {T}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))

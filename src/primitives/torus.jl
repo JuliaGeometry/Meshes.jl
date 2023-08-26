@@ -44,8 +44,6 @@ radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
-boundary(::Torus) = nothing
-
 function (t::Torus{T})(u, v) where {T}
   if (u < 0 || u > 1) || (v < 0 || v > 1)
     throw(DomainError((u, v), "t(u, v) is not defined for u, v outside [0, 1]²."))

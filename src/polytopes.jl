@@ -174,13 +174,6 @@ Winding number of `point` with respect to the `polygon`.
 """
 function windingnumber end
 
-"""
-    boundary(polygon)
-
-Returns the boundary of the `polygon`.
-"""
-boundary(p::Polygon) = hasholes(p) ? Multi(rings(p)) : first(rings(p))
-
 # implementations of Polygon
 include("polytopes/ngon.jl")
 include("polytopes/polyarea.jl")

@@ -69,8 +69,6 @@ paramdim(::Type{Point{Dim,T}}) where {Dim,T} = 0
 
 center(p::Point) = p
 
-boundary(::Point) = nothing
-
 ==(A::Point, B::Point) = A.coords == B.coords
 
 Base.isapprox(A::Point{Dim,T}, B::Point{Dim,T}; atol=atol(T), kwargs...) where {Dim,T} =

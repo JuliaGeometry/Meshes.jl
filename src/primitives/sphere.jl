@@ -65,8 +65,6 @@ center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
-boundary(::Sphere) = nothing
-
 function (s::Sphere{2,T})(φ) where {T}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))

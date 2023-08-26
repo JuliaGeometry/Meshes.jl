@@ -52,13 +52,6 @@ bounding box of the `geometry`.
 """
 Base.extrema(g::Geometry) = extrema(boundingbox(g))
 
-"""
-    boundary(geometry)
-
-Return the boundary of the `geometry`.
-"""
-function boundary end
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

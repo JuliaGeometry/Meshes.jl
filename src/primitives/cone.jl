@@ -3,23 +3,25 @@
 # ------------------------------------------------------------------
 
 """
-    Cone(disk, apex)
+    Cone(base, apex)
 
-A cone with base `disk` and `apex`.
+A cone with `base` disk and `apex`.
 See https://en.wikipedia.org/wiki/Cone.
 
 See also [`ConeSurface`](@ref).
 """
 struct Cone{T} <: Primitive{3,T}
-  disk::Disk{T}
+  base::Disk{T}
   apex::Point{3,T}
 end
 
-Cone(disk::Disk, apex::Tuple) = Cone(disk, Point(apex))
+Cone(base::Disk, apex::Tuple) = Cone(base, Point(apex))
 
 paramdim(::Type{<:Cone}) = 3
 
-boundary(c::Cone) = ConeSurface(c.disk, c.apex)
+base(c::Cone) = c.base
+
+apex(c::Cone) = c.apex
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cone{T}}) where {T} =
   Cone(rand(rng, Disk{T}), rand(rng, Point{3,T}))

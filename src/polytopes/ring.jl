@@ -30,8 +30,6 @@ Ring(vertices::Point{Dim,T}...) where {Dim,T} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
 Ring(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ring(CircularVector(vertices))
 
-boundary(::Ring) = nothing
-
 nvertices(r::Ring) = length(r.vertices)
 
 ==(r₁::Ring, r₂::Ring) = r₁.vertices == r₂.vertices

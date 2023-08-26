@@ -35,12 +35,6 @@ ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1
 
-function boundary(b::BezierCurve)
-  ps = b.controls
-  p₁, p₂ = first(ps), last(ps)
-  p₁ ≈ p₂ ? nothing : PointSet([p₁, p₂])
-end
-
 """
 Evaluation method used to obtain a point along
 a Bézier curve from a parametric expression.

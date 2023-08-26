@@ -14,11 +14,6 @@ nvertices(::Type{<:Hexahedron}) = 8
 Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(h₁.vertices, h₂.vertices))
 
-function boundary(h::Hexahedron)
-  indices = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
-  SimpleMesh(pointify(h), connect.(indices))
-end
-
 function (h::Hexahedron)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v, w), "h(u, v, w) is not defined for u, v, w outside [0, 1]³."))

@@ -17,11 +17,6 @@ Rope(vertices::Tuple...) = Rope([Point(v) for v in vertices])
 Rope(vertices::Point{Dim,T}...) where {Dim,T} = Rope(collect(vertices))
 Rope(vertices::AbstractVector{<:Tuple}) = Rope(Point.(vertices))
 
-function boundary(r::Rope)
-  v = r.vertices
-  PointSet([first(v), last(v)])
-end
-
 nvertices(r::Rope) = length(r.vertices)
 
 ==(r₁::Rope, r₂::Rope) = r₁.vertices == r₂.vertices

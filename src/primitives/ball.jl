@@ -28,8 +28,6 @@ center(b::Ball) = b.center
 
 radius(b::Ball) = b.radius
 
-boundary(b::Ball) = Sphere(b.center, b.radius)
-
 function (b::Ball{2,T})(ρ, φ) where {T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))

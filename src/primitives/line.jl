@@ -18,8 +18,6 @@ Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
 
 paramdim(::Type{<:Line}) = 1
 
-boundary(::Line) = nothing
-
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 
 (l::Line)(t) = l.a + t * (l.b - l.a)

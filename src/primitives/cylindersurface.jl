@@ -72,8 +72,6 @@ function isright(c::CylinderSurface{T}) where {T}
   isparallelv && isparallelw
 end
 
-boundary(::CylinderSurface) = nothing
-
 Base.isapprox(c₁::CylinderSurface{T}, c₂::CylinderSurface{T}) where {T} =
   c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(T))
 

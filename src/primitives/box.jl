@@ -43,33 +43,6 @@ diagonal(b::Box) = norm(b.max - b.min)
 
 sides(b::Box) = Tuple(b.max - b.min)
 
-boundary(b::Box{1}) = PointSet([b.min, b.max])
-
-function boundary(b::Box{2})
-  A = coordinates(b.min)
-  B = coordinates(b.max)
-  v = Point.([(A[1], A[2]), (B[1], A[2]), (B[1], B[2]), (A[1], B[2])])
-  Ring(v)
-end
-
-function boundary(b::Box{3})
-  A = coordinates(b.min)
-  B = coordinates(b.max)
-  v =
-    Point.([
-      (A[1], A[2], A[3]),
-      (B[1], A[2], A[3]),
-      (B[1], B[2], A[3]),
-      (A[1], B[2], A[3]),
-      (A[1], A[2], B[3]),
-      (B[1], A[2], B[3]),
-      (B[1], B[2], B[3]),
-      (A[1], B[2], B[3])
-    ])
-  c = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
-  SimpleMesh(v, connect.(c))
-end
-
 Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
 function (b::Box{Dim,T})(uv...) where {Dim,T}

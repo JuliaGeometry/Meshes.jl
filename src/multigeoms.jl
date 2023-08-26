@@ -50,12 +50,6 @@ function centroid(m::Multi)
   Point(sum(cs) / length(cs))
 end
 
-function boundary(m::Multi)
-  bounds = [boundary(geom) for geom in m.geoms]
-  valid = filter(!isnothing, bounds)
-  isempty(valid) ? nothing : reduce(merge, valid)
-end
-
 rings(m::MultiPolygon{Dim,T}) where {Dim,T} = [ring for poly in m.geoms for ring in rings(poly)]
 
 Base.collect(m::Multi) = m.geoms
