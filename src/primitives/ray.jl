@@ -18,10 +18,6 @@ Ray(p::Tuple, v::Tuple) = Ray(Point(p), Vec(v))
 
 paramdim(::Type{<:Ray}) = 1
 
-measure(::Ray{Dim,T}) where {Dim,T} = typemax(T)
-
-Base.length(r::Ray) = measure(r)
-
 boundary(r::Ray) = r.p
 
 ==(r₁::Ray, r₂::Ray) = (r₁.p ≈ r₂.p) && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁

@@ -55,13 +55,6 @@ See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
 const Chain = Polytope{1}
 
 """
-   length(chain)
-
-Return the length of the `chain`.
-"""
-Base.length(c::Chain) = measure(c)
-
-"""
     segments(chain)
 
 Return the segments linking consecutive points of the `chain`.
@@ -168,13 +161,6 @@ See also [`Ngon`](@ref) and [`PolyArea`](@ref).
 const Polygon = Polytope{2}
 
 """
-    area(polygon)
-
-Return the area of the `polygon`.
-"""
-area(p::Polygon) = measure(p)
-
-"""
     rings(polygon)
 
 Return the outer and inner rings of the polygon.
@@ -211,13 +197,6 @@ A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 See also [`Tetrahedron`](@ref), [`Hexahedron`](@ref) and [`Pyramid`](@ref).
 """
 const Polyhedron = Polytope{3}
-
-"""
-   volume(polyhedron)
-
-Return the volume of the `polyhedron`.
-"""
-volume(p::Polyhedron) = measure(p)
 
 # implementations of Polyhedron
 include("polytopes/tetrahedron.jl")

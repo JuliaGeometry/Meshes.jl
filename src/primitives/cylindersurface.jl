@@ -72,10 +72,6 @@ function isright(c::CylinderSurface{T}) where {T}
   isparallelv && isparallelw
 end
 
-measure(c::CylinderSurface{T}) where {T} = (norm(c.bot(0, 0) - c.top(0, 0)) + c.radius) * 2 * c.radius * T(π)
-
-area(c::CylinderSurface) = measure(c)
-
 boundary(::CylinderSurface) = nothing
 
 Base.isapprox(c₁::CylinderSurface{T}, c₂::CylinderSurface{T}) where {T} =

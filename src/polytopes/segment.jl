@@ -21,8 +21,6 @@ Base.maximum(s::Segment) = s.vertices[2]
 
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
-measure(s::Segment) = norm(s.vertices[2] - s.vertices[1])
-
 boundary(s::Segment) = PointSet(pointify(s))
 
 center(s::Segment{Dim,T}) where {Dim,T} = s(T(0.5))

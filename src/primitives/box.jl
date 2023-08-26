@@ -43,14 +43,6 @@ diagonal(b::Box) = norm(b.max - b.min)
 
 sides(b::Box) = Tuple(b.max - b.min)
 
-measure(b::Box) = prod(b.max - b.min)
-
-Base.length(b::Box{1}) = measure(b)
-
-area(b::Box{2}) = measure(b)
-
-volume(b::Box{3}) = measure(b)
-
 boundary(b::Box{1}) = PointSet([b.min, b.max])
 
 function boundary(b::Box{2})

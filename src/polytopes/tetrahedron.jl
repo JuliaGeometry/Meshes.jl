@@ -14,11 +14,6 @@ nvertices(::Type{<:Tetrahedron}) = 4
 Base.isapprox(t₁::Tetrahedron, t₂::Tetrahedron; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
 
-function measure(t::Tetrahedron)
-  A, B, C, D = t.vertices
-  abs((A - D) ⋅ ((B - D) × (C - D))) / 6
-end
-
 function boundary(t::Tetrahedron)
   indices = [(3, 2, 1), (4, 1, 2), (4, 3, 1), (4, 2, 3)]
   SimpleMesh(pointify(t), connect.(indices))

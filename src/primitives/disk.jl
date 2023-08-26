@@ -25,10 +25,6 @@ center(d::Disk) = d.plane(0, 0)
 
 radius(d::Disk) = d.radius
 
-measure(d::Disk{T}) where {T} = T(π) * d.radius^2
-
-area(d::Disk) = measure(d)
-
 boundary(d::Disk) = Circle(d.plane, d.radius)
 
 function (d::Disk{T})(ρ, φ) where {T}

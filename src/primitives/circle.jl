@@ -46,10 +46,6 @@ center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius
 
-measure(c::Circle{T}) where {T} = 2 * T(π) * c.radius
-
-Base.length(c::Circle) = measure(c)
-
 boundary(::Circle) = nothing
 
 function (c::Circle{T})(φ) where {T}

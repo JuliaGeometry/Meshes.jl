@@ -58,10 +58,6 @@ axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
 
-measure(c::Cylinder{T}) where {T} = norm(c.bot(0, 0) - c.top(0, 0)) * T(π) * c.radius^2
-
-volume(c::Cylinder) = measure(c)
-
 boundary(c::Cylinder) = CylinderSurface(c.bot, c.top, c.radius)
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)

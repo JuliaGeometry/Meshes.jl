@@ -81,6 +81,7 @@ include("predicates.jl")
 
 # operations
 include("sideof.jl")
+include("measures.jl")
 include("orientation.jl")
 include("merging.jl")
 include("clipping.jl")
@@ -124,13 +125,9 @@ export
   embeddim,
   paramdim,
   coordtype,
-  measure,
-  area,
-  volume,
   boundary,
   center,
   centroid,
-  perimeter,
 
   # primitives
   Primitive,
@@ -169,7 +166,6 @@ export
   axis,
   isright,
   sides,
-  measure,
   diagonal,
   ⪯,
   ≺,
@@ -214,6 +210,7 @@ export
   MultiRope,
   MultiRing,
   MultiPolygon,
+  MultiPolyhedron,
 
   # connectivities
   Connectivity,
@@ -396,6 +393,12 @@ export
   ON,
   LEFT,
   RIGHT,
+
+  # measures
+  measure,
+  area,
+  volume,
+  perimeter,
 
   # orientation
   OrientationMethod,

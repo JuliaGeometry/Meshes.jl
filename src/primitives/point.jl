@@ -69,8 +69,6 @@ paramdim(::Type{Point{Dim,T}}) where {Dim,T} = 0
 
 center(p::Point) = p
 
-measure(::Point{Dim,T}) where {Dim,T} = zero(T)
-
 boundary(::Point) = nothing
 
 ==(A::Point, B::Point) = A.coords == B.coords

@@ -42,12 +42,6 @@ paramdim(::Type{<:Plane}) = 2
 
 normal(p::Plane) = normalize(p.u × p.v)
 
-measure(::Plane{T}) where {T} = typemax(T)
-
-area(p::Plane) = measure(p)
-
-perimeter(::Plane{T}) where {T} = zero(T)
-
 boundary(::Plane) = nothing
 
 ==(p₁::Plane, p₂::Plane) =

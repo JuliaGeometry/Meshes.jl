@@ -44,14 +44,6 @@ radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
-# https://en.wikipedia.org/wiki/Torus
-function measure(t::Torus{T}) where {T}
-  R, r = t.major, t.minor
-  4T(π)^2 * R * r
-end
-
-area(t::Torus) = measure(t)
-
 boundary(::Torus) = nothing
 
 function (t::Torus{T})(u, v) where {T}

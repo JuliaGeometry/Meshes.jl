@@ -28,6 +28,7 @@ const MultiSegment{Dim,T} = Multi{Dim,T,<:Segment{Dim,T}}
 const MultiRope{Dim,T} = Multi{Dim,T,<:Rope{Dim,T}}
 const MultiRing{Dim,T} = Multi{Dim,T,<:Ring{Dim,T}}
 const MultiPolygon{Dim,T} = Multi{Dim,T,<:Polygon{Dim,T}}
+const MultiPolyhedron{Dim,T} = Multi{Dim,T,<:Polyhedron{Dim,T}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
@@ -48,12 +49,6 @@ function centroid(m::Multi)
   cs = coordinates.(centroid.(m.geoms))
   Point(sum(cs) / length(cs))
 end
-
-measure(m::Multi) = sum(measure, m.geoms)
-
-Base.length(m::Multi{Dim,T,<:Chain}) where {Dim,T} = measure(m)
-area(m::Multi{Dim,T,<:Polygon}) where {Dim,T} = measure(m)
-volume(m::Multi{Dim,T,<:Polyhedron}) where {Dim,T} = measure(m)
 
 function boundary(m::Multi)
   bounds = [boundary(geom) for geom in m.geoms]

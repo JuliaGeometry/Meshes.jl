@@ -97,13 +97,6 @@ function centroid(domain::Domain{Dim,T}) where {Dim,T}
 end
 
 """
-    measure(domain)
-
-Return the measure of the `domain`, i.e. the length, area, or volume.
-"""
-measure(domain::Domain) = sum(measure, domain)
-
-"""
     extrema(domain)
 
 Return the top left and bottom right corners of the

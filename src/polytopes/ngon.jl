@@ -67,13 +67,6 @@ function signarea(t::Triangle{2})
   signarea(v[1], v[2], v[3])
 end
 
-measure(t::Triangle{2}) = abs(signarea(t))
-
-function measure(t::Triangle{3})
-  A, B, C = t.vertices
-  norm((B - A) × (C - A)) / 2
-end
-
 function normal(t::Triangle{3})
   a, b, c = t.vertices
   n = (b - a) × (c - a)
