@@ -98,25 +98,12 @@ Return the length of the `object`.
 
 See also [`measure`](@ref).
 """
-function Base.length(::GeometryOrDomain) end
-
-Base.length(r::Ray) = measure(r)
-
-Base.length(l::Line) = measure(l)
-
-Base.length(b::Box{1}) = measure(b)
-
-Base.length(s::Sphere{2}) = measure(s)
-
-Base.length(c::Circle) = measure(c)
-
-Base.length(c::Chain) = measure(c)
-
-Base.length(m::MultiSegment) = measure(m)
-
-Base.length(m::MultiRope) = measure(m)
-
-Base.length(m::MultiRing) = measure(m)
+function Base.length(g::GeometryOrDomain)
+  if isparametrized(g) && paramdim(g) != 1
+    throw(ArgumentError("invalid parametric dimension for computing length"))
+  end
+  measure(g)
+end
 
 """
     area(object)
@@ -125,25 +112,12 @@ Return the area of the `object`.
 
 See also [`measure`](@ref).
 """
-function area(::GeometryOrDomain) end
-
-area(p::Plane) = measure(p)
-
-area(b::Box{2}) = measure(b)
-
-area(b::Ball{2}) = measure(b)
-
-area(s::Sphere{3}) = measure(s)
-
-area(d::Disk) = measure(d)
-
-area(c::CylinderSurface) = measure(c)
-
-area(t::Torus) = measure(t)
-
-area(p::Polygon) = measure(p)
-
-area(m::MultiPolygon) = measure(m)
+function area(g::GeometryOrDomain)
+  if isparametrized(g) && paramdim(g) != 2
+    throw(ArgumentError("invalid parametric dimension for computing area"))
+  end
+  measure(g)
+end
 
 """
     volume(object)
@@ -152,17 +126,12 @@ Return the volume of the `object`.
 
 See also [`measure`](@ref).
 """
-function volume(::GeometryOrDomain) end
-
-volume(b::Box{3}) = measure(b)
-
-volume(b::Ball{3}) = measure(b)
-
-volume(c::Cylinder) = measure(c)
-
-volume(p::Polyhedron) = measure(p)
-
-volume(m::MultiPolyhedron) = measure(m)
+function volume(g::GeometryOrDomain)
+  if isparametrized(g) && paramdim(g) != 3
+    throw(ArgumentError("invalid parametric dimension for computing volume"))
+  end
+  measure(g)
+end
 
 # ----------
 # PERIMETER
