@@ -5,8 +5,8 @@
 """
     StdCoords()
 
-Transform points to lie within box of
-unitary sides centered at the origin.
+Standardize coordinates of all geometries
+to the interval `[-0.5, 0.5]`.
 """
 struct StdCoords <: GeometricTransform end
 
