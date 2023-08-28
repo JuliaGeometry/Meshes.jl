@@ -11,6 +11,18 @@ See [https://en.wikipedia.org/wiki/Geometric_transformation]
 """
 abstract type GeometricTransform <: Transform end
 
+# fallback with raw vector of geometries for convenience
+function apply(t::GeometricTransform, g::AbstractVector{<:Geometry})
+  n, c = apply(t, GeometrySet(g))
+  parent(n), c
+end
+
+# fallback with raw vector of geometries for convenience
+function revert(t::GeometricTransform, g::AbstractVector{<:Geometry}, c)
+  o = revert(t, GeometrySet(g), c)
+  parent(o)
+end
+
 """
     CoordinateTransform
 

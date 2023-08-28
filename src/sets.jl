@@ -26,6 +26,8 @@ element(gset::GeometrySet, ind::Int) = gset.geoms[ind]
 
 nelements(gset::GeometrySet) = length(gset.geoms)
 
+Base.parent(gset::GeometrySet) = gset.geoms
+
 # ------------------------
 # SPECIAL CASE: POINT SET
 # ------------------------

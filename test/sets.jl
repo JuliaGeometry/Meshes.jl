@@ -12,6 +12,7 @@
     gset1 = GeometrySet(geoms)
     gset2 = GeometrySet(g for g in geoms)
     @test gset1 == gset2
+    @test parent(gset1) === geoms
   end
 
   @testset "PointSet" begin

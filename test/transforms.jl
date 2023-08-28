@@ -148,6 +148,10 @@
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+    @test all(TB.revert(f, r, c) .≈ d)
 
     # --------------
     # CARTESIANGRID
@@ -269,6 +273,10 @@
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+    @test all(TB.revert(f, r, c) .≈ d)
 
     # --------------
     # CARTESIANGRID
@@ -403,6 +411,10 @@
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
     @test TB.revert(f, r, c) ≈ d
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+    @test all(TB.revert(f, r, c) .≈ d)
 
     # --------------
     # CARTESIANGRID
