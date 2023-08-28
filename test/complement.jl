@@ -33,7 +33,7 @@
   r = rings(m)
   @test m isa MultiPolygon
   @test length(r) == 4
-  g = collect(m)
+  g = parent(m)
   @test length(g) == 3
   @test rings(g[1])[1] ≈ Ring(P2[(0 - τ, 0 - τ), (1 + τ, 0 - τ), (1 + τ, 1 + τ), (0 - τ, 1 + τ)])
   @test rings(g[1])[2] == Ring(P2[(0, 0), (0, 1), (1, 1), (1, 0)])

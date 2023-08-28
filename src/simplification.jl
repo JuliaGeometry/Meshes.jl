@@ -22,7 +22,7 @@ simplify(box::Box{2}, method::SimplificationMethod) = PolyArea(simplify(boundary
 
 simplify(polygon::Polygon, method::SimplificationMethod) = PolyArea([simplify(ring, method) for ring in rings(polygon)])
 
-simplify(multi::Multi, method::SimplificationMethod) = Multi([simplify(geom, method) for geom in collect(multi)])
+simplify(multi::Multi, method::SimplificationMethod) = Multi([simplify(geom, method) for geom in parent(multi)])
 
 simplify(domain::Domain, method::SimplificationMethod) = GeometrySet([simplify(elem, method) for elem in domain])
 

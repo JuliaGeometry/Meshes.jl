@@ -18,7 +18,7 @@ pointify(p::Primitive) = pointify(boundary(p))
 
 pointify(p::Polytope) = collect(vertices(p))
 
-pointify(m::Multi) = pointify(collect(m))
+pointify(m::Multi) = pointify(parent(m))
 
 pointify(geoms) = mapreduce(pointify, vcat, geoms)
 

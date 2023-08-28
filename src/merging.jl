@@ -37,8 +37,8 @@ Base.merge(m::Mesh, g::Geometry) = merge(m, discretize(g))
 
 Base.merge(g₁::Geometry, g₂::Geometry) = Multi([g₁, g₂])
 
-Base.merge(m₁::Multi, m₂::Multi) = Multi([collect(m₁); collect(m₂)])
+Base.merge(m₁::Multi, m₂::Multi) = Multi([parent(m₁); parent(m₂)])
 
-Base.merge(m::Multi, g::Geometry) = Multi([collect(m); g])
+Base.merge(m::Multi, g::Geometry) = Multi([parent(m); g])
 
-Base.merge(g::Geometry, m::Multi) = Multi([g; collect(m)])
+Base.merge(g::Geometry, m::Multi) = Multi([g; parent(m)])

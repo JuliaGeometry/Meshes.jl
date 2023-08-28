@@ -17,7 +17,7 @@ boundingbox(p::Polytope) = _pboxes(vertices(p))
 
 boundingbox(p::Primitive) = boundingbox(boundary(p))
 
-boundingbox(m::Multi) = _bboxes(boundingbox(g) for g in collect(m))
+boundingbox(m::Multi) = _bboxes(boundingbox(g) for g in parent(m))
 
 boundingbox(geoms) = _bboxes(boundingbox(g) for g in geoms)
 

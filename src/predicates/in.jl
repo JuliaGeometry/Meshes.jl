@@ -138,7 +138,7 @@ function Base.in(p::Point, poly::PolyArea)
   end
 end
 
-Base.in(p::Point, m::Multi) = any(g -> p ∈ g, collect(m))
+Base.in(p::Point, m::Multi) = any(g -> p ∈ g, parent(m))
 
 """
     point ∈ domain

@@ -52,7 +52,7 @@ end
 
 rings(m::MultiPolygon{Dim,T}) where {Dim,T} = [ring for poly in m.geoms for ring in rings(poly)]
 
-Base.collect(m::Multi) = m.geoms
+Base.parent(m::Multi) = m.geoms
 
 ==(m₁::Multi, m₂::Multi) = length(m₁.geoms) == length(m₂.geoms) && all(g -> g[1] == g[2], zip(m₁.geoms, m₂.geoms))
 
@@ -65,5 +65,5 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
   println(io, m)
-  print(io, io_lines(m, "  "))
+  print(io, io_lines(m.geoms, "  "))
 end

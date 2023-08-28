@@ -56,7 +56,7 @@
   # constructor with iterator
   grid = CartesianGrid{T}(10, 10)
   multi = Multi(grid)
-  @test collect(multi) == collect(grid)
+  @test parent(multi) == collect(grid)
 
   # boundary of multi-3D-geometry
   box1 = Box(P3(0, 0, 0), P3(1, 1, 1))

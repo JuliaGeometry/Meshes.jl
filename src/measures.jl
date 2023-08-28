@@ -81,7 +81,7 @@ measure(c::Chain) = sum(measure, segments(c))
 
 measure(g::Geometry) = sum(measure, discretize(g))
 
-measure(m::Multi) = sum(measure, collect(m))
+measure(m::Multi) = sum(measure, parent(m))
 
 measure(::PointSet{Dim,T}) where {Dim,T} = zero(T)
 

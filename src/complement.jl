@@ -23,7 +23,7 @@ end
 _complement(b, r::Ring) = PolyArea([b, reverse(r)])
 
 function _complement(b, m::MultiRing)
-  rings = collect(m)
+  rings = parent(m)
 
   outer = PolyArea([b, reverse(first(rings))])
   inners = [PolyArea(reverse(rings[i])) for i in 2:length(rings)]

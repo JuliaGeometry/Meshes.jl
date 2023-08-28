@@ -42,7 +42,7 @@ convexhull(p::Polytope) = _pconvexhull(vertices(p))
 
 convexhull(p::Primitive) = convexhull(boundary(p))
 
-convexhull(m::Multi) = _gconvexhull(collect(m))
+convexhull(m::Multi) = _gconvexhull(parent(m))
 
 convexhull(geoms) = _gconvexhull(geoms)
 

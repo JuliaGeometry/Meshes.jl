@@ -95,7 +95,7 @@ function boundary(h::Hexahedron)
 end
 
 function boundary(m::Multi)
-  bounds = [boundary(geom) for geom in collect(m)]
+  bounds = [boundary(geom) for geom in parent(m)]
   valid = filter(!isnothing, bounds)
   isempty(valid) ? nothing : reduce(merge, valid)
 end

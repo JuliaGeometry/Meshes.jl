@@ -108,11 +108,11 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   end
 end
 
-intersects(m::Multi, g::Geometry) = intersects(collect(m), [g])
+intersects(m::Multi, g::Geometry) = intersects(parent(m), [g])
 
 intersects(g::Geometry, m::Multi) = intersects(m, g)
 
-intersects(m₁::Multi, m₂::Multi) = intersects(collect(m₁), collect(m₂))
+intersects(m₁::Multi, m₂::Multi) = intersects(parent(m₁), parent(m₂))
 
 intersects(d::Domain, g::Geometry) = intersects(d, [g])
 
@@ -138,7 +138,7 @@ intersects(p::Point, m::Multi) = p ∈ m
 
 intersects(m::Multi, p::Point) = intersects(p, m)
 
-intersects(c::Chain, m::Multi) = intersects(segments(c), collect(m))
+intersects(c::Chain, m::Multi) = intersects(segments(c), parent(m))
 
 intersects(m::Multi, c::Chain) = intersects(c, m)
 

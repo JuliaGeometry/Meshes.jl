@@ -90,7 +90,7 @@ function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMetho
 end
 
 discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
-  mapreduce(geom -> discretize(geom, method), merge, collect(multi))
+  mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
 function discretizewithin(ring::Ring{3}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
@@ -120,7 +120,7 @@ discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
 
 discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
 
-discretize(multi::Multi) = mapreduce(discretize, merge, collect(multi))
+discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
 discretize(mesh::Mesh) = mesh
 
@@ -167,7 +167,7 @@ simplexify(poly::Polygon) = discretize(poly, isconvex(poly) ? FanTriangulation()
 
 simplexify(poly::Polyhedron) = discretize(poly, Tetrahedralization())
 
-simplexify(multi::Multi) = mapreduce(simplexify, merge, collect(multi))
+simplexify(multi::Multi) = mapreduce(simplexify, merge, parent(multi))
 
 function simplexify(mesh::Mesh)
   points = vertices(mesh)
