@@ -19,14 +19,6 @@ generator `rng`.
 sample(object, method::SamplingMethod) = sample(Random.GLOBAL_RNG, object, method)
 
 """
-    sampleinds(rng, domain, method)
-
-Sample indices of elements in `domain` with discrete
-sampling `method` and random number generator `rng`.
-"""
-function sampleinds end
-
-"""
     DiscreteSamplingMethod
 
 A method for sampling from discrete representations
@@ -34,6 +26,14 @@ of geometric objects such as meshes or collections
 of geometries.
 """
 abstract type DiscreteSamplingMethod <: SamplingMethod end
+
+"""
+    sampleinds(rng, domain, method)
+
+Sample indices of elements in `domain` with discrete
+sampling `method` and random number generator `rng`.
+"""
+function sampleinds end
 
 # ----------------
 # IMPLEMENTATIONS

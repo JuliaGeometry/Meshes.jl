@@ -4,7 +4,6 @@
 
 module Meshes
 
-using Tables
 using StaticArrays
 using SparseArrays
 using CircularArrays
@@ -17,7 +16,6 @@ using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using Rotations: Rotation, QuatRotation, Angle2d, rotation_between
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 
-import Tables
 import Random
 import Base: sort
 import Base: ==, !
