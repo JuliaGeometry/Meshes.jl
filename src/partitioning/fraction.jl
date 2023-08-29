@@ -20,7 +20,7 @@ end
 
 FractionPartition(fraction) = FractionPartition(fraction, true)
 
-function partsubsets(rng::AbstractRNG, domain::Domain, method::FractionPartition)
+function partitioninds(rng::AbstractRNG, domain::Domain, method::FractionPartition)
   n = nelements(domain)
   f = round(Int, method.fraction * n)
 

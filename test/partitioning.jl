@@ -373,40 +373,6 @@
     s1 = indices(partition(g, bmn))
     s2 = indices(partition(g, hmn))
     @test setify(s1) == setify(s2)
-
-    # test IO methods
-    d = meshdata(CartesianGrid{T}(10, 10), etable=(a=rand(100),))
-    p = partition(d, BlockPartition(T(5)))
-    @test sprint(show, p) == "4 Partition"
-    if T == Float32
-      @test sprint(show, MIME"text/plain"(), p) ==
-            "4 Partition\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}"
-    elseif T == Float64
-      @test sprint(show, MIME"text/plain"(), p) ==
-            "4 Partition\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}\n  └─25 View{100 MeshData}"
-    end
-  end
-
-  @testset "Data trait" begin
-    data = meshdata(CartesianGrid{T}(10, 10), etable=(a=rand(100), b=rand(100)))
-    for method in [
-      UniformPartition(2),
-      FractionPartition(T(0.5)),
-      BlockPartition(T(2)),
-      BallPartition(T(2)),
-      BisectPointPartition(V2(1, 1), P2(5, 5)),
-      BisectFractionPartition(V2(1, 1), T(0.5)),
-      PlanePartition(V2(1, 1)),
-      DirectionPartition(V2(1, 1)),
-      PredicatePartition((i, j) -> iseven(i + j)),
-      SpatialPredicatePartition((x, y) -> norm(x + y) < T(5)),
-      ProductPartition(UniformPartition(2), UniformPartition(2)),
-      HierarchicalPartition(UniformPartition(2), UniformPartition(2))
-    ]
-      Π = partition(data, method)
-      inds = reduce(vcat, indices(Π))
-      @test sort(inds) == 1:100
-    end
   end
 
   @testset "Utilities" begin

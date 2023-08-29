@@ -7,11 +7,6 @@
 # -------------------
 
 Base.view(domain::Domain, inds) = DomainView(domain, inds)
-Base.view(data::Data, inds) = DataView(data, inds)
-
-# specialize view to avoid infinite loops
-Base.view(v::DomainView, inds::AbstractVector{Int}) = DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
-Base.view(v::DataView, inds::AbstractVector{Int}) = DataView(getfield(v, :data), getfield(v, :inds)[inds])
 
 # ---------------------
 # UNVIEWS WITH INDICES
@@ -24,9 +19,10 @@ Return the underlying domain/data of the `object` and
 the indices of the view. If the `object` is not a view,
 then return the `object` with all its indices as a fallback.
 """
-unview(object) = object, 1:nitems(object)
+function unview end
+
+unview(d::Domain) = d, 1:nelements(d)
 unview(v::DomainView) = getfield(v, :domain), getfield(v, :inds)
-unview(v::DataView) = getfield(v, :data), getfield(v, :inds)
 
 # ----------------------
 # VIEWS WITH GEOMETRIES
@@ -39,24 +35,6 @@ Return a view of the `domain` containing all elements that
 intersect with the `geometry`.
 """
 Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
-
-function Base.view(data::Data, geometry::Geometry)
-  D = typeof(data)
-  dom = domain(data)
-  tab = values(data)
-
-  # retrieve subdomain
-  inds = indices(dom, geometry)
-  subdom = view(dom, inds)
-
-  # retrieve subtable
-  subtab = Tables.subset(tab, inds)
-
-  # data table for elements
-  vals = Dict(paramdim(dom) => subtab)
-
-  constructor(D)(subdom, vals)
-end
 
 """
     indices(domain, geometry)

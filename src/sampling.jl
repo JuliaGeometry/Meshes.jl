@@ -16,7 +16,7 @@ Sample elements or points from geometric `object`
 with `method`. Optionally, specify random number
 generator `rng`.
 """
-sample(object, method) = sample(Random.GLOBAL_RNG, object, method)
+sample(object, method::SamplingMethod) = sample(Random.GLOBAL_RNG, object, method)
 
 """
     DiscreteSamplingMethod
@@ -66,8 +66,6 @@ include("sampling/mindistance.jl")
 # FALLBACKS
 # ----------
 
-sample(rng::AbstractRNG, d::Data, method::DiscreteSamplingMethod) = view(d, sampleinds(rng, domain(d), method))
-
 sample(rng::AbstractRNG, d::Domain, method::DiscreteSamplingMethod) = view(d, sampleinds(rng, d, method))
 
 sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(g), method)
@@ -77,14 +75,14 @@ sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample
 # ----------
 
 """
-    sample([rng], object, size, [weights]; replace=false, ordered=false)
+    sample([rng], domain, size, [weights]; replace=false, ordered=false)
 
-Generate `size` samples from `object` uniformly or using `weights`,
+Generate `size` samples from `domain` uniformly or using `weights`,
 with or without replacement depending on the `replace` option. The
 option `ordered` can be used to return samples in the same order of
-the `object`.
+the `domain`.
 """
-function sample(object::Union{Domain,Data}, size::Int, weights=nothing; replace=false, ordered=false)
+function sample(domain::Domain, size::Int, weights=nothing; replace=false, ordered=false)
   method = WeightedSampling(size, weights; replace=replace, ordered=ordered)
-  sample(Random.GLOBAL_RNG, object, method)
+  sample(Random.GLOBAL_RNG, domain, method)
 end
