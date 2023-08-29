@@ -14,21 +14,20 @@ struct HierarchicalPartition <: PartitionMethod
   second::PartitionMethod
 end
 
-function partition(rng::AbstractRNG, object, method::HierarchicalPartition)
-  result = Vector{Int}[]
+function partitioninds(rng::AbstractRNG, domain::Domain, method::HierarchicalPartition)
+  subsets = Vector{Int}[]
 
   # use first partition method
-  p = partition(rng, object, method.first)
+  s₁, _ = partitioninds(rng, domain, method.first)
 
   # use second method to partition the first
-  s = indices(p)
-  for (i, d) in Iterators.enumerate(p)
-    q = partition(rng, d, method.second)
-
-    for js in indices(q)
-      push!(result, s[i][js])
+  for is in s₁
+    v = view(domain, is)
+    s₂, _ = partitioninds(rng, v, method.second)
+    for js in s₂
+      push!(subsets, is[js])
     end
   end
 
-  Partition(object, result)
+  subsets, Dict()
 end
