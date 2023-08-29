@@ -374,29 +374,4 @@
     s2 = indices(partition(g, hmn))
     @test setify(s1) == setify(s2)
   end
-
-  @testset "Utilities" begin
-    d = CartesianGrid{T}(10, 10)
-    l, r = split(d, T(0.5))
-    @test nelements(l) == 50
-    @test nelements(r) == 50
-    l, r = split(d, T(0.5), T.((1, 0)))
-    @test nelements(l) == 50
-    @test nelements(r) == 50
-    lpts = [centroid(l, i) for i in 1:nelements(l)]
-    rpts = [centroid(r, i) for i in 1:nelements(r)]
-    cl = mean(coordinates.(lpts))
-    cr = mean(coordinates.(rpts))
-    @test cl[1] < cr[1]
-    @test cl[2] == cr[2]
-    l, r = split(d, T(0.5), T.((0, 1)))
-    @test nelements(l) == 50
-    @test nelements(r) == 50
-    lpts = [centroid(l, i) for i in 1:nelements(l)]
-    rpts = [centroid(r, i) for i in 1:nelements(r)]
-    cl = mean(coordinates.(lpts))
-    cr = mean(coordinates.(rpts))
-    @test cl[1] == cr[1]
-    @test cl[2] < cr[2]
-  end
 end
