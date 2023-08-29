@@ -105,22 +105,3 @@ include("partitioning/predicate.jl")
 include("partitioning/spatialpredicate.jl")
 include("partitioning/product.jl")
 include("partitioning/hierarchical.jl")
-
-# ----------
-# UTILITIES
-# ----------
-
-"""
-    split(object, fraction, [normal])
-
-Split spatial `object` into two parts where the first
-part has a `fraction` of the elements. Optionally, the
-split is performed perpendicular to a `normal` direction.
-"""
-function Base.split(object, fraction::Real, normal=nothing)
-  if isnothing(normal)
-    partition(object, FractionPartition(fraction))
-  else
-    partition(object, BisectFractionPartition(normal, fraction))
-  end
-end
