@@ -14,14 +14,14 @@ struct ProductPartition{P1,P2} <: PartitionMethod
 end
 
 # general case
-function partition(rng::AbstractRNG, object, method::ProductPartition)
+function partition(rng::AbstractRNG, domain::Domain, method::ProductPartition)
   # individual partition results
-  s₁ = indices(partition(rng, object, method.p₁))
-  s₂ = indices(partition(rng, object, method.p₂))
+  s₁ = indices(partition(rng, domain, method.p₁))
+  s₂ = indices(partition(rng, domain, method.p₂))
 
   # label-based representation
-  l₁ = Vector{Int}(undef, nitems(object))
-  l₂ = Vector{Int}(undef, nitems(object))
+  l₁ = Vector{Int}(undef, nelements(domain))
+  l₂ = Vector{Int}(undef, nelements(domain))
   for (i, inds) in enumerate(s₁)
     l₁[inds] .= i
   end
@@ -32,8 +32,8 @@ function partition(rng::AbstractRNG, object, method::ProductPartition)
   # product of labels
   counter = 0
   d = Dict{Tuple{Int,Int},Int}()
-  l = Vector{Int}(undef, nitems(object))
-  for i in 1:nitems(object)
+  l = Vector{Int}(undef, nelements(domain))
+  for i in 1:nelements(domain)
     t = (l₁[i], l₂[i])
     if t ∉ keys(d)
       counter += 1
@@ -44,7 +44,7 @@ function partition(rng::AbstractRNG, object, method::ProductPartition)
 
   # return partition using label predicate
   pred(i, j) = l[i] == l[j]
-  partition(rng, object, PredicatePartition(pred))
+  partition(rng, domain, PredicatePartition(pred))
 end
 
 # predicate partition method

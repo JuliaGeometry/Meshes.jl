@@ -290,9 +290,6 @@ export
   # trajectories
   CylindricalTrajectory,
 
-  # domain/data traits
-  nitems,
-
   # views
   DomainView,
   DataView,
