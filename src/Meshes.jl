@@ -20,7 +20,6 @@ using NearestNeighbors: KDTree, BallTree, knn, inrange
 import Tables
 import Random
 import Base: sort
-import Base: values
 import Base: ==, !
 import Base: +, -, *
 import StatsBase: sample
@@ -51,9 +50,6 @@ include("toporelations.jl")
 
 # domains
 include("domains.jl")
-
-# data over domains
-include("data.jl")
 
 # utilities
 include("utils.jl")
@@ -295,16 +291,6 @@ export
 
   # trajectories
   CylindricalTrajectory,
-
-  # data traits
-  Data,
-  domain,
-  constructor,
-  asarray,
-
-  # mesh data
-  MeshData,
-  meshdata,
 
   # domain/data traits
   nitems,

@@ -16,6 +16,9 @@ struct DomainView{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
   inds::I
 end
 
+# specialize constructor to avoid infinite loops
+DomainView(v::DomainView, inds) = DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
+
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
@@ -34,59 +37,4 @@ function Base.show(io::IO, v::DomainView)
   domain = getfield(v, :domain)
   nelms = length(getfield(v, :inds))
   print(io, "$nelms View{$domain}")
-end
-
-# -----------
-# DATA VIEWS
-# -----------
-
-"""
-    DataView(data, inds)
-
-Return a view of `data` at indices `inds`.
-"""
-struct DataView{D<:Data,I} <: Data
-  data::D
-  inds::I
-end
-
-# ---------------
-# DATA INTERFACE
-# ---------------
-
-function domain(v::DataView)
-  data = getfield(v, :data)
-  inds = getfield(v, :inds)
-  view(domain(data), inds)
-end
-
-function values(v::DataView, rank=nothing)
-  data = getfield(v, :data)
-  inds = getfield(v, :inds)
-  R = paramdim(domain(data))
-  r = isnothing(rank) ? R : rank
-  𝒯 = values(data, r)
-  r == R ? Tables.subset(𝒯, inds) : nothing
-end
-
-function constructor(::Type{DataView{D,I}}) where {D<:Data,I}
-  function ctor(domain, values)
-    data = constructor(D)(domain, values)
-    inds = 1:nelements(domain)
-    DataView(data, inds)
-  end
-end
-
-# specialize methods for performance
-==(v₁::DataView, v₂::DataView) =
-  getfield(v₁, :data) == getfield(v₂, :data) && getfield(v₁, :inds) == getfield(v₂, :inds)
-
-# -----------
-# IO METHODS
-# -----------
-
-function Base.show(io::IO, v::DataView)
-  data = getfield(v, :data)
-  nelms = length(getfield(v, :inds))
-  print(io, "$nelms View{$data}")
 end

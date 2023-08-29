@@ -65,8 +65,6 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
-include("dummy.jl")
-
 # list of tests
 testfiles = [
   "vectors.jl",
@@ -80,8 +78,6 @@ testfiles = [
   "sets.jl",
   "mesh.jl",
   "trajectories.jl",
-  "data.jl",
-  "meshdata.jl",
   "utils.jl",
   "views.jl",
   "viewing.jl",

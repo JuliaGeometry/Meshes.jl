@@ -28,7 +28,7 @@ end
 Return subsets and metadata for the partition `method`
 applied to the `object` with random number generator `rng`.
 """
-partsubsets(rng::AbstractRNG, object, method::PartitionMethod) = partsubsets(rng, domain(object), method)
+function partsubsets end
 
 """
     PredicatePartitionMethod
