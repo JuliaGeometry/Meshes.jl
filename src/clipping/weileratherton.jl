@@ -49,46 +49,37 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::WeilerAtherton) where {Di
   vᵣ = orientation(ring) == CCW ? vertices(ring) : reverse(vertices(ring))
   vₒ = orientation(other) == CCW ? vertices(other) : reverse(vertices(other))
 
-  pᵣ = _find_and_insert_intersections(vᵣ, vₒ)
-  pₒ = _find_and_insert_intersections(vₒ, vᵣ)
-  nᵣ, nₒ = length(pᵣ), length(pₒ)
+  pᵣ, pₒ = _find_and_insert_intersections(vᵣ, vₒ)
+  nᵣ= length(pᵣ)
 
+  # corner case without intersections
   if nᵣ == nvertices(ring)
-    # ring is totally inside or totally outside other
-    if sideof(vᵣ[1], other) == IN 
+    if sideof(vᵣ[1], other) == IN
+      # ring is totally inside other
       return [ring]
     else
+      # ring is totally outside other
       return []
     end
   end
 
-  Iposᵣ = Dict{Intersection, Int}()
-  for i in 1:nᵣ
-    if pᵣ[i] isa Intersection
-      Iposᵣ[pᵣ[i]] = i
-    end
-  end
+  Iposᵣ = _build_dict_intersection_to_position(pᵣ)
+  Iposₒ = _build_dict_intersection_to_position(pₒ)
 
-  Iposₒ = Dict{Intersection, Int}()
-  for i in 1:nₒ
-    if pₒ[i] isa Intersection
-      Iposₒ[pₒ[i]] = i
-    end
-  end
+  u = Ring{Dim,T}[]
 
-  # mark intersections of type INTERSECTION_ENTER
   isvisited = fill(false, length(pᵣ))
   isentering = (sideof(vᵣ[1], other) == OUT)
-  u = Ring{Dim,T}[]
 
   for i in 1:nᵣ
     if pᵣ[i] isa Intersection
       if isentering && !isvisited[i]
-        vᵤ = _walkloop(pᵣ, pₒ, i, isvisited)
+        # build new ring starting from the current entering intersection 
+        vᵤ = _walkloop(pᵣ, pₒ, i, isvisited, Iposᵣ, Iposₒ)
         rᵤ = orientation(ring) == CCW ? Ring(unique(vᵤ)...) : Ring(reverse(unique(vᵤ)...))
+
         push!(u, rᵤ)
       end
-
       isentering = !isentering
     end
   end
@@ -100,76 +91,100 @@ end
 # ----------------
 
 function _find_and_insert_intersections(vᵣ, vₒ)
-  pᵣ = []
-  for i in eachindex(vᵣ)
-    push!(pᵣ, vᵣ[i])
-    I = []
-    for j in eachindex(vₒ)
+  nᵣ = length(vᵣ)
+  nₒ = length(vₒ)
+
+  vᵣI = [Intersection[] for i=1:nᵣ]
+  vₒI = [Intersection[] for i=1:nₒ]
+
+  for i in 1:nᵣ
+    for j in 1:nₒ
       sᵣ = Segment(vᵣ[i], vᵣ[i+1])
       sₒ = Segment(vₒ[j], vₒ[j+1])
       lₒ = Line(vₒ[j], vₒ[j+1])
-      sI = intersection(sᵣ, sₒ)
+      I = intersection(sᵣ, sₒ)
 
-      if get(sI) isa Point && ((sideof(vᵣ[i], lₒ) == RIGHT) ⊻ (sideof(vᵣ[i+1], lₒ) == RIGHT))
-        push!(I, sI)
+      if get(I) isa Point && ((sideof(vᵣ[i], lₒ) == RIGHT) ⊻ (sideof(vᵣ[i+1], lₒ) == RIGHT))
+        push!(vᵣI[i], I)
+        push!(vₒI[j], I)
       end
     end
-    # sort intersections by distance
-    sort!(I, by = p -> measure(Segment(vᵣ[i], get(p))))
-    for p in I
-      push!(pᵣ, p)
+  end
+
+  pᵣ = []
+  for i in 1:nᵣ
+    push!(pᵣ, vᵣ[i])
+    sort!(vᵣI[i], by = p -> measure(Segment(vᵣ[i], get(p))))
+    for I in vᵣI[i]
+      push!(pᵣ, I)
     end
   end
-  pᵣ
+
+  pₒ = []
+  for i in 1:nₒ
+    push!(pₒ, vₒ[i])
+    sort!(vₒI[i], by = p -> measure(Segment(vₒ[i], get(p))))
+    for I in vₒI[i]
+      push!(pₒ, I)
+    end
+  end
+
+  pᵣ, pₒ
 end
 
-function _walkloop(pᵣ, pₒ, i, isvisited)
+function _build_dict_intersection_to_position(p)
+  Ipos = Dict{Intersection, Int}()
+  for i in eachindex(p)
+    if p[i] isa Intersection
+      Ipos[p[i]] = i
+    end
+  end
+  Ipos
+end
+
+function _walkloop(pᵣ, pₒ, i, isvisited, Iposᵣ, Iposₒ)
   nᵣ = length(pᵣ)
   nₒ = length(pₒ)
   vᵤ = []
+
   j = i
   while(true)
     isvisited[j] = true
-    # add current ring intersection
+
+    # add current intersection
     I = get(pᵣ[j])
     push!(vᵤ, I)
     j = mod1(j+1, nᵣ)
-    # collect points of ring until find a intersection
+
+    # walk through points of pᵣ until find a intersection
     while(pᵣ[j] isa Point)
       push!(vᵤ, pᵣ[j])
       j = mod1(j+1, nᵣ)
     end
 
-    # add intersection to ring and swap j to other
-    I = get(pᵣ[j])
+    # swap to j from pᵣ to pₒ
+    j = Iposₒ[pᵣ[j]]
+
+    # add current intersection
+    I = get(pₒ[j])
     push!(vᵤ, I)
-    #j = Iposₒ[I]
-    j = _findIindex(I, pₒ)
     j = mod1(j+1, nₒ)
 
-    # collect points of other until find a intersection
+    # walk through points of pₒ until find a intersection
     while(pₒ[j] isa Point)
       push!(vᵤ, pₒ[j])
       j = mod1(j+1, nₒ)
     end
-    # swap j back to ring
-    I = get(pₒ[j])
-    #j = Iposᵣ[I]
-    j = _findIindex(I, pᵣ)
+
+    # swap to j from pₒ to pᵣ
+    j = Iposᵣ[pₒ[j]]
 
     # stop if reach initial intersection 
     if i == j
       break
     end
   end
+
   vᵤ
 end
 
-function _findIindex(I, v)
-  for i in eachindex(v)
-    if v[i] isa Intersection && get(v[i]) ≈ I
-      return i
-    end
-  end
-  nothing
-end
