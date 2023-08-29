@@ -16,7 +16,7 @@ end
 
 UniformPartition(k) = UniformPartition(k, true)
 
-function partsubsets(rng::AbstractRNG, domain::Domain, method::UniformPartition)
+function partitioninds(rng::AbstractRNG, domain::Domain, method::UniformPartition)
   n = nelements(domain)
   k = method.k
 
