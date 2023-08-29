@@ -14,10 +14,10 @@ struct ProductPartition{P1,P2} <: PartitionMethod
 end
 
 # general case
-function partition(rng::AbstractRNG, domain::Domain, method::ProductPartition)
+function partitioninds(rng::AbstractRNG, domain::Domain, method::ProductPartition)
   # individual partition results
-  s₁ = indices(partition(rng, domain, method.p₁))
-  s₂ = indices(partition(rng, domain, method.p₂))
+  s₁, _ = partitioninds(rng, domain, method.p₁)
+  s₂, _ = partitioninds(rng, domain, method.p₂)
 
   # label-based representation
   l₁ = Vector{Int}(undef, nelements(domain))
@@ -44,25 +44,25 @@ function partition(rng::AbstractRNG, domain::Domain, method::ProductPartition)
 
   # return partition using label predicate
   pred(i, j) = l[i] == l[j]
-  partition(rng, domain, PredicatePartition(pred))
+  partitioninds(rng, domain, PredicatePartition(pred))
 end
 
 # predicate partition method
-function partition(
+function partitioninds(
   rng::AbstractRNG,
-  object,
+  domain::Domain,
   method::ProductPartition{P1,P2}
 ) where {P1<:PredicatePartitionMethod,P2<:PredicatePartitionMethod}
   pred(i, j) = method.p₁(i, j) * method.p₂(i, j)
-  partition(rng, object, PredicatePartition(pred))
+  partitioninds(rng, domain, PredicatePartition(pred))
 end
 
 # spatial predicate partition method
-function partition(
-  rng,
-  object,
+function partitioninds(
+  rng::AbstractRNG,
+  domain::Domain,
   method::ProductPartition{P1,P2}
 ) where {P1<:SPredicatePartitionMethod,P2<:SPredicatePartitionMethod}
   pred(x, y) = method.p₁(x, y) * method.p₂(x, y)
-  partition(rng, object, SpatialPredicatePartition(pred))
+  partitioninds(rng, domain, SpatialPredicatePartition(pred))
 end
