@@ -48,7 +48,6 @@ makedocs(
       "Vectors" => "vectors.md",
       "Geometries" => ["geometries/primitives.md", "geometries/polytopes.md"],
       "Domains" => ["domains/sets.md", "domains/meshes.md", "domains/trajectories.md"],
-      "Data" => "data.md",
       "Predicates" => "predicates.md",
       "Algorithms" => [
         "algorithms/sampling.md",
