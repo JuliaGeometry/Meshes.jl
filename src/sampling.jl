@@ -69,20 +69,3 @@ include("sampling/mindistance.jl")
 sample(rng::AbstractRNG, d::Domain, method::DiscreteSamplingMethod) = view(d, sampleinds(rng, d, method))
 
 sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(g), method)
-
-# ----------
-# UTILITIES
-# ----------
-
-"""
-    sample([rng], domain, size, [weights]; replace=false, ordered=false)
-
-Generate `size` samples from `domain` uniformly or using `weights`,
-with or without replacement depending on the `replace` option. The
-option `ordered` can be used to return samples in the same order of
-the `domain`.
-"""
-function sample(domain::Domain, size::Int, weights=nothing; replace=false, ordered=false)
-  method = WeightedSampling(size, weights; replace=replace, ordered=ordered)
-  sample(Random.GLOBAL_RNG, domain, method)
-end

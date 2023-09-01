@@ -336,26 +336,6 @@
     @test length(ps) > 0
   end
 
-  @testset "Utilities" begin
-    # uniform sampling
-    d = CartesianGrid{T}(10, 10)
-    s = sample(d, 50)
-    @test nelements(s) == 50
-    @test s[1] isa Quadrangle
-
-    # weighted sampling
-    d = CartesianGrid{T}(10, 10, 10)
-    s = sample(d, 100, rand([1, 2], 1000))
-    @test nelements(s) == 100
-    @test s[1] isa Hexahedron
-
-    # ordered sampling
-    d = CartesianGrid{T}(10, 10, 10)
-    s = sample(d, 100, rand([1, 2], 1000), ordered=true)
-    @test nelements(s) == 100
-    @test s[1] isa Hexahedron
-  end
-
   @testset "RNGs" begin
     dom = CartesianGrid{T}(100, 100)
     for method in [UniformSampling(100), WeightedSampling(100), BallSampling(T(10))]
