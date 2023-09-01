@@ -38,6 +38,8 @@ pointify(r::Ring) = vertices(r)
 
 pointify(r::Rope) = vertices(r)
 
+pointify(m::MultiPoint) = parent(m)
+
 pointify(p::PointSet) = collect(p)
 
 pointify(m::Mesh) = vertices(m)
