@@ -292,7 +292,6 @@ export
 
   # views
   DomainView,
-  DataView,
 
   # viewing
   unview,
