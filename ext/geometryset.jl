@@ -24,9 +24,8 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   ranks = Makie.@lift paramdim.($geoms)
 
   if all(ranks[] .== 0)
-    # visualize point set
-    coords = Makie.@lift coordinates.($geoms)
-    Makie.scatter!(plot, coords, color=colorant, markersize=pointsize)
+    points = Makie.@lift pointify.($geoms)
+    vizmany!(plot, points)
   elseif all(ranks[] .== 1)
     meshes = Makie.@lift discretize.($geoms)
     vizmany!(plot, meshes)

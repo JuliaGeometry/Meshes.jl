@@ -2,24 +2,28 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-mayberepeat(value::AbstractVector, meshes) = [value[e] for (e, mesh) in enumerate(meshes) for _ in 1:nelements(mesh)]
+mayberepeat(value, objs) = value
 
-mayberepeat(value, meshes) = value
+mayberepeat(value::AbstractVector, objs) = [value[e] for (e, obj) in enumerate(objs) for _ in 1:length(obj)]
 
-function vizmany!(plot, meshes)
+concat(obj₁, obj₂) = vcat(obj₁, obj₂)
+
+concat(mesh₁::Mesh, mesh₂::Mesh) = merge(mesh₁, mesh₂)
+
+function vizmany!(plot, objs)
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
 
-  mesh = Makie.@lift reduce(merge, $meshes)
-  colors = Makie.@lift mayberepeat($color, $meshes)
-  alphas = Makie.@lift mayberepeat($alpha, $meshes)
+  object = Makie.@lift reduce(concat, $objs)
+  colors = Makie.@lift mayberepeat($color, $objs)
+  alphas = Makie.@lift mayberepeat($alpha, $objs)
 
   viz!(
     plot,
-    mesh,
+    object,
     color=colors,
     alpha=alphas,
     colorscheme=colorscheme,
