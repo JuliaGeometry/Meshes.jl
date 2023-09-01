@@ -27,6 +27,8 @@ of geometries.
 """
 abstract type DiscreteSamplingMethod <: SamplingMethod end
 
+sample(rng::AbstractRNG, object, method::DiscreteSamplingMethod) = view(object, sampleinds(rng, object, method))
+
 """
     sampleinds(rng, domain, method)
 
@@ -54,6 +56,8 @@ space.
 """
 abstract type ContinuousSamplingMethod <: SamplingMethod end
 
+sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(g), method)
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
@@ -61,11 +65,3 @@ abstract type ContinuousSamplingMethod <: SamplingMethod end
 include("sampling/regular.jl")
 include("sampling/homogeneous.jl")
 include("sampling/mindistance.jl")
-
-# ----------
-# FALLBACKS
-# ----------
-
-sample(rng::AbstractRNG, d::Domain, method::DiscreteSamplingMethod) = view(d, sampleinds(rng, d, method))
-
-sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample(rng, discretize(g), method)
