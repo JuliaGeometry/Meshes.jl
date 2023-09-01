@@ -5,7 +5,7 @@
 Makie.plottype(::GeometrySet) = Viz{<:Tuple{GeometrySet}}
 
 function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
-  collection = plot[:object]
+  gset = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
@@ -17,8 +17,8 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
-  # decimate geometries if needed
-  geoms = Makie.@lift collect($collection)
+  # collect geometries in domain
+  geoms = Makie.@lift collect($gset)
 
   # retrieve parametric dimension
   ranks = Makie.@lift paramdim.($geoms)
@@ -41,13 +41,13 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     for rank in (3, 2, 1, 0)
       inds = Makie.@lift findall(g -> paramdim(g) == rank, $geoms)
       if !isempty(inds[])
-        gset = Makie.@lift GeometrySet($geoms[$inds])
+        rset = Makie.@lift GeometrySet($geoms[$inds])
         if colorant[] isa AbstractVector
           cset = Makie.@lift $colorant[$inds]
         else
           cset = colorant
         end
-        viz!(plot, gset, color=cset)
+        viz!(plot, rset, color=cset)
       end
     end
   end
@@ -68,4 +68,24 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
       # that is all we can do with 3D geometries
     end
   end
+end
+
+Makie.plottype(::PointSet) = Viz{<:Tuple{PointSet}}
+
+function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
+  pset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+  pointsize = plot[:pointsize]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+
+  # collect geometries in domain
+  geoms = Makie.@lift collect($pset)
+  coords = Makie.@lift coordinates.($geoms)
+
+  # visualize point set
+  Makie.scatter!(plot, coords, color=colorant, markersize=pointsize)
 end
