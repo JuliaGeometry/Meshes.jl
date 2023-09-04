@@ -64,7 +64,7 @@ function CartesianGrid(
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
 ) where {Dim,T}
   @assert all(>(0), dims) "dimensions must be positive"
-  @assert all(>(0), spacing) "spacing must be positive"
+  @assert all(>(zero(T)), spacing) "spacing must be positive"
   CartesianGrid{Dim,T}(origin, spacing, offset, GridTopology(dims))
 end
 
