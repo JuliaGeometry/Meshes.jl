@@ -5,16 +5,16 @@
 """
     SortingMethod
 
-A method for sorting geometric objects.
+A method for sorting objects.
 """
 abstract type SortingMethod end
 
 """
-    sort(domain, method)
+    sort(object, method)
 
-Sort the elements of the `domain` with given sorting `method`.
+Sort the elements of the `object` with given sorting `method`.
 """
-sort(domain::Domain, method::SortingMethod) = view(domain, sortinds(domain, method))
+sort(object, method::SortingMethod) = view(object, sortinds(object, method))
 
 # ----------------
 # IMPLEMENTATIONS
