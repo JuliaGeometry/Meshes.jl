@@ -19,7 +19,7 @@ function Base.show(io::IO, geom::Primitive)
   vals = map(fieldnames(typeof(geom))) do field
     val = getfield(geom, field)
     str = repr(val, context=ioctx)
-    "$field = $str"
+    "$field: $str"
   end
   join(ioctx, vals, ", ")
   print(ioctx, ")")
@@ -33,7 +33,7 @@ function Base.show(io::IO, ::MIME"text/plain", geom::Primitive)
     div = i == len ? "\n└─ " : "\n├─ "
     val = getfield(geom, field)
     str = repr(val, context=io)
-    print(io, "$div$field = $str")
+    print(io, "$div$field: $str")
   end
 end
 

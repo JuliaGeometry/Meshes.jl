@@ -213,17 +213,17 @@
     @test embeddim(r3) == 3
 
     r = Ray(P2(0, 0), V2(1, 1))
-    @test sprint(show, r) == "Ray(p = (0.0, 0.0), v = (1.0, 1.0))"
+    @test sprint(show, r) == "Ray(p: (0.0, 0.0), v: (1.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), r) == """
       Ray{2,Float32}
-      ├─ p = Point(0.0f0, 0.0f0)
-      └─ v = Vec(1.0f0, 1.0f0)"""
+      ├─ p: Point(0.0f0, 0.0f0)
+      └─ v: Vec(1.0f0, 1.0f0)"""
     else
       @test sprint(show, MIME("text/plain"), r) == """
       Ray{2,Float64}
-      ├─ p = Point(0.0, 0.0)
-      └─ v = Vec(1.0, 1.0)"""
+      ├─ p: Point(0.0, 0.0)
+      └─ v: Vec(1.0, 1.0)"""
     end
   end
 
@@ -250,17 +250,17 @@
     @test embeddim(l3) == 3
 
     l = Line(P2(0, 0), P2(1, 1))
-    @test sprint(show, l) == "Line(a = (0.0, 0.0), b = (1.0, 1.0))"
+    @test sprint(show, l) == "Line(a: (0.0, 0.0), b: (1.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), l) == """
       Line{2,Float32}
-      ├─ a = Point(0.0f0, 0.0f0)
-      └─ b = Point(1.0f0, 1.0f0)"""
+      ├─ a: Point(0.0f0, 0.0f0)
+      └─ b: Point(1.0f0, 1.0f0)"""
     else
       @test sprint(show, MIME("text/plain"), l) == """
       Line{2,Float64}
-      ├─ a = Point(0.0, 0.0)
-      └─ b = Point(1.0, 1.0)"""
+      ├─ a: Point(0.0, 0.0)
+      └─ b: Point(1.0, 1.0)"""
     end
   end
 
@@ -310,19 +310,19 @@
     @test embeddim(p) == 3
 
     p = Plane(P3(0, 0, 0), V3(1, 0, 0), V3(0, 1, 0))
-    @test sprint(show, p) == "Plane(p = (0.0, 0.0, 0.0), u = (1.0, 0.0, 0.0), v = (0.0, 1.0, 0.0))"
+    @test sprint(show, p) == "Plane(p: (0.0, 0.0, 0.0), u: (1.0, 0.0, 0.0), v: (0.0, 1.0, 0.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       Plane{3,Float32}
-      ├─ p = Point(0.0f0, 0.0f0, 0.0f0)
-      ├─ u = Vec(1.0f0, 0.0f0, 0.0f0)
-      └─ v = Vec(0.0f0, 1.0f0, 0.0f0)"""
+      ├─ p: Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ u: Vec(1.0f0, 0.0f0, 0.0f0)
+      └─ v: Vec(0.0f0, 1.0f0, 0.0f0)"""
     else
       @test sprint(show, MIME("text/plain"), p) == """
       Plane{3,Float64}
-      ├─ p = Point(0.0, 0.0, 0.0)
-      ├─ u = Vec(1.0, 0.0, 0.0)
-      └─ v = Vec(0.0, 1.0, 0.0)"""
+      ├─ p: Point(0.0, 0.0, 0.0)
+      ├─ u: Vec(1.0, 0.0, 0.0)
+      └─ v: Vec(0.0, 1.0, 0.0)"""
     end
   end
 
@@ -367,15 +367,15 @@
 
     b = BezierCurve(P2(0, 0), P2(0.5, 1), P2(1, 0))
     if T === Float32
-      @test sprint(show, b) == "BezierCurve(controls = Point2f[(0.0, 0.0), (0.5, 1.0), (1.0, 0.0)])"
+      @test sprint(show, b) == "BezierCurve(controls: Point2f[(0.0, 0.0), (0.5, 1.0), (1.0, 0.0)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve{2,Float32}
-      └─ controls = Point2f[Point(0.0f0, 0.0f0), Point(0.5f0, 1.0f0), Point(1.0f0, 0.0f0)]"""
+      └─ controls: Point2f[Point(0.0f0, 0.0f0), Point(0.5f0, 1.0f0), Point(1.0f0, 0.0f0)]"""
     else
-      @test sprint(show, b) == "BezierCurve(controls = Point2[(0.0, 0.0), (0.5, 1.0), (1.0, 0.0)])"
+      @test sprint(show, b) == "BezierCurve(controls: Point2[(0.0, 0.0), (0.5, 1.0), (1.0, 0.0)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve{2,Float64}
-      └─ controls = Point2[Point(0.0, 0.0), Point(0.5, 1.0), Point(1.0, 0.0)]"""
+      └─ controls: Point2[Point(0.0, 0.0), Point(0.5, 1.0), Point(1.0, 0.0)]"""
     end
   end
 
@@ -510,17 +510,17 @@
     )
 
     b = Box(P2(0, 0), P2(1, 1))
-    @test sprint(show, b) == "Box(min = (0.0, 0.0), max = (1.0, 1.0))"
+    @test sprint(show, b) == "Box(min: (0.0, 0.0), max: (1.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), b) == """
       Box{2,Float32}
-      ├─ min = Point(0.0f0, 0.0f0)
-      └─ max = Point(1.0f0, 1.0f0)"""
+      ├─ min: Point(0.0f0, 0.0f0)
+      └─ max: Point(1.0f0, 1.0f0)"""
     else
       @test sprint(show, MIME("text/plain"), b) == """
       Box{2,Float64}
-      ├─ min = Point(0.0, 0.0)
-      └─ max = Point(1.0, 1.0)"""
+      ├─ min: Point(0.0, 0.0)
+      └─ max: Point(1.0, 1.0)"""
     end
   end
 
@@ -594,17 +594,17 @@
     @test embeddim(b3) == 3
 
     b = Ball(P2(0, 0), T(1))
-    @test sprint(show, b) == "Ball(center = (0.0, 0.0), radius = 1.0)"
+    @test sprint(show, b) == "Ball(center: (0.0, 0.0), radius: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), b) == """
       Ball{2,Float32}
-      ├─ center = Point(0.0f0, 0.0f0)
-      └─ radius = 1.0f0"""
+      ├─ center: Point(0.0f0, 0.0f0)
+      └─ radius: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), b) == """
       Ball{2,Float64}
-      ├─ center = Point(0.0, 0.0)
-      └─ radius = 1.0"""
+      ├─ center: Point(0.0, 0.0)
+      └─ radius: 1.0"""
     end
   end
 
@@ -707,17 +707,17 @@
     @test embeddim(s3) == 3
 
     s = Sphere(P3(0, 0, 0), T(1))
-    @test sprint(show, s) == "Sphere(center = (0.0, 0.0, 0.0), radius = 1.0)"
+    @test sprint(show, s) == "Sphere(center: (0.0, 0.0, 0.0), radius: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), s) == """
       Sphere{3,Float32}
-      ├─ center = Point(0.0f0, 0.0f0, 0.0f0)
-      └─ radius = 1.0f0"""
+      ├─ center: Point(0.0f0, 0.0f0, 0.0f0)
+      └─ radius: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), s) == """
       Sphere{3,Float64}
-      ├─ center = Point(0.0, 0.0, 0.0)
-      └─ radius = 1.0"""
+      ├─ center: Point(0.0, 0.0, 0.0)
+      └─ radius: 1.0"""
     end
   end
 
@@ -746,17 +746,17 @@
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     d = Disk(p, T(2))
     @test sprint(show, d) ==
-          "Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)"
+          "Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), d) == """
       Disk{3,Float32}
-      ├─ plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 2.0f0"""
+      ├─ plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 2.0f0"""
     else
       @test sprint(show, MIME("text/plain"), d) == """
       Disk{3,Float64}
-      ├─ plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 2.0"""
+      ├─ plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 2.0"""
     end
   end
 
@@ -805,17 +805,17 @@
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     c = Circle(p, T(2))
     @test sprint(show, c) ==
-          "Circle(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)"
+          "Circle(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Circle{3,Float32}
-      ├─ plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 2.0f0"""
+      ├─ plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 2.0f0"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       Circle{3,Float64}
-      ├─ plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 2.0"""
+      ├─ plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 2.0"""
     end
   end
 
@@ -875,19 +875,19 @@
 
     c = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
     @test sprint(show, c) ==
-          "Cylinder(bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 1.0)"
+          "Cylinder(bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Cylinder{3,Float32}
-      ├─ bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      ├─ top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 1.0f0"""
+      ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       Cylinder{3,Float64}
-      ├─ bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      ├─ top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 1.0"""
+      ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 1.0"""
     end
   end
 
@@ -938,19 +938,19 @@
 
     c = CylinderSurface(T(1))
     @test sprint(show, c) ==
-          "CylinderSurface(bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 1.0)"
+          "CylinderSurface(bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       CylinderSurface{3,Float32}
-      ├─ bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      ├─ top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 1.0f0"""
+      ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       CylinderSurface{3,Float64}
-      ├─ bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      ├─ top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0))
-      └─ radius = 1.0"""
+      ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      └─ radius: 1.0"""
     end
   end
 
@@ -974,17 +974,17 @@
     a = P3(0, 0, 1)
     c = Cone(d, a)
     @test sprint(show, c) ==
-          "Cone(base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0), apex = (0.0, 0.0, 1.0))"
+          "Cone(base: Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0), apex: (0.0, 0.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Cone{3,Float32}
-      ├─ base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)
-      └─ apex = Point(0.0f0, 0.0f0, 1.0f0)"""
+      ├─ base: Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0)
+      └─ apex: Point(0.0f0, 0.0f0, 1.0f0)"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       Cone{3,Float64}
-      ├─ base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)
-      └─ apex = Point(0.0, 0.0, 1.0)"""
+      ├─ base: Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0)
+      └─ apex: Point(0.0, 0.0, 1.0)"""
     end
   end
 
@@ -1008,17 +1008,17 @@
     a = P3(0, 0, 1)
     s = ConeSurface(d, a)
     @test sprint(show, s) ==
-          "ConeSurface(base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0), apex = (0.0, 0.0, 1.0))"
+          "ConeSurface(base: Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0), apex: (0.0, 0.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), s) == """
       ConeSurface{3,Float32}
-      ├─ base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)
-      └─ apex = Point(0.0f0, 0.0f0, 1.0f0)"""
+      ├─ base: Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0)
+      └─ apex: Point(0.0f0, 0.0f0, 1.0f0)"""
     else
       @test sprint(show, MIME("text/plain"), s) == """
       ConeSurface{3,Float64}
-      ├─ base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)
-      └─ apex = Point(0.0, 0.0, 1.0)"""
+      ├─ base: Disk(plane: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0)
+      └─ apex: Point(0.0, 0.0, 1.0)"""
     end
   end
 
@@ -1068,21 +1068,21 @@
     @test isnothing(boundary(t))
 
     t = Torus(P3(1, 1, 1), V3(1, 0, 0), 2, 1)
-    @test sprint(show, t) == "Torus(center = (1.0, 1.0, 1.0), normal = (1.0, 0.0, 0.0), major = 2.0, minor = 1.0)"
+    @test sprint(show, t) == "Torus(center: (1.0, 1.0, 1.0), normal: (1.0, 0.0, 0.0), major: 2.0, minor: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
       Torus{3,Float32}
-      ├─ center = Point(1.0f0, 1.0f0, 1.0f0)
-      ├─ normal = Vec(1.0f0, 0.0f0, 0.0f0)
-      ├─ major = 2.0f0
-      └─ minor = 1.0f0"""
+      ├─ center: Point(1.0f0, 1.0f0, 1.0f0)
+      ├─ normal: Vec(1.0f0, 0.0f0, 0.0f0)
+      ├─ major: 2.0f0
+      └─ minor: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), t) == """
       Torus{3,Float64}
-      ├─ center = Point(1.0, 1.0, 1.0)
-      ├─ normal = Vec(1.0, 0.0, 0.0)
-      ├─ major = 2.0
-      └─ minor = 1.0"""
+      ├─ center: Point(1.0, 1.0, 1.0)
+      ├─ normal: Vec(1.0, 0.0, 0.0)
+      ├─ major: 2.0
+      └─ minor: 1.0"""
     end
   end
 end
