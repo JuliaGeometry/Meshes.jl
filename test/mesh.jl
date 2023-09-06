@@ -168,6 +168,7 @@
         minimum: Point(0.0, 0.0)
         maximum: Point(200.0, 100.0)
         spacing: (1.0, 1.0)"""
+    end
   end
 
   @testset "RectilinearGrid" begin

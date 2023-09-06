@@ -32,17 +32,9 @@
 
   dom = DummyDomain(P2(0, 0))
   @test sprint(show, dom) == "3 DummyDomain{2,$T}"
-  if T == Float32
-    @test sprint(show, MIME"text/plain"(), dom) == """
-    3 DummyDomain{2,Float32}
-    ├─ Ball(center = (1.0f0, 1.0f0), radius = 1.0)
-    ├─ Ball(center = (2.0f0, 2.0f0), radius = 1.0)
-    └─ Ball(center = (3.0f0, 3.0f0), radius = 1.0)"""
-  elseif T == Float64
-    @test sprint(show, MIME"text/plain"(), dom) == """
-    3 DummyDomain{2,Float64}
-    ├─ Ball(center = (1.0, 1.0), radius = 1.0)
-    ├─ Ball(center = (2.0, 2.0), radius = 1.0)
-    └─ Ball(center = (3.0, 3.0), radius = 1.0)"""
-  end
+  @test sprint(show, MIME"text/plain"(), dom) == """
+  3 DummyDomain{2,$T}
+  ├─ Ball(center = (1.0, 1.0), radius = 1.0)
+  ├─ Ball(center = (2.0, 2.0), radius = 1.0)
+  └─ Ball(center = (3.0, 3.0), radius = 1.0)"""
 end

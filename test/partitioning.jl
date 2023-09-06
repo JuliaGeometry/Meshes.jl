@@ -7,17 +7,17 @@
   @test sprint(show, p) == "100 Partition"
   @test sprint(show, MIME"text/plain"(), p) == """
   100 Partition
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
   ⋮
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  ├─1 View{10×10 CartesianGrid{2,Float64}}
-  └─1 View{10×10 CartesianGrid{2,Float64}}"""
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 View{10×10 CartesianGrid{2,$T}}
+  └─1 View{10×10 CartesianGrid{2,$T}}"""
 
   @testset "UniformPartition" begin
     Random.seed!(123)

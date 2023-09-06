@@ -39,19 +39,11 @@
   @test mchn isa Multi
   @test isnothing(noth)
   @test length(mchn) == T(8)
-  if T == Float32
-    @test sprint(show, mbox) == "MultiBox{2,Float32}"
-    @test sprint(show, MIME"text/plain"(), mbox) == """
-    MultiBox{2,Float32}
-    ├─ Box(min = (0.0f0, 0.0f0), max = (1.0f0, 1.0f0))
-    └─ Box(min = (1.0f0, 1.0f0), max = (2.0f0, 2.0f0))"""
-  elseif T == Float64
-    @test sprint(show, mbox) == "MultiBox{2,Float64}"
-    @test sprint(show, MIME"text/plain"(), mbox) == """
-    MultiBox{2,Float64}
-    ├─ Box(min = (0.0, 0.0), max = (1.0, 1.0))
-    └─ Box(min = (1.0, 1.0), max = (2.0, 2.0))"""
-  end
+  @test sprint(show, mbox) == "MultiBox{2,$T}"
+  @test sprint(show, MIME"text/plain"(), mbox) == """
+  MultiBox{2,$T}
+  ├─ Box(min = (0.0, 0.0), max = (1.0, 1.0))
+  └─ Box(min = (1.0, 1.0), max = (2.0, 2.0))"""
 
   # constructor with iterator
   grid = CartesianGrid{T}(10, 10)
@@ -72,19 +64,11 @@
   quad = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
   multi = Multi([poly, quad])
   @test unique(multi) == multi
-  if T == Float32
-    @test sprint(show, multi) == "MultiPolygon{2,Float32}"
-    @test sprint(show, MIME"text/plain"(), multi) == """
-    MultiPolygon{2,Float32}
-    ├─ PolyArea(4-Ring)
-    └─ Quadrangle((0.0f0, 0.0f0), ..., (0.0f0, 1.0f0))"""
-  elseif T == Float64
-    @test sprint(show, multi) == "MultiPolygon{2,Float64}"
-    @test sprint(show, MIME"text/plain"(), multi) == """
-    MultiPolygon{2,Float64}
-    ├─ PolyArea(4-Ring)
-    └─ Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"""
-  end
+  @test sprint(show, multi) == "MultiPolygon{2,$T}"
+  @test sprint(show, MIME"text/plain"(), multi) == """
+  MultiPolygon{2,$T}
+  ├─ PolyArea(4-Ring)
+  └─ Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"""
 
   # type aliases
   point = P2(0, 0)

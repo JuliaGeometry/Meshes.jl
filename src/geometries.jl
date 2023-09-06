@@ -52,6 +52,10 @@ bounding box of the `geometry`.
 """
 Base.extrema(g::Geometry) = extrema(boundingbox(g))
 
+# -----------
+# IO METHODS
+# -----------
+
 Base.summary(io::IO, geom::Geometry{Dim,T}) where {Dim,T} = print(io, "$(prettyname(geom)){$Dim,$T}")
 
 # ----------------
