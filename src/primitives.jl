@@ -12,11 +12,11 @@ See https://en.wikipedia.org/wiki/Geometric_primitive.
 """
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
-function Base.show(io::IO, geom::G) where {G<:Primitive}
+function Base.show(io::IO, geom::Primitive)
   ioctx = IOContext(io, :compact => true)
-  name = prettyname(G)
+  name = prettyname(geom)
   print(ioctx, "$name(")
-  vals = map(fieldnames(G)) do field
+  vals = map(fieldnames(typeof(geom))) do field
     val = getfield(geom, field)
     str = repr(val, context=ioctx)
     "$field = $str"
@@ -25,12 +25,9 @@ function Base.show(io::IO, geom::G) where {G<:Primitive}
   print(ioctx, ")")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", geom::G) where {G<:Primitive}
-  name = prettyname(G)
-  Dim = embeddim(geom)
-  T = coordtype(geom)
-  print(io, "$name{$Dim,$T}")
-  fnames = fieldnames(G)
+function Base.show(io::IO, ::MIME"text/plain", geom::Primitive)
+  summary(io, geom)
+  fnames = fieldnames(typeof(geom))
   len = length(fnames)
   for (i, field) in enumerate(fnames)
     div = i == len ? "\n└─ " : "\n├─ "

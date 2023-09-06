@@ -5,8 +5,19 @@
   p = partition(d, UniformPartition(100))
   @test parent(p) == d
   @test sprint(show, p) == "100 Partition"
-  @test sprint(show, MIME"text/plain"(), p) ==
-        "100 Partition\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  ⋮\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}\n  └─1 View{10×10 CartesianGrid{2,$T}}"
+  @test sprint(show, MIME"text/plain"(), p) == """
+  100 Partition
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ⋮
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  ├─1 View{10×10 CartesianGrid{2,Float64}}
+  └─1 View{10×10 CartesianGrid{2,Float64}}"""
 
   @testset "UniformPartition" begin
     Random.seed!(123)

@@ -157,12 +157,17 @@
 
     grid = CartesianGrid{T}(200, 100)
     if T == Float32
-      @test sprint(show, MIME"text/plain"(), grid) ==
-            "200×100 CartesianGrid{2,Float32}\n  minimum: Point(0.0f0, 0.0f0)\n  maximum: Point(200.0f0, 100.0f0)\n  spacing: (1.0f0, 1.0f0)"
+      @test sprint(show, MIME"text/plain"(), grid) == """
+      200×100 CartesianGrid{2,Float32}
+        minimum: Point(0.0f0, 0.0f0)
+        maximum: Point(200.0f0, 100.0f0)
+        spacing: (1.0f0, 1.0f0)"""
     elseif T == Float64
-      @test sprint(show, MIME"text/plain"(), grid) ==
-            "200×100 CartesianGrid{2,Float64}\n  minimum: Point(0.0, 0.0)\n  maximum: Point(200.0, 100.0)\n  spacing: (1.0, 1.0)"
-    end
+      @test sprint(show, MIME"text/plain"(), grid) == """
+      200×100 CartesianGrid{2,Float64}
+        minimum: Point(0.0, 0.0)
+        maximum: Point(200.0, 100.0)
+        spacing: (1.0, 1.0)"""
   end
 
   @testset "RectilinearGrid" begin

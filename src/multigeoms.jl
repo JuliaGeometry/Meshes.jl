@@ -58,10 +58,16 @@ Base.parent(m::Multi) = m.geoms
 
 Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms, m₂.geoms))
 
-function Base.show(io::IO, m::Multi{Dim,T}) where {Dim,T}
+# -----------
+# IO METHODS
+# -----------
+
+function Base.summary(io::IO, m::Multi{Dim,T}) where {Dim,T}
   name = prettyname(eltype(m.geoms))
   print(io, "Multi$name{$Dim,$T}")
 end
+
+Base.show(io::IO, m::Multi) = summary(io, m)
 
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
   println(io, m)

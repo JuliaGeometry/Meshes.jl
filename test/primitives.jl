@@ -152,6 +152,15 @@
     @test q ∈ q
     @test p ∉ q
     @test q ∉ p
+
+    p = P2(0, 1)
+    if T === Float32
+      @test sprint(show, p) == "Point(0.0f0, 1.0f0)"
+      @test sprint(show, p, context=:compact => true) == "(0.0f0, 1.0f0)"
+    else
+      @test sprint(show, p) == "Point(0.0, 1.0)"
+      @test sprint(show, p, context=:compact => true) == "(0.0, 1.0)"
+    end
   end
 
   @testset "Ray" begin
@@ -203,6 +212,21 @@
     @test r3 isa Ray
     @test embeddim(r2) == 2
     @test embeddim(r3) == 3
+
+    r = Ray(P2(0, 0), V2(1, 1))
+    if T === Float32
+      @test sprint(show, r) == "Ray(p = (0.0f0, 0.0f0), v = (1.0f0, 1.0f0))"
+      @test sprint(show, MIMI("text/plain"), r) == """
+      Ray{2,Float32}
+      ├─ p = Point(0.0f0, 0.0f0)
+      └─ v = Vec(1.0f0, 1.0f0)"""
+    else
+      @test sprint(show, r) == "Ray(p = (0.0, 0.0), v = (1.0, 1.0))"
+      @test sprint(show, MIMI("text/plain"), r) == """
+      Ray{2,Float64}
+      ├─ p = Point(0.0, 0.0)
+      └─ v = Vec(1.0, 1.0)"""
+    end
   end
 
   @testset "Line" begin
@@ -226,6 +250,21 @@
     @test l3 isa Line
     @test embeddim(l2) == 2
     @test embeddim(l3) == 3
+
+    l = Line(P2(0, 0), P2(1, 1))
+    if T === Float32
+      @test sprint(show, r) == "Line(a = (0.0f0, 0.0f0), b = (1.0f0, 1.0f0))"
+      @test sprint(show, MIMI("text/plain"), r) == """
+      Line{2,Float32}
+      ├─ a = Point(0.0f0, 0.0f0)
+      └─ b = Point(1.0f0, 1.0f0)"""
+    else
+      @test sprint(show, r) == "Line(a = (0.0, 0.0), b = (1.0, 1.0))"
+      @test sprint(show, MIMI("text/plain"), r) == """
+      Line{2,Float64}
+      ├─ a = Point(0.0, 0.0)
+      └─ b = Point(1.0, 1.0)"""
+    end
   end
 
   @testset "Plane" begin
@@ -272,6 +311,20 @@
     p = rand(Plane{T})
     @test p isa Plane
     @test embeddim(p) == 3
+
+    if T === Float32
+      @test sprint(show, r) == "Line(a = (0.0f0, 0.0f0), b = (1.0f0, 1.0f0))"
+      @test sprint(show, MIMI("text/plain"), r) == """
+      Line{2,Float32}
+      ├─ a = Point(0.0f0, 0.0f0)
+      └─ b = Point(1.0f0, 1.0f0)"""
+    else
+      @test sprint(show, r) == "Line(a = (0.0, 0.0), b = (1.0, 1.0))"
+      @test sprint(show, MIMI("text/plain"), r) == """
+      Line{2,Float64}
+      ├─ a = Point(0.0, 0.0)
+      └─ b = Point(1.0, 1.0)"""
+    end
   end
 
   @testset "BezierCurve" begin

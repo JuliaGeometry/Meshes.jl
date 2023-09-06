@@ -68,10 +68,15 @@
     pset = PointSet(P2[(1, 0), (0, 1)])
     @test sprint(show, pset) == "2 PointSet{2,$T}"
     if T == Float32
-      @test sprint(show, MIME"text/plain"(), pset) ==
-            "2 PointSet{2,Float32}\n  └─Point(1.0f0, 0.0f0)\n  └─Point(0.0f0, 1.0f0)"
+      @test sprint(show, MIME"text/plain"(), pset) == """
+      2 PointSet{2,Float32}
+      ├─ Point(1.0f0, 0.0f0)
+      └─ Point(0.0f0, 1.0f0)"""
     elseif T == Float64
-      @test sprint(show, MIME"text/plain"(), pset) == "2 PointSet{2,Float64}\n  └─Point(1.0, 0.0)\n  └─Point(0.0, 1.0)"
+      @test sprint(show, MIME"text/plain"(), pset) == """
+      2 PointSet{2,Float64}
+      ├─ Point(1.0, 0.0)
+      └─ Point(0.0, 1.0)"""
     end
   end
 end

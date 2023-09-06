@@ -45,22 +45,25 @@ Base.getindex(partition::Partition, inds::AbstractVector{Int}) = [getindex(parti
 
 Base.eltype(partition::Partition) = typeof(first(partition))
 
-function Base.show(io::IO, partition::Partition)
+function Base.summary(io::IO, partition::Partition)
   N = length(partition.subsets)
   print(io, "$N Partition")
 end
+
+Base.show(io::IO, partition::Partition) = summary(io, partition)
 
 function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
   subs = partition.subsets
   meta = partition.metadata
   println(io, partition)
   N = length(subs)
-  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
+  I, J = N > 10 ? (5, N - 4) : (N - 1, N)
   lines = [
-    ["  └─$(partition[i])" for i in 1:I]
-    (N > 10 ? ["  ⋮"] : [])
-    ["  └─$(partition[i])" for i in J:N]
+    ["├─$(partition[i])" for i in 1:I]
+    (N > 10 ? ["⋮"] : [])
+    ["├─$(partition[i])" for i in J:(N - 1)]
+    "└─$(partition[N])"
   ]
   print(io, join(lines, "\n"))
-  !isempty(meta) && print(io, "\n  metadata: ", join(keys(meta), ", "))
+  !isempty(meta) && print(io, "\nmetadata: ", join(keys(meta), ", "))
 end

@@ -16,11 +16,12 @@ end
 function io_lines(itr, tab="")
   vec = collect(itr)
   N = length(vec)
-  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
+  I, J = N > 10 ? (5, N - 4) : (N - 1, N)
   lines = [
-    ["$(vec[i])" for i in 1:I]
+    ["$(tab)├─ $(vec[i])" for i in 1:I]
     (N > 10 ? ["$(tab)⋮"] : [])
-    ["$(vec[i])" for i in J:N]
+    ["$(tab)├─ $(vec[i])" for i in J:(N - 1)]
+    "$(tab)└─ $(vec[N])"
   ]
-  "$(tab)├─ " * join(lines, "\n$(tab)├─ ", "\n$(tab)└─ ")
+  join(lines, "\n")
 end
