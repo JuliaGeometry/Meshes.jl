@@ -93,23 +93,29 @@ function Base.unique!(p::PolyArea)
 end
 
 function Base.show(io::IO, p::PolyArea)
-  nverts = nvertices.(p.rings)
-  rings = join(["$n-Ring" for n in nverts], ", ")
-  print(io, "PolyArea($rings)")
+  rings = p.rings
+  print(io, "PolyArea(")
+  if length(rings) == 1
+    r = first(rings)
+    printverts(io, vertices(r))
+  else
+    nverts = nvertices.(rings)
+    print(io, join(["$n-Ring" for n in nverts], ", "))
+  end
+  print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
-  nverts = nvertices.(p.rings)
-  rings = ["$n-Ring" for n in nverts]
+  rings = p.rings
   println(io, "PolyArea{$Dim,$T}")
   if length(rings) == 1
     println(io, "  outer")
-    print(io, io_lines(rings[1:1], "    "))
+    print(io, io_lines(rings[1:1], "  "))
   else
     println(io, "  outer")
-    println(io, io_lines(rings[1:1], "    "))
+    println(io, io_lines(rings[1:1], "  "))
     println(io, "  inner")
-    print(io, io_lines(rings[2:end], "    "))
+    print(io, io_lines(rings[2:end], "  "))
   end
 end
 

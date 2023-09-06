@@ -136,10 +136,12 @@ end
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
   dims = join(size(g.topology), "×")
   print(io, "$dims CartesianGrid{$Dim,$T}")
 end
+
+Base.show(io::IO, g::CartesianGrid) = summary(io, g)
 
 function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
   println(io, g)

@@ -245,16 +245,19 @@ Base.unique(p::Polytope) = unique!(deepcopy(p))
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polytope} =
   PL(ntuple(i -> rand(rng, Point{embeddim(PL),coordtype(PL)}), nvertices(PL)))
 
+# -----------
+# IO METHODS
+# -----------
+
 function Base.show(io::IO, p::Polytope)
   name = prettyname(p)
-  vert = join(vertices(p), ", ")
-  print(io, "$name($vert)")
+  print(io, "$name(")
+  printverts(io, vertices(p))
+  print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope)
-  name = prettyname(p)
-  Dim = embeddim(p)
-  T = coordtype(p)
-  println(io, "$name{$Dim,$T}")
-  print(io, io_lines(vertices(p), "  "))
+  summary(io, p)
+  println(io)
+  print(io, io_lines(vertices(p)))
 end

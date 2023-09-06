@@ -108,3 +108,13 @@ See https://en.wikipedia.org/wiki/Atan2.
 """
 ∠(u::V, v::V) where {V<:Vec{2}} = atan(u × v, u ⋅ v)  # preserve sign
 ∠(u::V, v::V) where {V<:Vec{3}} = atan(norm(u × v), u ⋅ v)  # discard sign
+
+function Base.show(io::IO, vec::Vec)
+  if get(io, :compact, false)
+    print(io, vec.coords)
+  else
+    print(io, "Vec$(vec.coords)")
+  end
+end
+
+Base.show(io::IO, ::MIME"text/plain", vec::Vec) = show(io, vec)

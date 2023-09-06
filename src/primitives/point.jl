@@ -145,5 +145,11 @@ See https://en.wikipedia.org/wiki/Atan2.
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} = Point(rand(rng, Vec{Dim,T}))
 
 function Base.show(io::IO, point::Point)
-  print(io, "Point$(Tuple(point.coords))")
+  if get(io, :compact, false)
+    print(io, Tuple(point.coords))
+  else
+    print(io, "Point$(Tuple(point.coords))")
+  end
 end
+
+Base.show(io::IO, ::MIME"text/plain", point::Point) = show(io, point)

@@ -62,6 +62,20 @@
     @test s isa Segment
     @test embeddim(s) == 3
     @test coordtype(s) === T
+
+    s = Segment(P2(0, 0), P2(1, 1))
+    @test sprint(show, s) == "Segment((0.0, 0.0), (1.0, 1.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), s) == """
+      Segment{2,Float32}
+      ├─ Point(0.0f0, 0.0f0)
+      └─ Point(1.0f0, 1.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), s) == """
+      Segment{2,Float64}
+      ├─ Point(0.0, 0.0)
+      └─ Point(1.0, 1.0)"""
+    end
   end
 
   @testset "Ropes/Rings" begin
@@ -228,6 +242,34 @@
     r1 = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     r2 = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
     @test innerangles(r1) ≈ innerangles(r2)
+
+    ri = Ring(P2[(1, 1), (2, 2), (3, 3)])
+    ro = Rope(P2[(1, 1), (2, 2), (3, 3)])
+    @test sprint(show, ri) == "Ring((1.0, 1.0), (2.0, 2.0), (3.0, 3.0))"
+    @test sprint(show, ro) == "Rope((1.0, 1.0), (2.0, 2.0), (3.0, 3.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), ri) == """
+      Ring{2,Float32}
+      ├─ Point(1.0f0, 1.0f0)
+      ├─ Point(2.0f0, 2.0f0)
+      └─ Point(3.0f0, 3.0f0)"""
+      @test sprint(show, MIME("text/plain"), ro) == """
+      Rope{2,Float32}
+      ├─ Point(1.0f0, 1.0f0)
+      ├─ Point(2.0f0, 2.0f0)
+      └─ Point(3.0f0, 3.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), ri) == """
+      Ring{2,Float64}
+      ├─ Point(1.0, 1.0)
+      ├─ Point(2.0, 2.0)
+      └─ Point(3.0, 3.0)"""
+      @test sprint(show, MIME("text/plain"), ro) == """
+      Rope{2,Float64}
+      ├─ Point(1.0, 1.0)
+      ├─ Point(2.0, 2.0)
+      └─ Point(3.0, 3.0)"""
+    end
   end
 
   @testset "Ngons" begin
@@ -330,6 +372,22 @@
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     @test isconvex(t)
 
+    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
+    @test sprint(show, t) == "Triangle((0.0, 0.0), (1.0, 0.0), (0.0, 1.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), t) == """
+      Triangle{2,Float32}
+      ├─ Point(0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 0.0f0)
+      └─ Point(0.0f0, 1.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), t) == """
+      Triangle{2,Float64}
+      ├─ Point(0.0, 0.0)
+      ├─ Point(1.0, 0.0)
+      └─ Point(0.0, 1.0)"""
+    end
+
     # -----------
     # QUADRANGLE
     # -----------
@@ -407,6 +465,24 @@
     @test !isconvex(q3)
     @test !isconvex(q4)
     @test !isconvex(q5)
+
+    q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    @test sprint(show, q) == "Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), q) == """
+      Quadrangle{2,Float32}
+      ├─ Point(0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 0.0f0)
+      ├─ Point(1.0f0, 1.0f0)
+      └─ Point(0.0f0, 1.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), q) == """
+      Quadrangle{2,Float64}
+      ├─ Point(0.0, 0.0)
+      ├─ Point(1.0, 0.0)
+      ├─ Point(1.0, 1.0)
+      └─ Point(0.0, 1.0)"""
+    end
   end
 
   @testset "PolyAreas" begin
@@ -602,6 +678,25 @@
     @test embeddim(p) == 3
     @test coordtype(p) === T
 
+    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
+    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
+    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
+    poly1 = PolyArea(outer)
+    poly2 = PolyArea([outer, hole1, hole2])
+    @test sprint(show, poly1) == "PolyArea((0.0, 0.0), ..., (0.0, 1.0))"
+    @test sprint(show, poly2) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
+    @test sprint(show, MIME("text/plain"), poly1) == """
+    PolyArea{2,$T}
+      outer
+      └─ Ring((0.0, 0.0), ..., (0.0, 1.0))"""
+    @test sprint(show, MIME("text/plain"), poly2) == """
+    PolyArea{2,$T}
+      outer
+      └─ Ring((0.0, 0.0), ..., (0.0, 1.0))
+      inner
+      ├─ Ring((0.2, 0.2), ..., (0.4, 0.2))
+      └─ Ring((0.6, 0.2), ..., (0.8, 0.2))"""
+
     # should not repeat the first vertex manually
     @test_throws ArgumentError PolyArea(P2[(0, 0), (0, 0)])
     @test_throws ArgumentError PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 0)])
@@ -638,6 +733,24 @@
     @test t isa Tetrahedron
     @test embeddim(t) == 3
     @test coordtype(t) === T
+
+    t = Tetrahedron(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0), P3(0, 0, 1))
+    @test sprint(show, t) == "Tetrahedron((0.0, 0.0, 0.0), ..., (0.0, 0.0, 1.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), t) == """
+      Tetrahedron{3,Float32}
+      ├─ Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 0.0f0, 0.0f0)
+      ├─ Point(0.0f0, 1.0f0, 0.0f0)
+      └─ Point(0.0f0, 0.0f0, 1.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), t) == """
+      Tetrahedron{3,Float64}
+      ├─ Point(0.0, 0.0, 0.0)
+      ├─ Point(1.0, 0.0, 0.0)
+      ├─ Point(0.0, 1.0, 0.0)
+      └─ Point(0.0, 0.0, 1.0)"""
+    end
 
     @test paramdim(Hexahedron) == 3
     @test nvertices(Hexahedron) == 8
@@ -685,6 +798,33 @@
     @test embeddim(h) == 3
     @test coordtype(h) === T
 
+    h =
+      Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
+    @test sprint(show, h) == "Hexahedron((0.0, 0.0, 0.0), ..., (0.0, 1.0, 1.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), h) == """
+      Hexahedron{3,Float32}
+      ├─ Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 1.0f0, 0.0f0)
+      ├─ Point(0.0f0, 1.0f0, 0.0f0)
+      ├─ Point(0.0f0, 0.0f0, 1.0f0)
+      ├─ Point(1.0f0, 0.0f0, 1.0f0)
+      ├─ Point(1.0f0, 1.0f0, 1.0f0)
+      └─ Point(0.0f0, 1.0f0, 1.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), h) == """
+      Hexahedron{3,Float64}
+      ├─ Point(0.0, 0.0, 0.0)
+      ├─ Point(1.0, 0.0, 0.0)
+      ├─ Point(1.0, 1.0, 0.0)
+      ├─ Point(0.0, 1.0, 0.0)
+      ├─ Point(0.0, 0.0, 1.0)
+      ├─ Point(1.0, 0.0, 1.0)
+      ├─ Point(1.0, 1.0, 1.0)
+      └─ Point(0.0, 1.0, 1.0)"""
+    end
+
     @test paramdim(Pyramid) == 3
     @test nvertices(Pyramid) == 5
 
@@ -703,5 +843,25 @@
     @test p isa Pyramid
     @test embeddim(p) == 3
     @test coordtype(p) === T
+
+    p = Pyramid(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1))
+    @test sprint(show, p) == "Pyramid((0.0, 0.0, 0.0), ..., (0.0, 0.0, 1.0))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), p) == """
+      Pyramid{3,Float32}
+      ├─ Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 1.0f0, 0.0f0)
+      ├─ Point(0.0f0, 1.0f0, 0.0f0)
+      └─ Point(0.0f0, 0.0f0, 1.0f0)"""
+    else
+      @test sprint(show, MIME("text/plain"), p) == """
+      Pyramid{3,Float64}
+      ├─ Point(0.0, 0.0, 0.0)
+      ├─ Point(1.0, 0.0, 0.0)
+      ├─ Point(1.0, 1.0, 0.0)
+      ├─ Point(0.0, 1.0, 0.0)
+      └─ Point(0.0, 0.0, 1.0)"""
+    end
   end
 end

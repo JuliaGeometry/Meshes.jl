@@ -68,4 +68,12 @@
   @test ∠(V3(0, -1, -1), V3(0, 1, 1)) ≈ T(π)
   @test ∠(V3(0, -1, -1), V3(0, 1, 0)) ≈ T(π * 3 / 4)
   @test ∠(V3(0, 1, 1), V3(1, 1, 0)) ≈ T(π / 3)
+
+  v = V2(0, 1)
+  @test sprint(show, v, context=:compact => true) == "(0.0, 1.0)"
+  if T === Float32
+    @test sprint(show, v) == "Vec(0.0f0, 1.0f0)"
+  else
+    @test sprint(show, v) == "Vec(0.0, 1.0)"
+  end
 end

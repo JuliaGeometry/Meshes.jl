@@ -13,14 +13,24 @@ end
 
 # helper function to print a large iterator
 # in multiple lines with a given tabulation
-function io_lines(itr, tab="  ")
+function io_lines(itr, tab="")
   vec = collect(itr)
   N = length(vec)
-  I, J = N > 10 ? (5, N - 4) : (N, N + 1)
+  I, J = N > 10 ? (5, N - 4) : (N - 1, N)
   lines = [
-    ["$(tab)└─$(vec[i])" for i in 1:I]
+    ["$(tab)├─ $(vec[i])" for i in 1:I]
     (N > 10 ? ["$(tab)⋮"] : [])
-    ["$(tab)└─$(vec[i])" for i in J:N]
+    ["$(tab)├─ $(vec[i])" for i in J:(N - 1)]
+    "$(tab)└─ $(vec[N])"
   ]
   join(lines, "\n")
+end
+
+function printverts(io::IO, verts)
+  ioctx = IOContext(io, :compact => true)
+  if length(verts) > 3
+    join(ioctx, (first(verts), "...", last(verts)), ", ")
+  else
+    join(ioctx, verts, ", ")
+  end
 end
