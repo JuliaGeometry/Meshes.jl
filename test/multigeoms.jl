@@ -25,7 +25,7 @@
   @test P2(1.5, 1.5) ∈ multi
   @test P2(1.5, 0.5) ∉ multi
   @test P2(0.5, 1.5) ∉ multi
-  @test sprint(show, multi) == "MultiPolyArea{2,$T}"
+  @test sprint(show, multi) == "Multi(2×PolyArea)"
   @test sprint(show, MIME"text/plain"(), multi) == """
   MultiPolyArea{2,$T}
   ├─ PolyArea((0.0, 0.0), ..., (0.0, 1.0))
@@ -39,7 +39,7 @@
   @test mchn isa Multi
   @test isnothing(noth)
   @test length(mchn) == T(8)
-  @test sprint(show, mbox) == "MultiBox{2,$T}"
+  @test sprint(show, mbox) == "Multi(2×Box)"
   @test sprint(show, MIME"text/plain"(), mbox) == """
   MultiBox{2,$T}
   ├─ Box(min = (0.0, 0.0), max = (1.0, 1.0))
@@ -64,7 +64,7 @@
   quad = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
   multi = Multi([poly, quad])
   @test unique(multi) == multi
-  @test sprint(show, multi) == "MultiPolygon{2,$T}"
+  @test sprint(show, multi) == "Multi(1×PolyArea, 1×Quadrangle)"
   @test sprint(show, MIME"text/plain"(), multi) == """
   MultiPolygon{2,$T}
   ├─ PolyArea((0.0, 0.0), ..., (0.0, 1.0))

@@ -67,7 +67,13 @@ function Base.summary(io::IO, m::Multi{Dim,T}) where {Dim,T}
   print(io, "Multi$name{$Dim,$T}")
 end
 
-Base.show(io::IO, m::Multi) = summary(io, m)
+function Base.show(io::IO, m::Multi)
+  print(io, "Multi(")
+  geoms = prettyname.(m.geoms)
+  counts = ["$(count(==(g), geoms))×$g" for g in unique(geoms)]
+  join(io, counts, ", ")
+  print(io, ")")
+end
 
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
   summary(io, m)
