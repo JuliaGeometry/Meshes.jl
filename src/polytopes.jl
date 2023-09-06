@@ -247,8 +247,18 @@ Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polyto
 
 function Base.show(io::IO, p::Polytope)
   name = prettyname(p)
-  vert = join(vertices(p), ", ")
-  print(io, "$name($vert)")
+  print(io, "$name(")
+  ioctx = IOContext(io, :compact => true)
+  if nvertices(p) > 3
+    verts = vertices(p)
+    v₁ = Tuple(coordinates(first(verts)))
+    vₙ = Tuple(coordinates(last(verts)))
+    join(ioctx, (v₁, "...", vₙ), ", ")
+  else
+    verts = (Tuple(coordinates(v)) for v in vertices(p))
+    join(ioctx, verts, ", ")
+  end
+  print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope)
