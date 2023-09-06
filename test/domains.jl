@@ -34,7 +34,7 @@
   @test sprint(show, dom) == "3 DummyDomain{2,$T}"
   @test sprint(show, MIME"text/plain"(), dom) == """
   3 DummyDomain{2,$T}
-  ├─ Ball(center = (1.0, 1.0), radius = 1.0)
-  ├─ Ball(center = (2.0, 2.0), radius = 1.0)
-  └─ Ball(center = (3.0, 3.0), radius = 1.0)"""
+  ├─ Ball(center: (1.0, 1.0), radius: 1.0)
+  ├─ Ball(center: (2.0, 2.0), radius: 1.0)
+  └─ Ball(center: (3.0, 3.0), radius: 1.0)"""
 end

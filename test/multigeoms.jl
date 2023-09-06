@@ -42,8 +42,8 @@
   @test sprint(show, mbox) == "Multi(2×Box)"
   @test sprint(show, MIME"text/plain"(), mbox) == """
   MultiBox{2,$T}
-  ├─ Box(min = (0.0, 0.0), max = (1.0, 1.0))
-  └─ Box(min = (1.0, 1.0), max = (2.0, 2.0))"""
+  ├─ Box(min: (0.0, 0.0), max: (1.0, 1.0))
+  └─ Box(min: (1.0, 1.0), max: (2.0, 2.0))"""
 
   # constructor with iterator
   grid = CartesianGrid{T}(10, 10)

@@ -875,18 +875,18 @@
 
     c = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
     @test sprint(show, c) ==
-          "Cylinder(bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 1.0)"
+          "Cylinder(bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Cylinder{3,Float32}
       ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
-      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
       └─ radius: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       Cylinder{3,Float64}
       ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
-      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
       └─ radius: 1.0"""
     end
   end
@@ -938,18 +938,18 @@
 
     c = CylinderSurface(T(1))
     @test sprint(show, c) ==
-          "CylinderSurface(bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 1.0)"
+          "CylinderSurface(bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       CylinderSurface{3,Float32}
       ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
-      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
       └─ radius: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       CylinderSurface{3,Float64}
       ├─ bot: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
-      ├─ top: Plane(p: (0.0, 0.0, 0.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
+      ├─ top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
       └─ radius: 1.0"""
     end
   end
