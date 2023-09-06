@@ -322,11 +322,33 @@
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     if T == Float32
-      @test sprint(show, MIME"text/plain"(), mesh) ==
-            "4 SimpleMesh{2,Float32}\n  5 vertices\n    └─Point(0.0f0, 0.0f0)\n    └─Point(1.0f0, 0.0f0)\n    └─Point(0.0f0, 1.0f0)\n    └─Point(1.0f0, 1.0f0)\n    └─Point(0.5f0, 0.5f0)\n  4 elements\n    └─Triangle(1, 2, 5)\n    └─Triangle(2, 4, 5)\n    └─Triangle(4, 3, 5)\n    └─Triangle(3, 1, 5)"
+      @test sprint(show, MIME"text/plain"(), mesh) == """
+      4 SimpleMesh{2,Float32}
+        5 vertices
+        ├─ Point(0.0f0, 0.0f0)
+        ├─ Point(1.0f0, 0.0f0)
+        ├─ Point(0.0f0, 1.0f0)
+        ├─ Point(1.0f0, 1.0f0)
+        └─ Point(0.5f0, 0.5f0)
+        4 elements
+        ├─ Triangle(1, 2, 5)
+        ├─ Triangle(2, 4, 5)
+        ├─ Triangle(4, 3, 5)
+        └─ Triangle(3, 1, 5)"""
     elseif T == Float64
-      @test sprint(show, MIME"text/plain"(), mesh) ==
-            "4 SimpleMesh{2,Float64}\n  5 vertices\n    └─Point(0.0, 0.0)\n    └─Point(1.0, 0.0)\n    └─Point(0.0, 1.0)\n    └─Point(1.0, 1.0)\n    └─Point(0.5, 0.5)\n  4 elements\n    └─Triangle(1, 2, 5)\n    └─Triangle(2, 4, 5)\n    └─Triangle(4, 3, 5)\n    └─Triangle(3, 1, 5)"
+      @test sprint(show, MIME"text/plain"(), mesh) == """
+      4 SimpleMesh{2,Float64}
+        5 vertices
+        ├─ Point(0.0, 0.0)
+        ├─ Point(1.0, 0.0)
+        ├─ Point(0.0, 1.0)
+        ├─ Point(1.0, 1.0)
+        └─ Point(0.5, 0.5)
+        4 elements
+        ├─ Triangle(1, 2, 5)
+        ├─ Triangle(2, 4, 5)
+        ├─ Triangle(4, 3, 5)
+        └─ Triangle(3, 1, 5)"""
     end
   end
 end

@@ -124,11 +124,12 @@ function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
   N = nelements(domain)
   I, J = N > 10 ? (5, N - 4) : (N, N + 1)
   lines = [
-    ["  └─$(domain[i])" for i in 1:I]
-    (N > 10 ? ["  ⋮"] : [])
-    ["  └─$(domain[i])" for i in J:N]
+    ["$(domain[i])" for i in 1:I]
+    (N > 10 ? ["⋮"] : [])
+    ["$(domain[i])" for i in J:N]
   ]
-  print(io, join(lines, "\n"))
+  print(io, "├─ ")
+  join(io, lines, "\n├─ ", "\n└─ ")
 end
 
 # ----------------

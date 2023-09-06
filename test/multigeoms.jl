@@ -25,15 +25,11 @@
   @test P2(1.5, 1.5) ∈ multi
   @test P2(1.5, 0.5) ∉ multi
   @test P2(0.5, 1.5) ∉ multi
-  if T == Float32
-    @test sprint(show, multi) == "MultiPolyArea{2,Float32}"
-    @test sprint(show, MIME"text/plain"(), multi) ==
-          "MultiPolyArea{2,Float32}\n  └─PolyArea(4-Ring)\n  └─PolyArea(4-Ring)"
-  elseif T == Float64
-    @test sprint(show, multi) == "MultiPolyArea{2,Float64}"
-    @test sprint(show, MIME"text/plain"(), multi) ==
-          "MultiPolyArea{2,Float64}\n  └─PolyArea(4-Ring)\n  └─PolyArea(4-Ring)"
-  end
+  @test sprint(show, multi) == "MultiPolyArea{2,$T}"
+  @test sprint(show, MIME"text/plain"(), multi) == """
+  MultiPolyArea{2,$T}
+  ├─ PolyArea(4-Ring)
+  └─ PolyArea(4-Ring)"""
 
   box1 = Box(P2(0, 0), P2(1, 1))
   box2 = Box(P2(1, 1), P2(2, 2))
@@ -45,12 +41,16 @@
   @test length(mchn) == T(8)
   if T == Float32
     @test sprint(show, mbox) == "MultiBox{2,Float32}"
-    @test sprint(show, MIME"text/plain"(), mbox) ==
-          "MultiBox{2,Float32}\n  └─Box{2, Float32}(Point(0.0f0, 0.0f0), Point(1.0f0, 1.0f0))\n  └─Box{2, Float32}(Point(1.0f0, 1.0f0), Point(2.0f0, 2.0f0))"
+    @test sprint(show, MIME"text/plain"(), mbox) == """
+    MultiBox{2,Float32}
+    ├─ Box(min = (0.0f0, 0.0f0), max = (1.0f0, 1.0f0))
+    └─ Box(min = (1.0f0, 1.0f0), max = (2.0f0, 2.0f0))"""
   elseif T == Float64
     @test sprint(show, mbox) == "MultiBox{2,Float64}"
-    @test sprint(show, MIME"text/plain"(), mbox) ==
-          "MultiBox{2,Float64}\n  └─Box{2, Float64}(Point(0.0, 0.0), Point(1.0, 1.0))\n  └─Box{2, Float64}(Point(1.0, 1.0), Point(2.0, 2.0))"
+    @test sprint(show, MIME"text/plain"(), mbox) == """
+    MultiBox{2,Float64}
+    ├─ Box(min = (0.0, 0.0), max = (1.0, 1.0))
+    └─ Box(min = (1.0, 1.0), max = (2.0, 2.0))"""
   end
 
   # constructor with iterator
@@ -74,12 +74,16 @@
   @test unique(multi) == multi
   if T == Float32
     @test sprint(show, multi) == "MultiPolygon{2,Float32}"
-    @test sprint(show, MIME"text/plain"(), multi) ==
-          "MultiPolygon{2,Float32}\n  └─PolyArea(4-Ring)\n  └─Quadrangle(Point(0.0f0, 0.0f0), Point(1.0f0, 0.0f0), Point(1.0f0, 1.0f0), Point(0.0f0, 1.0f0))"
+    @test sprint(show, MIME"text/plain"(), multi) == """
+    MultiPolygon{2,Float32}
+    ├─ PolyArea(4-Ring)
+    └─ Quadrangle((0.0f0, 0.0f0), ..., (0.0f0, 1.0f0))"""
   elseif T == Float64
     @test sprint(show, multi) == "MultiPolygon{2,Float64}"
-    @test sprint(show, MIME"text/plain"(), multi) ==
-          "MultiPolygon{2,Float64}\n  └─PolyArea(4-Ring)\n  └─Quadrangle(Point(0.0, 0.0), Point(1.0, 0.0), Point(1.0, 1.0), Point(0.0, 1.0))"
+    @test sprint(show, MIME"text/plain"(), multi) == """
+    MultiPolygon{2,Float64}
+    ├─ PolyArea(4-Ring)
+    └─ Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"""
   end
 
   # type aliases
