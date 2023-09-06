@@ -104,12 +104,12 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
   println(io, "PolyArea{$Dim,$T}")
   if length(rings) == 1
     println(io, "  outer")
-    print(io, io_lines(rings[1:1], "    "))
+    print(io, io_lines(rings[1:1], "  "))
   else
     println(io, "  outer")
-    println(io, io_lines(rings[1:1], "    "))
+    println(io, io_lines(rings[1:1], "  "))
     println(io, "  inner")
-    print(io, io_lines(rings[2:end], "    "))
+    print(io, io_lines(rings[2:end], "  "))
   end
 end
 

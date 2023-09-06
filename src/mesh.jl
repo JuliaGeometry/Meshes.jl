@@ -130,9 +130,9 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
   nelms = nelements(m)
   println(io, m)
   println(io, "  $nvert vertices")
-  println(io, io_lines(verts, "    "))
+  println(io, io_lines(verts, "  "))
   println(io, "  $nelms elements")
-  print(io, io_lines(elems, "    "))
+  print(io, io_lines(elems, "  "))
 end
 
 """

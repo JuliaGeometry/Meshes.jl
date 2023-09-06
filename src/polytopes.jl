@@ -246,19 +246,16 @@ Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polyto
   PL(ntuple(i -> rand(rng, Point{embeddim(PL),coordtype(PL)}), nvertices(PL)))
 
 function Base.show(io::IO, p::Polytope)
-  name = prettyname(p)
-  print(io, "$name(")
   ioctx = IOContext(io, :compact => true)
+  name = prettyname(p)
+  print(ioctx, "$name(")
+  verts = vertices(p)
   if nvertices(p) > 3
-    verts = vertices(p)
-    v₁ = Tuple(coordinates(first(verts)))
-    vₙ = Tuple(coordinates(last(verts)))
-    join(ioctx, (v₁, "...", vₙ), ", ")
+    join(ioctx, (first(verts), "...", last(verts)), ", ")
   else
-    verts = (Tuple(coordinates(v)) for v in vertices(p))
     join(ioctx, verts, ", ")
   end
-  print(io, ")")
+  print(ioctx, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope)
@@ -266,5 +263,5 @@ function Base.show(io::IO, ::MIME"text/plain", p::Polytope)
   Dim = embeddim(p)
   T = coordtype(p)
   println(io, "$name{$Dim,$T}")
-  print(io, io_lines(vertices(p), "  "))
+  print(io, io_lines(vertices(p)))
 end

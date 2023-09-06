@@ -65,5 +65,5 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
   println(io, m)
-  print(io, io_lines(m.geoms, "  "))
+  print(io, io_lines(m.geoms))
 end
