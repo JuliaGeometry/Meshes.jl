@@ -250,16 +250,10 @@ Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polyto
 # -----------
 
 function Base.show(io::IO, p::Polytope)
-  ioctx = IOContext(io, :compact => true)
   name = prettyname(p)
-  print(ioctx, "$name(")
-  verts = vertices(p)
-  if nvertices(p) > 3
-    join(ioctx, (first(verts), "...", last(verts)), ", ")
-  else
-    join(ioctx, verts, ", ")
-  end
-  print(ioctx, ")")
+  print(io, "$name(")
+  printverts(io, vertices(p))
+  print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope)

@@ -25,3 +25,12 @@ function io_lines(itr, tab="")
   ]
   join(lines, "\n")
 end
+
+function printverts(io::IO, verts)
+  ioctx = IOContext(io, :compact => true)
+  if length(verts) > 3
+    join(ioctx, (first(verts), "...", last(verts)), ", ")
+  else
+    join(ioctx, verts, ", ")
+  end
+end

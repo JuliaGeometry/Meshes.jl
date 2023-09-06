@@ -28,8 +28,8 @@
   @test sprint(show, multi) == "MultiPolyArea{2,$T}"
   @test sprint(show, MIME"text/plain"(), multi) == """
   MultiPolyArea{2,$T}
-  ├─ PolyArea(4-Ring)
-  └─ PolyArea(4-Ring)"""
+  ├─ PolyArea((0.0, 0.0), ..., (0.0, 1.0))
+  └─ PolyArea((1.0, 1.0), ..., (1.0, 2.0))"""
 
   box1 = Box(P2(0, 0), P2(1, 1))
   box2 = Box(P2(1, 1), P2(2, 2))
@@ -67,7 +67,7 @@
   @test sprint(show, multi) == "MultiPolygon{2,$T}"
   @test sprint(show, MIME"text/plain"(), multi) == """
   MultiPolygon{2,$T}
-  ├─ PolyArea(4-Ring)
+  ├─ PolyArea((0.0, 0.0), ..., (0.0, 1.0))
   └─ Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"""
 
   # type aliases

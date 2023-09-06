@@ -681,9 +681,15 @@
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly = PolyArea([outer, hole1, hole2])
-    @test sprint(show, poly) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
-    @test sprint(show, MIME("text/plain"), poly) == """
+    poly1 = PolyArea(outer)
+    poly2 = PolyArea([outer, hole1, hole2])
+    @test sprint(show, poly1) == "PolyArea((0.0, 0.0), ..., (0.0, 1.0))"
+    @test sprint(show, poly2) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
+    @test sprint(show, MIME("text/plain"), poly1) == """
+    PolyArea{2,$T}
+      outer
+      └─ Ring((0.0, 0.0), ..., (0.0, 1.0))"""
+    @test sprint(show, MIME("text/plain"), poly2) == """
     PolyArea{2,$T}
       outer
       └─ Ring((0.0, 0.0), ..., (0.0, 1.0))
