@@ -745,7 +745,8 @@
 
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     d = Disk(p, T(2))
-    @test sprint(show, d) == "Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)"
+    @test sprint(show, d) ==
+          "Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), d) == """
       Disk{3,Float32}
@@ -803,7 +804,8 @@
 
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     c = Circle(p, T(2))
-    @test sprint(show, c) == "Circle(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)"
+    @test sprint(show, c) ==
+          "Circle(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Circle{3,Float32}
@@ -872,7 +874,8 @@
     @test embeddim(c) == 3
 
     c = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
-    @test sprint(show, c) == "Cylinder(bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 1.0)"
+    @test sprint(show, c) ==
+          "Cylinder(bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Cylinder{3,Float32}
@@ -934,7 +937,8 @@
     @test embeddim(c) == 3
 
     c = CylinderSurface(T(1))
-    @test sprint(show, c) == "CylinderSurface(bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 1.0)"
+    @test sprint(show, c) ==
+          "CylinderSurface(bot = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), top = Plane(p = (0.0, 0.0, 1.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       CylinderSurface{3,Float32}
@@ -969,7 +973,8 @@
     d = Disk(p, T(2))
     a = P3(0, 0, 1)
     c = Cone(d, a)
-    @test sprint(show, c) == "Cone(base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0), apex = (0.0, 0.0, 1.0))"
+    @test sprint(show, c) ==
+          "Cone(base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0), apex = (0.0, 0.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Cone{3,Float32}
@@ -1002,7 +1007,8 @@
     d = Disk(p, T(2))
     a = P3(0, 0, 1)
     s = ConeSurface(d, a)
-    @test sprint(show, s) == "ConeSurface(base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0), apex = (0.0, 0.0, 1.0))"
+    @test sprint(show, s) ==
+          "ConeSurface(base = Disk(plane = Plane(p = (0.0, 0.0, 0.0), u = (1.0, -0.0, -0.0), v = (-0.0, 1.0, -0.0)), radius = 2.0), apex = (0.0, 0.0, 1.0))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), s) == """
       ConeSurface{3,Float32}

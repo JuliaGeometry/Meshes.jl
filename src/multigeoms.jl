@@ -70,6 +70,7 @@ end
 Base.show(io::IO, m::Multi) = summary(io, m)
 
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
-  println(io, m)
+  summary(io, m)
+  println(io)
   print(io, io_lines(m.geoms))
 end

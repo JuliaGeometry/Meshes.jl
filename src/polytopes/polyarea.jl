@@ -99,8 +99,7 @@ function Base.show(io::IO, p::PolyArea)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
-  nverts = nvertices.(p.rings)
-  rings = ["$n-Ring" for n in nverts]
+  rings = p.rings
   println(io, "PolyArea{$Dim,$T}")
   if length(rings) == 1
     println(io, "  outer")

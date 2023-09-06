@@ -55,7 +55,8 @@ Base.show(io::IO, partition::Partition) = summary(io, partition)
 function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
   subs = partition.subsets
   meta = partition.metadata
-  println(io, partition)
+  summary(io, partition)
+  println(io)
   N = length(subs)
   I, J = N > 10 ? (5, N - 4) : (N - 1, N)
   lines = [

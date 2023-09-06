@@ -264,5 +264,6 @@ end
 
 function Base.show(io::IO, ::MIME"text/plain", p::Polytope)
   summary(io, p)
+  println(io)
   print(io, io_lines(vertices(p)))
 end
