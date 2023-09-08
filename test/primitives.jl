@@ -1117,9 +1117,9 @@ end
 
 @testset "TruncatedCone" begin
   pb = Plane(P3(0, 0, 0), V3(0, 0, 1))
-  db = Disk(pb, T(5))
+  db = Disk(pb, T(1))
   pt = Plane(P3(0, 0, 10), V3(0, 0, 1))
-  dt = Disk(pt, T(3))
+  dt = Disk(pt, T(2))
   c = TruncatedCone(db, dt)
   @test embeddim(c) == 3
   @test paramdim(c) == 3
@@ -1130,4 +1130,30 @@ end
   c = rand(TruncatedCone{T})
   @test c isa TruncatedCone
   @test embeddim(c) == 3
+
+  c = TruncatedCone(db, dt)
+  @test P3(0, 0, 0) ∈ c
+  @test P3(0, 0, 10) ∈ c
+  @test P3(1, 0, 0) ∈ c
+  @test P3(2, 0, 10) ∈ c
+  @test P3(1, 0, 5) ∈ c
+
+  @test P3(1, 1, 0) ∉ c
+  @test P3(2, 2, 10) ∉ c
+  @test P3(0, 0, -0.01) ∉ c
+  @test P3(0, 0, 10.01) ∉ c
+
+  # reverse order, when top is larger than bottom
+  # the truncated cone is the same geometry
+  c = TruncatedCone(dt, db)
+  @test P3(0, 0, 0) ∈ c
+  @test P3(0, 0, 10) ∈ c
+  @test P3(1, 0, 0) ∈ c
+  @test P3(2, 0, 10) ∈ c
+  @test P3(1, 0, 5) ∈ c
+
+  @test P3(1, 1, 0) ∉ c
+  @test P3(2, 2, 10) ∉ c
+  @test P3(0, 0, -0.01) ∉ c
+  @test P3(0, 0, 10.01) ∉ c
 end

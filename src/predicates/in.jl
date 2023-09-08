@@ -90,6 +90,24 @@ function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
+function Base.in(p::Point{3}, c::TruncatedCone)
+  t = center(top(c))
+  b = center(bottom(c))
+  ax = b - t
+  (p - t) ⋅ ax ≥ 0 || return false
+  (p - b) ⋅ ax ≤ 0 || return false
+  # axial distance of p
+  ax_d = (p - t) ⋅ normalize(ax)
+  ax_drel = ax_d/norm(ax)
+  # cone radius at axial distance of p
+  rt = radius(top(c))
+  rb = radius(bottom(c))
+  c_r = rt*(1-ax_drel) + rb*ax_drel
+  # radial distance of p
+  rad_d = norm((p - t) - ax_drel * ax)
+  rad_d ≤ c_r
+end
+
 function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
   a, b, c = vertices(t)
