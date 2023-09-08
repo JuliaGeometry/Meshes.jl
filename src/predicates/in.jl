@@ -81,6 +81,15 @@ function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
+function Base.in(p::Point{3}, c::Cone)
+  a = apex(c)
+  b = center(base(c))
+  ax = a - b
+  (a - p) ⋅ ax ≥ 0 || return false
+  (b - p) ⋅ ax ≤ 0 || return false
+  ∠(b, a, p) ≤ halfangle(c)
+end
+
 function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
   a, b, c = vertices(t)
