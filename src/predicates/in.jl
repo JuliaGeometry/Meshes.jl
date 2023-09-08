@@ -63,6 +63,15 @@ function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
   isapprox(s, r, atol=atol(T))
 end
 
+function Base.in(p::Point{3}, c::Cone)
+  a = apex(c)
+  b = center(base(c))
+  ax = a - b
+  (a - p) ⋅ ax ≥ 0 || return false
+  (b - p) ⋅ ax ≤ 0 || return false
+  ∠(b, a, p) ≤ halfangle(c)
+end
+
 function Base.in(p::Point{3}, c::Cylinder)
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)

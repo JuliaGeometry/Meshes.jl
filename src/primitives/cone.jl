@@ -23,5 +23,9 @@ base(c::Cone) = c.base
 
 apex(c::Cone) = c.apex
 
+height(c::Cone) = norm(center(base(c)) - apex(c))
+
+halfangle(c::Cone) = atan(radius(base(c)), height(c))
+
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cone{T}}) where {T} =
   Cone(rand(rng, Disk{T}), rand(rng, Point{3,T}))
