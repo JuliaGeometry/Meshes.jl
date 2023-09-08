@@ -990,30 +990,30 @@
     # cone: apex at (5,4,3); base center at (5,1,3)
     # halfangle: 30° -> radius: sqrt(3)
     # axis of the cone is parallel to y axis
-    p = Plane(Point3(5,1,3), Vec3(0,1,0))
-    d = Disk(p, sqrt(3))
-    a = Point3(5,4,3)
+    p = Plane(P3(5,1,3), V3(0,1,0))
+    d = Disk(p, sqrt(T(3)))
+    a = P3(5,4,3)
     c = Cone(d, a)
 
-    @test rad2deg(Meshes.halfangle(c)) ≈ 30
-    @test Meshes.height(c) ≈ 3
+    @test rad2deg(Meshes.halfangle(c)) ≈ T(30)
+    @test Meshes.height(c) ≈ T(3)
 
-    @test Point3(5,1,3) ∈ c
-    @test Point3(5,4,3) ∈ c
-    @test Point3(5,1,3-sqrt(3)) ∈ c
-    @test Point3(5,1,3+sqrt(3)) ∈ c
-    @test Point3(5-sqrt(3),1,3) ∈ c
-    @test Point3(5+sqrt(3),1,3) ∈ c
-    @test Point3(5,2.5,3) ∈ c
-    @test Point3(5+sqrt(3)/2,2.5,3) ∈ c
-    @test Point3(5-sqrt(3)/2,2.5,3) ∈ c
+    @test P3(5,1,3) ∈ c
+    @test P3(5,4,3) ∈ c
+    @test P3(5,1,3-sqrt(3)) ∈ c
+    @test P3(5,1,3+sqrt(3)) ∈ c
+    @test P3(5-sqrt(3),1,3) ∈ c
+    @test P3(5+sqrt(3),1,3) ∈ c
+    @test P3(5,2.5,3) ∈ c
+    @test P3(5+sqrt(3)/2,2.5,3) ∈ c
+    @test P3(5-sqrt(3)/2,2.5,3) ∈ c
 
-    @test Point3(5,0.9,3) ∉ c
-    @test Point3(5,4.1,3) ∉ c
-    @test Point3(5,1,1) ∉ c
-    @test Point3(5+sqrt(3)+0.01,1,3) ∉ c
-    @test Point3(5+sqrt(3)/2+0.01,2.5,3) ∉ c
-    @test Point3(5-sqrt(3)/2-0.01,2.5,3) ∉ c
+    @test P3(5,0.9,3) ∉ c
+    @test P3(5,4.1,3) ∉ c
+    @test P3(5,1,1) ∉ c
+    @test P3(5+sqrt(3)+0.01,1,3) ∉ c
+    @test P3(5+sqrt(3)/2+0.01,2.5,3) ∉ c
+    @test P3(5-sqrt(3)/2-0.01,2.5,3) ∉ c
   end
 
   @testset "ConeSurface" begin
