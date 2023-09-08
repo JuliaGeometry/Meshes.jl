@@ -1125,6 +1125,8 @@ end
   @test paramdim(c) == 3
   @test coordtype(c) == T
 
+  @test_throws AssertionError TruncatedCone(db, db)
+
   c = rand(TruncatedCone{T})
   @test c isa TruncatedCone
   @test embeddim(c) == 3

@@ -17,6 +17,7 @@ struct TruncatedCone{T} <: Primitive{3,T}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     @assert bn ⋅ tn ≈ 1 "Bottom and top plane must be parallel"
+    @assert center(bot) ≉  center(top) "Bottom and top centers need to be distinct"
     new(bot, top)
   end
 end
