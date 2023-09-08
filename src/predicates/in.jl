@@ -63,6 +63,15 @@ function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
   isapprox(s, r, atol=atol(T))
 end
 
+function Base.in(p::Point{3}, c::Cone)
+  a = apex(c)
+  b = center(base(c))
+  ax = a - b
+  (a - p) ⋅ ax ≥ 0 || return false
+  (b - p) ⋅ ax ≤ 0 || return false
+  ∠(b, a, p) ≤ halfangle(c)
+end
+
 function Base.in(p::Point{3}, c::Cylinder)
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
@@ -79,15 +88,6 @@ function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   Q = rotation_between(n, Vec{3,T}(0, 0, 1))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
-end
-
-function Base.in(p::Point{3}, c::Cone)
-  a = apex(c)
-  b = center(base(c))
-  ax = a - b
-  (a - p) ⋅ ax ≥ 0 || return false
-  (b - p) ⋅ ax ≤ 0 || return false
-  ∠(b, a, p) ≤ halfangle(c)
 end
 
 function Base.in(p::Point{2}, t::Triangle{2})
