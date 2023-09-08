@@ -1114,3 +1114,18 @@
     end
   end
 end
+
+@testset "TruncatedCone" begin
+  pb = Plane(P3(0, 0, 0), V3(0, 0, 1))
+  db = Disk(pb, T(5))
+  pt = Plane(P3(0, 0, 10), V3(0, 0, 1))
+  dt = Disk(pt, T(3))
+  c = TruncatedCone(db, dt)
+  @test embeddim(c) == 3
+  @test paramdim(c) == 3
+  @test coordtype(c) == T
+
+  c = rand(TruncatedCone{T})
+  @test c isa TruncatedCone
+  @test embeddim(c) == 3
+end
