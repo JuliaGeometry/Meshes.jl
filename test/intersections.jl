@@ -1123,7 +1123,8 @@
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
     intersection(poly, other) |> type == Intersecting
     @test all(
-      vertices(poly ∩ other) .≈ [P2(3, 4), P2(4, 3), P2(5, 3), P2(5, 2), P2(4, 1), P2(2, 1), P2(2, 0), P2(5, 0), P2(5, 4)]
+      vertices(poly ∩ other) .≈
+      [P2(3, 4), P2(4, 3), P2(5, 3), P2(5, 2), P2(4, 1), P2(2, 1), P2(2, 0), P2(5, 0), P2(5, 4)]
     )
 
     # inside
