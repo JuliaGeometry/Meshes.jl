@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Selinger()
+    Selinger(ϵ)
 
-Simplify geometries with Selinger algorithm, which attempts to
+Simplify geometries with Selinger's algorithm, which attempts to
 minimize the number of vertices and the deviation of vertices
-to the resulting segments.
+to the resulting segments based on deviation tolerance `ϵ`.
 
 ## References
 
@@ -38,7 +38,7 @@ function simplify(chain::Chain{Dim,T}, method::Selinger) where {Dim,T}
     δ = [evaluate(Euclidean(), p[k], l) for k in i₊:j₋]
     if all(<(ϵ), δ)
       dᵢⱼ = norm(p[j] - p[i])
-      σᵢⱼ = o == 1 ? zero(T) : sqrt(sum(δ .^ 2) / length(δ))
+      σᵢⱼ = o == 1 ? zero(T) : sqrt(sum(abs2, δ) / length(δ))
       P[(i, jₙ)] = dᵢⱼ * σᵢⱼ
     end
   end
