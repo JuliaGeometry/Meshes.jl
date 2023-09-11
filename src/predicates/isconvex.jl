@@ -52,6 +52,8 @@ isconvex(::CylinderSurface) = false
 
 isconvex(::Torus) = false
 
+isconvex(::TruncatedCone) = true
+
 isconvex(::Triangle) = true
 
 isconvex(::Tetrahedron) = true
