@@ -3,17 +3,17 @@
 # ------------------------------------------------------------------
 
 """
-    TruncatedCone(bot, top)
+  Frustum(bot, top)
 
-A truncated cone (frustum) with `bot` and `top` disks.
+A frustum (truncated cone) with `bot` and `top` disks.
 See https://en.wikipedia.org/wiki/Frustum.
 
 """
-struct TruncatedCone{T} <: Primitive{3,T}
+struct Frustum{T} <: Primitive{3,T}
   bot::Disk{T}
   top::Disk{T}
 
-  function TruncatedCone{T}(bot, top) where {T}
+  function Frustum{T}(bot, top) where {T}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     @assert bn ⋅ tn ≈ 1 "Bottom and top plane must be parallel"
@@ -22,22 +22,18 @@ struct TruncatedCone{T} <: Primitive{3,T}
   end
 end
 
-TruncatedCone(bot::Disk{T}, top::Disk{T}) where {T} = TruncatedCone{T}(bot, top)
+Frustum(bot::Disk{T}, top::Disk{T}) where {T} = Frustum{T}(bot, top)
 
-paramdim(::Type{<:TruncatedCone}) = 3
+bottom(f::Frustum) = f.bot
 
-bottom(c::TruncatedCone) = c.bot
+top(f::Frustum) = f.top
 
-top(c::TruncatedCone) = c.top
+height(f::Frustum) = norm(center(bottom(f)) - center(top(f)))
 
-height(c::TruncatedCone) = norm(center(bottom(c)) - center(top(c)))
-
-halfangle(c::TruncatedCone) = atan(radius(base(c)), height(c))
-
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{TruncatedCone{T}}) where {T}
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum{T}}) where {T}
   bottom = rand(rng, Disk{T})
   ax = normal(plane(bottom))
   topplane = Plane{T}(center(bottom)+rand(T)*ax, ax)
   top = Disk{T}(topplane, rand(T))
-  TruncatedCone(bottom, top)
+  Frustum(bottom, top)
 end

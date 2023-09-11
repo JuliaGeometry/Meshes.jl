@@ -52,7 +52,7 @@ isconvex(::CylinderSurface) = false
 
 isconvex(::Torus) = false
 
-isconvex(::TruncatedCone) = true
+isconvex(::Frustum) = true
 
 isconvex(::Triangle) = true
 

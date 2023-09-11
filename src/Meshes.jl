@@ -146,7 +146,7 @@ export
   Cone,
   ConeSurface,
   Torus,
-  TruncatedCone,
+  Frustum,
   controls,
   ncontrols,
   degree,

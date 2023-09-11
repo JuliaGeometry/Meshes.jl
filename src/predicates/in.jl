@@ -90,9 +90,9 @@ function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
-function Base.in(p::Point{3}, c::TruncatedCone)
-  t = center(top(c))
-  b = center(bottom(c))
+function Base.in(p::Point{3}, f::Frustum)
+  t = center(top(f))
+  b = center(bottom(f))
   ax = b - t
   (p - t) ⋅ ax ≥ 0 || return false
   (p - b) ⋅ ax ≤ 0 || return false
@@ -100,8 +100,8 @@ function Base.in(p::Point{3}, c::TruncatedCone)
   ax_d = (p - t) ⋅ normalize(ax)
   ax_drel = ax_d/norm(ax)
   # cone radius at axial distance of p
-  rt = radius(top(c))
-  rb = radius(bottom(c))
+  rt = radius(top(f))
+  rb = radius(bottom(f))
   c_r = rt*(1-ax_drel) + rb*ax_drel
   # radial distance of p
   rad_d = norm((p - t) - ax_drel * ax)

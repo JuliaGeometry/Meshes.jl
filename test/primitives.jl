@@ -1115,45 +1115,43 @@
   end
 end
 
-@testset "TruncatedCone" begin
+@testset "Frustum" begin
   pb = Plane(P3(0, 0, 0), V3(0, 0, 1))
   db = Disk(pb, T(1))
   pt = Plane(P3(0, 0, 10), V3(0, 0, 1))
   dt = Disk(pt, T(2))
-  c = TruncatedCone(db, dt)
-  @test embeddim(c) == 3
-  @test paramdim(c) == 3
-  @test coordtype(c) == T
+  f = Frustum(db, dt)
+  @test embeddim(f) == 3
+  @test coordtype(f) == T
 
-  @test_throws AssertionError TruncatedCone(db, db)
+  @test_throws AssertionError Frustum(db, db)
 
-  c = rand(TruncatedCone{T})
-  @test c isa TruncatedCone
-  @test embeddim(c) == 3
+  f = rand(Frustum{T})
+  @test f isa Frustum
 
-  c = TruncatedCone(db, dt)
-  @test P3(0, 0, 0) ∈ c
-  @test P3(0, 0, 10) ∈ c
-  @test P3(1, 0, 0) ∈ c
-  @test P3(2, 0, 10) ∈ c
-  @test P3(1, 0, 5) ∈ c
+  f = Frustum(db, dt)
+  @test P3(0, 0, 0) ∈ f
+  @test P3(0, 0, 10) ∈ f
+  @test P3(1, 0, 0) ∈ f
+  @test P3(2, 0, 10) ∈ f
+  @test P3(1, 0, 5) ∈ f
 
-  @test P3(1, 1, 0) ∉ c
-  @test P3(2, 2, 10) ∉ c
-  @test P3(0, 0, -0.01) ∉ c
-  @test P3(0, 0, 10.01) ∉ c
+  @test P3(1, 1, 0) ∉ f
+  @test P3(2, 2, 10) ∉ f
+  @test P3(0, 0, -0.01) ∉ f
+  @test P3(0, 0, 10.01) ∉ f
 
   # reverse order, when top is larger than bottom
-  # the truncated cone is the same geometry
-  c = TruncatedCone(dt, db)
-  @test P3(0, 0, 0) ∈ c
-  @test P3(0, 0, 10) ∈ c
-  @test P3(1, 0, 0) ∈ c
-  @test P3(2, 0, 10) ∈ c
-  @test P3(1, 0, 5) ∈ c
+  # the frustum is the same geometry
+  f = Frustum(dt, db)
+  @test P3(0, 0, 0) ∈ f
+  @test P3(0, 0, 10) ∈ f
+  @test P3(1, 0, 0) ∈ f
+  @test P3(2, 0, 10) ∈ f
+  @test P3(1, 0, 5) ∈ f
 
-  @test P3(1, 1, 0) ∉ c
-  @test P3(2, 2, 10) ∉ c
-  @test P3(0, 0, -0.01) ∉ c
-  @test P3(0, 0, 10.01) ∉ c
+  @test P3(1, 1, 0) ∉ f
+  @test P3(2, 2, 10) ∉ f
+  @test P3(0, 0, -0.01) ∉ f
+  @test P3(0, 0, 10.01) ∉ f
 end
