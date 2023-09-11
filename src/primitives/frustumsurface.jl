@@ -3,18 +3,18 @@
 # ------------------------------------------------------------------
 
 """
-  Frustum(bot, top)
+  FrustumSurface(bot, top)
 
-A frustum (truncated cone) with `bot` and `top` disks.
+A frustum (truncated cone) surface with `bot` and `top` disks.
 See https://en.wikipedia.org/wiki/Frustum.
 
-See also [`FrustumSurface`](@ref).
+See also [`Frustum`](@ref).
 """
-struct Frustum{T} <: Primitive{3,T}
+struct FrustumSurface{T} <: Primitive{3,T}
   bot::Disk{T}
   top::Disk{T}
 
-  function Frustum{T}(bot, top) where {T}
+  function FrustumSurface{T}(bot, top) where {T}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     @assert bn ⋅ tn ≈ 1 "Bottom and top plane must be parallel"
@@ -23,18 +23,18 @@ struct Frustum{T} <: Primitive{3,T}
   end
 end
 
-Frustum(bot::Disk{T}, top::Disk{T}) where {T} = Frustum{T}(bot, top)
+FrustumSurface(bot::Disk{T}, top::Disk{T}) where {T} = FrustumSurface{T}(bot, top)
 
-bottom(f::Frustum) = f.bot
+bottom(f::FrustumSurface) = f.bot
 
-top(f::Frustum) = f.top
+top(f::FrustumSurface) = f.top
 
-height(f::Frustum) = norm(center(bottom(f)) - center(top(f)))
+height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum{T}}) where {T}
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{FrustumSurface{T}}) where {T}
   bottom = rand(rng, Disk{T})
   ax = normal(plane(bottom))
   topplane = Plane{T}(center(bottom)+rand(T)*ax, ax)
   top = Disk{T}(topplane, rand(T))
-  Frustum(bottom, top)
+  FrustumSurface(bottom, top)
 end

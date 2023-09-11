@@ -1123,6 +1123,7 @@ end
   f = Frustum(db, dt)
   @test embeddim(f) == 3
   @test coordtype(f) == T
+  @test boundary(f) == FrustumSurface(db, dt)
 
   @test_throws AssertionError Frustum(db, db)
 
@@ -1154,4 +1155,20 @@ end
   @test P3(2, 2, 10) ∉ f
   @test P3(0, 0, -0.01) ∉ f
   @test P3(0, 0, 10.01) ∉ f
+end
+
+@testset "FrustumSurface" begin
+  pb = Plane(P3(0, 0, 0), V3(0, 0, 1))
+  db = Disk(pb, T(1))
+  pt = Plane(P3(0, 0, 10), V3(0, 0, 1))
+  dt = Disk(pt, T(2))
+  f = FrustumSurface(db, dt)
+  @test embeddim(f) == 3
+  @test coordtype(f) == T
+  @test isnothing(boundary(f))
+
+  @test_throws AssertionError FrustumSurface(db, db)
+
+  f = rand(FrustumSurface{T})
+  @test f isa FrustumSurface
 end

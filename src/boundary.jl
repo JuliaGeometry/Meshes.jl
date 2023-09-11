@@ -73,6 +73,10 @@ end
 
 boundary(::Torus) = nothing
 
+boundary(f::Frustum) = FrustumSurface(bottom(f), top(f))
+
+boundary(::FrustumSurface) = nothing
+
 boundary(s::Segment) = PointSet(pointify(s))
 
 function boundary(r::Rope)
