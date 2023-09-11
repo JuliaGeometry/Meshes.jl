@@ -1126,6 +1126,8 @@ end
   @test boundary(f) == FrustumSurface(db, dt)
 
   @test_throws AssertionError Frustum(db, db)
+  
+  @test !Meshes.isparametrized(Frustum)
 
   f = rand(Frustum{T})
   @test f isa Frustum
@@ -1168,6 +1170,8 @@ end
   @test isnothing(boundary(f))
 
   @test_throws AssertionError FrustumSurface(db, db)
+  
+  @test !Meshes.isparametrized(FrustumSurface)
 
   f = rand(FrustumSurface{T})
   @test f isa FrustumSurface
