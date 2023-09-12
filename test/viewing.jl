@@ -108,4 +108,20 @@
   @test linds[9, 15] ∈ indices(grid, seg)
   @test linds[7, 11] ∈ indices(grid, rope)
   @test linds[12, 5] ∈ indices(grid, ring)
+
+  # points
+  p1 = P2(0, 0)
+  p2 = P2(0.5, 0.5)
+  p3 = P2(1, 1)
+  p4 = P2(2, 2)
+  p5 = P2(10, 10)
+  p6 = P2(11, 11)
+  grid = CartesianGrid{T}(10, 10)
+  linds = LinearIndices(size(grid))
+  @test linds[1, 1] == only(indices(grid, p1))
+  @test linds[1, 1] == only(indices(grid, p2))
+  @test linds[1, 1] == only(indices(grid, p3))
+  @test linds[2, 2] == only(indices(grid, p4))
+  @test linds[10, 10] == only(indices(grid, p5))
+  @test isempty(indices(grid, p6))
 end
