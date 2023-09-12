@@ -47,7 +47,8 @@ indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), doma
 function indices(grid::Grid{2}, poly::Polygon{2})
   dims = size(grid)
   mask = zeros(Int, dims)
-  cpoly = clip(poly, boundingbox(grid), SutherlandHodgman())
+  cpoly = poly ∩ boundingbox(grid)
+  isnothing(cpoly) && return Int[]
 
   for (i, triangle) in enumerate(simplexify(cpoly))
     _fill!(mask, grid, i, triangle)
@@ -93,26 +94,26 @@ function indices(grid::CartesianGrid, box::Box)
 end
 
 # utils
-function _fill!(mask, grid, fval, triangle)
+function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)
 
   # fill edges of triangle
-  _bresenham!(mask, grid, fval, v[1], v[2])
-  _bresenham!(mask, grid, fval, v[2], v[3])
-  _bresenham!(mask, grid, fval, v[3], v[1])
+  _bresenham!(mask, grid, val, v[1], v[2])
+  _bresenham!(mask, grid, val, v[2], v[3])
+  _bresenham!(mask, grid, val, v[3], v[1])
 
   # fill interior of triangle
-  j₁ = findfirst(==(fval), mask).I[2]
-  j₂ = findlast(==(fval), mask).I[2]
+  j₁ = findfirst(==(val), mask).I[2]
+  j₂ = findlast(==(val), mask).I[2]
   for j in j₁:j₂
-    i₁ = findfirst(==(fval), @view(mask[:, j]))
-    i₂ = findlast(==(fval), @view(mask[:, j]))
-    mask[i₁:i₂, j] .= fval
+    i₁ = findfirst(==(val), @view(mask[:, j]))
+    i₂ = findlast(==(val), @view(mask[:, j]))
+    mask[i₁:i₂, j] .= val
   end
 end
 
 # Bresenham's line algorithm: https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-function _bresenham!(mask, grid, fval, p₁, p₂)
+function _bresenham!(mask, grid, val, p₁, p₂)
   o = minimum(grid)
   s = spacing(grid)
 
@@ -129,20 +130,20 @@ function _bresenham!(mask, grid, fval, p₁, p₂)
 
   if abs(y₂ - y₁) < abs(x₂ - x₁)
     if x₁ > x₂
-      _bresenhamlow!(mask, fval, x₂, y₂, x₁, y₁)
+      _bresenhamlow!(mask, val, x₂, y₂, x₁, y₁)
     else
-      _bresenhamlow!(mask, fval, x₁, y₁, x₂, y₂)
+      _bresenhamlow!(mask, val, x₁, y₁, x₂, y₂)
     end
   else
     if y₁ > y₂
-      _bresenhamhigh!(mask, fval, x₂, y₂, x₁, y₁)
+      _bresenhamhigh!(mask, val, x₂, y₂, x₁, y₁)
     else
-      _bresenhamhigh!(mask, fval, x₁, y₁, x₂, y₂)
+      _bresenhamhigh!(mask, val, x₁, y₁, x₂, y₂)
     end
   end
 end
 
-function _bresenhamlow!(mask, fval, x₁, y₁, x₂, y₂)
+function _bresenhamlow!(mask, val, x₁, y₁, x₂, y₂)
   dx = x₂ - x₁
   dy = y₂ - y₁
   yi = 1
@@ -155,7 +156,7 @@ function _bresenhamlow!(mask, fval, x₁, y₁, x₂, y₂)
   y = y₁
 
   for x in x₁:x₂
-    mask[x, y] = fval
+    mask[x, y] = val
 
     if D > 0
       y = y + yi
@@ -166,7 +167,7 @@ function _bresenhamlow!(mask, fval, x₁, y₁, x₂, y₂)
   end
 end
 
-function _bresenhamhigh!(mask, fval, x₁, y₁, x₂, y₂)
+function _bresenhamhigh!(mask, val, x₁, y₁, x₂, y₂)
   dx = x₂ - x₁
   dy = y₂ - y₁
   xi = 1
@@ -179,7 +180,7 @@ function _bresenhamhigh!(mask, fval, x₁, y₁, x₂, y₂)
   x = x₁
 
   for y in y₁:y₂
-    mask[x, y] = fval
+    mask[x, y] = val
 
     if D > 0
       x = x + xi
