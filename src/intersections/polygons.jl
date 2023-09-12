@@ -11,3 +11,5 @@ function intersection(f, poly₁::Polygon, poly₂::Polygon)
     @IT Intersecting clipped f
   end
 end
+
+intersection(f, poly::Polygon{2}, box::Box{2}) = intersection(f, poly, convert(Quadrangle, box))
