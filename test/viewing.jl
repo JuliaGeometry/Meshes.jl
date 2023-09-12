@@ -81,6 +81,13 @@
   @test linds[46, 57] ∈ indices(grid, poly1)
   @test linds[48, 55] ∈ indices(grid, poly2)
 
+  # multi
+  multi = Multi([tri, pent])
+  grid = CartesianGrid{T}(20, 20)
+  linds = LinearIndices(size(grid))
+  @test linds[10, 10] ∈ indices(grid, multi)
+  @test linds[10, 6] ∈ indices(grid, multi)
+
   # clipping
   tri = Triangle(P2(-4, 10), P2(5, 19), P2(5, 1))
   grid = CartesianGrid{T}(20, 20)
