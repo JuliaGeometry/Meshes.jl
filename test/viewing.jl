@@ -93,4 +93,14 @@
   grid = CartesianGrid{T}(20, 20)
   linds = LinearIndices(size(grid))
   @test linds[3, 10] ∈ indices(grid, tri)
+
+  # chain
+  seg = Segment(P2(2, 12), P2(16, 18))
+  rope = Rope(P2(8, 1), P2(5, 9), P2(9, 13), P2(17, 10))
+  ring = Ring(P2(8, 1), P2(5, 9), P2(9, 13), P2(17, 10))
+  grid = CartesianGrid{T}(20, 20)
+  linds = LinearIndices(size(grid))
+  @test linds[9, 15] ∈ indices(grid, seg)
+  @test linds[7, 11] ∈ indices(grid, rope)
+  @test linds[12, 5] ∈ indices(grid, ring)
 end
