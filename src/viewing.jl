@@ -57,7 +57,7 @@ function indices(grid::Grid{2}, poly::Polygon{2})
   LinearIndices(dims)[mask .> 0]
 end
 
-indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, collect(multi)) |> unique
+indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
