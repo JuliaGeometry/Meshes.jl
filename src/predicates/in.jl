@@ -97,15 +97,15 @@ function Base.in(p::Point{3}, f::Frustum)
   (p - t) ⋅ ax ≥ 0 || return false
   (p - b) ⋅ ax ≤ 0 || return false
   # axial distance of p
-  ax_d = (p - t) ⋅ normalize(ax)
-  ax_drel = ax_d/norm(ax)
-  # cone radius at axial distance of p
+  ad = (p - t) ⋅ normalize(ax)
+  adrel = ad/norm(ax)
+  # frustum radius at axial distance of p
   rt = radius(top(f))
   rb = radius(bottom(f))
-  c_r = rt*(1-ax_drel) + rb*ax_drel
+  r = rt*(1-adrel) + rb*adrel
   # radial distance of p
-  rad_d = norm((p - t) - ax_drel * ax)
-  rad_d ≤ c_r
+  rd = norm((p - t) - adrel * ax)
+  rd ≤ r
 end
 
 function Base.in(p::Point{2}, t::Triangle{2})
