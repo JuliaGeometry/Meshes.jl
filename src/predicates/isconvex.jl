@@ -50,9 +50,9 @@ isconvex(::Cylinder) = true
 
 isconvex(::CylinderSurface) = false
 
-isconvex(::Torus) = false
-
 isconvex(::Frustum) = true
+
+isconvex(::Torus) = false
 
 isconvex(::Triangle) = true
 

@@ -82,14 +82,6 @@ function Base.in(p::Point{3}, c::Cylinder)
   norm((p - b) × a) / norm(a) ≤ r
 end
 
-function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
-  R, r = radii(t)
-  c, n = center(t), normal(t)
-  Q = rotation_between(n, Vec{3,T}(0, 0, 1))
-  x, y, z = Q * (p - c)
-  (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
-end
-
 function Base.in(p::Point{3}, f::Frustum)
   t = center(top(f))
   b = center(bottom(f))
@@ -106,6 +98,14 @@ function Base.in(p::Point{3}, f::Frustum)
   # radial distance of p
   rd = norm((p - t) - adrel * ax)
   rd ≤ r
+end
+
+function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
+  R, r = radii(t)
+  c, n = center(t), normal(t)
+  Q = rotation_between(n, Vec{3,T}(0, 0, 1))
+  x, y, z = Q * (p - c)
+  (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
 function Base.in(p::Point{2}, t::Triangle{2})
