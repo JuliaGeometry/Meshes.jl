@@ -18,7 +18,7 @@ struct FrustumSurface{T} <: Primitive{3,T}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     @assert bn ⋅ tn ≈ 1 "Bottom and top plane must be parallel"
-    @assert center(bot) ≉  center(top) "Bottom and top centers need to be distinct"
+    @assert center(bot) ≉ center(top) "Bottom and top centers need to be distinct"
     new(bot, top)
   end
 end
@@ -34,7 +34,7 @@ height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
 function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{FrustumSurface{T}}) where {T}
   bottom = rand(rng, Disk{T})
   ax = normal(plane(bottom))
-  topplane = Plane{T}(center(bottom)+rand(T)*ax, ax)
+  topplane = Plane{T}(center(bottom) + rand(T) * ax, ax)
   top = Disk{T}(topplane, rand(T))
   FrustumSurface(bottom, top)
 end

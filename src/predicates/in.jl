@@ -90,11 +90,11 @@ function Base.in(p::Point{3}, f::Frustum)
   (p - b) ⋅ ax ≤ 0 || return false
   # axial distance of p
   ad = (p - t) ⋅ normalize(ax)
-  adrel = ad/norm(ax)
+  adrel = ad / norm(ax)
   # frustum radius at axial distance of p
   rt = radius(top(f))
   rb = radius(bottom(f))
-  r = rt*(1-adrel) + rb*adrel
+  r = rt * (1 - adrel) + rb * adrel
   # radial distance of p
   rd = norm((p - t) - adrel * ax)
   rd ≤ r
