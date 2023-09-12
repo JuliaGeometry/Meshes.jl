@@ -48,12 +48,12 @@ function indices(grid::Grid{Dim}, point::Point{Dim}) where {Dim}
   point ∉ grid && return Int[]
 
   # grid properties
-  o = minimum(grid)
-  s = spacing(grid)
+  orig = minimum(grid)
+  spac = spacing(grid)
   dims = size(grid)
 
   # integer coordinates
-  coords = ceil.(Int, (point - o) ./ s)
+  coords = ceil.(Int, (point - orig) ./ spac)
 
   # fix coordinates that are on the grid border
   coords = clamp.(coords, 1, dims)
