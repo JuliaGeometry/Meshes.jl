@@ -94,6 +94,11 @@
   linds = LinearIndices(size(grid))
   @test linds[3, 10] ∈ indices(grid, tri)
 
+  # out of grid
+  tri = Triangle(P2(-12, 8), P2(-8, 14), P2(-4, 8))
+  grid = CartesianGrid{T}(20, 20)
+  @test isempty(indices(grid, tri))
+
   # chain
   seg = Segment(P2(2, 12), P2(16, 18))
   rope = Rope(P2(8, 1), P2(5, 9), P2(9, 13), P2(17, 10))
