@@ -82,6 +82,24 @@ function Base.in(p::Point{3}, c::Cylinder)
   norm((p - b) × a) / norm(a) ≤ r
 end
 
+function Base.in(p::Point{3}, f::Frustum)
+  t = center(top(f))
+  b = center(bottom(f))
+  ax = b - t
+  (p - t) ⋅ ax ≥ 0 || return false
+  (p - b) ⋅ ax ≤ 0 || return false
+  # axial distance of p
+  ad = (p - t) ⋅ normalize(ax)
+  adrel = ad/norm(ax)
+  # frustum radius at axial distance of p
+  rt = radius(top(f))
+  rb = radius(bottom(f))
+  r = rt*(1-adrel) + rb*adrel
+  # radial distance of p
+  rd = norm((p - t) - adrel * ax)
+  rd ≤ r
+end
+
 function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
   R, r = radii(t)
   c, n = center(t), normal(t)

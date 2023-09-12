@@ -71,6 +71,10 @@ function boundary(p::Pyramid)
   SimpleMesh(pointify(p), connect.(indices))
 end
 
+boundary(f::Frustum) = FrustumSurface(bottom(f), top(f))
+
+boundary(::FrustumSurface) = nothing
+
 boundary(::Torus) = nothing
 
 boundary(s::Segment) = PointSet(pointify(s))

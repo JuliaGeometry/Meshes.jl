@@ -145,6 +145,8 @@ export
   CylinderSurface,
   Cone,
   ConeSurface,
+  Frustum,
+  FrustumSurface,
   Torus,
   controls,
   ncontrols,

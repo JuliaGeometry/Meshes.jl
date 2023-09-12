@@ -1049,6 +1049,68 @@
       └─ apex: Point(0.0, 0.0, 1.0)"""
     end
   end
+  
+  @testset "Frustum" begin
+    pb = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    db = Disk(pb, T(1))
+    pt = Plane(P3(0, 0, 10), V3(0, 0, 1))
+    dt = Disk(pt, T(2))
+    f = Frustum(db, dt)
+    @test embeddim(f) == 3
+    @test coordtype(f) == T
+    @test boundary(f) == FrustumSurface(db, dt)
+  
+    @test_throws AssertionError Frustum(db, db)
+    
+    @test !Meshes.isparametrized(Frustum)
+  
+    f = rand(Frustum{T})
+    @test f isa Frustum
+  
+    f = Frustum(db, dt)
+    @test P3(0, 0, 0) ∈ f
+    @test P3(0, 0, 10) ∈ f
+    @test P3(1, 0, 0) ∈ f
+    @test P3(2, 0, 10) ∈ f
+    @test P3(1, 0, 5) ∈ f
+  
+    @test P3(1, 1, 0) ∉ f
+    @test P3(2, 2, 10) ∉ f
+    @test P3(0, 0, -0.01) ∉ f
+    @test P3(0, 0, 10.01) ∉ f
+  
+    # reverse order, when top is larger than bottom
+    # the frustum is the same geometry
+    f = Frustum(dt, db)
+    @test P3(0, 0, 0) ∈ f
+    @test P3(0, 0, 10) ∈ f
+    @test P3(1, 0, 0) ∈ f
+    @test P3(2, 0, 10) ∈ f
+    @test P3(1, 0, 5) ∈ f
+  
+    @test P3(1, 1, 0) ∉ f
+    @test P3(2, 2, 10) ∉ f
+    @test P3(0, 0, -0.01) ∉ f
+    @test P3(0, 0, 10.01) ∉ f
+  end
+  
+  @testset "FrustumSurface" begin
+    pb = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    db = Disk(pb, T(1))
+    pt = Plane(P3(0, 0, 10), V3(0, 0, 1))
+    dt = Disk(pt, T(2))
+    f = FrustumSurface(db, dt)
+    @test embeddim(f) == 3
+    @test coordtype(f) == T
+    @test isnothing(boundary(f))
+  
+    @test_throws AssertionError FrustumSurface(db, db)
+    
+    @test !Meshes.isparametrized(FrustumSurface)
+  
+    f = rand(FrustumSurface{T})
+    @test f isa FrustumSurface
+  end
 
   @testset "Torus" begin
     @test isparametrized(Torus)
