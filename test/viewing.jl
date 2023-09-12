@@ -63,8 +63,8 @@
   @test linds[55, 53] ∈ indices(grid, poly2)
 
   # rotate
-  poly1 = poly1 |> Rotate(Angle2d(π/2))
-  poly2 = poly2 |> Rotate(Angle2d(π/2))
+  poly1 = poly1 |> Rotate(Angle2d(π / 2))
+  poly2 = poly2 |> Rotate(Angle2d(π / 2))
 
   grid = CartesianGrid(P2(-20, 0), P2(0, 20), T.((1, 1)))
   linds = LinearIndices(size(grid))
