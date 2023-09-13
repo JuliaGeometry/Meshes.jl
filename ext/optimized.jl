@@ -11,7 +11,7 @@ const SubGrid{Dim,T} = Meshes.SubDomain{Dim,T,<:CartesianGrid{Dim,T}}
 Makie.plottype(::SubGrid) = Viz{<:Tuple{SubGrid}}
 
 function Makie.plot!(plot::Viz{<:Tuple{SubGrid}})
-  gridview = plot[:object]
+  subgrid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
@@ -21,13 +21,13 @@ function Makie.plot!(plot::Viz{<:Tuple{SubGrid}})
 
   # retrieve grid paramaters
   gparams = Makie.@lift let
-    grid, _ = unview($gridview)
+    grid, _ = unview($subgrid)
     dims = embeddim(grid)
     sp = spacing(grid)
 
     # coordinates of centroids
     coord(e) = coordinates(centroid(e))
-    coords = [coord(e) .+ sp ./ 2 for e in $gridview]
+    coords = [coord(e) .+ sp ./ 2 for e in $subgrid]
 
     # rectangle marker
     marker = Makie.Rect{dims}(-1 .* sp, sp)
