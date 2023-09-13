@@ -48,12 +48,12 @@ include("toporelations.jl")
 
 # domains
 include("domains.jl")
+include("subdomains.jl")
 
 # utilities
 include("utils.jl")
 
 # domain views
-include("views.jl")
 include("viewing.jl")
 
 # domain partitions
