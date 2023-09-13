@@ -7,33 +7,33 @@
 # -------------
 
 """
-    DomainView(domain, indices)
+    SubDomain(domain, indices)
 
 A partial view of a `domain` containing only the elements at `indices`.
 """
-struct DomainView{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
+struct SubDomain{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
   domain::D
   inds::I
 end
 
 # specialize constructor to avoid infinite loops
-DomainView(v::DomainView, inds) = DomainView(getfield(v, :domain), getfield(v, :inds)[inds])
+SubDomain(v::SubDomain, inds) = SubDomain(getfield(v, :domain), getfield(v, :inds)[inds])
 
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
 
-element(v::DomainView, ind::Int) = element(v.domain, v.inds[ind])
+element(v::SubDomain, ind::Int) = element(v.domain, v.inds[ind])
 
-nelements(v::DomainView) = length(v.inds)
+nelements(v::SubDomain) = length(v.inds)
 
-centroid(v::DomainView, ind::Int) = centroid(v.domain, v.inds[ind])
+centroid(v::SubDomain, ind::Int) = centroid(v.domain, v.inds[ind])
 
 # -----------
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, v::DomainView)
+function Base.show(io::IO, v::SubDomain)
   domain = getfield(v, :domain)
   nelms = length(getfield(v, :inds))
   print(io, "$nelms View{$domain}")

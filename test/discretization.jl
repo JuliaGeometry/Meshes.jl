@@ -60,7 +60,7 @@
 
     poly = PolyArea(P2[(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)])
     mesh = discretize(poly, RegularDiscretization(50))
-    @test mesh isa DomainView
+    @test mesh isa Meshes.SubDomain
     grid, inds = unview(mesh)
     @test grid isa CartesianGrid
     @test eltype(mesh) <: Quadrangle

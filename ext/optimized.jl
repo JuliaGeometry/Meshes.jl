@@ -6,11 +6,11 @@
 # recipes optimized for performance
 # ----------------------------------
 
-const GridView{Dim,T} = DomainView{Dim,T,<:CartesianGrid{Dim,T}}
+const SubGrid{Dim,T} = Meshes.SubDomain{Dim,T,<:CartesianGrid{Dim,T}}
 
-Makie.plottype(::GridView) = Viz{<:Tuple{GridView}}
+Makie.plottype(::SubGrid) = Viz{<:Tuple{SubGrid}}
 
-function Makie.plot!(plot::Viz{<:Tuple{GridView}})
+function Makie.plot!(plot::Viz{<:Tuple{SubGrid}})
   gridview = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]

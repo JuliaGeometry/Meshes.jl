@@ -292,9 +292,6 @@ export
   # trajectories
   CylindricalTrajectory,
 
-  # views
-  DomainView,
-
   # viewing
   unview,
   indices,

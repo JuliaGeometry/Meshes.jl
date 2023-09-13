@@ -6,7 +6,7 @@
 # VIEWS WITH INDICES
 # -------------------
 
-Base.view(domain::Domain, inds) = DomainView(domain, inds)
+Base.view(domain::Domain, inds) = SubDomain(domain, inds)
 
 # ---------------------
 # UNVIEWS WITH INDICES
@@ -22,7 +22,7 @@ then return the `object` with all its indices as a fallback.
 function unview end
 
 unview(d::Domain) = d, 1:nelements(d)
-unview(v::DomainView) = getfield(v, :domain), getfield(v, :inds)
+unview(v::SubDomain) = getfield(v, :domain), getfield(v, :inds)
 
 # ----------------------
 # VIEWS WITH GEOMETRIES
