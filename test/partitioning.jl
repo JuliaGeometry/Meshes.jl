@@ -7,17 +7,17 @@
   @test sprint(show, p) == "100 Partition"
   @test sprint(show, MIME"text/plain"(), p) == """
   100 Partition
-  ├─1 view(::CartesianGrid{2,Float64}, [98])
-  ├─1 view(::CartesianGrid{2,Float64}, [58])
-  ├─1 view(::CartesianGrid{2,Float64}, [83])
-  ├─1 view(::CartesianGrid{2,Float64}, [96])
-  ├─1 view(::CartesianGrid{2,Float64}, [5])
+  ├─1 view(::CartesianGrid{2,$T}, [98])
+  ├─1 view(::CartesianGrid{2,$T}, [58])
+  ├─1 view(::CartesianGrid{2,$T}, [83])
+  ├─1 view(::CartesianGrid{2,$T}, [96])
+  ├─1 view(::CartesianGrid{2,$T}, [5])
   ⋮
-  ├─1 view(::CartesianGrid{2,Float64}, [51])
-  ├─1 view(::CartesianGrid{2,Float64}, [4])
-  ├─1 view(::CartesianGrid{2,Float64}, [50])
-  ├─1 view(::CartesianGrid{2,Float64}, [69])
-  └─1 view(::CartesianGrid{2,Float64}, [61])"""
+  ├─1 view(::CartesianGrid{2,$T}, [51])
+  ├─1 view(::CartesianGrid{2,$T}, [4])
+  ├─1 view(::CartesianGrid{2,$T}, [50])
+  ├─1 view(::CartesianGrid{2,$T}, [69])
+  └─1 view(::CartesianGrid{2,$T}, [61])"""
 
   @testset "UniformPartition" begin
     Random.seed!(123)

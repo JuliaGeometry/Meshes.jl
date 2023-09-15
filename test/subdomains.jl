@@ -53,8 +53,8 @@
   pset = PointSet(P2.(1:100, 1:100))
   v1 = view(pset, 1:10)
   v2 = view(pset, [4, 8, 10, 7, 9, 1, 2, 3, 6, 5])
-  @test sprint(show, v1) == "10 view(::PointSet{2,T}, 1:10)"
-  @test sprint(show, v2) == "10 view(::PointSet{2,T}, [4, 8, 10, 7, ..., 2, 3, 6, 5])"
+  @test sprint(show, v1) == "10 view(::PointSet{2,$T}, 1:10)"
+  @test sprint(show, v2) == "10 view(::PointSet{2,$T}, [4, 8, 10, 7, ..., 2, 3, 6, 5])"
   if T === Float32
     @test sprint(show, MIME"text/plain"(), v1) == """
     10 view(::PointSet{2,Float32}, 1:10)
