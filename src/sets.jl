@@ -67,8 +67,3 @@ PointSet(points) = PointSet(collect(points))
 centroid(pset::PointSet, ind::Int) = pset[ind]
 
 centroid(pset::PointSet) = Point(sum(coordinates, pset) / nelements(pset))
-
-function Base.show(io::IO, pset::PointSet{Dim,T}) where {Dim,T}
-  n = nelements(pset)
-  print(io, "$n PointSet{$Dim,$T}")
-end

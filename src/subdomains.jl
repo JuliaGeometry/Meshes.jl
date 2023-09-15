@@ -11,13 +11,13 @@
 
 A partial view of a `domain` containing only the elements at `indices`.
 """
-struct SubDomain{Dim,T,D<:Domain{Dim,T},I} <: Domain{Dim,T}
+struct SubDomain{Dim,T,D<:Domain{Dim,T},I<:AbstractVector{Int}} <: Domain{Dim,T}
   domain::D
   inds::I
 end
 
 # specialize constructor to avoid infinite loops
-SubDomain(v::SubDomain, inds) = SubDomain(getfield(v, :domain), getfield(v, :inds)[inds])
+SubDomain(v::SubDomain, inds::AbstractVector{Int}) = SubDomain(getfield(v, :domain), getfield(v, :inds)[inds])
 
 # -----------------
 # DOMAIN INTERFACE
@@ -33,8 +33,12 @@ centroid(v::SubDomain, ind::Int) = centroid(v.domain, v.inds[ind])
 # IO METHODS
 # -----------
 
-function Base.show(io::IO, v::SubDomain)
+function Base.summary(io::IO, v::SubDomain{Dim,T}) where {Dim,T}
   domain = getfield(v, :domain)
-  nelms = length(getfield(v, :inds))
-  print(io, "$nelms View{$domain}")
+  name = prettyname(domain)
+  inds = getfield(v, :inds)
+  nelms = length(inds)
+  print(io, "$nelms view(::$name{$Dim,$T}, ")
+  printinds(io, inds)
+  print(io, ")")
 end

@@ -6,7 +6,7 @@
 # VIEWS WITH INDICES
 # -------------------
 
-Base.view(domain::Domain, inds) = SubDomain(domain, inds)
+Base.view(domain::Domain, inds::AbstractVector{Int}) = SubDomain(domain, inds)
 
 # ---------------------
 # UNVIEWS WITH INDICES

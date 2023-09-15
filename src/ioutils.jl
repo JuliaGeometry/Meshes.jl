@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 # helper function to print the actual name of
-# the geometry inside a deep type hierarchy
-prettyname(geom) = prettyname(typeof(geom))
-function prettyname(G::Type)
-  name = string(G)
+# the object type inside a deep type hierarchy
+prettyname(obj) = prettyname(typeof(obj))
+function prettyname(T::Type)
+  name = string(T)
   name = replace(name, r"{.*" => "")
   replace(name, r".+\." => "")
 end
@@ -34,3 +34,17 @@ function printverts(io::IO, verts)
     join(ioctx, verts, ", ")
   end
 end
+
+function printinds(io::IO, inds)
+  print(io, "[")
+  if length(inds) > 8
+    join(io, @view(inds[1:4]), ", ")
+    print(io, ", ..., ")
+    join(io, @view(inds[end-3:end]), ", ")
+  else
+    join(io, inds, ", ")
+  end
+  print(io, "]")
+end
+
+printinds(io::IO, inds::AbstractRange) = print(io, inds)

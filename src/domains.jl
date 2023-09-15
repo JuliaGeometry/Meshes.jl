@@ -115,19 +115,20 @@ topology(domain::Domain) = domain.topology
 
 function Base.summary(io::IO, domain::Domain{Dim,T}) where {Dim,T}
   nelm = nelements(domain)
-  name = nameof(typeof(domain))
+  name = prettyname(domain)
   print(io, "$nelm $name{$Dim,$T}")
 end
 
 Base.show(io::IO, domain::Domain) = summary(io, domain)
 
 function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
-  println(io, domain)
+  summary(io, domain)
+  println(io)
   N = nelements(domain)
   I, J = N > 10 ? (5, N - 4) : (N - 1, N)
   lines = [
     ["├─ $(domain[i])" for i in 1:I]
-    (N > 10 ? ["⋮"] : [])
+    (N > 10 ? ["⋮"] : String[])
     ["├─ $(domain[i])" for i in J:(N - 1)]
     "└─ $(domain[N])"
   ]
