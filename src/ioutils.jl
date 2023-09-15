@@ -11,21 +11,28 @@ function prettyname(T::Type)
   replace(name, r".+\." => "")
 end
 
-# helper function to print a large iterator
+# helper function to print a large indexable collection
 # in multiple lines with a given tabulation
-function io_lines(itr, tab="")
-  vec = collect(itr)
-  N = length(vec)
+function printelms(io::IO, elms, tab="")
+  N = length(elms)
   I, J = N > 10 ? (5, N - 4) : (N - 1, N)
-  lines = [
-    ["$(tab)├─ $(vec[i])" for i in 1:I]
-    (N > 10 ? ["$(tab)⋮"] : [])
-    ["$(tab)├─ $(vec[i])" for i in J:(N - 1)]
-    "$(tab)└─ $(vec[N])"
-  ]
-  join(lines, "\n")
+  for i in 1:I
+    println(io, "$(tab)├─ $(elms[i])")
+  end
+  if N > 10
+    println(io, "$(tab)⋮")
+  end
+  for i in J:(N - 1)
+    println(io, "$(tab)├─ $(elms[i])")
+  end
+  print(io, "$(tab)└─ $(elms[N])")
 end
 
+# helper function to print a large iterable
+# calling the printelms function
+printitr(io::IO, itr, tab="") = printelms(io, collect(itr), tab)
+
+# helper function to print the polygons vertices
 function printverts(io::IO, verts)
   ioctx = IOContext(io, :compact => true)
   if length(verts) > 3
@@ -35,6 +42,7 @@ function printverts(io::IO, verts)
   end
 end
 
+# helper function to print the view indices
 function printinds(io::IO, inds)
   print(io, "[")
   if length(inds) > 8

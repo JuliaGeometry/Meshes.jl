@@ -13,16 +13,16 @@ See https://en.wikipedia.org/wiki/Geometric_primitive.
 abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 
 function Base.show(io::IO, geom::Primitive)
-  ioctx = IOContext(io, :compact => true)
   name = prettyname(geom)
-  print(ioctx, "$name(")
+  print(io, "$name(")
+  ioctx = IOContext(io, :compact => true)
   vals = map(fieldnames(typeof(geom))) do field
     val = getfield(geom, field)
     str = repr(val, context=ioctx)
     "$field: $str"
   end
-  join(ioctx, vals, ", ")
-  print(ioctx, ")")
+  join(io, vals, ", ")
+  print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", geom::Primitive)
