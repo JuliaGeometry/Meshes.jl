@@ -1,23 +1,24 @@
 @testset "Partitioning" begin
   setify(lists) = Set(Set.(lists))
 
+  Random.seed!(123)
   d = CartesianGrid{T}(10, 10)
   p = partition(d, UniformPartition(100))
   @test parent(p) == d
   @test sprint(show, p) == "100 Partition"
   @test sprint(show, MIME"text/plain"(), p) == """
   100 Partition
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
+  ├─1 view(::CartesianGrid{2,$T}, [32])
+  ├─1 view(::CartesianGrid{2,$T}, [97])
+  ├─1 view(::CartesianGrid{2,$T}, [3])
+  ├─1 view(::CartesianGrid{2,$T}, [20])
+  ├─1 view(::CartesianGrid{2,$T}, [73])
   ⋮
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  ├─1 View{10×10 CartesianGrid{2,$T}}
-  └─1 View{10×10 CartesianGrid{2,$T}}"""
+  ├─1 view(::CartesianGrid{2,$T}, [89])
+  ├─1 view(::CartesianGrid{2,$T}, [14])
+  ├─1 view(::CartesianGrid{2,$T}, [82])
+  ├─1 view(::CartesianGrid{2,$T}, [78])
+  └─1 view(::CartesianGrid{2,$T}, [42])"""
 
   @testset "UniformPartition" begin
     Random.seed!(123)

@@ -48,4 +48,62 @@
   g = CartesianGrid{T}(10, 10)
   v = view(g, 1:3)
   @test measure(v) ≈ T(3)
+
+  # show
+  pset = PointSet(P2.(1:100, 1:100))
+  v1 = view(pset, 1:10)
+  v2 = view(pset, [4, 8, 10, 7, 9, 1, 2, 3, 6, 5])
+  @test sprint(show, v1) == "10 view(::PointSet{2,$T}, 1:10)"
+  @test sprint(show, v2) == "10 view(::PointSet{2,$T}, [4, 8, 10, 7, ..., 2, 3, 6, 5])"
+  if T === Float32
+    @test sprint(show, MIME"text/plain"(), v1) == """
+    10 view(::PointSet{2,Float32}, 1:10)
+    ├─ Point(1.0f0, 1.0f0)
+    ├─ Point(2.0f0, 2.0f0)
+    ├─ Point(3.0f0, 3.0f0)
+    ├─ Point(4.0f0, 4.0f0)
+    ├─ Point(5.0f0, 5.0f0)
+    ├─ Point(6.0f0, 6.0f0)
+    ├─ Point(7.0f0, 7.0f0)
+    ├─ Point(8.0f0, 8.0f0)
+    ├─ Point(9.0f0, 9.0f0)
+    └─ Point(10.0f0, 10.0f0)"""
+    @test sprint(show, MIME"text/plain"(), v2) == """
+    10 view(::PointSet{2,Float32}, [4, 8, 10, 7, ..., 2, 3, 6, 5])
+    ├─ Point(4.0f0, 4.0f0)
+    ├─ Point(8.0f0, 8.0f0)
+    ├─ Point(10.0f0, 10.0f0)
+    ├─ Point(7.0f0, 7.0f0)
+    ├─ Point(9.0f0, 9.0f0)
+    ├─ Point(1.0f0, 1.0f0)
+    ├─ Point(2.0f0, 2.0f0)
+    ├─ Point(3.0f0, 3.0f0)
+    ├─ Point(6.0f0, 6.0f0)
+    └─ Point(5.0f0, 5.0f0)"""
+  else
+    @test sprint(show, MIME"text/plain"(), v1) == """
+    10 view(::PointSet{2,Float64}, 1:10)
+    ├─ Point(1.0, 1.0)
+    ├─ Point(2.0, 2.0)
+    ├─ Point(3.0, 3.0)
+    ├─ Point(4.0, 4.0)
+    ├─ Point(5.0, 5.0)
+    ├─ Point(6.0, 6.0)
+    ├─ Point(7.0, 7.0)
+    ├─ Point(8.0, 8.0)
+    ├─ Point(9.0, 9.0)
+    └─ Point(10.0, 10.0)"""
+    @test sprint(show, MIME"text/plain"(), v2) == """
+    10 view(::PointSet{2,Float64}, [4, 8, 10, 7, ..., 2, 3, 6, 5])
+    ├─ Point(4.0, 4.0)
+    ├─ Point(8.0, 8.0)
+    ├─ Point(10.0, 10.0)
+    ├─ Point(7.0, 7.0)
+    ├─ Point(9.0, 9.0)
+    ├─ Point(1.0, 1.0)
+    ├─ Point(2.0, 2.0)
+    ├─ Point(3.0, 3.0)
+    ├─ Point(6.0, 6.0)
+    └─ Point(5.0, 5.0)"""
+  end
 end
