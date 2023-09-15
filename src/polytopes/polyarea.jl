@@ -100,7 +100,7 @@ function Base.show(io::IO, p::PolyArea)
     printverts(io, vertices(r))
   else
     nverts = nvertices.(rings)
-    print(io, join(["$n-Ring" for n in nverts], ", "))
+    join(io, ("$n-Ring" for n in nverts), ", ")
   end
   print(io, ")")
 end
@@ -108,14 +108,12 @@ end
 function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
   rings = p.rings
   println(io, "PolyArea{$Dim,$T}")
-  if length(rings) == 1
-    println(io, "  outer")
-    print(io, io_lines(rings[1:1], "  "))
-  else
-    println(io, "  outer")
-    println(io, io_lines(rings[1:1], "  "))
+  println(io, "  outer")
+  print(io, "  └─ $(rings[1])")
+  if length(rings) > 1
+    println(io)
     println(io, "  inner")
-    print(io, io_lines(rings[2:end], "  "))
+    printelms(io, @view(rings[2:end]), "  ")
   end
 end
 

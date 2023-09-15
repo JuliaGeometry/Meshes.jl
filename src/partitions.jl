@@ -53,18 +53,12 @@ end
 Base.show(io::IO, partition::Partition) = summary(io, partition)
 
 function Base.show(io::IO, ::MIME"text/plain", partition::Partition)
-  subs = partition.subsets
   meta = partition.metadata
   summary(io, partition)
   println(io)
-  N = length(subs)
-  I, J = N > 10 ? (5, N - 4) : (N - 1, N)
-  lines = [
-    ["├─$(partition[i])" for i in 1:I]
-    (N > 10 ? ["⋮"] : [])
-    ["├─$(partition[i])" for i in J:(N - 1)]
-    "└─$(partition[N])"
-  ]
-  print(io, join(lines, "\n"))
-  !isempty(meta) && print(io, "\nmetadata: ", join(keys(meta), ", "))
+  printelms(io, partition)
+  if !isempty(meta)
+    print(io, "\nmetadata: ")
+    join(io, keys(meta), ", ")
+  end
 end

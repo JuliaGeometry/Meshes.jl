@@ -70,7 +70,7 @@ end
 function Base.show(io::IO, m::Multi)
   print(io, "Multi(")
   geoms = prettyname.(m.geoms)
-  counts = ["$(count(==(g), geoms))×$g" for g in unique(geoms)]
+  counts = ("$(count(==(g), geoms))×$g" for g in unique(geoms))
   join(io, counts, ", ")
   print(io, ")")
 end
@@ -78,5 +78,5 @@ end
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
   summary(io, m)
   println(io)
-  print(io, io_lines(m.geoms))
+  printelms(io, m.geoms)
 end
