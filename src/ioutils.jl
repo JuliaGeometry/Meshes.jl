@@ -40,7 +40,7 @@ function printinds(io::IO, inds)
   if length(inds) > 8
     join(io, @view(inds[1:4]), ", ")
     print(io, ", ..., ")
-    join(io, @view(inds[end-3:end]), ", ")
+    join(io, @view(inds[(end - 3):end]), ", ")
   else
     join(io, inds, ", ")
   end
