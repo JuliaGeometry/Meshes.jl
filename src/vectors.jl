@@ -43,24 +43,18 @@ Vec3f(1, 2, 3) # explicitly ask for single precision
 """
 struct Vec{Dim,T} <: StaticVector{Dim,T}
   coords::NTuple{Dim,T}
-  Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
-  Vec{Dim,T}(coords::NTuple{Dim,T}) where {Dim,T<:Integer} = new{Dim,Float64}(coords)
+  Vec(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,float(T)}(NTuple{Dim,float(T)}(coords))
 end
 
 # convenience constructors
 Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(coords)
-function Vec{Dim,T}(coords::Tuple) where {Dim,T}
-  checkdim(Vec{Dim,T}, coords)
-  Vec{Dim,T}(NTuple{Dim,T}(coords))
-end
-function Vec{Dim,T}(coords::AbstractVector) where {Dim,T}
-  checkdim(Vec{Dim,T}, coords)
-  Vec{Dim,T}(NTuple{Dim,T}(coords))
+function Vec{Dim,T}(coords::Union{Tuple, AbstractVector}) where {Dim,T}
+  checkdim(Vec{Dim,float(T)}, coords)
+  Vec(NTuple{Dim,float(T)}(coords))
 end
 
 Vec(coords...) = Vec(coords)
-Vec(coords::Tuple) = Vec(promote(coords...))
-Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
+Vec(coords) = Vec(promote(coords...))
 
 # StaticVector constructors
 Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
