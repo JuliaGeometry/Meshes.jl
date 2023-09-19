@@ -43,7 +43,7 @@ Vec3f(1, 2, 3) # explicitly ask for single precision
 """
 struct Vec{Dim,T} <: StaticVector{Dim,T}
   coords::NTuple{Dim,T}
-  Vec(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,float(T)}(NTuple{Dim,float(T)}(coords))
+  Vec(coords::NTuple{Dim,T}) where {Dim,T} = new{Dim,float(T)}(coords)
 end
 
 # convenience constructors
