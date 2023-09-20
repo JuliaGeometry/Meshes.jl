@@ -48,8 +48,10 @@ end
 
 # convenience constructors
 Vec{Dim,T}(coords...) where {Dim,T} = Vec{Dim,T}(coords)
-function Vec{Dim,T}(coords::Union{Tuple, AbstractVector}) where {Dim,T}
-  checkdim(Vec{Dim,float(T)}, coords)
+function Vec{Dim,T}(coords::Union{Tuple,AbstractVector}) where {Dim,T}
+  if Dim ≠ length(coords)
+    throw(DimensionMismatch("invalid dimension"))
+  end
   Vec(NTuple{Dim,float(T)}(coords))
 end
 
