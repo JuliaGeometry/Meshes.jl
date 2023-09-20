@@ -44,11 +44,8 @@ struct Point{Dim,T} <: Primitive{Dim,T}
 end
 
 # convenience constructors
-Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
-Point{Dim,T}(coords) where {Dim,T} = Point(Vec{Dim,T}(coords))
-
-Point(coords...) = Point(coords)
-Point(coords) = Point(Vec(coords))
+Point{Dim,T}(coords...) where {Dim,T} = Point(Vec{Dim,T}(coords...))
+Point(coords...) = Point(Vec(coords...))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
