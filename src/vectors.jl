@@ -56,7 +56,7 @@ function Vec{Dim,T}(coords::Union{Tuple,AbstractVector}) where {Dim,T}
 end
 
 Vec(coords...) = Vec(coords)
-Vec(coords) = Vec(promote(coords...))
+Vec(coords::Tuple) = Vec(promote(coords...))
 
 # StaticVector constructors
 Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
