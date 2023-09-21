@@ -12,6 +12,7 @@ using Unitful
 using Rotations
 using Test, Random
 using ReferenceTests, ImageIO
+using Unitful
 
 import TransformsBase as TB
 import CairoMakie as Mke
