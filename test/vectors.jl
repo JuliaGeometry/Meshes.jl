@@ -2,7 +2,7 @@
   # vararg constructors
   @test eltype(Vec(1, 1)) == Float64
   @test eltype(Vec(1.0, 1.0)) == Float64
-  @test eltype(Vec(1.0f0, 1.0f0)) == Float32 
+  @test eltype(Vec(1.0f0, 1.0f0)) == Float32
   @test eltype(Vec1(1)) == Float64
   @test eltype(Vec2(1, 1)) == Float64
   @test eltype(Vec3(1, 1, 1)) == Float64
@@ -47,13 +47,13 @@
   @test Tuple(Vec(1, 2, 3)) == (1.0, 2.0, 3.0)
 
   # Unitful coordinates
-  vector = Vec(1u"m",1u"m")
+  vector = Vec(1u"m", 1u"m")
   @test unit(eltype(vector)) == u"m"
   @test Unitful.numtype(eltype(vector)) === Float64
-  vector = Vec(1.0u"m",1.0u"m")
+  vector = Vec(1.0u"m", 1.0u"m")
   @test unit(eltype(vector)) == u"m"
   @test Unitful.numtype(eltype(vector)) === Float64
-  vector = Vec(1.0f0u"m",1.0f0u"m")
+  vector = Vec(1.0f0u"m", 1.0f0u"m")
   @test unit(eltype(vector)) == u"m"
   @test Unitful.numtype(eltype(vector)) === Float32
 
