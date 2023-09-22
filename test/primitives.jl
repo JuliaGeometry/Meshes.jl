@@ -6,15 +6,6 @@
     @test coordtype(Point(1, 1)) == Float64
     @test coordtype(Point(1.0, 1.0)) == Float64
     @test coordtype(Point(1.0f0, 1.0f0)) == Float32
-    point = Point(1u"m",1u"m")
-    @test unit(coordtype(point)) == u"m"
-    @test Unitful.numtype(coordtype(point)) === Float64
-    point = Point(1.0u"m",1.0u"m")
-    @test unit(coordtype(point)) == u"m"
-    @test Unitful.numtype(coordtype(point)) === Float64
-    point = Point(1.0f0u"m",1.0f0u"m")
-    @test unit(coordtype(point)) == u"m"
-    @test Unitful.numtype(coordtype(point)) === Float32
     @test coordtype(Point1(1)) == Float64
     @test coordtype(Point2(1, 1)) == Float64
     @test coordtype(Point3(1, 1, 1)) == Float64
@@ -102,6 +93,17 @@
     @test coordtype(Point(1)) == Float64
     @test coordtype(Point(1, 2)) == Float64
     @test coordtype(Point(1, 2, 3)) == Float64
+
+    # Unitful coordinates
+    point = Point(1u"m",1u"m")
+    @test unit(coordtype(point)) == u"m"
+    @test Unitful.numtype(coordtype(point)) === Float64
+    point = Point(1.0u"m",1.0u"m")
+    @test unit(coordtype(point)) == u"m"
+    @test Unitful.numtype(coordtype(point)) === Float64
+    point = Point(1.0f0u"m",1.0f0u"m")
+    @test unit(coordtype(point)) == u"m"
+    @test Unitful.numtype(coordtype(point)) === Float32
 
     # generalized inequality
     @test P2(1, 1) ⪯ P2(1, 1)
