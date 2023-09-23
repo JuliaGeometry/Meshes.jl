@@ -93,8 +93,7 @@ end
 """
     ∠(u, v)
 
-Angle between vectors u and v.
-See https://en.wikipedia.org/wiki/Angle.
+Angle between vectors `u` and `v`.
 
 Uses the two-argument form of `atan` returning
 value in range [-π, π] in 2D and [0, π] in 3D.
@@ -106,8 +105,13 @@ See https://en.wikipedia.org/wiki/Atan2.
 ∠(Vec(1,0), Vec(0,1)) == π/2
 ```
 """
-∠(u::V, v::V) where {V<:Vec{2}} = atan(u × v, u ⋅ v)  # preserve sign
-∠(u::V, v::V) where {V<:Vec{3}} = atan(norm(u × v), u ⋅ v)  # discard sign
+function ∠(u::Vec{2}, v::Vec{2}) # preserve sign
+  θ = atan(u × v, u ⋅ v)
+  T = typeof(θ)
+  θ == -T(π) ? -θ : θ
+end
+
+∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v) # discard sign
 
 function Base.show(io::IO, vec::Vec)
   if get(io, :compact, false)
