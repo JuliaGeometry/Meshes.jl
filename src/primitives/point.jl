@@ -40,17 +40,12 @@ J = Point3f(1, 2, 3) # explicitly ask for single precision
 """
 struct Point{Dim,T} <: Primitive{Dim,T}
   coords::Vec{Dim,T}
-  Point{Dim,T}(coords::Vec{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
+  Point(coords::Vec{Dim,T}) where {Dim,T} = new{Dim,T}(coords)
 end
 
 # convenience constructors
-Point{Dim,T}(coords...) where {Dim,T} = Point{Dim,T}(coords)
-Point{Dim,T}(coords) where {Dim,T} = Point{Dim,T}(Vec{Dim,T}(coords))
-Point{Dim,T}(coords) where {Dim,T<:Integer} = Point{Dim,Float64}(coords)
-
-Point(coords...) = Point(coords)
-Point(coords) = Point(Vec(coords))
-Point(coords::Vec{Dim,T}) where {Dim,T} = Point{Dim,T}(coords)
+Point{Dim,T}(coords...) where {Dim,T} = Point(Vec{Dim,T}(coords...))
+Point(coords...) = Point(Vec(coords...))
 
 # coordinate type conversions
 Base.convert(::Type{Point{Dim,T}}, coords) where {Dim,T} = Point{Dim,T}(coords)
