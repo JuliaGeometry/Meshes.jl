@@ -5,7 +5,7 @@
 """
     RectilinearGrid(x, y, z, ...)
 
-A rectilinear grid with vertices at coordinates `x`, `y`, `z`, ...
+A rectilinear grid with vertices at sorted coordinates `x`, `y`, `z`, ...
 
 ## Examples
 
