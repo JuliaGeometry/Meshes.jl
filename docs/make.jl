@@ -76,5 +76,5 @@ makedocs(
 repo = "github.com/JuliaGeometry/MeshesDocs.git"
 
 withenv("GITHUB_REPOSITORY" => repo) do
-  deploydocs(repo=repo)
+  deploydocs(; repo, versions=["stable" => "v^", "dev" => "dev"])
 end
