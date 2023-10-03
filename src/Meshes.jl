@@ -8,9 +8,11 @@ using StaticArrays
 using SparseArrays
 using CircularArrays
 using LinearAlgebra
+using Unitful
 using Random
 
 using Bessels: gamma
+using Unitful: AbstractQuantity, numtype
 using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using Rotations: Rotation, QuatRotation, Angle2d, rotation_between

@@ -67,6 +67,7 @@ end
 
 # list of tests
 testfiles = [
+  "tolerances.jl",
   "vectors.jl",
   "primitives.jl",
   "polytopes.jl",
