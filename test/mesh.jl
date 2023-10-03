@@ -172,7 +172,7 @@
   end
 
   @testset "RectilinearGrid" begin
-    x = range(zero(T), stop=one(T), length=6)
+    x = range(zero(T), stop=oneunit(T), length=6)
     y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
     grid = RectilinearGrid(x, y)
     @test embeddim(grid) == 2

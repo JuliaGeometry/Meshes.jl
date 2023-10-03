@@ -98,7 +98,7 @@ end
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
-  invdir = one(T) ./ (ray(1) - ray(0))
+  invdir = oneunit(T) ./ (ray(1) - ray(0))
   lo, up = coordinates.(extrema(box))
   orig = coordinates(ray(0))
 
@@ -175,7 +175,7 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
     return @IT NotIntersecting nothing f
   end
 
-  λ = (e₂ ⋅ q) * (one(T) / det)
+  λ = (e₂ ⋅ q) * (oneunit(T) / det)
 
   if λ < -atol(T)
     return @IT NotIntersecting nothing f

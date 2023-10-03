@@ -35,12 +35,12 @@ function _intersection(f, seg::Segment{3,T}, λ) where {T}
   end
 
   # if λ is approximately 1, set as so to prevent any domain errors
-  if isapprox(λ, one(T), atol=atol(T))
+  if isapprox(λ, oneunit(T), atol=atol(T))
     return @IT Touching seg(1) f
   end
 
   # if λ is out of bounds for the segment, then there is no intersection
-  if (λ < zero(T) || λ > one(T))
+  if (λ < zero(T) || λ > oneunit(T))
     return @IT NotIntersecting nothing f
   else
     return @IT Crossing seg(λ) f
