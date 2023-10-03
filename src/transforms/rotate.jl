@@ -11,7 +11,7 @@ from Rotations.jl.
 ## Examples
 
 ```julia
-Rotate(oneunit(RotXYZ{Float64}))  # Generate identity rotation
+Rotate(one(RotXYZ{Float64}))  # Generate identity rotation
 Rotate(AngleAxis(0.2, 1.0, 0.0, 0.0))  # Rotate 0.2 radians around X-axis
 Rotate(rand(QuatRotation{Float64}))  # Generate random rotation
 ```
