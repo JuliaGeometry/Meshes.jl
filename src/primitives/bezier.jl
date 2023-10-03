@@ -84,17 +84,17 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
   cs = curve.controls
-  t̄ = oneunit(T) - t
+  t̄ = one(T) - t
   n = degree(curve)
   pₙ = coordinates(last(cs))
   aₙ = pₙ
 
   # initialization with i = n + 1, so bᵢ₋₁ = bₙ = aₙ
   bᵢ₋₁ = aₙ
-  cᵢ₋₁ = oneunit(T)
-  t̄ⁿ⁻ⁱ = oneunit(T)
+  cᵢ₋₁ = one(T)
+  t̄ⁿ⁻ⁱ = one(T)
   for i in n:-1:1
-    cᵢ₋₁ *= i / (n - i + oneunit(T))
+    cᵢ₋₁ *= i / (n - i + one(T))
     pᵢ₋₁ = coordinates(cs[i])
     t̄ⁿ⁻ⁱ *= t̄
     aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ

@@ -2,8 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-default_rotation(::Val{2}, T) = oneunit(Angle2d{T})
-default_rotation(::Val{3}, T) = oneunit(QuatRotation{T})
+default_rotation(::Val{2}, T) = one(Angle2d{T})
+default_rotation(::Val{3}, T) = one(QuatRotation{T})
 
 """
     MetricBall(radii, rotation=nothing)
@@ -41,7 +41,7 @@ end
 
 function MetricBall(radii::SVector{Dim,T}, R=default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
-  Λ = Diagonal(oneunit(T) ./ radii .^ 2)
+  Λ = Diagonal(one(T) ./ radii .^ 2)
 
   # Mahalanobis metric
   metric = Mahalanobis(Symmetric(R * Λ * R'))
@@ -83,7 +83,7 @@ i.e. the value `r` such that `||v|| ≤ r, ∀ v ∈ ball`
 and `||v|| > r, ∀ v ∉ ball``.
 """
 radius(ball::MetricBall) = first(ball.radii)
-radius(::MetricBall{R,<:Mahalanobis}) where {R} = oneunit(eltype(R))
+radius(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
 
 """
     isisotropic(ball)
