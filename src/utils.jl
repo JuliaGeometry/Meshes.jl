@@ -24,14 +24,6 @@ function signarea(A::Point{2}, B::Point{2}, C::Point{2})
 end
 
 """
-    dropunits(T)
-
-Returns the unitless type of a (unitful) type or value. See Unitful.jl.
-i.e. `dropunits(1u"mm") == Int`
-"""
-dropunits(v) = typeof(one(v))
-
-"""
     householderbasis(n)
 
 Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`,
