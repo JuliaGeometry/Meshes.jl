@@ -155,6 +155,16 @@
     @test vertex(grid, 1) == P2(0, 0)
     @test vertex(grid, 121) == P2(10, 10)
 
+    # units
+    Q = typeof(zero(T) * u"m")
+    grid = CartesianGrid{Q}(10, 10)
+    o = minimum(grid)
+    s = spacing(grid)
+    @test unit(coordtype(o)) == u"m"
+    @test Unitful.numtype(coordtype(o)) === T
+    @test unit(eltype(s)) == u"m"
+    @test Unitful.numtype(eltype(s)) === T
+
     grid = CartesianGrid{T}(200, 100)
     if T == Float32
       @test sprint(show, MIME"text/plain"(), grid) == """

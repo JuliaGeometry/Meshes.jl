@@ -97,7 +97,7 @@ CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T}; dims::Dims{Dim}=ntupl
 
 function CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T}
   origin = ntuple(i -> zero(T), Dim)
-  spacing = ntuple(i -> one(T), Dim)
+  spacing = ntuple(i -> oneunit(T), Dim)
   offset = ntuple(i -> 1, Dim)
   CartesianGrid(dims, origin, spacing, offset)
 end
