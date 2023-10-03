@@ -137,6 +137,18 @@ Cone
 ConeSurface
 ```
 
+### Frustum
+
+```@docs
+Frustum
+```
+
+### FrustumSurface
+
+```@docs
+FrustumSurface
+```
+
 ### Torus
 
 ```@docs
