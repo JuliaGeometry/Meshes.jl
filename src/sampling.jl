@@ -71,9 +71,10 @@ include("sampling/mindistance.jl")
 # ----------
 
 """
-    sample([rng], domain, size)
+    sample([rng], domain, size, [weights])
 
-Utility method that calls the `sample` function using `UniformSampling(size)`.
+Utility method that calls the `sample` function using `WeightedSampling(size, weights)`.
+If `weights` is not defined, this is equivalent to using `UniformSampling(size)`.
 """
-sample(domain::Domain, size::Integer) = sample(Random.GLOBAL_RNG, domain, size)
-sample(rng::AbstractRNG, domain::Domain, size::Integer) = sample(rng, domain, UniformSampling(size))
+sample(domain::Domain, size::Int, weights=nothing) = sample(Random.GLOBAL_RNG, domain, size, weights)
+sample(rng::AbstractRNG, domain::Domain, size::Int, weights=nothing) = sample(rng, domain, WeightedSampling(size, weights))
