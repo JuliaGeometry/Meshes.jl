@@ -28,6 +28,16 @@
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
+
+    # utility method
+    s = sample(d, 100, ordered=true)
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    @test nelements(s) == 100
+    @test isapprox(μ, T[50.0, 50.0], atol=T(10))
+    s = sample(d, 100, fill(1, 10000), ordered=true)
+    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    @test nelements(s) == 100
+    @test isapprox(μ, T[50.0, 50.0], atol=T(10))
   end
 
   @testset "BallSampling" begin
