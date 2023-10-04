@@ -65,3 +65,15 @@ sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample
 include("sampling/regular.jl")
 include("sampling/homogeneous.jl")
 include("sampling/mindistance.jl")
+
+# ----------
+# UTILITIES
+# ----------
+
+"""
+    sample([rng], domain, size)
+
+Utility method that calls the `sample` function using `UniformSampling(size)`.
+"""
+sample(domain::Domain, size::Integer) = sample(Random.GLOBAL_RNG, domain, size)
+sample(rng::AbstractRNG, domain::Domain, size::Integer) = sample(rng, domain, UniformSampling(size))
