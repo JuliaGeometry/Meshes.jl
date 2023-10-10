@@ -84,7 +84,11 @@ function vizgrid2D!(plot)
     nd = embeddim($grid)
     or = coordinates(minimum($grid))
     sp = spacing($grid)
+    
     sz = size($grid)
+    if *(sz...) != length($colorant)
+      sz = sz .+ 1
+    end
 
     xs, ys = cartesiancenters(or, sp, sz, nd)
 
