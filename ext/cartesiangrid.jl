@@ -18,7 +18,11 @@ function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
     if ndim == 1
       vizgrid1D!(plot)
     elseif ndim == 2
-      vizgrid2D!(plot)
+      if length(color) == nvertices(grid)
+        vizmesh2D!(plot)
+      else
+        vizgrid2D!(plot)
+      end
     elseif ndim == 3
       vizgrid3D!(plot)
     end
