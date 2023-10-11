@@ -15,12 +15,22 @@ function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
   # with 1D, 2D, 3D elements
   if color isa AbstractVector
     # visualize grid as heatmap or volume
-    if ndim == 1
-      vizgrid1D!(plot)
-    elseif ndim == 2
-      vizgrid2D!(plot)
-    elseif ndim == 3
-      vizgrid3D!(plot)
+    if length(color) == nvertices(grid)
+      if ndim == 1
+        vizmesh1D!(plot)
+      elseif ndim == 2
+        vizmesh2D!(plot)
+      elseif ndim == 3
+        vizmesh3D!(plot)    
+      end
+    else
+      if ndim == 1
+        vizgrid1D!(plot)
+      elseif ndim == 2
+        vizgrid2D!(plot)
+      elseif ndim == 3
+        vizgrid3D!(plot)
+      end
     end
   else
     # create the smallest mesh of simplices
@@ -84,11 +94,7 @@ function vizgrid2D!(plot)
     nd = embeddim($grid)
     or = coordinates(minimum($grid))
     sp = spacing($grid)
-    
     sz = size($grid)
-    if *(sz...) != length($colorant)
-      sz = sz .+ 1
-    end
 
     xs, ys = cartesiancenters(or, sp, sz, nd)
 
