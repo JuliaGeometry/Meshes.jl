@@ -23,7 +23,7 @@ Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(nor
 """
     Torus(p1, p2, p3, minor)
 
-The torus whose equator passes through points `p1`, `p2` and `p3` and with
+The torus whose centerline passes through points `p1`, `p2` and `p3` and with
 minor radius `minor`.
 """
 function Torus(p1::Point{3,T}, p2::Point{3,T}, p3::Point{3,T}, minor) where {T}
