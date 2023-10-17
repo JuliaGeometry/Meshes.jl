@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-  Frustum(bot, top)
+    Frustum(bot, top)
 
 A frustum (truncated cone) with `bot` and `top` disks.
 See https://en.wikipedia.org/wiki/Frustum.
