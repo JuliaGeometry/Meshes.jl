@@ -47,7 +47,8 @@ normal(p::Plane) = normalize(p.u × p.v)
 
 Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
   isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
-  isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
+  isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T)) &&
+  isapprox((p₂(0,0) - p₁(0,0)) ⋅ normal(p₁), zero(T), atol=atol(T))
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
 

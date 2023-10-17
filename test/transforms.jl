@@ -240,7 +240,7 @@
     f = Translate(T(0), T(0), T(1))
     g = Plane(P3(0, 0, 0), V3(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Plane(P3(0, 0, 0), V3(0, 0, 1))
+    @test r ≈ Plane(P3(0, 0, 1), V3(0, 0, 1))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -388,7 +388,7 @@
     f = Stretch(T(1), T(1), T(2))
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
-    @test r ≈ Cylinder(P3(0, 0, 1), P3(0, 0, 2))
+    @test r ≈ Cylinder(P3(0, 0, 0), P3(0, 0, 2))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
