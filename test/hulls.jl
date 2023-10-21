@@ -71,6 +71,73 @@
       pts = vertices(poly)
       chul = hull(pts, method)
       @test nvertices(chul) < length(pts)
+
+      if method == GrahamScan() # simplification not yet implemented for JarvisMarch()
+        # simplifying rectangular hull / triangular
+        points = [P2(i - 1, j - 1) for i in 1:11, j in 1:11] |> vec
+        chull = hull(points, method)
+        @test vertices(chull) == [P2(0, 0), P2(10, 0), P2(10, 10), P2(0, 10)]
+        for _ in 1:100 # test presence of interior points doesn't affect the result 
+          push!(points, P2(10 * rand(), 10 * rand()))
+        end
+        chull = hull(points, method)
+        @test vertices(chull) == [P2(0, 0), P2(10, 0), P2(10, 10), P2(0, 10)]
+
+        points = [P2(-1, 0), P2(0, 0), P2(1, 0), P2(0, 2)]
+        chull = hull(points, method)
+        @test vertices(chull) == [P2(-1, 0), P2(1, 0), P2(0, 2)]
+
+        # degenerate cases
+        points = [P2(0, 0), P2(1, 0), P2(2, 0)]
+        chull = hull(points, method)
+        @test vertices(chull) == [P2(0, 0), P2(1, 0), P2(2, 0)] # the degeneracy fix of PolyArea inserts P2(1,0)
+
+        points = [P2(0, 0), P2(1, 0), P2(2, 0), P2(10, 0), P2(100, 0)]
+        chull = hull(points, method)
+        @test vertices(chull) == [P2(0, 0), P2(50, 0), P2(100, 0)] # the degeneracy fix of PolyArea inserts P2(50,0)
+
+        # partially collinear 
+        points = [
+          P2(2, 0),
+          P2(4, 0),
+          P2(6, 0),
+          P2(10, 0),
+          P2(12, 1),
+          P2(14, 3),
+          P2(14, 6),
+          P2(14, 9),
+          P2(13, 10),
+          P2(11, 11),
+          P2(8, 12),
+          P2(3, 11),
+          P2(0, 8),
+          P2(0, 7),
+          P2(0, 6),
+          P2(0, 5),
+          P2(0, 4),
+          P2(0, 3),
+          P2(0, 2),
+          P2(1, 0)
+        ]
+        chull = hull(points, method)
+        truth = [
+          P2(0, 2),
+          P2(1, 0),
+          P2(10, 0),
+          P2(12, 1),
+          P2(14, 3),
+          P2(14, 9),
+          P2(13, 10),
+          P2(11, 11),
+          P2(8, 12),
+          P2(3, 11),
+          P2(0, 8)
+        ]
+        @test vertices(chull) == truth
+        push!(points, P2(4, 8), P2(2, 6), P2(6, 2), P2(10, 8), P2(8, 8), P2(10, 6))
+        chull = hull(points, method)
+        @test vertices(chull) == truth
+      end
     end
   end
 
