@@ -46,7 +46,7 @@ function hull(points, ::GrahamScan)
   # skip collinear points at beginning 
   y(p) = coordinates(p)[2]
   i = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
-  
+
   # all points are collinear, return segment
   isnothing(i) && return Segment(O, q[end])
 

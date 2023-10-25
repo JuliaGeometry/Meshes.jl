@@ -74,7 +74,7 @@
 
       if method == GrahamScan()
         # simplifying rectangular hull / triangular
-        points = [P2(i - 1, j - 1) for i in 1:11 for j in 1:11] 
+        points = [P2(i - 1, j - 1) for i in 1:11 for j in 1:11]
         chull = hull(points, method)
         @test vertices(chull) == [P2(0, 0), P2(10, 0), P2(10, 10), P2(0, 10)]
         for _ in 1:100 # test presence of interior points doesn't affect the result 
