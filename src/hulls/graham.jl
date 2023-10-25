@@ -43,13 +43,23 @@ function hull(points, ::GrahamScan)
   θ = [∠(A, O, B) for B in q]
   q = q[sortperm(θ)]
 
+  # skip collinear points at beginning 
+  y(p) = coordinates(p)[2]
+  i = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
+  
+  # all points are collinear, return segment
+  isnothing(i) && return Segment(O, q[end])
+
   # rotational sweep
-  r = [O, q[1], q[2]]
-  for B in q[3:end]
+  i = max(i, 2)
+  r = [O, q[i - 1], q[i]]
+  for B in q[(i + 1):end]
     while ∠(r[end - 1], r[end], B) > atol(T) && length(r) ≥ 3
       pop!(r)
     end
-    push!(r, B)
+    if !iscollinear(r[end - 1], r[end], B)
+      push!(r, B)
+    end
   end
 
   PolyArea(r)
