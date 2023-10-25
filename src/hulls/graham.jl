@@ -50,9 +50,8 @@ function hull(points, ::GrahamScan)
   # all points are collinear, return segment
   isnothing(idx) && return Segment(O, q[end])
 
-  idx = max(idx, 2) # is this necessary?
-
   # rotational sweep
+  idx = max(idx, 2)
   r = [O, q[idx - 1], q[idx]]
   for B in q[(idx + 1):end]
     while ∠(r[end - 1], r[end], B) > atol(T) && length(r) ≥ 3
