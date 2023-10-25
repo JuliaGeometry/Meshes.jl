@@ -45,15 +45,15 @@ function hull(points, ::GrahamScan)
 
   # skip collinear points at beginning 
   y(p) = coordinates(p)[2]
-  idx = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
+  i = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
   
   # all points are collinear, return segment
-  isnothing(idx) && return Segment(O, q[end])
+  isnothing(i) && return Segment(O, q[end])
 
   # rotational sweep
-  idx = max(idx, 2)
-  r = [O, q[idx - 1], q[idx]]
-  for B in q[(idx + 1):end]
+  i = max(i, 2)
+  r = [O, q[i - 1], q[i]]
+  for B in q[(i + 1):end]
     while ∠(r[end - 1], r[end], B) > atol(T) && length(r) ≥ 3
       pop!(r)
     end
