@@ -74,7 +74,7 @@
 
       if method == GrahamScan()
         # simplifying rectangular hull / triangular
-        points = [P2(i - 1, j - 1) for i in 1:11, j in 1:11] |> vec
+        points = [P2(i - 1, j - 1) for i in 1:11 for j in 1:11] 
         chull = hull(points, method)
         @test vertices(chull) == [P2(0, 0), P2(10, 0), P2(10, 10), P2(0, 10)]
         for _ in 1:100 # test presence of interior points doesn't affect the result 
@@ -90,11 +90,11 @@
         # degenerate cases
         points = [P2(0, 0), P2(1, 0), P2(2, 0)]
         chull = hull(points, method)
-        @test vertices(chull) == [P2(0, 0), P2(1, 0), P2(2, 0)] # the degeneracy fix of PolyArea inserts P2(1,0)
+        @test vertices(chull) == (P2(0, 0), P2(2, 0))
 
         points = [P2(0, 0), P2(1, 0), P2(2, 0), P2(10, 0), P2(100, 0)]
         chull = hull(points, method)
-        @test vertices(chull) == [P2(0, 0), P2(50, 0), P2(100, 0)] # the degeneracy fix of PolyArea inserts P2(50,0)
+        @test vertices(chull) == (P2(0, 0), P2(100, 0))
 
         # partially collinear 
         points = [
