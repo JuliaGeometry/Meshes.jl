@@ -45,17 +45,14 @@ function hull(points, ::GrahamScan)
 
   # initialise and skip collinear points at beginning 
   r = [O]
-  idx = 1
-  while idx ≤ length(q) && coordinates(q[idx])[2] == coordinates(O)[2]
-    idx += 1
+  oy = coordinates(O)[2]
+  idx = findfirst(qq -> coordinates(qq)[2] ≠ oy, q)
+  if isnothing(idx)
+    push!(r, q[end]) # all points are collinear, so just add in the last point 
+    return PolyArea(r)
   end
   idx = max(idx, 2)
-  push!(r, q[idx - 1])
-  if idx > length(q)
-    return PolyArea(r)
-  else
-    push!(r, q[idx])
-  end
+  push!(r, q[idx - 1], q[idx])
 
   # rotational sweep
   for B in q[(idx + 1):end]
