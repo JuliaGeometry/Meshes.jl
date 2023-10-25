@@ -72,7 +72,7 @@
       chul = hull(pts, method)
       @test nvertices(chul) < length(pts)
 
-      if method == GrahamScan() # simplification not yet implemented for JarvisMarch()
+      if method == GrahamScan()
         # simplifying rectangular hull / triangular
         points = [P2(i - 1, j - 1) for i in 1:11, j in 1:11] |> vec
         chull = hull(points, method)
