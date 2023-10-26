@@ -25,18 +25,21 @@ function clip(poly::Polygon, other::Geometry, method::SutherlandHodgman)
 end
 
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
+  # make sure other ring is CCW
+  occw = orientation(other) == CCW ? other : reverse(other)
+
   v = vertices(ring)
-  o = orientation(other) == CCW ? vertices(other) : reverse(vertices(other))
+  o = vertices(occw)
 
   for i in 1:length(o)
     lₒ = Line(o[i], o[i + 1])
 
-    m = length(v)
-    u = Point{Dim,T}[]
+    n = length(v)
 
-    for j in 1:m
+    u = Point{Dim,T}[]
+    for j in 1:n
       v₁ = v[j]
-      v₂ = v[mod1(j + 1, m)]
+      v₂ = v[mod1(j + 1, n)]
       lᵣ = Line(v₁, v₂)
 
       isinside₁ = (sideof(v₁, lₒ) != RIGHT)
