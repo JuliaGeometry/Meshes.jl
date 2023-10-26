@@ -26,28 +26,26 @@ end
 
 function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
   v = vertices(ring)
-
   o = orientation(other) == CCW ? vertices(other) : reverse(vertices(other))
-  n = length(o)
 
-  for i in 1:n
-    lₒ = Line(o[i], o[mod1(i + 1, n)])
+  for i in 1:length(o)
+    lₒ = Line(o[i], o[i + 1])
 
     m = length(v)
     u = Point{Dim,T}[]
 
     for j in 1:m
-      p₁ = v[j]
-      p₂ = v[mod1(j + 1, m)]
-      lᵣ = Line(p₁, p₂)
+      v₁ = v[j]
+      v₂ = v[mod1(j + 1, m)]
+      lᵣ = Line(v₁, v₂)
 
-      isinside₁ = (sideof(p₁, lₒ) != RIGHT)
-      isinside₂ = (sideof(p₂, lₒ) != RIGHT)
+      isinside₁ = (sideof(v₁, lₒ) != RIGHT)
+      isinside₂ = (sideof(v₂, lₒ) != RIGHT)
 
       if isinside₁ && isinside₂
-        push!(u, p₁)
+        push!(u, v₁)
       elseif isinside₁ && !isinside₂
-        push!(u, p₁)
+        push!(u, v₁)
         push!(u, lₒ ∩ lᵣ)
       elseif !isinside₁ && isinside₂
         push!(u, lₒ ∩ lᵣ)
