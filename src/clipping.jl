@@ -11,12 +11,10 @@ abstract type ClippingMethod end
 
 """
     clip(geometry, other, method)
+
+Clip the subject `geometry` with `other` geometry using clipping `method`.
 """
-function clip(poly::Polygon, other::Geometry, method::ClippingMethod)
-  c = [clip(ring, boundary(other), method) for ring in rings(poly)]
-  r = [r for r in c if !isnothing(r)]
-  isempty(r) ? nothing : PolyArea(r)
-end
+function clip end
 
 # ----------------
 # IMPLEMENTATIONS
