@@ -372,7 +372,7 @@
     f = Stretch(T(1), T(1), T(2))
     g = Plane(P3(1, 1, 1), V3(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ g
+    @test r ≈ Plane(P3(1, 1, 2), V3(0, 0, 1))
     @test TB.revert(f, r, c) ≈ g
 
     f = Stretch(T(2), T(1), T(1))

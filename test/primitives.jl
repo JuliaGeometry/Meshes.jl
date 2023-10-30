@@ -302,6 +302,11 @@
     p₂ = Plane(P3(0, 0, 0), -V3(1, 1, 0))
     @test p₁ ≈ p₂
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/624
+    p₁ = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    p₂ = Plane(P3(0, 0, 10), V3(0, 0, 1))
+    @test !(p₁ ≈ p₂)
+
     # normal to plane has norm one regardless of basis
     p = Plane(P3(0, 0, 0), V3(2, 0, 0), V3(0, 3, 0))
     n = normal(p)

@@ -46,8 +46,11 @@ normal(p::Plane) = normalize(p.u × p.v)
   p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ && p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁
 
 Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
-  isapprox((p₁.v - p₁.u) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
-  isapprox((p₂.v - p₂.u) ⋅ normal(p₁), zero(T), atol=atol(T))
+  isapprox((p₁(0, 0) - p₂(0, 0)) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
+  isapprox((p₂(0, 0) - p₁(0, 0)) ⋅ normal(p₁), zero(T), atol=atol(T)) &&
+  isapprox(_area(normal(p₁), normal(p₂)), zero(T), atol=atol(T))
+
+_area(v₁::Vec, v₂::Vec) = norm(v₁ × v₂)
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
 
