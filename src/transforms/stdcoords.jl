@@ -27,10 +27,10 @@ function apply(::StdCoords, g::GeometryOrDomain)
   c, s = center(box), sides(box)
   tr = Translate(coordinates(c)...)
   ts = Stretch(s)
-  t = inv(tr) → inv(ts)
+  t = inverse(tr) → inverse(ts)
   t(g), t
 end
 
-revert(::StdCoords, g::GeometryOrDomain, t) = inv(t)(g)
+revert(::StdCoords, g::GeometryOrDomain, t) = inverse(t)(g)
 
 reapply(::StdCoords, g::GeometryOrDomain, t) = t(g)

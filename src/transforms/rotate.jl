@@ -41,7 +41,7 @@ isrevertible(::Type{<:Rotate}) = true
 
 isinvertible(::Type{<:Rotate}) = true
 
-Base.inv(t::Rotate) = Rotate(inv(t.rot))
+inverse(t::Rotate) = Rotate(inv(t.rot))
 
 applycoord(t::Rotate, v::Vec) = t.rot * v
 
