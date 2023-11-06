@@ -47,7 +47,7 @@ function applycoord end
 
 apply(t::CoordinateTransform, g::GeometryOrDomain) = applycoord(t, g), nothing
 
-revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inv(t), g)
+revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inverse(t), g)
 
 # apply transform recursively
 applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =

@@ -31,7 +31,7 @@ isrevertible(::Type{<:Stretch}) = true
 
 isinvertible(::Type{<:Stretch}) = true
 
-Base.inv(t::Stretch) = Stretch(1 ./ t.factors)
+inverse(t::Stretch) = Stretch(1 ./ t.factors)
 
 applycoord(t::Stretch, v::Vec) = t.factors .* v
 

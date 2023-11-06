@@ -2,7 +2,7 @@
   @testset "Rotate" begin
     @test TB.isrevertible(Rotate)
     @test TB.isinvertible(Rotate)
-    @test inv(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
+    @test TB.inverse(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
 
     # ------
     # POINT
@@ -179,7 +179,7 @@
   @testset "Translate" begin
     @test TB.isrevertible(Translate)
     @test TB.isinvertible(Translate)
-    @test inv(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
+    @test TB.inverse(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
 
     # ------
     # POINT
@@ -305,7 +305,7 @@
   @testset "Stretch" begin
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
-    @test inv(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
+    @test TB.inverse(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
 
     # ------
     # POINT
