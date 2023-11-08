@@ -19,10 +19,16 @@ CylindricalTrajectory(centroids) = CylindricalTrajectory(centroids, 1)
 
 topology(t::CylindricalTrajectory) = GridTopology(length(t.centroids))
 
-function element(t::CylindricalTrajectory, ind::Int)
+function element(t::CylindricalTrajectory{T}, ind::Int) where {T}
   c = t.centroids
   r = t.radius
   n = length(c)
+
+  if n == 1 # single vertical cylinder
+    p₁ = c[1] - Vec{3,T}(0, 0, 0.5)
+    p₂ = c[1] + Vec{3,T}(0, 0, 0.5)
+    return Cylinder(p₁, p₂, r)
+  end
 
   if ind == 1 # head of trajectory
     # points at cylinder planes

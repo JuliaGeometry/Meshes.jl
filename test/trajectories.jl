@@ -15,5 +15,13 @@
     @test nelements(t) == 20
     @test radius(t) == T(2)
     @test topology(t) == GridTopology(20)
+
+    # trajectory with single cylinder
+    t = CylindricalTrajectory([P3(0, 0, 0)], T(1))
+    @test eltype(t) <: Cylinder
+    @test nelements(t) == 1
+    @test radius(t) == T(1)
+    @test topology(t) == GridTopology(1)
+    @test t[1] == Cylinder(P3(0, 0, -0.5), P3(0, 0, 0.5), T(1))
   end
 end
