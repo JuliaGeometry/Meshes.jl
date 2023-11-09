@@ -596,6 +596,26 @@
       (0.0, 1.0)
     ]
     @test all(vertices(bpoly) .≈ target)
+
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/629
+    outer = Ring(P2(0., 0.), P2(0., 3.), P2(2., 3.), P2(2., 2.), P2(3., 2.), P2(3., 0.))
+    hole = Ring(Point(1., 1.), Point(1., 2.), Point(2., 2.), Point(2., 1.))
+    poly = PolyArea(outer, hole)
+    bpoly = poly |> Bridge(T(0.01))
+
+    target = P2[
+      (0.,0.),
+      (3.,0.),
+      (3.,2.),
+      (2.,2.),
+      (2.,1.),
+      (1.,1.),
+      (1.,2.),
+      (2.,2.),
+      (2.,3.),
+      (0.,3.),
+    ]
+    @test all(vertices(bpoly) .≈ target)
   end
 
   @testset "Smoothing" begin

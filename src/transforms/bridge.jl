@@ -68,33 +68,50 @@ function bridge(rings, rinds, δ)
     A = outer[omax]
     B = inner[imax]
 
-    # direction and normal to segment A--B
-    v = B - A
-    u = Vec(-v[2], v[1])
-    n = u / norm(u)
+    # Check for edge case where A and B are equivalent
+    if A == B
+      outer = [
+        outer[begin:(omax - 1)]
+        [A]
+        circshift(inner, -imax + 1)[2:end]
+        [A]
+        outer[(omax + 1):end]
+      ]
+      oinds = [
+        oinds[begin:omax-1]
+        circshift(iinds, -imax + 1)
+        oinds[omax:end]
+      ]
+    else
 
-    # the point A is split into A′ and A′′ and
-    # the point B is split into B′ and B′′ based
-    # on a given bridge width δ
-    A′ = A + (δ / 2) * n
-    A′′ = A - (δ / 2) * n
-    B′ = B + (δ / 2) * n
-    B′′ = B - (δ / 2) * n
+      # direction and normal to segment A--B
+      v = B - A
+      u = Vec(-v[2], v[1])
+      n = u / norm(u)
 
-    # insert hole at closest vertex
-    outer = [
-      outer[begin:(omax - 1)]
-      [A′, B′]
-      circshift(inner, -imax + 1)[2:end]
-      [B′′, A′′]
-      outer[(omax + 1):end]
-    ]
-    oinds = [
-      oinds[begin:omax]
-      circshift(iinds, -imax + 1)
-      [iinds[imax]]
-      oinds[omax:end]
-    ]
+      # the point A is split into A′ and A′′ and
+      # the point B is split into B′ and B′′ based
+      # on a given bridge width δ
+      A′ = A + (δ / 2) * n
+      A′′ = A - (δ / 2) * n
+      B′ = B + (δ / 2) * n
+      B′′ = B - (δ / 2) * n
+
+      # insert hole at closest vertex
+      outer = [
+        outer[begin:(omax - 1)]
+        [A′, B′]
+        circshift(inner, -imax + 1)[2:end]
+        [B′′, A′′]
+        outer[(omax + 1):end]
+      ]
+      oinds = [
+        oinds[begin:omax]
+        circshift(iinds, -imax + 1)
+        [iinds[imax]]
+        oinds[omax:end]
+      ]
+    end
   end
 
   # find duplicate vertices
