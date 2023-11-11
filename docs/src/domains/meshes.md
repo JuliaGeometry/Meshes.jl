@@ -45,6 +45,19 @@ viz(grid, showfacets = true)
 ```
 
 ```@docs
+StructuredGrid
+```
+
+```@example meshes
+# 2D structured grid
+X = [i/20 * cos(3π/2 * (j-1) / (30-1)) for i in 1:20, j in 1:30]
+Y = [i/20 * sin(3π/2 * (j-1) / (30-1)) for i in 1:20, j in 1:30]
+grid = StructuredGrid(X, Y)
+
+viz(grid, showfacets = true)
+```
+
+```@docs
 SimpleMesh
 ```
 

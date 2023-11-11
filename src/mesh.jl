@@ -191,6 +191,7 @@ Base.getindex(g::Grid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
 
 include("mesh/cartesiangrid.jl")
 include("mesh/rectilineargrid.jl")
+include("mesh/structuredgrid.jl")
 include("mesh/simplemesh.jl")
 
 # ------------

@@ -4,9 +4,6 @@ using DocumenterTools: Themes
 # load viz recipes
 import WGLMakie as Mke
 
-# Workaround for GR warnings
-ENV["GKSwstype"] = "100"
-
 istravis = "TRAVIS" ∈ keys(ENV)
 
 Themes.compile(

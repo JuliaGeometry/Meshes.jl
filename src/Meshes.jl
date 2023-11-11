@@ -275,6 +275,7 @@ export
   Grid,
   CartesianGrid,
   RectilinearGrid,
+  StructuredGrid,
   SimpleMesh,
   vertex,
   vertices,
