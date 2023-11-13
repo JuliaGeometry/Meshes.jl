@@ -2,15 +2,31 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# ----------------------------------
-# recipes optimized for performance
-# ----------------------------------
+# ----------------
+# RectilinearGrid
+# ----------------
 
-const SubGrid{Dim,T} = Meshes.SubDomain{Dim,T,<:CartesianGrid{Dim,T}}
+Makie.plottype(::RectilinearGrid) = Viz{<:Tuple{RectilinearGrid}}
 
-Makie.plottype(::SubGrid) = Viz{<:Tuple{SubGrid}}
+Makie.convert_arguments(P::Type{<:Viz}, grid::RectilinearGrid) = Makie.convert_arguments(P, convert(SimpleMesh, grid))
 
-function Makie.plot!(plot::Viz{<:Tuple{SubGrid}})
+# ---------------
+# StructuredGrid
+# ---------------
+
+Makie.plottype(::StructuredGrid) = Viz{<:Tuple{StructuredGrid}}
+
+Makie.convert_arguments(P::Type{<:Viz}, grid::StructuredGrid) = Makie.convert_arguments(P, convert(SimpleMesh, grid))
+
+# -----------------
+# SubCartesianGrid
+# -----------------
+
+const SubCartesianGrid{Dim,T} = Meshes.SubDomain{Dim,T,<:CartesianGrid{Dim,T}}
+
+Makie.plottype(::SubCartesianGrid) = Viz{<:Tuple{SubCartesianGrid}}
+
+function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   subgrid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
