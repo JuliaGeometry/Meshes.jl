@@ -489,7 +489,7 @@
     f = Expand(T(1), T(2), T(2))
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(P3(0, -1/3, -1/3), P3(1, -1/3, -1/3), P3(0, 10/6, 10/6))
+    @test r ≈ Triangle(P3(0, -1 / 3, -1 / 3), P3(1, -1 / 3, -1 / 3), P3(0, 10 / 6, 10 / 6))
     @test TB.revert(f, r, c) ≈ g
 
     # ----------
@@ -536,7 +536,7 @@
     f = Expand(T(1), T(2))
     d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
     r, c = TB.apply(f, d)
-    @test r ≈ PointSet([P2(0, -1/3), P2(1, -1/3), P2(1, 10/6)])
+    @test r ≈ PointSet([P2(0, -1 / 3), P2(1, -1 / 3), P2(1, 10 / 6)])
     @test TB.revert(f, r, c) ≈ d
 
     # ------------
