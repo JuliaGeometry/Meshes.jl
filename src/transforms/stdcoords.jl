@@ -34,9 +34,7 @@ reapply(t::StdCoords, g::GeometryOrDomain, c) = reapply(c[1], g, c[2])
 
 function _stdcoords(t, g)
   b = boundingbox(g)
-  c = center(b)
-  s = sides(b)
-  tr = Translate(coordinates(c)...)
-  ts = Stretch(s)
-  inverse(tr) → inverse(ts)
+  t = Translate(coordinates(center(b))...)
+  s = Stretch(sides(b))
+  inverse(t) → inverse(s)
 end
