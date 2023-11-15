@@ -480,6 +480,7 @@ export
   Rotate,
   Translate,
   Stretch,
+  Expand,
   StdCoords,
   Repair,
   Bridge,

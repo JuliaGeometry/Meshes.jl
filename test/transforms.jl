@@ -357,8 +357,8 @@
     # ----------
     # MULTIGEOM
     # ----------
+
     f = Stretch(T(1), T(2))
-    f = Translate(T(1), T(1))
     t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
@@ -437,6 +437,144 @@
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
+  end
+
+  @testset "Expand" begin
+    @test TB.isrevertible(Expand)
+    @test TB.isinvertible(Expand)
+    @test TB.inverse(Expand(T(1), T(2))) == Expand(T(1), T(1 / 2))
+
+    # ------
+    # POINT
+    # ------
+
+    f = Expand(T(1), T(2))
+    g = P2(1, 1)
+    r, c = TB.apply(f, g)
+    @test r ≈ P2(1, 1)
+    @test TB.revert(f, r, c) ≈ g
+
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Expand(T(1), T(2))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(0, 0), P2(1, 0))
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Expand(T(2), T(1))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(-0.5, 0), P2(1.5, 0))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ----
+    # BOX
+    # ----
+
+    f = Expand(T(1), T(2))
+    g = Box(P2(0, 0), P2(1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Box
+    @test r ≈ Box(P2(0, -0.5), P2(1, 1.5))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = Expand(T(1), T(2), T(2))
+    g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Triangle(P3(0, -1/3, -1/3), P3(1, -1/3, -1/3), P3(0, 10/6, 10/6))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = Expand(T(1), T(2))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ g
+
+    # ------
+    # PLANE
+    # ------
+
+    f = Expand(T(1), T(1), T(2))
+    g = Plane(P3(1, 1, 1), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ g
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Expand(T(2), T(1), T(1))
+    g = Plane(P3(1, 1, 1), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ g
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # CYLINDER
+    # ---------
+
+    f = Expand(T(1), T(1), T(2))
+    g = Cylinder(T(1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Cylinder(P3(0, 0, -0.5), P3(0, 0, 1.5))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Expand(T(1), T(2))
+    d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([P2(0, -1/3), P2(1, -1/3), P2(1, 10/6)])
+    @test TB.revert(f, r, c) ≈ d
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Expand(T(1), T(2))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ d
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+    @test all(TB.revert(f, r, c) .≈ d)
+
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = Expand(T(1), T(2))
+    d = CartesianGrid(P2(1, 1), P2(11, 11), dims=(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r ≈ CartesianGrid(P2(1, -4), P2(11, 16), dims=(10, 10))
+    @test TB.revert(f, r, c) ≈ d
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = Expand(T(1), T(2))
+    p = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
   end
 
