@@ -37,8 +37,7 @@ discretize(geometry::Geometry, method::BoundaryDiscretizationMethod) = discretiz
 
 function discretize(polygon::Polygon{Dim,T}, method::BoundaryDiscretizationMethod) where {Dim,T}
   # clean up polygon if necessary
-  clean = Repair{0}() → Repair{8}()
-  cpoly = clean(polygon)
+  cpoly = polygon |> Repair{0}() |> Repair{8}()
 
   # handle degenerate polygons
   if nvertices(cpoly) == 1
