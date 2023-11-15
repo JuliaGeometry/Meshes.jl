@@ -17,14 +17,14 @@ struct Bridge{T} <: GeometricTransform
   δ::T
 end
 
-Bridge() = Bridge(nothing)
+Bridge() = Bridge(0)
 
 function apply(transform::Bridge, poly::Polygon{Dim,T}) where {Dim,T}
   # sort rings lexicographically
   rpoly, rinds = apply(Repair{9}(), poly)
 
   # retrieve bridge width
-  δ = isnothing(transform.δ) ? zero(T) : transform.δ
+  δ = T(transform.δ)
 
   ring, dups = if hasholes(rpoly)
     bridge(rings(rpoly), rinds, δ)
