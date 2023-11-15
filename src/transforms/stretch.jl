@@ -5,8 +5,9 @@
 """
     Stretch(s₁, s₂, ...)
 
-Scale coordinates of geometry or mesh by
-given strictly positive factors `s₁, s₂, ...`.
+Stretch geometry or domain with
+strictly positive scaling factors
+`s₁, s₂, ...`.
 
 ## Examples
 
