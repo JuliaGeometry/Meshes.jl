@@ -72,6 +72,23 @@ viz(fig[1,2], mesh)
 fig
 ```
 
+## Expand
+
+```@docs
+Expand
+```
+
+```@example transforms
+grid = CartesianGrid(10, 10)
+
+mesh = grid |> Expand(2., 3.)
+
+fig = Mke.Figure(resolution = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
+```
+
 ## StdCoords
 
 ```@docs
