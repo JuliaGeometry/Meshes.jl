@@ -22,15 +22,21 @@ struct StdCoords <: GeometricTransform end
 
 isrevertible(::Type{<:StdCoords}) = true
 
-function apply(::StdCoords, g::GeometryOrDomain)
-  box = boundingbox(g)
-  c, s = center(box), sides(box)
-  tr = Translate(coordinates(c)...)
-  ts = Stretch(s)
-  t = inverse(tr) → inverse(ts)
-  t(g), t
+function apply(t::StdCoords, g::GeometryOrDomain)
+  p = _stdcoords(t, g)
+  n, c = apply(p, g)
+  n, (p, c)
 end
 
-revert(::StdCoords, g::GeometryOrDomain, t) = inverse(t)(g)
+revert(t::StdCoords, g::GeometryOrDomain, c) = revert(c[1], g, c[2])
 
-reapply(::StdCoords, g::GeometryOrDomain, t) = t(g)
+reapply(t::StdCoords, g::GeometryOrDomain, c) = reapply(c[1], g, c[2])
+
+function _stdcoords(t, g)
+  b = boundingbox(g)
+  c = center(b)
+  s = sides(b)
+  tr = Translate(coordinates(c)...)
+  ts = Stretch(s)
+  inverse(tr) → inverse(ts)
+end
