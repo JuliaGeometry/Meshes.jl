@@ -674,6 +674,18 @@
 
   @testset "Repair{9}" begin end
 
+  @testset "Repair{10}" begin
+    outer = Ring(P2[(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)])
+    inner = Ring(P2[(1, 1), (1, 2), (2, 2), (2, 1)])
+    poly = PolyArea(outer, inner)
+    repair = Repair{10}()
+    rpoly, cache = TB.apply(repair, poly)
+    @test nvertices(rpoly) == nvertices(poly)
+    @test length(first(rings(rpoly))) > length(first(rings(poly)))
+    opoly = TB.revert(repair, rpoly, cache)
+    @test opoly == poly
+  end
+
   @testset "Bridge" begin
     # https://github.com/JuliaGeometry/Meshes.jl/issues/566
     outer = Ring(P2(6, 4), P2(6, 7), P2(1, 6), P2(1, 1), P2(5, 2))

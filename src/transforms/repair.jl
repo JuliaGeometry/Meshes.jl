@@ -9,16 +9,17 @@ Perform repairing operation with code `K`.
 
 ## Available operations
 
-- K = 0: duplicated vertices and faces are removed
-- K = 1: unused vertices are removed
-- K = 2: non-manifold faces are removed
-- K = 3: degenerate faces are removed
-- K = 4: non-manifold vertices are removed
-- K = 5: non-manifold vertices are split by threshold
-- K = 6: close vertices are merged (given a radius)
-- K = 7: faces are coherently oriented
-- K = 8: zero-area ears are removed
-- K = 9: rings of polygon are sorted
+- K =  0: duplicated vertices and faces are removed
+- K =  1: unused vertices are removed
+- K =  2: non-manifold faces are removed
+- K =  3: degenerate faces are removed
+- K =  4: non-manifold vertices are removed
+- K =  5: non-manifold vertices are split by threshold
+- K =  6: close vertices are merged (given a radius)
+- K =  7: faces are coherently oriented
+- K =  8: zero-area ears are removed
+- K =  9: rings of polygon are sorted
+- K = 10: outer rings are expanded
 
 ## Examples
 
@@ -142,3 +143,26 @@ function repair9(r::AbstractVector{<:Ring})
 
   Ring.(newverts), newinds
 end
+
+# ---------------
+# OPERATION (10)
+# ---------------
+
+function apply(::Repair{10}, poly::PolyArea)
+  t = _expand10(poly)
+  r = rings(poly)
+  n, c = apply(t, first(r))
+  PolyArea([n; r[2:end]]), (t, c)
+end
+
+function revert(::Repair{10}, poly::PolyArea, c)
+  r = rings(poly)
+  o = revert(c[1], first(r), c[2])
+  PolyArea([o; r[2:end]])
+end
+
+apply(::Repair{10}, poly::Ngon) = poly, nothing
+
+revert(::Repair{10}, poly::Ngon, cache) = poly
+
+_expand10(g::Geometry{Dim,T}) where {Dim,T} = Expand(ntuple(i -> T(1) + 10atol(T), Dim))
