@@ -114,6 +114,8 @@ spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid) = g.offset
 
+XYZ(g::CartesianGrid) = XYZ(convert(RectilinearGrid, g))
+
 function centroid(g::CartesianGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p = cart2vert(g, ijk)
