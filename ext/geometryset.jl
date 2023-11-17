@@ -86,5 +86,5 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   coords = Makie.@lift coordinates.($geoms)
 
   # visualize point set
-  Makie.scatter!(plot, coords, color=colorant, markersize=pointsize)
+  Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
