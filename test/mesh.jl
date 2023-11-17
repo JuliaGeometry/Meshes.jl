@@ -159,9 +159,12 @@
     g1D = CartesianGrid{T}(10)
     g2D = CartesianGrid{T}(10, 10)
     g3D = CartesianGrid{T}(10, 10, 10)
-    @test XYZ(g1D) == (0:10,)
-    @test XYZ(g2D) == (repeat(0:10, 1, 11), repeat((0:10)', 11, 1))
-    @test XYZ(g3D) == (repeat(0:10, 1, 11, 11), repeat((0:10)', 11, 1, 11), repeat(reshape(0:10, 1, 1, 11), 11, 11, 1))
+    x = T.(0:10)
+    y = T.(0:10)'
+    z = reshape(T.(0:10), 1, 1, 11)
+    @test XYZ(g1D) == (x,)
+    @test XYZ(g2D) == (repeat(x, 1, 11), repeat(y, 11, 1))
+    @test XYZ(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
 
     # units
     Q = typeof(zero(T) * u"m")

@@ -33,13 +33,6 @@ RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
 cart2vert(g::RectilinearGrid, ijk::Tuple) = Point(getindex.(g.xyz, ijk))
 
-function centroid(g::RectilinearGrid, ind::Int)
-  ijk = elem2cart(topology(g), ind)
-  p1 = cart2vert(g, ijk)
-  p2 = cart2vert(g, ijk .+ 1)
-  Point((coordinates(p1) + coordinates(p2)) / 2)
-end
-
 @generated function XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T}
   exprs = ntuple(Dim) do d
     quote
@@ -53,4 +46,11 @@ end
     end
   end
   Expr(:tuple, exprs...)
+end
+
+function centroid(g::RectilinearGrid, ind::Int)
+  ijk = elem2cart(topology(g), ind)
+  p1 = cart2vert(g, ijk)
+  p2 = cart2vert(g, ijk .+ 1)
+  Point((coordinates(p1) + coordinates(p2)) / 2)
 end
