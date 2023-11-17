@@ -292,7 +292,6 @@ export
   cart2vert,
   spacing,
   offset,
-  XYZ,
 
   # trajectories
   CylindricalTrajectory,

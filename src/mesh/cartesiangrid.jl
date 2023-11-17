@@ -114,6 +114,16 @@ spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid) = g.offset
 
+function xyz(g::CartesianGrid{Dim}) where {Dim}
+  dims = size(g)
+  spac = spacing(g)
+  orig = coordinates(minimum(g))
+  ntuple(Dim) do i
+    o, s, d = orig[i], spac[i], dims[i]
+    range(start=o, step=s, length=(d + 1))
+  end
+end
+
 XYZ(g::CartesianGrid) = XYZ(convert(RectilinearGrid, g))
 
 function centroid(g::CartesianGrid, ind::Int)
