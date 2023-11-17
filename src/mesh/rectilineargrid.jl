@@ -39,3 +39,18 @@ function centroid(g::RectilinearGrid, ind::Int)
   p2 = cart2vert(g, ijk .+ 1)
   Point((coordinates(p1) + coordinates(p2)) / 2)
 end
+
+@generated function XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T}
+  exprs = ntuple(Dim) do d
+    quote
+      a = g.xyz[$d]
+      N = length(a)
+      A = Array{$T,$Dim}(undef, @ntuple($Dim, i -> N))
+      @nloops $Dim i A begin
+        @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
+      end
+      A
+    end
+  end
+  Expr(:tuple, exprs...)
+end

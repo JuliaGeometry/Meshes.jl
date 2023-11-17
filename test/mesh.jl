@@ -155,6 +155,14 @@
     @test vertex(grid, 1) == P2(0, 0)
     @test vertex(grid, 121) == P2(10, 10)
 
+    # XYZ
+    g1D = CartesianGrid{T}(10)
+    g2D = CartesianGrid{T}(10, 10)
+    g3D = CartesianGrid{T}(10, 10, 10)
+    @test XYZ(g1D) == (0:10,)
+    @test XYZ(g2D) == (repeat(0:10, 1, 11), repeat((0:10)', 11, 1))
+    @test XYZ(g3D) == (repeat(0:10, 1, 11, 11), repeat((0:10)', 11, 1, 11), repeat(reshape(0:10, 1, 1, 11), 11, 11, 1))
+
     # units
     Q = typeof(zero(T) * u"m")
     grid = CartesianGrid{Q}(10, 10)
@@ -198,11 +206,19 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
+    @test XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
     # single vertex access
     grid = RectilinearGrid(T.(0:10), T.(0:10))
     @test vertex(grid, 1) == P2(0, 0)
     @test vertex(grid, 121) == P2(10, 10)
+
+    # conversion
+    cg = CartesianGrid{T}(10, 10)
+    rg = convert(RectilinearGrid, cg)
+    @test topology(rg) == topology(cg)
+    @test nvertices(rg) == nvertices(cg)
+    @test nelements(rg) == nelements(cg)
   end
 
   @testset "StructuredGrid" begin
@@ -222,6 +238,20 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
+    @test XYZ(grid) == (X, Y)
+
+    # conversion
+    cg = CartesianGrid{T}(10, 10)
+    sg = convert(StructuredGrid, cg)
+    @test topology(sg) == topology(cg)
+    @test nvertices(sg) == nvertices(cg)
+    @test nelements(sg) == nelements(cg)
+
+    rg = RectilinearGrid(T.(0:10), T.(0:10))
+    sg = convert(StructuredGrid, rg)
+    @test topology(sg) == topology(rg)
+    @test nvertices(sg) == nvertices(rg)
+    @test nelements(sg) == nelements(rg)
   end
 
   @testset "SimpleMesh" begin

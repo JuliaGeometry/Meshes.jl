@@ -151,6 +151,15 @@ Convert Cartesian index `ijk` to vertex on `grid`.
 """
 cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
 
+"""
+    XYZ(grid)
+
+Returns the coordinate arrays of each dimension of the `grid`, e.g `(X, Y, Z, ...)`.
+With each vertex with coordinates `i,j,k,...` being constructed as follows: 
+`Point(X[i,j,k,...], Y[i,j,k,...], Z[i,j,k,...], ...)`.
+"""
+function XYZ end
+
 # ----------
 # FALLBACKS
 # ----------
@@ -199,3 +208,16 @@ include("mesh/simplemesh.jl")
 # ------------
 
 Base.convert(::Type{<:SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
+
+Base.convert(::Type{<:StructuredGrid}, g::Grid) = StructuredGrid(XYZ(g))
+
+function Base.convert(::Type{<:RectilinearGrid}, grid::CartesianGrid{Dim}) where {Dim}
+  dims = size(grid)
+  spac = spacing(grid)
+  orig = coordinates(minimum(grid))
+  xyz = ntuple(Dim) do i
+    o, s, d = orig[i], spac[i], dims[i]
+    range(start=o, step=s, length=(d + 1))
+  end
+  RectilinearGrid(xyz...)
+end

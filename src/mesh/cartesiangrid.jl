@@ -121,6 +121,8 @@ function centroid(g::CartesianGrid, ind::Int)
   p + δ
 end
 
+XYZ(g::CartesianGrid) = XYZ(convert(RectilinearGrid, g))
+
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
   dims = size(I)
   offset = g.offset .- first(I).I .+ 1
