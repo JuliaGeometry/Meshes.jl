@@ -219,5 +219,5 @@ function Base.convert(::Type{<:RectilinearGrid}, grid::CartesianGrid{Dim}) where
     o, s, d = orig[i], spac[i], dims[i]
     range(start=o, step=s, length=(d + 1))
   end
-  RectilinearGrid(xyz...)
+  RectilinearGrid(xyz)
 end
