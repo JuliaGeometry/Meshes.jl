@@ -38,7 +38,7 @@ cart2vert(g::RectilinearGrid, ijk::Tuple) = Point(getindex.(g.xyz, ijk))
     quote
       a = g.xyz[$d]
       N = length(a)
-      A = Array{T}(undef, @ntuple($Dim, i -> N))
+      A = Array{T,Dim}(undef, @ntuple($Dim, i -> N))
       @nloops $Dim i A begin
         @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
       end
