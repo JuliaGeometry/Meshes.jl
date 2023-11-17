@@ -219,10 +219,10 @@
     # conversion
     cg = CartesianGrid{T}(10, 10)
     rg = convert(RectilinearGrid, cg)
-    @test topology(rg) == topology(cg)
-    @test vertices(rg) == vertices(cg)
     @test nvertices(rg) == nvertices(cg)
     @test nelements(rg) == nelements(cg)
+    @test topology(rg) == topology(cg)
+    @test vertices(rg) == vertices(cg)
   end
 
   @testset "StructuredGrid" begin
@@ -247,17 +247,17 @@
     # conversion
     cg = CartesianGrid{T}(10, 10)
     sg = convert(StructuredGrid, cg)
-    @test topology(sg) == topology(cg)
-    @test vertices(sg) == vertices(cg)
     @test nvertices(sg) == nvertices(cg)
     @test nelements(sg) == nelements(cg)
+    @test topology(sg) == topology(cg)
+    @test vertices(sg) == vertices(cg)
 
     rg = RectilinearGrid(T.(0:10), T.(0:10))
     sg = convert(StructuredGrid, rg)
-    @test topology(sg) == topology(rg)
-    @test vertices(sg) == vertices(rg)
     @test nvertices(sg) == nvertices(rg)
     @test nelements(sg) == nelements(rg)
+    @test topology(sg) == topology(rg)
+    @test vertices(sg) == vertices(rg)
   end
 
   @testset "SimpleMesh" begin
