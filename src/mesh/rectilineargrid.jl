@@ -33,6 +33,8 @@ RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
 cart2vert(g::RectilinearGrid, ijk::Tuple) = Point(getindex.(g.xyz, ijk))
 
+xyz(g::RectilinearGrid) = g.xyz
+
 @generated function XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T}
   exprs = ntuple(Dim) do d
     quote
