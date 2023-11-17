@@ -155,7 +155,7 @@ cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
     XYZ(grid)
 
 Returns the coordinate arrays of each dimension of the `grid`, e.g `(X, Y, Z, ...)`.
-With each vertex with coordinates `i,j,k,...` being constructed as follows: 
+The vertex `i,j,k,...` is constructed with
 `Point(X[i,j,k,...], Y[i,j,k,...], Z[i,j,k,...], ...)`.
 """
 function XYZ end
