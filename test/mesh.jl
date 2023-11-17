@@ -155,6 +155,14 @@
     @test vertex(grid, 1) == P2(0, 0)
     @test vertex(grid, 121) == P2(10, 10)
 
+    # xyz
+    g1D = CartesianGrid{T}(10)
+    g2D = CartesianGrid{T}(10, 10)
+    g3D = CartesianGrid{T}(10, 10, 10)
+    @test Meshes.xyz(g1D) == (T.(0:10),)
+    @test Meshes.xyz(g2D) == (T.(0:10), T.(0:10))
+    @test Meshes.xyz(g3D) == (T.(0:10), T.(0:10), T.(0:10))
+
     # XYZ
     g1D = CartesianGrid{T}(10)
     g2D = CartesianGrid{T}(10, 10)
@@ -162,9 +170,9 @@
     x = T.(0:10)
     y = T.(0:10)'
     z = reshape(T.(0:10), 1, 1, 11)
-    @test XYZ(g1D) == (x,)
-    @test XYZ(g2D) == (repeat(x, 1, 11), repeat(y, 11, 1))
-    @test XYZ(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
+    @test Meshes.XYZ(g1D) == (x,)
+    @test Meshes.XYZ(g2D) == (repeat(x, 1, 11), repeat(y, 11, 1))
+    @test Meshes.XYZ(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
 
     # units
     Q = typeof(zero(T) * u"m")
@@ -209,7 +217,8 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
-    @test XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
+    @test Meshes.xyz(grid) == (x, y)
+    @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
     # single vertex access
     grid = RectilinearGrid(T.(0:10), T.(0:10))
@@ -242,7 +251,7 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
-    @test XYZ(grid) == (X, Y)
+    @test Meshes.XYZ(grid) == (X, Y)
 
     # conversion
     cg = CartesianGrid{T}(10, 10)

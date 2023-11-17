@@ -152,20 +152,20 @@ Convert Cartesian index `ijk` to vertex on `grid`.
 cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
 
 """
-    XYZ(grid)
-
-Returns the coordinate arrays of each dimension of the `grid`, e.g `(X, Y, Z, ...)`.
-The vertex `i,j,k,...` is constructed with `Point(X[i,j,k,...], Y[i,j,k,...], Z[i,j,k,...], ...)`.
-"""
-function XYZ end
-
-"""
     xyz(grid)
 
 Returns the coordinate vectors of each dimension of the `grid`, e.g `(x, y, z, ...)`.
 The vertex `i,j,k,...` is constructed with `Point(x[i], y[j], z[k], ...)`.
 """
 function xyz end
+
+"""
+    XYZ(grid)
+
+Returns the coordinate arrays of each dimension of the `grid`, e.g `(X, Y, Z, ...)`.
+The vertex `i,j,k,...` is constructed with `Point(X[i,j,k,...], Y[i,j,k,...], Z[i,j,k,...], ...)`.
+"""
+function XYZ end
 
 # ----------
 # FALLBACKS
