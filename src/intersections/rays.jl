@@ -205,4 +205,4 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
   return @IT Crossing ray(λ) f
 end
 
-intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), discretize(p))
+intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), simplexify(p))

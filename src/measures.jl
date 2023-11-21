@@ -79,7 +79,7 @@ end
 
 measure(c::Chain) = sum(measure, segments(c))
 
-measure(g::Geometry) = sum(measure, discretize(g))
+measure(g::Geometry) = sum(measure, simplexify(g))
 
 measure(m::Multi) = sum(measure, parent(m))
 

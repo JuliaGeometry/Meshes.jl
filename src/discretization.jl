@@ -119,6 +119,8 @@ discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
 
 discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
 
+discretize(ngon::Ngon{N}) where {N} = SimpleMesh(pointify(ngon), [connect(ntuple(i -> i, N))])
+
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
 discretize(mesh::Mesh) = mesh
