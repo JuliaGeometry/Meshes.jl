@@ -19,7 +19,7 @@ end
 
 Bridge() = Bridge(0)
 
-function apply(transform::Bridge, poly::Polygon{Dim,T}) where {Dim,T}
+function apply(transform::Bridge, poly::PolyArea{Dim,T}) where {Dim,T}
   # sort rings lexicographically
   rpoly, rinds = apply(Repair{9}(), poly)
 
@@ -34,6 +34,8 @@ function apply(transform::Bridge, poly::Polygon{Dim,T}) where {Dim,T}
 
   PolyArea(ring), dups
 end
+
+apply(::Bridge, poly::Ngon) = poly, []
 
 function bridge(rings, rinds, δ)
   # extract vertices and indices

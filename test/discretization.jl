@@ -184,6 +184,11 @@
       @test vertices(mesh) == vertices(chain)
       @test eltype(mesh) <: Triangle
       @test nelements(mesh) == 2
+
+      # preserves order of vertices
+      poly = Quadrangle(P3(0, 1, 0), P3(1, 1, 0), P3(1, 0, 0), P3(0, 0, 0))
+      mesh = simplexify(poly)
+      @test pointify(mesh) == pointify(poly)
     end
   end
 

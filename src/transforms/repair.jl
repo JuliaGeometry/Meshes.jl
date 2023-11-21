@@ -113,10 +113,12 @@ end
 # OPERATION (9)
 # --------------
 
-function apply(::Repair{9}, poly::Polygon)
+function apply(::Repair{9}, poly::PolyArea)
   newrings, indices = poly |> rings |> repair9
   PolyArea(newrings), indices
 end
+
+apply(::Repair{9}, poly::Ngon) = poly, []
 
 function repair9(r::AbstractVector{<:Ring})
   # sort vertices lexicographically

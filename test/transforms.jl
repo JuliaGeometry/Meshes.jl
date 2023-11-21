@@ -672,7 +672,12 @@
     @test vertices(rpoly) == [P2(0, 0)]
   end
 
-  @testset "Repair{9}" begin end
+  @testset "Repair{9}" begin
+    poly = Quadrangle(P3(0, 1, 0), P3(1, 1, 0), P3(1, 0, 0), P3(0, 0, 0))
+    bpoly = poly |> Repair{9}()
+    @test bpoly isa Quadrangle
+    @test bpoly == poly
+  end
 
   @testset "Repair{10}" begin
     outer = Ring(P2[(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)])
@@ -746,6 +751,11 @@
       (0.0, 1.0)
     ]
     @test all(vertices(bpoly) .≈ target)
+
+    poly = Quadrangle(P3(0, 1, 0), P3(1, 1, 0), P3(1, 0, 0), P3(0, 0, 0))
+    bpoly = poly |> Bridge()
+    @test bpoly isa Quadrangle
+    @test bpoly == poly
   end
 
   @testset "Smoothing" begin
