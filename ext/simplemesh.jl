@@ -59,9 +59,9 @@ function vizmesh2D!(plot)
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
-  facetcolor = plot[:facetcolor]
-  showfacets = plot[:showfacets]
   segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
@@ -136,7 +136,7 @@ function vizmesh2D!(plot)
     tmatrix = reduce(hcat, tconnec) |> transpose
 
     # enable shading in 3D
-    tshading = dim == 3
+    tshading = dim == 3 ? Makie.FastShading : Makie.NoShading
 
     tcoords, tmatrix, tcolors, tshading
   end

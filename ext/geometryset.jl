@@ -9,10 +9,10 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
-  facetcolor = plot[:facetcolor]
-  showfacets = plot[:showfacets]
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
@@ -41,10 +41,10 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
       inds = Makie.@lift findall(g -> paramdim(g) == rank, $geoms)
       if !isempty(inds[])
         rset = Makie.@lift GeometrySet($geoms[$inds])
-        if colorant[] isa AbstractVector
-          cset = Makie.@lift $colorant[$inds]
+        cset = if colorant[] isa AbstractVector
+          Makie.@lift $colorant[$inds]
         else
-          cset = colorant
+          colorant
         end
         viz!(plot, rset, color=cset)
       end
@@ -58,10 +58,10 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     elseif all(ranks[] .== 1)
       # all boundaries are point sets
       points = Makie.@lift mapreduce(collect, vcat, $bounds)
-      viz!(plot, (Makie.@lift GeometrySet($points)), color=facetcolor, showfacets=false, pointsize=pointsize)
+      viz!(plot, (Makie.@lift GeometrySet($points)), color=facetcolor, pointsize=pointsize)
     elseif all(ranks[] .== 2)
       # all boundaries are geometries
-      viz!(plot, (Makie.@lift GeometrySet($bounds)), color=facetcolor, showfacets=false, segmentsize=segmentsize)
+      viz!(plot, (Makie.@lift GeometrySet($bounds)), color=facetcolor, segmentsize=segmentsize)
     elseif all(ranks[] .== 3)
       # we already visualized the boundaries because
       # that is all we can do with 3D geometries

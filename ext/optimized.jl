@@ -38,7 +38,7 @@ function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   # retrieve grid paramaters
   gparams = Makie.@lift let
     grid, _ = unview($subgrid)
-    dims = embeddim(grid)
+    dim = embeddim(grid)
     sp = spacing(grid)
 
     # coordinates of centroids
@@ -46,10 +46,10 @@ function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
     coords = [coord(e) .+ sp ./ 2 for e in $subgrid]
 
     # rectangle marker
-    marker = Makie.Rect{dims}(-1 .* sp, sp)
+    marker = Makie.Rect{dim}(-1 .* sp, sp)
 
     # enable shading in 3D
-    shading = dims == 3
+    shading = dim == 3 ? Makie.FastShading : Makie.NoShading
 
     coords, marker, shading
   end

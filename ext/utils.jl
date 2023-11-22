@@ -16,6 +16,8 @@ function vizmany!(plot, objs)
   colorscheme = plot[:colorscheme]
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
 
   object = Makie.@lift reduce(concat, $objs)
   colors = Makie.@lift mayberepeat($color, $objs)
@@ -27,8 +29,9 @@ function vizmany!(plot, objs)
     color=colors,
     alpha=alphas,
     colorscheme=colorscheme,
-    showfacets=false,
     pointsize=pointsize,
-    segmentsize=segmentsize
+    segmentsize=segmentsize,
+    showfacets=showfacets,
+    facetcolor=facetcolor
   )
 end
