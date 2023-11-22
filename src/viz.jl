@@ -12,10 +12,10 @@ Visualize Meshes.jl `object` with various `options`.
 * `color`       - color of geometries
 * `alpha`       - transparency in [0,1]
 * `colorscheme` - color scheme from ColorSchemes.jl
-* `facetcolor`  - color of facets (e.g. edges)
-* `showfacets`  - enable visualization of facets
 * `pointsize`   - size of points in point set
 * `segmentsize` - size (or width) of segments
+* `showfacets`  - enable visualization of facets
+* `facetcolor`  - color of facets (e.g. edges)
 
 The option `color` can be a single scalar or a vector
 of scalars. For [`Mesh`](@ref) subtypes, the length of

@@ -24,9 +24,9 @@ function Makie.plot!(plot::Viz{<:Tuple{Domain}})
     color=plot[:color],
     alpha=plot[:alpha],
     colorscheme=plot[:colorscheme],
-    facetcolor=plot[:facetcolor],
-    showfacets=plot[:showfacets],
     pointsize=plot[:pointsize],
-    segmentsize=plot[:segmentsize]
+    segmentsize=plot[:segmentsize],
+    showfacets=plot[:showfacets],
+    facetcolor=plot[:facetcolor]
   )
 end

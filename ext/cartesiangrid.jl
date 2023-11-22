@@ -159,8 +159,8 @@ end
 
 function vizsegs!(plot)
   grid = plot[:object]
-  facetcolor = plot[:facetcolor]
   segmentsize = plot[:segmentsize]
+  facetcolor = plot[:facetcolor]
 
   cparams = Makie.@lift let
     nd = embeddim($grid)
