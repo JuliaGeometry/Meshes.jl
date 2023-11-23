@@ -9,49 +9,13 @@ function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
   mesh = plot[:object][]
   rank = paramdim(mesh)
 
-  # different recipes for meshes with
-  # 1D, 2D, 3D, ... ND simplices
-  if rank == 1
-    # visualize segments
-    vizmesh1D!(plot)
-  elseif rank == 2
-    # visualize polygons
+  if rank == 2
     vizmesh2D!(plot)
   elseif rank == 3
-    # visualize polyhedra
     vizmesh3D!(plot)
+  else
+    throw(ErrorException("can only visualize 2D and 3D meshes"))
   end
-end
-
-function vizmesh1D!(plot)
-  mesh = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
-  segmentsize = plot[:segmentsize]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
-
-  # retrieve coordinates of segments
-  coords = Makie.@lift let
-    topo = topology($mesh)
-    vert = vertices($mesh)
-    segmentsof(topo, vert)
-  end
-
-  # repeat colors for vertices of segments
-  colors = Makie.@lift let
-    if $colorant isa AbstractVector
-      c = [$colorant[e] for e in 1:nelements($mesh) for _ in 1:3]
-      c[begin:(end - 1)]
-    else
-      $colorant
-    end
-  end
-
-  # visualize segments
-  Makie.lines!(plot, coords, color=colors, linewidth=segmentsize)
 end
 
 function vizmesh2D!(plot)
@@ -199,23 +163,4 @@ function vizmesh3D!(plot)
     discretize.(bounds)
   end
   vizmany!(plot, meshes)
-end
-
-function segmentsof(topo, vert)
-  dim = embeddim(first(vert))
-  nan = Vec(ntuple(i -> NaN, dim))
-  xs = coordinates.(vert)
-
-  coords = map(elements(topo)) do e
-    inds = indices(e)
-    xs[collect(inds)]
-  end
-
-  reduce((x, y) -> [x; [nan]; y], coords)
-end
-
-function segmentsof(topo::GridTopology, vert)
-  xs = coordinates.(vert)
-  ip = first(isperiodic(topo))
-  ip ? [xs; [first(xs)]] : xs
 end
