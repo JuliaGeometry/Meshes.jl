@@ -196,21 +196,21 @@ function vizmesh3D!(plot)
   vizmany!(plot, meshes)
 end
 
-function segmentsof(topo, vert)	
-  dim = embeddim(first(vert))	
-  nan = Vec(ntuple(i -> NaN, dim))	
-  xs = coordinates.(vert)	
+function segmentsof(topo, vert)
+  dim = embeddim(first(vert))
+  nan = Vec(ntuple(i -> NaN, dim))
+  xs = coordinates.(vert)
 
-  coords = map(elements(topo)) do e	
-    inds = indices(e)	
-    xs[collect(inds)]	
-  end	
+  coords = map(elements(topo)) do e
+    inds = indices(e)
+    xs[collect(inds)]
+  end
 
-  reduce((x, y) -> [x; [nan]; y], coords)	
-end	
+  reduce((x, y) -> [x; [nan]; y], coords)
+end
 
-function segmentsof(topo::GridTopology, vert)	
-  xs = coordinates.(vert)	
-  ip = first(isperiodic(topo))	
-  ip ? [xs; [first(xs)]] : xs	
-end	
+function segmentsof(topo::GridTopology, vert)
+  xs = coordinates.(vert)
+  ip = first(isperiodic(topo))
+  ip ? [xs; [first(xs)]] : xs
+end
