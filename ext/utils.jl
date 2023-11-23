@@ -21,13 +21,5 @@ function vizmany!(plot, objs)
   colors = Makie.@lift mayberepeat($color, $objs)
   alphas = Makie.@lift mayberepeat($alpha, $objs)
 
-  viz!(
-    plot,
-    object,
-    color=colors,
-    alpha=alphas,
-    colorscheme=colorscheme,
-    pointsize=pointsize,
-    segmentsize=segmentsize
-  )
+  viz!(plot, object, color=colors, alpha=alphas, colorscheme=colorscheme, pointsize=pointsize, segmentsize=segmentsize)
 end
