@@ -10,7 +10,9 @@ function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
@@ -65,28 +67,10 @@ function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
 
   # optimized visualization of facets
   if showfacets[]
-    vizsegs!(plot)
+    tup = Makie.@lift cartesiansegments($or, $sp, $sz, $nd)
+    xyz = [(Makie.@lift $tup[i]) for i in 1:nd[]]
+    Makie.lines!(plot, xyz..., color=facetcolor, linewidth=segmentsize)
   end
-end
-
-function vizsegs!(plot)
-  grid = plot[:object]
-  segmentsize = plot[:segmentsize]
-  facetcolor = plot[:facetcolor]
-
-  cparams = Makie.@lift let
-    nd = embeddim($grid)
-    or = coordinates(minimum($grid))
-    sp = spacing($grid)
-    sz = size($grid)
-
-    cartesiansegments(or, sp, sz, nd)
-  end
-
-  # unpack observable of parameters
-  xyz = [(Makie.@lift $cparams[i]) for i in 1:embeddim(grid[])]
-
-  Makie.lines!(plot, xyz..., color=facetcolor, linewidth=segmentsize)
 end
 
 # helper function to create a minimum number
