@@ -30,7 +30,7 @@ hexagon = Hexagon((0.,0.), (1.,0.), (1.,1.),
 
 mesh = discretize(hexagon, FanTriangulation())
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], hexagon)
 viz(fig[1,2], mesh, showfacets = true)
 fig
@@ -47,7 +47,7 @@ sphere = Sphere((0.,0.,0.), 1.)
 
 mesh = discretize(sphere, RegularDiscretization(10,10))
 
-fig = Mke.Figure(resolution = (400, 400))
+fig = Mke.Figure(size = (400, 400))
 viz(fig[1,1], mesh, showfacets = true)
 fig
 ```
@@ -103,7 +103,7 @@ polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569
 
 mesh = discretize(polyarea, Dehn1899())
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showfacets = true)
 fig
@@ -118,7 +118,7 @@ FIST
 ```@example discretization
 mesh = discretize(polyarea, FIST())
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showfacets = true)
 fig
@@ -144,7 +144,7 @@ polyarea = PolyArea([outer, inners...])
 
 mesh = discretize(polyarea, FIST())
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showfacets = true)
 fig

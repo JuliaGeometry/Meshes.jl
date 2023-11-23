@@ -32,7 +32,7 @@ grid = CartesianGrid(10, 10)
 
 mesh = grid |> Rotate(Angle2d(π/4))
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
@@ -49,7 +49,7 @@ grid = CartesianGrid(10, 10)
 
 mesh = grid |> Translate(10., 20.)
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
@@ -66,7 +66,7 @@ grid = CartesianGrid(10, 10)
 
 mesh = grid |> Stretch(2., 3.)
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
@@ -83,7 +83,7 @@ grid = CartesianGrid(10, 10)
 
 mesh = grid |> Expand(2., 3.)
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
@@ -102,7 +102,7 @@ grid = CartesianGrid(10, 10)
 # scale coordinates to [-1,1] x [-1,1]
 mesh = grid |> StdCoords()
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
@@ -139,7 +139,7 @@ poly = PolyArea([outer, hole1, hole2])
 # polygon with single outer ring
 bpoly = poly |> Bridge(0.01)
 
-fig = Mke.Figure(resolution = (800, 400))
+fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], poly)
 viz(fig[1,2], bpoly)
 fig
@@ -178,7 +178,7 @@ mesh = readply(file)
 # smooth mesh with 30 iterations
 smesh = mesh |> TaubinSmoothing(30)
 
-fig = Mke.Figure(resolution = (800, 1200))
+fig = Mke.Figure(size = (800, 1200))
 viz(fig[1,1], mesh)
 viz(fig[2,1], smesh)
 fig

@@ -27,6 +27,10 @@ Makie.@recipe(Viz, object) do scene
   )
 end
 
+# choose between 2D and 3D axis
+Makie.args_preferred_axis(::Geometry{Dim}) where {Dim} = Dim === 2 ? Makie.Axis : Makie.LScene
+Makie.args_preferred_axis(::Domain{Dim}) where {Dim} = Dim === 2 ? Makie.Axis : Makie.LScene
+
 # color handling
 include("colors.jl")
 

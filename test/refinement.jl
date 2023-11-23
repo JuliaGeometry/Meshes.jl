@@ -5,7 +5,7 @@
     ref2 = refine(ref1, TriRefinement())
 
     if visualtests
-      fig = Mke.Figure(resolution=(900, 300))
+      fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], grid, showfacets=true)
       viz(fig[1, 2], ref1, showfacets=true)
       viz(fig[1, 3], ref2, showfacets=true)
@@ -22,7 +22,7 @@
     ref3 = refine(ref2, QuadRefinement())
 
     if visualtests
-      fig = Mke.Figure(resolution=(900, 300))
+      fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], ref1, showfacets=true)
       viz(fig[1, 2], ref2, showfacets=true)
       viz(fig[1, 3], ref3, showfacets=true)
@@ -39,7 +39,7 @@
     ref3 = refine(ref2, CatmullClark())
 
     if visualtests
-      fig = Mke.Figure(resolution=(900, 300))
+      fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], ref1, showfacets=true)
       viz(fig[1, 2], ref2, showfacets=true)
       viz(fig[1, 3], ref3, showfacets=true)
@@ -54,7 +54,7 @@
     ref3 = refine(ref2, CatmullClark())
 
     if visualtests
-      fig = Mke.Figure(resolution=(900, 300))
+      fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], ref1, showfacets=true)
       viz(fig[1, 2], ref2, showfacets=true)
       viz(fig[1, 3], ref3, showfacets=true)
@@ -69,7 +69,7 @@
     ref3 = refine(ref2, CatmullClark())
 
     if visualtests
-      fig = Mke.Figure(resolution=(900, 300))
+      fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], ref1, showfacets=true)
       viz(fig[1, 2], ref2, showfacets=true)
       viz(fig[1, 3], ref3, showfacets=true)
@@ -86,7 +86,7 @@
     ref3 = refine(ref2, TriSubdivision())
 
     if visualtests
-      fig = Mke.Figure(resolution=(900, 300))
+      fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], ref1, showfacets=true)
       viz(fig[1, 2], ref2, showfacets=true)
       viz(fig[1, 3], ref3, showfacets=true)

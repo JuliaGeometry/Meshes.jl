@@ -447,7 +447,7 @@
     if visualtests
       grid = CartesianGrid{T}(3, 3)
       mesh = simplexify(grid)
-      fig = Mke.Figure(resolution=(600, 300))
+      fig = Mke.Figure(size=(600, 300))
       viz(fig[1, 1], grid, showfacets=true)
       viz(fig[1, 2], mesh, showfacets=true)
       @test_reference "data/triangulate-$T.png" fig
