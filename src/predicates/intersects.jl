@@ -37,6 +37,16 @@ intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
+function intersects(ray::Ray{Dim,T}, sphere::Sphere{Dim,T})::Bool where {Dim,T}
+    sphere_center = center(sphere) - ray(0)
+    r_over_d = radius(sphere) / hypot(sphere_center...)
+    r_over_d > one(T) && return true
+    centered_ray = ray(1) - ray(0)
+    return abs(∠(sphere_center, centered_ray)) < asin(r_over_d)
+end
+
+intersect(sphere::Sphere, ray::Ray) = intersects(ray, sphere)
+
 intersects(p::Point, g::Geometry) = p ∈ g
 
 intersects(g::Geometry, p::Point) = intersects(p, g)
