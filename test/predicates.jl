@@ -196,6 +196,21 @@
     @test intersects(r2, t) == false
     @test intersects(t, r2) == false
 
+    s = Sphere(P2(0,3),1)
+    r =  Ray((0,0),(1,0))
+    @test intersects(r,s) == false
+    @test intersects(s,r) == false
+    r =  Ray((0,0),(0,1))
+    @test intersects(r,s) == true
+    @test intersects(s,r) == true
+    s = Sphere(Point3(0,3,0),1)
+    r =  Ray((0,0,0),(1,0,0))
+    @test intersects(r,s) == false
+    @test intersects(s,r) == false
+    r =  Ray((0,0,0),(0,1,0))
+    @test intersects(r,s) == true
+    @test intersects(s,r) == true
+    
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
