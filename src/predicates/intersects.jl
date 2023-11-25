@@ -38,11 +38,11 @@ intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
 function intersects(r::Ray, s::Sphere)
-    s_ = center(s) - r(0)
-    h = hypot(s_...)
-    radius(s) > h && return true
-    r_ = r(1) - r(0)
-    return abs(∠(s_, r_)) < asin(radius(s) / h)
+  s₀ = center(s) - r(0)
+  h = hypot(s₀...)
+  radius(s) > h && return true
+  r₀ = r(1) - r(0)
+  return abs(∠(s₀, r₀)) < asin(radius(s) / h)
 end
 
 intersects(s::Sphere, r::Ray) = intersects(r, s)

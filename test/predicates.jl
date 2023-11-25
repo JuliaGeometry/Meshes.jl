@@ -130,6 +130,14 @@
   end
 
   @testset "intersects" begin
+    function assertintersecsundertransforms(g1, gt, gf)
+      translations = Iterators.map(Translate, [(0, 0), (10, 0), (0, 10), (-10, 0), (0, -10)])
+      rotations = Iterators.map(Rotate ∘ Rotations.Angle2d, 0:(π / 4):(7π / 4))
+      transforms = (t ∘ r for (t, r) in Iterators.product(translations, rotations))
+      @test all(intersects(t(g1), t(gt)) for t in transforms)
+      @test all(!intersects(t(g1), t(gf)) for t in transforms)
+    end
+
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     q = Quadrangle(P2(1, 1), P2(2, 1), P2(2, 2), P2(1, 2))
     @test intersects(t, t)
@@ -196,20 +204,10 @@
     @test intersects(r2, t) == false
     @test intersects(t, r2) == false
 
-    s = Sphere(P2(0,3),1)
-    r =  Ray((0,0),(1,0))
-    @test intersects(r,s) == false
-    @test intersects(s,r) == false
-    r =  Ray((0,0),(0,1))
-    @test intersects(r,s) == true
-    @test intersects(s,r) == true
-    s = Sphere(Point3(0,3,0),1)
-    r =  Ray((0,0,0),(1,0,0))
-    @test intersects(r,s) == false
-    @test intersects(s,r) == false
-    r =  Ray((0,0,0),(0,1,0))
-    @test intersects(r,s) == true
-    @test intersects(s,r) == true
+    r = Ray((0, 0), (1, 0))
+    st = Sphere(P2(3, 0), 1)
+    sf = Sphere(P2(0, 3), 1)
+    assertintersecsundertransforms(r, st, sf)
     
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
