@@ -162,7 +162,7 @@ simplexify(box::Box{2}) = discretize(box, FanTriangulation())
 
 simplexify(box::Box{3}) = discretize(box, Tetrahedralization())
 
-simplexify(poly::Polygon) = discretize(poly, isconvex(poly) ? FanTriangulation() : Dehn1899())
+simplexify(poly::Polygon) = discretize(poly, Dehn1899())
 
 simplexify(poly::Polyhedron) = discretize(poly, Tetrahedralization())
 
