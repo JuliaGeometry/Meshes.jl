@@ -37,15 +37,19 @@ intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
-function intersects(ray::Ray{Dim,T}, sphere::Union{Ball{Dim,T},Sphere{Dim,T}})::Bool where {Dim,T}
-    sphere_center = center(sphere) - ray(0)
-    r_over_d = radius(sphere) / hypot(sphere_center...)
-    r_over_d > one(T) && return true
-    centered_ray = ray(1) - ray(0)
-    return abs(∠(sphere_center, centered_ray)) < asin(r_over_d)
+function intersects(r::Ray, s::Sphere)
+    s_ = center(s) - r(0)
+    h = hypot(s_...)
+    radius(s) > h && return true
+    r_ = r(1) - r(0)
+    return abs(∠(s_, r_)) < asin(radius(s) / h)
 end
 
-intersect(sphere::Union{Ball,Sphere}, ray::Ray) = intersects(ray, sphere)
+intersects(s::Sphere, r::Ray) = intersects(r, s)
+
+intersects(r::Ray, b::Ball) = intersects(r, boundary(b))
+
+intersects(b::Ball, r::Ray) = intersects(r, b)
 
 intersects(p::Point, g::Geometry) = p ∈ g
 
