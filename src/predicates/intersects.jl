@@ -42,7 +42,7 @@ function intersects(r::Ray, s::Sphere)
   h = hypot(s₀...)
   radius(s) > h && return true
   r₀ = r(1) - r(0)
-  return abs(∠(s₀, r₀)) < asin(radius(s) / h)
+  abs(∠(s₀, r₀)) < asin(radius(s) / h)
 end
 
 intersects(s::Sphere, r::Ray) = intersects(r, s)
