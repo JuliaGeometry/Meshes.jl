@@ -188,21 +188,23 @@
     @test intersects(r, b)
     @test intersects(b, r)
 
-    t = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(1, 2, 0))
-    r1 = Ray(P3(1, 1, 1), V3(0, 0, -1))
-    r2 = Ray(P3(1, 1, 1), V3(0, 0, 1))
+    t = Triangle(P3P3(0, 0, 0), P3P3(2, 0, 0), P3P3(1, 2, 0))
+    r1 = Ray(P3P3(1, 1, 1), V3V3(0, 0, -1))
+    r2 = Ray(P3P3(1, 1, 1), V3V3(0, 0, 1))
     @test intersects(r1, t) == true
     @test intersects(t, r1) == true
     @test intersects(r2, t) == false
     @test intersects(t, r2) == false
 
-    r = Ray((0, 0), (1, 0))
-    st = Sphere(P2(3, 0), 1)
-    sf = Sphere(P2(0, 3), 1)
-    for t in Translate.([(0, 0), (10, 0), (0, 10), (-10, 0), (0, -10)]), rot in Rotate.(Angle2d.(0:(π / 4):(7π / 4)))
-      f = t ∘ rot
-      @test intersects(f(r), f(st))
-      @test !intersects(f(r), f(sf))
+    r = Ray(P2(0, 0), V2(1, 0))
+    s1 = Sphere(P2(3, 0), T(1))
+    s2 = Sphere(P2(0, 3), T(1))
+    ts = Translate.([T.((0, 0)), T.((10, 0)), T.((0, 10)), T.((-10, 0)), T.((0, -10))])
+    rs = Rotate.(Angle2d.(T(0):T(π / 4):T(7π / 4)))
+    for t1 in ts, t2 in rs
+      t = t1 ∘ t2
+      @test intersects(t(r), t(s1))
+      @test !intersects(t(r), t(s2))
     end
 
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
