@@ -20,7 +20,7 @@ Makie.@recipe(Viz, object) do scene
     color=:slategray3,
     alpha=nothing,
     colorscheme=nothing,
-    pointsize=2,
+    pointsize=4,
     segmentsize=1.5,
     showfacets=false,
     facetcolor=:gray30
