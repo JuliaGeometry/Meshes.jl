@@ -34,8 +34,8 @@ function boundingbox(r::Ray{Dim,T}) where {Dim,T}
   upper(p, v) = v > 0 ? typemax(T) : p
   p = r(0)
   v = r(1) - r(0)
-  l = lower.(coordinates(p), coordinates(v))
-  u = upper.(coordinates(p), coordinates(v))
+  l = lower.(coordinates(p), v)
+  u = upper.(coordinates(p), v)
   Box(Point(l), Point(u))
 end
 
