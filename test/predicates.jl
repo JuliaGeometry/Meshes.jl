@@ -182,6 +182,12 @@
     @test intersects(t2, t3)
     @test !intersects(t1, t3)
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/639
+    r = Ray(P2(0.41169768366272996, 0.8990554132423699), V2(0.47249211625247445, 0.2523149692768657))
+    b = Box(P2(1.0, 1.0), P2(5.0, 2.0))
+    @test intersects(r, b)
+    @test intersects(b, r)
+
     t = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(1, 2, 0))
     r1 = Ray(P3(1, 1, 1), V3(0, 0, -1))
     r2 = Ray(P3(1, 1, 1), V3(0, 0, 1))
