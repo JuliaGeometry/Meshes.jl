@@ -7,6 +7,19 @@
   @test boundingbox(b) == b
   @test @allocated(boundingbox(b)) < 50
 
+  r = Ray(P2(0, 0), V2(1, 0))
+  @test boundingbox(r) == Box(P2(0, 0), P2(T(Inf), 0))
+  @test @allocated(boundingbox(r)) < 50
+  r = Ray(P2(1, 1), V2(0, 1))
+  @test boundingbox(r) == Box(P2(1, 1), P2(1, T(Inf)))
+  @test @allocated(boundingbox(r)) < 50
+  r = Ray(P2(1, 1), V2(-1, -1))
+  @test boundingbox(r) == Box(P2(T(-Inf), T(-Inf)), P2(1, 1))
+  @test @allocated(boundingbox(r)) < 50
+  r = Ray(P2(-1, 1), V2(1, -1))
+  @test boundingbox(r) == Box(P2(-1, T(-Inf)), P2(T(Inf), 1))
+  @test @allocated(boundingbox(r)) < 50
+
   s = Sphere(P2(0, 0), T(1))
   @test boundingbox(s) == Box(P2(-1, -1), P2(1, 1))
   @test @allocated(boundingbox(s)) < 50

@@ -29,6 +29,16 @@ boundingbox(p::Point) = Box(p, p)
 
 boundingbox(b::Box) = b
 
+function boundingbox(r::Ray{Dim,T}) where {Dim,T}
+  lower(p, v) = v < 0 ? typemin(T) : p
+  upper(p, v) = v > 0 ? typemax(T) : p
+  p = r(0)
+  v = r(1) - r(0)
+  l = lower.(coordinates(p), v)
+  u = upper.(coordinates(p), v)
+  Box(Point(l), Point(u))
+end
+
 function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   c = center(s)
   r = radius(s)
