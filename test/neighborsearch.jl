@@ -27,6 +27,10 @@
     s = BallSearch(𝒟, MetricBall(T(150), Haversine(T(6371))))
     n = search(P2(0, 0), s)
     @test Set(n) == Set([32041, 32400, 32401, 32760])
+
+    # construct from vector of geometries
+    s = BallSearch(rand(P2, 100), MetricBall(T(1)))
+    @test s isa BallSearch
   end
 
   @testset "KNearestSearch" begin
@@ -52,6 +56,10 @@
     nn = searchdists!(n, d, P2(9, 9), s)
     @test nn == 3
     @test Set(n[1:nn]) == Set([100, 99, 90])
+
+    # construct from vector of geometries
+    s = KNearestSearch(rand(P2, 100), 3)
+    @test s isa KNearestSearch
   end
 
   @testset "KBallSearch" begin
@@ -97,5 +105,9 @@
     n, d = searchdists(P2(5, 5), s, mask=mask)
     @test length(n) == 4
     @test length(d) == 4
+
+    # construct from vector of geometries
+    s = KBallSearch(rand(P2, 100), 10, MetricBall(T(1)))
+    @test s isa KBallSearch
   end
 end

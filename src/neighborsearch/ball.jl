@@ -7,7 +7,7 @@
 
 A method for searching neighbors in `domain` inside `ball`.
 """
-struct BallSearch{D,B<:MetricBall,T} <: NeighborSearchMethod
+struct BallSearch{D<:Domain,B<:MetricBall,T} <: NeighborSearchMethod
   # input fields
   domain::D
   ball::B
@@ -16,12 +16,14 @@ struct BallSearch{D,B<:MetricBall,T} <: NeighborSearchMethod
   tree::T
 end
 
-function BallSearch(domain::D, ball::B) where {D,B<:MetricBall}
+function BallSearch(domain::D, ball::B) where {D<:Domain,B<:MetricBall}
   m = metric(ball)
   xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   BallSearch{D,B,typeof(tree)}(domain, ball, tree)
 end
+
+BallSearch(geoms, ball) = BallSearch(GeometrySet(geoms), ball)
 
 function search(pₒ::Point, method::BallSearch; mask=nothing)
   tree = method.tree

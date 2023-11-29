@@ -8,7 +8,7 @@
 A method for searching `k` nearest neighbors in `domain`
 according to `metric`.
 """
-struct KNearestSearch{D,T} <: BoundedNeighborSearchMethod
+struct KNearestSearch{D<:Domain,T} <: BoundedNeighborSearchMethod
   # input fields
   domain::D
   k::Int
@@ -17,11 +17,13 @@ struct KNearestSearch{D,T} <: BoundedNeighborSearchMethod
   tree::T
 end
 
-function KNearestSearch(domain::D, k::Int; metric=Euclidean()) where {D}
+function KNearestSearch(domain::D, k::Int; metric=Euclidean()) where {D<:Domain}
   xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = metric isa MinkowskiMetric ? KDTree(xs, metric) : BallTree(xs, metric)
   KNearestSearch{D,typeof(tree)}(domain, k, tree)
 end
+
+KNearestSearch(geoms, k; metric=Euclidean()) = KNearestSearch(GeometrySet(geoms), k; metric)
 
 maxneighbors(method::KNearestSearch) = method.k
 

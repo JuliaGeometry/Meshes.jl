@@ -8,7 +8,7 @@
 A method that searches `k` nearest neighbors and then filters
 these neighbors using a norm `ball`.
 """
-struct KBallSearch{D,B<:MetricBall,T} <: BoundedNeighborSearchMethod
+struct KBallSearch{D<:Domain,B<:MetricBall,T} <: BoundedNeighborSearchMethod
   # input fields
   domain::D
   k::Int
@@ -18,12 +18,14 @@ struct KBallSearch{D,B<:MetricBall,T} <: BoundedNeighborSearchMethod
   tree::T
 end
 
-function KBallSearch(domain::D, k::Int, ball::B) where {D,B}
+function KBallSearch(domain::D, k::Int, ball::B) where {D<:Domain,B<:MetricBall}
   m = metric(ball)
   xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
 end
+
+KBallSearch(geoms, k, ball) = KBallSearch(GeometrySet(geoms), k, ball)
 
 maxneighbors(method::KBallSearch) = method.k
 
