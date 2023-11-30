@@ -106,21 +106,64 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
       AB = B - A
       AO = O - A
       d = AB × AO × AB
-    else # simplex case
+    elseif Dim == 3 == length(points)
+      # triangle case (incomplete simplex)
       C, B, A = points
       AB = B - A
       AC = C - A
       AO = O - A
-      ABᵀ = AC × AB × AB
-      ACᵀ = AB × AC × AC
-      if ABᵀ ⋅ AO > zero(T)
-        popat!(points, 1) # pop C
-        d = ABᵀ
-      elseif ACᵀ ⋅ AO > zero(T)
-        popat!(points, 2) # pop B
-        d = ACᵀ
-      else
-        return true
+      ABCᵀ = AB × AC
+      if ABCᵀ ⋅ AO < 0
+        points[1], points[2] = points[2], points[1]
+        ABCᵀ = -ABCᵀ
+      end
+      d = ABCᵀ
+    else # simplex case
+      if Dim == 2
+        C, B, A = points
+        AB = B - A
+        AC = C - A
+        AO = O - A
+        ABᵀ = AC × AB × AB
+        ACᵀ = AB × AC × AC
+        if ABᵀ ⋅ AO > zero(T)
+          popat!(points, 1) # pop C
+          d = ABᵀ
+        elseif ACᵀ ⋅ AO > zero(T)
+          popat!(points, 2) # pop B
+          d = ACᵀ
+        else
+          return true
+        end
+      else # if Dim == 3
+        #      A
+        #    / | \
+        #   /  D  \
+        #  / /   \ \
+        # B ------- C
+        # Simplex faces (with normal vectors pointing to the centroid):
+        # ABC, ADB, BDC, ACD
+        # (AXY = AX ⋅ AY)
+        D, C, B, A = points
+        AB = B - A
+        AC = C - A
+        AD = D - A
+        AO = O - A
+        ABCᵀ = AB × AC
+        ADBᵀ = AD × AB
+        ACDᵀ = AC × AD
+        if ABCᵀ ⋅ AO > zero(T)
+          popat!(points, 1) # pop D
+          d = ABCᵀ
+        elseif ADBᵀ ⋅ AO > zero(T)
+          popat!(points, 2) # pop C
+          d = ADBᵀ
+        elseif ACDᵀ ⋅ AO > zero(T)
+          popat!(points, 3) # pop B
+          d = ACDᵀ
+        else
+          return true
+        end
       end
     end
   end
