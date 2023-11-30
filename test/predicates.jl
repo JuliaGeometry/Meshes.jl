@@ -199,13 +199,145 @@
     r = Ray(P2(0, 0), V2(1, 0))
     s1 = Sphere(P2(3, 0), T(1))
     s2 = Sphere(P2(0, 3), T(1))
-    ts = Translate.([T.((0, 0)), T.((10, 0)), T.((0, 10)), T.((-10, 0)), T.((0, -10))])
-    rs = Rotate.(Angle2d.(T(0):T(π / 4):T(7π / 4)))
-    for t1 in ts, t2 in rs
-      t = t1 ∘ t2
-      @test intersects(t(r), t(s1))
-      @test !intersects(t(r), t(s2))
-    end
+    t1 = Translate(T.(0, 0))
+    t2 = Translate(T.(10, 0))
+    t3 = Translate(T.(0, 10))
+    t4 = Translate(T.(-10, 0))
+    t5 = Translate(T.(0, -10))
+    r1 = Rotate(Angle2d(T(0)))
+    r2 = Rotate(Angle2d(T(π / 4)))
+    r3 = Rotate(Angle2d(T(2π / 4)))
+    r4 = Rotate(Angle2d(T(3π / 4)))
+    r5 = Rotate(Angle2d(T(π)))
+    r6 = Rotate(Angle2d(T(5π / 4)))
+    r7 = Rotate(Angle2d(T(6π / 4)))
+    r8 = Rotate(Angle2d(T(7π / 4)))
+
+    t0 = t1
+    t = t0 ∘ r1
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r2
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r3
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r4
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r5
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r6
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r7
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r8
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t0 = t2
+    t = t0 ∘ r1
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r2
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r3
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r4
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r5
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r6
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r7
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r8
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t0 = t3
+    t = t0 ∘ r1
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r2
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r3
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r4
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r5
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r6
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r7
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r8
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t0 = t4
+    t = t0 ∘ r1
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r2
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r3
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r4
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r5
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r6
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r7
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r8
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t0 = t5
+    t = t0 ∘ r1
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r2
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r3
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r4
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r5
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r6
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r7
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
+    t = t0 ∘ r8
+    @test intersects(t(r), t(s1))
+    @test !intersects(t(r), t(s2))
 
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
