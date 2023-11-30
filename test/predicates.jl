@@ -199,11 +199,11 @@
     r = Ray(P2(0, 0), V2(1, 0))
     s1 = Sphere(P2(3, 0), T(1))
     s2 = Sphere(P2(0, 3), T(1))
-    t1 = Translate(T.(0, 0))
-    t2 = Translate(T.(10, 0))
-    t3 = Translate(T.(0, 10))
-    t4 = Translate(T.(-10, 0))
-    t5 = Translate(T.(0, -10))
+    t1 = Translate(T(0), T(0))
+    t2 = Translate(T(10), T(0))
+    t3 = Translate(T(0), T(10))
+    t4 = Translate(T(-10), T(0))
+    t5 = Translate(T(0), T(-10))
     r1 = Rotate(Angle2d(T(0)))
     r2 = Rotate(Angle2d(T(π / 4)))
     r3 = Rotate(Angle2d(T(2π / 4)))
@@ -338,6 +338,16 @@
     t = t0 ∘ r8
     @test intersects(t(r), t(s1))
     @test !intersects(t(r), t(s2))
+
+    r = Ray(P2(0, 0), V2(1, 0))
+    s = Sphere(P2(floatmax(Float32) / 2, 0), 1)
+    @test intersects(r, s)
+
+    r = Ray(P3(0, 0, 0), V3(1, 0, 0))
+    s1 = Sphere(P3(5, 0, 1 - eps(T(1))), T(1))
+    s2 = Sphere(P3(5, 0, 1 + eps(T(1))), T(1))
+    @test intersects(r, s1)
+    @test !intersects(r, s2)
 
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
