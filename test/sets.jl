@@ -13,6 +13,15 @@
     gset2 = GeometrySet(g for g in geoms)
     @test gset1 == gset2
     @test parent(gset1) === geoms
+
+    # make sure that eltype is inferred properly
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/643
+    geoms = Vector{Segment}()
+    push!(geoms, Segment(P2(0, 0), P2(1, 0)))
+    push!(geoms, Segment(P2(1, 0), P2(1, 1)))
+    push!(geoms, Segment(P2(1, 1), P2(0, 0)))
+    gset = GeometrySet(geoms)
+    @test eltype(gset) <: Segment{2,T}
   end
 
   @testset "PointSet" begin

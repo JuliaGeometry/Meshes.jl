@@ -20,7 +20,7 @@ struct GeometrySet{Dim,T,G<:Geometry{Dim,T}} <: Domain{Dim,T}
 end
 
 # constructor with iterator of geometries
-GeometrySet(geoms) = GeometrySet(collect(geoms))
+GeometrySet(geoms) = GeometrySet(map(identity, geoms))
 
 element(gset::GeometrySet, ind::Int) = gset.geoms[ind]
 
@@ -62,7 +62,7 @@ PointSet(coords::Vararg{V}) where {V<:AbstractVector} = PointSet(collect(coords)
 PointSet(coords::AbstractMatrix) = PointSet(Tuple.(eachcol(coords)))
 
 # constructor with iterator of points
-PointSet(points) = PointSet(collect(points))
+PointSet(points) = PointSet(map(identity, points))
 
 centroid(pset::PointSet, ind::Int) = pset[ind]
 
