@@ -51,3 +51,13 @@ end
 
 _origin(g) = centroid(g)
 _origin(p::Plane) = p(0, 0)
+
+# --------------
+# SPECIAL CASES
+# --------------
+
+apply(t::Expand, v::Vec) = apply(Stretch(t.factors), v)
+
+revert(t::Expand, v::Vec, c) = revert(Stretch(t.factors), v, c)
+
+reapply(t::Expand, v::Vec, c) = reapply(Stretch(t.factors), v, c)

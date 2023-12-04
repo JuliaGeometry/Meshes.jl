@@ -45,6 +45,10 @@ function applycoord end
 # TRANSFORM FALLBACKS
 # --------------------
 
+apply(t::CoordinateTransform, v::Vec) = applycoord(t, v), nothing
+
+revert(t::CoordinateTransform, v::Vec, c) = applycoord(inverse(t), v)
+
 apply(t::CoordinateTransform, g::GeometryOrDomain) = applycoord(t, g), nothing
 
 revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inverse(t), g)

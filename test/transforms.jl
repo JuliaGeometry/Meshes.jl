@@ -4,6 +4,16 @@
     @test TB.isinvertible(Rotate)
     @test TB.inverse(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
 
+    # ----
+    # VEC
+    # ----
+
+    f = Rotate(Angle2d(T(π / 2)))
+    v = V2(1, 0)
+    r, c = TB.apply(f, v)
+    @test r ≈ V2(0, 1)
+    @test TB.revert(f, r, c) ≈ v
+
     # ------
     # POINT
     # ------
@@ -181,6 +191,16 @@
     @test TB.isinvertible(Translate)
     @test TB.inverse(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
 
+    # ----
+    # VEC
+    # ----
+
+    f = Translate(T(1), T(1))
+    v = V2(1, 0)
+    r, c = TB.apply(f, v)
+    @test r ≈ V2(1, 0)
+    @test TB.revert(f, r, c) ≈ v
+
     # ------
     # POINT
     # ------
@@ -306,6 +326,16 @@
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
     @test TB.inverse(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
+
+    # ----
+    # VEC
+    # ----
+
+    f = Stretch(T(1), T(2))
+    v = V2(1, 1)
+    r, c = TB.apply(f, v)
+    @test r ≈ V2(1, 2)
+    @test TB.revert(f, r, c) ≈ v
 
     # ------
     # POINT
@@ -444,6 +474,16 @@
     @test TB.isrevertible(Expand)
     @test TB.isinvertible(Expand)
     @test TB.inverse(Expand(T(1), T(2))) == Expand(T(1), T(1 / 2))
+
+    # ----
+    # VEC
+    # ----
+
+    f = Expand(T(1), T(2))
+    v = V2(1, 1)
+    r, c = TB.apply(f, v)
+    @test r ≈ V2(1, 2)
+    @test TB.revert(f, r, c) ≈ v
 
     # ------
     # POINT
