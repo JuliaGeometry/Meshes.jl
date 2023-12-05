@@ -38,14 +38,14 @@ centroid(v::SubDomain, ind::Int) = centroid(v.domain, v.inds[ind])
 
 Returns the "parent domain" of a domain view.
 """
-Base.parent(d::SubDomain) = d.domain
+Base.parent(v::SubDomain) = v.domain
 
 """
     parentindices(subdomain)
 
 Returns the indices used to create the domain view.
 """
-Base.parentindices(d::SubDomain) = d.inds
+Base.parentindices(v::SubDomain) = v.inds
 
 # -----------
 # IO METHODS
