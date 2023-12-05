@@ -605,6 +605,13 @@
     @inferred someornone(l1, l2)
   end
 
+  @testset "Chains" begin
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/644
+    r = Rope(P2(0, 0), P2(1, 1))
+    @test r ∩ r == GeometrySet([Segment(P2(0, 0), P2(1, 1))])
+    @inferred someornone(r, r)
+  end
+
   @testset "Planes" begin
     # ---------
     # SEGMENTS
