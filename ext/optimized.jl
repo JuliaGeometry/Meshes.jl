@@ -37,7 +37,7 @@ function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
 
   # retrieve grid paramaters
   gparams = Makie.@lift let
-    grid, _ = unview($subgrid)
+    grid = parent($subgrid)
     dim = embeddim(grid)
     sp = spacing(grid)
 

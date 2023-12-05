@@ -17,7 +17,7 @@ struct SubDomain{Dim,T,D<:Domain{Dim,T},I<:AbstractVector{Int}} <: Domain{Dim,T}
 end
 
 # specialize constructor to avoid infinite loops
-SubDomain(v::SubDomain, inds::AbstractVector{Int}) = SubDomain(getfield(v, :domain), getfield(v, :inds)[inds])
+SubDomain(v::SubDomain, inds::AbstractVector{Int}) = SubDomain(v.domain, v.inds[inds])
 
 # -----------------
 # DOMAIN INTERFACE

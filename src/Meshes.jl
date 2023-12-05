@@ -297,7 +297,6 @@ export
   CylindricalTrajectory,
 
   # viewing
-  unview,
   indices,
 
   # partitions

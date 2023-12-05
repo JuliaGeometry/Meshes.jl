@@ -8,21 +8,15 @@
 
 Base.view(domain::Domain, inds::AbstractVector{Int}) = SubDomain(domain, inds)
 
-# ---------------------
-# UNVIEWS WITH INDICES
-# ---------------------
+# -------------
+# UNWRAP VIEWS
+# -------------
 
-"""
-    unview(object)
+Base.parent(d::Domain) = d
+Base.parentindices(d::Domain) = 1:nelements(d)
 
-Return the underlying domain/data of the `object` and
-the indices of the view. If the `object` is not a view,
-then return the `object` with all its indices as a fallback.
-"""
-function unview end
-
-unview(d::Domain) = d, 1:nelements(d)
-unview(v::SubDomain) = getfield(v, :domain), getfield(v, :inds)
+Base.parent(d::SubDomain) = d.domain
+Base.parentindices(d::SubDomain) = d.inds
 
 # ----------------------
 # VIEWS WITH GEOMETRIES
