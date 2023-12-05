@@ -29,6 +29,24 @@ nelements(v::SubDomain) = length(v.inds)
 
 centroid(v::SubDomain, ind::Int) = centroid(v.domain, v.inds[ind])
 
+# -------------
+# UNWRAP VIEWS
+# -------------
+
+"""
+    parent(subdomain)
+
+Returns the "parent domain" of a domain view.
+"""
+Base.parent(d::SubDomain) = d.domain
+
+"""
+    parentindices(subdomain)
+
+Returns the indices used to create the domain view.
+"""
+Base.parentindices(d::SubDomain) = d.inds
+
 # -----------
 # IO METHODS
 # -----------

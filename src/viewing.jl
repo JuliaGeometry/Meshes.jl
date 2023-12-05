@@ -8,16 +8,6 @@
 
 Base.view(domain::Domain, inds::AbstractVector{Int}) = SubDomain(domain, inds)
 
-# -------------
-# UNWRAP VIEWS
-# -------------
-
-Base.parent(d::Domain) = d
-Base.parentindices(d::Domain) = 1:nelements(d)
-
-Base.parent(d::SubDomain) = d.domain
-Base.parentindices(d::SubDomain) = d.inds
-
 # ----------------------
 # VIEWS WITH GEOMETRIES
 # ----------------------
