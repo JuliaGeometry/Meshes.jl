@@ -37,6 +37,20 @@ intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
+function intersects(r::Ray, s::Sphere)
+  u = center(s) - r(0)
+  h = norm(u)
+  radius(s) > h && return true
+  v = r(1) - r(0)
+  abs(∠(u, v)) < asin(radius(s) / h)
+end
+
+intersects(s::Sphere, r::Ray) = intersects(r, s)
+
+intersects(r::Ray, b::Ball) = intersects(r, boundary(b))
+
+intersects(b::Ball, r::Ray) = intersects(r, b)
+
 intersects(p::Point, g::Geometry) = p ∈ g
 
 intersects(g::Geometry, p::Point) = intersects(p, g)
