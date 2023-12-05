@@ -17,28 +17,44 @@ struct SubDomain{Dim,T,D<:Domain{Dim,T},I<:AbstractVector{Int}} <: Domain{Dim,T}
 end
 
 # specialize constructor to avoid infinite loops
-SubDomain(v::SubDomain, inds::AbstractVector{Int}) = SubDomain(getfield(v, :domain), getfield(v, :inds)[inds])
+SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[inds])
 
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
 
-element(v::SubDomain, ind::Int) = element(v.domain, v.inds[ind])
+element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 
-nelements(v::SubDomain) = length(v.inds)
+nelements(d::SubDomain) = length(d.inds)
 
-centroid(v::SubDomain, ind::Int) = centroid(v.domain, v.inds[ind])
+centroid(d::SubDomain, ind::Int) = centroid(d.domain, d.inds[ind])
+
+# -------------
+# UNWRAP VIEWS
+# -------------
+
+"""
+    parent(subdomain)
+
+Returns the "parent domain" of a domain view.
+"""
+Base.parent(d::SubDomain) = d.domain
+
+"""
+    parentindices(subdomain)
+
+Returns the indices used to create the domain view.
+"""
+Base.parentindices(d::SubDomain) = d.inds
 
 # -----------
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, v::SubDomain{Dim,T}) where {Dim,T}
-  domain = getfield(v, :domain)
-  name = prettyname(domain)
-  inds = getfield(v, :inds)
-  nelms = length(inds)
+function Base.summary(io::IO, d::SubDomain{Dim,T}) where {Dim,T}
+  name = prettyname(d.domain)
+  nelms = length(d.inds)
   print(io, "$nelms view(::$name{$Dim,$T}, ")
-  printinds(io, inds)
+  printinds(io, d.inds)
   print(io, ")")
 end

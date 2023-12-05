@@ -1,8 +1,10 @@
 @testset "Viewing" begin
   g = CartesianGrid{T}(10, 10)
   v = view(g, 1:3)
-  @test unview(v) == (g, 1:3)
-  @test unview(g) == (g, 1:100)
+  @test parent(v) == g
+  @test parentindices(v) == 1:3
+  @test parent(g) == g
+  @test parentindices(g) == 1:100
 
   g = CartesianGrid{T}(10, 10)
   b = Box(P2(1, 1), P2(5, 5))

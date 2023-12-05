@@ -47,6 +47,10 @@ Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
 
 Base.keys(domain::Domain) = 1:nelements(domain)
 
+Base.parent(domain::Domain) = domain
+
+Base.parentindices(domain::Domain) = 1:nelements(domain)
+
 """
     embeddim(domain)
 
