@@ -35,10 +35,22 @@ advanced geospatial modeling *and* visualization, not just one domain.
 For advanced data science with geospatial data (i.e., tables over meshes), consider the
 [GeoStats.jl](https://github.com/JuliaEarth/GeoStats.jl) framework. It provides sophisticated
 methods for estimating (interpolating), simulating and learning geospatial functions over
-[Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl) meshes.
+[Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl) meshes. Please check the
+[Geospatial Data Science with Julia](https://juliaearth.github.io/geospatial-data-science-with-julia)
+book for more information:
+
+
+```@raw html
+<p align="center">
+  <a href="https://juliaearth.github.io/geospatial-data-science-with-julia">
+    <img src="https://juliaearth.github.io/geospatial-data-science-with-julia/images/cover.svg" width="200px" hspace="20">
+  </a>
+</p>
+```
 
 If you have questions or would like to brainstorm ideas in general, don't hesitate to start
 a thread in our [zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
+We are happy to improve the ecosystem to meet user's needs.
 
 ## Installation
 

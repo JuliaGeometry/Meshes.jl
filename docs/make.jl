@@ -62,7 +62,8 @@ makedocs(
         "algorithms/hulls.md"
       ],
       "Transforms" => "transforms.md",
-      "Visualization" => "visualization.md"
+      "Visualization" => "visualization.md",
+      "Input/Output" => "io.md"
     ],
     "Contributing" => ["contributing/guidelines.md"],
     "About" => ["License" => "about/license.md"],
