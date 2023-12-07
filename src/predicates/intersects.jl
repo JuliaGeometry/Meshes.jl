@@ -77,25 +77,23 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
     d₂ = simplexify(g₂)
     return intersects(g₁, d₂)
   end
-  return _gjk(g₁, g₂)
-end
 
-function _gjk(g₁::Geometry{2,T}, g₂::Geometry{2,T}) where {T}
   # initial direction
   c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{2,T}) : c₂ - c₁
+  d = c₁ ≈ c₂ ? rand(Vec{Dim,T}) : c₂ - c₁
 
   # first point in Minkowski difference
   P = minkowskipoint(g₁, g₂, d)
 
   # origin of coordinate system
-  O = minkowskiorigin(2, T)
+  O = minkowskiorigin(Dim, T)
 
   # initialize simplex vertices
   points = [P]
 
   # move towards the origin
   d = O - P
+
   while true
     P = minkowskipoint(g₁, g₂, d)
     if (P - O) ⋅ d < zero(T)
@@ -109,98 +107,92 @@ function _gjk(g₁::Geometry{2,T}, g₂::Geometry{2,T}) where {T}
       AB = B - A
       AO = O - A
       d = AB × AO × AB
-    else # simplex case
-      C, B, A = points
-      AB = B - A
-      AC = C - A
-      AO = O - A
-      ABᵀ = AC × AB × AB
-      ACᵀ = AB × AC × AC
-      if ABᵀ ⋅ AO > zero(T)
-        popat!(points, 1) # pop C
-        d = ABᵀ
-      elseif ACᵀ ⋅ AO > zero(T)
-        popat!(points, 2) # pop B
-        d = ACᵀ
-      else
-        return true
-      end
+    else
+      d = _gjk!(Val(Dim), points)
+      isnothing(d) && return true
     end
   end
 end
 
-function _gjk(g₁::Geometry{3,T}, g₂::Geometry{3,T}) where {T}
-  # initial direction
-  c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{3,T}) : c₂ - c₁
+"""
+    _gtk!(::Val{Dim}, points) where Dim
 
-  # first point in Minkowski difference
-  P = minkowskipoint(g₁, g₂, d)
+Perform an iteration of the GJK algorithm.
 
-  # origin of coordinate system
-  O = minkowskiorigin(3, T)
+It returns `nothing` if the `Dim`-simplex represented by `points`
+contains the origin point. Otherwise, it returns a vector with
+the direction for searching the next point.
 
-  # initialize simplex vertices
-  points = [P]
+If the simplex is complete, it removes one point from the set to
+make room for the next point. A complete simplex must have `Dim + 1` points. 
 
-  # move towards the origin
-  d = O - P
-  while true
-    P = minkowskipoint(g₁, g₂, d)
-    if (P - O) ⋅ d < zero(T)
-      return false
+See also [`intersects`](@ref).
+"""
+function _gtk! end
+
+function _gjk!(::Val{2}, points)
+  @assert length(points) == 3
+  # triangle simplex case
+  C, B, A = points
+  AB = B - A
+  AC = C - A
+  AO = O - A
+  ABᵀ = AC × AB × AB
+  ACᵀ = AB × AC × AC
+  if ABᵀ ⋅ AO > zero(T)
+    popat!(points, 1) # pop C
+    d = ABᵀ
+  elseif ACᵀ ⋅ AO > zero(T)
+    popat!(points, 2) # pop B
+    d = ACᵀ
+  else
+    return true
+  end
+end
+
+function _gjk!(::Val{3}, points)
+  if length(points) == 3
+    # triangle case
+    C, B, A = points
+    AB = B - A
+    AC = C - A
+    AO = O - A
+    ABCᵀ = AB × AC
+    if ABCᵀ ⋅ AO < 0
+      points[1], points[2] = points[2], points[1]
+      ABCᵀ = -ABCᵀ
     end
-    push!(points, P)
-
-    # line segment case
-    if length(points) == 2
-      B, A = points
-      AB = B - A
-      AO = O - A
-      d = AB × AO × AB
-    elseif length(points) == 3
-      # triangle case
-      C, B, A = points
-      AB = B - A
-      AC = C - A
-      AO = O - A
-      ABCᵀ = AB × AC
-      if ABCᵀ ⋅ AO < 0
-        points[1], points[2] = points[2], points[1]
-        ABCᵀ = -ABCᵀ
-      end
-      d = ABCᵀ
+    return ABCᵀ
+  else
+    # tetrahedron simplex case
+    #      A
+    #    / | \
+    #   /  D  \
+    #  / /   \ \
+    # B ------- C
+    # Simplex faces (with normal vectors pointing to the centroid):
+    # ABC, ADB, BDC, ACD
+    # (AXY = AX × AY)
+    # ABC normal vector points to vertex D
+    D, C, B, A = points
+    AB = B - A
+    AC = C - A
+    AD = D - A
+    AO = O - A
+    ABCᵀ = AB × AC
+    ADBᵀ = AD × AB
+    ACDᵀ = AC × AD
+    if ABCᵀ ⋅ AO > zero(T)
+      popat!(points, 1) # pop D
+      return ABCᵀ
+    elseif ADBᵀ ⋅ AO > zero(T)
+      popat!(points, 2) # pop C
+      return ADBᵀ
+    elseif ACDᵀ ⋅ AO > zero(T)
+      popat!(points, 3) # pop B
+      return ACDᵀ
     else
-      # simplex case
-      #      A
-      #    / | \
-      #   /  D  \
-      #  / /   \ \
-      # B ------- C
-      # Simplex faces (with normal vectors pointing to the centroid):
-      # ABC, ADB, BDC, ACD
-      # (AXY = AX × AY)
-      # ABC normal vector points to vertex D
-      D, C, B, A = points
-      AB = B - A
-      AC = C - A
-      AD = D - A
-      AO = O - A
-      ABCᵀ = AB × AC
-      ADBᵀ = AD × AB
-      ACDᵀ = AC × AD
-      if ABCᵀ ⋅ AO > zero(T)
-        popat!(points, 1) # pop D
-        d = ABCᵀ
-      elseif ADBᵀ ⋅ AO > zero(T)
-        popat!(points, 2) # pop C
-        d = ADBᵀ
-      elseif ACDᵀ ⋅ AO > zero(T)
-        popat!(points, 3) # pop B
-        d = ACDᵀ
-      else
-        return true
-      end
+      return nothing
     end
   end
 end
