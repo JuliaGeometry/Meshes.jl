@@ -108,16 +108,16 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
       AO = O - A
       d = AB × AO × AB
     else
-      d = _gjk!(Val(Dim), points)
+      d = gjk!(Val(Dim), O, points)
       isnothing(d) && return true
     end
   end
 end
 
 """
-    _gtk!(::Val{Dim}, points) where Dim
+    gjk!(::Val{Dim}, origin, points) where Dim
 
-Perform an iteration of the GJK algorithm.
+Perform one iteration of the GJK algorithm.
 
 It returns `nothing` if the `Dim`-simplex represented by `points`
 contains the origin point. Otherwise, it returns a vector with
@@ -128,35 +128,36 @@ make room for the next point. A complete simplex must have `Dim + 1` points.
 
 See also [`intersects`](@ref).
 """
-function _gtk! end
+function gjk! end
 
-function _gjk!(::Val{2}, points)
+function gjk!(::Val{2}, origin, points)
   @assert length(points) == 3
   # triangle simplex case
   C, B, A = points
   AB = B - A
   AC = C - A
-  AO = O - A
+  AO = origin - A
   ABᵀ = AC × AB × AB
   ACᵀ = AB × AC × AC
+  T = coordtype(origin)
   if ABᵀ ⋅ AO > zero(T)
     popat!(points, 1) # pop C
-    d = ABᵀ
+    return ABᵀ
   elseif ACᵀ ⋅ AO > zero(T)
     popat!(points, 2) # pop B
-    d = ACᵀ
+    return ACᵀ
   else
-    return true
+    return nothing
   end
 end
 
-function _gjk!(::Val{3}, points)
+function gjk!(::Val{3}, origin, points)
   if length(points) == 3
     # triangle case
     C, B, A = points
     AB = B - A
     AC = C - A
-    AO = O - A
+    AO = origin - A
     ABCᵀ = AB × AC
     if ABCᵀ ⋅ AO < 0
       points[1], points[2] = points[2], points[1]
@@ -178,10 +179,11 @@ function _gjk!(::Val{3}, points)
     AB = B - A
     AC = C - A
     AD = D - A
-    AO = O - A
+    AO = origin - A
     ABCᵀ = AB × AC
     ADBᵀ = AD × AB
     ACDᵀ = AC × AD
+    T = coordtype(origin)
     if ABCᵀ ⋅ AO > zero(T)
       popat!(points, 1) # pop D
       return ABCᵀ
