@@ -49,6 +49,18 @@
   v = view(g, 1:3)
   @test measure(v) ≈ T(3)
 
+  # concatenation with same parent
+  g = CartesianGrid{T}(10, 10)
+  vg = vcat(view(g, 50:70), view(g, 10:30))
+  @test vg isa Meshes.SubDomain
+  @test vg == view(g, [50:70; 10:30])
+  # concatenation with different parents
+  g1 = CartesianGrid{T}(10, 10)
+  g2 = CartesianGrid{T}(20, 20)
+  vg = vcat(view(g1, 50:70), view(g2, 10:30))
+  @test vg isa GeometrySet
+  @test vg == GeometrySet([g1[50:70]; g2[10:30]])
+
   # show
   pset = PointSet(P2.(1:100, 1:100))
   v1 = view(pset, 1:10)

@@ -30,6 +30,15 @@
   pts = centroid.(Ref(dom), 1:3)
   @test pts == P2[(2, 2), (3, 3), (4, 4)]
 
+  # concatenation
+  dom1 = DummyDomain(P2(0, 0))
+  dom2 = DummyDomain(P2(3, 3))
+  dom3 = PointSet(rand(P2, 3))
+  @test vcat(dom1, dom2) == GeometrySet([collect(dom1); collect(dom2)])
+  @test vcat(dom2, dom3) == GeometrySet([collect(dom2); collect(dom3)])
+  @test vcat(dom3, dom1) == GeometrySet([collect(dom3); collect(dom1)])
+  @test vcat(dom1, dom2, dom3) == GeometrySet([collect(dom1); collect(dom2); collect(dom3)])
+
   dom = DummyDomain(P2(0, 0))
   @test sprint(show, dom) == "3 DummyDomain{2,$T}"
   @test sprint(show, MIME"text/plain"(), dom) == """
