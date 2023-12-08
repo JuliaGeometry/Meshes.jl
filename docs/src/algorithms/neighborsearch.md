@@ -1,13 +1,8 @@
 # Neighbor search
 
 ```@example neighbors
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example neighbors
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 It is often useful to search neighbor elements in a domain given a

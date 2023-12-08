@@ -71,13 +71,8 @@ the package.
 In all examples we assume the following packages are loaded:
 
 ```@example overview
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example overview
 using Meshes
-import WGLMakie as Mke
+import CairoMakie as Mke
 ```
 
 ### Points and vectors

@@ -1,13 +1,8 @@
 # Visualization
 
 ```@example viz
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example viz
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 The package exports a single [`viz`](@ref) command that

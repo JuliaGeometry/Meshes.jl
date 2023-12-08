@@ -1,13 +1,8 @@
 # Primitives
 
 ```@example primitives
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example primitives
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 ## Abstract

@@ -1,13 +1,8 @@
 # Predicates
 
 ```@example intersects
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example intersects
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 This section lists predicates that can be used to check properties of geometric

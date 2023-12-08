@@ -1,13 +1,8 @@
 # Trajectories
 
 ```@example trajec
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example trajec
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 Trajectories of geometries are special geometry sets

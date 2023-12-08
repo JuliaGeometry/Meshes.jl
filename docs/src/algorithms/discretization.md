@@ -1,13 +1,8 @@
 # Discretization
 
 ```@example discretization
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example discretization
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 ```@docs

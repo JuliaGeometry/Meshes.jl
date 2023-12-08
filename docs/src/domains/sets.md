@@ -1,13 +1,8 @@
 # Sets
 
 ```@example sets
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example sets
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 Geometry sets represent a collection of geometries without

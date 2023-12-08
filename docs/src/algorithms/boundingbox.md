@@ -1,13 +1,8 @@
 # Bounding box
 
 ```@example boundingbox
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example boundingbox
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 ```@docs

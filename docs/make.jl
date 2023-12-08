@@ -1,9 +1,6 @@
 using Documenter, Meshes
 using DocumenterTools: Themes
 
-# load viz recipes
-import WGLMakie as Mke
-
 istravis = "TRAVIS" ∈ keys(ENV)
 
 Themes.compile(

@@ -1,13 +1,8 @@
 # Transforms
 
 ```@example transforms
-using JSServe: Page # hide
-Page(exportable=true, offline=true) # hide
-```
-
-```@example transforms
 using Meshes # hide
-import WGLMakie as Mke # hide
+import CairoMakie as Mke # hide
 ```
 
 Geometric (e.g. coordinates) transforms are implemented according to the
