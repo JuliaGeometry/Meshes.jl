@@ -29,6 +29,17 @@ nelements(d::SubDomain) = length(d.inds)
 
 centroid(d::SubDomain, ind::Int) = centroid(d.domain, d.inds[ind])
 
+# specialized for efficiency
+function Base.vcat(d1::SubDomain, d2::SubDomain)
+  if parent(d1) === parent(d2)
+    dom = parent(d1)
+    inds = vcat(parentindices(d1), parentindices(d2))
+    SubDomain(dom, inds)
+  else
+    GeometrySet(vcat(collect(d1), collect(d2)))
+  end
+end
+
 # -------------
 # UNWRAP VIEWS
 # -------------

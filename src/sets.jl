@@ -28,6 +28,11 @@ nelements(gset::GeometrySet) = length(gset.geoms)
 
 Base.parent(gset::GeometrySet) = gset.geoms
 
+# specialized for efficiency
+Base.vcat(gset1::GeometrySet, gset2::GeometrySet) = GeometrySet(vcat(gset1.geoms, gset2.geoms))
+Base.vcat(gset::GeometrySet, dom::Domain) = GeometrySet(vcat(gset.geoms, collect(dom)))
+Base.vcat(dom::Domain, gset::GeometrySet) = GeometrySet(vcat(collect(dom), gset.geoms))
+
 # ------------------------
 # SPECIAL CASE: POINT SET
 # ------------------------

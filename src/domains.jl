@@ -51,6 +51,10 @@ Base.parent(domain::Domain) = domain
 
 Base.parentindices(domain::Domain) = 1:nelements(domain)
 
+Base.vcat(d1::Domain, d2::Domain) = GeometrySet(vcat(collect(d1), collect(d2)))
+
+Base.vcat(domains::Domain...) = reduce(vcat, domains)
+
 """
     embeddim(domain)
 
