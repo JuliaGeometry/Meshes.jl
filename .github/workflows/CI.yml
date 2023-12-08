@@ -7,6 +7,11 @@ on:
     branches:
       - master
     tags: '*'
+concurrency:
+  # Skip intermediate builds: always.
+  # Cancel intermediate builds: only if it is a pull request build.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 env:
   JULIA_NUM_THREADS: 2
 jobs:
