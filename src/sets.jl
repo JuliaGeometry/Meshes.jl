@@ -22,16 +22,16 @@ end
 # constructor with iterator of geometries
 GeometrySet(geoms) = GeometrySet(map(identity, geoms))
 
-element(gset::GeometrySet, ind::Int) = gset.geoms[ind]
+element(d::GeometrySet, ind::Int) = d.geoms[ind]
 
-nelements(gset::GeometrySet) = length(gset.geoms)
+nelements(d::GeometrySet) = length(d.geoms)
 
-Base.parent(gset::GeometrySet) = gset.geoms
+Base.parent(d::GeometrySet) = d.geoms
 
 # specialized for efficiency
-Base.vcat(gset1::GeometrySet, gset2::GeometrySet) = GeometrySet(vcat(gset1.geoms, gset2.geoms))
-Base.vcat(gset::GeometrySet, dom::Domain) = GeometrySet(vcat(gset.geoms, collect(dom)))
-Base.vcat(dom::Domain, gset::GeometrySet) = GeometrySet(vcat(collect(dom), gset.geoms))
+Base.vcat(d1::GeometrySet, d2::GeometrySet) = GeometrySet(vcat(d1.geoms, d2.geoms))
+Base.vcat(d1::GeometrySet, d2::Domain) = GeometrySet(vcat(d1.geoms, collect(d2)))
+Base.vcat(d1::Domain, d2::GeometrySet) = GeometrySet(vcat(collect(d1), d2.geoms))
 
 # ------------------------
 # SPECIAL CASE: POINT SET
@@ -69,6 +69,6 @@ PointSet(coords::AbstractMatrix) = PointSet(Tuple.(eachcol(coords)))
 # constructor with iterator of points
 PointSet(points) = PointSet(map(identity, points))
 
-centroid(pset::PointSet, ind::Int) = pset[ind]
+centroid(d::PointSet, ind::Int) = d[ind]
 
-centroid(pset::PointSet) = Point(sum(coordinates, pset) / nelements(pset))
+centroid(d::PointSet) = Point(sum(coordinates, d) / nelements(d))

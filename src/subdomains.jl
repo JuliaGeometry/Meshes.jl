@@ -62,8 +62,8 @@ Base.parentindices(d::SubDomain) = d.inds
 
 function Base.summary(io::IO, d::SubDomain{Dim,T}) where {Dim,T}
   name = prettyname(d.domain)
-  nelms = length(d.inds)
-  print(io, "$nelms view(::$name{$Dim,$T}, ")
+  nelm = length(d.inds)
+  print(io, "$nelm view(::$name{$Dim,$T}, ")
   printinds(io, d.inds)
   print(io, ")")
 end

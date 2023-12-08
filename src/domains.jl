@@ -31,29 +31,29 @@ function nelements end
 
 Base.isapprox(d1::Domain, d2::Domain) = nelements(d1) == nelements(d2) && all(d1[i] ≈ d2[i] for i in 1:nelements(d1))
 
-Base.getindex(domain::Domain, ind::Int) = element(domain, ind)
+Base.getindex(d::Domain, ind::Int) = element(d, ind)
 
-Base.getindex(domain::Domain, inds::AbstractVector) = [element(domain, ind) for ind in inds]
+Base.getindex(d::Domain, inds::AbstractVector) = [element(d, ind) for ind in inds]
 
-Base.firstindex(domain::Domain) = 1
+Base.firstindex(d::Domain) = 1
 
-Base.lastindex(domain::Domain) = nelements(domain)
+Base.lastindex(d::Domain) = nelements(d)
 
-Base.length(domain::Domain) = nelements(domain)
+Base.length(d::Domain) = nelements(d)
 
-Base.iterate(domain::Domain, state=1) = state > nelements(domain) ? nothing : (domain[state], state + 1)
+Base.iterate(d::Domain, state=1) = state > nelements(d) ? nothing : (d[state], state + 1)
 
-Base.eltype(domain::Domain) = eltype([domain[i] for i in 1:nelements(domain)])
+Base.eltype(d::Domain) = eltype([d[i] for i in 1:nelements(d)])
 
-Base.keys(domain::Domain) = 1:nelements(domain)
+Base.keys(d::Domain) = 1:nelements(d)
 
-Base.parent(domain::Domain) = domain
+Base.parent(d::Domain) = d
 
-Base.parentindices(domain::Domain) = 1:nelements(domain)
+Base.parentindices(d::Domain) = 1:nelements(d)
 
 Base.vcat(d1::Domain, d2::Domain) = GeometrySet(vcat(collect(d1), collect(d2)))
 
-Base.vcat(domains::Domain...) = reduce(vcat, domains)
+Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 """
     embeddim(domain)
@@ -61,7 +61,7 @@ Base.vcat(domains::Domain...) = reduce(vcat, domains)
 Return the number of dimensions of the space where the `domain` is embedded.
 """
 embeddim(::Type{<:Domain{Dim,T}}) where {Dim,T} = Dim
-embeddim(domain::Domain) = embeddim(typeof(domain))
+embeddim(d::Domain) = embeddim(typeof(d))
 
 """
     paramdim(domain)
@@ -69,7 +69,7 @@ embeddim(domain::Domain) = embeddim(typeof(domain))
 Return the number of parametric dimensions of the `domain` as the number of
 parametric dimensions of its elements.
 """
-paramdim(domain::Domain) = paramdim(first(domain))
+paramdim(d::Domain) = paramdim(first(d))
 
 """
     coordtype(domain)
@@ -77,14 +77,14 @@ paramdim(domain::Domain) = paramdim(first(domain))
 Return the machine type of each coordinate used to describe the `domain`.
 """
 coordtype(::Type{<:Domain{Dim,T}}) where {Dim,T} = T
-coordtype(domain::Domain) = coordtype(typeof(domain))
+coordtype(d::Domain) = coordtype(typeof(d))
 
 """
     centroid(domain, ind)
 
 Return the centroid of the `ind`-th element in the `domain`.
 """
-centroid(domain::Domain, ind::Int) = centroid(domain[ind])
+centroid(d::Domain, ind::Int) = centroid(d[ind])
 
 """
     centroid(domain)
@@ -92,10 +92,10 @@ centroid(domain::Domain, ind::Int) = centroid(domain[ind])
 Return the centroid of the `domain`, i.e. the centroid of all
 its element's centroids.
 """
-function centroid(domain::Domain{Dim,T}) where {Dim,T}
-  coords(i) = coordinates(centroid(domain, i))
-  volume(i) = measure(element(domain, i))
-  n = nelements(domain)
+function centroid(d::Domain{Dim,T}) where {Dim,T}
+  coords(i) = coordinates(centroid(d, i))
+  volume(i) = measure(element(d, i))
+  n = nelements(d)
   x = coords.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(T, n))
@@ -108,31 +108,31 @@ end
 Return the top left and bottom right corners of the
 bounding box of the `domain`.
 """
-Base.extrema(domain::Domain) = extrema(boundingbox(domain))
+Base.extrema(d::Domain) = extrema(boundingbox(d))
 
 """
     topology(domain)
 
 Return the topological structure of the `domain`.
 """
-topology(domain::Domain) = domain.topology
+topology(d::Domain) = d.topology
 
 # -----------
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, domain::Domain{Dim,T}) where {Dim,T}
-  nelm = nelements(domain)
-  name = prettyname(domain)
+function Base.summary(io::IO, d::Domain{Dim,T}) where {Dim,T}
+  nelm = nelements(d)
+  name = prettyname(d)
   print(io, "$nelm $name{$Dim,$T}")
 end
 
-Base.show(io::IO, domain::Domain) = summary(io, domain)
+Base.show(io::IO, d::Domain) = summary(io, d)
 
-function Base.show(io::IO, ::MIME"text/plain", domain::Domain)
-  summary(io, domain)
+function Base.show(io::IO, ::MIME"text/plain", d::Domain)
+  summary(io, d)
   println(io)
-  printelms(io, domain)
+  printelms(io, d)
 end
 
 # ----------------
