@@ -7,6 +7,8 @@
   normals = [V3(1, 0, 0), V3(0, 1, 0), V3(0, 0, 1), V3(-1, 0, 0), V3(0, -1, 0), V3(0, 0, -1), V3(rand(3) .- 0.5)]
   for n in normals
     u, v = householderbasis(n)
+    @test u isa V3
+    @test v isa V3
     @test u × v ≈ n ./ norm(n)
   end
 

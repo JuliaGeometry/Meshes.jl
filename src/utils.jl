@@ -35,17 +35,15 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
-function householderbasis(n)
+function householderbasis(n::Vec{3,T}) where {T}
   n̂ = norm(n)
-  _, i = findmax(n .+ n̂)
-  ei = 1:3 .== i
-  h = n + n̂ * ei
+  i = argmax(n .+ n̂)
+  eᵢ = Vec(ntuple(j -> j == i ? T(1) : T(0), 3))
+  h = n + n̂ * eᵢ
   H = I - 2h * transpose(h) / (transpose(h) * h)
   u, v = [H[:, j] for j in 1:3 if j != i]
-  if i == 2
-    u, v = v, u
-  end
-  u, v
+  i == 2 && ((u, v) = (v, u))
+  Vec(u), Vec(v)
 end
 
 """
