@@ -68,40 +68,71 @@ sideof(points, geom::Geometry) = map(point -> sideof(point, geom), points)
 Determines on which side the `point` is in relation to the surface `mesh`.
 Possible results are `IN`, `OUT`, or `ON` the `mesh`.
 """
-sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
+sideof(point::Point{3}, mesh::Mesh{3}) = sideof([point], mesh) |> first
 
 function sideof(points, mesh::Mesh{3})
   @assert paramdim(mesh) == 2 "sideof only defined for surface meshes"
+
+  # triangulate mesh if necessary
   (eltype(mesh) <: Triangle) || return sideof(points, simplexify(mesh))
-  map(point -> _sideof(point, mesh), points)
+
+  # SVD basis for projection
+  verts = vertices(mesh)
+  basis = svdbasis(verts)
+
+  # project points and mesh on SVD basis
+  ppts = proj(points, basis)
+  pmsh = SimpleMesh(proj(verts, basis), topology(mesh))
+
+  # bounding box of projected triangles
+  boxs = boundingbox.(pmsh)
+
+  # retreive basis
+  u, v = basis
+
+  # loop over query points
+  map(1:length(points)) do i
+    # find triangles with intersecting bounding box
+    inds = findall(b -> ppts[i] ∈ b, boxs)
+
+    if isempty(inds)
+      OUT # the point is outside the mesh
+    else
+      # filter original triangle mesh
+      fmsh = view(mesh, inds)
+
+      # define ray from SVD basis
+      nray = Ray(points[i], u × v)
+
+      # ray casting algorithm with filtered mesh
+      _raycasting(nray, fmsh)
+    end
+  end
 end
 
-function _sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
-  z = last.(coordinates.(extrema(mesh)))
-  r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
-
-  hasintersect = false
-  edgecrosses = 0
-  ps = Point{3,T}[]
-  for t in mesh
-    I = intersection(r, t)
+function _raycasting(ray::Ray{3,T}, tris) where {T}
+  ecross = 0 # number of edge crosses
+  inters = false # do we have intersection?
+  points = Point{3,T}[]
+  for tri in tris
+    I = intersection(ray, tri)
     if type(I) == Crossing
-      hasintersect = !hasintersect
+      inters = !inters
     elseif type(I) ∈ (EdgeTouching, CornerTouching, Touching)
       return ON
     elseif type(I) == EdgeCrossing
-      edgecrosses += 1
+      ecross += 1
     elseif type(I) == CornerCrossing
-      p = get(I)
-      if !any(≈(p), ps)
-        push!(ps, p)
-        hasintersect = !hasintersect
+      point = get(I)
+      if !any(≈(point), points)
+        push!(points, point)
+        inters = !inters
       end
     end
   end
 
   # check how many edges we crossed
-  isodd(edgecrosses ÷ 2) && (hasintersect = !hasintersect)
+  isodd(ecross ÷ 2) && (inters = !inters)
 
-  hasintersect ? IN : OUT
+  inters ? IN : OUT
 end
