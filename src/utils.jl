@@ -47,6 +47,27 @@ function householderbasis(n::Vec{3,T}) where {T}
 end
 
 """
+    svdbasis(X, [μ])
+
+Returns the 2D basis that retains most of the variance in the columns of `X`
+with predefined mean `μ`. The matrix `X` is assumed to be 3 by n, i.e. it
+holds 3D coordinates of a list of points.
+
+See https://math.stackexchange.com/a/99317.
+"""
+function svdbasis(X::AbstractMatrix{T}, μ=colmean(X)) where {T}
+  @assert size(X, 1) == 3 "svdbasis only defined for 3 by n matrices"
+  Z = X .- μ
+  U = svd(Z).U
+  u = Vec(U[:, 1]...)
+  v = Vec(U[:, 2]...)
+  n = Vec{3,T}(0, 0, 1)
+  (u × v) ⋅ n < 0 ? (v, u) : (u, v)
+end
+
+colmean(X) = sum(X, dims=2) / size(X, 2)
+
+"""
     mayberound(λ, x, tol)
 
 Round `λ` to `x` if it is within the tolerance `tol`.

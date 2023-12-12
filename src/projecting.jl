@@ -22,17 +22,18 @@ proj2D(p::PolyArea) = PolyArea(proj2D.(rings(p)))
 # IMPLEMENTATION
 # ---------------
 
-function proj2D(points::AbstractVector{Point{3,T}}) where {T}
-  # https://math.stackexchange.com/a/99317
-  X = mapreduce(coordinates, hcat, points)
-  μ = sum(X, dims=2) / size(X, 2)
-  Z = X .- μ
-  U = svd(Z).U
-  u = U[:, 1]
-  v = U[:, 2]
-  n = T[0, 0, 1]
-  if (u × v) ⋅ n < 0
-    u, v = v, u
+function proj2D(points::AbstractVector{<:Point{3}})
+  # retrieve coordinates
+  X = reduce(hcat, coordinates.(points))
+  μ = colmean(X)
+
+  # compute SVD basis
+  u, v = svdbasis(X, μ)
+
+  # project points
+  c = Point(μ...)
+  map(points) do p
+    d = p - c
+    Point(d ⋅ u, d ⋅ v)
   end
-  [Point(z ⋅ u, z ⋅ v) for z in eachcol(Z)]
 end
