@@ -47,16 +47,16 @@ function householderbasis(n::Vec{3,T}) where {T}
 end
 
 """
-    svdbasis(X, [μ])
+    svdbasis(points)
 
-Returns the 2D basis that retains most of the variance in the columns of `X`
-with predefined mean `μ`. The matrix `X` is assumed to be 3 by n, i.e. it
-holds 3D coordinates of a list of points.
+Returns the 2D basis that retains most of the variance in the list of 3D `points`
+using the singular value decomposition (SVD).
 
 See https://math.stackexchange.com/a/99317.
 """
-function svdbasis(X::AbstractMatrix{T}, μ=colmean(X)) where {T}
-  @assert size(X, 1) == 3 "svdbasis only defined for 3 by n matrices"
+function svdbasis(p::AbstractVector{Point{3,T}}) where {T}
+  X = reduce(hcat, coordinates.(p))
+  μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
   U = svd(Z).U
   u = Vec(U[:, 1]...)
@@ -64,8 +64,6 @@ function svdbasis(X::AbstractMatrix{T}, μ=colmean(X)) where {T}
   n = Vec{3,T}(0, 0, 1)
   (u × v) ⋅ n < 0 ? (v, u) : (u, v)
 end
-
-colmean(X) = sum(X, dims=2) / size(X, 2)
 
 """
     mayberound(λ, x, tol)

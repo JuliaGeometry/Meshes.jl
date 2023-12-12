@@ -22,16 +22,16 @@ proj2D(p::PolyArea) = PolyArea(proj2D.(rings(p)))
 # IMPLEMENTATION
 # ---------------
 
-function proj2D(points::AbstractVector{<:Point{3}})
-  # retrieve coordinates
-  X = reduce(hcat, coordinates.(points))
-  μ = colmean(X)
+proj2D(points::AbstractVector{<:Point{3}}) = proj(points, svdbasis(points))
 
-  # compute SVD basis
-  u, v = svdbasis(X, μ)
+function proj(points, basis)
+  # retrieve basis
+  u, v = basis
+
+  # centroid of projection
+  c = centroid(PointSet(points))
 
   # project points
-  c = Point(μ...)
   map(points) do p
     d = p - c
     Point(d ⋅ u, d ⋅ v)
