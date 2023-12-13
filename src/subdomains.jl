@@ -38,6 +38,14 @@ function Base.vcat(d1::SubDomain, d2::SubDomain)
   end
 end
 
+function ==(d1::SubDomain, d2::SubDomain)
+  if d1.domain == d2.domain
+    d1.inds == d2.inds
+  else
+    nelements(d1) == nelements(d2) && all(d1[i] == d2[i] for i in 1:nelements(d1))
+  end
+end
+
 # -------------
 # UNWRAP VIEWS
 # -------------
