@@ -51,5 +51,9 @@
     @test m isa Mahalanobis
     @test evaluate(m, [1.0, 0.0], [0.0, 0.0]) ≈ T(0.2)
     @test evaluate(m, [0.0, 1.0], [0.0, 0.0]) ≈ T(0.05)
+
+    # basic multiplication
+    @test 2MetricBall(T(1)) == MetricBall(T(2))
+    @test 2MetricBall(T[1, 2, 3]) == MetricBall(T[2, 4, 6])
   end
 end

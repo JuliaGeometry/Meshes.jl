@@ -2,9 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-default_rotation(::Val{2}, T) = one(Angle2d{T})
-default_rotation(::Val{3}, T) = one(QuatRotation{T})
-
 """
     MetricBall(radii, rotation=nothing)
     MetricBall(radius, metric=Euclidean())
@@ -34,19 +31,28 @@ Axis-aligned 3D ellipsoid with radii `(3.0, 2.0, 1.0)`:
 julia> mahalanobis = MetricBall((3.0, 2.0, 1.0))
 ```
 """
-struct MetricBall{R,M} <: Neighborhood
-  radii::R
+struct MetricBall{L,R,M} <: Neighborhood
+  radii::L
+  rotation::R
+
+  # state fields
   metric::M
 end
 
-function MetricBall(radii::SVector{Dim,T}, R=default_rotation(Val{Dim}(), T)) where {Dim,T}
+function MetricBall(radii::SVector{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where {Dim,T}
   # scaling matrix
   Λ = Diagonal(one(T) ./ radii .^ 2)
 
-  # Mahalanobis metric
-  metric = Mahalanobis(Symmetric(R * Λ * R'))
+  # rotation matrix
+  R = rotation
 
-  MetricBall{typeof(radii),typeof(metric)}(radii, metric)
+  # anisotropy matrix
+  M = Symmetric(R * Λ * R')
+
+  # Mahalanobis metric
+  metric = Mahalanobis(M)
+
+  MetricBall(radii, rotation, metric)
 end
 
 MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where {Dim,T} =
@@ -56,10 +62,14 @@ MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where
 MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{length(radii)}(), T)) where {T} =
   MetricBall(SVector{length(radii),T}(radii), rotation)
 
-function MetricBall(radius::T, metric=Euclidean()) where {T<:Real}
+function MetricBall(radius::T, metric=Euclidean()) where {T<:Number}
   radii = SVector(radius)
-  MetricBall{typeof(radii),typeof(metric)}(radii, metric)
+  rotation = nothing
+  MetricBall(radii, rotation, metric)
 end
+
+default_rotation(::Val{2}, T) = one(Angle2d{T})
+default_rotation(::Val{3}, T) = one(QuatRotation{T})
 
 """
     radii(ball)
@@ -83,7 +93,7 @@ i.e. the value `r` such that `||v|| ≤ r, ∀ v ∈ ball`
 and `||v|| > r, ∀ v ∉ ball``.
 """
 radius(ball::MetricBall) = first(ball.radii)
-radius(::MetricBall{R,<:Mahalanobis}) where {R} = one(eltype(R))
+radius(::MetricBall{L,R,<:Mahalanobis}) where {L,R} = one(eltype(R))
 
 """
     isisotropic(ball)
@@ -92,6 +102,9 @@ Tells whether or not the metric `ball` is isotropic,
 i.e. if all its radii are equal.
 """
 isisotropic(ball::MetricBall) = length(unique(ball.radii)) == 1
+
+*(α::Real, ball::MetricBall) = MetricBall(α .* ball.radii, nothing, ball.metric)
+*(α::Real, ball::MetricBall{L,R,<:Mahalanobis}) where {L,R} = MetricBall(α .* ball.radii, ball.rotation)
 
 function Base.show(io::IO, ball::MetricBall)
   n = length(ball.radii)
