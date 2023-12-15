@@ -62,8 +62,7 @@ MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where
 MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{length(radii)}(), T)) where {T} =
   MetricBall(SVector{length(radii),T}(radii), rotation)
 
-MetricBall(radius::T, metric=Euclidean()) where {T<:Number} =
-  MetricBall(SVector(radius), nothing, metric)
+MetricBall(radius::T, metric=Euclidean()) where {T<:Number} = MetricBall(SVector(radius), nothing, metric)
 
 default_rotation(::Val{2}, T) = one(Angle2d{T})
 default_rotation(::Val{3}, T) = one(QuatRotation{T})
