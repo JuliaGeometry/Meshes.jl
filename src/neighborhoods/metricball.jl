@@ -62,11 +62,8 @@ MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where
 MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{length(radii)}(), T)) where {T} =
   MetricBall(SVector{length(radii),T}(radii), rotation)
 
-function MetricBall(radius::T, metric=Euclidean()) where {T<:Number}
-  radii = SVector(radius)
-  rotation = nothing
-  MetricBall(radii, rotation, metric)
-end
+MetricBall(radius::T, metric=Euclidean()) where {T<:Number} =
+  MetricBall(SVector(radius), nothing, metric)
 
 default_rotation(::Val{2}, T) = one(Angle2d{T})
 default_rotation(::Val{3}, T) = one(QuatRotation{T})
@@ -92,8 +89,10 @@ Return the effective radius of the metric `ball`,
 i.e. the value `r` such that `||v|| ≤ r, ∀ v ∈ ball`
 and `||v|| > r, ∀ v ∉ ball``.
 """
-radius(ball::MetricBall) = first(ball.radii)
-radius(::MetricBall{L,R,<:Mahalanobis}) where {L,R} = one(eltype(R))
+function radius(ball::MetricBall)
+  r = first(ball.radii)
+  ball.metric isa Mahalanobis ? one(r) : r
+end
 
 """
     isisotropic(ball)
@@ -103,8 +102,13 @@ i.e. if all its radii are equal.
 """
 isisotropic(ball::MetricBall) = length(unique(ball.radii)) == 1
 
-*(α::Real, ball::MetricBall) = MetricBall(α .* ball.radii, nothing, ball.metric)
-*(α::Real, ball::MetricBall{L,R,<:Mahalanobis}) where {L,R} = MetricBall(α .* ball.radii, ball.rotation)
+function *(α::Real, ball::MetricBall)
+  if ball.metric isa Mahalanobis
+    MetricBall(α .* ball.radii, ball.rotation)
+  else
+    MetricBall(α .* ball.radii, nothing, ball.metric)
+  end
+end
 
 function Base.show(io::IO, ball::MetricBall)
   n = length(ball.radii)
