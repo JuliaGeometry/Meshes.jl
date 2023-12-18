@@ -37,9 +37,7 @@ ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point
 
 ParaboloidSurface(point::Point{3,T}) where {T} = ParaboloidSurface(point, T(1), T(1))
 
-ParaboloidSurface{T}() where {T} = ParaboloidSurface(Point{3, T}(0, 0, 0), T(1), T(1))
-
-ParaboloidSurface() = ParaboloidSurface{Float64}()
+ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0), 1, 1)
 
 @doc raw"""
     point(p::ParaboloidSurface{T})
