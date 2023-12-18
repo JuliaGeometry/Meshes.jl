@@ -46,6 +46,15 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
   Box(c - r⃗, c + r⃗)
 end
 
+function boundingbox(p::ParaboloidSurface{T}) where {T}
+    v = p.point
+    r = p.radius
+    f = p.focallength
+
+    _, cy, _ = coordinates(v)
+    Box(v + Vec(-r, -r, 0), v + Vec(r, r, r^2 / (4f)))
+end
+
 boundingbox(t::Torus) = _pboxes(pointify(t))
 
 boundingbox(g::Grid) = Box(extrema(g)...)
