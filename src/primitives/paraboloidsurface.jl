@@ -101,11 +101,11 @@ function (p::ParaboloidSurface{T})(r, θ) where {T}
     cx, cy, cz = coordinates(p.point)
 
     sinθ, cosθ = sincospi(T(2) * θ)
-    x = cx + r * p.radius * cosθ
-    y = cy + r * p.radius * sinθ
-    z = cz + (x^2 + y^2)/4f
+    x = r * p.radius * cosθ
+    y = r * p.radius * sinθ
+    z = (x^2 + y^2)/4f
     
-    Point(x, y, z)
+    Point(cx + x, cy + y, cz + z)
 end
 
 discretize(p::ParaboloidSurface) = discretize(p, RegularDiscretization(30))
