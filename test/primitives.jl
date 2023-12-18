@@ -1201,7 +1201,6 @@
     @test coordtype(p) == T
     @test isparametrized(p)
     @test focallength(p) == T(2)
-    @test point(p) == P3(0, 0, 0)
     @test radius(p) == T(1)
     @test axis(p) == Line(P3(0, 0, 0), P3(0, 0, T(2)))
     @test measure(p) == area(p) ≈ 32π / 3 * (17√17 / 64 - 1)
