@@ -22,7 +22,7 @@ radius.
 
 Same as above, but here the vertex is at `Point(0, 0, 0)`.
 
-See https://en.wikipedia.org/wiki/Paraboloid
+See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
 struct ParaboloidSurface{T} <: Primitive{3, T}
     point::Point{3,T}
