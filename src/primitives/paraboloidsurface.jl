@@ -45,7 +45,9 @@ ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point
 
 ParaboloidSurface(vertex::Point{3,T}) where {T} = ParaboloidSurface(vertex, T(1), T(1))
 
-ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0), 1, 1)
+ParaboloidSurface{T}() where {T} = ParaboloidSurface(Point{3, T}(0, 0, 0), T(1), T(1))
+
+ParaboloidSurface() = ParaboloidSurface{Float64}()
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
 
@@ -84,7 +86,7 @@ Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} 
 
 function (p::ParaboloidSurface{T})(r, θ) where {T}
     # r is the radial coordinate, θ is the angular coordinate
-    (r < 0 || r > 1) && error("radus r=$r is out of [0, 1]")
+    (r < 0 || r > 1) && throw(DomainError((r, θ), "radius r=$r is out of [0, 1]"))
     
     f = p.focallength
     cx, cy, cz = coordinates(p.vertex)
