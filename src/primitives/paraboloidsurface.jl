@@ -30,10 +30,8 @@ struct ParaboloidSurface{T} <: Primitive{3, T}
     focallength::T
 end
 
-function ParaboloidSurface(point::Tuple, radius, focallength)
-    pt = Point(point)
-    ParaboloidSurface(pt, convert(eltype(pt), radius), convert(eltype(pt), focallength))
-end
+ParaboloidSurface(point::Tuple, radius, focallength) =
+    ParaboloidSurface(Point(point), radius, focallength)
 
 ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point, T(radius), one(T))
 
