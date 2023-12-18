@@ -170,7 +170,6 @@ export
   sides,
   diagonal,
   focallength,
-  point,  
   ⪯,
   ≺,
   ⪰,

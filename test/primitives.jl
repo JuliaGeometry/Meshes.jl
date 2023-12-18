@@ -1241,13 +1241,13 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       ParaboloidSurface{3,Float32}
-      ├─ point: Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ vertex: Point(0.0f0, 0.0f0, 0.0f0)
       ├─ radius: 1.0f0
       └─ focallength: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), p) == """
       ParaboloidSurface{3,Float64}
-      ├─ point: Point(0.0, 0.0, 0.0)
+      ├─ vertex: Point(0.0, 0.0, 0.0)
       ├─ radius: 1.0
       └─ focallength: 1.0"""
     end
