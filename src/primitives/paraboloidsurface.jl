@@ -38,18 +38,14 @@ struct ParaboloidSurface{T} <: Primitive{3, T}
     focallength::T
 end
 
-function ParaboloidSurface(vertex::Tuple, radius, focallength)
-    pt = Point(vertex)
-    ParaboloidSurface(pt, convert(eltype(pt), radius), convert(eltype(pt), focallength))
-end
+ParaboloidSurface(point::Tuple, radius, focallength) =
+    ParaboloidSurface(Point(point), radius, focallength)
 
-ParaboloidSurface(vertex::Point{3,T}, radius) where {T} = ParaboloidSurface(vertex, T(radius), one(T))
+ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point, T(radius), T(1))
 
 ParaboloidSurface(vertex::Point{3,T}) where {T} = ParaboloidSurface(vertex, T(1), T(1))
 
-ParaboloidSurface{T}() where {T} = ParaboloidSurface(Point{3, T}(0, 0, 0), T(1), T(1))
-
-ParaboloidSurface() = ParaboloidSurface{Float64}()
+ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0), 1, 1)
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
 
