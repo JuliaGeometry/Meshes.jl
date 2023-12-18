@@ -5,9 +5,17 @@
 """
     ParaboloidSurface(point, radius, focallength)
 
-A paraboloid surface embedded in R³ and extending up to a distance `radius` from
-its focal axis, which is aligned along the z direction and passes through `point`
-(the apex of the paraboloid).
+A paraboloid surface embedded in R³ and extending up to a distance
+`radius` from its focal axis, which is aligned along the z direction
+and passes through `point` (the apex of the paraboloid). The equation
+of the paraboloid is the following:
+
+```math
+f(x, y) = \frac{(x - x_0)^2 + (y - y_0)^2}{4f} + z_0\qquad\text{for } x^2 + y^2 < r^2,
+```
+
+where ``(x_0, y_0, z_0)`` is the vertex of the parabola, ``f`` is the
+focal length, and ``r`` is the clip radius.
 
     ParaboloidSurface(point, radius)
 
