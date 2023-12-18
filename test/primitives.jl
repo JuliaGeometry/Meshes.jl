@@ -1221,6 +1221,8 @@
     @test measure(p) == area(p) ≈ 128π / 3 * (73√73 / 512 - 1)
     @test p(T(0), T(0)) ≈ P3(1, 5, 2)
     @test p(T(1), T(0)) ≈ P3(4, 5, 2 + 3^2/(4 * 4))
+    @test_throws DomainError p(T(-0.1), T(0))
+    @test_throws DomainError p(T(1.1), T(0))
 
     p = ParaboloidSurface{T}()
     @test p(T(0), T(0)) ≈ P3(0, 0, 0)
