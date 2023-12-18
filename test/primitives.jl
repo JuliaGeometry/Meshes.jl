@@ -1198,6 +1198,7 @@
     p = ParaboloidSurface(P3(0, 0, 0), T(1), T(2))
     @test embeddim(p) == 3
     @test paramdim(p) == 2
+    @test isperiodic(p) == (false, true)
     @test coordtype(p) == T
     @test isparametrized(p)
     @test focallength(p) == T(2)
@@ -1210,6 +1211,11 @@
     p3 = ParaboloidSurface(P3(1, 2, 3))
     @test p1 == p2 == p3
     @test p1 ≈ p2 ≈ p3
+
+    p = ParaboloidSurface((1.0, 2.0, 3.0), 4.0, 5.0)
+    @test coordtype(p) == Float64
+    @test radius(p) == 4.0
+    @test focallength(p) == 5.0
 
     p = ParaboloidSurface(P3(1, 5, 2), T(3), T(4))
     @test measure(p) == area(p) ≈ 128π / 3 * (73√73 / 512 - 1)
