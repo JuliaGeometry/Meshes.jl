@@ -69,7 +69,7 @@ Return the radius of the rim of the paraboloid.
 """
 radius(p::ParaboloidSurface) = p.radius
 
-@doc raw"""
+"""
     axis(p::ParaboloidSurface)
 
 Return the focal axis, connecting the focus with the vertex of the paraboloid.
