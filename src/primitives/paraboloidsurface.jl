@@ -33,7 +33,7 @@ end
 ParaboloidSurface(point::Tuple, radius, focallength) =
     ParaboloidSurface(Point(point), radius, focallength)
 
-ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point, T(radius), one(T))
+ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point, T(radius), T(1))
 
 ParaboloidSurface(point::Point{3,T}) where {T} = ParaboloidSurface(point, T(1), T(1))
 
