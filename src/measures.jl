@@ -58,9 +58,9 @@ function measure(c::CylinderSurface{T}) where {T}
 end
 
 function measure(p::ParaboloidSurface{T}) where {T}
-    f = p.focallength
-    r = p.radius
-    8π/3 * f^2 * ((1 + r^2/(2f)^2)^(3/2) - 1)
+    f = focallength(p)
+    r = radius(p)
+    T(8π/3) * f^2 * ((T(1) + r^2/(2f)^2)^T(3/2) - T(1))
 end
 
 # https://en.wikipedia.org/wiki/Torus
