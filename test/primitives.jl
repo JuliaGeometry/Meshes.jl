@@ -1237,7 +1237,7 @@
 
     p = ParaboloidSurface{T}()
     @test sprint(show, p) ==
-          "ParaboloidSurface(point: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
+          "ParaboloidSurface(vertex: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       ParaboloidSurface{3,Float32}
