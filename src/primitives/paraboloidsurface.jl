@@ -101,8 +101,5 @@ function (p::ParaboloidSurface{T})(r, θ) where {T}
     Point(cx + x, cy + y, cz + z)
 end
 
-discretize(p::ParaboloidSurface) = discretize(p, RegularDiscretization(30))
-simplexify(p::ParaboloidSurface) = discretize(p, RegularDiscretization(30))
-
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface{T}}) where {T} =
   ParaboloidSurface(rand(rng, Point{3, T}), rand(rng, T), rand(rng, T))
