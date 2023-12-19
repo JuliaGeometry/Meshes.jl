@@ -78,11 +78,9 @@ The axis is always aligned with the z direction.
 axis(p::ParaboloidSurface) = Line(p.vertex, p.vertex + Vec(0, 0, p.focallength))
 
 Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} =
-    (
-        p₁.vertex ≈ p₂.vertex &&
-        isapprox(p₁.focallength, p₂.focallength, atol=atol(T)) &&
-        isapprox(p₁.radius, p₂.radius, atol=atol(T))
-    )
+  p₁.vertex ≈ p₂.vertex &&
+  isapprox(p₁.focallength, p₂.focallength, atol=atol(T)) &&
+  isapprox(p₁.radius, p₂.radius, atol=atol(T))
 
 function (p::ParaboloidSurface{T})(r, θ) where {T}
     # r is the radial coordinate, θ is the angular coordinate
