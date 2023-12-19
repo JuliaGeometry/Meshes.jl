@@ -84,7 +84,9 @@ Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} 
 
 function (p::ParaboloidSurface{T})(r, θ) where {T}
     # r is the radial coordinate, θ is the angular coordinate
-    (r < 0 || r > 1) && throw(DomainError((r, θ), "radius r=$r is out of [0, 1]"))
+  if (r < 0 || r > 1)
+    throw(DomainError((r, θ), "radius r=$r is out of [0, 1]"))
+  end
     
     f = p.focallength
     cx, cy, cz = coordinates(p.vertex)
