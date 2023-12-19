@@ -990,6 +990,12 @@
     @test p1 == p2 == p3
     @test p1 ≈ p2 ≈ p3
 
+    p1 = ParaboloidSurface((1, 2, 3), 1.0, 1.0)
+    p2 = ParaboloidSurface((1, 2, 3), 1.0)
+    p3 = ParaboloidSurface((1, 2, 3))
+    @test p1 == p2 == p3
+    @test p1 ≈ p2 ≈ p3
+
     p = ParaboloidSurface((1.0, 2.0, 3.0), 4.0, 5.0)
     @test coordtype(p) == Float64
     @test radius(p) == 4.0

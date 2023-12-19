@@ -43,7 +43,11 @@ ParaboloidSurface(apex::Tuple, radius, focallength) =
 
 ParaboloidSurface(apex::Point{3,T}, radius) where {T} = ParaboloidSurface(apex, T(radius), T(1))
 
-ParaboloidSurface(apex::Point{3,T}) where {T} = ParaboloidSurface(apex, T(1), T(1))
+ParaboloidSurface(apex::Tuple, radius) where {T} = ParaboloidSurface(Point(apex), radius)
+
+ParaboloidSurface(apex::Point{3,T}) where {T} = ParaboloidSurface(apex, T(1))
+
+ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 
 ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0), 1.0, 1.0)
 
