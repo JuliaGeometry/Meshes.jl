@@ -47,7 +47,7 @@ function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
 end
 
 function boundingbox(p::ParaboloidSurface{T}) where {T}
-    v = p(T(0), T(0))
+    v = apex(p)
     r = radius(p)
     f = focallength(p)
 

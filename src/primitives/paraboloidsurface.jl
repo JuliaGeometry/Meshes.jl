@@ -3,47 +3,47 @@
 # ------------------------------------------------------------------
 
 """
-    ParaboloidSurface(point, radius, focallength)
+    ParaboloidSurface(apex, radius, focallength)
 
 A paraboloid surface embedded in R³ and extending up to a distance
 `radius` from its focal axis, which is aligned along the z direction
-and passes through `point` (the apex of the paraboloid). The equation
+and passes through `apex` (the apex of the paraboloid). The equation
 of the paraboloid is the following:
 
 ```math
 f(x, y) = \\frac{(x - x_0)^2 + (y - y_0)^2}{4f} + z_0\\qquad\\text{for } x^2 + y^2 < r^2,
 ```
 
-where ``(x_0, y_0, z_0)`` is the vertex of the parabola, ``f`` is the
+where ``(x_0, y_0, z_0)`` is the apex of the parabola, ``f`` is the
 focal length, and ``r`` is the clip radius.
 
-    ParaboloidSurface(point, radius)
+    ParaboloidSurface(apex, radius)
 
 This creates a paraboloid surface with focal length equal to 1.
 
-    ParaboloidSurface(point)
+    ParaboloidSurface(apex)
 
 This creates a paraboloid surface with focal length equal to 1 and a rim with unit
 radius.
 
     ParaboloidSurface()
 
-Same as above, but here the vertex is at `Point(0, 0, 0)`.
+Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
 struct ParaboloidSurface{T} <: Primitive{3, T}
-    vertex::Point{3,T}
+    apex::Point{3,T}
     radius::T
     focallength::T
 end
 
-ParaboloidSurface(point::Tuple, radius, focallength) =
-    ParaboloidSurface(Point(point), radius, focallength)
+ParaboloidSurface(apex::Tuple, radius, focallength) =
+    ParaboloidSurface(Point(apex), radius, focallength)
 
-ParaboloidSurface(point::Point{3,T}, radius) where {T} = ParaboloidSurface(point, T(radius), T(1))
+ParaboloidSurface(apex::Point{3,T}, radius) where {T} = ParaboloidSurface(apex, T(radius), T(1))
 
-ParaboloidSurface(vertex::Point{3,T}) where {T} = ParaboloidSurface(vertex, T(1), T(1))
+ParaboloidSurface(apex::Point{3,T}) where {T} = ParaboloidSurface(apex, T(1), T(1))
 
 ParaboloidSurface{T}() where {T} = ParaboloidSurface(Point{3, T}(0, 0, 0), T(1), T(1))
 
@@ -70,16 +70,23 @@ Return the radius of the rim of the paraboloid.
 radius(p::ParaboloidSurface) = p.radius
 
 """
+    apex(p::ParaboloidSurface)
+
+Return the apex of the paraboloid.
+"""
+apex(p::ParaboloidSurface) = p.apex
+
+"""
     axis(p::ParaboloidSurface)
 
-Return the focal axis, connecting the focus with the vertex of the paraboloid.
+Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface) = Line(p.vertex, p.vertex + Vec(0, 0, p.focallength))
+axis(p::ParaboloidSurface) = Line(p.apex, p.apex + Vec(0, 0, p.focallength))
 
 Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} =
     (
-        p₁.vertex ≈ p₂.vertex &&
+        p₁.apex ≈ p₂.apex &&
         isapprox(p₁.focallength, p₂.focallength, atol=atol(T)) &&
         isapprox(p₁.radius, p₂.radius, atol=atol(T))
     )
@@ -89,7 +96,7 @@ function (p::ParaboloidSurface{T})(r, θ) where {T}
     (r < 0 || r > 1) && throw(DomainError((r, θ), "radius r=$r is out of [0, 1]"))
     
     f = p.focallength
-    cx, cy, cz = coordinates(p.vertex)
+    cx, cy, cz = coordinates(p.apex)
 
     sinθ, cosθ = sincospi(T(2) * θ)
     x = r * p.radius * cosθ
