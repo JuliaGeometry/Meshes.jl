@@ -66,6 +66,8 @@ boundary(c::Cylinder) = CylinderSurface(bottom(c), top(c), radius(c))
 
 boundary(::CylinderSurface) = nothing
 
+boundary(::ParaboloidSurface) = nothing
+
 function boundary(p::Pyramid)
   indices = [(4, 3, 2, 1), (5, 1, 2), (5, 4, 1), (5, 3, 4), (5, 2, 3)]
   SimpleMesh(pointify(p), connect.(indices))

@@ -153,3 +153,18 @@ Torus
 ```@example primitives
 Torus((0.,0.,0.), (1.,0.,0.), (0.,1.,0.), 0.2) |> viz
 ```
+
+### ParaboloidSurface
+
+```@docs
+ParaboloidSurface
+```
+
+```@example primitives
+a = Point3(5, 2, 4)
+r = 1.0
+f = 0.25
+par = ParaboloidSurface(a, r, f)
+disk = Disk(Plane(a, Vec(0, 0, 1)), r)
+viz([par, disk], color = [:green, :gray])
+```

@@ -58,6 +58,13 @@
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
+    parsurf = rand(ParaboloidSurface{T})
+    mesh = discretize(parsurf, RegularDiscretization(10))
+    @test nvertices(mesh) == 10 * (10 + 1)
+    @test nelements(mesh) == 10 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
     poly = PolyArea(P2[(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)])
     mesh = discretize(poly, RegularDiscretization(50))
     @test mesh isa Meshes.SubDomain
