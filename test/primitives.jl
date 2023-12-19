@@ -1004,7 +1004,7 @@
     p = ParaboloidSurface(P3(1, 5, 2), T(3), T(4))
     @test measure(p) == area(p) ≈ T(128π / 3 * (73√73 / 512 - 1))
     @test p(T(0), T(0)) ≈ P3(1, 5, 2)
-    @test p(T(1), T(0)) ≈ P3(4, 5, 2 + 3^2/(4 * 4))
+    @test p(T(1), T(0)) ≈ P3(4, 5, 2 + 3^2 / (4 * 4))
     @test_throws DomainError p(T(-0.1), T(0))
     @test_throws DomainError p(T(1.1), T(0))
 
@@ -1025,8 +1025,7 @@
     @test embeddim(p) == 3
 
     p = ParaboloidSurface(P3(0, 0, 0))
-    @test sprint(show, p) ==
-          "ParaboloidSurface(apex: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
+    @test sprint(show, p) == "ParaboloidSurface(apex: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       ParaboloidSurface{3,Float32}
