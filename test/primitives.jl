@@ -970,6 +970,74 @@
     end
   end
 
+  @testset "ParaboloidSurface" begin
+    @test isparametrized(ParaboloidSurface)
+
+    p = ParaboloidSurface(P3(0, 0, 0), T(1), T(2))
+    @test embeddim(p) == 3
+    @test paramdim(p) == 2
+    @test isperiodic(p) == (false, true)
+    @test coordtype(p) == T
+    @test isparametrized(p)
+    @test focallength(p) == T(2)
+    @test radius(p) == T(1)
+    @test axis(p) == Line(P3(0, 0, 0), P3(0, 0, T(2)))
+    @test measure(p) == area(p) ≈ 32π / 3 * (17√17 / 64 - 1)
+
+    p1 = ParaboloidSurface(P3(1, 2, 3), T(1), T(1))
+    p2 = ParaboloidSurface(P3(1, 2, 3), T(1))
+    p3 = ParaboloidSurface(P3(1, 2, 3))
+    @test p1 == p2 == p3
+    @test p1 ≈ p2 ≈ p3
+
+    p = ParaboloidSurface((1.0, 2.0, 3.0), 4.0, 5.0)
+    @test coordtype(p) == Float64
+    @test radius(p) == 4.0
+    @test focallength(p) == 5.0
+
+    p = ParaboloidSurface(P3(1, 5, 2), T(3), T(4))
+    @test measure(p) == area(p) ≈ 128π / 3 * (73√73 / 512 - 1)
+    @test p(T(0), T(0)) ≈ P3(1, 5, 2)
+    @test p(T(1), T(0)) ≈ P3(4, 5, 2 + 3^2/(4 * 4))
+    @test_throws DomainError p(T(-0.1), T(0))
+    @test_throws DomainError p(T(1.1), T(0))
+
+    p = ParaboloidSurface{T}()
+    @test p(T(0), T(0)) ≈ P3(0, 0, 0)
+    @test p(T(0.5), T(0)) ≈ P3(T(0.5), 0, T(0.5^2 / 4))
+    @test p(T(0), T(0.5)) ≈ P3(0, 0, 0)
+    @test p(T(0.5), T(0.5)) ≈ P3(T(-0.5), 0, T(0.5^2 / 4))
+
+    p = ParaboloidSurface()
+    @test coordtype(p) == Float64
+
+    p = ParaboloidSurface(Point3(0, 0, 0))
+    @test coordtype(p) == Float64
+    p = ParaboloidSurface(Point3f(0, 0, 0))
+    @test coordtype(p) == Float32
+
+    p = rand(ParaboloidSurface{T})
+    @test p isa ParaboloidSurface
+    @test embeddim(p) == 3
+
+    p = ParaboloidSurface{T}()
+    @test sprint(show, p) ==
+          "ParaboloidSurface(apex: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), p) == """
+      ParaboloidSurface{3,Float32}
+      ├─ apex: Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ radius: 1.0f0
+      └─ focallength: 1.0f0"""
+    else
+      @test sprint(show, MIME("text/plain"), p) == """
+      ParaboloidSurface{3,Float64}
+      ├─ apex: Point(0.0, 0.0, 0.0)
+      ├─ radius: 1.0
+      └─ focallength: 1.0"""
+    end
+  end
+
   @testset "Cone" begin
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     d = Disk(p, T(2))
@@ -1189,74 +1257,6 @@
       ├─ normal: Vec(1.0, 0.0, 0.0)
       ├─ major: 2.0
       └─ minor: 1.0"""
-    end
-  end
-
-  @testset "ParaboloidSurface" begin
-    @test isparametrized(ParaboloidSurface)
-
-    p = ParaboloidSurface(P3(0, 0, 0), T(1), T(2))
-    @test embeddim(p) == 3
-    @test paramdim(p) == 2
-    @test isperiodic(p) == (false, true)
-    @test coordtype(p) == T
-    @test isparametrized(p)
-    @test focallength(p) == T(2)
-    @test radius(p) == T(1)
-    @test axis(p) == Line(P3(0, 0, 0), P3(0, 0, T(2)))
-    @test measure(p) == area(p) ≈ 32π / 3 * (17√17 / 64 - 1)
-
-    p1 = ParaboloidSurface(P3(1, 2, 3), T(1), T(1))
-    p2 = ParaboloidSurface(P3(1, 2, 3), T(1))
-    p3 = ParaboloidSurface(P3(1, 2, 3))
-    @test p1 == p2 == p3
-    @test p1 ≈ p2 ≈ p3
-
-    p = ParaboloidSurface((1.0, 2.0, 3.0), 4.0, 5.0)
-    @test coordtype(p) == Float64
-    @test radius(p) == 4.0
-    @test focallength(p) == 5.0
-
-    p = ParaboloidSurface(P3(1, 5, 2), T(3), T(4))
-    @test measure(p) == area(p) ≈ 128π / 3 * (73√73 / 512 - 1)
-    @test p(T(0), T(0)) ≈ P3(1, 5, 2)
-    @test p(T(1), T(0)) ≈ P3(4, 5, 2 + 3^2/(4 * 4))
-    @test_throws DomainError p(T(-0.1), T(0))
-    @test_throws DomainError p(T(1.1), T(0))
-
-    p = ParaboloidSurface{T}()
-    @test p(T(0), T(0)) ≈ P3(0, 0, 0)
-    @test p(T(0.5), T(0)) ≈ P3(T(0.5), 0, T(0.5^2 / 4))
-    @test p(T(0), T(0.5)) ≈ P3(0, 0, 0)
-    @test p(T(0.5), T(0.5)) ≈ P3(T(-0.5), 0, T(0.5^2 / 4))
-
-    p = ParaboloidSurface()
-    @test coordtype(p) == Float64
-
-    p = ParaboloidSurface(Point3(0, 0, 0))
-    @test coordtype(p) == Float64
-    p = ParaboloidSurface(Point3f(0, 0, 0))
-    @test coordtype(p) == Float32
-
-    p = rand(ParaboloidSurface{T})
-    @test p isa ParaboloidSurface
-    @test embeddim(p) == 3
-
-    p = ParaboloidSurface{T}()
-    @test sprint(show, p) ==
-          "ParaboloidSurface(vertex: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
-    if T === Float32
-      @test sprint(show, MIME("text/plain"), p) == """
-      ParaboloidSurface{3,Float32}
-      ├─ vertex: Point(0.0f0, 0.0f0, 0.0f0)
-      ├─ radius: 1.0f0
-      └─ focallength: 1.0f0"""
-    else
-      @test sprint(show, MIME("text/plain"), p) == """
-      ParaboloidSurface{3,Float64}
-      ├─ vertex: Point(0.0, 0.0, 0.0)
-      ├─ radius: 1.0
-      └─ focallength: 1.0"""
     end
   end
 end
