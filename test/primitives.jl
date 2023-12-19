@@ -982,7 +982,7 @@
     @test focallength(p) == T(2)
     @test radius(p) == T(1)
     @test axis(p) == Line(P3(0, 0, 0), P3(0, 0, T(2)))
-    @test measure(p) == area(p) ≈ 32π / 3 * (17√17 / 64 - 1)
+    @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1))
 
     p1 = ParaboloidSurface(P3(1, 2, 3), T(1), T(1))
     p2 = ParaboloidSurface(P3(1, 2, 3), T(1))
@@ -996,7 +996,7 @@
     @test focallength(p) == 5.0
 
     p = ParaboloidSurface(P3(1, 5, 2), T(3), T(4))
-    @test measure(p) == area(p) ≈ 128π / 3 * (73√73 / 512 - 1)
+    @test measure(p) == area(p) ≈ T(128π / 3 * (73√73 / 512 - 1))
     @test p(T(0), T(0)) ≈ P3(1, 5, 2)
     @test p(T(1), T(0)) ≈ P3(4, 5, 2 + 3^2/(4 * 4))
     @test_throws DomainError p(T(-0.1), T(0))
