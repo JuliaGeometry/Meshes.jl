@@ -30,7 +30,7 @@ setalpha(colors, ::Nothing) = colors
 # convert user input to colors
 function process(values::V, scheme, alphas)
   # find invalid and valid indices
-  iinds = findall(ismissing, values)
+  iinds = findall(v -> ismissing(v) || (v isa Number && isnan(v)), values)
   vinds = setdiff(1:length(values), iinds)
 
   # invalid values are assigned full transparency
