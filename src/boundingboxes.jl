@@ -50,9 +50,7 @@ function boundingbox(p::ParaboloidSurface{T}) where {T}
     v = apex(p)
     r = radius(p)
     f = focallength(p)
-
-    _, cy, _ = coordinates(v)
-    Box(v + Vec(-r, -r, T(0)), v + Vec(r, r, T(r^2 / (4f))))
+    Box(v + Vec(-r, -r, T(0)), v + Vec(r, r, r^2 / (4f)))
 end
 
 boundingbox(t::Torus) = _pboxes(pointify(t))
