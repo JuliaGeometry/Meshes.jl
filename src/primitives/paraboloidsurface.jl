@@ -80,7 +80,7 @@ apex(p::ParaboloidSurface) = p.apex
 Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface) = Line(p.apex, p.apex + Vec(0, 0, p.focallength))
+axis(p::ParaboloidSurface{T}) where {T} = Line(p.apex, p.apex + Vec(T(0), T(0), p.focallength))
 
 Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} =
   p₁.apex ≈ p₂.apex &&
