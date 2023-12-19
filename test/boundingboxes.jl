@@ -85,5 +85,5 @@
   @test @allocated(boundingbox(m)) < 50
 
   p = ParaboloidSurface{T}(P3(1, 2, 3), T(5), T(4))
-  @test boundingbox(p) ≈ Box(P3(-4, -3, 3), P3(6, 7, 73/16))  
+  @test boundingbox(p) ≈ Box(P3(-4, -3, 3), P3(6, 7, 73 / 16))
 end

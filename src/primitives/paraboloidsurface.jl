@@ -32,16 +32,15 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{T} <: Primitive{3, T}
-    apex::Point{3,T}
-    radius::T
-    focallength::T
+struct ParaboloidSurface{T} <: Primitive{3,T}
+  apex::Point{3,T}
+  radius::T
+  focallength::T
 end
 
 ParaboloidSurface(apex::Point{3,T}, radius, focallength) where {T} = ParaboloidSurface{T}(apex, radius, focallength)
 
-ParaboloidSurface(apex::Tuple, radius, focallength) =
-    ParaboloidSurface(Point(apex), radius, focallength)
+ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
 ParaboloidSurface(apex::Point{3,T}, radius) where {T} = ParaboloidSurface(apex, T(radius), T(1))
 
@@ -94,21 +93,21 @@ Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} 
   isapprox(p₁.radius, p₂.radius, atol=atol(T))
 
 function (p::ParaboloidSurface{T})(r, θ) where {T}
-    # r is the radial coordinate, θ is the angular coordinate
+  # r is the radial coordinate, θ is the angular coordinate
   if (r < 0 || r > 1)
     throw(DomainError((r, θ), "radius r=$r is out of [0, 1]"))
   end
-    
-    f = p.focallength
-    cx, cy, cz = coordinates(p.apex)
 
-    sinθ, cosθ = sincospi(T(2) * θ)
-    x = r * p.radius * cosθ
-    y = r * p.radius * sinθ
-    z = (x^2 + y^2)/4f
-    
-    Point(cx + x, cy + y, cz + z)
+  f = p.focallength
+  cx, cy, cz = coordinates(p.apex)
+
+  sinθ, cosθ = sincospi(T(2) * θ)
+  x = r * p.radius * cosθ
+  y = r * p.radius * sinθ
+  z = (x^2 + y^2) / 4f
+
+  Point(cx + x, cy + y, cz + z)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface{T}}) where {T} =
-  ParaboloidSurface(rand(rng, Point{3, T}), rand(rng, T), rand(rng, T))
+  ParaboloidSurface(rand(rng, Point{3,T}), rand(rng, T), rand(rng, T))
