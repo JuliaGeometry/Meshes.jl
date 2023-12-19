@@ -38,6 +38,8 @@ struct ParaboloidSurface{T} <: Primitive{3, T}
     focallength::T
 end
 
+ParaboloidSurface(apex::Point{3,T}, radius, focallength) where {T} = ParaboloidSurface{T}(apex, radius, focallength)
+
 ParaboloidSurface(apex::Tuple, radius, focallength) =
     ParaboloidSurface(Point(apex), radius, focallength)
 
