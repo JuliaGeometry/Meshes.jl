@@ -31,7 +31,9 @@ applycoord(t::Translate, p::Point) = p + Vec(t.offsets)
 apply(t::Translate{Dim}, g::RectilinearGrid{Dim}) where {Dim} =
   RectilinearGrid(ntuple(i -> xyz(g)[i] .+ t.offsets[i], Dim)), nothing
 
+revert(t::Translate, g::RectilinearGrid, c) = first(apply(inverse(t), g))
+
 apply(t::Translate{Dim}, g::StructuredGrid{Dim}) where {Dim} =
   StructuredGrid(ntuple(i -> XYZ(g)[i] .+ t.offsets[i], Dim)), nothing
 
-revert(t::Translate, g::Union{RectilinearGrid,StructuredGrid}, c) = first(apply(inverse(t), g))
+revert(t::Translate, g::StructuredGrid, c) = first(apply(inverse(t), g))
