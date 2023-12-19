@@ -24,7 +24,10 @@ applycoord(t::Translate, v::Vec) = v
 
 applycoord(t::Translate, p::Point) = p + Vec(t.offsets)
 
-# specializations
+# ----------------
+# SPECIALIZATIONS
+# ----------------
+
 apply(t::Translate{Dim}, g::RectilinearGrid{Dim}) where {Dim} =
   RectilinearGrid(ntuple(i -> xyz(g)[i] .+ t.offsets[i], Dim)), nothing
 
