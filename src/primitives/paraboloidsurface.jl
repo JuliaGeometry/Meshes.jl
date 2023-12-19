@@ -45,9 +45,7 @@ ParaboloidSurface(apex::Point{3,T}, radius) where {T} = ParaboloidSurface(apex, 
 
 ParaboloidSurface(apex::Point{3,T}) where {T} = ParaboloidSurface(apex, T(1), T(1))
 
-ParaboloidSurface{T}() where {T} = ParaboloidSurface(Point{3, T}(0, 0, 0), T(1), T(1))
-
-ParaboloidSurface() = ParaboloidSurface{Float64}()
+ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0), 1.0, 1.0)
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
 

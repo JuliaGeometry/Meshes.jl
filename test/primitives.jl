@@ -1002,14 +1002,12 @@
     @test_throws DomainError p(T(-0.1), T(0))
     @test_throws DomainError p(T(1.1), T(0))
 
-    p = ParaboloidSurface{T}()
-    @test p(T(0), T(0)) ≈ P3(0, 0, 0)
-    @test p(T(0.5), T(0)) ≈ P3(T(0.5), 0, T(0.5^2 / 4))
-    @test p(T(0), T(0.5)) ≈ P3(0, 0, 0)
-    @test p(T(0.5), T(0.5)) ≈ P3(T(-0.5), 0, T(0.5^2 / 4))
-
     p = ParaboloidSurface()
     @test coordtype(p) == Float64
+    @test p(0.0, 0.0) ≈ Point3(0, 0, 0)
+    @test p(0.5, 0.0) ≈ Point3(0.5, 0, 0.5^2 / 4)
+    @test p(0.0, 0.5) ≈ Point3(0, 0, 0)
+    @test p(0.5, 0.5) ≈ Point3(-0.5, 0, 0.5^2 / 4)
 
     p = ParaboloidSurface(Point3(0, 0, 0))
     @test coordtype(p) == Float64
@@ -1020,7 +1018,7 @@
     @test p isa ParaboloidSurface
     @test embeddim(p) == 3
 
-    p = ParaboloidSurface{T}()
+    p = ParaboloidSurface(P3(0, 0, 0))
     @test sprint(show, p) ==
           "ParaboloidSurface(apex: (0.0, 0.0, 0.0), radius: 1.0, focallength: 1.0)"
     if T === Float32
