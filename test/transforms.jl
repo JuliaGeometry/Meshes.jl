@@ -309,6 +309,28 @@
     @test r ≈ CartesianGrid(P2(1, 1), P2(11, 11), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = Translate(T(1), T(1))
+    d = RectilinearGrid(T.(0:10), T.(0:10))
+    r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
+    @test r ≈ RectilinearGrid(T.(1:11), T.(1:11))
+    @test TB.revert(f, r, c) ≈ d
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = Translate(T(1), T(1))
+    d = StructuredGrid(repeat(T.(0:10), 1, 11), repeat(T.(0:10)', 11, 1))
+    r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
+    @test r ≈ StructuredGrid(repeat(T.(1:11), 1, 11), repeat(T.(1:11)', 11, 1))
+    @test TB.revert(f, r, c) ≈ d
+
     # -----------
     # SIMPLEMESH
     # -----------
