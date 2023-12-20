@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{Dim,T}
+    Mesh{Dim,T,TP}
 
-A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`.
+A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`
+and topology of type `TP`.
 """
-abstract type Mesh{Dim,T} <: Domain{Dim,T} end
+abstract type Mesh{Dim,T,TP<:Topology} <: Domain{Dim,T} end
 
 """
     vertex(mesh, ind)
@@ -142,7 +143,7 @@ end
 
 A grid embedded in a `Dim`-dimensional space with coordinates of type `T`.
 """
-abstract type Grid{Dim,T} <: Mesh{Dim,T} end
+const Grid{Dim,T} = Mesh{Dim,T,GridTopology{Dim}}
 
 """
     vertex(grid, ijk)

@@ -53,4 +53,4 @@ applycoord(t::Rotate, b::Box{2}) = applycoord(t, convert(Quadrangle, b))
 
 applycoord(t::Rotate, b::Box{3}) = applycoord(t, convert(Hexahedron, b))
 
-applycoord(t::Rotate, g::Grid) = TransformedMesh(g, t)
+applycoord(t::Rotate, g::CartesianGrid) = TransformedGrid(g, t)
