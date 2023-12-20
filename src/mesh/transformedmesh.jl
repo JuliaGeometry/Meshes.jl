@@ -12,7 +12,7 @@ struct TransformedMesh{Dim,T,M<:Mesh{Dim,T},TR<:Transform} <: Mesh{Dim,T}
   transform::TR
 end
 
-TransformedMesh(mesh::TransformedMesh, transform::Transform) = TransformedMesh(mesh.mesh, mesh.transform → transform)
+TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
 topology(m::TransformedMesh) = topology(m.mesh)
 
