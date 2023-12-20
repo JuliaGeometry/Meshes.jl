@@ -13,6 +13,8 @@ using Rotations
 using Test, Random
 using ReferenceTests, ImageIO
 
+using TransformsBase: Identity, →
+
 import TransformsBase as TB
 import CairoMakie as Mke
 

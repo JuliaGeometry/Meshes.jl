@@ -280,6 +280,7 @@ export
   RectilinearGrid,
   StructuredGrid,
   SimpleMesh,
+  TransformedMesh,
   vertex,
   vertices,
   nvertices,
