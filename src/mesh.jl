@@ -149,7 +149,7 @@ abstract type Grid{Dim,T} <: Mesh{Dim,T} end
 
 Convert Cartesian index `ijk` to vertex on `grid`.
 """
-vertex(g::Grid, ijk::CartesianIndex) = vertex(g, ijk.I)
+vertex(g::Grid{Dim}, ijk::CartesianIndex{Dim}) where {Dim} = vertex(g, ijk.I)
 
 """
     xyz(grid)
@@ -173,11 +173,11 @@ function XYZ end
 
 Base.size(g::Grid) = size(topology(g))
 
+vertex(grid::Grid{Dim}, ijk::Dims{Dim}) where {Dim} = vertex(grid, LinearIndices(size(grid) .+ 1)[ijk...])
+
 Base.minimum(g::Grid{Dim}) where {Dim} = vertex(g, ntuple(i -> 1, Dim))
 Base.maximum(g::Grid{Dim}) where {Dim} = vertex(g, size(g) .+ 1)
 Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
-
-vertex(grid::Grid, ijk::Tuple) = vertex(grid,  LinearIndices(size(grid) .+ 1)[ijk...])
 
 function vertices(g::Grid)
   inds = CartesianIndices(size(g) .+ 1)

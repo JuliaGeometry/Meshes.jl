@@ -108,7 +108,8 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
-vertex(g::CartesianGrid, ijk::Tuple) = Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
+vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} =
+  Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
 
 spacing(g::CartesianGrid) = g.spacing
 

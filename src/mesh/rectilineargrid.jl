@@ -31,7 +31,7 @@ end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
-vertex(g::RectilinearGrid, ijk::Tuple) = Point(getindex.(g.xyz, ijk))
+vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.xyz, ijk))
 
 xyz(g::RectilinearGrid) = g.xyz
 
