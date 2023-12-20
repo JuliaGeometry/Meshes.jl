@@ -457,5 +457,8 @@
     @test TransformedMesh(rgrid, trans) == rgrid
     @test TransformedMesh(sgrid, trans) == sgrid
     @test TransformedMesh(mesh, trans) == mesh
+    trans1 = Translate(T(10), T(10))
+    trans2 = Translate(T(-10), T(-10))
+    @test TransformedMesh(TransformedMesh(grid, trans1), trans2) == TransformedMesh(grid, trans1 → trans2)
   end
 end

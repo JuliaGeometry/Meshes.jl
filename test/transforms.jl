@@ -170,6 +170,7 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = CartesianGrid{T}(10, 10)
     r, c = TB.apply(f, d)
+    @test r isa TransformedMesh
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
