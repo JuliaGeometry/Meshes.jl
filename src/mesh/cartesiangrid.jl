@@ -108,7 +108,8 @@ CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
 CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
 
-cart2vert(g::CartesianGrid, ijk::Tuple) = Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
+vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} =
+  Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
 
 spacing(g::CartesianGrid) = g.spacing
 
@@ -128,7 +129,7 @@ XYZ(g::CartesianGrid) = XYZ(convert(RectilinearGrid, g))
 
 function centroid(g::CartesianGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
-  p = cart2vert(g, ijk)
+  p = vertex(g, ijk)
   δ = Vec(spacing(g) ./ 2)
   p + δ
 end

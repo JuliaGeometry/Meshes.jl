@@ -145,11 +145,11 @@ A grid embedded in a `Dim`-dimensional space with coordinates of type `T`.
 abstract type Grid{Dim,T} <: Mesh{Dim,T} end
 
 """
-    cart2vert(grid, ijk)
+    vertex(grid, ijk)
 
 Convert Cartesian index `ijk` to vertex on `grid`.
 """
-cart2vert(g::Grid, ijk::CartesianIndex) = cart2vert(g, ijk.I)
+vertex(g::Grid{Dim}, ijk::CartesianIndex{Dim}) where {Dim} = vertex(g, ijk.I)
 
 """
     xyz(grid)
@@ -173,13 +173,15 @@ function XYZ end
 
 Base.size(g::Grid) = size(topology(g))
 
-Base.minimum(g::Grid{Dim}) where {Dim} = cart2vert(g, ntuple(i -> 1, Dim))
-Base.maximum(g::Grid{Dim}) where {Dim} = cart2vert(g, size(g) .+ 1)
+vertex(grid::Grid{Dim}, ijk::Dims{Dim}) where {Dim} = vertex(grid, LinearIndices(size(grid) .+ 1)[ijk...])
+
+Base.minimum(g::Grid{Dim}) where {Dim} = vertex(g, ntuple(i -> 1, Dim))
+Base.maximum(g::Grid{Dim}) where {Dim} = vertex(g, size(g) .+ 1)
 Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
 
 function vertices(g::Grid)
   inds = CartesianIndices(size(g) .+ 1)
-  vec([cart2vert(g, ind) for ind in inds])
+  vec([vertex(g, ind) for ind in inds])
 end
 
 function element(g::Grid, ind::Int)
@@ -187,7 +189,7 @@ function element(g::Grid, ind::Int)
   type = pltype(elem)
   einds = indices(elem)
   cinds = CartesianIndices(size(g) .+ 1)
-  verts = ntuple(i -> cart2vert(g, cinds[einds[i]]), nvertices(type))
+  verts = ntuple(i -> vertex(g, cinds[einds[i]]), nvertices(type))
   type(verts)
 end
 

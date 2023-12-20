@@ -31,7 +31,7 @@ end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
-cart2vert(g::RectilinearGrid, ijk::Tuple) = Point(getindex.(g.xyz, ijk))
+vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.xyz, ijk))
 
 xyz(g::RectilinearGrid) = g.xyz
 
@@ -52,7 +52,7 @@ end
 
 function centroid(g::RectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
-  p1 = cart2vert(g, ijk)
-  p2 = cart2vert(g, ijk .+ 1)
+  p1 = vertex(g, ijk)
+  p2 = vertex(g, ijk .+ 1)
   Point((coordinates(p1) + coordinates(p2)) / 2)
 end
