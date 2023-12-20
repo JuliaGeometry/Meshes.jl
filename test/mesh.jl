@@ -11,6 +11,8 @@
     @test nelements(grid) == 100
     @test eltype(grid) <: Segment{1,T}
     @test measure(grid) ≈ T(100)
+    @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
+    @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
 
     grid = CartesianGrid{T}(200, 100)
     @test embeddim(grid) == 2
@@ -23,6 +25,8 @@
     @test nelements(grid) == 200 * 100
     @test eltype(grid) <: Quadrangle{2,T}
     @test measure(grid) ≈ T(200 * 100)
+    @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
+    @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
 
     grid = CartesianGrid((200, 100, 50), T.((0, 0, 0)), T.((1, 1, 1)))
     @test embeddim(grid) == 3
@@ -35,6 +39,8 @@
     @test nelements(grid) == 200 * 100 * 50
     @test eltype(grid) <: Hexahedron{3,T}
     @test measure(grid) ≈ T(200 * 100 * 50)
+    @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
+    @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
 
     grid = CartesianGrid(T.((0, 0, 0)), T.((1, 1, 1)), T.((0.1, 0.1, 0.1)))
     @test embeddim(grid) == 3
@@ -217,6 +223,8 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
+    @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
+    @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test Meshes.xyz(grid) == (x, y)
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
@@ -251,6 +259,8 @@
     @test centroid(grid[1]) ≈ P2(0.1, 0.05)
     @test centroid(grid, 2) ≈ P2(0.3, 0.05)
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
+    @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
+    @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test Meshes.XYZ(grid) == (X, Y)
 
     # conversion
