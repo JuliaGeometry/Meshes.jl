@@ -181,11 +181,6 @@ Base.minimum(g::Grid{Dim}) where {Dim} = vertex(g, ntuple(i -> 1, Dim))
 Base.maximum(g::Grid{Dim}) where {Dim} = vertex(g, size(g) .+ 1)
 Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
 
-function vertices(g::Grid)
-  inds = CartesianIndices(size(g) .+ 1)
-  vec([vertex(g, ind) for ind in inds])
-end
-
 function element(g::Grid, ind::Int)
   elem = element(topology(g), ind)
   type = pltype(elem)
