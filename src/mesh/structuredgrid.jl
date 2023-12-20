@@ -31,6 +31,6 @@ end
 
 StructuredGrid(XYZ...) = StructuredGrid(XYZ)
 
-cart2vert(g::StructuredGrid{Dim}, ijk::Tuple) where {Dim} = Point(ntuple(d -> g.XYZ[d][ijk...], Dim))
+vertex(g::StructuredGrid{Dim}, ijk::Tuple) where {Dim} = Point(ntuple(d -> g.XYZ[d][ijk...], Dim))
 
 XYZ(g::StructuredGrid) = g.XYZ

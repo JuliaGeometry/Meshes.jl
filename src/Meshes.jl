@@ -291,7 +291,6 @@ export
   nfacets,
   topology,
   topoconvert,
-  cart2vert,
   spacing,
   offset,
 
