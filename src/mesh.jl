@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{Dim,T}
+    Mesh{Dim,T,TP}
 
 A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`
 and topology of type `TP`.

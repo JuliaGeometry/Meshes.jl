@@ -15,6 +15,7 @@ end
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
+# alias to improve readability in IO methods
 const TransformedGrid{Dim,T} = TransformedMesh{Dim,T,GridTopology{Dim}}
 
 topology(m::TransformedMesh) = topology(m.mesh)
