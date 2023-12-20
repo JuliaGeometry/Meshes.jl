@@ -12,6 +12,7 @@ struct TransformedMesh{Dim,T,M<:Mesh{Dim,T},TR<:Transform} <: Mesh{Dim,T}
   transform::TR
 end
 
+# specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
 topology(m::TransformedMesh) = topology(m.mesh)
