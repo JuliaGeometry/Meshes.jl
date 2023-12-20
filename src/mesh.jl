@@ -208,6 +208,7 @@ include("mesh/cartesiangrid.jl")
 include("mesh/rectilineargrid.jl")
 include("mesh/structuredgrid.jl")
 include("mesh/simplemesh.jl")
+include("mesh/transformedmesh.jl")
 
 # ------------
 # CONVERSIONS

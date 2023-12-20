@@ -440,5 +440,22 @@
         ├─ Triangle(4, 3, 5)
         └─ Triangle(3, 1, 5)"""
     end
+
+    @testset "TransformedMesh" begin
+      grid = CartesianGrid{T}(10, 10)
+      rgrid = convert(RectilinearGrid, grid)
+      sgrid = convert(StructuredGrid, grid)
+      mesh = convert(SimpleMesh, grid)
+      trans = Identity()
+      @test TransformedMesh(grid, trans) == grid
+      @test TransformedMesh(rgrid, trans) == rgrid
+      @test TransformedMesh(sgrid, trans) == sgrid
+      @test TransformedMesh(mesh, trans) == mesh
+      trans = Translate(10, 10) → Translate(-10, -10)
+      @test TransformedMesh(grid, trans) == grid
+      @test TransformedMesh(rgrid, trans) == rgrid
+      @test TransformedMesh(sgrid, trans) == sgrid
+      @test TransformedMesh(mesh, trans) == mesh
+    end
   end
 end
