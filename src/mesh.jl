@@ -14,14 +14,14 @@ abstract type Mesh{Dim,T} <: Domain{Dim,T} end
 
 Return the vertex of a `mesh` at index `ind`.
 """
-vertex(m::Mesh, ind) = vertices(m)[ind]
+function vertex end
 
 """
     vertices(mesh)
 
 Return the vertices of the `mesh`.
 """
-function vertices end
+vertices(m::Mesh) = [vertex(m, ind) for ind in 1:nvertices(m)]
 
 """
     nvertices(mesh)
@@ -173,16 +173,13 @@ function XYZ end
 
 Base.size(g::Grid) = size(topology(g))
 
-vertex(grid::Grid{Dim}, ijk::Dims{Dim}) where {Dim} = vertex(grid, LinearIndices(size(grid) .+ 1)[ijk...])
+vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
+
+vertex(g::Grid{Dim}, ijk::Dims{Dim}) where {Dim} = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
 
 Base.minimum(g::Grid{Dim}) where {Dim} = vertex(g, ntuple(i -> 1, Dim))
 Base.maximum(g::Grid{Dim}) where {Dim} = vertex(g, size(g) .+ 1)
 Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
-
-function vertices(g::Grid)
-  inds = CartesianIndices(size(g) .+ 1)
-  vec([vertex(g, ind) for ind in inds])
-end
 
 function element(g::Grid, ind::Int)
   elem = element(topology(g), ind)
