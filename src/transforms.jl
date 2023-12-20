@@ -60,6 +60,9 @@ applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
 # stop recursion at non-geometric types
 applycoord(::CoordinateTransform, x) = x
 
+# special treatment for TransformedMesh
+applycoord(t::CoordinateTransform, m::TransformedMesh) = TransformedMesh(m, t)
+
 # special treatment for lists of geometries
 applycoord(t::CoordinateTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
 applycoord(t::CoordinateTransform, g::AbstractVector{<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
