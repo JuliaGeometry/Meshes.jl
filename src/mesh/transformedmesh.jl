@@ -7,13 +7,15 @@
 
 Lazy representation of a geometric `transform` applied to a `mesh`.
 """
-struct TransformedMesh{Dim,T,M<:Mesh{Dim,T},TR<:Transform} <: Mesh{Dim,T}
+struct TransformedMesh{Dim,T,TP<:Topology,M<:Mesh{Dim,T,TP},TR<:Transform} <: Mesh{Dim,T,TP}
   mesh::M
   transform::TR
 end
 
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
+
+const TransformedGrid{Dim,T} = TransformedMesh{Dim,T,GridTopology{Dim}}
 
 topology(m::TransformedMesh) = topology(m.mesh)
 

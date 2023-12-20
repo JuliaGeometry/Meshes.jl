@@ -391,6 +391,13 @@
     @test nvertices(mesh) == 121
     @test nelements(mesh) == 100
     @test eltype(mesh) <: Quadrangle
+    # grid interface
+    @test size(mesh) == (10, 10)
+    @test minimum(mesh) == P2(0, 0)
+    @test maximum(mesh) == P2(10, 10)
+    @test extrema(mesh) == (P2(0, 0), P2(10, 10))
+    @test vertex(mesh, 1) == vertex(mesh, ntuple(i -> 1, embeddim(mesh)))
+    @test vertex(mesh, nvertices(mesh)) == vertex(mesh, size(mesh) .+ 1)
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
     points = rand(P2, 5)
@@ -460,5 +467,15 @@
     trans1 = Translate(T(10), T(10))
     trans2 = Translate(T(-10), T(-10))
     @test TransformedMesh(TransformedMesh(grid, trans1), trans2) == TransformedMesh(grid, trans1 → trans2)
+    # grid interface
+    trans = Identity()
+    tgrid = TransformedMesh(grid, trans)
+    @test tgrid isa TransformedGrid
+    @test size(tgrid) == (10, 10)
+    @test minimum(tgrid) == P2(0, 0)
+    @test maximum(tgrid) == P2(10, 10)
+    @test extrema(tgrid) == (P2(0, 0), P2(10, 10))
+    @test vertex(tgrid, 1) == vertex(tgrid, ntuple(i -> 1, embeddim(tgrid)))
+    @test vertex(tgrid, nvertices(tgrid)) == vertex(tgrid, size(tgrid) .+ 1)
   end
 end
