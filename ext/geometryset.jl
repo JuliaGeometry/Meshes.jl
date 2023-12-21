@@ -2,8 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plottype(::GeometrySet) = Viz{<:Tuple{GeometrySet}}
-
 function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   gset = plot[:object]
   color = plot[:color]
@@ -68,8 +66,6 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     end
   end
 end
-
-Makie.plottype(::PointSet) = Viz{<:Tuple{PointSet}}
 
 function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   pset = plot[:object]

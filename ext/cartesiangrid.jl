@@ -2,8 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plottype(::CartesianGrid) = Viz{<:Tuple{CartesianGrid}}
-
 function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
   # retrieve parameters
   grid = plot[:object]

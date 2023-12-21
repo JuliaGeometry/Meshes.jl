@@ -40,8 +40,8 @@ include("utils.jl")
 # viz recipes
 include("simplemesh.jl")
 include("cartesiangrid.jl")
+include("subcartesiangrid.jl")
 include("geometryset.jl")
-include("optimized.jl")
 include("fallbacks.jl")
 
 end
