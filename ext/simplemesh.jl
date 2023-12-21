@@ -2,8 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plottype(::SimpleMesh) = Viz{<:Tuple{SimpleMesh}}
-
 function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
   # retrieve mesh and rank
   mesh = plot[:object][]

@@ -2,29 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# ----------------
-# RectilinearGrid
-# ----------------
-
-Makie.plottype(::RectilinearGrid) = Viz{<:Tuple{RectilinearGrid}}
-
-Makie.convert_arguments(P::Type{<:Viz}, grid::RectilinearGrid) = Makie.convert_arguments(P, convert(SimpleMesh, grid))
-
-# ---------------
-# StructuredGrid
-# ---------------
-
-Makie.plottype(::StructuredGrid) = Viz{<:Tuple{StructuredGrid}}
-
-Makie.convert_arguments(P::Type{<:Viz}, grid::StructuredGrid) = Makie.convert_arguments(P, convert(SimpleMesh, grid))
-
-# -----------------
-# SubCartesianGrid
-# -----------------
-
 const SubCartesianGrid{Dim,T} = Meshes.SubDomain{Dim,T,<:CartesianGrid{Dim,T}}
-
-Makie.plottype(::SubCartesianGrid) = Viz{<:Tuple{SubCartesianGrid}}
 
 function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   subgrid = plot[:object]

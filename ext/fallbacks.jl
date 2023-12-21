@@ -2,31 +2,19 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
-
-Makie.convert_arguments(P::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) =
-  Makie.convert_arguments(P, GeometrySet(geoms))
-
 Makie.plottype(::Geometry) = Viz{<:Tuple{Geometry}}
-
-Makie.convert_arguments(P::Type{<:Viz}, geom::Geometry) = Makie.convert_arguments(P, GeometrySet([geom]))
-
 Makie.plottype(::Domain) = Viz{<:Tuple{Domain}}
 
-function Makie.plot!(plot::Viz{<:Tuple{Domain}})
-  # retrieve domain object
-  domain = plot[:object]
+Makie.convert_arguments(::Type{<:Viz}, geom::Geometry) = (GeometrySet([geom]),)
+Makie.convert_arguments(::Type{<:Viz}, domain::Domain) = (GeometrySet(collect(domain)),)
+Makie.convert_arguments(::Type{<:Viz}, mesh::Mesh) = (convert(SimpleMesh, mesh),)
 
-  # fallback to vector recipe
-  viz!(
-    plot,
-    (Makie.@lift collect($domain)),
-    color=plot[:color],
-    alpha=plot[:alpha],
-    colorscheme=plot[:colorscheme],
-    pointsize=plot[:pointsize],
-    segmentsize=plot[:segmentsize],
-    showfacets=plot[:showfacets],
-    facetcolor=plot[:facetcolor]
-  )
-end
+# skip conversion for these types
+Makie.convert_arguments(::Type{<:Viz}, gset::GeometrySet) = (gset,)
+Makie.convert_arguments(::Type{<:Viz}, mesh::SimpleMesh) = (mesh,)
+Makie.convert_arguments(::Type{<:Viz}, grid::CartesianGrid) = (grid,)
+Makie.convert_arguments(::Type{<:Viz}, grid::SubCartesianGrid) = (grid,)
+
+# vector of geometries for convenience
+Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
+Makie.convert_arguments(::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) = (GeometrySet(geoms),)
