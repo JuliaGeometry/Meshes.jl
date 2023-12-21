@@ -4,8 +4,6 @@
 
 Makie.plottype(::CartesianGrid) = Viz{<:Tuple{CartesianGrid}}
 
-Makie.convert_arguments(::Type{<:Viz}, grid::CartesianGrid) = (grid,)
-
 function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
   # retrieve parameters
   grid = plot[:object]

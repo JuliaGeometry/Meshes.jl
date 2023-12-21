@@ -12,20 +12,14 @@ Makie.convert_arguments(::Type{<:Viz}, geom::Geometry) = (GeometrySet([geom]),)
 
 Makie.plottype(::Domain) = Viz{<:Tuple{Domain}}
 
-function Makie.plot!(plot::Viz{<:Tuple{Domain}})
-  # retrieve domain object
-  domain = plot[:object]
+Makie.convert_arguments(::Type{<:Viz}, domain::Domain) = (GeometrySet(collect(domain)),)
 
-  # fallback to vector recipe
-  viz!(
-    plot,
-    (Makie.@lift collect($domain)),
-    color=plot[:color],
-    alpha=plot[:alpha],
-    colorscheme=plot[:colorscheme],
-    pointsize=plot[:pointsize],
-    segmentsize=plot[:segmentsize],
-    showfacets=plot[:showfacets],
-    facetcolor=plot[:facetcolor]
-  )
-end
+Makie.plottype(::Mesh) = Viz{<:Tuple{Mesh}}
+
+Makie.convert_arguments(::Type{<:Viz}, mesh::Mesh) = (convert(SimpleMesh, mesh),)
+
+# skip conversion for these types
+Makie.convert_arguments(::Type{<:Viz}, gset::GeometrySet) = (gset,)
+Makie.convert_arguments(::Type{<:Viz}, mesh::SimpleMesh) = (mesh,)
+Makie.convert_arguments(::Type{<:Viz}, grid::CartesianGrid) = (grid,)
+Makie.convert_arguments(::Type{<:Viz}, grid::SubCartesianGrid) = (grid,)

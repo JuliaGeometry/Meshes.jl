@@ -41,7 +41,7 @@ include("utils.jl")
 include("simplemesh.jl")
 include("cartesiangrid.jl")
 include("geometryset.jl")
-include("fallbacks.jl")
 include("optimized.jl")
+include("fallbacks.jl")
 
 end

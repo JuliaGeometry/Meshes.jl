@@ -2,14 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# -----
-# Mesh
-# -----
-
-Makie.plottype(::Mesh) = Viz{<:Tuple{Mesh}}
-
-Makie.convert_arguments(::Type{<:Viz}, mesh::Mesh) = (convert(SimpleMesh, mesh),)
-
 # -----------------
 # SubCartesianGrid
 # -----------------
