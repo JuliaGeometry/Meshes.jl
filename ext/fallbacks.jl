@@ -4,12 +4,11 @@
 
 Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
 
-Makie.convert_arguments(P::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) =
-  Makie.convert_arguments(P, GeometrySet(geoms))
+Makie.convert_arguments(::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) = (GeometrySet(geoms),)
 
 Makie.plottype(::Geometry) = Viz{<:Tuple{Geometry}}
 
-Makie.convert_arguments(P::Type{<:Viz}, geom::Geometry) = Makie.convert_arguments(P, GeometrySet([geom]))
+Makie.convert_arguments(::Type{<:Viz}, geom::Geometry) = (GeometrySet([geom]),)
 
 Makie.plottype(::Domain) = Viz{<:Tuple{Domain}}
 

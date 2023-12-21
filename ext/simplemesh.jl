@@ -4,6 +4,8 @@
 
 Makie.plottype(::SimpleMesh) = Viz{<:Tuple{SimpleMesh}}
 
+Makie.convert_arguments(::Type{<:Viz}, mesh::SimpleMesh) = (mesh,)
+
 function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
   # retrieve mesh and rank
   mesh = plot[:object][]
