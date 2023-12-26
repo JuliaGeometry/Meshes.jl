@@ -239,7 +239,7 @@
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
     @test grid[1:2, 1:2] == view(grid, [1, 2, 6, 7])
-    @test grid[1, 1:3] == view(mesh, [1, 6, 11])
+    @test grid[1, 1:3] == view(grid, [1, 6, 11])
     @test Meshes.xyz(grid) == (x, y)
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
@@ -279,7 +279,7 @@
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
     @test grid[1:2, 1:2] == view(grid, [1, 2, 6, 7])
-    @test grid[1, 1:3] == view(mesh, [1, 6, 11])
+    @test grid[1, 1:3] == view(grid, [1, 6, 11])
     @test Meshes.XYZ(grid) == (X, Y)
 
     # conversion
