@@ -77,10 +77,11 @@ include("neighborsearch.jl")
 include("predicates.jl")
 
 # operations
+include("winding.jl")
 include("sideof.jl")
+include("orientation.jl")
 include("measures.jl")
 include("boundary.jl")
-include("orientation.jl")
 include("merging.jl")
 include("clipping.jl")
 include("intersections.jl")
@@ -199,7 +200,6 @@ export
   vertex,
   vertices,
   nvertices,
-  windingnumber,
   rings,
   segments,
   angles,
@@ -372,6 +372,9 @@ export
   iscollinear,
   iscoplanar,
 
+  # winding number
+  winding,
+
   # sideof
   sideof,
   SideType,
@@ -381,15 +384,6 @@ export
   LEFT,
   RIGHT,
 
-  # measures
-  measure,
-  area,
-  volume,
-  perimeter,
-
-  # boundary
-  boundary,
-
   # orientation
   OrientationMethod,
   WindingOrientation,
@@ -398,6 +392,15 @@ export
   OrientationType,
   CW,
   CCW,
+
+  # measures
+  measure,
+  area,
+  volume,
+  perimeter,
+
+  # boundary
+  boundary,
 
   # clipping
   ClippingMethod,

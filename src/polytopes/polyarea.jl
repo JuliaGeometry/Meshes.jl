@@ -82,8 +82,6 @@ centroid(p::PolyArea) = centroid(first(p.rings))
 
 rings(p::PolyArea) = p.rings
 
-windingnumber(point::Point, p::PolyArea) = windingnumber(point, first(p.rings))
-
 function Base.unique!(p::PolyArea)
   foreach(unique!, p.rings)
   inds = findall(r -> nvertices(r) ≤ 2, p.rings)

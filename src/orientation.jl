@@ -62,7 +62,7 @@ function orientation(r::Ring{2,T}, ::WindingOrientation) where {T}
   # pick any segment
   x1, x2 = r.vertices[1:2]
   x̄ = center(Segment(x1, x2))
-  w = T(2π) * windingnumber(x̄, r) - ∠(x1, x̄, x2)
+  w = T(2π) * winding(x̄, r) - ∠(x1, x̄, x2)
   isapprox(w, T(π), atol=atol(T)) ? CCW : CW
 end
 

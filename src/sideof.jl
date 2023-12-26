@@ -51,7 +51,7 @@ Determines on which side the `point` is in relation to the `ring`.
 Possible results are `IN` or `OUT` the `ring`.
 """
 function sideof(point::Point{2,T}, ring::Ring{2,T}) where {T}
-  w = windingnumber(point, ring)
+  w = winding(point, ring)
   ifelse(isapprox(w, zero(T), atol=atol(T)), OUT, IN)
 end
 

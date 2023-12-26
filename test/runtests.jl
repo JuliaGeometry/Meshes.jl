@@ -90,6 +90,7 @@ testfiles = [
   "neighborhoods.jl",
   "neighborsearch.jl",
   "predicates.jl",
+  "winding.jl",
   "sideof.jl",
   "orientation.jl",
   "merging.jl",

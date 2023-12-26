@@ -167,13 +167,6 @@ Return the outer and inner rings of the polygon.
 """
 function rings end
 
-"""
-    windingnumber(point, polygon)
-
-Winding number of `point` with respect to the `polygon`.
-"""
-function windingnumber end
-
 # implementations of Polygon
 include("polytopes/ngon.jl")
 include("polytopes/polyarea.jl")

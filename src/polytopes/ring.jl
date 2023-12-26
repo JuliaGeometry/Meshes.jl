@@ -56,27 +56,6 @@ function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ring{Dim,T}
 end
 
 """
-    windingnumber(point, ring)
-
-Winding number of `point` with respect to the `ring`.
-The winding number is the total number of times that
-the ring travels counterclockwise around the point.
-See https://en.wikipedia.org/wiki/Winding_number.
-
-## References
-
-* Balbes, R. and Siegel, J. 1990. [A robust method for calculating
-  the simplicity and orientation of planar polygons]
-  (https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
-"""
-function windingnumber(p::Point{2,T}, r::Ring{2,T}) where {T}
-  v = r.vertices
-  n = length(v)
-  ∑ = sum(∠(v[i], p, v[i + 1]) for i in 1:n)
-  ∑ / T(2π)
-end
-
-"""
     innerangles(ring)
 
 Return inner angles of the `ring`. Inner
