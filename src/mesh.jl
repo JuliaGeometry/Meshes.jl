@@ -193,13 +193,10 @@ end
 
 Base.eltype(g::Grid) = typeof(first(g))
 
-"""
-    grid[iₛ:iₑ,jₛ:jₑ,...]
+Base.getindex(g::Grid{Dim}, ijk::Vararg{Int,Dim}) where {Dim} = element(g, LinearIndices(size(g))[ijk...])
 
-Return a subgrid of the `grid` using integer ranges `iₛ:iₑ`, `jₛ:jₑ`, ...
-"""
-Base.getindex(g::Grid{Dim}, r::Vararg{UnitRange{Int},Dim}) where {Dim} =
-  getindex(g, CartesianIndex(first.(r)):CartesianIndex(last.(r)))
+Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Int},Dim}) where {Dim} =
+  getindex(g, CartesianIndex(first.(ijk)):CartesianIndex(last.(ijk)))
 
 # ----------------
 # IMPLEMENTATIONS

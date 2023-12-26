@@ -13,6 +13,8 @@
     @test measure(grid) ≈ T(100)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
+    @test grid[1] == Segment(P1(0), P1(1))
+    @test grid[100] == Segment(P1(99), P1(100))
 
     grid = CartesianGrid{T}(200, 100)
     @test embeddim(grid) == 2
@@ -27,6 +29,8 @@
     @test measure(grid) ≈ T(200 * 100)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
+    @test grid[1, 1] == grid[1]
+    @test grid[200, 100] == grid[20000]
 
     grid = CartesianGrid((200, 100, 50), T.((0, 0, 0)), T.((1, 1, 1)))
     @test embeddim(grid) == 3
@@ -41,6 +45,8 @@
     @test measure(grid) ≈ T(200 * 100 * 50)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
+    @test grid[1, 1, 1] == grid[1]
+    @test grid[200, 100, 50] == grid[1000000]
 
     grid = CartesianGrid(T.((0, 0, 0)), T.((1, 1, 1)), T.((0.1, 0.1, 0.1)))
     @test embeddim(grid) == 3
@@ -108,6 +114,11 @@
     @test spacing(sub) == spacing(grid)
     @test minimum(sub) == P2(2, 3)
     @test maximum(sub) == P2(5, 8)
+    sub = grid[2, 3:7]
+    @test size(sub) == (1, 5)
+    @test spacing(sub) == spacing(grid)
+    @test minimum(sub) == P2(2, 3)
+    @test maximum(sub) == P2(3, 8)
 
     # subgrid with comparable vertices of grid
     grid = CartesianGrid((10, 10), P2(0.0, 0.0), T.((1.2, 1.2)))
@@ -225,6 +236,8 @@
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
+    @test grid[1, 1] == grid[1]
+    @test grid[5, 5] == grid[25]
     @test Meshes.xyz(grid) == (x, y)
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
@@ -261,6 +274,8 @@
     @test centroid(grid[2]) ≈ P2(0.3, 0.05)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
+    @test grid[1, 1] == grid[1]
+    @test grid[5, 5] == grid[25]
     @test Meshes.XYZ(grid) == (X, Y)
 
     # conversion
@@ -399,6 +414,8 @@
     @test extrema(mesh) == (P2(0, 0), P2(10, 10))
     @test vertex(mesh, 1) == vertex(mesh, ntuple(i -> 1, embeddim(mesh)))
     @test vertex(mesh, nvertices(mesh)) == vertex(mesh, size(mesh) .+ 1)
+    @test mesh[1, 1] == mesh[1]
+    @test mesh[10, 10] == mesh[100]
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
     points = rand(P2, 5)
