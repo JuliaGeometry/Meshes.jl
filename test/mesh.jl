@@ -238,8 +238,6 @@
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
-    @test grid[1:2, 1:2] == view(grid, [1, 2, 6, 7])
-    @test grid[1, 1:3] == view(grid, [1, 6, 11])
     @test Meshes.xyz(grid) == (x, y)
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
@@ -278,8 +276,6 @@
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
-    @test grid[1:2, 1:2] == view(grid, [1, 2, 6, 7])
-    @test grid[1, 1:3] == view(grid, [1, 6, 11])
     @test Meshes.XYZ(grid) == (X, Y)
 
     # conversion
@@ -419,8 +415,6 @@
     @test vertex(mesh, nvertices(mesh)) == vertex(mesh, size(mesh) .+ 1)
     @test mesh[1, 1] == mesh[1]
     @test mesh[10, 10] == mesh[100]
-    @test mesh[1:2, 1:2] == view(mesh, [1, 2, 11, 12])
-    @test mesh[1, 1:3] == view(mesh, [1, 11, 21])
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
     points = rand(P2, 5)

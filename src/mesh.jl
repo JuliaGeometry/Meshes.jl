@@ -193,30 +193,10 @@ end
 
 Base.eltype(g::Grid) = typeof(first(g))
 
-"""
-    grid[i,j,k,...]
-
-Return the grid element at index `i,j,k,...`.
-"""
 Base.getindex(g::Grid{Dim}, ijk::Vararg{Int,Dim}) where {Dim} = element(g, LinearIndices(size(g))[ijk...])
 
-"""
-    grid[iₛ:iₑ,jₛ:jₑ,kₛ:kₑ,...]
-
-Return a subgrid of the `grid` using integer ranges `iₛ:iₑ`, `jₛ:jₑ`, `kₛ:kₑ`, ...
-
-    grid[i,jₛ:jₑ,k,...]
-
-Return a subgrid of the `grid` treating integer indices as a single-element range, i.e. `i = i:i`.
-"""
 Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Int},Dim}) where {Dim} =
   getindex(g, CartesianIndex(first.(ijk)):CartesianIndex(last.(ijk)))
-
-function Base.getindex(g::Grid{Dim}, I::CartesianIndices{Dim}) where {Dim}
-  linds = LinearIndices(size(g))
-  inds = vec([linds[i] for i in I])
-  view(g, inds)
-end
 
 # ----------------
 # IMPLEMENTATIONS
