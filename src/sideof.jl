@@ -66,42 +66,11 @@ sideof(points, geom::Geometry) = map(point -> sideof(point, geom), points)
     sideof(point, mesh)
 
 Determines on which side the `point` is in relation to the surface `mesh`.
-Possible results are `IN`, `OUT`, or `ON` the `mesh`.
+Possible results are `IN` or `OUT` the `mesh`.
 """
 sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
 
-function sideof(points, mesh::Mesh{3})
-  @assert paramdim(mesh) == 2 "sideof only defined for surface meshes"
-  (eltype(mesh) <: Triangle) || return sideof(points, simplexify(mesh))
-  map(point -> _sideof(point, mesh), points)
-end
-
-function _sideof(point::Point{3,T}, mesh::Mesh{3,T}) where {T}
-  z = last.(coordinates.(extrema(mesh)))
-  r = Ray(point, Vec(zero(T), zero(T), 2 * (z[2] - z[1])))
-
-  hasintersect = false
-  edgecrosses = 0
-  ps = Point{3,T}[]
-  for t in mesh
-    I = intersection(r, t)
-    if type(I) == Crossing
-      hasintersect = !hasintersect
-    elseif type(I) ∈ (EdgeTouching, CornerTouching, Touching)
-      return ON
-    elseif type(I) == EdgeCrossing
-      edgecrosses += 1
-    elseif type(I) == CornerCrossing
-      p = get(I)
-      if !any(≈(p), ps)
-        push!(ps, p)
-        hasintersect = !hasintersect
-      end
-    end
-  end
-
-  # check how many edges we crossed
-  isodd(edgecrosses ÷ 2) && (hasintersect = !hasintersect)
-
-  hasintersect ? IN : OUT
+function sideof(points, mesh::Mesh{3,T}) where {T}
+  w = winding(points, mesh)
+  ifelse.(isapprox.(w, zero(T), atol=atol(T)), OUT, IN)
 end

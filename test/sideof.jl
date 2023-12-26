@@ -26,13 +26,10 @@
   @test sideof(P3(0.1, 0.1, -0.1), mesh) == OUT
 
   # point coincides with edge of triangle
-  @test sideof(P3(0.5, 0.0, 0.0), mesh) == ON
+  @test sideof(P3(0.5, 0.0, 0.0), mesh) == IN
 
   # point coincides with corner of triangle
-  @test sideof(P3(0.0, 0.0, 0.0), mesh) == ON
-
-  # point on face of triangle
-  @test sideof(P3(0.1, 0.1, 0.0), mesh) == ON
+  @test sideof(P3(0.0, 0.0, 0.0), mesh) == IN
 
   points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
   mesh = SimpleMesh(points, connec)
@@ -50,5 +47,5 @@
   points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)]
   connec = connect.([(1, 2, 3, 4)], [Tetrahedron])
   mesh = SimpleMesh(points, connec)
-  @test_throws AssertionError("sideof only defined for surface meshes") sideof(P3(0, 0, 0), mesh)
+  @test_throws AssertionError("winding number only defined for surface meshes") sideof(P3(0, 0, 0), mesh)
 end
