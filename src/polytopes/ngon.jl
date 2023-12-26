@@ -68,9 +68,8 @@ function signarea(t::Triangle{2})
 end
 
 function normal(t::Triangle{3})
-  a, b, c = t.vertices
-  n = (b - a) × (c - a)
-  n / norm(n)
+  A, B, C = t.vertices
+  ((B - A) × (C - A)) / 2
 end
 
 function (t::Triangle)(u, v)
