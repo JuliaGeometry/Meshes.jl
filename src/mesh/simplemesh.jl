@@ -48,3 +48,10 @@ vertex(m::SimpleMesh, ind::Int) = m.vertices[ind]
 vertices(m::SimpleMesh) = m.vertices
 
 nvertices(m::SimpleMesh) = length(m.vertices)
+
+function Base.getindex(m::SimpleMesh{Dim,T,V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {Dim,T,V}
+  dims = size(I)
+  cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
+  inds = vec(LinearIndices(size(m) .+ 1)[cinds])
+  SimpleMesh(m.vertices[inds], GridTopology(dims))
+end

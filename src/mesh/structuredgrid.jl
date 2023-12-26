@@ -37,7 +37,7 @@ XYZ(g::StructuredGrid) = g.XYZ
 
 function Base.getindex(g::StructuredGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
   dims = size(I)
-  range = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
-  XYZ = ntuple(i -> g.XYZ[i][range], Dim)
+  cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
+  XYZ = ntuple(i -> g.XYZ[i][cinds], Dim)
   StructuredGrid(XYZ, GridTopology(dims))
 end
