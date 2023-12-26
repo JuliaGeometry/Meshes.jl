@@ -56,3 +56,11 @@ function centroid(g::RectilinearGrid, ind::Int)
   p2 = vertex(g, ijk .+ 1)
   Point((coordinates(p1) + coordinates(p2)) / 2)
 end
+
+function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+  dims = size(I)
+  start = Tuple(first(I))
+  stop = Tuple(last(I)) .+ 1
+  xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], Dim)
+  RectilinearGrid(xyz, GridTopology(dims))
+end
