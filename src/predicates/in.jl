@@ -7,7 +7,7 @@
 
 Tells whether or not the `point` is in the `geometry`.
 """
-function Base.in(::Point, ::Geometry) end
+Base.in(p::Point, g::Geometry) = sideof(p, boundary(g)) == IN
 
 Base.in(p₁::Point, p₂::Point) = p₁ == p₂
 

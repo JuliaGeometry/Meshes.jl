@@ -27,6 +27,14 @@
     @test isconvex(b)
   end
 
+  @testset "in" begin
+    h = first(CartesianGrid{T}(10, 10, 10))
+    @test P3(0, 0, 0) ∈ h
+    @test P3(0.5, 0.5, 0.5) ∈ h
+    @test P3(-1, 0, 0) ∉ h
+    @test P3(0, 2, 0) ∉ h
+  end
+
   @testset "issubset" begin
     point = P2(0.5, 0.5)
     box = Box(P2(0, 0), P2(1, 1))
