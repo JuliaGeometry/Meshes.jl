@@ -201,7 +201,7 @@ function Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Colon,Int}
   getindex(g, CartesianIndices(ranges))
 end
 
-_asrange(::Int, i::UnitRange{Int}) = i
+_asrange(::Int, r::UnitRange{Int}) = r
 _asrange(d::Int, ::Colon) = 1:d
 _asrange(::Int, i::Int) = i:i
 
