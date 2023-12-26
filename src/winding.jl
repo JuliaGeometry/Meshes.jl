@@ -19,3 +19,6 @@ function winding(p::Point{2,T}, r::Ring{2,T}) where {T}
   n = length(v)
   sum(∠(v[i], p, v[i + 1]) for i in 1:n) / T(2π)
 end
+
+# fallback with iterable of points
+winding(points, object) = [winding(point, object) for point in points]
