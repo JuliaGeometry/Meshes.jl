@@ -119,6 +119,11 @@
     @test spacing(sub) == spacing(grid)
     @test minimum(sub) == P2(2, 3)
     @test maximum(sub) == P2(3, 8)
+    sub = grid[:, 3:7]
+    @test size(sub) == (10, 5)
+    @test spacing(sub) == spacing(grid)
+    @test minimum(sub) == P2(1, 3)
+    @test maximum(sub) == P2(11, 8)
 
     # subgrid with comparable vertices of grid
     grid = CartesianGrid((10, 10), P2(0.0, 0.0), T.((1.2, 1.2)))
@@ -246,6 +251,10 @@
     @test size(sub) == (1, 3)
     @test minimum(sub) == P2(0.2, 0.3)
     @test maximum(sub) == P2(0.4, 1.0)
+    sub = grid[:, 3:5]
+    @test size(sub) == (5, 3)
+    @test minimum(sub) == P2(0.0, 0.3)
+    @test maximum(sub) == P2(1.0, 1.0)
     @test Meshes.xyz(grid) == (x, y)
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
@@ -293,6 +302,10 @@
     @test minimum(sub) == P2(0.2, 0.3)
     @test maximum(sub) == P2(0.4, 1.0)
     @test Meshes.XYZ(grid) == (X, Y)
+    sub = grid[:, 3:5]
+    @test size(sub) == (5, 3)
+    @test minimum(sub) == P2(0.0, 0.3)
+    @test maximum(sub) == P2(1.0, 1.0)
 
     # conversion
     cg = CartesianGrid{T}(10, 10)
@@ -440,6 +453,10 @@
     @test size(sub) == (1, 5)
     @test minimum(sub) == P2(1, 2)
     @test maximum(sub) == P2(2, 7)
+    sub = mesh[:, 3:7]
+    @test size(sub) == (10, 5)
+    @test minimum(sub) == P2(0, 2)
+    @test maximum(sub) == P2(10, 7)
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
     points = rand(P2, 5)
@@ -529,5 +546,9 @@
     @test size(sub) == (1, 5)
     @test minimum(sub) == P2(1, 2)
     @test maximum(sub) == P2(2, 7)
+    sub = tgrid[:, 3:7]
+    @test size(sub) == (10, 5)
+    @test minimum(sub) == P2(0, 2)
+    @test maximum(sub) == P2(10, 7)
   end
 end
