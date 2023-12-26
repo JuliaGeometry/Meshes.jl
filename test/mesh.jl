@@ -299,6 +299,7 @@
     end
     @test eltype(mesh) <: Triangle{2,T}
     @test measure(mesh) ≈ T(1)
+    @test area(mesh) ≈ T(1)
     @test extrema(mesh) == (P2(0, 0), P2(1, 1))
 
     # test constructors

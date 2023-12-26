@@ -14,6 +14,7 @@
   dom = DummyDomain(P2(0, 0))
   @test embeddim(dom) == 2
   @test coordtype(dom) == T
+  @test !isparametrized(dom)
 
   # indexable/iterable interface
   dom = DummyDomain(P2(0, 0))

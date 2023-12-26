@@ -51,3 +51,7 @@ isparametrized(::Type{<:Quadrangle}) = true
 isparametrized(::Type{<:Tetrahedron}) = true
 
 isparametrized(::Type{<:Hexahedron}) = true
+
+isparametrized(d::Domain) = isparametrized(typeof(d))
+
+isparametrized(::Type{<:Domain}) = false
