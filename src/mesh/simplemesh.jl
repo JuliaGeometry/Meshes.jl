@@ -48,3 +48,12 @@ vertex(m::SimpleMesh, ind::Int) = m.vertices[ind]
 vertices(m::SimpleMesh) = m.vertices
 
 nvertices(m::SimpleMesh) = length(m.vertices)
+
+function Base.getindex(m::SimpleMesh{Dim,T,V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {Dim,T,V}
+  dims = size(I)
+  odims = size(m)
+  cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
+  inds = vec(LinearIndices(odims .+ 1)[cinds])
+  periodic = isperiodic(topology(m)) .&& dims .== odims
+  SimpleMesh(m.vertices[inds], GridTopology(dims, periodic))
+end

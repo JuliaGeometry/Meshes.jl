@@ -432,6 +432,14 @@
     @test vertex(mesh, nvertices(mesh)) == vertex(mesh, size(mesh) .+ 1)
     @test mesh[1, 1] == mesh[1]
     @test mesh[10, 10] == mesh[100]
+    sub = mesh[2:4, 3:7]
+    @test size(sub) == (3, 5)
+    @test minimum(sub) == P2(1, 2)
+    @test maximum(sub) == P2(4, 7)
+    sub = mesh[2, 3:7]
+    @test size(sub) == (1, 5)
+    @test minimum(sub) == P2(1, 2)
+    @test maximum(sub) == P2(2, 7)
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
     points = rand(P2, 5)
