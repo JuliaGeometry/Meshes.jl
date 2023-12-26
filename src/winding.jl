@@ -18,30 +18,23 @@ Generalized winding number of `points` with respect to the geometric `object`.
 """
 function winding end
 
-# ---------
-# GEOMETRY
-# ---------
+function winding(points, ring::Ring{2,T}) where {T}
+  v = vertices(ring)
+  n = nvertices(ring)
 
-function winding(p::Point{2,T}, r::Ring{2,T}) where {T}
-  v = vertices(r)
-  n = length(v)
-  sum(∠(v[i], p, v[i + 1]) for i in 1:n) / T(2π)
+  w(p) = sum(∠(v[i], p, v[i + 1]) for i in 1:n) / T(2π)
+
+  tcollect(w(p) for p in points)
 end
 
-# fallback for iterable of points
-winding(points, geom::Geometry) = map(point -> winding(point, geom), points)
-
-# -----
-# MESH
-# -----
-
-winding(point::Point{3}, mesh::Mesh{3}) = winding((point,), mesh) |> first
+winding(point::Point{2,T}, ring::Ring{2,T}) where {T} = winding((point,), ring) |> first
 
 # Jacobson et al 2013.
 function winding(points, mesh::Mesh{3,T}) where {T}
   @assert paramdim(mesh) == 2 "winding number only defined for surface meshes"
   (eltype(mesh) <: Triangle) || return winding(points, simplexify(mesh))
-  map(points) do p
+
+  function w(p)
     ∑ = sum(1:nelements(mesh)) do i
       v = vertices(mesh[i])
       a⃗ = v[1] - p
@@ -56,4 +49,8 @@ function winding(points, mesh::Mesh{3,T}) where {T}
     end
     ∑ / T(4π)
   end
+
+  tcollect(w(p) for p in points)
 end
+
+winding(point::Point{3,T}, mesh::Mesh{3,T}) where {T} = winding((point,), mesh) |> first
