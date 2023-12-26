@@ -519,5 +519,15 @@
     @test extrema(tgrid) == (P2(0, 0), P2(10, 10))
     @test vertex(tgrid, 1) == vertex(tgrid, ntuple(i -> 1, embeddim(tgrid)))
     @test vertex(tgrid, nvertices(tgrid)) == vertex(tgrid, size(tgrid) .+ 1)
+    @test tgrid[1, 1] == tgrid[1]
+    @test tgrid[10, 10] == tgrid[100]
+    sub = tgrid[2:4, 3:7]
+    @test size(sub) == (3, 5)
+    @test minimum(sub) == P2(1, 2)
+    @test maximum(sub) == P2(4, 7)
+    sub = tgrid[2, 3:7]
+    @test size(sub) == (1, 5)
+    @test minimum(sub) == P2(1, 2)
+    @test maximum(sub) == P2(2, 7)
   end
 end
