@@ -117,8 +117,8 @@
     sub = grid[2, 3:7]
     @test size(sub) == (1, 5)
     @test spacing(sub) == spacing(grid)
-    @test minimum(sub) == P2(1, 2)
-    @test maximum(sub) == P2(2, 7)
+    @test minimum(sub) == P2(2, 3)
+    @test maximum(sub) == P2(3, 8)
 
     # subgrid with comparable vertices of grid
     grid = CartesianGrid((10, 10), P2(0.0, 0.0), T.((1.2, 1.2)))
@@ -418,9 +418,9 @@
     @test vertex(mesh, 1) == vertex(mesh, ntuple(i -> 1, embeddim(mesh)))
     @test vertex(mesh, nvertices(mesh)) == vertex(mesh, size(mesh) .+ 1)
     @test mesh[1, 1] == mesh[1]
-    @test mesh[10, 10] == mesh[10]
-    @test mesh[1:2, 1:2] == view(mesh, [1, 2, 6, 7])
-    @test mesh[1, 1:3] == view(mesh, [1, 6, 11])
+    @test mesh[10, 10] == mesh[100]
+    @test mesh[1:2, 1:2] == view(mesh, [1, 2, 11, 12])
+    @test mesh[1, 1:3] == view(mesh, [1, 11, 21])
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
     points = rand(P2, 5)
