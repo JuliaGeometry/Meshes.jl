@@ -436,7 +436,7 @@
     @test size(sub) == (3, 5)
     @test minimum(sub) == P2(1, 2)
     @test maximum(sub) == P2(4, 7)
-    sub = grid[2, 3:7]
+    sub = mesh[2, 3:7]
     @test size(sub) == (1, 5)
     @test minimum(sub) == P2(1, 2)
     @test maximum(sub) == P2(2, 7)
