@@ -238,6 +238,14 @@
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
+    sub = grid[2:4, 3:5]
+    @test size(sub) == (3, 3)
+    @test minimum(sub) == P2(0.2, 0.3)
+    @test maximum(sub) == P2(0.8, 1.0)
+    sub = grid[2, 3:5]
+    @test size(sub) == (1, 3)
+    @test minimum(sub) == P2(0.2, 0.3)
+    @test maximum(sub) == P2(0.4, 1.0)
     @test Meshes.xyz(grid) == (x, y)
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6), repeat(y', 6, 1))
 
