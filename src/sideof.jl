@@ -71,6 +71,13 @@ Possible results are `IN` or `OUT` the `mesh`.
 sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
 
 function sideof(points, mesh::Mesh{3,T}) where {T}
-  w = winding(points, mesh)
-  ifelse.(isapprox.(w, zero(T), atol=atol(T)), OUT, IN)
+  box = boundingbox(mesh)
+  map(points) do point
+    if point ∉ box
+      OUT
+    else
+      w = winding(point, mesh)
+      ifelse(isapprox(w, zero(T), atol=atol(T)), OUT, IN)
+    end
+  end
 end
