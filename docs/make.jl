@@ -52,6 +52,7 @@ makedocs(
         "algorithms/intersection.md",
         "algorithms/clipping.md",
         "algorithms/merging.md",
+        "algorithms/winding.md",
         "algorithms/sideof.md",
         "algorithms/orientation.md",
         "algorithms/neighborsearch.md",
