@@ -75,6 +75,13 @@ Return the radii of the metric `ball`.
 radii(ball::MetricBall) = ball.radii
 
 """
+    rotation(ball)
+
+Return the rotation of the metric `ball`.
+"""
+rotation(ball::MetricBall) = isnothing(ball.rotation) ? I : ball.rotation
+
+"""
     metric(ball)
 
 Return the metric of the metric `ball`.

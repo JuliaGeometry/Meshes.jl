@@ -55,5 +55,10 @@
     # basic multiplication
     @test 2MetricBall(T(1)) == MetricBall(T(2))
     @test 2MetricBall(T[1, 2, 3]) == MetricBall(T[2, 4, 6])
+
+    # access to rotation
+    @test rotation(MetricBall(T(1))) == I
+    @test rotation(MetricBall(T[1, 2, 3])) == I
+    @test rotation(MetricBall(T[1, 2], Angle2d(T(π / 2)))) == Angle2d(T(π / 2))
   end
 end

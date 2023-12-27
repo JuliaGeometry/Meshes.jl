@@ -345,8 +345,9 @@ export
   # neighborhoods
   Neighborhood,
   MetricBall,
-  metric,
   radii,
+  rotation,
+  metric,
   radius,
   isisotropic,
 
