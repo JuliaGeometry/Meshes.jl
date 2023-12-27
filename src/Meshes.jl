@@ -18,6 +18,7 @@ using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
 using Rotations: Rotation, QuatRotation, Angle2d, rotation_between
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 using Base.Cartesian: @nloops, @nref, @ntuple
+using Base: @propagate_inbounds
 using Transducers: tcollect
 
 import Random

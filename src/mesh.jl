@@ -195,10 +195,7 @@ Base.eltype(g::Grid) = typeof(first(g))
 
 Base.getindex(g::Grid{Dim}, ijk::Vararg{Int,Dim}) where {Dim} = element(g, LinearIndices(size(g))[ijk...])
 
-Base.@propagate_inbounds function Base.getindex(
-  g::Grid{Dim},
-  ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}
-) where {Dim}
+@propagate_inbounds function Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}) where {Dim}
   dims = size(g)
   ranges = ntuple(i -> _asrange(dims[i], ijk[i]), Dim)
   getindex(g, CartesianIndices(ranges))

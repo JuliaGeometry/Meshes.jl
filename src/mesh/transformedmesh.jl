@@ -24,5 +24,5 @@ topology(m::TransformedMesh) = topology(m.mesh)
 
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
-Base.@propagate_inbounds Base.getindex(g::TransformedGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} =
+@propagate_inbounds Base.getindex(g::TransformedGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} =
   TransformedGrid(getindex(g.mesh, I), g.transform)
