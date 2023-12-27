@@ -195,7 +195,7 @@ Base.eltype(g::Grid) = typeof(first(g))
 
 Base.getindex(g::Grid{Dim}, ijk::Vararg{Int,Dim}) where {Dim} = element(g, LinearIndices(size(g))[ijk...])
 
-function Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}) where {Dim}
+@propagate_inbounds function Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}) where {Dim}
   dims = size(g)
   ranges = ntuple(i -> _asrange(dims[i], ijk[i]), Dim)
   getindex(g, CartesianIndices(ranges))
@@ -204,6 +204,14 @@ end
 _asrange(::Int, r::UnitRange{Int}) = r
 _asrange(d::Int, ::Colon) = 1:d
 _asrange(::Int, i::Int) = i:i
+
+function _checkbounds(g::Grid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+  dims = size(g)
+  ranges = I.indices
+  if !all(first(r) ≥ 1 && last(r) ≤ d for (d, r) in zip(dims, ranges))
+    throw(BoundsError(g, ranges))
+  end
+end
 
 # ----------------
 # IMPLEMENTATIONS
