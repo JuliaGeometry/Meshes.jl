@@ -58,6 +58,7 @@ function centroid(g::RectilinearGrid, ind::Int)
 end
 
 function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+  @boundscheck _checkbounds(g, I)
   dims = size(I)
   start = Tuple(first(I))
   stop = Tuple(last(I)) .+ 1

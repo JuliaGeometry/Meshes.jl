@@ -36,6 +36,7 @@ vertex(g::StructuredGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(ntuple(d -> g
 XYZ(g::StructuredGrid) = g.XYZ
 
 function Base.getindex(g::StructuredGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+  @boundscheck _checkbounds(g, I)
   dims = size(I)
   cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
   XYZ = ntuple(i -> g.XYZ[i][cinds], Dim)

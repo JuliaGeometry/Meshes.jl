@@ -135,8 +135,9 @@ function centroid(g::CartesianGrid, ind::Int)
 end
 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+  @boundscheck _checkbounds(g, I)
   dims = size(I)
-  offset = g.offset .- first(I).I .+ 1
+  offset = g.offset .- Tuple(first(I)) .+ 1
   CartesianGrid(dims, g.origin, g.spacing, offset)
 end
 
