@@ -55,9 +55,6 @@ function sideof(point::Point{2,T}, ring::Ring{2,T}) where {T}
   ifelse(isapprox(w, zero(T), atol=atol(T)), OUT, IN)
 end
 
-# fallback for iterable of points
-sideof(points, geom::Geometry) = map(point -> sideof(point, geom), points)
-
 # -----
 # MESH
 # -----
@@ -70,10 +67,17 @@ Possible results are `IN` or `OUT` the `mesh`.
 """
 sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
 
-function sideof(points, mesh::Mesh{3,T}) where {T}
-  bbox = boundingbox(mesh)
+# ----------
+# FALLBACKS
+# ----------
+
+sideof(points, line::Line{2}) = map(point -> sideof(point, line), points)
+
+function sideof(points, object::GeometryOrDomain)
+  T = coordtype(object)
+  bbox = boundingbox(object)
   inds = findall(point -> point ∈ bbox, points)
-  wind = winding(points[inds], mesh)
+  wind = winding(points[inds], object)
   side = fill(OUT, length(points))
   side[inds] .= ifelse.(isapprox.(wind, zero(T), atol=atol(T)), OUT, IN)
   side
