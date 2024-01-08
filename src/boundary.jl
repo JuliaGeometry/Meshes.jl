@@ -18,12 +18,12 @@ boundary(::Line) = nothing
 function boundary(b::BezierCurve)
   p = controls(b)
   p₁, p₂ = first(p), last(p)
-  p₁ ≈ p₂ ? nothing : PointSet([p₁, p₂])
+  p₁ ≈ p₂ ? nothing : Multi([p₁, p₂])
 end
 
 boundary(::Plane) = nothing
 
-boundary(b::Box{1}) = PointSet([minimum(b), maximum(b)])
+boundary(b::Box{1}) = Multi([minimum(b), maximum(b)])
 
 function boundary(b::Box{2})
   A = coordinates(minimum(b))
@@ -79,11 +79,11 @@ boundary(::FrustumSurface) = nothing
 
 boundary(::Torus) = nothing
 
-boundary(s::Segment) = PointSet(pointify(s))
+boundary(s::Segment) = Multi(pointify(s))
 
 function boundary(r::Rope)
   v = vertices(r)
-  PointSet([first(v), last(v)])
+  Multi([first(v), last(v)])
 end
 
 boundary(::Ring) = nothing
