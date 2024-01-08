@@ -49,7 +49,7 @@
     @test !(s ≈ Segment(Point(1, 1, 2, 1), Point(0, 0, 0, 0)))
 
     s = Segment(P3(0, 0, 0), P3(1, 1, 1))
-    @test boundary(s) == PointSet([P3(0, 0, 0), P3(1, 1, 1)])
+    @test boundary(s) == Multi([P3(0, 0, 0), P3(1, 1, 1)])
     @test perimeter(s) == zero(T)
     @test center(s) == P3(0.5, 0.5, 0.5)
     @test coordtype(center(s)) == T
@@ -137,7 +137,7 @@
     @test centroid(c) == P2(0.5, 0.5)
 
     c = Rope(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-    @test boundary(c) == PointSet(P2[(0, 0), (0, 1)])
+    @test boundary(c) == Multi(P2[(0, 0), (0, 1)])
     c = Ring(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
     @test isnothing(boundary(c))
 

@@ -363,9 +363,9 @@
       @test_throws DomainError(T(1.2), "b(t) is not defined for t outside [0, 1].") b(T(1.2), method)
     end
 
-    @test boundary(b) == PointSet(P2(0, 0), P2(1, 0))
+    @test boundary(b) == Multi([P2(0, 0), P2(1, 0)])
     b = BezierCurve(P2(0, 0), P2(1, 1))
-    @test boundary(b) == PointSet([P2(0, 0), P2(1, 1)])
+    @test boundary(b) == Multi([P2(0, 0), P2(1, 1)])
     @test perimeter(b) == zero(T)
 
     b = BezierCurve(P2.(randn(100), randn(100)))
@@ -435,7 +435,7 @@
     @test extrema(b) == (P3(0, 0, 0), P3(1, 1, 1))
 
     b = Box(P1(0), P1(1))
-    @test boundary(b) == PointSet([P1(0), P1(1)])
+    @test boundary(b) == Multi([P1(0), P1(1)])
     @test measure(b) == T(1)
     @test P1(0) ∈ b
     @test P1(1) ∈ b
