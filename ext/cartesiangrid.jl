@@ -38,13 +38,13 @@ function Makie.plot!(plot::Viz{<:Tuple{CartesianGrid}})
     # search other visualization methods
     if nd[] == 2
       if nc[] == nv[]
-        # visualize as a simple mesh so that
-        # colors can be specified at vertices
-        vizmesh2D!(plot)
+        # visualize as built-in image with interpolation
+        C = Makie.@lift reshape($colorant, $sz .+ 1)
+        Makie.image!(plot, C, interpolate=true)
       else
-        # visualize as built-in heatmap
+        # visualize as built-in image without interpolation
         C = Makie.@lift reshape($colorant, $sz)
-        Makie.heatmap!(plot, xyz[1], xyz[2], C)
+        Makie.image!(plot, C, interpolate=false)
       end
     elseif nd[] == 3
       if nc[] == nv[]
