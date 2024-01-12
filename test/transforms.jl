@@ -437,7 +437,16 @@
     f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(0), T(0), T(1))
     g = Plane(P3(0, 0, 0), V3(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Plane(P3(0, 0, 1), V3(0, 0, -1), V3(0, 1, 0))
+    @test r ≈ Plane(P3(0, 0, 1), V3(1, 0, 0))
+
+    # ---------
+    # CYLINDER
+    # ---------
+
+    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(0), T(0), T(1))
+    g = Cylinder(T(1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Cylinder(P3(0, 0, 1), P3(1, 0, 1))
 
     # ---------
     # POINTSET
