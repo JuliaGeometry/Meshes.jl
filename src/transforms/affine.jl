@@ -32,8 +32,9 @@ end
 Affine(rot::R, offsets::Tuple) where {Dim,T,R<:Rotation{Dim,T}} = Affine{Dim,T,R}(rot, offsets)
 
 Affine(rot::Rotation, offsets...) = Affine(rot, offsets)
+
 Affine((u, v)::NTuple{2,Vec}, offsets...) = Affine(rotation_between(u, v), offsets)
-Affine((u, v)::NTuple{2,NTuple}, offsets...) = Affine((Vec(u), Vec(v)), offsets...)
+Affine((u, v)::NTuple{2,Tuple}, offsets...) = Affine((Vec(u), Vec(v)), offsets...)
 
 Affine(θ, offsets...) = Affine(Angle2d(θ), offsets)
 
