@@ -65,3 +65,8 @@ function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where 
   xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], Dim)
   RectilinearGrid(xyz, GridTopology(dims))
 end
+
+function Base.summary(io::IO, g::RectilinearGrid{Dim,T}) where {Dim,T}
+  join(io, size(g), "×")
+  print(io, " RectilinearGrid{$Dim,$T}")
+end

@@ -42,3 +42,8 @@ function Base.getindex(g::StructuredGrid{Dim}, I::CartesianIndices{Dim}) where {
   XYZ = ntuple(i -> g.XYZ[i][cinds], Dim)
   StructuredGrid(XYZ, GridTopology(dims))
 end
+
+function Base.summary(io::IO, g::StructuredGrid{Dim,T}) where {Dim,T}
+  join(io, size(g), "×")
+  print(io, " StructuredGrid{$Dim,$T}")
+end
