@@ -482,9 +482,11 @@
     v = V2(1, 0)
     g1 = P2(1, 0)
     g2 = Segment(P2(0, 0), P2(1, 0))
+    g3 = Box(P2(0, 0), P2(1, 1))
     @test f(v) ≈ s(v)
     @test f(g1) ≈ s(g1)
     @test f(g2) ≈ s(g2)
+    @test f(g3) ≈ s(g3)
   end
 
   @testset "Stretch" begin
