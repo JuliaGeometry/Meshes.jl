@@ -272,6 +272,66 @@
     @test nelements(rg) == nelements(cg)
     @test topology(rg) == topology(cg)
     @test vertices(rg) == vertices(cg)
+
+    x = range(zero(T), stop=one(T), length=6)
+    y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+    grid = RectilinearGrid(x, y)
+    @test sprint(show, grid) == "5×5 RectilinearGrid{2,$T}"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), grid) == """
+      5×5 RectilinearGrid{2,Float32}
+        36 vertices
+        ├─ Point(0.0f0, 0.0f0)
+        ├─ Point(0.2f0, 0.0f0)
+        ├─ Point(0.4f0, 0.0f0)
+        ├─ Point(0.6f0, 0.0f0)
+        ├─ Point(0.8f0, 0.0f0)
+        ⋮
+        ├─ Point(0.2f0, 1.0f0)
+        ├─ Point(0.4f0, 1.0f0)
+        ├─ Point(0.6f0, 1.0f0)
+        ├─ Point(0.8f0, 1.0f0)
+        └─ Point(1.0f0, 1.0f0)
+        25 elements
+        ├─ Quadrangle(1, 2, 8, 7)
+        ├─ Quadrangle(2, 3, 9, 8)
+        ├─ Quadrangle(3, 4, 10, 9)
+        ├─ Quadrangle(4, 5, 11, 10)
+        ├─ Quadrangle(5, 6, 12, 11)
+        ⋮
+        ├─ Quadrangle(25, 26, 32, 31)
+        ├─ Quadrangle(26, 27, 33, 32)
+        ├─ Quadrangle(27, 28, 34, 33)
+        ├─ Quadrangle(28, 29, 35, 34)
+        └─ Quadrangle(29, 30, 36, 35)"""
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), grid) == """
+      5×5 RectilinearGrid{2,Float64}
+        36 vertices
+        ├─ Point(0.0, 0.0)
+        ├─ Point(0.2, 0.0)
+        ├─ Point(0.4, 0.0)
+        ├─ Point(0.6, 0.0)
+        ├─ Point(0.8, 0.0)
+        ⋮
+        ├─ Point(0.2, 1.0)
+        ├─ Point(0.4, 1.0)
+        ├─ Point(0.6, 1.0)
+        ├─ Point(0.8, 1.0)
+        └─ Point(1.0, 1.0)
+        25 elements
+        ├─ Quadrangle(1, 2, 8, 7)
+        ├─ Quadrangle(2, 3, 9, 8)
+        ├─ Quadrangle(3, 4, 10, 9)
+        ├─ Quadrangle(4, 5, 11, 10)
+        ├─ Quadrangle(5, 6, 12, 11)
+        ⋮
+        ├─ Quadrangle(25, 26, 32, 31)
+        ├─ Quadrangle(26, 27, 33, 32)
+        ├─ Quadrangle(27, 28, 34, 33)
+        ├─ Quadrangle(28, 29, 35, 34)
+        └─ Quadrangle(29, 30, 36, 35)"""
+    end
   end
 
   @testset "StructuredGrid" begin
@@ -324,6 +384,66 @@
     @test nelements(sg) == nelements(rg)
     @test topology(sg) == topology(rg)
     @test vertices(sg) == vertices(rg)
+
+    X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
+    Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
+    grid = StructuredGrid(X, Y)
+    @test sprint(show, grid) == "5×5 StructuredGrid{2,$T}"
+    if T == Float32
+      @test sprint(show, MIME"text/plain"(), grid) == """
+      5×5 StructuredGrid{2,Float32}
+        36 vertices
+        ├─ Point(0.0f0, 0.0f0)
+        ├─ Point(0.2f0, 0.0f0)
+        ├─ Point(0.4f0, 0.0f0)
+        ├─ Point(0.6f0, 0.0f0)
+        ├─ Point(0.8f0, 0.0f0)
+        ⋮
+        ├─ Point(0.2f0, 1.0f0)
+        ├─ Point(0.4f0, 1.0f0)
+        ├─ Point(0.6f0, 1.0f0)
+        ├─ Point(0.8f0, 1.0f0)
+        └─ Point(1.0f0, 1.0f0)
+        25 elements
+        ├─ Quadrangle(1, 2, 8, 7)
+        ├─ Quadrangle(2, 3, 9, 8)
+        ├─ Quadrangle(3, 4, 10, 9)
+        ├─ Quadrangle(4, 5, 11, 10)
+        ├─ Quadrangle(5, 6, 12, 11)
+        ⋮
+        ├─ Quadrangle(25, 26, 32, 31)
+        ├─ Quadrangle(26, 27, 33, 32)
+        ├─ Quadrangle(27, 28, 34, 33)
+        ├─ Quadrangle(28, 29, 35, 34)
+        └─ Quadrangle(29, 30, 36, 35)"""
+    elseif T == Float64
+      @test sprint(show, MIME"text/plain"(), grid) == """
+      5×5 StructuredGrid{2,Float64}
+        36 vertices
+        ├─ Point(0.0, 0.0)
+        ├─ Point(0.2, 0.0)
+        ├─ Point(0.4, 0.0)
+        ├─ Point(0.6, 0.0)
+        ├─ Point(0.8, 0.0)
+        ⋮
+        ├─ Point(0.2, 1.0)
+        ├─ Point(0.4, 1.0)
+        ├─ Point(0.6, 1.0)
+        ├─ Point(0.8, 1.0)
+        └─ Point(1.0, 1.0)
+        25 elements
+        ├─ Quadrangle(1, 2, 8, 7)
+        ├─ Quadrangle(2, 3, 9, 8)
+        ├─ Quadrangle(3, 4, 10, 9)
+        ├─ Quadrangle(4, 5, 11, 10)
+        ├─ Quadrangle(5, 6, 12, 11)
+        ⋮
+        ├─ Quadrangle(25, 26, 32, 31)
+        ├─ Quadrangle(26, 27, 33, 32)
+        ├─ Quadrangle(27, 28, 34, 33)
+        ├─ Quadrangle(28, 29, 35, 34)
+        └─ Quadrangle(29, 30, 36, 35)"""
+    end
   end
 
   @testset "SimpleMesh" begin
