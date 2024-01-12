@@ -488,6 +488,7 @@ export
   CoordinateTransform,
   Rotate,
   Translate,
+  Affine,
   Stretch,
   Expand,
   StdCoords,

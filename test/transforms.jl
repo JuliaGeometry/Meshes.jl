@@ -355,6 +355,138 @@
     @test TB.revert(f, r, c) ≈ d
   end
 
+  @testset "Affine" begin
+    @test !TB.isrevertible(Affine)
+    @test !TB.isinvertible(Affine)
+
+    # ----
+    # VEC
+    # ----
+
+    f = Affine(T(π / 2), T(1), T(1))
+    v = V2(1, 0)
+    r, c = TB.apply(f, v)
+    @test r ≈ V2(0, 1)
+
+    # ------
+    # POINT
+    # ------
+
+    f = Affine(T(π / 2), T(1), T(1))
+    g = P2(1, 0)
+    r, c = TB.apply(f, g)
+    @test r ≈ P2(1, 2)
+
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Affine(T(π / 2), T(1), T(1))
+    g = Segment(P2(0, 0), P2(1, 0))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(P2(1, 1), P2(1, 2))
+
+    # ----
+    # BOX
+    # ----
+
+    f = Affine(T(π / 2), T(1), T(1))
+    g = Box(P2(0, 0), P2(1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Quadrangle
+    @test r ≈ Quadrangle(P2(1, 1), P2(1, 2), P2(0, 2), P2(0, 1))
+
+    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(1), T(2), T(3))
+    g = Box(P3(0, 0, 0), P3(1, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Hexahedron
+    @test r ≈ Hexahedron(
+      P3(1, 2, 3),
+      P3(1, 2, 2),
+      P3(1, 3, 2),
+      P3(1, 3, 3),
+      P3(2, 2, 3),
+      P3(2, 2, 2),
+      P3(2, 3, 2),
+      P3(2, 3, 3)
+    )
+
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(1), T(2), T(3))
+    g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Triangle(P3(1, 2, 3), P3(1, 2, 2), P3(2, 3, 3))
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = Affine(T(π / 2), T(1), T(1))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
+
+    # ------
+    # PLANE
+    # ------
+
+    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(0), T(0), T(1))
+    g = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Plane(P3(0, 0, 1), V3(0, 0, -1), V3(0, 1, 0))
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Affine(T(π / 2), T(1), T(1))
+    d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([P2(1, 1), P2(1, 2), P2(0, 2)])
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Affine(T(π / 2), T(1), T(1))
+    t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+
+    # ------------
+    # CONSTRUCTOR
+    # ------------
+
+    # type conversion
+    f = Affine(Angle2d(T(π / 2)), 1, 2)
+    @test eltype(f.offsets) <: T
+
+    # vector coordinates as tuples
+    f = Affine((T.((0, 0, 1)), T.((1, 0, 0))), T(1), T(2), T(3))
+    @test f == Affine((V3(0, 0, 1), V3(1, 0, 0)), T(1), T(2), T(3))
+
+    # ----------
+    # TRANSFORM
+    # ----------
+
+    f = Affine(T(π / 2), T(1), T(1))
+    s = Rotate(T(π / 2)) → Translate(T(1), T(1))
+    v = V2(1, 0)
+    g1 = P2(1, 0)
+    g2 = Segment(P2(0, 0), P2(1, 0))
+    @test f(v) ≈ s(v)
+    @test f(g1) ≈ s(g1)
+    @test f(g2) ≈ s(g2)
+  end
+
   @testset "Stretch" begin
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
