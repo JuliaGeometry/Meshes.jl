@@ -37,6 +37,20 @@ Rotate(u::Vec, v::Vec) = Rotate(rotation_between(u, v))
 
 Rotate(u::Tuple, v::Tuple) = Rotate(Vec(u), Vec(v))
 
+"""
+    Rotate(θ)
+
+Rotate the 2D geometry or mesh by angle `θ`, in radians,
+using the `Angle2d` rotation.
+
+## Examples
+
+```julia
+Rotate(π / 2)
+```
+"""
+Rotate(θ) = Rotate(Angle2d(θ))
+
 isrevertible(::Type{<:Rotate}) = true
 
 isinvertible(::Type{<:Rotate}) = true

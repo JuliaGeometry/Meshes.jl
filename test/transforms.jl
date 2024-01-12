@@ -185,6 +185,16 @@
     r, c = TB.apply(f, d)
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
+
+    # ---------
+    # FALLBACK
+    # ---------
+
+    f = Rotate(T(π / 2))
+    v = V2(1, 0)
+    r, c = TB.apply(f, v)
+    @test r ≈ V2(0, 1)
+    @test TB.revert(f, r, c) ≈ v
   end
 
   @testset "Translate" begin
