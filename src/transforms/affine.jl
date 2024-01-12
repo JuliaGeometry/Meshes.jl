@@ -17,8 +17,8 @@ rotation angle `θ`. See [`Rotate`](@ref) documentation for more details.
 # Examples
 
 ```julia
-Affine(AngleAxis(0.2, 1.0, 0.0, 0.0), 2, 2, -2)
-Affine((Vec(1, 0, 0), Vec(1, 1, 1)), -2, -2, 2)
+Affine(AngleAxis(0.2, 1.0, 0.0, 0.0), -2, 2, 2)
+Affine((Vec(1, 0, 0), Vec(1, 1, 1)), 2, -2, 2)
 Affine(π / 2, 2, -2)
 ```
 
