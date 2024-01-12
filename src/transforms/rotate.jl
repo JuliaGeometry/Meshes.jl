@@ -40,7 +40,7 @@ Rotate(u::Tuple, v::Tuple) = Rotate(Vec(u), Vec(v))
 """
     Rotate(θ)
 
-Rotate geometry or mesh by angle `θ`, in radians,
+Rotate the 2D geometry or mesh by angle `θ`, in radians,
 using the `Angle2d` rotation.
 
 ## Examples
