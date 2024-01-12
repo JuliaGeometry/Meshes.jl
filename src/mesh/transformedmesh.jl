@@ -15,14 +15,19 @@ end
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
+topology(m::TransformedMesh) = topology(m.mesh)
+
+vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
+
 # alias to improve readability in IO methods
 const TransformedGrid{Dim,T} = TransformedMesh{Dim,T,GridTopology{Dim}}
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 
-topology(m::TransformedMesh) = topology(m.mesh)
-
-vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
-
 @propagate_inbounds Base.getindex(g::TransformedGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} =
   TransformedGrid(getindex(g.mesh, I), g.transform)
+
+function Base.summary(io::IO, g::TransformedGrid{Dim,T}) where {Dim,T}
+  join(io, size(g), "×")
+  print(io, " TransformedGrid{$Dim,$T}")
+end

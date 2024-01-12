@@ -554,6 +554,33 @@
     @test size(sub) == (10, 5)
     @test minimum(sub) == P2(0, 2)
     @test maximum(sub) == P2(10, 7)
+    @test sprint(show, tgrid) == "10×10 TransformedGrid{2,Float64}"
+    @test sprint(show, MIME"text/plain"(), tgrid) == """
+    10×10 TransformedGrid{2,Float64}
+      121 vertices
+      ├─ Point(0.0, 0.0)
+      ├─ Point(1.0, 0.0)
+      ├─ Point(2.0, 0.0)
+      ├─ Point(3.0, 0.0)
+      ├─ Point(4.0, 0.0)
+      ⋮
+      ├─ Point(6.0, 10.0)
+      ├─ Point(7.0, 10.0)
+      ├─ Point(8.0, 10.0)
+      ├─ Point(9.0, 10.0)
+      └─ Point(10.0, 10.0)
+      100 elements
+      ├─ Quadrangle(1, 2, 13, 12)
+      ├─ Quadrangle(2, 3, 14, 13)
+      ├─ Quadrangle(3, 4, 15, 14)
+      ├─ Quadrangle(4, 5, 16, 15)
+      ├─ Quadrangle(5, 6, 17, 16)
+      ⋮
+      ├─ Quadrangle(105, 106, 117, 116)
+      ├─ Quadrangle(106, 107, 118, 117)
+      ├─ Quadrangle(107, 108, 119, 118)
+      ├─ Quadrangle(108, 109, 120, 119)
+      └─ Quadrangle(109, 110, 121, 120)"""
     @test_throws BoundsError grid[3:11, :]
   end
 end
