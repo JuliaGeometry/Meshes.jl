@@ -34,7 +34,7 @@ end
 
 isrevertible(t::Affine) = isinvertible(t)
 
-isinvertible(t::Affine) = !isapprox(det(t.A), 0, atol=1e-8)
+isinvertible(t::Affine) = !isapprox(det(t.A), zero(eltype(t.A)))
 
 function inverse(t::Affine)
   A = inv(t.A)

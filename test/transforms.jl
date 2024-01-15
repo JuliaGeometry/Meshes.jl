@@ -360,6 +360,9 @@
     @test TB.isrevertible(f)
     @test TB.isinvertible(f)
     @test TB.inverse(f) == Affine(Angle2d(-T(π / 2)), Angle2d(-T(π / 2)) * -T[1, 1])
+    f = Affine(T[6 3; 10 5], T[1, 1])
+    @test !TB.isrevertible(f)
+    @test !TB.isinvertible(f)
 
     # ----
     # VEC
