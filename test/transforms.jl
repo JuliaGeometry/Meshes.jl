@@ -356,8 +356,10 @@
   end
 
   @testset "Affine" begin
-    @test !TB.isrevertible(Affine)
-    @test !TB.isinvertible(Affine)
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
+    @test TB.isrevertible(f)
+    @test TB.isinvertible(f)
+    @test TB.inverse(f) == Affine(Angle2d(-T(π / 2)), Angle2d(-T(π / 2)) * -T[1, 1])
 
     # ----
     # VEC
@@ -367,6 +369,7 @@
     v = V2(1, 0)
     r, c = TB.apply(f, v)
     @test r ≈ V2(0, 1)
+    @test TB.revert(f, r, c) ≈ v
 
     # ------
     # POINT
@@ -376,6 +379,7 @@
     g = P2(1, 0)
     r, c = TB.apply(f, g)
     @test r ≈ P2(1, 2)
+    @test TB.revert(f, r, c) ≈ g
 
     # --------
     # SEGMENT
@@ -385,6 +389,7 @@
     g = Segment(P2(0, 0), P2(1, 0))
     r, c = TB.apply(f, g)
     @test r ≈ Segment(P2(1, 1), P2(1, 2))
+    @test TB.revert(f, r, c) ≈ g
 
     # ----
     # BOX
@@ -395,6 +400,9 @@
     r, c = TB.apply(f, g)
     @test r isa Quadrangle
     @test r ≈ Quadrangle(P2(1, 1), P2(1, 2), P2(0, 2), P2(0, 1))
+    q = TB.revert(f, r, c)
+    @test q isa Quadrangle
+    @test q ≈ convert(Quadrangle, g)
 
     f = Affine(rotation_between(V3(0, 0, 1), V3(1, 0, 0)), T[1, 2, 3])
     g = Box(P3(0, 0, 0), P3(1, 1, 1))
@@ -410,6 +418,9 @@
       P3(2, 3, 2),
       P3(2, 3, 3)
     )
+    h = TB.revert(f, r, c)
+    @test h isa Hexahedron
+    @test h ≈ convert(Hexahedron, g)
 
     # ---------
     # TRIANGLE
@@ -419,6 +430,7 @@
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(1, 2, 3), P3(1, 2, 2), P3(2, 3, 3))
+    @test TB.revert(f, r, c) ≈ g
 
     # ----------
     # MULTIGEOM
@@ -429,6 +441,7 @@
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ g
 
     # ------
     # PLANE
@@ -438,6 +451,7 @@
     g = Plane(P3(0, 0, 0), V3(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Plane(P3(0, 0, 1), V3(1, 0, 0))
+    @test TB.revert(f, r, c) ≈ g
 
     # ---------
     # CYLINDER
@@ -447,6 +461,7 @@
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(P3(0, 0, 1), P3(1, 0, 1))
+    @test TB.revert(f, r, c) ≈ g
 
     # ---------
     # POINTSET
@@ -456,6 +471,7 @@
     d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([P2(1, 1), P2(1, 2), P2(0, 2)])
+    @test TB.revert(f, r, c) ≈ d
 
     # ------------
     # GEOMETRYSET
@@ -466,9 +482,11 @@
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
+    @test TB.revert(f, r, c) ≈ d
     d = [t, t]
     r, c = TB.apply(f, d)
     @test all(r .≈ [f(t), f(t)])
+    @test all(TB.revert(f, r, c) .≈ d)
 
     # ----------
     # TRANSFORM

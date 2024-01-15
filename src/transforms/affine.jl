@@ -32,9 +32,15 @@ function Affine(A::AbstractMatrix, b::AbstractVector)
   Affine(_assmatrix(Dim, A), _assvector(Dim, b))
 end
 
-isrevertible(::Type{<:Affine}) = false
+isrevertible(t::Affine) = isinvertible(t)
 
-isinvertible(::Type{<:Affine}) = false
+isinvertible(t::Affine) = !isapprox(det(t.A), 0, atol=1e-8)
+
+function inverse(t::Affine)
+  A = inv(t.A)
+  b = A * -t.b
+  Affine(A, b)
+end
 
 applycoord(t::Affine, v::Vec) = t.A * v
 
