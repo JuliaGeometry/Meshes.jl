@@ -363,7 +363,7 @@
     # VEC
     # ----
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     v = V2(1, 0)
     r, c = TB.apply(f, v)
     @test r ≈ V2(0, 1)
@@ -372,7 +372,7 @@
     # POINT
     # ------
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     g = P2(1, 0)
     r, c = TB.apply(f, g)
     @test r ≈ P2(1, 2)
@@ -381,7 +381,7 @@
     # SEGMENT
     # --------
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     g = Segment(P2(0, 0), P2(1, 0))
     r, c = TB.apply(f, g)
     @test r ≈ Segment(P2(1, 1), P2(1, 2))
@@ -390,13 +390,13 @@
     # BOX
     # ----
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     g = Box(P2(0, 0), P2(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Quadrangle
     @test r ≈ Quadrangle(P2(1, 1), P2(1, 2), P2(0, 2), P2(0, 1))
 
-    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(1), T(2), T(3))
+    f = Affine(rotation_between(V3(0, 0, 1), V3(1, 0, 0)), T[1, 2, 3])
     g = Box(P3(0, 0, 0), P3(1, 1, 1))
     r, c = TB.apply(f, g)
     @test r isa Hexahedron
@@ -415,7 +415,7 @@
     # TRIANGLE
     # ---------
 
-    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(1), T(2), T(3))
+    f = Affine(rotation_between(V3(0, 0, 1), V3(1, 0, 0)), T[1, 2, 3])
     g = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(P3(1, 2, 3), P3(1, 2, 2), P3(2, 3, 3))
@@ -424,7 +424,7 @@
     # MULTIGEOM
     # ----------
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
@@ -434,7 +434,7 @@
     # PLANE
     # ------
 
-    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(0), T(0), T(1))
+    f = Affine(rotation_between(V3(0, 0, 1), V3(1, 0, 0)), T[0, 0, 1])
     g = Plane(P3(0, 0, 0), V3(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Plane(P3(0, 0, 1), V3(1, 0, 0))
@@ -443,7 +443,7 @@
     # CYLINDER
     # ---------
 
-    f = Affine((V3(0, 0, 1), V3(1, 0, 0)), T(0), T(0), T(1))
+    f = Affine(rotation_between(V3(0, 0, 1), V3(1, 0, 0)), T[0, 0, 1])
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(P3(0, 0, 1), P3(1, 0, 1))
@@ -452,7 +452,7 @@
     # POINTSET
     # ---------
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = PointSet([P2(0, 0), P2(1, 0), P2(1, 1)])
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([P2(1, 1), P2(1, 2), P2(0, 2)])
@@ -461,7 +461,7 @@
     # GEOMETRYSET
     # ------------
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     t = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
@@ -470,23 +470,11 @@
     r, c = TB.apply(f, d)
     @test all(r .≈ [f(t), f(t)])
 
-    # ------------
-    # CONSTRUCTOR
-    # ------------
-
-    # type conversion
-    f = Affine(Angle2d(T(π / 2)), 1, 2)
-    @test eltype(f.offsets) <: T
-
-    # vector coordinates as tuples
-    f = Affine((T.((0, 0, 1)), T.((1, 0, 0))), T(1), T(2), T(3))
-    @test f == Affine((V3(0, 0, 1), V3(1, 0, 0)), T(1), T(2), T(3))
-
     # ----------
     # TRANSFORM
     # ----------
 
-    f = Affine(T(π / 2), T(1), T(1))
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
     s = Rotate(T(π / 2)) → Translate(T(1), T(1))
     v = V2(1, 0)
     g1 = P2(1, 0)
@@ -496,6 +484,24 @@
     @test f(g1) ≈ s(g1)
     @test f(g2) ≈ s(g2)
     @test f(g3) ≈ s(g3)
+
+    # ------------
+    # CONSTRUCTOR
+    # ------------
+
+    # conversion to SArray
+    f = Affine(T[0 -1; 1 0], SVector{2}(T[1, 1]))
+    @test f.A isa SMatrix
+    f = Affine(SMatrix{2,2}(T[0 -1; 1 0]), T[1, 1])
+    @test f.b isa SVector
+    f = Affine(T[0 -1; 1 0], T[1, 1])
+    @test f.A isa SMatrix
+    @test f.b isa SVector
+
+    # error: A must be a square matrix
+    @test_throws ArgumentError Affine(T[1 1; 2 2; 3 3], T[1, 2])
+    # error: A and b must have the same dimension
+    @test_throws ArgumentError Affine(T[1 1; 2 2], T[1, 2, 3])
   end
 
   @testset "Stretch" begin

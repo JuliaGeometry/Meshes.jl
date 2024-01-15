@@ -3,48 +3,43 @@
 # ------------------------------------------------------------------
 
 """
-    Affine(rot, offsets...)
-    Affine((u, v), offsets...)
-    Affine(θ, offsets...)
+    Affine(A, b)
 
-Rotate geometry or mesh with rotation `rot` and translate
-their coordinates by given offsets `o₁, o₂, ...`.
-This transform is equivalet to `Rotate(rot) → Translate(offsets...)`.
-
-The rotation argument can also be a tuple of vectors `(u, v)` or a
-rotation angle `θ`. See [`Rotate`](@ref) documentation for more details.
+Rotate geometry or mesh with rotation matrix `A` and translate
+their coordinates with translation vector `b`.
 
 # Examples
 
 ```julia
-Affine(AngleAxis(0.2, 1.0, 0.0, 0.0), -2, 2, 2)
-Affine((Vec(1, 0, 0), Vec(1, 1, 1)), 2, -2, 2)
-Affine(π / 2, 2, -2)
+Affine(AngleAxis(0.2, 1.0, 0.0, 0.0), [-2, 2, 2])
+Affine(Angle2d(π / 2), SVector(2, -2))
+Affine([0 -1; 1 0], [-2, 2])
 ```
-
-See also [`Rotate`](@ref), [`Translate`](@ref).
 """
-struct Affine{Dim,T,R<:Rotation{Dim,T}} <: CoordinateTransform
-  rot::R
-  offsets::NTuple{Dim,T}
+struct Affine{Dim,M<:StaticMatrix{Dim,Dim},V<:StaticVector{Dim}} <: CoordinateTransform
+  A::M
+  b::V
 end
 
-Affine(rot::R, offsets::Tuple) where {Dim,T,R<:Rotation{Dim,T}} = Affine{Dim,T,R}(rot, offsets)
-
-Affine(rot::Rotation, offsets...) = Affine(rot, offsets)
-
-Affine((u, v)::NTuple{2,Vec}, offsets...) = Affine(rotation_between(u, v), offsets)
-Affine((u, v)::NTuple{2,Tuple}, offsets...) = Affine((Vec(u), Vec(v)), offsets...)
-
-Affine(θ, offsets...) = Affine(Angle2d(θ), offsets)
+function Affine(A::AbstractMatrix, b::AbstractVector)
+  sz = size(A)
+  if !allequal(sz)
+    throw(ArgumentError("`A` must be a square matrix"))
+  end
+  Dim = first(sz)
+  if Dim ≠ length(b)
+    throw(ArgumentError("`A` and `b` must have the same dimension"))
+  end
+  Affine(_assmatrix(Dim, A), _assvector(Dim, b))
+end
 
 isrevertible(::Type{<:Affine}) = false
 
 isinvertible(::Type{<:Affine}) = false
 
-applycoord(t::Affine, v::Vec) = t.rot * v
+applycoord(t::Affine, v::Vec) = t.A * v
 
-applycoord(t::Affine, p::Point) = Point(t.rot * coordinates(p)) + Vec(t.offsets)
+applycoord(t::Affine, p::Point) = Point(t.A * coordinates(p) + t.b)
 
 # --------------
 # SPECIAL CASES
@@ -53,3 +48,13 @@ applycoord(t::Affine, p::Point) = Point(t.rot * coordinates(p)) + Vec(t.offsets)
 applycoord(t::Affine, b::Box{2}) = applycoord(t, convert(Quadrangle, b))
 
 applycoord(t::Affine, b::Box{3}) = applycoord(t, convert(Hexahedron, b))
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_assmatrix(Dim, A::StaticMatrix) = A
+_assmatrix(Dim, A) = SMatrix{Dim,Dim}(A)
+
+_assvector(Dim, b::StaticVector) = b
+_assvector(Dim, b) = SVector{Dim}(b)
