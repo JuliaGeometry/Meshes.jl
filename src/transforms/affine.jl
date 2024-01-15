@@ -5,8 +5,7 @@
 """
     Affine(A, b)
 
-Rotate geometry or mesh with rotation matrix `A` and translate
-their coordinates with translation vector `b`.
+Affine transform `Ax + b` with matrix `A` and vector `b`.
 
 # Examples
 
