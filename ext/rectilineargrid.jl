@@ -23,14 +23,6 @@ function Makie.plot!(plot::Viz{<:Tuple{RectilinearGrid}})
   # size, coordinates and centroid coordinates
   sz = Makie.@lift size($grid)
   xyz = Makie.@lift Meshes.xyz($grid)
-  cxyz = map(1:nd[]) do i
-    Makie.@lift begin
-      x = $xyz[i]
-      a = @view x[begin:(end - 1)]
-      b = @view x[(begin + 1):end]
-      (a .+ b) ./ 2
-    end
-  end
 
   # dispatch different recipes
   if nc[] == 1
@@ -47,8 +39,10 @@ function Makie.plot!(plot::Viz{<:Tuple{RectilinearGrid}})
         vizmesh2D!(plot)
       else
         # visualize as built-in heatmap
+        x = Makie.@lift $xyz[1]
+        y = Makie.@lift $xyz[2]
         C = Makie.@lift reshape($colorant, $sz)
-        Makie.heatmap!(plot, cxyz[1], cxyz[2], C)
+        Makie.heatmap!(plot, x, y, C)
       end
     elseif nd[] == 3
       if nc[] == nv[]
