@@ -54,8 +54,8 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     if isempty(bounds[])
       # nothing to be done
     elseif all(ranks[] .== 1)
-      # all boundaries are point sets
-      points = Makie.@lift mapreduce(collect, vcat, $bounds)
+      # all boundaries are multipoints
+      points = Makie.@lift mapreduce(parent, vcat, $bounds)
       viz!(plot, (Makie.@lift GeometrySet($points)), color=facetcolor, pointsize=pointsize)
     elseif all(ranks[] .== 2)
       # all boundaries are geometries
