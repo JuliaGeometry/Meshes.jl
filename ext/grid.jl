@@ -3,38 +3,38 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
+  grid = plot[:object][]
+  
+  T = typeof(grid)
+  Dim = embeddim(grid)
+  if Dim == 1
+    vizgrid1D!(T, plot)
+  elseif Dim == 2
+    vizgrid2D!(T, plot)
+  elseif Dim == 3
+    vizgrid3D!(T, plot)
+  end
+end
+
+vizgrid1D!(::Type{<:Grid}, plot) = vizmesh1D!(plot)
+
+vizgrid2D!(::Type{<:Grid}, plot) = vizmesh2D!(plot)
+
+function vizgrid2D!(::Type{<:Union{CartesianGrid,RectilinearGrid}}, plot)
   grid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
-  
+  segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
   
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
-  
-  T = typeof(grid[])
-  Dim = embeddim(grid[])
-  if Dim == 1
-    vizgrid1D!(T, plot, colorant, nv, nc)
-  elseif Dim == 2
-    vizgrid2D!(T, plot, colorant, nv, nc)
-  elseif Dim == 3
-    vizgrid3D!(T, plot, colorant, nv, nc)
-  end
-end
-
-vizgrid1D!(::Type{<:Grid}, plot, colorant, nv, nc) = vizmesh1D!(plot)
-
-vizgrid2D!(::Type{<:Grid}, plot, colorant, nv, nc) = vizmesh2D!(plot)
-
-function vizgrid2D!(::Type{<:Union{CartesianGrid,RectilinearGrid}}, plot, colorant, nv, nc)
-  grid = plot[:object]
-  segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # grid coordinates
   xyz = Makie.@lift Meshes.xyz($grid)
@@ -66,7 +66,14 @@ function vizgrid2D!(::Type{<:Union{CartesianGrid,RectilinearGrid}}, plot, colora
   end
 end
 
-function vizgrid3D!(::Type{<:Grid}, plot, colorant, nv, nc)
+function vizgrid3D!(::Type{<:Grid}, plot)
+  grid = plot[:object]
+  color = plot[:color]
+  
+  # number of vertices and colors
+  nv = Makie.@lift nvertices($grid)
+  nc = Makie.@lift $color isa AbstractVector ? length($color) : 1
+
   if nv[] == nc[]
     error("not implemented")
   else
@@ -74,12 +81,22 @@ function vizgrid3D!(::Type{<:Grid}, plot, colorant, nv, nc)
   end
 end
 
-function vizgrid3D!(::Type{<:CartesianGrid}, plot, colorant, nv, nc)
+function vizgrid3D!(::Type{<:CartesianGrid}, plot)
   # retrieve parameters
   grid = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  
+  # number of vertices and colors
+  nv = Makie.@lift nvertices($grid)
+  nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
   # origin, spacing and size of grid
   or = Makie.@lift coordinates(minimum($grid))
