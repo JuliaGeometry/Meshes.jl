@@ -97,13 +97,9 @@ function vizgrid3D!(::Type{<:CartesianGrid}, plot)
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
-  # origin, spacing and size of grid
-  or = Makie.@lift coordinates(minimum($grid))
+  # spacing and coordinates of grid
   sp = Makie.@lift spacing($grid)
-  sz = Makie.@lift size($grid)
-
-  # coordinates of centroids
-  xyz = [Makie.@lift(range($or[i] + $sp[i] / 2, step=$sp[i], length=$sz[i])) for i in 1:3]
+  xyz = Makie.@lift Meshes.xyz($grid)
 
   if nc[] == 1
     # visualize bounding box with a single
@@ -115,17 +111,17 @@ function vizgrid3D!(::Type{<:CartesianGrid}, plot)
       error("not implemented")
     else
       # visualize as built-in meshscatter
-      xs = Makie.@lift $(xyz[1]) .+ $sp[1] / 2
-      ys = Makie.@lift $(xyz[2]) .+ $sp[2] / 2
-      zs = Makie.@lift $(xyz[3]) .+ $sp[3] / 2
-      coords = Makie.@lift [(x, y, z) for z in $zs for y in $ys for x in $xs]
+      xs = Makie.@lift $xyz[1][(begin + 1):end]
+      ys = Makie.@lift $xyz[2][(begin + 1):end]
+      zs = Makie.@lift $xyz[3][(begin + 1):end]
       rect = Makie.@lift Makie.Rect3(-1 .* $sp, $sp)
+      coords = Makie.@lift [(x, y, z) for z in $zs for y in $ys for x in $xs]
       Makie.meshscatter!(plot, coords, marker=rect, markersize=1, color=colorant)
     end
   end
 
   if showfacets[]
-    tup = Makie.@lift xyzsegments(Meshes.xyz($grid)...)
+    tup = Makie.@lift xyzsegments($xyz...)
     x, y, z = Makie.@lift($tup[1]), Makie.@lift($tup[2]), Makie.@lift($tup[3])
     Makie.lines!(plot, x, y, z, color=facetcolor, linewidth=segmentsize)
   end
