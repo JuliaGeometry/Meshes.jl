@@ -4,7 +4,6 @@
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   grid = plot[:object][]
-  
   T = typeof(grid)
   Dim = embeddim(grid)
   if Dim == 1
@@ -31,7 +30,7 @@ function vizgrid2D!(::Type{<:Union{CartesianGrid,RectilinearGrid}}, plot)
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
-  
+
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
@@ -69,7 +68,7 @@ end
 function vizgrid3D!(::Type{<:Grid}, plot)
   grid = plot[:object]
   color = plot[:color]
-  
+
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $color isa AbstractVector ? length($color) : 1
@@ -93,7 +92,7 @@ function vizgrid3D!(::Type{<:CartesianGrid}, plot)
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
-  
+
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
