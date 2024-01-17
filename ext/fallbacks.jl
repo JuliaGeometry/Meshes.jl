@@ -11,8 +11,8 @@ Makie.convert_arguments(::Type{<:Viz}, mesh::Mesh) = (convert(SimpleMesh, mesh),
 
 # skip conversion for these types
 Makie.convert_arguments(::Type{<:Viz}, gset::GeometrySet) = (gset,)
-Makie.convert_arguments(::Type{<:Viz}, grid::Grid) = (grid,)
 Makie.convert_arguments(::Type{<:Viz}, mesh::SimpleMesh) = (mesh,)
+Makie.convert_arguments(::Type{<:Viz}, grid::Grid) = (grid,)
 Makie.convert_arguments(::Type{<:Viz}, grid::SubCartesianGrid) = (grid,)
 
 # vector of geometries for convenience
