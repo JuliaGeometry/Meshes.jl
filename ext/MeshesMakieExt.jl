@@ -38,10 +38,9 @@ include("colors.jl")
 include("utils.jl")
 
 # viz recipes
+include("grid.jl")
 include("simplemesh.jl")
-include("cartesiangrid.jl")
 include("subcartesiangrid.jl")
-include("rectilineargrid.jl")
 include("geometryset.jl")
 include("fallbacks.jl")
 
