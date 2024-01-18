@@ -14,6 +14,7 @@ Makie.convert_arguments(::Type{<:Viz}, gset::GeometrySet) = (gset,)
 Makie.convert_arguments(::Type{<:Viz}, mesh::SimpleMesh) = (mesh,)
 Makie.convert_arguments(::Type{<:Viz}, grid::Grid) = (grid,)
 Makie.convert_arguments(::Type{<:Viz}, grid::SubCartesianGrid) = (grid,)
+Makie.convert_arguments(::Type{<:Viz}, poly::Polygon{2}) = (poly,)
 
 # vector of geometries for convenience
 Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
