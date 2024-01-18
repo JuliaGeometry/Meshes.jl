@@ -41,7 +41,7 @@ end
 # converts Meshes.Point to GeometryBasics.Point
 asgbpoint(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(getcoords(p))
 
-# returns the line segments for 2D Polygon
+# returns the line segments of the 2D Polygon
 function polysegments(poly)
   rs = rings(poly)
   outer = first(rs)
@@ -61,5 +61,5 @@ function polysegments(poly)
   x, y
 end
 
-# extracts the coordinates from point as tuple
+# extracts point coordinates as tuple
 getcoords(p) = Tuple(coordinates(p))
