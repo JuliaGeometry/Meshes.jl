@@ -97,7 +97,7 @@ function vizgrid3D!(::Type{<:CartesianGrid}, plot)
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
-  # spacing and coordinates of grid
+  # spacing and coordinates
   sp = Makie.@lift spacing($grid)
   xyz = Makie.@lift Meshes.xyz($grid)
 
