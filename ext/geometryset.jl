@@ -108,7 +108,6 @@ function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
   end
 end
 
-# converts Meshes.Polygon to Makie.Polygon
 function asmakie(poly::Polygon)
   rs = rings(poly)
   outer = [asmakie(p) for p in vertices(first(rs))]
@@ -120,5 +119,4 @@ function asmakie(poly::Polygon)
   end
 end
 
-# converts Meshes.Point to Makie.Point
 asmakie(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
