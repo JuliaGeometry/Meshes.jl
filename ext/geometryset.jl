@@ -100,7 +100,7 @@ function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
   # visualize as built-in poly
-  polys = Makie.@lift asgbpoly.(parent($pset))
+  polys = Makie.@lift asmakie.(parent($pset))
   if showfacets[]
     Makie.poly!(plot, polys, color=colorant, strokecolor=facetcolor, strokewidth=segmentsize)
   else
@@ -108,18 +108,17 @@ function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
   end
 end
 
-# converts Meshes.Polygon to GeometryBasics.Polygon
-function asgbpoly(poly)
+# converts Meshes.Polygon to Makie.Polygon
+function asmakie(poly::Polygon)
   rs = rings(poly)
-  outer = first(rs)
-  opts = [asgbpoint(p) for p in vertices(outer)]
+  outer = [asmakie(p) for p in vertices(first(rs))]
   if hasholes(poly)
-    ipts = map(i -> [asgbpoint(p) for p in vertices(rs[i])], 2:length(rs))
-    Makie.Polygon(opts, ipts)
+    inners = map(i -> [asmakie(p) for p in vertices(rs[i])], 2:length(rs))
+    Makie.Polygon(outer, inners)
   else
-    Makie.Polygon(opts)
+    Makie.Polygon(outer)
   end
 end
 
-# converts Meshes.Point to GeometryBasics.Point
-asgbpoint(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
+# converts Meshes.Point to Makie.Point
+asmakie(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
