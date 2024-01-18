@@ -108,6 +108,29 @@ function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
   end
 end
 
+const MultiPolygonSet{Dim,T} = GeometrySet{Dim,T,<:MultiPolygon{Dim,T}}
+
+function Makie.plot!(plot::Viz{<:Tuple{MultiPolygonSet{2}}})
+  mpset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+
+  # visualize as built-in poly
+  polys = Makie.@lift mapreduce(m -> asmakie.(parent(m)), vcat, $mpset)
+  if showfacets[]
+    Makie.poly!(plot, polys, color=colorant, strokecolor=facetcolor, strokewidth=segmentsize)
+  else
+    Makie.poly!(plot, polys, color=colorant)
+  end
+end
+
 function asmakie(poly::Polygon)
   rs = rings(poly)
   outer = [asmakie(p) for p in vertices(first(rs))]
