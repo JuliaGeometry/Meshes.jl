@@ -42,7 +42,6 @@ include("grid.jl")
 include("simplemesh.jl")
 include("subcartesiangrid.jl")
 include("geometryset.jl")
-include("polygon.jl")
 include("fallbacks.jl")
 
 end

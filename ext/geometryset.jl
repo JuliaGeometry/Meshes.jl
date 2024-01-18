@@ -84,3 +84,42 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   # visualize point set
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
+
+const PolygonSet{Dim,T} = GeometrySet{Dim,T,<:Polygon{Dim,T}}
+
+function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
+  pset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+
+  # visualize as built-in poly
+  polys = Makie.@lift asgbpoly.(parent($pset))
+  if showfacets[]
+    Makie.poly!(plot, polys, color=colorant, strokecolor=facetcolor, strokewidth=segmentsize)
+  else
+    Makie.poly!(plot, polys, color=colorant)
+  end
+end
+
+# converts Meshes.Polygon to GeometryBasics.Polygon
+function asgbpoly(poly)
+  rs = rings(poly)
+  outer = first(rs)
+  opts = [asgbpoint(p) for p in vertices(outer)]
+  if hasholes(poly)
+    ipts = map(i -> [asgbpoint(p) for p in vertices(rs[i])], 2:length(rs))
+    Makie.Polygon(opts, ipts)
+  else
+    Makie.Polygon(opts)
+  end
+end
+
+# converts Meshes.Point to GeometryBasics.Point
+asgbpoint(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
