@@ -164,7 +164,7 @@ function gjk!(O::Point{3,T}, points) where T
     AC = C - A
     AO = O - A
     ABCᵀ = AB × AC
-    if ABCᵀ ⋅ AO > 0
+    if ABCᵀ ⋅ AO < 0
       points[1], points[2] = points[2], points[1]
       ABCᵀ = -ABCᵀ
     end
