@@ -15,8 +15,8 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
-  # collect geometries in domain
-  geoms = Makie.@lift collect($gset)
+  # get geometries
+  geoms = Makie.@lift parent($gset)
 
   # retrieve parametric dimension
   ranks = Makie.@lift paramdim.($geoms)
@@ -25,8 +25,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     points = Makie.@lift pointify.($geoms)
     vizmany!(plot, points)
   elseif all(ranks[] .== 1)
-    meshes = Makie.@lift discretize.($geoms)
-    vizmany!(plot, meshes)
+    vizgset1D!(plot, geoms)
   elseif all(ranks[] .== 2)
     vizgset2D!(plot, geoms)
   elseif all(ranks[] .== 3)
@@ -76,12 +75,55 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
-  # collect geometries in domain
-  geoms = Makie.@lift collect($pset)
+  # get geometries and coordinates
+  geoms = Makie.@lift parent($pset)
   coords = Makie.@lift coordinates.($geoms)
 
   # visualize point set
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
+end
+
+function vizgset1D!(plot, geoms)
+  meshes = Makie.@lift discretize.($geoms)
+  vizmany!(plot, meshes)
+end
+
+const RaySet{Dim,T} = GeometrySet{Dim,T,Ray{Dim,T}}
+
+function vizgset1D!(plot::Viz{<:Tuple{RaySet}}, geoms)
+  rset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+
+  # visualize as built-in arrows
+  Dim = embeddim(rset[])
+  comps = Makie.@lift [(coordinates(ray.p)..., ray.v...) for ray in $geoms]
+  if Dim == 1
+    x = Makie.@lift getindex.($comps, 1)
+    u = Makie.@lift getindex.($comps, 2)
+    y = v = Makie.@lift zeros(coordtype($rset), length($rset))
+    Makie.arrows!(plot, x, y, u, v, color=colorant)
+  elseif Dim == 2
+    x = Makie.@lift getindex.($comps, 1)
+    y = Makie.@lift getindex.($comps, 2)
+    u = Makie.@lift getindex.($comps, 3)
+    v = Makie.@lift getindex.($comps, 4)
+    Makie.arrows!(plot, x, y, u, v, color=colorant)
+  elseif Dim == 3
+    x = Makie.@lift getindex.($comps, 1)
+    y = Makie.@lift getindex.($comps, 2)
+    z = Makie.@lift getindex.($comps, 3)
+    u = Makie.@lift getindex.($comps, 4)
+    v = Makie.@lift getindex.($comps, 5)
+    w = Makie.@lift getindex.($comps, 6)
+    Makie.arrows!(plot, x, y, z, u, v, w, color=colorant)
+  else
+    error("not implemented")
+  end
 end
 
 function vizgset2D!(plot, geoms)
