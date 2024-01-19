@@ -235,8 +235,12 @@
     # https://github.com/JuliaGeometry/Meshes.jl/issues/635
     q1 = Quadrangle(P3(4.0, 4.0, 0.0), P3(3.0, 3.0, 2.0), P3(3.0, 1.0, 2.0), P3(4.0, 0.0, 0.0))
     q2 = Quadrangle(P3(3.6, 3.0, 1.0), P3(5.6, 3.0, 1.0), P3(5.6, 1.0, 1.0), P3(3.6, 1.0, 1.0))
-    @test intersects(q1, q2) == false
-    @test intersects(q1, q1) == true
+    q3 = Quadrangle(P3(3.6, 1.0, 1.0), P3(5.6, 1.0, 1.0), P3(5.6, -1.0, 1.0), P3(3.6, -1.0, 1.0))
+    q4 = Quadrangle(P3(2.1, 1.0, 1.0), P3(4.1, 1.0, 1.0), P3(4.1, -1.0, 1.0), P3(2.1, -1.0, 1.0))
+    @test !intersects(q1, q2)
+    @test !intersects(q1, q3)
+    @test intersects(q1, q1)
+    @test intersects(q1, q4)
 
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
