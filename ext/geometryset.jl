@@ -96,34 +96,17 @@ function vizgset1D!(plot::Viz{<:Tuple{RaySet}}, geoms)
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
 
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
-
-  # visualize as built-in arrows
-  Dim = embeddim(rset[])
-  comps = Makie.@lift [(coordinates(ray.p)..., ray.v...) for ray in $geoms]
-  if Dim == 1
-    x = Makie.@lift getindex.($comps, 1)
-    u = Makie.@lift getindex.($comps, 2)
-    y = v = Makie.@lift zeros(coordtype($rset), length($rset))
-    Makie.arrows!(plot, x, y, u, v, color=colorant)
-  elseif Dim == 2
-    x = Makie.@lift getindex.($comps, 1)
-    y = Makie.@lift getindex.($comps, 2)
-    u = Makie.@lift getindex.($comps, 3)
-    v = Makie.@lift getindex.($comps, 4)
-    Makie.arrows!(plot, x, y, u, v, color=colorant)
-  elseif Dim == 3
-    x = Makie.@lift getindex.($comps, 1)
-    y = Makie.@lift getindex.($comps, 2)
-    z = Makie.@lift getindex.($comps, 3)
-    u = Makie.@lift getindex.($comps, 4)
-    v = Makie.@lift getindex.($comps, 5)
-    w = Makie.@lift getindex.($comps, 6)
-    Makie.arrows!(plot, x, y, z, u, v, w, color=colorant)
-  else
+  if embeddim(rset[]) ∉ (2, 3)
     error("not implemented")
   end
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  
+  # visualize as built-in arrows
+  origins = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
+  directions = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
+  Makie.arrows!(plot, origins, directions, color=colorant)
 end
 
 function vizgset2D!(plot, geoms)
@@ -174,3 +157,5 @@ function asmakie(poly::Polygon)
 end
 
 asmakie(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
+
+asmakie(v::Vec{Dim,T}) where {Dim,T} = Makie.Vec{Dim,T}(Tuple(v))
