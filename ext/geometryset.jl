@@ -28,7 +28,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     meshes = Makie.@lift discretize.($geoms)
     vizmany!(plot, meshes)
   elseif all(ranks[] .== 2)
-    vizgsetrank2!(plot, geoms)
+    vizgset2D!(plot, geoms)
   elseif all(ranks[] .== 3)
     meshes = Makie.@lift discretize.(boundary.($geoms))
     vizmany!(plot, meshes)
@@ -84,7 +84,7 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
 
-function vizgsetrank2!(plot, geoms)
+function vizgset2D!(plot, geoms)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes)
 end
@@ -93,7 +93,7 @@ const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
 
 const PolygonLikeSet{Dim,T} = GeometrySet{Dim,T,<:PolygonLike{Dim,T}}
 
-function vizgsetrank2!(plot::Viz{<:Tuple{PolygonLikeSet{2}}}, geoms)
+function vizgset2D!(plot::Viz{<:Tuple{PolygonLikeSet{2}}}, geoms)
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
