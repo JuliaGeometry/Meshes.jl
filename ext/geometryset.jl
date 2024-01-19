@@ -28,8 +28,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     meshes = Makie.@lift discretize.($geoms)
     vizmany!(plot, meshes)
   elseif all(ranks[] .== 2)
-    meshes = Makie.@lift discretize.($geoms)
-    vizmany!(plot, meshes)
+    vizgsetrank2!(plot, geoms)
   elseif all(ranks[] .== 3)
     meshes = Makie.@lift discretize.(boundary.($geoms))
     vizmany!(plot, meshes)
@@ -85,10 +84,16 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
 
-const PolygonSet{Dim,T} = GeometrySet{Dim,T,<:Polygon{Dim,T}}
+function vizgsetrank2!(plot, geoms)
+  meshes = Makie.@lift discretize.($geoms)
+  vizmany!(plot, meshes)
+end
 
-function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
-  pset = plot[:object]
+const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
+
+const PolygonLikeSet{Dim,T} = GeometrySet{Dim,T,<:PolygonLike{Dim,T}}
+
+function vizgsetrank2!(plot::Viz{<:Tuple{PolygonLikeSet{2}}}, geoms)
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
@@ -99,37 +104,21 @@ function Makie.plot!(plot::Viz{<:Tuple{PolygonSet{2}}})
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
+  # repeat colors if necessary
+  colors = Makie.@lift mayberepeat($colorant, $geoms)
+
   # visualize as built-in poly
-  polys = Makie.@lift asmakie.(parent($pset))
+  polys = Makie.@lift asmakie($geoms)
   if showfacets[]
-    Makie.poly!(plot, polys, color=colorant, strokecolor=facetcolor, strokewidth=segmentsize)
+    Makie.poly!(plot, polys, color=colors, strokecolor=facetcolor, strokewidth=segmentsize)
   else
-    Makie.poly!(plot, polys, color=colorant)
+    Makie.poly!(plot, polys, color=colors)
   end
 end
 
-const MultiPolygonSet{Dim,T} = GeometrySet{Dim,T,<:MultiPolygon{Dim,T}}
+asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
 
-function Makie.plot!(plot::Viz{<:Tuple{MultiPolygonSet{2}}})
-  mpset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
-  segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
-
-  # visualize as built-in poly
-  polys = Makie.@lift mapreduce(m -> asmakie.(parent(m)), vcat, $mpset)
-  if showfacets[]
-    Makie.poly!(plot, polys, color=colorant, strokecolor=facetcolor, strokewidth=segmentsize)
-  else
-    Makie.poly!(plot, polys, color=colorant)
-  end
-end
+asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
 
 function asmakie(poly::Polygon)
   rs = rings(poly)
