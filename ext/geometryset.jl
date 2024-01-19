@@ -15,8 +15,8 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
-  # collect geometries in domain
-  geoms = Makie.@lift collect($gset)
+  # get geometries
+  geoms = Makie.@lift parent($gset)
 
   # retrieve parametric dimension
   ranks = Makie.@lift paramdim.($geoms)
@@ -25,8 +25,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     points = Makie.@lift pointify.($geoms)
     vizmany!(plot, points)
   elseif all(ranks[] .== 1)
-    meshes = Makie.@lift discretize.($geoms)
-    vizmany!(plot, meshes)
+    vizgset1D!(plot, geoms)
   elseif all(ranks[] .== 2)
     vizgset2D!(plot, geoms)
   elseif all(ranks[] .== 3)
@@ -76,12 +75,38 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
-  # collect geometries in domain
-  geoms = Makie.@lift collect($pset)
+  # get geometries and coordinates
+  geoms = Makie.@lift parent($pset)
   coords = Makie.@lift coordinates.($geoms)
 
   # visualize point set
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
+end
+
+function vizgset1D!(plot, geoms)
+  meshes = Makie.@lift discretize.($geoms)
+  vizmany!(plot, meshes)
+end
+
+const RaySet{Dim,T} = GeometrySet{Dim,T,Ray{Dim,T}}
+
+function vizgset1D!(plot::Viz{<:Tuple{RaySet}}, geoms)
+  rset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+
+  if embeddim(rset[]) ∉ (2, 3)
+    error("not implemented")
+  end
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  
+  # visualize as built-in arrows
+  origins = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
+  directions = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
+  Makie.arrows!(plot, origins, directions, color=colorant)
 end
 
 function vizgset2D!(plot, geoms)
@@ -132,3 +157,5 @@ function asmakie(poly::Polygon)
 end
 
 asmakie(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
+
+asmakie(v::Vec{Dim,T}) where {Dim,T} = Makie.Vec{Dim,T}(Tuple(v))
