@@ -26,8 +26,8 @@ center(s::Segment{Dim,T}) where {Dim,T} = s(T(0.5))
 Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
-function (s::Segment)(t)
-  if t < 0 || t > 1
+function (s::Segment{Dim,T})(t) where {Dim,T}
+  if t < zero(T) || t > one(T)
     throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
   end
   a, b = s.vertices
