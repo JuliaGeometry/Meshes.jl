@@ -241,6 +241,12 @@
     @test !intersects(q1, q3)
     @test intersects(q1, q1)
     @test intersects(q1, q4)
+  
+    h1 = Tetrahedron(P3(1, 1, 0), P3(4, 4, 0), P3(2.5, 2.5, 1.5), P3(1, 3, 2))
+    h2 = Tetrahedron(P3(-1.0, 2.0, 1.0), P3(2.0, 1.0, 1.0), P3(-1.0, 4.0, 0.0), P3(0.5, 2.5, 1.5))
+    h3 = Tetrahedron(P3(-1.3, 2.0, 1.0), P3(1.7, 1.0, 1.0), P3(-1.3, 4.0, 0.0), P3(0.2, 2.5, 1.5))
+    @test intersects(h1,h2)
+    @test !intersects(h1,h3)
 
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
