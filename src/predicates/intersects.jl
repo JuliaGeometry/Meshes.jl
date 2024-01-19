@@ -107,12 +107,12 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
 end
 
 """
-    gjk!(origin::Point{Dim,T}, points) where {Dim,T}
+    gjk!(O::Point{Dim,T}, points) where {Dim,T}
 
 Perform one iteration of the GJK algorithm.
 
 It returns `nothing` if the `Dim`-simplex represented by `points`
-contains the origin point. Otherwise, it returns a vector with
+contains the origin point `O`. Otherwise, it returns a vector with
 the direction for searching the next point.
 
 If the simplex is complete, it removes one point from the set to
@@ -122,19 +122,19 @@ See also [`intersects`](@ref).
 """
 function gjk! end
 
-function gjk!(origin::Point{2,T}, points) where T
+function gjk!(O::Point{2,T}, points) where T
   # line segment case
   if length(points) == 2
     B, A = points
     AB = B - A
-    AO = origin - A
+    AO = O - A
     d = perpendicular(AB, AO)
   else
     # triangle simplex case
     C, B, A = points
     AB = B - A
     AC = C - A
-    AO = origin - A
+    AO = O - A
     ABᵀ = -perpendicular(AB, AC)
     ACᵀ = -perpendicular(AC, AB)
     if ABᵀ ⋅ AO > zero(T)
@@ -150,19 +150,19 @@ function gjk!(origin::Point{2,T}, points) where T
   d
 end
 
-function gjk!(origin::Point{3,T}, points) where T
+function gjk!(O::Point{3,T}, points) where T
   # line segment case
   if length(points) == 2
     B, A = points
     AB = B - A
-    AO = origin - A
+    AO = O - A
     d = AB × AO × AB
   elseif length(points) == 3
     # triangle case
     C, B, A = points
     AB = B - A
     AC = C - A
-    AO = origin - A
+    AO = O - A
     ABCᵀ = AB × AC
     if ABCᵀ ⋅ AO > 0
       points[1], points[2] = points[2], points[1]
@@ -185,7 +185,7 @@ function gjk!(origin::Point{3,T}, points) where T
     AB = B - A
     AC = C - A
     AD = D - A
-    AO = origin - A
+    AO = O - A
     ABCᵀ = AB × AC
     ADBᵀ = AD × AB
     ACDᵀ = AC × AD
@@ -245,9 +245,9 @@ intersects(m::Multi, c::Chain) = intersects(c, m)
 
 # support point in Minkowski difference
 function minkowskipoint(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}, d) where {Dim,T}
-  n = Vec{Dim,T}(d[1:Dim])
+  n = Vec{Dim,T}(d)
   v = supportfun(g₁, n) - supportfun(g₂, -n)
-  Point(ntuple(i -> i ≤ Dim ? v[i] : zero(T), Dim))
+  Point(v)
 end
 
 # origin of coordinate system
@@ -262,3 +262,5 @@ function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where T
   r = a × b × a
   Vec(r[1], r[2])
 end
+
+perpendicular(v::Vec{3,T}, d::Vec{3,T}) where T = a × b × a
