@@ -102,7 +102,7 @@ function vizgset1D!(plot::Viz{<:Tuple{RaySet}}, geoms)
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
-  
+
   # visualize as built-in arrows
   origins = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   directions = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
