@@ -121,7 +121,7 @@ See also [`intersects`](@ref).
 """
 function gjk! end
 
-function gjk!(O::Point{2,T}, points) where T
+function gjk!(O::Point{2,T}, points) where {T}
   # line segment case
   if length(points) == 2
     B, A = points
@@ -149,7 +149,7 @@ function gjk!(O::Point{2,T}, points) where T
   d
 end
 
-function gjk!(O::Point{3,T}, points) where T
+function gjk!(O::Point{3,T}, points) where {T}
   # line segment case
   if length(points) == 2
     B, A = points
@@ -251,7 +251,7 @@ minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
 # find a vector perpendicular to `v` using vector `d` as some direction hint
 # expect that `perpendicular(v, d) ⋅ d ≥ 0` or, in other words,
 # that the angle between the result vector and `d` is less or equal than 90º
-function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where T
+function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where {T}
   a = Vec(v[1], v[2], zero(T))
   b = Vec(d[1], d[2], zero(T))
   r = a × b × a
