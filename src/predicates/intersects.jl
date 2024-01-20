@@ -93,7 +93,6 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
 
   # move towards the origin
   d = O - P
-
   while true
     P = minkowskipoint(g₁, g₂, d)
     if (P - O) ⋅ d < zero(T)
