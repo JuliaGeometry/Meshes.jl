@@ -155,7 +155,7 @@ function gjk!(O::Point{3,T}, points) where T
     B, A = points
     AB = B - A
     AO = O - A
-    d = AB × AO × AB
+    d = perpendicular(AB, AO)
   elseif length(points) == 3
     # triangle case
     C, B, A = points
@@ -258,4 +258,4 @@ function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where T
   Vec(r[1], r[2])
 end
 
-perpendicular(v::Vec{3}, d::Vec{3}) = a × b × a
+perpendicular(v::Vec{3}, d::Vec{3}) = v × d × v
