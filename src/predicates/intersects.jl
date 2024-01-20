@@ -243,9 +243,8 @@ intersects(m::Multi, c::Chain) = intersects(c, m)
 # ------------------
 
 # support point in Minkowski difference
-function minkowskipoint(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}, d) where {Dim,T}
-  n = Vec{Dim,T}(d)
-  v = supportfun(g₁, n) - supportfun(g₂, -n)
+function minkowskipoint(g₁::Geometry, g₂::Geometry, d)
+  v = supportfun(g₁, d) - supportfun(g₂, -d)
   Point(v)
 end
 
