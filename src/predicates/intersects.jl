@@ -258,4 +258,4 @@ function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where T
   Vec(r[1], r[2])
 end
 
-perpendicular(v::Vec{3,T}, d::Vec{3,T}) where T = a × b × a
+perpendicular(v::Vec{3}, d::Vec{3}) = a × b × a
