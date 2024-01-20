@@ -100,30 +100,108 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
     end
     push!(points, P)
 
-    # line segment case
-    if length(points) == 2
-      B, A = points
-      AB = B - A
-      AO = O - A
-      d = AB × AO × AB
-    else # simplex case
-      C, B, A = points
-      AB = B - A
-      AC = C - A
-      AO = O - A
-      ABᵀ = AC × AB × AB
-      ACᵀ = AB × AC × AC
-      if ABᵀ ⋅ AO > zero(T)
-        popat!(points, 1) # pop C
-        d = ABᵀ
-      elseif ACᵀ ⋅ AO > zero(T)
-        popat!(points, 2) # pop B
-        d = ACᵀ
-      else
-        return true
-      end
+    d = gjk!(O, points)
+    isnothing(d) && return true
+  end
+end
+
+"""
+    gjk!(O::Point{Dim,T}, points) where {Dim,T}
+
+Perform one iteration of the GJK algorithm.
+
+It returns `nothing` if the `Dim`-simplex represented by `points`
+contains the origin point `O`. Otherwise, it returns a vector with
+the direction for searching the next point.
+
+If the simplex is complete, it removes one point from the set to
+make room for the next point. A complete simplex must have `Dim + 1` points. 
+
+See also [`intersects`](@ref).
+"""
+function gjk! end
+
+function gjk!(O::Point{2,T}, points) where T
+  # line segment case
+  if length(points) == 2
+    B, A = points
+    AB = B - A
+    AO = O - A
+    d = perpendicular(AB, AO)
+  else
+    # triangle simplex case
+    C, B, A = points
+    AB = B - A
+    AC = C - A
+    AO = O - A
+    ABᵀ = -perpendicular(AB, AC)
+    ACᵀ = -perpendicular(AC, AB)
+    if ABᵀ ⋅ AO > zero(T)
+      popat!(points, 1) # pop C
+      d = ABᵀ
+    elseif ACᵀ ⋅ AO > zero(T)
+      popat!(points, 2) # pop B
+      d = ACᵀ
+    else
+      d = nothing
     end
   end
+  d
+end
+
+function gjk!(O::Point{3,T}, points) where T
+  # line segment case
+  if length(points) == 2
+    B, A = points
+    AB = B - A
+    AO = O - A
+    d = perpendicular(AB, AO)
+  elseif length(points) == 3
+    # triangle case
+    C, B, A = points
+    AB = B - A
+    AC = C - A
+    AO = O - A
+    ABCᵀ = AB × AC
+    if ABCᵀ ⋅ AO < 0
+      points[1], points[2] = points[2], points[1]
+      ABCᵀ = -ABCᵀ
+    end
+    d = ABCᵀ
+  else
+    # tetrahedron simplex case
+    #      A
+    #    / | \
+    #   /  D  \
+    #  / /   \ \
+    # C ------- B
+    # Simplex faces (with normal vectors pointing away from the centroid):
+    # ABC, ADB, BDC, ACD
+    # (AXY = AX × AY)
+    # ACB normal vector points to vertex D
+    # ABC normal vector points in the opposite direction
+    D, C, B, A = points
+    AB = B - A
+    AC = C - A
+    AD = D - A
+    AO = O - A
+    ABCᵀ = AB × AC
+    ADBᵀ = AD × AB
+    ACDᵀ = AC × AD
+    if ABCᵀ ⋅ AO > zero(T)
+      popat!(points, 1) # pop D
+      d = ABCᵀ
+    elseif ADBᵀ ⋅ AO > zero(T)
+      popat!(points, 2) # pop C
+      d = ADBᵀ
+    elseif ACDᵀ ⋅ AO > zero(T)
+      popat!(points, 3) # pop B
+      d = ACDᵀ
+    else
+      d = nothing
+    end
+  end
+  d
 end
 
 intersects(m::Multi, g::Geometry) = intersects(parent(m), [g])
@@ -165,11 +243,19 @@ intersects(m::Multi, c::Chain) = intersects(c, m)
 # ------------------
 
 # support point in Minkowski difference
-function minkowskipoint(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}, d) where {Dim,T}
-  n = Vec{Dim,T}(d[1:Dim])
-  v = supportfun(g₁, n) - supportfun(g₂, -n)
-  Point(ntuple(i -> i ≤ Dim ? v[i] : zero(T), max(Dim, 3)))
-end
+minkowskipoint(g₁::Geometry, g₂::Geometry, d) = Point(supportfun(g₁, d) - supportfun(g₂, -d))
 
 # origin of coordinate system
-minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), max(Dim, 3)))
+minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
+
+# find a vector perpendicular to `v` using vector `d` as some direction hint
+# expect that `perpendicular(v, d) ⋅ d ≥ 0` or, in other words,
+# that the angle between the result vector and `d` is less or equal than 90º
+function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where T
+  a = Vec(v[1], v[2], zero(T))
+  b = Vec(d[1], d[2], zero(T))
+  r = a × b × a
+  Vec(r[1], r[2])
+end
+
+perpendicular(v::Vec{3}, d::Vec{3}) = v × d × v

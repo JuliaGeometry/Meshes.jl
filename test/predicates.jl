@@ -240,6 +240,22 @@
     @test intersects(r, s1)
     @test !intersects(r, s2)
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/635
+    q1 = Quadrangle(P3(4.0, 4.0, 0.0), P3(3.0, 3.0, 2.0), P3(3.0, 1.0, 2.0), P3(4.0, 0.0, 0.0))
+    q2 = Quadrangle(P3(3.6, 3.0, 1.0), P3(5.6, 3.0, 1.0), P3(5.6, 1.0, 1.0), P3(3.6, 1.0, 1.0))
+    q3 = Quadrangle(P3(3.6, 1.0, 1.0), P3(5.6, 1.0, 1.0), P3(5.6, -1.0, 1.0), P3(3.6, -1.0, 1.0))
+    q4 = Quadrangle(P3(2.1, 1.0, 1.0), P3(4.1, 1.0, 1.0), P3(4.1, -1.0, 1.0), P3(2.1, -1.0, 1.0))
+    @test !intersects(q1, q2)
+    @test !intersects(q1, q3)
+    @test intersects(q1, q1)
+    @test intersects(q1, q4)
+  
+    h1 = Tetrahedron(P3(1, 1, 0), P3(4, 4, 0), P3(2.5, 2.5, 1.5), P3(1, 3, 2))
+    h2 = Tetrahedron(P3(-1.0, 2.0, 1.0), P3(2.0, 1.0, 1.0), P3(-1.0, 4.0, 0.0), P3(0.5, 2.5, 1.5))
+    h3 = Tetrahedron(P3(-1.3, 2.0, 1.0), P3(1.7, 1.0, 1.0), P3(-1.3, 4.0, 0.0), P3(0.2, 2.5, 1.5))
+    @test intersects(h1,h2)
+    @test !intersects(h1,h3)
+
     outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
     hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
     hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
