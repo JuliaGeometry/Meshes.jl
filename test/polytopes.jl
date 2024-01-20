@@ -54,6 +54,18 @@
     @test center(s) == P3(0.5, 0.5, 0.5)
     @test coordtype(center(s)) == T
 
+    # using Unitful.jl types
+    using Unitful: m
+    x1 = T(0)m
+    x2 = T(1)m
+    TT = typeof(x1)
+    s = Segment(Point{3,TT}(x1, x1, x1), Point{3,TT}(x2, x2, x2))
+    @test boundary(s) == Multi([Point{3,TT}(x1, x1, x1), Point{3,TT}(x2, x2, x2)])
+    @test perimeter(s) == 0m
+    x_mid = T(0.5)m
+    @test center(s) == Point{3,TT}(x_mid, x_mid, x_mid)
+    @test coordtype(center(s)) == typeof(T(0)m)
+
     s = rand(Segment{2,T})
     @test s isa Segment
     @test embeddim(s) == 2

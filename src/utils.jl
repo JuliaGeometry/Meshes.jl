@@ -77,7 +77,7 @@ end
 """
     intersectparameters(a, b, c, d)
 
-Compute the parameters `λ₁` and `λ₂` of the lines 
+Compute the parameters `λ₁` and `λ₂` of the lines
 `a + λ₁ ⋅ v⃗₁`, with `v⃗₁ = b - a` and
 `c + λ₂ ⋅ v⃗₂`, with `v⃗₂ = d - c` spanned by the input
 points `a`, `b` resp. `c`, `d` such that to yield line
@@ -103,7 +103,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
   # the zero entries of the diagonal of R
   _, R = qr([A y])
 
-  # for Dim == 2 one has to check the L1 norm of rows as 
+  # for Dim == 2 one has to check the L1 norm of rows as
   # there are more columns than rows
   τ = atol(T)
   rₐ = sum(>(τ), sum(abs, R, dims=2))
@@ -121,3 +121,7 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   λ₁, λ₂, r, rₐ
 end
+
+get_precision(x) = typeof(ustrip(x))
+get_precision(p::Point) = get_precision(p.coords[1])
+get_precision(s::Segment) = get_precision(first(s.vertices))
