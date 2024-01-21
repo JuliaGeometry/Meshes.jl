@@ -30,7 +30,7 @@ end
 Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
-function (s::Segment{Dim,T})(t) where {Dim,T}
+function (s::Segment)(t)
   if t < 0 || t > 1
     throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
   end
