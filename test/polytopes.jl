@@ -64,7 +64,7 @@
     @test perimeter(s) == 0m
     x_mid = T(0.5)m
     @test center(s) == Point{3,TT}(x_mid, x_mid, x_mid)
-    @test coordtype(center(s)) == typeof(T(0)m)
+    @test coordtype(center(s)) == TT
 
     s = rand(Segment{2,T})
     @test s isa Segment

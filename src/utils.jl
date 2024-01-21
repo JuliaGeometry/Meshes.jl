@@ -123,5 +123,5 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 end
 
 get_precision(x) = typeof(ustrip(x))
-get_precision(p::Point) = get_precision(p.coords[1])
+get_precision(p::Point) = get_precision(first(coordinates.(p)))
 get_precision(s::Segment) = get_precision(first(s.vertices))
