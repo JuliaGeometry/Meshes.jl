@@ -4,22 +4,87 @@
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   grid = plot[:object][]
-  T = typeof(grid)
   Dim = embeddim(grid)
   if Dim == 1
-    vizgrid1D!(T, plot)
+    vizgrid1D!(plot)
   elseif Dim == 2
-    vizgrid2D!(T, plot)
+    vizgrid2D!(plot)
   elseif Dim == 3
-    vizgrid3D!(T, plot)
+    vizgrid3D!(plot)
   end
 end
 
-vizgrid1D!(::Type{<:Grid}, plot) = vizmesh1D!(plot)
+vizgrid1D!(plot) = vizmesh1D!(plot)
 
-vizgrid2D!(::Type{<:Grid}, plot) = vizmesh2D!(plot)
+vizgrid2D!(plot) = vizmesh2D!(plot)
 
-function vizgrid2D!(::Type{<:Union{CartesianGrid,RectilinearGrid}}, plot)
+function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
+  grid = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+
+  # number of vertices and colors
+  nv = Makie.@lift nvertices($grid)
+  nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+
+  # origin, spacing and size of grid
+  or = Makie.@lift coordinates(minimum($grid))
+  sp = Makie.@lift spacing($grid)
+  sz = Makie.@lift size($grid)
+
+  if nc[] == 1
+    # visualize bounding box with a single
+    # color for maximum performance
+    bbox = Makie.@lift boundingbox($grid)
+    viz!(plot, bbox, color=colorant)
+
+    if showfacets[]
+      tup = Makie.@lift xysegments(Meshes.xyz($grid)...)
+      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+      Makie.lines!(plot, x, y, color=facetcolor, linewidth=segmentsize)
+    end
+  else
+    if nc[] == nv[]
+      # visualize as built-in image with interpolation
+      C = Makie.@lift reshape($colorant, $sz .+ 1)
+      Makie.image!(plot, C, interpolate=true)
+    else
+      # visualize as built-in image without interpolation
+      C = Makie.@lift reshape($colorant, $sz)
+      Makie.image!(plot, C, interpolate=false)
+    end
+
+    if showfacets[]
+      tup = Makie.@lift xysegments(0:$sz[1], 0:$sz[2])
+      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+      Makie.lines!(plot, x, y, color=facetcolor, linewidth=segmentsize)
+    end
+
+    # adjust spacing and origin
+    spx, spy = sp[]
+    orx, ory = or[]
+    Makie.scale!(plot, spx, spy)
+    Makie.translate!(plot, orx, ory)
+  end
+end
+
+# defining a Makie.data_limits method is necessary because 
+# Makie.scale and Makie.translate don't adjust axis limits automatically
+function Makie.data_limits(plot::Viz{<:Tuple{CartesianGrid{2}}})
+  grid = plot[:object][]
+  pmin = Makie.Point3f(coordinates(minimum(grid))..., 0)
+  pmax = Makie.Point3f(coordinates(maximum(grid))..., 0)
+  Makie.limits_from_transformed_points([pmin, pmax])
+end
+
+function vizgrid2D!(plot::Viz{<:Tuple{RectilinearGrid}})
   grid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -65,7 +130,7 @@ function vizgrid2D!(::Type{<:Union{CartesianGrid,RectilinearGrid}}, plot)
   end
 end
 
-function vizgrid3D!(::Type{<:Grid}, plot)
+function vizgrid3D!(plot)
   grid = plot[:object]
   color = plot[:color]
 
@@ -80,7 +145,7 @@ function vizgrid3D!(::Type{<:Grid}, plot)
   end
 end
 
-function vizgrid3D!(::Type{<:CartesianGrid}, plot)
+function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
   # retrieve parameters
   grid = plot[:object]
   color = plot[:color]
