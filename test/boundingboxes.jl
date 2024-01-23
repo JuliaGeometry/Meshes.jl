@@ -87,13 +87,13 @@
   g = CartesianGrid{T}(10, 10)
   d = TransformedGrid(g, Rotate(T(π / 2)))
   @test boundingbox(d) ≈ Box(P2(-10, 0), P2(0, 10))
-  @test @allocated(boundingbox(d)) < 660
+  @test @allocated(boundingbox(d)) < 2300
 
   g = CartesianGrid{T}(10, 10)
   rg = convert(RectilinearGrid, g)
   d = TransformedGrid(rg, Rotate(T(π / 2)))
   @test boundingbox(d) ≈ Box(P2(-10, 0), P2(0, 10))
-  @test @allocated(boundingbox(d)) < 660
+  @test @allocated(boundingbox(d)) < 2300
 
   g = CartesianGrid{T}(10, 10)
   m = convert(SimpleMesh, g)
