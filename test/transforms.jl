@@ -3,6 +3,9 @@
     @test TB.isrevertible(Rotate)
     @test TB.isinvertible(Rotate)
     @test TB.inverse(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
+    rot = Angle2d(T(π / 2))
+    f = Rotate(rot)
+    @test TB.parameters(f) == (; rot)
 
     # ----
     # VEC
@@ -201,6 +204,9 @@
     @test TB.isrevertible(Translate)
     @test TB.isinvertible(Translate)
     @test TB.inverse(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
+    offsets = (T(1), T(2))
+    f = Translate(offsets)
+    @test TB.parameters(f) == (; offsets)
 
     # ----
     # VEC
@@ -363,6 +369,9 @@
     f = Affine(T[6 3; 10 5], T[1, 1])
     @test !TB.isrevertible(f)
     @test !TB.isinvertible(f)
+    A, b = Angle2d(T(π / 2)), T[1, 1]
+    f = Affine(A, b)
+    @test TB.parameters(f) == (; A, b)
 
     # ----
     # VEC
@@ -529,6 +538,10 @@
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
     @test TB.inverse(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
+    factors = (T(1), T(2))
+    f = Stretch(factors)
+    @test TB.parameters(f) == (; factors)
+
 
     # ----
     # VEC
@@ -677,6 +690,9 @@
     @test TB.isrevertible(Expand)
     @test TB.isinvertible(Expand)
     @test TB.inverse(Expand(T(1), T(2))) == Expand(T(1), T(1 / 2))
+    factors = (T(1), T(2))
+    f = Expand(factors)
+    @test TB.parameters(f) == (; factors)
 
     # ----
     # VEC
@@ -935,6 +951,10 @@
   end
 
   @testset "Bridge" begin
+    δ = T(0.01)
+    f = Bridge(δ)
+    @test TB.parameters(f) == (; δ)
+
     # https://github.com/JuliaGeometry/Meshes.jl/issues/566
     outer = Ring(P2(6, 4), P2(6, 7), P2(1, 6), P2(1, 1), P2(5, 2))
     inner₁ = Ring(P2(3, 3), P2(3, 4), P2(4, 3))
@@ -1002,6 +1022,10 @@
   end
 
   @testset "Smoothing" begin
+    n, λ, μ = 30, T(0.5), T(0)
+    f = LambdaMuSmoothing(n, λ, μ)
+    @test TB.parameters(f) == (; n, λ, μ)
+
     # smoothing doesn't change the topology
     trans = LaplaceSmoothing(30)
     @test TB.isrevertible(trans)

@@ -33,6 +33,7 @@ import NearestNeighbors: MinkowskiMetric
 import TransformsBase: Transform, →
 import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
+import TransformsBase: parameters
 
 # IO utils
 include("ioutils.jl")

@@ -32,6 +32,8 @@ function Affine(A::AbstractMatrix, b::AbstractVector)
   Affine(_assmatrix(Dim, A), _assvector(Dim, b))
 end
 
+parameters(t::Affine) = (A=t.A, b=t.b)
+
 isrevertible(t::Affine) = isinvertible(t)
 
 function isinvertible(t::Affine)

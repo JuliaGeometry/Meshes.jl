@@ -28,6 +28,8 @@ Expand(factors::NTuple{Dim,T}) where {Dim,T} = Expand{Dim,T}(factors)
 
 Expand(factors...) = Expand(factors)
 
+parameters(t::Expand) = (; factors=t.factors)
+
 isrevertible(::Type{<:Expand}) = true
 
 isinvertible(::Type{<:Expand}) = true
