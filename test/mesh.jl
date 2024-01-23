@@ -638,6 +638,9 @@
     sgrid = convert(StructuredGrid, grid)
     mesh = convert(SimpleMesh, grid)
     trans = Identity()
+    tmesh = TransformedMesh(mesh, trans)
+    @test parent(tmesh) === mesh
+    @test Meshes.transform(tmesh) === trans
     @test TransformedMesh(grid, trans) == grid
     @test TransformedMesh(rgrid, trans) == rgrid
     @test TransformedMesh(sgrid, trans) == sgrid
