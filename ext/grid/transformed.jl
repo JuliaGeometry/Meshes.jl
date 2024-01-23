@@ -25,15 +25,8 @@ end
 
 function Makie.data_limits(plot::Viz{<:Tuple{RotatedGrid{2}}})
   tgrid = plot[:object][]
-  grid = parent(tgrid)
-  trans = Meshes.transform(tgrid)
-  bbox = _bbox(grid, trans)
+  bbox = boundingbox(tgrid)
   pmin = Makie.Point3f(coordinates(minimum(bbox))..., 0)
   pmax = Makie.Point3f(coordinates(maximum(bbox))..., 0)
   Makie.limits_from_transformed_points([pmin, pmax])
-end
-
-function _bbox(grid, trans)
-  q = convert(Quadrangle, boundingbox(grid))
-  boundingbox(trans(q))
 end
