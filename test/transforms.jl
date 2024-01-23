@@ -542,7 +542,6 @@
     f = Stretch(factors)
     @test TB.parameters(f) == (; factors)
 
-
     # ----
     # VEC
     # ----
