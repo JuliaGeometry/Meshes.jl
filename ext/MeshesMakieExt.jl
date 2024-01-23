@@ -5,10 +5,13 @@
 module MeshesMakieExt
 
 using Meshes
+using Rotations
 
 using Makie: cgrad
 using Makie: coloralpha
 using Makie.Colors: Colorant
+
+import TransformsBase as TB
 
 import Meshes: viz, viz!
 import Meshes: ascolors
