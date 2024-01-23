@@ -55,7 +55,15 @@ end
 
 boundingbox(t::Torus) = _pboxes(pointify(t))
 
-boundingbox(g::Grid) = Box(extrema(g)...)
+boundingbox(g::CartesianGrid) = Box(extrema(g)...)
+
+boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
+
+boundingbox(g::TransformedGrid{Dim,T,<:CartesianGrid{Dim,T}}) where {Dim,T} =
+  boundingbox(parent(g)) |> transform(g) |> boundingbox
+
+boundingbox(g::TransformedGrid{Dim,T,<:RectilinearGrid{Dim,T}}) where {Dim,T} =
+  boundingbox(parent(g)) |> transform(g) |> boundingbox
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
 
