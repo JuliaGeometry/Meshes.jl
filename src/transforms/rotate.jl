@@ -51,6 +51,8 @@ Rotate(π / 2)
 """
 Rotate(θ) = Rotate(Angle2d(θ))
 
+parameters(t::Rotate) = (; rot=t.rot)
+
 isrevertible(::Type{<:Rotate}) = true
 
 isinvertible(::Type{<:Rotate}) = true

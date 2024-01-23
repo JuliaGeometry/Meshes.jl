@@ -14,6 +14,8 @@ end
 
 Translate(offsets...) = Translate(offsets)
 
+parameters(t::Translate) = (; offsets=t.offsets)
+
 isrevertible(::Type{<:Translate}) = true
 
 isinvertible(::Type{<:Translate}) = true
