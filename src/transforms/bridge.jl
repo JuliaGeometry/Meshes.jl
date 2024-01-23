@@ -19,6 +19,8 @@ end
 
 Bridge() = Bridge(0)
 
+parameters(t::Bridge) = (; δ=t.δ)
+
 function apply(transform::Bridge, poly::PolyArea{Dim,T}) where {Dim,T}
   # sort rings lexicographically
   rpoly, rinds = apply(Repair{9}(), poly)

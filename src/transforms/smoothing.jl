@@ -20,6 +20,8 @@ struct LambdaMuSmoothing{T} <: GeometricTransform
   μ::T
 end
 
+parameters(t::LambdaMuSmoothing) = (n=t.n, λ=t.λ, μ=t.μ)
+
 isrevertible(::Type{<:LambdaMuSmoothing}) = true
 
 function apply(transform::LambdaMuSmoothing, mesh::Mesh)

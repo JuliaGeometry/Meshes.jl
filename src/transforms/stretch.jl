@@ -28,6 +28,8 @@ Stretch(factors::NTuple{Dim,T}) where {Dim,T} = Stretch{Dim,T}(factors)
 
 Stretch(factors...) = Stretch(factors)
 
+parameters(t::Stretch) = (; factors=t.factors)
+
 isrevertible(::Type{<:Stretch}) = true
 
 isinvertible(::Type{<:Stretch}) = true
