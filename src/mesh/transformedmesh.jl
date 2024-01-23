@@ -15,6 +15,10 @@ end
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
+Base.parent(m::TransformedMesh) = m.mesh
+
+transform(m::TransformedMesh) = m.transform
+
 topology(m::TransformedMesh) = topology(m.mesh)
 
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
