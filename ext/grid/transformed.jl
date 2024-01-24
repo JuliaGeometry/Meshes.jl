@@ -4,8 +4,7 @@
 
 isimplemented(::TB.Transform) = false
 isimplemented(::Rotate{<:Angle2d}) = true
-isimplemented(::Translate{2}) = true
-isimplemented(::Translate{3}) = true
+isimplemented(::Translate) = true
 
 vizgrid2D!(plot::Viz{<:Tuple{TransformedGrid}}) = transformedgrid!(plot, vizmesh2D!)
 
