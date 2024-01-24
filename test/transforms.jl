@@ -957,7 +957,7 @@
   end
 
   @testset "Bridge" begin
-    @test !isaffine(StdCoords)
+    @test !isaffine(Bridge)
     δ = T(0.01)
     f = Bridge(δ)
     @test TB.parameters(f) == (; δ)
