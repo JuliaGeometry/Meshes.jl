@@ -25,7 +25,11 @@ end
 
 const TranslatedGrid{Dim,T} = TransformedGrid{Dim,T,G,TR} where {G,TR<:Translate{Dim}}
 
-function vizgrid2D!(plot::Viz{<:Tuple{TranslatedGrid}})
+vizgrid2D!(plot::Viz{<:Tuple{TranslatedGrid}}) = translatedgrid!(plot)
+
+vizgrid3D!(plot::Viz{<:Tuple{TranslatedGrid}}) = translatedgrid!(plot)
+
+function translatedgrid!(plot)
   tgrid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -40,25 +44,5 @@ function vizgrid2D!(plot::Viz{<:Tuple{TranslatedGrid}})
 
   # plot and translate the grid
   viz!(plot, grid; color, alpha, colorscheme, segmentsize, showfacets, facetcolor)
-  o₁, o₂ = offsets[]
-  Makie.translate!(plot, o₁, o₂)
-end
-
-function vizgrid3D!(plot::Viz{<:Tuple{TranslatedGrid}})
-  tgrid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
-  segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
-
-  grid = Makie.@lift parent($tgrid)
-  trans = Makie.@lift Meshes.transform($tgrid)
-  offsets = Makie.@lift first(TB.parameters($trans))
-
-  # plot and translate the grid
-  viz!(plot, grid; color, alpha, colorscheme, segmentsize, showfacets, facetcolor)
-  o₁, o₂, o₃ = offsets[]
-  Makie.translate!(plot, o₁, o₂, o₃)
+  Makie.translate!(plot, offsets[]...)
 end
