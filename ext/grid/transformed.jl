@@ -3,6 +3,8 @@
 # ------------------------------------------------------------------
 
 isoptimized(::TB.Transform) = false
+isoptimized(::TB.Identity) = true
+isoptimized(t::TB.SequentialTransform) = all(isoptimized, t)
 isoptimized(::Rotate{<:Angle2d}) = true
 isoptimized(::Translate) = true
 
@@ -27,6 +29,10 @@ function transformedgrid!(plot, fallback)
     fallback(tgrid)
   end
 end
+
+makietransform!(plot, trans::TB.Identity) = nothing
+
+makietransform!(plot, trans::TB.SequentialTransform) = foreach(t -> makietransform!(plot, t), trans)
 
 function makietransform!(plot, trans::Rotate{<:Angle2d})
   rot = first(TB.parameters(trans))
