@@ -17,8 +17,8 @@ abstract type GeometricTransform <: Transform end
 Tells whether or not the geometric `transform` is Affine,
 i.e. it can be defined as a muladd operation (`Ax + b`).
 """
-isaffine(t::Transform) = isaffine(typeof(t))
-isaffine(::Type{<:Transform}) = false
+isaffine(t::GeometricTransform) = isaffine(typeof(t))
+isaffine(::Type{<:GeometricTransform}) = false
 
 # fallback with raw vector of geometries for convenience
 function apply(t::GeometricTransform, g::AbstractVector{<:Geometry})

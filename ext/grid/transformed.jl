@@ -2,9 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-isimplemented(::TB.Transform) = false
-isimplemented(::Rotate{<:Angle2d}) = true
-isimplemented(::Translate) = true
+isoptimized(::TB.Transform) = false
+isoptimized(::Rotate{<:Angle2d}) = true
+isoptimized(::Translate) = true
 
 vizgrid2D!(plot::Viz{<:Tuple{TransformedGrid}}) = transformedgrid!(plot, vizmesh2D!)
 
@@ -14,7 +14,7 @@ function transformedgrid!(plot, fallback)
   tgrid = plot[:object]
   grid = Makie.@lift parent($tgrid)
   trans = Makie.@lift Meshes.transform($tgrid)
-  if isaffine(trans[]) && isimplemented(trans[])
+  if isoptimized(trans[])
     color = plot[:color]
     alpha = plot[:alpha]
     colorscheme = plot[:colorscheme]
