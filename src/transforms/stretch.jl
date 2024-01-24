@@ -30,6 +30,8 @@ Stretch(factors...) = Stretch(factors)
 
 parameters(t::Stretch) = (; factors=t.factors)
 
+isaffine(::Type{<:Stretch}) = true
+
 isrevertible(::Type{<:Stretch}) = true
 
 isinvertible(::Type{<:Stretch}) = true

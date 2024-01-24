@@ -498,6 +498,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  isaffine,
 
   # miscellaneous
   signarea,

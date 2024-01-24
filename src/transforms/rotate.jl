@@ -53,6 +53,8 @@ Rotate(θ) = Rotate(Angle2d(θ))
 
 parameters(t::Rotate) = (; rot=t.rot)
 
+isaffine(::Type{<:Rotate}) = true
+
 isrevertible(::Type{<:Rotate}) = true
 
 isinvertible(::Type{<:Rotate}) = true
