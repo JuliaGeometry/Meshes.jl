@@ -485,7 +485,6 @@ export
   refine,
 
   # transforms
-  isaffine,
   GeometricTransform,
   CoordinateTransform,
   Rotate,
@@ -499,6 +498,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  isaffine,
 
   # miscellaneous
   signarea,
