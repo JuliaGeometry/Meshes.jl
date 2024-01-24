@@ -2,9 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-isoptimized(::TB.Transform) = false
 isoptimized(::TB.Identity) = true
 isoptimized(t::TB.SequentialTransform) = all(isoptimized, t)
+
+isoptimized(::GeometricTransform) = false
 isoptimized(::Rotate{<:Angle2d}) = true
 isoptimized(::Translate) = true
 
