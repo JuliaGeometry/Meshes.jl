@@ -15,7 +15,7 @@ function vizgrid2D!(plot::Viz{<:Tuple{RotatedGrid}})
 
   grid = Makie.@lift parent($tgrid)
   trans = Makie.@lift Meshes.transform($tgrid)
-  rot = Makie.@lift TB.parameters($trans).rot
+  rot = Makie.@lift first(TB.parameters($trans))
   θ = Makie.@lift first(Rotations.params($rot))
 
   # plot and rotate the grid
@@ -23,10 +23,42 @@ function vizgrid2D!(plot::Viz{<:Tuple{RotatedGrid}})
   Makie.rotate!(plot, θ[])
 end
 
-function Makie.data_limits(plot::Viz{<:Tuple{RotatedGrid{2}}})
-  tgrid = plot[:object][]
-  bbox = boundingbox(tgrid)
-  pmin = Makie.Point3f(coordinates(minimum(bbox))..., 0)
-  pmax = Makie.Point3f(coordinates(maximum(bbox))..., 0)
-  Makie.limits_from_transformed_points([pmin, pmax])
+const TranslatedGrid{Dim,T} = TransformedGrid{Dim,T,G,TR} where {G,TR<:Translate{Dim}}
+
+function vizgrid2D!(plot::Viz{<:Tuple{TranslatedGrid}})
+  tgrid = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+
+  grid = Makie.@lift parent($tgrid)
+  trans = Makie.@lift Meshes.transform($tgrid)
+  offsets = Makie.@lift first(TB.parameters($trans))
+
+  # plot and translate the grid
+  viz!(plot, grid; color, alpha, colorscheme, segmentsize, showfacets, facetcolor)
+  o₁, o₂ = offsets[]
+  Makie.translate!(plot, o₁, o₂)
+end
+
+function vizgrid3D!(plot::Viz{<:Tuple{TranslatedGrid}})
+  tgrid = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+
+  grid = Makie.@lift parent($tgrid)
+  trans = Makie.@lift Meshes.transform($tgrid)
+  offsets = Makie.@lift first(TB.parameters($trans))
+
+  # plot and translate the grid
+  viz!(plot, grid; color, alpha, colorscheme, segmentsize, showfacets, facetcolor)
+  o₁, o₂, o₃ = offsets[]
+  Makie.translate!(plot, o₁, o₂, o₃)
 end

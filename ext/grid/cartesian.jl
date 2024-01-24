@@ -59,15 +59,6 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
   end
 end
 
-# defining a Makie.data_limits method is necessary because 
-# Makie.scale and Makie.translate don't adjust axis limits automatically
-function Makie.data_limits(plot::Viz{<:Tuple{CartesianGrid{2}}})
-  grid = plot[:object][]
-  pmin = Makie.Point3f(coordinates(minimum(grid))..., 0)
-  pmax = Makie.Point3f(coordinates(maximum(grid))..., 0)
-  Makie.limits_from_transformed_points([pmin, pmax])
-end
-
 function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
   # retrieve parameters
   grid = plot[:object]
