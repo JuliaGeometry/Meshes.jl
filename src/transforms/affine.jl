@@ -34,6 +34,8 @@ end
 
 parameters(t::Affine) = (A=t.A, b=t.b)
 
+isaffine(::Type{<:Affine}) = true
+
 isrevertible(t::Affine) = isinvertible(t)
 
 function isinvertible(t::Affine)

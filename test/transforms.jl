@@ -1,5 +1,6 @@
 @testset "Transforms" begin
   @testset "Rotate" begin
+    @test isaffine(Rotate)
     @test TB.isrevertible(Rotate)
     @test TB.isinvertible(Rotate)
     @test TB.inverse(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
@@ -201,6 +202,7 @@
   end
 
   @testset "Translate" begin
+    @test isaffine(Translate)
     @test TB.isrevertible(Translate)
     @test TB.isinvertible(Translate)
     @test TB.inverse(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
@@ -363,6 +365,7 @@
 
   @testset "Affine" begin
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
+    @test isaffine(f)
     @test TB.isrevertible(f)
     @test TB.isinvertible(f)
     @test TB.inverse(f) == Affine(Angle2d(-T(π / 2)), Angle2d(-T(π / 2)) * -T[1, 1])
@@ -535,6 +538,7 @@
   end
 
   @testset "Stretch" begin
+    @test isaffine(Stretch)
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
     @test TB.inverse(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
@@ -686,6 +690,7 @@
   end
 
   @testset "Expand" begin
+    @test !isaffine(Expand)
     @test TB.isrevertible(Expand)
     @test TB.isinvertible(Expand)
     @test TB.inverse(Expand(T(1), T(2))) == Expand(T(1), T(1 / 2))
@@ -837,6 +842,7 @@
   end
 
   @testset "StdCoords" begin
+    @test !isaffine(StdCoords)
     @test TB.isrevertible(StdCoords)
 
     # ---------
@@ -872,6 +878,7 @@
   end
 
   @testset "Repair{0}" begin
+    @test !isaffine(Repair)
     poly = PolyArea(P2[(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)])
     rpoly = poly |> Repair{0}()
     @test nvertices(rpoly) == 4
@@ -950,6 +957,7 @@
   end
 
   @testset "Bridge" begin
+    @test !isaffine(StdCoords)
     δ = T(0.01)
     f = Bridge(δ)
     @test TB.parameters(f) == (; δ)
@@ -1021,6 +1029,7 @@
   end
 
   @testset "Smoothing" begin
+    @test !isaffine(LambdaMuSmoothing)
     n, λ, μ = 30, T(0.5), T(0)
     f = LambdaMuSmoothing(n, λ, μ)
     @test TB.parameters(f) == (; n, λ, μ)

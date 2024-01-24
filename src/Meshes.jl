@@ -485,6 +485,7 @@ export
   refine,
 
   # transforms
+  isaffine,
   GeometricTransform,
   CoordinateTransform,
   Rotate,
