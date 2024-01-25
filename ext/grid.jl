@@ -54,6 +54,7 @@ aspoint3f(p::Point{3}) = Makie.Point3f(coordinates(p)...)
 include("grid/cartesian.jl")
 include("grid/rectilinear.jl")
 include("grid/transformed.jl")
+include("grid/structured.jl")
 
 # helper functions to create a minimum number
 # of line segments within Cartesian/Rectilinear grid
