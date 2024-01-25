@@ -9,6 +9,10 @@ isoptimized(::GeometricTransform) = false
 isoptimized(::Rotate{<:Angle2d}) = true
 isoptimized(::Translate) = true
 isoptimized(::Scale) = true
+function isoptimized(t::Affine{2})
+  A, _ = TB.parameters(t)
+  isdiag(A) || isrotation(A)
+end
 
 vizgrid2D!(plot::Viz{<:Tuple{TransformedGrid}}) = transformedgrid!(plot, vizmesh2D!)
 
@@ -50,4 +54,17 @@ end
 function makietransform!(plot, trans::Scale)
   factors = first(TB.parameters(trans))
   Makie.scale!(plot, factors...)
+end
+
+function makietransform!(plot, trans::Affine{2})
+  A, b = TB.parameters(trans)
+  if isdiag(A)
+    s₁, s₂ = A[1, 1], A[2, 2]
+    Makie.scale!(plot, s₁, s₂)
+  else
+    rot = convert(Angle2d, A)
+    θ = first(Rotations.params(rot))
+    Makie.rotate!(plot, θ)
+  end
+  Makie.translate!(plot, b...)
 end

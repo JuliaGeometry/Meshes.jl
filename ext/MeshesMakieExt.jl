@@ -6,6 +6,7 @@ module MeshesMakieExt
 
 using Meshes
 using Rotations
+using LinearAlgebra
 
 using Makie: cgrad
 using Makie: coloralpha
