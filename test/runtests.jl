@@ -98,6 +98,7 @@ testfiles = [
   "orientation.jl",
   "merging.jl",
   "clipping.jl",
+  "clamping.jl",
   "intersections.jl",
   "complement.jl",
   "simplification.jl",

@@ -56,7 +56,7 @@ We are happy to improve the ecosystem to meet user's needs.
 
 Get the latest stable release with Julia's package manager:
 
-```julia
+```
 ] add Meshes
 ```
 
