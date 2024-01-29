@@ -3,8 +3,11 @@
 
 Clamp the coordinates of a [`Point`](@ref) to the edges of a [`Box`](@ref). For each dimension, coordinates outside of the box are moved to the nearest edge of the box. The point and box must have an equal number of dimensions."""
 function Base.clamp(point::Point{Dim,T}, box::Box{Dim,T})::Point{Dim,T} where {Dim,T}
+  x = coordinates(point)
+  lo = coordinates(minimum(box))
+  hi = coordinates(maximum(box))
   ntuple(Dim) do i
-    Base.clamp(point.coords[i], box.min.coords[i], box.max.coords[i])
+    clamp(x[i], lo[i], hi[i])
   end |> Point
 end
 
