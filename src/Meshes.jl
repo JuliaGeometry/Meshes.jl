@@ -44,6 +44,9 @@ include("tolerances.jl")
 # basic vector type
 include("vectors.jl")
 
+# coordinates
+include("coordinates.jl")
+
 # geometries
 include("geometries.jl")
 
