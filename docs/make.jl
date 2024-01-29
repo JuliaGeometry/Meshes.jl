@@ -51,6 +51,7 @@ makedocs(
         "algorithms/simplification.md",
         "algorithms/intersection.md",
         "algorithms/clipping.md",
+        "algorithms/clamping.md",
         "algorithms/merging.md",
         "algorithms/winding.md",
         "algorithms/sideof.md",
