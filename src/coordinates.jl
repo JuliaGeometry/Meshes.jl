@@ -36,7 +36,7 @@ struct LatLonAlt{T<:Quantity,A<:Quantity} <: Coordinates{3,T}
     if unit(T) ≠ u"°"
       throw(ArgumentError("the units of `lat` and `lon` must be degrees"))
     end
-    if Nension(A) ≠ u"𝐋"
+    if dimension(A) ≠ u"𝐋"
       throw(ArgumentError("the unit of `alt` must be a length unit"))
     end
     new{float(T),float(A)}(lat, lon, alt)
@@ -51,7 +51,7 @@ struct EastNorth{T<:Quantity} <: Coordinates{2,T}
   east::T
   north::T
   function EastNorth{T}(east, north) where {T<:Quantity}
-    if Nension(T) ≠ u"𝐋"
+    if dimension(T) ≠ u"𝐋"
       throw(ArgumentError("the units of `east` and `north` must be length units"))
     end
     new{float(T)}(east, north)
@@ -66,7 +66,7 @@ struct WebMercator{T<:Quantity} <: Coordinates{2,T}
   x::T
   y::T
   function WebMercator{T}(x, y) where {T<:Quantity}
-    if Nension(T) ≠ u"𝐋"
+    if dimension(T) ≠ u"𝐋"
       throw(ArgumentError("the units of `x` and `y` must be length units"))
     end
     new{float(T)}(x, y)
