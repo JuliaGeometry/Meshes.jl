@@ -6,6 +6,11 @@
     Cartesian(x₁, x₂, ..., xₙ)
 
 N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ`.
+
+## References
+
+* [Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)
+* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
 struct Cartesian{N,T} <: Coordinates{N,T}
   coords::NTuple{N,T}
@@ -22,8 +27,14 @@ Cartesian(coords...) = Cartesian(coords)
 Polar coordinates with radius `ρ` and angle `ϕ`.
 
 ## Unique coordinates
+
 * radius: `ρ ∈ [0,∞)`
-* angle: `ϕ ∈ [0,2π]`
+* angle: `ϕ ∈ [0,2π)`
+
+## References
+
+* [Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
+* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
 struct Polar{T} <: Coordinates{2,T}
   ρ::T
@@ -40,9 +51,15 @@ Polar(ρ, ϕ) = Polar(promote(ρ, ϕ)...)
 Cylindrical coordinates with radius `ρ`, angle `ϕ` and height `z`.
 
 ## Unique coordinates
+
 * radius: `ρ ∈ [0,∞)`
-* angle: `ϕ ∈ [0,2π]`
+* angle: `ϕ ∈ [0,2π)`
 * height: `z ∈ [0,∞)`
+
+## References
+
+* [Cylindrical coordinate system](https://en.wikipedia.org/wiki/Cylindrical_coordinate_system)
+* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
 struct Cylindrical{T} <: Coordinates{3,T}
   ρ::T
@@ -60,9 +77,15 @@ Cylindrical(ρ, ϕ, z) = Cylindrical(promote(ρ, ϕ, z)...)
 Spherical coordinates with radius `r`, polar angle `θ` and azimuth angle `ϕ`.
 
 ## Unique coordinates
+
 * radius: `r ∈ [0,∞)`
 * polar angle: `θ ∈ [0,π]`
 * azimuth angle: `ϕ ∈ [0,2π)`
+
+## References
+
+* [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
+* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
 struct Spherical{T} <: Coordinates{3,T}
   r::T
