@@ -5,8 +5,7 @@
 """
     LatLon(lat, lon)
 
-Geographic coordinate with latitude `lat` (in degrees)
-and longitude `lon` (in degrees).
+Latitude and longitude in degrees.
 """
 struct LatLon{T<:Quantity} <: Coordinates{2,T}
   lat::T
@@ -26,9 +25,7 @@ LatLon(lat::Number, lon::Number) = LatLon(lat * u"°", lon * u"°")
 """
     LatLonAlt(lat, lon, alt)
 
-Geographic coordinate with latitude `lat` (in degrees),
-longitude `lon` (in degrees) and altitude `alt`.
-The altitude coordinate unit must be a length unit, which by default is meter.
+Latitude and longitude in degrees and altitude in length units (default to meter).
 """
 struct LatLonAlt{T<:Quantity,A<:Quantity} <: Coordinates{3,T}
   lat::T
@@ -52,9 +49,7 @@ LatLonAlt(lat::Number, lon::Number, alt::Number) = LatLonAlt(lat * u"°", lon * 
 """
     EastNorth(east, north)
 
-Geographic coordinate with distance `east` to the prime meridian
-and distance `north` to the equator.
-The coordinate units must be length units, which by default is meter.
+East and North in length units (default to meter).
 """
 struct EastNorth{T<:Quantity} <: Coordinates{2,T}
   east::T
@@ -74,8 +69,7 @@ EastNorth(east::Number, north::Number) = EastNorth(east * u"m", north * u"m")
 """
     WebMercator(x, y)
 
-Web Mercator coordinate with coordinates `x` and `y`.
-The coordinate units must be length units, which by default is meter.
+WebMercator coordinates in length units (default to meter).
 """
 struct WebMercator{T<:Quantity} <: Coordinates{2,T}
   x::T

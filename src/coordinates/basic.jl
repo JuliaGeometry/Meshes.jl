@@ -5,7 +5,7 @@
 """
     Cartesian(x₁, x₂, ..., xₙ)
 
-N-Dimensional Cartesian coordinate with coordinates `x₁, x₂, ..., xₙ`.
+N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ`.
 """
 struct Cartesian{N,T} <: Coordinates{N,T}
   coords::NTuple{N,T}
@@ -19,8 +19,7 @@ Cartesian(coords...) = Cartesian(coords)
 """
     Polar(ρ, ϕ)
 
-Polar coordinate with radial distance `ρ`
-and angular coordinate `ϕ` (in radians).
+Polar coordinates with radius `ρ` and angle `ϕ`.
 """
 struct Polar{T} <: Coordinates{2,T}
   ρ::T
@@ -34,8 +33,7 @@ Polar(ρ, ϕ) = Polar(promote(ρ, ϕ)...)
 """
     Cylindrical(ρ, ϕ, z)
 
-Cylindrical coordinate with radial distance `ρ`,
-angular coordinate `ϕ` (in radians) and height `z`.
+Cylindrical coordinates with radius `ρ`, angle `ϕ` and height `z`.
 """
 struct Cylindrical{T} <: Coordinates{3,T}
   ρ::T
@@ -50,8 +48,7 @@ Cylindrical(ρ, ϕ, z) = Cylindrical(promote(ρ, ϕ, z)...)
 """
     Spherical(r, θ, ϕ)
 
-Spherical coordinate with radial distance `r`,
-polar angle `θ` (in radians) and azimuthal angle `ϕ` (in radians).
+Spherical coordinates with radius `r`, polar angle `θ` and azimuth angle `ϕ`.
 """
 struct Spherical{T} <: Coordinates{3,T}
   r::T
