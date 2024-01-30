@@ -24,12 +24,7 @@ Cartesian(coords...) = Cartesian(coords)
 """
     Polar(ρ, ϕ)
 
-Polar coordinates with radius `ρ` and angle `ϕ`.
-
-## Unique coordinates
-
-* radius: `ρ ∈ [0,∞)`
-* angle: `ϕ ∈ [0,2π)`
+Polar coordinates with radius `ρ ∈ [0,∞)` and angle `ϕ ∈ [0,2π)`.
 
 ## References
 
@@ -48,13 +43,7 @@ Polar(ρ, ϕ) = Polar(promote(ρ, ϕ)...)
 """
     Cylindrical(ρ, ϕ, z)
 
-Cylindrical coordinates with radius `ρ`, angle `ϕ` and height `z`.
-
-## Unique coordinates
-
-* radius: `ρ ∈ [0,∞)`
-* angle: `ϕ ∈ [0,2π)`
-* height: `z ∈ [0,∞)`
+Cylindrical coordinates with radius `ρ ∈ [0,∞)`, angle `ϕ ∈ [0,2π)` and height `z ∈ [0,∞)`.
 
 ## References
 
@@ -74,13 +63,7 @@ Cylindrical(ρ, ϕ, z) = Cylindrical(promote(ρ, ϕ, z)...)
 """
     Spherical(r, θ, ϕ)
 
-Spherical coordinates with radius `r`, polar angle `θ` and azimuth angle `ϕ`.
-
-## Unique coordinates
-
-* radius: `r ∈ [0,∞)`
-* polar angle: `θ ∈ [0,π]`
-* azimuth angle: `ϕ ∈ [0,2π)`
+Spherical coordinates with radius `r ∈ [0,∞)`, polar angle `θ ∈ [0,π]` and azimuth angle `ϕ ∈ [0,2π)`.
 
 ## References
 
