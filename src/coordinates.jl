@@ -9,6 +9,9 @@ Parent type of all coordinate types.
 """
 abstract type Coordinates{N,T} end
 
+Base.isapprox(c₁::C, c₂::C; kwargs...) where {C<:Coordinates} =
+  all(isapprox(getfield(c₁, n), getfield(c₂, n); kwargs...) for n in fieldnames(C))
+
 # -----------
 # IO METHODS
 # -----------
@@ -41,22 +44,26 @@ include("coordinates/gis.jl")
 Base.convert(::Type{<:Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
 function Base.convert(::Type{<:Polar}, (; coords)::Cartesian{2})
   x, y = coords
-  # adjust the atan(y, x) interval: [-π,π] + π = [0,2π]
-  Polar(sqrt(x^2 + y^2), atan(y, x) + π)
+  Polar(sqrt(x^2 + y^2), _atan(y, x))
 end
 
 # Cartesian <--> Cylindrical
 Base.convert(::Type{<:Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
 function Base.convert(::Type{<:Cylindrical}, (; coords)::Cartesian{3})
   x, y, z = coords
-  # adjust the atan(y, x) interval: [-π,π] + π = [0,2π]
-  Cylindrical(sqrt(x^2 + y^2), atan(y, x) + π, z)
+  Cylindrical(sqrt(x^2 + y^2), _atan(y, x), z)
 end
 
 # Cartesian <--> Spherical
-Base.convert(::Type{<:Cartesian}, (; r, θ, ϕ)::Spherical) = Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
+Base.convert(::Type{<:Cartesian}, (; r, θ, ϕ)::Spherical) =
+  Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
 function Base.convert(::Type{<:Spherical}, (; coords)::Cartesian{3})
   x, y, z = coords
-  # adjust the atan(y, x) interval: [-π,π] + π = [0,2π]
-  Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z), atan(y, x) + π)
+  Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z), _atan(y, x))
+end
+
+# adjust negative angles
+function _atan(y::T, x::T) where {T}
+  a = atan(y, x)
+  a > 0 ? a : a + T(2π)
 end
