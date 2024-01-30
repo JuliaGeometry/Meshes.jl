@@ -54,6 +54,7 @@
     @test center(s) == P3(0.5, 0.5, 0.5)
     @test coordtype(center(s)) == T
 
+    # unitful coordinates
     x1 = T(0)u"m"
     x2 = T(1)u"m"
     s = Segment(Point(x1, x1, x1), Point(x2, x2, x2))
