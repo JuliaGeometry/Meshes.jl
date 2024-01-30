@@ -126,6 +126,16 @@ export
   ⋅,
   ×,
 
+  # coordinates
+  Cartesian,
+  Polar,
+  Cylindrical,
+  Spherical,
+  LatLon,
+  LatLonAlt,
+  EastNorth,
+  WebMercator,
+
   # geometries
   Geometry,
   embeddim,
