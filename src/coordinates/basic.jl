@@ -20,6 +20,10 @@ Cartesian(coords...) = Cartesian(coords)
     Polar(ρ, ϕ)
 
 Polar coordinates with radius `ρ` and angle `ϕ`.
+
+## Unique coordinates
+* radius: `ρ ∈ [0,∞)`
+* angle: `ϕ ∈ [0,2π]`
 """
 struct Polar{T} <: Coordinates{2,T}
   ρ::T
@@ -34,6 +38,11 @@ Polar(ρ, ϕ) = Polar(promote(ρ, ϕ)...)
     Cylindrical(ρ, ϕ, z)
 
 Cylindrical coordinates with radius `ρ`, angle `ϕ` and height `z`.
+
+## Unique coordinates
+* radius: `ρ ∈ [0,∞)`
+* angle: `ϕ ∈ [0,2π]`
+* height: `z ∈ [0,∞)`
 """
 struct Cylindrical{T} <: Coordinates{3,T}
   ρ::T
@@ -49,6 +58,11 @@ Cylindrical(ρ, ϕ, z) = Cylindrical(promote(ρ, ϕ, z)...)
     Spherical(r, θ, ϕ)
 
 Spherical coordinates with radius `r`, polar angle `θ` and azimuth angle `ϕ`.
+
+## Unique coordinates
+* radius: `r ∈ [0,∞)`
+* polar angle: `θ ∈ [0,π]`
+* azimuth angle: `ϕ ∈ [0,2π)`
 """
 struct Spherical{T} <: Coordinates{3,T}
   r::T
