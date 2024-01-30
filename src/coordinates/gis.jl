@@ -49,7 +49,7 @@ LatLonAlt(lat::Number, lon::Number, alt::Number) = LatLonAlt(lat * u"°", lon * 
 """
     EastNorth(east, north)
 
-East and North in length units (default to meter).
+East and north coordinates in length units (default to meter).
 """
 struct EastNorth{T<:Quantity} <: Coordinates{2,T}
   east::T
