@@ -21,6 +21,9 @@ Cartesian(coords::NTuple{N,T}) where {N,T} = Cartesian{N,T}(coords)
 Cartesian(coords::Tuple) = Cartesian(promote(coords...))
 Cartesian(coords...) = Cartesian(coords)
 
+Base.isapprox(c₁::Cartesian{N}, c₂::Cartesian{N}; kwargs...) where {N} =
+  all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
+
 """
     Polar(ρ, ϕ)
 
@@ -31,14 +34,13 @@ Polar coordinates with radius `ρ ∈ [0,∞)` and angle `ϕ ∈ [0,2π)`.
 * [Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Polar{T} <: Coordinates{2,T}
+struct Polar{T,A} <: Coordinates{2,T}
   ρ::T
-  ϕ::T
-  Polar{T}(ρ, ϕ) where {T} = new{float(T)}(ρ, ϕ)
+  ϕ::A
+  Polar{T,A}(ρ, ϕ) where {T,A} = new{float(T),float(A)}(ρ, ϕ)
 end
 
-Polar(ρ::T, ϕ::T) where {T} = Polar{T}(ρ, ϕ)
-Polar(ρ, ϕ) = Polar(promote(ρ, ϕ)...)
+Polar(ρ::T, ϕ::A) where {T,A} = Polar{T,A}(ρ, ϕ)
 
 """
     Cylindrical(ρ, ϕ, z)
@@ -50,15 +52,18 @@ Cylindrical coordinates with radius `ρ ∈ [0,∞)`, angle `ϕ ∈ [0,2π)` and
 * [Cylindrical coordinate system](https://en.wikipedia.org/wiki/Cylindrical_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Cylindrical{T} <: Coordinates{3,T}
+struct Cylindrical{T,A} <: Coordinates{3,T}
   ρ::T
-  ϕ::T
+  ϕ::A
   z::T
-  Cylindrical{T}(ρ, ϕ, z) where {T} = new{float(T)}(ρ, ϕ, z)
+  Cylindrical{T,A}(ρ, ϕ, z) where {T,A} = new{float(T),float(A)}(ρ, ϕ, z)
 end
 
-Cylindrical(ρ::T, ϕ::T, z::T) where {T} = Cylindrical{T}(ρ, ϕ, z)
-Cylindrical(ρ, ϕ, z) = Cylindrical(promote(ρ, ϕ, z)...)
+Cylindrical(ρ::T, ϕ::A, z::T) where {T,A} = Cylindrical{T,A}(ρ, ϕ, z)
+function Cylindrical(ρ, ϕ, z)
+  nρ, nz = promote(ρ, z)
+  Cylindrical(nρ, ϕ, nz)
+end
 
 """
     Spherical(r, θ, ϕ)
@@ -70,12 +75,12 @@ Spherical coordinates with radius `r ∈ [0,∞)`, polar angle `θ ∈ [0,π]` a
 * [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Spherical{T} <: Coordinates{3,T}
+struct Spherical{T,A} <: Coordinates{3,T}
   r::T
-  θ::T
-  ϕ::T
-  Spherical{T}(r, θ, ϕ) where {T} = new{float(T)}(r, θ, ϕ)
+  θ::A
+  ϕ::A
+  Spherical{T,A}(r, θ, ϕ) where {T,A} = new{float(T),float(A)}(r, θ, ϕ)
 end
 
-Spherical(r::T, θ::T, ϕ::T) where {T} = Spherical{T}(r, θ, ϕ)
-Spherical(r, θ, ϕ) = Spherical(promote(r, θ, ϕ)...)
+Spherical(r::T, θ::A, ϕ::A) where {T,A} = Spherical{T,A}(r, θ, ϕ)
+Spherical(r, θ, ϕ) = Spherical(r, promote(θ, ϕ)...)

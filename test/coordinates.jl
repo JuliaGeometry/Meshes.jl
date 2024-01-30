@@ -19,7 +19,8 @@
   end
 
   @testset "Polar" begin
-    @test Polar(T(1), 1) == Polar(T(1), T(1))
+    @test Polar(T(1), 1) == Polar(T(1), 1.0)
+    @test Polar(T(1) * u"m", 1 * u"°") == Polar(T(1) * u"m", 1.0u"°")
 
     c = Polar(T(1), T(1))
     @test sprint(show, c) == "Polar(ρ: 1.0, ϕ: 1.0)"
@@ -37,7 +38,9 @@
   end
 
   @testset "Cylindrical" begin
-    @test Cylindrical(T(1), 1, 1) == Cylindrical(T(1), T(1), T(1))
+    @test Cylindrical(T(1), 1, 1) == Cylindrical(T(1), 1.0, T(1))
+    @test Cylindrical(T(1), T(1), 1) == Cylindrical(T(1), T(1), T(1))
+    @test Cylindrical(T(1) * u"m", T(1) * u"°", 1 * u"m") == Cylindrical(T(1) * u"m", T(1) * u"°", T(1) * u"m")
 
     c = Cylindrical(T(1), T(1), T(1))
     @test sprint(show, c) == "Cylindrical(ρ: 1.0, ϕ: 1.0, z: 1.0)"
@@ -57,7 +60,9 @@
   end
 
   @testset "Spherical" begin
-    @test Spherical(T(1), 1, 1) == Spherical(T(1), T(1), T(1))
+    @test Spherical(T(1), 1, 1) == Spherical(T(1), 1.0, 1.0)
+    @test Spherical(T(1), T(1), 1) == Spherical(T(1), T(1), T(1))
+    @test Spherical(T(1) * u"m", T(1) * u"°", 1 * u"°") == Spherical(T(1) * u"m", T(1) * u"°", T(1) * u"°")
 
     c = Spherical(T(1), T(1), T(1))
     @test sprint(show, c) == "Spherical(r: 1.0, θ: 1.0, ϕ: 1.0)"
