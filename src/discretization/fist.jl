@@ -42,7 +42,10 @@ function discretizewithin(ring::Ring{2}, method::FIST)
   𝒫 = O == CCW ? ring : reverse(ring)
 
   # points of resulting mesh
-  points = vertices(𝒫)
+  points = collect(vertices(𝒫))
+
+  # standardize coordinates
+  stdpts = points |> StdCoords()
 
   # keep track of global indices
   inds = CircularVector(1:nvertices(𝒫))
@@ -59,10 +62,10 @@ function discretizewithin(ring::Ring{2}, method::FIST)
       i = pop!(𝒬)
       𝒬[𝒬 .> i] .-= 1
       # 1. push a new triangle to 𝒯
-      push!(𝒯, connect((inds[i - 1], inds[i], inds[i + 1]), Triangle))
+      push!(𝒯, connect((inds[i - 1], inds[i], inds[i + 1])))
       # 2. remove the vertex from 𝒫
       inds = inds[setdiff(1:n, mod1(i, n))]
-      𝒫 = Ring(points[inds])
+      𝒫 = Ring(stdpts[inds])
       n = nvertices(𝒫)
       # 3. update 𝒬 near clipped ear
       for j in (i - 1, i)
@@ -87,10 +90,10 @@ function discretizewithin(ring::Ring{2}, method::FIST)
         λ(I) = type(I) == Crossing
         if intersection(λ, s1, s2)
           # 1. push a new triangle to 𝒯
-          push!(𝒯, connect((inds[i], inds[i + 1], inds[i + 2]), Triangle))
+          push!(𝒯, connect((inds[i], inds[i + 1], inds[i + 2])))
           # 2. remove the vertex from 𝒫
           inds = inds[setdiff(1:n, mod1(i + 1, n))]
-          𝒫 = Ring(points[inds])
+          𝒫 = Ring(stdpts[inds])
           n = nvertices(𝒫)
           clipped = true
           break
@@ -99,9 +102,9 @@ function discretizewithin(ring::Ring{2}, method::FIST)
     end
   end
   # remaining polygonal area is the last triangle
-  push!(𝒯, connect((inds[1], inds[2], inds[3]), Triangle))
+  push!(𝒯, connect((inds[1], inds[2], inds[3])))
 
-  SimpleMesh(collect(points), 𝒯)
+  SimpleMesh(points, 𝒯)
 end
 
 # return index of all ears of 𝒫 assuming that 𝒫 is

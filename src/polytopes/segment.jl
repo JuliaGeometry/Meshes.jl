@@ -21,7 +21,10 @@ Base.maximum(s::Segment) = s.vertices[2]
 
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
-center(s::Segment{Dim,T}) where {Dim,T} = s(T(0.5))
+function center(s::Segment)
+  a, b = extrema(s)
+  Point((coordinates(a) + coordinates(b)) / 2)
+end
 
 Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))

@@ -147,6 +147,31 @@
     @test mesh == target
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
+
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/675
+    poly = PolyArea(
+      P2[
+        (1.1794224993e7, 1.7289506814e7),
+        (1.1794045018e7, 1.7289446822e7),
+        (1.1793985026e7, 1.7289486817e7),
+        (1.1793965029e7, 1.7289586803e7),
+        (1.1794105009e7, 1.7289766778e7),
+        (1.1794184998e7, 1.7289866764e7),
+        (1.179424499e7, 1.728996675e7),
+        (1.179424499e7, 1.7290106731e7),
+        (1.1794344976e7, 1.7290246711e7),
+        (1.1794364973e7, 1.7290386692e7),
+        (1.1794504954e7, 1.7290406689e7),
+        (1.1794724923e7, 1.729018672e7),
+        (1.1794624937e7, 1.7289946753e7),
+        (1.1794624937e7, 1.7289806772e7),
+        (1.1794564946e7, 1.7289706786e7),
+        (1.1794424965e7, 1.7289626797e7)
+      ]
+    )
+    mesh = discretize(poly, FIST())
+    @test nvertices(mesh) == 16
+    @test nelements(mesh) == 14
   end
 
   @testset "Miscellaneous" begin
