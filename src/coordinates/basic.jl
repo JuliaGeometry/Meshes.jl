@@ -12,30 +12,30 @@ Cartesian(coords::Tuple) = Coordinates(promote(coords...))
 Cartesian(coords...) = Cartesian(coords)
 
 struct Polar{T} <: Coordinates{2,T}
-  radius::T
-  angle::T
-  Polar{T}(radius, angle) where {T} = new{float(T)}(radius, angle)
+  ρ::T
+  ϕ::T
+  Polar{T}(ρ, ϕ) where {T} = new{float(T)}(ρ, ϕ)
 end
 
-Polar(radius::T, angle::T) where {T} = Polar{T}(radius, angle)
-Polar(radius, angle) = Polar(promote(radius, angle)...)
-
-struct Spherical{T} <: Coordinates{3,T}
-  radius::T
-  polar::T
-  azimuth::T
-  Spherical{T}(radius, polar, azimuth) where {T} = new{float(T)}(radius, polar, azimuth)
-end
-
-Spherical(radius::T, polar::T, azimuth::T) where {T} = Spherical{T}(radius, polar, azimuth)
-Spherical(radius, polar, azimuth) = Spherical(promote(radius, polar, azimuth)...)
+Polar(ρ::T, ϕ::T) where {T} = Polar{T}(ρ, ϕ)
+Polar(ρ, ϕ) = Polar(promote(ρ, ϕ)...)
 
 struct Cylindrical{T} <: Coordinates{3,T}
-  radius::T
-  angle::T
-  height::T
-  Cylindrical{T}(radius, angle, height) where {T} = new{float(T)}(radius, angle, height)
+  ρ::T
+  ϕ::T
+  z::T
+  Cylindrical{T}(ρ, ϕ, z) where {T} = new{float(T)}(ρ, ϕ, z)
 end
 
-Cylindrical(radius::T, angle::T, height::T) where {T} = Cylindrical{T}(radius, angle, height)
-Cylindrical(radius, angle, height) = Cylindrical(promote(radius, angle, height)...)
+Cylindrical(ρ::T, ϕ::T, z::T) where {T} = Cylindrical{T}(ρ, ϕ, z)
+Cylindrical(ρ, ϕ, z) = Cylindrical(promote(ρ, ϕ, z)...)
+
+struct Spherical{T} <: Coordinates{3,T}
+  r::T
+  θ::T
+  ϕ::T
+  Spherical{T}(r, θ, ϕ) where {T} = new{float(T)}(r, θ, ϕ)
+end
+
+Spherical(r::T, θ::T, ϕ::T) where {T} = Spherical{T}(r, θ, ϕ)
+Spherical(r, θ, ϕ) = Spherical(promote(r, θ, ϕ)...)
