@@ -127,6 +127,7 @@ export
   ×,
 
   # coordinates
+  Coordinates,
   Cartesian,
   Polar,
   Cylindrical,
