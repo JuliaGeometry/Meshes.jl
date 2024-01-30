@@ -54,6 +54,15 @@
     @test center(s) == P3(0.5, 0.5, 0.5)
     @test coordtype(center(s)) == T
 
+    x1 = T(0)u"m"
+    x2 = T(1)u"m"
+    s = Segment(Point(x1, x1, x1), Point(x2, x2, x2))
+    @test boundary(s) == Multi([Point(x1, x1, x1), Point(x2, x2, x2)])
+    @test perimeter(s) == 0u"m"
+    x_mid = T(0.5)u"m"
+    @test center(s) == Point(x_mid, x_mid, x_mid)
+    @test coordtype(center(s)) == typeof(x_mid)
+
     s = rand(Segment{2,T})
     @test s isa Segment
     @test embeddim(s) == 2
