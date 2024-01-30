@@ -59,9 +59,9 @@
     s = Segment(Point(x1, x1, x1), Point(x2, x2, x2))
     @test boundary(s) == Multi([Point(x1, x1, x1), Point(x2, x2, x2)])
     @test perimeter(s) == 0u"m"
-    x_mid = T(0.5)u"m"
-    @test center(s) == Point(x_mid, x_mid, x_mid)
-    @test coordtype(center(s)) == typeof(x_mid)
+    xm = T(0.5)u"m"
+    @test center(s) == Point(xm, xm, xm)
+    @test coordtype(center(s)) == typeof(xm)
 
     s = rand(Segment{2,T})
     @test s isa Segment
