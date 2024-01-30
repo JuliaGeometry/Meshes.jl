@@ -17,8 +17,8 @@ struct Cartesian{N,T} <: Coordinates{N,T}
   Cartesian{N,T}(coords) where {N,T} = new{N,float(T)}(coords)
 end
 
-Cartesian(coords::NTuple{N,T}) where {N,T} = Coordinates{N,T}(coords)
-Cartesian(coords::Tuple) = Coordinates(promote(coords...))
+Cartesian(coords::NTuple{N,T}) where {N,T} = Cartesian{N,T}(coords)
+Cartesian(coords::Tuple) = Cartesian(promote(coords...))
 Cartesian(coords...) = Cartesian(coords)
 
 """

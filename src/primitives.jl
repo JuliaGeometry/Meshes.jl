@@ -15,26 +15,13 @@ abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
 function Base.show(io::IO, geom::Primitive)
   name = prettyname(geom)
   print(io, "$name(")
-  ioctx = IOContext(io, :compact => true)
-  vals = map(fieldnames(typeof(geom))) do field
-    val = getfield(geom, field)
-    str = repr(val, context=ioctx)
-    "$field: $str"
-  end
-  join(io, vals, ", ")
+  printfields(io, geom, compact=true)
   print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", geom::Primitive)
   summary(io, geom)
-  fnames = fieldnames(typeof(geom))
-  len = length(fnames)
-  for (i, field) in enumerate(fnames)
-    div = i == len ? "\n└─ " : "\n├─ "
-    val = getfield(geom, field)
-    str = repr(val, context=io)
-    print(io, "$div$field: $str")
-  end
+  printfields(io, geom)
 end
 
 include("primitives/point.jl")
