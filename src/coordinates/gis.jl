@@ -2,6 +2,12 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    LatLon(lat, lon)
+
+Geographic coordinate with latitude `lat` (in degrees)
+and longitude `lon` (in degrees).
+"""
 struct LatLon{T<:Quantity} <: Coordinates{2,T}
   lat::T
   lon::T
@@ -17,6 +23,13 @@ LatLon(lat::T, lon::T) where {T<:Quantity} = LatLon{T}(lat, lon)
 LatLon(lat::Quantity, lon::Quantity) = LatLon(promote(lat, lon)...)
 LatLon(lat::Number, lon::Number) = LatLon(lat * u"°", lon * u"°")
 
+"""
+    LatLonAlt(lat, lon, alt)
+
+Geographic coordinate with latitude `lat` (in degrees),
+longitude `lon` (in degrees) and altitude `alt`.
+The altitude coordinate unit must be a length unit, which by default is meter.
+"""
 struct LatLonAlt{T<:Quantity,A<:Quantity} <: Coordinates{3,T}
   lat::T
   lon::T
@@ -36,6 +49,13 @@ LatLonAlt(lat::T, lon::T, alt::A) where {T<:Quantity,A<:Quantity} = LatLonAlt{T,
 LatLonAlt(lat::Quantity, lon::Quantity, alt::Quantity) = LatLonAlt(promote(lat, lon)..., alt)
 LatLonAlt(lat::Number, lon::Number, alt::Number) = LatLonAlt(lat * u"°", lon * u"°", alt * u"m")
 
+"""
+    EastNorth(east, north)
+
+Geographic coordinate with distance `east` to the prime meridian
+and distance `north` to the equator.
+The coordinate units must be length units, which by default is meter.
+"""
 struct EastNorth{T<:Quantity} <: Coordinates{2,T}
   east::T
   north::T
@@ -51,6 +71,12 @@ EastNorth(east::T, north::T) where {T<:Quantity} = EastNorth{T}(east, north)
 EastNorth(east::Quantity, north::Quantity) = EastNorth(promote(east, north)...)
 EastNorth(east::Number, north::Number) = EastNorth(east * u"m", north * u"m")
 
+"""
+    WebMercator(x, y)
+
+Web Mercator coordinate with coordinates `x` and `y`.
+The coordinate units must be length units, which by default is meter.
+"""
 struct WebMercator{T<:Quantity} <: Coordinates{2,T}
   x::T
   y::T
