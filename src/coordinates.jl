@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Coordinates{N,T}
+    Coordinates{N}
 
 Parent type of all coordinate types.
 """
-abstract type Coordinates{N,T} end
+abstract type Coordinates{N} end
 
 Base.isapprox(c₁::C, c₂::C; kwargs...) where {C<:Coordinates} =
   all(isapprox(getfield(c₁, n), getfield(c₂, n); kwargs...) for n in fieldnames(C))

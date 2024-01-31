@@ -12,7 +12,7 @@ N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ`.
 * [Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Cartesian{N,T} <: Coordinates{N,T}
+struct Cartesian{N,T} <: Coordinates{N}
   coords::NTuple{N,T}
   Cartesian{N,T}(coords) where {N,T} = new{N,float(T)}(coords)
 end
@@ -34,7 +34,7 @@ Polar coordinates with radius `ρ ∈ [0,∞)` and angle `ϕ ∈ [0,2π)`.
 * [Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Polar{T,A} <: Coordinates{2,T}
+struct Polar{T,A} <: Coordinates{2}
   ρ::T
   ϕ::A
   Polar{T,A}(ρ, ϕ) where {T,A} = new{float(T),float(A)}(ρ, ϕ)
@@ -52,7 +52,7 @@ Cylindrical coordinates with radius `ρ ∈ [0,∞)`, angle `ϕ ∈ [0,2π)` and
 * [Cylindrical coordinate system](https://en.wikipedia.org/wiki/Cylindrical_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Cylindrical{T,A} <: Coordinates{3,T}
+struct Cylindrical{T,A} <: Coordinates{3}
   ρ::T
   ϕ::A
   z::T
@@ -75,7 +75,7 @@ Spherical coordinates with radius `r ∈ [0,∞)`, polar angle `θ ∈ [0,π]` a
 * [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
 * [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
 """
-struct Spherical{T,A} <: Coordinates{3,T}
+struct Spherical{T,A} <: Coordinates{3}
   r::T
   θ::A
   ϕ::A

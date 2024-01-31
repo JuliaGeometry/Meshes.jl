@@ -12,7 +12,7 @@ Latitude and longitude in degrees.
 * [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
 * [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709)
 """
-struct LatLon{T<:Quantity} <: Coordinates{2,T}
+struct LatLon{T<:Quantity} <: Coordinates{2}
   lat::T
   lon::T
   function LatLon{T}(lat, lon) where {T<:Quantity}
@@ -37,7 +37,7 @@ Latitude and longitude in degrees and altitude in length units (default to meter
 * [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
 * [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709)
 """
-struct LatLonAlt{T<:Quantity,A<:Quantity} <: Coordinates{3,T}
+struct LatLonAlt{T<:Quantity,A<:Quantity} <: Coordinates{3}
   lat::T
   lon::T
   alt::A
@@ -65,7 +65,7 @@ East and north coordinates in length units (default to meter).
 
 * [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
 """
-struct EastNorth{T<:Quantity} <: Coordinates{2,T}
+struct EastNorth{T<:Quantity} <: Coordinates{2}
   east::T
   north::T
   function EastNorth{T}(east, north) where {T<:Quantity}
@@ -89,7 +89,7 @@ WebMercator coordinates in length units (default to meter).
 
 * [Web Mercator projection](https://en.wikipedia.org/wiki/Web_Mercator_projection)
 """
-struct WebMercator{T<:Quantity} <: Coordinates{2,T}
+struct WebMercator{T<:Quantity} <: Coordinates{2}
   x::T
   y::T
   function WebMercator{T}(x, y) where {T<:Quantity}
