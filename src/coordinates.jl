@@ -65,5 +65,5 @@ end
 # adjust negative angles
 function _atan(y::T, x::T) where {T}
   a = atan(y, x)
-  a > 0 ? a : a + T(2π)
+  a > zero(T) ? a : a + T(2π)
 end
