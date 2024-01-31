@@ -27,14 +27,14 @@ Base.isapprox(c₁::Cartesian{N}, c₂::Cartesian{N}; kwargs...) where {N} =
 function Base.show(io::IO, (; coords)::Cartesian{N}) where {N}
   print(io, "Cartesian(")
   fnames = _cartfields(N)
-  printfields(io, fnames, coords, compact=true)
+  printfields(io, coords, fnames, compact=true)
   print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", (; coords)::Cartesian{N}) where {N}
   print(io, "Cartesian coordinates")
   fnames = _cartfields(N)
-  printfields(io, fnames, coords)
+  printfields(io, coords, fnames)
 end
 
 function _cartfields(N)

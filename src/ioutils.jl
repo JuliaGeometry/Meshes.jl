@@ -57,9 +57,9 @@ end
 
 printinds(io::IO, inds::AbstractRange) = print(io, inds)
 
-printfields(io, obj; kwargs...) = printfields(io, fieldnames(typeof(obj)), obj; kwargs...)
+printfields(io, obj; kwargs...) = printfields(io, obj, fieldnames(typeof(obj)); kwargs...)
 
-function printfields(io, fnames, obj; compact=false)
+function printfields(io, obj, fnames; compact=false)
   if compact
     ioctx = IOContext(io, :compact => true)
     vals = map(enumerate(fnames)) do (i, field)
