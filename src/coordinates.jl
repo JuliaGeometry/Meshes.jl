@@ -29,13 +29,17 @@ function Base.show(io::IO, ::MIME"text/plain", coords::Coordinates)
   printfields(io, coords)
 end
 
-# -------------
-# HELPER TYPES
-# -------------
+# ----------
+# UTILITIES
+# ----------
 
 const Len{T} = Quantity{T,u"𝐋"}
 const Rad{T} = Quantity{T,NoDims,typeof(u"rad")}
 const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
+
+# only add the unit if the argument is not a quantity
+addunit(x::Number, u) = x * u
+addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinate type, please check the docstring"))
 
 # ----------------
 # IMPLEMENTATIONS
