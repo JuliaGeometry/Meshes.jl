@@ -39,13 +39,13 @@ end
 
 function _cartfields(N)
   if N == 1
-    ["x"]
+    ("x",)
   elseif N == 2
-    ["x", "y"]
+    ("x", "y")
   elseif N == 3
-    ["x", "y", "z"]
+    ("x", "y", "z")
   else
-    ["x$i" for i in 1:N]
+    ntuple(i -> "x$i", N)
   end
 end
 
