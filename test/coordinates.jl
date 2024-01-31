@@ -222,7 +222,7 @@
   end
 
   @testset "conversions" begin
-    @testset "Cartesian <--> Polar" begin
+    @testset "Cartesian <-> Polar" begin
       c1 = Cartesian(T(1), T(1))
       c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2), T(π / 4))
@@ -276,12 +276,16 @@
       c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2) * u"m", T(π / 4))
 
+      c1 = Polar(T(√2) * u"m", T(π / 4))
+      c2 = convert(Cartesian, c1)
+      @test c2 ≈ Cartesian(T(1) * u"m", T(1) * u"m")
+
       c1 = Polar(T(√2) * u"m", T(45) * u"°")
       c2 = convert(Cartesian, c1)
       @test c2 ≈ Cartesian(T(1) * u"m", T(1) * u"m")
     end
 
-    @testset "Cartesian <--> Cylindrical" begin
+    @testset "Cartesian <-> Cylindrical" begin
       c1 = Cartesian(T(1), T(1), T(1))
       c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2), T(π / 4), T(1))
@@ -335,12 +339,16 @@
       c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2) * u"m", T(π / 4), T(1) * u"m")
 
+      c1 = Cylindrical(T(√2) * u"m", T(π / 4), T(1) * u"m")
+      c2 = convert(Cartesian, c1)
+      @test c2 ≈ Cartesian(T(1) * u"m", T(1) * u"m", T(1) * u"m")
+
       c1 = Cylindrical(T(√2) * u"m", T(45) * u"°", T(1) * u"m")
       c2 = convert(Cartesian, c1)
       @test c2 ≈ Cartesian(T(1) * u"m", T(1) * u"m", T(1) * u"m")
     end
 
-    @testset "Cartesian <--> Spherical" begin
+    @testset "Cartesian <-> Spherical" begin
       c1 = Cartesian(T(1), T(1), T(1))
       c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(π / 4))
@@ -394,9 +402,14 @@
       c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√2) * u"m", T(π / 4), T(π / 2))
 
+      Q = typeof(T(1) * u"m")
+      c1 = Spherical(T(√2) * u"m", T(π / 4), T(π / 2))
+      c2 = convert(Cartesian, c1)
+      @test isapprox(c2, Cartesian(T(0) * u"m", T(1) * u"m", T(1) * u"m"), atol=atol(Q))
+
       c1 = Spherical(T(√2) * u"m", T(45) * u"°", T(90) * u"°")
       c2 = convert(Cartesian, c1)
-      @test c2 ≈ Cartesian(T(0) * u"m", T(1) * u"m", T(1) * u"m")
+      @test isapprox(c2, Cartesian(T(0) * u"m", T(1) * u"m", T(1) * u"m"), atol=atol(Q))
     end
   end
 end
