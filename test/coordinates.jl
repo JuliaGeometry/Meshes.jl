@@ -222,6 +222,15 @@
       @test c2 ≈ Polar(T(1), T(π))
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(T))
+
+      # units
+      c1 = Cartesian(T(1) * u"m", T(1) * u"m")
+      c2 = convert(Polar, c1)
+      @test c2 ≈ Polar(T(√2) * u"m", T(π / 4))
+
+      c1 = Polar(T(√2) * u"m", T(45) * u"°")
+      c2 = convert(Cartesian, c1)
+      @test c2 ≈ Cartesian(T(1) * u"m", T(1) * u"m")
     end
 
     @testset "Cartesian <--> Cylindrical" begin
@@ -272,6 +281,15 @@
       @test c2 ≈ Cylindrical(T(1), T(π), T(1))
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(T))
+
+      # units
+      c1 = Cartesian(T(1) * u"m", T(1) * u"m", T(1) * u"m")
+      c2 = convert(Cylindrical, c1)
+      @test c2 ≈ Cylindrical(T(√2) * u"m", T(π / 4), T(1) * u"m")
+
+      c1 = Cylindrical(T(√2) * u"m", T(45) * u"°", T(1) * u"m")
+      c2 = convert(Cartesian, c1)
+      @test c2 ≈ Cartesian(T(1) * u"m", T(1) * u"m", T(1) * u"m")
     end
 
     @testset "Cartesian <--> Spherical" begin
@@ -322,6 +340,15 @@
       @test c2 ≈ Spherical(T(√2), T(π / 4), T(π))
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(T))
+
+      # units
+      c1 = Cartesian(T(0) * u"m", T(1) * u"m", T(1) * u"m")
+      c2 = convert(Spherical, c1)
+      @test c2 ≈ Spherical(T(√2) * u"m", T(π / 4), T(π / 2))
+
+      c1 = Spherical(T(√2) * u"m", T(45) * u"°", T(90) * u"°")
+      c2 = convert(Cartesian, c1)
+      @test c2 ≈ Cartesian(T(0) * u"m", T(1) * u"m", T(1) * u"m")
     end
   end
 end

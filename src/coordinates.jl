@@ -65,5 +65,5 @@ end
 # adjust negative angles
 function atanpos(y::T, x::T) where {T}
   a = atan(y, x)
-  a ≥ zero(T) ? a : a + T(2π)
+  a ≥ zero(a) ? a : a + oftype(a, 2π)
 end
