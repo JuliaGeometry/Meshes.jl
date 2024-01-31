@@ -193,6 +193,12 @@
     c3 = convert(Cartesian, c2)
     @test c3 ≈ c1
 
+    c1 = Cartesian(T(1), -T(1))
+    c2 = convert(Polar, c1)
+    @test c2 ≈ Polar(T(√2), T(7π / 4))
+    c3 = convert(Cartesian, c2)
+    @test c3 ≈ c1
+
     c1 = Cartesian(T(0), T(1))
     c2 = convert(Polar, c1)
     @test c2 ≈ Polar(T(1), T(π / 2))
@@ -202,6 +208,18 @@
     c1 = Cartesian(T(0), -T(1))
     c2 = convert(Polar, c1)
     @test c2 ≈ Polar(T(1), T(3π / 2))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(T(1), T(0))
+    c2 = convert(Polar, c1)
+    @test c2 ≈ Polar(T(1), T(2π))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(-T(1), T(0))
+    c2 = convert(Polar, c1)
+    @test c2 ≈ Polar(T(1), T(π))
     c3 = convert(Cartesian, c2)
     @test isapprox(c3, c1, atol=atol(T))
 
@@ -224,6 +242,12 @@
     c3 = convert(Cartesian, c2)
     @test c3 ≈ c1
 
+    c1 = Cartesian(T(1), -T(1), T(1))
+    c2 = convert(Cylindrical, c1)
+    @test c2 ≈ Cylindrical(T(√2), T(7π / 4), T(1))
+    c3 = convert(Cartesian, c2)
+    @test c3 ≈ c1
+
     c1 = Cartesian(T(0), T(1), T(1))
     c2 = convert(Cylindrical, c1)
     @test c2 ≈ Cylindrical(T(1), T(π / 2), T(1))
@@ -233,6 +257,67 @@
     c1 = Cartesian(T(0), -T(1), T(1))
     c2 = convert(Cylindrical, c1)
     @test c2 ≈ Cylindrical(T(1), T(3π / 2), T(1))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(T(1), T(0), T(1))
+    c2 = convert(Cylindrical, c1)
+    @test c2 ≈ Cylindrical(T(1), T(2π), T(1))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(-T(1), T(0), T(1))
+    c2 = convert(Cylindrical, c1)
+    @test c2 ≈ Cylindrical(T(1), T(π), T(1))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    # Cartesian <--> Spherical
+    c1 = Cartesian(T(1), T(1), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(π / 4))
+    c3 = convert(Cartesian, c2)
+    @test c3 ≈ c1
+
+    c1 = Cartesian(-T(1), T(1), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(3π / 4))
+    c3 = convert(Cartesian, c2)
+    @test c3 ≈ c1
+
+    c1 = Cartesian(-T(1), -T(1), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(5π / 4))
+    c3 = convert(Cartesian, c2)
+    @test c3 ≈ c1
+
+    c1 = Cartesian(T(1), -T(1), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(7π / 4))
+    c3 = convert(Cartesian, c2)
+    @test c3 ≈ c1
+
+    c1 = Cartesian(T(0), T(1), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√2), T(π / 4), T(π / 2))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(T(0), -T(1), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√2), T(π / 4), T(3π / 2))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(T(1), T(0), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√2), T(π / 4), T(2π))
+    c3 = convert(Cartesian, c2)
+    @test isapprox(c3, c1, atol=atol(T))
+
+    c1 = Cartesian(-T(1), T(0), T(1))
+    c2 = convert(Spherical, c1)
+    @test c2 ≈ Spherical(T(√2), T(π / 4), T(π))
     c3 = convert(Cartesian, c2)
     @test isapprox(c3, c1, atol=atol(T))
   end
