@@ -5,16 +5,64 @@
     @test Cartesian(T(1), T(1), T(1)) == Cartesian((T(1), T(1), T(1)))
     @test Cartesian(T(1), 1) == Cartesian((T(1), T(1)))
 
-    c = Cartesian(T(1), T(1))
-    @test sprint(show, c) == "Cartesian(coords: (1.0, 1.0))"
+    c = Cartesian(T(1))
+    @test sprint(show, c) == "Cartesian(x: 1.0)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
       Cartesian coordinates
-      └─ coords: (1.0f0, 1.0f0)"""
+      └─ x: 1.0f0"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       Cartesian coordinates
-      └─ coords: (1.0, 1.0)"""
+      └─ x: 1.0"""
+    end
+
+    c = Cartesian(T(1), T(1))
+    @test sprint(show, c) == "Cartesian(x: 1.0, y: 1.0)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      Cartesian coordinates
+      ├─ x: 1.0f0
+      └─ y: 1.0f0"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      Cartesian coordinates
+      ├─ x: 1.0
+      └─ y: 1.0"""
+    end
+
+    c = Cartesian(T(1), T(1), T(1))
+    @test sprint(show, c) == "Cartesian(x: 1.0, y: 1.0, z: 1.0)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      Cartesian coordinates
+      ├─ x: 1.0f0
+      ├─ y: 1.0f0
+      └─ z: 1.0f0"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      Cartesian coordinates
+      ├─ x: 1.0
+      ├─ y: 1.0
+      └─ z: 1.0"""
+    end
+
+    c = Cartesian(T(1), T(1), T(1), T(1))
+    @test sprint(show, c) == "Cartesian(x1: 1.0, x2: 1.0, x3: 1.0, x4: 1.0)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      Cartesian coordinates
+      ├─ x1: 1.0f0
+      ├─ x2: 1.0f0
+      ├─ x3: 1.0f0
+      └─ x4: 1.0f0"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      Cartesian coordinates
+      ├─ x1: 1.0
+      ├─ x2: 1.0
+      ├─ x3: 1.0
+      └─ x4: 1.0"""
     end
   end
 

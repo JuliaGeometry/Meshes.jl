@@ -24,6 +24,31 @@ Cartesian(coords...) = Cartesian(coords)
 Base.isapprox(c₁::Cartesian{N}, c₂::Cartesian{N}; kwargs...) where {N} =
   all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
 
+function Base.show(io::IO, (; coords)::Cartesian{N}) where {N}
+  print(io, "Cartesian(")
+  fnames = _cartfields(N)
+  printfields(io, fnames, coords, compact=true)
+  print(io, ")")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", (; coords)::Cartesian{N}) where {N}
+  print(io, "Cartesian coordinates")
+  fnames = _cartfields(N)
+  printfields(io, fnames, coords)
+end
+
+function _cartfields(N)
+  if N == 1
+    ["x"]
+  elseif N == 2
+    ["x", "y"]
+  elseif N == 3
+    ["x", "y", "z"]
+  else
+    ["x$i" for i in 1:N]
+  end
+end
+
 """
     Polar(ρ, ϕ)
 
