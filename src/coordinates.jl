@@ -44,14 +44,14 @@ include("coordinates/gis.jl")
 Base.convert(::Type{<:Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
 function Base.convert(::Type{<:Polar}, (; coords)::Cartesian{2})
   x, y = coords
-  Polar(sqrt(x^2 + y^2), _atan(y, x))
+  Polar(sqrt(x^2 + y^2), atanpos(y, x))
 end
 
 # Cartesian <--> Cylindrical
 Base.convert(::Type{<:Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
 function Base.convert(::Type{<:Cylindrical}, (; coords)::Cartesian{3})
   x, y, z = coords
-  Cylindrical(sqrt(x^2 + y^2), _atan(y, x), z)
+  Cylindrical(sqrt(x^2 + y^2), atanpos(y, x), z)
 end
 
 # Cartesian <--> Spherical
@@ -59,11 +59,11 @@ Base.convert(::Type{<:Cartesian}, (; r, θ, ϕ)::Spherical) =
   Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
 function Base.convert(::Type{<:Spherical}, (; coords)::Cartesian{3})
   x, y, z = coords
-  Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z), _atan(y, x))
+  Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z), atanpos(y, x))
 end
 
 # adjust negative angles
-function _atan(y::T, x::T) where {T}
+function atanpos(y::T, x::T) where {T}
   a = atan(y, x)
-  a > zero(T) ? a : a + T(2π)
+  a ≥ zero(T) ? a : a + T(2π)
 end
