@@ -129,7 +129,8 @@
   @testset "Spherical" begin
     @test Spherical(T(1), T(1), T(1)) == Spherical(T(1) * u"m", T(1) * u"rad", T(1) * u"rad")
     @test Spherical(T(1) * u"m", T(1) * u"rad", 1 * u"rad") == Spherical(T(1) * u"m", T(1) * u"rad", T(1) * u"rad")
-    @test Spherical(T(1) * u"m", T(45) * u"°", T(45) * u"°") ≈ Spherical(T(1) * u"m", T(π / 4) * u"rad", T(π / 4) * u"rad")
+    @test Spherical(T(1) * u"m", T(45) * u"°", T(45) * u"°") ≈
+          Spherical(T(1) * u"m", T(π / 4) * u"rad", T(π / 4) * u"rad")
 
     c = Spherical(T(1), T(1), T(1))
     @test sprint(show, c) == "Spherical(r: 1.0 m, θ: 1.0 rad, ϕ: 1.0 rad)"
@@ -184,7 +185,8 @@
   @testset "LatLonAlt" begin
     @test LatLonAlt(T(1), T(1), T(1)) == LatLonAlt(T(1) * u"°", T(1) * u"°", T(1) * u"m")
     @test LatLonAlt(T(1) * u"°", 1 * u"°", T(1) * u"m") == LatLonAlt(T(1) * u"°", T(1) * u"°", T(1) * u"m")
-    @test LatLonAlt(T(π / 4) * u"rad", T(π / 4) * u"rad", T(1) * u"m") ≈ LatLonAlt(T(45) * u"°", T(45) * u"°", T(1) * u"m")
+    @test LatLonAlt(T(π / 4) * u"rad", T(π / 4) * u"rad", T(1) * u"m") ≈
+          LatLonAlt(T(45) * u"°", T(45) * u"°", T(1) * u"m")
 
     c = LatLonAlt(T(1), T(1), T(1))
     @test sprint(show, c) == "LatLonAlt(lat: 1.0°, lon: 1.0°, alt: 1.0 m)"
