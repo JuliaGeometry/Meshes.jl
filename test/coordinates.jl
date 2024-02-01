@@ -64,6 +64,12 @@
       ├─ x3: 1.0 m
       └─ x4: 1.0 m"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError Cartesian(T(1), T(1) * u"m")
+    @test_throws ArgumentError Cartesian(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError Cartesian(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError Cartesian(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "Polar" begin
@@ -83,6 +89,12 @@
       ├─ ρ: 1.0 m
       └─ ϕ: 1.0 rad"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError Polar(T(1), T(1) * u"rad")
+    @test_throws ArgumentError Polar(T(1) * u"s", T(1) * u"rad")
+    @test_throws ArgumentError Polar(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError Polar(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "Cylindrical" begin
@@ -105,6 +117,13 @@
       ├─ ϕ: 1.0 rad
       └─ z: 1.0 m"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError Cylindrical(T(1), T(1) * u"rad", T(1))
+    @test_throws ArgumentError Cylindrical(T(1) * u"s", T(1) * u"rad", T(1) * u"m")
+    @test_throws ArgumentError Cylindrical(T(1) * u"m", T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError Cylindrical(T(1) * u"m", T(1) * u"rad", T(1) * u"s")
+    @test_throws ArgumentError Cylindrical(T(1) * u"s", T(1) * u"s", T(1) * u"s")
   end
 
   @testset "Spherical" begin
@@ -127,6 +146,13 @@
       ├─ θ: 1.0 rad
       └─ ϕ: 1.0 rad"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError Spherical(T(1) * u"m", T(1), T(1))
+    @test_throws ArgumentError Spherical(T(1) * u"s", T(1) * u"rad", T(1) * u"rad")
+    @test_throws ArgumentError Spherical(T(1) * u"m", T(1) * u"s", T(1) * u"rad")
+    @test_throws ArgumentError Spherical(T(1) * u"m", T(1) * u"rad", T(1) * u"s")
+    @test_throws ArgumentError Spherical(T(1) * u"s", T(1) * u"s", T(1) * u"s")
   end
 
   @testset "LatLon" begin
@@ -147,6 +173,12 @@
       ├─ lat: 1.0°
       └─ lon: 1.0°"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError LatLon(T(1), T(1) * u"°")
+    @test_throws ArgumentError LatLon(T(1) * u"s", T(1) * u"°")
+    @test_throws ArgumentError LatLon(T(1) * u"°", T(1) * u"s")
+    @test_throws ArgumentError LatLon(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "LatLonAlt" begin
@@ -169,6 +201,13 @@
       ├─ lon: 1.0°
       └─ alt: 1.0 m"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError LatLonAlt(T(1), T(1), T(1) * u"m")
+    @test_throws ArgumentError LatLonAlt(T(1) * u"s", T(1) * u"°", T(1) * u"m")
+    @test_throws ArgumentError LatLonAlt(T(1) * u"°", T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError LatLonAlt(T(1) * u"°", T(1) * u"°", T(1) * u"s")
+    @test_throws ArgumentError LatLonAlt(T(1) * u"s", T(1) * u"s", T(1) * u"s")
   end
 
   @testset "EastNorth" begin
@@ -188,6 +227,12 @@
       ├─ east: 1.0 m
       └─ north: 1.0 m"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError EastNorth(T(1), T(1) * u"m")
+    @test_throws ArgumentError EastNorth(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError EastNorth(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError EastNorth(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "WebMercator" begin
@@ -207,6 +252,12 @@
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
+
+    # error: invalid units for coordinate type
+    @test_throws ArgumentError WebMercator(T(1), T(1) * u"m")
+    @test_throws ArgumentError WebMercator(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError WebMercator(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError WebMercator(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "conversions" begin
