@@ -5,12 +5,21 @@
 """
     Cartesian(x₁, x₂, ..., xₙ)
 
-N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ`.
+N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ` in length units (default to meter).
+
+## Examples
+
+```julia
+Cartesian(1, 1) # add default units
+Cartesian(1u"m", 1u"m") # integers are converted converted to floats
+Cartesian(1.0u"km", 1.0u"km", 1.0u"km")
+```
 
 ## References
 
 * [Cartesian coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)
-* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
+* [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
+* [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
 struct Cartesian{N,L<:Len} <: Coordinates{N}
   coords::NTuple{N,L}
@@ -52,12 +61,23 @@ end
 """
     Polar(ρ, ϕ)
 
-Polar coordinates with radius `ρ ∈ [0,∞)` and angle `ϕ ∈ [0,2π)`.
+Polar coordinates with radius `ρ ∈ [0,∞)` in length units (default to meter)
+and angle `ϕ ∈ [0,2π)` in angular units (default to radian).
+
+## Examples
+
+```julia
+Polar(1, π/4) # add default units
+Polar(1u"m", (π/4)u"rad") # integers are converted converted to floats
+Polar(1.0u"m", 45u"°") # degrees are converted to radians
+Polar(1.0u"km", (π/4)u"rad")
+```
 
 ## References
 
 * [Polar coordinate system](https://en.wikipedia.org/wiki/Polar_coordinate_system)
-* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
+* [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
+* [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
 struct Polar{L<:Len,R<:Rad} <: Coordinates{2}
   ρ::L
@@ -72,12 +92,24 @@ Polar(ρ::Number, ϕ::Number) = Polar(addunit(ρ, u"m"), addunit(ϕ, u"rad"))
 """
     Cylindrical(ρ, ϕ, z)
 
-Cylindrical coordinates with radius `ρ ∈ [0,∞)`, angle `ϕ ∈ [0,2π)` and height `z ∈ [0,∞)`.
+Cylindrical coordinates with radius `ρ ∈ [0,∞)` in length units (default to meter), 
+angle `ϕ ∈ [0,2π)` in angular units (default to radian) 
+and height `z ∈ [0,∞)` in length units (default to meter).
+
+## Examples
+
+```julia
+Cylindrical(1, π/4, 1) # add default units
+Cylindrical(1u"m", (π/4)u"rad", 1u"m") # integers are converted converted to floats
+Cylindrical(1.0u"m", 45u"°", 1.0u"m") # degrees are converted to radians
+Cylindrical(1.0u"km", (π/4)u"rad", 1.0u"km")
+```
 
 ## References
 
 * [Cylindrical coordinate system](https://en.wikipedia.org/wiki/Cylindrical_coordinate_system)
-* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
+* [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
+* [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
 struct Cylindrical{L<:Len,R<:Rad} <: Coordinates{3}
   ρ::L
@@ -97,12 +129,23 @@ Cylindrical(ρ::Number, ϕ::Number, z::Number) = Cylindrical(addunit(ρ, u"m"), 
 """
     Spherical(r, θ, ϕ)
 
-Spherical coordinates with radius `r ∈ [0,∞)`, polar angle `θ ∈ [0,π]` and azimuth angle `ϕ ∈ [0,2π)`.
+Spherical coordinates with radius `r ∈ [0,∞)` in length units (default to meter), 
+polar angle `θ ∈ [0,π]` and azimuth angle `ϕ ∈ [0,2π)` in angular units (default to radian).
+
+## Examples
+
+```julia
+Spherical(1, π/4, π/4) # add default units
+Spherical(1u"m", (π/4)u"rad", (π/4)u"rad") # integers are converted converted to floats
+Spherical(1.0u"m", 45u"°", 45u"°") # degrees are converted to radians
+Spherical(1.0u"km", (π/4)u"rad", (π/4)u"rad")
+```
 
 ## References
 
 * [Spherical coordinate system](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
-* [ISO 31-11](https://en.wikipedia.org/wiki/ISO_31-11)
+* [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
+* [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
 struct Spherical{L<:Len,R<:Rad} <: Coordinates{3}
   r::L

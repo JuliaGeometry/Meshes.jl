@@ -5,12 +5,21 @@
 """
     LatLon(lat, lon)
 
-Latitude and longitude in angle units (default to degree).
+Latitude and longitude in angular units (default to degree).
+
+## Examples
+
+```julia
+LatLon(45, 45) # add default units
+LatLon(45u"°", 45u"°") # integers are converted converted to floats
+LatLon((π/4)u"rad", (π/4)u"rad") # radians are converted to degrees
+LatLon(45.0u"°", 45.0u"°")
+```
 
 ## References
 
 * [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
-* [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709)
+* [ISO 6709:2022](https://www.iso.org/standard/75147.html)
 """
 struct LatLon{D<:Deg} <: Coordinates{2}
   lat::D
@@ -26,13 +35,22 @@ LatLon(lat::Number, lon::Number) = LatLon(addunit(lat, u"°"), addunit(lon, u"°
 """
     LatLonAlt(lat, lon, alt)
 
-Latitude and longitude in angle units (default to degree)
+Latitude and longitude in angular units (default to degree)
 and altitude in length units (default to meter).
+
+## Examples
+
+```julia
+LatLonAlt(45, 45, 1) # add default units
+LatLonAlt(45u"°", 45u"°", 1u"m") # integers are converted converted to floats
+LatLonAlt((π/4)u"rad", (π/4)u"rad", 1.0u"m") # radians are converted to degrees
+LatLonAlt(45.0u"°", 45.0u"°", 1.0u"km")
+```
 
 ## References
 
 * [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
-* [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709)
+* [ISO 6709:2022](https://www.iso.org/standard/75147.html)
 """
 struct LatLonAlt{D<:Deg,L<:Len} <: Coordinates{3}
   lat::D
@@ -50,6 +68,14 @@ LatLonAlt(lat::Number, lon::Number, alt::Number) = LatLonAlt(addunit(lat, u"°")
     EastNorth(east, north)
 
 East and north coordinates in length units (default to meter).
+
+## Examples
+
+```julia
+EastNorth(1, 1) # add default units
+EastNorth(1"m", 1"m") # integers are converted converted to floats
+EastNorth(1.0"km", 1.0"km")
+```
 
 ## References
 
@@ -69,6 +95,14 @@ EastNorth(east::Number, north::Number) = EastNorth(addunit(east, u"m"), addunit(
     WebMercator(x, y)
 
 WebMercator coordinates in length units (default to meter).
+
+## Examples
+
+```julia
+WebMercator(1, 1) # add default units
+WebMercator(1"m", 1"m") # integers are converted converted to floats
+WebMercator(1.0"km", 1.0"km")
+```
 
 ## References
 
