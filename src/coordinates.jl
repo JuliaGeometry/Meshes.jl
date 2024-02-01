@@ -39,7 +39,7 @@ const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
 
 # only add the unit if the argument is not a quantity
 addunit(x::Number, u) = x * u
-addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinate type, please check the docstring"))
+addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinates, please check the documentation"))
 
 # ----------------
 # IMPLEMENTATIONS
