@@ -56,3 +56,25 @@ function printinds(io::IO, inds)
 end
 
 printinds(io::IO, inds::AbstractRange) = print(io, inds)
+
+printfields(io, obj; kwargs...) = printfields(io, obj, fieldnames(typeof(obj)); kwargs...)
+
+function printfields(io, obj, fnames; compact=false)
+  if compact
+    ioctx = IOContext(io, :compact => true)
+    vals = map(enumerate(fnames)) do (i, field)
+      val = getfield(obj, i)
+      str = repr(val, context=ioctx)
+      "$field: $str"
+    end
+    join(io, vals, ", ")
+  else
+    len = length(fnames)
+    for (i, field) in enumerate(fnames)
+      div = i == len ? "\n└─ " : "\n├─ "
+      val = getfield(obj, i)
+      str = repr(val, context=io)
+      print(io, "$div$field: $str")
+    end
+  end
+end
