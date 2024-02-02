@@ -75,7 +75,7 @@ function Base.convert(::Type{<:Spherical}, (; coords)::Cartesian{3})
 end
 
 # adjust negative angles
-function atanpos(y::T, x::T) where {T}
-  a = atan(y, x)
-  a ≥ zero(a) ? a : a + oftype(a, 2π)
+function atanpos(y, x)
+  α = atan(y, x)
+  ifelse(α ≥ zero(α), α, α + oftype(α, 2π))
 end
