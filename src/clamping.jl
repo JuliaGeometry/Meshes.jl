@@ -1,8 +1,16 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 """
     clamp(point, box)
 
-Clamp the coordinates of a [`Point`](@ref) to the edges of a [`Box`](@ref). For each dimension, coordinates outside of the box are moved to the nearest edge of the box. The point and box must have an equal number of dimensions."""
-function Base.clamp(point::Point{Dim,T}, box::Box{Dim,T})::Point{Dim,T} where {Dim,T}
+Clamp the coordinates of a [`Point`](@ref) to the edges of a [`Box`](@ref).
+
+For each dimension, coordinates outside of the box are moved to the nearest
+edge of the box. The point and box must have an equal number of dimensions.
+"""
+function Base.clamp(point::Point{Dim}, box::Box{Dim}) where {Dim}
   x = coordinates(point)
   lo = coordinates(minimum(box))
   hi = coordinates(maximum(box))
@@ -12,9 +20,9 @@ function Base.clamp(point::Point{Dim,T}, box::Box{Dim,T})::Point{Dim,T} where {D
 end
 
 """
-    clamp(pointset, box)
+    clamp(pset, box)
 
-Clamp each point in a [`PointSet`](@ref) to the edges of a [`Box`](@ref), returning a new set of points."""
-function Base.clamp(points::PointSet{Dim,T}, box::Box{Dim,T})::PointSet{Dim,T} where {Dim,T}
-  PointSet(map(point -> clamp(point, box), points))
-end
+Clamp each point in a [`PointSet`](@ref) to the edges of a [`Box`](@ref),
+returning a new set of points.
+"""
+Base.clamp(points::PointSet, box::Box) = PointSet(map(point -> clamp(point, box), points))
