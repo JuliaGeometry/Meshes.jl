@@ -39,13 +39,16 @@ function discretizewithin(ring::Ring{2}, method::FIST)
 
   # input ring
   O = orientation(ring, TriangleOrientation())
-  𝒫 = O == CCW ? ring : reverse(ring)
-
-  # points of resulting mesh
-  points = collect(vertices(𝒫))
+  ℛ = O == CCW ? ring : reverse(ring)
 
   # standardize coordinates
-  stdpts = points |> StdCoords()
+  𝒫 = ℛ |> StdCoords()
+
+  # points of resulting mesh
+  points = collect(vertices(ℛ))
+
+  # standardized points for algorithm
+  stdpts = collect(vertices(𝒫))
 
   # keep track of global indices
   inds = CircularVector(1:nvertices(𝒫))
