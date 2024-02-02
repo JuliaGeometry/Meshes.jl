@@ -5,7 +5,7 @@
 """
     LatLon(lat, lon)
 
-Latitude and longitude in angular units (default to degree).
+Latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree).
 
 ## Examples
 
@@ -35,7 +35,7 @@ LatLon(lat::Number, lon::Number) = LatLon(addunit(lat, u"°"), addunit(lon, u"°
 """
     LatLonAlt(lat, lon, alt)
 
-Latitude and longitude in angular units (default to degree)
+Latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree)
 and altitude in length units (default to meter).
 
 ## Examples
