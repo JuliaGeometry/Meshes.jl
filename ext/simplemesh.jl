@@ -195,8 +195,9 @@ function vizmesh3D!(plot)
 end
 
 function segmentsof(topo, vert)
-  T = coordtype(first(vert))
-  Dim = embeddim(first(vert))
+  p = first(vert)
+  T = coordtype(p)
+  Dim = embeddim(p)
   nan = Vec{Dim,T}(ntuple(i -> NaN, Dim))
   xs = coordinates.(vert)
 
