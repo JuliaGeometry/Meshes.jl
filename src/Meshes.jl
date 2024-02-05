@@ -133,8 +133,7 @@ export
   Cylindrical,
   Spherical,
   LatLon,
-  LatLonAlt,
-  EastNorth,
+  Mercator,
   WebMercator,
 
   # geometries

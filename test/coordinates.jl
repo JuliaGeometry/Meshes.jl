@@ -182,59 +182,29 @@
     @test_throws ArgumentError LatLon(T(1) * u"s", T(1) * u"s")
   end
 
-  @testset "LatLonAlt" begin
-    @test LatLonAlt(T(1), T(1), T(1)) == LatLonAlt(T(1) * u"°", T(1) * u"°", T(1) * u"m")
-    @test LatLonAlt(T(1) * u"°", 1 * u"°", T(1) * u"m") == LatLonAlt(T(1) * u"°", T(1) * u"°", T(1) * u"m")
-    @test LatLonAlt(T(π / 4) * u"rad", T(π / 4) * u"rad", T(1) * u"m") ≈
-          LatLonAlt(T(45) * u"°", T(45) * u"°", T(1) * u"m")
+  @testset "Mercator" begin
+    @test Mercator(T(1), T(1)) == Mercator(T(1) * u"m", T(1) * u"m")
+    @test Mercator(T(1) * u"m", 1 * u"m") == Mercator(T(1) * u"m", T(1) * u"m")
 
-    c = LatLonAlt(T(1), T(1), T(1))
-    @test sprint(show, c) == "LatLonAlt(lat: 1.0°, lon: 1.0°, alt: 1.0 m)"
+    c = Mercator(T(1), T(1))
+    @test sprint(show, c) == "Mercator(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLonAlt coordinates
-      ├─ lat: 1.0f0°
-      ├─ lon: 1.0f0°
-      └─ alt: 1.0f0 m"""
+      Mercator coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLonAlt coordinates
-      ├─ lat: 1.0°
-      ├─ lon: 1.0°
-      └─ alt: 1.0 m"""
+      Mercator coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
     end
 
     # error: invalid units for coordinates
-    @test_throws ArgumentError LatLonAlt(T(1), T(1), T(1) * u"m")
-    @test_throws ArgumentError LatLonAlt(T(1) * u"s", T(1) * u"°", T(1) * u"m")
-    @test_throws ArgumentError LatLonAlt(T(1) * u"°", T(1) * u"s", T(1) * u"m")
-    @test_throws ArgumentError LatLonAlt(T(1) * u"°", T(1) * u"°", T(1) * u"s")
-    @test_throws ArgumentError LatLonAlt(T(1) * u"s", T(1) * u"s", T(1) * u"s")
-  end
-
-  @testset "EastNorth" begin
-    @test EastNorth(T(1), T(1)) == EastNorth(T(1) * u"m", T(1) * u"m")
-    @test EastNorth(T(1) * u"m", 1 * u"m") == EastNorth(T(1) * u"m", T(1) * u"m")
-
-    c = EastNorth(T(1), T(1))
-    @test sprint(show, c) == "EastNorth(east: 1.0 m, north: 1.0 m)"
-    if T === Float32
-      @test sprint(show, MIME("text/plain"), c) == """
-      EastNorth coordinates
-      ├─ east: 1.0f0 m
-      └─ north: 1.0f0 m"""
-    else
-      @test sprint(show, MIME("text/plain"), c) == """
-      EastNorth coordinates
-      ├─ east: 1.0 m
-      └─ north: 1.0 m"""
-    end
-
-    # error: invalid units for coordinates
-    @test_throws ArgumentError EastNorth(T(1), T(1) * u"m")
-    @test_throws ArgumentError EastNorth(T(1) * u"s", T(1) * u"m")
-    @test_throws ArgumentError EastNorth(T(1) * u"m", T(1) * u"s")
-    @test_throws ArgumentError EastNorth(T(1) * u"s", T(1) * u"s")
+    @test_throws ArgumentError Mercator(T(1), T(1) * u"m")
+    @test_throws ArgumentError Mercator(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError Mercator(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError Mercator(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "WebMercator" begin
