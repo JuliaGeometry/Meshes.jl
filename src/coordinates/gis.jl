@@ -38,7 +38,7 @@ LatLon((π/4)u"rad", (π/4)u"rad") # radians are converted to degrees
 LatLon(45.0u"°", 45.0u"°")
 ```
 
-See [EPSG:4326](epsg.io/4326).
+See [EPSG:4326](https://epsg.io/4326).
 """
 const LatLon{D<:Deg} = EPSG{4326,2,@NamedTuple{lat::D, lon::D}}
 
@@ -60,7 +60,7 @@ Mercator(1u"m", 1u"m") # integers are converted converted to floats
 Mercator(1.0u"km", 1.0u"km")
 ```
 
-See [EPSG:3395](epsg.io/3395).
+See [EPSG:3395](https://epsg.io/3395).
 """
 const Mercator{L<:Len} = EPSG{3395,2,@NamedTuple{x::L, y::L}}
 
@@ -81,7 +81,7 @@ WebMercator(1u"m", 1u"m") # integers are converted converted to floats
 WebMercator(1.0u"km", 1.0u"km")
 ```
 
-See [EPSG:3857](epsg.io/3857).
+See [EPSG:3857](https://epsg.io/3857).
 """
 const WebMercator{L<:Len} = EPSG{3857,2,@NamedTuple{x::L, y::L}}
 
