@@ -132,6 +132,7 @@ export
   Polar,
   Cylindrical,
   Spherical,
+  EPSG,
   LatLon,
   Mercator,
   WebMercator,

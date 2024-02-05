@@ -2,11 +2,11 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-struct EPSG{N,Code,Coords} <: Coordinates{N}
+struct EPSG{Code,N,Coords} <: Coordinates{N}
   coords::Coords
 end
 
-EPSG{N,Code,Coords}(; kwargs...) where {N,Code,Coords} = EPSG{N,Code,Coords}(values(kwargs))
+EPSG{Code,N,Coords}(; kwargs...) where {Code,N,Coords} = EPSG{Code,N,Coords}(values(kwargs))
 
 Base.isapprox(c₁::T, c₂::T; kwargs...) where {T<:EPSG} =
   all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
@@ -43,7 +43,7 @@ LatLon(45.0u"°", 45.0u"°")
 * [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
 * [ISO 6709:2022](https://www.iso.org/standard/75147.html)
 """
-const LatLon{D<:Deg} = EPSG{2,4326,@NamedTuple{lat::D, lon::D}}
+const LatLon{D<:Deg} = EPSG{4326,2,@NamedTuple{lat::D, lon::D}}
 
 LatLon(lat::D, lon::D) where {D<:Deg} = LatLon{float(D)}(; lat, lon)
 LatLon(lat::Deg, lon::Deg) = LatLon(promote(lat, lon)...)
@@ -67,7 +67,7 @@ Mercator(1.0u"km", 1.0u"km")
 
 * [Mercator projection](https://en.wikipedia.org/wiki/Mercator_projection)
 """
-const Mercator{L<:Len} = EPSG{2,3395,@NamedTuple{x::L, y::L}}
+const Mercator{L<:Len} = EPSG{3395,2,@NamedTuple{x::L, y::L}}
 
 Mercator(x::L, y::L) where {L<:Len} = Mercator{float(L)}(; x, y)
 Mercator(x::Len, y::Len) = Mercator(promote(x, y)...)
@@ -90,7 +90,7 @@ WebMercator(1.0u"km", 1.0u"km")
 
 * [Web Mercator projection](https://en.wikipedia.org/wiki/Web_Mercator_projection)
 """
-const WebMercator{L<:Len} = EPSG{2,3857,@NamedTuple{x::L, y::L}}
+const WebMercator{L<:Len} = EPSG{3857,2,@NamedTuple{x::L, y::L}}
 
 WebMercator(x::L, y::L) where {L<:Len} = WebMercator{float(L)}(; x, y)
 WebMercator(x::Len, y::Len) = WebMercator(promote(x, y)...)
