@@ -132,9 +132,9 @@ export
   Polar,
   Cylindrical,
   Spherical,
+  EPSG,
   LatLon,
-  LatLonAlt,
-  EastNorth,
+  Mercator,
   WebMercator,
 
   # geometries

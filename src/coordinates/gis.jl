@@ -2,6 +2,28 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+struct EPSG{Code,N,Coords} <: Coordinates{N}
+  coords::Coords
+end
+
+EPSG{Code,N,Coords}(args...) where {Code,N,Coords} = EPSG{Code,N,Coords}(Coords(args))
+
+Base.isapprox(c₁::T, c₂::T; kwargs...) where {T<:EPSG} =
+  all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
+
+function Base.show(io::IO, coords::EPSG)
+  name = prettyname(coords)
+  print(io, "$name(")
+  printfields(io, coords.coords, compact=true)
+  print(io, ")")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", coords::EPSG)
+  name = prettyname(coords)
+  print(io, "$name coordinates")
+  printfields(io, coords.coords)
+end
+
 """
     LatLon(lat, lon)
 
@@ -16,80 +38,35 @@ LatLon((π/4)u"rad", (π/4)u"rad") # radians are converted to degrees
 LatLon(45.0u"°", 45.0u"°")
 ```
 
-## References
-
-* [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
-* [ISO 6709:2022](https://www.iso.org/standard/75147.html)
+See [EPSG:4326](https://epsg.io/4326).
 """
-struct LatLon{D<:Deg} <: Coordinates{2}
-  lat::D
-  lon::D
-  LatLon{D}(lat, lon) where {D} = new{float(D)}(lat, lon)
-end
+const LatLon{D<:Deg} = EPSG{4326,2,@NamedTuple{lat::D, lon::D}}
 
-LatLon(lat::D, lon::D) where {D<:Deg} = LatLon{D}(lat, lon)
+LatLon(lat::D, lon::D) where {D<:Deg} = LatLon{float(D)}(lat, lon)
 LatLon(lat::Deg, lon::Deg) = LatLon(promote(lat, lon)...)
 LatLon(lat::Rad, lon::Rad) = LatLon(rad2deg(lat), rad2deg(lon))
 LatLon(lat::Number, lon::Number) = LatLon(addunit(lat, u"°"), addunit(lon, u"°"))
 
 """
-    LatLonAlt(lat, lon, alt)
+    Mercator(x, y)
 
-Latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree)
-and altitude in length units (default to meter).
-
-## Examples
-
-```julia
-LatLonAlt(45, 45, 1) # add default units
-LatLonAlt(45u"°", 45u"°", 1u"m") # integers are converted converted to floats
-LatLonAlt((π/4)u"rad", (π/4)u"rad", 1.0u"m") # radians are converted to degrees
-LatLonAlt(45.0u"°", 45.0u"°", 1.0u"km")
-```
-
-## References
-
-* [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
-* [ISO 6709:2022](https://www.iso.org/standard/75147.html)
-"""
-struct LatLonAlt{D<:Deg,L<:Len} <: Coordinates{3}
-  lat::D
-  lon::D
-  alt::L
-  LatLonAlt{D,L}(lat, lon, alt) where {D,L} = new{float(D),float(L)}(lat, lon, alt)
-end
-
-LatLonAlt(lat::D, lon::D, alt::L) where {D<:Deg,L<:Len} = LatLonAlt{D,L}(lat, lon, alt)
-LatLonAlt(lat::Deg, lon::Deg, alt::Len) = LatLonAlt(promote(lat, lon)..., alt)
-LatLonAlt(lat::Rad, lon::Rad, alt::Len) = LatLonAlt(rad2deg(lat), rad2deg(lon), alt)
-LatLonAlt(lat::Number, lon::Number, alt::Number) = LatLonAlt(addunit(lat, u"°"), addunit(lon, u"°"), addunit(alt, u"m"))
-
-"""
-    EastNorth(east, north)
-
-East and north coordinates in length units (default to meter).
+Mercator coordinates in length units (default to meter).
 
 ## Examples
 
 ```julia
-EastNorth(1, 1) # add default units
-EastNorth(1"m", 1"m") # integers are converted converted to floats
-EastNorth(1.0"km", 1.0"km")
+Mercator(1, 1) # add default units
+Mercator(1u"m", 1u"m") # integers are converted converted to floats
+Mercator(1.0u"km", 1.0u"km")
 ```
 
-## References
-
-* [Geographic coordinate system](https://en.wikipedia.org/wiki/Geographic_coordinate_system)
+See [EPSG:3395](https://epsg.io/3395).
 """
-struct EastNorth{L<:Len} <: Coordinates{2}
-  east::L
-  north::L
-  EastNorth{L}(east, north) where {L} = new{float(L)}(east, north)
-end
+const Mercator{L<:Len} = EPSG{3395,2,@NamedTuple{x::L, y::L}}
 
-EastNorth(east::L, north::L) where {L<:Len} = EastNorth{L}(east, north)
-EastNorth(east::Len, north::Len) = EastNorth(promote(east, north)...)
-EastNorth(east::Number, north::Number) = EastNorth(addunit(east, u"m"), addunit(north, u"m"))
+Mercator(x::L, y::L) where {L<:Len} = Mercator{float(L)}(x, y)
+Mercator(x::Len, y::Len) = Mercator(promote(x, y)...)
+Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
 
 """
     WebMercator(x, y)
@@ -100,20 +77,14 @@ WebMercator coordinates in length units (default to meter).
 
 ```julia
 WebMercator(1, 1) # add default units
-WebMercator(1"m", 1"m") # integers are converted converted to floats
-WebMercator(1.0"km", 1.0"km")
+WebMercator(1u"m", 1u"m") # integers are converted converted to floats
+WebMercator(1.0u"km", 1.0u"km")
 ```
 
-## References
-
-* [Web Mercator projection](https://en.wikipedia.org/wiki/Web_Mercator_projection)
+See [EPSG:3857](https://epsg.io/3857).
 """
-struct WebMercator{L<:Len} <: Coordinates{2}
-  x::L
-  y::L
-  WebMercator{L}(east, north) where {L} = new{float(L)}(east, north)
-end
+const WebMercator{L<:Len} = EPSG{3857,2,@NamedTuple{x::L, y::L}}
 
-WebMercator(x::L, y::L) where {L<:Len} = WebMercator{L}(x, y)
+WebMercator(x::L, y::L) where {L<:Len} = WebMercator{float(L)}(x, y)
 WebMercator(x::Len, y::Len) = WebMercator(promote(x, y)...)
 WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m"))
