@@ -15,6 +15,20 @@ function fitdims(dims::Dims{N}, D) where {N}
 end
 
 """
+    collectat(iter, inds)
+
+Collect iterator `iter` at indices `inds` without materialization.
+"""
+function collectat(iter, inds)
+  if isempty(inds)
+    eltype(iter)[]
+  else
+    selectat(inds) = enumerate ⨟ TakeWhile(x -> first(x) ≤ last(inds)) ⨟ Filter(y -> first(y) ∈ inds) ⨟ Map(last)
+    iter |> selectat(inds) |> tcollect
+  end
+end
+
+"""
     signarea(A, B, C)
 
 Compute signed area of triangle formed by points `A`, `B` and `C`.

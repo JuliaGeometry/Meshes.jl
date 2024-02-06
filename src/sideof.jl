@@ -76,9 +76,10 @@ sideof(points, line::Line{2}) = map(point -> sideof(point, line), points)
 function sideof(points, object::GeometryOrDomain)
   T = coordtype(object)
   bbox = boundingbox(object)
-  inds = findall(point -> point ∈ bbox, points)
-  wind = winding(points[inds], object)
-  side = fill(OUT, length(points))
+  isin = tcollect(point ∈ bbox for point in points)
+  inds = findall(isin)
+  wind = winding(collectat(points, inds), object)
+  side = fill(OUT, length(isin))
   side[inds] .= ifelse.(isapprox.(wind, zero(T), atol=atol(T)), OUT, IN)
   side
 end
