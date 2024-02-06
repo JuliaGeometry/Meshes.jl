@@ -169,13 +169,15 @@
         (1.1794424965e7, 1.7289626797e7)
       ]
     )
-    mesh = discretize(poly, FIST())
+    rng = MersenneTwister(123)
+    mesh = discretize(poly, FIST(rng))
     @test nvertices(mesh) == 16
     @test nelements(mesh) == 14
   end
 
   @testset "Miscellaneous" begin
-    for method in [FIST(), Dehn1899()]
+    rng = MersenneTwister(123)
+    for method in [FIST(rng), Dehn1899()]
       triangle = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
       mesh = discretize(triangle, method)
       @test vertices(mesh) == [P2(0, 0), P2(1, 0), P2(0, 1)]
@@ -225,7 +227,8 @@
   end
 
   @testset "Difficult examples" begin
-    for method in [FIST(), Dehn1899()]
+    rng = MersenneTwister(123)
+    for method in [FIST(rng), Dehn1899()]
       poly = readpoly(T, joinpath(datadir, "taubin.line"))
       mesh = discretize(poly, method)
       @test Set(vertices(poly)) == Set(vertices(mesh))
