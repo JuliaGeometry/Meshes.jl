@@ -74,6 +74,36 @@ function Base.convert(::Type{<:Spherical}, (; coords)::Cartesian{3})
   Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
 end
 
+# LatLon <-> WebMercator
+function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
+  lat, lon = coords
+  ϕ = ustrip(deg2rad(lat))
+  λ = ustrip(deg2rad(lon))
+  # k₀ = 1
+  x = λ
+  y = asinh(tan(ϕ))
+  WebMercator(x, y)
+end
+
+function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
+  x, y = coords
+  # k₀ = 1
+  ϕ = atan(sinh(ustrip(y)))
+  λ = ustrip(x)
+  LatLon(rad2deg(ϕ), rad2deg(λ))
+end
+
+# LatLon <-> Mercator
+function Base.convert(::Type{Mercator}, (; coords)::LatLon)
+  lat, lon = coords
+  ϕ = ustrip(deg2rad(lat))
+  λ = ustrip(deg2rad(lon))
+  # k₀ = 1
+  x = λ
+  y = asinh(tan(ϕ)) - ℯ * atanh(ℯ * sin(ϕ))
+  Mercator(x, y)
+end
+
 # adjust negative angles
 function atanpos(y, x)
   α = atan(y, x)
