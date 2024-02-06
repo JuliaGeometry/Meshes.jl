@@ -24,11 +24,10 @@ end
 function Base.convert(::Type{Mercator}, (; coords)::LatLon)
   λ = ustrip(deg2rad(coords.lon))
   ϕ = ustrip(deg2rad(coords.lat))
-  aλ = oftype(λ, wgs84.a)
-  aϕ = oftype(ϕ, wgs84.a)
-  eϕ = oftype(ϕ, wgs84.e)
-  x = aλ * λ
-  y = aϕ * (asinh(tan(ϕ)) - eϕ * atanh(eϕ * sin(ϕ)))
+  a = oftype(λ, wgs84.a)
+  e = oftype(λ, wgs84.e)
+  x = a * λ
+  y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
   Mercator(x * u"m", y * u"m")
 end
 
@@ -36,20 +35,18 @@ end
 function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
   λ = ustrip(deg2rad(coords.lon))
   ϕ = ustrip(deg2rad(coords.lat))
-  aλ = oftype(λ, wgs84.a)
-  aϕ = oftype(ϕ, wgs84.a)
-  x = aλ * λ
-  y = aϕ * asinh(tan(ϕ))
+  a = oftype(λ, wgs84.a)
+  x = a * λ
+  y = a * asinh(tan(ϕ))
   WebMercator(x * u"m", y * u"m")
 end
 
 function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
   x = ustrip(coords.x)
   y = ustrip(coords.y)
-  ax = oftype(x, wgs84.a)
-  ay = oftype(y, wgs84.a)
-  λ = x / ax
-  ϕ = atan(sinh(y / ay))
+  a = oftype(x, wgs84.a)
+  λ = x / a
+  ϕ = atan(sinh(y / a))
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end
 
