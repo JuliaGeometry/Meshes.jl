@@ -24,7 +24,7 @@ end
 function Base.convert(::Type{Mercator}, (; coords)::LatLon)
   λ = ustrip(deg2rad(coords.lon))
   ϕ = ustrip(deg2rad(coords.lat))
-  a = oftype(λ, wgs84.a)
+  a = oftype(λ, ustrip(wgs84.a))
   e = oftype(λ, wgs84.e)
   x = a * λ
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
@@ -35,23 +35,16 @@ end
 function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
   λ = ustrip(deg2rad(coords.lon))
   ϕ = ustrip(deg2rad(coords.lat))
-  a = oftype(λ, wgs84.a)
+  a = oftype(λ, ustrip(wgs84.a))
   x = a * λ
   y = a * asinh(tan(ϕ))
   WebMercator(x * u"m", y * u"m")
 end
 
 function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
-  x = ustrip(coords.x)
-  y = ustrip(coords.y)
+  x, y = coords
   a = oftype(x, wgs84.a)
   λ = x / a
   ϕ = atan(sinh(y / a))
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
-end
-
-# adjust negative angles
-function atanpos(y, x)
-  α = atan(y, x)
-  ifelse(α ≥ zero(α), α, α + oftype(α, 2π))
 end

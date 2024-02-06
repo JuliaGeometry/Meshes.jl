@@ -41,6 +41,12 @@ const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
 addunit(x::Number, u) = x * u
 addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinates, please check the documentation"))
 
+# adjust negative angles
+function atanpos(y, x)
+  α = atan(y, x)
+  ifelse(α ≥ zero(α), α, α + oftype(α, 2π))
+end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

@@ -9,5 +9,5 @@ const wgs84 = let
   b = a * (1 - f)
   e² = (2 - f) / f⁻¹
   e = √e²
-  (; a, b, e, e², f, f⁻¹)
+  (; a = a * u"m", b = b * u"m", e, e², f, f⁻¹)
 end
