@@ -185,6 +185,7 @@
   @testset "Mercator" begin
     @test Mercator(T(1), T(1)) == Mercator(T(1) * u"m", T(1) * u"m")
     @test Mercator(T(1) * u"m", 1 * u"m") == Mercator(T(1) * u"m", T(1) * u"m")
+    @test Mercator(T(1) * u"km", T(1) * u"km") == Mercator(T(1000) * u"m", T(1000) * u"m")
 
     c = Mercator(T(1), T(1))
     @test sprint(show, c) == "Mercator(x: 1.0 m, y: 1.0 m)"
@@ -210,6 +211,7 @@
   @testset "WebMercator" begin
     @test WebMercator(T(1), T(1)) == WebMercator(T(1) * u"m", T(1) * u"m")
     @test WebMercator(T(1) * u"m", 1 * u"m") == WebMercator(T(1) * u"m", T(1) * u"m")
+    @test WebMercator(T(1) * u"km", T(1) * u"km") == WebMercator(T(1000) * u"m", T(1000) * u"m")
 
     c = WebMercator(T(1), T(1))
     @test sprint(show, c) == "WebMercator(x: 1.0 m, y: 1.0 m)"
@@ -282,6 +284,12 @@
       @test c2 ≈ Polar(T(1), T(π))
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
+
+      # type stability
+      c1 = Cartesian(T(1), T(1))
+      c2 = Polar(T(√2), T(π / 4))
+      @inferred convert(Polar, c1)
+      @inferred convert(Cartesian, c2)
     end
 
     @testset "Cartesian <-> Cylindrical" begin
@@ -332,6 +340,12 @@
       @test c2 ≈ Cylindrical(T(1), T(π), T(1))
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
+
+      # type stability
+      c1 = Cartesian(T(1), T(1), T(1))
+      c2 = Cylindrical(T(√2), T(π / 4), T(1))
+      @inferred convert(Cylindrical, c1)
+      @inferred convert(Cartesian, c2)
     end
 
     @testset "Cartesian <-> Spherical" begin
@@ -382,50 +396,66 @@
       @test c2 ≈ Spherical(T(√2), T(π / 4), T(π))
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
+
+      # type stability
+      c1 = Cartesian(T(1), T(1), T(1))
+      c2 = Spherical(T(√3), atan(T(√2)), T(π / 4))
+      @inferred convert(Spherical, c1)
+      @inferred convert(Cartesian, c2)
     end
 
     @testset "LatLon <-> Mercator" begin
-      c1 = LatLon(T(45) * u"°", T(90) * u"°")
+      c1 = LatLon(T(45), T(90))
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
 
-      c1 = LatLon(-T(45) * u"°", T(90) * u"°")
+      c1 = LatLon(-T(45), T(90))
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), -T(5591295.9185533915))
 
-      c1 = LatLon(T(45) * u"°", -T(90) * u"°")
+      c1 = LatLon(T(45), -T(90))
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), T(5591295.9185533915))
 
-      c1 = LatLon(-T(45) * u"°", -T(90) * u"°")
+      c1 = LatLon(-T(45), -T(90))
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      @inferred convert(Mercator, c1)
     end
 
     @testset "LatLon <-> WebMercator" begin
-      c1 = LatLon(T(45) * u"°", T(90) * u"°")
+      c1 = LatLon(T(45), T(90))
       c2 = convert(WebMercator, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
-      c1 = LatLon(-T(45) * u"°", T(90) * u"°")
+      c1 = LatLon(-T(45), T(90))
       c2 = convert(WebMercator, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), -T(5621521.486192066))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
-      c1 = LatLon(T(45) * u"°", -T(90) * u"°")
+      c1 = LatLon(T(45), -T(90))
       c2 = convert(WebMercator, c1)
       @test c2 ≈ WebMercator(-T(10018754.171394622), T(5621521.486192066))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
-      c1 = LatLon(-T(45) * u"°", -T(90) * u"°")
+      c1 = LatLon(-T(45), -T(90))
       c2 = convert(WebMercator, c1)
       @test c2 ≈ WebMercator(-T(10018754.171394622), -T(5621521.486192066))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      c2 = WebMercator(T(10018754.171394622), T(5621521.486192066))
+      @inferred convert(WebMercator, c1)
+      @inferred convert(LatLon, c1)
     end
   end
 end

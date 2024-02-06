@@ -57,15 +57,17 @@ Mercator coordinates in length units (default to meter).
 ```julia
 Mercator(1, 1) # add default units
 Mercator(1u"m", 1u"m") # integers are converted converted to floats
-Mercator(1.0u"km", 1.0u"km")
+Mercator(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Mercator(1.0u"m", 1.0u"m")
 ```
 
 See [EPSG:3395](https://epsg.io/3395).
 """
-const Mercator{L<:Len} = EPSG{3395,2,@NamedTuple{x::L, y::L}}
+const Mercator{M<:Met} = EPSG{3395,2,@NamedTuple{x::M, y::M}}
 
-Mercator(x::L, y::L) where {L<:Len} = Mercator{float(L)}(x, y)
-Mercator(x::Len, y::Len) = Mercator(promote(x, y)...)
+Mercator(x::M, y::M) where {M<:Met} = Mercator{float(M)}(x, y)
+Mercator(x::Met, y::Met) = Mercator(promote(x, y)...)
+Mercator(x::Len, y::Len) = Mercator(uconvert(u"m", x), uconvert(u"m", y))
 Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
 
 """
@@ -78,13 +80,15 @@ WebMercator coordinates in length units (default to meter).
 ```julia
 WebMercator(1, 1) # add default units
 WebMercator(1u"m", 1u"m") # integers are converted converted to floats
-WebMercator(1.0u"km", 1.0u"km")
+WebMercator(1.0u"km", 1.0u"km") # length quantities are converted to meters
+WebMercator(1.0u"m", 1.0u"m")
 ```
 
 See [EPSG:3857](https://epsg.io/3857).
 """
-const WebMercator{L<:Len} = EPSG{3857,2,@NamedTuple{x::L, y::L}}
+const WebMercator{M<:Met} = EPSG{3857,2,@NamedTuple{x::M, y::M}}
 
-WebMercator(x::L, y::L) where {L<:Len} = WebMercator{float(L)}(x, y)
-WebMercator(x::Len, y::Len) = WebMercator(promote(x, y)...)
+WebMercator(x::M, y::M) where {M<:Met} = WebMercator{float(M)}(x, y)
+WebMercator(x::Met, y::Met) = WebMercator(promote(x, y)...)
+WebMercator(x::Len, y::Len) = WebMercator(uconvert(u"m", x), uconvert(u"m", y))
 WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m"))
