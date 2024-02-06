@@ -7,6 +7,7 @@
 # ----------
 
 const Len{T} = Quantity{T,u"𝐋"}
+const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
 const Rad{T} = Quantity{T,NoDims,typeof(u"rad")}
 const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
 
@@ -24,7 +25,7 @@ end
 # ELLIPSOIDS
 # -----------
 
-const wgs84 = let
+const WGS84 = let
   a = 6378137.0 * u"m"
   f⁻¹ = 298.257223563
   f = inv(f⁻¹)
@@ -103,8 +104,8 @@ function Base.convert(::Type{Mercator}, (; coords)::LatLon)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
-  a = oftype(l, ustrip(wgs84.a))
-  e = oftype(l, wgs84.e)
+  a = oftype(l, ustrip(WGS84.a))
+  e = oftype(l, WGS84.e)
   x = a * l
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
   Mercator(x * u"m", y * u"m")
@@ -115,7 +116,7 @@ function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
-  a = oftype(l, ustrip(wgs84.a))
+  a = oftype(l, ustrip(WGS84.a))
   x = a * l
   y = a * asinh(tan(ϕ))
   WebMercator(x * u"m", y * u"m")
@@ -124,7 +125,7 @@ end
 function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
   x = coords.x
   y = coords.y
-  a = oftype(x, wgs84.a)
+  a = oftype(x, WGS84.a)
   λ = x / a
   ϕ = atan(sinh(y / a))
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
