@@ -45,6 +45,7 @@ addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinates, pl
 # IMPLEMENTATIONS
 # ----------------
 
+include("coordinates/ellipsoids.jl")
 include("coordinates/basic.jl")
 include("coordinates/gis.jl")
 
@@ -53,71 +54,55 @@ include("coordinates/gis.jl")
 # ------------
 
 # Cartesian <-> Polar
-Base.convert(::Type{<:Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
-function Base.convert(::Type{<:Polar}, (; coords)::Cartesian{2})
+Base.convert(::Type{Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
+function Base.convert(::Type{Polar}, (; coords)::Cartesian{2})
   x, y = coords
   Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
 end
 
 # Cartesian <-> Cylindrical
-Base.convert(::Type{<:Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
-function Base.convert(::Type{<:Cylindrical}, (; coords)::Cartesian{3})
+Base.convert(::Type{Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
+function Base.convert(::Type{Cylindrical}, (; coords)::Cartesian{3})
   x, y, z = coords
   Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
 end
 
 # Cartesian <-> Spherical
-Base.convert(::Type{<:Cartesian}, (; r, θ, ϕ)::Spherical) =
+Base.convert(::Type{Cartesian}, (; r, θ, ϕ)::Spherical) =
   Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
-function Base.convert(::Type{<:Spherical}, (; coords)::Cartesian{3})
+function Base.convert(::Type{Spherical}, (; coords)::Cartesian{3})
   x, y, z = coords
   Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
 end
 
-# WGS84 ellipsoid
-const a = 6378137.0
-const f⁻¹ = 298.257223563
-const f = inv(f⁻¹)
-const b = a * (1 - f)
-const e² = (2 - f) / f⁻¹
-const e = √e²
-
 # LatLon <-> Mercator
-function fwdformula(::Type{Mercator})
-  x = (ϕ, λ) -> oftype(λ, a) * λ
-  y = (ϕ, λ) -> begin
-    ey = oftype(ϕ, e)
-    oftype(ϕ, a) * (asinh(tan(ϕ)) - ey * atanh(ey * sin(ϕ)))
-  end
-  x, y
-end
-
 function Base.convert(::Type{Mercator}, (; coords)::LatLon)
   lat, lon = coords
-  ϕ = ustrip(deg2rad(lat))
   λ = ustrip(deg2rad(lon))
-  x, y = fwdformula(Mercator)
-  Mercator(x(ϕ, λ) * u"m", y(ϕ, λ) * u"m")
+  ϕ = ustrip(deg2rad(lat))
+  x = oftype(λ, a) * λ
+  ey = oftype(ϕ, e)
+  y = oftype(ϕ, a) * (asinh(tan(ϕ)) - ey * atanh(ey * sin(ϕ)))
+  Mercator(x * u"m", y * u"m")
 end
 
 # LatLon <-> WebMercator
-fwdformula(::Type{WebMercator}) = ((ϕ, λ) -> oftype(λ, a) * λ, (ϕ, λ) -> oftype(ϕ, a) * asinh(tan(ϕ)))
-invformula(::Type{WebMercator}) = ((x, y) -> atan(sinh(y / oftype(y, a))), (x, y) -> x / oftype(x, a))
-
 function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
   lat, lon = coords
-  ϕ = ustrip(deg2rad(lat))
   λ = ustrip(deg2rad(lon))
-  x, y = fwdformula(WebMercator)
-  WebMercator(x(ϕ, λ) * u"m", y(ϕ, λ) * u"m")
+  ϕ = ustrip(deg2rad(lat))
+  x = oftype(λ, a) * λ
+  y = oftype(ϕ, a) * asinh(tan(ϕ))
+  WebMercator(x * u"m", y * u"m")
 end
 
 function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
   x, y = coords
   nx = ustrip(x)
   ny = ustrip(y)
-  ϕ, λ = invformula(WebMercator)
-  LatLon(rad2deg(ϕ(nx, ny)) * u"°", rad2deg(λ(nx, ny)) * u"°")
+  λ = nx / oftype(nx, a)
+  ϕ = atan(sinh(ny / oftype(ny, a)))
+  LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end
 
 # adjust negative angles
