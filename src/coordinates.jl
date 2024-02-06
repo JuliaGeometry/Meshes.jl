@@ -74,34 +74,45 @@ function Base.convert(::Type{<:Spherical}, (; coords)::Cartesian{3})
   Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
 end
 
+# WGS84 ellipsoid
+const a = 6378137.0
+const f⁻¹ = 298.257223563
+const f = inv(f⁻¹)
+const b = a * (1 - f)
+const e² = (2 - f) / f⁻¹
+const e = √e²
+
 # LatLon <-> WebMercator
+# k₀ = 1
+fwdformula(::Type{WebMercator}) = ((ϕ, λ) -> λ, (ϕ, λ) -> asinh(tan(ϕ)))
+invformula(::Type{WebMercator}) = ((x, y) -> atan(sinh(y)), (x, y) -> x)
+
 function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
   lat, lon = coords
   ϕ = ustrip(deg2rad(lat))
   λ = ustrip(deg2rad(lon))
-  # k₀ = 1
-  x = λ
-  y = asinh(tan(ϕ))
-  WebMercator(x, y)
+  x, y = fwdformula(WebMercator)
+  WebMercator(x(ϕ, λ), y(ϕ, λ))
 end
 
 function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
   x, y = coords
-  # k₀ = 1
-  ϕ = atan(sinh(ustrip(y)))
-  λ = ustrip(x)
-  LatLon(rad2deg(ϕ), rad2deg(λ))
+  nx = ustrip(x)
+  ny = ustrip(y)
+  ϕ, λ = invformula(WebMercator)
+  LatLon(rad2deg(ϕ(nx, ny)), rad2deg(λ(nx, ny)))
 end
 
 # LatLon <-> Mercator
+# k₀ = 1
+fwdformula(::Type{Mercator}) = ((ϕ, λ) -> λ, (ϕ, λ) -> asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
+
 function Base.convert(::Type{Mercator}, (; coords)::LatLon)
   lat, lon = coords
   ϕ = ustrip(deg2rad(lat))
   λ = ustrip(deg2rad(lon))
-  # k₀ = 1
-  x = λ
-  y = asinh(tan(ϕ)) - ℯ * atanh(ℯ * sin(ϕ))
-  Mercator(x, y)
+  x, y = fwdformula(Mercator)
+  Mercator(x(ϕ, λ), y(ϕ, λ))
 end
 
 # adjust negative angles
