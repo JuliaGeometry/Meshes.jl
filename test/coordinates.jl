@@ -383,5 +383,49 @@
       c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
     end
+
+    @testset "LatLon <-> Mercator" begin
+      c1 = LatLon(T(45) * u"°", T(90) * u"°")
+      c2 = convert(Mercator, c1)
+      @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
+
+      c1 = LatLon(-T(45) * u"°", T(90) * u"°")
+      c2 = convert(Mercator, c1)
+      @test c2 ≈ Mercator(T(10018754.171394622), -T(5591295.9185533915))
+
+      c1 = LatLon(T(45) * u"°", -T(90) * u"°")
+      c2 = convert(Mercator, c1)
+      @test c2 ≈ Mercator(-T(10018754.171394622), T(5591295.9185533915))
+
+      c1 = LatLon(-T(45) * u"°", -T(90) * u"°")
+      c2 = convert(Mercator, c1)
+      @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
+    end
+
+    @testset "LatLon <-> WebMercator" begin
+      c1 = LatLon(T(45) * u"°", T(90) * u"°")
+      c2 = convert(WebMercator, c1)
+      @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(45) * u"°", T(90) * u"°")
+      c2 = convert(WebMercator, c1)
+      @test c2 ≈ WebMercator(T(10018754.171394622), -T(5621521.486192066))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(45) * u"°", -T(90) * u"°")
+      c2 = convert(WebMercator, c1)
+      @test c2 ≈ WebMercator(-T(10018754.171394622), T(5621521.486192066))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(45) * u"°", -T(90) * u"°")
+      c2 = convert(WebMercator, c1)
+      @test c2 ≈ WebMercator(-T(10018754.171394622), -T(5621521.486192066))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+    end
   end
 end

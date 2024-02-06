@@ -82,17 +82,34 @@ const b = a * (1 - f)
 const e² = (2 - f) / f⁻¹
 const e = √e²
 
+# LatLon <-> Mercator
+function fwdformula(::Type{Mercator})
+  x = (ϕ, λ) -> oftype(λ, a) * λ
+  y = (ϕ, λ) -> begin
+    ey = oftype(ϕ, e)
+    oftype(ϕ, a) * (asinh(tan(ϕ)) - ey * atanh(ey * sin(ϕ)))
+  end
+  x, y
+end
+
+function Base.convert(::Type{Mercator}, (; coords)::LatLon)
+  lat, lon = coords
+  ϕ = ustrip(deg2rad(lat))
+  λ = ustrip(deg2rad(lon))
+  x, y = fwdformula(Mercator)
+  Mercator(x(ϕ, λ) * u"m", y(ϕ, λ) * u"m")
+end
+
 # LatLon <-> WebMercator
-# k₀ = 1
-fwdformula(::Type{WebMercator}) = ((ϕ, λ) -> λ, (ϕ, λ) -> asinh(tan(ϕ)))
-invformula(::Type{WebMercator}) = ((x, y) -> atan(sinh(y)), (x, y) -> x)
+fwdformula(::Type{WebMercator}) = ((ϕ, λ) -> oftype(λ, a) * λ, (ϕ, λ) -> oftype(ϕ, a) * asinh(tan(ϕ)))
+invformula(::Type{WebMercator}) = ((x, y) -> atan(sinh(y / oftype(y, a))), (x, y) -> x / oftype(x, a))
 
 function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
   lat, lon = coords
   ϕ = ustrip(deg2rad(lat))
   λ = ustrip(deg2rad(lon))
   x, y = fwdformula(WebMercator)
-  WebMercator(x(ϕ, λ), y(ϕ, λ))
+  WebMercator(x(ϕ, λ) * u"m", y(ϕ, λ) * u"m")
 end
 
 function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
@@ -100,19 +117,7 @@ function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
   nx = ustrip(x)
   ny = ustrip(y)
   ϕ, λ = invformula(WebMercator)
-  LatLon(rad2deg(ϕ(nx, ny)), rad2deg(λ(nx, ny)))
-end
-
-# LatLon <-> Mercator
-# k₀ = 1
-fwdformula(::Type{Mercator}) = ((ϕ, λ) -> λ, (ϕ, λ) -> asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
-
-function Base.convert(::Type{Mercator}, (; coords)::LatLon)
-  lat, lon = coords
-  ϕ = ustrip(deg2rad(lat))
-  λ = ustrip(deg2rad(lon))
-  x, y = fwdformula(Mercator)
-  Mercator(x(ϕ, λ), y(ϕ, λ))
+  LatLon(rad2deg(ϕ(nx, ny)) * u"°", rad2deg(λ(nx, ny)) * u"°")
 end
 
 # adjust negative angles
