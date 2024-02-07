@@ -119,4 +119,3 @@ include("coordinates/platecarree.jl")
 # ----------
 
 Base.convert(T::Type{EPSG{Code}}, coords::Coordinates) where {Code} = convert(typealias(T), coords)
-
