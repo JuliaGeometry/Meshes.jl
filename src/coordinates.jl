@@ -143,3 +143,24 @@ function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
   ϕ = atan(sinh(y / a))
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end
+
+# LatLon <-> PlateCaree
+function Base.convert(::Type{PlateCaree}, (; coords)::LatLon)
+  λ = deg2rad(coords.lon)
+  ϕ = deg2rad(coords.lat)
+  l = ustrip(λ)
+  o = ustrip(ϕ)
+  a = oftype(l, ustrip(WGS84.a))
+  x = a * l
+  y = a * o
+  PlateCaree(x * u"m", y * u"m")
+end
+
+function Base.convert(::Type{LatLon}, (; coords)::PlateCaree)
+  x = coords.x
+  y = coords.y
+  a = oftype(x, WGS84.a)
+  λ = x / a
+  ϕ = y / a
+  LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+end
