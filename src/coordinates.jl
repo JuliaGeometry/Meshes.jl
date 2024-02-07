@@ -76,91 +76,46 @@ function Base.show(io::IO, ::MIME"text/plain", coords::Coordinates)
   printfields(io, fields, fnames)
 end
 
+#------
+# EPSG
+#------
+
+"""
+    EPSG{code}
+
+EPSG dataset `code` between 1024 and 32767.
+Codes can be searched at [epsg.io](https://epsg.io/).
+
+See [EPSG Geodetic Parameter Dataset](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset)
+"""
+struct EPSG{Code,N,Coords} <: Coordinates{N}
+  coords::Coords
+end
+
+EPSG{Code,N,Coords}(args...) where {Code,N,Coords} = EPSG{Code,N,Coords}(Coords(args))
+
+_fields(coords::EPSG) = coords.coords
+_fnames(coords::EPSG) = keys(coords.coords)
+
+"""
+    typealias(::Type{EPSG{code}})
+
+Returns a coordinate type that has the EPSG `code`.
+"""
+function typealias end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
 include("coordinates/basic.jl")
-include("coordinates/gis.jl")
+include("coordinates/latlon.jl")
+include("coordinates/mercator.jl")
+include("coordinates/webmercator.jl")
+include("coordinates/platecarree.jl")
 
-# ------------
-# CONVERSIONS
-# ------------
+# ----------
+# FALLBACKS
+# ----------
 
-# Cartesian <-> Polar
-Base.convert(::Type{Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
-function Base.convert(::Type{Polar}, (; coords)::Cartesian{2})
-  x, y = coords
-  Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
-end
-
-# Cartesian <-> Cylindrical
-Base.convert(::Type{Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
-function Base.convert(::Type{Cylindrical}, (; coords)::Cartesian{3})
-  x, y, z = coords
-  Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
-end
-
-# Cartesian <-> Spherical
-Base.convert(::Type{Cartesian}, (; r, θ, ϕ)::Spherical) =
-  Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
-function Base.convert(::Type{Spherical}, (; coords)::Cartesian{3})
-  x, y, z = coords
-  Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
-end
-
-# EPSG fallback
 Base.convert(T::Type{EPSG{Code}}, coords::Coordinates) where {Code} = convert(typealias(T), coords)
-
-# LatLon <-> Mercator
-function Base.convert(::Type{Mercator}, (; coords)::LatLon)
-  λ = deg2rad(coords.lon)
-  ϕ = deg2rad(coords.lat)
-  l = ustrip(λ)
-  a = oftype(l, ustrip(WGS84.a))
-  e = oftype(l, WGS84.e)
-  x = a * l
-  y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
-  Mercator(x * u"m", y * u"m")
-end
-
-# LatLon <-> WebMercator
-function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
-  λ = deg2rad(coords.lon)
-  ϕ = deg2rad(coords.lat)
-  l = ustrip(λ)
-  a = oftype(l, ustrip(WGS84.a))
-  x = a * l
-  y = a * asinh(tan(ϕ))
-  WebMercator(x * u"m", y * u"m")
-end
-
-function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
-  x = coords.x
-  y = coords.y
-  a = oftype(x, WGS84.a)
-  λ = x / a
-  ϕ = atan(sinh(y / a))
-  LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
-end
-
-# LatLon <-> PlateCaree
-function Base.convert(::Type{PlateCaree}, (; coords)::LatLon)
-  λ = deg2rad(coords.lon)
-  ϕ = deg2rad(coords.lat)
-  l = ustrip(λ)
-  o = ustrip(ϕ)
-  a = oftype(l, ustrip(WGS84.a))
-  x = a * l
-  y = a * o
-  PlateCaree(x * u"m", y * u"m")
-end
-
-function Base.convert(::Type{LatLon}, (; coords)::PlateCaree)
-  x = coords.x
-  y = coords.y
-  a = oftype(x, WGS84.a)
-  λ = x / a
-  ϕ = y / a
-  LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
-end

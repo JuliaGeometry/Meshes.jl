@@ -234,35 +234,35 @@
     @test_throws ArgumentError WebMercator(T(1) * u"s", T(1) * u"s")
   end
 
-  @testset "PlateCaree" begin
-    @test PlateCaree(T(1), T(1)) == PlateCaree(T(1) * u"m", T(1) * u"m")
-    @test PlateCaree(T(1) * u"m", 1 * u"m") == PlateCaree(T(1) * u"m", T(1) * u"m")
-    @test PlateCaree(T(1) * u"km", T(1) * u"km") == PlateCaree(T(1000) * u"m", T(1000) * u"m")
+  @testset "PlateCarree" begin
+    @test PlateCarree(T(1), T(1)) == PlateCarree(T(1) * u"m", T(1) * u"m")
+    @test PlateCarree(T(1) * u"m", 1 * u"m") == PlateCarree(T(1) * u"m", T(1) * u"m")
+    @test PlateCarree(T(1) * u"km", T(1) * u"km") == PlateCarree(T(1000) * u"m", T(1000) * u"m")
 
-    c = PlateCaree(T(1), T(1))
-    @test sprint(show, c) == "PlateCaree(x: 1.0 m, y: 1.0 m)"
+    c = PlateCarree(T(1), T(1))
+    @test sprint(show, c) == "PlateCarree(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      PlateCaree coordinates
+      PlateCarree coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      PlateCaree coordinates
+      PlateCarree coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
 
     # error: invalid units for coordinates
-    @test_throws ArgumentError PlateCaree(T(1), T(1) * u"m")
-    @test_throws ArgumentError PlateCaree(T(1) * u"s", T(1) * u"m")
-    @test_throws ArgumentError PlateCaree(T(1) * u"m", T(1) * u"s")
-    @test_throws ArgumentError PlateCaree(T(1) * u"s", T(1) * u"s")
+    @test_throws ArgumentError PlateCarree(T(1), T(1) * u"m")
+    @test_throws ArgumentError PlateCarree(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError PlateCarree(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError PlateCarree(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "conversions" begin
     Q = typeof(T(1) * u"m")
-    @testset "Cartesian <-> Polar" begin
+    @testset "Cartesian <> Polar" begin
       c1 = Cartesian(T(1), T(1))
       c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2), T(π / 4))
@@ -318,7 +318,7 @@
       @inferred convert(Cartesian, c2)
     end
 
-    @testset "Cartesian <-> Cylindrical" begin
+    @testset "Cartesian <> Cylindrical" begin
       c1 = Cartesian(T(1), T(1), T(1))
       c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2), T(π / 4), T(1))
@@ -374,7 +374,7 @@
       @inferred convert(Cartesian, c2)
     end
 
-    @testset "Cartesian <-> Spherical" begin
+    @testset "Cartesian <> Spherical" begin
       c1 = Cartesian(T(1), T(1), T(1))
       c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(π / 4))
@@ -430,7 +430,7 @@
       @inferred convert(Cartesian, c2)
     end
 
-    @testset "LatLon <-> Mercator" begin
+    @testset "LatLon <> Mercator" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
@@ -458,7 +458,7 @@
       @inferred convert(EPSG{3395}, c1)
     end
 
-    @testset "LatLon <-> WebMercator" begin
+    @testset "LatLon <> WebMercator" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(WebMercator, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
@@ -499,42 +499,42 @@
       @inferred convert(EPSG{4326}, c2)
     end
 
-    @testset "LatLon <-> PlateCaree" begin
+    @testset "LatLon <> PlateCarree" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(PlateCaree, c1)
-      @test c2 ≈ PlateCaree(T(10018754.171394622), T(5009377.085697311))
+      c2 = convert(PlateCarree, c1)
+      @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(PlateCaree, c1)
-      @test c2 ≈ PlateCaree(T(10018754.171394622), -T(5009377.085697311))
+      c2 = convert(PlateCarree, c1)
+      @test c2 ≈ PlateCarree(T(10018754.171394622), -T(5009377.085697311))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(PlateCaree, c1)
-      @test c2 ≈ PlateCaree(-T(10018754.171394622), T(5009377.085697311))
+      c2 = convert(PlateCarree, c1)
+      @test c2 ≈ PlateCarree(-T(10018754.171394622), T(5009377.085697311))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(PlateCaree, c1)
-      @test c2 ≈ PlateCaree(-T(10018754.171394622), -T(5009377.085697311))
+      c2 = convert(PlateCarree, c1)
+      @test c2 ≈ PlateCarree(-T(10018754.171394622), -T(5009377.085697311))
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
       # EPSG fallback
       c1 = LatLon(T(45), T(90))
       c2 = convert(EPSG{32662}, c1)
-      @test c2 ≈ PlateCaree(T(10018754.171394622), T(5009377.085697311))
+      @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
       c3 = convert(EPSG{4326}, c2)
       @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      c2 = PlateCaree(T(10018754.171394622), T(5009377.085697311))
-      @inferred convert(PlateCaree, c1)
+      c2 = PlateCarree(T(10018754.171394622), T(5009377.085697311))
+      @inferred convert(PlateCarree, c1)
       @inferred convert(LatLon, c2)
       @inferred convert(EPSG{32662}, c1)
       @inferred convert(EPSG{4326}, c2)

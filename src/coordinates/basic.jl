@@ -143,3 +143,29 @@ Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = Spherical{L,R}(r, θ, ϕ)
 Spherical(r::Len, θ::Rad, ϕ::Rad) = Spherical(r, promote(θ, ϕ)...)
 Spherical(r::Len, θ::Deg, ϕ::Deg) = Spherical(r, deg2rad(θ), deg2rad(ϕ))
 Spherical(r::Number, θ::Number, ϕ::Number) = Spherical(addunit(r, u"m"), addunit(θ, u"rad"), addunit(ϕ, u"rad"))
+
+# ------------
+# CONVERSIONS
+# ------------
+
+# Cartesian <> Polar
+Base.convert(::Type{Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
+function Base.convert(::Type{Polar}, (; coords)::Cartesian{2})
+  x, y = coords
+  Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
+end
+
+# Cartesian <> Cylindrical
+Base.convert(::Type{Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
+function Base.convert(::Type{Cylindrical}, (; coords)::Cartesian{3})
+  x, y, z = coords
+  Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
+end
+
+# Cartesian <> Spherical
+Base.convert(::Type{Cartesian}, (; r, θ, ϕ)::Spherical) =
+  Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
+function Base.convert(::Type{Spherical}, (; coords)::Cartesian{3})
+  x, y, z = coords
+  Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
+end
