@@ -468,9 +468,9 @@
       c1 = LatLon(T(45), T(90))
       c2 = WebMercator(T(10018754.171394622), T(5621521.486192066))
       @inferred convert(WebMercator, c1)
-      @inferred convert(LatLon, c1)
+      @inferred convert(LatLon, c2)
       @inferred convert(EPSG{3857}, c1)
-      @inferred convert(EPSG{4326}, c1)
+      @inferred convert(EPSG{4326}, c2)
     end
   end
 end
