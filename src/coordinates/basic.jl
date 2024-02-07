@@ -30,23 +30,8 @@ Cartesian(coords::Vararg{L,N}) where {N,L<:Len} = Cartesian{N,L}(coords)
 Cartesian(coords::Len...) = Cartesian(promote(coords...)...)
 Cartesian(coords::Number...) = Cartesian(addunit.(coords, u"m")...)
 
-Base.isapprox(c₁::Cartesian{N}, c₂::Cartesian{N}; kwargs...) where {N} =
-  all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
-
-function Base.show(io::IO, (; coords)::Cartesian{N}) where {N}
-  print(io, "Cartesian(")
-  fnames = _cartfields(N)
-  printfields(io, coords, fnames, compact=true)
-  print(io, ")")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", (; coords)::Cartesian{N}) where {N}
-  print(io, "Cartesian coordinates")
-  fnames = _cartfields(N)
-  printfields(io, coords, fnames)
-end
-
-function _cartfields(N)
+_fields(coords::Cartesian) = coords.coords
+function _fnames(::Cartesian{N}) where {N}
   if N == 1
     ("x",)
   elseif N == 2

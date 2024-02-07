@@ -46,24 +46,34 @@ Parent type of all coordinate types.
 """
 abstract type Coordinates{N} end
 
-Base.isapprox(c₁::C, c₂::C; kwargs...) where {C<:Coordinates} =
-  all(isapprox(getfield(c₁, n), getfield(c₂, n); kwargs...) for n in fieldnames(C))
+_fields(coords::Coordinates) = coords
+_fnames(coords::Coordinates) = fieldnames(typeof(coords))
+
+function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {N,C<:Coordinates{N}}
+  f₁ = _fields(coords₁)
+  f₂ = _fields(coords₂)
+  all(isapprox(getfield(f₁, i), getfield(f₂, i); kwargs...) for i in 1:N)
+end
 
 # -----------
 # IO METHODS
 # -----------
 
 function Base.show(io::IO, coords::Coordinates)
-  name = nameof(typeof(coords))
+  name = prettyname(coords)
   print(io, "$name(")
-  printfields(io, coords, compact=true)
+  fields = _fields(coords)
+  fnames = _fnames(coords)
+  printfields(io, fields, fnames, compact=true)
   print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", coords::Coordinates)
-  name = nameof(typeof(coords))
+  name = prettyname(coords)
   print(io, "$name coordinates")
-  printfields(io, coords)
+  fields = _fields(coords)
+  fnames = _fnames(coords)
+  printfields(io, fields, fnames)
 end
 
 # ----------------
