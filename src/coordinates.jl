@@ -99,6 +99,9 @@ function Base.convert(::Type{Spherical}, (; coords)::Cartesian{3})
   Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
 end
 
+# EPSG fallback
+Base.convert(T::Type{EPSG{Code}}, coords::Coordinates) where {Code} = convert(typealias(T), coords)
+
 # LatLon <-> Mercator
 function Base.convert(::Type{Mercator}, (; coords)::LatLon)
   λ = deg2rad(coords.lon)
