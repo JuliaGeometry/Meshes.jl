@@ -52,7 +52,7 @@ _fnames(coords::Coordinates) = fieldnames(typeof(coords))
 function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {N,C<:Coordinates{N}}
   f₁ = _fields(coords₁)
   f₂ = _fields(coords₂)
-  all(isapprox(getfield(f₁, i), getfield(f₂, i); kwargs...) for i in 1:N)
+  all(ntuple(i -> isapprox(getfield(f₁, i), getfield(f₂, i); kwargs...), N))
 end
 
 # -----------
