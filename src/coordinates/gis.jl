@@ -2,11 +2,26 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    EPSG{code}
+
+EPSG dataset `code` between 1024 and 32767.
+Codes can be searched at [epsg.io](https://epsg.io/).
+
+See [EPSG Geodetic Parameter Dataset](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset)
+"""
 struct EPSG{Code,N,Coords} <: Coordinates{N}
   coords::Coords
 end
 
 EPSG{Code,N,Coords}(args...) where {Code,N,Coords} = EPSG{Code,N,Coords}(Coords(args))
+
+"""
+    typealias(::Type{EPSG{code}})
+
+Returns a coordinate type that has the EPSG `code`.
+"""
+function typealias end
 
 Base.isapprox(c₁::T, c₂::T; kwargs...) where {T<:EPSG} =
   all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
@@ -42,6 +57,8 @@ See [EPSG:4326](https://epsg.io/4326).
 """
 const LatLon{D<:Deg} = EPSG{4326,2,@NamedTuple{lat::D, lon::D}}
 
+typealias(::Type{EPSG{4326}}) = LatLon
+
 LatLon(lat::D, lon::D) where {D<:Deg} = LatLon{float(D)}(lat, lon)
 LatLon(lat::Deg, lon::Deg) = LatLon(promote(lat, lon)...)
 LatLon(lat::Rad, lon::Rad) = LatLon(rad2deg(lat), rad2deg(lon))
@@ -65,6 +82,8 @@ See [EPSG:3395](https://epsg.io/3395).
 """
 const Mercator{M<:Met} = EPSG{3395,2,@NamedTuple{x::M, y::M}}
 
+typealias(::Type{EPSG{3395}}) = Mercator
+
 Mercator(x::M, y::M) where {M<:Met} = Mercator{float(M)}(x, y)
 Mercator(x::Met, y::Met) = Mercator(promote(x, y)...)
 Mercator(x::Len, y::Len) = Mercator(uconvert(u"m", x), uconvert(u"m", y))
@@ -87,6 +106,8 @@ WebMercator(1.0u"m", 1.0u"m")
 See [EPSG:3857](https://epsg.io/3857).
 """
 const WebMercator{M<:Met} = EPSG{3857,2,@NamedTuple{x::M, y::M}}
+
+typealias(::Type{EPSG{3857}}) = WebMercator
 
 WebMercator(x::M, y::M) where {M<:Met} = WebMercator{float(M)}(x, y)
 WebMercator(x::Met, y::Met) = WebMercator(promote(x, y)...)

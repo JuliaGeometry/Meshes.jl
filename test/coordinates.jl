@@ -421,9 +421,15 @@
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
 
+      # EPSG fallback
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(EPSG{3395}, c1)
+      @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
+
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(Mercator, c1)
+      @inferred convert(EPSG{3395}, c1)
     end
 
     @testset "LatLon <-> WebMercator" begin
@@ -451,11 +457,20 @@
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
+      # EPSG fallback
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(EPSG{3857}, c1)
+      @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
+      c3 = convert(EPSG{4326}, c2)
+      @test c3 ≈ c1
+
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = WebMercator(T(10018754.171394622), T(5621521.486192066))
       @inferred convert(WebMercator, c1)
       @inferred convert(LatLon, c1)
+      @inferred convert(EPSG{3857}, c1)
+      @inferred convert(EPSG{4326}, c1)
     end
   end
 end
