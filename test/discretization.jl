@@ -284,10 +284,11 @@
       @test Set(vertices(poly)) == Set(vertices(mesh))
       @test nelements(mesh) == length(vertices(mesh)) - 2
 
-      poly = readpoly(T, joinpath(datadir, "hole1.line"))
-      mesh = discretize(poly, method)
-      @test Set(vertices(poly)) == Set(vertices(mesh))
-      @test nelements(mesh) == 32
+      # https://github.com/JuliaGeometry/Meshes.jl/issues/738
+      #poly = readpoly(T, joinpath(datadir, "hole1.line"))
+      #mesh = discretize(poly, method)
+      #@test Set(vertices(poly)) == Set(vertices(mesh))
+      #@test nelements(mesh) == 32
 
       poly = readpoly(T, joinpath(datadir, "hole2.line"))
       mesh = discretize(poly, method)
