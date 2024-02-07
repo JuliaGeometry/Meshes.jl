@@ -16,28 +16,15 @@ end
 
 EPSG{Code,N,Coords}(args...) where {Code,N,Coords} = EPSG{Code,N,Coords}(Coords(args))
 
+_fields(coords::EPSG) = coords.coords
+_fnames(coords::EPSG) = keys(coords.coords)
+
 """
     typealias(::Type{EPSG{code}})
 
 Returns a coordinate type that has the EPSG `code`.
 """
 function typealias end
-
-Base.isapprox(c₁::T, c₂::T; kwargs...) where {T<:EPSG} =
-  all(isapprox(x₁, x₂; kwargs...) for (x₁, x₂) in zip(c₁.coords, c₂.coords))
-
-function Base.show(io::IO, coords::EPSG)
-  name = prettyname(coords)
-  print(io, "$name(")
-  printfields(io, coords.coords, compact=true)
-  print(io, ")")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", coords::EPSG)
-  name = prettyname(coords)
-  print(io, "$name coordinates")
-  printfields(io, coords.coords)
-end
 
 """
     LatLon(lat, lon)
