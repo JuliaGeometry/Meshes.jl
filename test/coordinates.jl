@@ -234,6 +234,32 @@
     @test_throws ArgumentError WebMercator(T(1) * u"s", T(1) * u"s")
   end
 
+  @testset "PlateCaree" begin
+    @test PlateCaree(T(1), T(1)) == PlateCaree(T(1) * u"m", T(1) * u"m")
+    @test PlateCaree(T(1) * u"m", 1 * u"m") == PlateCaree(T(1) * u"m", T(1) * u"m")
+    @test PlateCaree(T(1) * u"km", T(1) * u"km") == PlateCaree(T(1000) * u"m", T(1000) * u"m")
+
+    c = PlateCaree(T(1), T(1))
+    @test sprint(show, c) == "PlateCaree(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      PlateCaree coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      PlateCaree coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError PlateCaree(T(1), T(1) * u"m")
+    @test_throws ArgumentError PlateCaree(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError PlateCaree(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError PlateCaree(T(1) * u"s", T(1) * u"s")
+  end
+
   @testset "conversions" begin
     Q = typeof(T(1) * u"m")
     @testset "Cartesian <-> Polar" begin
@@ -470,6 +496,47 @@
       @inferred convert(WebMercator, c1)
       @inferred convert(LatLon, c2)
       @inferred convert(EPSG{3857}, c1)
+      @inferred convert(EPSG{4326}, c2)
+    end
+
+    @testset "LatLon <-> PlateCaree" begin
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(PlateCaree, c1)
+      @test c2 ≈ PlateCaree(T(10018754.171394622), T(5009377.085697311))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(45), T(90))
+      c2 = convert(PlateCaree, c1)
+      @test c2 ≈ PlateCaree(T(10018754.171394622), -T(5009377.085697311))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(45), -T(90))
+      c2 = convert(PlateCaree, c1)
+      @test c2 ≈ PlateCaree(-T(10018754.171394622), T(5009377.085697311))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(45), -T(90))
+      c2 = convert(PlateCaree, c1)
+      @test c2 ≈ PlateCaree(-T(10018754.171394622), -T(5009377.085697311))
+      c3 = convert(LatLon, c2)
+      @test c3 ≈ c1
+
+      # EPSG fallback
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(EPSG{32662}, c1)
+      @test c2 ≈ PlateCaree(T(10018754.171394622), T(5009377.085697311))
+      c3 = convert(EPSG{4326}, c2)
+      @test c3 ≈ c1
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      c2 = PlateCaree(T(10018754.171394622), T(5009377.085697311))
+      @inferred convert(PlateCaree, c1)
+      @inferred convert(LatLon, c2)
+      @inferred convert(EPSG{32662}, c1)
       @inferred convert(EPSG{4326}, c2)
     end
   end

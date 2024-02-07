@@ -136,6 +136,7 @@ export
   LatLon,
   Mercator,
   WebMercator,
+  PlateCaree,
 
   # geometries
   Geometry,

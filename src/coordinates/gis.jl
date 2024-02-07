@@ -79,7 +79,7 @@ Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
 """
     WebMercator(x, y)
 
-WebMercator coordinates in length units (default to meter).
+Web Mercator coordinates in length units (default to meter).
 
 ## Examples
 
@@ -100,3 +100,28 @@ WebMercator(x::M, y::M) where {M<:Met} = WebMercator{float(M)}(x, y)
 WebMercator(x::Met, y::Met) = WebMercator(promote(x, y)...)
 WebMercator(x::Len, y::Len) = WebMercator(uconvert(u"m", x), uconvert(u"m", y))
 WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m"))
+
+"""
+    PlateCaree(x, y)
+
+Plate Carée coordinates in length units (default to meter).
+
+## Examples
+
+```julia
+PlateCaree(1, 1) # add default units
+PlateCaree(1u"m", 1u"m") # integers are converted converted to floats
+PlateCaree(1.0u"km", 1.0u"km") # length quantities are converted to meters
+PlateCaree(1.0u"m", 1.0u"m")
+```
+
+See [EPSG:32662](https://epsg.io/32662).
+"""
+const PlateCaree{M<:Met} = EPSG{32662,2,@NamedTuple{x::M, y::M}}
+
+typealias(::Type{EPSG{32662}}) = PlateCaree
+
+PlateCaree(x::M, y::M) where {M<:Met} = PlateCaree{float(M)}(x, y)
+PlateCaree(x::Met, y::Met) = PlateCaree(promote(x, y)...)
+PlateCaree(x::Len, y::Len) = PlateCaree(uconvert(u"m", x), uconvert(u"m", y))
+PlateCaree(x::Number, y::Number) = PlateCaree(addunit(x, u"m"), addunit(y, u"m"))
