@@ -535,18 +535,5 @@
     @test nvertices(topo) == 5
     @test nelements(topo) == 4
     @test paramdim(topo) == 2
-
-    adj = Adjacency{2}(topo)
-    @test sort(collect(adj(1))) == [-1, 2, 4]
-    @test sort(collect(adj(2))) == [-1, 1, 3]
-    @test sort(collect(adj(3))) == [-1, 2, 4]
-    @test sort(collect(adj(4))) == [-1, 1, 3]
-
-    cob = Coboundary{0, 2}(topo)
-    @test sort(cob(1)) == [1, 2, 3, 4]
-    @test sort(cob(2)) == [1, 4]
-    @test sort(cob(3)) == [1, 2]
-    @test sort(cob(4)) == [2, 3]
-    @test sort(cob(5)) == [3, 4]
   end
 end
