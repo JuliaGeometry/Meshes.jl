@@ -1,4 +1,4 @@
-@testset "Coordinates" begin
+@testset "CRS" begin
   @testset "Cartesian" begin
     @test Cartesian(T(1)) == Cartesian(T(1) * u"m")
     @test Cartesian(T(1), T(1)) == Cartesian(T(1) * u"m", T(1) * u"m")

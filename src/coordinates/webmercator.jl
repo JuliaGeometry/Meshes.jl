@@ -18,7 +18,7 @@ WebMercator(1.0u"m", 1.0u"m")
 
 See [EPSG:3857](https://epsg.io/3857).
 """
-const WebMercator{M<:Met} = EPSG{3857,2,@NamedTuple{x::M, y::M}}
+const WebMercator{M<:Met} = CRS{EPSG{3857},@NamedTuple{x::M, y::M},WGS84}
 
 typealias(::Type{EPSG{3857}}) = WebMercator
 
@@ -31,20 +31,22 @@ WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{WebMercator}, (; coords)::LatLon)
+function Base.convert(::Type{WebMercator}, coords::LatLon)
+  ellip = ellipsoid(coords)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
-  a = oftype(l, ustrip(WGS84.a))
+  a = oftype(l, ustrip(majoraxis(ellip)))
   x = a * l
   y = a * asinh(tan(ϕ))
   WebMercator(x * u"m", y * u"m")
 end
 
-function Base.convert(::Type{LatLon}, (; coords)::WebMercator)
+function Base.convert(::Type{LatLon}, coords::WebMercator)
+  ellip = ellipsoid(coords)
   x = coords.x
   y = coords.y
-  a = oftype(x, WGS84.a)
+  a = oftype(x, majoraxis(ellip))
   λ = x / a
   ϕ = atan(sinh(y / a))
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")

@@ -45,7 +45,9 @@ include("tolerances.jl")
 include("vectors.jl")
 
 # coordinates
-include("coordinates.jl")
+include("ellipsoids.jl")
+include("datums.jl")
+include("crs.jl")
 
 # geometries
 include("geometries.jl")

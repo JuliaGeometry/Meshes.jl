@@ -18,7 +18,7 @@ PlateCarree(1.0u"m", 1.0u"m")
 
 See [EPSG:32662](https://epsg.io/32662).
 """
-const PlateCarree{M<:Met} = EPSG{32662,2,@NamedTuple{x::M, y::M}}
+const PlateCarree{M<:Met} = CRS{EPSG{32662},@NamedTuple{x::M, y::M},WGS84}
 
 typealias(::Type{EPSG{32662}}) = PlateCarree
 
@@ -31,21 +31,23 @@ PlateCarree(x::Number, y::Number) = PlateCarree(addunit(x, u"m"), addunit(y, u"m
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{PlateCarree}, (; coords)::LatLon)
+function Base.convert(::Type{PlateCarree}, coords::LatLon)
+  ellip = ellipsoid(coords)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
   o = ustrip(ϕ)
-  a = oftype(l, ustrip(WGS84.a))
+  a = oftype(l, ustrip(majoraxis(ellip)))
   x = a * l
   y = a * o
   PlateCarree(x * u"m", y * u"m")
 end
 
-function Base.convert(::Type{LatLon}, (; coords)::PlateCarree)
+function Base.convert(::Type{LatLon}, coords::PlateCarree)
+  ellip = ellipsoid(coords)
   x = coords.x
   y = coords.y
-  a = oftype(x, WGS84.a)
+  a = oftype(x, majoraxis(ellip))
   λ = x / a
   ϕ = y / a
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")

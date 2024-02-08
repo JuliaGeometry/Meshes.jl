@@ -18,7 +18,7 @@ LatLon(45.0u"°", 45.0u"°")
 
 See [EPSG:4326](https://epsg.io/4326).
 """
-const LatLon{D<:Deg} = EPSG{4326,2,@NamedTuple{lat::D, lon::D}}
+const LatLon{D<:Deg} = CRS{EPSG{4326},@NamedTuple{lat::D, lon::D},WGS84}
 
 typealias(::Type{EPSG{4326}}) = LatLon
 
