@@ -64,3 +64,24 @@ function (𝒞::Coboundary{1,2,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
   e = half4edge(𝒞.topology, edge)
   isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
 end
+
+# -------------------
+# IndexedAdjacenciesTopology
+# -------------------
+
+function (𝒞::Coboundary{0,K,K,T})(vert_idx::Int) where {K, T<:IndexedAdjacenciesTopology}
+    𝒜 = Adjacency{K}(𝒞.topology)
+    results = Int[]
+    indices_to_explore = Int[]  # we treat this like a queue
+    push!(indices_to_explore, 𝒞.topology.R_star_relations[vert_idx])
+    while !isempty(indices_to_explore)
+        idx = popfirst!(indices_to_explore)
+        if idx == -1 || idx ∈ results
+            continue
+        elseif vert_idx ∈ indices(𝒞.topology.simplicies[idx])
+            push!(results, idx)
+            append!(indices_to_explore, 𝒜(idx))
+        end
+    end
+    results
+end
