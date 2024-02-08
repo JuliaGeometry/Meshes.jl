@@ -158,6 +158,7 @@ export
   Mercator,
   WebMercator,
   PlateCarree,
+  datum,
 
   # geometries
   Geometry,
