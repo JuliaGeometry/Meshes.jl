@@ -12,11 +12,16 @@ struct Ksimplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
 end
 
 Ksimplex(vertices::Vararg{NTuple{Dim, T},K_}) where {K_, Dim, T} = Ksimplex{K_-1, Dim, T, K_}(Point.(vertices))
+# Ksimplex(NTuple{K_, Point{Dim, T}}) where {K_, Dim, T} = Ksimplex{K_-1, Dim, T, K_}(vertices)
 Ksimplex(vertices::Vararg{Point{Dim,T},K_}) where {K_,Dim,T} = Ksimplex{K_-1,Dim,T,K_}(vertices)
 
 Ksimplex{K}(vertices::Vararg{Tuple,K_}) where {K,K_} = Ksimplex(Point.(vertices))
 Ksimplex{K}(vertices::Vararg{Point{Dim,T},K_}) where {K,Dim,T,K_} = Ksimplex{K_-1,Dim,T,K_}(vertices)
 Ksimplex{K}(vertices::NTuple{K_,Point{Dim,T}}) where {K,Dim,T,K_} = Ksimplex{K_-1,Dim,T,K_}(vertices)
+
+Ksimplex{K,Dim}(vertices::Vararg{Tuple,K_}) where {K,Dim,K_} = Ksimplex(Point.(vertices))
+Ksimplex{K,Dim}(vertices::Vararg{Point{Dim,T},K_}) where {K,Dim,T,K_} = Ksimplex{K_-1,Dim,T,K_}(vertices)
+Ksimplex{K,Dim}(vertices::NTuple{K_,Point{Dim,T}}) where {K,Dim,T,K_} = Ksimplex{K_-1,Dim,T,K_}(vertices)
 
 nvertices(::Type{<:Ksimplex{K}}) where {K} = K+1
 

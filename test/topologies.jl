@@ -527,7 +527,7 @@
     @test nfaces(t, 1) == 12
   end
 
-  @testset "IndexedAdjacencyTopology" begin
+  @testset "IndexedAdjacenciesTopology" begin
     # square with point in the middle, with all z-values = 0
     pts = [Point(0,0,0), Point(-1,-1,0), Point(-1,1,0), Point(1,1,0), Point(1,-1,0)]
     cons = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], Ksimplex{2, 3})

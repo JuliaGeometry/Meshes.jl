@@ -66,7 +66,7 @@ function IndexedAdjacenciesTopology(connections::AbstractVector{<:Connectivity{K
     end
 
     # construct R_star
-    all_vertex_indices = unique(reduce(vcat, collect.(indices.(simplicies))))
+    all_vertex_indices = sort(unique(vcat(collect.(indices.(simplicies))...)))
     R_star_relations=Int[
         findfirst(simpl -> idx ∈ indices(simpl), simplicies)
         for idx in all_vertex_indices
@@ -91,3 +91,11 @@ nvertices(t::IndexedAdjacenciesTopology) = length(t.R_star_relations)
 element(t::IndexedAdjacenciesTopology, idx) = t.simplicies[idx]
 
 nelements(t::IndexedAdjacenciesTopology) = length(t.simplicies)
+
+# ------------
+# CONVERSIONS
+# ------------
+
+function Base.convert(::Type{SimpleTopology}, t::IndexedAdjacenciesTopology)
+  SimpleTopology(t.simplices)
+end
