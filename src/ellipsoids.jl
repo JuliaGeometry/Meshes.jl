@@ -5,7 +5,7 @@
 """
     RevolutionEllipsoid
 
-Parent type of all datum ellipsoids.
+Parent type of all revolution ellipsoids.
 """
 abstract type RevolutionEllipsoid end
 
