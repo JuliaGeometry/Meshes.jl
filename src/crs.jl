@@ -25,6 +25,12 @@ end
 # CRS
 # ----
 
+"""
+    CRS{ID,Coords,Datum}
+
+A Coordinate Reference System (CRS) with identifier `ID`, coordinates `Coords`
+and given `Datum` can be used to georeference any point in physical space. 
+"""
 struct CRS{ID,Coords,Datum}
   coords::Coords
 end
