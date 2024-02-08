@@ -28,7 +28,6 @@ import Base: +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
-import ComputedFieldTypes: @computed
 
 # Transforms API
 import TransformsBase: Transform, →

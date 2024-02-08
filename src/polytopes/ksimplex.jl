@@ -7,16 +7,16 @@ For example, a line segment in 3-D space would be Ksimplex{1, 3} as it occupies 
 is made up of two points, and lies in 3d space.
 """
 
-@computed struct Ksimplex{K,Dim,T} <: Polytope{K,Dim,T}
-    vertices::NTuple{K+1, Point{Dim, T}}
+struct Ksimplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
+    vertices::NTuple{K_, Point{Dim, T}}
 end
 
-Ksimplex(vertices::Vararg{Tuple,N}) where {N} = Ksimplex(Point.(vertices))
-Ksimplex(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ksimplex{N-1,Dim,T}(vertices)
+Ksimplex(vertices::Vararg{NTuple{Dim, T},K_}) where {K_, Dim, T} = Ksimplex{K_-1, Dim, T, K_}(Point.(vertices))
+Ksimplex(vertices::Vararg{Point{Dim,T},K_}) where {K_,Dim,T} = Ksimplex{K_-1,Dim,T,K_}(vertices)
 
-Ksimplex{N}(vertices::Vararg{Tuple,N}) where {N} = Ksimplex(Point.(vertices))
-Ksimplex{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ksimplex{N-1,Dim,T}(vertices)
-Ksimplex{N}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = Ksimplex{N-1,Dim,T}(vertices)
+Ksimplex{K}(vertices::Vararg{Tuple,K_}) where {K,K_} = Ksimplex(Point.(vertices))
+Ksimplex{K}(vertices::Vararg{Point{Dim,T},K_}) where {K,Dim,T,K_} = Ksimplex{K_-1,Dim,T,K_}(vertices)
+Ksimplex{K}(vertices::NTuple{K_,Point{Dim,T}}) where {K,Dim,T,K_} = Ksimplex{K_-1,Dim,T,K_}(vertices)
 
 nvertices(::Type{<:Ksimplex{K}}) where {K} = K+1
 
