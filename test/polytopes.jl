@@ -871,9 +871,9 @@
     end
   end
 
-  @testset "Ksimplex" begin
+  @testset "KSimplex" begin
     @testset "normal" begin
-        splx = Ksimplex{3, 4}([Meshes.Point(rand(4)...) for _ in 1:4]...)
+        splx = KSimplex{3, 4}([Meshes.Point(rand(4)...) for _ in 1:4]...)
         n = normal(splx)
         v0 = first(vertices(splx))
         for v in vertices(splx)[2:end]
@@ -883,9 +883,8 @@
 
     @testset "measure" begin
         pts = [Point(0,0,0), Point(-1,-1,0), Point(-1,1,0), Point(1,1,0), Point(1,-1,0)]
-        cons = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], Ksimplex{2, 3})
-        topo = IndexedAdjacenciesTopology(cons)
-        splx = materialize(topo.simplicies[1], pts)
+        simplicies = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], KSimplex{2, 3})
+        splx = materialize(simplicies[1], pts)
         @test measure(splx) ≈ 1.
     end
   end
