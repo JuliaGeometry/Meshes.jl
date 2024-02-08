@@ -28,3 +28,20 @@ nvertices(::Type{<:Ksimplex{K}}) where {K} = K+1
 function Base.isapprox(p₁::KSimplexT, p₂::KSimplexT; kwargs...) where {KSimplexT<:Ksimplex}
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 end
+
+"Generate normal vector to every facet of simplex in (K+1) dimensions."
+function normal(splx::Ksimplex{K,Dim,T}) where {K, Dim, T<:Real}
+    verts = vertices(splx)
+    p0 = first(verts)
+    extended_basis = [(p .- p0 for p in verts[2:end])... rand!(similar(p0.coords))]
+    normal = qr(extended_basis).Q[:, end]
+end
+
+function measure(splx::Ksimplex{K,Dim,T}) where {K, Dim, T<:Real}
+    # https://en.wikipedia.org/wiki/Cayley%E2%80%93Menger_determinant
+    Ds_ = pairwise(SqEuclidean(), getfield.(vertices(splx), :coords))
+    Ds = [Ds_ ones(size(Ds_, 1), 1);
+          ones(1, size(Ds_, 2)) 0]
+    factor = (-1)^(K+1)/(factorial(K)^2*2^K)
+    return factor * det(Ds)
+end
