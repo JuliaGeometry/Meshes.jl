@@ -128,13 +128,32 @@ export
   ⋅,
   ×,
 
+  # ellipsoids
+  RevolutionEllipsoid,
+  majoraxis,
+  minoraxis,
+  eccentricity,
+  eccentricity²,
+  flattening,
+  flattening⁻¹,
+
+  # datums
+  Datum,
+  NoDatum,
+  WGS84,
+  ellipsoid,
+  latitudeₒ,
+  longitudeₒ,
+  altitudeₒ,
+
   # coordinates
-  Coordinates,
+  CRS,
+  EPSG,
+  ESRI,
   Cartesian,
   Polar,
   Cylindrical,
   Spherical,
-  EPSG,
   LatLon,
   Mercator,
   WebMercator,

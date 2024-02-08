@@ -1,5 +1,4 @@
-@testset begin
-  "Connectivities"
+@testset "Connectivities" begin
   # basic tests
   c = connect((1, 2, 3), Triangle)
   @test pltype(c) == Triangle

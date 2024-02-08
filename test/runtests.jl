@@ -74,6 +74,7 @@ include("dummy.jl")
 testfiles = [
   "tolerances.jl",
   "vectors.jl",
+  "datums.jl",
   "crs.jl",
   "primitives.jl",
   "polytopes.jl",
