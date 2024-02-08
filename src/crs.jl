@@ -29,7 +29,10 @@ end
     CRS{ID,Coords,Datum}
 
 A Coordinate Reference System (CRS) with identifier `ID`, coordinates `Coords`
-and given `Datum` can be used to georeference any point in physical space. 
+and given `Datum` can be used to georeference any point in physical space.
+
+The `CRS` type is not intended for end-users. Aliases are provided,
+such as `LatLon` and `WebMercator`, to facilitate coordinate system conversions.
 """
 struct CRS{ID,Coords,Datum}
   coords::Coords
