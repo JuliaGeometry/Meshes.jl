@@ -227,6 +227,7 @@ export
 
   # polytopes
   Polytope,
+  KSimplex,
   Chain,
   Segment,
   Rope,
