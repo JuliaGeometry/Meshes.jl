@@ -45,7 +45,9 @@ include("tolerances.jl")
 include("vectors.jl")
 
 # coordinates
-include("coordinates.jl")
+include("ellipsoids.jl")
+include("datums.jl")
+include("crs.jl")
 
 # geometries
 include("geometries.jl")
@@ -126,17 +128,37 @@ export
   ⋅,
   ×,
 
+  # ellipsoids
+  RevolutionEllipsoid,
+  majoraxis,
+  minoraxis,
+  eccentricity,
+  eccentricity²,
+  flattening,
+  flattening⁻¹,
+
+  # datums
+  Datum,
+  NoDatum,
+  WGS84,
+  ellipsoid,
+  latitudeₒ,
+  longitudeₒ,
+  altitudeₒ,
+
   # coordinates
-  Coordinates,
+  CRS,
+  EPSG,
+  ESRI,
   Cartesian,
   Polar,
   Cylindrical,
   Spherical,
-  EPSG,
   LatLon,
   Mercator,
   WebMercator,
   PlateCarree,
+  datum,
 
   # geometries
   Geometry,

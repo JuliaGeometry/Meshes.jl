@@ -18,7 +18,7 @@ Mercator(1.0u"m", 1.0u"m")
 
 See [EPSG:3395](https://epsg.io/3395).
 """
-const Mercator{M<:Met} = EPSG{3395,2,@NamedTuple{x::M, y::M}}
+const Mercator{M<:Met} = CRS{EPSG{3395},@NamedTuple{x::M, y::M},WGS84}
 
 typealias(::Type{EPSG{3395}}) = Mercator
 
@@ -31,12 +31,13 @@ Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{Mercator}, (; coords)::LatLon)
+function Base.convert(::Type{Mercator}, coords::LatLon)
+  🌎 = ellipsoid(coords)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
-  a = oftype(l, ustrip(WGS84.a))
-  e = oftype(l, WGS84.e)
+  a = oftype(l, ustrip(majoraxis(🌎)))
+  e = oftype(l, eccentricity(🌎))
   x = a * l
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
   Mercator(x * u"m", y * u"m")

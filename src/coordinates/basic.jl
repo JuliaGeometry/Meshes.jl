@@ -6,6 +6,7 @@
     Cartesian(x₁, x₂, ..., xₙ)
 
 N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ` in length units (default to meter).
+The first 3 coordinates can be accessed with the properties `x`, `y` and `z`, respectively.
 
 ## Examples
 
@@ -21,16 +22,27 @@ Cartesian(1.0u"km", 1.0u"km", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Cartesian{N,L<:Len} <: Coordinates{N}
-  coords::NTuple{N,L}
-  Cartesian{N,L}(coords) where {N,L} = new{N,float(L)}(coords)
-end
+const Cartesian{N,L<:Len} = CRS{:Cartesian,NTuple{N,L},NoDatum}
 
-Cartesian(coords::Vararg{L,N}) where {N,L<:Len} = Cartesian{N,L}(coords)
+Cartesian(coords::Vararg{L,N}) where {N,L<:Len} = Cartesian{N,float(L)}(coords)
 Cartesian(coords::Len...) = Cartesian(promote(coords...)...)
 Cartesian(coords::Number...) = Cartesian(addunit.(coords, u"m")...)
 
-_fields(coords::Cartesian) = coords.coords
+Base.propertynames(::Cartesian) = (:x, :y, :z)
+
+function Base.getproperty(coords::Cartesian, name::Symbol)
+  tup = _coords(coords)
+  if name === :x
+    tup[1]
+  elseif name === :y
+    tup[2]
+  elseif name === :z
+    tup[3]
+  else
+    error("invalid carteisan property, use `x`, `y` or `z`")
+  end
+end
+
 function _fnames(::Cartesian{N}) where {N}
   if N == 1
     ("x",)
@@ -64,13 +76,9 @@ Polar(1.0u"km", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Polar{L<:Len,R<:Rad} <: Coordinates{2}
-  ρ::L
-  ϕ::R
-  Polar{L,R}(ρ, ϕ) where {L,R} = new{float(L),float(R)}(ρ, ϕ)
-end
+const Polar{L<:Len,R<:Rad} = CRS{:Polar,@NamedTuple{ρ::L, ϕ::R},NoDatum}
 
-Polar(ρ::L, ϕ::R) where {L<:Len,R<:Rad} = Polar{L,R}(ρ, ϕ)
+Polar(ρ::L, ϕ::R) where {L<:Len,R<:Rad} = Polar{float(L),float(R)}(ρ, ϕ)
 Polar(ρ::Len, ϕ::Deg) = Polar(ρ, deg2rad(ϕ))
 Polar(ρ::Number, ϕ::Number) = Polar(addunit(ρ, u"m"), addunit(ϕ, u"rad"))
 
@@ -96,14 +104,9 @@ Cylindrical(1.0u"km", (π/4)u"rad", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Cylindrical{L<:Len,R<:Rad} <: Coordinates{3}
-  ρ::L
-  ϕ::R
-  z::L
-  Cylindrical{L,R}(ρ, ϕ, z) where {L,R} = new{float(L),float(R)}(ρ, ϕ, z)
-end
+const Cylindrical{L<:Len,R<:Rad} = CRS{:Cylindrical,@NamedTuple{ρ::L, ϕ::R, z::L},NoDatum}
 
-Cylindrical(ρ::L, ϕ::R, z::L) where {L<:Len,R<:Rad} = Cylindrical{L,R}(ρ, ϕ, z)
+Cylindrical(ρ::L, ϕ::R, z::L) where {L<:Len,R<:Rad} = Cylindrical{float(L),float(R)}(ρ, ϕ, z)
 function Cylindrical(ρ::Len, ϕ::Rad, z::Len)
   nρ, nz = promote(ρ, z)
   Cylindrical(nρ, ϕ, nz)
@@ -132,14 +135,9 @@ Spherical(1.0u"km", (π/4)u"rad", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Spherical{L<:Len,R<:Rad} <: Coordinates{3}
-  r::L
-  θ::R
-  ϕ::R
-  Spherical{L,R}(r, θ, ϕ) where {L,R} = new{float(L),float(R)}(r, θ, ϕ)
-end
+const Spherical{L<:Len,R<:Rad} = CRS{:Spherical,@NamedTuple{r::L, θ::R, ϕ::R},NoDatum}
 
-Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = Spherical{L,R}(r, θ, ϕ)
+Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = Spherical{float(L),float(R)}(r, θ, ϕ)
 Spherical(r::Len, θ::Rad, ϕ::Rad) = Spherical(r, promote(θ, ϕ)...)
 Spherical(r::Len, θ::Deg, ϕ::Deg) = Spherical(r, deg2rad(θ), deg2rad(ϕ))
 Spherical(r::Number, θ::Number, ϕ::Number) = Spherical(addunit(r, u"m"), addunit(θ, u"rad"), addunit(ϕ, u"rad"))
@@ -150,22 +148,14 @@ Spherical(r::Number, θ::Number, ϕ::Number) = Spherical(addunit(r, u"m"), addun
 
 # Cartesian <> Polar
 Base.convert(::Type{Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
-function Base.convert(::Type{Polar}, (; coords)::Cartesian{2})
-  x, y = coords
-  Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
-end
+Base.convert(::Type{Polar}, (; x, y)::Cartesian{2}) = Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
 
 # Cartesian <> Cylindrical
 Base.convert(::Type{Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
-function Base.convert(::Type{Cylindrical}, (; coords)::Cartesian{3})
-  x, y, z = coords
-  Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
-end
+Base.convert(::Type{Cylindrical}, (; x, y, z)::Cartesian{3}) = Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
 
 # Cartesian <> Spherical
 Base.convert(::Type{Cartesian}, (; r, θ, ϕ)::Spherical) =
   Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
-function Base.convert(::Type{Spherical}, (; coords)::Cartesian{3})
-  x, y, z = coords
+Base.convert(::Type{Spherical}, (; x, y, z)::Cartesian{3}) =
   Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
-end
