@@ -1,4 +1,18 @@
 @testset "CRS" begin
+  @testset "Datum" begin
+    c = Cartesian(T(1), T(1))
+    @test datum(c) === NoDatum
+    @test isnothing(latitudeₒ(c))
+    @test isnothing(longitudeₒ(c))
+    @test isnothing(altitudeₒ(c))
+
+    c = LatLon(T(1), T(1))
+    @test datum(c) === WGS84
+    @test latitudeₒ(c) == latitudeₒ(WGS84)
+    @test longitudeₒ(c) == longitudeₒ(WGS84)
+    @test altitudeₒ(c) == altitudeₒ(WGS84)
+  end
+
   @testset "Cartesian" begin
     @test Cartesian(T(1)) == Cartesian(T(1) * u"m")
     @test Cartesian(T(1), T(1)) == Cartesian(T(1) * u"m", T(1) * u"m")

@@ -48,11 +48,39 @@ end
 # DATUM
 # ------
 
+"""
+    datum(coords)
+
+Returns the datum of the coordinates `coords`.
+"""
 datum(::CRS{ID,Coords,Datum}) where {ID,Coords,Datum} = Datum
 
+"""
+    ellipsoid(coords)
+
+Returns the ellipsoid of the coordinates `coords`.
+"""
 ellipsoid(coords::CRS) = ellipsoid(datum(coords))
+
+"""
+    latitudeₒ(coords)
+
+Returns the latitude origin of the coordinates `coords`.
+"""
 latitudeₒ(coords::CRS) = latitudeₒ(datum(coords))
+
+"""
+    longitudeₒ(coords)
+
+Returns the longitude origin of the coordinates `coords`.
+"""
 longitudeₒ(coords::CRS) = longitudeₒ(datum(coords))
+
+"""
+    altitudeₒ(coords)
+
+Returns the altitude origin of the coordinates `coords`.
+"""
 altitudeₒ(coords::CRS) = altitudeₒ(datum(coords))
 
 # -----------

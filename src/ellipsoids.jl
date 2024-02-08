@@ -2,7 +2,54 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    RevolutionEllipsoid
+
+Parent type of all datum ellipsoids.
+"""
 abstract type RevolutionEllipsoid end
+
+"""
+    majoraxis(E)
+
+Returns the semi-major axis of the ellipsoid type `E`.
+"""
+function majoraxis end
+
+"""
+    minoraxis(E)
+
+Returns the semi-minor axis of the ellipsoid type `E`.
+"""
+function minoraxis end
+
+"""
+    eccentricity(E)
+
+Returns the eccentricity of the ellipsoid type `E`.
+"""
+function eccentricity end
+
+"""
+    eccentricity²(E)
+
+Returns the eccentricity squared of the ellipsoid type `E`.
+"""
+function eccentricity² end
+
+"""
+    flattening(E)
+
+Returns the flattening of the ellipsoid type `E`.
+"""
+function flattening end
+
+"""
+    flattening⁻¹(E)
+
+Returns the inverse flattening of the ellipsoid type `E`.
+"""
+function flattening⁻¹ end
 
 abstract type WGS84🌎 <: RevolutionEllipsoid end
 
