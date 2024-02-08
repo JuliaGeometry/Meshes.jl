@@ -1,6 +1,8 @@
-using DataStructures: Queue
-
-# assumptions
+# Implement the IndexedAdjacenciesTopologies (IA) described in
+# - Paoluzzi, A., Bernardini, F., Cattani, C., & Ferrucci, V. (1993). Dimension-independent modeling with simplicial complexes. ACM Transactions on Graphics (TOG), 12(1), 56-102.
+# and compared in
+# De Floriani, L., & Hui, A. (2007). Shape Representations Based on Simplicial and Cell Complexes. In Eurographics (State of the Art Reports) (pp. 63-87).
+# Assumptions
 # - topology is made up of one type of simplex only
 # - everything is strongly connected
 
@@ -45,29 +47,19 @@ function setuptest()
     topo = IndexedAdjacenciesTopology(cons)
 end
 
-import Meshes: paramdim
 paramdim(::IndexedAdjacenciesTopology{K}) where {K} = K
 
+# ---------------------
+# HIGH-LEVEL INTERFACE
+# ---------------------
 
-function (𝒜::Adjacency{K,K,T})(simpl_index::Int) where {K,T<:IndexedAdjacenciesTopology{K}}
-    𝒜.topology.neighboring_simplicies[simpl_index]
-end
+nvertices(t::IndexedAdjacenciesTopology) = length(t.R_star_relations)
 
-function (𝒞::Coboundary{0,K,K,T})(vert_idx::Int) where {K, T<:IndexedAdjacenciesTopology}
-    𝒜 = Adjacency{K}(𝒞.topology)
-    results = Int[]
-    indices_to_explore = Queue{Int}()
-    enqueue!(indices_to_explore, 𝒞.topology.R_star_relations[vert_idx])
-    while !isempty(indices_to_explore)
-        idx = dequeue!(indices_to_explore)
-        if idx == -1 || idx ∈ results
-            continue
-        elseif vert_idx ∈ indices(𝒞.topology.simplices[idx])
-            push!(results, idx)
-            for idx in 𝒜(idx)
-                enqueue!(indices_to_explore, idx)
-            end
-        end
-    end
-    results
-end
+# function faces(t::SimpleTopology, rank)
+#   cs = t.connec
+#   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
+# end
+
+element(t::IndexedAdjacenciesTopology, idx) = t.simplicies[idx]
+
+nelements(t::IndexedAdjacenciesTopology) = length(t.simplicies)

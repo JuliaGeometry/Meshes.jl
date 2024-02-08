@@ -28,6 +28,7 @@ import Base: +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
+import ComputedFieldTypes: @computed
 
 # Transforms API
 import TransformsBase: Transform, →
@@ -197,6 +198,7 @@ export
 
   # polytopes
   Polytope,
+  Ksimplex,
   Chain,
   Segment,
   Rope,
@@ -273,6 +275,7 @@ export
   half4pair,
   edge4pair,
   connec4elem,
+  IndexedAdjacenciesTopology,
 
   # topological relations
   TopologicalRelation,

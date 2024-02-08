@@ -1,6 +1,7 @@
+# for now we put this into a separate file because the `@computed` macro doesn't play well with Revise...
 @computed struct IndexedAdjacenciesTopology{K,dim} <: Topology
     # vertices::AbstractVector{Point{dim, T}}
-    simplices::AbstractVector{Connectivity{Ksimplex{K, dim}, K+1}}
+    simplicies::AbstractVector{Connectivity{Ksimplex{K, dim}, K+1}}
     neighboring_simplicies::AbstractVector{NTuple{K+1, Int}}
     R_star_relations::AbstractVector{Int}  # see L De Floriani, A Hui, 2007; Section 5.3
 
