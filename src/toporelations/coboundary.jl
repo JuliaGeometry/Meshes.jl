@@ -66,10 +66,10 @@ function (𝒞::Coboundary{1,2,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
 end
 
 # -------------------
-# IndexedAdjacenciesTopology
+# IndAdjTopology
 # -------------------
 
-function (𝒞::Coboundary{0,K,K,T})(vert_idx::Int) where {K, T<:IndexedAdjacenciesTopology}
+function (𝒞::Coboundary{0,K,K,T})(vert_idx::Int) where {K, T<:IndAdjTopology}
     𝒜 = Adjacency{K}(𝒞.topology)
     results = Int[]
     indices_to_explore = Int[]  # we treat this like a queue

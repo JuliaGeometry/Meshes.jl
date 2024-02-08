@@ -120,11 +120,11 @@ function (𝒜::Adjacency{2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
   inds
 end
 
-function (𝒜::Adjacency{K,K,T})(simpl_index::Int) where {K,T<:IndexedAdjacenciesTopology{K}}
+function (𝒜::Adjacency{K,K,T})(simpl_index::Int) where {K,T<:IndAdjTopology{K}}
     𝒜.topology.neighboring_simplicies[simpl_index]
 end
 
-function (𝒜::Adjacency{0,K,T})(vertex_index::Int) where {K, T<:IndexedAdjacenciesTopology{K}}
+function (𝒜::Adjacency{0,K,T})(vertex_index::Int) where {K, T<:IndAdjTopology{K}}
     𝒞 = Coboundary{0, K}(𝒜.topology)
     adjacent_simplicies = 𝒞(vertex_index)
     adjacent_vertices = indices.(element.([𝒜.topology], adjacent_simplicies))
