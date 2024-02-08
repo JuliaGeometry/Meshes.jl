@@ -123,3 +123,10 @@ end
 function (𝒜::Adjacency{K,K,T})(simpl_index::Int) where {K,T<:IndexedAdjacenciesTopology{K}}
     𝒜.topology.neighboring_simplicies[simpl_index]
 end
+
+function (𝒜::Adjacency{0,K,T})(vertex_index::Int) where {K, T<:IndexedAdjacenciesTopology{K}}
+    𝒞 = Coboundary{0, K}(𝒜.topology)
+    adjacent_simplicies = 𝒞(vertex_index)
+    adjacent_vertices = indices.(element.([𝒜.topology], adjacent_simplicies))
+    return setdiff(unique(vcat(collect.(adjacent_vertices)...)), vertex_index)
+end
