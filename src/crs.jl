@@ -114,14 +114,14 @@ Codes can be searched at [epsg.io](https://epsg.io/).
 
 See [EPSG Geodetic Parameter Dataset](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset)
 """
-abstract type EPSG{code} end
+abstract type EPSG{Code} end
 
 """
     ESRI{code}
 
 ESRI dataset `code`. Codes can be searched at [epsg.io](https://epsg.io/).
 """
-abstract type ESRI{code} end
+abstract type ESRI{Code} end
 
 """
     typealias(::Type{EPSG{code}})
