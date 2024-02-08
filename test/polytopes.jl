@@ -908,8 +908,9 @@
 
     @testset "measure" begin
         pts = [Point(0,0,0), Point(-1,-1,0), Point(-1,1,0), Point(1,1,0), Point(1,-1,0)]
-        simplicies = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], Simplex{2, 3})
-        splx = materialize(simplicies[1], pts)
+        cons = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], Simplex{2, 3})
+        topo = InddjTopology(cons)
+        splx = materialize(topo.simplicies[1], pts)
         @test measure(splx) ≈ 1.
         splx2 = materialize(connect((2,3,5)), pts)
         @test measure(splx2) ≈ 2.
