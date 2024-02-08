@@ -135,5 +135,4 @@ function nfacets(::Topology) end
 include("topologies/grid.jl")
 include("topologies/halfedge.jl")
 include("topologies/simple.jl")
-include("topologies/indexedadjacencies_.jl")
 include("topologies/indexedadjacencies.jl")
