@@ -32,12 +32,12 @@ Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
 # ------------
 
 function Base.convert(::Type{Mercator}, coords::LatLon)
-  ellip = ellipsoid(coords)
+  🌎 = ellipsoid(coords)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
-  a = oftype(l, ustrip(majoraxis(ellip)))
-  e = oftype(l, excenticity(ellip))
+  a = oftype(l, ustrip(majoraxis(🌎)))
+  e = oftype(l, eccentricity(🌎))
   x = a * l
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
   Mercator(x * u"m", y * u"m")

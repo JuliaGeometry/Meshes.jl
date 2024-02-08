@@ -18,7 +18,7 @@ end
 
 majoraxis(::Type{WGS84🌎}) = _WGS84.a
 minoraxis(::Type{WGS84🌎}) = _WGS84.b
-excenticity(::Type{WGS84🌎}) = _WGS84.e
-excenticity²(::Type{WGS84🌎}) = _WGS84.e
+eccentricity(::Type{WGS84🌎}) = _WGS84.e
+eccentricity²(::Type{WGS84🌎}) = _WGS84.e
 flattening(::Type{WGS84🌎}) = _WGS84.f
 flattening⁻¹(::Type{WGS84🌎}) = _WGS84.f⁻¹

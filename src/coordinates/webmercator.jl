@@ -32,21 +32,21 @@ WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m
 # ------------
 
 function Base.convert(::Type{WebMercator}, coords::LatLon)
-  ellip = ellipsoid(coords)
+  🌎 = ellipsoid(coords)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
-  a = oftype(l, ustrip(majoraxis(ellip)))
+  a = oftype(l, ustrip(majoraxis(🌎)))
   x = a * l
   y = a * asinh(tan(ϕ))
   WebMercator(x * u"m", y * u"m")
 end
 
 function Base.convert(::Type{LatLon}, coords::WebMercator)
-  ellip = ellipsoid(coords)
+  🌎 = ellipsoid(coords)
   x = coords.x
   y = coords.y
-  a = oftype(x, majoraxis(ellip))
+  a = oftype(x, majoraxis(🌎))
   λ = x / a
   ϕ = atan(sinh(y / a))
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")

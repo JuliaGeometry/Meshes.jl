@@ -51,9 +51,9 @@ end
 datum(::CRS{ID,Coords,Datum}) where {ID,Coords,Datum} = Datum
 
 ellipsoid(coords::CRS) = ellipsoid(datum(coords))
-latitude₀(coords::CRS) = latitude₀(datum(coords))
-longitude₀(coords::CRS) = longitude₀(datum(coords))
-altitude₀(coords::CRS) = altitude₀(datum(coords))
+latitudeₒ(coords::CRS) = latitudeₒ(datum(coords))
+longitudeₒ(coords::CRS) = longitudeₒ(datum(coords))
+altitudeₒ(coords::CRS) = altitudeₒ(datum(coords))
 
 # -----------
 # IO METHODS

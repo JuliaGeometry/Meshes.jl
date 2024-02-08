@@ -44,10 +44,10 @@ function Base.convert(::Type{PlateCarree}, coords::LatLon)
 end
 
 function Base.convert(::Type{LatLon}, coords::PlateCarree)
-  ellip = ellipsoid(coords)
+  🌎 = ellipsoid(coords)
   x = coords.x
   y = coords.y
-  a = oftype(x, majoraxis(ellip))
+  a = oftype(x, majoraxis(🌎))
   λ = x / a
   ϕ = y / a
   LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
