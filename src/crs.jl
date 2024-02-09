@@ -39,7 +39,8 @@ function typealias end
     CRS{ID,Coords,Datum,Params}
 
 A Coordinate Reference System (CRS) with identifier `ID`, coordinates `Coords`
-a given `Datum` and parameters `Params` can be used to georeference any point in physical space.
+a given `Datum` and parameters `Params` can be used to georeference any point
+in physical space.
 
 The `CRS` type is not intended for end-users. Aliases are provided,
 such as `LatLon` and `WebMercator`, to facilitate coordinate system conversions.
