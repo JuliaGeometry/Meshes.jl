@@ -43,5 +43,5 @@ function measure(splx::KSimplex{K,Dim,T}) where {K, Dim, T<:Real}
     Ds = [Ds_ ones(size(Ds_, 1), 1);
           ones(1, size(Ds_, 2)) 0]
     factor = (-1)^(K+1)/(factorial(K)^2*2^K)
-    return factor * det(Ds)
+    return sqrt(factor * det(Ds))
 end

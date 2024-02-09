@@ -886,6 +886,8 @@
         simplicies = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], KSimplex{2, 3})
         splx = materialize(simplicies[1], pts)
         @test measure(splx) ≈ 1.
+        splx2 = materialize(connect((2,3,5)), pts)
+        @test measure(splx2) ≈ 2.
     end
   end
 end
