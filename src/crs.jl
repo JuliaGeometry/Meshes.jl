@@ -137,7 +137,7 @@ include("crs/basic.jl")
 include("crs/latlon.jl")
 include("crs/mercator.jl")
 include("crs/webmercator.jl")
-include("crs/equidistantcylindrical.jl")
+include("crs/eqdistcylindrical.jl")
 
 # ----------
 # FALLBACKS
