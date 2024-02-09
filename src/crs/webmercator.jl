@@ -32,7 +32,7 @@ WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m
 # ------------
 
 function Base.convert(::Type{WebMercator}, coords::LatLon)
-  🌎 = ellipsoid(coords)
+  🌎 = ellipsoid(WebMercator)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)

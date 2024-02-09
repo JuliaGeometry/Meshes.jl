@@ -19,4 +19,18 @@
     @test longitudeₒ(WGS84) == 0.0u"°"
     @test altitudeₒ(WGS84) == 0.0u"m"
   end
+
+  @testset "WIII" begin
+    🌎 = ellipsoid(WIII)
+    @test majoraxis(🌎) == 6371000.0u"m"
+    @test minoraxis(🌎) == 6371000.0u"m"
+    @test eccentricity(🌎) == 0.0
+    @test eccentricity²(🌎) == 0.0
+    @test flattening(🌎) == 0.0
+    @test flattening⁻¹(🌎) == Inf
+
+    @test latitudeₒ(WIII) == 0.0u"°"
+    @test longitudeₒ(WIII) == 0.0u"°"
+    @test altitudeₒ(WIII) == 0.0u"m"
+  end
 end

@@ -62,3 +62,17 @@ ellipsoid(::Type{WGS84}) = WGS84🌎
 latitudeₒ(::Type{WGS84}) = 0.0u"°"
 longitudeₒ(::Type{WGS84}) = 0.0u"°"
 altitudeₒ(::Type{WGS84}) = 0.0u"m"
+
+"""
+    WGS84
+
+Winkel Tripel datum.
+
+See [ESRI:53042](https://epsg.io/53042)
+"""
+abstract type WIII <: Datum end
+
+ellipsoid(::Type{WIII}) = WIII🌎
+latitudeₒ(::Type{WIII}) = 0.0u"°"
+longitudeₒ(::Type{WIII}) = 0.0u"°"
+altitudeₒ(::Type{WIII}) = 0.0u"m"

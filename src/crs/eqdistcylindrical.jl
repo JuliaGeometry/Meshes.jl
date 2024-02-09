@@ -37,7 +37,7 @@ const PlateCarree = EquidistantCylindrical{EPSG{32662},0.0u"°"}
 typealias(::Type{EPSG{32662}}) = PlateCarree
 
 function Base.convert(::Type{EquidistantCylindrical{ID,latₜₛ}}, coords::LatLon) where {ID,latₜₛ}
-  🌎 = ellipsoid(coords)
+  🌎 = ellipsoid(EquidistantCylindrical{ID,latₜₛ})
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   ϕₜₛ = oftype(ϕ, deg2rad(latₜₛ))

@@ -141,6 +141,7 @@ export
   Datum,
   NoDatum,
   WGS84,
+  WIII,
   ellipsoid,
   latitudeₒ,
   longitudeₒ,
@@ -158,6 +159,7 @@ export
   Mercator,
   WebMercator,
   PlateCarree,
+  WinkelTripel,
   datum,
 
   # geometries

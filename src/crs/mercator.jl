@@ -32,7 +32,7 @@ Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
 # ------------
 
 function Base.convert(::Type{Mercator}, coords::LatLon)
-  🌎 = ellipsoid(coords)
+  🌎 = ellipsoid(Mercator)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
