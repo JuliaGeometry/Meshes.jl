@@ -2,24 +2,34 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# ----------
-# UTILITIES
-# ----------
+#-----------
+# EPSG/ESRI
+#-----------
 
-const Len{T} = Quantity{T,u"𝐋"}
-const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
-const Rad{T} = Quantity{T,NoDims,typeof(u"rad")}
-const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
+"""
+    EPSG{code}
 
-# only add the unit if the argument is not a quantity
-addunit(x::Number, u) = x * u
-addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinates, please check the documentation"))
+EPSG dataset `code` between 1024 and 32767.
+Codes can be searched at [epsg.io](https://epsg.io).
 
-# adjust negative angles
-function atanpos(y, x)
-  α = atan(y, x)
-  ifelse(α ≥ zero(α), α, α + oftype(α, 2π))
-end
+See [EPSG Geodetic Parameter Dataset](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset)
+"""
+abstract type EPSG{Code} end
+
+"""
+    ESRI{code}
+
+ESRI dataset `code`. Codes can be searched at [epsg.io](https://epsg.io).
+"""
+abstract type ESRI{Code} end
+
+"""
+    typealias(::Type{EPSG{code}})
+    typealias(::Type{ESRI{code}})
+
+Returns a CRS type that has the EPSG/ESRI `code`.
+"""
+function typealias end
 
 # ----
 # CRS
@@ -111,44 +121,20 @@ function Base.show(io::IO, ::MIME"text/plain", coords::CRS)
   printfields(io, _coords(coords), _fnames(coords))
 end
 
-#-----------
-# EPSG/ESRI
-#-----------
-
-"""
-    EPSG{code}
-
-EPSG dataset `code` between 1024 and 32767.
-Codes can be searched at [epsg.io](https://epsg.io).
-
-See [EPSG Geodetic Parameter Dataset](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset)
-"""
-abstract type EPSG{Code} end
-
-"""
-    ESRI{code}
-
-ESRI dataset `code`. Codes can be searched at [epsg.io](https://epsg.io).
-"""
-abstract type ESRI{Code} end
-
-"""
-    typealias(::Type{EPSG{code}})
-    typealias(::Type{ESRI{code}})
-
-Returns a coordinate type that has the EPSG/ESRI `code`.
-"""
-function typealias end
-
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
 
-include("coordinates/basic.jl")
-include("coordinates/latlon.jl")
-include("coordinates/mercator.jl")
-include("coordinates/webmercator.jl")
-include("coordinates/platecarree.jl")
+const Len{T} = Quantity{T,u"𝐋"}
+const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
+const Rad{T} = Quantity{T,NoDims,typeof(u"rad")}
+const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
+
+include("crs/basic.jl")
+include("crs/latlon.jl")
+include("crs/mercator.jl")
+include("crs/webmercator.jl")
+include("crs/platecarree.jl")
 
 # ----------
 # FALLBACKS

@@ -135,3 +135,21 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   λ₁, λ₂, r, rₐ
 end
+
+"""
+    addunit(x, u)
+
+Adds the unit only if the argument is not a quantity, otherwise an error is thrown.
+"""
+addunit(x::Number, u) = x * u
+addunit(x::Quantity, u) = throw(ArgumentError("invalid units for coordinates, please check the documentation"))
+
+"""
+    atanpos(x, y)
+
+Adjusts the interval of values returned by the `atan(y, x)` function from `[-π,π]` to `[0,2π]`.
+"""
+function atanpos(y, x)
+  α = atan(y, x)
+  ifelse(α ≥ zero(α), α, α + oftype(α, 2π))
+end
