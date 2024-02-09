@@ -18,7 +18,7 @@ Mercator(1.0u"m", 1.0u"m")
 
 See [EPSG:3395](https://epsg.io/3395).
 """
-const Mercator{M<:Met} = CRS{EPSG{3395},@NamedTuple{x::M, y::M},WGS84}
+const Mercator{M<:Met} = CRS{EPSG{3395},@NamedTuple{x::M, y::M},WGS84,NoParams}
 
 typealias(::Type{EPSG{3395}}) = Mercator
 

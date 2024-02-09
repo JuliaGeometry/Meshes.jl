@@ -36,19 +36,19 @@ function typealias end
 # ----
 
 """
-    CRS{ID,Coords,Datum}
+    CRS{ID,Coords,Datum,Params}
 
 A Coordinate Reference System (CRS) with identifier `ID`, coordinates `Coords`
-and given `Datum` can be used to georeference any point in physical space.
+a given `Datum` can be used to georeference any point in physical space and parametrs `Params`.
 
 The `CRS` type is not intended for end-users. Aliases are provided,
 such as `LatLon` and `WebMercator`, to facilitate coordinate system conversions.
 """
-struct CRS{ID,Coords,Datum}
+struct CRS{ID,Coords,Datum,Params}
   coords::Coords
 end
 
-CRS{ID,Coords,Datum}(args...) where {ID,Coords,Datum} = CRS{ID,Coords,Datum}(Coords(args))
+CRS{ID,Coords,Datum,Params}(args...) where {ID,Coords,Datum,Params} = CRS{ID,Coords,Datum,Params}(Coords(args))
 
 _coords(coords::CRS) = getfield(coords, :coords)
 
@@ -72,7 +72,7 @@ end
 
 Returns the datum of the coordinates `coords`.
 """
-datum(::CRS{ID,Coords,Datum}) where {ID,Coords,Datum} = Datum
+datum(::CRS{ID,Coords,Datum,Params}) where {ID,Coords,Datum,Params} = Datum
 
 """
     ellipsoid(coords)
@@ -130,11 +130,13 @@ const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
 const Rad{T} = Quantity{T,NoDims,typeof(u"rad")}
 const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
 
+const NoParams = nothing
+
 include("crs/basic.jl")
 include("crs/latlon.jl")
 include("crs/mercator.jl")
 include("crs/webmercator.jl")
-include("crs/platecarree.jl")
+include("crs/equidistantcylindrical.jl")
 
 # ----------
 # FALLBACKS
