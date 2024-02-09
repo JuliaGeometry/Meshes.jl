@@ -153,3 +153,10 @@ function atanpos(y, x)
   α = atan(y, x)
   ifelse(α ≥ zero(α), α, α + oftype(α, 2π))
 end
+
+"""
+    numconvert(T, x)
+
+Converts the number type of quantity `x` to `T`.
+"""
+numconvert(::Type{T}, x::Quantity{S,D,U}) where {T,S,D,U} = convert(Quantity{T,D,U}, x)

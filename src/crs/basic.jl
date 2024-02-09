@@ -22,7 +22,7 @@ Cartesian(1.0u"km", 1.0u"km", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Cartesian{N,L<:Len} = CRS{:Cartesian,NTuple{N,L},NoDatum}
+const Cartesian{N,L<:Len} = CRS{:Cartesian,NTuple{N,L},NoDatum,NoParams}
 
 Cartesian(coords::Vararg{L,N}) where {N,L<:Len} = Cartesian{N,float(L)}(coords)
 Cartesian(coords::Len...) = Cartesian(promote(coords...)...)
@@ -76,7 +76,7 @@ Polar(1.0u"km", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Polar{L<:Len,R<:Rad} = CRS{:Polar,@NamedTuple{ρ::L, ϕ::R},NoDatum}
+const Polar{L<:Len,R<:Rad} = CRS{:Polar,@NamedTuple{ρ::L, ϕ::R},NoDatum,NoParams}
 
 Polar(ρ::L, ϕ::R) where {L<:Len,R<:Rad} = Polar{float(L),float(R)}(ρ, ϕ)
 Polar(ρ::Len, ϕ::Deg) = Polar(ρ, deg2rad(ϕ))
@@ -104,7 +104,7 @@ Cylindrical(1.0u"km", (π/4)u"rad", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Cylindrical{L<:Len,R<:Rad} = CRS{:Cylindrical,@NamedTuple{ρ::L, ϕ::R, z::L},NoDatum}
+const Cylindrical{L<:Len,R<:Rad} = CRS{:Cylindrical,@NamedTuple{ρ::L, ϕ::R, z::L},NoDatum,NoParams}
 
 Cylindrical(ρ::L, ϕ::R, z::L) where {L<:Len,R<:Rad} = Cylindrical{float(L),float(R)}(ρ, ϕ, z)
 function Cylindrical(ρ::Len, ϕ::Rad, z::Len)
@@ -135,7 +135,7 @@ Spherical(1.0u"km", (π/4)u"rad", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Spherical{L<:Len,R<:Rad} = CRS{:Spherical,@NamedTuple{r::L, θ::R, ϕ::R},NoDatum}
+const Spherical{L<:Len,R<:Rad} = CRS{:Spherical,@NamedTuple{r::L, θ::R, ϕ::R},NoDatum,NoParams}
 
 Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = Spherical{float(L),float(R)}(r, θ, ϕ)
 Spherical(r::Len, θ::Rad, ϕ::Rad) = Spherical(r, promote(θ, ϕ)...)

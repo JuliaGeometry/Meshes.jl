@@ -18,7 +18,7 @@ WebMercator(1.0u"m", 1.0u"m")
 
 See [EPSG:3857](https://epsg.io/3857).
 """
-const WebMercator{M<:Met} = CRS{EPSG{3857},@NamedTuple{x::M, y::M},WGS84}
+const WebMercator{M<:Met} = CRS{EPSG{3857},@NamedTuple{x::M, y::M},WGS84,NoParams}
 
 typealias(::Type{EPSG{3857}}) = WebMercator
 
