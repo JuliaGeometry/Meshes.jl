@@ -219,7 +219,7 @@ export
 
   # polytopes
   Polytope,
-  KSimplex,
+  Simplex,
   Chain,
   Segment,
   Rope,
@@ -296,6 +296,7 @@ export
   half4pair,
   edge4pair,
   connec4elem,
+  IndAdjTopology,
 
   # topological relations
   TopologicalRelation,
