@@ -5,6 +5,8 @@ A K-simplex is a "simplical" polytope that occupies space in K dimensions using 
 and is embedded in some dimension `Dim`.
 For example, a line segment in 3-D space would be Simplex{1, 3} as it occupies a single dimension,
 is made up of two points, and lies in 3d space.
+
+Note that we only allow constructors of the form `Simplex(p1,p2,...,pk+1)`, not `Simplex(Tuple(...))`.
 """
 struct Simplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
     # Notice that this class has no default constructor (on purpose), since `K` can't be determined.
