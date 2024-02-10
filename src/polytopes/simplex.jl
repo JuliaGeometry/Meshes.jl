@@ -53,9 +53,8 @@ end
 function normal(splx::Simplex{K,Dim,T}) where {K, Dim, T<:Real}
     # It turns out the QR decomposition can be used to find an orthogonal basis,
     # where by construction the nth vector is orthogonal to vectors 1:(n-1).
-    verts = vertices(splx)
-    p0 = first(verts)
-    extendedbasis = [(p .- p0 for p in verts[2:end])... rand!(similar(coordinates(p0)))]
+    p0, pothers... = vertices(splx)
+    extendedbasis = [(p .- p0 for p in pothers)... rand!(similar(coordinates(p0)))]
     normal = qr(extendedbasis).Q[:, end]
 end
 
