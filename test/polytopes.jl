@@ -873,4 +873,23 @@
       └─ Point(0.0, 0.0, 1.0)"""
     end
   end
+  @testset "Simplex" begin
+    @testset "construction" begin
+        pts = (Point(1., 2., 3.), Point(1., 2., 4.));
+        pts32 = convert.(Point{3,Float32}, pts)
+
+        @test Simplex(pts...).vertices == pts
+        @test Simplex{1}(pts...).vertices == pts
+        @test Simplex{1,3}(pts...).vertices == pts
+        @test Simplex{1,3,Float64}(pts...).vertices == pts
+        @test Simplex{1,3,Float32}(pts...).vertices == pts32
+        @test Simplex(pts32...).vertices == pts32
+
+        @test_throws MethodError Simplex(pts)
+        @test_throws MethodError Simplex(collect(pts))
+        @test_throws ArgumentError Simplex{2,3}(pts...)
+
+        @test nvertices(Simplex(pts32...)) == 2
+
+    end
 end
