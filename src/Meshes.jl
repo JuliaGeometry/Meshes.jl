@@ -304,7 +304,6 @@ export
   half4pair,
   edge4pair,
   connec4elem,
-  IndAdjTopology,
 
   # topological relations
   TopologicalRelation,
