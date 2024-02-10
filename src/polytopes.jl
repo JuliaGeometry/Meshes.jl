@@ -192,7 +192,7 @@ include("polytopes/pyramid.jl")
 # -----------------------
 # K-SIMPLEX
 # -----------------------
-include("polytopes/ksimplex.jl")
+include("polytopes/simplex.jl")
 
 
 # -----------------------
