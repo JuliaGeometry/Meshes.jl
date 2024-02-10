@@ -14,6 +14,11 @@ struct Simplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
     vertices::NTuple{K_, Point{Dim, T}}
 end
 
+# ---------------------
+# CONSTRUCTORS
+# ---------------------
+# Include some dimensionality checking.
+
 Simplex(vertices::Vararg{Point{Dim,T},K_})           where {  Dim,T,K_   } = let
     (K_-1)<=Dim  || throw(ArgumentError("(Rank K)==(num vertices - 1) must be less or equal to embedding dimension Dim."))
     Simplex{K_-1,Dim,T,K_}(vertices)
@@ -34,8 +39,12 @@ Simplex{K,Dim,T}(vertices::Vararg{Point{Dim,T′},K_}) where {K,Dim,T,K_,T′} =
     Simplex{K_-1,Dim,T,K_}(vertices)
 end
 
+# ---------------------
+# HIGH-LEVEL INTERFACE
+# ---------------------
+
 nvertices(::Type{<:Simplex{K}}) where {K} = K+1
 
 function Base.isapprox(p₁::SimplexT, p₂::SimplexT; kwargs...) where {SimplexT<:Simplex}
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(vertices(p₁), vertices(p₂)))
 end
