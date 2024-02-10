@@ -14,6 +14,11 @@ struct Simplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
     vertices::NTuple{K_, Point{Dim, T}}
 end
 
+# ---------------------
+# CONSTRUCTORS
+# ---------------------
+# Include some dimensionality checking.
+
 Simplex(vertices::Vararg{Point{Dim,T},K_})           where {  Dim,T,K_   } = let
     (K_-1)<=Dim  || throw(ArgumentError("(Rank K)==(num vertices - 1) must be less or equal to embedding dimension Dim."))
     Simplex{K_-1,Dim,T,K_}(vertices)
@@ -34,23 +39,30 @@ Simplex{K,Dim,T}(vertices::Vararg{Point{Dim,T′},K_}) where {K,Dim,T,K_,T′} =
     Simplex{K_-1,Dim,T,K_}(vertices)
 end
 
+# ---------------------
+# HIGH-LEVEL INTERFACE
+# ---------------------
+
 nvertices(::Type{<:Simplex{K}}) where {K} = K+1
 
 function Base.isapprox(p₁::SimplexT, p₂::SimplexT; kwargs...) where {SimplexT<:Simplex}
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(vertices(p₁), vertices(p₂)))
 end
 
 "Generate normal vector to every facet of simplex in (K+1) dimensions."
 function normal(splx::Simplex{K,Dim,T}) where {K, Dim, T<:Real}
+    # It turns out the QR decomposition can be used to find an orthogonal basis,
+    # where by construction the nth vector is orthogonal to vectors 1:(n-1).
     verts = vertices(splx)
     p0 = first(verts)
-    extended_basis = [(p .- p0 for p in verts[2:end])... rand!(similar(p0.coords))]
-    normal = qr(extended_basis).Q[:, end]
+    extendedbasis = [(p .- p0 for p in verts[2:end])... rand!(similar(coordinates(p0)))]
+    normal = qr(extendedbasis).Q[:, end]
 end
 
+"Compute the measure (i.e. hyper-volume) in any dimension using the Cayley-Menger Determinant."
 function measure(splx::Simplex{K,Dim,T}) where {K, Dim, T<:Real}
     # https://en.wikipedia.org/wiki/Cayley%E2%80%93Menger_determinant
-    Ds_ = pairwise(SqEuclidean(), getfield.(vertices(splx), :coords))
+    Ds_ = pairwise(SqEuclidean(), coordinates.(vertices(splx)))
     Ds = [Ds_ ones(size(Ds_, 1), 1);
           ones(1, size(Ds_, 2)) 0]
     factor = (-1)^(K+1)/(factorial(K)^2*2^K)
