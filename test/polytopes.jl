@@ -888,8 +888,14 @@
         @test_throws MethodError Simplex(pts)
         @test_throws MethodError Simplex(collect(pts))
         @test_throws ArgumentError Simplex{2,3}(pts...)
-
-        @test nvertices(Simplex(pts32...)) == 2
-
+        @test_throws ArgumentError Simplex{4,3}(pts..., pts...)
     end
+    @testset "various properties" begin
+        pts = (Point(1., 2., 3.), Point(1., 2., 4.), Point(1., 3., 4.));
+        splx = Simplex(pts...)
+        @test nvertices(splx) == 3
+        @test paramdim(splx) == 2
+        @test issimplex(splx)
+    end
+  end
 end
