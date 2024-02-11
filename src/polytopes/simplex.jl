@@ -15,10 +15,6 @@ struct Simplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
     vertices::NTuple{K_, Point{Dim, T}}
 end
 
-# ---------------------
-# CONSTRUCTORS
-# ---------------------
-# Include some dimensionality checking.
 
 Simplex(vertices::Vararg{Point{Dim,T},K_})           where {  Dim,T,K_   } = let
     (K_-1)<=Dim  || throw(ArgumentError("(Rank K)==(num vertices - 1) must be less or equal to embedding dimension Dim."))
