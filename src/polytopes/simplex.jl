@@ -9,10 +9,8 @@ See also [`issimplex`](@ref).
 
 Note that we only allow constructors of the form `Simplex(p1,p2,...,pk+1)`, not `Simplex(Tuple(...))`.
 """
-struct Simplex{K,Dim,T,K_} <: Polytope{K,Dim,T}
-    # Notice that this class has no default constructor (on purpose), since `K` can't be determined.
-    # Instead we provide different constructors that also include some dimensionality checking.
-    vertices::NTuple{K_, Point{Dim, T}}
+struct Simplex{K,Dim,T,N} <: Polytope{K,Dim,T}
+  vertices::NTuple{N,Point{Dim,T}}
 end
 
 
