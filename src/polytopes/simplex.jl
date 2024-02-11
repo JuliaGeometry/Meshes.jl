@@ -1,10 +1,11 @@
 """
     Simplex(p1, p2, ..., pK, pK+1)
 
-A K-simplex is a "simplical" polytope that occupies space in K dimensions using K+1 points,
-and is embedded in some dimension `Dim`.
-For example, a line segment in 3-D space would be Simplex{1, 3} as it occupies a single dimension,
-is made up of two points, and lies in 3d space.
+A K-simplex is a polytope with parametric dimension K and K+1 vertices.
+It generalizes the [`Segment`](@ref), the  [`Triangle`](@ref) and the
+[`Tetrahedron`](@ref) to higher dimensions (K > 3).
+
+See also [`issimplex`](@ref).
 
 Note that we only allow constructors of the form `Simplex(p1,p2,...,pk+1)`, not `Simplex(Tuple(...))`.
 """
