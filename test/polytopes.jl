@@ -875,49 +875,49 @@
   end
   @testset "Simplex" begin
     @testset "construction" begin
-        pts = (P3(1., 2., 3.), P3(1., 2., 4.));
+      pts = (P3(1., 2., 3.), P3(1., 2., 4.));
+      @test vertices(Simplex(pts)) == pts
+      @test vertices(Simplex(pts...)) == pts
+
+      # test parametric constructor
+      @test vertices(Simplex{1}(pts...)) == pts
+      @test_throws ArgumentError vertices(Simplex{2}(pts...)) == pts
+
+      # test higher dimensions
+      let Dim=12, N=6, pts = ntuple(i->Point{Dim, T}(rand(T, Dim)), N)
         @test vertices(Simplex(pts)) == pts
-        @test vertices(Simplex(pts...)) == pts
+      end
 
-        # test parametric constructor
-        @test vertices(Simplex{1}(pts...)) == pts
-        @test_throws ArgumentError vertices(Simplex{2}(pts...)) == pts
-
-        # test higher dimensions
-        let Dim=12, N=6, pts = ntuple(i->Point{Dim, T}(rand(T, Dim)), N)
-            @test vertices(Simplex(pts)) == pts
-        end
-
-        # too many points for embedding dimension
-        let Dim=3, N=5, pts = ntuple(i->Point{Dim, T}(rand(T, Dim)), N)
-            @test_throws ArgumentError Simplex(pts)
-        end
+      # too many points for embedding dimension
+      let Dim=3, N=5, pts = ntuple(i->Point{Dim, T}(rand(T, Dim)), N)
+        @test_throws ArgumentError Simplex(pts)
+      end
     end
-    @testset "various properties" begin
-        pts = (Point(1., 2., 3.), Point(1., 2., 4.), Point(1., 3., 4.));
-        splx = Simplex(pts...)
-        @test nvertices(splx) == 3
-        @test paramdim(splx) == 2
-        @test issimplex(splx)
+    @testset "other properties" begin
+      pts = (P3(1., 2., 3.), P3(1., 2., 4.), P3(1., 3., 4.));
+      splx = Simplex(pts...)
+      @test nvertices(splx) == 3
+      @test paramdim(splx) == 2
+      @test issimplex(splx)
     end
     @testset "output" begin
-        p = Simplex(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0), P3(0, 0, 1))
-        @test sprint(show, p) == "Simplex((0.0, 0.0, 0.0), ..., (0.0, 0.0, 1.0))"
-        if T === Float32
-        @test sprint(show, MIME("text/plain"), p) == """
-        Simplex{3,Float32}
-        ├─ Point(0.0f0, 0.0f0, 0.0f0)
-        ├─ Point(1.0f0, 0.0f0, 0.0f0)
-        ├─ Point(0.0f0, 1.0f0, 0.0f0)
-        └─ Point(0.0f0, 0.0f0, 1.0f0)"""
-        else
-        @test sprint(show, MIME("text/plain"), p) == """
-        Simplex{3,Float64}
-        ├─ Point(0.0, 0.0, 0.0)
-        ├─ Point(1.0, 0.0, 0.0)
-        ├─ Point(0.0, 1.0, 0.0)
-        └─ Point(0.0, 0.0, 1.0)"""
-        end
+      p = Simplex(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0), P3(0, 0, 1))
+      @test sprint(show, p) == "Simplex((0.0, 0.0, 0.0), ..., (0.0, 0.0, 1.0))"
+      if T === Float32
+      @test sprint(show, MIME("text/plain"), p) == """
+      Simplex{3,Float32}
+      ├─ Point(0.0f0, 0.0f0, 0.0f0)
+      ├─ Point(1.0f0, 0.0f0, 0.0f0)
+      ├─ Point(0.0f0, 1.0f0, 0.0f0)
+      └─ Point(0.0f0, 0.0f0, 1.0f0)"""
+      else
+      @test sprint(show, MIME("text/plain"), p) == """
+      Simplex{3,Float64}
+      ├─ Point(0.0, 0.0, 0.0)
+      ├─ Point(1.0, 0.0, 0.0)
+      ├─ Point(0.0, 1.0, 0.0)
+      └─ Point(0.0, 0.0, 1.0)"""
+      end
     end
 
   end
