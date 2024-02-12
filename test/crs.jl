@@ -613,29 +613,29 @@
     @testset "LatLon <> WinkelTripel" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(WinkelTripel, c1)
-      @test c2 ≈ WinkelTripel(T(7036918.714302972), T(5225594.172156317))
+      @test c2 ≈ WinkelTripel(T(7044801.6979576545), T(5231448.051548355))
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(WinkelTripel, c1)
-      @test c2 ≈ WinkelTripel(T(7036918.714302972), -T(5225594.172156317))
+      @test c2 ≈ WinkelTripel(T(7044801.6979576545), -T(5231448.051548355))
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(WinkelTripel, c1)
-      @test c2 ≈ WinkelTripel(-T(7036918.714302972), T(5225594.172156317))
+      @test c2 ≈ WinkelTripel(-T(7044801.6979576545), T(5231448.051548355))
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(WinkelTripel, c1)
-      @test c2 ≈ WinkelTripel(-T(7036918.714302972), -T(5225594.172156317))
+      @test c2 ≈ WinkelTripel(-T(7044801.6979576545), -T(5231448.051548355))
 
       # EPSG/ESRI fallback
       c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{53042}, c1)
-      @test c2 ≈ WinkelTripel(T(7036918.714302972), T(5225594.172156317))
+      c2 = convert(ESRI{54042}, c1)
+      @test c2 ≈ WinkelTripel(T(7044801.6979576545), T(5231448.051548355))
 
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(WinkelTripel, c1)
-      @inferred convert(ESRI{53042}, c1)
+      @inferred convert(ESRI{54042}, c1)
     end
   end
 end

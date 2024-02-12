@@ -69,12 +69,3 @@ eccentricity(::Type{WGS84🌎}) = _WGS84.e
 eccentricity²(::Type{WGS84🌎}) = _WGS84.e²
 flattening(::Type{WGS84🌎}) = _WGS84.f
 flattening⁻¹(::Type{WGS84🌎}) = _WGS84.f⁻¹
-
-abstract type WIII🌎 <: RevolutionEllipsoid end
-
-majoraxis(::Type{WIII🌎}) = 6371000.0u"m"
-minoraxis(::Type{WIII🌎}) = 6371000.0u"m"
-eccentricity(::Type{WIII🌎}) = 0.0
-eccentricity²(::Type{WIII🌎}) = 0.0
-flattening(::Type{WIII🌎}) = 0.0
-flattening⁻¹(::Type{WIII🌎}) = Inf

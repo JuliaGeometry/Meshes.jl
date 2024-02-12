@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const Winkel{lat₁,M<:Met} = CRS{:Winkel,@NamedTuple{x::M, y::M},WIII,lat₁}
+const Winkel{lat₁,M<:Met} = CRS{:Winkel,@NamedTuple{x::M, y::M},WGS84,lat₁}
 
 Winkel{lat₁}(x::M, y::M) where {lat₁,M<:Met} = Winkel{lat₁,float(M)}(x, y)
 Winkel{lat₁}(x::Met, y::Met) where {lat₁} = Winkel{lat₁}(promote(x, y)...)
@@ -23,11 +23,11 @@ WinkelTripel(1.0u"km", 1.0u"km") # length quantities are converted to meters
 WinkelTripel(1.0u"m", 1.0u"m")
 ```
 
-See [ESRI:53042](https://epsg.io/53042).
+See [ESRI:54042](https://epsg.io/54042).
 """
 const WinkelTripel = Winkel{50.467u"°"}
 
-typealias(::Type{ESRI{53042}}) = WinkelTripel
+typealias(::Type{ESRI{54042}}) = WinkelTripel
 
 # ------------
 # CONVERSIONS
