@@ -162,6 +162,7 @@ export
   Lambert,
   Behrmann,
   WinkelTripel,
+  Robinson,
   datum,
 
   # geometries
