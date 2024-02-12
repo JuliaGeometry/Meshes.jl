@@ -5,7 +5,7 @@
 """
     EqualAreaCylindrical{latₜₛ}
 
-Equal Area Cylindrical CRS with  latitude of true scale `latₜₛ` in degrees.
+Equal Area Cylindrical CRS with latitude of true scale `latₜₛ` in degrees.
 """
 const EqualAreaCylindrical{latₜₛ,M<:Met} = CRS{:EAC,@NamedTuple{x::M, y::M},WGS84,latₜₛ}
 
