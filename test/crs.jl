@@ -461,7 +461,7 @@
       c2 = convert(Mercator, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
 
-      # EPSG fallback
+      # EPSG/ESRI fallback
       c1 = LatLon(T(45), T(90))
       c2 = convert(EPSG{3395}, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
@@ -497,7 +497,7 @@
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
-      # EPSG fallback
+      # EPSG/ESRI fallback
       c1 = LatLon(T(45), T(90))
       c2 = convert(EPSG{3857}, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
@@ -538,7 +538,7 @@
       c3 = convert(LatLon, c2)
       @test c3 ≈ c1
 
-      # EPSG fallback
+      # EPSG/ESRI fallback
       c1 = LatLon(T(45), T(90))
       c2 = convert(EPSG{32662}, c1)
       @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
@@ -552,6 +552,62 @@
       @inferred convert(LatLon, c2)
       @inferred convert(EPSG{32662}, c1)
       @inferred convert(EPSG{4326}, c2)
+    end
+
+    @testset "LatLon <> Lambert" begin
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(Lambert, c1)
+      @test c2 ≈ Lambert(T(10018754.171394622), T(4489858.8869480025))
+
+      c1 = LatLon(-T(45), T(90))
+      c2 = convert(Lambert, c1)
+      @test c2 ≈ Lambert(T(10018754.171394622), -T(4489858.8869480025))
+
+      c1 = LatLon(T(45), -T(90))
+      c2 = convert(Lambert, c1)
+      @test c2 ≈ Lambert(-T(10018754.171394622), T(4489858.8869480025))
+
+      c1 = LatLon(-T(45), -T(90))
+      c2 = convert(Lambert, c1)
+      @test c2 ≈ Lambert(-T(10018754.171394622), -T(4489858.8869480025))
+
+      # EPSG/ESRI fallback
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(ESRI{54034}, c1)
+      @test c2 ≈ Lambert(T(10018754.171394622), T(4489858.8869480025))
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      @inferred convert(Lambert, c1)
+      @inferred convert(ESRI{54034}, c1)
+    end
+
+    @testset "LatLon <> Behrmann" begin
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(Behrmann, c1)
+      @test c2 ≈ Behrmann(T(8683765.222580686), T(5180102.328839251))
+
+      c1 = LatLon(-T(45), T(90))
+      c2 = convert(Behrmann, c1)
+      @test c2 ≈ Behrmann(T(8683765.222580686), -T(5180102.328839251))
+
+      c1 = LatLon(T(45), -T(90))
+      c2 = convert(Behrmann, c1)
+      @test c2 ≈ Behrmann(-T(8683765.222580686), T(5180102.328839251))
+
+      c1 = LatLon(-T(45), -T(90))
+      c2 = convert(Behrmann, c1)
+      @test c2 ≈ Behrmann(-T(8683765.222580686), -T(5180102.328839251))
+
+      # EPSG/ESRI fallback
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(ESRI{54017}, c1)
+      @test c2 ≈ Behrmann(T(8683765.222580686), T(5180102.328839251))
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      @inferred convert(Behrmann, c1)
+      @inferred convert(ESRI{54017}, c1)
     end
 
     @testset "LatLon <> WinkelTripel" begin
@@ -571,7 +627,7 @@
       c2 = convert(WinkelTripel, c1)
       @test c2 ≈ WinkelTripel(-T(7036918.714302972), -T(5225594.172156317))
 
-      # EPSG fallback
+      # EPSG/ESRI fallback
       c1 = LatLon(T(45), T(90))
       c2 = convert(ESRI{53042}, c1)
       @test c2 ≈ WinkelTripel(T(7036918.714302972), T(5225594.172156317))

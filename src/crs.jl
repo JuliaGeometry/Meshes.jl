@@ -143,6 +143,7 @@ include("crs/latlon.jl")
 include("crs/mercator.jl")
 include("crs/webmercator.jl")
 include("crs/eqdistcylindrical.jl")
+include("crs/eqareacylindrical.jl")
 include("crs/winkeltripel.jl")
 
 # ----------
