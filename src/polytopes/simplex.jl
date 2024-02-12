@@ -28,7 +28,7 @@ Simplex{K}(vertices::NTuple{N}) where {K,N} = let
   N == K+1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
   Simplex(vertices...)
 end
-Simplex{K}(vertices::Vararg{<:Point,N}) where {K,N} = let
+Simplex{K}(vertices::NTuple{N}...) where {K,N} = let
   N == K+1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
   Simplex(vertices)
 end
