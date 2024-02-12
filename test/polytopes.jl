@@ -900,5 +900,25 @@
         @test paramdim(splx) == 2
         @test issimplex(splx)
     end
+    @testset "output" begin
+        p = Simplex(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0), P3(0, 0, 1))
+        @test sprint(show, p) == "Simplex((0.0, 0.0, 0.0), ..., (0.0, 0.0, 1.0))"
+        if T === Float32
+        @test sprint(show, MIME("text/plain"), p) == """
+        Simplex{3,Float32}
+        ├─ Point(0.0f0, 0.0f0, 0.0f0)
+        ├─ Point(1.0f0, 0.0f0, 0.0f0)
+        ├─ Point(0.0f0, 1.0f0, 0.0f0)
+        └─ Point(0.0f0, 0.0f0, 1.0f0)"""
+        else
+        @test sprint(show, MIME("text/plain"), p) == """
+        Simplex{3,Float64}
+        ├─ Point(0.0, 0.0, 0.0)
+        ├─ Point(1.0, 0.0, 0.0)
+        ├─ Point(0.0, 1.0, 0.0)
+        └─ Point(0.0, 0.0, 1.0)"""
+        end
+    end
+
   end
 end
