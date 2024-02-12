@@ -56,6 +56,10 @@ const Behrmann = EqualAreaCylindrical{30.0u"°"}
 
 typealias(::Type{ESRI{54017}}) = Behrmann
 
+# ------------
+# CONVERSIONS
+# ------------
+
 function Base.convert(::Type{EqualAreaCylindrical{latₜₛ}}, coords::LatLon) where {latₜₛ}
   dat = datum(EqualAreaCylindrical{latₜₛ})
   🌎 = ellipsoid(dat)

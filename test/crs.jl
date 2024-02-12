@@ -637,5 +637,33 @@
       @inferred convert(WinkelTripel, c1)
       @inferred convert(ESRI{54042}, c1)
     end
+
+    @testset "LatLon <> Robinson" begin
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(Robinson, c1)
+      @test c2 ≈ Robinson(T(7620313.925950073), T(4805073.646653474))
+
+      c1 = LatLon(-T(45), T(90))
+      c2 = convert(Robinson, c1)
+      @test c2 ≈ Robinson(T(7620313.925950073), -T(4805073.646653474))
+
+      c1 = LatLon(T(45), -T(90))
+      c2 = convert(Robinson, c1)
+      @test c2 ≈ Robinson(-T(7620313.925950073), T(4805073.646653474))
+
+      c1 = LatLon(-T(45), -T(90))
+      c2 = convert(Robinson, c1)
+      @test c2 ≈ Robinson(-T(7620313.925950073), -T(4805073.646653474))
+
+      # EPSG/ESRI fallback
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(ESRI{54030}, c1)
+      @test c2 ≈ Robinson(T(7620313.925950073), T(4805073.646653474))
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      @inferred convert(Robinson, c1)
+      @inferred convert(ESRI{54030}, c1)
+    end
   end
 end
