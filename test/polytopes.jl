@@ -875,20 +875,23 @@
   end
   @testset "Simplex" begin
     @testset "construction" begin
-        pts = (Point(1., 2., 3.), Point(1., 2., 4.));
-        pts32 = convert.(Point{3,Float32}, pts)
+        pts = (P3(1., 2., 3.), P3(1., 2., 4.));
+        @test vertices(Simplex(pts)) == pts
+        @test vertices(Simplex(pts...)) == pts
 
-        @test Simplex(pts...).vertices == pts
-        @test Simplex{1}(pts...).vertices == pts
-        @test Simplex{1,3}(pts...).vertices == pts
-        @test Simplex{1,3,Float64}(pts...).vertices == pts
-        @test Simplex{1,3,Float32}(pts...).vertices == pts32
-        @test Simplex(pts32...).vertices == pts32
+        # test parametric constructor
+        @test vertices(Simplex{1}(pts...)) == pts
+        @test_throws ArgumentError vertices(Simplex{2}(pts...)) == pts
 
-        @test_throws MethodError Simplex(pts)
-        @test_throws MethodError Simplex(collect(pts))
-        @test_throws ArgumentError Simplex{2,3}(pts...)
-        @test_throws ArgumentError Simplex{4,3}(pts..., pts...)
+        # test higher dimensions
+        let Dim=12, N=6, pts = ntuple(i->Point{Dim, T}(rand(T, Dim)), N)
+            @test vertices(Simplex(pts)) == pts
+        end
+
+        # too many points for embedding dimension
+        let Dim=3, N=5, pts = ntuple(i->Point{Dim, T}(rand(T, Dim)), N)
+            @test_throws ArgumentError Simplex(pts)
+        end
     end
     @testset "various properties" begin
         pts = (Point(1., 2., 3.), Point(1., 2., 4.), Point(1., 3., 4.));
