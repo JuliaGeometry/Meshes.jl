@@ -83,6 +83,11 @@ function connect(indices::Tuple, ::Type{Ngon})
   Connectivity{Ngon{N},N}(indices)
 end
 
+function connect(indices::Tuple, ::Type{Simplex})
+  N = length(indices)
+  Connectivity{Simplex{N-1},N}(indices)
+end
+
 function connect(indices::Tuple)
   N = length(indices)
   N > 2 ? connect(indices, Ngon) : connect(indices, Segment)
