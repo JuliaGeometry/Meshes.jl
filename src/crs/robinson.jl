@@ -31,8 +31,11 @@ Robinson(x::Number, y::Number) = Robinson(addunit(x, u"m"), addunit(y, u"m"))
 # CONVERSIONS
 # ------------
 
-# adapted from PROJ coordinate transformation software
-# ref: https://github.com/OSGeo/PROJ/blob/master/src/projections/robin.cpp
+# Adapted from PROJ coordinate transformation software
+# Initial PROJ 4.3 public domain code was put as Frank Warmerdam as copyright
+# holder, but he didn't mean to imply he did the work. Essentially all work was
+# done by Gerald Evenden.
+# reference code: https://github.com/OSGeo/PROJ/blob/master/src/projections/robin.cpp
 
 const _COEFSX = [
   (c₀=1.0f0, c₁=2.2199f-17, c₂=-7.15515f-5, c₃=3.1103f-6),
