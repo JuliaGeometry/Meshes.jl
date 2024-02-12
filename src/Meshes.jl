@@ -159,6 +159,8 @@ export
   Mercator,
   WebMercator,
   PlateCarree,
+  Lambert,
+  Behrmann,
   WinkelTripel,
   datum,
 
