@@ -39,7 +39,7 @@ function Base.getproperty(coords::Cartesian, name::Symbol)
   elseif name === :z
     tup[3]
   else
-    error("invalid carteisan property, use `x`, `y` or `z`")
+    error("invalid property, use `x`, `y` or `z`")
   end
 end
 
