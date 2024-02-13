@@ -378,6 +378,9 @@
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     @test isconvex(t)
 
+    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
+    @test_throws ErrorException("signed area only defined for triangles embedded in R², use `area` instead") signarea(t)
+
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     @test sprint(show, t) == "Triangle((0.0, 0.0), (1.0, 0.0), (0.0, 1.0))"
     if T === Float32
