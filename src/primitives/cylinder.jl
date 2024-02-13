@@ -8,14 +8,15 @@
 A solid circular cylinder embedded in R³ with given `radius`,
 delimited by `bottom` and `top` planes.
 
-    Cylinder(segment, radius)
+    Cylinder(start, finish, radius)
 
 Alternatively, construct a right circular cylinder with given `radius`
-and `segment` between `bottom` and `top` planes.
+along the segment with `start` and `finish` end points.
 
-    Cylinder(segment)
+    Cylinder(start, finish)
 
-Or construct a right circular cylinder with unit radius along the `segment`.
+Or construct a right circular cylinder with unit radius along the segment
+with `start` and `finish` end points.
 
     Cylinder(radius)
 
