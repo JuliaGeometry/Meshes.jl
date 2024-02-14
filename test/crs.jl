@@ -691,5 +691,71 @@
       @inferred convert(Robinson, c1)
       @inferred convert(ESRI{54030}, c1)
     end
+
+    @testset "LatLon <> OrthoNorth" begin
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(OrthoNorth, c1)
+      @test c2 ≈ OrthoNorth(T(4783602.75), T(-2761814.335408735))
+
+      c1 = LatLon(T(30), -T(60))
+      c2 = convert(OrthoNorth, c1)
+      @test c2 ≈ OrthoNorth(-T(4783602.75), T(-2761814.335408735))
+
+      # EPSG/ESRI fallback
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(ESRI{102035}, c1)
+      @test c2 ≈ OrthoNorth(T(4783602.75), T(-2761814.335408735))
+
+      # type stability
+      c1 = LatLon(T(30), T(60))
+      @inferred convert(OrthoNorth, c1)
+      @inferred convert(ESRI{102035}, c1)
+    end
+
+    @testset "LatLon <> OrthoSouth" begin
+      c1 = LatLon(-T(30), T(60))
+      c2 = convert(OrthoSouth, c1)
+      @test c2 ≈ OrthoSouth(T(4783602.75), T(2761814.335408735))
+
+      c1 = LatLon(-T(30), -T(60))
+      c2 = convert(OrthoSouth, c1)
+      @test c2 ≈ OrthoSouth(-T(4783602.75), T(2761814.335408735))
+
+      # EPSG/ESRI fallback
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(ESRI{102037}, c1)
+      @test c2 ≈ OrthoSouth(T(4783602.75), T(2761814.335408735))
+
+      # type stability
+      c1 = LatLon(T(30), T(60))
+      @inferred convert(OrthoSouth, c1)
+      @inferred convert(ESRI{102037}, c1)
+    end
+
+    @testset "LatLon <> OrthoEllip" begin
+      OrthoNorthEllip = Meshes.Orthographic{90.0u"°",0.0u"°",false}
+      OrthoSouthEllip = Meshes.Orthographic{-90.0u"°",0.0u"°",false}
+
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(OrthoNorthEllip, c1)
+      @test c2 ≈ OrthoNorthEllip(T(4787610.688267582), T(-2764128.319646418))
+
+      c1 = LatLon(T(30), -T(60))
+      c2 = convert(OrthoNorthEllip, c1)
+      @test c2 ≈ OrthoNorthEllip(-T(4787610.688267582), T(-2764128.319646418))
+
+      c1 = LatLon(-T(30), T(60))
+      c2 = convert(OrthoSouthEllip, c1)
+      @test c2 ≈ OrthoSouthEllip(T(4787610.688267582), T(2764128.319646418))
+
+      c1 = LatLon(-T(30), -T(60))
+      c2 = convert(OrthoSouthEllip, c1)
+      @test c2 ≈ OrthoSouthEllip(-T(4787610.688267582), T(2764128.319646418))
+
+      # type stability
+      c1 = LatLon(T(30), T(60))
+      @inferred convert(OrthoNorthEllip, c1)
+      @inferred convert(OrthoSouthEllip, c1)
+    end
   end
 end
