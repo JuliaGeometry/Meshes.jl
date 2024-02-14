@@ -30,12 +30,8 @@ OrthoNorth(1u"m", 1u"m") # integers are converted converted to floats
 OrthoNorth(1.0u"km", 1.0u"km") # length quantities are converted to meters
 OrthoNorth(1.0u"m", 1.0u"m")
 ```
-
-See [ESRI:102035](https://epsg.io/102035).
 """
-const OrthoNorth = Orthographic{90.0u"°",0.0u"°",true}
-
-typealias(::Type{ESRI{102035}}) = OrthoNorth
+const OrthoNorth = Orthographic{90.0u"°",0.0u"°",false}
 
 """
     OrthoSouth(x, y)
@@ -50,12 +46,12 @@ OrthoSouth(1u"m", 1u"m") # integers are converted converted to floats
 OrthoSouth(1.0u"km", 1.0u"km") # length quantities are converted to meters
 OrthoSouth(1.0u"m", 1.0u"m")
 ```
-
-See [ESRI:102037](https://epsg.io/102037).
 """
-const OrthoSouth = Orthographic{-90.0u"°",0.0u"°",true}
+const OrthoSouth = Orthographic{-90.0u"°",0.0u"°",false}
 
-typealias(::Type{ESRI{102037}}) = OrthoSouth
+typealias(::Type{ESRI{102035}}) = Orthographic{90.0u"°",0.0u"°",true}
+
+typealias(::Type{ESRI{102037}}) = Orthographic{-90.0u"°",0.0u"°",true}
 
 # ------------
 # CONVERSIONS
@@ -93,13 +89,9 @@ function Base.convert(::Type{Orthographic{lat₀,lon₀,true}}, coords::LatLon) 
   l = ustrip(λ)
   a = oftype(l, ustrip(majoraxis(🌎)))
 
-  sinϕ = sin(ϕ)
   cosϕ = cos(ϕ)
-  sinϕ₀ = sin(ϕ₀)
-  cosϕ₀ = cos(ϕ₀)
-
   x = a * cosϕ * sin(λ - λ₀)
-  y = a * (sinϕ * cosϕ₀ - cosϕ * sinϕ₀ * cos(λ - λ₀))
+  y = a * (sin(ϕ) * cos(ϕ₀) - cosϕ * sin(ϕ₀) * cos(λ - λ₀))
 
   Orthographic{lat₀,lon₀,true}(x * u"m", y * u"m")
 end
