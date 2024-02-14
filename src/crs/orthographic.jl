@@ -58,7 +58,7 @@ typealias(::Type{ESRI{102037}}) = Orthographic{-90.0u"°",0.0u"°",true}
 # ------------
 
 function Base.convert(::Type{Orthographic{lat₀,lon₀,false}}, coords::LatLon) where {lat₀,lon₀}
-  🌎 = ellipsoid(Orthographic{lat₀,lon₀})
+  🌎 = ellipsoid(Orthographic)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   λ₀ = oftype(λ, deg2rad(lon₀))
@@ -81,7 +81,7 @@ function Base.convert(::Type{Orthographic{lat₀,lon₀,false}}, coords::LatLon)
 end
 
 function Base.convert(::Type{Orthographic{lat₀,lon₀,true}}, coords::LatLon) where {lat₀,lon₀}
-  🌎 = ellipsoid(Orthographic{lat₀,lon₀})
+  🌎 = ellipsoid(Orthographic)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   λ₀ = oftype(λ, deg2rad(lon₀))
