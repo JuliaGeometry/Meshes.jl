@@ -61,6 +61,14 @@
   @test vg isa GeometrySet
   @test vg == GeometrySet([g1[50:70]; g2[10:30]])
 
+  # eltype
+  d1 = CartesianGrid{T}(10, 10)
+  d2 = GeometrySet([P2(0, 0), Box(P2(0, 0), P2(1, 1)), P2(2, 2)])
+  v1 = view(d1, 1:10)
+  v2 = view(d2, [1, 3])
+  @test eltype(v1) === Quadrangle{2,T}
+  @test eltype(v2) === Primitive{2,T}
+
   # show
   pset = PointSet(P2.(1:100, 1:100))
   v1 = view(pset, 1:10)
