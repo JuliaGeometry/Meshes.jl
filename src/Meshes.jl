@@ -164,6 +164,8 @@ export
   GallPeters,
   WinkelTripel,
   Robinson,
+  OrthoNorth,
+  OrthoSouth,
   datum,
 
   # geometries

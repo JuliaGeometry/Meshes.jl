@@ -146,6 +146,7 @@ include("crs/eqdistcylindrical.jl")
 include("crs/eqareacylindrical.jl")
 include("crs/winkeltripel.jl")
 include("crs/robinson.jl")
+include("crs/orthographic.jl")
 
 # ----------
 # FALLBACKS

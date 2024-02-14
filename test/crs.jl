@@ -691,5 +691,68 @@
       @inferred convert(Robinson, c1)
       @inferred convert(ESRI{54030}, c1)
     end
+
+    @testset "LatLon <> OrthoNorth" begin
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(OrthoNorth, c1)
+      @test c2 ≈ OrthoNorth(T(4787610.688267582), T(-2764128.319646418))
+
+      c1 = LatLon(T(30), -T(60))
+      c2 = convert(OrthoNorth, c1)
+      @test c2 ≈ OrthoNorth(-T(4787610.688267582), T(-2764128.319646418))
+
+      # type stability
+      c1 = LatLon(T(30), T(60))
+      @inferred convert(OrthoNorth, c1)
+    end
+
+    @testset "LatLon <> OrthoSouth" begin
+      c1 = LatLon(-T(30), T(60))
+      c2 = convert(OrthoSouth, c1)
+      @test c2 ≈ OrthoSouth(T(4787610.688267582), T(2764128.319646418))
+
+      c1 = LatLon(-T(30), -T(60))
+      c2 = convert(OrthoSouth, c1)
+      @test c2 ≈ OrthoSouth(-T(4787610.688267582), T(2764128.319646418))
+
+      # type stability
+      c1 = LatLon(T(30), T(60))
+      @inferred convert(OrthoSouth, c1)
+    end
+
+    @testset "LatLon <> OrthoSpherical" begin
+      OrthoNorthSpherical = Meshes.typealias(ESRI{102035})
+      OrthoSouthSpherical = Meshes.typealias(ESRI{102037})
+
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(OrthoNorthSpherical, c1)
+      @test c2 ≈ OrthoNorthSpherical(T(4783602.75), T(-2761814.335408735))
+
+      c1 = LatLon(T(30), -T(60))
+      c2 = convert(OrthoNorthSpherical, c1)
+      @test c2 ≈ OrthoNorthSpherical(-T(4783602.75), T(-2761814.335408735))
+
+      c1 = LatLon(-T(30), T(60))
+      c2 = convert(OrthoSouthSpherical, c1)
+      @test c2 ≈ OrthoSouthSpherical(T(4783602.75), T(2761814.335408735))
+
+      c1 = LatLon(-T(30), -T(60))
+      c2 = convert(OrthoSouthSpherical, c1)
+      @test c2 ≈ OrthoSouthSpherical(-T(4783602.75), T(2761814.335408735))
+
+      # EPSG/ESRI fallback
+      c1 = LatLon(T(30), T(60))
+      c2 = convert(ESRI{102035}, c1)
+      @test c2 ≈ OrthoNorthSpherical(T(4783602.75), T(-2761814.335408735))
+      c2 = convert(ESRI{102037}, c1)
+      @test c2 ≈ OrthoSouthSpherical(T(4783602.75), T(2761814.335408735))
+
+      # type stability
+      c1 = LatLon(T(30), T(60))
+      @inferred convert(OrthoNorthSpherical, c1)
+      @inferred convert(ESRI{102035}, c1)
+      @inferred convert(OrthoSouthSpherical, c1)
+      @inferred convert(ESRI{102037}, c1)
+    end
   end
 end
