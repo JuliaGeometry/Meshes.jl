@@ -41,9 +41,12 @@ function Base.convert(::Type{Winkel{lat₁}}, coords::LatLon) where {lat₁}
   l = ustrip(λ)
   o = ustrip(ϕ)
   a = oftype(l, ustrip(majoraxis(🌎)))
+
   α = acos(cos(ϕ) * cos(λ / 2))
-  sincα = sin(α) / α # unnormalized sinc
+  sincα = sinc(α / π) # unnormalized sinc
+
   x = a / 2 * (l * cos(ϕ₁) + (2cos(ϕ) * sin(λ / 2)) / sincα)
   y = a / 2 * (o + sin(ϕ) / sincα)
+
   Winkel{lat₁}(x * u"m", y * u"m")
 end

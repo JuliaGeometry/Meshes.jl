@@ -627,6 +627,10 @@
       c2 = convert(WinkelTripel, c1)
       @test c2 ≈ WinkelTripel(-T(7044801.6979576545), -T(5231448.051548355))
 
+      c1 = LatLon(T(0), T(0))
+      c2 = convert(WinkelTripel, c1)
+      @test c2 ≈ WinkelTripel(T(0), T(0))
+
       # EPSG/ESRI fallback
       c1 = LatLon(T(45), T(90))
       c2 = convert(ESRI{54042}, c1)
