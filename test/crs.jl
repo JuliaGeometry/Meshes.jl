@@ -610,6 +610,28 @@
       @inferred convert(ESRI{54017}, c1)
     end
 
+    @testset "LatLon <> GallPeters" begin
+      c1 = LatLon(T(45), T(90))
+      c2 = convert(GallPeters, c1)
+      @test c2 ≈ GallPeters(T(7096215.158458031), T(6338983.732612475))
+
+      c1 = LatLon(-T(45), T(90))
+      c2 = convert(GallPeters, c1)
+      @test c2 ≈ GallPeters(T(7096215.158458031), -T(6338983.732612475))
+
+      c1 = LatLon(T(45), -T(90))
+      c2 = convert(GallPeters, c1)
+      @test c2 ≈ GallPeters(-T(7096215.158458031), T(6338983.732612475))
+
+      c1 = LatLon(-T(45), -T(90))
+      c2 = convert(GallPeters, c1)
+      @test c2 ≈ GallPeters(-T(7096215.158458031), -T(6338983.732612475))
+
+      # type stability
+      c1 = LatLon(T(45), T(90))
+      @inferred convert(GallPeters, c1)
+    end
+
     @testset "LatLon <> WinkelTripel" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(WinkelTripel, c1)

@@ -56,6 +56,22 @@ const Behrmann = EqualAreaCylindrical{30.0u"°"}
 
 typealias(::Type{ESRI{54017}}) = Behrmann
 
+"""
+    GallPeters(x, y)
+
+Gall-Peters coordinates in length units (default to meter).
+
+## Examples
+
+```julia
+GallPeters(1, 1) # add default units
+GallPeters(1u"m", 1u"m") # integers are converted converted to floats
+GallPeters(1.0u"km", 1.0u"km") # length quantities are converted to meters
+GallPeters(1.0u"m", 1.0u"m")
+```
+"""
+const GallPeters = EqualAreaCylindrical{45.0u"°"}
+
 # ------------
 # CONVERSIONS
 # ------------

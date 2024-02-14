@@ -161,6 +161,7 @@ export
   PlateCarree,
   Lambert,
   Behrmann,
+  GallPeters,
   WinkelTripel,
   Robinson,
   datum,
