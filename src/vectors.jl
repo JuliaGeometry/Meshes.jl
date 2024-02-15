@@ -52,7 +52,7 @@ end
 Vec{Dim,T}(coords::Number...) where {Dim,T<:Continuous} = Vec{Dim,T}(coords)
 function Vec{Dim,T}(coords::Union{Tuple,AbstractVector}) where {Dim,T<:Continuous}
   if Dim ≠ length(coords)
-    throw(DimensionMismatch("number of coordinates must be equal to number of dimensions"))
+    throw(DimensionMismatch("the number of coordinates must be equal to the number of dimensions"))
   end
   Vec{Dim,T}(NTuple{Dim,T}(coords))
 end
