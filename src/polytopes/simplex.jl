@@ -6,8 +6,6 @@ It generalizes the [`Segment`](@ref), the  [`Triangle`](@ref) and the
 [`Tetrahedron`](@ref) to higher dimensions (K > 3).
 
 See also [`issimplex`](@ref).
-
-Note that we only allow constructors of the form `Simplex(p1,p2,...,pk+1)`, not `Simplex(Tuple(...))`.
 """
 struct Simplex{K,Dim,T,N} <: Polytope{K,Dim,T}
   vertices::NTuple{N,Point{Dim,T}}
