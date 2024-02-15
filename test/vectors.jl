@@ -38,7 +38,7 @@
   @test Vec{2,T}((-1.0, -2)) == Vec{2,T}((-1, -2.0))
   @test Vec{4,T}((0, -1.0, +2, -4.0)) == Vec{4,T}((0.0f0, -1.0f0, +2.0f0, -4.0f0))
 
-  # Integer coordinates converted to Float64
+  # integer coordinates are converted to float
   @test eltype(Vec(1)) == Float64
   @test eltype(Vec(1, 2)) == Float64
   @test eltype(Vec(1, 2, 3)) == Float64
@@ -60,7 +60,9 @@
   # throws
   @test_throws DimensionMismatch Vec{2,T}(1)
   @test_throws DimensionMismatch Vec{3,T}((2, 3))
+  @test_throws DimensionMismatch Vec{3,T}([2, 3])
   @test_throws DimensionMismatch Vec{-3,T}((4, 5, 6))
+  @test_throws DimensionMismatch Vec{-3,T}([4, 5, 6])
 
   # angles between 2D vectors
   @test ∠(V2(1, 0), V2(0, 1)) ≈ T(π / 2)
