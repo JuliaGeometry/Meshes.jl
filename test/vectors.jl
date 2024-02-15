@@ -90,4 +90,5 @@
   else
     @test sprint(show, v) == "Vec(0.0, 1.0)"
   end
+  @test sprint(show, MIME("text/plain"), v) == sprint(show, v)
 end
