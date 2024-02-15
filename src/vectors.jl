@@ -49,7 +49,7 @@ struct Vec{Dim,T<:Continuous} <: StaticVector{Dim,T}
 end
 
 # convenience constructors
-Vec{Dim,T}(coords::Number...) where {Dim,T<:Continuous} = Vec{Dim,T}(coords)
+Vec{Dim,T}(coords...) where {Dim,T<:Continuous} = Vec{Dim,T}(coords)
 function Vec{Dim,T}(coords::Union{Tuple,AbstractVector}) where {Dim,T<:Continuous}
   if Dim ≠ length(coords)
     throw(DimensionMismatch("the number of coordinates must be equal to the number of dimensions"))
@@ -57,9 +57,9 @@ function Vec{Dim,T}(coords::Union{Tuple,AbstractVector}) where {Dim,T<:Continuou
   Vec{Dim,T}(NTuple{Dim,T}(coords))
 end
 
-Vec(coords::Number...) = Vec(coords)
-Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec(promote(coords...))
-Vec(coords::NTuple{Dim,T}) where {Dim,T<:Number} = Vec(float.(coords))
+Vec(coords...) = Vec(coords)
+Vec(coords::Tuple) = Vec(promote(coords...))
+Vec(coords::NTuple{Dim,T}) where {Dim,T} = Vec(float.(coords))
 Vec(coords::NTuple{Dim,T}) where {Dim,T<:Continuous} = Vec{Dim,T}(coords)
 
 # StaticVector constructors
