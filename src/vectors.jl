@@ -63,8 +63,8 @@ Vec(coords::NTuple{Dim,T}) where {Dim,T<:Number} = Vec(float.(coords))
 Vec(coords::NTuple{Dim,T}) where {Dim,T<:Continuous} = Vec{Dim,T}(coords)
 
 # StaticVector constructors
-Vec(coords::StaticVector{Dim,T}) where {Dim,T} = Vec{Dim,T}(coords)
-Vec{Dim,T}(coords::StaticVector) where {Dim,T} = Vec{Dim,T}(Tuple(coords))
+Vec(coords::StaticVector{Dim,T}) where {Dim,T<:Continuous} = Vec{Dim,T}(coords)
+Vec{Dim,T}(coords::StaticVector) where {Dim,T<:Continuous} = Vec{Dim,T}(Tuple(coords))
 
 # type aliases for convenience
 const Vec1 = Vec{1,Float64}
