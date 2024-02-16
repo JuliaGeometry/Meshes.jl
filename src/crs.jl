@@ -9,14 +9,8 @@ Coordinate Reference System (CRS) with a given `Datum`
 """
 abstract type CRS{Datum} end
 
-_coords(coords::CRS) = coords
-
-function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {C<:CRS}
-  c₁ = _coords(coords₁)
-  c₂ = _coords(coords₂)
-  N = nfields(c₁)
-  all(ntuple(i -> isapprox(getfield(c₁, i), getfield(c₂, i); kwargs...), N))
-end
+Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {C<:CRS} =
+  all(ntuple(i -> isapprox(getfield(coords₁, i), getfield(coords₂, i); kwargs...), nfields(coords₁)))
 
 # ------
 # DATUM
@@ -66,19 +60,17 @@ altitudeₒ(T::Type{<:CRS}) = altitudeₒ(datum(T))
 # IO METHODS
 # -----------
 
-_fnames(coords::CRS) = fieldnames(typeof(coords))
-
 function Base.show(io::IO, coords::CRS)
   name = prettyname(coords)
   print(io, "$name(")
-  printfields(io, _coords(coords), _fnames(coords), compact=true)
+  printfields(io, coords, compact=true)
   print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", coords::CRS)
   name = prettyname(coords)
   print(io, "$name coordinates")
-  printfields(io, _coords(coords), _fnames(coords))
+  printfields(io, coords)
 end
 
 # ----------------

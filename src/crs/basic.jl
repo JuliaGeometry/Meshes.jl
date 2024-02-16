@@ -51,6 +51,23 @@ function Base.getproperty(coords::Cartesian, name::Symbol)
   end
 end
 
+function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {C<:Cartesian}
+  tup₁ = _coords(coords₁)
+  tup₂ = _coords(coords₂)
+  all(isapprox(c₁, c₂; kwargs...) for (c₁, c₂) in zip(tup₁, tup₂))
+end
+
+function Base.show(io::IO, coords::Cartesian)
+  print(io, "Cartesian(")
+  printfields(io, _coords(coords), _fnames(coords), compact=true)
+  print(io, ")")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", coords::Cartesian)
+  print(io, "Cartesian coordinates")
+  printfields(io, _coords(coords), _fnames(coords))
+end
+
 _coords(coords::Cartesian) = getfield(coords, :coords)
 
 function _fnames(::Cartesian{<:Any,N}) where {N}
