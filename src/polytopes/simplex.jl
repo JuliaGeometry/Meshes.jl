@@ -11,7 +11,6 @@ struct Simplex{K,Dim,T,N} <: Polytope{K,Dim,T}
   vertices::NTuple{N,Point{Dim,T}}
 end
 
-
 function Simplex(vertices::NTuple{N,Point{Dim,T}}) where {Dim,T,N}
   K = N - 1
   K ≤ Dim || throw(ArgumentError("Simplex rank (number of vertices - 1) must be less or equal to embedding dimension."))
@@ -22,12 +21,12 @@ Simplex(vertices::Point{Dim,T}...) where {Dim,T} = Simplex(vertices)
 Simplex(vertices::Tuple...) = Simplex(Point.(vertices))
 
 # Parametric constructor required for [`materialize`](@ref).
-Simplex{K}(vertices::NTuple{N}) where {K,N} = let
-  N == K+1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
+function Simplex{K}(vertices::NTuple{N}) where {K,N}
+  N == K + 1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
   Simplex(vertices...)
 end
-Simplex{K}(vertices::Vararg{Point,N}) where {K,N} = let
-  N == K+1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
+function Simplex{K}(vertices::Vararg{Point,N}) where {K,N}
+  N == K + 1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
   Simplex(vertices...)
 end
 
@@ -35,7 +34,7 @@ end
 # HIGH-LEVEL INTERFACE
 # ---------------------
 
-nvertices(::Type{<:Simplex{K}}) where {K} = K+1
+nvertices(::Type{<:Simplex{K}}) where {K} = K + 1
 
 function Base.isapprox(p₁::SimplexT, p₂::SimplexT; kwargs...) where {SimplexT<:Simplex}
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(vertices(p₁), vertices(p₂)))

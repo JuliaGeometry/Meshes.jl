@@ -190,11 +190,10 @@ include("polytopes/hexahedron.jl")
 include("polytopes/pyramid.jl")
 
 # -----------------------
-# K-SIMPLEX
+# SIMPLEX
 # -----------------------
 
 include("polytopes/simplex.jl")
-
 
 # -----------------------
 # N-POLYTOPE (FALLBACKS)

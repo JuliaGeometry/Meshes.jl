@@ -85,7 +85,7 @@ end
 
 function connect(indices::Tuple, ::Type{Simplex})
   N = length(indices)
-  Connectivity{Simplex{N-1},N}(indices)
+  Connectivity{Simplex{N - 1},N}(indices)
 end
 
 function connect(indices::Tuple)
