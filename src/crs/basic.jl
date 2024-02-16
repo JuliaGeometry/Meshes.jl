@@ -30,11 +30,11 @@ struct Cartesian{Datum,N,L<:Len} <: CRS{Datum}
   Cartesian{Datum}(coords::NTuple{N,L}) where {Datum,N,L<:Len} = new{Datum,N,float(L)}(coords)
 end
 
-Cartesian(args...) = Cartesian{NoDatum}(args...)
-
 Cartesian{Datum}(coords::L...) where {Datum,L<:Len} = Cartesian{Datum}(coords)
 Cartesian{Datum}(coords::Len...) where {Datum} = Cartesian{Datum}(promote(coords...))
 Cartesian{Datum}(coords::Number...) where {Datum} = Cartesian{Datum}(addunit.(coords, u"m")...)
+
+Cartesian(args...) = Cartesian{NoDatum}(args...)
 
 Base.propertynames(::Cartesian) = (:x, :y, :z)
 
@@ -95,10 +95,10 @@ struct Polar{Datum,L<:Len,R<:Rad} <: CRS{Datum}
   Polar{Datum}(ρ::L, ϕ::R) where {Datum,L<:Len,R<:Rad} = new{Datum,float(L),float(R)}(ρ, ϕ)
 end
 
-Polar(args...) = Polar{NoDatum}(args...)
-
 Polar{Datum}(ρ::Len, ϕ::Deg) where {Datum} = Polar{Datum}(ρ, deg2rad(ϕ))
 Polar{Datum}(ρ::Number, ϕ::Number) where {Datum} = Polar{Datum}(addunit(ρ, u"m"), addunit(ϕ, u"rad"))
+
+Polar(args...) = Polar{NoDatum}(args...)
 
 """
     Cylindrical(ρ, ϕ, z)
@@ -132,8 +132,6 @@ struct Cylindrical{Datum,L<:Len,R<:Rad} <: CRS{Datum}
   Cylindrical{Datum}(ρ::L, ϕ::R, z::L) where {Datum,L<:Len,R<:Rad} = new{Datum,float(L),float(R)}(ρ, ϕ, z)
 end
 
-Cylindrical(args...) = Cylindrical{NoDatum}(args...)
-
 function Cylindrical{Datum}(ρ::Len, ϕ::Rad, z::Len) where {Datum}
   nρ, nz = promote(ρ, z)
   Cylindrical{Datum}(nρ, ϕ, nz)
@@ -141,6 +139,8 @@ end
 Cylindrical{Datum}(ρ::Len, ϕ::Deg, z::Len) where {Datum} = Cylindrical{Datum}(ρ, deg2rad(ϕ), z)
 Cylindrical{Datum}(ρ::Number, ϕ::Number, z::Number) where {Datum} =
   Cylindrical{Datum}(addunit(ρ, u"m"), addunit(ϕ, u"rad"), addunit(z, u"m"))
+
+Cylindrical(args...) = Cylindrical{NoDatum}(args...)
 
 """
     Spherical(r, θ, ϕ)
@@ -173,12 +173,12 @@ struct Spherical{Datum,L<:Len,R<:Rad} <: CRS{Datum}
   Spherical{Datum}(r::L, θ::R, ϕ::R) where {Datum,L<:Len,R<:Rad} = new{Datum,float(L),float(R)}(r, θ, ϕ)
 end
 
-Spherical(args...) = Spherical{NoDatum}(args...)
-
 Spherical{Datum}(r::Len, θ::Rad, ϕ::Rad) where {Datum} = Spherical{Datum}(r, promote(θ, ϕ)...)
 Spherical{Datum}(r::Len, θ::Deg, ϕ::Deg) where {Datum} = Spherical{Datum}(r, deg2rad(θ), deg2rad(ϕ))
 Spherical{Datum}(r::Number, θ::Number, ϕ::Number) where {Datum} =
   Spherical{Datum}(addunit(r, u"m"), addunit(θ, u"rad"), addunit(ϕ, u"rad"))
+
+Spherical(args...) = Spherical{NoDatum}(args...)
 
 # ------------
 # CONVERSIONS
