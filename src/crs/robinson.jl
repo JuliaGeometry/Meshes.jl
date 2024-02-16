@@ -3,29 +3,32 @@
 # ------------------------------------------------------------------
 
 """
-    Robinson(x, y)
+    Robinson{Datum}(x, y)
 
-Robinson coordinates in length units (default to meter).
+Robinson coordinates in length units (default to meter) with a given `Datum`.
 
 ## Examples
 
 ```julia
-Robinson(1, 1) # add default units
-Robinson(1u"m", 1u"m") # integers are converted converted to floats
-Robinson(1.0u"km", 1.0u"km") # length quantities are converted to meters
-Robinson(1.0u"m", 1.0u"m")
+Robinson{WGS84}(1, 1) # add default units
+Robinson{WGS84}(1u"m", 1u"m") # integers are converted converted to floats
+Robinson{WGS84}(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Robinson{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 See [ESRI:54030](https://epsg.io/54030).
 """
-const Robinson{M<:Met} = CRS{:Robinson,@NamedTuple{x::M, y::M},WGS84,NoParams}
+struct Robinson{Datum,M<:Met} <: CRS{Datum}
+  x::M
+  y::M
+  Robinson{Datum}(x::M, y::M) where {Datum,M<:Met} = new{Datum,float(M)}(x, y)
+end
 
-typealias(::Type{ESRI{54030}}) = Robinson
+typealias(::Type{ESRI{54030}}) = Robinson{WGS84}
 
-Robinson(x::M, y::M) where {M<:Met} = Robinson{float(M)}(x, y)
-Robinson(x::Met, y::Met) = Robinson(promote(x, y)...)
-Robinson(x::Len, y::Len) = Robinson(uconvert(u"m", x), uconvert(u"m", y))
-Robinson(x::Number, y::Number) = Robinson(addunit(x, u"m"), addunit(y, u"m"))
+Robinson{Datum}(x::Met, y::Met) where {Datum} = Robinson{Datum}(promote(x, y)...)
+Robinson{Datum}(x::Len, y::Len) where {Datum} = Robinson{Datum}(uconvert(u"m", x), uconvert(u"m", y))
+Robinson{Datum}(x::Number, y::Number) where {Datum} = Robinson{Datum}(addunit(x, u"m"), addunit(y, u"m"))
 
 # ------------
 # CONVERSIONS
@@ -94,8 +97,8 @@ function _V(C, z)
   c₀ + z * (c₁ + z * (c₂ + z * c₃))
 end
 
-function Base.convert(::Type{Robinson}, coords::LatLon)
-  🌎 = ellipsoid(Robinson)
+function Base.convert(::Type{Robinson{Datum}}, coords::LatLon{Datum}) where {Datum}
+  🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
@@ -113,5 +116,5 @@ function Base.convert(::Type{Robinson}, coords::LatLon)
   x = a * _V(_COEFSX[i + 1], z) * FXC * l
   y = a * _V(_COEFSY[i + 1], z) * FYC * sign(o)
 
-  Robinson(x * u"m", y * u"m")
+  Robinson{Datum}(x * u"m", y * u"m")
 end

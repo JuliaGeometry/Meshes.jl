@@ -22,10 +22,13 @@ Cartesian(1.0u"km", 1.0u"km", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Cartesian{N,L<:Len} = CRS{:Cartesian,NTuple{N,L},NoDatum,NoParams}
+struct Cartesian{N,L<:Len} <: CRS{NoDatum}
+  coords::NTuple{N,L}
+  Cartesian(coords::NTuple{N,L}) where {N,L<:Len} = new{N,float(L)}(coords)
+end
 
-Cartesian(coords::Vararg{L,N}) where {N,L<:Len} = Cartesian{N,float(L)}(coords)
-Cartesian(coords::Len...) = Cartesian(promote(coords...)...)
+Cartesian(coords::L...) where {L<:Len} = Cartesian(coords)
+Cartesian(coords::Len...) = Cartesian(promote(coords...))
 Cartesian(coords::Number...) = Cartesian(addunit.(coords, u"m")...)
 
 Base.propertynames(::Cartesian) = (:x, :y, :z)
@@ -42,6 +45,8 @@ function Base.getproperty(coords::Cartesian, name::Symbol)
     error("invalid property, use `x`, `y` or `z`")
   end
 end
+
+_coords(coords::Cartesian) = getfield(coords, :coords)
 
 function _fnames(::Cartesian{N}) where {N}
   if N == 1
@@ -76,9 +81,12 @@ Polar(1.0u"km", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Polar{L<:Len,R<:Rad} = CRS{:Polar,@NamedTuple{ρ::L, ϕ::R},NoDatum,NoParams}
+struct Polar{L<:Len,R<:Rad} <: CRS{NoDatum}
+  ρ::L
+  ϕ::R
+  Polar(ρ::L, ϕ::R) where {L<:Len,R<:Rad} = new{float(L),float(R)}(ρ, ϕ)
+end
 
-Polar(ρ::L, ϕ::R) where {L<:Len,R<:Rad} = Polar{float(L),float(R)}(ρ, ϕ)
 Polar(ρ::Len, ϕ::Deg) = Polar(ρ, deg2rad(ϕ))
 Polar(ρ::Number, ϕ::Number) = Polar(addunit(ρ, u"m"), addunit(ϕ, u"rad"))
 
@@ -104,9 +112,13 @@ Cylindrical(1.0u"km", (π/4)u"rad", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Cylindrical{L<:Len,R<:Rad} = CRS{:Cylindrical,@NamedTuple{ρ::L, ϕ::R, z::L},NoDatum,NoParams}
+struct Cylindrical{L<:Len,R<:Rad} <: CRS{NoDatum}
+  ρ::L
+  ϕ::R
+  z::L
+  Cylindrical(ρ::L, ϕ::R, z::L) where {L<:Len,R<:Rad} = new{float(L),float(R)}(ρ, ϕ, z)
+end
 
-Cylindrical(ρ::L, ϕ::R, z::L) where {L<:Len,R<:Rad} = Cylindrical{float(L),float(R)}(ρ, ϕ, z)
 function Cylindrical(ρ::Len, ϕ::Rad, z::Len)
   nρ, nz = promote(ρ, z)
   Cylindrical(nρ, ϕ, nz)
@@ -135,9 +147,13 @@ Spherical(1.0u"km", (π/4)u"rad", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-const Spherical{L<:Len,R<:Rad} = CRS{:Spherical,@NamedTuple{r::L, θ::R, ϕ::R},NoDatum,NoParams}
+struct Spherical{L<:Len,R<:Rad} <: CRS{NoDatum}
+  r::L
+  θ::R
+  ϕ::R
+  Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = new{float(L),float(R)}(r, θ, ϕ)
+end
 
-Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = Spherical{float(L),float(R)}(r, θ, ϕ)
 Spherical(r::Len, θ::Rad, ϕ::Rad) = Spherical(r, promote(θ, ϕ)...)
 Spherical(r::Len, θ::Deg, ϕ::Deg) = Spherical(r, deg2rad(θ), deg2rad(ϕ))
 Spherical(r::Number, θ::Number, ϕ::Number) = Spherical(addunit(r, u"m"), addunit(θ, u"rad"), addunit(ϕ, u"rad"))

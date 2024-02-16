@@ -36,31 +36,19 @@ function typealias end
 # ----
 
 """
-    CRS{ID,Coords,Datum,Params}
+    CRS{Datum}
 
-A Coordinate Reference System (CRS) with identifier `ID`, coordinates `Coords`
-a given `Datum` and parameters `Params` can be used to georeference any point
-in physical space.
-
-The `CRS` type is not intended for end-users. Aliases are provided,
-such as `LatLon` and `WebMercator`, to facilitate coordinate system conversions.
+Parent type of all Coordinate Reference System (CRS) with a given `Datum`
+that can be used to georeference any point in physical space.
 """
-struct CRS{ID,Coords,Datum,Params}
-  coords::Coords
-end
+abstract type CRS{Datum} end
 
-CRS{ID,Coords,Datum,Params}(args...) where {ID,Coords,Datum,Params} = CRS{ID,Coords,Datum,Params}(Coords(args))
-
-_coords(coords::CRS) = getfield(coords, :coords)
-
-Base.propertynames(coords::CRS) = propertynames(_coords(coords))
-
-Base.getproperty(coords::CRS, name::Symbol) = getproperty(_coords(coords), name)
+_coords(coords::CRS) = coords
 
 function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {C<:CRS}
   c₁ = _coords(coords₁)
   c₂ = _coords(coords₂)
-  N = length(c₁)
+  N = nfields(c₁)
   all(ntuple(i -> isapprox(getfield(c₁, i), getfield(c₂, i); kwargs...), N))
 end
 
@@ -74,7 +62,7 @@ end
 Returns the datum of the coordinates `coords`.
 """
 datum(coords::CRS) = datum(typeof(coords))
-datum(::Type{<:CRS{<:Any,<:Any,Datum}}) where {Datum} = Datum
+datum(::Type{<:CRS{Datum}}) where {Datum} = Datum
 
 """
     ellipsoid(coords)
@@ -112,7 +100,7 @@ altitudeₒ(T::Type{<:CRS}) = altitudeₒ(datum(T))
 # IO METHODS
 # -----------
 
-_fnames(coords::CRS) = fieldnames(typeof(_coords(coords)))
+_fnames(coords::CRS) = fieldnames(typeof(coords))
 
 function Base.show(io::IO, coords::CRS)
   name = prettyname(coords)
@@ -135,8 +123,6 @@ const Len{T} = Quantity{T,u"𝐋"}
 const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
 const Rad{T} = Quantity{T,NoDims,typeof(u"rad")}
 const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
-
-const NoParams = nothing
 
 include("crs/basic.jl")
 include("crs/latlon.jl")

@@ -3,36 +3,39 @@
 # ------------------------------------------------------------------
 
 """
-    Mercator(x, y)
+    Mercator{Datum}(x, y)
 
-Mercator coordinates in length units (default to meter).
+Mercator coordinates in length units (default to meter) with a given `Datum`.
 
 ## Examples
 
 ```julia
-Mercator(1, 1) # add default units
-Mercator(1u"m", 1u"m") # integers are converted converted to floats
-Mercator(1.0u"km", 1.0u"km") # length quantities are converted to meters
-Mercator(1.0u"m", 1.0u"m")
+Mercator{WGS84}(1, 1) # add default units
+Mercator{WGS84}(1u"m", 1u"m") # integers are converted converted to floats
+Mercator{WGS84}(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Mercator{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 See [EPSG:3395](https://epsg.io/3395).
 """
-const Mercator{M<:Met} = CRS{:Mercator,@NamedTuple{x::M, y::M},WGS84,NoParams}
+struct Mercator{Datum,M<:Met} <: CRS{Datum}
+  x::M
+  y::M
+  Mercator{Datum}(x::M, y::M) where {Datum,M<:Met} = new{Datum,float(M)}(x, y)
+end
 
-typealias(::Type{EPSG{3395}}) = Mercator
+typealias(::Type{EPSG{3395}}) = Mercator{WGS84}
 
-Mercator(x::M, y::M) where {M<:Met} = Mercator{float(M)}(x, y)
-Mercator(x::Met, y::Met) = Mercator(promote(x, y)...)
-Mercator(x::Len, y::Len) = Mercator(uconvert(u"m", x), uconvert(u"m", y))
-Mercator(x::Number, y::Number) = Mercator(addunit(x, u"m"), addunit(y, u"m"))
+Mercator{Datum}(x::Met, y::Met) where {Datum} = Mercator{Datum}(promote(x, y)...)
+Mercator{Datum}(x::Len, y::Len) where {Datum} = Mercator{Datum}(uconvert(u"m", x), uconvert(u"m", y))
+Mercator{Datum}(x::Number, y::Number) where {Datum} = Mercator{Datum}(addunit(x, u"m"), addunit(y, u"m"))
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{Mercator}, coords::LatLon)
-  🌎 = ellipsoid(Mercator)
+function Base.convert(::Type{Mercator{Datum}}, coords::LatLon{Datum}) where {Datum}
+  🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
@@ -40,5 +43,5 @@ function Base.convert(::Type{Mercator}, coords::LatLon)
   e = oftype(l, eccentricity(🌎))
   x = a * l
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
-  Mercator(x * u"m", y * u"m")
+  Mercator{Datum}(x * u"m", y * u"m")
 end

@@ -3,45 +3,49 @@
 # ------------------------------------------------------------------
 
 """
-    EquidistantCylindrical{latₜₛ}
+    EquidistantCylindrical{Datum,latₜₛ}
 
-Equidistant Cylindrical CRS with latitude of true scale `latₜₛ` in degrees.
+Equidistant Cylindrical CRS with a given `Datum` and latitude of true scale `latₜₛ` in degrees.
 """
-const EquidistantCylindrical{latₜₛ,M<:Met} = CRS{:EDC,@NamedTuple{x::M, y::M},WGS84,latₜₛ}
+struct EquidistantCylindrical{Datum,latₜₛ,M<:Met} <: CRS{Datum}
+  x::M
+  y::M
+  EquidistantCylindrical{Datum,latₜₛ}(x::M, y::M) where {Datum,latₜₛ,M<:Met} = new{Datum,latₜₛ,float(M)}(x, y)
+end
 
-EquidistantCylindrical{latₜₛ}(x::M, y::M) where {latₜₛ,M<:Met} = EquidistantCylindrical{latₜₛ,float(M)}(x, y)
-EquidistantCylindrical{latₜₛ}(x::Met, y::Met) where {latₜₛ} = EquidistantCylindrical{latₜₛ}(promote(x, y)...)
-EquidistantCylindrical{latₜₛ}(x::Len, y::Len) where {latₜₛ} =
-  EquidistantCylindrical{latₜₛ}(uconvert(u"m", x), uconvert(u"m", y))
-EquidistantCylindrical{latₜₛ}(x::Number, y::Number) where {latₜₛ} =
-  EquidistantCylindrical{latₜₛ}(addunit(x, u"m"), addunit(y, u"m"))
+EquidistantCylindrical{Datum,latₜₛ}(x::Met, y::Met) where {Datum,latₜₛ} =
+  EquidistantCylindrical{Datum,latₜₛ}(promote(x, y)...)
+EquidistantCylindrical{Datum,latₜₛ}(x::Len, y::Len) where {Datum,latₜₛ} =
+  EquidistantCylindrical{Datum,latₜₛ}(uconvert(u"m", x), uconvert(u"m", y))
+EquidistantCylindrical{Datum,latₜₛ}(x::Number, y::Number) where {Datum,latₜₛ} =
+  EquidistantCylindrical{Datum,latₜₛ}(addunit(x, u"m"), addunit(y, u"m"))
 
 """
-    PlateCarree(x, y)
+    PlateCarree{Datum}(x, y)
 
-Plate Carrée coordinates in length units (default to meter).
+Plate Carrée coordinates in length units (default to meter) with a given `Datum`.
 
 ## Examples
 
 ```julia
-PlateCarree(1, 1) # add default units
-PlateCarree(1u"m", 1u"m") # integers are converted converted to floats
-PlateCarree(1.0u"km", 1.0u"km") # length quantities are converted to meters
-PlateCarree(1.0u"m", 1.0u"m")
+PlateCarree{WGS84}(1, 1) # add default units
+PlateCarree{WGS84}(1u"m", 1u"m") # integers are converted converted to floats
+PlateCarree{WGS84}(1.0u"km", 1.0u"km") # length quantities are converted to meters
+PlateCarree{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 See [EPSG:32662](https://epsg.io/32662).
 """
-const PlateCarree = EquidistantCylindrical{0.0u"°"}
+const PlateCarree{Datum} = EquidistantCylindrical{Datum,0.0u"°"}
 
-typealias(::Type{EPSG{32662}}) = PlateCarree
+typealias(::Type{EPSG{32662}}) = PlateCarree{WGS84}
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{EquidistantCylindrical{latₜₛ}}, coords::LatLon) where {latₜₛ}
-  🌎 = ellipsoid(EquidistantCylindrical{latₜₛ})
+function Base.convert(::Type{EquidistantCylindrical{Datum,latₜₛ}}, coords::LatLon{Datum}) where {Datum,latₜₛ}
+  🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   ϕₜₛ = oftype(ϕ, deg2rad(latₜₛ))
@@ -52,11 +56,11 @@ function Base.convert(::Type{EquidistantCylindrical{latₜₛ}}, coords::LatLon)
   x = a * l * cos(ϕₜₛ)
   y = a * o
 
-  EquidistantCylindrical{latₜₛ}(x * u"m", y * u"m")
+  EquidistantCylindrical{Datum,latₜₛ}(x * u"m", y * u"m")
 end
 
-function Base.convert(::Type{LatLon}, coords::EquidistantCylindrical{latₜₛ}) where {latₜₛ}
-  🌎 = ellipsoid(coords)
+function Base.convert(::Type{LatLon{Datum}}, coords::EquidistantCylindrical{Datum,latₜₛ}) where {Datum,latₜₛ}
+  🌎 = ellipsoid(Datum)
   x = coords.x
   y = coords.y
   a = oftype(x, majoraxis(🌎))
@@ -65,5 +69,5 @@ function Base.convert(::Type{LatLon}, coords::EquidistantCylindrical{latₜₛ})
   λ = x / (cos(ϕₜₛ) * a)
   ϕ = y / a
 
-  LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end
