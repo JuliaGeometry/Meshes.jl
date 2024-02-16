@@ -8,5 +8,5 @@
   @test Meshes.crs(ESRI{54034}) === Lambert{WGS84}
   @test Meshes.crs(ESRI{54042}) === WinkelTripel{WGS84}
   @test Meshes.crs(ESRI{102035}) === Meshes.Orthographic{90.0u"°",0.0u"°",true,WGS84}
-  @test Meshes.crs(ESRI{102037}) === Meshes.Orthographic{-90.0u"°",0.0u"°",true,WGS84}  
+  @test Meshes.crs(ESRI{102037}) === Meshes.Orthographic{-90.0u"°",0.0u"°",true,WGS84}
 end

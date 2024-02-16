@@ -856,7 +856,7 @@
 
     @testset "LatLon <> OrthoSpherical" begin
       OrthoNorthSpherical = Meshes.Orthographic{90.0u"°",0.0u"°",true,WGS84}
-      OrthoSouthSpherical = Meshes.Orthographic{-90.0u"°",0.0u"°",true,WGS84} 
+      OrthoSouthSpherical = Meshes.Orthographic{-90.0u"°",0.0u"°",true,WGS84}
 
       c1 = LatLon(T(30), T(60))
       c2 = convert(OrthoNorthSpherical, c1)
