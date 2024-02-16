@@ -3,16 +3,19 @@
 # ------------------------------------------------------------------
 
 """
+    Mercator(x, y)
     Mercator{Datum}(x, y)
 
-Mercator coordinates in length units (default to meter) with a given `Datum`.
+Mercator coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
 ```julia
-Mercator{WGS84}(1, 1) # add default units
-Mercator{WGS84}(1u"m", 1u"m") # integers are converted converted to floats
-Mercator{WGS84}(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Mercator(1, 1) # add default units
+Mercator(1u"m", 1u"m") # integers are converted converted to floats
+Mercator(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Mercator(1.0u"m", 1.0u"m")
 Mercator{WGS84}(1.0u"m", 1.0u"m")
 ```
 
@@ -25,6 +28,8 @@ struct Mercator{Datum,M<:Met} <: CRS{Datum}
 end
 
 typealias(::Type{EPSG{3395}}) = Mercator{WGS84}
+
+Mercator(args...) = Mercator{WGS84}(args...)
 
 Mercator{Datum}(x::Met, y::Met) where {Datum} = Mercator{Datum}(promote(x, y)...)
 Mercator{Datum}(x::Len, y::Len) where {Datum} = Mercator{Datum}(uconvert(u"m", x), uconvert(u"m", y))

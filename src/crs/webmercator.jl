@@ -3,16 +3,19 @@
 # ------------------------------------------------------------------
 
 """
+    WebMercator(x, y)
     WebMercator{Datum}(x, y)
 
-Web Mercator coordinates in length units (default to meter) with a given `Datum`.
+Web Mercator coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
 ```julia
-WebMercator{WGS84}(1, 1) # add default units
-WebMercator{WGS84}(1u"m", 1u"m") # integers are converted converted to floats
-WebMercator{WGS84}(1.0u"km", 1.0u"km") # length quantities are converted to meters
+WebMercator(1, 1) # add default units
+WebMercator(1u"m", 1u"m") # integers are converted converted to floats
+WebMercator(1.0u"km", 1.0u"km") # length quantities are converted to meters
+WebMercator(1.0u"m", 1.0u"m")
 WebMercator{WGS84}(1.0u"m", 1.0u"m")
 ```
 
@@ -25,6 +28,8 @@ struct WebMercator{Datum,M<:Met} <: CRS{Datum}
 end
 
 typealias(::Type{EPSG{3857}}) = WebMercator{WGS84}
+
+WebMercator(args...) = WebMercator{WGS84}(args...)
 
 WebMercator{Datum}(x::Met, y::Met) where {Datum} = WebMercator{Datum}(promote(x, y)...)
 WebMercator{Datum}(x::Len, y::Len) where {Datum} = WebMercator{Datum}(uconvert(u"m", x), uconvert(u"m", y))

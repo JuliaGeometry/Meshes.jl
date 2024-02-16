@@ -3,16 +3,19 @@
 # ------------------------------------------------------------------
 
 """
+    Robinson(x, y)
     Robinson{Datum}(x, y)
 
-Robinson coordinates in length units (default to meter) with a given `Datum`.
+Robinson coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
 ```julia
-Robinson{WGS84}(1, 1) # add default units
-Robinson{WGS84}(1u"m", 1u"m") # integers are converted converted to floats
-Robinson{WGS84}(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Robinson(1, 1) # add default units
+Robinson(1u"m", 1u"m") # integers are converted converted to floats
+Robinson(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Robinson(1.0u"m", 1.0u"m")
 Robinson{WGS84}(1.0u"m", 1.0u"m")
 ```
 
@@ -25,6 +28,8 @@ struct Robinson{Datum,M<:Met} <: CRS{Datum}
 end
 
 typealias(::Type{ESRI{54030}}) = Robinson{WGS84}
+
+Robinson(args...) = Robinson{WGS84}(args...)
 
 Robinson{Datum}(x::Met, y::Met) where {Datum} = Robinson{Datum}(promote(x, y)...)
 Robinson{Datum}(x::Len, y::Len) where {Datum} = Robinson{Datum}(uconvert(u"m", x), uconvert(u"m", y))

@@ -4,8 +4,10 @@
 
 """
     Cartesian(x₁, x₂, ..., xₙ)
+    Cartesian{Datum}(x₁, x₂, ..., xₙ)
 
-N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ` in length units (default to meter).
+N-dimensional Cartesian coordinates `x₁, x₂, ..., xₙ` in length units (default to meter)
+with a given `Datum` (default to `NoDatum`).
 The first 3 coordinates can be accessed with the properties `x`, `y` and `z`, respectively.
 
 ## Examples
@@ -14,6 +16,7 @@ The first 3 coordinates can be accessed with the properties `x`, `y` and `z`, re
 Cartesian(1, 1) # add default units
 Cartesian(1u"m", 1u"m") # integers are converted converted to floats
 Cartesian(1.0u"km", 1.0u"km", 1.0u"km")
+Cartesian{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 ## References
@@ -22,14 +25,16 @@ Cartesian(1.0u"km", 1.0u"km", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Cartesian{N,L<:Len} <: CRS{NoDatum}
+struct Cartesian{Datum,N,L<:Len} <: CRS{Datum}
   coords::NTuple{N,L}
-  Cartesian(coords::NTuple{N,L}) where {N,L<:Len} = new{N,float(L)}(coords)
+  Cartesian{Datum}(coords::NTuple{N,L}) where {Datum,N,L<:Len} = new{Datum,N,float(L)}(coords)
 end
 
-Cartesian(coords::L...) where {L<:Len} = Cartesian(coords)
-Cartesian(coords::Len...) = Cartesian(promote(coords...))
-Cartesian(coords::Number...) = Cartesian(addunit.(coords, u"m")...)
+Cartesian(args...) = Cartesian{NoDatum}(args...)
+
+Cartesian{Datum}(coords::L...) where {Datum,L<:Len} = Cartesian{Datum}(coords)
+Cartesian{Datum}(coords::Len...) where {Datum} = Cartesian{Datum}(promote(coords...))
+Cartesian{Datum}(coords::Number...) where {Datum} = Cartesian{Datum}(addunit.(coords, u"m")...)
 
 Base.propertynames(::Cartesian) = (:x, :y, :z)
 
@@ -48,7 +53,7 @@ end
 
 _coords(coords::Cartesian) = getfield(coords, :coords)
 
-function _fnames(::Cartesian{N}) where {N}
+function _fnames(::Cartesian{<:Any,N}) where {N}
   if N == 1
     ("x",)
   elseif N == 2
@@ -62,9 +67,11 @@ end
 
 """
     Polar(ρ, ϕ)
+    Polar{Datum}(ρ, ϕ)
 
-Polar coordinates with radius `ρ ∈ [0,∞)` in length units (default to meter)
-and angle `ϕ ∈ [0,2π)` in angular units (default to radian).
+Polar coordinates with radius `ρ ∈ [0,∞)` in length units (default to meter),
+angle `ϕ ∈ [0,2π)` in angular units (default to radian)
+and a given `Datum` (default to `NoDatum`).
 
 ## Examples
 
@@ -73,6 +80,7 @@ Polar(1, π/4) # add default units
 Polar(1u"m", (π/4)u"rad") # integers are converted converted to floats
 Polar(1.0u"m", 45u"°") # degrees are converted to radians
 Polar(1.0u"km", (π/4)u"rad")
+Polar{WGS84}(1.0u"m", (π/4)u"rad")
 ```
 
 ## References
@@ -81,21 +89,25 @@ Polar(1.0u"km", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Polar{L<:Len,R<:Rad} <: CRS{NoDatum}
+struct Polar{Datum,L<:Len,R<:Rad} <: CRS{Datum}
   ρ::L
   ϕ::R
-  Polar(ρ::L, ϕ::R) where {L<:Len,R<:Rad} = new{float(L),float(R)}(ρ, ϕ)
+  Polar{Datum}(ρ::L, ϕ::R) where {Datum,L<:Len,R<:Rad} = new{Datum,float(L),float(R)}(ρ, ϕ)
 end
 
-Polar(ρ::Len, ϕ::Deg) = Polar(ρ, deg2rad(ϕ))
-Polar(ρ::Number, ϕ::Number) = Polar(addunit(ρ, u"m"), addunit(ϕ, u"rad"))
+Polar(args...) = Polar{NoDatum}(args...)
+
+Polar{Datum}(ρ::Len, ϕ::Deg) where {Datum} = Polar{Datum}(ρ, deg2rad(ϕ))
+Polar{Datum}(ρ::Number, ϕ::Number) where {Datum} = Polar{Datum}(addunit(ρ, u"m"), addunit(ϕ, u"rad"))
 
 """
     Cylindrical(ρ, ϕ, z)
+    Cylindrical{Datum}(ρ, ϕ, z)
 
 Cylindrical coordinates with radius `ρ ∈ [0,∞)` in length units (default to meter), 
-angle `ϕ ∈ [0,2π)` in angular units (default to radian) 
-and height `z ∈ [0,∞)` in length units (default to meter).
+angle `ϕ ∈ [0,2π)` in angular units (default to radian),
+height `z ∈ [0,∞)` in length units (default to meter)
+and a given `Datum` (default to `NoDatum`).
 
 ## Examples
 
@@ -104,6 +116,7 @@ Cylindrical(1, π/4, 1) # add default units
 Cylindrical(1u"m", (π/4)u"rad", 1u"m") # integers are converted converted to floats
 Cylindrical(1.0u"m", 45u"°", 1.0u"m") # degrees are converted to radians
 Cylindrical(1.0u"km", (π/4)u"rad", 1.0u"km")
+Cylindrical{WGS84}(1.0u"m", (π/4)u"rad", 1.0u"m")
 ```
 
 ## References
@@ -112,25 +125,30 @@ Cylindrical(1.0u"km", (π/4)u"rad", 1.0u"km")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Cylindrical{L<:Len,R<:Rad} <: CRS{NoDatum}
+struct Cylindrical{Datum,L<:Len,R<:Rad} <: CRS{Datum}
   ρ::L
   ϕ::R
   z::L
-  Cylindrical(ρ::L, ϕ::R, z::L) where {L<:Len,R<:Rad} = new{float(L),float(R)}(ρ, ϕ, z)
+  Cylindrical{Datum}(ρ::L, ϕ::R, z::L) where {Datum,L<:Len,R<:Rad} = new{Datum,float(L),float(R)}(ρ, ϕ, z)
 end
 
-function Cylindrical(ρ::Len, ϕ::Rad, z::Len)
+Cylindrical(args...) = Cylindrical{NoDatum}(args...)
+
+function Cylindrical{Datum}(ρ::Len, ϕ::Rad, z::Len) where {Datum}
   nρ, nz = promote(ρ, z)
-  Cylindrical(nρ, ϕ, nz)
+  Cylindrical{Datum}(nρ, ϕ, nz)
 end
-Cylindrical(ρ::Len, ϕ::Deg, z::Len) = Cylindrical(ρ, deg2rad(ϕ), z)
-Cylindrical(ρ::Number, ϕ::Number, z::Number) = Cylindrical(addunit(ρ, u"m"), addunit(ϕ, u"rad"), addunit(z, u"m"))
+Cylindrical{Datum}(ρ::Len, ϕ::Deg, z::Len) where {Datum} = Cylindrical{Datum}(ρ, deg2rad(ϕ), z)
+Cylindrical{Datum}(ρ::Number, ϕ::Number, z::Number) where {Datum} =
+  Cylindrical{Datum}(addunit(ρ, u"m"), addunit(ϕ, u"rad"), addunit(z, u"m"))
 
 """
     Spherical(r, θ, ϕ)
+    Spherical{Datum}(r, θ, ϕ)
 
 Spherical coordinates with radius `r ∈ [0,∞)` in length units (default to meter), 
-polar angle `θ ∈ [0,π]` and azimuth angle `ϕ ∈ [0,2π)` in angular units (default to radian).
+polar angle `θ ∈ [0,π]` and azimuth angle `ϕ ∈ [0,2π)` in angular units (default to radian)
+and a given `Datum` (default to `NoDatum`).
 
 ## Examples
 
@@ -139,6 +157,7 @@ Spherical(1, π/4, π/4) # add default units
 Spherical(1u"m", (π/4)u"rad", (π/4)u"rad") # integers are converted converted to floats
 Spherical(1.0u"m", 45u"°", 45u"°") # degrees are converted to radians
 Spherical(1.0u"km", (π/4)u"rad", (π/4)u"rad")
+Spherical{WGS84}(1.0u"m", (π/4)u"rad", (π/4)u"rad")
 ```
 
 ## References
@@ -147,31 +166,37 @@ Spherical(1.0u"km", (π/4)u"rad", (π/4)u"rad")
 * [ISO 80000-2:2019](https://www.iso.org/standard/64973.html)
 * [ISO 80000-3:2019](https://www.iso.org/standard/64974.html)
 """
-struct Spherical{L<:Len,R<:Rad} <: CRS{NoDatum}
+struct Spherical{Datum,L<:Len,R<:Rad} <: CRS{Datum}
   r::L
   θ::R
   ϕ::R
-  Spherical(r::L, θ::R, ϕ::R) where {L<:Len,R<:Rad} = new{float(L),float(R)}(r, θ, ϕ)
+  Spherical{Datum}(r::L, θ::R, ϕ::R) where {Datum,L<:Len,R<:Rad} = new{Datum,float(L),float(R)}(r, θ, ϕ)
 end
 
-Spherical(r::Len, θ::Rad, ϕ::Rad) = Spherical(r, promote(θ, ϕ)...)
-Spherical(r::Len, θ::Deg, ϕ::Deg) = Spherical(r, deg2rad(θ), deg2rad(ϕ))
-Spherical(r::Number, θ::Number, ϕ::Number) = Spherical(addunit(r, u"m"), addunit(θ, u"rad"), addunit(ϕ, u"rad"))
+Spherical(args...) = Spherical{NoDatum}(args...)
+
+Spherical{Datum}(r::Len, θ::Rad, ϕ::Rad) where {Datum} = Spherical{Datum}(r, promote(θ, ϕ)...)
+Spherical{Datum}(r::Len, θ::Deg, ϕ::Deg) where {Datum} = Spherical{Datum}(r, deg2rad(θ), deg2rad(ϕ))
+Spherical{Datum}(r::Number, θ::Number, ϕ::Number) where {Datum} =
+  Spherical{Datum}(addunit(r, u"m"), addunit(θ, u"rad"), addunit(ϕ, u"rad"))
 
 # ------------
 # CONVERSIONS
 # ------------
 
 # Cartesian <> Polar
-Base.convert(::Type{Cartesian}, (; ρ, ϕ)::Polar) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
-Base.convert(::Type{Polar}, (; x, y)::Cartesian{2}) = Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
+Base.convert(::Type{Cartesian{Datum}}, (; ρ, ϕ)::Polar{Datum}) where {Datum} = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ))
+Base.convert(::Type{Polar{Datum}}, (; x, y)::Cartesian{Datum,2}) where {Datum} =
+  Polar(sqrt(x^2 + y^2), atanpos(y, x) * u"rad")
 
 # Cartesian <> Cylindrical
-Base.convert(::Type{Cartesian}, (; ρ, ϕ, z)::Cylindrical) = Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
-Base.convert(::Type{Cylindrical}, (; x, y, z)::Cartesian{3}) = Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
+Base.convert(::Type{Cartesian{Datum}}, (; ρ, ϕ, z)::Cylindrical{Datum}) where {Datum} =
+  Cartesian(ρ * cos(ϕ), ρ * sin(ϕ), z)
+Base.convert(::Type{Cylindrical{Datum}}, (; x, y, z)::Cartesian{Datum,3}) where {Datum} =
+  Cylindrical(sqrt(x^2 + y^2), atanpos(y, x) * u"rad", z)
 
 # Cartesian <> Spherical
-Base.convert(::Type{Cartesian}, (; r, θ, ϕ)::Spherical) =
+Base.convert(::Type{Cartesian{Datum}}, (; r, θ, ϕ)::Spherical{Datum}) where {Datum} =
   Cartesian(r * sin(θ) * cos(ϕ), r * sin(θ) * sin(ϕ), r * cos(θ))
-Base.convert(::Type{Spherical}, (; x, y, z)::Cartesian{3}) =
+Base.convert(::Type{Spherical{Datum}}, (; x, y, z)::Cartesian{Datum,3}) where {Datum} =
   Spherical(sqrt(x^2 + y^2 + z^2), atan(sqrt(x^2 + y^2), z) * u"rad", atanpos(y, x) * u"rad")
