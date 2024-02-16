@@ -27,13 +27,11 @@ struct Robinson{Datum,M<:Met} <: CRS{Datum}
   Robinson{Datum}(x::M, y::M) where {Datum,M<:Met} = new{Datum,float(M)}(x, y)
 end
 
-typealias(::Type{ESRI{54030}}) = Robinson{WGS84}
-
-Robinson(args...) = Robinson{WGS84}(args...)
-
 Robinson{Datum}(x::Met, y::Met) where {Datum} = Robinson{Datum}(promote(x, y)...)
 Robinson{Datum}(x::Len, y::Len) where {Datum} = Robinson{Datum}(uconvert(u"m", x), uconvert(u"m", y))
 Robinson{Datum}(x::Number, y::Number) where {Datum} = Robinson{Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+Robinson(args...) = Robinson{WGS84}(args...)
 
 # ------------
 # CONVERSIONS

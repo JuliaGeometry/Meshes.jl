@@ -8,11 +8,11 @@ struct Winkel{lat₁,Datum,M<:Met} <: CRS{Datum}
   Winkel{lat₁,Datum}(x::M, y::M) where {lat₁,Datum,M<:Met} = new{lat₁,Datum,float(M)}(x, y)
 end
 
-Winkel{lat₁}(args...) where {lat₁} = Winkel{lat₁,WGS84}(args...)
-
 Winkel{lat₁,Datum}(x::Met, y::Met) where {lat₁,Datum} = Winkel{lat₁,Datum}(promote(x, y)...)
 Winkel{lat₁,Datum}(x::Len, y::Len) where {lat₁,Datum} = Winkel{lat₁,Datum}(uconvert(u"m", x), uconvert(u"m", y))
 Winkel{lat₁,Datum}(x::Number, y::Number) where {lat₁,Datum} = Winkel{lat₁,Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+Winkel{lat₁}(args...) where {lat₁} = Winkel{lat₁,WGS84}(args...)
 
 """
     WinkelTripel(x, y)
@@ -34,8 +34,6 @@ WinkelTripel{WGS84}(1.0u"m", 1.0u"m")
 See [ESRI:54042](https://epsg.io/54042).
 """
 const WinkelTripel{Datum} = Winkel{50.467u"°",Datum}
-
-typealias(::Type{ESRI{54042}}) = WinkelTripel{WGS84}
 
 # ------------
 # CONVERSIONS

@@ -27,10 +27,8 @@ struct LatLon{Datum,D<:Deg} <: CRS{Datum}
   LatLon{Datum}(lat::D, lon::D) where {Datum,D<:Deg} = new{Datum,float(D)}(lat, lon)
 end
 
-typealias(::Type{EPSG{4326}}) = LatLon{WGS84}
-
-LatLon(args...) = LatLon{WGS84}(args...)
-
 LatLon{Datum}(lat::Deg, lon::Deg) where {Datum} = LatLon{Datum}(promote(lat, lon)...)
 LatLon{Datum}(lat::Rad, lon::Rad) where {Datum} = LatLon{Datum}(rad2deg(lat), rad2deg(lon))
 LatLon{Datum}(lat::Number, lon::Number) where {Datum} = LatLon{Datum}(addunit(lat, u"°"), addunit(lon, u"°"))
+
+LatLon(args...) = LatLon{WGS84}(args...)

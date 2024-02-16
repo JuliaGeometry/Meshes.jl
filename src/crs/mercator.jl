@@ -27,13 +27,11 @@ struct Mercator{Datum,M<:Met} <: CRS{Datum}
   Mercator{Datum}(x::M, y::M) where {Datum,M<:Met} = new{Datum,float(M)}(x, y)
 end
 
-typealias(::Type{EPSG{3395}}) = Mercator{WGS84}
-
-Mercator(args...) = Mercator{WGS84}(args...)
-
 Mercator{Datum}(x::Met, y::Met) where {Datum} = Mercator{Datum}(promote(x, y)...)
 Mercator{Datum}(x::Len, y::Len) where {Datum} = Mercator{Datum}(uconvert(u"m", x), uconvert(u"m", y))
 Mercator{Datum}(x::Number, y::Number) where {Datum} = Mercator{Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+Mercator(args...) = Mercator{WGS84}(args...)
 
 # ------------
 # CONVERSIONS

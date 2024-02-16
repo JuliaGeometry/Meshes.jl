@@ -48,6 +48,7 @@ include("vectors.jl")
 include("ellipsoids.jl")
 include("datums.jl")
 include("crs.jl")
+include("codes.jl")
 
 # geometries
 include("geometries.jl")

@@ -13,14 +13,14 @@ struct EquidistantCylindrical{latₜₛ,Datum,M<:Met} <: CRS{Datum}
   EquidistantCylindrical{latₜₛ,Datum}(x::M, y::M) where {latₜₛ,Datum,M<:Met} = new{latₜₛ,Datum,float(M)}(x, y)
 end
 
-EquidistantCylindrical{latₜₛ}(args...) where {latₜₛ} = EquidistantCylindrical{latₜₛ,WGS84}(args...)
-
 EquidistantCylindrical{latₜₛ,Datum}(x::Met, y::Met) where {latₜₛ,Datum} =
   EquidistantCylindrical{latₜₛ,Datum}(promote(x, y)...)
 EquidistantCylindrical{latₜₛ,Datum}(x::Len, y::Len) where {latₜₛ,Datum} =
   EquidistantCylindrical{latₜₛ,Datum}(uconvert(u"m", x), uconvert(u"m", y))
 EquidistantCylindrical{latₜₛ,Datum}(x::Number, y::Number) where {latₜₛ,Datum} =
   EquidistantCylindrical{latₜₛ,Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+EquidistantCylindrical{latₜₛ}(args...) where {latₜₛ} = EquidistantCylindrical{latₜₛ,WGS84}(args...)
 
 """
     PlateCarree(x, y)
@@ -42,8 +42,6 @@ PlateCarree{WGS84}(1.0u"m", 1.0u"m")
 See [EPSG:32662](https://epsg.io/32662).
 """
 const PlateCarree{Datum} = EquidistantCylindrical{0.0u"°",Datum}
-
-typealias(::Type{EPSG{32662}}) = PlateCarree{WGS84}
 
 # ------------
 # CONVERSIONS

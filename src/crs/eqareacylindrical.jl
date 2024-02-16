@@ -13,14 +13,14 @@ struct EqualAreaCylindrical{latₜₛ,Datum,M<:Met} <: CRS{Datum}
   EqualAreaCylindrical{latₜₛ,Datum}(x::M, y::M) where {latₜₛ,Datum,M<:Met} = new{latₜₛ,Datum,float(M)}(x, y)
 end
 
-EqualAreaCylindrical{latₜₛ}(args...) where {latₜₛ} = EqualAreaCylindrical{latₜₛ,WGS84}(args...)
-
 EqualAreaCylindrical{latₜₛ,Datum}(x::Met, y::Met) where {latₜₛ,Datum} =
   EqualAreaCylindrical{latₜₛ,Datum}(promote(x, y)...)
 EqualAreaCylindrical{latₜₛ,Datum}(x::Len, y::Len) where {latₜₛ,Datum} =
   EqualAreaCylindrical{latₜₛ,Datum}(uconvert(u"m", x), uconvert(u"m", y))
 EqualAreaCylindrical{latₜₛ,Datum}(x::Number, y::Number) where {latₜₛ,Datum} =
   EqualAreaCylindrical{latₜₛ,Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+EqualAreaCylindrical{latₜₛ}(args...) where {latₜₛ} = EqualAreaCylindrical{latₜₛ,WGS84}(args...)
 
 """
     Lambert(x, y)
@@ -43,8 +43,6 @@ See [ESRI:54034](https://epsg.io/54034).
 """
 const Lambert{Datum} = EqualAreaCylindrical{0.0u"°",Datum}
 
-typealias(::Type{ESRI{54034}}) = Lambert{WGS84}
-
 """
     Behrmann(x, y)
     Behrmann{Datum}(x, y)
@@ -65,8 +63,6 @@ Behrmann{WGS84}(1.0u"m", 1.0u"m")
 See [ESRI:54017](https://epsg.io/54017).
 """
 const Behrmann{Datum} = EqualAreaCylindrical{30.0u"°",Datum}
-
-typealias(::Type{ESRI{54017}}) = Behrmann{WGS84}
 
 """
     GallPeters(x, y)

@@ -14,14 +14,14 @@ struct Orthographic{lat₀,lon₀,S,Datum,M<:Met} <: CRS{Datum}
   Orthographic{lat₀,lon₀,S,Datum}(x::M, y::M) where {lat₀,lon₀,S,Datum,M<:Met} = new{lat₀,lon₀,S,Datum,float(M)}(x, y)
 end
 
-Orthographic{lat₀,lon₀,S}(args...) where {lat₀,lon₀,S} = Orthographic{lat₀,lon₀,S,WGS84}(args...)
-
 Orthographic{lat₀,lon₀,S,Datum}(x::Met, y::Met) where {lat₀,lon₀,S,Datum} =
   Orthographic{lat₀,lon₀,S,Datum}(promote(x, y)...)
 Orthographic{lat₀,lon₀,S,Datum}(x::Len, y::Len) where {lat₀,lon₀,S,Datum} =
   Orthographic{lat₀,lon₀,S,Datum}(uconvert(u"m", x), uconvert(u"m", y))
 Orthographic{lat₀,lon₀,S,Datum}(x::Number, y::Number) where {lat₀,lon₀,S,Datum} =
   Orthographic{lat₀,lon₀,S,Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+Orthographic{lat₀,lon₀,S}(args...) where {lat₀,lon₀,S} = Orthographic{lat₀,lon₀,S,WGS84}(args...)
 
 """
     OrthoNorth(x, y)
@@ -60,10 +60,6 @@ OrthoSouth{WGS84}(1.0u"m", 1.0u"m")
 ```
 """
 const OrthoSouth{Datum} = Orthographic{-90.0u"°",0.0u"°",false,Datum}
-
-typealias(::Type{ESRI{102035}}) = Orthographic{90.0u"°",0.0u"°",true,WGS84}
-
-typealias(::Type{ESRI{102037}}) = Orthographic{-90.0u"°",0.0u"°",true,WGS84}
 
 # ------------
 # CONVERSIONS

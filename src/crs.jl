@@ -2,39 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-#-----------
-# EPSG/ESRI
-#-----------
-
-"""
-    EPSG{code}
-
-EPSG dataset `code` between 1024 and 32767.
-Codes can be searched at [epsg.io](https://epsg.io).
-
-See [EPSG Geodetic Parameter Dataset](https://en.wikipedia.org/wiki/EPSG_Geodetic_Parameter_Dataset)
-"""
-abstract type EPSG{Code} end
-
-"""
-    ESRI{code}
-
-ESRI dataset `code`. Codes can be searched at [epsg.io](https://epsg.io).
-"""
-abstract type ESRI{Code} end
-
-"""
-    typealias(::Type{EPSG{code}})
-    typealias(::Type{ESRI{code}})
-
-Returns a CRS type that has the EPSG/ESRI `code`.
-"""
-function typealias end
-
-# ----
-# CRS
-# ----
-
 """
     CRS{Datum}
 
@@ -132,10 +99,3 @@ include("crs/eqareacylindrical.jl")
 include("crs/winkeltripel.jl")
 include("crs/robinson.jl")
 include("crs/orthographic.jl")
-
-# ----------
-# FALLBACKS
-# ----------
-
-Base.convert(T::Type{EPSG{Code}}, coords::CRS) where {Code} = convert(typealias(T), coords)
-Base.convert(T::Type{ESRI{Code}}, coords::CRS) where {Code} = convert(typealias(T), coords)
