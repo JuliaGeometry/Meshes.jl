@@ -38,8 +38,7 @@ function typealias end
 """
     CRS{Datum}
 
-Parent type of all Coordinate Reference Systems (CRS) with a given `Datum`
-that can be used to georeference any point in physical space.
+Coordinate Reference System (CRS) with a given `Datum`
 """
 abstract type CRS{Datum} end
 
