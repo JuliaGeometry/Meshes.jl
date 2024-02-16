@@ -41,10 +41,3 @@ crs(::Type{ESRI{54034}}) = Lambert{WGS84}
 crs(::Type{ESRI{54042}}) = WinkelTripel{WGS84}
 crs(::Type{ESRI{102035}}) = Orthographic{90.0u"°",0.0u"°",true,WGS84}
 crs(::Type{ESRI{102037}}) = Orthographic{-90.0u"°",0.0u"°",true,WGS84}
-
-# ----------
-# FALLBACKS
-# ----------
-
-Base.convert(T::Type{EPSG{Code}}, coords::CRS) where {Code} = convert(crs(T), coords)
-Base.convert(T::Type{ESRI{Code}}, coords::CRS) where {Code} = convert(crs(T), coords)

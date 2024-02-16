@@ -460,170 +460,170 @@
     Q = typeof(T(1) * u"m")
     @testset "Cartesian <> Polar" begin
       c1 = Cartesian(T(1), T(1))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2), T(π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(-T(1), T(1))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2), T(3π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(-T(1), -T(1))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2), T(5π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(T(1), -T(1))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(√2), T(7π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(T(0), T(1))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(1), T(π / 2))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(T(0), -T(1))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(1), T(3π / 2))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(T(1), T(0))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(1), T(0))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(-T(1), T(0))
-      c2 = convert(Polar{NoDatum}, c1)
+      c2 = convert(Polar, c1)
       @test c2 ≈ Polar(T(1), T(π))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       # type stability
       c1 = Cartesian(T(1), T(1))
       c2 = Polar(T(√2), T(π / 4))
-      @inferred convert(Polar{NoDatum}, c1)
-      @inferred convert(Cartesian{NoDatum}, c2)
+      @inferred convert(Polar, c1)
+      @inferred convert(Cartesian, c2)
     end
 
     @testset "Cartesian <> Cylindrical" begin
       c1 = Cartesian(T(1), T(1), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2), T(π / 4), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(-T(1), T(1), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2), T(3π / 4), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(-T(1), -T(1), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2), T(5π / 4), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(T(1), -T(1), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(√2), T(7π / 4), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(T(0), T(1), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(1), T(π / 2), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(T(0), -T(1), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(1), T(3π / 2), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(T(1), T(0), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(1), T(0), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(-T(1), T(0), T(1))
-      c2 = convert(Cylindrical{NoDatum}, c1)
+      c2 = convert(Cylindrical, c1)
       @test c2 ≈ Cylindrical(T(1), T(π), T(1))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       # type stability
       c1 = Cartesian(T(1), T(1), T(1))
       c2 = Cylindrical(T(√2), T(π / 4), T(1))
-      @inferred convert(Cylindrical{NoDatum}, c1)
-      @inferred convert(Cartesian{NoDatum}, c2)
+      @inferred convert(Cylindrical, c1)
+      @inferred convert(Cartesian, c2)
     end
 
     @testset "Cartesian <> Spherical" begin
       c1 = Cartesian(T(1), T(1), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(-T(1), T(1), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(3π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(-T(1), -T(1), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(5π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(T(1), -T(1), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√3), atan(T(√2)), T(7π / 4))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test c3 ≈ c1
 
       c1 = Cartesian(T(0), T(1), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√2), T(π / 4), T(π / 2))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(T(0), -T(1), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√2), T(π / 4), T(3π / 2))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(T(1), T(0), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√2), T(π / 4), T(0))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       c1 = Cartesian(-T(1), T(0), T(1))
-      c2 = convert(Spherical{NoDatum}, c1)
+      c2 = convert(Spherical, c1)
       @test c2 ≈ Spherical(T(√2), T(π / 4), T(π))
-      c3 = convert(Cartesian{NoDatum}, c2)
+      c3 = convert(Cartesian, c2)
       @test isapprox(c3, c1, atol=atol(Q))
 
       # type stability
       c1 = Cartesian(T(1), T(1), T(1))
       c2 = Spherical(T(√3), atan(T(√2)), T(π / 4))
-      @inferred convert(Spherical{NoDatum}, c1)
-      @inferred convert(Cartesian{NoDatum}, c2)
+      @inferred convert(Spherical, c1)
+      @inferred convert(Cartesian, c2)
     end
 
     @testset "LatLon <> Mercator" begin
@@ -643,15 +643,9 @@
       c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(EPSG{3395}, c1)
-      @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
-
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(Mercator{WGS84}, c1)
-      @inferred convert(EPSG{3395}, c1)
     end
 
     @testset "LatLon <> WebMercator" begin
@@ -679,20 +673,11 @@
       c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(EPSG{3857}, c1)
-      @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
-      c3 = convert(EPSG{4326}, c2)
-      @test c3 ≈ c1
-
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = WebMercator(T(10018754.171394622), T(5621521.486192066))
       @inferred convert(WebMercator{WGS84}, c1)
       @inferred convert(LatLon{WGS84}, c2)
-      @inferred convert(EPSG{3857}, c1)
-      @inferred convert(EPSG{4326}, c2)
     end
 
     @testset "LatLon <> PlateCarree" begin
@@ -720,20 +705,11 @@
       c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(EPSG{32662}, c1)
-      @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
-      c3 = convert(EPSG{4326}, c2)
-      @test c3 ≈ c1
-
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = PlateCarree(T(10018754.171394622), T(5009377.085697311))
       @inferred convert(PlateCarree{WGS84}, c1)
       @inferred convert(LatLon{WGS84}, c2)
-      @inferred convert(EPSG{32662}, c1)
-      @inferred convert(EPSG{4326}, c2)
     end
 
     @testset "LatLon <> Lambert" begin
@@ -753,15 +729,9 @@
       c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(-T(10018754.171394622), -T(4489858.8869480025))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54034}, c1)
-      @test c2 ≈ Lambert(T(10018754.171394622), T(4489858.8869480025))
-
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(Lambert{WGS84}, c1)
-      @inferred convert(ESRI{54034}, c1)
     end
 
     @testset "LatLon <> Behrmann" begin
@@ -781,15 +751,9 @@
       c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(-T(8683765.222580686), -T(5180102.328839251))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54017}, c1)
-      @test c2 ≈ Behrmann(T(8683765.222580686), T(5180102.328839251))
-
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(Behrmann{WGS84}, c1)
-      @inferred convert(ESRI{54017}, c1)
     end
 
     @testset "LatLon <> GallPeters" begin
@@ -835,15 +799,9 @@
       c2 = convert(WinkelTripel{WGS84}, c1)
       @test c2 ≈ WinkelTripel(T(0), T(0))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54042}, c1)
-      @test c2 ≈ WinkelTripel(T(7044801.6979576545), T(5231448.051548355))
-
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(WinkelTripel{WGS84}, c1)
-      @inferred convert(ESRI{54042}, c1)
     end
 
     @testset "LatLon <> Robinson" begin
@@ -863,15 +821,9 @@
       c2 = convert(Robinson{WGS84}, c1)
       @test c2 ≈ Robinson(-T(7620313.925950073), -T(4805073.646653474))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54030}, c1)
-      @test c2 ≈ Robinson(T(7620313.925950073), T(4805073.646653474))
-
       # type stability
       c1 = LatLon(T(45), T(90))
       @inferred convert(Robinson{WGS84}, c1)
-      @inferred convert(ESRI{54030}, c1)
     end
 
     @testset "LatLon <> OrthoNorth" begin
@@ -903,8 +855,8 @@
     end
 
     @testset "LatLon <> OrthoSpherical" begin
-      OrthoNorthSpherical = Meshes.crs(ESRI{102035})
-      OrthoSouthSpherical = Meshes.crs(ESRI{102037})
+      OrthoNorthSpherical = Meshes.Orthographic{90.0u"°",0.0u"°",true,WGS84}
+      OrthoSouthSpherical = Meshes.Orthographic{-90.0u"°",0.0u"°",true,WGS84} 
 
       c1 = LatLon(T(30), T(60))
       c2 = convert(OrthoNorthSpherical, c1)
@@ -922,19 +874,10 @@
       c2 = convert(OrthoSouthSpherical, c1)
       @test c2 ≈ OrthoSouthSpherical(-T(4783602.75), T(2761814.335408735))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(30), T(60))
-      c2 = convert(ESRI{102035}, c1)
-      @test c2 ≈ OrthoNorthSpherical(T(4783602.75), T(-2761814.335408735))
-      c2 = convert(ESRI{102037}, c1)
-      @test c2 ≈ OrthoSouthSpherical(T(4783602.75), T(2761814.335408735))
-
       # type stability
       c1 = LatLon(T(30), T(60))
       @inferred convert(OrthoNorthSpherical, c1)
-      @inferred convert(ESRI{102035}, c1)
       @inferred convert(OrthoSouthSpherical, c1)
-      @inferred convert(ESRI{102037}, c1)
     end
   end
 end

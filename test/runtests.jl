@@ -76,6 +76,7 @@ testfiles = [
   "vectors.jl",
   "datums.jl",
   "crs.jl",
+  "codes.jl",
   "primitives.jl",
   "polytopes.jl",
   "multigeoms.jl",
