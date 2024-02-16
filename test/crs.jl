@@ -903,8 +903,8 @@
     end
 
     @testset "LatLon <> OrthoSpherical" begin
-      OrthoNorthSpherical = Meshes.typealias(ESRI{102035})
-      OrthoSouthSpherical = Meshes.typealias(ESRI{102037})
+      OrthoNorthSpherical = Meshes.crs(ESRI{102035})
+      OrthoSouthSpherical = Meshes.crs(ESRI{102037})
 
       c1 = LatLon(T(30), T(60))
       c2 = convert(OrthoNorthSpherical, c1)
