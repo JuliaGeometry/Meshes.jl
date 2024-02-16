@@ -4,8 +4,10 @@
 
 """
     WebMercator(x, y)
+    WebMercator{Datum}(x, y)
 
-Web Mercator coordinates in length units (default to meter).
+Web Mercator coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
@@ -14,40 +16,44 @@ WebMercator(1, 1) # add default units
 WebMercator(1u"m", 1u"m") # integers are converted converted to floats
 WebMercator(1.0u"km", 1.0u"km") # length quantities are converted to meters
 WebMercator(1.0u"m", 1.0u"m")
+WebMercator{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 See [EPSG:3857](https://epsg.io/3857).
 """
-const WebMercator{M<:Met} = CRS{:WebMercator,@NamedTuple{x::M, y::M},WGS84,NoParams}
+struct WebMercator{Datum,M<:Met} <: CRS{Datum}
+  x::M
+  y::M
+  WebMercator{Datum}(x::M, y::M) where {Datum,M<:Met} = new{Datum,float(M)}(x, y)
+end
 
-typealias(::Type{EPSG{3857}}) = WebMercator
+WebMercator{Datum}(x::Met, y::Met) where {Datum} = WebMercator{Datum}(promote(x, y)...)
+WebMercator{Datum}(x::Len, y::Len) where {Datum} = WebMercator{Datum}(uconvert(u"m", x), uconvert(u"m", y))
+WebMercator{Datum}(x::Number, y::Number) where {Datum} = WebMercator{Datum}(addunit(x, u"m"), addunit(y, u"m"))
 
-WebMercator(x::M, y::M) where {M<:Met} = WebMercator{float(M)}(x, y)
-WebMercator(x::Met, y::Met) = WebMercator(promote(x, y)...)
-WebMercator(x::Len, y::Len) = WebMercator(uconvert(u"m", x), uconvert(u"m", y))
-WebMercator(x::Number, y::Number) = WebMercator(addunit(x, u"m"), addunit(y, u"m"))
+WebMercator(args...) = WebMercator{WGS84}(args...)
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{WebMercator}, coords::LatLon)
-  🌎 = ellipsoid(WebMercator)
+function Base.convert(::Type{WebMercator{Datum}}, coords::LatLon{Datum}) where {Datum}
+  🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
   l = ustrip(λ)
   a = oftype(l, ustrip(majoraxis(🌎)))
   x = a * l
   y = a * asinh(tan(ϕ))
-  WebMercator(x * u"m", y * u"m")
+  WebMercator{Datum}(x * u"m", y * u"m")
 end
 
-function Base.convert(::Type{LatLon}, coords::WebMercator)
-  🌎 = ellipsoid(coords)
+function Base.convert(::Type{LatLon{Datum}}, coords::WebMercator{Datum}) where {Datum}
+  🌎 = ellipsoid(Datum)
   x = coords.x
   y = coords.y
   a = oftype(x, majoraxis(🌎))
   λ = x / a
   ϕ = atan(sinh(y / a))
-  LatLon(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end

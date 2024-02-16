@@ -3,23 +3,31 @@
 # ------------------------------------------------------------------
 
 """
-    EqualAreaCylindrical{latₜₛ}
+    EqualAreaCylindrical{latₜₛ,Datum}
 
-Equal Area Cylindrical CRS with latitude of true scale `latₜₛ` in degrees.
+Equal Area Cylindrical CRS with latitude of true scale `latₜₛ` in degrees and a given `Datum`.
 """
-const EqualAreaCylindrical{latₜₛ,M<:Met} = CRS{:EAC,@NamedTuple{x::M, y::M},WGS84,latₜₛ}
+struct EqualAreaCylindrical{latₜₛ,Datum,M<:Met} <: CRS{Datum}
+  x::M
+  y::M
+  EqualAreaCylindrical{latₜₛ,Datum}(x::M, y::M) where {latₜₛ,Datum,M<:Met} = new{latₜₛ,Datum,float(M)}(x, y)
+end
 
-EqualAreaCylindrical{latₜₛ}(x::M, y::M) where {latₜₛ,M<:Met} = EqualAreaCylindrical{latₜₛ,float(M)}(x, y)
-EqualAreaCylindrical{latₜₛ}(x::Met, y::Met) where {latₜₛ} = EqualAreaCylindrical{latₜₛ}(promote(x, y)...)
-EqualAreaCylindrical{latₜₛ}(x::Len, y::Len) where {latₜₛ} =
-  EqualAreaCylindrical{latₜₛ}(uconvert(u"m", x), uconvert(u"m", y))
-EqualAreaCylindrical{latₜₛ}(x::Number, y::Number) where {latₜₛ} =
-  EqualAreaCylindrical{latₜₛ}(addunit(x, u"m"), addunit(y, u"m"))
+EqualAreaCylindrical{latₜₛ,Datum}(x::Met, y::Met) where {latₜₛ,Datum} =
+  EqualAreaCylindrical{latₜₛ,Datum}(promote(x, y)...)
+EqualAreaCylindrical{latₜₛ,Datum}(x::Len, y::Len) where {latₜₛ,Datum} =
+  EqualAreaCylindrical{latₜₛ,Datum}(uconvert(u"m", x), uconvert(u"m", y))
+EqualAreaCylindrical{latₜₛ,Datum}(x::Number, y::Number) where {latₜₛ,Datum} =
+  EqualAreaCylindrical{latₜₛ,Datum}(addunit(x, u"m"), addunit(y, u"m"))
+
+EqualAreaCylindrical{latₜₛ}(args...) where {latₜₛ} = EqualAreaCylindrical{latₜₛ,WGS84}(args...)
 
 """
     Lambert(x, y)
+    Lambert{Datum}(x, y)
 
-Lambert cylindrical equal-area coordinates in length units (default to meter).
+Lambert cylindrical equal-area coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
@@ -28,38 +36,40 @@ Lambert(1, 1) # add default units
 Lambert(1u"m", 1u"m") # integers are converted converted to floats
 Lambert(1.0u"km", 1.0u"km") # length quantities are converted to meters
 Lambert(1.0u"m", 1.0u"m")
+Lambert{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 See [ESRI:54034](https://epsg.io/54034).
 """
-const Lambert = EqualAreaCylindrical{0.0u"°"}
-
-typealias(::Type{ESRI{54034}}) = Lambert
+const Lambert{Datum} = EqualAreaCylindrical{0.0u"°",Datum}
 
 """
     Behrmann(x, y)
+    Behrmann{Datum}(x, y)
 
-Behrmann coordinates in length units (default to meter).
+Behrmann coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
 ```julia
-Lambert(1, 1) # add default units
-Lambert(1u"m", 1u"m") # integers are converted converted to floats
-Lambert(1.0u"km", 1.0u"km") # length quantities are converted to meters
-Lambert(1.0u"m", 1.0u"m")
+Behrmann(1, 1) # add default units
+Behrmann(1u"m", 1u"m") # integers are converted converted to floats
+Behrmann(1.0u"km", 1.0u"km") # length quantities are converted to meters
+Behrmann(1.0u"m", 1.0u"m")
+Behrmann{WGS84}(1.0u"m", 1.0u"m")
 ```
 
 See [ESRI:54017](https://epsg.io/54017).
 """
-const Behrmann = EqualAreaCylindrical{30.0u"°"}
-
-typealias(::Type{ESRI{54017}}) = Behrmann
+const Behrmann{Datum} = EqualAreaCylindrical{30.0u"°",Datum}
 
 """
     GallPeters(x, y)
+    GallPeters{Datum}(x, y)
 
-Gall-Peters coordinates in length units (default to meter).
+Gall-Peters coordinates in length units (default to meter)
+with a given `Datum` (default to `WGS84`).
 
 ## Examples
 
@@ -68,20 +78,20 @@ GallPeters(1, 1) # add default units
 GallPeters(1u"m", 1u"m") # integers are converted converted to floats
 GallPeters(1.0u"km", 1.0u"km") # length quantities are converted to meters
 GallPeters(1.0u"m", 1.0u"m")
+GallPeters{WGS84}(1.0u"m", 1.0u"m")
 ```
 """
-const GallPeters = EqualAreaCylindrical{45.0u"°"}
+const GallPeters{Datum} = EqualAreaCylindrical{45.0u"°",Datum}
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{EqualAreaCylindrical{latₜₛ}}, coords::LatLon) where {latₜₛ}
-  dat = datum(EqualAreaCylindrical{latₜₛ})
-  🌎 = ellipsoid(dat)
+function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::LatLon{Datum}) where {latₜₛ,Datum}
+  🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
-  λ₀ = oftype(λ, deg2rad(longitudeₒ(dat)))
+  λ₀ = oftype(λ, deg2rad(longitudeₒ(Datum)))
   ϕₜₛ = oftype(ϕ, deg2rad(latₜₛ))
   l = ustrip(λ)
   l₀ = ustrip(λ₀)
@@ -97,5 +107,5 @@ function Base.convert(::Type{EqualAreaCylindrical{latₜₛ}}, coords::LatLon) w
   x = a * k₀ * (l - l₀)
   y = a * q / 2k₀
 
-  EqualAreaCylindrical{latₜₛ}(x * u"m", y * u"m")
+  EqualAreaCylindrical{latₜₛ,Datum}(x * u"m", y * u"m")
 end

@@ -274,6 +274,188 @@
     @test_throws ArgumentError PlateCarree(T(1) * u"s", T(1) * u"s")
   end
 
+  @testset "Lambert" begin
+    @test Lambert(T(1), T(1)) == Lambert(T(1) * u"m", T(1) * u"m")
+    @test Lambert(T(1) * u"m", 1 * u"m") == Lambert(T(1) * u"m", T(1) * u"m")
+    @test Lambert(T(1) * u"km", T(1) * u"km") == Lambert(T(1000) * u"m", T(1000) * u"m")
+
+    c = Lambert(T(1), T(1))
+    @test sprint(show, c) == "Lambert(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      Lambert coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      Lambert coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError Lambert(T(1), T(1) * u"m")
+    @test_throws ArgumentError Lambert(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError Lambert(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError Lambert(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "Behrmann" begin
+    @test Behrmann(T(1), T(1)) == Behrmann(T(1) * u"m", T(1) * u"m")
+    @test Behrmann(T(1) * u"m", 1 * u"m") == Behrmann(T(1) * u"m", T(1) * u"m")
+    @test Behrmann(T(1) * u"km", T(1) * u"km") == Behrmann(T(1000) * u"m", T(1000) * u"m")
+
+    c = Behrmann(T(1), T(1))
+    @test sprint(show, c) == "Behrmann(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      Behrmann coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      Behrmann coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError Behrmann(T(1), T(1) * u"m")
+    @test_throws ArgumentError Behrmann(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError Behrmann(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError Behrmann(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "GallPeters" begin
+    @test GallPeters(T(1), T(1)) == GallPeters(T(1) * u"m", T(1) * u"m")
+    @test GallPeters(T(1) * u"m", 1 * u"m") == GallPeters(T(1) * u"m", T(1) * u"m")
+    @test GallPeters(T(1) * u"km", T(1) * u"km") == GallPeters(T(1000) * u"m", T(1000) * u"m")
+
+    c = GallPeters(T(1), T(1))
+    @test sprint(show, c) == "GallPeters(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      GallPeters coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      GallPeters coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError GallPeters(T(1), T(1) * u"m")
+    @test_throws ArgumentError GallPeters(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError GallPeters(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError GallPeters(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "WinkelTripel" begin
+    @test WinkelTripel(T(1), T(1)) == WinkelTripel(T(1) * u"m", T(1) * u"m")
+    @test WinkelTripel(T(1) * u"m", 1 * u"m") == WinkelTripel(T(1) * u"m", T(1) * u"m")
+    @test WinkelTripel(T(1) * u"km", T(1) * u"km") == WinkelTripel(T(1000) * u"m", T(1000) * u"m")
+
+    c = WinkelTripel(T(1), T(1))
+    @test sprint(show, c) == "WinkelTripel(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      WinkelTripel coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      WinkelTripel coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError WinkelTripel(T(1), T(1) * u"m")
+    @test_throws ArgumentError WinkelTripel(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError WinkelTripel(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError WinkelTripel(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "Robinson" begin
+    @test Robinson(T(1), T(1)) == Robinson(T(1) * u"m", T(1) * u"m")
+    @test Robinson(T(1) * u"m", 1 * u"m") == Robinson(T(1) * u"m", T(1) * u"m")
+    @test Robinson(T(1) * u"km", T(1) * u"km") == Robinson(T(1000) * u"m", T(1000) * u"m")
+
+    c = Robinson(T(1), T(1))
+    @test sprint(show, c) == "Robinson(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      Robinson coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      Robinson coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError Robinson(T(1), T(1) * u"m")
+    @test_throws ArgumentError Robinson(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError Robinson(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError Robinson(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "OrthoNorth" begin
+    @test OrthoNorth(T(1), T(1)) == OrthoNorth(T(1) * u"m", T(1) * u"m")
+    @test OrthoNorth(T(1) * u"m", 1 * u"m") == OrthoNorth(T(1) * u"m", T(1) * u"m")
+    @test OrthoNorth(T(1) * u"km", T(1) * u"km") == OrthoNorth(T(1000) * u"m", T(1000) * u"m")
+
+    c = OrthoNorth(T(1), T(1))
+    @test sprint(show, c) == "OrthoNorth(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      OrthoNorth coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      OrthoNorth coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError OrthoNorth(T(1), T(1) * u"m")
+    @test_throws ArgumentError OrthoNorth(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError OrthoNorth(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError OrthoNorth(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "OrthoSouth" begin
+    @test OrthoSouth(T(1), T(1)) == OrthoSouth(T(1) * u"m", T(1) * u"m")
+    @test OrthoSouth(T(1) * u"m", 1 * u"m") == OrthoSouth(T(1) * u"m", T(1) * u"m")
+    @test OrthoSouth(T(1) * u"km", T(1) * u"km") == OrthoSouth(T(1000) * u"m", T(1000) * u"m")
+
+    c = OrthoSouth(T(1), T(1))
+    @test sprint(show, c) == "OrthoSouth(x: 1.0 m, y: 1.0 m)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      OrthoSouth coordinates
+      ├─ x: 1.0f0 m
+      └─ y: 1.0f0 m"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      OrthoSouth coordinates
+      ├─ x: 1.0 m
+      └─ y: 1.0 m"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError OrthoSouth(T(1), T(1) * u"m")
+    @test_throws ArgumentError OrthoSouth(T(1) * u"s", T(1) * u"m")
+    @test_throws ArgumentError OrthoSouth(T(1) * u"m", T(1) * u"s")
+    @test_throws ArgumentError OrthoSouth(T(1) * u"s", T(1) * u"s")
+  end
+
   @testset "conversions" begin
     Q = typeof(T(1) * u"m")
     @testset "Cartesian <> Polar" begin
@@ -446,283 +628,235 @@
 
     @testset "LatLon <> Mercator" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(Mercator, c1)
+      c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(Mercator, c1)
+      c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), -T(5591295.9185533915))
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(Mercator, c1)
+      c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), T(5591295.9185533915))
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(Mercator, c1)
+      c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(EPSG{3395}, c1)
-      @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      @inferred convert(Mercator, c1)
-      @inferred convert(EPSG{3395}, c1)
+      @inferred convert(Mercator{WGS84}, c1)
     end
 
     @testset "LatLon <> WebMercator" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(WebMercator, c1)
+      c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
-      c3 = convert(LatLon, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(WebMercator, c1)
+      c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), -T(5621521.486192066))
-      c3 = convert(LatLon, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(WebMercator, c1)
+      c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(-T(10018754.171394622), T(5621521.486192066))
-      c3 = convert(LatLon, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(WebMercator, c1)
+      c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(-T(10018754.171394622), -T(5621521.486192066))
-      c3 = convert(LatLon, c2)
-      @test c3 ≈ c1
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(EPSG{3857}, c1)
-      @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
-      c3 = convert(EPSG{4326}, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = WebMercator(T(10018754.171394622), T(5621521.486192066))
-      @inferred convert(WebMercator, c1)
-      @inferred convert(LatLon, c2)
-      @inferred convert(EPSG{3857}, c1)
-      @inferred convert(EPSG{4326}, c2)
+      @inferred convert(WebMercator{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> PlateCarree" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(PlateCarree, c1)
+      c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
-      c3 = convert(LatLon, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(PlateCarree, c1)
+      c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(T(10018754.171394622), -T(5009377.085697311))
-      c3 = convert(LatLon, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(PlateCarree, c1)
+      c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(-T(10018754.171394622), T(5009377.085697311))
-      c3 = convert(LatLon, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(PlateCarree, c1)
+      c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(-T(10018754.171394622), -T(5009377.085697311))
-      c3 = convert(LatLon, c2)
-      @test c3 ≈ c1
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(EPSG{32662}, c1)
-      @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
-      c3 = convert(EPSG{4326}, c2)
+      c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = PlateCarree(T(10018754.171394622), T(5009377.085697311))
-      @inferred convert(PlateCarree, c1)
-      @inferred convert(LatLon, c2)
-      @inferred convert(EPSG{32662}, c1)
-      @inferred convert(EPSG{4326}, c2)
+      @inferred convert(PlateCarree{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> Lambert" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(Lambert, c1)
+      c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(T(10018754.171394622), T(4489858.8869480025))
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(Lambert, c1)
+      c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(T(10018754.171394622), -T(4489858.8869480025))
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(Lambert, c1)
+      c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(-T(10018754.171394622), T(4489858.8869480025))
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(Lambert, c1)
+      c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(-T(10018754.171394622), -T(4489858.8869480025))
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54034}, c1)
-      @test c2 ≈ Lambert(T(10018754.171394622), T(4489858.8869480025))
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      @inferred convert(Lambert, c1)
-      @inferred convert(ESRI{54034}, c1)
+      @inferred convert(Lambert{WGS84}, c1)
     end
 
     @testset "LatLon <> Behrmann" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(Behrmann, c1)
+      c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(T(8683765.222580686), T(5180102.328839251))
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(Behrmann, c1)
+      c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(T(8683765.222580686), -T(5180102.328839251))
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(Behrmann, c1)
+      c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(-T(8683765.222580686), T(5180102.328839251))
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(Behrmann, c1)
+      c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(-T(8683765.222580686), -T(5180102.328839251))
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54017}, c1)
-      @test c2 ≈ Behrmann(T(8683765.222580686), T(5180102.328839251))
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      @inferred convert(Behrmann, c1)
-      @inferred convert(ESRI{54017}, c1)
+      @inferred convert(Behrmann{WGS84}, c1)
     end
 
     @testset "LatLon <> GallPeters" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(GallPeters, c1)
+      c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(T(7096215.158458031), T(6338983.732612475))
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(GallPeters, c1)
+      c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(T(7096215.158458031), -T(6338983.732612475))
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(GallPeters, c1)
+      c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(-T(7096215.158458031), T(6338983.732612475))
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(GallPeters, c1)
+      c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(-T(7096215.158458031), -T(6338983.732612475))
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      @inferred convert(GallPeters, c1)
+      @inferred convert(GallPeters{WGS84}, c1)
     end
 
     @testset "LatLon <> WinkelTripel" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(WinkelTripel, c1)
+      c2 = convert(WinkelTripel{WGS84}, c1)
       @test c2 ≈ WinkelTripel(T(7044801.6979576545), T(5231448.051548355))
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(WinkelTripel, c1)
+      c2 = convert(WinkelTripel{WGS84}, c1)
       @test c2 ≈ WinkelTripel(T(7044801.6979576545), -T(5231448.051548355))
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(WinkelTripel, c1)
+      c2 = convert(WinkelTripel{WGS84}, c1)
       @test c2 ≈ WinkelTripel(-T(7044801.6979576545), T(5231448.051548355))
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(WinkelTripel, c1)
+      c2 = convert(WinkelTripel{WGS84}, c1)
       @test c2 ≈ WinkelTripel(-T(7044801.6979576545), -T(5231448.051548355))
 
       c1 = LatLon(T(0), T(0))
-      c2 = convert(WinkelTripel, c1)
+      c2 = convert(WinkelTripel{WGS84}, c1)
       @test c2 ≈ WinkelTripel(T(0), T(0))
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54042}, c1)
-      @test c2 ≈ WinkelTripel(T(7044801.6979576545), T(5231448.051548355))
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      @inferred convert(WinkelTripel, c1)
-      @inferred convert(ESRI{54042}, c1)
+      @inferred convert(WinkelTripel{WGS84}, c1)
     end
 
     @testset "LatLon <> Robinson" begin
       c1 = LatLon(T(45), T(90))
-      c2 = convert(Robinson, c1)
+      c2 = convert(Robinson{WGS84}, c1)
       @test c2 ≈ Robinson(T(7620313.925950073), T(4805073.646653474))
 
       c1 = LatLon(-T(45), T(90))
-      c2 = convert(Robinson, c1)
+      c2 = convert(Robinson{WGS84}, c1)
       @test c2 ≈ Robinson(T(7620313.925950073), -T(4805073.646653474))
 
       c1 = LatLon(T(45), -T(90))
-      c2 = convert(Robinson, c1)
+      c2 = convert(Robinson{WGS84}, c1)
       @test c2 ≈ Robinson(-T(7620313.925950073), T(4805073.646653474))
 
       c1 = LatLon(-T(45), -T(90))
-      c2 = convert(Robinson, c1)
+      c2 = convert(Robinson{WGS84}, c1)
       @test c2 ≈ Robinson(-T(7620313.925950073), -T(4805073.646653474))
-
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(45), T(90))
-      c2 = convert(ESRI{54030}, c1)
-      @test c2 ≈ Robinson(T(7620313.925950073), T(4805073.646653474))
 
       # type stability
       c1 = LatLon(T(45), T(90))
-      @inferred convert(Robinson, c1)
-      @inferred convert(ESRI{54030}, c1)
+      @inferred convert(Robinson{WGS84}, c1)
     end
 
     @testset "LatLon <> OrthoNorth" begin
       c1 = LatLon(T(30), T(60))
-      c2 = convert(OrthoNorth, c1)
+      c2 = convert(OrthoNorth{WGS84}, c1)
       @test c2 ≈ OrthoNorth(T(4787610.688267582), T(-2764128.319646418))
 
       c1 = LatLon(T(30), -T(60))
-      c2 = convert(OrthoNorth, c1)
+      c2 = convert(OrthoNorth{WGS84}, c1)
       @test c2 ≈ OrthoNorth(-T(4787610.688267582), T(-2764128.319646418))
 
       # type stability
       c1 = LatLon(T(30), T(60))
-      @inferred convert(OrthoNorth, c1)
+      @inferred convert(OrthoNorth{WGS84}, c1)
     end
 
     @testset "LatLon <> OrthoSouth" begin
       c1 = LatLon(-T(30), T(60))
-      c2 = convert(OrthoSouth, c1)
+      c2 = convert(OrthoSouth{WGS84}, c1)
       @test c2 ≈ OrthoSouth(T(4787610.688267582), T(2764128.319646418))
 
       c1 = LatLon(-T(30), -T(60))
-      c2 = convert(OrthoSouth, c1)
+      c2 = convert(OrthoSouth{WGS84}, c1)
       @test c2 ≈ OrthoSouth(-T(4787610.688267582), T(2764128.319646418))
 
       # type stability
       c1 = LatLon(T(30), T(60))
-      @inferred convert(OrthoSouth, c1)
+      @inferred convert(OrthoSouth{WGS84}, c1)
     end
 
     @testset "LatLon <> OrthoSpherical" begin
-      OrthoNorthSpherical = Meshes.typealias(ESRI{102035})
-      OrthoSouthSpherical = Meshes.typealias(ESRI{102037})
+      OrthoNorthSpherical = Meshes.Orthographic{90.0u"°",0.0u"°",true,WGS84}
+      OrthoSouthSpherical = Meshes.Orthographic{-90.0u"°",0.0u"°",true,WGS84} 
 
       c1 = LatLon(T(30), T(60))
       c2 = convert(OrthoNorthSpherical, c1)
@@ -740,19 +874,10 @@
       c2 = convert(OrthoSouthSpherical, c1)
       @test c2 ≈ OrthoSouthSpherical(-T(4783602.75), T(2761814.335408735))
 
-      # EPSG/ESRI fallback
-      c1 = LatLon(T(30), T(60))
-      c2 = convert(ESRI{102035}, c1)
-      @test c2 ≈ OrthoNorthSpherical(T(4783602.75), T(-2761814.335408735))
-      c2 = convert(ESRI{102037}, c1)
-      @test c2 ≈ OrthoSouthSpherical(T(4783602.75), T(2761814.335408735))
-
       # type stability
       c1 = LatLon(T(30), T(60))
       @inferred convert(OrthoNorthSpherical, c1)
-      @inferred convert(ESRI{102035}, c1)
       @inferred convert(OrthoSouthSpherical, c1)
-      @inferred convert(ESRI{102037}, c1)
     end
   end
 end
