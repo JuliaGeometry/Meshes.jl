@@ -58,13 +58,15 @@ function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {C<:Cartesia
 end
 
 function Base.show(io::IO, coords::Cartesian)
-  print(io, "Cartesian(")
+  Datum = datum(coords)
+  print(io, "Cartesian{$Datum}(")
   printfields(io, _coords(coords), _fnames(coords), compact=true)
   print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", coords::Cartesian)
-  print(io, "Cartesian coordinates")
+  Datum = datum(coords)
+  print(io, "Cartesian{$Datum} coordinates")
   printfields(io, _coords(coords), _fnames(coords))
 end
 

@@ -20,59 +20,59 @@
     @test Cartesian(T(1) * u"m", 1 * u"m") == Cartesian(T(1) * u"m", T(1) * u"m")
 
     c = Cartesian(T(1))
-    @test sprint(show, c) == "Cartesian(x: 1.0 m)"
+    @test sprint(show, c) == "Cartesian{NoDatum}(x: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       └─ x: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       └─ x: 1.0 m"""
     end
 
     c = Cartesian(T(1), T(1))
-    @test sprint(show, c) == "Cartesian(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "Cartesian{NoDatum}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
 
     c = Cartesian(T(1), T(1), T(1))
-    @test sprint(show, c) == "Cartesian(x: 1.0 m, y: 1.0 m, z: 1.0 m)"
+    @test sprint(show, c) == "Cartesian{NoDatum}(x: 1.0 m, y: 1.0 m, z: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       ├─ x: 1.0f0 m
       ├─ y: 1.0f0 m
       └─ z: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       ├─ x: 1.0 m
       ├─ y: 1.0 m
       └─ z: 1.0 m"""
     end
 
     c = Cartesian(T(1), T(1), T(1), T(1))
-    @test sprint(show, c) == "Cartesian(x1: 1.0 m, x2: 1.0 m, x3: 1.0 m, x4: 1.0 m)"
+    @test sprint(show, c) == "Cartesian{NoDatum}(x1: 1.0 m, x2: 1.0 m, x3: 1.0 m, x4: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       ├─ x1: 1.0f0 m
       ├─ x2: 1.0f0 m
       ├─ x3: 1.0f0 m
       └─ x4: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Cartesian coordinates
+      Cartesian{NoDatum} coordinates
       ├─ x1: 1.0 m
       ├─ x2: 1.0 m
       ├─ x3: 1.0 m
@@ -91,15 +91,15 @@
     @test Polar(T(1) * u"m", T(45) * u"°") ≈ Polar(T(1) * u"m", T(π / 4) * u"rad")
 
     c = Polar(T(1), T(1))
-    @test sprint(show, c) == "Polar(ρ: 1.0 m, ϕ: 1.0 rad)"
+    @test sprint(show, c) == "Polar{NoDatum}(ρ: 1.0 m, ϕ: 1.0 rad)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Polar coordinates
+      Polar{NoDatum} coordinates
       ├─ ρ: 1.0f0 m
       └─ ϕ: 1.0f0 rad"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Polar coordinates
+      Polar{NoDatum} coordinates
       ├─ ρ: 1.0 m
       └─ ϕ: 1.0 rad"""
     end
@@ -117,16 +117,16 @@
     @test Cylindrical(T(1) * u"m", T(45) * u"°", T(1) * u"m") ≈ Cylindrical(T(1) * u"m", T(π / 4) * u"rad", T(1) * u"m")
 
     c = Cylindrical(T(1), T(1), T(1))
-    @test sprint(show, c) == "Cylindrical(ρ: 1.0 m, ϕ: 1.0 rad, z: 1.0 m)"
+    @test sprint(show, c) == "Cylindrical{NoDatum}(ρ: 1.0 m, ϕ: 1.0 rad, z: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Cylindrical coordinates
+      Cylindrical{NoDatum} coordinates
       ├─ ρ: 1.0f0 m
       ├─ ϕ: 1.0f0 rad
       └─ z: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Cylindrical coordinates
+      Cylindrical{NoDatum} coordinates
       ├─ ρ: 1.0 m
       ├─ ϕ: 1.0 rad
       └─ z: 1.0 m"""
@@ -147,16 +147,16 @@
           Spherical(T(1) * u"m", T(π / 4) * u"rad", T(π / 4) * u"rad")
 
     c = Spherical(T(1), T(1), T(1))
-    @test sprint(show, c) == "Spherical(r: 1.0 m, θ: 1.0 rad, ϕ: 1.0 rad)"
+    @test sprint(show, c) == "Spherical{NoDatum}(r: 1.0 m, θ: 1.0 rad, ϕ: 1.0 rad)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Spherical coordinates
+      Spherical{NoDatum} coordinates
       ├─ r: 1.0f0 m
       ├─ θ: 1.0f0 rad
       └─ ϕ: 1.0f0 rad"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Spherical coordinates
+      Spherical{NoDatum} coordinates
       ├─ r: 1.0 m
       ├─ θ: 1.0 rad
       └─ ϕ: 1.0 rad"""
@@ -176,15 +176,15 @@
     @test LatLon(T(π / 4) * u"rad", T(π / 4) * u"rad") ≈ LatLon(T(45) * u"°", T(45) * u"°")
 
     c = LatLon(T(1), T(1))
-    @test sprint(show, c) == "LatLon(lat: 1.0°, lon: 1.0°)"
+    @test sprint(show, c) == "LatLon{WGS84}(lat: 1.0°, lon: 1.0°)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLon coordinates
+      LatLon{WGS84} coordinates
       ├─ lat: 1.0f0°
       └─ lon: 1.0f0°"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLon coordinates
+      LatLon{WGS84} coordinates
       ├─ lat: 1.0°
       └─ lon: 1.0°"""
     end
@@ -202,15 +202,15 @@
     @test Mercator(T(1) * u"km", T(1) * u"km") == Mercator(T(1000) * u"m", T(1000) * u"m")
 
     c = Mercator(T(1), T(1))
-    @test sprint(show, c) == "Mercator(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "Mercator{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Mercator coordinates
+      Mercator{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Mercator coordinates
+      Mercator{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -228,15 +228,15 @@
     @test WebMercator(T(1) * u"km", T(1) * u"km") == WebMercator(T(1000) * u"m", T(1000) * u"m")
 
     c = WebMercator(T(1), T(1))
-    @test sprint(show, c) == "WebMercator(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "WebMercator{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      WebMercator coordinates
+      WebMercator{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      WebMercator coordinates
+      WebMercator{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -254,15 +254,15 @@
     @test PlateCarree(T(1) * u"km", T(1) * u"km") == PlateCarree(T(1000) * u"m", T(1000) * u"m")
 
     c = PlateCarree(T(1), T(1))
-    @test sprint(show, c) == "PlateCarree(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "PlateCarree{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      PlateCarree coordinates
+      PlateCarree{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      PlateCarree coordinates
+      PlateCarree{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -280,15 +280,15 @@
     @test Lambert(T(1) * u"km", T(1) * u"km") == Lambert(T(1000) * u"m", T(1000) * u"m")
 
     c = Lambert(T(1), T(1))
-    @test sprint(show, c) == "Lambert(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "Lambert{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Lambert coordinates
+      Lambert{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Lambert coordinates
+      Lambert{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -306,15 +306,15 @@
     @test Behrmann(T(1) * u"km", T(1) * u"km") == Behrmann(T(1000) * u"m", T(1000) * u"m")
 
     c = Behrmann(T(1), T(1))
-    @test sprint(show, c) == "Behrmann(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "Behrmann{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Behrmann coordinates
+      Behrmann{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Behrmann coordinates
+      Behrmann{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -332,15 +332,15 @@
     @test GallPeters(T(1) * u"km", T(1) * u"km") == GallPeters(T(1000) * u"m", T(1000) * u"m")
 
     c = GallPeters(T(1), T(1))
-    @test sprint(show, c) == "GallPeters(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "GallPeters{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      GallPeters coordinates
+      GallPeters{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      GallPeters coordinates
+      GallPeters{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -358,15 +358,15 @@
     @test WinkelTripel(T(1) * u"km", T(1) * u"km") == WinkelTripel(T(1000) * u"m", T(1000) * u"m")
 
     c = WinkelTripel(T(1), T(1))
-    @test sprint(show, c) == "WinkelTripel(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "WinkelTripel{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      WinkelTripel coordinates
+      WinkelTripel{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      WinkelTripel coordinates
+      WinkelTripel{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -384,15 +384,15 @@
     @test Robinson(T(1) * u"km", T(1) * u"km") == Robinson(T(1000) * u"m", T(1000) * u"m")
 
     c = Robinson(T(1), T(1))
-    @test sprint(show, c) == "Robinson(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "Robinson{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      Robinson coordinates
+      Robinson{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      Robinson coordinates
+      Robinson{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -410,15 +410,15 @@
     @test OrthoNorth(T(1) * u"km", T(1) * u"km") == OrthoNorth(T(1000) * u"m", T(1000) * u"m")
 
     c = OrthoNorth(T(1), T(1))
-    @test sprint(show, c) == "OrthoNorth(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "OrthoNorth{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      OrthoNorth coordinates
+      OrthoNorth{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      OrthoNorth coordinates
+      OrthoNorth{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end
@@ -436,15 +436,15 @@
     @test OrthoSouth(T(1) * u"km", T(1) * u"km") == OrthoSouth(T(1000) * u"m", T(1000) * u"m")
 
     c = OrthoSouth(T(1), T(1))
-    @test sprint(show, c) == "OrthoSouth(x: 1.0 m, y: 1.0 m)"
+    @test sprint(show, c) == "OrthoSouth{WGS84}(x: 1.0 m, y: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      OrthoSouth coordinates
+      OrthoSouth{WGS84} coordinates
       ├─ x: 1.0f0 m
       └─ y: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      OrthoSouth coordinates
+      OrthoSouth{WGS84} coordinates
       ├─ x: 1.0 m
       └─ y: 1.0 m"""
     end

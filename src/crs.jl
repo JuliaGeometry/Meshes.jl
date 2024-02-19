@@ -60,16 +60,22 @@ altitudeₒ(T::Type{<:CRS}) = altitudeₒ(datum(T))
 # IO METHODS
 # -----------
 
+function Base.summary(io::IO, coords::CRS) 
+  name = prettyname(coords)
+  Datum = datum(coords)
+  print(io, "$name{$Datum} coordinates")
+end
+
 function Base.show(io::IO, coords::CRS)
   name = prettyname(coords)
-  print(io, "$name(")
+  Datum = datum(coords)
+  print(io, "$name{$Datum}(")
   printfields(io, coords, compact=true)
   print(io, ")")
 end
 
 function Base.show(io::IO, ::MIME"text/plain", coords::CRS)
-  name = prettyname(coords)
-  print(io, "$name coordinates")
+  summary(io, coords)
   printfields(io, coords)
 end
 
