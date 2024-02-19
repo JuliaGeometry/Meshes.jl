@@ -50,6 +50,23 @@ viz(fig[1,2], mesh)
 fig
 ```
 
+## Affine
+
+```@docs
+Affine
+```
+
+```@example transforms
+grid = CartesianGrid(10, 10)
+
+mesh = grid |> Affine(Angle2d(π/4), [10., 20.])
+
+fig = Mke.Figure(size = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
+```
+
 ## Scale
 
 ```@docs
