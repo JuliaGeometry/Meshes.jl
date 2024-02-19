@@ -150,8 +150,6 @@ export
 
   # coordinates
   CRS,
-  EPSG,
-  ESRI,
   Cartesian,
   Polar,
   Cylindrical,
@@ -168,6 +166,10 @@ export
   OrthoNorth,
   OrthoSouth,
   datum,
+
+  # codes
+  EPSG,
+  ESRI,
 
   # geometries
   Geometry,
