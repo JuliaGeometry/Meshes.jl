@@ -154,6 +154,8 @@ export
   Polar,
   Cylindrical,
   Spherical,
+  GeodeticLatLon,
+  GeocentricLatLon,
   LatLon,
   Mercator,
   WebMercator,

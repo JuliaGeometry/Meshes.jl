@@ -170,21 +170,21 @@
     @test_throws ArgumentError Spherical(T(1) * u"s", T(1) * u"s", T(1) * u"s")
   end
 
-  @testset "LatLon" begin
+  @testset "GeodeticLatLon" begin
     @test LatLon(T(1), T(1)) == LatLon(T(1) * u"°", T(1) * u"°")
     @test LatLon(T(1) * u"°", 1 * u"°") == LatLon(T(1) * u"°", T(1) * u"°")
     @test LatLon(T(π / 4) * u"rad", T(π / 4) * u"rad") ≈ LatLon(T(45) * u"°", T(45) * u"°")
 
     c = LatLon(T(1), T(1))
-    @test sprint(show, c) == "LatLon{WGS84}(lat: 1.0°, lon: 1.0°)"
+    @test sprint(show, c) == "GeodeticLatLon{WGS84}(lat: 1.0°, lon: 1.0°)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLon{WGS84} coordinates
+      GeodeticLatLon{WGS84} coordinates
       ├─ lat: 1.0f0°
       └─ lon: 1.0f0°"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLon{WGS84} coordinates
+      GeodeticLatLon{WGS84} coordinates
       ├─ lat: 1.0°
       └─ lon: 1.0°"""
     end
@@ -194,6 +194,32 @@
     @test_throws ArgumentError LatLon(T(1) * u"s", T(1) * u"°")
     @test_throws ArgumentError LatLon(T(1) * u"°", T(1) * u"s")
     @test_throws ArgumentError LatLon(T(1) * u"s", T(1) * u"s")
+  end
+
+  @testset "GeocentricLatLon" begin
+    @test GeocentricLatLon(T(1), T(1)) == GeocentricLatLon(T(1) * u"°", T(1) * u"°")
+    @test GeocentricLatLon(T(1) * u"°", 1 * u"°") == GeocentricLatLon(T(1) * u"°", T(1) * u"°")
+    @test GeocentricLatLon(T(π / 4) * u"rad", T(π / 4) * u"rad") ≈ GeocentricLatLon(T(45) * u"°", T(45) * u"°")
+
+    c = GeocentricLatLon(T(1), T(1))
+    @test sprint(show, c) == "GeocentricLatLon{WGS84}(lat: 1.0°, lon: 1.0°)"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      GeocentricLatLon{WGS84} coordinates
+      ├─ lat: 1.0f0°
+      └─ lon: 1.0f0°"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      GeocentricLatLon{WGS84} coordinates
+      ├─ lat: 1.0°
+      └─ lon: 1.0°"""
+    end
+
+    # error: invalid units for coordinates
+    @test_throws ArgumentError GeocentricLatLon(T(1), T(1) * u"°")
+    @test_throws ArgumentError GeocentricLatLon(T(1) * u"s", T(1) * u"°")
+    @test_throws ArgumentError GeocentricLatLon(T(1) * u"°", T(1) * u"s")
+    @test_throws ArgumentError GeocentricLatLon(T(1) * u"s", T(1) * u"s")
   end
 
   @testset "Mercator" begin
@@ -624,6 +650,44 @@
       c2 = Spherical(T(√3), atan(T(√2)), T(π / 4))
       @inferred convert(Spherical, c1)
       @inferred convert(Cartesian, c2)
+    end
+
+    @testset "GeodeticLatLon <> GeocentricLatLon" begin
+      c1 = LatLon(T(30), T(40))
+      c2 = convert(GeocentricLatLon{WGS84}, c1)
+      @test c2 ≈ GeocentricLatLon(T(29.833635809829065), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(35), T(40))
+      c2 = convert(GeocentricLatLon{WGS84}, c1)
+      @test c2 ≈ GeocentricLatLon(T(34.819388702349606), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(40), T(40))
+      c2 = convert(GeocentricLatLon{WGS84}, c1)
+      @test c2 ≈ GeocentricLatLon(T(39.810610551928434), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(30), T(40))
+      c2 = convert(GeocentricLatLon{WGS84}, c1)
+      @test c2 ≈ GeocentricLatLon(-T(29.833635809829065), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(35), T(40))
+      c2 = convert(GeocentricLatLon{WGS84}, c1)
+      @test c2 ≈ GeocentricLatLon(-T(34.819388702349606), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(40), T(40))
+      c2 = convert(GeocentricLatLon{WGS84}, c1)
+      @test c2 ≈ GeocentricLatLon(-T(39.810610551928434), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
     end
 
     @testset "LatLon <> Mercator" begin
