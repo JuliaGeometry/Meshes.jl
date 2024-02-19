@@ -32,3 +32,10 @@ function traverse(grid::Grid{Dim}, ::MultiGridPath) where {Dim}
 
   path
 end
+
+function traverse(domain::SubGrid, path::MultiGridPath) where {Dim,T}
+  inds = traverse(parent(domain), path)
+  pinds = parentindices(domain)
+  filter!(∈(pinds), inds)
+  inds
+end

@@ -66,6 +66,10 @@
     cgrid = CartesianGrid{T}(4, 4)
     rgrid = RectilinearGrid(T.(0:4), T.(0:4))
     @test traverse(cgrid, path) == traverse(rgrid, path)
+
+    grid = CartesianGrid{T}(3, 4)
+    vgrid = view(grid, 3:10)
+    @test traverse(vgrid, path) == [3, 10, 7, 8, 9, 4, 5, 6]
   end
 
   @testset "Miscellaneous" begin
