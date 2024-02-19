@@ -19,6 +19,9 @@ end
 # specialize constructor to avoid infinite loops
 SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[inds])
 
+# alias for dispatch
+const SubGrid{Dim,T} = SubDomain{Dim,T,<:Grid{Dim,T}}
+
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
