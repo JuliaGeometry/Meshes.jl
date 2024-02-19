@@ -57,6 +57,11 @@ function Base.isapprox(coords₁::C, coords₂::C; kwargs...) where {C<:Cartesia
   all(isapprox(c₁, c₂; kwargs...) for (c₁, c₂) in zip(tup₁, tup₂))
 end
 
+function Base.summary(io::IO, coords::Cartesian) 
+  Datum = datum(coords)
+  print(io, "Cartesian{$Datum} coordinates")
+end
+
 function Base.show(io::IO, coords::Cartesian)
   Datum = datum(coords)
   print(io, "Cartesian{$Datum}(")
@@ -65,8 +70,7 @@ function Base.show(io::IO, coords::Cartesian)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", coords::Cartesian)
-  Datum = datum(coords)
-  print(io, "Cartesian{$Datum} coordinates")
+  summary(io, coords)
   printfields(io, _coords(coords), _fnames(coords))
 end
 
