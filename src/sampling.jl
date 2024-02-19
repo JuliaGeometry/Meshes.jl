@@ -16,7 +16,7 @@ Sample elements or points from geometric `object`
 with `method`. Optionally, specify random number
 generator `rng`.
 """
-sample(object, method::SamplingMethod) = sample(Random.GLOBAL_RNG, object, method)
+sample(object, method::SamplingMethod) = sample(Random.default_rng(), object, method)
 
 """
     DiscreteSamplingMethod
@@ -77,6 +77,6 @@ Utility method that calls the `sample` function using `WeightedSampling(size, we
 If `weights` is not defined, this is equivalent to using `UniformSampling(size; replace, ordered)`.
 """
 sample(domain::Domain, size::Int, weights=nothing; kwargs...) =
-  sample(Random.GLOBAL_RNG, domain, size, weights; kwargs...)
+  sample(Random.default_rng(), domain, size, weights; kwargs...)
 sample(rng::AbstractRNG, domain::Domain, size::Int, weights=nothing; kwargs...) =
   sample(rng, domain, WeightedSampling(size, weights; kwargs...))

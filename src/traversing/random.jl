@@ -12,6 +12,6 @@ struct RandomPath{R<:AbstractRNG} <: Path
   rng::R
 end
 
-RandomPath() = RandomPath(Random.GLOBAL_RNG)
+RandomPath() = RandomPath(Random.default_rng())
 
 traverse(domain, path::RandomPath) = randperm(path.rng, nelements(domain))

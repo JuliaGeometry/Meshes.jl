@@ -31,7 +31,7 @@ struct FIST{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
   shuffle::Bool
 end
 
-FIST(rng=Random.GLOBAL_RNG; shuffle=true) = FIST(rng, shuffle)
+FIST(rng=Random.default_rng(); shuffle=true) = FIST(rng, shuffle)
 
 function discretizewithin(ring::Ring{2}, method::FIST)
   # helper function to shuffle ears

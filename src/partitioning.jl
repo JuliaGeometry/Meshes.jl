@@ -15,7 +15,7 @@ abstract type PartitionMethod end
 Partition `object` with partition `method`.
 Optionally, specify random number generator `rng`.
 """
-partition(object, method::PartitionMethod) = partition(Random.GLOBAL_RNG, object, method)
+partition(object, method::PartitionMethod) = partition(Random.default_rng(), object, method)
 
 function partition(rng::AbstractRNG, object, method::PartitionMethod)
   subsets, metadata = partitioninds(rng, object, method)
