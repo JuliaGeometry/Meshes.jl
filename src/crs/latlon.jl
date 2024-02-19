@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 abstract type LatitudeLongitude{Datum} <: CRS{Datum} end
 
 """
