@@ -179,12 +179,25 @@
     @test sprint(show, c) == "LatLon{WGS84}(lat: 1.0°, lon: 1.0°)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLon{WGS84} coordinates
+      (Geodetic) LatLon{WGS84} coordinates
       ├─ lat: 1.0f0°
       └─ lon: 1.0f0°"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
-      LatLon{WGS84} coordinates
+      (Geodetic) LatLon{WGS84} coordinates
+      ├─ lat: 1.0°
+      └─ lon: 1.0°"""
+    end
+
+    c = LatLon{Geocentric}(T(1), T(1))
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), c) == """
+      (Geocentric) LatLon{WGS84} coordinates
+      ├─ lat: 1.0f0°
+      └─ lon: 1.0f0°"""
+    else
+      @test sprint(show, MIME("text/plain"), c) == """
+      (Geocentric) LatLon{WGS84} coordinates
       ├─ lat: 1.0°
       └─ lon: 1.0°"""
     end
@@ -626,6 +639,44 @@
       @inferred convert(Cartesian, c2)
     end
 
+    @testset "Geodetic <> Geocentric" begin
+      c1 = LatLon(T(30), T(40))
+      c2 = convert(LatLon{Geocentric,WGS84}, c1)
+      @test c2 ≈ LatLon{Geocentric}(T(29.833635809829065), T(40))
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(35), T(40))
+      c2 = convert(LatLon{Geocentric,WGS84}, c1)
+      @test c2 ≈ LatLon{Geocentric}(T(34.819388702349606), T(40))
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(40), T(40))
+      c2 = convert(LatLon{Geocentric,WGS84}, c1)
+      @test c2 ≈ LatLon{Geocentric}(T(39.810610551928434), T(40))
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(30), T(40))
+      c2 = convert(LatLon{Geocentric,WGS84}, c1)
+      @test c2 ≈ LatLon{Geocentric}(-T(29.833635809829065), T(40))
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(35), T(40))
+      c2 = convert(LatLon{Geocentric,WGS84}, c1)
+      @test c2 ≈ LatLon{Geocentric}(-T(34.819388702349606), T(40))
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(40), T(40))
+      c2 = convert(LatLon{Geocentric,WGS84}, c1)
+      @test c2 ≈ LatLon{Geocentric}(-T(39.810610551928434), T(40))
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
+      @test c3 ≈ c1
+    end
+
     @testset "LatLon <> Mercator" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(Mercator{WGS84}, c1)
@@ -652,64 +703,64 @@
       c1 = LatLon(T(45), T(90))
       c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), T(5621521.486192066))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(T(10018754.171394622), -T(5621521.486192066))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(-T(10018754.171394622), T(5621521.486192066))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(WebMercator{WGS84}, c1)
       @test c2 ≈ WebMercator(-T(10018754.171394622), -T(5621521.486192066))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = WebMercator(T(10018754.171394622), T(5621521.486192066))
       @inferred convert(WebMercator{WGS84}, c1)
-      @inferred convert(LatLon{WGS84}, c2)
+      @inferred convert(LatLon{Geodetic,WGS84}, c2)
     end
 
     @testset "LatLon <> PlateCarree" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(T(10018754.171394622), T(5009377.085697311))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(T(10018754.171394622), -T(5009377.085697311))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(-T(10018754.171394622), T(5009377.085697311))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(PlateCarree{WGS84}, c1)
       @test c2 ≈ PlateCarree(-T(10018754.171394622), -T(5009377.085697311))
-      c3 = convert(LatLon{WGS84}, c2)
+      c3 = convert(LatLon{Geodetic,WGS84}, c2)
       @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
       c2 = PlateCarree(T(10018754.171394622), T(5009377.085697311))
       @inferred convert(PlateCarree{WGS84}, c1)
-      @inferred convert(LatLon{WGS84}, c2)
+      @inferred convert(LatLon{Geodetic,WGS84}, c2)
     end
 
     @testset "LatLon <> Lambert" begin

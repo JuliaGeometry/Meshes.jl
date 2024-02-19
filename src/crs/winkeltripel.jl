@@ -39,7 +39,7 @@ const WinkelTripel{Datum} = Winkel{50.467u"°",Datum}
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{Winkel{lat₁,Datum}}, coords::LatLon{Datum}) where {lat₁,Datum}
+function Base.convert(::Type{Winkel{lat₁,Datum}}, coords::LatLon{Geodetic,Datum}) where {lat₁,Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)

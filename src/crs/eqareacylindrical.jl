@@ -87,7 +87,7 @@ const GallPeters{Datum} = EqualAreaCylindrical{45.0u"°",Datum}
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::LatLon{Datum}) where {latₜₛ,Datum}
+function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::LatLon{Geodetic,Datum}) where {latₜₛ,Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)

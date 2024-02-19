@@ -165,6 +165,8 @@ export
   Robinson,
   OrthoNorth,
   OrthoSouth,
+  Geodetic,
+  Geocentric,
   datum,
 
   # codes
