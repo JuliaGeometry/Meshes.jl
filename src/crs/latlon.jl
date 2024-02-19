@@ -7,7 +7,9 @@ abstract type LatitudeLongitude{Datum} <: CRS{Datum} end
     GeodeticLatLon{Datum}(lat, lon)
 
 Geodetic latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree)
-with a given `Datum` (default to `WGS84`). `LatLon` is an alias to `GeocentricLatLon` and the recommended constructor.
+with a given `Datum` (default to `WGS84`).
+
+`LatLon` is an alias to `GeodeticLatLon`.
 
 ## Examples
 
@@ -17,8 +19,6 @@ LatLon(45u"°", 45u"°") # integers are converted converted to floats
 LatLon((π/4)u"rad", (π/4)u"rad") # radians are converted to degrees
 LatLon(45.0u"°", 45.0u"°")
 LatLon{WGS84}(45.0u"°", 45.0u"°")
-GeodeticLatLon(45.0u"°", 45.0u"°")
-GeodeticLatLon{WGS84}(45.0u"°", 45.0u"°")
 ```
 
 See [EPSG:4326](https://epsg.io/4326).
