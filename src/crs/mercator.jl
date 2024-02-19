@@ -37,7 +37,7 @@ Mercator(args...) = Mercator{WGS84}(args...)
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{Mercator{Datum}}, coords::LatLon{Geodetic,Datum}) where {Datum}
+function Base.convert(::Type{Mercator{Datum}}, coords::LatLon{Datum}) where {Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)

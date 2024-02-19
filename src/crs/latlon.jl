@@ -1,15 +1,13 @@
-@enum LatLonKind begin
-  Geodetic
-  Geocentric
-end
+abstract type LatitudeLongitude{Datum} <: CRS{Datum} end
 
 """
     LatLon(lat, lon)
-    LatLon{Kind}(lat, lon)
-    LatLon{Kind,Datum}(lat, lon)
+    LatLon{Datum}(lat, lon)
+    GeodeticLatLon(lat, lon)
+    GeodeticLatLon{Datum}(lat, lon)
 
-Latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree)
-with a specified `Kind` (`Geodetic`, the default, or `Geocentric`) and a given `Datum` (default to `WGS84`).
+Geodetic latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree)
+with a given `Datum` (default to `WGS84`). `LatLon` is an alias to `GeocentricLatLon` and the recommended constructor.
 
 ## Examples
 
@@ -18,43 +16,72 @@ LatLon(45, 45) # add default units
 LatLon(45u"°", 45u"°") # integers are converted converted to floats
 LatLon((π/4)u"rad", (π/4)u"rad") # radians are converted to degrees
 LatLon(45.0u"°", 45.0u"°")
-LatLon{Geocentric}(45.0u"°", 45.0u"°")
-LatLon{Geodetic,WGS84}(45.0u"°", 45.0u"°")
+LatLon{WGS84}(45.0u"°", 45.0u"°")
+GeodeticLatLon(45.0u"°", 45.0u"°")
+GeodeticLatLon{WGS84}(45.0u"°", 45.0u"°")
 ```
 
 See [EPSG:4326](https://epsg.io/4326).
 """
-struct LatLon{Kind,Datum,D<:Deg} <: CRS{Datum}
+struct GeodeticLatLon{Datum,D<:Deg} <: LatitudeLongitude{Datum}
   lat::D
   lon::D
-  LatLon{Kind,Datum}(lat::D, lon::D) where {Kind,Datum,D<:Deg} = new{Kind,Datum,float(D)}(lat, lon)
+  GeodeticLatLon{Datum}(lat::D, lon::D) where {Datum,D<:Deg} = new{Datum,float(D)}(lat, lon)
 end
 
-LatLon{Kind,Datum}(lat::Deg, lon::Deg) where {Kind,Datum} = LatLon{Kind,Datum}(promote(lat, lon)...)
-LatLon{Kind,Datum}(lat::Rad, lon::Rad) where {Kind,Datum} = LatLon{Kind,Datum}(rad2deg(lat), rad2deg(lon))
-LatLon{Kind,Datum}(lat::Number, lon::Number) where {Kind,Datum} =
-  LatLon{Kind,Datum}(addunit(lat, u"°"), addunit(lon, u"°"))
+GeodeticLatLon{Datum}(lat::Deg, lon::Deg) where {Datum} = GeodeticLatLon{Datum}(promote(lat, lon)...)
+GeodeticLatLon{Datum}(lat::Rad, lon::Rad) where {Datum} = GeodeticLatLon{Datum}(rad2deg(lat), rad2deg(lon))
+GeodeticLatLon{Datum}(lat::Number, lon::Number) where {Datum} =
+  GeodeticLatLon{Datum}(addunit(lat, u"°"), addunit(lon, u"°"))
 
-LatLon{Kind}(args...) where {Kind} = LatLon{Kind,WGS84}(args...)
+GeodeticLatLon(args...) = GeodeticLatLon{WGS84}(args...)
 
-LatLon(args...) = LatLon{Geodetic}(args...)
+const LatLon = GeodeticLatLon
 
-Base.summary(io::IO, ::LatLon{Kind,Datum}) where {Kind,Datum} = print(io, "($Kind) LatLon{$Datum} coordinates")
+"""
+    GeocentricLatLon(lat, lon)
+    GeocentricLatLon{Datum}(lat, lon)
+
+Geocentric latitude `lat ∈ [-90°,90°]` and longitude `lon ∈ [-180°,180°]` in angular units (default to degree)
+with a given `Datum` (default to `WGS84`).
+
+## Examples
+
+```julia
+GeocentricLatLon(45, 45) # add default units
+GeocentricLatLon(45u"°", 45u"°") # integers are converted converted to floats
+GeocentricLatLon((π/4)u"rad", (π/4)u"rad") # radians are converted to degrees
+GeocentricLatLon(45.0u"°", 45.0u"°")
+GeocentricLatLon{WGS84}(45.0u"°", 45.0u"°")
+```
+"""
+struct GeocentricLatLon{Datum,D<:Deg} <: LatitudeLongitude{Datum}
+  lat::D
+  lon::D
+  GeocentricLatLon{Datum}(lat::D, lon::D) where {Datum,D<:Deg} = new{Datum,float(D)}(lat, lon)
+end
+
+GeocentricLatLon{Datum}(lat::Deg, lon::Deg) where {Datum} = GeocentricLatLon{Datum}(promote(lat, lon)...)
+GeocentricLatLon{Datum}(lat::Rad, lon::Rad) where {Datum} = GeocentricLatLon{Datum}(rad2deg(lat), rad2deg(lon))
+GeocentricLatLon{Datum}(lat::Number, lon::Number) where {Datum} =
+  GeocentricLatLon{Datum}(addunit(lat, u"°"), addunit(lon, u"°"))
+
+GeocentricLatLon(args...) = GeocentricLatLon{WGS84}(args...)
 
 # ------------
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{LatLon{Geocentric,Datum}}, (; lat, lon)::LatLon{Geodetic,Datum}) where {Datum}
+function Base.convert(::Type{GeocentricLatLon{Datum}}, (; lat, lon)::LatLon{Datum}) where {Datum}
   l = ustrip(lat)
   e² = oftype(l, eccentricity²(ellipsoid(Datum)))
   lat′ = rad2deg(atan((1 - e²) * tan(lat)))
-  LatLon{Geocentric,Datum}(lat′ * u"°", lon)
+  GeocentricLatLon{Datum}(lat′ * u"°", lon)
 end
 
-function Base.convert(::Type{LatLon{Geodetic,Datum}}, (; lat, lon)::LatLon{Geocentric,Datum}) where {Datum}
+function Base.convert(::Type{LatLon{Datum}}, (; lat, lon)::GeocentricLatLon{Datum}) where {Datum}
   l = ustrip(lat)
   e² = oftype(l, eccentricity²(ellipsoid(Datum)))
   lat′ = rad2deg(atan(1 / (1 - e²) * tan(lat)))
-  LatLon{Geodetic,Datum}(lat′ * u"°", lon)
+  LatLon{Datum}(lat′ * u"°", lon)
 end

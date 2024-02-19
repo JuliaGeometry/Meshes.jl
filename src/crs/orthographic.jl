@@ -65,7 +65,7 @@ const OrthoSouth{Datum} = Orthographic{-90.0u"°",0.0u"°",false,Datum}
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{Orthographic{lat₀,lon₀,false,Datum}}, coords::LatLon{Geodetic,Datum}) where {lat₀,lon₀,Datum}
+function Base.convert(::Type{Orthographic{lat₀,lon₀,false,Datum}}, coords::LatLon{Datum}) where {lat₀,lon₀,Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
@@ -88,7 +88,7 @@ function Base.convert(::Type{Orthographic{lat₀,lon₀,false,Datum}}, coords::L
   Orthographic{lat₀,lon₀,false,Datum}(x * u"m", y * u"m")
 end
 
-function Base.convert(::Type{Orthographic{lat₀,lon₀,true,Datum}}, coords::LatLon{Geodetic,Datum}) where {lat₀,lon₀,Datum}
+function Base.convert(::Type{Orthographic{lat₀,lon₀,true,Datum}}, coords::LatLon{Datum}) where {lat₀,lon₀,Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)

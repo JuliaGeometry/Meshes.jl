@@ -154,6 +154,8 @@ export
   Polar,
   Cylindrical,
   Spherical,
+  GeodeticLatLon,
+  GeocentricLatLon,
   LatLon,
   Mercator,
   WebMercator,
@@ -165,8 +167,6 @@ export
   Robinson,
   OrthoNorth,
   OrthoSouth,
-  Geodetic,
-  Geocentric,
   datum,
 
   # codes

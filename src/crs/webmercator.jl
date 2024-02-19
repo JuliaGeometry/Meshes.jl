@@ -37,7 +37,7 @@ WebMercator(args...) = WebMercator{WGS84}(args...)
 # CONVERSIONS
 # ------------
 
-function Base.convert(::Type{WebMercator{Datum}}, coords::LatLon{Geodetic,Datum}) where {Datum}
+function Base.convert(::Type{WebMercator{Datum}}, coords::LatLon{Datum}) where {Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
@@ -48,12 +48,12 @@ function Base.convert(::Type{WebMercator{Datum}}, coords::LatLon{Geodetic,Datum}
   WebMercator{Datum}(x * u"m", y * u"m")
 end
 
-function Base.convert(::Type{LatLon{Geodetic,Datum}}, coords::WebMercator{Datum}) where {Datum}
+function Base.convert(::Type{LatLon{Datum}}, coords::WebMercator{Datum}) where {Datum}
   🌎 = ellipsoid(Datum)
   x = coords.x
   y = coords.y
   a = oftype(x, majoraxis(🌎))
   λ = x / a
   ϕ = atan(sinh(y / a))
-  LatLon{Geodetic,Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end

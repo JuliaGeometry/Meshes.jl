@@ -100,7 +100,7 @@ function _V(C, z)
   c₀ + z * (c₁ + z * (c₂ + z * c₃))
 end
 
-function Base.convert(::Type{Robinson{Datum}}, coords::LatLon{Geodetic,Datum}) where {Datum}
+function Base.convert(::Type{Robinson{Datum}}, coords::LatLon{Datum}) where {Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
   ϕ = deg2rad(coords.lat)
