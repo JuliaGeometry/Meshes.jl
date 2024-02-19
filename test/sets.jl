@@ -22,6 +22,13 @@
     push!(geoms, Segment(P2(1, 1), P2(0, 0)))
     gset = GeometrySet(geoms)
     @test eltype(gset) <: Segment{2,T}
+
+    # conversion
+    grid = CartesianGrid{T}(10, 10)
+    gset = convert(GeometrySet, grid)
+    @test gset isa GeometrySet
+    @test nelements(gset) == 100
+    @test eltype(gset) <: Quadrangle
   end
 
   @testset "PointSet" begin

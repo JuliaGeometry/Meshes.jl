@@ -142,3 +142,15 @@ end
 include("sets.jl")
 include("mesh.jl")
 include("trajectories.jl")
+
+# ------------
+# CONVERSIONS
+# ------------
+
+Base.convert(::Type{GeometrySet}, d::Domain) = GeometrySet(collect(d))
+
+Base.convert(::Type{SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
+
+Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid(XYZ(g))
+
+Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid(xyz(g))
