@@ -893,6 +893,8 @@
     @test nvertices(s) == 3
     @test paramdim(s) == 2
     @test issimplex(s)
+    @test s ≈ s
+    @test !(s ≈ Simplex(P3(1, 1, 1), P3(2, 2, 2), P3(3, 3, 3)))
 
     # error: number of vertices must be equal to rank K plus one
     pts = ntuple(i -> rand(P3), 3)
