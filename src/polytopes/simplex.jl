@@ -20,19 +20,14 @@ end
 Simplex(vertices::Point{Dim,T}...) where {Dim,T} = Simplex(vertices)
 Simplex(vertices::Tuple...) = Simplex(Point.(vertices))
 
-# Parametric constructor required for [`materialize`](@ref).
-function Simplex{K}(vertices::NTuple{N}) where {K,N}
-  N == K + 1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
-  Simplex(vertices...)
-end
-function Simplex{K}(vertices::Vararg{Point,N}) where {K,N}
-  N == K + 1 || throw(ArgumentError("Number of vertices must be rank K plus one."))
-  Simplex(vertices...)
+function Simplex{K}(vertices::NTuple{N,Point{Dim,T}}) where {K,Dim,T,N}
+  N == K + 1 || throw(ArgumentError("number of vertices must be equal to rank K plus one"))
+  K ≤ Dim || throw(ArgumentError("rank K must be less or equal to embedding dimension"))
+  Simplex{K,Dim,T,N}(vertices)
 end
 
-# ---------------------
-# HIGH-LEVEL INTERFACE
-# ---------------------
+Simplex{K}(vertices::Point{Dim,T}...) where {K,Dim,T} = Simplex{K}(vertices)
+Simplex{K}(vertices::Tuple...) where {K} = Simplex{K}(Point.(vertices))
 
 nvertices(::Type{<:Simplex{K}}) where {K} = K + 1
 

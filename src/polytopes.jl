@@ -189,9 +189,9 @@ include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
 include("polytopes/pyramid.jl")
 
-# -----------------------
+# --------
 # SIMPLEX
-# -----------------------
+# --------
 
 include("polytopes/simplex.jl")
 
