@@ -890,9 +890,9 @@
     @test vertices(Simplex(pts)) == pts
 
     s = Simplex(P3(1, 2, 3), P3(1, 2, 4), P3(1, 3, 4))
-    @test nvertices(s) == 3
-    @test paramdim(s) == 2
     @test issimplex(s)
+    @test paramdim(s) == 2
+    @test nvertices(s) == 3
     @test s ≈ s
     @test !(s ≈ Simplex(P3(1, 1, 1), P3(2, 2, 2), P3(3, 3, 3)))
 
