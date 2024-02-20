@@ -5,7 +5,7 @@
 """
     Ngon(p₁, p₂, ..., pₙ)
 
-A N-gon is a polygon with `N` vertices `p₁`, `p₂`, ..., `pₙ`
+A N-gon is a polygon with `N > 2` vertices `p₁`, `p₂`, ..., `pₙ`
 oriented counter-clockwise (CCW). In this case the number of
 vertices is fixed and known at compile time. Examples of N-gon
 are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
@@ -19,8 +19,6 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
-
-- Only N-gons with number of vertices greater than or equal to 3 (N≥3) are allowed.
 """
 struct Ngon{N,Dim,T} <: Polygon{Dim,T}
   vertices::NTuple{N,Point{Dim,T}}
