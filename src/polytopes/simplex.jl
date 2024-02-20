@@ -13,7 +13,7 @@ end
 
 function Simplex(vertices::NTuple{N,Point{Dim,T}}) where {Dim,T,N}
   K = N - 1
-  K ≤ Dim || throw(ArgumentError("Simplex rank (number of vertices - 1) must be less or equal to embedding dimension."))
+  K ≤ Dim || throw(ArgumentError("rank (number of vertices minus one) must be less or equal to embedding dimension"))
   Simplex{K,Dim,T,N}(vertices)
 end
 
@@ -31,6 +31,5 @@ Simplex{K}(vertices::Tuple...) where {K} = Simplex{K}(Point.(vertices))
 
 nvertices(::Type{<:Simplex{K}}) where {K} = K + 1
 
-function Base.isapprox(p₁::SimplexT, p₂::SimplexT; kwargs...) where {SimplexT<:Simplex}
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(vertices(p₁), vertices(p₂)))
-end
+Base.isapprox(s₁::Simplex, s₂::Simplex; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(vertices(s₁), vertices(s₂)))

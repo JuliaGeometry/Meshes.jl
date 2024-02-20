@@ -48,8 +48,8 @@ indices(c::Connectivity) = c.indices
 Connect a list of `indices` from a global vector of [`Point`](@ref)
 into a [`Polytope`](@ref) of type `PL`.
 
-The type `PL` can be a [`Ngon`](@ref) in which case the length of
-the indices is used to identify the actual N-gon type (e.g. Triangle).
+The type `PL` can be a [`Ngon`](@ref) or [`Simplex`](@ref) in which case the length of
+the indices is used to identify the actual polytope type.
 
 Finally, the type `PL` can be ommitted. In this case, the indices are
 assumed to be connected as a [`Ngon`](@ref) or as a [`Segment`](@ref).
