@@ -28,6 +28,7 @@ import Base: +, -, *
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
+import Optim
 
 # Transforms API
 import TransformsBase: Transform, →

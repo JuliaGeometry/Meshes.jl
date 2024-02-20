@@ -48,3 +48,44 @@ function Base.convert(::Type{Mercator{Datum}}, coords::LatLon{Datum}) where {Dat
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
   Mercator{Datum}(x * u"m", y * u"m")
 end
+
+function newton(f, df, x₀, niter)
+  x = x₀
+  for _ in 1:niter
+    x = x - f(x) / df(x)
+  end
+  x
+end
+
+function Base.convert(::Type{LatLon{Datum}}, coords::Mercator{Datum}) where {Datum}
+  🌎 = ellipsoid(Datum)
+  x = coords.x
+  y = coords.y
+  a = oftype(x, majoraxis(🌎))
+  e = convert(numtype(x), eccentricity(🌎))
+  e² = convert(numtype(x), eccentricity²(🌎))
+
+  # τ′(τ)
+  function f(x)
+    τ = x[1]
+    σ = sinh(e * atanh(e * τ / sqrt(1 + τ^2)))
+    τ * sqrt(1 + σ^2) - σ * sqrt(1 + τ^2)
+  end
+
+  # dτ′/dτ
+  function df(x)
+    τ = x[1]
+    ((1 - e²) * sqrt(1 + f(x)^2) * sqrt(1 + τ^2)) / (1 + (1 - e²) * τ^2)
+  end
+
+  ψ = y / a
+  τ′ = sinh(ψ)
+  τ₀ = abs(τ′) > 70 ? τ′ * exp(e * atanh(e)) : τ′ / (1 - e²)
+  sol = Optim.optimize(x -> f(x) - τ′, df, [τ₀], Optim.Newton(); inplace=false)
+  τ = Optim.minimizer(sol)[1]
+
+  λ = x / a
+  ϕ = atan(τ)
+
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+end
