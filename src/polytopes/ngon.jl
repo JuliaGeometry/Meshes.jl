@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    Ngon(p1, p2, ..., pN)
+    Ngon(p₁, p₂, ..., pₙ)
 
-A N-gon is a polygon with `N` vertices `p1`, `p2`, ..., `pN`
+A N-gon is a polygon with `N` vertices `p₁`, `p₂`, ..., `pₙ`
 oriented counter-clockwise (CCW). In this case the number of
 vertices is fixed and known at compile time. Examples of N-gon
 are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
@@ -19,17 +19,26 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
+
+- Only N-gons with number of vertices greater than or equal to 3 (N≥3) are allowed.
 """
 struct Ngon{N,Dim,T} <: Polygon{Dim,T}
   vertices::NTuple{N,Point{Dim,T}}
+  function Ngon{N,Dim,T}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T}
+    if N < 3
+      throw(ArgumentError("the number of vertices must be greater than or equal to 3"))
+    end
+    new(vertices)
+  end
 end
 
-Ngon(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
-Ngon(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
-
-Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon(Point.(vertices))
-Ngon{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
 Ngon{N}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N}(vertices)
+Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon{N}(Point.(vertices))
+
+Ngon(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
+Ngon(vertices::Point{Dim,T}...) where {Dim,T} = Ngon(vertices)
+Ngon(vertices::Tuple...) = Ngon(Point.(vertices))
 
 # type aliases for convenience
 const Triangle = Ngon{3}

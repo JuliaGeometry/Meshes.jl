@@ -276,7 +276,16 @@
   end
 
   @testset "Ngons" begin
+    pts = (P2(0, 0), P2(1, 0), P2(0, 1))
+    tups = (T.((0, 0)), T.((1, 0)), T.((0, 1)))
     @test paramdim(Ngon) == 2
+    @test vertices(Ngon(pts)) == pts
+    @test vertices(Ngon(pts...)) == pts
+    @test vertices(Ngon(tups...)) == pts
+    @test vertices(Ngon{3}(pts)) == pts
+    @test vertices(Ngon{3}(pts...)) == pts
+    @test vertices(Ngon{3}(tups...)) == pts
+
     NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
     NVERT = 3:10
     for (i, NGON) in enumerate(NGONS)
@@ -292,6 +301,10 @@
       @test embeddim(n) == 3
       @test coordtype(n) === T
     end
+
+    # error: the number of vertices must be greater than or equal to 3
+    @test_throws ArgumentError Ngon(P2(0, 0), P2(1, 1))
+    @test_throws ArgumentError Ngon{2}(P2(0, 0), P2(1, 1))
 
     # ---------
     # TRIANGLE
