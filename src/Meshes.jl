@@ -232,6 +232,7 @@ export
 
   # polytopes
   Polytope,
+  Simplex,
   Chain,
   Segment,
   Rope,
