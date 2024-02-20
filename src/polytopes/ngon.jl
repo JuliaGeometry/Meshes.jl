@@ -5,7 +5,7 @@
 """
     Ngon(p₁, p₂, ..., pₙ)
 
-A N-gon is a polygon with `N > 2` vertices `p₁`, `p₂`, ..., `pₙ`
+A N-gon is a polygon with `N ≥ 3` vertices `p₁`, `p₂`, ..., `pₙ`
 oriented counter-clockwise (CCW). In this case the number of
 vertices is fixed and known at compile time. Examples of N-gon
 are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
