@@ -14,7 +14,10 @@ struct Connectivity{PL<:Polytope,N}
   indices::NTuple{N,Int}
 
   function Connectivity{PL,N}(indices) where {PL,N}
-    @assert nvertices(PL) == N "invalid connectivity list"
+    @assert nvertices(PL) == N "cannot create a $PL with $N vertices"
+    if PL <: Ngon
+      @assert N ≥ 3 "Ngon requires 3 or more vertices"
+    end
     new(indices)
   end
 end

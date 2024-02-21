@@ -19,6 +19,9 @@
   @test_throws AssertionError connect((1, 2, 3, 4), Triangle)
   @test_throws AssertionError connect((1, 2, 3), Quadrangle)
 
+  # Ngon requires 3 or more vertices
+  @test_throws AssertionError connect((1, 2), Ngon)
+
   # heterogeneous collections
   c = connect.([(1, 2, 6, 5), (2, 4, 6), (4, 3, 5, 6), (1, 5, 3)], Ngon)
   @test c[1] isa Connectivity{Quadrangle}
