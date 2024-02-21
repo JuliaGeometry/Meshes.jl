@@ -14,7 +14,7 @@ using Random
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
 using StatsBase: AbstractWeights, Weights, quantile
-using Distances: PreMetric, Euclidean, Mahalanobis, evaluate
+using Distances: PreMetric, SqEuclidean, Euclidean, Mahalanobis, evaluate, pairwise
 using Rotations: Rotation, QuatRotation, Angle2d, rotation_between
 using NearestNeighbors: KDTree, BallTree, knn, inrange
 using Transducers: Filter, Map, TakeWhile, tcollect, ⨟

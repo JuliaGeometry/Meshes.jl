@@ -934,5 +934,18 @@
       ├─ Point(0.0, 1.0, 0.0)
       └─ Point(0.0, 0.0, 1.0)"""
     end
+
+    # measure
+    # Points forming a square with the first point in the center.
+    pts = [P3(0, 0, 0), P3(-1, -1, 0), P3(-1, 1, 0), P3(1, 1, 0), P3(1, -1, 0)]
+    simplicies = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], Simplex)
+    splx1 = materialize(simplicies[1], pts)
+    @test measure(splx1) ≈ 1.0
+    splx2 = materialize(connect((2, 3, 5), Simplex), pts)
+    @test measure(splx2) ≈ 2.0
+
+    # compare against Tetrahedon
+    pts = [P3(rand(3)) for _ in 1:4]
+    @test measure(Simplex(pts...)) ≈ measure(Tetrahedron(pts...))
   end
 end
