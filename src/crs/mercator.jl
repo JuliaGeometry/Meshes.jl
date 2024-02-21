@@ -70,7 +70,7 @@ function Base.convert(::Type{LatLon{Datum}}, coords::Mercator{Datum}) where {Dat
 
   ψ = y / a
   τ′ = sinh(ψ)
-  τ₀ = abs(τ′) > 70 ? τ′ * exp(e * atanh(e)) : τ′ / ome²
+  τ₀ = abs(τ′) > 70 ? (τ′ * exp(e * atanh(e))) : (τ′ / ome²)
   τ = newton(τ -> f(τ) - τ′, df, τ₀, maxiter=5)
 
   λ = x / a
