@@ -947,5 +947,21 @@
     # compare against Tetrahedon
     pts = [P3(rand(3)) for _ in 1:4]
     @test measure(Simplex(pts...)) ≈ measure(Tetrahedron(pts...))
+
+    # normal
+    let Dim = 4, N = 4
+      splx = Simplex(ntuple(i -> Point{Dim,T}(rand(T, Dim)), N))
+      n = normal(splx)
+      v0, vothers... = vertices(splx)
+      for v in vothers
+        @test (n' * (v - v0)) ≈ 0.0 atol = eps(T)
+      end
+    end
+
+    # Embedding dimension too low to construct normal vector.
+    let Dim = 3, N = 4
+      splx = Simplex(ntuple(i -> Point{Dim,T}(rand(T, Dim)), N))
+      @test_throws ArgumentError normal(splx)
+    end
   end
 end
