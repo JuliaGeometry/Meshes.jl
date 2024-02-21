@@ -72,11 +72,10 @@ include("dummy.jl")
 
 # list of tests
 testfiles = [
-  "tolerances.jl",
-  "vectors.jl",
   "datums.jl",
   "crs.jl",
   "codes.jl",
+  "vectors.jl",
   "primitives.jl",
   "polytopes.jl",
   "multigeoms.jl",
@@ -87,7 +86,7 @@ testfiles = [
   "subdomains.jl",
   "sets.jl",
   "mesh.jl",
-  "trajectories.jl",
+  "trajecs.jl",
   "utils.jl",
   "viewing.jl",
   "partitioning.jl",
@@ -114,7 +113,8 @@ testfiles = [
   "transforms.jl",
   "distances.jl",
   "supportfun.jl",
-  "matrices.jl"
+  "matrices.jl",
+  "tolerances.jl"
 ]
 
 # --------------------------------

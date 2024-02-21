@@ -142,7 +142,7 @@ end
 include("subdomains.jl")
 include("sets.jl")
 include("mesh.jl")
-include("trajectories.jl")
+include("trajecs.jl")
 
 # ------------
 # CONVERSIONS
