@@ -48,3 +48,33 @@ function Base.convert(::Type{Mercator{Datum}}, coords::LatLon{Datum}) where {Dat
   y = a * (asinh(tan(ϕ)) - e * atanh(e * sin(ϕ)))
   Mercator{Datum}(x * u"m", y * u"m")
 end
+
+function Base.convert(::Type{LatLon{Datum}}, coords::Mercator{Datum}) where {Datum}
+  🌎 = ellipsoid(Datum)
+  x = coords.x
+  y = coords.y
+  a = oftype(x, majoraxis(🌎))
+  e = convert(numtype(x), eccentricity(🌎))
+  e² = convert(numtype(x), eccentricity²(🌎))
+  ome² = 1 - e²
+
+  # τ′(τ)
+  function f(τ)
+    sqrt1τ² = sqrt(1 + τ^2)
+    σ = sinh(e * atanh(e * τ / sqrt1τ²))
+    τ * sqrt(1 + σ^2) - σ * sqrt1τ²
+  end
+
+  # dτ′/dτ
+  df(τ) = (ome² * sqrt(1 + f(τ)^2) * sqrt(1 + τ^2)) / (1 + ome² * τ^2)
+
+  ψ = y / a
+  τ′ = sinh(ψ)
+  τ₀ = abs(τ′) > 70 ? (τ′ * exp(e * atanh(e))) : (τ′ / ome²)
+  τ = newton(τ -> f(τ) - τ′, df, τ₀, maxiter=5)
+
+  λ = x / a
+  ϕ = atan(τ)
+
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+end

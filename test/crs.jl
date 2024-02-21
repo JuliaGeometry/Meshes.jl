@@ -694,22 +694,32 @@
       c1 = LatLon(T(45), T(90))
       c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), T(5591295.9185533915))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(T(10018754.171394622), -T(5591295.9185533915))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), T(5591295.9185533915))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(Mercator{WGS84}, c1)
       @test c2 ≈ Mercator(-T(10018754.171394622), -T(5591295.9185533915))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
+      c2 = Mercator(T(10018754.171394622), T(5591295.9185533915))
       @inferred convert(Mercator{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> WebMercator" begin
