@@ -60,7 +60,6 @@ include("toporelations.jl")
 
 # domains
 include("domains.jl")
-include("subdomains.jl")
 
 # utilities
 include("utils.jl")
@@ -117,19 +116,7 @@ include("projecting.jl")
 include("viz.jl")
 
 export
-  # vectors
-  Vec,
-  Vec1,
-  Vec2,
-  Vec3,
-  Vec1f,
-  Vec2f,
-  Vec3f,
-  ∠,
-  ⋅,
-  ×,
-
-  # ellipsoids
+  # revolution ellipsoids
   RevolutionEllipsoid,
   majoraxis,
   minoraxis,
@@ -172,6 +159,18 @@ export
   # codes
   EPSG,
   ESRI,
+
+  # vectors
+  Vec,
+  Vec1,
+  Vec2,
+  Vec3,
+  Vec1f,
+  Vec2f,
+  Vec3f,
+  ∠,
+  ⋅,
+  ×,
 
   # geometries
   Geometry,
@@ -318,6 +317,7 @@ export
 
   # domain traits
   Domain,
+  SubDomain,
   embeddim,
   paramdim,
   coordtype,
@@ -331,6 +331,7 @@ export
   # meshes
   Mesh,
   Grid,
+  SubGrid,
   CartesianGrid,
   RectilinearGrid,
   StructuredGrid,

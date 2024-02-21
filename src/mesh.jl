@@ -146,6 +146,13 @@ A grid embedded in a `Dim`-dimensional space with coordinates of type `T`.
 const Grid{Dim,T} = Mesh{Dim,T,GridTopology{Dim}}
 
 """
+    SubGrid{Dim,T}
+
+A view of a grid in a `Dim`-dimensinoal space with coordinates of type `T`.
+"""
+const SubGrid{Dim,T} = SubDomain{Dim,T,<:Grid{Dim,T}}
+
+"""
     vertex(grid, ijk)
 
 Convert Cartesian index `ijk` to vertex on `grid`.

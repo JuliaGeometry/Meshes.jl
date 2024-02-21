@@ -34,7 +34,7 @@
   # view of view stores the correct domain
   g = CartesianGrid{T}(10, 10)
   v = view(view(g, 11:20), 1:3)
-  @test v isa Meshes.SubDomain{2,T,<:CartesianGrid}
+  @test v isa SubGrid{2,T}
   @test v[1] == g[11]
   @test v[2] == g[12]
   @test v[3] == g[13]
@@ -52,7 +52,7 @@
   # concatenation with same parent
   g = CartesianGrid{T}(10, 10)
   vg = vcat(view(g, 50:70), view(g, 10:30))
-  @test vg isa Meshes.SubDomain
+  @test vg isa SubGrid{2,T}
   @test vg == view(g, [50:70; 10:30])
   # concatenation with different parents
   g1 = CartesianGrid{T}(10, 10)
