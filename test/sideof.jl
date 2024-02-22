@@ -54,4 +54,10 @@
   connec = connect.([(1, 2, 3, 4)], [Tetrahedron])
   mesh = SimpleMesh(points, connec)
   @test_throws AssertionError("winding number only defined for surface meshes") sideof(P3(0, 0, 0), mesh)
+
+  # sideof for simplex
+  # we embed a triangle in 3d space and check whether points on either side have different "sideof" value
+  points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0)]
+  splx = Simplex(points...)
+  @test sideof(P3(0, 0, 1), splx) != sideof(P3(0, 0, -1), splx)
 end

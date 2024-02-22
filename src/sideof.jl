@@ -67,6 +67,22 @@ Possible results are `IN` or `OUT` the `mesh`.
 """
 sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
 
+# -----
+# K-SIMPLEX
+# -----
+
+"""
+    sideof(point, simplex)
+
+Determines on which side the `point` is in relation to a k-simplex.
+Possible results are `LEFT` or `RIGHT`, although they are only useful for
+comparison, not for geometrical interpretation.
+"""
+function sideof(point::Point{Dim}, splx::Simplex{K,Dim}) where {K,Dim}
+  Dim == (K + 1) || throw(ArgumentError("`sideof` is only defined for `paramdim(splx)+1==Dim`"))
+  ifelse(signbit(normal(splx)' * (centroid(splx) - point)), LEFT, RIGHT)
+end
+
 # ----------
 # FALLBACKS
 # ----------
