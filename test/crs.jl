@@ -790,66 +790,96 @@
       c1 = LatLon(T(45), T(90))
       c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(T(10018754.171394622), T(4489858.8869480025))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(T(10018754.171394622), -T(4489858.8869480025))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(-T(10018754.171394622), T(4489858.8869480025))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(Lambert{WGS84}, c1)
       @test c2 ≈ Lambert(-T(10018754.171394622), -T(4489858.8869480025))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
+      c2 = Lambert(T(10018754.171394622), T(4489858.8869480025))
       @inferred convert(Lambert{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> Behrmann" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(T(8683765.222580686), T(5180102.328839251))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(T(8683765.222580686), -T(5180102.328839251))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(-T(8683765.222580686), T(5180102.328839251))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(Behrmann{WGS84}, c1)
       @test c2 ≈ Behrmann(-T(8683765.222580686), -T(5180102.328839251))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
+      c2 = Behrmann(T(8683765.222580686), T(5180102.328839251))
       @inferred convert(Behrmann{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> GallPeters" begin
       c1 = LatLon(T(45), T(90))
       c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(T(7096215.158458031), T(6338983.732612475))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), T(90))
       c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(T(7096215.158458031), -T(6338983.732612475))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(T(45), -T(90))
       c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(-T(7096215.158458031), T(6338983.732612475))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       c1 = LatLon(-T(45), -T(90))
       c2 = convert(GallPeters{WGS84}, c1)
       @test c2 ≈ GallPeters(-T(7096215.158458031), -T(6338983.732612475))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
 
       # type stability
       c1 = LatLon(T(45), T(90))
+      c2 = GallPeters(T(7096215.158458031), T(6338983.732612475))
       @inferred convert(GallPeters{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> WinkelTripel" begin

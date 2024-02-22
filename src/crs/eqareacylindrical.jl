@@ -109,3 +109,33 @@ function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::Lat
 
   EqualAreaCylindrical{latₜₛ,Datum}(x * u"m", y * u"m")
 end
+
+function ϕseries(β, e²)
+  e⁴ = e²^2
+  e⁶ = e²^3
+  β +
+  ((e² / 3 + 31e⁴ / 180 + 517e⁶ / 5040) * sin(2β)) +
+  ((23e⁴ / 360 + 251e⁶ / 3780) * sin(4β)) +
+  ((761e⁶ / 45360) * sin(6β))
+end
+
+function Base.convert(::Type{LatLon{Datum}}, coords::EqualAreaCylindrical{latₜₛ,Datum}) where {latₜₛ,Datum}
+  🌎 = ellipsoid(Datum)
+  x = coords.x
+  y = coords.y
+  a = oftype(x, majoraxis(🌎))
+  e = convert(numtype(x), eccentricity(🌎))
+  e² = convert(numtype(x), eccentricity²(🌎))
+  λ₀ = numconvert(numtype(x), deg2rad(longitudeₒ(Datum)))
+  ϕₜₛ = numconvert(numtype(x), deg2rad(latₜₛ))
+
+  k₀ = cos(ϕₜₛ) / sqrt(1 - e² * sin(ϕₜₛ)^2)
+  # same formula as q, but ϕ = 90°
+  qₚ = (1 - e²) * (1 / (1 - e²) - (1 / 2e) * log((1 - e) / (1 + e)))
+  β = asin(2y * k₀ / (a * qₚ))
+
+  λ = λ₀ + x / (a * k₀)
+  ϕ = ϕseries(β, e²)
+
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
+end
