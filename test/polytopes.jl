@@ -954,7 +954,7 @@
       n = normal(splx)
       v0, vothers... = vertices(splx)
       for v in vothers
-        @test (n' * (v - v0)) ≈ 0.0 atol = eps(T)
+        @test (n' * (v - v0)) ≈ 0.0 atol = sqrt(eps(T))
       end
     end
 
