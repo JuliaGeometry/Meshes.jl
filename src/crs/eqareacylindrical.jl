@@ -87,6 +87,14 @@ const GallPeters{Datum} = EqualAreaCylindrical{45.0u"°",Datum}
 # CONVERSIONS
 # ------------
 
+# Adapted from PROJ coordinate transformation software
+# Initial PROJ 4.3 public domain code was put as Frank Warmerdam as copyright
+# holder, but he didn't mean to imply he did the work. Essentially all work was
+# done by Gerald Evenden.
+
+# reference code: https://github.com/OSGeo/PROJ/blob/master/src/projections/cea.cpp
+# reference formula: https://neacsu.net/docs/geodesy/snyder/3-cylindrical/sect_10/
+
 function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::LatLon{Datum}) where {latₜₛ,Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
