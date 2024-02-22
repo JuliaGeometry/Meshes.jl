@@ -963,5 +963,18 @@
       splx = Simplex(ntuple(i -> Point{Dim,T}(rand(T, Dim)), N))
       @test_throws ArgumentError normal(splx)
     end
+
+    # containment
+    let Dim = 3, N = 4
+      splx = Simplex(ntuple(i -> Point{Dim,T}(rand(T, Dim)), N))
+      @test centroid(splx) ∈ splx
+      @test all((v + sqrt(eps(T)) * (centroid(splx) - v)) ∈ splx for v in vertices(splx))
+      @test .!any((v + sqrt(eps(T)) * (v - centroid(splx))) ∈ splx for v in vertices(splx))
+    end
+    # Simplex containment is not defined for these dimensions.
+    let Dim = 4, N = 4
+      splx = Simplex(ntuple(i -> Point{Dim,T}(rand(T, Dim)), N))
+      @test_throws ArgumentError centroid(splx) ∈ splx
+    end
   end
 end
