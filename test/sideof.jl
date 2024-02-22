@@ -60,4 +60,5 @@
   points = P3[(0, 0, 0), (1, 0, 0), (0, 1, 0)]
   splx = Simplex(points...)
   @test sideof(P3(0, 0, 1), splx) != sideof(P3(0, 0, -1), splx)
+  @test sideof(P3(0, 0, 1), splx) == sideof(P3(rand(3)...), splx)
 end
