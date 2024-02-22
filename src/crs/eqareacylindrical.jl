@@ -87,6 +87,14 @@ const GallPeters{Datum} = EqualAreaCylindrical{45.0u"°",Datum}
 # CONVERSIONS
 # ------------
 
+# Adapted from PROJ coordinate transformation software
+# Initial PROJ 4.3 public domain code was put as Frank Warmerdam as copyright
+# holder, but he didn't mean to imply he did the work. Essentially all work was
+# done by Gerald Evenden.
+
+# reference code: https://github.com/OSGeo/PROJ/blob/master/src/projections/cea.cpp
+# reference formula: https://neacsu.net/docs/geodesy/snyder/3-cylindrical/sect_10/
+
 function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::LatLon{Datum}) where {latₜₛ,Datum}
   🌎 = ellipsoid(Datum)
   λ = deg2rad(coords.lon)
@@ -99,13 +107,36 @@ function Base.convert(::Type{EqualAreaCylindrical{latₜₛ,Datum}}, coords::Lat
   e = oftype(l, eccentricity(🌎))
   e² = oftype(l, eccentricity²(🌎))
 
-  k₀ = cos(ϕₜₛ) / sqrt(1 - e² * sin(ϕₜₛ)^2)
   sinϕ = sin(ϕ)
   esinϕ = e * sinϕ
+  k₀ = cos(ϕₜₛ) / sqrt(1 - e² * sin(ϕₜₛ)^2)
   q = (1 - e²) * (sinϕ / (1 - esinϕ^2) - (1 / 2e) * log((1 - esinϕ) / (1 + esinϕ)))
 
   x = a * k₀ * (l - l₀)
   y = a * q / 2k₀
 
   EqualAreaCylindrical{latₜₛ,Datum}(x * u"m", y * u"m")
+end
+
+function Base.convert(::Type{LatLon{Datum}}, coords::EqualAreaCylindrical{latₜₛ,Datum}) where {latₜₛ,Datum}
+  🌎 = ellipsoid(Datum)
+  x = coords.x
+  y = coords.y
+  a = oftype(x, majoraxis(🌎))
+  e = convert(numtype(x), eccentricity(🌎))
+  e² = convert(numtype(x), eccentricity²(🌎))
+  λ₀ = numconvert(numtype(x), deg2rad(longitudeₒ(Datum)))
+  ϕₜₛ = numconvert(numtype(x), deg2rad(latₜₛ))
+
+  ome² = 1 - e²
+  k₀ = cos(ϕₜₛ) / sqrt(1 - e² * sin(ϕₜₛ)^2)
+  # same formula as q, but ϕ = 90°
+  qₚ = ome² * (1 / ome² - (1 / 2e) * log((1 - e) / (1 + e)))
+  
+  λ = λ₀ + x / (a * k₀)
+  q = 2y * k₀ / a
+  β = asin(q / qₚ)
+  ϕ = auth2geod(β, e²)
+
+  LatLon{Datum}(rad2deg(ϕ) * u"°", rad2deg(λ) * u"°")
 end
