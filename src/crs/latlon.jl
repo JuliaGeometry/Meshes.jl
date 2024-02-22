@@ -135,10 +135,10 @@ function Base.convert(::Type{AuthalicLatLon{Datum}}, coords::LatLon{Datum}) wher
   ϕ = ustrip(deg2rad(coords.lat))
   e = oftype(ϕ, eccentricity(🌎))
   e² = oftype(ϕ, eccentricity²(🌎))
+
   ome² = 1 - e²
   sinϕ = sin(ϕ)
   esinϕ = e * sinϕ
-
   q = ome² * (sinϕ / (1 - esinϕ^2) - (1 / 2e) * log((1 - esinϕ) / (1 + esinϕ)))
   # same formula as q, but ϕ = 90°
   qₚ = ome² * (1 / ome² - (1 / 2e) * log((1 - e) / (1 + e)))
