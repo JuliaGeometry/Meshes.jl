@@ -143,6 +143,7 @@ export
   Spherical,
   GeodeticLatLon,
   GeocentricLatLon,
+  AuthalicLatLon,
   LatLon,
   Mercator,
   WebMercator,

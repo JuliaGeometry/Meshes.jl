@@ -688,6 +688,56 @@
       @test c2 ≈ GeocentricLatLon(-T(39.810610551928434), T(40))
       c3 = convert(LatLon{WGS84}, c2)
       @test c3 ≈ c1
+
+      # type stability
+      c1 = LatLon(T(30), T(40))
+      c2 = GeocentricLatLon(T(29.833635809829065), T(40))
+      @inferred convert(GeocentricLatLon{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
+    end
+
+    @testset "GeodeticLatLon <> AuthalicLatLon" begin
+      c1 = LatLon(T(30), T(40))
+      c2 = convert(AuthalicLatLon{WGS84}, c1)
+      @test c2 ≈ AuthalicLatLon(T(29.888997034459567), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(35), T(40))
+      c2 = convert(AuthalicLatLon{WGS84}, c1)
+      @test c2 ≈ AuthalicLatLon(T(34.87951854973729), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(T(40), T(40))
+      c2 = convert(AuthalicLatLon{WGS84}, c1)
+      @test c2 ≈ AuthalicLatLon(T(39.87369373453432), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(30), T(40))
+      c2 = convert(AuthalicLatLon{WGS84}, c1)
+      @test c2 ≈ AuthalicLatLon(-T(29.888997034459567), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(35), T(40))
+      c2 = convert(AuthalicLatLon{WGS84}, c1)
+      @test c2 ≈ AuthalicLatLon(-T(34.87951854973729), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      c1 = LatLon(-T(40), T(40))
+      c2 = convert(AuthalicLatLon{WGS84}, c1)
+      @test c2 ≈ AuthalicLatLon(-T(39.87369373453432), T(40))
+      c3 = convert(LatLon{WGS84}, c2)
+      @test c3 ≈ c1
+
+      # type stability
+      c1 = LatLon(T(30), T(40))
+      c2 = AuthalicLatLon(T(29.888997034459567), T(40))
+      @inferred convert(AuthalicLatLon{WGS84}, c1)
+      @inferred convert(LatLon{WGS84}, c2)
     end
 
     @testset "LatLon <> Mercator" begin
