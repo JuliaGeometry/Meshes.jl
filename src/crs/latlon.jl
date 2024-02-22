@@ -113,30 +113,30 @@ AuthalicLatLon(args...) = AuthalicLatLon{WGS84}(args...)
 
 # reference code: https://github.com/OSGeo/PROJ/blob/master/src/4D_api.cpp#L774
 
-function Base.convert(::Type{GeocentricLatLon{Datum}}, (; lat, lon)::LatLon{Datum}) where {Datum}
-  l = ustrip(lat)
-  e² = oftype(l, eccentricity²(ellipsoid(Datum)))
-  lat′ = rad2deg(atan((1 - e²) * tan(lat)))
-  GeocentricLatLon{Datum}(lat′ * u"°", lon)
+function Base.convert(::Type{GeocentricLatLon{Datum}}, coords::LatLon{Datum}) where {Datum}
+  ϕ = ustrip(deg2rad(coords.lat))
+  e² = oftype(ϕ, eccentricity²(ellipsoid(Datum)))
+  ϕ′ = atan((1 - e²) * tan(ϕ))
+  GeocentricLatLon{Datum}(rad2deg(ϕ′) * u"°", coords.lon)
 end
 
-function Base.convert(::Type{LatLon{Datum}}, (; lat, lon)::GeocentricLatLon{Datum}) where {Datum}
-  l = ustrip(lat)
-  e² = oftype(l, eccentricity²(ellipsoid(Datum)))
-  lat′ = rad2deg(atan(1 / (1 - e²) * tan(lat)))
-  LatLon{Datum}(lat′ * u"°", lon)
+function Base.convert(::Type{LatLon{Datum}}, coords::GeocentricLatLon{Datum}) where {Datum}
+  ϕ′ = ustrip(deg2rad(coords.lat))
+  e² = oftype(ϕ′, eccentricity²(ellipsoid(Datum)))
+  ϕ = atan(1 / (1 - e²) * tan(ϕ′))
+  LatLon{Datum}(rad2deg(ϕ) * u"°", coords.lon)
 end
 
 # reference code: https://github.com/OSGeo/PROJ/blob/master/src/projections/healpix.cpp#L230
 # reference formula: https://mathworld.wolfram.com/AuthalicLatitude.html
 
-function Base.convert(::Type{AuthalicLatLon{Datum}}, (; lat, lon)::LatLon{Datum}) where {Datum}
+function Base.convert(::Type{AuthalicLatLon{Datum}}, coords::LatLon{Datum}) where {Datum}
   🌎 = ellipsoid(Datum)
-  l = ustrip(lat)
-  e = oftype(l, eccentricity(🌎))
-  e² = oftype(l, eccentricity²(🌎))
+  ϕ = ustrip(deg2rad(coords.lat))
+  e = oftype(ϕ, eccentricity(🌎))
+  e² = oftype(ϕ, eccentricity²(🌎))
   ome² = 1 - e²
-  sinϕ = sin(lat)
+  sinϕ = sin(ϕ)
   esinϕ = e * sinϕ
 
   q = ome² * (sinϕ / (1 - esinϕ^2) - (1 / 2e) * log((1 - esinϕ) / (1 + esinϕ)))
@@ -149,8 +149,8 @@ function Base.convert(::Type{AuthalicLatLon{Datum}}, (; lat, lon)::LatLon{Datum}
     qqₚ⁻¹ = sign(qqₚ⁻¹)
   end
 
-  lat′ = rad2deg(asin(qqₚ⁻¹))
-  AuthalicLatLon{Datum}(lat′ * u"°", lon)
+  β = asin(qqₚ⁻¹)
+  AuthalicLatLon{Datum}(rad2deg(β) * u"°", coords.lon)
 end
 
 # reference code: https://github.com/OSGeo/PROJ/blob/master/src/auth.cpp
@@ -176,9 +176,9 @@ function auth2geod(β, e²)
   β + (P₁₁ * e² + P₁₂ * e⁴ + P₁₃ * e⁶) * sin(2β) + (P₂₁ * e⁴ + P₂₂ * e⁶) * sin(4β) + (P₃₁ * e⁶) * sin(6β)
 end
 
-function Base.convert(::Type{LatLon{Datum}}, (; lat, lon)::AuthalicLatLon{Datum}) where {Datum}
-  l = ustrip(deg2rad(lat))
-  e² = oftype(l, eccentricity²(ellipsoid(Datum)))
-  lat′ = rad2deg(auth2geod(l, e²))
-  LatLon{Datum}(lat′ * u"°", lon)
+function Base.convert(::Type{LatLon{Datum}}, coords::AuthalicLatLon{Datum}) where {Datum}
+  β = ustrip(deg2rad(coords.lat))
+  e² = oftype(β, eccentricity²(ellipsoid(Datum)))
+  ϕ = auth2geod(β, e²)
+  LatLon{Datum}(rad2deg(ϕ) * u"°", coords.lon)
 end
