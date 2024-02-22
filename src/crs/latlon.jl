@@ -145,7 +145,7 @@ function Base.convert(::Type{AuthalicLatLon{Datum}}, (; lat, lon)::LatLon{Datum}
   qqₚ⁻¹ = q / qₚ
 
   if abs(qqₚ⁻¹) > 1
-    qqₚ⁻¹ = sign(qqₚ⁻¹) # rounding error
+    qqₚ⁻¹ = sign(qqₚ⁻¹)
   end
 
   lat′ = rad2deg(asin(qqₚ⁻¹))
