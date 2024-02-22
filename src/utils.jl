@@ -162,7 +162,7 @@ Converts the number type of quantity `x` to `T`.
 numconvert(::Type{T}, x::Quantity{S,D,U}) where {T,S,D,U} = convert(Quantity{T,D,U}, x)
 
 """
-    newton(f, df, xₒ; maxiter=10, tol=atol(typeof(x₀)))
+    newton(f, df, xₒ; maxiter=10, tol=atol(typeof(xₒ)))
 
 Newton's method approximates the root of the function `f` using its derivative `df`, 
 initial guess `xₒ`, `maxiter` iterations, and tolerance `tol`.
