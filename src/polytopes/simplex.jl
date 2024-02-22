@@ -38,7 +38,11 @@ nvertices(::Type{<:Simplex{K}}) where {K} = K + 1
 Base.isapprox(s₁::Simplex, s₂::Simplex; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(vertices(s₁), vertices(s₂)))
 
-"Compute normal vector to simplex with euclidean norm of 1."
+"""
+    normal(splx::Simplex)
+
+Compute normal vector to simplex with euclidean norm of 1.
+"""
 function normal(splx::Simplex{K,Dim,T}) where {K,Dim,T<:Real}
   Dim > K || throw(
     ArgumentError("simplex embedding dimension must be larger than parametric dimension for a normal vector to exist")
