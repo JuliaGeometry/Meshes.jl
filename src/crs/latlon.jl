@@ -145,6 +145,7 @@ function Base.convert(::Type{AuthalicLatLon{Datum}}, (; lat, lon)::LatLon{Datum}
   qqₚ⁻¹ = q / qₚ
 
   if abs(qqₚ⁻¹) > 1
+    # rounding error
     qqₚ⁻¹ = sign(qqₚ⁻¹)
   end
 
@@ -162,7 +163,8 @@ const _P₂₁ = 0.06388888888888888888 # 23 / 360
 const _P₂₂ = 0.06640211640211640212 # 251 / 3780
 const _P₃₁ = 0.01677689594356261023 # 761 / 45360
 
-function authlat(β, e²)
+# convert authalic latitude β to geodetic latitude ϕ
+function auth2geod(β, e²)
   e⁴ = e²^2
   e⁶ = e²^3
   P₁₁ = oftype(β, _P₁₁)
@@ -177,6 +179,6 @@ end
 function Base.convert(::Type{LatLon{Datum}}, (; lat, lon)::AuthalicLatLon{Datum}) where {Datum}
   l = ustrip(deg2rad(lat))
   e² = oftype(l, eccentricity²(ellipsoid(Datum)))
-  lat′ = rad2deg(authlat(l, e²))
+  lat′ = rad2deg(auth2geod(l, e²))
   LatLon{Datum}(lat′ * u"°", lon)
 end
