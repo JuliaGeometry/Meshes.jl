@@ -132,7 +132,7 @@ function Base.convert(::Type{LatLon{Datum}}, coords::EqualAreaCylindrical{latₜ
   k₀ = cos(ϕₜₛ) / sqrt(1 - e² * sin(ϕₜₛ)^2)
   # same formula as q, but ϕ = 90°
   qₚ = ome² * (1 / ome² - (1 / 2e) * log((1 - e) / (1 + e)))
-  
+
   λ = λ₀ + x / (a * k₀)
   q = 2y * k₀ / a
   β = asin(q / qₚ)
