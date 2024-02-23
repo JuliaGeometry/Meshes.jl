@@ -44,12 +44,6 @@ include("tolerances.jl")
 # basic vector type
 include("vectors.jl")
 
-# coordinates
-include("ellipsoids.jl")
-include("datums.jl")
-include("crs.jl")
-include("codes.jl")
-
 # geometries
 include("geometries.jl")
 
@@ -116,51 +110,6 @@ include("projecting.jl")
 include("viz.jl")
 
 export
-  # revolution ellipsoids
-  RevolutionEllipsoid,
-  majoraxis,
-  minoraxis,
-  eccentricity,
-  eccentricity²,
-  flattening,
-  flattening⁻¹,
-
-  # datums
-  Datum,
-  NoDatum,
-  WGS84,
-  WIII,
-  ellipsoid,
-  latitudeₒ,
-  longitudeₒ,
-  altitudeₒ,
-
-  # coordinates
-  CRS,
-  Cartesian,
-  Polar,
-  Cylindrical,
-  Spherical,
-  GeodeticLatLon,
-  GeocentricLatLon,
-  AuthalicLatLon,
-  LatLon,
-  Mercator,
-  WebMercator,
-  PlateCarree,
-  Lambert,
-  Behrmann,
-  GallPeters,
-  WinkelTripel,
-  Robinson,
-  OrthoNorth,
-  OrthoSouth,
-  datum,
-
-  # codes
-  EPSG,
-  ESRI,
-
   # vectors
   Vec,
   Vec1,
