@@ -186,12 +186,13 @@ end
 
 function vizmesh3D!(plot)
   mesh = plot[:object]
+  color = plot[:color]
   meshes = Makie.@lift let
     geoms = elements($mesh)
     bounds = boundary.(geoms)
     discretize.(bounds)
   end
-  vizmany!(plot, meshes)
+  vizmany!(plot, meshes, color)
 end
 
 function segmentsof(topo, vert)

@@ -7,10 +7,6 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
-  pointsize = plot[:pointsize]
-  segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
@@ -18,49 +14,22 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   # get geometries
   geoms = Makie.@lift parent($gset)
 
-  # retrieve parametric dimension
-  ranks = Makie.@lift paramdim.($geoms)
+  # get geometry types
+  types = Makie.@lift unique(typeof.($geoms))
 
-  if all(ranks[] .== 0)
-    points = Makie.@lift pointify.($geoms)
-    vizmany!(plot, points)
-  elseif all(ranks[] .== 1)
-    vizgset1D!(plot, geoms)
-  elseif all(ranks[] .== 2)
-    vizgset2D!(plot, geoms)
-  elseif all(ranks[] .== 3)
-    meshes = Makie.@lift discretize.(boundary.($geoms))
-    vizmany!(plot, meshes)
-  else # mixed dimension
-    # visualize subsets of equal rank
-    for rank in (3, 2, 1, 0)
-      inds = Makie.@lift findall(g -> paramdim(g) == rank, $geoms)
-      if !isempty(inds[])
-        rset = Makie.@lift GeometrySet(identity.($geoms[$inds]))
-        cset = if colorant[] isa AbstractVector
-          Makie.@lift $colorant[$inds]
-        else
-          colorant
-        end
-        viz!(plot, rset, color=cset)
-      end
-    end
-  end
-
-  if showfacets[]
-    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
-    if isempty(bounds[])
-      # nothing to be done
-    elseif all(ranks[] .== 1)
-      # all boundaries are multipoints
-      points = Makie.@lift mapreduce(parent, vcat, $bounds)
-      viz!(plot, (Makie.@lift GeometrySet($points)), color=facetcolor, pointsize=pointsize)
-    elseif all(ranks[] .== 2)
-      # all boundaries are geometries
-      viz!(plot, (Makie.@lift GeometrySet($bounds)), color=facetcolor, segmentsize=segmentsize)
-    elseif all(ranks[] .== 3)
-      # we already visualized the boundaries because
-      # that is all we can do with 3D geometries
+  for G in types[]
+    inds = Makie.@lift findall(g -> g isa G, $geoms)
+    gvec = Makie.@lift collect(G, $geoms[$inds])
+    colors = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
+    rank = Makie.@lift paramdim(first($gvec))
+    if rank[] == 0
+      vizgset0D!(plot, gvec, colors)
+    elseif rank[] == 1
+      vizgset1D!(plot, gvec, colors)
+    elseif rank[] == 2
+      vizgset2D!(plot, gvec, colors)
+    elseif rank[] == 3
+      vizgset3D!(plot, gvec, colors)
     end
   end
 end
@@ -83,51 +52,46 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
 
-function vizgset1D!(plot, geoms)
-  meshes = Makie.@lift discretize.($geoms)
-  vizmany!(plot, meshes)
+const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
+
+function vizgset0D!(plot, geoms, colorant)
+  points = Makie.@lift pointify.($geoms)
+  vizmany!(plot, points, colorant)
 end
 
-const RaySet{Dim,T} = GeometrySet{Dim,T,Ray{Dim,T}}
+function vizgset1D!(plot, geoms, colorant)
+  meshes = Makie.@lift discretize.($geoms)
+  vizmany!(plot, meshes, colorant)
+  showfactes1D!(plot, geoms)
+end
 
-function vizgset1D!(plot::Viz{<:Tuple{RaySet}}, geoms)
+function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
   rset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
 
   if embeddim(rset[]) ∉ (2, 3)
     error("not implemented")
   end
 
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
-
   # visualize as built-in arrows
   origins = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   directions = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
   Makie.arrows!(plot, origins, directions, color=colorant)
+
+  showfactes1D!(plot, geoms)
 end
 
-function vizgset2D!(plot, geoms)
+function vizgset2D!(plot, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
-  vizmany!(plot, meshes)
+  vizmany!(plot, meshes, colorant)
+  showfactes2D!(plot, geoms)
 end
 
 const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
 
-const PolygonLikeSet{Dim,T} = GeometrySet{Dim,T,<:PolygonLike{Dim,T}}
-
-function vizgset2D!(plot::Viz{<:Tuple{PolygonLikeSet{2}}}, geoms)
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
   # repeat colors if necessary
   colors = Makie.@lift mayberepeat($colorant, $geoms)
@@ -138,6 +102,39 @@ function vizgset2D!(plot::Viz{<:Tuple{PolygonLikeSet{2}}}, geoms)
     Makie.poly!(plot, polys, color=colors, strokecolor=facetcolor, strokewidth=segmentsize)
   else
     Makie.poly!(plot, polys, color=colors)
+  end
+
+  showfactes2D!(plot, geoms)
+end
+
+function vizgset3D!(plot, geoms, colorant)
+  meshes = Makie.@lift discretize.(boundary.($geoms))
+  vizmany!(plot, meshes, colorant)
+end
+
+function showfactes1D!(plot, geoms)
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+  pointsize = plot[:pointsize]
+
+  if showfacets[]
+    # all boundaries are points or multipoints
+    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
+    bset = Makie.@lift GeometrySet($bounds)
+    viz!(plot, bset, color=facetcolor, pointsize=pointsize)
+  end
+end
+
+function showfactes2D!(plot, geoms)
+  showfacets = plot[:showfacets]
+  facetcolor = plot[:facetcolor]
+  segmentsize = plot[:segmentsize]
+
+  if showfacets[]
+    # all boundaries are geometries
+    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
+    bset = Makie.@lift GeometrySet($bounds)
+    viz!(plot, bset, color=facetcolor, segmentsize=segmentsize)
   end
 end
 
