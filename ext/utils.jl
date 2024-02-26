@@ -15,16 +15,12 @@ concat(obj₁, obj₂) = vcat(obj₁, obj₂)
 
 concat(mesh₁::Mesh, mesh₂::Mesh) = merge(mesh₁, mesh₂)
 
-function vizmany!(plot, objs)
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+function vizmany!(plot, objs, colorant)
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
 
   object = Makie.@lift reduce(concat, $objs)
-  colors = Makie.@lift mayberepeat($color, $objs)
-  alphas = Makie.@lift mayberepeat($alpha, $objs)
+  colors = Makie.@lift mayberepeat($colorant, $objs)
 
-  viz!(plot, object, color=colors, alpha=alphas, colorscheme=colorscheme, pointsize=pointsize, segmentsize=segmentsize)
+  viz!(plot, object, color=colors, pointsize=pointsize, segmentsize=segmentsize)
 end

@@ -4,6 +4,12 @@
 
 function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   gset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colorscheme = plot[:colorscheme]
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
   # get geometries
   geoms = Makie.@lift parent($gset)
@@ -12,16 +18,18 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   types = Makie.@lift unique(typeof.($geoms))
 
   for G in types[]
-    gvec = Makie.@lift collect(G, filter(g -> g isa G, $geoms))
+    inds = Makie.@lift findall(g -> g isa G, $geoms)
+    gvec = Makie.@lift collect(G, $geoms[$inds])
+    colors = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
     rank = Makie.@lift paramdim(first($gvec))
     if rank[] == 0
-      vizgset0D!(plot, gvec)
+      vizgset0D!(plot, gvec, colors)
     elseif rank[] == 1
-      vizgset1D!(plot, gvec)
+      vizgset1D!(plot, gvec, colors)
     elseif rank[] == 2
-      vizgset2D!(plot, gvec)
+      vizgset2D!(plot, gvec, colors)
     elseif rank[] == 3
-      vizgset3D!(plot, gvec)
+      vizgset3D!(plot, gvec, colors)
     end
   end
 end
@@ -46,29 +54,23 @@ end
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
-function vizgset0D!(plot, geoms)
+function vizgset0D!(plot, geoms, colorant)
   points = Makie.@lift pointify.($geoms)
-  vizmany!(plot, points)
+  vizmany!(plot, points, colorant)
 end
 
-function vizgset1D!(plot, geoms)
+function vizgset1D!(plot, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
-  vizmany!(plot, meshes)
+  vizmany!(plot, meshes, colorant)
   showfactes1D!(plot, geoms)
 end
 
-function vizgset1D!(plot, geoms::ObservableVector{<:Ray})
+function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
   rset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
 
   if embeddim(rset[]) ∉ (2, 3)
     error("not implemented")
   end
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
   # visualize as built-in arrows
   origins = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
@@ -78,24 +80,18 @@ function vizgset1D!(plot, geoms::ObservableVector{<:Ray})
   showfactes1D!(plot, geoms)
 end
 
-function vizgset2D!(plot, geoms)
+function vizgset2D!(plot, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
-  vizmany!(plot, meshes)
+  vizmany!(plot, meshes, colorant)
   showfactes2D!(plot, geoms)
 end
 
 const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
 
-function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}})
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
   # repeat colors if necessary
   colors = Makie.@lift mayberepeat($colorant, $geoms)
@@ -111,9 +107,9 @@ function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}})
   showfactes2D!(plot, geoms)
 end
 
-function vizgset3D!(plot, geoms)
+function vizgset3D!(plot, geoms, colorant)
   meshes = Makie.@lift discretize.(boundary.($geoms))
-  vizmany!(plot, meshes)
+  vizmany!(plot, meshes, colorant)
 end
 
 function showfactes1D!(plot, geoms)
