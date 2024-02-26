@@ -8,22 +8,20 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   # get geometries
   geoms = Makie.@lift parent($gset)
 
-  # split into vectors of the same type
+  # get geometry types
   types = Makie.@lift unique(typeof.($geoms))
-  gvecs = [Makie.@lift(collect(T, filter(g -> typeof(g) <: T, $geoms))) for T in types[]]
 
-  for gvec in gvecs
+  for G in types[]
+    gvec = Makie.@lift collect(G, filter(g -> g isa G, $geoms))
     rank = Makie.@lift paramdim(first($gvec))
     if rank[] == 0
-      points = Makie.@lift pointify.($gvec)
-      vizmany!(plot, points)
+      vizgset0D!(plot, gvec)
     elseif rank[] == 1
       vizgset1D!(plot, gvec)
     elseif rank[] == 2
       vizgset2D!(plot, gvec)
     elseif rank[] == 3
-      meshes = Makie.@lift discretize.(boundary.($gvec))
-      vizmany!(plot, meshes)
+      vizgset3D!(plot, gvec)
     end
   end
 end
@@ -47,6 +45,11 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
 end
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
+
+function vizgset0D!(plot, geoms)
+  points = Makie.@lift pointify.($geoms)
+  vizmany!(plot, points)
+end
 
 function vizgset1D!(plot, geoms)
   meshes = Makie.@lift discretize.($geoms)
@@ -108,16 +111,21 @@ function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}})
   showfactes2D!(plot, geoms)
 end
 
+function vizgset3D!(plot, geoms)
+  meshes = Makie.@lift discretize.(boundary.($geoms))
+  vizmany!(plot, meshes)
+end
+
 function showfactes1D!(plot, geoms)
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
   pointsize = plot[:pointsize]
 
   if showfacets[]
+    # all boundaries are points or multipoints
     bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
-    points = Makie.@lift mapreduce(asvector, vcat, $bounds)
-    pset = Makie.@lift GeometrySet($points)
-    viz!(plot, pset, color=facetcolor, pointsize=pointsize)
+    bset = Makie.@lift GeometrySet($bounds)
+    viz!(plot, bset, color=facetcolor, pointsize=pointsize)
   end
 end
 
@@ -127,15 +135,12 @@ function showfactes2D!(plot, geoms)
   segmentsize = plot[:segmentsize]
 
   if showfacets[]
+    # all boundaries are geometries
     bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
     bset = Makie.@lift GeometrySet($bounds)
     viz!(plot, bset, color=facetcolor, segmentsize=segmentsize)
   end
 end
-
-asvector(geom::Geometry) = [geom]
-
-asvector(multi::Multi) = parent(multi)
 
 asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
 
