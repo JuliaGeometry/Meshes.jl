@@ -36,7 +36,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     for rank in (3, 2, 1, 0)
       inds = Makie.@lift findall(g -> paramdim(g) == rank, $geoms)
       if !isempty(inds[])
-        rset = Makie.@lift GeometrySet($geoms[$inds])
+        rset = Makie.@lift GeometrySet(identity.($geoms[$inds]))
         cset = if colorant[] isa AbstractVector
           Makie.@lift $colorant[$inds]
         else
