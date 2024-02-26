@@ -5,16 +5,12 @@
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   grid = plot[:object][]
   Dim = embeddim(grid)
-  if Dim == 1
-    vizgrid1D!(plot)
-  elseif Dim == 2
+  if Dim == 2
     vizgrid2D!(plot)
   elseif Dim == 3
     vizgrid3D!(plot)
   end
 end
-
-vizgrid1D!(plot) = vizmesh1D!(plot)
 
 vizgrid2D!(plot) = vizmesh2D!(plot)
 
