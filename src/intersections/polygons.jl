@@ -4,7 +4,14 @@
 
 function intersection(f, poly₁::Polygon, poly₂::Polygon)
   # TODO: use Weiler-Atherton or other more general clipping method
-  clipped = clip(poly₁, poly₂, SutherlandHodgman())
+  clipped = if isconvex(poly₂)
+    clip(poly₁, poly₂, SutherlandHodgman())
+  elseif isconvex(poly₁)
+    clip(poly₂, poly₁, SutherlandHodgman())
+  else
+    throw(ErrorException("intersection not implemented between two non-convex polygons"))
+  end
+
   if isnothing(clipped)
     @IT NotIntersecting nothing f
   else

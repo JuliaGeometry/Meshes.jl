@@ -1122,13 +1122,13 @@
     # triangle
     poly = Triangle(P2(6, 2), P2(3, 5), P2(0, 2))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
-    intersection(poly, other) |> type == Intersecting
+    @test intersection(poly, other) |> type == Intersecting
     @test all(vertices(poly ∩ other) .≈ [P2(5, 3), P2(4, 4), P2(2, 4), P2(0, 2), P2(5, 2)])
 
     # octagon
     poly = Octagon(P2(8, -2), P2(8, 5), P2(2, 5), P2(4, 3), P2(6, 3), P2(4, 1), P2(2, 1), P2(2, -2))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
-    intersection(poly, other) |> type == Intersecting
+    @test intersection(poly, other) |> type == Intersecting
     @test all(
       vertices(poly ∩ other) .≈
       [P2(3, 4), P2(4, 3), P2(5, 3), P2(5, 2), P2(4, 1), P2(2, 1), P2(2, 0), P2(5, 0), P2(5, 4)]
@@ -1137,14 +1137,20 @@
     # inside
     poly = Quadrangle(P2(1, 0), P2(1, 1), P2(0, 1), P2(0, 0))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
-    intersection(poly, other) |> type == Intersecting
+    @test intersection(poly, other) |> type == Intersecting
     @test all(vertices(poly ∩ other) .≈ vertices(poly))
 
     # outside
     poly = Quadrangle(P2(7, 6), P2(7, 7), P2(6, 7), P2(6, 6))
     other = Quadrangle(P2(5, 0), P2(5, 4), P2(0, 4), P2(0, 0))
-    intersection(poly, other) |> type == NotIntersecting
+    @test intersection(poly, other) |> type == NotIntersecting
     @test isnothing(poly ∩ other)
+
+    # convex and non-convex polygons
+    quad = Quadrangle(P2(0, 0), P2(0.1, 0.0), P2(0.1, 0.1), P2(0.0, 0.1))
+    poly = PolyArea(P2(0, 0), P2(2, 0), P2(1, 1), P2(1, 0.5))
+    @test intersection(quad, poly) |> type == Intersecting
+    @test all(vertices(quad ∩ poly) .≈ [P2(0, 0), P2(0.1, 0), P2(0.1, 0.05)])
   end
 
   @testset "Domains" begin
