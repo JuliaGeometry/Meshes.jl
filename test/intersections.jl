@@ -961,6 +961,15 @@
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     @inferred someornone(s, t)
 
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/728
+    s = Segment(P3(0.5, 0.5, 0.0), P3(0.5, 0.5, 2.0))
+    t = Triangle(P3(1.0, 0.0, 0.0), P3(0.0, 1.0, 0.0), P3(0.0, 0.0, 1.0))
+    @test intersection(s, t) |> type == Intersecting
+    @test s ∩ t == t ∩ s == P3(0.5, 0.5, 0.0)
+    s = Segment(P3(0.5, 0.5, 2.0), P3(0.5, 0.5, 0.0))
+    @test intersection(s, t) |> type == Intersecting
+    @test s ∩ t == t ∩ s == P3(0.5, 0.5, 0.0)
+
     # Intersection for a triangle and a ray
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
 

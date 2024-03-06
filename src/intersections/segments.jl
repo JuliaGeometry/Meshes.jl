@@ -201,121 +201,131 @@ function intersection(f, seg::Segment{N,T}, line::Line{N,T}) where {N,T}
   end
 end
 
-# Jiménez, J., Segura, R. and Feito, F. 2009.
+# Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
 function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
-  vₛ = vertices(seg)
-  vₜ = vertices(tri)
+  Q1, Q2 = vertices(seg)
+  V1, V2, V3 = vertices(tri)
 
-  A = vₛ[1] - vₜ[3]
-  B = vₜ[1] - vₜ[3]
-  C = vₜ[2] - vₜ[3]
+  # according to theorem 1, the algorithm only works
+  # when Q1 is not coplanar with the triangle, we need
+  # to swap Q1 with Q2 in that case
+  if iscoplanar(Q1, V1, V2, V3)
+    (Q1, Q2) = (Q2, Q1)
+  end
+
+  A = Q1 - V3
+  B = V1 - V3
+  C = V2 - V3
 
   W₁ = B × C
-  wᵥ = A ⋅ W₁
+  w = A ⋅ W₁
 
-  D = vₛ[2] - vₜ[3]
-  sᵥ = D ⋅ W₁
+  D = Q2 - V3
+  s = D ⋅ W₁
 
-  if wᵥ > atol(T)
+  if w > atol(T)
     # rejection 2
-    if sᵥ > atol(T)
+    if s > atol(T)
       return @IT NotIntersecting nothing f
     end
 
     W₂ = A × D
-    tᵥ = W₂ ⋅ C
+    t = W₂ ⋅ C
 
     # rejection 3
-    if tᵥ < -atol(T)
+    if t < -atol(T)
       return @IT NotIntersecting nothing f
     end
 
-    uᵥ = -(W₂ ⋅ B)
+    u = -(W₂ ⋅ B)
 
     # rejection 4
-    if uᵥ < -atol(T)
+    if u < -atol(T)
       return @IT NotIntersecting nothing f
     end
 
     # rejection 5
-    if wᵥ < (sᵥ + tᵥ + uᵥ)
+    if w < (s + t + u)
       return @IT NotIntersecting nothing f
     end
-  elseif wᵥ < -atol(T)
+  elseif w < -atol(T)
     # rejection 2
-    if sᵥ < -atol(T)
+    if s < -atol(T)
       return @IT NotIntersecting nothing f
     end
 
     W₂ = A × D
-    tᵥ = W₂ ⋅ C
+    t = W₂ ⋅ C
 
     # rejection 3
-    if tᵥ > atol(T)
+    if t > atol(T)
       return @IT NotIntersecting nothing f
     end
 
-    uᵥ = -(W₂ ⋅ B)
+    u = -(W₂ ⋅ B)
 
     # rejection 4
-    if uᵥ > atol(T)
+    if u > atol(T)
       return @IT NotIntersecting nothing f
     end
 
     # rejection 5
-    if wᵥ > (sᵥ + tᵥ + uᵥ)
+    if w > (s + t + u)
       return @IT NotIntersecting nothing f
     end
-  else
-    if sᵥ > atol(T)
+  else # w ≈ 0
+    if s > atol(T)
       W₂ = D × A
-      tᵥ = W₂ ⋅ C
+      t = W₂ ⋅ C
 
       # rejection 3
-      if tᵥ < -atol(T)
+      if t < -atol(T)
         return @IT NotIntersecting nothing f
       end
 
-      uᵥ = -(W₂ ⋅ B)
+      u = -(W₂ ⋅ B)
 
       # rejection 4
-      if uᵥ < -atol(T)
-        return @IT NotIntersecting nothing f
-      end
-      # rejection 5
-      if -sᵥ < (tᵥ + uᵥ)
-        return @IT NotIntersecting nothing f
-      end
-    elseif sᵥ < -atol(T)
-      W₂ = D × A
-      tᵥ = W₂ ⋅ C
-
-      # rejection 3
-      if tᵥ > atol(T)
-        return @IT NotIntersecting nothing f
-      end
-
-      uᵥ = -(W₂ ⋅ B)
-
-      # rejection 4
-      if uᵥ > atol(T)
+      if u < -atol(T)
         return @IT NotIntersecting nothing f
       end
 
       # rejection 5
-      if -sᵥ > (tᵥ + uᵥ)
+      if -s < (t + u)
         return @IT NotIntersecting nothing f
       end
-    else
+    elseif s < -atol(T)
+      W₂ = D × A
+      t = W₂ ⋅ C
+
+      # rejection 3
+      if t > atol(T)
+        return @IT NotIntersecting nothing f
+      end
+
+      u = -(W₂ ⋅ B)
+
+      # rejection 4
+      if u > atol(T)
+        return @IT NotIntersecting nothing f
+      end
+
+      # rejection 5
+      if -s > (t + u)
+        return @IT NotIntersecting nothing f
+      end
+    else # s ≈ 0
       # rejection 1, coplanar segment
       return @IT NotIntersecting nothing f
     end
   end
 
-  λ = clamp(wᵥ / (wᵥ - sᵥ), zero(T), one(T))
+  λ = clamp(w / (w - s), zero(T), one(T))
 
-  return @IT Intersecting seg(λ) f
+  p = Segment(Q1, Q2)(λ)
+
+  return @IT Intersecting p f
 end
 
 # sorts four numbers using a sorting network 
