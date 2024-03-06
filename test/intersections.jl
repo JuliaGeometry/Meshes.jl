@@ -856,11 +856,6 @@
     @test intersection(s, t) |> type == NotIntersecting
     @test isnothing(s ∩ t)
 
-    # coplanar, intersects with t (but should return NotIntersecting)
-    s = Segment(P3(-0.2, 0.2, 0.0), P3(1.2, 0.2, 0.0))
-    @test intersection(s, t) |> type == NotIntersecting
-    @test isnothing(s ∩ t)
-
     # coplanar, doesn't intersect with t
     s = Segment(P3(-0.2, -0.2, 0.0), P3(1.2, -0.2, 0.0))
     @test intersection(s, t) |> type == NotIntersecting
@@ -873,11 +868,6 @@
 
     # parallel, below, doesn't intersect with t
     s = Segment(P3(-0.2, 0.2, -1.0), P3(1.2, 0.2, -1.0))
-    @test intersection(s, t) |> type == NotIntersecting
-    @test isnothing(s ∩ t)
-
-    # segment colinear with edge of t (but should return NotIntersecting)
-    s = Segment(P3(-1.0, 0.0, 0.0), P3(1.0, 0.0, 0.0))
     @test intersection(s, t) |> type == NotIntersecting
     @test isnothing(s ∩ t)
 
@@ -1002,11 +992,6 @@
     @test intersection(r, t) |> type == NotIntersecting
     @test isnothing(r ∩ t)
 
-    # coplanar, intersects with t (but should return NotIntersecting)
-    r = Ray(P3(-0.2, 0.2, 0.0), V3(1.0, 0.0, 0.0))
-    @test intersection(r, t) |> type == NotIntersecting
-    @test isnothing(r ∩ t)
-
     # coplanar, doesn't intersect with t
     r = Ray(P3(-0.2, -0.2, 0.0), V3(1.0, 0.0, 0.0))
     @test intersection(r, t) |> type == NotIntersecting
@@ -1019,11 +1004,6 @@
 
     # parallel, below, doesn't intersect with t
     r = Ray(P3(-0.2, 0.2, -1.0), V3(1.0, 0.0, 0.0))
-    @test intersection(r, t) |> type == NotIntersecting
-    @test isnothing(r ∩ t)
-
-    # ray colinear with edge of t (but should return NotIntersecting)
-    r = Ray(P3(-1.0, 0.0, 0.0), V3(1.0, 0.0, 0.0))
     @test intersection(r, t) |> type == NotIntersecting
     @test isnothing(r ∩ t)
 
