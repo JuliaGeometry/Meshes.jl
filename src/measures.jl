@@ -89,15 +89,14 @@ end
 Compute the measure (i.e. hyper-volume) for a simplex in any dimension using the Cayley-Menger Determinant.
 """
 function measure(splx::Simplex{K,Dim,T,N}) where {K,Dim,T<:Real,N}
-  # Find the equation e.g. at
   # https://en.wikipedia.org/wiki/Cayley%E2%80%93Menger_determinant#Definition.
-  Ds_ = pairwise(SqEuclidean(), coordinates.(vertices(splx)))
-  Ds = [
-    Ds_ ones(size(Ds_, 1))
-    ones(size(Ds_, 2))' 0
+  dists = pairwise(SqEuclidean(), coordinates.(vertices(splx)))
+  mat = [
+    dists ones(size(dists, 1))
+    ones(size(dists, 2))' 0
   ]
   factor = (-1)^(K + 1) / (factorial(K)^2 * 2^K)
-  return sqrt(factor * det(Ds))
+  sqrt(factor * det(mat))
 end
 
 measure(c::Chain) = sum(measure, segments(c))

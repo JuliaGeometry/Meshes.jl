@@ -50,8 +50,8 @@ function normal(splx::Simplex{K,Dim,T}) where {K,Dim,T<:Real}
   # It turns out the QR decomposition can be used to find an orthogonal basis,
   # where by construction the nth column of `Q` is orthogonal to columns 1:(n-1).
   # Further, `qr` guarantees `Q` to be unitary, therefore `norm(Q[:, i]) ≈ 1` for all columns.
-  p0, pothers... = vertices(splx)
-  extendedbasis = [(p - p0 for p in pothers)... rand!(similar(coordinates(p0)))]
-  normal = qr(extendedbasis).Q[:, end]
-  return normal
+  p1, pothers... = vertices(splx)
+  basis = [(p - p1 for p in pothers)... rand!(similar(coordinates(p1)))]
+  normal = qr(basis).Q[:, end]
+  normal
 end

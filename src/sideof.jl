@@ -55,22 +55,6 @@ function sideof(point::Point{2,T}, ring::Ring{2,T}) where {T}
   ifelse(isapprox(w, zero(T), atol=atol(T)), OUT, IN)
 end
 
-# -----
-# MESH
-# -----
-
-"""
-    sideof(point, mesh)
-
-Determines on which side the `point` is in relation to the surface `mesh`.
-Possible results are `IN` or `OUT` the `mesh`.
-"""
-sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
-
-# -----
-# K-SIMPLEX
-# -----
-
 """
     sideof(point, simplex)
 
@@ -82,6 +66,18 @@ function sideof(point::Point{Dim}, splx::Simplex{K,Dim}) where {K,Dim}
   Dim == (K + 1) || throw(ArgumentError("`sideof` is only defined for `paramdim(splx)+1==Dim`"))
   ifelse(signbit(normal(splx)' * (centroid(splx) - point)), LEFT, RIGHT)
 end
+
+# -----
+# MESH
+# -----
+
+"""
+    sideof(point, mesh)
+
+Determines on which side the `point` is in relation to the surface `mesh`.
+Possible results are `IN` or `OUT` the `mesh`.
+"""
+sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
 
 # ----------
 # FALLBACKS
