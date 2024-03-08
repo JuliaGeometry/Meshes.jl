@@ -46,7 +46,7 @@ function normal(splx::Simplex{K,Dim,T}) where {K,Dim,T<:Real}
   # where by construction the nth column of `Q` is orthogonal to columns 1:(n-1).
   # Further, `qr` guarantees `Q` to be unitary, therefore `norm(Q[:, i]) ≈ 1` for all columns.
   p1, pothers... = vertices(splx)
-  basis = [(p - p1 for p in pothers)... rand!(similar(coordinates(p1)))]
+  basis = [stack(pothers .- [p1]; dims=2) rand!(similar(coordinates(p1)))]
   normal = qr(basis).Q[:, end]
   normal
 end
