@@ -83,11 +83,6 @@ function measure(t::Tetrahedron)
   abs((A - D) ⋅ ((B - D) × (C - D))) / 6
 end
 
-"""
-    measure(splx::Simplex)
-
-Compute the measure (i.e. hyper-volume) for a simplex in any dimension using the Cayley-Menger Determinant.
-"""
 function measure(splx::Simplex{K,Dim,T,N}) where {K,Dim,T<:Real,N}
   # https://en.wikipedia.org/wiki/Cayley%E2%80%93Menger_determinant#Definition.
   dists = pairwise(SqEuclidean(), coordinates.(vertices(splx)))
