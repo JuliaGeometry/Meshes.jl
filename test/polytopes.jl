@@ -938,10 +938,9 @@
     # measure
     # Points forming a square with the first point in the center.
     pts = [P3(0, 0, 0), P3(-1, -1, 0), P3(-1, 1, 0), P3(1, 1, 0), P3(1, -1, 0)]
-    simplicies = connect.([(1, 2, 3), (1, 3, 4), (1, 4, 5), (1, 5, 2)], Simplex)
-    splx1 = materialize(simplicies[1], pts)
+    splx1 = Simplex(pts[1], pts[2], pts[3])
     @test measure(splx1) ≈ 1.0
-    splx2 = materialize(connect((2, 3, 5), Simplex), pts)
+    splx2 = Simplex(pts[2], pts[3], pts[5])
     @test measure(splx2) ≈ 2.0
 
     # compare against Tetrahedon
