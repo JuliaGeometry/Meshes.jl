@@ -175,13 +175,6 @@ Tells whether or not the `point` is in the `domain`.
 Base.in(p::Point, d::Domain) = any(e -> p ∈ e, d)
 
 
-"""
-    Base.in(p::Point{Dim}, splx::Simplex{K,Dim})
-
-Tells whether or not the point `p` is contained in the Simplex `splx`.
-Both must be embedded in the same dimension. Currently requires the simplex to have "full"
-parametric dimension, e.g. a triangle embedded in a plane.
-"""
 function Base.in(p::Point{Dim}, splx::Simplex{K,Dim}) where {K,Dim}
   paramdim(splx) == Dim || throw(ArgumentError("simplex containment is only defined when the parametric dimension and the embedding dimension are the same"))
   verts = vertices(splx)
