@@ -86,12 +86,18 @@ end
 function measure(splx::Simplex{K,Dim,T,N}) where {K,Dim,T<:Real,N}
   # https://en.wikipedia.org/wiki/Cayley%E2%80%93Menger_determinant#Definition.
   dists = pairwise(SqEuclidean(), coordinates.(vertices(splx)))
-  mat = [
-    dists ones(size(dists, 1))
-    ones(size(dists, 2))' 0
+  mat = [  # somehow Julia fails the type inference for `mat` if we don't use the "nested" structure
+    [dists ones(T, size(dists, 1))];
+    [ones(T, size(dists, 2))' 0]
   ]
-  factor = (-1)^(K + 1) / (factorial(K)^2 * 2^K)
-  sqrt(factor * det(mat))
+  if K <= 11  # Integer overflow for K>11
+    factor = (-1)^(K + 1) // (factorial(K)^2 * 2^K)
+    sqrt(factor * det(mat))
+  else
+    factor = (-1)^(K + 1) // (factorial(big(K))^2 * 2^big(K))
+    retval = sqrt(factor * det(mat))
+    convert(T, retval)
+  end
 end
 
 measure(c::Chain) = sum(measure, segments(c))
