@@ -49,24 +49,18 @@ function (t::Torus{T})(u, v) where {T}
     throw(DomainError((u, v), "t(u, v) is not defined for u, v outside [0, 1]²."))
   end
 
-  # Domain transformations:
-  #   u [0,1] ↦ θ [0,2π]
-  #   v [0,1] ↦ ϕ [0,2π]
-  θ = u * T(2π)
-  ϕ = v * T(2π)
-
-  # Make aliases for convenient names
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
 
-  # Calculate torus-centric coordinates
+  Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
+  
+  θ = u * T(2π)
+  ϕ = v * T(2π)
   x = (R + r*cos(θ)) * cos(ϕ)
   y = (R + r*cos(θ)) * sin(ϕ)
   z = r * sin(θ)
 
-  # Translate and rotate from torus-centric into global coordinate system
-  Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
-  return c + Q * Vec{3,T}(x, y, z)
+  c + Q * Vec{3,T}(x, y, z)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} =
