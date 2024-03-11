@@ -15,8 +15,6 @@ issimplex(::Type{<:Triangle}) = true
 
 issimplex(::Type{<:Tetrahedron}) = true
 
-issimplex(::Type{<:Simplex}) = true
-
 """
     issimplex(connectivity)
 
