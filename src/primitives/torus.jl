@@ -48,17 +48,18 @@ function (t::Torus{T})(u, v) where {T}
   if (u < 0 || u > 1) || (v < 0 || v > 1)
     throw(DomainError((u, v), "t(u, v) is not defined for u, v outside [0, 1]²."))
   end
+
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
+
   Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
-  kxy = R^2 - r^2
-  kz = √kxy * r
-  uₛ = T(π) * (2 * u - 1)
-  vₛ = T(π) * (2 * v - 1)
-  k = R - r * cos(vₛ)
-  x = kxy * cos(uₛ) / k
-  y = kxy * sin(uₛ) / k
-  z = kz * sin(vₛ) / k
+  
+  θ = u * T(2π)
+  ϕ = v * T(2π)
+  x = (R + r*cos(θ)) * cos(ϕ)
+  y = (R + r*cos(θ)) * sin(ϕ)
+  z = r * sin(θ)
+
   c + Q * Vec{3,T}(x, y, z)
 end
 
