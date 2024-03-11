@@ -310,12 +310,10 @@
     # TRIANGLE
     # ---------
 
-    @test issimplex(Triangle)
     @test isparametrized(Triangle)
 
     # Triangle in 2D space
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
-    @test issimplex(t)
     @test isconvex(t)
     @test isparametrized(t)
     @test vertex(t, 1) == P2(0, 0)
@@ -733,7 +731,6 @@
     @test vertex(t, 2) == P3(1, 0, 0)
     @test vertex(t, 3) == P3(0, 1, 0)
     @test vertex(t, 4) == P3(0, 0, 1)
-    @test issimplex(t)
     @test isconvex(t)
     @test measure(t) == T(1 / 6)
     m = boundary(t)

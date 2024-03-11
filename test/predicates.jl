@@ -1,4 +1,15 @@
 @testset "Predicates" begin
+  @testset "issimplex" begin
+    @test issimplex(Segment)
+    @test issimplex(Segment(P2(0, 0), P2(1, 0)))
+
+    @test issimplex(Triangle)
+    @test issimplex(Triangle(P2(0, 0), P2(1, 0), P2(0, 1)))
+
+    @test issimplex(Tetrahedron)
+    @test issimplex(Tetrahedron(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0), P3(0, 0, 1)))
+  end
+
   @testset "isconvex" begin
     outer = P2[(6, 1), (2, 10), (10, 16), (18, 10), (14, 1)]
     inner = P2[(5, 7), (10, 12), (15, 7)]

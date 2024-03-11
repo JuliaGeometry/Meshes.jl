@@ -11,6 +11,8 @@ issimplex(g::Geometry) = issimplex(typeof(g))
 
 issimplex(::Type{<:Geometry}) = false
 
+issimplex(::Type{<:Segment}) = true
+
 issimplex(::Type{<:Triangle}) = true
 
 issimplex(::Type{<:Tetrahedron}) = true
