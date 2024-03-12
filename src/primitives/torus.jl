@@ -53,11 +53,11 @@ function (t::Torus{T})(u, v) where {T}
   R, r = t.major, t.minor
 
   Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
-  
+
   θ = u * T(2π)
   ϕ = v * T(2π)
-  x = (R + r*cos(θ)) * cos(ϕ)
-  y = (R + r*cos(θ)) * sin(ϕ)
+  x = (R + r * cos(θ)) * cos(ϕ)
+  y = (R + r * cos(θ)) * sin(ϕ)
   z = r * sin(θ)
 
   c + Q * Vec{3,T}(x, y, z)
