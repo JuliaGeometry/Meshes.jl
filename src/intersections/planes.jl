@@ -40,6 +40,7 @@ function intersection(f, plane1::Plane{T}, plane2::Plane{T}) where {T}
     p1 = (c1 * n1) + (c2 * n2)
     p2 = p1 + d
     return @IT Intersecting Line(p1,p2) f
+  end
 end
 
 # Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
