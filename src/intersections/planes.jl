@@ -37,9 +37,9 @@ function intersection(f, plane1::Plane{T}, plane2::Plane{T}) where {T}
     h2 = n2 ⋅ plane2.p.coords
     c1 = (h1 - h2 * n1n2) / (1 - n1n2^2)
     c2 = (h2 - h1 * n1n2) / (1 - n1n2^2)
-    p1 = Point((c1 * n1) + (c2 * n2))
-    p2 = Point(p1 + d)
-    return @IT Intersecting Line(p1,p2) f
+    p1 = (c1 * n1) + (c2 * n2)
+    p2 = p1 + d
+    return @IT Intersecting Line(Point(p1),Point(p2)) f
   end
 end
 
