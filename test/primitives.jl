@@ -849,6 +849,7 @@
     @test isconvex(c)
     @test isparametrized(c)
     @test !isright(c)
+    @test Meshes._hassaferadius(c)
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3))
     @test P3(1, 2, 3) ∈ c
     @test P3(4, 5, 6) ∈ c
@@ -905,6 +906,9 @@
       ├─ top: Plane(p: (0.0, 0.0, 1.0), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
       └─ radius: 1.0"""
     end
+
+    c = Cylinder(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(0, 0, 1), V3(1, 0, 1)), T(5))
+    @test !Meshes._hassaferadius(c)
   end
 
   @testset "CylinderSurface" begin
