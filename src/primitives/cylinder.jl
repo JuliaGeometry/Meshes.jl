@@ -63,3 +63,17 @@ Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
   Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+
+# Determine whether a Cylinder's radius is small enough to prevent its top
+#   and bottom planes from intersecting one another
+function _hassaferadius(c::Cylinder)
+  xs = intersect(c.bot, c.top)
+  if isnothing(xs)
+    # planes are parallel -- no intersection possible
+    return true
+  else
+    # planes are not parallel -- find max radius
+    rmax = evaluate(Euclidean(), axis(c), xs)
+    return c.radius <= rmax
+  end
+end
