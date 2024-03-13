@@ -77,3 +77,33 @@ function _hassaferadius(c::Cylinder)
     return c.radius <= rmax
   end
 end
+
+function (c::Cylinder{T})(u, v, w) where {T}
+  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
+    throw(DomainError((u, v, w), "c(u, v, w) is not defined for u, v, w outside [0, 1]³."))
+  end
+
+  r = radius(c)
+  b = bottom(c)
+  t = top(c)
+  a = axis(c)
+  d = a(1) - a(0)
+  h = norm(d)
+
+  ρ = r * u
+  φ = T(2π) * v
+
+  # Project a parametric Segment between the top and bottom planes
+  center = b(0, 0)
+  x = Point(ρ * cos(φ), ρ * sin(φ), 0)
+  y = Point(ρ * cos(φ), ρ * sin(φ), h)
+  xy = Line(x, y)
+  zt = intersect(xy, t)
+  zb = intersect(xy, b)
+  seg = Segment(zb, zt)
+
+  # rotation to align z axis with cylinder axis
+  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
+
+  center + Q * coordinates(seg(w))
+end
