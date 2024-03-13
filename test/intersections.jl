@@ -748,6 +748,22 @@
     l = Line(P3(0, 0, 0), P3(0, 2, 2))
     p = Plane(P3(0, 0, 1), V3(1, 0, 0), V3(0, 1, 0))
     @inferred someornone(l, p)
+
+    # ------
+    # PLANES
+    # ------
+
+    p1 = Plane(P3(0, 0, 0), V3(0, 0, 1))
+    
+    # p1 parallel to p2
+    p2 = Plane(P3(0, 0, 1), V3(0, 0, 1))
+    @test intersection(p1, p2) |> type == NotIntersecting
+    @test isnothing(p1 ∩ p2)
+
+    # p1 intersects p2
+    p2 = Plane(P3(0, 0, 1), V3(1 / sqrt(2), 0, 1 / sqrt(2)))
+    @test intersection(p1, p2) |> type == Intersecting
+    @test p1 ∩ p2 == Line(P3(1, 0, 0), P3(2, 0, 0))
   end
 
   @testset "Boxes" begin

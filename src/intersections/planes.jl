@@ -22,6 +22,26 @@ function intersection(f, line::LineLike{T}, plane::Plane{T}) where {T}
   end
 end
 
+# (https://en.wikipedia.org/wiki/Plane-plane_intersection)
+function intersection(f, plane1::Plane{T}, plane2::Plane{T}) where {T}
+  n1 = normal(plane1)
+  n2 = normal(plane2)
+  n1n2 = n1 ⋅ n2
+
+  if isapprox(n1n2, one(T), atol=atol(T))
+    # planes are parallel and do not intersect
+    return @IT NotIntersecting nothing f
+  else
+    d = n1 × n2
+    h1 = n1 ⋅ plane1.p.coords
+    h2 = n2 ⋅ plane2.p.coords
+    c1 = (h1 - h2 * n1n2) / (1 - n1n2^2)
+    c2 = (h2 - h1 * n1n2) / (1 - n1n2^2)
+    p1 = (c1 * n1) + (c2 * n2)
+    p2 = p1 + d
+    return @IT Intersecting Line(p1,p2) f
+end
+
 # Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
 # 
 # Return types:
