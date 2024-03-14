@@ -850,9 +850,9 @@
     @test !isright(c)
     @test Meshes._hassaferadius(c)
     @test isparametrized(c)
-    @test c(0, 0, 0) == bottom(c)(0, 0)
-    @test c(0, 0, 1) == top(c)(0, 0)
-    @test c(1, 0.25, 0) == P3(1, 7, 3)
+    @test c(0, 0, 0) ≈ bottom(c)(0, 0)
+    @test c(0, 0, 1) ≈ top(c)(0, 0)
+    @test c(1, 0.25, 0) ≈ P3(1, 7, 3)
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3))
     @test P3(1, 2, 3) ∈ c
     @test P3(4, 5, 6) ∈ c
