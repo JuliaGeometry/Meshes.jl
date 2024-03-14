@@ -39,6 +39,7 @@
   end
 
   @testset "isparametrized" begin
+    # primitives
     @test isparametrized(Ray)
     @test isparametrized(Line)
     @test isparametrized(Plane)
@@ -53,10 +54,30 @@
     @test isparametrized(ConeSurface)
     @test isparametrized(ParaboloidSurface)
     @test isparametrized(Torus)
+
+    # polytopes
     @test isparametrized(Segment)
     @test isparametrized(Triangle)
     @test isparametrized(Quadrangle)
     @test isparametrized(Hexahedron)
+  end
+
+  @testset "isperiodic" begin
+    # primitives
+    @test isperiodic(Box{1}) == (false,)
+    @test isperiodic(Box{2}) == (false, false)
+    @test isperiodic(Box{3}) == (false, false, false)
+    @test isperiodic(Ball{2}) == (false, true)
+    @test isperiodic(Ball{3}) == (false, true, true)
+    @test isperiodic(Sphere{2}) == (true,)
+    @test isperiodic(Sphere{3}) == (true, true)
+    @test isperiodic(ParaboloidSurface) == (false, true)
+    @test isperiodic(Torus) == (true, true)
+
+    # polytopes
+    @test isperiodic(Segment) == (false,)
+    @test isperiodic(Quadrangle) == (false, false)
+    @test isperiodic(Hexahedron) == (false, false, false)
   end
 
   @testset "in" begin

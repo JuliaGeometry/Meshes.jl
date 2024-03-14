@@ -2,7 +2,6 @@
   @testset "Segments" begin
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
-    @test isperiodic(Segment) == (false,)
 
     s = Segment(P1(1.0), P1(2.0))
     @test vertex(s, 1) == P1(1.0)
@@ -15,7 +14,6 @@
 
     s = Segment(P2(0, 0), P2(1, 1))
     @test isconvex(s)
-    @test isperiodic(s) == (false,)
     @test minimum(s) == P2(0, 0)
     @test maximum(s) == P2(1, 1)
     @test extrema(s) == (P2(0, 0), P2(1, 1))
@@ -407,11 +405,8 @@
     # QUADRANGLE
     # -----------
 
-    @test isperiodic(Quadrangle) == (false, false)
-
     # test periodicity of Quadrangle
     q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
-    @test isperiodic(q) == (false, false)
 
     # Quadrangle in 2D space
     q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
@@ -766,13 +761,11 @@
 
     @test paramdim(Hexahedron) == 3
     @test nvertices(Hexahedron) == 8
-    @test isperiodic(Hexahedron) == (false, false, false)
 
     h =
       Hexahedron(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0), P3(0, 0, 1), P3(1, 0, 1), P3(1, 1, 1), P3(0, 1, 1))
     @test vertex(h, 1) == P3(0, 0, 0)
     @test vertex(h, 8) == P3(0, 1, 1)
-    @test isperiodic(h) == (false, false, false)
     @test h(T(0), T(0), T(0)) == P3(0, 0, 0)
     @test h(T(0), T(0), T(1)) == P3(0, 0, 1)
     @test h(T(0), T(1), T(0)) == P3(0, 1, 0)

@@ -381,16 +381,11 @@
   end
 
   @testset "Box" begin
-    @test isperiodic(Box{1}) == (false,)
-    @test isperiodic(Box{2}) == (false, false)
-    @test isperiodic(Box{3}) == (false, false, false)
-
     b = Box(P1(0), P1(1))
     @test embeddim(b) == 1
     @test paramdim(b) == 1
     @test coordtype(b) == T
     @test isconvex(b)
-    @test isperiodic(b) == (false,)
     @test minimum(b) == P1(0)
     @test maximum(b) == P1(1)
     @test extrema(b) == (P1(0), P1(1))
@@ -400,7 +395,6 @@
     @test paramdim(b) == 2
     @test coordtype(b) == T
     @test isconvex(b)
-    @test isperiodic(b) == (false, false)
     @test minimum(b) == P2(0, 0)
     @test maximum(b) == P2(1, 1)
     @test extrema(b) == (P2(0, 0), P2(1, 1))
@@ -410,7 +404,6 @@
     @test paramdim(b) == 3
     @test coordtype(b) == T
     @test isconvex(b)
-    @test isperiodic(b) == (false, false, false)
     @test minimum(b) == P3(0, 0, 0)
     @test maximum(b) == P3(1, 1, 1)
     @test extrema(b) == (P3(0, 0, 0), P3(1, 1, 1))
@@ -522,15 +515,11 @@
   end
 
   @testset "Ball" begin
-    @test isperiodic(Ball{2}) == (false, true)
-    @test isperiodic(Ball{3}) == (false, true, true)
-
     b = Ball(P3(1, 2, 3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
     @test isconvex(b)
-    @test isperiodic(b) == (false, true, true)
     @test Meshes.center(b) == P3(1, 2, 3)
     @test radius(b) == T(5)
 
@@ -604,15 +593,11 @@
   end
 
   @testset "Sphere" begin
-    @test isperiodic(Sphere{2}) == (true,)
-    @test isperiodic(Sphere{3}) == (true, true)
-
     s = Sphere(P3(0, 0, 0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
     @test !isconvex(s)
-    @test isperiodic(s) == (true, true)
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
     @test extrema(s) == (P3(-1, -1, -1), P3(1, 1, 1))
@@ -631,7 +616,6 @@
     @test extrema(s) == (P2(-1, -1), P2(1, 1))
     @test !isconvex(s)
     @test isnothing(boundary(s))
-    @test isperiodic(s) == (true,)
 
     s1 = Sphere(P2(0, 0), T(1))
     s2 = Sphere(P2(0, 0))
@@ -940,7 +924,6 @@
     p = ParaboloidSurface(P3(0, 0, 0), T(1), T(2))
     @test embeddim(p) == 3
     @test paramdim(p) == 2
-    @test isperiodic(p) == (false, true)
     @test coordtype(p) == T
     @test focallength(p) == T(2)
     @test radius(p) == T(1)
@@ -1159,14 +1142,11 @@
   end
 
   @testset "Torus" begin
-    @test isperiodic(Torus) == (true, true)
-
     t = Torus(T.((1, 1, 1)), T.((1, 0, 0)), 2, 1)
     @test P3(1, 1, -1) ∈ t
     @test P3(1, 1, 1) ∉ t
     @test paramdim(t) == 2
     @test !isconvex(t)
-    @test isperiodic(t) == (true, true)
     @test Meshes.center(t) == P3(1, 1, 1)
     @test normal(t) == V3(1, 0, 0)
     @test radii(t) == (T(2), T(1))
