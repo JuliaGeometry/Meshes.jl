@@ -13,7 +13,6 @@
     @test !(s ≈ Segment(P1(-1.0), P1(2.0)))
 
     s = Segment(P2(0, 0), P2(1, 1))
-    @test isconvex(s)
     @test minimum(s) == P2(0, 0)
     @test maximum(s) == P2(1, 1)
     @test extrema(s) == (P2(0, 0), P2(1, 1))
@@ -308,7 +307,6 @@
 
     # Triangle in 2D space
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
-    @test isconvex(t)
     @test vertex(t, 1) == P2(0, 0)
     @test vertex(t, 2) == P2(1, 0)
     @test vertex(t, 3) == P2(0, 1)
@@ -375,12 +373,6 @@
     @test isapprox(normal(t), V3(0.5, 0, 0))
     t = Triangle(P3(0, 0, 0), P3(2, 0, 0), P3(0, 2, 2))
     @test isapprox(normal(t), V3(0, -2, 2))
-
-    # test convexity of Triangle
-    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
-    @test isconvex(t)
-    t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
-    @test isconvex(t)
 
     t = Triangle(P3(0, 0, 0), P3(1, 0, 0), P3(0, 1, 0))
     @test_throws ErrorException("signed area only defined for triangles embedded in R², use `area` instead") signarea(t)
@@ -449,30 +441,6 @@
     @test q(T(1), T(0)) == P3(1, 0, 0)
     @test q(T(1), T(1)) == P3(1, 1, 0)
     @test q(T(0), T(1)) == P3(0, 1, 1)
-
-    # isconvex in 2D
-    q1 = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
-    q2 = Quadrangle(P2(0.8, 0.8), P2(1, 0), P2(1, 1), P2(0, 1))
-    q3 = Quadrangle(P2(0, 0), P2(0.2, 0.8), P2(1, 1), P2(0, 1))
-    q4 = Quadrangle(P2(0, 0), P2(1, 0), P2(0.2, 0.2), P2(0, 1))
-    q5 = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0.8, 0.2))
-    @test isconvex(q1)
-    @test !isconvex(q2)
-    @test !isconvex(q3)
-    @test !isconvex(q4)
-    @test !isconvex(q5)
-
-    # isconvex in 3D
-    q1 = Quadrangle(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0))
-    q2 = Quadrangle(P3(0.8, 0.8, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0, 1, 0))
-    q3 = Quadrangle(P3(0, 0, 0), P3(0.2, 0.8, 0), P3(1, 1, 0), P3(0, 1, 0))
-    q4 = Quadrangle(P3(0, 0, 0), P3(1, 0, 0), P3(0.2, 0.2, 0), P3(0, 1, 0))
-    q5 = Quadrangle(P3(0, 0, 0), P3(1, 0, 0), P3(1, 1, 0), P3(0.8, 0.2, 0))
-    @test isconvex(q1)
-    @test !isconvex(q2)
-    @test !isconvex(q3)
-    @test !isconvex(q4)
-    @test !isconvex(q5)
 
     q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
     @test sprint(show, q) == "Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"
@@ -666,17 +634,6 @@
     poly = PolyArea([outer, hole1, hole2])
     @test area(poly) ≈ T(0.92)
 
-    # convexity
-    outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
-    hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
-    hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
-    poly1 = PolyArea(outer)
-    poly2 = PolyArea([outer, hole1, hole2])
-    @test isconvex(poly1)
-    @test !isconvex(poly2)
-    poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)])
-    @test !isconvex(poly)
-
     p = rand(PolyArea{2,T})
     @test p isa PolyArea
     @test embeddim(p) == 2
@@ -719,7 +676,6 @@
     @test vertex(t, 2) == P3(1, 0, 0)
     @test vertex(t, 3) == P3(0, 1, 0)
     @test vertex(t, 4) == P3(0, 0, 1)
-    @test isconvex(t)
     @test measure(t) == T(1 / 6)
     m = boundary(t)
     n = normal.(m)

@@ -176,7 +176,6 @@
   @testset "Ray" begin
     r = Ray(P2(0, 0), V2(1, 1))
     @test paramdim(r) == 1
-    @test isconvex(r)
     @test measure(r) == T(Inf)
     @test length(r) == T(Inf)
     @test boundary(r) == P2(0, 0)
@@ -238,7 +237,6 @@
   @testset "Line" begin
     l = Line(P2(0, 0), P2(1, 1))
     @test paramdim(l) == 1
-    @test isconvex(l)
     @test measure(l) == T(Inf)
     @test length(l) == T(Inf)
     @test isnothing(boundary(l))
@@ -274,7 +272,6 @@
     @test p(T(1), T(0)) == P3(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
-    @test isconvex(p)
     @test measure(p) == T(Inf)
     @test area(p) == T(Inf)
     @test p(T(0), T(0)) == P3(0, 0, 0)
@@ -385,7 +382,6 @@
     @test embeddim(b) == 1
     @test paramdim(b) == 1
     @test coordtype(b) == T
-    @test isconvex(b)
     @test minimum(b) == P1(0)
     @test maximum(b) == P1(1)
     @test extrema(b) == (P1(0), P1(1))
@@ -394,7 +390,6 @@
     @test embeddim(b) == 2
     @test paramdim(b) == 2
     @test coordtype(b) == T
-    @test isconvex(b)
     @test minimum(b) == P2(0, 0)
     @test maximum(b) == P2(1, 1)
     @test extrema(b) == (P2(0, 0), P2(1, 1))
@@ -403,7 +398,6 @@
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
-    @test isconvex(b)
     @test minimum(b) == P3(0, 0, 0)
     @test maximum(b) == P3(1, 1, 1)
     @test extrema(b) == (P3(0, 0, 0), P3(1, 1, 1))
@@ -519,7 +513,6 @@
     @test embeddim(b) == 3
     @test paramdim(b) == 3
     @test coordtype(b) == T
-    @test isconvex(b)
     @test Meshes.center(b) == P3(1, 2, 3)
     @test radius(b) == T(5)
 
@@ -597,7 +590,6 @@
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
-    @test !isconvex(s)
     @test Meshes.center(s) == P3(0, 0, 0)
     @test radius(s) == T(1)
     @test extrema(s) == (P3(-1, -1, -1), P3(1, 1, 1))
@@ -614,7 +606,6 @@
     @test Meshes.center(s) == P2(0, 0)
     @test radius(s) == T(1)
     @test extrema(s) == (P2(-1, -1), P2(1, 1))
-    @test !isconvex(s)
     @test isnothing(boundary(s))
 
     s1 = Sphere(P2(0, 0), T(1))
@@ -707,7 +698,6 @@
     @test plane(d) == p
     @test Meshes.center(d) == P3(0, 0, 0)
     @test radius(d) == T(2)
-    @test isconvex(d)
     @test measure(d) == T(π) * T(2)^2
     @test area(d) == measure(d)
     @test P3(0, 0, 0) ∈ d
@@ -744,7 +734,6 @@
     @test plane(c) == p
     @test Meshes.center(c) == P3(0, 0, 0)
     @test radius(c) == T(2)
-    @test !isconvex(c)
     @test measure(c) == 2 * T(π) * T(2)
     @test length(c) == measure(c)
     @test P3(2, 0, 0) ∈ c
@@ -800,7 +789,6 @@
     @test bottom(c) == Plane(P3(1, 2, 3), V3(0, 0, 1))
     @test top(c) == Plane(P3(4, 5, 6), V3(0, 0, 1))
     @test axis(c) == Line(P3(1, 2, 3), P3(4, 5, 6))
-    @test isconvex(c)
     @test !isright(c)
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3))
     @test P3(1, 2, 3) ∈ c
@@ -865,7 +853,6 @@
     @test embeddim(c) == 3
     @test paramdim(c) == 2
     @test coordtype(c) == T
-    @test !isconvex(c)
     @test radius(c) == T(2)
     @test bottom(c) == Plane(P3(0, 0, 0), V3(0, 0, 1))
     @test top(c) == Plane(P3(0, 0, 1), V3(0, 0, 1))
@@ -995,7 +982,6 @@
     @test embeddim(c) == 3
     @test paramdim(c) == 3
     @test coordtype(c) == T
-    @test isconvex(c)
     @test boundary(c) == ConeSurface(d, a)
 
     c = rand(Cone{T})
@@ -1057,7 +1043,6 @@
     @test embeddim(s) == 3
     @test paramdim(s) == 2
     @test coordtype(s) == T
-    @test !isconvex(s)
     @test isnothing(boundary(s))
 
     c = rand(ConeSurface{T})
@@ -1146,7 +1131,6 @@
     @test P3(1, 1, -1) ∈ t
     @test P3(1, 1, 1) ∉ t
     @test paramdim(t) == 2
-    @test !isconvex(t)
     @test Meshes.center(t) == P3(1, 1, 1)
     @test normal(t) == V3(1, 0, 0)
     @test radii(t) == (T(2), T(1))
