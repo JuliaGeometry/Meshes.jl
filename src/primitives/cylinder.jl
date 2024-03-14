@@ -95,7 +95,7 @@ function (c::Cylinder{T})(u, v, w) where {T}
 
   # Calculate translation/rotation to map between cylinder-space and global coords
   cylorigin = b(0, 0)
-  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
+  Q = rotation_between(Vec{3,T}(0, 0, 1), d)
 
   # Project a parametric Segment between the top and bottom planes
   x = cylorigin + Q * Vec(ρ * cos(φ), ρ * sin(φ), 0)
