@@ -71,8 +71,9 @@ function (s::Sphere{2,T})(φ) where {T}
   end
   c = s.center
   r = s.radius
-  x = r * cos(φ * T(2π))
-  y = r * sin(φ * T(2π))
+  sφ, cφ = sincospi(2 * T(φ))
+  x = r * cφ
+  y = r * sφ
   c + Vec(x, y)
 end
 
@@ -82,9 +83,11 @@ function (s::Sphere{3,T})(θ, φ) where {T}
   end
   c = s.center
   r = s.radius
-  x = r * sin(θ * T(π)) * cos(φ * T(2π))
-  y = r * sin(θ * T(π)) * sin(φ * T(2π))
-  z = r * cos(θ * T(π))
+  sθ, cθ = sincospi(T(θ))
+  sφ, cφ = sincospi(2 * T(φ))
+  x = r * sθ * cφ
+  y = r * sθ * sφ
+  z = r * cθ
   c + Vec(x, y, z)
 end
 

@@ -85,7 +85,7 @@ function (c::CylinderSurface{T})(φ, z) where {T}
   b = bottom(c)
   t = top(c)
   a = axis(c)
-  d = a(1) - a(0)
+  d = a(T(1)) - a(T(0))
   l = norm(d)
 
   # rotation to align z axis with cylinder axis
@@ -95,19 +95,16 @@ function (c::CylinderSurface{T})(φ, z) where {T}
   nᵦ = Q * normal(b)
   nₜ = Q * normal(t)
 
-  # scale coordinates
-  φₛ = 2T(π) * φ
-  zₛ = z
-
   # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
   # equation of the plane, we can solve for z and find all points
   # along the ellipse obtained by intersection
-  zᵦ = -l / 2 - (r * cos(φₛ) * nᵦ[1] + r * sin(φₛ) * nᵦ[2]) / nᵦ[3]
-  zₜ = +l / 2 - (r * cos(φₛ) * nₜ[1] + r * sin(φₛ) * nₜ[2]) / nₜ[3]
-  pᵦ = Point(r * cos(φₛ), r * sin(φₛ), zᵦ)
-  pₜ = Point(r * cos(φₛ), r * sin(φₛ), zₜ)
+  sφ, cφ = sincospi(2 * T(φ))
+  zᵦ = -l / 2 - (r * cφ * nᵦ[1] + r * sφ * nᵦ[2]) / nᵦ[3]
+  zₜ = +l / 2 - (r * cφ * nₜ[1] + r * sφ * nₜ[2]) / nₜ[3]
+  pᵦ = Point(r * cφ, r * sφ, zᵦ)
+  pₜ = Point(r * cφ, r * sφ, zₜ)
 
-  p = pᵦ + zₛ * (pₜ - pᵦ)
+  p = pᵦ + T(z) * (pₜ - pᵦ)
   o + Q' * coordinates(p)
 end
 

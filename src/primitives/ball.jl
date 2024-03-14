@@ -34,8 +34,10 @@ function (b::Ball{2,T})(ρ, φ) where {T}
   end
   c = b.center
   r = b.radius
-  x = ρ * r * cos(φ * T(2π))
-  y = ρ * r * sin(φ * T(2π))
+  l = T(ρ) * r
+  sφ, cφ = sincospi(2 * T(φ))
+  x = l * cφ
+  y = l * sφ
   c + Vec(x, y)
 end
 
@@ -45,9 +47,12 @@ function (b::Ball{3,T})(ρ, θ, φ) where {T}
   end
   c = b.center
   r = b.radius
-  x = ρ * r * sin(θ * T(π)) * cos(φ * T(2π))
-  y = ρ * r * sin(θ * T(π)) * sin(φ * T(2π))
-  z = ρ * r * cos(θ * T(π))
+  l = T(ρ) * r
+  sθ, cθ = sincospi(T(θ))
+  sφ, cφ = sincospi(2 * T(φ))
+  x = l * sθ * cφ
+  y = l * sθ * sφ
+  z = l * cθ
   c + Vec(x, y, z)
 end
 

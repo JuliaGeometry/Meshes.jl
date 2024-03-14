@@ -30,8 +30,10 @@ function (d::Disk{T})(ρ, φ) where {T}
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
   r = d.radius
-  u = ρ * r * cos(φ * T(2π))
-  v = ρ * r * sin(φ * T(2π))
+  l = T(ρ) * r
+  sφ, cφ = sincospi(2 * T(φ))
+  u = l * cφ
+  v = l * sφ
   d.plane(u, v)
 end
 

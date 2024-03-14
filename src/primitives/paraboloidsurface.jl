@@ -88,21 +88,19 @@ Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} 
   isapprox(p₁.focallength, p₂.focallength, atol=atol(T)) &&
   isapprox(p₁.radius, p₂.radius, atol=atol(T))
 
-function (p::ParaboloidSurface{T})(r, θ) where {T}
-  # r is the radial coordinate, θ is the angular coordinate
-  if (r < 0 || r > 1)
-    throw(DomainError((r, θ), "radius r=$r is out of [0, 1]"))
+function (p::ParaboloidSurface{T})(ρ, θ) where {T}
+  if (ρ < 0 || ρ > 1)
+    throw(DomainError((ρ, θ), "p(ρ, θ) is not defined for ρ outside [0, 1]."))
   end
-
+  c = p.apex
+  r = p.radius
   f = p.focallength
-  cx, cy, cz = coordinates(p.apex)
-
-  sinθ, cosθ = sincospi(T(2) * θ)
-  x = r * p.radius * cosθ
-  y = r * p.radius * sinθ
+  l = T(ρ) * r
+  sθ, cθ = sincospi(2 * T(θ))
+  x = l * cθ
+  y = l * sθ
   z = (x^2 + y^2) / 4f
-
-  Point(cx + x, cy + y, cz + z)
+  c + Vec(x, y, z)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface{T}}) where {T} =

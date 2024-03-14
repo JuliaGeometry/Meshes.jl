@@ -28,13 +28,13 @@ function (c::ConeSurface{T})(φ, h) where {T}
     throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
   n = -normal(plane(c.base))
-  v = c.base(0, 0) - c.apex
+  v = c.base(T(0), T(0)) - c.apex
   l = norm(v)
   θ = ∠(n, v)
-  o = c.apex + h * v
+  o = c.apex + T(h) * v
   r = h * l * cos(θ)
   s = Circle(Plane(o, n), r)
-  s(φ)
+  s(T(φ))
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface{T}}) where {T} =

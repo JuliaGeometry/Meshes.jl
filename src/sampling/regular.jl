@@ -24,7 +24,7 @@ end
 RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 
 function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) where {Dim,T}
-  V = T <: AbstractFloat ? T : Float64
+  V = floattype(T)
   D = paramdim(geom)
   sz = fitdims(method.sizes, D)
   δₛ = firstoffset(geom)
@@ -36,6 +36,9 @@ function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) w
   iₚ = (p for p in extrapoints(geom))
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
+
+floattype(T::Type{<:Quantity}) = floattype(Unitful.numtype(T))
+floattype(T::Type) = float(T)
 
 firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
 lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))

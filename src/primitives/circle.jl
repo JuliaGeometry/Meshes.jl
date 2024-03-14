@@ -51,8 +51,10 @@ function (c::Circle{T})(φ) where {T}
     throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))
   end
   r = c.radius
-  u = r * cos(φ * T(2π))
-  v = r * sin(φ * T(2π))
+  l = T(r)
+  sφ, cφ = sincospi(2 * T(φ))
+  u = l * cφ
+  v = l * sφ
   c.plane(u, v)
 end
 
