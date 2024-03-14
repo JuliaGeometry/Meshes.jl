@@ -93,17 +93,16 @@ function (c::Cylinder{T})(u, v, w) where {T}
   ρ = r * u
   φ = T(2π) * v
 
+  # Calculate translation/rotation to map between cylinder-space and global coords
+  cylorigin = b(0, 0)
+  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
+
   # Project a parametric Segment between the top and bottom planes
-  center = b(0, 0)
-  x = Point(ρ * cos(φ), ρ * sin(φ), 0)
-  y = Point(ρ * cos(φ), ρ * sin(φ), h)
+  x = cylorigin + Q * Vec(ρ * cos(φ), ρ * sin(φ), 0)
+  y = cylorigin + Q * Vec(ρ * cos(φ), ρ * sin(φ), h)
   xy = Line(x, y)
   zt = intersect(xy, t)
   zb = intersect(xy, b)
   seg = Segment(zb, zt)
-
-  # rotation to align z axis with cylinder axis
-  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
-
-  center + Q * coordinates(seg(w))
+  seg(w)
 end
