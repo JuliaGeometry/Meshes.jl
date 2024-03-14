@@ -30,6 +30,12 @@ isperiodic(::Type{<:Disk}) = (false, true)
 
 isperiodic(::Type{<:Circle}) = (true,)
 
+isperiodic(::Type{<:CylinderSurface}) = (true, false)
+
+isperiodic(::Type{<:ConeSurface}) = (true, false)
+
+isperiodic(::Type{<:ParaboloidSurface}) = (false, true)
+
 isperiodic(::Type{<:Torus}) = (true, true)
 
 isperiodic(c::Type{<:Chain}) = (isclosed(c),)

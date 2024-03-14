@@ -38,6 +38,27 @@
     @test isconvex(b)
   end
 
+  @testset "isparametrized" begin
+    @test isparametrized(Ray)
+    @test isparametrized(Line)
+    @test isparametrized(Plane)
+    @test isparametrized(Box)
+    @test isparametrized(Ball)
+    @test isparametrized(Sphere)
+    @test isparametrized(Disk)
+    @test isparametrized(Circle)
+    @test isparametrized(BezierCurve)
+    @test isparametrized(Cylinder)
+    @test isparametrized(CylinderSurface)
+    @test isparametrized(ConeSurface)
+    @test isparametrized(ParaboloidSurface)
+    @test isparametrized(Torus)
+    @test isparametrized(Segment)
+    @test isparametrized(Triangle)
+    @test isparametrized(Quadrangle)
+    @test isparametrized(Hexahedron)
+  end
+
   @testset "in" begin
     h = first(CartesianGrid{T}(10, 10, 10))
     @test P3(0, 0, 0) ∈ h

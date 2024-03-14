@@ -53,6 +53,10 @@ firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::CylinderSurface) = (bottom(c)(0, 0), top(c)(0, 0))
 
+firstoffset(::ConeSurface) = (n -> zero(n), n -> inv(n))
+lastoffset(::ConeSurface) = (n -> inv(n), n -> zero(n))
+extrapoints(c::ConeSurface) = (apex(c), base(c)(0, 0))
+
 firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
 lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
 extrapoints(::Geometry) = ()

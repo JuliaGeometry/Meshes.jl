@@ -54,10 +54,6 @@ ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0))
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
 
-isparametrized(::Type{<:ParaboloidSurface}) = true
-
-isperiodic(::Type{<:ParaboloidSurface}) = (false, true)
-
 """
     focallength(p::ParaboloidSurface)
 
