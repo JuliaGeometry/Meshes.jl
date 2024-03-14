@@ -6,7 +6,7 @@
     BezierCurve(points)
 
 A recursive Bézier curve with control points `points`.
-See https://en.wikipedia.org/wiki/Bézier_curve.
+See <https://en.wikipedia.org/wiki/Bézier_curve>.
 A point on the curve `b` can be evaluated by calling
 `b(t)` with `t` between `0` and `1`.
 The evaluation method defaults to DeCasteljau's algorithm
@@ -45,7 +45,7 @@ abstract type BezierEvalMethod end
 Accurate evaluation using De Casteljau's algorithm.
 Recommended for a small number of control points.
 
-See https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm.
+See <https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm>.
 """
 struct DeCasteljau <: BezierEvalMethod end
 
@@ -54,7 +54,7 @@ Approximate evaluation using Horner's method.
 Recommended for a large number of control points,
 if you can afford a precision loss.
 
-See https://en.wikipedia.org/wiki/Horner%27s_method.
+See <https://en.wikipedia.org/wiki/Horner%27s_method>.
 """
 struct Horner <: BezierEvalMethod end
 
