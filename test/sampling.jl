@@ -69,9 +69,6 @@
   end
 
   @testset "RegularSampling" begin
-    # fix import conflict with Plots
-    BezierCurve = Meshes.BezierCurve
-
     b = Box(P2(0, 0), P2(2, 2))
     ps = sample(b, RegularSampling(3))
     @test collect(ps) == P2[(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]

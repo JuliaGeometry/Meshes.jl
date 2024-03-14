@@ -12,9 +12,6 @@
   end
 
   @testset "RegularDiscretization" begin
-    # fix import conflict with Plots
-    BezierCurve = Meshes.BezierCurve
-
     bezier = BezierCurve([P2(0, 0), P2(1, 0), P2(1, 1)])
     mesh = discretize(bezier, RegularDiscretization(10))
     @test nvertices(mesh) == 11
@@ -382,9 +379,6 @@
   end
 
   @testset "Simplexify" begin
-    # fix import conflict with Plots
-    BezierCurve = Meshes.BezierCurve
-
     # simplexify is a helper function that calls an
     # appropriate discretization method depending on
     # the geometry type that is given to it
