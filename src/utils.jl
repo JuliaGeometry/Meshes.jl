@@ -66,7 +66,7 @@ end
 Returns the 2D basis that retains most of the variance in the list of 3D `points`
 using the singular value decomposition (SVD).
 
-See https://math.stackexchange.com/a/99317.
+See <https://math.stackexchange.com/a/99317>.
 """
 function svdbasis(p::AbstractVector{Point{3,T}}) where {T}
   X = reduce(hcat, coordinates.(p))

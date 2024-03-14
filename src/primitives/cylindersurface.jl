@@ -22,7 +22,7 @@ with `start` and `finish` end points.
 
 Finally, construct a right vertical circular cylinder surface with given `radius`.
 
-See https://en.wikipedia.org/wiki/Cylinder. 
+See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
 struct CylinderSurface{T} <: Primitive{3,T}
   bot::Plane{T}

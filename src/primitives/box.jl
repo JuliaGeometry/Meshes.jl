@@ -6,7 +6,7 @@
     Box(min, max)
 
 An axis-aligned box with `min` and `max` corners.
-See https://en.wikipedia.org/wiki/Hyperrectangle.
+See <https://en.wikipedia.org/wiki/Hyperrectangle>.
 
 ## Examples
 

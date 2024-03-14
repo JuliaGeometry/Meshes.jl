@@ -9,7 +9,7 @@ We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
 embedded in a `Dim`-dimensional space. The parameter `K` is also known as the
-rank or parametric dimension of the polytope: https://en.wikipedia.org/wiki/Abstract_polytope.
+rank or parametric dimension of the polytope: <https://en.wikipedia.org/wiki/Abstract_polytope>.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into
@@ -19,7 +19,7 @@ store all features.
 
 Additionally, the following property must hold in order for a geometry to be considered
 a polytope: the boundary of a (K+1)-polytope is a collection of K-polytopes, which may
-have (K-1)-polytopes in common. See https://en.wikipedia.org/wiki/Polytope.
+have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 ### Notes
 
@@ -48,7 +48,7 @@ end
     Chain{Dim,T}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
-See https://en.wikipedia.org/wiki/Polygonal_chain.
+See <https://en.wikipedia.org/wiki/Polygonal_chain>.
 
 See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
 """
