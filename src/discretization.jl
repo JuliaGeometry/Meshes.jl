@@ -119,7 +119,9 @@ discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
 
 discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
 
-discretize(p::ParaboloidSurface) = discretize(p, RegularDiscretization(50))
+discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
+
+discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
 
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 

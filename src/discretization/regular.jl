@@ -173,12 +173,12 @@ function discretize(cylsurf::CylinderSurface, method::RegularDiscretization)
   SimpleMesh(points, connec)
 end
 
-function discretize(conesurf::ConeSurface, method::RegularDiscretization)
-  nx, ny = fitdims(method.sizes, paramdim(conesurf))
+function discretize(consurf::ConeSurface, method::RegularDiscretization)
+  nx, ny = fitdims(method.sizes, paramdim(consurf))
 
   # sample points regularly
   sampler = RegularSampling(nx, ny)
-  points = collect(sample(conesurf, sampler))
+  points = collect(sample(consurf, sampler))
 
   # connect regular samples with quadrangles
   topo = GridTopology((nx - 1, ny - 1))
