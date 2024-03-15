@@ -57,8 +57,8 @@
 
     consurf = ConeSurface(Disk(Plane(P3(0, 0, 0), V3(0, 0, 1)), T(1)), P3(0, 0, 1))
     mesh = discretize(consurf, RegularDiscretization(10))
-    @test nvertices(mesh) == 10 * 10 + 2
-    @test nelements(mesh) == 10 * (10 - 1) + 2 * 10
+    @test nvertices(mesh) == 10 * 11 + 2
+    @test nelements(mesh) == 10 * 10 + 2 * 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 

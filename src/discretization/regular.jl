@@ -130,6 +130,43 @@ function appendtopo(::CylinderSurface, tg)
   SimpleTopology([middle; north; south])
 end
 
+function appendtopo(::ConeSurface, tg)
+  sz = size(tg)
+  ip = isperiodic(tg)
+  np = @. sz + !ip
+  nx, ny = np
+
+  # connect quadrangles in the middle
+  middle = collect(elements(tg))
+
+  # connect apex with triangles
+  south = map(1:(nx - 1)) do i
+    u = nx * ny + 1
+    v = i + 1
+    w = i
+    connect((u, v, w))
+  end
+  u = nx * ny + 1
+  v = 1
+  w = nx
+  push!(south, connect((u, v, w)))
+
+  # connect base center with triangles
+  offset = nx * ny - nx
+  north = map(1:(nx - 1)) do i
+    u = nx * ny + 2
+    v = offset + i + 1
+    w = offset + i
+    connect((u, w, v))
+  end
+  u = nx * ny + 2
+  v = nx * ny - nx + 1
+  w = nx * ny
+  push!(north, connect((u, w, v)))
+
+  SimpleTopology([middle; north; south])
+end
+
 # --------------
 # SPECIAL CASES
 # --------------
@@ -167,55 +204,6 @@ function _rball(ball, method::RegularDiscretization)
   push!(tris, connect((u, v, w)))
 
   connec = [quads; tris]
-
-  SimpleMesh(points, connec)
-end
-
-function discretize(consurf::ConeSurface, method::RegularDiscretization)
-  nx, ny = fitdims(method.sizes, paramdim(consurf))
-
-  # sample points regularly
-  sampler = RegularSampling(nx, ny)
-  points = collect(sample(consurf, sampler))
-
-  # connect regular samples with quadrangles
-  topo = GridTopology((nx - 1, ny - 1))
-  middle = collect(elements(topo))
-  for j in 1:(ny - 1)
-    u = (j) * nx
-    v = (j - 1) * nx + 1
-    w = (j) * nx + 1
-    z = (j + 1) * nx
-    quad = connect((u, v, w, z))
-    push!(middle, quad)
-  end
-
-  # connect apex with triangles
-  south = map(1:(nx - 1)) do i
-    u = nx * ny + 1
-    v = i + 1
-    w = i
-    connect((u, v, w))
-  end
-  u = nx * ny + 1
-  v = 1
-  w = nx
-  push!(south, connect((u, v, w)))
-
-  # connect base center with triangles
-  offset = nx * ny - nx
-  north = map(1:(nx - 1)) do i
-    u = nx * ny + 2
-    v = offset + i + 1
-    w = offset + i
-    connect((u, w, v))
-  end
-  u = nx * ny + 2
-  v = nx * ny - nx + 1
-  w = nx * ny
-  push!(north, connect((u, w, v)))
-
-  connec = [middle; south; north]
 
   SimpleMesh(points, connec)
 end
