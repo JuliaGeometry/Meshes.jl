@@ -19,14 +19,9 @@ RegularDiscretization(sizes::Vararg{Int,N}) where {N} = RegularDiscretization(si
 
 function discretize(geometry::Geometry, method::RegularDiscretization)
   if isparametrized(geometry)
-    sz = fitdims(method.sizes, paramdim(geometry))
-    ip = isperiodic(geometry)
-    np = @. sz + !ip
-
-    points = sample(geometry, RegularSampling(np))
-    topo = GridTopology(sz, ip)
-
-    SimpleMesh(collect(points), topo)
+    verts, tgrid = wrapgrid(geometry, method)
+    tmesh = appendtopo(geometry, tgrid)
+    SimpleMesh(collect(verts), tmesh)
   else
     box = boundingbox(geometry)
     grid = discretize(box, method)
@@ -34,34 +29,42 @@ function discretize(geometry::Geometry, method::RegularDiscretization)
   end
 end
 
-# --------------
-# SPECIAL CASES
-# --------------
+# ----------------------
+# wrap grid on geometry
+# ----------------------
 
-function discretize(box::Box, method::RegularDiscretization)
-  sz = fitdims(method.sizes, paramdim(box))
-  CartesianGrid(extrema(box)..., dims=sz)
+function wrapgrid(g, m)
+  sz = fitdims(m.sizes, paramdim(g))
+  ip = isperiodic(g)
+  np = @. sz + !ip
+  ps = sample(g, RegularSampling(np))
+  tg = GridTopology(sz, ip)
+  ps, tg
 end
 
-function discretize(sphere::Sphere{3}, method::RegularDiscretization)
-  nx, ny = fitdims(method.sizes, paramdim(sphere))
+function wrapgrid(g::Sphere{3}, m)
+  sz = fitdims(m.sizes, paramdim(g))
+  ip = (false, true)
+  np = @. sz + !ip
+  ps = sample(g, RegularSampling(np))
+  tg = GridTopology(sz, ip)
+  ps, tg
+end
 
-  # sample points regularly
-  sampler = RegularSampling(nx, ny)
-  points = collect(sample(sphere, sampler))
+# ------------------------
+# append to grid topology
+# ------------------------
 
-  # connect regular samples with quadrangles
-  topo = GridTopology((nx - 1, ny - 1))
-  middle = collect(elements(topo))
-  offset = nx * ny - nx
-  for i in 1:(nx - 1)
-    u = offset + i
-    v = offset + i + 1
-    w = i + 1
-    z = i
-    quad = connect((u, v, w, z))
-    push!(middle, quad)
-  end
+appendtopo(g, tg) = tg
+
+function appendtopo(::Sphere{3}, tg)
+  sz = size(tg)
+  ip = isperiodic(tg)
+  np = @. sz + !ip
+  nx, ny = np
+
+  # collect quadrangles in the middle
+  middle = collect(elements(tg))
 
   # connect north pole with triangles
   north = map(1:(ny - 1)) do j
@@ -87,9 +90,16 @@ function discretize(sphere::Sphere{3}, method::RegularDiscretization)
   w = nx
   push!(south, connect((u, w, v)))
 
-  connec = [middle; north; south]
+  SimpleTopology([middle; north; south])
+end
 
-  SimpleMesh(points, connec)
+# --------------
+# SPECIAL CASES
+# --------------
+
+function discretize(box::Box, method::RegularDiscretization)
+  sz = fitdims(method.sizes, paramdim(box))
+  CartesianGrid(extrema(box)..., dims=sz)
 end
 
 discretize(ball::Ball{2}, method::RegularDiscretization) = _rball(ball, method)
