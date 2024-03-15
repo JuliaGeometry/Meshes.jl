@@ -121,7 +121,11 @@ function appendtopo(::Sphere{3}, tg)
   SimpleTopology([middle; north; south])
 end
 
-function appendtopo(::CylinderSurface, tg)
+appendtopo(::CylinderSurface, tg) = _appendnorthsouth(tg)
+
+appendtopo(::ConeSurface, tg) = _appendnorthsouth(tg)
+
+function _appendnorthsouth(tg)
   sz = size(tg)
   ip = isperiodic(tg)
   np = @. sz + !ip
@@ -143,43 +147,6 @@ function appendtopo(::CylinderSurface, tg)
   push!(south, connect((u, v, w)))
 
   # connect north pole with triangles
-  offset = nx * ny - nx
-  north = map(1:(nx - 1)) do i
-    u = nx * ny + 2
-    v = offset + i + 1
-    w = offset + i
-    connect((u, w, v))
-  end
-  u = nx * ny + 2
-  v = nx * ny - nx + 1
-  w = nx * ny
-  push!(north, connect((u, w, v)))
-
-  SimpleTopology([middle; north; south])
-end
-
-function appendtopo(::ConeSurface, tg)
-  sz = size(tg)
-  ip = isperiodic(tg)
-  np = @. sz + !ip
-  nx, ny = np
-
-  # connect quadrangles in the middle
-  middle = collect(elements(tg))
-
-  # connect apex with triangles
-  south = map(1:(nx - 1)) do i
-    u = nx * ny + 1
-    v = i + 1
-    w = i
-    connect((u, v, w))
-  end
-  u = nx * ny + 1
-  v = 1
-  w = nx
-  push!(south, connect((u, v, w)))
-
-  # connect base center with triangles
   offset = nx * ny - nx
   north = map(1:(nx - 1)) do i
     u = nx * ny + 2
