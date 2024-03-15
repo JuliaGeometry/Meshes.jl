@@ -61,30 +61,6 @@ appendtopo(::Ball{2}, tg) = _appendcenter(tg)
 
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
-function _appendcenter(tg)
-  sz = size(tg)
-  ip = isperiodic(tg)
-  np = @. sz + !ip
-  nx, ny = np
-
-  # connect quadrangles in the middle
-  quads = collect(elements(tg))
-
-  # connect center with triangles
-  tris = map(1:(ny - 1)) do j
-    u = nx * ny + 1
-    v = 1 + (j - 1) * nx
-    w = 1 + (j) * nx
-    connect((u, v, w))
-  end
-  u = nx * ny + 1
-  v = 1 + (ny - 1) * nx
-  w = 1
-  push!(tris, connect((u, v, w)))
-
-  SimpleTopology([quads; tris])
-end
-
 function appendtopo(::Sphere{3}, tg)
   sz = size(tg)
   ip = isperiodic(tg)
@@ -124,6 +100,30 @@ end
 appendtopo(::CylinderSurface, tg) = _appendnorthsouth(tg)
 
 appendtopo(::ConeSurface, tg) = _appendnorthsouth(tg)
+
+function _appendcenter(tg)
+  sz = size(tg)
+  ip = isperiodic(tg)
+  np = @. sz + !ip
+  nx, ny = np
+
+  # connect quadrangles in the middle
+  quads = collect(elements(tg))
+
+  # connect center with triangles
+  tris = map(1:(ny - 1)) do j
+    u = nx * ny + 1
+    v = 1 + (j - 1) * nx
+    w = 1 + (j) * nx
+    connect((u, v, w))
+  end
+  u = nx * ny + 1
+  v = 1 + (ny - 1) * nx
+  w = 1
+  push!(tris, connect((u, v, w)))
+
+  SimpleTopology([quads; tris])
+end
 
 function _appendnorthsouth(tg)
   sz = size(tg)
