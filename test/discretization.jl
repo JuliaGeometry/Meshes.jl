@@ -43,8 +43,15 @@
 
     ball = Ball(P2(0, 0), T(1))
     mesh = discretize(ball, RegularDiscretization(10))
-    @test nvertices(mesh) == 10 * 10 + 1
-    @test nelements(mesh) == (10) * (10 - 1) + 10
+    @test nvertices(mesh) == 11 * 10 + 1
+    @test nelements(mesh) == 10 * 10 + 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    disk = Disk(Plane(P3(0, 0, 0), V3(0, 0, 1)), T(1))
+    mesh = discretize(disk, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 + 1
+    @test nelements(mesh) == 10 * 10 + 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
@@ -357,13 +364,13 @@
     mesh = discretize(ball)
     @test !(eltype(mesh) <: Triangle)
     @test !(eltype(mesh) <: Quadrangle)
-    @test nelements(mesh) == 2500
+    @test nelements(mesh) == 2550
 
     sphere = Sphere(P3(0, 0, 0), T(1))
-    mesh = discretize(ball)
+    mesh = discretize(sphere)
     @test !(eltype(mesh) <: Triangle)
     @test !(eltype(mesh) <: Quadrangle)
-    @test nelements(mesh) == 2500
+    @test nelements(mesh) == 2600
 
     cylsurf = CylinderSurface(T(1))
     mesh = discretize(cylsurf)

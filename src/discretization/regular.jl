@@ -57,6 +57,34 @@ end
 
 appendtopo(g, tg) = tg
 
+appendtopo(::Ball{2}, tg) = _appendcenter(tg)
+
+appendtopo(::Disk, tg) = _appendcenter(tg)
+
+function _appendcenter(tg)
+  sz = size(tg)
+  ip = isperiodic(tg)
+  np = @. sz + !ip
+  nx, ny = np
+
+  # connect quadrangles in the middle
+  quads = collect(elements(tg))
+
+  # connect center with triangles
+  tris = map(1:(ny - 1)) do j
+    u = nx * ny + 1
+    v = 1 + (j - 1) * nx
+    w = 1 + (j) * nx
+    connect((u, v, w))
+  end
+  u = nx * ny + 1
+  v = 1 + (ny - 1) * nx
+  w = 1
+  push!(tris, connect((u, v, w)))
+
+  SimpleTopology([quads; tris])
+end
+
 function appendtopo(::Sphere{3}, tg)
   sz = size(tg)
   ip = isperiodic(tg)
@@ -174,36 +202,4 @@ end
 function discretize(box::Box, method::RegularDiscretization)
   sz = fitdims(method.sizes, paramdim(box))
   CartesianGrid(extrema(box)..., dims=sz)
-end
-
-discretize(ball::Ball{2}, method::RegularDiscretization) = _rball(ball, method)
-
-discretize(disk::Disk, method::RegularDiscretization) = _rball(disk, method)
-
-function _rball(ball, method::RegularDiscretization)
-  nx, ny = fitdims(method.sizes, paramdim(ball))
-
-  # sample points regularly
-  sampler = RegularSampling(nx, ny)
-  points = collect(sample(ball, sampler))
-
-  # connect regular samples with quadrangles
-  topo = GridTopology((nx - 1, ny), (false, true))
-  quads = collect(elements(topo))
-
-  # connect center with triangles
-  tris = map(1:(ny - 1)) do j
-    u = nx * ny + 1
-    v = 1 + (j - 1) * nx
-    w = 1 + (j) * nx
-    connect((u, v, w))
-  end
-  u = nx * ny + 1
-  v = 1 + (ny - 1) * nx
-  w = 1
-  push!(tris, connect((u, v, w)))
-
-  connec = [quads; tris]
-
-  SimpleMesh(points, connec)
 end
