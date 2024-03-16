@@ -852,7 +852,7 @@
     @test isparametrized(c)
     @test c(0, 0, 0) ≈ bottom(c)(0, 0)
     @test c(0, 0, 1) ≈ top(c)(0, 0)
-    @test c(1, 0.25, 0) ≈ P3(1, 7, 3)
+    @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3))
     @test P3(1, 2, 3) ∈ c
     @test P3(4, 5, 6) ∈ c
