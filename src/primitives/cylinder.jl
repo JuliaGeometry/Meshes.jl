@@ -95,7 +95,7 @@ function (c::Cylinder{T})(ρ, φ, z) where {T}
   Q = rotation_between(Vec{3,T}(0, 0, 1), d)
 
   # Project a parametric Segment between the top and bottom planes
-  ρsinφ, ρcosφ = r * T(ρ) * sincospi(2 * T(φ))
+  ρsinφ, ρcosφ = (r * T(ρ)) .* sincospi(2 * T(φ))
   x = cylorigin + Q * Vec(ρcosφ, ρsinφ, 0)
   y = cylorigin + Q * Vec(ρcosφ, ρsinφ, h)
   xy = Line(x, y)
