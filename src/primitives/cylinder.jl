@@ -102,5 +102,5 @@ function (c::Cylinder{T})(ρ, φ, z) where {T}
   zt = intersect(xy, t)
   zb = intersect(xy, b)
   seg = Segment(zb, zt)
-  seg(z)
+  seg(T(z))
 end
