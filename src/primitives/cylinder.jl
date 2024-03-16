@@ -78,31 +78,29 @@ function _hassaferadius(c::Cylinder)
   end
 end
 
-function (c::Cylinder{T})(u, v, w) where {T}
-  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
-    throw(DomainError((u, v, w), "c(u, v, w) is not defined for u, v, w outside [0, 1]³."))
+function (c::Cylinder{T})(ρ, φ, z) where {T}
+  if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
+    throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
 
   r = radius(c)
   b = bottom(c)
   t = top(c)
   a = axis(c)
-  d = a(1) - a(0)
+  d = a(T(1)) - a(T(0))
   h = norm(d)
-
-  ρ = r * u
-  φ = T(2π) * v
 
   # Calculate translation/rotation to map between cylinder-space and global coords
   cylorigin = b(0, 0)
   Q = rotation_between(Vec{3,T}(0, 0, 1), d)
 
   # Project a parametric Segment between the top and bottom planes
-  x = cylorigin + Q * Vec(ρ * cos(φ), ρ * sin(φ), 0)
-  y = cylorigin + Q * Vec(ρ * cos(φ), ρ * sin(φ), h)
+  ρsinφ, ρcosφ = r * T(ρ) * sincospi(2 * T(φ))
+  x = cylorigin + Q * Vec(ρcosφ, ρsinφ, 0)
+  y = cylorigin + Q * Vec(ρcosφ, ρsinφ, h)
   xy = Line(x, y)
   zt = intersect(xy, t)
   zb = intersect(xy, b)
   seg = Segment(zb, zt)
-  seg(w)
+  seg(z)
 end
