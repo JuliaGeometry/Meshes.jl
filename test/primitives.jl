@@ -799,6 +799,7 @@
     @test c(0, 0, 0) ≈ bottom(c)(0, 0)
     @test c(0, 0, 1) ≈ top(c)(0, 0)
     @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
+    @test_throws DomainError c(1.1, 0, 0)
 
     c = Cylinder(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(0, 0, 1), V3(1, 0, 1)), T(5))
     @test !Meshes._hassaferadius(c)
