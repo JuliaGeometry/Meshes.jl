@@ -870,6 +870,10 @@
     @test isright(c)
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi
+    @test !Meshes.hasintersectingplanes(c)
+
+    c = CylinderSurface(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(0, 0, 1), V3(1, 0, 1)), T(5))
+    @test Meshes.hasintersectingplanes(c)
 
     c1 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1), T(1))
     c2 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1))
