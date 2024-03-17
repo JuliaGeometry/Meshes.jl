@@ -55,14 +55,15 @@ top(c::Cylinder) = c.top
 
 center(c::Cylinder) = center(boundary(c))
 
-axis(c::Cylinder) = Line(c.bot(0, 0), c.top(0, 0))
+axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
 
-Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
+intersectradius(c) = intersectradius(boundary(c))
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
-  Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+hasintersectingplanes(c::CylinderSurface) = hasintersectingplanes(boundary(c))
+
+Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 
 function (c::Cylinder{T})(ρ, φ, z) where {T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
@@ -91,16 +92,5 @@ function (c::Cylinder{T})(ρ, φ, z) where {T}
   seg(T(z))
 end
 
-# Determine whether a Cylinder's radius is small enough to prevent its top
-#   and bottom planes from intersecting one another
-function _hassaferadius(c::Cylinder)
-  xs = intersect(c.bot, c.top)
-  if isnothing(xs)
-    # planes are parallel -- no intersection possible
-    return true
-  else
-    # planes are not parallel -- find max radius
-    rmax = evaluate(Euclidean(), axis(c), xs)
-    return c.radius <= rmax
-  end
-end
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
+  Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
