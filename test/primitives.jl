@@ -528,6 +528,8 @@
     @test measure(b) ≈ T(π) * (T(2)^2)
     b = Ball(P3(0, 0, 0), T(2))
     @test measure(b) ≈ T(4 / 3) * T(π) * (T(2)^3)
+    @test_throws ArgumentError length(b)
+    @test_throws ArgumentError area(b)
 
     b = Ball(P2(0, 0), T(2))
     @test P2(1, 0) ∈ b
@@ -983,8 +985,6 @@
     @test paramdim(c) == 3
     @test coordtype(c) == T
     @test boundary(c) == ConeSurface(d, a)
-    @test_throws ArgumentError length(c)
-    @test_throws ArgumentError area(c)
 
     c = rand(Cone{T})
     @test c isa Cone
