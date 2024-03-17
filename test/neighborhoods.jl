@@ -6,7 +6,7 @@
     m = metric(b)
     @test evaluate(m, T[0], T[0]) ≤ r
     @test evaluate(m, T[0], T[1]) > r
-    @test radii(b) == b.radii
+    @test radii(b) == T[1 / 2]
 
     b = MetricBall(T(1))
     r = radius(b)
