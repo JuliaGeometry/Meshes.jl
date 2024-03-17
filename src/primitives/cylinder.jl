@@ -55,7 +55,7 @@ top(c::Cylinder) = c.top
 
 center(c::Cylinder) = center(boundary(c))
 
-axis(c::Cylinder) = axis(boundary(c))
+axis(c::Cylinder) = Line(c.bot(0, 0), c.top(0, 0))
 
 isright(c::Cylinder) = isright(boundary(c))
 
