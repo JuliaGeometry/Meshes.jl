@@ -40,17 +40,21 @@ end
 floattype(T::Type{<:Quantity}) = floattype(Unitful.numtype(T))
 floattype(T::Type) = float(T)
 
-firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
-lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
-extrapoints(s::Sphere{3}) = (s(0, 0), s(1, 0))
+firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
+lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
+extrapoints(::Geometry) = ()
 
-firstoffset(b::Ball) = (n -> inv(n + 1), firstoffset(boundary(b))...)
+firstoffset(d::Disk) = (n -> inv(n), firstoffset(boundary(d))...)
+lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
+extrapoints(d::Disk) = (center(d),)
+
+firstoffset(b::Ball) = (n -> inv(n), firstoffset(boundary(b))...)
 lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
 extrapoints(b::Ball) = (center(b),)
 
-firstoffset(d::Disk) = (n -> inv(n + 1), firstoffset(boundary(d))...)
-lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
-extrapoints(d::Disk) = (center(d),)
+firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
+lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
+extrapoints(s::Sphere{3}) = (s(0, 0), s(1, 0))
 
 firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
@@ -59,10 +63,6 @@ extrapoints(c::CylinderSurface) = (bottom(c)(0, 0), top(c)(0, 0))
 firstoffset(::ConeSurface) = (n -> zero(n), n -> inv(n))
 lastoffset(::ConeSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::ConeSurface) = (apex(c), base(c)(0, 0))
-
-firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
-lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
-extrapoints(::Geometry) = ()
 
 # --------------
 # SPECIAL CASES

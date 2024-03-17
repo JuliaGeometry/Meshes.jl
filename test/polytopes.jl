@@ -335,6 +335,7 @@
     @test unique(t) == t
     @test boundary(t) == first(rings(t))
     @test rings(t) == [Ring(P2(0, 0), P2(1, 0), P2(0, 1))]
+    @test convexhull(t) == t
 
     t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
     @test perimeter(t) ≈ T(1 + 1 + √2)

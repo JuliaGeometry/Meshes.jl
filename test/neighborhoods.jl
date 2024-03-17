@@ -6,6 +6,7 @@
     m = metric(b)
     @test evaluate(m, T[0], T[0]) ≤ r
     @test evaluate(m, T[0], T[1]) > r
+    @test radii(b) == T[1 / 2]
 
     b = MetricBall(T(1))
     r = radius(b)
@@ -13,6 +14,8 @@
     @test evaluate(m, T[0, 0], T[0, 0]) ≤ r
     @test evaluate(m, T[0, 0], T[1, 0]) ≤ r
     @test evaluate(m, T[0, 0], T[0, 1]) ≤ r
+    @test isisotropic(b)
+    @test sprint(show, b) == "MetricBall(1.0, Euclidean)"
 
     # Chebyshev metric
     b = MetricBall(T(1 / 2), Chebyshev())
