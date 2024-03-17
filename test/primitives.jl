@@ -983,6 +983,8 @@
     @test paramdim(c) == 3
     @test coordtype(c) == T
     @test boundary(c) == ConeSurface(d, a)
+    @test_throws ArgumentError length(c)
+    @test_throws ArgumentError area(c)
 
     c = rand(Cone{T})
     @test c isa Cone
@@ -1135,6 +1137,9 @@
     @test normal(t) == V3(1, 0, 0)
     @test radii(t) == (T(2), T(1))
     @test axis(t) == Line(P3(1, 1, 1), P3(2, 1, 1))
+    @test measure(t) ≈ 8 * T(π)^2
+    @test_throws ArgumentError length(t)
+    @test_throws ArgumentError volume(t)
 
     # torus passing through three points
     p₁ = P3(0, 0, 0)
