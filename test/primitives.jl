@@ -807,8 +807,10 @@
     c1 = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
     c2 = Cylinder(P3(0, 0, 0), P3(0, 0, 1))
     c3 = Cylinder(T(1))
-    @test c1 == c2 == c3
-    @test c1 ≈ c2 ≈ c3
+    c4 = Cylinder((0, 0, 0), (0, 0, 1), T(1))
+    c5 = Cylinder((0, 0, 0), (0, 0, 1))
+    @test c1 == c2 == c3 == c4 == c5
+    @test c1 ≈ c2 ≈ c3 ≈ c4 ≈ c5
 
     c = Cylinder(T(1))
     @test coordtype(c) == T
