@@ -70,26 +70,24 @@ function (c::Cylinder{T})(ρ, φ, z) where {T}
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
 
-  r = radius(c)
-  b = bottom(c)
   t = top(c)
+  b = bottom(c)
+  r = radius(c)
   a = axis(c)
   d = a(T(1)) - a(T(0))
   h = norm(d)
 
-  # Calculate translation/rotation to map between cylinder-space and global coords
-  cylorigin = b(0, 0)
+  # calculate translation/rotation to map between cylinder-space and global coords
+  o = b(0, 0)
   Q = rotation_between(Vec{3,T}(0, 0, 1), d)
 
-  # Project a parametric Segment between the top and bottom planes
-  ρsinφ, ρcosφ = (r * T(ρ)) .* sincospi(2 * T(φ))
-  x = cylorigin + Q * Vec(ρcosφ, ρsinφ, 0)
-  y = cylorigin + Q * Vec(ρcosφ, ρsinφ, h)
-  xy = Line(x, y)
-  zt = intersect(xy, t)
-  zb = intersect(xy, b)
-  seg = Segment(zb, zt)
-  seg(T(z))
+  # project a parametric Segment between the top and bottom planes
+  lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
+  p₁ = o + Q * Vec(lcφ, lsφ, T(0))
+  p₂ = o + Q * Vec(lcφ, lsφ, h)
+  l = Line(p₁, p₂)
+  s = Segment(l ∩ b, l ∩ t)
+  s(T(z))
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =

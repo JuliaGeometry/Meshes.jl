@@ -111,18 +111,7 @@ end
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface{T}}) where {T} =
   CylinderSurface(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
 
-"""
-    intersectradius(c::Cylinder)
-
-Determine the radius at which a `cylinder`'s top and bottom planes will intersect. 
-"""
-function intersectradius(c::CylinderSurface{T}) where {T}
-  xs = intersect(c.bot, c.top)
-  if isnothing(xs) # no intersect -- planes are parallel
-    return T(Inf)
-  else
-    return evaluate(Euclidean(), axis(c), xs)
-  end
+function hasintersectingplanes(c::CylinderSurface)
+  x = c.bot ∩ c.top
+  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < c.radius
 end
-
-hasintersectingplanes(c::CylinderSurface) = c.radius > intersectradius(c)
