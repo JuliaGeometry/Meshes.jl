@@ -35,10 +35,10 @@ end
 
 function wrapgrid(g, m)
   sz = fitdims(m.sizes, paramdim(g))
-  cl = perdims(g)
-  np = @. sz + !cl
+  pd = perdims(g)
+  np = @. sz + !pd
   ps = sample(g, RegularSampling(np))
-  tg = GridTopology(sz, cl)
+  tg = GridTopology(sz, pd)
   ps, tg
 end
 
