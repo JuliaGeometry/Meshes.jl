@@ -59,7 +59,34 @@ axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
 
+hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
+
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
+
+function (c::Cylinder{T})(ρ, φ, z) where {T}
+  if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
+    throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
+  end
+
+  t = top(c)
+  b = bottom(c)
+  r = radius(c)
+  a = axis(c)
+  d = a(T(1)) - a(T(0))
+  h = norm(d)
+
+  # calculate translation/rotation to map between cylinder-space and global coords
+  o = b(0, 0)
+  Q = rotation_between(Vec{3,T}(0, 0, 1), d)
+
+  # project a parametric Segment between the top and bottom planes
+  lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
+  p₁ = o + Q * Vec(lcφ, lsφ, T(0))
+  p₂ = o + Q * Vec(lcφ, lsφ, h)
+  l = Line(p₁, p₂)
+  s = Segment(l ∩ b, l ∩ t)
+  s(T(z))
+end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
   Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))

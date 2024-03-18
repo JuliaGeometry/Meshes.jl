@@ -797,6 +797,14 @@
     @test P3(4, 5, 6) ∈ c
     @test P3(0.99, 1.99, 2.99) ∉ c
     @test P3(4.01, 5.01, 6.01) ∉ c
+    @test !Meshes.hasintersectingplanes(c)
+    @test c(0, 0, 0) ≈ bottom(c)(0, 0)
+    @test c(0, 0, 1) ≈ top(c)(0, 0)
+    @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
+    @test_throws DomainError c(1.1, 0, 0)
+
+    c = Cylinder(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(0, 0, 1), V3(1, 0, 1)), T(5))
+    @test Meshes.hasintersectingplanes(c)
 
     c1 = Cylinder(P3(0, 0, 0), P3(0, 0, 1), T(1))
     c2 = Cylinder(P3(0, 0, 0), P3(0, 0, 1))
@@ -864,6 +872,10 @@
     @test isright(c)
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ 2 * T(2)^2 * pi + 2 * T(2) * pi
+    @test !Meshes.hasintersectingplanes(c)
+
+    c = CylinderSurface(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(0, 0, 1), V3(1, 0, 1)), T(5))
+    @test Meshes.hasintersectingplanes(c)
 
     c1 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1), T(1))
     c2 = CylinderSurface(P3(0, 0, 0), P3(0, 0, 1))

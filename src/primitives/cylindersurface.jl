@@ -110,3 +110,8 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface{T}}) where {T} =
   CylinderSurface(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+
+function hasintersectingplanes(c::CylinderSurface)
+  x = c.bot ∩ c.top
+  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < c.radius
+end
