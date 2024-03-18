@@ -47,7 +47,25 @@ function measure(c::Cylinder{T}) where {T}
   t = top(c)
   b = bottom(c)
   r = radius(c)
-  norm(t(0, 0) - b(0, 0)) * T(π) * r^2
+  d = t(T(0), T(0)) - b(T(0), T(0))
+
+  if isnothing(t ∩ b)  # planes are parallel
+    h = norm(d)
+    h * T(π) * r^2
+  elseif !hasintersectingplanes(c)
+    n₁ = normal(t)
+    n₂ = normal(b)
+    t₁ = t(0, 0) - (n₁ × (d × n₁))
+    t₂ = t(0, 0) + (n₁ × (d × n₁))
+    b₁ = b(0, 0) - (n₂ × (d × n₂))
+    b₂ = b(0, 0) + (n₂ × (d × n₂))
+
+    h₁ = norm(t₁ - b₁)
+    h₂ = norm(t₂ - b₂)
+    (h₁ + h₂)/T(2) * T(π) * r^2
+  else
+    error("Unable to calculate volume of cylinders whose planes intersect.")
+  end
 end
 
 function measure(c::CylinderSurface{T}) where {T}
