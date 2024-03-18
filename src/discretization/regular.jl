@@ -96,61 +96,51 @@ appendtopo(::CylinderSurface, tg) = _appendnorthsouth(tg)
 appendtopo(::ConeSurface, tg) = _appendnorthsouth(tg)
 
 function _appendcenter(tg)
-  sz = size(tg)
-  ip = isperiodic(tg)
-  np = @. sz + !ip
-  nx, ny = np
+  _, ny = size(tg)
 
   # connect quadrangles in the middle
   quads = collect(elements(tg))
 
   # connect center with triangles
+  u = nvertices(tg) + 1
   tris = map(1:(ny - 1)) do j
-    u = nx * ny + 1
-    v = 1 + (j - 1) * nx
-    w = 1 + (j) * nx
+    v = cart2corner(tg, 1, j)
+    w = cart2corner(tg, 1, j + 1)
     connect((u, v, w))
   end
-  u = nx * ny + 1
-  v = 1 + (ny - 1) * nx
-  w = 1
+  v = cart2corner(tg, 1, ny)
+  w = cart2corner(tg, 1, 1)
   push!(tris, connect((u, v, w)))
 
   SimpleTopology([quads; tris])
 end
 
 function _appendnorthsouth(tg)
-  sz = size(tg)
-  ip = isperiodic(tg)
-  np = @. sz + !ip
-  nx, ny = np
+  nx, ny = size(tg)
 
   # connect quadrangles in the middle
   middle = collect(elements(tg))
 
   # connect south pole with triangles
+  u = nvertices(tg) + 1
   south = map(1:(nx - 1)) do i
-    u = nx * ny + 1
-    v = i + 1
-    w = i
+    v = cart2corner(tg, i + 1, 1)
+    w = cart2corner(tg, i, 1)
     connect((u, v, w))
   end
-  u = nx * ny + 1
-  v = 1
-  w = nx
+  v = cart2corner(tg, 1, 1)
+  w = cart2corner(tg, nx, 1)
   push!(south, connect((u, v, w)))
 
   # connect north pole with triangles
-  offset = nx * ny - nx
+  u = nvertices(tg) + 2
   north = map(1:(nx - 1)) do i
-    u = nx * ny + 2
-    v = offset + i + 1
-    w = offset + i
+    v = cart2corner(tg, i + 1, ny)
+    w = cart2corner(tg, i, ny)
     connect((u, w, v))
   end
-  u = nx * ny + 2
-  v = nx * ny - nx + 1
-  w = nx * ny
+  v = cart2corner(tg, 1, ny)
+  w = cart2corner(tg, nx, ny)
   push!(north, connect((u, w, v)))
 
   SimpleTopology([middle; north; south])
