@@ -56,36 +56,31 @@ appendtopo(::Ball{2}, tg) = _appendcenter(tg)
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
 function appendtopo(::Sphere{3}, tg)
-  sz = size(tg)
-  ip = isperiodic(tg)
-  np = @. sz + !ip
-  nx, ny = np
+  nx, ny = size(tg)
 
   # collect quadrangles in the middle
   middle = collect(elements(tg))
 
   # connect north pole with triangles
+  u = nvertices(tg) + 1
   north = map(1:(ny - 1)) do j
-    u = nx * ny + 1
-    v = 1 + (j - 1) * nx
-    w = 1 + (j) * nx
+    v = cart2corner(tg, 1, j)
+    w = cart2corner(tg, 1, j + 1)
     connect((u, v, w))
   end
-  u = nx * ny + 1
-  v = 1 + (ny - 1) * nx
-  w = 1
+  v = cart2corner(tg, 1, ny)
+  w = cart2corner(tg, 1, 1)
   push!(north, connect((u, v, w)))
 
   # connect south pole with triangles
+  u = nvertices(tg) + 2
   south = map(1:(ny - 1)) do j
-    u = nx * ny + 2
-    v = (j) * nx
-    w = (j + 1) * nx
+    v = cart2corner(tg, nx + 1, j)
+    w = cart2corner(tg, nx + 1, j + 1)
     connect((u, w, v))
   end
-  u = nx * ny + 2
-  v = ny * nx
-  w = nx
+  v = cart2corner(tg, nx + 1, ny)
+  w = cart2corner(tg, nx + 1, 1)
   push!(south, connect((u, w, v)))
 
   SimpleTopology([middle; north; south])
@@ -135,12 +130,12 @@ function _appendnorthsouth(tg)
   # connect north pole with triangles
   u = nvertices(tg) + 2
   north = map(1:(nx - 1)) do i
-    v = cart2corner(tg, i + 1, ny)
-    w = cart2corner(tg, i, ny)
+    v = cart2corner(tg, i + 1, ny + 1)
+    w = cart2corner(tg, i, ny + 1)
     connect((u, w, v))
   end
-  v = cart2corner(tg, 1, ny)
-  w = cart2corner(tg, nx, ny)
+  v = cart2corner(tg, 1, ny + 1)
+  w = cart2corner(tg, nx, ny + 1)
   push!(north, connect((u, w, v)))
 
   SimpleTopology([middle; north; south])
