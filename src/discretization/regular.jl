@@ -55,40 +55,11 @@ appendtopo(::Ball{2}, tg) = _appendcenter(tg)
 
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
-function appendtopo(::Sphere{3}, tg)
-  nx, ny = size(tg)
+appendtopo(::Sphere{3}, tg) = _appendnorthsouth2(tg)
 
-  # collect quadrangles in the middle
-  middle = collect(elements(tg))
+appendtopo(::CylinderSurface, tg) = _appendnorthsouth1(tg)
 
-  # connect north pole with triangles
-  u = nvertices(tg) + 1
-  north = map(1:(ny - 1)) do j
-    v = cart2corner(tg, 1, j)
-    w = cart2corner(tg, 1, j + 1)
-    connect((u, v, w))
-  end
-  v = cart2corner(tg, 1, ny)
-  w = cart2corner(tg, 1, 1)
-  push!(north, connect((u, v, w)))
-
-  # connect south pole with triangles
-  u = nvertices(tg) + 2
-  south = map(1:(ny - 1)) do j
-    v = cart2corner(tg, nx + 1, j)
-    w = cart2corner(tg, nx + 1, j + 1)
-    connect((u, w, v))
-  end
-  v = cart2corner(tg, nx + 1, ny)
-  w = cart2corner(tg, nx + 1, 1)
-  push!(south, connect((u, w, v)))
-
-  SimpleTopology([middle; north; south])
-end
-
-appendtopo(::CylinderSurface, tg) = _appendnorthsouth(tg)
-
-appendtopo(::ConeSurface, tg) = _appendnorthsouth(tg)
+appendtopo(::ConeSurface, tg) = _appendnorthsouth1(tg)
 
 function _appendcenter(tg)
   _, ny = size(tg)
@@ -110,7 +81,7 @@ function _appendcenter(tg)
   SimpleTopology([quads; tris])
 end
 
-function _appendnorthsouth(tg)
+function _appendnorthsouth1(tg)
   nx, ny = size(tg)
 
   # connect quadrangles in the middle
@@ -137,6 +108,37 @@ function _appendnorthsouth(tg)
   v = cart2corner(tg, 1, ny + 1)
   w = cart2corner(tg, nx, ny + 1)
   push!(north, connect((u, w, v)))
+
+  SimpleTopology([middle; north; south])
+end
+
+function _appendnorthsouth2(tg)
+  nx, ny = size(tg)
+
+  # collect quadrangles in the middle
+  middle = collect(elements(tg))
+
+  # connect north pole with triangles
+  u = nvertices(tg) + 1
+  north = map(1:(ny - 1)) do j
+    v = cart2corner(tg, 1, j)
+    w = cart2corner(tg, 1, j + 1)
+    connect((u, v, w))
+  end
+  v = cart2corner(tg, 1, ny)
+  w = cart2corner(tg, 1, 1)
+  push!(north, connect((u, v, w)))
+
+  # connect south pole with triangles
+  u = nvertices(tg) + 2
+  south = map(1:(ny - 1)) do j
+    v = cart2corner(tg, nx + 1, j)
+    w = cart2corner(tg, nx + 1, j + 1)
+    connect((u, w, v))
+  end
+  v = cart2corner(tg, nx + 1, ny)
+  w = cart2corner(tg, nx + 1, 1)
+  push!(south, connect((u, w, v)))
 
   SimpleTopology([middle; north; south])
 end
