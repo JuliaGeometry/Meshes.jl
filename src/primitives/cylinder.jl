@@ -59,8 +59,6 @@ axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
 
-intersectradius(c::Cylinder) = intersectradius(boundary(c))
-
 hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
