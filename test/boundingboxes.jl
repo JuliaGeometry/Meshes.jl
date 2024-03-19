@@ -20,6 +20,13 @@
   @test boundingbox(r) == Box(P2(-1, T(-Inf)), P2(T(Inf), 1))
   @test @allocated(boundingbox(r)) < 50
 
+  b = Ball(P2(0, 0), T(1))
+  @test boundingbox(b) == Box(P2(-1, -1), P2(1, 1))
+  @test @allocated(boundingbox(b)) < 50
+  b = Ball(P2(1, 1), T(1))
+  @test boundingbox(b) == Box(P2(0, 0), P2(2, 2))
+  @test @allocated(boundingbox(b)) < 50
+
   s = Sphere(P2(0, 0), T(1))
   @test boundingbox(s) == Box(P2(-1, -1), P2(1, 1))
   @test @allocated(boundingbox(s)) < 50
@@ -27,12 +34,21 @@
   @test boundingbox(s) == Box(P2(0, 0), P2(2, 2))
   @test @allocated(boundingbox(s)) < 50
 
-  b = Ball(P2(0, 0), T(1))
-  @test boundingbox(b) == Box(P2(-1, -1), P2(1, 1))
-  @test @allocated(boundingbox(b)) < 50
-  b = Ball(P2(1, 1), T(1))
-  @test boundingbox(b) == Box(P2(0, 0), P2(2, 2))
-  @test @allocated(boundingbox(b)) < 50
+  c = Cylinder(T(1))
+  b = boundingbox(c)
+  @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
+
+  c = CylinderSurface(T(1))
+  b = boundingbox(c)
+  @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
+
+  c = Cone(Disk(Plane(P3(0,0,0), V3(0,0,1)), T(1)), P3(0,0,1))
+  b = boundingbox(c)
+  @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
+
+  c = ConeSurface(Disk(Plane(P3(0,0,0), V3(0,0,1)), T(1)), P3(0,0,1))
+  b = boundingbox(c)
+  @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
 
   b = Box(P2(-3, -1), P2(0.5, 0.5))
   s = Sphere(P2(0, 0), T(2))
