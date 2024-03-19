@@ -700,6 +700,7 @@
     @test plane(d) == p
     @test Meshes.center(d) == P3(0, 0, 0)
     @test radius(d) == T(2)
+    @test normal(d) == V3(0, 0, 1)
     @test measure(d) == T(π) * T(2)^2
     @test area(d) == measure(d)
     @test P3(0, 0, 0) ∈ d
