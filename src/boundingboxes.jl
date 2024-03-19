@@ -47,14 +47,14 @@ function boundingbox(s::Sphere{Dim}) where {Dim}
 end
 
 function boundingbox(c::CylinderSurface)
-  us = (0, 1/4, 1/2, 3/4)
-  vs = (0, 1/2, 1)
+  us = (0, 1 / 4, 1 / 2, 3 / 4)
+  vs = (0, 1 / 2, 1)
   ps = [c(u, v) for (u, v) in Iterators.product(us, vs)]
   boundingbox(ps)
 end
 
 function boundingbox(c::ConeSurface)
-  us = (0, 1/4, 1/2, 3/4)
+  us = (0, 1 / 4, 1 / 2, 3 / 4)
   vs = (1,)
   ps = [c(u, v) for (u, v) in Iterators.product(us, vs)]
   boundingbox([ps; apex(c)])

@@ -42,11 +42,11 @@
   b = boundingbox(c)
   @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
 
-  c = Cone(Disk(Plane(P3(0,0,0), V3(0,0,1)), T(1)), P3(0,0,1))
+  c = Cone(Disk(Plane(P3(0, 0, 0), V3(0, 0, 1)), T(1)), P3(0, 0, 1))
   b = boundingbox(c)
   @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
 
-  c = ConeSurface(Disk(Plane(P3(0,0,0), V3(0,0,1)), T(1)), P3(0,0,1))
+  c = ConeSurface(Disk(Plane(P3(0, 0, 0), V3(0, 0, 1)), T(1)), P3(0, 0, 1))
   b = boundingbox(c)
   @test b == Box(P3(-1, -1, 0), P3(1, 1, 1))
 
