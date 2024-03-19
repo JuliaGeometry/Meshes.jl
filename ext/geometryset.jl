@@ -62,7 +62,7 @@ end
 function vizgset1D!(plot, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
-  showfactes1D!(plot, geoms)
+  showfacets1D!(plot, geoms)
 end
 
 function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
@@ -77,13 +77,13 @@ function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
   directions = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
   Makie.arrows!(plot, origins, directions, color=colorant)
 
-  showfactes1D!(plot, geoms)
+  showfacets1D!(plot, geoms)
 end
 
 function vizgset2D!(plot, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
-  showfactes2D!(plot, geoms)
+  showfacets2D!(plot, geoms)
 end
 
 const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
@@ -104,7 +104,7 @@ function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
     Makie.poly!(plot, polys, color=colors)
   end
 
-  showfactes2D!(plot, geoms)
+  showfacets2D!(plot, geoms)
 end
 
 function vizgset3D!(plot, geoms, colorant)
@@ -112,7 +112,7 @@ function vizgset3D!(plot, geoms, colorant)
   vizmany!(plot, meshes, colorant)
 end
 
-function showfactes1D!(plot, geoms)
+function showfacets1D!(plot, geoms)
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
   pointsize = plot[:pointsize]
@@ -125,7 +125,7 @@ function showfactes1D!(plot, geoms)
   end
 end
 
-function showfactes2D!(plot, geoms)
+function showfacets2D!(plot, geoms)
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
   segmentsize = plot[:segmentsize]
