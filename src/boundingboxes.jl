@@ -39,11 +39,25 @@ function boundingbox(r::Ray{Dim,T}) where {Dim,T}
   Box(Point(l), Point(u))
 end
 
-function boundingbox(s::Sphere{Dim,T}) where {Dim,T}
+function boundingbox(s::Sphere{Dim}) where {Dim}
   c = center(s)
   r = radius(s)
   r⃗ = Vec(ntuple(i -> r, Dim))
   Box(c - r⃗, c + r⃗)
+end
+
+function boundingbox(c::CylinderSurface)
+  us = (0, 1/4, 1/2, 3/4)
+  vs = (0, 1/2, 1)
+  ps = [c(u, v) for (u, v) in Iterators.product(us, vs)]
+  boundingbox(ps)
+end
+
+function boundingbox(c::ConeSurface)
+  us = (0, 1/4, 1/2, 3/4)
+  vs = (1,)
+  ps = [c(u, v) for (u, v) in Iterators.product(us, vs)]
+  boundingbox([ps; apex(c)])
 end
 
 function boundingbox(p::ParaboloidSurface{T}) where {T}
