@@ -67,15 +67,17 @@ end
 
 function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
   rset = plot[:object]
+  segmentsize = plot[:segmentsize]
 
-  if embeddim(rset[]) ∉ (2, 3)
-    error("not implemented")
-  end
+  Dim = embeddim(rset[])
+
+  Dim ∈ (2, 3) || error("not implemented")
 
   # visualize as built-in arrows
-  origins = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
-  directions = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
-  Makie.arrows!(plot, origins, directions, color=colorant)
+  orig = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
+  dirs = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
+  size = Makie.@lift 0.1 * $segmentsize
+  Makie.arrows!(plot, orig, dirs, color=colorant, arrowsize=size)
 
   showfacets1D!(plot, geoms)
 end
