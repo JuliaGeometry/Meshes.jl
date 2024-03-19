@@ -7,16 +7,16 @@ function Makie.plot!(plot::Viz{<:Tuple{AbstractVector{Vec{Dim,T}}}}) where {Dim,
   color = plot[:color]
   alpha = plot[:alpha]
   colorscheme = plot[:colorscheme]
+  segmentsize = plot[:segmentsize]
 
-  if Dim ∉ (2, 3)
-    error("not implemented")
-  end
+  Dim ∈ (2, 3) || error("not implemented")
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colorscheme, $alpha)
 
   # visualize as built-in arrows
-  origins = Makie.@lift fill(zero(Makie.Point{Dim,T}), length($vecs))
-  directions = Makie.@lift asmakie.($vecs)
-  Makie.arrows!(plot, origins, directions, color=colorant)
+  orig = Makie.@lift fill(zero(Makie.Point{Dim,T}), length($vecs))
+  dirs = Makie.@lift asmakie.($vecs)
+  size = Makie.@lift 0.1 * $segmentsize
+  Makie.arrows!(plot, orig, dirs, color=colorant, arrowsize=size)
 end
