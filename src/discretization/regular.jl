@@ -104,7 +104,7 @@ function _appendpoles(tg, d, ccw)
 
   # connect north pole with triangles
   north = map(1:(sz[d] - 1)) do j
-    iᵤ = ntuple(i -> i == d ? j     : 1, nd)
+    iᵤ = ntuple(i -> i == d ? j : 1, nd)
     iᵥ = ntuple(i -> i == d ? j + 1 : 1, nd)
     u = cart2corner(tg, iᵤ...)
     v = cart2corner(tg, iᵥ...)
@@ -118,14 +118,14 @@ function _appendpoles(tg, d, ccw)
 
   # connect south pole with triangles
   south = map(1:(sz[d] - 1)) do j
-    iᵤ = ntuple(i -> i == d ? j     : sz[i] + 1, nd)
+    iᵤ = ntuple(i -> i == d ? j : sz[i] + 1, nd)
     iᵥ = ntuple(i -> i == d ? j + 1 : sz[i] + 1, nd)
     u = cart2corner(tg, iᵤ...)
     v = cart2corner(tg, iᵥ...)
     connect((s, swap(v, u)...))
   end
   iᵤ = ntuple(i -> i == d ? sz[d] : sz[i] + 1, nd)
-  iᵥ = ntuple(i -> i == d ? 1     : sz[i] + 1, nd)
+  iᵥ = ntuple(i -> i == d ? 1 : sz[i] + 1, nd)
   u = cart2corner(tg, iᵤ...)
   v = cart2corner(tg, iᵥ...)
   push!(south, connect((s, swap(v, u)...)))
