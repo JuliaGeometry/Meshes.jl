@@ -55,92 +55,82 @@ appendtopo(::Ball{2}, tg) = _appendcenter(tg)
 
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
-appendtopo(::Sphere{3}, tg) = _appendnorthsouth2(tg)
+appendtopo(::Sphere{3}, tg) = _appendpoles(tg, 2, true)
 
-appendtopo(::CylinderSurface, tg) = _appendnorthsouth1(tg)
+appendtopo(::CylinderSurface, tg) = _appendpoles(tg, 1, false)
 
-appendtopo(::ConeSurface, tg) = _appendnorthsouth1(tg)
+appendtopo(::ConeSurface, tg) = _appendpoles(tg, 1, false)
 
 function _appendcenter(tg)
+  # auxiliary variables
   _, ny = size(tg)
 
-  # connect quadrangles in the middle
+  # center of disk
+  c = nvertices(tg) + 1
+
+  # connect quadrangles in the disk
   quads = collect(elements(tg))
 
   # connect center with triangles
-  u = nvertices(tg) + 1
   tris = map(1:(ny - 1)) do j
-    v = cart2corner(tg, 1, j)
-    w = cart2corner(tg, 1, j + 1)
-    connect((u, v, w))
+    u = cart2corner(tg, 1, j)
+    v = cart2corner(tg, 1, j + 1)
+    connect((c, u, v))
   end
-  v = cart2corner(tg, 1, ny)
-  w = cart2corner(tg, 1, 1)
-  push!(tris, connect((u, v, w)))
+  u = cart2corner(tg, 1, ny)
+  v = cart2corner(tg, 1, 1)
+  push!(tris, connect((c, u, v)))
 
   SimpleTopology([quads; tris])
 end
 
-function _appendnorthsouth1(tg)
-  nx, ny = size(tg)
+# connect north and south poles to
+# grid topology along given dimension
+# and counter-clockwise orientation
+function _appendpoles(tg, d, ccw)
+  # auxiliary variables
+  sz = size(tg)
+  nd = length(sz)
 
-  # connect quadrangles in the middle
-  middle = collect(elements(tg))
+  # swap indices of poles if necessary
+  swap(u, v) = ccw ? (u, v) : (v, u)
 
-  # connect south pole with triangles
-  u = nvertices(tg) + 1
-  south = map(1:(nx - 1)) do i
-    v = cart2corner(tg, i + 1, 1)
-    w = cart2corner(tg, i, 1)
-    connect((u, v, w))
-  end
-  v = cart2corner(tg, 1, 1)
-  w = cart2corner(tg, nx, 1)
-  push!(south, connect((u, v, w)))
+  # north and south poles
+  n = nvertices(tg) + 1
+  s = nvertices(tg) + 2
 
-  # connect north pole with triangles
-  u = nvertices(tg) + 2
-  north = map(1:(nx - 1)) do i
-    v = cart2corner(tg, i + 1, ny + 1)
-    w = cart2corner(tg, i, ny + 1)
-    connect((u, w, v))
-  end
-  v = cart2corner(tg, 1, ny + 1)
-  w = cart2corner(tg, nx, ny + 1)
-  push!(north, connect((u, w, v)))
-
-  SimpleTopology([middle; north; south])
-end
-
-function _appendnorthsouth2(tg)
-  nx, ny = size(tg)
-
-  # collect quadrangles in the middle
-  middle = collect(elements(tg))
+  # connect quadrangles in the trunk
+  trunk = collect(elements(tg))
 
   # connect north pole with triangles
-  u = nvertices(tg) + 1
-  north = map(1:(ny - 1)) do j
-    v = cart2corner(tg, 1, j)
-    w = cart2corner(tg, 1, j + 1)
-    connect((u, v, w))
+  north = map(1:(sz[d] - 1)) do j
+    iᵤ = ntuple(i -> i == d ? j : 1, nd)
+    iᵥ = ntuple(i -> i == d ? j + 1 : 1, nd)
+    u = cart2corner(tg, iᵤ...)
+    v = cart2corner(tg, iᵥ...)
+    connect((n, swap(u, v)...))
   end
-  v = cart2corner(tg, 1, ny)
-  w = cart2corner(tg, 1, 1)
-  push!(north, connect((u, v, w)))
+  iᵤ = ntuple(i -> i == d ? sz[d] : 1, nd)
+  iᵥ = ntuple(i -> 1, nd)
+  u = cart2corner(tg, iᵤ...)
+  v = cart2corner(tg, iᵥ...)
+  push!(north, connect((n, swap(u, v)...)))
 
   # connect south pole with triangles
-  u = nvertices(tg) + 2
-  south = map(1:(ny - 1)) do j
-    v = cart2corner(tg, nx + 1, j)
-    w = cart2corner(tg, nx + 1, j + 1)
-    connect((u, w, v))
+  south = map(1:(sz[d] - 1)) do j
+    iᵤ = ntuple(i -> i == d ? j : sz[i] + 1, nd)
+    iᵥ = ntuple(i -> i == d ? j + 1 : sz[i] + 1, nd)
+    u = cart2corner(tg, iᵤ...)
+    v = cart2corner(tg, iᵥ...)
+    connect((s, swap(v, u)...))
   end
-  v = cart2corner(tg, nx + 1, ny)
-  w = cart2corner(tg, nx + 1, 1)
-  push!(south, connect((u, w, v)))
+  iᵤ = ntuple(i -> i == d ? sz[d] : sz[i] + 1, nd)
+  iᵥ = ntuple(i -> i == d ? 1 : sz[i] + 1, nd)
+  u = cart2corner(tg, iᵤ...)
+  v = cart2corner(tg, iᵥ...)
+  push!(south, connect((s, swap(v, u)...)))
 
-  SimpleTopology([middle; north; south])
+  SimpleTopology([trunk; north; south])
 end
 
 # --------------

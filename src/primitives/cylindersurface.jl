@@ -80,13 +80,13 @@ function (c::CylinderSurface{T})(φ, z) where {T}
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
   end
-  o = center(c)
-  r = radius(c)
-  b = bottom(c)
   t = top(c)
+  b = bottom(c)
+  r = radius(c)
   a = axis(c)
   d = a(T(1)) - a(T(0))
-  l = norm(d)
+  h = norm(d)
+  o = center(c)
 
   # rotation to align z axis with cylinder axis
   Q = rotation_between(d, Vec{3,T}(0, 0, 1))
@@ -98,11 +98,11 @@ function (c::CylinderSurface{T})(φ, z) where {T}
   # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
   # equation of the plane, we can solve for z and find all points
   # along the ellipse obtained by intersection
-  sφ, cφ = sincospi(2 * T(φ))
-  zᵦ = -l / 2 - (r * cφ * nᵦ[1] + r * sφ * nᵦ[2]) / nᵦ[3]
-  zₜ = +l / 2 - (r * cφ * nₜ[1] + r * sφ * nₜ[2]) / nₜ[3]
-  pᵦ = Point(r * cφ, r * sφ, zᵦ)
-  pₜ = Point(r * cφ, r * sφ, zₜ)
+  rsφ, rcφ = r .* sincospi(2 * T(φ))
+  zᵦ = -h / 2 - (rcφ * nᵦ[1] + rsφ * nᵦ[2]) / nᵦ[3]
+  zₜ = +h / 2 - (rcφ * nₜ[1] + rsφ * nₜ[2]) / nₜ[3]
+  pᵦ = Point(rcφ, rsφ, zᵦ)
+  pₜ = Point(rcφ, rsφ, zₜ)
 
   p = pᵦ + T(z) * (pₜ - pᵦ)
   o + Q' * coordinates(p)
