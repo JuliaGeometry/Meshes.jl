@@ -151,6 +151,9 @@
     @test isperiodic(Segment) == (false,)
     @test isperiodic(Quadrangle) == (false, false)
     @test isperiodic(Hexahedron) == (false, false, false)
+
+    @test isperiodic(CartesianGrid{T}(10, 10)) == (false, false)
+    @test isperiodic(CartesianGrid{T}(10, 10, 10)) == (false, false, false)
   end
 
   @testset "in" begin
