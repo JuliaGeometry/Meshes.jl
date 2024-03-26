@@ -16,11 +16,3 @@ isclosed(::Type{<:Segment}) = false
 isclosed(::Type{<:Rope}) = false
 
 isclosed(::Type{<:Ring}) = true
-
-"""
-    isclosed(topology)
-
-Tells whether or not the `topology` is closed
-along each parametric dimension.
-"""
-isclosed(t::GridTopology) = .!isopen(t)
