@@ -36,7 +36,13 @@ paramdim(::GridTopology{D}) where {D} = D
 
 Base.size(t::GridTopology) = t.dims
 
-isopen(t::GridTopology) = t.open
+"""
+    isperiodic(topology)
+
+Tells whether or not the `topology` is periodic
+along each parametric dimension.
+"""
+isperiodic(t::GridTopology) = .!t.open
 
 """
     elem2cart(t, e)
