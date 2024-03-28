@@ -6,13 +6,13 @@ function vizgrid2D!(plot::Viz{<:Tuple{RectilinearGrid}})
   grid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $alpha)
 
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)

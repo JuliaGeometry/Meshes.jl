@@ -16,7 +16,7 @@ ascolorscheme(name::Symbol) = cgrad(name)
 ascolorscheme(name::AbstractString) = ascolorscheme(Symbol(name))
 ascolorscheme(scheme) = scheme
 
-# default colorscheme for vector of values
+# default color scheme for vector of values
 defaultscheme(values) = cgrad(:viridis)
 
 # add transparency to colors

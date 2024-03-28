@@ -6,10 +6,10 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   gset = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $alpha)
 
   # get geometries
   geoms = Makie.@lift parent($gset)
@@ -38,11 +38,11 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
   pset = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
   pointsize = plot[:pointsize]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $alpha)
 
   # get geometries and coordinates
   geoms = Makie.@lift parent($pset)

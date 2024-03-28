@@ -20,11 +20,11 @@ function vizmesh1D!(plot)
   mesh = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
   segmentsize = plot[:segmentsize]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $alpha)
 
   # retrieve coordinates of segments
   coords = Makie.@lift let
@@ -51,13 +51,13 @@ function vizmesh2D!(plot)
   mesh = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $alpha)
 
   # retrieve triangle mesh parameters
   tparams = Makie.@lift let

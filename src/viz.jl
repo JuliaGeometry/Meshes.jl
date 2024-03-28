@@ -11,7 +11,7 @@ Visualize Meshes.jl `object` with various `options`.
 
 * `color`       - color of geometries
 * `alpha`       - transparency in [0,1]
-* `colorscheme` - color scheme from ColorSchemes.jl
+* `colormap`    - color scheme/map from ColorSchemes.jl
 * `pointsize`   - size of points in point set
 * `segmentsize` - size (or width) of segments
 * `showfacets`  - enable visualization of facets
@@ -63,10 +63,10 @@ scene with `options` forwarded to [`viz`](@ref).
 function viz! end
 
 """
-    ascolors(values, colorscheme)
+    ascolors(values, colormap)
 
 Convert vector of `values` to Colors.jl,
-using `colorscheme` from ColorSchemes.jl.
+using `colormap` from ColorSchemes.jl.
 
 ### Notes
 
@@ -80,7 +80,7 @@ function ascolors end
 """
     defaultscheme(values)
 
-Return default colorscheme for `values`.
+Return default colormap for `values`.
 
 ### Notes
 
