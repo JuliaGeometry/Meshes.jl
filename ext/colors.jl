@@ -6,10 +6,11 @@
 const V{T} = AbstractVector{<:T}
 
 # convert value to colorant, optionally using color scheme object
-ascolors(values::V{Symbol}, scheme) = ascolors(string.(values), scheme)
-ascolors(values::V{AbstractString}, scheme) = parse.(Ref(Colorant), values)
-ascolors(values::V{Number}, scheme) = get(scheme, values, :extrema)
-ascolors(values::V{Colorant}, scheme) = values
+ascolors(values::V{Symbol}, scheme, colorrange) = ascolors(string.(values), scheme, colorrange)
+ascolors(values::V{AbstractString}, scheme, colorrange) = parse.(Ref(Colorant), values)
+ascolors(values::V{Number}, scheme, colorrange) =
+  isnothing(colorrange) ? get(scheme, values, :extrema) : get(scheme, values, colorrange)
+ascolors(values::V{Colorant}, scheme, colorrange) = values
 
 # convert color scheme name to color scheme object
 ascolorscheme(name::Symbol) = cgrad(name)
@@ -28,7 +29,7 @@ setalpha(colors, ::Nothing) = colors
 # --------------------------------
 
 # convert user input to colors
-function process(values::V, scheme, alphas)
+function process(values::V, scheme, colorrange, alphas)
   # find invalid and valid indices
   isinvalid(v) = ismissing(v) || (v isa Number && isnan(v))
   iinds = findall(isinvalid, values)
@@ -40,7 +41,7 @@ function process(values::V, scheme, alphas)
   # valid values are assigned colors from scheme
   vals = coalesce.(values[vinds])
   vscheme = isnothing(scheme) ? defaultscheme(vals) : ascolorscheme(scheme)
-  vcolors = setalpha(ascolors(vals, vscheme), alphas)
+  vcolors = setalpha(ascolors(vals, vscheme, colorrange), alphas)
 
   # build final vector of colors
   colors = Vector{Colorant}(undef, length(values))
@@ -50,4 +51,4 @@ function process(values::V, scheme, alphas)
   colors
 end
 
-process(value, scheme, alphas) = process([value], scheme, alphas) |> first
+process(value, scheme, colorrange, alphas) = process([value], scheme, colorrange, alphas) |> first

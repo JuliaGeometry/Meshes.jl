@@ -7,12 +7,13 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
   color = plot[:color]
   alpha = plot[:alpha]
   colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)
@@ -65,12 +66,13 @@ function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
   color = plot[:color]
   alpha = plot[:alpha]
   colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
   segmentsize = plot[:segmentsize]
   showfacets = plot[:showfacets]
   facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
   # number of vertices and colors
   nv = Makie.@lift nvertices($grid)
