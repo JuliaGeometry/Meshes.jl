@@ -25,13 +25,13 @@ end
 
 FrustumSurface(bot::Disk{T}, top::Disk{T}) where {T} = FrustumSurface{T}(bot, top)
 
+paramdim(::Type{<:FrustumSurface}) = 2
+
 bottom(f::FrustumSurface) = f.bot
 
 top(f::FrustumSurface) = f.top
 
 height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
-
-paramdim(::Type{<:FrustumSurface}) = 2
 
 axis(f::FrustumSurface) = Line(center(bottom(f)), center(top(f)))
 
