@@ -25,11 +25,15 @@ end
 
 Frustum(bot::Disk{T}, top::Disk{T}) where {T} = Frustum{T}(bot, top)
 
+paramdim(::Type{<:Frustum}) = 3
+
 bottom(f::Frustum) = f.bot
 
 top(f::Frustum) = f.top
 
-height(f::Frustum) = norm(center(bottom(f)) - center(top(f)))
+height(f::Frustum) = height(boundary(f))
+
+axis(f::Frustum) = axis(boundary(f))
 
 function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum{T}}) where {T}
   bottom = rand(rng, Disk{T})

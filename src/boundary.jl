@@ -58,24 +58,19 @@ boundary(d::Disk) = Circle(plane(d), radius(d))
 
 boundary(::Circle) = nothing
 
-boundary(c::Cone) = ConeSurface(base(c), apex(c))
-
-boundary(::ConeSurface) = nothing
-
 boundary(c::Cylinder) = CylinderSurface(bottom(c), top(c), radius(c))
 
 boundary(::CylinderSurface) = nothing
 
-boundary(::ParaboloidSurface) = nothing
+boundary(c::Cone) = ConeSurface(base(c), apex(c))
 
-function boundary(p::Pyramid)
-  indices = [(4, 3, 2, 1), (5, 1, 2), (5, 4, 1), (5, 3, 4), (5, 2, 3)]
-  SimpleMesh(pointify(p), connect.(indices))
-end
+boundary(::ConeSurface) = nothing
 
 boundary(f::Frustum) = FrustumSurface(bottom(f), top(f))
 
 boundary(::FrustumSurface) = nothing
+
+boundary(::ParaboloidSurface) = nothing
 
 boundary(::Torus) = nothing
 
@@ -98,6 +93,11 @@ end
 function boundary(h::Hexahedron)
   indices = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
   SimpleMesh(pointify(h), connect.(indices))
+end
+
+function boundary(p::Pyramid)
+  indices = [(4, 3, 2, 1), (5, 1, 2), (5, 4, 1), (5, 3, 4), (5, 2, 3)]
+  SimpleMesh(pointify(p), connect.(indices))
 end
 
 function boundary(m::Multi)

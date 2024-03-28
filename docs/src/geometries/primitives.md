@@ -68,80 +68,58 @@ Box
 Box((0.,0.,0.), (1.,1.,1.)) |> viz
 ```
 
-### Ball
+### Ball/Sphere
 
 ```@docs
 Ball
+Sphere
 ```
 
 ```@example primitives
 Ball((0.,0.,0.), 1.) |> viz
 ```
 
-### Sphere
-
-```@docs
-Sphere
-```
-
-```@example primitives
-Sphere((0.,0.,0.), 1.) |> viz
-```
-
-### Disk
+### Disk/Circle
 
 ```@docs
 Disk
-```
-
-### Circle
-
-```@docs
 Circle
 ```
 
-### Cylinder
+### Cylinder/CylinderSurface
 
 ```@docs
 Cylinder
+CylinderSurface
 ```
 
 ```@example primitives
 Cylinder(1.0) |> viz
 ```
 
-### CylinderSurface
-
-```@docs
-CylinderSurface
-```
-
-```@example primitives
-CylinderSurface(1.0) |> viz
-```
-
-### Cone
+### Cone/ConeSurface
 
 ```@docs
 Cone
-```
-
-### ConeSurface
-
-```@docs
 ConeSurface
 ```
 
-### Frustum
+```@example primitives
+Cone(Disk(Plane((0,0,0), (0,0,1)), 1), (0,0,1)) |> viz
+```
+
+### Frustum/FrustumSurface
 
 ```@docs
 Frustum
+FrustumSurface
 ```
 
-### FrustumSurface
-
-```@docs
-FrustumSurface
+```@example primitives
+Frustum(
+  Disk(Plane((0,0,0), (0,0,1)), 2),
+  Disk(Plane((0,0,10), (0,0,1)), 1)
+) |> viz
 ```
 
 ### Torus
@@ -161,10 +139,5 @@ ParaboloidSurface
 ```
 
 ```@example primitives
-a = Point3(5, 2, 4)
-r = 1.0
-f = 0.25
-par = ParaboloidSurface(a, r, f)
-disk = Disk(Plane(a, Vec(0, 0, 1)), r)
-viz([par, disk], color = [:green, :gray])
+ParaboloidSurface((5., 2., 4.), 1.0, 0.25) |> viz
 ```
