@@ -30,6 +30,30 @@
     end
   end
 
+  @testset "RegularRefinement" begin
+    # 2D grids
+    grid = CartesianGrid(P2(0, 0), P2(10, 10), dims=(10, 10))
+    tgrid = CartesianGrid(P2(0, 0), P2(10, 10), dims=(20, 20))
+    @test refine(grid, RegularRefinement(2)) == tgrid
+    rgrid = convert(RectilinearGrid, grid)
+    trgrid = convert(RectilinearGrid, tgrid)
+    @test refine(rgrid, RegularRefinement(2)) == trgrid
+    sgrid = convert(StructuredGrid, grid)
+    tsgrid = convert(StructuredGrid, tgrid)
+    @test refine(sgrid, RegularRefinement(2)) == tsgrid
+
+    # 3D grids
+    grid = CartesianGrid{T}(3, 3, 3)
+    tgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(6, 6, 6))
+    @test refine(grid, RegularRefinement(2)) == tgrid
+    rgrid = convert(RectilinearGrid, grid)
+    trgrid = convert(RectilinearGrid, tgrid)
+    @test refine(rgrid, RegularRefinement(2)) == trgrid
+    sgrid = convert(StructuredGrid, grid)
+    tsgrid = convert(StructuredGrid, tgrid)
+    @test refine(sgrid, RegularRefinement(2)) == tsgrid
+  end
+
   @testset "CatmullClark" begin
     points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
