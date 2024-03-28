@@ -9,9 +9,10 @@ function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   color = plot[:color]
   alpha = plot[:alpha]
   colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
   # retrieve grid paramaters
   gparams = Makie.@lift let

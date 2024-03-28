@@ -7,12 +7,13 @@ function Makie.plot!(plot::Viz{<:Tuple{AbstractVector{Vec{Dim,T}}}}) where {Dim,
   color = plot[:color]
   alpha = plot[:alpha]
   colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
   segmentsize = plot[:segmentsize]
 
   Dim ∈ (2, 3) || error("not implemented")
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
   # visualize as built-in arrows
   orig = Makie.@lift fill(zero(Makie.Point{Dim,T}), length($vecs))
