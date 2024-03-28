@@ -54,6 +54,28 @@ viz(fig[2,2], ref3, showfacets = true)
 fig
 ```
 
+## RegularRefinement
+
+```@docs
+RegularRefinement
+```
+
+```@example refinement
+grid = CartesianGrid(10, 10)
+
+# refine three times
+ref1 = refine(grid, RegularRefinement(2, 2))
+ref2 = refine(ref1, RegularRefinement(3, 2))
+ref3 = refine(ref2, RegularRefinement(2, 3))
+
+fig = Mke.Figure(size = (800, 800))
+viz(fig[1,1], grid, showfacets = true)
+viz(fig[1,2], ref1, showfacets = true)
+viz(fig[2,1], ref2, showfacets = true)
+viz(fig[2,2], ref3, showfacets = true)
+fig
+```
+
 ## Catmull-Clark
 
 ```@docs
