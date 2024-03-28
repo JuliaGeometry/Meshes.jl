@@ -22,7 +22,7 @@ RegularRefinement(factors::Vararg{Int,N}) where {N} = RegularRefinement(factors)
 
 function refine(grid::CartesianGrid{Dim}, method::RegularRefinement) where {Dim}
   factors = fitdims(method.factors, Dim)
-  CartesianGrid(minimum(grid), maximum(grid), dims = size(grid) .* factors)
+  CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end
 
 function refine(grid::RectilinearGrid{Dim}, method::RegularRefinement) where {Dim}
