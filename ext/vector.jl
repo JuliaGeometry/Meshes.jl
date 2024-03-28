@@ -6,13 +6,13 @@ function Makie.plot!(plot::Viz{<:Tuple{AbstractVector{Vec{Dim,T}}}}) where {Dim,
   vecs = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
   segmentsize = plot[:segmentsize]
 
   Dim ∈ (2, 3) || error("not implemented")
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colorscheme, $alpha)
+  colorant = Makie.@lift process($color, $colormap, $alpha)
 
   # visualize as built-in arrows
   orig = Makie.@lift fill(zero(Makie.Point{Dim,T}), length($vecs))

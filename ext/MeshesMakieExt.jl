@@ -23,7 +23,7 @@ Makie.@recipe(Viz, object) do scene
   Makie.Attributes(
     color=:slategray3,
     alpha=nothing,
-    colorscheme=nothing,
+    colormap=nothing,
     pointsize=4,
     segmentsize=1.5,
     showfacets=false,

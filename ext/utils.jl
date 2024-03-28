@@ -17,7 +17,7 @@ concat(mesh₁::Mesh, mesh₂::Mesh) = merge(mesh₁, mesh₂)
 
 function vizmany!(plot, objs, color)
   alpha = plot[:alpha]
-  colorscheme = plot[:colorscheme]
+  colormap = plot[:colormap]
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
 
@@ -25,5 +25,5 @@ function vizmany!(plot, objs, color)
   colors = Makie.@lift mayberepeat($color, $objs)
   alphas = Makie.@lift mayberepeat($alpha, $objs)
 
-  viz!(plot, object, color=colors, alpha=alphas, colorscheme=colorscheme, pointsize=pointsize, segmentsize=segmentsize)
+  viz!(plot, object, color=colors, alpha=alphas, colormap=colormap, pointsize=pointsize, segmentsize=segmentsize)
 end
