@@ -121,6 +121,8 @@ discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization
 
 discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
 
+discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
+
 discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
 
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
