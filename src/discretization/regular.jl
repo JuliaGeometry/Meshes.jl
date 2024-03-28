@@ -61,6 +61,8 @@ appendtopo(::CylinderSurface, tg) = _appendpoles(tg, 1, false)
 
 appendtopo(::ConeSurface, tg) = _appendpoles(tg, 1, false)
 
+appendtopo(::FrustumSurface, tg) = _appendpoles(tg, 1, false)
+
 function _appendcenter(tg)
   # auxiliary variables
   _, ny = size(tg)

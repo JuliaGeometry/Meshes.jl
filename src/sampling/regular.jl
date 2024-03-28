@@ -64,6 +64,10 @@ firstoffset(::ConeSurface) = (n -> zero(n), n -> inv(n))
 lastoffset(::ConeSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::ConeSurface) = (apex(c), base(c)(0, 0))
 
+firstoffset(::FrustumSurface) = (n -> zero(n), n -> zero(n))
+lastoffset(::FrustumSurface) = (n -> inv(n), n -> zero(n))
+extrapoints(c::FrustumSurface) = (bottom(c)(0, 0), top(c)(0, 0))
+
 # --------------
 # SPECIAL CASES
 # --------------

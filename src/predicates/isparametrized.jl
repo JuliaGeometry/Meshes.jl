@@ -44,6 +44,8 @@ isparametrized(::Type{<:CylinderSurface}) = true
 
 isparametrized(::Type{<:ConeSurface}) = true
 
+isparametrized(::Type{<:FrustumSurface}) = true
+
 isparametrized(::Type{<:ParaboloidSurface}) = true
 
 isparametrized(::Type{<:Torus}) = true

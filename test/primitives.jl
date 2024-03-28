@@ -1132,6 +1132,7 @@
     dt = Disk(pt, T(2))
     f = FrustumSurface(db, dt)
     @test embeddim(f) == 3
+    @test paramdim(f) == 2
     @test coordtype(f) == T
     @test isnothing(boundary(f))
 
