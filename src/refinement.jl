@@ -22,5 +22,6 @@ function refine end
 
 include("refinement/tri.jl")
 include("refinement/quad.jl")
+include("refinement/regular.jl")
 include("refinement/catmullclark.jl")
 include("refinement/trisubdivision.jl")
