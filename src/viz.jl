@@ -12,6 +12,7 @@ Visualize Meshes.jl `object` with various `options`.
 * `color`       - color of geometries
 * `alpha`       - transparency in [0,1]
 * `colormap`    - color scheme/map from ColorSchemes.jl
+* `colorrange`  - minimum and maximum color values
 * `pointsize`   - size of points in point set
 * `segmentsize` - size (or width) of segments
 * `showfacets`  - enable visualization of facets

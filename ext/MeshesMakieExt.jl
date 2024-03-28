@@ -24,6 +24,7 @@ Makie.@recipe(Viz, object) do scene
     color=:slategray3,
     alpha=nothing,
     colormap=nothing,
+    colorrange=nothing,
     pointsize=4,
     segmentsize=1.5,
     showfacets=false,
