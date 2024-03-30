@@ -96,6 +96,7 @@ include("sampling.jl")
 include("pointification.jl")
 include("discretization.jl")
 include("refinement.jl")
+include("coarsening.jl")
 
 # transforms
 include("transforms.jl")
@@ -486,6 +487,11 @@ export
   CatmullClark,
   TriSubdivision,
   refine,
+
+  # coarsening
+  CoarseningMethod,
+  RegularCoarsening,
+  coarsen,
 
   # transforms
   GeometricTransform,

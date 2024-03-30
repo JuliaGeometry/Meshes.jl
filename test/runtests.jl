@@ -107,6 +107,7 @@ testfiles = [
   "pointification.jl",
   "discretization.jl",
   "refinement.jl",
+  "coarsening.jl",
   "transforms.jl",
   "distances.jl",
   "supportfun.jl",
