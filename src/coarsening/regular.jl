@@ -22,7 +22,7 @@ RegularCoarsening(factors::Vararg{Int,N}) where {N} = RegularCoarsening(factors)
 
 function coarsen(grid::CartesianGrid{Dim}, method::RegularCoarsening) where {Dim}
   factors = fitdims(method.factors, Dim)
-  CartesianGrid(minimum(grid), maximum(grid), dims = size(grid) .÷ factors)
+  CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .÷ factors)
 end
 
 function coarsen(grid::RectilinearGrid{Dim}, method::RegularCoarsening) where {Dim}
