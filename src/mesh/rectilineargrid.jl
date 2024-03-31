@@ -35,12 +35,14 @@ vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.
 
 xyz(g::RectilinearGrid) = g.xyz
 
-@generated function XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T}
+XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T} = _genXYZ(T, xyz(g))
+
+@generated function _genXYZ(::Type{T}, xyz::NTuple{Dim}) where {T,Dim}
   exprs = ntuple(Dim) do d
     quote
-      a = g.xyz[$d]
-      N = length(a)
-      A = Array{T,Dim}(undef, @ntuple($Dim, i -> N))
+      dims = @ntuple($Dim, i -> length(xyz[i]))
+      A = Array{T,Dim}(undef, dims)
+      a = xyz[$d]
       @nloops $Dim i A begin
         @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
       end
