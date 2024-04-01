@@ -125,7 +125,7 @@ function xyz(g::CartesianGrid{Dim}) where {Dim}
   end
 end
 
-XYZ(g::CartesianGrid{Dim,T}) where {Dim,T} = xyzXYZ(T, xyz(g))
+XYZ(g::CartesianGrid) = XYZ(xyz(g))
 
 function centroid(g::CartesianGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
