@@ -268,6 +268,15 @@
     # conversion
     cg = CartesianGrid{T}(10, 10)
     rg = convert(RectilinearGrid, cg)
+    @test size(rg) == size(cg)
+    @test nvertices(rg) == nvertices(cg)
+    @test nelements(rg) == nelements(cg)
+    @test topology(rg) == topology(cg)
+    @test vertices(rg) == vertices(cg)
+
+    cg = CartesianGrid{T}(10, 20, 30)
+    rg = convert(RectilinearGrid, cg)
+    @test size(rg) == size(cg)
     @test nvertices(rg) == nvertices(cg)
     @test nelements(rg) == nelements(cg)
     @test topology(rg) == topology(cg)
@@ -373,6 +382,15 @@
     # conversion
     cg = CartesianGrid{T}(10, 10)
     sg = convert(StructuredGrid, cg)
+    @test size(sg) == size(cg)
+    @test nvertices(sg) == nvertices(cg)
+    @test nelements(sg) == nelements(cg)
+    @test topology(sg) == topology(cg)
+    @test vertices(sg) == vertices(cg)
+
+    cg = CartesianGrid{T}(10, 20, 30)
+    sg = convert(StructuredGrid, cg)
+    @test size(sg) == size(cg)
     @test nvertices(sg) == nvertices(cg)
     @test nelements(sg) == nelements(cg)
     @test topology(sg) == topology(cg)
@@ -380,6 +398,15 @@
 
     rg = RectilinearGrid(T.(0:10), T.(0:10))
     sg = convert(StructuredGrid, rg)
+    @test size(sg) == size(rg)
+    @test nvertices(sg) == nvertices(rg)
+    @test nelements(sg) == nelements(rg)
+    @test topology(sg) == topology(rg)
+    @test vertices(sg) == vertices(rg)
+
+    rg = RectilinearGrid(T.(0:10), T.(0:20), T.(0:30))
+    sg = convert(StructuredGrid, rg)
+    @test size(sg) == size(rg)
     @test nvertices(sg) == nvertices(rg)
     @test nelements(sg) == nelements(rg)
     @test topology(sg) == topology(rg)
