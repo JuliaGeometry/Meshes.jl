@@ -135,3 +135,22 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   λ₁, λ₂, r, rₐ
 end
+
+"""
+    XYZ(xyz)
+
+Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
+"""
+@generated function XYZ(xyz::NTuple{Dim,<:AbstractVector{T}}) where {Dim,T}
+  exprs = ntuple(Dim) do d
+    quote
+      a = xyz[$d]
+      A = Array{T,Dim}(undef, length.(xyz))
+      @nloops $Dim i A begin
+        @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
+      end
+      A
+    end
+  end
+  Expr(:tuple, exprs...)
+end
