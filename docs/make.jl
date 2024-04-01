@@ -48,6 +48,7 @@ makedocs(
         "algorithms/partitioning.md",
         "algorithms/discretization.md",
         "algorithms/refinement.md",
+        "algorithms/coarsening.md",
         "algorithms/simplification.md",
         "algorithms/intersection.md",
         "algorithms/clipping.md",
