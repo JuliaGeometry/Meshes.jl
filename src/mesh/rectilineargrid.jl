@@ -35,9 +35,9 @@ vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.
 
 xyz(g::RectilinearGrid) = g.xyz
 
-XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T} = _genXYZ(T, xyz(g))
+XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T} = xyzXYZ(T, xyz(g))
 
-@generated function _genXYZ(::Type{T}, xyz::NTuple{Dim}) where {T,Dim}
+@generated function xyzXYZ(::Type{T}, xyz::NTuple{Dim}) where {T,Dim}
   exprs = ntuple(Dim) do d
     quote
       A = Array{T,Dim}(undef, length.(xyz))
