@@ -37,20 +37,6 @@ xyz(g::RectilinearGrid) = g.xyz
 
 XYZ(g::RectilinearGrid) = XYZ(xyz(g))
 
-@generated function XYZ(xyz::NTuple{Dim,<:AbstractVector{T}}) where {Dim,T}
-  exprs = ntuple(Dim) do d
-    quote
-      a = xyz[$d]
-      A = Array{T,Dim}(undef, length.(xyz))
-      @nloops $Dim i A begin
-        @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
-      end
-      A
-    end
-  end
-  Expr(:tuple, exprs...)
-end
-
 function centroid(g::RectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p1 = vertex(g, ijk)
