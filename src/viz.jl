@@ -91,3 +91,16 @@ selection of colorschemes from ColorSchemes.jl
 for custom Julia objects.
 """
 function defaultscheme end
+
+struct Colormap{V,S,R}
+  values::V
+  colorscheme::S
+  colorrange::R
+end
+
+colorscheme(cmap::Colormap) = cmap.colorscheme
+limits(cmap::Colormap) = isnothing(cmap.colorrange) ? extrema(skipinvalid(cmap.values)) : cmap.colorrange
+ticks(cmap::Colormap; length=5) = range(limits(cmap)..., length)
+
+isinvalid(v) = ismissing(v) || (v isa Number && isnan(v))
+skipinvalid(values) = Iterators.filter(!isinvalid, values)
