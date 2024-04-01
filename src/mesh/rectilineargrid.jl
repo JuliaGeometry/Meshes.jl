@@ -40,8 +40,7 @@ XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T} = _genXYZ(T, xyz(g))
 @generated function _genXYZ(::Type{T}, xyz::NTuple{Dim}) where {T,Dim}
   exprs = ntuple(Dim) do d
     quote
-      dims = @ntuple($Dim, i -> length(xyz[i]))
-      A = Array{T,Dim}(undef, dims)
+      A = Array{T,Dim}(undef, length.(xyz))
       a = xyz[$d]
       @nloops $Dim i A begin
         @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
