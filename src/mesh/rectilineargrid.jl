@@ -37,11 +37,11 @@ xyz(g::RectilinearGrid) = g.xyz
 
 XYZ(g::RectilinearGrid{Dim,T}) where {Dim,T} = xyzXYZ(T, xyz(g))
 
-@generated function xyzXYZ(::Type{T}, xyz::NTuple{Dim}) where {T,Dim}
+@generated function xyzXYZ(xyz::NTuple{Dim,<:AbstractVector{T}}) where {Dim,T}
   exprs = ntuple(Dim) do d
     quote
-      A = Array{T,Dim}(undef, length.(xyz))
       a = xyz[$d]
+      A = Array{T,Dim}(undef, length.(xyz))
       @nloops $Dim i A begin
         @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
       end
