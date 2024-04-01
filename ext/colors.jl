@@ -2,6 +2,19 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+getvalues(cmap::Colormap) = cmap.values
+getcolors(cmap::Colormap{<:AbstractVector{<:Number}}) =
+  isnothing(cmap.colorrange) ? get(cmap.scheme, cmap.values, :extrema) : get(cmap.scheme, cmap.values, cmap.colorrange)
+getcolors(cmap::Colormap{<:AbstractVector{<:AbstractString}}) = parse.(Ref(Colorant), cmap.values)
+getcolors(cmap::Colormap{<:AbstractVector{<:Colorant}}) = cmap.values
+
+colorscheme(cmap::Colormap) = cmap.colorscheme
+limits(cmap::Colormap) = isnothing(cmap.colorrange) ? extrema(skipinvalid(cmap.values)) : cmap.colorrange
+ticks(cmap::Colormap; length=5) = range(limits(cmap)..., length)
+
+isinvalid(v) = ismissing(v) || (v isa Number && isnan(v))
+skipinvalid(values) = Iterators.filter(!isinvalid, values)
+
 # type alias to reduce typing
 const V{T} = AbstractVector{<:T}
 
