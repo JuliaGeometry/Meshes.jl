@@ -94,7 +94,7 @@ function defaultscheme end
 
 struct Colormap{V,A,S,R}
   values::V
-  alpha::A
+  alphas::A
   colorscheme::S
   colorrange::R
 end

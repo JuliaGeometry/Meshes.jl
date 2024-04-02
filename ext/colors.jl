@@ -3,10 +3,18 @@
 # ------------------------------------------------------------------
 
 getvalues(cmap::Colormap) = cmap.values
-getcolors(cmap::Colormap{<:AbstractVector{<:Number}}) =
-  isnothing(cmap.colorrange) ? get(cmap.scheme, cmap.values, :extrema) : get(cmap.scheme, cmap.values, cmap.colorrange)
-getcolors(cmap::Colormap{<:AbstractVector{<:AbstractString}}) = parse.(Ref(Colorant), cmap.values)
-getcolors(cmap::Colormap{<:AbstractVector{<:Colorant}}) = cmap.values
+
+function getcolors(cmap::Colormap{<:AbstractVector{<:Number}})
+  colors = if isnothing(cmap.colorrange)
+    get(cmap.scheme, cmap.values, :extrema)
+  else
+    get(cmap.scheme, cmap.values, cmap.colorrange)
+  end
+  coloralpha.(colors, cmap.alphas)
+end
+
+getcolors(cmap::Colormap{<:AbstractVector{<:AbstractString}}) = coloralpha.(parse.(Ref(Colorant), cmap.values), cmap.alphas)
+getcolors(cmap::Colormap{<:AbstractVector{<:Colorant}}) = coloralpha.(cmap.values, cmap.alphas)
 
 colorscheme(cmap::Colormap) = cmap.colorscheme
 limits(cmap::Colormap) = isnothing(cmap.colorrange) ? extrema(skipinvalid(cmap.values)) : cmap.colorrange
