@@ -12,8 +12,6 @@ using Colorfy
 import TransformsBase as TB
 
 import Meshes: viz, viz!
-import Meshes: ascolors
-import Meshes: defaultscheme
 import Makie
 
 Makie.@recipe(Viz, object) do scene
