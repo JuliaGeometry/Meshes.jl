@@ -7,10 +7,7 @@ module MeshesMakieExt
 using Meshes
 using Rotations
 using LinearAlgebra
-
-using Makie: cgrad
-using Makie: coloralpha
-using Makie.Colors: Colorant
+using Colorfy
 
 import TransformsBase as TB
 
