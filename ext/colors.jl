@@ -5,8 +5,8 @@
 # preprocess colors provided by user
 function process(values::AbstractVector, colorscheme, colorrange, alphas)
   valphas = isnothing(alphas) ? Colorfy.defaultalphas(values) : alphas
-  vcolorscheme = isnothing(colorscheme) ? Colorfy.defaultscheme(values) : colorscheme
-  vcolorrange = isnothing(colorrange) ? :extrema : colorrange
+  vcolorscheme = isnothing(colorscheme) ? Colorfy.defaultcolorscheme(values) : colorscheme
+  vcolorrange = isnothing(colorrange) ? Colorfy.defaultcolorrange(values) : colorrange
   colorfy(values, alphas=valphas, colorscheme=vcolorscheme, colorrange=vcolorrange)
 end
 
