@@ -28,6 +28,7 @@ MeshesMakieExt = "Makie"
 [compat]
 Bessels = "0.2"
 CircularArrays = "1.3"
+Colorfy = "0.1"
 Distances = "0.10"
 LinearAlgebra = "1.9"
 Makie = "0.20"
