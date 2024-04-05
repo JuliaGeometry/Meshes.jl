@@ -61,6 +61,12 @@ applycoord(t::Affine, b::Box{2}) = applycoord(t, convert(Quadrangle, b))
 
 applycoord(t::Affine, b::Box{3}) = applycoord(t, convert(Hexahedron, b))
 
+applycoord(t::Affine, g::CartesianGrid) = TransformedGrid(g, t)
+
+applycoord(t::Affine, g::RectilinearGrid) = TransformedGrid(g, t)
+
+applycoord(t::Affine, g::StructuredGrid) = TransformedGrid(g, t)
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
