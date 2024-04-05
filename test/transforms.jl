@@ -178,6 +178,28 @@
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    d = convert(RectilinearGrid, CartesianGrid{T}(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa TransformedGrid
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = Rotate(Angle2d(T(π / 2)))
+    d = convert(StructuredGrid, CartesianGrid{T}(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa TransformedGrid
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
+
     # -----------
     # SIMPLEMESH
     # -----------
@@ -509,6 +531,28 @@
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = CartesianGrid{T}(10, 10)
+    r, c = TB.apply(f, d)
+    @test r isa TransformedGrid
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
+
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
+    d = convert(RectilinearGrid, CartesianGrid{T}(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa TransformedGrid
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test TB.revert(f, r, c) ≈ d
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
+    d = convert(StructuredGrid, CartesianGrid{T}(10, 10))
     r, c = TB.apply(f, d)
     @test r isa TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
