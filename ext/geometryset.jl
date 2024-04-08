@@ -93,17 +93,17 @@ end
 const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
 
 function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # repeat colors if necessary
   colors = Makie.@lift mayberepeat($colorant, $geoms)
 
   # visualize as built-in poly
   polys = Makie.@lift asmakie($geoms)
-  if showfacets[]
-    Makie.poly!(plot, polys, color=colors, strokecolor=facetcolor, strokewidth=segmentsize)
+  if showsegments[]
+    Makie.poly!(plot, polys, color=colors, strokecolor=segmentcolor, strokewidth=segmentsize)
   else
     Makie.poly!(plot, polys, color=colors)
   end
@@ -117,28 +117,28 @@ function vizgset3D!(plot, geoms, colorant)
 end
 
 function showfacets1D!(plot, geoms)
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
+  showpoints = plot[:showpoints]
+  pointcolor = plot[:pointcolor]
   pointsize = plot[:pointsize]
 
-  if showfacets[]
+  if showpoints[]
     # all boundaries are points or multipoints
     bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
     bset = Makie.@lift GeometrySet($bounds)
-    viz!(plot, bset, color=facetcolor, pointsize=pointsize)
+    viz!(plot, bset, color=pointcolor, pointsize=pointsize)
   end
 end
 
 function showfacets2D!(plot, geoms)
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  if showfacets[]
-    # all boundaries are geometries
+  if showsegments[]
+    # all boundaries are 1D geometries
     bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
     bset = Makie.@lift GeometrySet($bounds)
-    viz!(plot, bset, color=facetcolor, segmentsize=segmentsize)
+    viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
   end
 end
 

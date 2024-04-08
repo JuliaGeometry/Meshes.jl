@@ -25,10 +25,10 @@ ref2 = refine(ref1, TriRefinement())
 ref3 = refine(ref2, TriRefinement())
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], grid, showfacets = true)
-viz(fig[1,2], ref1, showfacets = true)
-viz(fig[2,1], ref2, showfacets = true)
-viz(fig[2,2], ref3, showfacets = true)
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
 
@@ -47,10 +47,10 @@ ref2 = refine(ref1, QuadRefinement())
 ref3 = refine(ref2, QuadRefinement())
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], grid, showfacets = true)
-viz(fig[1,2], ref1, showfacets = true)
-viz(fig[2,1], ref2, showfacets = true)
-viz(fig[2,2], ref3, showfacets = true)
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
 
@@ -69,10 +69,10 @@ ref2 = refine(ref1, RegularRefinement(3, 2))
 ref3 = refine(ref2, RegularRefinement(2, 3))
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], grid, showfacets = true)
-viz(fig[1,2], ref1, showfacets = true)
-viz(fig[2,1], ref2, showfacets = true)
-viz(fig[2,2], ref3, showfacets = true)
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
 
@@ -94,10 +94,10 @@ ref2 = refine(ref1, CatmullClark())
 ref3 = refine(ref2, CatmullClark())
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], mesh, showfacets = true)
-viz(fig[1,2], ref1, showfacets = true)
-viz(fig[2,1], ref2, showfacets = true)
-viz(fig[2,2], ref3, showfacets = true)
+viz(fig[1,1], mesh, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
 
@@ -116,9 +116,9 @@ ref2 = refine(ref1, TriSubdivision())
 ref3 = refine(ref2, TriSubdivision())
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], grid, showfacets = true)
-viz(fig[1,2], ref1, showfacets = true)
-viz(fig[2,1], ref2, showfacets = true)
-viz(fig[2,2], ref3, showfacets = true)
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
 fig
 ```

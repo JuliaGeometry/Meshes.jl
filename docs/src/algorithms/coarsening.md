@@ -25,9 +25,9 @@ cor2 = coarsen(cor1, RegularCoarsening(3, 2))
 cor3 = coarsen(cor2, RegularCoarsening(2, 3))
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], grid, showfacets = true)
-viz(fig[1,2], cor1, showfacets = true)
-viz(fig[2,1], cor2, showfacets = true)
-viz(fig[2,2], cor3, showfacets = true)
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], cor1, showsegments = true)
+viz(fig[2,1], cor2, showsegments = true)
+viz(fig[2,2], cor3, showsegments = true)
 fig
 ```

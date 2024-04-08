@@ -54,9 +54,9 @@ function vizmesh2D!(plot)
   alpha = plot[:alpha]
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
@@ -144,7 +144,7 @@ function vizmesh2D!(plot)
 
   Makie.mesh!(plot, tcoords, tmatrix, color=tcolors, shading=tshading)
 
-  if showfacets[]
+  if showsegments[]
     # retrieve coordinates parameters
     xparams = Makie.@lift let
       # relevant settings
@@ -182,7 +182,7 @@ function vizmesh2D!(plot)
       Makie.@lift $xparams[i]
     end
 
-    Makie.lines!(plot, xyz..., color=facetcolor, linewidth=segmentsize)
+    Makie.lines!(plot, xyz..., color=segmentcolor, linewidth=segmentsize)
   end
 end
 

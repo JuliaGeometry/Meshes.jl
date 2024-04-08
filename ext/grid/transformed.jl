@@ -26,10 +26,10 @@ function transformedgrid!(plot, fallback)
     color = plot[:color]
     alpha = plot[:alpha]
     colormap = plot[:colormap]
+    showsegments = plot[:showsegments]
+    segmentcolor = plot[:segmentcolor]
     segmentsize = plot[:segmentsize]
-    showfacets = plot[:showfacets]
-    facetcolor = plot[:facetcolor]
-    viz!(plot, grid; color, alpha, colormap, segmentsize, showfacets, facetcolor)
+    viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans[])
   else
     fallback(tgrid)

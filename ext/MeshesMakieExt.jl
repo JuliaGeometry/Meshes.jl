@@ -20,10 +20,12 @@ Makie.@recipe(Viz, object) do scene
     alpha=nothing,
     colormap=nothing,
     colorrange=nothing,
-    pointsize=4,
+    showsegments=false,
+    segmentcolor=:gray30,
     segmentsize=1.5,
-    showfacets=false,
-    facetcolor=:gray30
+    showpoints=false,
+    pointcolor=:gray30,
+    pointsize=4,
   )
 end
 

@@ -23,7 +23,7 @@ CartesianGrid
 # 3D Cartesian grid
 grid = CartesianGrid(10, 10, 10)
 
-viz(grid, showfacets = true)
+viz(grid, showsegments = true)
 ```
 
 ```@docs
@@ -36,7 +36,7 @@ x = 0.0:0.2:1.0
 y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 grid = RectilinearGrid(x, y)
 
-viz(grid, showfacets = true)
+viz(grid, showsegments = true)
 ```
 
 ```@docs
@@ -49,7 +49,7 @@ X = [i/20 * cos(3π/2 * (j-1) / (30-1)) for i in 1:20, j in 1:30]
 Y = [i/20 * sin(3π/2 * (j-1) / (30-1)) for i in 1:20, j in 1:30]
 grid = StructuredGrid(X, Y)
 
-viz(grid, showfacets = true)
+viz(grid, showsegments = true)
 ```
 
 ```@docs
@@ -66,7 +66,7 @@ connec = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(3,1,5)], Ngon)
 # 2D mesh made of N-gon elements
 mesh = SimpleMesh(points, connec)
 
-viz(mesh, showfacets = true)
+viz(mesh, showsegments = true)
 ```
 
 ## Connectivities

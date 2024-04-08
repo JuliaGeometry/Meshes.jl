@@ -8,9 +8,9 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
   alpha = plot[:alpha]
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
@@ -30,10 +30,10 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
     bbox = Makie.@lift boundingbox($grid)
     viz!(plot, bbox, color=colorant)
 
-    if showfacets[]
+    if showsegments[]
       tup = Makie.@lift xysegments(Meshes.xyz($grid)...)
       x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=facetcolor, linewidth=segmentsize)
+      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
     end
   else
     if nc[] == nv[]
@@ -46,10 +46,10 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
       Makie.image!(plot, C, interpolate=false)
     end
 
-    if showfacets[]
+    if showsegments[]
       tup = Makie.@lift xysegments(0:$sz[1], 0:$sz[2])
       x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=facetcolor, linewidth=segmentsize)
+      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
     end
 
     # adjust spacing and origin
@@ -67,9 +67,9 @@ function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
   alpha = plot[:alpha]
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
@@ -101,9 +101,9 @@ function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
     end
   end
 
-  if showfacets[]
+  if showsegments[]
     tup = Makie.@lift xyzsegments($xyz...)
     x, y, z = Makie.@lift($tup[1]), Makie.@lift($tup[2]), Makie.@lift($tup[3])
-    Makie.lines!(plot, x, y, z, color=facetcolor, linewidth=segmentsize)
+    Makie.lines!(plot, x, y, z, color=segmentcolor, linewidth=segmentsize)
   end
 end
