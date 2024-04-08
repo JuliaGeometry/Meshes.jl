@@ -294,9 +294,9 @@ Domain
 ```
 
 ```@example overview
-g = CartesianGrid(100, 100)
+grid = CartesianGrid(100, 100)
 
-viz(g, showsegments = true)
+viz(grid, showsegments = true)
 ```
 
 No memory is allocated:
@@ -308,7 +308,7 @@ No memory is allocated:
 but we can still loop over the elements, which are quadrangles in 2D:
 
 ```@example overview
-collect(elements(g))
+collect(grid)
 ```
 
 We can construct a general unstructured mesh with a global vector of points
@@ -330,5 +330,5 @@ The actual geometries of the elements are materialized in a lazy fashion
 like with the Cartesian grid:
 
 ```@example overview
-collect(elements(mesh))
+collect(mesh)
 ```
