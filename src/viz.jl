@@ -62,32 +62,3 @@ Visualize Meshes.jl `object` in an existing
 scene with `options` forwarded to [`viz`](@ref).
 """
 function viz! end
-
-"""
-    ascolors(values, colormap)
-
-Convert vector of `values` to Colors.jl,
-using `colormap` from ColorSchemes.jl.
-
-### Notes
-
-This function is intended for developers
-who may be interested in the visualization
-of custom Julia objects in the `color`
-argument of the [`viz`](@ref) function.
-"""
-function ascolors end
-
-"""
-    defaultscheme(values)
-
-Return default colormap for `values`.
-
-### Notes
-
-This function is intended for developers
-who may be interested in the automatic
-selection of colorschemes from ColorSchemes.jl
-for custom Julia objects.
-"""
-function defaultscheme end
