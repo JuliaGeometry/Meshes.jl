@@ -25,7 +25,7 @@ Makie.@recipe(Viz, object) do scene
     segmentsize=1.5,
     showpoints=false,
     pointcolor=:gray30,
-    pointsize=4,
+    pointsize=4
   )
 end
 
