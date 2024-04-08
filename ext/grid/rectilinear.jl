@@ -8,9 +8,9 @@ function vizgrid2D!(plot::Viz{<:Tuple{RectilinearGrid}})
   alpha = plot[:alpha]
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
-  showfacets = plot[:showfacets]
-  facetcolor = plot[:facetcolor]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
@@ -42,9 +42,9 @@ function vizgrid2D!(plot::Viz{<:Tuple{RectilinearGrid}})
     end
   end
 
-  if showfacets[]
+  if showsegments[]
     tup = Makie.@lift xysegments($xs, $ys)
     x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-    Makie.lines!(plot, x, y, color=facetcolor, linewidth=segmentsize)
+    Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
   end
 end

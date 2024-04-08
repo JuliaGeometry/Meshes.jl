@@ -296,7 +296,7 @@ Domain
 ```@example overview
 g = CartesianGrid(100, 100)
 
-viz(g, showfacets = true)
+viz(g, showsegments = true)
 ```
 
 No memory is allocated:
@@ -323,7 +323,7 @@ mesh = SimpleMesh(points, [tris; quads])
 ```
 
 ```@example overview
-viz(mesh, showfacets = true)
+viz(mesh, showsegments = true)
 ```
 
 The actual geometries of the elements are materialized in a lazy fashion

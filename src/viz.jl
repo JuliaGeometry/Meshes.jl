@@ -9,14 +9,16 @@ Visualize Meshes.jl `object` with various `options`.
 
 ## Available options
 
-* `color`       - color of geometries
-* `alpha`       - transparency in [0,1]
-* `colormap`    - color scheme/map from ColorSchemes.jl
-* `colorrange`  - minimum and maximum color values
-* `pointsize`   - size of points in point set
-* `segmentsize` - size (or width) of segments
-* `showfacets`  - enable visualization of facets
-* `facetcolor`  - color of facets (e.g. edges)
+* `color`        - color of geometries
+* `alpha`        - transparency in [0,1]
+* `colormap`     - color scheme/map from ColorSchemes.jl
+* `colorrange`   - minimum and maximum color values
+* `showsegments` - visualize segments
+* `segmentcolor` - color of segments
+* `segmentsize`  - width of segments
+* `showpoints`   - visualize points
+* `pointcolor`   - color of points
+* `pointsize`    - size of points
 
 The option `color` can be a single scalar or a vector
 of scalars. For [`Mesh`](@ref) subtypes, the length of
@@ -36,11 +38,11 @@ viz(mesh, color = 1:nelements(mesh))
 ```
 
 Different strategies to show the boundary of
-geometries (showfacets vs. boundary):
+geometries (showsegments vs. boundary):
 
 ```
-# visualize boundary as facets
-viz(polygon, showfacets = true)
+# visualize boundary with showsegments
+viz(polygon, showsegments = true)
 
 # visualize boundary with separate call
 viz(polygon)

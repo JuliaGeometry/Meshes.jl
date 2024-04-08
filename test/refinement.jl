@@ -6,9 +6,9 @@
 
     if visualtests
       fig = Mke.Figure(size=(900, 300))
-      viz(fig[1, 1], grid, showfacets=true)
-      viz(fig[1, 2], ref1, showfacets=true)
-      viz(fig[1, 3], ref2, showfacets=true)
+      viz(fig[1, 1], grid, showsegments=true)
+      viz(fig[1, 2], ref1, showsegments=true)
+      viz(fig[1, 3], ref2, showsegments=true)
       @test_reference "data/trirefine-$T.png" fig
     end
   end
@@ -23,9 +23,9 @@
 
     if visualtests
       fig = Mke.Figure(size=(900, 300))
-      viz(fig[1, 1], ref1, showfacets=true)
-      viz(fig[1, 2], ref2, showfacets=true)
-      viz(fig[1, 3], ref3, showfacets=true)
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/quadrefine-$T.png" fig
     end
   end
@@ -64,9 +64,9 @@
 
     if visualtests
       fig = Mke.Figure(size=(900, 300))
-      viz(fig[1, 1], ref1, showfacets=true)
-      viz(fig[1, 2], ref2, showfacets=true)
-      viz(fig[1, 3], ref3, showfacets=true)
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/catmullclark-1-$T.png" fig
     end
 
@@ -79,9 +79,9 @@
 
     if visualtests
       fig = Mke.Figure(size=(900, 300))
-      viz(fig[1, 1], ref1, showfacets=true)
-      viz(fig[1, 2], ref2, showfacets=true)
-      viz(fig[1, 3], ref3, showfacets=true)
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/catmullclark-2-$T.png" fig
     end
 
@@ -94,9 +94,9 @@
 
     if visualtests
       fig = Mke.Figure(size=(900, 300))
-      viz(fig[1, 1], ref1, showfacets=true)
-      viz(fig[1, 2], ref2, showfacets=true)
-      viz(fig[1, 3], ref3, showfacets=true)
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/catmullclark-3-$T.png" fig
     end
   end
@@ -111,9 +111,9 @@
 
     if visualtests
       fig = Mke.Figure(size=(900, 300))
-      viz(fig[1, 1], ref1, showfacets=true)
-      viz(fig[1, 2], ref2, showfacets=true)
-      viz(fig[1, 3], ref3, showfacets=true)
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/trisubdivision-$T.png" fig
     end
   end

@@ -27,7 +27,7 @@ mesh = discretize(hexagon, FanTriangulation())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], hexagon)
-viz(fig[1,2], mesh, showfacets = true)
+viz(fig[1,2], mesh, showsegments = true)
 fig
 ```
 
@@ -43,7 +43,7 @@ sphere = Sphere((0.,0.,0.), 1.)
 mesh = discretize(sphere, RegularDiscretization(10,10))
 
 fig = Mke.Figure(size = (400, 400))
-viz(fig[1,1], mesh, showfacets = true)
+viz(fig[1,1], mesh, showsegments = true)
 fig
 ```
 
@@ -100,7 +100,7 @@ mesh = discretize(polyarea, Dehn1899())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
-viz(fig[1,2], mesh, showfacets = true)
+viz(fig[1,2], mesh, showsegments = true)
 fig
 ```
 
@@ -115,7 +115,7 @@ mesh = discretize(polyarea, FIST())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
-viz(fig[1,2], mesh, showfacets = true)
+viz(fig[1,2], mesh, showsegments = true)
 fig
 ```
 
@@ -141,6 +141,6 @@ mesh = discretize(polyarea, FIST())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
-viz(fig[1,2], mesh, showfacets = true)
+viz(fig[1,2], mesh, showsegments = true)
 fig
 ```

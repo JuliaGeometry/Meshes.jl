@@ -39,5 +39,5 @@ such as [`Mesh`](@ref) and show facets efficiently:
 ```@example viz
 grid = CartesianGrid(10, 10, 10)
 
-viz(grid, showfacets = true, facetcolor = :teal)
+viz(grid, showsegments = true, segmentcolor = :teal)
 ```
