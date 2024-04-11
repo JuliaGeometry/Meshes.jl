@@ -702,7 +702,8 @@
     @test perimeter(e) == zero(T)
 
     e = Ellipsoid((T(3), T(2), T(1)))
-    @test sprint(show, e) == "Ellipsoid(radii: (3.0, 2.0, 1.0), center: (0.0, 0.0, 0.0), rotation: UniformScaling{Bool}(true))"
+    @test sprint(show, e) ==
+          "Ellipsoid(radii: (3.0, 2.0, 1.0), center: (0.0, 0.0, 0.0), rotation: UniformScaling{Bool}(true))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), e) == """
       Ellipsoid{3,Float32}
