@@ -102,8 +102,14 @@ function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
 
   # visualize as built-in poly
   polys = Makie.@lift asmakie($geoms)
-  strokecolor = Makie.@lift $showsegments ? $segmentcolor : :black
-  strokewidth = Makie.@lift $showsegments ? float($segmentsize) : 0.0
+  strokecolor = Makie.Observable{Any}()
+  map!(strokecolor, showsegments, segmentcolor) do showsegs, segcolor
+    showsegs ? segcolor : :black
+  end
+  strokewidth = Makie.Observable{Any}()
+  map!(strokewidth, showsegments, segmentsize) do showsegs, segsize
+    showsegs ? segsize : 0
+  end
   Makie.poly!(plot, polys; color=colors, strokecolor, strokewidth)
 end
 
