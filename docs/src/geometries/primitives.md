@@ -79,6 +79,16 @@ Sphere
 Ball((0.,0.,0.), 1.) |> viz
 ```
 
+## Ellipsoid
+
+```@docs
+Ellipsoid
+```
+
+```@example primitives
+Ellipsoid((3., 2., 1.)) |> viz
+```
+
 ### Disk/Circle
 
 ```@docs
