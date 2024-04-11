@@ -119,6 +119,7 @@
     @test isparametrized(Box)
     @test isparametrized(Ball)
     @test isparametrized(Sphere)
+    @test isparametrized(Ellipsoid)
     @test isparametrized(Disk)
     @test isparametrized(Circle)
     @test isparametrized(BezierCurve)
@@ -144,6 +145,7 @@
     @test isperiodic(Ball{3}) == (false, true, true)
     @test isperiodic(Sphere{2}) == (true,)
     @test isperiodic(Sphere{3}) == (true, true)
+    @test isperiodic(Ellipsoid) == (true, true)
     @test isperiodic(ParaboloidSurface) == (false, true)
     @test isperiodic(Torus) == (true, true)
 

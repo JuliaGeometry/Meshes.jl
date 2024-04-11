@@ -156,3 +156,5 @@ perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
 perimeter(::Plane{T}) where {T} = zero(T)
 
 perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
+
+perimeter(::Ellipsoid{T}) where {T} = zero(T)

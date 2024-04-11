@@ -56,6 +56,10 @@ firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
 lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
 extrapoints(s::Sphere{3}) = (s(0, 0), s(1, 0))
 
+firstoffset(::Ellipsoid) = (n -> inv(n + 1), n -> zero(n))
+lastoffset(::Ellipsoid) = (n -> inv(n + 1), n -> inv(n))
+extrapoints(e::Ellipsoid) = (e(0, 0), e(1, 0))
+
 firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::CylinderSurface) = (bottom(c)(0, 0), top(c)(0, 0))

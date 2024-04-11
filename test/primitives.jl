@@ -691,6 +691,33 @@
     end
   end
 
+  @testset "Ellipsoid" begin
+    e = Ellipsoid((T(3), T(2), T(1)))
+    @test embeddim(e) == 3
+    @test paramdim(e) == 2
+    @test coordtype(e) == T
+    @test radii(e) == (T(3), T(2), T(1))
+    @test center(e) == P3(0, 0, 0)
+    @test isnothing(boundary(e))
+    @test perimeter(e) == zero(T)
+
+    e = Ellipsoid((T(3), T(2), T(1)))
+    @test sprint(show, e) == "Ellipsoid(radii: (3.0, 2.0, 1.0), center: (0.0, 0.0, 0.0), rotation: UniformScaling{Bool}(true))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), e) == """
+      Ellipsoid{3,Float32}
+      ├─ radii: (3.0f0, 2.0f0, 1.0f0)
+      ├─ center: Point(0.0f0, 0.0f0, 0.0f0)
+      └─ rotation: UniformScaling{Bool}(true)"""
+    else
+      @test sprint(show, MIME("text/plain"), e) == """
+      Ellipsoid{3,Float64}
+      ├─ radii: (3.0, 2.0, 1.0)
+      ├─ center: Point(0.0, 0.0, 0.0)
+      └─ rotation: UniformScaling{Bool}(true)"""
+    end
+  end
+
   @testset "Disk" begin
     p = Plane(P3(0, 0, 0), V3(0, 0, 1))
     d = Disk(p, T(2))

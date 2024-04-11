@@ -54,6 +54,8 @@ boundary(b::Ball) = Sphere(center(b), radius(b))
 
 boundary(::Sphere) = nothing
 
+boundary(::Ellipsoid) = nothing
+
 boundary(d::Disk) = Circle(plane(d), radius(d))
 
 boundary(::Circle) = nothing

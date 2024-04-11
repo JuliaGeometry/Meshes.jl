@@ -41,6 +41,13 @@
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
+    ellips = Ellipsoid((T(3), T(2), T(1)))
+    mesh = discretize(ellips, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 + 2
+    @test nelements(mesh) == 10 * 10 + 2 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
     ball = Ball(P2(0, 0), T(1))
     mesh = discretize(ball, RegularDiscretization(10))
     @test nvertices(mesh) == 11 * 10 + 1
