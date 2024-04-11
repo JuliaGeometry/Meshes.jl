@@ -147,6 +147,7 @@ export
   Box,
   Ball,
   Sphere,
+  Ellipsoid,
   Disk,
   Circle,
   Cylinder,

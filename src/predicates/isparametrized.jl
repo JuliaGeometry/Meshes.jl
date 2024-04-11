@@ -34,6 +34,8 @@ isparametrized(::Type{<:Ball}) = true
 
 isparametrized(::Type{<:Sphere}) = true
 
+isparametrized(::Type{<:Ellipsoid}) = true
+
 isparametrized(::Type{<:Disk}) = true
 
 isparametrized(::Type{<:Circle}) = true

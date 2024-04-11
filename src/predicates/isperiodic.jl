@@ -26,6 +26,8 @@ isperiodic(::Type{<:Ball{Dim}}) where {Dim} = ntuple(i -> i != 1, Dim)
 
 isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i -> true, Dim - 1)
 
+isperiodic(::Type{<:Ellipsoid}) = (true, true)
+
 isperiodic(::Type{<:Disk}) = (false, true)
 
 isperiodic(::Type{<:Circle}) = (true,)

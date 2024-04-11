@@ -44,6 +44,7 @@ end
 
 perdims(g) = isperiodic(g)
 perdims(::Sphere{3}) = (false, true)
+perdims(::Ellipsoid) = (false, true)
 
 # ------------------------
 # append to grid topology
@@ -56,6 +57,8 @@ appendtopo(::Ball{2}, tg) = _appendcenter(tg)
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
 appendtopo(::Sphere{3}, tg) = _appendpoles(tg, 2, true)
+
+appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::CylinderSurface, tg) = _appendpoles(tg, 1, false)
 
