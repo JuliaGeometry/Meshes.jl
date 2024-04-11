@@ -256,14 +256,14 @@
     ps = sample(torus, RegularSampling(3, 3))
     ts = P3[
       (0, 0, -3),
-      (sqrt(3) / 2, 0, -1.5),
       (-sqrt(3) / 2, 0, -1.5),
+      (sqrt(3) / 2, 0, -1.5),
       (0, 3sqrt(3) / 2, 1.5),
-      (sqrt(3) / 2, 3sqrt(3) / 4, 0.75),
       (-sqrt(3) / 2, 3sqrt(3) / 4, 0.75),
+      (sqrt(3) / 2, 3sqrt(3) / 4, 0.75),
       (0, -3sqrt(3) / 2, 1.5),
-      (sqrt(3) / 2, -3sqrt(3) / 4, 0.75),
-      (-sqrt(3) / 2, -3sqrt(3) / 4, 0.75)
+      (-sqrt(3) / 2, -3sqrt(3) / 4, 0.75),
+      (sqrt(3) / 2, -3sqrt(3) / 4, 0.75)
     ]
     for (p, t) in zip(ps, ts)
       @test p ≈ t

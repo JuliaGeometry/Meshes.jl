@@ -53,7 +53,7 @@ function (t::Torus{T})(θ, φ) where {T}
 
   Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
 
-  sθ, cθ = sincospi(2 * T(θ))
+  sθ, cθ = sincospi(2 * T(-θ))
   sφ, cφ = sincospi(2 * T(φ))
   x = (R + r * cθ) * cφ
   y = (R + r * cθ) * sφ
