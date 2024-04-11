@@ -27,3 +27,9 @@ function vizmany!(plot, objs, color)
 
   viz!(plot, object, color=colors, alpha=alphas, colormap=colormap, pointsize=pointsize, segmentsize=segmentsize)
 end
+
+function liftany(f, args...)
+  obs = Makie.Observable{Any}()
+  map!(f, obs, args...)
+  obs
+end
