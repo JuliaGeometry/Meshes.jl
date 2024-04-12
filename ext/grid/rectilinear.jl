@@ -42,9 +42,9 @@ function vizgrid2D!(plot::Viz{<:Tuple{RectilinearGrid}})
     end
   end
 
-  if showsegments[]
-    tup = Makie.@lift xysegments($xs, $ys)
-    x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-    Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
-  end
+  # visualize segments
+  tup = Makie.@lift xysegments($xs, $ys)
+  x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+  segplot = Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+  segplot.visible = showsegments
 end

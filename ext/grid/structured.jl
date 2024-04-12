@@ -30,11 +30,11 @@ function vizgrid2D!(plot::Viz{<:Tuple{StructuredGrid}})
     C = Makie.@lift reshape($colorant, $sz)
     Makie.surface!(plot, X, Y, color=C)
 
-    if showsegments[]
-      tup = Makie.@lift structuredsegments($grid)
-      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
-    end
+    # visualize segments
+    tup = Makie.@lift structuredsegments($grid)
+    x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+    segplot = Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+    segplot.visible = showsegments
   else
     vizmesh2D!(plot)
   end

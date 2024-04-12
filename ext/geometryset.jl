@@ -121,12 +121,11 @@ function showfacets1D!(plot, geoms)
   pointcolor = plot[:pointcolor]
   pointsize = plot[:pointsize]
 
-  if showpoints[]
-    # all boundaries are points or multipoints
-    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
-    bset = Makie.@lift GeometrySet($bounds)
-    viz!(plot, bset, color=pointcolor, pointsize=pointsize)
-  end
+  # all boundaries are points or multipoints
+  bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
+  bset = Makie.@lift GeometrySet($bounds)
+  pointplot = viz!(plot, bset, color=pointcolor, pointsize=pointsize)
+  pointplot.visible = showpoints
 end
 
 function showfacets2D!(plot, geoms)
@@ -134,12 +133,11 @@ function showfacets2D!(plot, geoms)
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  if showsegments[]
-    # all boundaries are 1D geometries
-    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
-    bset = Makie.@lift GeometrySet($bounds)
-    viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
-  end
+  # all boundaries are 1D geometries
+  bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
+  bset = Makie.@lift GeometrySet($bounds)
+  segplot = viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
+  segplot.visible = showsegments
 end
 
 asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)

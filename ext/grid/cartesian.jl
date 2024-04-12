@@ -30,11 +30,11 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
     bbox = Makie.@lift boundingbox($grid)
     viz!(plot, bbox, color=colorant)
 
-    if showsegments[]
-      tup = Makie.@lift xysegments(Meshes.xyz($grid)...)
-      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
-    end
+    # visualize segments
+    tup = Makie.@lift xysegments(Meshes.xyz($grid)...)
+    x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+    segplot = Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+    segplot.visible = showsegments
   else
     if nc[] == nv[]
       # visualize as built-in image with interpolation
@@ -46,11 +46,11 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
       Makie.image!(plot, C, interpolate=false)
     end
 
-    if showsegments[]
-      tup = Makie.@lift xysegments(0:$sz[1], 0:$sz[2])
-      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
-    end
+    # visualize segments
+    tup = Makie.@lift xysegments(0:$sz[1], 0:$sz[2])
+    x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+    segplot = Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+    segplot.visible = showsegments
 
     # adjust spacing and origin
     spx, spy = sp[]
@@ -101,9 +101,9 @@ function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
     end
   end
 
-  if showsegments[]
-    tup = Makie.@lift xyzsegments($xyz...)
-    x, y, z = Makie.@lift($tup[1]), Makie.@lift($tup[2]), Makie.@lift($tup[3])
-    Makie.lines!(plot, x, y, z, color=segmentcolor, linewidth=segmentsize)
-  end
+  # visualize segments
+  tup = Makie.@lift xyzsegments($xyz...)
+  x, y, z = Makie.@lift($tup[1]), Makie.@lift($tup[2]), Makie.@lift($tup[3])
+  segplot = Makie.lines!(plot, x, y, z, color=segmentcolor, linewidth=segmentsize)
+  segplot.visible = showsegments
 end

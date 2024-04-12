@@ -142,48 +142,49 @@ function vizmesh2D!(plot)
   tcolors = Makie.@lift $tparams[3]
   tshading = Makie.@lift $tparams[4]
 
+  # visualize as built-in mesh
   Makie.mesh!(plot, tcoords, tmatrix, color=tcolors, shading=tshading)
 
-  if showsegments[]
-    # retrieve coordinates parameters
-    xparams = Makie.@lift let
-      # relevant settings
-      dim = embeddim($mesh)
-      topo = topology($mesh)
-      nvert = nvertices($mesh)
-      verts = vertices($mesh)
-      coords = coordinates.(verts)
+  # retrieve coordinates parameters
+  xparams = Makie.@lift let
+    # relevant settings
+    dim = embeddim($mesh)
+    topo = topology($mesh)
+    nvert = nvertices($mesh)
+    verts = vertices($mesh)
+    coords = coordinates.(verts)
 
-      # use a sophisticated data structure
-      # to extract the edges from the n-gons
-      t = convert(HalfEdgeTopology, topo)
-      ∂ = Boundary{1,0}(t)
+    # use a sophisticated data structure
+    # to extract the edges from the n-gons
+    t = convert(HalfEdgeTopology, topo)
+    ∂ = Boundary{1,0}(t)
 
-      # append indices of incident vertices
-      # interleaved with a sentinel index
-      inds = Int[]
-      for i in 1:nfacets(t)
-        append!(inds, ∂(i))
-        push!(inds, nvert + 1)
-      end
-
-      # fill sentinel index with NaN coordinates
-      push!(coords, Vec(ntuple(i -> NaN, dim)))
-
-      # extract incident vertices
-      coords = coords[inds]
-
-      # split coordinates to match signature
-      [getindex.(coords, j) for j in 1:dim]
+    # append indices of incident vertices
+    # interleaved with a sentinel index
+    inds = Int[]
+    for i in 1:nfacets(t)
+      append!(inds, ∂(i))
+      push!(inds, nvert + 1)
     end
 
-    # unpack observable of paramaters
-    xyz = map(1:embeddim(mesh[])) do i
-      Makie.@lift $xparams[i]
-    end
+    # fill sentinel index with NaN coordinates
+    push!(coords, Vec(ntuple(i -> NaN, dim)))
 
-    Makie.lines!(plot, xyz..., color=segmentcolor, linewidth=segmentsize)
+    # extract incident vertices
+    coords = coords[inds]
+
+    # split coordinates to match signature
+    [getindex.(coords, j) for j in 1:dim]
   end
+
+  # unpack observable of paramaters
+  xyz = map(1:embeddim(mesh[])) do i
+    Makie.@lift $xparams[i]
+  end
+
+  # visualize segments
+  segplot = Makie.lines!(plot, xyz..., color=segmentcolor, linewidth=segmentsize)
+  segplot.visible = showsegments
 end
 
 function vizmesh3D!(plot)
