@@ -30,34 +30,35 @@ function transformedgrid!(plot, fallback)
     segmentcolor = plot[:segmentcolor]
     segmentsize = plot[:segmentsize]
     viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
-    makietransform!(plot, trans[])
+    makietransform!(plot, trans)
   else
     fallback(tgrid)
   end
 end
 
-makietransform!(plot, trans::TB.Identity) = nothing
+makietransform!(plot, trans::Makie.Observable{<:TB.Identity}) = nothing
 
-makietransform!(plot, trans::TB.SequentialTransform) = foreach(t -> makietransform!(plot, t), trans)
+makietransform!(plot, trans::Makie.Observable{<:TB.SequentialTransform}) =
+  foreach(t -> makietransform!(plot, Makie.Observable(t)), trans[])
 
-function makietransform!(plot, trans::Rotate{<:Angle2d})
-  rot = first(TB.parameters(trans))
+function makietransform!(plot, trans::Makie.Observable{<:Rotate{<:Angle2d}})
+  rot = first(TB.parameters(trans[]))
   θ = first(Rotations.params(rot))
   Makie.rotate!(plot, θ)
 end
 
-function makietransform!(plot, trans::Translate)
-  offsets = first(TB.parameters(trans))
+function makietransform!(plot, trans::Makie.Observable{<:Translate})
+  offsets = first(TB.parameters(trans[]))
   Makie.translate!(plot, offsets...)
 end
 
-function makietransform!(plot, trans::Scale)
-  factors = first(TB.parameters(trans))
+function makietransform!(plot, trans::Makie.Observable{<:Scale})
+  factors = first(TB.parameters(trans[]))
   Makie.scale!(plot, factors...)
 end
 
-function makietransform!(plot, trans::Affine{2})
-  A, b = TB.parameters(trans)
+function makietransform!(plot, trans::Makie.Observable{<:Affine{2}})
+  A, b = TB.parameters(trans[])
   if isdiag(A)
     s₁, s₂ = A[1, 1], A[2, 2]
     Makie.scale!(plot, s₁, s₂)
