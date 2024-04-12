@@ -93,20 +93,12 @@ end
 const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
 
 function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
-  showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
-
   # repeat colors if necessary
   colors = Makie.@lift mayberepeat($colorant, $geoms)
 
   # visualize as built-in poly
   polys = Makie.@lift asmakie($geoms)
-  if showsegments[]
-    Makie.poly!(plot, polys, color=colors, strokecolor=segmentcolor, strokewidth=segmentsize)
-  else
-    Makie.poly!(plot, polys, color=colors)
-  end
+  Makie.poly!(plot, polys, color=colors)
 
   showfacets2D!(plot, geoms)
 end
