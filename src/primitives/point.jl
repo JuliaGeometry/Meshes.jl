@@ -107,4 +107,24 @@ end
 # IO METHODS
 # -----------
 
-# TODO: show
+function Base.show(io::IO, point::Point)
+  if get(io, :compact, false)
+    print(io, "(")
+    _printfields(io, point.coords)
+    print(io, ")")
+  else
+    print(io, "Point(")
+    _printfields(io, point.coords)
+    print(io, ")")
+  end
+end
+
+_printfields(io, coords::CRS) = printfields(io, coords, compact=true)
+_printfields(io, coords::CoordRefSystems.ShiftedCRS) = printfields(io, CoordRefSystems._coords(coords), compact=true)
+_printfields(io, coords::Cartesian) =
+  printfields(io, CoordRefSystems._coords(coords), CoordRefSystems._fnames(coords), compact=true)
+
+function Base.show(io::IO, ::MIME"text/plain", point::Point)
+  print(io, "Point with")
+  println(io, point.coords)
+end
