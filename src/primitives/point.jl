@@ -13,7 +13,7 @@ ncoords(::Type{<:Spherical}) = 3
 asvec(coords::Cartesian) = Vec(coords.coords)
 ascart(vec::Vec) = Cartesian(Tuple(vec))
 
-struct Point{C<:CRS}
+struct Point{C<:CRS} <: Primitive
   coords::C
 end
 

@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Geometry{Dim,T}
+    Geometry
 
-A geometry embedded in a `Dim`-dimensional space with coordinates of type `T`.
+A geometry embedded in a N-dimensional space.
 """
-abstract type Geometry{Dim,T} end
+abstract type Geometry end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 
@@ -16,7 +16,6 @@ Broadcast.broadcastable(g::Geometry) = Ref(g)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
-embeddim(::Type{<:Geometry{Dim,T}}) where {Dim,T} = Dim
 embeddim(g::Geometry) = embeddim(typeof(g))
 
 """
@@ -28,14 +27,6 @@ sphere embedded in 3D has 2 parametric dimensions (polar and azimuthal angles).
 See also [`isparametrized`](@ref).
 """
 paramdim(g::Geometry) = paramdim(typeof(g))
-
-"""
-    coordtype(geometry)
-
-Return the machine type of each coordinate used to describe the `geometry`.
-"""
-coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T} = T
-coordtype(g::Geometry) = coordtype(typeof(g))
 
 """
     centroid(geometry)
@@ -51,12 +42,6 @@ Return the top left and bottom right corners of the
 bounding box of the `geometry`.
 """
 Base.extrema(g::Geometry) = extrema(boundingbox(g))
-
-# -----------
-# IO METHODS
-# -----------
-
-Base.summary(io::IO, geom::Geometry{Dim,T}) where {Dim,T} = print(io, "$(prettyname(geom)){$Dim,$T}")
 
 # ----------------
 # IMPLEMENTATIONS
