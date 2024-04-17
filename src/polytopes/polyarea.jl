@@ -24,10 +24,10 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (e.g. only 2 vertices).
 """
-struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
+struct PolyArea{R<:Ring} <: Polygon
   rings::Vector{R}
 
-  function PolyArea{Dim,T,R}(rings; fix=true) where {Dim,T,R<:Ring{Dim,T}}
+  function PolyArea{R}(rings; fix=true) where {R<:Ring}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -57,7 +57,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}} = PolyArea{Dim,T,R}(rings; fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {R<:Ring} = PolyArea{R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
@@ -103,9 +103,9 @@ function Base.show(io::IO, p::PolyArea)
   print(io, ")")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   rings = p.rings
-  println(io, "PolyArea{$Dim,$T}")
+  println(io, "PolyArea")
   println(io, "  outer")
   print(io, "  └─ $(rings[1])")
   if length(rings) > 1
@@ -115,5 +115,6 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
   end
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim,T}}) where {Dim,T} =
-  PolyArea(rand(rng, Ring{Dim,T}))
+# TODO:
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim,T}}) where {Dim,T} =
+#   PolyArea(rand(rng, Ring{Dim,T}))

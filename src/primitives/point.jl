@@ -29,7 +29,8 @@ center(p::Point) = p
 
 ==(A::Point, B::Point) = A.coords == B.coords
 
-Base.isapprox(A::Point, B::Point; kwargs...) = isapprox(A.coords, B.coords; kwargs...)
+Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...) =
+  isapprox(A.coords, B.coords; atol, kwargs...)
 
 """
     coordinates(point)

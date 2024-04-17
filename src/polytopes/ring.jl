@@ -9,10 +9,10 @@ A closed polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
 See also [`Chain`](@ref) and [`Rope`](@ref).
 """
-struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
+struct Ring{V<:CircularVector{<:Point}} <: Chain
   vertices::V
 
-  function Ring{Dim,T,V}(vertices) where {Dim,T,V}
+  function Ring{V}(vertices) where {V}
     if first(vertices) == last(vertices) && length(vertices) ≥ 2
       throw(ArgumentError("""
       First and last vertices of `Ring` constructor must be different
@@ -24,11 +24,11 @@ struct Ring{Dim,T,V<:CircularVector{Point{Dim,T}}} <: Chain{Dim,T}
   end
 end
 
-Ring(vertices::CircularVector{Point{Dim,T}}) where {Dim,T} = Ring{Dim,T,typeof(vertices)}(vertices)
+Ring(vertices::CircularVector{<:Point}) = Ring{typeof(vertices)}(vertices)
 Ring(vertices::Tuple...) = Ring([Point(v) for v in vertices])
-Ring(vertices::Point{Dim,T}...) where {Dim,T} = Ring(collect(vertices))
+Ring(vertices::P...) where {P<:Point} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
-Ring(vertices::AbstractVector{Point{Dim,T}}) where {Dim,T} = Ring(CircularVector(vertices))
+Ring(vertices::AbstractVector{<:Point}) = Ring(CircularVector(vertices))
 
 nvertices(r::Ring) = length(r.vertices)
 
@@ -47,13 +47,14 @@ Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 # do not change which vertex comes first for closed chains
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ring{Dim,T}}) where {Dim,T}
-  v = rand(rng, Point{Dim,T}, rand(3:50))
-  while first(v) == last(v)
-    v = rand(rng, Point{Dim,T}, rand(3:50))
-  end
-  Ring(v)
-end
+# TODO
+# function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Ring{Dim,T}}) where {Dim,T}
+#   v = rand(rng, Point{Dim,T}, rand(3:50))
+#   while first(v) == last(v)
+#     v = rand(rng, Point{Dim,T}, rand(3:50))
+#   end
+#   Ring(v)
+# end
 
 """
     innerangles(ring)
@@ -62,10 +63,11 @@ Return inner angles of the `ring`. Inner
 angles are always positive, and unlike
 `angles` they can be greater than `π`.
 """
-function innerangles(r::Ring{2,T}) where {T}
+function innerangles(r::Ring)
   # correct sign of angles in case orientation is CW
   θs = orientation(r) == CW ? -angles(r) : angles(r)
   [θ > 0 ? 2 * T(π) - θ : -θ for θ in θs]
 end
 
-innerangles(r::Ring{3}) = innerangles(Ring(proj2D(vertices(r))))
+# TODO: handle Dim
+# innerangles(r::Ring{3}) = innerangles(Ring(proj2D(vertices(r))))
