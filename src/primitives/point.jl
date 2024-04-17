@@ -19,6 +19,7 @@ end
 
 # convenience constructors
 Point(coords...) = Point(Cartesian(coords...))
+Point(coords::Tuple) = Point(Cartesian(coords...))
 
 embeddim(::Type{Point{C}}) where {C<:CRS} = ncoords(C)
 embeddim(::Type{Point{<:CoordRefSystems.Geographic}}) = 3

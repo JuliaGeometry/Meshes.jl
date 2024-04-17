@@ -10,12 +10,10 @@ given `plane` with given `radius`.
 
 See also [`Circle`](@ref).
 """
-struct Disk{T} <: Primitive{3,T}
-  plane::Plane{T}
+struct Disk{P<:Plane,T} <: Primitive
+  plane::P
   radius::T
 end
-
-Disk(plane::Plane{T}, radius) where {T} = Disk(plane, T(radius))
 
 paramdim(::Type{<:Disk}) = 2
 
@@ -27,7 +25,7 @@ radius(d::Disk) = d.radius
 
 normal(d::Disk) = normal(d.plane)
 
-function (d::Disk{T})(ρ, φ) where {T}
+function (d::Disk{P,T})(ρ, φ) where {P,T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
@@ -39,4 +37,5 @@ function (d::Disk{T})(ρ, φ) where {T}
   d.plane(u, v)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Disk{T}}) where {T} = Disk(rand(rng, Plane{T}), rand(rng, T))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Disk{T}}) where {T} = Disk(rand(rng, Plane{T}), rand(rng, T))

@@ -24,22 +24,22 @@ Finally, construct a right vertical circular cylinder with given `radius`.
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct Cylinder{T} <: Primitive{3,T}
-  bot::Plane{T}
-  top::Plane{T}
+struct Cylinder{P<:Plane,T} <: Primitive
+  bot::P
+  top::P
   radius::T
 end
 
-function Cylinder(start::Point{3,T}, finish::Point{3,T}, radius) where {T}
+function Cylinder(start::Point, finish::Point, radius)
   dir = finish - start
   bot = Plane(start, dir)
   top = Plane(finish, dir)
-  Cylinder(bot, top, T(radius))
+  Cylinder(bot, top, radius)
 end
 
 Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
 
-Cylinder(start::Point{3,T}, finish::Point{3,T}) where {T} = Cylinder(start, finish, T(1))
+Cylinder(start::Point, finish::Point) = Cylinder(start, finish, 1.0)
 
 Cylinder(start::Tuple, finish::Tuple) = Cylinder(Point(start), Point(finish))
 
@@ -63,7 +63,7 @@ hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 
-function (c::Cylinder{T})(ρ, φ, z) where {T}
+function (c::Cylinder{P,T})(ρ, φ, z) where {P,T}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
@@ -87,5 +87,6 @@ function (c::Cylinder{T})(ρ, φ, z) where {T}
   s(T(z))
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
-  Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
+#   Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))

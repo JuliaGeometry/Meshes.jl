@@ -7,14 +7,14 @@
 
 A 3D ellipsoid with given `radii`, `center` and `rotation`.
 """
-struct Ellipsoid{T,R} <: Primitive{3,T}
+struct Ellipsoid{T,P<:Point,R} <: Primitive
   radii::NTuple{3,T}
-  center::Point{3,T}
+  center::P
   rotation::R
 end
 
-Ellipsoid(radii::NTuple{3,T}, center=(T(0), T(0), T(0)), rotation::R=I) where {T,R} =
-  Ellipsoid{T,R}(radii, center, rotation)
+Ellipsoid(radii::NTuple{3,T}, center::P=Point(T(0), T(0), T(0)), rotation::R=I) where {T,P,R} =
+  Ellipsoid{T,P,R}(radii, center, rotation)
 
 paramdim(::Type{<:Ellipsoid}) = 2
 
@@ -39,5 +39,6 @@ function (e::Ellipsoid{T})(θ, φ) where {T}
   c + R * Vec(x, y, z)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid{T}}) where {T} =
-  Ellipsoid((rand(rng, T), rand(rng, T), rand(rng, T)), rand(rng, Point{3,T}), rand(rng, QuatRotation))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid{T}}) where {T} =
+#   Ellipsoid((rand(rng, T), rand(rng, T), rand(rng, T)), rand(rng, Point{3,T}), rand(rng, QuatRotation))

@@ -9,14 +9,14 @@ A torus centered at `center` with axis of revolution directed by
 `normal` and with radii `major` and `minor`. 
 
 """
-struct Torus{T} <: Primitive{3,T}
-  center::Point{3,T}
+struct Torus{P<:Point,T} <: Primitive
+  center::P
   normal::Vec{3,T}
   major::T
   minor::T
 end
 
-Torus(center::Point{3,T}, normal::Vec{3,T}, major, minor) where {T} = Torus(center, normal, T(major), T(minor))
+Torus(center::Point, normal::Vec{3,T}, major, minor) where {T} = Torus(center, normal, T(major), T(minor))
 
 Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(normal), major, minor)
 
@@ -26,10 +26,10 @@ Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(nor
 The torus whose centerline passes through points `p1`, `p2` and `p3` and with
 minor radius `minor`.
 """
-function Torus(p1::Point{3,T}, p2::Point{3,T}, p3::Point{3,T}, minor) where {T}
+function Torus(p1::Point, p2::Point, p3::Point, minor)
   c = Circle(p1, p2, p3)
   p = Plane(p1, p2, p3)
-  Torus(center(c), normal(p), radius(c), T(minor))
+  Torus(center(c), normal(p), radius(c), minor)
 end
 
 Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Point(p3), minor)
@@ -44,7 +44,7 @@ radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
-function (t::Torus{T})(θ, φ) where {T}
+function (t::Torus{P,T})(θ, φ) where {P,T}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
@@ -62,5 +62,6 @@ function (t::Torus{T})(θ, φ) where {T}
   c + Q * Vec{3,T}(x, y, z)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} =
-  Torus(rand(rng, Point{3,T}), rand(rng, Vec{3,T}), rand(rng, T), rand(rng, T))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} =
+#   Torus(rand(rng, Point{3,T}), rand(rng, Vec{3,T}), rand(rng, T), rand(rng, T))

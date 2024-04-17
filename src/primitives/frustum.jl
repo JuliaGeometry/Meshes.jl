@@ -10,11 +10,11 @@ See <https://en.wikipedia.org/wiki/Frustum>.
 
 See also [`FrustumSurface`](@ref).
 """
-struct Frustum{T} <: Primitive{3,T}
-  bot::Disk{T}
-  top::Disk{T}
+struct Frustum{D<:Disk} <: Primitive
+  bot::D
+  top::D
 
-  function Frustum{T}(bot, top) where {T}
+  function Frustum{D}(bot, top) where {D}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     @assert bn ⋅ tn ≈ 1 "Bottom and top plane must be parallel"
@@ -23,7 +23,7 @@ struct Frustum{T} <: Primitive{3,T}
   end
 end
 
-Frustum(bot::Disk{T}, top::Disk{T}) where {T} = Frustum{T}(bot, top)
+Frustum(bot::D, top::D) where {D<:Disk} = Frustum{D}(bot, top)
 
 paramdim(::Type{<:Frustum}) = 3
 
@@ -35,10 +35,11 @@ height(f::Frustum) = height(boundary(f))
 
 axis(f::Frustum) = axis(boundary(f))
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum{T}}) where {T}
-  bottom = rand(rng, Disk{T})
-  ax = normal(plane(bottom))
-  topplane = Plane{T}(center(bottom) + rand(T) * ax, ax)
-  top = Disk{T}(topplane, rand(T))
-  Frustum(bottom, top)
-end
+# TODO
+# function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum{T}}) where {T}
+#   bottom = rand(rng, Disk{T})
+#   ax = normal(plane(bottom))
+#   topplane = Plane{T}(center(bottom) + rand(T) * ax, ax)
+#   top = Disk{T}(topplane, rand(T))
+#   Frustum(bottom, top)
+# end

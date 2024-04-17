@@ -9,9 +9,9 @@ A ray originating at point `p`, pointed in direction `v`.
 It can be called as `r(t)` with `t > 0` to cast it at
 `p + t * v`.
 """
-struct Ray{Dim,T} <: Primitive{Dim,T}
-  p::Point{Dim,T}
-  v::Vec{Dim,T}
+struct Ray{P<:Point,V<:Vec} <: Primitive
+  p::P
+  v::V
 end
 
 Ray(p::Tuple, v::Tuple) = Ray(Point(p), Vec(v))
@@ -27,5 +27,6 @@ function (r::Ray)(t)
   r.p + t * r.v
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ray{Dim,T}}) where {Dim,T} =
-  Ray(rand(rng, Point{Dim,T}), rand(rng, Vec{Dim,T}))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ray{Dim,T}}) where {Dim,T} =
+#   Ray(rand(rng, Point{Dim,T}), rand(rng, Vec{Dim,T}))

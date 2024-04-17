@@ -10,9 +10,9 @@ See <https://en.wikipedia.org/wiki/Cone>.
 
 See also [`ConeSurface`](@ref).
 """
-struct Cone{T} <: Primitive{3,T}
-  base::Disk{T}
-  apex::Point{3,T}
+struct Cone{D<:Disk,P<:Point} <: Primitive
+  base::D
+  apex::P
 end
 
 Cone(base::Disk, apex::Tuple) = Cone(base, Point(apex))
@@ -27,5 +27,6 @@ height(c::Cone) = norm(center(base(c)) - apex(c))
 
 halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cone{T}}) where {T} =
-  Cone(rand(rng, Disk{T}), rand(rng, Point{3,T}))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cone{T}}) where {T} =
+#   Cone(rand(rng, Disk{T}), rand(rng, Point{3,T}))

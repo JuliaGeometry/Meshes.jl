@@ -20,12 +20,12 @@ large number of points but less precise, can be used via
 BezierCurve(Point2[(0.,0.),(1.,-1.)])
 ```
 """
-struct BezierCurve{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Primitive{Dim,T}
+struct BezierCurve{V<:AbstractVector{<:Point}} <: Primitive
   controls::V
 end
 
 BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
-BezierCurve(points::Vararg) = BezierCurve(collect(points))
+BezierCurve(points::P...) where {P<:Point} = BezierCurve(collect(points))
 
 paramdim(::Type{<:BezierCurve}) = 1
 
@@ -74,36 +74,38 @@ function (curve::BezierCurve)(t, ::DeCasteljau)
   end
 end
 
+# TODO
 # Apply Horner's method on the monomial representation of the
 # Bézier curve B = ∑ᵢ aᵢtⁱ with i ∈ [0, n], n the degree of the
 # curve, aᵢ = binomial(n, i) * pᵢ * t̄ⁿ⁻ⁱ and t̄ = (1 - t).
 # Horner's rule recursively reconstructs B from a sequence bᵢ
 # with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
-function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
-  if t < 0 || t > 1
-    throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
-  end
-  cs = curve.controls
-  t̄ = one(T) - t
-  n = degree(curve)
-  pₙ = coordinates(last(cs))
-  aₙ = pₙ
+# function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
+#   if t < 0 || t > 1
+#     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
+#   end
+#   cs = curve.controls
+#   t̄ = one(T) - t
+#   n = degree(curve)
+#   pₙ = coordinates(last(cs))
+#   aₙ = pₙ
 
-  # initialization with i = n + 1, so bᵢ₋₁ = bₙ = aₙ
-  bᵢ₋₁ = aₙ
-  cᵢ₋₁ = one(T)
-  t̄ⁿ⁻ⁱ = one(T)
-  for i in n:-1:1
-    cᵢ₋₁ *= i / (n - i + one(T))
-    pᵢ₋₁ = coordinates(cs[i])
-    t̄ⁿ⁻ⁱ *= t̄
-    aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ
-    bᵢ₋₁ = aᵢ₋₁ + bᵢ₋₁ * t
-  end
+#   # initialization with i = n + 1, so bᵢ₋₁ = bₙ = aₙ
+#   bᵢ₋₁ = aₙ
+#   cᵢ₋₁ = one(T)
+#   t̄ⁿ⁻ⁱ = one(T)
+#   for i in n:-1:1
+#     cᵢ₋₁ *= i / (n - i + one(T))
+#     pᵢ₋₁ = coordinates(cs[i])
+#     t̄ⁿ⁻ⁱ *= t̄
+#     aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ
+#     bᵢ₋₁ = aᵢ₋₁ + bᵢ₋₁ * t
+#   end
 
-  b₀ = bᵢ₋₁
-  Point(b₀)
-end
+#   b₀ = bᵢ₋₁
+#   Point(b₀)
+# end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim,T}}) where {Dim,T} =
-  BezierCurve(rand(rng, Point{Dim,T}, 5))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim,T}}) where {Dim,T} =
+#   BezierCurve(rand(rng, Point{Dim,T}, 5))

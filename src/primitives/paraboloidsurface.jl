@@ -32,21 +32,19 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{T} <: Primitive{3,T}
-  apex::Point{3,T}
+struct ParaboloidSurface{P<:Point,T} <: Primitive
+  apex::P
   radius::T
   focallength::T
 end
 
-ParaboloidSurface(apex::Point{3,T}, radius, focallength) where {T} = ParaboloidSurface{T}(apex, radius, focallength)
-
 ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
-ParaboloidSurface(apex::Point{3,T}, radius) where {T} = ParaboloidSurface(apex, T(radius), T(1))
+ParaboloidSurface(apex::Point, radius::T) where {T} = ParaboloidSurface(apex, radius, T(1))
 
 ParaboloidSurface(apex::Tuple, radius) = ParaboloidSurface(Point(apex), radius)
 
-ParaboloidSurface(apex::Point{3,T}) where {T} = ParaboloidSurface(apex, T(1))
+ParaboloidSurface(apex::Point) = ParaboloidSurface(apex, 1.0)
 
 ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 
@@ -81,14 +79,14 @@ apex(p::ParaboloidSurface) = p.apex
 Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface{T}) where {T} = Line(p.apex, p.apex + Vec(T(0), T(0), p.focallength))
+axis(p::ParaboloidSurface{P,T}) where {P,T} = Line(p.apex, p.apex + Vec(T(0), T(0), p.focallength))
 
-Base.isapprox(p₁::ParaboloidSurface{T}, p₂::ParaboloidSurface{T}) where {T} =
+Base.isapprox(p₁::ParaboloidSurface{P,T}, p₂::ParaboloidSurface{P,T}) where {P,T} =
   p₁.apex ≈ p₂.apex &&
   isapprox(p₁.focallength, p₂.focallength, atol=atol(T)) &&
   isapprox(p₁.radius, p₂.radius, atol=atol(T))
 
-function (p::ParaboloidSurface{T})(ρ, θ) where {T}
+function (p::ParaboloidSurface{P,T})(ρ, θ) where {P,T}
   if (ρ < 0 || ρ > 1)
     throw(DomainError((ρ, θ), "p(ρ, θ) is not defined for ρ outside [0, 1]."))
   end
@@ -103,5 +101,6 @@ function (p::ParaboloidSurface{T})(ρ, θ) where {T}
   c + Vec(x, y, z)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface{T}}) where {T} =
-  ParaboloidSurface(rand(rng, Point{3,T}), rand(rng, T), rand(rng, T))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface{T}}) where {T} =
+#   ParaboloidSurface(rand(rng, Point{3,T}), rand(rng, T), rand(rng, T))
