@@ -191,6 +191,21 @@
     mesh = discretize(poly, FIST(rng))
     @test nvertices(mesh) == 16
     @test nelements(mesh) == 14
+
+    # https://github.com/JuliaGeometry/Meshes.jl/issues/738
+    poly = PolyArea(
+      P2[
+        (-0.5f0, 0.3296139f0),
+        (-0.19128194f0, -0.5f0),
+        (-0.37872985f0, 0.29592824f0),
+        (0.21377224f0, -0.0076110554f0),
+        (-0.20127837f0, 0.24671146f0)
+      ]
+    )
+    rng = MersenneTwister(123)
+    mesh = discretize(poly, FIST(rng))
+    @test nvertices(mesh) == 5
+    @test nelements(mesh) == 3
   end
 
   @testset "Miscellaneous" begin

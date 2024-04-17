@@ -102,6 +102,22 @@ function discretizewithin(ring::Ring{2}, method::FIST)
           break
         end
       end
+
+      # consecutive vertices vᵢ-1,  vᵢ, vᵢ+1 form a valid ear
+      # if vᵢ-1 lies on the edge vᵢ+1 -- vᵢ+2
+      v = vertices(𝒫)
+      for i in 1:n
+        if v[i - 1] ∈ Segment(v[i + 1], v[i + 2])
+          # 1. push a new triangle to 𝒯
+          push!(𝒯, connect((I[i - 1], I[i], I[i + 1])))
+          # 2. remove the vertex from 𝒫
+          I = I[setdiff(1:n, mod1(i, n))]
+          𝒫 = Ring(stdpts[I])
+          n = nvertices(𝒫)
+          clipped = true
+          break
+        end
+      end
     end
   end
   # remaining polygonal area is the last triangle
