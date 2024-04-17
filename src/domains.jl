@@ -7,7 +7,7 @@
 
 A domain is an indexable collection of geometries (e.g. mesh).
 """
-abstract type Domain{Dim,T} end
+abstract type Domain end
 
 """
     element(domain, ind)
@@ -60,7 +60,6 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
-embeddim(::Type{<:Domain{Dim,T}}) where {Dim,T} = Dim
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """
@@ -72,35 +71,28 @@ parametric dimensions of its elements.
 paramdim(d::Domain) = paramdim(first(d))
 
 """
-    coordtype(domain)
-
-Return the machine type of each coordinate used to describe the `domain`.
-"""
-coordtype(::Type{<:Domain{Dim,T}}) where {Dim,T} = T
-coordtype(d::Domain) = coordtype(typeof(d))
-
-"""
     centroid(domain, ind)
 
 Return the centroid of the `ind`-th element in the `domain`.
 """
 centroid(d::Domain, ind::Int) = centroid(d[ind])
 
-"""
-    centroid(domain)
+# TODO
+# """
+#     centroid(domain)
 
-Return the centroid of the `domain`, i.e. the centroid of all
-its element's centroids.
-"""
-function centroid(d::Domain{Dim,T}) where {Dim,T}
-  coords(i) = coordinates(centroid(d, i))
-  volume(i) = measure(element(d, i))
-  n = nelements(d)
-  x = coords.(1:n)
-  w = volume.(1:n)
-  all(iszero, w) && (w = ones(T, n))
-  Point(sum(w .* x) / sum(w))
-end
+# Return the centroid of the `domain`, i.e. the centroid of all
+# its element's centroids.
+# """
+# function centroid(d::Domain{Dim,T}) where {Dim,T}
+#   coords(i) = coordinates(centroid(d, i))
+#   volume(i) = measure(element(d, i))
+#   n = nelements(d)
+#   x = coords.(1:n)
+#   w = volume.(1:n)
+#   all(iszero, w) && (w = ones(T, n))
+#   Point(sum(w .* x) / sum(w))
+# end
 
 """
     extrema(domain)
@@ -121,10 +113,10 @@ topology(d::Domain) = d.topology
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, d::Domain{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, d::Domain)
   nelm = nelements(d)
   name = prettyname(d)
-  print(io, "$nelm $name{$Dim,$T}")
+  print(io, "$nelm $name")
 end
 
 Base.show(io::IO, d::Domain) = summary(io, d)
