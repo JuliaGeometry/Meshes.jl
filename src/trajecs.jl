@@ -7,19 +7,18 @@
 
 Trajectory of cylinders of given `radius` positioned at the `centroids`.
 """
-struct CylindricalTrajectory{T} <: Domain{3,T}
-  centroids::Vector{Point{3,T}}
+struct CylindricalTrajectory{P<:Point,T} <: Domain
+  centroids::Vector{P}
   radius::T
 end
 
-CylindricalTrajectory(centroids::AbstractVector{Point{3,T}}, radius) where {T} =
-  CylindricalTrajectory(centroids, T(radius))
+CylindricalTrajectory(centroids, radius) = CylindricalTrajectory(collect(centroids), radius)
 
-CylindricalTrajectory(centroids) = CylindricalTrajectory(centroids, 1)
+CylindricalTrajectory(centroids) = CylindricalTrajectory(centroids, 1.0)
 
 topology(t::CylindricalTrajectory) = GridTopology(length(t.centroids))
 
-function element(t::CylindricalTrajectory{T}, ind::Int) where {T}
+function element(t::CylindricalTrajectory{P,T}, ind::Int) where {P,T}
   c = t.centroids
   r = t.radius
   n = length(c)
