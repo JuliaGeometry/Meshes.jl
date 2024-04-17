@@ -18,7 +18,7 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Dim,T,V<:AbstractVector{T}} <: Grid{Dim,T}
+struct RectilinearGrid{Dim,V<:AbstractVector} <: Grid{Dim}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
 end
@@ -53,7 +53,7 @@ function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where 
   RectilinearGrid(xyz, GridTopology(dims))
 end
 
-function Base.summary(io::IO, g::RectilinearGrid{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, g::RectilinearGrid)
   join(io, size(g), "×")
-  print(io, " RectilinearGrid{$Dim,$T}")
+  print(io, " RectilinearGrid")
 end

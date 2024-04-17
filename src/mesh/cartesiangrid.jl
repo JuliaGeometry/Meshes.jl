@@ -50,8 +50,8 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{Dim,T} <: Grid{Dim,T}
-  origin::Point{Dim,T}
+struct CartesianGrid{Dim,P<:Point,T} <: Grid{Dim}
+  origin::P
   spacing::NTuple{Dim,T}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
@@ -59,10 +59,10 @@ end
 
 function CartesianGrid(
   dims::Dims{Dim},
-  origin::Point{Dim,T},
+  origin::P,
   spacing::NTuple{Dim,T},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim,T}
+) where {Dim,P<:Point,T}
   @assert all(>(0), dims) "dimensions must be positive"
   @assert all(>(zero(T)), spacing) "spacing must be positive"
   CartesianGrid{Dim,T}(origin, spacing, offset, GridTopology(dims))
@@ -75,7 +75,7 @@ CartesianGrid(
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
 ) where {Dim,T} = CartesianGrid(dims, Point(origin), spacing, offset)
 
-function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T}, spacing::NTuple{Dim,T}) where {Dim,T}
+function CartesianGrid(start::Point, finish::Point, spacing::NTuple{Dim,T}) where {Dim,T}
   dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
   origin = start
   offset = ntuple(i -> 1, Dim)
@@ -85,7 +85,7 @@ end
 CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T}, spacing::NTuple{Dim,T}) where {Dim,T} =
   CartesianGrid(Point(start), Point(finish), spacing)
 
-function CartesianGrid(start::Point{Dim,T}, finish::Point{Dim,T}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim,T}
+function CartesianGrid(start::Point, finish::Point; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim}
   origin = start
   spacing = Tuple((finish - start) ./ dims)
   offset = ntuple(i -> 1, Dim)
@@ -150,9 +150,9 @@ end
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, g::CartesianGrid{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, g::CartesianGrid)
   dims = join(size(g.topology), "×")
-  print(io, "$dims CartesianGrid{$Dim,$T}")
+  print(io, "$dims CartesianGrid")
 end
 
 Base.show(io::IO, g::CartesianGrid) = summary(io, g)

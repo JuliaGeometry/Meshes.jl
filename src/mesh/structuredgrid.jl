@@ -18,7 +18,7 @@ julia> Y = repeat([0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
 julia> StructuredGrid(X, Y)
 ```
 """
-struct StructuredGrid{Dim,T,A<:AbstractArray{T}} <: Grid{Dim,T}
+struct StructuredGrid{Dim,A<:AbstractArray} <: Grid{Dim}
   XYZ::NTuple{Dim,A}
   topology::GridTopology{Dim}
 end
@@ -43,7 +43,7 @@ function Base.getindex(g::StructuredGrid{Dim}, I::CartesianIndices{Dim}) where {
   StructuredGrid(XYZ, GridTopology(dims))
 end
 
-function Base.summary(io::IO, g::StructuredGrid{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, g::StructuredGrid)
   join(io, size(g), "×")
-  print(io, " StructuredGrid{$Dim,$T}")
+  print(io, " StructuredGrid")
 end
