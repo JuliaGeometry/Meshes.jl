@@ -15,7 +15,7 @@ multiple polygons as a single entity (e.g. country with islands).
 - Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
   [`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
 """
-struct Multi{Dim,T,G<:Geometry{Dim,T}} <: Geometry{Dim,T}
+struct Multi{G<:Geometry} <: Geometry
   geoms::Vector{G}
 end
 
@@ -23,12 +23,12 @@ end
 Multi(geoms) = Multi(collect(geoms))
 
 # type aliases for convenience
-const MultiPoint{Dim,T} = Multi{Dim,T,<:Point{Dim,T}}
-const MultiSegment{Dim,T} = Multi{Dim,T,<:Segment{Dim,T}}
-const MultiRope{Dim,T} = Multi{Dim,T,<:Rope{Dim,T}}
-const MultiRing{Dim,T} = Multi{Dim,T,<:Ring{Dim,T}}
-const MultiPolygon{Dim,T} = Multi{Dim,T,<:Polygon{Dim,T}}
-const MultiPolyhedron{Dim,T} = Multi{Dim,T,<:Polyhedron{Dim,T}}
+const MultiPoint = Multi{<:Point}
+const MultiSegment = Multi{<:Segment}
+const MultiRope = Multi{<:Rope}
+const MultiRing = Multi{<:Ring}
+const MultiPolygon = Multi{<:Polygon}
+const MultiPolyhedron = Multi{<:Polyhedron}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
@@ -50,7 +50,7 @@ function centroid(m::Multi)
   Point(sum(cs) / length(cs))
 end
 
-rings(m::MultiPolygon{Dim,T}) where {Dim,T} = [ring for poly in m.geoms for ring in rings(poly)]
+rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]
 
 Base.parent(m::Multi) = m.geoms
 
@@ -62,9 +62,9 @@ Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, m::Multi{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, m::Multi)
   name = prettyname(eltype(m.geoms))
-  print(io, "Multi$name{$Dim,$T}")
+  print(io, "Multi$name")
 end
 
 function Base.show(io::IO, m::Multi)
