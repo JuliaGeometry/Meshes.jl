@@ -7,7 +7,7 @@
 
 Trajectory of cylinders of given `radius` positioned at the `centroids`.
 """
-struct CylindricalTrajectory{P<:Point,T} <: Domain
+struct CylindricalTrajectory{P<:Point{3},T} <: Domain{3}
   centroids::Vector{P}
   radius::T
 end
