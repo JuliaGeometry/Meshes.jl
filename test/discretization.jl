@@ -195,11 +195,11 @@
     # https://github.com/JuliaGeometry/Meshes.jl/issues/738
     poly = PolyArea(
       P2[
-        (-0.5f0, 0.3296139f0),
-        (-0.19128194f0, -0.5f0),
-        (-0.37872985f0, 0.29592824f0),
-        (0.21377224f0, -0.0076110554f0),
-        (-0.20127837f0, 0.24671146f0)
+        (-0.5, 0.3296139),
+        (-0.19128194, -0.5),
+        (-0.37872985, 0.29592824),
+        (0.21377224, -0.0076110554),
+        (-0.20127837, 0.24671146)
       ]
     )
     rng = MersenneTwister(123)
@@ -318,10 +318,14 @@
       @test nelements(mesh) == length(vertices(mesh)) - 2
 
       # https://github.com/JuliaGeometry/Meshes.jl/issues/738
-      #poly = readpoly(T, joinpath(datadir, "hole1.line"))
-      #mesh = discretize(poly, method)
-      #@test Set(vertices(poly)) == Set(vertices(mesh))
-      #@test nelements(mesh) == 32
+      poly = readpoly(T, joinpath(datadir, "hole1.line"))
+      mesh = discretize(poly, method)
+      @test Set(vertices(poly)) == Set(vertices(mesh))
+      if method isa FIST && T == Float32
+        @test nelements(mesh) == 33
+      else
+        @test nelements(mesh) == 32
+      end
 
       poly = readpoly(T, joinpath(datadir, "hole2.line"))
       mesh = discretize(poly, method)
