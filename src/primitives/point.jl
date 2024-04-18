@@ -37,7 +37,7 @@ coordinates(A::Point) = A.coords
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{<:Cartesian}, B::Point{<:Cartesian}) = asvec(A.coords) - asvec(B.coords)
+-(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = asvec(A.coords) - asvec(B.coords)
 
 """
     +(A::Point, v::Vec)
@@ -46,8 +46,8 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{<:Cartesian}, v::Vec) = Point(ascart(asvec(A.coords) + v))
-+(v::Vec, A::Point{<:Cartesian}) = A + v
++(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(ascart(asvec(A.coords) + v))
++(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A + v
 
 """
     -(A::Point, v::Vec)
@@ -56,8 +56,8 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{<:Cartesian}, v::Vec) = Point(ascart(asvec(A.coords) - v))
--(v::Vec, A::Point{<:Cartesian}) = A - v
+-(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(ascart(asvec(A.coords) - v))
+-(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A - v
 
 """
     ⪯(A::Point, B::Point)
@@ -67,10 +67,10 @@ at a reference (or start) point `A`.
 
 Generalized inequality for non-negative orthant Rⁿ₊.
 """
-⪯(A::Point{<:Cartesian}, B::Point{<:Cartesian}) = all(≥(0), B - A)
-⪰(A::Point{<:Cartesian}, B::Point{<:Cartesian}) = all(≥(0), A - B)
-≺(A::Point{<:Cartesian}, B::Point{<:Cartesian}) = all(>(0), B - A)
-≻(A::Point{<:Cartesian}, B::Point{<:Cartesian}) = all(>(0), A - B)
+⪯(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0), B - A)
+⪰(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0), A - B)
+≺(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0), B - A)
+≻(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0), A - B)
 
 """
     ∠(A, B, C)
@@ -88,12 +88,11 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 ∠(Point(1,0), Point(0,0), Point(0,1)) == π/2
 ```
 """
-∠(A::P, B::P, C::P) where {P<:Point{<:Cartesian}} = ∠(A - B, C - B)
+∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A - B, C - B)
+∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Cartesian{Datum,N,T}}}) where {Datum,N,T}
-  tup = ntuple(Returns(rand(rng, T)), N)
-  Point(Cartesian(tup))
-end
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} = Point(rand(rng, Vec{Dim,T}))
 
 # -----------
 # IO METHODS
