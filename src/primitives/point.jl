@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-asvec(coords::Cartesian) = Vec(coords.coords)
+asvec(coords::Cartesian) = Vec(CoordRefSystems._coords(coords))
 ascart(vec::Vec) = Cartesian(Tuple(vec))
 
 struct Point{Dim,C<:CRS} <: Primitive{Dim}
@@ -67,10 +67,10 @@ at a reference (or start) point `A`.
 
 Generalized inequality for non-negative orthant Rⁿ₊.
 """
-⪯(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0), B - A)
-⪰(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0), A - B)
-≺(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0), B - A)
-≻(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0), A - B)
+⪯(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0u"m"), B - A)
+⪰(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0u"m"), A - B)
+≺(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0u"m"), B - A)
+≻(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0u"m"), A - B)
 
 """
     ∠(A, B, C)
