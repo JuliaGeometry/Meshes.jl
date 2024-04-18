@@ -19,13 +19,13 @@ struct Box{Dim,P<:Point{Dim}} <: Primitive{Dim}
   min::P
   max::P
 
-  function Box{P}(min, max) where {P<:Point}
+  function Box{Dim,P}(min, max) where {Dim,P<:Point{Dim}}
     @assert min ⪯ max "`min` must be less than or equal to `max`"
     new(min, max)
   end
 end
 
-Box(min::P, max::P) where {P<:Point} = Box{P}(min, max)
+Box(min::P, max::P) where {Dim,P<:Point{Dim}} = Box{Dim,P}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 

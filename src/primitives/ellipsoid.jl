@@ -13,7 +13,8 @@ struct Ellipsoid{T,P<:Point{3},R} <: Primitive{3}
   rotation::R
 end
 
-Ellipsoid(radii::NTuple{3,T}, center=(T(0), T(0), T(0)), rotation=I) = Ellipsoid(radii, Point(center), rotation)
+Ellipsoid(radii::NTuple{3,T}, center=(T(0), T(0), T(0)), rotation=I) where {T} =
+  Ellipsoid(radii, Point(center), rotation)
 
 paramdim(::Type{<:Ellipsoid}) = 2
 
