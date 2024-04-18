@@ -15,7 +15,7 @@ multiple polygons as a single entity (e.g. country with islands).
 - Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
   [`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
 """
-struct Multi{G<:Geometry} <: Geometry
+struct Multi{Dim,G<:Geometry{Dim}} <: Geometry{Dim}
   geoms::Vector{G}
 end
 
@@ -23,12 +23,12 @@ end
 Multi(geoms) = Multi(collect(geoms))
 
 # type aliases for convenience
-const MultiPoint = Multi{<:Point}
-const MultiSegment = Multi{<:Segment}
-const MultiRope = Multi{<:Rope}
-const MultiRing = Multi{<:Ring}
-const MultiPolygon = Multi{<:Polygon}
-const MultiPolyhedron = Multi{<:Polyhedron}
+const MultiPoint{Dim} = Multi{<:Point{Dim}}
+const MultiSegment{Dim} = Multi{<:Segment{Dim}}
+const MultiRope{Dim} = Multi{<:Rope{Dim}}
+const MultiRing{Dim} = Multi{<:Ring{Dim}}
+const MultiPolygon{Dim} = Multi{<:Polygon{Dim}}
+const MultiPolyhedron{Dim} = Multi{<:Polyhedron{Dim}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
@@ -62,9 +62,9 @@ Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, m::Multi)
+function Base.summary(io::IO, m::Multi{Dim}) where {Dim}
   name = prettyname(eltype(m.geoms))
-  print(io, "Multi$name")
+  print(io, "Multi$name{$Dim}")
 end
 
 function Base.show(io::IO, m::Multi)
