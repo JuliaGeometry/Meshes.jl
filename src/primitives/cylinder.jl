@@ -24,13 +24,13 @@ Finally, construct a right vertical circular cylinder with given `radius`.
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct Cylinder{P<:Plane,T} <: Primitive
+struct Cylinder{P<:Plane,T} <: Primitive{3}
   bot::P
   top::P
   radius::T
 end
 
-function Cylinder(start::Point, finish::Point, radius)
+function Cylinder(start::Point{3}, finish::Point{3}, radius)
   dir = finish - start
   bot = Plane(start, dir)
   top = Plane(finish, dir)
@@ -39,7 +39,7 @@ end
 
 Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
 
-Cylinder(start::Point, finish::Point) = Cylinder(start, finish, 1.0)
+Cylinder(start::Point{3}, finish::Point{3}) = Cylinder(start, finish, 1.0)
 
 Cylinder(start::Tuple, finish::Tuple) = Cylinder(Point(start), Point(finish))
 

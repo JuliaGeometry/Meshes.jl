@@ -10,7 +10,7 @@ given `plane` with given `radius`.
 
 See also [`Disk`](@ref).
 """
-struct Circle{P<:Plane,T} <: Primitive
+struct Circle{P<:Plane,T} <: Primitive{2}
   plane::P
   radius::T
 end
@@ -20,7 +20,7 @@ end
 
 A circle passing through points `p1`, `p2` and `p3`.
 """
-function Circle(p1::Point, p2::Point, p3::Point)
+function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   v12 = p2 - p1
   v13 = p3 - p1
   m12 = coordinates(p1 + v12 / 2)

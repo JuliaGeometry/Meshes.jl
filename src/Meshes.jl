@@ -57,59 +57,59 @@ include("toporelations.jl")
 include("domains.jl")
 
 # utilities
-include("utils.jl")
+# include("utils.jl")
 
 # domain views
-include("viewing.jl")
+# include("viewing.jl")
 
-# domain partitions
-include("partitions.jl")
-include("partitioning.jl")
+# # domain partitions
+# include("partitions.jl")
+# include("partitioning.jl")
 
-# domain sorting
-include("sorting.jl")
+# # domain sorting
+# include("sorting.jl")
 
-# domain traversal
-include("traversing.jl")
+# # domain traversal
+# include("traversing.jl")
 
-# neighbor search
-include("neighborhoods.jl")
-include("neighborsearch.jl")
+# # neighbor search
+# include("neighborhoods.jl")
+# include("neighborsearch.jl")
 
-# predicates
-include("predicates.jl")
+# # predicates
+# include("predicates.jl")
 
-# operations
-include("winding.jl")
-include("sideof.jl")
-include("orientation.jl")
-include("measures.jl")
-include("boundary.jl")
-include("merging.jl")
-include("clipping.jl")
-include("clamping.jl")
-include("intersections.jl")
-include("complement.jl")
-include("simplification.jl")
-include("boundingboxes.jl")
-include("hulls.jl")
-include("sampling.jl")
-include("pointification.jl")
-include("discretization.jl")
-include("refinement.jl")
-include("coarsening.jl")
+# # operations
+# include("winding.jl")
+# include("sideof.jl")
+# include("orientation.jl")
+# include("measures.jl")
+# include("boundary.jl")
+# include("merging.jl")
+# include("clipping.jl")
+# include("clamping.jl")
+# include("intersections.jl")
+# include("complement.jl")
+# include("simplification.jl")
+# include("boundingboxes.jl")
+# include("hulls.jl")
+# include("sampling.jl")
+# include("pointification.jl")
+# include("discretization.jl")
+# include("refinement.jl")
+# include("coarsening.jl")
 
-# transforms
-include("transforms.jl")
+# # transforms
+# include("transforms.jl")
 
-# miscellaneous
-include("distances.jl")
-include("supportfun.jl")
-include("matrices.jl")
-include("projecting.jl")
+# # miscellaneous
+# include("distances.jl")
+# include("supportfun.jl")
+# include("matrices.jl")
+# include("projecting.jl")
 
-# visualization
-include("viz.jl")
+# # visualization
+# include("viz.jl")
 
 export
   # vectors

@@ -49,7 +49,7 @@ vertices(m::SimpleMesh) = m.vertices
 
 nvertices(m::SimpleMesh) = length(m.vertices)
 
-function Base.getindex(m::SimpleMesh{V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {V}
+function Base.getindex(m::SimpleMesh{V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {V,Dim}
   @boundscheck _checkbounds(m, I)
   dims = size(I)
   odims = size(m)

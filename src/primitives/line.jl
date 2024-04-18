@@ -9,7 +9,7 @@ A line passing through points `a` and `b`.
 
 See also [`Segment`](@ref).
 """
-struct Line{P<:Point} <: Primitive
+struct Line{Dim,P<:Point} <: Primitive{Dim}
   a::P
   b::P
 end

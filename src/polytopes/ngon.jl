@@ -69,17 +69,17 @@ signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 # TRIANGLES
 # ----------
 
-function signarea(t::Triangle{2})
-  v = t.vertices
-  signarea(v[1], v[2], v[3])
-end
+# function signarea(t::Triangle{2})
+#   v = t.vertices
+#   signarea(v[1], v[2], v[3])
+# end
 
-signarea(::Triangle{3}) = error("signed area only defined for triangles embedded in R², use `area` instead")
+# signarea(::Triangle{3}) = error("signed area only defined for triangles embedded in R², use `area` instead")
 
-function normal(t::Triangle{3})
-  A, B, C = t.vertices
-  ((B - A) × (C - A)) / 2
-end
+# function normal(t::Triangle{3})
+#   A, B, C = t.vertices
+#   ((B - A) × (C - A)) / 2
+# end
 
 function (t::Triangle)(u, v)
   w = (1 - u - v)

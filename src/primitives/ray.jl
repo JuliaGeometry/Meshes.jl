@@ -9,7 +9,7 @@ A ray originating at point `p`, pointed in direction `v`.
 It can be called as `r(t)` with `t > 0` to cast it at
 `p + t * v`.
 """
-struct Ray{P<:Point,V<:Vec} <: Primitive
+struct Ray{Dim,P<:Point{Dim},V<:Vec{Dim}} <: Primitive{Dim}
   p::P
   v::V
 end

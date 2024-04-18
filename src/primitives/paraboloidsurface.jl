@@ -32,7 +32,7 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{P<:Point,T} <: Primitive
+struct ParaboloidSurface{P<:Point{3},T} <: Primitive{3}
   apex::P
   radius::T
   focallength::T
@@ -40,11 +40,11 @@ end
 
 ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
-ParaboloidSurface(apex::Point, radius::T) where {T} = ParaboloidSurface(apex, radius, T(1))
+ParaboloidSurface(apex::Point{3}, radius::T) where {T} = ParaboloidSurface(apex, radius, T(1))
 
 ParaboloidSurface(apex::Tuple, radius) = ParaboloidSurface(Point(apex), radius)
 
-ParaboloidSurface(apex::Point) = ParaboloidSurface(apex, 1.0)
+ParaboloidSurface(apex::Point{3}) = ParaboloidSurface(apex, 1.0)
 
 ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 

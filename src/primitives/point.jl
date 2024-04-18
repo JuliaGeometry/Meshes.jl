@@ -2,27 +2,17 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-ncoords(::Type{<:CoordRefSystems.Geographic}) = 2
-ncoords(::Type{<:CoordRefSystems.Projected}) = 2
-ncoords(::Type{<:LatLonAlt}) = 3
-ncoords(::Type{<:Cartesian{Datum,N}}) where {Datum,N} = N
-ncoords(::Type{<:Polar}) = 2
-ncoords(::Type{<:Cylindrical}) = 3
-ncoords(::Type{<:Spherical}) = 3
-
 asvec(coords::Cartesian) = Vec(coords.coords)
 ascart(vec::Vec) = Cartesian(Tuple(vec))
 
-struct Point{C<:CRS} <: Primitive
+struct Point{Dim,C<:CRS} <: Primitive{Dim}
   coords::C
+  Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ndims(coords),C}(coords)
 end
 
 # convenience constructors
 Point(coords...) = Point(Cartesian(coords...))
 Point(coords::Tuple) = Point(Cartesian(coords...))
-
-embeddim(::Type{Point{C}}) where {C<:CRS} = ncoords(C)
-embeddim(::Type{Point{<:CoordRefSystems.Geographic}}) = 3
 
 paramdim(::Type{<:Point}) = 0
 
@@ -126,7 +116,7 @@ _printfields(io, coords::CoordRefSystems.ShiftedCRS) = printfields(io, CoordRefS
 _printfields(io, coords::Cartesian) =
   printfields(io, CoordRefSystems._coords(coords), CoordRefSystems._fnames(coords), compact=true)
 
-function Base.show(io::IO, ::MIME"text/plain", point::Point)
-  print(io, "Point with")
-  println(io, point.coords)
+function Base.show(io::IO, mime::MIME"text/plain", point::Point)
+  print(io, "Point with ")
+  show(io, mime, point.coords)
 end

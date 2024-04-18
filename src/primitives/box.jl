@@ -15,7 +15,7 @@ Box(Point(0, 0, 0), Point(1, 1, 1))
 Box((0, 0), (1, 1))
 ```
 """
-struct Box{P<:Point} <: Primitive
+struct Box{Dim,P<:Point{Dim}} <: Primitive{Dim}
   min::P
   max::P
 
@@ -29,8 +29,7 @@ Box(min::P, max::P) where {P<:Point} = Box{P}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
-# TODO
-# paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
+paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
 Base.minimum(b::Box) = b.min
 

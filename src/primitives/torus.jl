@@ -9,14 +9,12 @@ A torus centered at `center` with axis of revolution directed by
 `normal` and with radii `major` and `minor`. 
 
 """
-struct Torus{P<:Point,T} <: Primitive
+struct Torus{P<:Point{3},V<:Vec{3},T} <: Primitive{3}
   center::P
-  normal::Vec{3,T}
+  normal::V
   major::T
   minor::T
 end
-
-Torus(center::Point, normal::Vec{3,T}, major, minor) where {T} = Torus(center, normal, T(major), T(minor))
 
 Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(normal), major, minor)
 
@@ -26,7 +24,7 @@ Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(nor
 The torus whose centerline passes through points `p1`, `p2` and `p3` and with
 minor radius `minor`.
 """
-function Torus(p1::Point, p2::Point, p3::Point, minor)
+function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor)
   c = Circle(p1, p2, p3)
   p = Plane(p1, p2, p3)
   Torus(center(c), normal(p), radius(c), minor)
@@ -44,7 +42,7 @@ radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
-function (t::Torus{P,T})(θ, φ) where {P,T}
+function (t::Torus{P,V,T})(θ, φ) where {P,V,T}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end

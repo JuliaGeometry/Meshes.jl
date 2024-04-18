@@ -20,7 +20,7 @@ large number of points but less precise, can be used via
 BezierCurve(Point2[(0.,0.),(1.,-1.)])
 ```
 """
-struct BezierCurve{V<:AbstractVector{<:Point}} <: Primitive
+struct BezierCurve{Dim,V<:AbstractVector{<:Point{Dim}}} <: Primitive{Dim}
   controls::V
 end
 

@@ -7,14 +7,13 @@
 
 A 3D ellipsoid with given `radii`, `center` and `rotation`.
 """
-struct Ellipsoid{T,P<:Point,R} <: Primitive
+struct Ellipsoid{T,P<:Point{3},R} <: Primitive{3}
   radii::NTuple{3,T}
   center::P
   rotation::R
 end
 
-Ellipsoid(radii::NTuple{3,T}, center::P=Point(T(0), T(0), T(0)), rotation::R=I) where {T,P,R} =
-  Ellipsoid{T,P,R}(radii, center, rotation)
+Ellipsoid(radii::NTuple{3,T}, center=(T(0), T(0), T(0)), rotation=I) = Ellipsoid(radii, Point(center), rotation)
 
 paramdim(::Type{<:Ellipsoid}) = 2
 

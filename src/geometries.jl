@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Geometry
+    Geometry{Dim}
 
-A geometry embedded in a N-dimensional space.
+A geometry embedded in a `Dim`-dimensional space.
 """
-abstract type Geometry end
+abstract type Geometry{Dim} end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 
@@ -16,6 +16,7 @@ Broadcast.broadcastable(g::Geometry) = Ref(g)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
+embeddim(::Type{<:Geometry{Dim}}) where {Dim} = Dim
 embeddim(g::Geometry) = embeddim(typeof(g))
 
 """
@@ -43,6 +44,12 @@ bounding box of the `geometry`.
 """
 Base.extrema(g::Geometry) = extrema(boundingbox(g))
 
+# -----------
+# IO METHODS
+# -----------
+
+Base.summary(io::IO, geom::Geometry{Dim}) where {Dim} = print(io, "$(prettyname(geom)){$Dim}")
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
@@ -55,6 +62,6 @@ include("multigeoms.jl")
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{<:Quadrangle}, b::Box{2}) = Quadrangle(vertices(boundary(b))...)
+# Base.convert(::Type{<:Quadrangle}, b::Box{2}) = Quadrangle(vertices(boundary(b))...)
 
-Base.convert(::Type{<:Hexahedron}, b::Box{3}) = Hexahedron(vertices(boundary(b))...)
+# Base.convert(::Type{<:Hexahedron}, b::Box{3}) = Hexahedron(vertices(boundary(b))...)

@@ -65,7 +65,7 @@ function CartesianGrid(
 ) where {Dim,P<:Point,T}
   @assert all(>(0), dims) "dimensions must be positive"
   @assert all(>(zero(T)), spacing) "spacing must be positive"
-  CartesianGrid{Dim,T}(origin, spacing, offset, GridTopology(dims))
+  CartesianGrid{Dim,P,T}(origin, spacing, offset, GridTopology(dims))
 end
 
 CartesianGrid(

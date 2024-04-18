@@ -13,18 +13,16 @@ defined by non-parallel vectors `u` and `v`.
 Alternatively specify point `p` and a given normal
 vector `n` to the plane.
 """
-struct Plane{P<:Point,T} <: Primitive
+struct Plane{P<:Point{3},V<:Vec{3}} <: Primitive{3}
   p::P
-  u::Vec{3,T}
-  v::Vec{3,T}
+  u::V
+  v::V
 end
 
-function Plane{T}(p::P, n::Vec{3,T}) where {P<:Point,T}
+function Plane(p::Point{3}, n::Vec{3})
   u, v = householderbasis(n)
-  Plane{P,T}(p, u, v)
+  Plane(p, u, v)
 end
-
-Plane(p::Point, n::Vec{3,T}) where {T} = Plane{T}(p, n)
 
 Plane(p::Tuple, u::Tuple, v::Tuple) = Plane(Point(p), Vec(u), Vec(v))
 
@@ -46,12 +44,13 @@ normal(p::Plane) = normalize(p.u × p.v)
 ==(p₁::Plane, p₂::Plane) =
   p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ && p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁
 
-Base.isapprox(p₁::Plane{P,T}, p₂::Plane{P,T}) where {P,T} =
-  isapprox((p₁(0, 0) - p₂(0, 0)) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
-  isapprox((p₂(0, 0) - p₁(0, 0)) ⋅ normal(p₁), zero(T), atol=atol(T)) &&
-  isapprox(_area(normal(p₁), normal(p₂)), zero(T), atol=atol(T))
+# TODO
+# Base.isapprox(p₁::Plane{T}, p₂::Plane{T}) where {T} =
+#   isapprox((p₁(0, 0) - p₂(0, 0)) ⋅ normal(p₂), zero(T), atol=atol(T)) &&
+#   isapprox((p₂(0, 0) - p₁(0, 0)) ⋅ normal(p₁), zero(T), atol=atol(T)) &&
+#   isapprox(_area(normal(p₁), normal(p₂)), zero(T), atol=atol(T))
 
-_area(v₁::Vec, v₂::Vec) = norm(v₁ × v₂)
+# _area(v₁::Vec, v₂::Vec) = norm(v₁ × v₂)
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
 
