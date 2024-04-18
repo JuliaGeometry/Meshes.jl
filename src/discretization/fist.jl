@@ -118,8 +118,24 @@ function discretizewithin(ring::Ring{2}, method::FIST)
           break
         end
       end
+
+      # enter in "desperate" mode and clip ears at random
+      if !clipped
+        # attempt to clip a convex vertex
+        isconvex(i) = vexity(v, i) == :CONVEX
+        j = findfirst(isconvex, 1:n)
+        i = isnothing(j) ? rand(method.rng, 1:n) : j
+        # 1. push a new triangle to 𝒯
+        push!(𝒯, connect((I[i - 1], I[i], I[i + 1])))
+        # 2. remove the vertex from 𝒫
+        I = I[setdiff(1:n, mod1(i, n))]
+        𝒫 = Ring(stdpts[I])
+        n = nvertices(𝒫)
+        clipped = true
+      end
     end
   end
+
   # remaining polygonal area is the last triangle
   push!(𝒯, connect((I[1], I[2], I[3])))
 
@@ -135,26 +151,8 @@ earsccw(𝒫) = filter(i -> isearccw(𝒫, i), 1:nvertices(𝒫))
 function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
   v = vertices(𝒫)
 
-  # helper function to compute the vexity of vertex i
-  function vexity(i)
-    α = ∠(v[i - 1], v[i], v[i + 1]) # oriented angle
-    θ = α > 0 ? 2 * T(π) - α : -α # inner angle
-    θ < π ? :CONVEX : :REFLEX
-  end
-
-  # helper function to check if vertex j is inside cone i
-  function incone(j, i)
-    s1 = sideof(v[j], Line(v[i], v[i - 1]))
-    s2 = sideof(v[j], Line(v[i], v[i + 1]))
-    if vexity(i) == :CONVEX
-      s1 != LEFT && s2 != RIGHT
-    else
-      s1 != LEFT || s2 != RIGHT
-    end
-  end
-
   # CE1.1: classify angle as convex vs. reflex
-  isconvex = vexity(i) == :CONVEX
+  isconvex = vexity(v, i) == :CONVEX
 
   # CE1.2: check if segment vᵢ-₁ -- vᵢ+₁ intersects 𝒫
   λ(I) = !(type(I) == CornerTouching || type(I) == NotIntersecting)
@@ -169,7 +167,26 @@ function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
   end
 
   # CE1.3: check if vᵢ-1 ∈ C(vᵢ, vᵢ+1, vᵢ+2) and vᵢ+1 ∈ C(vᵢ-2, vᵢ-1, vᵢ)
-  incones = incone(i - 1, i + 1) && incone(i + 1, i - 1)
+  incones = incone(v, i - 1, i + 1) && incone(v, i + 1, i - 1)
 
   isconvex && !hasintersect && incones
+end
+
+# helper function to compute the vexity of vertex i
+function vexity(v, i)
+  T = coordtype(first(v))
+  α = ∠(v[i - 1], v[i], v[i + 1]) # oriented angle
+  θ = α > 0 ? 2 * T(π) - α : -α # inner angle
+  θ < π ? :CONVEX : :REFLEX
+end
+
+# helper function to check if vertex j is inside cone i
+function incone(v, j, i)
+  s1 = sideof(v[j], Line(v[i], v[i - 1]))
+  s2 = sideof(v[j], Line(v[i], v[i + 1]))
+  if vexity(v, i) == :CONVEX
+    s1 != LEFT && s2 != RIGHT
+  else
+    s1 != LEFT || s2 != RIGHT
+  end
 end
