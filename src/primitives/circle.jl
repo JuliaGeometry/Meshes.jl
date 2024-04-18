@@ -10,7 +10,7 @@ given `plane` with given `radius`.
 
 See also [`Disk`](@ref).
 """
-struct Circle{P<:Plane,T} <: Primitive{2}
+struct Circle{P<:Plane,T} <: Primitive{3}
   plane::P
   radius::T
 end

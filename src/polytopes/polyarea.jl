@@ -24,10 +24,10 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (e.g. only 2 vertices).
 """
-struct PolyArea{R<:Ring} <: Polygon
+struct PolyArea{Dim,R<:Ring{Dim}} <: Polygon{Dim}
   rings::Vector{R}
 
-  function PolyArea{R}(rings; fix=true) where {R<:Ring}
+  function PolyArea{Dim,R}(rings; fix=true) where {Dim,R<:Ring{Dim}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -57,7 +57,7 @@ struct PolyArea{R<:Ring} <: Polygon
   end
 end
 
-PolyArea(rings::AbstractVector{R}; fix=true) where {R<:Ring} = PolyArea{R}(rings; fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,R<:Ring{Dim}} = PolyArea{Dim,R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
@@ -103,9 +103,9 @@ function Base.show(io::IO, p::PolyArea)
   print(io, ")")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
+function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim}) where {Dim}
   rings = p.rings
-  println(io, "PolyArea")
+  println(io, "PolyArea{$Dim}")
   println(io, "  outer")
   print(io, "  └─ $(rings[1])")
   if length(rings) > 1

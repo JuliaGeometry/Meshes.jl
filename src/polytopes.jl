@@ -3,12 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{K}
+    Polytope{K,Dim}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
-embedded in a N-dimensional space. The parameter `K` is also known as the
+embedded in a `Dim`-dimensional space. The parameter `K` is also known as the
 rank or parametric dimension of the polytope: <https://en.wikipedia.org/wiki/Abstract_polytope>.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
@@ -25,12 +25,12 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K} <: Geometry end
+abstract type Polytope{K,Dim} <: Geometry{Dim} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   expr = quote
-    $Base.@__doc__ struct $type{P<:Point} <: Polytope{$K}
+    $Base.@__doc__ struct $type{Dim,P<:Point{Dim}} <: Polytope{$K,Dim}
       vertices::NTuple{$N,P}
     end
 
@@ -45,14 +45,14 @@ end
 # -------------------
 
 """
-    Chain
+    Chain{Dim}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
 See <https://en.wikipedia.org/wiki/Polygonal_chain>.
 
 See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
 """
-const Chain = Polytope{1}
+const Chain{Dim} = Polytope{1,Dim}
 
 """
     segments(chain)
@@ -152,13 +152,13 @@ include("polytopes/ring.jl")
 # ---------------------
 
 """
-    Polygon
+    Polygon{Dim}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
 See also [`Ngon`](@ref) and [`PolyArea`](@ref).
 """
-const Polygon = Polytope{2}
+const Polygon{Dim} = Polytope{2,Dim}
 
 """
     rings(polygon)
@@ -176,13 +176,13 @@ include("polytopes/polyarea.jl")
 # ------------------------
 
 """
-    Polyhedron
+    Polyhedron{Dim}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 
 See also [`Tetrahedron`](@ref), [`Hexahedron`](@ref) and [`Pyramid`](@ref).
 """
-const Polyhedron = Polytope{3}
+const Polyhedron{Dim} = Polytope{3,Dim}
 
 # implementations of Polyhedron
 include("polytopes/tetrahedron.jl")
@@ -235,8 +235,9 @@ Return a new `polytope` without duplicate vertices.
 """
 Base.unique(p::Polytope) = unique!(deepcopy(p))
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polytope} =
-  PL(ntuple(i -> rand(rng, Point{embeddim(PL),coordtype(PL)}), nvertices(PL)))
+# TODO
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polytope} =
+#   PL(ntuple(i -> rand(rng, Point{embeddim(PL),coordtype(PL)}), nvertices(PL)))
 
 # -----------
 # IO METHODS
