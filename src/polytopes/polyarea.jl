@@ -103,9 +103,10 @@ function Base.show(io::IO, p::PolyArea)
   print(io, ")")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim}) where {Dim}
+function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   rings = p.rings
-  println(io, "PolyArea{$Dim}")
+  summary(io, p)
+  println(io)
   println(io, "  outer")
   print(io, "  └─ $(rings[1])")
   if length(rings) > 1

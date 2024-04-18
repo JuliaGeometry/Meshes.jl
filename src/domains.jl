@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Domain
+    Domain{Dim}
 
 A domain is an indexable collection of geometries (e.g. mesh).
 """
-abstract type Domain end
+abstract type Domain{Dim} end
 
 """
     element(domain, ind)
@@ -60,6 +60,7 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
+embeddim(::Type{<:Domain{Dim}}) where {Dim} = Dim
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """
@@ -113,10 +114,10 @@ topology(d::Domain) = d.topology
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, d::Domain)
+function Base.summary(io::IO, d::Domain{Dim}) where {Dim}
   nelm = nelements(d)
   name = prettyname(d)
-  print(io, "$nelm $name")
+  print(io, "$nelm $name{$Dim}")
 end
 
 Base.show(io::IO, d::Domain) = summary(io, d)
