@@ -43,7 +43,7 @@ function Base.getindex(g::StructuredGrid{Dim}, I::CartesianIndices{Dim}) where {
   StructuredGrid(XYZ, GridTopology(dims))
 end
 
-function Base.summary(io::IO, g::StructuredGrid{Dim}) where {Dim}
+function Base.summary(io::IO, g::StructuredGrid)
   join(io, size(g), "×")
-  print(io, " StructuredGrid{$Dim}")
+  print(io, " StructuredGrid")
 end

@@ -114,10 +114,10 @@ topology(d::Domain) = d.topology
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, d::Domain{Dim}) where {Dim}
+function Base.summary(io::IO, d::Domain)
   nelm = nelements(d)
   name = prettyname(d)
-  print(io, "$nelm $name{$Dim}")
+  print(io, "$nelm $name")
 end
 
 Base.show(io::IO, d::Domain) = summary(io, d)

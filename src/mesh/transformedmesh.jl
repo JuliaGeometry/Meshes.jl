@@ -31,7 +31,7 @@ TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 @propagate_inbounds Base.getindex(g::TransformedGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} =
   TransformedGrid(getindex(g.mesh, I), g.transform)
 
-function Base.summary(io::IO, g::TransformedGrid{Dim}) where {Dim}
+function Base.summary(io::IO, g::TransformedGrid)
   join(io, size(g), "×")
-  print(io, " TransformedGrid{$Dim}")
+  print(io, " TransformedGrid")
 end

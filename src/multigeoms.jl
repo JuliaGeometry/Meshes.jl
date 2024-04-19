@@ -62,9 +62,9 @@ Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, m::Multi{Dim}) where {Dim}
+function Base.summary(io::IO, m::Multi)
   name = prettyname(eltype(m.geoms))
-  print(io, "Multi$name{$Dim}")
+  print(io, "Multi$name")
 end
 
 function Base.show(io::IO, m::Multi)

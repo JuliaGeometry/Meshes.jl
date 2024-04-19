@@ -53,7 +53,7 @@ function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where 
   RectilinearGrid(xyz, GridTopology(dims))
 end
 
-function Base.summary(io::IO, g::RectilinearGrid{Dim}) where {Dim}
+function Base.summary(io::IO, g::RectilinearGrid)
   join(io, size(g), "×")
-  print(io, " RectilinearGrid{$Dim}")
+  print(io, " RectilinearGrid")
 end

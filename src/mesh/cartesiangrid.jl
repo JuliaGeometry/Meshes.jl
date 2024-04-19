@@ -150,9 +150,9 @@ end
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, g::CartesianGrid{Dim}) where {Dim}
+function Base.summary(io::IO, g::CartesianGrid)
   dims = join(size(g.topology), "×")
-  print(io, "$dims CartesianGrid{$Dim}")
+  print(io, "$dims CartesianGrid")
 end
 
 Base.show(io::IO, g::CartesianGrid) = summary(io, g)

@@ -48,7 +48,7 @@ Base.extrema(g::Geometry) = extrema(boundingbox(g))
 # IO METHODS
 # -----------
 
-Base.summary(io::IO, geom::Geometry{Dim}) where {Dim} = print(io, "$(prettyname(geom)){$Dim}")
+Base.summary(io::IO, geom::Geometry) = print(io, prettyname(geom))
 
 # ----------------
 # IMPLEMENTATIONS

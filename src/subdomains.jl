@@ -70,10 +70,10 @@ Base.parentindices(d::SubDomain) = d.inds
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, d::SubDomain{Dim}) where {Dim}
+function Base.summary(io::IO, d::SubDomain)
   name = prettyname(d.domain)
   nelm = length(d.inds)
-  print(io, "$nelm view(::$name{$Dim}, ")
+  print(io, "$nelm view(::$name, ")
   printinds(io, d.inds)
   print(io, ")")
 end
