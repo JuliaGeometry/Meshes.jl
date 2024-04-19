@@ -98,7 +98,7 @@ function CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Di
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim}) =
+CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim}) where {Dim} =
   CartesianGrid(start, finish, addunit.(spacing, u"m"))
 
 CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}, spacing::NTuple{Dim}) where {Dim} =
@@ -173,7 +173,7 @@ Base.show(io::IO, g::CartesianGrid) = summary(io, g)
 
 function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
   println(io, g)
-  println(io, "  minimum: ", minimum(g))
-  println(io, "  maximum: ", maximum(g))
-  print(io, "  spacing: ", spacing(g))
+  println(io, "├─ minimum: ", minimum(g))
+  println(io, "├─ maximum: ", maximum(g))
+  print(io, "└─ spacing: ", spacing(g))
 end
