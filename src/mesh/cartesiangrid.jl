@@ -91,12 +91,15 @@ CartesianGrid(
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
 ) where {Dim} = CartesianGrid(dims, Point(origin), spacing, offset)
 
-function CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim}) where {Dim}
-  dims = Tuple(ceil.(Int, (finish - start) ./ Vec(spacing)))
+function CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim,L}) where {Dim,L<:Len}
+  dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
   origin = start
   offset = ntuple(i -> 1, Dim)
   CartesianGrid(dims, origin, spacing, offset)
 end
+
+CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim}) =
+  CartesianGrid(start, finish, addunit.(spacing, u"m"))
 
 CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}, spacing::NTuple{Dim}) where {Dim} =
   CartesianGrid(Point(start), Point(finish), spacing)
@@ -109,7 +112,7 @@ function CartesianGrid(start::Point{Dim}, finish::Point{Dim}; dims::Dims{Dim}=nt
 end
 
 CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
-  CartesianGrid(Point(start), Point(finish); dims=dims)
+  CartesianGrid(Point(start), Point(finish); dims)
 
 function CartesianGrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> 0.0, Dim)
