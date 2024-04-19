@@ -18,10 +18,18 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Dim,V<:AbstractVector} <: Grid{Dim}
+struct RectilinearGrid{Dim,V<:AbstractVector{<:Len}} <: Grid{Dim}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
+
+  function RectilinearGrid(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Dim,V<:AbstractVector{<:Len}}
+    coords = float.(xyz)
+    new{Dim,eltype(coords)}(coords, topology)
+  end
 end
+
+RectilinearGrid(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Dim,V<:AbstractVector} =
+  RectilinearGrid(addunit.(xyz, u"m"), topology)
 
 function RectilinearGrid(xyz::Tuple)
   coords = promote(collect.(xyz)...)

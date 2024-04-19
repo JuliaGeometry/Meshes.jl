@@ -50,39 +50,55 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{Dim,P<:Point{Dim},T} <: Grid{Dim}
+struct CartesianGrid{Dim,P<:Point{Dim},L<:Len} <: Grid{Dim}
   origin::P
-  spacing::NTuple{Dim,T}
+  spacing::NTuple{Dim,L}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
+
+  function CartesianGrid(
+    origin::P,
+    spacing::NTuple{Dim,L},
+    offset::Dims{Dim},
+    topology::GridTopology{Dim}
+  ) where {Dim,P<:Point{Dim},L<:Len}
+    if !all(>(zero(L)), spacing)
+      throw(ArgumentError("spacing must be positive"))
+    end
+    new{Dim,P,float(L)}(origin, spacing, offset, topology)
+  end
 end
+
+CartesianGrid(origin::Point{Dim}, spacing::NTuple{Dim}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
+  CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
 
 function CartesianGrid(
   dims::Dims{Dim},
-  origin::P,
-  spacing::NTuple{Dim,T},
+  origin::Point{Dim},
+  spacing::NTuple{Dim},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim,P<:Point{Dim},T}
-  @assert all(>(0), dims) "dimensions must be positive"
-  @assert all(>(zero(T)), spacing) "spacing must be positive"
-  CartesianGrid{Dim,P,T}(origin, spacing, offset, GridTopology(dims))
+) where {Dim}
+  if !all(>(0), dims)
+    throw(ArgumentError("dimensions must be positive"))
+  end
+  CartesianGrid(origin, spacing, offset, GridTopology(dims))
 end
 
 CartesianGrid(
   dims::Dims{Dim},
-  origin::NTuple{Dim,T},
-  spacing::NTuple{Dim,T},
+  origin::NTuple{Dim},
+  spacing::NTuple{Dim},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim,T} = CartesianGrid(dims, Point(origin), spacing, offset)
+) where {Dim} = CartesianGrid(dims, Point(origin), spacing, offset)
 
-function CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim,T}) where {Dim,T}
-  dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
+function CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim}) where {Dim}
+  dims = Tuple(ceil.(Int, (finish - start) ./ Vec(spacing)))
   origin = start
   offset = ntuple(i -> 1, Dim)
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T}, spacing::NTuple{Dim,T}) where {Dim,T} =
+CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}, spacing::NTuple{Dim}) where {Dim} =
   CartesianGrid(Point(start), Point(finish), spacing)
 
 function CartesianGrid(start::Point{Dim}, finish::Point{Dim}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim}
@@ -92,24 +108,19 @@ function CartesianGrid(start::Point{Dim}, finish::Point{Dim}; dims::Dims{Dim}=nt
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-CartesianGrid(start::NTuple{Dim,T}, finish::NTuple{Dim,T}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim,T} =
+CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
   CartesianGrid(Point(start), Point(finish); dims=dims)
 
-function CartesianGrid{T}(dims::Dims{Dim}) where {Dim,T}
-  origin = ntuple(i -> zero(T), Dim)
-  spacing = ntuple(i -> oneunit(T), Dim)
+function CartesianGrid(dims::Dims{Dim}) where {Dim}
+  origin = ntuple(i -> 0.0, Dim)
+  spacing = ntuple(i -> 1.0, Dim)
   offset = ntuple(i -> 1, Dim)
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-CartesianGrid{T}(dims::Vararg{Int,Dim}) where {Dim,T} = CartesianGrid{T}(dims)
+CartesianGrid(dims::Int...) = CartesianGrid(dims)
 
-CartesianGrid(dims::Dims{Dim}) where {Dim} = CartesianGrid{Float64}(dims)
-
-CartesianGrid(dims::Vararg{Int,Dim}) where {Dim} = CartesianGrid{Float64}(dims)
-
-vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} =
-  Point(coordinates(g.origin) .+ (ijk .- g.offset) .* g.spacing)
+vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 
 spacing(g::CartesianGrid) = g.spacing
 

@@ -10,10 +10,13 @@ given `plane` with given `radius`.
 
 See also [`Circle`](@ref).
 """
-struct Disk{P<:Plane,T} <: Primitive{3}
+struct Disk{P<:Plane,L<:Len} <: Primitive{3}
   plane::P
-  radius::T
+  radius::L
+  Disk(plane::P, radius::L) where {P<:Plane,L<:Len} = new{P,typeof(radius)}(plane, fradius)
 end
+
+Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))
 
 paramdim(::Type{<:Disk}) = 2
 

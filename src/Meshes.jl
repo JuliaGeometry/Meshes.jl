@@ -36,6 +36,13 @@ import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
 import TransformsBase: parameters
 
+const Len{T} = Quantity{T,u"𝐋"}
+
+addunit(x::Number, u) = x * u
+addunit(x::AbstractArray{<:Number}, u) = x * u
+addunit(x::Quantity, u) = throw(ArgumentError("invalid units, please check the documentation"))
+addunit(x::AbstractArray{<:Quantity}, u) = throw(ArgumentError("invalid units, please check the documentation"))
+
 # IO utils
 include("ioutils.jl")
 

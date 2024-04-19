@@ -9,14 +9,17 @@ A ball with `center` and `radius`.
 
 See also [`Sphere`](@ref).
 """
-struct Ball{Dim,P<:Point{Dim},T} <: Primitive{Dim}
+struct Ball{Dim,P<:Point{Dim},L<:Len} <: Primitive{Dim}
   center::P
-  radius::T
+  radius::L
+  Ball(center::P, radius::L) where {Dim,P<:Point{Dim},L<:Len} = new{Dim,P,float(L)}(center, radius)
 end
+
+Ball(center::Point, radius) = Ball(center, addunit(radius, u"m"))
 
 Ball(center::Tuple, radius) = Ball(Point(center), radius)
 
-Ball(center::Point) = Ball(center, 1.0)
+Ball(center::Point) = Ball(center, 1.0u"m")
 
 Ball(center::Tuple) = Ball(Point(center))
 

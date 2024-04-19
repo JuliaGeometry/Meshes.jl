@@ -9,10 +9,13 @@ A sphere with `center` and `radius`.
 
 See also [`Ball`](@ref).
 """
-struct Sphere{Dim,P<:Point{Dim},T} <: Primitive{Dim}
+struct Sphere{Dim,P<:Point{Dim},L<:Len} <: Primitive{Dim}
   center::P
-  radius::T
+  radius::L
+  Sphere(center::P, radius::L) where {Dim,P<:Point{Dim},L<:Len} = new{Dim,P,float(L)}(center, radius)
 end
+
+Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 

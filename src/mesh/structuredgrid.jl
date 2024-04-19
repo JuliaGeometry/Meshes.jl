@@ -18,10 +18,18 @@ julia> Y = repeat([0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
 julia> StructuredGrid(X, Y)
 ```
 """
-struct StructuredGrid{Dim,A<:AbstractArray} <: Grid{Dim}
+struct StructuredGrid{Dim,A<:AbstractArray{<:Len}} <: Grid{Dim}
   XYZ::NTuple{Dim,A}
   topology::GridTopology{Dim}
+
+  function StructuredGrid(XYZ::NTuple{Dim,A}, topology::GridTopology{Dim}) where {Dim,A<:AbstractArray{<:Len}}
+    coords = float.(XYZ)
+    new{Dim,eltype(coords)}(coords, topology)
+  end
 end
+
+StructuredGrid(XYZ::NTuple{Dim,A}, topology::GridTopology{Dim}) where {Dim,A<:AbstractArray} =
+  StructuredGrid(addunit.(XYZ, u"m"), topology)
 
 function StructuredGrid(XYZ::Tuple)
   coords = promote(XYZ...)
