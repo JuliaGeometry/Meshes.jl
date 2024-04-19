@@ -1,14 +1,14 @@
 @testset "Sampling" begin
   @testset "UniformSampling" begin
-    Random.seed!(2021)
+    rng = StableRNG(123)
     d = CartesianGrid{T}(100, 100)
-    s = sample(d, UniformSampling(100))
+    s = sample(rng, d, UniformSampling(100))
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
 
     # availability of option ordered
-    s = sample(d, UniformSampling(100, ordered=true))
+    s = sample(rng, d, UniformSampling(100, ordered=true))
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
@@ -16,25 +16,25 @@
 
   @testset "WeightedSampling" begin
     # uniform weights => uniform sampler
-    Random.seed!(2020)
+    rng = StableRNG(123)
     d = CartesianGrid{T}(100, 100)
-    s = sample(d, WeightedSampling(100))
+    s = sample(rng, d, WeightedSampling(100))
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
 
     # availability of option ordered
-    s = sample(d, WeightedSampling(100, ordered=true))
+    s = sample(rng, d, WeightedSampling(100, ordered=true))
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
 
     # utility method
-    s = sample(d, 100, ordered=true)
+    s = sample(rng, d, 100, ordered=true)
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
-    s = sample(d, 100, fill(1, 10000), ordered=true)
+    s = sample(rng, d, 100, fill(1, 10000), ordered=true)
     μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, T[50.0, 50.0], atol=T(10))
@@ -360,9 +360,9 @@
   @testset "RNGs" begin
     dom = CartesianGrid{T}(100, 100)
     for method in [UniformSampling(100), WeightedSampling(100), BallSampling(T(10))]
-      rng = MersenneTwister(2021)
+      rng = StableRNG(2021)
       s1 = sample(rng, dom, method)
-      rng = MersenneTwister(2021)
+      rng = StableRNG(2021)
       s2 = sample(rng, dom, method)
       @test collect(s1) == collect(s2)
     end
@@ -371,9 +371,9 @@
     # because of https://github.com/JuliaStats/StatsBase.jl/issues/695
     if T == Float64
       for method in [HomogeneousSampling(100), MinDistanceSampling(T(5))]
-        rng = MersenneTwister(2021)
+        rng = StableRNG(2021)
         s1 = sample(rng, dom, method)
-        rng = MersenneTwister(2021)
+        rng = StableRNG(2021)
         s2 = sample(rng, dom, method)
         @test collect(s1) == collect(s2)
       end
@@ -397,9 +397,9 @@
         P3(0, 1, 1)
       )
     ]
-      rng = MersenneTwister(2021)
+      rng = StableRNG(2021)
       s1 = sample(rng, geom, method)
-      rng = MersenneTwister(2021)
+      rng = StableRNG(2021)
       s2 = sample(rng, geom, method)
       @test collect(s1) == collect(s2)
     end
