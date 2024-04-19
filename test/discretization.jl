@@ -187,7 +187,7 @@
         (1.1794424965e7, 1.7289626797e7)
       ]
     )
-    rng = MersenneTwister(123)
+    rng = StableRNG(123)
     mesh = discretize(poly, FIST(rng))
     @test nvertices(mesh) == 16
     @test nelements(mesh) == 14
@@ -202,14 +202,14 @@
         (-0.20127837, 0.24671146)
       ]
     )
-    rng = MersenneTwister(123)
+    rng = StableRNG(123)
     mesh = discretize(poly, FIST(rng))
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 3
   end
 
   @testset "Miscellaneous" begin
-    rng = MersenneTwister(123)
+    rng = StableRNG(123)
     for method in [FIST(rng), Dehn1899()]
       triangle = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
       mesh = discretize(triangle, method)
@@ -260,7 +260,7 @@
   end
 
   @testset "Difficult examples" begin
-    rng = MersenneTwister(123)
+    rng = StableRNG(123)
     for method in [FIST(rng), Dehn1899()]
       poly = readpoly(T, joinpath(datadir, "taubin.line"))
       mesh = discretize(poly, method)
@@ -321,11 +321,7 @@
       poly = readpoly(T, joinpath(datadir, "hole1.line"))
       mesh = discretize(poly, method)
       @test Set(vertices(poly)) == Set(vertices(mesh))
-      if method isa FIST && T == Float32
-        @test nelements(mesh) == 33
-      else
-        @test nelements(mesh) == 32
-      end
+      @test nelements(mesh) == 32
 
       poly = readpoly(T, joinpath(datadir, "hole2.line"))
       mesh = discretize(poly, method)

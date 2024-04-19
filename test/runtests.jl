@@ -10,7 +10,7 @@ using SparseArrays
 using PlyIO
 using Unitful
 using Rotations
-using Test, Random
+using Test, StableRNGs
 using ReferenceTests, ImageIO
 
 using TransformsBase: Identity, →

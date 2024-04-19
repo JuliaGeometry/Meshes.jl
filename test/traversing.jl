@@ -15,9 +15,9 @@
     p = traverse(grid, RandomPath())
     @test all(1 .≤ collect(p) .≤ 100 * 100)
 
-    path = RandomPath(MersenneTwister(123))
+    path = RandomPath(StableRNG(123))
     grid = CartesianGrid{T}(3, 3)
-    @test traverse(grid, path) == [8, 7, 5, 3, 4, 1, 6, 9, 2]
+    @test traverse(grid, path) == [4, 7, 2, 1, 3, 8, 5, 6, 9]
   end
 
   @testset "SourcePath" begin
@@ -76,7 +76,7 @@
     if visualtests
       paths = [
         LinearPath(),
-        RandomPath(MersenneTwister(123)),
+        RandomPath(StableRNG(123)),
         ShiftedPath(LinearPath(), 10),
         SourcePath(1:3),
         MultiGridPath()
