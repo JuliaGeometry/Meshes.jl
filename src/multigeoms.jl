@@ -23,12 +23,12 @@ end
 Multi(geoms) = Multi(collect(geoms))
 
 # type aliases for convenience
-const MultiPoint{Dim} = Multi{<:Point{Dim}}
-const MultiSegment{Dim} = Multi{<:Segment{Dim}}
-const MultiRope{Dim} = Multi{<:Rope{Dim}}
-const MultiRing{Dim} = Multi{<:Ring{Dim}}
-const MultiPolygon{Dim} = Multi{<:Polygon{Dim}}
-const MultiPolyhedron{Dim} = Multi{<:Polyhedron{Dim}}
+const MultiPoint{Dim} = Multi{Dim,<:Point{Dim}}
+const MultiSegment{Dim} = Multi{Dim,<:Segment{Dim}}
+const MultiRope{Dim} = Multi{Dim,<:Rope{Dim}}
+const MultiRing{Dim} = Multi{Dim,<:Ring{Dim}}
+const MultiPolygon{Dim} = Multi{Dim,<:Polygon{Dim}}
+const MultiPolyhedron{Dim} = Multi{Dim,<:Polyhedron{Dim}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
