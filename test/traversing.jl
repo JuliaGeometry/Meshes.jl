@@ -74,13 +74,8 @@
 
   @testset "Miscellaneous" begin
     if visualtests
-      paths = [
-        LinearPath(),
-        RandomPath(StableRNG(123)),
-        ShiftedPath(LinearPath(), 10),
-        SourcePath(1:3),
-        MultiGridPath()
-      ]
+      paths =
+        [LinearPath(), RandomPath(StableRNG(123)), ShiftedPath(LinearPath(), 10), SourcePath(1:3), MultiGridPath()]
 
       fnames = ["linear-path", "random-path", "shifted-path", "source-path", "multi-grid-path"]
 
