@@ -64,7 +64,7 @@ include("toporelations.jl")
 include("domains.jl")
 
 # utilities
-# include("utils.jl")
+include("utils.jl")
 
 # domain views
 # include("viewing.jl")

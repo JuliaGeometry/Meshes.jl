@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 # auxiliary type for dispatch purposes
-const GeometryOrDomain = Union{Geometry,Domain}
+const GeometryOrDomain{Dim} = Union{Geometry{Dim},Domain{Dim}}
 
 """
     fitdims(dims, D)
@@ -49,10 +49,10 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
-function householderbasis(n::Vec{3,T}) where {T}
+function householderbasis(n::Vec{3,L}) where {L}
   n̂ = norm(n)
   i = argmax(n .+ n̂)
-  eᵢ = Vec(ntuple(j -> j == i ? T(1) : T(0), 3))
+  eᵢ = Vec(ntuple(j -> j == i ? oneunit(L) : zero(L), 3))
   h = n + n̂ * eᵢ
   H = I - 2h * transpose(h) / (transpose(h) * h)
   u, v = [H[:, j] for j in 1:3 if j != i]
@@ -68,14 +68,15 @@ using the singular value decomposition (SVD).
 
 See <https://math.stackexchange.com/a/99317>.
 """
-function svdbasis(p::AbstractVector{Point{3,T}}) where {T}
+function svdbasis(p::AbstractVector{Point{3}})
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
-  U = svd(Z).U
+  U = svd(ustrip(Z)).U
+  T = eltype(U)
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
-  n = Vec{3,T}(0, 0, 1)
+  n = Vec(zero(T), zero(T), one(T))
   (u × v) ⋅ n < 0 ? (v, u) : (u, v)
 end
 
@@ -109,13 +110,14 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
+function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
   A = [(b - a) (c - d)]
   y = c - a
 
   # calculate the rank of the augmented matrix by checking
   # the zero entries of the diagonal of R
-  _, R = qr([A y])
+  _, R = qr(ustrip([A y]))
+  T = eltype(R)
 
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
