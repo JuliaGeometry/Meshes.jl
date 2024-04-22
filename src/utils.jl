@@ -51,9 +51,9 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
 """
 function householderbasis(n::Vec{3,L}) where {L}
   n̂ = norm(n)
-  i = argmax(n .+ n̂)
-  eᵢ = Vec(ntuple(j -> j == i ? oneunit(L) : zero(L), 3))
-  h = n + n̂ * eᵢ
+  h = n .+ n̂
+  i = argmax(h)
+  h = Vec(ntuple(j -> j == i ? h[i] : zero(L), 3))
   H = I - 2h * transpose(h) / (transpose(h) * h)
   u, v = [H[:, j] for j in 1:3 if j != i]
   i == 2 && ((u, v) = (v, u))
@@ -72,11 +72,11 @@ function svdbasis(p::AbstractVector{Point{3}})
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
+  L = eltype(Z)
   U = svd(ustrip(Z)).U
-  T = eltype(U)
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
-  n = Vec(zero(T), zero(T), one(T))
+  n = Vec(zero(L), zero(L), oneunit(L))
   (u × v) ⋅ n < 0 ? (v, u) : (u, v)
 end
 
@@ -111,13 +111,13 @@ calculated in order to identify the intersection type:
   - No intersection, skew lines: r == 2, rₐ == 3
 """
 function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
-  A = [(b - a) (c - d)]
-  y = c - a
+  A = [ustrip(b - a) ustrip(c - d)]
+  y = ustrip(c - a)
+  T = eltype(A)
 
   # calculate the rank of the augmented matrix by checking
   # the zero entries of the diagonal of R
-  _, R = qr(ustrip([A y]))
-  T = eltype(R)
+  _, R = qr([A y])
 
   # for Dim == 2 one has to check the L1 norm of rows as 
   # there are more columns than rows
