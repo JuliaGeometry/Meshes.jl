@@ -5,6 +5,37 @@
 asvec(coords::Cartesian) = Vec(CoordRefSystems._coords(coords))
 ascart(vec::Vec) = Cartesian(Tuple(vec))
 
+"""
+    Point(x₁, x₂, ..., xₙ)
+    Point((x₁, x₂, ..., xₙ))
+
+A point in `Dim`-dimensional space with coordinates in length units (default to meters).
+
+The coordinates of the point are given with respect to the canonical
+Euclidean basis, and integer coordinates are converted to float.
+
+## Examples
+
+```julia
+# 2D points
+Point(1.0, 2.0) # add default units
+Point(1.0u"m", 2.0u"m") # double precision as expected
+Point(1f0u"km", 2f0u"km") # single precision as expected
+Point(1u"m", 2u"m") # integer is converted to float by design
+
+# 3D points
+Point(1.0, 2.0, 3.0) # add default units
+Point(1.0u"m", 2.0u"m", 3.0u"m") # double precision as expected
+Point(1f0u"km", 2f0u"km", 3f0u"km") # single precision as expected
+Point(1u"m", 2u"m", 3u"m") # integer is converted to float by design
+```
+
+### Notes
+
+- Integer coordinates are not supported because most geometric processing
+  algorithms assume a continuous space. The conversion to float avoids
+  `InexactError` and other unexpected results.
+"""
 struct Point{Dim,C<:CRS} <: Primitive{Dim}
   coords::C
   Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ndims(coords),C}(coords)
