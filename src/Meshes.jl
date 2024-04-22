@@ -89,8 +89,8 @@ include("predicates.jl")
 
 # # operations
 include("winding.jl")
-# include("sideof.jl")
-# include("orientation.jl")
+include("sideof.jl")
+include("orientation.jl")
 # include("measures.jl")
 # include("boundary.jl")
 # include("merging.jl")
