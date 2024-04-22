@@ -12,9 +12,10 @@ include("predicates/issimple.jl")
 include("predicates/hasholes.jl")
 
 # binary predicates
-include("predicates/in.jl")
+# TODO: find an alternative to T
+# include("predicates/in.jl")
 include("predicates/issubset.jl")
-include("predicates/intersects.jl")
+# include("predicates/intersects.jl")
 
 # other predicates
 include("predicates/iscollinear.jl")

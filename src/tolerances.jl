@@ -4,6 +4,7 @@
 
 """
     atol(T)
+    atol(x::T)
 
 Absolute tolerance used in algorithms for approximate
 comparison with numbers of type `T`. It is used in the
@@ -13,6 +14,7 @@ source code in calls to the [`isapprox`](@ref) function:
 isapprox(a::T, b::T, atol=atol(T))
 ```
 """
+atol(x) = atol(typeof(x))
 atol(::Type{Float64}) = 1e-10
 atol(::Type{Float32}) = 1.0f-5
 atol(::Type{Q}) where {Q<:AbstractQuantity} = atol(numtype(Q)) * unit(Q)

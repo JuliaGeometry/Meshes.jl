@@ -9,20 +9,20 @@ A method for partitioning spatial objects into two half spaces
 defined by a `normal` direction and a `fraction` of points.
 The partition is returned within `maxiter` bisection iterations.
 """
-struct BisectFractionPartition{Dim,T} <: PartitionMethod
-  normal::Vec{Dim,T}
+struct BisectFractionPartition{V<:Vec} <: PartitionMethod
+  normal::V
   fraction::Float64
   maxiter::Int
 
-  function BisectFractionPartition{Dim,T}(normal, fraction, maxiter) where {Dim,T}
+  function BisectFractionPartition{V}(normal, fraction, maxiter) where {V<:Vec}
     new(normalize(normal), fraction, maxiter)
   end
 end
 
-BisectFractionPartition(normal::Vec{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
-  BisectFractionPartition{Dim,T}(normal, fraction, maxiter)
+BisectFractionPartition(normal::V, fraction=0.5, maxiter=10) where {V<:Vec} =
+  BisectFractionPartition{V}(normal, fraction, maxiter)
 
-BisectFractionPartition(normal::NTuple{Dim,T}, fraction=0.5, maxiter=10) where {Dim,T} =
+BisectFractionPartition(normal::Tuple, fraction=0.5, maxiter=10) =
   BisectFractionPartition(Vec(normal), fraction, maxiter)
 
 function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)

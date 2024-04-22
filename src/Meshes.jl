@@ -67,27 +67,28 @@ include("domains.jl")
 include("utils.jl")
 
 # domain views
-# include("viewing.jl")
+include("viewing.jl")
 
 # # domain partitions
-# include("partitions.jl")
-# include("partitioning.jl")
+include("partitions.jl")
+include("partitioning.jl")
 
 # # domain sorting
-# include("sorting.jl")
+include("sorting.jl")
 
 # # domain traversal
-# include("traversing.jl")
+include("traversing.jl")
 
 # # neighbor search
-# include("neighborhoods.jl")
+include("neighborhoods.jl")
+# TODO: find an alternative to coordtype
 # include("neighborsearch.jl")
 
 # # predicates
-# include("predicates.jl")
+include("predicates.jl")
 
 # # operations
-# include("winding.jl")
+include("winding.jl")
 # include("sideof.jl")
 # include("orientation.jl")
 # include("measures.jl")
@@ -116,7 +117,7 @@ include("utils.jl")
 # include("projecting.jl")
 
 # # visualization
-# include("viz.jl")
+include("viz.jl")
 
 export
   # vectors
