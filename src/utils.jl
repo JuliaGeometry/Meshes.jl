@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 # auxiliary type for dispatch purposes
-const GeometryOrDomain{Dim} = Union{Geometry{Dim},Domain{Dim}}
+const GeometryOrDomain = Union{Geometry,Domain}
 
 """
     fitdims(dims, D)
