@@ -48,7 +48,7 @@ ParaboloidSurface(apex::Point{3}, radius, focallength) =
 
 ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
-ParaboloidSurface(apex::Point{3}, radius::T) where {T} = ParaboloidSurface(apex, radius, T(1))
+ParaboloidSurface(apex::Point{3}, radius) = ParaboloidSurface(apex, radius, 1.0)
 
 ParaboloidSurface(apex::Tuple, radius) = ParaboloidSurface(Point(apex), radius)
 
@@ -87,22 +87,22 @@ apex(p::ParaboloidSurface) = p.apex
 Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface{P,T}) where {P,T} = Line(p.apex, p.apex + Vec(T(0), T(0), p.focallength))
+axis(p::ParaboloidSurface{P,L}) where {P,L} = Line(p.apex, p.apex + Vec(L(0), L(0), p.focallength))
 
-Base.isapprox(p₁::ParaboloidSurface{P,T}, p₂::ParaboloidSurface{P,T}) where {P,T} =
+Base.isapprox(p₁::ParaboloidSurface{P,L}, p₂::ParaboloidSurface{P,L}) where {P,L} =
   p₁.apex ≈ p₂.apex &&
-  isapprox(p₁.focallength, p₂.focallength, atol=atol(T)) &&
-  isapprox(p₁.radius, p₂.radius, atol=atol(T))
+  isapprox(p₁.focallength, p₂.focallength, atol=atol(L)) &&
+  isapprox(p₁.radius, p₂.radius, atol=atol(L))
 
-function (p::ParaboloidSurface{P,T})(ρ, θ) where {P,T}
+function (p::ParaboloidSurface{P,L})(ρ, θ) where {P,L}
   if (ρ < 0 || ρ > 1)
     throw(DomainError((ρ, θ), "p(ρ, θ) is not defined for ρ outside [0, 1]."))
   end
   c = p.apex
   r = p.radius
   f = p.focallength
-  l = T(ρ) * r
-  sθ, cθ = sincospi(2 * T(θ))
+  l = L(ρ) * r
+  sθ, cθ = sincospi(2 * L(θ))
   x = l * cθ
   y = l * sθ
   z = (x^2 + y^2) / 4f

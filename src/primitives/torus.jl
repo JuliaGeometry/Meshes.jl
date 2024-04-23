@@ -49,22 +49,22 @@ radii(t::Torus) = (t.major, t.minor)
 
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
-function (t::Torus{P,V,T})(θ, φ) where {P,V,T}
+function (t::Torus{P,V,L})(θ, φ) where {P,V,L}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
 
-  Q = rotation_between(Vec{3,T}(0, 0, 1), n⃗)
+  Q = rotation_between(Vec{3,L}(0, 0, 1), n⃗)
 
-  sθ, cθ = sincospi(2 * T(-θ))
-  sφ, cφ = sincospi(2 * T(φ))
+  sθ, cθ = sincospi(2 * L(-θ))
+  sφ, cφ = sincospi(2 * L(φ))
   x = (R + r * cθ) * cφ
   y = (R + r * cθ) * sφ
   z = r * sθ
 
-  c + Q * Vec{3,T}(x, y, z)
+  c + Q * Vec{3,L}(x, y, z)
 end
 
 # TODO

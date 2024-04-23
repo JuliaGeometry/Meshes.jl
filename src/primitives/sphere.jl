@@ -66,26 +66,26 @@ center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
-function (s::Sphere{2,P,T})(φ) where {P,T}
+function (s::Sphere{2,P,L})(φ) where {P,L}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
   end
   c = s.center
   r = s.radius
-  sφ, cφ = sincospi(2 * T(φ))
+  sφ, cφ = sincospi(2 * L(φ))
   x = r * cφ
   y = r * sφ
   c + Vec(x, y)
 end
 
-function (s::Sphere{3,P,T})(θ, φ) where {P,T}
+function (s::Sphere{3,P,L})(θ, φ) where {P,L}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   c = s.center
   r = s.radius
-  sθ, cθ = sincospi(T(θ))
-  sφ, cφ = sincospi(2 * T(φ))
+  sθ, cθ = sincospi(L(θ))
+  sφ, cφ = sincospi(2 * L(φ))
   x = r * sθ * cφ
   y = r * sθ * sφ
   z = r * cθ

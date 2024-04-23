@@ -47,13 +47,13 @@ center(c::Circle) = c.plane(0, 0)
 
 radius(c::Circle) = c.radius
 
-function (c::Circle{P,T})(φ) where {P,T}
+function (c::Circle{P,L})(φ) where {P,L}
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))
   end
   r = c.radius
-  l = T(r)
-  sφ, cφ = sincospi(2 * T(φ))
+  l = L(r)
+  sφ, cφ = sincospi(2 * L(φ))
   u = l * cφ
   v = l * sφ
   c.plane(u, v)

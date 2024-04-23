@@ -28,13 +28,13 @@ radius(d::Disk) = d.radius
 
 normal(d::Disk) = normal(d.plane)
 
-function (d::Disk{P,T})(ρ, φ) where {P,T}
+function (d::Disk{P,L})(ρ, φ) where {P,L}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
   r = d.radius
-  l = T(ρ) * r
-  sφ, cφ = sincospi(2 * T(φ))
+  l = L(ρ) * r
+  sφ, cφ = sincospi(2 * L(φ))
   u = l * cφ
   v = l * sφ
   d.plane(u, v)

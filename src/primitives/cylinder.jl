@@ -66,7 +66,7 @@ hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 
-function (c::Cylinder{P,T})(ρ, φ, z) where {P,T}
+function (c::Cylinder{P,L})(ρ, φ, z) where {P,L}
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
@@ -74,20 +74,20 @@ function (c::Cylinder{P,T})(ρ, φ, z) where {P,T}
   b = bottom(c)
   r = radius(c)
   a = axis(c)
-  d = a(T(1)) - a(T(0))
+  d = a(L(1)) - a(L(0))
   h = norm(d)
   o = b(0, 0)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(Vec{3,T}(0, 0, 1), d)
+  Q = rotation_between(Vec{3,L}(0, 0, 1), d)
 
   # project a parametric segment between the top and bottom planes
-  lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
-  p₁ = o + Q * Vec(lcφ, lsφ, T(0))
+  lsφ, lcφ = L(ρ) * r .* sincospi(2 * L(φ))
+  p₁ = o + Q * Vec(lcφ, lsφ, L(0))
   p₂ = o + Q * Vec(lcφ, lsφ, h)
   l = Line(p₁, p₂)
   s = Segment(l ∩ b, l ∩ t)
-  s(T(z))
+  s(L(z))
 end
 
 # TODO

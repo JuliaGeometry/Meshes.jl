@@ -64,22 +64,22 @@ end
 
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
-function isright(c::CylinderSurface{P,T}) where {P,T}
+function isright(c::CylinderSurface{P,L}) where {P,L}
   # cylinder is right if axis
   # is aligned with plane normals
   a = axis(c)
-  d = a(T(1)) - a(T(0))
+  d = a(L(1)) - a(L(0))
   v = normal(c.bot)
   w = normal(c.top)
-  isparallelv = isapprox(norm(d × v), zero(T), atol=atol(T))
-  isparallelw = isapprox(norm(d × w), zero(T), atol=atol(T))
+  isparallelv = isapprox(norm(d × v), zero(L), atol=atol(L))
+  isparallelw = isapprox(norm(d × w), zero(L), atol=atol(L))
   isparallelv && isparallelw
 end
 
-Base.isapprox(c₁::CylinderSurface{P,T}, c₂::CylinderSurface{P,T}) where {P,T} =
-  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(T))
+Base.isapprox(c₁::CylinderSurface{P,L}, c₂::CylinderSurface{P,L}) where {P,L} =
+  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(L))
 
-function (c::CylinderSurface{P,T})(φ, z) where {P,T}
+function (c::CylinderSurface{P,L})(φ, z) where {P,L}
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
   end
@@ -87,12 +87,12 @@ function (c::CylinderSurface{P,T})(φ, z) where {P,T}
   b = bottom(c)
   r = radius(c)
   a = axis(c)
-  d = a(T(1)) - a(T(0))
+  d = a(L(1)) - a(L(0))
   h = norm(d)
   o = center(c)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
+  Q = rotation_between(d, Vec{3,L}(0, 0, 1))
 
   # new normals of planes in new rotated system
   nᵦ = Q * normal(b)
@@ -101,13 +101,13 @@ function (c::CylinderSurface{P,T})(φ, z) where {P,T}
   # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
   # equation of the plane, we can solve for z and find all points
   # along the ellipse obtained by intersection
-  rsφ, rcφ = r .* sincospi(2 * T(φ))
+  rsφ, rcφ = r .* sincospi(2 * L(φ))
   zᵦ = -h / 2 - (rcφ * nᵦ[1] + rsφ * nᵦ[2]) / nᵦ[3]
   zₜ = +h / 2 - (rcφ * nₜ[1] + rsφ * nₜ[2]) / nₜ[3]
   pᵦ = Point(rcφ, rsφ, zᵦ)
   pₜ = Point(rcφ, rsφ, zₜ)
 
-  p = pᵦ + T(z) * (pₜ - pᵦ)
+  p = pᵦ + L(z) * (pₜ - pᵦ)
   o + Q' * coordinates(p)
 end
 

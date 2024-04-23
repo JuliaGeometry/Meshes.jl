@@ -28,15 +28,15 @@ center(e::Ellipsoid) = e.center
 
 rotation(e::Ellipsoid) = e.rotation
 
-function (e::Ellipsoid{T})(θ, φ) where {T}
+function (e::Ellipsoid{L})(θ, φ) where {L}
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "e(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   r = e.radii
   c = e.center
   R = e.rotation
-  sθ, cθ = sincospi(T(θ))
-  sφ, cφ = sincospi(2 * T(φ))
+  sθ, cθ = sincospi(L(θ))
+  sφ, cφ = sincospi(2 * L(φ))
   x = r[1] * sθ * cφ
   y = r[2] * sθ * sφ
   z = r[3] * cθ
