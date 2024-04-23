@@ -148,7 +148,7 @@ earsccw(𝒫) = filter(i -> isearccw(𝒫, i), 1:nvertices(𝒫))
 
 # tells whether or not vertex i is an ear of 𝒫
 # assuming that 𝒫 has counter-clockwise orientation
-function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
+function isearccw(𝒫::Ring, i)
   v = vertices(𝒫)
 
   # CE1.1: classify angle as convex vs. reflex

@@ -68,12 +68,12 @@ using the singular value decomposition (SVD).
 
 See <https://math.stackexchange.com/a/99317>.
 """
-function svdbasis(p::AbstractVector{Point{3}})
+function svdbasis(p::AbstractVector{<:Point{3}})
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
   𝒬 = eltype(X)
-  U = svd(ustrip(Z)).U * unit(𝒬)
+  U = svd(ustrip.(Z)).U * unit(𝒬)
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
   n = Vec(zero(𝒬), zero(𝒬), oneunit(𝒬))
@@ -111,8 +111,8 @@ calculated in order to identify the intersection type:
   - No intersection, skew lines: r == 2, rₐ == 3
 """
 function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
-  A = [ustrip(b - a) ustrip(c - d)]
-  y = ustrip(c - a)
+  A = [ustrip.(b - a) ustrip.(c - d)]
+  y = ustrip.(c - a)
   T = eltype(A)
 
   # calculate the rank of the augmented matrix by checking

@@ -12,7 +12,7 @@ include("predicates/issimple.jl")
 include("predicates/hasholes.jl")
 
 # binary predicates
-# TODO: find an alternative to T
+# TODO: find an alternative to get the coordtype
 # include("predicates/in.jl")
 include("predicates/issubset.jl")
 # include("predicates/intersects.jl")

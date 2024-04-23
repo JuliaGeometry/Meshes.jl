@@ -29,6 +29,7 @@ boundingbox(p::Point) = Box(p, p)
 
 boundingbox(b::Box) = b
 
+# TODO: should the coordinate function return a Vec?
 function boundingbox(r::Ray{Dim,T}) where {Dim,T}
   lower(p, v) = v < 0 ? typemin(T) : p
   upper(p, v) = v > 0 ? typemax(T) : p
@@ -60,11 +61,11 @@ function boundingbox(c::ConeSurface)
   boundingbox([ps; apex(c)])
 end
 
-function boundingbox(p::ParaboloidSurface{T}) where {T}
+function boundingbox(p::ParaboloidSurface)
   v = apex(p)
   r = radius(p)
   f = focallength(p)
-  Box(v + Vec(-r, -r, T(0)), v + Vec(r, r, r^2 / (4f)))
+  Box(v + Vec(-r, -r, zero(r)), v + Vec(r, r, r^2 / (4f)))
 end
 
 boundingbox(t::Torus) = _pboxes(pointify(t))
@@ -73,10 +74,10 @@ boundingbox(g::CartesianGrid) = Box(extrema(g)...)
 
 boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
 
-boundingbox(g::TransformedGrid{Dim,T,<:CartesianGrid{Dim,T}}) where {Dim,T} =
+boundingbox(g::TransformedGrid{Dim,<:CartesianGrid{Dim}}) where {Dim} =
   boundingbox(parent(g)) |> transform(g) |> boundingbox
 
-boundingbox(g::TransformedGrid{Dim,T,<:RectilinearGrid{Dim,T}}) where {Dim,T} =
+boundingbox(g::TransformedGrid{Dim,<:RectilinearGrid{Dim}}) where {Dim} =
   boundingbox(parent(g)) |> transform(g) |> boundingbox
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
