@@ -51,6 +51,7 @@ end
 
 applycoord(t::Affine, v::Vec) = t.A * v
 
+# TODO: should b have units?
 applycoord(t::Affine, p::Point) = Point(t.A * coordinates(p) + t.b)
 
 # --------------

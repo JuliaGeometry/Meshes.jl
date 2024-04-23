@@ -29,7 +29,6 @@ boundingbox(p::Point) = Box(p, p)
 
 boundingbox(b::Box) = b
 
-# TODO: should the coordinate function return a Vec?
 function boundingbox(r::Ray{Dim,T}) where {Dim,T}
   lower(p, v) = v < 0 ? typemin(T) : p
   upper(p, v) = v > 0 ? typemax(T) : p

@@ -99,12 +99,13 @@ repair8(v) = repair8(collect(v))
 
 repair8(v::AbstractVector) = repair8(CircularVector(v))
 
-function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
+function repair8(v::CircularVector{<:Point{Dim}}) where {Dim}
   n = length(v)
   keep = Int[]
   for i in 1:n
     t = Triangle(v[i - 1], v[i], v[i + 1])
-    area(t) > atol(T)^2 && push!(keep, i)
+    a = area(t)
+    a > atol(a)^2 && push!(keep, i)
   end
   isempty(keep) ? v[begin] : v[keep]
 end

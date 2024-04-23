@@ -54,6 +54,8 @@ center(p::Point) = p
 Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...) =
   isapprox(A.coords, B.coords; atol, kwargs...)
 
+# TODO: should the coordinate function return a Vec?
+# MOTIVATION: most uses of this function expect the return to be vector
 """
     coordinates(point)
 

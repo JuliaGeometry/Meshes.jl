@@ -110,11 +110,11 @@ include("complement.jl")
 include("pointification.jl")
 # TODO: find an alternative to get the coordtype
 # include("discretization.jl")
-# include("refinement.jl")
-# include("coarsening.jl")
+include("refinement.jl")
+include("coarsening.jl")
 
 # # transforms
-# include("transforms.jl")
+include("transforms.jl")
 
 # # miscellaneous
 # include("distances.jl")
@@ -128,12 +128,6 @@ include("viz.jl")
 export
   # vectors
   Vec,
-  Vec1,
-  Vec2,
-  Vec3,
-  Vec1f,
-  Vec2f,
-  Vec3f,
   ∠,
   ⋅,
   ×,
@@ -149,12 +143,6 @@ export
   # primitives
   Primitive,
   Point,
-  Point1,
-  Point2,
-  Point3,
-  Point1f,
-  Point2f,
-  Point3f,
   Ray,
   Line,
   BezierCurve,
