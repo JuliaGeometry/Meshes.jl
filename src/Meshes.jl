@@ -117,10 +117,10 @@ include("coarsening.jl")
 include("transforms.jl")
 
 # # miscellaneous
-# include("distances.jl")
-# include("supportfun.jl")
-# include("matrices.jl")
-# include("projecting.jl")
+include("distances.jl")
+include("supportfun.jl")
+include("matrices.jl")
+include("projecting.jl")
 
 # # visualization
 include("viz.jl")
