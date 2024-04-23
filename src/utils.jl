@@ -72,12 +72,12 @@ function svdbasis(p::AbstractVector{Point{3}})
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
-  L = eltype(Z)
-  U = svd(ustrip(Z)).U
+  𝒬 = eltype(X)
+  U = svd(ustrip(Z)).U * unit(𝒬)
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
-  n = Vec(zero(L), zero(L), oneunit(L))
-  (u × v) ⋅ n < 0 ? (v, u) : (u, v)
+  n = Vec(zero(𝒬), zero(𝒬), oneunit(𝒬))
+  (u × v) ⋅ n < zero(𝒬) ? (v, u) : (u, v)
 end
 
 """

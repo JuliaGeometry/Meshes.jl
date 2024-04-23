@@ -70,7 +70,7 @@ end
 Return the intersection of two geometries or domains `g₁` and `g₂`
 as a new (multi-)geometry.
 """
-Base.intersect(g₁::Union{Geometry,Domain}, g₂::Union{Geometry,Domain}) = get(intersection(g₁, g₂))
+Base.intersect(g₁::GeometryOrDomain, g₂::GeometryOrDomain) = get(intersection(g₁, g₂))
 
 """
     intersection([f], g₁, g₂)

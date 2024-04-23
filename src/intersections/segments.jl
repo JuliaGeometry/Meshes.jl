@@ -9,7 +9,7 @@
 # 3. intersect at one endpoint of both segments (CornerTouching -> Point)
 # 4. overlap of segments (Overlapping -> Segments)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
+function intersection(f, seg₁::Segment{N}, seg₂::Segment{N}) where {N}
   a, b = vertices(seg₁)
   c, d = vertices(seg₂)
 
@@ -45,6 +45,7 @@ function intersection(f, seg₁::Segment{N,T}, seg₂::Segment{N,T}) where {N,T}
 
   # arc length parameters λ₁ ∈ [0, l₁], λ₂ ∈ [0, l₂]: 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
+  T = typeof(λ₁)
 
   if r ≠ rₐ # not in same plane or parallel
     return @IT NotIntersecting nothing f #CASE 5
@@ -104,7 +105,7 @@ end
 # 3. intersects at one end point of segment and origin of ray (CornerTouching -> Point)
 # 4. overlap at more than one point (Overlapping -> Segment)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
+function intersection(f, seg::Segment{N}, ray::Ray{N}) where {N}
   a, b = ray(0), ray(1)
   c, d = seg(0), seg(1)
 
@@ -114,6 +115,7 @@ function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
   d₀ = c + 1 / l₂ * (d - c)
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
+  T = typeof(λ₁)
 
   # not in same plane or parallel
   if r ≠ rₐ
@@ -172,7 +174,7 @@ end
 # 2. intersect at an end point of segment (Touching -> Point)
 # 3. overlap of line and segment (Overlapping -> Segment)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{N,T}, line::Line{N,T}) where {N,T}
+function intersection(f, seg::Segment{N}, line::Line{N}) where {N}
   a, b = line(0), line(1)
   c, d = seg(0), seg(1)
 
@@ -181,6 +183,7 @@ function intersection(f, seg::Segment{N,T}, line::Line{N,T}) where {N,T}
   d₀ = c + 1 / l₂ * (d - c)
 
   _, λ₂, r, rₐ = intersectparameters(a, b, c, d₀)
+  T = typeof(λ₂)
 
   # not in same plane or parallel
   if r ≠ rₐ
@@ -203,7 +206,7 @@ end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
+function intersection(f, seg::Segment{3}, tri::Triangle{3})
   Q1, Q2 = vertices(seg)
   V1, V2, V3 = vertices(tri)
 
@@ -224,9 +227,9 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
   D = Q2 - V3
   s = D ⋅ W₁
 
-  if w > atol(T)
+  if w > atol(w)
     # rejection 2
-    if s > atol(T)
+    if s > atol(s)
       return @IT NotIntersecting nothing f
     end
 
@@ -234,14 +237,14 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
     t = W₂ ⋅ C
 
     # rejection 3
-    if t < -atol(T)
+    if t < -atol(t)
       return @IT NotIntersecting nothing f
     end
 
     u = -(W₂ ⋅ B)
 
     # rejection 4
-    if u < -atol(T)
+    if u < -atol(u)
       return @IT NotIntersecting nothing f
     end
 
@@ -249,9 +252,9 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
     if w < (s + t + u)
       return @IT NotIntersecting nothing f
     end
-  elseif w < -atol(T)
+  elseif w < -atol(w)
     # rejection 2
-    if s < -atol(T)
+    if s < -atol(s)
       return @IT NotIntersecting nothing f
     end
 
@@ -259,14 +262,14 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
     t = W₂ ⋅ C
 
     # rejection 3
-    if t > atol(T)
+    if t > atol(t)
       return @IT NotIntersecting nothing f
     end
 
     u = -(W₂ ⋅ B)
 
     # rejection 4
-    if u > atol(T)
+    if u > atol(u)
       return @IT NotIntersecting nothing f
     end
 
@@ -275,19 +278,19 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
       return @IT NotIntersecting nothing f
     end
   else # w ≈ 0
-    if s > atol(T)
+    if s > atol(s)
       W₂ = D × A
       t = W₂ ⋅ C
 
       # rejection 3
-      if t < -atol(T)
+      if t < -atol(t)
         return @IT NotIntersecting nothing f
       end
 
       u = -(W₂ ⋅ B)
 
       # rejection 4
-      if u < -atol(T)
+      if u < -atol(u)
         return @IT NotIntersecting nothing f
       end
 
@@ -295,19 +298,19 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
       if -s < (t + u)
         return @IT NotIntersecting nothing f
       end
-    elseif s < -atol(T)
+    elseif s < -atol(s)
       W₂ = D × A
       t = W₂ ⋅ C
 
       # rejection 3
-      if t > atol(T)
+      if t > atol(t)
         return @IT NotIntersecting nothing f
       end
 
       u = -(W₂ ⋅ B)
 
       # rejection 4
-      if u > atol(T)
+      if u > atol(u)
         return @IT NotIntersecting nothing f
       end
 
@@ -321,7 +324,8 @@ function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
     end
   end
 
-  λ = clamp(w / (w - s), zero(T), one(T))
+  λ = w / (w - s)
+  λ = clamp(λ, zero(λ), one(λ))
 
   p = Segment(Q1, Q2)(λ)
 

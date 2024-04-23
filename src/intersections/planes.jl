@@ -3,12 +3,12 @@
 # ------------------------------------------------------------------
 
 # (https://en.wikipedia.org/wiki/Plane-plane_intersection)
-function intersection(f, plane1::Plane{T}, plane2::Plane{T}) where {T}
+function intersection(f, plane1::Plane, plane2::Plane)
   n1 = normal(plane1)
   n2 = normal(plane2)
   n1n2 = n1 ⋅ n2
 
-  if isapprox(abs(n1n2), one(T), atol=atol(T))
+  if isapprox(abs(n1n2), one(n1n2), atol=atol(n1n2))
     # planes are parallel and do not intersect
     return @IT NotIntersecting nothing f
   else
@@ -23,17 +23,17 @@ function intersection(f, plane1::Plane{T}, plane2::Plane{T}) where {T}
   end
 end
 
-const LineLike{T} = Union{Line{3,T},Ray{3,T},Segment{3,T}}
+const LineLike = Union{Line{3},Ray{3},Segment{3}}
 
 # (https://en.wikipedia.org/wiki/Line-plane_intersection)
-function intersection(f, line::LineLike{T}, plane::Plane{T}) where {T}
+function intersection(f, line::LineLike, plane::Plane)
   # auxiliary parameters
   d = line(1) - line(0)
   n = normal(plane)
   a = (plane(0, 0) - line(0)) ⋅ n
   b = d ⋅ n
-  if isapprox(b, zero(T), atol=atol(T))
-    if isapprox(a, zero(T), atol=atol(T))
+  if isapprox(b, zero(b), atol=atol(b))
+    if isapprox(a, zero(a), atol=atol(a))
       return @IT Overlapping line f
     else
       return @IT NotIntersecting nothing f
@@ -49,19 +49,19 @@ end
 #   λ < 0 or  λ > 1 ⟹ NotIntersecting
 #   λ ≈ 0 or  λ ≈ 1 ⟹ Touching
 #   λ > 0 and λ < 1 ⟹ Crossing
-function _intersection(f, seg::Segment{3,T}, λ) where {T}
+function _intersection(f, seg::Segment{3}, λ)
   # if λ is approximately 0, set as so to prevent any domain errors
-  if isapprox(λ, zero(T), atol=atol(T))
+  if isapprox(λ, zero(λ), atol=atol(λ))
     return @IT Touching seg(0) f
   end
 
   # if λ is approximately 1, set as so to prevent any domain errors
-  if isapprox(λ, one(T), atol=atol(T))
+  if isapprox(λ, one(λ), atol=atol(λ))
     return @IT Touching seg(1) f
   end
 
   # if λ is out of bounds for the segment, then there is no intersection
-  if (λ < zero(T) || λ > one(T))
+  if (λ < zero(λ) || λ > one(λ))
     return @IT NotIntersecting nothing f
   else
     return @IT Crossing seg(λ) f
@@ -74,14 +74,14 @@ end
 #   λ < 0 ⟹ NotIntersecting
 #   λ ≈ 0 ⟹ Touching
 #   λ > 0 ⟹ Crossing
-function _intersection(f, ray::Ray{3,T}, λ) where {T}
+function _intersection(f, ray::Ray{3}, λ)
   # if λ is approximately 0, set as so to prevent any domain errors
-  if isapprox(λ, zero(T), atol=atol(T))
+  if isapprox(λ, zero(λ), atol=atol(λ))
     return @IT Touching ray(0) f
   end
 
   # if λ is out of bounds for the ray, then there is no intersection
-  if (λ < zero(T))
+  if (λ < zero(λ))
     return @IT NotIntersecting nothing f
   else
     return @IT Crossing ray(λ) f
