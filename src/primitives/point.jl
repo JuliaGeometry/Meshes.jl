@@ -2,9 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-asvec(coords::Cartesian) = Vec(CoordRefSystems._coords(coords))
-ascart(vec::Vec) = Cartesian(Tuple(vec))
-
 """
     Point(x₁, x₂, ..., xₙ)
     Point((x₁, x₂, ..., xₙ))
@@ -44,6 +41,7 @@ end
 # convenience constructors
 Point(coords...) = Point(Cartesian(coords...))
 Point(coords::Tuple) = Point(Cartesian(coords...))
+Point(coords::Vec) = Point(Cartesian(Tuple(coords)))
 
 paramdim(::Type{<:Point}) = 0
 
@@ -54,15 +52,13 @@ center(p::Point) = p
 Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...) =
   isapprox(A.coords, B.coords; atol, kwargs...)
 
-# TODO: should the coordinate function return a Vec?
-# MOTIVATION: most uses of this function expect the return to be vector
 """
     coordinates(point)
 
 Return the coordinates of the `point` with respect to the
 canonical Euclidean basis.
 """
-coordinates(A::Point) = A.coords
+coordinates(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.coords(A.coords))
 
 """
     -(A::Point, B::Point)
@@ -70,7 +66,7 @@ coordinates(A::Point) = A.coords
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = asvec(A.coords) - asvec(B.coords)
+-(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = coordinates(A) - coordinates(B)
 
 """
     +(A::Point, v::Vec)
@@ -79,7 +75,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(ascart(asvec(A.coords) + v))
++(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(A) + v)
 +(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A + v
 
 """
@@ -89,7 +85,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(ascart(asvec(A.coords) - v))
+-(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(A) - v)
 -(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A - v
 
 """
@@ -134,19 +130,12 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 function Base.show(io::IO, point::Point)
   if get(io, :compact, false)
     print(io, "(")
-    _printfields(io, point.coords)
-    print(io, ")")
   else
     print(io, "Point(")
-    _printfields(io, point.coords)
-    print(io, ")")
   end
+  printfields(io, CoordRefSystems.coords(point.coords), CoordRefSystems.cnames(point.coords), compact=true)
+  print(io, ")")
 end
-
-_printfields(io, coords::CRS) = printfields(io, coords, compact=true)
-_printfields(io, coords::CoordRefSystems.ShiftedCRS) = printfields(io, CoordRefSystems._coords(coords), compact=true)
-_printfields(io, coords::Cartesian) =
-  printfields(io, CoordRefSystems._coords(coords), CoordRefSystems._fnames(coords), compact=true)
 
 function Base.show(io::IO, mime::MIME"text/plain", point::Point)
   print(io, "Point with ")
