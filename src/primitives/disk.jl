@@ -20,6 +20,8 @@ Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))
 
 paramdim(::Type{<:Disk}) = 2
 
+coordtype(::Type{<:Disk{P}}) where {P} = coordtype(P)
+
 plane(d::Disk) = d.plane
 
 center(d::Disk) = d.plane(0, 0)

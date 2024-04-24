@@ -62,6 +62,8 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2)
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
+coordtype(::Type{<:Sphere{Dim,P}}) where {Dim,P} = coordtype(P)
+
 center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius

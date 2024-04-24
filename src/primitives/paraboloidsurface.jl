@@ -60,6 +60,8 @@ ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0))
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
 
+coordtype(::Type{<:ParaboloidSurface{P}}) where {P} = coordtype(P)
+
 """
     focallength(p::ParaboloidSurface)
 

@@ -50,6 +50,8 @@ CylinderSurface(radius) = CylinderSurface(Point(0, 0, 0), Point(0, 0, 1), radius
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
+coordtype(::Type{<:CylinderSurface{P}}) where {P} = coordtype(P)
+
 radius(c::CylinderSurface) = c.radius
 
 bottom(c::CylinderSurface) = c.bot

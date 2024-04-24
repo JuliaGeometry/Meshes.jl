@@ -19,6 +19,8 @@ Rope(vertices::AbstractVector{<:Tuple}) = Rope(Point.(vertices))
 
 nvertices(r::Rope) = length(r.vertices)
 
+coordtype(::Type{<:Rope{Dim,V}}) where {Dim,V} = coordtype(eltype(V))
+
 ==(r₁::Rope, r₂::Rope) = r₁.vertices == r₂.vertices
 
 function Base.isapprox(r₁::Rope, r₂::Rope; kwargs...)

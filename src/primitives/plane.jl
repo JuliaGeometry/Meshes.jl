@@ -39,6 +39,8 @@ Plane(p::Tuple, n::Tuple) = Plane(Point(p), Vec(n))
 
 paramdim(::Type{<:Plane}) = 2
 
+coordtype(::Type{<:Plane{P}}) where {P} = coordtype(P)
+
 normal(p::Plane) = normalize(p.u × p.v)
 
 ==(p₁::Plane, p₂::Plane) =

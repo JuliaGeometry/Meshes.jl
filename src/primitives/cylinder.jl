@@ -50,6 +50,8 @@ Cylinder(radius) = Cylinder(Point(0, 0, 0), Point(0, 0, 1), radius)
 
 paramdim(::Type{<:Cylinder}) = 3
 
+coordtype(::Type{<:Cylinder{P}}) where {P} = coordtype(P)
+
 radius(c::Cylinder) = c.radius
 
 bottom(c::Cylinder) = c.bot

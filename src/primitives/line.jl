@@ -18,6 +18,8 @@ Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
 
 paramdim(::Type{<:Line}) = 1
 
+coordtype(::Type{<:Line{Dim,P}}) where {Dim,P} = coordtype(P)
+
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 
 (l::Line)(t) = l.a + t * (l.b - l.a)

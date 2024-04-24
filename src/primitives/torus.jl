@@ -41,6 +41,8 @@ Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Poin
 
 paramdim(::Type{<:Torus}) = 2
 
+coordtype(::Type{<:Torus{P}}) where {P} = coordtype(P)
+
 center(t::Torus) = t.center
 
 normal(t::Torus) = t.normal

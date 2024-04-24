@@ -19,6 +19,8 @@ ConeSurface(base::Disk, apex::Tuple) = ConeSurface(base, Point(apex))
 
 paramdim(::Type{<:ConeSurface}) = 2
 
+coordtype(::Type{<:ConeSurface{D}}) where {D} = coordtype(D)
+
 base(c::ConeSurface) = c.base
 
 apex(c::ConeSurface) = c.apex

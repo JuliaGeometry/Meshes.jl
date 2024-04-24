@@ -29,6 +29,8 @@ BezierCurve(points::P...) where {P<:Point} = BezierCurve(collect(points))
 
 paramdim(::Type{<:BezierCurve}) = 1
 
+coordtype(::Type{<:BezierCurve{Dim,V}}) where {Dim,V} = coordtype(eltype(V))
+
 controls(b::BezierCurve) = b.controls
 
 ncontrols(b::BezierCurve) = length(b.controls)

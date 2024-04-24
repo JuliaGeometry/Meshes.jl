@@ -78,6 +78,8 @@ vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
 
 nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 
+coordtype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = coordtype(R)
+
 centroid(p::PolyArea) = centroid(first(p.rings))
 
 rings(p::PolyArea) = p.rings

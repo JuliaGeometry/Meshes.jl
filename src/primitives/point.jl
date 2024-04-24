@@ -45,6 +45,8 @@ Point(coords::Vec) = Point(Cartesian(Tuple(coords)))
 
 paramdim(::Type{<:Point}) = 0
 
+coordtype(::Type{<:Point{Dim,CRS}}) where {Dim,CRS} = CoordRefSystems.lentype(CRS)
+
 center(p::Point) = p
 
 ==(A::Point, B::Point) = A.coords == B.coords

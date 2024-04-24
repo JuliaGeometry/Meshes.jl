@@ -25,6 +25,8 @@ Ball(center::Tuple) = Ball(Point(center))
 
 paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 
+coordtype(::Type{<:Ball{Dim,P}}) where {Dim,P} = coordtype(P)
+
 center(b::Ball) = b.center
 
 radius(b::Ball) = b.radius

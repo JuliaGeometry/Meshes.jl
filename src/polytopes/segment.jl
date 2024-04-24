@@ -15,6 +15,8 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 
 nvertices(::Type{<:Segment}) = 2
 
+coordtype(::Type{<:Segment{Dim,P}}) where {Dim,P} = coordtype(P)
+
 Base.minimum(s::Segment) = s.vertices[1]
 
 Base.maximum(s::Segment) = s.vertices[2]

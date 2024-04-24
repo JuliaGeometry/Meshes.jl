@@ -32,6 +32,8 @@ Ring(vertices::AbstractVector{<:Point}) = Ring(CircularVector(vertices))
 
 nvertices(r::Ring) = length(r.vertices)
 
+coordtype(::Type{<:Ring{Dim,V}}) where {Dim,V} = coordtype(eltype(V))
+
 ==(r₁::Ring, r₂::Ring) = r₁.vertices == r₂.vertices
 
 function Base.isapprox(r₁::Ring, r₂::Ring; kwargs...)

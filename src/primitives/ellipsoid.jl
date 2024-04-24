@@ -22,6 +22,8 @@ Ellipsoid(radii::NTuple{3}, center=(0, 0, 0), rotation=I) = Ellipsoid(radii, Poi
 
 paramdim(::Type{<:Ellipsoid}) = 2
 
+coordtype(::Type{<:Ellipsoid{L,P}}) where {L,P} = coordtype(P)
+
 radii(e::Ellipsoid) = e.radii
 
 center(e::Ellipsoid) = e.center

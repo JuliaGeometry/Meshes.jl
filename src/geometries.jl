@@ -30,6 +30,13 @@ See also [`isparametrized`](@ref).
 paramdim(g::Geometry) = paramdim(typeof(g))
 
 """
+    coordtype(geometry)
+
+Return the machine type of each coordinate used to describe the `geometry`.
+"""
+coordtype(g::Geometry) = coordtype(typeof(g))
+
+"""
     centroid(geometry)
 
 Return the centroid of the `geometry`.

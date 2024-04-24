@@ -27,6 +27,8 @@ FrustumSurface(bot::D, top::D) where {D<:Disk} = FrustumSurface{D}(bot, top)
 
 paramdim(::Type{<:FrustumSurface}) = 2
 
+coordtype(::Type{<:FrustumSurface{D}}) where {D} = coordtype(D)
+
 bottom(f::FrustumSurface) = f.bot
 
 top(f::FrustumSurface) = f.top

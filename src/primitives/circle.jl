@@ -41,6 +41,8 @@ Circle(p1::Tuple, p2::Tuple, p3::Tuple) = Circle(Point(p1), Point(p2), Point(p3)
 
 paramdim(::Type{<:Circle}) = 1
 
+coordtype(::Type{<:Circle{P}}) where {P} = coordtype(P)
+
 plane(c::Circle) = c.plane
 
 center(c::Circle) = c.plane(0, 0)
