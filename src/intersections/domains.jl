@@ -11,7 +11,7 @@
   end
 end
 
-@commutativef intersection(f, dom::Domain, pset::PointSet) = intersection(f, Multi(collect(dom)), pset)
+intersection(f, dom::Domain, pset::PointSet) = intersection(f, Multi(collect(dom)), pset)
 
 function intersection(f, dom₁::Domain{Dim,T}, dom₂::Domain{Dim,T}) where {Dim,T}
   # loop over all geometries
