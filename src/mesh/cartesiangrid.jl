@@ -123,6 +123,8 @@ end
 
 CartesianGrid(dims::Int...) = CartesianGrid(dims)
 
+coordtype(::Type{<:CartesianGrid{Dim,P}}) where {Dim,P} = coordtype(P)
+
 vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 
 spacing(g::CartesianGrid) = g.spacing

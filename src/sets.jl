@@ -22,6 +22,8 @@ end
 # constructor with iterator of geometries
 GeometrySet(geoms) = GeometrySet(map(identity, geoms))
 
+coordtype(::Type{<:GeometrySet{Dim,G}}) where {Dim,G} = coordtype(G)
+
 element(d::GeometrySet, ind::Int) = d.geoms[ind]
 
 nelements(d::GeometrySet) = length(d.geoms)

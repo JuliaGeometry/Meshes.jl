@@ -39,6 +39,8 @@ end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
+coordtype(::Type{<:RectilinearGrid{Dim,V}}) where {Dim,V} = eltype(V)
+
 vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.xyz, ijk))
 
 xyz(g::RectilinearGrid) = g.xyz

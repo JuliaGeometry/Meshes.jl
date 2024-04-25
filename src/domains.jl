@@ -72,6 +72,13 @@ parametric dimensions of its elements.
 paramdim(d::Domain) = paramdim(first(d))
 
 """
+    coordtype(domain)
+
+Return the machine type of each coordinate used to describe the `domain`.
+"""
+coordtype(d::Domain) = coordtype(typeof(d))
+
+"""
     centroid(domain, ind)
 
 Return the centroid of the `ind`-th element in the `domain`.

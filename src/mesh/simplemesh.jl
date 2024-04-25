@@ -43,6 +43,8 @@ function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=
   SimpleMesh(vertices, topology)
 end
 
+coordtype(::Type{<:SimpleMesh{Dim,V}}) where {Dim,V} = coordtype(eltype(V))
+
 vertex(m::SimpleMesh, ind::Int) = m.vertices[ind]
 
 vertices(m::SimpleMesh) = m.vertices
