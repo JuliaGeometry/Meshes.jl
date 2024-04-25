@@ -97,7 +97,6 @@ return types, Julia is able to optimize the branches of the code
 and generate specialized code. This is not the case when
 `f === identity`.
 """
-intersection(f, g₁, g₂) = intersection(f, g₂, g₁)
 intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 
 # ----------------

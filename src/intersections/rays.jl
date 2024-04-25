@@ -69,7 +69,7 @@ end
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
+@commutativef function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
   a, b = ray(0), ray(1)
   c, d = line(0), line(1)
 
@@ -97,7 +97,7 @@ end
 
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
-function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
+@commutativef function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
   invdir = one(T) ./ (ray(1) - ray(0))
   lo, up = coordinates.(extrema(box))
   orig = coordinates(ray(0))
@@ -138,7 +138,7 @@ end
 #
 # Möller, T. & Trumbore, B., 1997.
 # (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
-function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
+@commutativef function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
   vs = vertices(tri)
   o = ray(0)
   d = ray(1) - ray(0)
@@ -205,4 +205,4 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
   return @IT Crossing ray(λ) f
 end
 
-intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), simplexify(p))
+@commutativef intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), simplexify(p))

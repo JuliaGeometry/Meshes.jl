@@ -5,5 +5,5 @@
 intersection(f, point₁::Point, point₂::Point) =
   point₁ == point₂ ? (@IT Intersecting point₁ f) : (@IT NotIntersecting nothing f)
 
-intersection(f, point::Point, geom::Geometry) =
+@commutativef intersection(f, point::Point, geom::Geometry) =
   point ∈ geom ? (@IT Intersecting point f) : (@IT NotIntersecting nothing f)

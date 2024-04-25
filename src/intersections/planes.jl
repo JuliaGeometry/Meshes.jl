@@ -26,7 +26,7 @@ end
 const LineLike{T} = Union{Line{3,T},Ray{3,T},Segment{3,T}}
 
 # (https://en.wikipedia.org/wiki/Line-plane_intersection)
-function intersection(f, line::LineLike{T}, plane::Plane{T}) where {T}
+@commutativef function intersection(f, line::LineLike{T}, plane::Plane{T}) where {T}
   # auxiliary parameters
   d = line(1) - line(0)
   n = normal(plane)

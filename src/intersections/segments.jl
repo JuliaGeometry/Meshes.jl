@@ -104,7 +104,7 @@ end
 # 3. intersects at one end point of segment and origin of ray (CornerTouching -> Point)
 # 4. overlap at more than one point (Overlapping -> Segment)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
+@commutativef function intersection(f, seg::Segment{N,T}, ray::Ray{N,T}) where {N,T}
   a, b = ray(0), ray(1)
   c, d = seg(0), seg(1)
 
@@ -172,7 +172,7 @@ end
 # 2. intersect at an end point of segment (Touching -> Point)
 # 3. overlap of line and segment (Overlapping -> Segment)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{N,T}, line::Line{N,T}) where {N,T}
+@commutativef function intersection(f, seg::Segment{N,T}, line::Line{N,T}) where {N,T}
   a, b = line(0), line(1)
   c, d = seg(0), seg(1)
 
@@ -203,7 +203,7 @@ end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
+@commutativef function intersection(f, seg::Segment{3,T}, tri::Triangle{3,T}) where {T}
   Q1, Q2 = vertices(seg)
   V1, V2, V3 = vertices(tri)
 

@@ -135,3 +135,69 @@ function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, 
 
   λ₁, λ₂, r, rₐ
 end
+
+"""
+  @commutative(expr)
+
+For an `expression` that defines a function or method with arguments (a::A, b::B),
+automatically generate an additional method definition with arguments (b::B, a::A).
+"""
+macro commutative(expr)
+  # TODO update to reflect changes in @commutativef for where keyword
+  # If expr is a regular or generic function definition
+  if (expr.head == :function) || (expr.head == :(=))
+    if (expr.args[1].head != :call) || (length(expr.args[1].args) != 3)
+      error("@commutative operates on a function with exactly two arguments")
+    end
+
+    # Create a new function definition whose arguments are swapped
+    expr_commuted = deepcopy(expr)
+    expr_commuted.args[1].args[2] = expr.args[1].args[3]
+    expr_commuted.args[1].args[3] = expr.args[1].args[2]
+
+    # Define regular and commuted methods
+    return :(begin
+              $(esc(expr))
+              $(esc(expr_commuted))
+            end)
+  else
+    error("@commutative only applies to function and method definitions.")
+  end
+end
+
+"""
+  @commutativef(expr)
+
+For an `expression` that defines a function or method with arguments (f, a::A, b::B),
+automatically generate an additional method definition with arguments (f, b::B, a::A).
+"""
+macro commutativef(expr)
+  # expr must be a regular or generic function/method definition
+  if (expr.head != :function) && (expr.head != :(=))
+    error("@commutativef only applies to function and method definitions.")
+  end
+
+  # Create a new function definition whose arguments are swapped
+  if expr.args[1].head == :where
+    # Usage of the parametric `where` introduces an extra layer of expression nesting
+    if (expr.args[1].args[1].head != :call) || (length(expr.args[1].args[1].args) != 4)
+      error("@commutativef operates on a function with exactly three arguments")
+    end
+    expr_commuted = deepcopy(expr)
+    expr_commuted.args[1].args[1].args[3] = expr.args[1].args[1].args[4]
+    expr_commuted.args[1].args[1].args[4] = expr.args[1].args[1].args[3]
+  else
+    if (expr.args[1].head != :call) || (length(expr.args[1].args) != 4)
+      error("@commutativef operates on a function with exactly three arguments")
+    end
+    expr_commuted = deepcopy(expr)
+    expr_commuted.args[1].args[3] = expr.args[1].args[4]
+    expr_commuted.args[1].args[4] = expr.args[1].args[3]
+  end
+
+  # Define the regular and commuted methods
+  return :(begin
+            $(esc(expr))
+            $(esc(expr_commuted))
+          end)
+end
