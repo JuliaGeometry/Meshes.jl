@@ -29,9 +29,9 @@ function sample(rng::AbstractRNG, d::Domain, method::HomogeneousSampling)
   (first(sample(rng, e, h)) for e in sample(rng, d, w))
 end
 
-function sample(rng::AbstractRNG, geom::Geometry{Dim,T}, method::HomogeneousSampling) where {Dim,T}
+function sample(rng::AbstractRNG, geom::Geometry, method::HomogeneousSampling)
   if isparametrized(geom)
-    randpoint() = geom(rand(rng, T, paramdim(geom))...)
+    randpoint() = geom(rand(rng, coordtype(geom), paramdim(geom))...)
     (randpoint() for _ in 1:(method.size))
   else
     sample(rng, discretize(geom), method)
@@ -42,31 +42,31 @@ end
 # SPECIAL CASES
 # --------------
 
-function sample(rng::AbstractRNG, triangle::Triangle{Dim,T}, method::HomogeneousSampling) where {Dim,T}
+function sample(rng::AbstractRNG, triangle::Triangle, method::HomogeneousSampling)
   function randpoint()
     # sample barycentric coordinates
-    u₁, u₂ = rand(rng, T, 2)
+    u₁, u₂ = rand(rng, coordtype(triangle), 2)
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
     triangle(λ₁, λ₂)
   end
   (randpoint() for _ in 1:(method.size))
 end
 
-function sample(rng::AbstractRNG, tetrahedron::Tetrahedron{Dim,T}, method::HomogeneousSampling) where {Dim,T}
+function sample(rng::AbstractRNG, tetrahedron::Tetrahedron, method::HomogeneousSampling)
   @error "not implemented"
 end
 
-function sample(rng::AbstractRNG, ball::Ball{2,T}, method::HomogeneousSampling) where {T}
+function sample(rng::AbstractRNG, ball::Ball{2}, method::HomogeneousSampling)
   function randpoint()
-    u₁, u₂ = rand(rng, T, 2)
+    u₁, u₂ = rand(rng, coordtype(ball), 2)
     ball(√u₁, u₂)
   end
   (randpoint() for _ in 1:(method.size))
 end
 
-function sample(rng::AbstractRNG, ball::Ball{3,T}, method::HomogeneousSampling) where {T}
+function sample(rng::AbstractRNG, ball::Ball{3}, method::HomogeneousSampling)
   function randpoint()
-    u₁, u₂, u₃ = rand(rng, T, 3)
+    u₁, u₂, u₃ = rand(rng, coordtype(ball), 3)
     ball(∛u₁, acos(1 - 2u₂) / T(π), u₃)
   end
   (randpoint() for _ in 1:(method.size))

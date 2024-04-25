@@ -12,11 +12,9 @@ include("predicates/issimple.jl")
 include("predicates/hasholes.jl")
 
 # binary predicates
-# TODO: use coordtype
-# include("predicates/in.jl")
+include("predicates/in.jl")
 include("predicates/issubset.jl")
-# TODO: use coordtype
-# include("predicates/intersects.jl")
+include("predicates/intersects.jl")
 
 # other predicates
 include("predicates/iscollinear.jl")

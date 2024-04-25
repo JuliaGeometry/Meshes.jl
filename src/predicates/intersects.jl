@@ -65,7 +65,9 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
-function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
+function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
+  𝒬 = coordtype(g₁)
+
   # must have intersection of bounding boxes
   intersects(boundingbox(g₁), boundingbox(g₂)) || return false
 
@@ -80,13 +82,13 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
 
   # initial direction
   c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{Dim,T}) : c₂ - c₁
+  d = c₁ ≈ c₂ ? rand(Vec{Dim,𝒬}) : c₂ - c₁
 
   # first point in Minkowski difference
   P = minkowskipoint(g₁, g₂, d)
 
   # origin of coordinate system
-  O = minkowskiorigin(Dim, T)
+  O = minkowskiorigin(Dim, 𝒬)
 
   # initialize simplex vertices
   points = [P]
@@ -95,7 +97,7 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   d = O - P
   while true
     P = minkowskipoint(g₁, g₂, d)
-    if (P - O) ⋅ d < zero(T)
+    if (P - O) ⋅ d < zero(𝒬)
       return false
     end
     push!(points, P)
@@ -121,7 +123,8 @@ See also [`intersects`](@ref).
 """
 function gjk! end
 
-function gjk!(O::Point{2,T}, points) where {T}
+function gjk!(O::Point{2}, points)
+  𝒬 = coordtype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -136,10 +139,10 @@ function gjk!(O::Point{2,T}, points) where {T}
     AO = O - A
     ABᵀ = -perpendicular(AB, AC)
     ACᵀ = -perpendicular(AC, AB)
-    if ABᵀ ⋅ AO > zero(T)
+    if ABᵀ ⋅ AO > zero(𝒬)
       popat!(points, 1) # pop C
       d = ABᵀ
-    elseif ACᵀ ⋅ AO > zero(T)
+    elseif ACᵀ ⋅ AO > zero(𝒬)
       popat!(points, 2) # pop B
       d = ACᵀ
     else
@@ -149,7 +152,8 @@ function gjk!(O::Point{2,T}, points) where {T}
   d
 end
 
-function gjk!(O::Point{3,T}, points) where {T}
+function gjk!(O::Point{3}, points)
+  𝒬 = coordtype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -188,13 +192,13 @@ function gjk!(O::Point{3,T}, points) where {T}
     ABCᵀ = AB × AC
     ADBᵀ = AD × AB
     ACDᵀ = AC × AD
-    if ABCᵀ ⋅ AO > zero(T)
+    if ABCᵀ ⋅ AO > zero(𝒬)
       popat!(points, 1) # pop D
       d = ABCᵀ
-    elseif ADBᵀ ⋅ AO > zero(T)
+    elseif ADBᵀ ⋅ AO > zero(𝒬)
       popat!(points, 2) # pop C
       d = ADBᵀ
-    elseif ACDᵀ ⋅ AO > zero(T)
+    elseif ACDᵀ ⋅ AO > zero(𝒬)
       popat!(points, 3) # pop B
       d = ACDᵀ
     else
@@ -251,9 +255,9 @@ minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
 # find a vector perpendicular to `v` using vector `d` as some direction hint
 # expect that `perpendicular(v, d) ⋅ d ≥ 0` or, in other words,
 # that the angle between the result vector and `d` is less or equal than 90º
-function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where {T}
-  a = Vec(v[1], v[2], zero(T))
-  b = Vec(d[1], d[2], zero(T))
+function perpendicular(v::Vec{2,L}, d::Vec{2,L}) where {L}
+  a = Vec(v[1], v[2], zero(L))
+  b = Vec(d[1], d[2], zero(L))
   r = a × b × a
   Vec(r[1], r[2])
 end

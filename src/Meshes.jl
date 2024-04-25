@@ -86,24 +86,19 @@ include("predicates.jl")
 include("winding.jl")
 include("sideof.jl")
 include("orientation.jl")
-# TODO: use coordtype
-# include("measures.jl")
+include("measures.jl")
 include("boundary.jl")
 include("merging.jl")
 include("clipping.jl")
 include("clamping.jl")
 include("intersections.jl")
 include("complement.jl")
-# TODO: use coordtype
-# include("simplification.jl")
-# TODO: use coordtype
-# include("boundingboxes.jl")
+include("simplification.jl")
+include("boundingboxes.jl")
 include("hulls.jl")
-# TODO: use coordtype
-# include("sampling.jl")
+include("sampling.jl")
 include("pointification.jl")
-# TODO: use coordtype
-# include("discretization.jl")
+include("discretization.jl")
 include("refinement.jl")
 include("coarsening.jl")
 

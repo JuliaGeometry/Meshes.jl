@@ -99,7 +99,7 @@ repair8(v) = repair8(collect(v))
 
 repair8(v::AbstractVector) = repair8(CircularVector(v))
 
-function repair8(v::CircularVector{<:Point{Dim}}) where {Dim}
+function repair8(v::CircularVector{<:Point})
   n = length(v)
   keep = Int[]
   for i in 1:n
@@ -168,4 +168,7 @@ apply(::Repair{10}, poly::Ngon) = poly, nothing
 
 revert(::Repair{10}, poly::Ngon, cache) = poly
 
-_stretch10(g::Geometry{Dim,T}) where {Dim,T} = Stretch(ntuple(i -> T(1) + 10atol(T), Dim))
+function _stretch10(g::Geometry{Dim}) where {Dim}
+  𝒬 = coordtype(g)
+  Stretch(ntuple(i -> 𝒬(1) + 10atol(𝒬), Dim))
+end

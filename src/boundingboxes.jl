@@ -29,9 +29,10 @@ boundingbox(p::Point) = Box(p, p)
 
 boundingbox(b::Box) = b
 
-function boundingbox(r::Ray{Dim,T}) where {Dim,T}
-  lower(p, v) = v < 0 ? typemin(T) : p
-  upper(p, v) = v > 0 ? typemax(T) : p
+function boundingbox(r::Ray)
+  𝒬 = coordtype(r)
+  lower(p, v) = v < 0 ? typemin(𝒬) : p
+  upper(p, v) = v > 0 ? typemax(𝒬) : p
   p = r(0)
   v = r(1) - r(0)
   l = lower.(coordinates(p), v)
@@ -89,10 +90,10 @@ _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
 function _pboxes(points)
   p = first(points)
-  T = coordtype(p)
+  𝒬 = coordtype(p)
   Dim = embeddim(p)
-  xmin = MVector(ntuple(i -> typemax(T), Dim))
-  xmax = MVector(ntuple(i -> typemin(T), Dim))
+  xmin = MVector(ntuple(i -> typemax(𝒬), Dim))
+  xmax = MVector(ntuple(i -> typemin(𝒬), Dim))
   for p in points
     x = coordinates(p)
     @. xmin = min(x, xmin)

@@ -85,22 +85,21 @@ Return the centroid of the `ind`-th element in the `domain`.
 """
 centroid(d::Domain, ind::Int) = centroid(d[ind])
 
-# TODO
-# """
-#     centroid(domain)
+"""
+    centroid(domain)
 
-# Return the centroid of the `domain`, i.e. the centroid of all
-# its element's centroids.
-# """
-# function centroid(d::Domain{Dim,T}) where {Dim,T}
-#   coords(i) = coordinates(centroid(d, i))
-#   volume(i) = measure(element(d, i))
-#   n = nelements(d)
-#   x = coords.(1:n)
-#   w = volume.(1:n)
-#   all(iszero, w) && (w = ones(T, n))
-#   Point(sum(w .* x) / sum(w))
-# end
+Return the centroid of the `domain`, i.e. the centroid of all
+its element's centroids.
+"""
+function centroid(d::Domain)
+  coords(i) = coordinates(centroid(d, i))
+  volume(i) = measure(element(d, i))
+  n = nelements(d)
+  x = coords.(1:n)
+  w = volume.(1:n)
+  all(iszero, w) && (w = ones(eltype(w), n))
+  Point(sum(w .* x) / sum(w))
+end
 
 """
     extrema(domain)

@@ -17,13 +17,13 @@ Return the measure or "volume" of the `object`.
 """
 function measure end
 
-measure(::Point{Dim,T}) where {Dim,T} = zero(T)
+measure(p::Point) = zero(coordtype(p))
 
-measure(::Ray{Dim,T}) where {Dim,T} = typemax(T)
+measure(r::Ray) = typemax(coordtype(r))
 
-measure(::Line{Dim,T}) where {Dim,T} = typemax(T)
+measure(l::Line) = typemax(coordtype(l))
 
-measure(::Plane{T}) where {T} = typemax(T)
+measure(p::Plane) = typemax(coordtype(p))
 
 measure(b::Box) = prod(maximum(b) - minimum(b))
 
@@ -39,32 +39,42 @@ function measure(s::Sphere{Dim}) where {Dim}
   2π^(n / 2) * r^(n - 1) / gamma(n / 2)
 end
 
-measure(d::Disk{T}) where {T} = T(π) * radius(d)^2
+function measure(d::Disk)
+  T = numtype(coordtype(d))
+  T(π) * radius(d)^2
+end
 
-measure(c::Circle{T}) where {T} = 2 * T(π) * radius(c)
+function measure(c::Circle)
+  T = numtype(coordtype(c))
+  2 * T(π) * radius(c)
+end
 
-function measure(c::Cylinder{T}) where {T}
+function measure(c::Cylinder)
+  T = numtype(coordtype(c))
   t = top(c)
   b = bottom(c)
   r = radius(c)
   norm(t(0, 0) - b(0, 0)) * T(π) * r^2
 end
 
-function measure(c::CylinderSurface{T}) where {T}
+function measure(c::CylinderSurface)
+  T = numtype(coordtype(c))
   t = top(c)
   b = bottom(c)
   r = radius(c)
   (norm(t(0, 0) - b(0, 0)) + r) * 2 * r * T(π)
 end
 
-function measure(p::ParaboloidSurface{T}) where {T}
+function measure(p::ParaboloidSurface)
+  T = numtype(coordtype(c))
   r = radius(p)
   f = focallength(p)
   T(8π / 3) * f^2 * ((T(1) + r^2 / (2f)^2)^(3 / 2) - T(1))
 end
 
 # https://en.wikipedia.org/wiki/Torus
-function measure(t::Torus{T}) where {T}
+function measure(t::Torus)
+  T = numtype(coordtype(c))
   R, r = radii(t)
   4T(π)^2 * R * r
 end
@@ -89,7 +99,7 @@ measure(g::Geometry) = sum(measure, simplexify(g))
 
 measure(m::Multi) = sum(measure, parent(m))
 
-measure(::PointSet{Dim,T}) where {Dim,T} = zero(T)
+measure(d::PointSet) = zero(coordtype(d))
 
 measure(d::Domain) = sum(measure, d)
 
@@ -151,10 +161,10 @@ the [`measure`](@ref) of its [`boundary`](@ref).
 """
 perimeter(g) = measure(boundary(g))
 
-perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
+perimeter(l::Line) = zero(coordtype(l))
 
-perimeter(::Plane{T}) where {T} = zero(T)
+perimeter(p::Plane) = zero(coordtype(p))
 
-perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
+perimeter(s::Sphere) = zero(coordtype(s))
 
-perimeter(::Ellipsoid{T}) where {T} = zero(T)
+perimeter(e::Ellipsoid) = zero(coordtype(e))

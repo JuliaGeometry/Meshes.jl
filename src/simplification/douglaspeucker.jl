@@ -39,11 +39,11 @@ function simplify(chain::Chain, method::DouglasPeucker)
 end
 
 # simplification by means of binary search
-function βsimplify(v::AbstractVector{Point{Dim,T}}, min, max, maxiter) where {Dim,T}
+function βsimplify(v::AbstractVector{P}, min, max, maxiter) where {P<:Point}
   i = 0
   u = v
   n = length(u)
-  a = zero(T)
+  a = zero(coordtype(P))
   b = initeps(u)
   while !(min ≤ n ≤ max) && i < maxiter
     # midpoint candidate
@@ -64,9 +64,9 @@ function βsimplify(v::AbstractVector{Point{Dim,T}}, min, max, maxiter) where {D
 end
 
 # initial ϵ guess for a given chain
-function initeps(v::AbstractVector{Point{Dim,T}}) where {Dim,T}
+function initeps(v::AbstractVector{P}) where {P<:Point}
   n = length(v)
-  ϵ = typemax(T)
+  ϵ = typemax(coordtype(P))
   l = Line(first(v), last(v))
   d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
   ϵ = quantile(d, 0.25)
@@ -74,11 +74,11 @@ function initeps(v::AbstractVector{Point{Dim,T}}) where {Dim,T}
 end
 
 # simplify chain assuming it is open
-function ϵsimplify(v::AbstractVector{Point{Dim,T}}, ϵ) where {Dim,T}
+function ϵsimplify(v::AbstractVector{P}, ϵ) where {P<:Point}
   # find vertex with maximum distance
   # to reference line
   l = Line(first(v), last(v))
-  imax, dmax = 0, zero(T)
+  imax, dmax = 0, zero(coordtype(P))
   for i in 2:(length(v) - 1)
     d = evaluate(Euclidean(), v[i], l)
     if d > dmax
