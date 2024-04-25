@@ -13,9 +13,9 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
 @polytope Segment 1 2
 
-nvertices(::Type{<:Segment}) = 2
-
 coordtype(::Type{<:Segment{Dim,P}}) where {Dim,P} = coordtype(P)
+
+nvertices(::Type{<:Segment}) = 2
 
 Base.minimum(s::Segment) = s.vertices[1]
 

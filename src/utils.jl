@@ -156,3 +156,13 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   end
   Expr(:tuple, exprs...)
 end
+
+"""
+    addunit(x, u)
+
+Adds the unit only if the argument is not a quantity, otherwise an error is thrown.
+"""
+addunit(x::Number, u) = x * u
+addunit(x::AbstractArray{<:Number}, u) = x * u
+addunit(::Quantity, _) = throw(ArgumentError("invalid units, please check the documentation"))
+addunit(::AbstractArray{<:Quantity}, _) = throw(ArgumentError("invalid units, please check the documentation"))

@@ -36,12 +36,8 @@ import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
 import TransformsBase: parameters
 
+# helper type alias
 const Len{T} = Quantity{T,u"𝐋"}
-
-addunit(x::Number, u) = x * u
-addunit(x::AbstractArray{<:Number}, u) = x * u
-addunit(x::Quantity, u) = throw(ArgumentError("invalid units, please check the documentation"))
-addunit(x::AbstractArray{<:Quantity}, u) = throw(ArgumentError("invalid units, please check the documentation"))
 
 # IO utils
 include("ioutils.jl")
@@ -69,25 +65,25 @@ include("utils.jl")
 # domain views
 include("viewing.jl")
 
-# # domain partitions
+# domain partitions
 include("partitions.jl")
 include("partitioning.jl")
 
-# # domain sorting
+# domain sorting
 include("sorting.jl")
 
-# # domain traversal
+# domain traversal
 include("traversing.jl")
 
-# # neighbor search
+# neighbor search
 include("neighborhoods.jl")
 # TODO: find an alternative to get the coordtype
 # include("neighborsearch.jl")
 
-# # predicates
+# predicates
 include("predicates.jl")
 
-# # operations
+# operations
 include("winding.jl")
 include("sideof.jl")
 include("orientation.jl")
@@ -113,16 +109,16 @@ include("pointification.jl")
 include("refinement.jl")
 include("coarsening.jl")
 
-# # transforms
+# transforms
 include("transforms.jl")
 
-# # miscellaneous
+# miscellaneous
 include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
 include("projecting.jl")
 
-# # visualization
+# visualization
 include("viz.jl")
 
 export

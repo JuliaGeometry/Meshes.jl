@@ -48,11 +48,11 @@ const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
 
+coordtype(::Type{<:Ngon{N,Dim,P}}) where {N,Dim,P} = coordtype(P)
+
 Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
-
-coordtype(::Type{<:Ngon{N,Dim,P}}) where {N,Dim,P} = coordtype(P)
 
 function Base.isapprox(p₁::Ngon, p₂::Ngon; kwargs...)
   nvertices(p₁) ≠ nvertices(p₂) && return false

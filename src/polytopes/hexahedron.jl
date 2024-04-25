@@ -9,9 +9,9 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
 @polytope Hexahedron 3 8
 
-nvertices(::Type{<:Hexahedron}) = 8
-
 coordtype(::Type{<:Hexahedron{Dim,P}}) where {Dim,P} = coordtype(P)
+
+nvertices(::Type{<:Hexahedron}) = 8
 
 Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(h₁.vertices, h₂.vertices))

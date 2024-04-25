@@ -67,6 +67,8 @@ PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
 PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
 
+coordtype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = coordtype(R)
+
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 
 function Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...)
@@ -77,8 +79,6 @@ end
 vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
 
 nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
-
-coordtype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = coordtype(R)
 
 centroid(p::PolyArea) = centroid(first(p.rings))
 
