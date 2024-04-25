@@ -24,11 +24,11 @@ Finally, construct a right vertical circular cylinder with given `radius`.
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct Cylinder{P<:Plane,L<:Len} <: Primitive{3}
+struct Cylinder{P<:Plane,ℒ<:Len} <: Primitive{3}
   bot::P
   top::P
-  radius::L
-  Cylinder(bot::P, top::P, radius::L) where {P<:Plane,L<:Len} = new{P,float(L)}(bot, top, radius)
+  radius::ℒ
+  Cylinder(bot::P, top::P, radius::ℒ) where {P<:Plane,ℒ<:Len} = new{P,float(ℒ)}(bot, top, radius)
 end
 
 Cylinder(bot::P, top::P, radius) where {P<:Plane} = Cylinder(bot, top, addunit(radius, u"m"))
@@ -50,7 +50,7 @@ Cylinder(radius) = Cylinder(Point(0, 0, 0), Point(0, 0, 1), radius)
 
 paramdim(::Type{<:Cylinder}) = 3
 
-coordtype(::Type{<:Cylinder{P}}) where {P} = coordtype(P)
+lentype(::Type{<:Cylinder{P}}) where {P} = lentype(P)
 
 radius(c::Cylinder) = c.radius
 
@@ -68,7 +68,9 @@ hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 
-function (c::Cylinder{P,L})(ρ, φ, z) where {P,L}
+function (c::Cylinder)(ρ, φ, z)
+  ℒ = lentype(c)
+  T = numtype(ℒ)
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
@@ -76,20 +78,20 @@ function (c::Cylinder{P,L})(ρ, φ, z) where {P,L}
   b = bottom(c)
   r = radius(c)
   a = axis(c)
-  d = a(L(1)) - a(L(0))
+  d = a(T(1)) - a(T(0))
   h = norm(d)
   o = b(0, 0)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(Vec{3,L}(0, 0, 1), d)
+  Q = rotation_between(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
 
   # project a parametric segment between the top and bottom planes
-  lsφ, lcφ = L(ρ) * r .* sincospi(2 * L(φ))
-  p₁ = o + Q * Vec(lcφ, lsφ, L(0))
+  lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
+  p₁ = o + Q * Vec(lcφ, lsφ, T(0))
   p₂ = o + Q * Vec(lcφ, lsφ, h)
   l = Line(p₁, p₂)
   s = Segment(l ∩ b, l ∩ t)
-  s(L(z))
+  s(T(z))
 end
 
 # TODO

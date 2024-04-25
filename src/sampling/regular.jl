@@ -24,7 +24,7 @@ end
 RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 
 function sample(::AbstractRNG, geom::Geometry, method::RegularSampling)
-  T = numtype(coordtype(geom))
+  T = numtype(lentype(geom))
   D = paramdim(geom)
   sz = fitdims(method.sizes, D)
   δₛ = firstoffset(geom)

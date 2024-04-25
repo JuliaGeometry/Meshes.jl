@@ -67,7 +67,7 @@ PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
 PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
 
-coordtype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = coordtype(R)
+lentype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = lentype(R)
 
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 

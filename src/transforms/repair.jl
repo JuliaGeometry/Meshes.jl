@@ -105,7 +105,7 @@ function repair8(v::CircularVector{<:Point})
   for i in 1:n
     t = Triangle(v[i - 1], v[i], v[i + 1])
     a = area(t)
-    a > atol(a)^2 && push!(keep, i)
+    a > atol(a) && push!(keep, i)
   end
   isempty(keep) ? v[begin] : v[keep]
 end
@@ -169,6 +169,6 @@ apply(::Repair{10}, poly::Ngon) = poly, nothing
 revert(::Repair{10}, poly::Ngon, cache) = poly
 
 function _stretch10(g::Geometry{Dim}) where {Dim}
-  𝒬 = coordtype(g)
-  Stretch(ntuple(i -> 𝒬(1) + 10atol(𝒬), Dim))
+  ℒ = lentype(g)
+  Stretch(ntuple(i -> ℒ(1) + 10atol(ℒ), Dim))
 end

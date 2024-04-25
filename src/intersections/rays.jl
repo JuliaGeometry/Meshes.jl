@@ -104,9 +104,9 @@ function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
   lo, up = coordinates.(extrema(box))
   orig = coordinates(ray(0))
 
-  𝒬 = eltype(orig)
-  tmin = zero(𝒬)
-  tmax = typemax(𝒬)
+  ℒ = eltype(orig)
+  tmin = zero(ℒ)
+  tmax = typemax(ℒ)
 
   # check for intersection with slabs along with each axis
   for i in 1:Dim
@@ -114,7 +114,7 @@ function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
     imax = (up[i] - orig[i]) * invdir[i]
 
     # swap variables if necessary
-    invdir[i] < zero(𝒬) && ((imin, imax) = (imax, imin))
+    invdir[i] < zero(ℒ) && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue

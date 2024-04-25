@@ -66,7 +66,7 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
 function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
-  𝒬 = coordtype(g₁)
+  ℒ = lentype(g₁)
 
   # must have intersection of bounding boxes
   intersects(boundingbox(g₁), boundingbox(g₂)) || return false
@@ -82,13 +82,13 @@ function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
 
   # initial direction
   c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{Dim,𝒬}) : c₂ - c₁
+  d = c₁ ≈ c₂ ? rand(Vec{Dim,ℒ}) : c₂ - c₁
 
   # first point in Minkowski difference
   P = minkowskipoint(g₁, g₂, d)
 
   # origin of coordinate system
-  O = minkowskiorigin(Dim, 𝒬)
+  O = minkowskiorigin(Dim, ℒ)
 
   # initialize simplex vertices
   points = [P]
@@ -97,7 +97,7 @@ function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
   d = O - P
   while true
     P = minkowskipoint(g₁, g₂, d)
-    if (P - O) ⋅ d < zero(𝒬)
+    if (P - O) ⋅ d < zero(ℒ)
       return false
     end
     push!(points, P)
@@ -124,7 +124,7 @@ See also [`intersects`](@ref).
 function gjk! end
 
 function gjk!(O::Point{2}, points)
-  𝒬 = coordtype(O)
+  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -139,10 +139,10 @@ function gjk!(O::Point{2}, points)
     AO = O - A
     ABᵀ = -perpendicular(AB, AC)
     ACᵀ = -perpendicular(AC, AB)
-    if ABᵀ ⋅ AO > zero(𝒬)
+    if ABᵀ ⋅ AO > zero(ℒ)
       popat!(points, 1) # pop C
       d = ABᵀ
-    elseif ACᵀ ⋅ AO > zero(𝒬)
+    elseif ACᵀ ⋅ AO > zero(ℒ)
       popat!(points, 2) # pop B
       d = ACᵀ
     else
@@ -153,7 +153,7 @@ function gjk!(O::Point{2}, points)
 end
 
 function gjk!(O::Point{3}, points)
-  𝒬 = coordtype(O)
+  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -192,13 +192,13 @@ function gjk!(O::Point{3}, points)
     ABCᵀ = AB × AC
     ADBᵀ = AD × AB
     ACDᵀ = AC × AD
-    if ABCᵀ ⋅ AO > zero(𝒬)
+    if ABCᵀ ⋅ AO > zero(ℒ)
       popat!(points, 1) # pop D
       d = ABCᵀ
-    elseif ADBᵀ ⋅ AO > zero(𝒬)
+    elseif ADBᵀ ⋅ AO > zero(ℒ)
       popat!(points, 2) # pop C
       d = ADBᵀ
-    elseif ACDᵀ ⋅ AO > zero(𝒬)
+    elseif ACDᵀ ⋅ AO > zero(ℒ)
       popat!(points, 3) # pop B
       d = ACDᵀ
     else
@@ -255,9 +255,9 @@ minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
 # find a vector perpendicular to `v` using vector `d` as some direction hint
 # expect that `perpendicular(v, d) ⋅ d ≥ 0` or, in other words,
 # that the angle between the result vector and `d` is less or equal than 90º
-function perpendicular(v::Vec{2,L}, d::Vec{2,L}) where {L}
-  a = Vec(v[1], v[2], zero(L))
-  b = Vec(d[1], d[2], zero(L))
+function perpendicular(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
+  a = Vec(v[1], v[2], zero(ℒ))
+  b = Vec(d[1], d[2], zero(ℒ))
   r = a × b × a
   Vec(r[1], r[2])
 end

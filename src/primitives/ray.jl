@@ -18,7 +18,7 @@ Ray(p::Tuple, v::Tuple) = Ray(Point(p), Vec(v))
 
 paramdim(::Type{<:Ray}) = 1
 
-coordtype(::Type{<:Ray{Dim,P}}) where {Dim,P} = coordtype(P)
+lentype(::Type{<:Ray{Dim,P}}) where {Dim,P} = lentype(P)
 
 ==(r₁::Ray, r₂::Ray) = (r₁.p ≈ r₂.p) && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁
 

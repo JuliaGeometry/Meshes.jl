@@ -22,7 +22,7 @@ Bridge() = Bridge(0)
 parameters(t::Bridge) = (; δ=t.δ)
 
 function apply(transform::Bridge, poly::PolyArea)
-  T = numtype(coordtype(poly))
+  T = numtype(lentype(poly))
 
   # sort rings lexicographically
   rpoly, rinds = apply(Repair{9}(), poly)
@@ -47,7 +47,7 @@ function bridge(rings, rinds, δ)
   vinds = rinds
 
   # retrieve coordinate type
-  T = coordtype(first(rings))
+  ℒ = lentype(first(rings))
 
   # initialize outer boundary
   outer = verts[1]
@@ -62,7 +62,7 @@ function bridge(rings, rinds, δ)
     # connecting outer and inner rings
     omax = 0
     imax = 0
-    dmin = typemax(T)
+    dmin = typemax(ℒ)
     for jₒ in 1:length(outer), jᵢ in 1:length(inner)
       d = sum(abs, outer[jₒ] - inner[jᵢ])
       if d < dmin

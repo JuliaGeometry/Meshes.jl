@@ -13,7 +13,7 @@ See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
 @polytope Segment 1 2
 
-coordtype(::Type{<:Segment{Dim,P}}) where {Dim,P} = coordtype(P)
+lentype(::Type{<:Segment{Dim,P}}) where {Dim,P} = lentype(P)
 
 nvertices(::Type{<:Segment}) = 2
 

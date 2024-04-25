@@ -31,8 +31,8 @@ Axis-aligned 3D ellipsoid with radii `(3.0, 2.0, 1.0)`:
 julia> mahalanobis = MetricBall((3.0, 2.0, 1.0))
 ```
 """
-struct MetricBall{L,R,M} <: Neighborhood
-  radii::L
+struct MetricBall{ℒ,R,M} <: Neighborhood
+  radii::ℒ
   rotation::R
 
   # state fields

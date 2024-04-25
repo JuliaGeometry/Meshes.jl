@@ -17,5 +17,6 @@ isapprox(a::T, b::T, atol=atol(T))
 atol(x) = atol(typeof(x))
 atol(::Type{Float64}) = 1e-10
 atol(::Type{Float32}) = 1.0f-5
-# TODO: handle unit exponent
-atol(::Type{Q}) where {Q<:AbstractQuantity} = atol(numtype(Q)) * unit(Q)
+atol(ℒ::Type{<:Len}) = atol(numtype(ℒ)) * unit(ℒ)
+atol(𝒜::Type{<:Area}) = atol(numtype(𝒜))^2 * unit(𝒜)
+atol(𝒱::Type{<:Vol}) = atol(numtype(𝒱))^3 * unit(𝒱)

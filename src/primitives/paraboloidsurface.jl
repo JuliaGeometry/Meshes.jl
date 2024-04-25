@@ -32,12 +32,12 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{P<:Point{3},L<:Len} <: Primitive{3}
+struct ParaboloidSurface{P<:Point{3},ℒ<:Len} <: Primitive{3}
   apex::P
-  radius::L
-  focallength::L
-  ParaboloidSurface(apex::P, radius::L, focallength::L) where {P<:Point{3},L<:Len} =
-    new{P,float(L)}(apex, radius, focallength)
+  radius::ℒ
+  focallength::ℒ
+  ParaboloidSurface(apex::P, radius::ℒ, focallength::ℒ) where {P<:Point{3},ℒ<:Len} =
+    new{P,float(ℒ)}(apex, radius, focallength)
 end
 
 ParaboloidSurface(apex::Point{3}, radius::Len, focallength::Len) =
@@ -48,11 +48,11 @@ ParaboloidSurface(apex::Point{3}, radius, focallength) =
 
 ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
-ParaboloidSurface(apex::Point{3}, radius) = ParaboloidSurface(apex, radius, 1.0)
+ParaboloidSurface(apex::Point{3}, radius) = ParaboloidSurface(apex, radius, oneunit(radius))
 
 ParaboloidSurface(apex::Tuple, radius) = ParaboloidSurface(Point(apex), radius)
 
-ParaboloidSurface(apex::Point{3}) = ParaboloidSurface(apex, 1.0)
+ParaboloidSurface(apex::Point{3}) = ParaboloidSurface(apex, 1.0u"m")
 
 ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 
@@ -60,7 +60,7 @@ ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0))
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
 
-coordtype(::Type{<:ParaboloidSurface{P}}) where {P} = coordtype(P)
+lentype(::Type{<:ParaboloidSurface{P}}) where {P} = lentype(P)
 
 """
     focallength(p::ParaboloidSurface)
@@ -89,22 +89,23 @@ apex(p::ParaboloidSurface) = p.apex
 Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface{P,L}) where {P,L} = Line(p.apex, p.apex + Vec(L(0), L(0), p.focallength))
+axis(p::ParaboloidSurface{P,ℒ}) where {P,ℒ} = Line(p.apex, p.apex + Vec(ℒ(0), ℒ(0), p.focallength))
 
-Base.isapprox(p₁::ParaboloidSurface{P,L}, p₂::ParaboloidSurface{P,L}) where {P,L} =
+Base.isapprox(p₁::ParaboloidSurface{P,ℒ}, p₂::ParaboloidSurface{P,ℒ}) where {P,ℒ} =
   p₁.apex ≈ p₂.apex &&
-  isapprox(p₁.focallength, p₂.focallength, atol=atol(L)) &&
-  isapprox(p₁.radius, p₂.radius, atol=atol(L))
+  isapprox(p₁.focallength, p₂.focallength, atol=atol(ℒ)) &&
+  isapprox(p₁.radius, p₂.radius, atol=atol(ℒ))
 
-function (p::ParaboloidSurface{P,L})(ρ, θ) where {P,L}
+function (p::ParaboloidSurface)(ρ, θ)
+  T = numtype(lentype(p))
   if (ρ < 0 || ρ > 1)
     throw(DomainError((ρ, θ), "p(ρ, θ) is not defined for ρ outside [0, 1]."))
   end
   c = p.apex
   r = p.radius
   f = p.focallength
-  l = L(ρ) * r
-  sθ, cθ = sincospi(2 * L(θ))
+  l = T(ρ) * r
+  sθ, cθ = sincospi(2 * T(θ))
   x = l * cθ
   y = l * sθ
   z = (x^2 + y^2) / 4f

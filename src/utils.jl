@@ -49,11 +49,11 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
-function householderbasis(n::Vec{3,L}) where {L}
+function householderbasis(n::Vec{3,ℒ}) where {ℒ}
   n̂ = norm(n)
   h = n .+ n̂
   i = argmax(h)
-  h = Vec(ntuple(j -> j == i ? h[i] : zero(L), 3))
+  h = Vec(ntuple(j -> j == i ? h[i] : zero(ℒ), 3))
   H = I - 2h * transpose(h) / (transpose(h) * h)
   u, v = [H[:, j] for j in 1:3 if j != i]
   i == 2 && ((u, v) = (v, u))
@@ -72,12 +72,12 @@ function svdbasis(p::AbstractVector{<:Point{3}})
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
-  𝒬 = eltype(X)
-  U = svd(ustrip.(Z)).U * unit(𝒬)
+  ℒ = eltype(X)
+  U = svd(ustrip.(Z)).U * unit(ℒ)
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
-  n = Vec(zero(𝒬), zero(𝒬), oneunit(𝒬))
-  (u × v) ⋅ n < zero(𝒬) ? (v, u) : (u, v)
+  n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
+  (u × v) ⋅ n < zero(ℒ) ? (v, u) : (u, v)
 end
 
 """

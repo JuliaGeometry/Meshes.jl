@@ -45,7 +45,7 @@ Point(coords::Vec) = Point(Cartesian(Tuple(coords)))
 
 paramdim(::Type{<:Point}) = 0
 
-coordtype(::Type{<:Point{Dim,CRS}}) where {Dim,CRS} = CoordRefSystems.lentype(CRS)
+lentype(::Type{<:Point{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 
 center(p::Point) = p
 
@@ -123,7 +123,7 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 ∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
 
 # TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim,T}}) where {Dim,T} = Point(rand(rng, Vec{Dim,T}))
+# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim}}) where {Dim} = Point(rand(rng, typeof(1.0u"m")))
 
 # -----------
 # IO METHODS

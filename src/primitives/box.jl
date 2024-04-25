@@ -31,7 +31,7 @@ Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
-coordtype(::Type{<:Box{Dim,P}}) where {Dim,P} = coordtype(P)
+lentype(::Type{<:Box{Dim,P}}) where {Dim,P} = lentype(P)
 
 Base.minimum(b::Box) = b.min
 
@@ -47,13 +47,12 @@ sides(b::Box) = Tuple(b.max - b.min)
 
 Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
-# TODO
-# function (b::Box{Dim,T})(uv...) where {Dim,T}
-#   if !all(x -> zero(T) ≤ x ≤ one(T), uv)
-#     throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
-#   end
-#   b.min + uv .* (b.max - b.min)
-# end
+function (b::Box)(uv...)
+  if !all(x -> zero(x) ≤ x ≤ one(x), uv)
+    throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
+  end
+  b.min + uv .* (b.max - b.min)
+end
 
 # TODO
 # function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim,T}}) where {Dim,T}

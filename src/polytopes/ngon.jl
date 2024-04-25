@@ -48,7 +48,7 @@ const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
 
-coordtype(::Type{<:Ngon{N,Dim,P}}) where {N,Dim,P} = coordtype(P)
+lentype(::Type{<:Ngon{N,Dim,P}}) where {N,Dim,P} = lentype(P)
 
 Base.unique!(ngon::Ngon) = ngon
 

@@ -15,7 +15,7 @@ end
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
-coordtype(::Type{<:TransformedMesh{Dim,TP,M}}) where {Dim,TP,M} = coordtype(M)
+lentype(::Type{<:TransformedMesh{Dim,TP,M}}) where {Dim,TP,M} = lentype(M)
 
 Base.parent(m::TransformedMesh) = m.mesh
 

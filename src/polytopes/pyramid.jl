@@ -9,7 +9,7 @@ A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
 @polytope Pyramid 3 5
 
-coordtype(::Type{<:Pyramid{Dim,P}}) where {Dim,P} = coordtype(P)
+lentype(::Type{<:Pyramid{Dim,P}}) where {Dim,P} = lentype(P)
 
 nvertices(::Type{<:Pyramid}) = 5
 

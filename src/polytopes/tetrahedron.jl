@@ -9,7 +9,7 @@ A tetrahedron with points `p1`, `p2`, `p3`, `p4`.
 """
 @polytope Tetrahedron 3 4
 
-coordtype(::Type{<:Tetrahedron{Dim,P}}) where {Dim,P} = coordtype(P)
+lentype(::Type{<:Tetrahedron{Dim,P}}) where {Dim,P} = lentype(P)
 
 nvertices(::Type{<:Tetrahedron}) = 4
 

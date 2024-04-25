@@ -19,7 +19,7 @@ Cone(base::Disk, apex::Tuple) = Cone(base, Point(apex))
 
 paramdim(::Type{<:Cone}) = 3
 
-coordtype(::Type{<:Cone{D}}) where {D} = coordtype(D)
+lentype(::Type{<:Cone{D}}) where {D} = lentype(D)
 
 base(c::Cone) = c.base
 

@@ -16,7 +16,7 @@ function Base.in(p::Point{Dim}, s::Segment{Dim}) where {Dim}
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = vertices(s)
   ab, ap = b - a, p - a
-  iscollinear(a, b, p) && zero(coordtype(p)) ≤ ab ⋅ ap ≤ ab ⋅ ab
+  iscollinear(a, b, p) && zero(lentype(p)) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
 
 Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ 0
@@ -30,8 +30,8 @@ end
 Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
 function Base.in(p::Point{3}, pl::Plane)
-  𝒬 = coordtype(p)
-  isapprox(normal(pl) ⋅ (p - pl(0, 0)), zero(𝒬), atol=atol(𝒬))
+  ℒ = lentype(p)
+  isapprox(normal(pl) ⋅ (p - pl(0, 0)), zero(ℒ), atol=atol(ℒ))
 end
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
@@ -40,14 +40,14 @@ function Base.in(p::Point{Dim}, b::Ball{Dim}) where {Dim}
   c = center(b)
   r = radius(b)
   s = norm(p - c)
-  s < r || isapprox(s, r, atol=atol(coordtype(p)))
+  s < r || isapprox(s, r, atol=atol(lentype(p)))
 end
 
 function Base.in(p::Point{Dim}, s::Sphere{Dim}) where {Dim}
   c = center(s)
   r = radius(s)
   s = norm(p - c)
-  isapprox(s, r, atol=atol(coordtype(p)))
+  isapprox(s, r, atol=atol(lentype(p)))
 end
 
 function Base.in(p::Point{3}, d::Disk)
@@ -55,7 +55,7 @@ function Base.in(p::Point{3}, d::Disk)
   c = center(d)
   r = radius(d)
   s = norm(p - c)
-  s < r || isapprox(s, r, atol=atol(coordtype(p)))
+  s < r || isapprox(s, r, atol=atol(lentype(p)))
 end
 
 function Base.in(p::Point{3}, c::Circle)
@@ -63,7 +63,7 @@ function Base.in(p::Point{3}, c::Circle)
   o = center(c)
   r = radius(c)
   s = norm(p - o)
-  isapprox(s, r, atol=atol(coordtype(p)))
+  isapprox(s, r, atol=atol(lentype(p)))
 end
 
 function Base.in(p::Point{3}, c::Cone)
@@ -104,10 +104,10 @@ function Base.in(p::Point{3}, f::Frustum)
 end
 
 function Base.in(p::Point{3}, t::Torus)
-  𝒬 = coordtype(p)
+  ℒ = lentype(p)
   R, r = radii(t)
   c, n = center(t), normal(t)
-  Q = rotation_between(n, Vec(zero(𝒬), zero(𝒬), one(𝒬)))
+  Q = rotation_between(n, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end

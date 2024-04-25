@@ -49,7 +49,7 @@ function discretize(polygon::Polygon, method::BoundaryDiscretizationMethod)
 
   # build bridges in case the polygon has holes,
   # i.e. reduce to a single outer boundary
-  bpoly, dups = apply(Bridge(2atol(coordtype(polygon))), cpoly)
+  bpoly, dups = apply(Bridge(2atol(lentype(polygon))), cpoly)
 
   # discretize using outer boundary
   mesh = discretizewithin(boundary(bpoly), method)

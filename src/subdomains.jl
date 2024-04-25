@@ -23,7 +23,7 @@ SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[
 # DOMAIN INTERFACE
 # -----------------
 
-coordtype(::Type{<:SubDomain{Dim,D}}) where {Dim,D} = coordtype(D)
+lentype(::Type{<:SubDomain{Dim,D}}) where {Dim,D} = lentype(D)
 
 element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 

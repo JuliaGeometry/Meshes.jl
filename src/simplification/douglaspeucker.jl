@@ -43,7 +43,7 @@ function βsimplify(v::AbstractVector{P}, min, max, maxiter) where {P<:Point}
   i = 0
   u = v
   n = length(u)
-  a = zero(coordtype(P))
+  a = zero(lentype(P))
   b = initeps(u)
   while !(min ≤ n ≤ max) && i < maxiter
     # midpoint candidate
@@ -66,7 +66,7 @@ end
 # initial ϵ guess for a given chain
 function initeps(v::AbstractVector{P}) where {P<:Point}
   n = length(v)
-  ϵ = typemax(coordtype(P))
+  ϵ = typemax(lentype(P))
   l = Line(first(v), last(v))
   d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
   ϵ = quantile(d, 0.25)
@@ -78,7 +78,7 @@ function ϵsimplify(v::AbstractVector{P}, ϵ) where {P<:Point}
   # find vertex with maximum distance
   # to reference line
   l = Line(first(v), last(v))
-  imax, dmax = 0, zero(coordtype(P))
+  imax, dmax = 0, zero(lentype(P))
   for i in 2:(length(v) - 1)
     d = evaluate(Euclidean(), v[i], l)
     if d > dmax

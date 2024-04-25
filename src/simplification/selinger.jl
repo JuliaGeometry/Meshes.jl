@@ -19,7 +19,7 @@ struct Selinger{T} <: SimplificationMethod
 end
 
 function simplify(chain::Chain, method::Selinger)
-  𝒬 = coordtype(chain)
+  ℒ = lentype(chain)
 
   # retrieve parameters
   ϵ = method.ϵ
@@ -30,7 +30,7 @@ function simplify(chain::Chain, method::Selinger)
 
   # penalty for each possible segment
   n = length(p)
-  P = Dict{Tuple{Int,Int},𝒬}()
+  P = Dict{Tuple{Int,Int},ℒ}()
   for i in 1:n, o in 1:(n - 2)
     j = i + o
     i₊ = i + 1
@@ -40,7 +40,7 @@ function simplify(chain::Chain, method::Selinger)
     δ = [evaluate(Euclidean(), p[k], l) for k in i₊:j₋]
     if all(<(ϵ), δ)
       dᵢⱼ = norm(p[j] - p[i])
-      σᵢⱼ = o == 1 ? zero(𝒬) : sqrt(sum(abs2, δ) / length(δ))
+      σᵢⱼ = o == 1 ? zero(ℒ) : sqrt(sum(abs2, δ) / length(δ))
       P[(i, jₙ)] = dᵢⱼ * σᵢⱼ
     end
   end

@@ -10,17 +10,17 @@ given `plane` with given `radius`.
 
 See also [`Circle`](@ref).
 """
-struct Disk{P<:Plane,L<:Len} <: Primitive{3}
+struct Disk{P<:Plane,ℒ<:Len} <: Primitive{3}
   plane::P
-  radius::L
-  Disk(plane::P, radius::L) where {P<:Plane,L<:Len} = new{P,typeof(radius)}(plane, fradius)
+  radius::ℒ
+  Disk(plane::P, radius::ℒ) where {P<:Plane,ℒ<:Len} = new{P,typeof(radius)}(plane, fradius)
 end
 
 Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))
 
 paramdim(::Type{<:Disk}) = 2
 
-coordtype(::Type{<:Disk{P}}) where {P} = coordtype(P)
+lentype(::Type{<:Disk{P}}) where {P} = lentype(P)
 
 plane(d::Disk) = d.plane
 
@@ -30,13 +30,14 @@ radius(d::Disk) = d.radius
 
 normal(d::Disk) = normal(d.plane)
 
-function (d::Disk{P,L})(ρ, φ) where {P,L}
+function (d::Disk)(ρ, φ)
+  T = numtype(lentype(d))
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
   r = d.radius
-  l = L(ρ) * r
-  sφ, cφ = sincospi(2 * L(φ))
+  l = T(ρ) * r
+  sφ, cφ = sincospi(2 * T(φ))
   u = l * cφ
   v = l * sφ
   d.plane(u, v)

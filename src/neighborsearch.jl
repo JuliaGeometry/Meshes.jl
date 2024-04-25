@@ -63,7 +63,7 @@ function maxneighbors end
 # ----------
 
 function search!(neighbors, pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
-  distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
+  distances = Vector{lentype(pₒ)}(undef, maxneighbors(method))
   searchdists!(neighbors, distances, pₒ, method; mask)
 end
 
@@ -75,7 +75,7 @@ end
 
 function searchdists(pₒ::Point, method::BoundedNeighborSearchMethod; mask=nothing)
   neighbors = Vector{Int}(undef, maxneighbors(method))
-  distances = Vector{coordtype(pₒ)}(undef, maxneighbors(method))
+  distances = Vector{lentype(pₒ)}(undef, maxneighbors(method))
   nneigh = searchdists!(neighbors, distances, pₒ, method; mask)
   view(neighbors, 1:nneigh), view(distances, 1:nneigh)
 end

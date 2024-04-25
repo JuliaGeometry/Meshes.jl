@@ -37,12 +37,12 @@ Vec(1u"m", 2u"m", 3u"m") # integer is converted to float by design
 
 - A `Vec` is a subtype of `StaticVector` from StaticArrays.jl
 """
-struct Vec{Dim,L<:Len} <: StaticVector{Dim,L}
-  coords::NTuple{Dim,L}
-  Vec{Dim,L}(coords::NTuple{Dim}) where {Dim,L<:Len} = new(coords)
+struct Vec{Dim,ℒ<:Len} <: StaticVector{Dim,ℒ}
+  coords::NTuple{Dim,ℒ}
+  Vec{Dim,ℒ}(coords::NTuple{Dim}) where {Dim,ℒ<:Len} = new(coords)
 end
 
-Vec(coords::NTuple{Dim,L}) where {Dim,L<:Len} = Vec{Dim,float(L)}(coords)
+Vec(coords::NTuple{Dim,ℒ}) where {Dim,ℒ<:Len} = Vec{Dim,float(ℒ)}(coords)
 Vec(coords::NTuple{Dim,Len}) where {Dim} = Vec(promote(coords...))
 Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec(addunit.(coords, u"m"))
 

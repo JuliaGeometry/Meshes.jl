@@ -30,7 +30,7 @@ Ring(vertices::P...) where {P<:Point} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
 Ring(vertices::AbstractVector{<:Point}) = Ring(CircularVector(vertices))
 
-coordtype(::Type{<:Ring{Dim,V}}) where {Dim,V} = coordtype(eltype(V))
+lentype(::Type{<:Ring{Dim,V}}) where {Dim,V} = lentype(eltype(V))
 
 nvertices(r::Ring) = length(r.vertices)
 

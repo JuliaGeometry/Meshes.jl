@@ -36,8 +36,13 @@ import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
 import TransformsBase: parameters
 
+# CoordRefSystems API
+import CoordRefSystems: lentype
+
 # helper type alias
 const Len{T} = Quantity{T,u"𝐋"}
+const Area{T} = Quantity{T,u"𝐋^2"}
+const Vol{T} = Quantity{T,u"𝐋^3"}
 
 # IO utils
 include("ioutils.jl")
@@ -125,7 +130,7 @@ export
   Geometry,
   embeddim,
   paramdim,
-  coordtype,
+  lentype,
   center,
   centroid,
 
@@ -263,7 +268,7 @@ export
   SubDomain,
   embeddim,
   paramdim,
-  coordtype,
+  lentype,
   element,
   nelements,
 

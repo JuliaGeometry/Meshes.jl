@@ -39,7 +39,7 @@ end
 
 StructuredGrid(XYZ...) = StructuredGrid(XYZ)
 
-coordtype(::Type{<:StructuredGrid{Dim,A}}) where {Dim,A} = eltype(A)
+lentype(::Type{<:StructuredGrid{Dim,A}}) where {Dim,A} = eltype(A)
 
 vertex(g::StructuredGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(ntuple(d -> g.XYZ[d][ijk...], Dim))
 

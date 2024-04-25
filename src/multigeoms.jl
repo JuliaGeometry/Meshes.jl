@@ -32,7 +32,7 @@ const MultiPolyhedron{Dim} = Multi{Dim,<:Polyhedron{Dim}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
-coordtype(::Type{<:Multi{Dim,G}}) where {Dim,G} = coordtype(G)
+lentype(::Type{<:Multi{Dim,G}}) where {Dim,G} = lentype(G)
 
 vertex(m::Multi, ind) = vertices(m)[ind]
 
