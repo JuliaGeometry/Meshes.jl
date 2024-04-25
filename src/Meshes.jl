@@ -509,6 +509,7 @@ export
   LaplaceSmoothing,
   TaubinSmoothing,
   isaffine,
+  inverse,
 
   # miscellaneous
   signarea,
