@@ -77,8 +77,7 @@ include("traversing.jl")
 
 # neighbor search
 include("neighborhoods.jl")
-# TODO: find an alternative to get the coordtype
-# include("neighborsearch.jl")
+include("neighborsearch.jl")
 
 # predicates
 include("predicates.jl")
@@ -87,7 +86,7 @@ include("predicates.jl")
 include("winding.jl")
 include("sideof.jl")
 include("orientation.jl")
-# TODO: find an alternative to get the coordtype
+# TODO: use coordtype
 # include("measures.jl")
 include("boundary.jl")
 include("merging.jl")
@@ -95,16 +94,15 @@ include("clipping.jl")
 include("clamping.jl")
 include("intersections.jl")
 include("complement.jl")
-# TODO: find an alternative to get the coordtype
+# TODO: use coordtype
 # include("simplification.jl")
-# TODO: find an alternative to get the coordtype
+# TODO: use coordtype
 # include("boundingboxes.jl")
-# TODO: find an alternative to get the coordtype
-# include("hulls.jl")
-# TODO: find an alternative to get the coordtype
+include("hulls.jl")
+# TODO: use coordtype
 # include("sampling.jl")
 include("pointification.jl")
-# TODO: find an alternative to get the coordtype
+# TODO: use coordtype
 # include("discretization.jl")
 include("refinement.jl")
 include("coarsening.jl")

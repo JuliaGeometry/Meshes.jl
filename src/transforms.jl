@@ -88,7 +88,7 @@ include("transforms/translate.jl")
 include("transforms/affine.jl")
 include("transforms/stretch.jl")
 include("transforms/stdcoords.jl")
-# TODO: find an alternative to get the coordtype
+# TODO: use coordtype
 # include("transforms/repair.jl")
 # include("transforms/bridge.jl")
 include("transforms/smoothing.jl")
