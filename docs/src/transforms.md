@@ -14,6 +14,13 @@ GeometricTransform
 CoordinateTransform
 ```
 
+Inverse transforms that are `isinvertible` can be computed with the `inverse` function
+(reexported by Meshes.jl).
+
+```@docs
+inverse
+```
+
 ## Rotate
 
 ```@docs
