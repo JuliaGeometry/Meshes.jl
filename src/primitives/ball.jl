@@ -61,6 +61,5 @@ function (b::Ball{3})(ρ, θ, φ)
   c + Vec(x, y, z)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ball{Dim,T}}) where {Dim,T} =
-#   Ball(rand(rng, Point{Dim,T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ball{Dim}}) where {Dim} =
+  Ball(rand(rng, Point{Dim}), rand(rng, Met{Float64}))

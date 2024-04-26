@@ -40,6 +40,5 @@ function (c::ConeSurface)(φ, h)
   s(T(φ))
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface{T}}) where {T} =
-#   ConeSurface(rand(rng, Disk{T}), rand(rng, Point{3,T}))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface}) =
+  ConeSurface(rand(rng, Disk), rand(rng, Point3))

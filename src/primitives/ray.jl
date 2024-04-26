@@ -29,6 +29,5 @@ function (r::Ray)(t)
   r.p + t * r.v
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ray{Dim,T}}) where {Dim,T} =
-#   Ray(rand(rng, Point{Dim,T}), rand(rng, Vec{Dim,T}))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ray{Dim}}) where {Dim} =
+  Ray(rand(rng, Point{Dim}), rand(rng, Vec{Dim,Met{Float64}}))

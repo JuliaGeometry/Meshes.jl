@@ -70,6 +70,5 @@ function (t::Torus)(θ, φ)
   c + Q * Vec(x, y, z)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus{T}}) where {T} =
-#   Torus(rand(rng, Point{3,T}), rand(rng, Vec{3,T}), rand(rng, T), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Torus}) =
+  Torus(rand(rng, Point3), rand(rng, Vec{3,Met{Float64}}), rand(rng, Met{Float64}), rand(rng, Met{Float64}))

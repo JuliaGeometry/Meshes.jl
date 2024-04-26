@@ -46,6 +46,8 @@ function (e::Ellipsoid)(θ, φ)
   c + R * Vec(x, y, z)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid{T}}) where {T} =
-#   Ellipsoid((rand(rng, T), rand(rng, T), rand(rng, T)), rand(rng, Point{3,T}), rand(rng, QuatRotation))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid}) = Ellipsoid(
+  (rand(rng, Met{Float64}), rand(rng, Met{Float64}), rand(rng, Met{Float64})),
+  rand(rng, Point3),
+  rand(rng, QuatRotation)
+)

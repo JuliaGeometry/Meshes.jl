@@ -43,5 +43,4 @@ function (d::Disk)(ρ, φ)
   d.plane(u, v)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Disk{T}}) where {T} = Disk(rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Disk}) = Disk(rand(rng, Plane), rand(rng, Met{Float64}))

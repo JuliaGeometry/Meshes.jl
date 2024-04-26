@@ -96,6 +96,5 @@ function (s::Sphere{3})(θ, φ)
   c + Vec(x, y, z)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Sphere{Dim,T}}) where {Dim,T} =
-#   Sphere(rand(rng, Point{Dim,T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Sphere{Dim}}) where {Dim} =
+  Sphere(rand(rng, Point{Dim}), rand(rng, Met{Float64}))

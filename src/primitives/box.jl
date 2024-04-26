@@ -54,9 +54,8 @@ function (b::Box)(uv...)
   b.min + uv .* (b.max - b.min)
 end
 
-# TODO
-# function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim,T}}) where {Dim,T}
-#   min = rand(rng, Point{Dim,T})
-#   max = min + rand(rng, Vec{Dim,T})
-#   Box(min, max)
-# end
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim}}) where {Dim}
+  min = rand(rng, Point{Dim})
+  max = min + rand(rng, Vec{Dim,Met{Float64}})
+  Box(min, max)
+end

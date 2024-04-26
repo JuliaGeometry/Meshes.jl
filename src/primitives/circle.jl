@@ -62,6 +62,5 @@ function (c::Circle)(φ)
   c.plane(u, v)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Circle{T}}) where {T} =
-#   Circle(rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Circle}) =
+  Circle(rand(rng, Plane), rand(rng, Met{Float64}))

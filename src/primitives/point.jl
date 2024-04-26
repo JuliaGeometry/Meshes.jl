@@ -43,6 +43,21 @@ Point(coords...) = Point(Cartesian(coords...))
 Point(coords::Tuple) = Point(Cartesian(coords...))
 Point(coords::Vec) = Point(Cartesian(Tuple(coords)))
 
+# parametric constructors
+function Point{Dim}(coords::C) where {Dim,C<:CRS}
+  if Dim ≠ CoordRefSystems.ndims(coords)
+    throw(ArgumentError("the embedding dimensions of point and `coords` must be equal"))
+  end
+  Point(coords)
+end
+Point{Dim}(coords...) where {Dim} = Point{Dim}(Cartesian(coords...))
+Point{Dim}(coords::Tuple) where {Dim} = Point{Dim}(Cartesian(coords...))
+Point{Dim}(coords::Vec) where {Dim}  = Point{Dim}(Cartesian(Tuple(coords)))
+
+const Point1 = Point{1}
+const Point2 = Point{2}
+const Point3 = Point{3}
+
 paramdim(::Type{<:Point}) = 0
 
 lentype(::Type{<:Point{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
@@ -122,8 +137,9 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 ∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A - B, C - B)
 ∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim}}) where {Dim} = Point(rand(rng, typeof(1.0u"m")))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point1}) = Point(rand(rng, Cartesian1))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point2}) = Point(rand(rng, Cartesian2))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point3}) = Point(rand(rng, Cartesian3))
 
 # -----------
 # IO METHODS
@@ -135,7 +151,7 @@ function Base.show(io::IO, point::Point)
   else
     print(io, "Point(")
   end
-  printfields(io, CoordRefSystems.coords(point.coords), CoordRefSystems.cnames(point.coords), compact=true)
+  printfields(io, CoordRefSystems.cvalues(point.coords), CoordRefSystems.cnames(point.coords), compact=true)
   print(io, ")")
 end
 

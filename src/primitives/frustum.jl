@@ -37,11 +37,10 @@ height(f::Frustum) = height(boundary(f))
 
 axis(f::Frustum) = axis(boundary(f))
 
-# TODO
-# function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum{T}}) where {T}
-#   bottom = rand(rng, Disk{T})
-#   ax = normal(plane(bottom))
-#   topplane = Plane{T}(center(bottom) + rand(T) * ax, ax)
-#   top = Disk{T}(topplane, rand(T))
-#   Frustum(bottom, top)
-# end
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum})
+  bottom = rand(rng, Disk)
+  ax = normal(plane(bottom))
+  topplane = Plane(center(bottom) + rand(Met{Float64}) * ax, ax)
+  top = Disk(topplane, rand(Met{Float64}))
+  Frustum(bottom, top)
+end

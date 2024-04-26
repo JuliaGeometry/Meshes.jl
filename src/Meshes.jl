@@ -22,6 +22,8 @@ using Transducers: Filter, Map, TakeWhile, tcollect, ⨟
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
+using CoordRefSystems: Cartesian1, Cartesian2, Cartesian3
+
 import Random
 import Base: sort
 import Base: ==, !
@@ -43,6 +45,7 @@ import CoordRefSystems: lentype
 const Len{T} = Quantity{T,u"𝐋"}
 const Area{T} = Quantity{T,u"𝐋^2"}
 const Vol{T} = Quantity{T,u"𝐋^3"}
+const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
 
 # IO utils
 include("ioutils.jl")

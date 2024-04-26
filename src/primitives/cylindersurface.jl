@@ -117,9 +117,8 @@ function (c::CylinderSurface)(φ, z)
   o + Q' * coordinates(p)
 end
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface{T}}) where {T} =
-#   CylinderSurface(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface}) =
+  CylinderSurface(rand(rng, Plane), rand(rng, Plane), rand(rng, Met{Float64}))
 
 function hasintersectingplanes(c::CylinderSurface)
   x = c.bot ∩ c.top

@@ -34,6 +34,5 @@ Base.open(r::Rope) = r
 
 Base.reverse!(r::Rope) = (reverse!(r.vertices); r)
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Rope{Dim,T}}) where {Dim,T} =
-#   Rope(rand(rng, Point{Dim,T}, rand(2:50)))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Rope{Dim}}) where {Dim} =
+  Rope(rand(rng, Point{Dim}, rand(2:50)))

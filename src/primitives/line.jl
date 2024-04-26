@@ -24,6 +24,5 @@ lentype(::Type{<:Line{Dim,P}}) where {Dim,P} = lentype(P)
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
 
-# TODO
-# Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Line{Dim,T}}) where {Dim,T} =
-#   Line(rand(rng, Point{Dim,T}, 2)...)
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Line{Dim}}) =
+  Line(rand(rng, Point{Dim}), rand(rng, Point{Dim}))
