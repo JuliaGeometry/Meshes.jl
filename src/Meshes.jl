@@ -22,8 +22,6 @@ using Transducers: Filter, Map, TakeWhile, tcollect, ⨟
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
-using CoordRefSystems: Cartesian1, Cartesian2, Cartesian3
-
 import Random
 import Base: sort
 import Base: ==, !

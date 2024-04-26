@@ -52,7 +52,7 @@ function Point{Dim}(coords::C) where {Dim,C<:CRS}
 end
 Point{Dim}(coords...) where {Dim} = Point{Dim}(Cartesian(coords...))
 Point{Dim}(coords::Tuple) where {Dim} = Point{Dim}(Cartesian(coords...))
-Point{Dim}(coords::Vec) where {Dim}  = Point{Dim}(Cartesian(Tuple(coords)))
+Point{Dim}(coords::Vec) where {Dim} = Point{Dim}(Cartesian(Tuple(coords)))
 
 const Point1 = Point{1}
 const Point2 = Point{2}
@@ -137,9 +137,8 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 ∠(A::P, B::P, C::P) where {P<:Point{2}} = ∠(A - B, C - B)
 ∠(A::P, B::P, C::P) where {P<:Point{3}} = ∠(A - B, C - B)
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point1}) = Point(rand(rng, Cartesian1))
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point2}) = Point(rand(rng, Cartesian2))
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point3}) = Point(rand(rng, Cartesian3))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Point{Dim}}) where {Dim} =
+  Point(rand(rng, Cartesian{NoDatum,Dim}))
 
 # -----------
 # IO METHODS
