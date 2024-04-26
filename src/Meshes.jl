@@ -39,11 +39,8 @@ import TransformsBase: parameters
 # CoordRefSystems API
 import CoordRefSystems: lentype
 
-# helper type alias
-const Len{T} = Quantity{T,u"𝐋"}
-const Area{T} = Quantity{T,u"𝐋^2"}
-const Vol{T} = Quantity{T,u"𝐋^3"}
-const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
+# unit utils
+include("units.jl")
 
 # IO utils
 include("ioutils.jl")
