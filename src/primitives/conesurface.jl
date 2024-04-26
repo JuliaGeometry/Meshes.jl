@@ -41,4 +41,4 @@ function (c::ConeSurface)(φ, h)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ConeSurface}) =
-  ConeSurface(rand(rng, Disk), rand(rng, Point3))
+  ConeSurface(rand(rng, Disk), rand(rng, Point{3}))

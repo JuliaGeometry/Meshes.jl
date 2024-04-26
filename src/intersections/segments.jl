@@ -9,7 +9,7 @@
 # 3. intersect at one endpoint of both segments (CornerTouching -> Point)
 # 4. overlap of segments (Overlapping -> Segments)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg₁::Segment{N}, seg₂::Segment{N}) where {N}
+function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
   a, b = vertices(seg₁)
   c, d = vertices(seg₂)
 
@@ -105,7 +105,7 @@ end
 # 3. intersects at one end point of segment and origin of ray (CornerTouching -> Point)
 # 4. overlap at more than one point (Overlapping -> Segment)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{N}, ray::Ray{N}) where {N}
+function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
   a, b = ray(0), ray(1)
   c, d = seg(0), seg(1)
 
@@ -122,8 +122,8 @@ function intersection(f, seg::Segment{N}, ray::Ray{N}) where {N}
     return @IT NotIntersecting nothing f # CASE 5
   # collinear
   elseif r == rₐ == 1
-    rc = sum((c - a) ./ (b - a)) / N
-    rd = sum((d - a) ./ (b - a)) / N
+    rc = sum((c - a) ./ (b - a)) / Dim
+    rd = sum((d - a) ./ (b - a)) / Dim
     rc = mayberound(rc, zero(T))
     rd = mayberound(rd, zero(T))
     if rc > 0 # c ∈ ray
@@ -174,7 +174,7 @@ end
 # 2. intersect at an end point of segment (Touching -> Point)
 # 3. overlap of line and segment (Overlapping -> Segment)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{N}, line::Line{N}) where {N}
+function intersection(f, seg::Segment{Dim}, line::Line{Dim}) where {Dim}
   a, b = line(0), line(1)
   c, d = seg(0), seg(1)
 

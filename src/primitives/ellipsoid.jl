@@ -48,6 +48,6 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid}) = Ellipsoid(
   (rand(rng, Met{Float64}), rand(rng, Met{Float64}), rand(rng, Met{Float64})),
-  rand(rng, Point3),
+  rand(rng, Point{3}),
   rand(rng, QuatRotation)
 )

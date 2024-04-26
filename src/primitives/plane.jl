@@ -65,4 +65,4 @@ _area(v₁::Vec, v₂::Vec) = norm(v₁ × v₂)
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Plane}) =
-  Plane(rand(rng, Point3), rand(rng, Vec{3,Met{Float64}}))
+  Plane(rand(rng, Point{3}), rand(rng, Vec{3,Met{Float64}}))

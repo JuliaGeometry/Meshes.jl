@@ -113,4 +113,4 @@ function (p::ParaboloidSurface)(ρ, θ)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface}) =
-  ParaboloidSurface(rand(rng, Point3), rand(rng, Met{Float64}), rand(rng, Met{Float64}))
+  ParaboloidSurface(rand(rng, Point{3}), rand(rng, Met{Float64}), rand(rng, Met{Float64}))

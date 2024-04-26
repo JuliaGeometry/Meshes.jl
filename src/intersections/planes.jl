@@ -23,7 +23,7 @@ function intersection(f, plane1::Plane, plane2::Plane)
   end
 end
 
-const LineLike = Union{Line{3},Ray{3},Segment{3}}
+const LineLike = Union{Segment{3},Ray{3},Line{3}}
 
 # (https://en.wikipedia.org/wiki/Line-plane_intersection)
 function intersection(f, line::LineLike, plane::Plane)

@@ -10,7 +10,7 @@
 # 4. overlap with aligned vectors (PosOverlapping -> Ray)
 # 5. overlap with colliding vectors (NegOverlapping -> Segment)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray₁::Ray{N}, ray₂::Ray{N}) where {N}
+function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
   a, b = ray₁(0), ray₁(1)
   c, d = ray₂(0), ray₂(1)
 
@@ -70,7 +70,7 @@ end
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray::Ray{N}, line::Line{N}) where {N}
+function intersection(f, ray::Ray{Dim}, line::Line{Dim}) where {Dim}
   a, b = ray(0), ray(1)
   c, d = line(0), line(1)
 
