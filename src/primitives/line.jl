@@ -9,7 +9,7 @@ A line passing through points `a` and `b`.
 
 See also [`Segment`](@ref).
 """
-struct Line{Dim,P<:Point} <: Primitive{Dim}
+struct Line{Dim,P<:Point{Dim}} <: Primitive{Dim}
   a::P
   b::P
 end
@@ -24,5 +24,5 @@ lentype(::Type{<:Line{Dim,P}}) where {Dim,P} = lentype(P)
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Line{Dim}}) =
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Line{Dim}}) where {Dim} =
   Line(rand(rng, Point{Dim}), rand(rng, Point{Dim}))

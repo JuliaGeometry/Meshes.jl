@@ -112,5 +112,5 @@ function (p::ParaboloidSurface)(ρ, θ)
   c + Vec(x, y, z)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface{T}}) where {T} =
-  ParaboloidSurface(rand(rng, Point{3,T}), rand(rng, T), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{ParaboloidSurface}) =
+  ParaboloidSurface(rand(rng, Point3), rand(rng, Met{Float64}), rand(rng, Met{Float64}))

@@ -75,7 +75,7 @@ Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...)
 Return the coordinates of the `point` with respect to the
 canonical Euclidean basis.
 """
-coordinates(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.coords(A.coords))
+coordinates(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords))
 
 """
     -(A::Point, B::Point)
