@@ -185,7 +185,7 @@ function intersection(f, ray::Ray{3}, tri::Triangle{3})
   end
 
   # assemble barycentric weights
-  w = Vec(u, v, det - u - v)
+  w = (u, v, det - u - v)
 
   if any(isapprox.(o, vs))
     return @IT CornerTouching ray(λ) f
