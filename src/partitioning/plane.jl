@@ -9,17 +9,20 @@ A method for partitioning spatial objects into a family of hyperplanes
 defined by a `normal` direction. Two points `x` and `y` belong to the same
 hyperplane when `(x - y) ⋅ normal < tol`.
 """
-struct PlanePartition{V<:Vec} <: SPredicatePartitionMethod
+struct PlanePartition{V<:Vec,ℒ<:Len} <: SPredicatePartitionMethod
   normal::V
-  tol::Float64
+  tol::ℒ
 
-  function PlanePartition{V}(normal, tol) where {V<:Vec}
-    new(normalize(normal), tol)
+  function PlanePartition(normal::V, tol::ℒ) where {V<:Vec,ℒ<:Len}
+    n = Vec(normalize(normal) * unit(eltype(normal)))
+    new{V,float(ℒ)}(n, tol)
   end
 end
 
-PlanePartition(normal::V; tol=1e-6) where {V<:Vec} = PlanePartition{V}(normal, tol)
+PlanePartition(normal::Vec, tol) = PlanePartition(normal, addunit(tol, u"m"))
 
-PlanePartition(normal::Tuple; tol=1e-6) = PlanePartition(Vec(normal), tol=tol)
+PlanePartition(normal::Vec; tol=1e-6u"m") = PlanePartition(normal, tol)
 
-(p::PlanePartition)(x, y) = abs((x - y) ⋅ p.normal) < p.tol
+PlanePartition(normal::Tuple; tol=1e-6u"m") = PlanePartition(Vec(normal), tol)
+
+(p::PlanePartition)(x, y) = abs((x - y) ⋅ p.normal) < p.tol^2
