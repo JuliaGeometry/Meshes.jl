@@ -235,9 +235,6 @@ Return a new `polytope` without duplicate vertices.
 """
 Base.unique(p::Polytope) = unique!(deepcopy(p))
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polytope} =
-  PL(ntuple(i -> rand(rng, Point{embeddim(PL)}), nvertices(PL)))
-
 # -----------
 # IO METHODS
 # -----------
