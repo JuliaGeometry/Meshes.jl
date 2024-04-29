@@ -149,7 +149,7 @@ const Grid{Dim} = Mesh{Dim,GridTopology{Dim}}
 
 A view of a grid in a `Dim`-dimensinoal space.
 """
-const SubGrid{Dim} = SubDomain{<:Grid{Dim}}
+const SubGrid{Dim} = SubDomain{Dim,<:Grid{Dim}}
 
 """
     vertex(grid, ijk)

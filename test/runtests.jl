@@ -67,6 +67,19 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
+point(T::Type, args...) = Point(T.(args)...)
+
+vec(T::Type, args...) = Vec(T.(args)...)
+
+cartgrid(T::Type, dims...) = cartgrid(T, dims)
+
+function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
+  origin = ntuple(i -> T(0.0), Dim)
+  spacing = ntuple(i -> T(1.0), Dim)
+  offset = ntuple(i -> 1, Dim)
+  CartesianGrid(dims, origin, spacing, offset)
+end
+
 # dummy definitions
 include("dummy.jl")
 
@@ -119,8 +132,9 @@ testfiles = [
 # RUN TESTS WITH SINGLE PRECISION
 # --------------------------------
 T = Float32
-P1, P2, P3 = Point{1,T}, Point{2,T}, Point{3,T}
-V1, V2, V3 = Vec{1,T}, Vec{2,T}, Vec{3,T}
+point(args...) = point(Float32, args...)
+vec(args...) = vec(Float32, args...)
+cartgrid(dims...) = cartgrid(Float32, dims...)
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")
@@ -132,8 +146,9 @@ end
 # RUN TESTS WITH DOUBLE PRECISION
 # --------------------------------
 T = Float64
-P1, P2, P3 = Point{1,T}, Point{2,T}, Point{3,T}
-V1, V2, V3 = Vec{1,T}, Vec{2,T}, Vec{3,T}
+point(args...) = point(Float64, args...)
+vec(args...) = vec(Float64, args...)
+cartgrid(dims...) = cartgrid(Float64, dims...)
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")
