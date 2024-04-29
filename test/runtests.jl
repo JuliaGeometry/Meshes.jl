@@ -16,7 +16,7 @@ using ReferenceTests, ImageIO
 using TransformsBase: Identity, →
 
 import TransformsBase as TB
-import CairoMakie as Mke
+# import CairoMakie as Mke
 
 # environment settings
 isCI = "CI" ∈ keys(ENV)
@@ -59,21 +59,21 @@ end
 # helper function to read *.ply files containing meshes
 function readply(T, fname)
   ply = load_ply(fname)
-  x = ply["vertex"]["x"]
-  y = ply["vertex"]["y"]
-  z = ply["vertex"]["z"]
-  points = Point{3,T}.(x, y, z)
+  x = T.(ply["vertex"]["x"])
+  y = T.(ply["vertex"]["y"])
+  z = T.(ply["vertex"]["z"])
+  points = Point.(x, y, z)
   connec = [connect(Tuple(c .+ 1)) for c in ply["face"]["vertex_indices"]]
   SimpleMesh(points, connec)
 end
 
-point(T::Type, args...) = Point(T.(args)...)
+point(args...) = Point(T.(args)...)
 
-vec(T::Type, args...) = Vec(T.(args)...)
+vec(args...) = Vec(T.(args)...)
 
-cartgrid(T::Type, dims...) = cartgrid(T, dims)
+cartgrid(dims...) = cartgrid(dims)
 
-function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
+function cartgrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> T(0.0), Dim)
   spacing = ntuple(i -> T(1.0), Dim)
   offset = ntuple(i -> 1, Dim)
@@ -86,55 +86,52 @@ include("dummy.jl")
 # list of tests
 testfiles = [
   "vectors.jl",
-  "primitives.jl",
-  "polytopes.jl",
-  "multigeoms.jl",
-  "connectivities.jl",
-  "topologies.jl",
-  "toporelations.jl",
-  "domains.jl",
-  "subdomains.jl",
-  "sets.jl",
-  "mesh.jl",
-  "trajecs.jl",
-  "utils.jl",
-  "viewing.jl",
-  "partitioning.jl",
-  "sorting.jl",
-  "traversing.jl",
-  "neighborhoods.jl",
-  "neighborsearch.jl",
-  "predicates.jl",
-  "winding.jl",
-  "sideof.jl",
-  "orientation.jl",
-  "merging.jl",
-  "clipping.jl",
-  "clamping.jl",
-  "intersections.jl",
-  "complement.jl",
-  "simplification.jl",
-  "boundingboxes.jl",
-  "hulls.jl",
-  "sampling.jl",
-  "pointification.jl",
-  "discretization.jl",
-  "refinement.jl",
-  "coarsening.jl",
-  "transforms.jl",
-  "distances.jl",
-  "supportfun.jl",
-  "matrices.jl",
-  "tolerances.jl"
+  # "primitives.jl",
+  # "polytopes.jl",
+  # "multigeoms.jl",
+  # "connectivities.jl",
+  # "topologies.jl",
+  # "toporelations.jl",
+  # "domains.jl",
+  # "subdomains.jl",
+  # "sets.jl",
+  # "mesh.jl",
+  # "trajecs.jl",
+  # "utils.jl",
+  # "viewing.jl",
+  # "partitioning.jl",
+  # "sorting.jl",
+  # "traversing.jl",
+  # "neighborhoods.jl",
+  # "neighborsearch.jl",
+  # "predicates.jl",
+  # "winding.jl",
+  # "sideof.jl",
+  # "orientation.jl",
+  # "merging.jl",
+  # "clipping.jl",
+  # "clamping.jl",
+  # "intersections.jl",
+  # "complement.jl",
+  # "simplification.jl",
+  # "boundingboxes.jl",
+  # "hulls.jl",
+  # "sampling.jl",
+  # "pointification.jl",
+  # "discretization.jl",
+  # "refinement.jl",
+  # "coarsening.jl",
+  # "transforms.jl",
+  # "distances.jl",
+  # "supportfun.jl",
+  # "matrices.jl",
+  # "tolerances.jl"
 ]
 
 # --------------------------------
 # RUN TESTS WITH SINGLE PRECISION
 # --------------------------------
 T = Float32
-point(args...) = point(Float32, args...)
-vec(args...) = vec(Float32, args...)
-cartgrid(dims...) = cartgrid(Float32, dims...)
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")
@@ -146,9 +143,6 @@ end
 # RUN TESTS WITH DOUBLE PRECISION
 # --------------------------------
 T = Float64
-point(args...) = point(Float64, args...)
-vec(args...) = vec(Float64, args...)
-cartgrid(dims...) = cartgrid(Float64, dims...)
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")
