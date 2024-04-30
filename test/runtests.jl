@@ -67,12 +67,13 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
-point(args...) = Point(T.(args)...)
+point(coords...) = point(coords)
+point(coords::Tuple) = Point(T.(coords))
 
-vec(args...) = Vec(T.(args)...)
+vec(coords...) = vec(coords)
+vec(coords::Tuple) = Vec(T.(coords))
 
 cartgrid(dims...) = cartgrid(dims)
-
 function cartgrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> T(0.0), Dim)
   spacing = ntuple(i -> T(1.0), Dim)
@@ -132,6 +133,7 @@ testfiles = [
 # RUN TESTS WITH SINGLE PRECISION
 # --------------------------------
 T = Float32
+ℳ = Meshes.Met{T}
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")
@@ -143,6 +145,7 @@ end
 # RUN TESTS WITH DOUBLE PRECISION
 # --------------------------------
 T = Float64
+ℳ = Meshes.Met{T}
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")

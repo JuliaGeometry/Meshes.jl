@@ -1,15 +1,13 @@
 @testset "Vectors" begin
-  Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
-
   # vararg constructors
-  @test eltype(Vec(1, 1)) == Met{Float64}
-  @test eltype(Vec(1.0, 1.0)) == Met{Float64}
-  @test eltype(Vec(1.0f0, 1.0f0)) == Met{Float32}
+  @test eltype(Vec(1, 1)) == Meshes.Met{Float64}
+  @test eltype(Vec(1.0, 1.0)) == Meshes.Met{Float64}
+  @test eltype(Vec(1.0f0, 1.0f0)) == Meshes.Met{Float32}
 
   # tuple constructors
-  @test eltype(Vec((1, 1))) == Met{Float64}
-  @test eltype(Vec((1.0, 1.0))) == Met{Float64}
-  @test eltype(Vec((1.0f0, 1.0f0))) == Met{Float32}
+  @test eltype(Vec((1, 1))) == Meshes.Met{Float64}
+  @test eltype(Vec((1.0, 1.0))) == Meshes.Met{Float64}
+  @test eltype(Vec((1.0f0, 1.0f0))) == Meshes.Met{Float32}
 
   # check all 1D Vec constructors, because those tend to make trouble
   @test Vec(T(1)) == Vec((T(1),))
@@ -25,9 +23,9 @@
   @test Vec((0, T(-1.0), +2, T(-4.0))) == Vec((T(0.0), T(-1.0), T(+2.0), T(-4.0)))
 
   # integer coordinates are converted to float
-  @test eltype(Vec(1)) == Met{Float64}
-  @test eltype(Vec(1, 2)) == Met{Float64}
-  @test eltype(Vec(1, 2, 3)) == Met{Float64}
+  @test eltype(Vec(1)) == Meshes.Met{Float64}
+  @test eltype(Vec(1, 2)) == Meshes.Met{Float64}
+  @test eltype(Vec(1, 2, 3)) == Meshes.Met{Float64}
   @test Tuple(Vec(1)) == (1.0u"m",)
   @test Tuple(Vec(1, 2)) == (1.0u"m", 2.0u"m")
   @test Tuple(Vec(1, 2, 3)) == (1.0u"m", 2.0u"m", 3.0u"m")
