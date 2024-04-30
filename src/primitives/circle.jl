@@ -30,9 +30,9 @@ function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   m13 = coordinates(p1 + v13 / 2)
   n⃗ = normal(Plane(p1, p2, p3))
   F = coordinates(p1) ⋅ n⃗
-  M = transpose([n⃗ v12 v13])
-  u = [F, m12 ⋅ v12, m13 ⋅ v13]
-  O = Point(inv(M) * u)
+  M = transpose([n⃗ v12 v13]) .|> ustrip
+  u = [F, m12 ⋅ v12, m13 ⋅ v13] .|> ustrip
+  O = Point(Vec(inv(M) * u * unit(lentype(p1))))
   r = norm(p1 - O)
   Circle(Plane(O, n⃗), r)
 end
@@ -57,8 +57,8 @@ function (c::Circle)(φ)
   r = c.radius
   l = r
   sφ, cφ = sincospi(2 * T(φ))
-  u = l * cφ
-  v = l * sφ
+  u = ustrip(l * cφ)
+  v = ustrip(l * sφ)
   c.plane(u, v)
 end
 

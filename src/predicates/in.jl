@@ -19,7 +19,7 @@ function Base.in(p::Point{Dim}, s::Segment{Dim}) where {Dim}
   iscollinear(a, b, p) && zero(lentype(p)) ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
 
-Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ 0
+Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ zero(lentype(p))^2
 
 function Base.in(p::Point, l::Line)
   w = norm(l(1) - l(0))
@@ -30,8 +30,8 @@ end
 Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
 function Base.in(p::Point{3}, pl::Plane)
-  ℒ = lentype(p)
-  isapprox(normal(pl) ⋅ (p - pl(0, 0)), zero(ℒ), atol=atol(ℒ))
+  a = normal(pl) ⋅ (p - pl(0, 0))
+  isapprox(a, zero(a), atol=atol(a))
 end
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
@@ -67,30 +67,33 @@ function Base.in(p::Point{3}, c::Circle)
 end
 
 function Base.in(p::Point{3}, c::Cone)
+  z = zero(lentype(p))^2
   a = apex(c)
   b = center(base(c))
   ax = a - b
-  (a - p) ⋅ ax ≥ 0 || return false
-  (b - p) ⋅ ax ≤ 0 || return false
+  (a - p) ⋅ ax ≥ z || return false
+  (b - p) ⋅ ax ≤ z || return false
   ∠(b, a, p) ≤ halfangle(c)
 end
 
 function Base.in(p::Point{3}, c::Cylinder)
+  z = zero(lentype(p))^2
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
   r = radius(c)
   a = t - b
-  (p - b) ⋅ a ≥ 0 || return false
-  (p - t) ⋅ a ≤ 0 || return false
+  (p - b) ⋅ a ≥ z || return false
+  (p - t) ⋅ a ≤ z || return false
   norm((p - b) × a) / norm(a) ≤ r
 end
 
 function Base.in(p::Point{3}, f::Frustum)
+  z = zero(lentype(p))^2
   t = center(top(f))
   b = center(bottom(f))
   ax = b - t
-  (p - t) ⋅ ax ≥ 0 || return false
-  (p - b) ⋅ ax ≤ 0 || return false
+  (p - t) ⋅ ax ≥ z || return false
+  (p - b) ⋅ ax ≤ z || return false
   # axial distance of p
   ad = (p - t) ⋅ normalize(ax)
   adrel = ad / norm(ax)
@@ -104,10 +107,10 @@ function Base.in(p::Point{3}, f::Frustum)
 end
 
 function Base.in(p::Point{3}, t::Torus)
-  ℒ = lentype(p)
+  T = numtype(lentype(p))
   R, r = radii(t)
   c, n = center(t), normal(t)
-  Q = rotation_between(n, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
+  Q = rotation_between(ustrip.(n), SVector(zero(T), zero(T), one(T)))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end

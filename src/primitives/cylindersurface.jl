@@ -75,8 +75,10 @@ function isright(c::CylinderSurface)
   d = a(T(1)) - a(T(0))
   v = normal(c.bot)
   w = normal(c.top)
-  isparallelv = isapprox(norm(d × v), zero(ℒ), atol=atol(ℒ))
-  isparallelw = isapprox(norm(d × w), zero(ℒ), atol=atol(ℒ))
+  nv = norm(d × v)
+  nw = norm(d × w)
+  isparallelv = isapprox(nv, zero(nv), atol=atol(nv))
+  isparallelw = isapprox(nw, zero(nw), atol=atol(nw))
   isparallelv && isparallelw
 end
 
@@ -84,8 +86,7 @@ Base.isapprox(c₁::CylinderSurface{P,ℒ}, c₂::CylinderSurface{P,ℒ}) where 
   c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(ℒ))
 
 function (c::CylinderSurface)(φ, z)
-  ℒ = lentype(c)
-  T = numtype(ℒ)
+  T = numtype(lentype(c))
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
   end
@@ -98,7 +99,7 @@ function (c::CylinderSurface)(φ, z)
   o = center(c)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
+  Q = rotation_between(ustrip.(d), SVector(zero(T), zero(T), one(T)))
 
   # new normals of planes in new rotated system
   nᵦ = Q * normal(b)

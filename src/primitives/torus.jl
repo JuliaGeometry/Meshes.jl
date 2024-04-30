@@ -31,11 +31,13 @@ Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(nor
 The torus whose centerline passes through points `p1`, `p2` and `p3` and with
 minor radius `minor`.
 """
-function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor)
+function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor::Len)
   c = Circle(p1, p2, p3)
   p = Plane(p1, p2, p3)
   Torus(center(c), normal(p), radius(c), minor)
 end
+
+Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor) = Torus(p1, p2, p3, addunit(minor, u"m"))
 
 Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Point(p3), minor)
 
@@ -52,14 +54,14 @@ radii(t::Torus) = (t.major, t.minor)
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
 function (t::Torus)(θ, φ)
-  T = numtype(lentype(p))
+  T = numtype(lentype(t))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
 
-  Q = rotation_between(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), n⃗)
+  Q = rotation_between(SVector(zero(T), zero(T), one(T)), ustrip.(n⃗))
 
   sθ, cθ = sincospi(2 * T(-θ))
   sφ, cφ = sincospi(2 * T(φ))

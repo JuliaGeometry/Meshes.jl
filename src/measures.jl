@@ -29,14 +29,16 @@ measure(b::Box) = prod(maximum(b) - minimum(b))
 
 # https://en.wikipedia.org/wiki/Volume_of_an_n-ball
 function measure(b::Ball{Dim}) where {Dim}
+  T = numtype(lentype(b))
   r, n = radius(b), Dim
-  (π^(n / 2) * r^n) / gamma(n / 2 + 1)
+  T(π)^T(n / 2) * r^n / gamma(T(n / 2) + 1)
 end
 
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
 function measure(s::Sphere{Dim}) where {Dim}
+  T = numtype(lentype(s))
   r, n = radius(s), Dim
-  2π^(n / 2) * r^(n - 1) / gamma(n / 2)
+  2 * T(π)^T(n / 2) * r^(n - 1) / gamma(T(n / 2))
 end
 
 measure(d::Disk) = π * radius(d)^2

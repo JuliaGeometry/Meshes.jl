@@ -51,9 +51,9 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
 """
 function householderbasis(n::Vec{3,ℒ}) where {ℒ}
   n̂ = norm(n)
-  h = n .+ n̂
-  i = argmax(h)
-  h = Vec(ntuple(j -> j == i ? h[i] : zero(ℒ), 3))
+  i = argmax(n .+ n̂)
+  n̂ᵢ = Vec(ntuple(j -> j == i ? n̂ : zero(ℒ), 3))
+  h = n + n̂ᵢ
   H = I - 2h * transpose(h) / (transpose(h) * h)
   u, v = [H[:, j] for j in 1:3 if j != i]
   i == 2 && ((u, v) = (v, u))

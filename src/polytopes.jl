@@ -35,7 +35,7 @@ macro polytope(type, K, N)
     end
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
-    $type(vertices::Vararg{<:Point,$N}) = $type(vertices)
+    $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
   esc(expr)
 end

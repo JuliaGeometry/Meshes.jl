@@ -13,8 +13,8 @@ function intersection(f, plane1::Plane, plane2::Plane)
     return @IT NotIntersecting nothing f
   else
     d = n1 × n2
-    h1 = n1 ⋅ plane1.p.coords
-    h2 = n2 ⋅ plane2.p.coords
+    h1 = n1 ⋅ coordinates(plane1.p)
+    h2 = n2 ⋅ coordinates(plane2.p)
     c1 = (h1 - h2 * n1n2) / (1 - n1n2^2)
     c2 = (h2 - h1 * n1n2) / (1 - n1n2^2)
     p1 = (c1 * n1) + (c2 * n2)
