@@ -24,15 +24,17 @@ Circle(plane::Plane, radius) = Circle(plane, addunit(radius, u"m"))
 A circle passing through points `p1`, `p2` and `p3`.
 """
 function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
+  ℒ = lentype(p1)
   v12 = p2 - p1
   v13 = p3 - p1
   m12 = coordinates(p1 + v12 / 2)
   m13 = coordinates(p1 + v13 / 2)
   n⃗ = normal(Plane(p1, p2, p3))
   F = coordinates(p1) ⋅ n⃗
-  M = transpose([n⃗ v12 v13]) .|> ustrip
-  u = [F, m12 ⋅ v12, m13 ⋅ v13] .|> ustrip
-  O = Point(Vec(inv(M) * u * unit(lentype(p1))))
+  M = transpose([n⃗ v12 v13])
+  M⁻¹ = inv(ustrip.(M)) * unit(ℒ)^-1
+  u = [F, m12 ⋅ v12, m13 ⋅ v13]
+  O = Point(Vec(M⁻¹ * u))
   r = norm(p1 - O)
   Circle(Plane(O, n⃗), r)
 end

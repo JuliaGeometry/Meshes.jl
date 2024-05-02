@@ -167,7 +167,7 @@ function gjk!(O::Point{3}, points)
     AC = C - A
     AO = O - A
     ABCᵀ = AB × AC
-    if ABCᵀ ⋅ AO < 0
+    if ABCᵀ ⋅ AO < zero(ℒ)^3
       points[1], points[2] = points[2], points[1]
       ABCᵀ = -ABCᵀ
     end
@@ -258,8 +258,11 @@ minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
 function perpendicular(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
   a = Vec(v[1], v[2], zero(ℒ))
   b = Vec(d[1], d[2], zero(ℒ))
-  r = a × b × a
-  Vec(r[1], r[2])
+  r = ustrip.(a × b × a) * unit(ℒ)
+  Vec(r)
 end
 
-perpendicular(v::Vec{3}, d::Vec{3}) = v × d × v
+function perpendicular(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} 
+  r = ustrip.(v × d × v) * unit(ℒ)
+  Vec(r)
+end
