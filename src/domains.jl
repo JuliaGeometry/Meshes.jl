@@ -74,7 +74,7 @@ paramdim(d::Domain) = paramdim(first(d))
 """
     lentype(domain)
 
-Return the machine type of each coordinate used to describe the `domain`.
+Return the length type of the `domain`.
 """
 lentype(d::Domain) = lentype(typeof(d))
 

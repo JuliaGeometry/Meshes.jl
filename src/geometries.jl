@@ -32,7 +32,7 @@ paramdim(g::Geometry) = paramdim(typeof(g))
 """
     lentype(geometry)
 
-Return the machine type of each coordinate used to describe the `geometry`.
+Return the length type of the `geometry`.
 """
 lentype(g::Geometry) = lentype(typeof(g))
 
