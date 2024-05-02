@@ -60,10 +60,7 @@ isconvex(::Tetrahedron) = true
 
 isconvex(p::Polygon{2}) = Set(vertices(convexhull(p))) == Set(vertices(p))
 
-function isconvex(m::Multi{Dim}) where {Dim}
-  x = measure(convexhull(m))
-  isapprox(x, measure(m), atol=atol(x))
-end
+isconvex(m::Multi) = isapproxequal(measure(convexhull(m)), measure(m))
 
 # --------------
 # OPTIMIZATIONS

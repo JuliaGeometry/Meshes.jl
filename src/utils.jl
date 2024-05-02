@@ -156,3 +156,7 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   end
   Expr(:tuple, exprs...)
 end
+
+isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
+isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
+isapproxone(x) = isapprox(x, oneunit(x), atol=atol(x))

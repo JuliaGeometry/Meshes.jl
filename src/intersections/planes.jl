@@ -8,7 +8,7 @@ function intersection(f, plane1::Plane, plane2::Plane)
   n2 = normal(plane2)
   n1n2 = n1 ⋅ n2
 
-  if isapprox(abs(n1n2), one(n1n2), atol=atol(n1n2))
+  if isapproxone(abs(n1n2))
     # planes are parallel and do not intersect
     return @IT NotIntersecting nothing f
   else
@@ -32,8 +32,8 @@ function intersection(f, line::LineLike, plane::Plane)
   n = normal(plane)
   a = (plane(0, 0) - line(0)) ⋅ n
   b = d ⋅ n
-  if isapprox(b, zero(b), atol=atol(b))
-    if isapprox(a, zero(a), atol=atol(a))
+  if isapproxzero(b)
+    if isapproxzero(a)
       return @IT Overlapping line f
     else
       return @IT NotIntersecting nothing f
@@ -51,12 +51,12 @@ end
 #   λ > 0 and λ < 1 ⟹ Crossing
 function _intersection(f, seg::Segment{3}, λ)
   # if λ is approximately 0, set as so to prevent any domain errors
-  if isapprox(λ, zero(λ), atol=atol(λ))
+  if isapproxzero(λ)
     return @IT Touching seg(0) f
   end
 
   # if λ is approximately 1, set as so to prevent any domain errors
-  if isapprox(λ, one(λ), atol=atol(λ))
+  if isapproxone(λ)
     return @IT Touching seg(1) f
   end
 
@@ -76,7 +76,7 @@ end
 #   λ > 0 ⟹ Crossing
 function _intersection(f, ray::Ray{3}, λ)
   # if λ is approximately 0, set as so to prevent any domain errors
-  if isapprox(λ, zero(λ), atol=atol(λ))
+  if isapproxzero(λ)
     return @IT Touching ray(0) f
   end
 

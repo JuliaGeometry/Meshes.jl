@@ -189,7 +189,7 @@ function intersection(f, ray::Ray{3}, tri::Triangle{3})
 
   if any(isapprox.(o, vs))
     return @IT CornerTouching ray(λ) f
-  elseif isapprox(λ, zero(λ), atol=atol(λ))
+  elseif isapproxzero(λ)
     if all(x -> x > zero(x), w)
       return @IT Touching ray(λ) f
     else
@@ -197,9 +197,9 @@ function intersection(f, ray::Ray{3}, tri::Triangle{3})
     end
   end
 
-  if count(x -> isapprox(x, zero(x), atol=atol(x)), w) == 1
+  if count(x -> isapproxzero(x), w) == 1
     return @IT EdgeCrossing ray(λ) f
-  elseif count(x -> isapprox(x, det, atol=atol(x)), w) == 1
+  elseif count(x -> isapproxequal(x, det), w) == 1
     return @IT CornerCrossing ray(λ) f
   end
 

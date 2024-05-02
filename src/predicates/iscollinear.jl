@@ -16,8 +16,7 @@ function iscollinear(A::Point{Dim}, B::Point{Dim}, C::Point{Dim}) where {Dim}
   for i in 1:Dim, j in (i + 1):Dim
     u = Vec(AB[i], AB[j])
     v = Vec(AC[i], AC[j])
-    x = u × v
-    if !isapprox(x, zero(x), atol=atol(x))
+    if !isapproxzero(u × v)
       result = false
       break
     end

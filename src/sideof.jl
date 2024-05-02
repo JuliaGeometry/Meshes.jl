@@ -50,10 +50,7 @@ end
 Determines on which side the `point` is in relation to the `ring`.
 Possible results are `IN` or `OUT` the `ring`.
 """
-function sideof(point::Point{2}, ring::Ring{2})
-  w = winding(point, ring)
-  ifelse(isapprox(w, zero(w), atol=atol(w)), OUT, IN)
-end
+sideof(point::Point{2}, ring::Ring{2}) = ifelse(isapproxzero(winding(point, ring)), OUT, IN)
 
 # -----
 # MESH
@@ -79,6 +76,6 @@ function sideof(points, object::GeometryOrDomain)
   inds = findall(isin)
   wind = winding(collectat(points, inds), object)
   side = fill(OUT, length(isin))
-  side[inds] .= map(w -> ifelse(isapprox(w, zero(w), atol=atol(w)), OUT, IN), wind)
+  side[inds] .= map(w -> ifelse(isapproxzero(w), OUT, IN), wind)
   side
 end

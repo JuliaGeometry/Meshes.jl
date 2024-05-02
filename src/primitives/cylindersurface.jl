@@ -75,15 +75,13 @@ function isright(c::CylinderSurface)
   d = a(T(1)) - a(T(0))
   v = normal(c.bot)
   w = normal(c.top)
-  nv = norm(d × v)
-  nw = norm(d × w)
-  isparallelv = isapprox(nv, zero(nv), atol=atol(nv))
-  isparallelw = isapprox(nw, zero(nw), atol=atol(nw))
+  isparallelv = isapproxzero(norm(d × v))
+  isparallelw = isapproxzero(norm(d × w))
   isparallelv && isparallelw
 end
 
-Base.isapprox(c₁::CylinderSurface{P,ℒ}, c₂::CylinderSurface{P,ℒ}) where {P,ℒ} =
-  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(ℒ))
+Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface) =
+  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapproxequal(c₁.radius, c₂.radius)
 
 function (c::CylinderSurface)(φ, z)
   T = numtype(lentype(c))

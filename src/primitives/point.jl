@@ -43,9 +43,6 @@ Point(coords...) = Point(Cartesian(coords...))
 Point(coords::Tuple) = Point(Cartesian(coords...))
 Point(coords::Vec) = Point(Cartesian(Tuple(coords)))
 
-# conversions
-Base.convert(::Type{Point}, coords::Tuple) = Point(coords)
-
 paramdim(::Type{<:Point}) = 0
 
 lentype(::Type{<:Point{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)

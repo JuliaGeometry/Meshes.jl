@@ -64,7 +64,7 @@ function orientation(r::Ring{2}, ::WindingOrientation)
   x̄ = center(Segment(x₁, x₂))
   w̄ = winding(x̄, r)
   w = oftype(w̄, 2π) * w̄ - ∠(x₁, x̄, x₂)
-  isapprox(w, oftype(w, π), atol=atol(w)) ? CCW : CW
+  isapproxequal(w, oftype(w, π)) ? CCW : CW
 end
 
 """
