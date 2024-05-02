@@ -19,7 +19,7 @@ Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 
-Sphere(center::Point) = Sphere(center, 1.0u"m")
+Sphere(center::Point) = Sphere(center, oneunit(lentype(center)))
 
 Sphere(center::Tuple) = Sphere(Point(center))
 

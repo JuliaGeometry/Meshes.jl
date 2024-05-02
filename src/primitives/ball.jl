@@ -19,7 +19,7 @@ Ball(center::Point, radius) = Ball(center, addunit(radius, u"m"))
 
 Ball(center::Tuple, radius) = Ball(Point(center), radius)
 
-Ball(center::Point) = Ball(center, 1.0u"m")
+Ball(center::Point) = Ball(center, oneunit(lentype(center)))
 
 Ball(center::Tuple) = Ball(Point(center))
 

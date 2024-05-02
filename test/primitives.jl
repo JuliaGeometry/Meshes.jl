@@ -511,11 +511,10 @@
     b = Ball(point(1, 2, 3), 4)
     @test Meshes.lentype(b) == ℳ
 
-    # TODO: radius must have the same lentype as point in the Ball(point) constructor?
-    # b1 = Ball(point(0, 0), T(1))
-    # b2 = Ball(point(0, 0))
-    # b3 = Ball(T.((0, 0)))
-    # @test b1 == b2 == b3
+    b1 = Ball(point(0, 0), T(1))
+    b2 = Ball(point(0, 0))
+    b3 = Ball(T.((0, 0)))
+    @test b1 == b2 == b3
 
     b = Ball(point(0, 0), T(2))
     @test measure(b) ≈ T(π) * (T(2)^2) * u"m^2"
@@ -603,11 +602,10 @@
     @test extrema(s) == (point(-1, -1), point(1, 1))
     @test isnothing(boundary(s))
 
-    # TODO: radius must have the same lentype as point in the Sphere(point) constructor?
-    # s1 = Sphere(point(0, 0), T(1))
-    # s2 = Sphere(point(0, 0))
-    # s3 = Sphere(T.((0, 0)))
-    # @test s1 == s2 == s3
+    s1 = Sphere(point(0, 0), T(1))
+    s2 = Sphere(point(0, 0))
+    s3 = Sphere(T.((0, 0)))
+    @test s1 == s2 == s3
 
     s = Sphere(point(0, 0), T(2))
     @test measure(s) ≈ T(2π) * 2 * u"m"
@@ -686,7 +684,7 @@
   end
 
   @testset "Ellipsoid" begin
-    e = Ellipsoid((T(3), T(2), T(1)), point(0, 0, 0))
+    e = Ellipsoid((T(3), T(2), T(1)))
     @test embeddim(e) == 3
     @test paramdim(e) == 2
     @test Meshes.lentype(e) == ℳ
@@ -695,7 +693,7 @@
     @test isnothing(boundary(e))
     @test perimeter(e) == zero(ℳ)
 
-    e = Ellipsoid((T(3), T(2), T(1)), point(0, 0, 0))
+    e = Ellipsoid((T(3), T(2), T(1)))
     @test sprint(show, e) ==
           "Ellipsoid(radii: (3.0 m, 2.0 m, 1.0 m), center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), rotation: UniformScaling{Bool}(true))"
     if T === Float32
@@ -830,15 +828,14 @@
     # c = Cylinder(Plane(point(0, 0, 0), vec(0, 0, 1)), Plane(point(0, 0, 1), vec(1, 0, 1)), T(5))
     # @test Meshes.hasintersectingplanes(c)
 
-    # TODO: radius must have the same lentype as point in the Cylinder(point, point, radius) constructor?
-    # c1 = Cylinder(point(0, 0, 0), point(0, 0, 1), T(1))
-    # c2 = Cylinder(point(0, 0, 0), point(0, 0, 1))
-    # c3 = Cylinder(T(1))
-    # @test c1 == c2 == c3
-    # @test c1 ≈ c2 ≈ c3
+    c1 = Cylinder(point(0, 0, 0), point(0, 0, 1), T(1))
+    c2 = Cylinder(point(0, 0, 0), point(0, 0, 1))
+    c3 = Cylinder(T(1))
+    @test c1 == c2 == c3
+    @test c1 ≈ c2 ≈ c3
 
     c = Cylinder(T(1))
-    @test Meshes.lentype(c) == Meshes.Met{Float64}
+    @test Meshes.lentype(c) == ℳ
     c = Cylinder(1)
     @test Meshes.lentype(c) == Meshes.Met{Float64}
 
@@ -884,7 +881,7 @@
   end
 
   @testset "CylinderSurface" begin
-    c = CylinderSurface(point(0, 0, 0), point(0, 0, 1), T(2))
+    c = CylinderSurface(T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 2
     @test Meshes.lentype(c) == ℳ
@@ -903,17 +900,16 @@
     # c = CylinderSurface(Plane(point(0, 0, 0), vec(0, 0, 1)), Plane(point(0, 0, 1), vec(1, 0, 1)), T(5))
     # @test Meshes.hasintersectingplanes(c)
 
-    # # TODO: radius must have the same lentype as point in the CylinderSurface(point, point, radius) constructor?
-    # c1 = CylinderSurface(point(0, 0, 0), point(0, 0, 1), T(1))
-    # c2 = CylinderSurface(point(0, 0, 0), point(0, 0, 1))
-    # c3 = CylinderSurface(T(1))
-    # @test c1 == c2 == c3
-    # @test c1 ≈ c2 ≈ c3
+    c1 = CylinderSurface(point(0, 0, 0), point(0, 0, 1), T(1))
+    c2 = CylinderSurface(point(0, 0, 0), point(0, 0, 1))
+    c3 = CylinderSurface(T(1))
+    @test c1 == c2 == c3
+    @test c1 ≈ c2 ≈ c3
 
     c = CylinderSurface(Plane(point(1, 2, 3), vec(0, 0, 1)), Plane(point(4, 5, 6), vec(0, 0, 1)), T(5))
     @test measure(c) == area(c) ≈ (2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3 * T(3)^2)) * u"m^2"
 
-    c = CylinderSurface(point(0, 0, 0), point(0, 0, 1), T(1))
+    c = CylinderSurface(T(1))
     @test c(T(0), T(0)) ≈ point(1, 0, 0)
     @test c(T(0.5), T(0)) ≈ point(-1, 0, 0)
     @test c(T(0), T(1)) ≈ point(1, 0, 1)
@@ -922,7 +918,7 @@
     c = CylinderSurface(1.0)
     @test Meshes.lentype(c) == Meshes.Met{Float64}
     c = CylinderSurface(1.0f0)
-    @test Meshes.lentype(c) == Meshes.Met{Float64}
+    @test Meshes.lentype(c) == Meshes.Met{Float32}
     c = CylinderSurface(1)
     @test Meshes.lentype(c) == Meshes.Met{Float64}
 
@@ -958,12 +954,11 @@
     @test axis(p) == Line(point(0, 0, 0), point(0, 0, T(2)))
     @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
 
-    # TODO: radius must have the same lentype as apex in the ParaboloidSurface(apex, radius, focallength) constructor?
-    # p1 = ParaboloidSurface(point(1, 2, 3), T(1), T(1))
-    # p2 = ParaboloidSurface(point(1, 2, 3), T(1))
-    # p3 = ParaboloidSurface(point(1, 2, 3))
-    # @test p1 == p2 == p3
-    # @test p1 ≈ p2 ≈ p3
+    p1 = ParaboloidSurface(point(1, 2, 3), T(1), T(1))
+    p2 = ParaboloidSurface(point(1, 2, 3), T(1))
+    p3 = ParaboloidSurface(point(1, 2, 3))
+    @test p1 == p2 == p3
+    @test p1 ≈ p2 ≈ p3
 
     p1 = ParaboloidSurface((1, 2, 3), 1.0, 1.0)
     p2 = ParaboloidSurface((1, 2, 3), 1.0)

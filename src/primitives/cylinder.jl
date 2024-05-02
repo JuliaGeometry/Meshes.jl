@@ -42,11 +42,15 @@ end
 
 Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
 
-Cylinder(start::Point{3}, finish::Point{3}) = Cylinder(start, finish, 1.0u"m")
+Cylinder(start::Point{3}, finish::Point{3}) = Cylinder(start, finish, oneunit(lentype(start)))
 
 Cylinder(start::Tuple, finish::Tuple) = Cylinder(Point(start), Point(finish))
 
-Cylinder(radius) = Cylinder(Point(0, 0, 0), Point(0, 0, 1), radius)
+function Cylinder(radius)
+  r0 = zero(radius)
+  r1 = oneunit(radius)
+  Cylinder(Point(r0, r0, r0), Point(r0, r0, r1), radius)
+end
 
 paramdim(::Type{<:Cylinder}) = 3
 

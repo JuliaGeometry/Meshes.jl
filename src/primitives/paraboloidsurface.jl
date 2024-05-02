@@ -52,7 +52,7 @@ ParaboloidSurface(apex::Point{3}, radius) = ParaboloidSurface(apex, radius, oneu
 
 ParaboloidSurface(apex::Tuple, radius) = ParaboloidSurface(Point(apex), radius)
 
-ParaboloidSurface(apex::Point{3}) = ParaboloidSurface(apex, 1.0u"m")
+ParaboloidSurface(apex::Point{3}) = ParaboloidSurface(apex, oneunit(lentype(apex)))
 
 ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 

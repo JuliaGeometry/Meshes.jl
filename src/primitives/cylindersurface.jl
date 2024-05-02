@@ -42,11 +42,15 @@ end
 
 CylinderSurface(start::Tuple, finish::Tuple, radius) = CylinderSurface(Point(start), Point(finish), radius)
 
-CylinderSurface(start::Point{3}, finish::Point{3}) = CylinderSurface(start, finish, 1.0u"m")
+CylinderSurface(start::Point{3}, finish::Point{3}) = CylinderSurface(start, finish, oneunit(lentype(start)))
 
 CylinderSurface(start::Tuple, finish::Tuple) = CylinderSurface(Point(start), Point(finish))
 
-CylinderSurface(radius) = CylinderSurface(Point(0, 0, 0), Point(0, 0, 1), radius)
+function CylinderSurface(radius)
+  r0 = zero(radius)
+  r1 = oneunit(radius)
+  CylinderSurface(Point(r0, r0, r0), Point(r0, r0, r1), radius)
+end
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
