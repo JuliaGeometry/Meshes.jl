@@ -25,6 +25,8 @@ proj2D(p::PolyArea) = PolyArea(proj2D.(rings(p)))
 proj2D(points::AbstractVector{<:Point{3}}) = proj(points, svdbasis(points))
 
 function proj(points, basis)
+  ℒ = lentype(eltype(points))
+
   # retrieve basis
   u, v = basis
 
@@ -34,6 +36,8 @@ function proj(points, basis)
   # project points
   map(points) do p
     d = p - c
-    Point(d ⋅ u, d ⋅ v)
+    x = ustrip(d ⋅ u) * unit(ℒ)
+    y = ustrip(d ⋅ v) * unit(ℒ)
+    Point(x, y)
   end
 end

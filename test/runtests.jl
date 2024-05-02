@@ -88,7 +88,7 @@ include("dummy.jl")
 testfiles = [
   "vectors.jl",
   "primitives.jl",
-  # "polytopes.jl",
+  "polytopes.jl",
   # "multigeoms.jl",
   # "connectivities.jl",
   # "topologies.jl",

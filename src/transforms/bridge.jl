@@ -82,10 +82,10 @@ function bridge(rings, rinds, δ)
     # the point A is split into A′ and A′′ and
     # the point B is split into B′ and B′′ based
     # on a given bridge width δ
-    A′ = A + (δ / 2) * n
-    A′′ = A - (δ / 2) * n
-    B′ = B + (δ / 2) * n
-    B′′ = B - (δ / 2) * n
+    A′ = A + Vec((δ / 2) * n)
+    A′′ = A - Vec((δ / 2) * n)
+    B′ = B + Vec((δ / 2) * n)
+    B′′ = B - Vec((δ / 2) * n)
 
     # insert hole at closest vertex
     outer = [
