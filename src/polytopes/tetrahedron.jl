@@ -9,8 +9,6 @@ A tetrahedron with points `p1`, `p2`, `p3`, `p4`.
 """
 @polytope Tetrahedron 3 4
 
-lentype(::Type{<:Tetrahedron{Dim,P}}) where {Dim,P} = lentype(P)
-
 nvertices(::Type{<:Tetrahedron}) = 4
 
 Base.isapprox(t₁::Tetrahedron, t₂::Tetrahedron; kwargs...) =

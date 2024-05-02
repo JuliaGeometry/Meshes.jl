@@ -20,7 +20,7 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,Dim,P<:Point{Dim}} <: Polygon{Dim}
+struct Ngon{N,Dim,P<:Point{Dim}} <: Polygon{Dim,P}
   vertices::NTuple{N,P}
   function Ngon{N,Dim,P}(vertices::NTuple{N,P}) where {N,Dim,P<:Point{Dim}}
     if N < 3

@@ -9,15 +9,13 @@ An open polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
 See also [`Chain`](@ref) and [`Ring`](@ref).
 """
-struct Rope{Dim,V<:AbstractVector{<:Point{Dim}}} <: Chain{Dim}
+struct Rope{Dim,P<:Point{Dim},V<:AbstractVector{P}} <: Chain{Dim,P}
   vertices::V
 end
 
 Rope(vertices::Tuple...) = Rope([Point(v) for v in vertices])
 Rope(vertices::P...) where {P<:Point} = Rope(collect(vertices))
 Rope(vertices::AbstractVector{<:Tuple}) = Rope(Point.(vertices))
-
-lentype(::Type{<:Rope{Dim,V}}) where {Dim,V} = lentype(eltype(V))
 
 nvertices(r::Rope) = length(r.vertices)
 

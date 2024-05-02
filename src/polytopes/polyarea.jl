@@ -24,10 +24,10 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (e.g. only 2 vertices).
 """
-struct PolyArea{Dim,R<:Ring{Dim}} <: Polygon{Dim}
+struct PolyArea{Dim,P<:Point{Dim},R<:Ring{Dim,P}} <: Polygon{Dim,P}
   rings::Vector{R}
 
-  function PolyArea{Dim,R}(rings; fix=true) where {Dim,R<:Ring{Dim}}
+  function PolyArea{Dim,P,R}(rings; fix=true) where {Dim,P<:Point{Dim},R<:Ring{Dim,P}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -57,7 +57,7 @@ struct PolyArea{Dim,R<:Ring{Dim}} <: Polygon{Dim}
   end
 end
 
-PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,R<:Ring{Dim}} = PolyArea{Dim,R}(rings; fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,P<:Point{Dim},R<:Ring{Dim,P}} = PolyArea{Dim,P,R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
@@ -118,5 +118,4 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   end
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim}}) where {Dim} =
-  PolyArea(rand(rng, Ring{Dim}))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim}}) where {Dim} = PolyArea(rand(rng, Ring{Dim}))

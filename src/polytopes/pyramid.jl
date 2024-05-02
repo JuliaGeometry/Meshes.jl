@@ -9,8 +9,6 @@ A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 """
 @polytope Pyramid 3 5
 
-lentype(::Type{<:Pyramid{Dim,P}}) where {Dim,P} = lentype(P)
-
 nvertices(::Type{<:Pyramid}) = 5
 
 Base.isapprox(p₁::Pyramid, p₂::Pyramid; kwargs...) =
