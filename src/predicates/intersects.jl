@@ -97,7 +97,7 @@ function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
   d = O - P
   while true
     P = minkowskipoint(g₁, g₂, d)
-    if (P - O) ⋅ d < zero(ℒ)
+    if (P - O) ⋅ d < zero(ℒ)^2
       return false
     end
     push!(points, P)
@@ -139,10 +139,10 @@ function gjk!(O::Point{2}, points)
     AO = O - A
     ABᵀ = -perpendicular(AB, AC)
     ACᵀ = -perpendicular(AC, AB)
-    if ABᵀ ⋅ AO > zero(ℒ)
+    if ABᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 1) # pop C
       d = ABᵀ
-    elseif ACᵀ ⋅ AO > zero(ℒ)
+    elseif ACᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 2) # pop B
       d = ACᵀ
     else
@@ -192,13 +192,13 @@ function gjk!(O::Point{3}, points)
     ABCᵀ = AB × AC
     ADBᵀ = AD × AB
     ACDᵀ = AC × AD
-    if ABCᵀ ⋅ AO > zero(ℒ)
+    if ABCᵀ ⋅ AO > zero(ℒ)^3
       popat!(points, 1) # pop D
       d = ABCᵀ
-    elseif ADBᵀ ⋅ AO > zero(ℒ)
+    elseif ADBᵀ ⋅ AO > zero(ℒ)^3
       popat!(points, 2) # pop C
       d = ADBᵀ
-    elseif ACDᵀ ⋅ AO > zero(ℒ)
+    elseif ACDᵀ ⋅ AO > zero(ℒ)^3
       popat!(points, 3) # pop B
       d = ACDᵀ
     else

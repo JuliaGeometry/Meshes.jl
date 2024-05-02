@@ -69,15 +69,15 @@ using the singular value decomposition (SVD).
 See <https://math.stackexchange.com/a/99317>.
 """
 function svdbasis(p::AbstractVector{<:Point{3}})
+  ℒ = lentype(eltype(p))
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
-  ℒ = eltype(X)
   U = svd(ustrip.(Z)).U * unit(ℒ)
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
   n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
-  (u × v) ⋅ n < zero(ℒ) ? (v, u) : (u, v)
+  (u × v) ⋅ n < zero(ℒ)^3 ? (v, u) : (u, v)
 end
 
 """

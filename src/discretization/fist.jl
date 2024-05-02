@@ -174,9 +174,8 @@ end
 
 # helper function to compute the vexity of vertex i
 function vexity(v, i)
-  ℒ = lentype(first(v))
   α = ∠(v[i - 1], v[i], v[i + 1]) # oriented angle
-  θ = α > 0 ? 2 * ℒ(π) - α : -α # inner angle
+  θ = α > 0 ? oftype(α, 2π) - α : -α # inner angle
   θ < π ? :CONVEX : :REFLEX
 end
 

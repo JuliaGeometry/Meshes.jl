@@ -100,7 +100,7 @@ end
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
-  invdir = 1 ./ (ray(1) - ray(0))
+  invdir = inv.(ray(1) - ray(0))
   lo, up = coordinates.(extrema(box))
   orig = coordinates(ray(0))
 
@@ -114,7 +114,7 @@ function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
     imax = (up[i] - orig[i]) * invdir[i]
 
     # swap variables if necessary
-    invdir[i] < zero(ℒ) && ((imin, imax) = (imax, imin))
+    invdir[i] < zero(ℒ)^-1 && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue
@@ -178,7 +178,7 @@ function intersection(f, ray::Ray{3}, tri::Triangle{3})
     return @IT NotIntersecting nothing f
   end
 
-  λ = (e₂ ⋅ q) / det
+  λ = (e₂ ⋅ q) * inv(det)
 
   if λ < -atol(λ)
     return @IT NotIntersecting nothing f
