@@ -31,36 +31,36 @@
   @test Tuple(Vec(1, 2, 3)) == (1.0u"m", 2.0u"m", 3.0u"m")
 
   # Unitful coordinates
-  vector = Vec(1u"m", 1u"m")
-  @test unit(eltype(vector)) == u"m"
-  @test Unitful.numtype(eltype(vector)) === Float64
-  vector = Vec(1.0u"m", 1.0u"m")
-  @test unit(eltype(vector)) == u"m"
-  @test Unitful.numtype(eltype(vector)) === Float64
-  vector = Vec(1.0f0u"m", 1.0f0u"m")
-  @test unit(eltype(vector)) == u"m"
-  @test Unitful.numtype(eltype(vector)) === Float32
+  v = Vec(1u"m", 1u"m")
+  @test unit(eltype(v)) == u"m"
+  @test Unitful.numtype(eltype(v)) === Float64
+  v = Vec(1.0u"m", 1.0u"m")
+  @test unit(eltype(v)) == u"m"
+  @test Unitful.numtype(eltype(v)) === Float64
+  v = Vec(1.0f0u"m", 1.0f0u"m")
+  @test unit(eltype(v)) == u"m"
+  @test Unitful.numtype(eltype(v)) === Float32
 
   # angles between 2D vectors
-  @test ∠(vec(1, 0), vec(0, 1)) ≈ T(π / 2)
-  @test ∠(vec(1, 0), vec(0, -1)) ≈ T(-π / 2)
-  @test ∠(vec(1, 0), vec(-1, 0)) ≈ T(π)
-  @test ∠(vec(0, 1), vec(-1, 0)) ≈ T(π / 2)
-  @test ∠(vec(0, 1), vec(0, -1)) ≈ T(π)
-  @test ∠(vec(0, 1), vec(1, 1)) ≈ T(-π / 4)
-  @test ∠(vec(0, -1), vec(1, 1)) ≈ T(π * 3 / 4)
-  @test ∠(vec(-1, -1), vec(1, 1)) ≈ T(π)
-  @test ∠(vec(-2, 0), vec(2, 0)) ≈ T(π)
+  @test ∠(vector(1, 0), vector(0, 1)) ≈ T(π / 2)
+  @test ∠(vector(1, 0), vector(0, -1)) ≈ T(-π / 2)
+  @test ∠(vector(1, 0), vector(-1, 0)) ≈ T(π)
+  @test ∠(vector(0, 1), vector(-1, 0)) ≈ T(π / 2)
+  @test ∠(vector(0, 1), vector(0, -1)) ≈ T(π)
+  @test ∠(vector(0, 1), vector(1, 1)) ≈ T(-π / 4)
+  @test ∠(vector(0, -1), vector(1, 1)) ≈ T(π * 3 / 4)
+  @test ∠(vector(-1, -1), vector(1, 1)) ≈ T(π)
+  @test ∠(vector(-2, 0), vector(2, 0)) ≈ T(π)
 
   # angles between 3D vectors
-  @test ∠(vec(0, 0, 1), vec(1, 1, 0)) ≈ T(π / 2)
-  @test ∠(vec(1, 0, 1), vec(1, 1, 0)) ≈ T(π / 3)
-  @test ∠(vec(-1, -1, 0), vec(1, 1, 0)) ≈ T(π)
-  @test ∠(vec(0, -1, -1), vec(0, 1, 1)) ≈ T(π)
-  @test ∠(vec(0, -1, -1), vec(0, 1, 0)) ≈ T(π * 3 / 4)
-  @test ∠(vec(0, 1, 1), vec(1, 1, 0)) ≈ T(π / 3)
+  @test ∠(vector(0, 0, 1), vector(1, 1, 0)) ≈ T(π / 2)
+  @test ∠(vector(1, 0, 1), vector(1, 1, 0)) ≈ T(π / 3)
+  @test ∠(vector(-1, -1, 0), vector(1, 1, 0)) ≈ T(π)
+  @test ∠(vector(0, -1, -1), vector(0, 1, 1)) ≈ T(π)
+  @test ∠(vector(0, -1, -1), vector(0, 1, 0)) ≈ T(π * 3 / 4)
+  @test ∠(vector(0, 1, 1), vector(1, 1, 0)) ≈ T(π / 3)
 
-  v = vec(0, 1)
+  v = vector(0, 1)
   @test sprint(show, v, context=:compact => true) == "(0.0 m, 1.0 m)"
   if T === Float32
     @test sprint(show, v) == "Vec(0.0f0 m, 1.0f0 m)"

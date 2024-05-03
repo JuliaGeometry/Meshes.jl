@@ -70,8 +70,8 @@ end
 point(coords...) = point(coords)
 point(coords::Tuple) = Point(T.(coords))
 
-vec(coords...) = vec(coords)
-vec(coords::Tuple) = Vec(T.(coords))
+vector(coords...) = vector(coords)
+vector(coords::Tuple) = Vec(T.(coords))
 
 cartgrid(dims...) = cartgrid(dims)
 function cartgrid(dims::Dims{Dim}) where {Dim}

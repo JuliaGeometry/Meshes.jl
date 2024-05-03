@@ -374,9 +374,9 @@
     @test t(T(0.5), T(0.5)) == point(0, 0.5, 0.5)
     @test_throws DomainError((T(-0.5), T(0.0)), "invalid barycentric coordinates for triangle.") t(T(-0.5), T(0.0))
     @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
-    @test isapprox(normal(t), vec(0.5, 0, 0))
+    @test isapprox(normal(t), vector(0.5, 0, 0))
     t = Triangle(point(0, 0, 0), point(2, 0, 0), point(0, 2, 2))
-    @test isapprox(normal(t), vec(0, -2, 2))
+    @test isapprox(normal(t), vector(0, -2, 2))
 
     t = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0))
     @test_throws ErrorException("signed area only defined for triangles embedded in R², use `area` instead") signarea(t)
@@ -689,9 +689,9 @@
     @test m isa Mesh
     @test nvertices(m) == 4
     @test nelements(m) == 4
-    @test n[1] == vec(0, 0, -0.5)
-    @test n[2] == vec(0, -0.5, 0)
-    @test n[3] == vec(-0.5, 0, 0)
+    @test n[1] == vector(0, 0, -0.5)
+    @test n[2] == vector(0, -0.5, 0)
+    @test n[3] == vector(-0.5, 0, 0)
     @test all(>(T(0) * u"m"), n[4])
     @test t(T(0), T(0), T(0)) ≈ point(0, 0, 0)
     @test t(T(1), T(0), T(0)) ≈ point(1, 0, 0)

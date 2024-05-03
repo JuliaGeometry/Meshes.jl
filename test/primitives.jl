@@ -10,29 +10,29 @@
     @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
     @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
-    @test coordinates(point(1)) == vec(1)
-    @test coordinates(point(1, 2)) == vec(1, 2)
-    @test coordinates(point(1, 2, 3)) == vec(1, 2, 3)
+    @test coordinates(point(1)) == vector(1)
+    @test coordinates(point(1, 2)) == vector(1, 2)
+    @test coordinates(point(1, 2, 3)) == vector(1, 2, 3)
 
-    @test point(1) - point(1) == vec(0)
-    @test point(1, 2) - point(1, 1) == vec(0, 1)
-    @test point(1, 2, 3) - point(1, 1, 1) == vec(0, 1, 2)
+    @test point(1) - point(1) == vector(0)
+    @test point(1, 2) - point(1, 1) == vector(0, 1)
+    @test point(1, 2, 3) - point(1, 1, 1) == vector(0, 1, 2)
     @test_throws MethodError point(1, 2) - point(1, 2, 3)
 
-    @test point(1) + vec(0) == point(1)
-    @test point(2) + vec(2) == point(4)
-    @test point(1, 2) + vec(0, 0) == point(1, 2)
-    @test point(2, 3) + vec(2, 1) == point(4, 4)
-    @test point(1, 2, 3) + vec(0, 0, 0) == point(1, 2, 3)
-    @test point(2, 3, 4) + vec(2, 1, 0) == point(4, 4, 4)
-    @test_throws MethodError point(1, 2) + vec(1, 2, 3)
+    @test point(1) + vector(0) == point(1)
+    @test point(2) + vector(2) == point(4)
+    @test point(1, 2) + vector(0, 0) == point(1, 2)
+    @test point(2, 3) + vector(2, 1) == point(4, 4)
+    @test point(1, 2, 3) + vector(0, 0, 0) == point(1, 2, 3)
+    @test point(2, 3, 4) + vector(2, 1, 0) == point(4, 4, 4)
+    @test_throws MethodError point(1, 2) + vector(1, 2, 3)
 
-    @test point(1) - vec(0) == point(1)
-    @test point(2) - vec(2) == point(0)
-    @test point(1, 2) - vec(0, 0) == point(1, 2)
-    @test point(2, 3) - vec(2, 1) == point(0, 2)
-    @test point(1, 2, 3) - vec(0, 0, 0) == point(1, 2, 3)
-    @test point(2, 3, 4) - vec(2, 1, 0) == point(0, 2, 4)
+    @test point(1) - vector(0) == point(1)
+    @test point(2) - vector(2) == point(0)
+    @test point(1, 2) - vector(0, 0) == point(1, 2)
+    @test point(2, 3) - vector(2, 1) == point(0, 2)
+    @test point(1, 2, 3) - vector(0, 0, 0) == point(1, 2, 3)
+    @test point(2, 3, 4) - vector(2, 1, 0) == point(0, 2, 4)
 
     @test embeddim(rand(Point{1})) == 1
     @test embeddim(rand(Point{2})) == 2
@@ -114,8 +114,8 @@
     @test isnothing(boundary(rand(Point{3})))
 
     # check broadcasting works as expected
-    @test point(2, 2) .- [point(2, 3), point(3, 1)] == [vec(0.0, -1.0), vec(-1.0, 1.0)]
-    @test point(2, 2, 2) .- [point(2, 3, 1), point(3, 1, 4)] == [vec(0.0, -1.0, 1.0), vec(-1.0, 1.0, -2.0)]
+    @test point(2, 2) .- [point(2, 3), point(3, 1)] == [vector(0.0, -1.0), vector(-1.0, 1.0)]
+    @test point(2, 2, 2) .- [point(2, 3, 1), point(3, 1, 4)] == [vector(0.0, -1.0, 1.0), vector(-1.0, 1.0, -2.0)]
 
     # angles between 2D points
     @test ∠(point(0, 1), point(0, 0), point(1, 0)) ≈ T(-π / 2)
@@ -166,42 +166,42 @@
   end
 
   @testset "Ray" begin
-    r = Ray(point(0, 0), vec(1, 1))
+    r = Ray(point(0, 0), vector(1, 1))
     @test paramdim(r) == 1
     @test measure(r) == typemax(ℳ)
     @test length(r) == typemax(ℳ)
     @test boundary(r) == point(0, 0)
     @test perimeter(r) == zero(ℳ)
 
-    r = Ray(point(0, 0), vec(1, 1))
+    r = Ray(point(0, 0), vector(1, 1))
     @test r(T(0.0)) == point(0, 0)
     @test r(T(1.0)) == point(1, 1)
     @test r(T(Inf)) == point(Inf, Inf)
-    @test r(T(1.0)) - r(T(0.0)) == vec(1, 1)
+    @test r(T(1.0)) - r(T(0.0)) == vector(1, 1)
     @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
 
     p₁ = point(3, 3, 3)
     p₂ = point(-3, -3, -3)
     p₃ = point(1, 0, 0)
-    r = Ray(point(0, 0, 0), vec(1, 1, 1))
+    r = Ray(point(0, 0, 0), vector(1, 1, 1))
     @test p₁ ∈ r
     @test p₂ ∉ r
     @test p₃ ∉ r
 
-    r1 = Ray(point(0, 0, 0), vec(1, 0, 0))
-    r2 = Ray(point(1, 1, 1), vec(1, 2, 1))
+    r1 = Ray(point(0, 0, 0), vector(1, 0, 0))
+    r2 = Ray(point(1, 1, 1), vector(1, 2, 1))
     @test r1 != r2
 
-    r1 = Ray(point(0, 0, 0), vec(1, 0, 0))
-    r2 = Ray(point(1, 0, 0), vec(-1, 0, 0))
+    r1 = Ray(point(0, 0, 0), vector(1, 0, 0))
+    r2 = Ray(point(1, 0, 0), vector(-1, 0, 0))
     @test r1 != r2
 
-    r1 = Ray(point(0, 0, 0), vec(1, 0, 0))
-    r2 = Ray(point(1, 0, 0), vec(1, 0, 0))
+    r1 = Ray(point(0, 0, 0), vector(1, 0, 0))
+    r2 = Ray(point(1, 0, 0), vector(1, 0, 0))
     @test r1 != r2
 
-    r1 = Ray(point(0, 0, 0), vec(2, 0, 0))
-    r2 = Ray(point(0, 0, 0), vec(1, 0, 0))
+    r1 = Ray(point(0, 0, 0), vector(2, 0, 0))
+    r2 = Ray(point(0, 0, 0), vector(1, 0, 0))
     @test r1 == r2
 
     r2 = rand(Ray{2})
@@ -211,7 +211,7 @@
     @test embeddim(r2) == 2
     @test embeddim(r3) == 3
 
-    r = Ray(point(0, 0), vec(1, 1))
+    r = Ray(point(0, 0), vector(1, 1))
     @test sprint(show, r) == "Ray(p: (x: 0.0 m, y: 0.0 m), v: (1.0 m, 1.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), r) == """
@@ -260,7 +260,7 @@
   end
 
   @testset "Plane" begin
-    p = Plane(point(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0))
+    p = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
     @test p(T(1), T(0)) == point(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
@@ -271,24 +271,24 @@
     @test isnothing(boundary(p))
     @test perimeter(p) == zero(ℳ)
 
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     @test p(T(1), T(0)) == point(1, 0, 0)
     @test p(T(0), T(1)) == point(0, 1, 0)
 
-    p₁ = Plane(point(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0))
-    p₂ = Plane(point(0, 0, 0), vec(0, 1, 0), vec(1, 0, 0))
+    p₁ = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
+    p₂ = Plane(point(0, 0, 0), vector(0, 1, 0), vector(1, 0, 0))
     @test p₁ ≈ p₂
-    p₁ = Plane(point(0, 0, 0), vec(1, 1, 0))
-    p₂ = Plane(point(0, 0, 0), -vec(1, 1, 0))
+    p₁ = Plane(point(0, 0, 0), vector(1, 1, 0))
+    p₂ = Plane(point(0, 0, 0), -vector(1, 1, 0))
     @test p₁ ≈ p₂
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/624
-    p₁ = Plane(point(0, 0, 0), vec(0, 0, 1))
-    p₂ = Plane(point(0, 0, 10), vec(0, 0, 1))
+    p₁ = Plane(point(0, 0, 0), vector(0, 0, 1))
+    p₂ = Plane(point(0, 0, 10), vector(0, 0, 1))
     @test !(p₁ ≈ p₂)
 
     # normal to plane has norm one regardless of basis
-    p = Plane(point(0, 0, 0), vec(2, 0, 0), vec(0, 3, 0))
+    p = Plane(point(0, 0, 0), vector(2, 0, 0), vector(0, 3, 0))
     n = normal(p)
     @test isapprox(norm(n), oneunit(ℳ), atol=atol(ℳ))
 
@@ -305,8 +305,9 @@
     @test p isa Plane
     @test embeddim(p) == 3
 
-    p = Plane(point(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0))
-    @test sprint(show, p) == "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, 0.0 m, 0.0 m), v: (0.0 m, 1.0 m, 0.0 m))"
+    p = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
+    @test sprint(show, p) ==
+          "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, 0.0 m, 0.0 m), v: (0.0 m, 1.0 m, 0.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       Plane
@@ -357,12 +358,14 @@
 
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
     if T === Float32
-      @test sprint(show, b) == "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float32, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
+      @test sprint(show, b) ==
+            "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float32, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve
       └─ controls: Point{2, CoordRefSystems.Cartesian{CoordRefSystems.NoDatum, 2, Quantity{Float32, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}[Point(x: 0.0 m, y: 0.0 m), Point(x: 0.5 m, y: 1.0 m), Point(x: 1.0 m, y: 0.0 m)]"""
     else
-      @test sprint(show, b) == "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float64, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
+      @test sprint(show, b) ==
+            "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float64, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve
       └─ controls: Point{2, CoordRefSystems.Cartesian{CoordRefSystems.NoDatum, 2, Quantity{Float64, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}[Point(x: 0.0 m, y: 0.0 m), Point(x: 0.5 m, y: 1.0 m), Point(x: 1.0 m, y: 0.0 m)]"""
@@ -712,7 +715,7 @@
   end
 
   @testset "Disk" begin
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     @test embeddim(d) == 3
     @test paramdim(d) == 2
@@ -720,7 +723,7 @@
     @test plane(d) == p
     @test Meshes.center(d) == point(0, 0, 0)
     @test radius(d) == T(2) * u"m"
-    @test normal(d) == vec(0, 0, 1)
+    @test normal(d) == vector(0, 0, 1)
     @test measure(d) == T(π) * T(2)^2 * u"m^2"
     @test area(d) == measure(d)
     @test point(0, 0, 0) ∈ d
@@ -731,7 +734,7 @@
     @test d isa Disk
     @test embeddim(d) == 3
 
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     @test sprint(show, d) ==
           "Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)"
@@ -749,7 +752,7 @@
   end
 
   @testset "Circle" begin
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 1
@@ -774,7 +777,7 @@
     @test p3 ∈ c
 
     # circle parametrization
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
     @test c(T(0)) ≈ point(2, 0, 0)
     @test c(T(0.25)) ≈ point(0, 2, 0)
@@ -786,7 +789,7 @@
     @test c isa Circle
     @test embeddim(c) == 3
 
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
     @test sprint(show, c) ==
           "Circle(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)"
@@ -804,13 +807,13 @@
   end
 
   @testset "Cylinder" begin
-    c = Cylinder(Plane(point(1, 2, 3), vec(0, 0, 1)), Plane(point(4, 5, 6), vec(0, 0, 1)), T(5))
+    c = Cylinder(Plane(point(1, 2, 3), vector(0, 0, 1)), Plane(point(4, 5, 6), vector(0, 0, 1)), T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
     @test Meshes.lentype(c) == ℳ
     @test radius(c) == T(5) * u"m"
-    @test bottom(c) == Plane(point(1, 2, 3), vec(0, 0, 1))
-    @test top(c) == Plane(point(4, 5, 6), vec(0, 0, 1))
+    @test bottom(c) == Plane(point(1, 2, 3), vector(0, 0, 1))
+    @test top(c) == Plane(point(4, 5, 6), vector(0, 0, 1))
     @test axis(c) == Line(point(1, 2, 3), point(4, 5, 6))
     @test !isright(c)
     @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3)) * u"m^3"
@@ -825,7 +828,7 @@
     @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
     @test_throws DomainError c(1.1, 0, 0)
 
-    # c = Cylinder(Plane(point(0, 0, 0), vec(0, 0, 1)), Plane(point(0, 0, 1), vec(1, 0, 1)), T(5))
+    # c = Cylinder(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     # @test Meshes.hasintersectingplanes(c)
 
     c1 = Cylinder(point(0, 0, 0), point(0, 0, 1), T(1))
@@ -841,8 +844,8 @@
 
     c = Cylinder(point(0, 0, 0), point(0, 0, 1), T(1))
     @test radius(c) == T(1) * u"m"
-    @test bottom(c) == Plane(point(0, 0, 0), vec(0, 0, 1))
-    @test top(c) == Plane(point(0, 0, 1), vec(0, 0, 1))
+    @test bottom(c) == Plane(point(0, 0, 0), vector(0, 0, 1))
+    @test top(c) == Plane(point(0, 0, 1), vector(0, 0, 1))
     @test center(c) == point(0.0, 0.0, 0.5)
     @test centroid(c) == point(0.0, 0.0, 0.5)
     @test axis(c) == Line(point(0, 0, 0), point(0, 0, 1))
@@ -886,8 +889,8 @@
     @test paramdim(c) == 2
     @test Meshes.lentype(c) == ℳ
     @test radius(c) == T(2) * u"m"
-    @test bottom(c) == Plane(point(0, 0, 0), vec(0, 0, 1))
-    @test top(c) == Plane(point(0, 0, 1), vec(0, 0, 1))
+    @test bottom(c) == Plane(point(0, 0, 0), vector(0, 0, 1))
+    @test top(c) == Plane(point(0, 0, 1), vector(0, 0, 1))
     @test center(c) == point(0.0, 0.0, 0.5)
     @test centroid(c) == point(0.0, 0.0, 0.5)
     @test axis(c) == Line(point(0, 0, 0), point(0, 0, 1))
@@ -897,7 +900,7 @@
     # TODO: fix intersection(f, Plane, Plane)
     # @test !Meshes.hasintersectingplanes(c)
 
-    # c = CylinderSurface(Plane(point(0, 0, 0), vec(0, 0, 1)), Plane(point(0, 0, 1), vec(1, 0, 1)), T(5))
+    # c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     # @test Meshes.hasintersectingplanes(c)
 
     c1 = CylinderSurface(point(0, 0, 0), point(0, 0, 1), T(1))
@@ -906,7 +909,7 @@
     @test c1 == c2 == c3
     @test c1 ≈ c2 ≈ c3
 
-    c = CylinderSurface(Plane(point(1, 2, 3), vec(0, 0, 1)), Plane(point(4, 5, 6), vec(0, 0, 1)), T(5))
+    c = CylinderSurface(Plane(point(1, 2, 3), vector(0, 0, 1)), Plane(point(4, 5, 6), vector(0, 0, 1)), T(5))
     @test measure(c) == area(c) ≈ (2 * T(5)^2 * pi + 2 * T(5) * pi * sqrt(3 * T(3)^2)) * u"m^2"
 
     c = CylinderSurface(T(1))
@@ -987,7 +990,7 @@
 
     p = ParaboloidSurface(Point(0.0, 0.0, 0.0))
     @test Meshes.lentype(p) == Meshes.Met{Float64}
-    p = ParaboloidSurface(Point(0f0, 0f0, 0f0))
+    p = ParaboloidSurface(Point(0.0f0, 0.0f0, 0.0f0))
     @test Meshes.lentype(p) == Meshes.Met{Float32}
 
     p = rand(ParaboloidSurface)
@@ -995,7 +998,8 @@
     @test embeddim(p) == 3
 
     p = ParaboloidSurface(point(0, 0, 0), T(1), T(1))
-    @test sprint(show, p) == "ParaboloidSurface(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
+    @test sprint(show, p) ==
+          "ParaboloidSurface(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       ParaboloidSurface
@@ -1012,7 +1016,7 @@
   end
 
   @testset "Cone" begin
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = point(0, 0, 1)
     c = Cone(d, a)
@@ -1025,7 +1029,7 @@
     @test c isa Cone
     @test embeddim(c) == 3
 
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = point(0, 0, 1)
     c = Cone(d, a)
@@ -1046,7 +1050,7 @@
     # cone: apex at (5,4,3); base center at (5,1,3)
     # halfangle: 30° -> radius: sqrt(3)
     # axis of the cone is parallel to y axis
-    p = Plane(point(5, 1, 3), vec(0, 1, 0))
+    p = Plane(point(5, 1, 3), vector(0, 1, 0))
     d = Disk(p, sqrt(T(3)))
     a = point(5, 4, 3)
     c = Cone(d, a)
@@ -1073,7 +1077,7 @@
   end
 
   @testset "ConeSurface" begin
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = point(0, 0, 1)
     s = ConeSurface(d, a)
@@ -1086,7 +1090,7 @@
     @test c isa ConeSurface
     @test embeddim(c) == 3
 
-    p = Plane(point(0, 0, 0), vec(0, 0, 1))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = point(0, 0, 1)
     s = ConeSurface(d, a)
@@ -1106,9 +1110,9 @@
   end
 
   @testset "Frustum" begin
-    pb = Plane(point(0, 0, 0), vec(0, 0, 1))
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
     db = Disk(pb, T(1))
-    pt = Plane(point(0, 0, 10), vec(0, 0, 1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
     dt = Disk(pt, T(2))
     f = Frustum(db, dt)
     @test embeddim(f) == 3
@@ -1148,9 +1152,9 @@
   end
 
   @testset "FrustumSurface" begin
-    pb = Plane(point(0, 0, 0), vec(0, 0, 1))
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
     db = Disk(pb, T(1))
-    pt = Plane(point(0, 0, 10), vec(0, 0, 1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
     dt = Disk(pt, T(2))
     f = FrustumSurface(db, dt)
     @test embeddim(f) == 3
@@ -1170,7 +1174,7 @@
     @test point(1, 1, 1) ∉ t
     @test paramdim(t) == 2
     @test Meshes.center(t) == point(1, 1, 1)
-    @test normal(t) == vec(1, 0, 0)
+    @test normal(t) == vector(1, 0, 0)
     @test radii(t) == (T(2) * u"m", T(1) * u"m")
     @test axis(t) == Line(point(1, 1, 1), point(2, 1, 1))
     @test measure(t) ≈ 8 * T(π)^2 * u"m^2"
@@ -1205,8 +1209,9 @@
     @test Meshes.lentype(t) == Meshes.Met{Float64}
     @test isnothing(boundary(t))
 
-    t = Torus(point(1, 1, 1), vec(1, 0, 0), T(2), T(1))
-    @test sprint(show, t) == "Torus(center: (x: 1.0 m, y: 1.0 m, z: 1.0 m), normal: (1.0 m, 0.0 m, 0.0 m), major: 2.0 m, minor: 1.0 m)"
+    t = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+    @test sprint(show, t) ==
+          "Torus(center: (x: 1.0 m, y: 1.0 m, z: 1.0 m), normal: (1.0 m, 0.0 m, 0.0 m), major: 2.0 m, minor: 1.0 m)"
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
       Torus
