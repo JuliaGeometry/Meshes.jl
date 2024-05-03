@@ -496,7 +496,7 @@
     poly = PolyArea([point.([(1, 2), (2, 3)]), point.([(1.1, 2.54), (1.4, 1.5)])], fix=false)
     @test vertices(poly) == CircularVector(point.([(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)]))
 
-    # TODO: fix intersection(f, Segment, Segment) is required to run issimple
+    # TODO: fix intersection(f, Segment, Segment) is required to use issimple
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]

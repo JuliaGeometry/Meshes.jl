@@ -22,6 +22,7 @@ function hull(points, ::GrahamScan)
   pₒ = first(points)
   Dim = embeddim(pₒ)
   ℒ = lentype(pₒ)
+  T = numtype(ℒ)
 
   @assert Dim == 2 "Graham's scan only defined in 2D"
 
@@ -39,7 +40,7 @@ function hull(points, ::GrahamScan)
   # sort points by polar angle
   O = p[1]
   q = p[2:n]
-  A = O + Vec{2,ℒ}(0, -1)
+  A = O + Vec(zero(ℒ), -oneunit(ℒ))
   θ = [∠(A, O, B) for B in q]
   q = q[sortperm(θ)]
 
@@ -54,7 +55,7 @@ function hull(points, ::GrahamScan)
   i = max(i, 2)
   r = [O, q[i - 1], q[i]]
   for B in q[(i + 1):end]
-    while ∠(r[end - 1], r[end], B) > atol(ℒ) && length(r) ≥ 3
+    while ∠(r[end - 1], r[end], B) > atol(T) && length(r) ≥ 3
       pop!(r)
     end
     if !iscollinear(r[end - 1], r[end], B)
