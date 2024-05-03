@@ -18,7 +18,7 @@ struct KNearestSearch{D<:Domain,T} <: BoundedNeighborSearchMethod
 end
 
 function KNearestSearch(domain::D, k::Int; metric=Euclidean()) where {D<:Domain}
-  xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
+  xs = [ustrip.(coordinates(centroid(domain, i))) for i in 1:nelements(domain)]
   tree = metric isa MinkowskiMetric ? KDTree(xs, metric) : BallTree(xs, metric)
   KNearestSearch{D,typeof(tree)}(domain, k, tree)
 end
@@ -28,16 +28,17 @@ KNearestSearch(geoms, k; metric=Euclidean()) = KNearestSearch(GeometrySet(geoms)
 maxneighbors(method::KNearestSearch) = method.k
 
 function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; mask=nothing)
+  u = unit(lentype(pₒ))
   tree = method.tree
   k = method.k
 
-  inds, dists = knn(tree, coordinates(pₒ), k, true)
+  inds, dists = knn(tree, ustrip.(coordinates(pₒ)), k, true)
 
   if isnothing(mask)
     nneigh = k
     @inbounds for i in 1:k
       neighbors[i] = inds[i]
-      distances[i] = dists[i]
+      distances[i] = dists[i] * u
     end
   else
     nneigh = 0
@@ -45,7 +46,7 @@ function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch;
       if mask[inds[i]]
         nneigh += 1
         neighbors[nneigh] = inds[i]
-        distances[nneigh] = dists[i]
+        distances[nneigh] = dists[i] * u
       end
     end
   end

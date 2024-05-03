@@ -20,7 +20,7 @@ end
 
 function KBallSearch(domain::D, k::Int, ball::B) where {D<:Domain,B<:MetricBall}
   m = metric(ball)
-  xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
+  xs = [ustrip.(coordinates(centroid(domain, i))) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
 end
@@ -30,11 +30,12 @@ KBallSearch(geoms, k, ball) = KBallSearch(GeometrySet(geoms), k, ball)
 maxneighbors(method::KBallSearch) = method.k
 
 function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
+  u = unit(lentype(pₒ))
   tree = method.tree
   dmax = radius(method.ball)
   k = method.k
 
-  inds, dists = knn(tree, coordinates(pₒ), k, true)
+  inds, dists = knn(tree, ustrip.(coordinates(pₒ)), k, true)
 
   # keep neighbors inside ball
   keep = dists .≤ dmax
@@ -47,7 +48,7 @@ function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; ma
     if keep[i]
       nneigh += 1
       neighbors[nneigh] = inds[i]
-      distances[nneigh] = dists[i]
+      distances[nneigh] = dists[i] * u
     end
   end
 
