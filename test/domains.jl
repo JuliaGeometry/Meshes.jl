@@ -1,39 +1,39 @@
 @testset "Domain" begin
   # basic properties
-  dom = DummyDomain(P2(0, 0))
+  dom = DummyDomain(point(0, 0))
   @test embeddim(dom) == 2
-  @test coordtype(dom) == T
+  @test Meshes.lentype(dom) == ℳ
   @test !isparametrized(dom)
 
   # indexable/iterable interface
-  dom = DummyDomain(P2(0, 0))
-  @test dom[begin] == Ball(P2(1, 1), T(1))
-  @test dom[end] == Ball(P2(3, 3), T(1))
-  @test eltype(dom) <: Ball{2,T}
+  dom = DummyDomain(point(0, 0))
+  @test dom[begin] == Ball(point(1, 1), T(1))
+  @test dom[end] == Ball(point(3, 3), T(1))
+  @test eltype(dom) <: Ball{2}
   @test length(dom) == 3
   @test keys(dom) == 1:3
-  @test collect(dom) == [Ball(P2(i, i), T(1)) for i in 1:3]
-  @test dom[1:2] == [Ball(P2(i, i), T(1)) for i in 1:2]
+  @test collect(dom) == [Ball(point(i, i), T(1)) for i in 1:3]
+  @test dom[1:2] == [Ball(point(i, i), T(1)) for i in 1:2]
 
   # coordinates of centroids
-  dom = DummyDomain(P2(1, 1))
+  dom = DummyDomain(point(1, 1))
   pts = centroid.(Ref(dom), 1:3)
-  @test pts == P2[(2, 2), (3, 3), (4, 4)]
+  @test pts == point.([(2, 2), (3, 3), (4, 4)])
 
   # concatenation
-  dom1 = DummyDomain(P2(0, 0))
-  dom2 = DummyDomain(P2(3, 3))
-  dom3 = PointSet(rand(P2, 3))
+  dom1 = DummyDomain(point(0, 0))
+  dom2 = DummyDomain(point(3, 3))
+  dom3 = PointSet(randpoint2(3))
   @test vcat(dom1, dom2) == GeometrySet([collect(dom1); collect(dom2)])
   @test vcat(dom2, dom3) == GeometrySet([collect(dom2); collect(dom3)])
   @test vcat(dom3, dom1) == GeometrySet([collect(dom3); collect(dom1)])
   @test vcat(dom1, dom2, dom3) == GeometrySet([collect(dom1); collect(dom2); collect(dom3)])
 
-  dom = DummyDomain(P2(0, 0))
-  @test sprint(show, dom) == "3 DummyDomain{2,$T}"
+  dom = DummyDomain(point(0, 0))
+  @test sprint(show, dom) == "3 DummyDomain"
   @test sprint(show, MIME"text/plain"(), dom) == """
-  3 DummyDomain{2,$T}
-  ├─ Ball(center: (1.0, 1.0), radius: 1.0)
-  ├─ Ball(center: (2.0, 2.0), radius: 1.0)
-  └─ Ball(center: (3.0, 3.0), radius: 1.0)"""
+  3 DummyDomain
+  ├─ Ball(center: (x: 1.0 m, y: 1.0 m), radius: 1.0 m)
+  ├─ Ball(center: (x: 2.0 m, y: 2.0 m), radius: 1.0 m)
+  └─ Ball(center: (x: 3.0 m, y: 3.0 m), radius: 1.0 m)"""
 end
