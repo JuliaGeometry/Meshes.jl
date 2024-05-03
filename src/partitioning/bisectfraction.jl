@@ -15,7 +15,8 @@ struct BisectFractionPartition{V<:Vec} <: PartitionMethod
   maxiter::Int
 
   function BisectFractionPartition{V}(normal, fraction, maxiter) where {V<:Vec}
-    new(normalize(normal), fraction, maxiter)
+    n = Vec(normalize(normal) * unit(eltype(normal)))
+    new(n, fraction, maxiter)
   end
 end
 
@@ -26,6 +27,7 @@ BisectFractionPartition(normal::Tuple, fraction=0.5, maxiter=10) =
   BisectFractionPartition(Vec(normal), fraction, maxiter)
 
 function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)
+  u = unit(lentype(domain))
   bbox = boundingbox(domain)
   n = method.normal
   f = method.fraction
@@ -36,8 +38,8 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionP
   maxiter = method.maxiter
 
   iter = 0
-  a = c - d / 2 * n
-  b = c + d / 2 * n
+  a = c - d / 2u * n
+  b = c + d / 2u * n
   subsets = Vector{Int}[]
   metadata = Dict()
   while iter < maxiter

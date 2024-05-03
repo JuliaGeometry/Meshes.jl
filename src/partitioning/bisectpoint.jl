@@ -13,7 +13,8 @@ struct BisectPointPartition{Dim,V<:Vec{Dim},P<:Point{Dim}} <: PartitionMethod
   point::P
 
   function BisectPointPartition{Dim,V,P}(normal, point) where {Dim,V<:Vec{Dim},P<:Point{Dim}}
-    new(normalize(normal), point)
+    n = Vec(normalize(normal) * unit(eltype(normal)))
+    new(n, point)
   end
 end
 

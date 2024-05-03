@@ -17,20 +17,25 @@ CylindricalTrajectory(centroids, radius::Len) = CylindricalTrajectory(collect(ce
 
 CylindricalTrajectory(centroids, radius) = CylindricalTrajectory(centroids, addunit(radius, u"m"))
 
-CylindricalTrajectory(centroids) = CylindricalTrajectory(centroids, 1.0u"m")
+CylindricalTrajectory(centroids::Vector{P}) where {P<:Point{3}} = CylindricalTrajectory(centroids, oneunit(lentype(P)))
+
+CylindricalTrajectory(centroids) = CylindricalTrajectory(collect(centroids))
 
 lentype(::Type{<:CylindricalTrajectory{P}}) where {P} = lentype(P)
 
 topology(t::CylindricalTrajectory) = GridTopology(length(t.centroids))
 
-function element(t::CylindricalTrajectory{P,T}, ind::Int) where {P,T}
+function element(t::CylindricalTrajectory, ind::Int)
+  ℒ = lentype(t)
+  T = numtype(ℒ)
+  u = unit(ℒ)
   c = t.centroids
   r = t.radius
   n = length(c)
 
   if n == 1 # single vertical cylinder
-    p₁ = c[1] - Vec{3,T}(0, 0, 0.5)
-    p₂ = c[1] + Vec{3,T}(0, 0, 0.5)
+    p₁ = c[1] - Vec(T(0) * u, T(0) * u, T(0.5) * u)
+    p₂ = c[1] + Vec(T(0) * u, T(0) * u, T(0.5) * u)
     return Cylinder(p₁, p₂, r)
   end
 

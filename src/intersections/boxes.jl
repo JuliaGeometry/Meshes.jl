@@ -20,7 +20,7 @@ function intersection(f, box₁::Box{Dim}, box₂::Box{Dim}) where {Dim}
   # auxiliary variables
   δ = v - u
   δ̄ = abs.(δ)
-  τ = atol(δ)
+  τ = atol(eltype(δ))
 
   # branch on possible configurations
   if all(>(τ), δ)
