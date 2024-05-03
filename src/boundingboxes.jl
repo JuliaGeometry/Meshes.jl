@@ -99,5 +99,5 @@ function _pboxes(points)
     @. xmin = min(x, xmin)
     @. xmax = max(x, xmax)
   end
-  Box(Point(xmin), Point(xmax))
+  Box(Point(Vec(xmin)), Point(Vec(xmax)))
 end

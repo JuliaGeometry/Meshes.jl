@@ -101,7 +101,7 @@ testfiles = [
   "domains.jl",
   "subdomains.jl",
   "sets.jl",
-  # "mesh.jl",
+  "mesh.jl",
   # "trajecs.jl",
   # "utils.jl",
   # "viewing.jl",
