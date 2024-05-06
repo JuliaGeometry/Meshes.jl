@@ -18,5 +18,8 @@ atol(x) = atol(typeof(x))
 atol(::Type{Float64}) = 1e-10
 atol(::Type{Float32}) = 1.0f-5
 atol(ℒ::Type{<:Len}) = atol(numtype(ℒ)) * unit(ℒ)
-atol(𝒜::Type{<:Area}) = atol(numtype(𝒜))^1.3 * unit(𝒜)
+function atol(𝒜::Type{<:Area})
+    T = numtype(𝒜)
+    atol(T)^T(1.3) * unit(𝒜)
+end
 atol(𝒱::Type{<:Vol}) = atol(numtype(𝒱))^3 * unit(𝒱)

@@ -128,13 +128,14 @@ testfiles = [
   "sampling.jl",
   "pointification.jl",
   "discretization.jl",
-  # "refinement.jl",
-  # "coarsening.jl",
+  "refinement.jl",
+  "coarsening.jl",
+  # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
   # "transforms.jl",
-  # "distances.jl",
-  # "supportfun.jl",
-  # "matrices.jl",
-  # "tolerances.jl"
+  "distances.jl",
+  "supportfun.jl",
+  "matrices.jl",
+  "tolerances.jl"
 ]
 
 # --------------------------------
