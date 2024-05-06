@@ -38,8 +38,8 @@ function (d::Disk)(ρ, φ)
   r = d.radius
   l = T(ρ) * r
   sφ, cφ = sincospi(2 * T(φ))
-  u = l * cφ
-  v = l * sφ
+  u = ustrip(l * cφ)
+  v = ustrip(l * sφ)
   d.plane(u, v)
 end
 

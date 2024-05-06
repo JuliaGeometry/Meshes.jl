@@ -25,7 +25,11 @@ struct DouglasPeucker{T} <: SimplificationMethod
   maxiter::Int
 end
 
-DouglasPeucker(ϵ=nothing; min=3, max=typemax(Int), maxiter=10) = DouglasPeucker(ϵ, min, max, maxiter)
+DouglasPeucker(ϵ=nothing; min=3, max=typemax(Int), maxiter=10) = DouglasPeucker(_ϵ(ϵ), min, max, maxiter)
+
+_ϵ(ϵ::Nothing) = ϵ
+_ϵ(ϵ::Number) = _ϵ(addunit(ϵ, u"m"))
+_ϵ(ϵ::Len) = float(ϵ)
 
 function simplify(chain::Chain, method::DouglasPeucker)
   v = if isnothing(method.ϵ)

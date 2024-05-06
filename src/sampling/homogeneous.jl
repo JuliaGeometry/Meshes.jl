@@ -21,7 +21,7 @@ function sample(rng::AbstractRNG, d::Domain, method::HomogeneousSampling)
   weights = isnothing(method.weights) ? measure.(d) : method.weights
 
   # sample elements with weights
-  w = WeightedSampling(size, weights, replace=true)
+  w = WeightedSampling(size, ustrip.(weights), replace=true)
 
   # within each element sample a single point
   h = HomogeneousSampling(1)
@@ -31,7 +31,7 @@ end
 
 function sample(rng::AbstractRNG, geom::Geometry, method::HomogeneousSampling)
   if isparametrized(geom)
-    randpoint() = geom(rand(rng, lentype(geom), paramdim(geom))...)
+    randpoint() = geom(rand(rng, numtype(lentype(geom)), paramdim(geom))...)
     (randpoint() for _ in 1:(method.size))
   else
     sample(rng, discretize(geom), method)
@@ -45,7 +45,7 @@ end
 function sample(rng::AbstractRNG, triangle::Triangle, method::HomogeneousSampling)
   function randpoint()
     # sample barycentric coordinates
-    u₁, u₂ = rand(rng, lentype(triangle), 2)
+    u₁, u₂ = rand(rng, numtype(lentype(triangle)), 2)
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
     triangle(λ₁, λ₂)
   end
@@ -58,7 +58,7 @@ end
 
 function sample(rng::AbstractRNG, ball::Ball{2}, method::HomogeneousSampling)
   function randpoint()
-    u₁, u₂ = rand(rng, lentype(ball), 2)
+    u₁, u₂ = rand(rng, numtype(lentype(ball)), 2)
     ball(√u₁, u₂)
   end
   (randpoint() for _ in 1:(method.size))
@@ -66,8 +66,8 @@ end
 
 function sample(rng::AbstractRNG, ball::Ball{3}, method::HomogeneousSampling)
   function randpoint()
-    u₁, u₂, u₃ = rand(rng, lentype(ball), 3)
-    ball(∛u₁, acos(1 - 2u₂) / T(π), u₃)
+    u₁, u₂, u₃ = rand(rng, numtype(lentype(ball)), 3)
+    ball(∛u₁, acos(1 - 2u₂) / π, u₃)
   end
   (randpoint() for _ in 1:(method.size))
 end

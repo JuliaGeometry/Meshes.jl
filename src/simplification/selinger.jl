@@ -14,12 +14,16 @@ to the resulting segments based on deviation tolerance `ϵ`.
 * Selinger, P. 2003. [Potrace: A polygon-based tracing algorithm]
   (https://potrace.sourceforge.net/potrace.pdf)
 """
-struct Selinger{T} <: SimplificationMethod
-  ϵ::T
+struct Selinger{ℒ<:Len} <: SimplificationMethod
+  ϵ::ℒ
+  Selinger(ϵ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(ϵ)
 end
+
+Selinger(ϵ) = Selinger(addunit(ϵ, u"m"))
 
 function simplify(chain::Chain, method::Selinger)
   ℒ = lentype(chain)
+  𝒜 = typeof(zero(ℒ)^2)
 
   # retrieve parameters
   ϵ = method.ϵ
@@ -30,7 +34,7 @@ function simplify(chain::Chain, method::Selinger)
 
   # penalty for each possible segment
   n = length(p)
-  P = Dict{Tuple{Int,Int},ℒ}()
+  P = Dict{Tuple{Int,Int},𝒜}()
   for i in 1:n, o in 1:(n - 2)
     j = i + o
     i₊ = i + 1
