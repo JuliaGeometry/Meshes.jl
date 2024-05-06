@@ -204,7 +204,7 @@
     ur2 = unique(r2)
     @test nvertices(ur1) < nvertices(r1)
     @test nvertices(ur2) < nvertices(r2)
-    # TODO: check this results
+    # TODO: investigate why this test changed
     if T === Float32
       @test nvertices(ur1) == 1
       @test nvertices(ur2) == 1

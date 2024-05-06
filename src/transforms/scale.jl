@@ -19,7 +19,7 @@ struct Scale{Dim,T} <: CoordinateTransform
   factors::NTuple{Dim,T}
 
   function Scale{Dim,T}(factors) where {Dim,T}
-    any(≤(0), factors) && throw(ArgumentError("Scaling factors must be positive."))
+    any(≤(zero(T)), factors) && throw(ArgumentError("Scaling factors must be positive."))
     new(factors)
   end
 end
