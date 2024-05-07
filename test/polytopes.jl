@@ -205,6 +205,7 @@
     @test nvertices(ur1) < nvertices(r1)
     @test nvertices(ur2) < nvertices(r2)
     # TODO: investigate why this test changed
+    # investigation result: related to isapprox implementation in Unitful.jl
     if T === Float32
       @test nvertices(ur1) == 1
       @test nvertices(ur2) == 1
@@ -592,7 +593,8 @@
         (-48.044501408820125, -18.326551273900744)
       ])
     )
-    # TODO: check this results
+    # TODO: investigate why this test changed
+    # investigation result: related to isapprox implementation in Unitful.jl
     upoly = unique(poly)
     @test nvertices(upoly) < nvertices(poly)
     if T === Float32

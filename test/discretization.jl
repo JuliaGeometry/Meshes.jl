@@ -300,6 +300,7 @@
       @test nelements(mesh) == length(vertices(mesh)) - 2
 
       # TODO: investigate why these tests are breaking
+      # investigation result: related to unique
       # poly = readpoly(T, joinpath(datadir, "smooth2.line"))
       # mesh = discretize(poly, method)
       # @test Set(vertices(poly)) == Set(vertices(mesh))
@@ -348,6 +349,7 @@
     end
 
     # TODO: investigate why this test changed
+    # investigation result: related to unique
     if T == Float64
       poly = PolyArea(
         point.([
