@@ -7,19 +7,18 @@
   @test boundingbox(b) == b
   @test @allocated(boundingbox(b)) < 50
 
-  # TODO: investigate why this is allocating more
   r = Ray(point(0, 0), vector(1, 0))
   @test boundingbox(r) == Box(point(0, 0), point(T(Inf), 0))
-  @test @allocated(boundingbox(r)) < 360
+  @test @allocated(boundingbox(r)) < 50
   r = Ray(point(1, 1), vector(0, 1))
   @test boundingbox(r) == Box(point(1, 1), point(1, T(Inf)))
-  @test @allocated(boundingbox(r)) < 360
+  @test @allocated(boundingbox(r)) < 50
   r = Ray(point(1, 1), vector(-1, -1))
   @test boundingbox(r) == Box(point(T(-Inf), T(-Inf)), point(1, 1))
-  @test @allocated(boundingbox(r)) < 360
+  @test @allocated(boundingbox(r)) < 50
   r = Ray(point(-1, 1), vector(1, -1))
   @test boundingbox(r) == Box(point(-1, T(-Inf)), point(T(Inf), 1))
-  @test @allocated(boundingbox(r)) < 360
+  @test @allocated(boundingbox(r)) < 50
 
   b = Ball(point(0, 0), T(1))
   @test boundingbox(b) == Box(point(-1, -1), point(1, 1))

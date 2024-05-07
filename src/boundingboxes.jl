@@ -30,9 +30,8 @@ boundingbox(p::Point) = Box(p, p)
 boundingbox(b::Box) = b
 
 function boundingbox(r::Ray)
-  ℒ = lentype(r)
-  lower(p, v) = v < zero(ℒ) ? typemin(ℒ) : p
-  upper(p, v) = v > zero(ℒ) ? typemax(ℒ) : p
+  lower(p, v) = v < zero(v) ? typemin(p) : p
+  upper(p, v) = v > zero(v) ? typemax(p) : p
   p = r(0)
   v = r(1) - r(0)
   l = lower.(coordinates(p), v)
