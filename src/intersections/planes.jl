@@ -2,10 +2,12 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# TODO: review this method
 # (https://en.wikipedia.org/wiki/Plane-plane_intersection)
 function intersection(f, plane1::Plane, plane2::Plane)
-  n1 = normal(plane1)
-  n2 = normal(plane2)
+  u = unit(lentype(plane1))
+  n1 = ustrip.(normal(plane1))
+  n2 = ustrip.(normal(plane2))
   n1n2 = n1 ⋅ n2
 
   if isapproxone(abs(n1n2))
@@ -13,13 +15,13 @@ function intersection(f, plane1::Plane, plane2::Plane)
     return @IT NotIntersecting nothing f
   else
     d = n1 × n2
-    h1 = n1 ⋅ coordinates(plane1.p)
-    h2 = n2 ⋅ coordinates(plane2.p)
+    h1 = n1 ⋅ ustrip.(coordinates(plane1.p))
+    h2 = n2 ⋅ ustrip.(coordinates(plane2.p))
     c1 = (h1 - h2 * n1n2) / (1 - n1n2^2)
     c2 = (h2 - h1 * n1n2) / (1 - n1n2^2)
     p1 = (c1 * n1) + (c2 * n2)
     p2 = p1 + d
-    return @IT Intersecting Line(Point(p1), Point(p2)) f
+    return @IT Intersecting Line(Point(Vec(p1 * u)), Point(Vec(p2 * u))) f
   end
 end
 

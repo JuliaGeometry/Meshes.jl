@@ -2,6 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# TODO: review this method
 # The intersection type can be one of six types:
 #
 # 1. intersect at one inner point (Crossing -> Point)
@@ -11,24 +12,25 @@
 # 5. overlap with colliding vectors (NegOverlapping -> Segment)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
+  ℒ = lentype(ray₁)
   a, b = ray₁(0), ray₁(1)
   c, d = ray₂(0), ray₂(1)
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
-  l₁, l₂ = norm(b - a), norm(d - c)
+  l₁ = ustrip(norm(b - a))
+  l₂ = ustrip(norm(d - c))
   b₀ = a + 1 / l₁ * (b - a)
   d₀ = c + 1 / l₂ * (d - c)
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
-  T = typeof(λ₁)
 
   # not in same plane or parallel
   if r ≠ rₐ
     return @IT NotIntersecting nothing f #CASE 6
   # collinear
   elseif r == rₐ == 1
-    if (b - a) ⋅ (d - c) ≥ 0 # rays aligned in same direction
-      if (a - c) ⋅ (b - a) ≥ 0 # origin of ray₁ ∈ ray₂
+    if (b - a) ⋅ (d - c) ≥ zero(ℒ)^2 # rays aligned in same direction
+      if (a - c) ⋅ (b - a) ≥ zero(ℒ)^2 # origin of ray₁ ∈ ray₂
         return @IT PosOverlapping ray₁ f # CASE 4: ray₁
       else
         return @IT PosOverlapping ray₂ f # CASE 4: ray₂
@@ -44,8 +46,8 @@ function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
     end
     # in same plane, not parallel
   else
-    λ₁ = mayberound(λ₁, zero(T))
-    λ₂ = mayberound(λ₂, zero(T))
+    λ₁ = mayberound(λ₁, zero(λ₁))
+    λ₂ = mayberound(λ₂, zero(λ₂))
     if λ₁ < 0 || λ₂ < 0
       return @IT NotIntersecting nothing f # CASE 6
     elseif λ₁ == 0
@@ -64,6 +66,7 @@ function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
   end
 end
 
+# TODO: review this method
 # The intersection type can be one of four types:
 # 
 # 1. intersect at one inner point (Crossing -> Point)
@@ -75,18 +78,17 @@ function intersection(f, ray::Ray{Dim}, line::Line{Dim}) where {Dim}
   c, d = line(0), line(1)
 
   # rescaling of point b necessary to gain a parameter λ₁ representing the arc length
-  l₁ = norm(b - a)
+  l₁ = ustrip(norm(b - a))
   b₀ = a + 1 / l₁ * (b - a)
 
   λ₁, _, r, rₐ = intersectparameters(a, b₀, c, d)
-  T = typeof(λ₁)
 
   if r ≠ rₐ # not in same plane or parallel
     return @IT NotIntersecting nothing f # CASE 4
   elseif r == rₐ == 1 # collinear
     return @IT Overlapping ray f # CASE 3
   else # in same plane, not parallel
-    λ₁ = mayberound(λ₁, zero(T))
+    λ₁ = mayberound(λ₁, zero(λ₁))
     if λ₁ > 0
       return @IT Crossing ray(λ₁ / l₁) f # CASE 1
     elseif λ₁ == 0
@@ -100,13 +102,14 @@ end
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
 function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
+  ℒ = lentype(ray)
   invdir = inv.(ray(1) - ray(0))
   lo, up = coordinates.(extrema(box))
   orig = coordinates(ray(0))
 
-  ℒ = eltype(orig)
-  tmin = zero(ℒ)
-  tmax = typemax(ℒ)
+  T = numtype(ℒ)
+  tmin = zero(T)
+  tmax = typemax(T)
 
   # check for intersection with slabs along with each axis
   for i in 1:Dim
@@ -114,7 +117,8 @@ function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
     imax = (up[i] - orig[i]) * invdir[i]
 
     # swap variables if necessary
-    invdir[i] < zero(ℒ)^-1 && ((imin, imax) = (imax, imin))
+    iinv = invdir[i]
+    iinv < zero(iinv) && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue

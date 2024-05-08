@@ -821,15 +821,14 @@
     @test point(4, 5, 6) ∈ c
     @test point(0.99, 1.99, 2.99) ∉ c
     @test point(4.01, 5.01, 6.01) ∉ c
-    # TODO: fix intersection(f, Plane, Plane)
-    # @test !Meshes.hasintersectingplanes(c)
+    @test !Meshes.hasintersectingplanes(c)
     @test c(0, 0, 0) ≈ bottom(c)(0, 0)
     @test c(0, 0, 1) ≈ top(c)(0, 0)
     @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
     @test_throws DomainError c(1.1, 0, 0)
 
-    # c = Cylinder(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
-    # @test Meshes.hasintersectingplanes(c)
+    c = Cylinder(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
+    @test Meshes.hasintersectingplanes(c)
 
     c1 = Cylinder(point(0, 0, 0), point(0, 0, 1), T(1))
     c2 = Cylinder(point(0, 0, 0), point(0, 0, 1))
@@ -897,11 +896,10 @@
     @test isright(c)
     @test isnothing(boundary(c))
     @test measure(c) == area(c) ≈ (2 * T(2)^2 * pi + 2 * T(2) * pi) * u"m^2"
-    # TODO: fix intersection(f, Plane, Plane)
-    # @test !Meshes.hasintersectingplanes(c)
+    @test !Meshes.hasintersectingplanes(c)
 
-    # c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
-    # @test Meshes.hasintersectingplanes(c)
+    c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
+    @test Meshes.hasintersectingplanes(c)
 
     c1 = CylinderSurface(point(0, 0, 0), point(0, 0, 1), T(1))
     c2 = CylinderSurface(point(0, 0, 0), point(0, 0, 1))

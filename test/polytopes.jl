@@ -214,7 +214,6 @@
       @test nvertices(ur2) == 16
     end
 
-    # TODO: review the implementation of these methods
     r = rand(Rope{2})
     @test r isa Rope
     @test embeddim(r) == 2
@@ -233,12 +232,11 @@
     @test embeddim(r) == 3
     @test Meshes.lentype(r) === Meshes.Met{Float64}
 
-    # TODO: fix intersection(f, Segment, Segment)
     # issimple benchmark
-    # r = Sphere(point(0, 0), T(1)) |> pointify |> Ring
-    # @test issimple(r)
-    # @test @elapsed(issimple(r)) < 0.02
-    # @test @allocated(issimple(r)) < 950000
+    r = Sphere(point(0, 0), T(1)) |> pointify |> Ring
+    @test issimple(r)
+    @test @elapsed(issimple(r)) < 0.02
+    @test @allocated(issimple(r)) < 950000
 
     # innerangles in 3D is obtained via projection
     r1 = Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -497,14 +495,13 @@
     poly = PolyArea([point.([(1, 2), (2, 3)]), point.([(1.1, 2.54), (1.4, 1.5)])], fix=false)
     @test vertices(poly) == CircularVector(point.([(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)]))
 
-    # TODO: fix intersection(f, Segment, Segment) is required to use issimple
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]
     polys1 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys1
       @test !hasholes(poly)
-      # @test issimple(poly)
+      @test issimple(poly)
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 30
       for algo in [WindingOrientation(), TriangleOrientation()]
@@ -519,7 +516,7 @@
     polys2 = [readpoly(T, joinpath(datadir, fname)) for fname in fnames]
     for poly in polys2
       @test !hasholes(poly)
-      # @test issimple(poly)
+      @test issimple(poly)
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 120
       for algo in [WindingOrientation(), TriangleOrientation()]
@@ -535,7 +532,7 @@
     for poly in polys3
       rs = rings(poly)
       @test hasholes(poly)
-      # @test !issimple(poly)
+      @test !issimple(poly)
       @test boundary(poly) == Multi(rs)
       @test nvertices(first(rs)) < 30
       @test all(nvertices.(rs[2:end]) .< 18)

@@ -108,5 +108,6 @@ function (curve::BezierCurve)(t, ::Horner)
   Point(b₀)
 end
 
+# TODO: review this method
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim}}) where {Dim} =
   BezierCurve([rand(rng, Point{Dim}) for _ in 1:5])

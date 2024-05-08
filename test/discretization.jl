@@ -83,14 +83,13 @@
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    # TODO: fix intersection(f, Segment, Segment)
-    # poly = PolyArea(point.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
-    # mesh = discretize(poly, RegularDiscretization(50))
-    # @test mesh isa SubGrid{2}
-    # grid = parent(mesh)
-    # @test grid isa CartesianGrid
-    # @test eltype(mesh) <: Quadrangle
-    # @test all(intersects(poly), mesh)
+    poly = PolyArea(point.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
+    mesh = discretize(poly, RegularDiscretization(50))
+    @test mesh isa SubGrid{2}
+    grid = parent(mesh)
+    @test grid isa CartesianGrid
+    @test eltype(mesh) <: Quadrangle
+    @test all(intersects(poly), mesh)
   end
 
   @testset "Dehn1899" begin
@@ -125,7 +124,7 @@
     @test eltype(mesh) <: Triangle
   end
 
-  # TODO: fix intersection(f, Segment, Segment) & applycoord(CoordinateTransform, GeometryOrDomain) to use FIST
+  # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain) to use FIST
   # @testset "FIST" begin
   #   𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
   #   @test Meshes.earsccw(𝒫) == [2, 4, 5]

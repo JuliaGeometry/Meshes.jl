@@ -2,6 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# TODO: review this method
 # The intersection type can be one of five types:
 #
 # 1. intersect at one inner point (Crossing -> Point)
@@ -38,14 +39,13 @@ function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
     end
   end
 
-  l₁ = length(seg₁)
-  l₂ = length(seg₂)
+  l₁ = ustrip(length(seg₁))
+  l₂ = ustrip(length(seg₂))
   b₀ = a + 1 / l₁ * (b - a)
   d₀ = c + 1 / l₂ * (d - c)
 
   # arc length parameters λ₁ ∈ [0, l₁], λ₂ ∈ [0, l₂]: 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
-  T = typeof(λ₁)
 
   if r ≠ rₐ # not in same plane or parallel
     return @IT NotIntersecting nothing f #CASE 5
@@ -58,8 +58,8 @@ function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
     vd = d - a
     λc = vc[i] / v[i]
     λd = vd[i] / v[i]
-    λc = mayberound(mayberound(λc, zero(T)), l₁)
-    λd = mayberound(mayberound(λd, zero(T)), l₁)
+    λc = mayberound(mayberound(λc, zero(λc)), l₁)
+    λd = mayberound(mayberound(λd, zero(λd)), l₁)
     if (λc > l₁ && λd > l₁) || (λc < 0 && λd < 0)
       return @IT NotIntersecting nothing f # CASE 5
     elseif (λc == 0 && λd < 0) || (λd == 0 && λc < 0)
@@ -67,14 +67,14 @@ function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
     elseif (λc == l₁ && λd > l₁) || (λd == l₁ && λc > l₁)
       return @IT CornerTouching b f # CASE 3
     else
-      t₁, t₂ = _sort4vals(zero(T), one(T), λc / l₁, λd / l₁)
+      t₁, t₂ = _sort4vals(zero(λc), one(λc), λc / l₁, λd / l₁)
       p₁ = seg₁(t₁)
       p₂ = seg₁(t₂)
       return @IT Overlapping Segment(p₁, p₂) f # CASE 4
     end
   else # in same plane, not parallel
-    λ₁ = mayberound(mayberound(λ₁, zero(T)), l₁)
-    λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
+    λ₁ = mayberound(mayberound(λ₁, zero(λ₁)), l₁)
+    λ₂ = mayberound(mayberound(λ₂, zero(λ₂)), l₂)
     if λ₁ < 0 || λ₂ < 0 || λ₁ > l₁ || λ₂ > l₂
       return @IT NotIntersecting nothing f # CASE 5
     # 8 cases remain
@@ -98,6 +98,7 @@ function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
   end
 end
 
+# TODO: review this method
 # The intersection type can be one of five types:
 # 
 # 1. intersect at one inner point (Crossing -> Point)
@@ -110,12 +111,12 @@ function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
   c, d = seg(0), seg(1)
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
-  l₁, l₂ = norm(b - a), length(seg)
+  l₁ = ustrip(norm(b - a))
+  l₂ = ustrip(length(seg))
   b₀ = a + 1 / l₁ * (b - a)
   d₀ = c + 1 / l₂ * (d - c)
 
   λ₁, λ₂, r, rₐ = intersectparameters(a, b₀, c, d₀)
-  T = typeof(λ₁)
 
   # not in same plane or parallel
   if r ≠ rₐ
@@ -124,8 +125,8 @@ function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
   elseif r == rₐ == 1
     rc = sum((c - a) ./ (b - a)) / Dim
     rd = sum((d - a) ./ (b - a)) / Dim
-    rc = mayberound(rc, zero(T))
-    rd = mayberound(rd, zero(T))
+    rc = mayberound(rc, zero(rc))
+    rd = mayberound(rd, zero(rd))
     if rc > 0 # c ∈ ray
       if rd ≥ 0
         return @IT Overlapping seg f # CASE 4
@@ -149,8 +150,8 @@ function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
     end
     # in same plane, not parallel
   else
-    λ₁ = mayberound(λ₁, zero(T))
-    λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
+    λ₁ = mayberound(λ₁, zero(λ₁))
+    λ₂ = mayberound(mayberound(λ₂, zero(λ₂)), l₂)
     if λ₁ < 0 || (λ₂ < 0 || λ₂ > l₂)
       return @IT NotIntersecting nothing f
     elseif λ₁ == 0
@@ -169,6 +170,7 @@ function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
   end
 end
 
+# TODO: review this method
 # The intersection type can be one of six types:
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at an end point of segment (Touching -> Point)
@@ -179,11 +181,10 @@ function intersection(f, seg::Segment{Dim}, line::Line{Dim}) where {Dim}
   c, d = seg(0), seg(1)
 
   # normalize points to gain parameter λ₂ corresponding to arc lengths
-  l₂ = length(seg)
+  l₂ = ustrip(length(seg))
   d₀ = c + 1 / l₂ * (d - c)
 
   _, λ₂, r, rₐ = intersectparameters(a, b, c, d₀)
-  T = typeof(λ₂)
 
   # not in same plane or parallel
   if r ≠ rₐ
@@ -193,7 +194,7 @@ function intersection(f, seg::Segment{Dim}, line::Line{Dim}) where {Dim}
     return @IT Overlapping seg f # CASE 3
   # in same plane, not parallel
   else
-    λ₂ = mayberound(mayberound(λ₂, zero(T)), l₂)
+    λ₂ = mayberound(mayberound(λ₂, zero(λ₂)), l₂)
     if λ₂ > 0 && λ₂ < l₂
       return @IT Crossing seg(λ₂ / l₂) f # CASE 1, equal to line(λ₁)
     elseif λ₂ == 0 || λ₂ == l₂

@@ -4,8 +4,7 @@
     poly = Triangle(point(6, 2), point(3, 5), point(0, 2))
     other = Quadrangle(point(5, 0), point(5, 4), point(0, 4), point(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
-    # TODO: fix intersection(f, Segment, Segment) is required to use issimple
-    # @test issimple(clipped)
+    @test issimple(clipped)
     @test all(vertices(clipped) .≈ [point(5, 3), point(4, 4), point(2, 4), point(0, 2), point(5, 2)])
 
     # octagon
@@ -13,7 +12,7 @@
       Octagon(point(8, -2), point(8, 5), point(2, 5), point(4, 3), point(6, 3), point(4, 1), point(2, 1), point(2, -2))
     other = Quadrangle(point(5, 0), point(5, 4), point(0, 4), point(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
-    # @test !issimple(clipped)
+    @test !issimple(clipped)
     @test all(
       vertices(clipped) .≈ [
         point(3, 4),
@@ -32,7 +31,7 @@
     poly = Quadrangle(point(1, 0), point(1, 1), point(0, 1), point(0, 0))
     other = Quadrangle(point(5, 0), point(5, 4), point(0, 4), point(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
-    # @test issimple(clipped)
+    @test issimple(clipped)
     @test all(vertices(clipped) .≈ vertices(poly))
 
     # outside
@@ -45,7 +44,7 @@
     poly = Hexagon(point(0, 2), point(-2, 2), point(-2, 0), point(0, -2), point(2, -2), point(2, 0))
     other = Hexagon(point(1, 0), point(0, 1), point(-1, 1), point(-1, 0), point(0, -1), point(1, -1))
     clipped = clip(poly, other, SutherlandHodgman())
-    # @test issimple(clipped)
+    @test issimple(clipped)
     @test all(vertices(clipped) .≈ vertices(other))
 
     # PolyArea with box
@@ -56,7 +55,7 @@
     other = Box(point(0, 1), point(3, 7))
     clipped = clip(poly, other, SutherlandHodgman())
     crings = rings(clipped)
-    # @test !issimple(clipped)
+    @test !issimple(clipped)
     @test all(
       vertices(crings[1]) .≈ [
         point(1.5, 7.0),
@@ -76,7 +75,7 @@
     poly = PolyArea([outer, inner])
     other = Quadrangle(point(4, 4), point(0, 4), point(0, 0), point(4, 0))
     clipped = clip(poly, other, SutherlandHodgman())
-    # @test !issimple(clipped)
+    @test !issimple(clipped)
     crings = rings(clipped)
     @test all(vertices(crings[1]) .≈ vertices(other))
     @test all(vertices(crings[2]) .≈ vertices(inner))
@@ -89,7 +88,7 @@
     other = PolyArea(Ring(point(6, 1), point(7, 2), point(6, 5), point(0, 2), point(1, 1)))
     clipped = clip(poly, other, SutherlandHodgman())
     crings = rings(clipped)
-    # @test !issimple(clipped)
+    @test !issimple(clipped)
     @test length(crings) == 2
     @test all(vertices(crings[1]) .≈ [point(6, 4), point(6, 5), point(1, 2.5), point(1, 1), point(5, 2)])
     @test all(vertices(crings[2]) .≈ [point(3.0, 3.0), point(3.0, 3.5), point(10 / 3, 11 / 3), point(4.0, 3.0)])

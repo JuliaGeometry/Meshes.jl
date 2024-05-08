@@ -166,8 +166,8 @@ function gjk!(O::Point{3}, points)
     AB = B - A
     AC = C - A
     AO = O - A
-    ABCᵀ = AB × AC
-    if ABCᵀ ⋅ AO < zero(ℒ)^3
+    ABCᵀ = crossprod(AB, AC)
+    if ABCᵀ ⋅ AO < zero(ℒ)^2
       points[1], points[2] = points[2], points[1]
       ABCᵀ = -ABCᵀ
     end
@@ -189,16 +189,16 @@ function gjk!(O::Point{3}, points)
     AC = C - A
     AD = D - A
     AO = O - A
-    ABCᵀ = AB × AC
-    ADBᵀ = AD × AB
-    ACDᵀ = AC × AD
-    if ABCᵀ ⋅ AO > zero(ℒ)^3
+    ABCᵀ = crossprod(AB, AC)
+    ADBᵀ = crossprod(AD, AB)
+    ACDᵀ = crossprod(AC, AD)
+    if ABCᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 1) # pop D
       d = ABCᵀ
-    elseif ADBᵀ ⋅ AO > zero(ℒ)^3
+    elseif ADBᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 2) # pop C
       d = ADBᵀ
-    elseif ACDᵀ ⋅ AO > zero(ℒ)^3
+    elseif ACDᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 3) # pop B
       d = ACDᵀ
     else
@@ -259,10 +259,9 @@ function perpendicular(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
   a = Vec(v[1], v[2], zero(ℒ))
   b = Vec(d[1], d[2], zero(ℒ))
   r = ustrip.(a × b × a) * unit(ℒ)
-  Vec(r)
+  Vec(r[1], r[2])
 end
 
-function perpendicular(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} 
-  r = ustrip.(v × d × v) * unit(ℒ)
-  Vec(r)
-end
+perpendicular(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(v × d × v) * unit(ℒ))
+
+crossprod(a::Vec{3,ℒ}, b::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(a × b) * unit(ℒ))

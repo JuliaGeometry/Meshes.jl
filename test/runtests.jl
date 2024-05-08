@@ -104,8 +104,7 @@ testfiles = [
   "mesh.jl",
   "trajecs.jl",
   "utils.jl",
-  # TODO: fix intersection(f, Segment, Segment) is required to run this testset
-  # "viewing.jl",
+  "viewing.jl",
   "partitioning.jl",
   "sorting.jl",
   "traversing.jl",
@@ -118,8 +117,7 @@ testfiles = [
   "merging.jl",
   "clipping.jl",
   "clamping.jl",
-  # TODO: fix intersect methods
-  # "intersections.jl",
+  "intersections.jl",
   # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
   # "complement.jl",
   "simplification.jl",
