@@ -214,24 +214,24 @@
       @test nvertices(ur2) == 16
     end
 
-    # TODO: review these methods
-    # r = rand(Rope{2})
-    # @test r isa Rope
-    # @test embeddim(r) == 2
-    # @test Meshes.lentype(r) === Meshes.Met{Float64}
-    # r = rand(Rope{3})
-    # @test r isa Rope
-    # @test embeddim(r) == 3
-    # @test Meshes.lentype(r) === Meshes.Met{Float64}
+    # TODO: review the implementation of these methods
+    r = rand(Rope{2})
+    @test r isa Rope
+    @test embeddim(r) == 2
+    @test Meshes.lentype(r) === Meshes.Met{Float64}
+    r = rand(Rope{3})
+    @test r isa Rope
+    @test embeddim(r) == 3
+    @test Meshes.lentype(r) === Meshes.Met{Float64}
 
-    # r = rand(Ring{2})
-    # @test r isa Ring
-    # @test embeddim(r) == 2
-    # @test Meshes.lentype(r) === Meshes.Met{Float64}
-    # r = rand(Ring{3})
-    # @test r isa Ring
-    # @test embeddim(r) == 3
-    # @test Meshes.lentype(r) === Meshes.Met{Float64}
+    r = rand(Ring{2})
+    @test r isa Ring
+    @test embeddim(r) == 2
+    @test Meshes.lentype(r) === Meshes.Met{Float64}
+    r = rand(Ring{3})
+    @test r isa Ring
+    @test embeddim(r) == 3
+    @test Meshes.lentype(r) === Meshes.Met{Float64}
 
     # TODO: fix intersection(f, Segment, Segment)
     # issimple benchmark
@@ -642,15 +642,14 @@
     poly = PolyArea([outer, hole1, hole2])
     @test area(poly) ≈ T(0.92) * u"m^2"
 
-    # TODO: review these methods
-    # p = rand(PolyArea{2})
-    # @test p isa PolyArea
-    # @test embeddim(p) == 2
-    # @test Meshes.lentype(p) === Meshes.Met{Float64}
-    # p = rand(PolyArea{3})
-    # @test p isa PolyArea
-    # @test embeddim(p) == 3
-    # @test Meshes.lentype(p) === Meshes.Met{Float64}
+    p = rand(PolyArea{2})
+    @test p isa PolyArea
+    @test embeddim(p) == 2
+    @test Meshes.lentype(p) === Meshes.Met{Float64}
+    p = rand(PolyArea{3})
+    @test p isa PolyArea
+    @test embeddim(p) == 3
+    @test Meshes.lentype(p) === Meshes.Met{Float64}
 
     outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
     hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
