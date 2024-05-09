@@ -8,9 +8,12 @@
 Translate coordinates of geometry or mesh by
 given offsets `o₁, o₂, ...`.
 """
-struct Translate{Dim,T} <: CoordinateTransform
-  offsets::NTuple{Dim,T}
+struct Translate{Dim,ℒ<:Len} <: CoordinateTransform
+  offsets::NTuple{Dim,ℒ}
 end
+
+# TODO: convert `offsets` values to float?
+Translate(offsets::Tuple) = Translate(addunit.(offsets, u"m"))
 
 Translate(offsets...) = Translate(offsets)
 

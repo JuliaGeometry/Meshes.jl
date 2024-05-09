@@ -124,94 +124,97 @@
     @test eltype(mesh) <: Triangle
   end
 
-  # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain) to use FIST
-  # @testset "FIST" begin
-  #   𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
-  #   @test Meshes.earsccw(𝒫) == [2, 4, 5]
+  @testset "FIST" begin
+    𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
+    @test Meshes.earsccw(𝒫) == [2, 4, 5]
 
-  #   𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (1, 2)]))
-  #   @test Meshes.earsccw(𝒫) == [2, 4]
+    𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (1, 2)]))
+    @test Meshes.earsccw(𝒫) == [2, 4]
 
-  #   𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (1, 2)]))
-  #   @test Meshes.earsccw(𝒫) == [2, 4]
+    𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (1, 2)]))
+    @test Meshes.earsccw(𝒫) == [2, 4]
 
-  #   𝒫 = Ring(point.([(0, 0), (1, 1), (1, 2)]))
-  #   @test Meshes.earsccw(𝒫) == []
+    𝒫 = Ring(point.([(0, 0), (1, 1), (1, 2)]))
+    @test Meshes.earsccw(𝒫) == []
 
-  #   𝒫 = Ring(
-  #     point[
-  #       (0.443339268495331, 0.283757618605357),
-  #       (0.497822414616971, 0.398142813114205),
-  #       (0.770343126156527, 0.201815462842808),
-  #       (0.761236456732531, 0.330085709922366),
-  #       (0.985658085510286, 0.221530395507904),
-  #       (0.877899962498139, 0.325516131702896),
-  #       (0.561404274882782, 0.540334008885703),
-  #       (0.949459768187313, 0.396227653478068),
-  #       (0.594962560615951, 0.584927547374551),
-  #       (0.324208409133154, 0.607290684450708),
-  #       (0.424085089823892, 0.493532112641353),
-  #       (0.209843417261654, 0.590030658255966),
-  #       (0.27993878548962, 0.525162463476181),
-  #       (0.385557753911967, 0.322338556632868)
-  #     ]
-  #   )
-  #   @test Meshes.earsccw(𝒫) == [1, 3, 5, 6, 8, 10, 12, 14]
+    𝒫 = Ring(
+      point.([
+        (0.443339268495331, 0.283757618605357),
+        (0.497822414616971, 0.398142813114205),
+        (0.770343126156527, 0.201815462842808),
+        (0.761236456732531, 0.330085709922366),
+        (0.985658085510286, 0.221530395507904),
+        (0.877899962498139, 0.325516131702896),
+        (0.561404274882782, 0.540334008885703),
+        (0.949459768187313, 0.396227653478068),
+        (0.594962560615951, 0.584927547374551),
+        (0.324208409133154, 0.607290684450708),
+        (0.424085089823892, 0.493532112641353),
+        (0.209843417261654, 0.590030658255966),
+        (0.27993878548962, 0.525162463476181),
+        (0.385557753911967, 0.322338556632868)
+      ])
+    )
+    @test Meshes.earsccw(𝒫) == [1, 3, 5, 6, 8, 10, 12, 14]
 
-  #   points = point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
-  #   connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
-  #   target = SimpleMesh(points, connec)
-  #   poly = PolyArea(points)
-  #   mesh = discretize(poly, FIST(shuffle=false))
-  #   @test mesh == target
-  #   @test Set(vertices(poly)) == Set(vertices(mesh))
-  #   @test nelements(mesh) == length(vertices(mesh)) - 2
+    points = point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
+    connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
+    target = SimpleMesh(points, connec)
+    poly = PolyArea(points)
+    mesh = discretize(poly, FIST(shuffle=false))
+    @test mesh == target
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
 
-  #   # https://github.com/JuliaGeometry/Meshes.jl/issues/675
-  #   poly = PolyArea(
-  #     point[
-  #       (1.1794224993e7, 1.7289506814e7),
-  #       (1.1794045018e7, 1.7289446822e7),
-  #       (1.1793985026e7, 1.7289486817e7),
-  #       (1.1793965029e7, 1.7289586803e7),
-  #       (1.1794105009e7, 1.7289766778e7),
-  #       (1.1794184998e7, 1.7289866764e7),
-  #       (1.179424499e7, 1.728996675e7),
-  #       (1.179424499e7, 1.7290106731e7),
-  #       (1.1794344976e7, 1.7290246711e7),
-  #       (1.1794364973e7, 1.7290386692e7),
-  #       (1.1794504954e7, 1.7290406689e7),
-  #       (1.1794724923e7, 1.729018672e7),
-  #       (1.1794624937e7, 1.7289946753e7),
-  #       (1.1794624937e7, 1.7289806772e7),
-  #       (1.1794564946e7, 1.7289706786e7),
-  #       (1.1794424965e7, 1.7289626797e7)
-  #     ]
-  #   )
-  #   rng = StableRNG(123)
-  #   mesh = discretize(poly, FIST(rng))
-  #   @test nvertices(mesh) == 16
-  #   @test nelements(mesh) == 14
+    # TODO: investigate why this test are breaking in Float32
+    # initial guess: possibly related to unique
+    if T == Float64
+      # https://github.com/JuliaGeometry/Meshes.jl/issues/675
+      poly = PolyArea(
+        point.([
+          (1.1794224993e7, 1.7289506814e7),
+          (1.1794045018e7, 1.7289446822e7),
+          (1.1793985026e7, 1.7289486817e7),
+          (1.1793965029e7, 1.7289586803e7),
+          (1.1794105009e7, 1.7289766778e7),
+          (1.1794184998e7, 1.7289866764e7),
+          (1.179424499e7, 1.728996675e7),
+          (1.179424499e7, 1.7290106731e7),
+          (1.1794344976e7, 1.7290246711e7),
+          (1.1794364973e7, 1.7290386692e7),
+          (1.1794504954e7, 1.7290406689e7),
+          (1.1794724923e7, 1.729018672e7),
+          (1.1794624937e7, 1.7289946753e7),
+          (1.1794624937e7, 1.7289806772e7),
+          (1.1794564946e7, 1.7289706786e7),
+          (1.1794424965e7, 1.7289626797e7)
+        ])
+      )
+      rng = StableRNG(123)
+      mesh = discretize(poly, FIST(rng))
+      @test nvertices(mesh) == 16
+      @test nelements(mesh) == 14
 
-  #   # https://github.com/JuliaGeometry/Meshes.jl/issues/738
-  #   poly = PolyArea(
-  #     point[
-  #       (-0.5, 0.3296139),
-  #       (-0.19128194, -0.5),
-  #       (-0.37872985, 0.29592824),
-  #       (0.21377224, -0.0076110554),
-  #       (-0.20127837, 0.24671146)
-  #     ]
-  #   )
-  #   rng = StableRNG(123)
-  #   mesh = discretize(poly, FIST(rng))
-  #   @test nvertices(mesh) == 5
-  #   @test nelements(mesh) == 3
-  # end
+      # https://github.com/JuliaGeometry/Meshes.jl/issues/738
+      poly = PolyArea(
+        point.([
+          (-0.5, 0.3296139),
+          (-0.19128194, -0.5),
+          (-0.37872985, 0.29592824),
+          (0.21377224, -0.0076110554),
+          (-0.20127837, 0.24671146)
+        ])
+      )
+      rng = StableRNG(123)
+      mesh = discretize(poly, FIST(rng))
+      @test nvertices(mesh) == 5
+      @test nelements(mesh) == 3
+    end
+  end
 
   @testset "Miscellaneous" begin
     rng = StableRNG(123)
-    for method in [#=FIST(rng),=# Dehn1899()]
+    for method in [FIST(rng), Dehn1899()]
       triangle = Triangle(point(0, 0), point(1, 0), point(0, 1))
       mesh = discretize(triangle, method)
       @test vertices(mesh) == [point(0, 0), point(1, 0), point(0, 1)]
@@ -262,7 +265,7 @@
 
   @testset "Difficult examples" begin
     rng = StableRNG(123)
-    for method in [#=FIST(rng),=# Dehn1899()]
+    for method in [FIST(rng), Dehn1899()]
       poly = readpoly(T, joinpath(datadir, "taubin.line"))
       mesh = discretize(poly, method)
       @test Set(vertices(poly)) == Set(vertices(mesh))

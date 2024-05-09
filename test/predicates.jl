@@ -252,8 +252,7 @@
     @test tri ⊆ multi
     # TODO: related to unique
     # @test pent ⊆ poly1
-    # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
-    # @test pent ⊈ poly2
+    @test pent ⊈ poly2
     @test pent ⊆ multi
 
     poly1 = PolyArea(point.([(4, 12), (11, 11), (16, 8), (16, 1), (13, -2), (2, -2), (-3, 4), (-2, 8)]))
@@ -267,8 +266,7 @@
     @test poly5 ⊆ poly1
     # TODO: related to unique
     # @test poly4 ⊆ poly2
-    # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
-    # @test poly4 ⊆ poly3
+    @test poly4 ⊆ poly3
     @test poly5 ⊈ poly2
     @test poly5 ⊈ poly3
   end
@@ -346,26 +344,25 @@
     @test intersects(r, s1)
     @test !intersects(r, s2)
 
-    # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
-    # # result doesn't change under translation
-    # t1 = Translate(T(10), T(0))
-    # t2 = Translate(T(0), T(10))
-    # t3 = Translate(T(-10), T(0))
-    # t4 = Translate(T(0), T(-10))
-    # for t in [t1, t2, t3, t4]
-    #   @test intersects(t(r), t(s1))
-    #   @test !intersects(t(r), t(s2))
-    # end
+    # result doesn't change under translation
+    t1 = Translate(T(10), T(0))
+    t2 = Translate(T(0), T(10))
+    t3 = Translate(T(-10), T(0))
+    t4 = Translate(T(0), T(-10))
+    for t in [t1, t2, t3, t4]
+      @test intersects(t(r), t(s1))
+      @test !intersects(t(r), t(s2))
+    end
 
-    # # result doesn't change under rotation
-    # r1 = Rotate(Angle2d(T(π / 2)))
-    # r2 = Rotate(Angle2d(T(-π / 2)))
-    # r3 = Rotate(Angle2d(T(π)))
-    # r4 = Rotate(Angle2d(T(-π)))
-    # for t in [r1, r2, r3, r4]
-    #   @test intersects(t(r), t(s1))
-    #   @test !intersects(t(r), t(s2))
-    # end
+    # result doesn't change under rotation
+    r1 = Rotate(Angle2d(T(π / 2)))
+    r2 = Rotate(Angle2d(T(-π / 2)))
+    r3 = Rotate(Angle2d(T(π)))
+    r4 = Rotate(Angle2d(T(-π)))
+    for t in [r1, r2, r3, r4]
+      @test intersects(t(r), t(s1))
+      @test !intersects(t(r), t(s2))
+    end
 
     r = Ray(point(0, 0), vector(1, 0))
     s = Sphere(point(floatmax(Float32) / 2, 0), 1)

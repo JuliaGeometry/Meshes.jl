@@ -169,6 +169,6 @@ apply(::Repair{10}, poly::Ngon) = poly, nothing
 revert(::Repair{10}, poly::Ngon, cache) = poly
 
 function _stretch10(g::Geometry{Dim}) where {Dim}
-  ℒ = lentype(g)
-  Stretch(ntuple(i -> ℒ(1) + 10atol(ℒ), Dim))
+  T = numtype(lentype(g))
+  Stretch(ntuple(i -> one(T) + 10atol(T), Dim))
 end

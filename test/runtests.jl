@@ -118,8 +118,7 @@ testfiles = [
   "clipping.jl",
   "clamping.jl",
   "intersections.jl",
-  # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
-  # "complement.jl",
+  "complement.jl",
   "simplification.jl",
   "boundingboxes.jl",
   "hulls.jl",
@@ -128,8 +127,7 @@ testfiles = [
   "discretization.jl",
   "refinement.jl",
   "coarsening.jl",
-  # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
-  # "transforms.jl",
+  "transforms.jl",
   "distances.jl",
   "supportfun.jl",
   "matrices.jl",

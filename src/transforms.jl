@@ -69,6 +69,9 @@ applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
 # stop recursion at non-geometric types
 applycoord(::CoordinateTransform, x) = x
 
+# TODO: review this decision
+applycoord(t::CoordinateTransform, p::Point) = Point(applycoord(t, coordinates(p)))
+
 # special treatment for TransformedMesh
 applycoord(t::CoordinateTransform, m::TransformedMesh) = TransformedMesh(m, t)
 

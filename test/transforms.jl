@@ -228,7 +228,7 @@
     @test TB.isrevertible(Translate)
     @test TB.isinvertible(Translate)
     @test TB.inverse(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
-    offsets = (T(1), T(2))
+    offsets = (T(1) * u"m", T(2) * u"m")
     f = Translate(offsets)
     @test TB.parameters(f) == (; offsets)
 
@@ -394,7 +394,7 @@
     f = Affine(T[6 3; 10 5], T[1, 1])
     @test !TB.isrevertible(f)
     @test !TB.isinvertible(f)
-    A, b = Angle2d(T(π / 2)), T[1, 1]
+    A, b = Angle2d(T(π / 2)), T[1, 1] * u"m"
     f = Affine(A, b)
     @test TB.parameters(f) == (; A, b)
 
@@ -441,7 +441,7 @@
     @test q isa Quadrangle
     @test q ≈ convert(Quadrangle, g)
 
-    f = Affine(rotation_between(vector(0, 0, 1), vector(1, 0, 0)), T[1, 2, 3])
+    f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
     g = Box(point(0, 0, 0), point(1, 1, 1))
     r, c = TB.apply(f, g)
     @test r isa Hexahedron
@@ -463,7 +463,7 @@
     # TRIANGLE
     # ---------
 
-    f = Affine(rotation_between(vector(0, 0, 1), vector(1, 0, 0)), T[1, 2, 3])
+    f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
     g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(point(1, 2, 3), point(1, 2, 2), point(2, 3, 3))
@@ -484,7 +484,7 @@
     # PLANE
     # ------
 
-    f = Affine(rotation_between(vector(0, 0, 1), vector(1, 0, 0)), T[0, 0, 1])
+    f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[0, 0, 1])
     g = Plane(point(0, 0, 0), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Plane(point(0, 0, 1), vector(1, 0, 0))
@@ -494,7 +494,7 @@
     # CYLINDER
     # ---------
 
-    f = Affine(rotation_between(vector(0, 0, 1), vector(1, 0, 0)), T[0, 0, 1])
+    f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[0, 0, 1])
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(point(0, 0, 1), point(1, 0, 1))
@@ -907,7 +907,7 @@
     f = StdCoords()
     d = view(PointSet(randpoint2(100)), 1:50)
     r, c = TB.apply(f, d)
-    @test all(sides(boundingbox(r)) .≤ T(1))
+    @test all(sides(boundingbox(r)) .≤ oneunit(ℳ))
     @test TB.revert(f, r, c) ≈ d
     r2 = TB.reapply(f, d, c)
     @test r == r2

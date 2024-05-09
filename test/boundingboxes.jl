@@ -100,17 +100,16 @@
   @test boundingbox(d) == Box(point(0, 0), point(10, 10))
   @test @allocated(boundingbox(d)) < 50
 
-  # TODO: fix applycoord(CoordinateTransform, GeometryOrDomain)
-  # g = cartgrid(10, 10)
-  # d = TransformedGrid(g, Rotate(T(π / 2)))
-  # @test boundingbox(d) ≈ Box(point(-10, 0), point(0, 10))
-  # @test @allocated(boundingbox(d)) < 2300
+  g = cartgrid(10, 10)
+  d = TransformedGrid(g, Rotate(T(π / 2)))
+  @test boundingbox(d) ≈ Box(point(-10, 0), point(0, 10))
+  @test @allocated(boundingbox(d)) < 2300
 
-  # g = cartgrid(10, 10)
-  # rg = convert(RectilinearGrid, g)
-  # d = TransformedGrid(rg, Rotate(T(π / 2)))
-  # @test boundingbox(d) ≈ Box(point(-10, 0), point(0, 10))
-  # @test @allocated(boundingbox(d)) < 2300
+  g = cartgrid(10, 10)
+  rg = convert(RectilinearGrid, g)
+  d = TransformedGrid(rg, Rotate(T(π / 2)))
+  @test boundingbox(d) ≈ Box(point(-10, 0), point(0, 10))
+  @test @allocated(boundingbox(d)) < 2300
 
   g = cartgrid(10, 10)
   m = convert(SimpleMesh, g)
