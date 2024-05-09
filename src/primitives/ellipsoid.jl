@@ -11,9 +11,11 @@ struct Ellipsoid{ℒ<:Len,P<:Point{3},R} <: Primitive{3}
   radii::NTuple{3,ℒ}
   center::P
   rotation::R
-  Ellipsoid(radii::NTuple{3,ℒ}, center::P, rotation::R) where {ℒ<:Len,P<:Point{3},R} =
-    new{float(ℒ),P,R}(radii, center, rotation)
+  Ellipsoid{ℒ,P,R}(radii, center, rotation) where {ℒ<:Len,P<:Point{3},R} = new(radii, center, rotation)
 end
+
+Ellipsoid(radii::NTuple{3,ℒ}, center::P, rotation::R) where {ℒ<:Len,P<:Point{3},R} =
+  Ellipsoid{float(ℒ),P,R}(radii, center, rotation)
 
 Ellipsoid(radii::NTuple{3}, center::P, rotation::R) where {P<:Point{3},R} =
   Ellipsoid(addunit.(radii, u"m"), center, rotation)

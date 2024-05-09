@@ -12,8 +12,10 @@ See also [`Ball`](@ref).
 struct Sphere{Dim,P<:Point{Dim},ℒ<:Len} <: Primitive{Dim}
   center::P
   radius::ℒ
-  Sphere(center::P, radius::ℒ) where {Dim,P<:Point{Dim},ℒ<:Len} = new{Dim,P,float(ℒ)}(center, radius)
+  Sphere{Dim,P,ℒ}(center, radius) where {Dim,P<:Point{Dim},ℒ<:Len} = new(center, radius)
 end
+
+Sphere(center::P, radius::ℒ) where {Dim,P<:Point{Dim},ℒ<:Len} = Sphere{Dim,P,float(ℒ)}(center, radius)
 
 Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
 

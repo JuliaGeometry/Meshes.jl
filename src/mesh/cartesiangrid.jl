@@ -56,18 +56,20 @@ struct CartesianGrid{Dim,P<:Point{Dim},ℒ<:Len} <: Grid{Dim}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
 
-  function CartesianGrid(
-    origin::P,
-    spacing::NTuple{Dim,ℒ},
-    offset::Dims{Dim},
-    topology::GridTopology{Dim}
-  ) where {Dim,P<:Point{Dim},ℒ<:Len}
+  function CartesianGrid{Dim,P,ℒ}(origin, spacing, offset, topology) where {Dim,P<:Point{Dim},ℒ<:Len}
     if !all(>(zero(ℒ)), spacing)
       throw(ArgumentError("spacing must be positive"))
     end
-    new{Dim,P,float(ℒ)}(origin, spacing, offset, topology)
+    new(origin, spacing, offset, topology)
   end
 end
+
+CartesianGrid(
+  origin::P,
+  spacing::NTuple{Dim,ℒ},
+  offset::Dims{Dim},
+  topology::GridTopology{Dim}
+) where {Dim,P<:Point{Dim},ℒ<:Len} = CartesianGrid{Dim,P,float(ℒ)}(origin, spacing, offset, topology)
 
 CartesianGrid(origin::Point{Dim}, spacing::NTuple{Dim}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
   CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)

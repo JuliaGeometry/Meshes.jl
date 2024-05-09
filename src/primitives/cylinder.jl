@@ -28,8 +28,10 @@ struct Cylinder{P<:Plane,ℒ<:Len} <: Primitive{3}
   bot::P
   top::P
   radius::ℒ
-  Cylinder(bot::P, top::P, radius::ℒ) where {P<:Plane,ℒ<:Len} = new{P,float(ℒ)}(bot, top, radius)
+  Cylinder{P,ℒ}(bot, top, radius) where {P<:Plane,ℒ<:Len} = new(bot, top, radius)
 end
+
+Cylinder(bot::P, top::P, radius::ℒ) where {P<:Plane,ℒ<:Len} = Cylinder{P,float(ℒ)}(bot, top, radius)
 
 Cylinder(bot::P, top::P, radius) where {P<:Plane} = Cylinder(bot, top, addunit(radius, u"m"))
 

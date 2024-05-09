@@ -36,9 +36,11 @@ struct ParaboloidSurface{P<:Point{3},ℒ<:Len} <: Primitive{3}
   apex::P
   radius::ℒ
   focallength::ℒ
-  ParaboloidSurface(apex::P, radius::ℒ, focallength::ℒ) where {P<:Point{3},ℒ<:Len} =
-    new{P,float(ℒ)}(apex, radius, focallength)
+  ParaboloidSurface{P,ℒ}(apex, radius, focallength) where {P<:Point{3},ℒ<:Len} = new(apex, radius, focallength)
 end
+
+ParaboloidSurface(apex::P, radius::ℒ, focallength::ℒ) where {P<:Point{3},ℒ<:Len} =
+  ParaboloidSurface{P,float(ℒ)}(apex, radius, focallength)
 
 ParaboloidSurface(apex::Point{3}, radius::Len, focallength::Len) =
   ParaboloidSurface(apex, promote(radius, focallength)...)

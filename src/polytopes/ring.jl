@@ -12,7 +12,7 @@ See also [`Chain`](@ref) and [`Rope`](@ref).
 struct Ring{Dim,P<:Point{Dim},V<:CircularVector{P}} <: Chain{Dim,P}
   vertices::V
 
-  function Ring{Dim,P,V}(vertices) where {Dim,P,V}
+  function Ring{Dim,P,V}(vertices) where {Dim,P<:Point{Dim},V<:CircularVector{P}}
     if first(vertices) == last(vertices) && length(vertices) ≥ 2
       throw(ArgumentError("""
       First and last vertices of `Ring` constructor must be different

@@ -22,7 +22,7 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 """
 struct Ngon{N,Dim,P<:Point{Dim}} <: Polygon{Dim,P}
   vertices::NTuple{N,P}
-  function Ngon{N,Dim,P}(vertices::NTuple{N,P}) where {N,Dim,P<:Point{Dim}}
+  function Ngon{N,Dim,P}(vertices) where {N,Dim,P<:Point{Dim}}
     if N < 3
       throw(ArgumentError("the number of vertices must be greater than or equal to 3"))
     end

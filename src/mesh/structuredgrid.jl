@@ -21,11 +21,12 @@ julia> StructuredGrid(X, Y)
 struct StructuredGrid{Dim,A<:AbstractArray{<:Len}} <: Grid{Dim}
   XYZ::NTuple{Dim,A}
   topology::GridTopology{Dim}
+  StructuredGrid{Dim,A}(XYZ, topology) where {Dim,A<:AbstractArray{<:Len}} = new(XYZ, topology)
+end
 
-  function StructuredGrid(XYZ::NTuple{Dim,A}, topology::GridTopology{Dim}) where {Dim,A<:AbstractArray{<:Len}}
-    coords = float.(XYZ)
-    new{Dim,eltype(coords)}(coords, topology)
-  end
+function StructuredGrid(XYZ::NTuple{Dim,A}, topology::GridTopology{Dim}) where {Dim,A<:AbstractArray{<:Len}}
+  coords = float.(XYZ)
+  StructuredGrid{Dim,eltype(coords)}(coords, topology)
 end
 
 StructuredGrid(XYZ::NTuple{Dim,A}, topology::GridTopology{Dim}) where {Dim,A<:AbstractArray} =

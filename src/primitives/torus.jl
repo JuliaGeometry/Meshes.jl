@@ -14,9 +14,11 @@ struct Torus{P<:Point{3},V<:Vec{3},ℒ<:Len} <: Primitive{3}
   normal::V
   major::ℒ
   minor::ℒ
-  Torus(center::P, normal::V, major::ℒ, minor::ℒ) where {P<:Point{3},V<:Vec{3},ℒ<:Len} =
-    new{P,V,float(ℒ)}(center, normal, major, minor)
+  Torus{P,V,ℒ}(center, normal, major, minor) where {P<:Point{3},V<:Vec{3},ℒ<:Len} = new(center, normal, major, minor)
 end
+
+Torus(center::P, normal::V, major::ℒ, minor::ℒ) where {P<:Point{3},V<:Vec{3},ℒ<:Len} =
+  Torus{P,V,float(ℒ)}(center, normal, major, minor)
 
 Torus(center::Point{3}, normal::Vec{3}, major::Len, minor::Len) = Torus(center, normal, promote(major, minor)...)
 
