@@ -37,7 +37,7 @@ function Makie.data_limits(plot::Viz{<:Tuple{Grid}})
   bbox = boundingbox(grid)
   pmin = aspoint3f(minimum(bbox))
   pmax = aspoint3f(maximum(bbox))
-  Makie.Rect3f(pmin, pmax)
+  Makie.Rect3f([pmin, pmax])
 end
 
 aspoint3f(p::Point{2}) = Makie.Point3f(ustrip.(coordinates(p))..., 0)
