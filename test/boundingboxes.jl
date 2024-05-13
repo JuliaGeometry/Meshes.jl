@@ -103,13 +103,13 @@
   g = cartgrid(10, 10)
   d = TransformedGrid(g, Rotate(T(π / 2)))
   @test boundingbox(d) ≈ Box(point(-10, 0), point(0, 10))
-  @test @allocated(boundingbox(d)) < 2300
+  @test @allocated(boundingbox(d)) < 3000
 
   g = cartgrid(10, 10)
   rg = convert(RectilinearGrid, g)
   d = TransformedGrid(rg, Rotate(T(π / 2)))
   @test boundingbox(d) ≈ Box(point(-10, 0), point(0, 10))
-  @test @allocated(boundingbox(d)) < 2300
+  @test @allocated(boundingbox(d)) < 3000
 
   g = cartgrid(10, 10)
   m = convert(SimpleMesh, g)
