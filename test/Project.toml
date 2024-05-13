@@ -1,5 +1,5 @@
 [deps]
-# CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
 CircularArrays = "7a955b69-7140-5f4e-a0ed-f168c5e2e749"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"

@@ -4,14 +4,13 @@
     ref1 = refine(grid, TriRefinement())
     ref2 = refine(ref1, TriRefinement())
     
-    # TODO: update MeshesMakieExt to run visualtests
-    # if visualtests
-    #   fig = Mke.Figure(size=(900, 300))
-    #   viz(fig[1, 1], grid, showsegments=true)
-    #   viz(fig[1, 2], ref1, showsegments=true)
-    #   viz(fig[1, 3], ref2, showsegments=true)
-    #   @test_reference "data/trirefine-$T.png" fig
-    # end
+    if visualtests
+      fig = Mke.Figure(size=(900, 300))
+      viz(fig[1, 1], grid, showsegments=true)
+      viz(fig[1, 2], ref1, showsegments=true)
+      viz(fig[1, 3], ref2, showsegments=true)
+      @test_reference "data/trirefine-$T.png" fig
+    end
   end
 
   @testset "QuadRefinement" begin
@@ -22,13 +21,13 @@
     ref2 = refine(ref1, QuadRefinement())
     ref3 = refine(ref2, QuadRefinement())
 
-    # if visualtests
-    #   fig = Mke.Figure(size=(900, 300))
-    #   viz(fig[1, 1], ref1, showsegments=true)
-    #   viz(fig[1, 2], ref2, showsegments=true)
-    #   viz(fig[1, 3], ref3, showsegments=true)
-    #   @test_reference "data/quadrefine-$T.png" fig
-    # end
+    if visualtests
+      fig = Mke.Figure(size=(900, 300))
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
+      @test_reference "data/quadrefine-$T.png" fig
+    end
   end
 
   @testset "RegularRefinement" begin
@@ -63,13 +62,13 @@
     ref2 = refine(ref1, CatmullClark())
     ref3 = refine(ref2, CatmullClark())
 
-    # if visualtests
-    #   fig = Mke.Figure(size=(900, 300))
-    #   viz(fig[1, 1], ref1, showsegments=true)
-    #   viz(fig[1, 2], ref2, showsegments=true)
-    #   viz(fig[1, 3], ref3, showsegments=true)
-    #   @test_reference "data/catmullclark-1-$T.png" fig
-    # end
+    if visualtests
+      fig = Mke.Figure(size=(900, 300))
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
+      @test_reference "data/catmullclark-1-$T.png" fig
+    end
 
     points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
@@ -78,13 +77,13 @@
     ref2 = refine(ref1, CatmullClark())
     ref3 = refine(ref2, CatmullClark())
 
-    # if visualtests
-    #   fig = Mke.Figure(size=(900, 300))
-    #   viz(fig[1, 1], ref1, showsegments=true)
-    #   viz(fig[1, 2], ref2, showsegments=true)
-    #   viz(fig[1, 3], ref3, showsegments=true)
-    #   @test_reference "data/catmullclark-2-$T.png" fig
-    # end
+    if visualtests
+      fig = Mke.Figure(size=(900, 300))
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
+      @test_reference "data/catmullclark-2-$T.png" fig
+    end
 
     points = point.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
     connec = connect.([(1, 4, 3, 2), (5, 6, 7, 8), (1, 2, 6, 5), (3, 4, 8, 7), (1, 5, 8, 4), (2, 3, 7, 6)])
@@ -93,13 +92,13 @@
     ref2 = refine(ref1, CatmullClark())
     ref3 = refine(ref2, CatmullClark())
 
-    # if visualtests
-    #   fig = Mke.Figure(size=(900, 300))
-    #   viz(fig[1, 1], ref1, showsegments=true)
-    #   viz(fig[1, 2], ref2, showsegments=true)
-    #   viz(fig[1, 3], ref3, showsegments=true)
-    #   @test_reference "data/catmullclark-3-$T.png" fig
-    # end
+    if visualtests
+      fig = Mke.Figure(size=(900, 300))
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
+      @test_reference "data/catmullclark-3-$T.png" fig
+    end
   end
 
   @testset "TriSubdivision" begin
@@ -110,12 +109,12 @@
     ref2 = refine(ref1, TriSubdivision())
     ref3 = refine(ref2, TriSubdivision())
 
-    # if visualtests
-    #   fig = Mke.Figure(size=(900, 300))
-    #   viz(fig[1, 1], ref1, showsegments=true)
-    #   viz(fig[1, 2], ref2, showsegments=true)
-    #   viz(fig[1, 3], ref3, showsegments=true)
-    #   @test_reference "data/trisubdivision-$T.png" fig
-    # end
+    if visualtests
+      fig = Mke.Figure(size=(900, 300))
+      viz(fig[1, 1], ref1, showsegments=true)
+      viz(fig[1, 2], ref2, showsegments=true)
+      viz(fig[1, 3], ref3, showsegments=true)
+      @test_reference "data/trisubdivision-$T.png" fig
+    end
   end
 end

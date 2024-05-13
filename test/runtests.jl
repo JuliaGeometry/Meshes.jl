@@ -16,7 +16,7 @@ using ReferenceTests, ImageIO
 using TransformsBase: Identity, →
 
 import TransformsBase as TB
-# import CairoMakie as Mke
+import CairoMakie as Mke
 
 # environment settings
 isCI = "CI" ∈ keys(ENV)

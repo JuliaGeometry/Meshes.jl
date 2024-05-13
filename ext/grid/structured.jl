@@ -22,7 +22,7 @@ function vizgrid2D!(plot::Viz{<:Tuple{StructuredGrid}})
   if nc[] == nv[]
     # size and coordinates
     sz = Makie.@lift size($grid) .+ 1
-    XYZ = Makie.@lift Meshes.XYZ($grid)
+    XYZ = Makie.@lift map(X -> ustrip.(X), Meshes.XYZ($grid))
     X = Makie.@lift $XYZ[1]
     Y = Makie.@lift $XYZ[2]
 
@@ -47,7 +47,7 @@ function structuredsegments(grid)
   for j in axes(cinds, 2)
     for i in axes(cinds, 1)
       p = vertex(grid, cinds[i, j])
-      c = Tuple(coordinates(p))
+      c = ustrip.(Tuple(coordinates(p)))
       push!(coords, c)
     end
     push!(coords, (NaN, NaN))
@@ -56,7 +56,7 @@ function structuredsegments(grid)
   for i in axes(cinds, 1)
     for j in axes(cinds, 2)
       p = vertex(grid, cinds[i, j])
-      c = Tuple(coordinates(p))
+      c = ustrip.(Tuple(coordinates(p)))
       push!(coords, c)
     end
     push!(coords, (NaN, NaN))

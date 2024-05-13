@@ -518,15 +518,14 @@
     mesh = simplexify(quad)
     @test vertices(mesh) == pointify(quad)
 
-    # TODO: update MeshesMakieExt
-    # if visualtests
-    #   grid = cartgrid(3, 3)
-    #   mesh = simplexify(grid)
-    #   fig = Mke.Figure(size=(600, 300))
-    #   viz(fig[1, 1], grid, showsegments=true)
-    #   viz(fig[1, 2], mesh, showsegments=true)
-    #   @test_reference "data/triangulate-$T.png" fig
-    # end
+    if visualtests
+      grid = cartgrid(3, 3)
+      mesh = simplexify(grid)
+      fig = Mke.Figure(size=(600, 300))
+      viz(fig[1, 1], grid, showsegments=true)
+      viz(fig[1, 2], mesh, showsegments=true)
+      @test_reference "data/triangulate-$T.png" fig
+    end
 
     # tetrahedralization
     box = Box(point(0, 0, 0), point(1, 1, 1))

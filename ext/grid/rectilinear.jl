@@ -20,7 +20,7 @@ function vizgrid2D!(plot::Viz{<:Tuple{RectilinearGrid}})
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
   # grid coordinates
-  xyz = Makie.@lift Meshes.xyz($grid)
+  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
   xs = Makie.@lift $xyz[1]
   ys = Makie.@lift $xyz[2]
 
