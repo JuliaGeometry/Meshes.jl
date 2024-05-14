@@ -74,8 +74,7 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 """
 function ∠(u::Vec{2}, v::Vec{2}) # preserve sign
   θ = atan(u × v, u ⋅ v)
-  T = typeof(θ)
-  θ == -T(π) ? -θ : θ
+  θ == oftype(θ, -π) ? -θ : θ
 end
 
 ∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v) # discard sign
