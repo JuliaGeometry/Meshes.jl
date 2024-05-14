@@ -128,7 +128,6 @@ export
   Geometry,
   embeddim,
   paramdim,
-  lentype,
   center,
   centroid,
 
@@ -266,7 +265,6 @@ export
   SubDomain,
   embeddim,
   paramdim,
-  lentype,
   element,
   nelements,
 
