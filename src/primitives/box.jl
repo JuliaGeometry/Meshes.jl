@@ -48,7 +48,7 @@ sides(b::Box) = Tuple(b.max - b.min)
 Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
 function (b::Box)(uv...)
-  if !all(x -> zero(x) ≤ x ≤ one(x), uv)
+  if !all(x -> 0 ≤ x ≤ 1, uv)
     throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
   end
   b.min + uv .* (b.max - b.min)
