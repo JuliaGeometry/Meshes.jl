@@ -2,7 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# TODO: review this method
 # The intersection type can be one of five types:
 #
 # 1. intersect at one inner point (Crossing -> Point)
@@ -98,7 +97,6 @@ function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
   end
 end
 
-# TODO: review this method
 # The intersection type can be one of five types:
 # 
 # 1. intersect at one inner point (Crossing -> Point)
@@ -170,7 +168,6 @@ function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
   end
 end
 
-# TODO: review this method
 # The intersection type can be one of six types:
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at an end point of segment (Touching -> Point)

@@ -2,7 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# TODO: review this method
 # The intersection type can be one of six types:
 #
 # 1. intersect at one inner point (Crossing -> Point)
@@ -66,7 +65,6 @@ function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
   end
 end
 
-# TODO: review this method
 # The intersection type can be one of four types:
 # 
 # 1. intersect at one inner point (Crossing -> Point)

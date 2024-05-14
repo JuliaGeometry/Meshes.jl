@@ -29,7 +29,6 @@ inverse(t::Translate) = Translate(-1 .* t.offsets)
 
 applycoord(t::Translate, v::Vec) = v
 
-# TODO: should offsets have units?
 applycoord(t::Translate, p::Point) = p + Vec(t.offsets)
 
 # ----------------

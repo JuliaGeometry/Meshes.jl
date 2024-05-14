@@ -130,15 +130,15 @@ function gjk!(O::Point{2}, points)
     B, A = points
     AB = B - A
     AO = O - A
-    d = perpendicular(AB, AO)
+    d = perphint(AB, AO)
   else
     # triangle simplex case
     C, B, A = points
     AB = B - A
     AC = C - A
     AO = O - A
-    ABᵀ = -perpendicular(AB, AC)
-    ACᵀ = -perpendicular(AC, AB)
+    ABᵀ = -perphint(AB, AC)
+    ACᵀ = -perphint(AC, AB)
     if ABᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 1) # pop C
       d = ABᵀ
@@ -159,14 +159,14 @@ function gjk!(O::Point{3}, points)
     B, A = points
     AB = B - A
     AO = O - A
-    d = perpendicular(AB, AO)
+    d = perphint(AB, AO)
   elseif length(points) == 3
     # triangle case
     C, B, A = points
     AB = B - A
     AC = C - A
     AO = O - A
-    ABCᵀ = crossprod(AB, AC)
+    ABCᵀ = perp(AB, AC)
     if ABCᵀ ⋅ AO < zero(ℒ)^2
       points[1], points[2] = points[2], points[1]
       ABCᵀ = -ABCᵀ
@@ -189,9 +189,9 @@ function gjk!(O::Point{3}, points)
     AC = C - A
     AD = D - A
     AO = O - A
-    ABCᵀ = crossprod(AB, AC)
-    ADBᵀ = crossprod(AD, AB)
-    ACDᵀ = crossprod(AC, AD)
+    ABCᵀ = perp(AB, AC)
+    ADBᵀ = perp(AD, AB)
+    ACDᵀ = perp(AC, AD)
     if ABCᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 1) # pop D
       d = ABCᵀ
@@ -250,18 +250,18 @@ intersects(m::Multi, c::Chain) = intersects(c, m)
 minkowskipoint(g₁::Geometry, g₂::Geometry, d) = Point(supportfun(g₁, d) - supportfun(g₂, -d))
 
 # origin of coordinate system
-minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
+minkowskiorigin(Dim, ℒ) = Point(ntuple(i -> zero(ℒ), Dim))
 
 # find a vector perpendicular to `v` using vector `d` as some direction hint
 # expect that `perpendicular(v, d) ⋅ d ≥ 0` or, in other words,
 # that the angle between the result vector and `d` is less or equal than 90º
-function perpendicular(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
+function perphint(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
   a = Vec(v[1], v[2], zero(ℒ))
   b = Vec(d[1], d[2], zero(ℒ))
   r = ustrip.(a × b × a) * unit(ℒ)
   Vec(r[1], r[2])
 end
 
-perpendicular(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(v × d × v) * unit(ℒ))
+perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(v × d × v) * unit(ℒ))
 
-crossprod(a::Vec{3,ℒ}, b::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(a × b) * unit(ℒ))
+perp(a::Vec{3,ℒ}, b::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(a × b) * unit(ℒ))

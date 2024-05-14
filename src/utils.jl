@@ -111,7 +111,7 @@ calculated in order to identify the intersection type:
   - No intersection, skew lines: r == 2, rₐ == 3
 """
 function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
-  A = [ustrip.(b - a) ustrip.(c - d)]
+  A = ustrip.([(b - a) (c - d)])
   y = ustrip.(c - a)
   T = eltype(A)
 
