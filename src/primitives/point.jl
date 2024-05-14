@@ -135,7 +135,9 @@ function Base.show(io::IO, point::Point)
   else
     print(io, "Point(")
   end
-  printfields(io, CoordRefSystems.cvalues(point.coords), CoordRefSystems.cnames(point.coords), compact=true)
+  cvalues = CoordRefSystems.cvalues(point.coords)
+  cnames = CoordRefSystems.cnames(point.coords)
+  printfields(io, cvalues, cnames, singleline=true)
   print(io, ")")
 end
 

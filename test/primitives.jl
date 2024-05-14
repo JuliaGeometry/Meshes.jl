@@ -151,13 +151,14 @@
 
     p = point(0, 1)
     @test sprint(show, p, context=:compact => true) == "(x: 0.0 m, y: 1.0 m)"
-    @test sprint(show, p) == "Point(x: 0.0 m, y: 1.0 m)"
     if T === Float32
+      @test sprint(show, p) == "Point(x: 0.0f0 m, y: 1.0f0 m)"
       @test sprint(show, MIME("text/plain"), p) == """
       Point with Cartesian{NoDatum} coordinates
       ├─ x: 0.0f0 m
       └─ y: 1.0f0 m"""
     else
+      @test sprint(show, p) == "Point(x: 0.0 m, y: 1.0 m)"
       @test sprint(show, MIME("text/plain"), p) == """
       Point with Cartesian{NoDatum} coordinates
       ├─ x: 0.0 m
@@ -216,7 +217,7 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), r) == """
       Ray
-      ├─ p: Point(x: 0.0 m, y: 0.0 m)
+      ├─ p: Point(x: 0.0f0 m, y: 0.0f0 m)
       └─ v: Vec(1.0f0 m, 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), r) == """
@@ -249,8 +250,8 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), l) == """
       Line
-      ├─ a: Point(x: 0.0 m, y: 0.0 m)
-      └─ b: Point(x: 1.0 m, y: 1.0 m)"""
+      ├─ a: Point(x: 0.0f0 m, y: 0.0f0 m)
+      └─ b: Point(x: 1.0f0 m, y: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), l) == """
       Line
@@ -311,7 +312,7 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       Plane
-      ├─ p: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
+      ├─ p: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
       ├─ u: Vec(1.0f0 m, 0.0f0 m, 0.0f0 m)
       └─ v: Vec(0.0f0 m, 1.0f0 m, 0.0f0 m)"""
     else
@@ -362,7 +363,7 @@
             "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float32, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve
-      └─ controls: Point{2, CoordRefSystems.Cartesian{CoordRefSystems.NoDatum, 2, Quantity{Float32, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}[Point(x: 0.0 m, y: 0.0 m), Point(x: 0.5 m, y: 1.0 m), Point(x: 1.0 m, y: 0.0 m)]"""
+      └─ controls: Point{2, CoordRefSystems.Cartesian{CoordRefSystems.NoDatum, 2, Quantity{Float32, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}[Point(x: 0.0f0 m, y: 0.0f0 m), Point(x: 0.5f0 m, y: 1.0f0 m), Point(x: 1.0f0 m, y: 0.0f0 m)]"""
     else
       @test sprint(show, b) ==
             "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float64, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
@@ -493,8 +494,8 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), b) == """
       Box
-      ├─ min: Point(x: 0.0 m, y: 0.0 m)
-      └─ max: Point(x: 1.0 m, y: 1.0 m)"""
+      ├─ min: Point(x: 0.0f0 m, y: 0.0f0 m)
+      └─ max: Point(x: 1.0f0 m, y: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), b) == """
       Box
@@ -572,7 +573,7 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), b) == """
       Ball
-      ├─ center: Point(x: 0.0 m, y: 0.0 m)
+      ├─ center: Point(x: 0.0f0 m, y: 0.0f0 m)
       └─ radius: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), b) == """
@@ -676,7 +677,7 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), s) == """
       Sphere
-      ├─ center: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
+      ├─ center: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
       └─ radius: 1.0f0 m"""
     else
       @test sprint(show, MIME("text/plain"), s) == """
@@ -703,7 +704,7 @@
       @test sprint(show, MIME("text/plain"), e) == """
       Ellipsoid
       ├─ radii: (3.0f0 m, 2.0f0 m, 1.0f0 m)
-      ├─ center: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
+      ├─ center: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
       └─ rotation: UniformScaling{Bool}(true)"""
     else
       @test sprint(show, MIME("text/plain"), e) == """
@@ -1001,7 +1002,7 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       ParaboloidSurface
-      ├─ apex: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
+      ├─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
       ├─ radius: 1.0f0 m
       └─ focallength: 1.0f0 m"""
     else
@@ -1037,7 +1038,7 @@
       @test sprint(show, MIME("text/plain"), c) == """
       Cone
       ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)
-      └─ apex: Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
+      └─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), c) == """
       Cone
@@ -1098,7 +1099,7 @@
       @test sprint(show, MIME("text/plain"), s) == """
       ConeSurface
       ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)
-      └─ apex: Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
+      └─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), s) == """
       ConeSurface
@@ -1213,7 +1214,7 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
       Torus
-      ├─ center: Point(x: 1.0 m, y: 1.0 m, z: 1.0 m)
+      ├─ center: Point(x: 1.0f0 m, y: 1.0f0 m, z: 1.0f0 m)
       ├─ normal: Vec(1.0f0 m, 0.0f0 m, 0.0f0 m)
       ├─ major: 2.0f0 m
       └─ minor: 1.0f0 m"""

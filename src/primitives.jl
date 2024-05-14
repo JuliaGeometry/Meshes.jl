@@ -14,8 +14,9 @@ abstract type Primitive{Dim} <: Geometry{Dim} end
 
 function Base.show(io::IO, geom::Primitive)
   name = prettyname(geom)
+  ioctx = IOContext(io, :compact => true)
   print(io, "$name(")
-  printfields(io, geom, compact=true)
+  printfields(ioctx, geom, singleline=true)
   print(io, ")")
 end
 
