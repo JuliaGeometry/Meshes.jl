@@ -63,10 +63,9 @@ angles are always positive, and unlike
 `angles` they can be greater than `π`.
 """
 function innerangles(r::Ring{2})
-  T = numtype(lentype(r))
   # correct sign of angles in case orientation is CW
   θs = orientation(r) == CW ? -angles(r) : angles(r)
-  [θ > 0 ? 2 * T(π) - θ : -θ for θ in θs]
+  [θ > 0 ? 2 * oftype(θ, π) - θ : -θ for θ in θs]
 end
 
 innerangles(r::Ring{3}) = innerangles(Ring(proj2D(vertices(r))))
