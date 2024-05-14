@@ -49,9 +49,9 @@ CylinderSurface(start::Point{3}, finish::Point{3}) = CylinderSurface(start, fini
 CylinderSurface(start::Tuple, finish::Tuple) = CylinderSurface(Point(start), Point(finish))
 
 function CylinderSurface(radius)
-  r₀ = zero(radius)
-  r₁ = oneunit(radius)
-  CylinderSurface(Point(r₀, r₀, r₀), Point(r₀, r₀, r₁), radius)
+  z = zero(radius)
+  o = oneunit(radius)
+  CylinderSurface(Point(z, z, z), Point(z, z, o), radius)
 end
 
 paramdim(::Type{<:CylinderSurface}) = 2
