@@ -86,8 +86,8 @@
     if T == Float32
       @test sprint(show, MIME"text/plain"(), pset) == """
       2 PointSet
-      ├─ Point(x: 1.0 m, y: 0.0 m)
-      └─ Point(x: 0.0 m, y: 1.0 m)"""
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 1.0f0 m)"""
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), pset) == """
       2 PointSet

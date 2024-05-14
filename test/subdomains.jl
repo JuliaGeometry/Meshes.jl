@@ -81,28 +81,28 @@
   if T === Float32
     @test sprint(show, MIME"text/plain"(), v1) == """
     10 view(::PointSet, 1:10)
-    ├─ Point(x: 1.0 m, y: 1.0 m)
-    ├─ Point(x: 2.0 m, y: 2.0 m)
-    ├─ Point(x: 3.0 m, y: 3.0 m)
-    ├─ Point(x: 4.0 m, y: 4.0 m)
-    ├─ Point(x: 5.0 m, y: 5.0 m)
-    ├─ Point(x: 6.0 m, y: 6.0 m)
-    ├─ Point(x: 7.0 m, y: 7.0 m)
-    ├─ Point(x: 8.0 m, y: 8.0 m)
-    ├─ Point(x: 9.0 m, y: 9.0 m)
-    └─ Point(x: 10.0 m, y: 10.0 m)"""
+    ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+    ├─ Point(x: 2.0f0 m, y: 2.0f0 m)
+    ├─ Point(x: 3.0f0 m, y: 3.0f0 m)
+    ├─ Point(x: 4.0f0 m, y: 4.0f0 m)
+    ├─ Point(x: 5.0f0 m, y: 5.0f0 m)
+    ├─ Point(x: 6.0f0 m, y: 6.0f0 m)
+    ├─ Point(x: 7.0f0 m, y: 7.0f0 m)
+    ├─ Point(x: 8.0f0 m, y: 8.0f0 m)
+    ├─ Point(x: 9.0f0 m, y: 9.0f0 m)
+    └─ Point(x: 10.0f0 m, y: 10.0f0 m)"""
     @test sprint(show, MIME"text/plain"(), v2) == """
     10 view(::PointSet, [4, 8, 10, 7, ..., 2, 3, 6, 5])
-    ├─ Point(x: 4.0 m, y: 4.0 m)
-    ├─ Point(x: 8.0 m, y: 8.0 m)
-    ├─ Point(x: 10.0 m, y: 10.0 m)
-    ├─ Point(x: 7.0 m, y: 7.0 m)
-    ├─ Point(x: 9.0 m, y: 9.0 m)
-    ├─ Point(x: 1.0 m, y: 1.0 m)
-    ├─ Point(x: 2.0 m, y: 2.0 m)
-    ├─ Point(x: 3.0 m, y: 3.0 m)
-    ├─ Point(x: 6.0 m, y: 6.0 m)
-    └─ Point(x: 5.0 m, y: 5.0 m)"""
+    ├─ Point(x: 4.0f0 m, y: 4.0f0 m)
+    ├─ Point(x: 8.0f0 m, y: 8.0f0 m)
+    ├─ Point(x: 10.0f0 m, y: 10.0f0 m)
+    ├─ Point(x: 7.0f0 m, y: 7.0f0 m)
+    ├─ Point(x: 9.0f0 m, y: 9.0f0 m)
+    ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+    ├─ Point(x: 2.0f0 m, y: 2.0f0 m)
+    ├─ Point(x: 3.0f0 m, y: 3.0f0 m)
+    ├─ Point(x: 6.0f0 m, y: 6.0f0 m)
+    └─ Point(x: 5.0f0 m, y: 5.0f0 m)"""
   else
     @test sprint(show, MIME"text/plain"(), v1) == """
     10 view(::PointSet, 1:10)

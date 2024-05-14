@@ -218,8 +218,8 @@
     if T == Float32
       @test sprint(show, MIME"text/plain"(), grid) == """
       200×100 CartesianGrid
-      ├─ minimum: Point(x: 0.0 m, y: 0.0 m)
-      ├─ maximum: Point(x: 200.0 m, y: 100.0 m)
+      ├─ minimum: Point(x: 0.0f0 m, y: 0.0f0 m)
+      ├─ maximum: Point(x: 200.0f0 m, y: 100.0f0 m)
       └─ spacing: (1.0f0 m, 1.0f0 m)"""
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), grid) == """
@@ -297,17 +297,17 @@
       @test sprint(show, MIME"text/plain"(), grid) == """
       5×5 RectilinearGrid
         36 vertices
-        ├─ Point(x: 0.0 m, y: 0.0 m)
-        ├─ Point(x: 0.2 m, y: 0.0 m)
-        ├─ Point(x: 0.4 m, y: 0.0 m)
-        ├─ Point(x: 0.6 m, y: 0.0 m)
-        ├─ Point(x: 0.8 m, y: 0.0 m)
+        ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.2f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.4f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.6f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.8f0 m, y: 0.0f0 m)
         ⋮
-        ├─ Point(x: 0.2 m, y: 1.0 m)
-        ├─ Point(x: 0.4 m, y: 1.0 m)
-        ├─ Point(x: 0.6 m, y: 1.0 m)
-        ├─ Point(x: 0.8 m, y: 1.0 m)
-        └─ Point(x: 1.0 m, y: 1.0 m)
+        ├─ Point(x: 0.2f0 m, y: 1.0f0 m)
+        ├─ Point(x: 0.4f0 m, y: 1.0f0 m)
+        ├─ Point(x: 0.6f0 m, y: 1.0f0 m)
+        ├─ Point(x: 0.8f0 m, y: 1.0f0 m)
+        └─ Point(x: 1.0f0 m, y: 1.0f0 m)
         25 elements
         ├─ Quadrangle(1, 2, 8, 7)
         ├─ Quadrangle(2, 3, 9, 8)
@@ -427,17 +427,17 @@
       @test sprint(show, MIME"text/plain"(), grid) == """
       5×5 StructuredGrid
         36 vertices
-        ├─ Point(x: 0.0 m, y: 0.0 m)
-        ├─ Point(x: 0.2 m, y: 0.0 m)
-        ├─ Point(x: 0.4 m, y: 0.0 m)
-        ├─ Point(x: 0.6 m, y: 0.0 m)
-        ├─ Point(x: 0.8 m, y: 0.0 m)
+        ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.2f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.4f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.6f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.8f0 m, y: 0.0f0 m)
         ⋮
-        ├─ Point(x: 0.2 m, y: 1.0 m)
-        ├─ Point(x: 0.4 m, y: 1.0 m)
-        ├─ Point(x: 0.6 m, y: 1.0 m)
-        ├─ Point(x: 0.8 m, y: 1.0 m)
-        └─ Point(x: 1.0 m, y: 1.0 m)
+        ├─ Point(x: 0.2f0 m, y: 1.0f0 m)
+        ├─ Point(x: 0.4f0 m, y: 1.0f0 m)
+        ├─ Point(x: 0.6f0 m, y: 1.0f0 m)
+        ├─ Point(x: 0.8f0 m, y: 1.0f0 m)
+        └─ Point(x: 1.0f0 m, y: 1.0f0 m)
         25 elements
         ├─ Quadrangle(1, 2, 8, 7)
         ├─ Quadrangle(2, 3, 9, 8)
@@ -640,11 +640,11 @@
       @test sprint(show, MIME"text/plain"(), mesh) == """
       4 SimpleMesh
         5 vertices
-        ├─ Point(x: 0.0 m, y: 0.0 m)
-        ├─ Point(x: 1.0 m, y: 0.0 m)
-        ├─ Point(x: 0.0 m, y: 1.0 m)
-        ├─ Point(x: 1.0 m, y: 1.0 m)
-        └─ Point(x: 0.5 m, y: 0.5 m)
+        ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 0.0f0 m, y: 1.0f0 m)
+        ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+        └─ Point(x: 0.5f0 m, y: 0.5f0 m)
         4 elements
         ├─ Triangle(1, 2, 5)
         ├─ Triangle(2, 4, 5)
@@ -717,17 +717,17 @@
       @test sprint(show, MIME"text/plain"(), tgrid) == """
       10×10 TransformedGrid
         121 vertices
-        ├─ Point(x: 0.0 m, y: 0.0 m)
-        ├─ Point(x: 1.0 m, y: 0.0 m)
-        ├─ Point(x: 2.0 m, y: 0.0 m)
-        ├─ Point(x: 3.0 m, y: 0.0 m)
-        ├─ Point(x: 4.0 m, y: 0.0 m)
+        ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 2.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 3.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 4.0f0 m, y: 0.0f0 m)
         ⋮
-        ├─ Point(x: 6.0 m, y: 10.0 m)
-        ├─ Point(x: 7.0 m, y: 10.0 m)
-        ├─ Point(x: 8.0 m, y: 10.0 m)
-        ├─ Point(x: 9.0 m, y: 10.0 m)
-        └─ Point(x: 10.0 m, y: 10.0 m)
+        ├─ Point(x: 6.0f0 m, y: 10.0f0 m)
+        ├─ Point(x: 7.0f0 m, y: 10.0f0 m)
+        ├─ Point(x: 8.0f0 m, y: 10.0f0 m)
+        ├─ Point(x: 9.0f0 m, y: 10.0f0 m)
+        └─ Point(x: 10.0f0 m, y: 10.0f0 m)
         100 elements
         ├─ Quadrangle(1, 2, 13, 12)
         ├─ Quadrangle(2, 3, 14, 13)

@@ -73,8 +73,8 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), s) == """
       Segment
-      ├─ Point(x: 0.0 m, y: 0.0 m)
-      └─ Point(x: 1.0 m, y: 1.0 m)"""
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+      └─ Point(x: 1.0f0 m, y: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), s) == """
       Segment
@@ -250,14 +250,14 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), ri) == """
       Ring
-      ├─ Point(x: 1.0 m, y: 1.0 m)
-      ├─ Point(x: 2.0 m, y: 2.0 m)
-      └─ Point(x: 3.0 m, y: 3.0 m)"""
+      ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+      ├─ Point(x: 2.0f0 m, y: 2.0f0 m)
+      └─ Point(x: 3.0f0 m, y: 3.0f0 m)"""
       @test sprint(show, MIME("text/plain"), ro) == """
       Rope
-      ├─ Point(x: 1.0 m, y: 1.0 m)
-      ├─ Point(x: 2.0 m, y: 2.0 m)
-      └─ Point(x: 3.0 m, y: 3.0 m)"""
+      ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+      ├─ Point(x: 2.0f0 m, y: 2.0f0 m)
+      └─ Point(x: 3.0f0 m, y: 3.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), ri) == """
       Ring
@@ -385,9 +385,9 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
       Triangle
-      ├─ Point(x: 0.0 m, y: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 0.0 m)
-      └─ Point(x: 0.0 m, y: 1.0 m)"""
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), t) == """
       Triangle
@@ -450,10 +450,10 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), q) == """
       Quadrangle
-      ├─ Point(x: 0.0 m, y: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 1.0 m)
-      └─ Point(x: 0.0 m, y: 1.0 m)"""
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), q) == """
       Quadrangle
@@ -707,10 +707,10 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
       Tetrahedron
-      ├─ Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 0.0 m, z: 0.0 m)
-      ├─ Point(x: 0.0 m, y: 1.0 m, z: 0.0 m)
-      └─ Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 0.0f0 m, y: 1.0f0 m, z: 0.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), t) == """
       Tetrahedron
@@ -816,14 +816,14 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), h) == """
       Hexahedron
-      ├─ Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 0.0 m, z: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 1.0 m, z: 0.0 m)
-      ├─ Point(x: 0.0 m, y: 1.0 m, z: 0.0 m)
-      ├─ Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)
-      ├─ Point(x: 1.0 m, y: 0.0 m, z: 1.0 m)
-      ├─ Point(x: 1.0 m, y: 1.0 m, z: 1.0 m)
-      └─ Point(x: 0.0 m, y: 1.0 m, z: 1.0 m)"""
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 1.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 0.0f0 m, y: 1.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m, z: 1.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 1.0f0 m, z: 1.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 1.0f0 m, z: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), h) == """
       Hexahedron
@@ -861,11 +861,11 @@
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """
       Pyramid
-      ├─ Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 0.0 m, z: 0.0 m)
-      ├─ Point(x: 1.0 m, y: 1.0 m, z: 0.0 m)
-      ├─ Point(x: 0.0 m, y: 1.0 m, z: 0.0 m)
-      └─ Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 1.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 0.0f0 m, y: 1.0f0 m, z: 0.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)"""
     else
       @test sprint(show, MIME("text/plain"), p) == """
       Pyramid
