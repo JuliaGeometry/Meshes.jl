@@ -231,6 +231,12 @@
     offsets = (T(1) * u"m", T(2) * u"m")
     f = Translate(offsets)
     @test TB.parameters(f) == (; offsets)
+    f = Translate(T(1), T(2))
+    @test TB.parameters(f) == (; offsets)
+    f = Translate(T(1), 2)
+    @test TB.parameters(f) == (; offsets)
+    f = Translate(1, 2)
+    @test TB.parameters(f) == (; offsets)
 
     # ----
     # VEC
@@ -394,8 +400,12 @@
     f = Affine(T[6 3; 10 5], T[1, 1])
     @test !TB.isrevertible(f)
     @test !TB.isinvertible(f)
-    A, b = Angle2d(T(π / 2)), T[1, 1] * u"m"
+    A, b = Angle2d(T(π / 2)), SVector(T(1) * u"m", T(1) * u"m")
     f = Affine(A, b)
+    @test TB.parameters(f) == (; A, b)
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
+    @test TB.parameters(f) == (; A, b)
+    f = Affine(Angle2d(T(π / 2)), [1, 1])
     @test TB.parameters(f) == (; A, b)
 
     # ----

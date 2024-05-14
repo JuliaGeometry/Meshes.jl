@@ -10,9 +10,11 @@ given offsets `o₁, o₂, ...`.
 """
 struct Translate{Dim,ℒ<:Len} <: CoordinateTransform
   offsets::NTuple{Dim,ℒ}
+  Translate(offsets::NTuple{Dim,ℒ}) where {Dim,ℒ<:Len} = new{Dim,float(ℒ)}(offsets)
 end
 
-# TODO: convert `offsets` values to float?
+Translate(offsets::NTuple{Dim,Len}) where {Dim} = Translate(promote(offsets...))
+
 Translate(offsets::Tuple) = Translate(addunit.(offsets, u"m"))
 
 Translate(offsets...) = Translate(offsets)

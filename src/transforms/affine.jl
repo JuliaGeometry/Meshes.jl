@@ -18,10 +18,14 @@ Affine([0 -1; 1 0], [-2, 2])
 struct Affine{Dim,M<:StaticMatrix{Dim,Dim},V<:StaticVector{Dim,<:Len}} <: CoordinateTransform
   A::M
   b::V
+  function Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim,<:Len}) where {Dim}
+    fA = float(A)
+    fb = float(b)
+    new{Dim,typeof(fA),typeof(fb)}(fA, fb)
+  end
 end
 
-# TODO: convert `b` values to float?
-Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim}) where {Dim} = Affine(A, addunit.(b, u"m"))
+Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim}) where {Dim} = Affine(A, addunit(b, u"m"))
 
 function Affine(A::AbstractMatrix, b::AbstractVector)
   sz = size(A)
