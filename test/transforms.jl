@@ -1024,8 +1024,10 @@
 
   @testset "Bridge" begin
     @test !isaffine(Bridge)
-    δ = T(0.01)
+    δ = T(0.01) * u"m"
     f = Bridge(δ)
+    @test TB.parameters(f) == (; δ)
+    f = Bridge(T(0.01))
     @test TB.parameters(f) == (; δ)
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/566
