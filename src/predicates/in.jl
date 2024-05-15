@@ -104,10 +104,10 @@ function Base.in(p::Point{3}, f::Frustum)
 end
 
 function Base.in(p::Point{3}, t::Torus)
-  T = numtype(lentype(p))
+  ℒ = lentype(p)
   R, r = radii(t)
   c, n = center(t), normal(t)
-  Q = rotation_between(ustrip.(n), SVector(zero(T), zero(T), one(T)))
+  Q = urotbetween(n, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end

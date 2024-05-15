@@ -39,7 +39,8 @@ height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
 axis(f::FrustumSurface) = Line(center(bottom(f)), center(top(f)))
 
 function (f::FrustumSurface)(φ, z)
-  T = numtype(lentype(f))
+  ℒ = lentype(f)
+  T = numtype(ℒ)
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "f(φ, z) is not defined for φ, z outside [0, 1]²."))
   end
@@ -50,7 +51,7 @@ function (f::FrustumSurface)(φ, z)
   l = norm(d)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(ustrip.(d), SVector(zero(T), zero(T), one(T)))
+  Q = urotbetween(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
 
   # scale coordinates
   φₛ = 2T(π) * φ

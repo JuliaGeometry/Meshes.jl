@@ -89,7 +89,7 @@ function (c::Cylinder)(ρ, φ, z)
   o = b(0, 0)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(SVector(zero(T), zero(T), one(T)), ustrip.(d))
+  Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
 
   # project a parametric segment between the top and bottom planes
   lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))

@@ -90,7 +90,8 @@ Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface) =
   c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapproxequal(c₁.radius, c₂.radius)
 
 function (c::CylinderSurface)(φ, z)
-  T = numtype(lentype(c))
+  ℒ = lentype(c)
+  T = numtype(ℒ)
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
   end
@@ -103,7 +104,7 @@ function (c::CylinderSurface)(φ, z)
   o = center(c)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(ustrip.(d), SVector(zero(T), zero(T), one(T)))
+  Q = urotbetween(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
 
   # new normals of planes in new rotated system
   nᵦ = Q * normal(b)

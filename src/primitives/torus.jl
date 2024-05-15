@@ -56,14 +56,15 @@ radii(t::Torus) = (t.major, t.minor)
 axis(t::Torus) = Line(t.center, t.center + t.normal)
 
 function (t::Torus)(θ, φ)
-  T = numtype(lentype(t))
+  ℒ = lentype(t)
+  T = numtype(ℒ)
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   c, n⃗ = t.center, t.normal
   R, r = t.major, t.minor
 
-  Q = rotation_between(SVector(zero(T), zero(T), one(T)), ustrip.(n⃗))
+  Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), n⃗)
 
   sθ, cθ = sincospi(2 * T(-θ))
   sφ, cφ = sincospi(2 * T(φ))
