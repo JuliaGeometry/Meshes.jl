@@ -358,18 +358,15 @@
     @test embeddim(b3) == 3
 
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
+    @test sprint(show, b) == "BezierCurve(controls: [(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
     if T === Float32
-      @test sprint(show, b) ==
-            "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float32, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve
-      └─ controls: Point{2, CoordRefSystems.Cartesian{CoordRefSystems.NoDatum, 2, Quantity{Float32, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}[Point(x: 0.0f0 m, y: 0.0f0 m), Point(x: 0.5f0 m, y: 1.0f0 m), Point(x: 1.0f0 m, y: 0.0f0 m)]"""
+      └─ controls: [Point(x: 0.0f0 m, y: 0.0f0 m), Point(x: 0.5f0 m, y: 1.0f0 m), Point(x: 1.0f0 m, y: 0.0f0 m)]"""
     else
-      @test sprint(show, b) ==
-            "BezierCurve(controls: Point{2, Cartesian{NoDatum, 2, Quantity{Float64, 𝐋, FreeUnits{(m,), 𝐋, nothing}}}}[(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
       @test sprint(show, MIME("text/plain"), b) == """
       BezierCurve
-      └─ controls: Point{2, CoordRefSystems.Cartesian{CoordRefSystems.NoDatum, 2, Quantity{Float64, 𝐋, Unitful.FreeUnits{(m,), 𝐋, nothing}}}}[Point(x: 0.0 m, y: 0.0 m), Point(x: 0.5 m, y: 1.0 m), Point(x: 1.0 m, y: 0.0 m)]"""
+      └─ controls: [Point(x: 0.0 m, y: 0.0 m), Point(x: 0.5 m, y: 1.0 m), Point(x: 1.0 m, y: 0.0 m)]"""
     end
   end
 

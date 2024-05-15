@@ -110,3 +110,22 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim}}) where {Dim} =
   BezierCurve([rand(rng, Point{Dim}) for _ in 1:5])
+
+# -----------
+# IO METHODS
+# -----------
+
+function Base.show(io::IO, b::BezierCurve)
+  ioctx = IOContext(io, :compact => true)
+  print(io, "BezierCurve(controls: [")
+  join(ioctx, b.controls, ", ")
+  print(io, "])")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", b::BezierCurve)
+  summary(io, b)
+  println(io)
+  print(io, "└─ controls: [")
+  join(io, b.controls, ", ")
+  print(io, "]")
+end
