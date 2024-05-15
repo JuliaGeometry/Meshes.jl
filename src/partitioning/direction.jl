@@ -11,11 +11,7 @@ with bandwidth tolerance `tol`.
 struct DirectionPartition{V<:Vec,ℒ<:Len} <: SPredicatePartitionMethod
   direction::V
   tol::ℒ
-
-  function DirectionPartition(direction::V, tol::ℒ) where {V<:Vec,ℒ<:Len}
-    d = Vec(normalize(direction) * unit(eltype(direction)))
-    new{V,float(ℒ)}(d, tol)
-  end
+  DirectionPartition(direction::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(direction), tol)
 end
 
 DirectionPartition(direction::Vec, tol) = DirectionPartition(direction, addunit(tol, u"m"))

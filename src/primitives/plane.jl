@@ -40,7 +40,7 @@ paramdim(::Type{<:Plane}) = 2
 
 lentype(::Type{<:Plane{P}}) where {P} = lentype(P)
 
-normal(p::Plane) = Vec(normalize(p.u × p.v) * unit(lentype(p)))
+normal(p::Plane) = unormalize(ucross(p.u, p.v))
 
 ==(p₁::Plane, p₂::Plane) =
   p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ && p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁

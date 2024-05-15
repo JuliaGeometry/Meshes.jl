@@ -11,11 +11,7 @@ defined by a `normal` direction and a reference `point`.
 struct BisectPointPartition{Dim,V<:Vec{Dim},P<:Point{Dim}} <: PartitionMethod
   normal::V
   point::P
-
-  function BisectPointPartition{Dim,V,P}(normal, point) where {Dim,V<:Vec{Dim},P<:Point{Dim}}
-    n = Vec(normalize(normal) * unit(eltype(normal)))
-    new(n, point)
-  end
+  BisectPointPartition{Dim,V,P}(normal, point) where {Dim,V<:Vec{Dim},P<:Point{Dim}} = new(unormalize(normal), point)
 end
 
 BisectPointPartition(normal::V, point::P) where {Dim,V<:Vec{Dim},P<:Point{Dim}} =

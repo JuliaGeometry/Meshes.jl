@@ -258,10 +258,10 @@ minkowskiorigin(Dim, ℒ) = Point(ntuple(i -> zero(ℒ), Dim))
 function perphint(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
   a = Vec(v[1], v[2], zero(ℒ))
   b = Vec(d[1], d[2], zero(ℒ))
-  r = ustrip.(a × b × a) * unit(ℒ)
+  r = ucross(a, b, a)
   Vec(r[1], r[2])
 end
 
-perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(v × d × v) * unit(ℒ))
+perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = ucross(v, d, v)
 
-perp(a::Vec{3,ℒ}, b::Vec{3,ℒ}) where {ℒ} = Vec(ustrip.(a × b) * unit(ℒ))
+perp(a::Vec{3,ℒ}, b::Vec{3,ℒ}) where {ℒ} = ucross(a, b)

@@ -73,7 +73,7 @@ function svdbasis(p::AbstractVector{<:Point{3}})
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
-  U = svd(ustrip.(Z)).U * unit(ℒ)
+  U = usvd(Z).U
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
   n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))

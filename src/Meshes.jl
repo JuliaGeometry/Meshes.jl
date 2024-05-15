@@ -65,6 +65,9 @@ include("domains.jl")
 # utilities
 include("utils.jl")
 
+# linear algebra
+include("linalg.jl")
+
 # domain views
 include("viewing.jl")
 

@@ -83,8 +83,7 @@ signarea(::Triangle{3}) = error("signed area only defined for triangles embedded
 
 function normal(t::Triangle{3})
   A, B, C = t.vertices
-  n = (B - A) × (C - A) / 2
-  Vec(ustrip.(n) * unit(lentype(t)))
+  ucross((B - A), (C - A)) / 2
 end
 
 function (t::Triangle)(u, v)

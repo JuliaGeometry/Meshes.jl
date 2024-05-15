@@ -12,11 +12,7 @@ hyperplane when `(x - y) ⋅ normal < tol`.
 struct PlanePartition{V<:Vec,ℒ<:Len} <: SPredicatePartitionMethod
   normal::V
   tol::ℒ
-
-  function PlanePartition(normal::V, tol::ℒ) where {V<:Vec,ℒ<:Len}
-    n = Vec(normalize(normal) * unit(eltype(normal)))
-    new{V,float(ℒ)}(n, tol)
-  end
+  PlanePartition(normal::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(normal), tol)
 end
 
 PlanePartition(normal::Vec, tol) = PlanePartition(normal, addunit(tol, u"m"))

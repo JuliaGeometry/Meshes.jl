@@ -13,11 +13,7 @@ struct BisectFractionPartition{V<:Vec} <: PartitionMethod
   normal::V
   fraction::Float64
   maxiter::Int
-
-  function BisectFractionPartition{V}(normal, fraction, maxiter) where {V<:Vec}
-    n = Vec(normalize(normal) * unit(eltype(normal)))
-    new(n, fraction, maxiter)
-  end
+  BisectFractionPartition{V}(normal, fraction, maxiter) where {V<:Vec} = new(unormalize(normal), fraction, maxiter)
 end
 
 BisectFractionPartition(normal::V, fraction=0.5, maxiter=10) where {V<:Vec} =
