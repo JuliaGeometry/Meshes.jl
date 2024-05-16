@@ -78,58 +78,60 @@ import CairoMakie as Mke
 ### Points and vectors
 
 A [`Point`](@ref) is defined by its coordinates in a global reference system. The type of the
-coordinates is determined automatically based on the specified literals, or is forced
-to a specific type using helper constructors (e.g. `Point2`, `Point3`, `Point2f`, `Point3f`).
+coordinates is determined automatically based on the specified literals.
 `Integer` coordinates are converted to `Float64` to fulfill the requirements of most
 geometric processing algorithms, which would be undefined in a discrete scale.
 
-A vector [`Vec`](@ref) follows the same pattern. It can be constructed with the generic `Vec`
-constructor or with the variants `Vec2` and `Vec3` for double precision and `Vec2f`
-and `Vec3f` for single precision.
+A vector [`Vec`](@ref) follows the same pattern. It can be constructed with the `Vec` constructor.
 
 ```@example overview
-# 2D points
-A = Point(0.0, 1.0) # double precision as expected
-B = Point(0f0, 1f0) # single precision as expected
-C = Point(0, 0) # Integer is converted to Float64 by design
-D = Point2(0, 1) # explicitly ask for double precision
-E = Point2f(0, 1) # explicitly ask for single precision
+Point(0.0, 1.0) # double precision as expected
+```
 
-# 3D points
-F = Point(1.0, 2.0, 3.0) # double precision as expected
-G = Point(1f0, 2f0, 3f0) # single precision as expected
-H = Point(1, 2, 3) # Integer is converted to Float64 by design
-I = Point3(1, 2, 3) # explicitly ask for double precision
-J = Point3f(1, 2, 3) # explicitly ask for single precision
+```@example overview
+Point(0f0, 1f0) # single precision as expected
+```
 
-for P in (A,B,C,D,E,F,G,H,I,J)
-  println("Coordinate type: ", coordtype(P))
-  println("Embedding dimension: ", embeddim(P))
-end
+```@example overview
+Point(0, 0) # Integer is converted to Float64 by design
+```
+
+```@example overview
+Point(1.0, 2.0, 3.0) # double precision as expected
+```
+
+```@example overview
+Point(1f0, 2f0, 3f0) # single precision as expected
+```
+
+```@example overview
+Point(1, 2, 3) # Integer is converted to Float64 by design
 ```
 
 Points can be subtracted to produce a vector:
 
 ```@example overview
+A = Point(1.0, 1.0)
+B = Point(3.0, 3.0)
 B - A
 ```
 
 They can't be added, but their coordinates can:
 
 ```@example overview
-coordinates(F) + coordinates(H)
+coordinates(A) + coordinates(B)
 ```
 
 We can add a point to a vector though, and get a new point:
 
 ```@example overview
-F + Vec(1, 1, 1)
+A + Vec(1, 1)
 ```
 
 And finally, we can create points at random with:
 
 ```@example overview
-ps = rand(Point2, 10)
+rand(Point{2})
 ```
 
 ### Primitives
@@ -195,7 +197,11 @@ viz(t)
 Some of these geometries have additional functionality like the measure (or area):
 
 ```@example overview
-measure(t) == area(t) == 1/2
+measure(t)
+```
+
+```@example overview
+measure(t) == area(t)
 ```
 
 Or the ability to know whether or not a point is inside:
@@ -316,7 +322,7 @@ and a collection of [`Connectivity`](@ref) that store the indices to the
 global vector of points:
 
 ```@example overview
-points = Point2[(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
+points = [(0,0), (1,0), (0,1), (1,1), (0.25,0.5), (0.75,0.5)]
 tris  = connect.([(1,5,3), (4,6,2)], Triangle)
 quads = connect.([(1,2,6,5), (4,3,5,6)], Quadrangle)
 mesh = SimpleMesh(points, [tris; quads])

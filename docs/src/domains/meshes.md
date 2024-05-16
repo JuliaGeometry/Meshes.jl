@@ -58,7 +58,7 @@ SimpleMesh
 
 ```@example meshes
 # global vector of 2D points
-points = Point2[(0,0),(1,0),(0,1),(1,1),(0.25,0.5),(0.75,0.5)]
+points = [(0,0),(1,0),(0,1),(1,1),(0.25,0.5),(0.75,0.5)]
 
 # connect the points into N-gon
 connec = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(3,1,5)], Ngon)
@@ -99,7 +99,7 @@ Adjacency
 
 ```@example meshes
 # global vector of 2D points
-points = Point2[(0,0),(1,0),(0,1),(1,1),(0.25,0.5),(0.75,0.5)]
+points = [(0,0),(1,0),(0,1),(1,1),(0.25,0.5),(0.75,0.5)]
 
 # connect the points into N-gon
 connec = connect.([(1,2,6,5),(2,4,6),(4,3,5,6),(3,1,5)], Ngon)

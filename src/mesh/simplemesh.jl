@@ -36,7 +36,7 @@ struct SimpleMesh{Dim,V<:AbstractVector{<:Point{Dim}},TP<:Topology} <: Mesh{Dim,
   topology::TP
 end
 
-SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) = SimpleMesh(Point.(coords), topology)
+SimpleMesh(coords::AbstractVector{<:Tuple}, topology::Topology) = SimpleMesh(Point.(coords), topology)
 
 function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=false)
   topology = relations ? HalfEdgeTopology(connec) : SimpleTopology(connec)

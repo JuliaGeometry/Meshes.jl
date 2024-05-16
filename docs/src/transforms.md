@@ -128,7 +128,7 @@ Repair
 
 ```@example transforms
 # mesh with unreferenced point
-points = Point3[(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)]
+points = [(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)]
 connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
 mesh   = SimpleMesh(points, connec)
 
@@ -174,7 +174,7 @@ function readply(fname)
   x = ply["vertex"]["x"]
   y = ply["vertex"]["y"]
   z = ply["vertex"]["z"]
-  points = Point3.(x, y, z)
+  points = Point.(x, y, z)
   connec = [connect(Tuple(c.+1)) for c in ply["face"]["vertex_indices"]]
   SimpleMesh(points, connec)
 end
