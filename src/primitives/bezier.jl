@@ -25,7 +25,7 @@ struct BezierCurve{Dim,V<:AbstractVector{<:Point{Dim}}} <: Primitive{Dim}
 end
 
 BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
-BezierCurve(points::P...) where {P<:Point} = BezierCurve(collect(points))
+BezierCurve(points...) = BezierCurve(collect(points))
 
 paramdim(::Type{<:BezierCurve}) = 1
 
