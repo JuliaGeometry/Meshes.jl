@@ -14,13 +14,6 @@ viz
 viz!
 ```
 
-Vectors of custom objects can be visualized with the `color`
-argument provided that they implement the `ascolors` trait:
-
-```@docs
-Meshes.ascolors
-```
-
 ## Geometries
 
 We can visualize a single geometry or multiple geometries in a vector:
