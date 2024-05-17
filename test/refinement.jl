@@ -3,7 +3,7 @@
     grid = cartgrid(3, 3)
     ref1 = refine(grid, TriRefinement())
     ref2 = refine(ref1, TriRefinement())
-    
+
     if visualtests
       fig = Mke.Figure(size=(900, 300))
       viz(fig[1, 1], grid, showsegments=true)

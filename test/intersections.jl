@@ -1131,12 +1131,22 @@
     @test all(vertices(poly ∩ other) .≈ [point(5, 3), point(4, 4), point(2, 4), point(0, 2), point(5, 2)])
 
     # octagon
-    poly = Octagon(point(8, -2), point(8, 5), point(2, 5), point(4, 3), point(6, 3), point(4, 1), point(2, 1), point(2, -2))
+    poly =
+      Octagon(point(8, -2), point(8, 5), point(2, 5), point(4, 3), point(6, 3), point(4, 1), point(2, 1), point(2, -2))
     other = Quadrangle(point(5, 0), point(5, 4), point(0, 4), point(0, 0))
     @test intersection(poly, other) |> type == Intersecting
     @test all(
-      vertices(poly ∩ other) .≈
-      [point(3, 4), point(4, 3), point(5, 3), point(5, 2), point(4, 1), point(2, 1), point(2, 0), point(5, 0), point(5, 4)]
+      vertices(poly ∩ other) .≈ [
+        point(3, 4),
+        point(4, 3),
+        point(5, 3),
+        point(5, 2),
+        point(4, 1),
+        point(2, 1),
+        point(2, 0),
+        point(5, 0),
+        point(5, 4)
+      ]
     )
 
     # inside

@@ -15,7 +15,7 @@
   v = view(p, b)
   @test centroid(v, 1) == point(1, 1)
   @test centroid(v, nelements(v)) == point(5, 5)
-  
+
   g = cartgrid(10, 10)
   p = PointSet(collect(vertices(g)))
   b = Ball(point(0, 0), T(2))

@@ -22,7 +22,7 @@ function winding(points, ring::Ring{2})
   v = vertices(ring)
   n = nvertices(ring)
 
-  function w(p) 
+  function w(p)
     ∑ = sum(∠(v[i], p, v[i + 1]) for i in 1:n)
     ∑ / oftype(∑, 2π)
   end

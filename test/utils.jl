@@ -2,7 +2,7 @@
   a, b, c = point(0, 0), point(1, 0), point(0, 1)
   @test signarea(a, b, c) == T(0.5) * u"m^2"
   a, b, c = point(0, 0), point(0, 1), point(1, 0)
-  @test signarea(a, b, c) == T(-0.5)  * u"m^2"
+  @test signarea(a, b, c) == T(-0.5) * u"m^2"
 
   normals = [
     vector(1, 0, 0),
