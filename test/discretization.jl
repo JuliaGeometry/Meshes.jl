@@ -297,21 +297,20 @@
       @test Set(vertices(poly)) == Set(vertices(mesh))
       @test nelements(mesh) == length(vertices(mesh)) - 2
 
-      # TODO: investigate why these tests are breaking
-      # poly = readpoly(T, joinpath(datadir, "smooth2.line"))
-      # mesh = discretize(poly, method)
-      # @test Set(vertices(poly)) == Set(vertices(mesh))
-      # @test nelements(mesh) == length(vertices(mesh)) - 2
+      poly = readpoly(T, joinpath(datadir, "smooth2.line"))
+      mesh = discretize(poly, method)
+      @test Set(vertices(poly)) == Set(vertices(mesh))
+      @test nelements(mesh) == length(vertices(mesh)) - 2
 
       poly = readpoly(T, joinpath(datadir, "smooth3.line"))
       mesh = discretize(poly, method)
       @test Set(vertices(poly)) == Set(vertices(mesh))
       @test nelements(mesh) == length(vertices(mesh)) - 2
 
-      # poly = readpoly(T, joinpath(datadir, "smooth4.line"))
-      # mesh = discretize(poly, method)
-      # @test Set(vertices(poly)) == Set(vertices(mesh))
-      # @test nelements(mesh) == length(vertices(mesh)) - 2
+      poly = readpoly(T, joinpath(datadir, "smooth4.line"))
+      mesh = discretize(poly, method)
+      @test Set(vertices(poly)) == Set(vertices(mesh))
+      @test nelements(mesh) == length(vertices(mesh)) - 2
 
       poly = readpoly(T, joinpath(datadir, "smooth5.line"))
       mesh = discretize(poly, method)
@@ -345,7 +344,6 @@
       @test nelements(mesh) == 32
     end
 
-    # TODO: investigate why this test changed
     if T == Float64
       poly = PolyArea(
         point.([
@@ -360,8 +358,8 @@
         ])
       )
       mesh = discretize(poly)
-      @test nvertices(mesh) == 7
-      @test nelements(mesh) == 5
+      @test nvertices(mesh) == 8
+      @test nelements(mesh) == 6
     end
 
     # degenerate triangle
