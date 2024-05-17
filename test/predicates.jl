@@ -250,8 +250,7 @@
     @test tri ⊆ poly1
     @test tri ⊈ poly2
     @test tri ⊆ multi
-    # TODO: related to unique
-    # @test pent ⊆ poly1
+    @test pent ⊆ poly1
     @test pent ⊈ poly2
     @test pent ⊆ multi
 
@@ -264,8 +263,7 @@
     @test poly3 ⊆ poly1
     @test poly4 ⊆ poly1
     @test poly5 ⊆ poly1
-    # TODO: related to unique
-    # @test poly4 ⊆ poly2
+    @test poly4 ⊆ poly2
     @test poly4 ⊆ poly3
     @test poly5 ⊈ poly2
     @test poly5 ⊈ poly3

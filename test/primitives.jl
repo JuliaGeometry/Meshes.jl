@@ -41,10 +41,6 @@
     @test Meshes.lentype(rand(Point{2})) == Meshes.Met{Float64}
     @test Meshes.lentype(rand(Point{3})) == Meshes.Met{Float64}
 
-    @test eltype(rand(Point{1}, 3)) == Point{1}
-    @test eltype(rand(Point{2}, 3)) == Point{2}
-    @test eltype(rand(Point{3}, 3)) == Point{3}
-
     @test point(1) ≈ point(1 + eps(T))
     @test point(1, 2) ≈ point(1 + eps(T), T(2))
     @test point(1, 2, 3) ≈ point(1 + eps(T), T(2), T(3))

@@ -204,14 +204,12 @@
     ur2 = unique(r2)
     @test nvertices(ur1) < nvertices(r1)
     @test nvertices(ur2) < nvertices(r2)
-    # TODO: investigate why this test changed
-    # investigation result: related to isapprox implementation in Unitful.jl
     if T === Float32
-      @test nvertices(ur1) == 1
-      @test nvertices(ur2) == 1
+      @test nvertices(ur1) == 10
+      @test nvertices(ur2) == 10
     else
-      @test nvertices(ur1) == 16
-      @test nvertices(ur2) == 16
+      @test nvertices(ur1) == 17
+      @test nvertices(ur2) == 17
     end
 
     r = rand(Rope{2})
@@ -590,19 +588,17 @@
         (-48.044501408820125, -18.326551273900744)
       ])
     )
-    # TODO: investigate why this test changed
-    # investigation result: related to isapprox implementation in Unitful.jl
     upoly = unique(poly)
     @test nvertices(upoly) < nvertices(poly)
     if T === Float32
-      @test nvertices(upoly) == 1
+      @test nvertices(upoly) == 10
     else
-      @test nvertices(upoly) == 16
+      @test nvertices(upoly) == 17
     end
 
     # invalid inner
-    outer = Ring(rand(Point{2}, 10)...)
-    p1, p2 = rand(Point{2}, 2)
+    outer = Ring(randpoint2(10))
+    p1, p2 = randpoint2(2)
     inner = Ring(p1, p1, p2)
     poly = PolyArea([outer, inner])
     upoly = unique(poly)
