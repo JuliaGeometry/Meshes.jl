@@ -11,11 +11,11 @@ respect to its bounding box.
 !(g::Geometry) = _complement(_boxboundary(g), boundary(g))
 
 function _boxboundary(g)
-  T = coordtype(g)
+  ℒ = lentype(g)
   b = boundingbox(g)
   c = coordinates(center(b))
   l = sides(b)
-  α = (l .+ 2atol(T)) ./ l
+  α = (l .+ 2atol(ℒ)) ./ l
   t = Translate(-c...) → Scale(α) → Translate(c...)
   boundary(t(b))
 end

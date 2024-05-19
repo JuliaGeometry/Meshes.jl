@@ -148,7 +148,7 @@ earsccw(𝒫) = filter(i -> isearccw(𝒫, i), 1:nvertices(𝒫))
 
 # tells whether or not vertex i is an ear of 𝒫
 # assuming that 𝒫 has counter-clockwise orientation
-function isearccw(𝒫::Ring{Dim,T}, i) where {Dim,T}
+function isearccw(𝒫::Ring, i)
   v = vertices(𝒫)
 
   # CE1.1: classify angle as convex vs. reflex
@@ -174,9 +174,8 @@ end
 
 # helper function to compute the vexity of vertex i
 function vexity(v, i)
-  T = coordtype(first(v))
   α = ∠(v[i - 1], v[i], v[i + 1]) # oriented angle
-  θ = α > 0 ? 2 * T(π) - α : -α # inner angle
+  θ = α > 0 ? oftype(α, 2π) - α : -α # inner angle
   θ < π ? :CONVEX : :REFLEX
 end
 

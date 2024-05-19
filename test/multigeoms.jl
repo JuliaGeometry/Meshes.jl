@@ -1,7 +1,7 @@
 @testset "Multi" begin
-  outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
-  hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
-  hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
+  outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+  hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
   poly = PolyArea([outer, hole1, hole2])
   multi = Multi([poly, poly])
   @test multi == multi
@@ -13,46 +13,46 @@
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
   @test rings(multi) == [rings(poly); rings(poly)]
 
-  poly1 = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-  poly2 = PolyArea(P2[(1, 1), (2, 1), (2, 2), (1, 2)])
+  poly1 = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly2 = PolyArea(point.([(1, 1), (2, 1), (2, 2), (1, 2)]))
   multi = Multi([poly1, poly2])
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
-  @test centroid(multi) == P2(1, 1)
-  @test P2(0.5, 0.5) ∈ multi
-  @test P2(1.5, 1.5) ∈ multi
-  @test P2(1.5, 0.5) ∉ multi
-  @test P2(0.5, 1.5) ∉ multi
+  @test centroid(multi) == point(1, 1)
+  @test point(0.5, 0.5) ∈ multi
+  @test point(1.5, 1.5) ∈ multi
+  @test point(1.5, 0.5) ∉ multi
+  @test point(0.5, 1.5) ∉ multi
   @test sprint(show, multi) == "Multi(2×PolyArea)"
   @test sprint(show, MIME"text/plain"(), multi) == """
-  MultiPolyArea{2,$T}
-  ├─ PolyArea((0.0, 0.0), ..., (0.0, 1.0))
-  └─ PolyArea((1.0, 1.0), ..., (1.0, 2.0))"""
+  MultiPolyArea
+  ├─ PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
+  └─ PolyArea((x: 1.0 m, y: 1.0 m), ..., (x: 1.0 m, y: 2.0 m))"""
 
-  box1 = Box(P2(0, 0), P2(1, 1))
-  box2 = Box(P2(1, 1), P2(2, 2))
+  box1 = Box(point(0, 0), point(1, 1))
+  box2 = Box(point(1, 1), point(2, 2))
   mbox = Multi([box1, box2])
   mchn = boundary(mbox)
   noth = boundary(mchn)
   @test mchn isa Multi
   @test isnothing(noth)
-  @test length(mchn) == T(8)
+  @test length(mchn) == T(8) * u"m"
   @test sprint(show, mbox) == "Multi(2×Box)"
   @test sprint(show, MIME"text/plain"(), mbox) == """
-  MultiBox{2,$T}
-  ├─ Box(min: (0.0, 0.0), max: (1.0, 1.0))
-  └─ Box(min: (1.0, 1.0), max: (2.0, 2.0))"""
+  MultiBox
+  ├─ Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))
+  └─ Box(min: (x: 1.0 m, y: 1.0 m), max: (x: 2.0 m, y: 2.0 m))"""
 
   # constructor with iterator
-  grid = CartesianGrid{T}(10, 10)
+  grid = cartgrid(10, 10)
   multi = Multi(grid)
   @test parent(multi) == collect(grid)
 
   # boundary of multi-3D-geometry
-  box1 = Box(P3(0, 0, 0), P3(1, 1, 1))
-  box2 = Box(P3(1, 1, 1), P3(2, 2, 2))
+  box1 = Box(point(0, 0, 0), point(1, 1, 1))
+  box2 = Box(point(1, 1, 1), point(2, 2, 2))
   mbox = Multi([box1, box2])
   mesh = boundary(mbox)
   @test mesh isa Mesh
@@ -60,24 +60,24 @@
   @test nelements(mesh) == 12
 
   # unique vertices
-  poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-  quad = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+  poly = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  quad = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
   multi = Multi([poly, quad])
   @test unique(multi) == multi
   @test sprint(show, multi) == "Multi(1×PolyArea, 1×Quadrangle)"
   @test sprint(show, MIME"text/plain"(), multi) == """
-  MultiPolygon{2,$T}
-  ├─ PolyArea((0.0, 0.0), ..., (0.0, 1.0))
-  └─ Quadrangle((0.0, 0.0), ..., (0.0, 1.0))"""
+  MultiPolygon
+  ├─ PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
+  └─ Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"""
 
   # type aliases
-  point = P2(0, 0)
-  segm = Segment(P2(0, 0), P2(1, 1))
-  rope = Rope(P2[(0, 0), (1, 0), (1, 1)])
-  ring = Ring(P2[(0, 0), (1, 0), (1, 1)])
-  tri = Triangle(P2(0, 0), P2(1, 0), P2(1, 1))
-  poly = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
-  @test Multi([point, point]) isa MultiPoint
+  p = point(0, 0)
+  segm = Segment(point(0, 0), point(1, 1))
+  rope = Rope(point.([(0, 0), (1, 0), (1, 1)]))
+  ring = Ring(point.([(0, 0), (1, 0), (1, 1)]))
+  tri = Triangle(point(0, 0), point(1, 0), point(1, 1))
+  poly = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  @test Multi([p, p]) isa MultiPoint
   @test Multi([segm, segm]) isa MultiSegment
   @test Multi([rope, rope]) isa MultiRope
   @test Multi([ring, ring]) isa MultiRing

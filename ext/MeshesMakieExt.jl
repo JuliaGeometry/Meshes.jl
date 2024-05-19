@@ -5,7 +5,9 @@
 module MeshesMakieExt
 
 using Meshes
+using Unitful
 using Rotations
+using StaticArrays
 using LinearAlgebra
 using Colorfy
 

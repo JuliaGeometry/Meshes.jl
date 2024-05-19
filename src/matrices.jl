@@ -90,12 +90,12 @@ function measurematrix(mesh)
   # retrieve coboundary relation
   ∂ = Coboundary{0,2}(topology(ℳ))
 
-  # initialize matrix
-  n = nvertices(ℳ)
-  M = 1.0 * I(n)
-
   # pre-compute all measures
   A = measure.(ℳ)
+
+  # initialize matrix
+  n = nvertices(ℳ)
+  M = oneunit(eltype(A)) * I(n)
 
   # fill matrix with measures
   for i in 1:n

@@ -49,7 +49,7 @@ end
 
 function makietransform!(plot, trans::Makie.Observable{<:Translate})
   offsets = first(TB.parameters(trans[]))
-  Makie.translate!(plot, offsets...)
+  Makie.translate!(plot, ustrip.(offsets)...)
 end
 
 function makietransform!(plot, trans::Makie.Observable{<:Scale})
@@ -67,5 +67,5 @@ function makietransform!(plot, trans::Makie.Observable{<:Affine{2}})
     θ = first(Rotations.params(rot))
     Makie.rotate!(plot, θ)
   end
-  Makie.translate!(plot, b...)
+  Makie.translate!(plot, ustrip.(b)...)
 end

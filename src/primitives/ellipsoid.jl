@@ -7,16 +7,25 @@
 
 A 3D ellipsoid with given `radii`, `center` and `rotation`.
 """
-struct Ellipsoid{T,R} <: Primitive{3,T}
-  radii::NTuple{3,T}
-  center::Point{3,T}
+struct Ellipsoid{ℒ<:Len,P<:Point{3},R} <: Primitive{3}
+  radii::NTuple{3,ℒ}
+  center::P
   rotation::R
+  Ellipsoid{ℒ,P,R}(radii, center, rotation) where {ℒ<:Len,P<:Point{3},R} = new(radii, center, rotation)
 end
 
-Ellipsoid(radii::NTuple{3,T}, center=(T(0), T(0), T(0)), rotation::R=I) where {T,R} =
-  Ellipsoid{T,R}(radii, center, rotation)
+Ellipsoid(radii::NTuple{3,ℒ}, center::P, rotation::R) where {ℒ<:Len,P<:Point{3},R} =
+  Ellipsoid{float(ℒ),P,R}(radii, center, rotation)
+
+Ellipsoid(radii::NTuple{3}, center::P, rotation::R) where {P<:Point{3},R} =
+  Ellipsoid(addunit.(radii, u"m"), center, rotation)
+
+Ellipsoid(radii::NTuple{3,T}, center=(zero(T), zero(T), zero(T)), rotation=I) where {T} =
+  Ellipsoid(radii, Point(center), rotation)
 
 paramdim(::Type{<:Ellipsoid}) = 2
+
+lentype(::Type{<:Ellipsoid{ℒ,P}}) where {ℒ,P} = lentype(P)
 
 radii(e::Ellipsoid) = e.radii
 
@@ -24,7 +33,8 @@ center(e::Ellipsoid) = e.center
 
 rotation(e::Ellipsoid) = e.rotation
 
-function (e::Ellipsoid{T})(θ, φ) where {T}
+function (e::Ellipsoid)(θ, φ)
+  T = numtype(lentype(e))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "e(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
@@ -39,5 +49,8 @@ function (e::Ellipsoid{T})(θ, φ) where {T}
   c + R * Vec(x, y, z)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid{T}}) where {T} =
-  Ellipsoid((rand(rng, T), rand(rng, T), rand(rng, T)), rand(rng, Point{3,T}), rand(rng, QuatRotation))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ellipsoid}) = Ellipsoid(
+  (rand(rng, Met{Float64}), rand(rng, Met{Float64}), rand(rng, Met{Float64})),
+  rand(rng, Point{3}),
+  rand(rng, QuatRotation)
+)

@@ -10,12 +10,14 @@
 # 4. overlap with aligned vectors (PosOverlapping -> Ray)
 # 5. overlap with colliding vectors (NegOverlapping -> Segment)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
+function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
+  ℒ = lentype(ray₁)
   a, b = ray₁(0), ray₁(1)
   c, d = ray₂(0), ray₂(1)
 
   # normalize points to gain parameters λ₁, λ₂ corresponding to arc lengths
-  l₁, l₂ = norm(b - a), norm(d - c)
+  l₁ = ustrip(norm(b - a))
+  l₂ = ustrip(norm(d - c))
   b₀ = a + 1 / l₁ * (b - a)
   d₀ = c + 1 / l₂ * (d - c)
 
@@ -26,8 +28,8 @@ function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
     return @IT NotIntersecting nothing f #CASE 6
   # collinear
   elseif r == rₐ == 1
-    if (b - a) ⋅ (d - c) ≥ 0 # rays aligned in same direction
-      if (a - c) ⋅ (b - a) ≥ 0 # origin of ray₁ ∈ ray₂
+    if (b - a) ⋅ (d - c) ≥ zero(ℒ)^2 # rays aligned in same direction
+      if (a - c) ⋅ (b - a) ≥ zero(ℒ)^2 # origin of ray₁ ∈ ray₂
         return @IT PosOverlapping ray₁ f # CASE 4: ray₁
       else
         return @IT PosOverlapping ray₂ f # CASE 4: ray₂
@@ -43,8 +45,8 @@ function intersection(f, ray₁::Ray{N,T}, ray₂::Ray{N,T}) where {N,T}
     end
     # in same plane, not parallel
   else
-    λ₁ = mayberound(λ₁, zero(T))
-    λ₂ = mayberound(λ₂, zero(T))
+    λ₁ = mayberound(λ₁, zero(λ₁))
+    λ₂ = mayberound(λ₂, zero(λ₂))
     if λ₁ < 0 || λ₂ < 0
       return @IT NotIntersecting nothing f # CASE 6
     elseif λ₁ == 0
@@ -69,12 +71,12 @@ end
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
+function intersection(f, ray::Ray{Dim}, line::Line{Dim}) where {Dim}
   a, b = ray(0), ray(1)
   c, d = line(0), line(1)
 
   # rescaling of point b necessary to gain a parameter λ₁ representing the arc length
-  l₁ = norm(b - a)
+  l₁ = ustrip(norm(b - a))
   b₀ = a + 1 / l₁ * (b - a)
 
   λ₁, _, r, rₐ = intersectparameters(a, b₀, c, d)
@@ -84,7 +86,7 @@ function intersection(f, ray::Ray{N,T}, line::Line{N,T}) where {N,T}
   elseif r == rₐ == 1 # collinear
     return @IT Overlapping ray f # CASE 3
   else # in same plane, not parallel
-    λ₁ = mayberound(λ₁, zero(T))
+    λ₁ = mayberound(λ₁, zero(λ₁))
     if λ₁ > 0
       return @IT Crossing ray(λ₁ / l₁) f # CASE 1
     elseif λ₁ == 0
@@ -97,11 +99,13 @@ end
 
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
-function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
-  invdir = one(T) ./ (ray(1) - ray(0))
+function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
+  ℒ = lentype(ray)
+  invdir = inv.(ray(1) - ray(0))
   lo, up = coordinates.(extrema(box))
   orig = coordinates(ray(0))
 
+  T = numtype(ℒ)
   tmin = zero(T)
   tmax = typemax(T)
 
@@ -111,7 +115,8 @@ function intersection(f, ray::Ray{Dim,T}, box::Box{Dim,T}) where {Dim,T}
     imax = (up[i] - orig[i]) * invdir[i]
 
     # swap variables if necessary
-    invdir[i] < zero(T) && ((imin, imax) = (imax, imin))
+    iinv = invdir[i]
+    iinv < zero(iinv) && ((imin, imax) = (imax, imin))
 
     # the ray is on a face of the box, avoid NaN
     (isnan(imin) || isnan(imax)) && continue
@@ -138,7 +143,7 @@ end
 #
 # Möller, T. & Trumbore, B., 1997.
 # (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
-function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
+function intersection(f, ray::Ray{3}, tri::Triangle{3})
   vs = vertices(tri)
   o = ray(0)
   d = ray(1) - ray(0)
@@ -149,21 +154,21 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
   det = e₁ ⋅ p
 
   # keep det > 0, modify T accordingly
-  if det > atol(T)
+  if det > atol(det)
     τ = o - vs[1]
   else
     τ = vs[1] - o
     det = -det
   end
 
-  if det < atol(T)
+  if det < atol(det)
     # This ray is parallel to the plane of the triangle.
     return @IT NotIntersecting nothing f
   end
 
   # calculate u parameter and test bounds
   u = τ ⋅ p
-  if u < -atol(T) || u > det
+  if u < -atol(u) || u > det
     return @IT NotIntersecting nothing f
   end
 
@@ -171,36 +176,36 @@ function intersection(f, ray::Ray{3,T}, tri::Triangle{3,T}) where {T}
 
   # calculate v parameter and test bounds
   v = d ⋅ q
-  if v < -atol(T) || u + v > det
+  if v < -atol(v) || u + v > det
     return @IT NotIntersecting nothing f
   end
 
-  λ = (e₂ ⋅ q) * (one(T) / det)
+  λ = (e₂ ⋅ q) * inv(det)
 
-  if λ < -atol(T)
+  if λ < -atol(λ)
     return @IT NotIntersecting nothing f
   end
 
   # assemble barycentric weights
-  w = Vec(u, v, det - u - v)
+  w = (u, v, det - u - v)
 
-  if any(isapprox.(o, vs, atol=atol(T)))
+  if any(isapprox.(o, vs))
     return @IT CornerTouching ray(λ) f
-  elseif isapprox(λ, zero(T), atol=atol(T))
-    if all(>(zero(T)), w)
+  elseif isapproxzero(λ)
+    if all(x -> x > zero(x), w)
       return @IT Touching ray(λ) f
     else
       return @IT EdgeTouching ray(λ) f
     end
   end
 
-  if count(x -> isapprox(x, zero(T), atol=atol(T)), w) == 1
+  if count(x -> isapproxzero(x), w) == 1
     return @IT EdgeCrossing ray(λ) f
-  elseif count(x -> isapprox(x, det, atol=atol(T)), w) == 1
+  elseif count(x -> isapproxequal(x, det), w) == 1
     return @IT CornerCrossing ray(λ) f
   end
 
-  λ = clamp(λ, zero(T), typemax(T))
+  λ = clamp(λ, zero(λ), typemax(λ))
 
   return @IT Crossing ray(λ) f
 end

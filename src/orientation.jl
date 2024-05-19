@@ -58,12 +58,13 @@ based on the winding number.
 """
 struct WindingOrientation <: OrientationMethod end
 
-function orientation(r::Ring{2,T}, ::WindingOrientation) where {T}
+function orientation(r::Ring{2}, ::WindingOrientation)
   # pick any segment
-  x1, x2 = r.vertices[1:2]
-  x̄ = center(Segment(x1, x2))
-  w = T(2π) * winding(x̄, r) - ∠(x1, x̄, x2)
-  isapprox(w, T(π), atol=atol(T)) ? CCW : CW
+  x₁, x₂ = r.vertices[1:2]
+  x̄ = center(Segment(x₁, x₂))
+  w̄ = winding(x̄, r)
+  w = oftype(w̄, 2π) * w̄ - ∠(x₁, x̄, x₂)
+  isapproxequal(w, oftype(w, π)) ? CCW : CW
 end
 
 """
@@ -79,9 +80,9 @@ based on signed triangular areas.
 """
 struct TriangleOrientation <: OrientationMethod end
 
-function orientation(r::Ring{2,T}, ::TriangleOrientation) where {T}
+function orientation(r::Ring{2}, ::TriangleOrientation)
   v = vertices(r)
   Δ(i) = signarea(v[1], v[i], v[i + 1])
   a = mapreduce(Δ, +, 2:(length(v) - 1))
-  a ≥ zero(T) ? CCW : CW
+  a ≥ zero(a) ? CCW : CW
 end

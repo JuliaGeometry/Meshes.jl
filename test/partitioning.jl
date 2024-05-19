@@ -1,27 +1,27 @@
 @testset "Partitioning" begin
   setify(lists) = Set(Set.(lists))
 
-  g = CartesianGrid{T}(10, 10)
+  g = cartgrid(10, 10)
   p = partition(g, UniformPartition(100))
   @test parent(p) == g
   @test length(p) == 100
 
   @testset "UniformPartition" begin
     rng = StableRNG(123)
-    g = CartesianGrid{T}(3, 3)
+    g = cartgrid(3, 3)
     p = partition(rng, g, UniformPartition(3, false))
     @test setify(indices(p)) == setify([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     rng = StableRNG(123)
     p = partition(rng, g, UniformPartition(3))
     @test setify(indices(p)) == setify([[5, 4, 2], [6, 7, 8], [9, 3, 1]])
 
-    g = CartesianGrid{T}(2, 3)
+    g = cartgrid(2, 3)
     p = partition(g, UniformPartition(3, false))
     @test setify(indices(p)) == setify([[1, 2], [3, 4], [5, 6]])
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, UniformPartition(3))
     rng = StableRNG(123)
     p2 = partition(rng, g, UniformPartition(3))
@@ -29,7 +29,7 @@
   end
 
   @testset "DirectionPartition" begin
-    g = CartesianGrid{T}(3, 3)
+    g = cartgrid(3, 3)
 
     # basic checks on small grids
     p = partition(g, DirectionPartition(T.((1, 0))))
@@ -54,7 +54,7 @@
     # partition of arbitrarily large grid always
     # returns the "lines" and "columns"
     for n in [10, 100, 200]
-      g = CartesianGrid{T}(n, n)
+      g = cartgrid(n, n)
 
       p = partition(g, DirectionPartition(T.((1, 0))))
       @test setify(indices(p)) == setify([collect(((i - 1) * n + 1):(i * n)) for i in 1:n])
@@ -69,7 +69,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, DirectionPartition(T.((1, 0))))
     rng = StableRNG(123)
     p2 = partition(rng, g, DirectionPartition(T.((1, 0))))
@@ -77,7 +77,7 @@
   end
 
   @testset "FractionPartition" begin
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
 
     p = partition(g, FractionPartition(T(0.5)))
     @test nelements(p[1]) == nelements(p[2]) == 50
@@ -93,7 +93,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, FractionPartition(T(0.5)))
     rng = StableRNG(123)
     p2 = partition(rng, g, FractionPartition(T(0.5)))
@@ -101,7 +101,7 @@
   end
 
   @testset "BlockPartition" begin
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
 
     p = partition(g, BlockPartition(T(5), T(5)))
     @test length(p) == 4
@@ -111,7 +111,7 @@
     @test length(p) == 12
     @test Set(nelements.(p)) == Set([5, 10])
 
-    g = CartesianGrid{T}(50, 50, 50)
+    g = cartgrid(50, 50, 50)
 
     p = partition(g, BlockPartition(T(1.0), T(1.0), T(1.0), neighbors=false))
     @test length(p) == 125000
@@ -127,7 +127,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, BlockPartition(T(5), T(2)))
     rng = StableRNG(123)
     p2 = partition(rng, g, BlockPartition(T(5), T(2)))
@@ -169,7 +169,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, BisectPointPartition(T.((1, 0)), T.((5, 5))))
     rng = StableRNG(123)
     p2 = partition(rng, g, BisectPointPartition(T.((1, 0)), T.((5, 5))))
@@ -202,7 +202,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, BisectFractionPartition(T.((1, 0)), T(0.5)))
     rng = StableRNG(123)
     p2 = partition(rng, g, BisectFractionPartition(T.((1, 0)), T(0.5)))
@@ -231,7 +231,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, BallPartition(T(2)))
     rng = StableRNG(123)
     p2 = partition(rng, g, BallPartition(T(2)))
@@ -249,7 +249,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, PlanePartition(T.((1, 0))))
     rng = StableRNG(123)
     p2 = partition(rng, g, PlanePartition(T.((1, 0))))
@@ -267,7 +267,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, partitioner)
     rng = StableRNG(123)
     p2 = partition(rng, g, partitioner)
@@ -278,14 +278,14 @@
     g = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
     # check if there are 100 partitions, each one having only 1 point
-    sp = SpatialPredicatePartition((x, y) -> norm(x - y) < T(1))
+    sp = SpatialPredicatePartition((x, y) -> norm(x - y) < T(1) * u"m")
     s = indices(partition(g, sp))
     @test length(s) == 100
     nelms = [nelements(d) for d in partition(g, sp)]
     @test all(nelms .== 1)
 
     # defining a predicate to check if points x and y belong to the square [0.,5.]x[0.,5.]
-    pred(x, y) = all(T[0, 0] .<= x .<= T[5, 5]) && all(T[0, 0] .<= y .<= T[5, 5])
+    pred(x, y) = all(T[0, 0] * u"m" .<= x .<= T[5, 5] * u"m") && all(T[0, 0] * u"m" .<= y .<= T[5, 5] * u"m")
     sp = SpatialPredicatePartition(pred)
     p = partition(g, sp)
     s = indices(p)
@@ -301,7 +301,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, sp)
     rng = StableRNG(123)
     p2 = partition(rng, g, sp)
@@ -329,7 +329,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, bmn)
     rng = StableRNG(123)
     p2 = partition(rng, g, bmn)
@@ -349,7 +349,7 @@
 
     # reproducible results with rng
     rng = StableRNG(123)
-    g = CartesianGrid{T}(10, 10)
+    g = cartgrid(10, 10)
     p1 = partition(rng, g, bmn)
     rng = StableRNG(123)
     p2 = partition(rng, g, bmn)

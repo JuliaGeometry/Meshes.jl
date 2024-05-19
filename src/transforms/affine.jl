@@ -15,10 +15,17 @@ Affine(Angle2d(π / 2), SVector(2, -2))
 Affine([0 -1; 1 0], [-2, 2])
 ```
 """
-struct Affine{Dim,M<:StaticMatrix{Dim,Dim},V<:StaticVector{Dim}} <: CoordinateTransform
+struct Affine{Dim,M<:StaticMatrix{Dim,Dim},V<:StaticVector{Dim,<:Len}} <: CoordinateTransform
   A::M
   b::V
+  function Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim,<:Len}) where {Dim}
+    fA = float(A)
+    fb = float(b)
+    new{Dim,typeof(fA),typeof(fb)}(fA, fb)
+  end
 end
+
+Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim}) where {Dim} = Affine(A, addunit(b, u"m"))
 
 function Affine(A::AbstractMatrix, b::AbstractVector)
   sz = size(A)
@@ -38,10 +45,7 @@ isaffine(::Type{<:Affine}) = true
 
 isrevertible(t::Affine) = isinvertible(t)
 
-function isinvertible(t::Affine)
-  d = det(t.A)
-  !isapprox(d, zero(d), atol=atol(typeof(d)))
-end
+isinvertible(t::Affine) = !isapproxzero(det(t.A))
 
 function inverse(t::Affine)
   A = inv(t.A)

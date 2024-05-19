@@ -20,9 +20,9 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,Dim,T} <: Polygon{Dim,T}
-  vertices::NTuple{N,Point{Dim,T}}
-  function Ngon{N,Dim,T}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T}
+struct Ngon{N,Dim,P<:Point{Dim}} <: Polygon{Dim,P}
+  vertices::NTuple{N,P}
+  function Ngon{N,Dim,P}(vertices) where {N,Dim,P<:Point{Dim}}
     if N < 3
       throw(ArgumentError("the number of vertices must be greater than or equal to 3"))
     end
@@ -30,12 +30,12 @@ struct Ngon{N,Dim,T} <: Polygon{Dim,T}
   end
 end
 
-Ngon{N}(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
-Ngon{N}(vertices::Vararg{Point{Dim,T},N}) where {N,Dim,T} = Ngon{N}(vertices)
+Ngon{N}(vertices::NTuple{N,P}) where {N,Dim,P<:Point{Dim}} = Ngon{N,Dim,P}(vertices)
+Ngon{N}(vertices::Vararg{P,N}) where {N,Dim,P<:Point{Dim}} = Ngon{N,Dim,P}(vertices)
 Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon{N}(Point.(vertices))
 
-Ngon(vertices::NTuple{N,Point{Dim,T}}) where {N,Dim,T} = Ngon{N,Dim,T}(vertices)
-Ngon(vertices::Point{Dim,T}...) where {Dim,T} = Ngon(vertices)
+Ngon(vertices::NTuple{N,P}) where {N,Dim,P<:Point{Dim}} = Ngon{N,Dim,P}(vertices)
+Ngon(vertices::P...) where {P<:Point} = Ngon(vertices)
 Ngon(vertices::Tuple...) = Ngon(Point.(vertices))
 
 # type aliases for convenience
@@ -47,6 +47,8 @@ const Heptagon = Ngon{7}
 const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
+
+lentype(::Type{<:Ngon{N,Dim,P}}) where {N,Dim,P} = lentype(P)
 
 Base.unique!(ngon::Ngon) = ngon
 
@@ -65,6 +67,9 @@ innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
 signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Ngon{N,Dim}}) where {N,Dim} =
+  Ngon{N}(ntuple(i -> rand(rng, Point{Dim}), N))
+
 # ----------
 # TRIANGLES
 # ----------
@@ -78,7 +83,7 @@ signarea(::Triangle{3}) = error("signed area only defined for triangles embedded
 
 function normal(t::Triangle{3})
   A, B, C = t.vertices
-  ((B - A) × (C - A)) / 2
+  ucross((B - A), (C - A)) / 2
 end
 
 function (t::Triangle)(u, v)

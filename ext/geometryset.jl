@@ -48,7 +48,7 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
 
   # get geometries and coordinates
   geoms = Makie.@lift parent($pset)
-  coords = Makie.@lift coordinates.($geoms)
+  coords = Makie.@lift map(g -> ustrip.(coordinates(g)), $geoms)
 
   # visualize point set
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
@@ -157,6 +157,6 @@ function asmakie(poly::Polygon)
   end
 end
 
-asmakie(p::Point{Dim,T}) where {Dim,T} = Makie.Point{Dim,T}(Tuple(coordinates(p)))
+asmakie(p::Point{Dim}) where {Dim} = Makie.Point{Dim}(ustrip.(Tuple(coordinates(p))))
 
-asmakie(v::Vec{Dim,T}) where {Dim,T} = Makie.Vec{Dim,T}(Tuple(v))
+asmakie(v::Vec{Dim}) where {Dim} = Makie.Vec{Dim}(ustrip.(Tuple(v)))

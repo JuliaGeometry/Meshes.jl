@@ -13,20 +13,25 @@ via bridges of given width `δ` as described in Held 1998.
 * Held. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
   (https://link.springer.com/article/10.1007/s00453-001-0028-4)
 """
-struct Bridge{T} <: GeometricTransform
-  δ::T
+struct Bridge{ℒ<:Len} <: GeometricTransform
+  δ::ℒ
+  Bridge(δ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(δ)
 end
 
-Bridge() = Bridge(0)
+Bridge(δ) = Bridge(addunit(δ, u"m"))
+
+Bridge() = Bridge(0.0u"m")
 
 parameters(t::Bridge) = (; δ=t.δ)
 
-function apply(transform::Bridge, poly::PolyArea{Dim,T}) where {Dim,T}
+function apply(transform::Bridge, poly::PolyArea)
+  ℒ = lentype(poly)
+
   # sort rings lexicographically
   rpoly, rinds = apply(Repair{9}(), poly)
 
   # retrieve bridge width
-  δ = T(transform.δ)
+  δ = convert(ℒ, transform.δ)
 
   ring, dups = if hasholes(rpoly)
     bridge(rings(rpoly), rinds, δ)
@@ -45,7 +50,7 @@ function bridge(rings, rinds, δ)
   vinds = rinds
 
   # retrieve coordinate type
-  T = coordtype(first(rings))
+  ℒ = lentype(first(rings))
 
   # initialize outer boundary
   outer = verts[1]
@@ -60,7 +65,7 @@ function bridge(rings, rinds, δ)
     # connecting outer and inner rings
     omax = 0
     imax = 0
-    dmin = typemax(T)
+    dmin = typemax(ℒ)
     for jₒ in 1:length(outer), jᵢ in 1:length(inner)
       d = sum(abs, outer[jₒ] - inner[jᵢ])
       if d < dmin
@@ -75,15 +80,15 @@ function bridge(rings, rinds, δ)
     # direction and normal to segment A--B
     v = B - A
     u = Vec(-v[2], v[1])
-    n = u / norm(u)
+    n = norm(u)
 
     # the point A is split into A′ and A′′ and
     # the point B is split into B′ and B′′ based
     # on a given bridge width δ
-    A′ = A + (δ / 2) * n
-    A′′ = A - (δ / 2) * n
-    B′ = B + (δ / 2) * n
-    B′′ = B - (δ / 2) * n
+    A′ = A + (δ / 2n) * u
+    A′′ = A - (δ / 2n) * u
+    B′ = B + (δ / 2n) * u
+    B′′ = B - (δ / 2n) * u
 
     # insert hole at closest vertex
     outer = [

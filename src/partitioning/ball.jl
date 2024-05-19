@@ -8,11 +8,14 @@
 A method for partitioning spatial objects into balls of a given
 `radius` using a `metric`.
 """
-struct BallPartition{T,M} <: SPredicatePartitionMethod
-  radius::T
+struct BallPartition{ℒ<:Len,M} <: SPredicatePartitionMethod
+  radius::ℒ
   metric::M
+  BallPartition(radius::ℒ, metric::M) where {ℒ<:Len,M} = new{float(ℒ),M}(radius, metric)
 end
 
-BallPartition(radius::T; metric::M=Euclidean()) where {T,M} = BallPartition{T,M}(radius, metric)
+BallPartition(radius, metric) = BallPartition(addunit(radius, u"m"), metric)
+
+BallPartition(radius; metric=Euclidean()) = BallPartition(radius, metric)
 
 (p::BallPartition)(x, y) = evaluate(p.metric, x, y) < p.radius

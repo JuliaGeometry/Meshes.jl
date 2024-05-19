@@ -33,7 +33,7 @@ vector `u` to the plane passing through the origin with normal vector `v`.
 Rotate(Vec(1, 0, 0), Vec(1, 1, 1))
 ```
 """
-Rotate(u::Vec, v::Vec) = Rotate(rotation_between(u, v))
+Rotate(u::Vec, v::Vec) = Rotate(urotbetween(u, v))
 
 Rotate(u::Tuple, v::Tuple) = Rotate(Vec(u), Vec(v))
 
@@ -61,7 +61,7 @@ isinvertible(::Type{<:Rotate}) = true
 
 inverse(t::Rotate) = Rotate(inv(t.rot))
 
-applycoord(t::Rotate, v::Vec) = t.rot * v
+applycoord(t::Rotate, v::Vec) = urotapply(t.rot, v)
 
 # --------------
 # SPECIAL CASES

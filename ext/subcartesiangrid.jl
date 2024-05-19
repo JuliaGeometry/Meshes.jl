@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const SubCartesianGrid{Dim,T} = SubDomain{Dim,T,<:CartesianGrid{Dim,T}}
+const SubCartesianGrid{Dim} = SubDomain{Dim,<:CartesianGrid{Dim}}
 
 function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   subgrid = plot[:object]
@@ -18,10 +18,10 @@ function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   gparams = Makie.@lift let
     grid = parent($subgrid)
     dim = embeddim(grid)
-    sp = spacing(grid)
+    sp = ustrip.(spacing(grid))
 
     # coordinates of centroids
-    coord(e) = coordinates(centroid(e))
+    coord(e) = ustrip.(coordinates(centroid(e)))
     coords = [coord(e) .+ sp ./ 2 for e in $subgrid]
 
     # rectangle marker

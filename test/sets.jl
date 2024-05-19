@@ -1,13 +1,13 @@
 @testset "Sets" begin
   @testset "GeometrySet" begin
-    s = Segment(P2(0, 0), P2(1, 1))
-    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
-    p = PolyArea(P2[(0, 0), (1, 0), (1, 1), (0, 1)])
+    s = Segment(point(0, 0), point(1, 1))
+    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    p = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     gset = GeometrySet([s, t, p])
-    @test [centroid(gset, i) for i in 1:3] == P2[(1 / 2, 1 / 2), (1 / 3, 1 / 3), (1 / 2, 1 / 2)]
+    @test [centroid(gset, i) for i in 1:3] == point.([(1 / 2, 1 / 2), (1 / 3, 1 / 3), (1 / 2, 1 / 2)])
 
-    s = Segment(P2(0, 0), P2(1, 1))
-    t = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
+    s = Segment(point(0, 0), point(1, 1))
+    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
     geoms = [s, t]
     gset1 = GeometrySet(geoms)
     gset2 = GeometrySet(g for g in geoms)
@@ -17,14 +17,14 @@
     # make sure that eltype is inferred properly
     # https://github.com/JuliaGeometry/Meshes.jl/issues/643
     geoms = Vector{Segment}()
-    push!(geoms, Segment(P2(0, 0), P2(1, 0)))
-    push!(geoms, Segment(P2(1, 0), P2(1, 1)))
-    push!(geoms, Segment(P2(1, 1), P2(0, 0)))
+    push!(geoms, Segment(point(0, 0), point(1, 0)))
+    push!(geoms, Segment(point(1, 0), point(1, 1)))
+    push!(geoms, Segment(point(1, 1), point(0, 0)))
     gset = GeometrySet(geoms)
-    @test eltype(gset) <: Segment{2,T}
+    @test eltype(gset) <: Segment{2}
 
     # conversion
-    grid = CartesianGrid{T}(10, 10)
+    grid = cartgrid(10, 10)
     gset = convert(GeometrySet, grid)
     @test gset isa GeometrySet
     @test nelements(gset) == 100
@@ -32,67 +32,67 @@
   end
 
   @testset "PointSet" begin
-    pset = PointSet(rand(P1, 100))
+    pset = PointSet(randpoint1(100))
     @test embeddim(pset) == 1
-    @test coordtype(pset) == T
+    @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
-    @test eltype(pset) <: P1
+    @test eltype(pset) <: Point{1}
 
-    pset = PointSet(rand(P2, 100))
+    pset = PointSet(randpoint2(100))
     @test embeddim(pset) == 2
-    @test coordtype(pset) == T
+    @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
-    @test eltype(pset) <: P2
+    @test eltype(pset) <: Point{2}
 
-    pset = PointSet(rand(P3, 100))
+    pset = PointSet(randpoint3(100))
     @test embeddim(pset) == 3
-    @test coordtype(pset) == T
+    @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
-    @test eltype(pset) <: P3
+    @test eltype(pset) <: Point{3}
 
-    pset1 = PointSet([P3(1, 2, 3), P3(4, 5, 6)])
-    pset2 = PointSet(P3(1, 2, 3), P3(4, 5, 6))
+    pset1 = PointSet([point(1, 2, 3), point(4, 5, 6)])
+    pset2 = PointSet(point(1, 2, 3), point(4, 5, 6))
     pset3 = PointSet([T.((1, 2, 3)), T.((4, 5, 6))])
     pset4 = PointSet(T.((1, 2, 3)), T.((4, 5, 6)))
     pset5 = PointSet(T[1 4; 2 5; 3 6])
     @test pset1 == pset2 == pset3 == pset4 == pset5
     for pset in [pset1, pset2, pset3, pset4, pset5]
       @test embeddim(pset) == 3
-      @test coordtype(pset) == T
+      @test Meshes.lentype(pset) === ℳ
       @test nelements(pset) == 2
-      @test pset[1] == P3(1, 2, 3)
-      @test pset[2] == P3(4, 5, 6)
+      @test pset[1] == point(1, 2, 3)
+      @test pset[2] == point(4, 5, 6)
     end
 
-    pset = PointSet(P2[(0, 0), (1, 0), (0, 1)])
-    @test centroid(pset) == P2(1 / 3, 1 / 3)
+    pset = PointSet(point.([(0, 0), (1, 0), (0, 1)]))
+    @test centroid(pset) == point(1 / 3, 1 / 3)
 
-    pset = PointSet(P2[(1, 0), (0, 1)])
+    pset = PointSet(point.([(1, 0), (0, 1)]))
     @test nelements(pset) == 2
-    @test centroid(pset, 1) == P2(1, 0)
-    @test centroid(pset, 2) == P2(0, 1)
+    @test centroid(pset, 1) == point(1, 0)
+    @test centroid(pset, 2) == point(0, 1)
 
-    pset = PointSet(P2[(0, 0), (1, 0), (0, 1)])
-    @test measure(pset) == zero(T)
+    pset = PointSet(point.([(0, 0), (1, 0), (0, 1)]))
+    @test measure(pset) == zero(T) * u"m"
 
     # constructor with iterator
-    points = P2[(1, 0), (0, 1)]
+    points = point.([(1, 0), (0, 1)])
     pset1 = PointSet(points)
     pset2 = PointSet(p for p in points)
     @test pset1 == pset2
 
-    pset = PointSet(P2[(1, 0), (0, 1)])
-    @test sprint(show, pset) == "2 PointSet{2,$T}"
+    pset = PointSet(point.([(1, 0), (0, 1)]))
+    @test sprint(show, pset) == "2 PointSet"
     if T == Float32
       @test sprint(show, MIME"text/plain"(), pset) == """
-      2 PointSet{2,Float32}
-      ├─ Point(1.0f0, 0.0f0)
-      └─ Point(0.0f0, 1.0f0)"""
+      2 PointSet
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 1.0f0 m)"""
     elseif T == Float64
       @test sprint(show, MIME"text/plain"(), pset) == """
-      2 PointSet{2,Float64}
-      ├─ Point(1.0, 0.0)
-      └─ Point(0.0, 1.0)"""
+      2 PointSet
+      ├─ Point(x: 1.0 m, y: 0.0 m)
+      └─ Point(x: 0.0 m, y: 1.0 m)"""
     end
   end
 end

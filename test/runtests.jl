@@ -59,13 +59,32 @@ end
 # helper function to read *.ply files containing meshes
 function readply(T, fname)
   ply = load_ply(fname)
-  x = ply["vertex"]["x"]
-  y = ply["vertex"]["y"]
-  z = ply["vertex"]["z"]
-  points = Point{3,T}.(x, y, z)
+  x = T.(ply["vertex"]["x"])
+  y = T.(ply["vertex"]["y"])
+  z = T.(ply["vertex"]["z"])
+  points = Point.(x, y, z)
   connec = [connect(Tuple(c .+ 1)) for c in ply["face"]["vertex_indices"]]
   SimpleMesh(points, connec)
 end
+
+point(coords...) = point(coords)
+point(coords::Tuple) = Point(T.(coords))
+
+vector(coords...) = vector(coords)
+vector(coords::Tuple) = Vec(T.(coords))
+
+cartgrid(dims...) = cartgrid(dims)
+function cartgrid(dims::Dims{Dim}) where {Dim}
+  origin = ntuple(i -> T(0.0), Dim)
+  spacing = ntuple(i -> T(1.0), Dim)
+  offset = ntuple(i -> 1, Dim)
+  CartesianGrid(dims, origin, spacing, offset)
+end
+
+randpoint1(n) = randpoint(1, n)
+randpoint2(n) = randpoint(2, n)
+randpoint3(n) = randpoint(3, n)
+randpoint(Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
 
 # dummy definitions
 include("dummy.jl")
@@ -119,8 +138,7 @@ testfiles = [
 # RUN TESTS WITH SINGLE PRECISION
 # --------------------------------
 T = Float32
-P1, P2, P3 = Point{1,T}, Point{2,T}, Point{3,T}
-V1, V2, V3 = Vec{1,T}, Vec{2,T}, Vec{3,T}
+ℳ = Meshes.Met{T}
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")
@@ -132,8 +150,7 @@ end
 # RUN TESTS WITH DOUBLE PRECISION
 # --------------------------------
 T = Float64
-P1, P2, P3 = Point{1,T}, Point{2,T}, Point{3,T}
-V1, V2, V3 = Vec{1,T}, Vec{2,T}, Vec{3,T}
+ℳ = Meshes.Met{T}
 @testset "Meshes.jl ($T)" begin
   for testfile in testfiles
     println("Testing $testfile...")

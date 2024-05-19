@@ -9,16 +9,19 @@ A sphere with `center` and `radius`.
 
 See also [`Ball`](@ref).
 """
-struct Sphere{Dim,T} <: Primitive{Dim,T}
-  center::Point{Dim,T}
-  radius::T
+struct Sphere{Dim,P<:Point{Dim},ℒ<:Len} <: Primitive{Dim}
+  center::P
+  radius::ℒ
+  Sphere{Dim,P,ℒ}(center, radius) where {Dim,P<:Point{Dim},ℒ<:Len} = new(center, radius)
 end
 
-Sphere(center::Point{Dim,T}, radius) where {Dim,T} = Sphere(center, T(radius))
+Sphere(center::P, radius::ℒ) where {Dim,P<:Point{Dim},ℒ<:Len} = Sphere{Dim,P,float(ℒ)}(center, radius)
+
+Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 
-Sphere(center::Point{Dim,T}) where {Dim,T} = Sphere(center, T(1))
+Sphere(center::Point) = Sphere(center, oneunit(lentype(center)))
 
 Sphere(center::Tuple) = Sphere(Point(center))
 
@@ -52,7 +55,7 @@ function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
   v3 = p3 - p4
   V = volume(Tetrahedron(p1, p2, p3, p4))
   r⃗ = ((v3 ⋅ v3) * (v1 × v2) + (v2 ⋅ v2) * (v3 × v1) + (v1 ⋅ v1) * (v2 × v3)) / 12V
-  center = p4 + r⃗
+  center = p4 + Vec(r⃗)
   radius = norm(r⃗)
   Sphere(center, radius)
 end
@@ -61,11 +64,14 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2)
 
 paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
 
+lentype(::Type{<:Sphere{Dim,P}}) where {Dim,P} = lentype(P)
+
 center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
-function (s::Sphere{2,T})(φ) where {T}
+function (s::Sphere{2})(φ)
+  T = numtype(lentype(s))
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
   end
@@ -77,7 +83,8 @@ function (s::Sphere{2,T})(φ) where {T}
   c + Vec(x, y)
 end
 
-function (s::Sphere{3,T})(θ, φ) where {T}
+function (s::Sphere{3})(θ, φ)
+  T = numtype(lentype(s))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
@@ -91,5 +98,5 @@ function (s::Sphere{3,T})(θ, φ) where {T}
   c + Vec(x, y, z)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Sphere{Dim,T}}) where {Dim,T} =
-  Sphere(rand(rng, Point{Dim,T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Sphere{Dim}}) where {Dim} =
+  Sphere(rand(rng, Point{Dim}), rand(rng, Met{Float64}))

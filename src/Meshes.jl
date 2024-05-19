@@ -4,6 +4,7 @@
 
 module Meshes
 
+using CoordRefSystems
 using StaticArrays
 using SparseArrays
 using CircularArrays
@@ -34,6 +35,12 @@ import TransformsBase: Transform, →
 import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
 import TransformsBase: parameters
+
+# CoordRefSystems API
+import CoordRefSystems: lentype
+
+# unit utils
+include("units.jl")
 
 # IO utils
 include("ioutils.jl")
@@ -113,12 +120,6 @@ include("viz.jl")
 export
   # vectors
   Vec,
-  Vec1,
-  Vec2,
-  Vec3,
-  Vec1f,
-  Vec2f,
-  Vec3f,
   ∠,
   ⋅,
   ×,
@@ -127,19 +128,12 @@ export
   Geometry,
   embeddim,
   paramdim,
-  coordtype,
   center,
   centroid,
 
   # primitives
   Primitive,
   Point,
-  Point1,
-  Point2,
-  Point3,
-  Point1f,
-  Point2f,
-  Point3f,
   Ray,
   Line,
   BezierCurve,
@@ -271,7 +265,6 @@ export
   SubDomain,
   embeddim,
   paramdim,
-  coordtype,
   element,
   nelements,
 

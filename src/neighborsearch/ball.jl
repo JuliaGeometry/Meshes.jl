@@ -18,7 +18,7 @@ end
 
 function BallSearch(domain::D, ball::B) where {D<:Domain,B<:MetricBall}
   m = metric(ball)
-  xs = [coordinates(centroid(domain, i)) for i in 1:nelements(domain)]
+  xs = [ustrip.(coordinates(centroid(domain, i))) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   BallSearch{D,B,typeof(tree)}(domain, ball, tree)
 end
@@ -29,7 +29,7 @@ function search(pₒ::Point, method::BallSearch; mask=nothing)
   tree = method.tree
   dmax = radius(method.ball)
 
-  inds = inrange(tree, coordinates(pₒ), dmax)
+  inds = inrange(tree, ustrip.(coordinates(pₒ)), dmax)
 
   if isnothing(mask)
     inds

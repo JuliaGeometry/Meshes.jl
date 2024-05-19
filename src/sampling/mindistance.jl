@@ -48,7 +48,7 @@ function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
   N = 2V / √3 * (ρ / α)^2
 
   # number of oversamples (Medeiros et al. 2014)
-  O = ceil(Int, δ * N)
+  O = ceil(Int, δ * ustrip(N))
 
   # oversample the object
   points = sample(rng, d, HomogeneousSampling(O))

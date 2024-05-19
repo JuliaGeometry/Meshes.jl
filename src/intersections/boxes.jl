@@ -8,7 +8,7 @@
 # 2. intersect at corner point (CornerTouching -> Point)
 # 3. intersect at one of the facets (Touching -> Box)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, box₁::Box{Dim,T}, box₂::Box{Dim,T}) where {Dim,T}
+function intersection(f, box₁::Box{Dim}, box₂::Box{Dim}) where {Dim}
   # retrieve corner points
   m1, M1 = coordinates.(extrema(box₁))
   m2, M2 = coordinates.(extrema(box₂))
@@ -20,7 +20,7 @@ function intersection(f, box₁::Box{Dim,T}, box₂::Box{Dim,T}) where {Dim,T}
   # auxiliary variables
   δ = v - u
   δ̄ = abs.(δ)
-  τ = atol(T)
+  τ = atol(eltype(δ))
 
   # branch on possible configurations
   if all(>(τ), δ)

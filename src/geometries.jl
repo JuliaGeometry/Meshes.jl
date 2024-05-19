@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Geometry{Dim,T}
+    Geometry{Dim}
 
-A geometry embedded in a `Dim`-dimensional space with coordinates of type `T`.
+A geometry embedded in a `Dim`-dimensional space.
 """
-abstract type Geometry{Dim,T} end
+abstract type Geometry{Dim} end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 
@@ -16,7 +16,7 @@ Broadcast.broadcastable(g::Geometry) = Ref(g)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
-embeddim(::Type{<:Geometry{Dim,T}}) where {Dim,T} = Dim
+embeddim(::Type{<:Geometry{Dim}}) where {Dim} = Dim
 embeddim(g::Geometry) = embeddim(typeof(g))
 
 """
@@ -30,12 +30,11 @@ See also [`isparametrized`](@ref).
 paramdim(g::Geometry) = paramdim(typeof(g))
 
 """
-    coordtype(geometry)
+    lentype(geometry)
 
-Return the machine type of each coordinate used to describe the `geometry`.
+Return the length type of the `geometry`.
 """
-coordtype(::Type{<:Geometry{Dim,T}}) where {Dim,T} = T
-coordtype(g::Geometry) = coordtype(typeof(g))
+lentype(g::Geometry) = lentype(typeof(g))
 
 """
     centroid(geometry)
@@ -56,7 +55,7 @@ Base.extrema(g::Geometry) = extrema(boundingbox(g))
 # IO METHODS
 # -----------
 
-Base.summary(io::IO, geom::Geometry{Dim,T}) where {Dim,T} = print(io, "$(prettyname(geom)){$Dim,$T}")
+Base.summary(io::IO, geom::Geometry) = print(io, prettyname(geom))
 
 # ----------------
 # IMPLEMENTATIONS

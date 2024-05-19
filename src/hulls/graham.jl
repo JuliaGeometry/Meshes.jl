@@ -21,7 +21,8 @@ struct GrahamScan <: HullMethod end
 function hull(points, ::GrahamScan)
   pₒ = first(points)
   Dim = embeddim(pₒ)
-  T = coordtype(pₒ)
+  ℒ = lentype(pₒ)
+  T = numtype(ℒ)
 
   @assert Dim == 2 "Graham's scan only defined in 2D"
 
@@ -39,7 +40,7 @@ function hull(points, ::GrahamScan)
   # sort points by polar angle
   O = p[1]
   q = p[2:n]
-  A = O + Vec{2,T}(0, -1)
+  A = O + Vec(zero(ℒ), -oneunit(ℒ))
   θ = [∠(A, O, B) for B in q]
   q = q[sortperm(θ)]
 

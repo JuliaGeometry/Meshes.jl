@@ -31,17 +31,19 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
   of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
   [`SimpleTopology`](@ref).
 """
-struct SimpleMesh{Dim,T,V<:AbstractVector{Point{Dim,T}},TP<:Topology} <: Mesh{Dim,T,TP}
+struct SimpleMesh{Dim,V<:AbstractVector{<:Point{Dim}},TP<:Topology} <: Mesh{Dim,TP}
   vertices::V
   topology::TP
 end
 
-SimpleMesh(coords::AbstractVector{<:NTuple}, topology::Topology) = SimpleMesh(Point.(coords), topology)
+SimpleMesh(coords::AbstractVector{<:Tuple}, topology::Topology) = SimpleMesh(Point.(coords), topology)
 
 function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=false)
   topology = relations ? HalfEdgeTopology(connec) : SimpleTopology(connec)
   SimpleMesh(vertices, topology)
 end
+
+lentype(::Type{<:SimpleMesh{Dim,V}}) where {Dim,V} = lentype(eltype(V))
 
 vertex(m::SimpleMesh, ind::Int) = m.vertices[ind]
 
@@ -49,7 +51,7 @@ vertices(m::SimpleMesh) = m.vertices
 
 nvertices(m::SimpleMesh) = length(m.vertices)
 
-function Base.getindex(m::SimpleMesh{Dim,T,V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {Dim,T,V}
+function Base.getindex(m::SimpleMesh{Dim,V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {Dim,V}
   @boundscheck _checkbounds(m, I)
   dims = size(I)
   odims = size(m)

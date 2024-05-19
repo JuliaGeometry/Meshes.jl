@@ -12,12 +12,15 @@ Optionally, compute the `neighbors` of a block as the metadata.
 
 Alternatively, specify the sides `side₁`, `side₂`, ..., `sideₙ`.
 """
-struct BlockPartition{S} <: PartitionMethod
-  sides::S
+struct BlockPartition{Dim,ℒ<:Len} <: PartitionMethod
+  sides::NTuple{Dim,ℒ}
   neighbors::Bool
+  BlockPartition(sides::NTuple{Dim,ℒ}, neighbors::Bool) where {Dim,ℒ<:Len} = new{Dim,float(ℒ)}(sides, neighbors)
 end
 
-BlockPartition(sides; neighbors=false) = BlockPartition(sides, neighbors)
+BlockPartition(sides::NTuple{Dim,Len}; neighbors=false) where {Dim} = BlockPartition(promote(sides...), neighbors)
+
+BlockPartition(sides::Tuple; neighbors=false) = BlockPartition(addunit.(sides, u"m"), neighbors)
 
 BlockPartition(sides...; neighbors=false) = BlockPartition(sides; neighbors=neighbors)
 

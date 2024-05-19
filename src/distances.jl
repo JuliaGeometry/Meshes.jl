@@ -22,11 +22,11 @@ end
     evaluate(Euclidean(), line1, line2)
 Evaluate the minimum Euclidean distance between `line1` and `line2`.
 """
-function evaluate(::Euclidean, line1::Line{Dim,T}, line2::Line{Dim,T}) where {Dim,T}
+function evaluate(::Euclidean, line1::Line{Dim}, line2::Line{Dim}) where {Dim}
   λ₁, λ₂, r, rₐ = intersectparameters(line1(0), line1(1), line2(0), line2(1))
 
   if (r == rₐ == 2) || (r == rₐ == 1)  # lines intersect or are colinear
-    return T(0)
+    return zero(lentype(line1))
   elseif (r == 1) && (rₐ == 2)  # lines are parallel
     return evaluate(Euclidean(), line1(0), line2)
   else  # get distance between closest points on each line

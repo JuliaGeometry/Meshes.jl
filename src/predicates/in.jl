@@ -11,15 +11,15 @@ Base.in(p::Point, g::Geometry) = sideof(p, boundary(g)) == IN
 
 Base.in(p₁::Point, p₂::Point) = p₁ == p₂
 
-function Base.in(p::Point{Dim,T}, s::Segment{Dim,T}) where {Dim,T}
+function Base.in(p::Point{Dim}, s::Segment{Dim}) where {Dim}
   # given collinear points (a, b, p), the point p intersects
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = vertices(s)
   ab, ap = b - a, p - a
-  iscollinear(a, b, p) && zero(T) ≤ ab ⋅ ap ≤ ab ⋅ ab
+  iscollinear(a, b, p) && zero(lentype(p))^2 ≤ ab ⋅ ap ≤ ab ⋅ ab
 end
 
-Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ 0
+Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ zero(lentype(p))^2
 
 function Base.in(p::Point, l::Line)
   w = norm(l(1) - l(0))
@@ -29,65 +29,68 @@ end
 
 Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
-Base.in(p::Point{3,T}, pl::Plane{T}) where {T} = isapprox(normal(pl) ⋅ (p - pl(0, 0)), zero(T), atol=atol(T))
+Base.in(p::Point{3}, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
-function Base.in(p::Point{Dim,T}, b::Ball{Dim,T}) where {Dim,T}
+function Base.in(p::Point{Dim}, b::Ball{Dim}) where {Dim}
   c = center(b)
   r = radius(b)
   s = norm(p - c)
-  s < r || isapprox(s, r, atol=atol(T))
+  s < r || isapproxequal(s, r)
 end
 
-function Base.in(p::Point{Dim,T}, s::Sphere{Dim,T}) where {Dim,T}
+function Base.in(p::Point{Dim}, s::Sphere{Dim}) where {Dim}
   c = center(s)
   r = radius(s)
   s = norm(p - c)
-  isapprox(s, r, atol=atol(T))
+  isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3,T}, d::Disk{T}) where {T}
+function Base.in(p::Point{3}, d::Disk)
   p ∉ plane(d) && return false
   c = center(d)
   r = radius(d)
   s = norm(p - c)
-  s < r || isapprox(s, r, atol=atol(T))
+  s < r || isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3,T}, c::Circle{T}) where {T}
+function Base.in(p::Point{3}, c::Circle)
   p ∉ plane(c) && return false
   o = center(c)
   r = radius(c)
   s = norm(p - o)
-  isapprox(s, r, atol=atol(T))
+  isapproxequal(s, r)
 end
 
 function Base.in(p::Point{3}, c::Cone)
+  z = zero(lentype(p))^2
   a = apex(c)
   b = center(base(c))
   ax = a - b
-  (a - p) ⋅ ax ≥ 0 || return false
-  (b - p) ⋅ ax ≤ 0 || return false
+  (a - p) ⋅ ax ≥ z || return false
+  (b - p) ⋅ ax ≤ z || return false
   ∠(b, a, p) ≤ halfangle(c)
 end
 
 function Base.in(p::Point{3}, c::Cylinder)
+  z = zero(lentype(p))^2
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
   r = radius(c)
   a = t - b
-  (p - b) ⋅ a ≥ 0 || return false
-  (p - t) ⋅ a ≤ 0 || return false
+  (p - b) ⋅ a ≥ z || return false
+  (p - t) ⋅ a ≤ z || return false
   norm((p - b) × a) / norm(a) ≤ r
 end
 
 function Base.in(p::Point{3}, f::Frustum)
+  z = zero(lentype(p))^2
   t = center(top(f))
   b = center(bottom(f))
   ax = b - t
-  (p - t) ⋅ ax ≥ 0 || return false
-  (p - b) ⋅ ax ≤ 0 || return false
+  (p - t) ⋅ ax ≥ z || return false
+  (p - b) ⋅ ax ≤ z || return false
   # axial distance of p
   ad = (p - t) ⋅ normalize(ax)
   adrel = ad / norm(ax)
@@ -100,10 +103,11 @@ function Base.in(p::Point{3}, f::Frustum)
   rd ≤ r
 end
 
-function Base.in(p::Point{3,T}, t::Torus{T}) where {T}
+function Base.in(p::Point{3}, t::Torus)
+  ℒ = lentype(p)
   R, r = radii(t)
   c, n = center(t), normal(t)
-  Q = rotation_between(n, Vec{3,T}(0, 0, 1))
+  Q = urotbetween(n, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end

@@ -3,19 +3,20 @@
 # ------------------------------------------------------------------
 
 """
-    Primitive{Dim,T}
+    Primitive{Dim}
 
 We say that a geometry is a primitive when it can be expressed as a single
 entity with no parts (a.k.a. atomic). For example, a sphere is a primitive
 described in terms of a mathematical expression involving a metric and a radius.
 See <https://en.wikipedia.org/wiki/Geometric_primitive>.
 """
-abstract type Primitive{Dim,T} <: Geometry{Dim,T} end
+abstract type Primitive{Dim} <: Geometry{Dim} end
 
 function Base.show(io::IO, geom::Primitive)
   name = prettyname(geom)
+  ioctx = IOContext(io, :compact => true)
   print(io, "$name(")
-  printfields(io, geom, compact=true)
+  printfields(ioctx, geom, singleline=true)
   print(io, ")")
 end
 

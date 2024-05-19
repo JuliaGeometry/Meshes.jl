@@ -7,7 +7,7 @@
 
 Sort geometric objects along a given `direction` vector.
 """
-struct DirectionSort{V} <: SortingMethod
+struct DirectionSort{V<:Vec} <: SortingMethod
   direction::V
 end
 

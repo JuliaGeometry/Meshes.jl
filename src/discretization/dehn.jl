@@ -31,7 +31,7 @@ function discretizewithin(ring::Ring{2}, ::Dehn1899)
   SimpleMesh(points, connec)
 end
 
-function dehn1899(v::AbstractVector{Point{Dim,T}}, inds) where {Dim,T}
+function dehn1899(v::AbstractVector{<:Point}, inds)
   I = CircularVector(inds)
   n = length(I)
 

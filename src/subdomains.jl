@@ -11,7 +11,7 @@
 
 A partial view of a `domain` containing only the elements at `indices`.
 """
-struct SubDomain{Dim,T,D<:Domain{Dim,T},I<:AbstractVector{Int}} <: Domain{Dim,T}
+struct SubDomain{Dim,D<:Domain{Dim},I<:AbstractVector{Int}} <: Domain{Dim}
   domain::D
   inds::I
 end
@@ -22,6 +22,8 @@ SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
+
+lentype(::Type{<:SubDomain{Dim,D}}) where {Dim,D} = lentype(D)
 
 element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 
@@ -70,10 +72,10 @@ Base.parentindices(d::SubDomain) = d.inds
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, d::SubDomain{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, d::SubDomain)
   name = prettyname(d.domain)
   nelm = length(d.inds)
-  print(io, "$nelm view(::$name{$Dim,$T}, ")
+  print(io, "$nelm view(::$name, ")
   printinds(io, d.inds)
   print(io, ")")
 end

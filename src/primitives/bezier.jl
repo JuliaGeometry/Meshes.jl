@@ -20,14 +20,16 @@ large number of points but less precise, can be used via
 BezierCurve(Point2[(0.,0.),(1.,-1.)])
 ```
 """
-struct BezierCurve{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Primitive{Dim,T}
+struct BezierCurve{Dim,V<:AbstractVector{<:Point{Dim}}} <: Primitive{Dim}
   controls::V
 end
 
 BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
-BezierCurve(points::Vararg) = BezierCurve(collect(points))
+BezierCurve(points...) = BezierCurve(collect(points))
 
 paramdim(::Type{<:BezierCurve}) = 1
+
+lentype(::Type{<:BezierCurve{Dim,V}}) where {Dim,V} = lentype(eltype(V))
 
 controls(b::BezierCurve) = b.controls
 
@@ -79,7 +81,8 @@ end
 # curve, aᵢ = binomial(n, i) * pᵢ * t̄ⁿ⁻ⁱ and t̄ = (1 - t).
 # Horner's rule recursively reconstructs B from a sequence bᵢ
 # with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
-function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
+function (curve::BezierCurve)(t, ::Horner)
+  T = numtype(lentype(curve))
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
@@ -105,5 +108,24 @@ function (curve::BezierCurve{Dim,T})(t, ::Horner) where {Dim,T}
   Point(b₀)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim,T}}) where {Dim,T} =
-  BezierCurve(rand(rng, Point{Dim,T}, 5))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim}}) where {Dim} =
+  BezierCurve([rand(rng, Point{Dim}) for _ in 1:5])
+
+# -----------
+# IO METHODS
+# -----------
+
+function Base.show(io::IO, b::BezierCurve)
+  ioctx = IOContext(io, :compact => true)
+  print(io, "BezierCurve(controls: [")
+  join(ioctx, b.controls, ", ")
+  print(io, "])")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", b::BezierCurve)
+  summary(io, b)
+  println(io)
+  print(io, "└─ controls: [")
+  join(io, b.controls, ", ")
+  print(io, "]")
+end

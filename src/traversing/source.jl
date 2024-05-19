@@ -23,7 +23,8 @@ function traverse(domain, path::SourcePath)
   @assert length(sources) ≤ nelements(domain) "more sources than points in object"
 
   # fit search tree
-  kdtree = KDTree(coordinates.([centroid(domain, s) for s in sources]))
+  xs = [ustrip.(coordinates(centroid(domain, s))) for s in sources]
+  kdtree = KDTree(xs)
 
   # other locations that are not sources
   others = setdiff(1:nelements(domain), sources)
@@ -34,7 +35,7 @@ function traverse(domain, path::SourcePath)
   # compute distances to sources
   dists = []
   for batch in batches
-    coords = coordinates.([centroid(domain, b) for b in batch])
+    coords = [ustrip.(coordinates(centroid(domain, b))) for b in batch]
     _, ds = knn(kdtree, coords, length(sources), true)
     append!(dists, ds)
   end

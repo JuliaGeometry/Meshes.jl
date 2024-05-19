@@ -3,12 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{K,Dim,T}
+    Polytope{K,Dim,P}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
-embedded in a `Dim`-dimensional space. The parameter `K` is also known as the
+embedded in a `Dim`-dimensional space with point type `P`. The parameter `K` is also known as the
 rank or parametric dimension of the polytope: <https://en.wikipedia.org/wiki/Abstract_polytope>.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
@@ -25,17 +25,17 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,Dim,T} <: Geometry{Dim,T} end
+abstract type Polytope{K,Dim,P<:Point} <: Geometry{Dim} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   expr = quote
-    $Base.@__doc__ struct $type{Dim,T} <: Polytope{$K,Dim,T}
-      vertices::NTuple{$N,Point{Dim,T}}
+    $Base.@__doc__ struct $type{Dim,P<:Point{Dim}} <: Polytope{$K,Dim,P}
+      vertices::NTuple{$N,P}
     end
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
-    $type(vertices::Vararg{Point{Dim,T},$N}) where {Dim,T} = $type{Dim,T}(vertices)
+    $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
   esc(expr)
 end
@@ -45,7 +45,7 @@ end
 # -------------------
 
 """
-    Chain{Dim,T}
+    Chain{Dim,P}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
 See <https://en.wikipedia.org/wiki/Polygonal_chain>.
@@ -85,7 +85,7 @@ function Base.open(::Chain) end
 Remove duplicate vertices in the `chain`.
 Closed chains remain closed.
 """
-function Base.unique!(c::Chain{Dim,T}) where {Dim,T}
+function Base.unique!(c::Chain)
   # sort vertices lexicographically
   verts = vertices(open(c))
   perms = sortperm(coordinates.(verts))
@@ -94,7 +94,7 @@ function Base.unique!(c::Chain{Dim,T}) where {Dim,T}
   keep = Int[]
   sorted = @view verts[perms]
   for i in 1:(length(sorted) - 1)
-    if !isapprox(sorted[i], sorted[i + 1], atol=atol(T))
+    if !isapprox(sorted[i], sorted[i + 1])
       # save index in the original vector
       push!(keep, perms[i])
     end
@@ -152,7 +152,7 @@ include("polytopes/ring.jl")
 # ---------------------
 
 """
-    Polygon{Dim,T}
+    Polygon{Dim,P}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
@@ -176,7 +176,7 @@ include("polytopes/polyarea.jl")
 # ------------------------
 
 """
-    Polyhedron{Dim,T}
+    Polyhedron{Dim,P}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 
@@ -199,6 +199,8 @@ include("polytopes/pyramid.jl")
 Return the parametric dimension or rank of the polytope.
 """
 paramdim(::Type{<:Polytope{K}}) where {K} = K
+
+lentype(::Type{<:Polytope{K,Dim,P}}) where {K,Dim,P} = lentype(P)
 
 """
     vertex(polytope, ind)
@@ -234,9 +236,6 @@ centroid(p::Polytope) = Point(sum(coordinates, vertices(p)) / length(vertices(p)
 Return a new `polytope` without duplicate vertices.
 """
 Base.unique(p::Polytope) = unique!(deepcopy(p))
-
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{PL}) where {PL<:Polytope} =
-  PL(ntuple(i -> rand(rng, Point{embeddim(PL),coordtype(PL)}), nvertices(PL)))
 
 # -----------
 # IO METHODS

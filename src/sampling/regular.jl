@@ -23,22 +23,19 @@ end
 
 RegularSampling(sizes::Vararg{Int,N}) where {N} = RegularSampling(sizes)
 
-function sample(::AbstractRNG, geom::Geometry{Dim,T}, method::RegularSampling) where {Dim,T}
-  V = floattype(T)
+function sample(::AbstractRNG, geom::Geometry, method::RegularSampling)
+  T = numtype(lentype(geom))
   D = paramdim(geom)
   sz = fitdims(method.sizes, D)
   δₛ = firstoffset(geom)
   δₑ = lastoffset(geom)
-  tₛ = ntuple(i -> V(0 + δₛ[i](sz[i])), D)
-  tₑ = ntuple(i -> V(1 - δₑ[i](sz[i])), D)
+  tₛ = ntuple(i -> T(0 + δₛ[i](sz[i])), D)
+  tₑ = ntuple(i -> T(1 - δₑ[i](sz[i])), D)
   rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
   iᵣ = (geom(uv...) for uv in Iterators.product(rs...))
   iₚ = (p for p in extrapoints(geom))
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
-
-floattype(T::Type{<:Quantity}) = floattype(Unitful.numtype(T))
-floattype(T::Type) = float(T)
 
 firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
 lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))

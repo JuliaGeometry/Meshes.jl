@@ -8,21 +8,21 @@
 A method for partitioning spatial objects along a given `direction`
 with bandwidth tolerance `tol`.
 """
-struct DirectionPartition{Dim,T} <: SPredicatePartitionMethod
-  direction::Vec{Dim,T}
-  tol::Float64
-
-  function DirectionPartition{Dim,T}(direction, tol) where {Dim,T}
-    new(normalize(direction), tol)
-  end
+struct DirectionPartition{V<:Vec,ℒ<:Len} <: SPredicatePartitionMethod
+  direction::V
+  tol::ℒ
+  DirectionPartition(direction::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(direction), tol)
 end
 
-DirectionPartition(direction::Vec{Dim,T}; tol=1e-6) where {Dim,T} = DirectionPartition{Dim,T}(direction, tol)
+DirectionPartition(direction::Vec, tol) = DirectionPartition(direction, addunit(tol, u"m"))
 
-DirectionPartition(direction::NTuple{Dim,T}; tol=1e-6) where {Dim,T} = DirectionPartition(Vec(direction), tol=tol)
+DirectionPartition(direction::Vec; tol=1e-6u"m") = DirectionPartition(direction, tol)
+
+DirectionPartition(direction::Tuple; tol=1e-6u"m") = DirectionPartition(Vec(direction), tol)
 
 function (p::DirectionPartition)(x, y)
   δ = x - y
   d = p.direction
-  norm(δ - (δ ⋅ d) * d) < p.tol
+  k = ustrip.(δ ⋅ d)
+  norm(δ - k * d) < p.tol
 end
