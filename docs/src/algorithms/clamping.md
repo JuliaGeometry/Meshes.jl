@@ -12,7 +12,7 @@ using Meshes # hide
 import CairoMakie as Mke # hide
 
 # set of 2D points to clamp
-points = PointSet([rand(Point{2}) for _ in 1:100])
+points = PointSet(rand(2, 100))
 
 # 2D box defining the clamping boundaries
 box = Box((0.25, 0.25), (0.75, 0.75))
