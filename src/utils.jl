@@ -49,11 +49,11 @@ such that `u`, `v`, and `n` form a right-hand orthogonal system.
   to find orthogonal vectors based on the Householder transformation"]
   (https://doi.org/10.1016/j.cad.2012.11.003)
 """
-function householderbasis(n::Vec{3,T}) where {T}
+function householderbasis(n::Vec{3,ℒ}) where {ℒ}
   n̂ = norm(n)
   i = argmax(n .+ n̂)
-  eᵢ = Vec(ntuple(j -> j == i ? T(1) : T(0), 3))
-  h = n + n̂ * eᵢ
+  n̂ᵢ = Vec(ntuple(j -> j == i ? n̂ : zero(ℒ), 3))
+  h = n + n̂ᵢ
   H = I - 2h * transpose(h) / (transpose(h) * h)
   u, v = [H[:, j] for j in 1:3 if j != i]
   i == 2 && ((u, v) = (v, u))
@@ -68,15 +68,16 @@ using the singular value decomposition (SVD).
 
 See <https://math.stackexchange.com/a/99317>.
 """
-function svdbasis(p::AbstractVector{Point{3,T}}) where {T}
+function svdbasis(p::AbstractVector{<:Point{3}})
+  ℒ = lentype(eltype(p))
   X = reduce(hcat, coordinates.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
-  U = svd(Z).U
+  U = usvd(Z).U
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
-  n = Vec{3,T}(0, 0, 1)
-  (u × v) ⋅ n < 0 ? (v, u) : (u, v)
+  n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
+  (u × v) ⋅ n < zero(ℒ)^3 ? (v, u) : (u, v)
 end
 
 """
@@ -109,9 +110,10 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(a::Point{Dim,T}, b::Point{Dim,T}, c::Point{Dim,T}, d::Point{Dim,T}) where {Dim,T}
-  A = [(b - a) (c - d)]
-  y = c - a
+function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
+  A = ustrip.([(b - a) (c - d)])
+  y = ustrip.(c - a)
+  T = eltype(A)
 
   # calculate the rank of the augmented matrix by checking
   # the zero entries of the diagonal of R
@@ -154,3 +156,30 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   end
   Expr(:tuple, exprs...)
 end
+
+isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
+isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
+isapproxone(x) = isapprox(x, oneunit(x), atol=atol(x))
+
+# Function wrappers that handle units
+# The result units of some operations, such as dot and cross, 
+# are treated in a special way to handle Meshes.jl use cases
+
+function usvd(A)
+  u = unit(eltype(A))
+  F = svd(ustrip.(A))
+  SVD(F.U * u, F.S * u, F.Vt * u)
+end
+
+uinv(A) = inv(ustrip.(A)) * unit(eltype(A))^-1
+
+unormalize(a::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(normalize(a) * unit(ℒ))
+
+udot(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = ustrip(a ⋅ b) * unit(ℒ)
+
+ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b) * unit(ℒ))
+ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}, c::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b × c) * unit(ℒ))
+
+urotbetween(u::Vec, v::Vec) = rotation_between(ustrip.(u), ustrip.(v))
+
+urotapply(R::Rotation, v::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(R * ustrip.(v) * unit(ℒ))

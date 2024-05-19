@@ -59,12 +59,11 @@ printinds(io::IO, inds::AbstractRange) = print(io, inds)
 
 printfields(io, obj; kwargs...) = printfields(io, obj, fieldnames(typeof(obj)); kwargs...)
 
-function printfields(io, obj, fnames; compact=false)
-  if compact
-    ioctx = IOContext(io, :compact => true)
+function printfields(io, obj, fnames; singleline=false)
+  if singleline
     vals = map(enumerate(fnames)) do (i, field)
       val = getfield(obj, i)
-      str = repr(val, context=ioctx)
+      str = repr(val, context=io)
       "$field: $str"
     end
     join(io, vals, ", ")

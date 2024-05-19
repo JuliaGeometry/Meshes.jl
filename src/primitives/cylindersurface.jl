@@ -24,28 +24,39 @@ Finally, construct a right vertical circular cylinder surface with given `radius
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct CylinderSurface{T} <: Primitive{3,T}
-  bot::Plane{T}
-  top::Plane{T}
-  radius::T
+struct CylinderSurface{P<:Plane,ℒ<:Len} <: Primitive{3}
+  bot::P
+  top::P
+  radius::ℒ
+  CylinderSurface{P,ℒ}(bot, top, radius) where {P<:Plane,ℒ<:Len} = new(bot, top, radius)
 end
 
-function CylinderSurface(start::Point{3,T}, finish::Point{3,T}, radius) where {T}
+CylinderSurface(bot::P, top::P, radius::ℒ) where {P<:Plane,ℒ<:Len} = CylinderSurface{P,float(ℒ)}(bot, top, radius)
+
+CylinderSurface(bot::P, top::P, radius) where {P<:Plane} = CylinderSurface(bot, top, addunit(radius, u"m"))
+
+function CylinderSurface(start::Point{3}, finish::Point{3}, radius)
   dir = finish - start
   bot = Plane(start, dir)
   top = Plane(finish, dir)
-  CylinderSurface(bot, top, T(radius))
+  CylinderSurface(bot, top, radius)
 end
 
 CylinderSurface(start::Tuple, finish::Tuple, radius) = CylinderSurface(Point(start), Point(finish), radius)
 
-CylinderSurface(start::Point{3,T}, finish::Point{3,T}) where {T} = CylinderSurface(start, finish, T(1))
+CylinderSurface(start::Point{3}, finish::Point{3}) = CylinderSurface(start, finish, oneunit(lentype(start)))
 
 CylinderSurface(start::Tuple, finish::Tuple) = CylinderSurface(Point(start), Point(finish))
 
-CylinderSurface(radius::T) where {T} = CylinderSurface(Point(T(0), T(0), T(0)), Point(T(0), T(0), T(1)), radius)
+function CylinderSurface(radius)
+  z = zero(radius)
+  o = oneunit(radius)
+  CylinderSurface(Point(z, z, z), Point(z, z, o), radius)
+end
 
 paramdim(::Type{<:CylinderSurface}) = 2
+
+lentype(::Type{<:CylinderSurface{P}}) where {P} = lentype(P)
 
 radius(c::CylinderSurface) = c.radius
 
@@ -61,22 +72,26 @@ end
 
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
-function isright(c::CylinderSurface{T}) where {T}
+function isright(c::CylinderSurface)
+  ℒ = lentype(c)
+  T = numtype(ℒ)
   # cylinder is right if axis
   # is aligned with plane normals
   a = axis(c)
   d = a(T(1)) - a(T(0))
   v = normal(c.bot)
   w = normal(c.top)
-  isparallelv = isapprox(norm(d × v), zero(T), atol=atol(T))
-  isparallelw = isapprox(norm(d × w), zero(T), atol=atol(T))
+  isparallelv = isapproxzero(norm(d × v))
+  isparallelw = isapproxzero(norm(d × w))
   isparallelv && isparallelw
 end
 
-Base.isapprox(c₁::CylinderSurface{T}, c₂::CylinderSurface{T}) where {T} =
-  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapprox(c₁.radius, c₂.radius, atol=atol(T))
+Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface) =
+  c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapproxequal(c₁.radius, c₂.radius)
 
-function (c::CylinderSurface{T})(φ, z) where {T}
+function (c::CylinderSurface)(φ, z)
+  ℒ = lentype(c)
+  T = numtype(ℒ)
   if (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
   end
@@ -89,7 +104,7 @@ function (c::CylinderSurface{T})(φ, z) where {T}
   o = center(c)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(d, Vec{3,T}(0, 0, 1))
+  Q = urotbetween(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
 
   # new normals of planes in new rotated system
   nᵦ = Q * normal(b)
@@ -108,8 +123,8 @@ function (c::CylinderSurface{T})(φ, z) where {T}
   o + Q' * coordinates(p)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface{T}}) where {T} =
-  CylinderSurface(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface}) =
+  CylinderSurface(rand(rng, Plane), rand(rng, Plane), rand(rng, Met{Float64}))
 
 function hasintersectingplanes(c::CylinderSurface)
   x = c.bot ∩ c.top

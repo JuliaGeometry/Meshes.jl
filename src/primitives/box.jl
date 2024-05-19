@@ -15,21 +15,23 @@ Box(Point(0, 0, 0), Point(1, 1, 1))
 Box((0, 0), (1, 1))
 ```
 """
-struct Box{Dim,T} <: Primitive{Dim,T}
-  min::Point{Dim,T}
-  max::Point{Dim,T}
+struct Box{Dim,P<:Point{Dim}} <: Primitive{Dim}
+  min::P
+  max::P
 
-  function Box{Dim,T}(min, max) where {Dim,T}
+  function Box{Dim,P}(min, max) where {Dim,P<:Point{Dim}}
     @assert min ⪯ max "`min` must be less than or equal to `max`"
     new(min, max)
   end
 end
 
-Box(min::Point{Dim,T}, max::Point{Dim,T}) where {Dim,T} = Box{Dim,T}(min, max)
+Box(min::P, max::P) where {Dim,P<:Point{Dim}} = Box{Dim,P}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
+
+lentype(::Type{<:Box{Dim,P}}) where {Dim,P} = lentype(P)
 
 Base.minimum(b::Box) = b.min
 
@@ -45,15 +47,15 @@ sides(b::Box) = Tuple(b.max - b.min)
 
 Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
-function (b::Box{Dim,T})(uv...) where {Dim,T}
-  if !all(x -> zero(T) ≤ x ≤ one(T), uv)
+function (b::Box)(uv...)
+  if !all(x -> 0 ≤ x ≤ 1, uv)
     throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
   end
   b.min + uv .* (b.max - b.min)
 end
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim,T}}) where {Dim,T}
-  min = rand(rng, Point{Dim,T})
-  max = min + rand(rng, Vec{Dim,T})
+function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Box{Dim}}) where {Dim}
+  min = rand(rng, Point{Dim})
+  max = min + rand(rng, Vec{Dim,Met{Float64}})
   Box(min, max)
 end

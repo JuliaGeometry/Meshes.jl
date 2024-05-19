@@ -13,7 +13,7 @@ GeometrySet
 ```
 
 ```@example sets
-GeometrySet(rand(Ball{3,Float64}, 3)) |> viz
+GeometrySet([rand(Ball{3}) for _ in 1:3]) |> viz
 ```
 
 ```@docs
@@ -21,5 +21,5 @@ PointSet
 ```
 
 ```@example sets
-PointSet(rand(Point2, 100)) |> viz
+PointSet([rand(Point{2}) for _ in 1:100]) |> viz
 ```

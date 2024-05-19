@@ -72,7 +72,7 @@ function vizmesh2D!(plot)
     elems = elements(topo)
 
     # coordinates of vertices
-    coords = coordinates.(verts)
+    coords = map(p -> ustrip.(coordinates(p)), verts)
 
     # fan triangulation (assume convexity)
     tris4elem = map(elems) do elem
@@ -148,11 +148,12 @@ function vizmesh2D!(plot)
     # retrieve coordinates parameters
     xparams = Makie.@lift let
       # relevant settings
+      T = Unitful.numtype(Meshes.lentype($mesh))
       dim = embeddim($mesh)
       topo = topology($mesh)
       nvert = nvertices($mesh)
       verts = vertices($mesh)
-      coords = coordinates.(verts)
+      coords = map(p -> ustrip.(coordinates(p)), verts)
 
       # use a sophisticated data structure
       # to extract the edges from the n-gons
@@ -168,7 +169,7 @@ function vizmesh2D!(plot)
       end
 
       # fill sentinel index with NaN coordinates
-      push!(coords, Vec(ntuple(i -> NaN, dim)))
+      push!(coords, SVector(ntuple(i -> T(NaN), dim)))
 
       # extract incident vertices
       coords = coords[inds]
@@ -199,10 +200,10 @@ end
 
 function segmentsof(topo, vert)
   p = first(vert)
-  T = coordtype(p)
+  T = Unitful.numtype(Meshes.lentype(p))
   Dim = embeddim(p)
-  nan = Vec{Dim,T}(ntuple(i -> NaN, Dim))
-  xs = coordinates.(vert)
+  nan = SVector(ntuple(i -> T(NaN), Dim))
+  xs = map(p -> ustrip.(coordinates(p)), vert)
 
   coords = map(elements(topo)) do e
     inds = indices(e)
@@ -213,7 +214,7 @@ function segmentsof(topo, vert)
 end
 
 function segmentsof(topo::GridTopology, vert)
-  xs = coordinates.(vert)
+  xs = map(p -> ustrip.(coordinates(p)), vert)
   ip = first(isperiodic(topo))
   ip ? [xs; [first(xs)]] : xs
 end

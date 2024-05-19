@@ -29,9 +29,9 @@ boundingbox(p::Point) = Box(p, p)
 
 boundingbox(b::Box) = b
 
-function boundingbox(r::Ray{Dim,T}) where {Dim,T}
-  lower(p, v) = v < 0 ? typemin(T) : p
-  upper(p, v) = v > 0 ? typemax(T) : p
+function boundingbox(r::Ray)
+  lower(p, v) = v < zero(v) ? typemin(p) : p
+  upper(p, v) = v > zero(v) ? typemax(p) : p
   p = r(0)
   v = r(1) - r(0)
   l = lower.(coordinates(p), v)
@@ -60,11 +60,11 @@ function boundingbox(c::ConeSurface)
   boundingbox([ps; apex(c)])
 end
 
-function boundingbox(p::ParaboloidSurface{T}) where {T}
+function boundingbox(p::ParaboloidSurface)
   v = apex(p)
   r = radius(p)
   f = focallength(p)
-  Box(v + Vec(-r, -r, T(0)), v + Vec(r, r, r^2 / (4f)))
+  Box(v + Vec(-r, -r, zero(r)), v + Vec(r, r, r^2 / (4f)))
 end
 
 boundingbox(t::Torus) = _pboxes(pointify(t))
@@ -73,10 +73,10 @@ boundingbox(g::CartesianGrid) = Box(extrema(g)...)
 
 boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
 
-boundingbox(g::TransformedGrid{Dim,T,<:CartesianGrid{Dim,T}}) where {Dim,T} =
+boundingbox(g::TransformedGrid{Dim,<:CartesianGrid{Dim}}) where {Dim} =
   boundingbox(parent(g)) |> transform(g) |> boundingbox
 
-boundingbox(g::TransformedGrid{Dim,T,<:RectilinearGrid{Dim,T}}) where {Dim,T} =
+boundingbox(g::TransformedGrid{Dim,<:RectilinearGrid{Dim}}) where {Dim} =
   boundingbox(parent(g)) |> transform(g) |> boundingbox
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
@@ -89,14 +89,14 @@ _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
 function _pboxes(points)
   p = first(points)
-  T = coordtype(p)
+  ℒ = lentype(p)
   Dim = embeddim(p)
-  xmin = MVector(ntuple(i -> typemax(T), Dim))
-  xmax = MVector(ntuple(i -> typemin(T), Dim))
+  xmin = MVector(ntuple(i -> typemax(ℒ), Dim))
+  xmax = MVector(ntuple(i -> typemin(ℒ), Dim))
   for p in points
     x = coordinates(p)
     @. xmin = min(x, xmin)
     @. xmax = max(x, xmax)
   end
-  Box(Point(xmin), Point(xmax))
+  Box(Point(Vec(xmin)), Point(Vec(xmax)))
 end

@@ -65,7 +65,9 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
-function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
+function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
+  ℒ = lentype(g₁)
+
   # must have intersection of bounding boxes
   intersects(boundingbox(g₁), boundingbox(g₂)) || return false
 
@@ -80,13 +82,13 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
 
   # initial direction
   c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{Dim,T}) : c₂ - c₁
+  d = c₁ ≈ c₂ ? rand(Vec{Dim,ℒ}) : c₂ - c₁
 
   # first point in Minkowski difference
   P = minkowskipoint(g₁, g₂, d)
 
   # origin of coordinate system
-  O = minkowskiorigin(Dim, T)
+  O = minkowskiorigin(Dim, ℒ)
 
   # initialize simplex vertices
   points = [P]
@@ -95,7 +97,7 @@ function intersects(g₁::Geometry{Dim,T}, g₂::Geometry{Dim,T}) where {Dim,T}
   d = O - P
   while true
     P = minkowskipoint(g₁, g₂, d)
-    if (P - O) ⋅ d < zero(T)
+    if (P - O) ⋅ d < zero(ℒ)^2
       return false
     end
     push!(points, P)
@@ -121,25 +123,26 @@ See also [`intersects`](@ref).
 """
 function gjk! end
 
-function gjk!(O::Point{2,T}, points) where {T}
+function gjk!(O::Point{2}, points)
+  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
     AB = B - A
     AO = O - A
-    d = perpendicular(AB, AO)
+    d = perphint(AB, AO)
   else
     # triangle simplex case
     C, B, A = points
     AB = B - A
     AC = C - A
     AO = O - A
-    ABᵀ = -perpendicular(AB, AC)
-    ACᵀ = -perpendicular(AC, AB)
-    if ABᵀ ⋅ AO > zero(T)
+    ABᵀ = -perphint(AB, AC)
+    ACᵀ = -perphint(AC, AB)
+    if ABᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 1) # pop C
       d = ABᵀ
-    elseif ACᵀ ⋅ AO > zero(T)
+    elseif ACᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 2) # pop B
       d = ACᵀ
     else
@@ -149,21 +152,22 @@ function gjk!(O::Point{2,T}, points) where {T}
   d
 end
 
-function gjk!(O::Point{3,T}, points) where {T}
+function gjk!(O::Point{3}, points)
+  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
     AB = B - A
     AO = O - A
-    d = perpendicular(AB, AO)
+    d = perphint(AB, AO)
   elseif length(points) == 3
     # triangle case
     C, B, A = points
     AB = B - A
     AC = C - A
     AO = O - A
-    ABCᵀ = AB × AC
-    if ABCᵀ ⋅ AO < 0
+    ABCᵀ = ucross(AB, AC)
+    if ABCᵀ ⋅ AO < zero(ℒ)^2
       points[1], points[2] = points[2], points[1]
       ABCᵀ = -ABCᵀ
     end
@@ -185,16 +189,16 @@ function gjk!(O::Point{3,T}, points) where {T}
     AC = C - A
     AD = D - A
     AO = O - A
-    ABCᵀ = AB × AC
-    ADBᵀ = AD × AB
-    ACDᵀ = AC × AD
-    if ABCᵀ ⋅ AO > zero(T)
+    ABCᵀ = ucross(AB, AC)
+    ADBᵀ = ucross(AD, AB)
+    ACDᵀ = ucross(AC, AD)
+    if ABCᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 1) # pop D
       d = ABCᵀ
-    elseif ADBᵀ ⋅ AO > zero(T)
+    elseif ADBᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 2) # pop C
       d = ADBᵀ
-    elseif ACDᵀ ⋅ AO > zero(T)
+    elseif ACDᵀ ⋅ AO > zero(ℒ)^2
       popat!(points, 3) # pop B
       d = ACDᵀ
     else
@@ -246,16 +250,16 @@ intersects(m::Multi, c::Chain) = intersects(c, m)
 minkowskipoint(g₁::Geometry, g₂::Geometry, d) = Point(supportfun(g₁, d) - supportfun(g₂, -d))
 
 # origin of coordinate system
-minkowskiorigin(Dim, T) = Point(ntuple(i -> zero(T), Dim))
+minkowskiorigin(Dim, ℒ) = Point(ntuple(i -> zero(ℒ), Dim))
 
 # find a vector perpendicular to `v` using vector `d` as some direction hint
-# expect that `perpendicular(v, d) ⋅ d ≥ 0` or, in other words,
+# expect that `perphint(v, d) ⋅ d ≥ 0` or, in other words,
 # that the angle between the result vector and `d` is less or equal than 90º
-function perpendicular(v::Vec{2,T}, d::Vec{2,T}) where {T}
-  a = Vec(v[1], v[2], zero(T))
-  b = Vec(d[1], d[2], zero(T))
-  r = a × b × a
+function perphint(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
+  a = Vec(v[1], v[2], zero(ℒ))
+  b = Vec(d[1], d[2], zero(ℒ))
+  r = ucross(a, b, a)
   Vec(r[1], r[2])
 end
 
-perpendicular(v::Vec{3}, d::Vec{3}) = v × d × v
+perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = ucross(v, d, v)

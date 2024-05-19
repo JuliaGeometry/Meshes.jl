@@ -18,10 +18,19 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Dim,T,V<:AbstractVector{T}} <: Grid{Dim,T}
+struct RectilinearGrid{Dim,V<:AbstractVector{<:Len}} <: Grid{Dim}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
+  RectilinearGrid{Dim,V}(xyz, topology) where {Dim,V<:AbstractVector{<:Len}} = new(xyz, topology)
 end
+
+function RectilinearGrid(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Dim,V<:AbstractVector{<:Len}}
+  coords = float.(xyz)
+  RectilinearGrid{Dim,eltype(coords)}(coords, topology)
+end
+
+RectilinearGrid(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Dim,V<:AbstractVector} =
+  RectilinearGrid(addunit.(xyz, u"m"), topology)
 
 function RectilinearGrid(xyz::Tuple)
   coords = promote(collect.(xyz)...)
@@ -30,6 +39,8 @@ function RectilinearGrid(xyz::Tuple)
 end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
+
+lentype(::Type{<:RectilinearGrid{Dim,V}}) where {Dim,V} = eltype(V)
 
 vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.xyz, ijk))
 
@@ -53,7 +64,7 @@ function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where 
   RectilinearGrid(xyz, GridTopology(dims))
 end
 
-function Base.summary(io::IO, g::RectilinearGrid{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, g::RectilinearGrid)
   join(io, size(g), "×")
-  print(io, " RectilinearGrid{$Dim,$T}")
+  print(io, " RectilinearGrid")
 end

@@ -1,6 +1,6 @@
 @testset "Refinement" begin
   @testset "TriRefinement" begin
-    grid = CartesianGrid{T}(3, 3)
+    grid = cartgrid(3, 3)
     ref1 = refine(grid, TriRefinement())
     ref2 = refine(ref1, TriRefinement())
 
@@ -14,7 +14,7 @@
   end
 
   @testset "QuadRefinement" begin
-    points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)]
+    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
     mesh = SimpleMesh(points, connec)
     ref1 = refine(mesh, QuadRefinement())
@@ -32,8 +32,8 @@
 
   @testset "RegularRefinement" begin
     # 2D grids
-    grid = CartesianGrid(P2(0, 0), P2(10, 10), dims=(10, 10))
-    tgrid = CartesianGrid(P2(0, 0), P2(10, 10), dims=(20, 20))
+    grid = CartesianGrid(point(0, 0), point(10, 10), dims=(10, 10))
+    tgrid = CartesianGrid(point(0, 0), point(10, 10), dims=(20, 20))
     @test refine(grid, RegularRefinement(2)) == tgrid
     rgrid = convert(RectilinearGrid, grid)
     trgrid = convert(RectilinearGrid, tgrid)
@@ -43,7 +43,7 @@
     @test refine(sgrid, RegularRefinement(2)) == tsgrid
 
     # 3D grids
-    grid = CartesianGrid{T}(3, 3, 3)
+    grid = cartgrid(3, 3, 3)
     tgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(6, 6, 6))
     @test refine(grid, RegularRefinement(2)) == tgrid
     rgrid = convert(RectilinearGrid, grid)
@@ -55,7 +55,7 @@
   end
 
   @testset "CatmullClark" begin
-    points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
     mesh = SimpleMesh(points, connec)
     ref1 = refine(mesh, CatmullClark())
@@ -70,7 +70,7 @@
       @test_reference "data/catmullclark-1-$T.png" fig
     end
 
-    points = P2[(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)]
+    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
     mesh = SimpleMesh(points, connec)
     ref1 = refine(mesh, CatmullClark())
@@ -85,7 +85,7 @@
       @test_reference "data/catmullclark-2-$T.png" fig
     end
 
-    points = P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]
+    points = point.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
     connec = connect.([(1, 4, 3, 2), (5, 6, 7, 8), (1, 2, 6, 5), (3, 4, 8, 7), (1, 5, 8, 4), (2, 3, 7, 6)])
     mesh = SimpleMesh(points, connec)
     ref1 = refine(mesh, CatmullClark())
@@ -102,7 +102,7 @@
   end
 
   @testset "TriSubdivision" begin
-    points = P3[(-1, -1, -1), (1, 1, -1), (1, -1, 1), (-1, 1, 1)]
+    points = point.([(-1, -1, -1), (1, 1, -1), (1, -1, 1), (-1, 1, 1)])
     connec = connect.([(1, 2, 3), (3, 2, 4), (4, 2, 1), (1, 3, 4)])
     mesh = SimpleMesh(points, connec)
     ref1 = refine(mesh, TriSubdivision())

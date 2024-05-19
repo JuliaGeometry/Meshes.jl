@@ -22,7 +22,7 @@ struct JarvisMarch <: HullMethod end
 function hull(points, ::JarvisMarch)
   pₒ = first(points)
   Dim = embeddim(pₒ)
-  T = coordtype(pₒ)
+  ℒ = lentype(pₒ)
 
   @assert Dim == 2 "Jarvis's march only defined in 2D"
 
@@ -42,7 +42,7 @@ function hull(points, ::JarvisMarch)
 
   # find next point with smallest angle
   O = p[i]
-  A = O + Vec{2,T}(0, -1)
+  A = O + Vec(zero(ℒ), -oneunit(ℒ))
   j = argmin(l -> ∠(A, O, p[l]), 𝒞)
 
   # initialize ring of indices

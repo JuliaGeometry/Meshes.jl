@@ -9,12 +9,12 @@ An open polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
 See also [`Chain`](@ref) and [`Ring`](@ref).
 """
-struct Rope{Dim,T,V<:AbstractVector{Point{Dim,T}}} <: Chain{Dim,T}
+struct Rope{Dim,P<:Point{Dim},V<:AbstractVector{P}} <: Chain{Dim,P}
   vertices::V
 end
 
 Rope(vertices::Tuple...) = Rope([Point(v) for v in vertices])
-Rope(vertices::Point{Dim,T}...) where {Dim,T} = Rope(collect(vertices))
+Rope(vertices::P...) where {P<:Point} = Rope(collect(vertices))
 Rope(vertices::AbstractVector{<:Tuple}) = Rope(Point.(vertices))
 
 nvertices(r::Rope) = length(r.vertices)
@@ -32,5 +32,5 @@ Base.open(r::Rope) = r
 
 Base.reverse!(r::Rope) = (reverse!(r.vertices); r)
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Rope{Dim,T}}) where {Dim,T} =
-  Rope(rand(rng, Point{Dim,T}, rand(2:50)))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:Rope{Dim}}) where {Dim} =
+  Rope([rand(rng, Point{Dim}) for _ in 1:rand(rng, 2:50)])

@@ -99,12 +99,13 @@ repair8(v) = repair8(collect(v))
 
 repair8(v::AbstractVector) = repair8(CircularVector(v))
 
-function repair8(v::CircularVector{Point{Dim,T}}) where {Dim,T}
+function repair8(v::CircularVector{<:Point})
   n = length(v)
   keep = Int[]
   for i in 1:n
     t = Triangle(v[i - 1], v[i], v[i + 1])
-    area(t) > atol(T)^2 && push!(keep, i)
+    a = area(t)
+    a > atol(a) && push!(keep, i)
   end
   isempty(keep) ? v[begin] : v[keep]
 end
@@ -167,4 +168,7 @@ apply(::Repair{10}, poly::Ngon) = poly, nothing
 
 revert(::Repair{10}, poly::Ngon, cache) = poly
 
-_stretch10(g::Geometry{Dim,T}) where {Dim,T} = Stretch(ntuple(i -> T(1) + 10atol(T), Dim))
+function _stretch10(g::Geometry{Dim}) where {Dim}
+  T = numtype(lentype(g))
+  Stretch(ntuple(i -> one(T) + 10atol(T), Dim))
+end

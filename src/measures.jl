@@ -17,56 +17,62 @@ Return the measure or "volume" of the `object`.
 """
 function measure end
 
-measure(::Point{Dim,T}) where {Dim,T} = zero(T)
+measure(p::Point) = zero(lentype(p))
 
-measure(::Ray{Dim,T}) where {Dim,T} = typemax(T)
+measure(r::Ray) = typemax(lentype(r))
 
-measure(::Line{Dim,T}) where {Dim,T} = typemax(T)
+measure(l::Line) = typemax(lentype(l))
 
-measure(::Plane{T}) where {T} = typemax(T)
+measure(p::Plane) = typemax(lentype(p))^2
 
 measure(b::Box) = prod(maximum(b) - minimum(b))
 
 # https://en.wikipedia.org/wiki/Volume_of_an_n-ball
 function measure(b::Ball{Dim}) where {Dim}
+  T = numtype(lentype(b))
   r, n = radius(b), Dim
-  (π^(n / 2) * r^n) / gamma(n / 2 + 1)
+  T(π)^T(n / 2) * r^n / gamma(T(n / 2) + 1)
 end
 
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
 function measure(s::Sphere{Dim}) where {Dim}
+  T = numtype(lentype(s))
   r, n = radius(s), Dim
-  2π^(n / 2) * r^(n - 1) / gamma(n / 2)
+  2 * T(π)^T(n / 2) * r^(n - 1) / gamma(T(n / 2))
 end
 
-measure(d::Disk{T}) where {T} = T(π) * radius(d)^2
+measure(d::Disk) = π * radius(d)^2
 
-measure(c::Circle{T}) where {T} = 2 * T(π) * radius(c)
+measure(c::Circle) = 2 * (π * radius(c))
 
-function measure(c::Cylinder{T}) where {T}
+function measure(c::Cylinder)
   t = top(c)
   b = bottom(c)
   r = radius(c)
-  norm(t(0, 0) - b(0, 0)) * T(π) * r^2
+  h = norm(t(0, 0) - b(0, 0))
+  π * r^2 * h
 end
 
-function measure(c::CylinderSurface{T}) where {T}
+function measure(c::CylinderSurface)
   t = top(c)
   b = bottom(c)
   r = radius(c)
-  (norm(t(0, 0) - b(0, 0)) + r) * 2 * r * T(π)
+  h = norm(t(0, 0) - b(0, 0))
+  2 * (π * r) * (h + r)
 end
 
-function measure(p::ParaboloidSurface{T}) where {T}
+function measure(p::ParaboloidSurface)
+  T = numtype(lentype(p))
   r = radius(p)
   f = focallength(p)
-  T(8π / 3) * f^2 * ((T(1) + r^2 / (2f)^2)^(3 / 2) - T(1))
+  (8 * T(π) / 3) * f^2 * ((1 + r^2 / (2f)^2)^T(3 / 2) - 1)
 end
 
 # https://en.wikipedia.org/wiki/Torus
-function measure(t::Torus{T}) where {T}
+function measure(t::Torus)
+  T = numtype(lentype(t))
   R, r = radii(t)
-  4T(π)^2 * R * r
+  4 * T(π)^2 * R * r
 end
 
 measure(s::Segment) = norm(maximum(s) - minimum(s))
@@ -89,7 +95,7 @@ measure(g::Geometry) = sum(measure, simplexify(g))
 
 measure(m::Multi) = sum(measure, parent(m))
 
-measure(::PointSet{Dim,T}) where {Dim,T} = zero(T)
+measure(d::PointSet) = zero(lentype(d))
 
 measure(d::Domain) = sum(measure, d)
 
@@ -151,10 +157,10 @@ the [`measure`](@ref) of its [`boundary`](@ref).
 """
 perimeter(g) = measure(boundary(g))
 
-perimeter(::Line{Dim,T}) where {Dim,T} = zero(T)
+perimeter(l::Line) = zero(lentype(l))
 
-perimeter(::Plane{T}) where {T} = zero(T)
+perimeter(p::Plane) = zero(lentype(p))
 
-perimeter(::Sphere{Dim,T}) where {Dim,T} = zero(T)
+perimeter(s::Sphere) = zero(lentype(s))
 
-perimeter(::Ellipsoid{T}) where {T} = zero(T)
+perimeter(e::Ellipsoid) = zero(lentype(e))

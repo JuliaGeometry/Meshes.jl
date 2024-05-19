@@ -24,28 +24,39 @@ Finally, construct a right vertical circular cylinder with given `radius`.
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct Cylinder{T} <: Primitive{3,T}
-  bot::Plane{T}
-  top::Plane{T}
-  radius::T
+struct Cylinder{P<:Plane,ℒ<:Len} <: Primitive{3}
+  bot::P
+  top::P
+  radius::ℒ
+  Cylinder{P,ℒ}(bot, top, radius) where {P<:Plane,ℒ<:Len} = new(bot, top, radius)
 end
 
-function Cylinder(start::Point{3,T}, finish::Point{3,T}, radius) where {T}
+Cylinder(bot::P, top::P, radius::ℒ) where {P<:Plane,ℒ<:Len} = Cylinder{P,float(ℒ)}(bot, top, radius)
+
+Cylinder(bot::P, top::P, radius) where {P<:Plane} = Cylinder(bot, top, addunit(radius, u"m"))
+
+function Cylinder(start::Point{3}, finish::Point{3}, radius)
   dir = finish - start
   bot = Plane(start, dir)
   top = Plane(finish, dir)
-  Cylinder(bot, top, T(radius))
+  Cylinder(bot, top, radius)
 end
 
 Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
 
-Cylinder(start::Point{3,T}, finish::Point{3,T}) where {T} = Cylinder(start, finish, T(1))
+Cylinder(start::Point{3}, finish::Point{3}) = Cylinder(start, finish, oneunit(lentype(start)))
 
 Cylinder(start::Tuple, finish::Tuple) = Cylinder(Point(start), Point(finish))
 
-Cylinder(radius::T) where {T} = Cylinder(Point(T(0), T(0), T(0)), Point(T(0), T(0), T(1)), radius)
+function Cylinder(radius)
+  z = zero(radius)
+  o = oneunit(radius)
+  Cylinder(Point(z, z, z), Point(z, z, o), radius)
+end
 
 paramdim(::Type{<:Cylinder}) = 3
+
+lentype(::Type{<:Cylinder{P}}) where {P} = lentype(P)
 
 radius(c::Cylinder) = c.radius
 
@@ -63,7 +74,9 @@ hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 
-function (c::Cylinder{T})(ρ, φ, z) where {T}
+function (c::Cylinder)(ρ, φ, z)
+  ℒ = lentype(c)
+  T = numtype(ℒ)
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
@@ -76,16 +89,16 @@ function (c::Cylinder{T})(ρ, φ, z) where {T}
   o = b(0, 0)
 
   # rotation to align z axis with cylinder axis
-  Q = rotation_between(Vec{3,T}(0, 0, 1), d)
+  Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
 
   # project a parametric segment between the top and bottom planes
   lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
-  p₁ = o + Q * Vec(lcφ, lsφ, T(0))
+  p₁ = o + Q * Vec(lcφ, lsφ, zero(ℒ))
   p₂ = o + Q * Vec(lcφ, lsφ, h)
   l = Line(p₁, p₂)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder{T}}) where {T} =
-  Cylinder(rand(rng, Plane{T}), rand(rng, Plane{T}), rand(rng, T))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder}) =
+  Cylinder(rand(rng, Plane), rand(rng, Plane), rand(rng, Met{Float64}))

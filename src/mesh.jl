@@ -3,12 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{Dim,T,TP}
+    Mesh{Dim,TP}
 
-A mesh embedded in a `Dim`-dimensional space with coordinates of type `T`
-and topology of type `TP`.
+A mesh embedded in a `Dim`-dimensional space with topology of type `TP`.
 """
-abstract type Mesh{Dim,T,TP<:Topology} <: Domain{Dim,T} end
+abstract type Mesh{Dim,TP<:Topology} <: Domain{Dim} end
 
 """
     vertex(mesh, ind)
@@ -123,7 +122,7 @@ topoconvert(TP::Type{<:Topology}, m::Mesh) = SimpleMesh(vertices(m), convert(TP,
 
 ==(m₁::Mesh, m₂::Mesh) = vertices(m₁) == vertices(m₂) && topology(m₁) == topology(m₂)
 
-function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
   t = topology(m)
   verts = vertices(m)
   elems = elements(t)
@@ -139,18 +138,18 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh{Dim,T}) where {Dim,T}
 end
 
 """
-    Grid{Dim,T}
+    Grid{Dim}
 
-A grid embedded in a `Dim`-dimensional space with coordinates of type `T`.
+A grid embedded in a `Dim`-dimensional space.
 """
-const Grid{Dim,T} = Mesh{Dim,T,GridTopology{Dim}}
+const Grid{Dim} = Mesh{Dim,GridTopology{Dim}}
 
 """
-    SubGrid{Dim,T}
+    SubGrid{Dim}
 
-A view of a grid in a `Dim`-dimensinoal space with coordinates of type `T`.
+A view of a grid in a `Dim`-dimensinoal space.
 """
-const SubGrid{Dim,T} = SubDomain{Dim,T,<:Grid{Dim,T}}
+const SubGrid{Dim} = SubDomain{Dim,<:Grid{Dim}}
 
 """
     vertex(grid, ijk)

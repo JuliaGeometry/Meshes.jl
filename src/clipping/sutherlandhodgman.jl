@@ -24,7 +24,7 @@ function clip(poly::Polygon, other::Geometry, method::SutherlandHodgman)
   isempty(r) ? nothing : PolyArea(r)
 end
 
-function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where {Dim,T}
+function clip(ring::Ring{Dim}, other::Ring{Dim}, ::SutherlandHodgman) where {Dim}
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 
@@ -36,7 +36,7 @@ function clip(ring::Ring{Dim,T}, other::Ring{Dim,T}, ::SutherlandHodgman) where 
 
     n = length(r)
 
-    u = Point{Dim,T}[]
+    u = Vector{eltype(r)}()
     for j in 1:n
       r₁ = r[j]
       r₂ = r[mod1(j + 1, n)]

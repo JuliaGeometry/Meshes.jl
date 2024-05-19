@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Domain
+    Domain{Dim}
 
 A domain is an indexable collection of geometries (e.g. mesh).
 """
-abstract type Domain{Dim,T} end
+abstract type Domain{Dim} end
 
 """
     element(domain, ind)
@@ -60,7 +60,7 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
-embeddim(::Type{<:Domain{Dim,T}}) where {Dim,T} = Dim
+embeddim(::Type{<:Domain{Dim}}) where {Dim} = Dim
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """
@@ -72,12 +72,11 @@ parametric dimensions of its elements.
 paramdim(d::Domain) = paramdim(first(d))
 
 """
-    coordtype(domain)
+    lentype(domain)
 
-Return the machine type of each coordinate used to describe the `domain`.
+Return the length type of the `domain`.
 """
-coordtype(::Type{<:Domain{Dim,T}}) where {Dim,T} = T
-coordtype(d::Domain) = coordtype(typeof(d))
+lentype(d::Domain) = lentype(typeof(d))
 
 """
     centroid(domain, ind)
@@ -92,14 +91,14 @@ centroid(d::Domain, ind::Int) = centroid(d[ind])
 Return the centroid of the `domain`, i.e. the centroid of all
 its element's centroids.
 """
-function centroid(d::Domain{Dim,T}) where {Dim,T}
+function centroid(d::Domain)
   coords(i) = coordinates(centroid(d, i))
   volume(i) = measure(element(d, i))
   n = nelements(d)
   x = coords.(1:n)
   w = volume.(1:n)
-  all(iszero, w) && (w = ones(T, n))
-  Point(sum(w .* x) / sum(w))
+  all(iszero, w) && (w = ones(eltype(w), n))
+  Point(Vec(sum(w .* x) / sum(w)))
 end
 
 """
@@ -121,10 +120,10 @@ topology(d::Domain) = d.topology
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, d::Domain{Dim,T}) where {Dim,T}
+function Base.summary(io::IO, d::Domain)
   nelm = nelements(d)
   name = prettyname(d)
-  print(io, "$nelm $name{$Dim,$T}")
+  print(io, "$nelm $name")
 end
 
 Base.show(io::IO, d::Domain) = summary(io, d)

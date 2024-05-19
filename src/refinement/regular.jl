@@ -47,10 +47,11 @@ function _refinedims(x, f)
 end
 
 function _XYZ(grid::StructuredGrid{2}, factors::Dims{2})
+  T = numtype(lentype(grid))
   fᵢ, fⱼ = factors
   sᵢ, sⱼ = size(grid)
-  us = 0:(1 / fᵢ):1
-  vs = 0:(1 / fⱼ):1
+  us = 0:T(1 / fᵢ):1
+  vs = 0:T(1 / fⱼ):1
   catᵢ(A...) = cat(A..., dims=Val(1))
   catⱼ(A...) = cat(A..., dims=Val(2))
 
@@ -72,11 +73,12 @@ function _XYZ(grid::StructuredGrid{2}, factors::Dims{2})
 end
 
 function _XYZ(grid::StructuredGrid{3}, factors::Dims{3})
+  T = numtype(lentype(grid))
   fᵢ, fⱼ, fₖ = factors
   sᵢ, sⱼ, sₖ = size(grid)
-  us = 0:(1 / fᵢ):1
-  vs = 0:(1 / fⱼ):1
-  ws = 0:(1 / fₖ):1
+  us = 0:T(1 / fᵢ):1
+  vs = 0:T(1 / fⱼ):1
+  ws = 0:T(1 / fₖ):1
   catᵢ(A...) = cat(A..., dims=Val(1))
   catⱼ(A...) = cat(A..., dims=Val(2))
   catₖ(A...) = cat(A..., dims=Val(3))

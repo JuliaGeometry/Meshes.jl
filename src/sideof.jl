@@ -39,9 +39,9 @@ Possible results are `LEFT`, `RIGHT` or `ON` the `line`.
 
 * Assumes the orientation of `Segment(line(0), line(1))`.
 """
-function sideof(point::Point{2,T}, line::Line{2,T}) where {T}
+function sideof(point::Point{2}, line::Line{2})
   a = signarea(point, line(0), line(1))
-  ifelse(a > atol(T), LEFT, ifelse(a < -atol(T), RIGHT, ON))
+  ifelse(a > atol(a), LEFT, ifelse(a < -atol(a), RIGHT, ON))
 end
 
 """
@@ -50,10 +50,7 @@ end
 Determines on which side the `point` is in relation to the `ring`.
 Possible results are `IN` or `OUT` the `ring`.
 """
-function sideof(point::Point{2,T}, ring::Ring{2,T}) where {T}
-  w = winding(point, ring)
-  ifelse(isapprox(w, zero(T), atol=atol(T)), OUT, IN)
-end
+sideof(point::Point{2}, ring::Ring{2}) = ifelse(isapproxzero(winding(point, ring)), OUT, IN)
 
 # -----
 # MESH
@@ -74,12 +71,11 @@ sideof(point::Point{3}, mesh::Mesh{3}) = sideof((point,), mesh) |> first
 sideof(points, line::Line{2}) = map(point -> sideof(point, line), points)
 
 function sideof(points, object::GeometryOrDomain)
-  T = coordtype(object)
   bbox = boundingbox(object)
   isin = tcollect(point ∈ bbox for point in points)
   inds = findall(isin)
   wind = winding(collectat(points, inds), object)
   side = fill(OUT, length(isin))
-  side[inds] .= ifelse.(isapprox.(wind, zero(T), atol=atol(T)), OUT, IN)
+  side[inds] .= map(w -> ifelse(isapproxzero(w), OUT, IN), wind)
   side
 end

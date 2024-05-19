@@ -24,10 +24,10 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (e.g. only 2 vertices).
 """
-struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
+struct PolyArea{Dim,P<:Point{Dim},R<:Ring{Dim,P}} <: Polygon{Dim,P}
   rings::Vector{R}
 
-  function PolyArea{Dim,T,R}(rings; fix=true) where {Dim,T,R<:Ring{Dim,T}}
+  function PolyArea{Dim,P,R}(rings; fix=true) where {Dim,P<:Point{Dim},R<:Ring{Dim,P}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -57,7 +57,7 @@ struct PolyArea{Dim,T,R<:Ring{Dim,T}} <: Polygon{Dim,T}
   end
 end
 
-PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,T,R<:Ring{Dim,T}} = PolyArea{Dim,T,R}(rings; fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,P<:Point{Dim},R<:Ring{Dim,P}} = PolyArea{Dim,P,R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
@@ -66,6 +66,8 @@ PolyArea(outer::Ring; fix=true) = PolyArea([outer]; fix)
 PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
 PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
+
+lentype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = lentype(R)
 
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 
@@ -103,9 +105,10 @@ function Base.show(io::IO, p::PolyArea)
   print(io, ")")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
+function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   rings = p.rings
-  println(io, "PolyArea{$Dim,$T}")
+  summary(io, p)
+  println(io)
   println(io, "  outer")
   print(io, "  └─ $(rings[1])")
   if length(rings) > 1
@@ -115,5 +118,4 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea{Dim,T}) where {Dim,T}
   end
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim,T}}) where {Dim,T} =
-  PolyArea(rand(rng, Ring{Dim,T}))
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim}}) where {Dim} = PolyArea(rand(rng, Ring{Dim}))

@@ -30,3 +30,6 @@ function (h::Hexahedron)(u, v, w)
     u * v * w * A8
   )
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Hexahedron{Dim}}) where {Dim} =
+  Hexahedron(ntuple(i -> rand(rng, Point{Dim}), 8))

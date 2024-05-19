@@ -7,7 +7,4 @@
 
 Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
 """
-function iscoplanar(A::Point{3,T}, B::Point{3,T}, C::Point{3,T}, D::Point{3,T}) where {T}
-  vol = volume(Tetrahedron(A, B, C, D))
-  isapprox(vol, zero(T), atol=atol(T))
-end
+iscoplanar(A::Point{3}, B::Point{3}, C::Point{3}, D::Point{3}) = isapproxzero(volume(Tetrahedron(A, B, C, D)))

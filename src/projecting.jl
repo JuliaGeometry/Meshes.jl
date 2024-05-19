@@ -34,6 +34,8 @@ function proj(points, basis)
   # project points
   map(points) do p
     d = p - c
-    Point(d ⋅ u, d ⋅ v)
+    x = udot(d, u)
+    y = udot(d, v)
+    Point(x, y)
   end
 end

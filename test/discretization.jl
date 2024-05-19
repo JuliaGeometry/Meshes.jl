@@ -1,6 +1,6 @@
 @testset "Discretization" begin
   @testset "FanTriangulation" begin
-    pts = P2[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.75, 1.5), (0.25, 1.5), (0.0, 1.0)]
+    pts = point.([(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.75, 1.5), (0.25, 1.5), (0.0, 1.0)])
     tris = [Triangle(pts[1], pts[i], pts[i + 1]) for i in 2:(length(pts) - 1)]
     hex = Hexagon(pts...)
     mesh = discretize(hex, FanTriangulation())
@@ -12,14 +12,14 @@
   end
 
   @testset "RegularDiscretization" begin
-    bezier = BezierCurve([P2(0, 0), P2(1, 0), P2(1, 1)])
+    bezier = BezierCurve([point(0, 0), point(1, 0), point(1, 1)])
     mesh = discretize(bezier, RegularDiscretization(10))
     @test nvertices(mesh) == 11
     @test nelements(mesh) == 10
     @test eltype(mesh) <: Segment
     @test nvertices.(mesh) ⊆ [2]
 
-    box = Box(P2(0, 0), P2(2, 2))
+    box = Box(point(0, 0), point(2, 2))
     mesh = discretize(box, RegularDiscretization(10))
     @test mesh isa CartesianGrid
     @test nvertices(mesh) == 121
@@ -27,14 +27,14 @@
     @test eltype(mesh) <: Quadrangle
     @test nvertices.(mesh) ⊆ [4]
 
-    sphere = Sphere(P2(0, 0), T(1))
+    sphere = Sphere(point(0, 0), T(1))
     mesh = discretize(sphere, RegularDiscretization(10))
     @test nvertices(mesh) == 10
     @test nelements(mesh) == 10
     @test eltype(mesh) <: Segment
     @test nvertices.(mesh) ⊆ [2]
 
-    sphere = Sphere(P3(0, 0, 0), T(1))
+    sphere = Sphere(point(0, 0, 0), T(1))
     mesh = discretize(sphere, RegularDiscretization(10))
     @test nvertices(mesh) == 11 * 10 + 2
     @test nelements(mesh) == 10 * 10 + 2 * 10
@@ -48,44 +48,44 @@
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    ball = Ball(P2(0, 0), T(1))
+    ball = Ball(point(0, 0), T(1))
     mesh = discretize(ball, RegularDiscretization(10))
     @test nvertices(mesh) == 11 * 10 + 1
     @test nelements(mesh) == 10 * 10 + 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    disk = Disk(Plane(P3(0, 0, 0), V3(0, 0, 1)), T(1))
+    disk = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(1))
     mesh = discretize(disk, RegularDiscretization(10))
     @test nvertices(mesh) == 11 * 10 + 1
     @test nelements(mesh) == 10 * 10 + 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    cylsurf = CylinderSurface(Plane(P3(0, 0, 0), V3(0, 0, 1)), Plane(P3(1, 1, 1), V3(0, 0, 1)), T(1))
+    cylsurf = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(1, 1, 1), vector(0, 0, 1)), T(1))
     mesh = discretize(cylsurf, RegularDiscretization(10))
     @test nvertices(mesh) == 10 * 11 + 2
     @test nelements(mesh) == 10 * 10 + 2 * 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    consurf = ConeSurface(Disk(Plane(P3(0, 0, 0), V3(0, 0, 1)), T(1)), P3(0, 0, 1))
+    consurf = ConeSurface(Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(1)), point(0, 0, 1))
     mesh = discretize(consurf, RegularDiscretization(10))
     @test nvertices(mesh) == 10 * 11 + 2
     @test nelements(mesh) == 10 * 10 + 2 * 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    parsurf = rand(ParaboloidSurface{T})
+    parsurf = rand(ParaboloidSurface)
     mesh = discretize(parsurf, RegularDiscretization(10))
     @test nvertices(mesh) == 10 * (10 + 1)
     @test nelements(mesh) == 10 * 10
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
-    poly = PolyArea(P2[(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)])
+    poly = PolyArea(point.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
     mesh = discretize(poly, RegularDiscretization(50))
-    @test mesh isa SubGrid{2,T}
+    @test mesh isa SubGrid{2}
     grid = parent(mesh)
     @test grid isa CartesianGrid
     @test eltype(mesh) <: Quadrangle
@@ -94,14 +94,14 @@
 
   @testset "Dehn1899" begin
     octa = Octagon(
-      P2(0.2, 0.2),
-      P2(0.5, -0.5),
-      P2(0.8, 0.2),
-      P2(1.5, 0.5),
-      P2(0.8, 0.8),
-      P2(0.5, 1.5),
-      P2(0.2, 0.8),
-      P2(-0.5, 0.5)
+      point(0.2, 0.2),
+      point(0.5, -0.5),
+      point(0.8, 0.2),
+      point(1.5, 0.5),
+      point(0.8, 0.8),
+      point(0.5, 1.5),
+      point(0.2, 0.8),
+      point(-0.5, 0.5)
     )
     mesh = discretize(octa, Dehn1899())
     @test nvertices(mesh) == 8
@@ -109,14 +109,14 @@
     @test eltype(mesh) <: Triangle
 
     octa = Octagon(
-      P3(0.2, 0.2, 0.0),
-      P3(0.5, -0.5, 0.0),
-      P3(0.8, 0.2, 0.0),
-      P3(1.5, 0.5, 0.0),
-      P3(0.8, 0.8, 0.0),
-      P3(0.5, 1.5, 0.0),
-      P3(0.2, 0.8, 0.0),
-      P3(-0.5, 0.5, 0.0)
+      point(0.2, 0.2, 0.0),
+      point(0.5, -0.5, 0.0),
+      point(0.8, 0.2, 0.0),
+      point(1.5, 0.5, 0.0),
+      point(0.8, 0.8, 0.0),
+      point(0.5, 1.5, 0.0),
+      point(0.2, 0.8, 0.0),
+      point(-0.5, 0.5, 0.0)
     )
     mesh = discretize(octa, Dehn1899())
     @test nvertices(mesh) == 8
@@ -125,20 +125,20 @@
   end
 
   @testset "FIST" begin
-    𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
+    𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
     @test Meshes.earsccw(𝒫) == [2, 4, 5]
 
-    𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (2, 1), (1, 2)])
+    𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (1, 2)]))
     @test Meshes.earsccw(𝒫) == [2, 4]
 
-    𝒫 = Ring(P2[(0, 0), (1, 0), (1, 1), (1, 2)])
+    𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (1, 2)]))
     @test Meshes.earsccw(𝒫) == [2, 4]
 
-    𝒫 = Ring(P2[(0, 0), (1, 1), (1, 2)])
+    𝒫 = Ring(point.([(0, 0), (1, 1), (1, 2)]))
     @test Meshes.earsccw(𝒫) == []
 
     𝒫 = Ring(
-      P2[
+      point.([
         (0.443339268495331, 0.283757618605357),
         (0.497822414616971, 0.398142813114205),
         (0.770343126156527, 0.201815462842808),
@@ -153,11 +153,11 @@
         (0.209843417261654, 0.590030658255966),
         (0.27993878548962, 0.525162463476181),
         (0.385557753911967, 0.322338556632868)
-      ]
+      ])
     )
     @test Meshes.earsccw(𝒫) == [1, 3, 5, 6, 8, 10, 12, 14]
 
-    points = P2[(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]
+    points = point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
     connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
     target = SimpleMesh(points, connec)
     poly = PolyArea(points)
@@ -168,7 +168,7 @@
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/675
     poly = PolyArea(
-      P2[
+      point.([
         (1.1794224993e7, 1.7289506814e7),
         (1.1794045018e7, 1.7289446822e7),
         (1.1793985026e7, 1.7289486817e7),
@@ -185,7 +185,7 @@
         (1.1794624937e7, 1.7289806772e7),
         (1.1794564946e7, 1.7289706786e7),
         (1.1794424965e7, 1.7289626797e7)
-      ]
+      ])
     )
     rng = StableRNG(123)
     mesh = discretize(poly, FIST(rng))
@@ -194,13 +194,13 @@
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/738
     poly = PolyArea(
-      P2[
+      point.([
         (-0.5, 0.3296139),
         (-0.19128194, -0.5),
         (-0.37872985, 0.29592824),
         (0.21377224, -0.0076110554),
         (-0.20127837, 0.24671146)
-      ]
+      ])
     )
     rng = StableRNG(123)
     mesh = discretize(poly, FIST(rng))
@@ -211,20 +211,20 @@
   @testset "Miscellaneous" begin
     rng = StableRNG(123)
     for method in [FIST(rng), Dehn1899()]
-      triangle = Triangle(P2(0, 0), P2(1, 0), P2(0, 1))
+      triangle = Triangle(point(0, 0), point(1, 0), point(0, 1))
       mesh = discretize(triangle, method)
-      @test vertices(mesh) == [P2(0, 0), P2(1, 0), P2(0, 1)]
+      @test vertices(mesh) == [point(0, 0), point(1, 0), point(0, 1)]
       @test collect(elements(mesh)) == [triangle]
 
-      quadrangle = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+      quadrangle = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
       mesh = discretize(quadrangle, method)
       elms = collect(elements(mesh))
-      @test vertices(mesh) == [P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1)]
+      @test vertices(mesh) == [point(0, 0), point(1, 0), point(1, 1), point(0, 1)]
       @test eltype(elms) <: Triangle
       @test length(elms) == 2
 
-      q = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
-      t = Triangle(P2(1, 0), P2(2, 1), P2(1, 1))
+      q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+      t = Triangle(point(1, 0), point(2, 1), point(1, 1))
       m = Multi([q, t])
       mesh = discretize(m, method)
       elms = collect(elements(mesh))
@@ -235,25 +235,25 @@
       @test eltype(elms) <: Triangle
       @test length(elms) == 3
 
-      outer = P2[(0, 0), (1, 0), (1, 1), (0, 1)]
-      hole1 = P2[(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]
-      hole2 = P2[(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]
+      outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
+      hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+      hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
       poly = PolyArea([outer, hole1, hole2])
       bpoly = poly |> Bridge(T(0.01))
       mesh = discretizewithin(boundary(bpoly), method)
       @test nvertices(mesh) == 16
       @test nelements(mesh) == 14
-      @test all(t -> area(t) > zero(T), mesh)
+      @test all(t -> area(t) > zero(ℳ)^2, mesh)
 
       # 3D chains
-      chain = Ring(P3[(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 1)])
+      chain = Ring(point.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 1)]))
       mesh = discretizewithin(chain, method)
       @test vertices(mesh) == vertices(chain)
       @test eltype(mesh) <: Triangle
       @test nelements(mesh) == 2
 
       # preserves order of vertices
-      poly = Quadrangle(P3(0, 1, 0), P3(1, 1, 0), P3(1, 0, 0), P3(0, 0, 0))
+      poly = Quadrangle(point(0, 1, 0), point(1, 1, 0), point(1, 0, 0), point(0, 0, 0))
       mesh = simplexify(poly)
       @test pointify(mesh) == pointify(poly)
     end
@@ -346,7 +346,7 @@
 
     if T == Float64
       poly = PolyArea(
-        P2[
+        point.([
           (-48.03012478813999, -18.323912004531923),
           (-48.030125176275845, -18.323904748608573),
           (-48.03017873307118, -18.323925747019675),
@@ -355,7 +355,7 @@
           (-48.03017951837907, -18.323938343610457),
           (-48.030124261780436, -18.32392184444903),
           (-48.0301218833633, -18.323910661117687)
-        ]
+        ])
       )
       mesh = discretize(poly)
       @test nvertices(mesh) == 8
@@ -363,16 +363,16 @@
     end
 
     # degenerate triangle
-    poly = PolyArea(P2[(0, 0), (1, 1), (1, 1)])
+    poly = PolyArea(point.([(0, 0), (1, 1), (1, 1)]))
     mesh = discretize(poly)
     @test nvertices(mesh) == 3
     @test nelements(mesh) == 1
-    @test vertices(mesh) == [P2(0, 0), P2(0, 0), P2(0, 0)]
-    @test mesh[1] == Triangle(P2(0, 0), P2(0, 0), P2(0, 0))
+    @test vertices(mesh) == [point(0, 0), point(0, 0), point(0, 0)]
+    @test mesh[1] == Triangle(point(0, 0), point(0, 0), point(0, 0))
   end
 
   @testset "Tetrahedralization" begin
-    box = Box(P3(0, 0, 0), P3(1, 1, 1))
+    box = Box(point(0, 0, 0), point(1, 1, 1))
     hexa = Hexahedron(pointify(box)...)
     bmesh = discretize(box, Tetrahedralization())
     hmesh = discretize(hexa, Tetrahedralization())
@@ -382,13 +382,13 @@
   end
 
   @testset "Discretize" begin
-    ball = Ball(P2(0, 0), T(1))
+    ball = Ball(point(0, 0), T(1))
     mesh = discretize(ball)
     @test !(eltype(mesh) <: Triangle)
     @test !(eltype(mesh) <: Quadrangle)
     @test nelements(mesh) == 2550
 
-    sphere = Sphere(P3(0, 0, 0), T(1))
+    sphere = Sphere(point(0, 0, 0), T(1))
     mesh = discretize(sphere)
     @test !(eltype(mesh) <: Triangle)
     @test !(eltype(mesh) <: Quadrangle)
@@ -403,7 +403,7 @@
     grid = CartesianGrid(10)
     @test discretize(grid) == grid
 
-    mesh = SimpleMesh(rand(P2, 3), connect.([(1, 2, 3)]))
+    mesh = SimpleMesh(randpoint2(3), connect.([(1, 2, 3)]))
     @test discretize(mesh) == mesh
   end
 
@@ -411,50 +411,50 @@
     # simplexify is a helper function that calls an
     # appropriate discretization method depending on
     # the geometry type that is given to it
-    box = Box(P1(0), P1(1))
+    box = Box(point(0), point(1))
     msh = simplexify(box)
     @test eltype(msh) <: Segment
     @test topology(msh) == GridTopology(1)
     @test nvertices(msh) == 2
     @test nelements(msh) == 1
-    @test msh[1] == Segment(P1(0), P1(1))
+    @test msh[1] == Segment(point(0), point(1))
 
-    seg = Segment(P1(0), P1(1))
+    seg = Segment(point(0), point(1))
     msh = simplexify(seg)
     @test eltype(msh) <: Segment
     @test topology(msh) == GridTopology(1)
     @test nvertices(msh) == 2
     @test nelements(msh) == 1
-    @test msh[1] == Segment(P1(0), P1(1))
+    @test msh[1] == Segment(point(0), point(1))
 
-    chn = Rope(P2[(0, 0), (1, 0), (1, 1)])
+    chn = Rope(point.([(0, 0), (1, 0), (1, 1)]))
     msh = simplexify(chn)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == 3
     @test nelements(msh) == 2
-    @test msh[1] == Segment(P2(0, 0), P2(1, 0))
-    @test msh[2] == Segment(P2(1, 0), P2(1, 1))
-    chn = Ring(P2[(0, 0), (1, 0), (1, 1)])
+    @test msh[1] == Segment(point(0, 0), point(1, 0))
+    @test msh[2] == Segment(point(1, 0), point(1, 1))
+    chn = Ring(point.([(0, 0), (1, 0), (1, 1)]))
     msh = simplexify(chn)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == 3
     @test nelements(msh) == 3
-    @test msh[1] == Segment(P2(0, 0), P2(1, 0))
-    @test msh[2] == Segment(P2(1, 0), P2(1, 1))
-    @test msh[3] == Segment(P2(1, 1), P2(0, 0))
+    @test msh[1] == Segment(point(0, 0), point(1, 0))
+    @test msh[2] == Segment(point(1, 0), point(1, 1))
+    @test msh[3] == Segment(point(1, 1), point(0, 0))
 
-    sph = Sphere(P2(0, 0), T(1))
+    sph = Sphere(point(0, 0), T(1))
     msh = simplexify(sph)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == nelements(msh)
 
-    bez = BezierCurve(P2[(0, 0), (1, 0), (1, 1)])
+    bez = BezierCurve(point.([(0, 0), (1, 0), (1, 1)]))
     msh = simplexify(bez)
     @test eltype(msh) <: Segment
     @test nvertices(msh) == nelements(msh) + 1
 
-    box = Box(P2(0, 0), P2(1, 1))
-    ngon = Quadrangle(P2(0, 0), P2(1, 0), P2(1, 1), P2(0, 1))
+    box = Box(point(0, 0), point(1, 1))
+    ngon = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
     for geom in [box, ngon, poly]
       bound = boundary(geom)
@@ -464,38 +464,38 @@
     end
 
     # triangulation of multi geometries
-    box1 = Box(P2(0, 0), P2(1, 1))
-    box2 = Box(P2(1, 1), P2(2, 2))
+    box1 = Box(point(0, 0), point(1, 1))
+    box2 = Box(point(1, 1), point(2, 2))
     multi = Multi([box1, box2])
     mesh = simplexify(multi)
     @test nvertices(mesh) == 8
     @test nelements(mesh) == 4
 
     # triangulation of spheres
-    sphere = Sphere(P3(0, 0, 0), T(1))
+    sphere = Sphere(point(0, 0, 0), T(1))
     mesh = simplexify(sphere)
     @test eltype(mesh) <: Triangle
     xs = coordinates.(vertices(mesh))
-    @test all(x -> norm(x) ≈ T(1), xs)
+    @test all(x -> norm(x) ≈ oneunit(ℳ), xs)
 
     # triangulation of cylinder surfaces
     cylsurf = CylinderSurface(T(1))
     mesh = simplexify(cylsurf)
     @test eltype(mesh) <: Triangle
     xs = coordinates.(vertices(mesh))
-    @test all(x -> T(-1) ≤ x[1] ≤ T(1), xs)
-    @test all(x -> T(-1) ≤ x[2] ≤ T(1), xs)
-    @test all(x -> T(0) ≤ x[3] ≤ T(1), xs)
+    @test all(x -> -oneunit(ℳ) ≤ x[1] ≤ oneunit(ℳ), xs)
+    @test all(x -> -oneunit(ℳ) ≤ x[2] ≤ oneunit(ℳ), xs)
+    @test all(x -> zero(ℳ) ≤ x[3] ≤ oneunit(ℳ), xs)
 
     # triangulation of balls
-    ball = Ball(P2(0, 0), T(1))
+    ball = Ball(point(0, 0), T(1))
     mesh = simplexify(ball)
     @test eltype(mesh) <: Triangle
     xs = coordinates.(vertices(mesh))
-    @test all(x -> norm(x) ≤ T(1) + eps(T), xs)
+    @test all(x -> norm(x) ≤ oneunit(ℳ) + eps(T) * u"m", xs)
 
     # triangulation of meshes
-    grid = CartesianGrid{T}(3, 3)
+    grid = cartgrid(3, 3)
     mesh = simplexify(grid)
     gpts = vertices(grid)
     mpts = vertices(mesh)
@@ -506,12 +506,12 @@
     @test measure(mesh) == measure(grid)
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/499
-    quad = Quadrangle(P3(0, 1, -1), P3(0, 1, 1), P3(0, -1, 1), P3(0, -1, -1))
+    quad = Quadrangle(point(0, 1, -1), point(0, 1, 1), point(0, -1, 1), point(0, -1, -1))
     mesh = simplexify(quad)
     @test vertices(mesh) == pointify(quad)
 
     if visualtests
-      grid = CartesianGrid{T}(3, 3)
+      grid = cartgrid(3, 3)
       mesh = simplexify(grid)
       fig = Mke.Figure(size=(600, 300))
       viz(fig[1, 1], grid, showsegments=true)
@@ -520,7 +520,7 @@
     end
 
     # tetrahedralization
-    box = Box(P3(0, 0, 0), P3(1, 1, 1))
+    box = Box(point(0, 0, 0), point(1, 1, 1))
     hex = Hexahedron(pointify(box)...)
     bmesh = simplexify(box)
     hmesh = simplexify(hex)
