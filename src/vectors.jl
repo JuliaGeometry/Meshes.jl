@@ -79,6 +79,12 @@ end
 
 ∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v) # discard sign
 
+# -----------
+# IO METHODS
+# -----------
+
+valrepr(vec::Vec; kwargs...) = repr(vec; kwargs...)
+
 function Base.show(io::IO, v::Vec)
   if get(io, :compact, false)
     print(io, v.coords)
