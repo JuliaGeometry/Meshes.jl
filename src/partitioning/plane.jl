@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    PlanePartition(normal; tol=1e-6)
+    PlanePartition(normal; [tol])
 
 A method for partitioning spatial objects into a family of hyperplanes
 defined by a `normal` direction. Two points `x` and `y` belong to the same
@@ -17,8 +17,8 @@ end
 
 PlanePartition(normal::Vec, tol) = PlanePartition(normal, addunit(tol, u"m"))
 
-PlanePartition(normal::Vec; tol=1e-6u"m") = PlanePartition(normal, tol)
+PlanePartition(normal::Vec; tol=atol(eltype(normal))) = PlanePartition(normal, tol)
 
-PlanePartition(normal::Tuple; tol=1e-6u"m") = PlanePartition(Vec(normal), tol)
+PlanePartition(normal::Tuple; kwargs...) = PlanePartition(Vec(normal); kwargs...)
 
-(p::PlanePartition)(x, y) = abs((x - y) ⋅ p.normal) < p.tol^2
+(p::PlanePartition)(x, y) = abs(udot(x - y, p.normal)) < p.tol
