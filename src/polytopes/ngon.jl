@@ -83,7 +83,7 @@ signarea(::Triangle{3}) = error("signed area only defined for triangles embedded
 
 function normal(t::Triangle{3})
   A, B, C = t.vertices
-  ucross((B - A), (C - A)) / 2
+  unormalize(ucross((B - A), (C - A)))
 end
 
 function (t::Triangle)(u, v)
