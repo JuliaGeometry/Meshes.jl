@@ -38,7 +38,7 @@ function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; ma
   inds, dists = knn(tree, ustrip.(coordinates(pₒ)), k, true)
 
   # keep neighbors inside ball
-  keep = dists .≤ dmax
+  keep = dists .≤ ustrip(dmax)
 
   # possibly mask some of the neighbors
   isnothing(mask) || (keep .*= mask[inds])

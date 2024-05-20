@@ -24,12 +24,17 @@ or blue noise sampling in the computer graphics community.
 * Medeiros et al. 2014. [Fast adaptive blue noise on polygonal surfaces]
   (https://www.sciencedirect.com/science/article/abs/pii/S1524070313000313)
 """
-struct MinDistanceSampling{T,M} <: ContinuousSamplingMethod
-  α::T
-  ρ::T
+struct MinDistanceSampling{ℒ<:Len,M} <: ContinuousSamplingMethod
+  α::ℒ
+  ρ::ℒ
   δ::Int
   metric::M
+  MinDistanceSampling(α::ℒ, ρ::ℒ, δ, metric::M) where {ℒ<:Len,M} = new{float(ℒ),M}(α, ρ, δ, metric)
 end
+
+MinDistanceSampling(α::Len, ρ::Len, δ, metric) = MinDistanceSampling(promote(α, ρ)..., δ, metric)
+
+MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(addunit(α, u"m"), addunit(ρ, u"m"), δ, metric)
 
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
