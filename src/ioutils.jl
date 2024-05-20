@@ -63,7 +63,7 @@ function printfields(io, obj, fnames; singleline=false)
   if singleline
     vals = map(enumerate(fnames)) do (i, field)
       val = getfield(obj, i)
-      str = repr(val, context=io)
+      str = valrepr(val, context=io)
       "$field: $str"
     end
     join(io, vals, ", ")
@@ -72,8 +72,11 @@ function printfields(io, obj, fnames; singleline=false)
     for (i, field) in enumerate(fnames)
       div = i == len ? "\n└─ " : "\n├─ "
       val = getfield(obj, i)
-      str = repr(val, context=io)
+      str = valrepr(val, context=io)
       print(io, "$div$field: $str")
     end
   end
 end
+
+valrepr(val; kwargs...) = repr(val; kwargs...)
+valrepr(vec::AbstractVector; kwargs...) = "[" * join((repr(v; kwargs...) for v in vec), ", ") * "]"
