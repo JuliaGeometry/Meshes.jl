@@ -27,7 +27,7 @@ function partitioninds(::AbstractRNG, domain::Domain, method::BisectPointPartiti
   left, right = Int[], Int[]
   for location in 1:nelements(domain)
     pₒ = centroid(domain, location)
-    if (pₒ - p) ⋅ n < zero(lentype(domain))^2
+    if isnegative((pₒ - p) ⋅ n)
       push!(left, location)
     else
       push!(right, location)

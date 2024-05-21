@@ -16,10 +16,10 @@ function Base.in(p::Point{Dim}, s::Segment{Dim}) where {Dim}
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = vertices(s)
   ab, ap = b - a, p - a
-  iscollinear(a, b, p) && zero(lentype(p))^2 ≤ ab ⋅ ap ≤ ab ⋅ ab
+  iscollinear(a, b, p) && (abap = ab ⋅ ap; isnonnegative(abap) && abap ≤ ab ⋅ ab)
 end
 
-Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && (p - r(0)) ⋅ (r(1) - r(0)) ≥ zero(lentype(p))^2
+Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && isnonnegative((p - r(0)) ⋅ (r(1) - r(0)))
 
 function Base.in(p::Point, l::Line)
   w = norm(l(1) - l(0))
@@ -64,33 +64,30 @@ function Base.in(p::Point{3}, c::Circle)
 end
 
 function Base.in(p::Point{3}, c::Cone)
-  z = zero(lentype(p))^2
   a = apex(c)
   b = center(base(c))
   ax = a - b
-  (a - p) ⋅ ax ≥ z || return false
-  (b - p) ⋅ ax ≤ z || return false
+  isnonnegative((a - p) ⋅ ax) || return false
+  isnonpositive((b - p) ⋅ ax) || return false
   ∠(b, a, p) ≤ halfangle(c)
 end
 
 function Base.in(p::Point{3}, c::Cylinder)
-  z = zero(lentype(p))^2
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
   r = radius(c)
   a = t - b
-  (p - b) ⋅ a ≥ z || return false
-  (p - t) ⋅ a ≤ z || return false
+  isnonnegative((p - b) ⋅ a) || return false
+  isnonpositive((p - t) ⋅ a) || return false
   norm((p - b) × a) / norm(a) ≤ r
 end
 
 function Base.in(p::Point{3}, f::Frustum)
-  z = zero(lentype(p))^2
   t = center(top(f))
   b = center(bottom(f))
   ax = b - t
-  (p - t) ⋅ ax ≥ z || return false
-  (p - b) ⋅ ax ≤ z || return false
+  isnonnegative((p - t) ⋅ ax) || return false
+  isnonpositive((p - b) ⋅ ax) || return false
   # axial distance of p
   ad = (p - t) ⋅ normalize(ax)
   adrel = ad / norm(ax)
