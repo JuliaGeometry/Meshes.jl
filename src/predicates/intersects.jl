@@ -124,7 +124,6 @@ See also [`intersects`](@ref).
 function gjk! end
 
 function gjk!(O::Point{2}, points)
-  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -153,7 +152,6 @@ function gjk!(O::Point{2}, points)
 end
 
 function gjk!(O::Point{3}, points)
-  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
