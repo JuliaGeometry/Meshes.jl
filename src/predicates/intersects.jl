@@ -97,7 +97,7 @@ function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
   d = O - P
   while true
     P = minkowskipoint(g₁, g₂, d)
-    if (P - O) ⋅ d < zero(ℒ)^2
+    if isnegative((P - O) ⋅ d)
       return false
     end
     push!(points, P)
@@ -124,7 +124,6 @@ See also [`intersects`](@ref).
 function gjk! end
 
 function gjk!(O::Point{2}, points)
-  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -139,10 +138,10 @@ function gjk!(O::Point{2}, points)
     AO = O - A
     ABᵀ = -perphint(AB, AC)
     ACᵀ = -perphint(AC, AB)
-    if ABᵀ ⋅ AO > zero(ℒ)^2
+    if ispositive(ABᵀ ⋅ AO)
       popat!(points, 1) # pop C
       d = ABᵀ
-    elseif ACᵀ ⋅ AO > zero(ℒ)^2
+    elseif ispositive(ACᵀ ⋅ AO)
       popat!(points, 2) # pop B
       d = ACᵀ
     else
@@ -153,7 +152,6 @@ function gjk!(O::Point{2}, points)
 end
 
 function gjk!(O::Point{3}, points)
-  ℒ = lentype(O)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -167,7 +165,7 @@ function gjk!(O::Point{3}, points)
     AC = C - A
     AO = O - A
     ABCᵀ = ucross(AB, AC)
-    if ABCᵀ ⋅ AO < zero(ℒ)^2
+    if isnegative(ABCᵀ ⋅ AO)
       points[1], points[2] = points[2], points[1]
       ABCᵀ = -ABCᵀ
     end
@@ -192,13 +190,13 @@ function gjk!(O::Point{3}, points)
     ABCᵀ = ucross(AB, AC)
     ADBᵀ = ucross(AD, AB)
     ACDᵀ = ucross(AC, AD)
-    if ABCᵀ ⋅ AO > zero(ℒ)^2
+    if ispositive(ABCᵀ ⋅ AO)
       popat!(points, 1) # pop D
       d = ABCᵀ
-    elseif ADBᵀ ⋅ AO > zero(ℒ)^2
+    elseif ispositive(ADBᵀ ⋅ AO)
       popat!(points, 2) # pop C
       d = ADBᵀ
-    elseif ACDᵀ ⋅ AO > zero(ℒ)^2
+    elseif ispositive(ACDᵀ ⋅ AO)
       popat!(points, 3) # pop B
       d = ACDᵀ
     else

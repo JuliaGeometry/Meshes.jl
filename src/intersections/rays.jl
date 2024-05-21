@@ -11,7 +11,6 @@
 # 5. overlap with colliding vectors (NegOverlapping -> Segment)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
-  ℒ = lentype(ray₁)
   a, b = ray₁(0), ray₁(1)
   c, d = ray₂(0), ray₂(1)
 
@@ -28,8 +27,8 @@ function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
     return @IT NotIntersecting nothing f #CASE 6
   # collinear
   elseif r == rₐ == 1
-    if (b - a) ⋅ (d - c) ≥ zero(ℒ)^2 # rays aligned in same direction
-      if (a - c) ⋅ (b - a) ≥ zero(ℒ)^2 # origin of ray₁ ∈ ray₂
+    if isnonnegative((b - a) ⋅ (d - c)) # rays aligned in same direction
+      if isnonnegative((a - c) ⋅ (b - a)) # origin of ray₁ ∈ ray₂
         return @IT PosOverlapping ray₁ f # CASE 4: ray₁
       else
         return @IT PosOverlapping ray₂ f # CASE 4: ray₂
