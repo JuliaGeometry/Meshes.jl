@@ -77,7 +77,7 @@ function svdbasis(p::AbstractVector{<:Point{3}})
   u = Vec(U[:, 1]...)
   v = Vec(U[:, 2]...)
   n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
-  (u × v) ⋅ n < zero(ℒ)^3 ? (v, u) : (u, v)
+  isnegative((u × v) ⋅ n) ? (v, u) : (u, v)
 end
 
 """
@@ -160,6 +160,11 @@ end
 isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
 isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
 isapproxone(x) = isapprox(x, oneunit(x), atol=atol(x))
+
+ispositive(x) = x > zero(x)
+isnegative(x) = x < zero(x)
+isnonpositive(x) = x ≤ zero(x)
+isnonnegative(x) = x ≥ zero(x)
 
 # Function wrappers that handle units
 # The result units of some operations, such as dot and cross, 
