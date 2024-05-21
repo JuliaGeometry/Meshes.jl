@@ -13,13 +13,16 @@ according to a norm-ball of given `radius`.
 * `metric`  - Metric for the ball (default to `Euclidean()`)
 * `maxsize` - Maximum size of the resulting sample (default to none)
 """
-struct BallSampling{T,M} <: DiscreteSamplingMethod
-  radius::T
+struct BallSampling{ℒ<:Len,M} <: DiscreteSamplingMethod
+  radius::ℒ
   metric::M
   maxsize::Union{Int,Nothing}
+  BallSampling(radius::ℒ, metric::M, maxsize) where {ℒ<:Len,M} = new{float(ℒ),M}(radius, metric, maxsize)
 end
 
-BallSampling(radius; metric=Euclidean(), maxsize=nothing) = BallSampling(radius, metric, maxsize)
+BallSampling(radius::Len; metric=Euclidean(), maxsize=nothing) = BallSampling(radius, metric, maxsize)
+
+BallSampling(radius; kwargs...) = BallSampling(addunit(radius, u"m"); kwargs...)
 
 function sampleinds(rng::AbstractRNG, d::Domain, method::BallSampling)
   radius = method.radius

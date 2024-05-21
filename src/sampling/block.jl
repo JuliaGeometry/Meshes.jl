@@ -12,9 +12,14 @@ A method for sampling objects that are `sides` apart using a
 
 Alternatively, specify the sides `side₁`, `side₂`, ..., `sideₙ`.
 """
-struct BlockSampling{S} <: DiscreteSamplingMethod
-  sides::S
+struct BlockSampling{Dim,ℒ<:Len} <: DiscreteSamplingMethod
+  sides::NTuple{Dim,ℒ}
+  BlockSampling(sides::NTuple{Dim,ℒ}) where {Dim,ℒ<:Len} = new{Dim,float(ℒ)}(sides)
 end
+
+BlockSampling(sides::NTuple{Dim,Len}) where {Dim} = BlockSampling(promote(sides...))
+
+BlockSampling(sides::Tuple) = BlockSampling(addunit.(sides, u"m"))
 
 BlockSampling(sides...) = BlockSampling(sides)
 
