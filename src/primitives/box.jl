@@ -39,7 +39,7 @@ Base.maximum(b::Box) = b.max
 
 Base.extrema(b::Box) = b.min, b.max
 
-center(b::Box) = Point((coordinates(b.max) + coordinates(b.min)) / 2)
+center(b::Box) = Point(coordinates((fromorigin(b.max) + fromorigin(b.min)) / 2))
 
 diagonal(b::Box) = norm(b.max - b.min)
 

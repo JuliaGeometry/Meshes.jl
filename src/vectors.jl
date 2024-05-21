@@ -58,6 +58,13 @@ function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T
 end
 
 """
+    coordinates(coords)
+
+Return the `Cartesian` coordinates of the `coords`.
+"""
+coordinates(coords::StaticVector) = Cartesian(Tuple(coords))
+
+"""
     ∠(u, v)
 
 Angle between vectors `u` and `v`.
@@ -78,6 +85,10 @@ function ∠(u::Vec{2}, v::Vec{2}) # preserve sign
 end
 
 ∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v) # discard sign
+
+# -----------
+# IO METHODS
+# -----------
 
 function Base.show(io::IO, v::Vec)
   if get(io, :compact, false)

@@ -34,7 +34,7 @@ reapply(t::StdCoords, g::GeometryOrDomain, c) = reapply(c[1], g, c[2])
 
 function _stdcoords(t, g)
   b = boundingbox(g)
-  t = Translate(coordinates(center(b))...)
+  t = Translate(fromorigin(center(b))...)
   s = Scale(ustrip.(sides(b)))
   inverse(t) → inverse(s)
 end
