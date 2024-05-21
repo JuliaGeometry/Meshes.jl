@@ -29,7 +29,7 @@ function search(pₒ::Point, method::BallSearch; mask=nothing)
   tree = method.tree
   dmax = radius(method.ball)
 
-  inds = inrange(tree, ustrip.(coordinates(pₒ)), dmax)
+  inds = inrange(tree, ustrip.(coordinates(pₒ)), ustrip(dmax))
 
   if isnothing(mask)
     inds

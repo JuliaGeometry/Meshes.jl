@@ -31,20 +31,25 @@ Axis-aligned 3D ellipsoid with radii `(3.0, 2.0, 1.0)`:
 julia> mahalanobis = MetricBall((3.0, 2.0, 1.0))
 ```
 """
-struct MetricBall{ℒ,R,M} <: Neighborhood
-  radii::ℒ
+struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
+  radii::SVector{Dim,ℒ}
   rotation::R
 
   # state fields
   metric::M
+
+  MetricBall(radii::SVector{Dim,ℒ}, rotation::R, metric::M) where {Dim,ℒ<:Len,R,M} =
+    new{Dim,float(ℒ),R,M}(radii, rotation, metric)
 end
 
-function MetricBall(radii::SVector{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where {Dim,T}
+MetricBall(radii::SVector, rotation, metric) = MetricBall(addunit(radii, u"m"), rotation, metric)
+
+function MetricBall(radii::SVector{Dim,ℒ}, rotation=nothing) where {Dim,ℒ<:Len}
   # scaling matrix
-  Λ = Diagonal(one(T) ./ radii .^ 2)
+  Λ = Diagonal((oneunit(ℒ) ./ radii) .^ 2)
 
   # rotation matrix
-  R = rotation
+  R = isnothing(rotation) ? default_rotation(Val(Dim), numtype(ℒ)) : rotation
 
   # anisotropy matrix
   M = Symmetric(R * Λ * R')
@@ -52,17 +57,17 @@ function MetricBall(radii::SVector{Dim,T}, rotation=default_rotation(Val{Dim}(),
   # Mahalanobis metric
   metric = Mahalanobis(M)
 
-  MetricBall(radii, rotation, metric)
+  MetricBall(radii, R, metric)
 end
 
-MetricBall(radii::NTuple{Dim,T}, rotation=default_rotation(Val{Dim}(), T)) where {Dim,T} =
-  MetricBall(SVector(radii), rotation)
+MetricBall(radii::SVector, rotation=nothing) = MetricBall(addunit(radii, u"m"), rotation)
+
+MetricBall(radii::Tuple, rotation=nothing) = MetricBall(SVector(radii), rotation)
 
 # avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=default_rotation(Val{length(radii)}(), T)) where {T} =
-  MetricBall(SVector{length(radii),T}(radii), rotation)
+MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} = MetricBall(SVector{length(radii),T}(radii), rotation)
 
-MetricBall(radius::T, metric=Euclidean()) where {T<:Number} = MetricBall(SVector(radius), nothing, metric)
+MetricBall(radius::Number, metric=Euclidean()) = MetricBall(SVector(radius), nothing, metric)
 
 default_rotation(::Val{2}, T) = one(Angle2d{T})
 default_rotation(::Val{3}, T) = one(QuatRotation{T})
