@@ -16,7 +16,8 @@ function Base.in(p::Point{Dim}, s::Segment{Dim}) where {Dim}
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = vertices(s)
   ab, ap = b - a, p - a
-  iscollinear(a, b, p) && (abap = ab ⋅ ap; isnonnegative(abap) && abap ≤ ab ⋅ ab)
+  iscollinear(a, b, p) && (abap = ab ⋅ ap;
+  isnonnegative(abap) && abap ≤ ab ⋅ ab)
 end
 
 Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && isnonnegative((p - r(0)) ⋅ (r(1) - r(0)))
