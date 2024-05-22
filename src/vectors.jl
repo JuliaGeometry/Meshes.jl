@@ -58,11 +58,11 @@ function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T
 end
 
 """
-    coordinates(coords)
+    coordinates(vec)
 
-Return the `Cartesian` coordinates of the `coords`.
+Return the coordinates of the `vec`.
 """
-coordinates(coords::StaticVector) = Cartesian(Tuple(coords))
+coordinates(vec::StaticVector) = Cartesian(Tuple(vec))
 
 """
     ∠(u, v)
