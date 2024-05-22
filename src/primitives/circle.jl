@@ -28,10 +28,10 @@ A circle passing through points `p1`, `p2` and `p3`.
 function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   v12 = p2 - p1
   v13 = p3 - p1
-  m12 = fromorigin(p1 + v12 / 2)
-  m13 = fromorigin(p1 + v13 / 2)
+  m12 = to(p1 + v12 / 2)
+  m13 = to(p1 + v13 / 2)
   n⃗ = normal(Plane(p1, p2, p3))
-  F = fromorigin(p1) ⋅ n⃗
+  F = to(p1) ⋅ n⃗
   M = transpose([n⃗ v12 v13])
   u = [F, m12 ⋅ v12, m13 ⋅ v13]
   O = Point(coordinates(uinv(M) * u))

@@ -34,8 +34,8 @@ function boundingbox(r::Ray)
   upper(p, v) = v > zero(v) ? typemax(p) : p
   p = r(0)
   v = r(1) - r(0)
-  l = lower.(fromorigin(p), v)
-  u = upper.(fromorigin(p), v)
+  l = lower.(to(p), v)
+  u = upper.(to(p), v)
   Box(Point(coordinates(l)), Point(coordinates(u)))
 end
 
@@ -94,7 +94,7 @@ function _pboxes(points)
   xmin = MVector(ntuple(i -> typemax(ℒ), Dim))
   xmax = MVector(ntuple(i -> typemin(ℒ), Dim))
   for p in points
-    x = fromorigin(p)
+    x = to(p)
     @. xmin = min(x, xmin)
     @. xmax = max(x, xmax)
   end

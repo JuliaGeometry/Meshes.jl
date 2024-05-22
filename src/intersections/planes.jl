@@ -7,8 +7,8 @@ function intersection(f, plane1::Plane, plane2::Plane)
   u = unit(lentype(plane1))
   n1 = ustrip.(normal(plane1))
   n2 = ustrip.(normal(plane2))
-  o1 = ustrip.(fromorigin(plane1.p))
-  o2 = ustrip.(fromorigin(plane2.p))
+  o1 = ustrip.(to(plane1.p))
+  o2 = ustrip.(to(plane2.p))
   n1n2 = n1 ⋅ n2
 
   if isapproxone(abs(n1n2))

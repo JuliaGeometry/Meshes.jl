@@ -101,8 +101,8 @@ end
 function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
   ℒ = lentype(ray)
   invdir = inv.(ray(1) - ray(0))
-  lo, up = fromorigin.(extrema(box))
-  orig = fromorigin(ray(0))
+  lo, up = to.(extrema(box))
+  orig = to(ray(0))
 
   T = numtype(ℒ)
   tmin = zero(T)

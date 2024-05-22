@@ -10,8 +10,8 @@
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, box₁::Box{Dim}, box₂::Box{Dim}) where {Dim}
   # retrieve corner points
-  m1, M1 = fromorigin.(extrema(box₁))
-  m2, M2 = fromorigin.(extrema(box₂))
+  m1, M1 = to.(extrema(box₁))
+  m2, M2 = to.(extrema(box₂))
 
   # relevant vertices
   u = Point(coordinates(max.(m1, m2)))

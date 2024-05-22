@@ -61,11 +61,11 @@ Return the coordinates of the `point`.
 coordinates(A::Point) = A.coords
 
 """
-    fromorigin(point)
+    to(point)
 
-Return the vector from origin of the `point`.
+Return the vector from the origin to the `point`.
 """
-fromorigin(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords))
+to(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords))
 
 """
     -(A::Point, B::Point)
@@ -73,7 +73,7 @@ fromorigin(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = fromorigin(A) - fromorigin(B)
+-(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = to(A) - to(B)
 
 """
     +(A::Point, v::Vec)
@@ -82,7 +82,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(fromorigin(A) + v))
++(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(to(A) + v))
 +(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A + v
 
 """
@@ -92,7 +92,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(fromorigin(A) - v))
+-(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(to(A) - v))
 -(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A - v
 
 """

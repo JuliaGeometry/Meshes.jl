@@ -19,7 +19,7 @@ function (t::Tetrahedron)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1) || (z < 0 || z > 1)
     throw(DomainError((u, v, w), "invalid barycentric coordinates for tetrahedron."))
   end
-  v₁, v₂, v₃, v₄ = fromorigin.(t.vertices)
+  v₁, v₂, v₃, v₄ = to.(t.vertices)
   Point(coordinates(v₁ * z + v₂ * u + v₃ * v + v₄ * w))
 end
 

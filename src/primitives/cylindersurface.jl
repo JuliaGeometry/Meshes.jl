@@ -65,8 +65,8 @@ bottom(c::CylinderSurface) = c.bot
 top(c::CylinderSurface) = c.top
 
 function center(c::CylinderSurface)
-  a = fromorigin(c.bot(0, 0))
-  b = fromorigin(c.top(0, 0))
+  a = to(c.bot(0, 0))
+  b = to(c.top(0, 0))
   Point(coordinates((a .+ b) ./ 2))
 end
 
@@ -120,7 +120,7 @@ function (c::CylinderSurface)(φ, z)
   pₜ = Point(rcφ, rsφ, zₜ)
 
   p = pᵦ + T(z) * (pₜ - pᵦ)
-  o + Q' * fromorigin(p)
+  o + Q' * to(p)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface}) =

@@ -48,7 +48,7 @@ function Base.unique!(m::Multi)
 end
 
 function centroid(m::Multi)
-  cs = fromorigin.(centroid.(m.geoms))
+  cs = to.(centroid.(m.geoms))
   Point(coordinates(sum(cs) / length(cs)))
 end
 

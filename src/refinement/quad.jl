@@ -22,7 +22,7 @@ function refine(mesh, ::QuadRefinement)
   ∂₂₀ = Boundary{2,0}(t)
   epts = map(1:nelements(t)) do elem
     ps = view(points, ∂₂₀(elem))
-    cₒ = sum(fromorigin, ps) / length(ps)
+    cₒ = sum(to, ps) / length(ps)
     Point(coordinates(cₒ))
   end
 
@@ -30,7 +30,7 @@ function refine(mesh, ::QuadRefinement)
   ∂₁₀ = Boundary{1,0}(t)
   fpts = map(1:nfacets(t)) do edge
     ps = view(points, ∂₁₀(edge))
-    cₒ = sum(fromorigin, ps) / length(ps)
+    cₒ = sum(to, ps) / length(ps)
     Point(coordinates(cₒ))
   end
 

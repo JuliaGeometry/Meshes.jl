@@ -89,7 +89,7 @@ function (curve::BezierCurve)(t, ::Horner)
   cs = curve.controls
   t̄ = one(T) - t
   n = degree(curve)
-  pₙ = fromorigin(last(cs))
+  pₙ = to(last(cs))
   aₙ = pₙ
 
   # initialization with i = n + 1, so bᵢ₋₁ = bₙ = aₙ
@@ -98,7 +98,7 @@ function (curve::BezierCurve)(t, ::Horner)
   t̄ⁿ⁻ⁱ = one(T)
   for i in n:-1:1
     cᵢ₋₁ *= i / (n - i + one(T))
-    pᵢ₋₁ = fromorigin(cs[i])
+    pᵢ₋₁ = to(cs[i])
     t̄ⁿ⁻ⁱ *= t̄
     aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ
     bᵢ₋₁ = aᵢ₋₁ + bᵢ₋₁ * t
