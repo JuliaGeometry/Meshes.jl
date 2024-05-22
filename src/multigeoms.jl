@@ -49,7 +49,7 @@ end
 
 function centroid(m::Multi)
   cs = to.(centroid.(m.geoms))
-  Point(coordinates(sum(cs) / length(cs)))
+  Point(coords(sum(cs) / length(cs)))
 end
 
 rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]

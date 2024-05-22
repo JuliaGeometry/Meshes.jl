@@ -52,7 +52,7 @@ function centroid(g::RectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p1 = vertex(g, ijk)
   p2 = vertex(g, ijk .+ 1)
-  Point(coordinates((to(p1) + to(p2)) / 2))
+  Point(coords((to(p1) + to(p2)) / 2))
 end
 
 function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}

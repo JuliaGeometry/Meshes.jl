@@ -36,7 +36,7 @@ function boundingbox(r::Ray)
   v = r(1) - r(0)
   l = lower.(to(p), v)
   u = upper.(to(p), v)
-  Box(Point(coordinates(l)), Point(coordinates(u)))
+  Box(Point(coords(l)), Point(coords(u)))
 end
 
 function boundingbox(s::Sphere{Dim}) where {Dim}
@@ -98,5 +98,5 @@ function _pboxes(points)
     @. xmin = min(x, xmin)
     @. xmax = max(x, xmax)
   end
-  Box(Point(coordinates(xmin)), Point(coordinates(xmax)))
+  Box(Point(coords(xmin)), Point(coords(xmax)))
 end

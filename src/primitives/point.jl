@@ -54,13 +54,6 @@ Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...)
   isapprox(A.coords, B.coords; atol, kwargs...)
 
 """
-    coordinates(point)
-
-Return the coordinates of the `point`.
-"""
-coordinates(A::Point) = A.coords
-
-"""
     to(point)
 
 Return the vector from the origin to the `point`.
@@ -82,7 +75,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(to(A) + v))
++(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coords(to(A) + v))
 +(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A + v
 
 """
@@ -92,7 +85,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(to(A) - v))
+-(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coords(to(A) - v))
 -(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A - v
 
 """

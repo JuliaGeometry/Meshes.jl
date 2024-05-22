@@ -245,7 +245,7 @@ intersects(m::Multi, c::Chain) = intersects(c, m)
 # ------------------
 
 # support point in Minkowski difference
-minkowskipoint(g₁::Geometry, g₂::Geometry, d) = Point(coordinates(supportfun(g₁, d) - supportfun(g₂, -d)))
+minkowskipoint(g₁::Geometry, g₂::Geometry, d) = Point(coords(supportfun(g₁, d) - supportfun(g₂, -d)))
 
 # origin of coordinate system
 minkowskiorigin(Dim, ℒ) = Point(ntuple(i -> zero(ℒ), Dim))
