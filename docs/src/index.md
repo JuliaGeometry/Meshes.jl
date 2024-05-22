@@ -116,7 +116,7 @@ B = Point(3.0, 3.0)
 B - A
 ```
 
-They can't be added, but their coordinates can:
+They cant be added, but the vectors from the origin to the points can:
 
 ```@example overview
 to(A) + to(B)
@@ -127,6 +127,14 @@ We can add a point to a vector though, and get a new point:
 ```@example overview
 A + Vec(1, 1)
 ```
+
+Every point has well-defined coordinates:
+
+```@example overview
+coords(A)
+```
+
+which can be converted with [CoordRefSystems.jl](https://github.com/JuliaEarth/CoordRefSystems.jl).
 
 And finally, we can create points at random with:
 
