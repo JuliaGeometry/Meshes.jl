@@ -119,7 +119,7 @@ B - A
 They can't be added, but their coordinates can:
 
 ```@example overview
-coordinates(A) + coordinates(B)
+to(A) + to(B)
 ```
 
 We can add a point to a vector though, and get a new point:

@@ -24,7 +24,7 @@ Point
 ```
 
 ```@docs
-coordinates(::Point)
+to(::Point)
 -(::Point, ::Point)
 +(::Point, ::Vec)
 -(::Point, ::Vec)
