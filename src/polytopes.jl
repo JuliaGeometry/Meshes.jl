@@ -228,7 +228,7 @@ nvertices(p::Polytope) = nvertices(typeof(p))
 
 Return the centroid of the `polytope`.
 """
-centroid(p::Polytope) = Point(coordinates(sum(to, vertices(p)) / length(vertices(p))))
+centroid(p::Polytope) = Point(coords(sum(to, vertices(p)) / length(vertices(p))))
 
 """
     unique(polytope)

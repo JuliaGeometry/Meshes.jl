@@ -105,7 +105,7 @@ function (curve::BezierCurve)(t, ::Horner)
   end
 
   b₀ = bᵢ₋₁
-  Point(coordinates(b₀))
+  Point(coords(b₀))
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim}}) where {Dim} =

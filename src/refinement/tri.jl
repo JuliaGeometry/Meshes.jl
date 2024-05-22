@@ -26,7 +26,7 @@ function refine(mesh, ::TriRefinement)
   epts = map(1:nelements(t)) do elem
     ps = view(points, ∂₂₀(elem))
     cₒ = sum(to, ps) / length(ps)
-    Point(coordinates(cₒ))
+    Point(coords(cₒ))
   end
 
   # original vertices

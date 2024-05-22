@@ -58,13 +58,6 @@ function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T
 end
 
 """
-    coordinates(vec)
-
-Return the coordinates of the `vec`.
-"""
-coordinates(vec::StaticVector) = Cartesian(Tuple(vec))
-
-"""
     ∠(u, v)
 
 Angle between vectors `u` and `v`.

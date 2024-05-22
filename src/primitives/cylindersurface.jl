@@ -67,7 +67,7 @@ top(c::CylinderSurface) = c.top
 function center(c::CylinderSurface)
   a = to(c.bot(0, 0))
   b = to(c.top(0, 0))
-  Point(coordinates((a .+ b) ./ 2))
+  Point(coords((a .+ b) ./ 2))
 end
 
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
