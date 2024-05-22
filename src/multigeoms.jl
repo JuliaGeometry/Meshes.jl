@@ -48,8 +48,8 @@ function Base.unique!(m::Multi)
 end
 
 function centroid(m::Multi)
-  cs = coordinates.(centroid.(m.geoms))
-  Point(sum(cs) / length(cs))
+  cs = to.(centroid.(m.geoms))
+  Point(coordinates(sum(cs) / length(cs)))
 end
 
 rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]

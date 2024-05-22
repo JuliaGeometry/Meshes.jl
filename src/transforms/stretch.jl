@@ -47,7 +47,7 @@ revert(t::Stretch, g::GeometryOrDomain, c) = revert(c[1], g, c[2])
 reapply(t::Stretch, g::GeometryOrDomain, c) = reapply(c[1], g, c[2])
 
 function _stretch(t, g)
-  o = coordinates(_origin(g))
+  o = to(_origin(g))
   Translate(-o...) → Scale(t.factors) → Translate(o...)
 end
 

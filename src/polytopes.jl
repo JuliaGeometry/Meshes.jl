@@ -88,7 +88,7 @@ Closed chains remain closed.
 function Base.unique!(c::Chain)
   # sort vertices lexicographically
   verts = vertices(open(c))
-  perms = sortperm(coordinates.(verts))
+  perms = sortperm(to.(verts))
 
   # remove true duplicates
   keep = Int[]
@@ -228,7 +228,7 @@ nvertices(p::Polytope) = nvertices(typeof(p))
 
 Return the centroid of the `polytope`.
 """
-centroid(p::Polytope) = Point(sum(coordinates, vertices(p)) / length(vertices(p)))
+centroid(p::Polytope) = Point(coordinates(sum(to, vertices(p)) / length(vertices(p))))
 
 """
     unique(polytope)

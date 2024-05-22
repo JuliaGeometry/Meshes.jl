@@ -89,7 +89,7 @@ function (curve::BezierCurve)(t, ::Horner)
   cs = curve.controls
   t̄ = one(T) - t
   n = degree(curve)
-  pₙ = coordinates(last(cs))
+  pₙ = to(last(cs))
   aₙ = pₙ
 
   # initialization with i = n + 1, so bᵢ₋₁ = bₙ = aₙ
@@ -98,14 +98,14 @@ function (curve::BezierCurve)(t, ::Horner)
   t̄ⁿ⁻ⁱ = one(T)
   for i in n:-1:1
     cᵢ₋₁ *= i / (n - i + one(T))
-    pᵢ₋₁ = coordinates(cs[i])
+    pᵢ₋₁ = to(cs[i])
     t̄ⁿ⁻ⁱ *= t̄
     aᵢ₋₁ = cᵢ₋₁ * pᵢ₋₁ * t̄ⁿ⁻ⁱ
     bᵢ₋₁ = aᵢ₋₁ + bᵢ₋₁ * t
   end
 
   b₀ = bᵢ₋₁
-  Point(b₀)
+  Point(coordinates(b₀))
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{BezierCurve{Dim}}) where {Dim} =

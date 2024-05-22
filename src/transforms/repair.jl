@@ -124,7 +124,7 @@ apply(::Repair{9}, poly::Ngon) = poly, []
 function repair9(r::AbstractVector{<:Ring})
   # sort vertices lexicographically
   verts = vertices.(r)
-  coord = coordinates.(reduce(vcat, verts))
+  coord = to.(reduce(vcat, verts))
   vperm = sortperm(sortperm(coord))
 
   # each ring has its own set of indices

@@ -35,7 +35,7 @@ function hull(points, ::GrahamScan)
   n == 2 && return Segment(p[1], p[2])
 
   # sort points lexicographically
-  p = p[sortperm(coordinates.(p))]
+  p = p[sortperm(to.(p))]
 
   # sort points by polar angle
   O = p[1]
@@ -45,7 +45,7 @@ function hull(points, ::GrahamScan)
   q = q[sortperm(θ)]
 
   # skip collinear points at beginning 
-  y(p) = coordinates(p)[2]
+  y(p) = to(p)[2]
   i = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
 
   # all points are collinear, return segment

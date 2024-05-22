@@ -11,9 +11,9 @@ For each dimension, coordinates outside of the box are moved to the nearest
 edge of the box. The point and box must have an equal number of dimensions.
 """
 function Base.clamp(point::Point{Dim}, box::Box{Dim}) where {Dim}
-  x = coordinates(point)
-  lo = coordinates(minimum(box))
-  hi = coordinates(maximum(box))
+  x = to(point)
+  lo = to(minimum(box))
+  hi = to(maximum(box))
   ntuple(Dim) do i
     clamp(x[i], lo[i], hi[i])
   end |> Point

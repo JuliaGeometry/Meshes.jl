@@ -43,7 +43,7 @@ function partitioninds(::AbstractRNG, domain::Domain, method::BlockPartition)
   nblocks = @. nleft + nright
 
   # top left corner of first block
-  start = coordinates(ce) .- nleft .* psides
+  start = to(ce) .- nleft .* psides
 
   subsets = [Int[] for i in 1:prod(nblocks)]
 
@@ -51,7 +51,7 @@ function partitioninds(::AbstractRNG, domain::Domain, method::BlockPartition)
   linear = LinearIndices(Dims(nblocks))
 
   for j in 1:nelements(domain)
-    coords = coordinates(centroid(domain, j))
+    coords = to(centroid(domain, j))
 
     # find block coordinates
     c = @. floor(Int, (coords - start) / psides) + 1

@@ -26,15 +26,15 @@ boundary(::Plane) = nothing
 boundary(b::Box{1}) = Multi([minimum(b), maximum(b)])
 
 function boundary(b::Box{2})
-  A = coordinates(minimum(b))
-  B = coordinates(maximum(b))
+  A = to(minimum(b))
+  B = to(maximum(b))
   v = Point.([(A[1], A[2]), (B[1], A[2]), (B[1], B[2]), (A[1], B[2])])
   Ring(v)
 end
 
 function boundary(b::Box{3})
-  A = coordinates(minimum(b))
-  B = coordinates(maximum(b))
+  A = to(minimum(b))
+  B = to(maximum(b))
   v =
     Point.([
       (A[1], A[2], A[3]),

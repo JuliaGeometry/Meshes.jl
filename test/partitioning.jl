@@ -154,8 +154,8 @@
     # all points in p1 are below those in p2
     pts1 = [centroid(p1, i) for i in 1:nelements(p1)]
     pts2 = [centroid(p2, i) for i in 1:nelements(p2)]
-    X1 = reduce(hcat, coordinates.(pts1))
-    X2 = reduce(hcat, coordinates.(pts2))
+    X1 = reduce(hcat, to.(pts1))
+    X2 = reduce(hcat, to.(pts2))
     M1 = maximum(X1, dims=2)
     m2 = minimum(X2, dims=2)
     @test all(X1[2, j] < m2[2] for j in 1:size(X1, 2))
@@ -187,8 +187,8 @@
     # all points in p1 are to the left of p2
     pts1 = [centroid(p1, i) for i in 1:nelements(p1)]
     pts2 = [centroid(p2, i) for i in 1:nelements(p2)]
-    X1 = reduce(hcat, coordinates.(pts1))
-    X2 = reduce(hcat, coordinates.(pts2))
+    X1 = reduce(hcat, to.(pts1))
+    X2 = reduce(hcat, to.(pts2))
     M1 = maximum(X1, dims=2)
     m2 = minimum(X2, dims=2)
     @test all(X1[1, j] < m2[1] for j in 1:size(X1, 2))

@@ -3,13 +3,13 @@
     rng = StableRNG(123)
     d = cartgrid(100, 100)
     s = sample(rng, d, UniformSampling(100))
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
 
     # availability of option ordered
     s = sample(rng, d, UniformSampling(100, ordered=true))
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
   end
@@ -19,23 +19,23 @@
     rng = StableRNG(123)
     d = cartgrid(100, 100)
     s = sample(rng, d, WeightedSampling(100))
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
 
     # availability of option ordered
     s = sample(rng, d, WeightedSampling(100, ordered=true))
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
 
     # utility method
     s = sample(rng, d, 100, ordered=true)
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
     s = sample(rng, d, 100, fill(1, 10000), ordered=true)
-    μ = mean(coordinates.([centroid(s, i) for i in 1:nelements(s)]))
+    μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
     @test nelements(s) == 100
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
   end
@@ -44,16 +44,16 @@
     d = cartgrid(100, 100)
     s = sample(d, BallSampling(T(10)))
     n = nelements(s)
-    x = coordinates(centroid(s, 1))
-    y = coordinates(centroid(s, 17))
+    x = to(centroid(s, 1))
+    y = to(centroid(s, 17))
     @test n < 100
     @test sqrt(sum((x - y) .^ 2)) ≥ T(10) * u"m"
 
     d = cartgrid(100, 100)
     s = sample(d, BallSampling(T(20)))
     n = nelements(s)
-    x = coordinates(centroid(s, 1))
-    y = coordinates(centroid(s, 17))
+    x = to(centroid(s, 1))
+    y = to(centroid(s, 17))
     @test n < 50
     @test sqrt(sum((x - y) .^ 2)) ≥ T(20) * u"m"
   end
@@ -62,7 +62,7 @@
     g = cartgrid(100, 100)
     s = sample(g, BlockSampling(T(10)))
     @test nelements(s) == 100
-    x = coordinates.(centroid.(s))
+    x = to.(centroid.(s))
     D = pairwise(Euclidean(), x)
     d = [D[i, j] for i in 1:length(x) for j in 1:(i - 1)]
     @test all(≥(T(10) * u"m"), d)
@@ -207,7 +207,7 @@
     # cylinder surface with parallel planes
     c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(0, 0, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
-    cs = coordinates.(ps)
+    cs = to.(ps)
     xs = getindex.(cs, 1)
     ys = getindex.(cs, 2)
     zs = getindex.(cs, 3)
@@ -219,7 +219,7 @@
     # cylinder surface with parallel shifted planes
     c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(1, 1, 1), vector(0, 0, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
-    cs = coordinates.(ps)
+    cs = to.(ps)
     xs = getindex.(cs, 1)
     ys = getindex.(cs, 2)
     zs = getindex.(cs, 3)
@@ -228,7 +228,7 @@
     # cylinder surface with non-parallel planes
     c = CylinderSurface(Plane(point(0, 0, 0), vector(1, 0, 1)), Plane(point(1, 1, 1), vector(0, 1, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
-    cs = coordinates.(ps)
+    cs = to.(ps)
     @test length(cs) == 200 + 2
 
     s = Segment(point(0, 0), point(1, 1))
@@ -300,26 +300,26 @@
     s = Segment(point(0, 0), point(1, 0))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
-    @test all(zero(ℳ) ≤ coords[1] ≤ oneunit(ℳ) for coords in coordinates.(ps))
-    @test all(coords[2] == zero(ℳ) for coords in coordinates.(ps))
+    @test all(zero(ℳ) ≤ coords[1] ≤ oneunit(ℳ) for coords in to.(ps))
+    @test all(coords[2] == zero(ℳ) for coords in to.(ps))
 
     s = Segment(point(0, 0), point(0, 1))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
-    @test all(coords[1] == zero(ℳ) for coords in coordinates.(ps))
-    @test all(zero(ℳ) ≤ coords[2] ≤ oneunit(ℳ) for coords in coordinates.(ps))
+    @test all(coords[1] == zero(ℳ) for coords in to.(ps))
+    @test all(zero(ℳ) ≤ coords[2] ≤ oneunit(ℳ) for coords in to.(ps))
 
     s = Segment(point(0, 0), point(1, 1))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
-    @test all(zero(ℳ) ≤ coords[1] == coords[2] ≤ oneunit(ℳ) for coords in coordinates.(ps))
+    @test all(zero(ℳ) ≤ coords[1] == coords[2] ≤ oneunit(ℳ) for coords in to.(ps))
 
     c = Rope(point(0, 0), point(1, 0), point(0, 1), point(1, 1))
     ps = sample(c, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(
       coords[1] + coords[2] == oneunit(ℳ) || (zero(ℳ) ≤ coords[1] ≤ oneunit(ℳ) && coords[2] ∈ [zero(ℳ), oneunit(ℳ)]) for
-      coords in coordinates.(ps)
+      coords in to.(ps)
     )
 
     t = Triangle(point(0, 0), point(1, 0), point(0, 1))

@@ -47,7 +47,7 @@ function _smooth(mesh, L, n, λ, μ; revert=false)
   points = vertices(mesh)
 
   # matrix with coordinates (nvertices x ndims)
-  X = reduce(hcat, coordinates.(points)) |> transpose
+  X = reduce(hcat, to.(points)) |> transpose
 
   # choose between apply and revert mode
   λ₁, λ₂ = revert ? (-μ, -λ) : (λ, μ)

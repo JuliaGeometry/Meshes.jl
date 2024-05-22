@@ -39,9 +39,8 @@ struct Point{Dim,C<:CRS} <: Primitive{Dim}
 end
 
 # convenience constructors
-Point(coords...) = Point(Cartesian(coords...))
-Point(coords::Tuple) = Point(Cartesian(coords...))
-Point(coords::Vec) = Point(Cartesian(Tuple(coords)))
+Point(coords...) = Point(Cartesian(coords))
+Point(coords::Tuple) = Point(Cartesian(coords))
 
 paramdim(::Type{<:Point}) = 0
 
@@ -57,10 +56,16 @@ Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...)
 """
     coordinates(point)
 
-Return the coordinates of the `point` with respect to the
-canonical Euclidean basis.
+Return the coordinates of the `point`.
 """
-coordinates(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords))
+coordinates(A::Point) = A.coords
+
+"""
+    to(point)
+
+Return the vector from the origin to the `point`.
+"""
+to(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords))
 
 """
     -(A::Point, B::Point)
@@ -68,7 +73,7 @@ coordinates(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = coordinates(A) - coordinates(B)
+-(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = to(A) - to(B)
 
 """
     +(A::Point, v::Vec)
@@ -77,7 +82,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(A) + v)
++(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(to(A) + v))
 +(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A + v
 
 """
@@ -87,7 +92,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(A) - v)
+-(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coordinates(to(A) - v))
 -(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A - v
 
 """

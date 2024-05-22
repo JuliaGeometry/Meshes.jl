@@ -24,7 +24,7 @@
   @test v[1] == g[1]
   v = view(p, b)
   @test nelements(v) == 6
-  @test coordinates.(v) == vector.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)])
+  @test to.(v) == vector.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)])
 
   # convex polygons
   tri = Triangle(point(5, 7), point(10, 12), point(15, 7))

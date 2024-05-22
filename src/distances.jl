@@ -39,4 +39,4 @@ end
 
 Evaluate pre-metric between coordinates of `point1` and `point2`.
 """
-evaluate(d::PreMetric, p1::Point, p2::Point) = evaluate(d, coordinates(p1), coordinates(p2))
+evaluate(d::PreMetric, p1::Point, p2::Point) = evaluate(d, to(p1), to(p2))

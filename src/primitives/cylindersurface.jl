@@ -65,9 +65,9 @@ bottom(c::CylinderSurface) = c.bot
 top(c::CylinderSurface) = c.top
 
 function center(c::CylinderSurface)
-  a = coordinates(c.bot(0, 0))
-  b = coordinates(c.top(0, 0))
-  Point((a .+ b) ./ 2)
+  a = to(c.bot(0, 0))
+  b = to(c.top(0, 0))
+  Point(coordinates((a .+ b) ./ 2))
 end
 
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
@@ -120,7 +120,7 @@ function (c::CylinderSurface)(φ, z)
   pₜ = Point(rcφ, rsφ, zₜ)
 
   p = pᵦ + T(z) * (pₜ - pᵦ)
-  o + Q' * coordinates(p)
+  o + Q' * to(p)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface}) =

@@ -475,14 +475,14 @@
     sphere = Sphere(point(0, 0, 0), T(1))
     mesh = simplexify(sphere)
     @test eltype(mesh) <: Triangle
-    xs = coordinates.(vertices(mesh))
+    xs = to.(vertices(mesh))
     @test all(x -> norm(x) ≈ oneunit(ℳ), xs)
 
     # triangulation of cylinder surfaces
     cylsurf = CylinderSurface(T(1))
     mesh = simplexify(cylsurf)
     @test eltype(mesh) <: Triangle
-    xs = coordinates.(vertices(mesh))
+    xs = to.(vertices(mesh))
     @test all(x -> -oneunit(ℳ) ≤ x[1] ≤ oneunit(ℳ), xs)
     @test all(x -> -oneunit(ℳ) ≤ x[2] ≤ oneunit(ℳ), xs)
     @test all(x -> zero(ℳ) ≤ x[3] ≤ oneunit(ℳ), xs)
@@ -491,7 +491,7 @@
     ball = Ball(point(0, 0), T(1))
     mesh = simplexify(ball)
     @test eltype(mesh) <: Triangle
-    xs = coordinates.(vertices(mesh))
+    xs = to.(vertices(mesh))
     @test all(x -> norm(x) ≤ oneunit(ℳ) + eps(T) * u"m", xs)
 
     # triangulation of meshes

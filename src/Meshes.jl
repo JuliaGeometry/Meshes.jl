@@ -158,6 +158,7 @@ export
   Horner,
   DeCasteljau,
   coordinates,
+  to,
   radius,
   radii,
   plane,

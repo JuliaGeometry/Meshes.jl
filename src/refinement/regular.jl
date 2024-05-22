@@ -55,7 +55,7 @@ function _XYZ(grid::StructuredGrid{2}, factors::Dims{2})
   catᵢ(A...) = cat(A..., dims=Val(1))
   catⱼ(A...) = cat(A..., dims=Val(2))
 
-  mat(quad) = [coordinates(quad(u, v)) for u in us, v in vs]
+  mat(quad) = [to(quad(u, v)) for u in us, v in vs]
   M = [mat(grid[i, j]) for i in 1:sᵢ, j in 1:sⱼ]
 
   C = mapreduce(catⱼ, 1:sⱼ) do j
@@ -83,7 +83,7 @@ function _XYZ(grid::StructuredGrid{3}, factors::Dims{3})
   catⱼ(A...) = cat(A..., dims=Val(2))
   catₖ(A...) = cat(A..., dims=Val(3))
 
-  mat(hex) = [coordinates(hex(u, v, w)) for u in us, v in vs, w in ws]
+  mat(hex) = [to(hex(u, v, w)) for u in us, v in vs, w in ws]
   M = [mat(grid[i, j, k]) for i in 1:sᵢ, j in 1:sⱼ, k in 1:sₖ]
 
   C = mapreduce(catₖ, 1:sₖ) do k

@@ -72,7 +72,7 @@ function vizmesh2D!(plot)
     elems = elements(topo)
 
     # coordinates of vertices
-    coords = map(p -> ustrip.(coordinates(p)), verts)
+    coords = map(p -> ustrip.(to(p)), verts)
 
     # fan triangulation (assume convexity)
     tris4elem = map(elems) do elem
@@ -153,7 +153,7 @@ function vizmesh2D!(plot)
       topo = topology($mesh)
       nvert = nvertices($mesh)
       verts = vertices($mesh)
-      coords = map(p -> ustrip.(coordinates(p)), verts)
+      coords = map(p -> ustrip.(to(p)), verts)
 
       # use a sophisticated data structure
       # to extract the edges from the n-gons
@@ -203,7 +203,7 @@ function segmentsof(topo, vert)
   T = Unitful.numtype(Meshes.lentype(p))
   Dim = embeddim(p)
   nan = SVector(ntuple(i -> T(NaN), Dim))
-  xs = map(p -> ustrip.(coordinates(p)), vert)
+  xs = map(p -> ustrip.(to(p)), vert)
 
   coords = map(elements(topo)) do e
     inds = indices(e)
@@ -214,7 +214,7 @@ function segmentsof(topo, vert)
 end
 
 function segmentsof(topo::GridTopology, vert)
-  xs = map(p -> ustrip.(coordinates(p)), vert)
+  xs = map(p -> ustrip.(to(p)), vert)
   ip = first(isperiodic(topo))
   ip ? [xs; [first(xs)]] : xs
 end

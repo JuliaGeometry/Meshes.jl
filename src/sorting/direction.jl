@@ -17,7 +17,7 @@ function sortinds(domain::Domain, method::DirectionSort)
   v = method.direction
   t = map(1:nelements(domain)) do i
     c = centroid(domain, i)
-    u = coordinates(c)
+    u = to(c)
     (u ⋅ v) / (v ⋅ v)
   end
   sortperm(t)

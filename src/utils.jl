@@ -70,7 +70,7 @@ See <https://math.stackexchange.com/a/99317>.
 """
 function svdbasis(p::AbstractVector{<:Point{3}})
   ℒ = lentype(eltype(p))
-  X = reduce(hcat, coordinates.(p))
+  X = reduce(hcat, to.(p))
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
   U = usvd(Z).U

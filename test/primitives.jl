@@ -10,9 +10,9 @@
     @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
     @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
-    @test coordinates(point(1)) == vector(1)
-    @test coordinates(point(1, 2)) == vector(1, 2)
-    @test coordinates(point(1, 2, 3)) == vector(1, 2, 3)
+    @test to(point(1)) == vector(1)
+    @test to(point(1, 2)) == vector(1, 2)
+    @test to(point(1, 2, 3)) == vector(1, 2, 3)
 
     @test point(1) - point(1) == vector(0)
     @test point(1, 2) - point(1, 1) == vector(0, 1)

@@ -113,10 +113,10 @@ end
 function Base.in(p::Point{2}, t::Triangle{2})
   # given coordinates
   a, b, c = vertices(t)
-  x₁, y₁ = coordinates(a)
-  x₂, y₂ = coordinates(b)
-  x₃, y₃ = coordinates(c)
-  x, y = coordinates(p)
+  x₁, y₁ = to(a)
+  x₂, y₂ = to(b)
+  x₃, y₃ = to(c)
+  x, y = to(p)
 
   # barycentric coordinates
   λ₁ = ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
