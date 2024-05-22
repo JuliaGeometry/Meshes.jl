@@ -116,7 +116,7 @@ B = Point(3.0, 3.0)
 B - A
 ```
 
-They cant be added, but the vectors from the origin to the points can:
+They can't be added, but the vectors from the origin to the points can:
 
 ```@example overview
 to(A) + to(B)
