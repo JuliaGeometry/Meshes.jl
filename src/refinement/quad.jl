@@ -22,16 +22,16 @@ function refine(mesh, ::QuadRefinement)
   ∂₂₀ = Boundary{2,0}(t)
   epts = map(1:nelements(t)) do elem
     ps = view(points, ∂₂₀(elem))
-    cₒ = sum(coordinates, ps) / length(ps)
-    Point(cₒ)
+    cₒ = sum(to, ps) / length(ps)
+    Point(coordinates(cₒ))
   end
 
   # add midpoints of edges
   ∂₁₀ = Boundary{1,0}(t)
   fpts = map(1:nfacets(t)) do edge
     ps = view(points, ∂₁₀(edge))
-    cₒ = sum(coordinates, ps) / length(ps)
-    Point(cₒ)
+    cₒ = sum(to, ps) / length(ps)
+    Point(coordinates(cₒ))
   end
 
   # original vertices

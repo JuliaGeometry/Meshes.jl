@@ -73,4 +73,4 @@ PointSet(points) = PointSet(map(identity, points))
 
 centroid(d::PointSet, ind::Int) = d[ind]
 
-centroid(d::PointSet) = Point(sum(coordinates, d) / nelements(d))
+centroid(d::PointSet) = Point(coordinates(sum(to, d) / nelements(d)))

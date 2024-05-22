@@ -27,7 +27,7 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionP
   bbox = boundingbox(domain)
   n = method.normal
   f = method.fraction
-  c = coordinates(center(bbox))
+  c = to(center(bbox))
   d = diagonal(bbox)
 
   # maximum number of bisections
@@ -41,7 +41,7 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionP
   while iter < maxiter
     m = (a + b) / 2
 
-    bisectpoint = BisectPointPartition(n, Point(m))
+    bisectpoint = BisectPointPartition(n, Point(coordinates(m)))
     subsets, metadata = partitioninds(rng, domain, bisectpoint)
 
     g = length(subsets[1]) / nelements(domain)

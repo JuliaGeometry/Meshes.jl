@@ -40,8 +40,8 @@ function Makie.data_limits(plot::Viz{<:Tuple{Grid}})
   Makie.Rect3f([pmin, pmax])
 end
 
-aspoint3f(p::Point{2}) = Makie.Point3f(ustrip.(coordinates(p))..., 0)
-aspoint3f(p::Point{3}) = Makie.Point3f(ustrip.(coordinates(p))...)
+aspoint3f(p::Point{2}) = Makie.Point3f(ustrip.(to(p))..., 0)
+aspoint3f(p::Point{3}) = Makie.Point3f(ustrip.(to(p))...)
 
 # ----------------
 # SPECIALIZATIONS

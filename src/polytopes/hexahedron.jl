@@ -18,16 +18,18 @@ function (h::Hexahedron)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v, w), "h(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
-  A1, A2, A4, A3, A5, A6, A8, A7 = coordinates.(h.vertices)
+  A1, A2, A4, A3, A5, A6, A8, A7 = to.(h.vertices)
   Point(
-    (1 - u) * (1 - v) * (1 - w) * A1 +
-    u * (1 - v) * (1 - w) * A2 +
-    (1 - u) * v * (1 - w) * A3 +
-    u * v * (1 - w) * A4 +
-    (1 - u) * (1 - v) * w * A5 +
-    u * (1 - v) * w * A6 +
-    (1 - u) * v * w * A7 +
-    u * v * w * A8
+    coordinates(
+      (1 - u) * (1 - v) * (1 - w) * A1 +
+      u * (1 - v) * (1 - w) * A2 +
+      (1 - u) * v * (1 - w) * A3 +
+      u * v * (1 - w) * A4 +
+      (1 - u) * (1 - v) * w * A5 +
+      u * (1 - v) * w * A6 +
+      (1 - u) * v * w * A7 +
+      u * v * w * A8
+    )
   )
 end
 

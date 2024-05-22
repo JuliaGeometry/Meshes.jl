@@ -70,7 +70,7 @@ applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
 applycoord(::CoordinateTransform, x) = x
 
 # special treatment for Point
-applycoord(t::CoordinateTransform, p::Point) = Point(applycoord(t, coordinates(p)))
+applycoord(t::CoordinateTransform, p::Point) = Point(coordinates(applycoord(t, to(p))))
 
 # special treatment for TransformedMesh
 applycoord(t::CoordinateTransform, m::TransformedMesh) = TransformedMesh(m, t)

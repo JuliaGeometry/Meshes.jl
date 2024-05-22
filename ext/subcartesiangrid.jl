@@ -21,7 +21,7 @@ function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
     sp = ustrip.(spacing(grid))
 
     # coordinates of centroids
-    coord(e) = ustrip.(coordinates(centroid(e)))
+    coord(e) = ustrip.(to(centroid(e)))
     coords = [coord(e) .+ sp ./ 2 for e in $subgrid]
 
     # rectangle marker

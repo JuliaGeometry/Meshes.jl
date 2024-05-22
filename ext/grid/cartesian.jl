@@ -20,7 +20,7 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
   # origin, spacing and size of grid
-  or = Makie.@lift ustrip.(coordinates(minimum($grid)))
+  or = Makie.@lift ustrip.(to(minimum($grid)))
   sp = Makie.@lift ustrip.(spacing($grid))
   sz = Makie.@lift size($grid)
 

@@ -92,13 +92,13 @@ Return the centroid of the `domain`, i.e. the centroid of all
 its element's centroids.
 """
 function centroid(d::Domain)
-  coords(i) = coordinates(centroid(d, i))
+  coords(i) = to(centroid(d, i))
   volume(i) = measure(element(d, i))
   n = nelements(d)
   x = coords.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(eltype(w), n))
-  Point(Vec(sum(w .* x) / sum(w)))
+  Point(coordinates(sum(w .* x) / sum(w)))
 end
 
 """

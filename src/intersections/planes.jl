@@ -7,8 +7,8 @@ function intersection(f, plane1::Plane, plane2::Plane)
   u = unit(lentype(plane1))
   n1 = ustrip.(normal(plane1))
   n2 = ustrip.(normal(plane2))
-  o1 = ustrip.(coordinates(plane1.p))
-  o2 = ustrip.(coordinates(plane2.p))
+  o1 = ustrip.(to(plane1.p))
+  o2 = ustrip.(to(plane2.p))
   n1n2 = n1 ⋅ n2
 
   if isapproxone(abs(n1n2))
@@ -22,7 +22,7 @@ function intersection(f, plane1::Plane, plane2::Plane)
     c2 = (h2 - h1 * n1n2) / (1 - n1n2^2)
     p1 = (c1 * n1) + (c2 * n2)
     p2 = p1 + d
-    return @IT Intersecting Line(Point(Vec(p1 * u)), Point(Vec(p2 * u))) f
+    return @IT Intersecting Line(Point(coordinates(p1 * u)), Point(coordinates(p2 * u))) f
   end
 end
 

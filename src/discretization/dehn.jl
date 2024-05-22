@@ -37,7 +37,7 @@ function dehn1899(v::AbstractVector{<:Point}, inds)
 
   if n > 3 # split chain
     # find lowerleft vertex
-    i = first(sortperm(coordinates.(v[I])))
+    i = first(sortperm(to.(v[I])))
 
     # left/right chains
     linds = (i - 1):(i + 1)

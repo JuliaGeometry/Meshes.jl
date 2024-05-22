@@ -35,7 +35,7 @@ function hull(points, ::JarvisMarch)
   n == 2 && return Segment(p[1], p[2])
 
   # find bottom-left point
-  i = argmin(l -> coordinates(p[l]), 1:n)
+  i = argmin(l -> to(p[l]), 1:n)
 
   # candidates for next point
   𝒞 = [1:(i - 1); (i + 1):n]

@@ -55,7 +55,7 @@ end
 
 applycoord(t::Affine, v::Vec) = t.A * v
 
-applycoord(t::Affine, p::Point) = Point(t.A * coordinates(p) + t.b)
+applycoord(t::Affine, p::Point) = Point(coordinates(t.A * to(p) + t.b))
 
 # --------------
 # SPECIAL CASES
