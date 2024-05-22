@@ -98,7 +98,7 @@ function centroid(d::Domain)
   x = coords.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(eltype(w), n))
-  Point(coordinates(sum(w .* x) / sum(w)))
+  Point(coords(sum(w .* x) / sum(w)))
 end
 
 """

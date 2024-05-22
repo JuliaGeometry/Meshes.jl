@@ -34,7 +34,7 @@ function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
   F = to(p1) ⋅ n⃗
   M = transpose([n⃗ v12 v13])
   u = [F, m12 ⋅ v12, m13 ⋅ v13]
-  O = Point(coordinates(uinv(M) * u))
+  O = Point(coords(uinv(M) * u))
   r = norm(p1 - O)
   Circle(Plane(O, n⃗), r)
 end

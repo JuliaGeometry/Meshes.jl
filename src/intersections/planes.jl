@@ -22,7 +22,7 @@ function intersection(f, plane1::Plane, plane2::Plane)
     c2 = (h2 - h1 * n1n2) / (1 - n1n2^2)
     p1 = (c1 * n1) + (c2 * n2)
     p2 = p1 + d
-    return @IT Intersecting Line(Point(coordinates(p1 * u)), Point(coordinates(p2 * u))) f
+    return @IT Intersecting Line(Point(coords(p1 * u)), Point(coords(p2 * u))) f
   end
 end
 
