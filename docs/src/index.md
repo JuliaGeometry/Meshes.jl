@@ -77,12 +77,12 @@ import CairoMakie as Mke
 
 ### Points and vectors
 
-A [`Point`](@ref) is defined by its coordinates in a global reference system. The type of the
-coordinates is determined automatically based on the specified literals.
-`Integer` coordinates are converted to `Float64` to fulfill the requirements of most
-geometric processing algorithms, which would be undefined in a discrete scale.
+A [`Point`](@ref) is defined by its coordinates in a coordinate reference system
+from [CoordRefSystems.jl](https://github.com/JuliaEarth/CoordRefSystems.jl). By
+default, a `Cartesian` coordinates with `NoDatum` are used.
 
-A vector [`Vec`](@ref) follows the same pattern. It can be constructed with the `Vec` constructor.
+`Integer` coordinates are converted to `Float64` to fulfill the requirements of most
+geometric processing algorithms, which would be undefined in a discrete scale:
 
 ```@example overview
 Point(0.0, 1.0) # double precision as expected
@@ -128,18 +128,10 @@ We can add a point to a vector though, and get a new point:
 A + Vec(1, 1)
 ```
 
-Every point has well-defined coordinates:
+Every point and vector has well-defined coordinates:
 
 ```@example overview
 coords(A)
-```
-
-which can be converted with [CoordRefSystems.jl](https://github.com/JuliaEarth/CoordRefSystems.jl).
-
-And finally, we can create points at random with:
-
-```@example overview
-rand(Point{2})
 ```
 
 ### Primitives
