@@ -90,7 +90,7 @@ function vizgset2D!(plot, geoms, colorant)
   showfacets2D!(plot, geoms)
 end
 
-const PolygonLike{Dim,T} = Union{Polygon{Dim,T},MultiPolygon{Dim,T}}
+const PolygonLike{Dim} = Union{Polygon{Dim},MultiPolygon{Dim}}
 
 function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
   showsegments = plot[:showsegments]
