@@ -38,14 +38,20 @@
     end
 
     # 2D simple test of default convention
-    m = metric(MetricBall(T.((1, 1))))
+    b = MetricBall(T.((1, 1)))
+    m = metric(b)
+    @test radius(b) == oneunit(ℳ)
     @test evaluate(m, T[1, 0] * u"m", T[0, 0] * u"m") == evaluate(m, T[0, 1] * u"m", T[0, 0] * u"m")
 
-    m = metric(MetricBall(T.((1, 2))))
+    b = MetricBall(T.((1, 2)))
+    m = metric(b)
+    @test radius(b) == oneunit(ℳ)
     @test evaluate(m, T[1, 0] * u"m", T[0, 0] * u"m") != evaluate(m, T[0, 1] * u"m", T[0, 0] * u"m")
 
     # 3D simple test of default convention
-    m = metric(MetricBall(T.((1.0, 0.5, 0.5)), RotZYX(T(-π / 4), T(0), T(0))))
+    b = MetricBall(T.((1.0, 0.5, 0.5)), RotZYX(T(-π / 4), T(0), T(0)))
+    m = metric(b)
+    @test radius(b) == oneunit(ℳ)
     @test evaluate(m, T[1.0, 1.0, 0.0] * u"m", T[0.0, 0.0, 0.0] * u"m") ≈ √T(8) * u"m"
     @test evaluate(m, T[-1.0, 1.0, 0.0] * u"m", T[0.0, 0.0, 0.0] * u"m") ≈ √T(2) * u"m"
 

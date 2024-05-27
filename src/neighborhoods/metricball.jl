@@ -102,7 +102,7 @@ and `||v|| > r, ∀ v ∉ ball``.
 """
 function radius(ball::MetricBall)
   r = first(ball.radii)
-  ball.metric isa Mahalanobis ? one(r) : r
+  ball.metric isa Mahalanobis ? oneunit(r) : r
 end
 
 """
