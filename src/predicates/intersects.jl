@@ -108,7 +108,7 @@ function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
 end
 
 """
-    gjk!(O::Point{Dim,T}, points) where {Dim,T}
+    gjk!(O::Point{Dim}, points) where {Dim}
 
 Perform one iteration of the GJK algorithm.
 
