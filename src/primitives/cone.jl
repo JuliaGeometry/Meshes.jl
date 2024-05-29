@@ -29,4 +29,4 @@ height(c::Cone) = norm(center(base(c)) - apex(c))
 
 halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cone}) = Cone(rand(rng, Disk), rand(rng, Point{3}))
+Random.rand(rng::Random.AbstractRNG, ::Type{Cone}) = Cone(rand(rng, Disk), rand(rng, Point{3}))

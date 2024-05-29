@@ -38,7 +38,7 @@ height(f::Frustum) = height(boundary(f))
 
 axis(f::Frustum) = axis(boundary(f))
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Frustum})
+function Random.rand(rng::Random.AbstractRNG, ::Type{Frustum})
   bottom = rand(rng, Disk)
   ax = normal(plane(bottom))
   topplane = Plane(center(bottom) + rand() * ax, ax)

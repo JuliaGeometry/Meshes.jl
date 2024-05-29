@@ -14,5 +14,4 @@ nvertices(::Type{<:Pyramid}) = 5
 Base.isapprox(p₁::Pyramid, p₂::Pyramid; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Pyramid{Dim}}) where {Dim} =
-  Pyramid(ntuple(i -> rand(rng, Point{Dim}), 5))
+Random.rand(rng::Random.AbstractRNG, ::Type{Pyramid{Dim}}) where {Dim} = Pyramid(ntuple(i -> rand(rng, Point{Dim}), 5))

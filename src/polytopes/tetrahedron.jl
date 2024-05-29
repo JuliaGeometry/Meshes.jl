@@ -23,5 +23,5 @@ function (t::Tetrahedron)(u, v, w)
   Point(coords(v₁ * z + v₂ * u + v₃ * v + v₄ * w))
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Tetrahedron{Dim}}) where {Dim} =
+Random.rand(rng::Random.AbstractRNG, ::Type{Tetrahedron{Dim}}) where {Dim} =
   Tetrahedron(ntuple(i -> rand(rng, Point{Dim}), 4))
