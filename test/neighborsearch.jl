@@ -29,7 +29,7 @@
     @test Set(n) == Set([32041, 32400, 32401, 32760])
 
     # construct from vector of geometries
-    s = BallSearch(rand(Point{2}, 100), MetricBall(T(1)))
+    s = BallSearch(randpoint2(100), MetricBall(T(1)))
     @test s isa BallSearch
   end
 
@@ -58,7 +58,7 @@
     @test Set(n[1:nn]) == Set([100, 99, 90])
 
     # construct from vector of geometries
-    s = KNearestSearch(rand(Point{2}, 100), 3)
+    s = KNearestSearch(randpoint2(100), 3)
     @test s isa KNearestSearch
   end
 
@@ -107,7 +107,7 @@
     @test length(d) == 4
 
     # construct from vector of geometries
-    s = KBallSearch(rand(Point{2}, 100), 10, MetricBall(T(1)))
+    s = KBallSearch(randpoint2(100), 10, MetricBall(T(1)))
     @test s isa KBallSearch
   end
 end

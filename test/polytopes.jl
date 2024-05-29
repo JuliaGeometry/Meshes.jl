@@ -604,8 +604,8 @@
     end
 
     # invalid inner
-    outer = Ring(rand(Point{2}, 10))
-    p1, p2 = rand(Point{2}, 2)
+    outer = Ring(randpoint2(10))
+    p1, p2 = randpoint2(2)
     inner = Ring(p1, p1, p2)
     poly = PolyArea([outer, inner])
     upoly = unique(poly)

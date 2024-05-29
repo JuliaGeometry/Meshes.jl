@@ -82,6 +82,11 @@ function cartgrid(dims::Dims{Dim}) where {Dim}
   CartesianGrid(dims, origin, spacing, offset)
 end
 
+randpoint1(n) = randpoint(1, n)
+randpoint2(n) = randpoint(2, n)
+randpoint3(n) = randpoint(3, n)
+randpoint(Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
+
 # dummy definitions
 include("dummy.jl")
 

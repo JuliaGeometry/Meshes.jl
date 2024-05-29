@@ -37,7 +37,7 @@
   points = pointify(gset)
   @test points == [pointify(tri); pointify(quad)]
 
-  pts = rand(Point{2}, 100)
+  pts = randpoint2(100)
   pset = PointSet(pts)
   @test pointify(pset) == pts
 
