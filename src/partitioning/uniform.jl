@@ -20,7 +20,7 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::UniformPartitio
   n = nelements(domain)
   k = method.k
 
-  @assert k ≤ n "number of subsets must be smaller than number of points"
+  assertion(k ≤ n, "number of subsets must be smaller than number of points")
 
   inds = method.shuffle ? shuffle(rng, 1:n) : collect(1:n)
   subsets = collect(Iterators.partition(inds, n ÷ k))

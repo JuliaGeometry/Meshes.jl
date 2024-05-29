@@ -34,7 +34,7 @@ winding(point::Point{2}, ring::Ring{2}) = winding((point,), ring) |> first
 
 # Jacobson et al 2013.
 function winding(points, mesh::Mesh{3})
-  @assert paramdim(mesh) == 2 "winding number only defined for surface meshes"
+  assertion(paramdim(mesh) == 2, "winding number only defined for surface meshes")
   (eltype(mesh) <: Triangle) || return winding(points, simplexify(mesh))
 
   function w(p)

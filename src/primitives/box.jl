@@ -20,7 +20,7 @@ struct Box{Dim,P<:Point{Dim}} <: Primitive{Dim}
   max::P
 
   function Box{Dim,P}(min, max) where {Dim,P<:Point{Dim}}
-    @assert min ⪯ max "`min` must be less than or equal to `max`"
+    assertion(min ⪯ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end

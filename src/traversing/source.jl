@@ -18,9 +18,9 @@ SourcePath(sources) = SourcePath(sources, 10^3)
 function traverse(domain, path::SourcePath)
   sources = path.sources
   batchsize = path.batchsize
-  @assert allunique(sources) "non-unique sources"
-  @assert all(1 .≤ sources .≤ nelements(domain)) "sources must be valid locations"
-  @assert length(sources) ≤ nelements(domain) "more sources than points in object"
+  assertion(allunique(sources), "non-unique sources")
+  assertion(all(1 .≤ sources .≤ nelements(domain)), "sources must be valid locations")
+  assertion(length(sources) ≤ nelements(domain), "more sources than points in object")
 
   # fit search tree
   xs = [ustrip.(to(centroid(domain, s))) for s in sources]

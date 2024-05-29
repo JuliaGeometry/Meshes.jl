@@ -130,7 +130,7 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
 end
 
 function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
-  @assert all(e -> paramdim(e) == 2, elems) "invalid element for half-edge topology"
+  assertion(all(e -> paramdim(e) == 2, elems), "invalid element for half-edge topology")
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order

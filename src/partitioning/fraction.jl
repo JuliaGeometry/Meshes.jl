@@ -13,7 +13,7 @@ struct FractionPartition <: PartitionMethod
   shuffle::Bool
 
   function FractionPartition(fraction, shuffle)
-    @assert 0 < fraction < 1 "fraction must be in interval (0,1)"
+    assertion(0 < fraction < 1, "fraction must be in interval (0,1)")
     new(fraction, shuffle)
   end
 end

@@ -36,7 +36,7 @@ function laplacematrix(mesh; weights=:cotangent)
     uniformlaplacian!(L, 𝒩)
   elseif weights == :cotangent
     v = vertices(ℳ)
-    @assert eltype(ℳ) <: Triangle "cotangent weights only defined for triangle meshes"
+    assertion(eltype(ℳ) <: Triangle, "cotangent weights only defined for triangle meshes")
     cotangentlaplacian!(L, 𝒩, v)
   else
     throw(ArgumentError("invalid discretization weights"))

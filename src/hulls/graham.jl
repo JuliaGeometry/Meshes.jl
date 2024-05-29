@@ -24,7 +24,7 @@ function hull(points, ::GrahamScan)
   ℒ = lentype(pₒ)
   T = numtype(ℒ)
 
-  @assert Dim == 2 "Graham's scan only defined in 2D"
+  assertion(Dim == 2, "Graham's scan only defined in 2D")
 
   # remove duplicates
   p = unique(points)

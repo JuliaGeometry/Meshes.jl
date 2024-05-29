@@ -6,6 +6,13 @@
 const GeometryOrDomain = Union{Geometry,Domain}
 
 """
+    assertion(cond, msg)
+
+Throws an `AssertionError(msg)` if `cond` is `false`.
+"""
+assertion(cond, msg) = cond || throw(AssertionError(msg))
+
+"""
     fitdims(dims, D)
 
 Fit tuple `dims` to a given length `D` by repeating the last dimension.
