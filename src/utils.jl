@@ -157,6 +157,13 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   Expr(:tuple, exprs...)
 end
 
+"""
+    assertion(cond, msg)
+
+Throws an `AssertionError` if `cond` is `false`.
+"""
+assertion(cond, msg) = cond || throw(AssertionError(msg))
+
 isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
 isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
 isapproxone(x) = isapprox(x, oneunit(x), atol=atol(x))

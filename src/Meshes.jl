@@ -39,8 +39,6 @@ import TransformsBase: parameters
 # CoordRefSystems API
 import CoordRefSystems: lentype
 
-assertion(cond, msg) = cond || throw(AssertionError(msg))
-
 # unit utils
 include("units.jl")
 
