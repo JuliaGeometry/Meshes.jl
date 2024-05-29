@@ -86,6 +86,16 @@
     @test unit(Meshes.lentype(p)) == u"m"
     @test Unitful.numtype(Meshes.lentype(p)) === Float32
 
+    # `to` function
+    p1 = point(1, 1)
+    p2 = point(1, 1, 1)
+    p3 = Point(Polar(T(√2), T(π / 4)))
+    p4 = Point(Cylindrical(T(√2), T(π / 4), T(1)))
+    @test to(p1) == vector(1, 1)
+    @test to(p2) == vector(1, 1, 1)
+    @test to(p3) ≈ vector(1, 1)
+    @test to(p4) ≈ vector(1, 1, 1)
+
     # generalized inequality
     @test point(1, 1) ⪯ point(1, 1)
     @test !(point(1, 1) ≺ point(1, 1))
