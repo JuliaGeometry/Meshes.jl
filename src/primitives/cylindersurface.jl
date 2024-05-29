@@ -123,7 +123,7 @@ function (c::CylinderSurface)(φ, z)
   o + Q' * to(p)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{CylinderSurface}) =
+Random.rand(rng::Random.AbstractRNG, ::Type{CylinderSurface}) =
   CylinderSurface(rand(rng, Plane), rand(rng, Plane), rand(rng, Met{Float64}))
 
 function hasintersectingplanes(c::CylinderSurface)

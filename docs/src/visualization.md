@@ -19,7 +19,7 @@ viz!
 We can visualize a single geometry or multiple geometries in a vector:
 
 ```@example viz
-triangles = [rand(Triangle{2}) for _ in 1:10]
+triangles = rand(Triangle{2}, 10)
 
 viz(triangles, color = 1:10)
 ```
