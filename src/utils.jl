@@ -6,6 +6,13 @@
 const GeometryOrDomain = Union{Geometry,Domain}
 
 """
+    assertion(cond, msg)
+
+Throws an `AssertionError` if `cond` is `false`.
+"""
+assertion(cond, msg) = cond || throw(AssertionError(msg))
+
+"""
     fitdims(dims, D)
 
 Fit tuple `dims` to a given length `D` by repeating the last dimension.
@@ -156,13 +163,6 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   end
   Expr(:tuple, exprs...)
 end
-
-"""
-    assertion(cond, msg)
-
-Throws an `AssertionError` if `cond` is `false`.
-"""
-assertion(cond, msg) = cond || throw(AssertionError(msg))
 
 isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
 isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
