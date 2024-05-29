@@ -1,5 +1,5 @@
 @testset "SubDomains" begin
-  pset = PointSet(randpoint3(100))
+  pset = PointSet(rand(Point{3}, 100))
   inds = rand(1:100, 3)
   v = view(pset, inds)
   @test nelements(v) == 3

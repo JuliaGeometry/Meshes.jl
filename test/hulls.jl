@@ -2,12 +2,12 @@
   @testset "Basic" begin
     for method in [GrahamScan(), JarvisMarch()]
       # basic test
-      pts = randpoint2(100)
+      pts = rand(Point{2}, 100)
       chul = hull(pts, method)
       @test all(pts .∈ Ref(chul))
 
       # duplicated points
-      pts = [randpoint2(100); randpoint2(100)]
+      pts = [rand(Point{2}, 100); rand(Point{2}, 100)]
       chul = hull(pts, method)
       @test all(pts .∈ Ref(chul))
 
