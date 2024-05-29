@@ -23,7 +23,7 @@
   # concatenation
   dom1 = DummyDomain(point(0, 0))
   dom2 = DummyDomain(point(3, 3))
-  dom3 = PointSet(rand(Point{2}, 3))
+  dom3 = PointSet(randpoint2(3))
   @test vcat(dom1, dom2) == GeometrySet([collect(dom1); collect(dom2)])
   @test vcat(dom2, dom3) == GeometrySet([collect(dom2); collect(dom3)])
   @test vcat(dom3, dom1) == GeometrySet([collect(dom3); collect(dom1)])

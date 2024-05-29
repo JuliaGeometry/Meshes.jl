@@ -14,8 +14,8 @@
   @test m isa Multi
   @test eltype(parent(m)) <: Primitive
 
-  m1 = SimpleMesh(rand(Point{3}, 3), [connect((1, 2, 3))])
-  m2 = SimpleMesh(rand(Point{3}, 4), [connect((1, 2, 3, 4))])
+  m1 = SimpleMesh(randpoint3(3), [connect((1, 2, 3))])
+  m2 = SimpleMesh(randpoint3(4), [connect((1, 2, 3, 4))])
   m = merge(m1, m2)
   @test m isa Mesh
   @test eltype(m) <: Ngon
