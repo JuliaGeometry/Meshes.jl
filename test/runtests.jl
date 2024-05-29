@@ -3,6 +3,7 @@ using Tables
 using Distances
 using Statistics
 using LinearAlgebra
+using CoordRefSystems
 using CategoricalArrays
 using CircularArrays
 using StaticArrays

@@ -38,9 +38,8 @@ struct Point{Dim,C<:CRS} <: Primitive{Dim}
   Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ndims(coords),C}(coords)
 end
 
-# convenience constructors
-Point(coords...) = Point(Cartesian(coords))
-Point(coords::Tuple) = Point(Cartesian(coords))
+# convenience constructor
+Point(coords...) = Point(Cartesian(coords...))
 
 paramdim(::Type{<:Point}) = 0
 
@@ -58,7 +57,7 @@ Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...)
 
 Return the vector from the origin to the `point`.
 """
-to(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords))
+to(A::Point) = Vec(CoordRefSystems.cvalues(convert(Cartesian, A.coords)))
 
 """
     -(A::Point, B::Point)
@@ -66,7 +65,7 @@ to(A::Point{Dim,<:Cartesian}) where {Dim} = Vec(CoordRefSystems.cvalues(A.coords
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = to(A) - to(B)
+-(A::Point{Dim}, B::Point{Dim}) where {Dim} = to(A) - to(B)
 
 """
     +(A::Point, v::Vec)
@@ -75,8 +74,8 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coords(to(A) + v))
-+(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A + v
++(A::Point{Dim}, v::Vec{Dim}) where {Dim} = Point(coords(to(A) + v))
++(v::Vec{Dim}, A::Point{Dim}) where {Dim} = A + v
 
 """
     -(A::Point, v::Vec)
@@ -85,8 +84,8 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim,<:Cartesian}, v::Vec{Dim}) where {Dim} = Point(coords(to(A) - v))
--(v::Vec{Dim}, A::Point{Dim,<:Cartesian}) where {Dim} = A - v
+-(A::Point{Dim}, v::Vec{Dim}) where {Dim} = Point(coords(to(A) - v))
+-(v::Vec{Dim}, A::Point{Dim}) where {Dim} = A - v
 
 """
     ⪯(A::Point, B::Point)
@@ -96,10 +95,10 @@ at a reference (or start) point `A`.
 
 Generalized inequality for non-negative orthant Rⁿ₊.
 """
-⪯(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0u"m"), B - A)
-⪰(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(≥(0u"m"), A - B)
-≺(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0u"m"), B - A)
-≻(A::Point{Dim,<:Cartesian}, B::Point{Dim,<:Cartesian}) where {Dim} = all(>(0u"m"), A - B)
+⪯(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x ≥ zero(x), B - A)
+⪰(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x ≥ zero(x), A - B)
+≺(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x > zero(x), B - A)
+≻(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x > zero(x), A - B)
 
 """
     ∠(A, B, C)
