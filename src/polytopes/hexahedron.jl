@@ -33,5 +33,5 @@ function (h::Hexahedron)(u, v, w)
   )
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Hexahedron{Dim}}) where {Dim} =
+Random.rand(rng::Random.AbstractRNG, ::Type{Hexahedron{Dim}}) where {Dim} =
   Hexahedron(ntuple(i -> rand(rng, Point{Dim}), 8))

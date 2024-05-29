@@ -100,5 +100,5 @@ function (c::Cylinder)(ρ, φ, z)
   s(T(z))
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{Cylinder}) =
+Random.rand(rng::Random.AbstractRNG, ::Type{Cylinder}) =
   Cylinder(rand(rng, Plane), rand(rng, Plane), rand(rng, Met{Float64}))

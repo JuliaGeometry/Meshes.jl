@@ -14,7 +14,7 @@ JarvisMarch
 ```
 
 ```@example hull
-pset = PointSet([rand(Point{2}) for _ in 1:100])
+pset = PointSet(rand(Point{2}, 100))
 chul = convexhull(pset)
 
 fig = Mke.Figure(size = (800, 400))

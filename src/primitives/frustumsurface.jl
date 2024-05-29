@@ -66,7 +66,7 @@ function (f::FrustumSurface)(φ, z)
   center(bottom(f)) + Q' * p
 end
 
-function Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{FrustumSurface})
+function Random.rand(rng::Random.AbstractRNG, ::Type{FrustumSurface})
   bottom = rand(rng, Disk)
   ax = normal(plane(bottom))
   topplane = Plane(center(bottom) + rand() * ax, ax)

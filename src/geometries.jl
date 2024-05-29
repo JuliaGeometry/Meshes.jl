@@ -51,6 +51,14 @@ bounding box of the `geometry`.
 """
 Base.extrema(g::Geometry) = extrema(boundingbox(g))
 
+# -------
+# RANDOM
+# -------
+
+Random.rand(::Type{G}) where {G<:Geometry} = rand(Random.default_rng(), G)
+Random.rand(::Type{G}, n::Int) where {G<:Geometry} = rand(Random.default_rng(), G, n)
+Random.rand(rng::Random.AbstractRNG, ::Type{G}, n::Int) where {G<:Geometry} = [rand(rng, G) for _ in 1:n]
+
 # -----------
 # IO METHODS
 # -----------

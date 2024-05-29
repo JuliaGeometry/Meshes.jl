@@ -118,4 +118,4 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   end
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Random.SamplerType{<:PolyArea{Dim}}) where {Dim} = PolyArea(rand(rng, Ring{Dim}))
+Random.rand(rng::Random.AbstractRNG, ::Type{PolyArea{Dim}}) where {Dim} = PolyArea(rand(rng, Ring{Dim}))

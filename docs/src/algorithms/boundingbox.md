@@ -10,7 +10,7 @@ boundingbox
 ```
 
 ```@example boundingbox
-pset = PointSet([rand(Point{2}) for _ in 1:100])
+pset = PointSet(rand(Point{2}, 100))
 bbox = boundingbox(pset)
 
 fig = Mke.Figure(size = (800, 400))
