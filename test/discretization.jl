@@ -403,7 +403,7 @@
     grid = CartesianGrid(10)
     @test discretize(grid) == grid
 
-    mesh = SimpleMesh(randpoint2(3), connect.([(1, 2, 3)]))
+    mesh = SimpleMesh(rand(Point{2}, 3), connect.([(1, 2, 3)]))
     @test discretize(mesh) == mesh
   end
 

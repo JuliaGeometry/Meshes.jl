@@ -617,13 +617,13 @@
     @test_throws BoundsError grid[3:11, :]
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
-    points = randpoint2(5)
+    points = rand(Point{2}, 5)
     connec = [connect((1, 2, 3))]
     mesh = SimpleMesh(points, connec)
     @test nvertices(mesh) == length(vertices(mesh)) == 5
 
     # single vertex access
-    points = randpoint2(5)
+    points = rand(Point{2}, 5)
     connec = [connect((1, 2, 3))]
     mesh = SimpleMesh(points, connec)
     @test vertex(mesh, 1) == points[1]

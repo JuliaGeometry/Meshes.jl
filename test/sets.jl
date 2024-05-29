@@ -32,19 +32,19 @@
   end
 
   @testset "PointSet" begin
-    pset = PointSet(randpoint1(100))
+    pset = PointSet(rand(Point{1}, 100))
     @test embeddim(pset) == 1
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
     @test eltype(pset) <: Point{1}
 
-    pset = PointSet(randpoint2(100))
+    pset = PointSet(rand(Point{2}, 100))
     @test embeddim(pset) == 2
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
     @test eltype(pset) <: Point{2}
 
-    pset = PointSet(randpoint3(100))
+    pset = PointSet(rand(Point{3}, 100))
     @test embeddim(pset) == 3
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
