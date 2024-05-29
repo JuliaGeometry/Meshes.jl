@@ -15,7 +15,7 @@ function Adjacency{P}(topology) where {P}
   D = paramdim(topology)
   T = typeof(topology)
 
-  @assert D ≥ P "invalid adjacency relation"
+  assertion(D ≥ P, "invalid adjacency relation")
 
   Adjacency{P,D,T}(topology)
 end

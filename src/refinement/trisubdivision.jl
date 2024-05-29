@@ -17,7 +17,7 @@ then subdividing each triangle into four triangles.
 struct TriSubdivision <: RefinementMethod end
 
 function refine(mesh, ::TriSubdivision)
-  @assert paramdim(mesh) == 2 "TriSubdivision only defined for surface meshes"
+  assertion(paramdim(mesh) == 2, "TriSubdivision only defined for surface meshes")
 
   # triangulate mesh if necessary
   tmesh = eltype(mesh) <: Triangle ? mesh : simplexify(mesh)

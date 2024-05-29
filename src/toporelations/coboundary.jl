@@ -16,7 +16,7 @@ function Coboundary{P,Q}(topology) where {P,Q}
   D = paramdim(topology)
   T = typeof(topology)
 
-  @assert P < Q ≤ D "invalid coboundary relation"
+  assertion(P < Q ≤ D, "invalid coboundary relation")
 
   Coboundary{P,Q,D,T}(topology)
 end

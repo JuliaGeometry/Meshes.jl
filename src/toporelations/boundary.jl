@@ -16,7 +16,7 @@ function Boundary{P,Q}(topology) where {P,Q}
   D = paramdim(topology)
   T = typeof(topology)
 
-  @assert D ≥ P > Q "invalid boundary relation"
+  assertion(D ≥ P > Q, "invalid boundary relation")
 
   Boundary{P,Q,D,T}(topology)
 end

@@ -18,8 +18,8 @@ struct FrustumSurface{D<:Disk} <: Primitive{3}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     a = bn ⋅ tn
-    @assert a ≈ oneunit(a) "Bottom and top plane must be parallel"
-    @assert center(bot) ≉ center(top) "Bottom and top centers need to be distinct"
+    assertion(a ≈ oneunit(a), "Bottom and top plane must be parallel")
+    assertion(center(bot) ≉ center(top), "Bottom and top centers need to be distinct")
     new(bot, top)
   end
 end
