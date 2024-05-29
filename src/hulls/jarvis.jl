@@ -24,7 +24,7 @@ function hull(points, ::JarvisMarch)
   Dim = embeddim(pₒ)
   ℒ = lentype(pₒ)
 
-  @assert Dim == 2 "Jarvis's march only defined in 2D"
+  assertion(Dim == 2, "Jarvis's march only defined in 2D")
 
   # remove duplicates
   p = unique(points)

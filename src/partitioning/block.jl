@@ -31,7 +31,7 @@ function partitioninds(::AbstractRNG, domain::Domain, method::BlockPartition)
   bsides = sides(bbox)
   Dim = length(bsides)
 
-  @assert all(psides .≤ bsides) "invalid block sides"
+  assertion(all(psides .≤ bsides), "invalid block sides")
 
   # bounding box properties
   ce = centroid(bbox)
