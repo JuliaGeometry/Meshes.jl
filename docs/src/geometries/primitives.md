@@ -25,9 +25,9 @@ rand(Point{3}, 100) |> viz
 
 ```@docs
 to(::Point)
--(::Point, ::Point)
-+(::Point, ::Vec)
--(::Point, ::Vec)
+-(::Point{Dim}, ::Point{Dim}) where {Dim}
++(::Point{Dim}, ::Vec{Dim}) where {Dim}
+-(::Point{Dim}, ::Vec{Dim}) where {Dim}
 ```
 
 ### Ray
