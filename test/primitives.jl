@@ -86,6 +86,15 @@
     @test unit(Meshes.lentype(p)) == u"m"
     @test Unitful.numtype(Meshes.lentype(p)) === Float32
 
+    # conversions
+    P = typeof(point(1, 1))
+    p1 = Point(1.0, 1.0)
+    p2 = convert(P, p1)
+    @test p2 isa P
+    p1 = Point(1.0f0, 1.0f0)
+    p2 = convert(P, p1)
+    @test p2 isa P
+
     # `to` function
     p1 = point(1, 1)
     p2 = point(1, 1, 1)
