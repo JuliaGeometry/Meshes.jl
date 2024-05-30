@@ -108,7 +108,7 @@ end
 Tells whether or not the metric `ball` is isotropic,
 i.e. if all its radii are equal.
 """
-isisotropic(ball::MetricBall) = length(unique(ball.radii)) == 1
+isisotropic(ball::MetricBall) = allequal(ball.radii)
 
 function *(α::Real, ball::MetricBall)
   if ball.metric isa Mahalanobis
