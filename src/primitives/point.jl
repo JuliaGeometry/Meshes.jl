@@ -42,7 +42,7 @@ end
 Point(coords...) = Point(Cartesian(coords...))
 
 # conversions
-Base.convert(::Type{Point{Dim,CRSₜ}}, p::Point{Dim,CRSₛ}) where {Dim,CRSₜ,CRSₛ} = Point(convert(CRSₜ, p.coords))
+Base.convert(::Type{Point{Dim,CRS}}, p::Point{Dim}) where {Dim,CRS} = Point(convert(CRS, p.coords))
 Base.convert(::Type{Point{Dim,CRS}}, p::Point{Dim,CRS}) where {Dim,CRS} = p
 
 paramdim(::Type{<:Point}) = 0
