@@ -6,7 +6,7 @@
     m = metric(b)
     @test evaluate(m, T[0] * u"m", T[0] * u"m") ≤ r
     @test evaluate(m, T[0] * u"m", T[1] * u"m") > r
-    @test radii(b) == T[1 / 2] * u"m"
+    @test radii(b) == (T(1 / 2) * u"m",)
 
     b = MetricBall(T(1))
     r = radius(b)
@@ -56,22 +56,22 @@
     @test evaluate(m, T[-1.0, 1.0, 0.0] * u"m", T[0.0, 0.0, 0.0] * u"m") ≈ √T(2) * u"m"
 
     # make sure the correct constructor is called
-    m = metric(MetricBall(T[1.0, 0.5, 0.2], RotXYX(T(0), T(0), T(0))))
+    m = metric(MetricBall(T.((1.0, 0.5, 0.2)), RotXYX(T(0), T(0), T(0))))
     @test m isa Mahalanobis
 
     # make sure the angle is clockwise
-    m = metric(MetricBall(T[20.0, 5.0], Angle2d(T(π / 2))))
+    m = metric(MetricBall(T.((20.0, 5.0)), Angle2d(T(π / 2))))
     @test m isa Mahalanobis
     @test evaluate(m, T[1.0, 0.0] * u"m", T[0.0, 0.0] * u"m") ≈ T(0.2) * u"m"
     @test evaluate(m, T[0.0, 1.0] * u"m", T[0.0, 0.0] * u"m") ≈ T(0.05) * u"m"
 
     # basic multiplication
     @test 2MetricBall(T(1)) == MetricBall(T(2))
-    @test 2MetricBall(T[1, 2, 3]) == MetricBall(T[2, 4, 6])
+    @test 2MetricBall(T.((1, 2, 3))) == MetricBall(T.((2, 4, 6)))
 
     # access to rotation
     @test rotation(MetricBall(T(1))) == I
-    @test rotation(MetricBall(T[1, 2, 3])) == I
-    @test rotation(MetricBall(T[1, 2], Angle2d(T(π / 2)))) == Angle2d(T(π / 2))
+    @test rotation(MetricBall(T.((1, 2, 3)))) == I
+    @test rotation(MetricBall(T.((1, 2)), Angle2d(T(π / 2)))) == Angle2d(T(π / 2))
   end
 end
