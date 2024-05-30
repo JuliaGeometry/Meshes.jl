@@ -41,7 +41,7 @@ end
 # convenience constructor
 Point(coords...) = Point(Cartesian(coords...))
 
-# conversion
+# conversions
 Base.convert(::Type{Point{Dim,CRSₜ}}, p::Point{Dim,CRSₛ}) where {Dim,CRSₜ,CRSₛ} = Point(convert(CRSₜ, p.coords))
 Base.convert(::Type{Point{Dim,CRS}}, p::Point{Dim,CRS}) where {Dim,CRS} = p
 
