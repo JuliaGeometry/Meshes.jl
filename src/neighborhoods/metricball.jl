@@ -32,24 +32,22 @@ julia> mahalanobis = MetricBall((3.0, 2.0, 1.0))
 ```
 """
 struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
-  radii::SVector{Dim,ℒ}
+  radii::NTuple{Dim,ℒ}
   rotation::R
 
   # state fields
   metric::M
 
-  MetricBall(radii::SVector{Dim,ℒ}, rotation::R, metric::M) where {Dim,ℒ<:Len,R,M} =
+  MetricBall(radii::NTuple{Dim,ℒ}, rotation::R, metric::M) where {Dim,ℒ<:Len,R,M} =
     new{Dim,float(ℒ),R,M}(radii, rotation, metric)
 end
 
-MetricBall(radii::SVector, rotation, metric) = MetricBall(addunit(radii, u"m"), rotation, metric)
-
-function MetricBall(radii::SVector{Dim,ℒ}, rotation=nothing) where {Dim,ℒ<:Len}
+function MetricBall(radii::NTuple{Dim,ℒ}, rotation=nothing) where {Dim,ℒ<:Len}
   # scaling matrix
-  Λ = Diagonal((oneunit(ℒ) ./ radii) .^ 2)
+  Λ = Diagonal(SVector((oneunit(ℒ) ./ radii) .^ 2))
 
   # rotation matrix
-  R = isnothing(rotation) ? default_rotation(Val(Dim), numtype(ℒ)) : rotation
+  R = isnothing(rotation) ? default_rotation(Val(Dim), float(numtype(ℒ))) : rotation
 
   # anisotropy matrix
   M = Symmetric(R * Λ * R')
@@ -60,14 +58,13 @@ function MetricBall(radii::SVector{Dim,ℒ}, rotation=nothing) where {Dim,ℒ<:L
   MetricBall(radii, R, metric)
 end
 
-MetricBall(radii::SVector, rotation=nothing) = MetricBall(addunit(radii, u"m"), rotation)
+MetricBall(radii::NTuple{Dim,Len}, rotation=nothing) where {Dim} = MetricBall(promote(radii...), rotation)
 
-MetricBall(radii::Tuple, rotation=nothing) = MetricBall(SVector(radii), rotation)
+MetricBall(radii::Tuple, rotation=nothing) = MetricBall(addunit.(radii, u"m"), rotation)
 
-# avoid silent calls to inner constructor
-MetricBall(radii::AbstractVector{T}, rotation=nothing) where {T} = MetricBall(SVector{length(radii),T}(radii), rotation)
+MetricBall(radius::Len, metric=Euclidean()) = MetricBall((radius,), nothing, metric)
 
-MetricBall(radius::Number, metric=Euclidean()) = MetricBall(SVector(radius), nothing, metric)
+MetricBall(radius::Number, metric=Euclidean()) = MetricBall(addunit(radius, u"m"), metric)
 
 default_rotation(::Val{2}, T) = one(Angle2d{T})
 default_rotation(::Val{3}, T) = one(QuatRotation{T})
@@ -123,7 +120,7 @@ end
 
 function Base.show(io::IO, ball::MetricBall)
   n = length(ball.radii)
-  r = n > 1 ? Tuple(ball.radii) : first(ball.radii)
+  r = n > 1 ? ball.radii : first(ball.radii)
   m = nameof(typeof(ball.metric))
   print(io, "MetricBall($r, $m)")
 end
