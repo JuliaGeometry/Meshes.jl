@@ -107,8 +107,6 @@ function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
   else
     Makie.poly!(plot, polys, color=colors)
   end
-
-  showfacets2D!(plot, geoms)
 end
 
 function vizgset3D!(plot, geoms, colorant)
