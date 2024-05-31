@@ -3,14 +3,14 @@
 # ------------------------------------------------------------------
 
 # flip arguments so that points always come first
-evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
+evaluate(dist::PreMetric, g::Geometry, p::Point) = evaluate(dist, p, g)
 
 """
-    evaluate(Euclidean(), point, line)
+    evaluate(distance::Euclidean, point, line)
 
-Evaluate the Euclidean distance between `point` and `line`.
+Evaluate the Euclidean `distance` between `point` and `line`.
 """
-function evaluate(::Euclidean, p::Point, l::Line)
+function evaluate(::Euclidean, p::Point{Dim}, l::Line{Dim}) where {Dim}
   a, b = l(0), l(1)
   u = p - a
   v = b - a
@@ -19,25 +19,26 @@ function evaluate(::Euclidean, p::Point, l::Line)
 end
 
 """
-    evaluate(Euclidean(), line1, line2)
-Evaluate the minimum Euclidean distance between `line1` and `line2`.
+    evaluate(distance::Euclidean, line₁, line₂)
+
+Evaluate the minimum Euclidean `distance` between `line₁` and `line₂`.
 """
-function evaluate(::Euclidean, line1::Line{Dim}, line2::Line{Dim}) where {Dim}
-  λ₁, λ₂, r, rₐ = intersectparameters(line1(0), line1(1), line2(0), line2(1))
+function evaluate(dist::Euclidean, line₁::Line{Dim}, line₂::Line{Dim}) where {Dim}
+  λ₁, λ₂, r, rₐ = intersectparameters(line₁(0), line₁(1), line₂(0), line₂(1))
 
   if (r == rₐ == 2) || (r == rₐ == 1)  # lines intersect or are colinear
-    return zero(lentype(line1))
+    return zero(result_type(dist, lentype(line₁), lentype(line₂)))
   elseif (r == 1) && (rₐ == 2)  # lines are parallel
-    return evaluate(Euclidean(), line1(0), line2)
+    return evaluate(dist, line₁(0), line₂)
   else  # get distance between closest points on each line
-    return evaluate(Euclidean(), line1(λ₁), line2(λ₂))
+    return evaluate(dist, line₁(λ₁), line₂(λ₂))
   end
 end
 
 """
-    evaluate(dist::PreMetric, point₁, point₂)
+    evaluate(distance::PreMetric, point₁, point₂)
 
-Evaluate pre-metric `dist` between coordinates of `point₁` and `point₂`.
+Evaluate pre-metric `distance` between coordinates of `point₁` and `point₂`.
 """
 function evaluate(dist::PreMetric, p₁::Point{Dim}, p₂::Point{Dim}) where {Dim}
   u₁ = unit(Meshes.lentype(p₁))
