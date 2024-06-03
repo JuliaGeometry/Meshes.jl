@@ -9,7 +9,7 @@ An open polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
 See also [`Chain`](@ref) and [`Ring`](@ref).
 """
-struct Rope{Dim,CRS,P<:Point{Dim,CRS},V<:AbstractVector{P}} <: Chain{Dim,CRS,P}
+struct Rope{Dim,C<:CRS,V<:AbstractVector{Point{Dim,C}}} <: Chain{Dim,C}
   vertices::V
 end
 

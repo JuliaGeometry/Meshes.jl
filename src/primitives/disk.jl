@@ -10,13 +10,13 @@ given `plane` with given `radius`.
 
 See also [`Circle`](@ref).
 """
-struct Disk{CRS,P<:Plane{CRS},ℒ<:Len} <: Primitive{3,CRS}
+struct Disk{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{3,C}
   plane::P
   radius::ℒ
-  Disk{CRS,P,ℒ}(plane, radius) where {CRS,P<:Plane{CRS},ℒ<:Len} = new(plane, radius)
+  Disk{C,P,ℒ}(plane, radius) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new(plane, radius)
 end
 
-Disk(plane::P, radius::ℒ) where {CRS,P<:Plane{CRS},ℒ<:Len} = Disk{CRS,P,float(ℒ)}(plane, radius)
+Disk(plane::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = Disk{C,P,float(ℒ)}(plane, radius)
 
 Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))
 

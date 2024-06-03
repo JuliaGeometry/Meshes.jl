@@ -9,9 +9,9 @@ A line passing through points `a` and `b`.
 
 See also [`Segment`](@ref).
 """
-struct Line{Dim,CRS,P<:Point{Dim,CRS}} <: Primitive{Dim,CRS}
-  a::P
-  b::P
+struct Line{Dim,C<:CRS} <: Primitive{Dim,C}
+  a::Point{Dim,C}
+  b::Point{Dim,C}
 end
 
 Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))

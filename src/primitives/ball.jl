@@ -9,13 +9,13 @@ A ball with `center` and `radius`.
 
 See also [`Sphere`](@ref).
 """
-struct Ball{Dim,CRS,P<:Point{Dim,CRS},ℒ<:Len} <: Primitive{Dim,CRS}
-  center::P
+struct Ball{Dim,C<:CRS,ℒ<:Len} <: Primitive{Dim,C}
+  center::Point{Dim,C}
   radius::ℒ
-  Ball{Dim,CRS,P,ℒ}(center, radius) where {Dim,CRS,P<:Point{Dim,CRS},ℒ<:Len} = new(center, radius)
+  Ball{Dim,C,ℒ}(center, radius) where {Dim,C<:CRS,ℒ<:Len} = new(center, radius)
 end
 
-Ball(center::P, radius::ℒ) where {Dim,CRS,P<:Point{Dim,CRS},ℒ<:Len} = Ball{Dim,CRS,P,float(ℒ)}(center, radius)
+Ball(center::Point{Dim,C}, radius::ℒ) where {Dim,C<:CRS,ℒ<:Len} = Ball{Dim,C,float(ℒ)}(center, radius)
 
 Ball(center::Point, radius) = Ball(center, addunit(radius, u"m"))
 

@@ -10,12 +10,12 @@ See <https://en.wikipedia.org/wiki/Cone>.
 
 See also [`Cone`](@ref).
 """
-struct ConeSurface{CRS,D<:Disk{CRS},P<:Point{3,CRS}} <: Primitive{3,CRS}
+struct ConeSurface{C<:CRS,D<:Disk{C}} <: Primitive{3,C}
   base::D
-  apex::P
+  apex::Point{3,C}
 end
 
-ConeSurface(base::Disk{CRS}, apex::Tuple) where {CRS<:Cartesian} = ConeSurface(base, Point(CRS(apex)))
+ConeSurface(base::Disk{C}, apex::Tuple) where {C<:Cartesian} = ConeSurface(base, Point(C(apex)))
 
 paramdim(::Type{<:ConeSurface}) = 2
 

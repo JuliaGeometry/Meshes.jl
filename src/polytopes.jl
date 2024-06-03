@@ -25,13 +25,13 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,Dim,CRS,P<:Point{Dim,CRS}} <: Geometry{Dim,CRS} end
+abstract type Polytope{K,Dim,CRS} <: Geometry{Dim,CRS} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   expr = quote
-    $Base.@__doc__ struct $type{Dim,CRS,P<:Point{Dim,CRS}} <: Polytope{$K,Dim,CRS,P}
-      vertices::NTuple{$N,P}
+    $Base.@__doc__ struct $type{Dim,C<:CRS} <: Polytope{$K,Dim,C}
+      vertices::NTuple{$N,Point{Dim,C}}
     end
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))

@@ -24,15 +24,15 @@ Finally, construct a right vertical circular cylinder surface with given `radius
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct CylinderSurface{CRS,P<:Plane{CRS},ℒ<:Len} <: Primitive{3,CRS}
+struct CylinderSurface{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{3,C}
   bot::P
   top::P
   radius::ℒ
-  CylinderSurface{CRS,P,ℒ}(bot, top, radius) where {CRS,P<:Plane{CRS},ℒ<:Len} = new(bot, top, radius)
+  CylinderSurface{C,P,ℒ}(bot, top, radius) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new(bot, top, radius)
 end
 
-CylinderSurface(bot::P, top::P, radius::ℒ) where {CRS,P<:Plane{CRS},ℒ<:Len} =
-  CylinderSurface{CRS,P,float(ℒ)}(bot, top, radius)
+CylinderSurface(bot::P, top::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} =
+  CylinderSurface{C,P,float(ℒ)}(bot, top, radius)
 
 CylinderSurface(bot::P, top::P, radius) where {P<:Plane} = CylinderSurface(bot, top, addunit(radius, u"m"))
 
