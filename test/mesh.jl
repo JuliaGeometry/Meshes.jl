@@ -272,6 +272,10 @@
     @test vertex(grid, 1) == point(0, 0)
     @test vertex(grid, 121) == point(10, 10)
 
+    # datum
+    grid = RectilinearGrid{WGS84Latest}(x, y)
+    @test datum(Meshes.coords(vertex(grid, 1))) === WGS84Latest
+
     # conversion
     cg = cartgrid(10, 10)
     rg = convert(RectilinearGrid, cg)
@@ -385,6 +389,10 @@
     @test maximum(sub) == point(1.0, 1.0)
     @test_throws BoundsError grid[2:6, :]
     @test Meshes.XYZ(grid) == (X * u"m", Y * u"m")
+
+    # datum
+    grid = StructuredGrid{WGS84Latest}(X, Y)
+    @test datum(Meshes.coords(vertex(grid, 1))) === WGS84Latest
 
     # conversion
     cg = cartgrid(10, 10)
