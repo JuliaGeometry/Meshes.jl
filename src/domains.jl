@@ -151,6 +151,8 @@ Base.convert(::Type{GeometrySet}, d::Domain) = GeometrySet(collect(d))
 
 Base.convert(::Type{SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
 
+# TODO: extract Datum from `g`
 Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid(XYZ(g))
 
+# TODO: extract Datum from `g`
 Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid(xyz(g))

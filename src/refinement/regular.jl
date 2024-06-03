@@ -25,17 +25,17 @@ function refine(grid::CartesianGrid{Dim}, method::RegularRefinement) where {Dim}
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end
 
-function refine(grid::RectilinearGrid{Dim}, method::RegularRefinement) where {Dim}
+function refine(grid::RectilinearGrid{Datum,Dim}, method::RegularRefinement) where {Datum,Dim}
   factors = fitdims(method.factors, Dim)
   xyzₛ = xyz(grid)
   xyzₜ = ntuple(i -> _refinedims(xyzₛ[i], factors[i]), Dim)
-  RectilinearGrid(xyzₜ)
+  RectilinearGrid{Datum}(xyzₜ)
 end
 
-function refine(grid::StructuredGrid{Dim}, method::RegularRefinement) where {Dim}
+function refine(grid::StructuredGrid{Datum,Dim}, method::RegularRefinement) where {Datum,Dim}
   factors = fitdims(method.factors, Dim)
   XYZ′ = _XYZ(grid, factors)
-  StructuredGrid(XYZ′)
+  StructuredGrid{Datum}(XYZ′)
 end
 
 function _refinedims(x, f)
@@ -46,7 +46,7 @@ function _refinedims(x, f)
   x′
 end
 
-function _XYZ(grid::StructuredGrid{2}, factors::Dims{2})
+function _XYZ(grid::StructuredGrid{Datum,2}, factors::Dims{2}) where {Datum}
   T = numtype(lentype(grid))
   fᵢ, fⱼ = factors
   sᵢ, sⱼ = size(grid)
@@ -72,7 +72,7 @@ function _XYZ(grid::StructuredGrid{2}, factors::Dims{2})
   (X, Y)
 end
 
-function _XYZ(grid::StructuredGrid{3}, factors::Dims{3})
+function _XYZ(grid::StructuredGrid{Datum,3}, factors::Dims{3}) where {Datum}
   T = numtype(lentype(grid))
   fᵢ, fⱼ, fₖ = factors
   sᵢ, sⱼ, sₖ = size(grid)

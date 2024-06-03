@@ -4,8 +4,10 @@
 
 """
     RectilinearGrid(x, y, z, ...)
+    RectilinearGrid{Datum}(x, y, z, ...)
 
-A rectilinear grid with vertices at sorted coordinates `x`, `y`, `z`, ...
+A rectilinear grid with vertices at sorted coordinates `x`, `y`, `z`, ...,
+and a given `Datum` (default to `NoDatum`).
 
 ## Examples
 
@@ -18,31 +20,36 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Dim,V<:AbstractVector{<:Len}} <: Grid{Dim}
+struct RectilinearGrid{Datum,Dim,V<:AbstractVector{<:Len}} <: Grid{Dim}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
-  RectilinearGrid{Dim,V}(xyz, topology) where {Dim,V<:AbstractVector{<:Len}} = new(xyz, topology)
+  RectilinearGrid{Datum,Dim,V}(xyz, topology) where {Datum,Dim,V<:AbstractVector{<:Len}} = new(xyz, topology)
 end
 
-function RectilinearGrid(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Dim,V<:AbstractVector{<:Len}}
+function RectilinearGrid{Datum}(
+  xyz::NTuple{Dim,V},
+  topology::GridTopology{Dim}
+) where {Datum,Dim,V<:AbstractVector{<:Len}}
   coords = float.(xyz)
-  RectilinearGrid{Dim,eltype(coords)}(coords, topology)
+  RectilinearGrid{Datum,Dim,eltype(coords)}(coords, topology)
 end
 
-RectilinearGrid(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Dim,V<:AbstractVector} =
-  RectilinearGrid(addunit.(xyz, u"m"), topology)
+RectilinearGrid{Datum}(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Datum,Dim,V<:AbstractVector} =
+  RectilinearGrid{Datum}(addunit.(xyz, u"m"), topology)
 
-function RectilinearGrid(xyz::Tuple)
+function RectilinearGrid{Datum}(xyz::Tuple) where {Datum}
   coords = promote(collect.(xyz)...)
   topology = GridTopology(length.(coords) .- 1)
-  RectilinearGrid(coords, topology)
+  RectilinearGrid{Datum}(coords, topology)
 end
 
-RectilinearGrid(xyz...) = RectilinearGrid(xyz)
+RectilinearGrid{Datum}(xyz...) where {Datum} = RectilinearGrid{Datum}(xyz)
 
-lentype(::Type{<:RectilinearGrid{Dim,V}}) where {Dim,V} = eltype(V)
+RectilinearGrid(args...) = RectilinearGrid{NoDatum}(args...)
 
-vertex(g::RectilinearGrid{Dim}, ijk::Dims{Dim}) where {Dim} = Point(getindex.(g.xyz, ijk))
+lentype(::Type{<:RectilinearGrid{Datum,Dim,V}}) where {Datum,Dim,V} = eltype(V)
+
+vertex(g::RectilinearGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
 
 xyz(g::RectilinearGrid) = g.xyz
 
@@ -55,13 +62,13 @@ function centroid(g::RectilinearGrid, ind::Int)
   Point(coords((to(p1) + to(p2)) / 2))
 end
 
-function Base.getindex(g::RectilinearGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+function Base.getindex(g::RectilinearGrid{Datum,Dim}, I::CartesianIndices{Dim}) where {Datum,Dim}
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   start = Tuple(first(I))
   stop = Tuple(last(I)) .+ 1
   xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], Dim)
-  RectilinearGrid(xyz, GridTopology(dims))
+  RectilinearGrid{Datum}(xyz, GridTopology(dims))
 end
 
 function Base.summary(io::IO, g::RectilinearGrid)
