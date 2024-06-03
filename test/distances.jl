@@ -32,6 +32,10 @@
   p4 = Point(cart2)
   @test evaluate(Haversine(), p1, p2) ≈ T(111194.92664455874) * u"m"
   @test evaluate(Haversine(), p3, p4) ≈ T(111194.92664455874) * u"m"
+  @test evaluate(Haversine(6371000u"m"), p1, p2) ≈ T(111194.92664455874) * u"m"
+  @test evaluate(Haversine(6371000u"m"), p3, p4) ≈ T(111194.92664455874) * u"m"
+  @test evaluate(Haversine(6371u"km"), p1, p2) ≈ T(111.19492664455874) * u"km"
+  @test evaluate(Haversine(6371u"km"), p3, p4) ≈ T(111.19492664455874) * u"km"
   @test evaluate(SphericalAngle(), p1, p2) ≈ deg2rad(T(1) * u"°")
   @test evaluate(SphericalAngle(), p3, p4) ≈ deg2rad(T(1) * u"°")
 end
