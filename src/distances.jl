@@ -55,7 +55,8 @@ end
 
 function evaluate(d::Haversine, p₁::Point{Dim,<:LatLon}, p₂::Point{Dim,<:LatLon}) where {Dim}
   uᵣ = unit(d.radius)
-  u = uᵣ === NoUnits ? u"m" : uᵣ
+  # add default unit if necessary
+  u = uᵣ === NoUnits ? u"m" : NoUnits
   latlon₁ = coords(p₁)
   latlon₂ = coords(p₂)
   v₁ = SVector(latlon₁.lon, latlon₁.lat)
