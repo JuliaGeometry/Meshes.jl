@@ -73,11 +73,9 @@ boundingbox(g::CartesianGrid) = Box(extrema(g)...)
 
 boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
 
-boundingbox(g::TransformedGrid{Dim,<:CartesianGrid{Dim}}) where {Dim} =
-  boundingbox(parent(g)) |> transform(g) |> boundingbox
+boundingbox(g::TransformedGrid{<:Any,<:CartesianGrid}) = boundingbox(parent(g)) |> transform(g) |> boundingbox
 
-boundingbox(g::TransformedGrid{Dim,<:RectilinearGrid{Datum,Dim}}) where {Datum,Dim} =
-  boundingbox(parent(g)) |> transform(g) |> boundingbox
+boundingbox(g::TransformedGrid{<:Any,<:RectilinearGrid}) = boundingbox(parent(g)) |> transform(g) |> boundingbox
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
 
