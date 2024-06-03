@@ -13,7 +13,7 @@ defined by non-parallel vectors `u` and `v`.
 Alternatively specify point `p` and a given normal
 vector `n` to the plane.
 """
-struct Plane{P<:Point{3},V<:Vec{3}} <: Primitive{3}
+struct Plane{CRS,P<:Point{3,CRS},V<:Vec{3}} <: Primitive{3,CRS}
   p::P
   u::V
   v::V
@@ -37,8 +37,6 @@ function Plane(p1::Point{3}, p2::Point{3}, p3::Point{3})
 end
 
 paramdim(::Type{<:Plane}) = 2
-
-lentype(::Type{<:Plane{P}}) where {P} = lentype(P)
 
 normal(p::Plane) = unormalize(ucross(p.u, p.v))
 

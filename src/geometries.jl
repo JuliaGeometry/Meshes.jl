@@ -7,7 +7,7 @@
 
 A geometry embedded in a `Dim`-dimensional space.
 """
-abstract type Geometry{Dim} end
+abstract type Geometry{Dim,CRS} end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 
@@ -34,6 +34,7 @@ paramdim(g::Geometry) = paramdim(typeof(g))
 
 Return the length type of the `geometry`.
 """
+lentype(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 lentype(g::Geometry) = lentype(typeof(g))
 
 """

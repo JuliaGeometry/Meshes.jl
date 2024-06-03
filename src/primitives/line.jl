@@ -9,7 +9,7 @@ A line passing through points `a` and `b`.
 
 See also [`Segment`](@ref).
 """
-struct Line{Dim,P<:Point{Dim}} <: Primitive{Dim}
+struct Line{Dim,CRS,P<:Point{Dim,CRS}} <: Primitive{Dim,CRS}
   a::P
   b::P
 end
@@ -17,8 +17,6 @@ end
 Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
 
 paramdim(::Type{<:Line}) = 1
-
-lentype(::Type{<:Line{Dim,P}}) where {Dim,P} = lentype(P)
 
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 

@@ -32,15 +32,16 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{P<:Point{3},ℒ<:Len} <: Primitive{3}
+struct ParaboloidSurface{CRS,P<:Point{3,CRS},ℒ<:Len} <: Primitive{3,CRS}
   apex::P
   radius::ℒ
   focallength::ℒ
-  ParaboloidSurface{P,ℒ}(apex, radius, focallength) where {P<:Point{3},ℒ<:Len} = new(apex, radius, focallength)
+  ParaboloidSurface{CRS,P,ℒ}(apex, radius, focallength) where {CRS,P<:Point{3,CRS},ℒ<:Len} =
+    new(apex, radius, focallength)
 end
 
-ParaboloidSurface(apex::P, radius::ℒ, focallength::ℒ) where {P<:Point{3},ℒ<:Len} =
-  ParaboloidSurface{P,float(ℒ)}(apex, radius, focallength)
+ParaboloidSurface(apex::P, radius::ℒ, focallength::ℒ) where {CRS,P<:Point{3,CRS},ℒ<:Len} =
+  ParaboloidSurface{CRS,P,float(ℒ)}(apex, radius, focallength)
 
 ParaboloidSurface(apex::Point{3}, radius::Len, focallength::Len) =
   ParaboloidSurface(apex, promote(radius, focallength)...)
@@ -61,8 +62,6 @@ ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0))
 
 paramdim(::Type{<:ParaboloidSurface}) = 2
-
-lentype(::Type{<:ParaboloidSurface{P}}) where {P} = lentype(P)
 
 """
     focallength(p::ParaboloidSurface)

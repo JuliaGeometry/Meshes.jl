@@ -25,12 +25,12 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,Dim,P<:Point} <: Geometry{Dim} end
+abstract type Polytope{K,Dim,CRS,P<:Point{Dim,CRS}} <: Geometry{Dim,CRS} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   expr = quote
-    $Base.@__doc__ struct $type{Dim,P<:Point{Dim}} <: Polytope{$K,Dim,P}
+    $Base.@__doc__ struct $type{Dim,CRS,P<:Point{Dim,CRS}} <: Polytope{$K,Dim,CRS,P}
       vertices::NTuple{$N,P}
     end
 
@@ -199,8 +199,6 @@ include("polytopes/pyramid.jl")
 Return the parametric dimension or rank of the polytope.
 """
 paramdim(::Type{<:Polytope{K}}) where {K} = K
-
-lentype(::Type{<:Polytope{K,Dim,P}}) where {K,Dim,P} = lentype(P)
 
 """
     vertex(polytope, ind)

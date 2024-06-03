@@ -20,9 +20,9 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,Dim,P<:Point{Dim}} <: Polygon{Dim,P}
+struct Ngon{N,Dim,CRS,P<:Point{Dim,CRS}} <: Polygon{Dim,CRS,P}
   vertices::NTuple{N,P}
-  function Ngon{N,Dim,P}(vertices) where {N,Dim,P<:Point{Dim}}
+  function Ngon{N,Dim,CRS,P}(vertices) where {N,Dim,CRS,P<:Point{Dim,CRS}}
     if N < 3
       throw(ArgumentError("the number of vertices must be greater than or equal to 3"))
     end
@@ -30,11 +30,11 @@ struct Ngon{N,Dim,P<:Point{Dim}} <: Polygon{Dim,P}
   end
 end
 
-Ngon{N}(vertices::NTuple{N,P}) where {N,Dim,P<:Point{Dim}} = Ngon{N,Dim,P}(vertices)
-Ngon{N}(vertices::Vararg{P,N}) where {N,Dim,P<:Point{Dim}} = Ngon{N,Dim,P}(vertices)
+Ngon{N}(vertices::NTuple{N,P}) where {N,Dim,CRS,P<:Point{Dim,CRS}} = Ngon{N,Dim,CRS,P}(vertices)
+Ngon{N}(vertices::Vararg{P,N}) where {N,P<:Point} = Ngon{N}(vertices)
 Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon{N}(Point.(vertices))
 
-Ngon(vertices::NTuple{N,P}) where {N,Dim,P<:Point{Dim}} = Ngon{N,Dim,P}(vertices)
+Ngon(vertices::NTuple{N,P}) where {N,Dim,CRS,P<:Point{Dim,CRS}} = Ngon{N,Dim,CRS,P}(vertices)
 Ngon(vertices::P...) where {P<:Point} = Ngon(vertices)
 Ngon(vertices::Tuple...) = Ngon(Point.(vertices))
 
@@ -47,8 +47,6 @@ const Heptagon = Ngon{7}
 const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
-
-lentype(::Type{<:Ngon{N,Dim,P}}) where {N,Dim,P} = lentype(P)
 
 Base.unique!(ngon::Ngon) = ngon
 
