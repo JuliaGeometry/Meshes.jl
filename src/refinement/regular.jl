@@ -20,7 +20,7 @@ end
 
 RegularRefinement(factors::Vararg{Int,N}) where {N} = RegularRefinement(factors)
 
-function refine(grid::CartesianGrid{Dim}, method::RegularRefinement) where {Dim}
+function refine(grid::CartesianGrid{Datum,Dim}, method::RegularRefinement) where {Datum,Dim}
   factors = fitdims(method.factors, Dim)
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end

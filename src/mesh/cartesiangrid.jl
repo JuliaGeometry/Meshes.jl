@@ -24,10 +24,13 @@ Alternatively, construct a Cartesian grid from a `start` point to a `finish`
 point using a given `spacing`.
 
     CartesianGrid(dims)
-    CartesianGrid(dim1, dim2, ...)
+    CartesianGrid(dim₁, dim₂, ...)
+    CartesianGrid{Datum}(dims)
+    CartesianGrid{Datum}(dim₁, dim₂, ...)
 
 Finally, a Cartesian grid can be constructed by only passing the dimensions
-`dims` as a tuple, or by passing each dimension `dim1`, `dim2`, ... separately.
+`dims` as a tuple, or by passing each dimension `dim₁`, `dim₂`, ... separately
+and, optionaly, a givem `Datum` (default to `NoDatum`).
 In this case, the origin and spacing default to (0,0,...) and (1,1,...).
 
 ## Examples
@@ -50,13 +53,13 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{Dim,C<:CRS,ℒ<:Len} <: Grid{Dim,C}
+struct CartesianGrid{Datum,Dim,C<:CRS{Datum},ℒ<:Len} <: Grid{Dim,C}
   origin::Point{Dim,C}
   spacing::NTuple{Dim,ℒ}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
 
-  function CartesianGrid{Dim,C,ℒ}(origin, spacing, offset, topology) where {Dim,C<:CRS,ℒ<:Len}
+  function CartesianGrid{Datum,Dim,C,ℒ}(origin, spacing, offset, topology) where {Datum,Dim,C<:CRS{Datum},ℒ<:Len}
     if !all(>(zero(ℒ)), spacing)
       throw(ArgumentError("spacing must be positive"))
     end
@@ -69,7 +72,7 @@ CartesianGrid(
   spacing::NTuple{Dim,ℒ},
   offset::Dims{Dim},
   topology::GridTopology{Dim}
-) where {Dim,C<:CRS,ℒ<:Len} = CartesianGrid{Dim,C,float(ℒ)}(origin, spacing, offset, topology)
+) where {Datum,Dim,C<:CRS{Datum},ℒ<:Len} = CartesianGrid{Datum,Dim,C,float(ℒ)}(origin, spacing, offset, topology)
 
 CartesianGrid(origin::Point{Dim}, spacing::NTuple{Dim}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
   CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
@@ -116,22 +119,26 @@ end
 CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
   CartesianGrid(Point(start), Point(finish); dims)
 
-function CartesianGrid(dims::Dims{Dim}) where {Dim}
-  origin = ntuple(i -> 0.0, Dim)
+function CartesianGrid{Datum}(dims::Dims{Dim}) where {Datum,Dim}
+  origin = Point(Cartesian{Datum}(ntuple(i -> 0.0u"m", Dim)))
   spacing = ntuple(i -> 1.0, Dim)
   offset = ntuple(i -> 1, Dim)
   CartesianGrid(dims, origin, spacing, offset)
 end
 
+CartesianGrid{Datum}(dims::Int...) where {Datum} = CartesianGrid{Datum}(dims)
+
+CartesianGrid(dims::Dims) = CartesianGrid{NoDatum}(dims)
+
 CartesianGrid(dims::Int...) = CartesianGrid(dims)
 
-vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
+vertex(g::CartesianGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 
 spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid) = g.offset
 
-function xyz(g::CartesianGrid{Dim}) where {Dim}
+function xyz(g::CartesianGrid{Datum,Dim}) where {Datum,Dim}
   dims = size(g)
   spac = spacing(g)
   orig = to(minimum(g))
@@ -150,7 +157,7 @@ function centroid(g::CartesianGrid, ind::Int)
   p + δ
 end
 
-function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+function Base.getindex(g::CartesianGrid{Datum,Dim}, I::CartesianIndices{Dim}) where {Datum,Dim}
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   offset = g.offset .- Tuple(first(I)) .+ 1

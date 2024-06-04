@@ -99,6 +99,28 @@
     @test nelements(grid) == 10 * 10
     @test eltype(grid) <: Quadrangle{2}
 
+    # construct with dimensions
+    grid = CartesianGrid(10, 10)
+    @test embeddim(grid) == 2
+    @test Meshes.lentype(grid) == Meshes.Met{Float64}
+    @test size(grid) == (10, 10)
+    @test minimum(grid) == Point(0.0, 0.0)
+    @test maximum(grid) == Point(10.0, 10.0)
+    @test spacing(grid) == (1.0 * u"m", 1.0 * u"m")
+    @test nelements(grid) == 10 * 10
+    @test eltype(grid) <: Quadrangle{2}
+
+    # construct with dimensions and datum
+    grid = CartesianGrid{WGS84Latest}(10, 10)
+    @test embeddim(grid) == 2
+    @test Meshes.lentype(grid) == Meshes.Met{Float64}
+    @test size(grid) == (10, 10)
+    @test minimum(grid) == Point(0.0, 0.0)
+    @test maximum(grid) == Point(10.0, 10.0)
+    @test spacing(grid) == (1.0 * u"m", 1.0 * u"m")
+    @test nelements(grid) == 10 * 10
+    @test eltype(grid) <: Quadrangle{2}
+
     # indexing into a subgrid
     grid = cartgrid(10, 10)
     sub = grid[1:2, 1:2]
