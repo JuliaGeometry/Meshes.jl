@@ -9,16 +9,14 @@ A ray originating at point `p`, pointed in direction `v`.
 It can be called as `r(t)` with `t > 0` to cast it at
 `p + t * v`.
 """
-struct Ray{Dim,P<:Point{Dim},V<:Vec{Dim}} <: Primitive{Dim}
-  p::P
-  v::V
+struct Ray{Dim,C<:CRS,ℒ<:Len} <: Primitive{Dim,C}
+  p::Point{Dim,C}
+  v::Vec{Dim,ℒ}
 end
 
 Ray(p::Tuple, v::Tuple) = Ray(Point(p), Vec(v))
 
 paramdim(::Type{<:Ray}) = 1
-
-lentype(::Type{<:Ray{Dim,P}}) where {Dim,P} = lentype(P)
 
 ==(r₁::Ray, r₂::Ray) = (r₁.p ≈ r₂.p) && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁
 

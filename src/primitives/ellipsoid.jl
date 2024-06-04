@@ -7,25 +7,22 @@
 
 A 3D ellipsoid with given `radii`, `center` and `rotation`.
 """
-struct Ellipsoid{ℒ<:Len,P<:Point{3},R} <: Primitive{3}
+struct Ellipsoid{ℒ<:Len,C<:CRS,R} <: Primitive{3,C}
   radii::NTuple{3,ℒ}
-  center::P
+  center::Point{3,C}
   rotation::R
-  Ellipsoid{ℒ,P,R}(radii, center, rotation) where {ℒ<:Len,P<:Point{3},R} = new(radii, center, rotation)
+  Ellipsoid{ℒ,C,R}(radii, center, rotation) where {ℒ<:Len,C<:CRS,R} = new(radii, center, rotation)
 end
 
-Ellipsoid(radii::NTuple{3,ℒ}, center::P, rotation::R) where {ℒ<:Len,P<:Point{3},R} =
-  Ellipsoid{float(ℒ),P,R}(radii, center, rotation)
+Ellipsoid(radii::NTuple{3,ℒ}, center::Point{3,C}, rotation::R) where {ℒ<:Len,C<:CRS,R} =
+  Ellipsoid{float(ℒ),C,R}(radii, center, rotation)
 
-Ellipsoid(radii::NTuple{3}, center::P, rotation::R) where {P<:Point{3},R} =
-  Ellipsoid(addunit.(radii, u"m"), center, rotation)
+Ellipsoid(radii::NTuple{3}, center::Point{3}, rotation) = Ellipsoid(addunit.(radii, u"m"), center, rotation)
 
 Ellipsoid(radii::NTuple{3,T}, center=(zero(T), zero(T), zero(T)), rotation=I) where {T} =
   Ellipsoid(radii, Point(center), rotation)
 
 paramdim(::Type{<:Ellipsoid}) = 2
-
-lentype(::Type{<:Ellipsoid{ℒ,P}}) where {ℒ,P} = lentype(P)
 
 radii(e::Ellipsoid) = e.radii
 

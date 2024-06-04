@@ -10,16 +10,14 @@ See <https://en.wikipedia.org/wiki/Cone>.
 
 See also [`ConeSurface`](@ref).
 """
-struct Cone{D<:Disk,P<:Point{3}} <: Primitive{3}
+struct Cone{C<:CRS,D<:Disk{C}} <: Primitive{3,C}
   base::D
-  apex::P
+  apex::Point{3,C}
 end
 
-Cone(base::Disk, apex::Tuple) = Cone(base, Point(apex))
+Cone(base::Disk{C}, apex::Tuple) where {C<:Cartesian} = Cone(base, Point(C(apex)))
 
 paramdim(::Type{<:Cone}) = 3
-
-lentype(::Type{<:Cone{D}}) where {D} = lentype(D)
 
 base(c::Cone) = c.base
 
