@@ -9,18 +9,21 @@ A torus centered at `center` with axis of revolution directed by
 `normal` and with radii `major` and `minor`. 
 
 """
-struct Torus{C<:CRS,V<:Vec{3},ℒ<:Len} <: Primitive{3,C}
+struct Torus{C<:CRS,ℒ<:Len} <: Primitive{3,C}
   center::Point{3,C}
-  normal::V
+  normal::Vec{3,ℒ}
   major::ℒ
   minor::ℒ
-  Torus{C,V,ℒ}(center, normal, major, minor) where {C<:CRS,V<:Vec{3},ℒ<:Len} = new(center, normal, major, minor)
+  Torus{C,ℒ}(center, normal, major, minor) where {C<:CRS,ℒ<:Len} = new(center, normal, major, minor)
 end
 
-Torus(center::Point{3,C}, normal::V, major::ℒ, minor::ℒ) where {C<:CRS,V<:Vec{3},ℒ<:Len} =
-  Torus{C,V,float(ℒ)}(center, normal, major, minor)
+Torus(center::Point{3,C}, normal::Vec{3,ℒ}, major::ℒ, minor::ℒ) where {C<:CRS,ℒ<:Len} =
+  Torus{C,float(ℒ)}(center, normal, major, minor)
 
-Torus(center::Point{3}, normal::Vec{3}, major::Len, minor::Len) = Torus(center, normal, promote(major, minor)...)
+function Torus(center::Point{3}, normal::Vec{3}, major::Len, minor::Len)
+  ℒ = promote_type(eltype(normal), typeof(major), typeof(minor))
+  Torus(center, Vec{3,ℒ}(normal), ℒ(major), ℒ(minor))
+end
 
 Torus(center::Point{3}, normal::Vec{3}, major, minor) =
   Torus(center, normal, addunit(major, u"m"), addunit(minor, u"m"))
