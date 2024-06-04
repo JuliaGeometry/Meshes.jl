@@ -10,10 +10,10 @@
     @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
     @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
-    @test Meshes.crstype(point(1, 1)) <: Cartesian{NoDatum,2}
-    @test Meshes.crstype(point(1, 1, 1)) <: Cartesian{NoDatum,3}
-    @test Meshes.crstype(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
-    @test Meshes.crstype(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
+    @test Meshes.crs(point(1, 1)) <: Cartesian{NoDatum,2}
+    @test Meshes.crs(point(1, 1, 1)) <: Cartesian{NoDatum,3}
+    @test Meshes.crs(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
+    @test Meshes.crs(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
 
     @test to(point(1)) == vector(1)
     @test to(point(1, 2)) == vector(1, 2)

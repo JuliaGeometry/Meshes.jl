@@ -80,12 +80,12 @@ lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """
-    crstype(domain)
+    crs(domain)
 
 Return the CRS type of the `domain`.
 """
-crstype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
-crstype(d::Domain) = crstype(typeof(d))
+crs(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
+crs(d::Domain) = crs(typeof(d))
 
 """
     centroid(domain, ind)
@@ -160,6 +160,6 @@ Base.convert(::Type{GeometrySet}, d::Domain) = GeometrySet(collect(d))
 
 Base.convert(::Type{SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
 
-Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid{datum(crstype(g))}(XYZ(g))
+Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid{datum(crs(g))}(XYZ(g))
 
-Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid{datum(crstype(g))}(xyz(g))
+Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid{datum(crs(g))}(xyz(g))
