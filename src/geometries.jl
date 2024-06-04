@@ -30,20 +30,20 @@ See also [`isparametrized`](@ref).
 paramdim(g::Geometry) = paramdim(typeof(g))
 
 """
-    lentype(geometry)
-
-Return the length type of the `geometry`.
-"""
-lentype(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
-lentype(g::Geometry) = lentype(typeof(g))
-
-"""
     crs(geometry)
 
 Return the CRS type of the `geometry`.
 """
 crs(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = CRS
 crs(g::Geometry) = crs(typeof(g))
+
+"""
+    lentype(geometry)
+
+Return the length type of the `geometry`.
+"""
+lentype(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
+lentype(g::Geometry) = lentype(typeof(g))
 
 """
     centroid(geometry)

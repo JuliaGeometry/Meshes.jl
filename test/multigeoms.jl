@@ -7,6 +7,8 @@
   @test multi == multi
   @test multi ≈ multi
   @test paramdim(multi) == 2
+  @test Meshes.crs(multi) <: Cartesian{NoDatum}
+  @test Meshes.lentype(multi) == ℳ
   @test vertex(multi, 1) == vertex(poly, 1)
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)

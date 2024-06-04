@@ -4,6 +4,8 @@
     @test nvertices(Segment) == 2
 
     s = Segment(point(1.0), point(2.0))
+    @test Meshes.crs(s) <: Cartesian{NoDatum}
+    @test Meshes.lentype(s) == ℳ
     @test vertex(s, 1) == point(1.0)
     @test vertex(s, 2) == point(2.0)
     @test all(point(x) ∈ s for x in 1:0.01:2)
@@ -94,9 +96,13 @@
     @test c1 == c2 == c3
 
     c = Rope(point.([(1, 1), (2, 2)]))
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test Meshes.lentype(c) == ℳ
     @test vertex(c, 1) == point(1, 1)
     @test vertex(c, 2) == point(2, 2)
     c = Ring(point.([(1, 1), (2, 2)]))
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test Meshes.lentype(c) == ℳ
     @test vertex(c, 0) == point(2, 2)
     @test vertex(c, 1) == point(1, 1)
     @test vertex(c, 2) == point(2, 2)
@@ -310,6 +316,8 @@
 
     # Triangle in 2D space
     t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    @test Meshes.crs(t) <: Cartesian{NoDatum}
+    @test Meshes.lentype(t) == ℳ
     @test vertex(t, 1) == point(0, 0)
     @test vertex(t, 2) == point(1, 0)
     @test vertex(t, 3) == point(0, 1)
@@ -408,6 +416,8 @@
 
     # Quadrangle in 2D space
     q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    @test Meshes.crs(q) <: Cartesian{NoDatum}
+    @test Meshes.lentype(q) == ℳ
     @test vertex(q, 1) == point(0, 0)
     @test vertex(q, 2) == point(1, 0)
     @test vertex(q, 3) == point(1, 1)
@@ -477,6 +487,8 @@
     poly = PolyArea([outer, hole1, hole2])
     @test poly == poly
     @test poly ≈ poly
+    @test Meshes.crs(poly) <: Cartesian{NoDatum}
+    @test Meshes.lentype(poly) == ℳ
 
     # outer chain with 2 vertices is fixed by default
     poly = PolyArea(point.([(0, 0), (1, 0)]))
@@ -680,6 +692,8 @@
     @test nvertices(Tetrahedron) == 4
 
     t = Tetrahedron(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0), point(0, 0, 1))
+    @test Meshes.crs(t) <: Cartesian{NoDatum}
+    @test Meshes.lentype(t) == ℳ
     @test vertex(t, 1) == point(0, 0, 0)
     @test vertex(t, 2) == point(1, 0, 0)
     @test vertex(t, 3) == point(0, 1, 0)
@@ -736,6 +750,8 @@
       point(1, 1, 1),
       point(0, 1, 1)
     )
+    @test Meshes.crs(h) <: Cartesian{NoDatum}
+    @test Meshes.lentype(h) == ℳ
     @test vertex(h, 1) == point(0, 0, 0)
     @test vertex(h, 8) == point(0, 1, 1)
     @test h(T(0), T(0), T(0)) == point(0, 0, 0)
@@ -844,6 +860,8 @@
     @test nvertices(Pyramid) == 5
 
     p = Pyramid(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0), point(0, 0, 1))
+    @test Meshes.crs(p) <: Cartesian{NoDatum}
+    @test Meshes.lentype(p) == ℳ
     @test volume(p) ≈ T(1 / 3) * u"m^3"
     m = boundary(p)
     @test m isa Mesh

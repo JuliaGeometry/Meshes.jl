@@ -72,20 +72,20 @@ parametric dimensions of its elements.
 paramdim(d::Domain) = paramdim(first(d))
 
 """
-    lentype(domain)
-
-Return the length type of the `domain`.
-"""
-lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
-lentype(d::Domain) = lentype(typeof(d))
-
-"""
     crs(domain)
 
 Return the CRS type of the `domain`.
 """
 crs(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
 crs(d::Domain) = crs(typeof(d))
+
+"""
+    lentype(domain)
+
+Return the length type of the `domain`.
+"""
+lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
+lentype(d::Domain) = lentype(typeof(d))
 
 """
     centroid(domain, ind)
