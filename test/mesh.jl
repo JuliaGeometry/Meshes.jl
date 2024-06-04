@@ -274,7 +274,7 @@
 
     # datum
     grid = RectilinearGrid{WGS84Latest}(x, y)
-    @test datum(Meshes.coords(vertex(grid, 1))) === WGS84Latest
+    @test datum(Meshes.crstype(grid)) === WGS84Latest
 
     # conversion
     cg = cartgrid(10, 10)
@@ -392,7 +392,7 @@
 
     # datum
     grid = StructuredGrid{WGS84Latest}(X, Y)
-    @test datum(Meshes.coords(vertex(grid, 1))) === WGS84Latest
+    @test datum(Meshes.crstype(grid)) === WGS84Latest
 
     # conversion
     cg = cartgrid(10, 10)

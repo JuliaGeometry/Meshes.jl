@@ -10,9 +10,16 @@
     @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
     @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
+    @test Meshes.crstype(point(1, 1)) <: Cartesian{NoDatum,2}
+    @test Meshes.crstype(point(1, 1, 1)) <: Cartesian{NoDatum,3}
+    @test Meshes.crstype(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
+    @test Meshes.crstype(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
+
     @test to(point(1)) == vector(1)
     @test to(point(1, 2)) == vector(1, 2)
     @test to(point(1, 2, 3)) == vector(1, 2, 3)
+    @test to(Point(Polar(T(√2), T(π / 4)))) ≈ vector(1, 1)
+    @test to(Point(Cylindrical(T(√2), T(π / 4), T(1)))) ≈ vector(1, 1, 1)
 
     @test point(1) - point(1) == vector(0)
     @test point(1, 2) - point(1, 1) == vector(0, 1)
@@ -94,16 +101,6 @@
     p1 = Point(1.0f0, 1.0f0)
     p2 = convert(P, p1)
     @test p2 isa P
-
-    # `to` function
-    p1 = point(1, 1)
-    p2 = point(1, 1, 1)
-    p3 = Point(Polar(T(√2), T(π / 4)))
-    p4 = Point(Cylindrical(T(√2), T(π / 4), T(1)))
-    @test to(p1) == vector(1, 1)
-    @test to(p2) == vector(1, 1, 1)
-    @test to(p3) ≈ vector(1, 1)
-    @test to(p4) ≈ vector(1, 1, 1)
 
     # generalized inequality
     @test point(1, 1) ⪯ point(1, 1)

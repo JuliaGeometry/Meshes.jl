@@ -80,6 +80,14 @@ lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """
+    crstype(domain)
+
+Return the CRS type of the `domain`.
+"""
+crstype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
+crstype(d::Domain) = crstype(typeof(d))
+
+"""
     centroid(domain, ind)
 
 Return the centroid of the `ind`-th element in the `domain`.
@@ -152,8 +160,6 @@ Base.convert(::Type{GeometrySet}, d::Domain) = GeometrySet(collect(d))
 
 Base.convert(::Type{SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
 
-# TODO: extract Datum from `g`
-Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid(XYZ(g))
+Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid{datum(crstype(g))}(XYZ(g))
 
-# TODO: extract Datum from `g`
-Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid(xyz(g))
+Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid{datum(crstype(g))}(xyz(g))
