@@ -72,6 +72,14 @@ parametric dimensions of its elements.
 paramdim(d::Domain) = paramdim(first(d))
 
 """
+    crs(domain)
+
+Return the coordinate reference system (CRS) of the `domain`.
+"""
+crs(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
+crs(d::Domain) = crs(typeof(d))
+
+"""
     lentype(domain)
 
 Return the length type of the `domain`.
@@ -152,8 +160,6 @@ Base.convert(::Type{GeometrySet}, d::Domain) = GeometrySet(collect(d))
 
 Base.convert(::Type{SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
 
-# TODO: extract Datum from `g`
-Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid(XYZ(g))
+Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid{datum(crs(g))}(XYZ(g))
 
-# TODO: extract Datum from `g`
-Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid(xyz(g))
+Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid{datum(crs(g))}(xyz(g))

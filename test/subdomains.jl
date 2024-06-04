@@ -3,6 +3,8 @@
   inds = rand(1:100, 3)
   v = view(pset, inds)
   @test nelements(v) == 3
+  @test Meshes.crs(v) <: Cartesian{NoDatum}
+  @test Meshes.lentype(v) == ℳ
   for i in 1:3
     p = pset[inds[i]]
     @test v[i] == p
@@ -13,6 +15,8 @@
   inds = rand(1:100, 3)
   v = view(grid, inds)
   @test nelements(v) == 3
+  @test Meshes.crs(v) <: Cartesian{NoDatum}
+  @test Meshes.lentype(v) == ℳ
   for i in 1:3
     e = grid[inds[i]]
     @test v[i] == e
@@ -25,6 +29,8 @@
   inds = rand(1:4, 3)
   v = view(mesh, inds)
   @test nelements(v) == 3
+  @test Meshes.crs(v) <: Cartesian{NoDatum}
+  @test Meshes.lentype(v) == ℳ
   for i in 1:3
     e = mesh[inds[i]]
     @test v[i] == e
