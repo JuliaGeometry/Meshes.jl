@@ -1,9 +1,7 @@
 # dummy type implementing the Domain trait
-struct DummyDomain{Dim,P<:Point{Dim}} <: Domain{Dim}
-  origin::P
+struct DummyDomain{Dim,C<:CRS} <: Domain{Dim,C}
+  origin::Point{Dim,C}
 end
-
-Meshes.lentype(::Type{<:DummyDomain{Dim,P}}) where {Dim,P} = Meshes.lentype(P)
 
 function Meshes.element(domain::DummyDomain{Dim}, ind::Int) where {Dim}
   ℒ = Meshes.lentype(domain)

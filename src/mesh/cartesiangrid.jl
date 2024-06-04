@@ -50,13 +50,13 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{Dim,P<:Point{Dim},ℒ<:Len} <: Grid{Dim}
-  origin::P
+struct CartesianGrid{Dim,C<:CRS,ℒ<:Len} <: Grid{Dim,C}
+  origin::Point{Dim,C}
   spacing::NTuple{Dim,ℒ}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
 
-  function CartesianGrid{Dim,P,ℒ}(origin, spacing, offset, topology) where {Dim,P<:Point{Dim},ℒ<:Len}
+  function CartesianGrid{Dim,C,ℒ}(origin, spacing, offset, topology) where {Dim,C<:CRS,ℒ<:Len}
     if !all(>(zero(ℒ)), spacing)
       throw(ArgumentError("spacing must be positive"))
     end
@@ -65,11 +65,11 @@ struct CartesianGrid{Dim,P<:Point{Dim},ℒ<:Len} <: Grid{Dim}
 end
 
 CartesianGrid(
-  origin::P,
+  origin::Point{Dim,C},
   spacing::NTuple{Dim,ℒ},
   offset::Dims{Dim},
   topology::GridTopology{Dim}
-) where {Dim,P<:Point{Dim},ℒ<:Len} = CartesianGrid{Dim,P,float(ℒ)}(origin, spacing, offset, topology)
+) where {Dim,C<:CRS,ℒ<:Len} = CartesianGrid{Dim,C,float(ℒ)}(origin, spacing, offset, topology)
 
 CartesianGrid(origin::Point{Dim}, spacing::NTuple{Dim}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
   CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
@@ -124,8 +124,6 @@ function CartesianGrid(dims::Dims{Dim}) where {Dim}
 end
 
 CartesianGrid(dims::Int...) = CartesianGrid(dims)
-
-lentype(::Type{<:CartesianGrid{Dim,P}}) where {Dim,P} = lentype(P)
 
 vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 

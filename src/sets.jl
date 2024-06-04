@@ -15,14 +15,12 @@ Set containing two balls centered at `(0.0, 0.0)` and `(1.0, 1.0)`:
 julia> GeometrySet([Ball((0.0, 0.0)), Ball((1.0, 1.0))])
 ```
 """
-struct GeometrySet{Dim,G<:Geometry{Dim}} <: Domain{Dim}
+struct GeometrySet{Dim,C<:CRS,G<:Geometry{Dim,C}} <: Domain{Dim,C}
   geoms::Vector{G}
 end
 
 # constructor with iterator of geometries
 GeometrySet(geoms) = GeometrySet(map(identity, geoms))
-
-lentype(::Type{<:GeometrySet{Dim,G}}) where {Dim,G} = lentype(G)
 
 element(d::GeometrySet, ind::Int) = d.geoms[ind]
 
@@ -39,7 +37,7 @@ Base.vcat(d1::Domain, d2::GeometrySet) = GeometrySet(vcat(collect(d1), d2.geoms)
 # SPECIAL CASE: POINT SET
 # ------------------------
 
-const PointSet{Dim,P<:Point{Dim}} = GeometrySet{Dim,P}
+const PointSet{Dim,CRS} = GeometrySet{Dim,CRS,Point{Dim,CRS}}
 
 """
     PointSet(points)
@@ -60,7 +58,7 @@ julia> PointSet([1,2,3], [4,5,6])
 julia> PointSet([1 4; 2 5; 3 6])
 ```
 """
-PointSet(points::AbstractVector{P}) where {Dim,P<:Point{Dim}} = PointSet{Dim,P}(points)
+PointSet(points::AbstractVector{Point{Dim,C}}) where {Dim,C<:CRS} = PointSet{Dim,C}(points)
 PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
 PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords))
 PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))
