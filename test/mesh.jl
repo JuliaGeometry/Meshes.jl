@@ -2,6 +2,7 @@
   @testset "CartesianGrid" begin
     grid = cartgrid(100)
     @test embeddim(grid) == 1
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (100,)
     @test minimum(grid) == point(0)
@@ -18,6 +19,7 @@
 
     grid = cartgrid(200, 100)
     @test embeddim(grid) == 2
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (200, 100)
     @test minimum(grid) == point(0, 0)
@@ -34,6 +36,7 @@
 
     grid = CartesianGrid((200, 100, 50), T.((0, 0, 0)), T.((1, 1, 1)))
     @test embeddim(grid) == 3
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (200, 100, 50)
     @test minimum(grid) == point(0, 0, 0)
@@ -50,6 +53,7 @@
 
     grid = CartesianGrid(T.((0, 0, 0)), T.((1, 1, 1)), T.((0.1, 0.1, 0.1)))
     @test embeddim(grid) == 3
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (10, 10, 10)
     @test minimum(grid) == point(0, 0, 0)
@@ -58,6 +62,7 @@
 
     grid = CartesianGrid(T.((-1.0, -1.0)), T.((1.0, 1.0)), dims=(200, 100))
     @test embeddim(grid) == 2
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (200, 100)
     @test minimum(grid) == point(-1.0, -1.0)
@@ -68,6 +73,7 @@
 
     grid = CartesianGrid((20, 10, 5), T.((0, 0, 0)), T.((5, 5, 5)))
     @test embeddim(grid) == 3
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (20, 10, 5)
     @test minimum(grid) == point(0, 0, 0)
@@ -91,6 +97,7 @@
     # constructor with offset
     grid = CartesianGrid((10, 10), T.((1.0, 1.0)), T.((1.0, 1.0)), (2, 2))
     @test embeddim(grid) == 2
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (10, 10)
     @test minimum(grid) == point(0.0, 0.0)
@@ -235,6 +242,7 @@
     y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
     grid = RectilinearGrid(x, y)
     @test embeddim(grid) == 2
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (5, 5)
     @test minimum(grid) == point(0, 0)
@@ -274,7 +282,7 @@
 
     # datum
     grid = RectilinearGrid{WGS84Latest}(x, y)
-    @test datum(Meshes.coords(vertex(grid, 1))) === WGS84Latest
+    @test datum(Meshes.crs(grid)) === WGS84Latest
 
     # conversion
     cg = cartgrid(10, 10)
@@ -359,6 +367,7 @@
     Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
     grid = StructuredGrid(X, Y)
     @test embeddim(grid) == 2
+    @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (5, 5)
     @test minimum(grid) == point(0, 0)
@@ -392,7 +401,7 @@
 
     # datum
     grid = StructuredGrid{WGS84Latest}(X, Y)
-    @test datum(Meshes.coords(vertex(grid, 1))) === WGS84Latest
+    @test datum(Meshes.crs(grid)) === WGS84Latest
 
     # conversion
     cg = cartgrid(10, 10)
@@ -499,6 +508,8 @@
         (point(1.0, 1.0), point(0.0, 1.0), point(0.5, 0.5)),
         (point(0.0, 1.0), point(0.0, 0.0), point(0.5, 0.5))
       ])
+    @test Meshes.crs(mesh) <: Cartesian{NoDatum}
+    @test Meshes.lentype(mesh) == ℳ
     @test vertices(mesh) == points
     @test collect(faces(mesh, 2)) == triangles
     @test collect(elements(mesh)) == triangles
@@ -682,6 +693,8 @@
     mesh = convert(SimpleMesh, grid)
     trans = Identity()
     tmesh = TransformedMesh(mesh, trans)
+    @test Meshes.crs(tmesh) <: Cartesian{NoDatum}
+    @test Meshes.lentype(tmesh) == ℳ
     @test parent(tmesh) === mesh
     @test Meshes.transform(tmesh) === trans
     @test TransformedMesh(grid, trans) == grid

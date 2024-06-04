@@ -2,6 +2,7 @@
   # basic properties
   dom = DummyDomain(point(0, 0))
   @test embeddim(dom) == 2
+  @test Meshes.crs(dom) <: Cartesian{NoDatum}
   @test Meshes.lentype(dom) == ℳ
   @test !isparametrized(dom)
 

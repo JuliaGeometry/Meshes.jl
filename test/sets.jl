@@ -4,6 +4,8 @@
     t = Triangle(point(0, 0), point(1, 0), point(0, 1))
     p = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     gset = GeometrySet([s, t, p])
+    @test Meshes.crs(gset) <: Cartesian{NoDatum}
+    @test Meshes.lentype(gset) == ℳ
     @test [centroid(gset, i) for i in 1:3] == point.([(1 / 2, 1 / 2), (1 / 3, 1 / 3), (1 / 2, 1 / 2)])
 
     s = Segment(point(0, 0), point(1, 1))
@@ -34,18 +36,21 @@
   @testset "PointSet" begin
     pset = PointSet(randpoint1(100))
     @test embeddim(pset) == 1
+    @test Meshes.crs(pset) <: Cartesian{NoDatum}
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
     @test eltype(pset) <: Point{1}
 
     pset = PointSet(randpoint2(100))
     @test embeddim(pset) == 2
+    @test Meshes.crs(pset) <: Cartesian{NoDatum}
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
     @test eltype(pset) <: Point{2}
 
     pset = PointSet(randpoint3(100))
     @test embeddim(pset) == 3
+    @test Meshes.crs(pset) <: Cartesian{NoDatum}
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
     @test eltype(pset) <: Point{3}

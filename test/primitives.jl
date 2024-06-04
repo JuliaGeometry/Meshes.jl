@@ -3,16 +3,20 @@
     @test embeddim(Point(1)) == 1
     @test embeddim(Point(1, 2)) == 2
     @test embeddim(Point(1, 2, 3)) == 3
+    @test Meshes.crs(point(1, 1)) <: Cartesian{NoDatum}
+    @test Meshes.crs(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
+    @test Meshes.crs(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
     @test Meshes.lentype(Point(1, 1)) == Meshes.Met{Float64}
     @test Meshes.lentype(Point(1.0, 1.0)) == Meshes.Met{Float64}
     @test Meshes.lentype(Point(1.0f0, 1.0f0)) == Meshes.Met{Float32}
-
     @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
     @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
     @test to(point(1)) == vector(1)
     @test to(point(1, 2)) == vector(1, 2)
     @test to(point(1, 2, 3)) == vector(1, 2, 3)
+    @test to(Point(Polar(T(√2), T(π / 4)))) ≈ vector(1, 1)
+    @test to(Point(Cylindrical(T(√2), T(π / 4), T(1)))) ≈ vector(1, 1, 1)
 
     @test point(1) - point(1) == vector(0)
     @test point(1, 2) - point(1, 1) == vector(0, 1)
@@ -95,16 +99,6 @@
     p2 = convert(P, p1)
     @test p2 isa P
 
-    # `to` function
-    p1 = point(1, 1)
-    p2 = point(1, 1, 1)
-    p3 = Point(Polar(T(√2), T(π / 4)))
-    p4 = Point(Cylindrical(T(√2), T(π / 4), T(1)))
-    @test to(p1) == vector(1, 1)
-    @test to(p2) == vector(1, 1, 1)
-    @test to(p3) ≈ vector(1, 1)
-    @test to(p4) ≈ vector(1, 1, 1)
-
     # generalized inequality
     @test point(1, 1) ⪯ point(1, 1)
     @test !(point(1, 1) ≺ point(1, 1))
@@ -184,6 +178,8 @@
   @testset "Ray" begin
     r = Ray(point(0, 0), vector(1, 1))
     @test paramdim(r) == 1
+    @test Meshes.crs(r) <: Cartesian{NoDatum}
+    @test Meshes.lentype(r) == ℳ
     @test measure(r) == typemax(ℳ)
     @test length(r) == typemax(ℳ)
     @test boundary(r) == point(0, 0)
@@ -245,6 +241,8 @@
   @testset "Line" begin
     l = Line(point(0, 0), point(1, 1))
     @test paramdim(l) == 1
+    @test Meshes.crs(l) <: Cartesian{NoDatum}
+    @test Meshes.lentype(l) == ℳ
     @test measure(l) == typemax(ℳ)
     @test length(l) == typemax(ℳ)
     @test isnothing(boundary(l))
@@ -280,6 +278,8 @@
     @test p(T(1), T(0)) == point(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
+    @test Meshes.crs(p) <: Cartesian{NoDatum}
+    @test Meshes.lentype(p) == ℳ
     @test measure(p) == typemax(ℳ)^2
     @test area(p) == typemax(ℳ)^2
     @test p(T(0), T(0)) == point(0, 0, 0)
@@ -343,6 +343,8 @@
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
     @test embeddim(b) == 2
     @test paramdim(b) == 1
+    @test Meshes.crs(b) <: Cartesian{NoDatum}
+    @test Meshes.lentype(b) == ℳ
 
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
     for method in [DeCasteljau(), Horner()]
@@ -389,6 +391,7 @@
     b = Box(point(0), point(1))
     @test embeddim(b) == 1
     @test paramdim(b) == 1
+    @test Meshes.crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test minimum(b) == point(0)
     @test maximum(b) == point(1)
@@ -397,6 +400,7 @@
     b = Box(point(0, 0), point(1, 1))
     @test embeddim(b) == 2
     @test paramdim(b) == 2
+    @test Meshes.crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test minimum(b) == point(0, 0)
     @test maximum(b) == point(1, 1)
@@ -405,6 +409,7 @@
     b = Box(point(0, 0, 0), point(1, 1, 1))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
+    @test Meshes.crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test minimum(b) == point(0, 0, 0)
     @test maximum(b) == point(1, 1, 1)
@@ -520,6 +525,7 @@
     b = Ball(point(1, 2, 3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
+    @test Meshes.crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test Meshes.center(b) == point(1, 2, 3)
     @test radius(b) == T(5) * u"m"
@@ -599,6 +605,7 @@
     s = Sphere(point(0, 0, 0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
+    @test Meshes.crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test Meshes.center(s) == point(0, 0, 0)
     @test radius(s) == T(1) * u"m"
@@ -703,6 +710,7 @@
     e = Ellipsoid((T(3), T(2), T(1)))
     @test embeddim(e) == 3
     @test paramdim(e) == 2
+    @test Meshes.crs(e) <: Cartesian{NoDatum}
     @test Meshes.lentype(e) == ℳ
     @test radii(e) == (T(3) * u"m", T(2) * u"m", T(1) * u"m")
     @test center(e) == point(0, 0, 0)
@@ -732,6 +740,7 @@
     d = Disk(p, T(2))
     @test embeddim(d) == 3
     @test paramdim(d) == 2
+    @test Meshes.crs(d) <: Cartesian{NoDatum}
     @test Meshes.lentype(d) == ℳ
     @test plane(d) == p
     @test Meshes.center(d) == point(0, 0, 0)
@@ -769,6 +778,7 @@
     c = Circle(p, T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 1
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test plane(c) == p
     @test Meshes.center(c) == point(0, 0, 0)
@@ -823,6 +833,7 @@
     c = Cylinder(Plane(point(1, 2, 3), vector(0, 0, 1)), Plane(point(4, 5, 6), vector(0, 0, 1)), T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test radius(c) == T(5) * u"m"
     @test bottom(c) == Plane(point(1, 2, 3), vector(0, 0, 1))
@@ -899,6 +910,7 @@
     c = CylinderSurface(T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 2
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test radius(c) == T(2) * u"m"
     @test bottom(c) == Plane(point(0, 0, 0), vector(0, 0, 1))
@@ -962,6 +974,7 @@
     p = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
     @test embeddim(p) == 3
     @test paramdim(p) == 2
+    @test Meshes.crs(p) <: Cartesian{NoDatum}
     @test Meshes.lentype(p) == ℳ
     @test focallength(p) == T(2) * u"m"
     @test radius(p) == T(1) * u"m"
@@ -1033,6 +1046,7 @@
     c = Cone(d, a)
     @test embeddim(c) == 3
     @test paramdim(c) == 3
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test boundary(c) == ConeSurface(d, a)
 
@@ -1094,6 +1108,7 @@
     s = ConeSurface(d, a)
     @test embeddim(s) == 3
     @test paramdim(s) == 2
+    @test Meshes.crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test isnothing(boundary(s))
 
@@ -1127,6 +1142,7 @@
     dt = Disk(pt, T(2))
     f = Frustum(db, dt)
     @test embeddim(f) == 3
+    @test Meshes.crs(f) <: Cartesian{NoDatum}
     @test Meshes.lentype(f) == ℳ
     @test boundary(f) == FrustumSurface(db, dt)
 
@@ -1170,6 +1186,7 @@
     f = FrustumSurface(db, dt)
     @test embeddim(f) == 3
     @test paramdim(f) == 2
+    @test Meshes.crs(f) <: Cartesian{NoDatum}
     @test Meshes.lentype(f) == ℳ
     @test isnothing(boundary(f))
 
@@ -1184,6 +1201,8 @@
     @test point(1, 1, -1) ∈ t
     @test point(1, 1, 1) ∉ t
     @test paramdim(t) == 2
+    @test Meshes.crs(t) <: Cartesian{NoDatum}
+    @test Meshes.lentype(t) == ℳ
     @test Meshes.center(t) == point(1, 1, 1)
     @test normal(t) == vector(1, 0, 0)
     @test radii(t) == (T(2) * u"m", T(1) * u"m")
