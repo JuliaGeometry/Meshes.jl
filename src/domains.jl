@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{Dim}
+    Domain{Dim,CRS}
 
 A domain is an indexable collection of geometries (e.g. mesh).
 """
-abstract type Domain{Dim} end
+abstract type Domain{Dim,CRS} end
 
 """
     element(domain, ind)
@@ -76,6 +76,7 @@ paramdim(d::Domain) = paramdim(first(d))
 
 Return the length type of the `domain`.
 """
+lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """

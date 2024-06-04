@@ -20,21 +20,19 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Datum,Dim,V<:AbstractVector{<:Len}} <: Grid{Dim}
+struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{Dim,Cartesian{Datum,Dim,ℒ}}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
-  RectilinearGrid{Datum,Dim,V}(xyz, topology) where {Datum,Dim,V<:AbstractVector{<:Len}} = new(xyz, topology)
+  RectilinearGrid{Datum,Dim,ℒ,V}(xyz, topology) where {Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} = new(xyz, topology)
 end
 
-function RectilinearGrid{Datum}(
-  xyz::NTuple{Dim,V},
-  topology::GridTopology{Dim}
-) where {Datum,Dim,V<:AbstractVector{<:Len}}
+function RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector{<:Len}}, topology::GridTopology{Dim}) where {Datum,Dim}
   coords = float.(xyz)
-  RectilinearGrid{Datum,Dim,eltype(coords)}(coords, topology)
+  V = eltype(coords)
+  RectilinearGrid{Datum,Dim,eltype(V),V}(coords, topology)
 end
 
-RectilinearGrid{Datum}(xyz::NTuple{Dim,V}, topology::GridTopology{Dim}) where {Datum,Dim,V<:AbstractVector} =
+RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {Datum,Dim} =
   RectilinearGrid{Datum}(addunit.(xyz, u"m"), topology)
 
 function RectilinearGrid{Datum}(xyz::Tuple) where {Datum}
@@ -46,8 +44,6 @@ end
 RectilinearGrid{Datum}(xyz...) where {Datum} = RectilinearGrid{Datum}(xyz)
 
 RectilinearGrid(args...) = RectilinearGrid{NoDatum}(args...)
-
-lentype(::Type{<:RectilinearGrid{Datum,Dim,V}}) where {Datum,Dim,V} = eltype(V)
 
 vertex(g::RectilinearGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
 

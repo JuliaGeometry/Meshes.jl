@@ -31,7 +31,7 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
   of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
   [`SimpleTopology`](@ref).
 """
-struct SimpleMesh{Dim,V<:AbstractVector{<:Point{Dim}},TP<:Topology} <: Mesh{Dim,TP}
+struct SimpleMesh{Dim,C<:CRS,V<:AbstractVector{Point{Dim,C}},TP<:Topology} <: Mesh{Dim,C,TP}
   vertices::V
   topology::TP
 end
@@ -42,8 +42,6 @@ function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=
   topology = relations ? HalfEdgeTopology(connec) : SimpleTopology(connec)
   SimpleMesh(vertices, topology)
 end
-
-lentype(::Type{<:SimpleMesh{Dim,V}}) where {Dim,V} = lentype(eltype(V))
 
 vertex(m::SimpleMesh, ind::Int) = m.vertices[ind]
 
