@@ -31,7 +31,7 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
   of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
   [`SimpleTopology`](@ref).
 """
-struct SimpleMesh{Dim,V<:AbstractVector{<:Point{Dim}},TP<:Topology} <: Mesh{Dim,TP}
+struct SimpleMesh{Dim,C<:CRS,V<:AbstractVector{Point{Dim,C}},TP<:Topology} <: Mesh{Dim,C,TP}
   vertices::V
   topology::TP
 end
@@ -43,15 +43,13 @@ function SimpleMesh(vertices, connec::AbstractVector{<:Connectivity}; relations=
   SimpleMesh(vertices, topology)
 end
 
-lentype(::Type{<:SimpleMesh{Dim,V}}) where {Dim,V} = lentype(eltype(V))
-
 vertex(m::SimpleMesh, ind::Int) = m.vertices[ind]
 
 vertices(m::SimpleMesh) = m.vertices
 
 nvertices(m::SimpleMesh) = length(m.vertices)
 
-function Base.getindex(m::SimpleMesh{Dim,V,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {Dim,V}
+function Base.getindex(m::SimpleMesh{Dim,<:Any,<:Any,GridTopology{Dim}}, I::CartesianIndices{Dim}) where {Dim}
   @boundscheck _checkbounds(m, I)
   dims = size(I)
   odims = size(m)

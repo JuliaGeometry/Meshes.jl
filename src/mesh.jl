@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{Dim,TP}
+    Mesh{Dim,CRS,TP}
 
-A mesh embedded in a `Dim`-dimensional space with topology of type `TP`.
+A mesh embedded in a `Dim`-dimensional space with given
+coordinate reference system `CRS` and topology of type `TP`.
 """
-abstract type Mesh{Dim,TP<:Topology} <: Domain{Dim} end
+abstract type Mesh{Dim,CRS,TP<:Topology} <: Domain{Dim,CRS} end
 
 """
     vertex(mesh, ind)
@@ -138,18 +139,18 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
 end
 
 """
-    Grid{Dim}
+    Grid{Dim,CRS}
 
-A grid embedded in a `Dim`-dimensional space.
+A grid embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`.
 """
-const Grid{Dim} = Mesh{Dim,GridTopology{Dim}}
+const Grid{Dim,CRS} = Mesh{Dim,CRS,GridTopology{Dim}}
 
 """
-    SubGrid{Dim}
+    SubGrid{Dim,CRS}
 
-A view of a grid in a `Dim`-dimensinoal space.
+A view of a grid in a `Dim`-dimensinoal space with given coordinate reference system `CRS`.
 """
-const SubGrid{Dim} = SubDomain{Dim,<:Grid{Dim}}
+const SubGrid{Dim,CRS} = SubDomain{Dim,CRS,<:Grid{Dim,CRS}}
 
 """
     vertex(grid, ijk)

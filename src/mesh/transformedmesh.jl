@@ -7,15 +7,13 @@
 
 Lazy representation of a geometric `transform` applied to a `mesh`.
 """
-struct TransformedMesh{Dim,TP<:Topology,M<:Mesh{Dim,TP},TR<:Transform} <: Mesh{Dim,TP}
+struct TransformedMesh{Dim,C<:CRS,TP<:Topology,M<:Mesh{Dim,C,TP},TR<:Transform} <: Mesh{Dim,C,TP}
   mesh::M
   transform::TR
 end
 
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
-
-lentype(::Type{<:TransformedMesh{Dim,TP,M}}) where {Dim,TP,M} = lentype(M)
 
 Base.parent(m::TransformedMesh) = m.mesh
 
@@ -26,7 +24,7 @@ topology(m::TransformedMesh) = topology(m.mesh)
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
 # alias to improve readability in IO methods
-const TransformedGrid{Dim,G<:Grid{Dim},TR} = TransformedMesh{Dim,GridTopology{Dim},G,TR}
+const TransformedGrid{Dim,CRS,G<:Grid{Dim,CRS},TR} = TransformedMesh{Dim,CRS,GridTopology{Dim},G,TR}
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 

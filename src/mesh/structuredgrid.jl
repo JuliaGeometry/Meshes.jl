@@ -20,21 +20,19 @@ julia> Y = repeat([0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
 julia> StructuredGrid(X, Y)
 ```
 """
-struct StructuredGrid{Datum,Dim,A<:AbstractArray{<:Len}} <: Grid{Dim}
+struct StructuredGrid{Datum,Dim,ℒ<:Len,A<:AbstractArray{ℒ}} <: Grid{Dim,Cartesian{Datum,Dim,ℒ}}
   XYZ::NTuple{Dim,A}
   topology::GridTopology{Dim}
-  StructuredGrid{Datum,Dim,A}(XYZ, topology) where {Datum,Dim,A<:AbstractArray{<:Len}} = new(XYZ, topology)
+  StructuredGrid{Datum,Dim,ℒ,A}(XYZ, topology) where {Datum,Dim,ℒ<:Len,A<:AbstractArray{ℒ}} = new(XYZ, topology)
 end
 
-function StructuredGrid{Datum}(
-  XYZ::NTuple{Dim,A},
-  topology::GridTopology{Dim}
-) where {Datum,Dim,A<:AbstractArray{<:Len}}
+function StructuredGrid{Datum}(XYZ::NTuple{Dim,<:AbstractArray{<:Len}}, topology::GridTopology{Dim}) where {Datum,Dim}
   coords = float.(XYZ)
-  StructuredGrid{Datum,Dim,eltype(coords)}(coords, topology)
+  A = eltype(coords)
+  StructuredGrid{Datum,Dim,eltype(A),A}(coords, topology)
 end
 
-StructuredGrid{Datum}(XYZ::NTuple{Dim,A}, topology::GridTopology{Dim}) where {Datum,Dim,A<:AbstractArray} =
+StructuredGrid{Datum}(XYZ::NTuple{Dim,<:AbstractArray}, topology::GridTopology{Dim}) where {Datum,Dim} =
   StructuredGrid{Datum}(addunit.(XYZ, u"m"), topology)
 
 function StructuredGrid{Datum}(XYZ::Tuple) where {Datum}
@@ -46,8 +44,6 @@ end
 StructuredGrid{Datum}(XYZ...) where {Datum} = StructuredGrid{Datum}(XYZ)
 
 StructuredGrid(args...) = StructuredGrid{NoDatum}(args...)
-
-lentype(::Type{<:StructuredGrid{Datum,Dim,A}}) where {Datum,Dim,A} = eltype(A)
 
 vertex(g::StructuredGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} =
   Point(Cartesian{Datum}(ntuple(d -> g.XYZ[d][ijk...], Dim)))

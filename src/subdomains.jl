@@ -11,7 +11,7 @@
 
 A partial view of a `domain` containing only the elements at `indices`.
 """
-struct SubDomain{Dim,D<:Domain{Dim},I<:AbstractVector{Int}} <: Domain{Dim}
+struct SubDomain{Dim,C<:CRS,D<:Domain{Dim,C},I<:AbstractVector{Int}} <: Domain{Dim,C}
   domain::D
   inds::I
 end
@@ -22,8 +22,6 @@ SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
-
-lentype(::Type{<:SubDomain{Dim,D}}) where {Dim,D} = lentype(D)
 
 element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 
