@@ -32,7 +32,7 @@ paramdim(g::Geometry) = paramdim(typeof(g))
 """
     crs(geometry)
 
-Return the CRS type of the `geometry`.
+Return the coordinate reference system (CRS) of the `geometry`.
 """
 crs(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = CRS
 crs(g::Geometry) = crs(typeof(g))

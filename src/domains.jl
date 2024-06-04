@@ -74,7 +74,7 @@ paramdim(d::Domain) = paramdim(first(d))
 """
     crs(domain)
 
-Return the CRS type of the `domain`.
+Return the coordinate reference system (CRS) of the `domain`.
 """
 crs(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
 crs(d::Domain) = crs(typeof(d))
