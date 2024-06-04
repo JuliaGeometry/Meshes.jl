@@ -24,10 +24,10 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (e.g. only 2 vertices).
 """
-struct PolyArea{Dim,P<:Point{Dim},R<:Ring{Dim,P}} <: Polygon{Dim,P}
+struct PolyArea{Dim,C<:CRS,R<:Ring{Dim,C}} <: Polygon{Dim,C}
   rings::Vector{R}
 
-  function PolyArea{Dim,P,R}(rings; fix=true) where {Dim,P<:Point{Dim},R<:Ring{Dim,P}}
+  function PolyArea{Dim,C,R}(rings; fix=true) where {Dim,C<:CRS,R<:Ring{Dim,C}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -57,7 +57,7 @@ struct PolyArea{Dim,P<:Point{Dim},R<:Ring{Dim,P}} <: Polygon{Dim,P}
   end
 end
 
-PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,P<:Point{Dim},R<:Ring{Dim,P}} = PolyArea{Dim,P,R}(rings; fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,C<:CRS,R<:Ring{Dim,C}} = PolyArea{Dim,C,R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
@@ -66,8 +66,6 @@ PolyArea(outer::Ring; fix=true) = PolyArea([outer]; fix)
 PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
 PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
-
-lentype(::Type{<:PolyArea{Dim,R}}) where {Dim,R} = lentype(R)
 
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 

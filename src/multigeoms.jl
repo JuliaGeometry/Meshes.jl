@@ -15,7 +15,7 @@ multiple polygons as a single entity (e.g. country with islands).
 - Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
   [`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
 """
-struct Multi{Dim,G<:Geometry{Dim}} <: Geometry{Dim}
+struct Multi{Dim,C<:CRS,G<:Geometry{Dim,C}} <: Geometry{Dim,C}
   geoms::Vector{G}
 end
 
@@ -23,16 +23,14 @@ end
 Multi(geoms) = Multi(collect(geoms))
 
 # type aliases for convenience
-const MultiPoint{Dim} = Multi{Dim,<:Point{Dim}}
-const MultiSegment{Dim} = Multi{Dim,<:Segment{Dim}}
-const MultiRope{Dim} = Multi{Dim,<:Rope{Dim}}
-const MultiRing{Dim} = Multi{Dim,<:Ring{Dim}}
-const MultiPolygon{Dim} = Multi{Dim,<:Polygon{Dim}}
-const MultiPolyhedron{Dim} = Multi{Dim,<:Polyhedron{Dim}}
+const MultiPoint{Dim,CRS} = Multi{Dim,CRS,<:Point{Dim,CRS}}
+const MultiSegment{Dim,CRS} = Multi{Dim,CRS,<:Segment{Dim,CRS}}
+const MultiRope{Dim,CRS} = Multi{Dim,CRS,<:Rope{Dim,CRS}}
+const MultiRing{Dim,CRS} = Multi{Dim,CRS,<:Ring{Dim,CRS}}
+const MultiPolygon{Dim,CRS} = Multi{Dim,CRS,<:Polygon{Dim,CRS}}
+const MultiPolyhedron{Dim,CRS} = Multi{Dim,CRS,<:Polyhedron{Dim,CRS}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
-
-lentype(::Type{<:Multi{Dim,G}}) where {Dim,G} = lentype(G)
 
 vertex(m::Multi, ind) = vertices(m)[ind]
 

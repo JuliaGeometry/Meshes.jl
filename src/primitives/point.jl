@@ -33,7 +33,7 @@ Point(1u"m", 2u"m", 3u"m") # integer is converted to float by design
   algorithms assume a continuous space. The conversion to float avoids
   `InexactError` and other unexpected results.
 """
-struct Point{Dim,C<:CRS} <: Primitive{Dim}
+struct Point{Dim,C<:CRS} <: Primitive{Dim,C}
   coords::C
   Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ndims(coords),C}(coords)
 end
@@ -46,8 +46,6 @@ Base.convert(::Type{Point{Dim,CRSₜ}}, p::Point{Dim,CRSₛ}) where {Dim,CRSₜ,
 Base.convert(::Type{Point{Dim,CRS}}, p::Point{Dim,CRS}) where {Dim,CRS} = p
 
 paramdim(::Type{<:Point}) = 0
-
-lentype(::Type{<:Point{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 
 center(p::Point) = p
 

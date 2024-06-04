@@ -3,13 +3,14 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{K,Dim,P}
+    Polytope{K,Dim,CRS}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
-embedded in a `Dim`-dimensional space with point type `P`. The parameter `K` is also known as the
-rank or parametric dimension of the polytope: <https://en.wikipedia.org/wiki/Abstract_polytope>.
+embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`. 
+The parameter `K` is also known as the rank or parametric dimension 
+of the polytope: <https://en.wikipedia.org/wiki/Abstract_polytope>.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into
@@ -25,13 +26,13 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,Dim,P<:Point} <: Geometry{Dim} end
+abstract type Polytope{K,Dim,CRS} <: Geometry{Dim,CRS} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   expr = quote
-    $Base.@__doc__ struct $type{Dim,P<:Point{Dim}} <: Polytope{$K,Dim,P}
-      vertices::NTuple{$N,P}
+    $Base.@__doc__ struct $type{Dim,C<:CRS} <: Polytope{$K,Dim,C}
+      vertices::NTuple{$N,Point{Dim,C}}
     end
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
@@ -45,7 +46,7 @@ end
 # -------------------
 
 """
-    Chain{Dim,P}
+    Chain{Dim,CRS}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
 See <https://en.wikipedia.org/wiki/Polygonal_chain>.
@@ -152,7 +153,7 @@ include("polytopes/ring.jl")
 # ---------------------
 
 """
-    Polygon{Dim,P}
+    Polygon{Dim,CRS}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
@@ -176,7 +177,7 @@ include("polytopes/polyarea.jl")
 # ------------------------
 
 """
-    Polyhedron{Dim,P}
+    Polyhedron{Dim,CRS}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 
@@ -199,8 +200,6 @@ include("polytopes/pyramid.jl")
 Return the parametric dimension or rank of the polytope.
 """
 paramdim(::Type{<:Polytope{K}}) where {K} = K
-
-lentype(::Type{<:Polytope{K,Dim,P}}) where {K,Dim,P} = lentype(P)
 
 """
     vertex(polytope, ind)

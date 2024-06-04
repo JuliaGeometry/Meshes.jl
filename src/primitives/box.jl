@@ -15,23 +15,21 @@ Box(Point(0, 0, 0), Point(1, 1, 1))
 Box((0, 0), (1, 1))
 ```
 """
-struct Box{Dim,P<:Point{Dim}} <: Primitive{Dim}
-  min::P
-  max::P
+struct Box{Dim,C<:CRS} <: Primitive{Dim,C}
+  min::Point{Dim,C}
+  max::Point{Dim,C}
 
-  function Box{Dim,P}(min, max) where {Dim,P<:Point{Dim}}
+  function Box{Dim,C}(min, max) where {Dim,C<:CRS}
     assertion(min ⪯ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end
 
-Box(min::P, max::P) where {Dim,P<:Point{Dim}} = Box{Dim,P}(min, max)
+Box(min::Point{Dim,C}, max::Point{Dim,C}) where {Dim,C<:CRS} = Box{Dim,C}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
-
-lentype(::Type{<:Box{Dim,P}}) where {Dim,P} = lentype(P)
 
 Base.minimum(b::Box) = b.min
 
