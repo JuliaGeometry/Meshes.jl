@@ -24,7 +24,7 @@ topology(m::TransformedMesh) = topology(m.mesh)
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
 # alias to improve readability in IO methods
-const TransformedGrid{Dim,CRS,G<:Grid{Dim,CRS},TR} = TransformedMesh{Dim,GridTopology{Dim},G,TR}
+const TransformedGrid{Dim,CRS,G<:Grid{Dim,CRS},TR} = TransformedMesh{Dim,CRS,GridTopology{Dim},G,TR}
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 
