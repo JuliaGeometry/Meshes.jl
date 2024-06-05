@@ -3,12 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    laplacematrix(mesh; weights=:cotangent)
+    laplacematrix(mesh; kind=nothing)
 
 The Laplace-Beltrami (a.k.a. Laplacian) matrix of the `mesh`.
-Optionally specify the discretization `weights`.
+Optionally, specify the `kind` of discretization.
 
-## Weights
+## Available discretizations
 
 * `:uniform`   - `Lᵢⱼ = 1 / |𝒩(i)|, ∀j ∈ 𝒩(i)`
 * `:cotangent` - `Lᵢⱼ = cot(αᵢⱼ) + cot(βᵢⱼ), ∀j ∈ 𝒩(i)`
@@ -20,29 +20,37 @@ Optionally specify the discretization `weights`.
 * Pinkall, U. & Polthier, K. 1993. [Computing discrete minimal surfaces and their conjugates]
   (https://projecteuclid.org/journals/experimental-mathematics/volume-2/issue-1/Computing-discrete-minimal-surfaces-and-their-conjugates/em/1062620735.full).
 """
-function laplacematrix(mesh; weights=:cotangent)
-  # convert to half-edge topology
-  ℳ = topoconvert(HalfEdgeTopology, mesh)
+function laplacematrix(mesh; kind=nothing)
+  # select default discretization
+  𝒦 = isnothing(kind) ? laplacekind(mesh) : kind
+
+  # sanity checks
+  𝒦 == :cotangent && assertion(eltype(mesh) <: Triangle, "cotangent weights only defined for triangle meshes")
+
+  # adjust topology if necessary
+  𝒯 = laplacetopo(topology(mesh))
 
   # retrieve adjacency relation
-  𝒩 = Adjacency{0}(topology(ℳ))
+  𝒩 = Adjacency{0}(𝒯)
 
   # initialize matrix
-  n = nvertices(ℳ)
+  n = nvertices(mesh)
   L = spzeros(n, n)
 
-  # fill matrix with weights
-  if weights == :uniform
+  # fill matrix
+  if 𝒦 == :uniform
     uniformlaplacian!(L, 𝒩)
-  elseif weights == :cotangent
-    assertion(eltype(ℳ) <: Triangle, "cotangent weights only defined for triangle meshes")
-    cotangentlaplacian!(L, 𝒩, vertices(ℳ))
-  else
-    throw(ArgumentError("invalid discretization weights"))
+  elseif 𝒦 == :cotangent
+    cotangentlaplacian!(L, 𝒩, vertices(mesh))
   end
 
   L
 end
+
+laplacekind(mesh) = eltype(mesh) <: Triangle ? :cotangent : :uniform
+
+laplacetopo(topo) = topo
+laplacetopo(topo::SimpleTopology) = convert(HalfEdgeTopology, topo)
 
 function uniformlaplacian!(L, 𝒩)
   n = size(L, 1)
@@ -106,18 +114,18 @@ function measurematrix(mesh)
 end
 
 """
-    adjacencymatrix(mesh)
+    adjacencymatrix(mesh; rank=paramdim(mesh))
 
-Return the adjacency matrix of the elements of the `mesh`
-using the adjacency relation of the underlying topology.
+The adjacency matrix of the `mesh` using the adjacency
+relation of given `rank` for the underlying topology.
 """
-function adjacencymatrix(mesh)
+function adjacencymatrix(mesh; rank=paramdim(mesh))
+  # retrieve adjacency relation
   t = topology(mesh)
-  D = paramdim(mesh)
-  𝒜 = Adjacency{D}(t)
+  𝒜 = Adjacency{rank}(t)
 
   # initialize matrix
-  n = nelements(mesh)
+  n = nfaces(mesh, rank)
   A = spzeros(Int, n, n)
 
   # fill in matrix

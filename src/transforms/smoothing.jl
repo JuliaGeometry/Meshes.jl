@@ -40,7 +40,7 @@ function revert(transform::LambdaMuSmoothing, mesh::Mesh, cache)
   _smooth(mesh, L, n, λ, μ, revert=true)
 end
 
-_laplacian(mesh) = laplacematrix(mesh, weights=:uniform)
+_laplacian(mesh) = laplacematrix(mesh, kind=:uniform)
 
 function _smooth(mesh, L, n, λ, μ; revert=false)
   # retrieve vertices
