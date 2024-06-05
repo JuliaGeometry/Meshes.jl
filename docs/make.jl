@@ -59,7 +59,8 @@ makedocs(
         "algorithms/orientation.md",
         "algorithms/neighborsearch.md",
         "algorithms/boundingbox.md",
-        "algorithms/hulls.md"
+        "algorithms/hulls.md",
+        "algorithms/matrices.md"
       ],
       "Transforms" => "transforms.md",
       "Visualization" => "visualization.md",
