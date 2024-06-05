@@ -55,7 +55,9 @@ segments     = faces(topology, 1)
 """
 function faces(t::Topology, rank)
   D = paramdim(t)
-  if rank == D
+  if rank == 0
+    vertices(t)
+  elseif rank == D
     elements(t)
   elseif rank == D - 1
     facets(t)
@@ -71,7 +73,9 @@ Return the number of `rank`-faces of the `topology`.
 """
 function nfaces(t::Topology, rank)
   D = paramdim(t)
-  if rank == D
+  if rank == 0
+    nvertices(t)
+  elseif rank == D
     nelements(t)
   elseif rank == D - 1
     nfacets(t)
