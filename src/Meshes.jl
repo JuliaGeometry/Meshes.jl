@@ -54,9 +54,6 @@ include("vectors.jl")
 # geometries
 include("geometries.jl")
 
-# coordinates
-include("coords.jl")
-
 # topological objects
 include("connectivities.jl")
 include("topologies.jl")
@@ -160,6 +157,7 @@ export
   degree,
   Horner,
   DeCasteljau,
+  coords,
   to,
   radius,
   radii,
@@ -215,10 +213,7 @@ export
   MultiRope,
   MultiRing,
   MultiPolygon,
-  MultiPolyhedron,
-
-  # coordinates
-  coords,
+  MultiPolyhedron,  
 
   # connectivities
   Connectivity,

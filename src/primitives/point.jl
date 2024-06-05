@@ -55,6 +55,13 @@ Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...)
   isapprox(A.coords, B.coords; atol, kwargs...)
 
 """
+    coords(point)
+
+Return the coordinates of the `point`.
+"""
+coords(A::Point) = A.coords
+
+"""
     to(point)
 
 Return the vector from the origin to the `point`.
