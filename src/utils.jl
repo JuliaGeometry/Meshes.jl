@@ -36,11 +36,11 @@ function collectat(iter, inds)
 end
 
 """
-    withdatum(g, coords)
+    withdatum(g, v)
 
-Constructs a point with the Datum of `g` and the coordinates `coords`.
+Point at the end of the vector `v` with the same datum of `g`.
 """
-withdatum(g::GeometryOrDomain, coords::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(coords)))
+withdatum(g::GeometryOrDomain, v::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(v)))
 
 """
     signarea(A, B, C)
