@@ -34,7 +34,7 @@ function refine(mesh, ::CatmullClark)
   epts = map(1:nelements(t)) do elem
     ps = view(points, ∂₂₀(elem))
     cₒ = sum(to, ps) / length(ps)
-    Point(coords(cₒ))
+    withdatum(mesh, cₒ)
   end
 
   # add midpoints of edges
@@ -46,7 +46,7 @@ function refine(mesh, ::CatmullClark)
     ∑p = sum(to, ps)
     ∑q = sum(to, qs)
     M = length(ps) + length(qs)
-    Point(coords((∑p + ∑q) / M))
+    withdatum(mesh, (∑p + ∑q) / M)
   end
 
   # move original vertices
@@ -68,7 +68,7 @@ function refine(mesh, ::CatmullClark)
       sum(to, uv) / 2
     end / n
 
-    Point(coords((F + 2R + (n - 3)P) / n))
+    withdatum(mesh, (F + 2R + (n - 3)P) / n)
   end
 
   # new points in refined mesh

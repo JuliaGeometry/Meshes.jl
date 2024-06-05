@@ -5,6 +5,8 @@
 # auxiliary type for dispatch purposes
 const GeometryOrDomain = Union{Geometry,Domain}
 
+withdatum(g::GeometryOrDomain, coords::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(coords)))
+
 """
     assertion(cond, msg)
 

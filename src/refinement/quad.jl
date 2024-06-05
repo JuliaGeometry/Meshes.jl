@@ -23,7 +23,7 @@ function refine(mesh, ::QuadRefinement)
   epts = map(1:nelements(t)) do elem
     ps = view(points, ∂₂₀(elem))
     cₒ = sum(to, ps) / length(ps)
-    Point(coords(cₒ))
+    withdatum(mesh, cₒ)
   end
 
   # add midpoints of edges
@@ -31,7 +31,7 @@ function refine(mesh, ::QuadRefinement)
   fpts = map(1:nfacets(t)) do edge
     ps = view(points, ∂₁₀(edge))
     cₒ = sum(to, ps) / length(ps)
-    Point(coords(cₒ))
+    withdatum(mesh, cₒ)
   end
 
   # original vertices
