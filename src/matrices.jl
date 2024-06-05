@@ -2,6 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# helper function to select default Laplacian discretization
+laplacekind(mesh) = eltype(mesh) <: Triangle ? :cotangent : :uniform
+
+# helper function to convert topology if necessary
+laplacetopo(topo::SimpleTopology) = convert(HalfEdgeTopology, topo)
+laplacetopo(topo) = topo
+
 """
     laplacematrix(mesh; kind=nothing)
 
@@ -47,11 +54,6 @@ function laplacematrix(mesh; kind=nothing)
   L
 end
 
-laplacekind(mesh) = eltype(mesh) <: Triangle ? :cotangent : :uniform
-
-laplacetopo(topo) = topo
-laplacetopo(topo::SimpleTopology) = convert(HalfEdgeTopology, topo)
-
 function uniformlaplacian!(L, 𝒩)
   n = size(L, 1)
   for i in 1:n
@@ -91,20 +93,23 @@ as `Δ = M⁻¹L`. When solving systems of the form `Δu = f`, it
 is useful to write `Lu = Mf` and exploit the symmetry of `L`.
 """
 function measurematrix(mesh)
-  # convert to half-edge topology
-  ℳ = topoconvert(HalfEdgeTopology, mesh)
+  # adjust topology if necessary
+  𝒯 = laplacetopo(topology(mesh))
+
+  # parametric dimension
+  D = paramdim(mesh)
 
   # retrieve coboundary relation
-  ∂ = Coboundary{0,2}(topology(ℳ))
+  ∂ = Coboundary{0,D}(𝒯)
 
   # pre-compute all measures
-  A = measure.(ℳ)
+  A = measure.(mesh)
 
   # initialize matrix
-  n = nvertices(ℳ)
+  n = nvertices(mesh)
   M = oneunit(eltype(A)) * I(n)
 
-  # fill matrix with measures
+  # fill matrix
   for i in 1:n
     Aᵢ = sum(A[∂(i)]) / 3
     M[i, i] = 2Aᵢ

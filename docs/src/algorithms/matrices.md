@@ -5,7 +5,7 @@ using Meshes # hide
 import CairoMakie as Mke # hide
 ```
 
-## Laplacian
+## Laplace
 
 ```@docs
 laplacematrix
