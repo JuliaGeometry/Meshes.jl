@@ -21,11 +21,6 @@
   pts = centroid.(Ref(dom), 1:3)
   @test pts == point.([(2, 2), (3, 3), (4, 4)])
 
-  # datum propagation
-  c = Cartesian{WGS84Latest}(T(1), T(1))
-  dom = DummyDomain(Point(c))
-  @test datum(Meshes.crs(centroid(dom))) === WGS84Latest
-
   # concatenation
   dom1 = DummyDomain(point(0, 0))
   dom2 = DummyDomain(point(3, 3))
@@ -34,6 +29,11 @@
   @test vcat(dom2, dom3) == GeometrySet([collect(dom2); collect(dom3)])
   @test vcat(dom3, dom1) == GeometrySet([collect(dom3); collect(dom1)])
   @test vcat(dom1, dom2, dom3) == GeometrySet([collect(dom1); collect(dom2); collect(dom3)])
+
+  # datum propagation
+  c = Cartesian{WGS84Latest}(T(1), T(1))
+  dom = DummyDomain(Point(c))
+  @test datum(Meshes.crs(centroid(dom))) === WGS84Latest
 
   dom = DummyDomain(point(0, 0))
   @test sprint(show, dom) == "3 DummyDomain"
