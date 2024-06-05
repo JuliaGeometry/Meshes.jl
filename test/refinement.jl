@@ -11,6 +11,12 @@
       viz(fig[1, 3], ref2, showsegments=true)
       @test_reference "data/trirefine-$T.png" fig
     end
+
+    # datum propagation
+    c = Cartesian{WGS84Latest}(T(0), T(0))
+    grid = CartesianGrid((3, 3), Point(c), (T(1), T(1)))
+    ref = refine(grid, TriRefinement())
+    @test datum(Meshes.crs(ref)) === WGS84Latest
   end
 
   @testset "QuadRefinement" begin
@@ -28,6 +34,13 @@
       viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/quadrefine-$T.png" fig
     end
+
+    # datum propagation
+    cs = Cartesian{WGS84Latest}.(NTuple{2,T}[(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
+    connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
+    mesh = SimpleMesh(Point.(cs), connec)
+    ref = refine(mesh, QuadRefinement())
+    @test datum(Meshes.crs(ref)) === WGS84Latest
   end
 
   @testset "RegularRefinement" begin
@@ -99,6 +112,13 @@
       viz(fig[1, 3], ref3, showsegments=true)
       @test_reference "data/catmullclark-3-$T.png" fig
     end
+
+    # datum propagation
+    cs = Cartesian{WGS84Latest}.(NTuple{2,T}[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
+    mesh = SimpleMesh(Point.(cs), connec)
+    ref = refine(mesh, CatmullClark())
+    @test datum(Meshes.crs(ref)) === WGS84Latest
   end
 
   @testset "TriSubdivision" begin

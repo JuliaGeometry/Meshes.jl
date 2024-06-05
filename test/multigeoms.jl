@@ -85,4 +85,12 @@
   @test Multi([ring, ring]) isa MultiRing
   @test Multi([tri, tri]) isa MultiPolygon
   @test Multi([poly, poly]) isa MultiPolygon
+
+  # datum propagation
+  cs1 = Cartesian{WGS84Latest}.(NTuple{2,T}[(0, 0), (1, 0), (1, 1), (0, 1)])
+  cs2 = Cartesian{WGS84Latest}.(NTuple{2,T}[(1, 1), (2, 1), (2, 2), (1, 2)])
+  poly1 = PolyArea(Point.(cs1))
+  poly2 = PolyArea(Point.(cs2))
+  multi = Multi([poly1, poly2])
+  @test datum(Meshes.crs(centroid(multi))) === WGS84Latest
 end
