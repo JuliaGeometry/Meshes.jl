@@ -6,8 +6,8 @@
 laplacekind(mesh) = eltype(mesh) <: Triangle ? :cotangent : :uniform
 
 # helper function to convert topology if necessary
-laplacetopo(topo::SimpleTopology) = convert(HalfEdgeTopology, topo)
-laplacetopo(topo) = topo
+adjusttopo(topo::SimpleTopology) = convert(HalfEdgeTopology, topo)
+adjusttopo(topo) = topo
 
 """
     laplacematrix(mesh; kind=nothing)
@@ -35,7 +35,7 @@ function laplacematrix(mesh; kind=nothing)
   𝒦 == :cotangent && assertion(eltype(mesh) <: Triangle, "cotangent weights only defined for triangle meshes")
 
   # adjust topology if necessary
-  𝒯 = laplacetopo(topology(mesh))
+  𝒯 = adjusttopo(topology(mesh))
 
   # retrieve adjacency relation
   𝒩 = Adjacency{0}(𝒯)
@@ -94,7 +94,7 @@ is useful to write `Lu = Mf` and exploit the symmetry of `L`.
 """
 function measurematrix(mesh)
   # adjust topology if necessary
-  𝒯 = laplacetopo(topology(mesh))
+  𝒯 = adjusttopo(topology(mesh))
 
   # parametric dimension
   D = paramdim(mesh)
@@ -125,9 +125,11 @@ The adjacency matrix of the `mesh` using the adjacency
 relation of given `rank` for the underlying topology.
 """
 function adjacencymatrix(mesh; rank=paramdim(mesh))
+  # adjust topology if necessary
+  𝒯 = adjusttopo(topology(mesh))
+
   # retrieve adjacency relation
-  t = topology(mesh)
-  𝒜 = Adjacency{rank}(t)
+  𝒜 = Adjacency{rank}(𝒯)
 
   # initialize matrix
   n = nfaces(mesh, rank)
