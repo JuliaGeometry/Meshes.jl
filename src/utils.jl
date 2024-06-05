@@ -5,8 +5,6 @@
 # auxiliary type for dispatch purposes
 const GeometryOrDomain = Union{Geometry,Domain}
 
-withdatum(g::GeometryOrDomain, coords::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(coords)))
-
 """
     assertion(cond, msg)
 
@@ -36,6 +34,13 @@ function collectat(iter, inds)
     iter |> selectat(inds) |> tcollect
   end
 end
+
+"""
+    withdatum(g, coords)
+
+Constructs a point with the Datum of `g` and the coordinates `coords`.
+"""
+withdatum(g::GeometryOrDomain, coords::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(coords)))
 
 """
     signarea(A, B, C)
