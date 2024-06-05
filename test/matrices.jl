@@ -38,7 +38,7 @@
   @test maximum(d) == 4
   @test length(findall(==(2), d)) == 4
   A = adjacencymatrix(grid, rank=0)
-  @test size(A) == (101*101, 101*101)
+  @test size(A) == (101 * 101, 101 * 101)
 
   # adjacency of SimpleMesh
   points = point.([(0, 0), (1, -1), (1, 1), (2, -1), (2, 1)])
