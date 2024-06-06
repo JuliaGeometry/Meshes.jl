@@ -1081,6 +1081,15 @@
     @test Meshes.lentype(c) == ℳ
     @test boundary(c) == ConeSurface(d, a)
 
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    a = T.((0, 0, 1))
+    c = Cone(d, a)
+    @test embeddim(c) == 3
+    @test paramdim(c) == 3
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test Meshes.lentype(c) == ℳ
+
     c = rand(Cone)
     @test c isa Cone
     @test embeddim(c) == 3
@@ -1142,6 +1151,15 @@
     @test Meshes.crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test isnothing(boundary(s))
+
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    a = T.((0, 0, 1))
+    c = ConeSurface(d, a)
+    @test embeddim(c) == 3
+    @test paramdim(c) == 2
+    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test Meshes.lentype(c) == ℳ
 
     c = rand(ConeSurface)
     @test c isa ConeSurface
