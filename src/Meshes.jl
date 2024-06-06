@@ -205,6 +205,7 @@ export
   angles,
   innerangles,
   normal,
+  ≗,
 
   # multi-geometries
   Multi,

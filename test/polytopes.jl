@@ -101,6 +101,12 @@
     c3 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
     @test c1 == c2 == c3
 
+    # circular equality
+    c1 = Ring(point.([(1, 1), (2, 2), (3, 3)]))
+    c2 = Ring(point.([(2, 2), (3, 3), (1, 1)]))
+    c3 = Ring(point.([(3, 3), (1, 1), (2, 2)]))
+    @test c1 ≗ c2 ≗ c3
+
     c = Rope(point.([(1, 1), (2, 2)]))
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
@@ -367,6 +373,12 @@
     t = Triangle((0.0f0, 0.0f0), (1.0f0, 0.0f0), (0.5f0, 1.0f0))
     @test Point(0.5f0, 0.5f0) ∈ t
     @test Point(0.5e0, 0.5e0) ∈ t
+
+    # circular equality
+    t1 = Triangle(T.((1, 1)), T.((2, 2)), T.((3, 3)))
+    t2 = Triangle(T.((2, 2)), T.((3, 3)), T.((1, 1)))
+    t3 = Triangle(T.((3, 3)), T.((1, 1)), T.((2, 2)))
+    @test t1 ≗ t2 ≗ t3
 
     # point at edge of triangle
     @test point(3, 1) ∈ Triangle(point(1, 1), point(5, 1), point(3, 3))
