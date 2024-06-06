@@ -213,7 +213,7 @@ export
   MultiRope,
   MultiRing,
   MultiPolygon,
-  MultiPolyhedron,  
+  MultiPolyhedron,
 
   # connectivities
   Connectivity,
