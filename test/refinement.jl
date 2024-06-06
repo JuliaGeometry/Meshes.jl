@@ -36,12 +36,10 @@
     end
 
     # datum propagation
-    cs =
-      Cartesian{
-        WGS84Latest
-      }.([T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.25, 0.25)), T.((0.75, 0.25)), T.((0.5, 0.75))])
+    tuples = [T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.25, 0.25)), T.((0.75, 0.25)), T.((0.5, 0.75))]
+    points = Point.(Cartesian{WGS84Latest}.(tuples))
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
-    mesh = SimpleMesh(Point.(cs), connec)
+    mesh = SimpleMesh(points, connec)
     ref = refine(mesh, QuadRefinement())
     @test datum(Meshes.crs(ref)) === WGS84Latest
   end
@@ -117,9 +115,10 @@
     end
 
     # datum propagation
-    cs = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))])
+    tuples = [T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))]
+    points = Point.(Cartesian{WGS84Latest}.(tuples))
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
-    mesh = SimpleMesh(Point.(cs), connec)
+    mesh = SimpleMesh(points, connec)
     ref = refine(mesh, CatmullClark())
     @test datum(Meshes.crs(ref)) === WGS84Latest
   end

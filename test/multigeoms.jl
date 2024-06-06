@@ -87,10 +87,12 @@
   @test Multi([poly, poly]) isa MultiPolygon
 
   # datum propagation
-  cs1 = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))])
-  cs2 = Cartesian{WGS84Latest}.([T.((1, 1)), T.((2, 1)), T.((2, 2)), T.((1, 2))])
-  poly1 = PolyArea(Point.(cs1))
-  poly2 = PolyArea(Point.(cs2))
+  tuples1 = [T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))]
+  tuples2 = [T.((1, 1)), T.((2, 1)), T.((2, 2)), T.((1, 2))]
+  points1 = Point.(Cartesian{WGS84Latest}.(tuples1))
+  points2 = Point.(Cartesian{WGS84Latest}.(tuples2))
+  poly1 = PolyArea(points1)
+  poly2 = PolyArea(points2)
   multi = Multi([poly1, poly2])
   @test datum(Meshes.crs(centroid(multi))) === WGS84Latest
 end

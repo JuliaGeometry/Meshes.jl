@@ -87,8 +87,9 @@
     @test pset1 == pset2
 
     # datum propagation
-    cs = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((0, 1))])
-    pset = PointSet(Point.(cs))
+    tuples = [T.((0, 0)), T.((1, 0)), T.((0, 1))]
+    points = Point.(Cartesian{WGS84Latest}.(tuples))
+    pset = PointSet(points)
     @test datum(Meshes.crs(centroid(pset))) === WGS84Latest
 
     pset = PointSet(point.([(1, 0), (0, 1)]))

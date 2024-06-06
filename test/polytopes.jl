@@ -257,8 +257,9 @@
     @test innerangles(r1) ≈ innerangles(r2)
 
     # datum propagation
-    cs = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))])
-    r = Ring(Point.(cs))
+    tuples = [T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))]
+    points = Point.(Cartesian{WGS84Latest}.(tuples))
+    r = Ring(points)
     @test datum(Meshes.crs(centroid(r))) === WGS84Latest
 
     ri = Ring(point.([(1, 1), (2, 2), (3, 3)]))
