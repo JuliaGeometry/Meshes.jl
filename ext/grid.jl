@@ -29,20 +29,6 @@ function vizgrid3D!(plot)
   end
 end
 
-# defining a Makie.data_limits method is necessary because
-# Makie.scale!, Makie.translate! and Makie.rotate!
-# don't adjust axis limits automatically
-function Makie.data_limits(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object][]
-  bbox = boundingbox(grid)
-  pmin = aspoint3f(minimum(bbox))
-  pmax = aspoint3f(maximum(bbox))
-  Makie.Rect3f([pmin, pmax])
-end
-
-aspoint3f(p::Point{2}) = Makie.Point3f(ustrip.(to(p))..., 0)
-aspoint3f(p::Point{3}) = Makie.Point3f(ustrip.(to(p))...)
-
 # ----------------
 # SPECIALIZATIONS
 # ----------------
