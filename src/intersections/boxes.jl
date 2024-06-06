@@ -14,8 +14,8 @@ function intersection(f, box₁::Box{Dim}, box₂::Box{Dim}) where {Dim}
   m2, M2 = to.(extrema(box₂))
 
   # relevant vertices
-  u = Point(coords(max.(m1, m2)))
-  v = Point(coords(min.(M1, M2)))
+  u = withdatum(box₁, max.(m1, m2))
+  v = withdatum(box₁, min.(M1, M2))
 
   # auxiliary variables
   δ = v - u

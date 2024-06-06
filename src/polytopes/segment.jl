@@ -23,7 +23,7 @@ Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
 function center(s::Segment)
   a, b = extrema(s)
-  Point(coords((to(a) + to(b)) / 2))
+  withdatum(s, (to(a) + to(b)) / 2)
 end
 
 Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =

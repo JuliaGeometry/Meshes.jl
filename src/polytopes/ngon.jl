@@ -89,7 +89,7 @@ function (t::Triangle)(u, v)
     throw(DomainError((u, v), "invalid barycentric coordinates for triangle."))
   end
   v₁, v₂, v₃ = to.(t.vertices)
-  Point(coords(v₁ * w + v₂ * u + v₃ * v))
+  withdatum(t, v₁ * w + v₂ * u + v₃ * v)
 end
 
 # ------------
@@ -102,5 +102,5 @@ function (q::Quadrangle)(u, v)
     throw(DomainError((u, v), "q(u, v) is not defined for u, v outside [0, 1]²."))
   end
   c₀₀, c₀₁, c₁₁, c₁₀ = to.(q.vertices)
-  Point(coords(c₀₀ * (1 - u) * (1 - v) + c₀₁ * u * (1 - v) + c₁₀ * (1 - u) * v + c₁₁ * u * v))
+  withdatum(q, c₀₀ * (1 - u) * (1 - v) + c₀₁ * u * (1 - v) + c₁₀ * (1 - u) * v + c₁₁ * u * v)
 end

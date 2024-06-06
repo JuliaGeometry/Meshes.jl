@@ -86,6 +86,12 @@
     pset2 = PointSet(p for p in points)
     @test pset1 == pset2
 
+    # datum propagation
+    tuples = [T.((0, 0)), T.((1, 0)), T.((0, 1))]
+    points = Point.(Cartesian{WGS84Latest}.(tuples))
+    pset = PointSet(points)
+    @test datum(Meshes.crs(centroid(pset))) === WGS84Latest
+
     pset = PointSet(point.([(1, 0), (0, 1)]))
     @test sprint(show, pset) == "2 PointSet"
     if T == Float32

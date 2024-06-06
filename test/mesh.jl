@@ -280,9 +280,10 @@
     @test vertex(grid, 1) == point(0, 0)
     @test vertex(grid, 121) == point(10, 10)
 
-    # datum
+    # constructor with datum & datum propagation
     grid = RectilinearGrid{WGS84Latest}(x, y)
     @test datum(Meshes.crs(grid)) === WGS84Latest
+    @test datum(Meshes.crs(centroid(grid))) === WGS84Latest
 
     # conversion
     cg = cartgrid(10, 10)
@@ -399,7 +400,7 @@
     @test_throws BoundsError grid[2:6, :]
     @test Meshes.XYZ(grid) == (X * u"m", Y * u"m")
 
-    # datum
+    # constructor with datum
     grid = StructuredGrid{WGS84Latest}(X, Y)
     @test datum(Meshes.crs(grid)) === WGS84Latest
 

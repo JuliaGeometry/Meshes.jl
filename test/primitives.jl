@@ -158,6 +158,11 @@
     @test p ∉ q
     @test q ∉ p
 
+    # datum propagation
+    c = Cartesian{WGS84Latest}(T(1), T(1))
+    @test datum(Meshes.crs(Point(c) + vector(1, 1))) === WGS84Latest
+    @test datum(Meshes.crs(Point(c) - vector(1, 1))) === WGS84Latest
+
     p = point(0, 1)
     @test sprint(show, p, context=:compact => true) == "(x: 0.0 m, y: 1.0 m)"
     if T === Float32
@@ -374,6 +379,13 @@
     @test embeddim(b2) == 2
     @test embeddim(b3) == 3
 
+    # datum propagation
+    c1 = Cartesian{WGS84Latest}(T(0), T(0))
+    c2 = Cartesian{WGS84Latest}(T(0.5), T(1))
+    c3 = Cartesian{WGS84Latest}(T(1), T(1))
+    b = BezierCurve(Point(c1), Point(c2), Point(c3))
+    @test datum(Meshes.crs(b(T(0), Horner()))) === WGS84Latest
+
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
     @test sprint(show, b) == "BezierCurve(controls: [(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
     if T === Float32
@@ -505,6 +517,12 @@
       point(1, 1, 1),
       point(0, 1, 1)
     )
+
+    # datum propagation
+    c1 = Cartesian{WGS84Latest}(T(0), T(0))
+    c2 = Cartesian{WGS84Latest}(T(1), T(1))
+    b = Box(Point(c1), Point(c2))
+    @test datum(Meshes.crs(center(b))) === WGS84Latest
 
     b = Box(point(0, 0), point(1, 1))
     @test sprint(show, b) == "Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))"
@@ -812,6 +830,13 @@
     @test c isa Circle
     @test embeddim(c) == 3
 
+    # datum propagation
+    c1 = Cartesian{WGS84Latest}(T(0), T(4), T(0))
+    c2 = Cartesian{WGS84Latest}(T(0), T(-4), T(0))
+    c3 = Cartesian{WGS84Latest}(T(0), T(0), T(4))
+    c = Circle(Point(c1), Point(c2), Point(c3))
+    @test datum(Meshes.crs(c)) === WGS84Latest
+
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
     @test sprint(show, c) ==
@@ -951,6 +976,12 @@
     c = rand(CylinderSurface)
     @test c isa CylinderSurface
     @test embeddim(c) == 3
+
+    # datum propagation
+    c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
+    c2 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
+    c = CylinderSurface(Point(c1), Point(c2), T(1))
+    @test datum(Meshes.crs(center(c))) === WGS84Latest
 
     c = CylinderSurface(T(1))
     @test sprint(show, c) ==
