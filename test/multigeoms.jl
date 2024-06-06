@@ -87,8 +87,8 @@
   @test Multi([poly, poly]) isa MultiPolygon
 
   # datum propagation
-  cs1 = Cartesian{WGS84Latest}.(NTuple{2,T}[(0, 0), (1, 0), (1, 1), (0, 1)])
-  cs2 = Cartesian{WGS84Latest}.(NTuple{2,T}[(1, 1), (2, 1), (2, 2), (1, 2)])
+  cs1 = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))])
+  cs2 = Cartesian{WGS84Latest}.([T.((1, 1)), T.((2, 1)), T.((2, 2)), T.((1, 2))])
   poly1 = PolyArea(Point.(cs1))
   poly2 = PolyArea(Point.(cs2))
   multi = Multi([poly1, poly2])
