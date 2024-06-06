@@ -15,7 +15,10 @@ struct Cone{C<:CRS,D<:Disk{C}} <: Primitive{3,C}
   apex::Point{3,C}
 end
 
-Cone(base::Disk{C}, apex::Tuple) where {C<:Cartesian} = Cone(base, Point(C(apex)))
+function Cone(base::Disk{C}, apex::Tuple) where {C<:Cartesian}
+  coords = convert(C, Cartesian{datum(C)}(apex))
+  Cone(base, Point(coords))
+end
 
 paramdim(::Type{<:Cone}) = 3
 
