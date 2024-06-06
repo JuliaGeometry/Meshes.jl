@@ -221,6 +221,12 @@
     r, c = TB.apply(f, v)
     @test r ≈ vector(0, 1)
     @test TB.revert(f, r, c) ≈ v
+
+    # datum propagation
+    f = Rotate(Angle2d(T(π / 2)))
+    c = Cartesian{WGS84Latest}(T(1), T(0))
+    p = Point(c)
+    @test datum(Meshes.crs(f(p))) === WGS84Latest
   end
 
   @testset "Translate" begin
@@ -595,6 +601,12 @@
     f = Affine(T[0 -1; 1 0], T[1, 1])
     @test f.A isa SMatrix
     @test f.b isa SVector
+
+    # datum propagation
+    f = Affine(Angle2d(T(π / 2)), T[1, 1])
+    c = Cartesian{WGS84Latest}(T(1), T(0))
+    p = Point(c)
+    @test datum(Meshes.crs(f(p))) === WGS84Latest
 
     # error: A must be a square matrix
     @test_throws ArgumentError Affine(T[1 1; 2 2; 3 3], T[1, 2])

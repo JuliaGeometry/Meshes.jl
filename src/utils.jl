@@ -36,6 +36,13 @@ function collectat(iter, inds)
 end
 
 """
+    withdatum(g, v)
+
+Point at the end of the vector `v` with the same datum of `g`.
+"""
+withdatum(g::GeometryOrDomain, v::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(v)))
+
+"""
     signarea(A, B, C)
 
 Compute signed area of triangle formed by points `A`, `B` and `C`.
