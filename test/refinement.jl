@@ -36,7 +36,7 @@
     end
 
     # datum propagation
-    cs = Cartesian{WGS84Latest}.(NTuple{2,T}[(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
+    cs = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.25, 0.25)), T.((0.75, 0.25)), T.((0.5, 0.75))])
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
     mesh = SimpleMesh(Point.(cs), connec)
     ref = refine(mesh, QuadRefinement())
@@ -114,7 +114,7 @@
     end
 
     # datum propagation
-    cs = Cartesian{WGS84Latest}.(NTuple{2,T}[(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    cs = Cartesian{WGS84Latest}.([T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
     mesh = SimpleMesh(Point.(cs), connec)
     ref = refine(mesh, CatmullClark())
