@@ -34,6 +34,19 @@ nvertices(r::Ring) = length(r.vertices)
 
 ==(r₁::Ring, r₂::Ring) = r₁.vertices == r₂.vertices
 
+"""
+    ≗(ring₁, ring₂)
+
+Tells whether or not the `ring₁` and `ring₂`
+are equal up to circular shifts.
+"""
+function ≗(r₁::Ring, r₂::Ring)
+  n = length(r₁.vertices)
+  i = findfirst(==(first(r₁.vertices)), r₂.vertices)
+  isnothing(i) && return false
+  r₁.vertices == r₂.vertices[i:(i+n-1)]
+end
+
 function Base.isapprox(r₁::Ring, r₂::Ring; kwargs...)
   nvertices(r₁) ≠ nvertices(r₂) && return false
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))

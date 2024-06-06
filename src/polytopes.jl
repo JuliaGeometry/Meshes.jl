@@ -162,6 +162,21 @@ See also [`Ngon`](@ref) and [`PolyArea`](@ref).
 const Polygon = Polytope{2}
 
 """
+    ≗(polygon₁, polygon₂)
+
+Tells whether or not the `polygon₁` and `polygon₂`
+are equal up to circular shifts.
+"""
+function ≗(p₁::Polygon, p₂::Polygon)
+  rings₁ = rings(p₁)
+  rings₂ = rings(p₂)
+  nring₁ = length(rings₁)
+  nring₂ = length(rings₂)
+  nring₁ == nring₂ || return false
+  all(r₁ ≗ r₂ for (r₁, r₂) in zip(rings₁, rings₂))
+end
+
+"""
     rings(polygon)
 
 Return the outer and inner rings of the polygon.
