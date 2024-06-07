@@ -44,7 +44,7 @@ function ≗(r₁::Ring, r₂::Ring)
   n = length(r₁.vertices)
   i = findfirst(==(first(r₁.vertices)), r₂.vertices)
   isnothing(i) && return false
-  r₁.vertices == r₂.vertices[i:(i+n-1)]
+  r₁.vertices == r₂.vertices[i:(i + n - 1)]
 end
 
 function Base.isapprox(r₁::Ring, r₂::Ring; kwargs...)
