@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Dehn1899()
+    DehnTriangulation()
 
 Max Dehns' triangulation proved in 1899.
 
@@ -19,9 +19,9 @@ with small number of vertices.
 * Devadoss, S & Rourke, J. 2011. [Discrete and computational geometry]
   (https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
 """
-struct Dehn1899 <: BoundaryDiscretizationMethod end
+struct DehnTriangulation <: BoundaryDiscretizationMethod end
 
-function discretizewithin(ring::Ring{2}, ::Dehn1899)
+function discretizewithin(ring::Ring{2}, ::DehnTriangulation)
   # points on resulting mesh
   points = collect(vertices(ring))
 
