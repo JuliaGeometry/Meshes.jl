@@ -63,8 +63,12 @@ apply(t::CoordinateTransform, g::GeometryOrDomain) = applycoord(t, g), nothing
 revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inverse(t), g)
 
 # apply transform recursively
-applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
-  constructor(G)((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
+@generated function applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain}
+  ctor = constructor(G)
+  names = fieldnames(G)
+  exprs = (:(applycoord(t, g.$name)) for name in names)
+  :($ctor($(exprs...)))
+end
 
 # stop recursion at non-geometric types
 applycoord(::CoordinateTransform, x) = x
