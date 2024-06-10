@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    FIST([rng]; shuffle=true)
+    HeldTriangulation([rng]; shuffle=true)
 
 Fast Industrial-Strength Triangulation (FIST) of polygons.
 
@@ -26,14 +26,14 @@ generator `rng`.
   constrained Delaunay triangulation of polygons]
   (https://www.sciencedirect.com/science/article/pii/S092577211830004X)
 """
-struct FIST{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
+struct HeldTriangulation{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
   rng::RNG
   shuffle::Bool
 end
 
-FIST(rng=Random.default_rng(); shuffle=true) = FIST(rng, shuffle)
+HeldTriangulation(rng=Random.default_rng(); shuffle=true) = HeldTriangulation(rng, shuffle)
 
-function discretizewithin(ring::Ring{2}, method::FIST)
+function discretizewithin(ring::Ring{2}, method::HeldTriangulation)
   # helper function to shuffle ears
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
 
