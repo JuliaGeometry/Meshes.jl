@@ -5,11 +5,20 @@
 """
     Proj(CRS)
 
-TODO
+Projects the coordinates of geometry or domain into `CRS`.
+
+## Examples
+
+```julia
+Proj(Polar)
+Proj(Mercator{WGS84Latest})
+```
 """
 struct Proj{CRS} <: CoordinateTransform end
 
 Proj(CRS) = Proj{CRS}()
+
+parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
 applycoord(::Proj, v::Vec) = v
 

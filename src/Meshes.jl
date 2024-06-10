@@ -494,16 +494,16 @@ export
   CoordinateTransform,
   Rotate,
   Translate,
-  Affine,
   Scale,
+  Affine,
   Stretch,
   StdCoords,
+  Proj,
   Repair,
   Bridge,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
-  Proj,
   isaffine,
 
   # miscellaneous

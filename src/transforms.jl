@@ -85,13 +85,13 @@ applycoord(t::CoordinateTransform, g::CircularVector{<:Geometry}) =
 # IMPLEMENTATIONS
 # ----------------
 
-include("transforms/scale.jl")
 include("transforms/rotate.jl")
 include("transforms/translate.jl")
+include("transforms/scale.jl")
 include("transforms/affine.jl")
 include("transforms/stretch.jl")
 include("transforms/stdcoords.jl")
+include("transforms/proj.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
 include("transforms/smoothing.jl")
-include("transforms/proj.jl")
