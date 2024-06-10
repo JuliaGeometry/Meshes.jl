@@ -15,9 +15,15 @@ using Random
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
 using StatsBase: AbstractWeights, Weights, quantile
-using Distances: PreMetric, Euclidean, Haversine, Mahalanobis, SphericalAngle, evaluate, result_type
-using Rotations: Rotation, QuatRotation, Angle2d, rotation_between
-using NearestNeighbors: KDTree, BallTree, knn, inrange
+using Distances: PreMetric, Euclidean, Mahalanobis
+using Distances: Haversine, SphericalAngle
+using Distances: evaluate, result_type
+using Rotations: Rotation, QuatRotation, Angle2d
+using Rotations: rotation_between
+using NearestNeighbors: KDTree, BallTree
+using NearestNeighbors: knn, inrange
+using DelaunayTriangulation: triangulate
+using DelaunayTriangulation: each_solid_triangle
 using Transducers: Filter, Map, TakeWhile, tcollect, ⨟
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
@@ -101,6 +107,7 @@ include("boundingboxes.jl")
 include("hulls.jl")
 include("sampling.jl")
 include("pointification.jl")
+include("tesselation.jl")
 include("discretization.jl")
 include("refinement.jl")
 include("coarsening.jl")
@@ -462,6 +469,11 @@ export
 
   # pointification
   pointify,
+
+  # tesselation
+  TesselationMethod,
+  DelaunayTesselation,
+  tesselate,
 
   # discretization
   DiscretizationMethod,
