@@ -88,14 +88,14 @@ viz(fig[1,2], mesh, showsegments = true)
 fig
 ```
 
-## FIST
+## HeldTriangulation
 
 ```@docs
-FIST
+HeldTriangulation
 ```
 
 ```@example discretization
-mesh = discretize(polyarea, FIST())
+mesh = discretize(polyarea, HeldTriangulation())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
@@ -121,7 +121,7 @@ inners = [[(0.87789994, 0.32551613), (0.5614043, 0.540334), (0.9494598, 0.396227
 
 polyarea = PolyArea([outer, inners...])
 
-mesh = discretize(polyarea, FIST())
+mesh = discretize(polyarea, HeldTriangulation())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
