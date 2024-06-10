@@ -16,8 +16,6 @@ end
 
 Line(a::Tuple, b::Tuple) = Line(Point(a), Point(b))
 
-constructor(::Type{<:Line}) = Line
-
 paramdim(::Type{<:Line}) = 1
 
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁

@@ -45,8 +45,6 @@ RectilinearGrid{Datum}(xyz...) where {Datum} = RectilinearGrid{Datum}(xyz)
 
 RectilinearGrid(args...) = RectilinearGrid{NoDatum}(args...)
 
-constructor(::Type{<:RectilinearGrid{Datum}}) where {Datum} = RectilinearGrid{Datum}
-
 vertex(g::RectilinearGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
 
 xyz(g::RectilinearGrid) = g.xyz

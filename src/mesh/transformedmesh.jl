@@ -15,8 +15,6 @@ end
 # specialize constructor to avoid deep structures
 TransformedMesh(m::TransformedMesh, t::Transform) = TransformedMesh(m.mesh, m.transform → t)
 
-constructor(::Type{<:TransformedMesh}) = TransformedMesh
-
 Base.parent(m::TransformedMesh) = m.mesh
 
 transform(m::TransformedMesh) = m.transform

@@ -22,8 +22,6 @@ Ellipsoid(radii::NTuple{3}, center::Point{3}, rotation) = Ellipsoid(addunit.(rad
 Ellipsoid(radii::NTuple{3,T}, center=(zero(T), zero(T), zero(T)), rotation=I) where {T} =
   Ellipsoid(radii, Point(center), rotation)
 
-constructor(::Type{<:Ellipsoid}) = Ellipsoid
-
 paramdim(::Type{<:Ellipsoid}) = 2
 
 radii(e::Ellipsoid) = e.radii

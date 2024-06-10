@@ -26,8 +26,6 @@ end
 
 Frustum(bot::D, top::D) where {C<:CRS,D<:Disk{C}} = Frustum{C,D}(bot, top)
 
-constructor(::Type{<:Frustum}) = Frustum
-
 paramdim(::Type{<:Frustum}) = 3
 
 bottom(f::Frustum) = f.bot

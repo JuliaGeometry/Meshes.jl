@@ -9,8 +9,6 @@ A hexahedron with points `p1`, `p2`, ..., `p8`.
 """
 @polytope Hexahedron 3 8
 
-constructor(::Type{<:Hexahedron}) = Hexahedron
-
 nvertices(::Type{<:Hexahedron}) = 8
 
 Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; kwargs...) =

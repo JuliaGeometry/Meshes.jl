@@ -20,8 +20,6 @@ function ConeSurface(base::Disk{C}, apex::Tuple) where {C<:Cartesian}
   ConeSurface(base, Point(coords))
 end
 
-constructor(::Type{<:ConeSurface}) = ConeSurface
-
 paramdim(::Type{<:ConeSurface}) = 2
 
 base(c::ConeSurface) = c.base

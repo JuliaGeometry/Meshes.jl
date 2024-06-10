@@ -46,8 +46,6 @@ Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor) = Torus(p1, p2, p3, addun
 
 Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Point(p3), minor)
 
-constructor(::Type{<:Torus}) = Torus
-
 paramdim(::Type{<:Torus}) = 2
 
 center(t::Torus) = t.center

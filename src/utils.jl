@@ -13,6 +13,13 @@ Throws an `AssertionError(msg)` if `cond` is `false`.
 assertion(cond, msg) = cond || throw(AssertionError(msg))
 
 """
+    constructor(G)
+
+Constructor of geometry type `G`.
+"""
+constructor(G::Type{<:GeometryOrDomain}) = getfield(Meshes, nameof(G))
+
+"""
     fitdims(dims, D)
 
 Fit tuple `dims` to a given length `D` by repeating the last dimension.

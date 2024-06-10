@@ -26,8 +26,6 @@ end
 
 FrustumSurface(bot::D, top::D) where {C<:CRS,D<:Disk{C}} = FrustumSurface{C,D}(bot, top)
 
-constructor(::Type{<:FrustumSurface}) = FrustumSurface
-
 paramdim(::Type{<:FrustumSurface}) = 2
 
 bottom(f::FrustumSurface) = f.bot

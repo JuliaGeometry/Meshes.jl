@@ -23,8 +23,6 @@ SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[
 # DOMAIN INTERFACE
 # -----------------
 
-constructor(::Type{<:SubDomain}) = SubDomain
-
 element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 
 nelements(d::SubDomain) = length(d.inds)

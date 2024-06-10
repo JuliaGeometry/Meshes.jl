@@ -25,8 +25,6 @@ Ball(center::Point) = Ball(center, oneunit(lentype(center)))
 
 Ball(center::Tuple) = Ball(Point(center))
 
-constructor(::Type{<:Ball}) = Ball
-
 paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
 
 center(b::Ball) = b.center

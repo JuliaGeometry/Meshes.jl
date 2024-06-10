@@ -20,8 +20,6 @@ Disk(plane::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = Disk{C,P,float
 
 Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))
 
-constructor(::Type{<:Disk}) = Disk
-
 paramdim(::Type{<:Disk}) = 2
 
 plane(d::Disk) = d.plane

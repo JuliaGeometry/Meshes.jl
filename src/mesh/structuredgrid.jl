@@ -45,8 +45,6 @@ StructuredGrid{Datum}(XYZ...) where {Datum} = StructuredGrid{Datum}(XYZ)
 
 StructuredGrid(args...) = StructuredGrid{NoDatum}(args...)
 
-constructor(::Type{<:StructuredGrid{Datum}}) where {Datum} = StructuredGrid{Datum}
-
 vertex(g::StructuredGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} =
   Point(Cartesian{Datum}(ntuple(d -> g.XYZ[d][ijk...], Dim)))
 

@@ -55,8 +55,6 @@ function CylinderSurface(radius)
   CylinderSurface(Point(z, z, z), Point(z, z, o), radius)
 end
 
-constructor(::Type{<:CylinderSurface}) = CylinderSurface
-
 paramdim(::Type{<:CylinderSurface}) = 2
 
 radius(c::CylinderSurface) = c.radius
