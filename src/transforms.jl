@@ -63,8 +63,12 @@ apply(t::CoordinateTransform, g::GeometryOrDomain) = applycoord(t, g), nothing
 revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inverse(t), g)
 
 # apply transform recursively
-applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
-  G((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
+@generated function applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain}
+  ctor = constructor(G)
+  names = fieldnames(G)
+  exprs = (:(applycoord(t, g.$name)) for name in names)
+  :($ctor($(exprs...)))
+end
 
 # stop recursion at non-geometric types
 applycoord(::CoordinateTransform, x) = x
@@ -85,12 +89,13 @@ applycoord(t::CoordinateTransform, g::CircularVector{<:Geometry}) =
 # IMPLEMENTATIONS
 # ----------------
 
-include("transforms/scale.jl")
 include("transforms/rotate.jl")
 include("transforms/translate.jl")
+include("transforms/scale.jl")
 include("transforms/affine.jl")
 include("transforms/stretch.jl")
 include("transforms/stdcoords.jl")
+include("transforms/proj.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
 include("transforms/smoothing.jl")

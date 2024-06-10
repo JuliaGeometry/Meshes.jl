@@ -954,6 +954,150 @@
     @test r == r2
   end
 
+  @testset "Proj" begin
+    @test !isaffine(Proj(Polar))
+    @test !TB.isrevertible(Proj(Polar))
+    @test !TB.isinvertible(Proj(Polar))
+    @test TB.parameters(Proj(Polar)) == (; CRS=Polar)
+
+    # ----
+    # VEC
+    # ----
+
+    f = Proj(Polar)
+    v = vector(1, 0)
+    r, c = TB.apply(f, v)
+    @test r == v
+
+    # ------
+    # POINT
+    # ------
+
+    f = Proj(Polar)
+    g = point(1, 1)
+    r, c = TB.apply(f, g)
+    @test r ≈ Point(Polar(T(√2), T(π / 4)))
+
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Proj(Polar)
+    g = Segment(point(0, 0), point(1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
+
+    # ----
+    # BOX
+    # ----
+
+    f = Proj(Polar)
+    g = Box(point(0, 0), point(1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Box
+    @test r ≈ Box(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
+
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = Proj(Polar)
+    g = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Triangle(Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(√2), T(π / 4))))
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = Proj(Polar)
+    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
+
+    # ------
+    # PLANE
+    # ------
+
+    f = Proj(Cylindrical)
+    g = Plane(point(1, 1, 1), vector(0, 0, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Plane(Point(Cylindrical(T(√2), T(π / 4), T(1))), vector(0, 0, 1))
+
+    # ---------
+    # CYLINDER
+    # ---------
+
+    f = Proj(Cylindrical)
+    g = Cylinder(point(0, 0, 0), point(1, 1, 1))
+    r, c = TB.apply(f, g)
+    @test r ≈ Cylinder(Point(Cylindrical(T(0), T(0), T(0))), Point(Cylindrical(T(√2), T(π / 4), T(1))))
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Proj(Polar)
+    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(√2), T(π / 4)))])
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Proj(Polar)
+    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = Proj(Polar)
+    d = CartesianGrid((10, 10), point(1, 1), T.((1, 1)))
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r ≈ CartesianGrid((10, 10), Point(Polar(T(√2), T(π / 4))), T.((1, 1)))
+
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = Proj(Polar)
+    d = convert(RectilinearGrid, cartgrid(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa SimpleMesh
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = Proj(Polar)
+    d = convert(StructuredGrid, cartgrid(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa SimpleMesh
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = Proj(Polar)
+    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+  end
+
   @testset "Repair{0}" begin
     @test !isaffine(Repair)
     poly = PolyArea(point.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
