@@ -958,6 +958,7 @@
     @test !isaffine(Proj(Polar))
     @test !TB.isrevertible(Proj(Polar))
     @test !TB.isinvertible(Proj(Polar))
+    @test TB.parameters(Proj(Polar)) == (; CRS=Polar)
 
     # ----
     # VEC
@@ -1064,6 +1065,26 @@
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(Polar(T(√2), T(π / 4))), T.((1, 1)))
+
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = Proj(Polar)
+    d = convert(RectilinearGrid, cartgrid(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa SimpleMesh
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = Proj(Polar)
+    d = convert(StructuredGrid, cartgrid(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa SimpleMesh
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # -----------
     # SIMPLEMESH
