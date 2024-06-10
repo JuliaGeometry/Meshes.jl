@@ -124,7 +124,7 @@
     @test eltype(mesh) <: Triangle
   end
 
-  @testset "FIST" begin
+  @testset "HeldTriangulation" begin
     𝒫 = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
     @test Meshes.earsccw(𝒫) == [2, 4, 5]
 
@@ -161,7 +161,7 @@
     connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
     target = SimpleMesh(points, connec)
     poly = PolyArea(points)
-    mesh = discretize(poly, FIST(shuffle=false))
+    mesh = discretize(poly, HeldTriangulation(shuffle=false))
     @test mesh == target
     @test Set(vertices(poly)) == Set(vertices(mesh))
     @test nelements(mesh) == length(vertices(mesh)) - 2
@@ -188,7 +188,7 @@
       ])
     )
     rng = StableRNG(123)
-    mesh = discretize(poly, FIST(rng))
+    mesh = discretize(poly, HeldTriangulation(rng))
     @test nvertices(mesh) == 16
     @test nelements(mesh) == 14
 
@@ -203,14 +203,14 @@
       ])
     )
     rng = StableRNG(123)
-    mesh = discretize(poly, FIST(rng))
+    mesh = discretize(poly, HeldTriangulation(rng))
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 3
   end
 
   @testset "Miscellaneous" begin
     rng = StableRNG(123)
-    for method in [FIST(rng), DehnTriangulation()]
+    for method in [DehnTriangulation(), HeldTriangulation(rng)]
       triangle = Triangle(point(0, 0), point(1, 0), point(0, 1))
       mesh = discretize(triangle, method)
       @test vertices(mesh) == [point(0, 0), point(1, 0), point(0, 1)]
@@ -261,7 +261,7 @@
 
   @testset "Difficult examples" begin
     rng = StableRNG(123)
-    for method in [FIST(rng), DehnTriangulation()]
+    for method in [DehnTriangulation(), HeldTriangulation(rng)]
       poly = readpoly(T, joinpath(datadir, "taubin.line"))
       mesh = discretize(poly, method)
       @test Set(vertices(poly)) == Set(vertices(mesh))

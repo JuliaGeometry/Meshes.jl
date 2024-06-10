@@ -480,7 +480,7 @@ export
   BoundaryDiscretizationMethod,
   FanTriangulation,
   DehnTriangulation,
-  FIST,
+  HeldTriangulation,
   Tetrahedralization,
   RegularDiscretization,
   discretize,
