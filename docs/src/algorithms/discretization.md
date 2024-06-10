@@ -31,26 +31,10 @@ viz(fig[1,2], mesh, showsegments = true)
 fig
 ```
 
-## RegularDiscretization
+## DehnTriangulation
 
 ```@docs
-RegularDiscretization
-```
-
-```@example discretization
-sphere = Sphere((0.,0.,0.), 1.)
-
-mesh = discretize(sphere, RegularDiscretization(10,10))
-
-fig = Mke.Figure(size = (400, 400))
-viz(fig[1,1], mesh, showsegments = true)
-fig
-```
-
-## Dehn1899
-
-```@docs
-Dehn1899
+DehnTriangulation
 ```
 
 ```@example discretization
@@ -96,7 +80,7 @@ polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569
                      (0.37951034, 0.31436795), (0.37547874, 0.30905423), (0.36070493, 0.3204269),
                      (0.33518887, 0.348486), (0.29893062, 0.3932315), (0.25193012, 0.45466346)])
 
-mesh = discretize(polyarea, Dehn1899())
+mesh = discretize(polyarea, DehnTriangulation())
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
@@ -143,4 +127,32 @@ fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], polyarea)
 viz(fig[1,2], mesh, showsegments = true)
 fig
+```
+
+## RegularDiscretization
+
+```@docs
+RegularDiscretization
+```
+
+```@example discretization
+sphere = Sphere((0.,0.,0.), 1.)
+
+mesh = discretize(sphere, RegularDiscretization(10,10))
+
+viz(mesh, showsegments = true)
+```
+
+## Tetrahedralization
+
+```@docs
+Tetrahedralization
+```
+
+```@example discretization
+box = Box((0., 0., 0.), (1., 1., 1.))
+
+mesh = discretize(box, Tetrahedralization())
+
+viz(mesh, colors = 1:nelements(mesh))
 ```

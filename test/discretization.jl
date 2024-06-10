@@ -92,7 +92,7 @@
     @test all(intersects(poly), mesh)
   end
 
-  @testset "Dehn1899" begin
+  @testset "DehnTriangulation" begin
     octa = Octagon(
       point(0.2, 0.2),
       point(0.5, -0.5),
@@ -103,7 +103,7 @@
       point(0.2, 0.8),
       point(-0.5, 0.5)
     )
-    mesh = discretize(octa, Dehn1899())
+    mesh = discretize(octa, DehnTriangulation())
     @test nvertices(mesh) == 8
     @test nelements(mesh) == 6
     @test eltype(mesh) <: Triangle
@@ -118,7 +118,7 @@
       point(0.2, 0.8, 0.0),
       point(-0.5, 0.5, 0.0)
     )
-    mesh = discretize(octa, Dehn1899())
+    mesh = discretize(octa, DehnTriangulation())
     @test nvertices(mesh) == 8
     @test nelements(mesh) == 6
     @test eltype(mesh) <: Triangle
@@ -210,7 +210,7 @@
 
   @testset "Miscellaneous" begin
     rng = StableRNG(123)
-    for method in [FIST(rng), Dehn1899()]
+    for method in [FIST(rng), DehnTriangulation()]
       triangle = Triangle(point(0, 0), point(1, 0), point(0, 1))
       mesh = discretize(triangle, method)
       @test vertices(mesh) == [point(0, 0), point(1, 0), point(0, 1)]
@@ -261,7 +261,7 @@
 
   @testset "Difficult examples" begin
     rng = StableRNG(123)
-    for method in [FIST(rng), Dehn1899()]
+    for method in [FIST(rng), DehnTriangulation()]
       poly = readpoly(T, joinpath(datadir, "taubin.line"))
       mesh = discretize(poly, method)
       @test Set(vertices(poly)) == Set(vertices(mesh))

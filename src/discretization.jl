@@ -170,7 +170,7 @@ simplexify(box::Box{2}) = discretize(box, FanTriangulation())
 
 simplexify(box::Box{3}) = discretize(box, Tetrahedralization())
 
-simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? FIST() : Dehn1899())
+simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? FIST() : DehnTriangulation())
 
 simplexify(poly::Polyhedron) = discretize(poly, Tetrahedralization())
 
@@ -216,7 +216,7 @@ end
 # ----------------
 
 include("discretization/fan.jl")
-include("discretization/regular.jl")
-include("discretization/fist.jl")
 include("discretization/dehn.jl")
+include("discretization/fist.jl")
 include("discretization/tetra.jl")
+include("discretization/regular.jl")
