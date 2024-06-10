@@ -125,6 +125,7 @@ testfiles = [
   "hulls.jl",
   "sampling.jl",
   "pointification.jl",
+  "tesselation.jl",
   "discretization.jl",
   "refinement.jl",
   "coarsening.jl",
