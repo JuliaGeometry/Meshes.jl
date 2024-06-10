@@ -5,7 +5,7 @@
 """
     Proj(CRS)
 
-Coverts the coordinates of geometry or domain to a given
+Convert the coordinates of geometry or domain to a given
 coordinate reference system `CRS`.
 
 ## Examples

@@ -15,7 +15,7 @@ assertion(cond, msg) = cond || throw(AssertionError(msg))
 """
     constructor(G)
 
-Constructor of geometry type `G`.
+Given a (parametric) type `G{T₁,T₂,...}`, return the type `G`.
 """
 constructor(G::Type{<:GeometryOrDomain}) = getfield(Meshes, nameof(G))
 
