@@ -45,6 +45,8 @@ Point(coords...) = Point(Cartesian(coords...))
 Base.convert(::Type{Point{Dim,CRSₜ}}, p::Point{Dim,CRSₛ}) where {Dim,CRSₜ,CRSₛ} = Point(convert(CRSₜ, p.coords))
 Base.convert(::Type{Point{Dim,CRS}}, p::Point{Dim,CRS}) where {Dim,CRS} = p
 
+constructor(::Type{<:Point}) = Point
+
 paramdim(::Type{<:Point}) = 0
 
 center(p::Point) = p

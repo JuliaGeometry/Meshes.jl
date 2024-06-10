@@ -88,6 +88,13 @@ lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """
+    constructor(domain)
+
+Return the constructor of the `domain`.
+"""
+constructor(d::Domain) = constructor(typeof(d))
+
+"""
     centroid(domain, ind)
 
 Return the centroid of the `ind`-th element in the `domain`.

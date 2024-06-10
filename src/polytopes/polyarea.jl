@@ -67,6 +67,8 @@ PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
 
 PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
 
+constructor(::Type{<:PolyArea}) = PolyArea
+
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 
 function Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...)

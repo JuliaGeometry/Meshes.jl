@@ -60,6 +60,8 @@ ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 
 ParaboloidSurface() = ParaboloidSurface(Point(0, 0, 0))
 
+constructor(::Type{<:ParaboloidSurface}) = ParaboloidSurface
+
 paramdim(::Type{<:ParaboloidSurface}) = 2
 
 """

@@ -20,6 +20,8 @@ function Cone(base::Disk{C}, apex::Tuple) where {C<:Cartesian}
   Cone(base, Point(coords))
 end
 
+constructor(::Type{<:Cone}) = Cone
+
 paramdim(::Type{<:Cone}) = 3
 
 base(c::Cone) = c.base

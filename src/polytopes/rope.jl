@@ -17,6 +17,8 @@ Rope(vertices::Tuple...) = Rope([Point(v) for v in vertices])
 Rope(vertices::P...) where {P<:Point} = Rope(collect(vertices))
 Rope(vertices::AbstractVector{<:Tuple}) = Rope(Point.(vertices))
 
+constructor(::Type{<:Rope}) = Rope
+
 nvertices(r::Rope) = length(r.vertices)
 
 ==(r₁::Rope, r₂::Rope) = r₁.vertices == r₂.vertices

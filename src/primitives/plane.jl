@@ -36,6 +36,8 @@ function Plane(p1::Point{3}, p2::Point{3}, p3::Point{3})
   Plane(p1, normal(t))
 end
 
+constructor(::Type{<:Plane}) = Plane
+
 paramdim(::Type{<:Plane}) = 2
 
 normal(p::Plane) = unormalize(ucross(p.u, p.v))

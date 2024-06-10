@@ -46,6 +46,13 @@ lentype(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
 lentype(g::Geometry) = lentype(typeof(g))
 
 """
+    constructor(geometry)
+
+Return the constructor of the `geometry`.
+"""
+constructor(g::Geometry) = constructor(typeof(g))
+
+"""
     centroid(geometry)
 
 Return the centroid of the `geometry`.

@@ -30,6 +30,8 @@ const MultiRing{Dim,CRS} = Multi{Dim,CRS,<:Ring{Dim,CRS}}
 const MultiPolygon{Dim,CRS} = Multi{Dim,CRS,<:Polygon{Dim,CRS}}
 const MultiPolyhedron{Dim,CRS} = Multi{Dim,CRS,<:Polyhedron{Dim,CRS}}
 
+constructor(::Type{<:Multi}) = Multi
+
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
 vertex(m::Multi, ind) = vertices(m)[ind]

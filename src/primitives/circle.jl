@@ -41,6 +41,8 @@ end
 
 Circle(p1::Tuple, p2::Tuple, p3::Tuple) = Circle(Point(p1), Point(p2), Point(p3))
 
+constructor(::Type{<:Circle}) = Circle
+
 paramdim(::Type{<:Circle}) = 1
 
 plane(c::Circle) = c.plane

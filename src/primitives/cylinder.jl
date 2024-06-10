@@ -54,6 +54,8 @@ function Cylinder(radius)
   Cylinder(Point(z, z, z), Point(z, z, o), radius)
 end
 
+constructor(::Type{<:Cylinder}) = Cylinder
+
 paramdim(::Type{<:Cylinder}) = 3
 
 radius(c::Cylinder) = c.radius

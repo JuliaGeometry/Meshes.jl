@@ -64,7 +64,7 @@ revert(t::CoordinateTransform, g::GeometryOrDomain, c) = applycoord(inverse(t), 
 
 # apply transform recursively
 applycoord(t::CoordinateTransform, g::G) where {G<:GeometryOrDomain} =
-  G((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
+  constructor(g)((applycoord(t, getfield(g, n)) for n in fieldnames(G))...)
 
 # stop recursion at non-geometric types
 applycoord(::CoordinateTransform, x) = x
@@ -94,3 +94,4 @@ include("transforms/stdcoords.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
 include("transforms/smoothing.jl")
+include("transforms/proj.jl")

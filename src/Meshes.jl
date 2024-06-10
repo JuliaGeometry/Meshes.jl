@@ -503,6 +503,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  Proj,
   isaffine,
 
   # miscellaneous

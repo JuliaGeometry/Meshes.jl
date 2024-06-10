@@ -29,6 +29,8 @@ Box(min::Point{Dim,C}, max::Point{Dim,C}) where {Dim,C<:CRS} = Box{Dim,C}(min, m
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
+constructor(::Type{<:Box}) = Box
+
 paramdim(::Type{<:Box{Dim}}) where {Dim} = Dim
 
 Base.minimum(b::Box) = b.min

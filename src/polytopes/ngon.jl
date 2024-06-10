@@ -48,6 +48,8 @@ const Octagon = Ngon{8}
 const Nonagon = Ngon{9}
 const Decagon = Ngon{10}
 
+constructor(::Type{<:Ngon}) = Ngon
+
 Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N

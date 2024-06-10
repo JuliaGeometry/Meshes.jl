@@ -27,6 +27,8 @@ end
 BezierCurve(points::AbstractVector{<:Tuple}) = BezierCurve(Point.(points))
 BezierCurve(points...) = BezierCurve(collect(points))
 
+constructor(::Type{<:BezierCurve}) = BezierCurve
+
 paramdim(::Type{<:BezierCurve}) = 1
 
 controls(b::BezierCurve) = b.controls
