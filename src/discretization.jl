@@ -170,7 +170,7 @@ simplexify(box::Box{2}) = discretize(box, FanTriangulation())
 
 simplexify(box::Box{3}) = discretize(box, Tetrahedralization())
 
-simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? HeldTriangulation() : DehnTriangulation())
+simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 
 simplexify(poly::Polyhedron) = discretize(poly, Tetrahedralization())
 
