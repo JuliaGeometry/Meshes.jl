@@ -1003,6 +1003,8 @@
     @test !TB.isrevertible(Proj(Polar))
     @test !TB.isinvertible(Proj(Polar))
     @test TB.parameters(Proj(Polar)) == (; CRS=Polar)
+    @test TB.parameters(Proj(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
+    @test TB.parameters(Proj(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
 
     # ----
     # VEC
