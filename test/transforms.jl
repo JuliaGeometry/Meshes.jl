@@ -760,7 +760,7 @@
     f = Scale(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -771,7 +771,7 @@
     f = Scale(T(1), T(2))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -934,7 +934,7 @@
     f = Stretch(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -945,7 +945,7 @@
     f = Stretch(T(1), T(2))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
