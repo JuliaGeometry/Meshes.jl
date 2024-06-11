@@ -51,3 +51,7 @@ function applycoord(t::Scale, g::CartesianGrid)
   offs = offset(g)
   CartesianGrid(dims, orig, spac, offs)
 end
+
+applycoord(t::Scale, g::RectilinearGrid) = TransformedGrid(g, t)
+
+applycoord(t::Scale, g::StructuredGrid) = TransformedGrid(g, t)
