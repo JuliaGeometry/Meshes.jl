@@ -11,87 +11,6 @@
     @test collect(elements(mesh)) == tris
   end
 
-  @testset "RegularDiscretization" begin
-    bezier = BezierCurve([point(0, 0), point(1, 0), point(1, 1)])
-    mesh = discretize(bezier, RegularDiscretization(10))
-    @test nvertices(mesh) == 11
-    @test nelements(mesh) == 10
-    @test eltype(mesh) <: Segment
-    @test nvertices.(mesh) ⊆ [2]
-
-    box = Box(point(0, 0), point(2, 2))
-    mesh = discretize(box, RegularDiscretization(10))
-    @test mesh isa CartesianGrid
-    @test nvertices(mesh) == 121
-    @test nelements(mesh) == 100
-    @test eltype(mesh) <: Quadrangle
-    @test nvertices.(mesh) ⊆ [4]
-
-    sphere = Sphere(point(0, 0), T(1))
-    mesh = discretize(sphere, RegularDiscretization(10))
-    @test nvertices(mesh) == 10
-    @test nelements(mesh) == 10
-    @test eltype(mesh) <: Segment
-    @test nvertices.(mesh) ⊆ [2]
-
-    sphere = Sphere(point(0, 0, 0), T(1))
-    mesh = discretize(sphere, RegularDiscretization(10))
-    @test nvertices(mesh) == 11 * 10 + 2
-    @test nelements(mesh) == 10 * 10 + 2 * 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    ellips = Ellipsoid((T(3), T(2), T(1)))
-    mesh = discretize(ellips, RegularDiscretization(10))
-    @test nvertices(mesh) == 11 * 10 + 2
-    @test nelements(mesh) == 10 * 10 + 2 * 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    ball = Ball(point(0, 0), T(1))
-    mesh = discretize(ball, RegularDiscretization(10))
-    @test nvertices(mesh) == 11 * 10 + 1
-    @test nelements(mesh) == 10 * 10 + 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    disk = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(1))
-    mesh = discretize(disk, RegularDiscretization(10))
-    @test nvertices(mesh) == 11 * 10 + 1
-    @test nelements(mesh) == 10 * 10 + 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    cylsurf = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(1, 1, 1), vector(0, 0, 1)), T(1))
-    mesh = discretize(cylsurf, RegularDiscretization(10))
-    @test nvertices(mesh) == 10 * 11 + 2
-    @test nelements(mesh) == 10 * 10 + 2 * 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    consurf = ConeSurface(Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(1)), point(0, 0, 1))
-    mesh = discretize(consurf, RegularDiscretization(10))
-    @test nvertices(mesh) == 10 * 11 + 2
-    @test nelements(mesh) == 10 * 10 + 2 * 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    parsurf = rand(ParaboloidSurface)
-    mesh = discretize(parsurf, RegularDiscretization(10))
-    @test nvertices(mesh) == 10 * (10 + 1)
-    @test nelements(mesh) == 10 * 10
-    @test eltype(mesh) <: Ngon
-    @test nvertices.(mesh) ⊆ [3, 4]
-
-    poly = PolyArea(point.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
-    mesh = discretize(poly, RegularDiscretization(50))
-    @test mesh isa SubGrid{2}
-    grid = parent(mesh)
-    @test grid isa CartesianGrid
-    @test eltype(mesh) <: Quadrangle
-    @test all(intersects(poly), mesh)
-  end
-
   @testset "DehnTriangulation" begin
     octa = Octagon(
       point(0.2, 0.2),
@@ -208,13 +127,22 @@
     @test nelements(mesh) == 3
   end
 
-  @testset "Miscellaneous" begin
+  @testset "DelaunayTriangulation" begin
     rng = StableRNG(123)
-    for method in [DehnTriangulation(), HeldTriangulation(rng)]
+    poly = Pentagon(point(0, 0), point(1, 0), point(1, 1), point(0.5, 2), point(0, 1))
+    mesh = discretize(poly, DelaunayTriangulation(rng))
+    @test Set(vertices(poly)) == Set(vertices(mesh))
+    @test nelements(mesh) == length(vertices(mesh)) - 2
+  end
+
+  @testset "Miscellaneous triangulations" begin
+    rng = StableRNG(123)
+    for method in [DehnTriangulation(), HeldTriangulation(rng), DelaunayTriangulation(rng)]
       triangle = Triangle(point(0, 0), point(1, 0), point(0, 1))
       mesh = discretize(triangle, method)
       @test vertices(mesh) == [point(0, 0), point(1, 0), point(0, 1)]
-      @test collect(elements(mesh)) == [triangle]
+      @test nelements(mesh) == 1
+      @test mesh[1] ≗ triangle
 
       quadrangle = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
       mesh = discretize(quadrangle, method)
@@ -259,7 +187,7 @@
     end
   end
 
-  @testset "Difficult examples" begin
+  @testset "Difficult triangulations" begin
     rng = StableRNG(123)
     for method in [DehnTriangulation(), HeldTriangulation(rng)]
       poly = readpoly(T, joinpath(datadir, "taubin.line"))
@@ -379,6 +307,87 @@
     @test bmesh == hmesh
     @test nvertices(bmesh) == 8
     @test nelements(bmesh) == 5
+  end
+
+  @testset "RegularDiscretization" begin
+    bezier = BezierCurve([point(0, 0), point(1, 0), point(1, 1)])
+    mesh = discretize(bezier, RegularDiscretization(10))
+    @test nvertices(mesh) == 11
+    @test nelements(mesh) == 10
+    @test eltype(mesh) <: Segment
+    @test nvertices.(mesh) ⊆ [2]
+
+    box = Box(point(0, 0), point(2, 2))
+    mesh = discretize(box, RegularDiscretization(10))
+    @test mesh isa CartesianGrid
+    @test nvertices(mesh) == 121
+    @test nelements(mesh) == 100
+    @test eltype(mesh) <: Quadrangle
+    @test nvertices.(mesh) ⊆ [4]
+
+    sphere = Sphere(point(0, 0), T(1))
+    mesh = discretize(sphere, RegularDiscretization(10))
+    @test nvertices(mesh) == 10
+    @test nelements(mesh) == 10
+    @test eltype(mesh) <: Segment
+    @test nvertices.(mesh) ⊆ [2]
+
+    sphere = Sphere(point(0, 0, 0), T(1))
+    mesh = discretize(sphere, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 + 2
+    @test nelements(mesh) == 10 * 10 + 2 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    ellips = Ellipsoid((T(3), T(2), T(1)))
+    mesh = discretize(ellips, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 + 2
+    @test nelements(mesh) == 10 * 10 + 2 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    ball = Ball(point(0, 0), T(1))
+    mesh = discretize(ball, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 + 1
+    @test nelements(mesh) == 10 * 10 + 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    disk = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(1))
+    mesh = discretize(disk, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 + 1
+    @test nelements(mesh) == 10 * 10 + 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    cylsurf = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(1, 1, 1), vector(0, 0, 1)), T(1))
+    mesh = discretize(cylsurf, RegularDiscretization(10))
+    @test nvertices(mesh) == 10 * 11 + 2
+    @test nelements(mesh) == 10 * 10 + 2 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    consurf = ConeSurface(Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(1)), point(0, 0, 1))
+    mesh = discretize(consurf, RegularDiscretization(10))
+    @test nvertices(mesh) == 10 * 11 + 2
+    @test nelements(mesh) == 10 * 10 + 2 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    parsurf = rand(ParaboloidSurface)
+    mesh = discretize(parsurf, RegularDiscretization(10))
+    @test nvertices(mesh) == 10 * (10 + 1)
+    @test nelements(mesh) == 10 * 10
+    @test eltype(mesh) <: Ngon
+    @test nvertices.(mesh) ⊆ [3, 4]
+
+    poly = PolyArea(point.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
+    mesh = discretize(poly, RegularDiscretization(50))
+    @test mesh isa SubGrid{2}
+    grid = parent(mesh)
+    @test grid isa CartesianGrid
+    @test eltype(mesh) <: Quadrangle
+    @test all(intersects(poly), mesh)
   end
 
   @testset "Discretize" begin

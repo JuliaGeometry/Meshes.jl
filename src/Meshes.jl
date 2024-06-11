@@ -481,6 +481,7 @@ export
   FanTriangulation,
   DehnTriangulation,
   HeldTriangulation,
+  DelaunayTriangulation,
   Tetrahedralization,
   RegularDiscretization,
   discretize,
