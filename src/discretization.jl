@@ -218,5 +218,6 @@ end
 include("discretization/fan.jl")
 include("discretization/dehn.jl")
 include("discretization/held.jl")
+include("discretization/delaunay.jl")
 include("discretization/tetra.jl")
 include("discretization/regular.jl")
