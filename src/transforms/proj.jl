@@ -4,9 +4,10 @@
 
 """
     Proj(CRS)
+    Proj(code)
 
 Convert the coordinates of geometry or domain to a given
-coordinate reference system `CRS`.
+coordinate reference system `CRS` or EPSG/ESRI `code`.
 
 ## Examples
 
@@ -14,11 +15,17 @@ coordinate reference system `CRS`.
 Proj(Polar)
 Proj(WebMercator)
 Proj(Mercator{WGS84Latest})
+Proj(EPSG{3395})
+Proj(ESRI{54017})
 ```
 """
 struct Proj{CRS} <: CoordinateTransform end
 
 Proj(CRS) = Proj{CRS}()
+
+Proj(code::Type{<:EPSG}) = Proj{CoordRefSystems.get(code)}()
+
+Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
