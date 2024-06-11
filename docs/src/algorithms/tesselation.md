@@ -7,7 +7,7 @@ import CairoMakie as Mke # hide
 
 ```@docs
 tesselate
-TessselationMethod
+TesselationMethod
 ```
 
 ## DelaunayTesselation
