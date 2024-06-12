@@ -512,6 +512,7 @@ export
   Stretch,
   StdCoords,
   Proj,
+  Shadow,
   Repair,
   Bridge,
   LambdaMuSmoothing,
