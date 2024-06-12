@@ -75,7 +75,7 @@ function householderbasis(n::Vec{3,ℒ}) where {ℒ}
   i = argmax(n .+ n̂)
   n̂ᵢ = Vec(ntuple(j -> j == i ? n̂ : zero(ℒ), 3))
   h = n + n̂ᵢ
-  H = I - 2h * transpose(h) / (transpose(h) * h)
+  H = (I - 2h * transpose(h) / (transpose(h) * h)) * unit(ℒ)
   u, v = [H[:, j] for j in 1:3 if j != i]
   i == 2 && ((u, v) = (v, u))
   Vec(u), Vec(v)
