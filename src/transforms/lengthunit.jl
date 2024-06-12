@@ -23,27 +23,32 @@ parameters(t::LengthUnit) = (; unit=t.unit)
 applycoord(t::LengthUnit, v::Vec) = uconvert.(t.unit, v)
 
 function applycoord(t::LengthUnit, p::Point{<:Any,<:Cartesian})
-  c = CoordRefSystems.cvalues(coords(p))
-  Point(Cartesian{datum(crs(p))}(uconvert.(t.unit, c)))
+  c = coords(p)
+  d = datum(crs(p))
+  v = CoordRefSystems.cvalues(c)
+  Point(Cartesian{d}(uconvert.(t.unit, v)))
 end
 
 function applycoord(t::LengthUnit, p::Point{<:Any,<:Polar})
   c = coords(p)
+  d = datum(crs(p))
   ρ = uconvert(t.unit, c.ρ)
-  Point(Polar{datum(crs(p))}(ρ, c.ϕ))
+  Point(Polar{d}(ρ, c.ϕ))
 end
 
 function applycoord(t::LengthUnit, p::Point{<:Any,<:Cylindrical})
   c = coords(p)
+  d = datum(crs(p))
   ρ = uconvert(t.unit, c.ρ)
   z = uconvert(t.unit, c.z)
-  Point(Cylindrical{datum(crs(p))}(ρ, c.ϕ, z))
+  Point(Cylindrical{d}(ρ, c.ϕ, z))
 end
 
 function applycoord(t::LengthUnit, p::Point{<:Any,<:Spherical})
   c = coords(p)
+  d = datum(crs(p))
   r = uconvert(t.unit, c.r)
-  Point(Spherical{datum(crs(p))}(r, c.θ, c.ϕ))
+  Point(Spherical{d}(r, c.θ, c.ϕ))
 end
 
 applycoord(::LengthUnit, p::Point) = throw(ArgumentError("the length unit of $(prettyname(crs(p))) cannot be changed"))
