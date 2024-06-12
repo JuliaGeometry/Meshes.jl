@@ -19,6 +19,14 @@
     @test v isa Vec{3}
     @test ustrip.(u × v) ≈ n ./ norm(n)
   end
+  n = Vec(T(1) * u"cm", T(1) * u"cm", T(1) * u"cm")
+  u, v = householderbasis(n)
+  @test unit(eltype(u)) == u"cm"
+  @test unit(eltype(v)) == u"cm"
+  n = Vec(T(1) * u"km", T(1) * u"km", T(1) * u"km")
+  u, v = householderbasis(n)
+  @test unit(eltype(u)) == u"km"
+  @test unit(eltype(v)) == u"km"
 
   @test Meshes.mayberound(1.1, 1.0, 0.2) ≈ 1.0
   @test Meshes.mayberound(1.1, 1.0, 0.10000000000000001) ≈ 1.1
