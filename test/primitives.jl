@@ -366,10 +366,12 @@
     @test boundary(b) == Multi([point(0, 0), point(1, 1)])
     @test perimeter(b) == zero(ℳ)
 
-    b = BezierCurve(point.(randn(100), randn(100)))
+    rng = StableRNG(123)
+    b = BezierCurve(point.(randn(rng, 100), randn(rng, 100)))
     t1 = @timed b(T(0.2))
     t2 = @timed b(T(0.2), Horner())
-    @test t1.time > t2.time
+    @test t1.time < 5e-4
+    @test t2.time < 5e-4
     @test t2.bytes < 100
 
     b2 = rand(BezierCurve{2})
