@@ -1144,6 +1144,159 @@
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   end
 
+  @testset "LengthUnit" begin
+    @test !isaffine(LengthUnit(u"km"))
+    @test !TB.isrevertible(LengthUnit(u"cm"))
+    @test !TB.isinvertible(LengthUnit(u"km"))
+    @test TB.parameters(LengthUnit(u"cm")) == (; unit=u"cm")
+
+    # ----
+    # VEC
+    # ----
+
+    f = LengthUnit(u"km")
+    v = vector(1000, 0)
+    r, c = TB.apply(f, v)
+    @test r ≈ Vec(T(1) * u"km", T(0) * u"km")
+
+    # ------
+    # POINT
+    # ------
+
+    f = LengthUnit(u"cm")
+    g = point(1, 1)
+    r, c = TB.apply(f, g)
+    @test r ≈ Point(T(100) * u"cm", T(100) * u"cm")
+
+    f = LengthUnit(u"km")
+    g = Point(Polar(T(1000), T(π / 4)))
+    r, c = TB.apply(f, g)
+    @test r ≈ Point(Polar(T(1) * u"km", T(π / 4) * u"rad"))
+
+    f = LengthUnit(u"cm")
+    g = Point(Cylindrical(T(1), T(π / 4), T(1)))
+    r, c = TB.apply(f, g)
+    @test r ≈ Point(Cylindrical(T(100) * u"cm", T(π / 4) * u"rad", T(100) * u"cm"))
+
+    f = LengthUnit(u"km")
+    g = Point(Spherical(T(1000), T(π / 4), T(π / 4)))
+    r, c = TB.apply(f, g)
+    @test r ≈ Point(Spherical(T(1) * u"km", T(π / 4) * u"rad", T(π / 4) * u"rad"))
+
+    f = LengthUnit(u"cm")
+    g = Point(Mercator(T(1), T(1)))
+    @test_throws ArgumentError TB.apply(f, g)
+
+    # --------
+    # SEGMENT
+    # --------
+
+    f = LengthUnit(u"km")
+    g = Segment(point(0, 0), point(1000, 1000))
+    r, c = TB.apply(f, g)
+    @test r ≈ Segment(Point(T(0) * u"km", T(0) * u"km"), Point(T(1) * u"km", T(1) * u"km"))
+
+    # ----
+    # BOX
+    # ----
+
+    f = LengthUnit(u"cm")
+    g = Box(point(0, 0), point(1, 1))
+    r, c = TB.apply(f, g)
+    @test r isa Box
+    @test r ≈ Box(Point(T(0) * u"cm", T(0) * u"cm"), Point(T(100) * u"cm", T(100) * u"cm"))
+
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = LengthUnit(u"km")
+    g = Triangle(point(0, 0), point(1000, 0), point(1000, 1000))
+    r, c = TB.apply(f, g)
+    @test r ≈ Triangle(
+      Point(T(0) * u"km", T(0) * u"km"),
+      Point(T(1) * u"km", T(0) * u"km"),
+      Point(T(1) * u"km", T(1) * u"km")
+    )
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = LengthUnit(u"cm")
+    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r ≈ Multi([f(t), f(t)])
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = LengthUnit(u"km")
+    d = PointSet([point(0, 0), point(1000, 0), point(1000, 1000)])
+    r, c = TB.apply(f, d)
+    @test r ≈ PointSet([
+      Point(T(0) * u"km", T(0) * u"km"),
+      Point(T(1) * u"km", T(0) * u"km"),
+      Point(T(1) * u"km", T(1) * u"km")
+    ])
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = LengthUnit(u"cm")
+    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r ≈ GeometrySet([f(t), f(t)])
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .≈ [f(t), f(t)])
+
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = LengthUnit(u"km")
+    d = CartesianGrid((10, 10), point(1000, 1000), T.((1, 1)))
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), T.((1, 1)))
+
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = LengthUnit(u"cm")
+    d = convert(RectilinearGrid, cartgrid(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = LengthUnit(u"km")
+    d = convert(StructuredGrid, cartgrid(10, 10))
+    r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = LengthUnit(u"cm")
+    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+  end
+
   @testset "Repair{0}" begin
     @test !isaffine(Repair)
     poly = PolyArea(point.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
