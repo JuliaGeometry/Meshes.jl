@@ -513,6 +513,7 @@ export
   StdCoords,
   Proj,
   LengthUnit,
+  Shadow,
   Repair,
   Bridge,
   LambdaMuSmoothing,
