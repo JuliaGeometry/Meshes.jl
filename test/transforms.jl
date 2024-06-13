@@ -1423,7 +1423,7 @@
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
-    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test r == SimpleMesh(f.(vertices(d)), topology(d))
   end
 
   @testset "Repair{0}" begin
