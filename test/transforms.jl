@@ -1299,12 +1299,13 @@
 
   @testset "Shadow" begin
     @test !isaffine(Shadow(:xy))
-    @test !TB.isrevertible(Shadow(:xy))
+    @test !TB.isrevertible(Shadow("xy"))
     @test !TB.isinvertible(Shadow(:xy))
-    @test TB.parameters(Shadow(:xy)) == (; inds=SVector(1, 2))
-    @test TB.parameters(Shadow(:yx)) == (; inds=SVector(1, 2))
-    @test TB.parameters(Shadow(:xz)) == (; inds=SVector(1, 3))
-    @test TB.parameters(Shadow(:yz)) == (; inds=SVector(2, 3))
+    @test TB.parameters(Shadow("xy")) == (; dims=(1, 2))
+    @test TB.parameters(Shadow(:yx)) == (; dims=(2, 1))
+    @test TB.parameters(Shadow("xz")) == (; dims=(1, 3))
+    @test TB.parameters(Shadow(:yz)) == (; dims=(2, 3))
+    @test_throws ArgumentError Shadow(:xk)
 
     # ----
     # VEC

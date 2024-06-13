@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    Shadow(plane)
+    Shadow(dims)
 
-Project the geometry or domain onto the given `plane`,
+Project the geometry or domain onto the given `dims`,
 producing a "shadow" of the original object.
 
 ## Examples
@@ -16,53 +16,60 @@ Shadow("xz")
 ```
 """
 struct Shadow{Dim} <: GeometricTransform
-  inds::SVector{Dim,Int}
-  Shadow(inds::SVector{Dim,Int}) where {Dim} = new{Dim}(sort(inds))
+  dims::Dims{Dim}
 end
 
-Shadow(inds::NTuple{Dim,Int}) where {Dim} = Shadow(SVector(inds))
+Shadow(dims::Int...) = Shadow(dims)
 
-Shadow(inds::Int...) = Shadow(inds)
+function _index(d)
+  if d == 'x'
+    1
+  elseif d == 'y'
+    2
+  elseif d == 'z'
+    3
+  else
+    throw(ArgumentError("'$d' isn't a valid dimension name"))
+  end
+end
 
-Shadow(plane::AbstractString) = Shadow(Tuple(_index(Val(Symbol(s))) for s in eachsplit(plane, "")))
+Shadow(dims::AbstractString) = Shadow(Dims(_index(d) for d in dims))
 
-Shadow(plane::Symbol) = Shadow(string(plane))
+Shadow(dims::Symbol) = Shadow(string(dims))
 
-parameters(t::Shadow) = (; inds=t.inds)
+parameters(t::Shadow) = (; dims=t.dims)
 
-apply(t::Shadow, v::Vec) = _shadow(v, t.inds), nothing
+apply(t::Shadow, v::Vec) = _shadow(v, _sorteddims(t.dims)), nothing
 
-apply(t::Shadow, g::GeometryOrDomain) = _shadow(g, t.inds), nothing
+apply(t::Shadow, g::GeometryOrDomain) = _shadow(g, _sorteddims(t.dims)), nothing
 
-_index(::Val{:x}) = 1
-_index(::Val{:y}) = 2
-_index(::Val{:z}) = 3
+_sorteddims(dims) = sort(SVector(dims))
 
-_shadow(v::Vec, inds) = v[inds]
+_shadow(v::Vec, dims) = v[dims]
 
-_shadow(p::Point, inds) = withdatum(p, to(p)[inds])
+_shadow(p::Point, dims) = withdatum(p, to(p)[dims])
 
-function _shadow(g::CartesianGrid, inds)
-  sz = size(g)[inds]
-  or = _shadow(minimum(g), inds)
-  sp = spacing(g)[inds]
-  of = offset(g)[inds]
+function _shadow(g::CartesianGrid, dims)
+  sz = size(g)[dims]
+  or = _shadow(minimum(g), dims)
+  sp = spacing(g)[dims]
+  of = offset(g)[dims]
   CartesianGrid(sz, or, sp, of)
 end
 
-_shadow(g::RectilinearGrid, inds) = RectilinearGrid{datum(crs(g))}(xyz(g)[inds])
+_shadow(g::RectilinearGrid, dims) = RectilinearGrid{datum(crs(g))}(xyz(g)[dims])
 
-function _shadow(g::StructuredGrid, inds)
+function _shadow(g::StructuredGrid, dims)
   ndims = length(size(g))
-  slices = ntuple(i -> ifelse(i ∈ inds, :, 1), ndims)
-  StructuredGrid{datum(crs(g))}(map(X -> X[slices...], XYZ(g)[inds]))
+  inds = ntuple(i -> ifelse(i ∈ dims, :, 1), ndims)
+  StructuredGrid{datum(crs(g))}(map(X -> X[inds...], XYZ(g)[dims]))
 end
 
 # apply shadow transform recursively
-@generated function _shadow(g::G, inds) where {G<:GeometryOrDomain}
+@generated function _shadow(g::G, dims) where {G<:GeometryOrDomain}
   ctor = constructor(G)
   names = fieldnames(G)
-  exprs = (:(_shadow(g.$name, inds)) for name in names)
+  exprs = (:(_shadow(g.$name, dims)) for name in names)
   :($ctor($(exprs...)))
 end
 
@@ -70,6 +77,6 @@ end
 _shadow(x, _) = x
 
 # special treatment for lists of geometries
-_shadow(g::NTuple{<:Any,<:Geometry}, inds) = map(gᵢ -> _shadow(gᵢ, inds), g)
-_shadow(g::AbstractVector{<:Geometry}, inds) = tcollect(_shadow(gᵢ, inds) for gᵢ in g)
-_shadow(g::CircularVector{<:Geometry}, inds) = CircularVector(tcollect(_shadow(gᵢ, inds) for gᵢ in g))
+_shadow(g::NTuple{<:Any,<:Geometry}, dims) = map(gᵢ -> _shadow(gᵢ, dims), g)
+_shadow(g::AbstractVector{<:Geometry}, dims) = tcollect(_shadow(gᵢ, dims) for gᵢ in g)
+_shadow(g::CircularVector{<:Geometry}, dims) = CircularVector(tcollect(_shadow(gᵢ, dims) for gᵢ in g))
