@@ -2,18 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function _index(d)
-  if d == 'x'
-    1
-  elseif d == 'y'
-    2
-  elseif d == 'z'
-    3
-  else
-    throw(ArgumentError("'$d' isn't a valid dimension name"))
-  end
-end
-
 """
     Shadow(dims)
 
@@ -44,6 +32,18 @@ parameters(t::Shadow) = (; dims=t.dims)
 apply(t::Shadow, v::Vec) = _shadow(v, _sort(t.dims)), nothing
 
 apply(t::Shadow, g::GeometryOrDomain) = _shadow(g, _sort(t.dims)), nothing
+
+function _index(d)
+  if d == 'x'
+    1
+  elseif d == 'y'
+    2
+  elseif d == 'z'
+    3
+  else
+    throw(ArgumentError("'$d' isn't a valid dimension name"))
+  end
+end
 
 _sort(dims) = sort(SVector(dims))
 
