@@ -1,10 +1,12 @@
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+CoordRefSystems = "b46f11dc-f210-4604-bfba-323c1ec968cb"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 Meshes = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 PlyIO = "42171d58-473b-503a-8d5f-782019eb09ec"
 Rotations = "6038ab10-8711-5258-84ad-4b1120ba62dc"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 Documenter = "0.27"
