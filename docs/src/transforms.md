@@ -50,23 +50,6 @@ viz(fig[1,2], mesh)
 fig
 ```
 
-## Affine
-
-```@docs
-Affine
-```
-
-```@example transforms
-grid = CartesianGrid(10, 10)
-
-mesh = grid |> Affine(Angle2d(π/4), [10., 20.])
-
-fig = Mke.Figure(size = (800, 400))
-viz(fig[1,1], grid)
-viz(fig[1,2], mesh)
-fig
-```
-
 ## Scale
 
 ```@docs
@@ -77,6 +60,23 @@ Scale
 grid = CartesianGrid(10, 10)
 
 mesh = grid |> Scale(2., 3.)
+
+fig = Mke.Figure(size = (800, 400))
+viz(fig[1,1], grid)
+viz(fig[1,2], mesh)
+fig
+```
+
+## Affine
+
+```@docs
+Affine
+```
+
+```@example transforms
+grid = CartesianGrid(10, 10)
+
+mesh = grid |> Affine(Angle2d(π/4), [10., 20.])
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
@@ -118,6 +118,36 @@ fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
+```
+
+## Proj
+
+```@docs
+Proj
+```
+
+```@example transforms
+# load coordinate reference system
+using CoordRefSystems: Polar
+
+# triangle with Cartesian coordinates
+triangle = Triangle((0, 0), (1, 0), (1, 1))
+
+# reproject to polar coordinates
+triangle |> Proj(Polar)
+```
+
+## LengthUnit
+
+```@docs
+LengthUnit
+```
+
+```@example transforms
+using Unitful: m, cm
+
+# convert meters to centimeters
+Point(1m, 2m, 3m) |> LengthUnit(cm)
 ```
 
 ## Repair
