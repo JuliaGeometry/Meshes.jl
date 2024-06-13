@@ -1297,6 +1297,136 @@
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   end
 
+  @testset "Shadow" begin
+    @test !isaffine(Shadow(:xy))
+    @test !TB.isrevertible(Shadow("xy"))
+    @test !TB.isinvertible(Shadow(:xy))
+    @test TB.parameters(Shadow("xy")) == (; dims=(1, 2))
+    @test TB.parameters(Shadow(:yx)) == (; dims=(2, 1))
+    @test TB.parameters(Shadow("xz")) == (; dims=(1, 3))
+    @test TB.parameters(Shadow(:yz)) == (; dims=(2, 3))
+    @test_throws ArgumentError Shadow(:xk)
+
+    # ----
+    # VEC
+    # ----
+
+    f = Shadow(:xy)
+    v = vector(1, 2, 3)
+    r, c = TB.apply(f, v)
+    @test r == vector(1, 2)
+
+    # ------
+    # POINT
+    # ------
+
+    f = Shadow(:xz)
+    g = point(1, 2, 3)
+    r, c = TB.apply(f, g)
+    @test r == point(1, 3)
+
+    # --------
+    # SEGMENT
+    # --------
+
+    f = Shadow(:yz)
+    g = Segment(point(1, 2, 3), point(4, 5, 6))
+    r, c = TB.apply(f, g)
+    @test r == Segment(point(2, 3), point(5, 6))
+
+    # ----
+    # BOX
+    # ----
+
+    f = Shadow(:xy)
+    g = Box(point(1, 2, 3), point(4, 5, 6))
+    r, c = TB.apply(f, g)
+    @test r isa Box
+    @test r == Box(point(1, 2), point(4, 5))
+
+    # ---------
+    # TRIANGLE
+    # ---------
+
+    f = Shadow(:xz)
+    g = Triangle(point(1, 2, 3), point(4, 5, 6), point(7, 8, 9))
+    r, c = TB.apply(f, g)
+    @test r == Triangle(point(1, 3), point(4, 6), point(7, 9))
+
+    # ----------
+    # MULTIGEOM
+    # ----------
+
+    f = Shadow(:yz)
+    t = Triangle(point(1, 2, 3), point(4, 5, 6), point(7, 8, 9))
+    g = Multi([t, t])
+    r, c = TB.apply(f, g)
+    @test r == Multi([f(t), f(t)])
+
+    # ---------
+    # POINTSET
+    # ---------
+
+    f = Shadow(:xy)
+    d = PointSet([point(1, 2, 3), point(4, 5, 6), point(7, 8, 9)])
+    r, c = TB.apply(f, d)
+    @test r == PointSet([point(1, 2), point(4, 5), point(7, 8)])
+
+    # ------------
+    # GEOMETRYSET
+    # ------------
+
+    f = Shadow(:xz)
+    t = Triangle(point(1, 2, 3), point(4, 5, 6), point(7, 8, 9))
+    d = GeometrySet([t, t])
+    r, c = TB.apply(f, d)
+    @test r == GeometrySet([f(t), f(t)])
+    d = [t, t]
+    r, c = TB.apply(f, d)
+    @test all(r .== [f(t), f(t)])
+
+    # --------------
+    # CARTESIANGRID
+    # --------------
+
+    f = Shadow(:yz)
+    d = CartesianGrid((10, 11, 12), point(1, 2, 3), T.((1.0, 1.1, 1.2)))
+    r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
+    @test r == CartesianGrid((11, 12), point(2, 3), T.((1.1, 1.2)))
+
+    # ----------------
+    # RECTILINEARGRID
+    # ----------------
+
+    f = Shadow(:xy)
+    d = convert(RectilinearGrid, cartgrid(10, 11, 12))
+    r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
+    @test r == RectilinearGrid(Meshes.xyz(d)[1], Meshes.xyz(d)[2])
+
+    # ---------------
+    # STRUCTUREDGRID
+    # ---------------
+
+    f = Shadow(:xz)
+    d = convert(StructuredGrid, cartgrid(10, 11, 12))
+    r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
+    @test r == StructuredGrid(Meshes.XYZ(d)[1][:, 1, :], Meshes.XYZ(d)[3][:, 1, :])
+
+    # -----------
+    # SIMPLEMESH
+    # -----------
+
+    f = Shadow(:yz)
+    p = point.([(0, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 0.5, 0.5)])
+    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    d = SimpleMesh(p, c)
+    r, c = TB.apply(f, d)
+    @test r == SimpleMesh(f.(vertices(d)), topology(d))
+  end
+
   @testset "Repair{0}" begin
     @test !isaffine(Repair)
     poly = PolyArea(point.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
