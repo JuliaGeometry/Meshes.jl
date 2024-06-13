@@ -66,6 +66,7 @@ end
 # stop recursion at non-geometric types
 _shadow(x, _) = x
 
+# special treatment for lists of geometries
 _shadow(g::NTuple{<:Any,<:Geometry}, inds) = map(gᵢ -> _shadow(gᵢ, inds), g)
 _shadow(g::AbstractVector{<:Geometry}, inds) = tcollect(_shadow(gᵢ, inds) for gᵢ in g)
 _shadow(g::CircularVector{<:Geometry}, inds) = CircularVector(tcollect(_shadow(gᵢ, inds) for gᵢ in g))
