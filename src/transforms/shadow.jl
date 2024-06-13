@@ -2,25 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    Shadow(dims)
-
-Project the geometry or domain onto the given `dims`,
-producing a "shadow" of the original object.
-
-## Examples
-
-```julia
-Shadow(:xy)
-Shadow("xz")
-```
-"""
-struct Shadow{Dim} <: GeometricTransform
-  dims::Dims{Dim}
-end
-
-Shadow(dims::Int...) = Shadow(dims)
-
 function _index(d)
   if d == 'x'
     1
@@ -33,17 +14,38 @@ function _index(d)
   end
 end
 
+"""
+    Shadow(dims)
+
+Project the geometry or domain onto the given `dims`,
+producing a "shadow" of the original object.
+
+## Examples
+
+```julia
+Shadow(:xy)
+Shadow("xz")
+Shadow(1, 2)
+Shadow((1, 3))
+```
+"""
+struct Shadow{Dim} <: GeometricTransform
+  dims::Dims{Dim}
+end
+
+Shadow(dims::Int...) = Shadow(dims)
+
 Shadow(dims::AbstractString) = Shadow(Dims(_index(d) for d in dims))
 
 Shadow(dims::Symbol) = Shadow(string(dims))
 
 parameters(t::Shadow) = (; dims=t.dims)
 
-apply(t::Shadow, v::Vec) = _shadow(v, _sorteddims(t.dims)), nothing
+apply(t::Shadow, v::Vec) = _shadow(v, _sort(t.dims)), nothing
 
-apply(t::Shadow, g::GeometryOrDomain) = _shadow(g, _sorteddims(t.dims)), nothing
+apply(t::Shadow, g::GeometryOrDomain) = _shadow(g, _sort(t.dims)), nothing
 
-_sorteddims(dims) = sort(SVector(dims))
+_sort(dims) = sort(SVector(dims))
 
 _shadow(v::Vec, dims) = v[dims]
 
