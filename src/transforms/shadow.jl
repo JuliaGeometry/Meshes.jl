@@ -19,14 +19,14 @@ struct Shadow{Dim} <: GeometricTransform
   plane::NTuple{Dim,Symbol}
 end
 
-Shadow(plane::AbstractString) = Shadow(Tuple(Symbol.(split(plane, ""))))
+Shadow(plane::AbstractString) = Shadow(Tuple(Symbol.(sort(split(plane, "")))))
 Shadow(plane::Symbol) = Shadow(string(plane))
 
 parameters(t::Shadow) = (; plane=t.plane)
 
 function apply(t::Shadow{Dim}, g::GeometryOrDomain) where {Dim}
   inds = SVector(ntuple(i -> _index(Val(t.plane[i])), Dim))
-  _shadow(g, sort(inds)), nothing
+  _shadow(g, inds), nothing
 end
 
 _index(::Val{:x}) = 1
