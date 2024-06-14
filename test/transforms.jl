@@ -1527,7 +1527,7 @@
     # CONESURFACE
     # ------------
 
-    f = Shadow(:xz)
+    f = Shadow(:xy)
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     g = ConeSurface(Disk(p, T(2)), point(0, 0, 1))
     m = discretize(g)
@@ -1539,7 +1539,7 @@
     # FRUSTUMSURFACE
     # ---------------
 
-    f = Shadow(:xy)
+    f = Shadow(:xz)
     pb = Plane(point(0, 0, 0), vector(0, 0, 1))
     pt = Plane(point(0, 0, 10), vector(0, 0, 1))
     g = FrustumSurface(Disk(pb, T(1)), Disk(pt, T(2)))
@@ -1552,7 +1552,7 @@
     # PARABOLOIDSURFACE
     # ------------------
 
-    f = Shadow(:xz)
+    f = Shadow(:yz)
     g = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
@@ -1563,7 +1563,7 @@
     # TORUS
     # ------
 
-    f = Shadow(:yz)
+    f = Shadow(:xy)
     g = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
