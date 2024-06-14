@@ -680,6 +680,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     # -------
@@ -692,6 +693,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     f = Scale(T(1), T(2), T(3))
@@ -727,6 +729,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     # -----
@@ -739,6 +742,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     # -------
@@ -751,6 +755,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     # ----------------
@@ -763,6 +768,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     # ------------------
@@ -787,6 +793,7 @@
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
     @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
     @test TB.revert(f, r, c) ≈ m
 
     # ---------
