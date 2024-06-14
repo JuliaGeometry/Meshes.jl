@@ -1471,6 +1471,105 @@
     @test r isa Box
     @test r == Box(point(1, 2), point(4, 5))
 
+    # ------
+    # PLANE
+    # ------
+
+    f = Shadow(:xz)
+    g = Plane(point(0, 0, 0), vector(0, 0, 1))
+    @test_throws ArgumentError TB.apply(f, g)
+
+    # ----------
+    # ELLIPSOID
+    # ----------
+
+    f = Shadow(:yz)
+    g = Ellipsoid(T.((1, 2, 3)))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # -----
+    # DISK
+    # -----
+
+    f = Shadow(:xy)
+    g = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # -------
+    # CIRCLE
+    # -------
+
+    f = Shadow(:xz)
+    g = Circle(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # ----------------
+    # CYLINDERSURFACE
+    # ----------------
+
+    f = Shadow(:yz)
+    g = CylinderSurface(T(1))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # ------------
+    # CONESURFACE
+    # ------------
+
+    f = Shadow(:xy)
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    g = ConeSurface(Disk(p, T(2)), point(0, 0, 1))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # ---------------
+    # FRUSTUMSURFACE
+    # ---------------
+
+    f = Shadow(:xz)
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
+    g = FrustumSurface(Disk(pb, T(1)), Disk(pt, T(2)))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # ------------------
+    # PARABOLOIDSURFACE
+    # ------------------
+
+    f = Shadow(:yz)
+    g = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
+    # ------
+    # TORUS
+    # ------
+
+    f = Shadow(:xy)
+    g = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+
     # ---------
     # TRIANGLE
     # ---------
