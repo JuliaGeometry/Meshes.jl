@@ -79,7 +79,7 @@ Sphere
 Ball((0.,0.,0.), 1.) |> viz
 ```
 
-## Ellipsoid
+### Ellipsoid
 
 ```@docs
 Ellipsoid
