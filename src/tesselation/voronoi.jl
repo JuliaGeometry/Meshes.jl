@@ -28,7 +28,7 @@ function tesselate(pset::PointSet{2}, method::VoronoiTesselation)
   # mesh with all (possibly unused) points
   points = get_polygon_points(vorono)
   polygs = each_polygon(vorono)
-  tuples = [Tuple(inds[begin:end-1]) for inds in polygs]
+  tuples = [Tuple(inds[begin:(end - 1)]) for inds in polygs]
   connec = connect.(tuples)
   mesh = SimpleMesh(points, connec)
 
