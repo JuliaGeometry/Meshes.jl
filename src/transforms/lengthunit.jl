@@ -55,6 +55,10 @@ _lenunit(c, _) = throw(ArgumentError("the length unit of $(prettyname(c)) cannot
 # SPECIAL CASES
 # --------------
 
+applycoord(t::LengthUnit, len::Len) = uconvert(t.unit, len)
+
+applycoord(t::LengthUnit, lens::NTuple{Dim,Len}) where {Dim} = uconvert.(t.unit, lens)
+
 applycoord(t::LengthUnit, g::RectilinearGrid) = RectilinearGrid{datum(crs(g))}(map(x -> uconvert.(t.unit, x), xyz(g)))
 
 applycoord(t::LengthUnit, g::StructuredGrid) = StructuredGrid{datum(crs(g))}(map(X -> uconvert.(t.unit, X), XYZ(g)))

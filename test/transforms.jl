@@ -1312,6 +1312,27 @@
     @test r isa Box
     @test r ≈ Box(Point(T(0) * u"cm", T(0) * u"cm"), Point(T(100) * u"cm", T(100) * u"cm"))
 
+    # -------
+    # SPHERE
+    # -------
+
+    f = LengthUnit(u"km")
+    g = Sphere(point(0, 0), T(1000))
+    r, c = TB.apply(f, g)
+    @test r isa Sphere
+    @test r ≈ Sphere(Point(T(0) * u"km", T(0) * u"km"), T(1) * u"km")
+
+    # ----------
+    # ELLIPSOID
+    # ----------
+
+    f = LengthUnit(u"cm")
+    g = Ellipsoid(T.((1, 1, 1)), point(0, 0, 0))
+    r, c = TB.apply(f, g)
+    @test r isa Ellipsoid
+    @test r ≈
+          Ellipsoid((T(100) * u"cm", T(100) * u"cm", T(100) * u"cm"), Point(T(0) * u"cm", T(0) * u"cm", T(0) * u"cm"))
+
     # ---------
     # TRIANGLE
     # ---------
@@ -1366,10 +1387,10 @@
     # --------------
 
     f = LengthUnit(u"km")
-    d = CartesianGrid((10, 10), point(1000, 1000), T.((1, 1)))
+    d = CartesianGrid((10, 10), point(1000, 1000), T.((1000, 1000)))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
-    @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), T.((1, 1)))
+    @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"))
 
     # ----------------
     # RECTILINEARGRID
