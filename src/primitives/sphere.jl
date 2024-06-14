@@ -68,6 +68,8 @@ center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
+Base.isapprox(s₁::Sphere, s₂::Sphere) = s₁.center ≈ s₂.center && s₁.radius ≈ s₂.radius
+
 function (s::Sphere{2})(φ)
   T = numtype(lentype(s))
   if (φ < 0 || φ > 1)
