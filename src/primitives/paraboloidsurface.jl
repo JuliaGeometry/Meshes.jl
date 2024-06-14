@@ -91,6 +91,16 @@ The axis is always aligned with the z direction.
 """
 axis(p::ParaboloidSurface{P,ℒ}) where {P,ℒ} = Line(p.apex, p.apex + Vec(ℒ(0), ℒ(0), p.focallength))
 
+function centroid(p::ParaboloidSurface)
+  c = p.apex
+  r = p.radius
+  f = p.focallength
+  z = r^2 / 4f
+  x = zero(z)
+  y = zero(z)
+  c + Vec(x, y, z / 2)
+end
+
 Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
   p₁.apex ≈ p₂.apex && isapproxequal(p₁.focallength, p₂.focallength) && isapproxequal(p₁.radius, p₂.radius)
 
