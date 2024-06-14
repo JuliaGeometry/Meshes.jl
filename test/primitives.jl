@@ -1013,6 +1013,7 @@
     @test radius(p) == T(1) * u"m"
     @test axis(p) == Line(point(0, 0, 0), point(0, 0, T(2)))
     @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
+    @test centroid(p) == point(0, 0, 1/16)
 
     p1 = ParaboloidSurface(point(1, 2, 3), T(1), T(1))
     p2 = ParaboloidSurface(point(1, 2, 3), T(1))
