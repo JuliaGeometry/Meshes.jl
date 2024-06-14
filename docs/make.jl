@@ -1,13 +1,6 @@
 using Documenter, Meshes
-using DocumenterTools: Themes
 
-istravis = "TRAVIS" ∈ keys(ENV)
-
-Themes.compile(
-  joinpath(@__DIR__, "src/assets/light.scss"),
-  joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
-)
-Themes.compile(joinpath(@__DIR__, "src/assets/dark.scss"), joinpath(@__DIR__, "src/assets/themes/documenter-dark.css"))
+prettyurls = get(ENV, "CI", nothing) == "true"
 
 makedocs(
   format=Documenter.HTML(
@@ -15,7 +8,7 @@ makedocs(
       "assets/favicon.ico",
       asset("https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap", class=:css)
     ],
-    prettyurls=istravis,
+    prettyurls=prettyurls,
     mathengine=KaTeX(
       Dict(
         :macros => Dict(
