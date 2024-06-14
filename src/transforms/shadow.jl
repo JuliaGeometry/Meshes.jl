@@ -75,7 +75,7 @@ _shadow(p::ParaboloidSurface, dims) = _shadow(discretize(p), dims)
 
 _shadow(t::Torus, dims) = _shadow(discretize(t), dims)
 
-_shadow(c::CylindricalTrajectory, dims) = _shadow(GeometrySet(collect(c)), dims)
+_shadow(t::CylindricalTrajectory, dims) = _shadow(GeometrySet(collect(t)), dims)
 
 function _shadow(g::CartesianGrid, dims)
   sz = size(g)[dims]
