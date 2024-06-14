@@ -150,6 +150,23 @@ using Unitful: m, cm
 Point(1m, 2m, 3m) |> LengthUnit(cm)
 ```
 
+## Shadow
+
+```@docs
+Shadow
+```
+
+```@example transforms
+ball = Ball((0, 0, 0), 1)
+disk = ball |> Shadow("xy")
+
+
+fig = Mke.Figure(size = (800, 400))
+viz(fig[1,1], ball)
+viz(fig[1,2], disk)
+fig
+```
+
 ## Repair
 
 ```@docs

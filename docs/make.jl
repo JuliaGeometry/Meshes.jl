@@ -40,6 +40,7 @@ makedocs(
         "algorithms/sampling.md",
         "algorithms/partitioning.md",
         "algorithms/discretization.md",
+        "algorithms/tesselation.md",
         "algorithms/refinement.md",
         "algorithms/coarsening.md",
         "algorithms/simplification.md",

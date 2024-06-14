@@ -25,3 +25,19 @@ viz(mesh, showsegments = true)
 viz!(points, color = :red)
 Mke.current_figure()
 ```
+
+## VoronoiTesselation
+
+```@docs
+VoronoiTesselation
+```
+
+```@example tesselation
+points = rand(Point{2}, 100)
+
+mesh = tesselate(points, VoronoiTesselation())
+
+viz(mesh, showsegments = true)
+viz!(points, color = :red)
+Mke.current_figure()
+```
