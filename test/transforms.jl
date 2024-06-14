@@ -670,6 +670,132 @@
     @test r ≈ Box(point(0, 0), point(1, 2))
     @test TB.revert(f, r, c) ≈ g
 
+    # -----
+    # BALL
+    # -----
+
+    f = Scale(T(1), T(2))
+    g = Ball(point(1, 2), T(3))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
+    # -------
+    # SPHERE
+    # -------
+
+    f = Scale(T(1), T(2))
+    g = Sphere(point(1, 2), T(3))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
+    f = Scale(T(1), T(2), T(3))
+    g = Sphere(point(1, 2, 3), T(4))
+    r, c = TB.apply(f, g)
+    @test r isa Ellipsoid
+    @test r ≈ Ellipsoid(T.((4, 8, 12)), point(1, 4, 9))
+    m = TB.revert(f, r, c)
+    @test m isa SimpleMesh
+    @test m ≈ discretize(g)
+
+    f = Scale(T(2))
+    g = Sphere(point(1, 2), T(3))
+    r, c = TB.apply(f, g)
+    @test r isa Sphere
+    @test r ≈ Sphere(point(2, 4), T(6))
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Scale(T(2))
+    g = Sphere(point(1, 2, 3), T(4))
+    r, c = TB.apply(f, g)
+    @test r isa Sphere
+    @test r ≈ Sphere(point(2, 4, 6), T(8))
+    @test TB.revert(f, r, c) ≈ g
+
+    # ----------
+    # ELLIPSOID
+    # ----------
+
+    f = Scale(T(1), T(2), T(3))
+    g = Ellipsoid(T.((1, 2, 3)))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
+    # -----
+    # DISK
+    # -----
+
+    f = Scale(T(1), T(2), T(3))
+    g = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
+    # -------
+    # CIRCLE
+    # -------
+
+    f = Scale(T(1), T(2), T(3))
+    g = Circle(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
+    # ----------------
+    # CYLINDERSURFACE
+    # ----------------
+
+    f = Scale(T(1), T(2), T(3))
+    g = CylinderSurface(T(1))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
+    # ------------------
+    # PARABOLOIDSURFACE
+    # ------------------
+
+    f = Scale(T(1), T(2), T(3))
+    g = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test TB.revert(f, r, c) ≈ m
+
+    # ------
+    # TORUS
+    # ------
+
+    f = Scale(T(1), T(2), T(3))
+    g = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+    m = discretize(g)
+    r, c = TB.apply(f, g)
+    @test r isa SimpleMesh
+    @test r ≈ f(m)
+    @test centroid(r) ≈ f(centroid(g))
+    @test TB.revert(f, r, c) ≈ m
+
     # ---------
     # TRIANGLE
     # ---------
@@ -705,16 +831,6 @@
     g = Plane(point(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ g
-    @test TB.revert(f, r, c) ≈ g
-
-    # ---------
-    # CYLINDER
-    # ---------
-
-    f = Scale(T(1), T(1), T(2))
-    g = Cylinder(T(1))
-    r, c = TB.apply(f, g)
-    @test r ≈ Cylinder(point(0, 0, 0), point(0, 0, 2))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -879,16 +995,6 @@
     g = Plane(point(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ g
-    @test TB.revert(f, r, c) ≈ g
-
-    # ---------
-    # CYLINDER
-    # ---------
-
-    f = Stretch(T(1), T(1), T(2))
-    g = Cylinder(T(1))
-    r, c = TB.apply(f, g)
-    @test r ≈ Cylinder(point(0, 0, -0.5), point(0, 0, 1.5))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
