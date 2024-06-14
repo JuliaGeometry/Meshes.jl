@@ -25,3 +25,4 @@ tesselate(points::AbstractVector{<:Point{2}}, method::TesselationMethod) = tesse
 # ----------------
 
 include("tesselation/delaunay.jl")
+include("tesselation/voronoi.jl")

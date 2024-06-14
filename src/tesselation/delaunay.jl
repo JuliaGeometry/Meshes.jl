@@ -20,9 +20,9 @@ end
 DelaunayTesselation(rng=Random.default_rng()) = DelaunayTesselation(rng)
 
 function tesselate(pset::PointSet{2}, method::DelaunayTesselation)
-  points = collect(pset)
-  coords = map(p -> ustrip.(to(p)), points)
+  # perform tesselation with raw coordinates
+  coords = map(p -> ustrip.(to(p)), pset)
   triang = triangulate(coords, rng=method.rng)
   connec = connect.(each_solid_triangle(triang))
-  SimpleMesh(points, connec)
+  SimpleMesh(collect(pset), connec)
 end
