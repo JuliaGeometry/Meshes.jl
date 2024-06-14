@@ -30,6 +30,9 @@ center(e::Ellipsoid) = e.center
 
 rotation(e::Ellipsoid) = e.rotation
 
+Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid) =
+  all(e₁.radii .≈ e₂.radii) && e₁.center ≈ e₂.center && e₁.rotation ≈ e₂.rotation
+
 function (e::Ellipsoid)(θ, φ)
   T = numtype(lentype(e))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)

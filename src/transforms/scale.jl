@@ -44,6 +44,17 @@ applycoord(t::Scale, v::Vec) = t.factors .* v
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Scale{1}, s::Sphere) = Sphere(center(s), t.factors[1] * radius(s))
+
+function applycoord(t::Scale{3}, s::Sphere{3})
+  radii = t.factors .* radius(s)
+  Ellipsoid(radii, center(s), I)
+end
+
+applycoord(t::Scale, ::Sphere) = throw(ArgumentError("scaling sphere with factors $(t.factors) is not yet possible"))
+
+applycoord(t::Scale, e::Ellipsoid) = Ellipsoid(t.factors .* radii(e), center(e), rotation(e))
+
 function applycoord(t::Scale, g::CartesianGrid)
   dims = size(g)
   orig = applycoord(t, minimum(g))

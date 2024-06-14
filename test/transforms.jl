@@ -670,6 +670,46 @@
     @test r ≈ Box(point(0, 0), point(1, 2))
     @test TB.revert(f, r, c) ≈ g
 
+    # -------
+    # SPHERE
+    # -------
+
+    f = Scale(T(2))
+    g = Sphere(point(1, 2), T(3))
+    r, c = TB.apply(f, g)
+    @test r isa Sphere
+    @test r ≈ Sphere(point(1, 2), T(6))
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Scale(T(2))
+    g = Sphere(point(1, 2, 3), T(4))
+    r, c = TB.apply(f, g)
+    @test r isa Sphere
+    @test r ≈ Sphere(point(1, 2, 3), T(8))
+    @test TB.revert(f, r, c) ≈ g
+
+    f = Scale(T(1), T(2), T(3))
+    g = Sphere(point(1, 2, 3), T(4))
+    r, c = TB.apply(f, g)
+    @test r isa Ellipsoid
+    @test r ≈ Ellipsoid(T.((4, 8, 12)), point(1, 2, 3), I)
+    @test TB.revert(f, r, c) ≈ Ellipsoid(T.((4, 4, 4)), point(1, 2, 3), I)
+
+    f = Scale(T(1), T(2))
+    g = Sphere(point(1, 2), T(3))
+    @test_throws ArgumentError TB.apply(f, g)
+
+    # ----------
+    # ELLIPSOID
+    # ----------
+
+    f = Scale(T(1), T(2), T(3))
+    g = Ellipsoid(T.((1, 2, 3)))
+    r, c = TB.apply(f, g)
+    @test r isa Ellipsoid
+    @test r ≈ Ellipsoid(T.((1, 4, 9)))
+    @test TB.revert(f, r, c) ≈ g
+
     # ---------
     # TRIANGLE
     # ---------
