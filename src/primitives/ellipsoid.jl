@@ -19,8 +19,10 @@ Ellipsoid(radii::NTuple{3,ℒ}, center::Point{3,C}, rotation::R) where {ℒ<:Len
 
 Ellipsoid(radii::NTuple{3}, center::Point{3}, rotation) = Ellipsoid(addunit.(radii, u"m"), center, rotation)
 
+Ellipsoid(radii::NTuple{3}, center::NTuple{3}, rotation) = Ellipsoid(radii, Point(center), rotation)
+
 Ellipsoid(radii::NTuple{3,T}, center=(zero(T), zero(T), zero(T)), rotation=I) where {T} =
-  Ellipsoid(radii, Point(center), rotation)
+  Ellipsoid(radii, center, rotation)
 
 paramdim(::Type{<:Ellipsoid}) = 2
 
