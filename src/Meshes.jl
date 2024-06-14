@@ -22,8 +22,10 @@ using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
 using NearestNeighbors: KDTree, BallTree
 using NearestNeighbors: knn, inrange
-using DelaunayTriangulation: triangulate
+using DelaunayTriangulation: triangulate, voronoi
 using DelaunayTriangulation: each_solid_triangle
+using DelaunayTriangulation: each_polygon
+using DelaunayTriangulation: get_polygon_points
 using Transducers: Filter, Map, TakeWhile, tcollect, ⨟
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
@@ -473,6 +475,7 @@ export
   # tesselation
   TesselationMethod,
   DelaunayTesselation,
+  VoronoiTesselation,
   tesselate,
 
   # discretization
