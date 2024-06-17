@@ -36,6 +36,8 @@ height(f::Frustum) = height(boundary(f))
 
 axis(f::Frustum) = axis(boundary(f))
 
+==(f₁::Frustum, f₂::Frustum) = f₁.bot == f₂.bot && f₁.top == f₂.top
+
 function Random.rand(rng::Random.AbstractRNG, ::Type{Frustum})
   bottom = rand(rng, Disk)
   ax = normal(plane(bottom))

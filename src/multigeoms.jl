@@ -54,7 +54,7 @@ rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]
 
 Base.parent(m::Multi) = m.geoms
 
-==(m₁::Multi, m₂::Multi) = length(m₁.geoms) == length(m₂.geoms) && all(g -> g[1] == g[2], zip(m₁.geoms, m₂.geoms))
+==(m₁::Multi, m₂::Multi) = m₁.geoms == m₂.geoms
 
 Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms, m₂.geoms))
 

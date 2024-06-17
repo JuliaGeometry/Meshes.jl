@@ -32,6 +32,8 @@ center(e::Ellipsoid) = e.center
 
 rotation(e::Ellipsoid) = e.rotation
 
+==(e₁::Ellipsoid, e₂::Ellipsoid) = all(e₁.radii .== e₂.radii) && e₁.center == e₂.center && e₁.rotation == e₂.rotation
+
 Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid) =
   all(e₁.radii .≈ e₂.radii) && e₁.center ≈ e₂.center && e₁.rotation ≈ e₂.rotation
 

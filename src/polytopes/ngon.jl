@@ -52,6 +52,8 @@ Base.unique!(ngon::Ngon) = ngon
 
 nvertices(::Type{<:Ngon{N}}) where {N} = N
 
+==(p₁::Ngon, p₂::Ngon) = p₁.vertices == p₂.vertices
+
 function Base.isapprox(p₁::Ngon, p₂::Ngon; kwargs...)
   nvertices(p₁) ≠ nvertices(p₂) && return false
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))

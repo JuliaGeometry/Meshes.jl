@@ -26,6 +26,8 @@ function center(s::Segment)
   withdatum(s, (to(a) + to(b)) / 2)
 end
 
+==(s₁::Segment, s₂::Segment) = s₁.vertices == s₂.vertices
+
 Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 

@@ -11,6 +11,8 @@ A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 
 nvertices(::Type{<:Pyramid}) = 5
 
+==(p₁::Pyramid, p₂::Pyramid) = p₁.vertices == p₂.vertices
+
 Base.isapprox(p₁::Pyramid, p₂::Pyramid; kwargs...) =
   all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 

@@ -43,6 +43,8 @@ diagonal(b::Box) = norm(b.max - b.min)
 
 sides(b::Box) = Tuple(b.max - b.min)
 
+==(b₁::Box, b₂::Box) = b₁.min == b₂.min && b₁.max == b₂.max
+
 Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
 
 function (b::Box)(uv...)

@@ -70,6 +70,8 @@ isright(c::Cylinder) = isright(boundary(c))
 
 hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
+==(c₁::Cylinder, c₂::Cylinder) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius
+
 Base.isapprox(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) ≈ boundary(c₂)
 
 function (c::Cylinder)(ρ, φ, z)

@@ -31,6 +31,8 @@ center(b::Ball) = b.center
 
 radius(b::Ball) = b.radius
 
+==(b₁::Ball, b₂::Ball) = b₁.center == b₂.center && b₁.radius == b₂.radius
+
 function (b::Ball{2})(ρ, φ)
   T = numtype(lentype(b))
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)

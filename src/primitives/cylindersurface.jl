@@ -85,6 +85,8 @@ function isright(c::CylinderSurface)
   isparallelv && isparallelw
 end
 
+==(c₁::CylinderSurface, c₂::CylinderSurface) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius
+
 Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface) =
   c₁.bot ≈ c₂.bot && c₁.top ≈ c₂.top && isapproxequal(c₁.radius, c₂.radius)
 

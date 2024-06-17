@@ -30,4 +30,6 @@ height(c::Cone) = norm(center(base(c)) - apex(c))
 
 halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
+==(c₁::Cone, c₂::Cone) = c₁.base == c₂.base && c₁.apex == c₂.apex
+
 Random.rand(rng::Random.AbstractRNG, ::Type{Cone}) = Cone(rand(rng, Disk), rand(rng, Point{3}))

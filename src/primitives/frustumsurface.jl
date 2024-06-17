@@ -36,6 +36,8 @@ height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
 
 axis(f::FrustumSurface) = Line(center(bottom(f)), center(top(f)))
 
+==(f₁::FrustumSurface, f₂::FrustumSurface) = f₁.bot == f₂.bot && f₁.top == f₂.top
+
 function (f::FrustumSurface)(φ, z)
   ℒ = lentype(f)
   T = numtype(ℒ)

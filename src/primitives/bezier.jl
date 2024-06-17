@@ -35,6 +35,8 @@ ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1
 
+==(b₁::BezierCurve, b₂::BezierCurve) = b₁.controls == b₂.controls
+
 """
 Evaluation method used to obtain a point along
 a Bézier curve from a parametric expression.
