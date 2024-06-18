@@ -205,6 +205,8 @@ udot(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = ustrip(a ⋅ b) * unit(
 udot(a::Vec{Dim,ℒ₁}, b::Vec{Dim,ℒ₂}) where {Dim,ℒ₁,ℒ₂} = udot(promote(a, b)...)
 
 ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b) * unit(ℒ))
+ucross(a::Vec{Dim,ℒ₁}, b::Vec{Dim,ℒ₂}) where {Dim,ℒ₁,ℒ₂} = ucross(promote(a, b)...)
+
 ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}, c::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b × c) * unit(ℒ))
 
 urotbetween(u::Vec, v::Vec) = rotation_between(ustrip.(u), ustrip.(v))
