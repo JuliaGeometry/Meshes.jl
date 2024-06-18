@@ -56,7 +56,7 @@ Base.parent(m::Multi) = m.geoms
 
 ==(m₁::Multi, m₂::Multi) = m₁.geoms == m₂.geoms
 
-Base.isapprox(m₁::Multi, m₂::Multi) = all(g -> g[1] ≈ g[2], zip(m₁.geoms, m₂.geoms))
+Base.isapprox(m₁::Multi, m₂::Multi) = all(g₁ ≈ g₂ for (g₁, g₂) in zip(m₁.geoms, m₂.geoms))
 
 # -----------
 # IO METHODS

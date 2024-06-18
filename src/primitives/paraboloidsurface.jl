@@ -105,6 +105,9 @@ end
   p₁.apex == p₂.apex && p₁.radius == p₂.radius && p₁.focallength == p₂.focallength
 
 Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
+  p₁.apex ≈ p₂.apex && p₁.radius ≈ p₂.radius && p₁.focallength ≈ p₂.focallength
+
+Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
   p₁.apex ≈ p₂.apex && isapproxequal(p₁.focallength, p₂.focallength) && isapproxequal(p₁.radius, p₂.radius)
 
 function (p::ParaboloidSurface)(ρ, θ)

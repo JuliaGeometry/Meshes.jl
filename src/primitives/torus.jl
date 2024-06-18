@@ -59,6 +59,9 @@ axis(t::Torus) = Line(t.center, t.center + t.normal)
 ==(t₁::Torus, t₂::Torus) =
   t₁.center == t₂.center && t₁.normal == t₂.normal && t₁.major == t₂.major && t₁.minor == t₂.minor
 
+Base.isapprox(t₁::Torus, t₂::Torus) =
+  t₁.center ≈ t₂.center && t₁.normal ≈ t₂.normal && t₁.major ≈ t₂.major && t₁.minor ≈ t₂.minor
+
 function (t::Torus)(θ, φ)
   ℒ = lentype(t)
   T = numtype(ℒ)
