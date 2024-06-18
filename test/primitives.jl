@@ -197,9 +197,9 @@
     @test boundary(r) == point(0, 0)
     @test perimeter(r) == zero(ℳ)
 
-    # r = Ray(point(0, 0), vector(1, 1))
-    # @test r == Ray(Point(0.0, 0.0), Vec(1.0, 1.0))
-    # @test r == Ray(Point(0.0f0, 0.0f0), Vec(1.0f0, 1.0f0))
+    r = Ray(point(0, 0), vector(1, 1))
+    @test r == Ray(Point(0.0, 0.0), Vec(1.0, 1.0))
+    @test r == Ray(Point(0.0f0, 0.0f0), Vec(1.0f0, 1.0f0))
 
     r = Ray(point(0, 0), vector(1, 1))
     @test r(T(0.0)) == point(0, 0)
@@ -307,9 +307,9 @@
     @test isnothing(boundary(p))
     @test perimeter(p) == zero(ℳ)
 
-    # p = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
-    # @test p == Plane(Point(0.0, 0.0, 0.0), Vec(1.0, 0.0, 0.0), Vec(0.0, 1.0, 0.0))
-    # @test p == Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(1.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 1.0f0, 0.0f0))
+    p = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
+    @test p == Plane(Point(0.0, 0.0, 0.0), Vec(1.0, 0.0, 0.0), Vec(0.0, 1.0, 0.0))
+    @test p == Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(1.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 1.0f0, 0.0f0))
 
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     @test p(T(1), T(0)) == point(1, 0, 0)
@@ -811,10 +811,10 @@
     @test point(0, 0, 1) ∉ d
     @test boundary(d) == Circle(p, T(2))
 
-    # p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    # d = Disk(p, T(2))
-    # @test d == Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0)
-    # @test d == Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    @test d == Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0)
+    @test d == Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
 
     d = rand(Disk)
     @test d isa Disk
@@ -854,10 +854,10 @@
     @test point(0, 0, 0) ∉ c
     @test isnothing(boundary(c))
 
-    # p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    # d = Circle(p, T(2))
-    # @test d == Circle(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0)
-    # @test d == Circle(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Circle(p, T(2))
+    @test d == Circle(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0)
+    @test d == Circle(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
 
     # 3D circumcircle
     p1 = point(0, 4, 0)
@@ -927,9 +927,9 @@
     @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
     @test_throws DomainError c(1.1, 0, 0)
 
-    # c = Cylinder(T(1))
-    # @test c == Cylinder(1.0)
-    # @test c == Cylinder(1.0f0)
+    c = Cylinder(T(1))
+    @test c == Cylinder(1.0)
+    @test c == Cylinder(1.0f0)
 
     c = Cylinder(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     @test Meshes.hasintersectingplanes(c)
@@ -1003,9 +1003,9 @@
     @test measure(c) == area(c) ≈ (2 * T(2)^2 * pi + 2 * T(2) * pi) * u"m^2"
     @test !Meshes.hasintersectingplanes(c)
 
-    # c = CylinderSurface(T(1))
-    # @test c == CylinderSurface(1.0)
-    # @test c == CylinderSurface(1.0f0)
+    c = CylinderSurface(T(1))
+    @test c == CylinderSurface(1.0)
+    @test c == CylinderSurface(1.0f0)
 
     c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     @test Meshes.hasintersectingplanes(c)
@@ -1154,13 +1154,13 @@
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
 
-    # p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    # d = Disk(p, T(2))
-    # a = point(0, 0, 1)
-    # c = Cone(d, a)
-    # @test c == Cone(Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0), Point(0.0, 0.0, 1.0))
-    # @test c ==
-    #       Cone(Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0), Point(0.0f0, 0.0f0, 1.0f0))
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    a = point(0, 0, 1)
+    c = Cone(d, a)
+    @test c == Cone(Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0), Point(0.0, 0.0, 1.0))
+    @test c ==
+          Cone(Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0), Point(0.0f0, 0.0f0, 1.0f0))
 
     c = rand(Cone)
     @test c isa Cone
@@ -1233,15 +1233,15 @@
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
 
-    # p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    # d = Disk(p, T(2))
-    # a = point(0, 0, 1)
-    # c = ConeSurface(d, a)
-    # @test c == ConeSurface(Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0), Point(0.0, 0.0, 1.0))
-    # @test c == ConeSurface(
-    #   Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0),
-    #   Point(0.0f0, 0.0f0, 1.0f0)
-    # )
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    a = point(0, 0, 1)
+    c = ConeSurface(d, a)
+    @test c == ConeSurface(Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 2.0), Point(0.0, 0.0, 1.0))
+    @test c == ConeSurface(
+      Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0),
+      Point(0.0f0, 0.0f0, 1.0f0)
+    )
 
     c = rand(ConeSurface)
     @test c isa ConeSurface
@@ -1279,19 +1279,19 @@
 
     @test_throws AssertionError Frustum(db, db)
 
-    # pb = Plane(point(0, 0, 0), vector(0, 0, 1))
-    # db = Disk(pb, T(1))
-    # pt = Plane(point(0, 0, 10), vector(0, 0, 1))
-    # dt = Disk(pt, T(2))
-    # f = Frustum(db, dt)
-    # @test f == Frustum(
-    #   Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 1.0),
-    #   Disk(Plane(Point(0.0, 0.0, 10.0), Vec(0.0, 0.0, 1.0)), 2.0)
-    # )
-    # @test f == Frustum(
-    #   Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 1.0f0),
-    #   Disk(Plane(Point(0.0f0, 0.0f0, 10.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
-    # )
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
+    db = Disk(pb, T(1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
+    dt = Disk(pt, T(2))
+    f = Frustum(db, dt)
+    @test f == Frustum(
+      Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 1.0),
+      Disk(Plane(Point(0.0, 0.0, 10.0), Vec(0.0, 0.0, 1.0)), 2.0)
+    )
+    @test f == Frustum(
+      Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 1.0f0),
+      Disk(Plane(Point(0.0f0, 0.0f0, 10.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
+    )
 
     f = rand(Frustum)
     @test f isa Frustum
@@ -1337,19 +1337,19 @@
 
     @test_throws AssertionError FrustumSurface(db, db)
 
-    # pb = Plane(point(0, 0, 0), vector(0, 0, 1))
-    # db = Disk(pb, T(1))
-    # pt = Plane(point(0, 0, 10), vector(0, 0, 1))
-    # dt = Disk(pt, T(2))
-    # f = FrustumSurface(db, dt)
-    # @test f == FrustumSurface(
-    #   Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 1.0),
-    #   Disk(Plane(Point(0.0, 0.0, 10.0), Vec(0.0, 0.0, 1.0)), 2.0)
-    # )
-    # @test f == FrustumSurface(
-    #   Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 1.0f0),
-    #   Disk(Plane(Point(0.0f0, 0.0f0, 10.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
-    # )
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
+    db = Disk(pb, T(1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
+    dt = Disk(pt, T(2))
+    f = FrustumSurface(db, dt)
+    @test f == FrustumSurface(
+      Disk(Plane(Point(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0)), 1.0),
+      Disk(Plane(Point(0.0, 0.0, 10.0), Vec(0.0, 0.0, 1.0)), 2.0)
+    )
+    @test f == FrustumSurface(
+      Disk(Plane(Point(0.0f0, 0.0f0, 0.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 1.0f0),
+      Disk(Plane(Point(0.0f0, 0.0f0, 10.0f0), Vec(0.0f0, 0.0f0, 1.0f0)), 2.0f0)
+    )
 
     f = rand(FrustumSurface)
     @test f isa FrustumSurface
