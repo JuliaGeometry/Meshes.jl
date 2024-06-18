@@ -47,9 +47,9 @@ function ≗(r₁::Ring, r₂::Ring)
   r₁.vertices == r₂.vertices[i:(i + n - 1)]
 end
 
-function Base.isapprox(r₁::Ring, r₂::Ring; kwargs...)
+function Base.isapprox(r₁::Ring, r₂::Ring; atol=atol(lentype(r₁)), kwargs...)
   nvertices(r₁) ≠ nvertices(r₂) && return false
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
+  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
 end
 
 Base.close(r::Ring) = r

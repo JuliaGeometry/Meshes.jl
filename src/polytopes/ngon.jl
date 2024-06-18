@@ -54,9 +54,9 @@ nvertices(::Type{<:Ngon{N}}) where {N} = N
 
 ==(p₁::Ngon, p₂::Ngon) = p₁.vertices == p₂.vertices
 
-function Base.isapprox(p₁::Ngon, p₂::Ngon; kwargs...)
+function Base.isapprox(p₁::Ngon, p₂::Ngon; atol=atol(lentype(p₁)), kwargs...)
   nvertices(p₁) ≠ nvertices(p₂) && return false
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
+  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 end
 
 rings(ngon::Ngon) = [Ring(pointify(ngon))]

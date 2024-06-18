@@ -69,9 +69,9 @@ PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
 
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 
-function Base.isapprox(p₁::PolyArea, p₂::PolyArea; kwargs...)
+function Base.isapprox(p₁::PolyArea, p₂::PolyArea; atol=atol(lentype(p₁)), kwargs...)
   length(p₁.rings) ≠ length(p₂.rings) && return false
-  all(isapprox(r₁, r₂; kwargs...) for (r₁, r₂) in zip(p₁.rings, p₂.rings))
+  all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(p₁.rings, p₂.rings))
 end
 
 vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)

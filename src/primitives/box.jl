@@ -45,7 +45,8 @@ sides(b::Box) = Tuple(b.max - b.min)
 
 ==(b₁::Box, b₂::Box) = b₁.min == b₂.min && b₁.max == b₂.max
 
-Base.isapprox(b₁::Box, b₂::Box) = b₁.min ≈ b₂.min && b₁.max ≈ b₂.max
+Base.isapprox(b₁::Box, b₂::Box; atol=atol(lentype(b₁)), kwargs...) =
+  isapprox(b₁.min, b₂.min; atol, kwargs...) && isapprox(b₁.max, b₂.max; atol, kwargs...)
 
 function (b::Box)(uv...)
   if !all(x -> 0 ≤ x ≤ 1, uv)

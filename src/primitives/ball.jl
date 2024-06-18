@@ -33,7 +33,8 @@ radius(b::Ball) = b.radius
 
 ==(b₁::Ball, b₂::Ball) = b₁.center == b₂.center && b₁.radius == b₂.radius
 
-Base.isapprox(b₁::Ball, b₂::Ball) = b₁.center ≈ b₂.center && b₁.radius ≈ b₂.radius
+Base.isapprox(b₁::Ball, b₂::Ball; atol=atol(lentype(b₁)), kwargs...) =
+  isapprox(b₁.center, b₂.center; atol, kwargs...) && isapprox(b₁.radius, b₂.radius; atol, kwargs...)
 
 function (b::Ball{2})(ρ, φ)
   T = numtype(lentype(b))

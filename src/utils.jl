@@ -178,9 +178,9 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   Expr(:tuple, exprs...)
 end
 
-isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
-isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
-isapproxone(x) = isapprox(x, oneunit(x), atol=atol(x))
+isapproxequal(x, y; atol=atol(x), kwargs...) = isapprox(x, y; atol, kwargs...)
+isapproxzero(x; atol=atol(x), kwargs...) = isapprox(x, zero(x); atol, kwargs...)
+isapproxone(x; atol=atol(x), kwargs...) = isapprox(x, oneunit(x); atol, kwargs...)
 
 ispositive(x) = x > zero(x)
 isnegative(x) = x < zero(x)

@@ -28,8 +28,8 @@ end
 
 ==(s₁::Segment, s₂::Segment) = s₁.vertices == s₂.vertices
 
-Base.isapprox(s₁::Segment, s₂::Segment; kwargs...) =
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
+Base.isapprox(s₁::Segment, s₂::Segment; atol=atol(lentype(s₁)), kwargs...) =
+  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
 function (s::Segment)(t)
   if t < 0 || t > 1

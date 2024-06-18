@@ -51,7 +51,8 @@ radius(c::Circle) = c.radius
 
 ==(c₁::Circle, c₂::Circle) = c₁.plane == c₂.plane && c₁.radius == c₂.radius
 
-Base.isapprox(c₁::Circle, c₂::Circle) = c₁.plane ≈ c₂.plane && c₁.radius ≈ c₂.radius
+Base.isapprox(c₁::Circle, c₂::Circle; atol=atol(lentype(c₁)), kwargs...) =
+  isapprox(c₁.plane, c₂.plane; atol, kwargs...) && isapprox(c₁.radius, c₂.radius; atol, kwargs...)
 
 function (c::Circle)(φ)
   T = numtype(lentype(c))

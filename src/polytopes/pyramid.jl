@@ -13,7 +13,7 @@ nvertices(::Type{<:Pyramid}) = 5
 
 ==(p₁::Pyramid, p₂::Pyramid) = p₁.vertices == p₂.vertices
 
-Base.isapprox(p₁::Pyramid, p₂::Pyramid; kwargs...) =
-  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
+Base.isapprox(p₁::Pyramid, p₂::Pyramid; atol=atol(lentype(p₁)), kwargs...) =
+  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Pyramid{Dim}}) where {Dim} = Pyramid(ntuple(i -> rand(rng, Point{Dim}), 5))
