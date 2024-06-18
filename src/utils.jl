@@ -202,6 +202,7 @@ uinv(A) = inv(ustrip.(A)) * unit(eltype(A))^-1
 unormalize(a::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(normalize(a) * unit(ℒ))
 
 udot(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = ustrip(a ⋅ b) * unit(ℒ)
+udot(a::Vec{Dim,ℒ₁}, b::Vec{Dim,ℒ₂}) where {Dim,ℒ₁,ℒ₂} = udot(promote(a, b)...)
 
 ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b) * unit(ℒ))
 ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}, c::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b × c) * unit(ℒ))
