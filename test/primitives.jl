@@ -454,7 +454,7 @@
 
     b = Box(point(0, 0), point(1, 1))
     equaltest(b)
-    isapproxtext(b)
+    isapproxtest(b)
 
     b = Box(point(0), point(1))
     @test boundary(b) == Multi([point(0), point(1)])
