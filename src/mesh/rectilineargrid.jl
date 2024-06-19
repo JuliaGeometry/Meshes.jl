@@ -23,13 +23,12 @@ julia> RectilinearGrid(x, y)
 struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{Dim,Cartesian{Datum,Dim,ℒ}}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
-  RectilinearGrid{Datum,Dim,ℒ,V}(xyz, topology) where {Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} = new(xyz, topology)
-end
 
-function RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector{<:Len}}, topology::GridTopology{Dim}) where {Datum,Dim}
-  coords = float.(xyz)
-  V = eltype(coords)
-  RectilinearGrid{Datum,Dim,eltype(V),V}(coords, topology)
+  function RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector{<:Len}}, topology::GridTopology{Dim}) where {Datum,Dim}
+    coords = float.(xyz)
+    V = eltype(coords)
+    new{Datum,Dim,eltype(V),V}(coords, topology)
+  end
 end
 
 RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {Datum,Dim} =
