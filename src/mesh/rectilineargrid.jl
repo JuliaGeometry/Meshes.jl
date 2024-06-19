@@ -24,7 +24,10 @@ struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{Dim,Ca
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
 
-  function RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector{<:Len}}, topology::GridTopology{Dim}) where {Datum,Dim}
+  function RectilinearGrid{Datum}(
+    xyz::NTuple{Dim,<:AbstractVector{<:Len}},
+    topology::GridTopology{Dim}
+  ) where {Datum,Dim}
     coords = float.(xyz)
     V = eltype(coords)
     new{Datum,Dim,eltype(V),V}(coords, topology)

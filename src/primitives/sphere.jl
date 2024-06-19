@@ -15,7 +15,6 @@ struct Sphere{Dim,C<:CRS,ℒ<:Len} <: Primitive{Dim,C}
   Sphere(center::Point{Dim,C}, radius::ℒ) where {Dim,C<:CRS,ℒ<:Len} = new{Dim,C,float(ℒ)}(center, radius)
 end
 
-
 Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
