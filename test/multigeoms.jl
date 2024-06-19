@@ -50,8 +50,8 @@
   box1 = Box(point(0, 0), point(1, 1))
   box2 = Box(point(1, 1), point(2, 2))
   mbox = Multi([box1, box2])
-  @test mbox == Multi([Box(Point(0.0, 0.0), Point(1.0, 1.0)), Box(Point(1.0, 1.0), Point(2.0, 2.0))])
-  @test mbox == Multi([Box(Point(0.0f0, 0.0f0), Point(1.0f0, 1.0f0)), Box(Point(1.0f0, 1.0f0), Point(2.0f0, 2.0f0))])
+  equaltest(mbox)
+  isapproxtest(mbox)
 
   # constructor with iterator
   grid = cartgrid(10, 10)

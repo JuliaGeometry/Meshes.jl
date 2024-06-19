@@ -109,6 +109,40 @@ function equaltest(g)
   @test g == withprecision(Float32, g)
 end
 
+function isapproxtest(g::Geometry{1})
+  τ64 = Meshes.atol(Float64) * u"m"
+  τ32 = Meshes.atol(Float32) * u"m"
+  g64 = withprecision(Float64, g)
+  g32 = withprecision(Float32, g)
+  @test isapprox(g, Translate(τ64)(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(τ32)(g32), atol=1.1τ32)
+end
+
+function isapproxtest(g::Geometry{2})
+  τ64 = Meshes.atol(Float64) * u"m"
+  τ32 = Meshes.atol(Float32) * u"m"
+  g64 = withprecision(Float64, g)
+  g32 = withprecision(Float32, g)
+  @test isapprox(g, Translate(τ64, 0u"m")(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(0u"m", τ64)(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(τ32, 0u"m")(g32), atol=1.1τ32)
+  @test isapprox(g, Translate(0u"m", τ32)(g32), atol=1.1τ32)
+end
+
+function isapproxtest(g::Geometry{3})
+  τ64 = Meshes.atol(Float64) * u"m"
+  τ32 = Meshes.atol(Float32) * u"m"
+  g64 = withprecision(Float64, g)
+  g32 = withprecision(Float32, g)
+  @test isapprox(g, Translate(τ64, 0u"m", 0u"m")(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(0u"m", τ64, 0u"m")(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(0u"m", 0u"m", τ64)(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(τ32, 0u"m", 0u"m")(g32), atol=1.1τ32)
+  @test isapprox(g, Translate(0u"m", τ32, 0u"m")(g32), atol=1.1τ32)
+  @test isapprox(g, Translate(0u"m", 0u"m", τ32)(g32), atol=1.1τ32)
+end
+
+
 # dummy definitions
 include("dummy.jl")
 

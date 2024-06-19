@@ -1,6 +1,4 @@
 @testset "Primitives" begin
-  e64 = eps(Float64)
-  e32 = eps(Float32)
   @testset "Point" begin
     @test embeddim(Point(1)) == 1
     @test embeddim(Point(1, 2)) == 2
@@ -17,13 +15,9 @@
     equaltest(point(1))
     equaltest(point(1, 2))
     equaltest(point(1, 2, 3))
-
-    @test isapprox(point(1), Point(1.0 + e64), atol=1e-5u"m")
-    @test isapprox(point(1), Point(1.0f0 + e32), atol=1e-5u"m")
-    @test isapprox(point(1, 2), Point(1.0 + e64, 2.0 + e64), atol=1e-5u"m")
-    @test isapprox(point(1, 2), Point(1.0f0 + e32, 2.0f0 + e32), atol=1e-5u"m")
-    @test isapprox(point(1, 2, 3), Point(1.0 + e64, 2.0 + e64, 3.0 + e64), atol=1e-5u"m")
-    @test isapprox(point(1, 2, 3), Point(1.0f0 + e32, 2.0f0 + e32, 3.0f0 + e32), atol=1e-5u"m")
+    isapproxtest(point(1))
+    isapproxtest(point(1, 2))
+    isapproxtest(point(1, 2, 3))
 
     @test to(point(1)) == vector(1)
     @test to(point(1, 2)) == vector(1, 2)
@@ -203,11 +197,9 @@
     @test boundary(r) == point(0, 0)
     @test perimeter(r) == zero(ℳ)
 
-    equaltest(Ray(point(0, 0), vector(1, 1)))
-
     r = Ray(point(0, 0), vector(1, 1))
-    @test isapprox(r, Ray(Point(0.0 + e64, 0.0 + e64), Vec(1.0 + e64, 1.0 + e64)), atol=1e-5u"m")
-    @test isapprox(r, Ray(Point(0.0f0 + e32, 0.0f0 + e32), Vec(1.0f0 + e32, 1.0f0 + e32)), atol=1e-5u"m")
+    equaltest(r)
+    isapproxtest(r)
 
     r = Ray(point(0, 0), vector(1, 1))
     @test r(T(0.0)) == point(0, 0)
@@ -272,11 +264,9 @@
     @test isnothing(boundary(l))
     @test perimeter(l) == zero(ℳ)
 
-    equaltest(Line(point(0, 0), point(1, 1)))
-
     l = Line(point(0, 0), point(1, 1))
-    @test isapprox(l, Line(Point(0.0 + e64, 0.0 + e64), Point(1.0 + e64, 1.0 + e64)), atol=1e-5u"m")
-    @test isapprox(l, Line(Point(0.0f0 + e32, 0.0f0 + e32), Point(1.0f0 + e32, 1.0f0 + e32)), atol=1e-5u"m")
+    equaltest(l)
+    isapproxtest(l)
 
     l = Line(point(0, 0), point(1, 1))
     @test (l(0), l(1)) == (point(0, 0), point(1, 1))
@@ -317,27 +307,9 @@
     @test isnothing(boundary(p))
     @test perimeter(p) == zero(ℳ)
 
-    equaltest(Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0)))
-
     p = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
-    @test isapprox(
-      p,
-      Plane(
-        Point(0.0 + e64, 0.0 + e64, 0.0 + e64),
-        Vec(1.0 + e64, 0.0 + e64, 0.0 + e64),
-        Vec(0.0 + e64, 1.0 + e64, 0.0 + e64)
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      p,
-      Plane(
-        Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32),
-        Vec(1.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32),
-        Vec(0.0f0 + e32, 1.0f0 + e32, 0.0f0 + e32)
-      ),
-      atol=1e-5u"m"
-    )
+    equaltest(p)
+    isapproxtest(p)
 
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     @test p(T(1), T(0)) == point(1, 0, 0)
@@ -398,11 +370,9 @@
     @test Meshes.crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
 
-    equaltest(BezierCurve(point(0, 0), point(1, 1)))
-
     b = BezierCurve(point(0, 0), point(1, 1))
-    @test isapprox(b, BezierCurve(Point(0.0 + e64, 0.0 + e64), Point(1.0 + e64, 1.0 + e64)), atol=1e-5u"m")
-    @test isapprox(b, BezierCurve(Point(0.0f0 + e32, 0.0f0 + e32), Point(1.0f0 + e32, 1.0f0 + e32)), atol=1e-5u"m")
+    equaltest(b)
+    isapproxtest(b)
 
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
     for method in [DeCasteljau(), Horner()]
@@ -482,11 +452,9 @@
     @test maximum(b) == point(1, 1, 1)
     @test extrema(b) == (point(0, 0, 0), point(1, 1, 1))
 
-    equaltest(Box(point(0, 0), point(1, 1)))
-
     b = Box(point(0, 0), point(1, 1))
-    @test isapprox(b, Box(Point(0.0 + e64, 0.0 + e64), Point(1.0 + e64, 1.0 + e64)), atol=1e-5u"m")
-    @test isapprox(b, Box(Point(0.0f0 + e32, 0.0f0 + e32), Point(1.0f0 + e32, 1.0f0 + e32)), atol=1e-5u"m")
+    equaltest(b)
+    isapproxtext(b)
 
     b = Box(point(0), point(1))
     @test boundary(b) == Multi([point(0), point(1)])
@@ -609,11 +577,9 @@
     @test Meshes.center(b) == point(1, 2, 3)
     @test radius(b) == T(5) * u"m"
 
-    equaltest(Ball(point(0, 0), T(1)))
-
     b = Ball(point(0, 0), T(1))
-    @test isapprox(b, Ball(Point(0.0 + e64, 0.0 + e64), 1.0 + e64), atol=1e-5u"m")
-    @test isapprox(b, Ball(Point(0.0f0 + e32, 0.0f0 + e32), 1.0f0 + e32), atol=1e-5u"m")
+    equaltest(b)
+    isapproxtest(b)
 
     b = Ball(point(1, 2, 3), 4)
     @test Meshes.lentype(b) == ℳ
@@ -698,11 +664,9 @@
     @test isnothing(boundary(s))
     @test perimeter(s) == zero(ℳ)
 
-    equaltest(Sphere(point(0, 0), T(1)))
-
     s = Sphere(point(0, 0), T(1))
-    @test isapprox(s, Sphere(Point(0.0 + e64, 0.0 + e64), 1.0 + e64), atol=1e-5u"m")
-    @test isapprox(s, Sphere(Point(0.0f0 + e32, 0.0f0 + e32), 1.0f0 + e32), atol=1e-5u"m")
+    equaltest(s)
+    isapproxtest(s)
 
     s = Sphere(point(1, 2, 3), 4)
     @test Meshes.lentype(s) == ℳ
@@ -808,19 +772,9 @@
     @test isnothing(boundary(e))
     @test perimeter(e) == zero(ℳ)
 
-    equaltest(Ellipsoid((T(3), T(2), T(1))))
-
-    e = Ellipsoid((T(3), T(2), T(1)), point(1, 1, 1))
-    @test isapprox(
-      e,
-      Ellipsoid((3.0 + e64, 2.0 + e64, 1.0 + e64), Point(1.0 + e64, 1.0 + e64, 1.0 + e64)),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      e,
-      Ellipsoid((3.0f0 + e32, 2.0f0 + e32, 1.0f0 + e32), Point(1.0f0 + e32, 1.0f0 + e32, 1.0f0 + e32)),
-      atol=1e-5u"m"
-    )
+    e = Ellipsoid((T(3), T(2), T(1)))
+    equaltest(e)
+    isapproxtest(e)
 
     e = Ellipsoid((T(3), T(2), T(1)))
     @test sprint(show, e) ==
@@ -860,22 +814,7 @@
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     equaltest(d)
-
-    p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    d = Disk(p, T(2))
-    @test isapprox(
-      d,
-      Disk(Plane(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 2.0 + e64),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      d,
-      Disk(
-        Plane(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-        2.0f0 + e32
-      ),
-      atol=1e-5u"m"
-    )
+    isapproxtest(d)
 
     d = rand(Disk)
     @test d isa Disk
@@ -918,22 +857,7 @@
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
     equaltest(c)
-
-    p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    c = Circle(p, T(2))
-    @test isapprox(
-      c,
-      Circle(Plane(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 2.0 + e64),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      c,
-      Circle(
-        Plane(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-        2.0f0 + e32
-      ),
-      atol=1e-5u"m"
-    )
+    isapproxtest(c)
 
     # 3D circumcircle
     p1 = point(0, 4, 0)
@@ -1003,27 +927,9 @@
     @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
     @test_throws DomainError c(1.1, 0, 0)
 
-    equaltest(Cylinder(T(1)))
-
-    c = Cylinder(Plane(point(1, 2, 3), vector(0, 0, 1)), Plane(point(4, 5, 6), vector(0, 0, 1)), T(5))
-    @test isapprox(
-      c,
-      Cylinder(
-        Plane(Point(1.0 + e64, 2.0 + e64, 3.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)),
-        Plane(Point(4.0 + e64, 5.0 + e64, 6.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)),
-        5.0 + e64
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      c,
-      Cylinder(
-        Plane(Point(1.0f0 + e32, 2.0f0 + e32, 3.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-        Plane(Point(4.0f0 + e32, 5.0f0 + e32, 6.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-        5.0f0 + e32
-      ),
-      atol=1e-5u"m"
-    )
+    c = Cylinder(T(1))
+    equaltest(c)
+    isapproxtest(c)
 
     c = Cylinder(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     @test Meshes.hasintersectingplanes(c)
@@ -1097,27 +1003,9 @@
     @test measure(c) == area(c) ≈ (2 * T(2)^2 * pi + 2 * T(2) * pi) * u"m^2"
     @test !Meshes.hasintersectingplanes(c)
 
-    equaltest(CylinderSurface(T(1)))
-
-    c = CylinderSurface(Plane(point(1, 2, 3), vector(0, 0, 1)), Plane(point(4, 5, 6), vector(0, 0, 1)), T(5))
-    @test isapprox(
-      c,
-      CylinderSurface(
-        Plane(Point(1.0 + e64, 2.0 + e64, 3.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)),
-        Plane(Point(4.0 + e64, 5.0 + e64, 6.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)),
-        5.0 + e64
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      c,
-      CylinderSurface(
-        Plane(Point(1.0f0 + e32, 2.0f0 + e32, 3.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-        Plane(Point(4.0f0 + e32, 5.0f0 + e32, 6.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-        5.0f0 + e32
-      ),
-      atol=1e-5u"m"
-    )
+    c = CylinderSurface(T(1))
+    equaltest(c)
+    isapproxtest(c)
 
     c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     @test Meshes.hasintersectingplanes(c)
@@ -1184,15 +1072,9 @@
     @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
     @test centroid(p) == point(0, 0, 1 / 16)
 
-    equaltest(ParaboloidSurface(point(0, 0, 0), T(1), T(2)))
-
     p = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
-    @test isapprox(p, ParaboloidSurface(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), 1.0 + e64, 2.0 + e64), atol=1e-5u"m")
-    @test isapprox(
-      p,
-      ParaboloidSurface(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), 1.0f0 + e32, 2.0f0 + e32),
-      atol=1e-5u"m"
-    )
+    equaltest(p)
+    isapproxtest(p)
 
     p1 = ParaboloidSurface(point(1, 2, 3), T(1), T(1))
     p2 = ParaboloidSurface(point(1, 2, 3), T(1))
@@ -1277,30 +1159,7 @@
     a = point(0, 0, 1)
     c = Cone(d, a)
     equaltest(c)
-
-    p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    d = Disk(p, T(2))
-    a = point(0, 0, 1)
-    c = Cone(d, a)
-    @test isapprox(
-      c,
-      Cone(
-        Disk(Plane(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 2.0 + e64),
-        Point(0.0 + e64, 0.0 + e64, 1.0 + e64)
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      c,
-      Cone(
-        Disk(
-          Plane(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-          2.0f0 + e32
-        ),
-        Point(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)
-      ),
-      atol=1e-5u"m"
-    )
+    isapproxtest(c)
 
     c = rand(Cone)
     @test c isa Cone
@@ -1378,30 +1237,7 @@
     a = point(0, 0, 1)
     c = ConeSurface(d, a)
     equaltest(c)
-
-    p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    d = Disk(p, T(2))
-    a = point(0, 0, 1)
-    c = ConeSurface(d, a)
-    @test isapprox(
-      c,
-      ConeSurface(
-        Disk(Plane(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 2.0 + e64),
-        Point(0.0 + e64, 0.0 + e64, 1.0 + e64)
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      c,
-      ConeSurface(
-        Disk(
-          Plane(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-          2.0f0 + e32
-        ),
-        Point(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)
-      ),
-      atol=1e-5u"m"
-    )
+    isapproxtest(c)
 
     c = rand(ConeSurface)
     @test c isa ConeSurface
@@ -1445,34 +1281,7 @@
     dt = Disk(pt, T(2))
     f = Frustum(db, dt)
     equaltest(f)
-
-    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
-    db = Disk(pb, T(1))
-    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
-    dt = Disk(pt, T(2))
-    f = Frustum(db, dt)
-    @test isapprox(
-      f,
-      Frustum(
-        Disk(Plane(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 1.0 + e64),
-        Disk(Plane(Point(0.0 + e64, 0.0 + e64, 10.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 2.0 + e64)
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      f,
-      Frustum(
-        Disk(
-          Plane(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-          1.0f0 + e32
-        ),
-        Disk(
-          Plane(Point(0.0f0 + e32, 0.0f0 + e32, 10.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-          2.0f0 + e32
-        )
-      ),
-      atol=1e-5u"m"
-    )
+    isapproxtest(f)
 
     f = rand(Frustum)
     @test f isa Frustum
@@ -1524,34 +1333,7 @@
     dt = Disk(pt, T(2))
     f = FrustumSurface(db, dt)
     equaltest(f)
-
-    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
-    db = Disk(pb, T(1))
-    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
-    dt = Disk(pt, T(2))
-    f = FrustumSurface(db, dt)
-    @test isapprox(
-      f,
-      FrustumSurface(
-        Disk(Plane(Point(0.0 + e64, 0.0 + e64, 0.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 1.0 + e64),
-        Disk(Plane(Point(0.0 + e64, 0.0 + e64, 10.0 + e64), Vec(0.0 + e64, 0.0 + e64, 1.0 + e64)), 2.0 + e64)
-      ),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      f,
-      FrustumSurface(
-        Disk(
-          Plane(Point(0.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-          1.0f0 + e32
-        ),
-        Disk(
-          Plane(Point(0.0f0 + e32, 0.0f0 + e32, 10.0f0 + e32), Vec(0.0f0 + e32, 0.0f0 + e32, 1.0f0 + e32)),
-          2.0f0 + e32
-        )
-      ),
-      atol=1e-5u"m"
-    )
+    isapproxtest(f)
 
     f = rand(FrustumSurface)
     @test f isa FrustumSurface
@@ -1572,24 +1354,9 @@
     @test_throws ArgumentError length(t)
     @test_throws ArgumentError volume(t)
 
-    equaltest(Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1)))
-
     t = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
-    @test isapprox(
-      t,
-      Torus(Point(1.0 + e64, 1.0 + e64, 1.0 + e64), Vec(1.0 + e64, 0.0 + e64, 0.0 + e64), 2.0 + e64, 1.0 + e64),
-      atol=1e-5u"m"
-    )
-    @test isapprox(
-      t,
-      Torus(
-        Point(1.0f0 + e32, 1.0f0 + e32, 1.0f0 + e32),
-        Vec(1.0f0 + e32, 0.0f0 + e32, 0.0f0 + e32),
-        2.0f0 + e32,
-        1.0f0 + e32
-      ),
-      atol=1e-5u"m"
-    )
+    equaltest(t)
+    isapproxtest(t)
 
     # torus passing through three points
     p₁ = point(0, 0, 0)
