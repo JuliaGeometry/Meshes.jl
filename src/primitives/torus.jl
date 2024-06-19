@@ -14,11 +14,9 @@ struct Torus{C<:CRS,ℒ<:Len} <: Primitive{3,C}
   normal::Vec{3,ℒ}
   major::ℒ
   minor::ℒ
-  Torus{C,ℒ}(center, normal, major, minor) where {C<:CRS,ℒ<:Len} = new(center, normal, major, minor)
+  Torus(center::Point{3,C}, normal::Vec{3,ℒ}, major::ℒ, minor::ℒ) where {C<:CRS,ℒ<:Len} =
+    new{C,float(ℒ)}(center, normal, major, minor)
 end
-
-Torus(center::Point{3,C}, normal::Vec{3,ℒ}, major::ℒ, minor::ℒ) where {C<:CRS,ℒ<:Len} =
-  Torus{C,float(ℒ)}(center, normal, major, minor)
 
 function Torus(center::Point{3}, normal::Vec{3}, major::Len, minor::Len)
   ℒ = promote_type(eltype(normal), typeof(major), typeof(minor))
