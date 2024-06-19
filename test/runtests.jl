@@ -87,6 +87,28 @@ randpoint2(n) = randpoint(2, n)
 randpoint3(n) = randpoint(3, n)
 randpoint(Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
 
+numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
+
+withprecision(_, x) = x
+withprecision(T, v::Vec) = numconvert.(T, v)
+withprecision(T, p::Point) = Meshes.withdatum(p, withprecision(T, to(p)))
+withprecision(T, len::Meshes.Len) = numconvert(T, len)
+withprecision(T, lens::NTuple{Dim,Meshes.Len}) where {Dim} = numconvert.(T, lens)
+withprecision(T, geoms::NTuple{Dim,<:Geometry}) where {Dim} = withprecision.(T, geoms)
+withprecision(T, geoms::AbstractVector{<:Geometry}) = [withprecision(T, g) for g in geoms]
+withprecision(T, geoms::CircularVector{<:Geometry}) = CircularVector([withprecision(T, g) for g in geoms])
+@generated function withprecision(T, g::G) where {G<:Meshes.GeometryOrDomain}
+  ctor = Meshes.constructor(G)
+  names = fieldnames(G)
+  exprs = (:(withprecision(T, g.$name)) for name in names)
+  :($ctor($(exprs...)))
+end
+
+function equaltest(g)
+  @test g == withprecision(Float64, g)
+  @test g == withprecision(Float32, g)
+end
+
 # dummy definitions
 include("dummy.jl")
 
