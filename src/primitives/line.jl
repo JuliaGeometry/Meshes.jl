@@ -20,6 +20,9 @@ paramdim(::Type{<:Line}) = 1
 
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 
+Base.isapprox(l₁::Line, l₂::Line; atol=atol(lentype(l₁)), kwargs...) =
+  isapprox(l₁.a, l₂.a; atol, kwargs...) && isapprox(l₁.b, l₂.b; atol, kwargs...)
+
 (l::Line)(t) = l.a + t * (l.b - l.a)
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Line{Dim}}) where {Dim} = Line(rand(rng, Point{Dim}), rand(rng, Point{Dim}))

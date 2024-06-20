@@ -178,9 +178,9 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   Expr(:tuple, exprs...)
 end
 
-isapproxequal(x, y) = isapprox(x, y, atol=atol(x))
-isapproxzero(x) = isapprox(x, zero(x), atol=atol(x))
-isapproxone(x) = isapprox(x, oneunit(x), atol=atol(x))
+isapproxequal(x, y; atol=atol(x), kwargs...) = isapprox(x, y; atol, kwargs...)
+isapproxzero(x; atol=atol(x), kwargs...) = isapprox(x, zero(x); atol, kwargs...)
+isapproxone(x; atol=atol(x), kwargs...) = isapprox(x, oneunit(x); atol, kwargs...)
 
 ispositive(x) = x > zero(x)
 isnegative(x) = x < zero(x)
@@ -202,8 +202,11 @@ uinv(A) = inv(ustrip.(A)) * unit(eltype(A))^-1
 unormalize(a::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(normalize(a) * unit(ℒ))
 
 udot(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = ustrip(a ⋅ b) * unit(ℒ)
+udot(a::Vec{Dim,ℒ₁}, b::Vec{Dim,ℒ₂}) where {Dim,ℒ₁,ℒ₂} = udot(promote(a, b)...)
 
 ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b) * unit(ℒ))
+ucross(a::Vec{Dim,ℒ₁}, b::Vec{Dim,ℒ₂}) where {Dim,ℒ₁,ℒ₂} = ucross(promote(a, b)...)
+
 ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}, c::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(ustrip.(a × b × c) * unit(ℒ))
 
 urotbetween(u::Vec, v::Vec) = rotation_between(ustrip.(u), ustrip.(v))

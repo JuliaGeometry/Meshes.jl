@@ -99,8 +99,13 @@ function centroid(p::ParaboloidSurface)
   c + Vec(x, y, z / 2)
 end
 
-Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
-  p₁.apex ≈ p₂.apex && isapproxequal(p₁.focallength, p₂.focallength) && isapproxequal(p₁.radius, p₂.radius)
+==(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
+  p₁.apex == p₂.apex && p₁.radius == p₂.radius && p₁.focallength == p₂.focallength
+
+Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface; atol=atol(lentype(p₁)), kwargs...) =
+  isapprox(p₁.apex, p₂.apex; atol, kwargs...) &&
+  isapprox(p₁.focallength, p₂.focallength; atol, kwargs...) &&
+  isapprox(p₁.radius, p₂.radius; atol, kwargs...)
 
 function (p::ParaboloidSurface)(ρ, θ)
   T = numtype(lentype(p))

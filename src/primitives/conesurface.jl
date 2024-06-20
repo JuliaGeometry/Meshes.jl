@@ -26,6 +26,11 @@ base(c::ConeSurface) = c.base
 
 apex(c::ConeSurface) = c.apex
 
+==(c₁::ConeSurface, c₂::ConeSurface) = c₁.base == c₂.base && c₁.apex == c₂.apex
+
+Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kwargs...) =
+  isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
+
 function (c::ConeSurface)(φ, h)
   T = numtype(lentype(c))
   if (φ < 0 || φ > 1) || (h < 0 || h > 1)

@@ -47,6 +47,12 @@
   ├─ Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))
   └─ Box(min: (x: 1.0 m, y: 1.0 m), max: (x: 2.0 m, y: 2.0 m))"""
 
+  box1 = Box(point(0, 0), point(1, 1))
+  box2 = Box(point(1, 1), point(2, 2))
+  mbox = Multi([box1, box2])
+  equaltest(mbox)
+  isapproxtest(mbox)
+
   # constructor with iterator
   grid = cartgrid(10, 10)
   multi = Multi(grid)
