@@ -30,8 +30,14 @@ center(e::Ellipsoid) = e.center
 
 rotation(e::Ellipsoid) = e.rotation
 
-Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid) =
-  all(e₁.radii .≈ e₂.radii) && e₁.center ≈ e₂.center && e₁.rotation ≈ e₂.rotation
+==(e₁::Ellipsoid, e₂::Ellipsoid) = e₁.radii == e₂.radii && e₁.center == e₂.center && e₁.rotation == e₂.rotation
+
+function Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid; atol=atol(lentype(e₁)), kwargs...)
+  u = Unitful.promote_unit(unit(lentype(e₁)), unit(lentype(e₂)))
+  all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(e₁.radii, e₂.radii)) &&
+  isapprox(e₁.center, e₂.center; atol, kwargs...) &&
+  isapprox(e₁.rotation, e₂.rotation; atol=ustrip(u, atol), kwargs...)
+end
 
 function (e::Ellipsoid)(θ, φ)
   T = numtype(lentype(e))

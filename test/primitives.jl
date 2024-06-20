@@ -12,6 +12,13 @@
     @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
     @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
+    equaltest(point(1))
+    equaltest(point(1, 2))
+    equaltest(point(1, 2, 3))
+    isapproxtest(point(1))
+    isapproxtest(point(1, 2))
+    isapproxtest(point(1, 2, 3))
+
     @test to(point(1)) == vector(1)
     @test to(point(1, 2)) == vector(1, 2)
     @test to(point(1, 2, 3)) == vector(1, 2, 3)
@@ -191,6 +198,10 @@
     @test perimeter(r) == zero(ℳ)
 
     r = Ray(point(0, 0), vector(1, 1))
+    equaltest(r)
+    isapproxtest(r)
+
+    r = Ray(point(0, 0), vector(1, 1))
     @test r(T(0.0)) == point(0, 0)
     @test r(T(1.0)) == point(1, 1)
     @test r(T(Inf)) == point(Inf, Inf)
@@ -254,6 +265,10 @@
     @test perimeter(l) == zero(ℳ)
 
     l = Line(point(0, 0), point(1, 1))
+    equaltest(l)
+    isapproxtest(l)
+
+    l = Line(point(0, 0), point(1, 1))
     @test (l(0), l(1)) == (point(0, 0), point(1, 1))
 
     l2 = rand(Line{2})
@@ -291,6 +306,10 @@
     @test normal(p) == Vec(0, 0, 1)
     @test isnothing(boundary(p))
     @test perimeter(p) == zero(ℳ)
+
+    p = Plane(point(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
+    equaltest(p)
+    isapproxtest(p)
 
     p = Plane(point(0, 0, 0), vector(0, 0, 1))
     @test p(T(1), T(0)) == point(1, 0, 0)
@@ -350,6 +369,10 @@
     @test paramdim(b) == 1
     @test Meshes.crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
+
+    b = BezierCurve(point(0, 0), point(1, 1))
+    equaltest(b)
+    isapproxtest(b)
 
     b = BezierCurve(point(0, 0), point(0.5, 1), point(1, 0))
     for method in [DeCasteljau(), Horner()]
@@ -428,6 +451,10 @@
     @test minimum(b) == point(0, 0, 0)
     @test maximum(b) == point(1, 1, 1)
     @test extrema(b) == (point(0, 0, 0), point(1, 1, 1))
+
+    b = Box(point(0, 0), point(1, 1))
+    equaltest(b)
+    isapproxtest(b)
 
     b = Box(point(0), point(1))
     @test boundary(b) == Multi([point(0), point(1)])
@@ -550,6 +577,10 @@
     @test Meshes.center(b) == point(1, 2, 3)
     @test radius(b) == T(5) * u"m"
 
+    b = Ball(point(0, 0), T(1))
+    equaltest(b)
+    isapproxtest(b)
+
     b = Ball(point(1, 2, 3), 4)
     @test Meshes.lentype(b) == ℳ
 
@@ -632,6 +663,10 @@
     @test extrema(s) == (point(-1, -1, -1), point(1, 1, 1))
     @test isnothing(boundary(s))
     @test perimeter(s) == zero(ℳ)
+
+    s = Sphere(point(0, 0), T(1))
+    equaltest(s)
+    isapproxtest(s)
 
     s = Sphere(point(1, 2, 3), 4)
     @test Meshes.lentype(s) == ℳ
@@ -738,6 +773,10 @@
     @test perimeter(e) == zero(ℳ)
 
     e = Ellipsoid((T(3), T(2), T(1)))
+    equaltest(e)
+    isapproxtest(e)
+
+    e = Ellipsoid((T(3), T(2), T(1)))
     @test sprint(show, e) ==
           "Ellipsoid(radii: (3.0 m, 2.0 m, 1.0 m), center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), rotation: UniformScaling{Bool}(true))"
     if T === Float32
@@ -771,6 +810,11 @@
     @test point(0, 0, 0) ∈ d
     @test point(0, 0, 1) ∉ d
     @test boundary(d) == Circle(p, T(2))
+
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    equaltest(d)
+    isapproxtest(d)
 
     d = rand(Disk)
     @test d isa Disk
@@ -809,6 +853,11 @@
     @test point(0, 2, 0) ∈ c
     @test point(0, 0, 0) ∉ c
     @test isnothing(boundary(c))
+
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    c = Circle(p, T(2))
+    equaltest(c)
+    isapproxtest(c)
 
     # 3D circumcircle
     p1 = point(0, 4, 0)
@@ -877,6 +926,10 @@
     @test c(0, 0, 1) ≈ top(c)(0, 0)
     @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
     @test_throws DomainError c(1.1, 0, 0)
+
+    c = Cylinder(T(1))
+    equaltest(c)
+    isapproxtest(c)
 
     c = Cylinder(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     @test Meshes.hasintersectingplanes(c)
@@ -950,6 +1003,10 @@
     @test measure(c) == area(c) ≈ (2 * T(2)^2 * pi + 2 * T(2) * pi) * u"m^2"
     @test !Meshes.hasintersectingplanes(c)
 
+    c = CylinderSurface(T(1))
+    equaltest(c)
+    isapproxtest(c)
+
     c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(1, 0, 1)), T(5))
     @test Meshes.hasintersectingplanes(c)
 
@@ -1014,6 +1071,10 @@
     @test axis(p) == Line(point(0, 0, 0), point(0, 0, T(2)))
     @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
     @test centroid(p) == point(0, 0, 1 / 16)
+
+    p = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
+    equaltest(p)
+    isapproxtest(p)
 
     p1 = ParaboloidSurface(point(1, 2, 3), T(1), T(1))
     p2 = ParaboloidSurface(point(1, 2, 3), T(1))
@@ -1093,6 +1154,13 @@
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
 
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    a = point(0, 0, 1)
+    c = Cone(d, a)
+    equaltest(c)
+    isapproxtest(c)
+
     c = rand(Cone)
     @test c isa Cone
     @test embeddim(c) == 3
@@ -1164,6 +1232,13 @@
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
 
+    p = Plane(point(0, 0, 0), vector(0, 0, 1))
+    d = Disk(p, T(2))
+    a = point(0, 0, 1)
+    c = ConeSurface(d, a)
+    equaltest(c)
+    isapproxtest(c)
+
     c = rand(ConeSurface)
     @test c isa ConeSurface
     @test embeddim(c) == 3
@@ -1199,6 +1274,14 @@
     @test boundary(f) == FrustumSurface(db, dt)
 
     @test_throws AssertionError Frustum(db, db)
+
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
+    db = Disk(pb, T(1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
+    dt = Disk(pt, T(2))
+    f = Frustum(db, dt)
+    equaltest(f)
+    isapproxtest(f)
 
     f = rand(Frustum)
     @test f isa Frustum
@@ -1244,6 +1327,14 @@
 
     @test_throws AssertionError FrustumSurface(db, db)
 
+    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
+    db = Disk(pb, T(1))
+    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
+    dt = Disk(pt, T(2))
+    f = FrustumSurface(db, dt)
+    equaltest(f)
+    isapproxtest(f)
+
     f = rand(FrustumSurface)
     @test f isa FrustumSurface
   end
@@ -1262,6 +1353,10 @@
     @test measure(t) ≈ 8 * T(π)^2 * u"m^2"
     @test_throws ArgumentError length(t)
     @test_throws ArgumentError volume(t)
+
+    t = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+    equaltest(t)
+    isapproxtest(t)
 
     # torus passing through three points
     p₁ = point(0, 0, 0)

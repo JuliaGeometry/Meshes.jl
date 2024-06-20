@@ -37,6 +37,10 @@
     @test !(s ≈ Segment(point(1, 1, 1), point(0, 0, 0)))
     @test !(s ≈ Segment(point(1, 1, 1), point(0, 1, 0)))
 
+    s = Segment(point(0, 0), point(1, 1))
+    equaltest(s)
+    isapproxtest(s)
+
     s = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
     @test all(Point(x, x, x, x) ∈ s for x in 1:0.01:2)
     @test all(p ∉ s for p in [Point(0.99, 0.99, 0.99, 0.99), Point(2.1, 2.1, 2.1, 2.1)])
@@ -100,6 +104,14 @@
     c2 = Ring(point(1, 1), point(2, 2))
     c3 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
     @test c1 == c2 == c3
+
+    c = Rope(point(0, 0), point(1, 0), point(0, 1))
+    equaltest(c)
+    isapproxtest(c)
+
+    c = Ring(point(0, 0), point(1, 0), point(0, 1))
+    equaltest(c)
+    isapproxtest(c)
 
     # circular equality
     c1 = Ring(point.([(1, 1), (2, 2), (3, 3)]))
@@ -367,6 +379,10 @@
     @test convexhull(t) == t
 
     t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    equaltest(t)
+    isapproxtest(t)
+
+    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
     @test perimeter(t) ≈ T(1 + 1 + √2) * u"m"
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/333
@@ -442,9 +458,6 @@
     # QUADRANGLE
     # -----------
 
-    # test periodicity of Quadrangle
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
-
     # Quadrangle in 2D space
     q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
     @test Meshes.crs(q) <: Cartesian{NoDatum}
@@ -472,6 +485,10 @@
     @test q(T(1), T(0)) == point(1, 0)
     @test q(T(1), T(1)) == point(1, 1)
     @test q(T(0), T(1)) == point(0, 1)
+
+    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    equaltest(q)
+    isapproxtest(q)
 
     q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
     @test_throws DomainError((T(1.2), T(1.2)), "q(u, v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
@@ -528,6 +545,10 @@
     @test poly ≈ poly
     @test Meshes.crs(poly) <: Cartesian{NoDatum}
     @test Meshes.lentype(poly) == ℳ
+
+    p = PolyArea(point(0, 0), point(1, 0), point(0, 1))
+    equaltest(p)
+    isapproxtest(p)
 
     # outer chain with 2 vertices is fixed by default
     poly = PolyArea(point.([(0, 0), (1, 0)]))
@@ -753,6 +774,10 @@
     @test t(T(0), T(0), T(1)) ≈ point(0, 0, 1)
     @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
 
+    t = Tetrahedron(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0), point(0, 0, 1))
+    equaltest(t)
+    isapproxtest(t)
+
     t = rand(Tetrahedron{3})
     @test t isa Tetrahedron
     @test embeddim(t) == 3
@@ -809,6 +834,19 @@
     @test h(T(1), T(0), T(1)) == point(1, 0, 1)
     @test h(T(1), T(1), T(0)) == point(1, 1, 0)
     @test h(T(1), T(1), T(1)) == point(1, 1, 1)
+
+    h = Hexahedron(
+      point(0, 0, 0),
+      point(1, 0, 0),
+      point(1, 1, 0),
+      point(0, 1, 0),
+      point(0, 0, 1),
+      point(1, 0, 1),
+      point(1, 1, 1),
+      point(0, 1, 1)
+    )
+    equaltest(h)
+    isapproxtest(h)
 
     h = Hexahedron(
       point(0, 0, 0),
@@ -930,6 +968,10 @@
     @test m[3] isa Triangle
     @test m[4] isa Triangle
     @test m[5] isa Triangle
+
+    p = Pyramid(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0), point(0, 0, 1))
+    equaltest(p)
+    isapproxtest(p)
 
     p = rand(Pyramid{3})
     @test p isa Pyramid

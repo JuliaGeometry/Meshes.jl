@@ -35,6 +35,12 @@ ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1
 
+==(b₁::BezierCurve, b₂::BezierCurve) = b₁.controls == b₂.controls
+
+Base.isapprox(b₁::BezierCurve, b₂::BezierCurve; atol=atol(lentype(b₁)), kwargs...) =
+  length(b₁.controls) == length(b₂.controls) &&
+  all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(b₁.controls, b₂.controls))
+
 """
 Evaluation method used to obtain a point along
 a Bézier curve from a parametric expression.

@@ -36,6 +36,11 @@ height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
 
 axis(f::FrustumSurface) = Line(center(bottom(f)), center(top(f)))
 
+==(f₁::FrustumSurface, f₂::FrustumSurface) = f₁.bot == f₂.bot && f₁.top == f₂.top
+
+Base.isapprox(f₁::FrustumSurface, f₂::FrustumSurface; atol=atol(lentype(f₁)), kwargs...) =
+  isapprox(f₁.bot, f₂.bot; atol, kwargs...) && isapprox(f₁.top, f₂.top; atol, kwargs...)
+
 function (f::FrustumSurface)(φ, z)
   ℒ = lentype(f)
   T = numtype(ℒ)

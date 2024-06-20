@@ -49,10 +49,9 @@ paramdim(::Type{<:Point}) = 0
 
 center(p::Point) = p
 
-==(A::Point, B::Point) = A.coords == B.coords
+==(A::Point, B::Point) = to(A) == to(B)
 
-Base.isapprox(A::Point, B::Point; atol=CoordRefSystems.tol(A.coords), kwargs...) =
-  isapprox(A.coords, B.coords; atol, kwargs...)
+Base.isapprox(A::Point, B::Point; atol=atol(lentype(A)), kwargs...) = isapprox(to(A), to(B); atol, kwargs...)
 
 """
     coords(point)

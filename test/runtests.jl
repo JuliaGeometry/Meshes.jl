@@ -25,70 +25,21 @@ islinux = Sys.islinux()
 visualtests = !isCI || (isCI && islinux)
 datadir = joinpath(@__DIR__, "data")
 
-# helper function to read *.line files containing polygons
-# generated with RPG (https://github.com/cgalab/genpoly-rpg)
-function readpoly(T, fname)
-  open(fname, "r") do f
-    # read outer chain
-    n = parse(Int, readline(f))
-    outer = map(1:n) do _
-      coords = readline(f)
-      x, y = parse.(T, split(coords))
-      Point(x, y)
-    end
-
-    # read inner chains
-    inners = []
-    while !eof(f)
-      n = parse(Int, readline(f))
-      inner = map(1:n) do _
-        coords = readline(f)
-        x, y = parse.(T, split(coords))
-        Point(x, y)
-      end
-      push!(inners, inner)
-    end
-
-    # return polygonal area
-    @assert first(outer) == last(outer)
-    @assert all(first(i) == last(i) for i in inners)
-    rings = [outer, inners...]
-    PolyArea([r[begin:(end - 1)] for r in rings])
-  end
-end
-
-# helper function to read *.ply files containing meshes
-function readply(T, fname)
-  ply = load_ply(fname)
-  x = T.(ply["vertex"]["x"])
-  y = T.(ply["vertex"]["y"])
-  z = T.(ply["vertex"]["z"])
-  points = Point.(x, y, z)
-  connec = [connect(Tuple(c .+ 1)) for c in ply["face"]["vertex_indices"]]
-  SimpleMesh(points, connec)
-end
-
-point(coords...) = point(coords)
-point(coords::Tuple) = Point(T.(coords))
-
-vector(coords...) = vector(coords)
-vector(coords::Tuple) = Vec(T.(coords))
-
-cartgrid(dims...) = cartgrid(dims)
-function cartgrid(dims::Dims{Dim}) where {Dim}
-  origin = ntuple(i -> T(0.0), Dim)
-  spacing = ntuple(i -> T(1.0), Dim)
-  offset = ntuple(i -> 1, Dim)
-  CartesianGrid(dims, origin, spacing, offset)
-end
-
-randpoint1(n) = randpoint(1, n)
-randpoint2(n) = randpoint(2, n)
-randpoint3(n) = randpoint(3, n)
-randpoint(Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
-
 # dummy definitions
 include("dummy.jl")
+
+# helper functions
+include("testutils.jl")
+
+point(args...) = point(T, args...)
+
+vector(args...) = vector(T, args...)
+
+cartgrid(args...) = cartgrid(T, args...)
+
+randpoint1(n) = randpoint(T, 1, n)
+randpoint2(n) = randpoint(T, 2, n)
+randpoint3(n) = randpoint(T, 3, n)
 
 # list of tests
 testfiles = [
