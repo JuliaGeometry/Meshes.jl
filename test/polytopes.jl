@@ -108,6 +108,7 @@
     c = Rope(point(0, 0), point(1, 0), point(0, 1))
     equaltest(c)
     isapproxtest(c)
+
     c = Ring(point(0, 0), point(1, 0), point(0, 1))
     equaltest(c)
     isapproxtest(c)
