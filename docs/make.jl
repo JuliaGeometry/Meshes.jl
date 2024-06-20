@@ -4,10 +4,7 @@ prettyurls = get(ENV, "CI", nothing) == "true"
 
 makedocs(
   format=Documenter.HTML(
-    assets=[
-      "assets/favicon.ico",
-      asset("https://fonts.googleapis.com/css?family=Montserrat|Source+Code+Pro&display=swap", class=:css)
-    ],
+    assets=["assets/favicon.ico"],
     prettyurls=prettyurls,
     mathengine=KaTeX(
       Dict(
