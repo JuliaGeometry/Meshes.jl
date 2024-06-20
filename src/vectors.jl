@@ -51,7 +51,7 @@ Vec(coords::Number...) = Vec(coords)
 # StaticVector interface
 Base.Tuple(v::Vec) = getfield(v, :coords)
 Base.getindex(v::Vec, i::Int) = getindex(getfield(v, :coords), i)
-Base.promote_rule(::Type{Vec{Dim,ℒ₁}}, ::Type{Vec{Dim,ℒ₂}}) where {Dim,ℒ₁,ℒ₂} = Vec{Dim,promote_type(ℒ₁,ℒ₂)}
+Base.promote_rule(::Type{Vec{Dim,ℒ₁}}, ::Type{Vec{Dim,ℒ₂}}) where {Dim,ℒ₁,ℒ₂} = Vec{Dim,promote_type(ℒ₁, ℒ₂)}
 function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
