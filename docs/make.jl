@@ -2,9 +2,7 @@ using Documenter, Meshes
 
 makedocs(
   warnonly=[:missing_docs, :cross_references],
-  format=Documenter.HTML(
-    prettyurls=get(ENV, "CI", nothing) == "true",
-  ),
+  format=Documenter.HTML(prettyurls=get(ENV, "CI", nothing) == "true"),
   sitename="Meshes.jl",
   authors="Júlio Hoffimann and contributors",
   pages=[
