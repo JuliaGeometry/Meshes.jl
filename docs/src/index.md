@@ -13,8 +13,8 @@
 [Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl) provides efficient
 implementations of concepts from computational geometry. It promotes rigorous
 mathematical definitions of spatial discretizations (a.k.a. meshes) that are
-adequate for describing general manifolds embedded in $\R^n$, including surfaces
-described with spherical coordinates, and geometries described with multiple
+adequate for describing general manifolds embedded in $\mathbb{R}^3$, including
+surfaces described with spherical coordinates, and geometries described with multiple
 coordinate reference systems.
 
 Unlike other existing efforts in the Julia ecosystem, this project is being carefully

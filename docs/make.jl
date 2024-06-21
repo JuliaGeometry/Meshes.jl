@@ -1,27 +1,9 @@
 using Documenter, Meshes
 
-prettyurls = get(ENV, "CI", nothing) == "true"
-
 makedocs(
+  warnonly=[:missing_docs, :cross_references],
   format=Documenter.HTML(
-    prettyurls=prettyurls,
-    mathengine=KaTeX(
-      Dict(
-        :macros => Dict(
-          "\\x" => "\\boldsymbol{x}",
-          "\\z" => "\\boldsymbol{z}",
-          "\\l" => "\\boldsymbol{\\lambda}",
-          "\\c" => "\\boldsymbol{c}",
-          "\\C" => "\\boldsymbol{C}",
-          "\\g" => "\\boldsymbol{g}",
-          "\\G" => "\\boldsymbol{G}",
-          "\\f" => "\\boldsymbol{f}",
-          "\\F" => "\\boldsymbol{F}",
-          "\\R" => "\\mathbb{R}",
-          "\\1" => "\\mathbb{1}"
-        )
-      )
-    )
+    prettyurls=get(ENV, "CI", nothing) == "true",
   ),
   sitename="Meshes.jl",
   authors="Júlio Hoffimann and contributors",
