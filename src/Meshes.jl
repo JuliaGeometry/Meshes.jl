@@ -509,6 +509,7 @@ export
   LaplaceSmoothing,
   TaubinSmoothing,
   isaffine,
+  isinvertible,
   inverse,
 
   # miscellaneous

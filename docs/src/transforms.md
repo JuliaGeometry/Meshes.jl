@@ -14,11 +14,12 @@ GeometricTransform
 CoordinateTransform
 ```
 
-Inverse transforms that are `isinvertible` can be computed with the `inverse` function
-(reexported by Meshes.jl).
+Some transforms have an inverse that can be created with the [`inverse`](@ref) function.
+The function [`isinvertible`](@ref) can be used to check if a transform is invertible.
 
 ```@docs
 inverse
+isinvertible
 ```
 
 ## Rotate
