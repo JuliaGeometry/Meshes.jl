@@ -14,6 +14,14 @@ GeometricTransform
 CoordinateTransform
 ```
 
+Some transforms have an inverse that can be created with the [`inverse`](@ref) function.
+The function [`isinvertible`](@ref) can be used to check if a transform is invertible.
+
+```@docs
+inverse
+isinvertible
+```
+
 ## Rotate
 
 ```@docs
