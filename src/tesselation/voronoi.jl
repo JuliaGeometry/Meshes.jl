@@ -21,16 +21,18 @@ VoronoiTesselation(rng=Random.default_rng()) = VoronoiTesselation(rng)
 
 function tesselate(pset::PointSet, method::VoronoiTesselation)
   C = crs(pset)
+  T = numtype(lentype(pset))
   assertion(CoordRefSystems.ncoords(C) == 2, "the number of coordinates of the points must be 2")
 
   # perform tesselation with raw coordinates
-  cs = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
-  triang = triangulate(cs, rng=method.rng)
+  xy = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
+  triang = triangulate(xy, rng=method.rng)
   vorono = voronoi(triang, clip=true)
 
   # mesh with all (possibly unused) points
-  points = map(get_polygon_points(vorono)) do cs
-    Point(CoordRefSystems.reconstruct(C, cs))
+  points = map(get_polygon_points(vorono)) do xy
+    coords = CoordRefSystems.reconstruct(C, T.(xy))
+    Point(coords)
   end
   polygs = each_polygon(vorono)
   tuples = [Tuple(inds[begin:(end - 1)]) for inds in polygs]
