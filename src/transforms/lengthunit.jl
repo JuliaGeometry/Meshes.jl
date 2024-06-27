@@ -26,7 +26,7 @@ applycoord(t::LengthUnit, p::Point) = Point(_lenunit(coords(p), t.unit))
 
 function _lenunit(c::Cartesian, u)
   d = datum(c)
-  v = CoordRefSystems.cvalues(c)
+  v = CoordRefSystems.values(c)
   Cartesian{d}(uconvert.(u, v))
 end
 

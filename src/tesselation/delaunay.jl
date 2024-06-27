@@ -19,10 +19,12 @@ end
 
 DelaunayTesselation(rng=Random.default_rng()) = DelaunayTesselation(rng)
 
-function tesselate(pset::PointSet{2}, method::DelaunayTesselation)
+function tesselate(pset::PointSet, method::DelaunayTesselation)
+  assertion(CoordRefSystems.ncoords(crs(pset)) == 2, "points must have 2 coordinates")
+
   # perform tesselation with raw coordinates
-  coords = map(p -> ustrip.(to(p)), pset)
-  triang = triangulate(coords, rng=method.rng)
+  rawval = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
+  triang = triangulate(rawval, rng=method.rng)
   connec = connect.(each_solid_triangle(triang))
   SimpleMesh(collect(pset), connec)
 end
