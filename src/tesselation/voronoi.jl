@@ -19,20 +19,17 @@ end
 
 VoronoiTesselation(rng=Random.default_rng()) = VoronoiTesselation(rng)
 
-function tesselate(pset::PointSet{2}, method::VoronoiTesselation)
-  d = datum(crs(pset))
-  u = unit(lentype(pset))
+function tesselate(pset::PointSet, method::VoronoiTesselation)
+  C = crs(pset)
+  assertion(CoordRefSystems.ncoords(C) == 2, "the number of coordinates of the points must be 2")
 
   # perform tesselation with raw coordinates
-  coords = map(p -> ustrip.(to(p)), pset)
-  triang = triangulate(coords, rng=method.rng)
+  cs = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
+  triang = triangulate(cs, rng=method.rng)
   vorono = voronoi(triang, clip=true)
 
   # mesh with all (possibly unused) points
-  points = map(get_polygon_points(vorono)) do (x, y)
-    coords = Cartesian{d}(x * u, y * u)
-    Point(coords)
-  end
+  points = map(cs -> Point(CoordRefSystems.reconstruct(C, cs)), get_polygon_points(vorono))
   polygs = each_polygon(vorono)
   tuples = [Tuple(inds[begin:(end - 1)]) for inds in polygs]
   connec = connect.(tuples)
