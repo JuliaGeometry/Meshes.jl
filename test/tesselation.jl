@@ -6,12 +6,21 @@
     mesh2 = tesselate(pset, DelaunayTesselation(StableRNG(2024)))
     @test mesh1 == mesh2
 
-    # datum and unit propagation
+    # CRS propagation
     tuples = [(rand(T) * u"km", rand(T) * u"km") for _ in 1:10]
     pset = PointSet(Point.(Cartesian{WGS84Latest}.(tuples)))
     mesh = tesselate(pset, DelaunayTesselation(StableRNG(2024)))
-    @test datum(Meshes.crs(mesh)) === WGS84Latest
-    @test unit(Meshes.lentype(mesh)) == u"km"
+    @test Meshes.crs(mesh) === Meshes.crs(pset)
+
+    coords = [LatLon(rand(-90:T(0.1):90), rand(-180:T(0.1):180)) for _ in 1:10]
+    pset = PointSet(Point.(coords))
+    mesh = tesselate(pset, DelaunayTesselation(StableRNG(2024)))
+    @test Meshes.crs(mesh) === Meshes.crs(pset)
+
+    # error: the number of coordinates of the points must be 2
+    pts = randpoint3(10)
+    pset = PointSet(pts)
+    @test_throws AssertionError tesselate(pset, DelaunayTesselation(StableRNG(2024)))
   end
 
   @testset "Voronoi" begin
@@ -21,11 +30,20 @@
     mesh2 = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
     @test mesh1 == mesh2
 
-    # datum and unit propagation
+    # CRS propagation
     tuples = [(rand(T) * u"km", rand(T) * u"km") for _ in 1:10]
     pset = PointSet(Point.(Cartesian{WGS84Latest}.(tuples)))
     mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
-    @test datum(Meshes.crs(mesh)) === WGS84Latest
-    @test unit(Meshes.lentype(mesh)) == u"km"
+    @test Meshes.crs(mesh) === Meshes.crs(pset)
+
+    coords = [LatLon(rand(-90:T(0.1):90), rand(-180:T(0.1):180)) for _ in 1:10]
+    pset = PointSet(Point.(coords))
+    mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
+    @test Meshes.crs(mesh) === Meshes.crs(pset)
+
+    # error: the number of coordinates of the points must be 2
+    pts = randpoint3(10)
+    pset = PointSet(pts)
+    @test_throws AssertionError tesselate(pset, VoronoiTesselation(StableRNG(2024)))
   end
 end

@@ -65,7 +65,7 @@ coords(A::Point) = A.coords
 
 Return the vector from the origin to the `point`.
 """
-to(A::Point) = Vec(CoordRefSystems.cvalues(convert(Cartesian, A.coords)))
+to(A::Point) = Vec(CoordRefSystems.values(convert(Cartesian, A.coords)))
 
 """
     -(A::Point, B::Point)
@@ -139,9 +139,9 @@ function Base.show(io::IO, point::Point)
   else
     print(io, "Point(")
   end
-  cvalues = CoordRefSystems.cvalues(point.coords)
-  cnames = CoordRefSystems.cnames(point.coords)
-  printfields(io, cvalues, cnames, singleline=true)
+  values = CoordRefSystems.values(point.coords)
+  names = CoordRefSystems.names(point.coords)
+  printfields(io, values, names, singleline=true)
   print(io, ")")
 end
 
