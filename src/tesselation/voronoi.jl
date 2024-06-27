@@ -22,7 +22,7 @@ VoronoiTesselation(rng=Random.default_rng()) = VoronoiTesselation(rng)
 function tesselate(pset::PointSet, method::VoronoiTesselation)
   C = crs(pset)
   T = numtype(lentype(pset))
-  assertion(CoordRefSystems.ncoords(C) == 2, "the number of coordinates of the points must be 2")
+  assertion(CoordRefSystems.ncoords(C) == 2, "points must have 2 coordinates")
 
   # perform tesselation with raw coordinates
   rawval = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)

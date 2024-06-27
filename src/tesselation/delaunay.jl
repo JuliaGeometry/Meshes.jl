@@ -20,7 +20,7 @@ end
 DelaunayTesselation(rng=Random.default_rng()) = DelaunayTesselation(rng)
 
 function tesselate(pset::PointSet, method::DelaunayTesselation)
-  assertion(CoordRefSystems.ncoords(crs(pset)) == 2, "the number of coordinates of the points must be 2")
+  assertion(CoordRefSystems.ncoords(crs(pset)) == 2, "points must have 2 coordinates")
 
   # perform tesselation with raw coordinates
   rawval = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
