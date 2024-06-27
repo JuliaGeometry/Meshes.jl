@@ -25,8 +25,8 @@ function tesselate(pset::PointSet, method::VoronoiTesselation)
   assertion(CoordRefSystems.ncoords(C) == 2, "the number of coordinates of the points must be 2")
 
   # perform tesselation with raw coordinates
-  xy = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
-  triang = triangulate(xy, rng=method.rng)
+  rawval = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
+  triang = triangulate(rawval, rng=method.rng)
   vorono = voronoi(triang, clip=true)
 
   # mesh with all (possibly unused) points

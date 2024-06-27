@@ -23,8 +23,8 @@ function tesselate(pset::PointSet, method::DelaunayTesselation)
   assertion(CoordRefSystems.ncoords(crs(pset)) == 2, "the number of coordinates of the points must be 2")
 
   # perform tesselation with raw coordinates
-  xy = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
-  triang = triangulate(xy, rng=method.rng)
+  rawval = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
+  triang = triangulate(rawval, rng=method.rng)
   connec = connect.(each_solid_triangle(triang))
   SimpleMesh(collect(pset), connec)
 end
