@@ -29,7 +29,9 @@ function tesselate(pset::PointSet, method::VoronoiTesselation)
   vorono = voronoi(triang, clip=true)
 
   # mesh with all (possibly unused) points
-  points = map(cs -> Point(CoordRefSystems.reconstruct(C, cs)), get_polygon_points(vorono))
+  points = map(get_polygon_points(vorono)) do cs
+    Point(CoordRefSystems.reconstruct(C, cs))
+  end
   polygs = each_polygon(vorono)
   tuples = [Tuple(inds[begin:(end - 1)]) for inds in polygs]
   connec = connect.(tuples)
