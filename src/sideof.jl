@@ -50,7 +50,7 @@ end
 Determines on which side the `point` is in relation to the `ring`.
 Possible results are `IN` or `OUT` the `ring`.
 """
-sideof(point::Point{2}, ring::Ring{2}) = ifelse(isapproxzero(winding(point, ring)), OUT, IN)
+sideof(point::Point, ring::Ring) = ifelse(isapproxzero(winding(point, ring)), OUT, IN)
 
 # -----
 # MESH
