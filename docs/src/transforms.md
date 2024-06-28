@@ -2,6 +2,7 @@
 
 ```@example transforms
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -126,6 +127,19 @@ fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
 viz(fig[1,2], mesh)
 fig
+```
+
+## FlatCoords
+
+```@docs
+FlatCoords
+```
+
+```@example transforms
+point = Point(LatLon(30, 60))
+triangle = Triangle(Point(LatLon(30, 60)), Point(LatLon(30, 61)), Point(LatLon(31, 60)))
+
+[point, triangle] |> FlatCoords()
 ```
 
 ## Proj
