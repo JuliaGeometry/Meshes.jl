@@ -18,31 +18,27 @@ Generalized winding number of `points` with respect to the geometric `object`.
 """
 function winding end
 
-function winding(points, ring::Ring{2,<:Cartesian})
-  v = vertices(ring)
-  n = nvertices(ring)
+function winding(points, ring::Ring)
+  assertion(
+    CoordRefSystems.ncoords(crs(eltype(points))) == 2 && CoordRefSystems.ncoords(crs(ring)) == 2,
+    "points must have 2 coordinates"
+  )
+
+  r = ascart2(ring)
+  pts = map(ascart2, points)
+
+  v = vertices(r)
+  n = nvertices(r)
 
   function w(p)
     ∑ = sum(∠(v[i], p, v[i + 1]) for i in 1:n)
     ∑ / oftype(∑, 2π)
   end
 
-  tcollect(w(p) for p in points)
-end
-
-function winding(points, ring::Ring)
-  assertion(
-    CoordRefSystems.ncoords(crs(eltype(points))) == 2 && CoordRefSystems.ncoords(crs(ring)) == 2,
-    "points must have 2 coordinates"
-  )
-  winding(_ascart(points), _ascart(ring))
+  tcollect(w(p) for p in pts)
 end
 
 winding(point::Point, ring::Ring) = winding((point,), ring) |> first
-
-_ascart(point::Point) = Point(CoordRefSystems.rawvalues(coords(point)))
-_ascart(ring::Ring) = Ring(_ascart(vertices(ring)))
-_ascart(points) = map(_ascart, points) 
 
 # Jacobson et al 2013.
 function winding(points, mesh::Mesh{3})
