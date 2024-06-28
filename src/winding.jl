@@ -19,11 +19,6 @@ Generalized winding number of `points` with respect to the geometric `object`.
 function winding end
 
 function winding(points, ring::Ring)
-  assertion(
-    CoordRefSystems.ncoords(crs(eltype(points))) == 2 && CoordRefSystems.ncoords(crs(ring)) == 2,
-    "points must have 2 coordinates"
-  )
-
   r = ascart2(ring)
   pts = map(ascart2, points)
 

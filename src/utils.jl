@@ -213,6 +213,7 @@ urotbetween(u::Vec, v::Vec) = rotation_between(ustrip.(u), ustrip.(v))
 
 urotapply(R::Rotation, v::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(R * ustrip.(v) * unit(ℒ))
 
+ascart2(::CRS) = throw(ArgumentError("points must have 2 coordinates"))
 ascart2(coords::Cartesian{Datum,2}) where {Datum} = coords
 ascart2(coords::Polar) = convert(Cartesian, coords)
 ascart2(coords::LatLon) = Cartesian{datum(coords)}(CoordRefSystems.rawvalues(coords))
