@@ -2,6 +2,7 @@
 
 ```@example transforms
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
