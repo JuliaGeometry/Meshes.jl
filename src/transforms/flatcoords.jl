@@ -5,7 +5,7 @@
 """
     FlatCoords()
 
-Convert the coordinates of a geometry or domain to Cartesian2D when possible.
+Flatten the coordinates of a geometry or domain to 2D Cartesian coordinates when possible.
 """
 struct FlatCoords <: CoordinateTransform end
 
