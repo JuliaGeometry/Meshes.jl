@@ -13,7 +13,7 @@ applycoord(::FlatCoords, v::Vec) = v
 
 applycoord(::FlatCoords, p::Point) = Point(_flatcoords(coords(p)))
 
-function _flatcoords(coords::CRS) 
+function _flatcoords(coords::CRS)
   if CoordRefSystems.ncoords(coords) ≠ 2
     throw(ArgumentError("points must have 2 coordinates"))
   end
