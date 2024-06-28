@@ -212,23 +212,3 @@ ucross(a::Vec{Dim,ℒ}, b::Vec{Dim,ℒ}, c::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(
 urotbetween(u::Vec, v::Vec) = rotation_between(ustrip.(u), ustrip.(v))
 
 urotapply(R::Rotation, v::Vec{Dim,ℒ}) where {Dim,ℒ} = Vec(R * ustrip.(v) * unit(ℒ))
-
-ascart2(::CRS) = throw(ArgumentError("points must have 2 coordinates"))
-ascart2(coords::Cartesian{Datum,2}) where {Datum} = coords
-ascart2(coords::Polar) = convert(Cartesian, coords)
-ascart2(coords::LatLon) = Cartesian{datum(coords)}(CoordRefSystems.rawvalues(coords))
-ascart2(coords::GeocentricLatLon) = Cartesian{datum(coords)}(CoordRefSystems.rawvalues(coords))
-ascart2(coords::AuthalicLatLon) = Cartesian{datum(coords)}(CoordRefSystems.rawvalues(coords))
-ascart2(coords::CoordRefSystems.Projected) = convert(Cartesian, coords)
-
-ascart2(x) = x
-ascart2(p::Point) = Point(ascart2(coords(p)))
-ascart2(geoms::NTuple{Dim,<:Geometry}) where {Dim} = map(ascart2, geoms)
-ascart2(geoms::AbstractVector{<:Geometry}) = tcollect(ascart2(g) for g in geoms)
-ascart2(geoms::CircularVector{<:Geometry}) = CircularVector(tcollect(ascart2(g) for g in geoms))
-@generated function ascart2(g::G) where {G<:GeometryOrDomain}
-  ctor = Meshes.constructor(G)
-  names = fieldnames(G)
-  exprs = (:(ascart2(g.$name)) for name in names)
-  :($ctor($(exprs...)))
-end

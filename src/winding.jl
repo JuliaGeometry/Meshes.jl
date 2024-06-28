@@ -19,8 +19,8 @@ Generalized winding number of `points` with respect to the geometric `object`.
 function winding end
 
 function winding(points, ring::Ring)
-  r = ascart2(ring)
-  pts = map(ascart2, points)
+  ps = map(FlatCoords(), points)
+  r = ring |> FlatCoords()
 
   v = vertices(r)
   n = nvertices(r)
@@ -30,7 +30,7 @@ function winding(points, ring::Ring)
     ∑ / oftype(∑, 2π)
   end
 
-  tcollect(w(p) for p in pts)
+  tcollect(w(p) for p in ps)
 end
 
 winding(point::Point, ring::Ring) = winding((point,), ring) |> first
