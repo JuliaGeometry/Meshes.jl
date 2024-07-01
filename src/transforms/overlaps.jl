@@ -3,40 +3,40 @@
 # ------------------------------------------------------------------
 
 """
-    Within(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
+    Overlaps(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
 
-Retain the domain geometries that are within `x` limits [`xmax`,`xmax`],
+Retain the domain geometries that overlap with `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
 (default to meters).
 
 ## Examples
 
 ```julia
-Within(x=(2, 4))
-Within(x=(1u"km", 3u"km"))
-Within(y=(1.2, 1.8), z=(2.4, 3.0))
+Overlaps(x=(2, 4))
+Overlaps(x=(1u"km", 3u"km"))
+Overlaps(y=(1.2, 1.8), z=(2.4, 3.0))
 ```
 """
-struct Within{X,Y,Z} <: GeometricTransform
+struct Overlaps{X,Y,Z} <: GeometricTransform
   x::X
   y::Y
   z::Z
 end
 
-Within(; x=nothing, y=nothing, z=nothing) =
-  Within(isnothing(x) ? x : _aslen.(x), isnothing(y) ? y : _aslen.(y), isnothing(z) ? z : _aslen.(z))
+Overlaps(; x=nothing, y=nothing, z=nothing) =
+  Overlaps(isnothing(x) ? x : _aslen.(x), isnothing(y) ? y : _aslen.(y), isnothing(z) ? z : _aslen.(z))
 
-parameters(t::Within) = (; x=t.x, y=t.y, z=t.z)
+parameters(t::Overlaps) = (; x=t.x, y=t.y, z=t.z)
 
-function preprocess(t::Within, d::Domain)
+function preprocess(t::Overlaps, d::Domain)
   bbox = boundingbox(d)
-  bbox₁ = _within(1, t.x, bbox)
-  bbox₂ = _within(2, t.y, bbox₁)
-  bbox₃ = _within(3, t.z, bbox₂)
+  bbox₁ = _overlaps(1, t.x, bbox)
+  bbox₂ = _overlaps(2, t.y, bbox₁)
+  bbox₃ = _overlaps(3, t.z, bbox₂)
   indices(d, bbox₃)
 end
 
-function apply(t::Within, d::Domain)
+function apply(t::Overlaps, d::Domain)
   inds = preprocess(t, d)
   n = view(d, inds)
   n, nothing
@@ -46,7 +46,7 @@ _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"
 _aslen(x::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
 
-function _within(dim, lims, bbox)
+function _overlaps(dim, lims, bbox)
   Dim = embeddim(bbox)
   if Dim < dim || isnothing(lims)
     bbox

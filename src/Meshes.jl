@@ -518,7 +518,7 @@ export
   Proj,
   LengthUnit,
   Shadow,
-  Within,
+  Overlaps,
   Repair,
   Bridge,
   LambdaMuSmoothing,
