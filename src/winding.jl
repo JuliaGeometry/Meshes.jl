@@ -18,19 +18,28 @@ Generalized winding number of `points` with respect to the geometric `object`.
 """
 function winding end
 
-function winding(points, ring::Ring)
-  ps = map(FlatCoords(), points)
-  r = ring |> FlatCoords()
+winding(points, ring::Ring) = _winding(_coords(points, ring), points, ring)
 
-  v = vertices(r)
-  n = nvertices(r)
+function _winding(::Cartesian{Datum,2}, points, ring) where {Datum}
+  v = vertices(ring)
+  n = nvertices(ring)
 
   function w(p)
     ∑ = sum(∠(v[i], p, v[i + 1]) for i in 1:n)
     ∑ / oftype(∑, 2π)
   end
 
-  tcollect(w(p) for p in ps)
+  tcollect(w(p) for p in points)
+end
+
+_winding(::CRS, points, ring) = winding(map(FlatCoords(), points), ring |> FlatCoords())
+
+function _coords(points, ring)
+  p = first(points)
+  if crs(p) !== crs(ring)
+    throw(ArgumentError("both arguments must have the same CRS"))
+  end
+  coords(p)
 end
 
 winding(point::Point, ring::Ring) = winding((point,), ring) |> first
