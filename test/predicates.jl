@@ -165,6 +165,19 @@
     @test point(0.5, 0.5, 0.5) ∈ h
     @test point(-1, 0, 0) ∉ h
     @test point(0, 2, 0) ∉ h
+
+    outer = Point.([LatLon(T(0), T(0)), LatLon(T(1), T(0)), LatLon(T(1), T(1)), LatLon(T(0), T(1))])
+    hole1 = Point.([LatLon(T(0.2), T(0.2)), LatLon(T(0.4), T(0.2)), LatLon(T(0.4), T(0.4)), LatLon(T(0.2), T(0.4))])
+    hole2 = Point.([LatLon(T(0.6), T(0.2)), LatLon(T(0.8), T(0.2)), LatLon(T(0.8), T(0.4)), LatLon(T(0.6), T(0.4))])
+    poly = PolyArea([outer, hole1, hole2])
+    @test all(p ∈ poly for p in outer)
+    @test Point(LatLon(T(0.5), T(0.5))) ∈ poly
+    @test Point(LatLon(T(0.2), T(0.6))) ∈ poly
+    @test Point(LatLon(T(1.5), T(0.5))) ∉ poly
+    @test Point(LatLon(T(-0.5), T(0.5))) ∉ poly
+    @test Point(LatLon(T(0.25), T(0.25))) ∉ poly
+    @test Point(LatLon(T(0.75), T(0.25))) ∉ poly
+    @test Point(LatLon(T(0.75), T(0.75))) ∈ poly
   end
 
   @testset "issubset" begin

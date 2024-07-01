@@ -15,6 +15,14 @@
   pts = [p1, p2, p3]
   @test sideof(pts, c) == [IN, OUT, IN]
 
+  p1, p2, p3 = Point(LatLon(T(0.5), T(0.5))), Point(LatLon(T(1.5), T(0.5))), Point(LatLon(T(1), T(1)))
+  c = Ring(Point.([LatLon(T(0), T(0)), LatLon(T(1), T(0)), LatLon(T(1), T(1)), LatLon(T(0), T(1))]))
+  @test sideof(p1, c) == IN
+  @test sideof(p2, c) == OUT
+  @test sideof(p3, c) == IN
+  pts = [p1, p2, p3]
+  @test sideof(pts, c) == [IN, OUT, IN]
+
   points = point.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, 0.25, 1)])
   connec = connect.([(1, 3, 2), (1, 2, 4), (1, 4, 3), (2, 3, 4)], Triangle)
   mesh = SimpleMesh(points, connec)
