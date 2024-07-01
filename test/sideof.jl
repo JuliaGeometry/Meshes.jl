@@ -15,8 +15,8 @@
   pts = [p1, p2, p3]
   @test sideof(pts, c) == [IN, OUT, IN]
 
-  p1, p2, p3 = Point(LatLon(T(0.5), T(0.5))), Point(LatLon(T(1.5), T(0.5))), Point(LatLon(T(1), T(1)))
-  c = Ring(Point.([LatLon(T(0), T(0)), LatLon(T(1), T(0)), LatLon(T(1), T(1)), LatLon(T(0), T(1))]))
+  p1, p2, p3 = latlon(0.5, 0.5), latlon(1.5, 0.5), latlon(1, 1)
+  c = Ring([latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)])
   @test sideof(p1, c) == IN
   @test sideof(p2, c) == OUT
   @test sideof(p3, c) == IN

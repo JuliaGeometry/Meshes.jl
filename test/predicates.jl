@@ -166,18 +166,18 @@
     @test cart(-1, 0, 0) ∉ h
     @test cart(0, 2, 0) ∉ h
 
-    outer = Point.([LatLon(T(0), T(0)), LatLon(T(1), T(0)), LatLon(T(1), T(1)), LatLon(T(0), T(1))])
-    hole1 = Point.([LatLon(T(0.2), T(0.2)), LatLon(T(0.4), T(0.2)), LatLon(T(0.4), T(0.4)), LatLon(T(0.2), T(0.4))])
-    hole2 = Point.([LatLon(T(0.6), T(0.2)), LatLon(T(0.8), T(0.2)), LatLon(T(0.8), T(0.4)), LatLon(T(0.6), T(0.4))])
+    outer = [latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)]
+    hole1 = [latlon(0.2, 0.2), latlon(0.4, 0.2), latlon(0.4, 0.4), latlon(0.2, 0.4)]
+    hole2 = [latlon(0.6, 0.2), latlon(0.8, 0.2), latlon(0.8, 0.4), latlon(0.6, 0.4)]
     poly = PolyArea([outer, hole1, hole2])
     @test all(p ∈ poly for p in outer)
-    @test Point(LatLon(T(0.5), T(0.5))) ∈ poly
-    @test Point(LatLon(T(0.2), T(0.6))) ∈ poly
-    @test Point(LatLon(T(1.5), T(0.5))) ∉ poly
-    @test Point(LatLon(T(-0.5), T(0.5))) ∉ poly
-    @test Point(LatLon(T(0.25), T(0.25))) ∉ poly
-    @test Point(LatLon(T(0.75), T(0.25))) ∉ poly
-    @test Point(LatLon(T(0.75), T(0.75))) ∈ poly
+    @test latlon(0.5, 0.5) ∈ poly
+    @test latlon(0.2, 0.6) ∈ poly
+    @test latlon(1.5, 0.5) ∉ poly
+    @test latlon(-0.5, 0.5) ∉ poly
+    @test latlon(0.25, 0.25) ∉ poly
+    @test latlon(0.75, 0.25) ∉ poly
+    @test latlon(0.75, 0.75) ∈ poly
   end
 
   @testset "issubset" begin

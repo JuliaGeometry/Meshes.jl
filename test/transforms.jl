@@ -1133,7 +1133,7 @@
     @test r ≈ cart(1, 1)
 
     f = FlatCoords()
-    g = Point(LatLon(T(30), T(60)))
+    g = latlon(30, 60)
     r, c = TB.apply(f, g)
     @test r == Point(Cartesian{WGS84Latest}(T(30), T(60)))
 
