@@ -5,11 +5,9 @@
 """
     Within(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
 
-Retain the domain geometries that are within x bounds [`xmax`,`xmax`],
-y bounds [`ymax`,`ymax`] and z bounds [`zmin`,`zmax`],
-all in length units (default to meters).
-
-All bounds are optional and only applicable bounds will be used.
+Retain the domain geometries that are within `x` limits [`xmax`,`xmax`],
+`y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
+(default to meters).
 
 ## Examples
 
