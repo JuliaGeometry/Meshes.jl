@@ -28,6 +28,8 @@ end
 Within(; x=nothing, y=nothing, z=nothing) =
   Within(isnothing(x) ? x : _aslen.(x), isnothing(y) ? y : _aslen.(y), isnothing(z) ? z : _aslen.(z))
 
+parameters(t::Within) = (; x=t.x, y=t.y, z=t.z)
+
 function preprocess(t::Within, d::Domain)
   bbox = boundingbox(d)
   bbox₁ = _within(1, t.x, bbox)
@@ -42,8 +44,8 @@ function apply(t::Within, d::Domain)
   n, nothing
 end
 
-_aslen(x::Len) = x
-_aslen(x::Number) = x * u"m"
+_aslen(x::Len) = float(x)
+_aslen(x::Number) = float(x) * u"m"
 _aslen(x::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
 
 function _within(dim, bound, bbox)
