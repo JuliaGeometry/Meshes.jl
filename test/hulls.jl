@@ -156,8 +156,7 @@
     b1 = Box(cart(0, 0), cart(1, 1))
     b2 = Box(cart(-1, -1), cart(0.5, 0.5))
     @test convexhull(Multi([b1, b2])) == PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
-    @test convexhull(GeometrySet([b1, b2])) ==
-          PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+    @test convexhull(GeometrySet([b1, b2])) == PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
 
     b1 = Ball(cart(0, 0), T(1))
     b2 = Box(cart(-1, -1), cart(0, 0))

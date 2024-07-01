@@ -8,23 +8,13 @@
     @test all(vertices(clipped) .≈ [cart(5, 3), cart(4, 4), cart(2, 4), cart(0, 2), cart(5, 2)])
 
     # octagon
-    poly =
-      Octagon(cart(8, -2), cart(8, 5), cart(2, 5), cart(4, 3), cart(6, 3), cart(4, 1), cart(2, 1), cart(2, -2))
+    poly = Octagon(cart(8, -2), cart(8, 5), cart(2, 5), cart(4, 3), cart(6, 3), cart(4, 1), cart(2, 1), cart(2, -2))
     other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
     clipped = clip(poly, other, SutherlandHodgman())
     @test !issimple(clipped)
     @test all(
-      vertices(clipped) .≈ [
-        cart(3, 4),
-        cart(4, 3),
-        cart(5, 3),
-        cart(5, 2),
-        cart(4, 1),
-        cart(2, 1),
-        cart(2, 0),
-        cart(5, 0),
-        cart(5, 4)
-      ]
+      vertices(clipped) .≈
+      [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0), cart(5, 4)]
     )
 
     # inside
@@ -48,8 +38,7 @@
     @test all(vertices(clipped) .≈ vertices(other))
 
     # PolyArea with box
-    outer =
-      Ring(cart(8, 0), cart(4, 8), cart(2, 8), cart(-2, 0), cart(0, 0), cart(1, 2), cart(5, 2), cart(6, 0))
+    outer = Ring(cart(8, 0), cart(4, 8), cart(2, 8), cart(-2, 0), cart(0, 0), cart(1, 2), cart(5, 2), cart(6, 0))
     inner = Ring(cart(4, 4), cart(2, 4), cart(3, 6))
     poly = PolyArea([outer, inner])
     other = Box(cart(0, 1), cart(3, 7))
@@ -57,15 +46,8 @@
     crings = rings(clipped)
     @test !issimple(clipped)
     @test all(
-      vertices(crings[1]) .≈ [
-        cart(1.5, 7.0),
-        cart(0.0, 4.0),
-        cart(0.0, 1.0),
-        cart(0.5, 1.0),
-        cart(1.0, 2.0),
-        cart(3.0, 2.0),
-        cart(3.0, 7.0)
-      ]
+      vertices(crings[1]) .≈
+      [cart(1.5, 7.0), cart(0.0, 4.0), cart(0.0, 1.0), cart(0.5, 1.0), cart(1.0, 2.0), cart(3.0, 2.0), cart(3.0, 7.0)]
     )
     @test all(vertices(crings[2]) .≈ [cart(3.0, 4.0), cart(2.0, 4.0), cart(3.0, 6.0)])
 
