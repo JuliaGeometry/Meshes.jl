@@ -44,7 +44,7 @@ end
 
 _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"
-_aslen(x::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
+_aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
 
 function _overlaps(dim, lims, bbox)
   Dim = embeddim(bbox)
