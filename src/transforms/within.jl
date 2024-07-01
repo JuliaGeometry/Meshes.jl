@@ -25,11 +25,8 @@ struct Within{X,Y,Z} <: GeometricTransform
   z::Z
 end
 
-Within(; x=nothing, y=nothing, z=nothing) = Within(
-  isnothing(x) ? x : _aslen.(x, u"m"),
-  isnothing(y) ? y : _aslen.(y, u"m"),
-  isnothing(z) ? z : _aslen.(z, u"m")
-)
+Within(; x=nothing, y=nothing, z=nothing) =
+  Within(isnothing(x) ? x : _aslen.(x), isnothing(y) ? y : _aslen.(y), isnothing(z) ? z : _aslen.(z))
 
 function preprocess(t::Within, d::Domain)
   bbox = boundingbox(d)

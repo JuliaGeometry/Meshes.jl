@@ -264,3 +264,19 @@ viz(fig[1,1], mesh)
 viz(fig[2,1], smesh)
 fig
 ```
+
+## Within
+
+```@docs
+Within
+```
+
+```@example transforms
+grid = CartesianGrid(10, 10)
+subgrid = grid |> Within(x=(1.5, 6.5), y=(3.5, 8.5))
+
+fig = Mke.Figure(size = (800, 400))
+viz(fig[1,1], grid, color=1:nelements(grid))
+viz(fig[1,2], subgrid, color=1:nelements(subgrid))
+fig
+```
