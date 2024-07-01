@@ -46,16 +46,16 @@ _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"
 _aslen(x::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
 
-function _within(dim, bound, bbox)
+function _within(dim, lims, bbox)
   Dim = embeddim(bbox)
-  if Dim < dim || isnothing(bound)
+  if Dim < dim || isnothing(lims)
     bbox
   else
-    bmin, bmax = bound
+    lmin, lmax = lims
     min = to(minimum(bbox))
     max = to(maximum(bbox))
-    nmin = Vec(ntuple(i -> i == dim ? bmin : min[i], Dim))
-    nmax = Vec(ntuple(i -> i == dim ? bmax : max[i], Dim))
+    nmin = Vec(ntuple(i -> i == dim ? lmin : min[i], Dim))
+    nmax = Vec(ntuple(i -> i == dim ? lmax : max[i], Dim))
     Box(withdatum(bbox, nmin), withdatum(bbox, nmax))
   end
 end
