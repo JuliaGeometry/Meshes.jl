@@ -37,9 +37,9 @@ vector(args...) = vector(T, args...)
 
 cartgrid(args...) = cartgrid(T, args...)
 
-randpoint1(n) = randpoint(T, 1, n)
-randpoint2(n) = randpoint(T, 2, n)
-randpoint3(n) = randpoint(T, 3, n)
+randpoint1(n) = randcart(T, 1, n)
+randpoint2(n) = randcart(T, 2, n)
+randpoint3(n) = randcart(T, 3, n)
 
 # list of tests
 testfiles = [

@@ -55,7 +55,7 @@ function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-randpoint(T, Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
+randcart(T, Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
 
 numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
 
