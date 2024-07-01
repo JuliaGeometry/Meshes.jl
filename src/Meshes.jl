@@ -42,7 +42,7 @@ import NearestNeighbors: MinkowskiMetric
 import TransformsBase: Transform, →
 import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
-import TransformsBase: parameters
+import TransformsBase: parameters, preprocess
 
 # CoordRefSystems API
 import CoordRefSystems: lentype
@@ -523,6 +523,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  Within,
   isaffine,
   isinvertible,
   inverse,
