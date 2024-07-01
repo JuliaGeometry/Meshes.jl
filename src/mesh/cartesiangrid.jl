@@ -123,11 +123,11 @@ end
 
 CartesianGrid(dims::Int...) = CartesianGrid(dims)
 
-vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
-
 spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid) = g.offset
+
+vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 
 function xyz(g::CartesianGrid{Dim}) where {Dim}
   dims = size(g)
