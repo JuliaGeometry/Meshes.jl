@@ -18,9 +18,16 @@ Generalized winding number of `points` with respect to the geometric `object`.
 """
 function winding end
 
+# ------
+# RINGS
+# ------
+
 winding(points, ring::Ring) = _winding(_coords(points, ring), points, ring)
 
-function _winding(::Cartesian{Datum,2}, points, ring) where {Datum}
+winding(point::Point, ring::Ring) = winding((point,), ring) |> first
+
+# Cartesian coordinates are easy
+function _winding(::Cartesian, points, ring)
   v = vertices(ring)
   n = nvertices(ring)
 
@@ -32,17 +39,25 @@ function _winding(::Cartesian{Datum,2}, points, ring) where {Datum}
   tcollect(w(p) for p in points)
 end
 
-_winding(::CRS, points, ring) = winding(map(FlatCoords(), points), ring |> FlatCoords())
+# flatten CRS to Cartesian in general case
+function _winding(::CRS, points, ring)
+  flat = FlatCoords()
+  fpts = map(flat, points)
+  fring = ring |> flat
+  winding(fpts, fring)
+end
 
 function _coords(points, ring)
   p = first(points)
   if crs(p) !== crs(ring)
-    throw(ArgumentError("both arguments must have the same CRS"))
+    throw(ArgumentError("arguments must have the same CRS"))
   end
   coords(p)
 end
 
-winding(point::Point, ring::Ring) = winding((point,), ring) |> first
+# -------
+# MESHES
+# -------
 
 # Jacobson et al 2013.
 function winding(points, mesh::Mesh{3})
