@@ -254,8 +254,7 @@
       cart(0, 1, 1)
     )
     ps = sample(h, RegularSampling(2, 2, 2))
-    @test collect(ps) ==
-          cart.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0), (0, 0, 1), (1, 0, 1), (0, 1, 1), (1, 1, 1)])
+    @test collect(ps) == cart.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0), (0, 0, 1), (1, 0, 1), (0, 1, 1), (1, 1, 1)])
     ps = sample(h, RegularSampling(3, 2, 2))
     @test collect(ps) ==
           cart.([
