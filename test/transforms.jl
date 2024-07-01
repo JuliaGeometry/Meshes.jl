@@ -1946,10 +1946,10 @@
     # CARTESIANGRID
     # --------------
 
-    f = Within(x=(T(1.5), T(4.5)))
+    f = Within(z=(T(1.5), T(4.5)))
     d = cartgrid(10, 10, 10)
     r, c = TB.apply(f, d)
-    @test r == CartesianGrid((4, 10, 10), cart(1, 0, 0), T.((1, 1, 1)))
+    @test r == CartesianGrid((10, 10, 4), cart(0, 0, 1), T.((1, 1, 1)))
 
     # ----------------
     # RECTILINEARGRID
