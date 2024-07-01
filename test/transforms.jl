@@ -23,9 +23,9 @@
     # ------
 
     f = Rotate(Angle2d(T(π / 2)))
-    g = point(1, 0)
+    g = cart(1, 0)
     r, c = TB.apply(f, g)
-    @test r ≈ point(0, 1)
+    @test r ≈ cart(0, 1)
     @test TB.revert(f, r, c) ≈ g
 
     # --------
@@ -33,9 +33,9 @@
     # --------
 
     f = Rotate(Angle2d(T(π / 2)))
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(0, 0), point(0, 1))
+    @test r ≈ Segment(cart(0, 0), cart(0, 1))
     @test TB.revert(f, r, c) ≈ g
 
     # ----
@@ -43,27 +43,27 @@
     # ----
 
     f = Rotate(Angle2d(T(π / 2)))
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Quadrangle
-    @test r ≈ Quadrangle(point(0, 0), point(0, 1), point(-1, 1), point(-1, 0))
+    @test r ≈ Quadrangle(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
     q = TB.revert(f, r, c)
     @test q isa Quadrangle
     @test q ≈ convert(Quadrangle, g)
 
     f = Rotate(vector(1, 0, 0), vector(0, 1, 0))
-    g = Box(point(0, 0, 0), point(1, 1, 1))
+    g = Box(cart(0, 0, 0), cart(1, 1, 1))
     r, c = TB.apply(f, g)
     @test r isa Hexahedron
     @test r ≈ Hexahedron(
-      point(0, 0, 0),
-      point(0, 1, 0),
-      point(-1, 1, 0),
-      point(-1, 0, 0),
-      point(0, 0, 1),
-      point(0, 1, 1),
-      point(-1, 1, 1),
-      point(-1, 0, 1)
+      cart(0, 0, 0),
+      cart(0, 1, 0),
+      cart(-1, 1, 0),
+      cart(-1, 0, 0),
+      cart(0, 0, 1),
+      cart(0, 1, 1),
+      cart(-1, 1, 1),
+      cart(-1, 0, 1)
     )
     h = TB.revert(f, r, c)
     @test h isa Hexahedron
@@ -74,15 +74,15 @@
     # ----------
 
     f = Rotate(Angle2d(T(π / 2)))
-    g = Rope(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    g = Rope(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Rope(point(0, 0), point(0, 1), point(-1, 1), point(-1, 0))
+    @test r ≈ Rope(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
     @test TB.revert(f, r, c) ≈ g
 
     f = Rotate(Angle2d(T(π / 2)))
-    g = Ring(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    g = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Ring(point(0, 0), point(0, 1), point(-1, 1), point(-1, 0))
+    @test r ≈ Ring(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -90,15 +90,15 @@
     # ---------
 
     f = Rotate(AngleAxis(T(π / 2), T(0), T(0), T(1)))
-    g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0))
+    g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(0, 0, 0), point(0, 1, 0), point(-1, 0, 0))
+    @test r ≈ Triangle(cart(0, 0, 0), cart(0, 1, 0), cart(-1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
 
     f = Rotate(vector(0, 0, 1), vector(1, 0, 0))
-    g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0))
+    g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(0, 0, 0), point(0, 0, -1), point(0, 1, 0))
+    @test r ≈ Triangle(cart(0, 0, 0), cart(0, 0, -1), cart(0, 1, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -106,9 +106,9 @@
     # ---------
 
     f = Rotate(Angle2d(T(π / 2)))
-    p = PolyArea(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    p = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     r, c = TB.apply(f, p)
-    @test r ≈ PolyArea(point(0, 0), point(0, 1), point(-1, 1), point(-1, 0))
+    @test r ≈ PolyArea(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
     @test TB.revert(f, r, c) ≈ p
 
     # ----------
@@ -116,7 +116,7 @@
     # ----------
 
     f = Rotate(Angle2d(T(π / 2)))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -127,9 +127,9 @@
     # ------
 
     f = Rotate(vector(0, 0, 1), vector(1, 0, 0))
-    g = Plane(point(0, 0, 0), vector(0, 0, 1))
+    g = Plane(cart(0, 0, 0), vector(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Plane(point(0, 0, 0), vector(1, 0, 0))
+    @test r ≈ Plane(cart(0, 0, 0), vector(1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -139,7 +139,7 @@
     f = Rotate(vector(0, 0, 1), vector(1, 0, 0))
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
-    @test r ≈ Cylinder(point(0, 0, 0), point(1, 0, 0))
+    @test r ≈ Cylinder(cart(0, 0, 0), cart(1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -147,9 +147,9 @@
     # ---------
 
     f = Rotate(Angle2d(T(π / 2)))
-    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
     r, c = TB.apply(f, d)
-    @test r ≈ PointSet([point(0, 0), point(0, 1), point(-1, 1)])
+    @test r ≈ PointSet([cart(0, 0), cart(0, 1), cart(-1, 1)])
     @test TB.revert(f, r, c) ≈ d
 
     # ------------
@@ -157,7 +157,7 @@
     # ------------
 
     f = Rotate(Angle2d(T(π / 2)))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -205,7 +205,7 @@
     # -----------
 
     f = Rotate(Angle2d(T(π / 2)))
-    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -259,9 +259,9 @@
     # ------
 
     f = Translate(T(1), T(1))
-    g = point(1, 0)
+    g = cart(1, 0)
     r, c = TB.apply(f, g)
-    @test r ≈ point(2, 1)
+    @test r ≈ cart(2, 1)
     @test TB.revert(f, r, c) ≈ g
 
     # --------
@@ -269,9 +269,9 @@
     # --------
 
     f = Translate(T(1), T(1))
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(1, 1), point(2, 1))
+    @test r ≈ Segment(cart(1, 1), cart(2, 1))
     @test TB.revert(f, r, c) ≈ g
 
     # ----
@@ -279,10 +279,10 @@
     # ----
 
     f = Translate(T(1), T(1))
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Box
-    @test r ≈ Box(point(1, 1), point(2, 2))
+    @test r ≈ Box(cart(1, 1), cart(2, 2))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -290,9 +290,9 @@
     # ---------
 
     f = Translate(T(1), T(2), T(3))
-    g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 1))
+    g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(1, 2, 3), point(2, 2, 3), point(1, 3, 4))
+    @test r ≈ Triangle(cart(1, 2, 3), cart(2, 2, 3), cart(1, 3, 4))
     @test TB.revert(f, r, c) ≈ g
 
     # ----------
@@ -300,7 +300,7 @@
     # ----------
 
     f = Translate(T(1), T(1))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -311,9 +311,9 @@
     # ------
 
     f = Translate(T(0), T(0), T(1))
-    g = Plane(point(0, 0, 0), vector(0, 0, 1))
+    g = Plane(cart(0, 0, 0), vector(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Plane(point(0, 0, 1), vector(0, 0, 1))
+    @test r ≈ Plane(cart(0, 0, 1), vector(0, 0, 1))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -323,7 +323,7 @@
     f = Translate(T(0), T(0), T(1))
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
-    @test r ≈ Cylinder(point(0, 0, 1), point(0, 0, 2))
+    @test r ≈ Cylinder(cart(0, 0, 1), cart(0, 0, 2))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -331,9 +331,9 @@
     # ---------
 
     f = Translate(T(1), T(1))
-    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
     r, c = TB.apply(f, d)
-    @test r ≈ PointSet([point(1, 1), point(2, 1), point(2, 2)])
+    @test r ≈ PointSet([cart(1, 1), cart(2, 1), cart(2, 2)])
     @test TB.revert(f, r, c) ≈ d
 
     # ------------
@@ -341,7 +341,7 @@
     # ------------
 
     f = Translate(T(1), T(1))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -359,7 +359,7 @@
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
-    @test r ≈ CartesianGrid(point(1, 1), point(11, 11), dims=(10, 10))
+    @test r ≈ CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
     # ----------------
@@ -389,7 +389,7 @@
     # -----------
 
     f = Translate(T(1), T(1))
-    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -429,9 +429,9 @@
     # ------
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
-    g = point(1, 0)
+    g = cart(1, 0)
     r, c = TB.apply(f, g)
-    @test r ≈ point(1, 2)
+    @test r ≈ cart(1, 2)
     @test TB.revert(f, r, c) ≈ g
 
     # --------
@@ -439,9 +439,9 @@
     # --------
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(1, 1), point(1, 2))
+    @test r ≈ Segment(cart(1, 1), cart(1, 2))
     @test TB.revert(f, r, c) ≈ g
 
     # ----
@@ -449,27 +449,27 @@
     # ----
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Quadrangle
-    @test r ≈ Quadrangle(point(1, 1), point(1, 2), point(0, 2), point(0, 1))
+    @test r ≈ Quadrangle(cart(1, 1), cart(1, 2), cart(0, 2), cart(0, 1))
     q = TB.revert(f, r, c)
     @test q isa Quadrangle
     @test q ≈ convert(Quadrangle, g)
 
     f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
-    g = Box(point(0, 0, 0), point(1, 1, 1))
+    g = Box(cart(0, 0, 0), cart(1, 1, 1))
     r, c = TB.apply(f, g)
     @test r isa Hexahedron
     @test r ≈ Hexahedron(
-      point(1, 2, 3),
-      point(1, 2, 2),
-      point(1, 3, 2),
-      point(1, 3, 3),
-      point(2, 2, 3),
-      point(2, 2, 2),
-      point(2, 3, 2),
-      point(2, 3, 3)
+      cart(1, 2, 3),
+      cart(1, 2, 2),
+      cart(1, 3, 2),
+      cart(1, 3, 3),
+      cart(2, 2, 3),
+      cart(2, 2, 2),
+      cart(2, 3, 2),
+      cart(2, 3, 3)
     )
     h = TB.revert(f, r, c)
     @test h isa Hexahedron
@@ -480,9 +480,9 @@
     # ---------
 
     f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
-    g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 1))
+    g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(1, 2, 3), point(1, 2, 2), point(2, 3, 3))
+    @test r ≈ Triangle(cart(1, 2, 3), cart(1, 2, 2), cart(2, 3, 3))
     @test TB.revert(f, r, c) ≈ g
 
     # ----------
@@ -490,7 +490,7 @@
     # ----------
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -501,9 +501,9 @@
     # ------
 
     f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[0, 0, 1])
-    g = Plane(point(0, 0, 0), vector(0, 0, 1))
+    g = Plane(cart(0, 0, 0), vector(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Plane(point(0, 0, 1), vector(1, 0, 0))
+    @test r ≈ Plane(cart(0, 0, 1), vector(1, 0, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -513,7 +513,7 @@
     f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[0, 0, 1])
     g = Cylinder(T(1))
     r, c = TB.apply(f, g)
-    @test r ≈ Cylinder(point(0, 0, 1), point(1, 0, 1))
+    @test r ≈ Cylinder(cart(0, 0, 1), cart(1, 0, 1))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -521,9 +521,9 @@
     # ---------
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
-    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
     r, c = TB.apply(f, d)
-    @test r ≈ PointSet([point(1, 1), point(1, 2), point(0, 2)])
+    @test r ≈ PointSet([cart(1, 1), cart(1, 2), cart(0, 2)])
     @test TB.revert(f, r, c) ≈ d
 
     # ------------
@@ -531,7 +531,7 @@
     # ------------
 
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -581,9 +581,9 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     s = Rotate(T(π / 2)) → Translate(T(1), T(1))
     v = vector(1, 0)
-    g1 = point(1, 0)
-    g2 = Segment(point(0, 0), point(1, 0))
-    g3 = Box(point(0, 0), point(1, 1))
+    g1 = cart(1, 0)
+    g2 = Segment(cart(0, 0), cart(1, 0))
+    g3 = Box(cart(0, 0), cart(1, 1))
     @test f(v) ≈ s(v)
     @test f(g1) ≈ s(g1)
     @test f(g2) ≈ s(g2)
@@ -638,9 +638,9 @@
     # ------
 
     f = Scale(T(1), T(2))
-    g = point(1, 1)
+    g = cart(1, 1)
     r, c = TB.apply(f, g)
-    @test r ≈ point(1, 2)
+    @test r ≈ cart(1, 2)
     @test TB.revert(f, r, c) ≈ g
 
     # --------
@@ -648,15 +648,15 @@
     # --------
 
     f = Scale(T(1), T(2))
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(0, 0), point(1, 0))
+    @test r ≈ Segment(cart(0, 0), cart(1, 0))
     @test TB.revert(f, r, c) ≈ g
 
     f = Scale(T(2), T(1))
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(0, 0), point(2, 0))
+    @test r ≈ Segment(cart(0, 0), cart(2, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ----
@@ -664,10 +664,10 @@
     # ----
 
     f = Scale(T(1), T(2))
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Box
-    @test r ≈ Box(point(0, 0), point(1, 2))
+    @test r ≈ Box(cart(0, 0), cart(1, 2))
     @test TB.revert(f, r, c) ≈ g
 
     # -----
@@ -675,7 +675,7 @@
     # -----
 
     f = Scale(T(1), T(2))
-    g = Ball(point(1, 2), T(3))
+    g = Ball(cart(1, 2), T(3))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -688,7 +688,7 @@
     # -------
 
     f = Scale(T(1), T(2))
-    g = Sphere(point(1, 2), T(3))
+    g = Sphere(cart(1, 2), T(3))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -697,26 +697,26 @@
     @test TB.revert(f, r, c) ≈ m
 
     f = Scale(T(1), T(2), T(3))
-    g = Sphere(point(1, 2, 3), T(4))
+    g = Sphere(cart(1, 2, 3), T(4))
     r, c = TB.apply(f, g)
     @test r isa Ellipsoid
-    @test r ≈ Ellipsoid(T.((4, 8, 12)), point(1, 4, 9))
+    @test r ≈ Ellipsoid(T.((4, 8, 12)), cart(1, 4, 9))
     m = TB.revert(f, r, c)
     @test m isa SimpleMesh
     @test m ≈ discretize(g)
 
     f = Scale(T(2))
-    g = Sphere(point(1, 2), T(3))
+    g = Sphere(cart(1, 2), T(3))
     r, c = TB.apply(f, g)
     @test r isa Sphere
-    @test r ≈ Sphere(point(2, 4), T(6))
+    @test r ≈ Sphere(cart(2, 4), T(6))
     @test TB.revert(f, r, c) ≈ g
 
     f = Scale(T(2))
-    g = Sphere(point(1, 2, 3), T(4))
+    g = Sphere(cart(1, 2, 3), T(4))
     r, c = TB.apply(f, g)
     @test r isa Sphere
-    @test r ≈ Sphere(point(2, 4, 6), T(8))
+    @test r ≈ Sphere(cart(2, 4, 6), T(8))
     @test TB.revert(f, r, c) ≈ g
 
     # ----------
@@ -737,7 +737,7 @@
     # -----
 
     f = Scale(T(1), T(2), T(3))
-    g = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -750,7 +750,7 @@
     # -------
 
     f = Scale(T(1), T(2), T(3))
-    g = Circle(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -776,7 +776,7 @@
     # ------------------
 
     f = Scale(T(1), T(2), T(3))
-    g = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
+    g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -788,7 +788,7 @@
     # ------
 
     f = Scale(T(1), T(2), T(3))
-    g = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+    g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -801,9 +801,9 @@
     # ---------
 
     f = Scale(T(1), T(2), T(3))
-    g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 1))
+    g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 2, 3))
+    @test r ≈ Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 2, 3))
     @test TB.revert(f, r, c) ≈ g
 
     # ----------
@@ -811,7 +811,7 @@
     # ----------
 
     f = Scale(T(1), T(2))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -822,13 +822,13 @@
     # ------
 
     f = Scale(T(1), T(1), T(2))
-    g = Plane(point(1, 1, 1), vector(0, 0, 1))
+    g = Plane(cart(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Plane(point(1, 1, 2), vector(0, 0, 1))
+    @test r ≈ Plane(cart(1, 1, 2), vector(0, 0, 1))
     @test TB.revert(f, r, c) ≈ g
 
     f = Scale(T(2), T(1), T(1))
-    g = Plane(point(1, 1, 1), vector(0, 0, 1))
+    g = Plane(cart(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ g
     @test TB.revert(f, r, c) ≈ g
@@ -838,9 +838,9 @@
     # ---------
 
     f = Scale(T(1), T(2))
-    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
     r, c = TB.apply(f, d)
-    @test r ≈ PointSet([point(0, 0), point(1, 0), point(1, 2)])
+    @test r ≈ PointSet([cart(0, 0), cart(1, 0), cart(1, 2)])
     @test TB.revert(f, r, c) ≈ d
 
     # ------------
@@ -848,7 +848,7 @@
     # ------------
 
     f = Scale(T(1), T(2))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -863,10 +863,10 @@
     # --------------
 
     f = Scale(T(1), T(2))
-    d = CartesianGrid(point(1, 1), point(11, 11), dims=(10, 10))
+    d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
-    @test r ≈ CartesianGrid(point(1, 2), point(11, 22), dims=(10, 10))
+    @test r ≈ CartesianGrid(cart(1, 2), cart(11, 22), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
     # ----------------
@@ -896,7 +896,7 @@
     # -----------
 
     f = Scale(T(1), T(2))
-    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -928,9 +928,9 @@
     # ------
 
     f = Stretch(T(1), T(2))
-    g = point(1, 1)
+    g = cart(1, 1)
     r, c = TB.apply(f, g)
-    @test r ≈ point(1, 1)
+    @test r ≈ cart(1, 1)
     @test TB.revert(f, r, c) ≈ g
 
     # --------
@@ -938,15 +938,15 @@
     # --------
 
     f = Stretch(T(1), T(2))
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(0, 0), point(1, 0))
+    @test r ≈ Segment(cart(0, 0), cart(1, 0))
     @test TB.revert(f, r, c) ≈ g
 
     f = Stretch(T(2), T(1))
-    g = Segment(point(0, 0), point(1, 0))
+    g = Segment(cart(0, 0), cart(1, 0))
     r, c = TB.apply(f, g)
-    @test r ≈ Segment(point(-0.5, 0), point(1.5, 0))
+    @test r ≈ Segment(cart(-0.5, 0), cart(1.5, 0))
     @test TB.revert(f, r, c) ≈ g
 
     # ----
@@ -954,10 +954,10 @@
     # ----
 
     f = Stretch(T(1), T(2))
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Box
-    @test r ≈ Box(point(0, -0.5), point(1, 1.5))
+    @test r ≈ Box(cart(0, -0.5), cart(1, 1.5))
     @test TB.revert(f, r, c) ≈ g
 
     # ---------
@@ -965,9 +965,9 @@
     # ---------
 
     f = Stretch(T(1), T(2), T(2))
-    g = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 1))
+    g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(0, -1 / 3, -1 / 3), point(1, -1 / 3, -1 / 3), point(0, 10 / 6, 10 / 6))
+    @test r ≈ Triangle(cart(0, -1 / 3, -1 / 3), cart(1, -1 / 3, -1 / 3), cart(0, 10 / 6, 10 / 6))
     @test TB.revert(f, r, c) ≈ g
 
     # ----------
@@ -975,7 +975,7 @@
     # ----------
 
     f = Stretch(T(1), T(2))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -986,13 +986,13 @@
     # ------
 
     f = Stretch(T(1), T(1), T(2))
-    g = Plane(point(1, 1, 1), vector(0, 0, 1))
+    g = Plane(cart(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ g
     @test TB.revert(f, r, c) ≈ g
 
     f = Stretch(T(2), T(1), T(1))
-    g = Plane(point(1, 1, 1), vector(0, 0, 1))
+    g = Plane(cart(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ g
     @test TB.revert(f, r, c) ≈ g
@@ -1002,9 +1002,9 @@
     # ---------
 
     f = Stretch(T(1), T(2))
-    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
     r, c = TB.apply(f, d)
-    @test r ≈ PointSet([point(0, -1 / 3), point(1, -1 / 3), point(1, 10 / 6)])
+    @test r ≈ PointSet([cart(0, -1 / 3), cart(1, -1 / 3), cart(1, 10 / 6)])
     @test TB.revert(f, r, c) ≈ d
 
     # ------------
@@ -1012,7 +1012,7 @@
     # ------------
 
     f = Stretch(T(1), T(2))
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -1027,10 +1027,10 @@
     # --------------
 
     f = Stretch(T(1), T(2))
-    d = CartesianGrid(point(1, 1), point(11, 11), dims=(10, 10))
+    d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
-    @test r ≈ CartesianGrid(point(1, -4), point(11, 16), dims=(10, 10))
+    @test r ≈ CartesianGrid(cart(1, -4), cart(11, 16), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
     # ----------------
@@ -1060,7 +1060,7 @@
     # -----------
 
     f = Stretch(T(1), T(2))
-    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -1089,16 +1089,16 @@
     # --------------
 
     f = StdCoords()
-    d = CartesianGrid(point(1, 1), point(11, 11), dims=(10, 10))
+    d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
-    @test r ≈ CartesianGrid(point(-0.5, -0.5), point(0.5, 0.5), dims=(10, 10))
+    @test r ≈ CartesianGrid(cart(-0.5, -0.5), cart(0.5, 0.5), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
     f = StdCoords()
     d = cartgrid(10, 20)
     r, c = TB.apply(f, d)
-    @test r ≈ CartesianGrid(point(-0.5, -0.5), point(0.5, 0.5), dims=(10, 20))
+    @test r ≈ CartesianGrid(cart(-0.5, -0.5), cart(0.5, 0.5), dims=(10, 20))
     @test TB.revert(f, r, c) ≈ d
     r2 = TB.reapply(f, d, c)
     @test r == r2
@@ -1123,14 +1123,14 @@
     # ------
 
     f = FlatCoords()
-    g = point(1, 1)
+    g = cart(1, 1)
     r, c = TB.apply(f, g)
-    @test r == point(1, 1)
+    @test r == cart(1, 1)
 
     f = FlatCoords()
     g = Point(Polar(T(√2), T(π / 4)))
     r, c = TB.apply(f, g)
-    @test r ≈ point(1, 1)
+    @test r ≈ cart(1, 1)
 
     f = FlatCoords()
     g = Point(LatLon(T(30), T(60)))
@@ -1153,7 +1153,7 @@
     @test r == Point(Cartesian{WGS84Latest}(T(1), T(1)))
 
     f = FlatCoords()
-    g = point(1, 1, 1)
+    g = cart(1, 1, 1)
     # error: points must have 2 coordinates
     @test_throws ArgumentError TB.apply(f, g)
 
@@ -1164,12 +1164,12 @@
     f = FlatCoords()
     g = Rope(Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(1), T(π / 2))))
     r, c = TB.apply(f, g)
-    @test r ≈ Rope(point(0, 0), point(1, 0), point(0, 1))
+    @test r ≈ Rope(cart(0, 0), cart(1, 0), cart(0, 1))
 
     f = FlatCoords()
     g = Ring(Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(1), T(π / 2))))
     r, c = TB.apply(f, g)
-    @test r ≈ Ring(point(0, 0), point(1, 0), point(0, 1))
+    @test r ≈ Ring(cart(0, 0), cart(1, 0), cart(0, 1))
 
     # ---------
     # TRIANGLE
@@ -1178,7 +1178,7 @@
     f = FlatCoords()
     g = Triangle(Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(1), T(π / 2))))
     r, c = TB.apply(f, g)
-    @test r ≈ Triangle(point(0, 0), point(1, 0), point(0, 1))
+    @test r ≈ Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   end
 
   @testset "Proj" begin
@@ -1203,7 +1203,7 @@
     # ------
 
     f = Proj(Polar)
-    g = point(1, 1)
+    g = cart(1, 1)
     r, c = TB.apply(f, g)
     @test r ≈ Point(Polar(T(√2), T(π / 4)))
 
@@ -1212,7 +1212,7 @@
     # --------
 
     f = Proj(Polar)
-    g = Segment(point(0, 0), point(1, 1))
+    g = Segment(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Segment(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
 
@@ -1221,7 +1221,7 @@
     # ----
 
     f = Proj(Polar)
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Box
     @test r ≈ Box(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
@@ -1231,7 +1231,7 @@
     # ---------
 
     f = Proj(Polar)
-    g = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    g = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(√2), T(π / 4))))
 
@@ -1240,7 +1240,7 @@
     # ----------
 
     f = Proj(Polar)
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -1250,7 +1250,7 @@
     # ------
 
     f = Proj(Cylindrical)
-    g = Plane(point(1, 1, 1), vector(0, 0, 1))
+    g = Plane(cart(1, 1, 1), vector(0, 0, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Plane(Point(Cylindrical(T(√2), T(π / 4), T(1))), vector(0, 0, 1))
 
@@ -1259,7 +1259,7 @@
     # ---------
 
     f = Proj(Cylindrical)
-    g = Cylinder(point(0, 0, 0), point(1, 1, 1))
+    g = Cylinder(cart(0, 0, 0), cart(1, 1, 1))
     r, c = TB.apply(f, g)
     @test r ≈ Cylinder(Point(Cylindrical(T(0), T(0), T(0))), Point(Cylindrical(T(√2), T(π / 4), T(1))))
 
@@ -1268,7 +1268,7 @@
     # ---------
 
     f = Proj(Polar)
-    d = PointSet([point(0, 0), point(1, 0), point(1, 1)])
+    d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([Point(Polar(T(0), T(0))), Point(Polar(T(1), T(0))), Point(Polar(T(√2), T(π / 4)))])
 
@@ -1277,7 +1277,7 @@
     # ------------
 
     f = Proj(Polar)
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -1290,7 +1290,7 @@
     # --------------
 
     f = Proj(Polar)
-    d = CartesianGrid((10, 10), point(1, 1), T.((1, 1)))
+    d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(Polar(T(√2), T(π / 4))), T.((1, 1)))
@@ -1320,7 +1320,7 @@
     # -----------
 
     f = Proj(Polar)
-    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -1347,7 +1347,7 @@
     # ------
 
     f = LengthUnit(u"cm")
-    g = point(1, 1)
+    g = cart(1, 1)
     r, c = TB.apply(f, g)
     @test r ≈ Point(T(100) * u"cm", T(100) * u"cm")
 
@@ -1375,7 +1375,7 @@
     # --------
 
     f = LengthUnit(u"km")
-    g = Segment(point(0, 0), point(1000, 1000))
+    g = Segment(cart(0, 0), cart(1000, 1000))
     r, c = TB.apply(f, g)
     @test r ≈ Segment(Point(T(0) * u"km", T(0) * u"km"), Point(T(1) * u"km", T(1) * u"km"))
 
@@ -1384,7 +1384,7 @@
     # ----
 
     f = LengthUnit(u"cm")
-    g = Box(point(0, 0), point(1, 1))
+    g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
     @test r isa Box
     @test r ≈ Box(Point(T(0) * u"cm", T(0) * u"cm"), Point(T(100) * u"cm", T(100) * u"cm"))
@@ -1394,7 +1394,7 @@
     # -------
 
     f = LengthUnit(u"km")
-    g = Sphere(point(0, 0), T(1000))
+    g = Sphere(cart(0, 0), T(1000))
     r, c = TB.apply(f, g)
     @test r isa Sphere
     @test r ≈ Sphere(Point(T(0) * u"km", T(0) * u"km"), T(1) * u"km")
@@ -1404,7 +1404,7 @@
     # ----------
 
     f = LengthUnit(u"cm")
-    g = Ellipsoid(T.((1, 1, 1)), point(0, 0, 0))
+    g = Ellipsoid(T.((1, 1, 1)), cart(0, 0, 0))
     r, c = TB.apply(f, g)
     @test r isa Ellipsoid
     @test r ≈
@@ -1415,7 +1415,7 @@
     # ---------
 
     f = LengthUnit(u"km")
-    g = Triangle(point(0, 0), point(1000, 0), point(1000, 1000))
+    g = Triangle(cart(0, 0), cart(1000, 0), cart(1000, 1000))
     r, c = TB.apply(f, g)
     @test r ≈ Triangle(
       Point(T(0) * u"km", T(0) * u"km"),
@@ -1428,7 +1428,7 @@
     # ----------
 
     f = LengthUnit(u"cm")
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
@@ -1438,7 +1438,7 @@
     # ---------
 
     f = LengthUnit(u"km")
-    d = PointSet([point(0, 0), point(1000, 0), point(1000, 1000)])
+    d = PointSet([cart(0, 0), cart(1000, 0), cart(1000, 1000)])
     r, c = TB.apply(f, d)
     @test r ≈ PointSet([
       Point(T(0) * u"km", T(0) * u"km"),
@@ -1451,7 +1451,7 @@
     # ------------
 
     f = LengthUnit(u"cm")
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r ≈ GeometrySet([f(t), f(t)])
@@ -1464,7 +1464,7 @@
     # --------------
 
     f = LengthUnit(u"km")
-    d = CartesianGrid((10, 10), point(1000, 1000), T.((1000, 1000)))
+    d = CartesianGrid((10, 10), cart(1000, 1000), T.((1000, 1000)))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"))
@@ -1494,7 +1494,7 @@
     # -----------
 
     f = LengthUnit(u"cm")
-    p = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -1525,35 +1525,35 @@
     # ------
 
     f = Shadow(:xz)
-    g = point(1, 2, 3)
+    g = cart(1, 2, 3)
     r, c = TB.apply(f, g)
-    @test r == point(1, 3)
+    @test r == cart(1, 3)
 
     # --------
     # SEGMENT
     # --------
 
     f = Shadow(:yz)
-    g = Segment(point(1, 2, 3), point(4, 5, 6))
+    g = Segment(cart(1, 2, 3), cart(4, 5, 6))
     r, c = TB.apply(f, g)
-    @test r == Segment(point(2, 3), point(5, 6))
+    @test r == Segment(cart(2, 3), cart(5, 6))
 
     # ----
     # BOX
     # ----
 
     f = Shadow(:xy)
-    g = Box(point(1, 2, 3), point(4, 5, 6))
+    g = Box(cart(1, 2, 3), cart(4, 5, 6))
     r, c = TB.apply(f, g)
     @test r isa Box
-    @test r == Box(point(1, 2), point(4, 5))
+    @test r == Box(cart(1, 2), cart(4, 5))
 
     # ------
     # PLANE
     # ------
 
     f = Shadow(:xz)
-    g = Plane(point(0, 0, 0), vector(0, 0, 1))
+    g = Plane(cart(0, 0, 0), vector(0, 0, 1))
     @test_throws ArgumentError TB.apply(f, g)
 
     # ----------
@@ -1572,7 +1572,7 @@
     # -----
 
     f = Shadow(:xy)
-    g = Disk(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -1583,7 +1583,7 @@
     # -------
 
     f = Shadow(:xz)
-    g = Circle(Plane(point(0, 0, 0), vector(0, 0, 1)), T(2))
+    g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -1605,8 +1605,8 @@
     # ------------
 
     f = Shadow(:xy)
-    p = Plane(point(0, 0, 0), vector(0, 0, 1))
-    g = ConeSurface(Disk(p, T(2)), point(0, 0, 1))
+    p = Plane(cart(0, 0, 0), vector(0, 0, 1))
+    g = ConeSurface(Disk(p, T(2)), cart(0, 0, 1))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -1617,8 +1617,8 @@
     # ---------------
 
     f = Shadow(:xz)
-    pb = Plane(point(0, 0, 0), vector(0, 0, 1))
-    pt = Plane(point(0, 0, 10), vector(0, 0, 1))
+    pb = Plane(cart(0, 0, 0), vector(0, 0, 1))
+    pt = Plane(cart(0, 0, 10), vector(0, 0, 1))
     g = FrustumSurface(Disk(pb, T(1)), Disk(pt, T(2)))
     m = discretize(g)
     r, c = TB.apply(f, g)
@@ -1630,7 +1630,7 @@
     # ------------------
 
     f = Shadow(:yz)
-    g = ParaboloidSurface(point(0, 0, 0), T(1), T(2))
+    g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -1641,7 +1641,7 @@
     # ------
 
     f = Shadow(:xy)
-    g = Torus(point(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+    g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
     @test r isa SimpleMesh
@@ -1652,16 +1652,16 @@
     # ---------
 
     f = Shadow(:xz)
-    g = Triangle(point(1, 2, 3), point(4, 5, 6), point(7, 8, 9))
+    g = Triangle(cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9))
     r, c = TB.apply(f, g)
-    @test r == Triangle(point(1, 3), point(4, 6), point(7, 9))
+    @test r == Triangle(cart(1, 3), cart(4, 6), cart(7, 9))
 
     # ----------
     # MULTIGEOM
     # ----------
 
     f = Shadow(:yz)
-    t = Triangle(point(1, 2, 3), point(4, 5, 6), point(7, 8, 9))
+    t = Triangle(cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9))
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r == Multi([f(t), f(t)])
@@ -1671,16 +1671,16 @@
     # ---------
 
     f = Shadow(:xy)
-    d = PointSet([point(1, 2, 3), point(4, 5, 6), point(7, 8, 9)])
+    d = PointSet([cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9)])
     r, c = TB.apply(f, d)
-    @test r == PointSet([point(1, 2), point(4, 5), point(7, 8)])
+    @test r == PointSet([cart(1, 2), cart(4, 5), cart(7, 8)])
 
     # ------------
     # GEOMETRYSET
     # ------------
 
     f = Shadow(:xz)
-    t = Triangle(point(1, 2, 3), point(4, 5, 6), point(7, 8, 9))
+    t = Triangle(cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9))
     d = GeometrySet([t, t])
     r, c = TB.apply(f, d)
     @test r == GeometrySet([f(t), f(t)])
@@ -1693,10 +1693,10 @@
     # --------------
 
     f = Shadow(:yz)
-    d = CartesianGrid((10, 11, 12), point(1, 2, 3), T.((1.0, 1.1, 1.2)))
+    d = CartesianGrid((10, 11, 12), cart(1, 2, 3), T.((1.0, 1.1, 1.2)))
     r, c = TB.apply(f, d)
     @test r isa CartesianGrid
-    @test r == CartesianGrid((11, 12), point(2, 3), T.((1.1, 1.2)))
+    @test r == CartesianGrid((11, 12), cart(2, 3), T.((1.1, 1.2)))
 
     # ----------------
     # RECTILINEARGRID
@@ -1723,7 +1723,7 @@
     # -----------
 
     f = Shadow(:yz)
-    p = point.([(0, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 0.5, 0.5)])
+    p = cart.([(0, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 0.5, 0.5)])
     c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
@@ -1732,21 +1732,21 @@
 
   @testset "Repair{0}" begin
     @test !isaffine(Repair)
-    poly = PolyArea(point.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
+    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
     rpoly = poly |> Repair{0}()
     @test nvertices(rpoly) == 4
-    @test vertices(rpoly) == point.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   end
 
   @testset "Repair{1}" begin
     # a tetrahedron with an unused vertex
-    points = point.([(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)])
+    points = cart.([(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)])
     connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
     mesh = SimpleMesh(points, connec)
     rmesh = mesh |> Repair{1}()
     @test nvertices(rmesh) == nvertices(mesh) - 1
     @test nelements(rmesh) == nelements(mesh)
-    @test point(5, 5, 5) ∉ vertices(rmesh)
+    @test cart(5, 5, 5) ∉ vertices(rmesh)
   end
 
   @testset "Repair{2}" begin end
@@ -1777,30 +1777,30 @@
 
   @testset "Repair{8}" begin
     poly = PolyArea(
-      point.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
+      cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
     )
     rpoly = poly |> Repair{8}()
     @test nvertices(rpoly) == 4
-    @test vertices(rpoly) == point.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
+    @test vertices(rpoly) == cart.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
 
     # degenerate triangle with repeated vertices
-    poly = PolyArea(point.([(0, 0), (1, 1), (1, 1)]))
+    poly = PolyArea(cart.([(0, 0), (1, 1), (1, 1)]))
     rpoly = poly |> Repair{8}()
     @test !hasholes(rpoly)
-    @test rings(rpoly) == [Ring(point(0, 0))]
-    @test vertices(rpoly) == [point(0, 0)]
+    @test rings(rpoly) == [Ring(cart(0, 0))]
+    @test vertices(rpoly) == [cart(0, 0)]
   end
 
   @testset "Repair{9}" begin
-    poly = Quadrangle(point(0, 1, 0), point(1, 1, 0), point(1, 0, 0), point(0, 0, 0))
+    poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     bpoly = poly |> Repair{9}()
     @test bpoly isa Quadrangle
     @test bpoly == poly
   end
 
   @testset "Repair{10}" begin
-    outer = Ring(point.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
-    inner = Ring(point.([(1, 1), (1, 2), (2, 2), (2, 1)]))
+    outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
+    inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
     poly = PolyArea(outer, inner)
     repair = Repair{10}()
     rpoly, cache = TB.apply(repair, poly)
@@ -1819,32 +1819,32 @@
     @test TB.parameters(f) == (; δ)
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/566
-    outer = Ring(point(6, 4), point(6, 7), point(1, 6), point(1, 1), point(5, 2))
-    inner₁ = Ring(point(3, 3), point(3, 4), point(4, 3))
-    inner₂ = Ring(point(2, 5), point(2, 6), point(3, 5))
+    outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
+    inner₁ = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
+    inner₂ = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
     poly = PolyArea([outer, inner₁, inner₂])
     bpoly = poly |> Bridge(T(0.1))
     @test !hasholes(bpoly)
     @test nvertices(bpoly) == 15
 
     # unique and bridges
-    poly = PolyArea(point.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
+    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
     cpoly = poly |> Repair{0}() |> Bridge()
-    @test cpoly == PolyArea(point.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
+    @test cpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
 
     # basic ngon tests
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test (t |> Bridge() |> boundary) == boundary(t)
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test (q |> Bridge() |> boundary) == boundary(q)
 
     # bridges between holes
-    outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
     poly = PolyArea([outer, hole1, hole2])
     @test vertices(poly) ==
-          point.([
+          cart.([
       (0, 0),
       (1, 0),
       (1, 1),
@@ -1860,7 +1860,7 @@
     ])
     bpoly = poly |> Bridge(T(0.01))
     target =
-      point.([
+      cart.([
         (-0.0035355339059327372, 0.0035355339059327372),
         (0.19646446609406729, 0.20353553390593274),
         (0.2, 0.4),
@@ -1880,7 +1880,7 @@
       ])
     @test all(vertices(bpoly) .≈ target)
 
-    poly = Quadrangle(point(0, 1, 0), point(1, 1, 0), point(1, 0, 0), point(0, 0, 0))
+    poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     bpoly = poly |> Bridge()
     @test bpoly isa Quadrangle
     @test bpoly == poly

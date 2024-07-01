@@ -5,7 +5,7 @@
   @test paramdim(c) == 2
   @test issimplex(c)
   @test indices(c) == (1, 2, 3)
-  @test materialize(c, point.([(0, 0), (1, 0), (0, 1)])) == Triangle(point(0, 0), point(1, 0), point(0, 1))
+  @test materialize(c, cart.([(0, 0), (1, 0), (0, 1)])) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
 
   # tuple from other collections
   c = connect(Tuple([1, 2, 3]), Triangle)
@@ -13,7 +13,7 @@
   @test paramdim(c) == 2
   @test issimplex(c)
   @test indices(c) == (1, 2, 3)
-  @test materialize(c, point.([(0, 0), (1, 0), (0, 1)])) == Triangle(point(0, 0), point(1, 0), point(0, 1))
+  @test materialize(c, cart.([(0, 0), (1, 0), (0, 1)])) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
 
   # incorrect number of vertices for polytope
   @test_throws AssertionError connect((1, 2, 3, 4), Triangle)
@@ -44,6 +44,6 @@
   @test paramdim(c) == 3
   @test issimplex(c)
   @test indices(c) == (1, 2, 3, 4)
-  points = point.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+  points = cart.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
   @test materialize(c, points) == Tetrahedron(points...)
 end

@@ -41,8 +41,8 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
-point(T::Type, coords...) = point(T, coords)
-point(T::Type, coords::Tuple) = Point(T.(coords))
+cart(T::Type, coords...) = cart(T, coords)
+cart(T::Type, coords::Tuple) = Point(T.(coords))
 
 vector(T::Type, coords...) = vector(T, coords)
 vector(T::Type, coords::Tuple) = Vec(T.(coords))

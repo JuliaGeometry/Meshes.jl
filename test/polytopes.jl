@@ -3,41 +3,41 @@
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
 
-    s = Segment(point(1.0), point(2.0))
+    s = Segment(cart(1.0), cart(2.0))
     @test Meshes.crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
-    @test vertex(s, 1) == point(1.0)
-    @test vertex(s, 2) == point(2.0)
-    @test all(point(x) ∈ s for x in 1:0.01:2)
-    @test all(point(x) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
+    @test vertex(s, 1) == cart(1.0)
+    @test vertex(s, 2) == cart(2.0)
+    @test all(cart(x) ∈ s for x in 1:0.01:2)
+    @test all(cart(x) ∉ s for x in [-1.0, 0.0, 0.99, 2.1, 5.0, 10.0])
     @test s ≈ s
-    @test !(s ≈ Segment(point(2.0), point(1.0)))
-    @test !(s ≈ Segment(point(-1.0), point(2.0)))
+    @test !(s ≈ Segment(cart(2.0), cart(1.0)))
+    @test !(s ≈ Segment(cart(-1.0), cart(2.0)))
 
-    s = Segment(point(0, 0), point(1, 1))
-    @test minimum(s) == point(0, 0)
-    @test maximum(s) == point(1, 1)
-    @test extrema(s) == (point(0, 0), point(1, 1))
+    s = Segment(cart(0, 0), cart(1, 1))
+    @test minimum(s) == cart(0, 0)
+    @test maximum(s) == cart(1, 1)
+    @test extrema(s) == (cart(0, 0), cart(1, 1))
     @test isapprox(length(s), sqrt(T(2)) * u"m")
-    @test s(T(0)) == point(0, 0)
-    @test s(T(1)) == point(1, 1)
-    @test all(point(x, x) ∈ s for x in 0:0.01:1)
-    @test all(p ∉ s for p in [point(-0.1, -0.1), point(1.1, 1.1), point(0.5, 0.49), point(1, 2)])
+    @test s(T(0)) == cart(0, 0)
+    @test s(T(1)) == cart(1, 1)
+    @test all(cart(x, x) ∈ s for x in 0:0.01:1)
+    @test all(p ∉ s for p in [cart(-0.1, -0.1), cart(1.1, 1.1), cart(0.5, 0.49), cart(1, 2)])
     @test_throws DomainError(T(1.2), "s(t) is not defined for t outside [0, 1].") s(T(1.2))
     @test_throws DomainError(T(-0.5), "s(t) is not defined for t outside [0, 1].") s(T(-0.5))
     @test s ≈ s
-    @test !(s ≈ Segment(point(1, 1), point(0, 0)))
-    @test !(s ≈ Segment(point(1, 2), point(0, 0)))
+    @test !(s ≈ Segment(cart(1, 1), cart(0, 0)))
+    @test !(s ≈ Segment(cart(1, 2), cart(0, 0)))
 
-    s = Segment(point(0, 0, 0), point(1, 1, 1))
-    @test all(point(x, x, x) ∈ s for x in 0:0.01:1)
-    @test all(p ∉ s for p in [point(-0.1, -0.1, -0.1), point(1.1, 1.1, 1.1)])
-    @test all(p ∉ s for p in [point(0.5, 0.5, 0.49), point(1, 1, 2)])
+    s = Segment(cart(0, 0, 0), cart(1, 1, 1))
+    @test all(cart(x, x, x) ∈ s for x in 0:0.01:1)
+    @test all(p ∉ s for p in [cart(-0.1, -0.1, -0.1), cart(1.1, 1.1, 1.1)])
+    @test all(p ∉ s for p in [cart(0.5, 0.5, 0.49), cart(1, 1, 2)])
     @test s ≈ s
-    @test !(s ≈ Segment(point(1, 1, 1), point(0, 0, 0)))
-    @test !(s ≈ Segment(point(1, 1, 1), point(0, 1, 0)))
+    @test !(s ≈ Segment(cart(1, 1, 1), cart(0, 0, 0)))
+    @test !(s ≈ Segment(cart(1, 1, 1), cart(0, 1, 0)))
 
-    s = Segment(point(0, 0), point(1, 1))
+    s = Segment(cart(0, 0), cart(1, 1))
     equaltest(s)
     isapproxtest(s)
 
@@ -49,10 +49,10 @@
     @test !(s ≈ Segment(Point(2, 2, 2, 2), Point(1, 1, 1, 1)))
     @test !(s ≈ Segment(Point(1, 1, 2, 1), Point(0, 0, 0, 0)))
 
-    s = Segment(point(0, 0, 0), point(1, 1, 1))
-    @test boundary(s) == Multi([point(0, 0, 0), point(1, 1, 1)])
+    s = Segment(cart(0, 0, 0), cart(1, 1, 1))
+    @test boundary(s) == Multi([cart(0, 0, 0), cart(1, 1, 1)])
     @test perimeter(s) == zero(T) * u"m"
-    @test center(s) == point(0.5, 0.5, 0.5)
+    @test center(s) == cart(0.5, 0.5, 0.5)
     @test Meshes.lentype(center(s)) == ℳ
 
     # unitful coordinates
@@ -80,7 +80,7 @@
     s = Segment(Point(c1), Point(c2))
     @test datum(Meshes.crs(s(T(0)))) === WGS84Latest
 
-    s = Segment(point(0, 0), point(1, 1))
+    s = Segment(cart(0, 0), cart(1, 1))
     @test sprint(show, s) == "Segment((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 1.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), s) == """
@@ -96,105 +96,105 @@
   end
 
   @testset "Ropes/Rings" begin
-    c1 = Rope(point.([(1, 1), (2, 2)]))
-    c2 = Rope(point(1, 1), point(2, 2))
+    c1 = Rope(cart.([(1, 1), (2, 2)]))
+    c2 = Rope(cart(1, 1), cart(2, 2))
     c3 = Rope(T.((1, 1.0)), T.((2.0, 2.0)))
     @test c1 == c2 == c3
-    c1 = Ring(point.([(1, 1), (2, 2)]))
-    c2 = Ring(point(1, 1), point(2, 2))
+    c1 = Ring(cart.([(1, 1), (2, 2)]))
+    c2 = Ring(cart(1, 1), cart(2, 2))
     c3 = Ring(T.((1, 1.0)), T.((2.0, 2.0)))
     @test c1 == c2 == c3
 
-    c = Rope(point(0, 0), point(1, 0), point(0, 1))
+    c = Rope(cart(0, 0), cart(1, 0), cart(0, 1))
     equaltest(c)
     isapproxtest(c)
 
-    c = Ring(point(0, 0), point(1, 0), point(0, 1))
+    c = Ring(cart(0, 0), cart(1, 0), cart(0, 1))
     equaltest(c)
     isapproxtest(c)
 
     # circular equality
-    c1 = Ring(point.([(1, 1), (2, 2), (3, 3)]))
-    c2 = Ring(point.([(2, 2), (3, 3), (1, 1)]))
-    c3 = Ring(point.([(3, 3), (1, 1), (2, 2)]))
+    c1 = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
+    c2 = Ring(cart.([(2, 2), (3, 3), (1, 1)]))
+    c3 = Ring(cart.([(3, 3), (1, 1), (2, 2)]))
     @test c1 ≗ c2 ≗ c3
 
-    c = Rope(point.([(1, 1), (2, 2)]))
+    c = Rope(cart.([(1, 1), (2, 2)]))
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
-    @test vertex(c, 1) == point(1, 1)
-    @test vertex(c, 2) == point(2, 2)
-    c = Ring(point.([(1, 1), (2, 2)]))
+    @test vertex(c, 1) == cart(1, 1)
+    @test vertex(c, 2) == cart(2, 2)
+    c = Ring(cart.([(1, 1), (2, 2)]))
     @test Meshes.crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
-    @test vertex(c, 0) == point(2, 2)
-    @test vertex(c, 1) == point(1, 1)
-    @test vertex(c, 2) == point(2, 2)
-    @test vertex(c, 3) == point(1, 1)
-    @test vertex(c, 4) == point(2, 2)
+    @test vertex(c, 0) == cart(2, 2)
+    @test vertex(c, 1) == cart(1, 1)
+    @test vertex(c, 2) == cart(2, 2)
+    @test vertex(c, 3) == cart(1, 1)
+    @test vertex(c, 4) == cart(2, 2)
 
-    c = Rope(point.([(1, 1), (2, 2), (3, 3)]))
-    @test collect(segments(c)) == [Segment(point(1, 1), point(2, 2)), Segment(point(2, 2), point(3, 3))]
-    c = Ring(point.([(1, 1), (2, 2), (3, 3)]))
+    c = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
+    @test collect(segments(c)) == [Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 3))]
+    c = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
     @test collect(segments(c)) ==
-          [Segment(point(1, 1), point(2, 2)), Segment(point(2, 2), point(3, 3)), Segment(point(3, 3), point(1, 1))]
+          [Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 3)), Segment(cart(3, 3), cart(1, 1))]
 
-    c = Rope(point.([(1, 1), (2, 2), (2, 2), (3, 3)]))
-    @test unique(c) == Rope(point.([(1, 1), (2, 2), (3, 3)]))
-    @test c == Rope(point.([(1, 1), (2, 2), (2, 2), (3, 3)]))
+    c = Rope(cart.([(1, 1), (2, 2), (2, 2), (3, 3)]))
+    @test unique(c) == Rope(cart.([(1, 1), (2, 2), (3, 3)]))
+    @test c == Rope(cart.([(1, 1), (2, 2), (2, 2), (3, 3)]))
     unique!(c)
-    @test c == Rope(point.([(1, 1), (2, 2), (3, 3)]))
+    @test c == Rope(cart.([(1, 1), (2, 2), (3, 3)]))
 
-    c = Rope(point.([(1, 1), (2, 2), (3, 3)]))
-    @test close(c) == Ring(point.([(1, 1), (2, 2), (3, 3)]))
-    c = Ring(point.([(1, 1), (2, 2), (3, 3)]))
-    @test open(c) == Rope(point.([(1, 1), (2, 2), (3, 3)]))
+    c = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
+    @test close(c) == Ring(cart.([(1, 1), (2, 2), (3, 3)]))
+    c = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
+    @test open(c) == Rope(cart.([(1, 1), (2, 2), (3, 3)]))
 
-    c = Rope(point.([(1, 1), (2, 2), (3, 3)]))
+    c = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
     reverse!(c)
-    @test c == Rope(point.([(3, 3), (2, 2), (1, 1)]))
-    c = Rope(point.([(1, 1), (2, 2), (3, 3)]))
-    @test reverse(c) == Rope(point.([(3, 3), (2, 2), (1, 1)]))
+    @test c == Rope(cart.([(3, 3), (2, 2), (1, 1)]))
+    c = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
+    @test reverse(c) == Rope(cart.([(3, 3), (2, 2), (1, 1)]))
 
-    c = Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     @test angles(c) ≈ [-π / 2, -π / 2, -π / 2, -π / 2]
-    c = Rope(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    c = Rope(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     @test angles(c) ≈ [-π / 2, -π / 2]
-    c = Ring(point.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
+    c = Ring(cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
     @test angles(c) ≈ [-atan(2), -π / 2, +π / 2, -π / 2, -π / 2, -(π - atan(2))]
     @test innerangles(c) ≈ [atan(2), π / 2, 3π / 2, π / 2, π / 2, π - atan(2)]
 
-    c1 = Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    c1 = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     c2 = Ring(vertices(c1))
     @test c1 == c2
 
-    c = Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    @test centroid(c) == point(0.5, 0.5)
+    c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    @test centroid(c) == cart(0.5, 0.5)
 
-    c = Rope(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    @test boundary(c) == Multi(point.([(0, 0), (0, 1)]))
-    c = Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    c = Rope(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    @test boundary(c) == Multi(cart.([(0, 0), (0, 1)]))
+    c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     @test isnothing(boundary(c))
 
     # should not repeat the first vertex manually
-    @test_throws ArgumentError Ring(point.([(0, 0), (0, 0)]))
-    @test_throws ArgumentError Ring(point.([(0, 0), (1, 0), (1, 1), (0, 0)]))
+    @test_throws ArgumentError Ring(cart.([(0, 0), (0, 0)]))
+    @test_throws ArgumentError Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 0)]))
 
     # degenerate rings with 1 or 2 vertices are allowed
-    r = Ring(point.([(0, 0)]))
+    r = Ring(cart.([(0, 0)]))
     @test isclosed(r)
     @test nvertices(r) == 1
-    @test collect(segments(r)) == [Segment(point(0, 0), point(0, 0))]
-    r = Ring(point.([(0, 0), (1, 1)]))
+    @test collect(segments(r)) == [Segment(cart(0, 0), cart(0, 0))]
+    r = Ring(cart.([(0, 0), (1, 1)]))
     @test isclosed(r)
     @test nvertices(r) == 2
-    @test collect(segments(r)) == [Segment(point(0, 0), point(1, 1)), Segment(point(1, 1), point(0, 0))]
+    @test collect(segments(r)) == [Segment(cart(0, 0), cart(1, 1)), Segment(cart(1, 1), cart(0, 0))]
 
-    p1 = point(1, 1)
-    p2 = point(3, 1)
-    p3 = point(1, 0)
-    p4 = point(3, 0)
-    pts = point.([(0, 0), (2, 2), (4, 0)])
+    p1 = cart(1, 1)
+    p2 = cart(3, 1)
+    p3 = cart(1, 0)
+    p4 = cart(3, 0)
+    pts = cart.([(0, 0), (2, 2), (4, 0)])
     r = Ring(pts)
     @test p1 ∈ r
     @test p2 ∈ r
@@ -208,7 +208,7 @@
 
     # approximately equal vertices
     pts =
-      point.(
+      cart.(
         [
           (-48.04448403189499, -18.326530800015174)
           (-48.044478457836675, -18.326503670869467)
@@ -264,14 +264,14 @@
     @test Meshes.lentype(r) === Meshes.Met{Float64}
 
     # issimple benchmark
-    r = Sphere(point(0, 0), T(1)) |> pointify |> Ring
+    r = Sphere(cart(0, 0), T(1)) |> pointify |> Ring
     @test issimple(r)
     @test @elapsed(issimple(r)) < 0.02
     @test @allocated(issimple(r)) < 950000
 
     # innerangles in 3D is obtained via projection
-    r1 = Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    r2 = Ring(point.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]))
+    r1 = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    r2 = Ring(cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]))
     @test innerangles(r1) ≈ innerangles(r2)
 
     # datum propagation
@@ -280,8 +280,8 @@
     r = Ring(points)
     @test datum(Meshes.crs(centroid(r))) === WGS84Latest
 
-    ri = Ring(point.([(1, 1), (2, 2), (3, 3)]))
-    ro = Rope(point.([(1, 1), (2, 2), (3, 3)]))
+    ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
+    ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
     @test sprint(show, ri) == "Ring((x: 1.0 m, y: 1.0 m), (x: 2.0 m, y: 2.0 m), (x: 3.0 m, y: 3.0 m))"
     @test sprint(show, ro) == "Rope((x: 1.0 m, y: 1.0 m), (x: 2.0 m, y: 2.0 m), (x: 3.0 m, y: 3.0 m))"
     if T === Float32
@@ -310,7 +310,7 @@
   end
 
   @testset "Ngons" begin
-    pts = (point(0, 0), point(1, 0), point(0, 1))
+    pts = (cart(0, 0), cart(1, 0), cart(0, 1))
     tups = (T.((0, 0)), T.((1, 0)), T.((0, 1)))
     @test paramdim(Ngon) == 2
     @test vertices(Ngon(pts)) == pts
@@ -337,52 +337,52 @@
     end
 
     # error: the number of vertices must be greater than or equal to 3
-    @test_throws ArgumentError Ngon(point(0, 0), point(1, 1))
-    @test_throws ArgumentError Ngon{2}(point(0, 0), point(1, 1))
+    @test_throws ArgumentError Ngon(cart(0, 0), cart(1, 1))
+    @test_throws ArgumentError Ngon{2}(cart(0, 0), cart(1, 1))
 
     # ---------
     # TRIANGLE
     # ---------
 
     # Triangle in 2D space
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test Meshes.crs(t) <: Cartesian{NoDatum}
     @test Meshes.lentype(t) == ℳ
-    @test vertex(t, 1) == point(0, 0)
-    @test vertex(t, 2) == point(1, 0)
-    @test vertex(t, 3) == point(0, 1)
+    @test vertex(t, 1) == cart(0, 0)
+    @test vertex(t, 2) == cart(1, 0)
+    @test vertex(t, 3) == cart(0, 1)
     @test signarea(t) == T(0.5) * u"m^2"
     @test area(t) == T(0.5) * u"m^2"
-    t = Triangle(point(0, 0), point(0, 1), point(1, 0))
+    t = Triangle(cart(0, 0), cart(0, 1), cart(1, 0))
     @test signarea(t) == T(-0.5) * u"m^2"
     @test area(t) == T(0.5) * u"m^2"
-    t = Triangle(point(0, 0), point(1, 0), point(1, 1))
-    for p in point.([(0, 0), (1, 0), (1, 1), (0.5, 0.0), (1.0, 0.5), (0.5, 0.5)])
+    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+    for p in cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.0), (1.0, 0.5), (0.5, 0.5)])
       @test p ∈ t
     end
-    for p in point.([(-1, 0), (0, -1), (0.5, 1.0)])
+    for p in cart.([(-1, 0), (0, -1), (0.5, 1.0)])
       @test p ∉ t
     end
-    t = Triangle(point(0.4, 0.4), point(0.6, 0.4), point(0.8, 0.4))
-    @test point(0.2, 0.4) ∉ t
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
-    @test t(T(0.0), T(0.0)) == point(0, 0)
-    @test t(T(1.0), T(0.0)) == point(1, 0)
-    @test t(T(0.0), T(1.0)) == point(0, 1)
-    @test t(T(0.5), T(0.5)) == point(0.5, 0.5)
+    t = Triangle(cart(0.4, 0.4), cart(0.6, 0.4), cart(0.8, 0.4))
+    @test cart(0.2, 0.4) ∉ t
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+    @test t(T(0.0), T(0.0)) == cart(0, 0)
+    @test t(T(1.0), T(0.0)) == cart(1, 0)
+    @test t(T(0.0), T(1.0)) == cart(0, 1)
+    @test t(T(0.5), T(0.5)) == cart(0.5, 0.5)
     @test_throws DomainError((T(-0.5), T(0.0)), "invalid barycentric coordinates for triangle.") t(T(-0.5), T(0.0))
     @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
     @test !hasholes(t)
     @test unique(t) == t
     @test boundary(t) == first(rings(t))
-    @test rings(t) == [Ring(point(0, 0), point(1, 0), point(0, 1))]
+    @test rings(t) == [Ring(cart(0, 0), cart(1, 0), cart(0, 1))]
     @test convexhull(t) == t
 
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     equaltest(t)
     isapproxtest(t)
 
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test perimeter(t) ≈ T(1 + 1 + √2) * u"m"
 
     # https://github.com/JuliaGeometry/Meshes.jl/issues/333
@@ -397,38 +397,38 @@
     @test t1 ≗ t2 ≗ t3
 
     # point at edge of triangle
-    @test point(3, 1) ∈ Triangle(point(1, 1), point(5, 1), point(3, 3))
+    @test cart(3, 1) ∈ Triangle(cart(1, 1), cart(5, 1), cart(3, 3))
 
     # test angles
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8 * eps(T)))
     @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8 * eps(T)))
 
     # Triangle in 3D space
-    t = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0))
+    t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
     @test area(t) == T(0.5) * u"m^2"
-    t = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 1))
+    t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 1))
     @test area(t) > T(0.7) * u"m^2"
-    for p in point.([(0, 0, 0), (1, 0, 0), (0, 1, 1), (0, 0.2, 0.2)])
+    for p in cart.([(0, 0, 0), (1, 0, 0), (0, 1, 1), (0, 0.2, 0.2)])
       @test p ∈ t
     end
-    for p in point.([(-1, 0, 0), (1, 2, 0), (0, 1, 2)])
+    for p in cart.([(-1, 0, 0), (1, 2, 0), (0, 1, 2)])
       @test p ∉ t
     end
-    t = Triangle(point(0, 0, 0), point(0, 1, 0), point(0, 0, 1))
-    @test t(T(0.0), T(0.0)) == point(0, 0, 0)
-    @test t(T(1.0), T(0.0)) == point(0, 1, 0)
-    @test t(T(0.0), T(1.0)) == point(0, 0, 1)
-    @test t(T(0.5), T(0.5)) == point(0, 0.5, 0.5)
+    t = Triangle(cart(0, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+    @test t(T(0.0), T(0.0)) == cart(0, 0, 0)
+    @test t(T(1.0), T(0.0)) == cart(0, 1, 0)
+    @test t(T(0.0), T(1.0)) == cart(0, 0, 1)
+    @test t(T(0.5), T(0.5)) == cart(0, 0.5, 0.5)
     @test_throws DomainError((T(-0.5), T(0.0)), "invalid barycentric coordinates for triangle.") t(T(-0.5), T(0.0))
     @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
     @test isapprox(normal(t), vector(1, 0, 0))
     @test isapprox(norm(normal(t)), oneunit(ℳ))
-    t = Triangle(point(0, 0, 0), point(2, 0, 0), point(0, 2, 2))
+    t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(0, 2, 2))
     @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475))
     @test isapprox(norm(normal(t)), oneunit(ℳ))
 
-    t = Triangle(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0))
+    t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
     @test_throws ErrorException("signed area only defined for triangles embedded in R², use `area` instead") signarea(t)
 
     # datum propagation
@@ -438,7 +438,7 @@
     t = Triangle(Point(c1), Point(c2), Point(c3))
     @test datum(Meshes.crs(t(T(0), T(0)))) === WGS84Latest
 
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test sprint(show, t) == "Triangle((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 0.0 m), (x: 0.0 m, y: 1.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
@@ -459,52 +459,52 @@
     # -----------
 
     # Quadrangle in 2D space
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test Meshes.crs(q) <: Cartesian{NoDatum}
     @test Meshes.lentype(q) == ℳ
-    @test vertex(q, 1) == point(0, 0)
-    @test vertex(q, 2) == point(1, 0)
-    @test vertex(q, 3) == point(1, 1)
-    @test vertex(q, 4) == point(0, 1)
+    @test vertex(q, 1) == cart(0, 0)
+    @test vertex(q, 2) == cart(1, 0)
+    @test vertex(q, 3) == cart(1, 1)
+    @test vertex(q, 4) == cart(0, 1)
     @test area(q) == T(1) * u"m^2"
-    q = Quadrangle(point(0, 0), point(1, 0), point(1.5, 1.0), point(0.5, 1.0))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1.5, 1.0), cart(0.5, 1.0))
     @test area(q) == T(1) * u"m^2"
-    q = Quadrangle(point(0, 0), point(1, 0), point(1.5, 1.0), point(0.5, 1.0))
-    for p in point.([(0, 0), (1, 0), (1.5, 1.0), (0.5, 1.0), (0.5, 0.5)])
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1.5, 1.0), cart(0.5, 1.0))
+    for p in cart.([(0, 0), (1, 0), (1.5, 1.0), (0.5, 1.0), (0.5, 0.5)])
       @test p ∈ q
     end
-    for p in point.([(0, 1), (1.5, 0.0)])
+    for p in cart.([(0, 1), (1.5, 0.0)])
       @test p ∉ q
     end
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test !hasholes(q)
     @test unique(q) == q
     @test boundary(q) == first(rings(q))
-    @test rings(q) == [Ring(point(0, 0), point(1, 0), point(1, 1), point(0, 1))]
-    @test q(T(0), T(0)) == point(0, 0)
-    @test q(T(1), T(0)) == point(1, 0)
-    @test q(T(1), T(1)) == point(1, 1)
-    @test q(T(0), T(1)) == point(0, 1)
+    @test rings(q) == [Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))]
+    @test q(T(0), T(0)) == cart(0, 0)
+    @test q(T(1), T(0)) == cart(1, 0)
+    @test q(T(1), T(1)) == cart(1, 1)
+    @test q(T(0), T(1)) == cart(0, 1)
 
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     equaltest(q)
     isapproxtest(q)
 
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test_throws DomainError((T(1.2), T(1.2)), "q(u, v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
 
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test perimeter(q) ≈ T(4) * u"m"
 
     # Quadrangle in 3D space
-    q = Quadrangle(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0))
+    q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
     @test area(q) == T(1) * u"m^2"
-    q = Quadrangle(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 1))
+    q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 1))
     @test area(q) > T(1) * u"m^2"
-    @test q(T(0), T(0)) == point(0, 0, 0)
-    @test q(T(1), T(0)) == point(1, 0, 0)
-    @test q(T(1), T(1)) == point(1, 1, 0)
-    @test q(T(0), T(1)) == point(0, 1, 1)
+    @test q(T(0), T(0)) == cart(0, 0, 0)
+    @test q(T(1), T(0)) == cart(1, 0, 0)
+    @test q(T(1), T(1)) == cart(1, 1, 0)
+    @test q(T(0), T(1)) == cart(0, 1, 1)
 
     # datum propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0))
@@ -514,7 +514,7 @@
     q = Quadrangle(Point(c1), Point(c2), Point(c3), Point(c4))
     @test datum(Meshes.crs(q(T(0), T(0)))) === WGS84Latest
 
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test sprint(show, q) == "Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), q) == """
@@ -537,38 +537,38 @@
     @test paramdim(PolyArea) == 2
 
     # equality and approximate equality
-    outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
     poly = PolyArea([outer, hole1, hole2])
     @test poly == poly
     @test poly ≈ poly
     @test Meshes.crs(poly) <: Cartesian{NoDatum}
     @test Meshes.lentype(poly) == ℳ
 
-    p = PolyArea(point(0, 0), point(1, 0), point(0, 1))
+    p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
     equaltest(p)
     isapproxtest(p)
 
     # outer chain with 2 vertices is fixed by default
-    poly = PolyArea(point.([(0, 0), (1, 0)]))
-    @test rings(poly) == [Ring(point.([(0, 0), (0.5, 0.0), (1, 0)]))]
+    poly = PolyArea(cart.([(0, 0), (1, 0)]))
+    @test rings(poly) == [Ring(cart.([(0, 0), (0.5, 0.0), (1, 0)]))]
 
     # inner chain with 2 vertices is removed by default
-    poly = PolyArea([point.([(0, 0), (1, 0), (1, 1), (0, 1)]), point.([(1, 2), (2, 3)])])
-    @test rings(poly) == [Ring(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))]
+    poly = PolyArea([cart.([(0, 0), (1, 0), (1, 1), (0, 1)]), cart.([(1, 2), (2, 3)])])
+    @test rings(poly) == [Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))]
 
     # orientation of chains is fixed by default
-    poly = PolyArea(point.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-    @test vertices(poly) == CircularVector(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    poly = PolyArea(point.([(0, 0), (0, 1), (1, 1), (1, 0)]), fix=false)
-    @test vertices(poly) == CircularVector(point.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+    poly = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+    @test vertices(poly) == CircularVector(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    poly = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]), fix=false)
+    @test vertices(poly) == CircularVector(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
 
     # test accessor methods
-    poly = PolyArea(point.([(1, 2), (2, 3)]), fix=false)
-    @test vertices(poly) == CircularVector(point.([(1, 2), (2, 3)]))
-    poly = PolyArea([point.([(1, 2), (2, 3)]), point.([(1.1, 2.54), (1.4, 1.5)])], fix=false)
-    @test vertices(poly) == CircularVector(point.([(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)]))
+    poly = PolyArea(cart.([(1, 2), (2, 3)]), fix=false)
+    @test vertices(poly) == CircularVector(cart.([(1, 2), (2, 3)]))
+    poly = PolyArea([cart.([(1, 2), (2, 3)]), cart.([(1.1, 2.54), (1.4, 1.5)])], fix=false)
+    @test vertices(poly) == CircularVector(cart.([(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)]))
 
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
@@ -636,14 +636,14 @@
     end
 
     # test uniqueness
-    points = point.([(1, 1), (2, 2), (2, 2), (3, 3)])
+    points = cart.([(1, 1), (2, 2), (2, 2), (3, 3)])
     poly = PolyArea(points)
     unique!(poly)
-    @test first(rings(poly)) == Ring(point.([(1, 1), (2, 2), (3, 3)]))
+    @test first(rings(poly)) == Ring(cart.([(1, 1), (2, 2), (3, 3)]))
 
     # approximately equal vertices
     poly = PolyArea(
-      point.(
+      cart.(
         [
           (-48.04448403189499, -18.326530800015174)
           (-48.044478457836675, -18.326503670869467)
@@ -685,32 +685,32 @@
     @test !hasholes(upoly)
 
     # centroid
-    poly = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    @test centroid(poly) == point(0.5, 0.5)
+    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    @test centroid(poly) == cart(0.5, 0.5)
 
     # single vertex access
-    poly = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    @test vertex(poly, 1) == point(0, 0)
-    @test vertex(poly, 4) == point(0, 1)
+    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    @test vertex(poly, 1) == cart(0, 0)
+    @test vertex(poly, 4) == cart(0, 1)
 
     # point in polygonal area
-    outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
     poly = PolyArea([outer, hole1, hole2])
     @test all(p ∈ poly for p in outer)
-    @test point(0.5, 0.5) ∈ poly
-    @test point(0.2, 0.6) ∈ poly
-    @test point(1.5, 0.5) ∉ poly
-    @test point(-0.5, 0.5) ∉ poly
-    @test point(0.25, 0.25) ∉ poly
-    @test point(0.75, 0.25) ∉ poly
-    @test point(0.75, 0.75) ∈ poly
+    @test cart(0.5, 0.5) ∈ poly
+    @test cart(0.2, 0.6) ∈ poly
+    @test cart(1.5, 0.5) ∉ poly
+    @test cart(-0.5, 0.5) ∉ poly
+    @test cart(0.25, 0.25) ∉ poly
+    @test cart(0.75, 0.25) ∉ poly
+    @test cart(0.75, 0.75) ∈ poly
 
     # area
-    outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
     poly = PolyArea([outer, hole1, hole2])
     @test area(poly) ≈ T(0.92) * u"m^2"
 
@@ -723,9 +723,9 @@
     @test embeddim(p) == 3
     @test Meshes.lentype(p) === Meshes.Met{Float64}
 
-    outer = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = point.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = point.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
     poly1 = PolyArea(outer)
     poly2 = PolyArea([outer, hole1, hole2])
     @test sprint(show, poly1) == "PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
@@ -743,21 +743,21 @@
       └─ Ring((x: 0.6 m, y: 0.2 m), ..., (x: 0.8 m, y: 0.2 m))"""
 
     # should not repeat the first vertex manually
-    @test_throws ArgumentError PolyArea(point.([(0, 0), (0, 0)]))
-    @test_throws ArgumentError PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 0)]))
+    @test_throws ArgumentError PolyArea(cart.([(0, 0), (0, 0)]))
+    @test_throws ArgumentError PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 0)]))
   end
 
   @testset "Polyhedra" begin
     @test paramdim(Tetrahedron) == 3
     @test nvertices(Tetrahedron) == 4
 
-    t = Tetrahedron(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0), point(0, 0, 1))
+    t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test Meshes.crs(t) <: Cartesian{NoDatum}
     @test Meshes.lentype(t) == ℳ
-    @test vertex(t, 1) == point(0, 0, 0)
-    @test vertex(t, 2) == point(1, 0, 0)
-    @test vertex(t, 3) == point(0, 1, 0)
-    @test vertex(t, 4) == point(0, 0, 1)
+    @test vertex(t, 1) == cart(0, 0, 0)
+    @test vertex(t, 2) == cart(1, 0, 0)
+    @test vertex(t, 3) == cart(0, 1, 0)
+    @test vertex(t, 4) == cart(0, 0, 1)
     @test measure(t) == T(1 / 6) * u"m^3"
     m = boundary(t)
     n = normal.(m)
@@ -768,13 +768,13 @@
     @test n[2] == vector(0, -1, 0)
     @test n[3] == vector(-1, 0, 0)
     @test all(>(T(0) * u"m"), n[4])
-    @test t(T(0), T(0), T(0)) ≈ point(0, 0, 0)
-    @test t(T(1), T(0), T(0)) ≈ point(1, 0, 0)
-    @test t(T(0), T(1), T(0)) ≈ point(0, 1, 0)
-    @test t(T(0), T(0), T(1)) ≈ point(0, 0, 1)
+    @test t(T(0), T(0), T(0)) ≈ cart(0, 0, 0)
+    @test t(T(1), T(0), T(0)) ≈ cart(1, 0, 0)
+    @test t(T(0), T(1), T(0)) ≈ cart(0, 1, 0)
+    @test t(T(0), T(0), T(1)) ≈ cart(0, 0, 1)
     @test_throws DomainError((T(1), T(1), T(1)), "invalid barycentric coordinates for tetrahedron.") t(T(1), T(1), T(1))
 
-    t = Tetrahedron(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0), point(0, 0, 1))
+    t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
     equaltest(t)
     isapproxtest(t)
 
@@ -791,7 +791,7 @@
     t = Tetrahedron(Point(c1), Point(c2), Point(c3), Point(c4))
     @test datum(Meshes.crs(t(T(0), T(0), T(0)))) === WGS84Latest
 
-    t = Tetrahedron(point(0, 0, 0), point(1, 0, 0), point(0, 1, 0), point(0, 0, 1))
+    t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test sprint(show, t) == "Tetrahedron((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), t) == """
@@ -813,61 +813,61 @@
     @test nvertices(Hexahedron) == 8
 
     h = Hexahedron(
-      point(0, 0, 0),
-      point(1, 0, 0),
-      point(1, 1, 0),
-      point(0, 1, 0),
-      point(0, 0, 1),
-      point(1, 0, 1),
-      point(1, 1, 1),
-      point(0, 1, 1)
+      cart(0, 0, 0),
+      cart(1, 0, 0),
+      cart(1, 1, 0),
+      cart(0, 1, 0),
+      cart(0, 0, 1),
+      cart(1, 0, 1),
+      cart(1, 1, 1),
+      cart(0, 1, 1)
     )
     @test Meshes.crs(h) <: Cartesian{NoDatum}
     @test Meshes.lentype(h) == ℳ
-    @test vertex(h, 1) == point(0, 0, 0)
-    @test vertex(h, 8) == point(0, 1, 1)
-    @test h(T(0), T(0), T(0)) == point(0, 0, 0)
-    @test h(T(0), T(0), T(1)) == point(0, 0, 1)
-    @test h(T(0), T(1), T(0)) == point(0, 1, 0)
-    @test h(T(0), T(1), T(1)) == point(0, 1, 1)
-    @test h(T(1), T(0), T(0)) == point(1, 0, 0)
-    @test h(T(1), T(0), T(1)) == point(1, 0, 1)
-    @test h(T(1), T(1), T(0)) == point(1, 1, 0)
-    @test h(T(1), T(1), T(1)) == point(1, 1, 1)
+    @test vertex(h, 1) == cart(0, 0, 0)
+    @test vertex(h, 8) == cart(0, 1, 1)
+    @test h(T(0), T(0), T(0)) == cart(0, 0, 0)
+    @test h(T(0), T(0), T(1)) == cart(0, 0, 1)
+    @test h(T(0), T(1), T(0)) == cart(0, 1, 0)
+    @test h(T(0), T(1), T(1)) == cart(0, 1, 1)
+    @test h(T(1), T(0), T(0)) == cart(1, 0, 0)
+    @test h(T(1), T(0), T(1)) == cart(1, 0, 1)
+    @test h(T(1), T(1), T(0)) == cart(1, 1, 0)
+    @test h(T(1), T(1), T(1)) == cart(1, 1, 1)
 
     h = Hexahedron(
-      point(0, 0, 0),
-      point(1, 0, 0),
-      point(1, 1, 0),
-      point(0, 1, 0),
-      point(0, 0, 1),
-      point(1, 0, 1),
-      point(1, 1, 1),
-      point(0, 1, 1)
+      cart(0, 0, 0),
+      cart(1, 0, 0),
+      cart(1, 1, 0),
+      cart(0, 1, 0),
+      cart(0, 0, 1),
+      cart(1, 0, 1),
+      cart(1, 1, 1),
+      cart(0, 1, 1)
     )
     equaltest(h)
     isapproxtest(h)
 
     h = Hexahedron(
-      point(0, 0, 0),
-      point(1, 0, 0),
-      point(1, 1, 0),
-      point(0, 1, 0),
-      point(0, 0, 1),
-      point(1, 0, 1),
-      point(1, 1, 1),
-      point(0, 1, 1)
+      cart(0, 0, 0),
+      cart(1, 0, 0),
+      cart(1, 1, 0),
+      cart(0, 1, 0),
+      cart(0, 0, 1),
+      cart(1, 0, 1),
+      cart(1, 1, 1),
+      cart(0, 1, 1)
     )
     @test volume(h) ≈ T(1 * 1 * 1) * u"m^3"
     h = Hexahedron(
-      point(0, 0, 0),
-      point(2, 0, 0),
-      point(2, 2, 0),
-      point(0, 2, 0),
-      point(0, 0, 2),
-      point(2, 0, 2),
-      point(2, 2, 2),
-      point(0, 2, 2)
+      cart(0, 0, 0),
+      cart(2, 0, 0),
+      cart(2, 2, 0),
+      cart(0, 2, 0),
+      cart(0, 0, 2),
+      cart(2, 0, 2),
+      cart(2, 2, 2),
+      cart(0, 2, 2)
     )
     @test volume(h) ≈ T(2 * 2 * 2) * u"m^3"
 
@@ -875,26 +875,26 @@
     # here we build a hexahedron which is a frustum of a prism with
     # bottom area S₁= 4, top area S₂= 1, height H = 2
     h = Hexahedron(
-      point(0, 0, 0),
-      point(2, 0, 0),
-      point(2, 2, 0),
-      point(0, 2, 0),
-      point(0, 0, 2),
-      point(1, 0, 2),
-      point(1, 1, 2),
-      point(0, 1, 2)
+      cart(0, 0, 0),
+      cart(2, 0, 0),
+      cart(2, 2, 0),
+      cart(0, 2, 0),
+      cart(0, 0, 2),
+      cart(1, 0, 2),
+      cart(1, 1, 2),
+      cart(0, 1, 2)
     )
     @test volume(h) ≈ T(1 / 3 * 2 * (1 + 4 + sqrt(1 * 4))) * u"m^3"
 
     h = Hexahedron(
-      point(0, 0, 0),
-      point(1, 0, 0),
-      point(1, 1, 0),
-      point(0, 1, 0),
-      point(0, 0, 1),
-      point(1, 0, 1),
-      point(1, 1, 1),
-      point(0, 1, 1)
+      cart(0, 0, 0),
+      cart(1, 0, 0),
+      cart(1, 1, 0),
+      cart(0, 1, 0),
+      cart(0, 0, 1),
+      cart(1, 0, 1),
+      cart(1, 1, 1),
+      cart(0, 1, 1)
     )
     m = boundary(h)
     @test m isa Mesh
@@ -919,14 +919,14 @@
     @test datum(Meshes.crs(h(T(0), T(0), T(0)))) === WGS84Latest
 
     h = Hexahedron(
-      point(0, 0, 0),
-      point(1, 0, 0),
-      point(1, 1, 0),
-      point(0, 1, 0),
-      point(0, 0, 1),
-      point(1, 0, 1),
-      point(1, 1, 1),
-      point(0, 1, 1)
+      cart(0, 0, 0),
+      cart(1, 0, 0),
+      cart(1, 1, 0),
+      cart(0, 1, 0),
+      cart(0, 0, 1),
+      cart(1, 0, 1),
+      cart(1, 1, 1),
+      cart(0, 1, 1)
     )
     @test sprint(show, h) == "Hexahedron((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 1.0 m, z: 1.0 m))"
     if T === Float32
@@ -956,7 +956,7 @@
     @test paramdim(Pyramid) == 3
     @test nvertices(Pyramid) == 5
 
-    p = Pyramid(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0), point(0, 0, 1))
+    p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test Meshes.crs(p) <: Cartesian{NoDatum}
     @test Meshes.lentype(p) == ℳ
     @test volume(p) ≈ T(1 / 3) * u"m^3"
@@ -969,7 +969,7 @@
     @test m[4] isa Triangle
     @test m[5] isa Triangle
 
-    p = Pyramid(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0), point(0, 0, 1))
+    p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
     equaltest(p)
     isapproxtest(p)
 
@@ -978,7 +978,7 @@
     @test embeddim(p) == 3
     @test Meshes.lentype(p) === Meshes.Met{Float64}
 
-    p = Pyramid(point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0), point(0, 0, 1))
+    p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
     if T === Float32
       @test sprint(show, MIME("text/plain"), p) == """

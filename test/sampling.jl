@@ -69,16 +69,16 @@
   end
 
   @testset "RegularSampling" begin
-    b = Box(point(0, 0), point(2, 2))
+    b = Box(cart(0, 0), cart(2, 2))
     ps = sample(b, RegularSampling(3))
-    @test collect(ps) == point.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)])
+    @test collect(ps) == cart.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)])
     ps = sample(b, RegularSampling(2, 3))
-    @test collect(ps) == point.([(0, 0), (2, 0), (0, 1), (2, 1), (0, 2), (2, 2)])
+    @test collect(ps) == cart.([(0, 0), (2, 0), (0, 1), (2, 1), (0, 2), (2, 2)])
 
-    b = BezierCurve([point(0, 0), point(1, 0), point(1, 1)])
+    b = BezierCurve([cart(0, 0), cart(1, 0), cart(1, 1)])
     ps = sample(b, RegularSampling(4))
     ts =
-      point.([
+      cart.([
         (0.0, 0.0),
         (0.5555555555555556, 0.1111111111111111),
         (0.8888888888888888, 0.4444444444444444),
@@ -88,17 +88,17 @@
       @test p ≈ t
     end
 
-    s = Sphere(point(0, 0), T(2))
+    s = Sphere(cart(0, 0), T(2))
     ps = sample(s, RegularSampling(4))
-    ts = point.([(2, 0), (0, 2), (-2, 0), (0, -2)])
+    ts = cart.([(2, 0), (0, 2), (-2, 0), (0, -2)])
     for (p, t) in zip(ps, ts)
       @test p ≈ t
     end
 
-    s = Sphere(point(0, 0, 0), T(2))
+    s = Sphere(cart(0, 0, 0), T(2))
     ps = sample(s, RegularSampling(2, 2))
     ts =
-      point.([
+      cart.([
         (1.7320508075688772, 0.0, 1.0),
         (1.7320508075688772, 0.0, -1.0),
         (-1.7320508075688772, 0.0, 1.0),
@@ -110,10 +110,10 @@
       @test p ≈ t
     end
 
-    e = Ellipsoid((T(3), T(2), T(1)), point(1, 1, 1), RotZYX(T(π / 4), T(π / 4), T(π / 4)))
+    e = Ellipsoid((T(3), T(2), T(1)), cart(1, 1, 1), RotZYX(T(π / 4), T(π / 4), T(π / 4)))
     ps = sample(e, RegularSampling(2, 2))
     ts =
-      point.([
+      cart.([
         (2.725814800973295, 2.225814800973295, -0.5871173070873834),
         (1.872261410380021, 2.372261410380021, -1.0871173070873832),
         (0.12773858961997864, -0.37226141038002103, 3.0871173070873836),
@@ -125,11 +125,11 @@
       @test p ≈ t
     end
 
-    b = Ball(point(0, 0), T(2))
+    b = Ball(cart(0, 0), T(2))
     ps = sample(b, RegularSampling(3, 4))
     @test all(∈(b), ps)
     ts =
-      point.([
+      cart.([
         (0.6666666666666666, 0.0),
         (1.3333333333333333, 0.0),
         (2.0, 0.0),
@@ -148,11 +148,11 @@
       @test p ≈ t
     end
 
-    b = Ball(point(10, 10), T(2))
+    b = Ball(cart(10, 10), T(2))
     ps = sample(b, RegularSampling(4, 3))
     @test all(∈(b), ps)
     ts =
-      point.([
+      cart.([
         (10.5, 10.0),
         (11.0, 10.0),
         (11.5, 10.0),
@@ -171,11 +171,11 @@
       @test p ≈ t
     end
 
-    b = Ball(point(0, 0, 0), T(2))
+    b = Ball(cart(0, 0, 0), T(2))
     ps = sample(b, RegularSampling(3, 2, 3))
     @test all(∈(b), ps)
     ts =
-      point.([
+      cart.([
         (0.5773502691896257, 0.0, 0.3333333333333333),
         (1.1547005383792515, 0.0, 0.6666666666666666),
         (1.7320508075688772, 0.0, 1.0),
@@ -200,12 +200,12 @@
       @test p ≈ t
     end
 
-    b = Ball(point(10, 10, 10), T(2))
+    b = Ball(cart(10, 10, 10), T(2))
     ps = sample(b, RegularSampling(3, 2, 3))
     @test all(∈(b), ps)
 
     # cylinder surface with parallel planes
-    c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(0, 0, 1), vector(0, 0, 1)), T(1))
+    c = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = to.(ps)
     xs = getindex.(cs, 1)
@@ -217,7 +217,7 @@
     @test all(zero(ℳ) ≤ z ≤ oneunit(ℳ) for z in zs)
 
     # cylinder surface with parallel shifted planes
-    c = CylinderSurface(Plane(point(0, 0, 0), vector(0, 0, 1)), Plane(point(1, 1, 1), vector(0, 0, 1)), T(1))
+    c = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = to.(ps)
     xs = getindex.(cs, 1)
@@ -226,39 +226,39 @@
     @test length(cs) == 200 + 2
 
     # cylinder surface with non-parallel planes
-    c = CylinderSurface(Plane(point(0, 0, 0), vector(1, 0, 1)), Plane(point(1, 1, 1), vector(0, 1, 1)), T(1))
+    c = CylinderSurface(Plane(cart(0, 0, 0), vector(1, 0, 1)), Plane(cart(1, 1, 1), vector(0, 1, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
     cs = to.(ps)
     @test length(cs) == 200 + 2
 
-    s = Segment(point(0, 0), point(1, 1))
+    s = Segment(cart(0, 0), cart(1, 1))
     ps = sample(s, RegularSampling(2))
-    @test collect(ps) == point.([(0, 0), (1, 1)])
+    @test collect(ps) == cart.([(0, 0), (1, 1)])
     ps = sample(s, RegularSampling(3))
-    @test collect(ps) == point.([(0, 0), (0.5, 0.5), (1, 1)])
+    @test collect(ps) == cart.([(0, 0), (0.5, 0.5), (1, 1)])
 
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     ps = sample(q, RegularSampling(2, 2))
-    @test collect(ps) == point.([(0, 0), (1, 0), (0, 1), (1, 1)])
+    @test collect(ps) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
     ps = sample(q, RegularSampling(3, 3))
-    @test collect(ps) == point.([(0, 0), (0.5, 0), (1, 0), (0, 0.5), (0.5, 0.5), (1, 0.5), (0, 1), (0.5, 1), (1, 1)])
+    @test collect(ps) == cart.([(0, 0), (0.5, 0), (1, 0), (0, 0.5), (0.5, 0.5), (1, 0.5), (0, 1), (0.5, 1), (1, 1)])
 
     h = Hexahedron(
-      point(0, 0, 0),
-      point(1, 0, 0),
-      point(1, 1, 0),
-      point(0, 1, 0),
-      point(0, 0, 1),
-      point(1, 0, 1),
-      point(1, 1, 1),
-      point(0, 1, 1)
+      cart(0, 0, 0),
+      cart(1, 0, 0),
+      cart(1, 1, 0),
+      cart(0, 1, 0),
+      cart(0, 0, 1),
+      cart(1, 0, 1),
+      cart(1, 1, 1),
+      cart(0, 1, 1)
     )
     ps = sample(h, RegularSampling(2, 2, 2))
     @test collect(ps) ==
-          point.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0), (0, 0, 1), (1, 0, 1), (0, 1, 1), (1, 1, 1)])
+          cart.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (1, 1, 0), (0, 0, 1), (1, 0, 1), (0, 1, 1), (1, 1, 1)])
     ps = sample(h, RegularSampling(3, 2, 2))
     @test collect(ps) ==
-          point.([
+          cart.([
       (0, 0, 0),
       (0.5, 0, 0),
       (1, 0, 0),
@@ -273,10 +273,10 @@
       (1, 1, 1)
     ])
 
-    torus = Torus(point(0, 0, 0), vector(1, 0, 0), T(2), T(1))
+    torus = Torus(cart(0, 0, 0), vector(1, 0, 0), T(2), T(1))
     ps = sample(torus, RegularSampling(3, 3))
     ts =
-      point.([
+      cart.([
         (0, 0, -3),
         (-sqrt(3) / 2, 0, -1.5),
         (sqrt(3) / 2, 0, -1.5),
@@ -297,24 +297,24 @@
   end
 
   @testset "HomogeneousSampling" begin
-    s = Segment(point(0, 0), point(1, 0))
+    s = Segment(cart(0, 0), cart(1, 0))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(zero(ℳ) ≤ coords[1] ≤ oneunit(ℳ) for coords in to.(ps))
     @test all(coords[2] == zero(ℳ) for coords in to.(ps))
 
-    s = Segment(point(0, 0), point(0, 1))
+    s = Segment(cart(0, 0), cart(0, 1))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(coords[1] == zero(ℳ) for coords in to.(ps))
     @test all(zero(ℳ) ≤ coords[2] ≤ oneunit(ℳ) for coords in to.(ps))
 
-    s = Segment(point(0, 0), point(1, 1))
+    s = Segment(cart(0, 0), cart(1, 1))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(zero(ℳ) ≤ coords[1] == coords[2] ≤ oneunit(ℳ) for coords in to.(ps))
 
-    c = Rope(point(0, 0), point(1, 0), point(0, 1), point(1, 1))
+    c = Rope(cart(0, 0), cart(1, 0), cart(0, 1), cart(1, 1))
     ps = sample(c, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(
@@ -322,33 +322,33 @@
       coords in to.(ps)
     )
 
-    t = Triangle(point(0, 0), point(1, 0), point(0, 1))
+    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     ps = sample(t, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(∈(t), ps)
 
-    q = Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     ps = sample(q, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(∈(q), ps)
 
-    b = Ball(point(10, 10), T(3))
+    b = Ball(cart(10, 10), T(3))
     ps = sample(b, HomogeneousSampling(100))
     @test first(ps) isa Point{2}
     @test all(∈(b), ps)
 
-    b = Ball(point(10, 10, 10), T(10))
+    b = Ball(cart(10, 10, 10), T(10))
     ps = sample(b, HomogeneousSampling(100))
     @test first(ps) isa Point{3}
     @test all(∈(b), ps)
 
-    poly1 = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    poly2 = PolyArea(point.([(1, 1), (2, 1), (2, 2), (1, 2)]))
+    poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
     multi = Multi([poly1, poly2])
     ps = sample(multi, HomogeneousSampling(100))
-    @test all(p -> (point(0, 0) ⪯ p ⪯ point(1, 1)) || (point(1, 1) ⪯ p ⪯ point(2, 2)), ps)
+    @test all(p -> (cart(0, 0) ⪯ p ⪯ cart(1, 1)) || (cart(1, 1) ⪯ p ⪯ cart(2, 2)), ps)
 
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
     connec = connect.([(3, 1, 5), (4, 6, 2), (1, 2, 6, 5), (5, 6, 4, 3)])
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, HomogeneousSampling(400))
@@ -360,13 +360,13 @@
   end
 
   @testset "MinDistanceSampling" begin
-    poly1 = PolyArea(point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    poly2 = PolyArea(point.([(1, 1), (2, 1), (2, 2), (1, 2)]))
+    poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
     multi = Multi([poly1, poly2])
     ps = sample(multi, MinDistanceSampling(0.1))
-    @test all(p -> (point(0, 0) ⪯ p ⪯ point(1, 1)) || (point(1, 1) ⪯ p ⪯ point(2, 2)), ps)
+    @test all(p -> (cart(0, 0) ⪯ p ⪯ cart(1, 1)) || (cart(1, 1) ⪯ p ⪯ cart(2, 2)), ps)
 
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
     connec = connect.([(3, 1, 5), (4, 6, 2), (1, 2, 6, 5), (5, 6, 4, 3)])
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, MinDistanceSampling(0.2))
@@ -377,7 +377,7 @@
 
     # geometries with almost zero measure
     # can still be sampled (at least one point)
-    poly = PolyArea(point.([(-44.20065308, -21.12284851), (-44.20324135, -21.122799875), (-44.20582962, -21.12275124)]))
+    poly = PolyArea(cart.([(-44.20065308, -21.12284851), (-44.20324135, -21.122799875), (-44.20582962, -21.12275124)]))
     ps = sample(poly, MinDistanceSampling(3.2423333333753135e-5))
     @test length(ps) > 0
   end
@@ -406,20 +406,20 @@
 
     method = RegularSampling(10)
     for geom in [
-      Box(point(0, 0), point(2, 2))
-      Sphere(point(0, 0), T(2))
-      Ball(point(0, 0), T(2))
-      Segment(point(0, 0), point(1, 1))
-      Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
+      Box(cart(0, 0), cart(2, 2))
+      Sphere(cart(0, 0), T(2))
+      Ball(cart(0, 0), T(2))
+      Segment(cart(0, 0), cart(1, 1))
+      Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
       Hexahedron(
-        point(0, 0, 0),
-        point(1, 0, 0),
-        point(1, 1, 0),
-        point(0, 1, 0),
-        point(0, 0, 1),
-        point(1, 0, 1),
-        point(1, 1, 1),
-        point(0, 1, 1)
+        cart(0, 0, 0),
+        cart(1, 0, 0),
+        cart(1, 1, 0),
+        cart(0, 1, 0),
+        cart(0, 0, 1),
+        cart(1, 0, 1),
+        cart(1, 1, 1),
+        cart(0, 1, 1)
       )
     ]
       rng = StableRNG(2021)

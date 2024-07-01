@@ -1,12 +1,12 @@
 @testset "Merging" begin
-  s = Sphere(point(0, 0, 0), T(1))
+  s = Sphere(cart(0, 0, 0), T(1))
   c = CylinderSurface(T(1))
   m = merge(s, c)
   @test m isa Multi
   @test eltype(parent(m)) <: Primitive
 
-  s = Sphere(point(0, 0, 0), T(1))
-  b = Box(point(0, 0, 0), point(1, 1, 1))
+  s = Sphere(cart(0, 0, 0), T(1))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
   ms = Multi([s])
   mb = Multi([b])
   @test merge(ms, b) == merge(ms, mb) == merge(s, mb)
