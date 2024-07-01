@@ -31,7 +31,7 @@ include("dummy.jl")
 # helper functions
 include("testutils.jl")
 
-point(args...) = point(T, args...)
+cart(args...) = cart(T, args...)
 
 vector(args...) = vector(T, args...)
 

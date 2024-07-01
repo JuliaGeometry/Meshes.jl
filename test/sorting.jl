@@ -3,7 +3,7 @@
     g = cartgrid(3, 3)
     s = sort(g, DirectionSort((T(1), T(1))))
     @test centroid.(s) ==
-          point.([
+          cart.([
       (0.5, 0.5),
       (1.5, 0.5),
       (0.5, 1.5),

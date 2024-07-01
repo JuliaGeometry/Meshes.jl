@@ -1,7 +1,7 @@
 @testset "Matrices" begin
   @testset "Laplace" begin
     # uniform weights for simple mesh
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     L = laplacematrix(mesh, kind=:uniform)
@@ -18,7 +18,7 @@
     @test size(L) == (5, 5)
 
     # cotangent weights only defined for triangle meshes
-    points = point.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    points = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     connec = connect.([(1, 2, 3, 4)], Quadrangle)
     mesh = SimpleMesh(points, connec)
     @test_throws AssertionError laplacematrix(mesh, kind=:cotangent)
@@ -34,7 +34,7 @@
 
   @testset "Measure" begin
     # measure matrix of simple mesh
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     M = measurematrix(mesh)
@@ -57,7 +57,7 @@
     @test size(A) == (101 * 101, 101 * 101)
 
     # adjacency of SimpleMesh
-    points = point.([(0, 0), (1, -1), (1, 1), (2, -1), (2, 1)])
+    points = cart.([(0, 0), (1, -1), (1, 1), (2, -1), (2, 1)])
     connec = connect.([(1, 2, 3), (3, 2, 4, 5)])
     mesh = SimpleMesh(points, connec, relations=true)
     A = adjacencymatrix(mesh)
@@ -74,7 +74,7 @@
 
   @testset "Miscellaneous" begin
     # full Laplace-Beltrami operator
-    sphere = Sphere(point(0, 0, 0))
+    sphere = Sphere(cart(0, 0, 0))
     mesh = simplexify(sphere)
     L = laplacematrix(mesh)
     M = measurematrix(mesh)

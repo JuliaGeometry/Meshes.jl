@@ -1,7 +1,7 @@
 @testset "Utilities" begin
-  a, b, c = point(0, 0), point(1, 0), point(0, 1)
+  a, b, c = cart(0, 0), cart(1, 0), cart(0, 1)
   @test signarea(a, b, c) == T(0.5) * u"m^2"
-  a, b, c = point(0, 0), point(0, 1), point(1, 0)
+  a, b, c = cart(0, 0), cart(0, 1), cart(1, 0)
   @test signarea(a, b, c) == T(-0.5) * u"m^2"
 
   normals = [
@@ -33,14 +33,14 @@
   @test Meshes.mayberound(1.1, 1.0, 0.05) ≈ 1.1
 
   # intersect parameters
-  p1, p2 = point(0, 0), point(1, 1)
-  p3, p4 = point(1, 0), point(0, 1)
+  p1, p2 = cart(0, 0), cart(1, 1)
+  p3, p4 = cart(1, 0), cart(0, 1)
   @inferred Meshes.intersectparameters(p1, p2, p3, p4)
   @inferred Meshes.intersectparameters(p1, p3, p2, p4)
   @inferred Meshes.intersectparameters(p1, p2, p1, p2)
 
-  p1, p2 = point(0, 0, 0), point(1, 1, 1)
-  p3, p4 = point(1, 0, 0), point(0, 1, 1)
+  p1, p2 = cart(0, 0, 0), cart(1, 1, 1)
+  p3, p4 = cart(1, 0, 0), cart(0, 1, 1)
   @inferred Meshes.intersectparameters(p1, p2, p3, p4)
   @inferred Meshes.intersectparameters(p1, p3, p2, p4)
   @inferred Meshes.intersectparameters(p1, p2, p1, p2)

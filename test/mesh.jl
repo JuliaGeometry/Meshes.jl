@@ -5,26 +5,26 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (100,)
-    @test minimum(grid) == point(0)
-    @test maximum(grid) == point(100)
-    @test extrema(grid) == (point(0), point(100))
+    @test minimum(grid) == cart(0)
+    @test maximum(grid) == cart(100)
+    @test extrema(grid) == (cart(0), cart(100))
     @test spacing(grid) == (T(1) * u"m",)
     @test nelements(grid) == 100
     @test eltype(grid) <: Segment{1}
     @test measure(grid) ≈ T(100) * u"m"
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
-    @test grid[1] == Segment(point(0), point(1))
-    @test grid[100] == Segment(point(99), point(100))
+    @test grid[1] == Segment(cart(0), cart(1))
+    @test grid[100] == Segment(cart(99), cart(100))
 
     grid = cartgrid(200, 100)
     @test embeddim(grid) == 2
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (200, 100)
-    @test minimum(grid) == point(0, 0)
-    @test maximum(grid) == point(200, 100)
-    @test extrema(grid) == (point(0, 0), point(200, 100))
+    @test minimum(grid) == cart(0, 0)
+    @test maximum(grid) == cart(200, 100)
+    @test extrema(grid) == (cart(0, 0), cart(200, 100))
     @test spacing(grid) == (T(1) * u"m", T(1) * u"m")
     @test nelements(grid) == 200 * 100
     @test eltype(grid) <: Quadrangle{2}
@@ -39,9 +39,9 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (200, 100, 50)
-    @test minimum(grid) == point(0, 0, 0)
-    @test maximum(grid) == point(200, 100, 50)
-    @test extrema(grid) == (point(0, 0, 0), point(200, 100, 50))
+    @test minimum(grid) == cart(0, 0, 0)
+    @test maximum(grid) == cart(200, 100, 50)
+    @test extrema(grid) == (cart(0, 0, 0), cart(200, 100, 50))
     @test spacing(grid) == (T(1) * u"m", T(1) * u"m", T(1) * u"m")
     @test nelements(grid) == 200 * 100 * 50
     @test eltype(grid) <: Hexahedron{3}
@@ -56,8 +56,8 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (10, 10, 10)
-    @test minimum(grid) == point(0, 0, 0)
-    @test maximum(grid) == point(1, 1, 1)
+    @test minimum(grid) == cart(0, 0, 0)
+    @test maximum(grid) == cart(1, 1, 1)
     @test spacing(grid) == (T(0.1) * u"m", T(0.1) * u"m", T(0.1) * u"m")
 
     grid = CartesianGrid(T.((-1.0, -1.0)), T.((1.0, 1.0)), dims=(200, 100))
@@ -65,8 +65,8 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (200, 100)
-    @test minimum(grid) == point(-1.0, -1.0)
-    @test maximum(grid) == point(1.0, 1.0)
+    @test minimum(grid) == cart(-1.0, -1.0)
+    @test maximum(grid) == cart(1.0, 1.0)
     @test spacing(grid) == (T(2 / 200) * u"m", T(2 / 100) * u"m")
     @test nelements(grid) == 200 * 100
     @test eltype(grid) <: Quadrangle{2}
@@ -76,21 +76,21 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (20, 10, 5)
-    @test minimum(grid) == point(0, 0, 0)
-    @test maximum(grid) == point(100, 50, 25)
-    @test extrema(grid) == (point(0, 0, 0), point(100, 50, 25))
+    @test minimum(grid) == cart(0, 0, 0)
+    @test maximum(grid) == cart(100, 50, 25)
+    @test extrema(grid) == (cart(0, 0, 0), cart(100, 50, 25))
     @test spacing(grid) == (T(5) * u"m", T(5) * u"m", T(5) * u"m")
     @test nelements(grid) == 20 * 10 * 5
     @test eltype(grid) <: Hexahedron{3}
     @test vertices(grid[1]) == (
-      point(0, 0, 0),
-      point(5, 0, 0),
-      point(5, 5, 0),
-      point(0, 5, 0),
-      point(0, 0, 5),
-      point(5, 0, 5),
-      point(5, 5, 5),
-      point(0, 5, 5)
+      cart(0, 0, 0),
+      cart(5, 0, 0),
+      cart(5, 5, 0),
+      cart(0, 5, 0),
+      cart(0, 0, 5),
+      cart(5, 0, 5),
+      cart(5, 5, 5),
+      cart(0, 5, 5)
     )
     @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
@@ -100,8 +100,8 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (10, 10)
-    @test minimum(grid) == point(0.0, 0.0)
-    @test maximum(grid) == point(10.0, 10.0)
+    @test minimum(grid) == cart(0.0, 0.0)
+    @test maximum(grid) == cart(10.0, 10.0)
     @test spacing(grid) == (T(1) * u"m", T(1) * u"m")
     @test nelements(grid) == 10 * 10
     @test eltype(grid) <: Quadrangle{2}
@@ -112,39 +112,39 @@
     @test size(sub) == (2, 2)
     @test spacing(sub) == spacing(grid)
     @test minimum(sub) == minimum(grid)
-    @test maximum(sub) == point(2, 2)
+    @test maximum(sub) == cart(2, 2)
     sub = grid[1:1, 2:3]
     @test size(sub) == (1, 2)
     @test spacing(sub) == spacing(grid)
-    @test minimum(sub) == point(0, 1)
-    @test maximum(sub) == point(1, 3)
+    @test minimum(sub) == cart(0, 1)
+    @test maximum(sub) == cart(1, 3)
     sub = grid[2:4, 3:7]
     @test size(sub) == (3, 5)
     @test spacing(sub) == spacing(grid)
-    @test minimum(sub) == point(1, 2)
-    @test maximum(sub) == point(4, 7)
-    grid = CartesianGrid(point(1, 1), point(11, 11), dims=(10, 10))
+    @test minimum(sub) == cart(1, 2)
+    @test maximum(sub) == cart(4, 7)
+    grid = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     sub = grid[2:4, 3:7]
     @test size(sub) == (3, 5)
     @test spacing(sub) == spacing(grid)
-    @test minimum(sub) == point(2, 3)
-    @test maximum(sub) == point(5, 8)
+    @test minimum(sub) == cart(2, 3)
+    @test maximum(sub) == cart(5, 8)
     sub = grid[2, 3:7]
     @test size(sub) == (1, 5)
     @test spacing(sub) == spacing(grid)
-    @test minimum(sub) == point(2, 3)
-    @test maximum(sub) == point(3, 8)
+    @test minimum(sub) == cart(2, 3)
+    @test maximum(sub) == cart(3, 8)
     sub = grid[:, 3:7]
     @test size(sub) == (10, 5)
     @test spacing(sub) == spacing(grid)
-    @test minimum(sub) == point(1, 3)
-    @test maximum(sub) == point(11, 8)
+    @test minimum(sub) == cart(1, 3)
+    @test maximum(sub) == cart(11, 8)
     @test_throws BoundsError grid[3:11, :]
 
     # subgrid with comparable vertices of grid
-    grid = CartesianGrid((10, 10), point(0.0, 0.0), T.((1.2, 1.2)))
+    grid = CartesianGrid((10, 10), cart(0.0, 0.0), T.((1.2, 1.2)))
     sub = grid[2:4, 5:7]
-    @test sub == CartesianGrid((3, 3), point(0.0, 0.0), T.((1.2, 1.2)), (0, -3))
+    @test sub == CartesianGrid((3, 3), cart(0.0, 0.0), T.((1.2, 1.2)), (0, -3))
     ind = reshape(reshape(1:121, 11, 11)[2:5, 5:8], :)
     @test vertices(grid)[ind] == vertices(sub)
 
@@ -155,16 +155,16 @@
     @test sub1 == sub2
 
     grid = cartgrid(200, 100)
-    @test centroid(grid, 1) == point(0.5, 0.5)
-    @test centroid(grid, 2) == point(1.5, 0.5)
-    @test centroid(grid, 200 * 100) == point(199.5, 99.5)
+    @test centroid(grid, 1) == cart(0.5, 0.5)
+    @test centroid(grid, 2) == cart(1.5, 0.5)
+    @test centroid(grid, 200 * 100) == cart(199.5, 99.5)
     @test nelements(grid) == 200 * 100
     @test eltype(grid) <: Quadrangle{2}
-    @test grid[1] == Quadrangle(point(0, 0), point(1, 0), point(1, 1), point(0, 1))
-    @test grid[2] == Quadrangle(point(1, 0), point(2, 0), point(2, 1), point(1, 1))
+    @test grid[1] == Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+    @test grid[2] == Quadrangle(cart(1, 0), cart(2, 0), cart(2, 1), cart(1, 1))
 
     # expand CartesianGrid with comparable vertices
-    grid = CartesianGrid((10, 10), point(0.0, 0.0), T.((1.0, 1.0)))
+    grid = CartesianGrid((10, 10), cart(0.0, 0.0), T.((1.0, 1.0)))
     left, right = (1, 1), (1, 1)
     newdim = size(grid) .+ left .+ right
     newoffset = offset(grid) .+ left
@@ -190,8 +190,8 @@
 
     # single vertex access
     grid = cartgrid(10, 10)
-    @test vertex(grid, 1) == point(0, 0)
-    @test vertex(grid, 121) == point(10, 10)
+    @test vertex(grid, 1) == cart(0, 0)
+    @test vertex(grid, 121) == cart(10, 10)
 
     # xyz
     g1D = cartgrid(10)
@@ -213,7 +213,7 @@
     @test Meshes.XYZ(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
 
     # units
-    grid = CartesianGrid((10, 10), point(0, 0), (T(1) * u"m", T(1) * u"m"))
+    grid = CartesianGrid((10, 10), cart(0, 0), (T(1) * u"m", T(1) * u"m"))
     o = minimum(grid)
     s = spacing(grid)
     @test unit(Meshes.lentype(o)) == u"m"
@@ -245,40 +245,40 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (5, 5)
-    @test minimum(grid) == point(0, 0)
-    @test maximum(grid) == point(1, 1)
-    @test extrema(grid) == (point(0, 0), point(1, 1))
+    @test minimum(grid) == cart(0, 0)
+    @test maximum(grid) == cart(1, 1)
+    @test extrema(grid) == (cart(0, 0), cart(1, 1))
     @test nelements(grid) == 25
     @test eltype(grid) <: Quadrangle{2}
     @test measure(grid) ≈ T(1) * u"m^2"
-    @test centroid(grid, 1) ≈ point(0.1, 0.05)
-    @test centroid(grid[1]) ≈ point(0.1, 0.05)
-    @test centroid(grid, 2) ≈ point(0.3, 0.05)
-    @test centroid(grid[2]) ≈ point(0.3, 0.05)
+    @test centroid(grid, 1) ≈ cart(0.1, 0.05)
+    @test centroid(grid[1]) ≈ cart(0.1, 0.05)
+    @test centroid(grid, 2) ≈ cart(0.3, 0.05)
+    @test centroid(grid[2]) ≈ cart(0.3, 0.05)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
     sub = grid[2:4, 3:5]
     @test size(sub) == (3, 3)
-    @test minimum(sub) == point(0.2, 0.3)
-    @test maximum(sub) == point(0.8, 1.0)
+    @test minimum(sub) == cart(0.2, 0.3)
+    @test maximum(sub) == cart(0.8, 1.0)
     sub = grid[2, 3:5]
     @test size(sub) == (1, 3)
-    @test minimum(sub) == point(0.2, 0.3)
-    @test maximum(sub) == point(0.4, 1.0)
+    @test minimum(sub) == cart(0.2, 0.3)
+    @test maximum(sub) == cart(0.4, 1.0)
     sub = grid[:, 3:5]
     @test size(sub) == (5, 3)
-    @test minimum(sub) == point(0.0, 0.3)
-    @test maximum(sub) == point(1.0, 1.0)
+    @test minimum(sub) == cart(0.0, 0.3)
+    @test maximum(sub) == cart(1.0, 1.0)
     @test_throws BoundsError grid[2:6, :]
     @test Meshes.xyz(grid) == (x * u"m", y * u"m")
     @test Meshes.XYZ(grid) == (repeat(x, 1, 6) * u"m", repeat(y', 6, 1) * u"m")
 
     # single vertex access
     grid = RectilinearGrid(T.(0:10), T.(0:10))
-    @test vertex(grid, 1) == point(0, 0)
-    @test vertex(grid, 121) == point(10, 10)
+    @test vertex(grid, 1) == cart(0, 0)
+    @test vertex(grid, 121) == cart(10, 10)
 
     # constructor with datum & datum propagation
     grid = RectilinearGrid{WGS84Latest}(x, y)
@@ -371,32 +371,32 @@
     @test Meshes.crs(grid) <: Cartesian{NoDatum}
     @test Meshes.lentype(grid) == ℳ
     @test size(grid) == (5, 5)
-    @test minimum(grid) == point(0, 0)
-    @test maximum(grid) == point(1, 1)
-    @test extrema(grid) == (point(0, 0), point(1, 1))
+    @test minimum(grid) == cart(0, 0)
+    @test maximum(grid) == cart(1, 1)
+    @test extrema(grid) == (cart(0, 0), cart(1, 1))
     @test nelements(grid) == 25
     @test eltype(grid) <: Quadrangle{2}
     @test measure(grid) ≈ T(1) * u"m^2"
-    @test centroid(grid, 1) ≈ point(0.1, 0.05)
-    @test centroid(grid[1]) ≈ point(0.1, 0.05)
-    @test centroid(grid, 2) ≈ point(0.3, 0.05)
-    @test centroid(grid[2]) ≈ point(0.3, 0.05)
+    @test centroid(grid, 1) ≈ cart(0.1, 0.05)
+    @test centroid(grid[1]) ≈ cart(0.1, 0.05)
+    @test centroid(grid, 2) ≈ cart(0.3, 0.05)
+    @test centroid(grid[2]) ≈ cart(0.3, 0.05)
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
     @test grid[1, 1] == grid[1]
     @test grid[5, 5] == grid[25]
     sub = grid[2:4, 3:5]
     @test size(sub) == (3, 3)
-    @test minimum(sub) == point(0.2, 0.3)
-    @test maximum(sub) == point(0.8, 1.0)
+    @test minimum(sub) == cart(0.2, 0.3)
+    @test maximum(sub) == cart(0.8, 1.0)
     sub = grid[2, 3:5]
     @test size(sub) == (1, 3)
-    @test minimum(sub) == point(0.2, 0.3)
-    @test maximum(sub) == point(0.4, 1.0)
+    @test minimum(sub) == cart(0.2, 0.3)
+    @test maximum(sub) == cart(0.4, 1.0)
     sub = grid[:, 3:5]
     @test size(sub) == (5, 3)
-    @test minimum(sub) == point(0.0, 0.3)
-    @test maximum(sub) == point(1.0, 1.0)
+    @test minimum(sub) == cart(0.0, 0.3)
+    @test maximum(sub) == cart(1.0, 1.0)
     @test_throws BoundsError grid[2:6, :]
     @test Meshes.XYZ(grid) == (X * u"m", Y * u"m")
 
@@ -499,15 +499,15 @@
   end
 
   @testset "SimpleMesh" begin
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     triangles =
       Triangle.([
-        (point(0.0, 0.0), point(1.0, 0.0), point(0.5, 0.5)),
-        (point(1.0, 0.0), point(1.0, 1.0), point(0.5, 0.5)),
-        (point(1.0, 1.0), point(0.0, 1.0), point(0.5, 0.5)),
-        (point(0.0, 1.0), point(0.0, 0.0), point(0.5, 0.5))
+        (cart(0.0, 0.0), cart(1.0, 0.0), cart(0.5, 0.5)),
+        (cart(1.0, 0.0), cart(1.0, 1.0), cart(0.5, 0.5)),
+        (cart(1.0, 1.0), cart(0.0, 1.0), cart(0.5, 0.5)),
+        (cart(0.0, 1.0), cart(0.0, 0.0), cart(0.5, 0.5))
       ])
     @test Meshes.crs(mesh) <: Cartesian{NoDatum}
     @test Meshes.lentype(mesh) == ℳ
@@ -521,7 +521,7 @@
     @test eltype(mesh) <: Triangle{2}
     @test measure(mesh) ≈ T(1) * u"m^2"
     @test area(mesh) ≈ T(1) * u"m^2"
-    @test extrema(mesh) == (point(0, 0), point(1, 1))
+    @test extrema(mesh) == (cart(0, 0), cart(1, 1))
 
     # test constructors
     coords = [T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))]
@@ -542,15 +542,15 @@
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 4
 
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
     Δs = connect.([(3, 1, 5), (4, 6, 2)], Triangle)
     □s = connect.([(1, 2, 6, 5), (5, 6, 4, 3)], Quadrangle)
     mesh = SimpleMesh(points, [Δs; □s])
     elms = [
-      Triangle(point(0.0, 1.0), point(0.0, 0.0), point(0.25, 0.5)),
-      Triangle(point(1.0, 1.0), point(0.75, 0.5), point(1.0, 0.0)),
-      Quadrangle(point(0.0, 0.0), point(1.0, 0.0), point(0.75, 0.5), point(0.25, 0.5)),
-      Quadrangle(point(0.25, 0.5), point(0.75, 0.5), point(1.0, 1.0), point(0.0, 1.0))
+      Triangle(cart(0.0, 1.0), cart(0.0, 0.0), cart(0.25, 0.5)),
+      Triangle(cart(1.0, 1.0), cart(0.75, 0.5), cart(1.0, 0.0)),
+      Quadrangle(cart(0.0, 0.0), cart(1.0, 0.0), cart(0.75, 0.5), cart(0.25, 0.5)),
+      Quadrangle(cart(0.25, 0.5), cart(0.75, 0.5), cart(1.0, 1.0), cart(0.0, 1.0))
     ]
     @test collect(elements(mesh)) == elms
     @test nelements(mesh) == 4
@@ -560,7 +560,7 @@
     @test eltype(mesh) <: Polygon{2}
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/177
-    points = point.([(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)])
+    points = cart.([(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)])
     connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
     mesh = SimpleMesh(points, connec)
     topo = topology(mesh)
@@ -568,13 +568,13 @@
     @test collect(faces(topo, 3)) == [connect((1, 2, 3, 4), Tetrahedron)]
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/187
-    points = point.([(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)])
+    points = cart.([(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)])
     connec = connect.([(1, 2, 3, 4), (3, 4, 1)], [Tetrahedron, Triangle])
     mesh = SimpleMesh(points[4:-1:1], connec)
     meshvp = SimpleMesh(view(points, 4:-1:1), connec)
     @test mesh == meshvp
 
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     bytes = @allocated faces(mesh, 2)
@@ -583,24 +583,24 @@
     bytes = @allocated collect(cells)
     @test bytes < 800
 
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
-    @test centroid(mesh, 1) == centroid(Triangle(point(0, 0), point(1, 0), point(0.5, 0.5)))
-    @test centroid(mesh, 2) == centroid(Triangle(point(1, 0), point(1, 1), point(0.5, 0.5)))
-    @test centroid(mesh, 3) == centroid(Triangle(point(1, 1), point(0, 1), point(0.5, 0.5)))
-    @test centroid(mesh, 4) == centroid(Triangle(point(0, 1), point(0, 0), point(0.5, 0.5)))
+    @test centroid(mesh, 1) == centroid(Triangle(cart(0, 0), cart(1, 0), cart(0.5, 0.5)))
+    @test centroid(mesh, 2) == centroid(Triangle(cart(1, 0), cart(1, 1), cart(0.5, 0.5)))
+    @test centroid(mesh, 3) == centroid(Triangle(cart(1, 1), cart(0, 1), cart(0.5, 0.5)))
+    @test centroid(mesh, 4) == centroid(Triangle(cart(0, 1), cart(0, 0), cart(0.5, 0.5)))
 
     # merge operation with 2D geometries
-    mesh₁ = SimpleMesh(point.([(0, 0), (1, 0), (0, 1)]), connect.([(1, 2, 3)]))
-    mesh₂ = SimpleMesh(point.([(1, 0), (1, 1), (0, 1)]), connect.([(1, 2, 3)]))
+    mesh₁ = SimpleMesh(cart.([(0, 0), (1, 0), (0, 1)]), connect.([(1, 2, 3)]))
+    mesh₂ = SimpleMesh(cart.([(1, 0), (1, 1), (0, 1)]), connect.([(1, 2, 3)]))
     mesh = merge(mesh₁, mesh₂)
     @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
     @test collect(elements(topology(mesh))) == connect.([(1, 2, 3), (4, 5, 6)])
 
     # merge operation with 3D geometries
-    mesh₁ = SimpleMesh(point.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]), connect.([(1, 2, 3, 4)], Tetrahedron))
-    mesh₂ = SimpleMesh(point.([(1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1)]), connect.([(1, 2, 3, 4)], Tetrahedron))
+    mesh₁ = SimpleMesh(cart.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]), connect.([(1, 2, 3, 4)], Tetrahedron))
+    mesh₂ = SimpleMesh(cart.([(1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1)]), connect.([(1, 2, 3, 4)], Tetrahedron))
     mesh = merge(mesh₁, mesh₂)
     @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
     @test collect(elements(topology(mesh))) == connect.([(1, 2, 3, 4), (5, 6, 7, 8)], Tetrahedron)
@@ -615,25 +615,25 @@
     @test eltype(mesh) <: Quadrangle
     # grid interface
     @test size(mesh) == (10, 10)
-    @test minimum(mesh) == point(0, 0)
-    @test maximum(mesh) == point(10, 10)
-    @test extrema(mesh) == (point(0, 0), point(10, 10))
+    @test minimum(mesh) == cart(0, 0)
+    @test maximum(mesh) == cart(10, 10)
+    @test extrema(mesh) == (cart(0, 0), cart(10, 10))
     @test vertex(mesh, 1) == vertex(mesh, ntuple(i -> 1, embeddim(mesh)))
     @test vertex(mesh, nvertices(mesh)) == vertex(mesh, size(mesh) .+ 1)
     @test mesh[1, 1] == mesh[1]
     @test mesh[10, 10] == mesh[100]
     sub = mesh[2:4, 3:7]
     @test size(sub) == (3, 5)
-    @test minimum(sub) == point(1, 2)
-    @test maximum(sub) == point(4, 7)
+    @test minimum(sub) == cart(1, 2)
+    @test maximum(sub) == cart(4, 7)
     sub = mesh[2, 3:7]
     @test size(sub) == (1, 5)
-    @test minimum(sub) == point(1, 2)
-    @test maximum(sub) == point(2, 7)
+    @test minimum(sub) == cart(1, 2)
+    @test maximum(sub) == cart(2, 7)
     sub = mesh[:, 3:7]
     @test size(sub) == (10, 5)
-    @test minimum(sub) == point(0, 2)
-    @test maximum(sub) == point(10, 7)
+    @test minimum(sub) == cart(0, 2)
+    @test maximum(sub) == cart(10, 7)
     @test_throws BoundsError grid[3:11, :]
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/261
@@ -652,7 +652,7 @@
     @test vertex(mesh, 4) == points[4]
     @test vertex(mesh, 5) == points[5]
 
-    points = point.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
     @test sprint(show, mesh) == "4 SimpleMesh"
@@ -715,25 +715,25 @@
     tgrid = TransformedMesh(grid, trans)
     @test tgrid isa TransformedGrid
     @test size(tgrid) == (10, 10)
-    @test minimum(tgrid) == point(0, 0)
-    @test maximum(tgrid) == point(10, 10)
-    @test extrema(tgrid) == (point(0, 0), point(10, 10))
+    @test minimum(tgrid) == cart(0, 0)
+    @test maximum(tgrid) == cart(10, 10)
+    @test extrema(tgrid) == (cart(0, 0), cart(10, 10))
     @test vertex(tgrid, 1) == vertex(tgrid, ntuple(i -> 1, embeddim(tgrid)))
     @test vertex(tgrid, nvertices(tgrid)) == vertex(tgrid, size(tgrid) .+ 1)
     @test tgrid[1, 1] == tgrid[1]
     @test tgrid[10, 10] == tgrid[100]
     sub = tgrid[2:4, 3:7]
     @test size(sub) == (3, 5)
-    @test minimum(sub) == point(1, 2)
-    @test maximum(sub) == point(4, 7)
+    @test minimum(sub) == cart(1, 2)
+    @test maximum(sub) == cart(4, 7)
     sub = tgrid[2, 3:7]
     @test size(sub) == (1, 5)
-    @test minimum(sub) == point(1, 2)
-    @test maximum(sub) == point(2, 7)
+    @test minimum(sub) == cart(1, 2)
+    @test maximum(sub) == cart(2, 7)
     sub = tgrid[:, 3:7]
     @test size(sub) == (10, 5)
-    @test minimum(sub) == point(0, 2)
-    @test maximum(sub) == point(10, 7)
+    @test minimum(sub) == cart(0, 2)
+    @test maximum(sub) == cart(10, 7)
     @test sprint(show, tgrid) == "10×10 TransformedGrid"
     if T == Float32
       @test sprint(show, MIME"text/plain"(), tgrid) == """
