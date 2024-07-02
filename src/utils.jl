@@ -56,11 +56,8 @@ Flatten coordinates of point `p` to Cartesian coordinates,
 ignoring the original units of the coordinate reference system.
 """
 flat(p::Point) = Point(flat(coords(p)))
-flat(c::GeodeticLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
-flat(c::GeocentricLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
-flat(c::AuthalicLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
+flat(c::LatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
 flat(c::CRS) = convert(Cartesian, c)
-
 
 """
     signarea(A, B, C)
