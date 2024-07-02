@@ -11,17 +11,17 @@
   c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test sideof(p1, c) == IN
   @test sideof(p2, c) == OUT
-  @test sideof(p3, c) == IN
+  @test sideof(p3, c) == ON
   pts = [p1, p2, p3]
-  @test sideof(pts, c) == [IN, OUT, IN]
+  @test sideof(pts, c) == [IN, OUT, ON]
 
   p1, p2, p3 = latlon(0.5, 0.5), latlon(1.5, 0.5), latlon(1, 1)
   c = Ring([latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)])
   @test sideof(p1, c) == IN
   @test sideof(p2, c) == OUT
-  @test sideof(p3, c) == IN
+  @test sideof(p3, c) == ON
   pts = [p1, p2, p3]
-  @test sideof(pts, c) == [IN, OUT, IN]
+  @test sideof(pts, c) == [IN, OUT, ON]
 
   points = cart.([(0, 0, 0), (1, 0, 0), (0, 1, 0), (0.25, 0.25, 1)])
   connec = connect.([(1, 3, 2), (1, 2, 4), (1, 4, 3), (2, 3, 4)], Triangle)
