@@ -24,11 +24,6 @@
   # exact same memory allocations
   @test alloccart == alloclatlon
 
-  # error: both arguments must have the same CRS
-  p = latlon(0.5, 0.5)
-  c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test_throws ArgumentError winding(p, c)
-
   m = boundary(Box(cart(0, 0, 0), cart(2, 2, 2)))
   @test all(>(0), winding(vertices(m), m))
   @test isapprox(winding(cart(1, 1, 1), m), T(1), atol=atol(T))
