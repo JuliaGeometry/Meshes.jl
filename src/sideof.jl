@@ -68,7 +68,7 @@ function sideof(point::Point, ring::Ring)
   for i in 1:n
     # flat coordinates of segment i -- i+1
     pᵢ = flat(coords(v[i]))
-    pⱼ = flat(coords(v[i+1]))
+    pⱼ = flat(coords(v[i + 1]))
     xᵢ, yᵢ = pᵢ.x, pᵢ.y
     xⱼ, yⱼ = pⱼ.x, pⱼ.y
 
