@@ -10,16 +10,19 @@
   @test winding(p, c) ≈ T(2)
   @test winding(p, reverse(c)) ≈ T(-2)
   @test winding([p, p], c) ≈ T[2, 2]
-  # We record the allocations for cartesian
-  allocated_cart = @allocated winding(p, c)
+  # record allocations for cartesian
+  alloccart = @allocated winding(p, c)
 
   p = latlon(0.5, 0.5)
   c = Ring([latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)])
   @test winding(p, c) ≈ T(1)
   @test winding(p, reverse(c)) ≈ T(-1)
   @test winding([p, p], c) ≈ T[1, 1]
-  # We test that latlon does not incur in more allocations
-  @test allocated_cart == @allocated winding(p, c)
+  # record allocations for latlon
+  alloclatlon == @allocated winding(p, c)
+
+  # exact same memory allocations
+  @test alloccart == alloclatlon
 
   # error: both arguments must have the same CRS
   p = latlon(0.5, 0.5)
