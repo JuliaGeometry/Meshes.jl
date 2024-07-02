@@ -89,7 +89,7 @@ function sideof(point::Point, ring::Ring)
       if ispositive(f)
         # case 3, 9
         k += 1
-      elseif f == zero(f)
+      elseif isequalzero(f)
         # case 16, 21
         return ON
       end
@@ -99,25 +99,25 @@ function sideof(point::Point, ring::Ring)
       if isnegative(f)
         # case 4, 10
         k += 1
-      elseif f == zero(f)
+      elseif isequalzero(f)
         # case 19, 20
         return ON
       end
-    elseif v₂ == zero(v₂) && isnegative(v₁)
+    elseif isequalzero(v₂) && isnegative(v₁)
       # case 7, 14, 17
       f = u₁ * v₂ - u₂ * v₁
-      if f == zero(f)
+      if isequalzero(f)
         # case 17
         return ON
       end
-    elseif v₁ == zero(v₁) && isnegative(v₂)
+    elseif isequalzero(v₁) && isnegative(v₂)
       # case 8, 15, 18
       f = u₁ * v₂ - u₂ * v₁
-      if f == zero(f)
+      if isequalzero(f)
         # case 18
         return ON
       end
-    elseif v₁ == zero(v₁) && v₂ == zero(v₂)
+    elseif isequalzero(v₁) && isequalzero(v₂)
       # case 1, 2, 5, 6, 22, 23
       if isnonpositive(u₂) && isnonnegative(u₁)
         # case 1
