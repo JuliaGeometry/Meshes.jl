@@ -41,7 +41,6 @@ end
 
 # flatten CRS to Cartesian in general case
 function _winding(::CRS, points, ring)
-  flat = FlatCoords()
   v = vertices(ring)
   n = nvertices(ring)
 
