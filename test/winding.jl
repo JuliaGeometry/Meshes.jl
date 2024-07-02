@@ -19,7 +19,7 @@
   @test winding(p, reverse(c)) ≈ T(-1)
   @test winding([p, p], c) ≈ T[1, 1]
   # record allocations for latlon
-  alloclatlon == @allocated winding(p, c)
+  alloclatlon = @allocated winding(p, c)
 
   # exact same memory allocations
   @test alloccart == alloclatlon
