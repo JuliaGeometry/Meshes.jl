@@ -61,7 +61,6 @@ flat(c::GeocentricLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
 flat(c::AuthalicLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
 flat(c::CRS) = convert(Cartesian, c)
 
-
 """
     signarea(A, B, C)
 
