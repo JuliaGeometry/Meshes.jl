@@ -22,43 +22,19 @@ function winding end
 # RINGS
 # ------
 
-winding(points, ring::Ring) = _winding(_coords(points, ring), points, ring)
+function winding(points, ring::Ring)
+  v = vertices(ring)
+  n = nvertices(ring)
+
+  function w(p)
+    Σ = sum(∠(flat(v[i]), flat(p), flat(v[i + 1])) for i in 1:n)
+    Σ / oftype(Σ, 2π)
+  end
+
+  tcollect(w(p) for p in points)
+end
 
 winding(point::Point, ring::Ring) = winding((point,), ring) |> first
-
-# Cartesian coordinates are easy
-function _winding(::Cartesian, points, ring)
-  v = vertices(ring)
-  n = nvertices(ring)
-
-  function w(p)
-    ∑ = sum(∠(v[i], p, v[i + 1]) for i in 1:n)
-    ∑ / oftype(∑, 2π)
-  end
-
-  tcollect(w(p) for p in points)
-end
-
-# flatten CRS to Cartesian in general case
-function _winding(::CRS, points, ring)
-  v = vertices(ring)
-  n = nvertices(ring)
-
-  function w(p)
-    ∑ = sum(∠(flat(v[i]), flat(p), flat(v[i + 1])) for i in 1:n)
-    ∑ / oftype(∑, 2π)
-  end
-
-  tcollect(w(p) for p in points)
-end
-
-function _coords(points, ring)
-  p = first(points)
-  if crs(p) !== crs(ring)
-    throw(ArgumentError("arguments must have the same CRS"))
-  end
-  coords(p)
-end
 
 # -------
 # MESHES
