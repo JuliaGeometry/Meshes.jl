@@ -65,7 +65,10 @@ function sideof(point::Point, ring::Ring)
   xₚ, yₚ = p.x, p.y
 
   k = Threads.Atomic{Int}(0)
+  ison = Threads.Atomic{Bool}(false)
   Threads.@threads for i in 1:n
+    ison[] && break
+
     # flat coordinates of segment i -- i+1
     pᵢ = flat(coords(v[i]))
     pⱼ = flat(coords(v[i + 1]))
@@ -91,7 +94,7 @@ function sideof(point::Point, ring::Ring)
         Threads.atomic_add!(k, 1)
       elseif isequalzero(f)
         # case 16, 21
-        return ON
+        ison[] = true
       end
     elseif ispositive(v₁) && isnonpositive(v₂)
       # case 4, 10, 19, 20, 12, 25
@@ -101,35 +104,35 @@ function sideof(point::Point, ring::Ring)
         Threads.atomic_add!(k, 1)
       elseif isequalzero(f)
         # case 19, 20
-        return ON
+        ison[] = true
       end
     elseif isequalzero(v₂) && isnegative(v₁)
       # case 7, 14, 17
       f = u₁ * v₂ - u₂ * v₁
       if isequalzero(f)
         # case 17
-        return ON
+        ison[] = true
       end
     elseif isequalzero(v₁) && isnegative(v₂)
       # case 8, 15, 18
       f = u₁ * v₂ - u₂ * v₁
       if isequalzero(f)
         # case 18
-        return ON
+        ison[] = true
       end
     elseif isequalzero(v₁) && isequalzero(v₂)
       # case 1, 2, 5, 6, 22, 23
       if isnonpositive(u₂) && isnonnegative(u₁)
         # case 1
-        return ON
+        ison[] = true
       elseif isnonpositive(u₁) && isnonnegative(u₂)
         # case 2
-        return ON
+        ison[] = true
       end
     end
   end
 
-  iseven(k[]) ? OUT : IN
+  ison[] ? ON : (iseven(k[]) ? OUT : IN)
 end
 
 # -----
