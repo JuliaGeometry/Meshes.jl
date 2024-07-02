@@ -133,6 +133,8 @@ function sideof(point::Point, ring::Ring)
     end
   end
 
+  # when `ison` is true, the value of `k` might be incorrectly set by multiple threads, 
+  # however that does not matter in the following return statement
   ison[] ? ON : (iseven(k[]) ? OUT : IN)
 end
 
