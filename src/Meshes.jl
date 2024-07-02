@@ -514,7 +514,6 @@ export
   Affine,
   Stretch,
   StdCoords,
-  FlatCoords,
   Proj,
   LengthUnit,
   Shadow,

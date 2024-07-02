@@ -50,6 +50,19 @@ Point at the end of the vector `v` with the same datum of `g`.
 withdatum(g::GeometryOrDomain, v::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(v)))
 
 """
+    flat(p)
+
+Flatten coordinates of point `p` to Cartesian coordinates,
+ignoring the original units of the coordinate reference system.
+"""
+flat(p::Point) = Point(flat(coords(p)))
+flat(c::GeodeticLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
+flat(c::GeocentricLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
+flat(c::AuthalicLatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
+flat(c::CRS) = convert(Cartesian, c)
+
+
+"""
     signarea(A, B, C)
 
 Compute signed area of triangle formed by points `A`, `B` and `C`.

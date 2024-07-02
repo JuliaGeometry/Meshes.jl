@@ -129,19 +129,6 @@ viz(fig[1,2], mesh)
 fig
 ```
 
-## FlatCoords
-
-```@docs
-FlatCoords
-```
-
-```@example transforms
-point = Point(LatLon(30, 60))
-triangle = Triangle(Point(LatLon(30, 60)), Point(LatLon(30, 61)), Point(LatLon(31, 60)))
-
-[point, triangle] |> FlatCoords()
-```
-
 ## Proj
 
 ```@docs
