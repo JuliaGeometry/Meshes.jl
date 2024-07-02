@@ -67,6 +67,7 @@ function sideof(point::Point, ring::Ring)
   k = Threads.Atomic{Int}(0)
   ison = Threads.Atomic{Bool}(false)
   Threads.@threads for i in 1:n
+    # premature termination if point is on ring
     ison[] && break
 
     # flat coordinates of segment i -- i+1
