@@ -64,8 +64,8 @@ function sideof(point::Point, ring::Ring)
   p = flat(coords(point))
   xₚ, yₚ = p.x, p.y
 
-  k = 0
-  for i in 1:n
+  k = Threads.Atomic{Int}(0)
+  Threads.@threads for i in 1:n
     # flat coordinates of segment i -- i+1
     pᵢ = flat(coords(v[i]))
     pⱼ = flat(coords(v[i + 1]))
@@ -88,7 +88,7 @@ function sideof(point::Point, ring::Ring)
       f = u₁ * v₂ - u₂ * v₁
       if ispositive(f)
         # case 3, 9
-        k += 1
+        Threads.atomic_add!(k, 1)
       elseif isequalzero(f)
         # case 16, 21
         return ON
@@ -98,7 +98,7 @@ function sideof(point::Point, ring::Ring)
       f = u₁ * v₂ - u₂ * v₁
       if isnegative(f)
         # case 4, 10
-        k += 1
+        Threads.atomic_add!(k, 1)
       elseif isequalzero(f)
         # case 19, 20
         return ON
@@ -129,7 +129,7 @@ function sideof(point::Point, ring::Ring)
     end
   end
 
-  iseven(k) ? OUT : IN
+  iseven(k[]) ? OUT : IN
 end
 
 # -----
