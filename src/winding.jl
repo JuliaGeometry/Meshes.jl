@@ -42,9 +42,15 @@ end
 # flatten CRS to Cartesian in general case
 function _winding(::CRS, points, ring)
   flat = FlatCoords()
-  fpts = map(flat, points)
-  fring = ring |> flat
-  winding(fpts, fring)
+  v = vertices(ring)
+  n = nvertices(ring)
+
+  function w(p)
+    ∑ = sum(∠(flat(v[i]), flat(p), flat(v[i + 1])) for i in 1:n)
+    ∑ / oftype(∑, 2π)
+  end
+
+  tcollect(w(p) for p in points)
 end
 
 function _coords(points, ring)
