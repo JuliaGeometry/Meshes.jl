@@ -69,13 +69,24 @@ struct CartesianGrid{Dim,C<:CRS,ℒ<:Len} <: Grid{Dim,C}
   end
 end
 
-CartesianGrid(origin::Point{Dim}, spacing::NTuple{Dim}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
-  CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
+CartesianGrid(
+  origin::Point{Dim},
+  spacing::NTuple{Dim,Len},
+  offset::Dims{Dim},
+  topology::GridTopology{Dim}
+) where {Dim} = CartesianGrid(origin, promote(spacing...), offset, topology)
+
+CartesianGrid(
+  origin::Point{Dim},
+  spacing::NTuple{Dim,Number},
+  offset::Dims{Dim},
+  topology::GridTopology{Dim}
+) where {Dim} = CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
 
 function CartesianGrid(
   dims::Dims{Dim},
   origin::Point{Dim},
-  spacing::NTuple{Dim},
+  spacing::NTuple{Dim,Number},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
 ) where {Dim}
   if !all(>(0), dims)
@@ -86,8 +97,8 @@ end
 
 CartesianGrid(
   dims::Dims{Dim},
-  origin::NTuple{Dim},
-  spacing::NTuple{Dim},
+  origin::NTuple{Dim,Number},
+  spacing::NTuple{Dim,Number},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
 ) where {Dim} = CartesianGrid(dims, Point(origin), spacing, offset)
 
@@ -98,10 +109,13 @@ function CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Di
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim}) where {Dim} =
+CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim,Len}) where {Dim} =
+  CartesianGrid(start, finish, promote(spacing...))
+
+CartesianGrid(start::Point{Dim}, finish::Point{Dim}, spacing::NTuple{Dim,Number}) where {Dim} =
   CartesianGrid(start, finish, addunit.(spacing, u"m"))
 
-CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}, spacing::NTuple{Dim}) where {Dim} =
+CartesianGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
   CartesianGrid(Point(start), Point(finish), spacing)
 
 function CartesianGrid(start::Point{Dim}, finish::Point{Dim}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim}
@@ -111,8 +125,11 @@ function CartesianGrid(start::Point{Dim}, finish::Point{Dim}; dims::Dims{Dim}=nt
   CartesianGrid(dims, origin, spacing, offset)
 end
 
-CartesianGrid(start::NTuple{Dim}, finish::NTuple{Dim}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
-  CartesianGrid(Point(start), Point(finish); dims)
+CartesianGrid(
+  start::NTuple{Dim,Number},
+  finish::NTuple{Dim,Number};
+  dims::Dims{Dim}=ntuple(i -> 100, Dim)
+) where {Dim} = CartesianGrid(Point(start), Point(finish); dims)
 
 function CartesianGrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> 0.0, Dim)
