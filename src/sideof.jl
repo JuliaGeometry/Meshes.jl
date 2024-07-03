@@ -57,6 +57,8 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
   (https://www.mdpi.com/2073-8994/10/10/477)
 """
 function sideof(point::Point, ring::Ring)
+  assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
+
   v = vertices(ring)
   n = nvertices(ring)
 
