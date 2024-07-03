@@ -827,9 +827,19 @@
     @test intersection(b1, b3) |> type == Touching
     @test b1 ∩ b3 == Box(cart(1, 0, 0), cart(2, 2, 0))
 
+    # different units
+    b1 = Box((T(0) * u"cm", T(0) * u"cm"), (T(100) * u"cm", T(100) * u"cm"))
+    b2 = Box((T(500) * u"mm", T(500) * u"mm"), (T(2000) * u"mm", T(2000) * u"mm"))
+    @test intersection(b1, b2) |> type == Overlapping
+    @test unit(Meshes.lentype(b1 ∩ b2)) == u"m"
+    @test b1 ∩ b2 == Box(cart(0.5, 0.5), cart(1, 1))
+
     # type stability tests
     b1 = Box(cart(0, 0), cart(1, 1))
     b2 = Box(cart(0.5, 0.5), cart(2, 2))
+    @inferred someornone(b1, b2)
+    b1 = Box((T(0) * u"cm", T(0) * u"cm"), (T(100) * u"cm", T(100) * u"cm"))
+    b2 = Box((T(500) * u"mm", T(500) * u"mm"), (T(2000) * u"mm", T(2000) * u"mm"))
     @inferred someornone(b1, b2)
 
     # datum propagation
