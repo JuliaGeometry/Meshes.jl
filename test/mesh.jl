@@ -106,6 +106,14 @@
     @test nelements(grid) == 10 * 10
     @test eltype(grid) <: Quadrangle{2}
 
+    # mixed units
+    grid = CartesianGrid((10, 10), (T(0) * u"m", T(0) * u"cm"), (T(100) * u"cm", T(1) * u"m"))
+    @test unit(Meshes.lentype(grid)) == u"m"
+    grid = CartesianGrid((T(0) * u"cm", T(0) * u"m"), (T(10) * u"m", T(1000) * u"cm"), (T(100) * u"cm", T(1) * u"m"))
+    @test unit(Meshes.lentype(grid)) == u"m"
+    grid = CartesianGrid((T(0) * u"cm", T(0) * u"m"), (T(10) * u"m", T(1000) * u"cm"), dims=(10, 10))
+    @test unit(Meshes.lentype(grid)) == u"m"
+
     # indexing into a subgrid
     grid = cartgrid(10, 10)
     sub = grid[1:2, 1:2]
