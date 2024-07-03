@@ -160,9 +160,7 @@ XYZ(g::CartesianGrid) = XYZ(xyz(g))
 
 function centroid(g::CartesianGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
-  p = vertex(g, ijk)
-  δ = Vec(spacing(g) ./ 2)
-  p + δ
+  vertex(g, ijk) + Vec(spacing(g) ./ 2)
 end
 
 function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
