@@ -226,7 +226,7 @@
     f = Rotate(Angle2d(T(π / 2)))
     c = Cartesian{WGS84Latest}(T(1), T(0))
     p = Point(c)
-    @test datum(Meshes.crs(f(p))) === WGS84Latest
+    @test datum(crs(f(p))) === WGS84Latest
   end
 
   @testset "Translate" begin
@@ -606,7 +606,7 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     c = Cartesian{WGS84Latest}(T(1), T(0))
     p = Point(c)
-    @test datum(Meshes.crs(f(p))) === WGS84Latest
+    @test datum(crs(f(p))) === WGS84Latest
 
     # error: A must be a square matrix
     @test_throws ArgumentError Affine(T[1 1; 2 2; 3 3], T[1, 2])

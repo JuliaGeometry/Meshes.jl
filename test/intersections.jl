@@ -770,7 +770,7 @@
     c2 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     p1 = Plane(Point(c1), vector(0, 0, 1))
     p2 = Plane(Point(c2), vector(1 / sqrt(2), 0, 1 / sqrt(2)))
-    @test datum(Meshes.crs(p1 ∩ p2)) === WGS84Latest
+    @test datum(crs(p1 ∩ p2)) === WGS84Latest
   end
 
   @testset "Boxes" begin
@@ -849,7 +849,7 @@
     c4 = Cartesian{WGS84Latest}(T(2), T(2))
     b1 = Box(Point(c1), Point(c2))
     b2 = Box(Point(c3), Point(c4))
-    @test datum(Meshes.crs(b1 ∩ b2)) === WGS84Latest
+    @test datum(crs(b1 ∩ b2)) === WGS84Latest
 
     # Ray-Box intersection
     b = Box(cart(0, 0, 0), cart(1, 1, 1))

@@ -122,9 +122,9 @@
   # datum propagation
   c = Cartesian{WGS84Latest}(T(-1), T(1))
   r = Ray(Point(c), vector(1, -1))
-  @test datum(Meshes.crs(boundingbox(r))) === WGS84Latest
+  @test datum(crs(boundingbox(r))) === WGS84Latest
   c = Cartesian{WGS84Latest}(T(0), T(0))
   g = CartesianGrid((10, 10), Point(c), (T(1), T(1)))
   m = convert(SimpleMesh, g)
-  @test datum(Meshes.crs(boundingbox(m))) === WGS84Latest
+  @test datum(crs(boundingbox(m))) === WGS84Latest
 end

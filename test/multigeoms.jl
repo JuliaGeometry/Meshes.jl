@@ -7,7 +7,7 @@
   @test multi == multi
   @test multi ≈ multi
   @test paramdim(multi) == 2
-  @test Meshes.crs(multi) <: Cartesian{NoDatum}
+  @test crs(multi) <: Cartesian{NoDatum}
   @test Meshes.lentype(multi) == ℳ
   @test vertex(multi, 1) == vertex(poly, 1)
   @test vertices(multi) == [vertices(poly); vertices(poly)]
@@ -100,5 +100,5 @@
   poly1 = PolyArea(points1)
   poly2 = PolyArea(points2)
   multi = Multi([poly1, poly2])
-  @test datum(Meshes.crs(centroid(multi))) === WGS84Latest
+  @test datum(crs(centroid(multi))) === WGS84Latest
 end

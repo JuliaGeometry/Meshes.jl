@@ -16,7 +16,7 @@
     c = Cartesian{WGS84Latest}(T(0), T(0))
     grid = CartesianGrid((3, 3), Point(c), (T(1), T(1)))
     ref = refine(grid, TriRefinement())
-    @test datum(Meshes.crs(ref)) === WGS84Latest
+    @test datum(crs(ref)) === WGS84Latest
   end
 
   @testset "QuadRefinement" begin
@@ -41,7 +41,7 @@
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
     mesh = SimpleMesh(points, connec)
     ref = refine(mesh, QuadRefinement())
-    @test datum(Meshes.crs(ref)) === WGS84Latest
+    @test datum(crs(ref)) === WGS84Latest
   end
 
   @testset "RegularRefinement" begin
@@ -120,7 +120,7 @@
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
     mesh = SimpleMesh(points, connec)
     ref = refine(mesh, CatmullClark())
-    @test datum(Meshes.crs(ref)) === WGS84Latest
+    @test datum(crs(ref)) === WGS84Latest
   end
 
   @testset "TriSubdivision" begin
