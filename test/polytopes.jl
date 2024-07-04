@@ -4,7 +4,7 @@
     @test nvertices(Segment) == 2
 
     s = Segment(cart(1.0), cart(2.0))
-    @test Meshes.crs(s) <: Cartesian{NoDatum}
+    @test crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test vertex(s, 1) == cart(1.0)
     @test vertex(s, 2) == cart(2.0)
@@ -78,7 +78,7 @@
     c1 = Cartesian{WGS84Latest}(T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(1), T(1))
     s = Segment(Point(c1), Point(c2))
-    @test datum(Meshes.crs(s(T(0)))) === WGS84Latest
+    @test datum(crs(s(T(0)))) === WGS84Latest
 
     s = Segment(cart(0, 0), cart(1, 1))
     @test sprint(show, s) == "Segment((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 1.0 m))"
@@ -120,12 +120,12 @@
     @test c1 ≗ c2 ≗ c3
 
     c = Rope(cart.([(1, 1), (2, 2)]))
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test vertex(c, 1) == cart(1, 1)
     @test vertex(c, 2) == cart(2, 2)
     c = Ring(cart.([(1, 1), (2, 2)]))
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test vertex(c, 0) == cart(2, 2)
     @test vertex(c, 1) == cart(1, 1)
@@ -278,7 +278,7 @@
     tuples = [T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))]
     points = Point.(Cartesian{WGS84Latest}.(tuples))
     r = Ring(points)
-    @test datum(Meshes.crs(centroid(r))) === WGS84Latest
+    @test datum(crs(centroid(r))) === WGS84Latest
 
     ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
     ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
@@ -346,7 +346,7 @@
 
     # Triangle in 2D space
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-    @test Meshes.crs(t) <: Cartesian{NoDatum}
+    @test crs(t) <: Cartesian{NoDatum}
     @test Meshes.lentype(t) == ℳ
     @test vertex(t, 1) == cart(0, 0)
     @test vertex(t, 2) == cart(1, 0)
@@ -436,7 +436,7 @@
     c2 = Cartesian{WGS84Latest}(T(1), T(0))
     c3 = Cartesian{WGS84Latest}(T(0), T(1))
     t = Triangle(Point(c1), Point(c2), Point(c3))
-    @test datum(Meshes.crs(t(T(0), T(0)))) === WGS84Latest
+    @test datum(crs(t(T(0), T(0)))) === WGS84Latest
 
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test sprint(show, t) == "Triangle((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 0.0 m), (x: 0.0 m, y: 1.0 m))"
@@ -460,7 +460,7 @@
 
     # Quadrangle in 2D space
     q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-    @test Meshes.crs(q) <: Cartesian{NoDatum}
+    @test crs(q) <: Cartesian{NoDatum}
     @test Meshes.lentype(q) == ℳ
     @test vertex(q, 1) == cart(0, 0)
     @test vertex(q, 2) == cart(1, 0)
@@ -512,7 +512,7 @@
     c3 = Cartesian{WGS84Latest}(T(1), T(1))
     c4 = Cartesian{WGS84Latest}(T(0), T(1))
     q = Quadrangle(Point(c1), Point(c2), Point(c3), Point(c4))
-    @test datum(Meshes.crs(q(T(0), T(0)))) === WGS84Latest
+    @test datum(crs(q(T(0), T(0)))) === WGS84Latest
 
     q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test sprint(show, q) == "Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
@@ -543,7 +543,7 @@
     poly = PolyArea([outer, hole1, hole2])
     @test poly == poly
     @test poly ≈ poly
-    @test Meshes.crs(poly) <: Cartesian{NoDatum}
+    @test crs(poly) <: Cartesian{NoDatum}
     @test Meshes.lentype(poly) == ℳ
 
     p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
@@ -752,7 +752,7 @@
     @test nvertices(Tetrahedron) == 4
 
     t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
-    @test Meshes.crs(t) <: Cartesian{NoDatum}
+    @test crs(t) <: Cartesian{NoDatum}
     @test Meshes.lentype(t) == ℳ
     @test vertex(t, 1) == cart(0, 0, 0)
     @test vertex(t, 2) == cart(1, 0, 0)
@@ -789,7 +789,7 @@
     c3 = Cartesian{WGS84Latest}(T(0), T(1), T(0))
     c4 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     t = Tetrahedron(Point(c1), Point(c2), Point(c3), Point(c4))
-    @test datum(Meshes.crs(t(T(0), T(0), T(0)))) === WGS84Latest
+    @test datum(crs(t(T(0), T(0), T(0)))) === WGS84Latest
 
     t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test sprint(show, t) == "Tetrahedron((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
@@ -822,7 +822,7 @@
       cart(1, 1, 1),
       cart(0, 1, 1)
     )
-    @test Meshes.crs(h) <: Cartesian{NoDatum}
+    @test crs(h) <: Cartesian{NoDatum}
     @test Meshes.lentype(h) == ℳ
     @test vertex(h, 1) == cart(0, 0, 0)
     @test vertex(h, 8) == cart(0, 1, 1)
@@ -916,7 +916,7 @@
     c7 = Cartesian{WGS84Latest}(T(1), T(1), T(1))
     c8 = Cartesian{WGS84Latest}(T(0), T(1), T(1))
     h = Hexahedron(Point(c1), Point(c2), Point(c3), Point(c4), Point(c5), Point(c6), Point(c7), Point(c8))
-    @test datum(Meshes.crs(h(T(0), T(0), T(0)))) === WGS84Latest
+    @test datum(crs(h(T(0), T(0), T(0)))) === WGS84Latest
 
     h = Hexahedron(
       cart(0, 0, 0),
@@ -957,7 +957,7 @@
     @test nvertices(Pyramid) == 5
 
     p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
-    @test Meshes.crs(p) <: Cartesian{NoDatum}
+    @test crs(p) <: Cartesian{NoDatum}
     @test Meshes.lentype(p) == ℳ
     @test volume(p) ≈ T(1 / 3) * u"m^3"
     m = boundary(p)

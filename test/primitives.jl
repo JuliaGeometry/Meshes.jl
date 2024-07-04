@@ -3,9 +3,9 @@
     @test embeddim(Point(1)) == 1
     @test embeddim(Point(1, 2)) == 2
     @test embeddim(Point(1, 2, 3)) == 3
-    @test Meshes.crs(cart(1, 1)) <: Cartesian{NoDatum}
-    @test Meshes.crs(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
-    @test Meshes.crs(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
+    @test crs(cart(1, 1)) <: Cartesian{NoDatum}
+    @test crs(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
+    @test crs(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
     @test Meshes.lentype(Point(1, 1)) == Meshes.Met{Float64}
     @test Meshes.lentype(Point(1.0, 1.0)) == Meshes.Met{Float64}
     @test Meshes.lentype(Point(1.0f0, 1.0f0)) == Meshes.Met{Float32}
@@ -167,8 +167,8 @@
 
     # datum propagation
     c = Cartesian{WGS84Latest}(T(1), T(1))
-    @test datum(Meshes.crs(Point(c) + vector(1, 1))) === WGS84Latest
-    @test datum(Meshes.crs(Point(c) - vector(1, 1))) === WGS84Latest
+    @test datum(crs(Point(c) + vector(1, 1))) === WGS84Latest
+    @test datum(crs(Point(c) - vector(1, 1))) === WGS84Latest
 
     p = cart(0, 1)
     @test sprint(show, p, context=:compact => true) == "(x: 0.0 m, y: 1.0 m)"
@@ -190,7 +190,7 @@
   @testset "Ray" begin
     r = Ray(cart(0, 0), vector(1, 1))
     @test paramdim(r) == 1
-    @test Meshes.crs(r) <: Cartesian{NoDatum}
+    @test crs(r) <: Cartesian{NoDatum}
     @test Meshes.lentype(r) == ℳ
     @test measure(r) == typemax(ℳ)
     @test length(r) == typemax(ℳ)
@@ -257,7 +257,7 @@
   @testset "Line" begin
     l = Line(cart(0, 0), cart(1, 1))
     @test paramdim(l) == 1
-    @test Meshes.crs(l) <: Cartesian{NoDatum}
+    @test crs(l) <: Cartesian{NoDatum}
     @test Meshes.lentype(l) == ℳ
     @test measure(l) == typemax(ℳ)
     @test length(l) == typemax(ℳ)
@@ -298,7 +298,7 @@
     @test p(T(1), T(0)) == cart(1, 0, 0)
     @test paramdim(p) == 2
     @test embeddim(p) == 3
-    @test Meshes.crs(p) <: Cartesian{NoDatum}
+    @test crs(p) <: Cartesian{NoDatum}
     @test Meshes.lentype(p) == ℳ
     @test measure(p) == typemax(ℳ)^2
     @test area(p) == typemax(ℳ)^2
@@ -367,7 +367,7 @@
     b = BezierCurve(cart(0, 0), cart(0.5, 1), cart(1, 0))
     @test embeddim(b) == 2
     @test paramdim(b) == 1
-    @test Meshes.crs(b) <: Cartesian{NoDatum}
+    @test crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
 
     b = BezierCurve(cart(0, 0), cart(1, 1))
@@ -409,7 +409,7 @@
     c2 = Cartesian{WGS84Latest}(T(0.5), T(1))
     c3 = Cartesian{WGS84Latest}(T(1), T(1))
     b = BezierCurve(Point(c1), Point(c2), Point(c3))
-    @test datum(Meshes.crs(b(T(0), Horner()))) === WGS84Latest
+    @test datum(crs(b(T(0), Horner()))) === WGS84Latest
 
     b = BezierCurve(cart(0, 0), cart(0.5, 1), cart(1, 0))
     @test sprint(show, b) == "BezierCurve(controls: [(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
@@ -428,7 +428,7 @@
     b = Box(cart(0), cart(1))
     @test embeddim(b) == 1
     @test paramdim(b) == 1
-    @test Meshes.crs(b) <: Cartesian{NoDatum}
+    @test crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test minimum(b) == cart(0)
     @test maximum(b) == cart(1)
@@ -437,7 +437,7 @@
     b = Box(cart(0, 0), cart(1, 1))
     @test embeddim(b) == 2
     @test paramdim(b) == 2
-    @test Meshes.crs(b) <: Cartesian{NoDatum}
+    @test crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test minimum(b) == cart(0, 0)
     @test maximum(b) == cart(1, 1)
@@ -446,7 +446,7 @@
     b = Box(cart(0, 0, 0), cart(1, 1, 1))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
-    @test Meshes.crs(b) <: Cartesian{NoDatum}
+    @test crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test minimum(b) == cart(0, 0, 0)
     @test maximum(b) == cart(1, 1, 1)
@@ -551,7 +551,7 @@
     c1 = Cartesian{WGS84Latest}(T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(1), T(1))
     b = Box(Point(c1), Point(c2))
-    @test datum(Meshes.crs(center(b))) === WGS84Latest
+    @test datum(crs(center(b))) === WGS84Latest
 
     b = Box(cart(0, 0), cart(1, 1))
     @test sprint(show, b) == "Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))"
@@ -572,7 +572,7 @@
     b = Ball(cart(1, 2, 3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
-    @test Meshes.crs(b) <: Cartesian{NoDatum}
+    @test crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
     @test Meshes.center(b) == cart(1, 2, 3)
     @test radius(b) == T(5) * u"m"
@@ -656,7 +656,7 @@
     s = Sphere(cart(0, 0, 0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
-    @test Meshes.crs(s) <: Cartesian{NoDatum}
+    @test crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test Meshes.center(s) == cart(0, 0, 0)
     @test radius(s) == T(1) * u"m"
@@ -765,7 +765,7 @@
     e = Ellipsoid((T(3), T(2), T(1)))
     @test embeddim(e) == 3
     @test paramdim(e) == 2
-    @test Meshes.crs(e) <: Cartesian{NoDatum}
+    @test crs(e) <: Cartesian{NoDatum}
     @test Meshes.lentype(e) == ℳ
     @test radii(e) == (T(3) * u"m", T(2) * u"m", T(1) * u"m")
     @test center(e) == cart(0, 0, 0)
@@ -799,7 +799,7 @@
     d = Disk(p, T(2))
     @test embeddim(d) == 3
     @test paramdim(d) == 2
-    @test Meshes.crs(d) <: Cartesian{NoDatum}
+    @test crs(d) <: Cartesian{NoDatum}
     @test Meshes.lentype(d) == ℳ
     @test plane(d) == p
     @test Meshes.center(d) == cart(0, 0, 0)
@@ -842,7 +842,7 @@
     c = Circle(p, T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 1
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test plane(c) == p
     @test Meshes.center(c) == cart(0, 0, 0)
@@ -886,7 +886,7 @@
     c2 = Cartesian{WGS84Latest}(T(0), T(-4), T(0))
     c3 = Cartesian{WGS84Latest}(T(0), T(0), T(4))
     c = Circle(Point(c1), Point(c2), Point(c3))
-    @test datum(Meshes.crs(c)) === WGS84Latest
+    @test datum(crs(c)) === WGS84Latest
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
@@ -909,7 +909,7 @@
     c = Cylinder(Plane(cart(1, 2, 3), vector(0, 0, 1)), Plane(cart(4, 5, 6), vector(0, 0, 1)), T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test radius(c) == T(5) * u"m"
     @test bottom(c) == Plane(cart(1, 2, 3), vector(0, 0, 1))
@@ -990,7 +990,7 @@
     c = CylinderSurface(T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 2
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test radius(c) == T(2) * u"m"
     @test bottom(c) == Plane(cart(0, 0, 0), vector(0, 0, 1))
@@ -1040,7 +1040,7 @@
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     c = CylinderSurface(Point(c1), Point(c2), T(1))
-    @test datum(Meshes.crs(center(c))) === WGS84Latest
+    @test datum(crs(center(c))) === WGS84Latest
 
     c = CylinderSurface(T(1))
     @test sprint(show, c) ==
@@ -1064,7 +1064,7 @@
     p = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     @test embeddim(p) == 3
     @test paramdim(p) == 2
-    @test Meshes.crs(p) <: Cartesian{NoDatum}
+    @test crs(p) <: Cartesian{NoDatum}
     @test Meshes.lentype(p) == ℳ
     @test focallength(p) == T(2) * u"m"
     @test radius(p) == T(1) * u"m"
@@ -1141,7 +1141,7 @@
     c = Cone(d, a)
     @test embeddim(c) == 3
     @test paramdim(c) == 3
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test boundary(c) == ConeSurface(d, a)
 
@@ -1151,7 +1151,7 @@
     c = Cone(d, a)
     @test embeddim(c) == 3
     @test paramdim(c) == 3
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
@@ -1219,7 +1219,7 @@
     s = ConeSurface(d, a)
     @test embeddim(s) == 3
     @test paramdim(s) == 2
-    @test Meshes.crs(s) <: Cartesian{NoDatum}
+    @test crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test isnothing(boundary(s))
 
@@ -1229,7 +1229,7 @@
     c = ConeSurface(d, a)
     @test embeddim(c) == 3
     @test paramdim(c) == 2
-    @test Meshes.crs(c) <: Cartesian{NoDatum}
+    @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
@@ -1269,7 +1269,7 @@
     dt = Disk(pt, T(2))
     f = Frustum(db, dt)
     @test embeddim(f) == 3
-    @test Meshes.crs(f) <: Cartesian{NoDatum}
+    @test crs(f) <: Cartesian{NoDatum}
     @test Meshes.lentype(f) == ℳ
     @test boundary(f) == FrustumSurface(db, dt)
 
@@ -1321,7 +1321,7 @@
     f = FrustumSurface(db, dt)
     @test embeddim(f) == 3
     @test paramdim(f) == 2
-    @test Meshes.crs(f) <: Cartesian{NoDatum}
+    @test crs(f) <: Cartesian{NoDatum}
     @test Meshes.lentype(f) == ℳ
     @test isnothing(boundary(f))
 
@@ -1344,7 +1344,7 @@
     @test cart(1, 1, -1) ∈ t
     @test cart(1, 1, 1) ∉ t
     @test paramdim(t) == 2
-    @test Meshes.crs(t) <: Cartesian{NoDatum}
+    @test crs(t) <: Cartesian{NoDatum}
     @test Meshes.lentype(t) == ℳ
     @test Meshes.center(t) == cart(1, 1, 1)
     @test normal(t) == vector(1, 0, 0)

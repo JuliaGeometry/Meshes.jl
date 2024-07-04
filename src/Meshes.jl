@@ -137,6 +137,7 @@ export
   Geometry,
   embeddim,
   paramdim,
+  crs,
   center,
   centroid,
 
@@ -276,6 +277,7 @@ export
   SubDomain,
   embeddim,
   paramdim,
+  crs,
   element,
   nelements,
 

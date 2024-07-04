@@ -212,7 +212,7 @@
     c = Cartesian{WGS84Latest}(T(0), T(0))
     g = CartesianGrid((10, 10), Point(c), (T(1), T(1)))
     p = partition(g, BisectFractionPartition(T.((1.0, 0.0)), T(0.2)))
-    @test datum(Meshes.crs(first(p))) === WGS84Latest
+    @test datum(crs(first(p))) === WGS84Latest
   end
 
   @testset "BallPartition" begin

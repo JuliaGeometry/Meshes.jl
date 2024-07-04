@@ -2,7 +2,7 @@
   # basic properties
   dom = DummyDomain(cart(0, 0))
   @test embeddim(dom) == 2
-  @test Meshes.crs(dom) <: Cartesian{NoDatum}
+  @test crs(dom) <: Cartesian{NoDatum}
   @test Meshes.lentype(dom) == ℳ
   @test !isparametrized(dom)
 
@@ -33,7 +33,7 @@
   # datum propagation
   c = Cartesian{WGS84Latest}(T(1), T(1))
   dom = DummyDomain(Point(c))
-  @test datum(Meshes.crs(centroid(dom))) === WGS84Latest
+  @test datum(crs(centroid(dom))) === WGS84Latest
 
   dom = DummyDomain(cart(0, 0))
   @test sprint(show, dom) == "3 DummyDomain"
