@@ -216,10 +216,7 @@
   end
 
   @testset "BallPartition" begin
-    pset = PointSet(T[
-      0 1 1 0 0.2
-      0 0 1 1 0.2
-    ])
+    pset = PointSet(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1), cart(0.2, 0.2))
 
     # 3 balls with 1 point, and 1 ball with 2 points
     p = partition(pset, BallPartition(T(0.5)))

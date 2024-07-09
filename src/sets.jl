@@ -53,18 +53,12 @@ julia> PointSet([Point(1,2,3), Point(4,5,6)])
 julia> PointSet(Point(1,2,3), Point(4,5,6))
 julia> PointSet([(1,2,3), (4,5,6)])
 julia> PointSet((1,2,3), (4,5,6))
-julia> PointSet([[1,2,3], [4,5,6]])
-julia> PointSet([1,2,3], [4,5,6])
-julia> PointSet([1 4; 2 5; 3 6])
 ```
 """
 PointSet(points::AbstractVector{Point{Dim,C}}) where {Dim,C<:CRS} = PointSet{Dim,C}(points)
 PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
 PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords))
 PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))
-PointSet(coords::AbstractVector{V}) where {V<:AbstractVector} = PointSet(Tuple.(coords))
-PointSet(coords::Vararg{V}) where {V<:AbstractVector} = PointSet(collect(coords))
-PointSet(coords::AbstractMatrix) = PointSet(Tuple.(eachcol(coords)))
 
 # constructor with iterator of points
 PointSet(points) = PointSet(map(identity, points))

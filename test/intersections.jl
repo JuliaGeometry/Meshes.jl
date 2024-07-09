@@ -1142,7 +1142,7 @@
 
     r = Ray(cart(-1.0, -1.0, -1.0), vector(1.0, 1.0, 1.0))
     @test intersection(r, o) |> type == Intersecting
-    @test r ∩ o == PointSet([cart(0.0, 0.0, 0.0)])
+    @test r ∩ o == PointSet(cart(0.0, 0.0, 0.0))
 
     r = Ray(cart(-1.0, -1.0, -1.0), vector(-1.0, -1.0, -1.0))
     @test intersection(r, o) |> type == NotIntersecting
