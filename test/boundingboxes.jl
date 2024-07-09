@@ -68,10 +68,10 @@
   @test @allocated(boundingbox(m)) < 50
   @test @allocated(boundingbox(d)) < 50
 
-  d = PointSet(T[0 1 2; 0 2 1])
+  d = PointSet(cart(0, 0), cart(1, 2), cart(2, 1))
   @test boundingbox(d) == Box(cart(0, 0), cart(2, 2))
   @test @allocated(boundingbox(d)) < 50
-  d = PointSet(T[1 2; 2 1])
+  d = PointSet(cart(1, 2), cart(2, 1))
   @test boundingbox(d) == Box(cart(1, 1), cart(2, 2))
   @test @allocated(boundingbox(d)) < 50
 
@@ -85,7 +85,7 @@
   @test boundingbox(d) == Box(cart(1, 1), cart(11, 11))
   @test @allocated(boundingbox(d)) < 50
 
-  d = PointSet(T[0 1 2; 0 2 1])
+  d = PointSet(cart(0, 0), cart(1, 2), cart(2, 1))
   v = view(d, 1:2)
   @test boundingbox(v) == Box(cart(0, 0), cart(1, 2))
   @test @allocated(boundingbox(v)) < 50
