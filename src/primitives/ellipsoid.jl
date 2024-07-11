@@ -19,7 +19,8 @@ Ellipsoid(radii::Tuple, center::Point, rotation) = Ellipsoid(addunit.(radii, u"m
 
 Ellipsoid(radii::Tuple, center::Tuple, rotation) = Ellipsoid(radii, Point(center), rotation)
 
-Ellipsoid(radii::Tuple, center=(_zero(radii), _zero(radii), _zero(radii)), rotation=I) = Ellipsoid(radii, center, rotation)
+Ellipsoid(radii::Tuple, center=(_zero(radii), _zero(radii), _zero(radii)), rotation=I) =
+  Ellipsoid(radii, center, rotation)
 
 _zero(radii) = zero(first(radii))
 

@@ -23,8 +23,7 @@ function Torus(center::Point, normal::Vec, major::Len, minor::Len)
   Torus(center, Vec{3,ℒ}(normal), ℒ(major), ℒ(minor))
 end
 
-Torus(center::Point, normal::Vec, major, minor) =
-  Torus(center, normal, addunit(major, u"m"), addunit(minor, u"m"))
+Torus(center::Point, normal::Vec, major, minor) = Torus(center, normal, addunit(major, u"m"), addunit(minor, u"m"))
 
 Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(normal), major, minor)
 
