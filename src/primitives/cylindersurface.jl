@@ -33,7 +33,7 @@ end
 
 CylinderSurface(bot::P, top::P, radius) where {P<:Plane} = CylinderSurface(bot, top, addunit(radius, u"m"))
 
-function CylinderSurface(start::Point{3}, finish::Point{3}, radius)
+function CylinderSurface(start::Point, finish::Point, radius)
   dir = finish - start
   bot = Plane(start, dir)
   top = Plane(finish, dir)
@@ -42,7 +42,7 @@ end
 
 CylinderSurface(start::Tuple, finish::Tuple, radius) = CylinderSurface(Point(start), Point(finish), radius)
 
-CylinderSurface(start::Point{3}, finish::Point{3}) = CylinderSurface(start, finish, oneunit(lentype(start)))
+CylinderSurface(start::Point, finish::Point) = CylinderSurface(start, finish, oneunit(lentype(start)))
 
 CylinderSurface(start::Tuple, finish::Tuple) = CylinderSurface(Point(start), Point(finish))
 

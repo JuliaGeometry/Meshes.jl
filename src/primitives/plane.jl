@@ -19,7 +19,7 @@ struct Plane{C<:CRS,ℒ<:Len} <: Primitive{3,C}
   v::Vec{3,ℒ}
 end
 
-function Plane(p::Point{3}, n::Vec{3})
+function Plane(p::Point, n::Vec)
   u, v = householderbasis(n)
   Plane(p, u, v)
 end
@@ -28,7 +28,7 @@ Plane(p::Tuple, u::Tuple, v::Tuple) = Plane(Point(p), Vec(u), Vec(v))
 
 Plane(p::Tuple, n::Tuple) = Plane(Point(p), Vec(n))
 
-function Plane(p1::Point{3}, p2::Point{3}, p3::Point{3})
+function Plane(p1::Point, p2::Point, p3::Point)
   t = Triangle(p1, p2, p3)
   if isapproxzero(area(t))
     throw(ArgumentError("The three points are colinear."))

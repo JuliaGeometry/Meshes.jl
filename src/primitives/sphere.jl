@@ -28,7 +28,7 @@ Sphere(center::Tuple) = Sphere(Point(center))
 
 A 2D sphere passing through points `p1`, `p2` and `p3`.
 """
-function Sphere(p1::Point{2}, p2::Point{2}, p3::Point{2})
+function Sphere(p1::Point, p2::Point, p3::Point)
   x1, y1 = p2 - p1
   x2, y2 = p3 - p2
   c1 = centroid(Segment(p1, p2))
@@ -47,7 +47,7 @@ Sphere(p1::Tuple, p2::Tuple, p3::Tuple) = Sphere(Point(p1), Point(p2), Point(p3)
 
 A 3D sphere passing through points `p1`, `p2`, `p3` and `p4`.
 """
-function Sphere(p1::Point{3}, p2::Point{3}, p3::Point{3}, p4::Point{3})
+function Sphere(p1::Point, p2::Point, p3::Point, p4::Point)
   v1 = p1 - p4
   v2 = p2 - p4
   v3 = p3 - p4

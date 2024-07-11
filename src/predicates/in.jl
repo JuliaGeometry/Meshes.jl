@@ -30,7 +30,7 @@ end
 
 Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
-Base.in(p::Point{3}, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
+Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
@@ -48,7 +48,7 @@ function Base.in(p::Point{Dim}, s::Sphere{Dim}) where {Dim}
   isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3}, d::Disk)
+function Base.in(p::Point, d::Disk)
   p ∉ plane(d) && return false
   c = center(d)
   r = radius(d)
@@ -56,7 +56,7 @@ function Base.in(p::Point{3}, d::Disk)
   s < r || isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3}, c::Circle)
+function Base.in(p::Point, c::Circle)
   p ∉ plane(c) && return false
   o = center(c)
   r = radius(c)
@@ -64,7 +64,7 @@ function Base.in(p::Point{3}, c::Circle)
   isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3}, c::Cone)
+function Base.in(p::Point, c::Cone)
   a = apex(c)
   b = center(base(c))
   ax = a - b
@@ -73,7 +73,7 @@ function Base.in(p::Point{3}, c::Cone)
   ∠(b, a, p) ≤ halfangle(c)
 end
 
-function Base.in(p::Point{3}, c::Cylinder)
+function Base.in(p::Point, c::Cylinder)
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
   r = radius(c)
@@ -83,7 +83,7 @@ function Base.in(p::Point{3}, c::Cylinder)
   norm((p - b) × a) / norm(a) ≤ r
 end
 
-function Base.in(p::Point{3}, f::Frustum)
+function Base.in(p::Point, f::Frustum)
   t = center(top(f))
   b = center(bottom(f))
   ax = b - t
@@ -101,7 +101,7 @@ function Base.in(p::Point{3}, f::Frustum)
   rd ≤ r
 end
 
-function Base.in(p::Point{3}, t::Torus)
+function Base.in(p::Point, t::Torus)
   ℒ = lentype(p)
   R, r = radii(t)
   c, n = center(t), normal(t)
