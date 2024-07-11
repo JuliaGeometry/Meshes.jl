@@ -41,7 +41,7 @@ winding(point::Point, ring::Ring) = winding((point,), ring) |> first
 # -------
 
 # Jacobson et al 2013.
-function winding(points, mesh::Mesh{3})
+function winding(points, mesh::Mesh)
   assertion(paramdim(mesh) == 2, "winding number only defined for surface meshes")
   (eltype(mesh) <: Triangle) || return winding(points, simplexify(mesh))
 
@@ -64,4 +64,4 @@ function winding(points, mesh::Mesh{3})
   tcollect(w(p) for p in points)
 end
 
-winding(point::Point{3}, mesh::Mesh{3}) = winding((point,), mesh) |> first
+winding(point::Point, mesh::Mesh) = winding((point,), mesh) |> first
