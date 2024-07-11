@@ -110,24 +110,7 @@ function Base.in(p::Point, t::Torus)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
-function Base.in(p::Point{2}, t::Triangle{2})
-  # given coordinates
-  a, b, c = vertices(t)
-  x₁, y₁ = to(a)
-  x₂, y₂ = to(b)
-  x₃, y₃ = to(c)
-  x, y = to(p)
-
-  # barycentric coordinates
-  λ₁ = ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₂ = ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₃ = 1 - λ₁ - λ₂
-
-  # barycentric check
-  0 ≤ λ₁ ≤ 1 && 0 ≤ λ₂ ≤ 1 && 0 ≤ λ₃ ≤ 1
-end
-
-function Base.in(p::Point{3}, t::Triangle{3})
+function Base.in(p::Point, t::Triangle)
   # given coordinates
   a, b, c = vertices(t)
 
