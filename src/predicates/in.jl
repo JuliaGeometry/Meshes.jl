@@ -30,7 +30,7 @@ end
 
 Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
-Base.in(p::Point{3}, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
+Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
@@ -48,7 +48,7 @@ function Base.in(p::Point{Dim}, s::Sphere{Dim}) where {Dim}
   isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3}, d::Disk)
+function Base.in(p::Point, d::Disk)
   p ∉ plane(d) && return false
   c = center(d)
   r = radius(d)
@@ -56,7 +56,7 @@ function Base.in(p::Point{3}, d::Disk)
   s < r || isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3}, c::Circle)
+function Base.in(p::Point, c::Circle)
   p ∉ plane(c) && return false
   o = center(c)
   r = radius(c)
@@ -64,7 +64,7 @@ function Base.in(p::Point{3}, c::Circle)
   isapproxequal(s, r)
 end
 
-function Base.in(p::Point{3}, c::Cone)
+function Base.in(p::Point, c::Cone)
   a = apex(c)
   b = center(base(c))
   ax = a - b
@@ -73,7 +73,7 @@ function Base.in(p::Point{3}, c::Cone)
   ∠(b, a, p) ≤ halfangle(c)
 end
 
-function Base.in(p::Point{3}, c::Cylinder)
+function Base.in(p::Point, c::Cylinder)
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
   r = radius(c)
@@ -83,7 +83,7 @@ function Base.in(p::Point{3}, c::Cylinder)
   norm((p - b) × a) / norm(a) ≤ r
 end
 
-function Base.in(p::Point{3}, f::Frustum)
+function Base.in(p::Point, f::Frustum)
   t = center(top(f))
   b = center(bottom(f))
   ax = b - t
@@ -101,7 +101,7 @@ function Base.in(p::Point{3}, f::Frustum)
   rd ≤ r
 end
 
-function Base.in(p::Point{3}, t::Torus)
+function Base.in(p::Point, t::Torus)
   ℒ = lentype(p)
   R, r = radii(t)
   c, n = center(t), normal(t)
@@ -110,24 +110,7 @@ function Base.in(p::Point{3}, t::Torus)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
-function Base.in(p::Point{2}, t::Triangle{2})
-  # given coordinates
-  a, b, c = vertices(t)
-  x₁, y₁ = to(a)
-  x₂, y₂ = to(b)
-  x₃, y₃ = to(c)
-  x, y = to(p)
-
-  # barycentric coordinates
-  λ₁ = ((y₂ - y₃) * (x - x₃) + (x₃ - x₂) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₂ = ((y₃ - y₁) * (x - x₃) + (x₁ - x₃) * (y - y₃)) / ((y₂ - y₃) * (x₁ - x₃) + (x₃ - x₂) * (y₁ - y₃))
-  λ₃ = 1 - λ₁ - λ₂
-
-  # barycentric check
-  0 ≤ λ₁ ≤ 1 && 0 ≤ λ₂ ≤ 1 && 0 ≤ λ₃ ≤ 1
-end
-
-function Base.in(p::Point{3}, t::Triangle{3})
+function Base.in(p::Point, t::Triangle)
   # given coordinates
   a, b, c = vertices(t)
 

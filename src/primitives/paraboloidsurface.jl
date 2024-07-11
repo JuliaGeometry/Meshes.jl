@@ -40,19 +40,19 @@ struct ParaboloidSurface{C<:CRS,ℒ<:Len} <: Primitive{3,C}
     new{C,float(ℒ)}(apex, radius, focallength)
 end
 
-ParaboloidSurface(apex::Point{3}, radius::Len, focallength::Len) =
+ParaboloidSurface(apex::Point, radius::Len, focallength::Len) =
   ParaboloidSurface(apex, promote(radius, focallength)...)
 
-ParaboloidSurface(apex::Point{3}, radius, focallength) =
+ParaboloidSurface(apex::Point, radius, focallength) =
   ParaboloidSurface(apex, addunit(radius, u"m"), addunit(focallength, u"m"))
 
 ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
-ParaboloidSurface(apex::Point{3}, radius) = ParaboloidSurface(apex, radius, oneunit(radius))
+ParaboloidSurface(apex::Point, radius) = ParaboloidSurface(apex, radius, oneunit(radius))
 
 ParaboloidSurface(apex::Tuple, radius) = ParaboloidSurface(Point(apex), radius)
 
-ParaboloidSurface(apex::Point{3}) = ParaboloidSurface(apex, oneunit(lentype(apex)))
+ParaboloidSurface(apex::Point) = ParaboloidSurface(apex, oneunit(lentype(apex)))
 
 ParaboloidSurface(apex::Tuple) = ParaboloidSurface(Point(apex))
 

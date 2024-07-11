@@ -15,12 +15,13 @@ struct Ellipsoid{ℒ<:Len,C<:CRS,R} <: Primitive{3,C}
     new{float(ℒ),C,R}(radii, center, rotation)
 end
 
-Ellipsoid(radii::NTuple{3}, center::Point{3}, rotation) = Ellipsoid(addunit.(radii, u"m"), center, rotation)
+Ellipsoid(radii::Tuple, center::Point, rotation) = Ellipsoid(addunit.(radii, u"m"), center, rotation)
 
-Ellipsoid(radii::NTuple{3}, center::NTuple{3}, rotation) = Ellipsoid(radii, Point(center), rotation)
+Ellipsoid(radii::Tuple, center::Tuple, rotation) = Ellipsoid(radii, Point(center), rotation)
 
-Ellipsoid(radii::NTuple{3,T}, center=(zero(T), zero(T), zero(T)), rotation=I) where {T} =
-  Ellipsoid(radii, center, rotation)
+Ellipsoid(radii::Tuple, center=(_zero(radii), _zero(radii), _zero(radii)), rotation=I) = Ellipsoid(radii, center, rotation)
+
+_zero(radii) = zero(first(radii))
 
 paramdim(::Type{<:Ellipsoid}) = 2
 

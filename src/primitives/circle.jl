@@ -23,7 +23,7 @@ Circle(plane::Plane, radius) = Circle(plane, addunit(radius, u"m"))
 
 A circle passing through points `p1`, `p2` and `p3`.
 """
-function Circle(p1::Point{3}, p2::Point{3}, p3::Point{3})
+function Circle(p1::Point, p2::Point, p3::Point)
   v12 = p2 - p1
   v13 = p3 - p1
   m12 = to(p1 + v12 / 2)

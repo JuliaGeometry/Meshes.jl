@@ -18,7 +18,7 @@ If the `method` is ommitted, a default algorithm is used.
 """
 function tesselate end
 
-tesselate(points::AbstractVector{<:Point{2}}, method::TesselationMethod) = tesselate(PointSet(points), method)
+tesselate(points::AbstractVector{<:Point}, method::TesselationMethod) = tesselate(PointSet(points), method)
 
 # ----------------
 # IMPLEMENTATIONS

@@ -33,7 +33,7 @@ end
 
 Cylinder(bot::P, top::P, radius) where {P<:Plane} = Cylinder(bot, top, addunit(radius, u"m"))
 
-function Cylinder(start::Point{3}, finish::Point{3}, radius)
+function Cylinder(start::Point, finish::Point, radius)
   dir = finish - start
   bot = Plane(start, dir)
   top = Plane(finish, dir)
@@ -42,7 +42,7 @@ end
 
 Cylinder(start::Tuple, finish::Tuple, radius) = Cylinder(Point(start), Point(finish), radius)
 
-Cylinder(start::Point{3}, finish::Point{3}) = Cylinder(start, finish, oneunit(lentype(start)))
+Cylinder(start::Point, finish::Point) = Cylinder(start, finish, oneunit(lentype(start)))
 
 Cylinder(start::Tuple, finish::Tuple) = Cylinder(Point(start), Point(finish))
 

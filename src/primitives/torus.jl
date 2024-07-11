@@ -18,12 +18,12 @@ struct Torus{C<:CRS,ℒ<:Len} <: Primitive{3,C}
     new{C,float(ℒ)}(center, normal, major, minor)
 end
 
-function Torus(center::Point{3}, normal::Vec{3}, major::Len, minor::Len)
+function Torus(center::Point, normal::Vec, major::Len, minor::Len)
   ℒ = promote_type(eltype(normal), typeof(major), typeof(minor))
   Torus(center, Vec{3,ℒ}(normal), ℒ(major), ℒ(minor))
 end
 
-Torus(center::Point{3}, normal::Vec{3}, major, minor) =
+Torus(center::Point, normal::Vec, major, minor) =
   Torus(center, normal, addunit(major, u"m"), addunit(minor, u"m"))
 
 Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(normal), major, minor)
@@ -34,13 +34,13 @@ Torus(center::Tuple, normal::Tuple, major, minor) = Torus(Point(center), Vec(nor
 The torus whose centerline passes through points `p1`, `p2` and `p3` and with
 minor radius `minor`.
 """
-function Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor::Len)
+function Torus(p1::Point, p2::Point, p3::Point, minor::Len)
   c = Circle(p1, p2, p3)
   p = Plane(p1, p2, p3)
   Torus(center(c), normal(p), radius(c), minor)
 end
 
-Torus(p1::Point{3}, p2::Point{3}, p3::Point{3}, minor) = Torus(p1, p2, p3, addunit(minor, u"m"))
+Torus(p1::Point, p2::Point, p3::Point, minor) = Torus(p1, p2, p3, addunit(minor, u"m"))
 
 Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Point(p3), minor)
 
