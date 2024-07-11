@@ -74,11 +74,11 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 ```
 """
 function ∠(u::Vec{2}, v::Vec{2}) # preserve sign
-  θ = atan(u × v, u ⋅ v)
+  θ = atan(u × v, u ⋅ v) * u"rad"
   θ == oftype(θ, -π) ? -θ : θ
 end
 
-∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v) # discard sign
+∠(u::Vec{3}, v::Vec{3}) = atan(norm(u × v), u ⋅ v) * u"rad" # discard sign
 
 # -----------
 # IO METHODS

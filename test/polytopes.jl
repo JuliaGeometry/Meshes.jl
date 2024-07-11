@@ -401,8 +401,8 @@
 
     # test angles
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-    @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45], atol=8 * eps(T)))
-    @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45], atol=8 * eps(T)))
+    @test all(isapprox.(rad2deg.(angles(t)), T[-90, -45, -45] * u"°", atol=8 * eps(T)))
+    @test all(isapprox.(rad2deg.(innerangles(t)), T[90, 45, 45] * u"°", atol=8 * eps(T)))
 
     # Triangle in 3D space
     t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
