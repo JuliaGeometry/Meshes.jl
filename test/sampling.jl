@@ -204,6 +204,18 @@
     ps = sample(b, RegularSampling(3, 2, 3))
     @test all(∈(b), ps)
 
+    # cylinder with parallel planes
+    c = Cylinder(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1))
+    ps = sample(c, RegularSampling(2, 20, 10))
+    cs = to.(ps)
+    xs = getindex.(cs, 1)
+    ys = getindex.(cs, 2)
+    zs = getindex.(cs, 3)
+    @test length(cs) == 200 + 200 + 10
+    @test all(-oneunit(ℳ) ≤ x ≤ oneunit(ℳ) for x in xs)
+    @test all(-oneunit(ℳ) ≤ y ≤ oneunit(ℳ) for y in ys)
+    @test all(zero(ℳ) ≤ z ≤ oneunit(ℳ) for z in zs)
+
     # cylinder surface with parallel planes
     c = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1))
     ps = sample(c, RegularSampling(20, 10))
