@@ -147,6 +147,8 @@
     @test isperiodic(Sphere{2}) == (true,)
     @test isperiodic(Sphere{3}) == (true, true)
     @test isperiodic(Ellipsoid) == (true, true)
+    @test isperiodic(Cylinder) == (false, true, false)
+    @test isperiodic(CylinderSurface) == (true, false)
     @test isperiodic(ParaboloidSurface) == (false, true)
     @test isperiodic(Torus) == (true, true)
 
