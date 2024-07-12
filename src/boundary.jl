@@ -102,6 +102,11 @@ function boundary(p::Pyramid)
   SimpleMesh(pointify(p), connect.(indices))
 end
 
+function boundary(w::Wedge)
+  indices = [(1, 3, 2), (4, 5, 6), (1, 2, 5, 4), (2, 3, 6, 5), (3, 1, 4, 6)]
+  SimpleMesh(pointify(w), connect.(indices))
+end
+
 function boundary(m::Multi)
   bounds = [boundary(geom) for geom in parent(m)]
   valid = filter(!isnothing, bounds)

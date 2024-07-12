@@ -204,6 +204,7 @@ const Polyhedron = Polytope{3}
 include("polytopes/tetrahedron.jl")
 include("polytopes/hexahedron.jl")
 include("polytopes/pyramid.jl")
+include("polytopes/wedge.jl")
 
 # -----------------------
 # N-POLYTOPE (FALLBACKS)
