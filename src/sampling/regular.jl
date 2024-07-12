@@ -33,41 +33,50 @@ function sample(::AbstractRNG, geom::Geometry, method::RegularSampling)
   tₑ = ntuple(i -> T(1 - δₑ[i](sz[i])), D)
   rs = (range(tₛ[i], stop=tₑ[i], length=sz[i]) for i in 1:D)
   iᵣ = (geom(uv...) for uv in Iterators.product(rs...))
-  iₚ = (p for p in extrapoints(geom))
+  iₚ = (p for p in extrapoints(geom, sz))
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
 firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
 lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
-extrapoints(::Geometry) = ()
+extrapoints(::Geometry, sz) = ()
 
 firstoffset(d::Disk) = (n -> inv(n), firstoffset(boundary(d))...)
 lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
-extrapoints(d::Disk) = (center(d),)
+extrapoints(d::Disk, sz) = (center(d),)
 
 firstoffset(b::Ball) = (n -> inv(n), firstoffset(boundary(b))...)
 lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
-extrapoints(b::Ball) = (center(b),)
+extrapoints(b::Ball, sz) = (center(b),)
 
 firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
 lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
-extrapoints(s::Sphere{3}) = (s(0, 0), s(1, 0))
+extrapoints(s::Sphere{3}, sz) = (s(0, 0), s(1, 0))
 
 firstoffset(::Ellipsoid) = (n -> inv(n + 1), n -> zero(n))
 lastoffset(::Ellipsoid) = (n -> inv(n + 1), n -> inv(n))
-extrapoints(e::Ellipsoid) = (e(0, 0), e(1, 0))
+extrapoints(e::Ellipsoid, sz) = (e(0, 0), e(1, 0))
+
+firstoffset(::Cylinder) = (n -> inv(n), n -> zero(n), n -> zero(n))
+lastoffset(::Cylinder) = (n -> zero(n), n -> inv(n), n -> zero(n))
+function extrapoints(c::Cylinder, sz)
+  b = bottom(c)(0, 0)
+  t = top(c)(0, 0)
+  s = Segment(b, t)
+  [s(t) for t in range(0, 1, sz[3])]
+end
 
 firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
-extrapoints(c::CylinderSurface) = (bottom(c)(0, 0), top(c)(0, 0))
+extrapoints(c::CylinderSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
 firstoffset(::ConeSurface) = (n -> zero(n), n -> inv(n))
 lastoffset(::ConeSurface) = (n -> inv(n), n -> zero(n))
-extrapoints(c::ConeSurface) = (apex(c), base(c)(0, 0))
+extrapoints(c::ConeSurface, sz) = (apex(c), base(c)(0, 0))
 
 firstoffset(::FrustumSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::FrustumSurface) = (n -> inv(n), n -> zero(n))
-extrapoints(c::FrustumSurface) = (bottom(c)(0, 0), top(c)(0, 0))
+extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
 # --------------
 # SPECIAL CASES
