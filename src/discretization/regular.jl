@@ -96,7 +96,7 @@ function _appendaxis(tg)
   _, ny, nz = size(tg)
 
   # number of grid vertices
-  n = nvertices(tg)
+  nvert = nvertices(tg)
 
   # connect hexahedra in the volume
   hexas = collect(elements(tg))
@@ -105,18 +105,18 @@ function _appendaxis(tg)
   inds = NTuple{6,Int}[]
   for k in 1:nz
     for j in 1:(ny - 1)
-      a1 = n + k
+      a1 = nvert + k
       b1 = cart2corner(tg, 1, j, k)
       c1 = cart2corner(tg, 1, j + 1, k)
-      a2 = n + k + 1
+      a2 = nvert + k + 1
       b2 = cart2corner(tg, 1, j, k + 1)
       c2 = cart2corner(tg, 1, j + 1, k + 1)
       push!(inds, (a1, b1, c1, a2, b2, c2))
     end
-    a1 = n + k
+    a1 = nvert + k
     b1 = cart2corner(tg, 1, ny, k)
     c1 = cart2corner(tg, 1, 1, k)
-    a2 = n + k + 1
+    a2 = nvert + k + 1
     b2 = cart2corner(tg, 1, ny, k + 1)
     c2 = cart2corner(tg, 1, 1, k + 1)
     push!(inds, (a1, b1, c1, a2, b2, c2))
