@@ -114,6 +114,8 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{BezierCurve{Dim}}) where {Dim} = BezierCurve(rand(rng, Point{Dim}, 5))
 
+Random.rand(rng::Random.AbstractRNG, ::Type{BezierCurve}) = rand(rng, BezierCurve{3})
+
 # -----------
 # IO METHODS
 # -----------

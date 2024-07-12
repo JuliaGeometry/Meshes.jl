@@ -27,3 +27,5 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Tetrahedron{Dim}}) where {Dim} =
   Tetrahedron(ntuple(i -> rand(rng, Point{Dim}), 4))
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Tetrahedron}) = rand(rng, Tetrahedron{3})

@@ -31,3 +31,5 @@ Base.open(r::Rope) = r
 Base.reverse!(r::Rope) = (reverse!(r.vertices); r)
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Rope{Dim}}) where {Dim} = Rope(rand(rng, Point{Dim}, rand(rng, 2:50)))
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Rope}) = rand(rng, Rope{3})

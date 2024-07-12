@@ -17,3 +17,5 @@ Base.isapprox(t₁::Wedge, t₂::Wedge; atol=atol(lentype(t₁)), kwargs...) =
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Wedge{Dim}}) where {Dim} = Wedge(ntuple(i -> rand(rng, Point{Dim}), 6))
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Wedge}) = rand(rng, Wedge{3})

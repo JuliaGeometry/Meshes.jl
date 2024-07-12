@@ -101,3 +101,5 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Sphere{Dim}}) where {Dim} =
   Sphere(rand(rng, Point{Dim}), rand(rng, Met{Float64}))
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Sphere}) = rand(rng, Sphere{3})

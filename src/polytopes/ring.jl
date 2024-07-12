@@ -66,6 +66,8 @@ function Random.rand(rng::Random.AbstractRNG, ::Type{Ring{Dim}}) where {Dim}
   Ring(v)
 end
 
+Random.rand(rng::Random.AbstractRNG, ::Type{Ring}) = rand(rng, Ring{3})
+
 """
     innerangles(ring)
 

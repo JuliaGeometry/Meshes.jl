@@ -73,6 +73,10 @@
     @test s isa Segment
     @test embeddim(s) == 3
     @test Meshes.lentype(s) === Meshes.Met{Float64}
+    s = rand(Segment)
+    @test s isa Segment
+    @test embeddim(s) == 3
+    @test Meshes.lentype(s) === Meshes.Met{Float64}
 
     # datum propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0))
@@ -253,12 +257,20 @@
     @test r isa Rope
     @test embeddim(r) == 3
     @test Meshes.lentype(r) === Meshes.Met{Float64}
+    r = rand(Rope)
+    @test r isa Rope
+    @test embeddim(r) == 3
+    @test Meshes.lentype(r) === Meshes.Met{Float64}
 
     r = rand(Ring{2})
     @test r isa Ring
     @test embeddim(r) == 2
     @test Meshes.lentype(r) === Meshes.Met{Float64}
     r = rand(Ring{3})
+    @test r isa Ring
+    @test embeddim(r) == 3
+    @test Meshes.lentype(r) === Meshes.Met{Float64}
+    r = rand(Ring)
     @test r isa Ring
     @test embeddim(r) == 3
     @test Meshes.lentype(r) === Meshes.Met{Float64}
@@ -331,6 +343,10 @@
       @test embeddim(n) == 2
       @test Meshes.lentype(n) === Meshes.Met{Float64}
       n = rand(NGON{3})
+      @test n isa NGON
+      @test embeddim(n) == 3
+      @test Meshes.lentype(n) === Meshes.Met{Float64}
+      n = rand(NGON)
       @test n isa NGON
       @test embeddim(n) == 3
       @test Meshes.lentype(n) === Meshes.Met{Float64}
@@ -722,6 +738,10 @@
     @test p isa PolyArea
     @test embeddim(p) == 3
     @test Meshes.lentype(p) === Meshes.Met{Float64}
+    p = rand(PolyArea)
+    @test p isa PolyArea
+    @test embeddim(p) == 3
+    @test Meshes.lentype(p) === Meshes.Met{Float64}
 
     outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
@@ -779,6 +799,10 @@
     isapproxtest(t)
 
     t = rand(Tetrahedron{3})
+    @test t isa Tetrahedron
+    @test embeddim(t) == 3
+    @test Meshes.lentype(t) === Meshes.Met{Float64}
+    t = rand(Tetrahedron)
     @test t isa Tetrahedron
     @test embeddim(t) == 3
     @test Meshes.lentype(t) === Meshes.Met{Float64}
@@ -905,6 +929,10 @@
     @test h isa Hexahedron
     @test embeddim(h) == 3
     @test Meshes.lentype(h) === Meshes.Met{Float64}
+    h = rand(Hexahedron)
+    @test h isa Hexahedron
+    @test embeddim(h) == 3
+    @test Meshes.lentype(h) === Meshes.Met{Float64}
 
     # datum propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
@@ -975,6 +1003,10 @@
     @test p isa Pyramid
     @test embeddim(p) == 3
     @test Meshes.lentype(p) === Meshes.Met{Float64}
+    p = rand(Pyramid)
+    @test p isa Pyramid
+    @test embeddim(p) == 3
+    @test Meshes.lentype(p) === Meshes.Met{Float64}
 
     p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
@@ -1015,6 +1047,10 @@
     isapproxtest(w)
 
     w = rand(Wedge{3})
+    @test w isa Wedge
+    @test embeddim(w) == 3
+    @test Meshes.lentype(w) === Meshes.Met{Float64}
+    w = rand(Wedge)
     @test w isa Wedge
     @test embeddim(w) == 3
     @test Meshes.lentype(w) === Meshes.Met{Float64}
