@@ -360,6 +360,13 @@
     @test eltype(mesh) <: Ngon
     @test nvertices.(mesh) ⊆ [3, 4]
 
+    cyl = Cylinder(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
+    mesh = discretize(cyl, RegularDiscretization(10))
+    @test nvertices(mesh) == 11 * 10 * 11 + 11
+    @test nelements(mesh) == 11 * 10 * 10
+    @test eltype(mesh) <: Polyhedron
+    @test nvertices.(mesh) ⊆ [6, 8]
+
     cylsurf = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
     mesh = discretize(cylsurf, RegularDiscretization(10))
     @test nvertices(mesh) == 10 * 11 + 2

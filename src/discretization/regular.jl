@@ -60,6 +60,8 @@ appendtopo(::Sphere{3}, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
 
+appendtopo(::Cylinder, tg) = _appendaxis(tg)
+
 appendtopo(::CylinderSurface, tg) = _appendpoles(tg, 1, false)
 
 appendtopo(::ConeSurface, tg) = _appendpoles(tg, 1, false)
@@ -87,6 +89,41 @@ function _appendcenter(tg)
   push!(tris, connect((c, u, v)))
 
   SimpleTopology([quads; tris])
+end
+
+function _appendaxis(tg)
+  # auxiliary variables
+  _, ny, nz = size(tg)
+
+  # number of grid vertices
+  nvert = nvertices(tg)
+
+  # connect hexahedra in the volume
+  hexas = collect(elements(tg))
+
+  # connect axis with wedges
+  inds = NTuple{6,Int}[]
+  for k in 1:nz
+    for j in 1:(ny - 1)
+      a1 = nvert + k
+      b1 = cart2corner(tg, 1, j, k)
+      c1 = cart2corner(tg, 1, j + 1, k)
+      a2 = nvert + k + 1
+      b2 = cart2corner(tg, 1, j, k + 1)
+      c2 = cart2corner(tg, 1, j + 1, k + 1)
+      push!(inds, (a1, b1, c1, a2, b2, c2))
+    end
+    a1 = nvert + k
+    b1 = cart2corner(tg, 1, ny, k)
+    c1 = cart2corner(tg, 1, 1, k)
+    a2 = nvert + k + 1
+    b2 = cart2corner(tg, 1, ny, k + 1)
+    c2 = cart2corner(tg, 1, 1, k + 1)
+    push!(inds, (a1, b1, c1, a2, b2, c2))
+  end
+  wedges = [connect(ind, Wedge) for ind in inds]
+
+  SimpleTopology([hexas; wedges])
 end
 
 # connect north and south poles to
