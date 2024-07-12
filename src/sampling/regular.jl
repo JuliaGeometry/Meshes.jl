@@ -60,10 +60,11 @@ extrapoints(e::Ellipsoid, sz) = (e(0, 0), e(1, 0))
 firstoffset(::Cylinder) = (n -> inv(n), n -> zero(n), n -> zero(n))
 lastoffset(::Cylinder) = (n -> zero(n), n -> inv(n), n -> zero(n))
 function extrapoints(c::Cylinder, sz)
+  T = numtype(lentype(c))
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
   s = Segment(b, t)
-  [s(t) for t in range(0, 1, sz[3])]
+  [s(t) for t in range(zero(T), one(T), sz[3])]
 end
 
 firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
