@@ -48,9 +48,11 @@
     @test embeddim(rand(Point{1})) == 1
     @test embeddim(rand(Point{2})) == 2
     @test embeddim(rand(Point{3})) == 3
+    @test embeddim(rand(Point)) == 3
     @test Meshes.lentype(rand(Point{1})) == Meshes.Met{Float64}
     @test Meshes.lentype(rand(Point{2})) == Meshes.Met{Float64}
     @test Meshes.lentype(rand(Point{3})) == Meshes.Met{Float64}
+    @test Meshes.lentype(rand(Point)) == Meshes.Met{Float64}
 
     @test cart(1) ≈ cart(1 + eps(T))
     @test cart(1, 2) ≈ cart(1 + eps(T), T(2))
@@ -234,10 +236,13 @@
 
     r2 = rand(Ray{2})
     r3 = rand(Ray{3})
+    r = rand(Ray)
     @test r2 isa Ray
     @test r3 isa Ray
+    @test r isa Ray
     @test embeddim(r2) == 2
     @test embeddim(r3) == 3
+    @test embeddim(r) == 3
 
     r = Ray(cart(0, 0), vector(1, 1))
     @test sprint(show, r) == "Ray(p: (x: 0.0 m, y: 0.0 m), v: (1.0 m, 1.0 m))"
@@ -273,10 +278,13 @@
 
     l2 = rand(Line{2})
     l3 = rand(Line{3})
+    l = rand(Line)
     @test l2 isa Line
     @test l3 isa Line
+    @test l isa Line
     @test embeddim(l2) == 2
     @test embeddim(l3) == 3
+    @test embeddim(l) == 3
 
     l = Line(cart(0, 0), cart(1, 1))
     @test sprint(show, l) == "Line(a: (x: 0.0 m, y: 0.0 m), b: (x: 1.0 m, y: 1.0 m))"
@@ -399,10 +407,13 @@
 
     b2 = rand(BezierCurve{2})
     b3 = rand(BezierCurve{3})
+    b = rand(BezierCurve)
     @test b2 isa BezierCurve
     @test b3 isa BezierCurve
+    @test b isa BezierCurve
     @test embeddim(b2) == 2
     @test embeddim(b3) == 3
+    @test embeddim(b) == 3
 
     # datum propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0))
@@ -517,12 +528,15 @@
     b1 = rand(Box{1})
     b2 = rand(Box{2})
     b3 = rand(Box{3})
+    b = rand(Box)
     @test b1 isa Box
     @test b2 isa Box
     @test b3 isa Box
+    @test b isa Box
     @test embeddim(b1) == 1
     @test embeddim(b2) == 2
     @test embeddim(b3) == 3
+    @test embeddim(b) == 3
 
     @test_throws AssertionError Box(cart(1), cart(0))
     @test_throws AssertionError Box(cart(1, 1), cart(0, 0))
@@ -630,12 +644,15 @@
     b1 = rand(Ball{1})
     b2 = rand(Ball{2})
     b3 = rand(Ball{3})
+    b = rand(Ball)
     @test b1 isa Ball
     @test b2 isa Ball
     @test b3 isa Ball
+    @test b isa Ball
     @test embeddim(b1) == 1
     @test embeddim(b2) == 2
     @test embeddim(b3) == 3
+    @test embeddim(b) == 3
 
     b = Ball(cart(0, 0), T(1))
     @test sprint(show, b) == "Ball(center: (x: 0.0 m, y: 0.0 m), radius: 1.0 m)"
@@ -739,12 +756,15 @@
     s1 = rand(Sphere{1})
     s2 = rand(Sphere{2})
     s3 = rand(Sphere{3})
+    s = rand(Sphere)
     @test s1 isa Sphere
     @test s2 isa Sphere
     @test s3 isa Sphere
+    @test s isa Sphere
     @test embeddim(s1) == 1
     @test embeddim(s2) == 2
     @test embeddim(s3) == 3
+    @test embeddim(s) == 3
 
     s = Sphere(cart(0, 0, 0), T(1))
     @test sprint(show, s) == "Sphere(center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m)"

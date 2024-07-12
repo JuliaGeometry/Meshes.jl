@@ -66,3 +66,5 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Ball{Dim}}) where {Dim} =
   Ball(rand(rng, Point{Dim}), rand(rng, Met{Float64}))
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Ball}) = rand(rng, Ball{3})
