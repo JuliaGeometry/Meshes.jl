@@ -67,6 +67,8 @@ signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Ngon{N,Dim}}) where {N,Dim} = Ngon{N}(ntuple(i -> rand(rng, Point{Dim}), N))
 
+Random.rand(rng::Random.AbstractRNG, ::Type{Ngon{N}}) where {N} = rand(rng, Ngon{N,3})
+
 # ----------
 # TRIANGLES
 # ----------

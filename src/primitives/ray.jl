@@ -32,3 +32,5 @@ end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Ray{Dim}}) where {Dim} =
   Ray(rand(rng, Point{Dim}), rand(rng, Vec{Dim,Met{Float64}}))
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Ray}) = rand(rng, Ray{3})

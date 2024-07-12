@@ -60,3 +60,5 @@ function Random.rand(rng::Random.AbstractRNG, ::Type{Box{Dim}}) where {Dim}
   max = min + rand(rng, Vec{Dim,Met{Float64}})
   Box(min, max)
 end
+
+Random.rand(rng::Random.AbstractRNG, ::Type{Box}) = rand(rng, Box{3})
