@@ -968,8 +968,6 @@
     @test m[3] isa Triangle
     @test m[4] isa Triangle
     @test m[5] isa Triangle
-
-    p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
     equaltest(p)
     isapproxtest(p)
 
@@ -996,6 +994,51 @@
       ├─ Point(x: 1.0 m, y: 1.0 m, z: 0.0 m)
       ├─ Point(x: 0.0 m, y: 1.0 m, z: 0.0 m)
       └─ Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
+    end
+
+    @test paramdim(Wedge) == 3
+    @test nvertices(Wedge) == 6
+
+    w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
+    @test crs(w) <: Cartesian{NoDatum}
+    @test Meshes.lentype(w) == ℳ
+    @test volume(w) ≈ T(1 / 2) * u"m^3"
+    m = boundary(w)
+    @test m isa Mesh
+    @test nelements(m) == 5
+    @test m[1] isa Triangle
+    @test m[2] isa Triangle
+    @test m[3] isa Quadrangle
+    @test m[4] isa Quadrangle
+    @test m[5] isa Quadrangle
+    equaltest(w)
+    isapproxtest(w)
+
+    w = rand(Wedge{3})
+    @test w isa Wedge
+    @test embeddim(w) == 3
+    @test Meshes.lentype(w) === Meshes.Met{Float64}
+
+    w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
+    @test sprint(show, w) == "Wedge((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 1.0 m, z: 1.0 m))"
+    if T === Float32
+      @test sprint(show, MIME("text/plain"), w) == """
+      Wedge
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 0.0f0 m, y: 1.0f0 m, z: 0.0f0 m)
+      ├─ Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)
+      ├─ Point(x: 1.0f0 m, y: 0.0f0 m, z: 1.0f0 m)
+      └─ Point(x: 0.0f0 m, y: 1.0f0 m, z: 1.0f0 m)"""
+    else
+      @test sprint(show, MIME("text/plain"), w) == """
+      Wedge
+      ├─ Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
+      ├─ Point(x: 1.0 m, y: 0.0 m, z: 0.0 m)
+      ├─ Point(x: 0.0 m, y: 1.0 m, z: 0.0 m)
+      ├─ Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)
+      ├─ Point(x: 1.0 m, y: 0.0 m, z: 1.0 m)
+      └─ Point(x: 0.0 m, y: 1.0 m, z: 1.0 m)"""
     end
   end
 end

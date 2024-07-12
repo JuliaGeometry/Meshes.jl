@@ -23,3 +23,8 @@ function discretize(pyramid::Pyramid, ::Tetrahedralization)
   indices = [(1, 2, 4, 5), (3, 4, 2, 5)]
   SimpleMesh(pointify(pyramid), connect.(indices, Tetrahedron))
 end
+
+function discretize(wedge::Wedge, ::Tetrahedralization)
+  indices = [(1, 2, 3, 4), (4, 5, 6, 2), (4, 5, 6, 3)]
+  SimpleMesh(pointify(wedge), connect.(indices, Tetrahedron))
+end
