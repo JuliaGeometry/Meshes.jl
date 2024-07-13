@@ -410,6 +410,12 @@
     @test !(eltype(mesh) <: Quadrangle)
     @test nelements(mesh) == 2600
 
+    cyl = Cylinder(T(1))
+    mesh = discretize(cyl)
+    @test !(eltype(mesh) <: Wedge)
+    @test !(eltype(mesh) <: Hexahedron)
+    @test nelements(mesh) == 300
+
     cylsurf = CylinderSurface(T(1))
     mesh = discretize(cylsurf)
     @test !(eltype(mesh) <: Triangle)
