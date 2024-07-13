@@ -8,16 +8,15 @@
 Constrained Delaunay triangulation of polygons.
 Optionally, specify the random number generator `rng`.
 
-!!! note "Wrapper"
-
-    Wraps DelaunayTriangulation.jl's `triangulate`. For any internal errors caused 
-    by `DelaunayTriangulation.triangulate`, file an issue at 
-    [DelaunayTriangulation.jl](https://github.com/JuliaGeometry/DelaunayTriangulation.jl/issues/new).
-
 ## References
 
 * Cheng et al. 2012. [Delaunay Mesh Generation]
   (https://people.eecs.berkeley.edu/~jrs/meshbook.html)
+
+### Notes
+
+Wraps DelaunayTriangulation.jl. For any internal errors, file an issue at 
+[DelaunayTriangulation.jl](https://github.com/JuliaGeometry/DelaunayTriangulation.jl/issues/new)
 """
 struct DelaunayTriangulation{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
   rng::RNG

@@ -8,16 +8,15 @@
 Unconstrained Voronoi tesselation of point sets.
 Optionally, specify the random number generator `rng`.
 
-!!! note "Wrapper" 
-
-    Wraps DelaunayTriangulation.jl's `voronoi`. For any internal errors caused 
-    by `DelaunayTriangulation.voronoi`, file an issue at 
-    [DelaunayTriangulation.jl](https://github.com/JuliaGeometry/DelaunayTriangulation.jl/issues/new).
-
 ## References
 
 * Cheng et al. 2012. [Delaunay Mesh Generation]
   (https://people.eecs.berkeley.edu/~jrs/meshbook.html)
+
+### Notes
+
+Wraps DelaunayTriangulation.jl. For any internal errors, file an issue at 
+[DelaunayTriangulation.jl](https://github.com/JuliaGeometry/DelaunayTriangulation.jl/issues/new)
 """
 struct VoronoiTesselation{RNG<:AbstractRNG} <: TesselationMethod
   rng::RNG
