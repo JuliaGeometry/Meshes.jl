@@ -8,6 +8,12 @@
 Unconstrained Delaunay tesselation of point sets.
 Optionally, specify the random number generator `rng`.
 
+!!! note "Wrapper" 
+
+    Wraps DelaunayTriangulation.jl's `triangulate`. For any internal errors caused 
+    by `DelaunayTriangulation.triangulate`, file an issue at 
+    [DelaunayTriangulation.jl](https://github.com/JuliaGeometry/DelaunayTriangulation.jl/issues/new).
+
 ## References
 
 * Cheng et al. 2012. [Delaunay Mesh Generation]
