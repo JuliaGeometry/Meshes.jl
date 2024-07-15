@@ -109,7 +109,7 @@ function (curve::BezierCurve)(t, ::Horner)
   end
 
   b₀ = bᵢ₋₁
-  withdatum(curve, b₀)
+  withcrs(curve, b₀)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{BezierCurve{Dim}}) where {Dim} = BezierCurve(rand(rng, Point{Dim}, 5))

@@ -167,10 +167,10 @@
     @test p ∉ q
     @test q ∉ p
 
-    # datum propagation
-    c = Cartesian{WGS84Latest}(T(1), T(1))
-    @test datum(crs(Point(c) + vector(1, 1))) === WGS84Latest
-    @test datum(crs(Point(c) - vector(1, 1))) === WGS84Latest
+    # CRS propagation
+    p = merc(1, 1)
+    @test crs(p + vector(1, 1)) === crs(p)
+    @test crs(p - vector(1, 1)) === crs(p)
 
     p = cart(0, 1)
     @test sprint(show, p, context=:compact => true) == "(x: 0.0 m, y: 1.0 m)"
@@ -415,12 +415,9 @@
     @test embeddim(b3) == 3
     @test embeddim(b) == 3
 
-    # datum propagation
-    c1 = Cartesian{WGS84Latest}(T(0), T(0))
-    c2 = Cartesian{WGS84Latest}(T(0.5), T(1))
-    c3 = Cartesian{WGS84Latest}(T(1), T(1))
-    b = BezierCurve(Point(c1), Point(c2), Point(c3))
-    @test datum(crs(b(T(0), Horner()))) === WGS84Latest
+    # CRS propagation
+    b = BezierCurve(merc(0, 0), merc(0.5, 1), merc(1, 0))
+    @test crs(b(T(0), Horner())) === crs(b)
 
     b = BezierCurve(cart(0, 0), cart(0.5, 1), cart(1, 0))
     @test sprint(show, b) == "BezierCurve(controls: [(x: 0.0 m, y: 0.0 m), (x: 0.5 m, y: 1.0 m), (x: 1.0 m, y: 0.0 m)])"
@@ -561,11 +558,9 @@
       cart(0, 1, 1)
     )
 
-    # datum propagation
-    c1 = Cartesian{WGS84Latest}(T(0), T(0))
-    c2 = Cartesian{WGS84Latest}(T(1), T(1))
-    b = Box(Point(c1), Point(c2))
-    @test datum(crs(center(b))) === WGS84Latest
+    # CRS propagation
+    b = Box(merc(0, 0), merc(1, 1))
+    @test crs(center(b)) === crs(b)
 
     b = Box(cart(0, 0), cart(1, 1))
     @test sprint(show, b) == "Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))"
@@ -901,12 +896,12 @@
     @test c isa Circle
     @test embeddim(c) == 3
 
-    # datum propagation
+    # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(4), T(0))
     c2 = Cartesian{WGS84Latest}(T(0), T(-4), T(0))
     c3 = Cartesian{WGS84Latest}(T(0), T(0), T(4))
     c = Circle(Point(c1), Point(c2), Point(c3))
-    @test datum(crs(c)) === WGS84Latest
+    @test crs(c) === typeof(c1)
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
@@ -1056,11 +1051,11 @@
     @test c isa CylinderSurface
     @test embeddim(c) == 3
 
-    # datum propagation
+    # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     c = CylinderSurface(Point(c1), Point(c2), T(1))
-    @test datum(crs(center(c))) === WGS84Latest
+    @test crs(center(c)) === crs(c)
 
     c = CylinderSurface(T(1))
     @test sprint(show, c) ==

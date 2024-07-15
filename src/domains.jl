@@ -107,7 +107,7 @@ function centroid(d::Domain)
   x = vector.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(eltype(w), n))
-  withdatum(d, sum(w .* x) / sum(w))
+  withcrs(d, sum(w .* x) / sum(w))
 end
 
 """

@@ -65,4 +65,4 @@ PointSet(points) = PointSet(map(identity, points))
 
 centroid(d::PointSet, ind::Int) = d[ind]
 
-centroid(d::PointSet) = withdatum(d, sum(to, d) / nelements(d))
+centroid(d::PointSet) = withcrs(d, sum(to, d) / nelements(d))

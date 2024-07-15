@@ -32,7 +32,7 @@ function Circle(p1::Point, p2::Point, p3::Point)
   F = to(p1) ⋅ n⃗
   M = transpose([n⃗ v12 v13])
   u = [F, m12 ⋅ v12, m13 ⋅ v13]
-  O = withdatum(p1, uinv(M) * u)
+  O = withcrs(p1, uinv(M) * u)
   r = norm(p1 - O)
   Circle(Plane(O, n⃗), r)
 end

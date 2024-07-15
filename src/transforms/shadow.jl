@@ -49,7 +49,7 @@ _sort(dims) = sort(SVector(dims))
 
 _shadow(v::Vec, dims) = v[dims]
 
-_shadow(p::Point, dims) = withdatum(p, to(p)[dims])
+_shadow(p::Point, dims) = withcrs(p, to(p)[dims])
 
 _shadow(::Plane, _) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
 

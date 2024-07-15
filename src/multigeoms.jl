@@ -47,7 +47,7 @@ end
 
 function centroid(m::Multi)
   cs = to.(centroid.(m.geoms))
-  withdatum(m, sum(cs) / length(cs))
+  withcrs(m, sum(cs) / length(cs))
 end
 
 rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]

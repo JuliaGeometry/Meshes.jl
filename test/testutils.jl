@@ -44,6 +44,9 @@ end
 cart(T::Type, coords...) = cart(T, coords)
 cart(T::Type, coords::Tuple) = Point(T.(coords))
 
+merc(T::Type, coords...) = merc(T, coords)
+merc(T::Type, coords::Tuple) = Point(Mercator(T.(coords)...))
+
 latlon(T::Type, coords...) = latlon(T, coords)
 latlon(T::Type, coords::Tuple) = Point(LatLon(T.(coords)...))
 
@@ -64,7 +67,7 @@ numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
 
 withprecision(_, x) = x
 withprecision(T, v::Vec) = numconvert.(T, v)
-withprecision(T, p::Point) = Meshes.withdatum(p, withprecision(T, to(p)))
+withprecision(T, p::Point) = Meshes.withcrs(p, withprecision(T, to(p)))
 withprecision(T, len::Meshes.Len) = numconvert(T, len)
 withprecision(T, lens::NTuple{Dim,Meshes.Len}) where {Dim} = numconvert.(T, lens)
 withprecision(T, geoms::NTuple{Dim,<:Geometry}) where {Dim} = withprecision.(T, geoms)

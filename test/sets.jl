@@ -85,11 +85,9 @@
     pset2 = PointSet(p for p in points)
     @test pset1 == pset2
 
-    # datum propagation
-    tuples = [T.((0, 0)), T.((1, 0)), T.((0, 1))]
-    points = Point.(Cartesian{WGS84Latest}.(tuples))
-    pset = PointSet(points)
-    @test datum(crs(centroid(pset))) === WGS84Latest
+    # CRS propagation
+    pset = PointSet(merc.([(0, 0), (1, 0), (0, 1)]))
+    @test crs(centroid(pset)) === crs(pset)
 
     pset = PointSet(cart.([(1, 0), (0, 1)]))
     @test sprint(show, pset) == "2 PointSet"
