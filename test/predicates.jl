@@ -168,18 +168,18 @@
     @test cart(-1, 0, 0) ∉ h
     @test cart(0, 2, 0) ∉ h
 
-    outer = [latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)]
-    hole1 = [latlon(0.2, 0.2), latlon(0.4, 0.2), latlon(0.4, 0.4), latlon(0.2, 0.4)]
-    hole2 = [latlon(0.6, 0.2), latlon(0.8, 0.2), latlon(0.8, 0.4), latlon(0.6, 0.4)]
+    outer = [merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)]
+    hole1 = [merc(0.2, 0.2), merc(0.4, 0.2), merc(0.4, 0.4), merc(0.2, 0.4)]
+    hole2 = [merc(0.6, 0.2), merc(0.8, 0.2), merc(0.8, 0.4), merc(0.6, 0.4)]
     poly = PolyArea([outer, hole1, hole2])
     @test all(p ∈ poly for p in outer)
-    @test latlon(0.5, 0.5) ∈ poly
-    @test latlon(0.2, 0.6) ∈ poly
-    @test latlon(1.5, 0.5) ∉ poly
-    @test latlon(-0.5, 0.5) ∉ poly
-    @test latlon(0.25, 0.25) ∉ poly
-    @test latlon(0.75, 0.25) ∉ poly
-    @test latlon(0.75, 0.75) ∈ poly
+    @test merc(0.5, 0.5) ∈ poly
+    @test merc(0.2, 0.6) ∈ poly
+    @test merc(1.5, 0.5) ∉ poly
+    @test merc(-0.5, 0.5) ∉ poly
+    @test merc(0.25, 0.25) ∉ poly
+    @test merc(0.75, 0.25) ∉ poly
+    @test merc(0.75, 0.75) ∈ poly
   end
 
   @testset "issubset" begin
