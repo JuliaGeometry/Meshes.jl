@@ -171,7 +171,7 @@
     outer = [latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)]
     hole1 = [latlon(0.2, 0.2), latlon(0.4, 0.2), latlon(0.4, 0.4), latlon(0.2, 0.4)]
     hole2 = [latlon(0.6, 0.2), latlon(0.8, 0.2), latlon(0.8, 0.4), latlon(0.6, 0.4)]
-    poly = PolyArea([outer, hole1, hole2])
+    poly = PolyArea([outer, hole1, hole2], fix=false)
     @test all(p ∈ poly for p in outer)
     @test latlon(0.5, 0.5) ∈ poly
     @test latlon(0.2, 0.6) ∈ poly
