@@ -765,12 +765,12 @@
     @test intersection(p1, p2) |> type == Intersecting
     @test p1 ∩ p2 == Line(cart(1, 0, 0), cart(1, 1, 0))
 
-    # datum propagation
+    # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     p1 = Plane(Point(c1), vector(0, 0, 1))
     p2 = Plane(Point(c2), vector(1 / sqrt(2), 0, 1 / sqrt(2)))
-    @test datum(crs(p1 ∩ p2)) === WGS84Latest
+    @test crs(p1 ∩ p2) === crs(p1)
   end
 
   @testset "Boxes" begin
@@ -842,14 +842,10 @@
     b2 = Box((T(500) * u"mm", T(500) * u"mm"), (T(2000) * u"mm", T(2000) * u"mm"))
     @inferred someornone(b1, b2)
 
-    # datum propagation
-    c1 = Cartesian{WGS84Latest}(T(0), T(0))
-    c2 = Cartesian{WGS84Latest}(T(1), T(1))
-    c3 = Cartesian{WGS84Latest}(T(0.5), T(0.5))
-    c4 = Cartesian{WGS84Latest}(T(2), T(2))
-    b1 = Box(Point(c1), Point(c2))
-    b2 = Box(Point(c3), Point(c4))
-    @test datum(crs(b1 ∩ b2)) === WGS84Latest
+    # CRS propagation
+    b1 = Box(merc(0, 0), merc(1, 1))
+    b2 = Box(merc(0.5, 0.5), merc(2, 2))
+    @test crs(b1 ∩ b2) === crs(b1)
 
     # Ray-Box intersection
     b = Box(cart(0, 0, 0), cart(1, 1, 1))

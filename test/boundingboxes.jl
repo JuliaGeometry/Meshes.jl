@@ -119,12 +119,10 @@
   p = ParaboloidSurface(cart(1, 2, 3), T(5), T(4))
   @test boundingbox(p) ≈ Box(cart(-4, -3, 3), cart(6, 7, 73 / 16))
 
-  # datum propagation
-  c = Cartesian{WGS84Latest}(T(-1), T(1))
-  r = Ray(Point(c), vector(1, -1))
-  @test datum(crs(boundingbox(r))) === WGS84Latest
-  c = Cartesian{WGS84Latest}(T(0), T(0))
-  g = CartesianGrid((10, 10), Point(c), (T(1), T(1)))
+  # CRS propagation
+  r = Ray(merc(-1, 1), vector(1, -1))
+  @test crs(boundingbox(r)) === crs(r)
+  g = CartesianGrid((10, 10), merc(0, 0), (T(1), T(1)))
   m = convert(SimpleMesh, g)
-  @test datum(crs(boundingbox(m))) === WGS84Latest
+  @test crs(boundingbox(m)) === crs(m)
 end

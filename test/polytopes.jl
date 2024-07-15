@@ -78,11 +78,9 @@
     @test embeddim(s) == 3
     @test Meshes.lentype(s) === Meshes.Met{Float64}
 
-    # datum propagation
-    c1 = Cartesian{WGS84Latest}(T(0), T(0))
-    c2 = Cartesian{WGS84Latest}(T(1), T(1))
-    s = Segment(Point(c1), Point(c2))
-    @test datum(crs(s(T(0)))) === WGS84Latest
+    # CRS propagation
+    s = Segment(merc(0, 0), merc(1, 1))
+    @test crs(s(T(0))) === crs(s)
 
     s = Segment(cart(0, 0), cart(1, 1))
     @test sprint(show, s) == "Segment((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 1.0 m))"
@@ -286,11 +284,9 @@
     r2 = Ring(cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]))
     @test innerangles(r1) ≈ innerangles(r2)
 
-    # datum propagation
-    tuples = [T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))]
-    points = Point.(Cartesian{WGS84Latest}.(tuples))
-    r = Ring(points)
-    @test datum(crs(centroid(r))) === WGS84Latest
+    # CRS propagation
+    r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    @test crs(centroid(r)) === crs(r)
 
     ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
     ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
@@ -447,12 +443,9 @@
     t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
     @test_throws ErrorException("signed area only defined for triangles embedded in R², use `area` instead") signarea(t)
 
-    # datum propagation
-    c1 = Cartesian{WGS84Latest}(T(0), T(0))
-    c2 = Cartesian{WGS84Latest}(T(1), T(0))
-    c3 = Cartesian{WGS84Latest}(T(0), T(1))
-    t = Triangle(Point(c1), Point(c2), Point(c3))
-    @test datum(crs(t(T(0), T(0)))) === WGS84Latest
+    # CRS propagation
+    t = Triangle(merc(0, 0), merc(1, 0), merc(0, 1))
+    @test crs(t(T(0), T(0))) === crs(t)
 
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     @test sprint(show, t) == "Triangle((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 0.0 m), (x: 0.0 m, y: 1.0 m))"
@@ -522,13 +515,9 @@
     @test q(T(1), T(1)) == cart(1, 1, 0)
     @test q(T(0), T(1)) == cart(0, 1, 1)
 
-    # datum propagation
-    c1 = Cartesian{WGS84Latest}(T(0), T(0))
-    c2 = Cartesian{WGS84Latest}(T(1), T(0))
-    c3 = Cartesian{WGS84Latest}(T(1), T(1))
-    c4 = Cartesian{WGS84Latest}(T(0), T(1))
-    q = Quadrangle(Point(c1), Point(c2), Point(c3), Point(c4))
-    @test datum(crs(q(T(0), T(0)))) === WGS84Latest
+    # CRS propagation
+    q = Quadrangle(merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1))
+    @test crs(q(T(0), T(0))) === crs(q)
 
     q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test sprint(show, q) == "Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
@@ -807,13 +796,13 @@
     @test embeddim(t) == 3
     @test Meshes.lentype(t) === Meshes.Met{Float64}
 
-    # datum propagation
+    # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(1), T(0), T(0))
     c3 = Cartesian{WGS84Latest}(T(0), T(1), T(0))
     c4 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     t = Tetrahedron(Point(c1), Point(c2), Point(c3), Point(c4))
-    @test datum(crs(t(T(0), T(0), T(0)))) === WGS84Latest
+    @test crs(t(T(0), T(0), T(0))) === crs(t)
 
     t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test sprint(show, t) == "Tetrahedron((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
@@ -934,7 +923,7 @@
     @test embeddim(h) == 3
     @test Meshes.lentype(h) === Meshes.Met{Float64}
 
-    # datum propagation
+    # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(1), T(0), T(0))
     c3 = Cartesian{WGS84Latest}(T(1), T(1), T(0))
@@ -944,7 +933,7 @@
     c7 = Cartesian{WGS84Latest}(T(1), T(1), T(1))
     c8 = Cartesian{WGS84Latest}(T(0), T(1), T(1))
     h = Hexahedron(Point(c1), Point(c2), Point(c3), Point(c4), Point(c5), Point(c6), Point(c7), Point(c8))
-    @test datum(crs(h(T(0), T(0), T(0)))) === WGS84Latest
+    @test crs(h(T(0), T(0), T(0))) === crs(h)
 
     h = Hexahedron(
       cart(0, 0, 0),

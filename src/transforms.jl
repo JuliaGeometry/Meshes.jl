@@ -74,7 +74,7 @@ end
 applycoord(::CoordinateTransform, x) = x
 
 # special treatment for Point
-applycoord(t::CoordinateTransform, p::Point) = withdatum(p, applycoord(t, to(p)))
+applycoord(t::CoordinateTransform, p::Point) = withcrs(p, applycoord(t, to(p)))
 
 # special treatment for TransformedMesh
 applycoord(t::CoordinateTransform, m::TransformedMesh) = TransformedMesh(m, t)

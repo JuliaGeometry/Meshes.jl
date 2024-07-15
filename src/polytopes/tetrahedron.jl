@@ -22,7 +22,7 @@ function (t::Tetrahedron)(u, v, w)
     throw(DomainError((u, v, w), "invalid barycentric coordinates for tetrahedron."))
   end
   v₁, v₂, v₃, v₄ = to.(t.vertices)
-  withdatum(t, v₁ * z + v₂ * u + v₃ * v + v₄ * w)
+  withcrs(t, v₁ * z + v₂ * u + v₃ * v + v₄ * w)
 end
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Tetrahedron{Dim}}) where {Dim} =

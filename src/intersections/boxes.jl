@@ -14,8 +14,8 @@ function intersection(f, box₁::Box{Dim}, box₂::Box{Dim}) where {Dim}
   m2, M2 = to.(extrema(box₂))
 
   # relevant vertices
-  u = withdatum(box₁, max.(promote(m1, m2)...))
-  v = withdatum(box₁, min.(promote(M1, M2)...))
+  u = withcrs(box₁, max.(promote(m1, m2)...))
+  v = withcrs(box₁, min.(promote(M1, M2)...))
 
   # auxiliary variables
   δ = v - u

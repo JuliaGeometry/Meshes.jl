@@ -92,13 +92,9 @@
   @test Multi([tri, tri]) isa MultiPolygon
   @test Multi([poly, poly]) isa MultiPolygon
 
-  # datum propagation
-  tuples1 = [T.((0, 0)), T.((1, 0)), T.((1, 1)), T.((0, 1))]
-  tuples2 = [T.((1, 1)), T.((2, 1)), T.((2, 2)), T.((1, 2))]
-  points1 = Point.(Cartesian{WGS84Latest}.(tuples1))
-  points2 = Point.(Cartesian{WGS84Latest}.(tuples2))
-  poly1 = PolyArea(points1)
-  poly2 = PolyArea(points2)
+  # CRS propagation
+  poly1 = PolyArea(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly2 = PolyArea(merc.([(1, 1), (2, 1), (2, 2), (1, 2)]))
   multi = Multi([poly1, poly2])
-  @test datum(crs(centroid(multi))) === WGS84Latest
+  @test crs(centroid(multi)) === crs(multi)
 end

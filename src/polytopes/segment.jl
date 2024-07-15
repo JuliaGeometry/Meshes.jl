@@ -23,7 +23,7 @@ Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
 function center(s::Segment)
   a, b = extrema(s)
-  withdatum(s, (to(a) + to(b)) / 2)
+  withcrs(s, (to(a) + to(b)) / 2)
 end
 
 ==(s₁::Segment, s₂::Segment) = s₁.vertices == s₂.vertices

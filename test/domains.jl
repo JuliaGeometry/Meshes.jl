@@ -30,10 +30,9 @@
   @test vcat(dom3, dom1) == GeometrySet([collect(dom3); collect(dom1)])
   @test vcat(dom1, dom2, dom3) == GeometrySet([collect(dom1); collect(dom2); collect(dom3)])
 
-  # datum propagation
-  c = Cartesian{WGS84Latest}(T(1), T(1))
-  dom = DummyDomain(Point(c))
-  @test datum(crs(centroid(dom))) === WGS84Latest
+  # CRS propagation
+  dom = DummyDomain(merc(1, 1))
+  @test crs(centroid(dom)) === crs(dom)
 
   dom = DummyDomain(cart(0, 0))
   @test sprint(show, dom) == "3 DummyDomain"

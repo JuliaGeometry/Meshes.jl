@@ -56,6 +56,6 @@ function _overlaps(dim, lims, bbox)
     max = to(maximum(bbox))
     nmin = Vec(ntuple(i -> i == dim ? lmin : min[i], Dim))
     nmax = Vec(ntuple(i -> i == dim ? lmax : max[i], Dim))
-    Box(withdatum(bbox, nmin), withdatum(bbox, nmax))
+    Box(withcrs(bbox, nmin), withcrs(bbox, nmax))
   end
 end
