@@ -124,7 +124,7 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 ∠(Point(1,0), Point(0,0), Point(0,1)) == π/2
 ```
 """
-∠(A::P, B::P, C::P) where {P<:Point} = ∠(A - B, C - B)
+∠(A::Point, B::Point, C::Point) = ∠(A - B, C - B)
 
 Random.rand(rng::Random.AbstractRNG, ::Type{Point{Dim}}) where {Dim} = Point(rand(rng, Cartesian{NoDatum,Dim}))
 

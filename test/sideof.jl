@@ -15,8 +15,8 @@
   pts = [p1, p2, p3]
   @test sideof(pts, c) == [IN, OUT, ON]
 
-  p1, p2, p3 = latlon(0.5, 0.5), latlon(1.5, 0.5), latlon(1, 1)
-  c = Ring([latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)])
+  p1, p2, p3 = merc(0.5, 0.5), merc(1.5, 0.5), merc(1, 1)
+  c = Ring([merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)])
   @test sideof(p1, c) == IN
   @test sideof(p2, c) == OUT
   @test sideof(p3, c) == ON
