@@ -50,8 +50,8 @@ Point at the end of the vector `v` with the same CRS of `g`.
 function withcrs(g::GeometryOrDomain, v::StaticVector)
   C = crs(g)
   cart = Cartesian{datum(C)}(Tuple(v))
-  coords = convert(CoordRefSystems.constructor(C), cart)
-  Point(coords)
+  ctor = CoordRefSystems.constructor(C)
+  Point(convert(ctor, cart))
 end
 
 """
