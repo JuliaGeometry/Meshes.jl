@@ -60,7 +60,7 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
-embeddim(::Type{<:Domain{Dim}}) where {Dim} = Dim
+embeddim(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CoordRefSystems.ndims(CRS)
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """

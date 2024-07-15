@@ -16,7 +16,7 @@ Broadcast.broadcastable(g::Geometry) = Ref(g)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
-embeddim(::Type{<:Geometry{Dim}}) where {Dim} = Dim
+embeddim(::Type{<:Geometry{Dim,CRS}}) where {Dim,CRS} = CoordRefSystems.ndims(CRS)
 embeddim(g::Geometry) = embeddim(typeof(g))
 
 """

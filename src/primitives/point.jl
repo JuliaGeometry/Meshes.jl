@@ -35,7 +35,7 @@ Point(1u"m", 2u"m", 3u"m") # integer is converted to float by design
 """
 struct Point{Dim,C<:CRS} <: Primitive{Dim,C}
   coords::C
-  Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ndims(coords),C}(coords)
+  Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ncoords(coords),C}(coords)
 end
 
 # convenience constructor
@@ -73,7 +73,7 @@ to(A::Point) = Vec(CoordRefSystems.values(convert(Cartesian, A.coords)))
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{Dim}, B::Point{Dim}) where {Dim} = to(A) - to(B)
+-(A::Point, B::Point) = to(A) - to(B)
 
 """
     +(A::Point, v::Vec)
@@ -82,8 +82,8 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim}, v::Vec{Dim}) where {Dim} = withdatum(A, to(A) + v)
-+(v::Vec{Dim}, A::Point{Dim}) where {Dim} = A + v
++(A::Point, v::Vec) = withdatum(A, to(A) + v)
++(v::Vec, A::Point) = A + v
 
 """
     -(A::Point, v::Vec)
@@ -92,8 +92,8 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim}, v::Vec{Dim}) where {Dim} = withdatum(A, to(A) - v)
--(v::Vec{Dim}, A::Point{Dim}) where {Dim} = A - v
+-(A::Point, v::Vec) = withdatum(A, to(A) - v)
+-(v::Vec, A::Point) = A - v
 
 """
     ⪯(A::Point, B::Point)
@@ -103,10 +103,10 @@ at a reference (or start) point `A`.
 
 Generalized inequality for non-negative orthant Rⁿ₊.
 """
-⪯(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x ≥ zero(x), B - A)
-⪰(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x ≥ zero(x), A - B)
-≺(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x > zero(x), B - A)
-≻(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x > zero(x), A - B)
+⪯(A::Point, B::Point) = all(x -> x ≥ zero(x), B - A)
+⪰(A::Point, B::Point) = all(x -> x ≥ zero(x), A - B)
+≺(A::Point, B::Point) = all(x -> x > zero(x), B - A)
+≻(A::Point, B::Point) = all(x -> x > zero(x), A - B)
 
 """
     ∠(A, B, C)
