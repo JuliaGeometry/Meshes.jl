@@ -43,11 +43,16 @@ function collectat(iter, inds)
 end
 
 """
-    withdatum(g, v)
+    withcrs(g, v)
 
-Point at the end of the vector `v` with the same datum of `g`.
+Point at the end of the vector `v` with the same CRS of `g`.
 """
-withdatum(g::GeometryOrDomain, v::StaticVector) = Point(Cartesian{datum(crs(g))}(Tuple(v)))
+function withcrs(g::GeometryOrDomain, v::StaticVector)
+  C = crs(g)
+  cart = Cartesian{datum(C)}(Tuple(v))
+  ctor = CoordRefSystems.constructor(C)
+  Point(convert(ctor, cart))
+end
 
 """
     flat(p)

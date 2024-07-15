@@ -41,7 +41,7 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionP
   while iter < maxiter
     m = (a + b) / 2
 
-    bisectpoint = BisectPointPartition(n, withdatum(domain, m))
+    bisectpoint = BisectPointPartition(n, withcrs(domain, m))
     subsets, metadata = partitioninds(rng, domain, bisectpoint)
 
     g = length(subsets[1]) / nelements(domain)

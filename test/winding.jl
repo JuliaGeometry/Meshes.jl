@@ -13,16 +13,16 @@
   # record allocations for cartesian
   alloccart = @allocated winding(p, c)
 
-  p = latlon(0.5, 0.5)
-  c = Ring([latlon(0, 0), latlon(1, 0), latlon(1, 1), latlon(0, 1)])
+  p = merc(0.5, 0.5)
+  c = Ring([merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)])
   @test winding(p, c) ≈ T(1)
   @test winding(p, reverse(c)) ≈ T(-1)
   @test winding([p, p], c) ≈ T[1, 1]
-  # record allocations for latlon
-  alloclatlon = @allocated winding(p, c)
+  # record allocations for merc
+  allocmerc = @allocated winding(p, c)
 
   # exact same memory allocations
-  @test alloccart == alloclatlon
+  @test alloccart == allocmerc
 
   m = boundary(Box(cart(0, 0, 0), cart(2, 2, 2)))
   @test all(>(0), winding(vertices(m), m))

@@ -21,7 +21,7 @@ function (h::Hexahedron)(u, v, w)
     throw(DomainError((u, v, w), "h(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
   A1, A2, A4, A3, A5, A6, A8, A7 = to.(h.vertices)
-  withdatum(
+  withcrs(
     h,
     (1 - u) * (1 - v) * (1 - w) * A1 +
     u * (1 - v) * (1 - w) * A2 +

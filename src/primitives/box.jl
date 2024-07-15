@@ -37,7 +37,7 @@ Base.maximum(b::Box) = b.max
 
 Base.extrema(b::Box) = b.min, b.max
 
-center(b::Box) = withdatum(b, (to(b.max) + to(b.min)) / 2)
+center(b::Box) = withcrs(b, (to(b.max) + to(b.min)) / 2)
 
 diagonal(b::Box) = norm(b.max - b.min)
 

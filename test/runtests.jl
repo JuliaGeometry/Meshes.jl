@@ -33,7 +33,7 @@ include("testutils.jl")
 
 cart(args...) = cart(T, args...)
 
-latlon(args...) = latlon(T, args...)
+merc(args...) = merc(T, args...)
 
 vector(args...) = vector(T, args...)
 

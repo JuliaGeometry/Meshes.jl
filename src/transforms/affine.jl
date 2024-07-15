@@ -55,7 +55,7 @@ end
 
 applycoord(t::Affine, v::Vec) = t.A * v
 
-applycoord(t::Affine, p::Point) = withdatum(p, t.A * to(p) + t.b)
+applycoord(t::Affine, p::Point) = withcrs(p, t.A * to(p) + t.b)
 
 # --------------
 # SPECIAL CASES
