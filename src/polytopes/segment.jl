@@ -38,7 +38,3 @@ function (s::Segment)(t)
   a, b = s.vertices
   a + t * (b - a)
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Segment{Dim}}) where {Dim} = Segment(ntuple(i -> rand(rng, Point{Dim}), 2))
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Segment}) = rand(rng, Segment{3})

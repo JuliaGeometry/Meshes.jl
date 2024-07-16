@@ -121,6 +121,3 @@ function (p::ParaboloidSurface)(ρ, θ)
   z = (x^2 + y^2) / 4f
   c + Vec(x, y, z)
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{ParaboloidSurface}) =
-  ParaboloidSurface(rand(rng, Point{3}), rand(rng, Met{Float64}), rand(rng, Met{Float64}))

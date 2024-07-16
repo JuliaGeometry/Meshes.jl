@@ -24,7 +24,3 @@ Base.isapprox(l₁::Line, l₂::Line; atol=atol(lentype(l₁)), kwargs...) =
   isapprox(l₁.a, l₂.a; atol, kwargs...) && isapprox(l₁.b, l₂.b; atol, kwargs...)
 
 (l::Line)(t) = l.a + t * (l.b - l.a)
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Line{Dim}}) where {Dim} = Line(rand(rng, Point{Dim}), rand(rng, Point{Dim}))
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Line}) = rand(rng, Line{3})

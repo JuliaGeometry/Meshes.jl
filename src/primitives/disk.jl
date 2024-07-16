@@ -45,5 +45,3 @@ function (d::Disk)(ρ, φ)
   v = ustrip(l * sφ)
   d.plane(u, v)
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Disk}) = Disk(rand(rng, Plane), rand(rng, Met{Float64}))

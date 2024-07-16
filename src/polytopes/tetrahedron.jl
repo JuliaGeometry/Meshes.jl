@@ -24,8 +24,3 @@ function (t::Tetrahedron)(u, v, w)
   v₁, v₂, v₃, v₄ = to.(t.vertices)
   withcrs(t, v₁ * z + v₂ * u + v₃ * v + v₄ * w)
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Tetrahedron{Dim}}) where {Dim} =
-  Tetrahedron(ntuple(i -> rand(rng, Point{Dim}), 4))
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Tetrahedron}) = rand(rng, Tetrahedron{3})
