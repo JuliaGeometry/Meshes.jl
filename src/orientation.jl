@@ -60,10 +60,10 @@ struct WindingOrientation <: OrientationMethod end
 
 function orientation(r::Ring{2}, ::WindingOrientation)
   # pick any segment
-  x₁, x₂ = r.vertices[1:2]
-  x̄ = center(Segment(x₁, x₂))
-  w̄ = winding(x̄, r)
-  w = oftype(w̄, 2π) * w̄ - ∠(x₁, x̄, x₂)
+  p₁, p₂ = vertices(r)[1:2]
+  p̄ = center(Segment(p₁, p₂))
+  w̄ = winding(p̄, r)
+  w = oftype(w̄, 2π) * w̄ - ∠(p₁, p̄, p₂)
   isapproxequal(w, oftype(w, π)) ? CCW : CW
 end
 
