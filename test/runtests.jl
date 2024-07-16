@@ -35,6 +35,8 @@ cart(args...) = cart(T, args...)
 
 merc(args...) = merc(T, args...)
 
+latlon(args...) = latlon(T, args...)
+
 vector(args...) = vector(T, args...)
 
 cartgrid(args...) = cartgrid(T, args...)
@@ -57,6 +59,7 @@ testfiles = [
   "sets.jl",
   "mesh.jl",
   "trajecs.jl",
+  "crs.jl",
   "utils.jl",
   "viewing.jl",
   "partitioning.jl",

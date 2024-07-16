@@ -47,6 +47,9 @@ cart(T::Type, coords::Tuple) = Point(T.(coords))
 merc(T::Type, coords...) = merc(T, coords)
 merc(T::Type, coords::Tuple) = Point(Mercator(T.(coords)...))
 
+latlon(T::Type, coords...) = latlon(T, coords)
+latlon(T::Type, coords::Tuple) = Point(LatLon(T.(coords)...))
+
 vector(T::Type, coords...) = vector(T, coords)
 vector(T::Type, coords::Tuple) = Vec(T.(coords))
 
