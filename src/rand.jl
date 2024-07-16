@@ -2,11 +2,41 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Random.rand(rng::Random.AbstractRNG, G::Type{<:Geometry}; crs=Cartesian3D) = _rand(rng, G, crs)
-Random.rand(G::Type{<:Geometry}; kwargs...) = rand(Random.default_rng(), G; kwargs...)
+"""
+    rand([rng], G, crs=Cartesian3D)
 
-Random.rand(rng::Random.AbstractRNG, G::Type{<:Geometry}, n::Int; kwargs...) = [rand(rng, G; kwargs...) for _ in 1:n]
+Generate a random geometry of type `G` with CRS `crs`,
+optionally passing a random number generator `rng`.
+
+# Examples
+
+```julia
+rand(Point)
+rand(Plane)
+rand(Point, crs=Cartesian2D)
+rand(Plane, crs=LatLon)
+```
+"""
+Random.rand(G::Type{<:Geometry}; kwargs...) = rand(Random.default_rng(), G; kwargs...)
+Random.rand(rng::Random.AbstractRNG, G::Type{<:Geometry}; crs=Cartesian3D) = _rand(rng, G, crs)
+
+"""
+    rand([rng], G, n, crs=Cartesian3D)
+
+Generate a vector of `n` random geometries of type `G` with CRS `crs`,
+optionally passing a random number generator `rng`.
+
+# Examples
+
+```julia
+rand(Point, 10)
+rand(Plane, 10)
+rand(Point, 10, crs=Cartesian2D)
+rand(Plane, 10, crs=LatLon)
+```
+"""
 Random.rand(G::Type{<:Geometry}, n::Int; kwargs...) = rand(Random.default_rng(), G, n; kwargs...)
+Random.rand(rng::Random.AbstractRNG, G::Type{<:Geometry}, n::Int; kwargs...) = [rand(rng, G; kwargs...) for _ in 1:n]
 
 # ----------------
 # IMPLEMENTATIONS

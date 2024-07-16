@@ -62,9 +62,6 @@ include("vectors.jl")
 # geometries
 include("geometries.jl")
 
-# rand implementation
-include("rand.jl")
-
 # topological objects
 include("connectivities.jl")
 include("topologies.jl")
@@ -121,6 +118,7 @@ include("coarsening.jl")
 include("transforms.jl")
 
 # miscellaneous
+include("rand.jl")
 include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
