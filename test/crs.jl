@@ -41,7 +41,7 @@
     d = SimpleMesh(p, c)
     @test crs(d) <: Mercator{WGS84Latest}
   end
-  
+
   @testset "Geographic" begin
     g = latlon(1, 1)
     @test crs(g) <: LatLon{WGS84Latest}
@@ -115,7 +115,16 @@
     @test crs(g) <: LatLon{WGS84Latest}
     g = Tetrahedron(latlon(0, 0), latlon(0, 90), latlon(0, -90), latlon(90, 0))
     @test crs(g) <: LatLon{WGS84Latest}
-    g = Hexahedron(latlon(0, 45), latlon(0, 135), latlon(0, -135), latlon(0, -45), latlon(1, 45), latlon(1, 135), latlon(1, -135), latlon(1, -45))
+    g = Hexahedron(
+      latlon(0, 45),
+      latlon(0, 135),
+      latlon(0, -135),
+      latlon(0, -45),
+      latlon(1, 45),
+      latlon(1, 135),
+      latlon(1, -135),
+      latlon(1, -45)
+    )
     @test crs(g) <: LatLon{WGS84Latest}
     g = Pyramid(latlon(0, 45), latlon(0, 135), latlon(0, -135), latlon(0, -45), latlon(90, 0))
     @test crs(g) <: LatLon{WGS84Latest}
