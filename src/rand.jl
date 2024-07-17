@@ -75,9 +75,9 @@ _rand(rng::Random.AbstractRNG, ::Type{Cylinder}, CRS) =
 _rand(rng::Random.AbstractRNG, ::Type{CylinderSurface}, CRS) =
   CylinderSurface(_rand(rng, Plane, CRS), _rand(rng, Plane, CRS), _rlen(rng))
 
-_rand(rng::Random.AbstractRNG, ::Type{Cone}, CRS) = Cone(_rand(rng, Disk, CRS), _rlen(rng))
+_rand(rng::Random.AbstractRNG, ::Type{Cone}, CRS) = Cone(_rand(rng, Disk, CRS), _rand(rng, Point, CRS))
 
-_rand(rng::Random.AbstractRNG, ::Type{ConeSurface}, CRS) = ConeSurface(_rand(rng, Disk, CRS), _rlen(rng))
+_rand(rng::Random.AbstractRNG, ::Type{ConeSurface}, CRS) = ConeSurface(_rand(rng, Disk, CRS), _rand(rng, Point, CRS))
 
 function _rand(rng::Random.AbstractRNG, ::Type{Frustum}, CRS)
   bottom = _rand(rng, Disk, CRS)
