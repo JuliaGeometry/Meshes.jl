@@ -24,7 +24,7 @@ Finally, construct a right vertical circular cylinder with given `radius`.
 
 See <https://en.wikipedia.org/wiki/Cylinder>. 
 """
-struct Cylinder{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{3,C}
+struct Cylinder{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{C}
   bot::P
   top::P
   radius::ℒ

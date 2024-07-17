@@ -33,17 +33,16 @@ Point(1u"m", 2u"m", 3u"m") # integer is converted to float by design
   algorithms assume a continuous space. The conversion to float avoids
   `InexactError` and other unexpected results.
 """
-struct Point{Dim,C<:CRS} <: Primitive{Dim,C}
+struct Point{C<:CRS} <: Primitive{C}
   coords::C
-  Point(coords::C) where {C<:CRS} = new{CoordRefSystems.ndims(coords),C}(coords)
 end
 
 # convenience constructor
 Point(coords...) = Point(Cartesian(coords...))
 
 # conversions
-Base.convert(::Type{Point{Dim,CRSₜ}}, p::Point{Dim,CRSₛ}) where {Dim,CRSₜ,CRSₛ} = Point(convert(CRSₜ, p.coords))
-Base.convert(::Type{Point{Dim,CRS}}, p::Point{Dim,CRS}) where {Dim,CRS} = p
+Base.convert(::Type{Point{CRSₜ}}, p::Point{CRSₛ}) where {CRSₜ,CRSₛ} = Point(convert(CRSₜ, p.coords))
+Base.convert(::Type{Point{CRS}}, p::Point{CRS}) where {CRS} = p
 
 paramdim(::Type{<:Point}) = 0
 
@@ -73,7 +72,7 @@ to(A::Point) = Vec(CoordRefSystems.values(convert(Cartesian, A.coords)))
 Return the [`Vec`](@ref) associated with the direction
 from point `B` to point `A`.
 """
--(A::Point{Dim}, B::Point{Dim}) where {Dim} = to(A) - to(B)
+-(A::Point, B::Point) = to(A) - to(B)
 
 """
     +(A::Point, v::Vec)
@@ -82,8 +81,8 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point{Dim}, v::Vec{Dim}) where {Dim} = withcrs(A, to(A) + v)
-+(v::Vec{Dim}, A::Point{Dim}) where {Dim} = A + v
++(A::Point, v::Vec) = withcrs(A, to(A) + v)
++(v::Vec, A::Point) = A + v
 
 """
     -(A::Point, v::Vec)
@@ -92,8 +91,8 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point{Dim}, v::Vec{Dim}) where {Dim} = withcrs(A, to(A) - v)
--(v::Vec{Dim}, A::Point{Dim}) where {Dim} = A - v
+-(A::Point, v::Vec) = withcrs(A, to(A) - v)
+-(v::Vec, A::Point) = A - v
 
 """
     ⪯(A::Point, B::Point)
@@ -103,10 +102,10 @@ at a reference (or start) point `A`.
 
 Generalized inequality for non-negative orthant Rⁿ₊.
 """
-⪯(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x ≥ zero(x), B - A)
-⪰(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x ≥ zero(x), A - B)
-≺(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x > zero(x), B - A)
-≻(A::Point{Dim}, B::Point{Dim}) where {Dim} = all(x -> x > zero(x), A - B)
+⪯(A::Point, B::Point) = all(x -> x ≥ zero(x), B - A)
+⪰(A::Point, B::Point) = all(x -> x ≥ zero(x), A - B)
+≺(A::Point, B::Point) = all(x -> x > zero(x), B - A)
+≻(A::Point, B::Point) = all(x -> x > zero(x), A - B)
 
 """
     ∠(A, B, C)

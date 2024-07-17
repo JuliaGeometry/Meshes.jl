@@ -11,7 +11,7 @@
 
 A partial view of a `domain` containing only the elements at `indices`.
 """
-struct SubDomain{Dim,C<:CRS,D<:Domain{Dim,C},I<:AbstractVector{Int}} <: Domain{Dim,C}
+struct SubDomain{C<:CRS,D<:Domain{C},I<:AbstractVector{Int}} <: Domain{C}
   domain::D
   inds::I
 end

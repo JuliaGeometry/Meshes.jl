@@ -9,12 +9,12 @@ A torus centered at `center` with axis of revolution directed by
 `normal` and with radii `major` and `minor`. 
 
 """
-struct Torus{C<:CRS,ℒ<:Len} <: Primitive{3,C}
-  center::Point{3,C}
+struct Torus{C<:CRS,ℒ<:Len} <: Primitive{C}
+  center::Point{C}
   normal::Vec{3,ℒ}
   major::ℒ
   minor::ℒ
-  Torus(center::Point{3,C}, normal::Vec{3,ℒ}, major::ℒ, minor::ℒ) where {C<:CRS,ℒ<:Len} =
+  Torus(center::Point{C}, normal::Vec{3,ℒ}, major::ℒ, minor::ℒ) where {C<:CRS,ℒ<:Len} =
     new{C,float(ℒ)}(center, normal, major, minor)
 end
 

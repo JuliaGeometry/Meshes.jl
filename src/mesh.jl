@@ -8,7 +8,7 @@
 A mesh embedded in a `Dim`-dimensional space with given
 coordinate reference system `CRS` and topology of type `TP`.
 """
-abstract type Mesh{Dim,CRS,TP<:Topology} <: Domain{Dim,CRS} end
+abstract type Mesh{CRS,TP<:Topology} <: Domain{CRS} end
 
 """
     vertex(mesh, ind)
@@ -143,14 +143,14 @@ end
 
 A grid embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`.
 """
-const Grid{Dim,CRS} = Mesh{Dim,CRS,GridTopology{Dim}}
+const Grid{CRS,TP<:GridTopology} = Mesh{CRS,TP}
 
 """
     SubGrid{Dim,CRS}
 
 A view of a grid in a `Dim`-dimensinoal space with given coordinate reference system `CRS`.
 """
-const SubGrid{Dim,CRS} = SubDomain{Dim,CRS,<:Grid{Dim,CRS}}
+const SubGrid{CRS} = SubDomain{CRS,<:Grid{CRS}}
 
 """
     vertex(grid, ijk)
