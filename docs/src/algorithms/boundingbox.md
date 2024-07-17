@@ -2,6 +2,7 @@
 
 ```@example boundingbox
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -10,7 +11,7 @@ boundingbox
 ```
 
 ```@example boundingbox
-pset = PointSet(rand(Point{2}, 100))
+pset = PointSet(rand(Point, 100, crs=Cartesian2D))
 bbox = boundingbox(pset)
 
 fig = Mke.Figure(size = (800, 400))

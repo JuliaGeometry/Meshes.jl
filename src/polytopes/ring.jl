@@ -58,16 +58,6 @@ Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 # do not change which vertex comes first for closed chains
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
-function Random.rand(rng::Random.AbstractRNG, ::Type{Ring{Dim}}) where {Dim}
-  v = rand(rng, Point{Dim}, rand(rng, 3:50))
-  while first(v) == last(v)
-    v = rand(rng, Point{Dim}, rand(rng, 3:50))
-  end
-  Ring(v)
-end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Ring}) = rand(rng, Ring{3})
-
 """
     innerangles(ring)
 

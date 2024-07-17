@@ -64,5 +64,3 @@ function (c::Circle)(φ)
   v = ustrip(l * sφ)
   c.plane(u, v)
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Circle}) = Circle(rand(rng, Plane), rand(rng, Met{Float64}))

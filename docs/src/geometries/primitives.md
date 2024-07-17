@@ -20,7 +20,7 @@ Point
 ```
 
 ```@example primitives
-rand(Point{3}, 100) |> viz
+rand(Point, 100) |> viz
 ```
 
 ```@docs

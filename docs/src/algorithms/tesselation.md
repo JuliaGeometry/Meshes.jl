@@ -2,6 +2,7 @@
 
 ```@example tesselation
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -17,7 +18,7 @@ DelaunayTesselation
 ```
 
 ```@example tesselation
-points = rand(Point{2}, 100)
+points = rand(Point, 100, crs=Cartesian2D)
 
 mesh = tesselate(points, DelaunayTesselation())
 
@@ -33,7 +34,7 @@ VoronoiTesselation
 ```
 
 ```@example tesselation
-points = rand(Point{2}, 100)
+points = rand(Point, 100, crs=Cartesian2D)
 
 mesh = tesselate(points, VoronoiTesselation())
 

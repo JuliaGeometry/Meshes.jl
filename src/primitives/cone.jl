@@ -34,5 +34,3 @@ halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
 Base.isapprox(c₁::Cone, c₂::Cone; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Cone}) = Cone(rand(rng, Disk), rand(rng, Point{3}))

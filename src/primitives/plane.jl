@@ -49,5 +49,3 @@ Base.isapprox(p₁::Plane, p₂::Plane; atol=atol(lentype(p₁)), kwargs...) =
   isapproxzero(norm(ucross(normal(p₁), normal(p₂))); atol, kwargs...)
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Plane}) = Plane(rand(rng, Point{3}), rand(rng, Vec{3,Met{Float64}}))

@@ -45,15 +45,6 @@
     @test cart(1, 2, 3) - vector(0, 0, 0) == cart(1, 2, 3)
     @test cart(2, 3, 4) - vector(2, 1, 0) == cart(0, 2, 4)
 
-    @test embeddim(rand(Point{1})) == 1
-    @test embeddim(rand(Point{2})) == 2
-    @test embeddim(rand(Point{3})) == 3
-    @test embeddim(rand(Point)) == 3
-    @test Meshes.lentype(rand(Point{1})) == Meshes.Met{Float64}
-    @test Meshes.lentype(rand(Point{2})) == Meshes.Met{Float64}
-    @test Meshes.lentype(rand(Point{3})) == Meshes.Met{Float64}
-    @test Meshes.lentype(rand(Point)) == Meshes.Met{Float64}
-
     @test cart(1) ≈ cart(1 + eps(T))
     @test cart(1, 2) ≈ cart(1 + eps(T), T(2))
     @test cart(1, 2, 3) ≈ cart(1 + eps(T), T(2), T(3))
@@ -127,9 +118,9 @@
     @test measure(cart(1, 2, 3)) == zero(ℳ)
 
     # boundary of points is nothing
-    @test isnothing(boundary(rand(Point{1})))
-    @test isnothing(boundary(rand(Point{2})))
-    @test isnothing(boundary(rand(Point{3})))
+    @test isnothing(boundary(cart(1)))
+    @test isnothing(boundary(cart(1, 2)))
+    @test isnothing(boundary(cart(1, 2, 3)))
 
     # check broadcasting works as expected
     @test cart(2, 2) .- [cart(2, 3), cart(3, 1)] == [vector(0.0, -1.0), vector(-1.0, 1.0)]
@@ -234,16 +225,6 @@
     r2 = Ray(cart(0, 0, 0), vector(1, 0, 0))
     @test r1 == r2
 
-    r2 = rand(Ray{2})
-    r3 = rand(Ray{3})
-    r = rand(Ray)
-    @test r2 isa Ray
-    @test r3 isa Ray
-    @test r isa Ray
-    @test embeddim(r2) == 2
-    @test embeddim(r3) == 3
-    @test embeddim(r) == 3
-
     r = Ray(cart(0, 0), vector(1, 1))
     @test sprint(show, r) == "Ray(p: (x: 0.0 m, y: 0.0 m), v: (1.0 m, 1.0 m))"
     if T === Float32
@@ -275,16 +256,6 @@
 
     l = Line(cart(0, 0), cart(1, 1))
     @test (l(0), l(1)) == (cart(0, 0), cart(1, 1))
-
-    l2 = rand(Line{2})
-    l3 = rand(Line{3})
-    l = rand(Line)
-    @test l2 isa Line
-    @test l3 isa Line
-    @test l isa Line
-    @test embeddim(l2) == 2
-    @test embeddim(l3) == 3
-    @test embeddim(l) == 3
 
     l = Line(cart(0, 0), cart(1, 1))
     @test sprint(show, l) == "Line(a: (x: 0.0 m, y: 0.0 m), b: (x: 1.0 m, y: 1.0 m))"
@@ -349,10 +320,6 @@
     @test p₂ ∈ p
     @test p₃ ∈ p
 
-    p = rand(Plane)
-    @test p isa Plane
-    @test embeddim(p) == 3
-
     p = Plane(cart(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
     @test sprint(show, p) ==
           "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, 0.0 m, 0.0 m), v: (0.0 m, 1.0 m, 0.0 m))"
@@ -404,16 +371,6 @@
     @test t1.time < 5e-4
     @test t2.time < 5e-4
     @test t2.bytes < 100
-
-    b2 = rand(BezierCurve{2})
-    b3 = rand(BezierCurve{3})
-    b = rand(BezierCurve)
-    @test b2 isa BezierCurve
-    @test b3 isa BezierCurve
-    @test b isa BezierCurve
-    @test embeddim(b2) == 2
-    @test embeddim(b3) == 3
-    @test embeddim(b) == 3
 
     # CRS propagation
     b = BezierCurve(merc(0, 0), merc(0.5, 1), merc(1, 0))
@@ -522,19 +479,6 @@
     @test b(T(0.0), T(0.0), T(0.0)) == cart(0, 0, 0)
     @test b(T(1.0), T(1.0), T(1.0)) == cart(10, 20, 30)
 
-    b1 = rand(Box{1})
-    b2 = rand(Box{2})
-    b3 = rand(Box{3})
-    b = rand(Box)
-    @test b1 isa Box
-    @test b2 isa Box
-    @test b3 isa Box
-    @test b isa Box
-    @test embeddim(b1) == 1
-    @test embeddim(b2) == 2
-    @test embeddim(b3) == 3
-    @test embeddim(b) == 3
-
     @test_throws AssertionError Box(cart(1), cart(0))
     @test_throws AssertionError Box(cart(1, 1), cart(0, 0))
     @test_throws AssertionError Box(cart(1, 1, 1), cart(0, 0, 0))
@@ -636,19 +580,6 @@
     ps = b.(1, rand(T, 100), rand(T, 100))
     all(∈(b), ps)
 
-    b1 = rand(Ball{1})
-    b2 = rand(Ball{2})
-    b3 = rand(Ball{3})
-    b = rand(Ball)
-    @test b1 isa Ball
-    @test b2 isa Ball
-    @test b3 isa Ball
-    @test b isa Ball
-    @test embeddim(b1) == 1
-    @test embeddim(b2) == 2
-    @test embeddim(b3) == 3
-    @test embeddim(b) == 3
-
     b = Ball(cart(0, 0), T(1))
     @test sprint(show, b) == "Ball(center: (x: 0.0 m, y: 0.0 m), radius: 1.0 m)"
     if T === Float32
@@ -748,19 +679,6 @@
     @test s(T(0), T(0)) ≈ cart(0, 0, 2)
     @test s(T(0.5), T(0.5)) ≈ cart(-2, 0, 0)
 
-    s1 = rand(Sphere{1})
-    s2 = rand(Sphere{2})
-    s3 = rand(Sphere{3})
-    s = rand(Sphere)
-    @test s1 isa Sphere
-    @test s2 isa Sphere
-    @test s3 isa Sphere
-    @test s isa Sphere
-    @test embeddim(s1) == 1
-    @test embeddim(s2) == 2
-    @test embeddim(s3) == 3
-    @test embeddim(s) == 3
-
     s = Sphere(cart(0, 0, 0), T(1))
     @test sprint(show, s) == "Sphere(center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m)"
     if T === Float32
@@ -831,10 +749,6 @@
     equaltest(d)
     isapproxtest(d)
 
-    d = rand(Disk)
-    @test d isa Disk
-    @test embeddim(d) == 3
-
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     @test sprint(show, d) ==
@@ -891,10 +805,6 @@
     @test c(T(0.5)) ≈ cart(-2, 0, 0)
     @test c(T(0.75)) ≈ cart(0, -2, 0)
     @test c(T(1)) ≈ cart(2, 0, 0)
-
-    c = rand(Circle)
-    @test c isa Circle
-    @test embeddim(c) == 3
 
     # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(4), T(0))
@@ -979,10 +889,6 @@
     @test cart(0, 0, 1.001) ∉ c
     @test cart(1, 1, 1) ∉ c
 
-    c = rand(Cylinder)
-    @test c isa Cylinder
-    @test embeddim(c) == 3
-
     c = Cylinder(cart(0, 0, 0), cart(0, 0, 1), T(1))
     @test sprint(show, c) ==
           "Cylinder(bot: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), top: Plane(p: (x: 0.0 m, y: 0.0 m, z: 1.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 1.0 m)"
@@ -1046,10 +952,6 @@
     @test Meshes.lentype(c) == Meshes.Met{Float32}
     c = CylinderSurface(1)
     @test Meshes.lentype(c) == Meshes.Met{Float64}
-
-    c = rand(CylinderSurface)
-    @test c isa CylinderSurface
-    @test embeddim(c) == 3
 
     # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
@@ -1127,10 +1029,6 @@
     p = ParaboloidSurface(Point(0.0f0, 0.0f0, 0.0f0))
     @test Meshes.lentype(p) == Meshes.Met{Float32}
 
-    p = rand(ParaboloidSurface)
-    @test p isa ParaboloidSurface
-    @test embeddim(p) == 3
-
     p = ParaboloidSurface(cart(0, 0, 0), T(1), T(1))
     @test sprint(show, p) ==
           "ParaboloidSurface(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
@@ -1175,10 +1073,6 @@
     c = Cone(d, a)
     equaltest(c)
     isapproxtest(c)
-
-    c = rand(Cone)
-    @test c isa Cone
-    @test embeddim(c) == 3
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
@@ -1254,10 +1148,6 @@
     equaltest(c)
     isapproxtest(c)
 
-    c = rand(ConeSurface)
-    @test c isa ConeSurface
-    @test embeddim(c) == 3
-
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = cart(0, 0, 1)
@@ -1297,9 +1187,6 @@
     f = Frustum(db, dt)
     equaltest(f)
     isapproxtest(f)
-
-    f = rand(Frustum)
-    @test f isa Frustum
 
     f = Frustum(db, dt)
     @test cart(0, 0, 0) ∈ f
@@ -1349,9 +1236,6 @@
     f = FrustumSurface(db, dt)
     equaltest(f)
     isapproxtest(f)
-
-    f = rand(FrustumSurface)
-    @test f isa FrustumSurface
   end
 
   @testset "Torus" begin
@@ -1394,12 +1278,6 @@
     c₃ = T.((3, 2, 1))
     q = Torus(c₁, c₂, c₃, 1)
     @test q == t
-
-    t = rand(Torus)
-    @test t isa Torus
-    @test embeddim(t) == 3
-    @test Meshes.lentype(t) == Meshes.Met{Float64}
-    @test isnothing(boundary(t))
 
     t = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     @test sprint(show, t) ==

@@ -118,6 +118,7 @@ include("coarsening.jl")
 include("transforms.jl")
 
 # miscellaneous
+include("rand.jl")
 include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
