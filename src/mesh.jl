@@ -150,7 +150,7 @@ const Grid{CRS,Dim} = Mesh{CRS,GridTopology{Dim}}
 
 A view of a grid in a `Dim`-dimensinoal space with given coordinate reference system `CRS`.
 """
-const SubGrid{CRS} = SubDomain{CRS,<:Grid{CRS}}
+const SubGrid{CRS,Dim} = SubDomain{CRS,<:Grid{CRS,Dim}}
 
 """
     vertex(grid, ijk)
@@ -215,7 +215,7 @@ _asrange(::Int, r::UnitRange{Int}) = r
 _asrange(d::Int, ::Colon) = 1:d
 _asrange(::Int, i::Int) = i:i
 
-function _checkbounds(g::Grid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim}
+function _checkbounds(g, I)
   dims = size(g)
   ranges = I.indices
   if !all(first(r) ≥ 1 && last(r) ≤ d for (d, r) in zip(dims, ranges))
