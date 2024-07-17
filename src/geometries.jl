@@ -78,6 +78,8 @@ include("multigeoms.jl")
 # CONVERSIONS
 # ------------
 
-Base.convert(::Type{<:Quadrangle}, b::Box{2}) = Quadrangle(vertices(boundary(b))...)
+# TODO: dim check 2
+Base.convert(::Type{<:Quadrangle}, b::Box) = Quadrangle(vertices(boundary(b))...)
 
-Base.convert(::Type{<:Hexahedron}, b::Box{3}) = Hexahedron(vertices(boundary(b))...)
+# TODO: dim check 3
+Base.convert(::Type{<:Hexahedron}, b::Box) = Hexahedron(vertices(boundary(b))...)

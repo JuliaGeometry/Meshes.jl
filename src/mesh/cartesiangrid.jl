@@ -110,7 +110,7 @@ CartesianGrid(start::Point, finish::Point, spacing::NTuple{Dim,Number}) where {D
 CartesianGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
   CartesianGrid(Point(start), Point(finish), spacing)
 
-function CartesianGrid(start::Point, finish::Point; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim}
+function CartesianGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, embeddim(start)))
   origin = start
   spacing = Tuple((finish - start) ./ dims)
   offset = ntuple(i -> 1, Dim)
@@ -136,9 +136,9 @@ spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid) = g.offset
 
-vertex(g::CartesianGrid{Dim}, ijk::Dims{Dim}) where {Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
+vertex(g::CartesianGrid{CRS,Dim}, ijk::Dims{Dim}) where {CRS,Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 
-function xyz(g::CartesianGrid{Dim}) where {Dim}
+function xyz(g::CartesianGrid{CRS,Dim}) where {CRS,Dim}
   dims = size(g)
   spac = spacing(g)
   orig = to(minimum(g))
@@ -155,7 +155,7 @@ function centroid(g::CartesianGrid, ind::Int)
   vertex(g, ijk) + Vec(spacing(g) ./ 2)
 end
 
-function Base.getindex(g::CartesianGrid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+function Base.getindex(g::CartesianGrid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim}
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   offset = g.offset .- Tuple(first(I)) .+ 1
