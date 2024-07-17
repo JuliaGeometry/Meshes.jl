@@ -24,11 +24,11 @@ topology(m::TransformedMesh) = topology(m.mesh)
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
 # alias to improve readability in IO methods
-const TransformedGrid{CRS,G<:Grid{CRS},TR} = TransformedMesh{CRS,GridTopology{Dim},G,TR}
+const TransformedGrid{CRS,Dim,G<:Grid{CRS,Dim},TR} = TransformedMesh{CRS,GridTopology{Dim},G,TR}
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 
-@propagate_inbounds Base.getindex(g::TransformedGrid{Dim}, I::CartesianIndices{Dim}) where {Dim} =
+@propagate_inbounds Base.getindex(g::TransformedGrid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim} =
   TransformedGrid(getindex(g.mesh, I), g.transform)
 
 function Base.summary(io::IO, g::TransformedGrid)

@@ -20,7 +20,7 @@ julia> Y = repeat([0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
 julia> StructuredGrid(X, Y)
 ```
 """
-struct StructuredGrid{Datum,Dim,ℒ<:Len,A<:AbstractArray{ℒ}} <: Grid{Cartesian{Datum,Dim,ℒ},GridTopology{Dim}}
+struct StructuredGrid{Datum,Dim,ℒ<:Len,A<:AbstractArray{ℒ}} <: Grid{Cartesian{Datum,Dim,ℒ},Dim}
   XYZ::NTuple{Dim,A}
   topology::GridTopology{Dim}
 

@@ -143,7 +143,7 @@ end
 
 A grid embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`.
 """
-const Grid{CRS,TP<:GridTopology} = Mesh{CRS,TP}
+const Grid{CRS,Dim} = Mesh{CRS,GridTopology{Dim}}
 
 """
     SubGrid{Dim,CRS}
@@ -157,7 +157,7 @@ const SubGrid{CRS} = SubDomain{CRS,<:Grid{CRS}}
 
 Convert Cartesian index `ijk` to vertex on `grid`.
 """
-vertex(g::Grid{Dim}, ijk::CartesianIndex{Dim}) where {Dim} = vertex(g, ijk.I)
+vertex(g::Grid{CRS,Dim}, ijk::CartesianIndex{Dim}) where {CRS,Dim} = vertex(g, ijk.I)
 
 """
     xyz(grid)
@@ -183,11 +183,11 @@ Base.size(g::Grid) = size(topology(g))
 
 vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
 
-vertex(g::Grid{Dim}, ijk::Dims{Dim}) where {Dim} = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
+vertex(g::Grid{CRS,Dim}, ijk::Dims{Dim}) where {CRS,Dim} = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
 
-Base.minimum(g::Grid{Dim}) where {Dim} = vertex(g, ntuple(i -> 1, Dim))
-Base.maximum(g::Grid{Dim}) where {Dim} = vertex(g, size(g) .+ 1)
-Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
+Base.minimum(g::Grid{CRS,Dim}) where {CRS,Dim} = vertex(g, ntuple(i -> 1, Dim))
+Base.maximum(g::Grid) = vertex(g, size(g) .+ 1)
+Base.extrema(g::Grid) = minimum(g), maximum(g)
 
 function element(g::Grid, ind::Int)
   elem = element(topology(g), ind)
@@ -200,9 +200,12 @@ end
 
 Base.eltype(g::Grid) = typeof(first(g))
 
-Base.getindex(g::Grid{Dim}, ijk::Vararg{Int,Dim}) where {Dim} = element(g, LinearIndices(size(g))[ijk...])
+Base.getindex(g::Grid{CRS,Dim}, ijk::Vararg{Int,Dim}) where {CRS,Dim} = element(g, LinearIndices(size(g))[ijk...])
 
-@propagate_inbounds function Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}) where {Dim}
+@propagate_inbounds function Base.getindex(
+  g::Grid{CRS,Dim},
+  ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}
+) where {CRS,Dim}
   dims = size(g)
   ranges = ntuple(i -> _asrange(dims[i], ijk[i]), Dim)
   getindex(g, CartesianIndices(ranges))
@@ -212,7 +215,7 @@ _asrange(::Int, r::UnitRange{Int}) = r
 _asrange(d::Int, ::Colon) = 1:d
 _asrange(::Int, i::Int) = i:i
 
-function _checkbounds(g::Grid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+function _checkbounds(g::Grid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim}
   dims = size(g)
   ranges = I.indices
   if !all(first(r) ≥ 1 && last(r) ≤ d for (d, r) in zip(dims, ranges))
