@@ -12,9 +12,9 @@ optionally passing a random number generator `rng`.
 
 ```julia
 rand(Point)
-rand(Plane)
+rand(Triangle)
 rand(Point, crs=Cartesian2D)
-rand(Plane, crs=LatLon)
+rand(Triangle, crs=LatLon)
 ```
 """
 Random.rand(G::Type{<:Geometry}; kwargs...) = rand(Random.default_rng(), G; kwargs...)
@@ -30,9 +30,9 @@ optionally passing a random number generator `rng`.
 
 ```julia
 rand(Point, 10)
-rand(Plane, 10)
+rand(Triangle, 10)
 rand(Point, 10, crs=Cartesian2D)
-rand(Plane, 10, crs=LatLon)
+rand(Triangle, 10, crs=LatLon)
 ```
 """
 Random.rand(G::Type{<:Geometry}, n::Int; kwargs...) = rand(Random.default_rng(), G, n; kwargs...)

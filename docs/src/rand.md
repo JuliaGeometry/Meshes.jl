@@ -34,9 +34,9 @@ For reproducibility purposes, a random number generator can be passed as the fir
 
 ```@example rand
 rng = MersenneTwister(123)
-rand(rng, Plane)
+rand(rng, Triangle)
 ```
 
 ```@example rand
-rand(rng, Plane, 5)
+rand(rng, Triangle, 5)
 ```
