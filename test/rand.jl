@@ -253,4 +253,8 @@
   @test w isa Wedge
   @test crs(w) <: LatLon
   @test Meshes.lentype(w) === Meshes.Met{Float64}
+
+  # vector of random geometries
+  ps = rand(Point, 10)
+  @test eltype(ps) <: Point
 end
