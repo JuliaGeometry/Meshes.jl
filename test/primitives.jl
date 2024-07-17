@@ -118,9 +118,9 @@
     @test measure(cart(1, 2, 3)) == zero(ℳ)
 
     # boundary of points is nothing
-    @test isnothing(boundary(rand(Point{1})))
-    @test isnothing(boundary(rand(Point{2})))
-    @test isnothing(boundary(rand(Point{3})))
+    @test isnothing(boundary(cart(1)))
+    @test isnothing(boundary(cart(1, 2)))
+    @test isnothing(boundary(cart(1, 2, 3)))
 
     # check broadcasting works as expected
     @test cart(2, 2) .- [cart(2, 3), cart(3, 1)] == [vector(0.0, -1.0), vector(-1.0, 1.0)]
