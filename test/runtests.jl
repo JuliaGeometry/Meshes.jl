@@ -86,6 +86,7 @@ testfiles = [
   "refinement.jl",
   "coarsening.jl",
   "transforms.jl",
+  "rand.jl",
   "distances.jl",
   "supportfun.jl",
   "matrices.jl",

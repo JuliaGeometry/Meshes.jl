@@ -2,6 +2,7 @@
 
 ```@example sets
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -13,7 +14,7 @@ GeometrySet
 ```
 
 ```@example sets
-GeometrySet(rand(Ball{3}, 3)) |> viz
+GeometrySet(rand(Ball, 3)) |> viz
 ```
 
 ```@docs
@@ -21,5 +22,5 @@ PointSet
 ```
 
 ```@example sets
-PointSet(rand(Point{2}, 100)) |> viz
+PointSet(rand(Point, 100, crs=Cartesian2D)) |> viz
 ```

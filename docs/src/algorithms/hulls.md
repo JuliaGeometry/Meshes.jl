@@ -2,6 +2,7 @@
 
 ```@example hull
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -14,7 +15,7 @@ JarvisMarch
 ```
 
 ```@example hull
-pset = PointSet(rand(Point{2}, 100))
+pset = PointSet(rand(Point, 100, crs=Cartesian2D))
 chul = convexhull(pset)
 
 fig = Mke.Figure(size = (800, 400))

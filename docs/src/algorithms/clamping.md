@@ -9,10 +9,11 @@ clamp(::PointSet, ::Box)
 
 ```@example clamping
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 
 # set of 2D points to clamp
-points = PointSet(rand(Point{2}, 100))
+points = PointSet(rand(Point, 100, crs=Cartesian2D))
 
 # 2D box defining the clamping boundaries
 box = Box((0.25, 0.25), (0.75, 0.75))

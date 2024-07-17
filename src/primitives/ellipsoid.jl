@@ -56,9 +56,3 @@ function (e::Ellipsoid)(θ, φ)
   z = r[3] * cθ
   c + R * Vec(x, y, z)
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Ellipsoid}) = Ellipsoid(
-  (rand(rng, Met{Float64}), rand(rng, Met{Float64}), rand(rng, Met{Float64})),
-  rand(rng, Point{3}),
-  rand(rng, QuatRotation)
-)

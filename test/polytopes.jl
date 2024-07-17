@@ -65,19 +65,6 @@
     @test center(s) == Point(xm, xm, xm)
     @test Meshes.lentype(center(s)) == typeof(xm)
 
-    s = rand(Segment{2})
-    @test s isa Segment
-    @test embeddim(s) == 2
-    @test Meshes.lentype(s) === Meshes.Met{Float64}
-    s = rand(Segment{3})
-    @test s isa Segment
-    @test embeddim(s) == 3
-    @test Meshes.lentype(s) === Meshes.Met{Float64}
-    s = rand(Segment)
-    @test s isa Segment
-    @test embeddim(s) == 3
-    @test Meshes.lentype(s) === Meshes.Met{Float64}
-
     # CRS propagation
     s = Segment(merc(0, 0), merc(1, 1))
     @test crs(s(T(0))) === crs(s)
@@ -247,32 +234,6 @@
       @test nvertices(ur2) == 17
     end
 
-    r = rand(Rope{2})
-    @test r isa Rope
-    @test embeddim(r) == 2
-    @test Meshes.lentype(r) === Meshes.Met{Float64}
-    r = rand(Rope{3})
-    @test r isa Rope
-    @test embeddim(r) == 3
-    @test Meshes.lentype(r) === Meshes.Met{Float64}
-    r = rand(Rope)
-    @test r isa Rope
-    @test embeddim(r) == 3
-    @test Meshes.lentype(r) === Meshes.Met{Float64}
-
-    r = rand(Ring{2})
-    @test r isa Ring
-    @test embeddim(r) == 2
-    @test Meshes.lentype(r) === Meshes.Met{Float64}
-    r = rand(Ring{3})
-    @test r isa Ring
-    @test embeddim(r) == 3
-    @test Meshes.lentype(r) === Meshes.Met{Float64}
-    r = rand(Ring)
-    @test r isa Ring
-    @test embeddim(r) == 3
-    @test Meshes.lentype(r) === Meshes.Met{Float64}
-
     # issimple benchmark
     r = Sphere(cart(0, 0), T(1)) |> pointify |> Ring
     @test issimple(r)
@@ -333,19 +294,6 @@
     for (i, NGON) in enumerate(NGONS)
       @test paramdim(NGON) == 2
       @test nvertices(NGON) == NVERT[i]
-
-      n = rand(NGON{2})
-      @test n isa NGON
-      @test embeddim(n) == 2
-      @test Meshes.lentype(n) === Meshes.Met{Float64}
-      n = rand(NGON{3})
-      @test n isa NGON
-      @test embeddim(n) == 3
-      @test Meshes.lentype(n) === Meshes.Met{Float64}
-      n = rand(NGON)
-      @test n isa NGON
-      @test embeddim(n) == 3
-      @test Meshes.lentype(n) === Meshes.Met{Float64}
     end
 
     # error: the number of vertices must be greater than or equal to 3
@@ -719,19 +667,6 @@
     poly = PolyArea([outer, hole1, hole2])
     @test area(poly) ≈ T(0.92) * u"m^2"
 
-    p = rand(PolyArea{2})
-    @test p isa PolyArea
-    @test embeddim(p) == 2
-    @test Meshes.lentype(p) === Meshes.Met{Float64}
-    p = rand(PolyArea{3})
-    @test p isa PolyArea
-    @test embeddim(p) == 3
-    @test Meshes.lentype(p) === Meshes.Met{Float64}
-    p = rand(PolyArea)
-    @test p isa PolyArea
-    @test embeddim(p) == 3
-    @test Meshes.lentype(p) === Meshes.Met{Float64}
-
     outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
     hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
@@ -786,15 +721,6 @@
     t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
     equaltest(t)
     isapproxtest(t)
-
-    t = rand(Tetrahedron{3})
-    @test t isa Tetrahedron
-    @test embeddim(t) == 3
-    @test Meshes.lentype(t) === Meshes.Met{Float64}
-    t = rand(Tetrahedron)
-    @test t isa Tetrahedron
-    @test embeddim(t) == 3
-    @test Meshes.lentype(t) === Meshes.Met{Float64}
 
     # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
@@ -914,15 +840,6 @@
     @test nvertices(m) == 8
     @test nelements(m) == 6
 
-    h = rand(Hexahedron{3})
-    @test h isa Hexahedron
-    @test embeddim(h) == 3
-    @test Meshes.lentype(h) === Meshes.Met{Float64}
-    h = rand(Hexahedron)
-    @test h isa Hexahedron
-    @test embeddim(h) == 3
-    @test Meshes.lentype(h) === Meshes.Met{Float64}
-
     # CRS propagation
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(1), T(0), T(0))
@@ -988,15 +905,6 @@
     equaltest(p)
     isapproxtest(p)
 
-    p = rand(Pyramid{3})
-    @test p isa Pyramid
-    @test embeddim(p) == 3
-    @test Meshes.lentype(p) === Meshes.Met{Float64}
-    p = rand(Pyramid)
-    @test p isa Pyramid
-    @test embeddim(p) == 3
-    @test Meshes.lentype(p) === Meshes.Met{Float64}
-
     p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
     @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
     if T === Float32
@@ -1034,15 +942,6 @@
     @test m[5] isa Quadrangle
     equaltest(w)
     isapproxtest(w)
-
-    w = rand(Wedge{3})
-    @test w isa Wedge
-    @test embeddim(w) == 3
-    @test Meshes.lentype(w) === Meshes.Met{Float64}
-    w = rand(Wedge)
-    @test w isa Wedge
-    @test embeddim(w) == 3
-    @test Meshes.lentype(w) === Meshes.Met{Float64}
 
     w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
     @test sprint(show, w) == "Wedge((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 1.0 m, z: 1.0 m))"

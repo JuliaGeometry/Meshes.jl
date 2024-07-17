@@ -2,6 +2,7 @@
 
 ```@example viz
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -19,7 +20,7 @@ viz!
 We can visualize a single geometry or multiple geometries in a vector:
 
 ```@example viz
-triangles = rand(Triangle{2}, 10)
+triangles = rand(Triangle, 10, crs=Cartesian2D)
 
 viz(triangles, color = 1:10)
 ```

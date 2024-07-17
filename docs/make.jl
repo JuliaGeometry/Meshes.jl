@@ -33,6 +33,7 @@ makedocs(
         "algorithms/matrices.md"
       ],
       "Transforms" => "transforms.md",
+      "Random" => "rand.md",
       "Visualization" => "visualization.md",
       "Input/Output" => "io.md"
     ],

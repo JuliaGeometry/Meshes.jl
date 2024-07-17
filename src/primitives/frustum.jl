@@ -40,11 +40,3 @@ axis(f::Frustum) = axis(boundary(f))
 
 Base.isapprox(f₁::Frustum, f₂::Frustum; atol=atol(lentype(f₁)), kwargs...) =
   isapprox(boundary(f₁), boundary(f₂); atol, kwargs...)
-
-function Random.rand(rng::Random.AbstractRNG, ::Type{Frustum})
-  bottom = rand(rng, Disk)
-  ax = normal(plane(bottom))
-  topplane = Plane(center(bottom) + rand() * ax, ax)
-  top = Disk(topplane, rand(Met{Float64}))
-  Frustum(bottom, top)
-end

@@ -126,10 +126,6 @@ See <https://en.wikipedia.org/wiki/Atan2>.
 """
 ∠(A::P, B::P, C::P) where {P<:Point} = ∠(A - B, C - B)
 
-Random.rand(rng::Random.AbstractRNG, ::Type{Point{Dim}}) where {Dim} = Point(rand(rng, Cartesian{NoDatum,Dim}))
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Point}) = rand(rng, Point{3})
-
 # -----------
 # IO METHODS
 # -----------

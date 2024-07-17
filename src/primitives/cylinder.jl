@@ -98,6 +98,3 @@ function (c::Cylinder)(ρ, φ, z)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
 end
-
-Random.rand(rng::Random.AbstractRNG, ::Type{Cylinder}) =
-  Cylinder(rand(rng, Plane), rand(rng, Plane), rand(rng, Met{Float64}))
