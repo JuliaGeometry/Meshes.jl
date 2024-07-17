@@ -185,7 +185,7 @@ vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
 
 vertex(g::Grid{CRS,Dim}, ijk::Dims{Dim}) where {CRS,Dim} = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
 
-Base.minimum(g::Grid{CRS,Dim}) where {CRS,Dim} = vertex(g, ntuple(i -> 1, Dim))
+Base.minimum(g::Grid) = vertex(g, ntuple(i -> 1, embeddim(g)))
 Base.maximum(g::Grid) = vertex(g, size(g) .+ 1)
 Base.extrema(g::Grid) = minimum(g), maximum(g)
 

@@ -58,7 +58,7 @@ Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 # do not change which vertex comes first for closed chains
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
-# TODO: check dim 2
+# TODO: check dim: 2
 """
     innerangles(ring)
 

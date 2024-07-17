@@ -64,12 +64,13 @@ flat(p::Point) = Point(flat(coords(p)))
 flat(c::LatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
 flat(c::CRS) = convert(Cartesian, c)
 
+# TODO: check dim: 2
 """
     signarea(A, B, C)
 
 Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
-function signarea(A::Point{2}, B::Point{2}, C::Point{2})
+function signarea(A::Point, B::Point, C::Point)
   ((B - A) × (C - A)) / 2
 end
 
@@ -96,6 +97,7 @@ function householderbasis(n::Vec{3,ℒ}) where {ℒ}
   Vec(u), Vec(v)
 end
 
+# TODO: check dim: 3
 """
     svdbasis(points)
 
@@ -104,7 +106,7 @@ using the singular value decomposition (SVD).
 
 See <https://math.stackexchange.com/a/99317>.
 """
-function svdbasis(p::AbstractVector{<:Point{3}})
+function svdbasis(p::AbstractVector{<:Point})
   ℒ = lentype(eltype(p))
   X = reduce(hcat, to.(p))
   μ = sum(X, dims=2) / size(X, 2)
@@ -125,6 +127,7 @@ function mayberound(λ::T, x::T, atol=atol(T)) where {T}
   isapprox(λ, x, atol=atol) ? x : λ
 end
 
+# TODO: check dim: same dim
 """
     intersectparameters(a, b, c, d)
 
@@ -146,7 +149,7 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
+function intersectparameters(a::Point, b::Point, c::Point, d::Point)
   A = ustrip.([(b - a) (c - d)])
   y = ustrip.(c - a)
   T = eltype(A)

@@ -28,7 +28,8 @@ that intersect with the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-function indices(grid::Grid{Dim}, point::Point{Dim}) where {Dim}
+# TODO: check dim: same dim
+function indices(grid::Grid, point::Point)
   point ∉ grid && return Int[]
 
   # grid properties
@@ -46,7 +47,8 @@ function indices(grid::Grid{Dim}, point::Point{Dim}) where {Dim}
   [LinearIndices(dims)[coords...]]
 end
 
-function indices(grid::Grid{2}, poly::Polygon{2})
+# TODO: check dim: 2
+function indices(grid::Grid, poly::Polygon)
   dims = size(grid)
   mask = zeros(Int, dims)
   cpoly = poly ∩ boundingbox(grid)
@@ -60,7 +62,8 @@ function indices(grid::Grid{2}, poly::Polygon{2})
   LinearIndices(dims)[mask .> 0]
 end
 
-function indices(grid::Grid{2}, chain::Chain{2})
+# TODO: check dim: 2
+function indices(grid::Grid, chain::Chain)
   dims = size(grid)
   mask = falses(dims)
 

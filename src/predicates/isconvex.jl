@@ -58,7 +58,11 @@ isconvex(::Triangle) = true
 
 isconvex(::Tetrahedron) = true
 
-isconvex(p::Polygon{2}) = Set(vertices(convexhull(p))) == Set(vertices(p))
+isconvex(p::Polygon) = _isconvex(p, Val(embeddim(p)))
+
+_isconvex(p::Polygon, ::Val{2}) = Set(vertices(convexhull(p))) == Set(vertices(p))
+
+_isconvex(p::Polygon, ::Val{3}) = isconvex(proj2D(p))
 
 isconvex(m::Multi) = isapproxequal(measure(convexhull(m)), measure(m))
 
@@ -66,12 +70,10 @@ isconvex(m::Multi) = isapproxequal(measure(convexhull(m)), measure(m))
 # OPTIMIZATIONS
 # --------------
 
-function isconvex(q::Quadrangle{2})
+# TODO: check dim: 2
+function isconvex(q::Quadrangle)
   v = vertices(q)
   d1 = Segment(v[1], v[3])
   d2 = Segment(v[2], v[4])
   intersects(d1, d2)
 end
-
-# temporary workaround in 3D
-isconvex(p::Polygon{3}) = isconvex(proj2D(p))

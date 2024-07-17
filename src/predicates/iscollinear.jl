@@ -2,12 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# TODO: check dim: same dim
 """
     iscollinear(A, B, C)
 
 Tells whether or not the points `A`, `B` and `C` are collinear.
 """
-function iscollinear(A::Point{Dim}, B::Point{Dim}, C::Point{Dim}) where {Dim}
+function iscollinear(A::Point, B::Point, C::Point)
   # points A, B, C are collinear if and only if the
   # cross-products for segments AB and AC with respect
   # to all possible pairs of coordinates are zero
