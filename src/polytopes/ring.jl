@@ -58,6 +58,7 @@ Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 # do not change which vertex comes first for closed chains
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
+# TODO: check dim 2
 """
     innerangles(ring)
 
@@ -65,12 +66,8 @@ Return inner angles of the `ring`. Inner
 angles are always positive, and unlike
 `angles` they can be greater than `π`.
 """
-innerangles(r::Ring) = _innerangles(r, Val(embeddim(r)))
-
-function _innerangles(r::Ring, ::Val{2})
+function innerangles(r::Ring)
   # correct sign of angles in case orientation is CW
   θs = orientation(r) == CW ? -angles(r) : angles(r)
   [θ > 0 ? 2 * oftype(θ, π) - θ : -θ for θ in θs]
 end
-
-_innerangles(r::Ring, ::Val{3}) = innerangles(Ring(proj2D(vertices(r))))
