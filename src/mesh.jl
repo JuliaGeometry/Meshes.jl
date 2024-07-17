@@ -211,6 +211,16 @@ Base.getindex(g::Grid{CRS,Dim}, ijk::Vararg{Int,Dim}) where {CRS,Dim} = element(
   getindex(g, CartesianIndices(ranges))
 end
 
+function Base.getindex(g::Grid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim}
+  @boundscheck _checkbounds(g, I)
+  dims = size(I)
+  odims = size(g)
+  cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
+  inds = vec(LinearIndices(odims .+ 1)[cinds])
+  periodic = isperiodic(topology(g)) .&& dims .== odims
+  SimpleMesh(vertices(g)[inds], GridTopology(dims, periodic))
+end
+
 _asrange(::Int, r::UnitRange{Int}) = r
 _asrange(d::Int, ::Colon) = 1:d
 _asrange(::Int, i::Int) = i:i
