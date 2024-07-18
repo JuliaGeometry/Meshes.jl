@@ -60,7 +60,7 @@ end
 
 Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
 
-paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
+paramdim(S::Type{<:Sphere}) = embeddim(S) - 1
 
 center(s::Sphere) = s.center
 
@@ -86,7 +86,7 @@ function _sphere(::Val{2}, s, φ)
   c + Vec(x, y)
 end
 
-function _sphere(::Val{2}, s, θ, φ)
+function _sphere(::Val{3}, s, θ, φ)
   T = numtype(lentype(s))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
