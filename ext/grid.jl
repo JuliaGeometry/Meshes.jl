@@ -4,7 +4,7 @@
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   grid = plot[:object][]
-  pdim = embeddim(grid)
+  pdim = paramdim(grid)
   edim = embeddim(grid)
   vizgrid!(plot, Val(pdim), Val(edim))
 end

@@ -5,7 +5,7 @@
 function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
   # retrieve mesh and rank
   mesh = plot[:object][]
-  pdim = embeddim(mesh)
+  pdim = paramdim(mesh)
   edim = embeddim(mesh)
   vizmesh!(plot, Val(pdim), Val(edim))
 end
