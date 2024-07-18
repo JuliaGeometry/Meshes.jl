@@ -85,7 +85,9 @@ function equaltest(g)
   @test g == withprecision(Float32, g)
 end
 
-function isapproxtest(g::Geometry{1})
+isapproxtest(g::Geometry) = _isapproxtest(g, Val(embeddim(g)))
+
+function _isapproxtest(g::Geometry, ::Val{1})
   τ64 = Meshes.atol(Float64) * u"m"
   τ32 = Meshes.atol(Float32) * u"m"
   g64 = withprecision(Float64, g)
@@ -94,7 +96,7 @@ function isapproxtest(g::Geometry{1})
   @test isapprox(g, Translate(τ32)(g32), atol=1.1τ32)
 end
 
-function isapproxtest(g::Geometry{2})
+function _isapproxtest(g::Geometry, ::Val{2})
   τ64 = Meshes.atol(Float64) * u"m"
   τ32 = Meshes.atol(Float32) * u"m"
   g64 = withprecision(Float64, g)
@@ -105,7 +107,7 @@ function isapproxtest(g::Geometry{2})
   @test isapprox(g, Translate(0u"m", τ32)(g32), atol=1.1τ32)
 end
 
-function isapproxtest(g::Geometry{3})
+function _isapproxtest(g::Geometry, ::Val{3})
   τ64 = Meshes.atol(Float64) * u"m"
   τ32 = Meshes.atol(Float32) * u"m"
   g64 = withprecision(Float64, g)
