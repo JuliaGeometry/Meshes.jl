@@ -13,6 +13,14 @@ Throws an `AssertionError(msg)` if `cond` is `false`.
 assertion(cond, msg) = cond || throw(AssertionError(msg))
 
 """
+    assertdim(geom, dim)
+
+Throws an `AssertionError` if the `embeddim` of the geometry `geom`
+is different than the specified dimension `dim`. 
+"""
+assertdim(geom, dim) = assertion(embeddim(geom) == dim, "Geometry must be embedded in $dim-dimensional space.")
+
+"""
     constructor(G)
 
 Given a (parametric) type `G{T₁,T₂,...}`, return the type `G`.
