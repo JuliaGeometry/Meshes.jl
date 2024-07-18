@@ -139,13 +139,12 @@
 
   @testset "isperiodic" begin
     # primitives
-    @test isperiodic(Box{1}) == (false,)
-    @test isperiodic(Box{2}) == (false, false)
-    @test isperiodic(Box{3}) == (false, false, false)
-    @test isperiodic(Ball{2}) == (false, true)
-    @test isperiodic(Ball{3}) == (false, true, true)
-    @test isperiodic(Sphere{2}) == (true,)
-    @test isperiodic(Sphere{3}) == (true, true)
+    @test isperiodic(Box{Cartesian2D}) == (false, false)
+    @test isperiodic(Box{Cartesian3D}) == (false, false, false)
+    @test isperiodic(Ball{Cartesian2D}) == (false, true)
+    @test isperiodic(Ball{Cartesian3D}) == (false, true, true)
+    @test isperiodic(Sphere{Cartesian2D}) == (true,)
+    @test isperiodic(Sphere{Cartesian3D}) == (true, true)
     @test isperiodic(Ellipsoid) == (true, true)
     @test isperiodic(Cylinder) == (false, true, false)
     @test isperiodic(CylinderSurface) == (true, false)
