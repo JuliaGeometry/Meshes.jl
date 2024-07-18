@@ -91,7 +91,9 @@ end
 discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-function discretizewithin(ring::Ring{3}, method::BoundaryDiscretizationMethod)
+discretizewithin(ring::Ring, method::BoundaryDiscretizationMethod) = _discretizewithin(ring, Val(embeddim(ring)), method)
+
+function _discretizewithin(ring::Ring, ::Val{3}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
   points = collect(vertices(ring))
 
@@ -109,11 +111,17 @@ end
 
 discretize(geometry) = simplexify(geometry)
 
-discretize(ball::Ball{2}) = discretize(ball, RegularDiscretization(50))
+function discretize(ball::Ball)
+  assertdim(ball, 2)
+  discretize(ball, RegularDiscretization(50))
+end
 
 discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
 
-discretize(sphere::Sphere{3}) = discretize(sphere, RegularDiscretization(50))
+function discretize(sphere::Sphere)
+  assertdim(sphere, 3)
+  discretize(sphere, RegularDiscretization(50))
+end
 
 discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
 
@@ -148,7 +156,13 @@ function simplexify end
 
 simplexify(geometry) = simplexify(discretize(geometry))
 
-simplexify(box::Box{1}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
+simplexify(box::Box) = _simplexify(box, Val(embeddim(box)))
+
+_simplexify(box::Box, ::Val{1}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
+
+_simplexify(box::Box, ::Val{2}) = discretize(box, FanTriangulation())
+
+_simplexify(box::Box, ::Val{3}) = discretize(box, Tetrahedralization())
 
 simplexify(seg::Segment) = SimpleMesh(pointify(seg), GridTopology(1))
 
@@ -164,13 +178,12 @@ end
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
-simplexify(sphere::Sphere{2}) = discretize(sphere, RegularDiscretization(50))
+function simplexify(sphere::Sphere)
+  assertdim(sphere, 2)
+  discretize(sphere, RegularDiscretization(50))
+end
 
 simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
-
-simplexify(box::Box{2}) = discretize(box, FanTriangulation())
-
-simplexify(box::Box{3}) = discretize(box, Tetrahedralization())
 
 simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 

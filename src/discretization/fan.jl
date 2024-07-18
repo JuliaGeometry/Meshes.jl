@@ -11,9 +11,9 @@ See [https://en.wikipedia.org/wiki/Fan_triangulation]
 """
 struct FanTriangulation <: BoundaryDiscretizationMethod end
 
-discretizewithin(ring::Ring{2}, ::FanTriangulation) = fan(ring)
+_discretizewithin(ring::Ring, ::Val{2}, ::FanTriangulation) = fan(ring)
 
-discretizewithin(ring::Ring{3}, ::FanTriangulation) = fan(ring)
+_discretizewithin(ring::Ring, ::Val{3}, ::FanTriangulation) = fan(ring)
 
 function fan(ring::Ring)
   points = collect(vertices(ring))
