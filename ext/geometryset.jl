@@ -24,7 +24,7 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     colors = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
     pdim = Makie.@lift paramdim(first($gvec))
     edim = Makie.@lift embeddim(first($gvec))
-    vizgset!(plot, Val(pdim), Val(edim), gvec, colors)
+    vizgset!(plot, Val(pdim[]), Val(edim[]), gvec, colors)
   end
 end
 

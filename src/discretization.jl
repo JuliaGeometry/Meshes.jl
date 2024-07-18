@@ -109,15 +109,13 @@ end
 # DEFAULT METHODS
 # ----------------
 
-discretize(geometry) = simplexify(geometry)
+discretize(geometry) = _discretize(geometry, Val(embeddim(geometry)))
 
-discretize(ball::Ball) = _discretize(ball, Val(embedded(ball)))
+_discretize(geometry, ::Val) = simplexify(geometry)
 
 _discretize(ball::Ball, ::Val{2}) = discretize(ball, RegularDiscretization(50))
 
 discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
-
-discretize(sphere::Sphere) = _discretize(sphere, Val(embedded(sphere)))
 
 _discretize(sphere::Sphere, ::Val{3}) = discretize(sphere, RegularDiscretization(50))
 
@@ -152,9 +150,9 @@ when the `object` has parametric dimension 2.
 """
 function simplexify end
 
-simplexify(geometry) = simplexify(discretize(geometry))
+simplexify(geometry) = _simplexify(geometry, Val(embeddim(geometry)))
 
-simplexify(box::Box) = _simplexify(box, Val(embeddim(box)))
+_simplexify(geometry, ::Val) = simplexify(discretize(geometry))
 
 _simplexify(box::Box, ::Val{1}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
 
@@ -175,8 +173,6 @@ function simplexify(chain::Chain)
 end
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
-
-simplexify(sphere::Sphere) = _simplexify(sphere, Val(embeddim(sphere)))
 
 _simplexify(sphere::Sphere, ::Val{2}) = discretize(sphere, RegularDiscretization(50))
 
