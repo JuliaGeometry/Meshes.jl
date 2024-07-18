@@ -113,7 +113,7 @@ discretize(geometry) = simplexify(geometry)
 
 discretize(ball::Ball) = _discretize(ball, Val(embedded(ball)))
 
-discretize(ball::Ball, ::Val{2}) = discretize(ball, RegularDiscretization(50))
+_discretize(ball::Ball, ::Val{2}) = discretize(ball, RegularDiscretization(50))
 
 discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
 
@@ -176,10 +176,9 @@ end
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
-function simplexify(sphere::Sphere)
-  assertdim(sphere, 2)
-  discretize(sphere, RegularDiscretization(50))
-end
+simplexify(sphere::Sphere) = _simplexify(sphere, Val(embeddim(sphere)))
+
+_simplexify(sphere::Sphere, ::Val{2}) = discretize(sphere, RegularDiscretization(50))
 
 simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
