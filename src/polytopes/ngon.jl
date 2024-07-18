@@ -77,8 +77,8 @@ function signarea(t::Triangle)
   signarea(v[1], v[2], v[3])
 end
 
-# TODO: check dim: 3
 function normal(t::Triangle)
+  assertdim(t, 3)
   A, B, C = t.vertices
   unormalize(ucross((B - A), (C - A)))
 end
