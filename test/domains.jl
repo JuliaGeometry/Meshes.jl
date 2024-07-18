@@ -10,7 +10,7 @@
   dom = DummyDomain(cart(0, 0))
   @test dom[begin] == Ball(cart(1, 1), T(1))
   @test dom[end] == Ball(cart(3, 3), T(1))
-  @test eltype(dom) <: Ball{2}
+  @test eltype(dom) <: Ball
   @test length(dom) == 3
   @test keys(dom) == 1:3
   @test collect(dom) == [Ball(cart(i, i), T(1)) for i in 1:3]
