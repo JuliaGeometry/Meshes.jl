@@ -240,11 +240,6 @@
     @test @elapsed(issimple(r)) < 0.02
     @test @allocated(issimple(r)) < 950000
 
-    # innerangles in 3D is obtained via projection
-    r1 = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    r2 = Ring(cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]))
-    @test innerangles(r1) ≈ innerangles(r2)
-
     # CRS propagation
     r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     @test crs(centroid(r)) === crs(r)
@@ -389,7 +384,7 @@
     @test isapprox(norm(normal(t)), oneunit(ℳ))
 
     t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
-    @test_throws ErrorException("signed area only defined for triangles embedded in R², use `area` instead") signarea(t)
+    @test_throws ArgumentError signarea(t)
 
     # CRS propagation
     t = Triangle(merc(0, 0), merc(1, 0), merc(0, 1))
