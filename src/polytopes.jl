@@ -3,14 +3,15 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{K,Dim,CRS}
+    Polytope{K,CRS}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
-polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces,
-embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`. 
+polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces.
 The parameter `K` is also known as the rank or parametric dimension 
-of the polytope: <https://en.wikipedia.org/wiki/Abstract_polytope>.
+of the polytope (<https://en.wikipedia.org/wiki/Abstract_polytope>).
+The vertices are stored with coordinates in a given coordinate
+reference system `CRS`.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into

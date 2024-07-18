@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{Dim,CRS}
+    Domain{CRS}
 
 A domain is an indexable collection of geometries (e.g. mesh).
 """

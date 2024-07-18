@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    Geometry{Dim,CRS}
+    Geometry{CRS}
 
-A geometry embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`.
+A geometry with given coordinate reference system `CRS`.
 """
 abstract type Geometry{CRS} end
 
