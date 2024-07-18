@@ -42,21 +42,24 @@ function wrapgrid(g, m)
   ps, tg
 end
 
-perdims(g) = isperiodic(g)
-perdims(::Sphere{3}) = (false, true)
+perdims(g) = _perdims(g, Val(embeddim(g)))
+_perdims(g, ::Val) = isperiodic(g)
+_perdims(::Sphere, ::Val{3}) = (false, true)
 perdims(::Ellipsoid) = (false, true)
 
 # ------------------------
 # append to grid topology
 # ------------------------
 
-appendtopo(g, tg) = tg
+appendtopo(g, tg) = _appendtopo(g, Val(embeddim(g)), tg)
 
-appendtopo(::Ball{2}, tg) = _appendcenter(tg)
+_appendtopo(g, ::Val, tp) = tp
+
+_appendtopo(::Ball, ::Val{2}, tg) = _appendcenter(tg)
 
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
-appendtopo(::Sphere{3}, tg) = _appendpoles(tg, 2, true)
+_appendtopo(::Sphere, ::Val{3}, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
 
