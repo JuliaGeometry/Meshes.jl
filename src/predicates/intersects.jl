@@ -65,7 +65,6 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
-# TODO: check dim: same dim
 function intersects(g₁::Geometry, g₂::Geometry)
   ℒ = lentype(g₁)
 

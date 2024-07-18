@@ -28,7 +28,6 @@ that intersect with the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-# TODO: check dim: same dim
 function indices(grid::Grid, point::Point)
   point ∉ grid && return Int[]
 

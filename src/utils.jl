@@ -127,7 +127,6 @@ function mayberound(λ::T, x::T, atol=atol(T)) where {T}
   isapprox(λ, x, atol=atol) ? x : λ
 end
 
-# TODO: check dim: same dim
 """
     intersectparameters(a, b, c, d)
 

@@ -2,7 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# TODO: check dim: same dim
 """
     iscollinear(A, B, C)
 
