@@ -72,7 +72,7 @@ function _extrapoints(c::Cylinder, ::Val, sz)
 end
 
 _firstoffset(::CylinderSurface, ::Val) = (n -> zero(n), n -> zero(n))
-_lastoffset(::CylinderSurface,, ::Val) = (n -> inv(n), n -> zero(n))
+_lastoffset(::CylinderSurface, ::Val) = (n -> inv(n), n -> zero(n))
 _extrapoints(c::CylinderSurface, ::Val, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
 _firstoffset(::ConeSurface, ::Val) = (n -> zero(n), n -> inv(n))

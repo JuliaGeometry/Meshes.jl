@@ -199,11 +199,15 @@ end
 
 Base.eltype(g::Grid) = typeof(first(g))
 
+Base.getindex(g::Grid, ind::Int) = element(g, ind)
+
+Base.getindex(g::Grid, inds::AbstractVector) = [element(g, ind) for ind in inds]
+
 Base.getindex(g::Grid, ijk::Int...) = element(g, LinearIndices(size(g))[ijk...])
 
-@propagate_inbounds function Base.getindex(g::Grid, ijk::Union{UnitRange{Int},Colon,Int}...)
+@propagate_inbounds function Base.getindex(g::Grid, ijk...)
   dims = size(g)
-  ranges = ntuple(i -> _asrange(dims[i], ijk[i]), Dim)
+  ranges = ntuple(i -> _asrange(dims[i], ijk[i]), embeddim(g))
   getindex(g, CartesianIndices(ranges))
 end
 
