@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
+function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Val{2}, ::Val{2})
   grid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -61,7 +61,7 @@ function vizgrid2D!(plot::Viz{<:Tuple{CartesianGrid}})
   end
 end
 
-function vizgrid3D!(plot::Viz{<:Tuple{CartesianGrid}})
+function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Val{3}, ::Val{3})
   # retrieve parameters
   grid = plot[:object]
   color = plot[:color]
