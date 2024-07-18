@@ -26,7 +26,7 @@ function intersection(f, plane1::Plane, plane2::Plane)
   end
 end
 
-const LineLike = Union{Segment{3},Ray{3},Line{3}}
+const LineLike = Union{Segment,Ray,Line}
 
 # (https://en.wikipedia.org/wiki/Line-plane_intersection)
 function intersection(f, line::LineLike, plane::Plane)
@@ -52,7 +52,7 @@ end
 #   λ < 0 or  λ > 1 ⟹ NotIntersecting
 #   λ ≈ 0 or  λ ≈ 1 ⟹ Touching
 #   λ > 0 and λ < 1 ⟹ Crossing
-function _intersection(f, seg::Segment{3}, λ)
+function _intersection(f, seg::Segment, λ)
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapproxzero(λ)
     return @IT Touching seg(0) f
@@ -77,7 +77,7 @@ end
 #   λ < 0 ⟹ NotIntersecting
 #   λ ≈ 0 ⟹ Touching
 #   λ > 0 ⟹ Crossing
-function _intersection(f, ray::Ray{3}, λ)
+function _intersection(f, ray::Ray, λ)
   # if λ is approximately 0, set as so to prevent any domain errors
   if isapproxzero(λ)
     return @IT Touching ray(0) f

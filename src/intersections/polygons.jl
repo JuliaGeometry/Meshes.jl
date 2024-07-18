@@ -19,4 +19,4 @@ function intersection(f, poly₁::Polygon, poly₂::Polygon)
   end
 end
 
-intersection(f, poly::Polygon{2}, box::Box{2}) = intersection(f, poly, convert(Quadrangle, box))
+intersection(f, poly::Polygon, box::Box) = intersection(f, poly, convert(Quadrangle, box))

@@ -28,16 +28,16 @@ measure(p::Plane) = typemax(lentype(p))^2
 measure(b::Box) = prod(maximum(b) - minimum(b))
 
 # https://en.wikipedia.org/wiki/Volume_of_an_n-ball
-function measure(b::Ball{Dim}) where {Dim}
+function measure(b::Ball)
   T = numtype(lentype(b))
-  r, n = radius(b), Dim
+  r, n = radius(b), embeddim(b)
   T(π)^T(n / 2) * r^n / gamma(T(n / 2) + 1)
 end
 
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
-function measure(s::Sphere{Dim}) where {Dim}
+function measure(s::Sphere)
   T = numtype(lentype(s))
-  r, n = radius(s), Dim
+  r, n = radius(s), embeddim(s)
   2 * T(π)^T(n / 2) * r^(n - 1) / gamma(T(n / 2))
 end
 
@@ -77,9 +77,11 @@ end
 
 measure(s::Segment) = norm(maximum(s) - minimum(s))
 
-measure(t::Triangle{2}) = abs(signarea(t))
+measure(t::Triangle) = _measure(t, Val(embeddim(t)))
 
-function measure(t::Triangle{3})
+_measure(t::Triangle, ::Val{2}) = abs(signarea(t))
+
+function _measure(t::Triangle, ::Val{3})
   A, B, C = vertices(t)
   norm((B - A) × (C - A)) / 2
 end

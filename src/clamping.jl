@@ -10,11 +10,11 @@ Clamp the coordinates of a [`Point`](@ref) to the edges of a [`Box`](@ref).
 For each dimension, coordinates outside of the box are moved to the nearest
 edge of the box. The point and box must have an equal number of dimensions.
 """
-function Base.clamp(point::Point{Dim}, box::Box{Dim}) where {Dim}
+function Base.clamp(point::Point, box::Box)
   x = to(point)
   lo = to(minimum(box))
   hi = to(maximum(box))
-  ntuple(Dim) do i
+  ntuple(embeddim(point)) do i
     clamp(x[i], lo[i], hi[i])
   end |> Point
 end

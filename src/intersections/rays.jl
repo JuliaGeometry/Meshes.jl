@@ -10,7 +10,7 @@
 # 4. overlap with aligned vectors (PosOverlapping -> Ray)
 # 5. overlap with colliding vectors (NegOverlapping -> Segment)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray₁::Ray{Dim}, ray₂::Ray{Dim}) where {Dim}
+function intersection(f, ray₁::Ray, ray₂::Ray)
   a, b = ray₁(0), ray₁(1)
   c, d = ray₂(0), ray₂(1)
 
@@ -70,7 +70,7 @@ end
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, ray::Ray{Dim}, line::Line{Dim}) where {Dim}
+function intersection(f, ray::Ray, line::Line)
   a, b = ray(0), ray(1)
   c, d = line(0), line(1)
 
@@ -98,7 +98,7 @@ end
 
 # Williams A, Barrus S, Morley R K, et al., 2005.
 # (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
-function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
+function intersection(f, ray::Ray, box::Box)
   ℒ = lentype(ray)
   invdir = inv.(ray(1) - ray(0))
   lo, up = to.(extrema(box))
@@ -109,7 +109,7 @@ function intersection(f, ray::Ray{Dim}, box::Box{Dim}) where {Dim}
   tmax = typemax(T)
 
   # check for intersection with slabs along with each axis
-  for i in 1:Dim
+  for i in 1:embeddim(ray)
     imin = (lo[i] - orig[i]) * invdir[i]
     imax = (up[i] - orig[i]) * invdir[i]
 
@@ -142,7 +142,7 @@ end
 #
 # Möller, T. & Trumbore, B., 1997.
 # (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
-function intersection(f, ray::Ray{3}, tri::Triangle{3})
+function intersection(f, ray::Ray, tri::Triangle)
   vs = vertices(tri)
   o = ray(0)
   d = ray(1) - ray(0)

@@ -24,7 +24,7 @@ function clip(poly::Polygon, other::Geometry, method::SutherlandHodgman)
   isempty(r) ? nothing : PolyArea(r)
 end
 
-function clip(ring::Ring{Dim}, other::Ring{Dim}, ::SutherlandHodgman) where {Dim}
+function clip(ring::Ring, other::Ring, ::SutherlandHodgman)
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 
