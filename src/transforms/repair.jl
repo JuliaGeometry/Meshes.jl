@@ -72,8 +72,7 @@ end
 # OPERATION (7)
 # --------------
 
-# HalfEdgeTopology constructor
-# performs orientation of faces
+# HalfEdgeTopology constructor performs orientation of faces
 apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 
 # --------------

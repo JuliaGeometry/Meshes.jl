@@ -18,7 +18,9 @@ See also [`decimate`](@ref).
 """
 function simplify end
 
-simplify(box::Box{2}, method::SimplificationMethod) = PolyArea(simplify(boundary(box), method))
+simplify(box::Box, method::SimplificationMethod) = _simplify(box, Val(embeddim(box)), method)
+
+_simplify(box::Box, ::Val{2}, method::SimplificationMethod) = PolyArea(simplify(boundary(box), method))
 
 simplify(polygon::Polygon, method::SimplificationMethod) = PolyArea([simplify(ring, method) for ring in rings(polygon)])
 

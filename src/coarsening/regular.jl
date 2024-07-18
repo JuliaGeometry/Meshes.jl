@@ -20,25 +20,25 @@ end
 
 RegularCoarsening(factors::Vararg{Int,N}) where {N} = RegularCoarsening(factors)
 
-function coarsen(grid::CartesianGrid{Dim}, method::RegularCoarsening) where {Dim}
-  factors = fitdims(method.factors, Dim)
+function coarsen(grid::CartesianGrid, method::RegularCoarsening)
+  factors = fitdims(method.factors, embeddim(grid))
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .÷ factors)
 end
 
-function coarsen(grid::RectilinearGrid{Datum,Dim}, method::RegularCoarsening) where {Datum,Dim}
-  factors = fitdims(method.factors, Dim)
+function coarsen(grid::RectilinearGrid{Datum}, method::RegularCoarsening) where {Datum}
+  factors = fitdims(method.factors, embeddim(grid))
   dims = size(grid) .+ .!isperiodic(grid)
-  rngs = ntuple(i -> 1:factors[i]:dims[i], Dim)
+  rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
   xyzₛ = xyz(grid)
-  xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], Dim)
+  xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], embeddim(grid))
   RectilinearGrid{Datum}(xyzₜ)
 end
 
-function coarsen(grid::StructuredGrid{Datum,Dim}, method::RegularCoarsening) where {Datum,Dim}
-  factors = fitdims(method.factors, Dim)
+function coarsen(grid::StructuredGrid{Datum}, method::RegularCoarsening) where {Datum}
+  factors = fitdims(method.factors, embeddim(grid))
   dims = size(grid) .+ .!isperiodic(grid)
-  rngs = ntuple(i -> 1:factors[i]:dims[i], Dim)
+  rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
   XYZₛ = XYZ(grid)
-  XYZₜ = ntuple(i -> XYZₛ[i][rngs...], Dim)
+  XYZₜ = ntuple(i -> XYZₛ[i][rngs...], embeddim(grid))
   StructuredGrid{Datum}(XYZₜ)
 end

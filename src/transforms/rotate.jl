@@ -67,9 +67,11 @@ applycoord(t::Rotate, v::Vec) = urotapply(t.rot, v)
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Rotate, b::Box{2}) = applycoord(t, convert(Quadrangle, b))
+applycoord(t::Rotate, b::Box) = _applycoord(t, b, Val(embeddim(b)))
 
-applycoord(t::Rotate, b::Box{3}) = applycoord(t, convert(Hexahedron, b))
+_applycoord(t::Rotate, b::Box, ::Val{2}) = applycoord(t, convert(Quadrangle, b))
+
+_applycoord(t::Rotate, b::Box, ::Val{3}) = applycoord(t, convert(Hexahedron, b))
 
 applycoord(t::Rotate, g::CartesianGrid) = TransformedGrid(g, t)
 
