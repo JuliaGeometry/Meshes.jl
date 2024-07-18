@@ -10,7 +10,7 @@
     @test extrema(grid) == (cart(0), cart(100))
     @test spacing(grid) == (T(1) * u"m",)
     @test nelements(grid) == 100
-    @test eltype(grid) <: Segment{1}
+    @test eltype(grid) <: Segment
     @test measure(grid) ≈ T(100) * u"m"
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
@@ -81,7 +81,7 @@
     @test extrema(grid) == (cart(0, 0, 0), cart(100, 50, 25))
     @test spacing(grid) == (T(5) * u"m", T(5) * u"m", T(5) * u"m")
     @test nelements(grid) == 20 * 10 * 5
-    @test eltype(grid) <: Hexahedron{3}
+    @test eltype(grid) <: Hexahedron
     @test vertices(grid[1]) == (
       cart(0, 0, 0),
       cart(5, 0, 0),

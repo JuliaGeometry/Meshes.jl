@@ -113,7 +113,7 @@ CartesianGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NT
 function CartesianGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, embeddim(start)))
   origin = start
   spacing = Tuple((finish - start) ./ dims)
-  offset = ntuple(i -> 1, Dim)
+  offset = ntuple(i -> 1, length(dims))
   CartesianGrid(dims, origin, spacing, offset)
 end
 

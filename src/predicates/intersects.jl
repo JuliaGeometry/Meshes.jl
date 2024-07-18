@@ -66,6 +66,7 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
 function intersects(g₁::Geometry, g₂::Geometry)
+  Dim = embeddim(g₁)
   ℒ = lentype(g₁)
 
   # must have intersection of bounding boxes
