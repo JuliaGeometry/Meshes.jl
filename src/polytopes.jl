@@ -47,7 +47,7 @@ end
 # -------------------
 
 """
-    Chain{Dim,CRS}
+    Chain{CRS}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
 See <https://en.wikipedia.org/wiki/Polygonal_chain>.
@@ -154,7 +154,7 @@ include("polytopes/ring.jl")
 # ---------------------
 
 """
-    Polygon{Dim,CRS}
+    Polygon{CRS}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
@@ -193,7 +193,7 @@ include("polytopes/polyarea.jl")
 # ------------------------
 
 """
-    Polyhedron{Dim,CRS}
+    Polyhedron{CRS}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 

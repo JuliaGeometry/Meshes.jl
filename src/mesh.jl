@@ -3,10 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{Dim,CRS,TP}
+    Mesh{CRS,TP}
 
-A mesh embedded in a `Dim`-dimensional space with given
-coordinate reference system `CRS` and topology of type `TP`.
+A mesh with given coordinate reference system `CRS` and topology of type `TP`.
 """
 abstract type Mesh{CRS,TP<:Topology} <: Domain{CRS} end
 
@@ -139,16 +138,16 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
 end
 
 """
-    Grid{Dim,CRS}
+    Grid{CRS,Dim}
 
-A grid embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`.
+A grid with given coordinate reference system `CRS` embedded in a `Dim`-dimensional space.
 """
 const Grid{CRS,Dim} = Mesh{CRS,GridTopology{Dim}}
 
 """
-    SubGrid{Dim,CRS}
+    SubGrid{CRS,Dim}
 
-A view of a grid in a `Dim`-dimensinoal space with given coordinate reference system `CRS`.
+A view of a grid with given coordinate reference system `CRS` embedded in a `Dim`-dimensinoal space.
 """
 const SubGrid{CRS,Dim} = SubDomain{CRS,<:Grid{CRS,Dim}}
 
