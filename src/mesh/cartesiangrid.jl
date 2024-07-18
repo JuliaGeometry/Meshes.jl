@@ -136,13 +136,13 @@ spacing(g::CartesianGrid) = g.spacing
 
 offset(g::CartesianGrid) = g.offset
 
-vertex(g::CartesianGrid{CRS,Dim}, ijk::Dims{Dim}) where {CRS,Dim} = g.origin + Vec((ijk .- g.offset) .* g.spacing)
+vertex(g::CartesianGrid, ijk::Dims) = g.origin + Vec((ijk .- g.offset) .* g.spacing)
 
-function xyz(g::CartesianGrid{CRS,Dim}) where {CRS,Dim}
+function xyz(g::CartesianGrid)
   dims = size(g)
   spac = spacing(g)
   orig = to(minimum(g))
-  ntuple(Dim) do i
+  ntuple(embeddim(g)) do i
     o, s, d = orig[i], spac[i], dims[i]
     range(start=o, step=s, length=(d + 1))
   end
@@ -155,7 +155,7 @@ function centroid(g::CartesianGrid, ind::Int)
   vertex(g, ijk) + Vec(spacing(g) ./ 2)
 end
 
-function Base.getindex(g::CartesianGrid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim}
+function Base.getindex(g::CartesianGrid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   offset = g.offset .- Tuple(first(I)) .+ 1

@@ -47,7 +47,7 @@ RectilinearGrid{Datum}(xyz...) where {Datum} = RectilinearGrid{Datum}(xyz)
 
 RectilinearGrid(args...) = RectilinearGrid{NoDatum}(args...)
 
-vertex(g::RectilinearGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
+vertex(g::RectilinearGrid{Datum}, ijk::Dims) where {Datum} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
 
 xyz(g::RectilinearGrid) = g.xyz
 
@@ -60,12 +60,12 @@ function centroid(g::RectilinearGrid, ind::Int)
   withcrs(g, (to(p1) + to(p2)) / 2)
 end
 
-function Base.getindex(g::RectilinearGrid{Datum,Dim}, I::CartesianIndices{Dim}) where {Datum,Dim}
+function Base.getindex(g::RectilinearGrid{Datum}, I::CartesianIndices) where {Datum}
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   start = Tuple(first(I))
   stop = Tuple(last(I)) .+ 1
-  xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], Dim)
+  xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], embeddim(g))
   RectilinearGrid{Datum}(xyz, GridTopology(dims))
 end
 

@@ -157,7 +157,7 @@ const SubGrid{CRS,Dim} = SubDomain{CRS,<:Grid{CRS,Dim}}
 
 Convert Cartesian index `ijk` to vertex on `grid`.
 """
-vertex(g::Grid{CRS,Dim}, ijk::CartesianIndex{Dim}) where {CRS,Dim} = vertex(g, ijk.I)
+vertex(g::Grid, ijk::CartesianIndex) = vertex(g, ijk.I)
 
 """
     xyz(grid)
@@ -183,7 +183,7 @@ Base.size(g::Grid) = size(topology(g))
 
 vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
 
-vertex(g::Grid{CRS,Dim}, ijk::Dims{Dim}) where {CRS,Dim} = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
+vertex(g::Grid, ijk::Dims) = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
 
 Base.minimum(g::Grid) = vertex(g, ntuple(i -> 1, embeddim(g)))
 Base.maximum(g::Grid) = vertex(g, size(g) .+ 1)
@@ -200,18 +200,15 @@ end
 
 Base.eltype(g::Grid) = typeof(first(g))
 
-Base.getindex(g::Grid{CRS,Dim}, ijk::Vararg{Int,Dim}) where {CRS,Dim} = element(g, LinearIndices(size(g))[ijk...])
+Base.getindex(g::Grid, ijk::Int...) = element(g, LinearIndices(size(g))[ijk...])
 
-@propagate_inbounds function Base.getindex(
-  g::Grid{CRS,Dim},
-  ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}
-) where {CRS,Dim}
+@propagate_inbounds function Base.getindex(g::Grid, ijk::Union{UnitRange{Int},Colon,Int}...)
   dims = size(g)
   ranges = ntuple(i -> _asrange(dims[i], ijk[i]), Dim)
   getindex(g, CartesianIndices(ranges))
 end
 
-function Base.getindex(g::Grid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim}
+function Base.getindex(g::Grid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   odims = size(g)
