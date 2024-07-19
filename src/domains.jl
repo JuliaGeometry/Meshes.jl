@@ -3,12 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{CRS,M}
+    Domain{M,CRS}
 
 A domain is an indexable collection of geometries (e.g. mesh)
-in a given coordinate reference system `CRS` and manifold `M`.
+in a given manifold `M` with point coordinates specified in
+coordinate reference system `CRS`.
 """
-abstract type Domain{CRS,M} end
+abstract type Domain{M,CRS} end
 
 """
     element(domain, ind)
