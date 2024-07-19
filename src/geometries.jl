@@ -79,11 +79,11 @@ include("multigeoms.jl")
 # ------------
 
 function Base.convert(::Type{<:Quadrangle}, b::Box)
-  assertdim(b, 2)
+  checkdim(b, 2)
   Quadrangle(vertices(boundary(b))...)
 end
 
 function Base.convert(::Type{<:Hexahedron}, b::Box)
-  assertdim(b, 3)
+  checkdim(b, 3)
   Hexahedron(vertices(boundary(b))...)
 end

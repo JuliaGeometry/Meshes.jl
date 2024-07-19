@@ -70,15 +70,13 @@ signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 # ----------
 
 function signarea(t::Triangle)
-  if embeddim(t) ≠ 2
-    throw(ArgumentError("signed area only defined for triangles embedded in R², use `area` instead"))
-  end
+  checkdim(t, 2)
   v = t.vertices
   signarea(v[1], v[2], v[3])
 end
 
 function normal(t::Triangle)
-  assertdim(t, 3)
+  checkdim(t, 3)
   A, B, C = t.vertices
   unormalize(ucross((B - A), (C - A)))
 end

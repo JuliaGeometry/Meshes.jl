@@ -13,12 +13,13 @@ Throws an `AssertionError(msg)` if `cond` is `false`.
 assertion(cond, msg) = cond || throw(AssertionError(msg))
 
 """
-    assertdim(geom, dim)
+    checkdim(geom, dim)
 
-Throws an `AssertionError` if the `embeddim` of the geometry `geom`
+Throws an `ArgumentError` if the `embeddim` of the geometry `geom`
 is different than the specified dimension `dim`. 
 """
-assertdim(geom, dim) = assertion(embeddim(geom) == dim, lazy"geometry must be embedded in $dim-dimensional space")
+checkdim(geom, dim) =
+  embeddim(geom) ≠ dim && throw(ArgumentError("geometry must be embedded in $dim-dimensional space"))
 
 """
     constructor(G)
@@ -78,7 +79,7 @@ flat(c::CRS) = convert(Cartesian, c)
 Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
 function signarea(A::Point, B::Point, C::Point)
-  assertdim(A, 2)
+  checkdim(A, 2)
   ((B - A) × (C - A)) / 2
 end
 
@@ -114,7 +115,7 @@ using the singular value decomposition (SVD).
 See <https://math.stackexchange.com/a/99317>.
 """
 function svdbasis(p::AbstractVector{<:Point})
-  assertdim(first(p), 3)
+  checkdim(first(p), 3)
   ℒ = lentype(eltype(p))
   X = reduce(hcat, to.(p))
   μ = sum(X, dims=2) / size(X, 2)
