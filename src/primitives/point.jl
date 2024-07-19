@@ -33,7 +33,7 @@ Point(1u"m", 2u"m", 3u"m") # integer is converted to float by design
   algorithms assume a continuous space. The conversion to float avoids
   `InexactError` and other unexpected results.
 """
-struct Point{C<:CRS} <: Primitive{C}
+struct Point{C<:CRS,M<:AbstractManifold} <: Primitive{C,M}
   coords::C
 end
 

@@ -7,12 +7,12 @@
 
 A 3D ellipsoid with given `radii`, `center` and `rotation`.
 """
-struct Ellipsoid{ℒ<:Len,C<:CRS,R} <: Primitive{C}
+struct Ellipsoid{C<:CRS,M<:AbstractManifold,R,ℒ<:Len} <: Primitive{C,M}
   radii::NTuple{3,ℒ}
-  center::Point{C}
+  center::Point{C,M}
   rotation::R
-  Ellipsoid(radii::NTuple{3,ℒ}, center::Point{C}, rotation::R) where {ℒ<:Len,C<:CRS,R} =
-    new{float(ℒ),C,R}(radii, center, rotation)
+  Ellipsoid(radii::NTuple{3,ℒ}, center::Point{C,M}, rotation::R) where {C<:CRS,M,R,ℒ<:Len} =
+    new{C,M,R,float(ℒ)}(radii, center, rotation)
 end
 
 Ellipsoid(radii::Tuple, center::Point, rotation) = Ellipsoid(addunit.(radii, u"m"), center, rotation)

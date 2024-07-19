@@ -13,8 +13,8 @@ defined by non-parallel vectors `u` and `v`.
 Alternatively specify point `p` and a given normal
 vector `n` to the plane.
 """
-struct Plane{C<:CRS,V<:Vec{3}} <: Primitive{C}
-  p::Point{C}
+struct Plane{C<:CRS,M<:AbstractManifold,P<:Point{C,M},V<:Vec{3}} <: Primitive{C,M}
+  p::P
   u::V
   v::V
 end

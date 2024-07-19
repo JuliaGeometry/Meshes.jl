@@ -9,8 +9,8 @@ A ray originating at point `p`, pointed in direction `v`.
 It can be called as `r(t)` with `t > 0` to cast it at
 `p + t * v`.
 """
-struct Ray{C<:CRS,V<:Vec} <: Primitive{C}
-  p::Point{C}
+struct Ray{C<:CRS,M<:AbstractManifold,P<:Point,V<:Vec} <: Primitive{C,M}
+  p::P
   v::V
 end
 
