@@ -28,7 +28,7 @@ const TransformedGrid{CRS,Dim,G<:Grid{CRS,Dim},TR} = TransformedMesh{CRS,GridTop
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 
-@propagate_inbounds Base.getindex(g::TransformedGrid{CRS,Dim}, I::CartesianIndices{Dim}) where {CRS,Dim} =
+@propagate_inbounds Base.getindex(g::TransformedGrid, I::CartesianIndices) =
   TransformedGrid(getindex(g.mesh, I), g.transform)
 
 function Base.summary(io::IO, g::TransformedGrid)
