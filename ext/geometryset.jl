@@ -22,16 +22,9 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     inds = Makie.@lift findall(g -> g isa G, $geoms)
     gvec = Makie.@lift collect(G, $geoms[$inds])
     colors = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
-    rank = Makie.@lift paramdim(first($gvec))
-    if rank[] == 0
-      vizgset0D!(plot, gvec, colors)
-    elseif rank[] == 1
-      vizgset1D!(plot, gvec, colors)
-    elseif rank[] == 2
-      vizgset2D!(plot, gvec, colors)
-    elseif rank[] == 3
-      vizgset3D!(plot, gvec, colors)
-    end
+    pdim = Makie.@lift paramdim(first($gvec))
+    edim = Makie.@lift embeddim(first($gvec))
+    vizgset!(plot, Val(pdim[]), Val(edim[]), gvec, colors)
   end
 end
 
@@ -56,18 +49,18 @@ end
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
-function vizgset0D!(plot, geoms, colorant)
+function vizgset!(plot, ::Val{0}, ::Val, geoms, colorant)
   points = Makie.@lift pointify.($geoms)
   vizmany!(plot, points, colorant)
 end
 
-function vizgset1D!(plot, geoms, colorant)
+function vizgset!(plot, ::Val{1}, ::Val, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
   showfacets1D!(plot, geoms)
 end
 
-function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
+function vizgset!(plot, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
   rset = plot[:object]
   segmentsize = plot[:segmentsize]
 
@@ -84,15 +77,15 @@ function vizgset1D!(plot, geoms::ObservableVector{<:Ray}, colorant)
   showfacets1D!(plot, geoms)
 end
 
-function vizgset2D!(plot, geoms, colorant)
+function vizgset!(plot, ::Val{2}, ::Val, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
   showfacets2D!(plot, geoms)
 end
 
-const PolygonLike{Dim} = Union{Polygon{Dim},MultiPolygon{Dim}}
+const PolygonLike = Union{Polygon,MultiPolygon}
 
-function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
+function vizgset!(plot, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:PolygonLike}, colorant)
   showsegments = plot[:showsegments]
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
@@ -109,7 +102,7 @@ function vizgset2D!(plot, geoms::ObservableVector{<:PolygonLike{2}}, colorant)
   end
 end
 
-function vizgset3D!(plot, geoms, colorant)
+function vizgset!(plot, ::Val{3}, ::Val, geoms, colorant)
   meshes = Makie.@lift discretize.(boundary.($geoms))
   vizmany!(plot, meshes, colorant)
 end
@@ -155,6 +148,6 @@ function asmakie(poly::Polygon)
   end
 end
 
-asmakie(p::Point{Dim}) where {Dim} = Makie.Point{Dim}(ustrip.(Tuple(to(p))))
+asmakie(p::Point) = Makie.Point(ustrip.(Tuple(to(p))))
 
-asmakie(v::Vec{Dim}) where {Dim} = Makie.Vec{Dim}(ustrip.(Tuple(v)))
+asmakie(v::Vec) = Makie.Vec(ustrip.(Tuple(v)))

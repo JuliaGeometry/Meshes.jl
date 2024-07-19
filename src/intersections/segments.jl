@@ -9,7 +9,7 @@
 # 3. intersect at one endpoint of both segments (CornerTouching -> Point)
 # 4. overlap of segments (Overlapping -> Segments)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg₁::Segment{Dim}, seg₂::Segment{Dim}) where {Dim}
+function intersection(f, seg₁::Segment, seg₂::Segment)
   a, b = vertices(seg₁)
   c, d = vertices(seg₂)
 
@@ -104,7 +104,8 @@ end
 # 3. intersects at one end point of segment and origin of ray (CornerTouching -> Point)
 # 4. overlap at more than one point (Overlapping -> Segment)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{Dim}, ray::Ray{Dim}) where {Dim}
+function intersection(f, seg::Segment, ray::Ray)
+  Dim = embeddim(seg)
   a, b = ray(0), ray(1)
   c, d = seg(0), seg(1)
 
@@ -173,7 +174,7 @@ end
 # 2. intersect at an end point of segment (Touching -> Point)
 # 3. overlap of line and segment (Overlapping -> Segment)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{Dim}, line::Line{Dim}) where {Dim}
+function intersection(f, seg::Segment, line::Line)
   a, b = line(0), line(1)
   c, d = seg(0), seg(1)
 
@@ -204,7 +205,7 @@ end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-function intersection(f, seg::Segment{3}, tri::Triangle{3})
+function intersection(f, seg::Segment, tri::Triangle)
   Q1, Q2 = vertices(seg)
   V1, V2, V3 = vertices(tri)
 

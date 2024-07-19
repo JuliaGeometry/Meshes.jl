@@ -13,6 +13,15 @@ Throws an `AssertionError(msg)` if `cond` is `false`.
 assertion(cond, msg) = cond || throw(AssertionError(msg))
 
 """
+    checkdim(geom, dim)
+
+Throws an `ArgumentError` if the `embeddim` of the geometry `geom`
+is different than the specified dimension `dim`. 
+"""
+checkdim(geom, dim) =
+  embeddim(geom) ≠ dim && throw(ArgumentError("geometry must be embedded in $dim-dimensional space"))
+
+"""
     constructor(G)
 
 Given a (parametric) type `G{T₁,T₂,...}`, return the type `G`.
@@ -69,7 +78,8 @@ flat(c::CRS) = convert(Cartesian, c)
 
 Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
-function signarea(A::Point{2}, B::Point{2}, C::Point{2})
+function signarea(A::Point, B::Point, C::Point)
+  checkdim(A, 2)
   ((B - A) × (C - A)) / 2
 end
 
@@ -104,7 +114,8 @@ using the singular value decomposition (SVD).
 
 See <https://math.stackexchange.com/a/99317>.
 """
-function svdbasis(p::AbstractVector{<:Point{3}})
+function svdbasis(p::AbstractVector{<:Point})
+  checkdim(first(p), 3)
   ℒ = lentype(eltype(p))
   X = reduce(hcat, to.(p))
   μ = sum(X, dims=2) / size(X, 2)
@@ -146,7 +157,7 @@ calculated in order to identify the intersection type:
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
-function intersectparameters(a::Point{Dim}, b::Point{Dim}, c::Point{Dim}, d::Point{Dim}) where {Dim}
+function intersectparameters(a::Point, b::Point, c::Point, d::Point)
   A = ustrip.([(b - a) (c - d)])
   y = ustrip.(c - a)
   T = eltype(A)

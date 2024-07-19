@@ -9,10 +9,10 @@ A closed polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
 See also [`Chain`](@ref) and [`Rope`](@ref).
 """
-struct Ring{Dim,C<:CRS,V<:CircularVector{Point{Dim,C}}} <: Chain{Dim,C}
+struct Ring{C<:CRS,V<:CircularVector{Point{C}}} <: Chain{C}
   vertices::V
 
-  function Ring{Dim,C,V}(vertices) where {Dim,C<:CRS,V<:CircularVector{Point{Dim,C}}}
+  function Ring{C,V}(vertices) where {C<:CRS,V<:CircularVector{Point{C}}}
     if first(vertices) == last(vertices) && length(vertices) ≥ 2
       throw(ArgumentError("""
       First and last vertices of `Ring` constructor must be different
@@ -24,7 +24,7 @@ struct Ring{Dim,C<:CRS,V<:CircularVector{Point{Dim,C}}} <: Chain{Dim,C}
   end
 end
 
-Ring(vertices::CircularVector{Point{Dim,C}}) where {Dim,C<:CRS} = Ring{Dim,C,typeof(vertices)}(vertices)
+Ring(vertices::CircularVector{Point{C}}) where {C<:CRS} = Ring{C,typeof(vertices)}(vertices)
 Ring(vertices::Tuple...) = Ring([Point(v) for v in vertices])
 Ring(vertices::P...) where {P<:Point} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
@@ -65,10 +65,8 @@ Return inner angles of the `ring`. Inner
 angles are always positive, and unlike
 `angles` they can be greater than `π`.
 """
-function innerangles(r::Ring{2})
+function innerangles(r::Ring)
   # correct sign of angles in case orientation is CW
   θs = orientation(r) == CW ? -angles(r) : angles(r)
   [θ > 0 ? 2 * oftype(θ, π) - θ : -θ for θ in θs]
 end
-
-innerangles(r::Ring{3}) = innerangles(Ring(proj2D(vertices(r))))

@@ -20,11 +20,11 @@ isperiodic(b::BezierCurve) = (first(controls(b)) == last(controls(b)),)
 
 isperiodic(::Type{<:Plane}) = (false, false)
 
-isperiodic(::Type{<:Box{Dim}}) where {Dim} = ntuple(i -> false, Dim)
+isperiodic(B::Type{<:Box}) = ntuple(i -> false, embeddim(B))
 
-isperiodic(::Type{<:Ball{Dim}}) where {Dim} = ntuple(i -> i != 1, Dim)
+isperiodic(B::Type{<:Ball}) = ntuple(i -> i != 1, embeddim(B))
 
-isperiodic(::Type{<:Sphere{Dim}}) where {Dim} = ntuple(i -> true, Dim - 1)
+isperiodic(S::Type{<:Sphere}) = ntuple(i -> true, embeddim(S) - 1)
 
 isperiodic(::Type{<:Ellipsoid}) = (true, true)
 

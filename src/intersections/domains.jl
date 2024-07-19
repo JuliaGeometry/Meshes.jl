@@ -13,9 +13,9 @@ end
 
 intersection(f, dom::Domain, pset::PointSet) = intersection(f, Multi(collect(dom)), pset)
 
-function intersection(f, dom₁::Domain{Dim}, dom₂::Domain{Dim}) where {Dim}
+function intersection(f, dom₁::Domain, dom₂::Domain)
   # loop over all geometries
-  gs = Geometry{Dim}[]
+  gs = Geometry[]
   for g₁ in dom₁, g₂ in dom₂
     g = g₁ ∩ g₂
     isnothing(g) || push!(gs, g)

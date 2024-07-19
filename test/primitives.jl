@@ -28,7 +28,7 @@
     @test cart(1) - cart(1) == vector(0)
     @test cart(1, 2) - cart(1, 1) == vector(0, 1)
     @test cart(1, 2, 3) - cart(1, 1, 1) == vector(0, 1, 2)
-    @test_throws MethodError cart(1, 2) - cart(1, 2, 3)
+    @test_throws DimensionMismatch cart(1, 2) - cart(1, 2, 3)
 
     @test cart(1) + vector(0) == cart(1)
     @test cart(2) + vector(2) == cart(4)
@@ -36,7 +36,7 @@
     @test cart(2, 3) + vector(2, 1) == cart(4, 4)
     @test cart(1, 2, 3) + vector(0, 0, 0) == cart(1, 2, 3)
     @test cart(2, 3, 4) + vector(2, 1, 0) == cart(4, 4, 4)
-    @test_throws MethodError cart(1, 2) + vector(1, 2, 3)
+    @test_throws DimensionMismatch cart(1, 2) + vector(1, 2, 3)
 
     @test cart(1) - vector(0) == cart(1)
     @test cart(2) - vector(2) == cart(0)

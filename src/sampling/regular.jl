@@ -37,9 +37,13 @@ function sample(::AbstractRNG, geom::Geometry, method::RegularSampling)
   Iterators.flatmap(identity, (iᵣ, iₚ))
 end
 
-firstoffset(g::Geometry) = ntuple(i -> (n -> zero(n)), paramdim(g))
-lastoffset(g::Geometry) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
-extrapoints(::Geometry, sz) = ()
+firstoffset(g::Geometry) = _firstoffset(g, Val(embeddim(g)))
+lastoffset(g::Geometry) = _lastoffset(g, Val(embeddim(g)))
+extrapoints(g::Geometry, sz) = _extrapoints(g, Val(embeddim(g)), sz)
+
+_firstoffset(g::Geometry, ::Val) = ntuple(i -> (n -> zero(n)), paramdim(g))
+_lastoffset(g::Geometry, ::Val) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
+_extrapoints(::Geometry, ::Val, sz) = ()
 
 firstoffset(d::Disk) = (n -> inv(n), firstoffset(boundary(d))...)
 lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
@@ -49,9 +53,9 @@ firstoffset(b::Ball) = (n -> inv(n), firstoffset(boundary(b))...)
 lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
 extrapoints(b::Ball, sz) = (center(b),)
 
-firstoffset(::Sphere{3}) = (n -> inv(n + 1), n -> zero(n))
-lastoffset(::Sphere{3}) = (n -> inv(n + 1), n -> inv(n))
-extrapoints(s::Sphere{3}, sz) = (s(0, 0), s(1, 0))
+_firstoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> zero(n))
+_lastoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> inv(n))
+_extrapoints(s::Sphere, ::Val{3}, sz) = (s(0, 0), s(1, 0))
 
 firstoffset(::Ellipsoid) = (n -> inv(n + 1), n -> zero(n))
 lastoffset(::Ellipsoid) = (n -> inv(n + 1), n -> inv(n))

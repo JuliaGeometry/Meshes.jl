@@ -39,10 +39,10 @@ function boundingbox(r::Ray)
   Box(withcrs(r, l), withcrs(r, u))
 end
 
-function boundingbox(s::Sphere{Dim}) where {Dim}
+function boundingbox(s::Sphere)
   c = center(s)
   r = radius(s)
-  r⃗ = Vec(ntuple(i -> r, Dim))
+  r⃗ = Vec(ntuple(i -> r, embeddim(s)))
   Box(c - r⃗, c + r⃗)
 end
 

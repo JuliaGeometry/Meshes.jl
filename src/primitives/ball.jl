@@ -9,10 +9,10 @@ A ball with `center` and `radius`.
 
 See also [`Sphere`](@ref).
 """
-struct Ball{Dim,C<:CRS,ℒ<:Len} <: Primitive{Dim,C}
-  center::Point{Dim,C}
+struct Ball{C<:CRS,ℒ<:Len} <: Primitive{C}
+  center::Point{C}
   radius::ℒ
-  Ball(center::Point{Dim,C}, radius::ℒ) where {Dim,C<:CRS,ℒ<:Len} = new{Dim,C,float(ℒ)}(center, radius)
+  Ball(center::Point{C}, radius::ℒ) where {C<:CRS,ℒ<:Len} = new{C,float(ℒ)}(center, radius)
 end
 
 Ball(center::Point, radius) = Ball(center, addunit(radius, u"m"))
@@ -23,7 +23,7 @@ Ball(center::Point) = Ball(center, oneunit(lentype(center)))
 
 Ball(center::Tuple) = Ball(Point(center))
 
-paramdim(::Type{<:Ball{Dim}}) where {Dim} = Dim
+paramdim(B::Type{<:Ball}) = embeddim(B)
 
 center(b::Ball) = b.center
 
@@ -34,7 +34,9 @@ radius(b::Ball) = b.radius
 Base.isapprox(b₁::Ball, b₂::Ball; atol=atol(lentype(b₁)), kwargs...) =
   isapprox(b₁.center, b₂.center; atol, kwargs...) && isapprox(b₁.radius, b₂.radius; atol, kwargs...)
 
-function (b::Ball{2})(ρ, φ)
+(b::Ball)(args...) = _ball(Val(embeddim(b)), b, args...)
+
+function _ball(::Val{2}, b, ρ, φ)
   T = numtype(lentype(b))
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
@@ -48,7 +50,7 @@ function (b::Ball{2})(ρ, φ)
   c + Vec(x, y)
 end
 
-function (b::Ball{3})(ρ, θ, φ)
+function _ball(::Val{3}, b, ρ, θ, φ)
   T = numtype(lentype(b))
   if (ρ < 0 || ρ > 1) || (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, θ, φ), "b(ρ, θ, φ) is not defined for ρ, θ, φ outside [0, 1]³."))

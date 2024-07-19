@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const SubCartesianGrid{Dim,CRS} = SubDomain{Dim,CRS,<:CartesianGrid{Dim,CRS}}
+const SubCartesianGrid{CRS} = SubDomain{CRS,<:CartesianGrid{CRS}}
 
 function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
   subgrid = plot[:object]

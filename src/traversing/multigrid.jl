@@ -10,7 +10,8 @@ the coarsest scale and moves to progressively finer scales.
 """
 struct MultiGridPath <: Path end
 
-function traverse(grid::Grid{Dim}, ::MultiGridPath) where {Dim}
+function traverse(grid::Grid, ::MultiGridPath)
+  Dim = embeddim(grid)
   dims = size(grid)
   nelems = prod(dims)
   linear = LinearIndices(dims)

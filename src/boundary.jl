@@ -23,16 +23,18 @@ end
 
 boundary(::Plane) = nothing
 
-boundary(b::Box{1}) = Multi([minimum(b), maximum(b)])
+boundary(b::Box) = _boundary(b, Val(embeddim(b)))
 
-function boundary(b::Box{2})
+_boundary(b::Box, ::Val{1}) = Multi([minimum(b), maximum(b)])
+
+function _boundary(b::Box, ::Val{2})
   A = to(minimum(b))
   B = to(maximum(b))
   v = Point.([(A[1], A[2]), (B[1], A[2]), (B[1], B[2]), (A[1], B[2])])
   Ring(v)
 end
 
-function boundary(b::Box{3})
+function _boundary(b::Box, ::Val{3})
   A = to(minimum(b))
   B = to(maximum(b))
   v =

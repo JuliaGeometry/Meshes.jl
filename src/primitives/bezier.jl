@@ -17,10 +17,10 @@ large number of points but less precise, can be used via
 ## Examples
 
 ```julia
-BezierCurve(Point2[(0.,0.),(1.,-1.)])
+BezierCurve([(0.,0.),(1.,-1.)])
 ```
 """
-struct BezierCurve{Dim,C<:CRS,V<:AbstractVector{Point{Dim,C}}} <: Primitive{Dim,C}
+struct BezierCurve{C<:CRS,V<:AbstractVector{Point{C}}} <: Primitive{C}
   controls::V
 end
 

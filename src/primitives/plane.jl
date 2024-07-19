@@ -13,10 +13,10 @@ defined by non-parallel vectors `u` and `v`.
 Alternatively specify point `p` and a given normal
 vector `n` to the plane.
 """
-struct Plane{C<:CRS,ℒ<:Len} <: Primitive{3,C}
-  p::Point{3,C}
-  u::Vec{3,ℒ}
-  v::Vec{3,ℒ}
+struct Plane{C<:CRS,V<:Vec{3}} <: Primitive{C}
+  p::Point{C}
+  u::V
+  v::V
 end
 
 function Plane(p::Point, n::Vec)

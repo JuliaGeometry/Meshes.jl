@@ -65,7 +65,8 @@ intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, bo
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
-function intersects(g₁::Geometry{Dim}, g₂::Geometry{Dim}) where {Dim}
+function intersects(g₁::Geometry, g₂::Geometry)
+  Dim = embeddim(g₁)
   ℒ = lentype(g₁)
 
   # must have intersection of bounding boxes
@@ -121,9 +122,9 @@ make room for the next point. A complete simplex must have `Dim + 1` points.
 
 See also [`intersects`](@ref).
 """
-function gjk! end
+gjk!(O::Point, points) = _gjk!(Val(embeddim(O)), O, points)
 
-function gjk!(O::Point{2}, points)
+function _gjk!(::Val{2}, O, points)
   # line segment case
   if length(points) == 2
     B, A = points
@@ -151,7 +152,7 @@ function gjk!(O::Point{2}, points)
   d
 end
 
-function gjk!(O::Point{3}, points)
+function _gjk!(::Val{3}, O, points)
   # line segment case
   if length(points) == 2
     B, A = points

@@ -10,7 +10,7 @@
     @test extrema(grid) == (cart(0), cart(100))
     @test spacing(grid) == (T(1) * u"m",)
     @test nelements(grid) == 100
-    @test eltype(grid) <: Segment{1}
+    @test eltype(grid) <: Segment
     @test measure(grid) ≈ T(100) * u"m"
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
@@ -27,7 +27,7 @@
     @test extrema(grid) == (cart(0, 0), cart(200, 100))
     @test spacing(grid) == (T(1) * u"m", T(1) * u"m")
     @test nelements(grid) == 200 * 100
-    @test eltype(grid) <: Quadrangle{2}
+    @test eltype(grid) <: Quadrangle
     @test measure(grid) ≈ T(200 * 100) * u"m^2"
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
@@ -44,7 +44,7 @@
     @test extrema(grid) == (cart(0, 0, 0), cart(200, 100, 50))
     @test spacing(grid) == (T(1) * u"m", T(1) * u"m", T(1) * u"m")
     @test nelements(grid) == 200 * 100 * 50
-    @test eltype(grid) <: Hexahedron{3}
+    @test eltype(grid) <: Hexahedron
     @test measure(grid) ≈ T(200 * 100 * 50) * u"m^3"
     @test vertex(grid, 1) == vertex(grid, ntuple(i -> 1, embeddim(grid)))
     @test vertex(grid, nvertices(grid)) == vertex(grid, size(grid) .+ 1)
@@ -69,7 +69,7 @@
     @test maximum(grid) == cart(1.0, 1.0)
     @test spacing(grid) == (T(2 / 200) * u"m", T(2 / 100) * u"m")
     @test nelements(grid) == 200 * 100
-    @test eltype(grid) <: Quadrangle{2}
+    @test eltype(grid) <: Quadrangle
 
     grid = CartesianGrid((20, 10, 5), T.((0, 0, 0)), T.((5, 5, 5)))
     @test embeddim(grid) == 3
@@ -81,7 +81,7 @@
     @test extrema(grid) == (cart(0, 0, 0), cart(100, 50, 25))
     @test spacing(grid) == (T(5) * u"m", T(5) * u"m", T(5) * u"m")
     @test nelements(grid) == 20 * 10 * 5
-    @test eltype(grid) <: Hexahedron{3}
+    @test eltype(grid) <: Hexahedron
     @test vertices(grid[1]) == (
       cart(0, 0, 0),
       cart(5, 0, 0),
@@ -104,7 +104,7 @@
     @test maximum(grid) == cart(10.0, 10.0)
     @test spacing(grid) == (T(1) * u"m", T(1) * u"m")
     @test nelements(grid) == 10 * 10
-    @test eltype(grid) <: Quadrangle{2}
+    @test eltype(grid) <: Quadrangle
 
     # mixed units
     grid = CartesianGrid((10, 10), (T(0) * u"m", T(0) * u"cm"), (T(100) * u"cm", T(1) * u"m"))
@@ -167,7 +167,7 @@
     @test centroid(grid, 2) == cart(1.5, 0.5)
     @test centroid(grid, 200 * 100) == cart(199.5, 99.5)
     @test nelements(grid) == 200 * 100
-    @test eltype(grid) <: Quadrangle{2}
+    @test eltype(grid) <: Quadrangle
     @test grid[1] == Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     @test grid[2] == Quadrangle(cart(1, 0), cart(2, 0), cart(2, 1), cart(1, 1))
 
@@ -257,7 +257,7 @@
     @test maximum(grid) == cart(1, 1)
     @test extrema(grid) == (cart(0, 0), cart(1, 1))
     @test nelements(grid) == 25
-    @test eltype(grid) <: Quadrangle{2}
+    @test eltype(grid) <: Quadrangle
     @test measure(grid) ≈ T(1) * u"m^2"
     @test centroid(grid, 1) ≈ cart(0.1, 0.05)
     @test centroid(grid[1]) ≈ cart(0.1, 0.05)
@@ -383,7 +383,7 @@
     @test maximum(grid) == cart(1, 1)
     @test extrema(grid) == (cart(0, 0), cart(1, 1))
     @test nelements(grid) == 25
-    @test eltype(grid) <: Quadrangle{2}
+    @test eltype(grid) <: Quadrangle
     @test measure(grid) ≈ T(1) * u"m^2"
     @test centroid(grid, 1) ≈ cart(0.1, 0.05)
     @test centroid(grid[1]) ≈ cart(0.1, 0.05)
@@ -526,7 +526,7 @@
     for i in 1:length(triangles)
       @test mesh[i] == triangles[i]
     end
-    @test eltype(mesh) <: Triangle{2}
+    @test eltype(mesh) <: Triangle
     @test measure(mesh) ≈ T(1) * u"m^2"
     @test area(mesh) ≈ T(1) * u"m^2"
     @test extrema(mesh) == (cart(0, 0), cart(1, 1))
@@ -535,17 +535,17 @@
     coords = [T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))]
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(coords, SimpleTopology(connec))
-    @test eltype(mesh) <: Triangle{2}
+    @test eltype(mesh) <: Triangle
     @test topology(mesh) isa SimpleTopology
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 4
     mesh = SimpleMesh(coords, connec)
-    @test eltype(mesh) <: Triangle{2}
+    @test eltype(mesh) <: Triangle
     @test topology(mesh) isa SimpleTopology
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 4
     mesh = SimpleMesh(coords, connec, relations=true)
-    @test eltype(mesh) <: Triangle{2}
+    @test eltype(mesh) <: Triangle
     @test topology(mesh) isa HalfEdgeTopology
     @test nvertices(mesh) == 5
     @test nelements(mesh) == 4
@@ -565,7 +565,7 @@
     for i in 1:length(elms)
       @test mesh[i] == elms[i]
     end
-    @test eltype(mesh) <: Polygon{2}
+    @test eltype(mesh) <: Polygon
 
     # test for https://github.com/JuliaGeometry/Meshes.jl/issues/177
     points = cart.([(0, 0, 0), (1, 0, 0), (1, 1, 1), (0, 1, 0)])

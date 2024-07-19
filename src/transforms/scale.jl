@@ -46,11 +46,13 @@ applycoord(t::Scale, v::Vec) = t.factors .* v
 
 applycoord(t::Scale, b::Ball) = applycoord(t, discretize(b))
 
-applycoord(t::Scale, s::Sphere) = applycoord(t, discretize(s))
+applycoord(t::Scale{Dim}, s::Sphere) where {Dim} = _applycoord(t, s, Val(Dim), Val(embeddim(s)))
 
-applycoord(t::Scale{1}, s::Sphere) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
+_applycoord(t::Scale, s::Sphere, ::Val, ::Val) = applycoord(t, discretize(s))
 
-applycoord(t::Scale{3}, s::Sphere{3}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
+_applycoord(t::Scale, s::Sphere, ::Val{1}, ::Val) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
+
+_applycoord(t::Scale, s::Sphere, ::Val{3}, ::Val{3}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
 
 applycoord(t::Scale, e::Ellipsoid) = applycoord(t, discretize(e))
 

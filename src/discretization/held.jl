@@ -33,7 +33,7 @@ end
 
 HeldTriangulation(rng=Random.default_rng(); shuffle=true) = HeldTriangulation(rng, shuffle)
 
-function discretizewithin(ring::Ring{2}, method::HeldTriangulation)
+function _discretizewithin(ring::Ring, ::Val{2}, method::HeldTriangulation)
   # helper function to shuffle ears
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
 

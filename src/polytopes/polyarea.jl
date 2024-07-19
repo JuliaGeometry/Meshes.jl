@@ -24,10 +24,10 @@ in the real world, including issues with:
 * `degeneracy` - Sometimes data is shared with
   degenerate rings (e.g. only 2 vertices).
 """
-struct PolyArea{Dim,C<:CRS,R<:Ring{Dim,C}} <: Polygon{Dim,C}
+struct PolyArea{C<:CRS,R<:Ring{C}} <: Polygon{C}
   rings::Vector{R}
 
-  function PolyArea{Dim,C,R}(rings; fix=true) where {Dim,C<:CRS,R<:Ring{Dim,C}}
+  function PolyArea{C,R}(rings; fix=true) where {C<:CRS,R<:Ring{C}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -57,7 +57,7 @@ struct PolyArea{Dim,C<:CRS,R<:Ring{Dim,C}} <: Polygon{Dim,C}
   end
 end
 
-PolyArea(rings::AbstractVector{R}; fix=true) where {Dim,C<:CRS,R<:Ring{Dim,C}} = PolyArea{Dim,C,R}(rings; fix)
+PolyArea(rings::AbstractVector{R}; fix=true) where {C<:CRS,R<:Ring{C}} = PolyArea{C,R}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 

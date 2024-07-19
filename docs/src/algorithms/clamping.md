@@ -3,7 +3,7 @@
 Meshes adds methods to Julia's built-in `clamp` function. The additional methods clamp points to the edges of a box in any number of dimensions. The target points and boxes must have the same number of dimensions and the same numeric type.
 
 ```@docs
-clamp(::Point{Dim}, ::Box{Dim}) where {Dim}
+clamp(::Point, ::Box)
 clamp(::PointSet, ::Box)
 ```
 

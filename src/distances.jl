@@ -10,7 +10,7 @@ evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
 
 Evaluate the Euclidean `distance` between `point` and `line`.
 """
-function evaluate(::Euclidean, p::Point{Dim}, l::Line{Dim}) where {Dim}
+function evaluate(::Euclidean, p::Point, l::Line)
   a, b = l(0), l(1)
   u = p - a
   v = b - a
@@ -23,7 +23,7 @@ end
 
 Evaluate the minimum Euclidean `distance` between `line₁` and `line₂`.
 """
-function evaluate(d::Euclidean, l₁::Line{Dim}, l₂::Line{Dim}) where {Dim}
+function evaluate(d::Euclidean, l₁::Line, l₂::Line)
   λ₁, λ₂, r, rₐ = intersectparameters(l₁(0), l₁(1), l₂(0), l₂(1))
 
   if (r == rₐ == 2) || (r == rₐ == 1)  # lines intersect or are colinear
@@ -40,7 +40,7 @@ end
 
 Evaluate pre-metric `distance` between coordinates of `point₁` and `point₂`.
 """
-function evaluate(d::PreMetric, p₁::Point{Dim}, p₂::Point{Dim}) where {Dim}
+function evaluate(d::PreMetric, p₁::Point, p₂::Point)
   u₁ = unit(Meshes.lentype(p₁))
   u₂ = unit(Meshes.lentype(p₂))
   u = Unitful.promote_unit(u₁, u₂)
@@ -53,7 +53,7 @@ end
 # SPECIAL CASES
 # --------------
 
-function evaluate(d::Haversine, p₁::Point{Dim,<:LatLon}, p₂::Point{Dim,<:LatLon}) where {Dim}
+function evaluate(d::Haversine, p₁::Point{<:LatLon}, p₂::Point{<:LatLon})
   uᵣ = unit(d.radius)
   # add default unit if necessary
   u = uᵣ === NoUnits ? u"m" : NoUnits
@@ -64,10 +64,10 @@ function evaluate(d::Haversine, p₁::Point{Dim,<:LatLon}, p₂::Point{Dim,<:Lat
   evaluate(d, v₁, v₂) * u
 end
 
-evaluate(d::Haversine, p₁::Point{Dim}, p₂::Point{Dim}) where {Dim} =
+evaluate(d::Haversine, p₁::Point, p₂::Point) =
   evaluate(d, Point(convert(LatLon, coords(p₁))), Point(convert(LatLon, coords(p₂))))
 
-function evaluate(d::SphericalAngle, p₁::Point{Dim,<:LatLon}, p₂::Point{Dim,<:LatLon}) where {Dim}
+function evaluate(d::SphericalAngle, p₁::Point{<:LatLon}, p₂::Point{<:LatLon})
   latlon₁ = coords(p₁)
   latlon₂ = coords(p₂)
   v₁ = SVector(deg2rad(latlon₁.lon), deg2rad(latlon₁.lat))
@@ -75,5 +75,5 @@ function evaluate(d::SphericalAngle, p₁::Point{Dim,<:LatLon}, p₂::Point{Dim,
   evaluate(d, v₁, v₂) * u"rad"
 end
 
-evaluate(d::SphericalAngle, p₁::Point{Dim}, p₂::Point{Dim}) where {Dim} =
+evaluate(d::SphericalAngle, p₁::Point, p₂::Point) =
   evaluate(d, Point(convert(LatLon, coords(p₁))), Point(convert(LatLon, coords(p₂))))
