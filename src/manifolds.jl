@@ -7,15 +7,11 @@
 
 Euclidean manifold with dimension `Dim`.
 """
-abstract type 𝔼{Dim} <: AbstractManifold{ℝ} end
-
-manifold_dimension(::Type{𝔼{Dim}}) where {Dim} = Dim
+abstract type 𝔼{Dim} end
 
 """
     🌐
 
 Ellipsoid manifold for geodesic geometry.
 """
-abstract type 🌐 <: AbstractManifold{ℝ} end
-
-manifold_dimension(::Type{🌐}) = 2
+abstract type 🌐 end
