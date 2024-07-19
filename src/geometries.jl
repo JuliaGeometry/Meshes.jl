@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Geometry{CRS,M}
+    Geometry{M,CRS}
 
-A geometry in a given coordinate reference system `CRS` and manifold `M`.
+A geometry in a given manifold `M` with point coordinates specified
+in a coordinate reference system `CRS`.
 """
-abstract type Geometry{CRS,M} end
+abstract type Geometry{M,CRS} end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 
@@ -16,7 +17,7 @@ Broadcast.broadcastable(g::Geometry) = Ref(g)
 
 Return the number of dimensions of the space where the `geometry` is embedded.
 """
-embeddim(::Type{<:Geometry{CRS}}) where {CRS} = CoordRefSystems.ndims(CRS)
+embeddim(::Type{<:Geometry{M,CRS}}) where {M,CRS} = CoordRefSystems.ndims(CRS)
 embeddim(g::Geometry) = embeddim(typeof(g))
 
 """
@@ -34,7 +35,7 @@ paramdim(g::Geometry) = paramdim(typeof(g))
 
 Return the coordinate reference system (CRS) of the `geometry`.
 """
-crs(::Type{<:Geometry{CRS}}) where {CRS} = CRS
+crs(::Type{<:Geometry{M,CRS}}) where {M,CRS} = CRS
 crs(g::Geometry) = crs(typeof(g))
 
 """
@@ -42,7 +43,7 @@ crs(g::Geometry) = crs(typeof(g))
 
 Return the manifold where the `geometry` is defined.
 """
-manifold(::Type{<:Geometry{CRS,M}}) where {CRS,M} = M
+manifold(::Type{<:Geometry{M,CRS}}) where {M,CRS} = M
 manifold(g::Geometry) = manifold(typeof(g))
 
 """

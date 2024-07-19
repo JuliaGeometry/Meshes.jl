@@ -15,7 +15,7 @@ multiple polygons as a single entity (e.g. country with islands).
 - Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
   [`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
 """
-struct Multi{C<:CRS,M<:AbstractManifold,G<:Geometry{C,M}} <: Geometry{C,M}
+struct Multi{M<:AbstractManifold,C<:CRS,G<:Geometry{M,C}} <: Geometry{M,C}
   geoms::Vector{G}
 end
 
@@ -23,12 +23,12 @@ end
 Multi(geoms) = Multi(collect(geoms))
 
 # type aliases for convenience
-const MultiPoint{CRS} = Multi{CRS,<:Point{CRS}}
-const MultiSegment{CRS} = Multi{CRS,<:Segment{CRS}}
-const MultiRope{CRS} = Multi{CRS,<:Rope{CRS}}
-const MultiRing{CRS} = Multi{CRS,<:Ring{CRS}}
-const MultiPolygon{CRS} = Multi{CRS,<:Polygon{CRS}}
-const MultiPolyhedron{CRS} = Multi{CRS,<:Polyhedron{CRS}}
+const MultiPoint{M,CRS} = Multi{M,CRS,<:Point{M,CRS}}
+const MultiSegment{M,CRS} = Multi{M,CRS,<:Segment{M,CRS}}
+const MultiRope{M,CRS} = Multi{M,CRS,<:Rope{M,CRS}}
+const MultiRing{M,CRS} = Multi{M,CRS,<:Ring{M,CRS}}
+const MultiPolygon{M,CRS} = Multi{M,CRS,<:Polygon{M,CRS}}
+const MultiPolyhedron{M,CRS} = Multi{M,CRS,<:Polyhedron{M,CRS}}
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
