@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{CRS}
+    Domain{CRS,M}
 
-A domain is an indexable collection of geometries (e.g. mesh).
+A domain is an indexable collection of geometries (e.g. mesh)
+in a given coordinate reference system `CRS` and manifold `M`.
 """
-abstract type Domain{CRS} end
+abstract type Domain{CRS,M} end
 
 """
     element(domain, ind)
@@ -80,6 +81,14 @@ crs(::Type{<:Domain{CRS}}) where {CRS} = CRS
 crs(d::Domain) = crs(typeof(d))
 
 """
+    manifold(domain)
+
+Return the manifold where the `domain` is defined.
+"""
+manifold(::Type{<:Domain{CRS,M}}) where {CRS,M} = M
+manifold(d::Domain) = manifold(typeof(d))
+
+"""
     lentype(domain)
 
 Return the length type of the `domain`.
@@ -147,10 +156,10 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("subdomains.jl")
 include("sets.jl")
 include("mesh.jl")
 include("trajecs.jl")
+include("subdomains.jl")
 
 # ------------
 # CONVERSIONS

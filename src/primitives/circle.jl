@@ -10,10 +10,10 @@ given `plane` with given `radius`.
 
 See also [`Disk`](@ref).
 """
-struct Circle{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{C}
+struct Circle{C<:CRS,M<:AbstractManifold,P<:Plane{C,M},ℒ<:Len} <: Primitive{C,M}
   plane::P
   radius::ℒ
-  Circle(plane::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new{C,P,float(ℒ)}(plane, radius)
+  Circle(plane::P, radius::ℒ) where {C<:CRS,M<:AbstractManifold,P<:Plane{C},ℒ<:Len} = new{C,M,P,float(ℒ)}(plane, radius)
 end
 
 Circle(plane::Plane, radius) = Circle(plane, addunit(radius, u"m"))

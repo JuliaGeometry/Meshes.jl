@@ -9,10 +9,10 @@ A ball with `center` and `radius`.
 
 See also [`Sphere`](@ref).
 """
-struct Ball{C<:CRS,ℒ<:Len} <: Primitive{C}
-  center::Point{C}
+struct Ball{C<:CRS,M<:AbstractManifold,ℒ<:Len} <: Primitive{C,M}
+  center::Point{C,M}
   radius::ℒ
-  Ball(center::Point{C}, radius::ℒ) where {C<:CRS,ℒ<:Len} = new{C,float(ℒ)}(center, radius)
+  Ball(center::Point{C,M}, radius::ℒ) where {C<:CRS,M<:AbstractManifold,ℒ<:Len} = new{C,M,float(ℒ)}(center, radius)
 end
 
 Ball(center::Point, radius) = Ball(center, addunit(radius, u"m"))

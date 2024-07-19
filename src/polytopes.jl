@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{K,CRS}
+    Polytope{K,CRS,M}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
@@ -11,7 +11,7 @@ polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces.
 The parameter `K` is also known as the rank or parametric dimension 
 of the polytope (<https://en.wikipedia.org/wiki/Abstract_polytope>).
 The vertices are stored with coordinates in a given coordinate
-reference system `CRS`.
+reference system `CRS` and manifold `M`.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into
@@ -27,13 +27,13 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,CRS} <: Geometry{CRS} end
+abstract type Polytope{K,CRS,M} <: Geometry{CRS,M} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   expr = quote
-    $Base.@__doc__ struct $type{C<:CRS} <: Polytope{$K,C}
-      vertices::NTuple{$N,Point{C}}
+    $Base.@__doc__ struct $type{C<:CRS,M<:AbstractManifold} <: Polytope{$K,C,M}
+      vertices::NTuple{$N,Point{C,M}}
     end
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
@@ -47,7 +47,7 @@ end
 # -------------------
 
 """
-    Chain{CRS}
+    Chain{CRS,M}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
 See <https://en.wikipedia.org/wiki/Polygonal_chain>.
@@ -154,7 +154,7 @@ include("polytopes/ring.jl")
 # ---------------------
 
 """
-    Polygon{CRS}
+    Polygon{CRS,M}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
@@ -193,7 +193,7 @@ include("polytopes/polyarea.jl")
 # ------------------------
 
 """
-    Polyhedron{CRS}
+    Polyhedron{CRS,M}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 

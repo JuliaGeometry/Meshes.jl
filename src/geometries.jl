@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Geometry{CRS}
+    Geometry{CRS,M}
 
-A geometry with given coordinate reference system `CRS`.
+A geometry in a given coordinate reference system `CRS` and manifold `M`.
 """
-abstract type Geometry{CRS} end
+abstract type Geometry{CRS,M} end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 
@@ -36,6 +36,14 @@ Return the coordinate reference system (CRS) of the `geometry`.
 """
 crs(::Type{<:Geometry{CRS}}) where {CRS} = CRS
 crs(g::Geometry) = crs(typeof(g))
+
+"""
+    manifold(geometry)
+
+Return the manifold where the `geometry` is defined.
+"""
+manifold(::Type{<:Geometry{CRS,M}}) where {CRS,M} = M
+manifold(g::Geometry) = manifold(typeof(g))
 
 """
     lentype(geometry)

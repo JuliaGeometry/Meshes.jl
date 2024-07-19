@@ -27,6 +27,7 @@ using DelaunayTriangulation: each_solid_triangle
 using DelaunayTriangulation: each_polygon
 using DelaunayTriangulation: get_polygon_points
 using Transducers: Filter, Map, TakeWhile, tcollect, ⨟
+using ManifoldsBase: AbstractManifold, ℝ
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
@@ -47,6 +48,10 @@ import TransformsBase: parameters, preprocess
 # CoordRefSystems API
 import CoordRefSystems: lentype
 
+# Manifolds API
+import ManifoldsBase: manifold_dimension
+import ManifoldsBase: check_point
+
 # unit utils
 include("units.jl")
 
@@ -58,6 +63,9 @@ include("tolerances.jl")
 
 # basic vector type
 include("vectors.jl")
+
+# manifold types
+include("manifolds.jl")
 
 # geometries
 include("geometries.jl")
@@ -133,6 +141,10 @@ export
   ∠,
   ⋅,
   ×,
+
+  # manifolds
+  𝔼,
+  🌐,
 
   # geometries
   Geometry,
