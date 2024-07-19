@@ -18,7 +18,7 @@ assertion(cond, msg) = cond || throw(AssertionError(msg))
 Throws an `AssertionError` if the `embeddim` of the geometry `geom`
 is different than the specified dimension `dim`. 
 """
-assertdim(geom, dim) = assertion(embeddim(geom) == dim, "Geometry must be embedded in $dim-dimensional space.")
+assertdim(geom, dim) = assertion(embeddim(geom) == dim, lazy"geometry must be embedded in $dim-dimensional space")
 
 """
     constructor(G)
