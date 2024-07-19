@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Primitive{CRS,M}
+    Primitive{M,CRS}
 
 We say that a geometry is a primitive when it can be expressed as a single
 entity with no parts (a.k.a. atomic). For example, a sphere is a primitive

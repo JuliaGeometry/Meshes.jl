@@ -6,7 +6,8 @@
     Mesh{M,CRS,TP}
 
 A mesh of geometries in a given manifold `M` with point coordinates specified
-in a coordinate reference system `CRS`, and topology `TP`.
+in a coordinate reference system `CRS`. Unlike a general domain, a mesh has a
+well-defined topology `TP`.
 """
 abstract type Mesh{M,CRS,TP} <: Domain{M,CRS} end
 
@@ -142,7 +143,7 @@ end
     Grid{M,CRS,Dim}
 
 A grid of geometries in a given manifold `M` with points coordinates specified
-in a coordinate reference system `CRS`, embedded in a `Dim`-dimensional space.
+in a coordinate reference system `CRS`, which is embedded in `Dim` dimensions.
 """
 const Grid{M,CRS,Dim} = Mesh{M,CRS,GridTopology{Dim}}
 
