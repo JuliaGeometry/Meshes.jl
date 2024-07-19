@@ -50,7 +50,7 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{C<:CRS,Dim,ℒ<:Len} <: Grid{C,Dim}
+struct CartesianGrid{C<:CRS,Dim,ℒ<:Len} <: Grid{𝔼{Dim},C,Dim}
   origin::Point{C}
   spacing::NTuple{Dim,ℒ}
   offset::Dims{Dim}
