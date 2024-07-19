@@ -91,7 +91,8 @@ end
 discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-discretizewithin(ring::Ring, method::BoundaryDiscretizationMethod) = _discretizewithin(ring, Val(embeddim(ring)), method)
+discretizewithin(ring::Ring, method::BoundaryDiscretizationMethod) =
+  _discretizewithin(ring, Val(embeddim(ring)), method)
 
 function _discretizewithin(ring::Ring, ::Val{3}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
