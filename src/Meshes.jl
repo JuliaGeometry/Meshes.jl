@@ -50,7 +50,6 @@ import CoordRefSystems: lentype
 
 # Manifolds API
 import ManifoldsBase: manifold_dimension
-import ManifoldsBase: check_point
 
 # unit utils
 include("units.jl")
