@@ -310,24 +310,24 @@
   @testset "HomogeneousSampling" begin
     s = Segment(cart(0, 0), cart(1, 0))
     ps = sample(s, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(zero(ℳ) ≤ coords[1] ≤ oneunit(ℳ) for coords in to.(ps))
     @test all(coords[2] == zero(ℳ) for coords in to.(ps))
 
     s = Segment(cart(0, 0), cart(0, 1))
     ps = sample(s, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(coords[1] == zero(ℳ) for coords in to.(ps))
     @test all(zero(ℳ) ≤ coords[2] ≤ oneunit(ℳ) for coords in to.(ps))
 
     s = Segment(cart(0, 0), cart(1, 1))
     ps = sample(s, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(zero(ℳ) ≤ coords[1] == coords[2] ≤ oneunit(ℳ) for coords in to.(ps))
 
     c = Rope(cart(0, 0), cart(1, 0), cart(0, 1), cart(1, 1))
     ps = sample(c, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(
       coords[1] + coords[2] == oneunit(ℳ) || (zero(ℳ) ≤ coords[1] ≤ oneunit(ℳ) && coords[2] ∈ [zero(ℳ), oneunit(ℳ)]) for
       coords in to.(ps)
@@ -335,22 +335,22 @@
 
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     ps = sample(t, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(∈(t), ps)
 
     q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
     ps = sample(q, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(∈(q), ps)
 
     b = Ball(cart(10, 10), T(3))
     ps = sample(b, HomogeneousSampling(100))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(∈(b), ps)
 
     b = Ball(cart(10, 10, 10), T(10))
     ps = sample(b, HomogeneousSampling(100))
-    @test first(ps) isa Point{3}
+    @test first(ps) isa Point
     @test all(∈(b), ps)
 
     poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -363,10 +363,10 @@
     connec = connect.([(3, 1, 5), (4, 6, 2), (1, 2, 6, 5), (5, 6, 4, 3)])
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, HomogeneousSampling(400))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(∈(mesh), ps)
     ps = sample(mesh, HomogeneousSampling(400, 1:nelements(mesh)))
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(∈(mesh), ps)
   end
 
@@ -382,7 +382,7 @@
     mesh = SimpleMesh(points, connec)
     ps = sample(mesh, MinDistanceSampling(0.2))
     n = length(ps)
-    @test first(ps) isa Point{2}
+    @test first(ps) isa Point
     @test all(∈(mesh), ps)
     @test all(norm(ps[i] - ps[j]) ≥ T(0.2) * u"m" for i in 1:n for j in (i + 1):n)
 

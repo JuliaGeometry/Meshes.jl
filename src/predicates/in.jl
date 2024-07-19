@@ -11,7 +11,7 @@ Base.in(p::Point, g::Geometry) = sideof(p, boundary(g)) == IN
 
 Base.in(p₁::Point, p₂::Point) = p₁ == p₂
 
-function Base.in(p::Point{Dim}, s::Segment{Dim}) where {Dim}
+function Base.in(p::Point, s::Segment)
   # given collinear points (a, b, p), the point p intersects
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = vertices(s)
@@ -34,14 +34,14 @@ Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
-function Base.in(p::Point{Dim}, b::Ball{Dim}) where {Dim}
+function Base.in(p::Point, b::Ball)
   c = center(b)
   r = radius(b)
   s = norm(p - c)
   s < r || isapproxequal(s, r)
 end
 
-function Base.in(p::Point{Dim}, s::Sphere{Dim}) where {Dim}
+function Base.in(p::Point, s::Sphere)
   c = center(s)
   r = radius(s)
   s = norm(p - c)

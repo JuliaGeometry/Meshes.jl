@@ -40,7 +40,7 @@
   # view of view stores the correct domain
   g = cartgrid(10, 10)
   v = view(view(g, 11:20), 1:3)
-  @test v isa SubGrid{2}
+  @test v isa SubGrid
   @test v[1] == g[11]
   @test v[2] == g[12]
   @test v[3] == g[13]
@@ -58,7 +58,7 @@
   # concatenation with same parent
   g = cartgrid(10, 10)
   vg = vcat(view(g, 50:70), view(g, 10:30))
-  @test vg isa SubGrid{2}
+  @test vg isa SubGrid
   @test vg == view(g, [50:70; 10:30])
   # concatenation with different parents
   g1 = cartgrid(10, 10)
@@ -74,9 +74,9 @@
   v1 = view(d1, 1:500000)
   v2 = view(d2, 1:500000000)
   v3 = view(d3, [1, 3])
-  @test eltype(v1) <: Quadrangle{2}
-  @test eltype(v2) <: Hexahedron{3}
-  @test eltype(v3) <: Primitive{2}
+  @test eltype(v1) <: Quadrangle
+  @test eltype(v2) <: Hexahedron
+  @test eltype(v3) <: Primitive
 
   # show
   pset = PointSet(cart.(1:100, 1:100))

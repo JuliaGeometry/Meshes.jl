@@ -72,8 +72,7 @@ end
 # OPERATION (7)
 # --------------
 
-# HalfEdgeTopology constructor
-# performs orientation of faces
+# HalfEdgeTopology constructor performs orientation of faces
 apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 
 # --------------
@@ -168,7 +167,7 @@ apply(::Repair{10}, poly::Ngon) = poly, nothing
 
 revert(::Repair{10}, poly::Ngon, cache) = poly
 
-function _stretch10(g::Geometry{Dim}) where {Dim}
+function _stretch10(g::Geometry)
   T = numtype(lentype(g))
-  Stretch(ntuple(i -> one(T) + 10atol(T), Dim))
+  Stretch(ntuple(i -> one(T) + 10atol(T), embeddim(g)))
 end

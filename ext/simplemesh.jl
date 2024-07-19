@@ -3,20 +3,14 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
-  # retrieve mesh and rank
-  mesh = plot[:object][]
-  rank = paramdim(mesh)
-
-  if rank == 1
-    vizmesh1D!(plot)
-  elseif rank == 2
-    vizmesh2D!(plot)
-  elseif rank == 3
-    vizmesh3D!(plot)
-  end
+  # retrieve mesh and dimensions
+  mesh = plot[:object]
+  pdim = Makie.@lift paramdim($mesh)
+  edim = Makie.@lift embeddim($mesh)
+  vizmesh!(plot, Val(pdim[]), Val(edim[]))
 end
 
-function vizmesh1D!(plot)
+function vizmesh!(plot, ::Val{1}, ::Val)
   mesh = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -48,7 +42,7 @@ function vizmesh1D!(plot)
   Makie.lines!(plot, coords, color=colors, linewidth=segmentsize)
 end
 
-function vizmesh2D!(plot)
+function vizmesh!(plot, ::Val{2}, ::Val)
   mesh = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -187,7 +181,7 @@ function vizmesh2D!(plot)
   end
 end
 
-function vizmesh3D!(plot)
+function vizmesh!(plot, ::Val{3}, ::Val)
   mesh = plot[:object]
   color = plot[:color]
   meshes = Makie.@lift let

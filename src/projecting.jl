@@ -22,7 +22,7 @@ proj2D(p::PolyArea) = PolyArea(proj2D.(rings(p)))
 # IMPLEMENTATION
 # ---------------
 
-proj2D(points::AbstractVector{<:Point{3}}) = proj(points, svdbasis(points))
+proj2D(points::AbstractVector{<:Point}) = proj(points, svdbasis(points))
 
 function proj(points, basis)
   # retrieve basis

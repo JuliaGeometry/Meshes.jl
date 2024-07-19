@@ -23,7 +23,7 @@
     push!(geoms, Segment(cart(1, 0), cart(1, 1)))
     push!(geoms, Segment(cart(1, 1), cart(0, 0)))
     gset = GeometrySet(geoms)
-    @test eltype(gset) <: Segment{2}
+    @test eltype(gset) <: Segment
 
     # conversion
     grid = cartgrid(10, 10)
@@ -39,21 +39,21 @@
     @test crs(pset) <: Cartesian{NoDatum}
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
-    @test eltype(pset) <: Point{1}
+    @test eltype(pset) <: Point
 
     pset = PointSet(randpoint2(100))
     @test embeddim(pset) == 2
     @test crs(pset) <: Cartesian{NoDatum}
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
-    @test eltype(pset) <: Point{2}
+    @test eltype(pset) <: Point
 
     pset = PointSet(randpoint3(100))
     @test embeddim(pset) == 3
     @test crs(pset) <: Cartesian{NoDatum}
     @test Meshes.lentype(pset) === ℳ
     @test nelements(pset) == 100
-    @test eltype(pset) <: Point{3}
+    @test eltype(pset) <: Point
 
     pset1 = PointSet([cart(1, 2, 3), cart(4, 5, 6)])
     pset2 = PointSet(cart(1, 2, 3), cart(4, 5, 6))

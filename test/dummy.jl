@@ -1,12 +1,12 @@
 # dummy type implementing the Domain trait
-struct DummyDomain{Dim,C<:CRS} <: Domain{Dim,C}
-  origin::Point{Dim,C}
+struct DummyDomain{C<:CRS} <: Domain{C}
+  origin::Point{C}
 end
 
-function Meshes.element(domain::DummyDomain{Dim}, ind::Int) where {Dim}
+function Meshes.element(domain::DummyDomain, ind::Int)
   ℒ = Meshes.lentype(domain)
   T = Unitful.numtype(ℒ)
-  c = domain.origin + Vec(ntuple(i -> T(ind) * unit(ℒ), Dim))
+  c = domain.origin + Vec(ntuple(i -> T(ind) * unit(ℒ), embeddim(domain)))
   r = oneunit(ℒ)
   Ball(c, r)
 end

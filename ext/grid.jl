@@ -3,18 +3,15 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object][]
-  Dim = embeddim(grid)
-  if Dim == 2
-    vizgrid2D!(plot)
-  elseif Dim == 3
-    vizgrid3D!(plot)
-  end
+  grid = plot[:object]
+  pdim = Makie.@lift paramdim($grid)
+  edim = Makie.@lift embeddim($grid)
+  vizgrid!(plot, Val(pdim[]), Val(edim[]))
 end
 
-vizgrid2D!(plot) = vizmesh2D!(plot)
+vizgrid!(plot, ::Val{2}, ::Val{2}) = vizmesh!(plot, Val(2), Val(2))
 
-function vizgrid3D!(plot)
+function vizgrid!(plot, ::Val{3}, ::Val{3})
   grid = plot[:object]
   color = plot[:color]
 
@@ -25,7 +22,7 @@ function vizgrid3D!(plot)
   if nv[] == nc[]
     error("not implemented")
   else
-    vizmesh3D!(plot)
+    vizmesh!(plot, Val(3), Val(3))
   end
 end
 

@@ -20,9 +20,9 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,Dim,C<:CRS} <: Polygon{Dim,C}
-  vertices::NTuple{N,Point{Dim,C}}
-  function Ngon{N,Dim,C}(vertices) where {N,Dim,C<:CRS}
+struct Ngon{N,C<:CRS} <: Polygon{C}
+  vertices::NTuple{N,Point{C}}
+  function Ngon{N,C}(vertices) where {N,C<:CRS}
     if N < 3
       throw(ArgumentError("the number of vertices must be greater than or equal to 3"))
     end
@@ -30,11 +30,11 @@ struct Ngon{N,Dim,C<:CRS} <: Polygon{Dim,C}
   end
 end
 
-Ngon{N}(vertices::NTuple{N,Point{Dim,C}}) where {N,Dim,C<:CRS} = Ngon{N,Dim,C}(vertices)
+Ngon{N}(vertices::NTuple{N,Point{C}}) where {N,C<:CRS} = Ngon{N,C}(vertices)
 Ngon{N}(vertices::Vararg{P,N}) where {N,P<:Point} = Ngon{N}(vertices)
 Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon{N}(Point.(vertices))
 
-Ngon(vertices::NTuple{N,Point{Dim,C}}) where {N,Dim,C<:CRS} = Ngon{N,Dim,C}(vertices)
+Ngon(vertices::NTuple{N,Point{C}}) where {N,C<:CRS} = Ngon{N,C}(vertices)
 Ngon(vertices::P...) where {P<:Point} = Ngon(vertices)
 Ngon(vertices::Tuple...) = Ngon(Point.(vertices))
 
@@ -69,14 +69,14 @@ signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
 # TRIANGLES
 # ----------
 
-function signarea(t::Triangle{2})
+function signarea(t::Triangle)
+  checkdim(t, 2)
   v = t.vertices
   signarea(v[1], v[2], v[3])
 end
 
-signarea(::Triangle{3}) = error("signed area only defined for triangles embedded in R², use `area` instead")
-
-function normal(t::Triangle{3})
+function normal(t::Triangle)
+  checkdim(t, 3)
   A, B, C = t.vertices
   unormalize(ucross((B - A), (C - A)))
 end

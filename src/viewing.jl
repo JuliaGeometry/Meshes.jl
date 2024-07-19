@@ -28,7 +28,7 @@ that intersect with the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-function indices(grid::Grid{Dim}, point::Point{Dim}) where {Dim}
+function indices(grid::Grid, point::Point)
   point ∉ grid && return Int[]
 
   # grid properties
@@ -46,21 +46,7 @@ function indices(grid::Grid{Dim}, point::Point{Dim}) where {Dim}
   [LinearIndices(dims)[coords...]]
 end
 
-function indices(grid::Grid{2}, poly::Polygon{2})
-  dims = size(grid)
-  mask = zeros(Int, dims)
-  cpoly = poly ∩ boundingbox(grid)
-  isnothing(cpoly) && return Int[]
-
-  for (i, triangle) in enumerate(simplexify(cpoly))
-    _fill!(mask, grid, i, triangle)
-  end
-
-  # convert to linear indices
-  LinearIndices(dims)[mask .> 0]
-end
-
-function indices(grid::Grid{2}, chain::Chain{2})
+function indices(grid::Grid, chain::Chain)
   dims = size(grid)
   mask = falses(dims)
 
@@ -73,7 +59,19 @@ function indices(grid::Grid{2}, chain::Chain{2})
   LinearIndices(dims)[mask]
 end
 
-indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, parent(multi)) |> unique
+function indices(grid::Grid, poly::Polygon)
+  dims = size(grid)
+  mask = zeros(Int, dims)
+  cpoly = poly ∩ boundingbox(grid)
+  isnothing(cpoly) && return Int[]
+
+  for (i, triangle) in enumerate(simplexify(cpoly))
+    _fill!(mask, grid, i, triangle)
+  end
+
+  # convert to linear indices
+  LinearIndices(dims)[mask .> 0]
+end
 
 function indices(grid::CartesianGrid, box::Box)
   # grid properties
@@ -94,6 +92,8 @@ function indices(grid::CartesianGrid, box::Box)
   # convert to linear indices
   LinearIndices(sz)[range] |> vec
 end
+
+indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, parent(multi)) |> unique
 
 # utils
 function _fill!(mask, grid, val, triangle)

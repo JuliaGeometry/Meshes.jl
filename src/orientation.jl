@@ -42,7 +42,9 @@ function orientation(p::Polygon, method)
   hasholes(p) ? o : first(o)
 end
 
-orientation(r::Ring{3}, method) = orientation(proj2D(r), method)
+orientation(r::Ring, method) = _orientation(r, Val(embeddim(r)), method)
+
+_orientation(r::Ring, ::Val{3}, method) = orientation(proj2D(r), method)
 
 """
     WindingOrientation()
@@ -58,7 +60,7 @@ based on the winding number.
 """
 struct WindingOrientation <: OrientationMethod end
 
-function orientation(r::Ring{2}, ::WindingOrientation)
+function _orientation(r::Ring, ::Val{2}, ::WindingOrientation)
   # pick any segment
   p₁, p₂ = vertices(r)[1:2]
   p̄ = center(Segment(p₁, p₂))
@@ -80,7 +82,7 @@ based on signed triangular areas.
 """
 struct TriangleOrientation <: OrientationMethod end
 
-function orientation(r::Ring{2}, ::TriangleOrientation)
+function _orientation(r::Ring, ::Val{2}, ::TriangleOrientation)
   v = vertices(r)
   Δ(i) = signarea(v[1], v[i], v[i + 1])
   a = mapreduce(Δ, +, 2:(length(v) - 1))

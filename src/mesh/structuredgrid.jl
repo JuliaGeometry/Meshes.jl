@@ -20,7 +20,7 @@ julia> Y = repeat([0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
 julia> StructuredGrid(X, Y)
 ```
 """
-struct StructuredGrid{Datum,Dim,ℒ<:Len,A<:AbstractArray{ℒ}} <: Grid{Dim,Cartesian{Datum,Dim,ℒ}}
+struct StructuredGrid{Datum,Dim,ℒ<:Len,A<:AbstractArray{ℒ}} <: Grid{Cartesian{Datum,Dim,ℒ},Dim}
   XYZ::NTuple{Dim,A}
   topology::GridTopology{Dim}
 
@@ -44,16 +44,16 @@ StructuredGrid{Datum}(XYZ...) where {Datum} = StructuredGrid{Datum}(XYZ)
 
 StructuredGrid(args...) = StructuredGrid{NoDatum}(args...)
 
-vertex(g::StructuredGrid{Datum,Dim}, ijk::Dims{Dim}) where {Datum,Dim} =
-  Point(Cartesian{Datum}(ntuple(d -> g.XYZ[d][ijk...], Dim)))
+vertex(g::StructuredGrid{Datum}, ijk::Dims) where {Datum} =
+  Point(Cartesian{Datum}(ntuple(d -> g.XYZ[d][ijk...], embeddim(g))))
 
 XYZ(g::StructuredGrid) = g.XYZ
 
-function Base.getindex(g::StructuredGrid{Datum,Dim}, I::CartesianIndices{Dim}) where {Datum,Dim}
+function Base.getindex(g::StructuredGrid{Datum}, I::CartesianIndices) where {Datum}
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
-  XYZ = ntuple(i -> g.XYZ[i][cinds], Dim)
+  XYZ = ntuple(i -> g.XYZ[i][cinds], embeddim(g))
   StructuredGrid{Datum}(XYZ, GridTopology(dims))
 end
 

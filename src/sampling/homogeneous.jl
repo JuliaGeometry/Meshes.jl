@@ -56,7 +56,10 @@ function sample(rng::AbstractRNG, tetrahedron::Tetrahedron, method::HomogeneousS
   @error "not implemented"
 end
 
-function sample(rng::AbstractRNG, ball::Ball{2}, method::HomogeneousSampling)
+sample(rng::AbstractRNG, ball::Ball, method::HomogeneousSampling) =
+  _sample(rng, ball, Val(embeddim(ball)), method)
+
+function _sample(rng::AbstractRNG, ball::Ball, ::Val{2}, method::HomogeneousSampling)
   function randpoint()
     u₁, u₂ = rand(rng, numtype(lentype(ball)), 2)
     ball(√u₁, u₂)
@@ -64,7 +67,7 @@ function sample(rng::AbstractRNG, ball::Ball{2}, method::HomogeneousSampling)
   (randpoint() for _ in 1:(method.size))
 end
 
-function sample(rng::AbstractRNG, ball::Ball{3}, method::HomogeneousSampling)
+function _sample(rng::AbstractRNG, ball::Ball, ::Val{3}, method::HomogeneousSampling)
   function randpoint()
     u₁, u₂, u₃ = rand(rng, numtype(lentype(ball)), 3)
     ball(∛u₁, acos(1 - 2u₂) / π, u₃)

@@ -3,12 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{Dim,CRS,TP}
+    Mesh{CRS,TP}
 
-A mesh embedded in a `Dim`-dimensional space with given
-coordinate reference system `CRS` and topology of type `TP`.
+A mesh with given coordinate reference system `CRS` and topology of type `TP`.
 """
-abstract type Mesh{Dim,CRS,TP<:Topology} <: Domain{Dim,CRS} end
+abstract type Mesh{CRS,TP<:Topology} <: Domain{CRS} end
 
 """
     vertex(mesh, ind)
@@ -139,25 +138,25 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
 end
 
 """
-    Grid{Dim,CRS}
+    Grid{CRS,Dim}
 
-A grid embedded in a `Dim`-dimensional space with given coordinate reference system `CRS`.
+A grid with given coordinate reference system `CRS` embedded in a `Dim`-dimensional space.
 """
-const Grid{Dim,CRS} = Mesh{Dim,CRS,GridTopology{Dim}}
+const Grid{CRS,Dim} = Mesh{CRS,GridTopology{Dim}}
 
 """
-    SubGrid{Dim,CRS}
+    SubGrid{CRS,Dim}
 
-A view of a grid in a `Dim`-dimensinoal space with given coordinate reference system `CRS`.
+A view of a grid with given coordinate reference system `CRS` embedded in a `Dim`-dimensinoal space.
 """
-const SubGrid{Dim,CRS} = SubDomain{Dim,CRS,<:Grid{Dim,CRS}}
+const SubGrid{CRS,Dim} = SubDomain{CRS,<:Grid{CRS,Dim}}
 
 """
     vertex(grid, ijk)
 
 Convert Cartesian index `ijk` to vertex on `grid`.
 """
-vertex(g::Grid{Dim}, ijk::CartesianIndex{Dim}) where {Dim} = vertex(g, ijk.I)
+vertex(g::Grid, ijk::CartesianIndex) = vertex(g, ijk.I)
 
 """
     xyz(grid)
@@ -183,11 +182,11 @@ Base.size(g::Grid) = size(topology(g))
 
 vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
 
-vertex(g::Grid{Dim}, ijk::Dims{Dim}) where {Dim} = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
+vertex(g::Grid, ijk::Dims) = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
 
-Base.minimum(g::Grid{Dim}) where {Dim} = vertex(g, ntuple(i -> 1, Dim))
-Base.maximum(g::Grid{Dim}) where {Dim} = vertex(g, size(g) .+ 1)
-Base.extrema(g::Grid{Dim}) where {Dim} = minimum(g), maximum(g)
+Base.minimum(g::Grid) = vertex(g, ntuple(i -> 1, embeddim(g)))
+Base.maximum(g::Grid) = vertex(g, size(g) .+ 1)
+Base.extrema(g::Grid) = minimum(g), maximum(g)
 
 function element(g::Grid, ind::Int)
   elem = element(topology(g), ind)
@@ -200,19 +199,33 @@ end
 
 Base.eltype(g::Grid) = typeof(first(g))
 
-Base.getindex(g::Grid{Dim}, ijk::Vararg{Int,Dim}) where {Dim} = element(g, LinearIndices(size(g))[ijk...])
+Base.getindex(g::Grid, ind::Int) = element(g, ind)
 
-@propagate_inbounds function Base.getindex(g::Grid{Dim}, ijk::Vararg{Union{UnitRange{Int},Colon,Int},Dim}) where {Dim}
+Base.getindex(g::Grid, inds::AbstractVector) = [element(g, ind) for ind in inds]
+
+Base.getindex(g::Grid, ijk::Int...) = element(g, LinearIndices(size(g))[ijk...])
+
+@propagate_inbounds function Base.getindex(g::Grid, ijk...)
   dims = size(g)
-  ranges = ntuple(i -> _asrange(dims[i], ijk[i]), Dim)
+  ranges = ntuple(i -> _asrange(dims[i], ijk[i]), embeddim(g))
   getindex(g, CartesianIndices(ranges))
+end
+
+function Base.getindex(g::Grid, I::CartesianIndices)
+  @boundscheck _checkbounds(g, I)
+  dims = size(I)
+  odims = size(g)
+  cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
+  inds = vec(LinearIndices(odims .+ 1)[cinds])
+  periodic = isperiodic(topology(g)) .&& dims .== odims
+  SimpleMesh(vertices(g)[inds], GridTopology(dims, periodic))
 end
 
 _asrange(::Int, r::UnitRange{Int}) = r
 _asrange(d::Int, ::Colon) = 1:d
 _asrange(::Int, i::Int) = i:i
 
-function _checkbounds(g::Grid{Dim}, I::CartesianIndices{Dim}) where {Dim}
+function _checkbounds(g, I)
   dims = size(g)
   ranges = I.indices
   if !all(first(r) ≥ 1 && last(r) ≤ d for (d, r) in zip(dims, ranges))

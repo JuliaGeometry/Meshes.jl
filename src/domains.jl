@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{Dim,CRS}
+    Domain{CRS}
 
 A domain is an indexable collection of geometries (e.g. mesh).
 """
-abstract type Domain{Dim,CRS} end
+abstract type Domain{CRS} end
 
 """
     element(domain, ind)
@@ -60,7 +60,7 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
-embeddim(::Type{<:Domain{Dim}}) where {Dim} = Dim
+embeddim(::Type{<:Domain{CRS}}) where {CRS} = CoordRefSystems.ndims(CRS)
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """
@@ -76,7 +76,7 @@ paramdim(d::Domain) = paramdim(first(d))
 
 Return the coordinate reference system (CRS) of the `domain`.
 """
-crs(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = CRS
+crs(::Type{<:Domain{CRS}}) where {CRS} = CRS
 crs(d::Domain) = crs(typeof(d))
 
 """
@@ -84,7 +84,7 @@ crs(d::Domain) = crs(typeof(d))
 
 Return the length type of the `domain`.
 """
-lentype(::Type{<:Domain{Dim,CRS}}) where {Dim,CRS} = lentype(CRS)
+lentype(::Type{<:Domain{CRS}}) where {CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """

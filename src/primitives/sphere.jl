@@ -9,10 +9,10 @@ A sphere with `center` and `radius`.
 
 See also [`Ball`](@ref).
 """
-struct Sphere{Dim,C<:CRS,ℒ<:Len} <: Primitive{Dim,C}
-  center::Point{Dim,C}
+struct Sphere{C<:CRS,ℒ<:Len} <: Primitive{C}
+  center::Point{C}
   radius::ℒ
-  Sphere(center::Point{Dim,C}, radius::ℒ) where {Dim,C<:CRS,ℒ<:Len} = new{Dim,C,float(ℒ)}(center, radius)
+  Sphere(center::Point{C}, radius::ℒ) where {C<:CRS,ℒ<:Len} = new{C,float(ℒ)}(center, radius)
 end
 
 Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
@@ -60,7 +60,7 @@ end
 
 Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
 
-paramdim(::Type{<:Sphere{Dim}}) where {Dim} = Dim - 1
+paramdim(S::Type{<:Sphere}) = embeddim(S) - 1
 
 center(s::Sphere) = s.center
 
@@ -71,7 +71,9 @@ radius(s::Sphere) = s.radius
 Base.isapprox(s₁::Sphere, s₂::Sphere; atol=atol(lentype(s₁)), kwargs...) =
   isapprox(s₁.center, s₂.center; atol, kwargs...) && isapprox(s₁.radius, s₂.radius; atol, kwargs...)
 
-function (s::Sphere{2})(φ)
+(s::Sphere)(args...) = _sphere(Val(embeddim(s)), s, args...)
+
+function _sphere(::Val{2}, s, φ)
   T = numtype(lentype(s))
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
@@ -84,7 +86,7 @@ function (s::Sphere{2})(φ)
   c + Vec(x, y)
 end
 
-function (s::Sphere{3})(θ, φ)
+function _sphere(::Val{3}, s, θ, φ)
   T = numtype(lentype(s))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))

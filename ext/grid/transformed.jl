@@ -14,9 +14,11 @@ function isoptimized(t::Affine{2})
   isdiag(A) || isrotation(A)
 end
 
-vizgrid2D!(plot::Viz{<:Tuple{TransformedGrid}}) = transformedgrid!(plot, vizmesh2D!)
+vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, ::Val{2}, ::Val{2}) =
+  transformedgrid!(plot, plot -> vizmesh!(plot, Val(2), Val(2)))
 
-vizgrid3D!(plot::Viz{<:Tuple{TransformedGrid}}) = transformedgrid!(plot, vizmesh3D!)
+vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, ::Val{3}, ::Val{3}) =
+  transformedgrid!(plot, plot -> vizmesh!(plot, Val(3), Val(3)))
 
 function transformedgrid!(plot, fallback)
   tgrid = plot[:object]
@@ -32,7 +34,7 @@ function transformedgrid!(plot, fallback)
     viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans)
   else
-    fallback(tgrid)
+    fallback(plot)
   end
 end
 
