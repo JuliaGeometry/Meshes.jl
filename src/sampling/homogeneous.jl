@@ -56,8 +56,7 @@ function sample(rng::AbstractRNG, tetrahedron::Tetrahedron, method::HomogeneousS
   @error "not implemented"
 end
 
-sample(rng::AbstractRNG, ball::Ball, method::HomogeneousSampling) =
-  _sample(rng, ball, Val(embeddim(ball)), method)
+sample(rng::AbstractRNG, ball::Ball, method::HomogeneousSampling) = _sample(rng, ball, Val(embeddim(ball)), method)
 
 function _sample(rng::AbstractRNG, ball::Ball, ::Val{2}, method::HomogeneousSampling)
   function randpoint()
