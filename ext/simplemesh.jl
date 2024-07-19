@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
-  # retrieve mesh and rank
-  mesh = plot[:object][]
-  pdim = paramdim(mesh)
-  edim = embeddim(mesh)
-  vizmesh!(plot, Val(pdim), Val(edim))
+  # retrieve mesh and dimensions
+  mesh = plot[:object]
+  pdim = Makie.@lift paramdim($mesh)
+  edim = Makie.@lift embeddim($mesh)
+  vizmesh!(plot, Val(pdim[]), Val(edim[]))
 end
 
 function vizmesh!(plot, ::Val{1}, ::Val)

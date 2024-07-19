@@ -3,10 +3,10 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object][]
-  pdim = paramdim(grid)
-  edim = embeddim(grid)
-  vizgrid!(plot, Val(pdim), Val(edim))
+  grid = plot[:object]
+  pdim = Makie.@lift paramdim($grid)
+  edim = Makie.@lift embeddim($grid)
+  vizgrid!(plot, Val(pdim[]), Val(edim[]))
 end
 
 vizgrid!(plot, ::Val{2}, ::Val{2}) = vizmesh!(plot, Val(2), Val(2))

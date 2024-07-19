@@ -45,25 +45,25 @@ _firstoffset(g::Geometry, ::Val) = ntuple(i -> (n -> zero(n)), paramdim(g))
 _lastoffset(g::Geometry, ::Val) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
 _extrapoints(::Geometry, ::Val, sz) = ()
 
-_firstoffset(d::Disk, ::Val) = (n -> inv(n), firstoffset(boundary(d))...)
-_lastoffset(d::Disk, ::Val) = (n -> zero(n), lastoffset(boundary(d))...)
-_extrapoints(d::Disk, ::Val, sz) = (center(d),)
+firstoffset(d::Disk) = (n -> inv(n), firstoffset(boundary(d))...)
+lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
+extrapoints(d::Disk, sz) = (center(d),)
 
-_firstoffset(b::Ball, ::Val) = (n -> inv(n), firstoffset(boundary(b))...)
-_lastoffset(b::Ball, ::Val) = (n -> zero(n), lastoffset(boundary(b))...)
-_extrapoints(b::Ball, ::Val, sz) = (center(b),)
+firstoffset(b::Ball) = (n -> inv(n), firstoffset(boundary(b))...)
+lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
+extrapoints(b::Ball, sz) = (center(b),)
 
 _firstoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> zero(n))
 _lastoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> inv(n))
 _extrapoints(s::Sphere, ::Val{3}, sz) = (s(0, 0), s(1, 0))
 
-_firstoffset(::Ellipsoid, ::Val) = (n -> inv(n + 1), n -> zero(n))
-_lastoffset(::Ellipsoid, ::Val) = (n -> inv(n + 1), n -> inv(n))
-_extrapoints(e::Ellipsoid, ::Val, sz) = (e(0, 0), e(1, 0))
+firstoffset(::Ellipsoid) = (n -> inv(n + 1), n -> zero(n))
+lastoffset(::Ellipsoid) = (n -> inv(n + 1), n -> inv(n))
+extrapoints(e::Ellipsoid, sz) = (e(0, 0), e(1, 0))
 
-_firstoffset(::Cylinder, ::Val) = (n -> inv(n), n -> zero(n), n -> zero(n))
-_lastoffset(::Cylinder, ::Val) = (n -> zero(n), n -> inv(n), n -> zero(n))
-function _extrapoints(c::Cylinder, ::Val, sz)
+firstoffset(::Cylinder) = (n -> inv(n), n -> zero(n), n -> zero(n))
+lastoffset(::Cylinder) = (n -> zero(n), n -> inv(n), n -> zero(n))
+function extrapoints(c::Cylinder, sz)
   T = numtype(lentype(c))
   b = bottom(c)(0, 0)
   t = top(c)(0, 0)
@@ -71,17 +71,17 @@ function _extrapoints(c::Cylinder, ::Val, sz)
   [s(t) for t in range(zero(T), one(T), sz[3])]
 end
 
-_firstoffset(::CylinderSurface, ::Val) = (n -> zero(n), n -> zero(n))
-_lastoffset(::CylinderSurface, ::Val) = (n -> inv(n), n -> zero(n))
-_extrapoints(c::CylinderSurface, ::Val, sz) = (bottom(c)(0, 0), top(c)(0, 0))
+firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
+lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
+extrapoints(c::CylinderSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
-_firstoffset(::ConeSurface, ::Val) = (n -> zero(n), n -> inv(n))
-_lastoffset(::ConeSurface, ::Val) = (n -> inv(n), n -> zero(n))
-_extrapoints(c::ConeSurface, ::Val, sz) = (apex(c), base(c)(0, 0))
+firstoffset(::ConeSurface) = (n -> zero(n), n -> inv(n))
+lastoffset(::ConeSurface) = (n -> inv(n), n -> zero(n))
+extrapoints(c::ConeSurface, sz) = (apex(c), base(c)(0, 0))
 
-_firstoffset(::FrustumSurface, ::Val) = (n -> zero(n), n -> zero(n))
-_lastoffset(::FrustumSurface, ::Val) = (n -> inv(n), n -> zero(n))
-_extrapoints(c::FrustumSurface, ::Val, sz) = (bottom(c)(0, 0), top(c)(0, 0))
+firstoffset(::FrustumSurface) = (n -> zero(n), n -> zero(n))
+lastoffset(::FrustumSurface) = (n -> inv(n), n -> zero(n))
+extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
 # --------------
 # SPECIAL CASES
