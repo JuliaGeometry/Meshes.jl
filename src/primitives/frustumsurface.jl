@@ -10,11 +10,11 @@ See <https://en.wikipedia.org/wiki/Frustum>.
 
 See also [`Frustum`](@ref).
 """
-struct FrustumSurface{C<:CRS,M<:AbstractManifold,D<:Disk{C,M}} <: Primitive{C,M}
+struct FrustumSurface{M<:AbstractManifold,C<:CRS,D<:Disk{M,C}} <: Primitive{M,C}
   bot::D
   top::D
 
-  function FrustumSurface{C,M,D}(bot, top) where {C<:CRS,M<:AbstractManifold,D<:Disk{C,M}}
+  function FrustumSurface{M,C,D}(bot, top) where {M<:AbstractManifold,C<:CRS,D<:Disk{M,C}}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     a = bn ⋅ tn
@@ -24,7 +24,7 @@ struct FrustumSurface{C<:CRS,M<:AbstractManifold,D<:Disk{C,M}} <: Primitive{C,M}
   end
 end
 
-FrustumSurface(bot::D, top::D) where {C<:CRS,M<:AbstractManifold,D<:Disk{C,M}} = FrustumSurface{C,M,D}(bot, top)
+FrustumSurface(bot::D, top::D) where {M<:AbstractManifold,C<:CRS,D<:Disk{M,C}} = FrustumSurface{M,C,D}(bot, top)
 
 paramdim(::Type{<:FrustumSurface}) = 2
 

@@ -9,13 +9,13 @@ A torus centered at `center` with axis of revolution directed by
 `normal` and with radii `major` and `minor`. 
 
 """
-struct Torus{C<:CRS,M<:AbstractManifold,P<:Point{C,M},V<:Vec{3},ℒ<:Len} <: Primitive{C,M}
-  center::P
+struct Torus{M<:AbstractManifold,C<:CRS,V<:Vec{3},ℒ<:Len} <: Primitive{M,C}
+  center::Point{M,C}
   normal::V
   major::ℒ
   minor::ℒ
-  Torus(center::P, normal::V, major::ℒ, minor::ℒ) where {C<:CRS,M<:AbstractManifold,P<:Point{C,M},V<:Vec{3},ℒ<:Len} =
-    new{C,M,P,V,float(ℒ)}(center, normal, major, minor)
+  Torus(center::Point{M,C}, normal::V, major::ℒ, minor::ℒ) where {M<:AbstractManifold,C<:CRS,V<:Vec{3},ℒ<:Len} =
+    new{M,C,V,float(ℒ)}(center, normal, major, minor)
 end
 
 Torus(center::Point, normal::Vec, major::Len, minor::Len) = Torus(center, normal, promote(major, minor)...)

@@ -15,17 +15,17 @@ Box(Point(0, 0, 0), Point(1, 1, 1))
 Box((0, 0), (1, 1))
 ```
 """
-struct Box{C<:CRS,M<:AbstractManifold} <: Primitive{C,M}
-  min::Point{C,M}
-  max::Point{C,M}
+struct Box{M<:AbstractManifold,C<:CRS} <: Primitive{M,C}
+  min::Point{M,C}
+  max::Point{M,C}
 
-  function Box{C,M}(min, max) where {C<:CRS,M<:AbstractManifold}
+  function Box{M,C}(min, max) where {M<:AbstractManifold,C<:CRS}
     assertion(min ⪯ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end
 
-Box(min::Point{C,M}, max::Point{C,M}) where {C<:CRS,M<:AbstractManifold} = Box{C,M}(min, max)
+Box(min::Point{M,C}, max::Point{M,C}) where {M<:AbstractManifold,C<:CRS} = Box{M,C}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 

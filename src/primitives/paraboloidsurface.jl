@@ -32,12 +32,12 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{C<:CRS,M<:AbstractManifold,ℒ<:Len} <: Primitive{C,M}
-  apex::Point{C,M}
+struct ParaboloidSurface{M<:AbstractManifold,C<:CRS,ℒ<:Len} <: Primitive{M,C}
+  apex::Point{M,C}
   radius::ℒ
   focallength::ℒ
-  ParaboloidSurface(apex::Point{C,M}, radius::ℒ, focallength::ℒ) where {C<:CRS,M<:AbstractManifold,ℒ<:Len} =
-    new{C,M,float(ℒ)}(apex, radius, focallength)
+  ParaboloidSurface(apex::Point{M,C}, radius::ℒ, focallength::ℒ) where {M<:AbstractManifold,C<:CRS,ℒ<:Len} =
+    new{M,C,float(ℒ)}(apex, radius, focallength)
 end
 
 ParaboloidSurface(apex::Point, radius::Len, focallength::Len) = ParaboloidSurface(apex, promote(radius, focallength)...)
@@ -86,7 +86,7 @@ apex(p::ParaboloidSurface) = p.apex
 Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface{C,M,ℒ}) where {C,M,ℒ} = Line(p.apex, p.apex + Vec(ℒ(0), ℒ(0), p.focallength))
+axis(p::ParaboloidSurface{M,C,ℒ}) where {M,C,ℒ} = Line(p.apex, p.apex + Vec(ℒ(0), ℒ(0), p.focallength))
 
 function centroid(p::ParaboloidSurface)
   c = p.apex
