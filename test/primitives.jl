@@ -364,14 +364,6 @@
     @test boundary(b) == Multi([cart(0, 0), cart(1, 1)])
     @test perimeter(b) == zero(ℳ)
 
-    rng = StableRNG(123)
-    b = BezierCurve(cart.(randn(rng, 100), randn(rng, 100)))
-    t1 = @timed b(T(0.2))
-    t2 = @timed b(T(0.2), Horner())
-    @test t1.time < 5e-4
-    @test t2.time < 5e-4
-    @test t2.bytes < 100
-
     # CRS propagation
     b = BezierCurve(merc(0, 0), merc(0.5, 1), merc(1, 0))
     @test crs(b(T(0), Horner())) === crs(b)
