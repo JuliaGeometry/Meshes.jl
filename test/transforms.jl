@@ -1651,21 +1651,21 @@
     @test r == SimpleMesh(f.(vertices(d)), topology(d))
   end
 
-  @testset "Overlaps" begin
-    @test !isaffine(Overlaps(x=(T(2), T(4))))
-    @test !TB.isrevertible(Overlaps(x=(T(2), T(4))))
-    @test !TB.isinvertible(Overlaps(x=(T(2), T(4))))
-    @test TB.parameters(Overlaps(x=(T(2), T(4)))) == (x=(T(2) * u"m", T(4) * u"m"), y=nothing, z=nothing)
-    @test TB.parameters(Overlaps(y=(T(2) * u"km", T(4) * u"km"))) ==
+  @testset "Within" begin
+    @test !isaffine(Within(x=(T(2), T(4))))
+    @test !TB.isrevertible(Within(x=(T(2), T(4))))
+    @test !TB.isinvertible(Within(x=(T(2), T(4))))
+    @test TB.parameters(Within(x=(T(2), T(4)))) == (x=(T(2) * u"m", T(4) * u"m"), y=nothing, z=nothing)
+    @test TB.parameters(Within(y=(T(2) * u"km", T(4) * u"km"))) ==
           (x=nothing, y=(T(2) * u"km", T(4) * u"km"), z=nothing)
-    @test TB.parameters(Overlaps(z=(2, 4))) == (x=nothing, y=nothing, z=(2.0u"m", 4.0u"m"))
-    @test_throws ArgumentError Overlaps(x=(T(2) * u"°", T(4) * u"°"))
+    @test TB.parameters(Within(z=(2, 4))) == (x=nothing, y=nothing, z=(2.0u"m", 4.0u"m"))
+    @test_throws ArgumentError Within(x=(T(2) * u"°", T(4) * u"°"))
 
     # ---------
     # POINTSET
     # ---------
 
-    f = Overlaps(x=(T(1.5), T(3.5)))
+    f = Within(x=(T(1.5), T(3.5)))
     d = PointSet([cart(1, 0), cart(2, 1), cart(3, 1), cart(4, 0)])
     r, c = TB.apply(f, d)
     @test r == PointSet([cart(2, 1), cart(3, 1)])
@@ -1674,7 +1674,7 @@
     # GEOMETRYSET
     # ------------
 
-    f = Overlaps(x=(T(1.5), T(3.5)))
+    f = Within(x=(T(1.5), T(3.5)))
     t1 = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     t2 = t1 |> Translate(T(2), T(2))
     t3 = t2 |> Translate(T(2), T(2))
@@ -1686,7 +1686,7 @@
     # CARTESIANGRID
     # --------------
 
-    f = Overlaps(z=(T(1.5), T(4.5)))
+    f = Within(z=(T(1.5), T(4.5)))
     d = cartgrid(10, 10, 10)
     r, c = TB.apply(f, d)
     @test r == CartesianGrid((10, 10, 4), cart(0, 0, 1), T.((1, 1, 1)))
@@ -1695,7 +1695,7 @@
     # RECTILINEARGRID
     # ----------------
 
-    f = Overlaps(y=(T(3.5), T(6.5)))
+    f = Within(y=(T(3.5), T(6.5)))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
     @test r == convert(RectilinearGrid, CartesianGrid((10, 4), cart(0, 3), T.((1, 1))))
@@ -1704,7 +1704,7 @@
     # STRUCTUREDGRID
     # ---------------
 
-    f = Overlaps(x=(T(5.5), T(8.5)))
+    f = Within(x=(T(5.5), T(8.5)))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
     @test r == convert(StructuredGrid, CartesianGrid((4, 10), cart(5, 0), T.((1, 1))))
@@ -1713,7 +1713,7 @@
     # SIMPLEMESH
     # -----------
 
-    f = Overlaps(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
+    f = Within(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
     d = convert(SimpleMesh, cartgrid(10, 10))
     r, c = TB.apply(f, d)
     @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
