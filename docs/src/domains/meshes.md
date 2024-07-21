@@ -95,7 +95,8 @@ Coboundary
 Adjacency
 ```
 
-### Examples
+Consider the following examples with the [`Boundary`](@ref) and
+[`Coboundary`](@ref) relations defined for the [`HalfEdgeTopology`](@ref):
 
 ```@example meshes
 # global vector of 2D points
@@ -125,4 +126,66 @@ topo = convert(HalfEdgeTopology, topology(mesh))
 
 # show n-gons that share edge 3
 𝒞₁₂(3)
+```
+
+## Matrices
+
+Based on topological relations, we can extract matrices that
+are widely used in applications such as [`laplacematrix`](@ref),
+and [`adjacencymatrix`](@ref).
+
+### Laplace
+
+```@docs
+laplacematrix
+```
+
+```@example meshes
+grid = CartesianGrid(10, 10)
+
+laplacematrix(grid, kind = :uniform)
+```
+
+```@example meshes
+points = [(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
+mesh = SimpleMesh(points, connec)
+
+laplacematrix(mesh, kind = :cotangent)
+```
+
+### Measure
+
+```@docs
+measurematrix
+```
+
+```@example meshes
+grid = CartesianGrid(10, 10)
+
+measurematrix(grid)
+```
+
+```@example meshes
+points = [(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)]
+connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
+mesh = SimpleMesh(points, connec)
+
+measurematrix(mesh)
+```
+
+### Adjacency
+
+```@docs
+adjacencymatrix
+```
+
+```@example meshes
+grid = CartesianGrid(10, 10)
+
+adjacencymatrix(grid)
+```
+
+```@example meshes
+adjacencymatrix(grid, rank = 0)
 ```
