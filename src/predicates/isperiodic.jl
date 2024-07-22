@@ -22,11 +22,11 @@ isperiodic(::Type{<:Plane}) = (false, false)
 
 isperiodic(B::Type{<:Box}) = ntuple(i -> false, embeddim(B))
 
-isperiodic(B::Type{<:Ball}) = ntuple(i -> i != 1, embeddim(B))
+isperiodic(B::Type{<:Ball}) = ntuple(i -> i == embeddim(B), embeddim(B))
 
-isperiodic(S::Type{<:Sphere}) = ntuple(i -> true, embeddim(S) - 1)
+isperiodic(S::Type{<:Sphere}) = ntuple(i -> i == embeddim(S) - 1, embeddim(S) - 1)
 
-isperiodic(::Type{<:Ellipsoid}) = (true, true)
+isperiodic(::Type{<:Ellipsoid}) = (false, true)
 
 isperiodic(::Type{<:Disk}) = (false, true)
 

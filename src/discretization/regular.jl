@@ -35,17 +35,12 @@ end
 
 function wrapgrid(g, m)
   sz = fitdims(m.sizes, paramdim(g))
-  pd = perdims(g)
+  pd = isperiodic(g)
   np = @. sz + !pd
   ps = sample(g, RegularSampling(np))
   tg = GridTopology(sz, pd)
   ps, tg
 end
-
-perdims(g) = _perdims(g, Val(embeddim(g)))
-_perdims(g, ::Val) = isperiodic(g)
-_perdims(::Sphere, ::Val{3}) = (false, true)
-perdims(::Ellipsoid) = (false, true)
 
 # ------------------------
 # append to grid topology
