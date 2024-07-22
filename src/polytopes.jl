@@ -29,14 +29,27 @@ abstract type Polytope{K,M,CRS} <: Geometry{M,CRS} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
-  expr = quote
-    $Base.@__doc__ struct $type{M<:AbstractManifold,C<:CRS} <: Polytope{$K,M,C}
-      vertices::NTuple{$N,Point{M,C}}
+  structexpr = if K == 3
+    quote
+      struct $type{C<:CRS,Mₚ<:AbstractManifold} <: Polytope{$K,𝔼{3},C}
+        vertices::NTuple{$N,Point{Mₚ,C}}
+      end
     end
+  else
+    quote
+      struct $type{M<:AbstractManifold,C<:CRS} <: Polytope{$K,M,C}
+        vertices::NTuple{$N,Point{M,C}}
+      end
+    end
+  end
+
+  expr = quote
+    $Base.@__doc__ $structexpr
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
     $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
+
   esc(expr)
 end
 
