@@ -51,13 +51,13 @@ julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
 struct CartesianGrid{C<:CRS,Dim,ℒ<:Len} <: Grid{𝔼{Dim},C,Dim}
-  origin::Point{C}
+  origin::Point{𝔼{Dim},C}
   spacing::NTuple{Dim,ℒ}
   offset::Dims{Dim}
   topology::GridTopology{Dim}
 
   function CartesianGrid(
-    origin::Point{C},
+    origin::Point{𝔼{Dim},C},
     spacing::NTuple{Dim,ℒ},
     offset::Dims{Dim},
     topology::GridTopology{Dim}

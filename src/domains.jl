@@ -62,7 +62,7 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
-embeddim(::Type{<:Domain{CRS}}) where {CRS} = CoordRefSystems.ndims(CRS)
+embeddim(::Type{<:Domain{M,CRS}}) where {M,CRS} = CoordRefSystems.ndims(CRS)
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """
@@ -78,7 +78,7 @@ paramdim(d::Domain) = paramdim(first(d))
 
 Return the coordinate reference system (CRS) of the `domain`.
 """
-crs(::Type{<:Domain{CRS}}) where {CRS} = CRS
+crs(::Type{<:Domain{M,CRS}}) where {M,CRS} = CRS
 crs(d::Domain) = crs(typeof(d))
 
 """
@@ -86,7 +86,7 @@ crs(d::Domain) = crs(typeof(d))
 
 Return the manifold where the `domain` is defined.
 """
-manifold(::Type{<:Domain{CRS,M}}) where {CRS,M} = M
+manifold(::Type{<:Domain{M,CRS}}) where {M,CRS} = M
 manifold(d::Domain) = manifold(typeof(d))
 
 """
@@ -94,7 +94,7 @@ manifold(d::Domain) = manifold(typeof(d))
 
 Return the length type of the `domain`.
 """
-lentype(::Type{<:Domain{CRS}}) where {CRS} = lentype(CRS)
+lentype(::Type{<:Domain{M,CRS}}) where {M,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """

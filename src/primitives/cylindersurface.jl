@@ -28,7 +28,8 @@ struct CylinderSurface{M<:AbstractManifold,C<:CRS,P<:Plane{M,C},ℒ<:Len} <: Pri
   bot::P
   top::P
   radius::ℒ
-  CylinderSurface(bot::P, top::P, radius::ℒ) where {M<:AbstractManifold,C<:CRS,P<:Plane{C},ℒ<:Len} = new{M,C,P,float(ℒ)}(bot, top, radius)
+  CylinderSurface(bot::P, top::P, radius::ℒ) where {M<:AbstractManifold,C<:CRS,P<:Plane{M,C},ℒ<:Len} =
+    new{M,C,P,float(ℒ)}(bot, top, radius)
 end
 
 CylinderSurface(bot::P, top::P, radius) where {P<:Plane} = CylinderSurface(bot, top, addunit(radius, u"m"))

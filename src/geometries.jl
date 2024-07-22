@@ -51,7 +51,7 @@ manifold(g::Geometry) = manifold(typeof(g))
 
 Return the length type of the `geometry`.
 """
-lentype(::Type{<:Geometry{CRS}}) where {CRS} = lentype(CRS)
+lentype(::Type{<:Geometry{M,CRS}}) where {M,CRS} = lentype(CRS)
 lentype(g::Geometry) = lentype(typeof(g))
 
 """

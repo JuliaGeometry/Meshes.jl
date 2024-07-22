@@ -7,7 +7,7 @@
 
 Lazy representation of a geometric `transform` applied to a `mesh`.
 """
-struct TransformedMesh{M<:AbstractManifold,C<:CRS,TP<:Topology,MS<:Mesh{C,TP},TR<:Transform} <: Mesh{M,C,TP}
+struct TransformedMesh{M<:AbstractManifold,C<:CRS,TP<:Topology,MS<:Mesh{M,C,TP},TR<:Transform} <: Mesh{M,C,TP}
   mesh::MS
   transform::TR
 end
@@ -24,7 +24,7 @@ topology(m::TransformedMesh) = topology(m.mesh)
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
 # alias to improve readability in IO methods
-const TransformedGrid{M,CRS,Dim,G<:Grid{CRS,Dim},TR} = TransformedMesh{M,CRS,GridTopology{Dim},G,TR}
+const TransformedGrid{M,CRS,Dim,G<:Grid{M,CRS,Dim},TR} = TransformedMesh{M,CRS,GridTopology{Dim},G,TR}
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
 

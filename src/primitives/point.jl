@@ -37,12 +37,21 @@ struct Point{M<:AbstractManifold,C<:CRS} <: Primitive{M,C}
   coords::C
 end
 
+Point{M}(coords::C) where {M<:AbstractManifold,C<:CRS} = Point{M,C}(coords)
+
+Point(coords::CRS) = Point{_manifold(coords)}(coords)
+
+_manifold(coords::CRS) = 𝔼{CoordRefSystems.ndims(coords)}
+_manifold(::LatLon) = 🌐
+_manifold(::GeocentricLatLon) = 🌐
+_manifold(::AuthalicLatLon) = 🌐
+
 # convenience constructor
 Point(coords...) = Point(Cartesian(coords...))
 
 # conversions
-Base.convert(::Type{Point{CRSₜ}}, p::Point{CRSₛ}) where {CRSₜ,CRSₛ} = Point(convert(CRSₜ, p.coords))
-Base.convert(::Type{Point{CRS}}, p::Point{CRS}) where {CRS} = p
+Base.convert(::Type{Point{M,CRSₜ}}, p::Point{M,CRSₛ}) where {M,CRSₜ,CRSₛ} = Point{M}(convert(CRSₜ, p.coords))
+Base.convert(::Type{Point{M,CRS}}, p::Point{M,CRS}) where {M,CRS} = p
 
 paramdim(::Type{<:Point}) = 0
 

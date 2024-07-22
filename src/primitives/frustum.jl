@@ -14,7 +14,7 @@ struct Frustum{M<:AbstractManifold,C<:CRS,D<:Disk{M,C}} <: Primitive{M,C}
   bot::D
   top::D
 
-  function Frustum{M,C,D}(bot, top) where {M<:AbstractManifold,C<:CRS,D<:Disk{C}}
+  function Frustum{M,C,D}(bot, top) where {M<:AbstractManifold,C<:CRS,D<:Disk{M,C}}
     bn = normal(plane(bot))
     tn = normal(plane(top))
     a = bn ⋅ tn

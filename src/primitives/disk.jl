@@ -13,7 +13,7 @@ See also [`Circle`](@ref).
 struct Disk{M<:AbstractManifold,C<:CRS,P<:Plane{M,C},ℒ<:Len} <: Primitive{M,C}
   plane::P
   radius::ℒ
-  Disk(plane::P, radius::ℒ) where {M<:AbstractManifold,C<:CRS,P<:Plane{C},ℒ<:Len} = new{M,C,P,float(ℒ)}(plane, radius)
+  Disk(plane::P, radius::ℒ) where {M<:AbstractManifold,C<:CRS,P<:Plane{M,C},ℒ<:Len} = new{M,C,P,float(ℒ)}(plane, radius)
 end
 
 Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))

@@ -15,9 +15,9 @@ struct Cone{M<:AbstractManifold,C<:CRS,D<:Disk{M,C}} <: Primitive{M,C}
   apex::Point{M,C}
 end
 
-function Cone(base::Disk{C}, apex::Tuple) where {C<:Cartesian}
+function Cone(base::Disk{M,C}, apex::Tuple) where {M<:AbstractManifold,C<:Cartesian}
   coords = convert(C, Cartesian{datum(C)}(apex))
-  Cone(base, Point(coords))
+  Cone(base, Point{M}(coords))
 end
 
 paramdim(::Type{<:Cone}) = 3

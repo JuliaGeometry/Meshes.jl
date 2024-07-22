@@ -27,7 +27,7 @@ in the real world, including issues with:
 struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
 
-  function PolyArea{M,C,R,V}(rings; fix=true) where {M<:AbstractManifold,C<:CRS,R<:Ring{C},V<:AbstractVector{R}}
+  function PolyArea{M,C,R,V}(rings; fix=true) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
@@ -43,10 +43,9 @@ struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <:
 
       # fix degeneracy
       if nvertices(outer) == 2
-        v = vertices(outer)
-        A, B = v[1], v[2]
-        M = center(Segment(A, B))
-        outer = Ring(A, M, B)
+        A, B = vertices(outer)
+        P = center(Segment(A, B))
+        outer = Ring(A, P, B)
       end
       inners = filter(r -> nvertices(r) > 2, inners)
 
@@ -57,7 +56,8 @@ struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <:
   end
 end
 
-PolyArea(rings::V; fix=true) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} = PolyArea{M,C,R,V}(rings; fix)
+PolyArea(rings::V; fix=true) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} =
+  PolyArea{M,C,R,V}(rings; fix)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
 
