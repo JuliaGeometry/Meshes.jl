@@ -41,11 +41,6 @@ Point{M}(coords::C) where {M<:AbstractManifold,C<:CRS} = Point{M,C}(coords)
 
 Point(coords::CRS) = Point{_manifold(coords)}(coords)
 
-_manifold(coords::CRS) = 𝔼{CoordRefSystems.ndims(coords)}
-_manifold(::LatLon) = 🌐
-_manifold(::GeocentricLatLon) = 🌐
-_manifold(::AuthalicLatLon) = 🌐
-
 # convenience constructor
 Point(coords...) = Point(Cartesian(coords...))
 
@@ -154,3 +149,12 @@ function Base.show(io::IO, mime::MIME"text/plain", point::Point)
   print(io, "Point with ")
   show(io, mime, point.coords)
 end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_manifold(coords::CRS) = 𝔼{CoordRefSystems.ndims(coords)}
+_manifold(::LatLon) = 🌐
+_manifold(::GeocentricLatLon) = 🌐
+_manifold(::AuthalicLatLon) = 🌐
