@@ -176,15 +176,15 @@ viz(fig[1,2], disk)
 fig
 ```
 
-## Overlaps
+## Within
 
 ```@docs
-Overlaps
+Within
 ```
 
 ```@example transforms
 grid = CartesianGrid(10, 10)
-subgrid = grid |> Overlaps(x=(1.5, 6.5), y=(3.5, 8.5))
+subgrid = grid |> Within(x=(1.5, 6.5), y=(3.5, 8.5))
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)

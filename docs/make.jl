@@ -29,8 +29,7 @@ makedocs(
         "algorithms/orientation.md",
         "algorithms/neighborsearch.md",
         "algorithms/boundingbox.md",
-        "algorithms/hulls.md",
-        "algorithms/matrices.md"
+        "algorithms/hulls.md"
       ],
       "Transforms" => "transforms.md",
       "Random" => "rand.md",
