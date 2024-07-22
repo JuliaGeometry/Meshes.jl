@@ -86,7 +86,10 @@ apex(p::ParaboloidSurface) = p.apex
 Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
-axis(p::ParaboloidSurface{C,Mₚ,ℒ}) where {C,Mₚ,ℒ} = Line(p.apex, p.apex + Vec(ℒ(0), ℒ(0), p.focallength))
+function axis(p::ParaboloidSurface)
+  f = p.focallength
+  Line(p.apex, p.apex + Vec(zero(f), zero(f), f))
+end
 
 function centroid(p::ParaboloidSurface)
   c = p.apex
