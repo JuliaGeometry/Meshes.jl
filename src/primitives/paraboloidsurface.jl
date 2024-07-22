@@ -32,12 +32,12 @@ Same as above, but here the apex is at `Apex(0, 0, 0)`.
 
 See also <https://en.wikipedia.org/wiki/Paraboloid>.
 """
-struct ParaboloidSurface{M<:AbstractManifold,C<:CRS,ℒ<:Len} <: Primitive{M,C}
-  apex::Point{M,C}
+struct ParaboloidSurface{C<:CRS,Mₚ<:AbstractManifold,ℒ<:Len} <: Primitive{𝔼{3},C}
+  apex::Point{Mₚ,C}
   radius::ℒ
   focallength::ℒ
-  ParaboloidSurface(apex::Point{M,C}, radius::ℒ, focallength::ℒ) where {M<:AbstractManifold,C<:CRS,ℒ<:Len} =
-    new{M,C,float(ℒ)}(apex, radius, focallength)
+  ParaboloidSurface(apex::Point{Mₚ,C}, radius::ℒ, focallength::ℒ) where {C<:CRS,Mₚ<:AbstractManifold,ℒ<:Len} =
+    new{C,Mₚ,float(ℒ)}(apex, radius, focallength)
 end
 
 ParaboloidSurface(apex::Point, radius::Len, focallength::Len) = ParaboloidSurface(apex, promote(radius, focallength)...)

@@ -10,14 +10,14 @@ See <https://en.wikipedia.org/wiki/Cone>.
 
 See also [`ConeSurface`](@ref).
 """
-struct Cone{M<:AbstractManifold,C<:CRS,D<:Disk{M,C}} <: Primitive{M,C}
+struct Cone{C<:CRS,D<:Disk{C},Mₚ<:AbstractManifold} <: Primitive{𝔼{3},C}
   base::D
-  apex::Point{M,C}
+  apex::Point{Mₚ,C}
 end
 
-function Cone(base::Disk{M,C}, apex::Tuple) where {M<:AbstractManifold,C<:Cartesian}
+function Cone(base::Disk{C}, apex::Tuple) where {C<:Cartesian}
   coords = convert(C, Cartesian{datum(C)}(apex))
-  Cone(base, Point{M}(coords))
+  Cone(base, Point(coords))
 end
 
 paramdim(::Type{<:Cone}) = 3
