@@ -20,7 +20,7 @@ struct Box{M<:AbstractManifold,C<:CRS} <: Primitive{M,C}
   max::Point{M,C}
 
   function Box{M,C}(min, max) where {M<:AbstractManifold,C<:CRS}
-    assertion(min ⪯ max, "`min` must be less than or equal to `max`")
+    assertion(min ≤ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end

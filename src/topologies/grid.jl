@@ -14,7 +14,6 @@ to aperiodic dimensions.
 ```julia
 julia> GridTopology((10,20)) # 10x20 elements in a grid
 julia> GridTopology((10,20), (true,false)) # cylinder topology
-julia> GridTopology((10,20), (true,true)) # sphere topology
 ```
 """
 struct GridTopology{D} <: Topology
