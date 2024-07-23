@@ -116,8 +116,6 @@ Partial order for points on a given manifold.
 <(A::Point{🌐}, B::Point{🌐}) = _lat(A) < _lat(B)
 >(A::Point{🌐}, B::Point{🌐}) = _lat(A) > _lat(B)
 
-_lat(P) = convert(LatLon, P.coords).lat
-
 """
     ∠(A, B, C)
 
@@ -165,3 +163,5 @@ _manifold(coords::CRS) = 𝔼{CoordRefSystems.ndims(coords)}
 _manifold(::LatLon) = 🌐
 _manifold(::GeocentricLatLon) = 🌐
 _manifold(::AuthalicLatLon) = 🌐
+
+_lat(P) = convert(LatLon, P.coords).lat
