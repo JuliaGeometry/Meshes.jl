@@ -401,9 +401,6 @@ export
   RIGHT,
 
   # orientation
-  OrientationMethod,
-  WindingOrientation,
-  TriangleOrientation,
   orientation,
   OrientationType,
   CW,
