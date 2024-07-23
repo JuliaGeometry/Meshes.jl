@@ -25,7 +25,7 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,M,CRS} <: Geometry{M,CRS} end
+abstract type Polytope{K,M<:AbstractManifold,C<:CRS} <: Geometry{M,C} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)

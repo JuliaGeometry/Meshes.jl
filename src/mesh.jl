@@ -9,7 +9,7 @@ A mesh of geometries in a given manifold `M` with point coordinates specified
 in a coordinate reference system `CRS`. Unlike a general domain, a mesh has a
 well-defined topology `TP`.
 """
-abstract type Mesh{M,CRS,TP} <: Domain{M,CRS} end
+abstract type Mesh{M<:AbstractManifold,C<:CRS,TP<:Topology} <: Domain{M,C} end
 
 """
     vertex(mesh, ind)
@@ -145,7 +145,7 @@ end
 A grid of geometries in a given manifold `M` with points coordinates specified
 in a coordinate reference system `CRS`, which is embedded in `Dim` dimensions.
 """
-const Grid{M,CRS,Dim} = Mesh{M,CRS,GridTopology{Dim}}
+const Grid{M<:AbstractManifold,C<:CRS,Dim} = Mesh{M,C,GridTopology{Dim}}
 
 """
     vertex(grid, ijk)
