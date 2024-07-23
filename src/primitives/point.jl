@@ -104,12 +104,19 @@ at a reference (or start) point `A`.
     <(A::Point, B::Point)
     >(A::Point, B::Point)
 
-Generalized inequality for non-negative orthant Rⁿ₊.
+Partial order for points on a given manifold.
 """
 ≤(A::Point, B::Point) = all(x -> x ≥ zero(x), B - A)
 ≥(A::Point, B::Point) = all(x -> x ≥ zero(x), A - B)
 <(A::Point, B::Point) = all(x -> x > zero(x), B - A)
 >(A::Point, B::Point) = all(x -> x > zero(x), A - B)
+
+≤(A::Point{🌐}, B::Point{🌐}) = _lat(A) ≤ _lat(B)
+≥(A::Point{🌐}, B::Point{🌐}) = _lat(A) ≥ _lat(B)
+<(A::Point{🌐}, B::Point{🌐}) = _lat(A) < _lat(B)
+>(A::Point{🌐}, B::Point{🌐}) = _lat(A) > _lat(B)
+
+_lat(P) = convert(LatLon, P.coords).lat
 
 """
     ∠(A, B, C)
