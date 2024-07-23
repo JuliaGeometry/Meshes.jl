@@ -38,7 +38,7 @@ function _discretizewithin(ring::Ring, ::Val{2}, method::HeldTriangulation)
   earshuffle!(𝒬) = method.shuffle && shuffle!(method.rng, 𝒬)
 
   # input ring
-  O = orientation(ring, TriangleOrientation())
+  O = orientation(ring)
   ℛ = O == CCW ? ring : reverse(ring)
 
   # standardize coordinates

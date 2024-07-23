@@ -527,9 +527,7 @@
       @test issimple(poly)
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 30
-      for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == CCW
-      end
+      @test orientation(poly) == CCW
       @test unique(poly) == poly
     end
 
@@ -542,9 +540,7 @@
       @test issimple(poly)
       @test boundary(poly) == first(rings(poly))
       @test nvertices(poly) == 120
-      for algo in [WindingOrientation(), TriangleOrientation()]
-        @test orientation(poly, algo) == CCW
-      end
+      @test orientation(poly) == CCW
       @test unique(poly) == poly
     end
 
@@ -559,11 +555,9 @@
       @test boundary(poly) == Multi(rs)
       @test nvertices(first(rs)) < 30
       @test all(nvertices.(rs[2:end]) .< 18)
-      for algo in [WindingOrientation(), TriangleOrientation()]
-        orients = orientation(poly, algo)
-        @test orients[1] == CCW
-        @test all(orients[2:end] .== CW)
-      end
+      o = orientation(poly)
+      @test o[1] == CCW
+      @test all(o[2:end] .== CW)
       @test unique(poly) == poly
     end
 
@@ -573,14 +567,9 @@
       nb = nvertices(b)
       np = nvertices.(rings(poly))
       @test nb ≥ sum(np)
-      # triangle orientation always works even
+      # orientation always works even
       # in the presence of self-intersections
-      @test orientation(b, TriangleOrientation()) == CCW
-      # winding orientation is only suitable
-      # for simple polygonal chains
-      # if issimple(b)
-      #   @test orientation(b, WindingOrientation()) == CCW
-      # end
+      @test orientation(b) == CCW
     end
 
     # test uniqueness
