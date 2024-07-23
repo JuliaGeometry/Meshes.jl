@@ -20,7 +20,7 @@ struct Box{C<:CRS} <: Primitive{C}
   max::Point{C}
 
   function Box{C}(min, max) where {C<:CRS}
-    assertion(min ⪯ max, "`min` must be less than or equal to `max`")
+    assertion(min ≤ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end

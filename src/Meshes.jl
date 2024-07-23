@@ -34,6 +34,7 @@ import Random
 import Base: sort
 import Base: ==, !
 import Base: +, -, *
+import Base: <, >, ≤, ≥
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
@@ -182,10 +183,6 @@ export
   sides,
   diagonal,
   focallength,
-  ⪯,
-  ≺,
-  ⪰,
-  ≻,
 
   # polytopes
   Polytope,
