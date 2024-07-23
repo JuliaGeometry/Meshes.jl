@@ -25,7 +25,7 @@ SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[
 A subgrid of geometries in a given manifold `M` with point coordinates specified
 in a coordinate reference system `CRS`, which is embedded in `Dim` dimensions.
 """
-const SubGrid{M,CRS,Dim} = SubDomain{M,CRS,<:Grid{M,CRS,Dim}}
+const SubGrid{M<:AbstractManifold,C<:CRS,Dim} = SubDomain{M,C,<:Grid{M,C,Dim}}
 
 # -----------------
 # DOMAIN INTERFACE
