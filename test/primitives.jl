@@ -100,14 +100,14 @@
     @test p2 isa P
 
     # generalized inequality
-    @test cart(1, 1) ⪯ cart(1, 1)
-    @test !(cart(1, 1) ≺ cart(1, 1))
-    @test cart(1, 2) ⪯ cart(3, 4)
-    @test cart(1, 2) ≺ cart(3, 4)
-    @test cart(1, 1) ⪰ cart(1, 1)
-    @test !(cart(1, 1) ≻ cart(1, 1))
-    @test cart(3, 4) ⪰ cart(1, 2)
-    @test cart(3, 4) ≻ cart(1, 2)
+    @test cart(1, 1) ≤ cart(1, 1)
+    @test !(cart(1, 1) < cart(1, 1))
+    @test cart(1, 2) ≤ cart(3, 4)
+    @test cart(1, 2) < cart(3, 4)
+    @test cart(1, 1) ≥ cart(1, 1)
+    @test !(cart(1, 1) > cart(1, 1))
+    @test cart(3, 4) ≥ cart(1, 2)
+    @test cart(3, 4) > cart(1, 2)
 
     # center and centroid
     @test Meshes.center(cart(1, 1)) == cart(1, 1)
