@@ -50,9 +50,9 @@ end
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
-function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val{Dim}, geoms, colorant) where {Dim}
-  @warn "geodesic geometries can't be visualized yet, visualizing as Euclidean..."
-  vizgset!(plot, 𝔼{Dim}, pdim, edim, geoms, colorant)
+function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)

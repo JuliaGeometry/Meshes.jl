@@ -11,9 +11,9 @@ function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
   vizmesh!(plot, M[], Val(pdim[]), Val(edim[]))
 end
 
-function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val{Dim}) where {Dim}
-  @warn "geodesic geometries can't be visualized yet, visualizing as Euclidean..."
-  vizmesh!(plot, 𝔼{Dim}, pdim, edim)
+function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizmesh!(plot, 𝔼, pdim, edim)
 end
 
 function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val)

@@ -10,9 +10,9 @@ function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   vizgrid!(plot, M[], Val(pdim[]), Val(edim[]))
 end
 
-function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val{Dim}) where {Dim}
-  @warn "geodesic geometries can't be visualized yet, visualizing as Euclidean..."
-  vizgrid!(plot, 𝔼{Dim}, pdim, edim)
+function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizgrid!(plot, 𝔼, pdim, edim)
 end
 
 vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2}) = vizmesh!(plot, M, pdim, edim)
