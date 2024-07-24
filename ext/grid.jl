@@ -15,9 +15,7 @@ function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
   vizgrid!(plot, 𝔼, pdim, edim)
 end
 
-vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2}) = vizmesh!(plot, M, pdim, edim)
-
-vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3}) = vizmesh!(plot, M, pdim, edim)
+vizgrid!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val) = vizmesh!(plot, M, pdim, edim)
 
 # ----------------
 # SPECIALIZATIONS
