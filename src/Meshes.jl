@@ -139,7 +139,6 @@ export
   ×,
 
   # manifolds
-  manifold,
   𝔼,
   🌐,
 
@@ -148,6 +147,7 @@ export
   embeddim,
   paramdim,
   crs,
+  manifold,
   center,
   centroid,
 
@@ -285,6 +285,7 @@ export
   embeddim,
   paramdim,
   crs,
+  manifold,
   element,
   nelements,
 
