@@ -139,6 +139,7 @@ export
   ×,
 
   # manifolds
+  manifold,
   𝔼,
   🌐,
 

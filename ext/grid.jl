@@ -4,14 +4,20 @@
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   grid = plot[:object]
+  M = Makie.@lift manifold($grid)
   pdim = Makie.@lift paramdim($grid)
   edim = Makie.@lift embeddim($grid)
-  vizgrid!(plot, Val(pdim[]), Val(edim[]))
+  vizgrid!(plot, M[], Val(pdim[]), Val(edim[]))
 end
 
-vizgrid!(plot, ::Val{2}, ::Val{2}) = vizmesh!(plot, Val(2), Val(2))
+function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val{Dim}) where {Dim}
+  @warn "geodesic geometries can't be visualized yet, visualizing as Euclidean..."
+  vizgrid!(plot, 𝔼{Dim}, pdim, edim)
+end
 
-function vizgrid!(plot, ::Val{3}, ::Val{3})
+vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2}) = vizmesh!(plot, M, pdim, edim)
+
+function vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3})
   grid = plot[:object]
   color = plot[:color]
 
@@ -22,7 +28,7 @@ function vizgrid!(plot, ::Val{3}, ::Val{3})
   if nv[] == nc[]
     error("not implemented")
   else
-    vizmesh!(plot, Val(3), Val(3))
+    vizmesh!(plot, M, pdim, edim)
   end
 end
 

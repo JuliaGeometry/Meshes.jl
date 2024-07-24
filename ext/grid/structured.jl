@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, ::Val{2}, ::Val{2})
+function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
   grid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -36,7 +36,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, ::Val{2}, ::Val{2})
       Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
     end
   else
-    vizmesh!(plot, Val(2), Val(2))
+    vizmesh!(plot, M, pdim, edim)
   end
 end
 
