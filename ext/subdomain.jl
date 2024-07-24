@@ -48,7 +48,7 @@ function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
   )
 end
 
-const SubCartesianGrid{C<:CRS,Mₚ<:AbstractManifold,Dim} = SubDomain{𝔼{Dim},C,<:CartesianGrid{C,Mₚ,Dim}}
+const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
 
 function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, ::Val)
   subgrid = plot[:object]
