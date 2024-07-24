@@ -21,14 +21,31 @@ function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
   alpha = plot[:alpha]
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
+  showsegments = plot[:showsegments]
+  segmentcolor = plot[:segmentcolor]
+  segmentsize = plot[:segmentsize]
+  showpoints = plot[:showpoints]
+  pointcolor = plot[:pointcolor]
+  pointsize = plot[:pointsize]
 
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+  # construct the geometry set
+  gset = Makie.@lift GeometrySet(collect($subdom))
 
-  # collect geometries
-  geoms = Makie.@lift collect($subdom)
-
-  vizmany!(plot, geoms, colorant)
+  # forward attributes
+  viz!(
+    plot,
+    gset;
+    color,
+    alpha,
+    colormap,
+    colorrange,
+    showsegments,
+    segmentcolor,
+    segmentsize,
+    showpoints,
+    pointcolor,
+    pointsize
+  )
 end
 
 const SubCartesianGrid{C<:CRS,Mₚ<:AbstractManifold,Dim} = SubDomain{𝔼{Dim},C,<:CartesianGrid{C,Mₚ,Dim}}
