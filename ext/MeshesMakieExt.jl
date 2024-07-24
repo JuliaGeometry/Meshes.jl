@@ -43,9 +43,10 @@ include("colors.jl")
 include("utils.jl")
 
 # viz recipes
-include("grid.jl")
 include("mesh.jl")
+include("grid.jl")
 include("geometryset.jl")
+include("subdomain.jl")
 include("vector.jl")
 include("fallbacks.jl")
 

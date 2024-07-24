@@ -24,7 +24,6 @@ vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3}) = vizmesh!(plot, M, 
 # ----------------
 
 include("grid/cartesian.jl")
-include("grid/subcartesian.jl")
 include("grid/rectilinear.jl")
 include("grid/structured.jl")
 include("grid/transformed.jl")
