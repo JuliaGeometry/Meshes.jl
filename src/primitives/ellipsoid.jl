@@ -11,7 +11,7 @@ struct Ellipsoid{C<:CRS,Mₚ<:AbstractManifold,R,ℒ<:Len} <: Primitive{𝔼{3},
   radii::NTuple{3,ℒ}
   center::Point{Mₚ,C}
   rotation::R
-  Ellipsoid(radii::NTuple{3,ℒ}, center::Point{Mₚ,C}, rotation::R) where{C<:CRS,Mₚ<:AbstractManifold,R,ℒ<:Len} =
+  Ellipsoid(radii::NTuple{3,ℒ}, center::Point{Mₚ,C}, rotation::R) where {C<:CRS,Mₚ<:AbstractManifold,R,ℒ<:Len} =
     new{C,Mₚ,R,float(ℒ)}(radii, center, rotation)
 end
 

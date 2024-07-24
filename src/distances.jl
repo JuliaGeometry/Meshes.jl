@@ -64,8 +64,7 @@ function _evaluate(d::Haversine, coords₁::LatLon, coords₂::LatLon)
   evaluate(d, v₁, v₂) * u
 end
 
-_evaluate(d::Haversine, coords₁::CRS, coords₂::CRS) =
-  _evaluate(d, convert(LatLon, coords₁), convert(LatLon, coords₂))
+_evaluate(d::Haversine, coords₁::CRS, coords₂::CRS) = _evaluate(d, convert(LatLon, coords₁), convert(LatLon, coords₂))
 
 evaluate(d::SphericalAngle, p₁::Point, p₂::Point) = _evaluate(d, coords(p₁), coords(p₂))
 
