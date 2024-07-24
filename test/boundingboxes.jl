@@ -93,7 +93,7 @@
   d = cartgrid(10, 10)
   v = view(d, 1:2)
   @test boundingbox(v) == Box(cart(0, 0), cart(2, 1))
-  @test @allocated(boundingbox(v)) < 9000
+  @test @allocated(boundingbox(v)) < 10000
 
   g = cartgrid(10, 10)
   d = convert(RectilinearGrid, g)

@@ -10,7 +10,7 @@ See <https://en.wikipedia.org/wiki/Frustum>.
 
 See also [`FrustumSurface`](@ref).
 """
-struct Frustum{C<:CRS,D<:Disk{C}} <: Primitive{C}
+struct Frustum{C<:CRS,D<:Disk{C}} <: Primitive{𝔼{3},C}
   bot::D
   top::D
 

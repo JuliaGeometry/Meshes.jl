@@ -4,27 +4,18 @@
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   grid = plot[:object]
+  M = Makie.@lift manifold($grid)
   pdim = Makie.@lift paramdim($grid)
   edim = Makie.@lift embeddim($grid)
-  vizgrid!(plot, Val(pdim[]), Val(edim[]))
+  vizgrid!(plot, M[], Val(pdim[]), Val(edim[]))
 end
 
-vizgrid!(plot, ::Val{2}, ::Val{2}) = vizmesh!(plot, Val(2), Val(2))
-
-function vizgrid!(plot, ::Val{3}, ::Val{3})
-  grid = plot[:object]
-  color = plot[:color]
-
-  # number of vertices and colors
-  nv = Makie.@lift nvertices($grid)
-  nc = Makie.@lift $color isa AbstractVector ? length($color) : 1
-
-  if nv[] == nc[]
-    error("not implemented")
-  else
-    vizmesh!(plot, Val(3), Val(3))
-  end
+function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizgrid!(plot, 𝔼, pdim, edim)
 end
+
+vizgrid!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val) = vizmesh!(plot, M, pdim, edim)
 
 # ----------------
 # SPECIALIZATIONS
@@ -32,8 +23,8 @@ end
 
 include("grid/cartesian.jl")
 include("grid/rectilinear.jl")
-include("grid/transformed.jl")
 include("grid/structured.jl")
+include("grid/transformed.jl")
 
 # helper functions to create a minimum number
 # of line segments within Cartesian/Rectilinear grid

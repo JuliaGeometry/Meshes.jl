@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Val{2}, ::Val{2})
+function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
   grid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -33,7 +33,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Val{2}, ::Val{2})
     if nc[] == nv[]
       # visualize as a simple mesh so that
       # colors can be specified at vertices
-      vizmesh!(plot, Val(2), Val(2))
+      vizmesh!(plot, M, pdim, edim)
     else
       # visualize as built-in heatmap
       sz = Makie.@lift size($grid)

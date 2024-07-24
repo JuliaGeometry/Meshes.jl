@@ -60,6 +60,9 @@ include("tolerances.jl")
 # basic vector type
 include("vectors.jl")
 
+# manifold types
+include("manifolds.jl")
+
 # geometries
 include("geometries.jl")
 
@@ -135,11 +138,16 @@ export
   ⋅,
   ×,
 
+  # manifolds
+  𝔼,
+  🌐,
+
   # geometries
   Geometry,
   embeddim,
   paramdim,
   crs,
+  manifold,
   center,
   centroid,
 
@@ -277,6 +285,7 @@ export
   embeddim,
   paramdim,
   crs,
+  manifold,
   element,
   nelements,
 

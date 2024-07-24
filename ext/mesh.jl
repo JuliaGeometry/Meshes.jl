@@ -2,15 +2,21 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
+function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
   # retrieve mesh and dimensions
   mesh = plot[:object]
+  M = Makie.@lift manifold($mesh)
   pdim = Makie.@lift paramdim($mesh)
   edim = Makie.@lift embeddim($mesh)
-  vizmesh!(plot, Val(pdim[]), Val(edim[]))
+  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]))
 end
 
-function vizmesh!(plot, ::Val{1}, ::Val)
+function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizmesh!(plot, 𝔼, pdim, edim)
+end
+
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val)
   mesh = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -42,7 +48,7 @@ function vizmesh!(plot, ::Val{1}, ::Val)
   Makie.lines!(plot, coords, color=colors, linewidth=segmentsize)
 end
 
-function vizmesh!(plot, ::Val{2}, ::Val)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   mesh = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -181,7 +187,7 @@ function vizmesh!(plot, ::Val{2}, ::Val)
   end
 end
 
-function vizmesh!(plot, ::Val{3}, ::Val)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val)
   mesh = plot[:object]
   color = plot[:color]
   meshes = Makie.@lift let

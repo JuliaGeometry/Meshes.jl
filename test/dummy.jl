@@ -1,6 +1,6 @@
 # dummy type implementing the Domain trait
-struct DummyDomain{C<:CRS} <: Domain{C}
-  origin::Point{C}
+struct DummyDomain{M<:Meshes.AbstractManifold,C<:CRS} <: Domain{M,C}
+  origin::Point{M,C}
 end
 
 function Meshes.element(domain::DummyDomain, ind::Int)

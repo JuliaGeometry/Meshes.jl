@@ -5,27 +5,39 @@
 """
     Box(min, max)
 
-An axis-aligned box with `min` and `max` corners.
-See <https://en.wikipedia.org/wiki/Hyperrectangle>.
+A (geodesic) box with `min` and `max` points on a given manifold.
 
 ## Examples
 
+Construct a 3D box using points with Cartesian coordinates:
+
 ```julia
-Box(Point(0, 0, 0), Point(1, 1, 1))
+Box((0, 0, 0), (1, 1, 1))
+```
+
+Likewise, construct a 2D box on the plane:
+
+```julia
 Box((0, 0), (1, 1))
 ```
-"""
-struct Box{C<:CRS} <: Primitive{C}
-  min::Point{C}
-  max::Point{C}
 
-  function Box{C}(min, max) where {C<:CRS}
+Construct a geodesic box on the ellipsoid:
+
+```julia
+Box(Point(LatLon(0, 0)), Point(LatLon(1, 1)))
+```
+"""
+struct Box{M<:AbstractManifold,C<:CRS} <: Primitive{M,C}
+  min::Point{M,C}
+  max::Point{M,C}
+
+  function Box{M,C}(min, max) where {M<:AbstractManifold,C<:CRS}
     assertion(min ≤ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end
 
-Box(min::Point{C}, max::Point{C}) where {C<:CRS} = Box{C}(min, max)
+Box(min::Point{M,C}, max::Point{M,C}) where {M<:AbstractManifold,C<:CRS} = Box{M,C}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
