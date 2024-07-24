@@ -31,7 +31,7 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
   of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
   [`SimpleTopology`](@ref).
 """
-struct SimpleMesh{C<:CRS,V<:AbstractVector{Point{C}},TP<:Topology} <: Mesh{C,TP}
+struct SimpleMesh{M<:AbstractManifold,C<:CRS,V<:AbstractVector{Point{M,C}},TP<:Topology} <: Mesh{M,C,TP}
   vertices::V
   topology::TP
 end

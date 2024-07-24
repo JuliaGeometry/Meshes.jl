@@ -53,27 +53,27 @@ end
 # SPECIAL CASES
 # --------------
 
-function evaluate(d::Haversine, p₁::Point{<:LatLon}, p₂::Point{<:LatLon})
+evaluate(d::Haversine, p₁::Point, p₂::Point) = _evaluate(d, coords(p₁), coords(p₂))
+
+function _evaluate(d::Haversine, coords₁::LatLon, coords₂::LatLon)
   uᵣ = unit(d.radius)
   # add default unit if necessary
   u = uᵣ === NoUnits ? u"m" : NoUnits
-  latlon₁ = coords(p₁)
-  latlon₂ = coords(p₂)
-  v₁ = SVector(latlon₁.lon, latlon₁.lat)
-  v₂ = SVector(latlon₂.lon, latlon₂.lat)
+  v₁ = SVector(coords₁.lon, coords₁.lat)
+  v₂ = SVector(coords₂.lon, coords₂.lat)
   evaluate(d, v₁, v₂) * u
 end
 
-evaluate(d::Haversine, p₁::Point, p₂::Point) =
-  evaluate(d, Point(convert(LatLon, coords(p₁))), Point(convert(LatLon, coords(p₂))))
+_evaluate(d::Haversine, coords₁::CRS, coords₂::CRS) =
+  _evaluate(d, convert(LatLon, coords₁), convert(LatLon, coords₂))
 
-function evaluate(d::SphericalAngle, p₁::Point{<:LatLon}, p₂::Point{<:LatLon})
-  latlon₁ = coords(p₁)
-  latlon₂ = coords(p₂)
-  v₁ = SVector(deg2rad(latlon₁.lon), deg2rad(latlon₁.lat))
-  v₂ = SVector(deg2rad(latlon₂.lon), deg2rad(latlon₂.lat))
+evaluate(d::SphericalAngle, p₁::Point, p₂::Point) = _evaluate(d, coords(p₁), coords(p₂))
+
+function _evaluate(d::SphericalAngle, coords₁::LatLon, coords₂::LatLon)
+  v₁ = SVector(deg2rad(coords₁.lon), deg2rad(coords₁.lat))
+  v₂ = SVector(deg2rad(coords₂.lon), deg2rad(coords₂.lat))
   evaluate(d, v₁, v₂) * u"rad"
 end
 
-evaluate(d::SphericalAngle, p₁::Point, p₂::Point) =
-  evaluate(d, Point(convert(LatLon, coords(p₁))), Point(convert(LatLon, coords(p₂))))
+_evaluate(d::SphericalAngle, coords₁::CRS, coords₂::CRS) =
+  _evaluate(d, convert(LatLon, coords₁), convert(LatLon, coords₂))

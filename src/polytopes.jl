@@ -3,15 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    Polytope{K,CRS}
+    Polytope{K,M,CRS}
 
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces.
 The parameter `K` is also known as the rank or parametric dimension 
 of the polytope (<https://en.wikipedia.org/wiki/Abstract_polytope>).
-The vertices are stored with coordinates in a given coordinate
-reference system `CRS`.
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
 for example, can be decomposed into faces. Each face can then be decomposed into
@@ -27,18 +25,31 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,CRS} <: Geometry{CRS} end
+abstract type Polytope{K,M<:AbstractManifold,C<:CRS} <: Geometry{M,C} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
-  expr = quote
-    $Base.@__doc__ struct $type{C<:CRS} <: Polytope{$K,C}
-      vertices::NTuple{$N,Point{C}}
+  structexpr = if K == 3
+    quote
+      struct $type{C<:CRS,Mₚ<:AbstractManifold} <: Polytope{$K,𝔼{3},C}
+        vertices::NTuple{$N,Point{Mₚ,C}}
+      end
     end
+  else
+    quote
+      struct $type{M<:AbstractManifold,C<:CRS} <: Polytope{$K,M,C}
+        vertices::NTuple{$N,Point{M,C}}
+      end
+    end
+  end
+
+  expr = quote
+    $Base.@__doc__ $structexpr
 
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
     $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
+
   esc(expr)
 end
 
@@ -47,7 +58,7 @@ end
 # -------------------
 
 """
-    Chain{CRS}
+    Chain{M,CRS}
 
 A chain is a 1-polytope, i.e. a polytope with parametric dimension 1.
 See <https://en.wikipedia.org/wiki/Polygonal_chain>.
@@ -154,7 +165,7 @@ include("polytopes/ring.jl")
 # ---------------------
 
 """
-    Polygon{CRS}
+    Polygon{M,CRS}
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
@@ -193,7 +204,7 @@ include("polytopes/polyarea.jl")
 # ------------------------
 
 """
-    Polyhedron{CRS}
+    Polyhedron{M,CRS}
 
 A polyhedron is a 3-polytope, i.e. a polytope with parametric dimension 3.
 

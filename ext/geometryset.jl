@@ -22,45 +22,42 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
     inds = Makie.@lift findall(g -> g isa G, $geoms)
     gvec = Makie.@lift collect(G, $geoms[$inds])
     colors = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
+    M = Makie.@lift manifold(first($gvec))
     pdim = Makie.@lift paramdim(first($gvec))
     edim = Makie.@lift embeddim(first($gvec))
-    vizgset!(plot, Val(pdim[]), Val(edim[]), gvec, colors)
+    vizgset!(plot, M[], Val(pdim[]), Val(edim[]), gvec, colors)
   end
-end
-
-function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
-  pset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-  pointsize = plot[:pointsize]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
-  # get geometries and coordinates
-  geoms = Makie.@lift parent($pset)
-  coords = Makie.@lift map(g -> ustrip.(to(g)), $geoms)
-
-  # visualize point set
-  Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
-function vizgset!(plot, ::Val{0}, ::Val, geoms, colorant)
+function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
   points = Makie.@lift pointify.($geoms)
   vizmany!(plot, points, colorant)
 end
 
-function vizgset!(plot, ::Val{1}, ::Val, geoms, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colorant)
+  pointsize = plot[:pointsize]
+
+  # get coordinates
+  coords = Makie.@lift map(p -> ustrip.(to(p)), $geoms)
+
+  # visualize points
+  Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
   showfacets1D!(plot, geoms)
 end
 
-function vizgset!(plot, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
   rset = plot[:object]
   segmentsize = plot[:segmentsize]
 
@@ -77,7 +74,7 @@ function vizgset!(plot, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, coloran
   showfacets1D!(plot, geoms)
 end
 
-function vizgset!(plot, ::Val{2}, ::Val, geoms, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, geoms, colorant)
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
   showfacets2D!(plot, geoms)
@@ -85,7 +82,7 @@ end
 
 const PolygonLike = Union{Polygon,MultiPolygon}
 
-function vizgset!(plot, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:PolygonLike}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:PolygonLike}, colorant)
   showsegments = plot[:showsegments]
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
@@ -102,7 +99,7 @@ function vizgset!(plot, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:PolygonLik
   end
 end
 
-function vizgset!(plot, ::Val{3}, ::Val, geoms, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
   meshes = Makie.@lift discretize.(boundary.($geoms))
   vizmany!(plot, meshes, colorant)
 end

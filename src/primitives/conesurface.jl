@@ -10,9 +10,9 @@ See <https://en.wikipedia.org/wiki/Cone>.
 
 See also [`Cone`](@ref).
 """
-struct ConeSurface{C<:CRS,D<:Disk{C}} <: Primitive{C}
+struct ConeSurface{C<:CRS,D<:Disk{C},Mₚ<:AbstractManifold} <: Primitive{𝔼{3},C}
   base::D
-  apex::Point{C}
+  apex::Point{Mₚ,C}
 end
 
 function ConeSurface(base::Disk{C}, apex::Tuple) where {C<:Cartesian}

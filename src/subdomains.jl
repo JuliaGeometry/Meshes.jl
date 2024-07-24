@@ -11,13 +11,21 @@
 
 A partial view of a `domain` containing only the elements at `indices`.
 """
-struct SubDomain{C<:CRS,D<:Domain{C},I<:AbstractVector{Int}} <: Domain{C}
+struct SubDomain{M<:AbstractManifold,C<:CRS,D<:Domain{M,C},I<:AbstractVector{Int}} <: Domain{M,C}
   domain::D
   inds::I
 end
 
 # specialize constructor to avoid infinite loops
 SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[inds])
+
+"""
+    SubGrid{M,CRS,Dim}
+
+A subgrid of geometries in a given manifold `M` with point coordinates specified
+in a coordinate reference system `CRS`, which is embedded in `Dim` dimensions.
+"""
+const SubGrid{M<:AbstractManifold,C<:CRS,Dim} = SubDomain{M,C,<:Grid{M,C,Dim}}
 
 # -----------------
 # DOMAIN INTERFACE

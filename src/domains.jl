@@ -3,11 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    Domain{CRS}
+    Domain{M,CRS}
 
-A domain is an indexable collection of geometries (e.g. mesh).
+A domain is an indexable collection of geometries (e.g. mesh)
+in a given manifold `M` with point coordinates specified in a
+coordinate reference system `CRS`.
 """
-abstract type Domain{CRS} end
+abstract type Domain{M<:AbstractManifold,C<:CRS} end
 
 """
     element(domain, ind)
@@ -60,7 +62,7 @@ Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
 Return the number of dimensions of the space where the `domain` is embedded.
 """
-embeddim(::Type{<:Domain{CRS}}) where {CRS} = CoordRefSystems.ndims(CRS)
+embeddim(::Type{<:Domain{M,CRS}}) where {M,CRS} = CoordRefSystems.ndims(CRS)
 embeddim(d::Domain) = embeddim(typeof(d))
 
 """
@@ -76,15 +78,23 @@ paramdim(d::Domain) = paramdim(first(d))
 
 Return the coordinate reference system (CRS) of the `domain`.
 """
-crs(::Type{<:Domain{CRS}}) where {CRS} = CRS
+crs(::Type{<:Domain{M,CRS}}) where {M,CRS} = CRS
 crs(d::Domain) = crs(typeof(d))
+
+"""
+    manifold(domain)
+
+Return the manifold where the `domain` is defined.
+"""
+manifold(::Type{<:Domain{M,CRS}}) where {M,CRS} = M
+manifold(d::Domain) = manifold(typeof(d))
 
 """
     lentype(domain)
 
 Return the length type of the `domain`.
 """
-lentype(::Type{<:Domain{CRS}}) where {CRS} = lentype(CRS)
+lentype(::Type{<:Domain{M,CRS}}) where {M,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """
@@ -147,10 +157,10 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("subdomains.jl")
 include("sets.jl")
 include("mesh.jl")
 include("trajecs.jl")
+include("subdomains.jl")
 
 # ------------
 # CONVERSIONS

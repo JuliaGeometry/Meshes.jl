@@ -20,7 +20,7 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{Cartesian{Datum,Dim,ℒ},Dim}
+struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{𝔼{Dim},Cartesian{Datum,Dim,ℒ},Dim}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
 

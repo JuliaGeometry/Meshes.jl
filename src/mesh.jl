@@ -3,11 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    Mesh{CRS,TP}
+    Mesh{M,CRS,TP}
 
-A mesh with given coordinate reference system `CRS` and topology of type `TP`.
+A mesh of geometries in a given manifold `M` with point coordinates specified
+in a coordinate reference system `CRS`. Unlike a general domain, a mesh has a
+well-defined topology `TP`.
 """
-abstract type Mesh{CRS,TP<:Topology} <: Domain{CRS} end
+abstract type Mesh{M<:AbstractManifold,C<:CRS,TP<:Topology} <: Domain{M,C} end
 
 """
     vertex(mesh, ind)
@@ -138,18 +140,12 @@ function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
 end
 
 """
-    Grid{CRS,Dim}
+    Grid{M,CRS,Dim}
 
-A grid with given coordinate reference system `CRS` embedded in a `Dim`-dimensional space.
+A grid of geometries in a given manifold `M` with points coordinates specified
+in a coordinate reference system `CRS`, which is embedded in `Dim` dimensions.
 """
-const Grid{CRS,Dim} = Mesh{CRS,GridTopology{Dim}}
-
-"""
-    SubGrid{CRS,Dim}
-
-A view of a grid with given coordinate reference system `CRS` embedded in a `Dim`-dimensinoal space.
-"""
-const SubGrid{CRS,Dim} = SubDomain{CRS,<:Grid{CRS,Dim}}
+const Grid{M<:AbstractManifold,C<:CRS,Dim} = Mesh{M,C,GridTopology{Dim}}
 
 """
     vertex(grid, ijk)
