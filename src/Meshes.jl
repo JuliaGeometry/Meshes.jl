@@ -48,6 +48,10 @@ import TransformsBase: parameters, preprocess
 # CoordRefSystems API
 import CoordRefSystems: lentype
 
+# Manifolds API
+import ManifoldsBase: AbstractManifold, ℝ
+import ManifoldsBase: manifold_dimension
+
 # unit utils
 include("units.jl")
 
