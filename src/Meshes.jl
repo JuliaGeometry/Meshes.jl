@@ -51,6 +51,7 @@ import CoordRefSystems: lentype
 # Manifolds API
 import ManifoldsBase: AbstractManifold, ℝ
 import ManifoldsBase: manifold_dimension
+import ManifoldsBase: check_point
 
 # unit utils
 include("units.jl")
@@ -77,6 +78,9 @@ include("toporelations.jl")
 
 # domains
 include("domains.jl")
+
+# manifold functions
+include("manifuns.jl")
 
 # utilities
 include("utils.jl")
