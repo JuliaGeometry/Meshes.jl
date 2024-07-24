@@ -29,7 +29,19 @@ function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
   end
 end
 
-function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
+const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
+
+function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
+  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
+  vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
+  points = Makie.@lift pointify.($geoms)
+  vizmany!(plot, points, colorant)
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colorant)
   pset = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -46,18 +58,6 @@ function Makie.plot!(plot::Viz{<:Tuple{PointSet}})
 
   # visualize point set
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
-end
-
-const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
-
-function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
-  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
-  vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
-end
-
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
-  points = Makie.@lift pointify.($geoms)
-  vizmany!(plot, points, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)

@@ -2,9 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-const SubCartesianGrid{CRS} = SubDomain{CRS,<:CartesianGrid{CRS}}
+const SubCartesianGrid{C<:CRS,Mₚ<:AbstractManifold,Dim} = SubDomain{𝔼{Dim},C,<:CartesianGrid{C,Mₚ,Dim}}
 
-function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
+function vizgrid!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, ::Val)
   subgrid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]

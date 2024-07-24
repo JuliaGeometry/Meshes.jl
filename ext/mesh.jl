@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{SimpleMesh}})
+function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
   # retrieve mesh and dimensions
   mesh = plot[:object]
   M = Makie.@lift manifold($mesh)

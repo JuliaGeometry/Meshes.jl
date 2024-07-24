@@ -24,9 +24,10 @@ vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3}) = vizmesh!(plot, M, 
 # ----------------
 
 include("grid/cartesian.jl")
+include("grid/subcartesian.jl")
 include("grid/rectilinear.jl")
-include("grid/transformed.jl")
 include("grid/structured.jl")
+include("grid/transformed.jl")
 
 # helper functions to create a minimum number
 # of line segments within Cartesian/Rectilinear grid
