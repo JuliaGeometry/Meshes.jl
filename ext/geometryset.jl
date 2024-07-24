@@ -42,21 +42,12 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colorant)
-  pset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
   pointsize = plot[:pointsize]
 
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+  # get coordinates
+  coords = Makie.@lift map(p -> ustrip.(to(p)), $geoms)
 
-  # get geometries and coordinates
-  geoms = Makie.@lift parent($pset)
-  coords = Makie.@lift map(g -> ustrip.(to(g)), $geoms)
-
-  # visualize point set
+  # visualize points
   Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
 end
 
