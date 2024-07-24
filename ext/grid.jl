@@ -17,20 +17,7 @@ end
 
 vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2}) = vizmesh!(plot, M, pdim, edim)
 
-function vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3})
-  grid = plot[:object]
-  color = plot[:color]
-
-  # number of vertices and colors
-  nv = Makie.@lift nvertices($grid)
-  nc = Makie.@lift $color isa AbstractVector ? length($color) : 1
-
-  if nv[] == nc[]
-    error("not implemented")
-  else
-    vizmesh!(plot, M, pdim, edim)
-  end
-end
+vizgrid!(plot, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3}) = vizmesh!(plot, M, pdim, edim)
 
 # ----------------
 # SPECIALIZATIONS
