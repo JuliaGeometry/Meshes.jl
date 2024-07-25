@@ -46,8 +46,10 @@ function collectat(iter, inds)
   if isempty(inds)
     eltype(iter)[]
   else
-    selectat(inds) = enumerate ⨟ TakeWhile(x -> first(x) ≤ last(inds)) ⨟ Filter(y -> first(y) ∈ inds) ⨟ Map(last)
-    iter |> selectat(inds) |> tcollect
+    e = enumerate(iter)
+    w = Iterators.takewhile(x -> (first(x) ≤ last(inds)), e)
+    f = Iterators.filter(x -> (first(x) ∈ inds), w)
+    map(last, f)
   end
 end
 

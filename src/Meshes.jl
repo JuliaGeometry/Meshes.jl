@@ -26,7 +26,6 @@ using DelaunayTriangulation: triangulate, voronoi
 using DelaunayTriangulation: each_solid_triangle
 using DelaunayTriangulation: each_polygon
 using DelaunayTriangulation: get_polygon_points
-using Transducers: Filter, Map, TakeWhile, tcollect, ⨟
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
