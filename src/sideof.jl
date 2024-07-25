@@ -160,7 +160,7 @@ sideof(points, line::Line) = map(point -> sideof(point, line), points)
 
 function sideof(points, object::GeometryOrDomain)
   bbox = boundingbox(object)
-  isin = tcollect(point ∈ bbox for point in points)
+  isin = [point ∈ bbox for point in points]
   inds = findall(isin)
   side = fill(OUT, length(isin))
   side[inds] .= sidewithinbox(collectat(points, inds), object)
