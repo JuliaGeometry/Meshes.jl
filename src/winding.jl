@@ -31,7 +31,7 @@ function winding(points, ring::Ring)
     Σ / oftype(Σ, 2π)
   end
 
-  tcollect(w(p) for p in points)
+  [w(p) for p in points]
 end
 
 winding(point::Point, ring::Ring) = winding((point,), ring) |> first
@@ -61,7 +61,7 @@ function winding(points, mesh::Mesh)
     ∑ / oftype(∑, 4π)
   end
 
-  tcollect(w(p) for p in points)
+  [w(p) for p in points]
 end
 
 winding(point::Point, mesh::Mesh) = winding((point,), mesh) |> first
