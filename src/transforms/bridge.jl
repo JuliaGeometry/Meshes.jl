@@ -52,8 +52,11 @@ function bridge(rings, rinds, δ)
   # retrieve coordinate type
   ℒ = lentype(first(rings))
 
+  # retrieve original CRS
+  C = crs(first(rings))
+
   # initialize outer boundary
-  outer = verts[1]
+  outer = flat.(verts[1])
   oinds = vinds[1]
 
   # merge holes into outer boundary
@@ -67,7 +70,7 @@ function bridge(rings, rinds, δ)
     imax = 0
     dmin = typemax(ℒ)
     for jₒ in 1:length(outer), jᵢ in 1:length(inner)
-      d = sum(abs, outer[jₒ] - inner[jᵢ])
+      d = sum(abs, outer[jₒ] - flat(inner[jᵢ]))
       if d < dmin
         omax = jₒ
         imax = jᵢ
@@ -78,7 +81,7 @@ function bridge(rings, rinds, δ)
     B = inner[imax]
 
     # direction and normal to segment A--B
-    v = B - A
+    v = flat(B) - flat(A)
     u = Vec(-v[2], v[1])
     n = norm(u)
 
@@ -117,5 +120,10 @@ function bridge(rings, rinds, δ)
     end
   end
 
-  Ring(outer), dups
+  points = map(outer) do p
+    c = CoordRefSystems.rawvalues(coords(p))
+    Point(CoordRefSystems.reconstruct(C, c))
+  end
+
+  Ring(points), dups
 end
