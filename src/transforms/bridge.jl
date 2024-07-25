@@ -121,7 +121,7 @@ function bridge(rings, rinds, δ)
   end
 
   points = map(outer) do p
-    c = CoordRefSystems.rawvalues(coords(p))
+    c = CoordRefSystems.raw(coords(p))
     Point(CoordRefSystems.reconstruct(C, c))
   end
 
