@@ -11,7 +11,6 @@ function Makie.plot!(plot::Viz{<:Tuple{Grid}})
 end
 
 function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
   vizgrid!(plot, 𝔼, pdim, edim)
 end
 

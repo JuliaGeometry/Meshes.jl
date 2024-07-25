@@ -12,7 +12,6 @@ function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
 end
 
 function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
   vizmesh!(plot, 𝔼, pdim, edim)
 end
 

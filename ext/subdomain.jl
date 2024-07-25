@@ -11,7 +11,6 @@ function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
 end
 
 function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
   vizsubdom!(plot, 𝔼, pdim, edim)
 end
 
