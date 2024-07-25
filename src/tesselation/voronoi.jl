@@ -30,7 +30,7 @@ function tesselate(pset::PointSet, method::VoronoiTesselation)
   assertion(CoordRefSystems.ncoords(C) == 2, "points must have 2 coordinates")
 
   # perform tesselation with raw coordinates
-  rawval = map(p -> CoordRefSystems.rawvalues(coords(p)), pset)
+  rawval = map(p -> CoordRefSystems.raw(coords(p)), pset)
   triang = triangulate(rawval, rng=method.rng)
   vorono = voronoi(triang, clip=true)
 
