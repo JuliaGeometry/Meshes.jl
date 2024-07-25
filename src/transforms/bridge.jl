@@ -61,7 +61,7 @@ function bridge(rings, rinds, δ)
 
   # merge holes into outer boundary
   for i in 2:length(verts)
-    inner = verts[i]
+    inner = flat.(verts[i])
     iinds = vinds[i]
 
     # find closest pair of vertices (A, B)
@@ -70,7 +70,7 @@ function bridge(rings, rinds, δ)
     imax = 0
     dmin = typemax(ℒ)
     for jₒ in 1:length(outer), jᵢ in 1:length(inner)
-      d = sum(abs, outer[jₒ] - flat(inner[jᵢ]))
+      d = sum(abs, outer[jₒ] - inner[jᵢ])
       if d < dmin
         omax = jₒ
         imax = jᵢ
@@ -81,7 +81,7 @@ function bridge(rings, rinds, δ)
     B = inner[imax]
 
     # direction and normal to segment A--B
-    v = flat(B) - flat(A)
+    v = B - A
     u = Vec(-v[2], v[1])
     n = norm(u)
 
