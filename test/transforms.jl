@@ -1873,6 +1873,14 @@
     bpoly = poly |> Bridge()
     @test bpoly isa Quadrangle
     @test bpoly == poly
+
+    # bridge with latlon coords
+    outer = latlon.([(0, 0), (0, 90), (90, 90), (90, 0)])
+    hole1 = latlon.([(10, 10), (10, 20), (20, 20), (20, 10)])
+    hole2 = latlon.([(10, 80), (10, 90), (20, 90), (20, 80)])
+    poly = PolyArea([outer, hole1, hole2])
+    bpoly = poly |> Bridge()
+    @test nvertices(bpoly) == 16
   end
 
   @testset "Smoothing" begin

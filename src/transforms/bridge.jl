@@ -52,13 +52,16 @@ function bridge(rings, rinds, δ)
   # retrieve coordinate type
   ℒ = lentype(first(rings))
 
+  # retrieve original CRS
+  C = crs(first(rings))
+
   # initialize outer boundary
-  outer = verts[1]
+  outer = flat.(verts[1])
   oinds = vinds[1]
 
   # merge holes into outer boundary
   for i in 2:length(verts)
-    inner = verts[i]
+    inner = flat.(verts[i])
     iinds = vinds[i]
 
     # find closest pair of vertices (A, B)
@@ -117,5 +120,10 @@ function bridge(rings, rinds, δ)
     end
   end
 
-  Ring(outer), dups
+  points = map(outer) do p
+    c = CoordRefSystems.rawvalues(coords(p))
+    Point(CoordRefSystems.reconstruct(C, c))
+  end
+
+  Ring(points), dups
 end
