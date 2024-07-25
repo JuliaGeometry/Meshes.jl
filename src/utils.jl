@@ -70,7 +70,7 @@ Flatten coordinates of point `p` to Cartesian coordinates,
 ignoring the original units of the coordinate reference system.
 """
 flat(p::Point) = Point(flat(coords(p)))
-flat(c::LatLon) = Cartesian{datum(c)}(CoordRefSystems.rawvalues(c))
+flat(c::LatLon) = Cartesian{datum(c)}(ustrip(c.lat), ustrip(c.lon))
 flat(c::CRS) = convert(Cartesian, c)
 
 """
