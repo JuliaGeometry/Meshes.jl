@@ -106,5 +106,5 @@ _shadow(x, _) = x
 
 # special treatment for lists of geometries
 _shadow(g::NTuple{<:Any,<:Geometry}, dims) = map(gᵢ -> _shadow(gᵢ, dims), g)
-_shadow(g::AbstractVector{<:Geometry}, dims) = tcollect(_shadow(gᵢ, dims) for gᵢ in g)
-_shadow(g::CircularVector{<:Geometry}, dims) = CircularVector(tcollect(_shadow(gᵢ, dims) for gᵢ in g))
+_shadow(g::AbstractVector{<:Geometry}, dims) = [_shadow(gᵢ, dims) for gᵢ in g]
+_shadow(g::CircularVector{<:Geometry}, dims) = CircularVector([_shadow(gᵢ, dims) for gᵢ in g])
