@@ -32,7 +32,6 @@ end
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
 function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
-  @warn "geodesic geometries can't be visualized yet. Visualizing as Euclidean..."
   vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
 end
 
