@@ -1781,10 +1781,19 @@
   end
 
   @testset "Repair{9}" begin
-    poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    bpoly = poly |> Repair{9}()
-    @test bpoly isa Quadrangle
-    @test bpoly == poly
+    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+    repair = Repair{9}()
+    rquad, cache = TB.apply(repair, quad)
+    @test rquad isa Quadrangle
+    @test rquad == quad
+
+    outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
+    inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
+    inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
+    poly = PolyArea([outer, inner1, inner2])
+    repair = Repair{9}()
+    rpoly, cache = TB.apply(repair, poly)
+    @test rpoly == PolyArea([outer, inner2, inner1])
   end
 
   @testset "Repair{10}" begin
@@ -1822,6 +1831,21 @@
     repair = Repair{12}()
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea(outer)
+  end
+
+  @testset "Repair fallbacks" begin
+    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+    repair = Repair{10}()
+    rquad, cache = TB.apply(repair, quad)
+    @test rquad isa Quadrangle
+    @test rquad == quad
+
+    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+    gset = GeometrySet([poly1, poly2])
+    repair = Repair{11}()
+    rgset, cache = TB.apply(repair, gset)
+    @test rgset == GeometrySet([repair(poly1), repair(poly2)])
   end
 
   @testset "Bridge" begin
