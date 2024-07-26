@@ -39,7 +39,7 @@ function apply(transform::Bridge, poly::PolyArea)
     first(rings(rpoly)), []
   end
 
-  PolyArea(ring), dups # TODO: check orientation
+  PolyArea(ring), dups
 end
 
 apply(::Bridge, poly::Ngon) = poly, []
