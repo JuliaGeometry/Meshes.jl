@@ -46,8 +46,9 @@ function collectat(iter, inds)
   if isempty(inds)
     eltype(iter)[]
   else
-    e = enumerate(iter)
-    w = Iterators.takewhile(x -> (first(x) ≤ last(inds)), e)
+    m = maximum(inds)
+    e = Iterators.enumerate(iter)
+    w = Iterators.takewhile(x -> (first(x) ≤ m), e)
     f = Iterators.filter(x -> (first(x) ∈ inds), w)
     map(last, f)
   end
