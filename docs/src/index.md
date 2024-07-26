@@ -32,13 +32,9 @@ for finite element analysis (e.g. [JuAFEM.jl](https://kristofferc.github.io/JuAF
 experience with mesh representations that are adequate for finite finite element analysis,
 advanced geospatial modeling *and* visualization, not just one domain.
 
-For advanced data science with geospatial data (i.e., tables over meshes), consider the
-[GeoStats.jl](https://github.com/JuliaEarth/GeoStats.jl) framework. It provides sophisticated
-methods for estimating (interpolating), simulating and learning geospatial functions over
-[Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl) meshes. Please check the
-[Geospatial Data Science with Julia](https://juliaearth.github.io/geospatial-data-science-with-julia)
-book for more information:
-
+The [Geospatial Data Science with Julia](https://juliaearth.github.io/geospatial-data-science-with-julia)
+book is a great resource to learn more about [Meshes.jl](https://github.com/JuliaGeometry/Meshes.jl)
+and geospatial data (i.e. tables over meshes):
 
 ```@raw html
 <p align="center">
@@ -48,9 +44,8 @@ book for more information:
 </p>
 ```
 
-If you have questions or would like to brainstorm ideas in general, don't hesitate to start
-a thread in our [zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
-We are happy to improve the ecosystem to meet user's needs.
+If you have questions or would like to brainstorm ideas, don't hesitate to start a thread in our
+[zulip channel](https://julialang.zulipchat.com/#narrow/stream/275558-meshes.2Ejl).
 
 ## Installation
 
