@@ -19,7 +19,9 @@ Perform repairing operation with code `K`.
 - K =  7: faces are coherently oriented
 - K =  8: zero-area ears are removed
 - K =  9: rings of polygon are sorted
-- K = 10: outer rings are expanded
+- K = 10: outer rings of polygon are expanded
+- K = 11: rings of polygon are coherently oriented
+- K = 12: degenerate rings of polygon are removed
 
 ## Examples
 
@@ -170,4 +172,42 @@ revert(::Repair{10}, poly::Ngon, cache) = poly
 function _stretch10(g::Geometry)
   T = numtype(lentype(g))
   Stretch(ntuple(i -> one(T) + 10atol(T), embeddim(g)))
+end
+
+# ---------------
+# OPERATION (11)
+# ---------------
+
+function apply(::Repair{11}, poly::PolyArea)
+  r = rings(poly)
+
+  # fix orientation
+  ofix(r, o) = orientation(r) == o ? r : reverse(r)
+  outer = ofix(first(r), CCW)
+  inners = ofix.(r[2:end], CW)
+
+  PolyArea([outer; inners]), nothing
+end
+
+# ---------------
+# OPERATION (12)
+# ---------------
+
+function apply(::Repair{12}, poly::PolyArea)
+  r = rings(poly)
+
+  # fix degeneracy
+  oring = first(r)
+  outer = if nvertices(oring) == 2
+    A, B = vertices(oring)
+    P = center(Segment(A, B))
+    Ring(A, P, B)
+  else
+    oring
+  end
+
+  # remove degenerated rings
+  inners = filter(r -> nvertices(r) > 2, r[2:end])
+
+  PolyArea([outer; inners]), nothing
 end
