@@ -18,9 +18,6 @@ struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <:
   rings::V
 
   function PolyArea{M,C,R,V}(rings) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}}
-    if isempty(rings)
-      throw(ArgumentError("cannot create PolyArea without rings"))
-    end
     new(rings)
   end
 end
