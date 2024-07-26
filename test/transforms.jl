@@ -1840,8 +1840,8 @@
     @test rquad isa Quadrangle
     @test rquad == quad
 
-    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]), fix=false)
-    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]), fix=false)
+    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
     gset = GeometrySet([poly1, poly2])
     repair = Repair{11}()
     rgset, cache = TB.apply(repair, gset)
