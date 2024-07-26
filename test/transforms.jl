@@ -1821,7 +1821,7 @@
     poly = PolyArea(outer, inner, fix=false)
     repair = Repair{12}()
     rpoly, cache = TB.apply(repair, poly)
-    @test rpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    @test rpoly == PolyArea(outer)
   end
 
   @testset "Bridge" begin
