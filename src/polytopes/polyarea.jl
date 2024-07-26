@@ -16,14 +16,7 @@ at the end of the vector.
 """
 struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
-
-  function PolyArea{M,C,R,V}(rings) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}}
-    new(rings)
-  end
 end
-
-PolyArea(rings::V) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} =
-  PolyArea{M,C,R,V}(rings)
 
 PolyArea(vertices::AbstractVector{<:AbstractVector}) = PolyArea([Ring(v) for v in vertices])
 
