@@ -95,7 +95,7 @@
     inner = cart.([(5, 7), (10, 12), (15, 7)])
     pent = Pentagon(outer...)
     tri = Triangle(inner...)
-    poly = PolyArea([outer, inner])
+    poly = PolyArea([outer, reverse(inner)])
     multi = Multi([poly, tri])
     @test isconvex(pent)
     @test isconvex(tri)
@@ -258,7 +258,7 @@
     pent = Pentagon(pts2...)
     tri = Triangle(pts1...)
     poly1 = PolyArea(pts2)
-    poly2 = PolyArea([pts2, pts1])
+    poly2 = PolyArea([pts2, reverse(pts1)])
     multi = Multi([poly2, tri])
     @test tri ⊆ pent
     @test tri ⊆ poly1
