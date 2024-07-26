@@ -163,10 +163,10 @@
       @test eltype(elms) <: Triangle
       @test length(elms) == 3
 
-      outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-      hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-      hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-      poly = PolyArea([outer, hole1, hole2])
+      outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+      hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+      hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
+      poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
       bpoly = poly |> Bridge(T(0.01))
       mesh = discretizewithin(boundary(bpoly), method)
       @test nvertices(mesh) == 16

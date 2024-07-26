@@ -52,10 +52,10 @@ Base.isapprox(r₁::Ring, r₂::Ring; atol=atol(lentype(r₁)), kwargs...) =
 
 Base.close(r::Ring) = r
 
-# call `open` again to avoid issues in case of nested CircularVector
+# call `open` again to avoid issues with nested CircularVector
 Base.open(r::Ring) = open(Rope(parent(r.vertices)))
 
-# do not change which vertex comes first for closed chains
+# do not change which vertex comes first in reverse order
 Base.reverse!(r::Ring) = (reverse!(@view r.vertices[(begin + 1):end]); r)
 
 """

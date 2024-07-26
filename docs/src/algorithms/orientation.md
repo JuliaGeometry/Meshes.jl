@@ -33,9 +33,9 @@ For polygons with holes, the function returns a
 vector with the orientation of all constituent rings:
 
 ```@example orientation
-outer = [(0.0,0.0),(1.0,0.0),(1.0,1.0),(0.0,1.0)]
-hole1 = [(0.2,0.2),(0.4,0.2),(0.4,0.4),(0.2,0.4)]
-hole2 = [(0.6,0.2),(0.8,0.2),(0.8,0.4),(0.6,0.4)]
+outer = [(0, 0), (1, 0), (1, 1), (0, 1)]
+hole1 = [(0.2, 0.2), (0.2, 0.4), (0.4, 0.4), (0.4, 0.2)]
+hole2 = [(0.6, 0.2), (0.6, 0.4), (0.8, 0.4), (0.8, 0.2)]
 poly  = PolyArea([outer, hole1, hole2])
 
 orientation(poly)
