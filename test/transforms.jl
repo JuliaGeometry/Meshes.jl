@@ -1787,6 +1787,12 @@
   end
 
   @testset "Repair{9}" begin
+    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+    repair = Repair{9}()
+    rquad, cache = TB.apply(repair, quad)
+    @test rquad isa Quadrangle
+    @test rquad == quad
+
     outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
     inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
     inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
@@ -1835,7 +1841,7 @@
 
   @testset "Repair fallbacks" begin
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    repair = Repair{11}()
+    repair = Repair{10}()
     rquad, cache = TB.apply(repair, quad)
     @test rquad isa Quadrangle
     @test rquad == quad
