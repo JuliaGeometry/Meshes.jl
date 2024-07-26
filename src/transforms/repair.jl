@@ -184,11 +184,9 @@ function apply(::Repair{11}, poly::PolyArea)
   # fix orientation
   ofix(r, o) = orientation(r) == o ? r : reverse(r)
   
-  outer = first(r)
-  outer = ofix(outer, CCW)
+  outer = ofix(first(r), CCW)
   
-  inners = r[2:end]
-  inners = ofix.(inners, CW)
+  inners = ofix.(r[2:end], CW)
 
   PolyArea([outer; inners]), nothing
 end
@@ -209,8 +207,7 @@ function apply(::Repair{12}, poly::PolyArea)
   end
   
   # remove degenerated rings
-  inners = r[2:end]
-  inners = filter(r -> nvertices(r) > 2, inners)
+  inners = filter(r -> nvertices(r) > 2, r[2:end])
 
   PolyArea([outer; inners]), nothing
 end
