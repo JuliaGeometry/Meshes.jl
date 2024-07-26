@@ -10,7 +10,7 @@ See <https://en.wikipedia.org/wiki/Cone>.
 
 See also [`Cone`](@ref).
 """
-struct ConeSurface{C<:CRS,D<:Disk{C},Mₚ<:AbstractManifold} <: Primitive{𝔼{3},C}
+struct ConeSurface{C<:CRS,D<:Disk{C},Mₚ<:Manifold} <: Primitive{𝔼{3},C}
   base::D
   apex::Point{Mₚ,C}
 end

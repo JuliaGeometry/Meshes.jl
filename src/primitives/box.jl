@@ -27,17 +27,17 @@ Construct a geodesic box on the ellipsoid:
 Box(Point(LatLon(0, 0)), Point(LatLon(1, 1)))
 ```
 """
-struct Box{M<:AbstractManifold,C<:CRS} <: Primitive{M,C}
+struct Box{M<:Manifold,C<:CRS} <: Primitive{M,C}
   min::Point{M,C}
   max::Point{M,C}
 
-  function Box{M,C}(min, max) where {M<:AbstractManifold,C<:CRS}
+  function Box{M,C}(min, max) where {M<:Manifold,C<:CRS}
     assertion(min ≤ max, "`min` must be less than or equal to `max`")
     new(min, max)
   end
 end
 
-Box(min::Point{M,C}, max::Point{M,C}) where {M<:AbstractManifold,C<:CRS} = Box{M,C}(min, max)
+Box(min::Point{M,C}, max::Point{M,C}) where {M<:Manifold,C<:CRS} = Box{M,C}(min, max)
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 

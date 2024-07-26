@@ -14,7 +14,7 @@ vector of tuples with coordinates for convenience,
 in which case the first point should *not* be repeated
 at the end of the vector.
 """
-struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
+struct PolyArea{M<:Manifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
 end
 

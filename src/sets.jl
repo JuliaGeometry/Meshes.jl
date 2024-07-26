@@ -15,7 +15,7 @@ Set containing two balls centered at `(0.0, 0.0)` and `(1.0, 1.0)`:
 julia> GeometrySet([Ball((0.0, 0.0)), Ball((1.0, 1.0))])
 ```
 """
-struct GeometrySet{M<:AbstractManifold,C<:CRS,G<:Geometry{M,C}} <: Domain{M,C}
+struct GeometrySet{M<:Manifold,C<:CRS,G<:Geometry{M,C}} <: Domain{M,C}
   geoms::Vector{G}
 end
 
@@ -37,7 +37,7 @@ Base.vcat(d1::Domain, d2::GeometrySet) = GeometrySet(vcat(collect(d1), d2.geoms)
 # SPECIAL CASE: POINT SET
 # ------------------------
 
-const PointSet{M<:AbstractManifold,C<:CRS} = GeometrySet{M,C,Point{M,C}}
+const PointSet{M<:Manifold,C<:CRS} = GeometrySet{M,C,Point{M,C}}
 
 """
     PointSet(points)
@@ -55,7 +55,7 @@ julia> PointSet([(1,2,3), (4,5,6)])
 julia> PointSet((1,2,3), (4,5,6))
 ```
 """
-PointSet(points::AbstractVector{Point{M,C}}) where {M<:AbstractManifold,C<:CRS} = PointSet{M,C}(points)
+PointSet(points::AbstractVector{Point{M,C}}) where {M<:Manifold,C<:CRS} = PointSet{M,C}(points)
 PointSet(points::Vararg{P}) where {P<:Point} = PointSet(collect(points))
 PointSet(coords::AbstractVector{TP}) where {TP<:Tuple} = PointSet(Point.(coords))
 PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))

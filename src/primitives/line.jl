@@ -9,7 +9,7 @@ A line passing through points `a` and `b`.
 
 See also [`Segment`](@ref).
 """
-struct Line{M<:AbstractManifold,C<:CRS} <: Primitive{M,C}
+struct Line{M<:Manifold,C<:CRS} <: Primitive{M,C}
   a::Point{M,C}
   b::Point{M,C}
 end

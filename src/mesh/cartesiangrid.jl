@@ -50,7 +50,7 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{C<:CRS,Mₚ<:AbstractManifold,Dim,ℒ<:Len} <: Grid{𝔼{Dim},C,Dim}
+struct CartesianGrid{C<:CRS,Mₚ<:Manifold,Dim,ℒ<:Len} <: Grid{𝔼{Dim},C,Dim}
   origin::Point{Mₚ,C}
   spacing::NTuple{Dim,ℒ}
   offset::Dims{Dim}
@@ -61,7 +61,7 @@ struct CartesianGrid{C<:CRS,Mₚ<:AbstractManifold,Dim,ℒ<:Len} <: Grid{𝔼{Di
     spacing::NTuple{Dim,ℒ},
     offset::Dims{Dim},
     topology::GridTopology{Dim}
-  ) where {C<:CRS,Mₚ<:AbstractManifold,Dim,ℒ<:Len}
+  ) where {C<:CRS,Mₚ<:Manifold,Dim,ℒ<:Len}
     if !all(>(zero(ℒ)), spacing)
       throw(ArgumentError("spacing must be positive"))
     end

@@ -9,7 +9,7 @@ A domain is an indexable collection of geometries (e.g. mesh)
 in a given manifold `M` with point coordinates specified in a
 coordinate reference system `CRS`.
 """
-abstract type Domain{M<:AbstractManifold,C<:CRS} end
+abstract type Domain{M<:Manifold,C<:CRS} end
 
 """
     element(domain, ind)
