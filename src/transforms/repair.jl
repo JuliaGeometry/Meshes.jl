@@ -19,9 +19,9 @@ Perform repairing operation with code `K`.
 - K =  7: faces are coherently oriented
 - K =  8: zero-area ears are removed
 - K =  9: rings of polygon are sorted
-- K = 10: outer rings are expanded
-- K = 11: orientation of polygon rings is ajusted to: CWW for outer and CW for inners
-- K = 12: degeneracy of outer ring is fixed and degenerated inner rings are removed
+- K = 10: outer rings of polygon are expanded
+- K = 11: rings of polygon are coherently oriented
+- K = 12: degenerate rings of polygon are removed
 
 ## Examples
 
@@ -180,33 +180,17 @@ end
 
 function apply(::Repair{11}, poly::PolyArea)
   r = rings(poly)
-  outer = r[begin]
-  inners = hasholes(poly) ? r[(begin + 1):end] : eltype(r)[]
-
-  # original orientations
-  oouter = orientation(outer)
-  oinners = orientation.(inners)
   
-  # adjust orientation
-  oadjust(r, oold, onew) = oold == onew ? r : reverse(r)
-  outer = oadjust(outer, oouter, CCW)
-  inners = oadjust.(inners, oinners, CW)
+  # fix orientation
+  ofix(r, o) = orientation(r) == o ? r : reverse(r)
+  
+  outer = first(r)
+  outer = ofix(outer, CCW)
+  
+  inners = r[2:end]
+  inners = ofix.(inners, CW)
 
-  PolyArea([outer; inners]), (oouter, oinners)
-end
-
-function revert(::Repair{11}, poly::PolyArea, cache)
-  r = rings(poly)
-  outer = r[begin]
-  inners = hasholes(poly) ? r[(begin + 1):end] : eltype(r)[]
-
-  # revert to original orientation
-  (oouter, oinners) = cache
-  oadjust(r, oold, onew) = oold == onew ? r : reverse(r)
-  outer = oadjust(outer, CCW, oouter)
-  inners = oadjust.(inners, CW, oinners)
-
-  PolyArea([outer; inners])
+  PolyArea([outer; inners]), nothing
 end
 
 # ---------------
@@ -215,17 +199,17 @@ end
 
 function apply(::Repair{12}, poly::PolyArea)
   r = rings(poly)
-  outer = r[begin]
-  inners = hasholes(poly) ? r[(begin + 1):end] : eltype(r)[]
-
+  
   # fix degeneracy
+  outer = first(r)
   if nvertices(outer) == 2
     A, B = vertices(outer)
     P = center(Segment(A, B))
     outer = Ring(A, P, B)
   end
-
+  
   # remove degenerated rings
+  inners = r[2:end]
   inners = filter(r -> nvertices(r) > 2, inners)
 
   PolyArea([outer; inners]), nothing
