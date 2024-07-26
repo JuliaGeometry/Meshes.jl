@@ -95,7 +95,7 @@
     inner = cart.([(5, 7), (10, 12), (15, 7)])
     pent = Pentagon(outer...)
     tri = Triangle(inner...)
-    poly = PolyArea([outer, inner])
+    poly = PolyArea([outer, reverse(inner)])
     multi = Multi([poly, tri])
     @test isconvex(pent)
     @test isconvex(tri)
@@ -258,7 +258,7 @@
     pent = Pentagon(pts2...)
     tri = Triangle(pts1...)
     poly1 = PolyArea(pts2)
-    poly2 = PolyArea([pts2, pts1])
+    poly2 = PolyArea([pts2, reverse(pts1)])
     multi = Multi([poly2, tri])
     @test tri ⊆ pent
     @test tri ⊆ poly1
@@ -268,11 +268,11 @@
     @test pent ⊈ poly2
     @test pent ⊆ multi
 
-    poly1 = PolyArea(cart.([(4, 12), (11, 11), (16, 8), (16, 1), (13, -2), (2, -2), (-3, 4), (-2, 8)]))
-    poly2 = PolyArea(cart.([(3, 0), (1, 2), (3, 4), (1, 6), (4, 7), (10, 7), (11, 4), (9, 0)]))
-    poly3 = PolyArea(cart.([(3, 2), (4, 4), (3, 8), (12, 8), (14, 4), (12, 1)]))
-    poly4 = PolyArea(cart.([(8, 2), (5, 4), (5, 6), (9, 6), (10, 4)]))
-    poly5 = PolyArea(cart.([(3, 9), (6, 11), (10, 10), (10, 9)]))
+    poly1 = PolyArea(cart.([(-2, 8), (-3, 4), (2, -2), (13, -2), (16, 1), (16, 8), (11, 11), (4, 12)]))
+    poly2 = PolyArea(cart.([(9, 0), (11, 4), (10, 7), (4, 7), (1, 6), (3, 4), (1, 2), (3, 0)]))
+    poly3 = PolyArea(cart.([(12, 1), (14, 4), (12, 8), (3, 8), (4, 4), (3, 2)]))
+    poly4 = PolyArea(cart.([(10, 4), (9, 6), (5, 6), (5, 4), (8, 2)]))
+    poly5 = PolyArea(cart.([(10, 9), (10, 10), (6, 11), (3, 9)]))
     @test poly2 ⊆ poly1
     @test poly3 ⊆ poly1
     @test poly4 ⊆ poly1
@@ -402,11 +402,11 @@
     @test intersects(h1, h2)
     @test !intersects(h1, h3)
 
-    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+    hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
     poly1 = PolyArea(outer)
-    poly2 = PolyArea([outer, hole1, hole2])
+    poly2 = PolyArea([outer, reverse(hole1), reverse(hole2)])
     ball1 = Ball(cart(0.5, 0.5), T(0.05))
     ball2 = Ball(cart(0.3, 0.3), T(0.05))
     ball3 = Ball(cart(0.7, 0.3), T(0.05))
