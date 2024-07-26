@@ -63,5 +63,5 @@ function hull(points, ::GrahamScan)
     end
   end
 
-  PolyArea(r)
+  PolyArea(r) # TODO: check orientation
 end

@@ -21,7 +21,7 @@ struct SutherlandHodgman <: ClippingMethod end
 function clip(poly::Polygon, other::Geometry, method::SutherlandHodgman)
   c = [clip(ring, boundary(other), method) for ring in rings(poly)]
   r = [r for r in c if !isnothing(r)]
-  isempty(r) ? nothing : PolyArea(r)
+  isempty(r) ? nothing : PolyArea(r) # TODO: check orientation
 end
 
 function clip(ring::Ring, other::Ring, ::SutherlandHodgman)

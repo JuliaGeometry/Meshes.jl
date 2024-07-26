@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    PolyArea(outer; fix=true)
-    PolyArea([outer, inner₁, inner₂, ..., innerₖ]; fix=true)
+    PolyArea(outer)
+    PolyArea([outer, inner₁, inner₂, ..., innerₖ])
 
 A polygonal area with `outer` ring, and optional inner
 rings `inner₁`, `inner₂`, ..., `innerₖ`.
@@ -13,59 +13,28 @@ Rings can be a vector of [`Point`](@ref) or a
 vector of tuples with coordinates for convenience,
 in which case the first point should *not* be repeated
 at the end of the vector.
-
-The option `fix` tries to correct issues with polygons
-in the real world, including issues with:
-
-* `orientation` - Most algorithms assume that the
-  outer ring is oriented counter-clockwise (CCW) and
-  that all inner rings are oriented clockwise (CW).
-
-* `degeneracy` - Sometimes data is shared with
-  degenerate rings (e.g. only 2 vertices).
 """
 struct PolyArea{M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
 
-  function PolyArea{M,C,R,V}(rings; fix=true) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}}
+  function PolyArea{M,C,R,V}(rings) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}}
     if isempty(rings)
       throw(ArgumentError("cannot create PolyArea without rings"))
     end
-
-    if fix
-      outer = rings[begin]
-      inners = length(rings) > 1 ? rings[(begin + 1):end] : R[]
-
-      # fix orientation
-      ofix(r, o) = orientation(r) == o ? r : reverse(r)
-      outer = ofix(outer, CCW)
-      inners = ofix.(inners, CW)
-
-      # fix degeneracy
-      if nvertices(outer) == 2
-        A, B = vertices(outer)
-        P = center(Segment(A, B))
-        outer = Ring(A, P, B)
-      end
-      inners = filter(r -> nvertices(r) > 2, inners)
-
-      rings = [outer; inners]
-    end
-
     new(rings)
   end
 end
 
-PolyArea(rings::V; fix=true) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} =
-  PolyArea{M,C,R,V}(rings; fix)
+PolyArea(rings::V) where {M<:AbstractManifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} =
+  PolyArea{M,C,R,V}(rings)
 
-PolyArea(vertices::AbstractVector{<:AbstractVector}; fix=true) = PolyArea([Ring(v) for v in vertices]; fix)
+PolyArea(vertices::AbstractVector{<:AbstractVector}) = PolyArea([Ring(v) for v in vertices])
 
-PolyArea(outer::Ring; fix=true) = PolyArea([outer]; fix)
+PolyArea(outer::Ring) = PolyArea([outer])
 
-PolyArea(outer::AbstractVector; fix=true) = PolyArea(Ring(outer); fix)
+PolyArea(outer::AbstractVector) = PolyArea(Ring(outer))
 
-PolyArea(outer...; fix=true) = PolyArea(collect(outer); fix)
+PolyArea(outer...) = PolyArea(collect(outer))
 
 ==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
 

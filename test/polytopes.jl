@@ -498,26 +498,6 @@
     equaltest(p)
     isapproxtest(p)
 
-    # outer chain with 2 vertices is fixed by default
-    poly = PolyArea(cart.([(0, 0), (1, 0)]))
-    @test rings(poly) == [Ring(cart.([(0, 0), (0.5, 0.0), (1, 0)]))]
-
-    # inner chain with 2 vertices is removed by default
-    poly = PolyArea([cart.([(0, 0), (1, 0), (1, 1), (0, 1)]), cart.([(1, 2), (2, 3)])])
-    @test rings(poly) == [Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))]
-
-    # orientation of chains is fixed by default
-    poly = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-    @test vertices(poly) == CircularVector(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    poly = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]), fix=false)
-    @test vertices(poly) == CircularVector(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-
-    # test accessor methods
-    poly = PolyArea(cart.([(1, 2), (2, 3)]), fix=false)
-    @test vertices(poly) == CircularVector(cart.([(1, 2), (2, 3)]))
-    poly = PolyArea([cart.([(1, 2), (2, 3)]), cart.([(1.1, 2.54), (1.4, 1.5)])], fix=false)
-    @test vertices(poly) == CircularVector(cart.([(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)]))
-
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]

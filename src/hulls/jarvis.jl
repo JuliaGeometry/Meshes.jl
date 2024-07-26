@@ -66,5 +66,5 @@ function hull(points, ::JarvisMarch)
     push!(ℐ, j)
   end
 
-  PolyArea(p[ℐ[begin:(end - 1)]])
+  PolyArea(p[ℐ[begin:(end - 1)]]) # TODO: check orientation
 end
