@@ -38,7 +38,7 @@ struct Repair{K} <: GeometricTransform end
 
 apply(::Repair{0}, geom::Polytope) = unique(geom), nothing
 
-apply(::Repair{0}, mesh::Mesh) = @error "not implemented"
+apply(::Repair{0}, mesh::Mesh) = error("not implemented")
 
 # --------------
 # OPERATION (1)
@@ -120,8 +120,6 @@ function apply(::Repair{9}, poly::PolyArea)
   PolyArea(newrings), indices
 end
 
-apply(::Repair{9}, poly::Ngon) = poly, []
-
 function repair9(r::AbstractVector{<:Ring})
   # sort vertices lexicographically
   verts = vertices.(r)
@@ -165,10 +163,6 @@ function revert(::Repair{10}, poly::PolyArea, c)
   PolyArea([o; r[2:end]])
 end
 
-apply(::Repair{10}, poly::Ngon) = poly, nothing
-
-revert(::Repair{10}, poly::Ngon, cache) = poly
-
 function _stretch10(g::Geometry)
   T = numtype(lentype(g))
   Stretch(ntuple(i -> one(T) + 10atol(T), embeddim(g)))
@@ -211,3 +205,11 @@ function apply(::Repair{12}, poly::PolyArea)
 
   PolyArea([outer; inners]), nothing
 end
+
+# ----------
+# FALLBACKS
+# ----------
+
+apply(::Repair, geom::Geometry) = geom, nothing
+
+apply(t::Repair, dom::Domain) = GeometrySet([t(g) for g in dom]), nothing

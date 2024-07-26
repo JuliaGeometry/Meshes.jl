@@ -1725,6 +1725,12 @@
     rpoly = poly |> Repair{0}()
     @test nvertices(rpoly) == 4
     @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+
+    # error: not implemented
+    points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+    connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    mesh = SimpleMesh(points, connec)
+    @test_throws ErrorException mesh |> Repair{0}()
   end
 
   @testset "Repair{1}" begin
@@ -1781,10 +1787,13 @@
   end
 
   @testset "Repair{9}" begin
-    poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    bpoly = poly |> Repair{9}()
-    @test bpoly isa Quadrangle
-    @test bpoly == poly
+    outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
+    inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
+    inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
+    poly = PolyArea([outer, inner1, inner2])
+    repair = Repair{9}()
+    rpoly, cache = TB.apply(repair, poly)
+    @test rpoly == PolyArea([outer, inner2, inner1])
   end
 
   @testset "Repair{10}" begin
@@ -1822,6 +1831,21 @@
     repair = Repair{12}()
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea(outer)
+  end
+
+  @testset "Repair fallbacks" begin
+    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+    repair = Repair{11}()
+    rquad, cache = TB.apply(repair, quad)
+    @test rquad isa Quadrangle
+    @test rquad == quad
+
+    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]), fix=false)
+    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]), fix=false)
+    gset = GeometrySet([poly1, poly2])
+    repair = Repair{11}()
+    rgset, cache = TB.apply(repair, gset)
+    @test rgset == GeometrySet([repair(poly1), repair(poly2)])
   end
 
   @testset "Bridge" begin
