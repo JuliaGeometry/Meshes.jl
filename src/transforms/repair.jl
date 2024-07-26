@@ -180,12 +180,10 @@ end
 
 function apply(::Repair{11}, poly::PolyArea)
   r = rings(poly)
-  
+
   # fix orientation
   ofix(r, o) = orientation(r) == o ? r : reverse(r)
-  
   outer = ofix(first(r), CCW)
-  
   inners = ofix.(r[2:end], CW)
 
   PolyArea([outer; inners]), nothing
@@ -197,15 +195,17 @@ end
 
 function apply(::Repair{12}, poly::PolyArea)
   r = rings(poly)
-  
+
   # fix degeneracy
-  outer = first(r)
-  if nvertices(outer) == 2
-    A, B = vertices(outer)
+  oring = first(r)
+  outer = if nvertices(oring) == 2
+    A, B = vertices(oring)
     P = center(Segment(A, B))
-    outer = Ring(A, P, B)
+    Ring(A, P, B)
+  else
+    oring
   end
-  
+
   # remove degenerated rings
   inners = filter(r -> nvertices(r) > 2, r[2:end])
 
