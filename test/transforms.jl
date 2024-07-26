@@ -1800,8 +1800,8 @@
   end
 
   @testset "Repair{11}" begin
-    outer = Ring(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-    inner = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
+    inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     poly = PolyArea(outer, inner, fix=false)
     repair = Repair{11}()
     rpoly, cache = TB.apply(repair, poly)
@@ -1816,7 +1816,9 @@
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
 
-    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]), cart.([(1, 2), (2, 3)]), fix=false)
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    inner = cart.([(1, 2), (2, 3)])
+    poly = PolyArea(outer, inner, fix=false)
     repair = Repair{12}()
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
