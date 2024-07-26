@@ -25,19 +25,19 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 - Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
-abstract type Polytope{K,M<:AbstractManifold,C<:CRS} <: Geometry{M,C} end
+abstract type Polytope{K,M<:Manifold,C<:CRS} <: Geometry{M,C} end
 
 # heper macro to define polytopes
 macro polytope(type, K, N)
   structexpr = if K == 3
     quote
-      struct $type{C<:CRS,Mₚ<:AbstractManifold} <: Polytope{$K,𝔼{3},C}
+      struct $type{C<:CRS,Mₚ<:Manifold} <: Polytope{$K,𝔼{3},C}
         vertices::NTuple{$N,Point{Mₚ,C}}
       end
     end
   else
     quote
-      struct $type{M<:AbstractManifold,C<:CRS} <: Polytope{$K,M,C}
+      struct $type{M<:Manifold,C<:CRS} <: Polytope{$K,M,C}
         vertices::NTuple{$N,Point{M,C}}
       end
     end

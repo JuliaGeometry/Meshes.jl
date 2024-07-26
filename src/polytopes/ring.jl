@@ -9,10 +9,10 @@ A closed polygonal chain from a sequence of points `p1`, `p2`, ..., `pn`.
 
 See also [`Chain`](@ref) and [`Rope`](@ref).
 """
-struct Ring{M<:AbstractManifold,C<:CRS,V<:CircularVector{Point{M,C}}} <: Chain{M,C}
+struct Ring{M<:Manifold,C<:CRS,V<:CircularVector{Point{M,C}}} <: Chain{M,C}
   vertices::V
 
-  function Ring{M,C,V}(vertices) where {M<:AbstractManifold,C<:CRS,V<:CircularVector{Point{M,C}}}
+  function Ring{M,C,V}(vertices) where {M<:Manifold,C<:CRS,V<:CircularVector{Point{M,C}}}
     if first(vertices) == last(vertices) && length(vertices) ≥ 2
       throw(ArgumentError("""
       First and last vertices of `Ring` constructor must be different
@@ -24,7 +24,7 @@ struct Ring{M<:AbstractManifold,C<:CRS,V<:CircularVector{Point{M,C}}} <: Chain{M
   end
 end
 
-Ring(vertices::CircularVector{Point{M,C}}) where {M<:AbstractManifold,C<:CRS} = Ring{M,C,typeof(vertices)}(vertices)
+Ring(vertices::CircularVector{Point{M,C}}) where {M<:Manifold,C<:CRS} = Ring{M,C,typeof(vertices)}(vertices)
 Ring(vertices::Tuple...) = Ring([Point(v) for v in vertices])
 Ring(vertices::P...) where {P<:Point} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))

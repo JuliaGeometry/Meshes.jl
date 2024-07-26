@@ -8,7 +8,7 @@
 A geometry in a given manifold `M` with point coordinates specified
 in a coordinate reference system `CRS`.
 """
-abstract type Geometry{M<:AbstractManifold,C<:CRS} end
+abstract type Geometry{M<:Manifold,C<:CRS} end
 
 Broadcast.broadcastable(g::Geometry) = Ref(g)
 

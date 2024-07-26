@@ -7,10 +7,10 @@
 
 Trajectory of cylinders of given `radius` positioned at the `centroids`.
 """
-struct CylindricalTrajectory{C<:CRS,Mₚ<:AbstractManifold,ℒ<:Len} <: Domain{𝔼{3},C}
+struct CylindricalTrajectory{C<:CRS,Mₚ<:Manifold,ℒ<:Len} <: Domain{𝔼{3},C}
   centroids::Vector{Point{Mₚ,C}}
   radius::ℒ
-  CylindricalTrajectory(centroids::Vector{Point{Mₚ,C}}, radius::ℒ) where {C<:CRS,Mₚ<:AbstractManifold,ℒ<:Len} =
+  CylindricalTrajectory(centroids::Vector{Point{Mₚ,C}}, radius::ℒ) where {C<:CRS,Mₚ<:Manifold,ℒ<:Len} =
     new{C,Mₚ,float(ℒ)}(centroids, radius)
 end
 

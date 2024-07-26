@@ -20,9 +20,9 @@ are `Triangle` (N=3), `Quadrangle` (N=4), `Pentagon` (N=5), etc.
 - Type aliases are `Triangle`, `Quadrangle`, `Pentagon`, `Hexagon`,
   `Heptagon`, `Octagon`, `Nonagon`, `Decagon`.
 """
-struct Ngon{N,M<:AbstractManifold,C<:CRS} <: Polygon{M,C}
+struct Ngon{N,M<:Manifold,C<:CRS} <: Polygon{M,C}
   vertices::NTuple{N,Point{M,C}}
-  function Ngon{N,M,C}(vertices) where {N,M<:AbstractManifold,C<:CRS}
+  function Ngon{N,M,C}(vertices) where {N,M<:Manifold,C<:CRS}
     if N < 3
       throw(ArgumentError("the number of vertices must be greater than or equal to 3"))
     end
@@ -30,11 +30,11 @@ struct Ngon{N,M<:AbstractManifold,C<:CRS} <: Polygon{M,C}
   end
 end
 
-Ngon{N}(vertices::NTuple{N,Point{M,C}}) where {N,M<:AbstractManifold,C<:CRS} = Ngon{N,M,C}(vertices)
+Ngon{N}(vertices::NTuple{N,Point{M,C}}) where {N,M<:Manifold,C<:CRS} = Ngon{N,M,C}(vertices)
 Ngon{N}(vertices::Vararg{P,N}) where {N,P<:Point} = Ngon{N}(vertices)
 Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon{N}(Point.(vertices))
 
-Ngon(vertices::NTuple{N,Point{M,C}}) where {N,M<:AbstractManifold,C<:CRS} = Ngon{N,M,C}(vertices)
+Ngon(vertices::NTuple{N,Point{M,C}}) where {N,M<:Manifold,C<:CRS} = Ngon{N,M,C}(vertices)
 Ngon(vertices::P...) where {P<:Point} = Ngon(vertices)
 Ngon(vertices::Tuple...) = Ngon(Point.(vertices))
 
