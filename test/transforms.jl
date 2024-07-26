@@ -1799,6 +1799,31 @@
     @test opoly == poly
   end
 
+  @testset "Repair{11}" begin
+    outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
+    inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    poly = PolyArea(outer, inner, fix=false)
+    repair = Repair{11}()
+    rpoly, cache = TB.apply(repair, poly)
+    router, rinner = rings(rpoly)
+    @test router == Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
+    @test rinner == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  end
+
+  @testset "Repair{12}" begin
+    poly = PolyArea(cart.([(0, 0), (1, 0)]), fix=false)
+    repair = Repair{12}()
+    rpoly, cache = TB.apply(repair, poly)
+    @test rpoly == PolyArea(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
+
+    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+    inner = cart.([(1, 2), (2, 3)])
+    poly = PolyArea(outer, inner, fix=false)
+    repair = Repair{12}()
+    rpoly, cache = TB.apply(repair, poly)
+    @test rpoly == PolyArea(outer)
+  end
+
   @testset "Bridge" begin
     @test !isaffine(Bridge)
     δ = T(0.01) * u"m"
