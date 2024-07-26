@@ -70,7 +70,6 @@ isconvex(m::Multi) = isapproxequal(measure(convexhull(m)), measure(m))
 # OPTIMIZATIONS
 # --------------
 
-# TODO: check dim: 2
 function isconvex(q::Quadrangle)
   v = vertices(q)
   d1 = Segment(v[1], v[3])

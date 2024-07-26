@@ -498,26 +498,6 @@
     equaltest(p)
     isapproxtest(p)
 
-    # outer chain with 2 vertices is fixed by default
-    poly = PolyArea(cart.([(0, 0), (1, 0)]))
-    @test rings(poly) == [Ring(cart.([(0, 0), (0.5, 0.0), (1, 0)]))]
-
-    # inner chain with 2 vertices is removed by default
-    poly = PolyArea([cart.([(0, 0), (1, 0), (1, 1), (0, 1)]), cart.([(1, 2), (2, 3)])])
-    @test rings(poly) == [Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))]
-
-    # orientation of chains is fixed by default
-    poly = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-    @test vertices(poly) == CircularVector(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    poly = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]), fix=false)
-    @test vertices(poly) == CircularVector(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-
-    # test accessor methods
-    poly = PolyArea(cart.([(1, 2), (2, 3)]), fix=false)
-    @test vertices(poly) == CircularVector(cart.([(1, 2), (2, 3)]))
-    poly = PolyArea([cart.([(1, 2), (2, 3)]), cart.([(1.1, 2.54), (1.4, 1.5)])], fix=false)
-    @test vertices(poly) == CircularVector(cart.([(1, 2), (2, 3), (1.1, 2.54), (1.4, 1.5)]))
-
     # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
     # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
     fnames = ["poly$i.line" for i in 1:5]
@@ -645,17 +625,17 @@
     @test cart(0.75, 0.75) ∈ poly
 
     # area
-    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-    poly = PolyArea([outer, hole1, hole2])
+    outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+    hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
+    poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
     @test area(poly) ≈ T(0.92) * u"m^2"
 
-    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-    hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+    outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+    hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+    hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
     poly1 = PolyArea(outer)
-    poly2 = PolyArea([outer, hole1, hole2])
+    poly2 = PolyArea([outer, reverse(hole1), reverse(hole2)])
     @test sprint(show, poly1) == "PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
     @test sprint(show, poly2) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
     @test sprint(show, MIME("text/plain"), poly1) == """
