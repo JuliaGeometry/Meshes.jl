@@ -20,6 +20,8 @@ Perform repairing operation with code `K`.
 - K =  8: zero-area ears are removed
 - K =  9: rings of polygon are sorted
 - K = 10: outer rings are expanded
+- K = 11: orientation of polygon rings is ajusted to: CWW for outer and CW for inners
+- K = 12: degeneracy of outer ring is fixed and degenerated inner rings are removed
 
 ## Examples
 
@@ -170,4 +172,61 @@ revert(::Repair{10}, poly::Ngon, cache) = poly
 function _stretch10(g::Geometry)
   T = numtype(lentype(g))
   Stretch(ntuple(i -> one(T) + 10atol(T), embeddim(g)))
+end
+
+# ---------------
+# OPERATION (11)
+# ---------------
+
+function apply(::Repair{11}, poly::PolyArea)
+  r = rings(poly)
+  outer = r[begin]
+  inners = hasholes(poly) ? r[(begin + 1):end] : eltype(r)[]
+
+  # original orientations
+  oouter = orientation(outer)
+  oinners = orientation.(inners)
+  
+  # adjust orientation
+  oadjust(r, oold, onew) = oold == onew ? r : reverse(r)
+  outer = oadjust(outer, oouter, CCW)
+  inners = oadjust.(inners, oinners, CW)
+
+  PolyArea([outer; inners]), (oouter, oinners)
+end
+
+function revert(::Repair{11}, poly::PolyArea, cache)
+  r = rings(poly)
+  outer = r[begin]
+  inners = hasholes(poly) ? r[(begin + 1):end] : eltype(r)[]
+
+  # revert to original orientation
+  (oouter, oinners) = cache
+  oadjust(r, oold, onew) = oold == onew ? r : reverse(r)
+  outer = oadjust(outer, CCW, oouter)
+  inners = oadjust.(inners, CW, oinners)
+
+  PolyArea([outer; inners])
+end
+
+# ---------------
+# OPERATION (12)
+# ---------------
+
+function apply(::Repair{12}, poly::PolyArea)
+  r = rings(poly)
+  outer = r[begin]
+  inners = hasholes(poly) ? r[(begin + 1):end] : eltype(r)[]
+
+  # fix degeneracy
+  if nvertices(outer) == 2
+    A, B = vertices(outer)
+    P = center(Segment(A, B))
+    outer = Ring(A, P, B)
+  end
+
+  # remove degenerated rings
+  inners = filter(r -> nvertices(r) > 2, inners)
+
+  PolyArea([outer; inners]), nothing
 end
