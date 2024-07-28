@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 const ATOL64 = ScopedValue(1e-10)
-const ATOL32 = ScopedValue(1f-5)
+const ATOL32 = ScopedValue(1.0f-5)
 
 """
     atol(T)
