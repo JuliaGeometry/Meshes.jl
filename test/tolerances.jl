@@ -17,4 +17,8 @@
   @test atol(zero(ℒ)) == atol(ℒ)
   @test atol(zero(𝒜)) == atol(𝒜)
   @test atol(zero(𝒱)) == atol(𝒱)
+  @inferred atol(T)
+  @inferred atol(ℒ)
+  @inferred atol(𝒜)
+  @inferred atol(𝒱)
 end
