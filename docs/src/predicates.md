@@ -18,6 +18,10 @@ Exact arithmetic is expensive to apply and approximations are typically sufficie
 exact predicates are available in [ExactPredicates.jl](https://github.com/lairez/ExactPredicates.jl)
 if you need them.
 
+Robust predicates are often expensive to apply and approximations typically suffice.
+If needed, consider [ExactPredicates.jl](https://github.com/lairez/ExactPredicates.jl) or 
+[AdaptivePredicates.jl](https://github.com/JuliaGeometry/AdaptivePredicates.jl).
+
 ## isparametrized
 
 ```@docs
