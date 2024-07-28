@@ -1,4 +1,4 @@
-# Changing default absolute tolerances
+# Tolerances
 
 Meshes.jl uses a fix absolute tolerance, which is used when comparing numbers, e.g., when using `point in geometry`. The default value
 for `Float64` computations is `1e-10`, while the default for `Float32` is `1f-5`. If you want to use a custom value for the
