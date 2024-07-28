@@ -34,7 +34,8 @@ makedocs(
       "Transforms" => "transforms.md",
       "Random" => "rand.md",
       "Visualization" => "visualization.md",
-      "Input/Output" => "io.md"
+      "Input/Output" => "io.md",
+      "Preferences" => "preferences.md"
     ],
     "Contributing" => ["contributing/guidelines.md"],
     "About" => ["License" => "about/license.md"],
