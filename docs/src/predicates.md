@@ -14,10 +14,6 @@ For example, rather than checking if a point `p` is exactly in a sphere of radiu
 on the point type, so `p` might be slightly outside the sphere but still be considered
 as being inside.
 
-Exact arithmetic is expensive to apply and approximations are typically sufficient;
-exact predicates are available in [ExactPredicates.jl](https://github.com/lairez/ExactPredicates.jl)
-if you need them.
-
 Robust predicates are often expensive to apply and approximations typically suffice.
 If needed, consider [ExactPredicates.jl](https://github.com/lairez/ExactPredicates.jl) or 
 [AdaptivePredicates.jl](https://github.com/JuliaGeometry/AdaptivePredicates.jl).
