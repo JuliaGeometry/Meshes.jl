@@ -2,8 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-ATOL64 = ScopedValue(1e-10)
-ATOL32 = ScopedValue(1f-5)
+const ATOL64 = ScopedValue(1e-10)
+const ATOL32 = ScopedValue(1f-5)
 
 """
     atol(T)
