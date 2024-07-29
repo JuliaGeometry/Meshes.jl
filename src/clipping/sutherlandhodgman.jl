@@ -49,9 +49,9 @@ function clip(ring::Ring, other::Ring, ::SutherlandHodgman)
         push!(u, r₁)
       elseif isinside₁ && !isinside₂
         push!(u, r₁)
-        push!(u, lᵣ ∩ lₒ)
+        push!(u, intersectpoint(lᵣ, lₒ))
       elseif !isinside₁ && isinside₂
-        push!(u, lᵣ ∩ lₒ)
+        push!(u, intersectpoint(lᵣ, lₒ))
       end
     end
 
@@ -59,4 +59,21 @@ function clip(ring::Ring, other::Ring, ::SutherlandHodgman)
   end
 
   isempty(r) ? nothing : Ring(unique(r))
+end
+
+# helper function to find any intersection point
+# between crossing or overlapping lines
+function intersectpoint(l₁::Line, l₂::Line)
+  intersection(l₁, l₂) do I
+    if type(I) == Crossing # get intersection point
+      get(I)
+    elseif type(I) == Overlapping # perturb line and retry
+      ℒ = lentype(l₁)
+      T = numtype(ℒ)
+      δx = rand((1, -1)) * rand(T) * atol(ℒ)
+      δy = rand((1, -1)) * rand(T) * atol(ℒ)
+      l₁′ = Line(l₁(0), l₁(1) + Vec(δx, δy))
+      intersectpoint(l₁′, l₂)
+    end
+  end
 end

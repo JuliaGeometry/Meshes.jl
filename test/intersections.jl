@@ -1143,6 +1143,17 @@
     r = Ray(cart(-1.0, -1.0, -1.0), vector(-1.0, -1.0, -1.0))
     @test intersection(r, o) |> type == NotIntersecting
     @test isnothing(r ∩ o)
+
+    t = Triangle(cart(0.9356498598903396, 6.5), cart(1.3571428571428377, 6.5), cart(1.0, 7.0))
+    q = Quadrangle(cart(0.0, 0.0), cart(6.0, 0.0), cart(1.0, 7.0), cart(1.0, 6.0))
+    @test intersection(t, q) |> type == Intersecting
+    @test t ∩ q isa PolyArea
+    @test q ∩ t isa PolyArea
+
+    t1 = Triangle(cart(0.0, 0.0), cart(0.0, 1.000000000000001), cart(1.0, 1.0))
+    t2 = Triangle(cart(0.0, 1.0), cart(0.0, 2.0), cart(1.0, 1.000000000001))
+    @test intersection(t1, t2) |> type == Intersecting
+    @test t1 ∩ t2 isa PolyArea
   end
 
   @testset "Polygons" begin
