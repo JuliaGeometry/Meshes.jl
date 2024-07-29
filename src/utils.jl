@@ -73,8 +73,7 @@ Flatten coordinates of point `p` to Cartesian coordinates,
 ignoring the original units of the coordinate reference system.
 """
 flat(p::Point) = Point(flat(coords(p)))
-flat(c::LatLon) = Cartesian{datum(c)}(ustrip(c.lat), ustrip(c.lon))
-flat(c::CRS) = convert(Cartesian, c)
+flat(c::CRS) = Cartesian{datum(c)}(CoordRefSystems.raw(c))
 
 """
     signarea(A, B, C)
