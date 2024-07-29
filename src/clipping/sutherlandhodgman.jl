@@ -64,16 +64,6 @@ end
 # helper function to find any intersection point
 # between crossing or overlapping lines
 function intersectpoint(l₁::Line, l₂::Line)
-  intersection(l₁, l₂) do I
-    if type(I) == Crossing # get intersection point
-      get(I)
-    elseif type(I) == Overlapping # perturb line and retry
-      ℒ = lentype(l₁)
-      T = numtype(ℒ)
-      δx = rand((1, -1)) * rand(T) * atol(ℒ)
-      δy = rand((1, -1)) * rand(T) * atol(ℒ)
-      l₁′ = Line(l₁(0), l₁(1) + Vec(δx, δy))
-      intersectpoint(l₁′, l₂)
-    end
-  end
+  λ(I) = type(I) == Overlapping ? l₁(0) : get(I)
+  intersection(λ, l₁, l₂)
 end
