@@ -1842,6 +1842,13 @@
 
     poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
     poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+    multi = Multi([poly1, poly2])
+    repair = Repair{11}()
+    rmulti, cache = TB.apply(repair, multi)
+    @test rmulti == Multi([repair(poly1), repair(poly2)])
+
+    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
     gset = GeometrySet([poly1, poly2])
     repair = Repair{11}()
     rgset, cache = TB.apply(repair, gset)
