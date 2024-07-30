@@ -62,6 +62,24 @@ issimple
 hasholes
 ```
 
+## point₁ ≤ point₂
+
+```@docs
+Base.:<(::Point, ::Point)
+Base.:>(::Point, ::Point)
+Base.:≤(::Point, ::Point)
+Base.:≥(::Point, ::Point)
+```
+
+## point₁ ⪯ point₂
+
+```@docs
+≺(::Point, ::Point)
+≻(::Point, ::Point)
+⪯(::Point, ::Point)
+⪰(::Point, ::Point)
+```
+
 ## point ∈ geometry
 
 ```@docs
