@@ -214,4 +214,6 @@ end
 
 apply(::Repair, geom::Geometry) = geom, nothing
 
+apply(t::Repair, multi::Multi) = Multi([t(g) for g in parent(multi)]), nothing
+
 apply(t::Repair, dom::Domain) = GeometrySet([t(g) for g in dom]), nothing
