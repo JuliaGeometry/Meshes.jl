@@ -191,6 +191,10 @@ export
   sides,
   diagonal,
   focallength,
+  ≺,
+  ≻,
+  ⪯,
+  ⪰,
 
   # polytopes
   Polytope,

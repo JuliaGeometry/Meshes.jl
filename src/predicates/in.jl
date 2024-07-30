@@ -32,7 +32,7 @@ Base.in(p::Point, c::Chain) = any(s -> p ∈ s, segments(c))
 
 Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
-Base.in(p::Point, b::Box) = minimum(b) ≤ p ≤ maximum(b)
+Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
 function Base.in(p::Point, b::Ball)
   c = center(b)
