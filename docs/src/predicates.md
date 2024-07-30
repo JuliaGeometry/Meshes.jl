@@ -12,7 +12,8 @@ One important note to make is that these predicates are not necessarily exact.
 For example, rather than checking if a point `p` is exactly in a sphere of radius
 `r` centered at `c`, we check if `norm(p-c) ≈ r` with an absolute tolerance depending
 on the point type, so `p` might be slightly outside the sphere but still be considered
-as being inside.
+as being inside. This absolute tolerance can be adjusted in specific scopes as discussed
+in the [Tolerances](tolerances.md) section.
 
 Robust predicates are often expensive to apply and approximations typically suffice.
 If needed, consider [ExactPredicates.jl](https://github.com/lairez/ExactPredicates.jl) or 
