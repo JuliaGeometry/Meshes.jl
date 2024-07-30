@@ -551,6 +551,44 @@
     @test intersects(seg, multi)
   end
 
+  @testset "ordering" begin
+    # lexicographical order
+    @test cart(0, 0) < cart(1, 1)
+    @test cart(0, 0) < cart(0, 1)
+    @test cart(1, 0) < cart(1, 1)
+    @test !(cart(1, 0) < cart(1, 0))
+    @test !(cart(1, 0) < cart(0, 0))
+    @test cart(1, 1) > cart(0, 0)
+    @test cart(0, 1) > cart(0, 0)
+    @test cart(1, 1) > cart(1, 0)
+    @test cart(1, 0) ≥ cart(1, 0)
+    @test cart(1, 0) ≥ cart(0, 0)
+    @test cart(0, 0) ≤ cart(0, 0)
+
+    # product order
+    @test cart(0, 0) ≺ cart(1, 1)
+    @test !(cart(0, 0) ≺ cart(0, 1))
+    @test !(cart(1, 0) ≺ cart(1, 1))
+    @test !(cart(1, 0) ≺ cart(1, 0))
+    @test !(cart(1, 0) ≺ cart(0, 0))
+    @test cart(1, 1) ≻ cart(0, 0)
+    @test !(cart(0, 1) ≻ cart(0, 0))
+    @test !(cart(1, 1) ≻ cart(1, 0))
+    @test cart(1, 0) ⪰ cart(1, 0)
+    @test cart(1, 0) ⪰ cart(0, 0)
+    @test cart(0, 0) ⪯ cart(0, 0)
+
+    # product order
+    @test cart(1, 1) ⪯ cart(1, 1)
+    @test !(cart(1, 1) ≺ cart(1, 1))
+    @test cart(1, 2) ⪯ cart(3, 4)
+    @test cart(1, 2) ≺ cart(3, 4)
+    @test cart(1, 1) ⪰ cart(1, 1)
+    @test !(cart(1, 1) ≻ cart(1, 1))
+    @test cart(3, 4) ⪰ cart(1, 2)
+    @test cart(3, 4) ≻ cart(1, 2)
+  end
+
   @testset "iscollinear" begin
     @test iscollinear(cart(0, 0), cart(1, 1), cart(2, 2))
   end

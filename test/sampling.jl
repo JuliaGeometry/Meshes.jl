@@ -357,7 +357,7 @@
     poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
     multi = Multi([poly1, poly2])
     ps = sample(multi, HomogeneousSampling(100))
-    @test all(p -> (cart(0, 0) ≤ p ≤ cart(1, 1)) || (cart(1, 1) ≤ p ≤ cart(2, 2)), ps)
+    @test all(p -> (cart(0, 0) ⪯ p ⪯ cart(1, 1)) || (cart(1, 1) ⪯ p ⪯ cart(2, 2)), ps)
 
     points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
     connec = connect.([(3, 1, 5), (4, 6, 2), (1, 2, 6, 5), (5, 6, 4, 3)])
@@ -375,7 +375,7 @@
     poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
     multi = Multi([poly1, poly2])
     ps = sample(multi, MinDistanceSampling(0.1))
-    @test all(p -> (cart(0, 0) ≤ p ≤ cart(1, 1)) || (cart(1, 1) ≤ p ≤ cart(2, 2)), ps)
+    @test all(p -> (cart(0, 0) ⪯ p ⪯ cart(1, 1)) || (cart(1, 1) ⪯ p ⪯ cart(2, 2)), ps)
 
     points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.5), (0.75, 0.5)])
     connec = connect.([(3, 1, 5), (4, 6, 2), (1, 2, 6, 5), (5, 6, 4, 3)])
