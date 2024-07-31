@@ -180,6 +180,13 @@
       @test eltype(mesh) <: Triangle
       @test nelements(mesh) == 2
 
+      # latlon coordinates
+      poly = PolyArea(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0))
+      mesh = discretize(poly, method)
+      @test vertices(mesh) == vertices(poly)
+      @test eltype(mesh) <: Triangle
+      @test nelements(mesh) == 2
+
       # preserves order of vertices
       poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
       mesh = simplexify(poly)
