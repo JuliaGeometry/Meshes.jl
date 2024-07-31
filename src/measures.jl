@@ -77,11 +77,7 @@ end
 
 measure(s::Segment) = norm(maximum(s) - minimum(s))
 
-measure(t::Triangle) = _measure(t, Val(embeddim(t)))
-
-_measure(t::Triangle, ::Val{2}) = abs(signarea(t))
-
-function _measure(t::Triangle, ::Val{3})
+function measure(t::Triangle)
   A, B, C = vertices(t)
   norm((B - A) × (C - A)) / 2
 end

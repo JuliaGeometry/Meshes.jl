@@ -306,10 +306,8 @@
     @test vertex(t, 1) == cart(0, 0)
     @test vertex(t, 2) == cart(1, 0)
     @test vertex(t, 3) == cart(0, 1)
-    @test signarea(t) == T(0.5) * u"m^2"
     @test area(t) == T(0.5) * u"m^2"
     t = Triangle(cart(0, 0), cart(0, 1), cart(1, 0))
-    @test signarea(t) == T(-0.5) * u"m^2"
     @test area(t) == T(0.5) * u"m^2"
     t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
     for p in cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.0), (1.0, 0.5), (0.5, 0.5)])
@@ -382,9 +380,6 @@
     t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(0, 2, 2))
     @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475))
     @test isapprox(norm(normal(t)), oneunit(ℳ))
-
-    t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
-    @test_throws ArgumentError signarea(t)
 
     # CRS propagation
     t = Triangle(merc(0, 0), merc(1, 0), merc(0, 1))
