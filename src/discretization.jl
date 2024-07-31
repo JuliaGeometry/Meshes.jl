@@ -91,10 +91,7 @@ end
 discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-discretizewithin(ring::Ring, method::BoundaryDiscretizationMethod) =
-  _discretizewithin(ring, Val(embeddim(ring)), method)
-
-function _discretizewithin(ring::Ring, ::Val{3}, method::BoundaryDiscretizationMethod)
+function discretizewithin(ring::Ring{𝔼{3}}, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
   points = collect(vertices(ring))
 
@@ -106,19 +103,35 @@ function _discretizewithin(ring::Ring, ::Val{3}, method::BoundaryDiscretizationM
   SimpleMesh(points, topology(mesh))
 end
 
+function discretizewithin(ring::Ring{🌐}, method::BoundaryDiscretizationMethod)
+  # collect vertices to get rid of static containers
+  points = collect(vertices(ring))
+
+  # discretize within 2D ring with given method
+  fpoints = map(points) do p
+    latlon = convert(LatLon, coords(p))
+    Point(flat(latlon))
+  end 
+  fring = Ring(fpoints)
+  mesh = discretizewithin(fring, method)
+
+  # return mesh with original points
+  SimpleMesh(points, topology(mesh))
+end
+
 # ----------------
 # DEFAULT METHODS
 # ----------------
 
-discretize(geometry) = _discretize(geometry, Val(embeddim(geometry)))
+discretize(geometry) = simplexify(geometry)
 
-_discretize(geometry, ::Val) = simplexify(geometry)
-
-_discretize(ball::Ball, ::Val{2}) = discretize(ball, RegularDiscretization(50))
+discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
 
 discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
 
-_discretize(sphere::Sphere, ::Val{3}) = discretize(sphere, RegularDiscretization(50))
+discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
+
+discretize(sphere::Sphere{🌐}) = discretize(sphere, RegularDiscretization(50))
 
 discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
 
@@ -151,15 +164,15 @@ when the `object` has parametric dimension 2.
 """
 function simplexify end
 
-simplexify(geometry) = _simplexify(geometry, Val(embeddim(geometry)))
+simplexify(geometry) = simplexify(discretize(geometry))
 
-_simplexify(geometry, ::Val) = simplexify(discretize(geometry))
+simplexify(box::Box{𝔼{1}}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
 
-_simplexify(box::Box, ::Val{1}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
+simplexify(box::Box{𝔼{2}}) = discretize(box, FanTriangulation())
 
-_simplexify(box::Box, ::Val{2}) = discretize(box, FanTriangulation())
+simplexify(box::Box{𝔼{3}}) = discretize(box, Tetrahedralization())
 
-_simplexify(box::Box, ::Val{3}) = discretize(box, Tetrahedralization())
+simplexify(box::Box{🌐}) = discretize(box, Tetrahedralization())
 
 simplexify(seg::Segment) = SimpleMesh(pointify(seg), GridTopology(1))
 
@@ -175,7 +188,7 @@ end
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
-_simplexify(sphere::Sphere, ::Val{2}) = discretize(sphere, RegularDiscretization(50))
+simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(50))
 
 simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
