@@ -46,15 +46,13 @@ end
 # append to grid topology
 # ------------------------
 
-appendtopo(g, tg) = _appendtopo(g, Val(embeddim(g)), tg)
+appendtopo(g, tg) = tg
 
-_appendtopo(g, ::Val, tp) = tp
-
-_appendtopo(::Ball, ::Val{2}, tg) = _appendcenter(tg)
+appendtopo(::Ball{𝔼{2}}, tg) = _appendcenter(tg)
 
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
-_appendtopo(::Sphere, ::Val{3}, tg) = _appendpoles(tg, 2, true)
+appendtopo(::Sphere{𝔼{3}}, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
 
