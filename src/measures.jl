@@ -83,19 +83,12 @@ function measure(t::Triangle)
 end
 
 function measure(p::Polygon{𝔼{2}})
-  r = rings(p)
-  m = _areawithin(r[1])
-  for i in 2:length(r)
-    m += _areawithin(r[i])
+  sum(rings(p)) do r
+    v = vertices(r)
+    n = nvertices(r)
+    c = centroid(r)
+    sum(signarea(c, v[i], v[i + 1]) for i in 1:n)
   end
-  m
-end
-
-function _areawithin(r::Ring{𝔼{2}})
-  v = vertices(r)
-  n = nvertices(r)
-  c = centroid(r)
-  sum(signarea(c, v[i], v[i + 1]) for i in 1:n)
 end
 
 function measure(t::Tetrahedron)
