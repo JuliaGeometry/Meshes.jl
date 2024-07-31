@@ -82,6 +82,15 @@ function measure(t::Triangle)
   norm((B - A) × (C - A)) / 2
 end
 
+function measure(p::Polygon{𝔼{2}})
+  sum(rings(p)) do r
+    v = vertices(r)
+    n = nvertices(r)
+    c = centroid(r)
+    sum(signarea(c, v[i], v[i + 1]) for i in 1:n)
+  end
+end
+
 function measure(t::Tetrahedron)
   A, B, C, D = vertices(t)
   abs((A - D) ⋅ ((B - D) × (C - D))) / 6
