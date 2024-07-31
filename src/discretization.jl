@@ -91,32 +91,25 @@ end
 discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-function discretizewithin(ring::Ring{𝔼{3}}, method::BoundaryDiscretizationMethod)
+function discretizewithin(ring::Ring, method::BoundaryDiscretizationMethod)
   # collect vertices to get rid of static containers
   points = collect(vertices(ring))
 
   # discretize within 2D ring with given method
-  ring2D = Ring(proj2D(points))
+  ring2D = Ring(_proj2D(manifold(ring), points))
   mesh = discretizewithin(ring2D, method)
 
   # return mesh with original points
   SimpleMesh(points, topology(mesh))
 end
 
-function discretizewithin(ring::Ring{🌐}, method::BoundaryDiscretizationMethod)
-  # collect vertices to get rid of static containers
-  points = collect(vertices(ring))
+_proj2D(::Type{𝔼{3}}, points) = proj2D(points)
 
-  # discretize within 2D ring with given method
-  fpoints = map(points) do p
+function _proj2D(::Type{🌐}, points)
+  map(points) do p
     latlon = convert(LatLon, coords(p))
-    Point(flat(latlon))
+    flat(Point(latlon))
   end
-  fring = Ring(fpoints)
-  mesh = discretizewithin(fring, method)
-
-  # return mesh with original points
-  SimpleMesh(points, topology(mesh))
 end
 
 # ----------------
@@ -130,8 +123,6 @@ discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
 discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
 
 discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
-
-discretize(sphere::Sphere{🌐}) = discretize(sphere, RegularDiscretization(50))
 
 discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
 
@@ -171,8 +162,6 @@ simplexify(box::Box{𝔼{1}}) = SimpleMesh(collect(extrema(box)), GridTopology(1
 simplexify(box::Box{𝔼{2}}) = discretize(box, FanTriangulation())
 
 simplexify(box::Box{𝔼{3}}) = discretize(box, Tetrahedralization())
-
-simplexify(box::Box{🌐}) = discretize(box, Tetrahedralization())
 
 simplexify(seg::Segment) = SimpleMesh(pointify(seg), GridTopology(1))
 

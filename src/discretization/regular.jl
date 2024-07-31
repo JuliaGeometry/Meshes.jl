@@ -54,8 +54,6 @@ appendtopo(::Disk, tg) = _appendcenter(tg)
 
 appendtopo(::Sphere{𝔼{3}}, tg) = _appendpoles(tg, 2, true)
 
-appendtopo(::Sphere{🌐}, tg) = _appendpoles(tg, 2, true)
-
 appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::Cylinder, tg) = _appendaxis(tg)
