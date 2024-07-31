@@ -9,11 +9,11 @@
 """
     measure(object)
 
-Return the measure or "volume" of the `object`.
+Return the measure of the geometric `object`.
 
-### Notes
-
-- Type aliases are [`length`](@ref), [`area`](@ref), [`volume`](@ref)
+This function is also known as [`length`](@ref),
+[`area`](@ref) or [`volume`](@ref) depending on
+the parametric dimension of the object.
 """
 function measure end
 
