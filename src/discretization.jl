@@ -111,7 +111,7 @@ function discretizewithin(ring::Ring{🌐}, method::BoundaryDiscretizationMethod
   fpoints = map(points) do p
     latlon = convert(LatLon, coords(p))
     Point(flat(latlon))
-  end 
+  end
   fring = Ring(fpoints)
   mesh = discretizewithin(fring, method)
 
