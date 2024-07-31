@@ -21,7 +21,7 @@ with small number of vertices.
 """
 struct DehnTriangulation <: BoundaryDiscretizationMethod end
 
-function _discretizewithin(ring::Ring, ::Val{2}, ::DehnTriangulation)
+function discretizewithin(ring::Ring{𝔼{2}}, ::DehnTriangulation)
   # points on resulting mesh
   points = collect(vertices(ring))
 
