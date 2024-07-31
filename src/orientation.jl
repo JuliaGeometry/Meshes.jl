@@ -26,15 +26,13 @@ function orientation(p::Polygon)
   hasholes(p) ? o : first(o)
 end
 
-orientation(r::Ring) = _orientation(r, Val(embeddim(r)))
+orientation(r::Ring{𝔼{3}}) = orientation(proj2D(r))
 
-_orientation(r::Ring, ::Val{3}) = _orientation(proj2D(r), Val(2))
-
-function _orientation(r::Ring, ::Val{2})
+function orientation(r::Ring)
   ℒ = lentype(r)
   v = vertices(r)
   n = nvertices(r)
-  A(i) = signarea(v[1], v[i], v[i + 1])
+  A(i) = signarea(flat(v[1]), flat(v[i]), flat(v[i + 1]))
   Σ = sum(A, 2:(n - 1), init=zero(ℒ)^2)
   Σ ≥ zero(Σ) ? CCW : CW
 end
