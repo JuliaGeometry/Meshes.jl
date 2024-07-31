@@ -191,10 +191,6 @@ export
   sides,
   diagonal,
   focallength,
-  ≺,
-  ≻,
-  ⪯,
-  ⪰,
 
   # polytopes
   Polytope,
@@ -397,6 +393,10 @@ export
   intersects,
   iscollinear,
   iscoplanar,
+  ≺,
+  ≻,
+  ⪯,
+  ⪰,
 
   # winding number
   winding,

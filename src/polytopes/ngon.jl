@@ -63,17 +63,9 @@ angles(ngon::Ngon) = angles(boundary(ngon))
 
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
-signarea(ngon::Ngon) = sum(signarea, simplexify(ngon))
-
 # ----------
 # TRIANGLES
 # ----------
-
-function signarea(t::Triangle)
-  checkdim(t, 2)
-  v = t.vertices
-  signarea(v[1], v[2], v[3])
-end
 
 function normal(t::Triangle)
   checkdim(t, 3)
