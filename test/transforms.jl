@@ -174,7 +174,7 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -185,7 +185,7 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -196,7 +196,7 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -547,7 +547,7 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -558,7 +558,7 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -569,7 +569,7 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa TransformedGrid
+    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
