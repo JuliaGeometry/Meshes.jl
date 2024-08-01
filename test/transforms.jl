@@ -1038,7 +1038,7 @@
     f = Stretch(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
+    @test r isa SimpleMesh
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1627,7 +1627,7 @@
     d = convert(RectilinearGrid, cartgrid(10, 11, 12))
     r, c = TB.apply(f, d)
     @test r isa SimpleMesh
-    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+    @test r == SimpleMesh(f.(vertices(d)), topology(d))
 
     # ---------------
     # STRUCTUREDGRID
