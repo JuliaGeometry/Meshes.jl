@@ -59,6 +59,7 @@ applycoord(t::LengthUnit, len::Len) = uconvert(t.unit, len)
 
 applycoord(t::LengthUnit, lens::NTuple{Dim,Len}) where {Dim} = uconvert.(t.unit, lens)
 
+# TODO: how to chage the unit of the CRS type
 applycoord(t::LengthUnit, g::RectilinearGrid) = RectilinearGrid{datum(crs(g))}(map(x -> uconvert.(t.unit, x), xyz(g)))
 
 applycoord(t::LengthUnit, g::StructuredGrid) = StructuredGrid{datum(crs(g))}(map(X -> uconvert.(t.unit, X), XYZ(g)))
