@@ -26,8 +26,7 @@ struct RectilinearGrid{M<:Manifold,C<:CRS,Dim,V<:AbstractVector} <: Grid{M,C,Dim
 
   function RectilinearGrid{M,C}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {M,C,Dim}
     coords = float.(xyz)
-    V = eltype(coords)
-    new{M,C,Dim,eltype(V),V}(coords, topology)
+    new{M,C,Dim,V}(coords, topology)
   end
 end
 
