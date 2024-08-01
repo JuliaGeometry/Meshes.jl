@@ -36,13 +36,13 @@ function apply(transform::Bridge, poly::PolyArea)
   ring, dups = if hasholes(rpoly)
     bridge(rings(rpoly), rinds, δ)
   else
-    first(rings(rpoly)), []
+    first(rings(rpoly)), Tuple{Int,Int}[]
   end
 
   PolyArea(ring), dups
 end
 
-apply(::Bridge, poly::Ngon) = poly, []
+apply(::Bridge, poly::Ngon) = poly, Tuple{Int,Int}[]
 
 function bridge(rings, rinds, δ)
   # extract vertices and indices
