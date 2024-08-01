@@ -47,9 +47,14 @@ end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
-vertex(g::RectilinearGrid{M,C}, ijk::Dims) where {M,C} = Point(CoordRefSystems.reconstruct(C, getindex.(g.xyz, ijk)))
+function vertex(g::RectilinearGrid, ijk::Dims)
+  C = crs(g)
+  raw = getindex.(g.xyz, ijk)
+  coords = CoordRefSystems.reconstruct(C, raw)
+  Point(coords)
+end
 
-xyz(g::RectilinearGrid{M,C}) where {M,C} = g.xyz .* CoordRefSystems.units(C)
+xyz(g::RectilinearGrid) = g.xyz .* CoordRefSystems.units(crs(g))
 
 XYZ(g::RectilinearGrid) = XYZ(xyz(g))
 
