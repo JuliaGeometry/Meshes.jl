@@ -20,36 +20,36 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{𝔼{Dim},Cartesian{Datum,Dim,ℒ},Dim}
+struct RectilinearGrid{M<:Manifold,C<:CRS,Dim,V<:AbstractVector} <: Grid{M,C,Dim}
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
 
-  function RectilinearGrid{Datum}(
-    xyz::NTuple{Dim,<:AbstractVector{<:Len}},
-    topology::GridTopology{Dim}
-  ) where {Datum,Dim}
+  function RectilinearGrid{M,C}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {M,C,Dim}
     coords = float.(xyz)
     V = eltype(coords)
-    new{Datum,Dim,eltype(V),V}(coords, topology)
+    new{M,C,Dim,eltype(V),V}(coords, topology)
   end
 end
 
-RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {Datum,Dim} =
-  RectilinearGrid{Datum}(addunit.(xyz, u"m"), topology)
-
-function RectilinearGrid{Datum}(xyz::Tuple) where {Datum}
+function RectilinearGrid{M,C}(xyz::Tuple) where {M,C}
   coords = promote(collect.(xyz)...)
   topology = GridTopology(length.(coords) .- 1)
-  RectilinearGrid{Datum}(coords, topology)
+  RectilinearGrid{M,C}(coords, topology)
 end
 
-RectilinearGrid{Datum}(xyz...) where {Datum} = RectilinearGrid{Datum}(xyz)
+RectilinearGrid{M,C}(xyz...) where {M,C} = RectilinearGrid{M,C}(xyz)
 
-RectilinearGrid(args...) = RectilinearGrid{NoDatum}(args...)
+function RectilinearGrid(xyz::Tuple)
+  Dim = length(xyz)
+  C = Cartesian{NoDatum,Dim,Met{Float64}}
+  RectilinearGrid{𝔼{Dim},C}(args...)
+end
 
-vertex(g::RectilinearGrid{Datum}, ijk::Dims) where {Datum} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
+RectilinearGrid(xyz...) = RectilinearGrid(xyz)
 
-xyz(g::RectilinearGrid) = g.xyz
+vertex(g::RectilinearGrid{M,C}, ijk::Dims) where {M,C} = Point(CoordRefSystems.reconstruct(C, getindex.(g.xyz, ijk)))
+
+xyz(g::RectilinearGrid{M,C}) where {M,C} = g.xyz .* CoordRefSystems.units(C)
 
 XYZ(g::RectilinearGrid) = XYZ(xyz(g))
 
@@ -60,13 +60,13 @@ function centroid(g::RectilinearGrid, ind::Int)
   withcrs(g, (to(p1) + to(p2)) / 2)
 end
 
-function Base.getindex(g::RectilinearGrid{Datum}, I::CartesianIndices) where {Datum}
+function Base.getindex(g::RectilinearGrid{M,C}, I::CartesianIndices) where {M,C}
   @boundscheck _checkbounds(g, I)
   dims = size(I)
   start = Tuple(first(I))
   stop = Tuple(last(I)) .+ 1
   xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], embeddim(g))
-  RectilinearGrid{Datum}(xyz, GridTopology(dims))
+  RectilinearGrid{M,C}(xyz, GridTopology(dims))
 end
 
 function Base.summary(io::IO, g::RectilinearGrid)
