@@ -24,7 +24,10 @@ struct RectilinearGrid{M<:Manifold,C<:CRS,Dim,V<:AbstractVector} <: Grid{M,C,Dim
   xyz::NTuple{Dim,V}
   topology::GridTopology{Dim}
 
-  function RectilinearGrid{M,C}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {M,C,Dim}
+  function RectilinearGrid{M,C}(
+    xyz::NTuple{Dim,V},
+    topology::GridTopology{Dim}
+  ) where {M<:Manifold,C<:CRS,Dim,V<:AbstractVector}
     coords = float.(xyz)
     new{M,C,Dim,V}(coords, topology)
   end
@@ -41,7 +44,7 @@ RectilinearGrid{M,C}(xyz...) where {M,C} = RectilinearGrid{M,C}(xyz)
 function RectilinearGrid(xyz::Tuple)
   Dim = length(xyz)
   C = Cartesian{NoDatum,Dim,Met{Float64}}
-  RectilinearGrid{𝔼{Dim},C}(args...)
+  RectilinearGrid{𝔼{Dim},C}(xyz)
 end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
