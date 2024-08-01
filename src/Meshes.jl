@@ -301,8 +301,6 @@ export
   RectilinearGrid,
   StructuredGrid,
   SimpleMesh,
-  TransformedMesh,
-  TransformedGrid,
   vertex,
   vertices,
   nvertices,
