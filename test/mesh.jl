@@ -288,10 +288,11 @@
     @test vertex(grid, 1) == cart(0, 0)
     @test vertex(grid, 121) == cart(10, 10)
 
-    # constructor with datum & datum propagation
-    grid = RectilinearGrid{WGS84Latest}(x, y)
-    @test datum(crs(grid)) === WGS84Latest
-    @test datum(crs(centroid(grid))) === WGS84Latest
+    # constructor with CRS & CRS propagation
+    C = typeof(merc(0, 0))
+    grid = RectilinearGrid{𝔼{2},C}(x, y)
+    @test crs(grid) === C
+    @test crs(centroid(grid)) === C
 
     # conversion
     cg = cartgrid(10, 10)

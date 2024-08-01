@@ -29,7 +29,7 @@ function coarsen(grid::RectilinearGrid{M,C}, method::RegularCoarsening) where {M
   factors = fitdims(method.factors, embeddim(grid))
   dims = size(grid) .+ .!isperiodic(grid)
   rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
-  xyzₛ = xyz(grid)
+  xyzₛ = map(x -> ustrip.(x), xyz(g))
   xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], embeddim(grid))
   RectilinearGrid{M,C}(xyzₜ)
 end

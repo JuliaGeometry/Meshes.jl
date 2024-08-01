@@ -42,9 +42,11 @@ end
 RectilinearGrid{M,C}(xyz...) where {M,C} = RectilinearGrid{M,C}(xyz)
 
 function RectilinearGrid(xyz::Tuple)
+  coords = promote(collect.(xyz)...)
   Dim = length(xyz)
-  C = Cartesian{NoDatum,Dim,Met{Float64}}
-  RectilinearGrid{𝔼{Dim},C}(xyz)
+  T = eltype(eltype(coords))
+  C = Cartesian{NoDatum,Dim,Met{T}}
+  RectilinearGrid{𝔼{Dim},C}(coords)
 end
 
 RectilinearGrid(xyz...) = RectilinearGrid(xyz)
