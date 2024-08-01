@@ -172,4 +172,5 @@ Base.convert(::Type{SimpleMesh}, m::Mesh) = SimpleMesh(vertices(m), topology(m))
 
 Base.convert(::Type{StructuredGrid}, g::Grid) = StructuredGrid{datum(crs(g))}(XYZ(g))
 
-Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) = RectilinearGrid{datum(crs(g))}(xyz(g))
+Base.convert(::Type{RectilinearGrid}, g::CartesianGrid) =
+  RectilinearGrid{manifold(g),crs(g)}(map(x -> ustrip.(x), xyz(g)))
