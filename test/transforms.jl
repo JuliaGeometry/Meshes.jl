@@ -1872,6 +1872,9 @@
     @test !hasholes(bpoly)
     @test nvertices(bpoly) == 15
 
+    # make sure that result is inferred
+    @inferred poly |> Bridge(T(0.1))
+
     # unique and bridges
     poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
     cpoly = poly |> Repair{0}() |> Bridge()
