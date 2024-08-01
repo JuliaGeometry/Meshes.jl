@@ -85,8 +85,7 @@ function _shadow(g::CartesianGrid, dims)
   CartesianGrid(sz, or, sp, of)
 end
 
-# TODO: hot to get the new CRS type
-_shadow(g::RectilinearGrid, dims) = RectilinearGrid{datum(crs(g))}(xyz(g)[dims])
+_shadow(g::RectilinearGrid, dims) = _shadow(convert(SimpleMesh, g), dims)
 
 function _shadow(g::StructuredGrid, dims)
   ndims = length(size(g))
