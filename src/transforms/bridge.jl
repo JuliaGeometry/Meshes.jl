@@ -52,9 +52,6 @@ function bridge(rings, rinds, δ)
   # retrieve coordinate type
   ℒ = lentype(first(rings))
 
-  # retrieve original CRS
-  C = crs(first(rings))
-
   # initialize outer boundary
   outer = flat.(verts[1])
   oinds = vinds[1]
@@ -121,6 +118,7 @@ function bridge(rings, rinds, δ)
   end
 
   points = map(outer) do p
+    C = crs(first(rings))
     c = CoordRefSystems.raw(coords(p))
     Point(CoordRefSystems.reconstruct(C, c))
   end
