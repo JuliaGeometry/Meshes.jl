@@ -262,19 +262,19 @@ We can also compute angles of any given chain, no matter if it
 is open or closed:
 
 ```@example overview
-angles(r) * 180 / pi
+angles(r)
 ```
 
 The sign of these angles is a function of the orientation:
 
 ```@example overview
-angles(reverse(r)) * 180 / pi
+angles(reverse(r))
 ```
 
 In case of rings (i.e. closed chains), we can compute inner angles as well:
 
 ```@example overview
-innerangles(r) * 180 / pi
+innerangles(r)
 ```
 
 And there is a lot more functionality available like for instance

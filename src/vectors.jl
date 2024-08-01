@@ -22,15 +22,15 @@ v = B - A
 
 # 2D vectors
 Vec(1.0, 2.0) # add default units
-Vec(1.0u"m", 2.0u"m") # double precision as expected
-Vec(1f0u"km", 2f0u"km") # single precision as expected
-Vec(1u"m", 2u"m") # integer is converted to float by design
+Vec(1.0m, 2.0m) # double precision as expected
+Vec(1f0km, 2f0km) # single precision as expected
+Vec(1m, 2m) # integer is converted to float by design
 
 # 3D vectors
 Vec(1.0, 2.0, 3.0) # add default units
-Vec(1.0u"m", 2.0u"m", 3.0u"m") # double precision as expected
-Vec(1f0u"km", 2f0u"km", 3f0u"km") # single precision as expected
-Vec(1u"m", 2u"m", 3u"m") # integer is converted to float by design
+Vec(1.0m, 2.0m, 3.0m) # double precision as expected
+Vec(1f0km, 2f0km, 3f0km) # single precision as expected
+Vec(1m, 2m, 3m) # integer is converted to float by design
 ```
 
 ### Notes
