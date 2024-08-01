@@ -27,7 +27,7 @@ end
 
 function refine(grid::RectilinearGrid{M,C}, method::RegularRefinement) where {M,C}
   factors = fitdims(method.factors, embeddim(grid))
-  xyzₛ = map(x -> ustrip.(x), xyz(g))
+  xyzₛ = map(x -> ustrip.(x), xyz(grid))
   xyzₜ = ntuple(i -> _refinedims(xyzₛ[i], factors[i]), embeddim(grid))
   RectilinearGrid{M,C}(xyzₜ)
 end

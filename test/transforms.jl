@@ -368,7 +368,7 @@
     f = Translate(T(1), T(1))
     d = RectilinearGrid(T.(0:10), T.(0:10))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
+    @test r isa SimpleMesh
     @test r ≈ RectilinearGrid(T.(1:11), T.(1:11))
     @test TB.revert(f, r, c) ≈ d
 

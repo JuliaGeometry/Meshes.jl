@@ -37,8 +37,7 @@ applycoord(t::Translate, p::Point) = p + Vec(t.offsets)
 # SPECIALIZATIONS
 # ----------------
 
-apply(t::Translate, g::RectilinearGrid{M,C}) where {M,C} =
-  RectilinearGrid{M,C}(ntuple(i -> xyz(g)[i] .+ t.offsets[i], embeddim(g))), nothing
+apply(t::Translate, g::RectilinearGrid) = apply(t, convert(SimpleMesh, g))
 
 revert(t::Translate, g::RectilinearGrid, c) = first(apply(inverse(t), g))
 

@@ -289,7 +289,7 @@
     @test vertex(grid, 121) == cart(10, 10)
 
     # constructor with CRS & CRS propagation
-    C = typeof(merc(0, 0))
+    C = typeof(coords(merc(0, 0)))
     grid = RectilinearGrid{𝔼{2},C}(x, y)
     @test crs(grid) === C
     @test crs(centroid(grid)) === C
