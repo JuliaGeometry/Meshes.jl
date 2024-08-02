@@ -81,7 +81,7 @@ function discretize(polygon::Polygon, method::BoundaryDiscretizationMethod)
         end
       end
     end
-    connec = connect.(Tuple.(einds))
+    connec = [connect(ntuple(i -> inds[i], 3)) for inds in einds]
 
     # return mesh without duplicates
     SimpleMesh(points, connec)
