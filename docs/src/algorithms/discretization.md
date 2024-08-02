@@ -10,7 +10,6 @@ discretize
 discretizewithin
 simplexify
 DiscretizationMethod
-BoundaryTriangulationMethod
 ```
 
 ## FanTriangulation
