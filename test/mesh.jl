@@ -728,6 +728,11 @@
     tmesh = Meshes.TransformedMesh(mesh, trans)
     @test manifold(tmesh) === 𝔼{3}
     @test crs(tmesh) <: Cartesian
+    trans = Proj(Polar)
+    tgrid = Meshes.TransformedMesh(grid, trans)
+    @test tgrid isa Meshes.TransformedGrid
+    @test manifold(tgrid) === 𝔼{2}
+    @test crs(tgrid) <: Polar
 
     # grid interface
     trans = Identity()
