@@ -27,6 +27,10 @@
     @test nelements(mesh) == 6
     @test eltype(mesh) <: Triangle
 
+    # type stability tests
+    poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+    @inferred discretize(poly, DehnTriangulation())
+
     octa = Octagon(
       cart(0.2, 0.2, 0.0),
       cart(0.5, -0.5, 0.0),

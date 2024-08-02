@@ -70,6 +70,6 @@ function dehn1899(v::AbstractVector{<:Point}, inds)
     [left; right]
   else
     # return the triangle
-    [connect(Tuple(inds), Triangle)]
+    [connect(ntuple(i -> inds[i], 3))]
   end
 end
