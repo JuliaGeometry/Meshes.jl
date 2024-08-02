@@ -19,7 +19,7 @@ with small number of vertices.
 * Devadoss, S & Rourke, J. 2011. [Discrete and computational geometry]
   (https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
 """
-struct DehnTriangulation <: BoundaryDiscretizationMethod end
+struct DehnTriangulation <: BoundaryTriangulationMethod end
 
 function discretizewithin(ring::Ring{𝔼{2}}, ::DehnTriangulation)
   # points on resulting mesh

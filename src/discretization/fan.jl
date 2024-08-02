@@ -9,7 +9,7 @@ The fan triangulation algorithm for convex polygons.
 See [https://en.wikipedia.org/wiki/Fan_triangulation]
 (https://en.wikipedia.org/wiki/Fan_triangulation).
 """
-struct FanTriangulation <: BoundaryDiscretizationMethod end
+struct FanTriangulation <: BoundaryTriangulationMethod end
 
 function discretizewithin(ring::Ring, ::FanTriangulation)
   points = collect(vertices(ring))

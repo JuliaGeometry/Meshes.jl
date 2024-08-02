@@ -18,7 +18,7 @@ Optionally, specify the random number generator `rng`.
 Wraps DelaunayTriangulation.jl. For any internal errors, file an issue at 
 [DelaunayTriangulation.jl](https://github.com/JuliaGeometry/DelaunayTriangulation.jl/issues/new)
 """
-struct DelaunayTriangulation{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
+struct DelaunayTriangulation{RNG<:AbstractRNG} <: BoundaryTriangulationMethod
   rng::RNG
 end
 
