@@ -10,6 +10,13 @@ A method for discretizing geometries into meshes.
 abstract type DiscretizationMethod end
 
 """
+    TriangulationMethod
+
+A method for discretizing geometries into triangular meshes.
+"""
+abstract type TriangulationMethod <: DiscretizationMethod end
+
+"""
     discretize(geometry, [method])
 
 Discretize `geometry` with discretization `method`.
@@ -20,11 +27,11 @@ used with a specific number of elements.
 function discretize end
 
 """
-    BoundaryDiscretizationMethod
+    BoundaryTriangulationMethod
 
-A method for discretizing geometries based on their boundary.
+A method for discretizing geometries into triangular meshes based on their boundary.
 """
-abstract type BoundaryDiscretizationMethod <: DiscretizationMethod end
+abstract type BoundaryTriangulationMethod <: TriangulationMethod end
 
 """
     discretizewithin(boundary, method)
@@ -33,9 +40,43 @@ Discretize geometry within `boundary` with boundary discretization `method`.
 """
 function discretizewithin end
 
-discretize(geometry::Geometry, method::BoundaryDiscretizationMethod) = discretizewithin(boundary(geometry), method)
+# -----------
+# DISCRETIZE
+# -----------
 
-function discretize(polygon::Polygon, method::BoundaryDiscretizationMethod)
+discretize(geometry) = simplexify(geometry)
+
+discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
+
+discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
+
+discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
+
+discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
+
+discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
+
+discretize(cyl::Cylinder) = discretize(cyl, RegularDiscretization(2, 50, 2))
+
+discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
+
+discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
+
+discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
+
+discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
+
+discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
+
+discretize(mesh::Mesh) = mesh
+
+# -----------------
+# BOUNDARY METHODS
+# -----------------
+
+discretize(geometry::Geometry, method::BoundaryTriangulationMethod) = discretizewithin(boundary(geometry), method)
+
+function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
   # clean up polygon if necessary
   cpoly = polygon |> Repair{0}() |> Repair{8}()
 
@@ -88,10 +129,10 @@ function discretize(polygon::Polygon, method::BoundaryDiscretizationMethod)
   end
 end
 
-discretize(multi::Multi, method::BoundaryDiscretizationMethod) =
+discretize(multi::Multi, method::BoundaryTriangulationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-function discretizewithin(ring::Ring, method::BoundaryDiscretizationMethod)
+function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
   # collect vertices to get rid of static containers
   points = collect(vertices(ring))
 
@@ -112,35 +153,9 @@ function _proj2D(::Type{🌐}, points)
   end
 end
 
-# ----------------
-# DEFAULT METHODS
-# ----------------
-
-discretize(geometry) = simplexify(geometry)
-
-discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
-
-discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
-
-discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
-
-discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
-
-discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
-
-discretize(cyl::Cylinder) = discretize(cyl, RegularDiscretization(2, 50, 2))
-
-discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
-
-discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
-
-discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
-
-discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
-
-discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
-
-discretize(mesh::Mesh) = mesh
+# -----------
+# SIMPLEXIFY
+# -----------
 
 """
     simplexify(object)
@@ -161,7 +176,7 @@ simplexify(box::Box{𝔼{1}}) = SimpleMesh(collect(extrema(box)), GridTopology(1
 
 simplexify(box::Box{𝔼{2}}) = discretize(box, FanTriangulation())
 
-simplexify(box::Box{𝔼{3}}) = discretize(box, Tetrahedralization())
+simplexify(box::Box{𝔼{3}}) = discretize(box, ManualDiscretization())
 
 simplexify(seg::Segment) = SimpleMesh(pointify(seg), GridTopology(1))
 
@@ -183,7 +198,7 @@ simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
 simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 
-simplexify(poly::Polyhedron) = discretize(poly, Tetrahedralization())
+simplexify(poly::Polyhedron) = discretize(poly, ManualDiscretization())
 
 simplexify(multi::Multi) = mapreduce(simplexify, merge, parent(multi))
 
@@ -230,5 +245,5 @@ include("discretization/fan.jl")
 include("discretization/dehn.jl")
 include("discretization/held.jl")
 include("discretization/delaunay.jl")
-include("discretization/tetra.jl")
+include("discretization/manual.jl")
 include("discretization/regular.jl")
