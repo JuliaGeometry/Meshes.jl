@@ -158,16 +158,16 @@ mesh = discretize(sphere, RegularDiscretization(10,10))
 viz(mesh, showsegments = true)
 ```
 
-## Tetrahedralization
+## ManualDiscretization
 
 ```@docs
-Tetrahedralization
+ManualDiscretization
 ```
 
 ```@example discretization
 box = Box((0., 0., 0.), (1., 1., 1.))
 
-mesh = discretize(box, Tetrahedralization())
+mesh = discretize(box, ManualDiscretization())
 
 viz(mesh, colors = 1:nelements(mesh))
 ```

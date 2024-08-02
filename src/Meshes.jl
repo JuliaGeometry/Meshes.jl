@@ -489,12 +489,12 @@ export
 
   # discretization
   DiscretizationMethod,
-  BoundaryDiscretizationMethod,
+  BoundaryTriangulationMethod,
   FanTriangulation,
   DehnTriangulation,
   HeldTriangulation,
   DelaunayTriangulation,
-  Tetrahedralization,
+  ManualDiscretization,
   RegularDiscretization,
   discretize,
   discretizewithin,

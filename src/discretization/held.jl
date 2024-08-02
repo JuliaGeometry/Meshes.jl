@@ -26,7 +26,7 @@ generator `rng`.
   constrained Delaunay triangulation of polygons]
   (https://www.sciencedirect.com/science/article/pii/S092577211830004X)
 """
-struct HeldTriangulation{RNG<:AbstractRNG} <: BoundaryDiscretizationMethod
+struct HeldTriangulation{RNG<:AbstractRNG} <: BoundaryTriangulationMethod
   rng::RNG
   shuffle::Bool
 end
