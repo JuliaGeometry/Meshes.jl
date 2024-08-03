@@ -41,9 +41,9 @@ function tesselate(pset::PointSet, method::VoronoiTesselation)
   end
   polygs = get_polygons(vorono)
   connec = Vector{Connectivity}(undef, length(polygs))
-  for (idx, poly) in polygs
-    tup = ntuple(i -> poly[i], length(poly) - 1)
-    connec[idx] = connect(tup, Ngon)
+  for (order_idx, vertices_inds) in polygs
+    tup = ntuple(i -> vertices_inds[i], length(vertices_inds) - 1)
+    connec[order_idx] = connect(tup, Ngon)
   end
   mesh = SimpleMesh(points, connec)
 
