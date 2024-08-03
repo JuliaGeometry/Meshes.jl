@@ -701,27 +701,43 @@
     sgrid = convert(StructuredGrid, grid)
     mesh = convert(SimpleMesh, grid)
     trans = Identity()
-    tmesh = TransformedMesh(mesh, trans)
+    tmesh = Meshes.TransformedMesh(mesh, trans)
     @test crs(tmesh) <: Cartesian{NoDatum}
     @test Meshes.lentype(tmesh) == ℳ
     @test parent(tmesh) === mesh
     @test Meshes.transform(tmesh) === trans
-    @test TransformedMesh(grid, trans) == grid
-    @test TransformedMesh(rgrid, trans) == rgrid
-    @test TransformedMesh(sgrid, trans) == sgrid
-    @test TransformedMesh(mesh, trans) == mesh
+    @test Meshes.TransformedMesh(grid, trans) == grid
+    @test Meshes.TransformedMesh(rgrid, trans) == rgrid
+    @test Meshes.TransformedMesh(sgrid, trans) == sgrid
+    @test Meshes.TransformedMesh(mesh, trans) == mesh
     trans = Translate(T(10), T(10)) → Translate(T(-10), T(-10))
-    @test TransformedMesh(grid, trans) == grid
-    @test TransformedMesh(rgrid, trans) == rgrid
-    @test TransformedMesh(sgrid, trans) == sgrid
-    @test TransformedMesh(mesh, trans) == mesh
+    @test Meshes.TransformedMesh(grid, trans) == grid
+    @test Meshes.TransformedMesh(rgrid, trans) == rgrid
+    @test Meshes.TransformedMesh(sgrid, trans) == sgrid
+    @test Meshes.TransformedMesh(mesh, trans) == mesh
     trans1 = Translate(T(10), T(10))
     trans2 = Translate(T(-10), T(-10))
-    @test TransformedMesh(TransformedMesh(grid, trans1), trans2) == TransformedMesh(grid, trans1 → trans2)
+    @test Meshes.TransformedMesh(Meshes.TransformedMesh(grid, trans1), trans2) ==
+          Meshes.TransformedMesh(grid, trans1 → trans2)
+
+    # transforms that change the Manifold and/or CRS
+    points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
+    connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+    mesh = SimpleMesh(points, connec)
+    trans = Proj(Cartesian)
+    tmesh = Meshes.TransformedMesh(mesh, trans)
+    @test manifold(tmesh) === 𝔼{3}
+    @test crs(tmesh) <: Cartesian
+    trans = Proj(Polar)
+    tgrid = Meshes.TransformedMesh(grid, trans)
+    @test tgrid isa Meshes.TransformedGrid
+    @test manifold(tgrid) === 𝔼{2}
+    @test crs(tgrid) <: Polar
+
     # grid interface
     trans = Identity()
-    tgrid = TransformedMesh(grid, trans)
-    @test tgrid isa TransformedGrid
+    tgrid = Meshes.TransformedMesh(grid, trans)
+    @test tgrid isa Meshes.TransformedGrid
     @test size(tgrid) == (10, 10)
     @test minimum(tgrid) == cart(0, 0)
     @test maximum(tgrid) == cart(10, 10)
@@ -742,6 +758,7 @@
     @test size(sub) == (10, 5)
     @test minimum(sub) == cart(0, 2)
     @test maximum(sub) == cart(10, 7)
+
     @test sprint(show, tgrid) == "10×10 TransformedGrid"
     if T == Float32
       @test sprint(show, MIME"text/plain"(), tgrid) == """

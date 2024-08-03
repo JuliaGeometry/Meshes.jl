@@ -301,8 +301,6 @@ export
   RectilinearGrid,
   StructuredGrid,
   SimpleMesh,
-  TransformedMesh,
-  TransformedGrid,
   vertex,
   vertices,
   nvertices,
@@ -491,12 +489,12 @@ export
 
   # discretization
   DiscretizationMethod,
-  BoundaryDiscretizationMethod,
+  BoundaryTriangulationMethod,
   FanTriangulation,
   DehnTriangulation,
   HeldTriangulation,
   DelaunayTriangulation,
-  Tetrahedralization,
+  ManualDiscretization,
   RegularDiscretization,
   discretize,
   discretizewithin,

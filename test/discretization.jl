@@ -27,6 +27,10 @@
     @test nelements(mesh) == 6
     @test eltype(mesh) <: Triangle
 
+    # type stability tests
+    poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+    @inferred discretize(poly, DehnTriangulation())
+
     octa = Octagon(
       cart(0.2, 0.2, 0.0),
       cart(0.5, -0.5, 0.0),
@@ -306,11 +310,11 @@
     @test mesh[1] == Triangle(cart(0, 0), cart(0, 0), cart(0, 0))
   end
 
-  @testset "Tetrahedralization" begin
+  @testset "ManualDiscretization" begin
     box = Box(cart(0, 0, 0), cart(1, 1, 1))
     hexa = Hexahedron(pointify(box)...)
-    bmesh = discretize(box, Tetrahedralization())
-    hmesh = discretize(hexa, Tetrahedralization())
+    bmesh = discretize(box, ManualDiscretization())
+    hmesh = discretize(hexa, ManualDiscretization())
     @test bmesh == hmesh
     @test nvertices(bmesh) == 8
     @test nelements(bmesh) == 5

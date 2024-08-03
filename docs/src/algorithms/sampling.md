@@ -6,7 +6,7 @@ import CairoMakie as Mke # hide
 ```
 
 ```@docs
-sample
+sample(::Any, ::SamplingMethod)
 SamplingMethod
 DiscreteSamplingMethod
 ContinuousSamplingMethod
