@@ -39,9 +39,12 @@ function tesselate(pset::PointSet, method::VoronoiTesselation)
     coords = CoordRefSystems.reconstruct(C, T.(xy))
     Point(coords)
   end
-  polygs = each_polygon(vorono)
-  tuples = [Tuple(inds[begin:(end - 1)]) for inds in polygs]
-  connec = connect.(tuples)
+  polygs = get_polygons(vorono)
+  connec = Vector{Connectivity}(undef, length(polygs))
+  for (idx, poly) in polygs
+    tup = ntuple(i -> poly[i], length(poly) - 1)
+    connec[idx] = connect(tup, Ngon)
+  end
   mesh = SimpleMesh(points, connec)
 
   # remove unused points

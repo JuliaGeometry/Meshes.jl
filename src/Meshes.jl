@@ -24,7 +24,7 @@ using NearestNeighbors: KDTree, BallTree
 using NearestNeighbors: knn, inrange
 using DelaunayTriangulation: triangulate, voronoi
 using DelaunayTriangulation: each_solid_triangle
-using DelaunayTriangulation: each_polygon
+using DelaunayTriangulation: get_polygons 
 using DelaunayTriangulation: get_polygon_points
 using ScopedValues: ScopedValue
 using Base.Cartesian: @nloops, @nref, @ntuple
