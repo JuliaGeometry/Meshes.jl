@@ -47,8 +47,9 @@
     @test_throws AssertionError tesselate(pset, VoronoiTesselation(StableRNG(2024)))
 
     # Test polygon order is the same as input points order
+    rng = StableRNG(2024)
     pts = randpoint2(10)
-    mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
+    mesh = tesselate(pts, VoronoiTesselation(rng))
     @test all(zip(pts, mesh)) do (pt, poly)
       pt in poly || pt ∉ mesh # The pt ∉ mesh is because some points are on the border of the respective polygon and return false from `pt in poly` due to floating point precision. So if that happens we check that the point is not in any other polygon
     end
