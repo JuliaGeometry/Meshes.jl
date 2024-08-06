@@ -50,8 +50,6 @@
     pts = randpoint2(10)
     mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
     @test all(zip(pts, mesh)) do (p, poly)
-      p ∈ poly && return true
-      # point is not in poly due to a floating point error.
       # check if the target polygon's centroid is the closest
       dist(e) = evaluate(Euclidean(), p, centroid(e))
       all(mesh) do elem
