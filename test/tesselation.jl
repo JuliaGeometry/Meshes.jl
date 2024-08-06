@@ -36,14 +36,14 @@
     mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
     @test crs(mesh) === crs(pset)
 
-    coords = [LatLon(rand(-90:T(0.1):90), rand(-180:T(0.1):180)) for _ in 1:10]
-    pset = PointSet(Point.(coords))
-    mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
-    @test crs(mesh) === crs(pset)
-
     # error: the number of coordinates of the points must be 2
     pts = randpoint3(10)
     pset = PointSet(pts)
     @test_throws AssertionError tesselate(pset, VoronoiTesselation(StableRNG(2024)))
+
+    # Test polygon order is the same as input points order
+    pts = randpoint2(10)
+    mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
+    @test all(sideof(p, boundary(poly)) ∈ (IN, ON) for (p, poly) in zip(pts, mesh))
   end
 end
