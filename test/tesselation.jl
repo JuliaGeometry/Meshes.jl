@@ -52,11 +52,11 @@
     @test all(zip(pts, mesh)) do (pt, poly)
       pt in poly && return true
       # Point is not in poly, might be to a rounding error. We check if the target polygon's centroid is the closest of all
-      centroid_dists = map(mesh) do element
-        norm(centroid(element) - pt)
-      end
       this_dist = norm(centroid(poly) - pt)
-      all(>=(this_dist), centroid_dists)
+      all(mesh) do element
+        d = norm(centroid(element) - pt)
+        d >= this_dist
+      end
     end
   end
 end
