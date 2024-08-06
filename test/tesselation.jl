@@ -44,12 +44,6 @@
     # Test polygon order is the same as input points order
     pts = randpoint2(10)
     mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
-    @test all(zip(pts, mesh)) do (p, poly)
-      # check if the target polygon's centroid is the closest
-      dist(e) = evaluate(Euclidean(), p, centroid(e))
-      all(mesh) do elem
-        dist(elem) ≥ dist(poly)
-      end
-    end
+    @test issameorder(pts, mesh)
   end
 end
