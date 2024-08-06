@@ -80,15 +80,6 @@ withprecision(T, geoms::CircularVector{<:Geometry}) = CircularVector([withprecis
   :($ctor($(exprs...)))
 end
 
-# check if the order of the mesh polygons is the same as the input points
-function issameorder(pts, mesh)
-  all(zip(pts, mesh)) do (p, poly)
-    # check if the target polygon's centroid is the closest
-    dist(e) = evaluate(Euclidean(), p, centroid(e))
-    all(dist(elem) ≥ dist(poly) for elem in mesh)
-  end
-end
-
 function equaltest(g)
   @test g == withprecision(Float64, g)
   @test g == withprecision(Float32, g)

@@ -44,6 +44,6 @@
     # Test polygon order is the same as input points order
     pts = randpoint2(10)
     mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
-    @test issameorder(pts, mesh)
+    @test all(sideof(p, boundary(poly)) ∈ (IN, ON) for (p, poly) in zip(pts, mesh))
   end
 end
