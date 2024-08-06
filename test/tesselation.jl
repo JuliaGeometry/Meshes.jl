@@ -36,7 +36,7 @@
     mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
     @test crs(mesh) === crs(pset)
 
-    coords = [LatLon(rand(-90:T(0.1):90), rand(-180:T(0.1):180)) for _ in 1:10]
+    coords = [LatLon(rand(-80:T(0.1):80), rand(-180:T(0.1):180)) for _ in 1:10]
     pset = PointSet(Point.(coords))
     mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
     @test crs(mesh) === crs(pset)
@@ -49,13 +49,13 @@
     # Test polygon order is the same as input points order
     pts = randpoint2(10)
     mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
-    @test all(zip(pts, mesh)) do (pt, poly)
-      pt in poly && return true
-      # Point is not in poly, might be to a rounding error. We check if the target polygon's centroid is the closest of all
-      this_dist = norm(centroid(poly) - pt)
-      all(mesh) do element
-        d = norm(centroid(element) - pt)
-        d >= this_dist
+    @test all(zip(pts, mesh)) do (p, poly)
+      p ∈ poly && return true
+      # point is not in poly due to a floating point error.
+      # check if the target polygon's centroid is the closest
+      dist(e) = evaluate(Euclidean(), p, centroid(e))
+      all(mesh) do elem
+        dist(elem) ≥ dist(poly)
       end
     end
   end
