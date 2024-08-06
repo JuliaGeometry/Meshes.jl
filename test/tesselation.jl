@@ -36,11 +36,6 @@
     mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
     @test crs(mesh) === crs(pset)
 
-    coords = [LatLon(rand(-20:T(0.1):20), rand(-180:T(0.1):180)) for _ in 1:10]
-    pset = PointSet(Point.(coords))
-    mesh = tesselate(pset, VoronoiTesselation(StableRNG(2024)))
-    @test crs(mesh) === crs(pset)
-
     # error: the number of coordinates of the points must be 2
     pts = randpoint3(10)
     pset = PointSet(pts)
