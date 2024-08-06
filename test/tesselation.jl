@@ -50,7 +50,13 @@
     pts = randpoint2(10)
     mesh = tesselate(pts, VoronoiTesselation(StableRNG(2024)))
     @test all(zip(pts, mesh)) do (pt, poly)
-      pt in poly || pt ∉ mesh # The pt ∉ mesh is because some points are on the border of the respective polygon and return false from `pt in poly` due to floating point precision. So if that happens we check that the point is not in any other polygon
+      pt in poly && return true
+      # Point is not in poly, might be to a rounding error. We check if the target polygon's centroid is the closest of all
+      centroid_dists = map(mesh) do element
+        norm(centroid(element) - pt)
+      end
+      this_dist = norm(centroid(poly) - pt)
+      all(<=(this_dist), centroid_dists)
     end
   end
 end
