@@ -9,7 +9,6 @@ isoptimized(::Type, ::GeometricTransform) = false
 
 isoptimized(::Type{<:Cartesian2D}, ::Proj{<:Projected}) = true
 isoptimized(::Type{<:Projected}, ::Proj{<:Cartesian2D}) = true
-isoptimized(::Type{<:Projected}, ::Proj{Cartesian}) = true
 
 isoptimized(::Type, ::Rotate{<:Angle2d}) = true
 isoptimized(::Type, ::Translate) = true
