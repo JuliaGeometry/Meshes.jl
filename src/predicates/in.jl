@@ -110,7 +110,20 @@ function Base.in(p::Point, t::Torus)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2
 end
 
-function Base.in(p::Point, t::Triangle)
+function Base.in(point::Point, poly::Polygon{𝔼{2}})
+  r = rings(poly)
+  inside = sideof(point, first(r)) != OUT
+  if hasholes(poly)
+    outside = all(sideof(point, r[i]) == OUT for i in 2:length(r))
+    inside && outside
+  else
+    inside
+  end
+end
+
+Base.in(p::Point, poly::Polygon{𝔼{3}}) = any(Δ -> p ∈ Δ, simplexify(poly))
+
+function Base.in(p::Point, t::Triangle{𝔼{3}})
   # given coordinates
   a, b, c = vertices(t)
 
@@ -135,19 +148,6 @@ function Base.in(p::Point, t::Triangle)
 
   # barycentric check
   λ₂ ≥ 0 && λ₃ ≥ 0 && (λ₂ + λ₃) ≤ 1
-end
-
-Base.in(p::Point, ngon::Ngon) = any(Δ -> p ∈ Δ, simplexify(ngon))
-
-function Base.in(point::Point, poly::Polygon)
-  r = rings(poly)
-  inside = sideof(point, first(r)) != OUT
-  if hasholes(poly)
-    outside = all(sideof(point, r[i]) == OUT for i in 2:length(r))
-    inside && outside
-  else
-    inside
-  end
 end
 
 Base.in(p::Point, m::Multi) = any(g -> p ∈ g, parent(m))
