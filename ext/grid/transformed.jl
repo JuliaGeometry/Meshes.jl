@@ -2,14 +2,18 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-isoptimized(::TB.Identity) = true
-isoptimized(t::TB.SequentialTransform) = all(isoptimized, t)
+isoptimized(::Type, ::TB.Identity) = true
+isoptimized(CRS::Type, t::TB.SequentialTransform) = all(tᵢ -> isoptimized(CRS, tᵢ), t)
 
-isoptimized(::GeometricTransform) = false
-isoptimized(::Rotate{<:Angle2d}) = true
-isoptimized(::Translate) = true
-isoptimized(::Scale) = true
-function isoptimized(t::Affine{2})
+isoptimized(::Type, ::GeometricTransform) = false
+
+isoptimized(::Type{<:Cartesian2D}, ::Proj{<:Projected}) = true
+isoptimized(::Type{<:Projected}, ::Proj{<:Cartesian2D}) = true
+
+isoptimized(::Type, ::Rotate{<:Angle2d}) = true
+isoptimized(::Type, ::Translate) = true
+isoptimized(::Type, ::Scale) = true
+function isoptimized(::Type, t::Affine{2})
   A, _ = TB.parameters(t)
   isdiag(A) || isrotation(A)
 end
@@ -24,7 +28,7 @@ function transformedgrid!(plot, fallback)
   tgrid = plot[:object]
   grid = Makie.@lift parent($tgrid)
   trans = Makie.@lift Meshes.transform($tgrid)
-  if isoptimized(trans[])
+  if isoptimized(crs(grid[]), trans[])
     color = plot[:color]
     alpha = plot[:alpha]
     colormap = plot[:colormap]
@@ -39,6 +43,8 @@ function transformedgrid!(plot, fallback)
 end
 
 makietransform!(plot, trans::Makie.Observable{<:TB.Identity}) = nothing
+
+makietransform!(plot, trans::Makie.Observable{<:Proj}) = nothing
 
 makietransform!(plot, trans::Makie.Observable{<:TB.SequentialTransform}) =
   foreach(t -> makietransform!(plot, Makie.Observable(t)), trans[])

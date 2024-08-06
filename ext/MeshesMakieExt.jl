@@ -9,7 +9,10 @@ using Unitful
 using Rotations
 using StaticArrays
 using LinearAlgebra
+using CoordRefSystems
 using Colorfy
+
+using CoordRefSystems: Projected
 
 import TransformsBase as TB
 
