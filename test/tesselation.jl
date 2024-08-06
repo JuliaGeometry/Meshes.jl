@@ -56,7 +56,7 @@
         norm(centroid(element) - pt)
       end
       this_dist = norm(centroid(poly) - pt)
-      all(<=(this_dist), centroid_dists)
+      all(>=(this_dist), centroid_dists)
     end
   end
 end
