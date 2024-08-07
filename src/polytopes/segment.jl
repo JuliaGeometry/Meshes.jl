@@ -38,3 +38,5 @@ function (s::Segment)(t)
   a, b = s.vertices
   a + t * (b - a)
 end
+
+Base.reverse(s::Segment) = Segment(reverse(extrema(s)))

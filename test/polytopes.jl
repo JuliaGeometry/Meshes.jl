@@ -13,6 +13,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(cart(2.0), cart(1.0)))
     @test !(s ≈ Segment(cart(-1.0), cart(2.0)))
+    @test reverse(s) == Segment(cart(2.0), cart(1.0))
 
     s = Segment(cart(0, 0), cart(1, 1))
     @test minimum(s) == cart(0, 0)
@@ -28,6 +29,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(cart(1, 1), cart(0, 0)))
     @test !(s ≈ Segment(cart(1, 2), cart(0, 0)))
+    @test reverse(s) == Segment(cart(1, 1), cart(0, 0))
 
     s = Segment(cart(0, 0, 0), cart(1, 1, 1))
     @test all(cart(x, x, x) ∈ s for x in 0:0.01:1)
@@ -36,6 +38,7 @@
     @test s ≈ s
     @test !(s ≈ Segment(cart(1, 1, 1), cart(0, 0, 0)))
     @test !(s ≈ Segment(cart(1, 1, 1), cart(0, 1, 0)))
+    @test reverse(s) == Segment(cart(1, 1, 1), cart(0, 0, 0))
 
     s = Segment(cart(0, 0), cart(1, 1))
     equaltest(s)
