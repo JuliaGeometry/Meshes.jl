@@ -1725,6 +1725,12 @@
     rpoly = poly |> Repair{0}()
     @test nvertices(rpoly) == 4
     @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+
+    repair = Repair{0}()
+    @test sprint(show, repair) == "Repair(K: 0)"
+    @test sprint(show, MIME"text/plain"(), repair) == """
+    Repair transform
+    └─ K: 0"""
   end
 
   @testset "Repair{1}" begin
