@@ -29,6 +29,14 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
+Base.show(io::IO, ::Proj{CRS}) where {CRS} = print(io, "Proj(CRS: $CRS)")
+
+function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS}) where {CRS}
+  summary(io, t)
+  println(io)
+  print(io, "└─ CRS: $CRS")
+end
+
 applycoord(::Proj, v::Vec) = v
 
 applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
