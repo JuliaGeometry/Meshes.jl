@@ -217,3 +217,15 @@ apply(::Repair, geom::Geometry) = geom, nothing
 apply(t::Repair, multi::Multi) = Multi([t(g) for g in parent(multi)]), nothing
 
 apply(t::Repair, dom::Domain) = GeometrySet([t(g) for g in dom]), nothing
+
+# -----------
+# IO METHODS
+# -----------
+
+Base.show(io::IO, ::Repair{K}) where {K} = print(io, "Repair(K: $K)")
+
+function Base.show(io::IO, ::MIME"text/plain", t::Repair{K}) where {K}
+  summary(io, t)
+  println(io)
+  print(io, "└─ K: $K")
+end
