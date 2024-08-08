@@ -69,9 +69,9 @@ function _sideofserial(point::Point, r::Ring)
   v = vertices(r)
   k = 0
   for i in eachindex(v)
-    ison, increment = _sideofcore(point, v[i], v[i + 1])
+    ison, addk = _sideofcore(point, v[i], v[i + 1])
     ison && return ON
-    increment && (k += 1)
+    addk && (k += 1)
   end
   iseven(k) ? OUT : IN
 end
@@ -79,13 +79,13 @@ end
 function _sideofthreads(point::Point, r::Ring)
   v = vertices(r)
   k = Threads.Atomic{Int}(0)
-  ison = Threads.Atomic{Bool}(false)
+  on = Threads.Atomic{Bool}(false)
   Threads.@threads for i in eachindex(v)
-    _ison, increment = _sideofcore(point, v[i], v[i + 1])
-    (ison[] = _ison) && break
-    increment && Threads.atomic_add!(k, 1)
+    ison, addk = _sideofcore(point, v[i], v[i + 1])
+    (on[] = ison) && break
+    addk && Threads.atomic_add!(k, 1)
   end
-  ison[] ? ON : (iseven(k[]) ? OUT : IN)
+  on[] ? ON : (iseven(k[]) ? OUT : IN)
 end
 
 function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
@@ -94,9 +94,9 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
   xₚ, yₚ = p.x, p.y
 
   # possible return values for readability
-  ISON = (true, false) # ison=true, increment=false
-  INCREMENT = (false, true) # ison=false, increment=true
-  UNCHANGED = (false, false) # ison=false, increment=false
+  ISON = (true, false) # ison=true, addk=false
+  ADDK = (false, true) # ison=false, addk=true
+  NONE = (false, false) # ison=false, addk=false
 
   # flat coordinates of segment i -- i+1
   pᵢ = flat(coords(pᵢ))
@@ -109,7 +109,7 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
 
   if (isnegative(v₁) && isnegative(v₂)) || (ispositive(v₁) && ispositive(v₂))
     # case 11, 26
-    return UNCHANGED
+    return NONE
   end
 
   u₁ = xᵢ - xₚ
@@ -120,7 +120,7 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
     f = u₁ * v₂ - u₂ * v₁
     if ispositive(f)
       # case 3, 9
-      return INCREMENT
+      return ADDK
     elseif isequalzero(f)
       # case 16, 21
       return ISON
@@ -130,7 +130,7 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
     f = u₁ * v₂ - u₂ * v₁
     if isnegative(f)
       # case 4, 10
-      return INCREMENT
+      return ADDK
     elseif isequalzero(f)
       # case 19, 20
       return ISON
@@ -160,7 +160,7 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
     end
   end
   # case 5, 6, 7, 8, 12, 13, 14, 15, 22, 23, 24, 25
-  return UNCHANGED
+  return NONE
 end
 
 # -----
