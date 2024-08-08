@@ -38,6 +38,9 @@ function refine(grid::StructuredGrid{Datum}, method::RegularRefinement) where {D
   StructuredGrid{Datum}(XYZ′)
 end
 
+refine(grid::TransformedGrid, method::RegularRefinement) =
+  TransformedGrid(refine(parent(grid), method), transform(grid))
+
 function _refinedims(x, f)
   x′ = mapreduce(vcat, 1:(length(x) - 1)) do i
     range(x[i], x[i + 1], f + 1)[begin:(end - 1)]
