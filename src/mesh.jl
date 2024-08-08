@@ -126,17 +126,15 @@ topoconvert(TP::Type{<:Topology}, m::Mesh) = SimpleMesh(vertices(m), convert(TP,
 
 function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
   t = topology(m)
-  verts = vertices(m)
-  elems = elements(t)
   nvert = nvertices(m)
   nelms = nelements(m)
   summary(io, m)
   println(io)
   println(io, "  $nvert vertices")
-  printelms(io, verts, "  ")
+  printelms(io, m, nelms=nvert, getelm=vertex, tab="  ")
   println(io)
   println(io, "  $nelms elements")
-  printitr(io, elems, "  ")
+  printelms(io, t, nelms=nelms, getelm=element, tab="  ")
 end
 
 """

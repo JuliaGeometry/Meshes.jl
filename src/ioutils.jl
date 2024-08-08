@@ -11,26 +11,21 @@ function prettyname(T::Type)
   replace(name, r".+\." => "")
 end
 
-# helper function to print a large indexable collection
-# in multiple lines with a given tabulation
-function printelms(io::IO, elms, tab="")
-  N = length(elms)
-  I, J = N > 10 ? (5, N - 4) : (N - 1, N)
+# helper function to print the elements of an object
+# in multiple lines with a given number of elements, getter and tabulation
+function printelms(io::IO, obj; nelms=length(obj), getelm=getindex, tab="")
+  I, J = nelms > 10 ? (5, nelms - 4) : (nelms - 1, nelms)
   for i in 1:I
-    println(io, "$(tab)├─ $(elms[i])")
+    println(io, "$(tab)├─ $(getelm(obj, i))")
   end
-  if N > 10
+  if nelms > 10
     println(io, "$(tab)⋮")
   end
-  for i in J:(N - 1)
-    println(io, "$(tab)├─ $(elms[i])")
+  for i in J:(nelms - 1)
+    println(io, "$(tab)├─ $(getelm(obj, i))")
   end
-  print(io, "$(tab)└─ $(elms[N])")
+  print(io, "$(tab)└─ $(getelm(obj, nelms))")
 end
-
-# helper function to print a large iterable
-# calling the printelms function
-printitr(io::IO, itr, tab="") = printelms(io, collect(itr), tab)
 
 # helper function to print the polygons vertices
 function printverts(io::IO, verts)
