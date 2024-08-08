@@ -42,3 +42,6 @@ function coarsen(grid::StructuredGrid{Datum}, method::RegularCoarsening) where {
   XYZₜ = ntuple(i -> XYZₛ[i][rngs...], embeddim(grid))
   StructuredGrid{Datum}(XYZₜ)
 end
+
+coarsen(grid::TransformedGrid, method::RegularCoarsening) =
+  TransformedGrid(coarsen(parent(grid), method), transform(grid))
