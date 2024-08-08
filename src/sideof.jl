@@ -58,13 +58,22 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
 """
 function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
-
-  n = nvertices(ring)
-  if n <= 1000 || Threads.nthreads() == 1
+  if nvertices(ring) <= 1000 || Threads.nthreads() == 1
     _sideofserial(point, ring)
   else
     _sideofthreads(point, ring)
   end
+end
+
+function _sideofserial(point::Point, r::Ring)
+  v = vertices(r)
+  k = 0
+  for i in eachindex(v)
+    ison, increment = _sideofcore(point, v[i], v[i + 1])
+    ison && return ON
+    increment && (k += 1)
+  end
+  iseven(k) ? OUT : IN
 end
 
 function _sideofthreads(point::Point, r::Ring)
@@ -72,22 +81,11 @@ function _sideofthreads(point::Point, r::Ring)
   k = Threads.Atomic{Int}(0)
   ison = Threads.Atomic{Bool}(false)
   Threads.@threads for i in eachindex(v)
-    _ison, increment_k = _sideofcore(point, v[i], v[i + 1])
+    _ison, increment = _sideofcore(point, v[i], v[i + 1])
     (ison[] = _ison) && break
-    increment_k && Threads.atomic_add!(k, 1)
+    increment && Threads.atomic_add!(k, 1)
   end
   ison[] ? ON : (iseven(k[]) ? OUT : IN)
-end
-
-function _sideofserial(point::Point, r::Ring)
-  v = vertices(r)
-  k = 0
-  for i in eachindex(v)
-    ison, increment_k = _sideofcore(point, v[i], v[i + 1])
-    ison && return ON
-    k += increment_k
-  end
-  iseven(k) ? OUT : IN
 end
 
 function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
@@ -95,10 +93,10 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
   p = flat(coords(point))
   xₚ, yₚ = p.x, p.y
 
-  # Create possible return values for readability
-  ISON = (true, false) # ison=true, increment_k=false
-  INCREMENT_K = (false, true) # ison=false, increment_k=true
-  UNCHANGED = (false, false) # ison=false, increment_k=false
+  # possible return values for readability
+  ISON = (true, false) # ison=true, increment=false
+  INCREMENT = (false, true) # ison=false, increment=true
+  UNCHANGED = (false, false) # ison=false, increment=false
 
   # flat coordinates of segment i -- i+1
   pᵢ = flat(coords(pᵢ))
@@ -122,7 +120,7 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
     f = u₁ * v₂ - u₂ * v₁
     if ispositive(f)
       # case 3, 9
-      return INCREMENT_K
+      return INCREMENT
     elseif isequalzero(f)
       # case 16, 21
       return ISON
@@ -132,7 +130,7 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
     f = u₁ * v₂ - u₂ * v₁
     if isnegative(f)
       # case 4, 10
-      return INCREMENT_K
+      return INCREMENT
     elseif isequalzero(f)
       # case 19, 20
       return ISON
