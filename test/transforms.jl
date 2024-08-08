@@ -1724,47 +1724,47 @@
     @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
   end
 
-  @testset "Repair{0}" begin
+  @testset "Repair(0)" begin
     @test !isaffine(Repair)
     poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
-    rpoly = poly |> Repair{0}()
+    rpoly = poly |> Repair(0)
     @test nvertices(rpoly) == 4
     @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
 
-    repair = Repair{0}()
+    repair = Repair(0)
     @test sprint(show, repair) == "Repair(K: 0)"
     @test sprint(show, MIME"text/plain"(), repair) == """
     Repair transform
     └─ K: 0"""
   end
 
-  @testset "Repair{1}" begin
+  @testset "Repair(1)" begin
     # a tetrahedron with an unused vertex
     points = cart.([(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)])
     connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
     mesh = SimpleMesh(points, connec)
-    rmesh = mesh |> Repair{1}()
+    rmesh = mesh |> Repair(1)
     @test nvertices(rmesh) == nvertices(mesh) - 1
     @test nelements(rmesh) == nelements(mesh)
     @test cart(5, 5, 5) ∉ vertices(rmesh)
   end
 
-  @testset "Repair{2}" begin end
+  @testset "Repair(2)" begin end
 
-  @testset "Repair{3}" begin end
+  @testset "Repair(3)" begin end
 
-  @testset "Repair{4}" begin end
+  @testset "Repair(4)" begin end
 
-  @testset "Repair{5}" begin end
+  @testset "Repair(5)" begin end
 
-  @testset "Repair{6}" begin end
+  @testset "Repair(6)" begin end
 
-  @testset "Repair{7}" begin
+  @testset "Repair(7)" begin
     # mesh with inconsistent orientation
     points = randpoint3(6)
     connec = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
     mesh = SimpleMesh(points, connec)
-    rmesh = mesh |> Repair{7}()
+    rmesh = mesh |> Repair(7)
     topo = topology(mesh)
     rtopo = topology(rmesh)
     e = collect(elements(topo))
@@ -1775,25 +1775,25 @@
     @test n[4] != e[4]
   end
 
-  @testset "Repair{8}" begin
+  @testset "Repair(8)" begin
     poly = PolyArea(
       cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
     )
-    rpoly = poly |> Repair{8}()
+    rpoly = poly |> Repair(8)
     @test nvertices(rpoly) == 4
     @test vertices(rpoly) == cart.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
 
     # degenerate triangle with repeated vertices
     poly = PolyArea(cart.([(0, 0), (1, 1), (1, 1)]))
-    rpoly = poly |> Repair{8}()
+    rpoly = poly |> Repair(8)
     @test !hasholes(rpoly)
     @test rings(rpoly) == [Ring(cart(0, 0))]
     @test vertices(rpoly) == [cart(0, 0)]
   end
 
-  @testset "Repair{9}" begin
+  @testset "Repair(9)" begin
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    repair = Repair{9}()
+    repair = Repair(9)
     rquad, cache = TB.apply(repair, quad)
     @test rquad isa Quadrangle
     @test rquad == quad
@@ -1802,16 +1802,16 @@
     inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
     inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
     poly = PolyArea([outer, inner1, inner2])
-    repair = Repair{9}()
+    repair = Repair(9)
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea([outer, inner2, inner1])
   end
 
-  @testset "Repair{10}" begin
+  @testset "Repair(10)" begin
     outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
     inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
     poly = PolyArea(outer, inner)
-    repair = Repair{10}()
+    repair = Repair(10)
     rpoly, cache = TB.apply(repair, poly)
     @test nvertices(rpoly) == nvertices(poly)
     @test length(first(rings(rpoly))) > length(first(rings(poly)))
@@ -1819,34 +1819,34 @@
     @test opoly == poly
   end
 
-  @testset "Repair{11}" begin
+  @testset "Repair(11)" begin
     outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
     inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     poly = PolyArea(outer, inner)
-    repair = Repair{11}()
+    repair = Repair(11)
     rpoly, cache = TB.apply(repair, poly)
     router, rinner = rings(rpoly)
     @test router == Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
     @test rinner == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
   end
 
-  @testset "Repair{12}" begin
+  @testset "Repair(12)" begin
     poly = PolyArea(cart.([(0, 0), (1, 0)]))
-    repair = Repair{12}()
+    repair = Repair(12)
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
 
     outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     inner = cart.([(1, 2), (2, 3)])
     poly = PolyArea(outer, inner)
-    repair = Repair{12}()
+    repair = Repair(12)
     rpoly, cache = TB.apply(repair, poly)
     @test rpoly == PolyArea(outer)
   end
 
   @testset "Repair fallbacks" begin
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    repair = Repair{10}()
+    repair = Repair(10)
     rquad, cache = TB.apply(repair, quad)
     @test rquad isa Quadrangle
     @test rquad == quad
@@ -1854,14 +1854,14 @@
     poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
     poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
     multi = Multi([poly1, poly2])
-    repair = Repair{11}()
+    repair = Repair(11)
     rmulti, cache = TB.apply(repair, multi)
     @test rmulti == Multi([repair(poly1), repair(poly2)])
 
     poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
     poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
     gset = GeometrySet([poly1, poly2])
-    repair = Repair{11}()
+    repair = Repair(11)
     rgset, cache = TB.apply(repair, gset)
     @test rgset == GeometrySet([repair(poly1), repair(poly2)])
   end
@@ -1888,7 +1888,7 @@
 
     # unique and bridges
     poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
-    cpoly = poly |> Repair{0}() |> Bridge()
+    cpoly = poly |> Repair(0) |> Bridge()
     @test cpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
 
     # basic ngon tests
