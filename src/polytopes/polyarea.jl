@@ -69,6 +69,6 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   if length(rings) > 1
     println(io)
     println(io, "  inner")
-    printelms(io, @view(rings[2:end]), "  ")
+    printelms(io, @view(rings[2:end]), tab="  ")
   end
 end
