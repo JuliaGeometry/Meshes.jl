@@ -63,10 +63,10 @@
   mesh = SimpleMesh(points, connec)
   @test_throws AssertionError("winding number only defined for surface meshes") sideof(cart(0, 0, 0), mesh)
 
-  # sideof serial vs parallel
-  r = randpoint2(500) |> Ring
-  p = Point(2, 2)
+  # sideof serial vs threads
+  p = first(randpoint2(1))
+  r = Ring(randpoint2(500))
   serial = Meshes._sideofserial(p, r)
-  parallel = Meshes._sideofthreads(p, r)
-  @test serial === parallel
+  threads = Meshes._sideofthreads(p, r)
+  @test serial == threads
 end
