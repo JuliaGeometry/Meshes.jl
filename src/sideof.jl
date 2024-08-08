@@ -160,7 +160,7 @@ function _sideof_hao_core(point::Point, pᵢ::Point, pⱼ::Point)
       # case 2
       return ISON
     end 
-end
+  end
   # case 5, 6, 7, 8, 12, 13, 14, 15, 22, 23, 24, 25
   return UNCHANGED
 end
