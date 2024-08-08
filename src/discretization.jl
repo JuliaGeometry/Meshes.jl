@@ -78,7 +78,7 @@ discretize(geometry::Geometry, method::BoundaryTriangulationMethod) = discretize
 
 function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
   # clean up polygon if necessary
-  cpoly = polygon |> Repair{0}() |> Repair{8}()
+  cpoly = polygon |> Repair(0) |> Repair(8)
 
   # handle degenerate polygons
   if nvertices(cpoly) == 1

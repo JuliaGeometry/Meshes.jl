@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    Repair{K}
+    Repair(K)
 
 Perform repairing operation with code `K`.
 
@@ -27,10 +27,12 @@ Perform repairing operation with code `K`.
 
 ```
 # remove duplicates and degenerates
-mesh |> Repair{0}() |> Repair{3}()
+mesh |> Repair(0) |> Repair(3)
 ```
 """
 struct Repair{K} <: GeometricTransform end
+
+Repair(K) = Repair{K}()
 
 # --------------
 # OPERATION (0)

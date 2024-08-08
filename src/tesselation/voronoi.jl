@@ -48,5 +48,5 @@ function tesselate(pset::PointSet, method::VoronoiTesselation)
   mesh = SimpleMesh(points, connec)
 
   # remove unused points
-  mesh |> Repair{1}()
+  mesh |> Repair(1)
 end
