@@ -53,7 +53,7 @@
     sgrid = convert(StructuredGrid, grid)
     tsgrid = convert(StructuredGrid, tgrid)
     @test refine(sgrid, RegularRefinement(2)) == tsgrid
-    tfgrid = Meshes.TransformedGrid(grid, Indetity())
+    tfgrid = Meshes.TransformedGrid(grid, Identity())
     @test refine(tfgrid, RegularRefinement(2)) == refine(grid, RegularRefinement(2))
 
     # 3D grids
@@ -66,7 +66,7 @@
     sgrid = convert(StructuredGrid, grid)
     tsgrid = convert(StructuredGrid, tgrid)
     @test refine(sgrid, RegularRefinement(2)) == tsgrid
-    tfgrid = Meshes.TransformedGrid(grid, Indetity())
+    tfgrid = Meshes.TransformedGrid(grid, Identity())
     @test refine(tfgrid, RegularRefinement(2)) == refine(grid, RegularRefinement(2))
   end
 

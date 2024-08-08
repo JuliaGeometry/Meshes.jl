@@ -10,7 +10,7 @@
     sgrid = convert(StructuredGrid, grid)
     tsgrid = convert(StructuredGrid, tgrid)
     @test coarsen(sgrid, RegularCoarsening(2)) == tsgrid
-    tfgrid = Meshes.TransformedGrid(grid, Indetity())
+    tfgrid = Meshes.TransformedGrid(grid, Identity())
     @test coarsen(tfgrid, RegularCoarsening(2)) == coarsen(grid, RegularCoarsening(2))
 
     grid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(20, 20))
@@ -27,7 +27,7 @@
     sgrid = convert(StructuredGrid, grid)
     tsgrid = convert(StructuredGrid, tgrid)
     @test coarsen(sgrid, RegularCoarsening(2, 4, 5)) == tsgrid
-    tfgrid = Meshes.TransformedGrid(grid, Indetity())
+    tfgrid = Meshes.TransformedGrid(grid, Identity())
     @test coarsen(tfgrid, RegularCoarsening(2, 4, 5)) == coarsen(grid, RegularCoarsening(2, 4, 5))
   end
 end
