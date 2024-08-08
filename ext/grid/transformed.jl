@@ -19,12 +19,12 @@ function isoptimized(::Type, t::Affine{2})
 end
 
 vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2}) =
-  transformedgrid!(plot, plot -> vizmesh!(plot, M, pdim, edim))
+  viztransfgrid!(plot, M, pdim, edim)
 
 vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3}) =
-  transformedgrid!(plot, plot -> vizmesh!(plot, M, pdim, edim))
+  viztransfgrid!(plot, M, pdim, edim)
 
-function transformedgrid!(plot, fallback)
+function viztransfgrid!(plot, M, pdim, edim)
   tgrid = plot[:object]
   grid = Makie.@lift parent($tgrid)
   trans = Makie.@lift Meshes.transform($tgrid)
@@ -38,7 +38,7 @@ function transformedgrid!(plot, fallback)
     viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans)
   else
-    fallback(plot)
+    vizmesh!(plot, M, pdim, edim)
   end
 end
 
