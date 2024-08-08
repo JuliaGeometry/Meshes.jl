@@ -28,7 +28,7 @@ function apply(transform::Bridge, poly::PolyArea)
   ℒ = lentype(poly)
 
   # sort rings lexicographically
-  rpoly, rinds = apply(Repair{9}(), poly)
+  rpoly, rinds = apply(Repair(9), poly)
 
   # retrieve bridge width
   δ = convert(ℒ, transform.δ)
