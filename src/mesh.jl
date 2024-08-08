@@ -126,17 +126,15 @@ topoconvert(TP::Type{<:Topology}, m::Mesh) = SimpleMesh(vertices(m), convert(TP,
 
 function Base.show(io::IO, ::MIME"text/plain", m::Mesh)
   t = topology(m)
-  verts = vertices(m)
-  elems = elements(t)
   nvert = nvertices(m)
   nelms = nelements(m)
   summary(io, m)
   println(io)
   println(io, "  $nvert vertices")
-  printelms(io, verts, "  ")
+  printelms(io, m, nelms=nvert, getelm=vertex, tab="  ")
   println(io)
   println(io, "  $nelms elements")
-  printitr(io, elems, "  ")
+  printelms(io, t, nelms=nelms, getelm=element, tab="  ")
 end
 
 """
@@ -176,11 +174,13 @@ function XYZ end
 
 Base.size(g::Grid) = size(topology(g))
 
+paramdim(g::Grid) = length(size(g))
+
 vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
 
 vertex(g::Grid, ijk::Dims) = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
 
-Base.minimum(g::Grid) = vertex(g, ntuple(i -> 1, embeddim(g)))
+Base.minimum(g::Grid) = vertex(g, ntuple(i -> 1, paramdim(g)))
 Base.maximum(g::Grid) = vertex(g, size(g) .+ 1)
 Base.extrema(g::Grid) = minimum(g), maximum(g)
 
@@ -203,7 +203,7 @@ Base.getindex(g::Grid, ijk::Int...) = element(g, LinearIndices(size(g))[ijk...])
 
 @propagate_inbounds function Base.getindex(g::Grid, ijk...)
   dims = size(g)
-  ranges = ntuple(i -> _asrange(dims[i], ijk[i]), embeddim(g))
+  ranges = ntuple(i -> _asrange(dims[i], ijk[i]), paramdim(g))
   getindex(g, CartesianIndices(ranges))
 end
 
