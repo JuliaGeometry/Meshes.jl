@@ -66,7 +66,7 @@
   # sideof serial vs parallel
   r = randpoint2(500) |> Ring
   p = Point(2, 2)
-  serial = Meshes._sideof_hao_serial(p, r)
-  parallel = Meshes._sideof_hao_threads(p, r)
+  serial = Meshes._sideofserial(p, r)
+  parallel = Meshes._sideofthreads(p, r)
   @test serial === parallel
 end

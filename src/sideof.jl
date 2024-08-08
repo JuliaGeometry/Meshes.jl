@@ -60,37 +60,37 @@ function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
 
   n = nvertices(ring)
-  if n <= 1000 || Threads.nthreads() == 1 # Serial version
-    _sideof_hao_serial(point, ring)
+  if n <= 1000 || Threads.nthreads() == 1
+    _sideofserial(point, ring)
   else
-    _sideof_hao_threads(point, ring)
+    _sideofthreads(point, ring)
   end
 end
 
-function _sideof_hao_threads(point::Point, r::Ring)
+function _sideofthreads(point::Point, r::Ring)
   v = vertices(r)
   k = Threads.Atomic{Int}(0)
   ison = Threads.Atomic{Bool}(false)
   Threads.@threads for i in eachindex(v)
-    _ison, increment_k = _sideof_hao_core(point, v[i], v[i + 1])
+    _ison, increment_k = _sideofcore(point, v[i], v[i + 1])
     (ison[] = _ison) && break
     increment_k && Threads.atomic_add!(k, 1)
   end
-  return ison[] ? ON : (iseven(k[]) ? OUT : IN)
+  ison[] ? ON : (iseven(k[]) ? OUT : IN)
 end
 
-function _sideof_hao_serial(point::Point, r::Ring)
+function _sideofserial(point::Point, r::Ring)
   v = vertices(r)
   k = 0
   for i in eachindex(v)
-    ison, increment_k = _sideof_hao_core(point, v[i], v[i + 1])
+    ison, increment_k = _sideofcore(point, v[i], v[i + 1])
     ison && return ON
     k += increment_k
   end
-  return iseven(k) ? OUT : IN
+  iseven(k) ? OUT : IN
 end
 
-function _sideof_hao_core(point::Point, pᵢ::Point, pⱼ::Point)
+function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
   # flat coordinates of query point
   p = flat(coords(point))
   xₚ, yₚ = p.x, p.y
