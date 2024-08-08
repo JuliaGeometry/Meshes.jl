@@ -59,86 +59,112 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
 function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
 
-  v = vertices(ring)
   n = nvertices(ring)
+  if n <= 1000 || Threads.nthreads() == 1 # Serial version
+    _sideof_hao_serial(point, ring)
+  else
+    _sideof_hao_threads(point, ring)
+  end
+end
 
+function _sideof_hao_threads(point::Point, r::Ring)
+  v = vertices(r)
+  k = Threads.Atomic{Int}(0)
+  ison = Threads.Atomic{Bool}(false)
+  Threads.@threads for i in eachindex(v)
+    _ison, increment_k = _sideof_hao_core(point, v[i], v[i+1])
+    (ison[] = _ison) && break
+    increment_k && Threads.atomic_add!(k, 1)
+  end
+  return ison[] ? ON : (iseven(k[]) ? OUT : IN)
+end
+
+function _sideof_hao_serial(point::Point, r::Ring)
+  v = vertices(r)
+  k = 0
+  for i in eachindex(v)
+    ison, increment_k = _sideof_hao_core(point, v[i], v[i+1])
+    ison && return ON
+    k += increment_k
+  end
+  return iseven(k) ? OUT : IN
+end
+
+function _sideof_hao_core(point::Point, pᵢ::Point, pⱼ::Point)
   # flat coordinates of query point
   p = flat(coords(point))
   xₚ, yₚ = p.x, p.y
 
-  k = Threads.Atomic{Int}(0)
-  ison = Threads.Atomic{Bool}(false)
-  Threads.@threads for i in 1:n
-    # premature termination if point is on ring
-    ison[] && break
+  # Create possible return values for readability
+  ISON = (true, false) # ison=true, increment_k=false
+  INCREMENT_K = (false, true) # ison=false, increment_k=true
+  UNCHANGED = (false, false) # ison=false, increment_k=false
 
-    # flat coordinates of segment i -- i+1
-    pᵢ = flat(coords(v[i]))
-    pⱼ = flat(coords(v[i + 1]))
-    xᵢ, yᵢ = pᵢ.x, pᵢ.y
-    xⱼ, yⱼ = pⱼ.x, pⱼ.y
+  # flat coordinates of segment i -- i+1
+  pᵢ = flat(coords(pᵢ))
+  pⱼ = flat(coords(pⱼ))
+  xᵢ, yᵢ = pᵢ.x, pᵢ.y
+  xⱼ, yⱼ = pⱼ.x, pⱼ.y
+  
+  v₁ = yᵢ - yₚ
+  v₂ = yⱼ - yₚ
 
-    v₁ = yᵢ - yₚ
-    v₂ = yⱼ - yₚ
-
-    if (isnegative(v₁) && isnegative(v₂)) || (ispositive(v₁) && ispositive(v₂))
-      # case 11, 26
-      continue
-    end
-
-    u₁ = xᵢ - xₚ
-    u₂ = xⱼ - xₚ
-
-    if ispositive(v₂) && isnonpositive(v₁)
-      # case 3, 9, 16, 21, 13, 24
-      f = u₁ * v₂ - u₂ * v₁
-      if ispositive(f)
-        # case 3, 9
-        Threads.atomic_add!(k, 1)
-      elseif isequalzero(f)
-        # case 16, 21
-        ison[] = true
-      end
-    elseif ispositive(v₁) && isnonpositive(v₂)
-      # case 4, 10, 19, 20, 12, 25
-      f = u₁ * v₂ - u₂ * v₁
-      if isnegative(f)
-        # case 4, 10
-        Threads.atomic_add!(k, 1)
-      elseif isequalzero(f)
-        # case 19, 20
-        ison[] = true
-      end
-    elseif isequalzero(v₂) && isnegative(v₁)
-      # case 7, 14, 17
-      f = u₁ * v₂ - u₂ * v₁
-      if isequalzero(f)
-        # case 17
-        ison[] = true
-      end
-    elseif isequalzero(v₁) && isnegative(v₂)
-      # case 8, 15, 18
-      f = u₁ * v₂ - u₂ * v₁
-      if isequalzero(f)
-        # case 18
-        ison[] = true
-      end
-    elseif isequalzero(v₁) && isequalzero(v₂)
-      # case 1, 2, 5, 6, 22, 23
-      if isnonpositive(u₂) && isnonnegative(u₁)
-        # case 1
-        ison[] = true
-      elseif isnonpositive(u₁) && isnonnegative(u₂)
-        # case 2
-        ison[] = true
-      end
-    end
+  if (isnegative(v₁) && isnegative(v₂)) || (ispositive(v₁) && ispositive(v₂))
+    # case 11, 26
+    return UNCHANGED
   end
 
-  # when `ison` is true, the value of `k` might be incorrectly set by multiple threads, 
-  # however that does not matter in the following return statement
-  ison[] ? ON : (iseven(k[]) ? OUT : IN)
+  u₁ = xᵢ - xₚ
+  u₂ = xⱼ - xₚ
+
+  if ispositive(v₂) && isnonpositive(v₁)
+    # case 3, 9, 16, 21, 13, 24
+    f = u₁ * v₂ - u₂ * v₁
+    if ispositive(f)
+    # case 3, 9
+      return INCREMENT_K
+    elseif isequalzero(f)
+    # case 16, 21
+      return ISON
+    end
+  elseif ispositive(v₁) && isnonpositive(v₂)
+    # case 4, 10, 19, 20, 12, 25
+    f = u₁ * v₂ - u₂ * v₁
+    if isnegative(f)
+    # case 4, 10
+      return INCREMENT_K
+    elseif isequalzero(f)
+    # case 19, 20
+      return ISON
+    end
+  elseif isequalzero(v₂) && isnegative(v₁)
+    # case 7, 14, 17
+    f = u₁ * v₂ - u₂ * v₁
+    if isequalzero(f)
+    # case 17
+      return ISON
+    end
+  elseif isequalzero(v₁) && isnegative(v₂)
+    # case 8, 15, 18
+    f = u₁ * v₂ - u₂ * v₁
+    if isequalzero(f)
+    # case 18
+      return ISON
+    end
+  elseif isequalzero(v₁) && isequalzero(v₂)
+    # case 1, 2, 5, 6, 22, 23
+    if isnonpositive(u₂) && isnonnegative(u₁)
+    # case 1
+      return ISON
+    elseif isnonpositive(u₁) && isnonnegative(u₂)
+    # case 2
+      return ISON
+    end 
 end
+# case 5, 6, 7, 8, 12, 13, 14, 15, 22, 23, 24, 25
+  return UNCHANGED
+end
+
 
 # -----
 # MESH
