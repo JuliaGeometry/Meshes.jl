@@ -58,40 +58,40 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
 """
 function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
-  if nvertices(ring) <= 1000 || Threads.nthreads() == 1
+  if nvertices(ring) ≤ 1000 || Threads.nthreads() == 1
     _sideofserial(point, ring)
   else
     _sideofthreads(point, ring)
   end
 end
 
-function _sideofserial(point::Point, r::Ring)
+function _sideofserial(p::Point, r::Ring)
   v = vertices(r)
   k = 0
   for i in eachindex(v)
-    ison, addk = _sideofcore(point, v[i], v[i + 1])
+    ison, addk = _sideofcore(p, v[i], v[i + 1])
     ison && return ON
     addk && (k += 1)
   end
   iseven(k) ? OUT : IN
 end
 
-function _sideofthreads(point::Point, r::Ring)
+function _sideofthreads(p::Point, r::Ring)
   v = vertices(r)
   k = Threads.Atomic{Int}(0)
   on = Threads.Atomic{Bool}(false)
   Threads.@threads for i in eachindex(v)
-    ison, addk = _sideofcore(point, v[i], v[i + 1])
+    ison, addk = _sideofcore(p, v[i], v[i + 1])
     (on[] = ison) && break
     addk && Threads.atomic_add!(k, 1)
   end
   on[] ? ON : (iseven(k[]) ? OUT : IN)
 end
 
-function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
+function _sideofcore(p::Point, pᵢ::Point, pⱼ::Point)
   # flat coordinates of query point
-  p = flat(coords(point))
-  xₚ, yₚ = p.x, p.y
+  cₚ = flat(coords(p))
+  xₚ, yₚ = cₚ.x, cₚ.y
 
   # possible return values for readability
   ISON = (true, false) # ison=true, addk=false
@@ -99,10 +99,10 @@ function _sideofcore(point::Point, pᵢ::Point, pⱼ::Point)
   NONE = (false, false) # ison=false, addk=false
 
   # flat coordinates of segment i -- i+1
-  pᵢ = flat(coords(pᵢ))
-  pⱼ = flat(coords(pⱼ))
-  xᵢ, yᵢ = pᵢ.x, pᵢ.y
-  xⱼ, yⱼ = pⱼ.x, pⱼ.y
+  cᵢ = flat(coords(pᵢ))
+  cⱼ = flat(coords(pⱼ))
+  xᵢ, yᵢ = cᵢ.x, cᵢ.y
+  xⱼ, yⱼ = cⱼ.x, cⱼ.y
 
   v₁ = yᵢ - yₚ
   v₂ = yⱼ - yₚ
