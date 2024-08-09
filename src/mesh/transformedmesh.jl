@@ -33,6 +33,8 @@ topology(m::TransformedMesh) = topology(m.mesh)
 
 vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
+centroid(m::TransformedMesh, ind::Int) = m.transform(centroid(m.mesh, ind))
+
 # alias to improve readability in IO methods
 const TransformedGrid{M<:Manifold,C<:CRS,Dim,G<:Grid,TR<:Transform} = TransformedMesh{M,C,GridTopology{Dim},G,TR}
 
