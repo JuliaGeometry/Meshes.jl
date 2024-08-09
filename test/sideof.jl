@@ -62,4 +62,11 @@
   connec = connect.([(1, 2, 3, 4)], [Tetrahedron])
   mesh = SimpleMesh(points, connec)
   @test_throws AssertionError("winding number only defined for surface meshes") sideof(cart(0, 0, 0), mesh)
+
+  # sideof serial vs threads
+  p = first(randpoint2(1))
+  r = Ring(randpoint2(500))
+  serial = Meshes._sideofserial(p, r)
+  threads = Meshes._sideofthreads(p, r)
+  @test serial == threads
 end
