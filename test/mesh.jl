@@ -760,7 +760,7 @@
     @test maximum(sub) == cart(10, 7)
 
     # optimization of centroid
-    trans = Rotate(T(π/4))
+    trans = Rotate(T(π / 4))
     cgrid = cartgrid(10, 10)
     tmesh = Meshes.TransformedMesh(cgrid, trans)
     centr = centroid(tmesh, 1)
