@@ -2,29 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-isoptimized(::Type, ::TB.Identity) = true
-isoptimized(CRS::Type, t::TB.SequentialTransform) = all(tᵢ -> isoptimized(CRS, tᵢ), t)
-
-isoptimized(::Type, ::GeometricTransform) = false
-
-isoptimized(::Type{<:Cartesian2D}, ::Proj{<:Projected}) = true
-isoptimized(::Type{<:Projected}, ::Proj{<:Cartesian2D}) = true
-
-isoptimized(::Type, ::Rotate{<:Angle2d}) = true
-isoptimized(::Type, ::Translate) = true
-isoptimized(::Type, ::Scale) = true
-function isoptimized(::Type, t::Affine{2})
-  A, _ = TB.parameters(t)
-  isdiag(A) || isrotation(A)
-end
-
-vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2}) =
-  viztransfgrid!(plot, M, pdim, edim)
-
-vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val{3}, edim::Val{3}) =
-  viztransfgrid!(plot, M, pdim, edim)
-
-function viztransfgrid!(plot, M, pdim, edim)
+function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
   tgrid = plot[:object]
   grid = Makie.@lift parent($tgrid)
   trans = Makie.@lift Meshes.transform($tgrid)
@@ -40,6 +18,22 @@ function viztransfgrid!(plot, M, pdim, edim)
   else
     vizmesh!(plot, M, pdim, edim)
   end
+end
+
+isoptimized(::Type, ::TB.Identity) = true
+isoptimized(CRS::Type, t::TB.SequentialTransform) = all(tᵢ -> isoptimized(CRS, tᵢ), t)
+
+isoptimized(::Type, ::GeometricTransform) = false
+
+isoptimized(::Type{<:Cartesian2D}, ::Proj{<:Projected}) = true
+isoptimized(::Type{<:Projected}, ::Proj{<:Cartesian2D}) = true
+
+isoptimized(::Type, ::Rotate{<:Angle2d}) = true
+isoptimized(::Type, ::Translate) = true
+isoptimized(::Type, ::Scale) = true
+function isoptimized(::Type, t::Affine{2})
+  A, _ = TB.parameters(t)
+  isdiag(A) || isrotation(A)
 end
 
 makietransform!(plot, trans::Makie.Observable{<:TB.Identity}) = nothing
