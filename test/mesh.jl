@@ -766,6 +766,12 @@
     centr = centroid(tmesh, 1)
     @test @allocated(centroid(tmesh, 1)) < 50
 
+    # optimization of ==
+    trans = Rotate(T(π / 4))
+    cgrid = cartgrid(1000, 1000)
+    tmesh = Meshes.TransformedMesh(cgrid, trans)
+    @test tmesh == tmesh
+
     @test sprint(show, tgrid) == "10×10 TransformedGrid"
     if T == Float32
       @test sprint(show, MIME"text/plain"(), tgrid) == """

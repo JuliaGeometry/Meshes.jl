@@ -162,10 +162,10 @@ function Base.getindex(g::CartesianGrid, I::CartesianIndices)
   CartesianGrid(dims, g.origin, g.spacing, offset)
 end
 
-==(g1::CartesianGrid, g2::CartesianGrid) =
-  g1.topology == g2.topology &&
-  g1.spacing == g2.spacing &&
-  Tuple(g1.origin - g2.origin) == (g1.offset .- g2.offset) .* g1.spacing
+==(g₁::CartesianGrid, g₂::CartesianGrid) =
+  g₁.topology == g₂.topology &&
+  g₁.spacing == g₂.spacing &&
+  Tuple(g₁.origin - g₂.origin) == (g₁.offset .- g₂.offset) .* g₁.spacing
 
 # -----------
 # IO METHODS
