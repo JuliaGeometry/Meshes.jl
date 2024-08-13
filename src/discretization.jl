@@ -245,7 +245,7 @@ function simplexify(mesh::Mesh)
 
   # simplex type for parametric dimension
   PL = paramdim(mesh) == 2 ? Triangle : Tetrahedron
-  NV = paramdim(mesh) == 2 ? 3 : 4
+  NV = nvertices(PL)
 
   # new connectivities
   newconnecs = [connect(ntuple(i -> inds[i], NV), PL) for inds in ginds]
