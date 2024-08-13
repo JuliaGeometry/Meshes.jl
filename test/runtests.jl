@@ -51,6 +51,7 @@ testfiles = [
   "primitives.jl",
   "polytopes.jl",
   "multigeoms.jl",
+  "transformedgeoms.jl",
   "connectivities.jl",
   "topologies.jl",
   "toporelations.jl",

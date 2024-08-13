@@ -22,7 +22,7 @@ function TransformedGeometry(g::Geometry, t::Transform)
 end
 
 # specialize constructor to avoid deep structures
-TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, m.transform → t)
+TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, g.transform → t)
 
 # type aliases for convenience
 const TransformedPoint{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Point,T}
