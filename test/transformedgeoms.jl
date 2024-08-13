@@ -1,10 +1,10 @@
 @testset "TransformedGeometry" begin
   b = Box(cart(0, 0), cart(1, 1))
-  t = Proj(Mercator)
+  t = Translate(1, 2)
   tb = Meshes.TransformedGeometry(b, t)
   @test parent(tb) == b
   @test Meshes.transform(tb) == t
-  t2 = Translate(2, 2)
+  t2 = Scale(2, 3)
   tb2 = Meshes.TransformedGeometry(tb, t2)
   @test Meshes.transform(tb2) == (t → t2)
   @test paramdim(tb) == paramdim(b)
@@ -29,7 +29,7 @@
   isapproxtest(ts)
 
   s = Segment(cart(0, 0), cart(1, 1))
-  t = Proj(Mercator)
+  t = Translate(1, 2)
   ts = Meshes.TransformedGeometry(s, t)
   @test vertex(ts, 1) == t(vertex(s, 1))
   @test vertices(ts) == t.(vertices(s))
@@ -38,7 +38,7 @@
   isapproxtest(ts)
 
   p = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  t = Proj(Mercator)
+  t = Translate(1, 2)
   tp = Meshes.TransformedGeometry(p, t)
   @test vertex(tp, 1) == t(vertex(p, 1))
   @test vertices(tp) == t.(vertices(p))
