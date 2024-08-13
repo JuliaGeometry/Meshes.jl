@@ -29,6 +29,7 @@ const TransformedPoint{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,
 const TransformedSegment{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Segment,T}
 const TransformedRope{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Rope,T}
 const TransformedRing{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Ring,T}
+const TransformedPolytope{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polytope,T}
 const TransformedPolygon{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polygon,T}
 const TransformedPolyhedron{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polyhedron,T}
 
@@ -55,15 +56,15 @@ Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(le
 # POLYTOPE
 # ---------
 
-vertex(g::TransformedGeometry, ind) = g.transform(vertex(g.geometry, ind))
+vertex(g::TransformedPolytope, ind) = g.transform(vertex(g.geometry, ind))
 
-vertices(g::TransformedGeometry) = map(g.transform, vertices(g.geometry))
+vertices(g::TransformedPolytope) = map(g.transform, vertices(g.geometry))
 
-nvertices(g::TransformedGeometry) = nvertices(g.geometry)
+nvertices(g::TransformedPolytope) = nvertices(g.geometry)
 
-Base.unique(g::TransformedGeometry) = unique!(deepcopy(g))
+Base.unique(g::TransformedPolytope) = unique!(deepcopy(g))
 
-Base.unique!(g::TransformedGeometry) = (unique!(g.geometry); g)
+Base.unique!(g::TransformedPolytope) = (unique!(g.geometry); g)
 
 # --------
 # POLYGON
