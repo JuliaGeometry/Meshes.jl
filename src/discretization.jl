@@ -215,26 +215,29 @@ simplexify(poly::Polyhedron) = discretize(poly, ManualDiscretization())
 simplexify(multi::Multi) = mapreduce(simplexify, merge, parent(multi))
 
 function simplexify(mesh::Mesh)
+  # retrieve vertices and topology
   points = vertices(mesh)
-  elems = elements(mesh)
   topo = topology(mesh)
-  connec = elements(topo)
+
+  # check if there is something to do
+  all(issimplex, elements(topo)) && return mesh
 
   # initialize vector of global indices
   ginds = Vector{Int}[]
 
   # simplexify each element and append global indices
-  for (e, c) in zip(elems, connec)
-    # simplexify single element
-    mesh′ = simplexify(e)
-    topo′ = topology(mesh′)
-    connec′ = elements(topo′)
+  for connec in elements(topo)
+    # materialize element and indices
+    elem = materialize(connec, points)
+    inds = indices(connec)
 
-    # global indices
-    inds = indices(c)
+    # simplexify element
+    mesh′ = simplexify(elem)
+    topo′ = topology(mesh′)
+    connecs′ = elements(topo′)
 
     # convert from local to global indices
-    einds = [[inds[i] for i in indices(c′)] for c′ in connec′]
+    einds = [[inds[i] for i in indices(c′)] for c′ in connecs′]
 
     # save global indices
     append!(ginds, einds)
@@ -244,9 +247,9 @@ function simplexify(mesh::Mesh)
   PL = paramdim(mesh) == 2 ? Triangle : Tetrahedron
 
   # new connectivities
-  newconnec = connect.(Tuple.(ginds), PL)
+  newconnecs = connect.(Tuple.(ginds), PL)
 
-  SimpleMesh(points, newconnec)
+  SimpleMesh(points, newconnecs)
 end
 
 # ----------------
