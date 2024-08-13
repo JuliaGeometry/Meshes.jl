@@ -29,7 +29,7 @@ const MultiRope{M<:Manifold,C<:CRS} = Multi{M,C,<:Rope{M,C}}
 const MultiRing{M<:Manifold,C<:CRS} = Multi{M,C,<:Ring{M,C}}
 const MultiPolygon{M<:Manifold,C<:CRS} = Multi{M,C,<:Polygon{M,C}}
 const MultiPolyhedron{M<:Manifold,C<:CRS} = Multi{M,C,<:Polyhedron{M,C}}
-const MultiPolytope{M<:Manifold,C<:CRS} = Multi{M,C,<:Polytope{M,C}}
+const MultiPolytope{K,M<:Manifold,C<:CRS} = Multi{M,C,<:Polytope{K,M,C}}
 
 Base.parent(m::Multi) = m.geoms
 
