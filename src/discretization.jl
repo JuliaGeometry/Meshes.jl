@@ -68,13 +68,28 @@ discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretizati
 
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
+discretize(tgeom::TransformedGeometry) = transform(tgeom)(discretize(parent(tgeom)))
+
 discretize(mesh::Mesh) = mesh
+
+# ----------
+# FALLBACKS
+# ----------
+
+discretize(multi::Multi, method::DiscretizationMethod) =
+  mapreduce(geom -> discretize(geom, method), merge, parent(multi))
+
+discretize(tgeom::TransformedGeometry, method::DiscretizationMethod) =
+  transform(tgeom)(discretize(parent(tgeom), method))
 
 # -----------------
 # BOUNDARY METHODS
 # -----------------
 
-discretize(geometry::Geometry, method::BoundaryTriangulationMethod) = discretizewithin(boundary(geometry), method)
+discretize(geometry, method::BoundaryTriangulationMethod) = discretizewithin(boundary(geometry), method)
+
+discretize(multi::Multi, method::BoundaryTriangulationMethod) =
+  mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
 function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
   # clean up polygon if necessary
@@ -128,9 +143,6 @@ function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
     SimpleMesh(points, connec)
   end
 end
-
-discretize(multi::Multi, method::BoundaryTriangulationMethod) =
-  mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
 function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
   # collect vertices to get rid of static containers
