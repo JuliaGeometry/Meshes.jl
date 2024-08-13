@@ -24,13 +24,30 @@ end
 # specialize constructor to avoid deep structures
 TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, m.transform → t)
 
+# type aliases for convenience
+const TransformedPolytope{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polytope,T}
+const TransformedPolygon{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polygon,T}
+
 Base.parent(g::TransformedGeometry) = g.geometry
 
 transform(g::TransformedGeometry) = g.transform
 
+# ---------
+# GEOMETRY
+# ---------
+
 paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
 centroid(g::TransformedGeometry) = g.transform(centroid(g.geometry))
+
+==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
+
+Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
+  isapprox(g₁.geometry, g₂.geometry; atol, kwargs...) && g₁.transform == g₂.transform
+
+# ---------
+# POLYTOPE
+# ---------
 
 vertex(g::TransformedGeometry, ind) = vertices(g)[ind]
 
@@ -45,15 +62,15 @@ function Base.unique!(g::TransformedGeometry)
   g
 end
 
-==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
-
-Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  isapprox(g₁.geometry, g₂.geometry; atol, kwargs...) && g₁.transform == g₂.transform
-
-# alias to improve readability in IO methods
-const TransformedPolygon{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polygon,T}
+# --------
+# POLYGON
+# --------
 
 rings(p::TransformedPolygon) = map(p.transform, rings(p.geometry))
+
+# -----------
+# IO METHODS
+# -----------
 
 function Base.summary(io::IO, g::TransformedGeometry)
   name = prettyname(g.geometry)
