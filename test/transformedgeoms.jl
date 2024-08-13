@@ -1,6 +1,6 @@
 @testset "TransformedGeometry" begin
   b = Box(cart(0, 0), cart(1, 1))
-  t = Proj(Mercator{WGS84Latest})
+  t = Proj(Mercator)
   tb = Meshes.TransformedGeometry(b, t)
   @test parent(tb) == b
   @test Meshes.transform(tb) == t
@@ -29,7 +29,7 @@
   isapproxtest(ts)
 
   s = Segment(cart(0, 0), cart(1, 1))
-  t = Proj(Mercator{WGS84Latest})
+  t = Proj(Mercator)
   ts = Meshes.TransformedGeometry(s, t)
   @test vertex(ts, 1) == t(vertex(s, 1))
   @test vertices(ts) == t.(vertices(s))
@@ -38,7 +38,7 @@
   isapproxtest(ts)
 
   p = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  t = Proj(Mercator{WGS84Latest})
+  t = Proj(Mercator)
   tp = Meshes.TransformedGeometry(p, t)
   @test vertex(tp, 1) == t(vertex(p, 1))
   @test vertices(tp) == t.(vertices(p))
