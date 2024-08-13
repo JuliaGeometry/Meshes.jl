@@ -35,7 +35,7 @@ vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
 centroid(m::TransformedMesh, ind::Int) = m.transform(centroid(m.mesh, ind))
 
-==(m₁::TransformedMesh, m₂::TransformedMesh) = m₁.mesh == m₂.mesh && m₁.transform == m₂.transform
+==(m₁::TransformedMesh, m₂::TransformedMesh) = m₁.transform == m₂.transform && m₁.mesh == m₂.mesh
 
 # alias to improve readability in IO methods
 const TransformedGrid{M<:Manifold,C<:CRS,Dim,G<:Grid,TR<:Transform} = TransformedMesh{M,C,GridTopology{Dim},G,TR}
