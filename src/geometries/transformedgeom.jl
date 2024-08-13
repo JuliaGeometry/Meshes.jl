@@ -45,6 +45,8 @@ centroid(g::TransformedGeometry) = g.transform(centroid(g.geometry))
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₁.geometry, g₂.geometry; atol, kwargs...) && g₁.transform == g₂.transform
 
+(g::TransformedGeometry)(uvw...) = g.transform(g.geometry(uvw...))
+
 # ---------
 # POLYTOPE
 # ---------
