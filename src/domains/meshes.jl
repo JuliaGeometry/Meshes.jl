@@ -233,8 +233,8 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("mesh/cartesiangrid.jl")
-include("mesh/rectilineargrid.jl")
-include("mesh/structuredgrid.jl")
-include("mesh/simplemesh.jl")
-include("mesh/transformedmesh.jl")
+include("meshes/cartesiangrid.jl")
+include("meshes/rectilineargrid.jl")
+include("meshes/structuredgrid.jl")
+include("meshes/simplemesh.jl")
+include("meshes/transformedmesh.jl")
