@@ -23,7 +23,9 @@ Ball(center::Point) = Ball(center, oneunit(lentype(center)))
 
 Ball(center::Tuple) = Ball(Point(center))
 
-paramdim(B::Type{<:Ball}) = embeddim(B)
+paramdim(::Type{<:Ball{𝔼{Dim}}}) where {Dim} = Dim
+
+paramdim(::Type{<:Ball{🌐}}) = 2
 
 center(b::Ball) = b.center
 

@@ -399,6 +399,10 @@
     @test maximum(b) == cart(1, 1, 1)
     @test extrema(b) == (cart(0, 0, 0), cart(1, 1, 1))
 
+    b = Box(latlon(0, 0), latlon(45, 90))
+    @test embeddim(b) == 3
+    @test paramdim(b) == 2
+
     b = Box(cart(0, 0), cart(1, 1))
     equaltest(b)
     isapproxtest(b)
@@ -512,6 +516,10 @@
     @test Meshes.center(b) == cart(1, 2, 3)
     @test radius(b) == T(5) * u"m"
 
+    b = Ball(latlon(0, 0), T(5))
+    @test embeddim(b) == 3
+    @test paramdim(b) == 2
+
     b = Ball(cart(0, 0), T(1))
     equaltest(b)
     isapproxtest(b)
@@ -588,6 +596,10 @@
     @test extrema(s) == (cart(-1, -1, -1), cart(1, 1, 1))
     @test isnothing(boundary(s))
     @test perimeter(s) == zero(ℳ)
+
+    s = Sphere(latlon(0, 0), T(1))
+    @test embeddim(s) == 3
+    @test paramdim(s) == 1
 
     s = Sphere(cart(0, 0), T(1))
     equaltest(s)
