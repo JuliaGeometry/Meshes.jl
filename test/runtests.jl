@@ -57,7 +57,7 @@ testfiles = [
   "domains.jl",
   "subdomains.jl",
   "sets.jl",
-  "mesh.jl",
+  "meshes.jl",
   "trajecs.jl",
   "crs.jl",
   "utils.jl",
