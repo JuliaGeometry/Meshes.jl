@@ -86,7 +86,7 @@ discretize(tgeom::TransformedGeometry, method::DiscretizationMethod) =
 # BOUNDARY METHODS
 # -----------------
 
-discretize(geometry::Geometry, method::BoundaryTriangulationMethod) = discretizewithin(boundary(geometry), method)
+discretize(geometry, method::BoundaryTriangulationMethod) = discretizewithin(boundary(geometry), method)
 
 function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
   # clean up polygon if necessary
