@@ -30,7 +30,14 @@ const MultiRing{M<:Manifold,C<:CRS} = Multi{M,C,<:Ring{M,C}}
 const MultiPolygon{M<:Manifold,C<:CRS} = Multi{M,C,<:Polygon{M,C}}
 const MultiPolyhedron{M<:Manifold,C<:CRS} = Multi{M,C,<:Polyhedron{M,C}}
 
+Base.parent(m::Multi) = m.geoms
+
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
+
+function centroid(m::Multi)
+  cs = to.(centroid.(m.geoms))
+  withcrs(m, sum(cs) / length(cs))
+end
 
 vertex(m::Multi, ind) = vertices(m)[ind]
 
@@ -45,19 +52,12 @@ function Base.unique!(m::Multi)
   m
 end
 
-function centroid(m::Multi)
-  cs = to.(centroid.(m.geoms))
-  withcrs(m, sum(cs) / length(cs))
-end
-
-rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]
-
-Base.parent(m::Multi) = m.geoms
-
 ==(m₁::Multi, m₂::Multi) = m₁.geoms == m₂.geoms
 
 Base.isapprox(m₁::Multi, m₂::Multi; atol=atol(lentype(m₁)), kwargs...) =
   length(m₁.geoms) == length(m₂.geoms) && all(isapprox(g₁, g₂; atol, kwargs...) for (g₁, g₂) in zip(m₁.geoms, m₂.geoms))
+
+rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]
 
 # -----------
 # IO METHODS

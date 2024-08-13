@@ -30,6 +30,8 @@ transform(g::TransformedGeometry) = g.transform
 
 paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
+centroid(g::TransformedGeometry) = g.transform(centroid(g.geometry))
+
 vertex(g::TransformedGeometry, ind) = vertices(g)[ind]
 
 vertices(g::TransformedGeometry) = map(g.transform, vertices(g.geometry))
@@ -43,21 +45,15 @@ function Base.unique!(g::TransformedGeometry)
   g
 end
 
-centroid(g::TransformedGeometry) = g.transform(centroid(g.geometry))
-
-# alias to improve readability in IO methods
-const TransformedPolygon{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polygon,T}
-
-rings(p::TransformedPolygon) = map(p.transform, rings(p.geometry))
-
 ==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
 
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₁.geometry, g₂.geometry; atol, kwargs...) && g₁.transform == g₂.transform
 
-# -----------
-# IO METHODS
-# -----------
+# alias to improve readability in IO methods
+const TransformedPolygon{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polygon,T}
+
+rings(p::TransformedPolygon) = map(p.transform, rings(p.geometry))
 
 function Base.summary(io::IO, g::TransformedGeometry)
   name = prettyname(g.geometry)
