@@ -49,7 +49,7 @@ Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(le
 # POLYTOPE
 # ---------
 
-vertex(g::TransformedGeometry, ind) = vertices(g)[ind]
+vertex(g::TransformedGeometry, ind) = g.transform(vertex(g.geometry, ind))
 
 vertices(g::TransformedGeometry) = map(g.transform, vertices(g.geometry))
 
