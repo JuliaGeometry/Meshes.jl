@@ -25,8 +25,12 @@ end
 TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, m.transform → t)
 
 # type aliases for convenience
-const TransformedPolytope{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polytope,T}
+const TransformedPoint{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Point,T}
+const TransformedSegment{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Segment,T}
+const TransformedRope{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Rope,T}
+const TransformedRing{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Ring,T}
 const TransformedPolygon{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polygon,T}
+const TransformedPolyhedron{M<:Manifold,C<:CRS,T<:Transform} = TransformedGeometry{M,C,<:Polyhedron,T}
 
 Base.parent(g::TransformedGeometry) = g.geometry
 
@@ -59,10 +63,7 @@ nvertices(g::TransformedGeometry) = nvertices(g.geometry)
 
 Base.unique(g::TransformedGeometry) = unique!(deepcopy(g))
 
-function Base.unique!(g::TransformedGeometry)
-  unique!(g.geometry)
-  g
-end
+Base.unique!(g::TransformedGeometry) = (unique!(g.geometry); g)
 
 # --------
 # POLYGON
