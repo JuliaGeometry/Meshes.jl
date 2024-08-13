@@ -157,10 +157,10 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("sets.jl")
-include("mesh.jl")
-include("trajecs.jl")
-include("subdomains.jl")
+include("domains/sets.jl")
+include("domains/meshes.jl")
+include("domains/trajecs.jl")
+include("domains/subdomains.jl")
 
 # ------------
 # CONVERSIONS

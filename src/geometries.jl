@@ -79,9 +79,9 @@ Base.summary(io::IO, geom::Geometry) = print(io, prettyname(geom))
 # IMPLEMENTATIONS
 # ----------------
 
-include("primitives.jl")
-include("polytopes.jl")
-include("multigeoms.jl")
+include("geometries/primitives.jl")
+include("geometries/polytopes.jl")
+include("geometries/multigeoms.jl")
 
 # ------------
 # CONVERSIONS
