@@ -56,15 +56,15 @@ Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(le
 # POLYTOPE
 # ---------
 
-vertex(g::TransformedPolytope, ind) = g.transform(vertex(g.geometry, ind))
+vertex(p::TransformedPolytope, ind) = p.transform(vertex(p.geometry, ind))
 
-vertices(g::TransformedPolytope) = map(g.transform, vertices(g.geometry))
+vertices(p::TransformedPolytope) = map(p.transform, vertices(p.geometry))
 
-nvertices(g::TransformedPolytope) = nvertices(g.geometry)
+nvertices(p::TransformedPolytope) = nvertices(p.geometry)
 
-Base.unique(g::TransformedPolytope) = unique!(deepcopy(g))
+Base.unique(p::TransformedPolytope) = unique!(deepcopy(p))
 
-Base.unique!(g::TransformedPolytope) = (unique!(g.geometry); g)
+Base.unique!(p::TransformedPolytope) = (unique!(p.geometry); p)
 
 # --------
 # POLYGON
