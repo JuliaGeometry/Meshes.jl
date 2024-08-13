@@ -41,7 +41,9 @@ Box(min::Point{M,C}, max::Point{M,C}) where {M<:Manifold,C<:CRS} = Box{M,C}(min,
 
 Box(min::Tuple, max::Tuple) = Box(Point(min), Point(max))
 
-paramdim(B::Type{<:Box}) = embeddim(B)
+paramdim(::Type{<:Box{𝔼{Dim}}}) where {Dim} = Dim
+
+paramdim(::Type{<:Box{🌐}}) = 2
 
 Base.minimum(b::Box) = b.min
 

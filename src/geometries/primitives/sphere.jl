@@ -60,7 +60,9 @@ end
 
 Sphere(p1::Tuple, p2::Tuple, p3::Tuple, p4::Tuple) = Sphere(Point(p1), Point(p2), Point(p3), Point(p4))
 
-paramdim(S::Type{<:Sphere}) = embeddim(S) - 1
+paramdim(::Type{<:Sphere{𝔼{Dim}}}) where {Dim} = Dim - 1
+
+paramdim(::Type{<:Sphere{🌐}}) = 1
 
 center(s::Sphere) = s.center
 
