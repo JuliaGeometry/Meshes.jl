@@ -60,6 +60,8 @@ isparametrized(::Type{<:Tetrahedron}) = true
 
 isparametrized(::Type{<:Hexahedron}) = true
 
+isparametrized(::Type{<:TransformedGeometry{M,C,G}}) where {M,C,G} = isparametrized(G)
+
 isparametrized(d::Domain) = isparametrized(typeof(d))
 
 isparametrized(::Type{<:Domain}) = false
