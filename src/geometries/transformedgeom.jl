@@ -24,16 +24,18 @@ end
 _point(g) = centroid(g)
 _point(p::Primitive) = _point(boundary(p))
 _point(p::Polytope) = first(vertices(p))
-_point(m::Multi) = _point(first(parent(m)))
-_point(g::TransformedGeometry) = transform(g)(_point(parent(g)))
+_point(p::Point) = p
 _point(r::Ray) = r(0)
 _point(l::Line) = l(0)
 _point(b::BezierCurve) = first(controls(b))
 _point(b::Box) = minimum(b)
+_point(s::Sphere) = center(s)
 _point(c::CylinderSurface) = apex(c)
 _point(c::ConeSurface) = apex(c)
 _point(f::FrustumSurface) = _point(bottom(f))
 _point(p::ParaboloidSurface) = apex(p)
+_point(m::Multi) = _point(first(parent(m)))
+_point(g::TransformedGeometry) = transform(g)(_point(parent(g)))
 
 # specialize constructor to avoid deep structures
 TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, g.transform → t)
