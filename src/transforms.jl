@@ -72,9 +72,6 @@ end
 # stop recursion at non-geometric types
 applycoord(::CoordinateTransform, x) = x
 
-# special treatment for Point
-applycoord(t::CoordinateTransform, p::Point) = withcrs(p, applycoord(t, coords(p)))
-
 # special treatment for TransformedGeometry
 applycoord(t::CoordinateTransform, g::TransformedGeometry) = TransformedGeometry(g, t)
 
