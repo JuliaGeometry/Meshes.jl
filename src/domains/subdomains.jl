@@ -19,10 +19,6 @@ end
 # specialize constructor to avoid infinite loops
 SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[inds])
 
-Base.parent(d::SubDomain) = d.domain
-
-Base.parentindices(d::SubDomain) = d.inds
-
 """
     SubGrid{M,CRS,Dim}
 
