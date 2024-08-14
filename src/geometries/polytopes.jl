@@ -251,13 +251,6 @@ Return the number of vertices in the `polytope`.
 nvertices(p::Polytope) = nvertices(typeof(p))
 
 """
-    centroid(polytope)
-
-Return the centroid of the `polytope`.
-"""
-centroid(p::Polytope) = withcrs(p, sum(to, vertices(p)) / length(vertices(p)))
-
-"""
     unique(polytope)
 
 Return a new `polytope` without duplicate vertices.

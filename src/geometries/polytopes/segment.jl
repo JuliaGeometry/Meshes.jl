@@ -21,11 +21,6 @@ Base.maximum(s::Segment) = s.vertices[2]
 
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
-function center(s::Segment)
-  a, b = extrema(s)
-  withcrs(s, (to(a) + to(b)) / 2)
-end
-
 ==(s₁::Segment, s₂::Segment) = s₁.vertices == s₂.vertices
 
 Base.isapprox(s₁::Segment, s₂::Segment; atol=atol(lentype(s₁)), kwargs...) =

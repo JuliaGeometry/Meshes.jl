@@ -55,13 +55,6 @@ lentype(::Type{<:Geometry{M,CRS}}) where {M,CRS} = lentype(CRS)
 lentype(g::Geometry) = lentype(typeof(g))
 
 """
-    centroid(geometry)
-
-Return the centroid of the `geometry`.
-"""
-centroid(g::Geometry) = center(g)
-
-"""
     extrema(geometry)
 
 Return the top left and bottom right corners of the

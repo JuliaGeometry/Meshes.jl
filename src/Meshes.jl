@@ -98,11 +98,12 @@ include("neighborsearch.jl")
 include("predicates.jl")
 
 # operations
+include("centroid.jl")
+include("measures.jl")
+include("boundary.jl")
 include("winding.jl")
 include("sideof.jl")
 include("orientation.jl")
-include("measures.jl")
-include("boundary.jl")
 include("merging.jl")
 include("clipping.jl")
 include("clamping.jl")
@@ -148,8 +149,6 @@ export
   paramdim,
   crs,
   manifold,
-  center,
-  centroid,
 
   # primitives
   Primitive,
@@ -179,6 +178,7 @@ export
   DeCasteljau,
   coords,
   to,
+  center,
   radius,
   radii,
   plane,
@@ -396,6 +396,18 @@ export
   ⪯,
   ⪰,
 
+  # centroids
+  centroid,
+
+  # measures
+  measure,
+  area,
+  volume,
+  perimeter,
+
+  # boundary
+  boundary,
+
   # winding number
   winding,
 
@@ -413,15 +425,6 @@ export
   OrientationType,
   CW,
   CCW,
-
-  # measures
-  measure,
-  area,
-  volume,
-  perimeter,
-
-  # boundary
-  boundary,
 
   # clipping
   ClippingMethod,

@@ -91,16 +91,6 @@ function axis(p::ParaboloidSurface)
   Line(p.apex, p.apex + Vec(zero(f), zero(f), f))
 end
 
-function centroid(p::ParaboloidSurface)
-  c = p.apex
-  r = p.radius
-  f = p.focallength
-  z = r^2 / 4f
-  x = zero(z)
-  y = zero(z)
-  c + Vec(x, y, z / 2)
-end
-
 ==(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
   p₁.apex == p₂.apex && p₁.radius == p₂.radius && p₁.focallength == p₂.focallength
 

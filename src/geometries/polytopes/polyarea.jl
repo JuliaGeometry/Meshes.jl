@@ -35,8 +35,6 @@ vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
 
 nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 
-centroid(p::PolyArea) = centroid(first(p.rings))
-
 rings(p::PolyArea) = p.rings
 
 function Base.unique!(p::PolyArea)
