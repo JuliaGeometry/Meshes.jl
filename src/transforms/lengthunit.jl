@@ -20,9 +20,25 @@ end
 
 parameters(t::LengthUnit) = (; unit=t.unit)
 
+applycoord(t::LengthUnit, p::Point) = Point(_lenunit(coords(p), t.unit))
+
 applycoord(t::LengthUnit, v::Vec) = uconvert.(t.unit, v)
 
-applycoord(t::LengthUnit, p::Point) = Point(_lenunit(coords(p), t.unit))
+# --------------
+# SPECIAL CASES
+# --------------
+
+applycoord(t::LengthUnit, len::Len) = uconvert(t.unit, len)
+
+applycoord(t::LengthUnit, lens::NTuple{Dim,Len}) where {Dim} = uconvert.(t.unit, lens)
+
+applycoord(t::LengthUnit, g::RectilinearGrid) = RectilinearGrid{datum(crs(g))}(map(x -> uconvert.(t.unit, x), xyz(g)))
+
+applycoord(t::LengthUnit, g::StructuredGrid) = StructuredGrid{datum(crs(g))}(map(X -> uconvert.(t.unit, X), XYZ(g)))
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
 
 function _lenunit(c::Cartesian, u)
   d = datum(c)
@@ -50,15 +66,3 @@ function _lenunit(c::Spherical, u)
 end
 
 _lenunit(c, _) = throw(ArgumentError("the length unit of $(prettyname(c)) cannot be changed"))
-
-# --------------
-# SPECIAL CASES
-# --------------
-
-applycoord(t::LengthUnit, len::Len) = uconvert(t.unit, len)
-
-applycoord(t::LengthUnit, lens::NTuple{Dim,Len}) where {Dim} = uconvert.(t.unit, lens)
-
-applycoord(t::LengthUnit, g::RectilinearGrid) = RectilinearGrid{datum(crs(g))}(map(x -> uconvert.(t.unit, x), xyz(g)))
-
-applycoord(t::LengthUnit, g::StructuredGrid) = StructuredGrid{datum(crs(g))}(map(X -> uconvert.(t.unit, X), XYZ(g)))

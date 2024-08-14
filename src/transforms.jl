@@ -73,10 +73,10 @@ end
 applycoord(::CoordinateTransform, x) = x
 
 # special treatment for Point
-applycoord(t::CoordinateTransform, p::Point) = withcrs(p, applycoord(t, to(p)))
+applycoord(t::CoordinateTransform, p::Point) = withcrs(p, applycoord(t, coords(p)))
 
 # special treatment for TransformedGeometry
-applycoord(t::CoordinateTransform, m::TransformedGeometry) = TransformedGeometry(m, t)
+applycoord(t::CoordinateTransform, g::TransformedGeometry) = TransformedGeometry(g, t)
 
 # special treatment for TransformedMesh
 applycoord(t::CoordinateTransform, m::TransformedMesh) = TransformedMesh(m, t)

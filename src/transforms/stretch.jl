@@ -42,17 +42,9 @@ function apply(t::Stretch, g::GeometryOrDomain)
   n, (p, c)
 end
 
-revert(t::Stretch, g::GeometryOrDomain, c) = revert(c[1], g, c[2])
+revert(::Stretch, g::GeometryOrDomain, c) = revert(c[1], g, c[2])
 
-reapply(t::Stretch, g::GeometryOrDomain, c) = reapply(c[1], g, c[2])
-
-function _stretch(t, g)
-  o = to(_origin(g))
-  Translate(-o...) → Scale(t.factors) → Translate(o...)
-end
-
-_origin(g) = centroid(g)
-_origin(p::Plane) = p(0, 0)
+reapply(::Stretch, g::GeometryOrDomain, c) = reapply(c[1], g, c[2])
 
 # --------------
 # SPECIAL CASES
@@ -63,3 +55,15 @@ apply(t::Stretch, v::Vec) = apply(Scale(t.factors), v)
 revert(t::Stretch, v::Vec, c) = revert(Scale(t.factors), v, c)
 
 reapply(t::Stretch, v::Vec, c) = reapply(Scale(t.factors), v, c)
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _stretch(t, g)
+  o = to(_origin(g))
+  Translate(-o...) → Scale(t.factors) → Translate(o...)
+end
+
+_origin(g) = centroid(g)
+_origin(p::Plane) = p(0, 0)
