@@ -67,6 +67,8 @@ applycoord(t::Rotate, v::Vec) = urotapply(t.rot, v)
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Rotate, b::Box) = TransformedGeometry(t, b)
+
 applycoord(t::Rotate, g::CartesianGrid) = TransformedGrid(g, t)
 
 applycoord(t::Rotate, g::RectilinearGrid) = TransformedGrid(g, t)

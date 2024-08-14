@@ -44,6 +44,28 @@ applycoord(t::Scale, v::Vec) = t.factors .* v
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Scale, b::Ball) = TransformedGeometry(b, t)
+
+applycoord(t::Scale, s::Sphere) = TransformedGeometry(s, t)
+
+applycoord(t::Scale{1}, s::Sphere) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
+
+applycoord(t::Scale{3}, s::Sphere{𝔼{3}}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
+
+applycoord(t::Scale, e::Ellipsoid) = TransformedGeometry(e, t)
+
+applycoord(t::Scale, d::Disk) = TransformedGeometry(d, t)
+
+applycoord(t::Scale, c::Circle) = TransformedGeometry(c, t)
+
+applycoord(t::Scale, c::Cylinder) = TransformedGeometry(c, t)
+
+applycoord(t::Scale, c::CylinderSurface) = TransformedGeometry(c, t)
+
+applycoord(t::Scale, p::ParaboloidSurface) = TransformedGeometry(p, t)
+
+applycoord(t::Scale, tr::Torus) = TransformedGeometry(tr, t)
+
 function applycoord(t::Scale, g::CartesianGrid)
   dims = size(g)
   orig = applycoord(t, minimum(g))

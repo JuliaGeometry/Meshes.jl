@@ -80,18 +80,6 @@ withprecision(T, geoms::CircularVector{<:Geometry}) = CircularVector([withprecis
   :($ctor($(exprs...)))
 end
 
-translate(x, _...) = x
-translate(p::Point, offsets...) = p + Vec(offsets)
-translate(g::NTuple{Dim,<:Geometry}, offsets...) where {Dim} = map(gᵢ -> translate(gᵢ, offsets...), g)
-translate(g::AbstractVector{<:Geometry}, offsets...) = map(gᵢ -> translate(gᵢ, offsets...), g)
-translate(g::CircularVector{<:Geometry}, offsets...) = CircularVector(map(gᵢ -> translate(gᵢ, offsets...), g))
-@generated function translate(g::G, offsets...) where {G<:Meshes.GeometryOrDomain}
-  ctor = Meshes.constructor(G)
-  names = fieldnames(G)
-  exprs = (:(translate(g.$name, offsets...)) for name in names)
-  :($ctor($(exprs...)))
-end
-
 function equaltest(g)
   @test g == withprecision(Float64, g)
   @test g == withprecision(Float32, g)
@@ -104,8 +92,8 @@ function _isapproxtest(g::Geometry, ::Val{1})
   τ32 = Meshes.atol(Float32) * u"m"
   g64 = withprecision(Float64, g)
   g32 = withprecision(Float32, g)
-  @test isapprox(g, translate(g64, τ64), atol=1.1τ64)
-  @test isapprox(g, translate(g32, τ32), atol=1.1τ32)
+  @test isapprox(g, Translate(τ64)(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(τ32)(g32), atol=1.1τ32)
 end
 
 function _isapproxtest(g::Geometry, ::Val{2})
@@ -113,10 +101,10 @@ function _isapproxtest(g::Geometry, ::Val{2})
   τ32 = Meshes.atol(Float32) * u"m"
   g64 = withprecision(Float64, g)
   g32 = withprecision(Float32, g)
-  @test isapprox(g, translate(g64, τ64, 0u"m"), atol=1.1τ64)
-  @test isapprox(g, translate(g64, 0u"m", τ64), atol=1.1τ64)
-  @test isapprox(g, translate(g32, τ32, 0u"m"), atol=1.1τ32)
-  @test isapprox(g, translate(g32, 0u"m", τ32), atol=1.1τ32)
+  @test isapprox(g, Translate(τ64, 0u"m")(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(0u"m", τ64)(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(τ32, 0u"m")(g32), atol=1.1τ32)
+  @test isapprox(g, Translate(0u"m", τ32)(g32), atol=1.1τ32)
 end
 
 function _isapproxtest(g::Geometry, ::Val{3})
@@ -124,10 +112,10 @@ function _isapproxtest(g::Geometry, ::Val{3})
   τ32 = Meshes.atol(Float32) * u"m"
   g64 = withprecision(Float64, g)
   g32 = withprecision(Float32, g)
-  @test isapprox(g, translate(g64, τ64, 0u"m", 0u"m"), atol=1.1τ64)
-  @test isapprox(g, translate(g64, 0u"m", τ64, 0u"m"), atol=1.1τ64)
-  @test isapprox(g, translate(g64, 0u"m", 0u"m", τ64), atol=1.1τ64)
-  @test isapprox(g, translate(g32, τ32, 0u"m", 0u"m"), atol=1.1τ32)
-  @test isapprox(g, translate(g32, 0u"m", τ32, 0u"m"), atol=1.1τ32)
-  @test isapprox(g, translate(g32, 0u"m", 0u"m", τ32), atol=1.1τ32)
+  @test isapprox(g, Translate(τ64, 0u"m", 0u"m")(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(0u"m", τ64, 0u"m")(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(0u"m", 0u"m", τ64)(g64), atol=1.1τ64)
+  @test isapprox(g, Translate(τ32, 0u"m", 0u"m")(g32), atol=1.1τ32)
+  @test isapprox(g, Translate(0u"m", τ32, 0u"m")(g32), atol=1.1τ32)
+  @test isapprox(g, Translate(0u"m", 0u"m", τ32)(g32), atol=1.1τ32)
 end

@@ -61,6 +61,8 @@ applycoord(t::Affine, p::Point) = withcrs(p, t.A * to(p) + t.b)
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Affine, b::Box) = TransformedGeometry(t, b)
+
 applycoord(t::Affine, g::CartesianGrid) = TransformedGrid(g, t)
 
 applycoord(t::Affine, g::RectilinearGrid) = TransformedGrid(g, t)

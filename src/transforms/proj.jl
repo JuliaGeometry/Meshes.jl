@@ -37,6 +37,8 @@ applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Proj, g::Primitive) = TransformedGeometry(t, g)
+
 applycoord(t::Proj, g::RectilinearGrid) = applycoord(t, convert(SimpleMesh, g))
 
 applycoord(t::Proj, g::StructuredGrid) = applycoord(t, convert(SimpleMesh, g))
