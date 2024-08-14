@@ -17,9 +17,23 @@ struct TransformedGeometry{M<:Manifold,C<:CRS,G<:Geometry,T<:Transform} <: Geome
 end
 
 function TransformedGeometry(g::Geometry, t::Transform)
-  p = t(centroid(g))
+  p = t(_point(g))
   TransformedGeometry{manifold(p),crs(p)}(g, t)
 end
+
+_point(g) = centroid(g)
+_point(p::Primitive) = _point(boundary(p))
+_point(p::Polytope) = first(vertices(p))
+_point(m::Multi) = _point(first(parent(m)))
+_point(g::TransformedGeometry) = transform(g)(_point(parent(g)))
+_point(r::Ray) = r(0)
+_point(l::Line) = l(0)
+_point(b::BezierCurve) = first(controls(b))
+_point(b::Box) = minimum(b)
+_point(c::CylinderSurface) = apex(c)
+_point(c::ConeSurface) = apex(c)
+_point(f::FrustumSurface) = _point(bottom(f))
+_point(p::ParaboloidSurface) = apex(p)
 
 # specialize constructor to avoid deep structures
 TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, g.transform → t)
@@ -46,7 +60,7 @@ paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 ==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
 
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  isapprox(g₁.geometry, g₂.geometry; atol, kwargs...) && g₁.transform == g₂.transform
+  g₁.transform == g₂.transform && isapprox(g₁.geometry, g₂.geometry; atol, kwargs...)
 
 (g::TransformedGeometry)(uvw...) = g.transform(g.geometry(uvw...))
 

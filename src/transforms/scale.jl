@@ -44,30 +44,6 @@ applycoord(t::Scale, v::Vec) = t.factors .* v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Scale, b::Ball) = applycoord(t, discretize(b))
-
-applycoord(t::Scale{Dim}, s::Sphere) where {Dim} = _applycoord(t, s, Val(Dim), Val(embeddim(s)))
-
-_applycoord(t::Scale, s::Sphere, ::Val, ::Val) = applycoord(t, discretize(s))
-
-_applycoord(t::Scale, s::Sphere, ::Val{1}, ::Val) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
-
-_applycoord(t::Scale, s::Sphere, ::Val{3}, ::Val{3}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
-
-applycoord(t::Scale, e::Ellipsoid) = applycoord(t, discretize(e))
-
-applycoord(t::Scale, d::Disk) = applycoord(t, discretize(d))
-
-applycoord(t::Scale, c::Circle) = applycoord(t, discretize(c))
-
-applycoord(t::Scale, c::Cylinder) = applycoord(t, discretize(c))
-
-applycoord(t::Scale, c::CylinderSurface) = applycoord(t, discretize(c))
-
-applycoord(t::Scale, p::ParaboloidSurface) = applycoord(t, discretize(p))
-
-applycoord(t::Scale, tr::Torus) = applycoord(t, discretize(tr))
-
 function applycoord(t::Scale, g::CartesianGrid)
   dims = size(g)
   orig = applycoord(t, minimum(g))

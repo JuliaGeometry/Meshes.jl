@@ -61,12 +61,6 @@ applycoord(t::Affine, p::Point) = withcrs(p, t.A * to(p) + t.b)
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Affine, b::Box) = _applycoord(t, b, Val(embeddim(b)))
-
-_applycoord(t::Affine, b::Box, ::Val{2}) = applycoord(t, convert(Quadrangle, b))
-
-_applycoord(t::Affine, b::Box, ::Val{3}) = applycoord(t, convert(Hexahedron, b))
-
 applycoord(t::Affine, g::CartesianGrid) = TransformedGrid(g, t)
 
 applycoord(t::Affine, g::RectilinearGrid) = TransformedGrid(g, t)
