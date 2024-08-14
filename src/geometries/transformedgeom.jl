@@ -76,7 +76,7 @@ Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)
   isapprox(g₁.transform(discretize(g₁.geometry)), discretize(g₂); atol, kwargs...)
 
 Base.isapprox(g₁::Geometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  isapprox(g₂, g₁,; atol, kwargs...)
+  isapprox(g₂, g₁; atol, kwargs...)
 
 (g::TransformedGeometry)(uvw...) = g.transform(g.geometry(uvw...))
 
