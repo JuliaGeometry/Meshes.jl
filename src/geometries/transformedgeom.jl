@@ -21,7 +21,7 @@ function TransformedGeometry(g::Geometry, t::Transform)
   TransformedGeometry{manifold(p),crs(p)}(g, t)
 end
 
-_point(g) = isparametrized(g) ? g(ntuple(i -> 0, paramdim(g))...) : centroid(g)
+_point(g) = isparametrized(g) ? g(ntuple(i -> zero(numtype(lentype(g))), paramdim(g))...) : centroid(g)
 
 # specialize constructor to avoid deep structures
 TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, g.transform → t)
