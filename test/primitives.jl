@@ -99,8 +99,7 @@
     p2 = convert(P, p1)
     @test p2 isa P
 
-    # center and centroid
-    @test Meshes.center(cart(1, 1)) == cart(1, 1)
+    # centroid
     @test centroid(cart(1, 1)) == cart(1, 1)
 
     # measure of points is zero
@@ -423,7 +422,7 @@
 
     b = Box(cart(1, 1), cart(2, 2))
     @test sides(b) == (T(1) * u"m", T(1) * u"m")
-    @test Meshes.center(b) == cart(1.5, 1.5)
+    @test centroid(b) == cart(1.5, 1.5)
     @test diagonal(b) == √T(2) * u"m"
 
     b = Box(cart(1, 2), cart(3, 4))
@@ -490,7 +489,7 @@
 
     # CRS propagation
     b = Box(merc(0, 0), merc(1, 1))
-    @test crs(center(b)) === crs(b)
+    @test crs(centroid(b)) === crs(b)
 
     b = Box(cart(0, 0), cart(1, 1))
     @test sprint(show, b) == "Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))"
@@ -513,7 +512,7 @@
     @test paramdim(b) == 3
     @test crs(b) <: Cartesian{NoDatum}
     @test Meshes.lentype(b) == ℳ
-    @test Meshes.center(b) == cart(1, 2, 3)
+    @test center(b) == cart(1, 2, 3)
     @test radius(b) == T(5) * u"m"
 
     b = Ball(latlon(0, 0), T(5))
@@ -591,7 +590,7 @@
     @test paramdim(s) == 2
     @test crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
-    @test Meshes.center(s) == cart(0, 0, 0)
+    @test center(s) == cart(0, 0, 0)
     @test radius(s) == T(1) * u"m"
     @test extrema(s) == (cart(-1, -1, -1), cart(1, 1, 1))
     @test isnothing(boundary(s))
@@ -612,7 +611,7 @@
     @test embeddim(s) == 2
     @test paramdim(s) == 1
     @test Meshes.lentype(s) == ℳ
-    @test Meshes.center(s) == cart(0, 0)
+    @test center(s) == cart(0, 0)
     @test radius(s) == T(1) * u"m"
     @test extrema(s) == (cart(-1, -1), cart(1, 1))
     @test isnothing(boundary(s))
@@ -646,13 +645,13 @@
 
     # 2D sphere passing through 3 points
     s = Sphere(cart(0, 0), cart(0.5, 0), cart(1, 1))
-    @test Meshes.center(s) == cart(0.25, 0.75)
+    @test center(s) == cart(0.25, 0.75)
     @test radius(s) == T(0.7905694150420949) * u"m"
     s = Sphere(cart(0, 0), cart(1, 0), cart(0, 1))
-    @test Meshes.center(s) == cart(0.5, 0.5)
+    @test center(s) == cart(0.5, 0.5)
     @test radius(s) == T(0.7071067811865476) * u"m"
     s = Sphere(cart(0, 0), cart(1, 0), cart(1, 1))
-    @test Meshes.center(s) == cart(0.5, 0.5)
+    @test center(s) == cart(0.5, 0.5)
     @test radius(s) == T(0.7071067811865476) * u"m"
 
     # 3D sphere passing through 4 points
@@ -661,7 +660,7 @@
     @test cart(5, 0, 1) ∈ s
     @test cart(1, 1, 1) ∈ s
     @test cart(3, 2, 1) ∈ s
-    O = Meshes.center(s)
+    O = center(s)
     r = radius(s)
     @test isapprox(r, norm(cart(0, 0, 0) - O))
 
@@ -729,7 +728,7 @@
     @test crs(d) <: Cartesian{NoDatum}
     @test Meshes.lentype(d) == ℳ
     @test plane(d) == p
-    @test Meshes.center(d) == cart(0, 0, 0)
+    @test center(d) == cart(0, 0, 0)
     @test radius(d) == T(2) * u"m"
     @test normal(d) == vector(0, 0, 1)
     @test measure(d) == T(π) * T(2)^2 * u"m^2"
@@ -768,7 +767,7 @@
     @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test plane(c) == p
-    @test Meshes.center(c) == cart(0, 0, 0)
+    @test center(c) == cart(0, 0, 0)
     @test radius(c) == T(2) * u"m"
     @test measure(c) == 2 * T(π) * T(2) * u"m"
     @test length(c) == measure(c)
@@ -868,7 +867,6 @@
     @test radius(c) == T(1) * u"m"
     @test bottom(c) == Plane(cart(0, 0, 0), vector(0, 0, 1))
     @test top(c) == Plane(cart(0, 0, 1), vector(0, 0, 1))
-    @test center(c) == cart(0.0, 0.0, 0.5)
     @test centroid(c) == cart(0.0, 0.0, 0.5)
     @test axis(c) == Line(cart(0, 0, 0), cart(0, 0, 1))
     @test isright(c)
@@ -910,7 +908,6 @@
     @test radius(c) == T(2) * u"m"
     @test bottom(c) == Plane(cart(0, 0, 0), vector(0, 0, 1))
     @test top(c) == Plane(cart(0, 0, 1), vector(0, 0, 1))
-    @test center(c) == cart(0.0, 0.0, 0.5)
     @test centroid(c) == cart(0.0, 0.0, 0.5)
     @test axis(c) == Line(cart(0, 0, 0), cart(0, 0, 1))
     @test isright(c)
@@ -951,7 +948,7 @@
     c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
     c2 = Cartesian{WGS84Latest}(T(0), T(0), T(1))
     c = CylinderSurface(Point(c1), Point(c2), T(1))
-    @test crs(center(c)) === crs(c)
+    @test crs(centroid(c)) === crs(c)
 
     c = CylinderSurface(T(1))
     @test sprint(show, c) ==
@@ -1239,7 +1236,7 @@
     @test paramdim(t) == 2
     @test crs(t) <: Cartesian{NoDatum}
     @test Meshes.lentype(t) == ℳ
-    @test Meshes.center(t) == cart(1, 1, 1)
+    @test center(t) == cart(1, 1, 1)
     @test normal(t) == vector(1, 0, 0)
     @test radii(t) == (T(2) * u"m", T(1) * u"m")
     @test axis(t) == Line(cart(1, 1, 1), cart(2, 1, 1))

@@ -60,8 +60,6 @@ bottom(c::Cylinder) = c.bot
 
 top(c::Cylinder) = c.top
 
-center(c::Cylinder) = center(boundary(c))
-
 axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))

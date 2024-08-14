@@ -53,13 +53,6 @@ xyz(g::RectilinearGrid) = g.xyz
 
 XYZ(g::RectilinearGrid) = XYZ(xyz(g))
 
-function centroid(g::RectilinearGrid, ind::Int)
-  ijk = elem2cart(topology(g), ind)
-  p1 = vertex(g, ijk)
-  p2 = vertex(g, ijk .+ 1)
-  withcrs(g, (to(p1) + to(p2)) / 2)
-end
-
 function Base.getindex(g::RectilinearGrid{Datum}, I::CartesianIndices) where {Datum}
   @boundscheck _checkbounds(g, I)
   dims = size(I)

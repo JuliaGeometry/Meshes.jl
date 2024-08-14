@@ -198,7 +198,7 @@ function apply(::Repair{12}, poly::PolyArea)
   oring = first(r)
   outer = if nvertices(oring) == 2
     A, B = vertices(oring)
-    P = center(Segment(A, B))
+    P = centroid(Segment(A, B))
     Ring(A, P, B)
   else
     oring

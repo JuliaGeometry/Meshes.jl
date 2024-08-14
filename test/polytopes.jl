@@ -55,8 +55,8 @@
     s = Segment(cart(0, 0, 0), cart(1, 1, 1))
     @test boundary(s) == Multi([cart(0, 0, 0), cart(1, 1, 1)])
     @test perimeter(s) == zero(T) * u"m"
-    @test center(s) == cart(0.5, 0.5, 0.5)
-    @test Meshes.lentype(center(s)) == ℳ
+    @test centroid(s) == cart(0.5, 0.5, 0.5)
+    @test Meshes.lentype(centroid(s)) == ℳ
 
     # unitful coordinates
     x1 = T(0)u"m"
@@ -65,8 +65,8 @@
     @test boundary(s) == Multi([Point(x1, x1, x1), Point(x2, x2, x2)])
     @test perimeter(s) == 0u"m"
     xm = T(0.5)u"m"
-    @test center(s) == Point(xm, xm, xm)
-    @test Meshes.lentype(center(s)) == typeof(xm)
+    @test centroid(s) == Point(xm, xm, xm)
+    @test Meshes.lentype(centroid(s)) == typeof(xm)
 
     # CRS propagation
     s = Segment(merc(0, 0), merc(1, 1))

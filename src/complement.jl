@@ -13,7 +13,7 @@ respect to its bounding box.
 function _boxboundary(g)
   ℒ = lentype(g)
   b = boundingbox(g)
-  c = to(center(b))
+  c = to(centroid(b))
   l = sides(b)
   α = (l .+ 2atol(ℒ)) ./ l
   t = Translate(-c...) → Scale(α) → Translate(c...)

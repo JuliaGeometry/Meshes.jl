@@ -39,11 +39,6 @@ Base.parent(m::Multi) = m.geoms
 
 paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
-function centroid(m::Multi)
-  cs = to.(centroid.(m.geoms))
-  withcrs(m, sum(cs) / length(cs))
-end
-
 ==(m₁::Multi, m₂::Multi) = m₁.geoms == m₂.geoms
 
 Base.isapprox(m₁::Multi, m₂::Multi; atol=atol(lentype(m₁)), kwargs...) =

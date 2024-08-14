@@ -43,8 +43,6 @@ transform(g::TransformedGeometry) = g.transform
 
 paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
-centroid(g::TransformedGeometry) = g.transform(centroid(g.geometry))
-
 ==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
 
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
