@@ -60,12 +60,6 @@ bottom(c::CylinderSurface) = c.bot
 
 top(c::CylinderSurface) = c.top
 
-function center(c::CylinderSurface)
-  a = to(c.bot(0, 0))
-  b = to(c.top(0, 0))
-  withcrs(c, (a .+ b) ./ 2)
-end
-
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
 function isright(c::CylinderSurface)
@@ -101,7 +95,7 @@ function (c::CylinderSurface)(φ, z)
   a = axis(c)
   d = a(T(1)) - a(T(0))
   h = norm(d)
-  o = center(c)
+  o = centroid(c)
 
   # rotation to align z axis with cylinder axis
   Q = urotbetween(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))

@@ -40,7 +40,7 @@ function element(t::CylindricalTrajectory, ind::Int)
 
   if ind == 1 # head of trajectory
     # points at cylinder planes
-    p₂ = center(Segment(c[ind], c[ind + 1]))
+    p₂ = centroid(Segment(c[ind], c[ind + 1]))
     p₁ = p₂ - 2 * (p₂ - c[ind])
 
     # normals to cylinder planes
@@ -48,7 +48,7 @@ function element(t::CylindricalTrajectory, ind::Int)
     n₁ = n₂
   elseif ind == n # tail of trajectory
     # points at cylinder planes
-    p₁ = center(Segment(c[ind - 1], c[ind]))
+    p₁ = centroid(Segment(c[ind - 1], c[ind]))
     p₂ = p₁ + 2 * (c[ind] - p₁)
 
     # normals to cylinder planes
@@ -56,8 +56,8 @@ function element(t::CylindricalTrajectory, ind::Int)
     n₂ = n₁
   else # middle of trajectory
     # points at cylinder planes
-    p₁ = center(Segment(c[ind - 1], c[ind]))
-    p₂ = center(Segment(c[ind], c[ind + 1]))
+    p₁ = centroid(Segment(c[ind - 1], c[ind]))
+    p₂ = centroid(Segment(c[ind], c[ind + 1]))
 
     # normals to cylinder planes
     n₁ = c[ind] - c[ind - 1]

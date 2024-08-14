@@ -19,6 +19,10 @@ end
 # specialize constructor to avoid infinite loops
 SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[inds])
 
+Base.parent(d::SubDomain) = d.domain
+
+Base.parentindices(d::SubDomain) = d.inds
+
 """
     SubGrid{M,CRS,Dim}
 
@@ -34,8 +38,6 @@ const SubGrid{M<:Manifold,C<:CRS,Dim} = SubDomain{M,C,<:Grid{M,C,Dim}}
 element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 
 nelements(d::SubDomain) = length(d.inds)
-
-centroid(d::SubDomain, ind::Int) = centroid(d.domain, d.inds[ind])
 
 # specializations
 Base.eltype(d::SubDomain) = eltype(d.domain)

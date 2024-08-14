@@ -27,7 +27,7 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionP
   bbox = boundingbox(domain)
   n = method.normal
   f = method.fraction
-  c = to(center(bbox))
+  c = to(centroid(bbox))
   d = diagonal(bbox)
 
   # maximum number of bisections

@@ -150,11 +150,6 @@ end
 
 XYZ(g::CartesianGrid) = XYZ(xyz(g))
 
-function centroid(g::CartesianGrid, ind::Int)
-  ijk = elem2cart(topology(g), ind)
-  vertex(g, ijk) + Vec(spacing(g) ./ 2)
-end
-
 function Base.getindex(g::CartesianGrid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)
   dims = size(I)

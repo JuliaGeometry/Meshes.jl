@@ -62,7 +62,3 @@ PointSet(coords::Vararg{TP}) where {TP<:Tuple} = PointSet(collect(coords))
 
 # constructor with iterator of points
 PointSet(points) = PointSet(map(identity, points))
-
-centroid(d::PointSet, ind::Int) = d[ind]
-
-centroid(d::PointSet) = withcrs(d, sum(to, d) / nelements(d))

@@ -98,29 +98,6 @@ lentype(::Type{<:Domain{M,CRS}}) where {M,CRS} = lentype(CRS)
 lentype(d::Domain) = lentype(typeof(d))
 
 """
-    centroid(domain, ind)
-
-Return the centroid of the `ind`-th element in the `domain`.
-"""
-centroid(d::Domain, ind::Int) = centroid(d[ind])
-
-"""
-    centroid(domain)
-
-Return the centroid of the `domain`, i.e. the centroid of all
-its element's centroids.
-"""
-function centroid(d::Domain)
-  vector(i) = to(centroid(d, i))
-  volume(i) = measure(element(d, i))
-  n = nelements(d)
-  x = vector.(1:n)
-  w = volume.(1:n)
-  all(iszero, w) && (w = ones(eltype(w), n))
-  withcrs(d, sum(w .* x) / sum(w))
-end
-
-"""
     extrema(domain)
 
 Return the top left and bottom right corners of the

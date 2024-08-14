@@ -50,8 +50,6 @@ Base.convert(::Type{Point{M,CRS}}, p::Point{M,CRS}) where {M,CRS} = p
 
 paramdim(::Type{<:Point}) = 0
 
-center(p::Point) = p
-
 ==(A::Point, B::Point) = to(A) == to(B)
 
 Base.isapprox(A::Point, B::Point; atol=atol(lentype(A)), kwargs...) = isapprox(to(A), to(B); atol, kwargs...)

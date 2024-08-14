@@ -38,7 +38,7 @@ function refine(mesh, ::TriSubdivision)
   for eind in 1:nfacets(t)
     i, j = sort(∂₁₀(eind))
     edge = Segment(points[i], points[j])
-    push!(points, center(edge))
+    push!(points, centroid(edge))
     midpoints[(i, j)] = (np += 1)
   end
 
