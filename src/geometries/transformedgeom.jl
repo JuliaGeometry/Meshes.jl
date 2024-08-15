@@ -45,26 +45,20 @@ transform(g::TransformedGeometry) = g.transform
 
 paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
-==(g₁::TransformedGeometry, g₂::TransformedGeometry) = pointify(g₁) == pointify(g₂)
+==(g₁::TransformedGeometry, g₂::TransformedGeometry) = _isequal(g₁, g₂)
 
-==(g₁::TransformedGeometry, g₂::Geometry) = pointify(g₁) == pointify(g₂)
+==(g₁::TransformedGeometry, g₂::Geometry) = _isequal(g₁, g₂)
 
-==(g₁::Geometry, g₂::TransformedGeometry) = g₂ == g₁
+==(g₁::Geometry, g₂::TransformedGeometry) = _isequal(g₁, g₂)
 
-function Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...)
-  ps₁ = pointify(g₁)
-  ps₂ = pointify(g₂)
-  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
-end
+Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
+  _isapprox(g₁, g₂; atol, kwargs...)
 
-function Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...)
-  ps₁ = pointify(g₁)
-  ps₂ = pointify(g₂)
-  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
-end
+Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...) =
+  _isapprox(g₁, g₂; atol, kwargs...)
 
 Base.isapprox(g₁::Geometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  isapprox(g₂, g₁; atol, kwargs...)
+  _isapprox(g₁, g₂; atol, kwargs...)
 
 (g::TransformedGeometry)(uvw...) = g.transform(g.geometry(uvw...))
 
@@ -93,3 +87,15 @@ rings(p::TransformedPolygon) = map(p.transform, rings(p.geometry))
 # -----------
 
 prettyname(g::TransformedGeometry) = "Transformed$(prettyname(g.geometry))"
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_isequal(g₁, g₂) = pointify(g₁) == pointify(g₂)
+
+function _isapprox(g₁, g₂; kwargs...)
+  ps₁ = pointify(g₁)
+  ps₂ = pointify(g₂)
+  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
+end
