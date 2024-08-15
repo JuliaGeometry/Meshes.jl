@@ -29,13 +29,15 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
-applycoord(::Proj, v::Vec) = v
-
 applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
+
+applycoord(::Proj, v::Vec) = v
 
 # --------------
 # SPECIAL CASES
 # --------------
+
+applycoord(t::Proj, g::Primitive) = TransformedGeometry(g, t)
 
 applycoord(t::Proj, g::RectilinearGrid) = applycoord(t, convert(SimpleMesh, g))
 

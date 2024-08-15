@@ -3,18 +3,15 @@
 # ------------------------------------------------------------------
 
 """
-    isparametrized(geometry)
+    isparametrized(object)
 
-Tells whether or not the `geometry` is parametrized,
-i.e. can be called as `geometry(u₁, u₂, ..., uₙ)` with
-local coordinates `(u₁, u₂, ..., uₙ) ∈ [0,1]ⁿ` where
-`n` is the parametric dimension.
+Tells whether or not the geometric `object` is parametrized, i.e.
+can be called as `object(u₁, u₂, ..., uₙ)` with local coordinates
+`(u₁, u₂, ..., uₙ) ∈ [0,1]ⁿ` where `n` is the parametric dimension.
 
 See also [`paramdim`](@ref).
 """
-function isparametrized end
-
-isparametrized(g::Geometry) = isparametrized(typeof(g))
+isparametrized(g) = isparametrized(typeof(g))
 
 isparametrized(::Type{<:Geometry}) = false
 
@@ -28,11 +25,11 @@ isparametrized(::Type{<:Plane}) = true
 
 isparametrized(::Type{<:BezierCurve}) = true
 
-isparametrized(::Type{<:Box}) = true
+isparametrized(::Type{<:Box{<:𝔼}}) = true
 
-isparametrized(::Type{<:Ball}) = true
+isparametrized(::Type{<:Ball{<:𝔼}}) = true
 
-isparametrized(::Type{<:Sphere}) = true
+isparametrized(::Type{<:Sphere{<:𝔼}}) = true
 
 isparametrized(::Type{<:Ellipsoid}) = true
 
@@ -60,6 +57,6 @@ isparametrized(::Type{<:Tetrahedron}) = true
 
 isparametrized(::Type{<:Hexahedron}) = true
 
-isparametrized(d::Domain) = isparametrized(typeof(d))
+isparametrized(::Type{<:TransformedGeometry{M,C,G}}) where {M,C,G} = isparametrized(G)
 
 isparametrized(::Type{<:Domain}) = false

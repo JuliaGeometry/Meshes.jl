@@ -17,7 +17,9 @@ struct TransformedGeometry{M<:Manifold,C<:CRS,G<:Geometry,T<:Transform} <: Geome
 end
 
 function TransformedGeometry(g::Geometry, t::Transform)
-  p = t(centroid(g))
+  D = paramdim(g)
+  T = numtype(lentype(g))
+  p = t(isparametrized(g) ? g(ntuple(i -> zero(T), D)...) : centroid(g))
   TransformedGeometry{manifold(p),crs(p)}(g, t)
 end
 
@@ -43,10 +45,20 @@ transform(g::TransformedGeometry) = g.transform
 
 paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
-==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
+==(g₁::TransformedGeometry, g₂::TransformedGeometry) = _isequal(g₁, g₂)
+
+==(g₁::TransformedGeometry, g₂::Geometry) = _isequal(g₁, g₂)
+
+==(g₁::Geometry, g₂::TransformedGeometry) = _isequal(g₁, g₂)
 
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  isapprox(g₁.geometry, g₂.geometry; atol, kwargs...) && g₁.transform == g₂.transform
+  _isapprox(g₁, g₂; atol, kwargs...)
+
+Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...) =
+  _isapprox(g₁, g₂; atol, kwargs...)
+
+Base.isapprox(g₁::Geometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
+  _isapprox(g₁, g₂; atol, kwargs...)
 
 (g::TransformedGeometry)(uvw...) = g.transform(g.geometry(uvw...))
 
@@ -74,7 +86,16 @@ rings(p::TransformedPolygon) = map(p.transform, rings(p.geometry))
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, g::TransformedGeometry)
-  name = prettyname(g.geometry)
-  print(io, "Transformed$name")
+prettyname(g::TransformedGeometry) = "Transformed$(prettyname(g.geometry))"
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_isequal(g₁, g₂) = pointify(g₁) == pointify(g₂)
+
+function _isapprox(g₁, g₂; kwargs...)
+  ps₁ = pointify(g₁)
+  ps₂ = pointify(g₂)
+  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
 end

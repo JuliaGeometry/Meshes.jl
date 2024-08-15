@@ -38,35 +38,35 @@ isinvertible(::Type{<:Scale}) = true
 
 inverse(t::Scale) = Scale(1 ./ t.factors)
 
+applycoord(t::Scale, p::Point) = withcrs(p, applycoord(t, to(p)))
+
 applycoord(t::Scale, v::Vec) = t.factors .* v
 
 # --------------
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Scale, b::Ball) = applycoord(t, discretize(b))
+applycoord(t::Scale, b::Ball) = TransformedGeometry(b, t)
 
-applycoord(t::Scale{Dim}, s::Sphere) where {Dim} = _applycoord(t, s, Val(Dim), Val(embeddim(s)))
+applycoord(t::Scale, s::Sphere) = TransformedGeometry(s, t)
 
-_applycoord(t::Scale, s::Sphere, ::Val, ::Val) = applycoord(t, discretize(s))
+applycoord(t::Scale{1}, s::Sphere) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
 
-_applycoord(t::Scale, s::Sphere, ::Val{1}, ::Val) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
+applycoord(t::Scale{3}, s::Sphere{𝔼{3}}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
 
-_applycoord(t::Scale, s::Sphere, ::Val{3}, ::Val{3}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
+applycoord(t::Scale, e::Ellipsoid) = TransformedGeometry(e, t)
 
-applycoord(t::Scale, e::Ellipsoid) = applycoord(t, discretize(e))
+applycoord(t::Scale, d::Disk) = TransformedGeometry(d, t)
 
-applycoord(t::Scale, d::Disk) = applycoord(t, discretize(d))
+applycoord(t::Scale, c::Circle) = TransformedGeometry(c, t)
 
-applycoord(t::Scale, c::Circle) = applycoord(t, discretize(c))
+applycoord(t::Scale, c::Cylinder) = TransformedGeometry(c, t)
 
-applycoord(t::Scale, c::Cylinder) = applycoord(t, discretize(c))
+applycoord(t::Scale, c::CylinderSurface) = TransformedGeometry(c, t)
 
-applycoord(t::Scale, c::CylinderSurface) = applycoord(t, discretize(c))
+applycoord(t::Scale, p::ParaboloidSurface) = TransformedGeometry(p, t)
 
-applycoord(t::Scale, p::ParaboloidSurface) = applycoord(t, discretize(p))
-
-applycoord(t::Scale, tr::Torus) = applycoord(t, discretize(tr))
+applycoord(t::Scale, tr::Torus) = TransformedGeometry(tr, t)
 
 function applycoord(t::Scale, g::CartesianGrid)
   dims = size(g)

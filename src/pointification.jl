@@ -20,6 +20,8 @@ pointify(p::Polytope) = collect(vertices(p))
 
 pointify(m::Multi) = pointify(parent(m))
 
+pointify(g::TransformedGeometry) = map(transform(g), pointify(parent(g)))
+
 pointify(geoms) = mapreduce(pointify, vcat, geoms)
 
 # ----------------
@@ -31,6 +33,8 @@ pointify(p::Point) = [p]
 pointify(s::Sphere) = _rsample(s)
 
 pointify(t::Torus) = _rsample(t)
+
+pointify(c::CylinderSurface) = _rsample(c)
 
 pointify(p::PolyArea) = vertices(p)
 

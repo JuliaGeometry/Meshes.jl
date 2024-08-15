@@ -68,6 +68,19 @@ Base.extrema(g::Geometry) = extrema(boundingbox(g))
 
 Base.summary(io::IO, geom::Geometry) = print(io, prettyname(geom))
 
+function Base.show(io::IO, geom::Geometry)
+  name = prettyname(geom)
+  ioctx = IOContext(io, :compact => true)
+  print(io, "$name(")
+  printfields(ioctx, geom, singleline=true)
+  print(io, ")")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", geom::Geometry)
+  summary(io, geom)
+  printfields(io, geom)
+end
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

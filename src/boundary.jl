@@ -114,3 +114,5 @@ function boundary(m::Multi)
   valid = filter(!isnothing, bounds)
   isempty(valid) ? nothing : reduce(merge, valid)
 end
+
+boundary(g::TransformedGeometry) = transform(g)(boundary(parent(g)))

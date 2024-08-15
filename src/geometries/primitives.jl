@@ -12,19 +12,6 @@ See <https://en.wikipedia.org/wiki/Geometric_primitive>.
 """
 abstract type Primitive{M<:Manifold,C<:CRS} <: Geometry{M,C} end
 
-function Base.show(io::IO, geom::Primitive)
-  name = prettyname(geom)
-  ioctx = IOContext(io, :compact => true)
-  print(io, "$name(")
-  printfields(ioctx, geom, singleline=true)
-  print(io, ")")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", geom::Primitive)
-  summary(io, geom)
-  printfields(io, geom)
-end
-
 include("primitives/point.jl")
 include("primitives/ray.jl")
 include("primitives/line.jl")
