@@ -25,11 +25,11 @@ isparametrized(::Type{<:Plane}) = true
 
 isparametrized(::Type{<:BezierCurve}) = true
 
-isparametrized(::Type{<:Box}) = true
+isparametrized(::Type{<:Box{𝔼}}) = true
 
-isparametrized(::Type{<:Ball}) = true
+isparametrized(::Type{<:Ball{𝔼}}) = true
 
-isparametrized(::Type{<:Sphere}) = true
+isparametrized(::Type{<:Sphere{𝔼}}) = true
 
 isparametrized(::Type{<:Ellipsoid}) = true
 
