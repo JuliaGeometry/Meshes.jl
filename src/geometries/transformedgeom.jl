@@ -52,7 +52,7 @@ paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 ==(g₁::Geometry, g₂::TransformedGeometry) = g₂ == g₁
 
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  g₁.transform == g₂.transform && isapprox(g₁.geometry, g₂.geometry; atol, kwargs...)
+  g₁.transform ≈ g₂.transform && isapprox(g₁.geometry, g₂.geometry; atol, kwargs...)
 
 Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₁.transform(discretize(g₁.geometry)), discretize(g₂); atol, kwargs...)
