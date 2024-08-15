@@ -51,11 +51,17 @@ paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
 ==(g₁::Geometry, g₂::TransformedGeometry) = g₂ == g₁
 
-Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(pointify(g₁), pointify(g₂)))
+function Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...)
+  ps₁ = pointify(g₁)
+  ps₂ = pointify(g₂)
+  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
+end
 
-Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...) =
-  all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(pointify(g₁), pointify(g₂)))
+function Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...)
+  ps₁ = pointify(g₁)
+  ps₂ = pointify(g₂)
+  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
+end
 
 Base.isapprox(g₁::Geometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₂, g₁; atol, kwargs...)
