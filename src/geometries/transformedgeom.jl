@@ -86,7 +86,4 @@ rings(p::TransformedPolygon) = map(p.transform, rings(p.geometry))
 # IO METHODS
 # -----------
 
-function Base.summary(io::IO, g::TransformedGeometry)
-  name = prettyname(g.geometry)
-  print(io, "Transformed$name")
-end
+prettyname(g::TransformedGeometry) = "Transformed$(prettyname(g.geometry))"

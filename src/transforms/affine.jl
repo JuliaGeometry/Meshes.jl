@@ -61,7 +61,7 @@ applycoord(t::Affine, v::Vec) = t.A * v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Affine, b::Box) = TransformedGeometry(t, b)
+applycoord(t::Affine, b::Box) = TransformedGeometry(b, t)
 
 applycoord(t::Affine, g::CartesianGrid) = TransformedGrid(g, t)
 

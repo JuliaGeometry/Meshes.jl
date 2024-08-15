@@ -54,4 +54,14 @@
   @test unique(tp2) == tp
   equaltest(tp)
   isapproxtest(tp)
+
+  b = Box(cart(0, 0), cart(1, 1))
+  t = Translate(T(1), T(2))
+  tb = Meshes.TransformedGeometry(b, t)
+  @test sprint(show, tb) ==
+        "TransformedBox(geometry: Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m)), transform: Translate(offsets: (1.0 m, 2.0 m)))"
+  @test sprint(show, MIME"text/plain"(), tb) == """
+  TransformedBox
+  ├─ geometry: Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))
+  └─ transform: Translate(offsets: (1.0 m, 2.0 m))"""
 end

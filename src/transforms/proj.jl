@@ -37,7 +37,7 @@ applycoord(::Proj, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Proj, g::Primitive) = TransformedGeometry(t, g)
+applycoord(t::Proj, g::Primitive) = TransformedGeometry(g, t)
 
 applycoord(t::Proj, g::RectilinearGrid) = applycoord(t, convert(SimpleMesh, g))
 
