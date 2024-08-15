@@ -45,14 +45,14 @@ transform(g::TransformedGeometry) = g.transform
 
 paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
-==(g₁::TransformedGeometry, g₂::TransformedGeometry) = g₁.transform == g₂.transform && g₁.geometry == g₂.geometry
+==(g₁::TransformedGeometry, g₂::TransformedGeometry) = pointify(g₁) == pointify(g₂)
 
 ==(g₁::TransformedGeometry, g₂::Geometry) = pointify(g₁) == pointify(g₂)
 
 ==(g₁::Geometry, g₂::TransformedGeometry) = g₂ == g₁
 
 Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  g₁.transform ≈ g₂.transform && isapprox(g₁.geometry, g₂.geometry; atol, kwargs...)
+  all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(pointify(g₁), pointify(g₂)))
 
 Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...) =
   all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(pointify(g₁), pointify(g₂)))
