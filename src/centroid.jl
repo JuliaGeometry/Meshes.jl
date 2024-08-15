@@ -9,11 +9,11 @@ The centroid of the `geometry`.
 """
 centroid(g::Geometry) = center(g) # some geometries have a natural center
 
-centroid(p::Polytope) = withcrs(p, sum(to, vertices(p)) / nvertices(p))
-
 centroid(p::Point) = p
 
 centroid(p::Polygon) = centroid(first(rings(p)))
+
+centroid(p::Polytope) = withcrs(p, sum(to, vertices(p)) / nvertices(p))
 
 centroid(b::Box) = withcrs(b, sum(to, extrema(b)) / 2)
 

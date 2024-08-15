@@ -31,7 +31,8 @@ function nelements end
 
 ==(d1::Domain, d2::Domain) = nelements(d1) == nelements(d2) && all(d1[i] == d2[i] for i in 1:nelements(d1))
 
-Base.isapprox(d1::Domain, d2::Domain) = nelements(d1) == nelements(d2) && all(d1[i] ≈ d2[i] for i in 1:nelements(d1))
+Base.isapprox(d1::Domain, d2::Domain; kwargs...) =
+  nelements(d1) == nelements(d2) && all(isapprox(d1[i], d2[i]; kwargs...) for i in 1:nelements(d1))
 
 Base.getindex(d::Domain, ind::Int) = element(d, ind)
 

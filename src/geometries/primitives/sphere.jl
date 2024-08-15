@@ -73,9 +73,7 @@ radius(s::Sphere) = s.radius
 Base.isapprox(s₁::Sphere, s₂::Sphere; atol=atol(lentype(s₁)), kwargs...) =
   isapprox(s₁.center, s₂.center; atol, kwargs...) && isapprox(s₁.radius, s₂.radius; atol, kwargs...)
 
-(s::Sphere)(args...) = _sphere(Val(embeddim(s)), s, args...)
-
-function _sphere(::Val{2}, s, φ)
+function (s::Sphere{𝔼{2}})(φ)
   T = numtype(lentype(s))
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
@@ -88,7 +86,7 @@ function _sphere(::Val{2}, s, φ)
   c + Vec(x, y)
 end
 
-function _sphere(::Val{3}, s, θ, φ)
+function (s::Sphere{𝔼{3}})(θ, φ)
   T = numtype(lentype(s))
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))

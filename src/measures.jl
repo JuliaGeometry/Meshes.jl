@@ -25,17 +25,17 @@ measure(l::Line) = typemax(lentype(l))
 
 measure(p::Plane) = typemax(lentype(p))^2
 
-measure(b::Box) = prod(maximum(b) - minimum(b))
+measure(b::Box{<:𝔼}) = prod(maximum(b) - minimum(b))
 
 # https://en.wikipedia.org/wiki/Volume_of_an_n-ball
-function measure(b::Ball)
+function measure(b::Ball{<:𝔼})
   T = numtype(lentype(b))
   r, n = radius(b), embeddim(b)
   T(π)^T(n / 2) * r^n / gamma(T(n / 2) + 1)
 end
 
 # https://en.wikipedia.org/wiki/N-sphere#Volume_and_surface_area
-function measure(s::Sphere)
+function measure(s::Sphere{<:𝔼})
   T = numtype(lentype(s))
   r, n = radius(s), embeddim(s)
   2 * T(π)^T(n / 2) * r^(n - 1) / gamma(T(n / 2))
