@@ -17,11 +17,11 @@ struct TransformedGeometry{M<:Manifold,C<:CRS,G<:Geometry,T<:Transform} <: Geome
 end
 
 function TransformedGeometry(g::Geometry, t::Transform)
-  p = t(_point(g))
+  D = paramdim(g)
+  T = numtype(lentype(g))
+  p = t(isparametrized(g) ? g(ntuple(i -> zero(T), D)...) : centroid(g))
   TransformedGeometry{manifold(p),crs(p)}(g, t)
 end
-
-_point(g) = isparametrized(g) ? g(ntuple(i -> zero(numtype(lentype(g))), paramdim(g))...) : centroid(g)
 
 # specialize constructor to avoid deep structures
 TransformedGeometry(g::TransformedGeometry, t::Transform) = TransformedGeometry(g.geometry, g.transform → t)
