@@ -349,6 +349,7 @@
     f = Translate(T(1), T(1))
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -359,6 +360,7 @@
     f = Translate(T(1), T(1))
     d = RectilinearGrid(T.(0:10), T.(0:10))
     r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
     @test r ≈ RectilinearGrid(T.(1:11), T.(1:11))
     @test TB.revert(f, r, c) ≈ d
 
@@ -369,6 +371,7 @@
     f = Translate(T(1), T(1))
     d = StructuredGrid(repeat(T.(0:10), 1, 11), repeat(T.(0:10)', 11, 1))
     r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
     @test r ≈ StructuredGrid(repeat(T.(1:11), 1, 11), repeat(T.(1:11)', 11, 1))
     @test TB.revert(f, r, c) ≈ d
 
@@ -831,6 +834,7 @@
     f = Scale(T(1), T(2))
     d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(1, 2), cart(11, 22), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -841,6 +845,7 @@
     f = Scale(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -851,6 +856,7 @@
     f = Scale(T(1), T(2))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -991,6 +997,7 @@
     f = Stretch(T(1), T(2))
     d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(1, -4), cart(11, 16), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1001,6 +1008,7 @@
     f = Stretch(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1011,6 +1019,7 @@
     f = Stretch(T(1), T(2))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1050,6 +1059,7 @@
     f = StdCoords()
     d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(-0.5, -0.5), cart(0.5, 0.5), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1177,6 +1187,7 @@
     f = Proj(Polar)
     d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(Polar(T(√2), T(π / 4))), T.((1, 1)))
 
     # ----------------
@@ -1345,6 +1356,7 @@
     f = LengthUnit(u"km")
     d = CartesianGrid((10, 10), cart(1000, 1000), T.((1000, 1000)))
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"))
 
     # ----------------
@@ -1354,6 +1366,7 @@
     f = LengthUnit(u"cm")
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # ---------------
@@ -1363,6 +1376,7 @@
     f = LengthUnit(u"km")
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # -----------
@@ -1562,6 +1576,7 @@
     f = Shadow(:yz)
     d = CartesianGrid((10, 11, 12), cart(1, 2, 3), T.((1.0, 1.1, 1.2)))
     r, c = TB.apply(f, d)
+    @test r isa CartesianGrid
     @test r == CartesianGrid((11, 12), cart(2, 3), T.((1.1, 1.2)))
 
     # ----------------
@@ -1571,6 +1586,7 @@
     f = Shadow(:xy)
     d = convert(RectilinearGrid, cartgrid(10, 11, 12))
     r, c = TB.apply(f, d)
+    @test r isa RectilinearGrid
     @test r == RectilinearGrid(Meshes.xyz(d)[1], Meshes.xyz(d)[2])
 
     # ---------------
@@ -1580,6 +1596,7 @@
     f = Shadow(:xz)
     d = convert(StructuredGrid, cartgrid(10, 11, 12))
     r, c = TB.apply(f, d)
+    @test r isa StructuredGrid
     @test r == StructuredGrid(Meshes.XYZ(d)[1][:, 1, :], Meshes.XYZ(d)[3][:, 1, :])
 
     # -----------
