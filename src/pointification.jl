@@ -20,6 +20,8 @@ pointify(p::Polytope) = collect(vertices(p))
 
 pointify(m::Multi) = pointify(parent(m))
 
+pointify(g::TransformedGeometry) = map(transform(g), pointify(parent(g)))
+
 pointify(geoms) = mapreduce(pointify, vcat, geoms)
 
 # ----------------

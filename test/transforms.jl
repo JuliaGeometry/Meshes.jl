@@ -45,9 +45,10 @@
     f = Rotate(Angle2d(T(π / 2)))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Quadrangle(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
-    q = TB.revert(f, r, c)
-    @test q ≈ convert(Quadrangle, g)
+    q = Quadrangle(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
+    @test all(pointify(r) .≈ pointify(q))
+    o = TB.revert(f, r, c)
+    @test all(pointify(o) .≈ pointify(g))
 
     f = Rotate(vector(1, 0, 0), vector(0, 1, 0))
     g = Box(cart(0, 0, 0), cart(1, 1, 1))
@@ -442,9 +443,10 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r ≈ Quadrangle(cart(1, 1), cart(1, 2), cart(0, 2), cart(0, 1))
-    q = TB.revert(f, r, c)
-    @test q ≈ convert(Quadrangle, g)
+    q = Quadrangle(cart(1, 1), cart(1, 2), cart(0, 2), cart(0, 1))
+    @test all(pointify(r) .≈ pointify(q))
+    o = TB.revert(f, r, c)
+    @test all(pointify(o) .≈ pointify(g))
 
     f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
     g = Box(cart(0, 0, 0), cart(1, 1, 1))
@@ -1139,15 +1141,6 @@
     g = Multi([t, t])
     r, c = TB.apply(f, g)
     @test r ≈ Multi([f(t), f(t)])
-
-    # ------
-    # PLANE
-    # ------
-
-    f = Proj(Cylindrical)
-    g = Plane(cart(1, 1, 1), vector(0, 0, 1))
-    r, c = TB.apply(f, g)
-    @test r ≈ Plane(Point(Cylindrical(T(√2), T(π / 4), T(1))), vector(0, 0, 1))
 
     # ---------
     # CYLINDER

@@ -100,3 +100,45 @@ include("transforms/within.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
 include("transforms/smoothing.jl")
+
+# --------------
+# OPTIMIZATIONS
+# --------------
+
+function →(t₁::Rotate, t₂::Rotate)
+  rot₁ = parameters(t₁).rot
+  rot₂ = parameters(t₂).rot
+  Rotate(rot₂ * rot₁)
+end
+
+function →(t₁::Translate, t₂::Translate)
+  offsets₁ = parameters(t₁).offsets
+  offsets₂ = parameters(t₂).offsets
+  Translate(offsets₁ .+ offsets₂)
+end
+
+function →(t₁::Scale, t₂::Scale)
+  factors₁ = parameters(t₁).factors
+  factors₂ = parameters(t₂).factors
+  Scale(factors₁ .* factors₂)
+end
+
+function →(t₁::Affine, t₂::Affine)
+  A₁ = parameters(t₁).A
+  A₂ = parameters(t₂).A
+  b₁ = parameters(t₁).b
+  b₂ = parameters(t₂).b
+  Affine(A₂ * A₁, A₂ * b₁ + b₂)
+end
+
+function →(t₁::Stretch, t₂::Stretch)
+  factors₁ = parameters(t₁).factors
+  factors₂ = parameters(t₂).factors
+  Stretch(factors₁ .* factors₂)
+end
+
+function →(t₁::Rotate, t₂::Translate)
+  rot = parameters(t₁).rot
+  offsets = parameters(t₂).offsets
+  Affine(rot, SVector(offsets))
+end

@@ -29,8 +29,6 @@ isinvertible(::Type{<:Translate}) = true
 
 inverse(t::Translate) = Translate(-1 .* t.offsets)
 
-→(t₁::Translate, t₂::Translate) = Translate(t₁.offsets .+ t₂.offsets)
-
 applycoord(t::Translate, p::Point) = p + Vec(t.offsets)
 
 applycoord(::Translate, v::Vec) = v
