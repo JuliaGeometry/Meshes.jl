@@ -51,32 +51,6 @@ _shadow(v::Vec, dims) = v[dims]
 
 _shadow(p::Point, dims) = withcrs(p, to(p)[dims])
 
-_shadow(::Plane, _) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
-
-_shadow(e::Ellipsoid, dims) = _shadow(discretize(e), dims)
-
-_shadow(d::Disk, dims) = _shadow(discretize(d), dims)
-
-_shadow(c::Circle, dims) = _shadow(discretize(c), dims)
-
-_shadow(c::Cylinder, dims) = _shadow(discretize(c), dims)
-
-_shadow(c::CylinderSurface, dims) = _shadow(discretize(c), dims)
-
-_shadow(c::Cone, dims) = _shadow(discretize(c), dims)
-
-_shadow(c::ConeSurface, dims) = _shadow(discretize(c), dims)
-
-_shadow(f::Frustum, dims) = _shadow(discretize(f), dims)
-
-_shadow(f::FrustumSurface, dims) = _shadow(discretize(f), dims)
-
-_shadow(p::ParaboloidSurface, dims) = _shadow(discretize(p), dims)
-
-_shadow(t::Torus, dims) = _shadow(discretize(t), dims)
-
-_shadow(t::CylindricalTrajectory, dims) = _shadow(GeometrySet(collect(t)), dims)
-
 function _shadow(g::CartesianGrid, dims)
   sz = size(g)[dims]
   or = _shadow(minimum(g), dims)
@@ -108,3 +82,33 @@ _shadow(x, _) = x
 _shadow(g::NTuple{<:Any,<:Geometry}, dims) = map(gᵢ -> _shadow(gᵢ, dims), g)
 _shadow(g::AbstractVector{<:Geometry}, dims) = [_shadow(gᵢ, dims) for gᵢ in g]
 _shadow(g::CircularVector{<:Geometry}, dims) = CircularVector([_shadow(gᵢ, dims) for gᵢ in g])
+
+# --------------
+# SPECIAL CASES
+# --------------
+
+apply(::Shadow, ::Plane) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
+
+apply(t::Shadow, e::Ellipsoid) = TransformedGeometry(e, t), nothing
+
+apply(t::Shadow, d::Disk) = TransformedGeometry(d, t), nothing
+
+apply(t::Shadow, c::Circle) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::Cylinder) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::CylinderSurface) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::Cone) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::ConeSurface) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, f::Frustum) = TransformedGeometry(f, t), nothing
+
+apply(t::Shadow, f::FrustumSurface) = TransformedGeometry(f, t), nothing
+
+apply(t::Shadow, p::ParaboloidSurface) = TransformedGeometry(p, t), nothing
+
+apply(t::Shadow, tr::Torus) = TransformedGeometry(tr, t), nothing
+
+apply(t::Shadow, ct::CylindricalTrajectory) = apply(t, GeometrySet(collect(ct))), nothing

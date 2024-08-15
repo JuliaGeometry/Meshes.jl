@@ -1439,8 +1439,7 @@
     g = Ellipsoid(T.((1, 2, 3)))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # -----
     # DISK
@@ -1450,8 +1449,7 @@
     g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # -------
     # CIRCLE
@@ -1461,7 +1459,7 @@
     g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # ----------------
     # CYLINDERSURFACE
@@ -1471,7 +1469,7 @@
     g = CylinderSurface(T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # ------------
     # CONESURFACE
@@ -1482,7 +1480,7 @@
     g = ConeSurface(Disk(p, T(2)), cart(0, 0, 1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # ---------------
     # FRUSTUMSURFACE
@@ -1494,7 +1492,7 @@
     g = FrustumSurface(Disk(pb, T(1)), Disk(pt, T(2)))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # ------------------
     # PARABOLOIDSURFACE
@@ -1504,7 +1502,7 @@
     g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # ------
     # TORUS
@@ -1514,7 +1512,7 @@
     g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
 
     # ---------
     # TRIANGLE
