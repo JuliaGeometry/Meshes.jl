@@ -8,14 +8,14 @@
   tb2 = Meshes.TransformedGeometry(tb, t2)
   @test Meshes.transform(tb2) == (t → t2)
   @test paramdim(tb) == paramdim(b)
+  @test tb == tb
+  @test tb ≈ tb
+  @test tb(T(0.5), T(0.5)) == t(b(T(0.5), T(0.5)))
   @test centroid(tb) == t(centroid(b))
   @test discretize(tb) == t(discretize(b))
-  @test tb(T(0.5), T(0.5)) == t(b(T(0.5), T(0.5)))
   t3 = Scale(T(2), T(2))
   tb3 = Meshes.TransformedGeometry(b, t3)
   @test measure(tb3) == 4 * measure(b)
-  equaltest(tb)
-  isapproxtest(tb)
 
   b = Ball(latlon(0, 0), T(1))
   t = Proj(Cartesian)
