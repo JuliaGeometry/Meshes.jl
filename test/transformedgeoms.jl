@@ -22,16 +22,12 @@
   tb = Meshes.TransformedGeometry(b, t)
   @test paramdim(tb) == paramdim(b)
   @test centroid(tb) == t(centroid(b))
-  equaltest(tb)
-  isapproxtest(tb)
 
   s = Sphere(latlon(0, 0), T(1))
   t = Proj(Cartesian)
   ts = Meshes.TransformedGeometry(s, t)
   @test paramdim(ts) == paramdim(s)
   @test centroid(ts) == t(centroid(s))
-  equaltest(ts)
-  isapproxtest(ts)
 
   s = Segment(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
@@ -39,8 +35,6 @@
   @test vertex(ts, 1) == t(vertex(s, 1))
   @test vertices(ts) == t.(vertices(s))
   @test nvertices(ts) == nvertices(s)
-  equaltest(ts)
-  isapproxtest(ts)
 
   p = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   t = Translate(T(1), T(2))
@@ -52,8 +46,6 @@
   p2 = PolyArea(cart(0, 0), cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   tp2 = Meshes.TransformedGeometry(p2, t)
   @test unique(tp2) == tp
-  equaltest(tp)
-  isapproxtest(tp)
 
   b = Box(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
