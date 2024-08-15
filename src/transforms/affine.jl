@@ -53,6 +53,8 @@ function inverse(t::Affine)
   Affine(A, b)
 end
 
+→(t₁::Affine, t₂::Affine) = Affine(t₂.A * t₁.A, t₂.A * t₁.b + t₂.b)
+
 applycoord(t::Affine, p::Point) = withcrs(p, t.A * to(p) + t.b)
 
 applycoord(t::Affine, v::Vec) = t.A * v

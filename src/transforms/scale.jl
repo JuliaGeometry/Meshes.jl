@@ -38,6 +38,8 @@ isinvertible(::Type{<:Scale}) = true
 
 inverse(t::Scale) = Scale(1 ./ t.factors)
 
+→(t₁::Scale, t₂::Scale) = Scale(t₁.factors .* t₂.factors)
+
 applycoord(t::Scale, p::Point) = withcrs(p, applycoord(t, to(p)))
 
 applycoord(t::Scale, v::Vec) = t.factors .* v

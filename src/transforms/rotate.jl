@@ -61,6 +61,8 @@ isinvertible(::Type{<:Rotate}) = true
 
 inverse(t::Rotate) = Rotate(inv(t.rot))
 
+→(t₁::Rotate, t₂::Rotate) = Rotate(t₂.rot * t₁.rot)
+
 applycoord(t::Rotate, p::Point) = withcrs(p, applycoord(t, to(p)))
 
 applycoord(t::Rotate, v::Vec) = urotapply(t.rot, v)
