@@ -45,16 +45,13 @@
     f = Rotate(Angle2d(T(π / 2)))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Quadrangle
     @test r ≈ Quadrangle(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
     q = TB.revert(f, r, c)
-    @test q isa Quadrangle
     @test q ≈ convert(Quadrangle, g)
 
     f = Rotate(vector(1, 0, 0), vector(0, 1, 0))
     g = Box(cart(0, 0, 0), cart(1, 1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Hexahedron
     @test r ≈ Hexahedron(
       cart(0, 0, 0),
       cart(0, 1, 0),
@@ -66,7 +63,6 @@
       cart(-1, 0, 1)
     )
     h = TB.revert(f, r, c)
-    @test h isa Hexahedron
     @test h ≈ convert(Hexahedron, g)
 
     # ----------
@@ -174,7 +170,6 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
-    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -185,7 +180,6 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -196,7 +190,6 @@
     f = Rotate(Angle2d(T(π / 2)))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -280,7 +273,6 @@
     f = Translate(T(1), T(1))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Box
     @test r ≈ Box(cart(1, 1), cart(2, 2))
     @test TB.revert(f, r, c) ≈ g
 
@@ -357,7 +349,6 @@
     f = Translate(T(1), T(1))
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -368,7 +359,6 @@
     f = Translate(T(1), T(1))
     d = RectilinearGrid(T.(0:10), T.(0:10))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
     @test r ≈ RectilinearGrid(T.(1:11), T.(1:11))
     @test TB.revert(f, r, c) ≈ d
 
@@ -379,7 +369,6 @@
     f = Translate(T(1), T(1))
     d = StructuredGrid(repeat(T.(0:10), 1, 11), repeat(T.(0:10)', 11, 1))
     r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
     @test r ≈ StructuredGrid(repeat(T.(1:11), 1, 11), repeat(T.(1:11)', 11, 1))
     @test TB.revert(f, r, c) ≈ d
 
@@ -450,16 +439,13 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Quadrangle
     @test r ≈ Quadrangle(cart(1, 1), cart(1, 2), cart(0, 2), cart(0, 1))
     q = TB.revert(f, r, c)
-    @test q isa Quadrangle
     @test q ≈ convert(Quadrangle, g)
 
     f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
     g = Box(cart(0, 0, 0), cart(1, 1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Hexahedron
     @test r ≈ Hexahedron(
       cart(1, 2, 3),
       cart(1, 2, 2),
@@ -471,7 +457,6 @@
       cart(2, 3, 3)
     )
     h = TB.revert(f, r, c)
-    @test h isa Hexahedron
     @test h ≈ convert(Hexahedron, g)
 
     # ---------
@@ -547,7 +532,6 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = cartgrid(10, 10)
     r, c = TB.apply(f, d)
-    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -558,7 +542,6 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -569,7 +552,6 @@
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa Meshes.TransformedGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -664,7 +646,6 @@
     f = Scale(T(1), T(2))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Box
     @test r ≈ Box(cart(0, 0), cart(1, 2))
     @test TB.revert(f, r, c) ≈ g
 
@@ -676,10 +657,9 @@
     g = Ball(cart(1, 2), T(3))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # -------
     # SPHERE
@@ -689,31 +669,25 @@
     g = Sphere(cart(1, 2), T(3))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     f = Scale(T(1), T(2), T(3))
     g = Sphere(cart(1, 2, 3), T(4))
     r, c = TB.apply(f, g)
-    @test r isa Ellipsoid
     @test r ≈ Ellipsoid(T.((4, 8, 12)), cart(1, 4, 9))
-    m = TB.revert(f, r, c)
-    @test m isa SimpleMesh
-    @test m ≈ discretize(g)
+    @test discretize(TB.revert(f, r, c)) ≈ discretize(g)
 
     f = Scale(T(2))
     g = Sphere(cart(1, 2), T(3))
     r, c = TB.apply(f, g)
-    @test r isa Sphere
     @test r ≈ Sphere(cart(2, 4), T(6))
     @test TB.revert(f, r, c) ≈ g
 
     f = Scale(T(2))
     g = Sphere(cart(1, 2, 3), T(4))
     r, c = TB.apply(f, g)
-    @test r isa Sphere
     @test r ≈ Sphere(cart(2, 4, 6), T(8))
     @test TB.revert(f, r, c) ≈ g
 
@@ -725,10 +699,9 @@
     g = Ellipsoid(T.((1, 2, 3)))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # -----
     # DISK
@@ -738,10 +711,9 @@
     g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # -------
     # CIRCLE
@@ -751,10 +723,9 @@
     g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # ----------------
     # CYLINDERSURFACE
@@ -764,10 +735,9 @@
     g = CylinderSurface(T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # ------------------
     # PARABOLOIDSURFACE
@@ -777,9 +747,8 @@
     g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(r) ≈ f(m)
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # ------
     # TORUS
@@ -789,10 +758,9 @@
     g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
-    @test r ≈ f(m)
+    @test discretize(r) ≈ f(m)
     @test centroid(r) ≈ f(centroid(g))
-    @test TB.revert(f, r, c) ≈ m
+    @test discretize(TB.revert(f, r, c)) ≈ m
 
     # ---------
     # TRIANGLE
@@ -863,7 +831,6 @@
     f = Scale(T(1), T(2))
     d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(1, 2), cart(11, 22), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -874,7 +841,6 @@
     f = Scale(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -885,7 +851,6 @@
     f = Scale(T(1), T(2))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -954,7 +919,6 @@
     f = Stretch(T(1), T(2))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Box
     @test r ≈ Box(cart(0, -0.5), cart(1, 1.5))
     @test TB.revert(f, r, c) ≈ g
 
@@ -1027,7 +991,6 @@
     f = Stretch(T(1), T(2))
     d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(1, -4), cart(11, 16), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1038,7 +1001,6 @@
     f = Stretch(T(1), T(2))
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1049,7 +1011,6 @@
     f = Stretch(T(1), T(2))
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f(vertices(d)), topology(d))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1089,7 +1050,6 @@
     f = StdCoords()
     d = CartesianGrid(cart(1, 1), cart(11, 11), dims=(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r ≈ CartesianGrid(cart(-0.5, -0.5), cart(0.5, 0.5), dims=(10, 10))
     @test TB.revert(f, r, c) ≈ d
 
@@ -1149,7 +1109,6 @@
     f = Proj(Polar)
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Box
     @test r ≈ Box(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
 
     # ---------
@@ -1218,7 +1177,6 @@
     f = Proj(Polar)
     d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(Polar(T(√2), T(π / 4))), T.((1, 1)))
 
     # ----------------
@@ -1228,7 +1186,6 @@
     f = Proj(Polar)
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa SimpleMesh
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # ---------------
@@ -1238,7 +1195,6 @@
     f = Proj(Polar)
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa SimpleMesh
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # -----------
@@ -1312,7 +1268,6 @@
     f = LengthUnit(u"cm")
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
-    @test r isa Box
     @test r ≈ Box(Point(T(0) * u"cm", T(0) * u"cm"), Point(T(100) * u"cm", T(100) * u"cm"))
 
     # -------
@@ -1322,7 +1277,6 @@
     f = LengthUnit(u"km")
     g = Sphere(cart(0, 0), T(1000))
     r, c = TB.apply(f, g)
-    @test r isa Sphere
     @test r ≈ Sphere(Point(T(0) * u"km", T(0) * u"km"), T(1) * u"km")
 
     # ----------
@@ -1332,7 +1286,6 @@
     f = LengthUnit(u"cm")
     g = Ellipsoid(T.((1, 1, 1)), cart(0, 0, 0))
     r, c = TB.apply(f, g)
-    @test r isa Ellipsoid
     @test r ≈
           Ellipsoid((T(100) * u"cm", T(100) * u"cm", T(100) * u"cm"), Point(T(0) * u"cm", T(0) * u"cm", T(0) * u"cm"))
 
@@ -1392,7 +1345,6 @@
     f = LengthUnit(u"km")
     d = CartesianGrid((10, 10), cart(1000, 1000), T.((1000, 1000)))
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"))
 
     # ----------------
@@ -1402,7 +1354,6 @@
     f = LengthUnit(u"cm")
     d = convert(RectilinearGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # ---------------
@@ -1412,7 +1363,6 @@
     f = LengthUnit(u"km")
     d = convert(StructuredGrid, cartgrid(10, 10))
     r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
     # -----------
@@ -1471,7 +1421,6 @@
     f = Shadow(:xy)
     g = Box(cart(1, 2, 3), cart(4, 5, 6))
     r, c = TB.apply(f, g)
-    @test r isa Box
     @test r == Box(cart(1, 2), cart(4, 5))
 
     # ------
@@ -1512,7 +1461,6 @@
     g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
     @test r ≈ f(m)
 
     # ----------------
@@ -1523,7 +1471,6 @@
     g = CylinderSurface(T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
     @test r ≈ f(m)
 
     # ------------
@@ -1535,7 +1482,6 @@
     g = ConeSurface(Disk(p, T(2)), cart(0, 0, 1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
     @test r ≈ f(m)
 
     # ---------------
@@ -1548,7 +1494,6 @@
     g = FrustumSurface(Disk(pb, T(1)), Disk(pt, T(2)))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
     @test r ≈ f(m)
 
     # ------------------
@@ -1559,7 +1504,6 @@
     g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
     @test r ≈ f(m)
 
     # ------
@@ -1570,7 +1514,6 @@
     g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
     m = discretize(g)
     r, c = TB.apply(f, g)
-    @test r isa SimpleMesh
     @test r ≈ f(m)
 
     # ---------
@@ -1621,7 +1564,6 @@
     f = Shadow(:yz)
     d = CartesianGrid((10, 11, 12), cart(1, 2, 3), T.((1.0, 1.1, 1.2)))
     r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
     @test r == CartesianGrid((11, 12), cart(2, 3), T.((1.1, 1.2)))
 
     # ----------------
@@ -1631,7 +1573,6 @@
     f = Shadow(:xy)
     d = convert(RectilinearGrid, cartgrid(10, 11, 12))
     r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
     @test r == RectilinearGrid(Meshes.xyz(d)[1], Meshes.xyz(d)[2])
 
     # ---------------
@@ -1641,7 +1582,6 @@
     f = Shadow(:xz)
     d = convert(StructuredGrid, cartgrid(10, 11, 12))
     r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
     @test r == StructuredGrid(Meshes.XYZ(d)[1][:, 1, :], Meshes.XYZ(d)[3][:, 1, :])
 
     # -----------
@@ -1795,7 +1735,6 @@
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     repair = Repair(9)
     rquad, cache = TB.apply(repair, quad)
-    @test rquad isa Quadrangle
     @test rquad == quad
 
     outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
@@ -1848,7 +1787,6 @@
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     repair = Repair(10)
     rquad, cache = TB.apply(repair, quad)
-    @test rquad isa Quadrangle
     @test rquad == quad
 
     poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
@@ -1941,7 +1879,6 @@
 
     poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     bpoly = poly |> Bridge()
-    @test bpoly isa Quadrangle
     @test bpoly == poly
 
     # bridge with latlon coords
