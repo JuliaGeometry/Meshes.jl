@@ -272,6 +272,7 @@
     f = Translate(T(1), T(1))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
+    @test r isa Box
     @test r ≈ Box(cart(1, 1), cart(2, 2))
     @test TB.revert(f, r, c) ≈ g
 
@@ -647,6 +648,7 @@
     f = Scale(T(1), T(2))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
+    @test r isa Box
     @test r ≈ Box(cart(0, 0), cart(1, 2))
     @test TB.revert(f, r, c) ≈ g
 
@@ -677,18 +679,21 @@
     f = Scale(T(1), T(2), T(3))
     g = Sphere(cart(1, 2, 3), T(4))
     r, c = TB.apply(f, g)
+    @test r isa Ellipsoid
     @test r ≈ Ellipsoid(T.((4, 8, 12)), cart(1, 4, 9))
     @test discretize(TB.revert(f, r, c)) ≈ discretize(g)
 
     f = Scale(T(2))
     g = Sphere(cart(1, 2), T(3))
     r, c = TB.apply(f, g)
+    @test r isa Sphere
     @test r ≈ Sphere(cart(2, 4), T(6))
     @test TB.revert(f, r, c) ≈ g
 
     f = Scale(T(2))
     g = Sphere(cart(1, 2, 3), T(4))
     r, c = TB.apply(f, g)
+    @test r isa Sphere
     @test r ≈ Sphere(cart(2, 4, 6), T(8))
     @test TB.revert(f, r, c) ≈ g
 
@@ -923,6 +928,7 @@
     f = Stretch(T(1), T(2))
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
+    @test r isa Box
     @test r ≈ Box(cart(0, -0.5), cart(1, 1.5))
     @test TB.revert(f, r, c) ≈ g
 
@@ -1268,6 +1274,7 @@
     f = LengthUnit(u"cm")
     g = Box(cart(0, 0), cart(1, 1))
     r, c = TB.apply(f, g)
+    @test r isa Box
     @test r ≈ Box(Point(T(0) * u"cm", T(0) * u"cm"), Point(T(100) * u"cm", T(100) * u"cm"))
 
     # -------
@@ -1277,6 +1284,7 @@
     f = LengthUnit(u"km")
     g = Sphere(cart(0, 0), T(1000))
     r, c = TB.apply(f, g)
+    @test r isa Sphere
     @test r ≈ Sphere(Point(T(0) * u"km", T(0) * u"km"), T(1) * u"km")
 
     # ----------
@@ -1286,6 +1294,7 @@
     f = LengthUnit(u"cm")
     g = Ellipsoid(T.((1, 1, 1)), cart(0, 0, 0))
     r, c = TB.apply(f, g)
+    @test r isa Ellipsoid
     @test r ≈
           Ellipsoid((T(100) * u"cm", T(100) * u"cm", T(100) * u"cm"), Point(T(0) * u"cm", T(0) * u"cm", T(0) * u"cm"))
 
@@ -1424,6 +1433,7 @@
     f = Shadow(:xy)
     g = Box(cart(1, 2, 3), cart(4, 5, 6))
     r, c = TB.apply(f, g)
+    @test r isa Box
     @test r == Box(cart(1, 2), cart(4, 5))
 
     # ------
@@ -1739,6 +1749,7 @@
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     repair = Repair(9)
     rquad, cache = TB.apply(repair, quad)
+    @test rquad isa Quadrangle
     @test rquad == quad
 
     outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
@@ -1791,6 +1802,7 @@
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     repair = Repair(10)
     rquad, cache = TB.apply(repair, quad)
+    @test rquad isa Quadrangle
     @test rquad == quad
 
     poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
@@ -1883,6 +1895,7 @@
 
     poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     bpoly = poly |> Bridge()
+    @test bpoly isa Quadrangle
     @test bpoly == poly
 
     # bridge with latlon coords

@@ -33,6 +33,40 @@ apply(t::Shadow, v::Vec) = _shadow(v, _sort(t.dims)), nothing
 
 apply(t::Shadow, g::GeometryOrDomain) = _shadow(g, _sort(t.dims)), nothing
 
+# --------------
+# SPECIAL CASES
+# --------------
+
+apply(::Shadow, ::Plane) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
+
+apply(t::Shadow, e::Ellipsoid) = TransformedGeometry(e, t), nothing
+
+apply(t::Shadow, d::Disk) = TransformedGeometry(d, t), nothing
+
+apply(t::Shadow, c::Circle) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::Cylinder) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::CylinderSurface) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::Cone) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, c::ConeSurface) = TransformedGeometry(c, t), nothing
+
+apply(t::Shadow, f::Frustum) = TransformedGeometry(f, t), nothing
+
+apply(t::Shadow, f::FrustumSurface) = TransformedGeometry(f, t), nothing
+
+apply(t::Shadow, p::ParaboloidSurface) = TransformedGeometry(p, t), nothing
+
+apply(t::Shadow, tr::Torus) = TransformedGeometry(tr, t), nothing
+
+apply(t::Shadow, ct::CylindricalTrajectory) = apply(t, GeometrySet(collect(ct))), nothing
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
 function _index(d)
   if d == 'x'
     1
@@ -82,33 +116,3 @@ _shadow(x, _) = x
 _shadow(g::NTuple{<:Any,<:Geometry}, dims) = map(gᵢ -> _shadow(gᵢ, dims), g)
 _shadow(g::AbstractVector{<:Geometry}, dims) = [_shadow(gᵢ, dims) for gᵢ in g]
 _shadow(g::CircularVector{<:Geometry}, dims) = CircularVector([_shadow(gᵢ, dims) for gᵢ in g])
-
-# --------------
-# SPECIAL CASES
-# --------------
-
-apply(::Shadow, ::Plane) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
-
-apply(t::Shadow, e::Ellipsoid) = TransformedGeometry(e, t), nothing
-
-apply(t::Shadow, d::Disk) = TransformedGeometry(d, t), nothing
-
-apply(t::Shadow, c::Circle) = TransformedGeometry(c, t), nothing
-
-apply(t::Shadow, c::Cylinder) = TransformedGeometry(c, t), nothing
-
-apply(t::Shadow, c::CylinderSurface) = TransformedGeometry(c, t), nothing
-
-apply(t::Shadow, c::Cone) = TransformedGeometry(c, t), nothing
-
-apply(t::Shadow, c::ConeSurface) = TransformedGeometry(c, t), nothing
-
-apply(t::Shadow, f::Frustum) = TransformedGeometry(f, t), nothing
-
-apply(t::Shadow, f::FrustumSurface) = TransformedGeometry(f, t), nothing
-
-apply(t::Shadow, p::ParaboloidSurface) = TransformedGeometry(p, t), nothing
-
-apply(t::Shadow, tr::Torus) = TransformedGeometry(tr, t), nothing
-
-apply(t::Shadow, ct::CylindricalTrajectory) = apply(t, GeometrySet(collect(ct))), nothing
