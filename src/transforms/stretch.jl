@@ -36,6 +36,8 @@ isinvertible(::Type{<:Stretch}) = true
 
 inverse(t::Stretch) = Stretch(1 ./ t.factors)
 
+→(t₁::Stretch, t₂::Stretch) = Stretch(t₁.factors .* t₂.factors)
+
 function apply(t::Stretch, g::GeometryOrDomain)
   p = _stretch(t, g)
   n, c = apply(p, g)
