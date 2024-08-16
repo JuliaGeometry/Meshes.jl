@@ -29,15 +29,15 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
-# convert the CRS and use the default manifold
-applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
-
 # convert the CRS and preserve the manifold
-applycoord(::Proj{CRS}, p::Point{M}) where {CRS<:Basic,M<:🌐} = Point{M}(convert(CRS, coords(p)))
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Basic} = Point{🌐}(convert(CRS, coords(p)))
 
-# fix ambiguities
-applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Projected} = Point(convert(CRS, coords(p)))
-applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Geographic} = Point(convert(CRS, coords(p)))
+# convert the CRS and use the default manifold
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Projected} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Geographic} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Basic} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Projected} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Geographic} = _proj(CRS, p)
 
 applycoord(::Proj, v::Vec) = v
 
@@ -64,3 +64,9 @@ function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS}) where {CRS}
   println(io)
   print(io, "└─ CRS: $CRS")
 end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_proj(CRS, p) = Point(convert(CRS, coords(p)))
