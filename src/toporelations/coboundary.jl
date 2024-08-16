@@ -32,25 +32,22 @@ function (𝒞::Coboundary{0,D,D,T})(ind::Integer) where {D,T<:GridTopology}
   cycl = isperiodic(topo)
   cind = corner2cart(topo, ind)
 
-  # offsets along each dimension
-  offsets = CartesianIndices(ntuple(i -> -1:0, D))
-
-  ninds = NTuple{D,Int}[]
-  for offset in offsets
+  inds = Int[]
+  for offset in CartesianIndices(ntuple(i -> -1:0, D))
     # apply offset to center index
     sind = cind .+ Tuple(offset)
 
     # wrap indices in case of periodic dimension
-    wrap(i) = mod1(sind[i], dims[i])
-    wind = ntuple(i -> cycl[i] ? wrap(i) : sind[i], D)
+    wind = ntuple(D) do i
+      cycl[i] ? mod1(sind[i], dims[i]) : sind[i]
+    end
 
     # discard invalid indices
     valid(i) = 1 ≤ wind[i] ≤ dims[i]
-    all(valid, 1:D) && push!(ninds, wind)
+    all(valid, 1:D) && push!(inds, cart2elem(topo, wind...))
   end
 
-  # return linear index of element
-  [cart2elem(topo, ind...) for ind in ninds]
+  inds
 end
 
 # -------------------
@@ -69,13 +66,13 @@ function (𝒞::Coboundary{0,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(𝒞.topology, ind)
 
   # initialize result
-  elements = [e.elem]
+  inds = [e.elem]
 
   # search in CCW orientation
   p = e.prev
   h = p.half
   while !isnothing(h.elem) && h != e
-    push!(elements, h.elem)
+    push!(inds, h.elem)
     p = h.prev
     h = p.half
   end
@@ -85,13 +82,13 @@ function (𝒞::Coboundary{0,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
     # search in CW orientation
     h = e.half
     while !isnothing(h.elem)
-      pushfirst!(elements, h.elem)
+      pushfirst!(inds, h.elem)
       n = h.next
       h = n.half
     end
   end
 
-  elements
+  inds
 end
 
 # elements sharing a segment in 2D mesh
