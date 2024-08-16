@@ -141,10 +141,10 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   tcolors = Makie.@lift $tparams[3]
   tshading = Makie.@lift $tparams[4]
 
-  # construc the mesh
+  # Makie's triangle mesh
   mkemesh = Makie.@lift GB.Mesh($tcoords, $tconnec)
 
-  # visualize as built-in mesh
+  # main visualization
   Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
 
   if showsegments[]
