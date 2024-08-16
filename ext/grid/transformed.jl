@@ -4,19 +4,31 @@
 
 function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
   tgrid = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
   grid = Makie.@lift parent($tgrid)
   trans = Makie.@lift Meshes.transform($tgrid)
   if isoptimized(crs(grid[]), trans[])
-    color = plot[:color]
-    alpha = plot[:alpha]
-    colormap = plot[:colormap]
     showsegments = plot[:showsegments]
     segmentcolor = plot[:segmentcolor]
     segmentsize = plot[:segmentsize]
     viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans)
   else
-    vizmesh!(plot, M, pdim, edim)
+    if paramdim(tgrid[]) == 2
+      colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+      texture = Makie.@lift reshape($colorant, size($tgrid))
+      coords = Makie.@lift map(asmakie, vertices($tgrid))
+      quads = Makie.@lift [GB.QuadFace(vertices(e)) for e in elements(topology($tgrid))]
+      sz = Makie.@lift size($tgrid)
+      uv = Makie.@lift [Mke.Vec2f(u, v) for u in range(0, 1, $sz[1]) for v in range(0, 1, $sz[2])]
+      msh = Makie.@lift GB.Mesh(Makie.meta($coords, uv=$uv), $quads)
+      Makie.mesh!(msh, color=texture)
+    else
+      vizmesh!(plot, M, pdim, edim)
+    end
   end
 end
 
