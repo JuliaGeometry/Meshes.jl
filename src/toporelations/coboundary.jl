@@ -47,7 +47,7 @@ function (𝒞::Coboundary{0,D,D,T})(ind::Integer) where {D,T<:GridTopology}
     all(valid, 1:D) && push!(inds, cart2elem(topo, wind...))
   end
 
-  inds
+  ntuple(i -> inds[i], length(inds))
 end
 
 # -------------------
@@ -58,7 +58,10 @@ end
 function (𝒞::Coboundary{0,1,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
   t = 𝒞.topology
   𝒜 = Adjacency{0}(t)
-  [edge4pair(t, (ind, other)) for other in 𝒜(ind)]
+  o = 𝒜(ind)
+  ntuple(length(o)) do i
+    edge4pair(t, (ind, o[i]))
+  end
 end
 
 # elements sharing a vertex in 2D mesh
@@ -88,11 +91,11 @@ function (𝒞::Coboundary{0,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
     end
   end
 
-  inds
+  ntuple(i -> inds[i], length(inds))
 end
 
 # elements sharing a segment in 2D mesh
 function (𝒞::Coboundary{1,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
   e = half4edge(𝒞.topology, ind)
-  isnothing(e.half.elem) ? [e.elem] : [e.elem, e.half.elem]
+  isnothing(e.half.elem) ? (e.elem,) : (e.elem, e.half.elem)
 end
