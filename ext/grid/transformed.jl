@@ -21,7 +21,7 @@ function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, p
       colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
       texture = Makie.@lift reshape($colorant, size($tgrid))
       coords = Makie.@lift map(asmakie, vertices($tgrid))
-      quads = Makie.@lift [GB.QuadFace(vertices(e)) for e in elements(topology($tgrid))]
+      quads = Makie.@lift [GB.QuadFace(indices(e)) for e in elements(topology($tgrid))]
       sz = Makie.@lift size($tgrid)
       uv = Makie.@lift [Mke.Vec2f(u, v) for u in range(0, 1, $sz[1]) for v in range(0, 1, $sz[2])]
       msh = Makie.@lift GB.Mesh(Makie.meta($coords, uv=$uv), $quads)
