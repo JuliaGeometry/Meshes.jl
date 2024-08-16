@@ -32,8 +32,8 @@ function refine(mesh, ::CatmullClark)
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
   epts = map(1:nelements(t)) do elem
-    ps = view(points, ∂₂₀(elem))
-    cₒ = sum(to, ps) / length(ps)
+    is = ∂₂₀(elem)
+    cₒ = sum(j -> to(points[j]), is) / length(is)
     withcrs(mesh, cₒ)
   end
 
@@ -41,11 +41,11 @@ function refine(mesh, ::CatmullClark)
   ∂₁₂ = Coboundary{1,2}(t)
   ∂₁₀ = Boundary{1,0}(t)
   fpts = map(1:nfacets(t)) do edge
-    ps = view(epts, ∂₁₂(edge))
-    qs = view(points, ∂₁₀(edge))
-    ∑p = sum(to, ps)
-    ∑q = sum(to, qs)
-    M = length(ps) + length(qs)
+    is = ∂₁₂(edge)
+    js = ∂₁₀(edge)
+    ∑p = sum(i -> to(epts[i]), is)
+    ∑q = sum(j -> to(points[j]), js)
+    M = length(is) + length(js)
     withcrs(mesh, (∑p + ∑q) / M)
   end
 
@@ -57,16 +57,13 @@ function refine(mesh, ::CatmullClark)
     P = to(points[u])
 
     # average of centroids
-    ps = view(epts, ∂₀₂(u))
-    F = sum(to, ps) / length(ps)
+    is = ∂₀₂(u)
+    F = sum(i -> to(epts[i]), is) / length(is)
 
     # average of midpoints
     vs = ∂₀₀(u)
     n = length(vs)
-    R = sum(vs) do v
-      uv = view(points, [u, v])
-      sum(to, uv) / 2
-    end / n
+    R = sum(v -> to(points[u]) + to(points[v]), vs) / 2n
 
     withcrs(mesh, (F + 2R + (n - 3)P) / n)
   end
@@ -81,13 +78,15 @@ function refine(mesh, ::CatmullClark)
   ∂₂₁ = Boundary{2,1}(t)
   newconnec = Connectivity{Quadrangle,4}[]
   for elem in 1:nelements(t)
-    verts = CircularVector(∂₂₀(elem))
-    edges = CircularVector(∂₂₁(elem))
-    for i in 1:length(edges)
+    verts = ∂₂₀(elem)
+    edges = ∂₂₁(elem)
+    nv = length(verts)
+    ne = length(edges)
+    for i in 1:ne
       u = elem + offset₁
-      v = edges[i] + offset₂
-      w = verts[i + 1]
-      z = edges[i + 1] + offset₂
+      v = edges[mod1(i, ne)] + offset₂
+      w = verts[mod1(i + 1, nv)]
+      z = edges[mod1(i + 1, ne)] + offset₂
       quad = connect((u, v, w, z))
       push!(newconnec, quad)
     end

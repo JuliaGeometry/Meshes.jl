@@ -17,8 +17,10 @@ Optionally, specify the `kind` of discretization.
 
 ## Available discretizations
 
-* `:uniform`   - `Lᵢⱼ = 1 / |𝒩(i)|, ∀j ∈ 𝒩(i)`
-* `:cotangent` - `Lᵢⱼ = cot(αᵢⱼ) + cot(βᵢⱼ), ∀j ∈ 𝒩(i)`
+* `:uniform`   - `Lᵢⱼ = 1 / |𝒜(i)|, ∀j ∈ 𝒜(i)`
+* `:cotangent` - `Lᵢⱼ = cot(αᵢⱼ) + cot(βᵢⱼ), ∀j ∈ 𝒜(i)`
+
+where `𝒜(i)` is the adjacency relation at vertex `i`.
 
 ## References
 
@@ -38,7 +40,7 @@ function laplacematrix(mesh; kind=nothing)
   𝒯 = adjusttopo(topology(mesh))
 
   # retrieve adjacency relation
-  𝒩 = Adjacency{0}(𝒯)
+  𝒜 = Adjacency{0}(𝒯)
 
   # initialize matrix
   n = nvertices(mesh)
@@ -46,18 +48,18 @@ function laplacematrix(mesh; kind=nothing)
 
   # fill matrix
   if 𝒦 == :uniform
-    uniformlaplacian!(L, 𝒩)
+    uniformlaplacian!(L, 𝒜)
   elseif 𝒦 == :cotangent
-    cotangentlaplacian!(L, 𝒩, vertices(mesh))
+    cotangentlaplacian!(L, 𝒜, vertices(mesh))
   end
 
   L
 end
 
-function uniformlaplacian!(L, 𝒩)
+function uniformlaplacian!(L, 𝒜)
   n = size(L, 1)
   for i in 1:n
-    js = 𝒩(i)
+    js = 𝒜(i)
     for j in js
       L[i, j] = 1 / length(js)
     end
@@ -65,12 +67,15 @@ function uniformlaplacian!(L, 𝒩)
   end
 end
 
-function cotangentlaplacian!(L, 𝒩, v)
+function cotangentlaplacian!(L, 𝒜, v)
   n = size(L, 1)
   for i in 1:n
-    js = CircularVector(𝒩(i))
-    for k in 1:length(js)
-      j₋, j, j₊ = js[k - 1], js[k], js[k + 1]
+    js = 𝒜(i)
+    m = length(js)
+    for k in 1:m
+      j₋ = js[mod1(k - 1, m)]
+      j = js[mod1(k, m)]
+      j₊ = js[mod1(k + 1, m)]
       vᵢ, vⱼ = v[i], v[j]
       v₋, v₊ = v[j₋], v[j₊]
       αᵢⱼ = ∠(vⱼ, v₋, vᵢ)
@@ -111,7 +116,8 @@ function measurematrix(mesh)
 
   # fill matrix
   for i in 1:n
-    Aᵢ = sum(A[∂(i)]) / 3
+    js = ∂(i)
+    Aᵢ = sum(j -> A[j], js) / 3
     M[i, i] = 2Aᵢ
   end
 
