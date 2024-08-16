@@ -21,16 +21,16 @@ function refine(mesh, ::QuadRefinement)
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
   epts = map(1:nelements(t)) do elem
-    ps = view(points, ∂₂₀(elem))
-    cₒ = sum(to, ps) / length(ps)
+    is = ∂₂₀(elem)
+    cₒ = sum(j -> to(points[j]), is) / length(is)
     withcrs(mesh, cₒ)
   end
 
   # add midpoints of edges
   ∂₁₀ = Boundary{1,0}(t)
   fpts = map(1:nfacets(t)) do edge
-    ps = view(points, ∂₁₀(edge))
-    cₒ = sum(to, ps) / length(ps)
+    is = ∂₁₀(edge)
+    cₒ = sum(i -> to(points[i]), is) / length(is)
     withcrs(mesh, cₒ)
   end
 
@@ -47,13 +47,15 @@ function refine(mesh, ::QuadRefinement)
   ∂₂₁ = Boundary{2,1}(t)
   newconnec = Connectivity{Quadrangle,4}[]
   for elem in 1:nelements(t)
-    verts = CircularVector(∂₂₀(elem))
-    edges = CircularVector(∂₂₁(elem))
-    for i in 1:length(edges)
+    verts = ∂₂₀(elem)
+    edges = ∂₂₁(elem)
+    nv = length(verts)
+    ne = length(edges)
+    for i in 1:ne
       u = elem + offset₁
-      v = edges[i] + offset₂
-      w = verts[i + 1]
-      z = edges[i + 1] + offset₂
+      v = edges[mod1(i, ne)] + offset₂
+      w = verts[mod1(i + 1, nv)]
+      z = edges[mod1(i + 1, ne)] + offset₂
       quad = connect((u, v, w, z))
       push!(newconnec, quad)
     end

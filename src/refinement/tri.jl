@@ -24,8 +24,8 @@ function refine(mesh, ::TriRefinement)
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
   epts = map(1:nelements(t)) do elem
-    ps = view(points, ∂₂₀(elem))
-    cₒ = sum(to, ps) / length(ps)
+    is = ∂₂₀(elem)
+    cₒ = sum(i -> to(points[i]), is) / length(is)
     withcrs(mesh, cₒ)
   end
 
@@ -40,11 +40,12 @@ function refine(mesh, ::TriRefinement)
   # connect vertices into new triangles
   newconnec = Connectivity{Triangle,3}[]
   for elem in 1:nelements(t)
-    verts = CircularVector(∂₂₀(elem))
-    for i in 1:length(verts)
+    verts = ∂₂₀(elem)
+    nv = length(verts)
+    for i in 1:nv
       u = elem + offset
-      v = verts[i]
-      w = verts[i + 1]
+      v = verts[mod1(i, nv)]
+      w = verts[mod1(i + 1, nv)]
       tri = connect((u, v, w))
       push!(newconnec, tri)
     end

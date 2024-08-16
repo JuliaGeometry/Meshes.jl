@@ -163,7 +163,9 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
       # interleaved with a sentinel index
       inds = Int[]
       for i in 1:nfacets(t)
-        append!(inds, ∂(i))
+        for j in ∂(i)
+          push!(inds, j)
+        end
         push!(inds, nvert + 1)
       end
 
