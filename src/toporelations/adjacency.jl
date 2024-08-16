@@ -63,7 +63,7 @@ function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
     all(valid, 1:D) && push!(inds, cart2elem(topo, wind...))
   end
 
-  inds
+  ntuple(i -> inds[i], length(inds))
 end
 
 # -------------------
@@ -100,7 +100,7 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
     end
   end
 
-  inds
+  ntuple(i -> inds[i], length(inds))
 end
 
 # adjacent elements in a 2D half-edge topology
@@ -118,5 +118,5 @@ function (𝒜::Adjacency{2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
     n = n.next
   end
 
-  inds
+  ntuple(i -> inds[i], length(inds))
 end

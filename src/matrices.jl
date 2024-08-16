@@ -82,7 +82,7 @@ function cotangentlaplacian!(L, 𝒜, v)
       βᵢⱼ = ∠(vᵢ, v₊, vⱼ)
       L[i, j] = cot(αᵢⱼ) + cot(βᵢⱼ)
     end
-    L[i, i] = -sum(L[i, js])
+    L[i, i] = -sum(j -> L[i, j], js)
   end
 end
 
@@ -105,7 +105,7 @@ function measurematrix(mesh)
   D = paramdim(mesh)
 
   # retrieve coboundary relation
-  ∂ = Coboundary{0,D}(𝒯)
+  𝒞 = Coboundary{0,D}(𝒯)
 
   # pre-compute all measures
   A = measure.(mesh)
@@ -116,7 +116,7 @@ function measurematrix(mesh)
 
   # fill matrix
   for i in 1:n
-    js = ∂(i)
+    js = 𝒞(i)
     Aᵢ = sum(j -> A[j], js) / 3
     M[i, i] = 2Aᵢ
   end
