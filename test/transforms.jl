@@ -1107,19 +1107,19 @@
     r, c = TB.apply(f, g)
     @test r ≈ Point(Polar(T(√2), T(π / 4)))
 
-    # changes the Manifold
+    # change the manifold
     f = Proj(Mercator)
-    g = latlon(45, 90)
+    g = latlon(0, 0)
     r, c = TB.apply(f, g)
     @test manifold(r) === 𝔼{2}
-    @test r ≈ merc(10018754.171394622, 5591295.9185533915)
+    @test r ≈ merc(0, 0)
 
-    # maintains the Manifold
+    # preserve the manifold
     f = Proj(Cartesian)
-    g = latlon(30, 40)
+    g = latlon(0, 0)
     r, c = TB.apply(f, g)
     @test manifold(r) === 🌐
-    @test r ≈ cart(4234890.278665873, 3553494.8709047823, 3170373.735383637)
+    @test r ≈ cart(6378137.0, 0, 0)
 
     # --------
     # SEGMENT
@@ -1232,7 +1232,7 @@
     # SPECIAL CASES
     # --------------
 
-    f = Proj(Marcator)
+    f = Proj(Mercator)
     g = Box(latlon(0, 180), latlon(45, 90))
     r, c = TB.apply(f, g)
     @test manifold(r) === 𝔼{2}

@@ -35,6 +35,10 @@ applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
 # convert the CRS and preserve the manifold
 applycoord(::Proj{CRS}, p::Point{M}) where {CRS<:Basic,M<:🌐} = Point{M}(convert(CRS, coords(p)))
 
+# fix ambiguities
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Projected} = Point(convert(CRS, coords(p)))
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Geographic} = Point(convert(CRS, coords(p)))
+
 applycoord(::Proj, v::Vec) = v
 
 # --------------
