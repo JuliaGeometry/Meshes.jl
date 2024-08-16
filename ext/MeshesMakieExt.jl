@@ -12,6 +12,8 @@ using LinearAlgebra
 using CoordRefSystems
 using Colorfy
 
+using Unitful: numtype
+using Meshes: lentype
 using CoordRefSystems: Projected
 
 import TransformsBase as TB
