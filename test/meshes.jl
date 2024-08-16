@@ -726,7 +726,7 @@
     mesh = SimpleMesh(points, connec)
     trans = Proj(Cartesian)
     tmesh = Meshes.TransformedMesh(mesh, trans)
-    @test manifold(tmesh) === 𝔼{3}
+    @test manifold(tmesh) === 🌐
     @test crs(tmesh) <: Cartesian
     trans = Proj(Polar)
     tgrid = Meshes.TransformedMesh(grid, trans)
