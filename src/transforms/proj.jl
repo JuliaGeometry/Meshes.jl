@@ -29,7 +29,15 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
-applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
+# convert the CRS and preserve the manifold
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Basic} = Point{🌐}(convert(CRS, coords(p)))
+
+# convert the CRS and (possibly) change the manifold
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Projected} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Geographic} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Basic} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Projected} = _proj(CRS, p)
+applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Geographic} = _proj(CRS, p)
 
 applycoord(::Proj, v::Vec) = v
 
@@ -37,7 +45,9 @@ applycoord(::Proj, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Proj, g::Primitive) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Projected}, g::Primitive{<:🌐}) = TransformedGeometry(g, t)
+
+applycoord(t::Proj{<:Geographic}, g::Primitive{<:𝔼}) = TransformedGeometry(g, t)
 
 applycoord(t::Proj, g::RectilinearGrid) = applycoord(t, convert(SimpleMesh, g))
 
@@ -54,3 +64,9 @@ function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS}) where {CRS}
   println(io)
   print(io, "└─ CRS: $CRS")
 end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_proj(CRS, p) = Point(convert(CRS, coords(p)))
