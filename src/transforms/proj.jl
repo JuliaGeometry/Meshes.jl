@@ -32,7 +32,7 @@ parameters(::Proj{CRS}) where {CRS} = (; CRS)
 # convert the CRS and preserve the manifold
 applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Basic} = Point{🌐}(convert(CRS, coords(p)))
 
-# convert the CRS and use the default manifold
+# convert the CRS and (possibly) change the manifold
 applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Projected} = _proj(CRS, p)
 applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Geographic} = _proj(CRS, p)
 applycoord(::Proj{CRS}, p::Point{<:𝔼}) where {CRS<:Basic} = _proj(CRS, p)
