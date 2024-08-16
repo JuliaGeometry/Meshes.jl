@@ -63,7 +63,7 @@ function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
   i5 += oz
   i6 += oz
 
-  [i1, i2, i3, i4, i5, i6]
+  (i1, i2, i3, i4, i5, i6)
 end
 
 # vertices of hexahedron on 3D grid
@@ -85,12 +85,13 @@ function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   i6 = cart2corner(t, i₊, j, k₊)
   i7 = cart2corner(t, i₊, j₊, k₊)
   i8 = cart2corner(t, i, j₊, k₊)
-  [i1, i2, i3, i4, i5, i6, i7, i8]
+
+  (i1, i2, i3, i4, i5, i6, i7, i8)
 end
 
 # vertices of quadrangle on 3D grid
 function (∂::Boundary{2,0,3,T})(ind::Integer) where {T<:GridTopology}
-  @error "not implemented"
+  throw(ErrorException("not implemented"))
 end
 
 # segments making up quadrangles in 2D grid
@@ -122,7 +123,7 @@ function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
   i3 += oy
   i4 += oy
 
-  [i1, i2, i3, i4]
+  (i1, i2, i3, i4)
 end
 
 # vertices of quadrangle on 2D grid
@@ -139,7 +140,8 @@ function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   i2 = cart2corner(t, i₊, j)
   i3 = cart2corner(t, i₊, j₊)
   i4 = cart2corner(t, i, j₊)
-  [i1, i2, i3, i4]
+
+  (i1, i2, i3, i4)
 end
 
 # vertices of segment on 2D grid
@@ -164,7 +166,7 @@ function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
     i2 = cart2corner(t, i₊, j)
   end
 
-  [i1, i2]
+  (i1, i2)
 end
 
 # vertices of segment on 1D grid
@@ -176,7 +178,7 @@ function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
   i1 = ind
   i2 = c ? mod1(ind + 1, n) : ind + 1
 
-  [i1, i2]
+  (i1, i2)
 end
 
 # -------------------
@@ -186,17 +188,23 @@ end
 function (∂::Boundary{2,1,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
   t = ∂.topology
   l = loop(half4elem(t, elem))
-  v = CircularVector(l)
-  [edge4pair(t, (v[i], v[i + 1])) for i in 1:length(v)]
+  n = length(l)
+  ntuple(n) do i
+    edge4pair(t, (l[mod1(i, n)], l[mod1(i + 1, n)]))
+  end
 end
 
 function (∂::Boundary{2,0,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
-  loop(half4elem(∂.topology, elem))
+  t = ∂.topology
+  l = loop(half4elem(t, elem))
+  n = length(l)
+  ntuple(i -> l[i], n)
 end
 
 function (∂::Boundary{1,0,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
-  e = half4edge(∂.topology, edge)
-  [e.head, e.half.head]
+  t = ∂.topology
+  e = half4edge(t, edge)
+  (e.head, e.half.head)
 end
 
 # ----------------
@@ -204,5 +212,5 @@ end
 # ----------------
 
 function (∂::Boundary{D,0,D,T})(ind::Integer) where {D,T<:SimpleTopology}
-  collect(connec4elem(∂.topology, ind))
+  connec4elem(∂.topology, ind)
 end

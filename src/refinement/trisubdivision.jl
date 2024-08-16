@@ -36,10 +36,10 @@ function refine(mesh, ::TriSubdivision)
   midpoints = Dict{Tuple{Int,Int},Int}()
   ∂₁₀ = Boundary{1,0}(t)
   for eind in 1:nfacets(t)
-    i, j = sort(∂₁₀(eind))
+    i, j = ∂₁₀(eind)
     edge = Segment(points[i], points[j])
     push!(points, centroid(edge))
-    midpoints[(i, j)] = (np += 1)
+    midpoints[_ordered(i, j)] = (np += 1)
   end
 
   # construct subtriangles of faces
