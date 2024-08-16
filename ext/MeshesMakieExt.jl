@@ -13,6 +13,7 @@ using CoordRefSystems
 using Colorfy
 
 using CoordRefSystems: Projected
+using Makie: GeometryBasics as GB
 
 import TransformsBase as TB
 
