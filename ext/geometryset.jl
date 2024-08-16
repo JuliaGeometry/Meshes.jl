@@ -128,22 +128,3 @@ function showfacets2D!(plot, geoms)
     viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
   end
 end
-
-asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
-
-asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
-
-function asmakie(poly::Polygon)
-  rs = rings(poly)
-  outer = [asmakie(p) for p in vertices(first(rs))]
-  if hasholes(poly)
-    inners = map(i -> [asmakie(p) for p in vertices(rs[i])], 2:length(rs))
-    Makie.Polygon(outer, inners)
-  else
-    Makie.Polygon(outer)
-  end
-end
-
-asmakie(p::Point) = Makie.Point(ustrip.(Tuple(to(p))))
-
-asmakie(v::Vec) = Makie.Vec(ustrip.(Tuple(v)))

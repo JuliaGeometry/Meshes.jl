@@ -15,6 +15,7 @@ using Colorfy
 using CoordRefSystems: Projected
 
 import TransformsBase as TB
+import Makie.GeometryBasics as GB
 
 import Meshes: viz, viz!
 import Makie

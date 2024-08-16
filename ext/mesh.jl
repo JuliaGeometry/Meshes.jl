@@ -71,16 +71,19 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
     elems = elements(topo)
 
     # coordinates of vertices
-    coords = map(p -> ustrip.(to(p)), verts)
+    coords = map(asmakie, verts)
 
     # fan triangulation (assume convexity)
-    tris4elem = map(elems) do elem
+    ntris = sum(e -> nvertices(pltype(e)) - 2, elems)
+    tris = Vector{GB.TriangleFace{Int}}(undef, ntris)
+    tind = 0
+    for elem in elems
       I = indices(elem)
-      [[I[1], I[i], I[i + 1]] for i in 2:(length(I) - 1)]
+      for i in 2:(length(I) - 1)
+        tind += 1
+        tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
+      end
     end
-
-    # flatten vector of triangles
-    tris = [tri for tris in tris4elem for tri in tris]
 
     # element vs. vertex coloring
     if $colorant isa AbstractVector
@@ -89,18 +92,18 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
         # duplicate vertices and adjust
         # connectivities to avoid linear
         # interpolation of colors
-        nt = 0
+        tind = 0
         elem4tri = Dict{Int,Int}()
-        for e in 1:nelem
-          Δs = tris4elem[e]
-          for _ in 1:length(Δs)
-            nt += 1
-            elem4tri[nt] = e
+        sizehint!(elem4tri, ntris)
+        for (eind, e) in enumerate(elems)
+          for _ in 1:(nvertices(pltype(e)) - 2)
+            tind += 1
+            elem4tri[tind] = eind
           end
         end
-        nv = 3nt
+        nv = 3ntris
         tcoords = [coords[i] for tri in tris for i in tri]
-        tconnec = [collect(I) for I in Iterators.partition(1:nv, 3)]
+        tconnec = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntris)]
         tcolors = map(1:nv) do i
           t = ceil(Int, i / 3)
           e = elem4tri[t]
@@ -126,22 +129,23 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
       tcolors = $colorant
     end
 
-    # convert connectivities to matrix format
-    tmatrix = reduce(hcat, tconnec) |> transpose
-
     # enable shading in 3D
     tshading = dim == 3 ? Makie.FastShading : Makie.NoShading
 
-    tcoords, tmatrix, tcolors, tshading
+    tcoords, tconnec, tcolors, tshading
   end
 
   # unpack observable of parameters
   tcoords = Makie.@lift $tparams[1]
-  tmatrix = Makie.@lift $tparams[2]
+  tconnec = Makie.@lift $tparams[2]
   tcolors = Makie.@lift $tparams[3]
   tshading = Makie.@lift $tparams[4]
 
-  Makie.mesh!(plot, tcoords, tmatrix, color=tcolors, shading=tshading)
+  # Makie's triangle mesh
+  mkemesh = Makie.@lift GB.Mesh($tcoords, $tconnec)
+
+  # main visualization
+  Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
 
   if showsegments[]
     # retrieve coordinates parameters

@@ -27,3 +27,22 @@ function vizmany!(plot, objs, color)
 
   viz!(plot, object, color=colors, alpha=alphas, colormap=colormap, pointsize=pointsize, segmentsize=segmentsize)
 end
+
+asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
+
+asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
+
+function asmakie(poly::Polygon)
+  rs = rings(poly)
+  outer = [asmakie(p) for p in vertices(first(rs))]
+  if hasholes(poly)
+    inners = map(i -> [asmakie(p) for p in vertices(rs[i])], 2:length(rs))
+    Makie.Polygon(outer, inners)
+  else
+    Makie.Polygon(outer)
+  end
+end
+
+asmakie(p::Point) = Makie.Point{embeddim(p),Float32}(ustrip.(Tuple(to(p))))
+
+asmakie(v::Vec) = Makie.Vec{length(v),Float32}(ustrip.(Tuple(v)))
