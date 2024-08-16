@@ -1107,6 +1107,20 @@
     r, c = TB.apply(f, g)
     @test r ≈ Point(Polar(T(√2), T(π / 4)))
 
+    # changes the Manifold
+    f = Proj(Mercator)
+    g = latlon(45, 90)
+    r, c = TB.apply(f, g)
+    @test manifold(r) === 𝔼{2}
+    @test r ≈ merc(10018754.171394622, 5591295.9185533915)
+
+    # maintains the Manifold
+    f = Proj(Cartesian)
+    g = latlon(30, 40)
+    r, c = TB.apply(f, g)
+    @test manifold(r) === 🌐
+    @test r ≈ cart(4234890.278665873, 3553494.8709047823, 3170373.735383637)
+
     # --------
     # SEGMENT
     # --------
@@ -1213,6 +1227,20 @@
     d = SimpleMesh(p, c)
     r, c = TB.apply(f, d)
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+    # --------------
+    # SPECIAL CASES
+    # --------------
+
+    f = Proj(Marcator)
+    g = Box(latlon(0, 180), latlon(45, 90))
+    r, c = TB.apply(f, g)
+    @test manifold(r) === 𝔼{2}
+
+    f = Proj(LatLon)
+    g = Box(merc(0, 0), merc(1, 1))
+    r, c = TB.apply(f, g)
+    @test manifold(r) === 🌐
   end
 
   @testset "LengthUnit" begin

@@ -29,7 +29,11 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
+# converts the CRS and uses an appropriate Manifold
 applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
+
+# converts the CRS and maintains the Manifold
+applycoord(::Proj{CRS}, p::Point{M}) where {CRS<:Basic,M<:🌐} = Point{M}(convert(CRS, coords(p)))
 
 applycoord(::Proj, v::Vec) = v
 
@@ -37,7 +41,9 @@ applycoord(::Proj, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Proj, g::Primitive) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Projected}, g::Primitive{<:🌐}) = TransformedGeometry(g, t)
+
+applycoord(t::Proj{<:Geographic}, g::Primitive{<:𝔼}) = TransformedGeometry(g, t)
 
 applycoord(t::Proj, g::RectilinearGrid) = applycoord(t, convert(SimpleMesh, g))
 
