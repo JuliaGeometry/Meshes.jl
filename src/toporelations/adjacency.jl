@@ -34,6 +34,7 @@ function (𝒜::Adjacency{0,D,T})(ind::Integer) where {D,T<:GridTopology}
   # construct topology for vertices
   vtopo = GridTopology(dims .+ 1, cycl)
   𝒜vert = Adjacency{D}(vtopo)
+
   𝒜vert(ind)
 end
 
@@ -44,25 +45,25 @@ function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
   cycl = isperiodic(topo)
   cind = elem2cart(topo, ind)
 
-  # offsets along each dimension
-  offsets = [ntuple(i -> i == d ? s : 0, D) for d in 1:D for s in (-1, 1)]
+  inds = Int[]
+  for d in 1:D, s in (-1, 1)
+    # offset along each dimension
+    offset = ntuple(i -> i == d ? s : 0, D)
 
-  ninds = NTuple{D,Int}[]
-  for offset in offsets
     # apply offset to center index
     sind = cind .+ offset
 
     # wrap indices in case of periodic dimension
-    wrap(i) = mod1(sind[i], dims[i])
-    wind = ntuple(i -> cycl[i] ? wrap(i) : sind[i], D)
+    wind = ntuple(D) do i
+      cycl[i] ? mod1(sind[i], dims[i]) : sind[i]
+    end
 
     # discard invalid indices
     valid(i) = 1 ≤ wind[i] ≤ dims[i]
-    all(valid, 1:D) && push!(ninds, wind)
+    all(valid, 1:D) && push!(inds, cart2elem(topo, wind...))
   end
 
-  # return linear index of element
-  [cart2elem(topo, ind...) for ind in ninds]
+  inds
 end
 
 # -------------------
@@ -74,13 +75,13 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   e = half4vert(𝒜.topology, vert)
 
   # initialize result
-  vertices = [e.half.head]
+  inds = [e.half.head]
 
   # search in CCW orientation
   p = e.prev
   h = p.half
   while !isnothing(h.elem) && h != e
-    push!(vertices, p.head)
+    push!(inds, p.head)
     p = h.prev
     h = p.half
   end
@@ -88,18 +89,18 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
   # if border edge is hit
   if isnothing(h.elem)
     # add last arm manually
-    push!(vertices, p.head)
+    push!(inds, p.head)
 
     # search in CW orientation
     h = e.half
     while !isnothing(h.elem)
       n = h.next
       h = n.half
-      pushfirst!(vertices, h.head)
+      pushfirst!(inds, h.head)
     end
   end
 
-  vertices
+  inds
 end
 
 # adjacent elements in a 2D half-edge topology
