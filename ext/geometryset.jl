@@ -144,6 +144,6 @@ function asmakie(poly::Polygon)
   end
 end
 
-asmakie(p::Point) = Makie.Point(ustrip.(Tuple(to(p))))
+asmakie(p::Point) = Makie.Point{embeddim(p),Float32}(ustrip.(Tuple(to(p))))
 
-asmakie(v::Vec) = Makie.Vec(ustrip.(Tuple(v)))
+asmakie(v::Vec) = Makie.Vec{length(v),Float32}(ustrip.(Tuple(v)))

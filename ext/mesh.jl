@@ -144,7 +144,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   # construc the mesh
   mkemesh = Makie.@lift GB.Mesh($tcoords, $tconnec)
 
-  # # visualize as built-in mesh
+  # visualize as built-in mesh
   Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
 
   if showsegments[]
