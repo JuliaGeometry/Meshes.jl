@@ -29,10 +29,10 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
-# converts the CRS and uses an appropriate Manifold
+# convert the CRS and use the default manifold
 applycoord(::Proj{CRS}, p::Point) where {CRS} = Point(convert(CRS, coords(p)))
 
-# converts the CRS and maintains the Manifold
+# convert the CRS and preserve the manifold
 applycoord(::Proj{CRS}, p::Point{M}) where {CRS<:Basic,M<:🌐} = Point{M}(convert(CRS, coords(p)))
 
 applycoord(::Proj, v::Vec) = v
