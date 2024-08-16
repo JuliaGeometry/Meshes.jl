@@ -120,7 +120,7 @@ nvertices(t::GridTopology) = prod(t.dims .+ t.open)
 function element(t::GridTopology{D}, ind) where {D}
   ∂ = Boundary{D,0}(t)
   T = elementtype(t)
-  connect(Tuple(∂(ind)), T)
+  connect(∂(ind), T)
 end
 
 nelements(t::GridTopology) = prod(t.dims)
@@ -128,7 +128,7 @@ nelements(t::GridTopology) = prod(t.dims)
 function facet(t::GridTopology{D}, ind) where {D}
   ∂ = Boundary{D - 1,0}(t)
   T = facettype(t)
-  connect(Tuple(∂(ind)), T)
+  connect(∂(ind), T)
 end
 
 nfacets(t::GridTopology{1}) = t.dims[1] + t.open[1]
