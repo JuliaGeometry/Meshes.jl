@@ -19,7 +19,7 @@ function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, p
     grid = Makie.@lift parent($tgrid)
     viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans)
-  elseif pdim == 2 # visualize quadrangle mesh with texture using uv coords
+  elseif pdim == Val(2) # visualize quadrangle mesh with texture using uv coords
     verts = Makie.@lift map(asmakie, vertices($tgrid))
     quads = Makie.@lift [GB.QuadFace(indices(e)) for e in elements(topology($tgrid))]
 
@@ -35,14 +35,18 @@ function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, p
     elseif ncolor[] == nquads[]
       Makie.@lift reshape($colorant, $dims)
     elseif ncolor[] == nverts[]
-      throw(ErrorException("cannot visualize transformed grid with colors on vertices"))
+      Makie.@lift reshape($colorant, $dims .+ 1)
+    else
+      throw(ArgumentError("invalid number of colors"))
     end
 
-    uv = Makie.@lift [Makie.Vec2f(u, v) for u in range(0, 1, $dims[1] + 1) for v in range(0, 1, $dims[2] + 1)]
+    uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $dims[2] + 1) for u in range(0, 1, $dims[1] + 1)]
 
     mesh = Makie.@lift GB.Mesh(Makie.meta($verts, uv=$uv), $quads)
 
-    Makie.mesh!(mesh, color=texture)
+    shading = edim == Val(3) ? Makie.FastShading : Makie.NoShading
+
+    Makie.mesh!(plot, mesh, color=texture, shading=shading)
   else # fallback to triangle mesh visualization
     vizmesh!(plot, M, pdim, edim)
   end
