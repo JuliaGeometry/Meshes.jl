@@ -41,7 +41,7 @@ function (c::ConeSurface)(φ, h)
   l = norm(v)
   θ = ∠(n, v)
   o = c.apex + T(h) * v
-  r = T(h) * l * cos(θ)
+  r = T(h) * l * tan(θ)
   s = Circle(Plane(o, n), r)
   s(T(φ))
 end
