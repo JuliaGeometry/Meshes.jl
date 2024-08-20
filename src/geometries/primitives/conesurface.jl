@@ -37,7 +37,7 @@ function (c::ConeSurface)(φ, h)
     throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
   n = -normal(c.base)
-  v = c.base(T(0), T(0)) - c.apex
+  v = c.base(0, 0) - c.apex
   l = norm(v)
   θ = ∠(n, v)
   o = c.apex + T(h) * v
