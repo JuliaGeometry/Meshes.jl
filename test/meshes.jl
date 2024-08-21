@@ -717,8 +717,7 @@
     @test TransformedMesh(mesh, trans) == mesh
     trans1 = Translate(T(10), T(10))
     trans2 = Translate(T(-10), T(-10))
-    @test TransformedMesh(TransformedMesh(grid, trans1), trans2) ==
-          TransformedMesh(grid, trans1 → trans2)
+    @test TransformedMesh(TransformedMesh(grid, trans1), trans2) == TransformedMesh(grid, trans1 → trans2)
 
     # transforms that change the Manifold and/or CRS
     points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
