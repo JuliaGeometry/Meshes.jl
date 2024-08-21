@@ -5,7 +5,7 @@
 """
     TransformedGeometry(geometry, transform)
 
-Lazy representation of a geometric `transform` applied to a `geometry`.
+Lazy representation of a coordinate `transform` applied to a `geometry`.
 """
 struct TransformedGeometry{M<:Manifold,C<:CRS,G<:Geometry,T<:Transform} <: Geometry{M,C}
   geometry::G

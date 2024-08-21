@@ -234,6 +234,9 @@ export
   MultiPolygon,
   MultiPolyhedron,
 
+  # transformed geometry
+  TransformedGeometry,
+
   # connectivities
   Connectivity,
   paramdim,
@@ -297,11 +300,12 @@ export
   # meshes
   Mesh,
   Grid,
-  SubGrid,
+  SimpleMesh,
+  TransformedMesh,
   CartesianGrid,
   RectilinearGrid,
   StructuredGrid,
-  SimpleMesh,
+  TransformedGrid,
   vertex,
   vertices,
   nvertices,

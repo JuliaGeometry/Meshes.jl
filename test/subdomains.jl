@@ -40,7 +40,7 @@
   # view of view stores the correct domain
   g = cartgrid(10, 10)
   v = view(view(g, 11:20), 1:3)
-  @test v isa SubGrid
+  @test v isa Meshes.SubGrid
   @test v[1] == g[11]
   @test v[2] == g[12]
   @test v[3] == g[13]
@@ -58,7 +58,7 @@
   # concatenation with same parent
   g = cartgrid(10, 10)
   vg = vcat(view(g, 50:70), view(g, 10:30))
-  @test vg isa SubGrid
+  @test vg isa Meshes.SubGrid
   @test vg == view(g, [50:70; 10:30])
   # concatenation with different parents
   g1 = cartgrid(10, 10)
