@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
+function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
   tgrid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
