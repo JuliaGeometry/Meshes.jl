@@ -234,6 +234,9 @@ export
   MultiPolygon,
   MultiPolyhedron,
 
+  # transformed geometry
+  TransformedGeometry,
+
   # connectivities
   Connectivity,
   paramdim,

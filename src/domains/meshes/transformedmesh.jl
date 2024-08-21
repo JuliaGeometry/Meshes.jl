@@ -5,7 +5,7 @@
 """
     TransformedMesh(mesh, transform)
 
-Lazy representation of a geometric `transform` applied to a `mesh`.
+Lazy representation of a coordinate `transform` applied to a `mesh`.
 """
 struct TransformedMesh{M<:Manifold,C<:CRS,TP<:Topology,MS<:Mesh,TR<:Transform} <: Mesh{M,C,TP}
   mesh::MS
