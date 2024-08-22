@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    DouglasPeuckerSimplification([ϵ]; min=3, max=typemax(Int), maxiter=10)
+    DouglasPeuckerSimplification(ϵ)
 
 Simplify geometries with Douglas-Peucker algorithm. The higher
 is the tolerance `ϵ`, the more aggressive is the simplification.
