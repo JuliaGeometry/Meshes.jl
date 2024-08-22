@@ -15,12 +15,12 @@
   pts = [p1, p2, p3]
   @test sideof(pts, c) == [IN, OUT, ON]
 
-  c_mm = LengthUnit(Unitful.mm)(c)
-  @test sideof(p1, c_mm) == IN
-  @test sideof(p2, c_mm) == OUT
-  @test sideof(p3, c_mm) == ON
+  c′ = c |> LengthUnit(Unitful.mm)
+  @test sideof(p1, c′) == IN
+  @test sideof(p2, c′) == OUT
+  @test sideof(p3, c′) == ON
   pts = [p1, p2, p3]
-  @test sideof(pts, c_mm) == [IN, OUT, ON]
+  @test sideof(pts, c′) == [IN, OUT, ON]
 
   p1, p2, p3 = merc(0.5, 0.5), merc(1.5, 0.5), merc(1, 1)
   c = Ring([merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)])
