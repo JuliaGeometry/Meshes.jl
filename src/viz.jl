@@ -17,6 +17,7 @@ Visualize Meshes.jl `object` with various `options`.
 * `segmentcolor` - color of segments
 * `segmentsize`  - width of segments
 * `showpoints`   - visualize points
+* `pointmarker`  - marker of points
 * `pointcolor`   - color of points
 * `pointsize`    - size of points
 

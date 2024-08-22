@@ -41,13 +41,14 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colorant)
+  pointmarker = plot[:pointmarker]
   pointsize = plot[:pointsize]
 
-  # get coordinates
+  # get raw Cartesian coordinates of points
   coords = Makie.@lift map(p -> ustrip.(to(p)), $geoms)
 
-  # visualize points
-  Makie.scatter!(plot, coords, color=colorant, markersize=pointsize, overdraw=true)
+  # visualize points with given marker and size
+  Makie.scatter!(plot, coords, color=colorant, marker=pointmarker, markersize=pointsize, overdraw=true)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
@@ -105,14 +106,15 @@ end
 
 function showfacets1D!(plot, geoms)
   showpoints = plot[:showpoints]
+  pointmarker = plot[:pointmarker]
   pointcolor = plot[:pointcolor]
   pointsize = plot[:pointsize]
 
   if showpoints[]
     # all boundaries are points or multipoints
-    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
-    bset = Makie.@lift GeometrySet($bounds)
-    viz!(plot, bset, color=pointcolor, pointsize=pointsize)
+    points = Makie.@lift filter(!isnothing, boundary.($geoms))
+    pset = Makie.@lift GeometrySet($points)
+    viz!(plot, pset, color=pointcolor, pointmarker=pointmarker, pointsize=pointsize)
   end
 end
 
