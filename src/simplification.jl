@@ -12,9 +12,7 @@ abstract type SimplificationMethod end
 """
     simplify(object, method)
 
-Simplify `object` with given `method`.
-
-See also [`decimate`](@ref).
+Simplify geometric `object` with given `method`.
 """
 function simplify end
 
@@ -33,20 +31,3 @@ simplify(domain::Domain, method::SimplificationMethod) = GeometrySet([simplify(e
 include("simplification/selinger.jl")
 include("simplification/douglaspeucker.jl")
 include("simplification/binarysearch.jl")
-
-# ----------
-# UTILITIES
-# ----------
-
-"""
-    decimate(object, [ϵ]; min=3, max=typemax(Int), maxiter=10)
-
-Simplify `object` with an appropriate simplification method
-and deviation tolerance `ϵ`.
-
-If the tolerance `ϵ` is not provided, perform binary search until
-the number of vertices is between `min` and `max` or until the
-number of iterations reaches a maximum `maxiter`.
-"""
-decimate(object, ϵ=nothing; min=3, max=typemax(Int), maxiter=10) =
-  simplify(object, DouglasPeuckerSimplification(ϵ, min=min, max=max, maxiter=maxiter))

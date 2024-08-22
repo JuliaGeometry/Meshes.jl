@@ -461,7 +461,6 @@ export
   DouglasPeuckerSimplification,
   BinarySearchSimplification,
   simplify,
-  decimate,
 
   # bounding boxes
   boundingbox,

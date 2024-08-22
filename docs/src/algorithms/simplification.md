@@ -7,7 +7,6 @@ import CairoMakie as Mke # hide
 
 ```@docs
 simplify
-decimate
 SimplificationMethod
 ```
 
