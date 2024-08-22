@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    DouglasPeucker([ϵ]; min=3, max=typemax(Int), maxiter=10)
+    DouglasPeuckerSimplification([ϵ]; min=3, max=typemax(Int), maxiter=10)
 
 Simplify geometries with Douglas-Peucker algorithm. The higher
 is the tolerance `ϵ`, the more aggressive is the simplification.
@@ -18,20 +18,20 @@ number of iterations reaches a maximum `maxiter`.
   the Number of Points Required to Represent a Digitized Line or its
   Caricature](https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-struct DouglasPeucker{T} <: SimplificationMethod
+struct DouglasPeuckerSimplification{T} <: SimplificationMethod
   ϵ::T
   min::Int
   max::Int
   maxiter::Int
 end
 
-DouglasPeucker(ϵ=nothing; min=3, max=typemax(Int), maxiter=10) = DouglasPeucker(_ϵ(ϵ), min, max, maxiter)
+DouglasPeuckerSimplification(ϵ=nothing; min=3, max=typemax(Int), maxiter=10) = DouglasPeuckerSimplification(_ϵ(ϵ), min, max, maxiter)
 
 _ϵ(ϵ::Nothing) = ϵ
 _ϵ(ϵ::Number) = _ϵ(addunit(ϵ, u"m"))
 _ϵ(ϵ::Len) = float(ϵ)
 
-function simplify(chain::Chain, method::DouglasPeucker)
+function simplify(chain::Chain, method::DouglasPeuckerSimplification)
   v = if isnothing(method.ϵ)
     # perform binary search with other parameters
     βsimplify(vertices(chain), method.min, method.max, method.maxiter)

@@ -3,25 +3,25 @@
 # ------------------------------------------------------------------
 
 """
-    Selinger(ϵ)
+    SelingerSimplification(ϵ)
 
-Simplify geometries with Selinger's algorithm, which attempts to
+Simplify geometries with SelingerSimplification's algorithm, which attempts to
 minimize the number of vertices and the deviation of vertices
 to the resulting segments based on deviation tolerance `ϵ`.
 
 ## References
 
-* Selinger, P. 2003. [Potrace: A polygon-based tracing algorithm]
+* SelingerSimplification, P. 2003. [Potrace: A polygon-based tracing algorithm]
   (https://potrace.sourceforge.net/potrace.pdf)
 """
-struct Selinger{ℒ<:Len} <: SimplificationMethod
+struct SelingerSimplification{ℒ<:Len} <: SimplificationMethod
   ϵ::ℒ
-  Selinger(ϵ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(ϵ)
+  SelingerSimplification(ϵ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(ϵ)
 end
 
-Selinger(ϵ) = Selinger(addunit(ϵ, u"m"))
+SelingerSimplification(ϵ) = SelingerSimplification(addunit(ϵ, u"m"))
 
-function simplify(chain::Chain, method::Selinger)
+function simplify(chain::Chain, method::SelingerSimplification)
   ℒ = lentype(chain)
   𝒜 = typeof(zero(ℒ)^2)
 

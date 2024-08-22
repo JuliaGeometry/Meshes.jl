@@ -14,7 +14,7 @@ SimplificationMethod
 ## Douglas-Peucker
 
 ```@docs
-DouglasPeucker
+DouglasPeuckerSimplification
 ```
 
 ```@example simplification
@@ -60,9 +60,9 @@ polyarea = PolyArea([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569
                      (0.37951034, 0.31436795), (0.37547874, 0.30905423), (0.36070493, 0.3204269),
                      (0.33518887, 0.348486), (0.29893062, 0.3932315), (0.25193012, 0.45466346)])
 
-simp1 = simplify(polyarea, DouglasPeucker(0.01))
-simp2 = simplify(polyarea, DouglasPeucker(0.05))
-simp3 = simplify(polyarea, DouglasPeucker(0.10))
+simp1 = simplify(polyarea, DouglasPeuckerSimplification(0.01))
+simp2 = simplify(polyarea, DouglasPeuckerSimplification(0.05))
+simp3 = simplify(polyarea, DouglasPeuckerSimplification(0.10))
 
 fig = Mke.Figure(size = (800, 800))
 viz(fig[1,1], polyarea)
@@ -75,13 +75,13 @@ fig
 ## Selinger
 
 ```@docs
-Selinger
+SelingerSimplification
 ```
 
 ```@example simplification
-simp1 = simplify(polyarea, Selinger(0.01))
-simp2 = simplify(polyarea, Selinger(0.05))
-simp3 = simplify(polyarea, Selinger(0.10))
+simp1 = simplify(polyarea, SelingerSimplification(0.01))
+simp2 = simplify(polyarea, SelingerSimplification(0.05))
+simp3 = simplify(polyarea, SelingerSimplification(0.10))
 
 fig = Mke.Figure(size = (800, 800))
 viz(fig[1,1], polyarea)

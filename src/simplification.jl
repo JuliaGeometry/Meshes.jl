@@ -18,9 +18,7 @@ See also [`decimate`](@ref).
 """
 function simplify end
 
-simplify(box::Box, method::SimplificationMethod) = _simplify(box, Val(embeddim(box)), method)
-
-_simplify(box::Box, ::Val{2}, method::SimplificationMethod) = PolyArea(simplify(boundary(box), method))
+simplify(box::Box{𝔼{2}}, method::SimplificationMethod) = PolyArea(simplify(boundary(box), method))
 
 simplify(polygon::Polygon, method::SimplificationMethod) = PolyArea([simplify(ring, method) for ring in rings(polygon)])
 
@@ -50,4 +48,4 @@ the number of vertices is between `min` and `max` or until the
 number of iterations reaches a maximum `maxiter`.
 """
 decimate(object, ϵ=nothing; min=3, max=typemax(Int), maxiter=10) =
-  simplify(object, DouglasPeucker(ϵ, min=min, max=max, maxiter=maxiter))
+  simplify(object, DouglasPeuckerSimplification(ϵ, min=min, max=max, maxiter=maxiter))

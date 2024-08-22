@@ -457,8 +457,8 @@ export
 
   # simplification
   SimplificationMethod,
-  DouglasPeucker,
-  Selinger,
+  DouglasPeuckerSimplification,
+  SelingerSimplification,
   simplify,
   decimate,
 
