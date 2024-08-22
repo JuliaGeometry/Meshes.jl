@@ -8,10 +8,6 @@
 Simplify geometries with Douglas-Peucker algorithm. The higher
 is the tolerance `ϵ`, the more aggressive is the simplification.
 
-If the tolerance `ϵ` is not provided, perform binary search until
-the number of vertices is between `min` and `max` or until the
-number of iterations reaches a maximum `maxiter`.
-
 ## References
 
 * Douglas, D. and Peucker, T. 1973. [Algorithms for the Reduction of
@@ -20,65 +16,16 @@ number of iterations reaches a maximum `maxiter`.
 """
 struct DouglasPeuckerSimplification{T} <: SimplificationMethod
   ϵ::T
-  min::Int
-  max::Int
-  maxiter::Int
+  DouglasPeuckerSimplification(ϵ::T) where {T} = new{float(T)}(ϵ)
 end
-
-DouglasPeuckerSimplification(ϵ=nothing; min=3, max=typemax(Int), maxiter=10) = DouglasPeuckerSimplification(_ϵ(ϵ), min, max, maxiter)
-
-_ϵ(ϵ::Nothing) = ϵ
-_ϵ(ϵ::Number) = _ϵ(addunit(ϵ, u"m"))
-_ϵ(ϵ::Len) = float(ϵ)
 
 function simplify(chain::Chain, method::DouglasPeuckerSimplification)
-  v = if isnothing(method.ϵ)
-    # perform binary search with other parameters
-    βsimplify(vertices(chain), method.min, method.max, method.maxiter)
-  else
-    # perform Douglas-Peucker ϵ-simplification
-    ϵsimplify(vertices(chain), method.ϵ)
-  end |> collect
-  isclosed(chain) ? Ring(v) : Rope(v)
-end
-
-# simplification by means of binary search
-function βsimplify(v::AbstractVector{P}, min, max, maxiter) where {P<:Point}
-  i = 0
-  u = v
-  n = length(u)
-  a = zero(lentype(P))
-  b = initeps(u)
-  while !(min ≤ n ≤ max) && i < maxiter
-    # midpoint candidate
-    ϵ = (a + b) / 2
-
-    # evaluate at midpoint
-    u = ϵsimplify(v, ϵ)
-    n = length(u)
-
-    # binary search
-    n < min && (b = ϵ)
-    n > max && (a = ϵ)
-
-    i += 1
-  end
-
-  u
-end
-
-# initial ϵ guess for a given chain
-function initeps(v::AbstractVector{P}) where {P<:Point}
-  n = length(v)
-  ϵ = typemax(lentype(P))
-  l = Line(first(v), last(v))
-  d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
-  ϵ = quantile(d, 0.25)
-  2ϵ
+  verts = _douglaspeucker(vertices(chain), method.ϵ) |> collect
+  isclosed(chain) ? Ring(verts) : Rope(verts)
 end
 
 # simplify chain assuming it is open
-function ϵsimplify(v::AbstractVector{P}, ϵ) where {P<:Point}
+function _douglaspeucker(v::AbstractVector{P}, ϵ) where {P<:Point}
   # find vertex with maximum distance
   # to reference line
   l = Line(first(v), last(v))
@@ -94,8 +41,8 @@ function ϵsimplify(v::AbstractVector{P}, ϵ) where {P<:Point}
   if dmax < ϵ
     [first(v), last(v)]
   else
-    v₁ = ϵsimplify(v[begin:imax], ϵ)
-    v₂ = ϵsimplify(v[imax:end], ϵ)
+    v₁ = _douglaspeucker(v[begin:imax], ϵ)
+    v₂ = _douglaspeucker(v[imax:end], ϵ)
     [v₁[begin:(end - 1)]; v₂]
   end
 end

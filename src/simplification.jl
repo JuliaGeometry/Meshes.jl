@@ -30,8 +30,9 @@ simplify(domain::Domain, method::SimplificationMethod) = GeometrySet([simplify(e
 # IMPLEMENTATIONS
 # ----------------
 
-include("simplification/douglaspeucker.jl")
 include("simplification/selinger.jl")
+include("simplification/douglaspeucker.jl")
+include("simplification/binarysearch.jl")
 
 # ----------
 # UTILITIES
