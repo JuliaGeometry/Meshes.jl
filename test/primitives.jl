@@ -1122,6 +1122,7 @@
     @test crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test isnothing(boundary(s))
+    @test_throws DomainError p(0, nextfloat(1.0))
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
@@ -1131,6 +1132,9 @@
     @test paramdim(c) == 2
     @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
+    @test p(0, 0) ≈ a
+    @test p(0, 1) ≈ cart(1, 0, 0)
+    @test p(T(0.25), 1) ≈ cart(0, 1, 0)
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
