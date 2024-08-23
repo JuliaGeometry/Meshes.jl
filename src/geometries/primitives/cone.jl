@@ -35,20 +35,19 @@ halfangle(c::Cone) = atan(radius(base(c)), height(c))
 Base.isapprox(c₁::Cone, c₂::Cone; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
 
-function (cone::Cone)(uφ, ur, uh)
+function (c::Cone)(φ, r, h)
   T = numtype(lentype(cone))
-  if (uφ < 0 || uφ > 1) || (ur < 0 || ur > 1) || (uh < 0 || uh > 1)
-    throw(DomainError((uφ, ur, uh), "c(φ, r, h) is not defined for φ, r, h outside [0, 1]³."))
+  if (φ < 0 || φ > 1) || (r < 0 || r > 1) || (h < 0 || h > 1)
+    throw(DomainError((φ, r, h), "c(φ, r, h) is not defined for φ, r, h outside [0, 1]³."))
   end
 
-  a = cone.apex
-  R = cone.base.radius
-  b = cone.base.plane.p
-  û = normalize(cone.base.plane.u)
-  v̂ = normalize(cone.base.plane.v)
-  sφ, cφ = sincospi(2uφ)
-  r = R * ur
-  c = b + Vec(r * cφ * û) + Vec(r * sφ * v̂)
-  h̄ = uh * (c - a)
+  a = c.apex
+  R = radius(c.base)
+  p = c.base.plane.p
+  û = normalize(c.base.plane.u)
+  v̂ = normalize(c.base.plane.v)
+  sφ, cφ = sincospi(2φ)
+  b = p + Vec(r * R * cφ * û) + Vec(r * R * sφ * v̂)
+  h̄ = h * (b - a)
   a + h̄
 end
