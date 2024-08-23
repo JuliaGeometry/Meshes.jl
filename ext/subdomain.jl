@@ -24,6 +24,7 @@ function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
+  pointmarker = plot[:pointmarker]
   pointcolor = plot[:pointcolor]
   pointsize = plot[:pointsize]
 
@@ -42,6 +43,7 @@ function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
     segmentcolor,
     segmentsize,
     showpoints,
+    pointmarker,
     pointcolor,
     pointsize
   )

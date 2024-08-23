@@ -14,7 +14,6 @@ using Colorfy
 
 using Unitful: numtype
 using Meshes: lentype
-using CoordRefSystems: Projected
 
 import TransformsBase as TB
 import Makie.GeometryBasics as GB
@@ -32,6 +31,7 @@ Makie.@recipe(Viz, object) do scene
     segmentcolor=:gray30,
     segmentsize=1.5,
     showpoints=false,
+    pointmarker=:circle,
     pointcolor=:gray30,
     pointsize=4
   )

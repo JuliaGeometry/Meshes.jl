@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
+function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
   tgrid = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -20,8 +20,11 @@ function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, p
     viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans)
   elseif pdim == Val(2) # visualize quadrangle mesh with texture using uv coords
+    # decide whether or not to reverse connectivity list
+    rfunc = Makie.@lift _reverse(crs($tgrid))
+
     verts = Makie.@lift map(asmakie, vertices($tgrid))
-    quads = Makie.@lift [GB.QuadFace(indices(e)) for e in elements(topology($tgrid))]
+    quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($tgrid))]
 
     colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
@@ -51,6 +54,9 @@ function vizgrid!(plot::Viz{<:Tuple{Meshes.TransformedGrid}}, M::Type{<:𝔼}, p
     vizmesh!(plot, M, pdim, edim)
   end
 end
+
+_reverse(::Type{<:CRS}) = identity
+_reverse(::Type{<:LatLon}) = reverse
 
 # --------------
 # OPTIMIZATIONS

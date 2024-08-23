@@ -101,13 +101,13 @@
   @test @allocated(boundingbox(d)) < 50
 
   g = cartgrid(10, 10)
-  d = Meshes.TransformedGrid(g, Rotate(T(π / 2)))
+  d = TransformedGrid(g, Rotate(T(π / 2)))
   @test boundingbox(d) ≈ Box(cart(-10, 0), cart(0, 10))
   @test @allocated(boundingbox(d)) < 3000
 
   g = cartgrid(10, 10)
   rg = convert(RectilinearGrid, g)
-  d = Meshes.TransformedGrid(rg, Rotate(T(π / 2)))
+  d = TransformedGrid(rg, Rotate(T(π / 2)))
   @test boundingbox(d) ≈ Box(cart(-10, 0), cart(0, 10))
   @test @allocated(boundingbox(d)) < 3000
 
