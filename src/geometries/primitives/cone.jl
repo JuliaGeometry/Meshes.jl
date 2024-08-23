@@ -45,15 +45,15 @@ function (cone::Cone)(uφ, ur, uh)
   a = cone.apex
   R = cone.base.radius
   b = cone.base.plane.p
-  û = cone.base.plane.u
-  v̂ = cone.base.plane.v
+  û = normalize(cone.base.plane.u)
+  v̂ = normalize(cone.base.plane.v)
 
   # Scaled parametric coords
   sφ, cφ = sincospi(2uφ)
   r = R * ur
 
   # Locate parametric point
-  c = b + (r * cφ * û) + (r * sφ * v̂)
+  c = b + Vec(r * cφ * û) + Vec(r * sφ * v̂)
   h̄ = uh * (c - a)
   a + h̄
 end

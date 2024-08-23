@@ -41,14 +41,14 @@ function (conesurface::ConeSurface)(uφ, uh)
   a = conesurface.apex
   R = conesurface.base.radius
   b = conesurface.base.plane.p
-  û = conesurface.base.plane.u
-  v̂ = conesurface.base.plane.v
+  û = normalize(conesurface.base.plane.u)
+  v̂ = normalize(conesurface.base.plane.v)
 
   # Scaled parametric coords
   sφ, cφ = sincospi(2uφ)
 
   # Locate parametric point
-  c = b + (R * cφ * û) + (R * sφ * v̂)
+  c = b + Vec(R * cφ * û) + Vec(R * sφ * v̂)
   h̄ = uh * (c - a)
   a + h̄
 end
