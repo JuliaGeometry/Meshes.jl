@@ -31,17 +31,24 @@ apex(c::ConeSurface) = c.apex
 Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
 
-function (c::ConeSurface)(φ, h)
-  T = numtype(lentype(c))
-  if (φ < 0 || φ > 1) || (h < 0 || h > 1)
-    throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
+function (conesurface::Cone)(uφ, uh)
+  T = numtype(lentype(cone))
+  if (uφ < 0 || uφ > 1) || (uh < 0 || uh > 1)
+    throw(DomainError((uφ, uh), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
-  n = -normal(c.base)
-  v = c.base(0, 0) - c.apex
-  l = norm(v)
-  θ = ∠(n, v)
-  o = c.apex + T(h) * v
-  r = T(h) * l * tan(θ)
-  s = Circle(Plane(o, n), r)
-  s(T(φ))
+
+  # Aliases
+  a = cone.apex
+  R = cone.base.radius
+  b = cone.base.plane.p
+  û = cone.base.plane.u
+  v̂ = cone.base.plane.v
+
+  # Scaled parametric coords
+  sφ, cφ = sincospi(2uφ)
+
+  # Locate parametric point
+  c = b + (R * cφ * û) + (R * sφ * v̂)
+  h̄ = uh * (c - a)
+  a + h̄
 end

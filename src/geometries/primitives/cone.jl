@@ -34,3 +34,26 @@ halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
 Base.isapprox(c₁::Cone, c₂::Cone; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
+
+function (cone::Cone)(uφ, ur, uh)
+  T = numtype(lentype(cone))
+  if (uφ < 0 || uφ > 1) || (ur < 0 || ur > 1) || (uh < 0 || uh > 1)
+    throw(DomainError((uφ, ur, uh), "c(φ, r, h) is not defined for φ, r, h outside [0, 1]³."))
+  end
+
+  # Aliases
+  a = cone.apex
+  R = cone.base.radius
+  b = cone.base.plane.p
+  û = cone.base.plane.u
+  v̂ = cone.base.plane.v
+
+  # Scaled parametric coords
+  sφ, cφ = sincospi(2uφ)
+  r = R * ur
+
+  # Locate parametric point
+  c = b + (r * cφ * û) + (r * sφ * v̂)
+  h̄ = uh * (c - a)
+  a + h̄
+end
