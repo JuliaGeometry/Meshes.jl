@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    SelingerSimplification(ϵ)
+    SelingerSimplification(τ)
 
-Simplify geometries with SelingerSimplification's algorithm, which attempts to
-minimize the number of vertices and the deviation of vertices
-to the resulting segments based on deviation tolerance `ϵ`.
+Selinger's simplification algorithm with tolerance `τ` in length units
+(default to meter).
+
+The higher is the tolerance, the more aggressive is the simplification.
 
 ## References
 
@@ -15,18 +16,18 @@ to the resulting segments based on deviation tolerance `ϵ`.
   (https://potrace.sourceforge.net/potrace.pdf)
 """
 struct SelingerSimplification{ℒ<:Len} <: SimplificationMethod
-  ϵ::ℒ
-  SelingerSimplification(ϵ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(ϵ)
+  τ::ℒ
+  SelingerSimplification(τ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(τ)
 end
 
-SelingerSimplification(ϵ) = SelingerSimplification(addunit(ϵ, u"m"))
+SelingerSimplification(τ) = SelingerSimplification(addunit(τ, u"m"))
 
 function simplify(chain::Chain, method::SelingerSimplification)
   ℒ = lentype(chain)
   𝒜 = typeof(zero(ℒ)^2)
 
   # retrieve parameters
-  ϵ = method.ϵ
+  τ = method.τ
 
   # vertices as circular vector
   v = vertices(chain)
@@ -37,15 +38,12 @@ function simplify(chain::Chain, method::SelingerSimplification)
   P = Dict{Tuple{Int,Int},𝒜}()
   for i in 1:n, o in 1:(n - 2)
     j = i + o
-    i₊ = i + 1
-    j₋ = j - 1
-    jₙ = mod1(j, n)
     l = Line(p[i], p[j])
-    δ = [evaluate(Euclidean(), p[k], l) for k in i₊:j₋]
-    if all(<(ϵ), δ)
+    δ = [evaluate(Euclidean(), p[k], l) for k in (i + 1):(j - 1)]
+    if all(<(τ), δ)
       dᵢⱼ = norm(p[j] - p[i])
       σᵢⱼ = o == 1 ? zero(ℒ) : sqrt(sum(abs2, δ) / length(δ))
-      P[(i, jₙ)] = dᵢⱼ * σᵢⱼ
+      P[(i, mod1(j, n))] = dᵢⱼ * σᵢⱼ
     end
   end
 
@@ -71,7 +69,6 @@ function simplify(chain::Chain, method::SelingerSimplification)
     end
   end
 
-  @assert first(bestpath) == last(bestpath)
   Ring(collect(v[bestpath[begin:(end - 1)]]))
 end
 

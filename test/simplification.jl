@@ -25,7 +25,8 @@
     @test s3 == GeometrySet([s1, s1])
   end
 
-  @testset "BinarySearch" begin
+  @testset "MinMax" begin
+    # Douglas-Peucker
     c = Ring(cart.([(0, 0), (1, 0), (1.5, 0.5), (1, 1), (0, 1)]))
     s1 = simplify(c, DouglasPeuckerSimplification(T(0.1)))
     s2 = simplify(c, MinMaxSimplification(DouglasPeuckerSimplification, max=6))
