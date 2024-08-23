@@ -42,7 +42,7 @@ function simplify(chain::Chain, method::SelingerSimplification)
     δ = [evaluate(Euclidean(), p[k], l) for k in (i + 1):(j - 1)]
     if all(<(τ), δ)
       dᵢⱼ = norm(p[j] - p[i])
-      σᵢⱼ = o == 1 ? zero(ℒ) : sqrt(sum(abs2, δ) / length(δ))
+      σᵢⱼ = o == 1 ? zero(ℒ) : norm(δ)
       P[(i, mod1(j, n))] = dᵢⱼ * σᵢⱼ
     end
   end

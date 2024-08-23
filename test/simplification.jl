@@ -1,8 +1,8 @@
 @testset "Simplification" begin
   @testset "Selinger" begin
     c = Ring(cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 2), (0, 1)]))
-    s1 = simplify(c, SelingerSimplification(0.1))
-    s2 = simplify(c, SelingerSimplification(0.5))
+    s1 = simplify(c, SelingerSimplification(T(0.1)))
+    s2 = simplify(c, SelingerSimplification(T(0.5)))
     @test s1 == Ring(cart.([(1, 0), (1, 1), (2, 1), (2, 2), (0, 2), (0, 0)]))
     @test s2 == Ring(cart.([(1, 0), (2, 2), (0, 2), (0, 0)]))
   end
