@@ -32,17 +32,17 @@ Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kw
   isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
 
 function (conesurface::ConeSurface)(uφ, uh)
-  T = numtype(lentype(cone))
+  T = numtype(lentype(conesurface))
   if (uφ < 0 || uφ > 1) || (uh < 0 || uh > 1)
     throw(DomainError((uφ, uh), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
 
   # Aliases
-  a = cone.apex
-  R = cone.base.radius
-  b = cone.base.plane.p
-  û = cone.base.plane.u
-  v̂ = cone.base.plane.v
+  a = conesurface.apex
+  R = conesurface.base.radius
+  b = conesurface.base.plane.p
+  û = conesurface.base.plane.u
+  v̂ = conesurface.base.plane.v
 
   # Scaled parametric coords
   sφ, cφ = sincospi(2uφ)
