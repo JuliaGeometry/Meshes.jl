@@ -831,7 +831,7 @@
     b1 = Box((T(0) * u"cm", T(0) * u"cm"), (T(100) * u"cm", T(100) * u"cm"))
     b2 = Box((T(500) * u"mm", T(500) * u"mm"), (T(2000) * u"mm", T(2000) * u"mm"))
     @test intersection(b1, b2) |> type == Overlapping
-    @test unit(Meshes.lentype(b1 ∩ b2)) == u"m"
+    @test unit(Meshes.lentype(b1 ∩ b2)) == u"cm"
     @test b1 ∩ b2 == Box(cart(0.5, 0.5), cart(1, 1))
 
     # type stability tests

@@ -83,7 +83,11 @@ _sort(dims) = sort(SVector(dims))
 
 _shadow(v::Vec, dims) = v[dims]
 
-_shadow(p::Point, dims) = withcrs(p, to(p)[dims])
+function _shadow(p::Point, dims)
+  v = _shadow(to(p), dims)
+  coords = Cartesian{datum(crs(p))}(v...)
+  Point(coords)
+end
 
 function _shadow(g::CartesianGrid, dims)
   sz = size(g)[dims]
