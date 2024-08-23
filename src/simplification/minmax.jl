@@ -3,23 +3,23 @@
 # ------------------------------------------------------------------
 
 """
-    BinarySearchSimplification(method; min=3, max=typemax(Int), maxiter=10)
+    MinMaxSimplification(method; min=3, max=typemax(Int), maxiter=10)
 
-Simplify geometries with binary search algorithm and another simplification `method`.
+Simplify geometries with binary search algorithm and a parent simplification `method`.
 
 The simplification is performed until the number of vertices is in the `[min, max]`
-interval or until a maximum number of iterations `maxiter` is reached.
+range or until a maximum number of iterations `maxiter` is reached.
 """
-struct BinarySearchSimplification{M} <: SimplificationMethod
+struct MinMaxSimplification{M} <: SimplificationMethod
   method::M
   min::Int
   max::Int
   maxiter::Int
 end
 
-BinarySearchSimplification(method; min=3, max=typemax(Int), maxiter=10)
+MinMaxSimplification(method; min=3, max=typemax(Int), maxiter=10)
 
-function simplify(c::Chain, m::BinarySearchSimplification)
+function simplify(c::Chain, m::MinMaxSimplification)
   i = 0
   s = c
   n = nvertices(c)

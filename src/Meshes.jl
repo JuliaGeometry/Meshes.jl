@@ -459,7 +459,7 @@ export
   SimplificationMethod,
   SelingerSimplification,
   DouglasPeuckerSimplification,
-  BinarySearchSimplification,
+  MinMaxSimplification,
   simplify,
 
   # bounding boxes

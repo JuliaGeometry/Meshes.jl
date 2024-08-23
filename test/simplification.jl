@@ -28,10 +28,10 @@
   @testset "BinarySearch" begin
     c = Ring(cart.([(0, 0), (1, 0), (1.5, 0.5), (1, 1), (0, 1)]))
     s1 = simplify(c, DouglasPeuckerSimplification(T(0.1)))
-    s2 = simplify(c, BinarySearchSimplification(DouglasPeuckerSimplification, max=6))
+    s2 = simplify(c, MinMaxSimplification(DouglasPeuckerSimplification, max=6))
     @test s1 == s2
     s1 = simplify(c, DouglasPeuckerSimplification(T(0.5)))
-    s2 = simplify(c, BinarySearchSimplification(DouglasPeuckerSimplification, max=4))
+    s2 = simplify(c, MinMaxSimplification(DouglasPeuckerSimplification, max=4))
     @test s1 == s2
   end
 end
