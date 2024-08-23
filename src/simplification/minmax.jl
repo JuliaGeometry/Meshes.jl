@@ -27,15 +27,15 @@ function simplify(c::Chain, m::MinMaxSimplification)
   a, b = _initrange(c)
   while !(m.min ≤ n ≤ m.max) && i < m.maxiter
     # midpoint candidate
-    ϵ = (a + b) / 2
+    τ = (a + b) / 2
 
     # evaluate at midpoint
-    s = simplify(c, m.method(ϵ))
+    s = simplify(c, m.method(τ))
     n = nvertices(s)
 
     # binary search
-    n < m.min && (b = ϵ)
-    n > m.max && (a = ϵ)
+    n < m.min && (b = τ)
+    n > m.max && (a = τ)
 
     i += 1
   end
@@ -50,6 +50,6 @@ function _initrange(c)
   l = Line(first(v), last(v))
   d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
   z = zero(lentype(c))
-  ϵ = quantile(d, 0.25)
-  (z, 2ϵ)
+  τ = quantile(d, 0.25)
+  (z, 2τ)
 end

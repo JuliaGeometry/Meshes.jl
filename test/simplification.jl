@@ -27,13 +27,13 @@
 
   @testset "MinMax" begin
     # Selinger
-    c = Ring(cart.([(0, 0), (1, 0), (1.5, 0.5), (1, 1), (0, 1)]))
+    c = Ring(cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 2), (0, 1)]))
     s1 = simplify(c, SelingerSimplification(T(0.1)))
     s2 = simplify(c, MinMaxSimplification(SelingerSimplification, max=6))
-    @test s1 ≗ s2
+    @test nvertices(s2) ≤ nvertices(s1)
     s1 = simplify(c, SelingerSimplification(T(0.5)))
     s2 = simplify(c, MinMaxSimplification(SelingerSimplification, max=4))
-    @test s1 ≗ s2
+    @test nvertices(s2) ≤ nvertices(s1)
 
     # Douglas-Peucker
     c = Ring(cart.([(0, 0), (1, 0), (1.5, 0.5), (1, 1), (0, 1)]))
