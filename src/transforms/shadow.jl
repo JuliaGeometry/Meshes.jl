@@ -85,8 +85,8 @@ _shadow(v::Vec, dims) = v[dims]
 
 function _shadow(p::Point, dims)
   v = _shadow(to(p), dims)
-  coords = Cartesian{datum(crs(p))}(v...)
-  Point(coords)
+  c = Cartesian{datum(crs(p))}(v...)
+  Point(c)
 end
 
 function _shadow(g::CartesianGrid, dims)

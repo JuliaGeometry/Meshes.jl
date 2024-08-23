@@ -10,7 +10,8 @@ Point at the end of the vector `v` with the same CRS of `g`.
 function withcrs(g::GeometryOrDomain, v::StaticVector)
   C = crs(g)
   D = datum(C)
-  Point(convert(C, Cartesian{D}(v...)))
+  c = convert(C, Cartesian{D}(v...))
+  Point(c)
 end
 
 """
