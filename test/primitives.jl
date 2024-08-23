@@ -1123,7 +1123,7 @@
     @test crs(s) <: Cartesian{NoDatum}
     @test Meshes.lentype(s) == ℳ
     @test isnothing(boundary(s))
-    @test_throws DomainError p(0, nextfloat(1.0))
+    @test_throws DomainError s(0, nextfloat(1.0))
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
