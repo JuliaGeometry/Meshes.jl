@@ -44,6 +44,6 @@ function (c::ConeSurface)(φ, h)
   v̂ = normalize(c.base.plane.v)
   sφ, cφ = sincospi(2φ)
   b = p + Vec(R * cφ * û) + Vec(R * sφ * v̂)
-  h̄ = uh * (b - a)
+  h̄ = h * (b - a)
   a + h̄
 end
