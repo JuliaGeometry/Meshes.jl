@@ -31,11 +31,6 @@ using TestItemRunner
   datadir = joinpath(@__DIR__, "data")
 
   T = Float32
-  ℳ = Meshes.Met{T}
 
-  # dummy definitions
-  include("dummy.jl")
-
-  # helper functions
   include("testutils.jl")
 end
