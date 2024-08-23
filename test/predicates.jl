@@ -1,5 +1,5 @@
-@testset "Predicates" begin
-  @testset "issimplex" begin
+@testitem "Predicates" begin
+  @testitem "issimplex" begin
     @test issimplex(Segment)
     @test issimplex(Segment(cart(0, 0), cart(1, 0)))
 
@@ -10,7 +10,7 @@
     @test issimplex(Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1)))
   end
 
-  @testset "isconvex" begin
+  @testitem "isconvex" begin
     # primitives
     r = Ray(cart(0, 0), vector(1, 1))
     @test isconvex(r)
@@ -112,7 +112,7 @@
     @test !isconvex(poly)
   end
 
-  @testset "isparametrized" begin
+  @testitem "isparametrized" begin
     # primitives
     @test isparametrized(Ray)
     @test isparametrized(Line)
@@ -137,7 +137,7 @@
     @test isparametrized(Hexahedron)
   end
 
-  @testset "isperiodic" begin
+  @testitem "isperiodic" begin
     # primitives
     @test isperiodic(Box{𝔼{2},Cartesian2D}) == (false, false)
     @test isperiodic(Box{𝔼{3},Cartesian3D}) == (false, false, false)
@@ -160,7 +160,7 @@
     @test isperiodic(cartgrid(10, 10, 10)) == (false, false, false)
   end
 
-  @testset "in" begin
+  @testitem "in" begin
     h = first(cartgrid(10, 10, 10))
     @test cart(0, 0, 0) ∈ h
     @test cart(0.5, 0.5, 0.5) ∈ h
@@ -181,7 +181,7 @@
     @test merc(0.75, 0.75) ∈ poly
   end
 
-  @testset "issubset" begin
+  @testitem "issubset" begin
     p = cart(0.5, 0.5)
     box = Box(cart(0, 0), cart(1, 1))
     ball = Ball(cart(0, 0))
@@ -283,7 +283,7 @@
     @test poly5 ⊈ poly3
   end
 
-  @testset "intersects" begin
+  @testitem "intersects" begin
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     q = Quadrangle(cart(1, 1), cart(2, 1), cart(2, 2), cart(1, 2))
     @test intersects(t, t)
@@ -551,7 +551,7 @@
     @test intersects(seg, multi)
   end
 
-  @testset "ordering" begin
+  @testitem "ordering" begin
     # lexicographical order
     @test cart(0, 0) < cart(1, 1)
     @test cart(0, 0) < cart(0, 1)
@@ -589,11 +589,11 @@
     @test cart(3, 4) ≻ cart(1, 2)
   end
 
-  @testset "iscollinear" begin
+  @testitem "iscollinear" begin
     @test iscollinear(cart(0, 0), cart(1, 1), cart(2, 2))
   end
 
-  @testset "iscoplanar" begin
+  @testitem "iscoplanar" begin
     @test iscoplanar(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
   end
 end

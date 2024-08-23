@@ -1,5 +1,5 @@
-@testset "Sorting" begin
-  @testset "DirectionSort" begin
+@testitem "Sorting" begin
+  @testitem "DirectionSort" begin
     g = cartgrid(3, 3)
     s = sort(g, DirectionSort((T(1), T(1))))
     @test centroid.(s) ==

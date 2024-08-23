@@ -1,5 +1,5 @@
-@testset "Sampling" begin
-  @testset "UniformSampling" begin
+@testitem "Sampling" begin
+  @testitem "UniformSampling" begin
     rng = StableRNG(123)
     d = cartgrid(100, 100)
     s = sample(rng, d, UniformSampling(100))
@@ -14,7 +14,7 @@
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
   end
 
-  @testset "WeightedSampling" begin
+  @testitem "WeightedSampling" begin
     # uniform weights => uniform sampler
     rng = StableRNG(123)
     d = cartgrid(100, 100)
@@ -40,7 +40,7 @@
     @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
   end
 
-  @testset "BallSampling" begin
+  @testitem "BallSampling" begin
     d = cartgrid(100, 100)
     s = sample(d, BallSampling(T(10)))
     n = nelements(s)
@@ -58,7 +58,7 @@
     @test sqrt(sum((x - y) .^ 2)) ≥ T(20) * u"m"
   end
 
-  @testset "BlockSampling" begin
+  @testitem "BlockSampling" begin
     g = cartgrid(100, 100)
     s = sample(g, BlockSampling(T(10)))
     @test nelements(s) == 100
@@ -68,7 +68,7 @@
     @test all(≥(T(10) * u"m"), d)
   end
 
-  @testset "RegularSampling" begin
+  @testitem "RegularSampling" begin
     b = Box(cart(0, 0), cart(2, 2))
     ps = sample(b, RegularSampling(3))
     @test collect(ps) == cart.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)])
@@ -307,7 +307,7 @@
     @test length(collect(points)) == 20000
   end
 
-  @testset "HomogeneousSampling" begin
+  @testitem "HomogeneousSampling" begin
     s = Segment(cart(0, 0), cart(1, 0))
     ps = sample(s, HomogeneousSampling(100))
     @test first(ps) isa Point
@@ -370,7 +370,7 @@
     @test all(∈(mesh), ps)
   end
 
-  @testset "MinDistanceSampling" begin
+  @testitem "MinDistanceSampling" begin
     poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
     multi = Multi([poly1, poly2])
@@ -393,7 +393,7 @@
     @test length(ps) > 0
   end
 
-  @testset "RNGs" begin
+  @testitem "RNGs" begin
     dom = cartgrid(100, 100)
     for method in [UniformSampling(100), WeightedSampling(100), BallSampling(T(10))]
       rng = StableRNG(2021)

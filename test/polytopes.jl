@@ -1,5 +1,5 @@
-@testset "Polytopes" begin
-  @testset "Segments" begin
+@testitem "Polytopes" begin
+  @testitem "Segments" begin
     @test paramdim(Segment) == 1
     @test nvertices(Segment) == 2
 
@@ -87,7 +87,7 @@
     end
   end
 
-  @testset "Ropes/Rings" begin
+  @testitem "Ropes/Rings" begin
     c1 = Rope(cart.([(1, 1), (2, 2)]))
     c2 = Rope(cart(1, 1), cart(2, 2))
     c3 = Rope(T.((1, 1.0)), T.((2.0, 2.0)))
@@ -276,7 +276,7 @@
     end
   end
 
-  @testset "Ngons" begin
+  @testitem "Ngons" begin
     pts = (cart(0, 0), cart(1, 0), cart(0, 1))
     tups = (T.((0, 0)), T.((1, 0)), T.((0, 1)))
     @test paramdim(Ngon) == 2
@@ -479,7 +479,7 @@
     end
   end
 
-  @testset "PolyAreas" begin
+  @testitem "PolyAreas" begin
     @test paramdim(PolyArea) == 2
 
     # equality and approximate equality
@@ -653,7 +653,7 @@
     @test_throws ArgumentError PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 0)]))
   end
 
-  @testset "Polyhedra" begin
+  @testitem "Polyhedra" begin
     @test paramdim(Tetrahedron) == 3
     @test nvertices(Tetrahedron) == 4
 

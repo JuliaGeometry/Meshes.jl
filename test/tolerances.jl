@@ -1,4 +1,4 @@
-@testset "tolerances" begin
+@testitem "tolerances" begin
   ℒ = ℳ
   𝒜 = typeof(zero(ℳ)^2)
   𝒱 = typeof(zero(ℳ)^3)

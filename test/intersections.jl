@@ -1,4 +1,4 @@
-@testset "Intersections" begin
+@testitem "Intersections" begin
   # helper function for type stability tests
   function someornone(g1, g2)
     intersection(g1, g2) do I
@@ -10,7 +10,7 @@
     end
   end
 
-  @testset "Points" begin
+  @testitem "Points" begin
     p = cart(0, 0)
     q = cart(-1, -1)
     b = Box(cart(0, 0), cart(1, 1))
@@ -21,7 +21,7 @@
     @test isnothing(q ∩ b)
   end
 
-  @testset "Segments" begin
+  @testitem "Segments" begin
     # segments in 2D
     s1 = Segment(cart(0, 0), cart(1, 0))
     s2 = Segment(cart(0.5, 0.0), cart(2, 0))
@@ -469,7 +469,7 @@
     @test Meshes._sort4vals(2.0, 2.5, 1.1, 1.4) == (1.4, 2.0)
   end
 
-  @testset "Rays" begin
+  @testitem "Rays" begin
     # rays in 2D
     r₁ = Ray(cart(1, 0), vector(2, 1))
     r₂ = Ray(cart(0, 2), vector(2, -3))
@@ -554,7 +554,7 @@
     @test intersection(l₁, r₆) |> type === NotIntersecting
   end
 
-  @testset "Lines" begin
+  @testitem "Lines" begin
     # lines in 2D
     l1 = Line(cart(0, 0), cart(1, 0))
     l2 = Line(cart(-1, -1), cart(-1, 1))
@@ -605,14 +605,14 @@
     @inferred someornone(l1, l2)
   end
 
-  @testset "Chains" begin
+  @testitem "Chains" begin
     # https://github.com/JuliaGeometry/Meshes.jl/issues/644
     r = Rope(cart(0, 0), cart(1, 1))
     @test r ∩ r == GeometrySet([Segment(cart(0, 0), cart(1, 1))])
     @inferred someornone(r, r)
   end
 
-  @testset "Planes" begin
+  @testitem "Planes" begin
     # ---------
     # SEGMENTS
     # ---------
@@ -773,7 +773,7 @@
     @test crs(p1 ∩ p2) === crs(p1)
   end
 
-  @testset "Boxes" begin
+  @testitem "Boxes" begin
     b1 = Box(cart(0, 0), cart(1, 1))
     b2 = Box(cart(0.5, 0.5), cart(2, 2))
     b3 = Box(cart(2, 2), cart(3, 3))
@@ -871,7 +871,7 @@
     @test r ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
   end
 
-  @testset "Triangles" begin
+  @testitem "Triangles" begin
     # utility to reverse segments, to more fully
     # test branches in the intersection algorithm
     reverse_segment(s) = Segment(vertices(s)[2], vertices(s)[1])
@@ -1124,7 +1124,7 @@
     @test r ∩ t ≈ cart(0.5, 0.0, 0.0)
   end
 
-  @testset "Ngons" begin
+  @testitem "Ngons" begin
     o = Octagon(
       cart(0.0, 0.0, 1.0),
       cart(0.5, -0.5, 0.0),
@@ -1156,7 +1156,7 @@
     @test t1 ∩ t2 isa PolyArea
   end
 
-  @testset "Polygons" begin
+  @testitem "Polygons" begin
     # triangle
     poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
     other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
@@ -1191,7 +1191,7 @@
     @test all(vertices(quad ∩ poly) .≈ [cart(0, 0), cart(0.1, 0), cart(0.1, 0.05)])
   end
 
-  @testset "Domains" begin
+  @testitem "Domains" begin
     grid = cartgrid(4, 4)
     pset = PointSet(centroid.(grid))
     ball = Ball(cart(0, 0), T(1))

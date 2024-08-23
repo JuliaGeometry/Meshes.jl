@@ -1,4 +1,4 @@
-@testset "Domain" begin
+@testitem "Domain" begin
   # basic properties
   dom = DummyDomain(cart(0, 0))
   @test embeddim(dom) == 2

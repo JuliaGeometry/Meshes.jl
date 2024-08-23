@@ -1,5 +1,5 @@
-@testset "Neighborhoods" begin
-  @testset "MetricBall" begin
+@testitem "Neighborhoods" begin
+  @testitem "MetricBall" begin
     # Euclidean metric
     b = MetricBall(T(1 / 2))
     r = radius(b)

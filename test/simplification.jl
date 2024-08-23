@@ -1,5 +1,5 @@
-@testset "Simplification" begin
-  @testset "DouglasPeucker" begin
+@testitem "Simplification" begin
+  @testitem "DouglasPeucker" begin
     c = Ring(cart.([(0, 0), (1, 0), (1.5, 0.5), (1, 1), (0, 1)]))
     s1 = simplify(c, DouglasPeucker(T(0.1)))
     s2 = simplify(c, DouglasPeucker(T(0.5)))
@@ -26,7 +26,7 @@
     @test s1 == s2
   end
 
-  @testset "Selinger" begin
+  @testitem "Selinger" begin
     c = Ring(cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2), (0, 2), (0, 1)]))
     s1 = simplify(c, Selinger(0.1))
     s2 = simplify(c, Selinger(0.5))
@@ -34,7 +34,7 @@
     @test s2 == Ring(cart.([(1, 0), (2, 2), (0, 2), (0, 0)]))
   end
 
-  @testset "Utilities" begin
+  @testitem "Utilities" begin
     # decimate is a helper function to simplify
     # geometries with an appropriate method
     b = Box(cart(0, 0), cart(1, 1))

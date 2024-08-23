@@ -1,4 +1,4 @@
-@testset "Clamping" begin
+@testitem "Clamping" begin
   box = Box((zero(T), zero(T)), (one(T), one(T)))
   @test clamp(cart(0.5, 0.5), box) == cart(0.5, 0.5)
   @test clamp(cart(-1, 0.5), box) == cart(0, 0.5)

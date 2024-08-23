@@ -1,4 +1,4 @@
-@testset "complement" begin
+@testitem "complement" begin
   τ = atol(T)
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))

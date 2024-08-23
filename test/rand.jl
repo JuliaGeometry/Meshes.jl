@@ -1,4 +1,4 @@
-@testset "rand" begin
+@testitem "rand" begin
   p = rand(Point)
   @test p isa Point
   @test crs(p) <: Cartesian3D

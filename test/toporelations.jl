@@ -1,5 +1,5 @@
-@testset "TopologicalRelation" begin
-  @testset "GridTopology" begin
+@testitem "TopologicalRelation" begin
+  @testitem "GridTopology" begin
     # 3 grid
     t = GridTopology(3)
     ∂ = Boundary{1,0}(t)
@@ -441,7 +441,7 @@
     @test_throws AssertionError Coboundary{2,0}(t)
   end
 
-  @testset "HalfEdgeTopology" begin
+  @testitem "HalfEdgeTopology" begin
     # 2 triangles
     elems = connect.([(1, 2, 3), (4, 3, 2)])
     t = HalfEdgeTopology(elems)
@@ -562,7 +562,7 @@
     @test_throws AssertionError Coboundary{2,0}(t)
   end
 
-  @testset "SimpleTopology" begin
+  @testitem "SimpleTopology" begin
     elems = connect.([(1, 2, 3), (4, 3, 2)])
     t = SimpleTopology(elems)
     ∂ = Boundary{2,0}(t)

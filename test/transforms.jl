@@ -1,5 +1,5 @@
-@testset "Transforms" begin
-  @testset "Rotate" begin
+@testitem "Transforms" begin
+  @testitem "Rotate" begin
     @test isaffine(Rotate)
     @test TB.isrevertible(Rotate)
     @test TB.isinvertible(Rotate)
@@ -220,7 +220,7 @@
     @test crs(f(p)) === crs(p)
   end
 
-  @testset "Translate" begin
+  @testitem "Translate" begin
     @test isaffine(Translate)
     @test TB.isrevertible(Translate)
     @test TB.isinvertible(Translate)
@@ -388,7 +388,7 @@
     @test TB.revert(f, r, c) ≈ d
   end
 
-  @testset "Affine" begin
+  @testitem "Affine" begin
     f = Affine(Angle2d(T(π / 2)), T[1, 1])
     @test isaffine(f)
     @test TB.isrevertible(f)
@@ -596,7 +596,7 @@
     @test_throws ArgumentError Affine(T[1 1; 2 2], T[1, 2, 3])
   end
 
-  @testset "Scale" begin
+  @testitem "Scale" begin
     @test isaffine(Scale)
     @test TB.isrevertible(Scale)
     @test TB.isinvertible(Scale)
@@ -876,7 +876,7 @@
     @test TB.revert(f, r, c) ≈ d
   end
 
-  @testset "Stretch" begin
+  @testitem "Stretch" begin
     @test !isaffine(Stretch)
     @test TB.isrevertible(Stretch)
     @test TB.isinvertible(Stretch)
@@ -1040,7 +1040,7 @@
     @test TB.revert(f, r, c) ≈ d
   end
 
-  @testset "StdCoords" begin
+  @testitem "StdCoords" begin
     @test !isaffine(StdCoords)
     @test TB.isrevertible(StdCoords)
 
@@ -1076,7 +1076,7 @@
     @test r == r2
   end
 
-  @testset "Proj" begin
+  @testitem "Proj" begin
     @test !isaffine(Proj(Polar))
     @test !TB.isrevertible(Proj(Polar))
     @test !TB.isinvertible(Proj(Polar))
@@ -1243,7 +1243,7 @@
     @test manifold(r) === 🌐
   end
 
-  @testset "LengthUnit" begin
+  @testitem "LengthUnit" begin
     @test !isaffine(LengthUnit(u"km"))
     @test !TB.isrevertible(LengthUnit(u"cm"))
     @test !TB.isinvertible(LengthUnit(u"km"))
@@ -1417,7 +1417,7 @@
     @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   end
 
-  @testset "Shadow" begin
+  @testitem "Shadow" begin
     @test !isaffine(Shadow(:xy))
     @test !TB.isrevertible(Shadow("xy"))
     @test !TB.isinvertible(Shadow(:xy))
@@ -1638,7 +1638,7 @@
     @test r == SimpleMesh(f.(vertices(d)), topology(d))
   end
 
-  @testset "Within" begin
+  @testitem "Within" begin
     @test !isaffine(Within(x=(T(2), T(4))))
     @test !TB.isrevertible(Within(x=(T(2), T(4))))
     @test !TB.isinvertible(Within(x=(T(2), T(4))))
@@ -1706,7 +1706,7 @@
     @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
   end
 
-  @testset "Repair(0)" begin
+  @testitem "Repair(0)" begin
     @test !isaffine(Repair)
     poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
     rpoly = poly |> Repair(0)
@@ -1720,7 +1720,7 @@
     └─ K: 0"""
   end
 
-  @testset "Repair(1)" begin
+  @testitem "Repair(1)" begin
     # a tetrahedron with an unused vertex
     points = cart.([(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)])
     connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
@@ -1731,17 +1731,17 @@
     @test cart(5, 5, 5) ∉ vertices(rmesh)
   end
 
-  @testset "Repair(2)" begin end
+  @testitem "Repair(2)" begin end
 
-  @testset "Repair(3)" begin end
+  @testitem "Repair(3)" begin end
 
-  @testset "Repair(4)" begin end
+  @testitem "Repair(4)" begin end
 
-  @testset "Repair(5)" begin end
+  @testitem "Repair(5)" begin end
 
-  @testset "Repair(6)" begin end
+  @testitem "Repair(6)" begin end
 
-  @testset "Repair(7)" begin
+  @testitem "Repair(7)" begin
     # mesh with inconsistent orientation
     points = randpoint3(6)
     connec = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
@@ -1757,7 +1757,7 @@
     @test n[4] != e[4]
   end
 
-  @testset "Repair(8)" begin
+  @testitem "Repair(8)" begin
     poly = PolyArea(
       cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
     )
@@ -1773,7 +1773,7 @@
     @test vertices(rpoly) == [cart(0, 0)]
   end
 
-  @testset "Repair(9)" begin
+  @testitem "Repair(9)" begin
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     repair = Repair(9)
     rquad, cache = TB.apply(repair, quad)
@@ -1789,7 +1789,7 @@
     @test rpoly == PolyArea([outer, inner2, inner1])
   end
 
-  @testset "Repair(10)" begin
+  @testitem "Repair(10)" begin
     outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
     inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
     poly = PolyArea(outer, inner)
@@ -1801,7 +1801,7 @@
     @test opoly == poly
   end
 
-  @testset "Repair(11)" begin
+  @testitem "Repair(11)" begin
     outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
     inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
     poly = PolyArea(outer, inner)
@@ -1812,7 +1812,7 @@
     @test rinner == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
   end
 
-  @testset "Repair(12)" begin
+  @testitem "Repair(12)" begin
     poly = PolyArea(cart.([(0, 0), (1, 0)]))
     repair = Repair(12)
     rpoly, cache = TB.apply(repair, poly)
@@ -1826,7 +1826,7 @@
     @test rpoly == PolyArea(outer)
   end
 
-  @testset "Repair fallbacks" begin
+  @testitem "Repair fallbacks" begin
     quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
     repair = Repair(10)
     rquad, cache = TB.apply(repair, quad)
@@ -1848,7 +1848,7 @@
     @test rgset == GeometrySet([repair(poly1), repair(poly2)])
   end
 
-  @testset "Bridge" begin
+  @testitem "Bridge" begin
     @test !isaffine(Bridge)
     δ = T(0.01) * u"m"
     f = Bridge(δ)
@@ -1935,7 +1935,7 @@
     @test nvertices(bpoly) == 16
   end
 
-  @testset "Smoothing" begin
+  @testitem "Smoothing" begin
     @test !isaffine(LambdaMuSmoothing)
     n, λ, μ = 30, T(0.5), T(0)
     f = LambdaMuSmoothing(n, λ, μ)

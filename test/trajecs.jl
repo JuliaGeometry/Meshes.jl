@@ -1,5 +1,5 @@
-@testset "Trajectories" begin
-  @testset "CylindricalTrajectory" begin
+@testitem "Trajectories" begin
+  @testitem "CylindricalTrajectory" begin
     s = Segment(cart(0, 0, 0), cart(0, 0, 1))
     c = [s(t) for t in range(T(0), stop=T(1), length=10)]
     t = CylindricalTrajectory(c)

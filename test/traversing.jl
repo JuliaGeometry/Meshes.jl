@@ -1,4 +1,4 @@
-@testset "Paths" begin
+@testitem "Paths" begin
   grid = cartgrid(100, 100)
 
   for path in [LinearPath(), RandomPath(), ShiftedPath(LinearPath(), 0), SourcePath(1:3)]
@@ -6,12 +6,12 @@
     @test length(p) == 100 * 100
   end
 
-  @testset "LinearPath" begin
+  @testitem "LinearPath" begin
     p = traverse(grid, LinearPath())
     @test p == 1:(100 * 100)
   end
 
-  @testset "RandomPath" begin
+  @testitem "RandomPath" begin
     p = traverse(grid, RandomPath())
     @test all(1 .≤ collect(p) .≤ 100 * 100)
 
@@ -20,7 +20,7 @@
     @test traverse(grid, path) == [4, 7, 2, 1, 3, 8, 5, 6, 9]
   end
 
-  @testset "SourcePath" begin
+  @testitem "SourcePath" begin
     grid = cartgrid(3, 3)
     pset = PointSet(centroid.(grid))
 
@@ -33,7 +33,7 @@
     end
   end
 
-  @testset "ShiftedPath" begin
+  @testitem "ShiftedPath" begin
     grid = cartgrid(3, 3)
     path = LinearPath()
     for offset in [0, 1, -1]
@@ -45,7 +45,7 @@
     end
   end
 
-  @testset "MultiGridPath" begin
+  @testitem "MultiGridPath" begin
     path = MultiGridPath()
 
     grid = cartgrid(3, 3)
@@ -72,7 +72,7 @@
     @test traverse(vgrid, path) == [3, 10, 7, 8, 9, 4, 5, 6]
   end
 
-  @testset "Miscellaneous" begin
+  @testitem "Miscellaneous" begin
     if visualtests
       paths =
         [LinearPath(), RandomPath(StableRNG(123)), ShiftedPath(LinearPath(), 10), SourcePath(1:3), MultiGridPath()]

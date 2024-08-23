@@ -1,4 +1,4 @@
-@testset "winding" begin
+@testitem "winding" begin
   p = cart(0.5, 0.5)
   c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test winding(p, c) ≈ T(1)

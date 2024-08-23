@@ -1,4 +1,4 @@
-@testset "orientation" begin
+@testitem "orientation" begin
   # test orientation
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test orientation(t) == CCW

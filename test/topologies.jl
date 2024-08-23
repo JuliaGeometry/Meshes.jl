@@ -1,5 +1,5 @@
-@testset "Topology" begin
-  @testset "GridTopology" begin
+@testitem "Topology" begin
+  @testitem "GridTopology" begin
     t = GridTopology(3)
     @test paramdim(t) == 1
     @test size(t) == (3,)
@@ -356,7 +356,7 @@
     @test element(t, 24) == connect((44, 45, 48, 47, 8, 9, 12, 11), Hexahedron)
   end
 
-  @testset "HalfEdgeTopology" begin
+  @testitem "HalfEdgeTopology" begin
     function test_halfedge(elems, topology)
       @test nelements(topology) == length(elems)
       for e in 1:nelements(topology)
@@ -486,7 +486,7 @@
     @test n == connect.([(5, 4, 1), (6, 2, 4), (6, 5, 3), (4, 5, 6)])
   end
 
-  @testset "SimpleTopology" begin
+  @testitem "SimpleTopology" begin
     # 2 triangles
     elems = connect.([(1, 2, 3), (4, 3, 2)])
     t = SimpleTopology(elems)

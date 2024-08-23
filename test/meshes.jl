@@ -1,5 +1,5 @@
-@testset "Meshes" begin
-  @testset "CartesianGrid" begin
+@testitem "Meshes" begin
+  @testitem "CartesianGrid" begin
     grid = cartgrid(100)
     @test embeddim(grid) == 1
     @test crs(grid) <: Cartesian{NoDatum}
@@ -245,7 +245,7 @@
     end
   end
 
-  @testset "RectilinearGrid" begin
+  @testitem "RectilinearGrid" begin
     x = range(zero(T), stop=one(T), length=6)
     y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
     grid = RectilinearGrid(x, y)
@@ -371,7 +371,7 @@
     end
   end
 
-  @testset "StructuredGrid" begin
+  @testitem "StructuredGrid" begin
     X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
     Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
     grid = StructuredGrid(X, Y)
@@ -506,7 +506,7 @@
     end
   end
 
-  @testset "SimpleMesh" begin
+  @testitem "SimpleMesh" begin
     points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
     mesh = SimpleMesh(points, connec)
@@ -695,7 +695,7 @@
     end
   end
 
-  @testset "TransformedMesh" begin
+  @testitem "TransformedMesh" begin
     grid = cartgrid(10, 10)
     rgrid = convert(RectilinearGrid, grid)
     sgrid = convert(StructuredGrid, grid)

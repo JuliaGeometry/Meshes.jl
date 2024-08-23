@@ -1,5 +1,5 @@
-@testset "Refinement" begin
-  @testset "TriRefinement" begin
+@testitem "Refinement" begin
+  @testitem "TriRefinement" begin
     grid = cartgrid(3, 3)
     ref1 = refine(grid, TriRefinement())
     ref2 = refine(ref1, TriRefinement())
@@ -18,7 +18,7 @@
     @test crs(ref) === crs(grid)
   end
 
-  @testset "QuadRefinement" begin
+  @testitem "QuadRefinement" begin
     points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
     connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
     mesh = SimpleMesh(points, connec)
@@ -42,7 +42,7 @@
     @test crs(ref) === crs(mesh)
   end
 
-  @testset "RegularRefinement" begin
+  @testitem "RegularRefinement" begin
     # 2D grids
     grid = CartesianGrid(cart(0, 0), cart(10, 10), dims=(10, 10))
     tgrid = CartesianGrid(cart(0, 0), cart(10, 10), dims=(20, 20))
@@ -70,7 +70,7 @@
     @test refine(tfgrid, RegularRefinement(2)) == refine(grid, RegularRefinement(2))
   end
 
-  @testset "CatmullClark" begin
+  @testitem "CatmullClark" begin
     points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
     connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
     mesh = SimpleMesh(points, connec)
@@ -124,7 +124,7 @@
     @test crs(ref) === crs(mesh)
   end
 
-  @testset "TriSubdivision" begin
+  @testitem "TriSubdivision" begin
     points = cart.([(-1, -1, -1), (1, 1, -1), (1, -1, 1), (-1, 1, 1)])
     connec = connect.([(1, 2, 3), (3, 2, 4), (4, 2, 1), (1, 3, 4)])
     mesh = SimpleMesh(points, connec)

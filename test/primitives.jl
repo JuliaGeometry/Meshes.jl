@@ -1,5 +1,5 @@
-@testset "Primitives" begin
-  @testset "Point" begin
+@testitem "Primitives" begin
+  @testitem "Point" begin
     @test embeddim(Point(1)) == 1
     @test embeddim(Point(1, 2)) == 2
     @test embeddim(Point(1, 2, 3)) == 3
@@ -169,7 +169,7 @@
     end
   end
 
-  @testset "Ray" begin
+  @testitem "Ray" begin
     r = Ray(cart(0, 0), vector(1, 1))
     @test paramdim(r) == 1
     @test crs(r) <: Cartesian{NoDatum}
@@ -229,7 +229,7 @@
     end
   end
 
-  @testset "Line" begin
+  @testitem "Line" begin
     l = Line(cart(0, 0), cart(1, 1))
     @test paramdim(l) == 1
     @test crs(l) <: Cartesian{NoDatum}
@@ -261,7 +261,7 @@
     end
   end
 
-  @testset "Plane" begin
+  @testitem "Plane" begin
     p = Plane(cart(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
     @test p(T(1), T(0)) == cart(1, 0, 0)
     @test paramdim(p) == 2
@@ -327,7 +327,7 @@
     end
   end
 
-  @testset "BezierCurve" begin
+  @testitem "BezierCurve" begin
     b = BezierCurve(cart(0, 0), cart(0.5, 1), cart(1, 0))
     @test embeddim(b) == 2
     @test paramdim(b) == 1
@@ -370,7 +370,7 @@
     end
   end
 
-  @testset "Box" begin
+  @testitem "Box" begin
     b = Box(cart(0), cart(1))
     @test embeddim(b) == 1
     @test paramdim(b) == 1
@@ -506,7 +506,7 @@
     end
   end
 
-  @testset "Ball" begin
+  @testitem "Ball" begin
     b = Ball(cart(1, 2, 3), T(5))
     @test embeddim(b) == 3
     @test paramdim(b) == 3
@@ -584,7 +584,7 @@
     end
   end
 
-  @testset "Sphere" begin
+  @testitem "Sphere" begin
     s = Sphere(cart(0, 0, 0), T(1))
     @test embeddim(s) == 3
     @test paramdim(s) == 2
@@ -687,7 +687,7 @@
     end
   end
 
-  @testset "Ellipsoid" begin
+  @testitem "Ellipsoid" begin
     e = Ellipsoid((T(3), T(2), T(1)))
     @test embeddim(e) == 3
     @test paramdim(e) == 2
@@ -720,7 +720,7 @@
     end
   end
 
-  @testset "Disk" begin
+  @testitem "Disk" begin
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     @test embeddim(d) == 3
@@ -759,7 +759,7 @@
     end
   end
 
-  @testset "Circle" begin
+  @testitem "Circle" begin
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     c = Circle(p, T(2))
     @test embeddim(c) == 3
@@ -823,7 +823,7 @@
     end
   end
 
-  @testset "Cylinder" begin
+  @testitem "Cylinder" begin
     c = Cylinder(Plane(cart(1, 2, 3), vector(0, 0, 1)), Plane(cart(4, 5, 6), vector(0, 0, 1)), T(5))
     @test embeddim(c) == 3
     @test paramdim(c) == 3
@@ -899,7 +899,7 @@
     end
   end
 
-  @testset "CylinderSurface" begin
+  @testitem "CylinderSurface" begin
     c = CylinderSurface(T(2))
     @test embeddim(c) == 3
     @test paramdim(c) == 2
@@ -968,7 +968,7 @@
     end
   end
 
-  @testset "ParaboloidSurface" begin
+  @testitem "ParaboloidSurface" begin
     p = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
     @test embeddim(p) == 3
     @test paramdim(p) == 2
@@ -1038,7 +1038,7 @@
     end
   end
 
-  @testset "Cone" begin
+  @testitem "Cone" begin
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = cart(0, 0, 1)
@@ -1112,7 +1112,7 @@
     @test cart(5 - sqrt(3) / 2 - 0.01, 2.5, 3) ∉ c
   end
 
-  @testset "ConeSurface" begin
+  @testitem "ConeSurface" begin
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
     a = cart(0, 0, 1)
@@ -1158,7 +1158,7 @@
     end
   end
 
-  @testset "Frustum" begin
+  @testitem "Frustum" begin
     pb = Plane(cart(0, 0, 0), vector(0, 0, 1))
     db = Disk(pb, T(1))
     pt = Plane(cart(0, 0, 10), vector(0, 0, 1))
@@ -1206,7 +1206,7 @@
     @test cart(0, 0, 10.01) ∉ f
   end
 
-  @testset "FrustumSurface" begin
+  @testitem "FrustumSurface" begin
     pb = Plane(cart(0, 0, 0), vector(0, 0, 1))
     db = Disk(pb, T(1))
     pt = Plane(cart(0, 0, 10), vector(0, 0, 1))
@@ -1229,7 +1229,7 @@
     isapproxtest(f)
   end
 
-  @testset "Torus" begin
+  @testitem "Torus" begin
     t = Torus(T.((1, 1, 1)), T.((1, 0, 0)), 2, 1)
     @test cart(1, 1, -1) ∈ t
     @test cart(1, 1, 1) ∉ t

@@ -1,4 +1,4 @@
-@testset "TransformedGeometry" begin
+@testitem "TransformedGeometry" begin
   b = Box(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
   tb = TransformedGeometry(b, t)

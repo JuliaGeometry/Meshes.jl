@@ -1,5 +1,5 @@
-@testset "Sets" begin
-  @testset "GeometrySet" begin
+@testitem "Sets" begin
+  @testitem "GeometrySet" begin
     s = Segment(cart(0, 0), cart(1, 1))
     t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
     p = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -33,7 +33,7 @@
     @test eltype(gset) <: Quadrangle
   end
 
-  @testset "PointSet" begin
+  @testitem "PointSet" begin
     pset = PointSet(randpoint1(100))
     @test embeddim(pset) == 1
     @test crs(pset) <: Cartesian{NoDatum}

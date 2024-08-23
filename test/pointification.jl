@@ -1,4 +1,4 @@
-@testset "Pointification" begin
+@testitem "Pointification" begin
   p = cart(0, 0)
   @test pointify(p) == [cart(0, 0)]
 
