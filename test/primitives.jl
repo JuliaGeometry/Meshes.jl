@@ -1058,8 +1058,8 @@
     @test paramdim(c) == 3
     @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
-    @test c(0, 0, 0) ≈ Point(a)
-    @test c(0, 0, 1) ≈ centroid(p)
+    @test c(T(0), T(0), T(0)) ≈ Point(a)
+    @test c(T(0), T(0), T(1)) ≈ centroid(p)
     @test c(T(0.25), T(1.0), T(1.0)) ≈ cart(0, 2, 0)
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
