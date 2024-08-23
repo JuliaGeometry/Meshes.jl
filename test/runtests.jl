@@ -30,6 +30,7 @@ using TestItemRunner
   visualtests = !isCI || (isCI && islinux)
   datadir = joinpath(@__DIR__, "data")
 
+  # float settings
   T = Float32
 
   include("testutils.jl")
