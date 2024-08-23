@@ -31,7 +31,7 @@ apex(c::ConeSurface) = c.apex
 Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
 
-function (conesurface::Cone)(uφ, uh)
+function (conesurface::ConeSurface)(uφ, uh)
   T = numtype(lentype(cone))
   if (uφ < 0 || uφ > 1) || (uh < 0 || uh > 1)
     throw(DomainError((uφ, uh), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
