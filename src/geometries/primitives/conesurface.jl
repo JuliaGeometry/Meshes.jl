@@ -31,19 +31,19 @@ apex(c::ConeSurface) = c.apex
 Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
 
-function (conesurface::ConeSurface)(uφ, uh)
-  T = numtype(lentype(conesurface))
-  if (uφ < 0 || uφ > 1) || (uh < 0 || uh > 1)
-    throw(DomainError((uφ, uh), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
+function (c::ConeSurface)(φ, h)
+  T = numtype(lentype(c))
+  if (φ < 0 || φ > 1) || (h < 0 || h > 1)
+    throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
 
-  a = conesurface.apex
-  R = conesurface.base.radius
-  b = conesurface.base.plane.p
-  û = normalize(conesurface.base.plane.u)
-  v̂ = normalize(conesurface.base.plane.v)
-  sφ, cφ = sincospi(2uφ)
-  c = b + Vec(R * cφ * û) + Vec(R * sφ * v̂)
-  h̄ = uh * (c - a)
+  a = c.apex
+  R = radius(c.base)
+  p = c.base.plane.p
+  û = normalize(c.base.plane.u)
+  v̂ = normalize(c.base.plane.v)
+  sφ, cφ = sincospi(2φ)
+  b = p + Vec(R * cφ * û) + Vec(R * sφ * v̂)
+  h̄ = uh * (b - a)
   a + h̄
 end
