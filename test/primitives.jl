@@ -1048,7 +1048,7 @@
     @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
     @test boundary(c) == ConeSurface(d, a)
-    @test_throws DomainError p(0, 0, nextfloat(1.0))
+    @test_throws DomainError c(0, 0, nextfloat(1.0))
 
     p = Plane(cart(0, 0, 0), vector(0, 0, 1))
     d = Disk(p, T(2))
