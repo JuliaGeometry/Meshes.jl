@@ -41,18 +41,23 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
+cart(args...) = cart(T, args...)
 cart(T::Type, coords...) = cart(T, coords)
 cart(T::Type, coords::Tuple) = Point(T.(coords))
 
+merc(args...) = merc(T, args...)
 merc(T::Type, coords...) = merc(T, coords)
 merc(T::Type, coords::Tuple) = Point(Mercator(T.(coords)...))
 
+latlon(args...) = latlon(T, args...)
 latlon(T::Type, coords...) = latlon(T, coords)
 latlon(T::Type, coords::Tuple) = Point(LatLon(T.(coords)...))
 
+vector(args...) = vector(T, args...)
 vector(T::Type, coords...) = vector(T, coords)
 vector(T::Type, coords::Tuple) = Vec(T.(coords))
 
+cartgrid(args...) = cartgrid(T, args...)
 cartgrid(T::Type, dims...) = cartgrid(T, dims)
 function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> T(0.0), Dim)
@@ -61,6 +66,9 @@ function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
   CartesianGrid(dims, origin, spacing, offset)
 end
 
+randpoint1(n) = randcart(T, 1, n)
+randpoint2(n) = randcart(T, 2, n)
+randpoint3(n) = randcart(T, 3, n)
 randcart(T, Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
 
 numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
