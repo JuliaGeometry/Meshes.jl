@@ -14,10 +14,12 @@ is the tolerance `ϵ`, the more aggressive is the simplification.
   the Number of Points Required to Represent a Digitized Line or its
   Caricature](https://www.sciencedirect.com/science/article/abs/pii/0167839691900198)
 """
-struct DouglasPeuckerSimplification{T} <: SimplificationMethod
-  ϵ::T
-  DouglasPeuckerSimplification(ϵ::T) where {T} = new{float(T)}(ϵ)
+struct DouglasPeuckerSimplification{ℒ<:Len} <: SimplificationMethod
+  ϵ::ℒ
+  DouglasPeuckerSimplification(ϵ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(ϵ)
 end
+
+DouglasPeuckerSimplification(ϵ) = DouglasPeuckerSimplification(addunit(ϵ, u"m"))
 
 function simplify(chain::Chain, method::DouglasPeuckerSimplification)
   verts = _douglaspeucker(vertices(chain), method.ϵ) |> collect

@@ -17,7 +17,8 @@ struct MinMaxSimplification{M} <: SimplificationMethod
   maxiter::Int
 end
 
-MinMaxSimplification(method; min=3, max=typemax(Int), maxiter=10)
+MinMaxSimplification(method; min=3, max=typemax(Int), maxiter=10) =
+  MinMaxSimplification(method, min, max, maxiter)
 
 function simplify(c::Chain, m::MinMaxSimplification)
   i = 0
