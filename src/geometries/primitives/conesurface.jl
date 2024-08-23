@@ -37,17 +37,12 @@ function (conesurface::ConeSurface)(uφ, uh)
     throw(DomainError((uφ, uh), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
 
-  # Aliases
   a = conesurface.apex
   R = conesurface.base.radius
   b = conesurface.base.plane.p
   û = normalize(conesurface.base.plane.u)
   v̂ = normalize(conesurface.base.plane.v)
-
-  # Scaled parametric coords
   sφ, cφ = sincospi(2uφ)
-
-  # Locate parametric point
   c = b + Vec(R * cφ * û) + Vec(R * sφ * v̂)
   h̄ = uh * (c - a)
   a + h̄
