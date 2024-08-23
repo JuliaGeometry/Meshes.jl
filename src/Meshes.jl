@@ -457,10 +457,10 @@ export
 
   # simplification
   SimplificationMethod,
-  DouglasPeucker,
-  Selinger,
+  SelingerSimplification,
+  DouglasPeuckerSimplification,
+  MinMaxSimplification,
   simplify,
-  decimate,
 
   # bounding boxes
   boundingbox,
