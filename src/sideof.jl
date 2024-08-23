@@ -58,10 +58,11 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
 """
 function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
+  point′ = point |> Proj(crs(ring))
   if nvertices(ring) ≤ 1000 || Threads.nthreads() == 1
-    _sideofserial(point, ring)
+    _sideofserial(point′, ring)
   else
-    _sideofthreads(point, ring)
+    _sideofthreads(point′, ring)
   end
 end
 
