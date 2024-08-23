@@ -1133,7 +1133,7 @@
     @test paramdim(c) == 2
     @test crs(c) <: Cartesian{NoDatum}
     @test Meshes.lentype(c) == ℳ
-    @test c(0, 0) ≈ a
+    @test c(0, 0) ≈ Point(a)
     @test c(0, 1) ≈ cart(2, 0, 0)
     @test c(T(0.25), 1) ≈ cart(0, 2, 0)
 
