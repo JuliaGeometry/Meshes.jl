@@ -457,10 +457,10 @@ export
 
   # simplification
   SimplificationMethod,
-  DouglasPeucker,
-  Selinger,
+  SelingerSimplification,
+  DouglasPeuckerSimplification,
+  MinMaxSimplification,
   simplify,
-  decimate,
 
   # bounding boxes
   boundingbox,
@@ -534,7 +534,7 @@ export
   Proj,
   LengthUnit,
   Shadow,
-  Within,
+  Crop,
   Repair,
   Bridge,
   LambdaMuSmoothing,
