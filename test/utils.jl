@@ -1,4 +1,4 @@
-@testset "Utilities" begin
+@testitem "Utilities" setup = [Setup] begin
   a, b, c = cart(0, 0), cart(1, 0), cart(0, 1)
   @test signarea(a, b, c) == T(0.5) * u"m^2"
   a, b, c = cart(0, 0), cart(0, 1), cart(1, 0)

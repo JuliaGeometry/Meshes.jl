@@ -1,4 +1,4 @@
-@testset "Viewing" begin
+@testitem "Viewing" setup = [Setup] begin
   g = cartgrid(10, 10)
   v = view(g, 1:3)
   @test parent(v) == g

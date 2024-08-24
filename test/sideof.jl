@@ -1,4 +1,4 @@
-@testset "sideof" begin
+@testitem "sideof" setup = [Setup] begin
   p1, p2, p3 = cart(0, 0), cart(1, 1), cart(0.25, 0.5)
   l = Line(cart(0.5, 0.0), cart(0.0, 1.0))
   @test sideof(p1, l) == LEFT

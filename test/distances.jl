@@ -1,4 +1,4 @@
-@testset "Distances" begin
+@testitem "Distances" setup = [Setup] begin
   p = cart(0, 1)
   l = Line(cart(0, 0), cart(1, 0))
   @test evaluate(Euclidean(), p, l) == T(1) * u"m"

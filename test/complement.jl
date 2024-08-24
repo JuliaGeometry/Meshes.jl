@@ -1,4 +1,4 @@
-@testset "complement" begin
+@testitem "Complement of geometries" setup = [Setup] begin
   τ = atol(T)
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
