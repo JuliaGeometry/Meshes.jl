@@ -31,7 +31,7 @@ using TestItemRunner
   datadir = joinpath(@__DIR__, "data")
 
   # float settings
-  T = Float32
+  T = Float64
 
   include("testutils.jl")
 end
