@@ -1,4 +1,4 @@
-@testitem "MetricBall" begin
+@testitem "MetricBall" setup = [Setup] begin
   # Euclidean metric
   b = MetricBall(T(1 / 2))
   r = radius(b)

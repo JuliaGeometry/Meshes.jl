@@ -1,4 +1,4 @@
-@testitem "Bounding boxes" begin
+@testitem "Bounding boxes" setup = [Setup] begin
   p = cart(0, 0)
   @test boundingbox(p) == Box(p, p)
   @test @allocated(boundingbox(p)) < 50

@@ -1,4 +1,4 @@
-@testitem "Delaunay" begin
+@testitem "Delaunay" setup = [Setup] begin
   pts = randpoint2(10)
   pset = PointSet(pts)
   mesh1 = tesselate(pts, DelaunayTesselation(StableRNG(2024)))
@@ -22,7 +22,7 @@
   @test_throws AssertionError tesselate(pset, DelaunayTesselation(StableRNG(2024)))
 end
 
-@testitem "Voronoi" begin
+@testitem "Voronoi" setup = [Setup] begin
   pts = randpoint2(10)
   pset = PointSet(pts)
   mesh1 = tesselate(pts, VoronoiTesselation(StableRNG(2024)))

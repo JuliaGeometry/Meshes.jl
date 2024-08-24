@@ -1,4 +1,4 @@
-@testitem "SutherlandHodgman" begin
+@testitem "SutherlandHodgman" setup = [Setup] begin
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))

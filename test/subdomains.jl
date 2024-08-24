@@ -1,4 +1,4 @@
-@testitem "SubDomains" begin
+@testitem "SubDomains" setup = [Setup] begin
   pset = PointSet(randpoint3(100))
   inds = rand(1:100, 3)
   v = view(pset, inds)

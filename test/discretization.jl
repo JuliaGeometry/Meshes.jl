@@ -1,4 +1,4 @@
-@testitem "FanTriangulation" begin
+@testitem "FanTriangulation" setup = [Setup] begin
   pts = cart.([(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.75, 1.5), (0.25, 1.5), (0.0, 1.0)])
   tris = [Triangle(pts[1], pts[i], pts[i + 1]) for i in 2:(length(pts) - 1)]
   hex = Hexagon(pts...)
@@ -10,7 +10,7 @@
   @test collect(elements(mesh)) == tris
 end
 
-@testitem "DehnTriangulation" begin
+@testitem "DehnTriangulation" setup = [Setup] begin
   octa = Octagon(
     cart(0.2, 0.2),
     cart(0.5, -0.5),
@@ -46,7 +46,7 @@ end
   @test eltype(mesh) <: Triangle
 end
 
-@testitem "HeldTriangulation" begin
+@testitem "HeldTriangulation" setup = [Setup] begin
   𝒫 = Ring(cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)]))
   @test Meshes.earsccw(𝒫) == [2, 4, 5]
 
@@ -130,7 +130,7 @@ end
   @test nelements(mesh) == 3
 end
 
-@testitem "DelaunayTriangulation" begin
+@testitem "DelaunayTriangulation" setup = [Setup] begin
   rng = StableRNG(123)
   poly = Pentagon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0.5, 2), cart(0, 1))
   mesh = discretize(poly, DelaunayTriangulation(rng))
@@ -138,7 +138,7 @@ end
   @test nelements(mesh) == length(vertices(mesh)) - 2
 end
 
-@testitem "Misc triangulations" begin
+@testitem "Misc triangulations" setup = [Setup] begin
   rng = StableRNG(123)
   for method in [DehnTriangulation(), HeldTriangulation(rng), DelaunayTriangulation(rng)]
     triangle = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
@@ -197,7 +197,7 @@ end
   end
 end
 
-@testitem "Difficult triangulations" begin
+@testitem "Difficult triangulations" setup = [Setup] begin
   rng = StableRNG(123)
   for method in [DehnTriangulation(), HeldTriangulation(rng)]
     poly = readpoly(T, joinpath(datadir, "taubin.line"))
@@ -309,7 +309,7 @@ end
   @test mesh[1] == Triangle(cart(0, 0), cart(0, 0), cart(0, 0))
 end
 
-@testitem "ManualDiscretization" begin
+@testitem "ManualDiscretization" setup = [Setup] begin
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
   hexa = Hexahedron(pointify(box)...)
   bmesh = discretize(box, ManualDiscretization())
@@ -319,7 +319,7 @@ end
   @test nelements(bmesh) == 5
 end
 
-@testitem "RegularDiscretization" begin
+@testitem "RegularDiscretization" setup = [Setup] begin
   bezier = BezierCurve([cart(0, 0), cart(1, 0), cart(1, 1)])
   mesh = discretize(bezier, RegularDiscretization(10))
   @test nvertices(mesh) == 11
@@ -407,7 +407,7 @@ end
   @test all(intersects(poly), mesh)
 end
 
-@testitem "Discretize" begin
+@testitem "Discretize" setup = [Setup] begin
   ball = Ball(cart(0, 0), T(1))
   mesh = discretize(ball)
   @test !(eltype(mesh) <: Triangle)
@@ -439,7 +439,7 @@ end
   @test discretize(mesh) == mesh
 end
 
-@testitem "Simplexify" begin
+@testitem "Simplexify" setup = [Setup] begin
   # simplexify is a helper function that calls an
   # appropriate discretization method depending on
   # the geometry type that is given to it

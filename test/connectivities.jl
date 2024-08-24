@@ -1,4 +1,4 @@
-@testitem "Connectivities" begin
+@testitem "Connectivities" setup = [Setup] begin
   # basic tests
   c = connect((1, 2, 3), Triangle)
   @test pltype(c) == Triangle

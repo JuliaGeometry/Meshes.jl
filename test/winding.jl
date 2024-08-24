@@ -1,4 +1,4 @@
-@testitem "winding" begin
+@testitem "Winding numbers" setup = [Setup] begin
   p = cart(0.5, 0.5)
   c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test winding(p, c) ≈ T(1)

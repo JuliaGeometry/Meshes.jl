@@ -1,4 +1,4 @@
-@testitem "Point intersection" begin
+@testitem "Point intersection" setup = [Setup] begin
   p = cart(0, 0)
   q = cart(-1, -1)
   b = Box(cart(0, 0), cart(1, 1))
@@ -9,7 +9,7 @@
   @test isnothing(q ∩ b)
 end
 
-@testitem "Segment intersection" begin
+@testitem "Segment intersection" setup = [Setup] begin
   # segments in 2D
   s1 = Segment(cart(0, 0), cart(1, 0))
   s2 = Segment(cart(0.5, 0.0), cart(2, 0))
@@ -457,7 +457,7 @@ end
   @test Meshes._sort4vals(2.0, 2.5, 1.1, 1.4) == (1.4, 2.0)
 end
 
-@testitem "Ray intersection" begin
+@testitem "Ray intersection" setup = [Setup] begin
   # rays in 2D
   r₁ = Ray(cart(1, 0), vector(2, 1))
   r₂ = Ray(cart(0, 2), vector(2, -3))
@@ -542,7 +542,7 @@ end
   @test intersection(l₁, r₆) |> type === NotIntersecting
 end
 
-@testitem "Line intersection" begin
+@testitem "Line intersection" setup = [Setup] begin
   # lines in 2D
   l1 = Line(cart(0, 0), cart(1, 0))
   l2 = Line(cart(-1, -1), cart(-1, 1))
@@ -593,14 +593,14 @@ end
   @inferred someornone(l1, l2)
 end
 
-@testitem "Chain intersection" begin
+@testitem "Chain intersection" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/644
   r = Rope(cart(0, 0), cart(1, 1))
   @test r ∩ r == GeometrySet([Segment(cart(0, 0), cart(1, 1))])
   @inferred someornone(r, r)
 end
 
-@testitem "Plane intersection" begin
+@testitem "Plane intersection" setup = [Setup] begin
   # ---------
   # SEGMENTS
   # ---------
@@ -761,7 +761,7 @@ end
   @test crs(p1 ∩ p2) === crs(p1)
 end
 
-@testitem "Box intersection" begin
+@testitem "Box intersection" setup = [Setup] begin
   b1 = Box(cart(0, 0), cart(1, 1))
   b2 = Box(cart(0.5, 0.5), cart(2, 2))
   b3 = Box(cart(2, 2), cart(3, 3))
@@ -859,7 +859,7 @@ end
   @test r ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
 end
 
-@testitem "Triangle intersection" begin
+@testitem "Triangle intersection" setup = [Setup] begin
   # utility to reverse segments, to more fully
   # test branches in the intersection algorithm
   reverse_segment(s) = Segment(vertices(s)[2], vertices(s)[1])
@@ -1112,7 +1112,7 @@ end
   @test r ∩ t ≈ cart(0.5, 0.0, 0.0)
 end
 
-@testitem "Ngon intersection" begin
+@testitem "Ngon intersection" setup = [Setup] begin
   o = Octagon(
     cart(0.0, 0.0, 1.0),
     cart(0.5, -0.5, 0.0),
@@ -1144,7 +1144,7 @@ end
   @test t1 ∩ t2 isa PolyArea
 end
 
-@testitem "Polygon intersection" begin
+@testitem "Polygon intersection" setup = [Setup] begin
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
@@ -1179,7 +1179,7 @@ end
   @test all(vertices(quad ∩ poly) .≈ [cart(0, 0), cart(0.1, 0), cart(0.1, 0.05)])
 end
 
-@testitem "Domain intersection" begin
+@testitem "Domain intersection" setup = [Setup] begin
   grid = cartgrid(4, 4)
   pset = PointSet(centroid.(grid))
   ball = Ball(cart(0, 0), T(1))

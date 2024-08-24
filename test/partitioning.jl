@@ -1,4 +1,4 @@
-@testitem "UniformPartition" begin
+@testitem "UniformPartition" setup = [Setup] begin
   rng = StableRNG(123)
   g = cartgrid(10, 10)
   p = partition(g, UniformPartition(100))
@@ -26,7 +26,7 @@
   @test p1 == p2
 end
 
-@testitemm "DirectionPartition" begin
+@testitemm "DirectionPartition" setup = [Setup] begin
   g = cartgrid(3, 3)
 
   # basic checks on small grids
@@ -74,7 +74,7 @@ end
   @test p1 == p2
 end
 
-@testitem "FractionPartition" begin
+@testitem "FractionPartition" setup = [Setup] begin
   g = cartgrid(10, 10)
 
   p = partition(g, FractionPartition(T(0.5)))
@@ -98,7 +98,7 @@ end
   @test p1 == p2
 end
 
-@testitem "BlockPartition" begin
+@testitem "BlockPartition" setup = [Setup] begin
   g = cartgrid(10, 10)
 
   p = partition(g, BlockPartition(T(5), T(5)))
@@ -141,7 +141,7 @@ end
   @test m1 == m2
 end
 
-@testitem "BisectPointPartition" begin
+@testitem "BisectPointPartition" setup = [Setup] begin
   g = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   p = partition(g, BisectPointPartition(T.((0.0, 1.0)), T.((5.0, 5.1))))
@@ -174,7 +174,7 @@ end
   @test p1 == p2
 end
 
-@testitem "BisectFractionPartition" begin
+@testitem "BisectFractionPartition" setup = [Setup] begin
   g = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   p = partition(g, BisectFractionPartition(T.((1.0, 0.0)), T(0.2)))
@@ -212,7 +212,7 @@ end
   @test crs(first(p)) === crs(g)
 end
 
-@testitem "BallPartition" begin
+@testitem "BallPartition" setup = [Setup] begin
   pset = PointSet(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1), cart(0.2, 0.2))
 
   # 3 balls with 1 point, and 1 ball with 2 points
@@ -238,7 +238,7 @@ end
   @test p1 == p2
 end
 
-@testitem "PlanePartition" begin
+@testitem "PlanePartition" setup = [Setup] begin
   g = CartesianGrid((3, 3), T.((-0.5, -0.5)), T.((1.0, 1.0)))
   p = partition(g, PlanePartition(T.((0, 1))))
   @test setify(indices(p)) == setify([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
@@ -256,7 +256,7 @@ end
   @test p1 == p2
 end
 
-@testitem "PredicatePartition" begin
+@testitem "PredicatePartition" setup = [Setup] begin
   g = CartesianGrid((3, 3), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   # partition even from odd locations
@@ -274,7 +274,7 @@ end
   @test p1 == p2
 end
 
-@testitem "SpatialPredicatePartition" begin
+@testitem "SpatialPredicatePartition" setup = [Setup] begin
   g = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   # check if there are 100 partitions, each one having only 1 point
@@ -308,7 +308,7 @@ end
   @test p1 == p2
 end
 
-@testitem "ProductPartition" begin
+@testitem "ProductPartition" setup = [Setup] begin
   g = CartesianGrid((100, 100), T.((-0.5, -0.5)), T.((1.0, 1.0)))
   bm = BlockPartition(T(10), T(10))
   bn = BlockPartition(T(5), T(5))
@@ -336,7 +336,7 @@ end
   @test p1 == p2
 end
 
-@testitem "HierarchicalPartition" begin
+@testitem "HierarchicalPartition" setup = [Setup] begin
   g = CartesianGrid((100, 100), T.((-0.5, -0.5)), T.((1.0, 1.0)))
   bm = BlockPartition(T(10), T(10))
   bn = BlockPartition(T(5), T(5))
@@ -356,7 +356,7 @@ end
   @test p1 == p2
 end
 
-@testitem "Misc partition" begin
+@testitem "Misc partition" setup = [Setup] begin
   g = CartesianGrid((100, 100), T.((-0.5, -0.5)), T.((1.0, 1.0)))
   bm = BlockPartition(T(10), T(10))
   bn = BlockPartition(T(5), T(5))

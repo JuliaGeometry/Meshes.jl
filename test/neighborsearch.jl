@@ -1,4 +1,4 @@
-@testitem "BallSearch" begin
+@testitem "BallSearch" setup = [Setup] begin
   𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   s = BallSearch(𝒟, MetricBall(T(1)))
@@ -32,7 +32,7 @@
   @test s isa BallSearch
 end
 
-@testitem "KNearestSearch" begin
+@testitem "KNearestSearch" setup = [Setup] begin
   𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
   s = KNearestSearch(𝒟, 3)
   n = search(cart(0, 0), s)
@@ -61,7 +61,7 @@ end
   @test s isa KNearestSearch
 end
 
-@testitem "KBallSearch" begin
+@testitem "KBallSearch" setup = [Setup] begin
   𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   s = KBallSearch(𝒟, 10, MetricBall(T(100)))

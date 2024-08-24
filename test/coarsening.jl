@@ -1,4 +1,4 @@
-@testitem "RegularCoarsening" begin
+@testitem "RegularCoarsening" setup = [Setup] begin
   # 2D grids
   grid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(20, 20))
   tgrid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(10, 10))

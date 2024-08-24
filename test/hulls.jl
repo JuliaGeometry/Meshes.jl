@@ -1,4 +1,4 @@
-@testitem "Hulls" begin
+@testitem "Hulls" setup = [Setup] begin
   for method in [GrahamScan(), JarvisMarch()]
     # basic test
     pts = randpoint2(100)
@@ -141,7 +141,7 @@
   end
 end
 
-@testitem "Convex hulls" begin
+@testitem "Convex hulls" setup = [Setup] begin
   @test convexhull(cart(0, 0)) == cart(0, 0)
 
   @test convexhull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))

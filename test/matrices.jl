@@ -1,4 +1,4 @@
-@testitem "Laplace matrix" begin
+@testitem "Laplace matrix" setup = [Setup] begin
   # uniform weights for simple mesh
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -31,7 +31,7 @@
   @test size(L) == (11 * 11 * 11, 11 * 11 * 11)
 end
 
-@testitem "Measure matrix" begin
+@testitem "Measure matrix" setup = [Setup] begin
   # measure matrix of simple mesh
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -41,7 +41,7 @@ end
   @test isdiag(M)
 end
 
-@testitem "Adjacency matrix" begin
+@testitem "Adjacency matrix" setup = [Setup] begin
   # adjacency of CartesianGrid
   grid = cartgrid(100, 100)
   A = adjacencymatrix(grid)
@@ -71,7 +71,7 @@ end
   ]
 end
 
-@testitem "Misc matrix" begin
+@testitem "Misc matrix" setup = [Setup] begin
   # full Laplace-Beltrami operator
   sphere = Sphere(cart(0, 0, 0))
   mesh = simplexify(sphere)

@@ -1,4 +1,4 @@
-@testitem "Projected CRS" begin
+@testitem "Projected CRS" setup = [Setup] begin
   g = merc(1, 1)
   @test crs(g) <: Mercator{WGS84Latest}
   g = Ray(merc(0, 0), vector(1, 1))
@@ -41,7 +41,7 @@
   @test crs(d) <: Mercator{WGS84Latest}
 end
 
-@testitem "Geographic CRS" begin
+@testitem "Geographic CRS" setup = [Setup] begin
   g = latlon(1, 1)
   @test crs(g) <: LatLon{WGS84Latest}
   g = Ray(latlon(0, 0), vector(1, 1, 1))

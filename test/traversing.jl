@@ -1,4 +1,4 @@
-@testitem "Traversing" begin
+@testitem "Traversing" setup = [Setup] begin
   grid = cartgrid(100, 100)
   for path in [LinearPath(), RandomPath(), ShiftedPath(LinearPath(), 0), SourcePath(1:3)]
     p = traverse(grid, path)
