@@ -62,8 +62,7 @@
   @test traverse(vgrid, path) == [3, 10, 7, 8, 9, 4, 5, 6]
 
   if visualtests
-    paths =
-      [LinearPath(), RandomPath(StableRNG(123)), ShiftedPath(LinearPath(), 10), SourcePath(1:3), MultiGridPath()]
+    paths = [LinearPath(), RandomPath(StableRNG(123)), ShiftedPath(LinearPath(), 10), SourcePath(1:3), MultiGridPath()]
 
     fnames = ["linear-path", "random-path", "shifted-path", "source-path", "multi-grid-path"]
 
