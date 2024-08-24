@@ -20,9 +20,9 @@ end
 
 Meshes.nelements(d::DummyDomain) = 3
 
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
+# -------------
+# IO FUNCTIONS
+# -------------
 
 # helper function to read *.line files containing polygons
 # generated with RPG (https://github.com/cgalab/genpoly-rpg)
@@ -67,6 +67,10 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
+# --------------
+# CRS FUNCTIONS
+# --------------
+
 cart(T::Type, coords...) = cart(T, coords)
 cart(T::Type, coords::Tuple) = Point(T.(coords))
 
@@ -99,6 +103,10 @@ randpoint1(n) = randcart(T, 1, n)
 randpoint2(n) = randcart(T, 2, n)
 randpoint3(n) = randcart(T, 3, n)
 
+# ----------------
+# OTHER FUNCTIONS
+# ----------------
+
 numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
 
 withprecision(_, x) = x
@@ -115,6 +123,19 @@ withprecision(T, geoms::CircularVector{<:Geometry}) = CircularVector([withprecis
   exprs = (:(withprecision(T, g.$name)) for name in names)
   :($ctor($(exprs...)))
 end
+
+# helper function for type stability tests
+function someornone(g1, g2)
+  intersection(g1, g2) do I
+    if type(I) == NotIntersecting
+      "None"
+    else
+      "Some"
+    end
+  end
+end
+
+setify(lists) = Set(Set.(lists))
 
 function equaltest(g)
   @test g == withprecision(Float64, g)

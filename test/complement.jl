@@ -1,4 +1,4 @@
-@testitem "complement" begin
+@testitem "Complement of geometries" begin
   τ = atol(T)
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))

@@ -138,7 +138,7 @@ end
   @test nelements(mesh) == length(vertices(mesh)) - 2
 end
 
-@testitem "Miscellaneous triangulations" begin
+@testitem "Misc triangulations" begin
   rng = StableRNG(123)
   for method in [DehnTriangulation(), HeldTriangulation(rng), DelaunayTriangulation(rng)]
     triangle = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
