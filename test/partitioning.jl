@@ -322,9 +322,9 @@ end
   # pXp=p (for deterministic p)
   for p in [BlockPartition(T(10), T(10)), BisectFractionPartition(T.((0.1, 0.1)))]
     pp = ProductPartition(p, p)
-    s1 = indices(partition(g, pp))
-    s2 = indices(partition(g, p))
-    @test setify(s1) == setify(s2)
+    i1 = indices(partition(g, pp))
+    i2 = indices(partition(g, p))
+    @test setify(i1) == setify(i2)
   end
 
   # reproducible results with rng

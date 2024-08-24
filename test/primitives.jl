@@ -709,13 +709,13 @@ end
     Ellipsoid
     ├─ radii: (3.0f0 m, 2.0f0 m, 1.0f0 m)
     ├─ center: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
-    └─ rotation: UniformScaling{Bool}(true)"""
+    └─ rotation: LinearAlgebra.UniformScaling{Bool}(true)"""
   else
     @test sprint(show, MIME("text/plain"), e) == """
     Ellipsoid
     ├─ radii: (3.0 m, 2.0 m, 1.0 m)
     ├─ center: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
-    └─ rotation: UniformScaling{Bool}(true)"""
+    └─ rotation: LinearAlgebra.UniformScaling{Bool}(true)"""
   end
 end
 

@@ -28,11 +28,11 @@
   @test evaluate(m, T[0] * u"m", T[1] * u"m") > r
 
   for r in T[1.0, 2.0, 3.0, 4.0, 5.0]
-    b = MetricBall(r, Chebyshev())
-    r = radius(b)
-    m = metric(b)
+    o = MetricBall(r, Chebyshev())
+    r = radius(o)
+    d = metric(o)
     for i in zero(r):oneunit(r):r, j in zero(r):oneunit(r):r
-      @test evaluate(m, T[0, 0] * u"m", [i, j]) ≤ r
+      @test evaluate(d, T[0, 0] * u"m", [i, j]) ≤ r
     end
   end
 

@@ -558,12 +558,12 @@ end
   @test l1 ∩ l2 == l2 ∩ l1 == l1
 
   # rounding errors
-  l1 = Line(cart(3.0, 1.0), cart(2.0, 2.0))
   for k in 1:1000
-    Δ = k * atol(T)
-    l2 = Line(cart(1.5, 1.5 + Δ), cart(3.0, 1.5 + Δ))
-    p = cart(2.5 - Δ, 1.5 + Δ)
-    @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ p
+    δ = k * atol(T)
+    lo = Line(cart(3.0, 1.0), cart(2.0, 2.0))
+    lδ = Line(cart(1.5, 1.5 + δ), cart(3.0, 1.5 + δ))
+    p = cart(2.5 - δ, 1.5 + δ)
+    @test lo ∩ lδ ≈ lδ ∩ lo ≈ p
   end
 
   # lines in 3D

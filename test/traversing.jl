@@ -19,21 +19,21 @@
   grid = cartgrid(3, 3)
   pset = PointSet(centroid.(grid))
   for sdomain in [grid, pset]
-    p = traverse(sdomain, SourcePath([1, 9]))
-    @test collect(p) == [1, 9, 2, 4, 6, 8, 5, 3, 7]
+    t = traverse(sdomain, SourcePath([1, 9]))
+    @test collect(t) == [1, 9, 2, 4, 6, 8, 5, 3, 7]
 
-    p = traverse(sdomain, SourcePath([1]))
-    @test collect(p) == [1, 2, 4, 5, 3, 7, 6, 8, 9]
+    t = traverse(sdomain, SourcePath([1]))
+    @test collect(t) == [1, 2, 4, 5, 3, 7, 6, 8, 9]
   end
 
   grid = cartgrid(3, 3)
   path = LinearPath()
   for offset in [0, 1, -1]
     spath = ShiftedPath(path, offset)
-    p = traverse(grid, path)
-    sp = traverse(grid, spath)
-    @test length(sp) == 9
-    @test collect(sp) == circshift(p, -offset)
+    t = traverse(grid, path)
+    st = traverse(grid, spath)
+    @test length(st) == 9
+    @test collect(st) == circshift(t, -offset)
   end
 
   path = MultiGridPath()
@@ -68,8 +68,8 @@
 
     for (path, fname) in zip(paths, fnames)
       for d in (6, 7)
-        grid = cartgrid(d, d)
-        elems = [grid[i] for i in traverse(grid, path)]
+        agrid = cartgrid(d, d)
+        elems = [agrid[i] for i in traverse(agrid, path)]
         fig = viz(elems, color=1:length(elems))
         @test_reference "data/$fname-$(d)x$(d).png" fig
       end

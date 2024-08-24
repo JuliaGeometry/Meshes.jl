@@ -1083,10 +1083,10 @@ end
   @test TB.parameters(Proj(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
   @test TB.parameters(Proj(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
   f = Proj(Mercator)
-  @test sprint(show, f) == "Proj(CRS: Mercator)"
+  @test sprint(show, f) == "Proj(CRS: CoordRefSystems.Mercator)"
   @test sprint(show, MIME"text/plain"(), f) == """
   Proj transform
-  └─ CRS: Mercator"""
+  └─ CRS: CoordRefSystems.Mercator"""
 
   # ----
   # VEC
