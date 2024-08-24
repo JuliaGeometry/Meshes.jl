@@ -31,7 +31,16 @@ using TestItemRunner
   datadir = joinpath(@__DIR__, "data")
 
   # float settings
-  T = Float64
+  T = if isCI
+    if ENV["FLOAT_TYPE"] == "Float32"
+      Float32
+    elseif ENV["FLOAT_TYPE"] == "Float64"
+      Float64
+    end
+  else
+    Float64
+  end
+  @show T
 
   include("testutils.jl")
 end
