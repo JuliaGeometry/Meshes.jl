@@ -1755,9 +1755,8 @@ end
 end
 
 @testitem "Repair(8)" setup = [Setup] begin
-  poly = PolyArea(
-    cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
-  )
+  poly =
+    PolyArea(cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)]))
   rpoly = poly |> Repair(8)
   @test nvertices(rpoly) == 4
   @test vertices(rpoly) == cart.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
