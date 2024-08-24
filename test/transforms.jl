@@ -1322,8 +1322,7 @@ end
   g = Ellipsoid(T.((1, 1, 1)), cart(0, 0, 0))
   r, c = TB.apply(f, g)
   @test r isa Ellipsoid
-  @test r ≈
-        Ellipsoid((T(100) * u"cm", T(100) * u"cm", T(100) * u"cm"), Point(T(0) * u"cm", T(0) * u"cm", T(0) * u"cm"))
+  @test r ≈ Ellipsoid((T(100) * u"cm", T(100) * u"cm", T(100) * u"cm"), Point(T(0) * u"cm", T(0) * u"cm", T(0) * u"cm"))
 
   # ---------
   # TRIANGLE
