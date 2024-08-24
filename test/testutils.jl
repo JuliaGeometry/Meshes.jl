@@ -1,3 +1,29 @@
+# -------------
+# HELPER TYPES
+# -------------
+
+# meter type
+ℳ = Meshes.Met{T}
+
+# dummy type implementing the Domain trait
+struct DummyDomain{M<:Meshes.Manifold,C<:CRS} <: Domain{M,C}
+  origin::Point{M,C}
+end
+
+function Meshes.element(domain::DummyDomain, ind::Int)
+  ℒ = Meshes.lentype(domain)
+  T = Unitful.numtype(ℒ)
+  c = domain.origin + Vec(ntuple(i -> T(ind) * unit(ℒ), embeddim(domain)))
+  r = oneunit(ℒ)
+  Ball(c, r)
+end
+
+Meshes.nelements(d::DummyDomain) = 3
+
+# -------------
+# IO FUNCTIONS
+# -------------
+
 # helper function to read *.line files containing polygons
 # generated with RPG (https://github.com/cgalab/genpoly-rpg)
 function readpoly(T, fname)
@@ -41,6 +67,10 @@ function readply(T, fname)
   SimpleMesh(points, connec)
 end
 
+# --------------
+# CRS FUNCTIONS
+# --------------
+
 cart(T::Type, coords...) = cart(T, coords)
 cart(T::Type, coords::Tuple) = Point(T.(coords))
 
@@ -53,6 +83,7 @@ latlon(T::Type, coords::Tuple) = Point(LatLon(T.(coords)...))
 vector(T::Type, coords...) = vector(T, coords)
 vector(T::Type, coords::Tuple) = Vec(T.(coords))
 
+cartgrid(args...) = cartgrid(T, args...)
 cartgrid(T::Type, dims...) = cartgrid(T, dims)
 function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> T(0.0), Dim)
@@ -62,6 +93,19 @@ function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
 end
 
 randcart(T, Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
+
+# methods with fixed T
+cart(xs...) = cart(T, xs...)
+merc(xs...) = merc(T, xs...)
+latlon(xs...) = latlon(T, xs...)
+vector(xs...) = vector(T, xs...)
+randpoint1(n) = randcart(T, 1, n)
+randpoint2(n) = randcart(T, 2, n)
+randpoint3(n) = randcart(T, 3, n)
+
+# ----------------
+# OTHER FUNCTIONS
+# ----------------
 
 numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
 
@@ -79,6 +123,19 @@ withprecision(T, geoms::CircularVector{<:Geometry}) = CircularVector([withprecis
   exprs = (:(withprecision(T, g.$name)) for name in names)
   :($ctor($(exprs...)))
 end
+
+# helper function for type stability tests
+function someornone(g1, g2)
+  intersection(g1, g2) do I
+    if type(I) == NotIntersecting
+      "None"
+    else
+      "Some"
+    end
+  end
+end
+
+setify(lists) = Set(Set.(lists))
 
 function equaltest(g)
   @test g == withprecision(Float64, g)

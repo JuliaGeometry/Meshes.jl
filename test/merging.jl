@@ -1,4 +1,4 @@
-@testset "Merging" begin
+@testitem "Merging" setup = [Setup] begin
   s = Sphere(cart(0, 0, 0), T(1))
   c = CylinderSurface(T(1))
   m = merge(s, c)
