@@ -40,7 +40,6 @@ using TestItemRunner
   else
     Float64
   end
-  @show T
 
   include("testutils.jl")
 end
