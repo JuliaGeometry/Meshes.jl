@@ -1020,8 +1020,7 @@ end
   @test Meshes.lentype(p) == Meshes.Met{Float32}
 
   p = ParaboloidSurface(cart(0, 0, 0), T(1), T(1))
-  @test sprint(show, p) ==
-        "ParaboloidSurface(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
+  @test sprint(show, p) == "ParaboloidSurface(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
   if T === Float32
     @test sprint(show, MIME("text/plain"), p) == """
     ParaboloidSurface
