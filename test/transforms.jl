@@ -1637,21 +1637,20 @@ end
   @test r == SimpleMesh(f.(vertices(d)), topology(d))
 end
 
-@testitem "Within" setup = [Setup] begin
-  @test !isaffine(Within(x=(T(2), T(4))))
-  @test !TB.isrevertible(Within(x=(T(2), T(4))))
-  @test !TB.isinvertible(Within(x=(T(2), T(4))))
-  @test TB.parameters(Within(x=(T(2), T(4)))) == (x=(T(2) * u"m", T(4) * u"m"), y=nothing, z=nothing)
-  @test TB.parameters(Within(y=(T(2) * u"km", T(4) * u"km"))) ==
-        (x=nothing, y=(T(2) * u"km", T(4) * u"km"), z=nothing)
-  @test TB.parameters(Within(z=(2, 4))) == (x=nothing, y=nothing, z=(2.0u"m", 4.0u"m"))
-  @test_throws ArgumentError Within(x=(T(2) * u"°", T(4) * u"°"))
+@testitem "Crop" setup = [Setup] begin
+  @test !isaffine(Crop(x=(T(2), T(4))))
+  @test !TB.isrevertible(Crop(x=(T(2), T(4))))
+  @test !TB.isinvertible(Crop(x=(T(2), T(4))))
+  @test TB.parameters(Crop(x=(T(2), T(4)))) == (x=(T(2) * u"m", T(4) * u"m"), y=nothing, z=nothing)
+  @test TB.parameters(Crop(y=(T(2) * u"km", T(4) * u"km"))) == (x=nothing, y=(T(2) * u"km", T(4) * u"km"), z=nothing)
+  @test TB.parameters(Crop(z=(2, 4))) == (x=nothing, y=nothing, z=(2.0u"m", 4.0u"m"))
+  @test_throws ArgumentError Crop(x=(T(2) * u"°", T(4) * u"°"))
 
   # ---------
   # POINTSET
   # ---------
 
-  f = Within(x=(T(1.5), T(3.5)))
+  f = Crop(x=(T(1.5), T(3.5)))
   d = PointSet([cart(1, 0), cart(2, 1), cart(3, 1), cart(4, 0)])
   r, c = TB.apply(f, d)
   @test r == PointSet([cart(2, 1), cart(3, 1)])
@@ -1660,7 +1659,7 @@ end
   # GEOMETRYSET
   # ------------
 
-  f = Within(x=(T(1.5), T(3.5)))
+  f = Crop(x=(T(1.5), T(3.5)))
   t1 = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   t2 = t1 |> Translate(T(2), T(2))
   t3 = t2 |> Translate(T(2), T(2))
@@ -1672,7 +1671,7 @@ end
   # CARTESIANGRID
   # --------------
 
-  f = Within(z=(T(1.5), T(4.5)))
+  f = Crop(z=(T(1.5), T(4.5)))
   d = cartgrid(10, 10, 10)
   r, c = TB.apply(f, d)
   @test r == CartesianGrid((10, 10, 4), cart(0, 0, 1), T.((1, 1, 1)))
@@ -1681,7 +1680,7 @@ end
   # RECTILINEARGRID
   # ----------------
 
-  f = Within(y=(T(3.5), T(6.5)))
+  f = Crop(y=(T(3.5), T(6.5)))
   d = convert(RectilinearGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r == convert(RectilinearGrid, CartesianGrid((10, 4), cart(0, 3), T.((1, 1))))
@@ -1690,7 +1689,7 @@ end
   # STRUCTUREDGRID
   # ---------------
 
-  f = Within(x=(T(5.5), T(8.5)))
+  f = Crop(x=(T(5.5), T(8.5)))
   d = convert(StructuredGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r == convert(StructuredGrid, CartesianGrid((4, 10), cart(5, 0), T.((1, 1))))
@@ -1699,7 +1698,7 @@ end
   # SIMPLEMESH
   # -----------
 
-  f = Within(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
+  f = Crop(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
   d = convert(SimpleMesh, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
@@ -1732,534 +1731,177 @@ end
 
 @testitem "Repair(2)" setup = [Setup] begin end
 
-    # ------------
-    # GEOMETRYSET
-    # ------------
-
-    f = LengthUnit(u"cm")
-    t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
-    d = GeometrySet([t, t])
-    r, c = TB.apply(f, d)
-    @test r ≈ GeometrySet([f(t), f(t)])
-    d = [t, t]
-    r, c = TB.apply(f, d)
-    @test all(r .≈ [f(t), f(t)])
-
-    # --------------
-    # CARTESIANGRID
-    # --------------
-
-    f = LengthUnit(u"km")
-    d = CartesianGrid((10, 10), cart(1000, 1000), T.((1000, 1000)))
-    r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
-    @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"))
-
-    # ----------------
-    # RECTILINEARGRID
-    # ----------------
-
-    f = LengthUnit(u"cm")
-    d = convert(RectilinearGrid, cartgrid(10, 10))
-    r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
-    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
-
-    # ---------------
-    # STRUCTUREDGRID
-    # ---------------
-
-    f = LengthUnit(u"km")
-    d = convert(StructuredGrid, cartgrid(10, 10))
-    r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
-    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
-
-    # -----------
-    # SIMPLEMESH
-    # -----------
-
-    f = LengthUnit(u"cm")
-    p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
-    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
-    d = SimpleMesh(p, c)
-    r, c = TB.apply(f, d)
-    @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
-  end
-
-  @testset "Shadow" begin
-    @test !isaffine(Shadow(:xy))
-    @test !TB.isrevertible(Shadow("xy"))
-    @test !TB.isinvertible(Shadow(:xy))
-    @test TB.parameters(Shadow("xy")) == (; dims=(1, 2))
-    @test TB.parameters(Shadow(:yx)) == (; dims=(2, 1))
-    @test TB.parameters(Shadow("xz")) == (; dims=(1, 3))
-    @test TB.parameters(Shadow(:yz)) == (; dims=(2, 3))
-    @test_throws ArgumentError Shadow(:xk)
-
-    # ----
-    # VEC
-    # ----
-
-    f = Shadow(:xy)
-    v = vector(1, 2, 3)
-    r, c = TB.apply(f, v)
-    @test r == vector(1, 2)
-
-    # ------
-    # POINT
-    # ------
-
-    f = Shadow(:xz)
-    g = cart(1, 2, 3)
-    r, c = TB.apply(f, g)
-    @test r == cart(1, 3)
-
-    # --------
-    # SEGMENT
-    # --------
-
-    f = Shadow(:yz)
-    g = Segment(cart(1, 2, 3), cart(4, 5, 6))
-    r, c = TB.apply(f, g)
-    @test r == Segment(cart(2, 3), cart(5, 6))
-
-    # ----
-    # BOX
-    # ----
-
-    f = Shadow(:xy)
-    g = Box(cart(1, 2, 3), cart(4, 5, 6))
-    r, c = TB.apply(f, g)
-    @test r isa Box
-    @test r == Box(cart(1, 2), cart(4, 5))
-
-    # ------
-    # PLANE
-    # ------
-
-    f = Shadow(:xz)
-    g = Plane(cart(0, 0, 0), vector(0, 0, 1))
-    @test_throws ArgumentError TB.apply(f, g)
-
-    # ----------
-    # ELLIPSOID
-    # ----------
-
-    f = Shadow(:yz)
-    g = Ellipsoid(T.((1, 2, 3)))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # -----
-    # DISK
-    # -----
-
-    f = Shadow(:xy)
-    g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # -------
-    # CIRCLE
-    # -------
-
-    f = Shadow(:xz)
-    g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # ----------------
-    # CYLINDERSURFACE
-    # ----------------
-
-    f = Shadow(:yz)
-    g = CylinderSurface(T(1))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # ------------
-    # CONESURFACE
-    # ------------
-
-    f = Shadow(:xy)
-    p = Plane(cart(0, 0, 0), vector(0, 0, 1))
-    g = ConeSurface(Disk(p, T(2)), cart(0, 0, 1))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # ---------------
-    # FRUSTUMSURFACE
-    # ---------------
-
-    f = Shadow(:xz)
-    pb = Plane(cart(0, 0, 0), vector(0, 0, 1))
-    pt = Plane(cart(0, 0, 10), vector(0, 0, 1))
-    g = FrustumSurface(Disk(pb, T(1)), Disk(pt, T(2)))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # ------------------
-    # PARABOLOIDSURFACE
-    # ------------------
-
-    f = Shadow(:yz)
-    g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # ------
-    # TORUS
-    # ------
-
-    f = Shadow(:xy)
-    g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
-    m = discretize(g)
-    r, c = TB.apply(f, g)
-    @test discretize(r) ≈ f(m)
-
-    # ---------
-    # TRIANGLE
-    # ---------
-
-    f = Shadow(:xz)
-    g = Triangle(cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9))
-    r, c = TB.apply(f, g)
-    @test r == Triangle(cart(1, 3), cart(4, 6), cart(7, 9))
-
-    # ----------
-    # MULTIGEOM
-    # ----------
-
-    f = Shadow(:yz)
-    t = Triangle(cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9))
-    g = Multi([t, t])
-    r, c = TB.apply(f, g)
-    @test r == Multi([f(t), f(t)])
-
-    # ---------
-    # POINTSET
-    # ---------
-
-    f = Shadow(:xy)
-    d = PointSet([cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9)])
-    r, c = TB.apply(f, d)
-    @test r == PointSet([cart(1, 2), cart(4, 5), cart(7, 8)])
-
-    # ------------
-    # GEOMETRYSET
-    # ------------
-
-    f = Shadow(:xz)
-    t = Triangle(cart(1, 2, 3), cart(4, 5, 6), cart(7, 8, 9))
-    d = GeometrySet([t, t])
-    r, c = TB.apply(f, d)
-    @test r == GeometrySet([f(t), f(t)])
-    d = [t, t]
-    r, c = TB.apply(f, d)
-    @test all(r .== [f(t), f(t)])
-
-    # --------------
-    # CARTESIANGRID
-    # --------------
-
-    f = Shadow(:yz)
-    d = CartesianGrid((10, 11, 12), cart(1, 2, 3), T.((1.0, 1.1, 1.2)))
-    r, c = TB.apply(f, d)
-    @test r isa CartesianGrid
-    @test r == CartesianGrid((11, 12), cart(2, 3), T.((1.1, 1.2)))
-
-    # ----------------
-    # RECTILINEARGRID
-    # ----------------
-
-    f = Shadow(:xy)
-    d = convert(RectilinearGrid, cartgrid(10, 11, 12))
-    r, c = TB.apply(f, d)
-    @test r isa RectilinearGrid
-    @test r == RectilinearGrid(Meshes.xyz(d)[1], Meshes.xyz(d)[2])
-
-    # ---------------
-    # STRUCTUREDGRID
-    # ---------------
-
-    f = Shadow(:xz)
-    d = convert(StructuredGrid, cartgrid(10, 11, 12))
-    r, c = TB.apply(f, d)
-    @test r isa StructuredGrid
-    @test r == StructuredGrid(Meshes.XYZ(d)[1][:, 1, :], Meshes.XYZ(d)[3][:, 1, :])
-
-    # -----------
-    # SIMPLEMESH
-    # -----------
-
-    f = Shadow(:yz)
-    p = cart.([(0, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (0, 0.5, 0.5)])
-    c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
-    d = SimpleMesh(p, c)
-    r, c = TB.apply(f, d)
-    @test r == SimpleMesh(f.(vertices(d)), topology(d))
-  end
-
-  @testset "Crop" begin
-    @test !isaffine(Crop(x=(T(2), T(4))))
-    @test !TB.isrevertible(Crop(x=(T(2), T(4))))
-    @test !TB.isinvertible(Crop(x=(T(2), T(4))))
-    @test TB.parameters(Crop(x=(T(2), T(4)))) == (x=(T(2) * u"m", T(4) * u"m"), y=nothing, z=nothing)
-    @test TB.parameters(Crop(y=(T(2) * u"km", T(4) * u"km"))) == (x=nothing, y=(T(2) * u"km", T(4) * u"km"), z=nothing)
-    @test TB.parameters(Crop(z=(2, 4))) == (x=nothing, y=nothing, z=(2.0u"m", 4.0u"m"))
-    @test_throws ArgumentError Crop(x=(T(2) * u"°", T(4) * u"°"))
-
-    # ---------
-    # POINTSET
-    # ---------
-
-    f = Crop(x=(T(1.5), T(3.5)))
-    d = PointSet([cart(1, 0), cart(2, 1), cart(3, 1), cart(4, 0)])
-    r, c = TB.apply(f, d)
-    @test r == PointSet([cart(2, 1), cart(3, 1)])
-
-    # ------------
-    # GEOMETRYSET
-    # ------------
-
-    f = Crop(x=(T(1.5), T(3.5)))
-    t1 = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-    t2 = t1 |> Translate(T(2), T(2))
-    t3 = t2 |> Translate(T(2), T(2))
-    d = GeometrySet([t1, t2, t3])
-    r, c = TB.apply(f, d)
-    @test r == GeometrySet([t2])
-
-    # --------------
-    # CARTESIANGRID
-    # --------------
-
-    f = Crop(z=(T(1.5), T(4.5)))
-    d = cartgrid(10, 10, 10)
-    r, c = TB.apply(f, d)
-    @test r == CartesianGrid((10, 10, 4), cart(0, 0, 1), T.((1, 1, 1)))
-
-    # ----------------
-    # RECTILINEARGRID
-    # ----------------
-
-    f = Crop(y=(T(3.5), T(6.5)))
-    d = convert(RectilinearGrid, cartgrid(10, 10))
-    r, c = TB.apply(f, d)
-    @test r == convert(RectilinearGrid, CartesianGrid((10, 4), cart(0, 3), T.((1, 1))))
-
-    # ---------------
-    # STRUCTUREDGRID
-    # ---------------
-
-    f = Crop(x=(T(5.5), T(8.5)))
-    d = convert(StructuredGrid, cartgrid(10, 10))
-    r, c = TB.apply(f, d)
-    @test r == convert(StructuredGrid, CartesianGrid((4, 10), cart(5, 0), T.((1, 1))))
-
-    # -----------
-    # SIMPLEMESH
-    # -----------
-
-    f = Crop(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
-    d = convert(SimpleMesh, cartgrid(10, 10))
-    r, c = TB.apply(f, d)
-    @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
-  end
-
-  @testset "Repair(0)" begin
-    @test !isaffine(Repair)
-    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
-    rpoly = poly |> Repair(0)
-    @test nvertices(rpoly) == 4
-    @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-
-    repair = Repair(0)
-    @test sprint(show, repair) == "Repair(K: 0)"
-    @test sprint(show, MIME"text/plain"(), repair) == """
-    Repair transform
-    └─ K: 0"""
-  end
-
-  @testset "Repair(1)" begin
-    # a tetrahedron with an unused vertex
-    points = cart.([(0, 0, 0), (0, 0, 1), (5, 5, 5), (0, 1, 0), (1, 0, 0)])
-    connec = connect.([(1, 2, 4), (1, 2, 5), (1, 4, 5), (2, 4, 5)])
-    mesh = SimpleMesh(points, connec)
-    rmesh = mesh |> Repair(1)
-    @test nvertices(rmesh) == nvertices(mesh) - 1
-    @test nelements(rmesh) == nelements(mesh)
-    @test cart(5, 5, 5) ∉ vertices(rmesh)
-  end
-
-  @testset "Repair(2)" begin end
-
-  @testset "Repair(3)" begin end
-
-  @testset "Repair(4)" begin end
-
-  @testset "Repair(5)" begin end
-
-  @testset "Repair(6)" begin end
-
-  @testset "Repair(7)" begin
-    # mesh with inconsistent orientation
-    points = randpoint3(6)
-    connec = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
-    mesh = SimpleMesh(points, connec)
-    rmesh = mesh |> Repair(7)
-    topo = topology(mesh)
-    rtopo = topology(rmesh)
-    e = collect(elements(topo))
-    n = collect(elements(rtopo))
-    @test n[1] == e[1]
-    @test n[2] != e[2]
-    @test n[3] != e[3]
-    @test n[4] != e[4]
-  end
-
-  @testset "Repair(8)" begin
-    poly = PolyArea(
-      cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
-    )
-    rpoly = poly |> Repair(8)
-    @test nvertices(rpoly) == 4
-    @test vertices(rpoly) == cart.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
-
-    # degenerate triangle with repeated vertices
-    poly = PolyArea(cart.([(0, 0), (1, 1), (1, 1)]))
-    rpoly = poly |> Repair(8)
-    @test !hasholes(rpoly)
-    @test rings(rpoly) == [Ring(cart(0, 0))]
-    @test vertices(rpoly) == [cart(0, 0)]
-  end
-
-  @testset "Repair(9)" begin
-    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    repair = Repair(9)
-    rquad, cache = TB.apply(repair, quad)
-    @test rquad isa Quadrangle
-    @test rquad == quad
-
-    outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
-    inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
-    inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
-    poly = PolyArea([outer, inner1, inner2])
-    repair = Repair(9)
-    rpoly, cache = TB.apply(repair, poly)
-    @test rpoly == PolyArea([outer, inner2, inner1])
-  end
-
-  @testset "Repair(10)" begin
-    outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
-    inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
-    poly = PolyArea(outer, inner)
-    repair = Repair(10)
-    rpoly, cache = TB.apply(repair, poly)
-    @test nvertices(rpoly) == nvertices(poly)
-    @test length(first(rings(rpoly))) > length(first(rings(poly)))
-    opoly = TB.revert(repair, rpoly, cache)
-    @test opoly == poly
-  end
-
-  @testset "Repair(11)" begin
-    outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
-    inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    poly = PolyArea(outer, inner)
-    repair = Repair(11)
-    rpoly, cache = TB.apply(repair, poly)
-    router, rinner = rings(rpoly)
-    @test router == Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
-    @test rinner == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-  end
-
-  @testset "Repair(12)" begin
-    poly = PolyArea(cart.([(0, 0), (1, 0)]))
-    repair = Repair(12)
-    rpoly, cache = TB.apply(repair, poly)
-    @test rpoly == PolyArea(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
-
-    outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-    inner = cart.([(1, 2), (2, 3)])
-    poly = PolyArea(outer, inner)
-    repair = Repair(12)
-    rpoly, cache = TB.apply(repair, poly)
-    @test rpoly == PolyArea(outer)
-  end
-
-  @testset "Repair fallbacks" begin
-    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    repair = Repair(10)
-    rquad, cache = TB.apply(repair, quad)
-    @test rquad isa Quadrangle
-    @test rquad == quad
-
-    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-    multi = Multi([poly1, poly2])
-    repair = Repair(11)
-    rmulti, cache = TB.apply(repair, multi)
-    @test rmulti == Multi([repair(poly1), repair(poly2)])
-
-    poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-    poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-    gset = GeometrySet([poly1, poly2])
-    repair = Repair(11)
-    rgset, cache = TB.apply(repair, gset)
-    @test rgset == GeometrySet([repair(poly1), repair(poly2)])
-  end
-
-  @testset "Bridge" begin
-    @test !isaffine(Bridge)
-    δ = T(0.01) * u"m"
-    f = Bridge(δ)
-    @test TB.parameters(f) == (; δ)
-    f = Bridge(T(0.01))
-    @test TB.parameters(f) == (; δ)
-
-    # https://github.com/JuliaGeometry/Meshes.jl/issues/566
-    outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
-    inner₁ = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
-    inner₂ = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
-    poly = PolyArea([outer, inner₁, inner₂])
-    bpoly = poly |> Bridge(T(0.1))
-    @test !hasholes(bpoly)
-    @test nvertices(bpoly) == 15
-
-    # make sure that result is inferred
-    @inferred poly |> Bridge(T(0.1))
-
-    # unique and bridges
-    poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
-    cpoly = poly |> Repair(0) |> Bridge()
-    @test cpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
-
-    # basic ngon tests
-    t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-    @test (t |> Bridge() |> boundary) == boundary(t)
-    q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-    @test (q |> Bridge() |> boundary) == boundary(q)
-
-    # bridges between holes
-    outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-    hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
-    hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-    poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
-    @test vertices(poly) ==
-          cart.([
-      (0, 0),
-      (1, 0),
-      (1, 1),
-      (0, 1),
-      (0.2, 0.2),
+@testitem "Repair(3)" setup = [Setup] begin end
+
+@testitem "Repair(4)" setup = [Setup] begin end
+
+@testitem "Repair(5)" setup = [Setup] begin end
+
+@testitem "Repair(6)" setup = [Setup] begin end
+
+@testitem "Repair(7)" setup = [Setup] begin
+  # mesh with inconsistent orientation
+  points = randpoint3(6)
+  connec = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
+  mesh = SimpleMesh(points, connec)
+  rmesh = mesh |> Repair(7)
+  topo = topology(mesh)
+  rtopo = topology(rmesh)
+  e = collect(elements(topo))
+  n = collect(elements(rtopo))
+  @test n[1] == e[1]
+  @test n[2] != e[2]
+  @test n[3] != e[3]
+  @test n[4] != e[4]
+end
+
+@testitem "Repair(8)" setup = [Setup] begin
+  poly = PolyArea(
+    cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)])
+  )
+  rpoly = poly |> Repair(8)
+  @test nvertices(rpoly) == 4
+  @test vertices(rpoly) == cart.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
+
+  # degenerate triangle with repeated vertices
+  poly = PolyArea(cart.([(0, 0), (1, 1), (1, 1)]))
+  rpoly = poly |> Repair(8)
+  @test !hasholes(rpoly)
+  @test rings(rpoly) == [Ring(cart(0, 0))]
+  @test vertices(rpoly) == [cart(0, 0)]
+end
+
+@testitem "Repair(9)" setup = [Setup] begin
+  quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+  repair = Repair(9)
+  rquad, cache = TB.apply(repair, quad)
+  @test rquad isa Quadrangle
+  @test rquad == quad
+
+  outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
+  inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
+  inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
+  poly = PolyArea([outer, inner1, inner2])
+  repair = Repair(9)
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == PolyArea([outer, inner2, inner1])
+end
+
+@testitem "Repair(10)" setup = [Setup] begin
+  outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
+  inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
+  poly = PolyArea(outer, inner)
+  repair = Repair(10)
+  rpoly, cache = TB.apply(repair, poly)
+  @test nvertices(rpoly) == nvertices(poly)
+  @test length(first(rings(rpoly))) > length(first(rings(poly)))
+  opoly = TB.revert(repair, rpoly, cache)
+  @test opoly == poly
+end
+
+@testitem "Repair(11)" setup = [Setup] begin
+  outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
+  inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  poly = PolyArea(outer, inner)
+  repair = Repair(11)
+  rpoly, cache = TB.apply(repair, poly)
+  router, rinner = rings(rpoly)
+  @test router == Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
+  @test rinner == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+end
+
+@testitem "Repair(12)" setup = [Setup] begin
+  poly = PolyArea(cart.([(0, 0), (1, 0)]))
+  repair = Repair(12)
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == PolyArea(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
+
+  outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  inner = cart.([(1, 2), (2, 3)])
+  poly = PolyArea(outer, inner)
+  repair = Repair(12)
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == PolyArea(outer)
+end
+
+@testitem "Repair fallbacks" setup = [Setup] begin
+  quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+  repair = Repair(10)
+  rquad, cache = TB.apply(repair, quad)
+  @test rquad isa Quadrangle
+  @test rquad == quad
+
+  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  multi = Multi([poly1, poly2])
+  repair = Repair(11)
+  rmulti, cache = TB.apply(repair, multi)
+  @test rmulti == Multi([repair(poly1), repair(poly2)])
+
+  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  gset = GeometrySet([poly1, poly2])
+  repair = Repair(11)
+  rgset, cache = TB.apply(repair, gset)
+  @test rgset == GeometrySet([repair(poly1), repair(poly2)])
+end
+
+@testitem "Bridge" setup = [Setup] begin
+  @test !isaffine(Bridge)
+  δ = T(0.01) * u"m"
+  f = Bridge(δ)
+  @test TB.parameters(f) == (; δ)
+  f = Bridge(T(0.01))
+  @test TB.parameters(f) == (; δ)
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/566
+  outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
+  inner₁ = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
+  inner₂ = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
+  poly = PolyArea([outer, inner₁, inner₂])
+  bpoly = poly |> Bridge(T(0.1))
+  @test !hasholes(bpoly)
+  @test nvertices(bpoly) == 15
+
+  # make sure that result is inferred
+  @inferred poly |> Bridge(T(0.1))
+
+  # unique and bridges
+  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
+  cpoly = poly |> Repair(0) |> Bridge()
+  @test cpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
+
+  # basic ngon tests
+  t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+  @test (t |> Bridge() |> boundary) == boundary(t)
+  q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test (q |> Bridge() |> boundary) == boundary(q)
+
+  # bridges between holes
+  outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+  hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
+  poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
+  @test vertices(poly) ==
+        cart.([
+    (0, 0),
+    (1, 0),
+    (1, 1),
+    (0, 1),
+    (0.2, 0.2),
+    (0.2, 0.4),
+    (0.4, 0.4),
+    (0.4, 0.2),
+    (0.6, 0.2),
+    (0.6, 0.4),
+    (0.8, 0.4),
+    (0.8, 0.2)
+  ])
+  bpoly = poly |> Bridge(T(0.01))
+  target =
+    cart.([
+      (-0.0035355339059327372, 0.0035355339059327372),
+      (0.19646446609406729, 0.20353553390593274),
       (0.2, 0.4),
       (0.4, 0.405),
       (0.6, 0.405),
