@@ -73,9 +73,9 @@ end
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
   mesh = SimpleMesh(points, connec)
-  ref1 = refine(mesh, CatmullClark())
-  ref2 = refine(ref1, CatmullClark())
-  ref3 = refine(ref2, CatmullClark())
+  ref1 = refine(mesh, CatmullClarkRefinement())
+  ref2 = refine(ref1, CatmullClarkRefinement())
+  ref3 = refine(ref2, CatmullClarkRefinement())
 
   if visualtests
     fig = Mke.Figure(size=(900, 300))
@@ -88,9 +88,9 @@ end
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
   connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
   mesh = SimpleMesh(points, connec)
-  ref1 = refine(mesh, CatmullClark())
-  ref2 = refine(ref1, CatmullClark())
-  ref3 = refine(ref2, CatmullClark())
+  ref1 = refine(mesh, CatmullClarkRefinement())
+  ref2 = refine(ref1, CatmullClarkRefinement())
+  ref3 = refine(ref2, CatmullClarkRefinement())
 
   if visualtests
     fig = Mke.Figure(size=(900, 300))
@@ -103,9 +103,9 @@ end
   points = cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)])
   connec = connect.([(1, 4, 3, 2), (5, 6, 7, 8), (1, 2, 6, 5), (3, 4, 8, 7), (1, 5, 8, 4), (2, 3, 7, 6)])
   mesh = SimpleMesh(points, connec)
-  ref1 = refine(mesh, CatmullClark())
-  ref2 = refine(ref1, CatmullClark())
-  ref3 = refine(ref2, CatmullClark())
+  ref1 = refine(mesh, CatmullClarkRefinement())
+  ref2 = refine(ref1, CatmullClarkRefinement())
+  ref3 = refine(ref2, CatmullClarkRefinement())
 
   if visualtests
     fig = Mke.Figure(size=(900, 300))
@@ -119,7 +119,7 @@ end
   points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
   mesh = SimpleMesh(points, connec)
-  ref = refine(mesh, CatmullClark())
+  ref = refine(mesh, CatmullClarkRefinement())
   @test crs(ref) === crs(mesh)
 end
 

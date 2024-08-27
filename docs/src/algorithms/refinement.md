@@ -79,7 +79,7 @@ fig
 ## Catmull-Clark
 
 ```@docs
-CatmullClark
+CatmullClarkRefinement
 ```
 
 ```@example refinement
@@ -89,9 +89,9 @@ connec = connect.([(1,4,3,2),(5,6,7,8),(1,2,6,5),(3,4,8,7),(1,5,8,4),(2,3,7,6)])
 mesh   = SimpleMesh(points, connec)
 
 # refine three times
-ref1 = refine(mesh, CatmullClark())
-ref2 = refine(ref1, CatmullClark())
-ref3 = refine(ref2, CatmullClark())
+ref1 = refine(mesh, CatmullClarkRefinement())
+ref2 = refine(ref1, CatmullClarkRefinement())
+ref3 = refine(ref2, CatmullClarkRefinement())
 
 fig = Mke.Figure(size = (800, 800))
 viz(fig[1,1], mesh, showsegments = true)
