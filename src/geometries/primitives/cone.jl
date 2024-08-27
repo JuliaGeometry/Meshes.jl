@@ -40,14 +40,7 @@ function (c::Cone)(φ, r, h)
   if (φ < 0 || φ > 1) || (r < 0 || r > 1) || (h < 0 || h > 1)
     throw(DomainError((φ, r, h), "c(φ, r, h) is not defined for φ, r, h outside [0, 1]³."))
   end
-
   a = c.apex
-  R = radius(c.base)
-  p = c.base.plane.p
-  û = normalize(c.base.plane.u)
-  v̂ = normalize(c.base.plane.v)
-  sφ, cφ = sincospi(2φ)
-  b = p + Vec(r * R * cφ * û) + Vec(r * R * sφ * v̂)
-  h̄ = h * (b - a)
-  a + h̄
+  b = c.base(r, φ)
+  Segment(a, b)(h)
 end
