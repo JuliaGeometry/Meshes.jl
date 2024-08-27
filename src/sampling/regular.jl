@@ -75,9 +75,9 @@ firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::CylinderSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
-firstoffset(::ConeSurface) = (n -> zero(n), n -> inv(n))
-lastoffset(::ConeSurface) = (n -> inv(n), n -> zero(n))
-extrapoints(c::ConeSurface, sz) = (apex(c), base(c)(0, 0))
+firstoffset(::ConeSurface) = (n -> zero(n), n -> zero(n))
+lastoffset(::ConeSurface) = (n -> inv(n), n -> inv(n))
+extrapoints(c::ConeSurface, sz) = (base(c)(0, 0), apex(c))
 
 firstoffset(::FrustumSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::FrustumSurface) = (n -> inv(n), n -> zero(n))

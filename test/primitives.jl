@@ -1050,15 +1050,15 @@ end
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
-  a = T.((0, 0, 1))
+  a = cart(0, 0, 1)
   c = Cone(d, a)
   @test embeddim(c) == 3
   @test paramdim(c) == 3
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
-  @test c(T(0), T(0), T(0)) ≈ Point(a)
-  @test c(T(0), T(0), T(1)) ≈ centroid(p)
-  @test c(T(0.25), T(1.0), T(1.0)) ≈ cart(0, 2, 0)
+  @test c(T(0), T(0), T(0)) ≈ centroid(p)
+  @test c(T(0), T(0), T(1)) ≈ a
+  @test c(T(1.0), T(0.25), T(0.0)) ≈ cart(0, 2, 0)
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1128,15 +1128,15 @@ end
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
-  a = T.((0, 0, 1))
+  a = cart(0, 0, 1)
   c = ConeSurface(d, a)
   @test embeddim(c) == 3
   @test paramdim(c) == 2
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
-  @test c(T(0), T(0)) ≈ Point(a)
-  @test c(T(0), T(1)) ≈ cart(2, 0, 0)
-  @test c(T(1//4), T(1)) ≈ cart(0, 2, 0)
+  @test c(T(0), T(0)) ≈ cart(2, 0, 0)
+  @test c(T(0), T(1)) ≈ a
+  @test c(T(0.25), T(0)) ≈ cart(0, 2, 0)
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))

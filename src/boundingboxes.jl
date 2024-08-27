@@ -55,7 +55,7 @@ end
 
 function boundingbox(c::ConeSurface)
   us = (0, 1 / 4, 1 / 2, 3 / 4)
-  vs = (1,)
+  vs = (0,)
   ps = [c(u, v) for (u, v) in Iterators.product(us, vs)]
   boundingbox([ps; apex(c)])
 end

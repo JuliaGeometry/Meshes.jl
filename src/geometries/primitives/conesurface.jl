@@ -37,6 +37,6 @@ function (c::ConeSurface)(φ, h)
     throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
   a = c.apex
-  b = c.base(T(1), φ)
-  Segment(a, b)(h)
+  b = c.base(one(T), φ)
+  Segment(b, a)(h)
 end
