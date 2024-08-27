@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    SutherlandHodgman()
+    SutherlandHodgmanClipping()
 
 The Sutherland-Hodgman algorithm for clipping polygons.
 
@@ -16,15 +16,15 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 
 * The algorithm assumes that the clipping geometry is convex.
 """
-struct SutherlandHodgman <: ClippingMethod end
+struct SutherlandHodgmanClipping <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, method::SutherlandHodgman)
+function clip(poly::Polygon, other::Geometry, method::SutherlandHodgmanClipping)
   c = [clip(ring, boundary(other), method) for ring in rings(poly)]
   r = [r for r in c if !isnothing(r)]
   isempty(r) ? nothing : PolyArea(r)
 end
 
-function clip(ring::Ring, other::Ring, ::SutherlandHodgman)
+function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 

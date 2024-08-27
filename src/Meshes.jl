@@ -433,7 +433,7 @@ export
 
   # clipping
   ClippingMethod,
-  SutherlandHodgman,
+  SutherlandHodgmanClipping,
   clip,
 
   # intersections
@@ -513,7 +513,7 @@ export
   TriRefinement,
   QuadRefinement,
   RegularRefinement,
-  CatmullClark,
+  CatmullClarkRefinement,
   TriSubdivision,
   refine,
 

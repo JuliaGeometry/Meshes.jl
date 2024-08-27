@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    CatmullClark()
+    CatmullClarkRefinement()
 
 Catmull-Clark refinement of polygonal meshes.
 
@@ -19,9 +19,9 @@ surface.
   B-spline surfaces on arbitrary topological meshes]
   (https://www.sciencedirect.com/science/article/abs/pii/0010448578901100)
 """
-struct CatmullClark <: RefinementMethod end
+struct CatmullClarkRefinement <: RefinementMethod end
 
-function refine(mesh, ::CatmullClark)
+function refine(mesh, ::CatmullClarkRefinement)
   # retrieve geometry and topology
   points = vertices(mesh)
   connec = topology(mesh)

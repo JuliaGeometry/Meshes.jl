@@ -10,10 +10,10 @@ clip
 ClippingMethod
 ```
 
-## SutherlandHodgman
+## Sutherland-Hodgman
 
 ```@docs
-SutherlandHodgman
+SutherlandHodgmanClipping
 ```
 
 ```@example clipping
@@ -26,7 +26,7 @@ poly = PolyArea([outer, inner])
 other = Box((0,1), (3,7))
 
 # clipped polygon
-clipped = clip(poly, other, SutherlandHodgman())
+clipped = clip(poly, other, SutherlandHodgmanClipping())
 
 viz(poly)
 viz!(other, color = :black, alpha = 0.2)

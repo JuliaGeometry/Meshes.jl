@@ -2,14 +2,14 @@
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test issimple(clipped)
   @test all(vertices(clipped) .≈ [cart(5, 3), cart(4, 4), cart(2, 4), cart(0, 2), cart(5, 2)])
 
   # octagon
   poly = Octagon(cart(8, -2), cart(8, 5), cart(2, 5), cart(4, 3), cart(6, 3), cart(4, 1), cart(2, 1), cart(2, -2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test !issimple(clipped)
   @test all(
     vertices(clipped) .≈
@@ -19,20 +19,20 @@
   # inside
   poly = Quadrangle(cart(1, 0), cart(1, 1), cart(0, 1), cart(0, 0))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test issimple(clipped)
   @test all(vertices(clipped) .≈ vertices(poly))
 
   # outside
   poly = Quadrangle(cart(7, 6), cart(7, 7), cart(6, 7), cart(6, 6))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test isnothing(clipped)
 
   # surrounded
   poly = Hexagon(cart(0, 2), cart(-2, 2), cart(-2, 0), cart(0, -2), cart(2, -2), cart(2, 0))
   other = Hexagon(cart(1, 0), cart(0, 1), cart(-1, 1), cart(-1, 0), cart(0, -1), cart(1, -1))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test issimple(clipped)
   @test all(vertices(clipped) .≈ vertices(other))
 
@@ -41,7 +41,7 @@
   inner = Ring(cart(4, 4), cart(2, 4), cart(3, 6))
   poly = PolyArea([outer, inner])
   other = Box(cart(0, 1), cart(3, 7))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   crings = rings(clipped)
   @test !issimple(clipped)
   @test all(
@@ -55,7 +55,7 @@
   inner = Ring(cart(1, 3), cart(3, 3), cart(3, 1), cart(1, 1))
   poly = PolyArea([outer, inner])
   other = Quadrangle(cart(4, 4), cart(0, 4), cart(0, 0), cart(4, 0))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test !issimple(clipped)
   crings = rings(clipped)
   @test all(vertices(crings[1]) .≈ vertices(other))
@@ -67,7 +67,7 @@
   inner₂ = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
   poly = PolyArea([outer, inner₁, inner₂])
   other = PolyArea(Ring(cart(6, 1), cart(7, 2), cart(6, 5), cart(0, 2), cart(1, 1)))
-  clipped = clip(poly, other, SutherlandHodgman())
+  clipped = clip(poly, other, SutherlandHodgmanClipping())
   crings = rings(clipped)
   @test !issimple(clipped)
   @test length(crings) == 2
