@@ -34,3 +34,12 @@ halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
 Base.isapprox(c₁::Cone, c₂::Cone; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
+
+function (c::Cone)(r, φ, h)
+  if (r < 0 || r > 1) || (φ < 0 || φ > 1) || (h < 0 || h > 1)
+    throw(DomainError((r, φ, h), "c(r, φ, h) is not defined for r, φ, h outside [0, 1]³."))
+  end
+  a = c.apex
+  b = c.base(r, φ)
+  Segment(b, a)(h)
+end
