@@ -1,4 +1,4 @@
-@testset "sideof" begin
+@testitem "sideof" setup = [Setup] begin
   p1, p2, p3 = cart(0, 0), cart(1, 1), cart(0.25, 0.5)
   l = Line(cart(0.5, 0.0), cart(0.0, 1.0))
   @test sideof(p1, l) == LEFT
@@ -14,6 +14,13 @@
   @test sideof(p3, c) == ON
   pts = [p1, p2, p3]
   @test sideof(pts, c) == [IN, OUT, ON]
+
+  c′ = c |> LengthUnit(Unitful.mm)
+  @test sideof(p1, c′) == IN
+  @test sideof(p2, c′) == OUT
+  @test sideof(p3, c′) == ON
+  pts = [p1, p2, p3]
+  @test sideof(pts, c′) == [IN, OUT, ON]
 
   p1, p2, p3 = merc(0.5, 0.5), merc(1.5, 0.5), merc(1, 1)
   c = Ring([merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)])

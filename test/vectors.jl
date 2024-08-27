@@ -1,4 +1,4 @@
-@testset "Vectors" begin
+@testitem "Vectors" setup = [Setup] begin
   # vararg constructors
   @test eltype(Vec(1, 1)) == Meshes.Met{Float64}
   @test eltype(Vec(1.0, 1.0)) == Meshes.Met{Float64}
