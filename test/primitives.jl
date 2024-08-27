@@ -1046,6 +1046,7 @@ end
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
   @test boundary(c) == ConeSurface(d, a)
+  @test_throws DomainError c(T(0), T(0), nextfloat(T(1)))
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1055,6 +1056,9 @@ end
   @test paramdim(c) == 3
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
+  @test c(T(0), T(0), T(0)) ≈ Point(a)
+  @test c(T(0), T(0), T(1)) ≈ centroid(p)
+  @test c(T(0.25), T(1.0), T(1.0)) ≈ cart(0, 2, 0)
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1120,6 +1124,7 @@ end
   @test crs(s) <: Cartesian{NoDatum}
   @test Meshes.lentype(s) == ℳ
   @test isnothing(boundary(s))
+  @test_throws DomainError s(T(0), nextfloat(T(1)))
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1129,6 +1134,9 @@ end
   @test paramdim(c) == 2
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
+  @test c(T(0), T(0)) ≈ Point(a)
+  @test c(T(0), T(1)) ≈ cart(2, 0, 0)
+  @test c(T(1//4), T(1)) ≈ cart(0, 2, 0)
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
