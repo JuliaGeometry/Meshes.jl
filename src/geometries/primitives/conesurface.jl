@@ -36,12 +36,7 @@ function (c::ConeSurface)(φ, h)
   if (φ < 0 || φ > 1) || (h < 0 || h > 1)
     throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
-  n = -normal(c.base)
-  v = c.base(T(0), T(0)) - c.apex
-  l = norm(v)
-  θ = ∠(n, v)
-  o = c.apex + T(h) * v
-  r = T(h) * l * cos(θ)
-  s = Circle(Plane(o, n), r)
-  s(T(φ))
+  a = c.apex
+  b = c.base(one(T), φ)
+  Segment(b, a)(h)
 end
