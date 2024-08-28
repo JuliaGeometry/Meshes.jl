@@ -71,6 +71,8 @@ applycoord(t::Rotate, v::Vec) = urotapply(t.rot, v)
 
 applycoord(t::Rotate, b::Box) = TransformedGeometry(b, t)
 
+applycoord(t::Rotate, e::Ellipsoid) = Ellipsoid(radii(e), center(e), t.rot * rotation(e))
+
 applycoord(t::Rotate, g::CartesianGrid) = TransformedGrid(g, t)
 
 applycoord(t::Rotate, g::RectilinearGrid) = TransformedGrid(g, t)
