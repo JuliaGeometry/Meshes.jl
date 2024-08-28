@@ -702,7 +702,7 @@ end
   isapproxtest(e)
 
   e = Ellipsoid((T(3), T(2), T(1)))
-  R = RotXYZ(T(π/4), T(π/5), T(π/3))
+  R = RotXYZ(T(π / 4), T(π / 5), T(π / 3))
   @test rotation(e |> Rotate(R)) == R
 
   e = Ellipsoid((T(3), T(2), T(1)))
