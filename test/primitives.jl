@@ -702,6 +702,10 @@ end
   isapproxtest(e)
 
   e = Ellipsoid((T(3), T(2), T(1)))
+  R = RotXYZ(T(π / 4), T(π / 5), T(π / 3))
+  @test rotation(e |> Rotate(R)) == R
+
+  e = Ellipsoid((T(3), T(2), T(1)))
   @test sprint(show, e) ==
         "Ellipsoid(radii: (3.0 m, 2.0 m, 1.0 m), center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), rotation: UniformScaling{Bool}(true))"
   if T === Float32
