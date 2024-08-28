@@ -142,7 +142,7 @@
 
   R = RotXYZ(T(π / 4), T(π / 5), T(π / 3))
   f = Rotate(R)
-  g = Ellipsoid((T(3), T(2), T(1)))
+  g = Ellipsoid((T(3), T(2), T(1)), (T(1), T(1), T(1)))
   r, c = TB.apply(f, g)
   @test center(r) == center(g) |> Rotate(R)
   @test rotation(r) == R
