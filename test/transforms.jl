@@ -136,6 +136,17 @@
   @test r ≈ Cylinder(cart(0, 0, 0), cart(1, 0, 0))
   @test TB.revert(f, r, c) ≈ g
 
+  # ----------
+  # ELLIPSOID
+  # ----------
+
+  R = RotXYZ(T(π / 4), T(π / 5), T(π / 3))
+  f = Rotate(R)
+  g = Ellipsoid((T(3), T(2), T(1)))
+  r, c = TB.apply(f, g)
+  @test center(r) == center(g) |> Rotate(R)
+  @test rotation(r) == R
+
   # ---------
   # POINTSET
   # ---------
