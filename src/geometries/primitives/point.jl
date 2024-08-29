@@ -50,8 +50,8 @@ Base.convert(::Type{Point{M,CRS}}, p::Point{M,CRS}) where {M,CRS} = p
 
 # promotion
 function Base.promote(A::Point, B::Point)
-  coords₁, coords₂ = promote(coords(A), coords(B))
-  Point(coords₁), Point(coords₂)
+  a, b = promote(coords(A), coords(B))
+  Point(a), Point(b)
 end
 
 paramdim(::Type{<:Point}) = 0
