@@ -81,6 +81,8 @@ Affine
 ```
 
 ```@example transforms
+using Rotations: Angle2d
+
 grid = CartesianGrid(10, 10)
 
 mesh = grid |> Affine(Angle2d(π/4), [10., 20.])
