@@ -30,11 +30,9 @@ Rotate
 ```
 
 ```@example transforms
-using Rotations: Angle2d
-
 grid = CartesianGrid(10, 10)
 
-mesh = grid |> Rotate(Angle2d(π/4))
+mesh = grid |> Rotate(π/4)
 
 fig = Mke.Figure(size = (800, 400))
 viz(fig[1,1], grid)
