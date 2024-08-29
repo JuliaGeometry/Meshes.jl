@@ -44,23 +44,34 @@ Point(coords::CRS) = Point{_manifold(coords)}(coords)
 # convenience constructor
 Point(coords...) = Point(Cartesian(coords...))
 
-# conversions
+# conversion
 Base.convert(::Type{Point{M,CRSₜ}}, p::Point{M,CRSₛ}) where {M,CRSₜ,CRSₛ} = Point{M}(convert(CRSₜ, p.coords))
 Base.convert(::Type{Point{M,CRS}}, p::Point{M,CRS}) where {M,CRS} = p
 
+# promotion
+function Base.promote(A::Point, B::Point, Cs::Point...)
+  Ps = (A, B, Cs...)
+  Point.(promote(coords.(Ps)...))
+end
+
 paramdim(::Type{<:Point}) = 0
 
-==(A::Point, B::Point) = to(A) == to(_crsconvert(crs(A), B))
+function ==(A::Point, B::Point)
+  A′, B′ = promote(A, B)
+  to(A′) == to(B′)
+end
 
 function ==(A::Point{🌐,<:LatLon}, B::Point{🌐,<:LatLon})
-  B′ = _crsconvert(crs(A), B)
-  lat₁, lon₁ = A.coords.lat, A.coords.lon
+  A′, B′ = promote(A, B)
+  lat₁, lon₁ = A′.coords.lat, A′.coords.lon
   lat₂, lon₂ = B′.coords.lat, B′.coords.lon
   lat₁ == lat₂ && lon₁ == lon₂ || (abs(lon₁) == 180u"°" && lon₁ == -lon₂)
 end
 
-Base.isapprox(A::Point, B::Point; atol=atol(lentype(A)), kwargs...) =
-  isapprox(to(A), to(_crsconvert(crs(A), B)); atol, kwargs...)
+function Base.isapprox(A::Point, B::Point; atol=atol(lentype(A)), kwargs...)
+  A′, B′ = promote(A, B)
+  isapprox(to(A′), to(B′); atol, kwargs...)
+end
 
 """
     coords(point)
