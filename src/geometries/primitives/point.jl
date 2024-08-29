@@ -156,7 +156,7 @@ function _samecrs(A, B)
 end
 
 # handle -180° == 180° in latlon coordinates
-function _isequalcoords(coords₁, coords₂)
+function _isequallatlon(coords₁, coords₂)
   lat₁, lon₁ = coords₁.lat, coords₁.lon
   lat₂, lon₂ = coords₂.lat, coords₂.lon
   lat₁ == lat₂ && lon₁ == lon₂ || (abs(lon₁) == 180u"°" && lon₁ == -lon₂)
