@@ -18,6 +18,16 @@
   isapproxtest(cart(1, 2))
   isapproxtest(cart(1, 2, 3))
 
+  # different datums
+  p1 = Point(Cartesian{WGS84{1762}}(T(1), T(1), T(1)))
+  p2 = Point(Cartesian{ITRF{2008}}(T(1), T(1), T(1)))
+  @test p1 == p2
+  @test p1 ≈ p2
+
+  # latlon special cases
+  @test latlon(45, 180) == latlon(45, -180)
+  @test latlon(45, -180) == latlon(45, 180)
+
   @test to(cart(1)) == vector(1)
   @test to(cart(1, 2)) == vector(1, 2)
   @test to(cart(1, 2, 3)) == vector(1, 2, 3)
