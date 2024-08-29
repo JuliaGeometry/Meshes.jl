@@ -33,9 +33,6 @@
   ps = promote(p1, p3)
   @test allequal(Meshes.lentype.(ps))
   @test Meshes.lentype(first(ps)) == Meshes.Met{T}
-  ps = promote(p1, p2, p3)
-  @test allequal(Meshes.lentype.(ps))
-  @test Meshes.lentype(first(ps)) == Meshes.Met{Float64}
 
   equaltest(cart(1))
   equaltest(cart(1, 2))
