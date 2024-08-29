@@ -50,12 +50,17 @@ Base.convert(::Type{Point{M,CRS}}, p::Point{M,CRS}) where {M,CRS} = p
 
 paramdim(::Type{<:Point}) = 0
 
-==(A::Point, B::Point) = to(A) == to(_samecrs(A, B))
+==(A::Point, B::Point) = to(A) == to(_crsconvert(crs(A), B))
 
-==(A::Point{🌐,<:LatLon}, B::Point{🌐,<:LatLon}) = _isequallatlon(coords(A), coords(_samecrs(A, B)))
+function ==(A::Point{🌐,<:LatLon}, B::Point{🌐,<:LatLon})
+  B′ = _crsconvert(crs(A), B)
+  lat₁, lon₁ = A.coords.lat, A.coords.lon
+  lat₂, lon₂ = B′.coords.lat, B′.coords.lon
+  lat₁ == lat₂ && lon₁ == lon₂ || (abs(lon₁) == 180u"°" && lon₁ == -lon₂)
+end
 
 Base.isapprox(A::Point, B::Point; atol=atol(lentype(A)), kwargs...) =
-  isapprox(to(A), to(_samecrs(A, B)); atol, kwargs...)
+  isapprox(to(A), to(_crsconvert(crs(A), B)); atol, kwargs...)
 
 """
     coords(point)
@@ -149,15 +154,8 @@ _manifold(::AuthalicLatLon) = 🌐
 
 _lat(P) = convert(LatLon, P.coords).lat
 
-# make B have the same CRS as A without promoting the machine type
-function _samecrs(A, B)
-  CRS = CoordRefSystems.constructor(crs(A))
-  Point(convert(CRS, coords(B)))
-end
-
-# handle -180° == 180° in latlon coordinates
-function _isequallatlon(coords₁, coords₂)
-  lat₁, lon₁ = coords₁.lat, coords₁.lon
-  lat₂, lon₂ = coords₂.lat, coords₂.lon
-  lat₁ == lat₂ && lon₁ == lon₂ || (abs(lon₁) == 180u"°" && lon₁ == -lon₂)
+# convert to CRS without promoting the machine type
+function _crsconvert(CRS, P)
+  ctor = CoordRefSystems.constructor(CRS)
+  Point(convert(ctor, coords(P)))
 end
