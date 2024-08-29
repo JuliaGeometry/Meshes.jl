@@ -1129,7 +1129,7 @@ end
   g = latlon(0, 0)
   r, c = TB.apply(f, g)
   @test manifold(r) === 🌐
-  @test r ≈ cart(6378137.0, 0, 0)
+  @test r ≈ Point(Cartesian{WGS84Latest}(T(6378137.0), T(0), T(0)))
 
   # --------
   # SEGMENT

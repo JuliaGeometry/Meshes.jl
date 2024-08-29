@@ -2,6 +2,9 @@
   @test embeddim(Point(1)) == 1
   @test embeddim(Point(1, 2)) == 2
   @test embeddim(Point(1, 2, 3)) == 3
+  @test paramdim(Point(1)) == 0
+  @test paramdim(Point(1, 2)) == 0
+  @test paramdim(Point(1, 2, 3)) == 0
   @test crs(cart(1, 1)) <: Cartesian{NoDatum}
   @test crs(Point(Polar(T(√2), T(π / 4)))) <: Polar{NoDatum}
   @test crs(Point(Cylindrical(T(√2), T(π / 4), T(1)))) <: Cylindrical{NoDatum}
@@ -11,12 +14,42 @@
   @test Meshes.lentype(Point((T(1), T(1)))) == ℳ
   @test Meshes.lentype(Point(T(1), T(1))) == ℳ
 
+  # conversion
+  P = typeof(cart(1, 1))
+  p1 = Point(1.0, 1.0)
+  p2 = convert(P, p1)
+  @test p2 isa P
+  p1 = Point(1.0f0, 1.0f0)
+  p2 = convert(P, p1)
+  @test p2 isa P
+
+  # promotion
+  p1 = Point(T(1), T(1))
+  p2 = Point(1.0, 1.0)
+  p3 = Point(1.0f0, 1.0f0)
+  ps = promote(p1, p2)
+  @test allequal(Meshes.lentype.(ps))
+  @test Meshes.lentype(first(ps)) == Meshes.Met{Float64}
+  ps = promote(p1, p3)
+  @test allequal(Meshes.lentype.(ps))
+  @test Meshes.lentype(first(ps)) == Meshes.Met{T}
+
   equaltest(cart(1))
   equaltest(cart(1, 2))
   equaltest(cart(1, 2, 3))
   isapproxtest(cart(1))
   isapproxtest(cart(1, 2))
   isapproxtest(cart(1, 2, 3))
+
+  # different datums
+  p1 = Point(Cartesian{WGS84{1762}}(T(1), T(1), T(1)))
+  p2 = Point(Cartesian{ITRF{2008}}(T(1), T(1), T(1)))
+  @test p1 == p2
+  @test p1 ≈ p2
+
+  # latlon special cases
+  @test latlon(45, 180) == latlon(45, -180)
+  @test latlon(45, -180) == latlon(45, 180)
 
   @test to(cart(1)) == vector(1)
   @test to(cart(1, 2)) == vector(1, 2)
@@ -88,15 +121,6 @@
   p = Point(1.0f0u"m", 1.0f0u"m")
   @test unit(Meshes.lentype(p)) == u"m"
   @test Unitful.numtype(Meshes.lentype(p)) === Float32
-
-  # conversions
-  P = typeof(cart(1, 1))
-  p1 = Point(1.0, 1.0)
-  p2 = convert(P, p1)
-  @test p2 isa P
-  p1 = Point(1.0f0, 1.0f0)
-  p2 = convert(P, p1)
-  @test p2 isa P
 
   # centroid
   @test centroid(cart(1, 1)) == cart(1, 1)
