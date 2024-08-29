@@ -164,9 +164,3 @@ _manifold(::GeocentricLatLon) = 🌐
 _manifold(::AuthalicLatLon) = 🌐
 
 _lat(P) = convert(LatLon, P.coords).lat
-
-# convert to CRS without promoting the machine type
-function _crsconvert(CRS, P)
-  ctor = CoordRefSystems.constructor(CRS)
-  Point(convert(ctor, coords(P)))
-end
