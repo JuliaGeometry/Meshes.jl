@@ -42,8 +42,8 @@
   isapproxtest(cart(1, 2, 3))
 
   # different datums
-  p1 = Point(Cartesian{WGS84{1762}}(T(1), T(1), T(1)))
-  p2 = Point(Cartesian{ITRF{2008}}(T(1), T(1), T(1)))
+  p1 = Point(Cartesian{WGS84Latest}(T(1), T(1), T(1)))
+  p2 = Point(Cartesian{NAD83}(T(1), T(1), T(1)))
   @test p1 == p2
   @test p1 ≈ p2
 
