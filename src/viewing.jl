@@ -28,7 +28,11 @@ that intersect with the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-function indices(grid::Grid, point::Point)
+# --------------
+# OPTIMIZATIONS
+# --------------
+
+function indices(grid::CartesianGrid, point::Point)
   point ∉ grid && return Int[]
 
   # grid properties
@@ -46,7 +50,7 @@ function indices(grid::Grid, point::Point)
   [LinearIndices(dims)[coords...]]
 end
 
-function indices(grid::Grid, chain::Chain)
+function indices(grid::CartesianGrid, chain::Chain)
   dims = size(grid)
   mask = falses(dims)
 
@@ -55,11 +59,10 @@ function indices(grid::Grid, chain::Chain)
     _bresenham!(mask, grid, true, p₁, p₂)
   end
 
-  # convert to linear indices
   LinearIndices(dims)[mask]
 end
 
-function indices(grid::Grid, poly::Polygon)
+function indices(grid::CartesianGrid, poly::Polygon)
   dims = size(grid)
   mask = zeros(Int, dims)
   cpoly = poly ∩ boundingbox(grid)
@@ -69,7 +72,6 @@ function indices(grid::Grid, poly::Polygon)
     _fill!(mask, grid, i, triangle)
   end
 
-  # convert to linear indices
   LinearIndices(dims)[mask .> 0]
 end
 
@@ -93,9 +95,12 @@ function indices(grid::CartesianGrid, box::Box)
   LinearIndices(sz)[range] |> vec
 end
 
-indices(domain::Domain, multi::Multi) = mapreduce(geom -> indices(domain, geom), vcat, parent(multi)) |> unique
+indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
-# utils
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
 function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)
 
