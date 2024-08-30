@@ -23,33 +23,40 @@ end
 
 boundary(::Plane) = nothing
 
-boundary(b::Box) = _boundary(b, Val(embeddim(b)))
+boundary(b::Box{𝔼{1}}) = Multi([minimum(b), maximum(b)])
 
-_boundary(b::Box, ::Val{1}) = Multi([minimum(b), maximum(b)])
-
-function _boundary(b::Box, ::Val{2})
-  A = to(minimum(b))
-  B = to(maximum(b))
-  v = Point.([(A[1], A[2]), (B[1], A[2]), (B[1], B[2]), (A[1], B[2])])
+function boundary(b::Box{𝔼{2}})
+  A = convert(Cartesian, coords(minimum(b)))
+  B = convert(Cartesian, coords(maximum(b)))
+  point(x, y) = Point{𝔼{2}}(convert(crs(b), Cartesian{datum(crs(b))}(x, y)))
+  v = [point(A.x, A.y), point(B.x, A.y), point(B.x, B.y), point(A.x, B.y)]
   Ring(v)
 end
 
-function _boundary(b::Box, ::Val{3})
-  A = to(minimum(b))
-  B = to(maximum(b))
-  v =
-    Point.([
-      (A[1], A[2], A[3]),
-      (B[1], A[2], A[3]),
-      (B[1], B[2], A[3]),
-      (A[1], B[2], A[3]),
-      (A[1], A[2], B[3]),
-      (B[1], A[2], B[3]),
-      (B[1], B[2], B[3]),
-      (A[1], B[2], B[3])
-    ])
+function boundary(b::Box{𝔼{3}})
+  A = convert(Cartesian, coords(minimum(b)))
+  B = convert(Cartesian, coords(maximum(b)))
+  point(x, y, z) = Point{𝔼{3}}(convert(crs(b), Cartesian{datum(crs(b))}(x, y, z)))
+  v = [
+    point(A.x, A.y, A.z),
+    point(B.x, A.y, A.z),
+    point(B.x, B.y, A.z),
+    point(A.x, B.y, A.z),
+    point(A.x, A.y, B.z),
+    point(B.x, A.y, B.z),
+    point(B.x, B.y, B.z),
+    point(A.x, B.y, B.z)
+  ]
   c = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
   SimpleMesh(v, connect.(c))
+end
+
+function boundary(b::Box{🌐})
+  A = convert(LatLon, coords(minimum(b)))
+  B = convert(LatLon, coords(maximum(b)))
+  point(lat, lon) = Point{🌐}(convert(crs(b), LatLon{datum(crs(b))}(lat, lon)))
+  v = [point(A.lat, A.lon), point(A.lat, B.lon), point(B.lat, B.lon), point(B.lat, A.lon)]
+  Ring(v)
 end
 
 boundary(b::Ball) = Sphere(center(b), radius(b))

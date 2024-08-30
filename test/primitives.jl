@@ -460,6 +460,9 @@ end
   b = Box(cart(0, 0), cart(1, 1))
   @test boundary(b) == Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
 
+  b = Box(latlon(0, 0), latlon(1, 1))
+  @test boundary(b) == Ring(latlon.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+
   b = Box(cart(0, 0, 0), cart(1, 1, 1))
   m = boundary(b)
   @test m isa Mesh
