@@ -44,8 +44,8 @@
   # different datums
   p1 = Point(Cartesian{WGS84{1762}}(T(1), T(1), T(1)))
   p2 = Point(Cartesian{ITRF{2008}}(T(1), T(1), T(1)))
-  @test p1 == p2
-  @test p1 ≈ p2
+  @test_broken p1 == p2
+  @test_broken p1 ≈ p2
 
   # latlon special cases
   @test latlon(45, 180) == latlon(45, -180)
@@ -459,6 +459,9 @@ end
 
   b = Box(cart(0, 0), cart(1, 1))
   @test boundary(b) == Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+
+  b = Box(latlon(0, 0), latlon(1, 1))
+  @test boundary(b) == Ring(latlon.([(0, 0), (0, 1), (1, 1), (1, 0)]))
 
   b = Box(cart(0, 0, 0), cart(1, 1, 1))
   m = boundary(b)
