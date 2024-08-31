@@ -21,7 +21,7 @@ end
 """
     collectat(iter, inds)
 
-Collect iterator `iter` at indices `inds` without materialization.
+Collect iterable `iter` at indices `inds` efficiently.
 """
 function collectat(iter, inds)
   if isempty(inds)
@@ -34,6 +34,8 @@ function collectat(iter, inds)
     map(last, f)
   end
 end
+
+collectat(vec::AbstractVector, inds) = vec[inds]
 
 """
     XYZ(xyz)
