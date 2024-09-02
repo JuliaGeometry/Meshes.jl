@@ -1,11 +1,4 @@
-@testitem "Viewing" setup = [Setup] begin
-  g = cartgrid(10, 10)
-  v = view(g, 1:3)
-  @test parent(v) == g
-  @test parentindices(v) == 1:3
-  @test parent(g) == g
-  @test parentindices(g) == 1:100
-
+@testitem "Indices" setup = [Setup] begin
   g = cartgrid(10, 10)
   b = Box(cart(1, 1), cart(5, 5))
   v = view(g, b)

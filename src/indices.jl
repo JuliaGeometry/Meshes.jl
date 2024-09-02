@@ -2,35 +2,12 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# -------------------
-# VIEWS WITH INDICES
-# -------------------
-
-Base.view(domain::Domain, inds::AbstractVector{Int}) = SubDomain(domain, inds)
-
-# ----------------------
-# VIEWS WITH GEOMETRIES
-# ----------------------
-
-"""
-    view(domain, geometry)
-
-Return a view of the `domain` containing all elements that
-intersect with the `geometry`.
-"""
-Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
-
 """
     indices(domain, geometry)
 
-Return the indices of the elements of the `domain`
-that intersect with the `geometry`.
+Return the indices of the elements of the `domain` that intersect with the `geometry`.
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
-
-# --------------
-# OPTIMIZATIONS
-# --------------
 
 function indices(grid::CartesianGrid, point::Point)
   point ∉ grid && return Int[]
@@ -96,6 +73,51 @@ function indices(grid::CartesianGrid, box::Box)
 end
 
 indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
+
+function indices(grid::RectilinearGrid, box::Box)
+  # grid properties
+  sz = size(grid)
+  nd = length(sz)
+
+  # intersection of boxes
+  lo, up = to.(extrema(boundingbox(grid) ∩ box))
+
+  # integer coordinates of lower point
+  ilo = ntuple(nd) do i
+    findlast(x -> x ≤ lo[i], xyz(grid)[i])
+  end
+
+  # integer coordinates of upper point
+  iup = ntuple(nd) do i
+    findfirst(x -> x ≥ up[i], xyz(grid)[i])
+  end
+
+  # integer coordinates of elements
+  range = CartesianIndex(ilo):CartesianIndex(iup .- 1)
+
+  # convert to linear indices
+  LinearIndices(sz)[range] |> vec
+end
+
+function indices(mesh::Mesh, poly::Polygon)
+  t = topology(mesh)
+  D = paramdim(mesh)
+  vs = vertices(mesh)
+  rs = rings(poly)
+
+  # find vertices that are inside polygon
+  inside = sideof(vs, rs[1]) .!= OUT
+  for i in 2:length(rs)
+    inside .&= sideof(vs, rs[i]) .== OUT
+  end
+  vinds = findall(inside)
+
+  # find corresponding elements
+  𝒞 = Coboundary{0,D}(t)
+  unique(e for v in vinds for e in 𝒞(v))
+end
+
+indices(mesh::Mesh, box::Box) = indices(mesh, convert(Quadrangle, box))
 
 # -----------------
 # HELPER FUNCTIONS

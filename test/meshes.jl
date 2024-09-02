@@ -228,6 +228,14 @@
   @test unit(eltype(s)) == u"m"
   @test Unitful.numtype(eltype(s)) === T
 
+  # views
+  grid = cartgrid(10, 10)
+  vgrid = view(grid, 1:3)
+  @test parent(vgrid) == grid
+  @test parentindices(vgrid) == 1:3
+  @test parent(grid) == grid
+  @test parentindices(grid) == 1:100
+
   grid = cartgrid(200, 100)
   if T == Float32
     @test sprint(show, MIME"text/plain"(), grid) == """
