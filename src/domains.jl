@@ -58,6 +58,10 @@ Base.vcat(d1::Domain, d2::Domain) = GeometrySet(vcat(collect(d1), collect(d2)))
 
 Base.vcat(ds::Domain...) = reduce(vcat, ds)
 
+Base.view(domain::Domain, inds::AbstractVector{Int}) = SubDomain(domain, inds)
+
+Base.view(domain::Domain, geometry::Geometry) = view(domain, indices(domain, geometry))
+
 """
     embeddim(domain)
 
