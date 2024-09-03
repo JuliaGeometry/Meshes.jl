@@ -78,8 +78,8 @@ include("domains.jl")
 # utilities
 include("utils.jl")
 
-# domain views
-include("viewing.jl")
+# domain indices
+include("indices.jl")
 
 # domain partitions
 include("partitions.jl")
@@ -323,7 +323,7 @@ export
   # trajectories
   CylindricalTrajectory,
 
-  # viewing
+  # indices
   indices,
 
   # partitions

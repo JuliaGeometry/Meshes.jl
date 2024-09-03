@@ -1,11 +1,4 @@
-@testitem "Viewing" setup = [Setup] begin
-  g = cartgrid(10, 10)
-  v = view(g, 1:3)
-  @test parent(v) == g
-  @test parentindices(v) == 1:3
-  @test parent(g) == g
-  @test parentindices(g) == 1:100
-
+@testitem "Indices" setup = [Setup] begin
   g = cartgrid(10, 10)
   b = Box(cart(1, 1), cart(5, 5))
   v = view(g, b)
@@ -16,6 +9,7 @@
   @test centroid(v, 1) == cart(1, 1)
   @test centroid(v, nelements(v)) == cart(5, 5)
 
+  # boxes
   g = cartgrid(10, 10)
   p = PointSet(collect(vertices(g)))
   b = Ball(cart(0, 0), T(2))
@@ -25,6 +19,88 @@
   v = view(p, b)
   @test nelements(v) == 6
   @test to.(v) == vector.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)])
+
+  b1 = Box(cart(0.6, 0.7), cart(1.0, 1.0))
+  b2 = Box(cart(0.6, 0.7), cart(1.2, 1.2))
+  b3 = Box(cart(0.0, 0.0), cart(0.6, 0.3))
+  b4 = Box(cart(-0.2, -0.2), cart(0.6, 0.3))
+  b5 = Box(cart(0.25, 0.15), cart(0.95, 0.85))
+  b6 = Box(cart(0.35, 0.25), cart(0.85, 0.75))
+  b7 = Box(cart(0.05, 0.05), cart(0.65, 0.35))
+  b8 = Box(cart(0.55, 0.65), cart(0.95, 0.95))
+  x = range(zero(T), stop=one(T), length=6)
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+  g = RectilinearGrid(x, y)
+  linds = LinearIndices(size(g))
+  @test issetequal(indices(g, b1), [linds[4, 4], linds[5, 4], linds[4, 5], linds[5, 5]])
+  @test issetequal(indices(g, b2), [linds[4, 4], linds[5, 4], linds[4, 5], linds[5, 5]])
+  @test issetequal(indices(g, b3), [linds[1, 1], linds[2, 1], linds[3, 1], linds[1, 2], linds[2, 2], linds[3, 2]])
+  @test issetequal(indices(g, b4), [linds[1, 1], linds[2, 1], linds[3, 1], linds[1, 2], linds[2, 2], linds[3, 2]])
+  @test issetequal(
+    indices(g, b5),
+    [
+      linds[2, 2],
+      linds[3, 2],
+      linds[4, 2],
+      linds[5, 2],
+      linds[2, 3],
+      linds[3, 3],
+      linds[4, 3],
+      linds[5, 3],
+      linds[2, 4],
+      linds[3, 4],
+      linds[4, 4],
+      linds[5, 4]
+    ]
+  )
+  @test issetequal(
+    indices(g, b6),
+    [
+      linds[2, 2],
+      linds[3, 2],
+      linds[4, 2],
+      linds[5, 2],
+      linds[2, 3],
+      linds[3, 3],
+      linds[4, 3],
+      linds[5, 3],
+      linds[2, 4],
+      linds[3, 4],
+      linds[4, 4],
+      linds[5, 4]
+    ]
+  )
+  @test issetequal(
+    indices(g, b7),
+    [
+      linds[1, 1],
+      linds[2, 1],
+      linds[3, 1],
+      linds[4, 1],
+      linds[1, 2],
+      linds[2, 2],
+      linds[3, 2],
+      linds[4, 2],
+      linds[1, 3],
+      linds[2, 3],
+      linds[3, 3],
+      linds[4, 3]
+    ]
+  )
+  @test issetequal(
+    indices(g, b8),
+    [
+      linds[3, 3],
+      linds[4, 3],
+      linds[5, 3],
+      linds[3, 4],
+      linds[4, 4],
+      linds[5, 4],
+      linds[3, 5],
+      linds[4, 5],
+      linds[5, 5]
+    ]
+  )
 
   # convex polygons
   tri = Triangle(cart(5, 7), cart(10, 12), cart(15, 7))
