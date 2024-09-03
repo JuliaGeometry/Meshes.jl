@@ -99,26 +99,6 @@ function indices(grid::RectilinearGrid, box::Box)
   LinearIndices(sz)[range] |> vec
 end
 
-function indices(mesh::Mesh, poly::Polygon)
-  t = topology(mesh)
-  D = paramdim(mesh)
-  vs = vertices(mesh)
-  rs = rings(poly)
-
-  # find vertices that are inside polygon
-  inside = sideof(vs, rs[1]) .!= OUT
-  for i in 2:length(rs)
-    inside .&= sideof(vs, rs[i]) .== OUT
-  end
-  vinds = findall(inside)
-
-  # find corresponding elements
-  𝒞 = Coboundary{0,D}(t)
-  unique(e for v in vinds for e in 𝒞(v))
-end
-
-indices(mesh::Mesh, box::Box) = indices(mesh, convert(Quadrangle, box))
-
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
