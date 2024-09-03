@@ -53,6 +53,28 @@ function indices(grid::CartesianGrid, poly::Polygon)
 end
 
 function indices(grid::CartesianGrid, box::Box)
+  # cartesian range
+  range = cartesianrange(grid, box)
+
+  # convert to linear indices
+  LinearIndices(size(grid))[range] |> vec
+end
+
+indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
+
+function indices(grid::RectilinearGrid, box::Box)
+  # cartesian range
+  range = cartesianrange(grid, box)
+
+  # convert to linear indices
+  LinearIndices(size(grid))[range] |> vec
+end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function cartesianrange(grid::CartesianGrid, box::Box)
   # grid properties
   or = minimum(grid)
   sp = spacing(grid)
@@ -66,15 +88,10 @@ function indices(grid::CartesianGrid, box::Box)
   iup = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
 
   # Cartesian range from corner to corner
-  range = CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
-
-  # convert to linear indices
-  LinearIndices(sz)[range] |> vec
+  CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
 end
 
-indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
-
-function indices(grid::RectilinearGrid, box::Box)
+function cartesianrange(grid::RectilinearGrid, box::Box)
   # grid properties
   sz = size(grid)
   nd = length(sz)
@@ -93,15 +110,8 @@ function indices(grid::RectilinearGrid, box::Box)
   end
 
   # integer coordinates of elements
-  range = CartesianIndex(ilo):CartesianIndex(iup .- 1)
-
-  # convert to linear indices
-  LinearIndices(sz)[range] |> vec
+  CartesianIndex(ilo):CartesianIndex(iup .- 1)
 end
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
 
 function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)
