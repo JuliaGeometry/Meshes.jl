@@ -7,6 +7,7 @@ const Len{T} = Quantity{T,u"𝐋"}
 const Area{T} = Quantity{T,u"𝐋^2"}
 const Vol{T} = Quantity{T,u"𝐋^3"}
 const Met{T} = Quantity{T,u"𝐋",typeof(u"m")}
+const Deg{T} = Quantity{T,NoDims,typeof(u"°")}
 
 """
     addunit(x, u)
