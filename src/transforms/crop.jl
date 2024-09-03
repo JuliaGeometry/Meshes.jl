@@ -33,13 +33,25 @@ function preprocess(t::Crop, d::Domain)
   bbox₁ = _overlaps(1, t.x, bbox)
   bbox₂ = _overlaps(2, t.y, bbox₁)
   bbox₃ = _overlaps(3, t.z, bbox₂)
-  indices(d, bbox₃)
+  bbox₃
 end
 
 function apply(t::Crop, d::Domain)
-  inds = preprocess(t, d)
-  n = view(d, inds)
+  box = preprocess(t, d)
+  n = view(d, box)
   n, nothing
+end
+
+function apply(t::Crop, g::CartesianGrid)
+  box = preprocess(t, g)
+  range = cartesianrange(g, box)
+  g[range], nothing
+end
+
+function apply(t::Crop, g::RectilinearGrid)
+  box = preprocess(t, g)
+  range = cartesianrange(g, box)
+  g[range], nothing
 end
 
 _aslen(x::Len) = float(x)
