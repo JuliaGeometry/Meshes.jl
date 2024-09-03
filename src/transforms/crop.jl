@@ -21,29 +21,13 @@ struct Crop{T} <: GeometricTransform
   limits::T
 end
 
-function Crop(; x=nothing, y=nothing, z=nothing, lat=nothing, lon=nothing)
-  if !isnothing(lat) || !isnothing(lon)
-    Crop((lat=isnothing(lat) ? lat : _asdeg.(lat), lon=isnothing(lon) ? lon : _asdeg.(lon)))
-  else
-    Crop((x=isnothing(x) ? x : _aslen.(x), y=isnothing(y) ? y : _aslen.(y), z=isnothing(z) ? z : _aslen.(z)))
-  end
-end
+Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-function preprocess(t::Crop, d::Domain{<:𝔼})
+function preprocess(t::Crop, d::Domain)
   bbox = boundingbox(d)
-  bbox₁ = _overlaps(1, t.limits.x, bbox)
-  bbox₂ = _overlaps(2, t.limits.y, bbox₁)
-  bbox₃ = _overlaps(3, t.limits.z, bbox₂)
-  bbox₃
-end
-
-function preprocess(t::Crop, d::Domain{<:🌐})
-  bbox = boundingbox(d)
-  bbox₁ = _overlapslat(t.limits.lat, bbox)
-  bbox₂ = _overlapslon(t.limits.lon, bbox₁)
-  bbox₂
+  _cropbox(bbox, t.limits)
 end
 
 function apply(t::Crop, d::Domain)
@@ -64,6 +48,10 @@ function apply(t::Crop, g::RectilinearGrid)
   g[range], nothing
 end
 
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
 _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"
 _aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
@@ -72,44 +60,51 @@ _asdeg(x::Deg) = float(x)
 _asdeg(x::Number) = float(x) * u"°"
 _asdeg(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
 
-function _overlaps(dim, lims, bbox)
-  Dim = embeddim(bbox)
-  if Dim < dim || isnothing(lims)
-    bbox
-  else
-    lmin, lmax = lims
-    min = to(minimum(bbox))
-    max = to(maximum(bbox))
-    nmin = Vec(ntuple(i -> i == dim ? lmin : min[i], Dim))
-    nmax = Vec(ntuple(i -> i == dim ? lmax : max[i], Dim))
-    Box(withcrs(bbox, nmin), withcrs(bbox, nmax))
-  end
+_xyzlimits(limits) = (
+  x=haskey(limits, :x) ? _aslen.(limits.x) : nothing,
+  y=haskey(limits, :y) ? _aslen.(limits.y) : nothing,
+  z=haskey(limits, :z) ? _aslen.(limits.z) : nothing
+)
+
+_latlonlimits(limits) =
+  (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
+
+function _cropbox(box::Box{🌐}, limits)
+  point(lat, lon) = Point{🌐}(convert(crs(box), LatLon{datum(crs(box))}(lat, lon)))
+  lims = _latlonlimits(limits)
+  min = convert(LatLon, coords(minimum(box)))
+  max = convert(LatLon, coords(maximum(box)))
+  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
+  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
+  Box(point(latmin, lonmin), point(latmax, lonmax))
 end
 
-function _overlapslat(lims, bbox)
-  point(lat, lon) = Point{🌐}(convert(crs(bbox), LatLon{datum(crs(bbox))}(lat, lon)))
-  if isnothing(lims)
-    bbox
-  else
-    lmin, lmax = lims
-    min = convert(LatLon, coords(minimum(bbox)))
-    max = convert(LatLon, coords(maximum(bbox)))
-    nmin = point(lmin, min.lon)
-    nmax = point(lmax, max.lon)
-    Box(nmin, nmax)
-  end
+function _cropbox(box::Box{𝔼{1}}, limits)
+  point(x) = Point{𝔼{1}}(convert(crs(box), Cartesian{datum(crs(box))}(x)))
+  lims = _xyzlimits(limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
+  Box(point(xmin), point(xmax))
 end
 
-function _overlapslon(lims, bbox)
-  point(lat, lon) = Point{🌐}(convert(crs(bbox), LatLon{datum(crs(bbox))}(lat, lon)))
-  if isnothing(lims)
-    bbox
-  else
-    lmin, lmax = lims
-    min = convert(LatLon, coords(minimum(bbox)))
-    max = convert(LatLon, coords(maximum(bbox)))
-    nmin = point(min.lat, lmin)
-    nmax = point(max.lat, lmax)
-    Box(nmin, nmax)
-  end
+function _cropbox(box::Box{𝔼{2}}, limits)
+  point(x, y) = Point{𝔼{2}}(convert(crs(box), Cartesian{datum(crs(box))}(x, y)))
+  lims = _xyzlimits(limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
+  ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
+  Box(point(xmin, ymin), point(xmax, ymax))
+end
+
+function _cropbox(box::Box{𝔼{3}}, limits)
+  point(x, y, z) = Point{𝔼{3}}(convert(crs(box), Cartesian{datum(crs(box))}(x, y, z)))
+  lims = _xyzlimits(limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
+  ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
+  zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
+  Box(point(xmin, ymin, zmin), point(xmax, ymax, zmax))
 end
