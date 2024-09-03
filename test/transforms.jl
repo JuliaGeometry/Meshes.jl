@@ -1684,6 +1684,7 @@ end
   f = Crop(z=(T(1.5), T(4.5)))
   d = cartgrid(10, 10, 10)
   r, c = TB.apply(f, d)
+  @test r isa CartesianGrid
   @test r == CartesianGrid((10, 10, 4), cart(0, 0, 1), T.((1, 1, 1)))
 
   # ----------------
@@ -1693,6 +1694,7 @@ end
   f = Crop(y=(T(3.5), T(6.5)))
   d = convert(RectilinearGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
+  @test r isa RectilinearGrid
   @test r == convert(RectilinearGrid, CartesianGrid((10, 4), cart(0, 3), T.((1, 1))))
 
   # ---------------
