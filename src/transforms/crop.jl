@@ -67,7 +67,7 @@ function _crop(box::Box{🌐}, limits)
   max = convert(LatLon, coords(maximum(box)))
   latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
   lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
-  Box(withcrs(box, (latmin, lonmin), basecrs=LatLon), withcrs(box, (latmax, lonmax), basecrs=LatLon))
+  Box(withcrs(box, (latmin, lonmin), LatLon), withcrs(box, (latmax, lonmax), LatLon))
 end
 
 _xyzlimits(limits) = (
