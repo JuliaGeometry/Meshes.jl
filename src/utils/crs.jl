@@ -3,15 +3,15 @@
 # ------------------------------------------------------------------
 
 """
-    withcrs(g, coords, CRS=Cartesian)
+    withcrs(g, coords, basecrs=Cartesian)
 
-Point with the same CRS of `g` from another point with `coords` specified in a source `CRS`.
+Point with the same CRS of `g` from another point with `coords` specified in a source `basecrs`.
 """
-function withcrs(g::GeometryOrDomain, coords::Tuple; CRS=Cartesian)
+function withcrs(g::GeometryOrDomain, coords::Tuple; basecrs=Cartesian)
   M = manifold(g)
   C = crs(g)
   D = datum(C)
-  c = convert(C, CRS{D}(coords...))
+  c = convert(C, basecrs{D}(coords...))
   Point{M}(c)
 end
 
@@ -20,7 +20,7 @@ end
 
 Point at the end of the vector `v` with the same CRS of `g`.
 """
-withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), CRS=Cartesian)
+withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), basecrs=Cartesian)
 
 """
     flat(p)
