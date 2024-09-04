@@ -77,6 +77,72 @@ function apply(t::Crop, g::Grid{𝔼{2}})
   g[xstart:xstop, ystart:ystop], nothing
 end
 
+function apply(t::Crop, g::Grid{𝔼{3}})
+  box = preprocess(t, g)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  sx, sy, sz = size(g)
+  xstart = findfirst(1:sx) do i
+    p = centroid(g[i, 1, 1])
+    c = convert(Cartesian, coords(p))
+    c.x ≥ min.x
+  end
+  xstop = findlast(xstart:sx) do i
+    p = centroid(g[i, 1, 1])
+    c = convert(Cartesian, coords(p))
+    c.x ≤ max.x
+  end
+  ystart = findfirst(1:sy) do i
+    p = centroid(g[1, i, 1])
+    c = convert(Cartesian, coords(p))
+    c.y ≥ min.y
+  end
+  ystop = findlast(ystart:sy) do i
+    p = centroid(g[1, i, 1])
+    c = convert(Cartesian, coords(p))
+    c.y ≤ max.y
+  end
+  zstart = findfirst(1:sz) do i
+    p = centroid(g[1, 1, i])
+    c = convert(Cartesian, coords(p))
+    c.z ≥ min.z
+  end
+  zstop = findlast(zstart:sz) do i
+    p = centroid(g[1, 1, i])
+    c = convert(Cartesian, coords(p))
+    c.z ≤ max.z
+  end
+  g[xstart:xstop, ystart:ystop, zstart:zstop], nothing
+end
+
+function apply(t::Crop, g::Grid{🌐})
+  box = preprocess(t, g)
+  min = convert(LatLon, coords(minimum(box)))
+  max = convert(LatLon, coords(maximum(box)))
+  slon, slat = size(g)
+  lonstart = findfirst(1:slon) do i
+    p = centroid(g[i, 1])
+    c = convert(LatLon, coords(p))
+    c.lon ≥ min.lon
+  end
+  lonstop = findlast(lonstart:slon) do i
+    p = centroid(g[i, 1])
+    c = convert(LatLon, coords(p))
+    c.lon ≤ max.lon
+  end
+  latstart = findfirst(1:slat) do i
+    p = centroid(g[1, i])
+    c = convert(LatLon, coords(p))
+    c.lat ≥ min.lat
+  end
+  latstop = findlast(latstart:slat) do i
+    p = centroid(g[1, i])
+    c = convert(LatLon, coords(p))
+    c.lat ≤ max.lat
+  end
+  g[lonstart:lonstop, latstart:latstop], nothing
+end
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
