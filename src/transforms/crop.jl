@@ -25,10 +25,7 @@ Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-function preprocess(t::Crop, d::Domain)
-  bbox = boundingbox(d)
-  _cropbox(bbox, t.limits)
-end
+preprocess(t::Crop, d::Domain) = _cropbox(boundingbox(d), t.limits)
 
 function apply(t::Crop, d::Domain)
   box = preprocess(t, d)
@@ -77,7 +74,6 @@ _xyzlimits(limits) = (
 
 _latlonlimits(limits) =
   (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
-
 
 function _xyzminmax(::Type{𝔼{1}}, min, max, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
