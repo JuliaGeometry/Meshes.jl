@@ -4,10 +4,12 @@
 
 """
     Crop(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
+    Crop(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
 Retain the domain geometries that intersect with `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
-(default to meters).
+(default to meters) in Euclidean manifold, or with latitude limits [`latmin`,`latmax`]
+and longitude limits [`lonmin`,`lonmax`] in Ellipsoid manifold.
 
 ## Examples
 
@@ -15,6 +17,8 @@ Retain the domain geometries that intersect with `x` limits [`xmax`,`xmax`],
 Crop(x=(2, 4))
 Crop(x=(1u"km", 3u"km"))
 Crop(y=(1.2, 1.8), z=(2.4, 3.0))
+Crop(lat=(30, 60))
+Crop(lon=(45u"°", 100u"°"))
 ```
 """
 struct Crop{T} <: GeometricTransform
@@ -25,7 +29,7 @@ Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-preprocess(t::Crop, d::Domain) = _cropbox(boundingbox(d), t.limits)
+preprocess(t::Crop, d::Domain) = _crop(boundingbox(d), t.limits)
 
 function apply(t::Crop, d::Domain)
   box = preprocess(t, d)
@@ -49,15 +53,15 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-function _cropbox(box::Box{<:𝔼}, limits)
+function _crop(box::Box{<:𝔼}, limits)
   lims = _xyzlimits(limits)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  xyzmin, xyzmax = _xyzminmax(manifold(box), min, max, lims)
+  xyzmin, xyzmax = _xyzminmax(min, max, lims)
   Box(withcrs(box, xyzmin), withcrs(box, xyzmax))
 end
 
-function _cropbox(box::Box{🌐}, limits)
+function _crop(box::Box{🌐}, limits)
   lims = _latlonlimits(limits)
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
@@ -75,18 +79,18 @@ _xyzlimits(limits) = (
 _latlonlimits(limits) =
   (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
 
-function _xyzminmax(::Type{𝔼{1}}, min, max, lims)
+function _xyzminmax(min::Cartesian{Datum,1}, max::Cartesian{Datum,1}, lims) where {Datum}
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   (xmin,), (xmax,)
 end
 
-function _xyzminmax(::Type{𝔼{2}}, min, max, lims)
+function _xyzminmax(min::Cartesian{Datum,2}, max::Cartesian{Datum,2}, lims) where {Datum}
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
   (xmin, ymin), (xmax, ymax)
 end
 
-function _xyzminmax(::Type{𝔼{3}}, min, max, lims)
+function _xyzminmax(min::Cartesian{Datum,3}, max::Cartesian{Datum,3}, lims) where {Datum}
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
   zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
