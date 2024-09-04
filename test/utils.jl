@@ -44,4 +44,14 @@
   @inferred Meshes.intersectparameters(p1, p2, p3, p4)
   @inferred Meshes.intersectparameters(p1, p3, p2, p4)
   @inferred Meshes.intersectparameters(p1, p2, p1, p2)
+
+  # withcrs
+  c = (T(1), T(1))
+  p = merc(c)
+  v = to(p)
+  @inferred Meshes.withcrs(p, v)
+  @inferred Meshes.withcrs(p, c)
+  c = (T(30), T(60))
+  p = latlon(c) |> Proj(Cartesian)
+  @inferred Meshes.withcrs(p, c, LatLon)
 end
