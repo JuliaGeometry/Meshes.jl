@@ -49,6 +49,34 @@ function apply(t::Crop, g::RectilinearGrid)
   g[range], nothing
 end
 
+function apply(t::Crop, g::Grid{𝔼{2}})
+  box = preprocess(t, g)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  sx, sy = size(g)
+  xstart = findfirst(1:sx) do i
+    p = centroid(g[i, 1])
+    c = convert(Cartesian, coords(p))
+    c.x ≥ min.x
+  end
+  xstop = findlast(xstart:sx) do i
+    p = centroid(g[i, 1])
+    c = convert(Cartesian, coords(p))
+    c.x ≤ max.x
+  end
+  ystart = findfirst(1:sy) do i
+    p = centroid(g[1, i])
+    c = convert(Cartesian, coords(p))
+    c.y ≥ min.y
+  end
+  ystop = findlast(ystart:sy) do i
+    p = centroid(g[1, i])
+    c = convert(Cartesian, coords(p))
+    c.y ≤ max.y
+  end
+  g[xstart:xstop, ystart:ystop], nothing
+end
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
