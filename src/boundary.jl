@@ -28,24 +28,22 @@ boundary(b::Box{𝔼{1}}) = Multi([minimum(b), maximum(b)])
 function boundary(b::Box{𝔼{2}})
   A = convert(Cartesian, coords(minimum(b)))
   B = convert(Cartesian, coords(maximum(b)))
-  point(x, y) = Point{𝔼{2}}(convert(crs(b), Cartesian{datum(crs(b))}(x, y)))
-  v = [point(A.x, A.y), point(B.x, A.y), point(B.x, B.y), point(A.x, B.y)]
+  v = [withcrs(b, (A.x, A.y)), withcrs(b, (B.x, A.y)), withcrs(b, (B.x, B.y)), withcrs(b, (A.x, B.y))]
   Ring(v)
 end
 
 function boundary(b::Box{𝔼{3}})
   A = convert(Cartesian, coords(minimum(b)))
   B = convert(Cartesian, coords(maximum(b)))
-  point(x, y, z) = Point{𝔼{3}}(convert(crs(b), Cartesian{datum(crs(b))}(x, y, z)))
   v = [
-    point(A.x, A.y, A.z),
-    point(B.x, A.y, A.z),
-    point(B.x, B.y, A.z),
-    point(A.x, B.y, A.z),
-    point(A.x, A.y, B.z),
-    point(B.x, A.y, B.z),
-    point(B.x, B.y, B.z),
-    point(A.x, B.y, B.z)
+    withcrs(b, (A.x, A.y, A.z)),
+    withcrs(b, (B.x, A.y, A.z)),
+    withcrs(b, (B.x, B.y, A.z)),
+    withcrs(b, (A.x, B.y, A.z)),
+    withcrs(b, (A.x, A.y, B.z)),
+    withcrs(b, (B.x, A.y, B.z)),
+    withcrs(b, (B.x, B.y, B.z)),
+    withcrs(b, (A.x, B.y, B.z))
   ]
   c = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
   SimpleMesh(v, connect.(c))
@@ -54,8 +52,12 @@ end
 function boundary(b::Box{🌐})
   A = convert(LatLon, coords(minimum(b)))
   B = convert(LatLon, coords(maximum(b)))
-  point(lat, lon) = Point{🌐}(convert(crs(b), LatLon{datum(crs(b))}(lat, lon)))
-  v = [point(A.lat, A.lon), point(A.lat, B.lon), point(B.lat, B.lon), point(B.lat, A.lon)]
+  v = [
+    withcrs(b, (A.lat, A.lon), LatLon),
+    withcrs(b, (A.lat, B.lon), LatLon),
+    withcrs(b, (B.lat, B.lon), LatLon),
+    withcrs(b, (B.lat, A.lon), LatLon)
+  ]
   Ring(v)
 end
 
