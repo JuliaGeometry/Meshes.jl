@@ -5,7 +5,7 @@
 """
     withcrs(g, coords, CRS=Cartesian)
 
-Point with the same CRS of `g` from another point with `coords` specified in `CRS`.
+Point with the same CRS of `g` from another point with `coords` in given `CRS`.
 """
 function withcrs(g::GeometryOrDomain, coords::Tuple, ::Type{CRS}) where {CRS}
   M = manifold(g)
