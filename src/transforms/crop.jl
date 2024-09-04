@@ -53,8 +53,8 @@ function _cropbox(box::Box{<:𝔼}, limits)
   lims = _xyzlimits(limits)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  nmin, nmax = _xyzminmax(manifold(box), min, max, lims)
-  Box(withcrs(box, nmin), withcrs(box, nmax))
+  xyzmin, xyzmax = _xyzminmax(manifold(box), min, max, lims)
+  Box(withcrs(box, xyzmin), withcrs(box, xyzmax))
 end
 
 function _cropbox(box::Box{🌐}, limits)
