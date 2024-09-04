@@ -52,13 +52,22 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-_aslen(x::Len) = float(x)
-_aslen(x::Number) = float(x) * u"m"
-_aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
+function _cropbox(box::Box{<:𝔼}, limits)
+  lims = _xyzlimits(limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  nmin, nmax = _xyzminmax(manifold(box), min, max, lims)
+  Box(withcrs(box, nmin), withcrs(box, nmax))
+end
 
-_asdeg(x::Deg) = float(x)
-_asdeg(x::Number) = float(x) * u"°"
-_asdeg(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
+function _cropbox(box::Box{🌐}, limits)
+  lims = _latlonlimits(limits)
+  min = convert(LatLon, coords(minimum(box)))
+  max = convert(LatLon, coords(maximum(box)))
+  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
+  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
+  Box(withcrs(box, (latmin, lonmin), crs=LatLon), withcrs(box, (latmax, lonmax), crs=LatLon))
+end
 
 _xyzlimits(limits) = (
   x=haskey(limits, :x) ? _aslen.(limits.x) : nothing,
@@ -69,42 +78,29 @@ _xyzlimits(limits) = (
 _latlonlimits(limits) =
   (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
 
-function _cropbox(box::Box{🌐}, limits)
-  point(lat, lon) = Point{🌐}(convert(crs(box), LatLon{datum(crs(box))}(lat, lon)))
-  lims = _latlonlimits(limits)
-  min = convert(LatLon, coords(minimum(box)))
-  max = convert(LatLon, coords(maximum(box)))
-  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
-  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
-  Box(point(latmin, lonmin), point(latmax, lonmax))
-end
 
-function _cropbox(box::Box{𝔼{1}}, limits)
-  point(x) = Point{𝔼{1}}(convert(crs(box), Cartesian{datum(crs(box))}(x)))
-  lims = _xyzlimits(limits)
-  min = convert(Cartesian, coords(minimum(box)))
-  max = convert(Cartesian, coords(maximum(box)))
+function _xyzminmax(::Type{𝔼{1}}, min, max, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
-  Box(point(xmin), point(xmax))
+  (xmin,), (xmax,)
 end
 
-function _cropbox(box::Box{𝔼{2}}, limits)
-  point(x, y) = Point{𝔼{2}}(convert(crs(box), Cartesian{datum(crs(box))}(x, y)))
-  lims = _xyzlimits(limits)
-  min = convert(Cartesian, coords(minimum(box)))
-  max = convert(Cartesian, coords(maximum(box)))
+function _xyzminmax(::Type{𝔼{2}}, min, max, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
-  Box(point(xmin, ymin), point(xmax, ymax))
+  (xmin, ymin), (xmax, ymax)
 end
 
-function _cropbox(box::Box{𝔼{3}}, limits)
-  point(x, y, z) = Point{𝔼{3}}(convert(crs(box), Cartesian{datum(crs(box))}(x, y, z)))
-  lims = _xyzlimits(limits)
-  min = convert(Cartesian, coords(minimum(box)))
-  max = convert(Cartesian, coords(maximum(box)))
+function _xyzminmax(::Type{𝔼{3}}, min, max, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
   zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
-  Box(point(xmin, ymin, zmin), point(xmax, ymax, zmax))
+  (xmin, ymin, zmin), (xmax, ymax, zmax)
 end
+
+_aslen(x::Len) = float(x)
+_aslen(x::Number) = float(x) * u"m"
+_aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
+
+_asdeg(x::Deg) = float(x)
+_asdeg(x::Number) = float(x) * u"°"
+_asdeg(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
