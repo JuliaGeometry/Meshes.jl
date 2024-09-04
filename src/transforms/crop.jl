@@ -59,7 +59,7 @@ function apply(t::Crop, g::Grid{𝔼{2}})
     c = convert(Cartesian, coords(p))
     c.x ≥ min.x
   end
-  xstop = findlast(xstart:sx) do i
+  xstop = findlast(1:sx) do i
     p = centroid(g[i, 1])
     c = convert(Cartesian, coords(p))
     c.x ≤ max.x
@@ -69,7 +69,7 @@ function apply(t::Crop, g::Grid{𝔼{2}})
     c = convert(Cartesian, coords(p))
     c.y ≥ min.y
   end
-  ystop = findlast(ystart:sy) do i
+  ystop = findlast(1:sy) do i
     p = centroid(g[1, i])
     c = convert(Cartesian, coords(p))
     c.y ≤ max.y
@@ -87,7 +87,7 @@ function apply(t::Crop, g::Grid{𝔼{3}})
     c = convert(Cartesian, coords(p))
     c.x ≥ min.x
   end
-  xstop = findlast(xstart:sx) do i
+  xstop = findlast(1:sx) do i
     p = centroid(g[i, 1, 1])
     c = convert(Cartesian, coords(p))
     c.x ≤ max.x
@@ -97,7 +97,7 @@ function apply(t::Crop, g::Grid{𝔼{3}})
     c = convert(Cartesian, coords(p))
     c.y ≥ min.y
   end
-  ystop = findlast(ystart:sy) do i
+  ystop = findlast(1:sy) do i
     p = centroid(g[1, i, 1])
     c = convert(Cartesian, coords(p))
     c.y ≤ max.y
@@ -107,7 +107,7 @@ function apply(t::Crop, g::Grid{𝔼{3}})
     c = convert(Cartesian, coords(p))
     c.z ≥ min.z
   end
-  zstop = findlast(zstart:sz) do i
+  zstop = findlast(1:sz) do i
     p = centroid(g[1, 1, i])
     c = convert(Cartesian, coords(p))
     c.z ≤ max.z
@@ -125,7 +125,7 @@ function apply(t::Crop, g::Grid{🌐})
     c = convert(LatLon, coords(p))
     c.lon ≥ min.lon
   end
-  lonstop = findlast(lonstart:slon) do i
+  lonstop = findlast(1:slon) do i
     p = centroid(g[i, 1])
     c = convert(LatLon, coords(p))
     c.lon ≤ max.lon
@@ -135,7 +135,7 @@ function apply(t::Crop, g::Grid{🌐})
     c = convert(LatLon, coords(p))
     c.lat ≥ min.lat
   end
-  latstop = findlast(latstart:slat) do i
+  latstop = findlast(1:slat) do i
     p = centroid(g[1, i])
     c = convert(LatLon, coords(p))
     c.lat ≤ max.lat
