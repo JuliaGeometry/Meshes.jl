@@ -29,28 +29,27 @@ abstract type Exiting <: VertexType end
 # of the clipped rings.
 mutable struct RingVertex{VT<:VertexType,M<:Manifold,C<:CRS}
   point::Point{M,C}
-  left::RingVertex{VT,M,C} where {VT<:VertexType}
-  right::RingVertex{VT,M,C} where {VT<:VertexType}
+  left::RingVertex{<:VertexType,M,C}
+  right::RingVertex{<:VertexType,M,C}
 
-  function RingVertex{VT,M,C}(point::Point{M,C}) where {VT<:VertexType,M<:Manifold,C<:CRS}
+  function RingVertex{VT,M,C}(point) where {VT<:VertexType,M<:Manifold,C<:CRS}
     v = new(point)
     v.left = v
     v.right = v
-    return v
+    v
   end
 end
 
-RingVertex{VT}(point::Point{M,C}) where {VT<:VertexType,M<:Manifold,C<:CRS} =
-  RingVertex{VT,manifold(point),typeof(point.coords)}(point)
+RingVertex{VT}(point::Point{M,C}) where {VT<:VertexType,M<:Manifold,C<:CRS} = RingVertex{VT,M,C}(point)
 
 isnormal(::RingVertex{Normal}) = true
 isnormal(::RingVertex) = false
 
-function appendvertices!(v1::RingVertex{Normal}, v2::RingVertex{Normal})
-  v2.left = v1.left
-  v1.left = v2
-  v2.right = v1.right
-  v1.right = v2
+function appendvertices!(v₁::RingVertex{Normal}, v₂::RingVertex{Normal})
+  v₂.left = v₁.left
+  v₁.left = v₂
+  v₂.right = v₁.right
+  v₁.right = v₂
 end
 
 function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
@@ -143,7 +142,7 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
 
             if point ≈ clipped.left.point
               clippingprev = Segment(clipping.left.point, point)
-              if measure(clippingprev) ≈ 0.0 * u"m"
+              if measure(clippingprev) ≈ 0.0u"m"
                 clippingprev = Segment(clipping.point, point)
               end
 
@@ -163,7 +162,7 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
 
             if point ≈ clipping.left.point
               clippedprev = Segment(clipped.left.point, point)
-              if measure(clippedprev) ≈ 0.0 * u"m"
+              if measure(clippedprev) ≈ 0.0u"m"
                 clippedprev = Segment(clipped.point, point)
               end
 
@@ -200,26 +199,26 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
 
   # When no interesction have been registered with any of the rings, the clipping ring either
   # encircles everything or is completely contained in the clipped polygon.
-  if all(isequal(false), intersected)
+  if !any(intersected)
     o = orientation(ring)
-    contained = [v ∈ PolyArea(ring) for v in vertices(polyrings[1])]
-    if (o == CCW && all(contained))
+    allcontained = all(v ∈ PolyArea(ring) for v in vertices(polyrings[1]))
+    if (o == CCW && allcontained)
       return poly
     end
-    if (o == CW && !all(contained))
+    if (o == CW && !allcontained)
       push!(collectedrings, polyrings[1])
       intersected[1] = true
       for polyring in polyrings[2:end]
-        if !all([v ∈ PolyArea(ring) for v in vertices(polyring)])
+        if !all(v ∈ PolyArea(ring) for v in vertices(polyring))
           push!(collectedrings, polyring)
         end
       end
-      if any([v ∈ PolyArea(polyrings[1]) for v in vertices(ring)])
+      if any(v ∈ PolyArea(polyrings[1]) for v in vertices(ring))
         push!(collectedrings, ring)
       end
       return PolyArea(collectedrings...)
     end
-    if all([v ∈ PolyArea(polyrings[1]) for v in vertices(ring)])
+    if all(v ∈ PolyArea(polyrings[1]) for v in vertices(ring))
       push!(collectedrings, ring)
     end
   end
@@ -231,9 +230,9 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
     valid = true
     for k in eachindex(intersected)
       if !intersected[k]
+        # Check if majority of vertices are inside the clipping ring.
+        ins = count(v ∈ PolyArea(ring) for v in vertices(polyrings[k]))
         if orientation(ring) == CCW
-          # Check if majority of vertices are inside the clipping ring.
-          ins = count(isequal(true), [v ∈ PolyArea(ring) for v in vertices(polyrings[k])])
           if ins > (length(vertices(polyrings[k])) - ins)
             if orientation(polyrings[k]) == CCW
               pushfirst!(newpolyrings, polyrings[k])
@@ -246,8 +245,6 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
             valid = false
           end
         else
-          # Check if majority of vertices are outside the clipping ring.
-          ins = count(isequal(true), [v ∈ PolyArea(ring) for v in vertices(polyrings[k])])
           if ins < (length(vertices(polyrings[k])) - ins)
             if orientation(polyrings[k]) == CCW
               pushfirst!(newpolyrings, polyrings[k])
@@ -265,29 +262,24 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
   end
 
   n = length(polys)
-  out = n == 0 ? nothing : (n == 1 ? polys[1] : GeometrySet(polys))
-  return out
+  n == 0 ? nothing : (n == 1 ? polys[1] : GeometrySet(polys))
 end
 
-function clip(poly::Polygon, other::Geometry, method::WeilerAthertonClipping)
-  return _clip(poly, boundary(other), method)
-end
+clip(poly::Polygon, other::Geometry, method::WeilerAthertonClipping) = clip(poly, boundary(other), method)
 
-function _clip(poly, multi::Multi, method::WeilerAthertonClipping)
+function clip(poly::Polygon, multi::Multi, method::WeilerAthertonClipping)
   for r in parent(multi)
     poly = clip(poly, r, method)
     if isnothing(poly)
       return nothing
     end
   end
-  return poly
+  poly
 end
-
-_clip(poly, other, method) = clip(poly, other, method::WeilerAthertonClipping)
 
 function clip(dom::Domain, other::Geometry, method::WeilerAthertonClipping)
   clipped = filter(!isnothing, [clip(geom, other, method) for geom in dom])
-  return isempty(clipped) ? nothing : (length(clipped) == 1 ? clipped[1] : GeometrySet(clipped))
+  isempty(clipped) ? nothing : (length(clipped) == 1 ? clipped[1] : GeometrySet(clipped))
 end
 
 # Inserts the intersection in the ring.
@@ -330,14 +322,14 @@ nextvertex(v::RingVertex{Exiting}) = v.left
 
 # Takes a list of entering vertices and returns all rings that contain those vertices.
 function collectclipped(entering::Vector{RingVertex{Entering}})
-  rings::Vector{Ring} = []
-  visited::Vector{RingVertex} = []
+  rings = Ring[]
+  visited = RingVertex[]
   for i in eachindex(entering)
     if entering[i] in visited
       continue
     end
 
-    ring::Vector{RingVertex} = []
+    ring = RingVertex[]
     vertex = entering[i]
     while !(vertex in ring)
       if vertex in visited
@@ -350,7 +342,7 @@ function collectclipped(entering::Vector{RingVertex{Entering}})
     end
 
     # Remove duplicates.
-    newring::Vector{RingVertex} = [ring[1]]
+    newring = RingVertex[ring[1]]
     for i in 2:length(ring)
       if !(ring[i].point ≈ newring[end].point)
         push!(newring, ring[i])
@@ -369,10 +361,10 @@ function collectclipped(entering::Vector{RingVertex{Entering}})
     end
 
     if length(ring) > 2
-      push!(rings, Ring([r.point for r in ring]...))
+      push!(rings, Ring([r.point for r in ring]))
     end
   end
-  return rings
+  rings
 end
 
 # Used to figure out the type of the vertex to add when intersection is other than the crossing
@@ -380,6 +372,8 @@ end
 # Function measures the angles formed between the segments and checks wether the two clipped segments
 # start and end in the same region or different regions, as separated by the clipping segments.
 function decidedirection(clipped₁, clipped₂, clipping₁, clipping₂)
+  T = numtype(lentype(clipped₁))
+
   # The input segments should all share one common vertex.
   # Form vectors from the common vertex to other vertices.
   a = minimum(clipped₁) - maximum(clipped₁)
@@ -387,34 +381,39 @@ function decidedirection(clipped₁, clipped₂, clipping₁, clipping₂)
   c = minimum(clipping₁) - maximum(clipping₁)
   d = maximum(clipping₂) - minimum(clipping₂)
 
-  if any(norm.([a, b, c, d]) .≈ 0.0 * u"m")
+  if any(norm(v) ≈ 0.0u"m" for v in (a, b, c, d))
     # An zero length input segment found, no need to calculate.
     return nothing
   end
 
-  β = mod(∠(a, b), 2pi * u"rad")
-  γ = mod(∠(a, c), 2pi * u"rad")
-  δ = mod(∠(a, d), 2pi * u"rad")
+  tol = atol(0.0) * u"rad"
+  twoπ = 2 * T(π) * u"rad"
 
-  if isapprox(γ, 0.0, atol=atol(0.0)) || isapprox(γ, 2pi, atol=atol(0.0))
-    if δ < β < 2pi
+  β = mod(∠(a, b), twoπ)
+  γ = mod(∠(a, c), twoπ)
+  δ = mod(∠(a, d), twoπ)
+
+  if isapprox(γ, zero(γ), atol=tol) || isapprox(γ, twoπ, atol=tol)
+    if δ < β < twoπ
       return Entering
     else
       return Exiting
     end
-  elseif isapprox(δ, 0.0, atol=atol(0.0)) || isapprox(δ, 2pi, atol=atol(0.0))
-    if γ < β < 2pi
+  elseif isapprox(δ, zero(δ), atol=tol) || isapprox(δ, twoπ, atol=tol)
+    if γ < β < twoπ
       return Exiting
     else
       return Entering
     end
   end
-  if γ < δ && (γ < β || isapprox(β, γ, atol=atol(0.0))) && (isapprox(β, δ, atol=atol(0.0)) || β < δ)
+
+  if γ < δ && (γ < β || isapprox(β, γ, atol=tol)) && (isapprox(β, δ, atol=tol) || β < δ)
     return Exiting
-  elseif δ < γ && (δ < β || isapprox(β, δ, atol=atol(0.0))) && (isapprox(β, γ, atol=atol(0.0)) || β < γ)
+  elseif δ < γ && (δ < β || isapprox(β, δ, atol=tol)) && (isapprox(β, γ, atol=tol) || β < γ)
     return Entering
   end
-  return nothing
+
+  nothing
 end
 
 # Converts a regular Meshes.Ring into a ring formed with RingVertex data type.
