@@ -9,7 +9,7 @@
 Retain the domain geometries that intersect with `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
 (default to meters) in Euclidean manifold, or with latitude limits [`latmin`,`latmax`]
-and longitude limits [`lonmin`,`lonmax`] in Ellipsoid manifold.
+and longitude limits [`lonmin`,`lonmax`] in degree units in Ellipsoid manifold.
 
 ## Examples
 
