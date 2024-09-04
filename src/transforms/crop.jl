@@ -4,10 +4,12 @@
 
 """
     Crop(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
+    Crop(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
-Retain the domain geometries that intersect with `x` limits [`xmax`,`xmax`],
+Retain the domain geometries within `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
-(default to meters).
+(default to meters), or within latitude limits [`latmin`,`latmax`]
+and longitude limits [`lonmin`,`lonmax`] in degree units.
 
 ## Examples
 
@@ -15,26 +17,19 @@ Retain the domain geometries that intersect with `x` limits [`xmax`,`xmax`],
 Crop(x=(2, 4))
 Crop(x=(1u"km", 3u"km"))
 Crop(y=(1.2, 1.8), z=(2.4, 3.0))
+Crop(lat=(30, 60))
+Crop(lon=(45u"°", 90u"°"))
 ```
 """
-struct Crop{X,Y,Z} <: GeometricTransform
-  x::X
-  y::Y
-  z::Z
+struct Crop{T} <: GeometricTransform
+  limits::T
 end
 
-Crop(; x=nothing, y=nothing, z=nothing) =
-  Crop(isnothing(x) ? x : _aslen.(x), isnothing(y) ? y : _aslen.(y), isnothing(z) ? z : _aslen.(z))
+Crop(; kwargs...) = Crop(values(kwargs))
 
-parameters(t::Crop) = (; x=t.x, y=t.y, z=t.z)
+parameters(t::Crop) = (; limits=t.limits)
 
-function preprocess(t::Crop, d::Domain)
-  bbox = boundingbox(d)
-  bbox₁ = _overlaps(1, t.x, bbox)
-  bbox₂ = _overlaps(2, t.y, bbox₁)
-  bbox₃ = _overlaps(3, t.z, bbox₂)
-  bbox₃
-end
+preprocess(t::Crop, d::Domain) = _crop(boundingbox(d), t.limits)
 
 function apply(t::Crop, d::Domain)
   box = preprocess(t, d)
@@ -54,20 +49,53 @@ function apply(t::Crop, g::RectilinearGrid)
   g[range], nothing
 end
 
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _crop(box::Box{<:𝔼}, limits)
+  lims = _xyzlimits(limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  xyzmin, xyzmax = _xyzminmax(min, max, lims)
+  Box(withcrs(box, xyzmin), withcrs(box, xyzmax))
+end
+
+function _crop(box::Box{🌐}, limits)
+  lims = _latlonlimits(limits)
+  min = convert(LatLon, coords(minimum(box)))
+  max = convert(LatLon, coords(maximum(box)))
+  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
+  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
+  Box(withcrs(box, (latmin, lonmin), LatLon), withcrs(box, (latmax, lonmax), LatLon))
+end
+
+_xyzlimits(limits) = (
+  x=haskey(limits, :x) ? _aslen.(limits.x) : nothing,
+  y=haskey(limits, :y) ? _aslen.(limits.y) : nothing,
+  z=haskey(limits, :z) ? _aslen.(limits.z) : nothing
+)
+
+_latlonlimits(limits) =
+  (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
+
+function _xyzminmax(min::Cartesian2D, max::Cartesian2D, lims)
+  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
+  ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
+  (xmin, ymin), (xmax, ymax)
+end
+
+function _xyzminmax(min::Cartesian3D, max::Cartesian3D, lims)
+  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
+  ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
+  zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
+  (xmin, ymin, zmin), (xmax, ymax, zmax)
+end
+
 _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"
 _aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
 
-function _overlaps(dim, lims, bbox)
-  Dim = embeddim(bbox)
-  if Dim < dim || isnothing(lims)
-    bbox
-  else
-    lmin, lmax = lims
-    min = to(minimum(bbox))
-    max = to(maximum(bbox))
-    nmin = Vec(ntuple(i -> i == dim ? lmin : min[i], Dim))
-    nmax = Vec(ntuple(i -> i == dim ? lmax : max[i], Dim))
-    Box(withcrs(bbox, nmin), withcrs(bbox, nmax))
-  end
-end
+_asdeg(x::Deg) = float(x)
+_asdeg(x::Number) = float(x) * u"°"
+_asdeg(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
