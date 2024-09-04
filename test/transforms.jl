@@ -1705,15 +1705,27 @@ end
   f = Crop(x=(T(5.5), T(8.5)))
   d = convert(StructuredGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
+  @test r isa StructuredGrid
   @test r == convert(StructuredGrid, CartesianGrid((4, 10), cart(5, 0), T.((1, 1))))
 
-  # -----------
-  # SIMPLEMESH
-  # -----------
+  # ----------------
+  # TRANSFORMEDGRID
+  # ----------------
+
+  f = Crop(x=(T(1), T(5)), y=(T(2), T(6)))
+  d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
+  r, c = TB.apply(f, d)
+  @test r isa TransformedGrid
+  @test r == TransformedGrid(CartesianGrid((6, 6), cart(2, 2), T.((1, 1))), Rotate(T(π / 4)))
+
+  # ------------------
+  # SIMPLEMESH (GRID)
+  # ------------------
 
   f = Crop(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
   d = convert(SimpleMesh, cartgrid(10, 10))
   r, c = TB.apply(f, d)
+  @test r isa SimpleMesh
   @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
 end
 
