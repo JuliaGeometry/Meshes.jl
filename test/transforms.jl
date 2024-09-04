@@ -1651,10 +1651,11 @@ end
   @test !isaffine(Crop(x=(T(2), T(4))))
   @test !TB.isrevertible(Crop(x=(T(2), T(4))))
   @test !TB.isinvertible(Crop(x=(T(2), T(4))))
-  @test TB.parameters(Crop(x=(T(2), T(4)))) == (x=(T(2) * u"m", T(4) * u"m"), y=nothing, z=nothing)
-  @test TB.parameters(Crop(y=(T(2) * u"km", T(4) * u"km"))) == (x=nothing, y=(T(2) * u"km", T(4) * u"km"), z=nothing)
-  @test TB.parameters(Crop(z=(2, 4))) == (x=nothing, y=nothing, z=(2.0u"m", 4.0u"m"))
-  @test_throws ArgumentError Crop(x=(T(2) * u"°", T(4) * u"°"))
+  @test TB.parameters(Crop(x=(T(2), T(4)))) == (; x=(T(2), T(4)))
+  @test TB.parameters(Crop(y=(T(2) * u"km", T(4) * u"km"))) == (; y=(T(2) * u"km", T(4) * u"km"))
+  @test TB.parameters(Crop(z=(2, 4))) == (; z=(2, 4))
+  @test TB.parameters(Crop(lat=(30, 60))) == (; lat=(30, 60))
+  @test TB.parameters(Crop(lon=(45u"°", 90u"°"))) == (; lon=(45u"°", 90u"°"))
 
   # ---------
   # POINTSET

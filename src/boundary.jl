@@ -53,10 +53,10 @@ function boundary(b::Box{🌐})
   A = convert(LatLon, coords(minimum(b)))
   B = convert(LatLon, coords(maximum(b)))
   v = [
-    withcrs(b, (A.lat, A.lon), crs=LatLon),
-    withcrs(b, (A.lat, B.lon), crs=LatLon),
-    withcrs(b, (B.lat, B.lon), crs=LatLon),
-    withcrs(b, (B.lat, A.lon), crs=LatLon)
+    withcrs(b, (A.lat, A.lon), CRS=LatLon),
+    withcrs(b, (A.lat, B.lon), CRS=LatLon),
+    withcrs(b, (B.lat, B.lon), CRS=LatLon),
+    withcrs(b, (B.lat, A.lon), CRS=LatLon)
   ]
   Ring(v)
 end

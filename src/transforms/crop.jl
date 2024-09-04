@@ -18,7 +18,7 @@ Crop(x=(2, 4))
 Crop(x=(1u"km", 3u"km"))
 Crop(y=(1.2, 1.8), z=(2.4, 3.0))
 Crop(lat=(30, 60))
-Crop(lon=(45u"°", 100u"°"))
+Crop(lon=(45u"°", 90u"°"))
 ```
 """
 struct Crop{T} <: GeometricTransform
@@ -67,7 +67,7 @@ function _crop(box::Box{🌐}, limits)
   max = convert(LatLon, coords(maximum(box)))
   latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
   lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
-  Box(withcrs(box, (latmin, lonmin), crs=LatLon), withcrs(box, (latmax, lonmax), crs=LatLon))
+  Box(withcrs(box, (latmin, lonmin), CRS=LatLon), withcrs(box, (latmax, lonmax), CRS=LatLon))
 end
 
 _xyzlimits(limits) = (
@@ -79,18 +79,13 @@ _xyzlimits(limits) = (
 _latlonlimits(limits) =
   (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
 
-function _xyzminmax(min::Cartesian{Datum,1}, max::Cartesian{Datum,1}, lims) where {Datum}
-  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
-  (xmin,), (xmax,)
-end
-
-function _xyzminmax(min::Cartesian{Datum,2}, max::Cartesian{Datum,2}, lims) where {Datum}
+function _xyzminmax(min::Cartesian2D, max::Cartesian2D, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
   (xmin, ymin), (xmax, ymax)
 end
 
-function _xyzminmax(min::Cartesian{Datum,3}, max::Cartesian{Datum,3}, lims) where {Datum}
+function _xyzminmax(min::Cartesian3D, max::Cartesian3D, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
   zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
