@@ -6,10 +6,10 @@
     Crop(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
     Crop(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
-Retain the domain geometries that intersect with `x` limits [`xmax`,`xmax`],
+Retain the domain geometries within `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
-(default to meters) in Euclidean manifold, or with latitude limits [`latmin`,`latmax`]
-and longitude limits [`lonmin`,`lonmax`] in degree units in Ellipsoid manifold.
+(default to meters), or within latitude limits [`latmin`,`latmax`]
+and longitude limits [`lonmin`,`lonmax`] in degree units.
 
 ## Examples
 
