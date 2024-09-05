@@ -30,7 +30,7 @@ Crop(; kwargs...) = Crop(values(kwargs))
 parameters(t::Crop) = (; limits=t.limits)
 
 function preprocess(t::Crop, g::Grid)
-  limits = _crop(boundingbox(g), t.limits)
+  limits = _fixlimits(boundingbox(g), t.limits)
   cartesianrange(g, limits)
 end
 
@@ -43,14 +43,14 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-function _crop(box::Box{<:𝔼}, limits)
+function _fixlimits(box::Box{<:𝔼}, limits)
   lims = _xyzlimits(limits)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
   _xyzminmax(min, max, lims)
 end
 
-function _crop(box::Box{🌐}, limits)
+function _fixlimits(box::Box{🌐}, limits)
   lims = _latlonlimits(limits)
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
