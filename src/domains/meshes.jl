@@ -155,7 +155,7 @@ vertex(g::Grid, ijk::CartesianIndex) = vertex(g, ijk.I)
 """
     vsize(grid)
 
-Size of each dimension of the grid vertices.
+Number of vertices along each dimension of the `grid`.
 """
 vsize(g::Grid) = size(g) .+ .!isperiodic(g)
 
