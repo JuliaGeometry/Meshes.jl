@@ -105,6 +105,12 @@ function intersectparameters(a::Point, b::Point, c::Point, d::Point)
   λ₁, λ₂, r, rₐ
 end
 
+"""
+    cartesianrange(grid, limits)
+
+Return the Cartesian range for the elements of the
+`grid` within given `limits` along each dimension.
+"""
 function cartesianrange(grid::CartesianGrid, limits)
   # grid properties
   or = minimum(grid)
@@ -157,16 +163,17 @@ end
 
 function cartesianrange(grid::Grid{𝔼{2}}, limits)
   nx, ny = vsize(grid)
-  (lxmin, lxmax), (lymin, lymax) = limits
+
+  (xₛ, xₑ), (yₛ, yₑ) = limits
 
   a = convert(Cartesian, coords(vertex(grid, (1, 1))))
   b = convert(Cartesian, coords(vertex(grid, (nx, 1))))
   c = convert(Cartesian, coords(vertex(grid, (1, ny))))
 
-  xmin = max(lxmin, a.x)
-  ymin = max(lymin, a.y)
-  xmax = min(lxmax, b.x)
-  ymax = min(lymax, c.y)
+  xmin = max(xₛ, a.x)
+  ymin = max(yₛ, a.y)
+  xmax = min(xₑ, b.x)
+  ymax = min(yₑ, c.y)
 
   iₛ = findlast(1:nx) do i
     p = vertex(grid, (i, 1))
@@ -188,6 +195,7 @@ function cartesianrange(grid::Grid{𝔼{2}}, limits)
     c = convert(Cartesian, coords(p))
     c.y ≥ ymax
   end
+
   if iₛ == iₑ || jₛ == jₑ
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
@@ -197,19 +205,20 @@ end
 
 function cartesianrange(grid::Grid{𝔼{3}}, limits)
   nx, ny, nz = vsize(grid)
-  (lxmin, lxmax), (lymin, lymax), (lzmin, lzmax) = limits
+
+  (xₛ, xₑ), (yₛ, yₑ), (zₛ, zₑ) = limits
 
   a = convert(Cartesian, coords(vertex(grid, (1, 1, 1))))
   b = convert(Cartesian, coords(vertex(grid, (nx, 1, 1))))
   c = convert(Cartesian, coords(vertex(grid, (1, ny, 1))))
   d = convert(Cartesian, coords(vertex(grid, (1, 1, nz))))
 
-  xmin = max(lxmin, a.x)
-  ymin = max(lymin, a.y)
-  zmin = max(lzmin, a.z)
-  xmax = min(lxmax, b.x)
-  ymax = min(lymax, c.y)
-  zmax = min(lzmax, d.z)
+  xmin = max(xₛ, a.x)
+  ymin = max(yₛ, a.y)
+  zmin = max(zₛ, a.z)
+  xmax = min(xₑ, b.x)
+  ymax = min(yₑ, c.y)
+  zmax = min(zₑ, d.z)
 
   iₛ = findlast(1:nx) do i
     p = vertex(grid, (i, 1, 1))
