@@ -51,6 +51,22 @@ function apply(t::Crop, g::Grid{𝔼{2}})
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
   nx, ny = vsize(g)
+
+  # check limits
+  ivalid = any(1:nx) do i
+    p = vertex(g, (i, 1))
+    c = convert(Cartesian, coords(p))
+    min.x ≤ c.x ≤ max.x
+  end
+  jvalid = any(1:ny) do i
+    p = vertex(g, (1, i))
+    c = convert(Cartesian, coords(p))
+    min.y ≤ c.y ≤ max.y
+  end
+  if !ivalid || !jvalid
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
   iₛ = findlast(1:nx) do i
     p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
@@ -81,6 +97,27 @@ function apply(t::Crop, g::Grid{𝔼{3}})
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
   nx, ny, nz = vsize(g)
+
+  # check limits
+  ivalid = any(1:nx) do i
+    p = vertex(g, (i, 1, 1))
+    c = convert(Cartesian, coords(p))
+    min.x ≤ c.x ≤ max.x
+  end
+  jvalid = any(1:ny) do i
+    p = vertex(g, (1, i, 1))
+    c = convert(Cartesian, coords(p))
+    min.y ≤ c.y ≤ max.y
+  end
+  kvalid = any(1:nz) do i
+    p = vertex(g, (1, 1, i))
+    c = convert(Cartesian, coords(p))
+    min.z ≤ c.z ≤ max.z
+  end
+  if !ivalid || !jvalid || !kvalid
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
   iₛ = findlast(1:nx) do i
     p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
@@ -122,6 +159,22 @@ function apply(t::Crop, g::Grid{🌐})
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
   nlon, nlat = vsize(g)
+
+  # check limits
+  ivalid = any(1:nlon) do i
+    p = vertex(g, (i, 1))
+    c = convert(Cartesian, coords(p))
+    min.lon ≤ c.lon ≤ max.lon
+  end
+  jvalid = any(1:nlat) do i
+    p = vertex(g, (1, i))
+    c = convert(Cartesian, coords(p))
+    min.lat ≤ c.lat ≤ max.lat
+  end
+  if !ivalid || !jvalid
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
   iₛ = findlast(1:nlon) do i
     p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))

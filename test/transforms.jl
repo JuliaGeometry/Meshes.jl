@@ -1724,6 +1724,12 @@ end
   @test r isa TransformedGrid
   @test r == TransformedGrid(CartesianGrid((4, 3), cart(4, 7), T.((1, 1))), Rotate(T(π / 4)))
 
+  f = Crop(x=(T(0), T(14)), y=(T(0), T(14)), z=(T(0), T(14)))
+  d = TransformedGrid(cartgrid(10, 10, 10), Translate(T(2), T(2), T(2)))
+  r, c = TB.apply(f, d)
+  @test r isa TransformedGrid
+  @test r == d
+
   # ------------------
   # SIMPLEMESH (GRID)
   # ------------------
@@ -1733,6 +1739,17 @@ end
   r, c = TB.apply(f, d)
   @test r isa SimpleMesh
   @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
+
+  # ------
+  # ERROS
+  # ------
+
+  # error: invalid limits
+  f = Crop(x=(T(-5), T(-1)), y=(T(2), T(6)))
+  d = TransformedGrid(cartgrid(10, 10), Identity())
+  @test_throws ArgumentError TB.apply(f, d)
+  f = Crop(x=(T(1), T(5)), y=(T(12), T(16)))
+  @test_throws ArgumentError TB.apply(f, d)
 end
 
 @testitem "Repair(0)" setup = [Setup] begin
