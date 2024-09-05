@@ -83,7 +83,6 @@ function apply(t::Crop, g::Grid{𝔼{2}})
     c = convert(Cartesian, coords(p))
     c.y ≥ ymax
   end
-  
   if iₛ == iₑ || jₛ == jₑ
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
