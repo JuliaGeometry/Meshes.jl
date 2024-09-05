@@ -27,7 +27,7 @@ end
 
 function coarsen(grid::RectilinearGrid{Datum}, method::RegularCoarsening) where {Datum}
   factors = fitdims(method.factors, embeddim(grid))
-  dims = size(grid) .+ .!isperiodic(grid)
+  dims = vsize(grid)
   rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
   xyzₛ = xyz(grid)
   xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], embeddim(grid))
@@ -36,7 +36,7 @@ end
 
 function coarsen(grid::StructuredGrid{Datum}, method::RegularCoarsening) where {Datum}
   factors = fitdims(method.factors, embeddim(grid))
-  dims = size(grid) .+ .!isperiodic(grid)
+  dims = vsize(grid)
   rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
   XYZₛ = XYZ(grid)
   XYZₜ = ntuple(i -> XYZₛ[i][rngs...], embeddim(grid))

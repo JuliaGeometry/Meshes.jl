@@ -1657,27 +1657,6 @@ end
   @test TB.parameters(Crop(lat=(30, 60))) == (; limits=(; lat=(30, 60)))
   @test TB.parameters(Crop(lon=(45u"°", 90u"°"))) == (; limits=(; lon=(45u"°", 90u"°")))
 
-  # ---------
-  # POINTSET
-  # ---------
-
-  f = Crop(x=(T(1.5), T(3.5)))
-  d = PointSet([cart(1, 0), cart(2, 1), cart(3, 1), cart(4, 0)])
-  r, c = TB.apply(f, d)
-  @test r == PointSet([cart(2, 1), cart(3, 1)])
-
-  # ------------
-  # GEOMETRYSET
-  # ------------
-
-  f = Crop(x=(T(1.5), T(3.5)))
-  t1 = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-  t2 = t1 |> Translate(T(2), T(2))
-  t3 = t2 |> Translate(T(2), T(2))
-  d = GeometrySet([t1, t2, t3])
-  r, c = TB.apply(f, d)
-  @test r == GeometrySet([t2])
-
   # --------------
   # CARTESIANGRID
   # --------------
@@ -1705,7 +1684,30 @@ end
   f = Crop(x=(T(5.5), T(8.5)))
   d = convert(StructuredGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
+  @test r isa StructuredGrid
   @test r == convert(StructuredGrid, CartesianGrid((4, 10), cart(5, 0), T.((1, 1))))
+
+  # ----------------
+  # TRANSFORMEDGRID
+  # ----------------
+
+  f = Crop(x=(T(1), T(5)), y=(T(2), T(6)))
+  d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
+  r, c = TB.apply(f, d)
+  @test r isa TransformedGrid
+  @test r == TransformedGrid(CartesianGrid((7, 7), cart(1, 2), T.((1, 1))), Rotate(T(π / 4)))
+
+  f = Crop(x=(T(3), T(5)), y=(T(5), T(8)))
+  d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
+  r, c = TB.apply(f, d)
+  @test r isa TransformedGrid
+  @test r == TransformedGrid(CartesianGrid((4, 3), cart(4, 7), T.((1, 1))), Rotate(T(π / 4)))
+
+  f = Crop(x=(T(0), T(14)), y=(T(0), T(14)), z=(T(0), T(14)))
+  d = TransformedGrid(cartgrid(10, 10, 10), Translate(T(2), T(2), T(2)))
+  r, c = TB.apply(f, d)
+  @test r isa TransformedGrid
+  @test r == d
 
   # -----------
   # SIMPLEMESH
@@ -1714,7 +1716,19 @@ end
   f = Crop(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
   d = convert(SimpleMesh, cartgrid(10, 10))
   r, c = TB.apply(f, d)
+  @test r isa SimpleMesh
   @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
+
+  # -------
+  # ERRORS
+  # -------
+
+  # error: invalid limits
+  f = Crop(x=(T(-5), T(-1)), y=(T(2), T(6)))
+  d = TransformedGrid(cartgrid(10, 10), Identity())
+  @test_throws ArgumentError TB.apply(f, d)
+  f = Crop(x=(T(1), T(5)), y=(T(12), T(16)))
+  @test_throws ArgumentError TB.apply(f, d)
 end
 
 @testitem "Repair(0)" setup = [Setup] begin

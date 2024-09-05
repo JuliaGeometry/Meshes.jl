@@ -54,7 +54,7 @@ end
 
 function indices(grid::CartesianGrid, box::Box)
   # cartesian range
-  range = cartesianrange(grid, box)
+  range = cartesianrange(grid, _boxlimits(box))
 
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
@@ -64,7 +64,7 @@ indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geo
 
 function indices(grid::RectilinearGrid, box::Box)
   # cartesian range
-  range = cartesianrange(grid, box)
+  range = cartesianrange(grid, _boxlimits(box))
 
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
@@ -74,43 +74,14 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-function cartesianrange(grid::CartesianGrid, box::Box)
-  # grid properties
-  or = minimum(grid)
-  sp = spacing(grid)
-  sz = size(grid)
-
-  # intersection of boxes
-  lo, up = extrema(boundingbox(grid) ∩ box)
-
-  # Cartesian indices of new corners
-  ilo = max.(ceil.(Int, (lo - or) ./ sp), 1)
-  iup = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
-
-  # Cartesian range from corner to corner
-  CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
+function _boxlimits(box::Box{𝔼{2}})
+  min, max = convert.(Cartesian, coords.(extrema(box)))
+  (min.x, max.x), (min.y, max.y)
 end
 
-function cartesianrange(grid::RectilinearGrid, box::Box)
-  # grid properties
-  sz = size(grid)
-  nd = length(sz)
-
-  # intersection of boxes
-  lo, up = to.(extrema(boundingbox(grid) ∩ box))
-
-  # integer coordinates of lower point
-  ilo = ntuple(nd) do i
-    findlast(x -> x ≤ lo[i], xyz(grid)[i])
-  end
-
-  # integer coordinates of upper point
-  iup = ntuple(nd) do i
-    findfirst(x -> x ≥ up[i], xyz(grid)[i])
-  end
-
-  # integer coordinates of elements
-  CartesianIndex(ilo):CartesianIndex(iup .- 1)
+function _boxlimits(box::Box{𝔼{3}})
+  min, max = convert.(Cartesian, coords.(extrema(box)))
+  (min.x, max.x), (min.y, max.y), (min.z, max.z)
 end
 
 function _fill!(mask, grid, val, triangle)
