@@ -53,11 +53,8 @@ function indices(grid::CartesianGrid, poly::Polygon)
 end
 
 function indices(grid::CartesianGrid, box::Box)
-  # box limits
-  limits = _boxlimits(box)
-
   # cartesian range
-  range = cartesianrange(grid, limits)
+  range = cartesianrange(grid, _boxlimits(box))
 
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
@@ -66,11 +63,8 @@ end
 indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::RectilinearGrid, box::Box)
-  # box limits
-  limits = _boxlimits(box)
-
   # cartesian range
-  range = cartesianrange(grid, limits)
+  range = cartesianrange(grid, _boxlimits(box))
 
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
