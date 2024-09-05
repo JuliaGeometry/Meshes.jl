@@ -153,6 +153,13 @@ Convert Cartesian index `ijk` to vertex on `grid`.
 vertex(g::Grid, ijk::CartesianIndex) = vertex(g, ijk.I)
 
 """
+    vsize(grid)
+
+Number of vertices along each dimension of the `grid`.
+"""
+vsize(g::Grid) = size(g) .+ .!isperiodic(g)
+
+"""
     xyz(grid)
 
 Returns the coordinate vectors of each dimension of the `grid`, e.g `(x, y, z, ...)`.
@@ -176,19 +183,19 @@ Base.size(g::Grid) = size(topology(g))
 
 paramdim(g::Grid) = length(size(g))
 
-vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(size(g) .+ 1)[ind])
+vertex(g::Grid, ind::Int) = vertex(g, CartesianIndices(vsize(g))[ind])
 
-vertex(g::Grid, ijk::Dims) = vertex(g, LinearIndices(size(g) .+ 1)[ijk...])
+vertex(g::Grid, ijk::Dims) = vertex(g, LinearIndices(vsize(g))[ijk...])
 
 Base.minimum(g::Grid) = vertex(g, ntuple(i -> 1, paramdim(g)))
-Base.maximum(g::Grid) = vertex(g, size(g) .+ 1)
+Base.maximum(g::Grid) = vertex(g, vsize(g))
 Base.extrema(g::Grid) = minimum(g), maximum(g)
 
 function element(g::Grid, ind::Int)
   elem = element(topology(g), ind)
   type = pltype(elem)
   einds = indices(elem)
-  cinds = CartesianIndices(size(g) .+ 1)
+  cinds = CartesianIndices(vsize(g))
   verts = ntuple(i -> vertex(g, cinds[einds[i]]), nvertices(type))
   type(verts)
 end
