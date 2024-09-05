@@ -29,30 +29,9 @@ Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-function preprocess(t::Crop, d::Domain{<:𝔼})
-  limits = _crop(boundingbox(d), t.limits)
-  min = withcrs(d, ntuple(i -> first(limits[i]), embeddim(d)))
-  max = withcrs(d, ntuple(i -> last(limits[i]), embeddim(d)))
-  b = Box(min, max)
-  indices(d, b)
-end
-
-function preprocess(t::Crop, d::Domain{🌐})
-  (lonmin, lonmax), (latmin, latmax) = _crop(boundingbox(d), t.limits)
-  min = withcrs(box, (latmin, lonmin), LatLon)
-  max = withcrs(box, (latmax, lonmax), LatLon)
-  b = Box(min, max)
-  indices(d, b)
-end
-
 function preprocess(t::Crop, g::Grid)
   limits = _crop(boundingbox(g), t.limits)
   cartesianrange(g, limits)
-end
-
-function apply(t::Crop, d::Domain)
-  inds = preprocess(t, d)
-  view(d, inds), nothing
 end
 
 function apply(t::Crop, g::Grid)
