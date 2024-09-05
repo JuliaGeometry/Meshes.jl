@@ -29,27 +29,54 @@ Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-preprocess(t::Crop, d::Domain) = _crop(boundingbox(d), t.limits)
+function preprocess(t::Crop, d::Domain)
+  b = _crop(boundingbox(d), t.limits)
+  indices(d, b)
+end
+
+function preprocess(t::Crop, g::Grid)
+  b = _crop(boundingbox(g), t.limits)
+  _cartesianrange(g, b)
+end
 
 function apply(t::Crop, d::Domain)
-  b = preprocess(t, d)
-  view(d, b), nothing
+  inds = preprocess(t, d)
+  view(d, inds), nothing
 end
 
-function apply(t::Crop, g::CartesianGrid)
-  b = preprocess(t, g)
-  g[cartesianrange(g, b)], nothing
+function apply(t::Crop, g::Grid)
+  range = preprocess(t, g)
+  g[range], nothing
 end
 
-function apply(t::Crop, g::RectilinearGrid)
-  b = preprocess(t, g)
-  g[cartesianrange(g, b)], nothing
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _crop(box::Box{<:𝔼}, limits)
+  lims = _xyzlimits(limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  xyzmin, xyzmax = _xyzminmax(min, max, lims)
+  Box(withcrs(box, xyzmin), withcrs(box, xyzmax))
 end
 
-function apply(t::Crop, g::Grid{𝔼{2}})
-  box = preprocess(t, g)
-  bmin = convert(Cartesian, coords(minimum(box)))
-  bmax = convert(Cartesian, coords(maximum(box)))
+function _crop(box::Box{🌐}, limits)
+  lims = _latlonlimits(limits)
+  min = convert(LatLon, coords(minimum(box)))
+  max = convert(LatLon, coords(maximum(box)))
+  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
+  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
+  Box(withcrs(box, (latmin, lonmin), LatLon), withcrs(box, (latmax, lonmax), LatLon))
+end
+
+_cartesianrange(g::CartesianGrid, b::Box) = cartesianrange(g, b)
+
+_cartesianrange(g::RectilinearGrid, b::Box) = cartesianrange(g, b)
+
+function _cartesianrange(g::Grid{𝔼{2}}, b::Box)
+  bmin = convert(Cartesian, coords(minimum(b)))
+  bmax = convert(Cartesian, coords(maximum(b)))
   nx, ny = vsize(g)
 
   gmin = convert(Cartesian, coords(vertex(g, (1, 1))))
@@ -87,13 +114,12 @@ function apply(t::Crop, g::Grid{𝔼{2}})
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
 
-  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1)], nothing
+  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
 end
 
-function apply(t::Crop, g::Grid{𝔼{3}})
-  box = preprocess(t, g)
-  bmin = convert(Cartesian, coords(minimum(box)))
-  bmax = convert(Cartesian, coords(maximum(box)))
+function _cartesianrange(g::Grid{𝔼{3}}, b::Box)
+  bmin = convert(Cartesian, coords(minimum(b)))
+  bmax = convert(Cartesian, coords(maximum(b)))
   nx, ny, nz = vsize(g)
 
   gmin = convert(Cartesian, coords(vertex(g, (1, 1, 1))))
@@ -146,13 +172,12 @@ function apply(t::Crop, g::Grid{𝔼{3}})
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
 
-  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1), kₛ:(kₑ - 1)], nothing
+  CartesianIndex(iₛ, jₛ, kₛ):CartesianIndex(iₑ - 1, jₑ - 1, kₑ - 1)
 end
 
-function apply(t::Crop, g::Grid{🌐})
-  box = preprocess(t, g)
-  bmin = convert(LatLon, coords(minimum(box)))
-  bmax = convert(LatLon, coords(maximum(box)))
+function _cartesianrange(g::Grid{🌐}, b::Box)
+  bmin = convert(LatLon, coords(minimum(b)))
+  bmax = convert(LatLon, coords(maximum(b)))
   nlon, nlat = vsize(g)
 
   gmin = convert(Cartesian, coords(vertex(g, (1, 1))))
@@ -191,28 +216,7 @@ function apply(t::Crop, g::Grid{🌐})
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
 
-  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1)], nothing
-end
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-function _crop(box::Box{<:𝔼}, limits)
-  lims = _xyzlimits(limits)
-  min = convert(Cartesian, coords(minimum(box)))
-  max = convert(Cartesian, coords(maximum(box)))
-  xyzmin, xyzmax = _xyzminmax(min, max, lims)
-  Box(withcrs(box, xyzmin), withcrs(box, xyzmax))
-end
-
-function _crop(box::Box{🌐}, limits)
-  lims = _latlonlimits(limits)
-  min = convert(LatLon, coords(minimum(box)))
-  max = convert(LatLon, coords(maximum(box)))
-  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
-  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
-  Box(withcrs(box, (latmin, lonmin), LatLon), withcrs(box, (latmax, lonmax), LatLon))
+  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
 end
 
 _xyzlimits(limits) = (
