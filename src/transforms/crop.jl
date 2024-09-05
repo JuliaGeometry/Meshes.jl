@@ -53,94 +53,94 @@ function apply(t::Crop, g::Grid{𝔼{2}})
   box = preprocess(t, g)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  sx, sy = size(g)
-  xstart = findfirst(1:sx) do i
-    p = centroid(g[i, 1])
+  sx, sy = size(g) .+ 1
+  xstart = findlast(1:sx) do i
+    p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≥ min.x
+    c.x ≤ min.x
   end
-  xstop = findlast(1:sx) do i
-    p = centroid(g[i, 1])
+  xstop = findfirst(1:sx) do i
+    p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≤ max.x
+    c.x ≥ max.x
   end
-  ystart = findfirst(1:sy) do i
-    p = centroid(g[1, i])
+  ystart = findlast(1:sy) do i
+    p = vertex(g, (1, i))
     c = convert(Cartesian, coords(p))
-    c.y ≥ min.y
+    c.y ≤ min.y
   end
-  ystop = findlast(1:sy) do i
-    p = centroid(g[1, i])
+  ystop = findfirst(1:sy) do i
+    p = vertex(g, (1, i))
     c = convert(Cartesian, coords(p))
-    c.y ≤ max.y
+    c.y ≥ max.y
   end
-  g[xstart:xstop, ystart:ystop], nothing
+  g[xstart:(xstop - 1), ystart:(ystop - 1)], nothing
 end
 
 function apply(t::Crop, g::Grid{𝔼{3}})
   box = preprocess(t, g)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  sx, sy, sz = size(g)
-  xstart = findfirst(1:sx) do i
-    p = centroid(g[i, 1, 1])
+  sx, sy, sz = size(g) .+ 1
+  xstart = findlast(1:sx) do i
+    p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≥ min.x
+    c.x ≤ min.x
   end
-  xstop = findlast(1:sx) do i
-    p = centroid(g[i, 1, 1])
+  xstop = findfirst(1:sx) do i
+    p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≤ max.x
+    c.x ≥ max.x
   end
-  ystart = findfirst(1:sy) do i
-    p = centroid(g[1, i, 1])
+  ystart = findlast(1:sy) do i
+    p = vertex(g, (1, i, 1))
     c = convert(Cartesian, coords(p))
-    c.y ≥ min.y
+    c.y ≤ min.y
   end
-  ystop = findlast(1:sy) do i
-    p = centroid(g[1, i, 1])
+  ystop = findfirst(1:sy) do i
+    p = vertex(g, (1, i, 1))
     c = convert(Cartesian, coords(p))
-    c.y ≤ max.y
+    c.y ≥ max.y
   end
-  zstart = findfirst(1:sz) do i
-    p = centroid(g[1, 1, i])
+  zstart = findlast(1:sz) do i
+    p = vertex(g, (1, 1, i))
     c = convert(Cartesian, coords(p))
-    c.z ≥ min.z
+    c.z ≤ min.z
   end
-  zstop = findlast(1:sz) do i
-    p = centroid(g[1, 1, i])
+  zstop = findfirst(1:sz) do i
+    p = vertex(g, (1, 1, i))
     c = convert(Cartesian, coords(p))
-    c.z ≤ max.z
+    c.z ≥ max.z
   end
-  g[xstart:xstop, ystart:ystop, zstart:zstop], nothing
+  g[xstart:(xstop - 1), ystart:(ystop - 1), zstart:(zstop - 1)], nothing
 end
 
 function apply(t::Crop, g::Grid{🌐})
   box = preprocess(t, g)
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
-  slon, slat = size(g)
-  lonstart = findfirst(1:slon) do i
-    p = centroid(g[i, 1])
+  slon, slat = size(g) .+ 1
+  lonstart = findlast(1:slon) do i
+    p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))
-    c.lon ≥ min.lon
+    c.lon ≤ min.lon
   end
-  lonstop = findlast(1:slon) do i
-    p = centroid(g[i, 1])
+  lonstop = findfirst(1:slon) do i
+    p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))
-    c.lon ≤ max.lon
+    c.lon ≥ max.lon
   end
-  latstart = findfirst(1:slat) do i
-    p = centroid(g[1, i])
+  latstart = findlast(1:slat) do i
+    p = vertex(g, (1, i))
     c = convert(LatLon, coords(p))
-    c.lat ≥ min.lat
+    c.lat ≤ min.lat
   end
-  latstop = findlast(1:slat) do i
-    p = centroid(g[1, i])
+  latstop = findfirst(1:slat) do i
+    p = vertex(g, (1, i))
     c = convert(LatLon, coords(p))
-    c.lat ≤ max.lat
+    c.lat ≥ max.lat
   end
-  g[lonstart:lonstop, latstart:latstop], nothing
+  g[lonstart:(lonstop - 1), latstart:(latstop - 1)], nothing
 end
 
 # -----------------

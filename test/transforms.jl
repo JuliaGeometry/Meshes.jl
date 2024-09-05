@@ -1716,7 +1716,7 @@ end
   d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
   r, c = TB.apply(f, d)
   @test r isa TransformedGrid
-  @test r == TransformedGrid(CartesianGrid((6, 6), cart(2, 2), T.((1, 1))), Rotate(T(π / 4)))
+  @test r == TransformedGrid(CartesianGrid((7, 7), cart(1, 2), T.((1, 1))), Rotate(T(π / 4)))
 
   # ------------------
   # SIMPLEMESH (GRID)
