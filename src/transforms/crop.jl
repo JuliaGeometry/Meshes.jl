@@ -59,8 +59,8 @@ function apply(t::Crop, g::Grid{𝔼{2}})
   gymax = convert(Cartesian, coords(vertex(g, (1, ny)))).y
 
   xmin = max(bmin.x, gxmin)
-  xmax = min(bmax.x, gxmax)
   ymin = max(bmin.y, gymin)
+  xmax = min(bmax.x, gxmax)
   ymax = min(bmax.y, gymax)
 
   iₛ = findlast(1:nx) do i
@@ -105,10 +105,10 @@ function apply(t::Crop, g::Grid{𝔼{3}})
   gzmax = convert(Cartesian, coords(vertex(g, (1, 1, nz)))).z
 
   xmin = max(bmin.x, gxmin)
-  xmax = min(bmax.x, gxmax)
   ymin = max(bmin.y, gymin)
-  ymax = min(bmax.y, gymax)
   zmin = max(bmin.z, gzmin)
+  xmax = min(bmax.x, gxmax)
+  ymax = min(bmax.y, gymax)
   zmax = min(bmax.z, gzmax)
 
   iₛ = findlast(1:nx) do i
@@ -162,8 +162,8 @@ function apply(t::Crop, g::Grid{🌐})
   glatmax = convert(Cartesian, coords(vertex(g, (1, nlat)))).lat
 
   lonmin = max(bmin.lon, glonmin)
-  lonmax = min(bmax.lon, glonmax)
   latmin = max(bmin.lat, glatmin)
+  lonmax = min(bmax.lon, glonmax)
   latmax = min(bmax.lat, glatmax)
 
   iₛ = findlast(1:nlon) do i
