@@ -238,8 +238,6 @@ function _xyzminmax(min::Cartesian3D, max::Cartesian3D, lims)
   (xmin, ymin, zmin), (xmax, ymax, zmax)
 end
 
-_fixindex(i, default) = isnothing(i) ? default : i
-
 _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"
 _aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
