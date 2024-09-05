@@ -127,11 +127,11 @@ function cartesianrange(grid::CartesianGrid, limits)
   lo, up = extrema(boundingbox(grid) ∩ bbox)
 
   # Cartesian indices of new corners
-  ilo = max.(ceil.(Int, (lo - or) ./ sp), 1)
-  iup = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
+  ijkₛ = max.(ceil.(Int, (lo - or) ./ sp), 1)
+  ijkₑ = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
 
   # Cartesian range from corner to corner
-  CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
+  CartesianIndex(Tuple(ijkₛ)):CartesianIndex(Tuple(ijkₑ))
 end
 
 function cartesianrange(grid::RectilinearGrid, limits)
@@ -148,17 +148,17 @@ function cartesianrange(grid::RectilinearGrid, limits)
   lo, up = to.(extrema(boundingbox(grid) ∩ bbox))
 
   # integer coordinates of lower point
-  ilo = ntuple(nd) do i
+  ijkₛ = ntuple(nd) do i
     findlast(x -> x ≤ lo[i], xyz(grid)[i])
   end
 
   # integer coordinates of upper point
-  iup = ntuple(nd) do i
+  ijkₑ = ntuple(nd) do i
     findfirst(x -> x ≥ up[i], xyz(grid)[i])
   end
 
   # integer coordinates of elements
-  CartesianIndex(ilo):CartesianIndex(iup .- 1)
+  CartesianIndex(ijkₛ):CartesianIndex(ijkₑ .- 1)
 end
 
 function cartesianrange(grid::Grid{𝔼{2}}, limits)
