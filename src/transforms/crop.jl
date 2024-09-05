@@ -71,7 +71,9 @@ function apply(t::Crop, g::Grid{𝔼{2}})
     c = convert(Cartesian, coords(p))
     c.y ≥ max.y
   end
-  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1)], nothing
+  irange = _fixindex(iₛ, 1):(_fixindex(iₑ, nx) - 1)
+  jrange = _fixindex(jₛ, 1):(_fixindex(jₑ, ny) - 1)
+  g[irange, jrange], nothing
 end
 
 function apply(t::Crop, g::Grid{𝔼{3}})
@@ -109,7 +111,10 @@ function apply(t::Crop, g::Grid{𝔼{3}})
     c = convert(Cartesian, coords(p))
     c.z ≥ max.z
   end
-  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1), kₛ:(kₑ - 1)], nothing
+  irange = _fixindex(iₛ, 1):(_fixindex(iₑ, nx) - 1)
+  jrange = _fixindex(jₛ, 1):(_fixindex(jₑ, ny) - 1)
+  krange = _fixindex(kₛ, 1):(_fixindex(kₑ, nz) - 1)
+  g[irange, jrange, krange], nothing
 end
 
 function apply(t::Crop, g::Grid{🌐})
@@ -137,7 +142,9 @@ function apply(t::Crop, g::Grid{🌐})
     c = convert(LatLon, coords(p))
     c.lat ≥ max.lat
   end
-  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1)], nothing
+  irange = _fixindex(iₛ, 1):(_fixindex(iₑ, nlon) - 1)
+  jrange = _fixindex(jₛ, 1):(_fixindex(jₑ, nlat) - 1)
+  g[irange, jrange], nothing
 end
 
 # -----------------
@@ -182,6 +189,8 @@ function _xyzminmax(min::Cartesian3D, max::Cartesian3D, lims)
   zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
   (xmin, ymin, zmin), (xmax, ymax, zmax)
 end
+
+_fixindex(i, default) = isnothing(i) ? default : i
 
 _aslen(x::Len) = float(x)
 _aslen(x::Number) = float(x) * u"m"

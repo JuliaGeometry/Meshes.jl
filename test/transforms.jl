@@ -1718,6 +1718,12 @@ end
   @test r isa TransformedGrid
   @test r == TransformedGrid(CartesianGrid((7, 7), cart(1, 2), T.((1, 1))), Rotate(T(π / 4)))
 
+  f = Crop(x=(T(3), T(5)), y=(T(5), T(8)))
+  d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
+  r, c = TB.apply(f, d)
+  @test r isa TransformedGrid
+  @test r == TransformedGrid(CartesianGrid((4, 3), cart(4, 7), T.((1, 1))), Rotate(T(π / 4)))
+
   # ------------------
   # SIMPLEMESH (GRID)
   # ------------------
