@@ -6,7 +6,7 @@
     Crop(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
     Crop(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
-Retain the domain geometries within `x` limits [`xmax`,`xmax`],
+Retain the grid geometries within `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
 (default to meters), or within latitude limits [`latmin`,`latmax`]
 and longitude limits [`lonmin`,`lonmax`] in degree units.

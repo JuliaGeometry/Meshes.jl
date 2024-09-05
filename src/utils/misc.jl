@@ -112,12 +112,13 @@ function cartesianrange(grid::CartesianGrid, limits)
   sz = size(grid)
   nd = length(sz)
 
-  # box points
+  # box from limits
   bmin = withcrs(grid, ntuple(i -> first(limits[i]), nd))
   bmax = withcrs(grid, ntuple(i -> last(limits[i]), nd))
+  bbox = Box(bmin, bmax)
 
   # intersection of boxes
-  lo, up = extrema(boundingbox(grid) ∩ Box(bmin, bmax))
+  lo, up = extrema(boundingbox(grid) ∩ bbox)
 
   # Cartesian indices of new corners
   ilo = max.(ceil.(Int, (lo - or) ./ sp), 1)
@@ -132,12 +133,13 @@ function cartesianrange(grid::RectilinearGrid, limits)
   sz = size(grid)
   nd = length(sz)
 
-  # box points
+  # box from limits
   bmin = withcrs(grid, ntuple(i -> first(limits[i]), nd))
   bmax = withcrs(grid, ntuple(i -> last(limits[i]), nd))
+  bbox = Box(bmin, bmax)
 
   # intersection of boxes
-  lo, up = to.(extrema(boundingbox(grid) ∩ Box(bmin, bmax)))
+  lo, up = to.(extrema(boundingbox(grid) ∩ bbox))
 
   # integer coordinates of lower point
   ilo = ntuple(nd) do i
