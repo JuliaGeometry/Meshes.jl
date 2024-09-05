@@ -48,156 +48,151 @@ end
 
 function apply(t::Crop, g::Grid{𝔼{2}})
   box = preprocess(t, g)
-  min = convert(Cartesian, coords(minimum(box)))
-  max = convert(Cartesian, coords(maximum(box)))
+  bmin = convert(Cartesian, coords(minimum(box)))
+  bmax = convert(Cartesian, coords(maximum(box)))
   nx, ny = vsize(g)
 
-  # check limits
-  ivalid = any(1:nx) do i
-    p = vertex(g, (i, 1))
-    c = convert(Cartesian, coords(p))
-    min.x ≤ c.x ≤ max.x
-  end
-  jvalid = any(1:ny) do i
-    p = vertex(g, (1, i))
-    c = convert(Cartesian, coords(p))
-    min.y ≤ c.y ≤ max.y
-  end
-  if !ivalid || !jvalid
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
+  gmin = convert(Cartesian, coords(vertex(g, (1, 1))))
+  gxmin = gmin.x
+  gymin = gmin.y
+  gxmax = convert(Cartesian, coords(vertex(g, (nx, 1)))).x
+  gymax = convert(Cartesian, coords(vertex(g, (1, ny)))).y
+
+  xmin = max(bmin.x, gxmin)
+  xmax = min(bmax.x, gxmax)
+  ymin = max(bmin.y, gymin)
+  ymax = min(bmax.y, gymax)
 
   iₛ = findlast(1:nx) do i
     p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≤ min.x
+    c.x ≤ xmin
   end
   iₑ = findfirst(1:nx) do i
     p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≥ max.x
+    c.x ≥ xmax
   end
   jₛ = findlast(1:ny) do i
     p = vertex(g, (1, i))
     c = convert(Cartesian, coords(p))
-    c.y ≤ min.y
+    c.y ≤ ymin
   end
   jₑ = findfirst(1:ny) do i
     p = vertex(g, (1, i))
     c = convert(Cartesian, coords(p))
-    c.y ≥ max.y
+    c.y ≥ ymax
   end
-  irange = _fixindex(iₛ, 1):(_fixindex(iₑ, nx) - 1)
-  jrange = _fixindex(jₛ, 1):(_fixindex(jₑ, ny) - 1)
-  g[irange, jrange], nothing
+  
+  if iₛ == iₑ || jₛ == jₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1)], nothing
 end
 
 function apply(t::Crop, g::Grid{𝔼{3}})
   box = preprocess(t, g)
-  min = convert(Cartesian, coords(minimum(box)))
-  max = convert(Cartesian, coords(maximum(box)))
+  bmin = convert(Cartesian, coords(minimum(box)))
+  bmax = convert(Cartesian, coords(maximum(box)))
   nx, ny, nz = vsize(g)
 
-  # check limits
-  ivalid = any(1:nx) do i
-    p = vertex(g, (i, 1, 1))
-    c = convert(Cartesian, coords(p))
-    min.x ≤ c.x ≤ max.x
-  end
-  jvalid = any(1:ny) do i
-    p = vertex(g, (1, i, 1))
-    c = convert(Cartesian, coords(p))
-    min.y ≤ c.y ≤ max.y
-  end
-  kvalid = any(1:nz) do i
-    p = vertex(g, (1, 1, i))
-    c = convert(Cartesian, coords(p))
-    min.z ≤ c.z ≤ max.z
-  end
-  if !ivalid || !jvalid || !kvalid
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
+  gmin = convert(Cartesian, coords(vertex(g, (1, 1, 1))))
+  gxmin = gmin.x
+  gymin = gmin.y
+  gzmin = gmin.z
+  gxmax = convert(Cartesian, coords(vertex(g, (nx, 1, 1)))).x
+  gymax = convert(Cartesian, coords(vertex(g, (1, ny, 1)))).y
+  gzmax = convert(Cartesian, coords(vertex(g, (1, 1, nz)))).z
+
+  xmin = max(bmin.x, gxmin)
+  xmax = min(bmax.x, gxmax)
+  ymin = max(bmin.y, gymin)
+  ymax = min(bmax.y, gymax)
+  zmin = max(bmin.z, gzmin)
+  zmax = min(bmax.z, gzmax)
 
   iₛ = findlast(1:nx) do i
     p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≤ min.x
+    c.x ≤ xmin
   end
   iₑ = findfirst(1:nx) do i
     p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
-    c.x ≥ max.x
+    c.x ≥ xmax
   end
   jₛ = findlast(1:ny) do i
     p = vertex(g, (1, i, 1))
     c = convert(Cartesian, coords(p))
-    c.y ≤ min.y
+    c.y ≤ ymin
   end
   jₑ = findfirst(1:ny) do i
     p = vertex(g, (1, i, 1))
     c = convert(Cartesian, coords(p))
-    c.y ≥ max.y
+    c.y ≥ ymax
   end
   kₛ = findlast(1:nz) do i
     p = vertex(g, (1, 1, i))
     c = convert(Cartesian, coords(p))
-    c.z ≤ min.z
+    c.z ≤ zmin
   end
   kₑ = findfirst(1:nz) do i
     p = vertex(g, (1, 1, i))
     c = convert(Cartesian, coords(p))
-    c.z ≥ max.z
+    c.z ≥ zmax
   end
-  irange = _fixindex(iₛ, 1):(_fixindex(iₑ, nx) - 1)
-  jrange = _fixindex(jₛ, 1):(_fixindex(jₑ, ny) - 1)
-  krange = _fixindex(kₛ, 1):(_fixindex(kₑ, nz) - 1)
-  g[irange, jrange, krange], nothing
+
+  if iₛ == iₑ || jₛ == jₑ || kₛ == kₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1), kₛ:(kₑ - 1)], nothing
 end
 
 function apply(t::Crop, g::Grid{🌐})
   box = preprocess(t, g)
-  min = convert(LatLon, coords(minimum(box)))
-  max = convert(LatLon, coords(maximum(box)))
+  bmin = convert(LatLon, coords(minimum(box)))
+  bmax = convert(LatLon, coords(maximum(box)))
   nlon, nlat = vsize(g)
 
-  # check limits
-  ivalid = any(1:nlon) do i
-    p = vertex(g, (i, 1))
-    c = convert(Cartesian, coords(p))
-    min.lon ≤ c.lon ≤ max.lon
-  end
-  jvalid = any(1:nlat) do i
-    p = vertex(g, (1, i))
-    c = convert(Cartesian, coords(p))
-    min.lat ≤ c.lat ≤ max.lat
-  end
-  if !ivalid || !jvalid
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
+  gmin = convert(Cartesian, coords(vertex(g, (1, 1))))
+  glonmin = gmin.lon
+  glatmin = gmin.lat
+  glonmax = convert(Cartesian, coords(vertex(g, (nlon, 1)))).lon
+  glatmax = convert(Cartesian, coords(vertex(g, (1, nlat)))).lat
+
+  lonmin = max(bmin.lon, glonmin)
+  lonmax = min(bmax.lon, glonmax)
+  latmin = max(bmin.lat, glatmin)
+  latmax = min(bmax.lat, glatmax)
 
   iₛ = findlast(1:nlon) do i
     p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))
-    c.lon ≤ min.lon
+    c.lon ≤ lonmin
   end
   iₑ = findfirst(1:nlon) do i
     p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))
-    c.lon ≥ max.lon
+    c.lon ≥ lonmax
   end
   jₛ = findlast(1:nlat) do i
     p = vertex(g, (1, i))
     c = convert(LatLon, coords(p))
-    c.lat ≤ min.lat
+    c.lat ≤ latmin
   end
   jₑ = findfirst(1:nlat) do i
     p = vertex(g, (1, i))
     c = convert(LatLon, coords(p))
-    c.lat ≥ max.lat
+    c.lat ≥ latmax
   end
-  irange = _fixindex(iₛ, 1):(_fixindex(iₑ, nlon) - 1)
-  jrange = _fixindex(jₛ, 1):(_fixindex(jₑ, nlat) - 1)
-  g[irange, jrange], nothing
+
+  if iₛ == iₑ || jₛ == jₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  g[iₛ:(iₑ - 1), jₛ:(jₑ - 1)], nothing
 end
 
 # -----------------
