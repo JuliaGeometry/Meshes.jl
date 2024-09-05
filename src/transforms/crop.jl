@@ -53,23 +53,23 @@ function apply(t::Crop, g::Grid{𝔼{2}})
   box = preprocess(t, g)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  sx, sy = size(g) .+ 1
-  xstart = findlast(1:sx) do i
+  nx, ny = vsize(g)
+  xstart = findlast(1:nx) do i
     p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
     c.x ≤ min.x
   end
-  xstop = findfirst(1:sx) do i
+  xstop = findfirst(1:nx) do i
     p = vertex(g, (i, 1))
     c = convert(Cartesian, coords(p))
     c.x ≥ max.x
   end
-  ystart = findlast(1:sy) do i
+  ystart = findlast(1:ny) do i
     p = vertex(g, (1, i))
     c = convert(Cartesian, coords(p))
     c.y ≤ min.y
   end
-  ystop = findfirst(1:sy) do i
+  ystop = findfirst(1:ny) do i
     p = vertex(g, (1, i))
     c = convert(Cartesian, coords(p))
     c.y ≥ max.y
@@ -81,33 +81,33 @@ function apply(t::Crop, g::Grid{𝔼{3}})
   box = preprocess(t, g)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  sx, sy, sz = size(g) .+ 1
-  xstart = findlast(1:sx) do i
+  nx, ny, nz = vsize(g)
+  xstart = findlast(1:nx) do i
     p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
     c.x ≤ min.x
   end
-  xstop = findfirst(1:sx) do i
+  xstop = findfirst(1:nx) do i
     p = vertex(g, (i, 1, 1))
     c = convert(Cartesian, coords(p))
     c.x ≥ max.x
   end
-  ystart = findlast(1:sy) do i
+  ystart = findlast(1:ny) do i
     p = vertex(g, (1, i, 1))
     c = convert(Cartesian, coords(p))
     c.y ≤ min.y
   end
-  ystop = findfirst(1:sy) do i
+  ystop = findfirst(1:ny) do i
     p = vertex(g, (1, i, 1))
     c = convert(Cartesian, coords(p))
     c.y ≥ max.y
   end
-  zstart = findlast(1:sz) do i
+  zstart = findlast(1:nz) do i
     p = vertex(g, (1, 1, i))
     c = convert(Cartesian, coords(p))
     c.z ≤ min.z
   end
-  zstop = findfirst(1:sz) do i
+  zstop = findfirst(1:nz) do i
     p = vertex(g, (1, 1, i))
     c = convert(Cartesian, coords(p))
     c.z ≥ max.z
@@ -119,23 +119,23 @@ function apply(t::Crop, g::Grid{🌐})
   box = preprocess(t, g)
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
-  slon, slat = size(g) .+ 1
-  lonstart = findlast(1:slon) do i
+  nlon, nlat = vsize(g)
+  lonstart = findlast(1:nlon) do i
     p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))
     c.lon ≤ min.lon
   end
-  lonstop = findfirst(1:slon) do i
+  lonstop = findfirst(1:nlon) do i
     p = vertex(g, (i, 1))
     c = convert(LatLon, coords(p))
     c.lon ≥ max.lon
   end
-  latstart = findlast(1:slat) do i
+  latstart = findlast(1:nlat) do i
     p = vertex(g, (1, i))
     c = convert(LatLon, coords(p))
     c.lat ≤ min.lat
   end
-  latstop = findfirst(1:slat) do i
+  latstop = findfirst(1:nlat) do i
     p = vertex(g, (1, i))
     c = convert(LatLon, coords(p))
     c.lat ≥ max.lat
