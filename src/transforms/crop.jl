@@ -6,10 +6,11 @@
     Crop(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
     Crop(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
-Retain the grid geometries within `x` limits [`xmax`,`xmax`],
-`y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`] in length units
-(default to meters), or within latitude limits [`latmin`,`latmax`]
-and longitude limits [`lonmin`,`lonmax`] in degree units.
+Retain the grid elements within `x` limits [`xmax`,`xmax`],
+`y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`]
+in length units (default to meters), or within `lat` limits
+[`latmin`,`latmax`] and `lon` limits [`lonmin`,`lonmax`]
+in degree units.
 
 ## Examples
 
@@ -29,15 +30,9 @@ Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-function preprocess(t::Crop, g::Grid)
-  limits = _fixlimits(boundingbox(g), t.limits)
-  cartesianrange(g, limits)
-end
+preprocess(t::Crop, g::Grid) = cartesianrange(g, _fixlimits(boundingbox(g), t.limits))
 
-function apply(t::Crop, g::Grid)
-  range = preprocess(t, g)
-  g[range], nothing
-end
+apply(t::Crop, g::Grid) = g[preprocess(t, g)], nothing
 
 # -----------------
 # HELPER FUNCTIONS
