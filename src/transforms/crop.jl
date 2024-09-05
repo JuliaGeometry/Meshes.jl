@@ -74,21 +74,19 @@ _cartesianrange(g::CartesianGrid, b::Box) = cartesianrange(g, b)
 
 _cartesianrange(g::RectilinearGrid, b::Box) = cartesianrange(g, b)
 
-function _cartesianrange(g::Grid{𝔼{2}}, b::Box)
-  bmin = convert(Cartesian, coords(minimum(b)))
-  bmax = convert(Cartesian, coords(maximum(b)))
+function _cartesianrange(g::Grid{𝔼{2}}, box::Box)
+  bmin = convert(Cartesian, coords(minimum(box)))
+  bmax = convert(Cartesian, coords(maximum(box)))
   nx, ny = vsize(g)
 
-  gmin = convert(Cartesian, coords(vertex(g, (1, 1))))
-  gxmin = gmin.x
-  gymin = gmin.y
-  gxmax = convert(Cartesian, coords(vertex(g, (nx, 1)))).x
-  gymax = convert(Cartesian, coords(vertex(g, (1, ny)))).y
+  a = convert(Cartesian, coords(vertex(g, (1, 1))))
+  b = convert(Cartesian, coords(vertex(g, (nx, 1))))
+  c = convert(Cartesian, coords(vertex(g, (1, ny))))
 
-  xmin = max(bmin.x, gxmin)
-  ymin = max(bmin.y, gymin)
-  xmax = min(bmax.x, gxmax)
-  ymax = min(bmax.y, gymax)
+  xmin = max(bmin.x, a.x)
+  ymin = max(bmin.y, a.y)
+  xmax = min(bmax.x, b.x)
+  ymax = min(bmax.y, c.y)
 
   iₛ = findlast(1:nx) do i
     p = vertex(g, (i, 1))
@@ -117,25 +115,22 @@ function _cartesianrange(g::Grid{𝔼{2}}, b::Box)
   CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
 end
 
-function _cartesianrange(g::Grid{𝔼{3}}, b::Box)
-  bmin = convert(Cartesian, coords(minimum(b)))
-  bmax = convert(Cartesian, coords(maximum(b)))
+function _cartesianrange(g::Grid{𝔼{3}}, box::Box)
+  bmin = convert(Cartesian, coords(minimum(box)))
+  bmax = convert(Cartesian, coords(maximum(box)))
   nx, ny, nz = vsize(g)
 
-  gmin = convert(Cartesian, coords(vertex(g, (1, 1, 1))))
-  gxmin = gmin.x
-  gymin = gmin.y
-  gzmin = gmin.z
-  gxmax = convert(Cartesian, coords(vertex(g, (nx, 1, 1)))).x
-  gymax = convert(Cartesian, coords(vertex(g, (1, ny, 1)))).y
-  gzmax = convert(Cartesian, coords(vertex(g, (1, 1, nz)))).z
+  a = convert(Cartesian, coords(vertex(g, (1, 1, 1))))
+  b = convert(Cartesian, coords(vertex(g, (nx, 1, 1))))
+  c = convert(Cartesian, coords(vertex(g, (1, ny, 1))))
+  d = convert(Cartesian, coords(vertex(g, (1, 1, nz))))
 
-  xmin = max(bmin.x, gxmin)
-  ymin = max(bmin.y, gymin)
-  zmin = max(bmin.z, gzmin)
-  xmax = min(bmax.x, gxmax)
-  ymax = min(bmax.y, gymax)
-  zmax = min(bmax.z, gzmax)
+  xmin = max(bmin.x, a.x)
+  ymin = max(bmin.y, a.y)
+  zmin = max(bmin.z, a.z)
+  xmax = min(bmax.x, b.x)
+  ymax = min(bmax.y, c.y)
+  zmax = min(bmax.z, d.z)
 
   iₛ = findlast(1:nx) do i
     p = vertex(g, (i, 1, 1))
@@ -175,21 +170,19 @@ function _cartesianrange(g::Grid{𝔼{3}}, b::Box)
   CartesianIndex(iₛ, jₛ, kₛ):CartesianIndex(iₑ - 1, jₑ - 1, kₑ - 1)
 end
 
-function _cartesianrange(g::Grid{🌐}, b::Box)
-  bmin = convert(LatLon, coords(minimum(b)))
-  bmax = convert(LatLon, coords(maximum(b)))
+function _cartesianrange(g::Grid{🌐}, box::Box)
+  bmin = convert(LatLon, coords(minimum(box)))
+  bmax = convert(LatLon, coords(maximum(box)))
   nlon, nlat = vsize(g)
 
-  gmin = convert(Cartesian, coords(vertex(g, (1, 1))))
-  glonmin = gmin.lon
-  glatmin = gmin.lat
-  glonmax = convert(Cartesian, coords(vertex(g, (nlon, 1)))).lon
-  glatmax = convert(Cartesian, coords(vertex(g, (1, nlat)))).lat
+  a = convert(Cartesian, coords(vertex(g, (1, 1))))
+  b = convert(Cartesian, coords(vertex(g, (nlon, 1))))
+  c = convert(Cartesian, coords(vertex(g, (1, nlat))))
 
-  lonmin = max(bmin.lon, glonmin)
-  latmin = max(bmin.lat, glatmin)
-  lonmax = min(bmax.lon, glonmax)
-  latmax = min(bmax.lat, glatmax)
+  lonmin = max(bmin.lon, a.lon)
+  latmin = max(bmin.lat, a.lat)
+  lonmax = min(bmax.lon, b.lon)
+  latmax = min(bmax.lat, c.lat)
 
   iₛ = findlast(1:nlon) do i
     p = vertex(g, (i, 1))
