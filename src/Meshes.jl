@@ -534,7 +534,7 @@ export
   Proj,
   LengthUnit,
   Shadow,
-  Crop,
+  Slice,
   Repair,
   Bridge,
   LambdaMuSmoothing,
