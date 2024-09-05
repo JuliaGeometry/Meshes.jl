@@ -81,12 +81,12 @@ end
 # -----------------
 
 function _boxlimits(box::Box{𝔼{2}})
-  min, max = extrema(box)
+  min, max = convert(Cartesian, coords.(extrema(box)))
   (min.x, max.x), (min.y, max.y)
 end
 
 function _boxlimits(box::Box{𝔼{3}})
-  min, max = extrema(box)
+  min, max = convert(Cartesian, coords.(extrema(box)))
   (min.x, max.x), (min.y, max.y), (min.z, max.z)
 end
 
