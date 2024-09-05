@@ -29,14 +29,25 @@ Crop(; kwargs...) = Crop(values(kwargs))
 
 parameters(t::Crop) = (; limits=t.limits)
 
-function preprocess(t::Crop, d::Domain)
-  b = _crop(boundingbox(d), t.limits)
+function preprocess(t::Crop, d::Domain{<:𝔼})
+  limits = _crop(boundingbox(d), t.limits)
+  min = withcrs(d, ntuple(i -> first(limits[i]), embeddim(d)))
+  max = withcrs(d, ntuple(i -> last(limits[i]), embeddim(d)))
+  b = Box(min, max)
+  indices(d, b)
+end
+
+function preprocess(t::Crop, d::Domain{🌐})
+  (lonmin, lonmax), (latmin, latmax) = _crop(boundingbox(d), t.limits)
+  min = withcrs(box, (latmin, lonmin), LatLon)
+  max = withcrs(box, (latmax, lonmax), LatLon)
+  b = Box(min, max)
   indices(d, b)
 end
 
 function preprocess(t::Crop, g::Grid)
-  b = _crop(boundingbox(g), t.limits)
-  _cartesianrange(g, b)
+  limits = _crop(boundingbox(g), t.limits)
+  cartesianrange(g, limits)
 end
 
 function apply(t::Crop, d::Domain)
@@ -57,159 +68,16 @@ function _crop(box::Box{<:𝔼}, limits)
   lims = _xyzlimits(limits)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  xyzmin, xyzmax = _xyzminmax(min, max, lims)
-  Box(withcrs(box, xyzmin), withcrs(box, xyzmax))
+  _xyzminmax(min, max, lims)
 end
 
 function _crop(box::Box{🌐}, limits)
   lims = _latlonlimits(limits)
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
-  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
   lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
-  Box(withcrs(box, (latmin, lonmin), LatLon), withcrs(box, (latmax, lonmax), LatLon))
-end
-
-_cartesianrange(g::CartesianGrid, b::Box) = cartesianrange(g, b)
-
-_cartesianrange(g::RectilinearGrid, b::Box) = cartesianrange(g, b)
-
-function _cartesianrange(g::Grid{𝔼{2}}, box::Box)
-  bmin = convert(Cartesian, coords(minimum(box)))
-  bmax = convert(Cartesian, coords(maximum(box)))
-  nx, ny = vsize(g)
-
-  a = convert(Cartesian, coords(vertex(g, (1, 1))))
-  b = convert(Cartesian, coords(vertex(g, (nx, 1))))
-  c = convert(Cartesian, coords(vertex(g, (1, ny))))
-
-  xmin = max(bmin.x, a.x)
-  ymin = max(bmin.y, a.y)
-  xmax = min(bmax.x, b.x)
-  ymax = min(bmax.y, c.y)
-
-  iₛ = findlast(1:nx) do i
-    p = vertex(g, (i, 1))
-    c = convert(Cartesian, coords(p))
-    c.x ≤ xmin
-  end
-  iₑ = findfirst(1:nx) do i
-    p = vertex(g, (i, 1))
-    c = convert(Cartesian, coords(p))
-    c.x ≥ xmax
-  end
-  jₛ = findlast(1:ny) do i
-    p = vertex(g, (1, i))
-    c = convert(Cartesian, coords(p))
-    c.y ≤ ymin
-  end
-  jₑ = findfirst(1:ny) do i
-    p = vertex(g, (1, i))
-    c = convert(Cartesian, coords(p))
-    c.y ≥ ymax
-  end
-  if iₛ == iₑ || jₛ == jₑ
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
-
-  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
-end
-
-function _cartesianrange(g::Grid{𝔼{3}}, box::Box)
-  bmin = convert(Cartesian, coords(minimum(box)))
-  bmax = convert(Cartesian, coords(maximum(box)))
-  nx, ny, nz = vsize(g)
-
-  a = convert(Cartesian, coords(vertex(g, (1, 1, 1))))
-  b = convert(Cartesian, coords(vertex(g, (nx, 1, 1))))
-  c = convert(Cartesian, coords(vertex(g, (1, ny, 1))))
-  d = convert(Cartesian, coords(vertex(g, (1, 1, nz))))
-
-  xmin = max(bmin.x, a.x)
-  ymin = max(bmin.y, a.y)
-  zmin = max(bmin.z, a.z)
-  xmax = min(bmax.x, b.x)
-  ymax = min(bmax.y, c.y)
-  zmax = min(bmax.z, d.z)
-
-  iₛ = findlast(1:nx) do i
-    p = vertex(g, (i, 1, 1))
-    c = convert(Cartesian, coords(p))
-    c.x ≤ xmin
-  end
-  iₑ = findfirst(1:nx) do i
-    p = vertex(g, (i, 1, 1))
-    c = convert(Cartesian, coords(p))
-    c.x ≥ xmax
-  end
-  jₛ = findlast(1:ny) do i
-    p = vertex(g, (1, i, 1))
-    c = convert(Cartesian, coords(p))
-    c.y ≤ ymin
-  end
-  jₑ = findfirst(1:ny) do i
-    p = vertex(g, (1, i, 1))
-    c = convert(Cartesian, coords(p))
-    c.y ≥ ymax
-  end
-  kₛ = findlast(1:nz) do i
-    p = vertex(g, (1, 1, i))
-    c = convert(Cartesian, coords(p))
-    c.z ≤ zmin
-  end
-  kₑ = findfirst(1:nz) do i
-    p = vertex(g, (1, 1, i))
-    c = convert(Cartesian, coords(p))
-    c.z ≥ zmax
-  end
-
-  if iₛ == iₑ || jₛ == jₑ || kₛ == kₑ
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
-
-  CartesianIndex(iₛ, jₛ, kₛ):CartesianIndex(iₑ - 1, jₑ - 1, kₑ - 1)
-end
-
-function _cartesianrange(g::Grid{🌐}, box::Box)
-  bmin = convert(LatLon, coords(minimum(box)))
-  bmax = convert(LatLon, coords(maximum(box)))
-  nlon, nlat = vsize(g)
-
-  a = convert(Cartesian, coords(vertex(g, (1, 1))))
-  b = convert(Cartesian, coords(vertex(g, (nlon, 1))))
-  c = convert(Cartesian, coords(vertex(g, (1, nlat))))
-
-  lonmin = max(bmin.lon, a.lon)
-  latmin = max(bmin.lat, a.lat)
-  lonmax = min(bmax.lon, b.lon)
-  latmax = min(bmax.lat, c.lat)
-
-  iₛ = findlast(1:nlon) do i
-    p = vertex(g, (i, 1))
-    c = convert(LatLon, coords(p))
-    c.lon ≤ lonmin
-  end
-  iₑ = findfirst(1:nlon) do i
-    p = vertex(g, (i, 1))
-    c = convert(LatLon, coords(p))
-    c.lon ≥ lonmax
-  end
-  jₛ = findlast(1:nlat) do i
-    p = vertex(g, (1, i))
-    c = convert(LatLon, coords(p))
-    c.lat ≤ latmin
-  end
-  jₑ = findfirst(1:nlat) do i
-    p = vertex(g, (1, i))
-    c = convert(LatLon, coords(p))
-    c.lat ≥ latmax
-  end
-
-  if iₛ == iₑ || jₛ == jₑ
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
-
-  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
+  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
+  (lonmin, lonmax), (latmin, latmax)
 end
 
 _xyzlimits(limits) = (
@@ -224,14 +92,14 @@ _latlonlimits(limits) =
 function _xyzminmax(min::Cartesian2D, max::Cartesian2D, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
-  (xmin, ymin), (xmax, ymax)
+  (xmin, xmax), (ymin, ymax)
 end
 
 function _xyzminmax(min::Cartesian3D, max::Cartesian3D, lims)
   xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
   ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
   zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
-  (xmin, ymin, zmin), (xmax, ymax, zmax)
+  (xmin, xmax), (ymin, ymax), (zmin, zmax)
 end
 
 _aslen(x::Len) = float(x)

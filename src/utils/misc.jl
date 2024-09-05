@@ -104,3 +104,186 @@ function intersectparameters(a::Point, b::Point, c::Point, d::Point)
 
   λ₁, λ₂, r, rₐ
 end
+
+function cartesianrange(grid::CartesianGrid, limits)
+  # grid properties
+  or = minimum(grid)
+  sp = spacing(grid)
+  sz = size(grid)
+  nd = length(sz)
+
+  # box points
+  bmin = withcrs(grid, ntuple(i -> first(limits[i]), nd))
+  bmax = withcrs(grid, ntuple(i -> last(limits[i]), nd))
+
+  # intersection of boxes
+  lo, up = extrema(boundingbox(grid) ∩ Box(bmin, bmax))
+
+  # Cartesian indices of new corners
+  ilo = max.(ceil.(Int, (lo - or) ./ sp), 1)
+  iup = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
+
+  # Cartesian range from corner to corner
+  CartesianIndex(Tuple(ilo)):CartesianIndex(Tuple(iup))
+end
+
+function cartesianrange(grid::RectilinearGrid, limits)
+  # grid properties
+  sz = size(grid)
+  nd = length(sz)
+
+  # box points
+  bmin = withcrs(grid, ntuple(i -> first(limits[i]), nd))
+  bmax = withcrs(grid, ntuple(i -> last(limits[i]), nd))
+
+  # intersection of boxes
+  lo, up = to.(extrema(boundingbox(grid) ∩ Box(bmin, bmax)))
+
+  # integer coordinates of lower point
+  ilo = ntuple(nd) do i
+    findlast(x -> x ≤ lo[i], xyz(grid)[i])
+  end
+
+  # integer coordinates of upper point
+  iup = ntuple(nd) do i
+    findfirst(x -> x ≥ up[i], xyz(grid)[i])
+  end
+
+  # integer coordinates of elements
+  CartesianIndex(ilo):CartesianIndex(iup .- 1)
+end
+
+function cartesianrange(grid::Grid{𝔼{2}}, limits)
+  nx, ny = vsize(grid)
+  (lxmin, lxmax), (lymin, lymax) = limits
+
+  a = convert(Cartesian, coords(vertex(grid, (1, 1))))
+  b = convert(Cartesian, coords(vertex(grid, (nx, 1))))
+  c = convert(Cartesian, coords(vertex(grid, (1, ny))))
+
+  xmin = max(lxmin, a.x)
+  ymin = max(lymin, a.y)
+  xmax = min(lxmax, b.x)
+  ymax = min(lymax, c.y)
+
+  iₛ = findlast(1:nx) do i
+    p = vertex(grid, (i, 1))
+    c = convert(Cartesian, coords(p))
+    c.x ≤ xmin
+  end
+  iₑ = findfirst(1:nx) do i
+    p = vertex(grid, (i, 1))
+    c = convert(Cartesian, coords(p))
+    c.x ≥ xmax
+  end
+  jₛ = findlast(1:ny) do i
+    p = vertex(grid, (1, i))
+    c = convert(Cartesian, coords(p))
+    c.y ≤ ymin
+  end
+  jₑ = findfirst(1:ny) do i
+    p = vertex(grid, (1, i))
+    c = convert(Cartesian, coords(p))
+    c.y ≥ ymax
+  end
+  if iₛ == iₑ || jₛ == jₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
+end
+
+function cartesianrange(grid::Grid{𝔼{3}}, limits)
+  nx, ny, nz = vsize(grid)
+  (lxmin, lxmax), (lymin, lymax), (lzmin, lzmax) = limits
+
+  a = convert(Cartesian, coords(vertex(grid, (1, 1, 1))))
+  b = convert(Cartesian, coords(vertex(grid, (nx, 1, 1))))
+  c = convert(Cartesian, coords(vertex(grid, (1, ny, 1))))
+  d = convert(Cartesian, coords(vertex(grid, (1, 1, nz))))
+
+  xmin = max(lxmin, a.x)
+  ymin = max(lymin, a.y)
+  zmin = max(lzmin, a.z)
+  xmax = min(lxmax, b.x)
+  ymax = min(lymax, c.y)
+  zmax = min(lzmax, d.z)
+
+  iₛ = findlast(1:nx) do i
+    p = vertex(grid, (i, 1, 1))
+    c = convert(Cartesian, coords(p))
+    c.x ≤ xmin
+  end
+  iₑ = findfirst(1:nx) do i
+    p = vertex(grid, (i, 1, 1))
+    c = convert(Cartesian, coords(p))
+    c.x ≥ xmax
+  end
+  jₛ = findlast(1:ny) do i
+    p = vertex(grid, (1, i, 1))
+    c = convert(Cartesian, coords(p))
+    c.y ≤ ymin
+  end
+  jₑ = findfirst(1:ny) do i
+    p = vertex(grid, (1, i, 1))
+    c = convert(Cartesian, coords(p))
+    c.y ≥ ymax
+  end
+  kₛ = findlast(1:nz) do i
+    p = vertex(grid, (1, 1, i))
+    c = convert(Cartesian, coords(p))
+    c.z ≤ zmin
+  end
+  kₑ = findfirst(1:nz) do i
+    p = vertex(grid, (1, 1, i))
+    c = convert(Cartesian, coords(p))
+    c.z ≥ zmax
+  end
+
+  if iₛ == iₑ || jₛ == jₑ || kₛ == kₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  CartesianIndex(iₛ, jₛ, kₛ):CartesianIndex(iₑ - 1, jₑ - 1, kₑ - 1)
+end
+
+function cartesianrange(grid::Grid{🌐}, limits)  
+  nlon, nlat = vsize(grid)
+  (llonmin, llonmax), (llatmin, llatmax) = limits
+
+  a = convert(Cartesian, coords(vertex(grid, (1, 1))))
+  b = convert(Cartesian, coords(vertex(grid, (nlon, 1))))
+  c = convert(Cartesian, coords(vertex(grid, (1, nlat))))
+
+  lonmin = max(llonmin, a.lon)
+  latmin = max(llatmin, a.lat)
+  lonmax = min(llonmax, b.lon)
+  latmax = min(llatmax, c.lat)
+
+  iₛ = findlast(1:nlon) do i
+    p = vertex(grid, (i, 1))
+    c = convert(LatLon, coords(p))
+    c.lon ≤ lonmin
+  end
+  iₑ = findfirst(1:nlon) do i
+    p = vertex(grid, (i, 1))
+    c = convert(LatLon, coords(p))
+    c.lon ≥ lonmax
+  end
+  jₛ = findlast(1:nlat) do i
+    p = vertex(grid, (1, i))
+    c = convert(LatLon, coords(p))
+    c.lat ≤ latmin
+  end
+  jₑ = findfirst(1:nlat) do i
+    p = vertex(grid, (1, i))
+    c = convert(LatLon, coords(p))
+    c.lat ≥ latmax
+  end
+
+  if iₛ == iₑ || jₛ == jₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
+end
