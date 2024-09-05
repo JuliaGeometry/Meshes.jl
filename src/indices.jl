@@ -54,8 +54,7 @@ end
 
 function indices(grid::CartesianGrid, box::Box)
   # box limits
-  min, max = to.(extrema(box))
-  limits = ntuple(i -> (min[i], max[i]), embeddim(grid))
+  limits = _boxlimits(box)
 
   # cartesian range
   range = cartesianrange(grid, limits)
@@ -68,8 +67,7 @@ indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geo
 
 function indices(grid::RectilinearGrid, box::Box)
   # box limits
-  min, max = to.(extrema(box))
-  limits = ntuple(i -> (min[i], max[i]), embeddim(grid))
+  limits = _boxlimits(box)
 
   # cartesian range
   range = cartesianrange(grid, limits)
@@ -81,6 +79,16 @@ end
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
+
+function _boxlimits(box::Box{𝔼{2}})
+  min, max = extrema(box)
+  (min.x, max.x), (min.y, max.y)
+end
+
+function _boxlimits(box::Box{𝔼{3}})
+  min, max = extrema(box)
+  (min.x, max.x), (min.y, max.y), (min.z, max.z)
+end
 
 function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)
