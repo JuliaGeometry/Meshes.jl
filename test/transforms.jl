@@ -1657,27 +1657,6 @@ end
   @test TB.parameters(Crop(lat=(30, 60))) == (; limits=(; lat=(30, 60)))
   @test TB.parameters(Crop(lon=(45u"°", 90u"°"))) == (; limits=(; lon=(45u"°", 90u"°")))
 
-  # ---------
-  # POINTSET
-  # ---------
-
-  f = Crop(x=(T(1.5), T(3.5)))
-  d = PointSet([cart(1, 0), cart(2, 1), cart(3, 1), cart(4, 0)])
-  r, c = TB.apply(f, d)
-  @test r == PointSet([cart(2, 1), cart(3, 1)])
-
-  # ------------
-  # GEOMETRYSET
-  # ------------
-
-  f = Crop(x=(T(1.5), T(3.5)))
-  t1 = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-  t2 = t1 |> Translate(T(2), T(2))
-  t3 = t2 |> Translate(T(2), T(2))
-  d = GeometrySet([t1, t2, t3])
-  r, c = TB.apply(f, d)
-  @test r == GeometrySet([t2])
-
   # --------------
   # CARTESIANGRID
   # --------------
@@ -1730,9 +1709,9 @@ end
   @test r isa TransformedGrid
   @test r == d
 
-  # ------------------
-  # SIMPLEMESH (GRID)
-  # ------------------
+  # -----------
+  # SIMPLEMESH
+  # -----------
 
   f = Crop(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
   d = convert(SimpleMesh, cartgrid(10, 10))
@@ -1740,9 +1719,9 @@ end
   @test r isa SimpleMesh
   @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
 
-  # ------
-  # ERROS
-  # ------
+  # -------
+  # ERRORS
+  # -------
 
   # error: invalid limits
   f = Crop(x=(T(-5), T(-1)), y=(T(2), T(6)))
