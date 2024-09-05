@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    Crop(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
-    Crop(lat=(latmin, latmax), lon=(lonmin, lonmax))
+    Slice(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
+    Slice(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
 Retain the grid elements within `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`]
@@ -15,24 +15,24 @@ in degree units.
 ## Examples
 
 ```julia
-Crop(x=(2, 4))
-Crop(x=(1u"km", 3u"km"))
-Crop(y=(1.2, 1.8), z=(2.4, 3.0))
-Crop(lat=(30, 60))
-Crop(lon=(45u"°", 90u"°"))
+Slice(x=(2, 4))
+Slice(x=(1u"km", 3u"km"))
+Slice(y=(1.2, 1.8), z=(2.4, 3.0))
+Slice(lat=(30, 60))
+Slice(lon=(45u"°", 90u"°"))
 ```
 """
-struct Crop{T} <: GeometricTransform
+struct Slice{T} <: GeometricTransform
   limits::T
 end
 
-Crop(; kwargs...) = Crop(values(kwargs))
+Slice(; kwargs...) = Slice(values(kwargs))
 
-parameters(t::Crop) = (; limits=t.limits)
+parameters(t::Slice) = (; limits=t.limits)
 
-preprocess(t::Crop, g::Grid) = cartesianrange(g, _fixlimits(boundingbox(g), t.limits))
+preprocess(t::Slice, g::Grid) = cartesianrange(g, _fixlimits(boundingbox(g), t.limits))
 
-apply(t::Crop, g::Grid) = g[preprocess(t, g)], nothing
+apply(t::Slice, g::Grid) = g[preprocess(t, g)], nothing
 
 # -----------------
 # HELPER FUNCTIONS

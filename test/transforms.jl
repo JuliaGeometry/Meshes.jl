@@ -1647,21 +1647,21 @@ end
   @test r == SimpleMesh(f.(vertices(d)), topology(d))
 end
 
-@testitem "Crop" setup = [Setup] begin
-  @test !isaffine(Crop(x=(T(2), T(4))))
-  @test !TB.isrevertible(Crop(x=(T(2), T(4))))
-  @test !TB.isinvertible(Crop(x=(T(2), T(4))))
-  @test TB.parameters(Crop(x=(T(2), T(4)))) == (; limits=(; x=(T(2), T(4))))
-  @test TB.parameters(Crop(y=(T(2) * u"km", T(4) * u"km"))) == (; limits=(; y=(T(2) * u"km", T(4) * u"km")))
-  @test TB.parameters(Crop(z=(2, 4))) == (; limits=(; z=(2, 4)))
-  @test TB.parameters(Crop(lat=(30, 60))) == (; limits=(; lat=(30, 60)))
-  @test TB.parameters(Crop(lon=(45u"°", 90u"°"))) == (; limits=(; lon=(45u"°", 90u"°")))
+@testitem "Slice" setup = [Setup] begin
+  @test !isaffine(Slice(x=(T(2), T(4))))
+  @test !TB.isrevertible(Slice(x=(T(2), T(4))))
+  @test !TB.isinvertible(Slice(x=(T(2), T(4))))
+  @test TB.parameters(Slice(x=(T(2), T(4)))) == (; limits=(; x=(T(2), T(4))))
+  @test TB.parameters(Slice(y=(T(2) * u"km", T(4) * u"km"))) == (; limits=(; y=(T(2) * u"km", T(4) * u"km")))
+  @test TB.parameters(Slice(z=(2, 4))) == (; limits=(; z=(2, 4)))
+  @test TB.parameters(Slice(lat=(30, 60))) == (; limits=(; lat=(30, 60)))
+  @test TB.parameters(Slice(lon=(45u"°", 90u"°"))) == (; limits=(; lon=(45u"°", 90u"°")))
 
   # --------------
   # CARTESIANGRID
   # --------------
 
-  f = Crop(z=(T(1.5), T(4.5)))
+  f = Slice(z=(T(1.5), T(4.5)))
   d = cartgrid(10, 10, 10)
   r, c = TB.apply(f, d)
   @test r isa CartesianGrid
@@ -1671,7 +1671,7 @@ end
   # RECTILINEARGRID
   # ----------------
 
-  f = Crop(y=(T(3.5), T(6.5)))
+  f = Slice(y=(T(3.5), T(6.5)))
   d = convert(RectilinearGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r isa RectilinearGrid
@@ -1681,7 +1681,7 @@ end
   # STRUCTUREDGRID
   # ---------------
 
-  f = Crop(x=(T(5.5), T(8.5)))
+  f = Slice(x=(T(5.5), T(8.5)))
   d = convert(StructuredGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r isa StructuredGrid
@@ -1691,19 +1691,19 @@ end
   # TRANSFORMEDGRID
   # ----------------
 
-  f = Crop(x=(T(1), T(5)), y=(T(2), T(6)))
+  f = Slice(x=(T(1), T(5)), y=(T(2), T(6)))
   d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
   r, c = TB.apply(f, d)
   @test r isa TransformedGrid
   @test r == TransformedGrid(CartesianGrid((7, 7), cart(1, 2), T.((1, 1))), Rotate(T(π / 4)))
 
-  f = Crop(x=(T(3), T(5)), y=(T(5), T(8)))
+  f = Slice(x=(T(3), T(5)), y=(T(5), T(8)))
   d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
   r, c = TB.apply(f, d)
   @test r isa TransformedGrid
   @test r == TransformedGrid(CartesianGrid((4, 3), cart(4, 7), T.((1, 1))), Rotate(T(π / 4)))
 
-  f = Crop(x=(T(0), T(14)), y=(T(0), T(14)), z=(T(0), T(14)))
+  f = Slice(x=(T(0), T(14)), y=(T(0), T(14)), z=(T(0), T(14)))
   d = TransformedGrid(cartgrid(10, 10, 10), Translate(T(2), T(2), T(2)))
   r, c = TB.apply(f, d)
   @test r isa TransformedGrid
@@ -1713,7 +1713,7 @@ end
   # SIMPLEMESH
   # -----------
 
-  f = Crop(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
+  f = Slice(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
   d = convert(SimpleMesh, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r isa SimpleMesh
@@ -1724,10 +1724,10 @@ end
   # -------
 
   # error: invalid limits
-  f = Crop(x=(T(-5), T(-1)), y=(T(2), T(6)))
+  f = Slice(x=(T(-5), T(-1)), y=(T(2), T(6)))
   d = TransformedGrid(cartgrid(10, 10), Identity())
   @test_throws ArgumentError TB.apply(f, d)
-  f = Crop(x=(T(1), T(5)), y=(T(12), T(16)))
+  f = Slice(x=(T(1), T(5)), y=(T(12), T(16)))
   @test_throws ArgumentError TB.apply(f, d)
 end
 
