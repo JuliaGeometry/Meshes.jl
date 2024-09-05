@@ -247,7 +247,7 @@ function cartesianrange(grid::Grid{𝔼{3}}, limits)
   CartesianIndex(iₛ, jₛ, kₛ):CartesianIndex(iₑ - 1, jₑ - 1, kₑ - 1)
 end
 
-function cartesianrange(grid::Grid{🌐}, limits)  
+function cartesianrange(grid::Grid{🌐}, limits)
   nlon, nlat = vsize(grid)
   (llonmin, llonmax), (llatmin, llatmax) = limits
 
