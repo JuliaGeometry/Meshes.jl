@@ -262,9 +262,9 @@ function cartesianrange(grid::Grid{🌐}, limits)
   nlon, nlat = vsize(grid)
   (llonmin, llonmax), (llatmin, llatmax) = limits
 
-  a = convert(Cartesian, coords(vertex(grid, (1, 1))))
-  b = convert(Cartesian, coords(vertex(grid, (nlon, 1))))
-  c = convert(Cartesian, coords(vertex(grid, (1, nlat))))
+  a = convert(LatLon, coords(vertex(grid, (1, 1))))
+  b = convert(LatLon, coords(vertex(grid, (nlon, 1))))
+  c = convert(LatLon, coords(vertex(grid, (1, nlat))))
 
   lonmin = max(llonmin, a.lon)
   latmin = max(llatmin, a.lat)
