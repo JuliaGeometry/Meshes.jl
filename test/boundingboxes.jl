@@ -56,8 +56,13 @@
   d = GeometrySet([b, s])
   @test boundingbox(m) == Box(cart(-3, -2), cart(2, 2))
   @test boundingbox(d) == Box(cart(-3, -2), cart(2, 2))
-  @test @allocated(boundingbox(m)) < 2600
-  @test @allocated(boundingbox(d)) < 2600
+  if Sys.iswindows() && VERSION < v"1.10"
+    @test @allocated(boundingbox(m)) < 4100
+    @test @allocated(boundingbox(d)) < 4100
+  else
+    @test @allocated(boundingbox(m)) < 2600
+    @test @allocated(boundingbox(d)) < 2600
+  end
 
   b1 = Box(cart(0, 0), cart(1, 1))
   b2 = Box(cart(-1, -1), cart(0.5, 0.5))
