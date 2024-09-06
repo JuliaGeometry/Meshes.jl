@@ -186,23 +186,23 @@ function cartesianrange(grid::Grid{𝔼{2}}, limits)
 
   iₛ = findlast(xinds) do i
     p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
+    c = convert(Cartesian, coords(p))
     c.x ≤ xmin
   end
   iₑ = findfirst(xinds) do i
     p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
+    c = convert(Cartesian, coords(p))
     c.x ≥ xmax
   end
 
   jₛ = findlast(yinds) do i
     p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
+    c = convert(Cartesian, coords(p))
     c.y ≤ ymin
   end
   jₑ = findfirst(yinds) do i
     p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
+    c = convert(Cartesian, coords(p))
     c.y ≥ ymax
   end
 
@@ -246,35 +246,35 @@ function cartesianrange(grid::Grid{𝔼{3}}, limits)
   zmax = min(zₑ, gzₑ)
 
   iₛ = findlast(xinds) do i
-    p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
+    p = vertex(grid, (i, 1, 1))
+    c = convert(Cartesian, coords(p))
     c.x ≤ xmin
   end
   iₑ = findfirst(xinds) do i
-    p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
+    p = vertex(grid, (i, 1, 1))
+    c = convert(Cartesian, coords(p))
     c.x ≥ xmax
   end
 
   jₛ = findlast(yinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
+    p = vertex(grid, (1, i, 1))
+    c = convert(Cartesian, coords(p))
     c.y ≤ ymin
   end
   jₑ = findfirst(yinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
+    p = vertex(grid, (1, i, 1))
+    c = convert(Cartesian, coords(p))
     c.y ≥ ymax
   end
 
   kₛ = findlast(zinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
+    p = vertex(grid, (1, 1, i))
+    c = convert(Cartesian, coords(p))
     c.z ≤ zmin
   end
   kₑ = findfirst(zinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
+    p = vertex(grid, (1, 1, i))
+    c = convert(Cartesian, coords(p))
     c.z ≥ zmax
   end
 
