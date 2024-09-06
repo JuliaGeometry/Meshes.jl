@@ -170,27 +170,37 @@ function cartesianrange(grid::Grid{𝔼{2}}, limits)
   b = convert(Cartesian, coords(vertex(grid, (nx, 1))))
   c = convert(Cartesian, coords(vertex(grid, (1, ny))))
 
-  xmin = max(xₛ, a.x)
-  ymin = max(yₛ, a.y)
-  xmax = min(xₑ, b.x)
-  ymax = min(yₑ, c.y)
+  swapx = a.x > b.x
+  swapy = a.y > c.y
 
-  iₛ = findlast(1:nx) do i
+  xinds = swapx ? (nx:-1:1) : (1:1:nx)
+  yinds = swapy ? (ny:-1:1) : (1:1:ny)
+
+  gridxₛ, gridxₑ = swapx ? (b.x, a.x) : (a.x, b.x)
+  gridyₛ, gridyₑ = swapy ? (c.y, a.y) : (a.y, c.y)
+
+  xmin = max(xₛ, gridxₛ)
+  ymin = max(yₛ, gridyₛ)
+  xmax = min(xₑ, gridxₑ)
+  ymax = min(yₑ, gridyₑ)
+
+  iₛ = findlast(xinds) do i
     p = vertex(grid, (i, 1))
     c = convert(Cartesian, coords(p))
     c.x ≤ xmin
   end
-  iₑ = findfirst(1:nx) do i
+  iₑ = findfirst(xinds) do i
     p = vertex(grid, (i, 1))
     c = convert(Cartesian, coords(p))
     c.x ≥ xmax
   end
-  jₛ = findlast(1:ny) do i
+
+  jₛ = findlast(yinds) do i
     p = vertex(grid, (1, i))
     c = convert(Cartesian, coords(p))
     c.y ≤ ymin
   end
-  jₑ = findfirst(1:ny) do i
+  jₑ = findfirst(yinds) do i
     p = vertex(grid, (1, i))
     c = convert(Cartesian, coords(p))
     c.y ≥ ymax
@@ -200,7 +210,10 @@ function cartesianrange(grid::Grid{𝔼{2}}, limits)
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
 
-  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
+  iₛ, iₑ = swapx ? (iₑ, iₛ) : (iₛ, iₑ)
+  jₛ, jₑ = swapy ? (jₑ, jₛ) : (jₛ, jₑ)
+
+  CartesianIndex(xinds[iₛ], yinds[jₛ]):CartesianIndex(xinds[iₑ] - 1, yinds[jₑ] - 1)
 end
 
 function cartesianrange(grid::Grid{𝔼{3}}, limits)
@@ -213,39 +226,53 @@ function cartesianrange(grid::Grid{𝔼{3}}, limits)
   c = convert(Cartesian, coords(vertex(grid, (1, ny, 1))))
   d = convert(Cartesian, coords(vertex(grid, (1, 1, nz))))
 
-  xmin = max(xₛ, a.x)
-  ymin = max(yₛ, a.y)
-  zmin = max(zₛ, a.z)
-  xmax = min(xₑ, b.x)
-  ymax = min(yₑ, c.y)
-  zmax = min(zₑ, d.z)
+  swapx = a.x > b.x
+  swapy = a.y > c.y
+  swapz = a.z > d.z
 
-  iₛ = findlast(1:nx) do i
+  xinds = swapx ? (nx:-1:1) : (1:1:nx)
+  yinds = swapy ? (ny:-1:1) : (1:1:ny)
+  zinds = swapz ? (nz:-1:1) : (1:1:nz)
+
+  gridxₛ, gridxₑ = swapx ? (b.x, a.x) : (a.x, b.x)
+  gridyₛ, gridyₑ = swapy ? (c.y, a.y) : (a.y, c.y)
+  gridzₛ, gridzₑ = swapz ? (d.z, a.z) : (a.z, d.z)
+
+  xmin = max(xₛ, gridxₛ)
+  ymin = max(yₛ, gridyₛ)
+  zmin = max(zₛ, gridzₛ)
+  xmax = min(xₑ, gridxₑ)
+  ymax = min(yₑ, gridyₑ)
+  zmax = min(zₑ, gridzₑ)
+
+  iₛ = findlast(xinds) do i
     p = vertex(grid, (i, 1, 1))
     c = convert(Cartesian, coords(p))
     c.x ≤ xmin
   end
-  iₑ = findfirst(1:nx) do i
+  iₑ = findfirst(xinds) do i
     p = vertex(grid, (i, 1, 1))
     c = convert(Cartesian, coords(p))
     c.x ≥ xmax
   end
-  jₛ = findlast(1:ny) do i
+
+  jₛ = findlast(yinds) do i
     p = vertex(grid, (1, i, 1))
     c = convert(Cartesian, coords(p))
     c.y ≤ ymin
   end
-  jₑ = findfirst(1:ny) do i
+  jₑ = findfirst(yinds) do i
     p = vertex(grid, (1, i, 1))
     c = convert(Cartesian, coords(p))
     c.y ≥ ymax
   end
-  kₛ = findlast(1:nz) do i
+
+  kₛ = findlast(zinds) do i
     p = vertex(grid, (1, 1, i))
     c = convert(Cartesian, coords(p))
     c.z ≤ zmin
   end
-  kₑ = findfirst(1:nz) do i
+  kₑ = findfirst(zinds) do i
     p = vertex(grid, (1, 1, i))
     c = convert(Cartesian, coords(p))
     c.z ≥ zmax
@@ -255,38 +282,53 @@ function cartesianrange(grid::Grid{𝔼{3}}, limits)
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
 
-  CartesianIndex(iₛ, jₛ, kₛ):CartesianIndex(iₑ - 1, jₑ - 1, kₑ - 1)
+  iₛ, iₑ = swapx ? (iₑ, iₛ) : (iₛ, iₑ)
+  jₛ, jₑ = swapy ? (jₑ, jₛ) : (jₛ, jₑ)
+  kₛ, kₑ = swapz ? (kₑ, kₛ) : (kₛ, kₑ)
+
+  CartesianIndex(xinds[iₛ], yinds[jₛ], zinds[kₛ]):CartesianIndex(xinds[iₑ] - 1, yinds[jₑ] - 1, zinds[kₑ] - 1)
 end
 
 function cartesianrange(grid::Grid{🌐}, limits)
   nlon, nlat = vsize(grid)
-  (llonmin, llonmax), (llatmin, llatmax) = limits
+
+  (lonₛ, lonₑ), (latₛ, latₑ) = limits
 
   a = convert(LatLon, coords(vertex(grid, (1, 1))))
   b = convert(LatLon, coords(vertex(grid, (nlon, 1))))
   c = convert(LatLon, coords(vertex(grid, (1, nlat))))
 
-  lonmin = max(llonmin, a.lon)
-  latmin = max(llatmin, a.lat)
-  lonmax = min(llonmax, b.lon)
-  latmax = min(llatmax, c.lat)
+  swaplon = a.lon > b.lon
+  swaplat = a.lat > c.lat
 
-  iₛ = findlast(1:nlon) do i
+  loninds = swaplon ? (nlon:-1:1) : (1:1:nlon)
+  latinds = swaplat ? (nlat:-1:1) : (1:1:nlat)
+
+  gridlonₛ, gridlonₑ = swaplon ? (b.lon, a.lon) : (a.lon, b.lon)
+  gridlatₛ, gridlatₑ = swaplat ? (c.lat, a.lat) : (a.lat, c.lat)
+
+  lonmin = max(lonₛ, gridlonₛ)
+  latmin = max(latₛ, gridlatₛ)
+  lonmax = min(lonₑ, gridlonₑ)
+  latmax = min(latₑ, gridlatₑ)
+
+  iₛ = findlast(loninds) do i
     p = vertex(grid, (i, 1))
     c = convert(LatLon, coords(p))
     c.lon ≤ lonmin
   end
-  iₑ = findfirst(1:nlon) do i
+  iₑ = findfirst(loninds) do i
     p = vertex(grid, (i, 1))
     c = convert(LatLon, coords(p))
     c.lon ≥ lonmax
   end
-  jₛ = findlast(1:nlat) do i
+
+  jₛ = findlast(latinds) do i
     p = vertex(grid, (1, i))
     c = convert(LatLon, coords(p))
     c.lat ≤ latmin
   end
-  jₑ = findfirst(1:nlat) do i
+  jₑ = findfirst(latinds) do i
     p = vertex(grid, (1, i))
     c = convert(LatLon, coords(p))
     c.lat ≥ latmax
@@ -296,5 +338,8 @@ function cartesianrange(grid::Grid{🌐}, limits)
     throw(ArgumentError("the passed limits are not valid for the grid"))
   end
 
-  CartesianIndex(iₛ, jₛ):CartesianIndex(iₑ - 1, jₑ - 1)
+  iₛ, iₑ = swaplon ? (iₑ, iₛ) : (iₛ, iₑ)
+  jₛ, jₑ = swaplat ? (jₑ, jₛ) : (jₛ, jₑ)
+
+  CartesianIndex(loninds[iₛ], latinds[jₛ]):CartesianIndex(loninds[iₑ] - 1, latinds[jₑ] - 1)
 end
