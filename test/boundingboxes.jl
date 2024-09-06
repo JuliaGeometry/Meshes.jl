@@ -119,6 +119,19 @@
   p = ParaboloidSurface(cart(1, 2, 3), T(5), T(4))
   @test boundingbox(p) ≈ Box(cart(-4, -3, 3), cart(6, 7, 73 / 16))
 
+  # latlon coordinates
+  t = Triangle(latlon(0, 0), latlon(0, 2), latlon(1, 1))
+  @test boundingbox(t) == Box(latlon(0, 0), latlon(1, 2))
+  @test @allocated(boundingbox(t)) < 50
+
+  p = Pentagon(latlon(1, 6), latlon(10, 2), latlon(16, 10), latlon(10, 18), latlon(1, 14))
+  @test boundingbox(p) == Box(latlon(1, 2), latlon(16, 18))
+  @test @allocated(boundingbox(p)) < 50
+
+  d = PointSet(latlon(0, 0), latlon(2, 1), latlon(1, 2))
+  @test boundingbox(d) == Box(latlon(0, 0), latlon(2, 2))
+  @test @allocated(boundingbox(d)) < 50
+
   # CRS propagation
   r = Ray(merc(-1, 1), vector(1, -1))
   @test crs(boundingbox(r)) === crs(r)

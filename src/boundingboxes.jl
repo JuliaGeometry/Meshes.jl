@@ -85,16 +85,51 @@ boundingbox(m::Mesh) = _pboxes(vertices(m))
 
 _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
-function _pboxes(points)
+_pboxes(points) = _pboxes(manifold(first(points)), points)
+
+function _pboxes(::Type{𝔼{2}}, points)
   p = first(points)
   ℒ = lentype(p)
-  Dim = embeddim(p)
-  xmin = MVector(ntuple(i -> typemax(ℒ), Dim))
-  xmax = MVector(ntuple(i -> typemin(ℒ), Dim))
+  xmin, ymin = typemax(ℒ), typemax(ℒ)
+  xmax, ymax = typemin(ℒ), typemin(ℒ)
   for p in points
-    x = to(p)
-    @. xmin = min(x, xmin)
-    @. xmax = max(x, xmax)
+    c = convert(Cartesian, coords(p))
+    xmin = min(c.x, xmin)
+    ymin = min(c.y, ymin)
+    xmax = max(c.x, xmax)
+    ymax = max(c.y, ymax)
   end
-  Box(withcrs(p, xmin), withcrs(p, xmax))
+  Box(withcrs(p, (xmin, ymin)), withcrs(p, (xmax, ymax)))
+end
+
+function _pboxes(::Type{𝔼{3}}, points)
+  p = first(points)
+  ℒ = lentype(p)
+  xmin, ymin, zmin = typemax(ℒ), typemax(ℒ), typemax(ℒ)
+  xmax, ymax, zmax = typemin(ℒ), typemin(ℒ), typemin(ℒ)
+  for p in points
+    c = convert(Cartesian, coords(p))
+    xmin = min(c.x, xmin)
+    ymin = min(c.y, ymin)
+    zmin = min(c.z, zmin)
+    xmax = max(c.x, xmax)
+    ymax = max(c.y, ymax)
+    zmax = max(c.z, zmax)
+  end
+  Box(withcrs(p, (xmin, ymin, zmin)), withcrs(p, (xmax, ymax, zmax)))
+end
+
+function _pboxes(::Type{🌐}, points)
+  p = first(points)
+  T = numtype(lentype(p))
+  lonmin, latmin = T(180) * u"°", T(90) * u"°"
+  lonmax, latmax = T(-180) * u"°", T(-90) * u"°"
+  for p in points
+    c = convert(LatLon, coords(p))
+    lonmin = min(c.lon, lonmin)
+    latmin = min(c.lat, latmin)
+    lonmax = max(c.lon, lonmax)
+    latmax = max(c.lat, latmax)
+  end
+  Box(withcrs(p, (latmin, lonmin), LatLon), withcrs(p, (latmax, lonmax), LatLon))
 end
