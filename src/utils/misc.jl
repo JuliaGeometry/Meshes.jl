@@ -236,7 +236,7 @@ function cartesianrange(grid::Grid{𝔼{3}}, limits)
 
   gxₛ, gxₑ = swapx ? (b.x, a.x) : (a.x, b.x)
   gyₛ, gyₑ = swapy ? (c.y, a.y) : (a.y, c.y)
-  gzₛ, gzₑ = swapz ? (c.z, a.z) : (a.z, c.z)
+  gzₛ, gzₑ = swapz ? (d.z, a.z) : (a.z, d.z)
 
   xmin = max(xₛ, gxₛ)
   ymin = max(yₛ, gyₛ)
