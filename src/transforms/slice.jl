@@ -6,7 +6,7 @@
     Slice(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
     Slice(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
-Retain the grid elements within `x` limits [`xmax`,`xmax`],
+Retain the domain elements within `x` limits [`xmax`,`xmax`],
 `y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`]
 in length units (default to meters), or within `lat` limits
 [`latmin`,`latmax`] and `lon` limits [`lonmin`,`lonmax`]
@@ -15,11 +15,10 @@ in degree units.
 ## Examples
 
 ```julia
-Slice(x=(2, 4))
-Slice(x=(1u"km", 3u"km"))
-Slice(y=(1.2, 1.8), z=(2.4, 3.0))
-Slice(lat=(30, 60))
-Slice(lon=(45u"°", 90u"°"))
+Slice(x=(1000km, 3000km))
+Slice(x=(1000km, 2000km), y=(2000km, 5000km))
+Slice(lon=(0°, 90°))
+Slice(lon=(0°, 45°), lat=(0°, 45°))
 ```
 """
 struct Slice{T} <: GeometricTransform
@@ -30,54 +29,51 @@ Slice(; kwargs...) = Slice(values(kwargs))
 
 parameters(t::Slice) = (; limits=t.limits)
 
-preprocess(t::Slice, g::Grid) = cartesianrange(g, _fixlimits(boundingbox(g), t.limits))
+preprocess(t::Slice, d::Domain) = _sliceinds(d, _slicebox(boundingbox(d), t.limits))
 
-apply(t::Slice, g::Grid) = g[preprocess(t, g)], nothing
+apply(t::Slice, d::Domain) = _slice(d, preprocess(t, d)), nothing
 
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
 
-function _fixlimits(box::Box{<:𝔼}, limits)
-  lims = _xyzlimits(limits)
+_slice(d::Domain, inds) = view(d, inds)
+_slice(g::Grid, inds::CartesianIndices) = getindex(g, inds)
+
+_sliceinds(d::Domain, b) = indices(d, b)
+_sliceinds(g::CartesianGrid, b) = cartesianrange(g, b)
+_sliceinds(g::RectilinearGrid, b) = cartesianrange(g, b)
+_sliceinds(g::Grid{🌐}, b::Box{🌐}) = cartesianrange(g, b)
+
+function _slicebox(box::Box{𝔼{2}}, limits)
   min = convert(Cartesian, coords(minimum(box)))
   max = convert(Cartesian, coords(maximum(box)))
-  _minmax(min, max, lims)
+  xmin, xmax = get(limits, :x, (min.x, max.x))
+  ymin, ymax = get(limits, :y, (min.y, max.y))
+  bmin = _aslen.((xmin, ymin))
+  bmax = _aslen.((xmax, ymax))
+  Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 
-function _fixlimits(box::Box{🌐}, limits)
-  lims = _latlonlimits(limits)
+function _slicebox(box::Box{𝔼{3}}, limits)
+  min = convert(Cartesian, coords(minimum(box)))
+  max = convert(Cartesian, coords(maximum(box)))
+  xmin, xmax = get(limits, :x, (min.x, max.x))
+  ymin, ymax = get(limits, :y, (min.y, max.y))
+  zmin, zmax = get(limits, :z, (min.z, max.z))
+  bmin = _aslen.((xmin, ymin, zmin))
+  bmax = _aslen.((xmax, ymax, zmax))
+  Box(withcrs(box, bmin), withcrs(box, bmax))
+end
+
+function _slicebox(box::Box{🌐}, limits)
   min = convert(LatLon, coords(minimum(box)))
   max = convert(LatLon, coords(maximum(box)))
-  _minmax(min, max, lims)
-end
-
-_xyzlimits(limits) = (
-  x=haskey(limits, :x) ? _aslen.(limits.x) : nothing,
-  y=haskey(limits, :y) ? _aslen.(limits.y) : nothing,
-  z=haskey(limits, :z) ? _aslen.(limits.z) : nothing
-)
-
-_latlonlimits(limits) =
-  (lat=haskey(limits, :lat) ? _asdeg.(limits.lat) : nothing, lon=haskey(limits, :lon) ? _asdeg.(limits.lon) : nothing)
-
-function _minmax(min::Cartesian2D, max::Cartesian2D, lims)
-  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
-  ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
-  (xmin, xmax), (ymin, ymax)
-end
-
-function _minmax(min::Cartesian3D, max::Cartesian3D, lims)
-  xmin, xmax = isnothing(lims.x) ? (min.x, max.x) : lims.x
-  ymin, ymax = isnothing(lims.y) ? (min.y, max.y) : lims.y
-  zmin, zmax = isnothing(lims.z) ? (min.z, max.z) : lims.z
-  (xmin, xmax), (ymin, ymax), (zmin, zmax)
-end
-
-function _minmax(min::LatLon, max::LatLon, lims)
-  lonmin, lonmax = isnothing(lims.lon) ? (min.lon, max.lon) : lims.lon
-  latmin, latmax = isnothing(lims.lat) ? (min.lat, max.lat) : lims.lat
-  (lonmin, lonmax), (latmin, latmax)
+  latmin, latmax = get(limits, :lat, (min.lat, max.lat))
+  lonmin, lonmax = get(limits, :lon, (min.lon, max.lon))
+  bmin = _asdeg.((latmin, lonmin))
+  bmax = _asdeg.((latmax, lonmax))
+  Box(withcrs(box, bmin, LatLon), withcrs(box, bmax, LatLon))
 end
 
 _aslen(x::Len) = float(x)

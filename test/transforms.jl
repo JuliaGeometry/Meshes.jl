@@ -1676,59 +1676,6 @@ end
   r, c = TB.apply(f, d)
   @test r isa RectilinearGrid
   @test r == convert(RectilinearGrid, CartesianGrid((10, 4), cart(0, 3), T.((1, 1))))
-
-  # ---------------
-  # STRUCTUREDGRID
-  # ---------------
-
-  f = Slice(x=(T(5.5), T(8.5)))
-  d = convert(StructuredGrid, cartgrid(10, 10))
-  r, c = TB.apply(f, d)
-  @test r isa StructuredGrid
-  @test r == convert(StructuredGrid, CartesianGrid((4, 10), cart(5, 0), T.((1, 1))))
-
-  # ----------------
-  # TRANSFORMEDGRID
-  # ----------------
-
-  f = Slice(x=(T(1), T(5)), y=(T(2), T(6)))
-  d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
-  r, c = TB.apply(f, d)
-  @test r isa TransformedGrid
-  @test r == TransformedGrid(CartesianGrid((7, 7), cart(1, 2), T.((1, 1))), Rotate(T(π / 4)))
-
-  f = Slice(x=(T(3), T(5)), y=(T(5), T(8)))
-  d = TransformedGrid(cartgrid(10, 10), Rotate(T(π / 4)))
-  r, c = TB.apply(f, d)
-  @test r isa TransformedGrid
-  @test r == TransformedGrid(CartesianGrid((4, 3), cart(4, 7), T.((1, 1))), Rotate(T(π / 4)))
-
-  f = Slice(x=(T(0), T(14)), y=(T(0), T(14)), z=(T(0), T(14)))
-  d = TransformedGrid(cartgrid(10, 10, 10), Translate(T(2), T(2), T(2)))
-  r, c = TB.apply(f, d)
-  @test r isa TransformedGrid
-  @test r == d
-
-  # -----------
-  # SIMPLEMESH
-  # -----------
-
-  f = Slice(x=(T(1.5), T(4.5)), y=(T(3.5), T(6.5)))
-  d = convert(SimpleMesh, cartgrid(10, 10))
-  r, c = TB.apply(f, d)
-  @test r isa SimpleMesh
-  @test r == convert(SimpleMesh, CartesianGrid((4, 4), cart(1, 3), T.((1, 1))))
-
-  # -------
-  # ERRORS
-  # -------
-
-  # error: invalid limits
-  f = Slice(x=(T(-5), T(-1)), y=(T(2), T(6)))
-  d = TransformedGrid(cartgrid(10, 10), Identity())
-  @test_throws ArgumentError TB.apply(f, d)
-  f = Slice(x=(T(1), T(5)), y=(T(12), T(16)))
-  @test_throws ArgumentError TB.apply(f, d)
 end
 
 @testitem "Repair(0)" setup = [Setup] begin

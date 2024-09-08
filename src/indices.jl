@@ -2,6 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# ---------------
+# LINEAR INDICES
+# ---------------
+
 """
     indices(domain, geometry)
 
@@ -54,7 +58,7 @@ end
 
 function indices(grid::CartesianGrid, box::Box)
   # cartesian range
-  range = cartesianrange(grid, _boxlimits(box))
+  range = cartesianrange(grid, box)
 
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
@@ -64,25 +68,124 @@ indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geo
 
 function indices(grid::RectilinearGrid, box::Box)
   # cartesian range
-  range = cartesianrange(grid, _boxlimits(box))
+  range = cartesianrange(grid, box)
 
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
 end
 
+# ----------------
+# CARTESIAN RANGE
+# ----------------
+
+"""
+    cartesianrange(grid, box)
+
+Return the Cartesian range of the elements of the `grid` that intersect with the `box`.
+"""
+cartesianrange(grid::Grid{M}, box::Box{M}) where {M} = _manifoldrange(M, grid, box)
+
+_manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box)
+
+_manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
+
+function _euclideanrange(grid::CartesianGrid, box::Box)
+  # grid properties
+  or = minimum(grid)
+  sp = spacing(grid)
+  sz = size(grid)
+
+  # intersection of boxes
+  lo, up = extrema(boundingbox(grid) ∩ box)
+
+  # Cartesian indices of new corners
+  ijkₛ = max.(ceil.(Int, (lo - or) ./ sp), 1)
+  ijkₑ = min.(floor.(Int, (up - or) ./ sp) .+ 1, sz)
+
+  # Cartesian range from corner to corner
+  CartesianIndex(Tuple(ijkₛ)):CartesianIndex(Tuple(ijkₑ))
+end
+
+function _euclideanrange(grid::RectilinearGrid, box::Box)
+  # grid properties
+  nd = paramdim(grid)
+
+  # intersection of boxes
+  lo, up = to.(extrema(boundingbox(grid) ∩ box))
+
+  # integer coordinates of lower point
+  ijkₛ = ntuple(nd) do i
+    findlast(x -> x ≤ lo[i], xyz(grid)[i])
+  end
+
+  # integer coordinates of upper point
+  ijkₑ = ntuple(nd) do i
+    findfirst(x -> x ≥ up[i], xyz(grid)[i])
+  end
+
+  # integer coordinates of elements
+  CartesianIndex(ijkₛ):CartesianIndex(ijkₑ .- 1)
+end
+
+function _geodesicrange(grid::Grid, box::Box)
+  nlon, nlat = vsize(grid)
+
+  boxmin = convert(LatLon, coords(minimum(box)))
+  boxmax = convert(LatLon, coords(maximum(box)))
+
+  a = convert(LatLon, coords(vertex(grid, (1, 1))))
+  b = convert(LatLon, coords(vertex(grid, (nlon, 1))))
+  c = convert(LatLon, coords(vertex(grid, (1, nlat))))
+
+  swaplon = a.lon > b.lon
+  swaplat = a.lat > c.lat
+
+  loninds = swaplon ? (nlon:-1:1) : (1:1:nlon)
+  latinds = swaplat ? (nlat:-1:1) : (1:1:nlat)
+
+  gridlonₛ, gridlonₑ = swaplon ? (b.lon, a.lon) : (a.lon, b.lon)
+  gridlatₛ, gridlatₑ = swaplat ? (c.lat, a.lat) : (a.lat, c.lat)
+
+  lonmin = max(boxmin.lon, gridlonₛ)
+  latmin = max(boxmin.lat, gridlatₛ)
+  lonmax = min(boxmax.lon, gridlonₑ)
+  latmax = min(boxmax.lat, gridlatₑ)
+
+  iₛ = findlast(loninds) do i
+    p = vertex(grid, (i, 1))
+    c = convert(LatLon, coords(p))
+    c.lon ≤ lonmin
+  end
+  iₑ = findfirst(loninds) do i
+    p = vertex(grid, (i, 1))
+    c = convert(LatLon, coords(p))
+    c.lon ≥ lonmax
+  end
+
+  jₛ = findlast(latinds) do i
+    p = vertex(grid, (1, i))
+    c = convert(LatLon, coords(p))
+    c.lat ≤ latmin
+  end
+  jₑ = findfirst(latinds) do i
+    p = vertex(grid, (1, i))
+    c = convert(LatLon, coords(p))
+    c.lat ≥ latmax
+  end
+
+  if iₛ == iₑ || jₛ == jₑ
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+
+  iₛ, iₑ = swaplon ? (iₑ, iₛ) : (iₛ, iₑ)
+  jₛ, jₑ = swaplat ? (jₑ, jₛ) : (jₛ, jₑ)
+
+  CartesianIndex(loninds[iₛ], latinds[jₛ]):CartesianIndex(loninds[iₑ] - 1, latinds[jₑ] - 1)
+end
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
-
-function _boxlimits(box::Box{𝔼{2}})
-  min, max = convert.(Cartesian, coords.(extrema(box)))
-  (min.x, max.x), (min.y, max.y)
-end
-
-function _boxlimits(box::Box{𝔼{3}})
-  min, max = convert.(Cartesian, coords.(extrema(box)))
-  (min.x, max.x), (min.y, max.y), (min.z, max.z)
-end
 
 function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)
