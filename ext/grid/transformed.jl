@@ -30,7 +30,7 @@ function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Va
 
     nverts = Makie.@lift length($verts)
     nquads = Makie.@lift length($quads)
-    ncolor = Makie.@lift length($colorant)
+    ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
     dims = Makie.@lift size($tgrid)
     texture = if ncolor[] == 1
