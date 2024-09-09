@@ -100,6 +100,21 @@
   @test_throws ArgumentError RegularGrid((10, 10, 10), latlon(0, 0), T.((1, 1)))
   # error: the number of spacings must be equal to the number of coordinates
   @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((1, 1, 1)))
+
+  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  if T == Float32
+    @test sprint(show, MIME"text/plain"(), grid) == """
+    10×10 RegularGrid
+    ├─ minimum: Point(lat: 0.0f0°, lon: 0.0f0°)
+    ├─ maximum: Point(lat: 10.0f0°, lon: 10.0f0°)
+    └─ spacing: (1.0f0°, 1.0f0°)"""
+  elseif T == Float64
+    @test sprint(show, MIME"text/plain"(), grid) == """
+    10×10 RegularGrid
+    ├─ minimum: Point(lat: 0.0°, lon: 0.0°)
+    ├─ maximum: Point(lat: 10.0°, lon: 10.0°)
+    └─ spacing: (1.0°, 1.0°)"""
+  end
 end
 
 @testitem "CartesianGrid" setup = [Setup] begin
