@@ -27,6 +27,7 @@ function RegularGrid(
   end
 
   nc = CoordRefSystems.ncoords(C)
+  us = CoordRefSystems.units(C)
   ns = length(spacing)
 
   if N ≠ nc
@@ -37,7 +38,6 @@ function RegularGrid(
     throw(ArgumentError("the number of spacings must be equal to the number of coordinates"))
   end
 
-  us = CoordRefSystems.units(C)
   sp = ntuple(i -> float(_withunit(spacing[i], us[i])), nc)
 
   RegularGrid{M,C,typeof(sp),N}(origin, sp, offset, topology)
