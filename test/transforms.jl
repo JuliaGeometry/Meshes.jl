@@ -1206,8 +1206,7 @@ end
   f = Proj(Polar)
   d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
   r, c = TB.apply(f, d)
-  @test r isa CartesianGrid
-  @test r ≈ CartesianGrid((10, 10), Point(Polar(T(√2), T(π / 4))), T.((1, 1)))
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
   # ----------------
   # RECTILINEARGRID

@@ -240,6 +240,7 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("meshes/regulargrid.jl")
 include("meshes/cartesiangrid.jl")
 include("meshes/rectilineargrid.jl")
 include("meshes/structuredgrid.jl")

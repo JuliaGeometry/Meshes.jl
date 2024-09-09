@@ -2,6 +2,7 @@
 
 ```@example meshes
 using Meshes # hide
+using CoordRefSystems # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -13,6 +14,17 @@ constructs such as connectivity lists and topological structures (e.g. [`SimpleM
 ```@docs
 Mesh
 Grid
+```
+
+```@docs
+RegularGrid
+```
+
+```@example meshes
+# 2D regular grid
+grid = RegularGrid((8, 8), Point(Polar(0, 0)), (1, π/4))
+
+viz(grid, showsegments = true)
 ```
 
 ```@docs
