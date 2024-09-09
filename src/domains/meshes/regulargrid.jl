@@ -51,8 +51,8 @@ offset(g::RegularGrid) = g.offset
 
 function vertex(g::RegularGrid, ijk::Dims)
   ctor = CoordRefSystems.constructor(crs(g))
-  or = CoordRefSystems.values(coords(g.origin))
-  vals = or .+ (ijk .- g.offset) .* g.spacing
+  orig = CoordRefSystems.values(coords(g.origin))
+  vals = orig .+ (ijk .- g.offset) .* g.spacing
   Point(ctor(vals...))
 end
 
@@ -64,9 +64,9 @@ function Base.getindex(g::RegularGrid, I::CartesianIndices)
 end
 
 function ==(g₁::RegularGrid, g₂::RegularGrid)
-  or₁ = CoordRefSystems.values(coords(g₁.origin))
-  or₂ = CoordRefSystems.values(coords(g₂.origin))
-  g₁.topology == g₂.topology && g₁.spacing == g₂.spacing && or₁ .- or₂ == (g₁.offset .- g₂.offset) .* g₁.spacing
+  orig₁ = CoordRefSystems.values(coords(g₁.origin))
+  orig₂ = CoordRefSystems.values(coords(g₂.origin))
+  g₁.topology == g₂.topology && g₁.spacing == g₂.spacing && orig₁ .- orig₂ == (g₁.offset .- g₂.offset) .* g₁.spacing
 end
 
 # -----------------
