@@ -1,3 +1,139 @@
+@testitem "RegularGrid" setup = [Setup] begin
+  grid = RegularGrid((10, 20), merc(0, 0), T.((1, 1)))
+  @test embeddim(grid) == 2
+  @test paramdim(grid) == 2
+  @test crs(grid) <: Mercator
+  @test Meshes.lentype(grid) == ℳ
+  @test size(grid) == (10, 20)
+  @test minimum(grid) == merc(0, 0)
+  @test maximum(grid) == merc(10, 20)
+  @test extrema(grid) == (merc(0, 0), merc(10, 20))
+  @test spacing(grid) == (T(1) * u"m", T(1) * u"m")
+  @test nelements(grid) == 10 * 20
+  @test eltype(grid) <: Quadrangle
+  @test vertex(grid, 1) == vertex(grid, (1, 1))
+  @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21))
+  @test grid[1, 1] == grid[1]
+  @test grid[10, 20] == grid[200]
+
+  grid = RegularGrid((10, 20), latlon(0, 0), T.((1, 1)))
+  @test embeddim(grid) == 3
+  @test paramdim(grid) == 2
+  @test crs(grid) <: LatLon
+  @test Meshes.lentype(grid) == ℳ
+  @test size(grid) == (10, 20)
+  @test minimum(grid) == latlon(0, 0)
+  @test maximum(grid) == latlon(10, 20)
+  @test extrema(grid) == (latlon(0, 0), latlon(10, 20))
+  @test spacing(grid) == (T(1) * u"°", T(1) * u"°")
+  @test nelements(grid) == 10 * 20
+  @test eltype(grid) <: Quadrangle
+  @test vertex(grid, 1) == vertex(grid, (1, 1))
+  @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21))
+  @test grid[1, 1] == grid[1]
+  @test grid[10, 20] == grid[200]
+
+  grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
+  @test embeddim(grid) == 2
+  @test paramdim(grid) == 2
+  @test crs(grid) <: Polar
+  @test Meshes.lentype(grid) == ℳ
+  @test size(grid) == (10, 20)
+  @test minimum(grid) == Point(Polar(T(0), T(0)))
+  @test maximum(grid) == Point(Polar(T(10), T(20)))
+  @test extrema(grid) == (Point(Polar(T(0), T(0))), Point(Polar(T(10), T(20))))
+  @test spacing(grid) == (T(1) * u"m", T(1) * u"rad")
+  @test nelements(grid) == 10 * 20
+  @test eltype(grid) <: Quadrangle
+  @test vertex(grid, 1) == vertex(grid, (1, 1))
+  @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21))
+  @test grid[1, 1] == grid[1]
+  @test grid[10, 20] == grid[200]
+
+  grid = RegularGrid((10, 20, 30), Point(Cylindrical(T(0), T(0), T(0))), T.((1, 1, 1)))
+  @test embeddim(grid) == 3
+  @test paramdim(grid) == 3
+  @test crs(grid) <: Cylindrical
+  @test Meshes.lentype(grid) == ℳ
+  @test size(grid) == (10, 20, 30)
+  @test minimum(grid) == Point(Cylindrical(T(0), T(0), T(0)))
+  @test maximum(grid) == Point(Cylindrical(T(10), T(20), T(30)))
+  @test extrema(grid) == (Point(Cylindrical(T(0), T(0), T(0))), Point(Cylindrical(T(10), T(20), T(30))))
+  @test spacing(grid) == (T(1) * u"m", T(1) * u"rad", T(1) * u"m")
+  @test nelements(grid) == 10 * 20 * 30
+  @test eltype(grid) <: Hexahedron
+  @test vertex(grid, 1) == vertex(grid, (1, 1, 1))
+  @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21, 31))
+  @test grid[1, 1, 1] == grid[1]
+  @test grid[10, 20, 30] == grid[6000]
+
+  # spacing unit and numtype
+  grid = RegularGrid((10, 20), Point(Polar(T(0) * u"cm", T(0) * u"rad")), (10.0 * u"mm", 1.0f0 * u"rad"))
+  @test unit.(spacing(grid)) == (u"cm", u"rad")
+  @test Unitful.numtype.(spacing(grid)) == (T, T)
+
+  # xyz & XYZ
+  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  @test Meshes.xyz(grid) == (T.(0:10) * u"°", T.(0:10) * u"°")
+  x = T.(0:10) * u"°"
+  y = T.(0:10)' * u"°"
+  @test Meshes.XYZ(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
+  grid = RegularGrid((10, 10), Point(Polar(T(0), T(0))), T.((1, 1)))
+  @test Meshes.xyz(grid) == (T.(0:10) * u"m", T.(0:10) * u"rad")
+  x = T.(0:10) * u"m"
+  y = T.(0:10)' * u"rad"
+  @test Meshes.XYZ(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
+
+  # indexing into a subgrid
+  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  sub = grid[1:2, 1:2]
+  @test size(sub) == (2, 2)
+  @test spacing(sub) == spacing(grid)
+  @test minimum(sub) == minimum(grid)
+  @test maximum(sub) == latlon(2, 2)
+  grid = RegularGrid((10, 10), Point(Polar(T(0), T(0))), T.((1, 1)))
+  sub = grid[2:4, 3:7]
+  @test size(sub) == (3, 5)
+  @test spacing(sub) == spacing(grid)
+  @test minimum(sub) == Point(Polar(T(1), T(2)))
+  @test maximum(sub) == Point(Polar(T(4), T(7)))
+
+  # type stability
+  grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
+  @inferred vertex(grid, (1, 1))
+  @inferred grid[1, 1]
+  @inferred grid[1:2, 1:2]
+  @inferred Meshes.xyz(grid)
+  @inferred Meshes.XYZ(grid)
+
+  # error: dimensions must be positive
+  @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
+  # error: spacing must be positive
+  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((-1, -1)))
+  # error: regular spacing on `🌐` requires `LatLon` coordinates
+  p = latlon(0, 0) |> Proj(Cartesian)
+  @test_throws ArgumentError RegularGrid((10, 10), p, T.((1, 1)))
+  # error: the number of dimensions must be equal to the number of coordinates
+  @test_throws ArgumentError RegularGrid((10, 10, 10), latlon(0, 0), T.((1, 1)))
+  # error: the number of spacings must be equal to the number of coordinates
+  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((1, 1, 1)))
+
+  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  if T == Float32
+    @test sprint(show, MIME"text/plain"(), grid) == """
+    10×10 RegularGrid
+    ├─ minimum: Point(lat: 0.0f0°, lon: 0.0f0°)
+    ├─ maximum: Point(lat: 10.0f0°, lon: 10.0f0°)
+    └─ spacing: (1.0f0°, 1.0f0°)"""
+  elseif T == Float64
+    @test sprint(show, MIME"text/plain"(), grid) == """
+    10×10 RegularGrid
+    ├─ minimum: Point(lat: 0.0°, lon: 0.0°)
+    ├─ maximum: Point(lat: 10.0°, lon: 10.0°)
+    └─ spacing: (1.0°, 1.0°)"""
+  end
+end
+
 @testitem "CartesianGrid" setup = [Setup] begin
   grid = cartgrid(100)
   @test embeddim(grid) == 1
