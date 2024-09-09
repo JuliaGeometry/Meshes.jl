@@ -42,11 +42,17 @@ function RegularGrid(
   ns = length(spacing)
 
   if N ≠ nc
-    throw(ArgumentError("the number of dimensions must be equal to the number of coordinates"))
+    throw(ArgumentError("""
+    A $N-dimensional regular grid requires an origin with $N coordinates.
+    The provided origin has $nc coordinates.
+    """))
   end
 
   if ns ≠ nc
-    throw(ArgumentError("the number of spacings must be equal to the number of coordinates"))
+    throw(ArgumentError("""
+    A $N-dimensional regular grid requires $N spacing values.
+    The provided spacing has $ns values.
+    """))
   end
 
   sp = ntuple(i -> float(_withunit(spacing[i], us[i])), nc)
