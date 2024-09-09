@@ -23,16 +23,17 @@ function RegularGrid(
   topology::GridTopology{N}
 ) where {M<:Manifold,C<:CRS,N}
   if manifold(origin) <: 🌐 && !(crs(origin) <: LatLon)
-    throw(ArgumentError("origins with Ellipsoid manifold and CRS other than LatLon are not supported"))
+    throw(ArgumentError("regular spacing on `🌐` requires `LatLon` coordinates"))
   end
 
   nc = CoordRefSystems.ncoords(C)
+  ns = length(spacing)
 
   if N ≠ nc
     throw(ArgumentError("the number of dimensions must be equal to the number of coordinates"))
   end
 
-  if length(spacing) ≠ nc
+  if ns ≠ nc
     throw(ArgumentError("the number of spacings must be equal to the number of coordinates"))
   end
 
