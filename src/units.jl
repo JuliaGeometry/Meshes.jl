@@ -18,3 +18,10 @@ addunit(x::Number, u) = x * u
 addunit(x::AbstractArray{<:Number}, u) = x * u
 addunit(::Quantity, _) = throw(ArgumentError("invalid units, please check the documentation"))
 addunit(::AbstractArray{<:Quantity}, _) = throw(ArgumentError("invalid units, please check the documentation"))
+
+"""
+    numconvert(T, x)
+
+Converts the number type of quantity `x` to `T`.
+"""
+numconvert(::Type{T}, x::Quantity{S,D,U}) where {T,S,D,U} = convert(Quantity{T,D,U}, x)

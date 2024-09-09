@@ -67,6 +67,11 @@
   @test grid[1, 1, 1] == grid[1]
   @test grid[10, 20, 30] == grid[6000]
 
+  # spacing unit and numtype
+  grid = RegularGrid((10, 20), Point(Polar(T(0) * u"cm", T(0) * u"rad")), (10.0 * u"mm", 1.0f0 * u"rad"))
+  @test unit.(spacing(grid)) == (u"cm", u"rad")
+  @test Unitful.numtype.(spacing(grid)) == (T, T)
+
   # xyz & XYZ
   grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
   @test Meshes.xyz(grid) == (T.(0:10) * u"°", T.(0:10) * u"°")
@@ -93,6 +98,10 @@
   @test minimum(sub) == Point(Polar(T(1), T(2)))
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
+  # error: spacing must be positive
+  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((-1, -1)))
+  # error: dimensions must be positive
+  @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   p = latlon(0, 0) |> Proj(Cartesian)
   @test_throws ArgumentError RegularGrid((10, 10), p, T.((1, 1)))

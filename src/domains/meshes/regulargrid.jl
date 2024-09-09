@@ -37,6 +37,7 @@ function RegularGrid(
     throw(ArgumentError("regular spacing on `🌐` requires `LatLon` coordinates"))
   end
 
+  T = CoordRefSystems.mactype(C)
   nc = CoordRefSystems.ncoords(C)
   us = CoordRefSystems.units(C)
   ns = length(spacing)
@@ -55,7 +56,7 @@ function RegularGrid(
     """))
   end
 
-  sp = ntuple(i -> float(_withunit(spacing[i], us[i])), nc)
+  sp = ntuple(i -> numconvert(T, _withunit(spacing[i], us[i])), nc)
 
   RegularGrid{M,C,typeof(sp),N}(origin, sp, offset, topology)
 end
