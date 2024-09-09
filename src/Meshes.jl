@@ -302,6 +302,7 @@ export
   Grid,
   SimpleMesh,
   TransformedMesh,
+  RegularGrid,
   CartesianGrid,
   RectilinearGrid,
   StructuredGrid,

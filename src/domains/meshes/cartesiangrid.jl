@@ -62,11 +62,19 @@ function CartesianGrid(
   RegularGrid(orig, spacing, offset, topology)
 end
 
-CartesianGrid(origin::Point, spacing::NTuple{Dim,Len}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
-  CartesianGrid(origin, promote(spacing...), offset, topology)
+CartesianGrid(
+  origin::Point{<:𝔼},
+  spacing::NTuple{Dim,Len},
+  offset::Dims{Dim},
+  topology::GridTopology{Dim}
+) where {Dim} = CartesianGrid(origin, promote(spacing...), offset, topology)
 
-CartesianGrid(origin::Point, spacing::NTuple{Dim,Number}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
-  CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
+CartesianGrid(
+  origin::Point{<:𝔼},
+  spacing::NTuple{Dim,Number},
+  offset::Dims{Dim},
+  topology::GridTopology{Dim}
+) where {Dim} = CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
 
 function CartesianGrid(
   dims::Dims{Dim},
