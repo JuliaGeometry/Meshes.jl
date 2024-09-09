@@ -60,6 +60,18 @@ function vertex(g::RegularGrid, ijk::Dims)
   Point(ctor(vals...))
 end
 
+function xyz(g::RegularGrid)
+  dims = size(g)
+  spac = spacing(g)
+  orig = CoordRefSystems.values(coords(g.origin))
+  ntuple(paramdim(g)) do i
+    o, s, d = orig[i], spac[i], dims[i]
+    range(start=o, step=s, length=(d + 1))
+  end
+end
+
+XYZ(g::RegularGrid) = XYZ(xyz(g))
+
 function Base.getindex(g::RegularGrid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)
   dims = size(I)
@@ -71,6 +83,24 @@ function ==(g₁::RegularGrid, g₂::RegularGrid)
   orig₁ = CoordRefSystems.values(coords(g₁.origin))
   orig₂ = CoordRefSystems.values(coords(g₂.origin))
   g₁.topology == g₂.topology && g₁.spacing == g₂.spacing && orig₁ .- orig₂ == (g₁.offset .- g₂.offset) .* g₁.spacing
+end
+
+# -----------
+# IO METHODS
+# -----------
+
+function Base.summary(io::IO, g::RegularGrid)
+  dims = join(size(g.topology), "×")
+  name = prettyname(g)
+  print(io, "$dims $name")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", g::RegularGrid)
+  summary(io, g)
+  println(io)
+  println(io, "├─ minimum: ", minimum(g))
+  println(io, "├─ maximum: ", maximum(g))
+  print(io, "└─ spacing: ", spacing(g))
 end
 
 # -----------------
