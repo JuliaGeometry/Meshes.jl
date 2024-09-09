@@ -53,13 +53,13 @@ julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 
 function CartesianGrid(
-  origin::Point{M,C},
+  origin::Point{<:𝔼},
   spacing::NTuple{Dim,ℒ},
   offset::Dims{Dim},
   topology::GridTopology{Dim}
-) where {M<:𝔼,C<:Cartesian,Dim,ℒ<:Len}
-  sp = float.(spacing)
-  RegularGrid{M,C,typeof(sp),Dim}(origin, sp, offset, topology)
+) where {Dim,ℒ<:Len}
+  orig = Point(convert(Cartesian, coords(origin)))
+  RegularGrid(orig, spacing, offset, topology)
 end
 
 CartesianGrid(origin::Point, spacing::NTuple{Dim,Len}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
