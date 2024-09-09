@@ -29,11 +29,11 @@ function RegularGrid(
   nc = CoordRefSystems.ncoords(C)
 
   if N ≠ nc
-    throw(ArgumentError("the number of dimensions must be equal to the number of origin coordinates"))
+    throw(ArgumentError("the number of dimensions must be equal to the number of coordinates"))
   end
 
   if length(spacing) ≠ nc
-    throw(ArgumentError("the number of spacings must be equal to the number of origin coordinates"))
+    throw(ArgumentError("the number of spacings must be equal to the number of coordinates"))
   end
 
   us = CoordRefSystems.units(C)
