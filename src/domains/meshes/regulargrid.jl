@@ -90,13 +90,16 @@ function vertex(g::RegularGrid, ijk::Dims)
   Point(ctor(vals...))
 end
 
-function xyz(g::RegularGrid)
-  dims = size(g)
-  spac = spacing(g)
-  orig = CoordRefSystems.values(coords(g.origin))
-  ntuple(paramdim(g)) do i
-    o, s, d = orig[i], spac[i], dims[i]
-    range(start=o, step=s, length=(d + 1))
+@generated function xyz(g::RegularGrid{M,C,S,N}) where {M,C,S,N}
+  exprs = ntuple(N) do i
+    :(range(start=orig[$i], step=spac[$i], length=(dims[$i] + 1)))
+  end
+
+  quote
+    dims = size(g)
+    spac = spacing(g)
+    orig = CoordRefSystems.values(coords(g.origin))
+    ($(exprs...),)
   end
 end
 

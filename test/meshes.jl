@@ -98,6 +98,14 @@
   @test minimum(sub) == Point(Polar(T(1), T(2)))
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
+  # type stability
+  grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
+  @inferred vertex(grid, (1, 1))
+  @inferred grid[1, 1]
+  @inferred grid[1:2, 1:2]
+  @inferred Meshes.xyz(grid)
+  @inferred Meshes.XYZ(grid)
+
   # error: dimensions must be positive
   @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
   # error: spacing must be positive
