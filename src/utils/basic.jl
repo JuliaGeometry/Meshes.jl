@@ -42,7 +42,7 @@ collectat(vec::AbstractVector, inds) = vec[inds]
 
 Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
 """
-@generated function XYZ(xyz::NTuple{Dim,<:AbstractVector}) where {Dim}
+@generated function XYZ(xyz::NTuple{Dim,AbstractVector}) where {Dim}
   exprs = ntuple(Dim) do d
     quote
       a = xyz[$d]
