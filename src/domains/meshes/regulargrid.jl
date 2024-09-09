@@ -38,12 +38,7 @@ function RegularGrid(
   RegularGrid{M,C,typeof(sp),N}(origin, sp, offset, topology)
 end
 
-function RegularGrid(
-  dims::Dims{N},
-  origin::Point,
-  spacing::Tuple,
-  offset::Dims{N}=ntuple(i -> 1, N)
-) where {N}
+function RegularGrid(dims::Dims{N}, origin::Point, spacing::Tuple, offset::Dims{N}=ntuple(i -> 1, N)) where {N}
   if !all(>(0), dims)
     throw(ArgumentError("dimensions must be positive"))
   end
@@ -71,9 +66,7 @@ end
 function ==(g₁::RegularGrid, g₂::RegularGrid)
   or₁ = CoordRefSystems.values(coords(g₁.origin))
   or₂ = CoordRefSystems.values(coords(g₂.origin))
-  g₁.topology == g₂.topology &&
-  g₁.spacing == g₂.spacing &&
-  or₁ .- or₂ == (g₁.offset .- g₂.offset) .* g₁.spacing
+  g₁.topology == g₂.topology && g₁.spacing == g₂.spacing && or₁ .- or₂ == (g₁.offset .- g₂.offset) .* g₁.spacing
 end
 
 # -----------------
