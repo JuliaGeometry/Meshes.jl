@@ -98,10 +98,10 @@
   @test minimum(sub) == Point(Polar(T(1), T(2)))
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
-  # error: spacing must be positive
-  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((-1, -1)))
   # error: dimensions must be positive
   @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
+  # error: spacing must be positive
+  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((-1, -1)))
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   p = latlon(0, 0) |> Proj(Cartesian)
   @test_throws ArgumentError RegularGrid((10, 10), p, T.((1, 1)))
