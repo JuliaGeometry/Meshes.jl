@@ -51,9 +51,9 @@ applycoord(t::Proj{<:Geographic}, g::Primitive{<:𝔼}) = TransformedGeometry(g,
 
 applycoord(t::Proj, g::RegularGrid) = TransformedGrid(g, t)
 
-applycoord(t::Proj, g::RectilinearGrid) = applycoord(t, convert(SimpleMesh, g))
+applycoord(t::Proj, g::RectilinearGrid) = TransformedGrid(g, t)
 
-applycoord(t::Proj, g::StructuredGrid) = applycoord(t, convert(SimpleMesh, g))
+applycoord(t::Proj, g::StructuredGrid) = TransformedGrid(g, t)
 
 # -----------
 # IO METHODS

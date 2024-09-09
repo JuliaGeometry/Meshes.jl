@@ -2,6 +2,17 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    RegularGrid(dims, origin, spacing)
+
+A regular grid with dimensions `dims`, lower left corner at `origin`
+and cell spacing `spacing`. The three arguments must have the same length.
+
+    RegularGrid(dims, origin, spacing, offset)
+
+A regular grid with dimensions `dims`, with lower left corner of element
+`offset` at `origin` and cell spacing `spacing`.
+"""
 struct RegularGrid{M<:Manifold,C<:CRS,S<:Tuple,N} <: Grid{M,C,N}
   origin::Point{M,C}
   spacing::S
