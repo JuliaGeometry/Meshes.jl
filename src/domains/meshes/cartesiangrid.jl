@@ -30,6 +30,8 @@ Finally, a Cartesian grid can be constructed by only passing the dimensions
 `dims` as a tuple, or by passing each dimension `dim1`, `dim2`, ... separately.
 In this case, the origin and spacing default to (0,0,...) and (1,1,...).
 
+`CartesianGrid` is an alias to [`RegularGrid`](@ref) with `Cartesian` CRS.
+
 ## Examples
 
 Create a 3D grid with 100x100x50 hexahedrons:
@@ -49,6 +51,8 @@ Create a 1D grid from -1 to 1 with 100 segments:
 ```julia
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
+
+See also [`RegularGrid`](@ref).
 """
 const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 

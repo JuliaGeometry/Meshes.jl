@@ -21,6 +21,8 @@ RegularGrid((10, 20), Point(Polar(0.0mm, 0.0rad)), (10.0mm, 1.0rad)) # convert s
 RegularGrid((10, 20), Point(Marcator(0.0, 0.0)), (1.5, 1.5))
 RegularGrid((10, 20, 30), Point(Cylindrical(0.0, 0.0, 0.0)), (3.0, 2.0, 1.0))
 ```
+
+See also [`CartesianGrid`](@ref).
 """
 struct RegularGrid{M<:Manifold,C<:CRS,S<:Tuple,N} <: Grid{M,C,N}
   origin::Point{M,C}
