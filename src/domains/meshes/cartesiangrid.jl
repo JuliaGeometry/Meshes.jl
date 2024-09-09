@@ -50,23 +50,16 @@ Create a 1D grid from -1 to 1 with 100 segments:
 julia> CartesianGrid((-1.0,), (1.0,), dims=(100,))
 ```
 """
-struct CartesianGrid{C<:CRS,Mₚ<:Manifold,Dim,ℒ<:Len} <: Grid{𝔼{Dim},C,Dim}
-  origin::Point{Mₚ,C}
-  spacing::NTuple{Dim,ℒ}
-  offset::Dims{Dim}
-  topology::GridTopology{Dim}
+const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 
-  function CartesianGrid(
-    origin::Point{Mₚ,C},
-    spacing::NTuple{Dim,ℒ},
-    offset::Dims{Dim},
-    topology::GridTopology{Dim}
-  ) where {C<:CRS,Mₚ<:Manifold,Dim,ℒ<:Len}
-    if !all(>(zero(ℒ)), spacing)
-      throw(ArgumentError("spacing must be positive"))
-    end
-    new{C,Mₚ,Dim,float(ℒ)}(origin, spacing, offset, topology)
-  end
+function CartesianGrid(
+  origin::Point{M,C},
+  spacing::NTuple{Dim,ℒ},
+  offset::Dims{Dim},
+  topology::GridTopology{Dim}
+) where {M<:𝔼,C<:Cartesian,Dim,ℒ<:Len}
+  sp = float.(spacing)
+  RegularGrid{M,C,typeof(sp),Dim}(origin, sp, offset, topology)
 end
 
 CartesianGrid(origin::Point, spacing::NTuple{Dim,Len}, offset::Dims{Dim}, topology::GridTopology{Dim}) where {Dim} =
@@ -131,51 +124,3 @@ function CartesianGrid(dims::Dims{Dim}) where {Dim}
 end
 
 CartesianGrid(dims::Int...) = CartesianGrid(dims)
-
-spacing(g::CartesianGrid) = g.spacing
-
-offset(g::CartesianGrid) = g.offset
-
-vertex(g::CartesianGrid, ijk::Dims) = g.origin + Vec((ijk .- g.offset) .* g.spacing)
-
-function xyz(g::CartesianGrid)
-  dims = size(g)
-  spac = spacing(g)
-  orig = to(minimum(g))
-  ntuple(embeddim(g)) do i
-    o, s, d = orig[i], spac[i], dims[i]
-    range(start=o, step=s, length=(d + 1))
-  end
-end
-
-XYZ(g::CartesianGrid) = XYZ(xyz(g))
-
-function Base.getindex(g::CartesianGrid, I::CartesianIndices)
-  @boundscheck _checkbounds(g, I)
-  dims = size(I)
-  offset = g.offset .- Tuple(first(I)) .+ 1
-  CartesianGrid(dims, g.origin, g.spacing, offset)
-end
-
-==(g₁::CartesianGrid, g₂::CartesianGrid) =
-  g₁.topology == g₂.topology &&
-  g₁.spacing == g₂.spacing &&
-  Tuple(g₁.origin - g₂.origin) == (g₁.offset .- g₂.offset) .* g₁.spacing
-
-# -----------
-# IO METHODS
-# -----------
-
-function Base.summary(io::IO, g::CartesianGrid)
-  dims = join(size(g.topology), "×")
-  print(io, "$dims CartesianGrid")
-end
-
-Base.show(io::IO, g::CartesianGrid) = summary(io, g)
-
-function Base.show(io::IO, ::MIME"text/plain", g::CartesianGrid)
-  println(io, g)
-  println(io, "├─ minimum: ", minimum(g))
-  println(io, "├─ maximum: ", maximum(g))
-  print(io, "└─ spacing: ", spacing(g))
-end
