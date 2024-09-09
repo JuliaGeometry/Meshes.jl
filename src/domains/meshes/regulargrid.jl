@@ -22,6 +22,10 @@ function RegularGrid(
   offset::Dims{N},
   topology::GridTopology{N}
 ) where {M<:Manifold,C<:CRS,N}
+  if manifold(origin) <: 🌐 && !(crs(origin) <: LatLon)
+    throw(ArgumentError("origins with Ellipsoid manifold and CRS other than LatLon are not supported"))
+  end
+
   nc = CoordRefSystems.ncoords(C)
 
   if N ≠ nc
