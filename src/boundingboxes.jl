@@ -87,6 +87,19 @@ _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
 _pboxes(points) = _pboxes(manifold(first(points)), points)
 
+function _pboxes(::Type{𝔼{1}}, points)
+  p = first(points)
+  ℒ = lentype(p)
+  xmin = typemax(ℒ)
+  xmax = typemin(ℒ)
+  for p in points
+    c = convert(Cartesian, coords(p))
+    xmin = min(c.x, xmin)
+    xmax = max(c.x, xmax)
+  end
+  Box(withcrs(p, (xmin,)), withcrs(p, (xmax,)))
+end
+
 function _pboxes(::Type{𝔼{2}}, points)
   p = first(points)
   ℒ = lentype(p)
