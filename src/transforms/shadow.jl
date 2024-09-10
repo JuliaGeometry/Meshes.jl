@@ -63,6 +63,8 @@ apply(t::Shadow, tr::Torus) = TransformedGeometry(tr, t), nothing
 
 apply(t::Shadow, ct::CylindricalTrajectory) = apply(t, GeometrySet(collect(ct))), nothing
 
+apply(t::Shadow, g::RectilinearGrid) = TransformedGrid(g, t), nothing
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
@@ -96,8 +98,6 @@ function _shadow(g::CartesianGrid, dims)
   of = offset(g)[dims]
   CartesianGrid(sz, or, sp, of)
 end
-
-_shadow(g::RectilinearGrid, dims) = RectilinearGrid{datum(crs(g))}(xyz(g)[dims])
 
 function _shadow(g::StructuredGrid, dims)
   ndims = length(size(g))
