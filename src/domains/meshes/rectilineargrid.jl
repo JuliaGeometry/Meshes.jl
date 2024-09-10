@@ -43,6 +43,7 @@ function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopol
   end
 
   xyz′ = ntuple(i -> numconvert.(T, withunit.(xyz[i], us[i])), nc)
+
   RectilinearGrid{M,C,N,typeof(xyz′)}(xyz′, topology)
 end
 
