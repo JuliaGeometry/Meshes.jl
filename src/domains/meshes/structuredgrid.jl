@@ -42,7 +42,7 @@ function StructuredGrid{M,C}(XYZ::NTuple{N,AbstractArray}, topology::GridTopolog
     """))
   end
 
-  XYZ′ = ntuple(i -> numconvert.(T, _withunit.(XYZ[i], us[i])), nc)
+  XYZ′ = ntuple(i -> numconvert.(T, withunit.(XYZ[i], us[i])), nc)
   StructuredGrid{M,C,N,typeof(XYZ′)}(XYZ′, topology)
 end
 
@@ -67,7 +67,7 @@ end
 StructuredGrid{M,C}(XYZ::AbstractArray...) where {M<:Manifold,C<:CRS} = StructuredGrid{M,C}(XYZ)
 
 function StructuredGrid(XYZ::NTuple{N,AbstractArray}) where {N}
-  L = promote_type(ntuple(i -> _lentype(eltype(XYZ[i])), N)...)
+  L = promote_type(ntuple(i -> aslentype(eltype(XYZ[i])), N)...)
   M = 𝔼{N}
   C = Cartesian{NoDatum,N,L}
   StructuredGrid{M,C}(XYZ)
