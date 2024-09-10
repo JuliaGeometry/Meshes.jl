@@ -432,10 +432,19 @@ end
   @test vertex(grid, 121) == cart(10, 10)
 
   # constructor with manifold and CRS
+  x = range(zero(T), stop=one(T), length=6)
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
   C = typeof(Mercator(T(0), T(0)))
   grid = RectilinearGrid{𝔼{2},C}(x, y)
   @test manifold(grid) === 𝔼{2}
   @test crs(grid) === C
+  @test crs(grid[1, 1]) === C
+  @test crs(centroid(grid)) === C
+  C = typeof(LatLon(T(0), T(0)))
+  grid = RectilinearGrid{🌐,C}(x, y)
+  @test manifold(grid) === 🌐
+  @test crs(grid) === C
+  @test crs(grid[1, 1]) === C
   @test crs(centroid(grid)) === C
 
   # units
