@@ -67,7 +67,7 @@ function RegularGrid(
     """))
   end
 
-  sp = ntuple(i -> numconvert(T, _withunit(spacing[i], us[i])), nc)
+  sp = ntuple(i -> numconvert(T, withunit(spacing[i], us[i])), nc)
 
   RegularGrid{M,C,typeof(sp),N}(origin, sp, offset, topology)
 end
@@ -135,10 +135,3 @@ function Base.show(io::IO, ::MIME"text/plain", g::RegularGrid)
   println(io, "├─ maximum: ", maximum(g))
   print(io, "└─ spacing: ", spacing(g))
 end
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_withunit(x::Number, u) = x * u
-_withunit(x::Quantity, u) = uconvert(u, x)

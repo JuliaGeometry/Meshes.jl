@@ -1409,7 +1409,6 @@ end
   f = LengthUnit(u"km")
   d = convert(StructuredGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
-  @test r isa StructuredGrid
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
   # -----------
@@ -1629,8 +1628,7 @@ end
   f = Shadow(:xz)
   d = convert(StructuredGrid, cartgrid(10, 11, 12))
   r, c = TB.apply(f, d)
-  @test r isa StructuredGrid
-  @test r == StructuredGrid(Meshes.XYZ(d)[1][:, 1, :], Meshes.XYZ(d)[3][:, 1, :])
+  @test r == SimpleMesh(f.(vertices(d)), topology(d))
 
   # -----------
   # SIMPLEMESH

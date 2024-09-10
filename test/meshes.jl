@@ -488,6 +488,16 @@ end
   @inferred grid[1:2, 1:2]
   @inferred Meshes.XYZ(grid)
 
+  # error: regular spacing on `🌐` requires `LatLon` coordinates
+  x = range(zero(T), stop=one(T), length=6)
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+  z = T[0.0, 0.15, 0.35, 0.65, 0.85, 1.0]
+  C = typeof(Cartesian(T(0), T(0), T(0)))
+  @test_throws ArgumentError RectilinearGrid{🌐,C}(x, y, z)
+  # error: the number of dimensions must be equal to the number of coordinates
+  C = typeof(LatLon(T(0), T(0)))
+  @test_throws ArgumentError RectilinearGrid{🌐,C}(x, y, z)
+
   x = range(zero(T), stop=one(T), length=6)
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
   grid = RectilinearGrid(x, y)
@@ -586,9 +596,31 @@ end
   @test_throws BoundsError grid[2:6, :]
   @test Meshes.XYZ(grid) == (X * u"m", Y * u"m")
 
-  # constructor with datum
-  grid = StructuredGrid{WGS84Latest}(X, Y)
-  @test datum(crs(grid)) === WGS84Latest
+  # constructor with manifold and CRS
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
+  C = typeof(Mercator(T(0), T(0)))
+  grid = StructuredGrid{𝔼{2},C}(X, Y)
+  @test manifold(grid) === 𝔼{2}
+  @test crs(grid) === C
+  @test crs(grid[1, 1]) === C
+  @test crs(centroid(grid)) === C
+  C = typeof(LatLon(T(0), T(0)))
+  grid = StructuredGrid{🌐,C}(X, Y)
+  @test manifold(grid) === 🌐
+  @test crs(grid) === C
+  @test crs(grid[1, 1]) === C
+  @test crs(centroid(grid)) === C
+
+  # units
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"mm"
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1) * u"cm"
+  grid = StructuredGrid(X, Y)
+  @test unit(Meshes.lentype(grid)) == u"m"
+  # error: invalid units for cartesian coordinates
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"m"
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1) * u"°"
+  @test_throws ArgumentError StructuredGrid(X, Y)
 
   # conversion
   cg = cartgrid(10, 10)
@@ -622,6 +654,38 @@ end
   @test nelements(sg) == nelements(rg)
   @test topology(sg) == topology(rg)
   @test vertices(sg) == vertices(rg)
+
+  # type stability
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"mm"
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1) * u"cm"
+  ρ = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
+  ϕ = repeat(range(zero(T), stop=T(2π), length=6)', 6, 1)
+  C = typeof(Polar(T(0), T(0)))
+  grid = StructuredGrid{𝔼{2},C}(ρ, ϕ)
+  @inferred StructuredGrid(X, Y)
+  @inferred StructuredGrid{𝔼{2},C}(ρ, ϕ)
+  @inferred vertex(grid, (1, 1))
+  @inferred grid[1, 1]
+  @inferred grid[1:2, 1:2]
+
+  # error: regular spacing on `🌐` requires `LatLon` coordinates
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6, 6)
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1, 6)
+  Z = repeat(reshape(T[0.0, 0.15, 0.35, 0.65, 0.85, 1.0], 1, 1, 6), 6, 6, 1)
+  C = typeof(Cartesian(T(0), T(0), T(0)))
+  @test_throws ArgumentError StructuredGrid{🌐,C}(X, Y, Z)
+  # error: the number of dimensions must be equal to the number of coordinates
+  C = typeof(LatLon(T(0), T(0)))
+  @test_throws ArgumentError StructuredGrid{🌐,C}(X, Y, Z)
+  # error: all coordinate arrays must be the same size
+  X = rand(T, 6, 6)
+  Y = rand(T, 5, 5)
+  @test_throws ArgumentError StructuredGrid(X, Y)
+  # error: the number of array dimensions must be equal to the number of grid dimensions
+  X = rand(T, 6, 6)
+  Y = rand(T, 6, 6)
+  Z = rand(T, 6, 6)
+  @test_throws ArgumentError StructuredGrid(X, Y, Z)
 
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
   Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)

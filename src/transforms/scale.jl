@@ -79,5 +79,5 @@ end
 applycoord(t::Scale, g::RectilinearGrid) =
   RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * xyz(g)[i], paramdim(g)))
 
-applycoord(t::Scale{Dim}, g::StructuredGrid{Datum,Dim}) where {Datum,Dim} =
-  StructuredGrid{Datum}(ntuple(i -> t.factors[i] * XYZ(g)[i], Dim))
+applycoord(t::Scale, g::StructuredGrid) =
+  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * XYZ(g)[i], paramdim(g)))
