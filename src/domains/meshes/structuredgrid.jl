@@ -67,14 +67,10 @@ end
 StructuredGrid{M,C}(XYZ::AbstractArray...) where {M<:Manifold,C<:CRS} = StructuredGrid{M,C}(XYZ)
 
 function StructuredGrid(XYZ::NTuple{N,AbstractArray}) where {N}
-  try
-    L = promote_type(ntuple(i -> _lentype(eltype(XYZ[i])), N)...)
-    M = 𝔼{N}
-    C = Cartesian{NoDatum,N,L}
-    StructuredGrid{M,C}(XYZ)
-  catch
-    throw(ArgumentError("invalid units for cartesian coordinates"))
-  end
+  L = promote_type(ntuple(i -> _lentype(eltype(XYZ[i])), N)...)
+  M = 𝔼{N}
+  C = Cartesian{NoDatum,N,L}
+  StructuredGrid{M,C}(XYZ)
 end
 
 StructuredGrid(XYZ::AbstractArray...) = StructuredGrid(XYZ)
