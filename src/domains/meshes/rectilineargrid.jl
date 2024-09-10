@@ -99,9 +99,5 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-@generated function genntuple(f, ::Val{N}) where {N}
-  :(@ntuple $N i -> f(i))
-end
-
 _lentype(::Type{T}) where {T<:Len} = T
 _lentype(::Type{T}) where {T<:Number} = Met{T}
