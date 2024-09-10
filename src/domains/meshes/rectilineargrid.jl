@@ -75,13 +75,19 @@ xyz(g::RectilinearGrid) = g.xyz
 
 XYZ(g::RectilinearGrid) = XYZ(xyz(g))
 
-function Base.getindex(g::RectilinearGrid{M,C}, I::CartesianIndices) where {M<:Manifold,C<:CRS}
-  @boundscheck _checkbounds(g, I)
-  dims = size(I)
-  start = Tuple(first(I))
-  stop = Tuple(last(I)) .+ 1
-  xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], paramdim(g))
-  RectilinearGrid{M,C}(xyz, GridTopology(dims))
+@generated function Base.getindex(g::RectilinearGrid{M,C,N}, I::CartesianIndices) where {M,C,N}
+  exprs = ntuple(N) do i
+    :(g.xyz[$i][start[$i]:stop[$i]])
+  end
+
+  quote
+    @boundscheck _checkbounds(g, I)
+    dims = size(I)
+    start = Tuple(first(I))
+    stop = Tuple(last(I)) .+ 1
+    xyz = ($(exprs...),)
+    RectilinearGrid{M,C}(xyz, GridTopology(dims))
+  end
 end
 
 function Base.summary(io::IO, g::RectilinearGrid)
@@ -92,6 +98,10 @@ end
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
+
+@generated function genntuple(f, ::Val{N}) where {N}
+  :(@ntuple $N i -> f(i))
+end
 
 _lentype(::Type{T}) where {T<:Len} = T
 _lentype(::Type{T}) where {T<:Number} = Met{T}
