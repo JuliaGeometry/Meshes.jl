@@ -25,13 +25,13 @@ function coarsen(grid::CartesianGrid, method::RegularCoarsening)
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .÷ factors)
 end
 
-function coarsen(grid::RectilinearGrid{Datum}, method::RegularCoarsening) where {Datum}
-  factors = fitdims(method.factors, embeddim(grid))
+function coarsen(grid::RectilinearGrid, method::RegularCoarsening)
+  factors = fitdims(method.factors, paramdim(grid))
   dims = vsize(grid)
-  rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
+  rngs = ntuple(i -> 1:factors[i]:dims[i], paramdim(grid))
   xyzₛ = xyz(grid)
-  xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], embeddim(grid))
-  RectilinearGrid{Datum}(xyzₜ)
+  xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], paramdim(grid))
+  RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end
 
 function coarsen(grid::StructuredGrid{Datum}, method::RegularCoarsening) where {Datum}

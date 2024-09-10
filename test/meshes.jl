@@ -431,10 +431,22 @@ end
   @test vertex(grid, 1) == cart(0, 0)
   @test vertex(grid, 121) == cart(10, 10)
 
-  # constructor with datum & datum propagation
-  grid = RectilinearGrid{WGS84Latest}(x, y)
-  @test datum(crs(grid)) === WGS84Latest
-  @test datum(crs(centroid(grid))) === WGS84Latest
+  # constructor with manifold and CRS
+  C = typeof(Mercator(T(0), T(0)))
+  grid = RectilinearGrid{𝔼{2},C}(x, y)
+  @test manifold(grid) === 𝔼{2}
+  @test crs(grid) === C
+  @test crs(centroid(grid)) === C
+
+  # units
+  x = range(zero(T), stop=one(T), length=6) * u"mm"
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"cm"
+  grid = RectilinearGrid(x, y)
+  @test unit(Meshes.lentype(grid)) == u"m"
+  # error: invalid units for cartesian coordinates
+  x = range(zero(T), stop=one(T), length=6) * u"m"
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"°"
+  @test_throws ArgumentError RectilinearGrid(x, y)
 
   # conversion
   cg = cartgrid(10, 10)

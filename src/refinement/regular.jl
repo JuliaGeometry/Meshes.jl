@@ -25,11 +25,11 @@ function refine(grid::CartesianGrid, method::RegularRefinement)
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end
 
-function refine(grid::RectilinearGrid{Datum}, method::RegularRefinement) where {Datum}
-  factors = fitdims(method.factors, embeddim(grid))
+function refine(grid::RectilinearGrid, method::RegularRefinement)
+  factors = fitdims(method.factors, paramdim(grid))
   xyzₛ = xyz(grid)
-  xyzₜ = ntuple(i -> _refinedims(xyzₛ[i], factors[i]), embeddim(grid))
-  RectilinearGrid{Datum}(xyzₜ)
+  xyzₜ = ntuple(i -> _refinedims(xyzₛ[i], factors[i]), paramdim(grid))
+  RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end
 
 function refine(grid::StructuredGrid{Datum}, method::RegularRefinement) where {Datum}
