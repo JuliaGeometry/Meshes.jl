@@ -65,6 +65,8 @@ apply(t::Shadow, ct::CylindricalTrajectory) = apply(t, GeometrySet(collect(ct)))
 
 apply(t::Shadow, g::RectilinearGrid) = TransformedGrid(g, t), nothing
 
+apply(t::Shadow, g::StructuredGrid) = TransformedGrid(g, t), nothing
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
@@ -97,12 +99,6 @@ function _shadow(g::CartesianGrid, dims)
   sp = spacing(g)[dims]
   of = offset(g)[dims]
   CartesianGrid(sz, or, sp, of)
-end
-
-function _shadow(g::StructuredGrid, dims)
-  ndims = length(size(g))
-  inds = ntuple(i -> ifelse(i ∈ dims, :, 1), ndims)
-  StructuredGrid{datum(crs(g))}(map(X -> X[inds...], XYZ(g)[dims]))
 end
 
 # apply shadow transform recursively

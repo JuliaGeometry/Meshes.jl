@@ -25,3 +25,22 @@ addunit(::AbstractArray{<:Quantity}, _) = throw(ArgumentError("invalid units, pl
 Converts the number type of quantity `x` to `T`.
 """
 numconvert(::Type{T}, x::Quantity{S,D,U}) where {T,S,D,U} = convert(Quantity{T,D,U}, x)
+
+"""
+    withunit(x, u)
+
+Adds the unit if the argument is not a quantity, 
+otherwise, converts the unit of `x` to `u`.
+"""
+withunit(x::Number, u) = x * u
+withunit(x::Quantity, u) = uconvert(u, x)
+
+"""
+    aslentype(T)
+
+If `T` has length unit, return it. If `T` is number, return it with meter unit.
+Otherwise, throw an error.
+"""
+aslentype(::Type{T}) where {T<:Len} = T
+aslentype(::Type{T}) where {T<:Number} = Met{T}
+aslentype(::Type{<:Quantity}) = throw(ArgumentError("invalid units, please use a valid length unit"))

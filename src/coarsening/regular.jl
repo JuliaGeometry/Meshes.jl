@@ -21,7 +21,7 @@ end
 RegularCoarsening(factors::Vararg{Int,N}) where {N} = RegularCoarsening(factors)
 
 function coarsen(grid::CartesianGrid, method::RegularCoarsening)
-  factors = fitdims(method.factors, embeddim(grid))
+  factors = fitdims(method.factors, paramdim(grid))
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .÷ factors)
 end
 
@@ -34,13 +34,13 @@ function coarsen(grid::RectilinearGrid, method::RegularCoarsening)
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end
 
-function coarsen(grid::StructuredGrid{Datum}, method::RegularCoarsening) where {Datum}
-  factors = fitdims(method.factors, embeddim(grid))
+function coarsen(grid::StructuredGrid, method::RegularCoarsening)
+  factors = fitdims(method.factors, paramdim(grid))
   dims = vsize(grid)
-  rngs = ntuple(i -> 1:factors[i]:dims[i], embeddim(grid))
+  rngs = ntuple(i -> 1:factors[i]:dims[i], paramdim(grid))
   XYZₛ = XYZ(grid)
-  XYZₜ = ntuple(i -> XYZₛ[i][rngs...], embeddim(grid))
-  StructuredGrid{Datum}(XYZₜ)
+  XYZₜ = ntuple(i -> XYZₛ[i][rngs...], paramdim(grid))
+  StructuredGrid{manifold(grid),crs(grid)}(XYZₜ)
 end
 
 coarsen(grid::TransformedGrid, method::RegularCoarsening) =

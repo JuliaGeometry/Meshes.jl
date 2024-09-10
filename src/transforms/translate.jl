@@ -42,7 +42,7 @@ apply(t::Translate, g::RectilinearGrid) =
 
 revert(t::Translate, g::RectilinearGrid, c) = first(apply(inverse(t), g))
 
-apply(t::Translate, g::StructuredGrid{Datum}) where {Datum} =
-  StructuredGrid{Datum}(ntuple(i -> XYZ(g)[i] .+ t.offsets[i], embeddim(g))), nothing
+apply(t::Translate, g::StructuredGrid) =
+  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> XYZ(g)[i] .+ t.offsets[i], paramdim(g))), nothing
 
 revert(t::Translate, g::StructuredGrid, c) = first(apply(inverse(t), g))

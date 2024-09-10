@@ -21,7 +21,7 @@ end
 RegularRefinement(factors::Vararg{Int,N}) where {N} = RegularRefinement(factors)
 
 function refine(grid::CartesianGrid, method::RegularRefinement)
-  factors = fitdims(method.factors, embeddim(grid))
+  factors = fitdims(method.factors, paramdim(grid))
   CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end
 
@@ -32,10 +32,10 @@ function refine(grid::RectilinearGrid, method::RegularRefinement)
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end
 
-function refine(grid::StructuredGrid{Datum}, method::RegularRefinement) where {Datum}
-  factors = fitdims(method.factors, embeddim(grid))
+function refine(grid::StructuredGrid, method::RegularRefinement)
+  factors = fitdims(method.factors, paramdim(grid))
   XYZ′ = _XYZ(grid, factors)
-  StructuredGrid{Datum}(XYZ′)
+  StructuredGrid{manifold(grid),crs(grid)}(XYZ′)
 end
 
 refine(grid::TransformedGrid, method::RegularRefinement) =
@@ -49,7 +49,7 @@ function _refinedims(x, f)
   x′
 end
 
-_XYZ(grid::StructuredGrid, factors::Dims) = _XYZ(grid, Val(embeddim(grid)), factors)
+_XYZ(grid::StructuredGrid, factors::Dims) = _XYZ(grid, Val(paramdim(grid)), factors)
 
 function _XYZ(grid::StructuredGrid, ::Val{2}, factors::Dims{2})
   T = numtype(lentype(grid))

@@ -42,7 +42,7 @@ function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopol
     """))
   end
 
-  xyz′ = ntuple(i -> numconvert.(T, _withunit.(xyz[i], us[i])), nc)
+  xyz′ = ntuple(i -> numconvert.(T, withunit.(xyz[i], us[i])), nc)
   RectilinearGrid{M,C,N,typeof(xyz′)}(xyz′, topology)
 end
 
@@ -54,14 +54,10 @@ end
 RectilinearGrid{M,C}(xyz::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(xyz)
 
 function RectilinearGrid(xyz::NTuple{N,AbstractVector}) where {N}
-  try
-    L = promote_type(ntuple(i -> _lentype(eltype(xyz[i])), N)...)
-    M = 𝔼{N}
-    C = Cartesian{NoDatum,N,L}
-    RectilinearGrid{M,C}(xyz)
-  catch
-    throw(ArgumentError("invalid units for cartesian coordinates"))
-  end
+  L = promote_type(ntuple(i -> aslentype(eltype(xyz[i])), N)...)
+  M = 𝔼{N}
+  C = Cartesian{NoDatum,N,L}
+  RectilinearGrid{M,C}(xyz)
 end
 
 RectilinearGrid(xyz::AbstractVector...) = RectilinearGrid(xyz)
@@ -94,10 +90,3 @@ function Base.summary(io::IO, g::RectilinearGrid)
   join(io, size(g), "×")
   print(io, " RectilinearGrid")
 end
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_lentype(::Type{T}) where {T<:Len} = T
-_lentype(::Type{T}) where {T<:Number} = Met{T}
