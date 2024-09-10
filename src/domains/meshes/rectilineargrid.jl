@@ -42,8 +42,8 @@ function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopol
     """))
   end
 
-  coords = ntuple(i -> numconvert.(T, _withunit.(xyz[i], us[i])), nc)
-  RectilinearGrid{M,C,N,typeof(coords)}(coords, topology)
+  xyz′ = ntuple(i -> numconvert.(T, _withunit.(xyz[i], us[i])), nc)
+  RectilinearGrid{M,C,N,typeof(xyz′)}(xyz′, topology)
 end
 
 function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}) where {M<:Manifold,C<:CRS,N}
