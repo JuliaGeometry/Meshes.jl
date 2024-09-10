@@ -54,10 +54,14 @@ end
 RectilinearGrid{M,C}(xyz::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(xyz)
 
 function RectilinearGrid(xyz::NTuple{N,AbstractVector}) where {N}
-  M = 𝔼{N}
-  L = promote_type(_lentype.(eltype.(xyz))...)
-  C = Cartesian{NoDatum,N,L}
-  RectilinearGrid{M,C}(xyz)
+  try
+    L = promote_type(ntuple(i -> _lentype(eltype(xyz[i])), N)...)
+    M = 𝔼{N}
+    C = Cartesian{NoDatum,N,L}
+    RectilinearGrid{M,C}(xyz)
+  catch
+    throw(ArgumentError("invalid units for cartesian coordinates"))
+  end
 end
 
 RectilinearGrid(xyz::AbstractVector...) = RectilinearGrid(xyz)
@@ -91,4 +95,3 @@ end
 
 _lentype(::Type{T}) where {T<:Len} = T
 _lentype(::Type{T}) where {T<:Number} = Met{T}
-_lentype(::Type{<:Quantity}) = throw(ArgumentError("invalid units for cartesian coordinates"))
