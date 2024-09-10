@@ -81,17 +81,21 @@ StructuredGrid(XYZ::AbstractArray...) = StructuredGrid(XYZ)
 
 function vertex(g::StructuredGrid, ijk::Dims)
   ctor = CoordRefSystems.constructor(crs(g))
-  Point(ctor(ntuple(d -> g.XYZ[d][ijk...], paramdim(g))))
+  Point(ctor(ntuple(d -> g.XYZ[d][ijk...], paramdim(g))...))
 end
 
 XYZ(g::StructuredGrid) = g.XYZ
 
-function Base.getindex(g::StructuredGrid{M,C}, I::CartesianIndices) where {M,C}
-  @boundscheck _checkbounds(g, I)
-  dims = size(I)
-  cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
-  XYZ = ntuple(i -> g.XYZ[i][cinds], paramdim(g))
-  StructuredGrid{M,C}(XYZ, GridTopology(dims))
+@generated function Base.getindex(g::StructuredGrid{M,C,N}, I::CartesianIndices) where {M,C,N}
+  exprs = ntuple(i -> :(g.XYZ[$i][cinds]), N)
+
+  quote
+    @boundscheck _checkbounds(g, I)
+    dims = size(I)
+    cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
+    XYZ = ($(exprs...),)
+    StructuredGrid{M,C}(XYZ, GridTopology(dims))
+  end
 end
 
 function Base.summary(io::IO, g::StructuredGrid)

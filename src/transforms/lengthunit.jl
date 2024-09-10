@@ -34,7 +34,7 @@ applycoord(t::LengthUnit, lens::NTuple{Dim,Len}) where {Dim} = uconvert.(t.unit,
 
 applycoord(t::LengthUnit, g::RectilinearGrid) = TransformedGrid(g, t)
 
-applycoord(t::LengthUnit, g::StructuredGrid) = StructuredGrid{datum(crs(g))}(map(X -> uconvert.(t.unit, X), XYZ(g)))
+applycoord(t::LengthUnit, g::StructuredGrid) = TransformedGrid(g, t)
 
 # -----------------
 # HELPER FUNCTIONS
