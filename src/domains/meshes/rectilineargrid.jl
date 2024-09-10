@@ -90,5 +90,5 @@ end
 # -----------------
 
 _lentype(::Type{T}) where {T<:Len} = T
-_lentype(::Type{T}) where {T<:Number} = Met{T} 
+_lentype(::Type{T}) where {T<:Number} = Met{T}
 _lentype(::Type{<:Quantity}) = throw(ArgumentError("invalid units for cartesian coordinates"))
