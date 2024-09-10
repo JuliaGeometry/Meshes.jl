@@ -143,4 +143,9 @@
   g = CartesianGrid((10, 10), merc(0, 0), (T(1), T(1)))
   m = convert(SimpleMesh, g)
   @test crs(boundingbox(m)) === crs(m)
+
+  # 1D segment
+  s = Segment(cart(0), cart(1))
+  b = boundingbox(s)
+  @test b == Box(cart(0), cart(1))
 end
