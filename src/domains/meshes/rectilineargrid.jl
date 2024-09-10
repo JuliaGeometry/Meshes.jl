@@ -37,7 +37,7 @@ function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopol
 
   if N ≠ nc
     throw(ArgumentError("""
-    A $N-dimensional rectilinear grid requires an CRS with $N coordinates.
+    A $N-dimensional rectilinear grid requires a CRS with $N coordinates.
     The provided CRS has $nc coordinates.
     """))
   end
