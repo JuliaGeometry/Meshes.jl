@@ -37,8 +37,8 @@ applycoord(::Translate, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-apply(t::Translate, g::RectilinearGrid{Datum}) where {Datum} =
-  RectilinearGrid{Datum}(ntuple(i -> xyz(g)[i] .+ t.offsets[i], embeddim(g))), nothing
+apply(t::Translate, g::RectilinearGrid) =
+  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> xyz(g)[i] .+ t.offsets[i], paramdim(g))), nothing
 
 revert(t::Translate, g::RectilinearGrid, c) = first(apply(inverse(t), g))
 

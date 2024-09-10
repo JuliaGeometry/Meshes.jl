@@ -1400,7 +1400,6 @@ end
   f = LengthUnit(u"cm")
   d = convert(RectilinearGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
-  @test r isa RectilinearGrid
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
   # ---------------
@@ -1621,8 +1620,7 @@ end
   f = Shadow(:xy)
   d = convert(RectilinearGrid, cartgrid(10, 11, 12))
   r, c = TB.apply(f, d)
-  @test r isa RectilinearGrid
-  @test r == RectilinearGrid(Meshes.xyz(d)[1], Meshes.xyz(d)[2])
+  @test r == SimpleMesh(f.(vertices(d)), topology(d))
 
   # ---------------
   # STRUCTUREDGRID

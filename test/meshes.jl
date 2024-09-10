@@ -431,10 +431,31 @@ end
   @test vertex(grid, 1) == cart(0, 0)
   @test vertex(grid, 121) == cart(10, 10)
 
-  # constructor with datum & datum propagation
-  grid = RectilinearGrid{WGS84Latest}(x, y)
-  @test datum(crs(grid)) === WGS84Latest
-  @test datum(crs(centroid(grid))) === WGS84Latest
+  # constructor with manifold and CRS
+  x = range(zero(T), stop=one(T), length=6)
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+  C = typeof(Mercator(T(0), T(0)))
+  grid = RectilinearGrid{𝔼{2},C}(x, y)
+  @test manifold(grid) === 𝔼{2}
+  @test crs(grid) === C
+  @test crs(grid[1, 1]) === C
+  @test crs(centroid(grid)) === C
+  C = typeof(LatLon(T(0), T(0)))
+  grid = RectilinearGrid{🌐,C}(x, y)
+  @test manifold(grid) === 🌐
+  @test crs(grid) === C
+  @test crs(grid[1, 1]) === C
+  @test crs(centroid(grid)) === C
+
+  # units
+  x = range(zero(T), stop=one(T), length=6) * u"mm"
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"cm"
+  grid = RectilinearGrid(x, y)
+  @test unit(Meshes.lentype(grid)) == u"m"
+  # error: invalid units for cartesian coordinates
+  x = range(zero(T), stop=one(T), length=6) * u"m"
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"°"
+  @test_throws ArgumentError RectilinearGrid(x, y)
 
   # conversion
   cg = cartgrid(10, 10)
@@ -452,6 +473,20 @@ end
   @test nelements(rg) == nelements(cg)
   @test topology(rg) == topology(cg)
   @test vertices(rg) == vertices(cg)
+
+  # type stability
+  x = range(zero(T), stop=one(T), length=6) * u"mm"
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"cm"
+  ρ = range(zero(T), stop=one(T), length=6)
+  ϕ = range(zero(T), stop=T(2π), length=6)
+  C = typeof(Polar(T(0), T(0)))
+  grid = RectilinearGrid{𝔼{2},C}(ρ, ϕ)
+  @inferred RectilinearGrid(x, y)
+  @inferred RectilinearGrid{𝔼{2},C}(ρ, ϕ)
+  @inferred vertex(grid, (1, 1))
+  @inferred grid[1, 1]
+  @inferred grid[1:2, 1:2]
+  @inferred Meshes.XYZ(grid)
 
   x = range(zero(T), stop=one(T), length=6)
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]

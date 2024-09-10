@@ -76,8 +76,8 @@ function applycoord(t::Scale, g::CartesianGrid)
   CartesianGrid(dims, orig, spac, offs)
 end
 
-applycoord(t::Scale{Dim}, g::RectilinearGrid{Datum,Dim}) where {Datum,Dim} =
-  RectilinearGrid{Datum}(ntuple(i -> t.factors[i] * xyz(g)[i], Dim))
+applycoord(t::Scale, g::RectilinearGrid) =
+  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * xyz(g)[i], paramdim(g)))
 
 applycoord(t::Scale{Dim}, g::StructuredGrid{Datum,Dim}) where {Datum,Dim} =
   StructuredGrid{Datum}(ntuple(i -> t.factors[i] * XYZ(g)[i], Dim))

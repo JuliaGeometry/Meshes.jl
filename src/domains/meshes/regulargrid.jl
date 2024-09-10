@@ -17,7 +17,7 @@ A regular grid with dimensions `dims`, with lower left corner of element
 
 ```
 RegularGrid((10, 20), Point(LatLon(30.0°, 60.0°)), (1.0, 1.0)) # add coordinate units to spacing
-RegularGrid((10, 20), Point(Polar(0.0mm, 0.0rad)), (10.0mm, 1.0rad)) # convert spacing units to coordinate units
+RegularGrid((10, 20), Point(Polar(0.0cm, 0.0rad)), (10.0mm, 1.0rad)) # convert spacing units to coordinate units
 RegularGrid((10, 20), Point(Marcator(0.0, 0.0)), (1.5, 1.5))
 RegularGrid((10, 20, 30), Point(Cylindrical(0.0, 0.0, 0.0)), (3.0, 2.0, 1.0))
 ```

@@ -4,10 +4,10 @@
 
 """
     RectilinearGrid(x, y, z, ...)
-    RectilinearGrid{Datum}(x, y, z, ...)
+    RectilinearGrid{M,C}(x, y, z, ...)
 
 A rectilinear grid with vertices at sorted coordinates `x`, `y`, `z`, ...,
-and a given `Datum` (default to `NoDatum`).
+manifold `M` (default to `𝔼`) and CRS type `C` (default to `Cartesian`).
 
 ## Examples
 
@@ -20,49 +20,84 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{Datum,Dim,ℒ<:Len,V<:AbstractVector{ℒ}} <: Grid{𝔼{Dim},Cartesian{Datum,Dim,ℒ},Dim}
-  xyz::NTuple{Dim,V}
-  topology::GridTopology{Dim}
+struct RectilinearGrid{M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}} <: Grid{M,C,N}
+  xyz::X
+  topology::GridTopology{N}
+  RectilinearGrid{M,C,N,X}(xyz, topology) where {M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}} = new(xyz, topology)
+end
 
-  function RectilinearGrid{Datum}(
-    xyz::NTuple{Dim,<:AbstractVector{<:Len}},
-    topology::GridTopology{Dim}
-  ) where {Datum,Dim}
-    coords = float.(xyz)
-    V = eltype(coords)
-    new{Datum,Dim,eltype(V),V}(coords, topology)
+function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopology{N}) where {M<:Manifold,C<:CRS,N}
+  if M <: 🌐 && !(C <: LatLon)
+    throw(ArgumentError("rectilinear grid on `🌐` requires `LatLon` coordinates"))
+  end
+
+  T = CoordRefSystems.mactype(C)
+  nc = CoordRefSystems.ncoords(C)
+  us = CoordRefSystems.units(C)
+
+  if N ≠ nc
+    throw(ArgumentError("""
+    A $N-dimensional rectilinear grid requires a CRS with $N coordinates.
+    The provided CRS has $nc coordinates.
+    """))
+  end
+
+  xyz′ = ntuple(i -> numconvert.(T, _withunit.(xyz[i], us[i])), nc)
+  RectilinearGrid{M,C,N,typeof(xyz′)}(xyz′, topology)
+end
+
+function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}) where {M<:Manifold,C<:CRS,N}
+  topology = GridTopology(length.(xyz) .- 1)
+  RectilinearGrid{M,C}(xyz, topology)
+end
+
+RectilinearGrid{M,C}(xyz::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(xyz)
+
+function RectilinearGrid(xyz::NTuple{N,AbstractVector}) where {N}
+  try
+    L = promote_type(ntuple(i -> _lentype(eltype(xyz[i])), N)...)
+    M = 𝔼{N}
+    C = Cartesian{NoDatum,N,L}
+    RectilinearGrid{M,C}(xyz)
+  catch
+    throw(ArgumentError("invalid units for cartesian coordinates"))
   end
 end
 
-RectilinearGrid{Datum}(xyz::NTuple{Dim,<:AbstractVector}, topology::GridTopology{Dim}) where {Datum,Dim} =
-  RectilinearGrid{Datum}(addunit.(xyz, u"m"), topology)
+RectilinearGrid(xyz::AbstractVector...) = RectilinearGrid(xyz)
 
-function RectilinearGrid{Datum}(xyz::Tuple) where {Datum}
-  coords = promote(collect.(xyz)...)
-  topology = GridTopology(length.(coords) .- 1)
-  RectilinearGrid{Datum}(coords, topology)
+function vertex(g::RectilinearGrid, ijk::Dims)
+  ctor = CoordRefSystems.constructor(crs(g))
+  Point(ctor(getindex.(g.xyz, ijk)...))
 end
-
-RectilinearGrid{Datum}(xyz...) where {Datum} = RectilinearGrid{Datum}(xyz)
-
-RectilinearGrid(args...) = RectilinearGrid{NoDatum}(args...)
-
-vertex(g::RectilinearGrid{Datum}, ijk::Dims) where {Datum} = Point(Cartesian{Datum}(getindex.(g.xyz, ijk)))
 
 xyz(g::RectilinearGrid) = g.xyz
 
 XYZ(g::RectilinearGrid) = XYZ(xyz(g))
 
-function Base.getindex(g::RectilinearGrid{Datum}, I::CartesianIndices) where {Datum}
-  @boundscheck _checkbounds(g, I)
-  dims = size(I)
-  start = Tuple(first(I))
-  stop = Tuple(last(I)) .+ 1
-  xyz = ntuple(i -> g.xyz[i][start[i]:stop[i]], embeddim(g))
-  RectilinearGrid{Datum}(xyz, GridTopology(dims))
+@generated function Base.getindex(g::RectilinearGrid{M,C,N}, I::CartesianIndices) where {M,C,N}
+  exprs = ntuple(N) do i
+    :(g.xyz[$i][start[$i]:stop[$i]])
+  end
+
+  quote
+    @boundscheck _checkbounds(g, I)
+    dims = size(I)
+    start = Tuple(first(I))
+    stop = Tuple(last(I)) .+ 1
+    xyz = ($(exprs...),)
+    RectilinearGrid{M,C}(xyz, GridTopology(dims))
+  end
 end
 
 function Base.summary(io::IO, g::RectilinearGrid)
   join(io, size(g), "×")
   print(io, " RectilinearGrid")
 end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_lentype(::Type{T}) where {T<:Len} = T
+_lentype(::Type{T}) where {T<:Number} = Met{T}
