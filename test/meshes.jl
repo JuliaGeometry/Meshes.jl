@@ -114,9 +114,7 @@
   p = latlon(0, 0) |> Proj(Cartesian)
   @test_throws ArgumentError RegularGrid((10, 10), p, T.((1, 1)))
   # error: the number of dimensions must be equal to the number of coordinates
-  @test_throws ArgumentError RegularGrid((10, 10, 10), latlon(0, 0), T.((1, 1)))
-  # error: the number of spacings must be equal to the number of coordinates
-  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((1, 1, 1)))
+  @test_throws ArgumentError RegularGrid((10, 10, 10), latlon(0, 0), T.((1, 1, 1)))
 
   grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
   if T == Float32

@@ -24,13 +24,13 @@ RegularGrid((10, 20, 30), Point(Cylindrical(0.0, 0.0, 0.0)), (3.0, 2.0, 1.0))
 
 See also [`CartesianGrid`](@ref).
 """
-struct RegularGrid{M<:Manifold,C<:CRS,S<:Tuple,N} <: Grid{M,C,N}
+struct RegularGrid{M<:Manifold,C<:CRS,N,S<:NTuple{N,Quantity}} <: Grid{M,C,N}
   origin::Point{M,C}
   spacing::S
   offset::Dims{N}
   topology::GridTopology{N}
 
-  function RegularGrid{M,C,S,N}(origin, spacing, offset, topology) where {M<:Manifold,C<:CRS,S<:Tuple,N}
+  function RegularGrid{M,C,N,S}(origin, spacing, offset, topology) where {M<:Manifold,C<:CRS,N,S<:NTuple{N,Quantity}}
     if !all(s -> s > zero(s), spacing)
       throw(ArgumentError("spacing must be positive"))
     end
@@ -40,18 +40,17 @@ end
 
 function RegularGrid(
   origin::Point{M,C},
-  spacing::Tuple,
+  spacing::NTuple{N,Number},
   offset::Dims{N},
   topology::GridTopology{N}
 ) where {M<:Manifold,C<:CRS,N}
-  if manifold(origin) <: 🌐 && !(crs(origin) <: LatLon)
+  if M <: 🌐 && !(C <: LatLon)
     throw(ArgumentError("regular spacing on `🌐` requires `LatLon` coordinates"))
   end
 
   T = CoordRefSystems.mactype(C)
   nc = CoordRefSystems.ncoords(C)
   us = CoordRefSystems.units(C)
-  ns = length(spacing)
 
   if N ≠ nc
     throw(ArgumentError("""
@@ -60,19 +59,17 @@ function RegularGrid(
     """))
   end
 
-  if ns ≠ nc
-    throw(ArgumentError("""
-    A $N-dimensional regular grid requires $N spacing values.
-    The provided spacing has $ns values.
-    """))
-  end
-
   sp = ntuple(i -> numconvert(T, withunit(spacing[i], us[i])), nc)
 
-  RegularGrid{M,C,typeof(sp),N}(origin, sp, offset, topology)
+  RegularGrid{M,C,N,typeof(sp)}(origin, sp, offset, topology)
 end
 
-function RegularGrid(dims::Dims{N}, origin::Point, spacing::Tuple, offset::Dims{N}=ntuple(i -> 1, N)) where {N}
+function RegularGrid(
+  dims::Dims{N},
+  origin::Point,
+  spacing::NTuple{N,Number},
+  offset::Dims{N}=ntuple(i -> 1, N)
+) where {N}
   if !all(>(0), dims)
     throw(ArgumentError("dimensions must be positive"))
   end
@@ -90,7 +87,7 @@ function vertex(g::RegularGrid, ijk::Dims)
   Point(ctor(vals...))
 end
 
-@generated function xyz(g::RegularGrid{M,C,S,N}) where {M,C,S,N}
+@generated function xyz(g::RegularGrid{M,C,N}) where {M,C,N}
   exprs = ntuple(N) do i
     :(range(start=orig[$i], step=spac[$i], length=(dims[$i] + 1)))
   end

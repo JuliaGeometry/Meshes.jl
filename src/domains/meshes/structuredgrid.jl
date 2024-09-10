@@ -43,6 +43,7 @@ function StructuredGrid{M,C}(XYZ::NTuple{N,AbstractArray}, topology::GridTopolog
   end
 
   XYZ′ = ntuple(i -> numconvert.(T, withunit.(XYZ[i], us[i])), nc)
+
   StructuredGrid{M,C,N,typeof(XYZ′)}(XYZ′, topology)
 end
 
