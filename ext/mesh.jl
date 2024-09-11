@@ -146,7 +146,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
 
   if showsegments[]
-    meshfacets2D!(plot)
+    vizfacets!(plot)
   end
 end
 
@@ -161,7 +161,15 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val)
   vizmany!(plot, meshes, color)
 end
 
-function meshfacets2D!(plot)
+function vizfacets!(plot::Viz{<:Tuple{Mesh}})
+  mesh = plot[:object]
+  M = Makie.@lift manifold($mesh)
+  pdim = Makie.@lift paramdim($mesh)
+  edim = Makie.@lift embeddim($mesh)
+  vizmeshfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+end
+
+function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
   mesh = plot[:object]
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]

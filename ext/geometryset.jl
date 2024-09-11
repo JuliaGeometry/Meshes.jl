@@ -52,14 +52,20 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
+  showpoints = plot[:showpoints]
+
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
-  gsetfacets1D!(plot, geoms)
+
+  if showpoints[]
+    vizfacets!(plot, geoms)
+  end
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
   rset = plot[:object]
   segmentsize = plot[:segmentsize]
+  showpoints = plot[:showpoints]
 
   Dim = embeddim(rset[])
 
@@ -71,13 +77,20 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
   size = Makie.@lift 0.1 * $segmentsize
   Makie.arrows!(plot, orig, dirs, color=colorant, arrowsize=size)
 
-  gsetfacets1D!(plot, geoms)
+  if showpoints[]
+    vizfacets!(plot, geoms)
+  end
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, geoms, colorant)
+  showsegments = plot[:showsegments]
+
   meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
-  gsetfacets2D!(plot, geoms)
+
+  if showsegments[]
+    vizfacets!(plot, geoms)
+  end
 end
 
 const PolygonLike = Union{Polygon,MultiPolygon}
@@ -104,29 +117,30 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
   vizmany!(plot, meshes, colorant)
 end
 
-function gsetfacets1D!(plot, geoms)
-  showpoints = plot[:showpoints]
+function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
+  M = Makie.@lift manifold(first($geoms))
+  pdim = Makie.@lift paramdim(first($geoms))
+  edim = Makie.@lift embeddim(first($geoms))
+  vizgsetfacets!(plot, M, pdim, edim, geoms)
+end
+
+function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, geoms)
   pointmarker = plot[:pointmarker]
   pointcolor = plot[:pointcolor]
   pointsize = plot[:pointsize]
 
-  if showpoints[]
-    # all boundaries are points or multipoints
-    points = Makie.@lift filter(!isnothing, boundary.($geoms))
-    pset = Makie.@lift GeometrySet($points)
-    viz!(plot, pset, color=pointcolor, pointmarker=pointmarker, pointsize=pointsize)
-  end
+  # all boundaries are points or multipoints
+  points = Makie.@lift filter(!isnothing, boundary.($geoms))
+  pset = Makie.@lift GeometrySet($points)
+  viz!(plot, pset, color=pointcolor, pointmarker=pointmarker, pointsize=pointsize)
 end
 
-function gsetfacets2D!(plot, geoms)
-  showsegments = plot[:showsegments]
+function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms)
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  if showsegments[]
-    # all boundaries are 1D geometries
-    bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
-    bset = Makie.@lift GeometrySet($bounds)
-    viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
-  end
+  # all boundaries are 1D geometries
+  bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
+  bset = Makie.@lift GeometrySet($bounds)
+  viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
 end

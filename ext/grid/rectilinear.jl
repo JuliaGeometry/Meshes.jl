@@ -44,11 +44,20 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     end
 
     if showsegments[]
-      tup = Makie.@lift xysegments($xs, $ys)
-      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+      vizfacets!(plot)
     end
   else
     vizgridfallback!(plot, M, pdim, edim)
   end
+end
+
+function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
+  grid = plot[:object]
+  segmentcolor = plot[:segmentcolor]
+  segmentsize = plot[:segmentsize]
+
+  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
+  tup = Makie.@lift xysegments($xyz...)
+  x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+  Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
 end

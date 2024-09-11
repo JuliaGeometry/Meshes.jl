@@ -16,6 +16,16 @@ end
 
 vizgrid!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
+function vizfacets!(plot::Viz{<:Tuple{Grid}})
+  grid = plot[:object]
+  M = Makie.@lift manifold($grid)
+  pdim = Makie.@lift paramdim($grid)
+  edim = Makie.@lift embeddim($grid)
+  vizgridfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+end
+
+vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pdim, edim)
+
 # ----------------
 # SPECIALIZATIONS
 # ----------------
@@ -71,7 +81,7 @@ function vizgridfallback!(plot, M, pdim, edim)
     Makie.mesh!(plot, mesh, color=texture, shading=shading)
 
     if showsegments[]
-      meshfacets2D!(plot)
+      vizfacets!(plot)
     end
   else # fallback to triangle mesh visualization
     vizmesh!(plot, M, pdim, edim)
