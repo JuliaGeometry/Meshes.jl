@@ -92,7 +92,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
   vizmany!(plot, meshes, colorant)
 end
 
-vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizgeoms!(plot, faces=false)
+vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizgeoms!(plot, facets=false)
 
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
   M = Makie.@lift manifold(first($geoms))
@@ -122,7 +122,7 @@ function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms)
   viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
 end
 
-function vizgeoms!(plot; faces=false)
+function vizgeoms!(plot; facets=false)
   gset = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -130,7 +130,7 @@ function vizgeoms!(plot; faces=false)
   colorrange = plot[:colorrange]
 
   # process color spec into colorant
-  colorant = faces ? nothing : Makie.@lift(process($color, $colormap, $colorrange, $alpha))
+  colorant = facets ? nothing : Makie.@lift(process($color, $colormap, $colorrange, $alpha))
 
   # get geometries
   geoms = Makie.@lift parent($gset)
@@ -144,7 +144,7 @@ function vizgeoms!(plot; faces=false)
     M = Makie.@lift manifold(first($gvec))
     pdim = Makie.@lift paramdim(first($gvec))
     edim = Makie.@lift embeddim(first($gvec))
-    if faces
+    if facets
       vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
     else
       cvec = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
