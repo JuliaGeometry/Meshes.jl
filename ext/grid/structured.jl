@@ -12,31 +12,35 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+  if crs(grid[]) <: Cartesian
+    # process color spec into colorant
+    colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
-  # number of vertices and colors
-  nv = Makie.@lift nvertices($grid)
-  nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+    # number of vertices and colors
+    nv = Makie.@lift nvertices($grid)
+    nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
-  if nc[] == nv[]
-    # size and coordinates
-    sz = Makie.@lift size($grid) .+ 1
-    XYZ = Makie.@lift map(X -> ustrip.(X), Meshes.XYZ($grid))
-    X = Makie.@lift $XYZ[1]
-    Y = Makie.@lift $XYZ[2]
+    if nc[] == nv[]
+      # size and coordinates
+      sz = Makie.@lift size($grid) .+ 1
+      XYZ = Makie.@lift map(X -> ustrip.(X), Meshes.XYZ($grid))
+      X = Makie.@lift $XYZ[1]
+      Y = Makie.@lift $XYZ[2]
 
-    # visualize as built-in surface
-    C = Makie.@lift reshape($colorant, $sz)
-    Makie.surface!(plot, X, Y, color=C)
+      # visualize as built-in surface
+      C = Makie.@lift reshape($colorant, $sz)
+      Makie.surface!(plot, X, Y, color=C)
 
-    if showsegments[]
-      tup = Makie.@lift structuredsegments($grid)
-      x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-      Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+      if showsegments[]
+        tup = Makie.@lift structuredsegments($grid)
+        x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+        Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+      end
+    else
+      vizmesh!(plot, M, pdim, edim)
     end
   else
-    vizmesh!(plot, M, pdim, edim)
+    vizgridfallback!(plot, M, pdim, edim)
   end
 end
 
