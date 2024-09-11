@@ -17,46 +17,12 @@ function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Va
 
   if isoptimized(trans[]) # visualize parent grid and transform visualization
     grid = Makie.@lift parent($tgrid)
-    viz!(plot, grid; color, alpha, colormap, showsegments, segmentcolor, segmentsize)
+    viz!(plot, grid; color, alpha, colormap, colorrange, showsegments, segmentcolor, segmentsize)
     makietransform!(plot, trans)
-  elseif pdim == Val(2) # visualize quadrangle mesh with texture using uv coords
-    # decide whether or not to reverse connectivity list
-    rfunc = Makie.@lift _reverse(crs($tgrid))
-
-    verts = Makie.@lift map(asmakie, vertices($tgrid))
-    quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($tgrid))]
-
-    colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
-    nverts = Makie.@lift length($verts)
-    nquads = Makie.@lift length($quads)
-    ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
-
-    dims = Makie.@lift size($tgrid)
-    texture = if ncolor[] == 1
-      Makie.@lift fill($colorant, $dims)
-    elseif ncolor[] == nquads[]
-      Makie.@lift reshape($colorant, $dims)
-    elseif ncolor[] == nverts[]
-      Makie.@lift reshape($colorant, $dims .+ 1)
-    else
-      throw(ArgumentError("invalid number of colors"))
-    end
-
-    uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $dims[2] + 1) for u in range(0, 1, $dims[1] + 1)]
-
-    mesh = Makie.@lift GB.Mesh(Makie.meta($verts, uv=$uv), $quads)
-
-    shading = edim == Val(3) ? Makie.FastShading : Makie.NoShading
-
-    Makie.mesh!(plot, mesh, color=texture, shading=shading)
-  else # fallback to triangle mesh visualization
-    vizmesh!(plot, M, pdim, edim)
+  else # fallback to full grid visualization
+    vizgridfallback!(plot, M, pdim, edim)
   end
 end
-
-_reverse(::Type{<:CRS}) = identity
-_reverse(::Type{<:LatLon}) = reverse
 
 # --------------
 # OPTIMIZATIONS
