@@ -42,8 +42,6 @@ Makie.args_preferred_axis(g::Geometry) = embeddim(g) === 3 ? Makie.LScene : Maki
 Makie.args_preferred_axis(d::Domain) = embeddim(d) === 3 ? Makie.LScene : Makie.Axis
 Makie.args_preferred_axis(::AbstractVector{<:Vec{Dim}}) where {Dim} = Dim === 3 ? Makie.LScene : Makie.Axis
 
-function vizfacets! end
-
 # color handling
 include("colors.jl")
 
