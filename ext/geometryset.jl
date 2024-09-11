@@ -2,32 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
-  gset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
-  # get geometries
-  geoms = Makie.@lift parent($gset)
-
-  # get geometry types
-  types = Makie.@lift unique(typeof.($geoms))
-
-  for G in types[]
-    inds = Makie.@lift findall(g -> g isa G, $geoms)
-    gvec = Makie.@lift collect(G, $geoms[$inds])
-    colors = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
-    M = Makie.@lift manifold(first($gvec))
-    pdim = Makie.@lift paramdim(first($gvec))
-    edim = Makie.@lift embeddim(first($gvec))
-    vizgset!(plot, M[], Val(pdim[]), Val(edim[]), gvec, colors)
-  end
-end
+Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = plotgeoms!(plot, vizgset!)
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
@@ -117,24 +92,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
   vizmany!(plot, meshes, colorant)
 end
 
-function vizfacets!(plot::Viz{<:Tuple{GeometrySet}})
-  gset = plot[:object]
-
-  # get geometries
-  geoms = Makie.@lift parent($gset)
-
-  # get geometry types
-  types = Makie.@lift unique(typeof.($geoms))
-
-  for G in types[]
-    inds = Makie.@lift findall(g -> g isa G, $geoms)
-    gvec = Makie.@lift collect(G, $geoms[$inds])
-    M = Makie.@lift manifold(first($gvec))
-    pdim = Makie.@lift paramdim(first($gvec))
-    edim = Makie.@lift embeddim(first($gvec))
-    vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
-  end
-end
+vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = plotgeoms!(plot, vizgridfacets!, withcolor=false)
 
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
   M = Makie.@lift manifold(first($geoms))
@@ -162,4 +120,35 @@ function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms)
   bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
   bset = Makie.@lift GeometrySet($bounds)
   viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
+end
+
+function plotgeoms!(plot, plotfun; withcolor=true)
+  gset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
+
+  # process color spec into colorant
+  colorant = withcolor ? Makie.@lift(process($color, $colormap, $colorrange, $alpha)) : nothing
+
+  # get geometries
+  geoms = Makie.@lift parent($gset)
+
+  # get geometry types
+  types = Makie.@lift unique(typeof.($geoms))
+
+  for G in types[]
+    inds = Makie.@lift findall(g -> g isa G, $geoms)
+    gvec = Makie.@lift collect(G, $geoms[$inds])
+    M = Makie.@lift manifold(first($gvec))
+    pdim = Makie.@lift paramdim(first($gvec))
+    edim = Makie.@lift embeddim(first($gvec))
+    if withcolor
+      cvec = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
+      plotfun(plot, M[], Val(pdim[]), Val(edim[]), gvec, cvec)
+    else
+      plotfun(plot, M[], Val(pdim[]), Val(edim[]), gvec)
+    end
+  end
 end
