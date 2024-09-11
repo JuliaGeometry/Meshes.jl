@@ -32,9 +32,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
       Makie.surface!(plot, X, Y, color=C)
 
       if showsegments[]
-        tup = Makie.@lift structuredsegments($grid)
-        x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-        Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+        vizfacets!(plot)
       end
     else
       vizmesh!(plot, M, pdim, edim)
@@ -42,6 +40,16 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
   else
     vizgridfallback!(plot, M, pdim, edim)
   end
+end
+
+function vizgridfacets!(plot::Viz{<:Tuple{StructuredGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
+  grid = plot[:object]
+  segmentcolor = plot[:segmentcolor]
+  segmentsize = plot[:segmentsize]
+
+  tup = Makie.@lift structuredsegments($grid)
+  x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+  Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
 end
 
 function structuredsegments(grid)
