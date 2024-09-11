@@ -27,7 +27,7 @@ end
 
 function refine(grid::RectilinearGrid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
-  xyzₛ = xyz(grid)
+  xyzₛ = coordvectors(grid)
   xyzₜ = ntuple(i -> _refinedims(xyzₛ[i], factors[i]), paramdim(grid))
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end

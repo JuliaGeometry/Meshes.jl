@@ -20,13 +20,14 @@ julia> y = [0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
 julia> RectilinearGrid(x, y)
 ```
 """
-struct RectilinearGrid{M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}} <: Grid{M,C,N}
-  xyz::X
+struct RectilinearGrid{M<:Manifold,C<:CRS,N,NT<:NTuple{N,AbstractVector}} <: Grid{M,C,N}
+  coords::NT
   topology::GridTopology{N}
-  RectilinearGrid{M,C,N,X}(xyz, topology) where {M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}} = new(xyz, topology)
+  RectilinearGrid{M,C,N,NT}(coords, topology) where {M<:Manifold,C<:CRS,N,NT<:NTuple{N,AbstractVector}} =
+    new(coords, topology)
 end
 
-function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopology{N}) where {M<:Manifold,C<:CRS,N}
+function RectilinearGrid{M,C}(coords::NTuple{N,AbstractVector}, topology::GridTopology{N}) where {M<:Manifold,C<:CRS,N}
   if M <: 🌐 && !(C <: LatLon)
     throw(ArgumentError("rectilinear grid on `🌐` requires `LatLon` coordinates"))
   end
@@ -42,39 +43,39 @@ function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopol
     """))
   end
 
-  xyz′ = ntuple(i -> numconvert.(T, withunit.(xyz[i], us[i])), nc)
+  coords′ = ntuple(i -> numconvert.(T, withunit.(coords[i], us[i])), nc)
 
-  RectilinearGrid{M,C,N,typeof(xyz′)}(xyz′, topology)
+  RectilinearGrid{M,C,N,typeof(coords′)}(coords′, topology)
 end
 
-function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}) where {M<:Manifold,C<:CRS,N}
-  topology = GridTopology(length.(xyz) .- 1)
-  RectilinearGrid{M,C}(xyz, topology)
+function RectilinearGrid{M,C}(coords::NTuple{N,AbstractVector}) where {M<:Manifold,C<:CRS,N}
+  topology = GridTopology(length.(coords) .- 1)
+  RectilinearGrid{M,C}(coords, topology)
 end
 
-RectilinearGrid{M,C}(xyz::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(xyz)
+RectilinearGrid{M,C}(coords::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(coords)
 
-function RectilinearGrid(xyz::NTuple{N,AbstractVector}) where {N}
-  L = promote_type(ntuple(i -> aslentype(eltype(xyz[i])), N)...)
+function RectilinearGrid(coords::NTuple{N,AbstractVector}) where {N}
+  L = promote_type(ntuple(i -> aslentype(eltype(coords[i])), N)...)
   M = 𝔼{N}
   C = Cartesian{NoDatum,N,L}
-  RectilinearGrid{M,C}(xyz)
+  RectilinearGrid{M,C}(coords)
 end
 
-RectilinearGrid(xyz::AbstractVector...) = RectilinearGrid(xyz)
+RectilinearGrid(coords::AbstractVector...) = RectilinearGrid(coords)
 
 function vertex(g::RectilinearGrid, ijk::Dims)
   ctor = CoordRefSystems.constructor(crs(g))
-  Point(ctor(getindex.(g.xyz, ijk)...))
+  Point(ctor(getindex.(g.coords, ijk)...))
 end
 
-xyz(g::RectilinearGrid) = g.xyz
+coordvectors(g::RectilinearGrid) = g.coords
 
-XYZ(g::RectilinearGrid) = XYZ(xyz(g))
+coordarrays(g::RectilinearGrid) = coordarrays(coordvectors(g))
 
 @generated function Base.getindex(g::RectilinearGrid{M,C,N}, I::CartesianIndices) where {M,C,N}
   exprs = ntuple(N) do i
-    :(g.xyz[$i][start[$i]:stop[$i]])
+    :(g.coords[$i][start[$i]:stop[$i]])
   end
 
   quote
@@ -82,8 +83,8 @@ XYZ(g::RectilinearGrid) = XYZ(xyz(g))
     dims = size(I)
     start = Tuple(first(I))
     stop = Tuple(last(I)) .+ 1
-    xyz = ($(exprs...),)
-    RectilinearGrid{M,C}(xyz, GridTopology(dims))
+    coords = ($(exprs...),)
+    RectilinearGrid{M,C}(coords, GridTopology(dims))
   end
 end
 

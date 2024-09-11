@@ -38,11 +38,11 @@ applycoord(::Translate, v::Vec) = v
 # --------------
 
 apply(t::Translate, g::RectilinearGrid) =
-  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> xyz(g)[i] .+ t.offsets[i], paramdim(g))), nothing
+  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> coordvectors(g)[i] .+ t.offsets[i], paramdim(g))), nothing
 
 revert(t::Translate, g::RectilinearGrid, c) = first(apply(inverse(t), g))
 
 apply(t::Translate, g::StructuredGrid) =
-  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> XYZ(g)[i] .+ t.offsets[i], paramdim(g))), nothing
+  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> coordarrays(g)[i] .+ t.offsets[i], paramdim(g))), nothing
 
 revert(t::Translate, g::StructuredGrid, c) = first(apply(inverse(t), g))

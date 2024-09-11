@@ -72,17 +72,17 @@
   @test unit.(spacing(grid)) == (u"cm", u"rad")
   @test Unitful.numtype.(spacing(grid)) == (T, T)
 
-  # xyz & XYZ
+  # coordinate vectors and arrays
   grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
-  @test Meshes.xyz(grid) == (T.(0:10) * u"°", T.(0:10) * u"°")
+  @test Meshes.coordvectors(grid) == (T.(0:10) * u"°", T.(0:10) * u"°")
   x = T.(0:10) * u"°"
   y = T.(0:10)' * u"°"
-  @test Meshes.XYZ(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
+  @test Meshes.coordarrays(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
   grid = RegularGrid((10, 10), Point(Polar(T(0), T(0))), T.((1, 1)))
-  @test Meshes.xyz(grid) == (T.(0:10) * u"m", T.(0:10) * u"rad")
+  @test Meshes.coordvectors(grid) == (T.(0:10) * u"m", T.(0:10) * u"rad")
   x = T.(0:10) * u"m"
   y = T.(0:10)' * u"rad"
-  @test Meshes.XYZ(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
+  @test Meshes.coordarrays(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
 
   # indexing into a subgrid
   grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
@@ -103,8 +103,8 @@
   @inferred vertex(grid, (1, 1))
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
-  @inferred Meshes.xyz(grid)
-  @inferred Meshes.XYZ(grid)
+  @inferred Meshes.coordvectors(grid)
+  @inferred Meshes.coordarrays(grid)
 
   # error: dimensions must be positive
   @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
@@ -334,24 +334,24 @@ end
   @test vertex(grid, 1) == cart(0, 0)
   @test vertex(grid, 121) == cart(10, 10)
 
-  # xyz
+  # coordinate vectors
   g1D = cartgrid(10)
   g2D = cartgrid(10, 10)
   g3D = cartgrid(10, 10, 10)
-  @test Meshes.xyz(g1D) == (T.(0:10) * u"m",)
-  @test Meshes.xyz(g2D) == (T.(0:10) * u"m", T.(0:10) * u"m")
-  @test Meshes.xyz(g3D) == (T.(0:10) * u"m", T.(0:10) * u"m", T.(0:10) * u"m")
+  @test Meshes.coordvectors(g1D) == (T.(0:10) * u"m",)
+  @test Meshes.coordvectors(g2D) == (T.(0:10) * u"m", T.(0:10) * u"m")
+  @test Meshes.coordvectors(g3D) == (T.(0:10) * u"m", T.(0:10) * u"m", T.(0:10) * u"m")
 
-  # XYZ
+  # coordinate arrays
   g1D = cartgrid(10)
   g2D = cartgrid(10, 10)
   g3D = cartgrid(10, 10, 10)
   x = T.(0:10) * u"m"
   y = T.(0:10)' * u"m"
   z = reshape(T.(0:10), 1, 1, 11) * u"m"
-  @test Meshes.XYZ(g1D) == (x,)
-  @test Meshes.XYZ(g2D) == (repeat(x, 1, 11), repeat(y, 11, 1))
-  @test Meshes.XYZ(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
+  @test Meshes.coordarrays(g1D) == (x,)
+  @test Meshes.coordarrays(g2D) == (repeat(x, 1, 11), repeat(y, 11, 1))
+  @test Meshes.coordarrays(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
 
   # units
   grid = CartesianGrid((10, 10), cart(0, 0), (T(1) * u"m", T(1) * u"m"))
@@ -421,8 +421,8 @@ end
   @test minimum(sub) == cart(0.0, 0.3)
   @test maximum(sub) == cart(1.0, 1.0)
   @test_throws BoundsError grid[2:6, :]
-  @test Meshes.xyz(grid) == (x * u"m", y * u"m")
-  @test Meshes.XYZ(grid) == (repeat(x, 1, 6) * u"m", repeat(y', 6, 1) * u"m")
+  @test Meshes.coordvectors(grid) == (x * u"m", y * u"m")
+  @test Meshes.coordarrays(grid) == (repeat(x, 1, 6) * u"m", repeat(y', 6, 1) * u"m")
 
   # single vertex access
   grid = RectilinearGrid(T.(0:10), T.(0:10))
@@ -484,7 +484,7 @@ end
   @inferred vertex(grid, (1, 1))
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
-  @inferred Meshes.XYZ(grid)
+  @inferred Meshes.coordarrays(grid)
 
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   x = range(zero(T), stop=one(T), length=6)
@@ -592,7 +592,7 @@ end
   @test minimum(sub) == cart(0.0, 0.3)
   @test maximum(sub) == cart(1.0, 1.0)
   @test_throws BoundsError grid[2:6, :]
-  @test Meshes.XYZ(grid) == (X * u"m", Y * u"m")
+  @test Meshes.coordarrays(grid) == (X * u"m", Y * u"m")
 
   # constructor with manifold and CRS
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)

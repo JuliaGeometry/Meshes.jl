@@ -38,15 +38,15 @@ end
 collectat(vec::AbstractVector, inds) = vec[inds]
 
 """
-    XYZ(xyz)
+    coordarrays(coords)
 
-Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
+Generate the coordinate arrays from the coordinate vectors `coords`.
 """
-@generated function XYZ(xyz::NTuple{Dim,AbstractVector}) where {Dim}
+@generated function coordarrays(coords::NTuple{Dim,AbstractVector}) where {Dim}
   exprs = ntuple(Dim) do d
     quote
-      a = xyz[$d]
-      A = Array{eltype(a),Dim}(undef, length.(xyz))
+      a = coords[$d]
+      A = Array{eltype(a),Dim}(undef, length.(coords))
       @nloops $Dim i A begin
         @nref($Dim, A, i) = a[$(Symbol(:i_, d))]
       end

@@ -160,20 +160,20 @@ Number of vertices along each dimension of the `grid`.
 vsize(g::Grid) = size(g) .+ .!isperiodic(g)
 
 """
-    xyz(grid)
+    coordvectors(grid)
 
 Returns the coordinate vectors of each dimension of the `grid`, e.g `(x, y, z, ...)`.
 The vertex `i,j,k,...` is constructed with `Point(x[i], y[j], z[k], ...)`.
 """
-function xyz end
+function coordvectors end
 
 """
-    XYZ(grid)
+    coordarrays(grid)
 
 Returns the coordinate arrays of each dimension of the `grid`, e.g `(X, Y, Z, ...)`.
 The vertex `i,j,k,...` is constructed with `Point(X[i,j,k,...], Y[i,j,k,...], Z[i,j,k,...], ...)`.
 """
-function XYZ end
+function coordarrays end
 
 # ----------
 # FALLBACKS

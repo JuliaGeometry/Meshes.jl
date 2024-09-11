@@ -87,7 +87,7 @@ function vertex(g::RegularGrid, ijk::Dims)
   Point(ctor(vals...))
 end
 
-@generated function xyz(g::RegularGrid{M,C,N}) where {M,C,N}
+@generated function coordvectors(g::RegularGrid{M,C,N}) where {M,C,N}
   exprs = ntuple(N) do i
     :(range(start=orig[$i], step=spac[$i], length=(dims[$i] + 1)))
   end
@@ -100,7 +100,7 @@ end
   end
 end
 
-XYZ(g::RegularGrid) = XYZ(xyz(g))
+coordarrays(g::RegularGrid) = coordarrays(coordvectors(g))
 
 function Base.getindex(g::RegularGrid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)

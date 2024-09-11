@@ -31,7 +31,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     viz!(plot, bbox, color=colorant)
 
     if showsegments[]
-      xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
+      xyz = Makie.@lift map(x -> ustrip.(x), Meshes.coordvectors($grid))
       tup = Makie.@lift xysegments($xyz...)
       x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
       Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
@@ -81,7 +81,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
 
   # spacing and coordinates
   sp = Makie.@lift ustrip.(spacing($grid))
-  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
+  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.coordvectors($grid))
 
   if nc[] == 1
     # visualize bounding box with a single

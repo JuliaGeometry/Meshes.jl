@@ -22,7 +22,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
   if nc[] == nv[]
     # size and coordinates
     sz = Makie.@lift size($grid) .+ 1
-    XYZ = Makie.@lift map(X -> ustrip.(X), Meshes.XYZ($grid))
+    XYZ = Makie.@lift map(X -> ustrip.(X), Meshes.coordarrays($grid))
     X = Makie.@lift $XYZ[1]
     Y = Makie.@lift $XYZ[2]
 

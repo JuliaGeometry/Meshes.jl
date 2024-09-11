@@ -115,12 +115,12 @@ function _euclideanrange(grid::RectilinearGrid, box::Box)
 
   # integer coordinates of lower point
   ijkₛ = ntuple(nd) do i
-    findlast(x -> x ≤ lo[i], xyz(grid)[i])
+    findlast(x -> x ≤ lo[i], coordvectors(grid)[i])
   end
 
   # integer coordinates of upper point
   ijkₑ = ntuple(nd) do i
-    findfirst(x -> x ≥ up[i], xyz(grid)[i])
+    findfirst(x -> x ≥ up[i], coordvectors(grid)[i])
   end
 
   # integer coordinates of elements
