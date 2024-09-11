@@ -30,12 +30,18 @@ include("grid/transformed.jl")
 # -----------------
 
 function vizgridfallback!(plot, M, pdim, edim)
+  grid = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
+
   if pdim == Val(2) # visualize quadrangle mesh with texture using uv coords
     # decide whether or not to reverse connectivity list
-    rfunc = Makie.@lift _reverse(crs($tgrid))
+    rfunc = Makie.@lift _reverse(crs($grid))
 
-    verts = Makie.@lift map(asmakie, vertices($tgrid))
-    quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($tgrid))]
+    verts = Makie.@lift map(asmakie, vertices($grid))
+    quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
 
     colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
@@ -43,7 +49,7 @@ function vizgridfallback!(plot, M, pdim, edim)
     nquads = Makie.@lift length($quads)
     ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
-    dims = Makie.@lift size($tgrid)
+    dims = Makie.@lift size($grid)
     texture = if ncolor[] == 1
       Makie.@lift fill($colorant, $dims)
     elseif ncolor[] == nquads[]
