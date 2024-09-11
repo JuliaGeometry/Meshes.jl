@@ -35,6 +35,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   alpha = plot[:alpha]
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
+  showsegments = plot[:showsegments]
 
   if pdim == Val(2) # visualize quadrangle mesh with texture using uv coords
     # decide whether or not to reverse connectivity list
@@ -67,6 +68,10 @@ function vizgridfallback!(plot, M, pdim, edim)
     shading = edim == Val(3) ? Makie.FastShading : Makie.NoShading
 
     Makie.mesh!(plot, mesh, color=texture, shading=shading)
+
+    if showsegments[]
+      meshfacets2D!(plot)
+    end
   else # fallback to triangle mesh visualization
     vizmesh!(plot, M, pdim, edim)
   end
