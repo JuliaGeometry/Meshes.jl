@@ -117,6 +117,25 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
   vizmany!(plot, meshes, colorant)
 end
 
+function vizfacets!(plot::Viz{<:Tuple{GeometrySet}})
+  gset = plot[:object]
+
+  # get geometries
+  geoms = Makie.@lift parent($gset)
+
+  # get geometry types
+  types = Makie.@lift unique(typeof.($geoms))
+
+  for G in types[]
+    inds = Makie.@lift findall(g -> g isa G, $geoms)
+    gvec = Makie.@lift collect(G, $geoms[$inds])
+    M = Makie.@lift manifold(first($gvec))
+    pdim = Makie.@lift paramdim(first($gvec))
+    edim = Makie.@lift embeddim(first($gvec))
+    vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
+  end
+end
+
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
   M = Makie.@lift manifold(first($geoms))
   pdim = Makie.@lift paramdim(first($geoms))
