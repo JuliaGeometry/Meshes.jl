@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = plotgeoms!(plot, vizgset!)
+Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgeoms!(plot)
 
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
@@ -92,7 +92,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
   vizmany!(plot, meshes, colorant)
 end
 
-vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = plotgeoms!(plot, vizgridfacets!, withcolor=false)
+vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizgeoms!(plot, faces=false)
 
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
   M = Makie.@lift manifold(first($geoms))
@@ -122,7 +122,7 @@ function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms)
   viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
 end
 
-function plotgeoms!(plot, plotfun; withcolor=true)
+function vizgeoms!(plot; faces=false)
   gset = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
@@ -130,7 +130,7 @@ function plotgeoms!(plot, plotfun; withcolor=true)
   colorrange = plot[:colorrange]
 
   # process color spec into colorant
-  colorant = withcolor ? Makie.@lift(process($color, $colormap, $colorrange, $alpha)) : nothing
+  colorant = faces ? nothing : Makie.@lift(process($color, $colormap, $colorrange, $alpha))
 
   # get geometries
   geoms = Makie.@lift parent($gset)
@@ -144,11 +144,11 @@ function plotgeoms!(plot, plotfun; withcolor=true)
     M = Makie.@lift manifold(first($gvec))
     pdim = Makie.@lift paramdim(first($gvec))
     edim = Makie.@lift embeddim(first($gvec))
-    if withcolor
-      cvec = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
-      plotfun(plot, M[], Val(pdim[]), Val(edim[]), gvec, cvec)
+    if faces
+      vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
     else
-      plotfun(plot, M[], Val(pdim[]), Val(edim[]), gvec)
+      cvec = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
+      vizgset!(plot, M[], Val(pdim[]), Val(edim[]), gvec, cvec)
     end
   end
 end
