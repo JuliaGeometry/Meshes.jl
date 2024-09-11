@@ -140,7 +140,7 @@ function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
   M = Makie.@lift manifold(first($geoms))
   pdim = Makie.@lift paramdim(first($geoms))
   edim = Makie.@lift embeddim(first($geoms))
-  vizgsetfacets!(plot, M, pdim, edim, geoms)
+  vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), geoms)
 end
 
 function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, geoms)
