@@ -51,17 +51,18 @@ function vizgridfallback!(plot, M, pdim, edim)
     ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
     dims = Makie.@lift size($grid)
+    vdims = Makie.@lift Meshes.vsize($grid)
     texture = if ncolor[] == 1
       Makie.@lift fill($colorant, $dims)
     elseif ncolor[] == nquads[]
       Makie.@lift reshape($colorant, $dims)
     elseif ncolor[] == nverts[]
-      Makie.@lift reshape($colorant, $dims .+ 1)
+      Makie.@lift reshape($colorant, $vdims)
     else
       throw(ArgumentError("invalid number of colors"))
     end
 
-    uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $dims[2] + 1) for u in range(0, 1, $dims[1] + 1)]
+    uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $vdims[2]) for u in range(0, 1, $vdims[1])]
 
     mesh = Makie.@lift GB.Mesh(Makie.meta($verts, uv=$uv), $quads)
 
