@@ -54,8 +54,6 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
   showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
@@ -148,47 +146,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
 
   if showsegments[]
-    # retrieve coordinates parameters
-    xparams = Makie.@lift let
-      # relevant settings
-      T = Unitful.numtype(Meshes.lentype($mesh))
-      dim = embeddim($mesh)
-      topo = topology($mesh)
-      nvert = nvertices($mesh)
-      verts = vertices($mesh)
-      coords = map(p -> ustrip.(to(p)), verts)
-
-      # use a sophisticated data structure
-      # to extract the edges from the n-gons
-      t = convert(HalfEdgeTopology, topo)
-      ∂ = Boundary{1,0}(t)
-
-      # append indices of incident vertices
-      # interleaved with a sentinel index
-      inds = Int[]
-      for i in 1:nfacets(t)
-        for j in ∂(i)
-          push!(inds, j)
-        end
-        push!(inds, nvert + 1)
-      end
-
-      # fill sentinel index with NaN coordinates
-      push!(coords, SVector(ntuple(i -> T(NaN), dim)))
-
-      # extract incident vertices
-      coords = coords[inds]
-
-      # split coordinates to match signature
-      [getindex.(coords, j) for j in 1:dim]
-    end
-
-    # unpack observable of paramaters
-    xyz = map(1:embeddim(mesh[])) do i
-      Makie.@lift $xparams[i]
-    end
-
-    Makie.lines!(plot, xyz..., color=segmentcolor, linewidth=segmentsize)
+    vizfacets!(plot)
   end
 end
 
@@ -201,6 +159,54 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val)
     discretize.(bounds)
   end
   vizmany!(plot, meshes, color)
+end
+
+function vizfacets!(plot::Viz{<:Tuple{Mesh}})
+  mesh = plot[:object]
+  M = Makie.@lift manifold($mesh)
+  pdim = Makie.@lift paramdim($mesh)
+  edim = Makie.@lift embeddim($mesh)
+  vizmeshfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+end
+
+function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
+  mesh = plot[:object]
+  segmentcolor = plot[:segmentcolor]
+  segmentsize = plot[:segmentsize]
+
+  # retrieve coordinates parameters
+  coords = Makie.@lift let
+    # relevant settings
+    T = Unitful.numtype(Meshes.lentype($mesh))
+    dim = embeddim($mesh)
+    topo = topology($mesh)
+    nvert = nvertices($mesh)
+    verts = vertices($mesh)
+    coords = map(p -> ustrip.(to(p)), verts)
+
+    # use a sophisticated data structure
+    # to extract the edges from the n-gons
+    t = convert(HalfEdgeTopology, topo)
+    ∂ = Boundary{1,0}(t)
+
+    # append indices of incident vertices
+    # interleaved with a sentinel index
+    inds = Int[]
+    for i in 1:nfacets(t)
+      for j in ∂(i)
+        push!(inds, j)
+      end
+      push!(inds, nvert + 1)
+    end
+
+    # fill sentinel index with NaN coordinates
+    push!(coords, SVector(ntuple(i -> T(NaN), dim)))
+
+    # extract incident vertices
+    coords[inds]
+  end
+
+  Makie.lines!(plot, coords, color=segmentcolor, linewidth=segmentsize)
 end
 
 function segmentsof(topo, vert)
