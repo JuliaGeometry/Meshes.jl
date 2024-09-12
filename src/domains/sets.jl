@@ -23,7 +23,7 @@ end
 function GeometrySet(geoms)
   geoms′ = map(identity, geoms) # narrow types
 
-  # project all geometries to the same CRS if needed
+  # project all geometries to the same CRS if necessary
   gs = if allequal(crs(g) for g in geoms′)
     geoms′
   else
