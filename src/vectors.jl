@@ -42,8 +42,10 @@ struct Vec{Dim,T<:Number} <: StaticVector{Dim,T}
   Vec{Dim,T}(coords::NTuple{Dim}) where {Dim,T<:Number} = new(coords)
 end
 
-Vec(coords::NTuple{Dim,T}) where {Dim,T<:Number} = Vec{Dim,float(T)}(coords)
-Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec(promote(coords...))
+Vec{Dim}(coords::NTuple{Dim,T}) where {Dim,T<:Number} = Vec{Dim,float(T)}(coords)
+Vec{Dim}(coords::NTuple{Dim,Number}) where {Dim} = Vec{Dim}(promote(coords...))
+
+Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec{Dim}(coords)
 
 # StaticVector interface
 Base.Tuple(v::Vec) = getfield(v, :coords)
