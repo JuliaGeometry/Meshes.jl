@@ -20,7 +20,19 @@ struct GeometrySet{M<:Manifold,C<:CRS,G<:Geometry{M,C}} <: Domain{M,C}
 end
 
 # constructor with iterator of geometries
-GeometrySet(geoms) = GeometrySet(map(identity, geoms))
+function GeometrySet(geoms)
+  geoms′ = map(identity, geoms) # narrow types
+
+  # project all geometries to the same CRS if needed
+  gs = if allequal(crs(g) for g in geoms′)
+    geoms′
+  else
+    proj = Proj(crs(first(geoms′)))
+    map(proj, geoms′)
+  end
+
+  GeometrySet(gs)
+end
 
 element(d::GeometrySet, ind::Int) = d.geoms[ind]
 

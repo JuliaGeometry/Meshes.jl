@@ -24,6 +24,26 @@
   gset = GeometrySet(geoms)
   @test eltype(gset) <: Segment
 
+  # different CRS
+  s = Segment(latlon(0, 0), latlon(1, 1))
+  t = Triangle(latlon(0, 0), latlon(0, 1), latlon(1, 0)) |> Proj(PlateCarree)
+  q = Quadrangle(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0)) |> Proj(WebMercator)
+  geoms = [s, t, q]
+  gset = GeometrySet(geoms)
+  @test crs(gset) <: LatLon
+  gset = GeometrySet(g for g in geoms)
+  @test crs(gset) <: LatLon
+  geoms = [t, s, q]
+  gset = GeometrySet(geoms)
+  @test crs(gset) <: PlateCarree
+  gset = GeometrySet(g for g in geoms)
+  @test crs(gset) <: PlateCarree
+  geoms = [q, s, t]
+  gset = GeometrySet(geoms)
+  @test crs(gset) <: WebMercator
+  gset = GeometrySet(g for g in geoms)
+  @test crs(gset) <: WebMercator
+
   # conversion
   grid = cartgrid(10, 10)
   gset = convert(GeometrySet, grid)
