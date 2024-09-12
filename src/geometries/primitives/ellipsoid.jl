@@ -34,11 +34,11 @@ rotation(e::Ellipsoid) = e.rotation
 
 ==(e₁::Ellipsoid, e₂::Ellipsoid) = e₁.radii == e₂.radii && e₁.center == e₂.center && e₁.rotation == e₂.rotation
 
-function Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid; kwargs...)
-  # u = Unitful.promote_unit(unit(lentype(e₁)), unit(lentype(e₂)))
-  all(isapprox(r₁, r₂; kwargs...) for (r₁, r₂) in zip(e₁.radii, e₂.radii)) &&
-    isapprox(e₁.center, e₂.center; kwargs...) &&
-    isapprox(e₁.rotation, e₂.rotation; kwargs...)
+function Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid; atol=zero(lentype(e₁)), kwargs...)
+  u = Unitful.promote_unit(unit(lentype(e₁)), unit(lentype(e₂)))
+  all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(e₁.radii, e₂.radii)) &&
+    isapprox(e₁.center, e₂.center; atol, kwargs...) &&
+    isapprox(e₁.rotation, e₂.rotation; atol=ustrip(u, atol), kwargs...)
 end
 
 function (e::Ellipsoid)(θ, φ)
