@@ -6,7 +6,7 @@
     Vec(x₁, x₂, ..., xₙ)
     Vec((x₁, x₂, ..., xₙ))
 
-A geometric vector in `Dim`-dimensional space with coordinates
+A geometric vector in `N`-dimensional space with coordinates
 in length units (default to meters) for linear algebra.
 
 By default, integer coordinates are converted to float.
@@ -37,20 +37,20 @@ Vec(1m, 2m, 3m) # integer is converted to float by design
 
 - A `Vec` is a subtype of `StaticVector` from StaticArrays.jl
 """
-struct Vec{Dim,T<:Number} <: StaticVector{Dim,T}
-  coords::NTuple{Dim,T}
-  Vec{Dim,T}(coords::NTuple{Dim}) where {Dim,T<:Number} = new(coords)
+struct Vec{N,T<:Number} <: StaticVector{N,T}
+  coords::NTuple{N,T}
+  Vec{N,T}(coords::NTuple{N}) where {N,T<:Number} = new(coords)
 end
 
-Vec{Dim}(coords::NTuple{Dim,T}) where {Dim,T<:Number} = Vec{Dim,float(T)}(coords)
-Vec{Dim}(coords::NTuple{Dim,Number}) where {Dim} = Vec{Dim}(promote(coords...))
+Vec{N}(coords::NTuple{N,T}) where {N,T<:Number} = Vec{N,float(T)}(coords)
+Vec{N}(coords::NTuple{N,Number}) where {N} = Vec{N}(promote(coords...))
 
-Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec{Dim}(coords)
+Vec(coords::NTuple{N,Number}) where {N} = Vec{N}(coords)
 
 # StaticVector interface
 Base.Tuple(v::Vec) = getfield(v, :coords)
 Base.getindex(v::Vec, i::Int) = getindex(getfield(v, :coords), i)
-Base.promote_rule(::Type{Vec{Dim,T₁}}, ::Type{Vec{Dim,T₂}}) where {Dim,T₁,T₂} = Vec{Dim,promote_type(T₁, T₂)}
+Base.promote_rule(::Type{Vec{N,T₁}}, ::Type{Vec{N,T₂}}) where {N,T₁,T₂} = Vec{N,promote_type(T₁, T₂)}
 function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
