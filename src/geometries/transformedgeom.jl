@@ -94,5 +94,5 @@ _isequal(g₁, g₂) = pointify(g₁) == pointify(g₂)
 function _isapprox(g₁, g₂; kwargs...)
   ps₁ = pointify(g₁)
   ps₂ = pointify(g₂)
-  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
+  length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
 end
