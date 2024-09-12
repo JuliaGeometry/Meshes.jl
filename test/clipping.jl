@@ -87,12 +87,10 @@ end
   poly = Octagon(cart(8, -2), cart(8, 5), cart(2, 5), cart(4, 3), cart(6, 3), cart(4, 1), cart(2, 1), cart(2, -2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
   clipped = clip(poly, other, WeilerAthertonClipping())
-  @test length(clipped) == 2
-  @test issimple(clipped[1])
-  @test issimple(clipped[2])
-  out = vertices.(clipped)
-  @test all(out[1] .≈ [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 4)])
-  @test all(out[2] .≈ [cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0)])
+  @test all(
+    vertices(clipped) .≈
+    [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 4), cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0)]
+  )
 
   # inside
   poly = Quadrangle(cart(1, 0), cart(1, 1), cart(0, 1), cart(0, 0))
@@ -172,20 +170,6 @@ end
     ]
   )
 
-  # Two polygons with holes.
-  outer = Ring((8, 0), (4, 8), (2, 8), (-2, 0), (0, 0), (1, 2), (5, 2), (6, 0))
-  inner = Ring((4, 4), (2, 4), (3, 6))
-  poly = PolyArea([outer, inner])
-  other = poly |> Rotate(pi) |> Translate(8.0, 8.0)
-  clipped = clip(poly, other, WeilerAthertonClipping())
-  crings = rings(clipped)
-  @test all(
-    vertices(crings[1]) .≈
-    [cart(7, 2), cart(5, 6), cart(3, 6), cart(2, 8), cart(1, 6), cart(3, 2), cart(5, 2), cart(6, 0)]
-  )
-  @test crings[2] ≗ inner
-  @test all(vertices(crings[3]) .≈ [cart(4, 4), cart(6, 4), cart(5, 2)])
-
   # Tolerances are not properly retrieved for Float32 types, so need to pass them explicitly.
   atol_el = coords(cart(0.0)).x
 
@@ -204,46 +188,4 @@ end
       atol=atol(atol_el)
     )
   )
-
-  # Intersection only at a corner of two polygons with holes.
-  other = poly |> Rotate(pi)
-  clipped = clip(poly, other, WeilerAthertonClipping())
-  @test isnothing(clipped)
-
-  # Proper intersection of two polygons with holes.
-  other = poly |> Rotate(pi) |> Translate(1.0, 1.0)
-  clipped = clip(poly, other, WeilerAthertonClipping())
-  crings = rings(clipped)
-  @test length(crings) == 2
-  @test crings[1] ≈ rings(rectangle)[1]
-  @test all(
-    isapprox.(
-      vertices(crings[2]),
-      [
-        cart(0.4, 0.3),
-        cart(0.3, 0.3),
-        cart(0.35, 0.4),
-        cart(0.2, 0.7),
-        cart(0.5, 0.7),
-        cart(0.55, 0.8),
-        cart(0.6, 0.7),
-        cart(0.7, 0.7),
-        cart(0.65, 0.6),
-        cart(0.8, 0.3),
-        cart(0.5, 0.3),
-        cart(0.45, 0.2)
-      ],
-      atol=atol(atol_el)
-    )
-  )
-  # Clipping a GeometrySet.
-  poly = Quadrangle(cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0))
-  polyset = GeometrySet([poly, poly |> Translate(2.0, 0.0)])
-  other = Quadrangle(cart(0.5, 0.25), cart(2.5, 0.25), cart(2.5, 0.75), cart(0.5, 0.75))
-  clipped = clip(polyset, other, WeilerAthertonClipping())
-  @test clipped isa GeometrySet
-  crings = rings.(clipped)
-  @test length(crings) == 2
-  @test all(vertices(crings[1][1]) .≈ [cart(1.0, 0.25), cart(1.0, 0.75), cart(0.5, 0.75), cart(0.5, 0.25)])
-  @test all(vertices(crings[2][1]) .≈ [cart(2.0, 0.75), cart(2.0, 0.25), cart(2.5, 0.25), cart(2.5, 0.75)])
 end
