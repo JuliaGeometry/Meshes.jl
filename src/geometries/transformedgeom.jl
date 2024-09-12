@@ -51,14 +51,11 @@ paramdim(g::TransformedGeometry) = paramdim(g.geometry)
 
 ==(g₁::Geometry, g₂::TransformedGeometry) = _isequal(g₁, g₂)
 
-Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  _isapprox(g₁, g₂; atol, kwargs...)
+Base.isapprox(g₁::TransformedGeometry, g₂::TransformedGeometry; kwargs...) = _isapprox(g₁, g₂; kwargs...)
 
-Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; atol=atol(lentype(g₁)), kwargs...) =
-  _isapprox(g₁, g₂; atol, kwargs...)
+Base.isapprox(g₁::TransformedGeometry, g₂::Geometry; kwargs...) = _isapprox(g₁, g₂; kwargs...)
 
-Base.isapprox(g₁::Geometry, g₂::TransformedGeometry; atol=atol(lentype(g₁)), kwargs...) =
-  _isapprox(g₁, g₂; atol, kwargs...)
+Base.isapprox(g₁::Geometry, g₂::TransformedGeometry; kwargs...) = _isapprox(g₁, g₂; kwargs...)
 
 (g::TransformedGeometry)(uvw...) = g.transform(g.geometry(uvw...))
 

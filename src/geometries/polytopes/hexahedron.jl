@@ -13,8 +13,8 @@ nvertices(::Type{<:Hexahedron}) = 8
 
 ==(h₁::Hexahedron, h₂::Hexahedron) = h₁.vertices == h₂.vertices
 
-Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; atol=atol(lentype(h₁)), kwargs...) =
-  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(h₁.vertices, h₂.vertices))
+Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(h₁.vertices, h₂.vertices))
 
 function (h::Hexahedron)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)

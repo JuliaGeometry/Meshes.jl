@@ -20,7 +20,6 @@ paramdim(::Type{<:Line}) = 1
 
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 
-Base.isapprox(l₁::Line, l₂::Line; atol=atol(lentype(l₁)), kwargs...) =
-  isapprox(l₁.a, l₂.a; atol, kwargs...) && isapprox(l₁.b, l₂.b; atol, kwargs...)
+Base.isapprox(l₁::Line, l₂::Line; kwargs...) = isapprox(l₁.a, l₂.a; kwargs...) && isapprox(l₁.b, l₂.b; kwargs...)
 
 (l::Line)(t) = l.a + t * (l.b - l.a)

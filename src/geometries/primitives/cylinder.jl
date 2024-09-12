@@ -68,8 +68,7 @@ hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
 
 ==(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) == boundary(c₂)
 
-Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
+Base.isapprox(c₁::Cylinder, c₂::Cylinder; kwargs...) = isapprox(boundary(c₁), boundary(c₂); kwargs...)
 
 function (c::Cylinder)(ρ, φ, z)
   ℒ = lentype(c)

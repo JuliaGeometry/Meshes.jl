@@ -38,5 +38,4 @@ axis(f::Frustum) = axis(boundary(f))
 
 ==(f₁::Frustum, f₂::Frustum) = boundary(f₁) == boundary(f₂)
 
-Base.isapprox(f₁::Frustum, f₂::Frustum; atol=atol(lentype(f₁)), kwargs...) =
-  isapprox(boundary(f₁), boundary(f₂); atol, kwargs...)
+Base.isapprox(f₁::Frustum, f₂::Frustum; kwargs...) = isapprox(boundary(f₁), boundary(f₂); kwargs...)

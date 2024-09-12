@@ -53,11 +53,11 @@ axis(t::Torus) = Line(t.center, t.center + t.normal)
 ==(t₁::Torus, t₂::Torus) =
   t₁.center == t₂.center && t₁.normal == t₂.normal && t₁.major == t₂.major && t₁.minor == t₂.minor
 
-Base.isapprox(t₁::Torus, t₂::Torus; atol=atol(lentype(t₁)), kwargs...) =
-  isapprox(t₁.center, t₂.center; atol, kwargs...) &&
-  isapprox(t₁.normal, t₂.normal; atol, kwargs...) &&
-  isapprox(t₁.major, t₂.major; atol, kwargs...) &&
-  isapprox(t₁.minor, t₂.minor; atol, kwargs...)
+Base.isapprox(t₁::Torus, t₂::Torus; kwargs...) =
+  isapprox(t₁.center, t₂.center; kwargs...) &&
+  isapprox(t₁.normal, t₂.normal; kwargs...) &&
+  isapprox(t₁.major, t₂.major; kwargs...) &&
+  isapprox(t₁.minor, t₂.minor; kwargs...)
 
 function (t::Torus)(θ, φ)
   ℒ = lentype(t)

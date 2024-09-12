@@ -13,5 +13,5 @@ nvertices(::Type{<:Wedge}) = 6
 
 ==(t₁::Wedge, t₂::Wedge) = t₁.vertices == t₂.vertices
 
-Base.isapprox(t₁::Wedge, t₂::Wedge; atol=atol(lentype(t₁)), kwargs...) =
-  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
+Base.isapprox(t₁::Wedge, t₂::Wedge; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))

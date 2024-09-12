@@ -30,8 +30,8 @@ normal(d::Disk) = normal(d.plane)
 
 ==(d₁::Disk, d₂::Disk) = d₁.plane == d₂.plane && d₁.radius == d₂.radius
 
-Base.isapprox(d₁::Disk, d₂::Disk; atol=atol(lentype(d₁)), kwargs...) =
-  isapprox(d₁.plane, d₂.plane; atol, kwargs...) && isapprox(d₁.radius, d₂.radius; atol, kwargs...)
+Base.isapprox(d₁::Disk, d₂::Disk; kwargs...) =
+  isapprox(d₁.plane, d₂.plane; kwargs...) && isapprox(d₁.radius, d₂.radius; kwargs...)
 
 function (d::Disk)(ρ, φ)
   T = numtype(lentype(d))

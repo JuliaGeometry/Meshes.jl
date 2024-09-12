@@ -13,8 +13,8 @@ nvertices(::Type{<:Tetrahedron}) = 4
 
 ==(t₁::Tetrahedron, t₂::Tetrahedron) = t₁.vertices == t₂.vertices
 
-Base.isapprox(t₁::Tetrahedron, t₂::Tetrahedron; atol=atol(lentype(t₁)), kwargs...) =
-  all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
+Base.isapprox(t₁::Tetrahedron, t₂::Tetrahedron; kwargs...) =
+  all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
 
 function (t::Tetrahedron)(u, v, w)
   z = (1 - u - v - w)

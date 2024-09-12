@@ -41,8 +41,8 @@ paramdim(m::Multi) = maximum(paramdim, m.geoms)
 
 ==(m₁::Multi, m₂::Multi) = m₁.geoms == m₂.geoms
 
-Base.isapprox(m₁::Multi, m₂::Multi; atol=atol(lentype(m₁)), kwargs...) =
-  length(m₁.geoms) == length(m₂.geoms) && all(isapprox(g₁, g₂; atol, kwargs...) for (g₁, g₂) in zip(m₁.geoms, m₂.geoms))
+Base.isapprox(m₁::Multi, m₂::Multi; kwargs...) =
+  length(m₁.geoms) == length(m₂.geoms) && all(isapprox(g₁, g₂; kwargs...) for (g₁, g₂) in zip(m₁.geoms, m₂.geoms))
 
 # ---------
 # POLYTOPE

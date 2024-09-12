@@ -21,8 +21,8 @@ nvertices(r::Rope) = length(r.vertices)
 
 ==(r₁::Rope, r₂::Rope) = r₁.vertices == r₂.vertices
 
-Base.isapprox(r₁::Rope, r₂::Rope; atol=atol(lentype(r₁)), kwargs...) =
-  nvertices(r₁) == nvertices(r₂) && all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
+Base.isapprox(r₁::Rope, r₂::Rope; kwargs...) =
+  nvertices(r₁) == nvertices(r₂) && all(isapprox(v₁, v₂; kwargs...) for (v₁, v₂) in zip(r₁.vertices, r₂.vertices))
 
 Base.close(r::Rope) = Ring(r.vertices)
 

@@ -32,8 +32,7 @@ halfangle(c::Cone) = atan(radius(base(c)), height(c))
 
 ==(c₁::Cone, c₂::Cone) = boundary(c₁) == boundary(c₂)
 
-Base.isapprox(c₁::Cone, c₂::Cone; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
+Base.isapprox(c₁::Cone, c₂::Cone; kwargs...) = isapprox(boundary(c₁), boundary(c₂); kwargs...)
 
 function (c::Cone)(r, φ, h)
   if (r < 0 || r > 1) || (φ < 0 || φ > 1) || (h < 0 || h > 1)
