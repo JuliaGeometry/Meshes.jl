@@ -42,10 +42,8 @@ struct Vec{N,T<:Number} <: StaticVector{N,T}
   Vec{N,T}(coords::NTuple{N}) where {N,T<:Number} = new(coords)
 end
 
-Vec{N}(coords::NTuple{N,T}) where {N,T<:Number} = Vec{N,float(T)}(coords)
-Vec{N}(coords::NTuple{N,Number}) where {N} = Vec{N}(promote(coords...))
-
-Vec(coords::NTuple{N,Number}) where {N} = Vec{N}(coords)
+Vec(coords::NTuple{N,T}) where {N,T<:Number} = Vec{N,float(T)}(coords)
+Vec(coords::NTuple{N,Number}) where {N} = Vec(promote(coords...))
 
 # StaticVector interface
 Base.Tuple(v::Vec) = getfield(v, :coords)
