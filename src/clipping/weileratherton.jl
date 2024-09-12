@@ -23,10 +23,11 @@ abstract type Exiting <: VertexType end
 
 # Data structure for clipping the polygons. Fields left and right are used depending on the
 # VertexType. If Normal, left points to the following vertex of the original ring, and right
-# to the next  intersection vertex on the edge between point and left.point, or the following
+# to the next intersection vertex on the edge between point and left.point, or the following
 # original ring vertex if no intersections on the edge. For Entering and Exiting types, left
 # poitns to the following vertex on the clipping ring and right to the following vertex on one
 # of the clipped rings.
+# TODO Either properly document the usage of left and right, or separate RingVertex into Entering, Exiting and Normal vertices.
 mutable struct RingVertex{VT<:VertexType,M<:Manifold,C<:CRS}
   point::Point{M,C}
   left::RingVertex{<:VertexType,M,C}
@@ -52,8 +53,20 @@ function appendvertices!(v₁::RingVertex{Normal}, v₂::RingVertex{Normal})
   v₁.right = v₂
 end
 
+# Traversing and selecting following vertices for collecting of the rings after clipping depends
+# on the vertex type. Helper nextvertex follows the correct path.
+nextvertex(v::RingVertex{Normal}) = v.right
+nextvertex(v::RingVertex{Entering}) = v.right
+nextvertex(v::RingVertex{Exiting}) = v.left
+
 function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
   polyrings = rings(poly)
+
+  # If the polygon is contained in the ring, return the polygon right away.
+  allcontained = all(v ∈ PolyArea(ring) for v in vertices(polyrings[1]))
+  if (orientation(ring) == CCW && allcontained)
+    return poly
+  end
 
   # Convert the subject polygon rings and the clipping ring to the RingVertex data structure.
   clippedrings = [gettraversalring(r) for r in polyrings]
@@ -80,206 +93,88 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
         # Like for the clipping, the clipped also uses three consecutive vertices.
         clippedsegment = Segment(clipped.left.point, clipped.left.left.point)
 
-        vertextype = nothing
         I = intersection(clippingsegment, clippedsegment)
-
-        # First try to handle Crossing, EdgeTouching and CornerTouching intersections as they might
-        # add only a single intersection.
-
-        if type(I) == Crossing
-          point = get(I)
-          cl = Line(clipping.left.point, clipping.left.left.point)
-          vertextype = sideof(clipped.left.left.point, cl) == LEFT ? Entering : Exiting
-        elseif type(I) == EdgeTouching
-          point = get(I)
-          if point ≈ clipped.left.point
-            # When intersection is at the shared vertex of two edges of the clipped ring,
-            # then split the interscting edge of the clipping ring at the intersection point.
-            vertextype = decidedirection(
-              Segment(clipped.point, clipped.left.point),
-              clippedsegment,
-              Segment(clipping.left.point, point),
-              Segment(point, clipping.left.left.point)
-            )
-          elseif point ≈ clipping.left.point
-            # When intersection is at the shared vertex of two edges of the clipping ring,
-            # then split the interscting edge of the clipped ring at the intersection point.
-            vertextype = decidedirection(
-              Segment(clipped.left.point, point),
-              Segment(point, clipped.left.left.point),
-              Segment(clipping.point, clipping.left.point),
-              clippingsegment
-            )
-          end
-        elseif type(I) == CornerTouching
-          # When intersection is at the shared vertices of both the clipping and the clipped rings.
-          point = get(I)
-          if (point ≈ clipped.left.point) && (point ≈ clipping.left.point)
-            # Only applies if the intersection coincides with the middles of the currently observed
-            # vertices for both clipping and clipped rings.
-            vertextype = decidedirection(
-              Segment(clipped.point, point),
-              Segment(point, clipped.left.left.point),
-              Segment(clipping.point, point),
-              Segment(point, clipping.left.left.point)
-            )
-          end
-        end
-        if !isnothing(vertextype)
-          insertintersections!(clipping.left, clipped.left, point, vertextype, entering)
-          if vertextype == Entering
-            intersected[k] = true
-          end
-        end
-
-        # Overlapping intersections might add up to two intersections, so handle separately.
-
-        if type(I) == Overlapping
-          for point in extrema(get(I))
-            # For both ends of the intersecting segment, check if it coincides with the middle of
-            # the obeserved vertices for clipped and clipping rings. If it does, attempt adding a
-            # point.
-
-            if point ≈ clipped.left.point
-              clippingprev = Segment(clipping.left.point, point)
-              if measure(clippingprev) ≈ 0.0u"m"
-                clippingprev = Segment(clipping.point, point)
-              end
-
-              vertextype = decidedirection(
-                Segment(clipped.point, point),
-                Segment(point, clipped.left.left.point),
-                clippingprev,
-                Segment(point, clipping.left.left.point)
-              )
-              if !isnothing(vertextype)
-                insertintersections!(clipping.left, clipped.left, point, vertextype, entering)
-                if vertextype == Entering
-                  intersected[k] = true
-                end
-              end
-            end
-
-            if point ≈ clipping.left.point
-              clippedprev = Segment(clipped.left.point, point)
-              if measure(clippedprev) ≈ 0.0u"m"
-                clippedprev = Segment(clipped.point, point)
-              end
-
-              vertextype = decidedirection(
-                clippedprev,
-                Segment(point, clipped.left.left.point),
-                Segment(clipping.point, point),
-                Segment(point, clipping.left.left.point)
-              )
-              if !isnothing(vertextype)
-                insertintersections!(clipping.left, clipped.left, point, vertextype, entering)
-                if vertextype == Entering
-                  intersected[k] = true
-                end
-              end
-            end
-          end
-        end
+        vertex = vertexfromintersection(I, clipping, clipped)
+        success = insertintersections!(vertex, clipping, clipped, entering)
+        intersected[k] = intersected[k] || success
 
         clipped = clipped.left
-        if clipped.left == startclipped.left
-          break
-        end
+        clipped.left == startclipped.left && break
       end
     end
 
     clipping = clipping.left
-    if clipping.left == startclipping.left
-      break
-    end
+    clipping.left == startclipping.left && break
   end
 
-  collectedrings = collectclipped(entering)
-
-  # When no interesction have been registered with any of the rings, the clipping ring either
-  # encircles everything or is completely contained in the clipped polygon.
+  # Handle the case when no interections have been found.
   if !any(intersected)
-    o = orientation(ring)
-    allcontained = all(v ∈ PolyArea(ring) for v in vertices(polyrings[1]))
-    if (o == CCW && allcontained)
-      return poly
+    if orientation(ring) == CW
+      # For an inner clipping ring take all outside rings.
+      return PolyArea(collectoutsiderings(ring, polyrings)...)
+    else
+      # For an outer clipping ring add it to act as the outer ring.
+      collectedrings = all(v ∈ PolyArea(polyrings[1]) for v in vertices(ring)) ? [ring] : []
     end
-    if (o == CW && !allcontained)
-      push!(collectedrings, polyrings[1])
-      intersected[1] = true
-      for polyring in polyrings[2:end]
-        if !all(v ∈ PolyArea(ring) for v in vertices(polyring))
-          push!(collectedrings, polyring)
-        end
-      end
-      if any(v ∈ PolyArea(polyrings[1]) for v in vertices(ring))
-        push!(collectedrings, ring)
-      end
-      return PolyArea(collectedrings...)
-    end
-    if all(v ∈ PolyArea(polyrings[1]) for v in vertices(ring))
-      push!(collectedrings, ring)
-    end
+  else
+    # Collect rings formed from the intersected rings.
+    collectedrings = collectclipped(entering)
   end
 
-  # Handle all the non-intersected rings. Add them if they are contained in the clipping ring.
-  polys = PolyArea[]
-  for r in collectedrings
-    newpolyrings = [r]
-    valid = true
-    for k in eachindex(intersected)
-      if !intersected[k]
-        # Check if majority of vertices are inside the clipping ring.
-        ins = count(v ∈ PolyArea(ring) for v in vertices(polyrings[k]))
-        if orientation(ring) == CCW
-          if ins > (length(vertices(polyrings[k])) - ins)
-            if orientation(polyrings[k]) == CCW
-              pushfirst!(newpolyrings, polyrings[k])
-            else
-              push!(newpolyrings, polyrings[k])
-            end
-            intersected[k] = true
-          elseif vertices(ring)[1] ∈ PolyArea(polyrings[k]) && k > 1
-            # If the ring is contained within one of the inner rings, invalidate it.
-            valid = false
-          end
-        else
-          if ins < (length(vertices(polyrings[k])) - ins)
-            if orientation(polyrings[k]) == CCW
-              pushfirst!(newpolyrings, polyrings[k])
-            else
-              push!(newpolyrings, polyrings[k])
-            end
-            intersected[k] = true
-          end
-        end
-      end
-    end
-    if valid
-      push!(polys, PolyArea(newpolyrings))
-    end
-  end
+  # Complete the collected rings by adding non-intersected rings
+  # if they are contained within the collected ones.
+  completedrings = [perhapsaddnonintersected!(r, polyrings, intersected) for r in collectedrings]
+
+  # Convert completed ring lists into PolyAreas.
+  polys = PolyArea.(filter(!isnothing, completedrings))
 
   n = length(polys)
-  n == 0 ? nothing : (n == 1 ? polys[1] : GeometrySet(polys))
+  n == 0 ? nothing : (n == 1 ? polys[1] : Multi(polys))
 end
 
 clip(poly::Polygon, other::Geometry, method::WeilerAthertonClipping) = clip(poly, boundary(other), method)
 
-function clip(poly::Polygon, multi::Multi, method::WeilerAthertonClipping)
-  for r in parent(multi)
-    poly = clip(poly, r, method)
-    if isnothing(poly)
-      return nothing
+function collectoutsiderings(ring, polyrings)
+  newpolyrings = Ring[]
+  for k in eachindex(polyrings)
+    if !all(v ∈ PolyArea(ring) for v in vertices(polyrings[k]))
+      push!(newpolyrings, polyrings[k])
     end
   end
-  poly
+  if any(v ∈ PolyArea(polyrings[1]) for v in vertices(ring))
+    push!(newpolyrings, ring)
+  end
+  newpolyrings
 end
 
-function clip(dom::Domain, other::Geometry, method::WeilerAthertonClipping)
-  clipped = filter(!isnothing, [clip(geom, other, method) for geom in dom])
-  isempty(clipped) ? nothing : (length(clipped) == 1 ? clipped[1] : GeometrySet(clipped))
+function perhapsaddnonintersected!(ring, polyrings, intersected)
+  # Handle all the non-intersected rings. Add them if they are contained in the clipping ring.
+  newpolyrings = [ring]
+  for k in eachindex(intersected)
+    if !intersected[k]
+      ccw = orientation(ring) == CCW
+
+      # Discard if the processed ring is an outer ring but inside another inner ring.
+      if ccw && vertices(ring)[1] ∈ PolyArea(polyrings[k]) && k > 1
+        return nothing
+      end
+
+      vs = vertices(polyrings[k])
+      ins = count(v ∈ PolyArea(ring) for v in vs)
+      outs = length(vs) - ins
+      if ccw == (ins > outs)
+        if !ccw
+          # An outer ring should be first in the list.
+          pushfirst!(newpolyrings, polyrings[k])
+        else
+          # Inner rings should follow an outer in the list.
+          push!(newpolyrings, polyrings[k])
+        end
+        intersected[k] = true
+      end
+    end
+  end
+  newpolyrings
 end
 
 # Inserts the intersection in the ring.
@@ -304,21 +199,23 @@ function insertintersection!(head::RingVertex, intersection::RingVertex, side::S
 end
 
 # Inserts the intersection into both the clipping and the clipped rings.
-function insertintersections!(clipping, clipped, point, vtype, entering)
-  intersection = RingVertex{vtype}(point)
-  insertintersection!(clipping, intersection, :left)
-  insertintersection!(clipped, intersection, :right)
+function insertintersections!(vertex::Tuple, clipping, clipped, entering)
+  (vtype, point) = vertex
+  if !isnothing(vtype)
+    intersection = RingVertex{vtype}(point)
+    insertintersection!(clipping.left, intersection, :left)
+    insertintersection!(clipped.left, intersection, :right)
 
-  if vtype == Entering
-    push!(entering, intersection)
+    if vtype == Entering
+      push!(entering, intersection)
+    end
+    return true
   end
+  false
 end
 
-# Traversing and selecting following vertices for collecting of the rings after clipping depends
-# on the vertex type. Helper nextvertex follows the correct path.
-nextvertex(v::RingVertex{Normal}) = v.right
-nextvertex(v::RingVertex{Entering}) = v.right
-nextvertex(v::RingVertex{Exiting}) = v.left
+insertintersections!(vertices::Array, clipping, clipped, entering) =
+  any(insertintersections!.(vertices, Ref(clipping), Ref(clipped), Ref(entering)))
 
 # Takes a list of entering vertices and returns all rings that contain those vertices.
 function collectclipped(entering::Vector{RingVertex{Entering}})
@@ -365,6 +262,98 @@ function collectclipped(entering::Vector{RingVertex{Entering}})
     end
   end
   rings
+end
+
+function vertexfromintersection(I, clipping, clipped)
+  type(I) == Crossing && return vertexfromcrossing(get(I), clipping, clipped)
+  type(I) == CornerTouching && return vertexfromcornertouching(get(I), clipping, clipped)
+  type(I) == EdgeTouching && return vertexfromedgetouching(get(I), clipping, clipped)
+  type(I) == Overlapping && return vertexfromoverlapping(get(I), clipping, clipped)
+  (nothing, nothing)
+end
+
+function vertexfromcrossing(point, clipping, clipped)
+  cl = Line(clipping.left.point, clipping.left.left.point)
+  vertextype = sideof(clipped.left.left.point, cl) == LEFT ? Entering : Exiting
+  (vertextype, point)
+end
+
+function vertexfromedgetouching(point, clipping, clipped)
+  vertextype = nothing
+  if point ≈ clipped.left.point
+    # When intersection is at the shared vertex of two edges of the clipped ring,
+    # then split the interscting edge of the clipping ring at the intersection point.
+    vertextype = decidedirection(
+      Segment(clipped.point, clipped.left.point),
+      Segment(clipped.left.point, clipped.left.left.point),
+      Segment(clipping.left.point, point),
+      Segment(point, clipping.left.left.point)
+    )
+  elseif point ≈ clipping.left.point
+    # When intersection is at the shared vertex of two edges of the clipping ring,
+    # then split the interscting edge of the clipped ring at the intersection point.
+    vertextype = decidedirection(
+      Segment(clipped.left.point, point),
+      Segment(point, clipped.left.left.point),
+      Segment(clipping.point, clipping.left.point),
+      Segment(clipping.left.point, clipping.left.left.point)
+    )
+  end
+  (vertextype, point)
+end
+
+function vertexfromcornertouching(point, clipping, clipped)
+  vertextype = nothing
+  # When intersection is at the shared vertices of both the clipping and the clipped rings.
+  if (point ≈ clipped.left.point) && (point ≈ clipping.left.point)
+    # Only applies if the intersection coincides with the middles of the currently observed
+    # vertices for both clipping and clipped rings.
+    vertextype = decidedirection(
+      Segment(clipped.point, point),
+      Segment(point, clipped.left.left.point),
+      Segment(clipping.point, point),
+      Segment(point, clipping.left.left.point)
+    )
+  end
+  (vertextype, point)
+end
+
+function vertexfromoverlapping(segment, clipping, clipped)
+  # For both ends of the intersecting segment, check if it coincides with the middle of
+  # the obeserved vertices for clipped and clipping rings. If it does, attempt adding a
+  # point.
+
+  ret = Tuple[]
+  for point in extrema(segment)
+    if point ≈ clipped.left.point
+      clippingprev = Segment(clipping.left.point, point)
+      if measure(clippingprev) ≈ 0.0u"m"
+        clippingprev = Segment(clipping.point, point)
+      end
+      vertextype = decidedirection(
+        Segment(clipped.point, point),
+        Segment(point, clipped.left.left.point),
+        clippingprev,
+        Segment(point, clipping.left.left.point)
+      )
+      push!(ret, (vertextype, point))
+    end
+
+    if point ≈ clipping.left.point
+      clippedprev = Segment(clipped.left.point, point)
+      if measure(clippedprev) ≈ 0.0u"m"
+        clippedprev = Segment(clipped.point, point)
+      end
+      vertextype = decidedirection(
+        clippedprev,
+        Segment(point, clipped.left.left.point),
+        Segment(clipping.point, point),
+        Segment(point, clipping.left.left.point)
+      )
+      push!(ret, (vertextype, point))
+    end
+  end
+  ret
 end
 
 # Used to figure out the type of the vertex to add when intersection is other than the crossing

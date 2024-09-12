@@ -46,8 +46,8 @@ outer = Ring((8, 0), (4, 8), (2, 8), (-2, 0), (0, 0), (1, 2), (5, 2), (6, 0))
 inner = Ring((4, 4), (2, 4), (3, 6))
 poly = PolyArea([outer, inner])
 
-# clipping geometry can be a polygon with holes
-other = poly |> Rotate(π) |> Translate(8, 8)
+# clipping geometry
+other = outer |> Rotate(π) |> Translate(8, 8)
 
 # clipped polygon
 clipped = clip(poly, other, WeilerAthertonClipping())
