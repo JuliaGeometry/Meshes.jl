@@ -21,17 +21,14 @@ end
 
 # constructor with iterator of geometries
 function GeometrySet(geoms)
-  geoms′ = map(identity, geoms) # narrow types
-
   # project all geometries to the same CRS if necessary
-  gs = if allequal(crs(g) for g in geoms′)
-    geoms′
+  fun = if allequal(crs(g) for g in geoms)
+    identity # narrow types
   else
-    proj = Proj(crs(first(geoms′)))
-    map(proj, geoms′)
+    Proj(crs(first(geoms)))
   end
 
-  GeometrySet(gs)
+  GeometrySet(map(fun, geoms))
 end
 
 element(d::GeometrySet, ind::Int) = d.geoms[ind]
