@@ -6,7 +6,7 @@
     Vec(x₁, x₂, ..., xₙ)
     Vec((x₁, x₂, ..., xₙ))
 
-A geometric vector in `N`-dimensional space with coordinates
+A geometric vector in N-dimensional space with coordinates
 in length units (default to meters) for linear algebra.
 
 By default, integer coordinates are converted to float.
