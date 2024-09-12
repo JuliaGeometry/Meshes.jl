@@ -47,24 +47,30 @@ function vizgridfallback!(plot, M, pdim, edim)
   colorrange = plot[:colorrange]
   showsegments = plot[:showsegments]
 
-  if pdim == Val(2) # visualize quadrangle mesh with texture using uv coords
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+
+  # number of vertices, elements and colors
+  nverts = Makie.@lift nvertices($grid)
+  nelems = Makie.@lift nelements($grid)
+  ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+
+  # visualize quadrangle mesh with texture using uv coords
+  # plots with uv coords are always interpolated,
+  # so it is only used in the case ncolor == nverts
+  # or when there is a large number of elements
+  if pdim == Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
     # decide whether or not to reverse connectivity list
     rfunc = Makie.@lift _reverse(crs($grid))
 
     verts = Makie.@lift map(asmakie, vertices($grid))
     quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
 
-    colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
-    nverts = Makie.@lift length($verts)
-    nquads = Makie.@lift length($quads)
-    ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
-
     dims = Makie.@lift size($grid)
     vdims = Makie.@lift Meshes.vsize($grid)
     texture = if ncolor[] == 1
       Makie.@lift fill($colorant, $dims)
-    elseif ncolor[] == nquads[]
+    elseif ncolor[] == nelems[]
       Makie.@lift reshape($colorant, $dims)
     elseif ncolor[] == nverts[]
       Makie.@lift reshape($colorant, $vdims)
