@@ -7,9 +7,9 @@
 isequalzero(x) = x == zero(x)
 isequalone(x) = x == oneunit(x)
 
-isapproxequal(x, y; atol=atol(x), kwargs...) = isapprox(x, y; atol, kwargs...)
-isapproxzero(x; atol=atol(x), kwargs...) = isapprox(x, zero(x); atol, kwargs...)
-isapproxone(x; atol=atol(x), kwargs...) = isapprox(x, oneunit(x); atol, kwargs...)
+isapproxequal(x, y; kwargs...) = isapprox(x, y; kwargs...)
+isapproxzero(x; kwargs...) = isapprox(x, zero(x); kwargs...)
+isapproxone(x; kwargs...) = isapprox(x, oneunit(x); kwargs...)
 
 ispositive(x) = x > zero(x)
 isnegative(x) = x < zero(x)
@@ -21,6 +21,6 @@ isnonnegative(x) = x ≥ zero(x)
 
 Round `λ` to `x` if it is within the tolerance `tol`.
 """
-function mayberound(λ::T, x::T, atol=atol(T)) where {T}
-  isapprox(λ, x, atol=atol) ? x : λ
+function mayberound(λ, x; kwargs...)
+  isapprox(λ, x; kwargs...) ? x : λ
 end
