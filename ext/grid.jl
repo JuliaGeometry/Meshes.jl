@@ -57,8 +57,8 @@ function vizgridfallback!(plot, M, pdim, edim)
 
   # visualize quadrangle mesh with texture using uv coords
   # plots with uv coords are always interpolated,
-  # so it is only used in the case ncolor == nelems
-  # when there is a large number of elements
+  # so it is only used in the case ncolor == nverts
+  # or when there is a large number of elements
   if pdim == Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
     # decide whether or not to reverse connectivity list
     rfunc = Makie.@lift _reverse(crs($grid))
