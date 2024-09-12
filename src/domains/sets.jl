@@ -14,13 +14,26 @@ Set containing two balls centered at `(0.0, 0.0)` and `(1.0, 1.0)`:
 ```julia
 julia> GeometrySet([Ball((0.0, 0.0)), Ball((1.0, 1.0))])
 ```
+
+### Notes
+
+* Geometries with different CRS will be projected to the CRS of the first geometry.
 """
 struct GeometrySet{M<:Manifold,C<:CRS,G<:Geometry{M,C}} <: Domain{M,C}
   geoms::Vector{G}
 end
 
 # constructor with iterator of geometries
-GeometrySet(geoms) = GeometrySet(map(identity, geoms))
+function GeometrySet(geoms)
+  # project all geometries to the same CRS if necessary
+  fun = if allequal(crs(g) for g in geoms)
+    identity # narrow types
+  else
+    Proj(crs(first(geoms)))
+  end
+
+  GeometrySet(map(fun, geoms))
+end
 
 element(d::GeometrySet, ind::Int) = d.geoms[ind]
 
