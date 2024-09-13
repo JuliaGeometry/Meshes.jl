@@ -37,13 +37,14 @@ Vec(1m, 2m, 3m) # integer is converted to float by design
 
 - A `Vec` is a subtype of `StaticVector` from StaticArrays.jl
 """
-struct Vec{N,T<:Number} <: StaticVector{N,T}
+struct Vec{N,T<:Quantity} <: StaticVector{N,T}
   coords::NTuple{N,T}
-  Vec{N,T}(coords::NTuple{N}) where {N,T<:Number} = new(coords)
+  Vec{N,T}(coords::NTuple{N}) where {N,T<:Quantity} = new(coords)
 end
 
-Vec(coords::NTuple{N,T}) where {N,T<:Number} = Vec{N,float(T)}(coords)
-Vec(coords::NTuple{N,Number}) where {N} = Vec(promote(coords...))
+Vec(coords::NTuple{N,T}) where {N,T<:Quantity} = Vec{N,float(T)}(coords)
+Vec(coords::NTuple{N,Quantity}) where {N} = Vec(promote(coords...))
+Vec(coords::NTuple{N,Number}) where {N} = Vec(addunit.(coords, u"m"))
 
 # StaticVector interface
 Base.Tuple(v::Vec) = getfield(v, :coords)
@@ -52,7 +53,7 @@ Base.promote_rule(::Type{Vec{N,T₁}}, ::Type{Vec{N,T₂}}) where {N,T₁,T₂} 
 function StaticArrays.similar_type(::Type{<:Vec}, ::Type{T}, ::Size{S}) where {T,S}
   L = prod(S)
   N = length(S)
-  isone(N) && T <: Number ? Vec{L,T} : SArray{Tuple{S...},T,N,L}
+  isone(N) && T <: Quantity ? Vec{L,T} : SArray{Tuple{S...},T,N,L}
 end
 
 """
