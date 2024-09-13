@@ -51,15 +51,15 @@
   @test latlon(45, 180) == latlon(45, -180)
   @test latlon(45, -180) == latlon(45, 180)
 
-  @test to(cart(1)) == vector(1)
-  @test to(cart(1, 2)) == vector(1, 2)
-  @test to(cart(1, 2, 3)) == vector(1, 2, 3)
-  @test to(Point(Polar(T(√2), T(π / 4)))) ≈ vector(1, 1)
-  @test to(Point(Cylindrical(T(√2), T(π / 4), T(1)))) ≈ vector(1, 1, 1)
+  @test to(cart(1)) == vector(1) * u"m"
+  @test to(cart(1, 2)) == vector(1, 2) * u"m"
+  @test to(cart(1, 2, 3)) == vector(1, 2, 3) * u"m"
+  @test to(Point(Polar(T(√2), T(π / 4)))) ≈ vector(1, 1) * u"m"
+  @test to(Point(Cylindrical(T(√2), T(π / 4), T(1)))) ≈ vector(1, 1, 1) * u"m"
 
-  @test cart(1) - cart(1) == vector(0)
-  @test cart(1, 2) - cart(1, 1) == vector(0, 1)
-  @test cart(1, 2, 3) - cart(1, 1, 1) == vector(0, 1, 2)
+  @test cart(1) - cart(1) == vector(0) * u"m"
+  @test cart(1, 2) - cart(1, 1) == vector(0, 1) * u"m"
+  @test cart(1, 2, 3) - cart(1, 1, 1) == vector(0, 1, 2) * u"m"
   @test_throws DimensionMismatch cart(1, 2) - cart(1, 2, 3)
 
   @test cart(1) + vector(0) == cart(1)
@@ -135,8 +135,8 @@
   @test isnothing(boundary(cart(1, 2, 3)))
 
   # check broadcasting works as expected
-  @test cart(2, 2) .- [cart(2, 3), cart(3, 1)] == [vector(0.0, -1.0), vector(-1.0, 1.0)]
-  @test cart(2, 2, 2) .- [cart(2, 3, 1), cart(3, 1, 4)] == [vector(0.0, -1.0, 1.0), vector(-1.0, 1.0, -2.0)]
+  @test cart(2, 2) .- [cart(2, 3), cart(3, 1)] == [vector(0.0, -1.0), vector(-1.0, 1.0)] .* u"m"
+  @test cart(2, 2, 2) .- [cart(2, 3, 1), cart(3, 1, 4)] == [vector(0.0, -1.0, 1.0), vector(-1.0, 1.0, -2.0)] .* u"m"
 
   # angles between 2D points
   @test ∠(cart(0, 1), cart(0, 0), cart(1, 0)) ≈ T(-π / 2)
@@ -210,7 +210,7 @@ end
   @test r(T(0.0)) == cart(0, 0)
   @test r(T(1.0)) == cart(1, 1)
   @test r(T(Inf)) == cart(Inf, Inf)
-  @test r(T(1.0)) - r(T(0.0)) == vector(1, 1)
+  @test r(T(1.0)) - r(T(0.0)) == vector(1, 1) * u"m"
   @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
 
   p₁ = cart(3, 3, 3)
@@ -238,17 +238,17 @@ end
   @test r1 == r2
 
   r = Ray(cart(0, 0), vector(1, 1))
-  @test sprint(show, r) == "Ray(p: (x: 0.0 m, y: 0.0 m), v: (1.0 m, 1.0 m))"
+  @test sprint(show, r) == "Ray(p: (x: 0.0 m, y: 0.0 m), v: (1.0, 1.0))"
   if T === Float32
     @test sprint(show, MIME("text/plain"), r) == """
     Ray
     ├─ p: Point(x: 0.0f0 m, y: 0.0f0 m)
-    └─ v: Vec(1.0f0 m, 1.0f0 m)"""
+    └─ v: Vec(1.0f0, 1.0f0)"""
   else
     @test sprint(show, MIME("text/plain"), r) == """
     Ray
     ├─ p: Point(x: 0.0 m, y: 0.0 m)
-    └─ v: Vec(1.0 m, 1.0 m)"""
+    └─ v: Vec(1.0, 1.0)"""
   end
 end
 
@@ -321,7 +321,7 @@ end
   # normal to plane has norm one regardless of basis
   p = Plane(cart(0, 0, 0), vector(2, 0, 0), vector(0, 3, 0))
   n = normal(p)
-  @test isapprox(norm(n), oneunit(ℳ), atol=atol(ℳ))
+  @test isapprox(norm(n), oneunit(T), atol=atol(T))
 
   # plane passing through three points
   p₁ = cart(0, 0, 0)
@@ -334,19 +334,19 @@ end
 
   p = Plane(cart(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
   @test sprint(show, p) ==
-        "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, 0.0 m, 0.0 m), v: (0.0 m, 1.0 m, 0.0 m))"
+        "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, 0.0, 0.0), v: (0.0, 1.0, 0.0))"
   if T === Float32
     @test sprint(show, MIME("text/plain"), p) == """
     Plane
     ├─ p: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
-    ├─ u: Vec(1.0f0 m, 0.0f0 m, 0.0f0 m)
-    └─ v: Vec(0.0f0 m, 1.0f0 m, 0.0f0 m)"""
+    ├─ u: Vec(1.0f0, 0.0f0, 0.0f0)
+    └─ v: Vec(0.0f0, 1.0f0, 0.0f0)"""
   else
     @test sprint(show, MIME("text/plain"), p) == """
     Plane
     ├─ p: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
-    ├─ u: Vec(1.0 m, 0.0 m, 0.0 m)
-    └─ v: Vec(0.0 m, 1.0 m, 0.0 m)"""
+    ├─ u: Vec(1.0, 0.0, 0.0)
+    └─ v: Vec(0.0, 1.0, 0.0)"""
   end
 end
 
@@ -771,16 +771,16 @@ end
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
   @test sprint(show, d) ==
-        "Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)"
+        "Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m)"
   if T === Float32
     @test sprint(show, MIME("text/plain"), d) == """
     Disk
-    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m))
+    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
     └─ radius: 2.0f0 m"""
   else
     @test sprint(show, MIME("text/plain"), d) == """
     Disk
-    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m))
+    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
     └─ radius: 2.0 m"""
   end
 end
@@ -835,16 +835,16 @@ end
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   c = Circle(p, T(2))
   @test sprint(show, c) ==
-        "Circle(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)"
+        "Circle(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m)"
   if T === Float32
     @test sprint(show, MIME("text/plain"), c) == """
     Circle
-    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m))
+    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
     └─ radius: 2.0f0 m"""
   else
     @test sprint(show, MIME("text/plain"), c) == """
     Circle
-    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m))
+    ├─ plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0))
     └─ radius: 2.0 m"""
   end
 end
@@ -1099,16 +1099,16 @@ end
   a = cart(0, 0, 1)
   c = Cone(d, a)
   @test sprint(show, c) ==
-        "Cone(base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m), apex: (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
+        "Cone(base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m), apex: (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
   if T === Float32
     @test sprint(show, MIME("text/plain"), c) == """
     Cone
-    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)
+    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m)
     └─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)"""
   else
     @test sprint(show, MIME("text/plain"), c) == """
     Cone
-    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)
+    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m)
     └─ apex: Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
   end
 
@@ -1177,16 +1177,16 @@ end
   a = cart(0, 0, 1)
   s = ConeSurface(d, a)
   @test sprint(show, s) ==
-        "ConeSurface(base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m), apex: (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
+        "ConeSurface(base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m), apex: (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
   if T === Float32
     @test sprint(show, MIME("text/plain"), s) == """
     ConeSurface
-    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)
+    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m)
     └─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 1.0f0 m)"""
   else
     @test sprint(show, MIME("text/plain"), s) == """
     ConeSurface
-    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 2.0 m)
+    ├─ base: Disk(plane: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, -0.0, -0.0), v: (-0.0, 1.0, -0.0)), radius: 2.0 m)
     └─ apex: Point(x: 0.0 m, y: 0.0 m, z: 1.0 m)"""
   end
 end
@@ -1305,19 +1305,19 @@ end
 
   t = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
   @test sprint(show, t) ==
-        "Torus(center: (x: 1.0 m, y: 1.0 m, z: 1.0 m), normal: (1.0 m, 0.0 m, 0.0 m), major: 2.0 m, minor: 1.0 m)"
+        "Torus(center: (x: 1.0 m, y: 1.0 m, z: 1.0 m), normal: (1.0, 0.0, 0.0), major: 2.0 m, minor: 1.0 m)"
   if T === Float32
     @test sprint(show, MIME("text/plain"), t) == """
     Torus
     ├─ center: Point(x: 1.0f0 m, y: 1.0f0 m, z: 1.0f0 m)
-    ├─ normal: Vec(1.0f0 m, 0.0f0 m, 0.0f0 m)
+    ├─ normal: Vec(1.0f0, 0.0f0, 0.0f0)
     ├─ major: 2.0f0 m
     └─ minor: 1.0f0 m"""
   else
     @test sprint(show, MIME("text/plain"), t) == """
     Torus
     ├─ center: Point(x: 1.0 m, y: 1.0 m, z: 1.0 m)
-    ├─ normal: Vec(1.0 m, 0.0 m, 0.0 m)
+    ├─ normal: Vec(1.0, 0.0, 0.0)
     ├─ major: 2.0 m
     └─ minor: 1.0 m"""
   end

@@ -20,8 +20,11 @@ paramdim(::Type{<:Ray}) = 1
 
 ==(r₁::Ray, r₂::Ray) = r₁.p == r₂.p && (r₁.p + r₁.v) ∈ r₂ && (r₂.p + r₂.v) ∈ r₁
 
-Base.isapprox(r₁::Ray, r₂::Ray; atol=atol(lentype(r₁)), kwargs...) =
-  isapprox(r₁.p, r₂.p; atol, kwargs...) && isapprox(r₁.v, r₂.v; atol, kwargs...)
+function Base.isapprox(r₁::Ray, r₂::Ray; atol=atol(lentype(r₁)), kwargs...)
+  v₁ = withunit.(r₁.v, unit(lentype(r₁)))
+  v₂ = withunit.(r₂.v, unit(lentype(r₂)))
+  isapprox(r₁.p, r₂.p; atol, kwargs...) && isapprox(v₁, v₂; atol, kwargs...)
+end
 
 function (r::Ray)(t)
   if t < 0

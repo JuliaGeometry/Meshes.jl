@@ -1,13 +1,13 @@
 @testitem "Vectors" setup = [Setup] begin
   # vararg constructors
-  @test eltype(Vec(1, 1)) == Meshes.Met{Float64}
-  @test eltype(Vec(1.0, 1.0)) == Meshes.Met{Float64}
-  @test eltype(Vec(1.0f0, 1.0f0)) == Meshes.Met{Float32}
+  @test eltype(Vec(1, 1)) == Float64
+  @test eltype(Vec(1.0, 1.0)) == Float64
+  @test eltype(Vec(1.0f0, 1.0f0)) == Float32
 
   # tuple constructors
-  @test eltype(Vec((1, 1))) == Meshes.Met{Float64}
-  @test eltype(Vec((1.0, 1.0))) == Meshes.Met{Float64}
-  @test eltype(Vec((1.0f0, 1.0f0))) == Meshes.Met{Float32}
+  @test eltype(Vec((1, 1))) == Float64
+  @test eltype(Vec((1.0, 1.0))) == Float64
+  @test eltype(Vec((1.0f0, 1.0f0))) == Float32
 
   # check all 1D Vec constructors, because those tend to make trouble
   @test Vec(T(1)) == Vec((T(1),))
@@ -23,12 +23,12 @@
   @test Vec((0, T(-1.0), +2, T(-4.0))) == Vec((T(0.0), T(-1.0), T(+2.0), T(-4.0)))
 
   # integer coordinates are converted to float
-  @test eltype(Vec(1)) == Meshes.Met{Float64}
-  @test eltype(Vec(1, 2)) == Meshes.Met{Float64}
-  @test eltype(Vec(1, 2, 3)) == Meshes.Met{Float64}
-  @test Tuple(Vec(1)) == (1.0u"m",)
-  @test Tuple(Vec(1, 2)) == (1.0u"m", 2.0u"m")
-  @test Tuple(Vec(1, 2, 3)) == (1.0u"m", 2.0u"m", 3.0u"m")
+  @test eltype(Vec(1)) == Float64
+  @test eltype(Vec(1, 2)) == Float64
+  @test eltype(Vec(1, 2, 3)) == Float64
+  @test Tuple(Vec(1)) == (1.0,)
+  @test Tuple(Vec(1, 2)) == (1.0, 2.0)
+  @test Tuple(Vec(1, 2, 3)) == (1.0, 2.0, 3.0)
 
   # Unitful coordinates
   v = Vec(1u"m", 1u"m")
@@ -61,11 +61,11 @@
   @test ∠(vector(0, 1, 1), vector(1, 1, 0)) ≈ T(π / 3)
 
   v = vector(0, 1)
-  @test sprint(show, v, context=:compact => true) == "(0.0 m, 1.0 m)"
+  @test sprint(show, v, context=:compact => true) == "(0.0, 1.0)"
   if T === Float32
-    @test sprint(show, v) == "Vec(0.0f0 m, 1.0f0 m)"
+    @test sprint(show, v) == "Vec(0.0f0, 1.0f0)"
   else
-    @test sprint(show, v) == "Vec(0.0 m, 1.0 m)"
+    @test sprint(show, v) == "Vec(0.0, 1.0)"
   end
   @test sprint(show, MIME("text/plain"), v) == sprint(show, v)
 end
