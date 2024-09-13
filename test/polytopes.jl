@@ -377,10 +377,10 @@ end
   @test t(T(0.5), T(0.5)) == cart(0, 0.5, 0.5)
   @test_throws DomainError((T(-0.5), T(0.0)), "invalid barycentric coordinates for triangle.") t(T(-0.5), T(0.0))
   @test_throws DomainError((T(1), T(1)), "invalid barycentric coordinates for triangle.") t(T(1), T(1))
-  @test isapprox(normal(t), vector(1, 0, 0))
+  @test isapprox(normal(t), vector(1, 0, 0) * u"m")
   @test isapprox(norm(normal(t)), oneunit(ℳ))
   t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(0, 2, 2))
-  @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475))
+  @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475) * u"m")
   @test isapprox(norm(normal(t)), oneunit(ℳ))
 
   # CRS propagation
@@ -669,9 +669,9 @@ end
   @test m isa Mesh
   @test nvertices(m) == 4
   @test nelements(m) == 4
-  @test n[1] == vector(0, 0, -1)
-  @test n[2] == vector(0, -1, 0)
-  @test n[3] == vector(-1, 0, 0)
+  @test n[1] == vector(0, 0, -1) * u"m"
+  @test n[2] == vector(0, -1, 0) * u"m"
+  @test n[3] == vector(-1, 0, 0) * u"m"
   @test all(>(T(0) * u"m"), n[4])
   @test t(T(0), T(0), T(0)) ≈ cart(0, 0, 0)
   @test t(T(1), T(0), T(0)) ≈ cart(1, 0, 0)

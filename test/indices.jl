@@ -18,7 +18,7 @@
   @test v[1] == g[1]
   v = view(p, b)
   @test nelements(v) == 6
-  @test to.(v) == vector.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)])
+  @test to.(v) == vector.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)]) .* u"m"
 
   b1 = Box(cart(0.6, 0.7), cart(1.0, 1.0))
   b2 = Box(cart(0.6, 0.7), cart(1.2, 1.2))

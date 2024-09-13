@@ -1263,7 +1263,7 @@ end
   # ----
 
   f = LengthUnit(u"km")
-  v = vector(1000, 0)
+  v = Vec(T(1000) * u"m", T(0) * u"m")
   r, c = TB.apply(f, v)
   @test r ≈ Vec(T(1) * u"km", T(0) * u"km")
 

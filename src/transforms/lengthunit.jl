@@ -22,7 +22,9 @@ parameters(t::LengthUnit) = (; unit=t.unit)
 
 applycoord(t::LengthUnit, p::Point) = Point(_lenunit(coords(p), t.unit))
 
-applycoord(t::LengthUnit, v::Vec) = uconvert.(t.unit, v)
+applycoord(t::LengthUnit, v::Vec{N,<:Len}) where {N} = uconvert.(t.unit, v)
+
+applycoord(::LengthUnit, v::Vec) = v
 
 # --------------
 # SPECIAL CASES

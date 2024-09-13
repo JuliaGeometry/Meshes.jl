@@ -4,13 +4,13 @@
   s = sample(rng, d, UniformSampling(100))
   μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
   @test nelements(s) == 100
-  @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
+  @test isapprox(μ, vector(50.0, 50.0) * u"m", atol=T(10) * u"m")
 
   # availability of option ordered
   s = sample(rng, d, UniformSampling(100, ordered=true))
   μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
   @test nelements(s) == 100
-  @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
+  @test isapprox(μ, vector(50.0, 50.0) * u"m", atol=T(10) * u"m")
 end
 
 @testitem "WeightedSampling" setup = [Setup] begin
@@ -20,23 +20,23 @@ end
   s = sample(rng, d, WeightedSampling(100))
   μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
   @test nelements(s) == 100
-  @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
+  @test isapprox(μ, vector(50.0, 50.0) * u"m", atol=T(10) * u"m")
 
   # availability of option ordered
   s = sample(rng, d, WeightedSampling(100, ordered=true))
   μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
   @test nelements(s) == 100
-  @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
+  @test isapprox(μ, vector(50.0, 50.0) * u"m", atol=T(10) * u"m")
 
   # utility method
   s = sample(rng, d, 100, ordered=true)
   μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
   @test nelements(s) == 100
-  @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
+  @test isapprox(μ, vector(50.0, 50.0) * u"m", atol=T(10) * u"m")
   s = sample(rng, d, 100, fill(1, 10000), ordered=true)
   μ = mean(to.([centroid(s, i) for i in 1:nelements(s)]))
   @test nelements(s) == 100
-  @test isapprox(μ, vector(50.0, 50.0), atol=T(10) * u"m")
+  @test isapprox(μ, vector(50.0, 50.0) * u"m", atol=T(10) * u"m")
 end
 
 @testitem "BallSampling" setup = [Setup] begin

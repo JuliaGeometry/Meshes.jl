@@ -21,4 +21,8 @@ PlanePartition(normal::Vec; tol=atol(eltype(normal))) = PlanePartition(normal, t
 
 PlanePartition(normal::Tuple; kwargs...) = PlanePartition(Vec(normal); kwargs...)
 
-(p::PlanePartition)(x, y) = abs(udot(x - y, p.normal)) < p.tol
+function (p::PlanePartition)(x, y)
+  v = x - y
+  n = withunit.(p.normal, unit(eltype(v)))
+  abs(udot(v, n)) < p.tol
+end

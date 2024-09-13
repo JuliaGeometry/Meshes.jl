@@ -25,7 +25,7 @@ BisectFractionPartition(normal::Tuple, fraction=0.5, maxiter=10) =
 function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)
   u = unit(lentype(domain))
   bbox = boundingbox(domain)
-  n = method.normal
+  n = withunit.(method.normal, u)
   f = method.fraction
   c = to(centroid(bbox))
   d = diagonal(bbox)
