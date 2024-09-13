@@ -1267,6 +1267,11 @@ end
   r, c = TB.apply(f, v)
   @test r ≈ Vec(T(1) * u"km", T(0) * u"km")
 
+  f = LengthUnit(u"km")
+  v = vector(0, 0)
+  r, c = TB.apply(f, v)
+  @test r == v
+
   # ------
   # POINT
   # ------
