@@ -102,7 +102,7 @@ from point `B` to point `A`.
 Return the point at the end of the vector `v` placed
 at a reference (or start) point `A`.
 """
-+(A::Point, v::Vec) = withcrs(A, to(A) + v)
++(A::Point, v::Vec) = withcrs(A, to(A) + withunit.(v, unit(lentype(A))))
 +(v::Vec, A::Point) = A + v
 
 """
@@ -112,7 +112,7 @@ at a reference (or start) point `A`.
 Return the point at the end of the vector `-v` placed
 at a reference (or start) point `A`.
 """
--(A::Point, v::Vec) = withcrs(A, to(A) - v)
+-(A::Point, v::Vec) = withcrs(A, to(A) - withunit.(v, unit(lentype(A))))
 -(v::Vec, A::Point) = A - v
 
 """
