@@ -108,6 +108,7 @@ randpoint3(n) = randcart(T, 3, n)
 # ----------------
 
 numconvert(T, x::Quantity{S,D,U}) where {S,D,U} = convert(Quantity{T,D,U}, x)
+numconvert(T, x::Number) = convert(T, x)
 
 withprecision(_, x) = x
 withprecision(T, v::Vec) = numconvert.(T, v)
