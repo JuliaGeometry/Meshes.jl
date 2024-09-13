@@ -333,8 +333,7 @@ end
   @test p₃ ∈ p
 
   p = Plane(cart(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
-  @test sprint(show, p) ==
-        "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, 0.0, 0.0), v: (0.0, 1.0, 0.0))"
+  @test sprint(show, p) == "Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0, 0.0, 0.0), v: (0.0, 1.0, 0.0))"
   if T === Float32
     @test sprint(show, MIME("text/plain"), p) == """
     Plane
