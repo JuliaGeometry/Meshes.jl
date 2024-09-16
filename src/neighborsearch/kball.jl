@@ -31,13 +31,12 @@ maxneighbors(method::KBallSearch) = method.k
 
 function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
   tree = method.tree
-  dmax = radius(method.ball)
   k = method.k
 
   # adjust units of query point and radius
   u = unit(lentype(method.domain))
+  r = ustrip(u, radius(method.ball))
   x = ustrip.(u, to(pₒ))
-  r = ustrip(u, dmax)
 
   inds, dists = knn(tree, x, k, true)
 
