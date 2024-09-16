@@ -30,15 +30,18 @@ KBallSearch(geoms, k, ball) = KBallSearch(GeometrySet(geoms), k, ball)
 maxneighbors(method::KBallSearch) = method.k
 
 function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
-  u = unit(lentype(pₒ))
   tree = method.tree
-  dmax = radius(method.ball)
   k = method.k
 
-  inds, dists = knn(tree, ustrip.(to(pₒ)), k, true)
+  # adjust units of query point and radius
+  u = unit(lentype(method.domain))
+  r = ustrip(u, radius(method.ball))
+  x = ustrip.(u, to(pₒ))
+
+  inds, dists = knn(tree, x, k, true)
 
   # keep neighbors inside ball
-  keep = dists .≤ ustrip(dmax)
+  keep = dists .≤ r
 
   # possibly mask some of the neighbors
   isnothing(mask) || (keep .*= mask[inds])

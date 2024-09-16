@@ -21,6 +21,13 @@
   n = search(cart(9, 9), s)
   @test Set(n) == Set([89, 90, 99, 100])
 
+  # different units
+  s = BallSearch(𝒟, MetricBall(T(10) * u"dm"))
+  n = search(Point(T(900) * u"cm", T(900) * u"cm"), s)
+  @test Set(n) == Set([100, 99, 90])
+  n = search(Point(T(9000) * u"mm", T(9000) * u"mm"), s)
+  @test Set(n) == Set([100, 99, 90])
+
   # non MinkowskiMetric example
   𝒟 = CartesianGrid((360, 180), T.((0.0, -90.0)), T.((1.0, 1.0)))
   s = BallSearch(𝒟, MetricBall(T(150), Haversine(T(6371))))
@@ -55,6 +62,13 @@ end
   nn = searchdists!(n, d, cart(9, 9), s)
   @test nn == 3
   @test Set(n[1:nn]) == Set([100, 99, 90])
+
+  # different units
+  s = KNearestSearch(𝒟, 3)
+  n = search(Point(T(900) * u"cm", T(900) * u"cm"), s)
+  @test Set(n) == Set([100, 99, 90])
+  n = search(Point(T(9000) * u"mm", T(9000) * u"mm"), s)
+  @test Set(n) == Set([100, 99, 90])
 
   # construct from vector of geometries
   s = KNearestSearch(randpoint2(100), 3)
@@ -104,6 +118,13 @@ end
   n, d = searchdists(cart(5, 5), s, mask=mask)
   @test length(n) == 4
   @test length(d) == 4
+
+  # different units
+  s = KBallSearch(𝒟, 10, MetricBall(T(10) * u"dm"))
+  n = search(Point(T(500) * u"cm", T(500) * u"cm"), s)
+  @test Set(n) == Set([56, 66, 55, 57, 46])
+  n = search(Point(T(5000) * u"mm", T(5000) * u"mm"), s)
+  @test Set(n) == Set([56, 66, 55, 57, 46])
 
   # construct from vector of geometries
   s = KBallSearch(randpoint2(100), 10, MetricBall(T(1)))

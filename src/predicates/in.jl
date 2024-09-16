@@ -104,7 +104,7 @@ end
 function Base.in(p::Point, t::Torus)
   ℒ = lentype(p)
   R, r = radii(t)
-  c, n = center(t), normal(t)
+  c, n = center(t), direction(t)
   Q = urotbetween(n, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
   x, y, z = Q * (p - c)
   (R - √(x^2 + y^2))^2 + z^2 ≤ r^2

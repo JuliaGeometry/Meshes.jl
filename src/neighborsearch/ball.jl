@@ -27,9 +27,13 @@ BallSearch(geoms, ball) = BallSearch(GeometrySet(geoms), ball)
 
 function search(pₒ::Point, method::BallSearch; mask=nothing)
   tree = method.tree
-  dmax = radius(method.ball)
 
-  inds = inrange(tree, ustrip.(to(pₒ)), ustrip(dmax))
+  # adjust units of query point and radius
+  u = unit(lentype(method.domain))
+  r = ustrip(u, radius(method.ball))
+  x = ustrip.(u, to(pₒ))
+
+  inds = inrange(tree, x, r)
 
   if isnothing(mask)
     inds

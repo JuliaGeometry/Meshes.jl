@@ -1270,7 +1270,7 @@ end
   @test crs(t) <: Cartesian{NoDatum}
   @test Meshes.lentype(t) == ℳ
   @test center(t) == cart(1, 1, 1)
-  @test normal(t) == vector(1, 0, 0)
+  @test direction(t) == vector(1, 0, 0)
   @test radii(t) == (T(2) * u"m", T(1) * u"m")
   @test axis(t) == Line(cart(1, 1, 1), cart(2, 1, 1))
   @test measure(t) ≈ 8 * T(π)^2 * u"m^2"
@@ -1305,19 +1305,19 @@ end
 
   t = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
   @test sprint(show, t) ==
-        "Torus(center: (x: 1.0 m, y: 1.0 m, z: 1.0 m), normal: (1.0 m, 0.0 m, 0.0 m), major: 2.0 m, minor: 1.0 m)"
+        "Torus(center: (x: 1.0 m, y: 1.0 m, z: 1.0 m), direction: (1.0 m, 0.0 m, 0.0 m), major: 2.0 m, minor: 1.0 m)"
   if T === Float32
     @test sprint(show, MIME("text/plain"), t) == """
     Torus
     ├─ center: Point(x: 1.0f0 m, y: 1.0f0 m, z: 1.0f0 m)
-    ├─ normal: Vec(1.0f0 m, 0.0f0 m, 0.0f0 m)
+    ├─ direction: Vec(1.0f0 m, 0.0f0 m, 0.0f0 m)
     ├─ major: 2.0f0 m
     └─ minor: 1.0f0 m"""
   else
     @test sprint(show, MIME("text/plain"), t) == """
     Torus
     ├─ center: Point(x: 1.0 m, y: 1.0 m, z: 1.0 m)
-    ├─ normal: Vec(1.0 m, 0.0 m, 0.0 m)
+    ├─ direction: Vec(1.0 m, 0.0 m, 0.0 m)
     ├─ major: 2.0 m
     └─ minor: 1.0 m"""
   end
