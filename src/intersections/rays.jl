@@ -101,8 +101,8 @@ end
 function intersection(f, ray::Ray, box::Box)
   ℒ = lentype(ray)
   invdir = inv.(ray(1) - ray(0))
-  lo, up = to.(extrema(box))
-  orig = to(ray(0))
+  lo, up = cartvalues.(extrema(box))
+  orig = cartvalues(ray(0))
 
   T = numtype(ℒ)
   tmin = zero(T)

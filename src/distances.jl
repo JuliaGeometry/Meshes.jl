@@ -44,6 +44,7 @@ function evaluate(d::PreMetric, p₁::Point, p₂::Point)
   u₁ = unit(Meshes.lentype(p₁))
   u₂ = unit(Meshes.lentype(p₂))
   u = Unitful.promote_unit(u₁, u₂)
+  # TODO: maybe use cartvalues ​​with SVector
   v₁ = ustrip.(u, to(p₁))
   v₂ = ustrip.(u, to(p₂))
   evaluate(d, v₁, v₂) * u

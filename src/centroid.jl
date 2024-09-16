@@ -22,9 +22,9 @@ centroid(p::Plane) = p(0, 0)
 centroid(c::Cylinder) = centroid(boundary(c))
 
 function centroid(c::CylinderSurface)
-  a = centroid(bottom(c))
-  b = centroid(top(c))
-  withcrs(c, (to(a) + to(b)) / 2)
+  a = cartvalues(centroid(bottom(c)))
+  b = cartvalues(centroid(top(c)))
+  withcrs(c, (a .+ b) ./ 2)
 end
 
 function centroid(p::ParaboloidSurface)
@@ -47,13 +47,14 @@ centroid(g::TransformedGeometry) = transform(g)(centroid(parent(g)))
 The centroid of the `domain`.
 """
 function centroid(d::Domain)
-  vector(i) = to(centroid(d, i))
+  cvals(i) = cartvalues(centroid(d, i))
   volume(i) = measure(element(d, i))
   n = nelements(d)
-  x = vector.(1:n)
+  x = cvals.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(eltype(w), n))
-  withcrs(d, sum(w .* x) / sum(w))
+  y = mapreduce((xᵢ, wᵢ) -> wᵢ .* xᵢ, .+, x, w)
+  withcrs(d, y ./ sum(w))
 end
 
 """
@@ -72,9 +73,9 @@ end
 
 function centroid(g::RectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
-  p1 = vertex(g, ijk)
-  p2 = vertex(g, ijk .+ 1)
-  withcrs(g, (to(p1) + to(p2)) / 2)
+  p1 = cartvalues(vertex(g, ijk))
+  p2 = cartvalues(vertex(g, ijk .+ 1))
+  withcrs(g, (p1 .+ p2) ./ 2)
 end
 
 centroid(m::TransformedMesh, ind::Int) = transform(m)(centroid(parent(m), ind))

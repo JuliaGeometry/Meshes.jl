@@ -32,10 +32,10 @@ boundingbox(b::Box) = b
 function boundingbox(r::Ray)
   lower(p, v) = v < zero(v) ? typemin(p) : p
   upper(p, v) = v > zero(v) ? typemax(p) : p
-  p = r(0)
+  p = cartvalues(r(0))
   v = r(1) - r(0)
-  l = lower.(to(p), v)
-  u = upper.(to(p), v)
+  l = lower.(p, v)
+  u = upper.(p, v)
   Box(withcrs(r, l), withcrs(r, u))
 end
 

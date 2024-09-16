@@ -81,11 +81,18 @@ Return the coordinates of the `point`.
 coords(A::Point) = A.coords
 
 """
+    cartvalues(point)
+
+Return the cartesian coordinate values of the `point`.
+"""
+cartvalues(A::Point) = CoordRefSystems.values(convert(Cartesian, A.coords))
+
+"""
     to(point)
 
 Return the vector from the origin to the `point`.
 """
-to(A::Point) = Vec(CoordRefSystems.values(convert(Cartesian, A.coords)))
+to(A::Point) = Vec(cartvalues(A))
 
 """
     -(A::Point, B::Point)

@@ -11,12 +11,13 @@ For each dimension, coordinates outside of the box are moved to the nearest
 edge of the box. The point and box must have an equal number of dimensions.
 """
 function Base.clamp(point::Point, box::Box)
-  x = to(point)
-  lo = to(minimum(box))
-  hi = to(maximum(box))
-  ntuple(embeddim(point)) do i
+  x = cartvalues(point)
+  lo = cartvalues(minimum(box))
+  hi = cartvalues(maximum(box))
+  vals = ntuple(embeddim(point)) do i
     clamp(x[i], lo[i], hi[i])
-  end |> Point
+  end
+  Point(withcrs(point, vals))
 end
 
 """

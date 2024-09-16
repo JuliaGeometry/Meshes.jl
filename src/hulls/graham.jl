@@ -45,7 +45,7 @@ function hull(points, ::GrahamScan)
   q = q[sortperm(θ)]
 
   # skip collinear points at beginning 
-  y(p) = to(p)[2]
+  y(p) = cartvalues(p)[2]
   i = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
 
   # all points are collinear, return segment

@@ -26,7 +26,7 @@ DelaunayTriangulation(rng=Random.default_rng()) = DelaunayTriangulation(rng)
 
 function discretizewithin(ring::Ring{𝔼{2}}, method::DelaunayTriangulation)
   points = vertices(ring)
-  coords = map(p -> ustrip.(to(p)), points)
+  coords = map(p -> ustrip.(cartvalues(p)), points)
   bnodes = [1:nvertices(ring); 1]
   triang = triangulate(coords, boundary_nodes=bnodes, rng=method.rng)
   connec = connect.(each_solid_triangle(triang))

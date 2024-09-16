@@ -69,12 +69,10 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::SPredicateParti
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
-    p = centroid(domain, i)
-    x = to(p)
+    x = centroid(domain, i)
     inserted = false
     for subset in subsets
-      q = centroid(domain, subset[1])
-      y = to(q)
+      y = centroid(domain, subset[1])
       if method(x, y)
         push!(subset, i)
         inserted = true

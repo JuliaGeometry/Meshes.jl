@@ -20,6 +20,7 @@ end
 
 function KBallSearch(domain::D, k::Int, ball::B) where {D<:Domain,B<:MetricBall}
   m = metric(ball)
+  # TODO: maybe use cartvalues ​​with SVector
   xs = [ustrip.(to(centroid(domain, i))) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
