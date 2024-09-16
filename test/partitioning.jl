@@ -285,7 +285,7 @@ end
   @test all(nelms .== 1)
 
   # defining a predicate to check if points x and y belong to the square [0.,5.]x[0.,5.]
-  pred(x, y) = all(T[0, 0] * u"m" .<= x .<= T[5, 5] * u"m") && all(T[0, 0] * u"m" .<= y .<= T[5, 5] * u"m")
+  pred(x, y) = all(T[0, 0] * u"m" .<= to(x) .<= T[5, 5] * u"m") && all(T[0, 0] * u"m" .<= to(y) .<= T[5, 5] * u"m")
   sp = SpatialPredicatePartition(pred)
   p = partition(g, sp)
   s = indices(p)
