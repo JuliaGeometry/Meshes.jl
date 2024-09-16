@@ -28,11 +28,11 @@ KNearestSearch(geoms, k; metric=Euclidean()) = KNearestSearch(GeometrySet(geoms)
 maxneighbors(method::KNearestSearch) = method.k
 
 function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; mask=nothing)
-  u = unit(lentype(pₒ))
+  u = unit(lentype(method.domain))
   tree = method.tree
   k = method.k
 
-  inds, dists = knn(tree, ustrip.(to(pₒ)), k, true)
+  inds, dists = knn(tree, ustrip.(u, to(pₒ)), k, true)
 
   if isnothing(mask)
     nneigh = k
