@@ -53,8 +53,8 @@ function centroid(d::Domain)
   x = cvals.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(eltype(w), n))
-  y = mapreduce((xᵢ, wᵢ) -> wᵢ .* xᵢ, .+, x, w)
-  withcrs(d, y ./ sum(w))
+  ∑wᵢxᵢ = mapreduce((wᵢ, xᵢ) -> wᵢ .* xᵢ, .+, w, x)
+  withcrs(d, ∑wᵢxᵢ ./ sum(w))
 end
 
 """
@@ -73,9 +73,9 @@ end
 
 function centroid(g::RectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
-  p1 = cartvalues(vertex(g, ijk))
-  p2 = cartvalues(vertex(g, ijk .+ 1))
-  withcrs(g, (p1 .+ p2) ./ 2)
+  a = cartvalues(vertex(g, ijk))
+  b = cartvalues(vertex(g, ijk .+ 1))
+  withcrs(g, (a .+ b) ./ 2)
 end
 
 centroid(m::TransformedMesh, ind::Int) = transform(m)(centroid(parent(m), ind))

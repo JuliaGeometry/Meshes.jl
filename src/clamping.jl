@@ -12,12 +12,12 @@ edge of the box. The point and box must have an equal number of dimensions.
 """
 function Base.clamp(point::Point, box::Box)
   x = cartvalues(point)
-  lo = cartvalues(minimum(box))
-  hi = cartvalues(maximum(box))
+  m = cartvalues(minimum(box))
+  M = cartvalues(maximum(box))
   vals = ntuple(embeddim(point)) do i
-    clamp(x[i], lo[i], hi[i])
+    clamp(x[i], m[i], M[i])
   end
-  Point(withcrs(point, vals))
+  withcrs(point, vals)
 end
 
 """
