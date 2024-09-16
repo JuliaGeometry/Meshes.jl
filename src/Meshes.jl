@@ -192,6 +192,7 @@ export
   sides,
   diagonal,
   focallength,
+  direction,
 
   # polytopes
   Polytope,
