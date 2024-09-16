@@ -25,6 +25,13 @@ Point at the end of the vector `v` with the same CRS of `g`.
 withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), Cartesian)
 
 """
+    cartvalues(point)
+
+Return the cartesian coordinate values of the `point`.
+"""
+cartvalues(A::Point) = CoordRefSystems.values(convert(Cartesian, coords(A)))
+
+"""
     flat(p)
 
 Flatten coordinates of point `p` to Cartesian coordinates,
