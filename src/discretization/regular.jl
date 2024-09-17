@@ -177,5 +177,5 @@ end
 
 function discretize(box::Box, method::RegularDiscretization)
   sz = fitdims(method.sizes, paramdim(box))
-  CartesianGrid(extrema(box)..., dims=sz)
+  RegularGrid(extrema(box)..., dims=sz)
 end
