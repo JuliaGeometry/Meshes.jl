@@ -19,23 +19,27 @@ function discretize(box::Box, method::MaxLengthDiscretization)
   discretize(box, RegularDiscretization(sizes))
 end
 
-function discretize(segment::Segment{<:𝔼}, method::MaxLengthDiscretization)
-  size = ceil(Int, length(segment) / method.length)
-  discretize(segment, RegularDiscretization(size))
-end
-
-function discretize(segment::Segment{<:🌐}, method::MaxLengthDiscretization)
-  T = numtype(lentype(segment))
-  🌎 = ellipsoid(datum(crs(segment)))
-  r = numconvert(T, majoraxis(🌎))
-
-  a, b = vertices(segment)
-  d = evaluate(Haversine(r), a, b)
-
-  size = ceil(Int, d / method.length)
-
+function discretize(segment::Segment, method::MaxLengthDiscretization)
+  size = ceil(Int, _measure(segment) / method.length)
   discretize(segment, RegularDiscretization(size))
 end
 
 discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> discretize(s, method), merge, segments(chain))
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_measure(s::Segment{<:𝔼}) = measure(s)
+
+# TODO: Haversine returns the shortest distance between two points
+# this is not always equal to the distance between two directed points
+function _measure(s::Segment{<:🌐})
+  T = numtype(lentype(s))
+  🌎 = ellipsoid(datum(crs(s)))
+  r = numconvert(T, majoraxis(🌎))
+
+  a, b = extrema(s)
+  evaluate(Haversine(r), a, b)
+end
