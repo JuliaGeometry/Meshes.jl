@@ -335,6 +335,24 @@ end
   @test eltype(mesh) <: Quadrangle
   @test nvertices.(mesh) ⊆ [4]
 
+  box = Box(merc(0, 0), merc(2, 2))
+  mesh = discretize(box, RegularDiscretization(10))
+  @test mesh isa RegularGrid
+  @test crs(mesh) <: Mercator
+  @test nvertices(mesh) == 121
+  @test nelements(mesh) == 100
+  @test eltype(mesh) <: Quadrangle
+  @test nvertices.(mesh) ⊆ [4]
+
+  box = Box(latlon(-50, 150), latlon(50, 30))
+  mesh = discretize(box, RegularDiscretization(10))
+  @test mesh isa RegularGrid
+  @test crs(mesh) <: LatLon
+  @test nvertices(mesh) == 121
+  @test nelements(mesh) == 100
+  @test eltype(mesh) <: Quadrangle
+  @test nvertices.(mesh) ⊆ [4]
+
   sphere = Sphere(cart(0, 0), T(1))
   mesh = discretize(sphere, RegularDiscretization(10))
   @test nvertices(mesh) == 10
