@@ -167,9 +167,8 @@ function _startfinish(start::Point{<:𝔼}, finish::Point{<:𝔼})
 end
 
 function _startfinish(start::Point{<:🌐}, finish::Point{<:🌐})
-  finish′ = Point(convert(crs(start), coords(finish)))
   slatlon = convert(LatLon, coords(start))
-  flatlon = convert(LatLon, coords(finish′))
+  flatlon = convert(LatLon, coords(finish))
   slon = flatlon.lon < slatlon.lon ? slatlon.lon - 360u"°" : slatlon.lon
   svals = (slatlon.lat, slon)
   fvals = (flatlon.lat, flatlon.lon)
