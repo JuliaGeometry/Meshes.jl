@@ -56,41 +56,19 @@ See also [`RegularGrid`](@ref).
 """
 const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 
-function CartesianGrid(
-  origin::Point{<:𝔼},
-  spacing::NTuple{Dim,ℒ},
-  offset::Dims{Dim},
-  topology::GridTopology{Dim}
-) where {Dim,ℒ<:Len}
-  orig = Point(convert(Cartesian, coords(origin)))
-  RegularGrid(orig, spacing, offset, topology)
-end
-
 CartesianGrid(
-  origin::Point{<:𝔼},
-  spacing::NTuple{Dim,Len},
-  offset::Dims{Dim},
-  topology::GridTopology{Dim}
-) where {Dim} = CartesianGrid(origin, promote(spacing...), offset, topology)
-
-CartesianGrid(
-  origin::Point{<:𝔼},
+  origin::Point{𝔼{Dim}},
   spacing::NTuple{Dim,Number},
   offset::Dims{Dim},
   topology::GridTopology{Dim}
-) where {Dim} = CartesianGrid(origin, addunit.(spacing, u"m"), offset, topology)
+) where {Dim} = RegularGrid(_cartpoint(origin), spacing, offset, topology)
 
-function CartesianGrid(
+CartesianGrid(
   dims::Dims{Dim},
-  origin::Point,
+  origin::Point{𝔼{Dim}},
   spacing::NTuple{Dim,Number},
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim}
-  if !all(>(0), dims)
-    throw(ArgumentError("dimensions must be positive"))
-  end
-  CartesianGrid(origin, spacing, offset, GridTopology(dims))
-end
+) where {Dim} = RegularGrid(dims, _cartpoint(origin), spacing, offset)
 
 CartesianGrid(
   dims::Dims{Dim},
@@ -99,28 +77,14 @@ CartesianGrid(
   offset::Dims{Dim}=ntuple(i -> 1, Dim)
 ) where {Dim} = CartesianGrid(dims, Point(origin), spacing, offset)
 
-function CartesianGrid(start::Point, finish::Point, spacing::NTuple{Dim,ℒ}) where {Dim,ℒ<:Len}
-  dims = Tuple(ceil.(Int, (finish - start) ./ spacing))
-  origin = start
-  offset = ntuple(i -> 1, Dim)
-  CartesianGrid(dims, origin, spacing, offset)
-end
-
-CartesianGrid(start::Point, finish::Point, spacing::NTuple{Dim,Len}) where {Dim} =
-  CartesianGrid(start, finish, promote(spacing...))
-
-CartesianGrid(start::Point, finish::Point, spacing::NTuple{Dim,Number}) where {Dim} =
-  CartesianGrid(start, finish, addunit.(spacing, u"m"))
+CartesianGrid(start::Point{𝔼{Dim}}, finish::Point{𝔼{Dim}}, spacing::NTuple{Dim,Number}) where {Dim} =
+  RegularGrid(_cartpoint(start), _cartpoint(finish), spacing)
 
 CartesianGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
   CartesianGrid(Point(start), Point(finish), spacing)
 
-function CartesianGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, embeddim(start)))
-  origin = start
-  spacing = Tuple((finish - start) ./ dims)
-  offset = ntuple(i -> 1, length(dims))
-  CartesianGrid(dims, origin, spacing, offset)
-end
+CartesianGrid(start::Point{𝔼{Dim}}, finish::Point{𝔼{Dim}}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
+  RegularGrid(_cartpoint(start), _cartpoint(finish); dims)
 
 CartesianGrid(
   start::NTuple{Dim,Number},
@@ -136,3 +100,9 @@ function CartesianGrid(dims::Dims{Dim}) where {Dim}
 end
 
 CartesianGrid(dims::Int...) = CartesianGrid(dims)
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_cartpoint(p) = Point(convert(Cartesian, coords(p)))
