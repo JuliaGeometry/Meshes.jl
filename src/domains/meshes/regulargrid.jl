@@ -82,19 +82,19 @@ function RegularGrid(
   RegularGrid(origin, spacing, offset, GridTopology(dims))
 end
 
-function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(start))))
-  _checkorigin(start)
-  svals, fvals = _startfinish(start, finish)
-  spacing = (fvals .- svals) ./ dims
-  RegularGrid(dims, start, spacing)
-end
-
 function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
   _checkorigin(start)
   svals, fvals = _startfinish(start, finish)
   spac = _spacing(start, spacing)
   dims = ceil.(Int, (fvals .- svals) ./ spac)
   RegularGrid(dims, start, spac)
+end
+
+function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(start))))
+  _checkorigin(start)
+  svals, fvals = _startfinish(start, finish)
+  spacing = (fvals .- svals) ./ dims
+  RegularGrid(dims, start, spacing)
 end
 
 spacing(g::RegularGrid) = g.spacing
