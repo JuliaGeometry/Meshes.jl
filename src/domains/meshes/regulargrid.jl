@@ -13,6 +13,16 @@ and cell spacing `spacing`. The three arguments must have the same length.
 A regular grid with dimensions `dims`, with lower left corner of element
 `offset` at `origin` and cell spacing `spacing`.
 
+    RegularGrid(start, finish, dims=dims)
+
+Alternatively, construct a regular grid from a `start` point to a `finish`
+with dimensions `dims`.
+
+    RegularGrid(start, finish, spacing)
+
+Alternatively, construct a regular grid from a `start` point to a `finish`
+point using a given `spacing`.
+
 ## Examples
 
 ```
@@ -76,6 +86,18 @@ function RegularGrid(
   RegularGrid(origin, spacing, offset, GridTopology(dims))
 end
 
+function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(start))))
+  svals, fvals = _startfinish(start, finish)
+  spacing = (fvals .- svals) ./ dims
+  RegularGrid(dims, start, spacing)
+end
+
+function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
+  svals, fvals = _startfinish(start, finish)
+  dims = ceil.(Int, (fvals .- svals) ./ spacing)
+  RegularGrid(dims, start, spacing)
+end
+
 spacing(g::RegularGrid) = g.spacing
 
 offset(g::RegularGrid) = g.offset
@@ -131,4 +153,25 @@ function Base.show(io::IO, ::MIME"text/plain", g::RegularGrid)
   println(io, "├─ minimum: ", minimum(g))
   println(io, "├─ maximum: ", maximum(g))
   print(io, "└─ spacing: ", spacing(g))
+end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _startfinish(start::Point{<:𝔼}, finish::Point{<:𝔼})
+  finish′ = Point(convert(crs(start), coords(finish)))
+  svals = CoordRefSystems.values(coords(start))
+  fvals = CoordRefSystems.values(coords(finish′))
+  svals, fvals
+end
+
+function _startfinish(start::Point{<:🌐}, finish::Point{<:🌐})
+  finish′ = Point(convert(crs(start), coords(finish)))
+  slatlon = convert(LatLon, coords(start))
+  flatlon = convert(LatLon, coords(finish′))
+  slon = flatlon.lon < slatlon.lon ? slatlon.lon - 360u"°" : slatlon.lon
+  svals = (slatlon.lat, slon)
+  fvals = (flatlon.lat, flatlon.lon)
+  svals, fvals
 end
