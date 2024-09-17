@@ -190,8 +190,6 @@ simplexify(box::Box{𝔼{2}}) = discretize(box, FanTriangulation())
 
 simplexify(box::Box{𝔼{3}}) = discretize(box, ManualDiscretization())
 
-simplexify(seg::Segment) = SimpleMesh(pointify(seg), GridTopology(1))
-
 function simplexify(chain::Chain)
   np = nvertices(chain) + isclosed(chain)
   ip = isperiodic(chain)
