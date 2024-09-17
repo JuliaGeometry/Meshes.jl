@@ -24,4 +24,5 @@ function discretize(segment::Segment, method::MaxLengthDiscretization)
   discretize(segment, RegularDiscretization(size))
 end
 
-discretize(chain::Chain, method::MaxLengthDiscretization) = mapreduce(s -> discretize(s, method), merge, segments(chain))
+discretize(chain::Chain, method::MaxLengthDiscretization) =
+  mapreduce(s -> discretize(s, method), merge, segments(chain))
