@@ -54,13 +54,9 @@ function RegularGrid(
   offset::Dims{N},
   topology::GridTopology{N}
 ) where {M<:Manifold,C<:CRS,N}
-  if M <: 🌐 && !(C <: LatLon)
-    throw(ArgumentError("regular spacing on `🌐` requires `LatLon` coordinates"))
-  end
+  _checkorigin(origin)
 
-  T = CoordRefSystems.mactype(C)
   nc = CoordRefSystems.ncoords(C)
-  us = CoordRefSystems.units(C)
 
   if N ≠ nc
     throw(ArgumentError("""
@@ -69,9 +65,9 @@ function RegularGrid(
     """))
   end
 
-  sp = ntuple(i -> numconvert(T, withunit(spacing[i], us[i])), nc)
+  spac = _spacing(origin, spacing)
 
-  RegularGrid{M,C,N,typeof(sp)}(origin, sp, offset, topology)
+  RegularGrid{M,C,N,typeof(spac)}(origin, spac, offset, topology)
 end
 
 function RegularGrid(
@@ -87,15 +83,18 @@ function RegularGrid(
 end
 
 function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(start))))
+  _checkorigin(start)
   svals, fvals = _startfinish(start, finish)
   spacing = (fvals .- svals) ./ dims
   RegularGrid(dims, start, spacing)
 end
 
 function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
+  _checkorigin(start)
   svals, fvals = _startfinish(start, finish)
-  dims = ceil.(Int, (fvals .- svals) ./ spacing)
-  RegularGrid(dims, start, spacing)
+  spac = _spacing(start, spacing)
+  dims = ceil.(Int, (fvals .- svals) ./ spac)
+  RegularGrid(dims, start, spac)
 end
 
 spacing(g::RegularGrid) = g.spacing
@@ -158,6 +157,20 @@ end
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
+
+function _checkorigin(origin)
+  if manifold(origin) <: 🌐 && !(crs(origin) <: LatLon)
+    throw(ArgumentError("regular spacing on `🌐` requires `LatLon` coordinates"))
+  end
+end
+
+function _spacing(origin, spacing)
+  C = crs(origin)
+  T = CoordRefSystems.mactype(C)
+  nc = CoordRefSystems.ncoords(C)
+  us = CoordRefSystems.units(C)
+  ntuple(i -> numconvert(T, withunit(spacing[i], us[i])), nc)
+end
 
 function _startfinish(start::Point{<:𝔼}, finish::Point{<:𝔼})
   finish′ = Point(convert(crs(start), coords(finish)))
