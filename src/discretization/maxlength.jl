@@ -19,8 +19,21 @@ function discretize(box::Box, method::MaxLengthDiscretization)
   discretize(box, RegularDiscretization(sizes))
 end
 
-function discretize(segment::Segment, method::MaxLengthDiscretization)
+function discretize(segment::Segment{<:𝔼}, method::MaxLengthDiscretization)
   size = ceil(Int, length(segment) / method.length)
+  discretize(segment, RegularDiscretization(size))
+end
+
+function discretize(segment::Segment{<:🌐}, method::MaxLengthDiscretization)
+  T = numtype(lentype(segment))
+  🌎 = ellipsoid(datum(crs(segment)))
+  r = numconvert(T, majoraxis(🌎))
+
+  a, b = vertices(segment)
+  d = evaluate(Haversine(r), a, b)
+
+  size = ceil(Int, d / method.length)
+
   discretize(segment, RegularDiscretization(size))
 end
 
