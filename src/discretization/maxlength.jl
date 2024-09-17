@@ -34,7 +34,7 @@ discretize(chain::Chain, method::MaxLengthDiscretization) =
 _sides(box::Box{<:𝔼}) = sides(box)
 
 function _sides(box::Box{<:🌐})
-  A, B = extrema(box) 
+  A, B = extrema(box)
   a = convert(LatLon, coords(A))
   b = convert(LatLon, coords(B))
   P = withcrs(box, (a.lat, b.lon), LatLon)
