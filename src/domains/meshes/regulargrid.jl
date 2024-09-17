@@ -173,9 +173,10 @@ function _spacing(origin, spacing)
 end
 
 function _startfinish(start::Point{<:𝔼}, finish::Point{<:𝔼})
-  finish′ = Point(convert(crs(start), coords(finish)))
-  svals = CoordRefSystems.values(coords(start))
-  fvals = CoordRefSystems.values(coords(finish′))
+  scoords = coords(start)
+  fcoords = convert(crs(start), coords(finish))
+  svals = CoordRefSystems.values(scoords)
+  fvals = CoordRefSystems.values(fcoords)
   svals, fvals
 end
 
