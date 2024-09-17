@@ -67,6 +67,31 @@
   @test grid[1, 1, 1] == grid[1]
   @test grid[10, 20, 30] == grid[6000]
 
+  # constructors with start and finish
+  grid = RegularGrid(merc(0, 0), merc(10, 10), T.((0.1, 0.1)))
+  @test size(grid) == (100, 100)
+  @test minimum(grid) == merc(0, 0)
+  @test maximum(grid) == merc(10, 10)
+  @test spacing(grid) == (T(0.1) * u"m", T(0.1) * u"m")
+
+  grid = RegularGrid(latlon(-50, 150), latlon(50, 30), T.((10, 12)))
+  @test size(grid) == (10, 20)
+  @test minimum(grid) == latlon(-50, 150)
+  @test maximum(grid) == latlon(50, 30)
+  @test spacing(grid) == (T(10) * u"°", T(12) * u"°")
+
+  grid = RegularGrid(merc(0, 0), merc(10, 10), dims=(100, 100))
+  @test size(grid) == (100, 100)
+  @test minimum(grid) == merc(0, 0)
+  @test maximum(grid) == merc(10, 10)
+  @test spacing(grid) == (T(0.1) * u"m", T(0.1) * u"m")
+
+  grid = RegularGrid(latlon(-50, 150), latlon(50, 30), dims=(10, 20))
+  @test size(grid) == (10, 20)
+  @test minimum(grid) == latlon(-50, 150)
+  @test maximum(grid) == latlon(50, 30)
+  @test spacing(grid) == (T(10) * u"°", T(12) * u"°")
+
   # spacing unit and numtype
   grid = RegularGrid((10, 20), Point(Polar(T(0) * u"cm", T(0) * u"rad")), (10.0 * u"mm", 1.0f0 * u"rad"))
   @test unit.(spacing(grid)) == (u"cm", u"rad")
