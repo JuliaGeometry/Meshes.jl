@@ -51,11 +51,11 @@ function refine(mesh, method::TriRefinement)
   # new points in refined mesh
   newpoints = [vpts; rpts]
 
-  # offset to new vertex indices
-  offset = length(vpts)
-
   # new connectivities in refined mesh
   newconnec = Connectivity{Triangle,3}[]
+
+  # offset to new vertex indices
+  offset = length(vpts)
 
   # connectivities of new triangles
   for (i, elem) in enumerate(rinds)
