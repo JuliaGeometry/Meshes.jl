@@ -3,15 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    TriRefinement()
+    TriRefinement([pred])
 
 Refinement of polygonal meshes into triangles.
-A n-gon is subdivided into n triangles.
-
-    TriRefinement(pred)
-
-Refine only the elements of the mesh where
-`pred(element)` returns `true`.
+A n-gon for which the predicate `pred` holds true
+is subdivided into n triangles. The method refines all
+n-gons if the `pred` is ommited.
 """
 struct TriRefinement{F} <: RefinementMethod
   pred::F
@@ -30,23 +27,22 @@ function refine(mesh, method::TriRefinement)
   # convert to half-edge structure
   t = convert(HalfEdgeTopology, connec)
 
+  # indices to refine
+  einds = if isnothing(method.pred)
+    1:nelements(t)
+  else
+    einds = filter(i -> method.pred(mesh[i]), 1:nelements(t))
+  end
+
+  # indices to preserve
+  vinds = setdiff(einds, 1:nelements(t))
+
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
-  epts = if isnothing(method.pred)
-    map(1:nelements(t)) do elem
-      is = ∂₂₀(elem)
-      cₒ = sum(i -> to(points[i]), is) / length(is)
-      withcrs(mesh, cₒ)
-    end
-  else
-    pts = eltype(points)[]
-    for elem in mesh
-      e = element(mesh, elem)
-      if method.pred(e)
-        push!(pts, centroid(e))
-      end
-    end
-    pts
+  epts = map(einds) do elem
+    is = ∂₂₀(elem)
+    cₒ = sum(i -> to(points[i]), is) / length(is)
+    withcrs(mesh, cₒ)
   end
 
   # original vertices
@@ -55,38 +51,27 @@ function refine(mesh, method::TriRefinement)
   # new points in refined mesh
   newpoints = [vpts; epts]
 
+  # offset to new vertex indices
   offset = length(vpts)
 
-  # connect vertices into new triangles
+  # new connectivities in refined mesh
   newconnec = Connectivity{Triangle,3}[]
-  if isnothing(method.pred)
-    for elem in 1:nelements(t)
-      verts = ∂₂₀(elem)
-      nv = length(verts)
-      for i in 1:nv
-        u = elem + offset
-        v = verts[mod1(i, nv)]
-        w = verts[mod1(i + 1, nv)]
-        tri = connect((u, v, w))
-        push!(newconnec, tri)
-      end
-    end
-  else
-    u = offset
-    for elem in 1:nelements(t)
-      if method.pred(element(mesh, elem))
-        verts = ∂₂₀(elem)
-        nv = length(verts)
-        u += 1
-        for i in 1:nv
-          v = verts[mod1(i, nv)]
-          w = verts[mod1(i + 1, nv)]
-          tri = connect((u, v, w))
-          push!(newconnec, tri)
-        end
-      else
-        push!(newconnec, element(t, elem))
-      end
+  
+  # push connects of preserved elements
+  for elem in vinds
+    push!(newconnec, element(t, elem))
+  end
+  
+  # connect vertices into new triangles
+  for (i, elem) in enumerate(einds)
+    verts = ∂₂₀(elem)
+    nv = length(verts)
+    for j in 1:nv
+      u = i + offset
+      v = verts[mod1(j, nv)]
+      w = verts[mod1(j + 1, nv)]
+      tri = connect((u, v, w))
+      push!(newconnec, tri)
     end
   end
 
