@@ -7,10 +7,19 @@
 
 Refinement of polygonal meshes into triangles.
 A n-gon is subdivided into n triangles.
-"""
-struct TriRefinement <: RefinementMethod end
 
-function refine(mesh, ::TriRefinement)
+    TriRefinement(pred)
+
+Refine only the elements of the mesh where
+`pred(element)` returns `true`.
+"""
+struct TriRefinement{F} <: RefinementMethod
+  pred::F
+end
+
+TriRefinement() = TriRefinement(_ -> true)
+
+function refine(mesh, method::TriRefinement)
   assertion(paramdim(mesh) == 2, "TriRefinement only defined for surface meshes")
   (eltype(mesh) <: Triangle) || return simplexify(mesh)
 
@@ -21,33 +30,36 @@ function refine(mesh, ::TriRefinement)
   # convert to half-edge structure
   t = convert(HalfEdgeTopology, connec)
 
-  # add centroids of elements
+  # used to extract the vertex indices
   ∂₂₀ = Boundary{2,0}(t)
-  epts = map(1:nelements(t)) do elem
-    is = ∂₂₀(elem)
-    cₒ = sum(i -> to(points[i]), is) / length(is)
-    withcrs(mesh, cₒ)
-  end
 
-  # original vertices
-  vpts = points
+  # offset to new vertex indices
+  offset = length(points)
 
-  # new points in refined mesh
-  newpoints = [vpts; epts]
-
-  offset = length(vpts)
-
-  # connect vertices into new triangles
+  # add centroids of elements and connect vertices 
+  # into new triangles if necessary
+  newpoints = copy(points)
   newconnec = Connectivity{Triangle,3}[]
-  for elem in 1:nelements(t)
-    verts = ∂₂₀(elem)
-    nv = length(verts)
-    for i in 1:nv
-      u = elem + offset
-      v = verts[mod1(i, nv)]
-      w = verts[mod1(i + 1, nv)]
-      tri = connect((u, v, w))
-      push!(newconnec, tri)
+  for eᵢ in 1:nelements(t)
+    elem = element(mesh, eᵢ)
+    # check if the element should be refined
+    if method.pred(elem)
+      # add new centroid vertex
+      push!(newpoints, centroid(elem))
+
+      # add new connectivities
+      verts = ∂₂₀(eᵢ)
+      nv = length(verts)
+      for i in 1:nv
+        u = eᵢ + offset
+        v = verts[mod1(i, nv)]
+        w = verts[mod1(i + 1, nv)]
+        tri = connect((u, v, w))
+        push!(newconnec, tri)
+      end
+    else
+      # otherwise, just use the original connectivity
+      push!(newconnec, element(t, eᵢ))
     end
   end
 
