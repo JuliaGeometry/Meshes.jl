@@ -57,11 +57,6 @@ function refine(mesh, method::TriRefinement)
   # new connectivities in refined mesh
   newconnec = Connectivity{Triangle,3}[]
 
-  # connectivities of preserved elements
-  for elem in pinds
-    push!(newconnec, element(t, elem))
-  end
-
   # connectivities of new triangles
   for (i, elem) in enumerate(rinds)
     verts = ∂₂₀(elem)
@@ -73,6 +68,11 @@ function refine(mesh, method::TriRefinement)
       tri = connect((u, v, w))
       push!(newconnec, tri)
     end
+  end
+
+  # connectivities of preserved elements
+  for elem in pinds
+    push!(newconnec, element(t, elem))
   end
 
   SimpleMesh(newpoints, newconnec)
