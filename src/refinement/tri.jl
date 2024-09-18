@@ -28,18 +28,18 @@ function refine(mesh, method::TriRefinement)
   t = convert(HalfEdgeTopology, connec)
 
   # indices to refine
-  einds = if isnothing(method.pred)
+  rinds = if isnothing(method.pred)
     1:nelements(t)
   else
-    einds = filter(i -> method.pred(mesh[i]), 1:nelements(t))
+    rinds = filter(i -> method.pred(mesh[i]), 1:nelements(t))
   end
 
   # indices to preserve
-  vinds = setdiff(einds, 1:nelements(t))
+  pinds = setdiff(rinds, 1:nelements(t))
 
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
-  epts = map(einds) do elem
+  epts = map(rinds) do elem
     is = ∂₂₀(elem)
     cₒ = sum(i -> to(points[i]), is) / length(is)
     withcrs(mesh, cₒ)
@@ -58,12 +58,12 @@ function refine(mesh, method::TriRefinement)
   newconnec = Connectivity{Triangle,3}[]
 
   # connectivities of preserved elements
-  for elem in vinds
+  for elem in pinds
     push!(newconnec, element(t, elem))
   end
 
   # connect vertices into new triangles
-  for (i, elem) in enumerate(einds)
+  for (i, elem) in enumerate(rinds)
     verts = ∂₂₀(elem)
     nv = length(verts)
     for j in 1:nv
