@@ -77,15 +77,14 @@ end
 
 measure(s::Segment{<:𝔼}) = norm(maximum(s) - minimum(s))
 
-# TODO: Haversine returns the shortest distance between two points
-# this is not always equal to the distance between two directed points
+# TODO: replace Haversine by an appropriate geodesic distance
+# that considers the west-east orientation of segments
 function measure(s::Segment{<:🌐})
   T = numtype(lentype(s))
   🌎 = ellipsoid(datum(crs(s)))
   r = numconvert(T, majoraxis(🌎))
 
-  A, B = extrema(s)
-  evaluate(Haversine(r), A, B)
+  evaluate(Haversine(r), extrema(s)...)
 end
 
 function measure(t::Triangle)
