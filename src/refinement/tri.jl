@@ -56,12 +56,12 @@ function refine(mesh, method::TriRefinement)
 
   # new connectivities in refined mesh
   newconnec = Connectivity{Triangle,3}[]
-  
-  # push connects of preserved elements
+
+  # connectivities of preserved elements
   for elem in vinds
     push!(newconnec, element(t, elem))
   end
-  
+
   # connect vertices into new triangles
   for (i, elem) in enumerate(einds)
     verts = ∂₂₀(elem)
