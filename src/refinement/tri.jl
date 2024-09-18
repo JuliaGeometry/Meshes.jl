@@ -62,7 +62,7 @@ function refine(mesh, method::TriRefinement)
     push!(newconnec, element(t, elem))
   end
 
-  # connect vertices into new triangles
+  # connectivities of new triangles
   for (i, elem) in enumerate(rinds)
     verts = ∂₂₀(elem)
     nv = length(verts)
