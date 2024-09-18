@@ -5,7 +5,7 @@
 """
     MaxLengthDiscretization(length)
 
-TODO
+Discretize geometries into parts with sides of maximum `length` in length units (default to meters).
 """
 struct MaxLengthDiscretization{ℒ<:Len} <: DiscretizationMethod
   length::ℒ
