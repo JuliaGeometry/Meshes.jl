@@ -30,45 +30,63 @@ function refine(mesh, method::TriRefinement)
   # convert to half-edge structure
   t = convert(HalfEdgeTopology, connec)
 
-  # used to extract the vertex indices
+  # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
-
-  # offset to new vertex indices
-  offset = length(points)
-
-  # predicate function
-  pred = if isnothing(method.pred)
-    _ -> true
+  epts = if isnothing(method.pred)
+    map(1:nelements(t)) do elem
+      is = ∂₂₀(elem)
+      cₒ = sum(i -> to(points[i]), is) / length(is)
+      withcrs(mesh, cₒ)
+    end
   else
-    eᵢ -> method.pred(element(mesh, eᵢ))
+    pts = eltype(points)[]
+    for elem in mesh
+      e = element(mesh, elem)
+      if method.pred(e)
+        push!(pts, centroid(e))
+      end
+    end
+    pts
   end
 
-  # add centroids of elements and connect vertices 
-  # into new triangles if necessary
-  newpoints = copy(points)
-  newconnec = Connectivity{Triangle,3}[]
-  for eᵢ in 1:nelements(t)
-    # check if the element should be refined
-    if pred(eᵢ)
-      verts = ∂₂₀(eᵢ)
-      nv = length(verts)
-  
-      # add new centroid vertex
-      cₒ = sum(i -> to(points[i]), verts) / length(verts)
-      pₒ = withcrs(mesh, cₒ)
-      push!(newpoints, pₒ)
+  # original vertices
+  vpts = points
 
-      # add new connectivities
+  # new points in refined mesh
+  newpoints = [vpts; epts]
+
+  offset = length(vpts)
+
+  # connect vertices into new triangles
+  newconnec = Connectivity{Triangle,3}[]
+  if isnothing(method.pred)
+    for elem in 1:nelements(t)
+      verts = ∂₂₀(elem)
+      nv = length(verts)
       for i in 1:nv
-        u = eᵢ + offset
+        u = elem + offset
         v = verts[mod1(i, nv)]
         w = verts[mod1(i + 1, nv)]
         tri = connect((u, v, w))
         push!(newconnec, tri)
       end
-    else
-      # otherwise, just use the original connectivity
-      push!(newconnec, element(t, eᵢ))
+    end
+  else
+    u = offset
+    for elem in 1:nelements(t)
+      if method.pred(element(mesh, elem))
+        verts = ∂₂₀(elem)
+        nv = length(verts)
+        u += 1
+        for i in 1:nv
+          v = verts[mod1(i, nv)]
+          w = verts[mod1(i + 1, nv)]
+          tri = connect((u, v, w))
+          push!(newconnec, tri)
+        end
+      else
+        push!(newconnec, element(t, elem))
+      end
     end
   end
 
