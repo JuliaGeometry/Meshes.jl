@@ -23,6 +23,9 @@
   ref = refine(mesh, TriRefinement(e -> measure(e) > T(1) * u"m^2"))
   @test nelements(ref) == 13
   @test nvertices(ref) == 12
+  ref = refine(mesh, TriRefinement(e -> measure(e) ≤ T(1) * u"m^2"))
+  @test nelements(ref) == 15
+  @test nvertices(ref) == 13
 end
 
 @testitem "QuadRefinement" setup = [Setup] begin
