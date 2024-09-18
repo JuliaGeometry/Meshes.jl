@@ -75,7 +75,18 @@ function measure(t::Torus)
   4 * T(π)^2 * R * r
 end
 
-measure(s::Segment) = norm(maximum(s) - minimum(s))
+measure(s::Segment{<:𝔼}) = norm(maximum(s) - minimum(s))
+
+# TODO: Haversine returns the shortest distance between two points
+# this is not always equal to the distance between two directed points
+function measure(s::Segment{<:🌐})
+  T = numtype(lentype(s))
+  🌎 = ellipsoid(datum(crs(s)))
+  r = numconvert(T, majoraxis(🌎))
+
+  A, B = extrema(s)
+  evaluate(Haversine(r), A, B)
+end
 
 function measure(t::Triangle)
   A, B, C = vertices(t)
