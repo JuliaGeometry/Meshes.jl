@@ -75,7 +75,17 @@ function measure(t::Torus)
   4 * T(π)^2 * R * r
 end
 
-measure(s::Segment) = norm(maximum(s) - minimum(s))
+measure(s::Segment{<:𝔼}) = norm(maximum(s) - minimum(s))
+
+# TODO: replace Haversine by an appropriate geodesic distance
+# that considers the west-east orientation of segments
+function measure(s::Segment{<:🌐})
+  T = numtype(lentype(s))
+  🌎 = ellipsoid(datum(crs(s)))
+  r = numconvert(T, majoraxis(🌎))
+
+  evaluate(Haversine(r), extrema(s)...)
+end
 
 function measure(t::Triangle)
   A, B, C = vertices(t)
