@@ -39,7 +39,7 @@ function refine(mesh, method::TriRefinement)
 
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
-  epts = map(rinds) do elem
+  rpts = map(rinds) do elem
     is = ∂₂₀(elem)
     cₒ = sum(i -> to(points[i]), is) / length(is)
     withcrs(mesh, cₒ)
@@ -49,7 +49,7 @@ function refine(mesh, method::TriRefinement)
   vpts = points
 
   # new points in refined mesh
-  newpoints = [vpts; epts]
+  newpoints = [vpts; rpts]
 
   # offset to new vertex indices
   offset = length(vpts)
