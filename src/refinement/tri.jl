@@ -31,7 +31,7 @@ function refine(mesh, method::TriRefinement)
   rinds = if isnothing(method.pred)
     1:nelements(t)
   else
-    rinds = filter(i -> method.pred(mesh[i]), 1:nelements(t))
+    filter(i -> method.pred(mesh[i]), 1:nelements(t))
   end
 
   # indices to preserve
