@@ -35,7 +35,7 @@ function refine(mesh, method::TriRefinement)
   end
 
   # indices to preserve
-  pinds = setdiff(rinds, 1:nelements(t))
+  pinds = setdiff(1:nelements(t), rinds)
 
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
