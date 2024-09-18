@@ -17,7 +17,7 @@ struct TriRefinement{F} <: RefinementMethod
   pred::F
 end
 
-TriRefinement() = TriRefinement(_ -> true)
+TriRefinement() = TriRefinement(nothing)
 
 function refine(mesh, method::TriRefinement)
   assertion(paramdim(mesh) == 2, "TriRefinement only defined for surface meshes")
@@ -36,20 +36,29 @@ function refine(mesh, method::TriRefinement)
   # offset to new vertex indices
   offset = length(points)
 
+  # predicate function
+  pred = if isnothing(method.pred)
+    _ -> true
+  else
+    eᵢ -> method.pred(element(mesh, eᵢ))
+  end
+
   # add centroids of elements and connect vertices 
   # into new triangles if necessary
   newpoints = copy(points)
   newconnec = Connectivity{Triangle,3}[]
   for eᵢ in 1:nelements(t)
-    elem = element(mesh, eᵢ)
     # check if the element should be refined
-    if method.pred(elem)
-      # add new centroid vertex
-      push!(newpoints, centroid(elem))
-
-      # add new connectivities
+    if pred(eᵢ)
       verts = ∂₂₀(eᵢ)
       nv = length(verts)
+  
+      # add new centroid vertex
+      cₒ = sum(i -> to(points[i]), verts) / length(verts)
+      pₒ = withcrs(mesh, cₒ)
+      push!(newpoints, pₒ)
+
+      # add new connectivities
       for i in 1:nv
         u = eᵢ + offset
         v = verts[mod1(i, nv)]
