@@ -182,6 +182,16 @@
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   @test TB.revert(f, r, c) ≈ d
 
+  # ------------
+  # REGULARGRID
+  # ------------
+
+  f = Rotate(Angle2d(T(π / 2)))
+  d = RegularGrid(merc(0, 0), merc(1, 1), dims=(10, 10))
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+  @test TB.revert(f, r, c) ≈ d
+
   # ----------------
   # RECTILINEARGRID
   # ----------------
@@ -849,6 +859,16 @@ end
   r, c = TB.apply(f, d)
   @test r isa CartesianGrid
   @test r ≈ CartesianGrid(cart(1, 2), cart(11, 22), dims=(10, 10))
+  @test TB.revert(f, r, c) ≈ d
+
+  # ------------
+  # REGULARGRID
+  # ------------
+
+  f = Scale(T(1), T(2))
+  d = RegularGrid(merc(1, 1), merc(11, 11), dims=(10, 10))
+  r, c = TB.apply(f, d)
+  @test r ≈ RegularGrid(merc(1, 2), merc(11, 22), dims=(10, 10))
   @test TB.revert(f, r, c) ≈ d
 
   # ----------------

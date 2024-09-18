@@ -76,6 +76,8 @@ function applycoord(t::Scale, g::CartesianGrid)
   CartesianGrid(dims, orig, spac, offs)
 end
 
+applycoord(t::Scale, g::RegularGrid) = TransformedGrid(g, t)
+
 applycoord(t::Scale, g::RectilinearGrid) =
   RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * xyz(g)[i], paramdim(g)))
 
