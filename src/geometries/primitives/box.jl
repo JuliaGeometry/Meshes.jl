@@ -51,9 +51,9 @@ Base.maximum(b::Box) = b.max
 
 Base.extrema(b::Box) = b.min, b.max
 
-diagonal(b::Box) = norm(b.max - b.min)
+diagonal(b::Box{<:𝔼}) = norm(b.max - b.min)
 
-sides(b::Box) = Tuple(b.max - b.min)
+sides(b::Box{<:𝔼}) = Tuple(b.max - b.min)
 
 ==(b₁::Box, b₂::Box) = b₁.min == b₂.min && b₁.max == b₂.max
 

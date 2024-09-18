@@ -71,6 +71,17 @@
   s = Segment(merc(0, 0), merc(1, 1))
   @test crs(s(T(0))) === crs(s)
 
+  # measure
+  s = Segment(merc(0, 0), merc(1, 1))
+  @test measure(s) ≈ T(√2) * u"m"
+  s = Segment(latlon(0, 45), latlon(0, 135))
+  r = majoraxis(ellipsoid(datum(crs(s))))
+  C = 2 * T(π) * ℳ(r)
+  @test measure(s) ≈ C / 4
+  # TODO: fix measure of segments on the globe
+  s = Segment(latlon(0, 135), latlon(0, 45))
+  @test_broken measure(s) ≈ 3C / 4
+
   s = Segment(cart(0, 0), cart(1, 1))
   @test sprint(show, s) == "Segment((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 1.0 m))"
   if T === Float32
