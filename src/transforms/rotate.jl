@@ -60,7 +60,7 @@ applycoord(t::Rotate, b::Box) = TransformedGeometry(b, t)
 
 applycoord(t::Rotate, e::Ellipsoid) = Ellipsoid(radii(e), applycoord(t, center(e)), t.rot * rotation(e))
 
-applycoord(t::Rotate, g::CartesianGrid) = TransformedGrid(g, t)
+applycoord(t::Rotate, g::RegularGrid) = TransformedGrid(g, t)
 
 applycoord(t::Rotate, g::RectilinearGrid) = TransformedGrid(g, t)
 
