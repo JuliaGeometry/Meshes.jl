@@ -27,6 +27,15 @@ end
 discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> discretize(s, method), merge, segments(chain))
 
+function discretize(polygon::Polygon, method::MaxLengthDiscretization)
+  needrefine(e) = perimeter(e) > method.length * nvertices(e)
+  mesh = simplexify(polygon)
+  while any(needrefine, mesh)
+    mesh = refine(mesh, TriRefinement(needrefine))
+  end
+  mesh
+end
+
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
