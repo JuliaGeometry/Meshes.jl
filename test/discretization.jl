@@ -467,6 +467,29 @@ end
   @test nelements(mesh) == 404
   @test eltype(mesh) <: Segment
   @test nvertices.(mesh) ⊆ [2]
+
+  tri = Triangle(cart(0, 0), cart(10, 0), cart(0, 10))
+  mesh = discretize(tri, MaxLengthDiscretization(T(3)))
+  @test nvertices(mesh) == 15
+  @test nelements(mesh) == 16
+  @test eltype(mesh) <: Triangle
+  @test nvertices.(mesh) ⊆ [3]
+
+  quad = Quadrangle(latlon(0, 0), latlon(0, 45), latlon(45, 45), latlon(45, 0))
+  mesh = discretize(quad, MaxLengthDiscretization(T(1e6)))
+  @test nvertices(mesh) == 81
+  @test nelements(mesh) == 128
+  @test eltype(mesh) <: Triangle
+  @test nvertices.(mesh) ⊆ [3]
+
+  quad1 = Quadrangle(latlon(0, 0), latlon(0, 45), latlon(45, 45), latlon(45, 0))
+  quad2 = Quadrangle(latlon(0, 0), latlon(-45, 0), latlon(-45, 45), latlon(0, 45))
+  multi = Multi([quad1, quad2])
+  mesh = discretize(multi, MaxLengthDiscretization(T(1e6)))
+  @test nvertices(mesh) == 162
+  @test nelements(mesh) == 256
+  @test eltype(mesh) <: Triangle
+  @test nvertices.(mesh) ⊆ [3]
 end
 
 @testitem "Discretize" setup = [Setup] begin
