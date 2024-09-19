@@ -27,9 +27,9 @@ end
 discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> discretize(s, method), merge, segments(chain))
 
-discretize(geometry::Geometry, method::MaxLengthDiscretization) = _iterativerefinement(geometry, method)
-
 discretize(multi::Multi, method::MaxLengthDiscretization) = _iterativerefinement(multi, method)
+
+discretize(geometry::Geometry, method::MaxLengthDiscretization) = _iterativerefinement(geometry, method)
 
 # -----------------
 # HELPER FUNCTIONS
