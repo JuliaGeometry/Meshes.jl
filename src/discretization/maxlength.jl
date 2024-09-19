@@ -31,7 +31,7 @@ function discretize(polygon::Polygon, method::MaxLengthDiscretization)
   needrefine(e) = perimeter(e) > method.length * nvertices(e)
   mesh = simplexify(polygon)
   while any(needrefine, mesh)
-    mesh = refine(mesh, TriRefinement(needrefine))
+    mesh = refine(mesh, TriSubdivision())
   end
   mesh
 end
