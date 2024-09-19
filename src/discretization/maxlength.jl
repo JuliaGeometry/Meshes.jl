@@ -27,7 +27,15 @@ end
 discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> discretize(s, method), merge, segments(chain))
 
-function discretize(geometry::Geometry, method::MaxLengthDiscretization)
+discretize(geometry::Geometry, method::MaxLengthDiscretization) = _iterativerefinement(geometry, method)
+
+discretize(multi::Multi, method::MaxLengthDiscretization) = _iterativerefinement(multi, method)
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _iterativerefinement(geometry, method)
   iscoarse(e) = perimeter(e) > method.length * nvertices(e)
   mesh = simplexify(geometry)
   while any(iscoarse, mesh)
@@ -35,10 +43,6 @@ function discretize(geometry::Geometry, method::MaxLengthDiscretization)
   end
   mesh
 end
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
 
 _sides(box::Box{<:𝔼}) = sides(box)
 
