@@ -27,9 +27,9 @@ end
 discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> discretize(s, method), merge, segments(chain))
 
-function discretize(polygon::Polygon, method::MaxLengthDiscretization)
+function discretize(geometry::Geometry, method::MaxLengthDiscretization)
   iscoarse(e) = perimeter(e) > method.length * nvertices(e)
-  mesh = simplexify(polygon)
+  mesh = simplexify(geometry)
   while any(iscoarse, mesh)
     mesh = refine(mesh, TriSubdivision())
   end
