@@ -22,20 +22,20 @@ function refine(mesh, method::TriRefinement)
 
   # retrieve geometry and topology
   points = vertices(mesh)
-  connec = topology(mesh)
+  topo = topology(mesh)
 
   # indices to refine
   rinds = if isnothing(method.pred)
-    1:nelements(connec)
+    1:nelements(topo)
   else
-    filter(i -> method.pred(mesh[i]), 1:nelements(connec))
+    filter(i -> method.pred(mesh[i]), 1:nelements(topo))
   end
 
   # indices to preserve
-  pinds = setdiff(1:nelements(connec), rinds)
+  pinds = setdiff(1:nelements(topo), rinds)
 
   # add centroids of elements
-  ∂₂₀ = Boundary{2,0}(connec)
+  ∂₂₀ = Boundary{2,0}(topo)
   rpts = map(rinds) do elem
     is = ∂₂₀(elem)
     cₒ = sum(i -> to(points[i]), is) / length(is)
@@ -69,7 +69,7 @@ function refine(mesh, method::TriRefinement)
 
   # connectivities of preserved elements
   for elem in pinds
-    push!(newconnec, element(connec, elem))
+    push!(newconnec, element(topo, elem))
   end
 
   SimpleMesh(newpoints, newconnec)
