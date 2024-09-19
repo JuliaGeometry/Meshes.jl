@@ -3,14 +3,20 @@
 # ------------------------------------------------------------------
 
 """
-    TriRefinement()
+    TriRefinement([pred])
 
 Refinement of polygonal meshes into triangles.
-A n-gon is subdivided into n triangles.
+A n-gon for which the predicate `pred` holds true
+is subdivided into n triangles. The method refines all
+n-gons if the `pred` is ommited.
 """
-struct TriRefinement <: RefinementMethod end
+struct TriRefinement{F} <: RefinementMethod
+  pred::F
+end
 
-function refine(mesh, ::TriRefinement)
+TriRefinement() = TriRefinement(nothing)
+
+function refine(mesh, method::TriRefinement)
   assertion(paramdim(mesh) == 2, "TriRefinement only defined for surface meshes")
   (eltype(mesh) <: Triangle) || return simplexify(mesh)
 
@@ -21,9 +27,19 @@ function refine(mesh, ::TriRefinement)
   # convert to half-edge structure
   t = convert(HalfEdgeTopology, connec)
 
+  # indices to refine
+  rinds = if isnothing(method.pred)
+    1:nelements(t)
+  else
+    filter(i -> method.pred(mesh[i]), 1:nelements(t))
+  end
+
+  # indices to preserve
+  pinds = setdiff(1:nelements(t), rinds)
+
   # add centroids of elements
   ∂₂₀ = Boundary{2,0}(t)
-  epts = map(1:nelements(t)) do elem
+  rpts = map(rinds) do elem
     is = ∂₂₀(elem)
     cₒ = sum(i -> to(points[i]), is) / length(is)
     withcrs(mesh, cₒ)
@@ -33,22 +49,30 @@ function refine(mesh, ::TriRefinement)
   vpts = points
 
   # new points in refined mesh
-  newpoints = [vpts; epts]
+  newpoints = [vpts; rpts]
 
+  # new connectivities in refined mesh
+  newconnec = Connectivity{Triangle,3}[]
+
+  # offset to new vertex indices
   offset = length(vpts)
 
-  # connect vertices into new triangles
-  newconnec = Connectivity{Triangle,3}[]
-  for elem in 1:nelements(t)
+  # connectivities of new triangles
+  for (i, elem) in enumerate(rinds)
     verts = ∂₂₀(elem)
     nv = length(verts)
-    for i in 1:nv
-      u = elem + offset
-      v = verts[mod1(i, nv)]
-      w = verts[mod1(i + 1, nv)]
+    for j in 1:nv
+      u = i + offset
+      v = verts[mod1(j, nv)]
+      w = verts[mod1(j + 1, nv)]
       tri = connect((u, v, w))
       push!(newconnec, tri)
     end
+  end
+
+  # connectivities of preserved elements
+  for elem in pinds
+    push!(newconnec, element(t, elem))
   end
 
   SimpleMesh(newpoints, newconnec)

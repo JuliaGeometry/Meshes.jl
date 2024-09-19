@@ -15,6 +15,17 @@
   grid = CartesianGrid((3, 3), merc(0, 0), (T(1), T(1)))
   ref = refine(grid, TriRefinement())
   @test crs(ref) === crs(grid)
+
+  # predicate
+  points = cart.([(0, 0), (4, 0), (8, 0), (3, 1), (5, 1), (2, 2), (4, 2), (6, 2), (4, 4)])
+  connec = connect.([(1, 2, 6), (2, 3, 8), (6, 8, 9), (2, 5, 4), (4, 5, 7), (4, 7, 6), (5, 8, 7)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, TriRefinement(e -> measure(e) > T(1) * u"m^2"))
+  @test nelements(ref) == 13
+  @test nvertices(ref) == 12
+  ref = refine(mesh, TriRefinement(e -> measure(e) ≤ T(1) * u"m^2"))
+  @test nelements(ref) == 15
+  @test nvertices(ref) == 13
 end
 
 @testitem "QuadRefinement" setup = [Setup] begin
