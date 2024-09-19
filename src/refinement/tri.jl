@@ -24,21 +24,18 @@ function refine(mesh, method::TriRefinement)
   points = vertices(mesh)
   connec = topology(mesh)
 
-  # convert to half-edge structure
-  t = convert(HalfEdgeTopology, connec)
-
   # indices to refine
   rinds = if isnothing(method.pred)
-    1:nelements(t)
+    1:nelements(connec)
   else
-    filter(i -> method.pred(mesh[i]), 1:nelements(t))
+    filter(i -> method.pred(mesh[i]), 1:nelements(connec))
   end
 
   # indices to preserve
-  pinds = setdiff(1:nelements(t), rinds)
+  pinds = setdiff(1:nelements(connec), rinds)
 
   # add centroids of elements
-  ∂₂₀ = Boundary{2,0}(t)
+  ∂₂₀ = Boundary{2,0}(connec)
   rpts = map(rinds) do elem
     is = ∂₂₀(elem)
     cₒ = sum(i -> to(points[i]), is) / length(is)
@@ -72,7 +69,7 @@ function refine(mesh, method::TriRefinement)
 
   # connectivities of preserved elements
   for elem in pinds
-    push!(newconnec, element(t, elem))
+    push!(newconnec, element(connec, elem))
   end
 
   SimpleMesh(newpoints, newconnec)
