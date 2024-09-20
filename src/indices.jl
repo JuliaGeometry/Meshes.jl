@@ -13,7 +13,7 @@ Return the indices of the elements of the `domain` that intersect with the `geom
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, point::Point)
+function indices(grid::QuasiCartesianGrid, point::Point)
   point ∉ grid && return Int[]
 
   # grid properties
@@ -31,7 +31,7 @@ function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, point::Point)
   [LinearIndices(dims)[coords...]]
 end
 
-function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, chain::Chain)
+function indices(grid::QuasiCartesianGrid, chain::Chain)
   dims = size(grid)
   mask = falses(dims)
 
@@ -43,7 +43,7 @@ function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, chain::Chain)
   LinearIndices(dims)[mask]
 end
 
-function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, poly::Polygon)
+function indices(grid::QuasiCartesianGrid, poly::Polygon)
   dims = size(grid)
   mask = zeros(Int, dims)
   cpoly = poly ∩ boundingbox(grid)
@@ -56,7 +56,7 @@ function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, poly::Polygon
   LinearIndices(dims)[mask .> 0]
 end
 
-function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, box::Box)
+function indices(grid::QuasiCartesianGrid, box::Box)
   # cartesian range
   range = cartesianrange(grid, box)
 
@@ -64,7 +64,7 @@ function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, multi::Multi) =
+indices(grid::QuasiCartesianGrid, multi::Multi) =
   mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::RectilinearGrid, box::Box)
@@ -90,7 +90,7 @@ _manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box
 
 _manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
 
-function _euclideanrange(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, box::Box)
+function _euclideanrange(grid::QuasiCartesianGrid, box::Box)
   # grid properties
   or = minimum(grid)
   sp = spacing(grid)

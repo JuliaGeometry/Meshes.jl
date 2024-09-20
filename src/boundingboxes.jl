@@ -69,9 +69,9 @@ end
 
 boundingbox(t::Torus) = _pboxes(pointify(t))
 
-boundingbox(g::RegularGrid{<:𝔼,<:CartesianOrProjected}) = Box(extrema(g)...)
+boundingbox(g::QuasiCartesianGrid) = Box(extrema(g)...)
 
-boundingbox(g::RectilinearGrid{<:𝔼,<:CartesianOrProjected}) = Box(extrema(g)...)
+boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
 
 boundingbox(g::TransformedGrid{<:Any,<:Any,<:CartesianGrid}) = boundingbox(parent(g)) |> transform(g) |> boundingbox
 

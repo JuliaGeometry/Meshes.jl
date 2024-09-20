@@ -2,6 +2,8 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+const QuasiCartesianGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = RegularGrid{M,C}
+
 """
     CartesianGrid(dims, origin, spacing)
 
