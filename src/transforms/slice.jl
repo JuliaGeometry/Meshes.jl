@@ -41,8 +41,8 @@ _slice(d::Domain, inds) = view(d, inds)
 _slice(g::Grid, inds::CartesianIndices) = getindex(g, inds)
 
 _sliceinds(d::Domain, b) = indices(d, b)
-_sliceinds(g::CartesianGrid, b) = cartesianrange(g, b)
-_sliceinds(g::RectilinearGrid, b) = cartesianrange(g, b)
+_sliceinds(g::OrthoRegularGrid, b) = cartesianrange(g, b)
+_sliceinds(g::OrthoRectilinearGrid, b) = cartesianrange(g, b)
 _sliceinds(g::Grid{🌐}, b::Box{🌐}) = cartesianrange(g, b)
 
 function _slicebox(box::Box{𝔼{2}}, limits)

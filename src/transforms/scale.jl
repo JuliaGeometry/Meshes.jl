@@ -68,15 +68,13 @@ applycoord(t::Scale, p::ParaboloidSurface) = TransformedGeometry(p, t)
 
 applycoord(t::Scale, tr::Torus) = TransformedGeometry(tr, t)
 
-function applycoord(t::Scale, g::CartesianGrid)
+function applycoord(t::Scale, g::RegularGrid)
   dims = size(g)
   orig = applycoord(t, minimum(g))
   spac = t.factors .* spacing(g)
   offs = offset(g)
-  CartesianGrid(dims, orig, spac, offs)
+  RegularGrid(dims, orig, spac, offs)
 end
-
-applycoord(t::Scale, g::RegularGrid) = TransformedGrid(g, t)
 
 applycoord(t::Scale, g::RectilinearGrid) =
   RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * xyz(g)[i], paramdim(g)))
