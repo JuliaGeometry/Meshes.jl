@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# auxiliary alias for dispatch purposes
+# alias for dispatch purposes
 const QuasiCartesianGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = RegularGrid{M,C}
 
 """
