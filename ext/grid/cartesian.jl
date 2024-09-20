@@ -9,8 +9,6 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
   showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
 
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
