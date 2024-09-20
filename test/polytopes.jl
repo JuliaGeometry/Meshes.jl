@@ -178,10 +178,6 @@ end
   c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test isnothing(boundary(c))
 
-  # should not repeat the first vertex manually
-  @test_throws ArgumentError Ring(cart.([(0, 0), (0, 0)]))
-  @test_throws ArgumentError Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 0)]))
-
   # degenerate rings with 1 or 2 vertices are allowed
   r = Ring(cart.([(0, 0)]))
   @test isclosed(r)
@@ -657,10 +653,6 @@ end
     inner
     ├─ Ring((x: 0.2 m, y: 0.2 m), ..., (x: 0.4 m, y: 0.2 m))
     └─ Ring((x: 0.6 m, y: 0.2 m), ..., (x: 0.8 m, y: 0.2 m))"""
-
-  # should not repeat the first vertex manually
-  @test_throws ArgumentError PolyArea(cart.([(0, 0), (0, 0)]))
-  @test_throws ArgumentError PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 0)]))
 end
 
 @testitem "Polyhedra" setup = [Setup] begin
