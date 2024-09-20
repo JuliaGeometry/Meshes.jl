@@ -4,6 +4,7 @@
 
 # auxiliary types for dispatch purposes
 const GeometryOrDomain = Union{Geometry,Domain}
+
 const CartesianOrProjected = Union{Cartesian,Projected}
 
 include("utils/basic.jl")
