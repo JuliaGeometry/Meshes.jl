@@ -20,7 +20,7 @@ end
 
 RegularCoarsening(factors::Vararg{Int,N}) where {N} = RegularCoarsening(factors)
 
-function coarsen(grid::OrthoAxesRegularGrid, method::RegularCoarsening)
+function coarsen(grid::OrthoRegularGrid, method::RegularCoarsening)
   factors = fitdims(method.factors, paramdim(grid))
   RegularGrid(minimum(grid), maximum(grid), dims=size(grid) .÷ factors)
 end
