@@ -13,6 +13,7 @@
   @test eltype(grid) <: Quadrangle
   @test vertex(grid, 1) == vertex(grid, (1, 1))
   @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21))
+  @test centroid(grid, 1) == centroid(grid[1])
   @test grid[1, 1] == grid[1]
   @test grid[10, 20] == grid[200]
 
@@ -30,6 +31,7 @@
   @test eltype(grid) <: Quadrangle
   @test vertex(grid, 1) == vertex(grid, (1, 1))
   @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21))
+  @test centroid(grid, 1) == centroid(grid[1])
   @test grid[1, 1] == grid[1]
   @test grid[10, 20] == grid[200]
 
@@ -47,6 +49,7 @@
   @test eltype(grid) <: Quadrangle
   @test vertex(grid, 1) == vertex(grid, (1, 1))
   @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21))
+  @test centroid(grid, 1) == centroid(grid[1])
   @test grid[1, 1] == grid[1]
   @test grid[10, 20] == grid[200]
 
@@ -64,6 +67,7 @@
   @test eltype(grid) <: Hexahedron
   @test vertex(grid, 1) == vertex(grid, (1, 1, 1))
   @test vertex(grid, nvertices(grid)) == vertex(grid, (11, 21, 31))
+  @test centroid(grid, 1) == centroid(grid[1])
   @test grid[1, 1, 1] == grid[1]
   @test grid[10, 20, 30] == grid[6000]
 
