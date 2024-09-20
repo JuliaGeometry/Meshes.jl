@@ -247,5 +247,7 @@ include("meshes/structuredgrid.jl")
 include("meshes/simplemesh.jl")
 include("meshes/transformedmesh.jl")
 
-# alias for dispatch purposes
+# aliases for dispatch purposes
 const OrthoRegularGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = RegularGrid{M,C}
+const OrthoRectilinearGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = RectilinearGrid{M,C}
+const OrthoStructuredGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = StructuredGrid{M,C}
