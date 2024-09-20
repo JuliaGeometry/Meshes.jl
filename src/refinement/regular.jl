@@ -20,9 +20,9 @@ end
 
 RegularRefinement(factors::Vararg{Int,N}) where {N} = RegularRefinement(factors)
 
-function refine(grid::CartesianGrid, method::RegularRefinement)
+function refine(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
-  CartesianGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
+  RegularGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end
 
 function refine(grid::RectilinearGrid, method::RegularRefinement)

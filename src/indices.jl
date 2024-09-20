@@ -13,7 +13,7 @@ Return the indices of the elements of the `domain` that intersect with the `geom
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-function indices(grid::CartesianGrid, point::Point)
+function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, point::Point)
   point ∉ grid && return Int[]
 
   # grid properties
@@ -31,7 +31,7 @@ function indices(grid::CartesianGrid, point::Point)
   [LinearIndices(dims)[coords...]]
 end
 
-function indices(grid::CartesianGrid, chain::Chain)
+function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, chain::Chain)
   dims = size(grid)
   mask = falses(dims)
 
@@ -43,7 +43,7 @@ function indices(grid::CartesianGrid, chain::Chain)
   LinearIndices(dims)[mask]
 end
 
-function indices(grid::CartesianGrid, poly::Polygon)
+function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, poly::Polygon)
   dims = size(grid)
   mask = zeros(Int, dims)
   cpoly = poly ∩ boundingbox(grid)
@@ -56,7 +56,7 @@ function indices(grid::CartesianGrid, poly::Polygon)
   LinearIndices(dims)[mask .> 0]
 end
 
-function indices(grid::CartesianGrid, box::Box)
+function indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, box::Box)
   # cartesian range
   range = cartesianrange(grid, box)
 
@@ -64,7 +64,8 @@ function indices(grid::CartesianGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-indices(grid::CartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
+indices(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, multi::Multi) =
+  mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::RectilinearGrid, box::Box)
   # cartesian range
@@ -89,7 +90,7 @@ _manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box
 
 _manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
 
-function _euclideanrange(grid::CartesianGrid, box::Box)
+function _euclideanrange(grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, box::Box)
   # grid properties
   or = minimum(grid)
   sp = spacing(grid)

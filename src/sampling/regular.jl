@@ -87,6 +87,6 @@ extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 # SPECIAL CASES
 # --------------
 
-function sample(rng::AbstractRNG, grid::CartesianGrid, method::RegularSampling)
+function sample(rng::AbstractRNG, grid::RegularGrid{<:𝔼,<:CartesianOrProjected}, method::RegularSampling)
   sample(rng, boundingbox(grid), method)
 end
