@@ -66,7 +66,7 @@ end
 
 indices(grid::OrthoRegularGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
-function indices(grid::RectilinearGrid, box::Box)
+function indices(grid::OrthoRectilinearGrid, box::Box)
   # cartesian range
   range = cartesianrange(grid, box)
 
@@ -106,7 +106,7 @@ function _euclideanrange(grid::OrthoRegularGrid, box::Box)
   CartesianIndex(Tuple(ijkₛ)):CartesianIndex(Tuple(ijkₑ))
 end
 
-function _euclideanrange(grid::RectilinearGrid, box::Box)
+function _euclideanrange(grid::OrthoRectilinearGrid, box::Box)
   # grid properties
   nd = paramdim(grid)
 
