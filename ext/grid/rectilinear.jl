@@ -9,8 +9,6 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
   colormap = plot[:colormap]
   colorrange = plot[:colorrange]
   showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
 
   if crs(grid[]) <: Cartesian
     # process color spec into colorant
