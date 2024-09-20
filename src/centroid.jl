@@ -65,7 +65,7 @@ centroid(d::Domain, ind::Int) = centroid(d[ind])
 
 centroid(d::SubDomain, ind::Int) = centroid(parent(d), parentindices(d)[ind])
 
-function centroid(g::QuasiCartesianGrid, ind::Int)
+function centroid(g::OrthoAxesRegularGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   vertex(g, ijk) + Vec(spacing(g) ./ 2)
 end

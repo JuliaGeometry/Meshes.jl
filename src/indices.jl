@@ -13,7 +13,7 @@ Return the indices of the elements of the `domain` that intersect with the `geom
 """
 indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
-function indices(grid::QuasiCartesianGrid, point::Point)
+function indices(grid::OrthoAxesRegularGrid, point::Point)
   point ∉ grid && return Int[]
 
   # grid properties
@@ -31,7 +31,7 @@ function indices(grid::QuasiCartesianGrid, point::Point)
   [LinearIndices(dims)[coords...]]
 end
 
-function indices(grid::QuasiCartesianGrid, chain::Chain)
+function indices(grid::OrthoAxesRegularGrid, chain::Chain)
   dims = size(grid)
   mask = falses(dims)
 
@@ -43,7 +43,7 @@ function indices(grid::QuasiCartesianGrid, chain::Chain)
   LinearIndices(dims)[mask]
 end
 
-function indices(grid::QuasiCartesianGrid, poly::Polygon)
+function indices(grid::OrthoAxesRegularGrid, poly::Polygon)
   dims = size(grid)
   mask = zeros(Int, dims)
   cpoly = poly ∩ boundingbox(grid)
@@ -56,7 +56,7 @@ function indices(grid::QuasiCartesianGrid, poly::Polygon)
   LinearIndices(dims)[mask .> 0]
 end
 
-function indices(grid::QuasiCartesianGrid, box::Box)
+function indices(grid::OrthoAxesRegularGrid, box::Box)
   # cartesian range
   range = cartesianrange(grid, box)
 
@@ -64,7 +64,7 @@ function indices(grid::QuasiCartesianGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-indices(grid::QuasiCartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
+indices(grid::OrthoAxesRegularGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::RectilinearGrid, box::Box)
   # cartesian range
@@ -89,7 +89,7 @@ _manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box
 
 _manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
 
-function _euclideanrange(grid::QuasiCartesianGrid, box::Box)
+function _euclideanrange(grid::OrthoAxesRegularGrid, box::Box)
   # grid properties
   or = minimum(grid)
   sp = spacing(grid)

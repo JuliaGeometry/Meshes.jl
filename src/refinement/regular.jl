@@ -20,7 +20,7 @@ end
 
 RegularRefinement(factors::Vararg{Int,N}) where {N} = RegularRefinement(factors)
 
-function refine(grid::QuasiCartesianGrid, method::RegularRefinement)
+function refine(grid::OrthoAxesRegularGrid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
   RegularGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
 end

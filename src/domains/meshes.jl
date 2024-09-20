@@ -246,3 +246,6 @@ include("meshes/rectilineargrid.jl")
 include("meshes/structuredgrid.jl")
 include("meshes/simplemesh.jl")
 include("meshes/transformedmesh.jl")
+
+# alias for dispatch purposes
+const OrthoAxesRegularGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = RegularGrid{M,C}

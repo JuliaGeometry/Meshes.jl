@@ -69,7 +69,7 @@ end
 
 boundingbox(t::Torus) = _pboxes(pointify(t))
 
-boundingbox(g::QuasiCartesianGrid) = Box(extrema(g)...)
+boundingbox(g::OrthoAxesRegularGrid) = Box(extrema(g)...)
 
 boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
 
