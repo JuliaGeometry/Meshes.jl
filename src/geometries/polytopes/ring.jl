@@ -11,20 +11,8 @@ See also [`Chain`](@ref) and [`Rope`](@ref).
 """
 struct Ring{M<:Manifold,C<:CRS,V<:CircularVector{Point{M,C}}} <: Chain{M,C}
   vertices::V
-
-  function Ring{M,C,V}(vertices) where {M<:Manifold,C<:CRS,V<:CircularVector{Point{M,C}}}
-    if first(vertices) == last(vertices) && length(vertices) ≥ 2
-      throw(ArgumentError("""
-      First and last vertices of `Ring` constructor must be different
-      in the latest version of Meshes.jl. The type itself now holds
-      this connectivity information.
-      """))
-    end
-    new(vertices)
-  end
 end
 
-Ring(vertices::CircularVector{Point{M,C}}) where {M<:Manifold,C<:CRS} = Ring{M,C,typeof(vertices)}(vertices)
 Ring(vertices::Tuple...) = Ring([Point(v) for v in vertices])
 Ring(vertices::P...) where {P<:Point} = Ring(collect(vertices))
 Ring(vertices::AbstractVector{<:Tuple}) = Ring(Point.(vertices))
@@ -38,7 +26,7 @@ nvertices(r::Ring) = length(r.vertices)
     ≗(ring₁, ring₂)
 
 Tells whether or not the `ring₁` and `ring₂`
-are equal up to circular shifts.
+are equal regardless of circular shifts.
 """
 function ≗(r₁::Ring, r₂::Ring)
   n = length(r₁.vertices)

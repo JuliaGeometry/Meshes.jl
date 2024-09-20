@@ -177,7 +177,7 @@ const Polygon = Polytope{2}
     ≗(polygon₁, polygon₂)
 
 Tells whether or not the `polygon₁` and `polygon₂`
-are equal up to circular shifts.
+are equal regardless of circular shifts.
 """
 function ≗(p₁::Polygon, p₂::Polygon)
   rings₁ = rings(p₁)
