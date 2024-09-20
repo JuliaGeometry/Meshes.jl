@@ -65,12 +65,12 @@ centroid(d::Domain, ind::Int) = centroid(d[ind])
 
 centroid(d::SubDomain, ind::Int) = centroid(parent(d), parentindices(d)[ind])
 
-function centroid(g::CartesianGrid, ind::Int)
+function centroid(g::RegularGrid{<:𝔼,<:CartesianOrProjected}, ind::Int)
   ijk = elem2cart(topology(g), ind)
   vertex(g, ijk) + Vec(spacing(g) ./ 2)
 end
 
-function centroid(g::RectilinearGrid, ind::Int)
+function centroid(g::RectilinearGrid{<:𝔼,<:CartesianOrProjected}, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p1 = vertex(g, ijk)
   p2 = vertex(g, ijk .+ 1)
