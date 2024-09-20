@@ -362,6 +362,16 @@ end
   @test all(r .≈ [f(t), f(t)])
   @test all(TB.revert(f, r, c) .≈ d)
 
+  # ------------
+  # REGULARGRID
+  # ------------
+
+  f = Translate(T(1), T(1))
+  d = RegularGrid((8, 8), Point(Polar(T(0), T(0))), (T(1), T(π / 4)))
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+  @test TB.revert(f, r, c) ≈ d
+
   # --------------
   # CARTESIANGRID
   # --------------
@@ -384,6 +394,13 @@ end
   @test r ≈ RectilinearGrid(T.(1:11), T.(1:11))
   @test TB.revert(f, r, c) ≈ d
 
+  f = Translate(T(1), T(1))
+  g = RegularGrid((8, 8), Point(Polar(T(0), T(0))), (T(1), T(π / 4)))
+  d = convert(RectilinearGrid, g)
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+  @test TB.revert(f, r, c) ≈ d
+
   # ---------------
   # STRUCTUREDGRID
   # ---------------
@@ -393,6 +410,13 @@ end
   r, c = TB.apply(f, d)
   @test r isa StructuredGrid
   @test r ≈ StructuredGrid(repeat(T.(1:11), 1, 11), repeat(T.(1:11)', 11, 1))
+  @test TB.revert(f, r, c) ≈ d
+
+  f = Translate(T(1), T(1))
+  g = RegularGrid((8, 8), Point(Polar(T(0), T(0))), (T(1), T(π / 4)))
+  d = convert(StructuredGrid, g)
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   @test TB.revert(f, r, c) ≈ d
 
   # -----------
@@ -1403,6 +1427,15 @@ end
   r, c = TB.apply(f, d)
   @test all(r .≈ [f(t), f(t)])
 
+  # ------------
+  # REGULARGRID
+  # ------------
+
+  f = LengthUnit(u"cm")
+  d = RegularGrid((8, 8), Point(Polar(T(1), T(0))), (T(1), T(π / 4)))
+  r, c = TB.apply(f, d)
+  @test r ≈ RegularGrid((8, 8), Point(Polar(T(100) * u"cm", T(0) * u"rad")), (T(100) * u"cm", T(π / 4) * u"rad"))
+
   # --------------
   # CARTESIANGRID
   # --------------
@@ -1621,6 +1654,15 @@ end
   d = [t, t]
   r, c = TB.apply(f, d)
   @test all(r .== [f(t), f(t)])
+
+  # ------------
+  # REGULARGRID
+  # ------------
+
+  f = Shadow(:yz)
+  d = RegularGrid((8, 8, 8), Point(Cylindrical(T(0), T(0), T(0))), (T(1), T(π / 4), T(1)))
+  r, c = TB.apply(f, d)
+  @test r == SimpleMesh(f.(vertices(d)), topology(d))
 
   # --------------
   # CARTESIANGRID

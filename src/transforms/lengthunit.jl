@@ -32,6 +32,14 @@ applycoord(t::LengthUnit, len::Len) = uconvert(t.unit, len)
 
 applycoord(t::LengthUnit, lens::NTuple{Dim,Len}) where {Dim} = uconvert.(t.unit, lens)
 
+function applycoord(t::LengthUnit, g::RegularGrid)
+  dims = size(g)
+  orig = applycoord(t, minimum(g))
+  spac = map(s -> applycoord(t, s), spacing(g))
+  offs = offset(g)
+  RegularGrid(dims, orig, spac, offs)
+end
+
 applycoord(t::LengthUnit, g::RectilinearGrid) = TransformedGrid(g, t)
 
 applycoord(t::LengthUnit, g::StructuredGrid) = TransformedGrid(g, t)

@@ -63,6 +63,10 @@ apply(t::Shadow, tr::Torus) = TransformedGeometry(tr, t), nothing
 
 apply(t::Shadow, ct::CylindricalTrajectory) = apply(t, GeometrySet(collect(ct))), nothing
 
+apply(t::Shadow, g::CartesianGrid) = _shadow(g, _sort(t.dims)), nothing
+
+apply(t::Shadow, g::RegularGrid) = TransformedGrid(g, t), nothing
+
 apply(t::Shadow, g::RectilinearGrid) = TransformedGrid(g, t), nothing
 
 apply(t::Shadow, g::StructuredGrid) = TransformedGrid(g, t), nothing
