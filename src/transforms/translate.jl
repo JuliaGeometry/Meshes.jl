@@ -37,12 +37,16 @@ applycoord(::Translate, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-apply(t::Translate, g::RectilinearGrid) =
-  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> xyz(g)[i] .+ t.offsets[i], paramdim(g))), nothing
+applycoord(t::Translate, g::RegularGrid) = TransformedGrid(g, t)
 
-revert(t::Translate, g::RectilinearGrid, c) = first(apply(inverse(t), g))
+applycoord(t::Translate, g::OrthoRegularGrid) = RegularGrid(size(g), applycoord(t, minimum(g)), spacing(g), offset(g))
 
-apply(t::Translate, g::StructuredGrid) =
-  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> XYZ(g)[i] .+ t.offsets[i], paramdim(g))), nothing
+applycoord(t::Translate, g::RectilinearGrid) = TransformedGrid(g, t)
 
-revert(t::Translate, g::StructuredGrid, c) = first(apply(inverse(t), g))
+applycoord(t::Translate, g::OrthoRectilinearGrid) =
+  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> xyz(g)[i] .+ t.offsets[i], paramdim(g)))
+
+applycoord(t::Translate, g::StructuredGrid) = TransformedGrid(g, t)
+
+applycoord(t::Translate, g::OrthoStructuredGrid) =
+  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> XYZ(g)[i] .+ t.offsets[i], paramdim(g)))
