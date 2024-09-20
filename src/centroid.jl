@@ -70,7 +70,7 @@ function centroid(g::OrthoRegularGrid, ind::Int)
   vertex(g, ijk) + Vec(spacing(g) ./ 2)
 end
 
-function centroid(g::RectilinearGrid{<:𝔼,<:CartesianOrProjected}, ind::Int)
+function centroid(g::OrthoRectilinearGrid, ind::Int)
   ijk = elem2cart(topology(g), ind)
   p1 = vertex(g, ijk)
   p2 = vertex(g, ijk .+ 1)

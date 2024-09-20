@@ -71,11 +71,12 @@ boundingbox(t::Torus) = _pboxes(pointify(t))
 
 boundingbox(g::OrthoRegularGrid) = Box(extrema(g)...)
 
-boundingbox(g::RectilinearGrid) = Box(extrema(g)...)
+boundingbox(g::OrthoRectilinearGrid) = Box(extrema(g)...)
 
-boundingbox(g::TransformedGrid{<:Any,<:Any,<:CartesianGrid}) = boundingbox(parent(g)) |> transform(g) |> boundingbox
+boundingbox(g::TransformedGrid{<:Any,<:Any,<:OrthoRegularGrid}) = boundingbox(parent(g)) |> transform(g) |> boundingbox
 
-boundingbox(g::TransformedGrid{<:Any,<:Any,<:RectilinearGrid}) = boundingbox(parent(g)) |> transform(g) |> boundingbox
+boundingbox(g::TransformedGrid{<:Any,<:Any,<:OrthoRectilinearGrid}) =
+  boundingbox(parent(g)) |> transform(g) |> boundingbox
 
 boundingbox(m::Mesh) = _pboxes(vertices(m))
 

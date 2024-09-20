@@ -32,7 +32,7 @@ function refine(grid::RectilinearGrid, method::RegularRefinement)
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end
 
-function refine(grid::StructuredGrid, method::RegularRefinement)
+function refine(grid::OrthoStructuredGrid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
   XYZ′ = _XYZ(grid, factors)
   StructuredGrid{manifold(grid),crs(grid)}(XYZ′)
@@ -49,9 +49,9 @@ function _refinedims(x, f)
   x′
 end
 
-_XYZ(grid::StructuredGrid, factors::Dims) = _XYZ(grid, Val(paramdim(grid)), factors)
+_XYZ(grid::OrthoStructuredGrid, factors::Dims) = _XYZ(grid, Val(paramdim(grid)), factors)
 
-function _XYZ(grid::StructuredGrid, ::Val{2}, factors::Dims{2})
+function _XYZ(grid::OrthoStructuredGrid, ::Val{2}, factors::Dims{2})
   T = numtype(lentype(grid))
   fᵢ, fⱼ = factors
   sᵢ, sⱼ = size(grid)
@@ -77,7 +77,7 @@ function _XYZ(grid::StructuredGrid, ::Val{2}, factors::Dims{2})
   (X, Y)
 end
 
-function _XYZ(grid::StructuredGrid, ::Val{3}, factors::Dims{3})
+function _XYZ(grid::OrthoStructuredGrid, ::Val{3}, factors::Dims{3})
   T = numtype(lentype(grid))
   fᵢ, fⱼ, fₖ = factors
   sᵢ, sⱼ, sₖ = size(grid)
