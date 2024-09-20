@@ -64,8 +64,7 @@ function indices(grid::QuasiCartesianGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-indices(grid::QuasiCartesianGrid, multi::Multi) =
-  mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
+indices(grid::QuasiCartesianGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::RectilinearGrid, box::Box)
   # cartesian range
