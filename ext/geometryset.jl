@@ -26,6 +26,21 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector
   Makie.scatter!(plot, coords, color=colorant, marker=pointmarker, markersize=pointsize, overdraw=true)
 end
 
+function vizgset!(plot, ::Type{<:🌐}, ::Val{1}, ::Val, geoms, colorant)
+  showpoints = plot[:showpoints]
+
+  meshes = Makie.@lift begin
+    T = numtype(Meshes.lentype(first($geoms)))
+    method = MaxLengthDiscretization(T(1000) * u"km")
+    [discretize(g, method) for g in $geoms]
+  end
+  vizmany!(plot, meshes, colorant)
+
+  if showpoints[]
+    vizfacets!(plot, geoms)
+  end
+end
+
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
   showpoints = plot[:showpoints]
 
