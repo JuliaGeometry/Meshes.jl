@@ -61,7 +61,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   # or when there is a large number of elements
   if pdim == Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
     # decide whether or not to reverse connectivity list
-    rfunc = Makie.@lift _reverse(crs($grid))
+    rfunc = Makie.@lift _reverse(first($grid))
 
     verts = Makie.@lift map(asmakie, vertices($grid))
     quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
@@ -94,8 +94,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   end
 end
 
-_reverse(::Type{<:CRS}) = identity
-_reverse(::Type{<:LatLon}) = reverse
+_reverse(quad) = orientation(quad) == CW ? reverse : identity
 
 # helper functions to create a minimum number
 # of line segments within Cartesian/Rectilinear grid
