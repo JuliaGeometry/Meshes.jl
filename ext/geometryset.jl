@@ -31,7 +31,7 @@ function vizgset!(plot, ::Type{<:🌐}, ::Val{1}, ::Val, geoms, colorant)
 
   meshes = Makie.@lift begin
     T = numtype(Meshes.lentype(first($geoms)))
-    method = MaxLengthDiscretization(T(1e6) * u"m")
+    method = MaxLengthDiscretization(T(1000) * u"km")
     [discretize(g, method) for g in $geoms]
   end
   vizmany!(plot, meshes, colorant)
