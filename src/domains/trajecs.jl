@@ -72,4 +72,6 @@ nelements(t::CylindricalTrajectory) = length(t.centroids)
 
 Base.eltype(t::CylindricalTrajectory) = typeof(first(t))
 
+centroid(t::CylindricalTrajectory, ind::Int) = t.centroids[ind]
+
 radius(t::CylindricalTrajectory) = t.radius
