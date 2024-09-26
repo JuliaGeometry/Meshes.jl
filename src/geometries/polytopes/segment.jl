@@ -26,12 +26,22 @@ Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 Base.isapprox(s₁::Segment, s₂::Segment; atol=atol(lentype(s₁)), kwargs...) =
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
-function (s::Segment)(t)
+function (s::Segment{<:𝔼})(t)
   if t < 0 || t > 1
     throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
   end
   a, b = s.vertices
   a + t * (b - a)
+end
+
+function (s::Segment{<:🌐})(t)
+  if t < 0 || t > 1
+    throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
+  end
+  verts = convert.(LatLon, coords.(s.vertices))
+  a, b = CoordRefSystems.values.(verts)
+  vals = a .+ t .* (b .- a)
+  withcrs(s, vals, LatLon)
 end
 
 Base.reverse(s::Segment) = Segment(reverse(extrema(s)))
