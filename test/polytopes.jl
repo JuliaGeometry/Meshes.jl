@@ -82,6 +82,14 @@
   s = Segment(latlon(0, 135), latlon(0, 45))
   @test_broken measure(s) ≈ 3C / 4
 
+  # parameterization
+  s = Segment(latlon(45, 0), latlon(45, 90))
+  @test s(T(0)) == latlon(45, 0)
+  @test s(T(0.25)) == latlon(45, 22.5)
+  @test s(T(0.5)) == latlon(45, 45)
+  @test s(T(0.75)) == latlon(45, 67.5)
+  @test s(T(1)) == latlon(45, 90)
+
   s = Segment(cart(0, 0), cart(1, 1))
   @test sprint(show, s) == "Segment((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 1.0 m))"
   if T === Float32
