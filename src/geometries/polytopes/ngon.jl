@@ -73,7 +73,7 @@ function normal(t::Triangle)
   unormalize(ucross((B - A), (C - A)))
 end
 
-function (t::Triangle)(u, v)
+function (t::Triangle{<:𝔼})(u, v)
   w = (1 - u - v)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v), "invalid barycentric coordinates for triangle."))
@@ -82,15 +82,36 @@ function (t::Triangle)(u, v)
   withcrs(t, v₁ * w + v₂ * u + v₃ * v)
 end
 
+function (t::Triangle{<:🌐})(u, v)
+  w = (1 - u - v)
+  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
+    throw(DomainError((u, v), "invalid barycentric coordinates for triangle."))
+  end
+  verts = convert.(LatLon, coords.(t.vertices))
+  v₁, v₂, v₃ = CoordRefSystems.values.(verts)
+  vals = @. v₁ * w + v₂ * u + v₃ * v
+  withcrs(t, vals, LatLon)
+end
+
 # ------------
 # QUADRANGLES
 # ------------
 
 # Coons patch https://en.wikipedia.org/wiki/Coons_patch
-function (q::Quadrangle)(u, v)
+function (q::Quadrangle{<:𝔼})(u, v)
   if (u < 0 || u > 1) || (v < 0 || v > 1)
     throw(DomainError((u, v), "q(u, v) is not defined for u, v outside [0, 1]²."))
   end
   c₀₀, c₀₁, c₁₁, c₁₀ = to.(q.vertices)
   withcrs(q, c₀₀ * (1 - u) * (1 - v) + c₀₁ * u * (1 - v) + c₁₀ * (1 - u) * v + c₁₁ * u * v)
+end
+
+function (q::Quadrangle{<:🌐})(u, v)
+  if (u < 0 || u > 1) || (v < 0 || v > 1)
+    throw(DomainError((u, v), "q(u, v) is not defined for u, v outside [0, 1]²."))
+  end
+  verts = convert.(LatLon, coords.(q.vertices))
+  c₀₀, c₀₁, c₁₁, c₁₀ = CoordRefSystems.values.(verts)
+  vals = c₀₀ .* (1 - u) .* (1 - v) .+ c₀₁ .* u .* (1 - v) .+ c₁₀ .* (1 - u) .* v .+ c₁₁ .* u .* v
+  withcrs(q, vals, LatLon)
 end

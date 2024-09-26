@@ -40,7 +40,7 @@ function (s::Segment{<:🌐})(t)
   end
   verts = convert.(LatLon, coords.(s.vertices))
   a, b = CoordRefSystems.values.(verts)
-  vals = a .+ t .* (b .- a)
+  vals = @. a + t * (b - a)
   withcrs(s, vals, LatLon)
 end
 
