@@ -38,8 +38,7 @@ function refine(mesh, method::TriRefinement)
   ∂₂₀ = Boundary{2,0}(topo)
   rpts = map(rinds) do elem
     is = ∂₂₀(elem)
-    cₒ = sum(i -> to(points[i]), is) / length(is)
-    withcrs(mesh, cₒ)
+    coordmean(points[i] for i in is)
   end
 
   # original vertices
