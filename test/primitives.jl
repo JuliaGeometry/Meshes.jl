@@ -269,6 +269,13 @@ end
   l = Line(cart(0, 0), cart(1, 1))
   @test (l(0), l(1)) == (cart(0, 0), cart(1, 1))
 
+  l = Line(latlon(45, 0), latlon(45, 90))
+  @test l(T(0)) == latlon(45, 0)
+  @test l(T(0.25)) == latlon(45, 22.5)
+  @test l(T(0.5)) == latlon(45, 45)
+  @test l(T(0.75)) == latlon(45, 67.5)
+  @test l(T(1)) == latlon(45, 90)
+
   l = Line(cart(0, 0), cart(1, 1))
   @test sprint(show, l) == "Line(a: (x: 0.0 m, y: 0.0 m), b: (x: 1.0 m, y: 1.0 m))"
   if T === Float32
@@ -516,6 +523,10 @@ end
   # CRS propagation
   b = Box(merc(0, 0), merc(1, 1))
   @test crs(centroid(b)) === crs(b)
+
+  # centroid
+  b = Box(latlon(0, 0), latlon(30, 60))
+  @test centroid(b) == latlon(15, 30)
 
   b = Box(cart(0, 0), cart(1, 1))
   @test sprint(show, b) == "Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))"

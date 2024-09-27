@@ -13,9 +13,9 @@ centroid(p::Point) = p
 
 centroid(p::Polygon) = centroid(first(rings(p)))
 
-centroid(p::Polytope) = withcrs(p, sum(to, vertices(p)) / nvertices(p))
+centroid(p::Polytope) = coordmean(vertices(p))
 
-centroid(b::Box) = withcrs(b, sum(to, extrema(b)) / 2)
+centroid(b::Box) = coordmean(extrema(b))
 
 centroid(p::Plane) = p(0, 0)
 
