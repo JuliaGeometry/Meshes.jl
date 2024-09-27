@@ -72,7 +72,7 @@ function fromvalues(g, values)
 end
 
 function _coordsum(points, weights)
-  if isnothing(weights) 
+  if isnothing(weights)
     mapreduce(tovalues, .+, points)
   else
     mapreduce((p, w) -> tovalues(p) .* w, .+, points, weights)
