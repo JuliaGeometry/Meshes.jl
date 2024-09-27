@@ -402,6 +402,18 @@ end
   t = Triangle(merc(0, 0), merc(1, 0), merc(0, 1))
   @test crs(t(T(0), T(0))) === crs(t)
 
+  # parameterization
+  t = Triangle(latlon(0, 0), latlon(0, 45), latlon(45, 0))
+  @test t(T(0), T(0)) == latlon(0, 0)
+  @test t(T(0.5), T(0)) == latlon(0, 22.5)
+  @test t(T(1), T(0)) == latlon(0, 45)
+  @test t(T(0), T(0.5)) == latlon(22.5, 0)
+  @test t(T(0), T(1)) == latlon(45, 0)
+
+  # centroid
+  t = Triangle(latlon(0, 0), latlon(0, 45), latlon(45, 0))
+  @test centroid(t) == latlon(15, 15)
+
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test sprint(show, t) == "Triangle((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 0.0 m), (x: 0.0 m, y: 1.0 m))"
   if T === Float32
@@ -473,6 +485,21 @@ end
   # CRS propagation
   q = Quadrangle(merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1))
   @test crs(q(T(0), T(0))) === crs(q)
+
+  # parameterization
+  q = Quadrangle(latlon(0, 0), latlon(0, 45), latlon(45, 45), latlon(45, 0))
+  @test q(T(0), T(0)) == latlon(0, 0)
+  @test q(T(0.5), T(0)) == latlon(0, 22.5)
+  @test q(T(1), T(0)) == latlon(0, 45)
+  @test q(T(1), T(0.5)) == latlon(22.5, 45)
+  @test q(T(1), T(1)) == latlon(45, 45)
+  @test q(T(0.5), T(1)) == latlon(45, 22.5)
+  @test q(T(0), T(1)) == latlon(45, 0)
+  @test q(T(0), T(0.5)) == latlon(22.5, 0)
+
+  # centroid
+  q = Quadrangle(latlon(0, 0), latlon(0, 45), latlon(45, 45), latlon(45, 0))
+  @test centroid(q) == latlon(22.5, 22.5)
 
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test sprint(show, q) == "Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"

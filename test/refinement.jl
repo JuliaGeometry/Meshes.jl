@@ -26,6 +26,14 @@
   ref = refine(mesh, TriRefinement(e -> measure(e) ≤ T(1) * u"m^2"))
   @test nelements(ref) == 15
   @test nvertices(ref) == 13
+
+  # latlon
+  points = latlon.([(0, 0), (0, 4), (0, 8), (1, 3), (1, 5), (2, 2), (2, 4), (2, 6), (4, 4)])
+  connec = connect.([(1, 2, 6), (2, 3, 8), (6, 8, 9), (2, 5, 4), (4, 5, 7), (4, 7, 6), (5, 8, 7)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, TriRefinement())
+  @test nelements(ref) == 21
+  @test nvertices(ref) == 16
 end
 
 @testitem "QuadRefinement" setup = [Setup] begin
@@ -50,6 +58,14 @@ end
   mesh = SimpleMesh(points, connec)
   ref = refine(mesh, QuadRefinement())
   @test crs(ref) === crs(mesh)
+
+  # latlon
+  points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.25, 0.25), (0.25, 0.75), (0.75, 0.5)])
+  connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, QuadRefinement())
+  @test nelements(ref) == 15
+  @test nvertices(ref) == 22
 end
 
 @testitem "RegularRefinement" setup = [Setup] begin
