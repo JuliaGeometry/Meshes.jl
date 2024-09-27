@@ -78,8 +78,8 @@ function (t::Triangle)(u, v)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v), "invalid barycentric coordinates for triangle."))
   end
-  v₁, v₂, v₃ = to.(t.vertices)
-  withcrs(t, v₁ * w + v₂ * u + v₃ * v)
+  v₁, v₂, v₃ = t.vertices
+  coordsum((v₁, v₂, v₃), weights=(w, u, v))
 end
 
 # ------------
@@ -91,6 +91,10 @@ function (q::Quadrangle)(u, v)
   if (u < 0 || u > 1) || (v < 0 || v > 1)
     throw(DomainError((u, v), "q(u, v) is not defined for u, v outside [0, 1]²."))
   end
-  c₀₀, c₀₁, c₁₁, c₁₀ = to.(q.vertices)
-  withcrs(q, c₀₀ * (1 - u) * (1 - v) + c₀₁ * u * (1 - v) + c₁₀ * (1 - u) * v + c₁₁ * u * v)
+  c₀₀, c₀₁, c₁₁, c₁₀ = q.vertices
+  w₀₀ = (1 - u) * (1 - v)
+  w₀₁ = u * (1 - v)
+  w₁₀ = (1 - u) * v
+  w₁₁ = u * v
+  coordsum((c₀₀, c₀₁, c₁₀, c₁₁), weights=(w₀₀, w₀₁, w₁₀, w₁₁))
 end

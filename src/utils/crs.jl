@@ -32,3 +32,52 @@ ignoring the original units of the coordinate reference system.
 """
 flat(p::Point) = Point(flat(coords(p)))
 flat(c::CRS) = Cartesian{datum(c)}(CoordRefSystems.raw(c))
+
+"""
+    coordsum(points; weights=nothing)
+  
+Sum of the base coordinates of the points, `Cartesian` for `𝔼` and `LatLon` for `🌐`.
+If `weights` is passed, the weighted sum will be returned.
+"""
+function coordsum(points; weights=nothing)
+  values = _coordsum(points, weights)
+  fromvalues(first(points), values)
+end
+
+"""
+    coordmean(points; weights=nothing)
+  
+Mean of the base coordinates of the points, `Cartesian` for `𝔼` and `LatLon` for `🌐`.
+If `weights` is passed, the weighted mean will be returned.
+"""
+function coordmean(points; weights=nothing)
+  den = if isnothing(weights)
+    length(points)
+  else
+    sum(weights)
+  end
+  values = _coordsum(points, weights) ./ den
+  fromvalues(first(points), values)
+end
+
+function tovalues(p)
+  CRS = _basecrs(manifold(p))
+  c = convert(CRS, coords(p))
+  CoordRefSystems.values(c)
+end
+
+function fromvalues(g, values)
+  CRS = _basecrs(manifold(g))
+  withcrs(g, values, CRS)
+end
+
+function _coordsum(points, weights)
+  if isnothing(weights) 
+    mapreduce(tovalues, .+, points)
+  else
+    mapreduce((p, w) -> tovalues(p) .* w, .+, points, weights)
+  end
+end
+
+_basecrs(::Type{<:𝔼}) = Cartesian
+_basecrs(::Type{<:🌐}) = LatLon
