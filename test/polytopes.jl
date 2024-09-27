@@ -410,6 +410,10 @@ end
   @test t(T(0), T(0.5)) == latlon(22.5, 0)
   @test t(T(0), T(1)) == latlon(45, 0)
 
+  # centroid
+  t = Triangle(latlon(0, 0), latlon(0, 45), latlon(45, 0))
+  @test centroid(t) == latlon(15, 15)
+
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test sprint(show, t) == "Triangle((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 0.0 m), (x: 0.0 m, y: 1.0 m))"
   if T === Float32
@@ -492,6 +496,10 @@ end
   @test q(T(0.5), T(1)) == latlon(45, 22.5)
   @test q(T(0), T(1)) == latlon(45, 0)
   @test q(T(0), T(0.5)) == latlon(22.5, 0)
+
+  # centroid
+  q = Quadrangle(latlon(0, 0), latlon(0, 45), latlon(45, 45), latlon(45, 0))
+  @test centroid(q) == latlon(22.5, 22.5)
 
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test sprint(show, q) == "Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"

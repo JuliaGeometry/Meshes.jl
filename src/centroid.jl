@@ -47,13 +47,13 @@ centroid(g::TransformedGeometry) = transform(g)(centroid(parent(g)))
 The centroid of the `domain`.
 """
 function centroid(d::Domain)
-  point(i) = centroid(d, i)
+  vector(i) = to(centroid(d, i))
   volume(i) = measure(element(d, i))
   n = nelements(d)
-  x = point.(1:n)
+  x = vector.(1:n)
   w = volume.(1:n)
   all(iszero, w) && (w = ones(eltype(w), n))
-  coordmean(x, weights=w)
+  withcrs(d, sum(w .* x) / sum(w))
 end
 
 """
