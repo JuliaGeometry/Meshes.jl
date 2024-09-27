@@ -23,4 +23,4 @@ paramdim(::Type{<:Line}) = 1
 Base.isapprox(l₁::Line, l₂::Line; atol=atol(lentype(l₁)), kwargs...) =
   isapprox(l₁.a, l₂.a; atol, kwargs...) && isapprox(l₁.b, l₂.b; atol, kwargs...)
 
-(l::Line)(t) = l.a + t * (l.b - l.a)
+(l::Line)(t) = coordsum((l.a, la.b), weights=((1 - t), t))
