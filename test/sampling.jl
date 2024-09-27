@@ -387,6 +387,36 @@ end
   @test length(ps) > 0
 end
 
+@testitem "FibonacciSampling" setup = [Setup] begin
+  # Test FibonacciSampling on a Disk
+  disk = Disk(Plane(cart(4, 2, 1), Vec(2, 1, 1)), T(2))
+  ps = sample(disk, FibonacciSampling(100))
+  @test first(ps) isa Point
+  @test collect(ps)[1] ≈ cart(4, 2, 1)
+  @test all(∈(disk), ps)
+
+  # Test FibonacciSampling on a Sphere
+  sphere = Sphere(cart(1, 1, 1), T(2))
+  ps = sample(sphere, FibonacciSampling(100))
+  @test first(ps) isa Point
+  @test collect(ps)[1] ≈ cart(1, 1, 3)
+  @test all(∈(sphere), ps)
+
+  # Test FibonacciSampling on a 3D Ball
+  sphere = Ball(cart(1, 1, 1), T(2))
+  ps = sample(sphere, FibonacciSampling(100))
+  @test first(ps) isa Point
+  @test collect(ps)[1] ≈ cart(1, 1, 3)
+  @test all(∈(sphere), ps)
+
+  # Test FibonacciSampling on a 2D Ball
+  ball = Ball(cart(2, 1), T(0.1))
+  ps = sample(ball, FibonacciSampling(100))
+  @test first(ps) isa Point
+  @test collect(ps)[1] ≈ cart(2, 1)
+  @test all(∈(ball), ps)
+end
+
 @testitem "RNGs" setup = [Setup] begin
   dom = cartgrid(100, 100)
   for method in [UniformSampling(100), WeightedSampling(100), BallSampling(T(10))]
