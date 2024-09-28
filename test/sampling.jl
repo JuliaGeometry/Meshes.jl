@@ -388,32 +388,48 @@ end
 end
 
 @testitem "FibonacciSampling" setup = [Setup] begin
+  # Test FibonacciSampling on a 2D Box
+  box = Box(cart(1, 1), cart(4, 2))
+  ps = sample(box, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test ps[1].coords ≈ cart(1,1).coords
+  @test all(∈(box), ps)
+
+  # Test FibonacciSampling with π on a 2D Box
+  box = Box(cart(0, 0), cart(1, 1))
+  ps = sample(box, FibonacciSampling(100, π)) |> collect
+  @test first(ps) isa Point
+  @test all(∈(box), ps)
+  @test ps[2] ≈ cart(mod(1/π,1),1/100)
+
+  # Test FibonacciSampling on a transformed 2D Box
+  tbox = Box(cart(0, 0), cart(1, 1))
+  af = Affine([1 1;0 1],[2,0])
+  tbox = af(tbox)
+  ps = sample(tbox, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test ps[1].coords ≈ af(cart(0,0)).coords
+  @test all(∈(tbox), ps)
+
   # Test FibonacciSampling on a Disk
   disk = Disk(Plane(cart(4, 2, 1), Vec(2, 1, 1)), T(2))
-  ps = sample(disk, FibonacciSampling(100))
+  ps = sample(disk, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test collect(ps)[1] ≈ cart(4, 2, 1)
+  @test ps[1].coords ≈ centroid(disk).coords
   @test all(∈(disk), ps)
 
   # Test FibonacciSampling on a Sphere
   sphere = Sphere(cart(1, 1, 1), T(2))
-  ps = sample(sphere, FibonacciSampling(100))
+  ps = sample(sphere, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test collect(ps)[1] ≈ cart(1, 1, 3)
-  @test all(∈(sphere), ps)
-
-  # Test FibonacciSampling on a 3D Ball
-  sphere = Ball(cart(1, 1, 1), T(2))
-  ps = sample(sphere, FibonacciSampling(100))
-  @test first(ps) isa Point
-  @test collect(ps)[1] ≈ cart(1, 1, 3)
+  @test ps[1].coords ≈ cart(1,1,3).coords
   @test all(∈(sphere), ps)
 
   # Test FibonacciSampling on a 2D Ball
   ball = Ball(cart(2, 1), T(0.1))
-  ps = sample(ball, FibonacciSampling(100))
+  ps = sample(ball, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test collect(ps)[1] ≈ cart(2, 1)
+  @test ps[1].coords ≈ centroid(ball).coords
   @test all(∈(ball), ps)
 end
 
