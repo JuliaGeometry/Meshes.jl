@@ -65,6 +65,21 @@ blocks  = sample(grid, sampler)
 viz(blocks)
 ```
 
+### FibonacciSampling
+```@docs
+FibonacciSampling
+```
+
+```@example sampling
+sphere = Sphere((0.,0.,0.), 1.)
+
+# sample points using the Fibonacci lattice method
+sampler  = FibonacciSampling(100)
+points  = sample(sphere, sampler) |> collect
+
+viz(points)
+```
+
 ## Continuous sampling
 
 ### RegularSampling
