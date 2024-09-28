@@ -21,6 +21,11 @@ function boundary(b::BezierCurve)
   p₁ ≈ p₂ ? nothing : Multi([p₁, p₂])
 end
 
+function boundary(c::ParametrizedCurve)
+  p₁, p₂ = start_point(c), end_point(c)
+  p₁ ≈ p₂ ? nothing : Multi([p₁, p₂])
+end
+
 boundary(::Plane) = nothing
 
 boundary(b::Box{𝔼{1}}) = Multi([minimum(b), maximum(b)])
