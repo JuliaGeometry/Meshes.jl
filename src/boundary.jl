@@ -22,7 +22,7 @@ function boundary(b::BezierCurve)
 end
 
 function boundary(c::ParametrizedCurve)
-  p₁, p₂ = start_point(c), end_point(c)
+  p₁, p₂ = startpoint(c), endpoint(c)
   p₁ ≈ p₂ ? nothing : Multi([p₁, p₂])
 end
 

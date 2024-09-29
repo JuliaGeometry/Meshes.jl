@@ -28,14 +28,14 @@ struct ParametrizedCurve{M<:Meshes.Manifold,C<:Meshes.CRS,T<:Real,F<:Function} <
 end
 
 paramdim(::ParametrizedCurve) = 1
-start_parameter(curve::ParametrizedCurve) = curve.a
-start_point(curve::ParametrizedCurve) = curve(curve.a)
-end_parameter(curve::ParametrizedCurve) = curve.b
-end_point(curve::ParametrizedCurve) = curve(curve.b)
+startparameter(curve::ParametrizedCurve) = curve.a
+startpoint(curve::ParametrizedCurve) = curve(curve.a)
+endparameter(curve::ParametrizedCurve) = curve.b
+endpoint(curve::ParametrizedCurve) = curve(curve.b)
 
 function (curve::ParametrizedCurve)(t)
-  if t < start_parameter(curve) || t > end_parameter(curve)
-    throw(DomainError(t, "c(t) is not defined for t outside [$(start_parameter(curve)), $(end_parameter(curve))]."))
+  if t < startparameter(curve) || t > endparameter(curve)
+    throw(DomainError(t, "c(t) is not defined for t outside [$(startparameter(curve)), $(endparameter(curve))]."))
   end
   curve.func(t)
 end
