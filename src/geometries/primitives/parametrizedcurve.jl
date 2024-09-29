@@ -1,7 +1,18 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 """
     ParametrizedCurve(a, b, func)
 
-TODO
+A parametrized curve is a curve defined by a function `func` that maps a parameter `t` to a `Point` in space.
+The parameter `t` is defined in the interval `[a, b]`.
+
+## Examples
+
+```julia
+ParametrizedCurve(0.0, 1.0, t -> Point(cospi(2t), sinpi(2t)))
+```
 """
 struct ParametrizedCurve{M<:Meshes.Manifold,C<:Meshes.CRS,T<:Real,F<:Function} <: Primitive{M,C}
     a::T
