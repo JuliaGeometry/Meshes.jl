@@ -16,11 +16,11 @@ sample(Sphere((0,0,0), 1), FibonacciSampling(100))
 # sample using π instead of the golden ration
 sample(Box((0,0),(1,1)), FibonacciSampling(100,π))
 """
-struct FibonacciSampling{T <: Real} <: ContinuousSamplingMethod
+struct FibonacciSampling{T<:Real} <: ContinuousSamplingMethod
   n::Int
   ϕ::T
 
-  function FibonacciSampling(n::Int, ϕ::T) where {T <: Real}
+  function FibonacciSampling(n::Int, ϕ::T) where {T<:Real}
     if n ≤ 0
       throw(ArgumentError("Size must be positive"))
     end
