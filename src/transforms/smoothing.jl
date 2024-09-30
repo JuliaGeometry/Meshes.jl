@@ -66,7 +66,7 @@ function _smooth(mesh, L, n, λ, μ; revert=false)
 end
 
 """
-LaplaceSmoothing(n, λ=0.5)
+    LaplaceSmoothing(n, λ=0.5)
 
 Perform `n` iterations of Laplace smoothing with parameter `λ`.
 
@@ -78,7 +78,7 @@ Perform `n` iterations of Laplace smoothing with parameter `λ`.
 LaplaceSmoothing(n, λ=0.5) = LambdaMuSmoothing(n, λ, zero(λ))
 
 """
-TaubinSmoothing(n, λ=0.5)
+    TaubinSmoothing(n, λ=0.5)
 
 Perform `n` iterations of Taubin smoothing with parameter `0 < λ < 1`.
 
