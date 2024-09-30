@@ -18,7 +18,7 @@ isperiodic(::Type{<:Line}) = (false,)
 
 isperiodic(b::BezierCurve) = (first(controls(b)) == last(controls(b)),)
 
-isperiodic(c::ParametrizedCurve) = (startpoint(c) == endpoint(c),)
+isperiodic(c::ParametrizedCurve) = (minimum(c) == maximum(c),)
 
 isperiodic(::Type{<:Plane}) = (false, false)
 

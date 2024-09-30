@@ -29,9 +29,10 @@ end
 
 paramdim(::ParametrizedCurve) = 1
 startparameter(curve::ParametrizedCurve) = curve.a
-startpoint(curve::ParametrizedCurve) = curve(curve.a)
+Base.minimum(curve::ParametrizedCurve) = curve(curve.a)
 endparameter(curve::ParametrizedCurve) = curve.b
-endpoint(curve::ParametrizedCurve) = curve(curve.b)
+Base.maximum(curve::ParametrizedCurve) = curve(curve.b)
+# Base.extrema(curve::ParametrizedCurve) = curve(curve.a), curve(curve.b)
 
 function (curve::ParametrizedCurve)(t)
   if t < startparameter(curve) || t > endparameter(curve)
