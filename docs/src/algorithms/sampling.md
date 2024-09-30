@@ -65,21 +65,6 @@ blocks  = sample(grid, sampler)
 viz(blocks)
 ```
 
-### FibonacciSampling
-```@docs
-FibonacciSampling
-```
-
-```@example sampling
-sphere = Sphere((0.,0.,0.), 1.)
-
-# sample points using the Fibonacci lattice method
-sampler  = FibonacciSampling(100)
-points  = sample(sphere, sampler) |> collect
-
-viz(points)
-```
-
 ## Continuous sampling
 
 ### RegularSampling
@@ -126,6 +111,21 @@ grid = CartesianGrid(20, 20)
 # sample points that are apart by a given radius
 sampler = MinDistanceSampling(3.0)
 points  = sample(grid, sampler) |> collect
+
+viz(points)
+```
+
+### FibonacciSampling
+```@docs
+FibonacciSampling
+```
+
+```@example sampling
+sphere = Sphere((0.,0.,0.), 1.)
+
+# sample points using the Fibonacci lattice method
+sampler  = FibonacciSampling(100)
+points  = sample(sphere, sampler) |> collect
 
 viz(points)
 ```
