@@ -16,32 +16,28 @@ sample(Sphere((0,0,0), 1), FibonacciSampling(100))
 # sample using π instead of the golden ration
 sample(Box((0,0),(1,1)), FibonacciSampling(100,π))
 """
-struct FibonacciSampling <: SamplingMethod
+struct FibonacciSampling{T <: Real} <: ContinuousSamplingMethod
   n::Int
-  ϕ::Real
-  function FibonacciSampling(n::Int, ϕ::Real=(1 + √5) / 2)
+  ϕ::T
+
+  function FibonacciSampling(n::Int, ϕ::T) where {T <: Real}
     if n ≤ 0
       throw(ArgumentError("Size must be positive"))
     end
-    new(n, ϕ)
+    new{T}(n, ϕ)
   end
 end
 
+# Outer constructor with default value for ϕ
+FibonacciSampling(n::Int) = FibonacciSampling(n, (1 + √5) / 2)
+
 function sample(::AbstractRNG, geom::Geometry, method::FibonacciSampling)
-  # sample points in square
-  i = 0:(method.n - 1)
-  x, y = mod.(i / method.ϕ, 1), i / method.n
+  Iterators.map(0:(method.n - 1)) do i
+    # sample points in square
+    x, y = mod(i / method.ϕ, 1), i / method.n
 
-  # get points for each geometry
-  ps = Iterators.map(zip(x, y)) do (x, y)
-    Point(_fibonaccipointstogeom(geom, x, y))
-  end
-
-  # get transformations to turn canonical geometry into current geometry
-  transforms = _fibonaccigeomtransforms(geom)
-
-  Iterators.map(ps) do p
-    p |> transforms
+    # transform points to the geometry
+    Point(_fibonaccipointstogeom(geom, x, y)) |> _fibonaccigeomtransforms(geom)
   end
 end
 
