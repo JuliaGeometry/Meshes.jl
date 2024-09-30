@@ -32,7 +32,7 @@ startparameter(curve::ParametrizedCurve) = curve.a
 Base.minimum(curve::ParametrizedCurve) = curve(curve.a)
 endparameter(curve::ParametrizedCurve) = curve.b
 Base.maximum(curve::ParametrizedCurve) = curve(curve.b)
-# Base.extrema(curve::ParametrizedCurve) = curve(curve.a), curve(curve.b)
+Base.extrema(curve::ParametrizedCurve) = curve(curve.a), curve(curve.b)
 
 function (curve::ParametrizedCurve)(t)
   if t < startparameter(curve) || t > endparameter(curve)
