@@ -37,7 +37,7 @@ function sample(geom::Geometry, method::FibonacciSampling)
   end
   f = _distortion(geom)
   function point(i)
-    u, v = mod(i / method.ϕ, 1), i / method.n
+    u, v = mod(i / method.ϕ, 1), i / (method.n-1)
     geom(f(u, v)...)
   end
 
@@ -47,3 +47,4 @@ end
 _distortion(g) = (u,v) -> (u,v)
 _distortion(d::Disk) = (u,v) -> (√u,v)
 _distortion(b::Ball{𝔼{2}}) = (u,v) -> (√u,v)
+_distortion(s::Sphere) = (u,v) -> (acos(1-2v)/π,u)
