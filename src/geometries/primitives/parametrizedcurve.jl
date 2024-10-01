@@ -15,25 +15,21 @@ interval `[0, 1]`.
 ParametrizedCurve(t -> Point(cospi(2t), sinpi(2t)))
 ```
 """
-struct ParametrizedCurve{M<:Meshes.Manifold,C<:Meshes.CRS,T<:Real,F<:Function} <: Primitive{M,C}
-  a::T
-  b::T
+struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M,C}
   func::F
+  range::R
 
-  function ParametrizedCurve(func, ab=(0.0, 1.0))
-    a, b = promote(ab...)
+  function ParametrizedCurve(func, range=(0.0, 1.0))
+    a = first(range)
     p = func(a)
     M = manifold(p)
     C = crs(p)
-    T = typeof(a)
-    new{M,C,T,typeof(func)}(a, b, func)
+    new{M,C,typeof(func),typeof(range)}(func, range)
   end
 end
 
 paramdim(::ParametrizedCurve) = 1
-startparameter(curve::ParametrizedCurve) = curve.a
 Base.minimum(curve::ParametrizedCurve) = curve(0.0)
-endparameter(curve::ParametrizedCurve) = curve.b
 Base.maximum(curve::ParametrizedCurve) = curve(1.0)
 Base.extrema(curve::ParametrizedCurve) = curve(0.0), curve(1.0)
 
