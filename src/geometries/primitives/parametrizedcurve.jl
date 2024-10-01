@@ -20,7 +20,7 @@ struct ParametrizedCurve{M<:Meshes.Manifold,C<:Meshes.CRS,T<:Real,F<:Function} <
   b::T
   func::F
 
-  function ParametrizedCurve(func, ab = (0.0, 1.0))
+  function ParametrizedCurve(func, ab=(0.0, 1.0))
     a, b = promote(ab...)
     p = func(a)
     M = manifold(p)
