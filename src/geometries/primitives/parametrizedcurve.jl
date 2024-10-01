@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    ParametrizedCurve(func, ab = (0.0, 1.0))
+    ParametrizedCurve(func, range = (0.0, 1.0))
 
 A parametrized curve is a curve defined by a function `func` that maps a parameter `t` to a `Point` in space.
 The parameter `t` is defined in the interval `[a, b]`. The curve can only be evaluated for `t` in the
@@ -41,8 +41,6 @@ function (curve::ParametrizedCurve)(t)
   if t < 0.0 || t > 1.0
     throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
   end
-  a = startparameter(curve)
-  b = endparameter(curve)
-  θ = a + t * (b - a)
-  curve.func(θ)
+  a, b = curve.range
+  curve.func(a + t * (b - a))
 end
