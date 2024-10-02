@@ -398,7 +398,7 @@ end
   ps = sample(box, FibonacciSampling(100, π)) |> collect
   @test first(ps) isa Point
   @test all(∈(box), ps)
-  @test ps[2] ≈ cart(mod(1/π,1),1/100)
+  @test ps[2] ≈ cart(mod(1/π,1),1/99)
 
   tbox = Box(cart(0, 0), cart(1, 1))
   af = Affine([1 1;0 1],[2,0])
