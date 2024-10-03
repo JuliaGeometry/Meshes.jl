@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
 """
 	FibonacciSampling(n, ϕ = (1 + √5)/2)
 
@@ -29,7 +33,7 @@ function sample(geom::Geometry, method::FibonacciSampling)
   end
 
   fib = _fibmap(geom)
-  
+
   function point(i)
     u = mod(i / method.ϕ, 1)
     v = i / (method.n - 1)
