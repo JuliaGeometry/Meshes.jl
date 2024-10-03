@@ -43,11 +43,10 @@ function (b::Ball{𝔼{2}})(ρ, φ)
   end
   c = b.center
   r = b.radius
-  l = T(ρ) * r
-  sφ, cφ = sincospi(2 * T(φ))
-  x = l * cφ
-  y = l * sφ
-  c + Vec(x, y)
+  ρ′ = T(ρ) * r
+  φ′ = T(φ) * 2 * T(π) * u"rad"
+  p = Point(convert(crs(b), Polar(ρ′, φ′)))
+  p |> Translate(to(c)...)
 end
 
 function (b::Ball{𝔼{3}})(ρ, θ, φ)
@@ -57,11 +56,9 @@ function (b::Ball{𝔼{3}})(ρ, θ, φ)
   end
   c = b.center
   r = b.radius
-  l = T(ρ) * r
-  sθ, cθ = sincospi(T(θ))
-  sφ, cφ = sincospi(2 * T(φ))
-  x = l * sθ * cφ
-  y = l * sθ * sφ
-  z = l * cθ
-  c + Vec(x, y, z)
+  ρ′ = T(ρ) * r
+  θ′ = T(θ) * T(π) * u"rad"
+  φ′ = T(φ) * 2 * T(π) * u"rad"
+  p = Point(convert(crs(b), Spherical(ρ′, θ′, φ′)))
+  p |> Translate(to(c)...)
 end

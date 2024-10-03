@@ -80,10 +80,9 @@ function (s::Sphere{𝔼{2}})(φ)
   end
   c = s.center
   r = s.radius
-  sφ, cφ = sincospi(2 * T(φ))
-  x = r * cφ
-  y = r * sφ
-  c + Vec(x, y)
+  φ′ = T(φ) * 2 * T(π) * u"rad"
+  p = Point(convert(crs(s), Polar(r, φ′)))
+  p |> Translate(to(c)...)
 end
 
 function (s::Sphere{𝔼{3}})(θ, φ)
@@ -93,10 +92,8 @@ function (s::Sphere{𝔼{3}})(θ, φ)
   end
   c = s.center
   r = s.radius
-  sθ, cθ = sincospi(T(θ))
-  sφ, cφ = sincospi(2 * T(φ))
-  x = r * sθ * cφ
-  y = r * sθ * sφ
-  z = r * cθ
-  c + Vec(x, y, z)
+  θ′ = T(θ) * T(π) * u"rad"
+  φ′ = T(φ) * 2 * T(π) * u"rad"
+  p = Point(convert(crs(s), Spherical(r, θ′, φ′)))
+  p |> Translate(to(c)...)
 end
