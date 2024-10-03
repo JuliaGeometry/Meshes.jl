@@ -1,20 +1,13 @@
 """
-	FibonacciSampling(n)
+	FibonacciSampling(n, ϕ = (1 + √5)/2)
 
-Generate samples on a sphere using the Fibonacci lattice method.
-The parameter `n` specifies the number of points to generate.
-In the regular Fibonacci lattice method, the number ϕ is the golden ratio ((1 + √5)/2),
-but different numbers can be used, preferably irrational.
+Generate `n` Fibonacci points with parameter `ϕ`.
 
-## Example
+The golden ratio is used as the default value of `ϕ`,
+but other irrational values can be used.
 
-Sample a sphere with 1000 points:
-
-```julia
-sample(Sphere((0,0,0), 1), FibonacciSampling(100))
-
-# sample using π instead of the golden ratio
-sample(Box((0,0),(1,1)), FibonacciSampling(100,π))
+See <https://observablehq.com/@meetamit/fibonacci-lattices>
+and <https://www.johndcook.com/blog/2023/08/12/fibonacci-lattice>.
 """
 struct FibonacciSampling{T<:Real} <: ContinuousSamplingMethod
   n::Int
@@ -28,24 +21,26 @@ struct FibonacciSampling{T<:Real} <: ContinuousSamplingMethod
   end
 end
 
-# default to golden ratio
 FibonacciSampling(n::Int) = FibonacciSampling(n, (1 + √5) / 2)
 
 function sample(geom::Geometry, method::FibonacciSampling)
   if paramdim(geom) != 2
     throw(ArgumentError("Fibonacci sampling only defined for 2D geometries"))
   end
-  f = _distortion(geom)
+
+  fib = _fibmap(geom)
+  
   function point(i)
-    u, v = mod(i / method.ϕ, 1), i / (method.n - 1)
-    geom(f(u, v)...)
+    u = mod(i / method.ϕ, 1)
+    v = i / (method.n - 1)
+    geom(fib(u, v)...)
   end
 
   (point(i) for i in 0:(method.n - 1))
 end
 
-_distortion(g) = (u, v) -> (u, v)
-_distortion(d::Disk) = (u, v) -> (√u, v)
-_distortion(b::Ball{𝔼{2}}) = (u, v) -> (√u, v)
-_distortion(b::Ball{🌐}) = (u, v) -> (√u, v)
-_distortion(s::Sphere{𝔼{3}}) = (u, v) -> (acos(1 - 2v) / π, u)
+_fibmap(g) = (u, v) -> (u, v)
+_fibmap(d::Disk) = (u, v) -> (√u, v)
+_fibmap(b::Ball{𝔼{2}}) = (u, v) -> (√u, v)
+_fibmap(b::Ball{🌐}) = (u, v) -> (√u, v)
+_fibmap(s::Sphere{𝔼{3}}) = (u, v) -> (acos(1 - 2v) / π, u)
