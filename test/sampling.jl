@@ -411,11 +411,13 @@ end
   @test ps[1].coords ≈ af(cart(0, 0)).coords
   @test all(∈(tbox), ps)
 
-  disk = Disk(Plane(cart(4, 2, 1), Vec(2, 1, 1)), T(2))
+  disk = Disk(Plane(cart(3, 0, 0), Vec(1, 0, 0)), T(2))
   ps = sample(disk, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
   @test ps[1].coords ≈ centroid(disk).coords
-  @test all(∈(disk), ps)
+  @test all(p -> p.coords.x ≈ 3u"m", ps)
+  @test all(p -> -2u"m" < p.coords.y || p.coords.y < 2u"m" || isapprox(p.coords.y, 2u"m"; atol=1e-5u"m"), ps)
+  @test all(p -> -2u"m" < p.coords.z || p.coords.z < 2u"m" || isapprox(p.coords.z, 2u"m"; atol=1e-5u"m"), ps)
 
   sphere = Sphere(cart(1, 1, 1), T(2))
   ps = sample(sphere, FibonacciSampling(100)) |> collect
