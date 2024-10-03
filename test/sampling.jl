@@ -388,24 +388,27 @@ end
 end
 
 @testitem "FibonacciSampling" setup = [Setup] begin
+  @test_throws ArgumentError sample(Box(cart(0, 0), cart(1, 1)), FibonacciSampling(-1))
+  @test_throws ArgumentError sample(Box(Point(0, 0, 0), Point(1, 1, 1)), FibonacciSampling(100))
+
   box = Box(cart(1, 1), cart(4, 2))
   ps = sample(box, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ cart(1,1).coords
+  @test ps[1].coords ≈ cart(1, 1).coords
   @test all(∈(box), ps)
 
   box = Box(cart(0, 0), cart(1, 1))
   ps = sample(box, FibonacciSampling(100, π)) |> collect
   @test first(ps) isa Point
   @test all(∈(box), ps)
-  @test ps[2] ≈ cart(mod(1/π,1),1/99)
+  @test ps[2] ≈ cart(mod(1 / π, 1), 1 / 99)
 
   tbox = Box(cart(0, 0), cart(1, 1))
-  af = Affine([1 1;0 1],[2,0])
+  af = Affine([1 1; 0 1], [2, 0])
   tbox = af(tbox)
   ps = sample(tbox, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ af(cart(0,0)).coords
+  @test ps[1].coords ≈ af(cart(0, 0)).coords
   @test all(∈(tbox), ps)
 
   disk = Disk(Plane(cart(4, 2, 1), Vec(2, 1, 1)), T(2))
@@ -417,7 +420,7 @@ end
   sphere = Sphere(cart(1, 1, 1), T(2))
   ps = sample(sphere, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ cart(1,1,3).coords
+  @test ps[1].coords ≈ cart(1, 1, 3).coords
   @test all(∈(sphere), ps)
 
   ball = Ball(cart(2, 1), T(0.1))
