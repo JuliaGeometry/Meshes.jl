@@ -93,8 +93,9 @@ function (c::Cylinder)(ρ, φ, z)
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, zero(ℒ))))
   p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, h)))
-  p₁′ = p₁ |> Affine(Q, to(o))
-  p₂′ = p₂ |> Affine(Q, to(o))
+  affine = Affine(Q, to(o))
+  p₁′ = p₁ |> affine
+  p₂′ = p₂ |> affine
   l = Line(p₁′, p₂′)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
