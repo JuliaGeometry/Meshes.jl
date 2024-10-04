@@ -73,6 +73,4 @@ radius(s::Sphere) = s.radius
 Base.isapprox(s₁::Sphere, s₂::Sphere; atol=atol(lentype(s₁)), kwargs...) =
   isapprox(s₁.center, s₂.center; atol, kwargs...) && isapprox(s₁.radius, s₂.radius; atol, kwargs...)
 
-(s::Sphere{𝔼{2}})(φ) = Ball(center(s), radius(s))(1, φ)
-
-(s::Sphere{𝔼{3}})(θ, φ) = Ball(center(s), radius(s))(1, θ, φ)
+(s::Sphere)(uv...) = Ball(center(s), radius(s))(1, uv...)
