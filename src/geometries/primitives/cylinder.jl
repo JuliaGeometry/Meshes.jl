@@ -91,8 +91,8 @@ function (c::Cylinder)(ρ, φ, z)
   # project a parametric segment between the top and bottom planes
   ρ′ = T(ρ) * r
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p₁ = Point(convert(crs(c)), Cylindrical(ρ′, φ′, zero(ℒ)))
-  p₂ = Point(convert(crs(c)), Cylindrical(ρ′, φ′, h))
+  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, zero(ℒ))))
+  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, h)))
   p₁′ = p₁ |> Affine(Q, to(o))
   p₂′ = p₂ |> Affine(Q, to(o))
   l = Line(p₁′, p₂′)
