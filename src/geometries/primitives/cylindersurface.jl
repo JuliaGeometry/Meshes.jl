@@ -83,10 +83,7 @@ Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface; atol=atol(lentype(c�
   isapprox(c₁.top, c₂.top; atol, kwargs...) &&
   isapprox(c₁.radius, c₂.radius; atol, kwargs...)
 
-function (c::CylinderSurface)(φ, z)
-  T = numtype(lentype(c))
-  Cylinder(bottom(c), top(c), radius(c))(one(T), φ, z)
-end
+(c::CylinderSurface)(φ, z) = Cylinder(bottom(c), top(c), radius(c))(1, φ, z)
 
 function hasintersectingplanes(c::CylinderSurface)
   x = c.bot ∩ c.top
