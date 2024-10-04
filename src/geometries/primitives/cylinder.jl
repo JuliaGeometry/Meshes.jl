@@ -89,10 +89,13 @@ function (c::Cylinder)(ρ, φ, z)
   Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
 
   # project a parametric segment between the top and bottom planes
-  lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
-  p₁ = o + Q * Vec(lcφ, lsφ, zero(ℒ))
-  p₂ = o + Q * Vec(lcφ, lsφ, h)
-  l = Line(p₁, p₂)
+  ρ′ = T(ρ) * r
+  φ′ = T(φ) * 2 * T(π) * u"rad"
+  p₁ = Point(convert(crs(c)), Cylindrical(ρ′, φ′, zero(ℒ)))
+  p₂ = Point(convert(crs(c)), Cylindrical(ρ′, φ′, h))
+  p₁′ = p₁ |> Affine(Q, to(o))
+  p₂′ = p₂ |> Affine(Q, to(o))
+  l = Line(p₁′, p₂′)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
 end
