@@ -594,6 +594,12 @@ end
   @test b(T(0), T(0)) ≈ cart(0, 0)
   @test b(T(1), T(0)) ≈ cart(2, 0)
 
+  # machine type is preserved in parameterization
+  b = Ball(cart(0, 0), T(2))
+  @test Meshes.lentype(b(0, 0)) == ℳ
+  @test Meshes.lentype(b(0.0, 0.0)) == ℳ
+  @test Meshes.lentype(b(0.0f0, 0.0f0)) == ℳ
+
   b = Ball(cart(7, 7), T(1.5))
   ps = b.(1, rand(T, 100))
   all(∈(b), ps)
@@ -708,6 +714,12 @@ end
   s = Sphere(cart(0, 0, 0), T(2))
   @test s(T(0), T(0)) ≈ cart(0, 0, 2)
   @test s(T(0.5), T(0.5)) ≈ cart(-2, 0, 0)
+
+  # machine type is preserved in parameterization
+  s = Sphere(cart(0, 0), T(2))
+  @test Meshes.lentype(s(0)) == ℳ
+  @test Meshes.lentype(s(0.0)) == ℳ
+  @test Meshes.lentype(s(0.0f0)) == ℳ
 
   s = Sphere(cart(0, 0, 0), T(1))
   @test sprint(show, s) == "Sphere(center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m)"
@@ -918,6 +930,12 @@ end
   @test cart(0, 0, 1.001) ∉ c
   @test cart(1, 1, 1) ∉ c
 
+  # machine type is preserved in parameterization
+  c = Cylinder(T(1))
+  @test Meshes.lentype(c(0, 0, 0)) == ℳ
+  @test Meshes.lentype(c(0.0, 0.0, 0.0)) == ℳ
+  @test Meshes.lentype(c(0.0f0, 0.0f0, 0.0f0)) == ℳ
+
   c = Cylinder(cart(0, 0, 0), cart(0, 0, 1), T(1))
   @test sprint(show, c) ==
         "Cylinder(bot: Plane(p: (x: 0.0 m, y: 0.0 m, z: 0.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), top: Plane(p: (x: 0.0 m, y: 0.0 m, z: 1.0 m), u: (1.0 m, -0.0 m, -0.0 m), v: (-0.0 m, 1.0 m, -0.0 m)), radius: 1.0 m)"
@@ -973,6 +991,12 @@ end
   @test c(T(0.5), T(0)) ≈ cart(-1, 0, 0)
   @test c(T(0), T(1)) ≈ cart(1, 0, 1)
   @test c(T(0.5), T(1)) ≈ cart(-1, 0, 1)
+
+  # machine type is preserved in parameterization
+  c = CylinderSurface(T(1))
+  @test Meshes.lentype(c(0, 0)) == ℳ
+  @test Meshes.lentype(c(0.0, 0.0)) == ℳ
+  @test Meshes.lentype(c(0.0f0, 0.0f0)) == ℳ
 
   c = CylinderSurface(1.0)
   @test Meshes.lentype(c) == Meshes.Met{Float64}

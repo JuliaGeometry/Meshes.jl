@@ -73,27 +73,4 @@ radius(s::Sphere) = s.radius
 Base.isapprox(s₁::Sphere, s₂::Sphere; atol=atol(lentype(s₁)), kwargs...) =
   isapprox(s₁.center, s₂.center; atol, kwargs...) && isapprox(s₁.radius, s₂.radius; atol, kwargs...)
 
-function (s::Sphere{𝔼{2}})(φ)
-  T = numtype(lentype(s))
-  if (φ < 0 || φ > 1)
-    throw(DomainError(φ, "s(φ) is not defined for φ outside [0, 1]."))
-  end
-  c = s.center
-  r = s.radius
-  φ′ = T(φ) * 2 * T(π) * u"rad"
-  p = Point(convert(crs(s), Polar(r, φ′)))
-  p + to(c)
-end
-
-function (s::Sphere{𝔼{3}})(θ, φ)
-  T = numtype(lentype(s))
-  if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
-    throw(DomainError((θ, φ), "s(θ, φ) is not defined for θ, φ outside [0, 1]²."))
-  end
-  c = s.center
-  r = s.radius
-  θ′ = T(θ) * T(π) * u"rad"
-  φ′ = T(φ) * 2 * T(π) * u"rad"
-  p = Point(convert(crs(s), Spherical(r, θ′, φ′)))
-  p + to(c)
-end
+(s::Sphere)(uv...) = Ball(center(s), radius(s))(1, uv...)
