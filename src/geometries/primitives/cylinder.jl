@@ -83,7 +83,7 @@ function (c::Cylinder)(ρ, φ, z)
   a = axis(c)
   d = a(T(1)) - a(T(0))
   h = norm(d)
-  o = b(0, 0)
+  o = b(T(0), T(0))
 
   # rotation to align z axis with cylinder axis
   Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
