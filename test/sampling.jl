@@ -394,7 +394,7 @@ end
   box = Box(cart(1, 1), cart(4, 2))
   ps = sample(box, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ cart(1, 1).coords
+  @test first(ps) ≈ cart(1, 1)
   @test all(∈(box), ps)
 
   box = Box(cart(0, 0), cart(1, 1))
@@ -408,27 +408,27 @@ end
   tbox = af(tbox)
   ps = sample(tbox, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ af(cart(0, 0)).coords
+  @test first(ps) ≈ af(cart(0, 0))
   @test all(∈(tbox), ps)
 
   disk = Disk(Plane(cart(3, 0, 0), Vec(1, 0, 0)), T(2))
   ps = sample(disk, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ centroid(disk).coords
-  @test all(p -> p.coords.x ≈ 3u"m", ps)
-  @test all(p -> -2u"m" < p.coords.y || p.coords.y < 2u"m" || isapprox(p.coords.y, 2u"m"; atol=1e-5u"m"), ps)
-  @test all(p -> -2u"m" < p.coords.z || p.coords.z < 2u"m" || isapprox(p.coords.z, 2u"m"; atol=1e-5u"m"), ps)
+  @test first(ps) ≈ centroid(disk)
+  @test all(p -> coords(p).x ≈ 3u"m", ps)
+  @test all(p -> -2u"m" < coords(p).y || coords(p).y < 2u"m" || isapprox(coords(p).y, 2u"m"; atol=1e-5u"m"), ps)
+  @test all(p -> -2u"m" < coords(p).z || coords(p).z < 2u"m" || isapprox(coords(p).z, 2u"m"; atol=1e-5u"m"), ps)
 
   sphere = Sphere(cart(1, 1, 1), T(2))
   ps = sample(sphere, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ cart(1, 1, 3).coords
+  @test first(ps) ≈ cart(1, 1, 3)
   @test all(∈(sphere), ps)
 
   ball = Ball(cart(2, 1), T(0.1))
   ps = sample(ball, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test ps[1].coords ≈ centroid(ball).coords
+  @test first(ps) ≈ centroid(ball)
   @test all(∈(ball), ps)
 end
 
