@@ -404,7 +404,7 @@ end
   @test ps[2] ≈ cart(mod(1 / π, 1), 1 / 99)
 
   tbox = Box(cart(0, 0), cart(1, 1))
-  af = Affine([1 1; 0 1], [2, 0])
+  af = Affine(T[1 1; 0 1], T[2, 0])
   tbox = af(tbox)
   ps = sample(tbox, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
