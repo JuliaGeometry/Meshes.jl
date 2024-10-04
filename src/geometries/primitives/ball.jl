@@ -46,7 +46,7 @@ function (b::Ball{𝔼{2}})(ρ, φ)
   ρ′ = T(ρ) * r
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p = Point(convert(crs(b), Polar(ρ′, φ′)))
-  p |> Translate(to(c)...)
+  p + to(c)
 end
 
 function (b::Ball{𝔼{3}})(ρ, θ, φ)
@@ -60,5 +60,5 @@ function (b::Ball{𝔼{3}})(ρ, θ, φ)
   θ′ = T(θ) * T(π) * u"rad"
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p = Point(convert(crs(b), Spherical(ρ′, θ′, φ′)))
-  p |> Translate(to(c)...)
+  p + to(c)
 end

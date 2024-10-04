@@ -82,7 +82,7 @@ function (s::Sphere{𝔼{2}})(φ)
   r = s.radius
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p = Point(convert(crs(s), Polar(r, φ′)))
-  p |> Translate(to(c)...)
+  p + to(c)
 end
 
 function (s::Sphere{𝔼{3}})(θ, φ)
@@ -95,5 +95,5 @@ function (s::Sphere{𝔼{3}})(θ, φ)
   θ′ = T(θ) * T(π) * u"rad"
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p = Point(convert(crs(s), Spherical(r, θ′, φ′)))
-  p |> Translate(to(c)...)
+  p + to(c)
 end
