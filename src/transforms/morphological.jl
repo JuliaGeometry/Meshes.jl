@@ -22,10 +22,9 @@ tr = TransformedGeometry(box, t)
 box = Box((-pi,), (pi,))
 f(theta) = 1 - 1/3 * sin(2*theta)^2
 # with `Cartesian`:
-# tr = TransformedGeometry(box, Morphological(c -> Polar(f(Meshes.ustrip(c.x)), Meshes.ustrip(c.x))))
+# tr = TransformedGeometry(box, Morphological(c -> Point(Polar(f(Meshes.ustrip(c.x)), Meshes.ustrip(c.x)))))
 # with `Vec:
-tr = TransformedGeometry(box, Morphological(v -> Point(Polar(f(v[1]), v[1]))))
-
+tr = TransformedGeometry(box, Morphological(v -> Polar(f(v[1]), v[1])))
 ```
 """
 struct Morphological{F<:Function} <: CoordinateTransform
