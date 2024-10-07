@@ -65,6 +65,7 @@ sample(rng::AbstractRNG, g::Geometry, method::ContinuousSamplingMethod) = sample
 include("sampling/regular.jl")
 include("sampling/homogeneous.jl")
 include("sampling/mindistance.jl")
+include("sampling/fibonacci.jl")
 
 # ----------
 # UTILITIES

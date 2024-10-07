@@ -83,39 +83,7 @@ Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface; atol=atol(lentype(c�
   isapprox(c₁.top, c₂.top; atol, kwargs...) &&
   isapprox(c₁.radius, c₂.radius; atol, kwargs...)
 
-function (c::CylinderSurface)(φ, z)
-  ℒ = lentype(c)
-  T = numtype(ℒ)
-  if (φ < 0 || φ > 1) || (z < 0 || z > 1)
-    throw(DomainError((φ, z), "c(φ, z) is not defined for φ, z outside [0, 1]²."))
-  end
-  t = top(c)
-  b = bottom(c)
-  r = radius(c)
-  a = axis(c)
-  d = a(T(1)) - a(T(0))
-  h = norm(d)
-  o = centroid(c)
-
-  # rotation to align z axis with cylinder axis
-  Q = urotbetween(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
-
-  # new normals of planes in new rotated system
-  nᵦ = Q * normal(b)
-  nₜ = Q * normal(t)
-
-  # given cylindrical coordinates (r*cos(φ), r*sin(φ), z) and the
-  # equation of the plane, we can solve for z and find all points
-  # along the ellipse obtained by intersection
-  rsφ, rcφ = r .* sincospi(2 * T(φ))
-  zᵦ = -h / 2 - (rcφ * nᵦ[1] + rsφ * nᵦ[2]) / nᵦ[3]
-  zₜ = +h / 2 - (rcφ * nₜ[1] + rsφ * nₜ[2]) / nₜ[3]
-  pᵦ = Point(rcφ, rsφ, zᵦ)
-  pₜ = Point(rcφ, rsφ, zₜ)
-
-  p = pᵦ + T(z) * (pₜ - pᵦ)
-  o + Q' * to(p)
-end
+(c::CylinderSurface)(φ, z) = Cylinder(bottom(c), top(c), radius(c))(1, φ, z)
 
 function hasintersectingplanes(c::CylinderSurface)
   x = c.bot ∩ c.top

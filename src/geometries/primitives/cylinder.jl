@@ -83,16 +83,17 @@ function (c::Cylinder)(ρ, φ, z)
   a = axis(c)
   d = a(T(1)) - a(T(0))
   h = norm(d)
-  o = b(0, 0)
+  o = b(T(0), T(0))
 
   # rotation to align z axis with cylinder axis
   Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
 
   # project a parametric segment between the top and bottom planes
-  lsφ, lcφ = T(ρ) * r .* sincospi(2 * T(φ))
-  p₁ = o + Q * Vec(lcφ, lsφ, zero(ℒ))
-  p₂ = o + Q * Vec(lcφ, lsφ, h)
-  l = Line(p₁, p₂)
+  ρ′ = T(ρ) * r
+  φ′ = T(φ) * 2 * T(π) * u"rad"
+  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, zero(ℒ))))
+  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, h)))
+  l = Line(p₁, p₂) |> Affine(Q, to(o))
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
 end

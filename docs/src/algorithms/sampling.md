@@ -114,3 +114,18 @@ points  = sample(grid, sampler) |> collect
 
 viz(points)
 ```
+
+### FibonacciSampling
+```@docs
+FibonacciSampling
+```
+
+```@example sampling
+sphere = Sphere((0.,0.,0.), 1.)
+
+# sample points using the Fibonacci lattice method
+sampler  = FibonacciSampling(100)
+points  = sample(sphere, sampler) |> collect
+
+viz(points)
+```

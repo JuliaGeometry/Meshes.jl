@@ -387,6 +387,51 @@ end
   @test length(ps) > 0
 end
 
+@testitem "FibonacciSampling" setup = [Setup] begin
+  @test_throws ArgumentError sample(Box(cart(0, 0), cart(1, 1)), FibonacciSampling(-1))
+  @test_throws ArgumentError sample(Box(Point(0, 0, 0), Point(1, 1, 1)), FibonacciSampling(100))
+
+  box = Box(cart(1, 1), cart(4, 2))
+  ps = sample(box, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test first(ps) ≈ cart(1, 1)
+  @test all(∈(box), ps)
+
+  box = Box(cart(0, 0), cart(1, 1))
+  ps = sample(box, FibonacciSampling(100, π)) |> collect
+  @test first(ps) isa Point
+  @test all(∈(box), ps)
+  @test ps[2] ≈ cart(mod(1 / π, 1), 1 / 99)
+
+  tbox = Box(cart(0, 0), cart(1, 1))
+  af = Affine(T[1 1; 0 1], T[2, 0])
+  tbox = af(tbox)
+  ps = sample(tbox, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test first(ps) ≈ af(cart(0, 0))
+  @test all(∈(tbox), ps)
+
+  disk = Disk(Plane(cart(3, 0, 0), Vec(1, 0, 0)), T(2))
+  ps = sample(disk, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test first(ps) ≈ centroid(disk)
+  @test all(p -> coords(p).x ≈ 3u"m", ps)
+  @test all(p -> -2u"m" < coords(p).y || coords(p).y < 2u"m" || isapprox(coords(p).y, 2u"m"; atol=1e-5u"m"), ps)
+  @test all(p -> -2u"m" < coords(p).z || coords(p).z < 2u"m" || isapprox(coords(p).z, 2u"m"; atol=1e-5u"m"), ps)
+
+  sphere = Sphere(cart(1, 1, 1), T(2))
+  ps = sample(sphere, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test first(ps) ≈ cart(1, 1, 3)
+  @test all(∈(sphere), ps)
+
+  ball = Ball(cart(2, 1), T(0.1))
+  ps = sample(ball, FibonacciSampling(100)) |> collect
+  @test first(ps) isa Point
+  @test first(ps) ≈ centroid(ball)
+  @test all(∈(ball), ps)
+end
+
 @testitem "RNGs" setup = [Setup] begin
   dom = cartgrid(100, 100)
   for method in [UniformSampling(100), WeightedSampling(100), BallSampling(T(10))]
