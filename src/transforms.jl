@@ -100,6 +100,7 @@ include("transforms/slice.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
 include("transforms/smoothing.jl")
+include("transforms/morphological.jl")
 
 # --------------
 # OPTIMIZATIONS
