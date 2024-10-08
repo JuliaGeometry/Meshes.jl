@@ -12,7 +12,7 @@ interval `[0, 1]`.
 ## Examples
 
 ```julia
-ParametrizedCurve(t -> Point(cospi(2t), sinpi(2t)))
+ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2π))
 ```
 """
 struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M,C}
@@ -20,17 +20,18 @@ struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M
   range::R
 
   function ParametrizedCurve(func, range=(0.0, 1.0))
-    a = first(range)
+    a, b = promote(range...)
+    _range = (a, b)
     p = func(a)
     M = manifold(p)
     C = crs(p)
-    new{M,C,typeof(func),typeof(range)}(func, range)
+    new{M,C,typeof(func),typeof(_range)}(func, _range)
   end
 end
 
 paramdim(::Type{<:ParametrizedCurve}) = 1
-Base.minimum(curve::ParametrizedCurve) = curve.func(curve.a)
-Base.maximum(curve::ParametrizedCurve) = curve.func(curve.b)
+Base.minimum(curve::ParametrizedCurve) = curve.func(first(curve.range))
+Base.maximum(curve::ParametrizedCurve) = curve.func(last(curve.range))
 Base.extrema(curve::ParametrizedCurve) = minimum(curve), maximum(curve)
 
 function (curve::ParametrizedCurve)(t)
