@@ -5,9 +5,13 @@
 """
     ParametrizedCurve(func, range = (0.0, 1.0))
 
-A parametrized curve is a curve defined by a function `func` that maps a parameter `t` to a `Point` in space.
-The parameter `t` is defined in the interval `[a, b]`. The curve can only be evaluated for `t` in the
-interval `[0, 1]`.
+A parametrized curve is a curve defined by a function `func` that maps a
+(unitless) parameter `t` in the given `range` to a `Point` in space.
+
+## Example
+
+```julia
+ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2pi))
 
 ## Examples
 
