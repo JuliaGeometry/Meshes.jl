@@ -28,13 +28,13 @@ struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M
   end
 end
 
-paramdim(::ParametrizedCurve) = 1
-Base.minimum(curve::ParametrizedCurve) = curve(0.0)
-Base.maximum(curve::ParametrizedCurve) = curve(1.0)
-Base.extrema(curve::ParametrizedCurve) = curve(0.0), curve(1.0)
+paramdim(::Type{<:ParametrizedCurve}) = 1
+Base.minimum(curve::ParametrizedCurve) = curve.func(curve.a)
+Base.maximum(curve::ParametrizedCurve) = curve.func(curve.b)
+Base.extrema(curve::ParametrizedCurve) = minimum(curve), maximum(curve)
 
 function (curve::ParametrizedCurve)(t)
-  if t < 0.0 || t > 1.0
+  if t < 0 || t > 1
     throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
   end
   a, b = curve.range
