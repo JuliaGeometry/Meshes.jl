@@ -25,11 +25,11 @@ struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M
 
   function ParametrizedCurve(func, range=(0.0, 1.0))
     a, b = promote(range...)
-    _range = (a, b)
+    r = (a, b)
     p = func(a)
     M = manifold(p)
     C = crs(p)
-    new{M,C,typeof(func),typeof(_range)}(func, _range)
+    new{M,C,typeof(func),typeof(r)}(func, r)
   end
 end
 
