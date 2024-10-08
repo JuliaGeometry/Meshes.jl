@@ -29,8 +29,11 @@ struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M
 end
 
 paramdim(::Type{<:ParametrizedCurve}) = 1
+
 Base.minimum(curve::ParametrizedCurve) = curve.func(first(curve.range))
+
 Base.maximum(curve::ParametrizedCurve) = curve.func(last(curve.range))
+
 Base.extrema(curve::ParametrizedCurve) = minimum(curve), maximum(curve)
 
 function (curve::ParametrizedCurve)(t)
