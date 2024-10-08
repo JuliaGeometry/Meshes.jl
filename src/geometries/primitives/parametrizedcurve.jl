@@ -8,10 +8,6 @@
 A parametrized curve is a curve defined by a function `func` that maps a
 (unitless) parameter `t` in the given `range` to a `Point` in space.
 
-## Example
-
-```julia
-ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2pi))
 
 ## Examples
 
