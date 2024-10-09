@@ -29,6 +29,12 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
+# avoid constructing a new geometry or domain when the CRS is the same
+function apply(t::Proj{CRS}, g::GeometryOrDomain) where {CRS}
+  g′ = crs(g) <: CRS ? g : applycoord(t, g)
+  g′, nothing
+end
+
 # convert the CRS and preserve the manifold
 applycoord(::Proj{CRS}, p::Point{<:🌐}) where {CRS<:Basic} = Point{🌐}(convert(CRS, coords(p)))
 
