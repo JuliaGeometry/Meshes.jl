@@ -1298,8 +1298,8 @@ end
 end
 
 @testitem "ParametrizedCurve" setup = [Setup] begin
-  func(t) = Point(Polar(1, t))
-  c = ParametrizedCurve(func, (0, 2π))
+  func(t) = Point(Polar(T(1), T(t)))
+  c = ParametrizedCurve(func, (T(0), T(2π)))
   @test embeddim(c) == 2
   @test paramdim(c) == 1
   @test crs(c) <: Polar{NoDatum}
@@ -1307,24 +1307,24 @@ end
 
   equaltest(c)
 
-  @test c(T(0)) == func(0)
-  @test c(T(1)) == func(2π)
-  @test c(T(0.5)) == func(π)
+  @test c(T(0)) == func(T(0))
+  @test c(T(1)) == func(T(2π))
+  @test c(T(0.5)) == func(T(π))
   @test_throws DomainError(T(-0.1), "c(t) is not defined for t outside [0, 1].") c(T(-0.1))
   @test_throws DomainError(T(1.2), "c(t) is not defined for t outside [0, 1].") c(T(1.2))
 
   @test boundary(c) === nothing
 
-  c = ParametrizedCurve(t -> Point(cospi(t), sinpi(t)), (0, 1))
+  c = ParametrizedCurve(t -> Point(T(cospi(t)), T(sinpi(t))), (T(0), T(1)))
   @test boundary(c) == Multi([cart(1, 0), cart(-1, 0)])
   @test perimeter(c) == zero(ℳ)
 
   # CRS propagation
-  foo(t) = Point(Mercator(t, 2t))
-  c = ParametrizedCurve(foo, (0, 1))
+  foo(t) = Point(Mercator(T(t), T(2t)))
+  c = ParametrizedCurve(foo, (T(0), T(1)))
   @test crs(c(T(0))) === crs(c)
 
-  @test sprint(show, c) == "ParametrizedCurve(func: foo, range: (0, 1))"
+  @test sprint(show, c) == "ParametrizedCurve(func: foo, range: (0.0, 1.0))"
 end
 
 @testitem "Torus" setup = [Setup] begin
