@@ -545,6 +545,7 @@ export
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
+  Morphological,
   isaffine,
   isinvertible,
   inverse,
