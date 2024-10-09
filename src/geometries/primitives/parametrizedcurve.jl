@@ -17,15 +17,14 @@ ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2π))
 struct ParametrizedCurve{M<:Manifold,C<:CRS,F<:Function,R<:Tuple} <: Primitive{M,C}
   func::F
   range::R
+  ParametrizedCurve{M,C}(fun::F, range::R) where {M<:Manifold,C<:CRS,F<:Function,R<:Tuple} = new{M,C,F,R}(fun, range)
+end
 
-  function ParametrizedCurve(func, range=(0.0, 1.0))
-    a, b = promote(range...)
-    r = (a, b)
-    p = func(a)
-    M = manifold(p)
-    C = crs(p)
-    new{M,C,typeof(func),typeof(r)}(func, r)
-  end
+function ParametrizedCurve(fun, range=(0.0, 1.0))
+  a, b = promote(range...)
+  r = (a, b)
+  p = fun(a)
+  ParametrizedCurve{manifold(p),crs(p)}(fun, r)
 end
 
 paramdim(::Type{<:ParametrizedCurve}) = 1
