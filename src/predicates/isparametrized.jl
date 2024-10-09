@@ -25,6 +25,8 @@ isparametrized(::Type{<:Plane}) = true
 
 isparametrized(::Type{<:BezierCurve}) = true
 
+isparametrized(::Type{<:ParametrizedCurve}) = true
+
 isparametrized(::Type{<:Box{<:𝔼}}) = true
 
 isparametrized(::Type{<:Ball{<:𝔼}}) = true

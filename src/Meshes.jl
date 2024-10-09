@@ -157,6 +157,7 @@ export
   Ray,
   Line,
   BezierCurve,
+  ParametrizedCurve,
   Plane,
   Box,
   Ball,
