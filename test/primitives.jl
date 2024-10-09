@@ -1315,12 +1315,12 @@ end
 
   @test boundary(c) === nothing
 
-  c = ParametrizedCurve(t -> Point(T(cospi(t)), T(sinpi(t))), (T(0), T(1)))
+  c = ParametrizedCurve(t -> cart(cospi(t), sinpi(t)), (T(0), T(1)))
   @test boundary(c) == Multi([cart(1, 0), cart(-1, 0)])
   @test perimeter(c) == zero(ℳ)
 
   # CRS propagation
-  foo(t) = Point(Mercator(T(t), T(2t)))
+  foo(t) = merc(t, 2t)
   c = ParametrizedCurve(foo, (T(0), T(1)))
   @test crs(c(T(0))) === crs(c)
 

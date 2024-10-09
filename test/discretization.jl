@@ -327,7 +327,7 @@ end
   @test eltype(mesh) <: Segment
   @test nvertices.(mesh) ⊆ [2]
 
-  parametrizedcurve = ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2π))
+  parametrizedcurve = ParametrizedCurve(t -> cart(cos(t), sin(t)), (0, 2π))
   mesh = discretize(parametrizedcurve, RegularDiscretization(10))
   @test nvertices(mesh) == 11
   @test nelements(mesh) == 10
@@ -577,7 +577,7 @@ end
   @test eltype(msh) <: Segment
   @test nvertices(msh) == nelements(msh) + 1
 
-  par = ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2π))
+  par = ParametrizedCurve(t -> cart(cos(t), sin(t)), (0, 2π))
   msh = simplexify(par)
   @test eltype(msh) <: Segment
   @test nvertices(msh) == nelements(msh) + 1
