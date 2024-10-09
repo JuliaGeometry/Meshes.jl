@@ -123,6 +123,7 @@ end
   @test isparametrized(Disk)
   @test isparametrized(Circle)
   @test isparametrized(BezierCurve)
+  @test isparametrized(ParametrizedCurve)
   @test isparametrized(Cylinder)
   @test isparametrized(CylinderSurface)
   @test isparametrized(ConeSurface)

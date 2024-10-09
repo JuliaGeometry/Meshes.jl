@@ -52,6 +52,16 @@ BezierCurve
 BezierCurve((0.,0.), (1.,0.), (1.,1.)) |> viz
 ```
 
+### ParametrizedCurve
+
+```@docs
+ParametrizedCurve
+```
+
+```@example primitives
+ParametrizedCurve(t -> Point(cos(t), sin(t), 0.2t), (0, 4π)) |> viz
+```
+
 ### Plane
 
 ```@docs

@@ -202,6 +202,8 @@ end
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
+simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(50))
+
 simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(50))
 
 simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))

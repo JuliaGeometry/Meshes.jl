@@ -1297,6 +1297,36 @@ end
   isapproxtest(f)
 end
 
+@testitem "ParametrizedCurve" setup = [Setup] begin
+  fun(t) = Point(Polar(T(1), T(t)))
+  c = ParametrizedCurve(fun, (T(0), T(2π)))
+  @test embeddim(c) == 2
+  @test paramdim(c) == 1
+  @test crs(c) <: Polar{NoDatum}
+  @test Meshes.lentype(c) == ℳ
+
+  equaltest(c)
+
+  @test c(T(0)) == fun(T(0))
+  @test c(T(1)) == fun(T(2π))
+  @test c(T(0.5)) == fun(T(π))
+  @test_throws DomainError(T(-0.1), "c(t) is not defined for t outside [0, 1].") c(T(-0.1))
+  @test_throws DomainError(T(1.2), "c(t) is not defined for t outside [0, 1].") c(T(1.2))
+
+  @test boundary(c) === nothing
+
+  c = ParametrizedCurve(t -> cart(cospi(t), sinpi(t)), (T(0), T(1)))
+  @test boundary(c) == Multi([cart(1, 0), cart(-1, 0)])
+  @test perimeter(c) == zero(ℳ)
+
+  # CRS propagation
+  foo(t) = merc(t, 2t)
+  c = ParametrizedCurve(foo, (T(0), T(1)))
+  @test crs(c(T(0))) === crs(c)
+
+  @test sprint(show, c) == "ParametrizedCurve(fun: foo, range: (0.0, 1.0))"
+end
+
 @testitem "Torus" setup = [Setup] begin
   t = Torus(T.((1, 1, 1)), T.((1, 0, 0)), 2, 1)
   @test cart(1, 1, -1) ∈ t
