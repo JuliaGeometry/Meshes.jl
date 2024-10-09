@@ -327,6 +327,13 @@ end
   @test eltype(mesh) <: Segment
   @test nvertices.(mesh) ⊆ [2]
 
+  parametrizedcurve = ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2π))
+  mesh = discretize(parametrizedcurve, RegularDiscretization(10))
+  @test nvertices(mesh) == 11
+  @test nelements(mesh) == 10
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
   box = Box(cart(0, 0), cart(2, 2))
   mesh = discretize(box, RegularDiscretization(10))
   @test mesh isa CartesianGrid
@@ -567,6 +574,11 @@ end
 
   bez = BezierCurve(cart.([(0, 0), (1, 0), (1, 1)]))
   msh = simplexify(bez)
+  @test eltype(msh) <: Segment
+  @test nvertices(msh) == nelements(msh) + 1
+
+  par = ParametrizedCurve(t -> Point(cos(t), sin(t)), (0, 2π))
+  msh = simplexify(par)
   @test eltype(msh) <: Segment
   @test nvertices(msh) == nelements(msh) + 1
 
