@@ -7,7 +7,7 @@
   @test crs(g) <: Mercator{WGS84Latest}
   g = BezierCurve(merc(0, 0), merc(1, 1), merc(2, 0))
   @test crs(g) <: Mercator{WGS84Latest}
-  g = ParametrizedCurve(t -> merc(cos(t), sin(t)), (0, 2π))
+  g = ParametrizedCurve(t -> merc(cos(t), sin(t)), (T(0), T(2π)))
   @test crs(g) <: Mercator{WGS84Latest}
   g = Box(merc(0, 0), merc(1, 1))
   @test crs(g) <: Mercator{WGS84Latest}
