@@ -1294,6 +1294,36 @@ end
   g = Box(merc(0, 0), merc(1, 1))
   r, c = TB.apply(f, g)
   @test manifold(r) === 🌐
+
+  # --------------
+  # NO CONVERSION
+  # --------------
+
+  f = Proj(Cartesian)
+  g = cart(1, 1)
+  r, c = TB.apply(f, g)
+  @test r === g
+  f = Proj(crs(cart(0, 0)))
+  r, c = TB.apply(f, g)
+  @test r === g
+
+  f = Proj(LatLon)
+  g = Ring(latlon(0, 0), latlon(0, 1), latlon(1, 0))
+  r, c = TB.apply(f, g)
+  @test r === g
+  f = Proj(crs(latlon(0, 0)))
+  r, c = TB.apply(f, g)
+  @test r === g
+
+  f = Proj(Mercator)
+  p = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  d = SimpleMesh(p, c)
+  r, c = TB.apply(f, d)
+  @test r === d
+  f = Proj(crs(merc(0, 0)))
+  r, c = TB.apply(f, d)
+  @test r === d
 end
 
 @testitem "LengthUnit" setup = [Setup] begin
