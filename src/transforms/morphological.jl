@@ -20,6 +20,8 @@ struct Morphological{F<:Function} <: CoordinateTransform
   fun::F
 end
 
+parameters(t::Morphological) = (; fun=t.fun)
+
 applycoord(t::Morphological, p::Point) = Point(t.fun(coords(p)))
 
 applycoord(::Morphological, v::Vec) = v
@@ -28,7 +30,7 @@ applycoord(::Morphological, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Morphological, g::Primitive) = TransformedGeometry(g, t)
+applycoord(t::Morphological, g::Geometry) = TransformedGeometry(g, t)
 
 applycoord(t::Morphological, g::RegularGrid) = TransformedGrid(g, t)
 
