@@ -82,6 +82,13 @@ end
     @test p ≈ t
   end
 
+  c = ParametrizedCurve(t -> cart(cos(t), sin(t)), (T(0), T(2π)))
+  ps = sample(c, RegularSampling(4))
+  ts = cart.([(1.0, 0.0), (-0.5, 0.8660254037844387), (-0.5, -0.8660254037844385), (1.0, 0.0)])
+  for (p, t) in zip(ps, ts)
+    @test p ≈ t
+  end
+
   s = Sphere(cart(0, 0), T(2))
   ps = sample(s, RegularSampling(4))
   ts = cart.([(2, 0), (0, 2), (-2, 0), (0, -2)])
