@@ -1326,6 +1326,129 @@ end
   @test r === d
 end
 
+@testitem "Morphological" setup = [Setup] begin
+  f = Morphological(c -> c)
+  @test !isaffine(f)
+  @test !TB.isrevertible(f)
+  @test !TB.isinvertible(f)
+  @test TB.parameters(f) == (; fun=f.fun)
+
+  # ----
+  # VEC
+  # ----
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  v = vector(1, 0)
+  r, c = TB.apply(f, v)
+  @test r == v
+
+  # ------
+  # POINT
+  # ------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  g = cart(1, 1)
+  r, c = TB.apply(f, g)
+  @test r == cart(1, 1, 0)
+
+  # --------
+  # SEGMENT
+  # --------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  g = Segment(cart(0, 0), cart(1, 1))
+  r, c = TB.apply(f, g)
+  @test r ≈ Segment(cart(0, 0, 0), cart(1, 1, 0))
+
+  # ----
+  # BOX
+  # ----
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  g = Box(cart(0, 0), cart(1, 1))
+  r, c = TB.apply(f, g)
+  @test r ≈ Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
+
+  # ---------
+  # TRIANGLE
+  # ---------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  g = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  r, c = TB.apply(f, g)
+  @test r ≈ Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0))
+
+  # ----------
+  # MULTIGEOM
+  # ----------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  g = Multi([t, t])
+  r, c = TB.apply(f, g)
+  @test r ≈ Multi([f(t), f(t)])
+
+  # ---------
+  # POINTSET
+  # ---------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
+  r, c = TB.apply(f, d)
+  @test r ≈ PointSet([cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0)])
+
+  # ------------
+  # GEOMETRYSET
+  # ------------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  d = GeometrySet([t, t])
+  r, c = TB.apply(f, d)
+  @test r ≈ GeometrySet([f(t), f(t)])
+  d = [t, t]
+  r, c = TB.apply(f, d)
+  @test all(r .≈ [f(t), f(t)])
+
+  # --------------
+  # CARTESIANGRID
+  # --------------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # ----------------
+  # RECTILINEARGRID
+  # ----------------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  d = convert(RectilinearGrid, cartgrid(10, 10))
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # ---------------
+  # STRUCTUREDGRID
+  # ---------------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  d = convert(StructuredGrid, cartgrid(10, 10))
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # -----------
+  # SIMPLEMESH
+  # -----------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  d = SimpleMesh(p, c)
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+end
+
 @testitem "LengthUnit" setup = [Setup] begin
   @test !isaffine(LengthUnit(u"km"))
   @test !TB.isrevertible(LengthUnit(u"cm"))
