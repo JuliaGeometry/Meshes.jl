@@ -94,13 +94,13 @@ include("transforms/affine.jl")
 include("transforms/stretch.jl")
 include("transforms/stdcoords.jl")
 include("transforms/proj.jl")
+include("transforms/morphological.jl")
 include("transforms/lengthunit.jl")
 include("transforms/shadow.jl")
 include("transforms/slice.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
 include("transforms/smoothing.jl")
-include("transforms/morphological.jl")
 
 # --------------
 # OPTIMIZATIONS
