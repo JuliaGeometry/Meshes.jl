@@ -45,9 +45,9 @@ end
 # SPECIAL CASES
 # --------------
 
-apply(::Shadow, ::Plane) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
+apply(t::Shadow, b::Box{<:𝔼}) = Box(t(minimum(b)), t(maximum(b))), nothing
 
-apply(t::Shadow, b::Box) = Box(t(minimum(b)), t(maximum(b))), nothing
+apply(::Shadow, ::Plane) = throw(ArgumentError("Shadow transform doesn't yet support planes"))
 
 function apply(t::Shadow, g::CartesianGrid)
   dims = _sort(t.dims)
