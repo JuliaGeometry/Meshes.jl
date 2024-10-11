@@ -146,6 +146,20 @@ triangle = Triangle((0, 0), (1, 0), (1, 1))
 triangle |> Proj(Polar)
 ```
 
+## Morphological
+
+```@docs
+Morphological
+```
+
+```@example transforms
+# triangle with Cartesian coordinates
+triangle = Triangle((0, 0), (1, 0), (1, 1))
+
+# transform triangle coordinates
+triangle |> Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+```
+
 ## LengthUnit
 
 ```@docs
