@@ -126,8 +126,8 @@ end
   @test isparametrized(ParametrizedCurve)
   @test isparametrized(Cylinder)
   @test isparametrized(CylinderSurface)
-  @test isparametrized(ConeSurface)
   @test isparametrized(Cone)
+  @test isparametrized(ConeSurface)
   @test isparametrized(ParaboloidSurface)
   @test isparametrized(Torus)
 
