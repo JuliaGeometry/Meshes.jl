@@ -309,14 +309,32 @@ end
   @test mesh[1] == Triangle(cart(0, 0), cart(0, 0), cart(0, 0))
 end
 
-@testitem "ManualDiscretization" setup = [Setup] begin
+@testitem "ManualSimplexification" setup = [Setup] begin
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
   hexa = Hexahedron(pointify(box)...)
-  bmesh = discretize(box, ManualDiscretization())
-  hmesh = discretize(hexa, ManualDiscretization())
+  bmesh = discretize(box, ManualSimplexification())
+  hmesh = discretize(hexa, ManualSimplexification())
   @test bmesh == hmesh
   @test nvertices(bmesh) == 8
   @test nelements(bmesh) == 5
+
+  box = Box(cart(0), cart(1))
+  mesh = discretize(box, ManualSimplexification())
+  @test nvertices(mesh) == 2
+  @test nelements(mesh) == 1
+  @test eltype(mesh) <: Segment
+
+  box = Box(cart(0, 0), cart(1, 1))
+  mesh = discretize(box, ManualSimplexification())
+  @test nvertices(mesh) == 4
+  @test nelements(mesh) == 2
+  @test eltype(mesh) <: Triangle
+
+  box = Box(latlon(0, 0), latlon(45, 45))
+  mesh = discretize(box, ManualSimplexification())
+  @test nvertices(mesh) == 4
+  @test nelements(mesh) == 2
+  @test eltype(mesh) <: Triangle
 end
 
 @testitem "RegularDiscretization" setup = [Setup] begin
