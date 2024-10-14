@@ -68,7 +68,17 @@ discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretizati
 
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
-discretize(tgeom::TransformedGeometry) = transform(tgeom)(discretize(parent(tgeom)))
+function discretize(geometry::TransformedGeometry)
+  T = numtype(lentype(geometry))
+  trans = transform(geometry)
+  pgeom = parent(geometry)
+  mesh = if _needsrefinement(trans, pgeom)
+    discretize(pgeom, MaxLengthDiscretization(T(1000) * u"km"))
+  else
+    discretize(pgeom)
+  end
+  trans(mesh)
+end
 
 discretize(mesh::Mesh) = mesh
 
@@ -79,8 +89,8 @@ discretize(mesh::Mesh) = mesh
 discretize(multi::Multi, method::DiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-discretize(tgeom::TransformedGeometry, method::DiscretizationMethod) =
-  transform(tgeom)(discretize(parent(tgeom), method))
+discretize(geometry::TransformedGeometry, method::DiscretizationMethod) =
+  transform(geometry)(discretize(parent(geometry), method))
 
 # -----------------
 # BOUNDARY METHODS
@@ -154,15 +164,6 @@ function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
 
   # return mesh with original points
   SimpleMesh(points, topology(mesh))
-end
-
-_proj2D(::Type{𝔼{3}}, points) = proj2D(points)
-
-function _proj2D(::Type{🌐}, points)
-  map(points) do p
-    latlon = convert(LatLon, coords(p))
-    flat(Point(latlon))
-  end
 end
 
 # -----------
@@ -260,3 +261,24 @@ include("discretization/delaunay.jl")
 include("discretization/manual.jl")
 include("discretization/regular.jl")
 include("discretization/maxlength.jl")
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_needsrefinement(::Transform, ::Geometry) = false
+
+_needsrefinement(::Proj{<:Projected}, ::Geometry{<:🌐}) = true
+
+_needsrefinement(::Proj{<:Geographic}, ::Geometry{<:𝔼}) = true
+
+_needsrefinement(::Morphological, ::Geometry) = true
+
+_proj2D(::Type{𝔼{3}}, points) = proj2D(points)
+
+function _proj2D(::Type{🌐}, points)
+  map(points) do p
+    latlon = convert(LatLon, coords(p))
+    flat(Point(latlon))
+  end
+end
