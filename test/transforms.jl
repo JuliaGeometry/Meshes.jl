@@ -1221,6 +1221,16 @@ end
   r, c = TB.apply(f, g)
   @test r ≈ Cylinder(Point(Cylindrical(T(0), T(0), T(0))), Point(Cylindrical(T(√2), T(π / 4), T(1))))
 
+  # --------------------
+  # TRANSFORMEDGEOMETRY
+  # --------------------
+
+  f = Proj(Polar)
+  b = Box(cart(0, 0), cart(1, 1))
+  g = TransformedGeometry(b, Identity())
+  r, c = TB.apply(f, g)
+  @test r ≈ Box(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
+
   # ---------
   # POINTSET
   # ---------
@@ -1387,6 +1397,16 @@ end
   g = Multi([t, t])
   r, c = TB.apply(f, g)
   @test r ≈ Multi([f(t), f(t)])
+
+  # --------------------
+  # TRANSFORMEDGEOMETRY
+  # --------------------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
+  b = Box(cart(0, 0), cart(1, 1))
+  g = TransformedGeometry(b, Identity())
+  r, c = TB.apply(f, g)
+  @test r ≈ Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
 
   # ---------
   # POINTSET
