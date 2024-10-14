@@ -500,16 +500,16 @@ end
 end
 
 @testitem "Discretize" setup = [Setup] begin
+  box = Box(latlon(0, 0), latlon(45, 45))
+  mesh = discretize(box)
+  @test eltype(mesh) <: Quadrangle
+  @test nelements(mesh) == 2601
+
   ball = Ball(cart(0, 0), T(1))
   mesh = discretize(ball)
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 2550
-
-  box = Box(latlon(0, 0), latlon(45, 45))
-  mesh = discretize(box)
-  @test eltype(mesh) <: Quadrangle
-  @test nelements(mesh) == 2601
 
   sphere = Sphere(cart(0, 0, 0), T(1))
   mesh = discretize(sphere)
