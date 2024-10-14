@@ -49,6 +49,14 @@ This function is intended for developers of new
 """
 function applycoord end
 
+"""
+    isnonlinear(transform, object)
+
+Checks if the coordinate `transform` applied to `object` is non-linear,
+i.e. the transform does not preserve lines.
+"""
+isnonlinear(::CoordinateTransform, _) = false
+
 # --------------------
 # TRANSFORM FALLBACKS
 # --------------------

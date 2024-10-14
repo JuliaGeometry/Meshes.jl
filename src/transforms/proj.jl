@@ -29,6 +29,10 @@ Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
 
 parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
+isnonlinear(::Proj{<:Projected}, ::Geometry{<:🌐}) = true
+
+isnonlinear(::Proj{<:Geographic}, ::Geometry{<:𝔼}) = true
+
 # avoid constructing a new geometry or domain when the CRS is the same
 function apply(t::Proj{CRS}, g::GeometryOrDomain) where {CRS}
   g′ = crs(g) <: CRS ? g : applycoord(t, g)

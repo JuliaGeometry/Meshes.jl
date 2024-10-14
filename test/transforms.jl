@@ -5,6 +5,7 @@
   @test TB.inverse(Rotate(Angle2d(T(π / 2)))) == Rotate(Angle2d(-T(π / 2)))
   rot = Angle2d(T(π / 2))
   f = Rotate(rot)
+  @test !Meshes.isnonlinear(f, cart(1, 1))
   @test TB.parameters(f) == (; rot)
 
   # ----
@@ -247,6 +248,7 @@ end
   @test TB.inverse(Translate(T(1), T(2))) == Translate(T(-1), T(-2))
   offsets = (T(1) * u"m", T(2) * u"m")
   f = Translate(offsets)
+  @test !Meshes.isnonlinear(f, cart(1, 1))
   @test TB.parameters(f) == (; offsets)
   f = Translate(T(1), T(2))
   @test TB.parameters(f) == (; offsets)
@@ -443,6 +445,7 @@ end
   @test !TB.isinvertible(f)
   A, b = Angle2d(T(π / 2)), SVector(T(1) * u"m", T(1) * u"m")
   f = Affine(A, b)
+  @test !Meshes.isnonlinear(f, cart(1, 1))
   @test TB.parameters(f) == (; A, b)
   f = Affine(Angle2d(T(π / 2)), T[1, 1])
   @test TB.parameters(f) == (; A, b)
@@ -647,6 +650,7 @@ end
   @test TB.inverse(Scale(T(1), T(2))) == Scale(T(1), T(1 / 2))
   factors = (T(1), T(2))
   f = Scale(factors)
+  @test !Meshes.isnonlinear(f, cart(1, 1))
   @test TB.parameters(f) == (; factors)
 
   # ----
@@ -937,6 +941,7 @@ end
   @test TB.inverse(Stretch(T(1), T(2))) == Stretch(T(1), T(1 / 2))
   factors = (T(1), T(2))
   f = Stretch(factors)
+  @test !Meshes.isnonlinear(f, cart(1, 1))
   @test TB.parameters(f) == (; factors)
 
   # ----
@@ -1134,6 +1139,9 @@ end
   @test !isaffine(Proj(Polar))
   @test !TB.isrevertible(Proj(Polar))
   @test !TB.isinvertible(Proj(Polar))
+  @test !Meshes.isnonlinear(Proj(Polar), cart(1, 1))
+  @test Meshes.isnonlinear(Proj(Mercator), latlon(1, 1))
+  @test Meshes.isnonlinear(Proj(LatLon), merc(1, 1))
   @test TB.parameters(Proj(Polar)) == (; CRS=Polar)
   @test TB.parameters(Proj(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
   @test TB.parameters(Proj(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
@@ -1347,6 +1355,7 @@ end
   @test !isaffine(f)
   @test !TB.isrevertible(f)
   @test !TB.isinvertible(f)
+  @test Meshes.isnonlinear(f, cart(1, 1))
   @test TB.parameters(f) == (; fun=f.fun)
 
   # ----
@@ -1479,6 +1488,7 @@ end
   @test !isaffine(LengthUnit(u"km"))
   @test !TB.isrevertible(LengthUnit(u"cm"))
   @test !TB.isinvertible(LengthUnit(u"km"))
+  @test !Meshes.isnonlinear(LengthUnit(u"cm"), cart(1, 1))
   @test TB.parameters(LengthUnit(u"cm")) == (; unit=u"cm")
 
   # ----

@@ -22,6 +22,8 @@ end
 
 parameters(t::Morphological) = (; fun=t.fun)
 
+isnonlinear(::Morphological, ::Geometry) = true
+
 applycoord(t::Morphological, p::Point) = Point(t.fun(coords(p)))
 
 applycoord(::Morphological, v::Vec) = v
