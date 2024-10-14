@@ -184,11 +184,7 @@ function simplexify end
 
 simplexify(geometry) = simplexify(discretize(geometry))
 
-simplexify(box::Box{𝔼{1}}) = SimpleMesh(collect(extrema(box)), GridTopology(1))
-
-simplexify(box::Box{𝔼{2}}) = discretize(box, FanTriangulation())
-
-simplexify(box::Box{𝔼{3}}) = discretize(box, ManualDiscretization())
+simplexify(box::Box) = discretize(box, ManualSimplexification())
 
 function simplexify(chain::Chain)
   np = nvertices(chain) + isclosed(chain)
@@ -210,7 +206,7 @@ simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
 simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 
-simplexify(poly::Polyhedron) = discretize(poly, ManualDiscretization())
+simplexify(poly::Polyhedron) = discretize(poly, ManualSimplexification())
 
 simplexify(multi::Multi) = mapreduce(simplexify, merge, parent(multi))
 
