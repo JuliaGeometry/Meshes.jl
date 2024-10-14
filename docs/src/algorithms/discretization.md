@@ -157,16 +157,16 @@ mesh = discretize(sphere, RegularDiscretization(10,10))
 viz(mesh, showsegments = true)
 ```
 
-## ManualDiscretization
+## ManualSimplexification
 
 ```@docs
-ManualDiscretization
+ManualSimplexification
 ```
 
 ```@example discretization
 box = Box((0., 0., 0.), (1., 1., 1.))
 
-mesh = discretize(box, ManualDiscretization())
+mesh = discretize(box, ManualSimplexification())
 
 viz(mesh, colors = 1:nelements(mesh))
 ```

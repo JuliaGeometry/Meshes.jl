@@ -506,7 +506,7 @@ export
   DehnTriangulation,
   HeldTriangulation,
   DelaunayTriangulation,
-  ManualDiscretization,
+  ManualSimplexification,
   RegularDiscretization,
   MaxLengthDiscretization,
   discretize,
