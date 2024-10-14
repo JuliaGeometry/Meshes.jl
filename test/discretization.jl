@@ -310,14 +310,6 @@ end
 end
 
 @testitem "ManualSimplexification" setup = [Setup] begin
-  box = Box(cart(0, 0, 0), cart(1, 1, 1))
-  hexa = Hexahedron(pointify(box)...)
-  bmesh = discretize(box, ManualSimplexification())
-  hmesh = discretize(hexa, ManualSimplexification())
-  @test bmesh == hmesh
-  @test nvertices(bmesh) == 8
-  @test nelements(bmesh) == 5
-
   box = Box(cart(0), cart(1))
   mesh = discretize(box, ManualSimplexification())
   @test nvertices(mesh) == 2
@@ -329,6 +321,15 @@ end
   @test nvertices(mesh) == 4
   @test nelements(mesh) == 2
   @test eltype(mesh) <: Triangle
+
+  box = Box(cart(0, 0, 0), cart(1, 1, 1))
+  hexa = Hexahedron(pointify(box)...)
+  bmesh = discretize(box, ManualSimplexification())
+  hmesh = discretize(hexa, ManualSimplexification())
+  @test bmesh == hmesh
+  @test nvertices(bmesh) == 8
+  @test nelements(bmesh) == 5
+  @test eltype(bmesh) <: Tetrahedron
 
   box = Box(latlon(0, 0), latlon(45, 45))
   mesh = discretize(box, ManualSimplexification())
