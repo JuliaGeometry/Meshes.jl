@@ -52,7 +52,7 @@ applycoord(::Proj, v::Vec) = v
 # --------------
 
 # method to fix ambiguities
-applycoord(t::Proj, m::TransformedGeometry) = TransformedGeometry(m, t)
+applycoord(t::Proj, g::TransformedGeometry) = TransformedGeometry(g, t)
 
 applycoord(t::Proj{<:Projected}, g::Geometry{<:🌐}) = TransformedGeometry(g, t)
 

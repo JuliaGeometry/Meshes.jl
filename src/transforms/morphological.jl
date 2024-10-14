@@ -31,7 +31,7 @@ applycoord(::Morphological, v::Vec) = v
 # --------------
 
 # method to fix ambiguities
-applycoord(t::Morphological, m::TransformedGeometry) = TransformedGeometry(m, t)
+applycoord(t::Morphological, g::TransformedGeometry) = TransformedGeometry(g, t)
 
 applycoord(t::Morphological, g::Geometry) = TransformedGeometry(g, t)
 
