@@ -323,19 +323,22 @@ end
   @test eltype(mesh) <: Triangle
 
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
-  hexa = Hexahedron(pointify(box)...)
-  bmesh = discretize(box, ManualSimplexification())
-  hmesh = discretize(hexa, ManualSimplexification())
-  @test bmesh == hmesh
-  @test nvertices(bmesh) == 8
-  @test nelements(bmesh) == 5
-  @test eltype(bmesh) <: Tetrahedron
+  mesh = discretize(box, ManualSimplexification())
+  @test nvertices(mesh) == 8
+  @test nelements(mesh) == 5
+  @test eltype(mesh) <: Tetrahedron
 
   box = Box(latlon(0, 0), latlon(45, 45))
   mesh = discretize(box, ManualSimplexification())
   @test nvertices(mesh) == 4
   @test nelements(mesh) == 2
   @test eltype(mesh) <: Triangle
+
+  box = Box(cart(0, 0, 0), cart(1, 1, 1))
+  hexa = Hexahedron(pointify(box)...)
+  bmesh = discretize(box, ManualSimplexification())
+  hmesh = discretize(hexa, ManualSimplexification())
+  @test bmesh == hmesh
 end
 
 @testitem "RegularDiscretization" setup = [Setup] begin
