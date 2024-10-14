@@ -156,7 +156,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val)
   meshes = Makie.@lift let
     geoms = elements($mesh)
     bounds = boundary.(geoms)
-    discretize.(bounds)
+    _discretize.(bounds)
   end
   vizmany!(plot, meshes, color)
 end
