@@ -22,7 +22,7 @@ end
 
 parameters(t::Morphological) = (; fun=t.fun)
 
-isnonlinear(::Morphological, ::Geometry) = true
+distorts(::Morphological, ::Geometry) = true
 
 applycoord(t::Morphological, p::Point) = Point(t.fun(coords(p)))
 
