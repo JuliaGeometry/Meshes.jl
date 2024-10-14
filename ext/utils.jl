@@ -58,5 +58,3 @@ function _discretize(geom::Geometry{🌐})
   T = numtype(Meshes.lentype(geom))
   discretize(geom, MaxLengthDiscretization(T(1000) * u"km"))
 end
-
-_discretize(multi::Multi) = mapreduce(_discretize, merge, parent(multi))
