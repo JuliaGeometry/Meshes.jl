@@ -1225,11 +1225,17 @@ end
   # TRANSFORMEDGEOMETRY
   # --------------------
 
-  f = Proj(Polar)
-  b = Box(cart(0, 0), cart(1, 1))
+  f = Proj(Mercator)
+  b = Box(latlon(0, 0), latlon(45, 45))
   g = TransformedGeometry(b, Identity())
   r, c = TB.apply(f, g)
-  @test r ≈ Box(Point(Polar(T(0), T(0))), Point(Polar(T(√2), T(π / 4))))
+  @test r ≈ Box(f(minimum(b)), f(maximum(b)))
+
+  f = Proj(LatLon)
+  b = Box(merc(0, 0), merc(1, 1))
+  g = TransformedGeometry(b, Identity())
+  r, c = TB.apply(f, g)
+  @test r ≈ Box(f(minimum(b)), f(maximum(b)))
 
   # ---------
   # POINTSET
