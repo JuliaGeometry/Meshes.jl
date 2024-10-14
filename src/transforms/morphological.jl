@@ -30,10 +30,10 @@ applycoord(::Morphological, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
+applycoord(t::Morphological, g::Geometry) = TransformedGeometry(g, t)
+
 # method to fix ambiguities
 applycoord(t::Morphological, g::TransformedGeometry) = TransformedGeometry(g, t)
-
-applycoord(t::Morphological, g::Geometry) = TransformedGeometry(g, t)
 
 applycoord(t::Morphological, g::RegularGrid) = TransformedGrid(g, t)
 
