@@ -48,6 +48,11 @@ discretize(geometry) = simplexify(geometry)
 
 discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
 
+function discretize(box::Box{🌐})
+  T = numtype(Meshes.lentype(box))
+  discretize(box, MaxLengthDiscretization(T(100) * u"km"))
+end
+
 discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
 
 discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))

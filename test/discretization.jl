@@ -506,6 +506,11 @@ end
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 2550
 
+  box = Box(latlon(0, 0), latlon(45, 45))
+  mesh = discretize(box)
+  @test eltype(mesh) <: Quadrangle
+  @test nelements(mesh) == 2601
+
   sphere = Sphere(cart(0, 0, 0), T(1))
   mesh = discretize(sphere)
   @test !(eltype(mesh) <: Triangle)
