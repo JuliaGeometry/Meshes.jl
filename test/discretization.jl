@@ -519,6 +519,14 @@ end
   @test nelements(mesh) == 256
   @test eltype(mesh) <: Triangle
   @test nvertices.(mesh) ⊆ [3]
+
+  box = Box(latlon(0, 0), latlon(45, 45))
+  tbox = TransformedGeometry(box, Proj(Mercator))
+  mesh = discretize(tbox, MaxLengthDiscretization(T(1e5)))
+  @test nvertices(mesh) == 52 * 52
+  @test nelements(mesh) == 51 * 51
+  @test eltype(mesh) <: Quadrangle
+  @test nvertices.(mesh) ⊆ [4]
 end
 
 @testitem "Discretize" setup = [Setup] begin
