@@ -98,6 +98,9 @@ include("neighborsearch.jl")
 # predicates
 include("predicates.jl")
 
+# transforms
+include("transforms.jl")
+
 # operations
 include("centroid.jl")
 include("measures.jl")
@@ -119,9 +122,6 @@ include("tesselation.jl")
 include("discretization.jl")
 include("refinement.jl")
 include("coarsening.jl")
-
-# transforms
-include("transforms.jl")
 
 # miscellaneous
 include("rand.jl")
@@ -404,6 +404,29 @@ export
   ⪯,
   ⪰,
 
+  # transforms
+  GeometricTransform,
+  CoordinateTransform,
+  Rotate,
+  Translate,
+  Scale,
+  Affine,
+  Stretch,
+  StdCoords,
+  Proj,
+  Morphological,
+  LengthUnit,
+  Shadow,
+  Slice,
+  Repair,
+  Bridge,
+  LambdaMuSmoothing,
+  LaplaceSmoothing,
+  TaubinSmoothing,
+  isaffine,
+  isinvertible,
+  inverse,
+
   # centroids
   centroid,
 
@@ -526,29 +549,6 @@ export
   CoarseningMethod,
   RegularCoarsening,
   coarsen,
-
-  # transforms
-  GeometricTransform,
-  CoordinateTransform,
-  Rotate,
-  Translate,
-  Scale,
-  Affine,
-  Stretch,
-  StdCoords,
-  Proj,
-  Morphological,
-  LengthUnit,
-  Shadow,
-  Slice,
-  Repair,
-  Bridge,
-  LambdaMuSmoothing,
-  LaplaceSmoothing,
-  TaubinSmoothing,
-  isaffine,
-  isinvertible,
-  inverse,
 
   # miscellaneous
   signarea,
