@@ -26,25 +26,10 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector
   Makie.scatter!(plot, coords, color=colorant, marker=pointmarker, markersize=pointsize, overdraw=true)
 end
 
-function vizgset!(plot, ::Type{<:🌐}, ::Val{1}, ::Val, geoms, colorant)
-  showpoints = plot[:showpoints]
-
-  meshes = Makie.@lift begin
-    T = numtype(Meshes.lentype(first($geoms)))
-    method = MaxLengthDiscretization(T(1000) * u"km")
-    [discretize(g, method) for g in $geoms]
-  end
-  vizmany!(plot, meshes, colorant)
-
-  if showpoints[]
-    vizfacets!(plot, geoms)
-  end
-end
-
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
   showpoints = plot[:showpoints]
 
-  meshes = Makie.@lift discretize.($geoms)
+  meshes = Makie.@lift _discretize.($geoms)
   vizmany!(plot, meshes, colorant)
 
   if showpoints[]
@@ -75,7 +60,7 @@ end
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, geoms, colorant)
   showsegments = plot[:showsegments]
 
-  meshes = Makie.@lift discretize.($geoms)
+  meshes = Makie.@lift _discretize.($geoms)
   vizmany!(plot, meshes, colorant)
 
   if showsegments[]
@@ -102,23 +87,8 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVec
   end
 end
 
-function vizgset!(plot, ::Type{<:🌐}, ::Val{2}, ::Val, geoms::ObservableVector{<:Box}, colorant)
-  showsegments = plot[:showsegments]
-
-  meshes = Makie.@lift begin
-    T = numtype(Meshes.lentype(first($geoms)))
-    method = MaxLengthDiscretization(T(100) * u"km")
-    [discretize(g, method) for g in $geoms]
-  end
-  vizmany!(plot, meshes, colorant)
-
-  if showsegments[]
-    vizfacets!(plot, geoms)
-  end
-end
-
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
-  meshes = Makie.@lift discretize.(boundary.($geoms))
+  meshes = Makie.@lift _discretize.(boundary.($geoms))
   vizmany!(plot, meshes, colorant)
 end
 
