@@ -29,6 +29,9 @@ discretize(chain::Chain, method::MaxLengthDiscretization) =
 
 discretize(multi::Multi, method::MaxLengthDiscretization) = _iterativerefinement(multi, method)
 
+discretize(geometry::TransformedGeometry, method::MaxLengthDiscretization) =
+  transform(geometry)(discretize(parent(geometry), method))
+
 discretize(geometry::Geometry, method::MaxLengthDiscretization) = _iterativerefinement(geometry, method)
 
 # -----------------

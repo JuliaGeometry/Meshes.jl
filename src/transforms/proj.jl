@@ -51,9 +51,9 @@ applycoord(::Proj, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Proj{<:Projected}, g::Primitive{<:🌐}) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Projected}, g::Geometry{<:🌐}) = TransformedGeometry(g, t)
 
-applycoord(t::Proj{<:Geographic}, g::Primitive{<:𝔼}) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Geographic}, g::Geometry{<:𝔼}) = TransformedGeometry(g, t)
 
 applycoord(t::Proj, g::RegularGrid) = TransformedGrid(g, t)
 
