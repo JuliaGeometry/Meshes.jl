@@ -80,6 +80,14 @@ function discretize(geometry::TransformedGeometry)
   trans(mesh)
 end
 
+_needsrefinement(::Transform, ::Geometry) = false
+
+_needsrefinement(::Proj{<:Projected}, ::Geometry{<:🌐}) = true
+
+_needsrefinement(::Proj{<:Geographic}, ::Geometry{<:𝔼}) = true
+
+_needsrefinement(::Morphological, ::Geometry) = true
+
 discretize(mesh::Mesh) = mesh
 
 # ----------
@@ -164,6 +172,15 @@ function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
 
   # return mesh with original points
   SimpleMesh(points, topology(mesh))
+end
+
+_proj2D(::Type{𝔼{3}}, points) = proj2D(points)
+
+function _proj2D(::Type{🌐}, points)
+  map(points) do p
+    latlon = convert(LatLon, coords(p))
+    flat(Point(latlon))
+  end
 end
 
 # -----------
@@ -261,24 +278,3 @@ include("discretization/delaunay.jl")
 include("discretization/manual.jl")
 include("discretization/regular.jl")
 include("discretization/maxlength.jl")
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_needsrefinement(::Transform, ::Geometry) = false
-
-_needsrefinement(::Proj{<:Projected}, ::Geometry{<:🌐}) = true
-
-_needsrefinement(::Proj{<:Geographic}, ::Geometry{<:𝔼}) = true
-
-_needsrefinement(::Morphological, ::Geometry) = true
-
-_proj2D(::Type{𝔼{3}}, points) = proj2D(points)
-
-function _proj2D(::Type{🌐}, points)
-  map(points) do p
-    latlon = convert(LatLon, coords(p))
-    flat(Point(latlon))
-  end
-end
