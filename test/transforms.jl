@@ -505,6 +505,101 @@ end
   h = TB.revert(f, r, c)
   @test h ≈ convert(Hexahedron, g)
 
+  # -----
+  # BALL
+  # -----
+
+  f = Affine(Diagonal(T[1, 2]), T[1, 1])
+  g = Ball(cart(1, 2), T(3))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # -------
+  # SPHERE
+  # -------
+
+  f = Affine(Diagonal(T[1, 2]), T[1, 1])
+  g = Sphere(cart(1, 2), T(3))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # ----------
+  # ELLIPSOID
+  # ----------
+
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
+  g = Ellipsoid(T.((4, 5, 6)), cart(1, 2, 3))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # -----
+  # DISK
+  # -----
+
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
+  g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # -------
+  # CIRCLE
+  # -------
+
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
+  g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # ----------------
+  # CYLINDERSURFACE
+  # ----------------
+
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
+  g = CylinderSurface(T(1))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # ------------------
+  # PARABOLOIDSURFACE
+  # ------------------
+
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
+  g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
+  # ------
+  # TORUS
+  # ------
+
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
+  g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test discretize(r) ≈ f(m)
+  @test centroid(r) ≈ f(centroid(g))
+  @test discretize(TB.revert(f, r, c)) ≈ m
+
   # ---------
   # TRIANGLE
   # ---------
@@ -708,6 +803,20 @@ end
   @test centroid(r) ≈ f(centroid(g))
   @test discretize(TB.revert(f, r, c)) ≈ m
 
+  f = Scale(T(2))
+  g = Ball(cart(1, 2), T(3))
+  r, c = TB.apply(f, g)
+  @test r isa Ball
+  @test r ≈ Ball(cart(2, 4), T(6))
+  @test TB.revert(f, r, c) ≈ g
+
+  f = Scale(T(2))
+  g = Ball(cart(1, 2, 3), T(4))
+  r, c = TB.apply(f, g)
+  @test r isa Ball
+  @test r ≈ Ball(cart(2, 4, 6), T(8))
+  @test TB.revert(f, r, c) ≈ g
+
   # -------
   # SPHERE
   # -------
@@ -752,6 +861,14 @@ end
   @test discretize(r) ≈ f(m)
   @test centroid(r) ≈ f(centroid(g))
   @test discretize(TB.revert(f, r, c)) ≈ m
+
+  f = Scale(T(2))
+  g = Ellipsoid(T.((4, 5, 6)), cart(1, 2, 3))
+  m = discretize(g)
+  r, c = TB.apply(f, g)
+  @test r isa Ellipsoid
+  @test r ≈ Ellipsoid(T.((8, 10, 12)), cart(2, 4, 6))
+  @test TB.revert(f, r, c) ≈ g
 
   # -----
   # DISK
