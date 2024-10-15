@@ -1229,13 +1229,13 @@ end
   b = Box(latlon(0, 0), latlon(45, 45))
   g = TransformedGeometry(b, Identity())
   r, c = TB.apply(f, g)
-  @test r ≈ Box(f(minimum(b)), f(maximum(b)))
+  @test r ≈ TransformedGeometry(b, f)
 
   f = Proj(LatLon)
   b = Box(merc(0, 0), merc(1, 1))
   g = TransformedGeometry(b, Identity())
   r, c = TB.apply(f, g)
-  @test r ≈ Box(f(minimum(b)), f(maximum(b)))
+  @test r ≈ TransformedGeometry(b, f)
 
   # ---------
   # POINTSET
