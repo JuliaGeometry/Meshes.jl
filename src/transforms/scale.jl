@@ -48,6 +48,8 @@ applycoord(t::Scale, v::Vec) = t.factors .* v
 
 applycoord(t::Scale, b::Ball) = TransformedGeometry(b, t)
 
+applycoord(t::Scale{1}, b::Ball) = Ball(applycoord(t, center(b)), t.factors[1] * radius(b))
+
 applycoord(t::Scale, s::Sphere) = TransformedGeometry(s, t)
 
 applycoord(t::Scale{1}, s::Sphere) = Sphere(applycoord(t, center(s)), t.factors[1] * radius(s))
@@ -55,6 +57,8 @@ applycoord(t::Scale{1}, s::Sphere) = Sphere(applycoord(t, center(s)), t.factors[
 applycoord(t::Scale{3}, s::Sphere{𝔼{3}}) = Ellipsoid(t.factors .* radius(s), applycoord(t, center(s)))
 
 applycoord(t::Scale, e::Ellipsoid) = TransformedGeometry(e, t)
+
+applycoord(t::Scale{1}, e::Ellipsoid) = Ellipsoid(t.factors .* radii(s), applycoord(t, center(e)), rotation(e))
 
 applycoord(t::Scale, d::Disk) = TransformedGeometry(d, t)
 

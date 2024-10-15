@@ -63,6 +63,22 @@ applycoord(t::Affine, v::Vec) = t.A * v
 
 applycoord(t::Affine, b::Box) = TransformedGeometry(b, t)
 
+applycoord(t::Affine, s::Sphere) = TransformedGeometry(s, t)
+
+applycoord(t::Affine, e::Ellipsoid) = TransformedGeometry(e, t)
+
+applycoord(t::Affine, d::Disk) = TransformedGeometry(d, t)
+
+applycoord(t::Affine, c::Circle) = TransformedGeometry(c, t)
+
+applycoord(t::Affine, c::Cylinder) = TransformedGeometry(c, t)
+
+applycoord(t::Affine, c::CylinderSurface) = TransformedGeometry(c, t)
+
+applycoord(t::Affine, p::ParaboloidSurface) = TransformedGeometry(p, t)
+
+applycoord(t::Affine, tr::Torus) = TransformedGeometry(tr, t)
+
 applycoord(t::Affine, g::RegularGrid) = TransformedGrid(g, t)
 
 applycoord(t::Affine, g::RectilinearGrid) = TransformedGrid(g, t)
