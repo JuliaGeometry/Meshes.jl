@@ -129,4 +129,5 @@ function boundary(m::Multi)
   isempty(valid) ? nothing : reduce(merge, valid)
 end
 
-boundary(g::TransformedGeometry) = transform(g)(boundary(parent(g)))
+boundary(g::TransformedGeometry) =
+  hasdistortedboundary(g) ? TransformedGeometry(boundary(parent(g)), transform(g)) : transform(g)(boundary(parent(g)))

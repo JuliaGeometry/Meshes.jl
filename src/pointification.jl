@@ -20,7 +20,8 @@ pointify(p::Polytope) = collect(vertices(p))
 
 pointify(m::Multi) = pointify(parent(m))
 
-pointify(g::TransformedGeometry) = map(transform(g), pointify(parent(g)))
+pointify(g::TransformedGeometry) =
+  hasdistortedboundary(g) ? pointify(discretize(g)) : map(transform(g), pointify(parent(g)))
 
 pointify(geoms) = mapreduce(pointify, vcat, geoms)
 
