@@ -58,7 +58,7 @@ applycoord(t::Scale{3}, s::Sphere{𝔼{3}}) = Ellipsoid(t.factors .* radius(s), 
 
 applycoord(t::Scale, e::Ellipsoid) = TransformedGeometry(e, t)
 
-applycoord(t::Scale{1}, e::Ellipsoid) = Ellipsoid(t.factors .* radii(s), applycoord(t, center(e)), rotation(e))
+applycoord(t::Scale{1}, e::Ellipsoid) = Ellipsoid(t.factors .* radii(e), applycoord(t, center(e)), rotation(e))
 
 applycoord(t::Scale, d::Disk) = TransformedGeometry(d, t)
 

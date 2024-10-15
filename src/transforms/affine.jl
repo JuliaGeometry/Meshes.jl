@@ -63,6 +63,8 @@ applycoord(t::Affine, v::Vec) = t.A * v
 
 applycoord(t::Affine, b::Box) = TransformedGeometry(b, t)
 
+applycoord(t::Affine, b::Ball) = TransformedGeometry(b, t)
+
 applycoord(t::Affine, s::Sphere) = TransformedGeometry(s, t)
 
 applycoord(t::Affine, e::Ellipsoid) = TransformedGeometry(e, t)
