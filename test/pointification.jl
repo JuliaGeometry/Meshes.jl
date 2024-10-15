@@ -31,6 +31,18 @@
   points = pointify(multi)
   @test points == [pointify(tri); pointify(quad)]
 
+  box = Box(cart(0, 0), cart(1, 1))
+  trans = Translate(T(1), T(2))
+  tbox = TransformedGeometry(box, trans)
+  points = pointify(tbox)
+  @test points == trans.(pointify(box))
+
+  box = Box(latlon(0, 0), latlon(45, 45))
+  trans = Proj(Mercator)
+  tbox = TransformedGeometry(box, trans)
+  points = pointify(tbox)
+  @test points == pointify(discretize(tbox))
+
   tri = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
   quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   gset = GeometrySet([tri, quad])
