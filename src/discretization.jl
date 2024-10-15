@@ -70,23 +70,13 @@ discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
 function discretize(geometry::TransformedGeometry)
   T = numtype(lentype(geometry))
-  trans = transform(geometry)
-  pgeom = parent(geometry)
-  mesh = if _needsrefinement(trans, pgeom)
-    discretize(pgeom, MaxLengthDiscretization(T(1000) * u"km"))
+  mesh = if hasdistortedboundary(geometry)
+    discretize(parent(geometry), MaxLengthDiscretization(T(1000) * u"km"))
   else
-    discretize(pgeom)
+    discretize(parent(geometry))
   end
-  trans(mesh)
+  transform(geometry)(mesh)
 end
-
-_needsrefinement(::Transform, ::Geometry) = false
-
-_needsrefinement(::Proj{<:Projected}, ::Geometry{<:🌐}) = true
-
-_needsrefinement(::Proj{<:Geographic}, ::Geometry{<:𝔼}) = true
-
-_needsrefinement(::Morphological, ::Geometry) = true
 
 discretize(mesh::Mesh) = mesh
 

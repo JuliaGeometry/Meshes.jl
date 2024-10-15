@@ -39,6 +39,10 @@ Base.parent(g::TransformedGeometry) = g.geometry
 
 transform(g::TransformedGeometry) = g.transform
 
+hasdistortedboundary(g::TransformedGeometry) = hasdistortedboundary(transform(g), parent(g))
+
+hasdistortedboundary(::Transform, ::Geometry) = false
+
 # ---------
 # GEOMETRY
 # ---------
