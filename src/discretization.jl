@@ -68,7 +68,15 @@ discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretizati
 
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
-discretize(tgeom::TransformedGeometry) = transform(tgeom)(discretize(parent(tgeom)))
+function discretize(geometry::TransformedGeometry)
+  T = numtype(lentype(geometry))
+  mesh = if hasdistortedboundary(geometry)
+    discretize(parent(geometry), MaxLengthDiscretization(T(1000) * u"km"))
+  else
+    discretize(parent(geometry))
+  end
+  transform(geometry)(mesh)
+end
 
 discretize(mesh::Mesh) = mesh
 
@@ -79,8 +87,8 @@ discretize(mesh::Mesh) = mesh
 discretize(multi::Multi, method::DiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
 
-discretize(tgeom::TransformedGeometry, method::DiscretizationMethod) =
-  transform(tgeom)(discretize(parent(tgeom), method))
+discretize(geometry::TransformedGeometry, method::DiscretizationMethod) =
+  transform(geometry)(discretize(parent(geometry), method))
 
 # -----------------
 # BOUNDARY METHODS
