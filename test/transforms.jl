@@ -534,7 +534,7 @@ end
   # ----------
 
   f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
-  g = Ellipsoid(T.((1, 2, 3)))
+  g = Ellipsoid(T.((4, 5, 6)), cart(1, 2, 3))
   m = discretize(g)
   r, c = TB.apply(f, g)
   @test discretize(r) ≈ f(m)
