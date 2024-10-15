@@ -509,7 +509,7 @@ end
   # BALL
   # -----
 
-  f = Affine(Angle2d(T(π / 2)), T[1, 1])
+  f = Affine(Diagonal(T[1, 2]), T[1, 1])
   g = Ball(cart(1, 2), T(3))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -521,7 +521,7 @@ end
   # SPHERE
   # -------
 
-  f = Affine(Angle2d(T(π / 2)), T[1, 1])
+  f = Affine(Diagonal(T[1, 2]), T[1, 1])
   g = Sphere(cart(1, 2), T(3))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -533,7 +533,7 @@ end
   # ELLIPSOID
   # ----------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
   g = Ellipsoid(T.((4, 5, 6)), cart(1, 2, 3))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -545,7 +545,7 @@ end
   # DISK
   # -----
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
   g = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -557,7 +557,7 @@ end
   # CIRCLE
   # -------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
   g = Circle(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -569,7 +569,7 @@ end
   # CYLINDERSURFACE
   # ----------------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
   g = CylinderSurface(T(1))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -581,7 +581,7 @@ end
   # PARABOLOIDSURFACE
   # ------------------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
   g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
   m = discretize(g)
   r, c = TB.apply(f, g)
@@ -592,7 +592,7 @@ end
   # TORUS
   # ------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
   g = Torus(cart(1, 1, 1), vector(1, 0, 0), T(2), T(1))
   m = discretize(g)
   r, c = TB.apply(f, g)
