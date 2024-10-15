@@ -71,6 +71,16 @@
   tb = TransformedGeometry(b, t)
   @test Meshes.hasdistortedboundary(tb)
 
+  # boundary
+  b = Box(cart(0, 0), cart(1, 1))
+  t = Translate(T(1), T(2))
+  tb = TransformedGeometry(b, t)
+  @test boundary(tb) == t(boundary(b))
+  b = Box(latlon(0, 0), latlon(1, 1))
+  t = Proj(Mercator)
+  tb = TransformedGeometry(b, t)
+  @test boundary(tb) == TransformedGeometry(boundary(b), t)
+
   b = Box(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
   tb = TransformedGeometry(b, t)
