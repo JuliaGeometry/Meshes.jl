@@ -5,7 +5,7 @@
 """
     Morphological(fun; boundary=false)
 
-Morphological transform given by a function `fun`,
+Morphological transform given by a function `fun`
 that maps the coordinates of a geometry or a domain
 to new coordinates (`coords -> newcoords`).
 Optionally, the transform samples the `boundary` of polytopes,
