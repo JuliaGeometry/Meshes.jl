@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    Proj(CRS)
-    Proj(code)
+    Proj(CRS; boundary=false)
+    Proj(code; boundary=false)
 
 Convert the coordinates of geometry or domain to a given
 coordinate reference system `CRS` or EPSG/ESRI `code`.
@@ -17,17 +17,18 @@ Proj(WebMercator)
 Proj(Mercator{WGS84Latest})
 Proj(EPSG{3395})
 Proj(ESRI{54017})
+Proj(Robinson, boundary=true)
 ```
 """
-struct Proj{CRS} <: CoordinateTransform end
+struct Proj{CRS,Boundary} <: CoordinateTransform end
 
-Proj(CRS) = Proj{CRS}()
+Proj(CRS; boundary=false) = Proj{CRS,boundary}()
 
-Proj(code::Type{<:EPSG}) = Proj{CoordRefSystems.get(code)}()
+Proj(code::Type{<:EPSG}; kwargs...) = Proj(CoordRefSystems.get(code); kwargs...)
 
-Proj(code::Type{<:ESRI}) = Proj{CoordRefSystems.get(code)}()
+Proj(code::Type{<:ESRI}; kwargs...) = Proj(CoordRefSystems.get(code); kwargs...)
 
-parameters(::Proj{CRS}) where {CRS} = (; CRS)
+parameters(::Proj{CRS,Boundary}) where {CRS,Boundary} = (CRS=CRS, boundary=Boundary)
 
 # avoid constructing a new geometry or domain when the CRS is the same
 function apply(t::Proj{CRS}, g::GeometryOrDomain) where {CRS}
@@ -51,13 +52,13 @@ applycoord(::Proj, v::Vec) = v
 # SPECIAL CASES
 # --------------
 
-applycoord(t::Proj{<:Projected}, g::Geometry{<:🌐}) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Projected}, g::Primitive{<:🌐}) = TransformedGeometry(g, t)
 
-applycoord(t::Proj{<:Geographic}, g::Geometry{<:𝔼}) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Geographic}, g::Primitive{<:𝔼}) = TransformedGeometry(g, t)
 
-# methods to fix ambiguities
-applycoord(t::Proj{<:Projected}, g::TransformedGeometry{<:🌐}) = TransformedGeometry(g, t)
-applycoord(t::Proj{<:Geographic}, g::TransformedGeometry{<:𝔼}) = TransformedGeometry(g, t)
+applycoord(t::Proj{<:Projected,true}, g::Polytope{K,<:🌐}) where {K} = TransformedGeometry(g, t)
+
+applycoord(t::Proj{<:Geographic,true}, g::Polytope{K,<:𝔼}) where {K} = TransformedGeometry(g, t)
 
 applycoord(t::Proj, g::RegularGrid) = TransformedGrid(g, t)
 
@@ -69,12 +70,13 @@ applycoord(t::Proj, g::StructuredGrid) = TransformedGrid(g, t)
 # IO METHODS
 # -----------
 
-Base.show(io::IO, ::Proj{CRS}) where {CRS} = print(io, "Proj(CRS: $CRS)")
+Base.show(io::IO, ::Proj{CRS,Boundary}) where {CRS,Boundary} = print(io, "Proj(CRS: $CRS, boundary: $Boundary)")
 
-function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS}) where {CRS}
+function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS,Boundary}) where {CRS,Boundary}
   summary(io, t)
   println(io)
-  print(io, "└─ CRS: $CRS")
+  println(io, "├─ CRS: $CRS")
+  print(io, "└─ boundary: $Boundary")
 end
 
 # -----------------
