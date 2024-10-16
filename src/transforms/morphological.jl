@@ -8,8 +8,9 @@
 Morphological transform given by a function `fun`
 that maps the coordinates of a geometry or a domain
 to new coordinates (`coords -> newcoords`).
-Optionally, the transform samples the `boundary` of polytopes,
-if this option is `true`, to handle distortions
+
+Optionally, the transform samples the `boundary` of
+polytopes, if this option is `true`, to handle distortions
 that occur in manifold conversions.
 
 # Examples
