@@ -1251,14 +1251,15 @@ end
   @test !isaffine(Proj(Polar))
   @test !TB.isrevertible(Proj(Polar))
   @test !TB.isinvertible(Proj(Polar))
-  @test TB.parameters(Proj(Polar)) == (; CRS=Polar)
-  @test TB.parameters(Proj(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
-  @test TB.parameters(Proj(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
+  @test TB.parameters(Proj(Polar)) == (CRS=Polar, boundary=false)
+  @test TB.parameters(Proj(EPSG{3395})) == (CRS=Mercator{WGS84Latest}, boundary=false)
+  @test TB.parameters(Proj(ESRI{54017})) == (CRS=Behrmann{WGS84Latest}, boundary=false)
   f = Proj(Mercator)
-  @test sprint(show, f) == "Proj(CRS: CoordRefSystems.Mercator)"
+  @test sprint(show, f) == "Proj(CRS: CoordRefSystems.Mercator, boundary: false)"
   @test sprint(show, MIME"text/plain"(), f) == """
   Proj transform
-  └─ CRS: CoordRefSystems.Mercator"""
+  ├─ CRS: CoordRefSystems.Mercator
+  └─ boundary: false"""
 
   # ----
   # VEC
@@ -1457,6 +1458,26 @@ end
   f = Proj(crs(merc(0, 0)))
   r, c = TB.apply(f, d)
   @test r === d
+
+  # ----------------
+  # BOUNDARY OPTION
+  # ----------------
+
+  f = Proj(Mercator, boundary=false)
+  g = Triangle(latlon(0, 0), latlon(0, 45), latlon(45, 0))
+  r, c = TB.apply(f, g)
+  @test r isa Triangle
+  f = Proj(Mercator, boundary=true)
+  r, c = TB.apply(f, g)
+  @test r isa TransformedGeometry
+
+  f = Proj(LatLon, boundary=false)
+  g = Triangle(merc(0, 0), merc(1, 0), merc(1, 1))
+  r, c = TB.apply(f, g)
+  @test r isa Triangle
+  f = Proj(LatLon, boundary=true)
+  r, c = TB.apply(f, g)
+  @test r isa TransformedGeometry
 end
 
 @testitem "Morphological" setup = [Setup] begin
@@ -1464,7 +1485,12 @@ end
   @test !isaffine(f)
   @test !TB.isrevertible(f)
   @test !TB.isinvertible(f)
-  @test TB.parameters(f) == (; fun=f.fun)
+  @test TB.parameters(f) == (fun=f.fun, boundary=false)
+  @test sprint(show, f) == "Morphological(fun: $(f.fun), boundary: false)"
+  @test sprint(show, MIME"text/plain"(), f) == """
+  Morphological transform
+  ├─ fun: $(f.fun)
+  └─ boundary: false"""
 
   # ----
   # VEC
@@ -1590,6 +1616,18 @@ end
   d = SimpleMesh(p, c)
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # ----------------
+  # BOUNDARY OPTION
+  # ----------------
+
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)), boundary=false)
+  g = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  r, c = TB.apply(f, g)
+  @test r isa Triangle
+  f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)), boundary=true)
+  r, c = TB.apply(f, g)
+  @test r isa TransformedGeometry
 end
 
 @testitem "LengthUnit" setup = [Setup] begin

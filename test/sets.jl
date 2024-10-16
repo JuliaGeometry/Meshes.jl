@@ -30,22 +30,24 @@
   q = Quadrangle(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0)) |> Proj(WebMercator)
   geoms = [s, t, q]
   gset = GeometrySet(geoms)
+  @test eltype(gset) <: Polytope
   @test crs(gset) <: LatLon
   gset = GeometrySet(g for g in geoms)
+  @test eltype(gset) <: Polytope
   @test crs(gset) <: LatLon
   geoms = [t, s, q]
   gset = GeometrySet(geoms)
-  @test eltype(gset) <: TransformedGeometry
+  @test eltype(gset) <: Polytope
   @test crs(gset) <: PlateCarree
   gset = GeometrySet(g for g in geoms)
-  @test eltype(gset) <: TransformedGeometry
+  @test eltype(gset) <: Polytope
   @test crs(gset) <: PlateCarree
   geoms = [q, s, t]
   gset = GeometrySet(geoms)
-  @test eltype(gset) <: TransformedGeometry
+  @test eltype(gset) <: Polytope
   @test crs(gset) <: WebMercator
   gset = GeometrySet(g for g in geoms)
-  @test eltype(gset) <: TransformedGeometry
+  @test eltype(gset) <: Polytope
   @test crs(gset) <: WebMercator
 
   # conversion
