@@ -54,7 +54,7 @@ function _discretize(box::Box{🌐})
   discretize(box, MaxLengthDiscretization(T(100) * u"km"))
 end
 
-function _discretize(geom::Geometry{🌐})
-  T = numtype(Meshes.lentype(geom))
-  discretize(geom, MaxLengthDiscretization(T(1000) * u"km"))
+function _discretize(chain::Chain{🌐})
+  T = numtype(Meshes.lentype(chain))
+  discretize(chain, MaxLengthDiscretization(T(1000) * u"km"))
 end
