@@ -8,6 +8,9 @@
 
 Convert the coordinates of geometry or domain to a given
 coordinate reference system `CRS` or EPSG/ESRI `code`.
+Optionally, the transform samples the `boundary` of polytopes,
+if this option is `true`, to handle distortions
+that occur in manifold conversions.
 
 ## Examples
 

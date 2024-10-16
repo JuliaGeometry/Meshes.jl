@@ -5,9 +5,12 @@
 """
     Morphological(fun; boundary=false)
 
-Morphological transform given by a function `fun`
+Morphological transform given by a function `fun`,
 that maps the coordinates of a geometry or a domain
 to new coordinates (`coords -> newcoords`).
+Optionally, the transform samples the `boundary` of polytopes,
+if this option is `true`, to handle distortions
+that occur in manifold conversions.
 
 # Examples
 
@@ -16,7 +19,7 @@ ball = Ball((0, 0), 1)
 ball |> Morphological(c -> Cartesian(c.x + c.y, c.y, c.x - c.y))
 
 triangle = Triangle(latlon(0, 0), latlon(0, 45), latlon(45, 0))
-triangle |> Morphological(c -> LatLonAlt(c.lon, c.lat, 0.0m), boundary=true)
+triangle |> Morphological(c -> LatLonAlt(c.lat, c.lon, 0.0m), boundary=true)
 ```
 """
 struct Morphological{Boundary,F<:Function} <: CoordinateTransform
