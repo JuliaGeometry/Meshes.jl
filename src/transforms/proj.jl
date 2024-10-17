@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    Proj(CRS; boundary=false)
-    Proj(code; boundary=false)
+    Proj(CRS)
+    Proj(code)
 
 Convert the coordinates of geometry or domain to a given
 coordinate reference system `CRS` or EPSG/ESRI `code`.
@@ -21,18 +21,23 @@ Proj(WebMercator)
 Proj(Mercator{WGS84Latest})
 Proj(EPSG{3395})
 Proj(ESRI{54017})
-Proj(Robinson, boundary=true)
 ```
+
+### Notes
+
+* By default, only the vertices of the polytopes are transformed,
+  disregarding distortions that occur in manifold conversions.
+  To handle this case, use [`TransformedGeometry`](@ref).
 """
-struct Proj{CRS,Boundary} <: CoordinateTransform end
+struct Proj{CRS} <: CoordinateTransform end
 
-Proj(CRS; boundary=false) = Proj{CRS,boundary}()
+Proj(CRS) = Proj{CRS}()
 
-Proj(code::Type{<:EPSG}; kwargs...) = Proj(CoordRefSystems.get(code); kwargs...)
+Proj(code::Type{<:EPSG}) = Proj(CoordRefSystems.get(code))
 
-Proj(code::Type{<:ESRI}; kwargs...) = Proj(CoordRefSystems.get(code); kwargs...)
+Proj(code::Type{<:ESRI}) = Proj(CoordRefSystems.get(code))
 
-parameters(::Proj{CRS,Boundary}) where {CRS,Boundary} = (CRS=CRS, boundary=Boundary)
+parameters(::Proj{CRS}) where {CRS} = (; CRS)
 
 # avoid constructing a new geometry or domain when the CRS is the same
 function apply(t::Proj{CRS}, g::GeometryOrDomain) where {CRS}
@@ -60,10 +65,6 @@ applycoord(t::Proj{<:Projected}, g::Primitive{<:🌐}) = TransformedGeometry(g, 
 
 applycoord(t::Proj{<:Geographic}, g::Primitive{<:𝔼}) = TransformedGeometry(g, t)
 
-applycoord(t::Proj{<:Projected,true}, g::Polytope{K,<:🌐}) where {K} = TransformedGeometry(g, t)
-
-applycoord(t::Proj{<:Geographic,true}, g::Polytope{K,<:𝔼}) where {K} = TransformedGeometry(g, t)
-
 applycoord(t::Proj, g::RegularGrid) = TransformedGrid(g, t)
 
 applycoord(t::Proj, g::RectilinearGrid) = TransformedGrid(g, t)
@@ -74,13 +75,12 @@ applycoord(t::Proj, g::StructuredGrid) = TransformedGrid(g, t)
 # IO METHODS
 # -----------
 
-Base.show(io::IO, ::Proj{CRS,Boundary}) where {CRS,Boundary} = print(io, "Proj(CRS: $CRS, boundary: $Boundary)")
+Base.show(io::IO, ::Proj{CRS}) where {CRS} = print(io, "Proj(CRS: $CRS)")
 
-function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS,Boundary}) where {CRS,Boundary}
+function Base.show(io::IO, ::MIME"text/plain", t::Proj{CRS}) where {CRS}
   summary(io, t)
   println(io)
-  println(io, "├─ CRS: $CRS")
-  print(io, "└─ boundary: $Boundary")
+  print(io, "└─ CRS: $CRS")
 end
 
 # -----------------
