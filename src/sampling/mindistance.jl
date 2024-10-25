@@ -40,7 +40,7 @@ MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = M
 _measure(d::Domain) = sum(measure, d)
 _measure(d::Ball) = measure(d)
 
-function sample(rng::AbstractRNG, d::Union{Domain, Ball}, method::MinDistanceSampling)
+function sample(rng::AbstractRNG, d::Union{Domain,Ball}, method::MinDistanceSampling)
   # retrieve parameters
   α = method.α
   ρ = method.ρ
