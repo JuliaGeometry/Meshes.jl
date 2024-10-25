@@ -36,7 +36,7 @@ Base.isapprox(d1::Domain, d2::Domain; kwargs...) =
 
 Base.getindex(d::Domain, ind::Int) = element(d, ind)
 
-Base.getindex(d::Domain, inds::AbstractVector) = [element(d, ind) for ind in inds]
+Base.getindex(d::Domain, inds::AbstractVector) = [d[ind] for ind in inds]
 
 Base.firstindex(d::Domain) = 1
 
@@ -48,7 +48,7 @@ Base.iterate(d::Domain, state=1) = state > nelements(d) ? nothing : (d[state], s
 
 Base.eltype(d::Domain) = eltype([d[i] for i in 1:nelements(d)])
 
-Base.keys(d::Domain) = 1:nelements(d)
+Base.keys(d::Domain) = Base.OneTo(nelements(d))
 
 Base.parent(d::Domain) = d
 
