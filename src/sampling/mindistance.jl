@@ -37,7 +37,11 @@ MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(addunit(α, u"m"),
 
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(rng::AbstractRNG, obj::GeometryOrDomain, method::MinDistanceSampling)
+sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling) = _sample(rng, d, method)
+
+sample(rng::AbstractRNG, b::Ball, method::MinDistanceSampling) = _sample(rng, b, method)
+
+function _sample(rng::AbstractRNG, obj, method::MinDistanceSampling)
   # retrieve parameters
   α = method.α
   ρ = method.ρ
