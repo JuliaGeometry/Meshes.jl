@@ -150,7 +150,7 @@ Base.iterate(t::Topology, state=1) = state > nelements(t) ? nothing : (t[state],
 
 Base.eltype(t::Topology) = eltype([t[i] for i in 1:nelements(t)])
 
-Base.keys(t::Topology) = 1:nelements(t)
+Base.keys(t::Topology) = Base.OneTo(nelements(t))
 
 # ----------------
 # IMPLEMENTATIONS
