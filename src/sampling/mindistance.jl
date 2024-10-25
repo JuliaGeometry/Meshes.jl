@@ -37,7 +37,10 @@ MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(addunit(α, u"m"),
 
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
+_measure(d::Domain) = sum(measure, d)
+_measure(d::Ball) = measure(d)
+
+function sample(rng::AbstractRNG, d::Union{Domain, Ball}, method::MinDistanceSampling)
   # retrieve parameters
   α = method.α
   ρ = method.ρ
@@ -45,7 +48,7 @@ function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
   m = method.metric
 
   # total volume/area of the object
-  V = sum(measure, d)
+  V = _measure(d)
 
   # expected number of Poisson samples
   # for relative radius (Lagae & Dutré 2007)
