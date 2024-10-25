@@ -392,6 +392,12 @@ end
   poly = PolyArea(cart.([(-44.20065308, -21.12284851), (-44.20324135, -21.122799875), (-44.20582962, -21.12275124)]))
   ps = sample(poly, MinDistanceSampling(3.2423333333753135e-5))
   @test length(ps) > 0
+
+  ball = Ball(cart(10, 10), T(3))
+  ps = sample(ball, MinDistanceSampling(1.0))
+  n = length(ps)
+  @test all(∈(ball), ps)
+  @test all(norm(ps[i] - ps[j]) ≥ T(1.0) * u"m" for i in 1:n for j in (i + 1):n)
 end
 
 @testitem "FibonacciSampling" setup = [Setup] begin
