@@ -37,7 +37,6 @@ import Base: +, -, *
 import Base: <, >, ≤, ≥
 import StatsBase: sample
 import Distances: evaluate, result_type
-import NearestNeighbors: MinkowskiMetric
 
 # Transforms API
 import TransformsBase: Transform, →
