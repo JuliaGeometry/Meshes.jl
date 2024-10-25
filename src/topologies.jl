@@ -138,7 +138,7 @@ function nfacets(::Topology) end
 
 Base.getindex(t::Topology, ind::Int) = element(t, ind)
 
-Base.getindex(t::Topology, inds::AbstractVector) = [element(t, ind) for ind in inds]
+Base.getindex(t::Topology, inds::AbstractVector) = [t[ind] for ind in inds]
 
 Base.firstindex(t::Topology) = 1
 
