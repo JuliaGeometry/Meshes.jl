@@ -5,6 +5,51 @@
 # flip arguments so that points always come first
 evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
 
+# ----------
+# EUCLIDEAN
+# ----------
+
+struct EuclideanDistance <: MinkowskiMetric end
+
+# Distances.jl interface
+result_type(::EuclideanDistance, ::Type{T₁}, ::Type{T₂}) where {T₁,T₂} = float(promote_type(T₁, T₂))
+
+@propagate_inbounds function (d::EuclideanDistance)(a, b)
+  @boundscheck if length(a) ≠ length(b)
+    throw(
+      DimensionMismatch(
+        "first collection has length $(length(a)) which does not match the length of the second, $(length(b))."
+      )
+    )
+  end
+  norm((bᵢ - aᵢ) for (aᵢ, bᵢ) in zip(a, b))
+end
+
+# implementations for geometries
+(d::EuclideanDistance)(p₁::Point, p₂::Point) = norm(p₂ - p₁)
+
+function (d::EuclideanDistance)(p::Point, l::Line)
+  a, b = l(0), l(1)
+  u = p - a
+  v = b - a
+  α = (u ⋅ v) / (v ⋅ v)
+  norm(u - α * v)
+end
+
+(d::EuclideanDistance)(l::Line, p::Point) = d(p, l)
+
+function (d::EuclideanDistance)(l₁::Line, l₂::Line)
+  λ₁, λ₂, r, rₐ = intersectparameters(l₁(0), l₁(1), l₂(0), l₂(1))
+
+  if (r == rₐ == 2) || (r == rₐ == 1)  # lines intersect or are colinear
+    zero(result_type(d, lentype(l₁), lentype(l₂)))
+  elseif (r == 1) && (rₐ == 2)  # lines are parallel
+    d(l₁(0), l₂)
+  else  # get distance between closest points on each line
+    d(l₁(λ₁), l₂(λ₂))
+  end
+end
+
 """
     evaluate(distance::Euclidean, point, line)
 

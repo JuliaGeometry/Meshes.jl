@@ -17,7 +17,6 @@ using Unitful: AbstractQuantity, numtype
 using StatsBase: AbstractWeights, Weights, quantile
 using Distances: PreMetric, Euclidean, Mahalanobis
 using Distances: Haversine, SphericalAngle
-using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
 using CoordRefSystems: Basic, Projected, Geographic
@@ -37,7 +36,7 @@ import Base: ==, !
 import Base: +, -, *
 import Base: <, >, ≤, ≥
 import StatsBase: sample
-import Distances: evaluate
+import Distances: evaluate, result_type
 import NearestNeighbors: MinkowskiMetric
 
 # Transforms API
@@ -558,6 +557,7 @@ export
   measurematrix,
   adjacencymatrix,
   atol,
+  EuclideanDistance,
 
   # visualization
   viz,
