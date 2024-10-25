@@ -353,6 +353,17 @@
   @test element(t, 1) == connect((1, 2, 5, 4, 13, 14, 17, 16), Hexahedron)
   @test element(t, 2) == connect((2, 3, 6, 5, 14, 15, 18, 17), Hexahedron)
   @test element(t, 24) == connect((44, 45, 48, 47, 8, 9, 12, 11), Hexahedron)
+
+  # indexable api
+  t = GridTopology(10, 10)
+  @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
+  @test t[end] == connect((109, 110, 121, 120), Quadrangle)
+  @test t[10] == connect((10, 11, 22, 21), Quadrangle)
+  @test length(t) == 100
+  @test eltype(t) == Connectivity{Quadrangle,4}
+  for e in t
+    @test e isa Connectivity{Quadrangle,4}
+  end
 end
 
 @testitem "HalfEdgeTopology" setup = [Setup] begin
@@ -483,6 +494,18 @@ end
   t = HalfEdgeTopology(e)
   n = collect(elements(t))
   @test n == connect.([(5, 4, 1), (6, 2, 4), (6, 5, 3), (4, 5, 6)])
+
+  # indexable api
+  g = GridTopology(10, 10)
+  t = convert(HalfEdgeTopology, g)
+  @test t[begin] == connect((13, 12, 1, 2), Quadrangle)
+  @test t[end] == connect((110, 121, 120, 109), Quadrangle)
+  @test t[10] == connect((22, 21, 10, 11), Quadrangle)
+  @test length(t) == 100
+  @test eltype(t) == Connectivity{Quadrangle,4}
+  for e in t
+    @test e isa Connectivity{Quadrangle,4}
+  end
 end
 
 @testitem "SimpleTopology" setup = [Setup] begin
@@ -538,4 +561,16 @@ end
   @test nfaces(t, 2) == 4
   @test nfaces(t, 1) == 12
   @test nfaces(t, 0) == 9
+
+  # indexable api
+  g = GridTopology(10, 10)
+  t = convert(SimpleTopology, g)
+  @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
+  @test t[end] == connect((109, 110, 121, 120), Quadrangle)
+  @test t[10] == connect((10, 11, 22, 21), Quadrangle)
+  @test length(t) == 100
+  @test eltype(t) == Connectivity{Quadrangle,4}
+  for e in t
+    @test e isa Connectivity{Quadrangle,4}
+  end
 end
