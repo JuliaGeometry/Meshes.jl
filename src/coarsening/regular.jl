@@ -22,26 +22,42 @@ RegularCoarsening(factors::Vararg{Int,N}) where {N} = RegularCoarsening(factors)
 
 function coarsen(grid::OrthoRegularGrid, method::RegularCoarsening)
   factors = fitdims(method.factors, paramdim(grid))
-  RegularGrid(minimum(grid), maximum(grid), dims=size(grid) .÷ factors)
+  tdims = _targetsize(grid, factors)
+  RegularGrid(minimum(grid), maximum(grid), dims=tdims)
 end
 
 function coarsen(grid::RectilinearGrid, method::RegularCoarsening)
   factors = fitdims(method.factors, paramdim(grid))
-  dims = vsize(grid)
-  rngs = ntuple(i -> 1:factors[i]:dims[i], paramdim(grid))
+  inds = _vertinds(grid, factors)
   xyzₛ = xyz(grid)
-  xyzₜ = ntuple(i -> xyzₛ[i][rngs[i]], paramdim(grid))
+  xyzₜ = ntuple(i -> xyzₛ[i][inds[i]], paramdim(grid))
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
 end
 
 function coarsen(grid::StructuredGrid, method::RegularCoarsening)
   factors = fitdims(method.factors, paramdim(grid))
-  dims = vsize(grid)
-  rngs = ntuple(i -> 1:factors[i]:dims[i], paramdim(grid))
+  inds = _vertinds(grid, factors)
   XYZₛ = XYZ(grid)
-  XYZₜ = ntuple(i -> XYZₛ[i][rngs...], paramdim(grid))
+  XYZₜ = ntuple(i -> XYZₛ[i][inds...], paramdim(grid))
   StructuredGrid{manifold(grid),crs(grid)}(XYZₜ)
 end
 
 coarsen(grid::TransformedGrid, method::RegularCoarsening) =
   TransformedGrid(coarsen(parent(grid), method), transform(grid))
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _targetsize(grid, factors)
+  axes = Base.OneTo.(size(grid))
+  size(TileIterator(axes, factors))
+end
+
+_targetvsize(grid, factors) = _targetsize(grid, factors) .+ .!isperiodic(grid)
+
+function _vertinds(grid, factors)
+  dims = vsize(grid)
+  tdims = _targetvsize(grid, factors)
+  ntuple(i -> floor.(Int, range(start=1, stop=dims[i], length=tdims[i])), paramdim(grid))
+end
