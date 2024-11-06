@@ -16,6 +16,11 @@
   tgrid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(10, 5))
   @test coarsen(grid, RegularCoarsening(2, 4)) == tgrid
 
+  # non-multiple values
+  grid = CartesianGrid(cart(0, 0), cart(11, 17), dims=(11, 17))
+  tgrid = CartesianGrid(cart(0, 0), cart(11, 17), dims=(3, 6))
+  @test coarsen(grid, RegularCoarsening(5, 3)) == tgrid
+
   # 3D grids
   grid = cartgrid(100, 100, 100)
   tgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(50, 25, 20))
@@ -28,4 +33,9 @@
   @test coarsen(sgrid, RegularCoarsening(2, 4, 5)) == tsgrid
   tfgrid = TransformedGrid(grid, Identity())
   @test coarsen(tfgrid, RegularCoarsening(2, 4, 5)) == coarsen(grid, RegularCoarsening(2, 4, 5))
+
+  # non-multiple values
+  grid = CartesianGrid(cart(0, 0, 0), cart(11, 17, 23), dims=(11, 17, 23))
+  tgrid = CartesianGrid(cart(0, 0, 0), cart(11, 17, 23), dims=(2, 4, 8))
+  @test coarsen(grid, RegularCoarsening(7, 5, 3)) == tgrid
 end
