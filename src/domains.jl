@@ -48,7 +48,7 @@ Base.iterate(d::Domain, state=1) = state > nelements(d) ? nothing : (d[state], s
 
 Base.eltype(d::Domain) = eltype([d[i] for i in 1:nelements(d)])
 
-Base.keys(d::Domain) = Base.OneTo(nelements(d))
+Base.keys(d::Domain) = 1:nelements(d)
 
 Base.parent(d::Domain) = d
 
