@@ -5,8 +5,8 @@
 """
     proj2D(geometry)
 
-Project 3D `geometry` onto a 2D plane of
-maximum variance using singular values.
+Project 3D `geometry` onto a 2D plane of maximum
+variance using singular value decomposition.
 """
 function proj2D end
 
