@@ -16,7 +16,7 @@ function pointify end
 
 pointify(p::Primitive) = pointify(boundary(p))
 
-pointify(p::Polytope) = collect(vertices(p))
+pointify(p::Polytope) = vertices(p)
 
 pointify(m::Multi) = pointify(parent(m))
 

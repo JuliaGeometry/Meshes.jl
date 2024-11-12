@@ -69,7 +69,7 @@ function simplify(chain::Chain, method::SelingerSimplification)
     end
   end
 
-  Ring(collect(v[bestpath[begin:(end - 1)]]))
+  Ring(v[bestpath[begin:(end - 1)]])
 end
 
 function dijkstra(I, s, t)

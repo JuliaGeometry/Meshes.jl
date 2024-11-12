@@ -14,7 +14,7 @@ proj2D(r::Rope) = Ring(proj2D(vertices(r)))
 
 proj2D(r::Ring) = Ring(proj2D(vertices(r)))
 
-proj2D(p::Ngon) = Ngon(proj2D(collect(vertices(p)))...)
+proj2D(p::Ngon) = Ngon(proj2D(vertices(p)))
 
 proj2D(p::PolyArea) = PolyArea(proj2D.(rings(p)))
 
