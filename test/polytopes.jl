@@ -291,7 +291,7 @@ end
 end
 
 @testitem "Ngons" setup = [Setup] begin
-  pts = (cart(0, 0), cart(1, 0), cart(0, 1))
+  pts = SVector(cart(0, 0), cart(1, 0), cart(0, 1))
   tups = (T.((0, 0)), T.((1, 0)), T.((0, 1)))
   @test paramdim(Ngon) == 2
   @test vertices(Ngon(pts)) == pts
