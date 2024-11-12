@@ -37,6 +37,7 @@ import Base: sort
 import Base: ==, !
 import Base: +, -, *
 import Base: <, >, ≤, ≥
+import Base: iterate, length, IteratorSize, eltype
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
@@ -130,6 +131,7 @@ include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
 include("projecting.jl")
+include("iteration.jl")
 
 # visualization
 include("viz.jl")
@@ -559,9 +561,9 @@ export
   measurematrix,
   adjacencymatrix,
   atol,
+  verticesiter
 
-  # visualization
-  viz,
-  viz!
+# visualization
+viz, viz!
 
 end # module
