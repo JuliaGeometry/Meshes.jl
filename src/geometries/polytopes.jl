@@ -32,13 +32,13 @@ macro polytope(type, K, N)
   structexpr = if K == 3
     quote
       struct $type{C<:CRS,Mₚ<:Manifold} <: Polytope{$K,𝔼{3},C}
-        vertices::NTuple{$N,Point{Mₚ,C}}
+        vertices::SVector{$N,Point{Mₚ,C}}
       end
     end
   else
     quote
       struct $type{M<:Manifold,C<:CRS} <: Polytope{$K,M,C}
-        vertices::NTuple{$N,Point{M,C}}
+        vertices::SVector{$N,Point{M,C}}
       end
     end
   end
@@ -46,6 +46,7 @@ macro polytope(type, K, N)
   expr = quote
     $Base.@__doc__ $structexpr
 
+    $type(vertices::NTuple{$N,P}) where {P<:Point} = $type(SVector(vertices))
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
     $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
