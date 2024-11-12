@@ -6,10 +6,13 @@ Base.iterate(itr::VertexItr{T}, i=1) where {T<:Polytope} =
   (@inline; (i - 1) % UInt < nvertices(itr.el) % UInt ? (@inbounds vertex(itr.el, i), i + 1) : nothing)
 
 Base.iterate(itr::VertexItr{T}, state=(1, 1)) where {T<:Multi} = begin
-  ig, ivg = state
+  ig, ivg = state # current geometry index, current vertex index in the current geometry
   ig > length(itr.el.geoms) && return nothing
 
+  # iterate through the current geometry
   is = iterate(itr.el.geoms[ig], ivg)
+
+  # start next geometry if current one is done
   isnothing(is) && return iterate(itr, (ig + 1, 1))
 
   v, ivg = is
