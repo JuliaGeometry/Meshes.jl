@@ -14,20 +14,20 @@ The Wieler-Atherton algorithm for clipping polygons.
 """
 struct WeilerAthertonClipping <: ClippingMethod end
 
-# VertexType has three different types of vertices used for deciding how to navigate the data
-# structure when collecting the polygon rings after clipping.
+# VertexType distinguishes three different types of vertices used for constructing the structure
+# used by the Weiler-Atherton clipping algorithm. Normal type represents regular vertices, the
+# connecting points of edges of a rings. Entering and Exiting types represent intersections of
+# two ring edges, where one belongs to a clipping and other belongs to a clipped ring. The
+# Entering and Exiting types describe, from the perspective of the edges of the clipping ring,
+# whether it enters or exits the interior of the clipped ring.
 abstract type VertexType end
 abstract type Normal <: VertexType end
 abstract type Entering <: VertexType end
 abstract type Exiting <: VertexType end
 
 # Data structure for clipping the polygons. Fields left and right are used depending on the
-# VertexType. If Normal, left points to the following vertex of the original ring, and right
-# to the next intersection vertex on the edge between point and left.point, or the following
-# original ring vertex if no intersections on the edge. For Entering and Exiting types, left
-# poitns to the following vertex on the clipping ring and right to the following vertex on one
-# of the clipped rings.
-# TODO Either properly document the usage of left and right, or separate RingVertex into Entering, Exiting and Normal vertices.
+# VertexType, as designated with the helper functions. The data structure forms a directed
+# graph with each element always pointing to two elements.
 mutable struct RingVertex{VT<:VertexType,M<:Manifold,C<:CRS}
   point::Point{M,C}
   left::RingVertex{<:VertexType,M,C}
@@ -53,11 +53,41 @@ function appendvertices!(v₁::RingVertex{Normal}, v₂::RingVertex{Normal})
   v₁.right = v₂
 end
 
-# Traversing and selecting following vertices for collecting of the rings after clipping depends
-# on the vertex type. Helper nextvertex follows the correct path.
+# Helper functions to designate the use of the left and right branches of the RingVertex.
+
+# Normal vertex uses the left branch for the next Normal vertex,
+# which is the end of the ring edge for which the current vertex is the edge start.
+nextnormal(v::RingVertex{Normal}) = v.left
+# Normal vertex uses the right branch for the next intersection on the ring edge if any.
+# Otherwise, it holds the next Normal vertex, same as for the left branch.
 nextvertex(v::RingVertex{Normal}) = v.right
-nextvertex(v::RingVertex{Entering}) = v.right
-nextvertex(v::RingVertex{Exiting}) = v.left
+# Next clipping vertex is a following vertex, normal or an intersection, on a clipping ring.
+# Next clipped vertex is a following vertex, normal or an intersection, on a clipped ring.
+# Normal vertices are either on a clipping or a clipped, but the implementation is same
+# and helper functions can be used interchangeably.
+getnextclippingvertex(v::RingVertex{Normal}) = v.right
+setnextclippingvertex!(v::RingVertex{Normal}, next::RingVertex) = v.right = next
+getnextclippedvertex(v::RingVertex{Normal}) = v.right
+setnextclippedvertex!(v::RingVertex{Normal}, next::RingVertex) = v.right = next
+
+# Both Entering and Exiting vertices are always intersections and use the left branch for
+# the following vertex on the clipping ring.
+getnextclippingvertex(v::RingVertex) = v.left
+setnextclippingvertex!(v::RingVertex, next::RingVertex) = v.left = next
+
+# Similarly, the right branch holds the following vertex on the clipped ring.
+getnextclippedvertex(v::RingVertex) = v.right
+setnextclippedvertex!(v::RingVertex, next::RingVertex) = v.right = next
+
+# Traversing and selecting correct following vertices from the directed graph of RingVertex
+# elements should switch between rings whenever an intersection is encountered. If the current
+# edge is entering the interior of the clipped ring, follow to the next vertex on the clipping
+# ring. In case the edge is exiting the interior of the clipped ring, then follow the next vertex
+# on the clipped ring. For a Normal vertex take the next vertex which can be either an intersection
+# or an edge end.
+getnextresultvertex(v::RingVertex{Normal}) = nextvertex(v)
+getnextresultvertex(v::RingVertex{Entering}) = getnextclippedvertex(v)
+getnextresultvertex(v::RingVertex{Exiting}) = getnextclippingvertex(v)
 
 function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
   polyrings = rings(poly)
@@ -85,35 +115,39 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
     # Three consecutive clipping vertices are used to properly identify intersection vertex type
     # for corner cases, so the clipping segment is constructed with the two following vertices
     # after the current one.
-    clippingsegment = Segment(clipping.left.point, clipping.left.left.point)
+    clippingedgestart = nextnormal(clipping)
+    clippingedgeend = nextnormal(clippingedgestart)
+    clippingsegment = Segment(clippingedgestart.point, clippingedgeend.point)
 
     for (k, startclipped) in enumerate(clippedrings)
       clipped = startclipped
       while true
         # Like for the clipping, the clipped also uses three consecutive vertices.
-        clippedsegment = Segment(clipped.left.point, clipped.left.left.point)
+        clippededgestart = nextnormal(clipped)
+        clippededgeend = nextnormal(clippededgestart)
+        clippedsegment = Segment(clippededgestart.point, clippededgeend.point)
 
         I = intersection(clippingsegment, clippedsegment)
         vertex = vertexfromintersection(I, clipping, clipped)
-        success = insertintersections!(vertex, clipping, clipped, entering)
+        success = insertintersections!(vertex, clippingedgestart, clippededgestart, entering)
         intersected[k] = intersected[k] || success
 
-        clipped = clipped.left
-        clipped.left == startclipped.left && break
+        clipped = nextnormal(clipped)
+        nextnormal(clipped) == nextnormal(startclipped) && break
       end
     end
 
-    clipping = clipping.left
-    clipping.left == startclipping.left && break
+    clipping = nextnormal(clipping)
+    nextnormal(clipping) == nextnormal(startclipping) && break
   end
 
-  # Handle the case when no interections have been found.
   if !any(intersected)
+    # Handle the case when no interections have been found.
     if orientation(ring) == CW
-      # For an inner clipping ring take all outside rings.
+      # For an inner clipping ring take all clipped rings outside of it.
       return PolyArea(collectoutsiderings(ring, polyrings)...)
     else
-      # For an outer clipping ring add it to act as the outer ring.
+      # For an outer clipping ring add it to act as the outer ring of the clipped ring.
       collectedrings = all(v ∈ PolyArea(polyrings[1]) for v in vertices(ring)) ? [ring] : []
     end
   else
@@ -177,34 +211,37 @@ function perhapsaddnonintersected!(ring, polyrings, intersected)
   newpolyrings
 end
 
-# Inserts the intersection in the ring.
-function insertintersection!(head::RingVertex, intersection::RingVertex, side::Symbol)
-  tail = head.left
-  vertex = head
-
-  new = measure(Segment(head.point, intersection.point))
+function insertintersection!(head::RingVertex{Normal}, intersection::RingVertex, getnext, setnext!)
+  tail = nextnormal(head)
+  current = head
+  newdistance = measure(Segment(head.point, intersection.point))
+  # Search for the place to insert the intersection by comparing its distance
+  # from the head with other inserted intersections.
   while true
-    os = isnormal(vertex) ? :right : side
-    current = measure(Segment(head.point, getfield(vertex, os).point))
-    if (new < current) || (getfield(vertex, os) == tail)
-      next = getfield(vertex, os)
-      if !(new ≈ measure(Segment(head.point, next.point)))
-        setfield!(intersection, side, next)
-        setfield!(vertex, os, intersection)
+    before = current
+    current = getnext(current)
+    currentdistance = measure(Segment(head.point, current.point))
+
+    if (newdistance < currentdistance) || (current == tail)
+      if !(newdistance ≈ currentdistance) # TODO Check if this is needed.
+        # Only add if it is not coincident with the following vertex, or it could be added twice,
+        # if it is the tail vertex. In such case, the intersection will be detected second time
+        # and added then.
+        setnext!(intersection, current)
+        setnext!(before, intersection)
       end
       break
     end
-    vertex = getfield(vertex, os)
   end
 end
 
 # Inserts the intersection into both the clipping and the clipped rings.
-function insertintersections!(vertex::Tuple, clipping, clipped, entering)
+function insertintersections!(vertex::Tuple, clipping::RingVertex{Normal}, clipped::RingVertex{Normal}, entering)
   (vtype, point) = vertex
   if !isnothing(vtype)
     intersection = RingVertex{vtype}(point)
-    insertintersection!(clipping.left, intersection, :left)
-    insertintersection!(clipped.left, intersection, :right)
+    insertintersection!(clipping, intersection, getnextclippingvertex, setnextclippingvertex!)
+    insertintersection!(clipped, intersection, getnextclippedvertex, setnextclippedvertex!)
 
     if vtype == Entering
       push!(entering, intersection)
@@ -235,7 +272,7 @@ function collectclipped(entering::Vector{RingVertex{Entering}})
 
       push!(ring, vertex)
       push!(visited, vertex)
-      vertex = nextvertex(vertex)
+      vertex = getnextresultvertex(vertex)
     end
 
     # Remove duplicates.
@@ -273,30 +310,30 @@ function vertexfromintersection(I, clipping, clipped)
 end
 
 function vertexfromcrossing(point, clipping, clipped)
-  cl = Line(clipping.left.point, clipping.left.left.point)
-  vertextype = sideof(clipped.left.left.point, cl) == LEFT ? Entering : Exiting
+  cl = Line(nextnormal(clipping).point, nextnormal(nextnormal(clipping)).point)
+  vertextype = sideof(nextnormal(nextnormal(clipped)).point, cl) == LEFT ? Entering : Exiting
   (vertextype, point)
 end
 
 function vertexfromedgetouching(point, clipping, clipped)
   vertextype = nothing
-  if point ≈ clipped.left.point
+  if point ≈ nextnormal(clipped).point
     # When intersection is at the shared vertex of two edges of the clipped ring,
-    # then split the interscting edge of the clipping ring at the intersection point.
+    # then split the intersecting edge of the clipping ring at the intersection point.
     vertextype = decidedirection(
-      Segment(clipped.point, clipped.left.point),
-      Segment(clipped.left.point, clipped.left.left.point),
-      Segment(clipping.left.point, point),
-      Segment(point, clipping.left.left.point)
+      Segment(clipped.point, nextnormal(clipped).point),
+      Segment(nextnormal(clipped).point, nextnormal(nextnormal(clipped)).point),
+      Segment(nextnormal(clipping).point, point),
+      Segment(point, nextnormal(nextnormal(clipping)).point)
     )
-  elseif point ≈ clipping.left.point
+  elseif point ≈ nextnormal(clipping).point
     # When intersection is at the shared vertex of two edges of the clipping ring,
-    # then split the interscting edge of the clipped ring at the intersection point.
+    # then split the intersecting edge of the clipped ring at the intersection point.
     vertextype = decidedirection(
-      Segment(clipped.left.point, point),
-      Segment(point, clipped.left.left.point),
-      Segment(clipping.point, clipping.left.point),
-      Segment(clipping.left.point, clipping.left.left.point)
+      Segment(nextnormal(clipped).point, point),
+      Segment(point, nextnormal(nextnormal(clipped)).point),
+      Segment(clipping.point, nextnormal(clipping).point),
+      Segment(nextnormal(clipping).point, nextnormal(nextnormal(clipping)).point)
     )
   end
   (vertextype, point)
@@ -305,14 +342,14 @@ end
 function vertexfromcornertouching(point, clipping, clipped)
   vertextype = nothing
   # When intersection is at the shared vertices of both the clipping and the clipped rings.
-  if (point ≈ clipped.left.point) && (point ≈ clipping.left.point)
+  if (point ≈ nextnormal(clipped).point) && (point ≈ nextnormal(clipping).point)
     # Only applies if the intersection coincides with the middles of the currently observed
     # vertices for both clipping and clipped rings.
     vertextype = decidedirection(
       Segment(clipped.point, point),
-      Segment(point, clipped.left.left.point),
+      Segment(point, nextnormal(nextnormal(clipped)).point),
       Segment(clipping.point, point),
-      Segment(point, clipping.left.left.point)
+      Segment(point, nextnormal(nextnormal(clipping)).point)
     )
   end
   (vertextype, point)
@@ -320,35 +357,35 @@ end
 
 function vertexfromoverlapping(segment, clipping, clipped)
   # For both ends of the intersecting segment, check if it coincides with the middle of
-  # the obeserved vertices for clipped and clipping rings. If it does, attempt adding a
+  # the observed vertices for clipped and clipping rings. If it does, attempt adding a
   # point.
 
   ret = Tuple[]
   for point in extrema(segment)
-    if point ≈ clipped.left.point
-      clippingprev = Segment(clipping.left.point, point)
+    if point ≈ nextnormal(clipped).point
+      clippingprev = Segment(nextnormal(clipping).point, point)
       if measure(clippingprev) ≈ 0.0u"m"
         clippingprev = Segment(clipping.point, point)
       end
       vertextype = decidedirection(
         Segment(clipped.point, point),
-        Segment(point, clipped.left.left.point),
+        Segment(point, nextnormal(nextnormal(clipped)).point),
         clippingprev,
-        Segment(point, clipping.left.left.point)
+        Segment(point, nextnormal(nextnormal(clipping)).point)
       )
       push!(ret, (vertextype, point))
     end
 
-    if point ≈ clipping.left.point
-      clippedprev = Segment(clipped.left.point, point)
+    if point ≈ nextnormal(clipping).point
+      clippedprev = Segment(nextnormal(clipped).point, point)
       if measure(clippedprev) ≈ 0.0u"m"
         clippedprev = Segment(clipped.point, point)
       end
       vertextype = decidedirection(
         clippedprev,
-        Segment(point, clipped.left.left.point),
+        Segment(point, nextnormal(nextnormal(clipped)).point),
         Segment(clipping.point, point),
-        Segment(point, clipping.left.left.point)
+        Segment(point, nextnormal(nextnormal(clipping)).point)
       )
       push!(ret, (vertextype, point))
     end
@@ -416,5 +453,5 @@ function gettraversalring(ring::Ring)
     start = new
   end
 
-  return start.left
+  return nextnormal(start)
 end
