@@ -30,11 +30,13 @@ struct Ngon{N,M<:Manifold,C<:CRS} <: Polygon{M,C}
   end
 end
 
-Ngon{N}(vertices::NTuple{N,Point{M,C}}) where {N,M<:Manifold,C<:CRS} = Ngon{N,M,C}(SVector(vertices))
+Ngon{N}(vertices::SVector{N,Point{M,C}}) where {N,M<:Manifold,C<:CRS} = Ngon{N,M,C}(vertices)
+Ngon{N}(vertices::NTuple{N,P}) where {N,P<:Point} = Ngon{N}(SVector(vertices))
 Ngon{N}(vertices::Vararg{P,N}) where {N,P<:Point} = Ngon{N}(vertices)
 Ngon{N}(vertices::Vararg{Tuple,N}) where {N} = Ngon{N}(Point.(vertices))
 
-Ngon(vertices::NTuple{N,Point{M,C}}) where {N,M<:Manifold,C<:CRS} = Ngon{N,M,C}(SVector(vertices))
+Ngon(vertices::SVector{N,Point{M,C}}) where {N,M<:Manifold,C<:CRS} = Ngon{N,M,C}(vertices)
+Ngon(vertices::NTuple{N,P}) where {N,P<:Point} = Ngon(SVector(vertices))
 Ngon(vertices::P...) where {P<:Point} = Ngon(vertices)
 Ngon(vertices::Tuple...) = Ngon(Point.(vertices))
 
