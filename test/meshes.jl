@@ -244,7 +244,7 @@ end
   @test spacing(grid) == (T(5) * u"m", T(5) * u"m", T(5) * u"m")
   @test nelements(grid) == 20 * 10 * 5
   @test eltype(grid) <: Hexahedron
-  @test vertices(grid[1]) == (
+  @test vertices(grid[1]) == SVector(
     cart(0, 0, 0),
     cart(5, 0, 0),
     cart(5, 5, 0),

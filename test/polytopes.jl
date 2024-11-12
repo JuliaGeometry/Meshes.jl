@@ -293,13 +293,14 @@ end
 @testitem "Ngons" setup = [Setup] begin
   pts = (cart(0, 0), cart(1, 0), cart(0, 1))
   tups = (T.((0, 0)), T.((1, 0)), T.((0, 1)))
+  verts = SVector(pts)
   @test paramdim(Ngon) == 2
-  @test vertices(Ngon(pts)) == pts
-  @test vertices(Ngon(pts...)) == pts
-  @test vertices(Ngon(tups...)) == pts
-  @test vertices(Ngon{3}(pts)) == pts
-  @test vertices(Ngon{3}(pts...)) == pts
-  @test vertices(Ngon{3}(tups...)) == pts
+  @test vertices(Ngon(pts)) == verts
+  @test vertices(Ngon(pts...)) == verts
+  @test vertices(Ngon(tups...)) == verts
+  @test vertices(Ngon{3}(pts)) == verts
+  @test vertices(Ngon{3}(pts...)) == verts
+  @test vertices(Ngon{3}(tups...)) == verts
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
