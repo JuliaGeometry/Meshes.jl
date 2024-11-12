@@ -16,7 +16,8 @@ function pointify end
 
 pointify(p::Primitive) = pointify(boundary(p))
 
-pointify(p::Polytope) = vertices(p)
+# collect is necessary because CircularVector doesn't work with SVector
+pointify(p::Polytope) = collect(vertices(p))
 
 pointify(m::Multi) = pointify(parent(m))
 
