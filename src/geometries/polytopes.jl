@@ -46,8 +46,9 @@ macro polytope(type, K, N)
   expr = quote
     $Base.@__doc__ $structexpr
 
-    $type(vertices::Vararg{Tuple,$N}) = $type(SVector(Point.(vertices)))
-    $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(SVector(vertices))
+    $type(vertices::NTuple{$N,P}) where {P<:Point} = $type(SVector(vertices))
+    $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
+    $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
 
   esc(expr)
