@@ -1,29 +1,42 @@
+
 struct VertexItr{T}
-  el::T
+    el::T
 end
 
-Base.iterate(itr::VertexItr{T}, i=1) where {T<:Polytope} =
-  (@inline; (i - 1) % UInt < nvertices(itr.el) % UInt ? (@inbounds vertex(itr.el, i), i + 1) : nothing)
+_v_iterate(el::Polytope, i) =
+    (@inline; (i - 1) % UInt < nvertices(el) % UInt ? (@inbounds vertex(el, i), i + 1) : nothing)
 
-Base.iterate(itr::VertexItr{T}, state=(1, 1)) where {T<:Multi} = begin
-  ig, ivg = state # current geometry index, current vertex index in the current geometry
-  ig > length(itr.el.geoms) && return nothing
+_v_iterate(el::Mesh, i) =
+    (@inline; (i - 1) % UInt < nvertices(el) % UInt ? (@inbounds vertex(el, i), i + 1) : nothing)
 
-  # iterate through the current geometry
-  is = iterate(itr.el.geoms[ig], ivg)
+Base.iterate(itr::VertexItr{<:Mesh}, i=1) = _v_iterate(itr.el, i)
 
-  # start next geometry if current one is done
-  isnothing(is) && return iterate(itr, (ig + 1, 1))
+Base.iterate(itr::VertexItr{<:Polytope}, i=1) = _v_iterate(itr.el, i)
 
-  v, ivg = is
-  return (v, (ig, ivg))
+Base.iterate(itr::VertexItr{<:Multi}, state=(1, 1)) = begin
+    ig, ivg = state
+    ig > length(itr.el.geoms) && return nothing
+
+    is = _v_iterate(itr.el.geoms[ig], ivg)
+    is === nothing && return Base.iterate(itr, (ig + 1, 1))
+
+    v, ivg = is
+    return (v, (ig, ivg))
 end
 
-Base.IteratorSize(itr::VertexItr{T}) where {T<:Polytope} = Base.HasLength()
-Base.IteratorSize(itr::VertexItr{T}) where {T<:Multi} = Base.HasLength()
+Base.length(itr::VertexItr{<:Mesh}) = nvertices(T)
+Base.length(itr::VertexItr{<:Polytope}) = nvertices(T)
+Base.length(itr::VertexItr{<:Multi}) = sum(nvertices, itr.el.geoms)
 
-Base.length(itr::VertexItr{T}) where {T<:Polytope} = nvertices(T)
-Base.length(itr::VertexItr{T}) where {T<:Multi} = sum(nvertices, itr.el.geoms)
-Base.eltype(itr::VertexItr{T}) where {T} = Point
+Base.IteratorSize(itr::VertexItr) = Base.HasLength()
+Base.eltype(::VertexItr) = Point
 
-verticesiter(e::T) where {T<:Union{Geometry,Multi}} = VertexIter(e)
+eachvertex(e::T) where {T} = error("Vertex iterator not implemented for type $T")
+eachvertex(e::Union{Mesh,Polytope,Multi}) = VertexItr(e)
+# eachvertex(e::Multi) = Iterators.flatten(eachvertex.(e.geoms))
+
+
+
+
+
+

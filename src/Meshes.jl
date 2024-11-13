@@ -561,7 +561,7 @@ export
   measurematrix,
   adjacencymatrix,
   atol,
-  verticesiter
+  eachvertex
 
 # visualization
 viz, viz!
