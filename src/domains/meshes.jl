@@ -35,7 +35,7 @@ nvertices(m::Mesh) = nvertices(topology(m))
 """
     eachvertex(mesh)
 
-Return an iterator for the vertices in the `mesh`.
+Return an iterator for the vertices of the `mesh`.
 """
 eachvertex(m::Mesh) = (vertex(m, ind) for ind in 1:nvertices(m))
 
