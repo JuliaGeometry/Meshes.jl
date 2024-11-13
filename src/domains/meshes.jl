@@ -23,7 +23,7 @@ function vertex end
 
 Return the vertices of the `mesh`.
 """
-vertices(m::Mesh) = [vertex(m, ind) for ind in 1:nvertices(m)]
+vertices(m::Mesh) = collect(eachvertex(m))
 
 """
     nvertices(mesh)
@@ -31,6 +31,13 @@ vertices(m::Mesh) = [vertex(m, ind) for ind in 1:nvertices(m)]
 Return the number of vertices of the `mesh`.
 """
 nvertices(m::Mesh) = nvertices(topology(m))
+
+"""
+    eachvertex(mesh)
+
+Return an iterator for the vertices in the `mesh`.
+"""
+eachvertex(m::Mesh) = (vertex(m, ind) for ind in 1:nvertices(m))
 
 """
     faces(mesh, rank)

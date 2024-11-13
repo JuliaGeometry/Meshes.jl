@@ -48,11 +48,13 @@ Base.isapprox(m₁::Multi, m₂::Multi; atol=atol(lentype(m₁)), kwargs...) =
 # POLYTOPE
 # ---------
 
-vertex(m::MultiPolytope, ind) = vertices(m)[ind]
+vertex(m::MultiPolytope, ind) = getindex(Base.iterate(Base.Iterators.drop(eachvertex(m), ind - 1)), 1) # nth(itr, n)
 
-vertices(m::MultiPolytope) = [vertex for geom in m.geoms for vertex in vertices(geom)]
+vertices(m::MultiPolytope) = collect(eachvertex(m))
 
 nvertices(m::MultiPolytope) = sum(nvertices, m.geoms)
+
+eachvertex(m::MultiPolytope) = (v for g in m.geoms for v in vertices(g))
 
 Base.unique(m::MultiPolytope) = unique!(deepcopy(m))
 

@@ -252,6 +252,13 @@ Return the number of vertices in the `polytope`.
 nvertices(p::Polytope) = nvertices(typeof(p))
 
 """
+    eachvertex(polytope)
+
+Return an iterator for the vertices in the `polytope`
+"""
+eachvertex(p::Polytope) = (v for v in vertices(p))
+
+"""
     unique(polytope)
 
 Return a new `polytope` without duplicate vertices.

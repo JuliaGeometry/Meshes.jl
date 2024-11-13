@@ -130,7 +130,6 @@ include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
 include("projecting.jl")
-include("iteration.jl")
 
 # visualization
 include("viz.jl")
