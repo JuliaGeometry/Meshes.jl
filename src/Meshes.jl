@@ -561,9 +561,10 @@ export
   measurematrix,
   adjacencymatrix,
   atol,
-  eachvertex
+  eachvertex,
 
-# visualization
-viz, viz!
+  # visualization
+  viz,
+  viz!
 
 end # module
