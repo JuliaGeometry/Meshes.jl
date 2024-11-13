@@ -98,8 +98,6 @@ function apply(::Repair{8}, ring::Ring)
   Ring(v), nothing
 end
 
-repair8(v) = repair8(collect(v))
-
 repair8(v::AbstractVector) = repair8(CircularVector(v))
 
 function repair8(v::CircularVector{<:Point})
