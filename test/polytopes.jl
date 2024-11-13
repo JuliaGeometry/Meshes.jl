@@ -303,8 +303,11 @@ end
   @test vertices(Ngon{3}(tups...)) == verts
 
   @test collect(eachvertex(Ngon(pts))) == verts
-  @test @allocated eachvertex(Ngon(pts)) == 0
-  @test @allocated Base.iterate(eachvertex(Ngon(pts))) == 0
+  @test @allocated begin
+    for v in eachvertex(Ngon(pts))
+      # ...
+    end
+  end 0
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
