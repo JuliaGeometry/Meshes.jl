@@ -789,6 +789,7 @@ end
   @test crs(mesh) <: Cartesian{NoDatum}
   @test Meshes.lentype(mesh) == ℳ
   @test vertices(mesh) == points
+  @test collect(eachvertex(mesh)) == points
   @test collect(faces(mesh, 2)) == triangles
   @test collect(elements(mesh)) == triangles
   @test nelements(mesh) == 4
@@ -873,6 +874,7 @@ end
   mesh₂ = SimpleMesh(cart.([(1, 0), (1, 1), (0, 1)]), connect.([(1, 2, 3)]))
   mesh = merge(mesh₁, mesh₂)
   @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
+  @test collect(eachvertex(mesh)) == vertices(mesh)
   @test collect(elements(topology(mesh))) == connect.([(1, 2, 3), (4, 5, 6)])
 
   # merge operation with 3D geometries
@@ -880,6 +882,7 @@ end
   mesh₂ = SimpleMesh(cart.([(1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1)]), connect.([(1, 2, 3, 4)], Tetrahedron))
   mesh = merge(mesh₁, mesh₂)
   @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
+  @test collect(eachvertex(mesh)) == vertices(mesh)
   @test collect(elements(topology(mesh))) == connect.([(1, 2, 3, 4), (5, 6, 7, 8)], Tetrahedron)
 
   # convert any mesh to SimpleMesh

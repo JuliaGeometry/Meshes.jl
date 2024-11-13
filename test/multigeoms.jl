@@ -12,6 +12,7 @@
   @test vertex(multi, 1) == vertex(poly, 1)
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
+  @test collect(eachvertex(multi)) == [vertices(poly); vertices(poly)]
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
   @test rings(multi) == [rings(poly); rings(poly)]
 
@@ -20,6 +21,7 @@
   multi = Multi([poly1, poly2])
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
+  @test collect(eachvertex(multi)) == [vertices(poly1); vertices(poly2)]
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
   @test centroid(multi) == cart(1, 1)
