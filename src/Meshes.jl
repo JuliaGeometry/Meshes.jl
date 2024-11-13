@@ -37,7 +37,6 @@ import Base: sort
 import Base: ==, !
 import Base: +, -, *
 import Base: <, >, ≤, ≥
-import Base: iterate, length, IteratorSize, eltype
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric

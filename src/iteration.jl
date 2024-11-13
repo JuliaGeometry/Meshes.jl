@@ -13,7 +13,7 @@ Base.iterate(itr::VertexItr{<:Mesh}, i=1) = _v_iterate(itr.el, i)
 
 Base.iterate(itr::VertexItr{<:Polytope}, i=1) = _v_iterate(itr.el, i)
 
-Base.iterate(itr::VertexItr{<:Multi}, state=(1, 1)) = begin
+Base.iterate(itr::VertexItr{<:MultiPolytope}, state=(1, 1)) = begin
     ig, ivg = state
     ig > length(itr.el.geoms) && return nothing
 
@@ -26,16 +26,13 @@ end
 
 Base.length(itr::VertexItr{<:Mesh}) = nvertices(T)
 Base.length(itr::VertexItr{<:Polytope}) = nvertices(T)
-Base.length(itr::VertexItr{<:Multi}) = sum(nvertices, itr.el.geoms)
+Base.length(itr::VertexItr{<:MultiPolytope}) = sum(nvertices, itr.el.geoms)
 
 Base.IteratorSize(itr::VertexItr) = Base.HasLength()
 Base.eltype(::VertexItr) = Point
 
 eachvertex(e::T) where {T} = error("Vertex iterator not implemented for type $T")
-eachvertex(e::Union{Mesh,Polytope,Multi}) = VertexItr(e)
-# eachvertex(e::Multi) = Iterators.flatten(eachvertex.(e.geoms))
-
-
+eachvertex(e::Union{Mesh,Polytope,MultiPolytope}) = VertexItr(e)
 
 
 
