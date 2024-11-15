@@ -79,6 +79,9 @@ include("domains.jl")
 # utilities
 include("utils.jl")
 
+# iteration
+include("iteration.jl")
+
 # domain indices
 include("indices.jl")
 
@@ -330,6 +333,9 @@ export
   # indices
   indices,
 
+  # iteration
+  eachvertex,
+
   # partitions
   Partition,
   indices,
@@ -559,7 +565,6 @@ export
   measurematrix,
   adjacencymatrix,
   atol,
-  eachvertex,
 
   # visualization
   viz,
