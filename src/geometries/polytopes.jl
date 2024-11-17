@@ -247,9 +247,16 @@ vertices(p::Polytope) = p.vertices
 """
     nvertices(polytope)
 
-Return the number of vertices in the `polytope`.
+Return the number of vertices of the `polytope`.
 """
 nvertices(p::Polytope) = nvertices(typeof(p))
+
+"""
+    eachvertex(polytope)
+
+Return an iterator for the vertices of the `polytope`.
+"""
+eachvertex(p::Polytope) = (vertex(p, i) for i in 1:nvertices(p))
 
 """
     unique(polytope)

@@ -54,6 +54,8 @@ vertices(m::MultiPolytope) = collect(eachvertex(m))
 
 nvertices(m::MultiPolytope) = sum(nvertices, m.geoms)
 
+eachvertex(m::MultiPolytope) = VertexItr(m)
+
 Base.unique(m::MultiPolytope) = unique!(deepcopy(m))
 
 function Base.unique!(m::MultiPolytope)
@@ -89,3 +91,29 @@ function Base.show(io::IO, ::MIME"text/plain", m::Multi)
   println(io)
   printelms(io, m.geoms)
 end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+struct VertexItr{T}
+  el::T
+end
+
+eachvertex(e::MultiPolytope) = VertexItr(e)
+
+_v_iterate(el::Polytope, i) =
+  (@inline; (i - 1) % UInt < nvertices(el) % UInt ? (@inbounds vertex(el, i), i + 1) : nothing)
+
+Base.iterate(itr::VertexItr{<:MultiPolytope}, state=(1, 1)) = begin
+  ig, ivg = state
+  ig > length(itr.el.geoms) && return nothing
+  is = _v_iterate(itr.el.geoms[ig], ivg)
+  is === nothing && return Base.iterate(itr, (ig + 1, 1))
+  v, ivg = is
+  return (v, (ig, ivg))
+end
+
+Base.length(itr::VertexItr{<:MultiPolytope}) = sum(nvertices, itr.el.geoms)
+Base.IteratorSize(::VertexItr) = Base.HasLength()
+Base.eltype(::VertexItr) = Point

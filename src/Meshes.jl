@@ -79,9 +79,6 @@ include("domains.jl")
 # utilities
 include("utils.jl")
 
-# iteration
-include("iteration.jl")
-
 # domain indices
 include("indices.jl")
 
@@ -224,6 +221,7 @@ export
   vertex,
   vertices,
   nvertices,
+  eachvertex,
   rings,
   segments,
   angles,
@@ -316,6 +314,7 @@ export
   vertex,
   vertices,
   nvertices,
+  eachvertex,
   element,
   elements,
   nelements,
@@ -332,9 +331,6 @@ export
 
   # indices
   indices,
-
-  # iteration
-  eachvertex,
 
   # partitions
   Partition,
