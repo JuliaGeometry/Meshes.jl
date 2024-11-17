@@ -48,7 +48,7 @@ Base.isapprox(m₁::Multi, m₂::Multi; atol=atol(lentype(m₁)), kwargs...) =
 # POLYTOPE
 # ---------
 
-vertex(m::MultiPolytope, ind) = first(Base.Iterators.drop(eachvertex(m), ind - 1))
+vertex(m::MultiPolytope, ind) = first(Iterators.drop(eachvertex(m), ind - 1))
 
 vertices(m::MultiPolytope) = collect(eachvertex(m))
 
