@@ -15,20 +15,18 @@ Base.iterate(itr::VertexItr{<:Mesh}, i=1) = _v_iterate(itr.el, i)
 
 Base.iterate(itr::VertexItr{<:Polytope}, i=1) = _v_iterate(itr.el, i)
 
-@propagate_inbounds Base.iterate(itr::VertexItr{<:Meshes.MultiPolytope}, state=(1, 1)) = begin
+Base.iterate(itr::VertexItr{<:Meshes.MultiPolytope}, state=(1, 1)) = begin
   ig, ivg = state
   ig > length(itr.el.geoms) && return nothing
-
   is = _v_iterate(itr.el.geoms[ig], ivg)
   is === nothing && return Base.iterate(itr, (ig + 1, 1))
-
   v, ivg = is
   return (v, (ig, ivg))
 end
 
-Base.length(itr::VertexItr{<:Mesh}) = nvertices(T)
-Base.length(itr::VertexItr{<:Polytope}) = nvertices(T)
+Base.length(itr::VertexItr{<:Mesh}) = nvertices(itr.el)
+Base.length(itr::VertexItr{<:Polytope}) = nvertices(itr.el)
 Base.length(itr::VertexItr{<:Meshes.MultiPolytope}) = sum(nvertices, itr.el.geoms)
 
-Base.IteratorSize(itr::VertexItr) = Base.HasLength()
+Base.IteratorSize(::VertexItr) = Base.HasLength()
 Base.eltype(::VertexItr) = Point
