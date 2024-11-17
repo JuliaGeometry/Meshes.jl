@@ -20,12 +20,7 @@ struct Multi{M<:Manifold,C<:CRS,G<:Geometry{M,C}} <: Geometry{M,C}
 end
 
 # constructor with iterator of geometries
-
-Multi(geoms) = begin
-  all(gT <: Geometry{M,C} where {M<:Manifold,C<:CRS} for gT in typeof.(geoms)) ||
-  throw("All elements used must be subtypes of the same Geometry{<:Manifold, <:CRS}")
-  Multi(collect(geoms))
-end
+Multi(geoms) = Multi(collect(geoms))
 
 # type aliases for convenience
 const MultiPoint{M<:Manifold,C<:CRS} = Multi{M,C,<:Point{M,C}}
