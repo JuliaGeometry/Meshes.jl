@@ -82,6 +82,14 @@
   s = Segment(latlon(0, 135), latlon(0, 45))
   @test_broken measure(s) ≈ 3C / 4
 
+  # vertex iteration
+  const s = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
+  @test collect(eachvertex(s)) == [Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0)]
+  @test @allocated begin
+    for _ in eachindex(s)
+    end
+  end == 0
+
   # parameterization
   s = Segment(latlon(45, 0), latlon(45, 90))
   @test s(T(0)) == latlon(45, 0)
@@ -257,6 +265,14 @@ end
   @test @elapsed(issimple(r)) < 0.02
   @test @allocated(issimple(r)) < 950000
 
+  # vertex iteration
+  const r = Ring(Point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  @test collect(eachvertex(r)) == Point.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test @allocated begin
+    for _ in eachvertex(r)
+    end
+  end == 0
+
   # CRS propagation
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test crs(centroid(r)) === crs(r)
@@ -302,12 +318,13 @@ end
   @test vertices(Ngon{3}(pts...)) == verts
   @test vertices(Ngon{3}(tups...)) == verts
 
-  @test collect(eachvertex(Ngon(pts))) == verts
+  # vertex iteration
+  const ngon = Ngon(pts)
+  @test collect(eachvertex(ngon)) == verts
   @test @allocated begin
-    for v in eachvertex(Ngon(pts))
-      # ...
+    for v in eachvertex(ngon)
     end
-  end 0
+  end == 0
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10

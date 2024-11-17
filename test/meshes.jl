@@ -127,6 +127,14 @@
   @test minimum(sub) == Point(Polar(T(1), T(2)))
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
+  # vertex iteration
+  const rg = RegularGrid(Point(1, 1), Point(2, 2), (1, 1))
+  @test collect(eachvertex(rg)) == Point.([(1, 1), (2, 1), (1, 2), (2, 2)])
+  @test @allocated begin
+    for _ in eachvertex(rg)
+    end
+  end == 0
+
   # type stability
   grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
   @inferred vertex(grid, (1, 1))
@@ -801,6 +809,12 @@ end
   @test area(mesh) ≈ T(1) * u"m^2"
   @test extrema(mesh) == (cart(0, 0), cart(1, 1))
 
+  const cmesh = mesh
+  @test @allocated begin
+    for _ in eachvertex(cmesh)
+    end
+  end == 0
+
   # test constructors
   coords = [T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))]
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -875,6 +889,7 @@ end
   mesh = merge(mesh₁, mesh₂)
   @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
   @test collect(eachvertex(mesh)) == vertices(mesh)
+  @test @allocated iterate(eachvertex(mesh)) == 0
   @test collect(elements(topology(mesh))) == connect.([(1, 2, 3), (4, 5, 6)])
 
   # merge operation with 3D geometries
