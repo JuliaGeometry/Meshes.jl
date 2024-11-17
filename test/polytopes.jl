@@ -85,10 +85,10 @@
   # vertex iteration
   const s = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
   @test collect(eachvertex(s)) == [Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0)]
-  @test @allocated begin
+  @test @allocated(begin
     for _ in eachindex(s)
     end
-  end == 0
+  end) == 0
 
   # parameterization
   s = Segment(latlon(45, 0), latlon(45, 90))
@@ -268,10 +268,10 @@ end
   # vertex iteration
   const r = Ring(Point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test collect(eachvertex(r)) == Point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  @test @allocated begin
+  @test @allocated(begin
     for _ in eachvertex(r)
     end
-  end == 0
+  end) == 0
 
   # CRS propagation
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -321,10 +321,10 @@ end
   # vertex iteration
   const ngon = Ngon(pts)
   @test collect(eachvertex(ngon)) == verts
-  @test @allocated begin
+  @test @allocated(begin
     for v in eachvertex(ngon)
     end
-  end == 0
+  end) == 0
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
