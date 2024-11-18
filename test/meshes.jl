@@ -881,7 +881,7 @@ end
   mesh = merge(mesh₁, mesh₂)
   @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
   @test collect(eachvertex(mesh)) == vertices(mesh)
-  @test _iter_alloctest(mesh) == 0
+  @test eachvertexalloc(mesh) == 0
   @test collect(elements(topology(mesh))) == connect.([(1, 2, 3), (4, 5, 6)])
 
   # merge operation with 3D geometries
