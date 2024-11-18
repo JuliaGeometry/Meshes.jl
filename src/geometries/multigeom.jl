@@ -54,7 +54,7 @@ vertices(m::MultiPolytope) = collect(eachvertex(m))
 
 nvertices(m::MultiPolytope) = sum(nvertices, m.geoms)
 
-eachvertex(m::MultiPolytope) = (v for g in m.geoms for v in vertices(g))
+eachvertex(m::MultiPolytope) = (v for g in m.geoms for v in eachvertex(g))
 
 Base.unique(m::MultiPolytope) = unique!(deepcopy(m))
 
