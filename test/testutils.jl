@@ -179,7 +179,6 @@ end
 
 function eachvertexalloc(g)
   iterate(eachvertex(g)) # precompile run
-
   @allocated for _ in eachvertex(g)
   end
 end
