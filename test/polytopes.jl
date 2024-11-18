@@ -83,9 +83,9 @@
   @test_broken measure(s) ≈ 3C / 4
 
   # vertex iteration
-  const cseg = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
-  @test collect(eachvertex(cseg)) == [Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0)]
-  @test _iter_alloctest(cseg) == 0
+  s = Segment(cart(0, 0), cart(1, 1))
+  @test collect(eachvertex(s)) == [cart(0, 0), cart(1, 1)]
+  @test eachvertexalloc(s) == 0
 
   # parameterization
   s = Segment(latlon(45, 0), latlon(45, 90))
