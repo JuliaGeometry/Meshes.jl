@@ -100,8 +100,6 @@ struct VertexItr{T}
   el::T
 end
 
-eachvertex(e::MultiPolytope) = VertexItr(e)
-
 _v_iterate(el::Polytope, i) =
   (@inline; (i - 1) % UInt < nvertices(el) % UInt ? (@inbounds vertex(el, i), i + 1) : nothing)
 
@@ -116,4 +114,5 @@ end
 
 Base.length(itr::VertexItr{<:MultiPolytope}) = sum(nvertices, itr.el.geoms)
 Base.IteratorSize(::VertexItr) = Base.HasLength()
-Base.eltype(::VertexItr) = Point
+Base.IteratorEltype(::VertexItr) = Base.HasEltype()
+Base.eltype(::VertexItr{<:MultiPolytope{K,M,C}}) where {K,M<:Manifold,C<:CRS} = Point{M,C}
