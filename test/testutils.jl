@@ -183,9 +183,9 @@ function eachvertexalloc(g)
   end
 end
 
-function vertextest(g; bytes=0)
+function vertextest(g)
   @test collect(eachvertex(g)) == vertices(g)
-  @test eachvertexalloc(g) ≤ bytes
+  @test eachvertexalloc(g) == 0
   # type stability
   @test isconcretetype(eltype(vertices(g)))
   @inferred vertices(g)

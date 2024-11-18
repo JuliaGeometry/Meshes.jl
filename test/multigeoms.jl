@@ -112,5 +112,5 @@
   multi3 = Multi([poly3, poly4])
   vertextest(multi1)
   vertextest(multi2)
-  vertextest(multi3, bytes=3100)
+  vertextest(multi3)
 end

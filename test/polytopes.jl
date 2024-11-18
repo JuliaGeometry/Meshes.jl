@@ -652,9 +652,27 @@ end
   @test centroid(poly) == cart(0.5, 0.5)
 
   # single vertex access
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+  hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+  poly = PolyArea([outer, hole1, hole2])
   @test vertex(poly, 1) == cart(0, 0)
+  @test vertex(poly, 2) == cart(1, 0)
+  @test vertex(poly, 3) == cart(1, 1)
   @test vertex(poly, 4) == cart(0, 1)
+  @test vertex(poly, 5) == cart(0.2, 0.2)
+  @test vertex(poly, 6) == cart(0.4, 0.2)
+  @test vertex(poly, 7) == cart(0.4, 0.4)
+  @test vertex(poly, 8) == cart(0.2, 0.4)
+  @test vertex(poly, 9) == cart(0.6, 0.2)
+  @test vertex(poly, 10) == cart(0.8, 0.2)
+  @test vertex(poly, 11) == cart(0.8, 0.4)
+  @test vertex(poly, 12) == cart(0.6, 0.4)
+  @test_throws BoundsError vertex(poly, 13)
+  # type stability
+  @inferred vertex(poly, 4)
+  @inferred vertex(poly, 8)
+  @inferred vertex(poly, 12)
 
   # point in polygonal area
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
