@@ -263,9 +263,9 @@ end
   @test @allocated(issimple(r)) < 950000
 
   # vertex iteration
-  const cring = Ring(Point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test collect(eachvertex(cring)) == Point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  @test _iter_alloctest(cring) == 0
+  r = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  @test collect(eachvertex(r)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test eachvertexalloc(r) == 0
 
   # CRS propagation
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
