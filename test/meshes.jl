@@ -713,6 +713,8 @@ end
   @inferred vertex(grid, (1, 1))
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
+  @test isconcretetype(eltype(vertices(grid)))
+  @inferred vertices(grid)
 
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6, 6)
@@ -808,8 +810,6 @@ end
   @test crs(mesh) <: Cartesian{NoDatum}
   @test Meshes.lentype(mesh) == ℳ
   @test vertices(mesh) == points
-  @test collect(eachvertex(mesh)) == points
-  @test eachvertexalloc(mesh) == 0
   @test collect(faces(mesh, 2)) == triangles
   @test collect(elements(mesh)) == triangles
   @test nelements(mesh) == 4
