@@ -176,3 +176,11 @@ function _isapproxtest(g::Geometry, ::Val{3})
   @test isapprox(g, Translate(0u"m", τ32, 0u"m")(g32), atol=1.1τ32)
   @test isapprox(g, Translate(0u"m", 0u"m", τ32)(g32), atol=1.1τ32)
 end
+
+function _iter_alloctest(coll::Union{Geometry,Mesh})
+  iterate(eachvertex(coll)) # precompile run
+
+  bytes = @allocated for _ in eachvertex(coll)
+  end
+  bytes
+end

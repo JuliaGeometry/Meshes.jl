@@ -83,12 +83,9 @@
   @test_broken measure(s) ≈ 3C / 4
 
   # vertex iteration
-  const s = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
-  @test collect(eachvertex(s)) == [Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0)]
-  @test @allocated(begin
-    for _ in eachindex(s)
-    end
-  end) == 0
+  const cseg = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
+  @test collect(eachvertex(cseg)) == [Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0)]
+  @test _iter_alloctest(cseg) == 0
 
   # parameterization
   s = Segment(latlon(45, 0), latlon(45, 90))
@@ -266,12 +263,9 @@ end
   @test @allocated(issimple(r)) < 950000
 
   # vertex iteration
-  const r = Ring(Point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test collect(eachvertex(r)) == Point.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  @test @allocated(begin
-    for _ in eachvertex(r)
-    end
-  end) == 0
+  const cring = Ring(Point.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  @test collect(eachvertex(cring)) == Point.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test _iter_alloctest(cring) == 0
 
   # CRS propagation
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -321,10 +315,7 @@ end
   # vertex iteration
   const ngon = Ngon(pts)
   @test collect(eachvertex(ngon)) == verts
-  @test @allocated(begin
-    for v in eachvertex(ngon)
-    end
-  end) == 0
+  @test _iter_alloctest(ngon) == 0
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10

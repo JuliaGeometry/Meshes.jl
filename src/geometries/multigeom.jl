@@ -112,7 +112,7 @@ Base.iterate(itr::VertexItr{<:MultiPolytope}, state=(1, 1)) = begin
   return (v, (ig, ivg))
 end
 
-Base.length(itr::VertexItr{<:MultiPolytope}) = sum(nvertices, itr.el.geoms)
 Base.IteratorSize(::VertexItr) = Base.HasLength()
 Base.IteratorEltype(::VertexItr) = Base.HasEltype()
+Base.length(itr::VertexItr{<:MultiPolytope}) = sum(nvertices, itr.el.geoms)
 Base.eltype(::VertexItr{<:MultiPolytope{K,M,C}}) where {K,M<:Manifold,C<:CRS} = Point{M,C}

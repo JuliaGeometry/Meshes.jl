@@ -16,11 +16,8 @@
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
   @test rings(multi) == [rings(poly); rings(poly)]
 
-  const cmulti = multi
-  @test @allocated(begin
-    for _ in eachvertex(cmulti)
-    end
-  end) == 0
+  const cmulti = Multi([poly, poly])
+  @test _iter_alloctest(cmulti) == 0
 
   poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
