@@ -128,9 +128,9 @@
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
   # vertex iteration
-  const rg = RegularGrid(Point(1, 1), Point(2, 2), (1, 1))
-  @test collect(eachvertex(rg)) == Point.([(1, 1), (2, 1), (1, 2), (2, 2)])
-  @test _iter_alloctest(rg) == 0
+  grid = RegularGrid(cart(1, 1), cart(2, 2), (1, 1))
+  @test collect(eachvertex(grid)) == cart.([(1, 1), (2, 1), (1, 2), (2, 2)])
+  @test eachvertexalloc(grid) == 0
 
   # type stability
   grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
