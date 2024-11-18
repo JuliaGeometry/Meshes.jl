@@ -129,7 +129,7 @@
 
   # vertex iteration
   grid = RegularGrid((10, 10), cart(0, 0), T.((1, 1)))
-  eachvertextest(grid)
+  vertextest(grid)
 
   # type stability
   grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
@@ -509,7 +509,7 @@ end
   x = range(zero(T), stop=one(T), length=6)
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
   grid = RectilinearGrid(x, y)
-  eachvertextest(grid)
+  vertextest(grid)
 
   # type stability
   x = range(zero(T), stop=one(T), length=6) * u"mm"
@@ -696,7 +696,7 @@ end
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
   Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
   grid = StructuredGrid(X, Y)
-  eachvertextest(grid)
+  vertextest(grid)
 
   # type stability
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"mm"
@@ -949,7 +949,7 @@ end
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
-  eachvertextest(mesh)
+  vertextest(mesh)
 
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -1016,7 +1016,7 @@ end
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
   tmesh = TransformedMesh(mesh, trans)
-  eachvertextest(tmesh)
+  vertextest(tmesh)
 
   # transforms that change the Manifold and/or CRS
   points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])

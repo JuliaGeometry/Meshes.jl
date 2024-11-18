@@ -110,7 +110,7 @@
   multi1 = Multi([ring1, ring2, ring3, ring4])
   multi2 = Multi([poly1, poly2])
   multi3 = Multi([poly3, poly4])
-  eachvertextest(multi1)
-  eachvertextest(multi2)
-  eachvertextest(multi3, alloccheck=(<(400)))
+  vertextest(multi1)
+  vertextest(multi2)
+  vertextest(multi3, bytes=400)
 end
