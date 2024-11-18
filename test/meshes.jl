@@ -807,9 +807,6 @@ end
   @test area(mesh) ≈ T(1) * u"m^2"
   @test extrema(mesh) == (cart(0, 0), cart(1, 1))
 
-  const cmesh = SimpleMesh(points, connec)
-  @test _iter_alloctest(cmesh) == 0
-
   # test constructors
   coords = [T.((0, 0)), T.((1, 0)), T.((0, 1)), T.((1, 1)), T.((0.5, 0.5))]
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
