@@ -795,6 +795,7 @@ end
   @test Meshes.lentype(mesh) == ℳ
   @test vertices(mesh) == points
   @test collect(eachvertex(mesh)) == points
+  @test eachvertexalloc(mesh) == 0
   @test collect(faces(mesh, 2)) == triangles
   @test collect(elements(mesh)) == triangles
   @test nelements(mesh) == 4
