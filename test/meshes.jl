@@ -129,8 +129,7 @@
 
   # vertex iteration
   grid = RegularGrid((10, 10), cart(0, 0), T.((1, 1)))
-  @test collect(eachvertex(grid)) == vertices(grid)
-  @test eachvertexalloc(grid) == 0
+  eachvertextest(grid)
 
   # type stability
   grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
@@ -139,8 +138,6 @@
   @inferred grid[1:2, 1:2]
   @inferred Meshes.xyz(grid)
   @inferred Meshes.XYZ(grid)
-  @test isconcretetype(eltype(vertices(grid)))
-  @inferred vertices(grid)
 
   # error: dimensions must be positive
   @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
@@ -512,8 +509,7 @@ end
   x = range(zero(T), stop=one(T), length=6)
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
   grid = RectilinearGrid(x, y)
-  @test collect(eachvertex(grid)) == vertices(grid)
-  @test eachvertexalloc(grid) == 0
+  eachvertextest(grid)
 
   # type stability
   x = range(zero(T), stop=one(T), length=6) * u"mm"
@@ -528,8 +524,6 @@ end
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
   @inferred Meshes.XYZ(grid)
-  @test isconcretetype(eltype(vertices(grid)))
-  @inferred vertices(grid)
 
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   x = range(zero(T), stop=one(T), length=6)
@@ -702,8 +696,7 @@ end
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
   Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
   grid = StructuredGrid(X, Y)
-  @test collect(eachvertex(grid)) == vertices(grid)
-  @test eachvertexalloc(grid) == 0
+  eachvertextest(grid)
 
   # type stability
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"mm"
@@ -717,8 +710,6 @@ end
   @inferred vertex(grid, (1, 1))
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
-  @test isconcretetype(eltype(vertices(grid)))
-  @inferred vertices(grid)
 
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6, 6)
@@ -958,11 +949,7 @@ end
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
-  @test collect(eachvertex(mesh)) == vertices(mesh)
-  @test eachvertexalloc(mesh) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(mesh)))
-  @inferred vertices(mesh)
+  eachvertextest(mesh)
 
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -1029,11 +1016,7 @@ end
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
   tmesh = TransformedMesh(mesh, trans)
-  @test collect(eachvertex(tmesh)) == vertices(tmesh)
-  @test eachvertexalloc(tmesh) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(tmesh)))
-  @inferred vertices(tmesh)
+  eachvertextest(tmesh)
 
   # transforms that change the Manifold and/or CRS
   points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])

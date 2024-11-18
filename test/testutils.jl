@@ -183,3 +183,11 @@ function eachvertexalloc(g)
   @allocated for _ in eachvertex(g)
   end
 end
+
+function eachvertextest(g; alloccheck=(==(0)))
+  @test collect(eachvertex(g)) == vertices(g)
+  @test alloccheck(eachvertexalloc(g))
+  # type stability
+  @test isconcretetype(eltype(vertices(g)))
+  @inferred vertices(g)
+end

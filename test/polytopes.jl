@@ -42,6 +42,7 @@
   s = Segment(cart(0, 0), cart(1, 1))
   equaltest(s)
   isapproxtest(s)
+  eachvertextest(s)
 
   s = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
   @test all(Point(x, x, x, x) ∈ s for x in 1:0.01:2)
@@ -82,14 +83,6 @@
   s = Segment(latlon(0, 135), latlon(0, 45))
   @test_broken measure(s) ≈ 3C / 4
 
-  # vertex iteration
-  s = Segment(cart(0, 0), cart(1, 1))
-  @test collect(eachvertex(s)) == vertices(s)
-  @test eachvertexalloc(s) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(s)))
-  @inferred vertices(s)
-
   # parameterization
   s = Segment(latlon(45, 0), latlon(45, 90))
   @test s(T(0)) == latlon(45, 0)
@@ -126,10 +119,12 @@ end
   c = Rope(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(c)
   isapproxtest(c)
+  eachvertextest(c)
 
   c = Ring(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(c)
   isapproxtest(c)
+  eachvertextest(c)
 
   # circular equality
   c1 = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
@@ -265,19 +260,6 @@ end
   @test @elapsed(issimple(r)) < 0.02
   @test @allocated(issimple(r)) < 950000
 
-  # vertex iteration
-  ro = Rope(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  ri = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test collect(eachvertex(ro)) == vertices(ro)
-  @test collect(eachvertex(ri)) == vertices(ro)
-  @test eachvertexalloc(ro) == 0
-  @test eachvertexalloc(ri) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(ro)))
-  @test isconcretetype(eltype(vertices(ri)))
-  @inferred vertices(ro)
-  @inferred vertices(ri)
-
   # CRS propagation
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test crs(centroid(r)) === crs(r)
@@ -322,14 +304,6 @@ end
   @test vertices(Ngon{3}(pts)) == verts
   @test vertices(Ngon{3}(pts...)) == verts
   @test vertices(Ngon{3}(tups...)) == verts
-
-  # vertex iteration
-  ngon = Ngon(cart(0, 0), cart(1, 0), cart(0, 1))
-  @test collect(eachvertex(ngon)) == vertices(ngon)
-  @test eachvertexalloc(ngon) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(ngon)))
-  @inferred vertices(ngon)
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
@@ -381,6 +355,7 @@ end
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(t)
   isapproxtest(t)
+  eachvertextest(t)
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test perimeter(t) ≈ T(1 + 1 + √2) * u"m"
@@ -495,6 +470,7 @@ end
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   equaltest(q)
   isapproxtest(q)
+  eachvertextest(q)
 
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test_throws DomainError((T(1.2), T(1.2)), "q(u, v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
@@ -566,14 +542,7 @@ end
   p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(p)
   isapproxtest(p)
-
-  # vertex iteration
-  p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
-  @test collect(eachvertex(p)) == vertices(p)
-  @test eachvertexalloc(p) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(p)))
-  @inferred vertices(p)
+  eachvertextest(p)
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
   # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
@@ -758,14 +727,7 @@ end
   t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
   equaltest(t)
   isapproxtest(t)
-
-  # vertex iteration
-  t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
-  @test collect(eachvertex(t)) == vertices(t)
-  @test eachvertexalloc(t) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(t)))
-  @inferred vertices(t)
+  eachvertextest(t)
 
   # CRS propagation
   c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
@@ -831,23 +793,7 @@ end
   )
   equaltest(h)
   isapproxtest(h)
-
-  # vertex iteration
-  h = Hexahedron(
-    cart(0, 0, 0),
-    cart(1, 0, 0),
-    cart(1, 1, 0),
-    cart(0, 1, 0),
-    cart(0, 0, 1),
-    cart(1, 0, 1),
-    cart(1, 1, 1),
-    cart(0, 1, 1)
-  )
-  @test collect(eachvertex(h)) == vertices(h)
-  @test eachvertexalloc(h) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(h)))
-  @inferred vertices(h)
+  eachvertextest(t)
 
   h = Hexahedron(
     cart(0, 0, 0),
@@ -966,14 +912,7 @@ end
   @test m[5] isa Triangle
   equaltest(p)
   isapproxtest(p)
-
-  # vertex iteration
-  p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
-  @test collect(eachvertex(p)) == vertices(p)
-  @test eachvertexalloc(p) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(p)))
-  @inferred vertices(p)
+  eachvertextest(p)
 
   p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
@@ -1012,14 +951,7 @@ end
   @test m[5] isa Quadrangle
   equaltest(w)
   isapproxtest(w)
-
-  # vertex iteration
-  w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
-  @test collect(eachvertex(w)) == vertices(w)
-  @test eachvertexalloc(w) == 0
-  # type stability
-  @test isconcretetype(eltype(vertices(w)))
-  @inferred vertices(w)
+  eachvertextest(w)
 
   w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
   @test sprint(show, w) == "Wedge((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 1.0 m, z: 1.0 m))"

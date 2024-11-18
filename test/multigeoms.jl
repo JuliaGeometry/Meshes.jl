@@ -110,15 +110,7 @@
   multi1 = Multi([ring1, ring2, ring3, ring4])
   multi2 = Multi([poly1, poly2])
   multi3 = Multi([poly3, poly4])
-  @test collect(eachvertex(multi1)) == vertices(multi1)
-  @test collect(eachvertex(multi2)) == vertices(multi2)
-  @test collect(eachvertex(multi3)) == vertices(multi3)
-  @test eachvertexalloc(multi1) == 0
-  @test eachvertexalloc(multi2) == 0
-  @test eachvertexalloc(multi3) < 400
-  # type stability
-  @test isconcretetype(eltype(vertices(multi1)))
-  @test isconcretetype(eltype(vertices(multi2)))
-  @inferred vertices(multi1)
-  @inferred vertices(multi2)
+  eachvertextest(multi1)
+  eachvertextest(multi2)
+  eachvertextest(multi3, alloccheck=(<(400)))
 end
