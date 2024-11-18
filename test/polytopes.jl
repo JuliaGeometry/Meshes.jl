@@ -313,9 +313,9 @@ end
   @test vertices(Ngon{3}(tups...)) == verts
 
   # vertex iteration
-  const ngon = Ngon(pts)
+  ngon = Ngon(pts)
   @test collect(eachvertex(ngon)) == verts
-  @test _iter_alloctest(ngon) == 0
+  @test eachvertexalloc(ngon) == 0
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
