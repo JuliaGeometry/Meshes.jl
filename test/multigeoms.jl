@@ -97,4 +97,20 @@
   poly2 = PolyArea(merc.([(1, 1), (2, 1), (2, 2), (1, 2)]))
   multi = Multi([poly1, poly2])
   @test crs(centroid(multi)) === crs(multi)
+
+  # vertex iteration
+  ring1 = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  ring2 = Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
+  ring3 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+  ring4 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
+  poly1 = PolyArea(ring1)
+  poly2 = PolyArea(ring2)
+  poly3 = PolyArea([ring1, ring3])
+  poly4 = PolyArea([ring2, ring4])
+  multi1 = Multi([ring1, ring2, ring3, ring4])
+  multi2 = Multi([poly1, poly2])
+  multi3 = Multi([poly3, poly4])
+  vertextest(multi1)
+  vertextest(multi2)
+  vertextest(multi3, bytes=3100)
 end
