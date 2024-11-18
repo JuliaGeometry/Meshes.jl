@@ -34,11 +34,11 @@ Base.isapprox(p₁::PolyArea, p₂::PolyArea; atol=atol(lentype(p₁)), kwargs..
 function vertex(p::PolyArea, ind)
   offset = 0
   for r in p.rings
-    offset′ = offset
-    offset += nvertices(r)
-    if ind ≤ offset
-      return vertex(r, ind - offset′)
+    nverts = nvertices(r)
+    if ind ≤ offset + nverts
+      return vertex(r, ind - offset)
     end
+    offset += nverts
   end
   throw(BoundsError(p, ind))
 end
