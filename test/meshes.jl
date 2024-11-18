@@ -128,8 +128,8 @@
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
   # vertex iteration
-  grid = RegularGrid(cart(0, 0), cart(1, 1), (1, 1))
-  @test collect(eachvertex(grid)) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  grid = RegularGrid((10, 10), cart(0, 0), T.((1, 1)))
+  @test collect(eachvertex(grid)) == vertices(grid)
   @test eachvertexalloc(grid) == 0
 
   # type stability
@@ -509,8 +509,10 @@ end
   @test vertices(rg) == vertices(cg)
 
   # vertex iteration
-  grid = RectilinearGrid(T[0, 1], T[0, 1])
-  @test collect(eachvertex(grid)) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  x = range(zero(T), stop=one(T), length=6)
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+  grid = RectilinearGrid(x, y)
+  @test collect(eachvertex(grid)) == vertices(grid)
   @test eachvertexalloc(grid) == 0
 
   # type stability
@@ -697,8 +699,10 @@ end
   @test vertices(sg) == vertices(rg)
 
   # vertex iteration
-  grid = StructuredGrid(T[0 0; 1 1], T[0 1; 0 1])
-  @test collect(eachvertex(grid)) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
+  grid = StructuredGrid(X, Y)
+  @test collect(eachvertex(grid)) == vertices(grid)
   @test eachvertexalloc(grid) == 0
 
   # type stability
@@ -954,7 +958,7 @@ end
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
-  @test collect(eachvertex(mesh)) == points
+  @test collect(eachvertex(mesh)) == vertices(mesh)
   @test eachvertexalloc(mesh) == 0
   # type stability
   @test isconcretetype(eltype(vertices(mesh)))
@@ -1025,7 +1029,7 @@ end
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
   tmesh = TransformedMesh(mesh, trans)
-  @test collect(eachvertex(tmesh)) == points
+  @test collect(eachvertex(tmesh)) == vertices(tmesh)
   @test eachvertexalloc(tmesh) == 0
   # type stability
   @test isconcretetype(eltype(vertices(tmesh)))

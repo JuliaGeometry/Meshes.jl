@@ -110,9 +110,9 @@
   multi1 = Multi([ring1, ring2, ring3, ring4])
   multi2 = Multi([poly1, poly2])
   multi3 = Multi([poly3, poly4])
-  @test collect(eachvertex(multi1)) == [vertices(ring1); vertices(ring2); vertices(ring3); vertices(ring4)]
-  @test collect(eachvertex(multi2)) == [vertices(poly1); vertices(poly2)]
-  @test collect(eachvertex(multi3)) == [vertices(poly3); vertices(poly4)]
+  @test collect(eachvertex(multi1)) == vertices(multi1)
+  @test collect(eachvertex(multi2)) == vertices(multi2)
+  @test collect(eachvertex(multi3)) == vertices(multi3)
   @test eachvertexalloc(multi1) == 0
   @test eachvertexalloc(multi2) == 0
   @test eachvertexalloc(multi3) < 400

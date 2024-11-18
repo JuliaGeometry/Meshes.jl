@@ -84,7 +84,7 @@
 
   # vertex iteration
   s = Segment(cart(0, 0), cart(1, 1))
-  @test collect(eachvertex(s)) == [cart(0, 0), cart(1, 1)]
+  @test collect(eachvertex(s)) == vertices(s)
   @test eachvertexalloc(s) == 0
   # type stability
   @test isconcretetype(eltype(vertices(s)))
@@ -268,8 +268,8 @@ end
   # vertex iteration
   ro = Rope(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   ri = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test collect(eachvertex(ro)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  @test collect(eachvertex(ri)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test collect(eachvertex(ro)) == vertices(ro)
+  @test collect(eachvertex(ri)) == vertices(ro)
   @test eachvertexalloc(ro) == 0
   @test eachvertexalloc(ri) == 0
   # type stability
@@ -325,7 +325,7 @@ end
 
   # vertex iteration
   ngon = Ngon(cart(0, 0), cart(1, 0), cart(0, 1))
-  @test collect(eachvertex(ngon)) == [cart(0, 0), cart(1, 0), cart(0, 1)]
+  @test collect(eachvertex(ngon)) == vertices(ngon)
   @test eachvertexalloc(ngon) == 0
   # type stability
   @test isconcretetype(eltype(vertices(ngon)))
@@ -569,7 +569,7 @@ end
 
   # vertex iteration
   p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
-  @test collect(eachvertex(p)) == [cart(0, 0), cart(1, 0), cart(0, 1)]
+  @test collect(eachvertex(p)) == vertices(p)
   @test eachvertexalloc(p) == 0
   # type stability
   @test isconcretetype(eltype(vertices(p)))
@@ -761,7 +761,7 @@ end
 
   # vertex iteration
   t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
-  @test collect(eachvertex(t)) == [cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1)]
+  @test collect(eachvertex(t)) == vertices(t)
   @test eachvertexalloc(t) == 0
   # type stability
   @test isconcretetype(eltype(vertices(t)))
@@ -843,16 +843,7 @@ end
     cart(1, 1, 1),
     cart(0, 1, 1)
   )
-  @test collect(eachvertex(h)) == [
-    cart(0, 0, 0),
-    cart(1, 0, 0),
-    cart(1, 1, 0),
-    cart(0, 1, 0),
-    cart(0, 0, 1),
-    cart(1, 0, 1),
-    cart(1, 1, 1),
-    cart(0, 1, 1)
-  ]
+  @test collect(eachvertex(h)) == vertices(h)
   @test eachvertexalloc(h) == 0
   # type stability
   @test isconcretetype(eltype(vertices(h)))
@@ -978,7 +969,7 @@ end
 
   # vertex iteration
   p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
-  @test collect(eachvertex(p)) == [cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1)]
+  @test collect(eachvertex(p)) == vertices(p)
   @test eachvertexalloc(p) == 0
   # type stability
   @test isconcretetype(eltype(vertices(p)))
@@ -1024,8 +1015,7 @@ end
 
   # vertex iteration
   w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
-  @test collect(eachvertex(w)) ==
-        [cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1)]
+  @test collect(eachvertex(w)) == vertices(w)
   @test eachvertexalloc(w) == 0
   # type stability
   @test isconcretetype(eltype(vertices(w)))
