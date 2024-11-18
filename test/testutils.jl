@@ -176,3 +176,17 @@ function _isapproxtest(g::Geometry, ::Val{3})
   @test isapprox(g, Translate(0u"m", τ32, 0u"m")(g32), atol=1.1τ32)
   @test isapprox(g, Translate(0u"m", 0u"m", τ32)(g32), atol=1.1τ32)
 end
+
+function eachvertexalloc(g)
+  iterate(eachvertex(g)) # precompile run
+  @allocated for _ in eachvertex(g)
+  end
+end
+
+function vertextest(g; bytes=0)
+  @test collect(eachvertex(g)) == vertices(g)
+  @test eachvertexalloc(g) ≤ bytes
+  # type stability
+  @test isconcretetype(eltype(vertices(g)))
+  @inferred vertices(g)
+end

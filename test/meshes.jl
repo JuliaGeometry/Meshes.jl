@@ -127,6 +127,10 @@
   @test minimum(sub) == Point(Polar(T(1), T(2)))
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
+  # vertex iteration
+  grid = RegularGrid((10, 10), cart(0, 0), T.((1, 1)))
+  vertextest(grid)
+
   # type stability
   grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
   @inferred vertex(grid, (1, 1))
@@ -501,6 +505,12 @@ end
   @test topology(rg) == topology(cg)
   @test vertices(rg) == vertices(cg)
 
+  # vertex iteration
+  x = range(zero(T), stop=one(T), length=6)
+  y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
+  grid = RectilinearGrid(x, y)
+  vertextest(grid)
+
   # type stability
   x = range(zero(T), stop=one(T), length=6) * u"mm"
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"cm"
@@ -681,6 +691,12 @@ end
   @test nelements(sg) == nelements(rg)
   @test topology(sg) == topology(rg)
   @test vertices(sg) == vertices(rg)
+
+  # vertex iteration
+  X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
+  Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
+  grid = StructuredGrid(X, Y)
+  vertextest(grid)
 
   # type stability
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"mm"
@@ -929,6 +945,12 @@ end
   @test vertex(mesh, 4) == points[4]
   @test vertex(mesh, 5) == points[5]
 
+  # vertex iteration
+  points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  mesh = SimpleMesh(points, connec)
+  vertextest(mesh)
+
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
@@ -987,6 +1009,14 @@ end
   trans1 = Translate(T(10), T(10))
   trans2 = Translate(T(-10), T(-10))
   @test TransformedMesh(TransformedMesh(grid, trans1), trans2) == TransformedMesh(grid, trans1 → trans2)
+
+  # vertex iteration
+  trans = Identity()
+  points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  mesh = SimpleMesh(points, connec)
+  tmesh = TransformedMesh(mesh, trans)
+  vertextest(tmesh)
 
   # transforms that change the Manifold and/or CRS
   points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
