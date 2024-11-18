@@ -25,6 +25,7 @@
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
   @test collect(eachvertex(multi)) == [vertices(poly1); vertices(poly2)]
+  @test eachvertexalloc(multi) == 0
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
   @test centroid(multi) == cart(1, 1)
