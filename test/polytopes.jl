@@ -86,6 +86,9 @@
   s = Segment(cart(0, 0), cart(1, 1))
   @test collect(eachvertex(s)) == [cart(0, 0), cart(1, 1)]
   @test eachvertexalloc(s) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(s)))
+  @inferred vertices(s)
 
   # parameterization
   s = Segment(latlon(45, 0), latlon(45, 90))
@@ -263,9 +266,17 @@ end
   @test @allocated(issimple(r)) < 950000
 
   # vertex iteration
-  r = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test collect(eachvertex(r)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  @test eachvertexalloc(r) == 0
+  ro = Rope(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  ri = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  @test collect(eachvertex(ro)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test collect(eachvertex(ri)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  @test eachvertexalloc(ro) == 0
+  @test eachvertexalloc(ri) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(ro)))
+  @test isconcretetype(eltype(vertices(ri)))
+  @inferred vertices(ro)
+  @inferred vertices(ri)
 
   # CRS propagation
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -313,9 +324,12 @@ end
   @test vertices(Ngon{3}(tups...)) == verts
 
   # vertex iteration
-  ngon = Ngon(pts)
-  @test collect(eachvertex(ngon)) == verts
+  ngon = Ngon(cart(0, 0), cart(1, 0), cart(0, 1))
+  @test collect(eachvertex(ngon)) == [cart(0, 0), cart(1, 0), cart(0, 1)]
   @test eachvertexalloc(ngon) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(ngon)))
+  @inferred vertices(ngon)
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
@@ -553,6 +567,14 @@ end
   equaltest(p)
   isapproxtest(p)
 
+  # vertex iteration
+  p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
+  @test collect(eachvertex(p)) == [cart(0, 0), cart(1, 0), cart(0, 1)]
+  @test eachvertexalloc(p) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(p)))
+  @inferred vertices(p)
+
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
   # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
   fnames = ["poly$i.line" for i in 1:5]
@@ -737,6 +759,14 @@ end
   equaltest(t)
   isapproxtest(t)
 
+  # vertex iteration
+  t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test collect(eachvertex(t)) == [cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1)]
+  @test eachvertexalloc(t) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(t)))
+  @inferred vertices(t)
+
   # CRS propagation
   c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
   c2 = Cartesian{WGS84Latest}(T(1), T(0), T(0))
@@ -801,6 +831,32 @@ end
   )
   equaltest(h)
   isapproxtest(h)
+
+  # vertex iteration
+  h = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(1, 1, 1),
+    cart(0, 1, 1)
+  )
+  @test collect(eachvertex(h)) == [
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(1, 1, 1),
+    cart(0, 1, 1)
+  ]
+  @test eachvertexalloc(h) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(h)))
+  @inferred vertices(h)
 
   h = Hexahedron(
     cart(0, 0, 0),
@@ -920,6 +976,14 @@ end
   equaltest(p)
   isapproxtest(p)
 
+  # vertex iteration
+  p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test collect(eachvertex(p)) == [cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1)]
+  @test eachvertexalloc(p) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(p)))
+  @inferred vertices(p)
+
   p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
   if T === Float32
@@ -957,6 +1021,15 @@ end
   @test m[5] isa Quadrangle
   equaltest(w)
   isapproxtest(w)
+
+  # vertex iteration
+  w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
+  @test collect(eachvertex(w)) ==
+        [cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1)]
+  @test eachvertexalloc(w) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(w)))
+  @inferred vertices(w)
 
   w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
   @test sprint(show, w) == "Wedge((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 1.0 m, z: 1.0 m))"

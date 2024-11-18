@@ -10,8 +10,6 @@
   @test crs(multi) <: Cartesian{NoDatum}
   @test Meshes.lentype(multi) == ℳ
   @test vertex(multi, 1) == vertex(poly, 1)
-  @test collect(eachvertex(multi)) == [vertices(poly); vertices(poly)]
-  @test eachvertexalloc(multi) == 0
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
@@ -22,8 +20,6 @@
   multi = Multi([poly1, poly2])
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
-  @test collect(eachvertex(multi)) == [vertices(poly1); vertices(poly2)]
-  @test eachvertexalloc(multi) == 0
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
   @test centroid(multi) == cart(1, 1)
@@ -101,4 +97,28 @@
   poly2 = PolyArea(merc.([(1, 1), (2, 1), (2, 2), (1, 2)]))
   multi = Multi([poly1, poly2])
   @test crs(centroid(multi)) === crs(multi)
+
+  # vertex iteration
+  ring1 = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  ring2 = Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
+  ring3 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+  ring4 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
+  poly1 = PolyArea(ring1)
+  poly2 = PolyArea(ring2)
+  poly3 = PolyArea([ring1, ring3])
+  poly4 = PolyArea([ring2, ring4])
+  multi1 = Multi([ring1, ring2, ring3, ring4])
+  multi2 = Multi([poly1, poly2])
+  multi3 = Multi([poly3, poly4])
+  @test collect(eachvertex(multi1)) == [vertices(ring1); vertices(ring2); vertices(ring3); vertices(ring4)]
+  @test collect(eachvertex(multi2)) == [vertices(poly1); vertices(poly2)]
+  @test collect(eachvertex(multi3)) == [vertices(poly3); vertices(poly4)]
+  @test eachvertexalloc(multi1) == 0
+  @test eachvertexalloc(multi2) == 0
+  @test eachvertexalloc(multi3) < 400
+  # type stability
+  @test isconcretetype(eltype(vertices(multi1)))
+  @test isconcretetype(eltype(vertices(multi2)))
+  @inferred vertices(multi1)
+  @inferred vertices(multi2)
 end

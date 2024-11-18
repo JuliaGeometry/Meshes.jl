@@ -128,8 +128,8 @@
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
   # vertex iteration
-  grid = RegularGrid(cart(1, 1), cart(2, 2), (1, 1))
-  @test collect(eachvertex(grid)) == cart.([(1, 1), (2, 1), (1, 2), (2, 2)])
+  grid = RegularGrid(cart(0, 0), cart(1, 1), (1, 1))
+  @test collect(eachvertex(grid)) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
   @test eachvertexalloc(grid) == 0
 
   # type stability
@@ -139,6 +139,8 @@
   @inferred grid[1:2, 1:2]
   @inferred Meshes.xyz(grid)
   @inferred Meshes.XYZ(grid)
+  @test isconcretetype(eltype(vertices(grid)))
+  @inferred vertices(grid)
 
   # error: dimensions must be positive
   @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
@@ -506,6 +508,11 @@ end
   @test topology(rg) == topology(cg)
   @test vertices(rg) == vertices(cg)
 
+  # vertex iteration
+  grid = RectilinearGrid(T[0, 1], T[0, 1])
+  @test collect(eachvertex(grid)) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  @test eachvertexalloc(grid) == 0
+
   # type stability
   x = range(zero(T), stop=one(T), length=6) * u"mm"
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0] * u"cm"
@@ -519,6 +526,8 @@ end
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
   @inferred Meshes.XYZ(grid)
+  @test isconcretetype(eltype(vertices(grid)))
+  @inferred vertices(grid)
 
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   x = range(zero(T), stop=one(T), length=6)
@@ -686,6 +695,11 @@ end
   @test nelements(sg) == nelements(rg)
   @test topology(sg) == topology(rg)
   @test vertices(sg) == vertices(rg)
+
+  # vertex iteration
+  grid = StructuredGrid(T[0 0; 1 1], T[0 1; 0 1])
+  @test collect(eachvertex(grid)) == cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  @test eachvertexalloc(grid) == 0
 
   # type stability
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6) * u"mm"
@@ -880,8 +894,6 @@ end
   mesh₂ = SimpleMesh(cart.([(1, 0), (1, 1), (0, 1)]), connect.([(1, 2, 3)]))
   mesh = merge(mesh₁, mesh₂)
   @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
-  @test collect(eachvertex(mesh)) == vertices(mesh)
-  @test eachvertexalloc(mesh) == 0
   @test collect(elements(topology(mesh))) == connect.([(1, 2, 3), (4, 5, 6)])
 
   # merge operation with 3D geometries
@@ -889,8 +901,6 @@ end
   mesh₂ = SimpleMesh(cart.([(1, 0, 0), (1, 1, 0), (0, 1, 0), (1, 1, 1)]), connect.([(1, 2, 3, 4)], Tetrahedron))
   mesh = merge(mesh₁, mesh₂)
   @test vertices(mesh) == [vertices(mesh₁); vertices(mesh₂)]
-  @test collect(eachvertex(mesh)) == vertices(mesh)
-  @test eachvertexalloc(mesh) == 0
   @test collect(elements(topology(mesh))) == connect.([(1, 2, 3, 4), (5, 6, 7, 8)], Tetrahedron)
 
   # convert any mesh to SimpleMesh
@@ -939,6 +949,16 @@ end
   @test vertex(mesh, 3) == points[3]
   @test vertex(mesh, 4) == points[4]
   @test vertex(mesh, 5) == points[5]
+
+  # vertex iteration
+  points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  mesh = SimpleMesh(points, connec)
+  @test collect(eachvertex(mesh)) == points
+  @test eachvertexalloc(mesh) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(mesh)))
+  @inferred vertices(mesh)
 
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -998,6 +1018,18 @@ end
   trans1 = Translate(T(10), T(10))
   trans2 = Translate(T(-10), T(-10))
   @test TransformedMesh(TransformedMesh(grid, trans1), trans2) == TransformedMesh(grid, trans1 → trans2)
+
+  # vertex iteration
+  trans = Identity()
+  points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  mesh = SimpleMesh(points, connec)
+  tmesh = TransformedMesh(mesh, trans)
+  @test collect(eachvertex(tmesh)) == points
+  @test eachvertexalloc(tmesh) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(tmesh)))
+  @inferred vertices(tmesh)
 
   # transforms that change the Manifold and/or CRS
   points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
