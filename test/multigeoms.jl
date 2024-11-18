@@ -11,13 +11,11 @@
   @test Meshes.lentype(multi) == ℳ
   @test vertex(multi, 1) == vertex(poly, 1)
   @test collect(eachvertex(multi)) == [vertices(poly); vertices(poly)]
+  @test eachvertexalloc(multi) == 0
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
   @test rings(multi) == [rings(poly); rings(poly)]
-
-  const cmulti = Multi([poly, poly])
-  @test _iter_alloctest(cmulti) == 0
 
   poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
