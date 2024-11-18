@@ -43,7 +43,7 @@ function vertex(p::PolyArea, ind)
   throw(BoundsError(p, ind))
 end
 
-vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
+vertices(p::PolyArea) = collect(eachvertex(p))
 
 nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 
