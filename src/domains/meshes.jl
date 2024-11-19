@@ -227,8 +227,9 @@ function Base.getindex(g::Grid, I::CartesianIndices)
   odims = size(g)
   cinds = first(I):CartesianIndex(Tuple(last(I)) .+ 1)
   inds = vec(LinearIndices(odims .+ 1)[cinds])
+  points = [vertex(g, ind) for ind in inds]
   periodic = isperiodic(topology(g)) .&& dims .== odims
-  SimpleMesh(vertices(g)[inds], GridTopology(dims, periodic))
+  SimpleMesh(points, GridTopology(dims, periodic))
 end
 
 _asrange(::Int, r::UnitRange{Int}) = r

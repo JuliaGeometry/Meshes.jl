@@ -63,7 +63,7 @@ function vizgridfallback!(plot, M, pdim, edim)
     # decide whether or not to reverse connectivity list
     rfunc = Makie.@lift _reverse($grid)
 
-    verts = Makie.@lift map(asmakie, vertices($grid))
+    verts = Makie.@lift map(asmakie, eachvertex($grid))
     quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
 
     dims = Makie.@lift size($grid)
