@@ -13,7 +13,7 @@ function boundingbox end
 # FALLBACKS
 # ----------
 
-boundingbox(p::Polytope) = _pboxes(vertices(p))
+boundingbox(p::Polytope) = _pboxes(eachvertex(p))
 
 boundingbox(p::Primitive) = boundingbox(boundary(p))
 
@@ -78,7 +78,7 @@ boundingbox(g::TransformedGrid{<:Any,<:Any,<:OrthoRegularGrid}) = boundingbox(pa
 boundingbox(g::TransformedGrid{<:Any,<:Any,<:OrthoRectilinearGrid}) =
   boundingbox(parent(g)) |> transform(g) |> boundingbox
 
-boundingbox(m::Mesh) = _pboxes(vertices(m))
+boundingbox(m::Mesh) = _pboxes(eachvertex(m))
 
 # ----------------
 # IMPLEMENTATIONS

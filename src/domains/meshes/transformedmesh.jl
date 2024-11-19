@@ -18,7 +18,7 @@ struct TransformedMesh{M<:Manifold,C<:CRS,TP<:Topology,MS<:Mesh,TR<:Transform} <
 end
 
 function TransformedMesh(m::Mesh, t::Transform)
-  p = t(first(vertices(m)))
+  p = t(vertex(m, 1))
   TransformedMesh{manifold(p),crs(p)}(m, t)
 end
 

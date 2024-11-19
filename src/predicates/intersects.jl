@@ -61,7 +61,7 @@ intersects(s::Segment, c::Chain) = intersects(c, s)
 
 intersects(c₁::Chain, c₂::Chain) = intersects(segments(c₁), segments(c₂))
 
-intersects(c::Chain, g::Geometry) = any(∈(g), vertices(c)) || intersects(c, boundary(g))
+intersects(c::Chain, g::Geometry) = any(∈(g), eachvertex(c)) || intersects(c, boundary(g))
 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
