@@ -15,9 +15,8 @@ using Random
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
 using StatsBase: AbstractWeights, Weights, quantile
-using Distances: PreMetric, Euclidean, Mahalanobis
+using Distances: PreMetric, MinkowskiMetric, Euclidean, Mahalanobis
 using Distances: Haversine, SphericalAngle
-using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
 using TiledIteration: TileIterator
@@ -38,8 +37,8 @@ import Base: ==, !
 import Base: +, -, *
 import Base: <, >, ≤, ≥
 import StatsBase: sample
-import Distances: evaluate
-import NearestNeighbors: MinkowskiMetric
+import Distances: evaluate, result_type
+using NearestNeighbors: eval_pow, eval_diff
 
 # Transforms API
 import TransformsBase: Transform, →
@@ -561,6 +560,7 @@ export
   measurematrix,
   adjacencymatrix,
   atol,
+  EuclideanDistance,
 
   # visualization
   viz,
