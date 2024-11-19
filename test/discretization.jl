@@ -8,6 +8,10 @@
   @test eltype(mesh) <: Triangle
   @test vertices(mesh) == pts
   @test collect(elements(mesh)) == tris
+
+  # type stability tests
+  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @inferred discretize(poly, FanTriangulation())
 end
 
 @testitem "DehnTriangulation" setup = [Setup] begin
@@ -26,10 +30,6 @@ end
   @test nelements(mesh) == 6
   @test eltype(mesh) <: Triangle
 
-  # type stability tests
-  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  @inferred discretize(poly, DehnTriangulation())
-
   octa = Octagon(
     cart(0.2, 0.2, 0.0),
     cart(0.5, -0.5, 0.0),
@@ -44,6 +44,10 @@ end
   @test nvertices(mesh) == 8
   @test nelements(mesh) == 6
   @test eltype(mesh) <: Triangle
+
+  # type stability tests
+  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @inferred discretize(poly, DehnTriangulation())
 end
 
 @testitem "HeldTriangulation" setup = [Setup] begin
@@ -128,6 +132,10 @@ end
   mesh = discretize(poly, HeldTriangulation(rng))
   @test nvertices(mesh) == 5
   @test nelements(mesh) == 3
+
+  # type stability tests
+  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @inferred discretize(poly, HeldTriangulation())
 end
 
 @testitem "DelaunayTriangulation" setup = [Setup] begin
