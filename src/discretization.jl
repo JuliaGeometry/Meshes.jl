@@ -152,8 +152,8 @@ function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
 end
 
 function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
-  # collect vertices to get rid of static containers
-  points = collect(vertices(ring))
+  # retrieve vertices of ring
+  points = collect(eachvertex(ring))
 
   # discretize within 2D ring with given method
   ring2D = Ring(_proj2D(manifold(ring), points))
@@ -197,7 +197,7 @@ function simplexify(chain::Chain)
   np = nvertices(chain) + isclosed(chain)
   ip = isperiodic(chain)
 
-  points = collect(vertices(chain))
+  points = collect(eachvertex(chain))
   topo = GridTopology((np - 1,), ip)
 
   SimpleMesh(points, topo)

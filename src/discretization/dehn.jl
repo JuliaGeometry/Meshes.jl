@@ -22,12 +22,8 @@ with small number of vertices.
 struct DehnTriangulation <: BoundaryTriangulationMethod end
 
 function discretizewithin(ring::Ring{𝔼{2}}, ::DehnTriangulation)
-  # points on resulting mesh
-  points = collect(vertices(ring))
-
-  # Dehn's recursion
+  points = collect(eachvertex(ring))
   connec = dehn1899(points, 1:length(points))
-
   SimpleMesh(points, connec)
 end
 

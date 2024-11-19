@@ -45,10 +45,10 @@ function discretizewithin(ring::Ring{𝔼{2}}, method::HeldTriangulation)
   𝒫 = ℛ |> StdCoords()
 
   # points of resulting mesh
-  points = collect(vertices(ℛ))
+  points = collect(eachvertex(ℛ))
 
   # standardized points for algorithm
-  stdpts = collect(vertices(𝒫))
+  stdpts = collect(eachvertex(𝒫))
 
   # keep track of global indices
   I = CircularVector(1:nvertices(𝒫))
