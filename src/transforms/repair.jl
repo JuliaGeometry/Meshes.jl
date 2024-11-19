@@ -63,7 +63,7 @@ function apply(::Repair{1}, mesh::Mesh)
     ntuple(i -> inds[elem[i]], length(elem))
   end
 
-  points = vertices(mesh)[seen]
+  points = [vertex(mesh, ind) for ind in seen]
 
   connec = connect.(elems)
 

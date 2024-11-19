@@ -38,7 +38,7 @@ function convexhull end
 # FALLBACKS
 # ----------
 
-convexhull(p::Polytope) = _pconvexhull(vertices(p))
+convexhull(p::Polytope) = _pconvexhull(eachvertex(p))
 
 convexhull(p::Primitive) = convexhull(boundary(p))
 
@@ -62,7 +62,7 @@ convexhull(t::Triangle) = t
 
 convexhull(g::Grid) = Box(extrema(g)...)
 
-convexhull(m::Mesh) = _pconvexhull(vertices(m))
+convexhull(m::Mesh) = _pconvexhull(eachvertex(m))
 
 # ----------------
 # IMPLEMENTATIONS

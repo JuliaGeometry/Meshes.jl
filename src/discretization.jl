@@ -105,8 +105,7 @@ function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
 
   # handle degenerate polygons
   if nvertices(cpoly) == 1
-    v = first(vertices(cpoly))
-    points = [v, v, v]
+    points = fill(vertex(cpoly, 1), 3)
     connec = [connect((1, 2, 3))]
     return SimpleMesh(points, connec)
   end
