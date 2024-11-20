@@ -276,6 +276,18 @@ end
   @test l(T(0.75)) == latlon(45, 67.5)
   @test l(T(1)) == latlon(45, 90)
 
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1138
+  l1 = Line(cart(0, 0), cart(1, 0))
+  l2 = Line(cart(0, 0), cart(2, 0))
+  l3 = Line(cart(0, 0), cart(-1, 0))
+  l4 = Line(cart(0, 0), cart(0, 1))
+  l5 = Line(cart(0, 0), cart(0, 2))
+  l6 = Line(cart(0, 0), cart(0, -1))
+  @test l1 == l2 == l3
+  @test l1 ≈ l2 ≈ l3
+  @test l4 == l5 == l6
+  @test l4 ≈ l5 ≈ l6
+
   l = Line(cart(0, 0), cart(1, 1))
   @test sprint(show, l) == "Line(a: (x: 0.0 m, y: 0.0 m), b: (x: 1.0 m, y: 1.0 m))"
   if T === Float32
