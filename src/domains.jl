@@ -36,7 +36,7 @@ Base.isapprox(d1::Domain, d2::Domain; kwargs...) =
 
 Base.getindex(d::Domain, ind::Int) = element(d, ind)
 
-Base.getindex(d::Domain, inds::AbstractVector) = [element(d, ind) for ind in inds]
+Base.getindex(d::Domain, inds::AbstractVector) = [d[ind] for ind in inds]
 
 Base.firstindex(d::Domain) = 1
 

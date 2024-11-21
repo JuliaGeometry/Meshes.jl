@@ -12,7 +12,7 @@ See [https://en.wikipedia.org/wiki/Fan_triangulation]
 struct FanTriangulation <: BoundaryTriangulationMethod end
 
 function discretizewithin(ring::Ring, ::FanTriangulation)
-  points = collect(vertices(ring))
+  points = collect(eachvertex(ring))
   connec = [connect((1, i, i + 1)) for i in 2:(nvertices(ring) - 1)]
   SimpleMesh(points, connec)
 end

@@ -132,6 +132,26 @@ Return the number of facets of the `topology`.
 """
 function nfacets(::Topology) end
 
+# ----------
+# FALLBACKS
+# ----------
+
+Base.getindex(t::Topology, ind::Int) = element(t, ind)
+
+Base.getindex(t::Topology, inds::AbstractVector) = [t[ind] for ind in inds]
+
+Base.firstindex(t::Topology) = 1
+
+Base.lastindex(t::Topology) = nelements(t)
+
+Base.length(t::Topology) = nelements(t)
+
+Base.iterate(t::Topology, state=1) = state > nelements(t) ? nothing : (t[state], state + 1)
+
+Base.eltype(t::Topology) = eltype([t[i] for i in 1:nelements(t)])
+
+Base.keys(t::Topology) = 1:nelements(t)
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

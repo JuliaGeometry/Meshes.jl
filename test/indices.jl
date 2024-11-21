@@ -4,14 +4,14 @@
   v = view(g, b)
   @test v == CartesianGrid(cart(0, 0), cart(6, 6), dims=(6, 6))
 
-  p = PointSet(collect(vertices(g)))
+  p = PointSet(vertices(g))
   v = view(p, b)
   @test centroid(v, 1) == cart(1, 1)
   @test centroid(v, nelements(v)) == cart(5, 5)
 
   # boxes
   g = cartgrid(10, 10)
-  p = PointSet(collect(vertices(g)))
+  p = PointSet(vertices(g))
   b = Ball(cart(0, 0), T(2))
   v = view(g, b)
   @test nelements(v) == 4

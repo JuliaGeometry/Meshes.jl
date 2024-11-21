@@ -1,4 +1,3 @@
-using Base: BitSignedSmall
 # ------------------------------------------------------------------
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
@@ -38,7 +37,11 @@ MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(addunit(α, u"m"),
 
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
-function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
+sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling) = _sample(rng, d, method)
+
+sample(rng::AbstractRNG, b::Ball, method::MinDistanceSampling) = _sample(rng, b, method)
+
+function _sample(rng::AbstractRNG, obj, method::MinDistanceSampling)
   # retrieve parameters
   α = method.α
   ρ = method.ρ
@@ -46,7 +49,7 @@ function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
   m = method.metric
 
   # total volume/area of the object
-  V = sum(measure, d)
+  V = measure(obj)
 
   # expected number of Poisson samples
   # for relative radius (Lagae & Dutré 2007)
@@ -56,7 +59,7 @@ function sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling)
   O = ceil(Int, δ * ustrip(N))
 
   # oversample the object
-  points = sample(rng, d, HomogeneousSampling(O))
+  points = sample(rng, obj, HomogeneousSampling(O))
 
   # collect points into point set
   𝒫 = PointSet(collect(points))

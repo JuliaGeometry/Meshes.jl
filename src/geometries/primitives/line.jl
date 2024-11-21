@@ -21,6 +21,7 @@ paramdim(::Type{<:Line}) = 1
 ==(l₁::Line, l₂::Line) = l₁.a ∈ l₂ && l₁.b ∈ l₂ && l₂.a ∈ l₁ && l₂.b ∈ l₁
 
 Base.isapprox(l₁::Line, l₂::Line; atol=atol(lentype(l₁)), kwargs...) =
-  isapprox(l₁.a, l₂.a; atol, kwargs...) && isapprox(l₁.b, l₂.b; atol, kwargs...)
+  isapproxzero(norm(ucross(l₁.b - l₁.a, l₂.b - l₂.a)); atol, kwargs...) &&
+  isapproxzero(norm(ucross(l₁.b - l₂.a, l₂.b - l₂.a)); atol, kwargs...)
 
 (l::Line)(t) = coordsum((l.a, l.b), weights=((1 - t), t))

@@ -20,6 +20,7 @@ using Distances: Haversine, SphericalAngle
 using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
+using TiledIteration: TileIterator
 using CoordRefSystems: Basic, Projected, Geographic
 using NearestNeighbors: KDTree, BallTree
 using NearestNeighbors: knn, inrange
@@ -220,6 +221,7 @@ export
   vertex,
   vertices,
   nvertices,
+  eachvertex,
   rings,
   segments,
   angles,
@@ -312,6 +314,7 @@ export
   vertex,
   vertices,
   nvertices,
+  eachvertex,
   element,
   elements,
   nelements,

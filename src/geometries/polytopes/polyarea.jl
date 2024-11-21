@@ -31,7 +31,19 @@ PolyArea(outer...) = PolyArea(collect(outer))
 Base.isapprox(p₁::PolyArea, p₂::PolyArea; atol=atol(lentype(p₁)), kwargs...) =
   length(p₁.rings) == length(p₂.rings) && all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(p₁.rings, p₂.rings))
 
-vertices(p::PolyArea) = mapreduce(vertices, vcat, p.rings)
+function vertex(p::PolyArea, ind)
+  offset = 0
+  for r in p.rings
+    nverts = nvertices(r)
+    if ind ≤ offset + nverts
+      return vertex(r, ind - offset)
+    end
+    offset += nverts
+  end
+  throw(BoundsError(p, ind))
+end
+
+vertices(p::PolyArea) = collect(eachvertex(p))
 
 nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 

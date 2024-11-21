@@ -10,6 +10,7 @@ point of reference. This can be performed with search methods:
 
 ```@docs
 NeighborSearchMethod
+BoundedNeighborSearchMethod
 search
 search!
 searchdists
