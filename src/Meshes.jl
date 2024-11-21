@@ -402,10 +402,6 @@ export
   intersects,
   iscollinear,
   iscoplanar,
-  ≺,
-  ≻,
-  ⪯,
-  ⪰,
 
   # centroids
   centroid,

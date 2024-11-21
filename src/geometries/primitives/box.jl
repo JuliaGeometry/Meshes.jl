@@ -32,7 +32,7 @@ struct Box{M<:Manifold,C<:CRS} <: Primitive{M,C}
   max::Point{M,C}
 
   function Box{M,C}(min, max) where {M<:Manifold,C<:CRS}
-    assertion(min ⪯ max, "can only construct box with min ⪯ max")
+    assertion(min ≤ max, "can only construct box with min ≤ max")
     new(min, max)
   end
 end
