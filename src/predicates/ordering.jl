@@ -49,3 +49,9 @@ See <https://en.wikipedia.org/wiki/Partially_ordered_set#Orders_on_the_Cartesian
 """
 ⪰(A::Point, B::Point) = all(x -> x ≥ zero(x), A - B)
 ⪰(A::Point{🌐}, B::Point{🌐}) = _lat(A) ≥ _lat(B)
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_lat(point) = convert(LatLon, coords(point)).lat
