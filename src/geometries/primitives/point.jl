@@ -68,6 +68,11 @@ function ==(A::Point{🌐,<:LatLon}, B::Point{🌐,<:LatLon})
   lat₁ == lat₂ && lon₁ == lon₂ || (abs(lon₁) == 180u"°" && lon₁ == -lon₂)
 end
 
+function Base.isless(A::Point, B::Point)
+  A′, B′ = promote(A, B)
+  isless(to(A′), to(B′))
+end
+
 function Base.isapprox(A::Point, B::Point; atol=atol(lentype(A)), kwargs...)
   A′, B′ = promote(A, B)
   isapprox(to(A′), to(B′); atol, kwargs...)

@@ -14,20 +14,20 @@ using Random
 
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
-using StatsBase: AbstractWeights, Weights, quantile
+using CoordRefSystems: Basic, Geographic, Projected
 using Distances: PreMetric, Euclidean, Mahalanobis
 using Distances: Haversine, SphericalAngle
 using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
-using TiledIteration: TileIterator
-using CoordRefSystems: Basic, Projected, Geographic
 using NearestNeighbors: KDTree, BallTree
 using NearestNeighbors: knn, inrange
 using DelaunayTriangulation: triangulate, voronoi
 using DelaunayTriangulation: each_solid_triangle
 using DelaunayTriangulation: get_polygons
 using DelaunayTriangulation: get_polygon_points
+using StatsBase: AbstractWeights, Weights, quantile
+using TiledIteration: TileIterator
 using ScopedValues: ScopedValue
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
@@ -36,7 +36,6 @@ import Random
 import Base: sort
 import Base: ==, !
 import Base: +, -, *
-import Base: <, >, ≤, ≥
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
