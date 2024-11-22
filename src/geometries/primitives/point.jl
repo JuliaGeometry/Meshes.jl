@@ -50,7 +50,7 @@ Base.convert(::Type{Point{M,CRS}}, p::Point{M,CRS}) where {M,CRS} = p
 
 # promotion
 function Base.promote(A::Point, B::Point)
-  a, b = promote(coords(A), coords(B))
+  a, b = promote(A.coords, B.coords)
   Point(a), Point(b)
 end
 
@@ -61,10 +61,12 @@ function ==(A::Point, B::Point)
   to(A′) == to(B′)
 end
 
-function ==(A::Point{🌐,<:LatLon}, B::Point{🌐,<:LatLon})
+function ==(A::Point{🌐}, B::Point{🌐})
   A′, B′ = promote(A, B)
-  lat₁, lon₁ = A′.coords.lat, A′.coords.lon
-  lat₂, lon₂ = B′.coords.lat, B′.coords.lon
+  latlon₁ = convert(LatLon, A′.coords)
+  latlon₂ = convert(LatLon, B′.coords)
+  lat₁, lon₁ = latlon₁.lat, latlon₁.lon
+  lat₂, lon₂ = latlon₂.lat, latlon₂.lon
   lat₁ == lat₂ && lon₁ == lon₂ || (abs(lon₁) == 180u"°" && lon₁ == -lon₂)
 end
 
@@ -167,5 +169,3 @@ _manifold(coords::CRS) = 𝔼{CoordRefSystems.ndims(coords)}
 _manifold(::LatLon) = 🌐
 _manifold(::GeocentricLatLon) = 🌐
 _manifold(::AuthalicLatLon) = 🌐
-
-_lat(P) = convert(LatLon, P.coords).lat
