@@ -88,49 +88,20 @@ _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
 _pboxes(points) = _pboxes(manifold(first(points)), points)
 
-function _pboxes(::Type{𝔼{1}}, points)
+function _pboxes(::Type{𝔼{N}}, points) where {N}
   p = first(points)
   ℒ = lentype(p)
-  xmin = typemax(ℒ)
-  xmax = typemin(ℒ)
-  for p in points
-    c = convert(Cartesian, coords(p))
-    xmin = min(c.x, xmin)
-    xmax = max(c.x, xmax)
-  end
-  Box(withcrs(p, (xmin,)), withcrs(p, (xmax,)))
-end
+  cmin = fill(typemax(ℒ), N)
+  cmax = fill(typemin(ℒ), N)
 
-function _pboxes(::Type{𝔼{2}}, points)
-  p = first(points)
-  ℒ = lentype(p)
-  xmin, ymin = typemax(ℒ), typemax(ℒ)
-  xmax, ymax = typemin(ℒ), typemin(ℒ)
   for p in points
-    c = convert(Cartesian, coords(p))
-    xmin = min(c.x, xmin)
-    ymin = min(c.y, ymin)
-    xmax = max(c.x, xmax)
-    ymax = max(c.y, ymax)
+    c = getfield(convert(Cartesian, coords(p)), :coords)
+    for i = 1:N
+      cmin[i] = min(c[i], cmin[i])
+      cmax[i] = max(c[i], cmax[i])
+    end
   end
-  Box(withcrs(p, (xmin, ymin)), withcrs(p, (xmax, ymax)))
-end
-
-function _pboxes(::Type{𝔼{3}}, points)
-  p = first(points)
-  ℒ = lentype(p)
-  xmin, ymin, zmin = typemax(ℒ), typemax(ℒ), typemax(ℒ)
-  xmax, ymax, zmax = typemin(ℒ), typemin(ℒ), typemin(ℒ)
-  for p in points
-    c = convert(Cartesian, coords(p))
-    xmin = min(c.x, xmin)
-    ymin = min(c.y, ymin)
-    zmin = min(c.z, zmin)
-    xmax = max(c.x, xmax)
-    ymax = max(c.y, ymax)
-    zmax = max(c.z, zmax)
-  end
-  Box(withcrs(p, (xmin, ymin, zmin)), withcrs(p, (xmax, ymax, zmax)))
+  Box(withcrs(p, Tuple(cmin)), withcrs(p, Tuple(cmax)))
 end
 
 function _pboxes(::Type{🌐}, points)
