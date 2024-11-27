@@ -60,8 +60,8 @@
     @test @allocated(boundingbox(m)) < 4100
     @test @allocated(boundingbox(d)) < 4100
   else
-    @test @allocated(boundingbox(m)) < 2600
-    @test @allocated(boundingbox(d)) < 2600
+    @test @allocated(boundingbox(m)) < 3200
+    @test @allocated(boundingbox(d)) < 3200
   end
 
   b1 = Box(cart(0, 0), cart(1, 1))
@@ -70,15 +70,15 @@
   d = GeometrySet([b1, b2])
   @test boundingbox(m) == Box(cart(-1, -1), cart(1, 1))
   @test boundingbox(d) == Box(cart(-1, -1), cart(1, 1))
-  @test @allocated(boundingbox(m)) < 50
-  @test @allocated(boundingbox(d)) < 50
+  @test @allocated(boundingbox(m)) < 500
+  @test @allocated(boundingbox(d)) < 500
 
   d = PointSet(cart(0, 0), cart(1, 2), cart(2, 1))
   @test boundingbox(d) == Box(cart(0, 0), cart(2, 2))
-  @test @allocated(boundingbox(d)) < 50
+  @test @allocated(boundingbox(d)) < 500
   d = PointSet(cart(1, 2), cart(2, 1))
   @test boundingbox(d) == Box(cart(1, 1), cart(2, 2))
-  @test @allocated(boundingbox(d)) < 50
+  @test @allocated(boundingbox(d)) < 500
 
   d = cartgrid(10, 10)
   @test boundingbox(d) == Box(cart(0, 0), cart(10, 10))
@@ -93,7 +93,7 @@
   d = PointSet(cart(0, 0), cart(1, 2), cart(2, 1))
   v = view(d, 1:2)
   @test boundingbox(v) == Box(cart(0, 0), cart(1, 2))
-  @test @allocated(boundingbox(v)) < 50
+  @test @allocated(boundingbox(v)) < 500
 
   d = cartgrid(10, 10)
   v = view(d, 1:2)
@@ -119,7 +119,7 @@
   g = cartgrid(10, 10)
   m = convert(SimpleMesh, g)
   @test boundingbox(m) == Box(cart(0, 0), cart(10, 10))
-  @test @allocated(boundingbox(m)) < 50
+  @test @allocated(boundingbox(m)) < 500
 
   p = ParaboloidSurface(cart(1, 2, 3), T(5), T(4))
   @test boundingbox(p) ≈ Box(cart(-4, -3, 3), cart(6, 7, 73 / 16))

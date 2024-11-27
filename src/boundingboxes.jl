@@ -96,7 +96,7 @@ function _pboxes(::Type{𝔼{N}}, points) where {N}
 
   for p in points
     c = getfield(convert(Cartesian, coords(p)), :coords)
-    for i = 1:N
+    for i in 1:N
       cmin[i] = min(c[i], cmin[i])
       cmax[i] = max(c[i], cmax[i])
     end
