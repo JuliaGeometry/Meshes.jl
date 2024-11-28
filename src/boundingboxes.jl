@@ -88,20 +88,42 @@ _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 
 _pboxes(points) = _pboxes(manifold(first(points)), points)
 
-function _pboxes(::Type{𝔼{N}}, points) where {N}
-  p = first(points)
-  ℒ = lentype(p)
-  cmin = fill(typemax(ℒ), N)
-  cmax = fill(typemin(ℒ), N)
+@generated function _pboxes(::Type{𝔼{N}}, points) where {N}
+  minvars = ntuple(i -> Symbol(:cmin, i), N)
+  maxvars = ntuple(i -> Symbol(:cmax, i), N)
 
-  for p in points
-    c = CoordRefSystems.values(convert(Cartesian, coords(p)))
-    for i in 1:N
-      cmin[i] = min(c[i], cmin[i])
-      cmax[i] = max(c[i], cmax[i])
-    end
+  mininit = ntuple(N) do i
+    minvar = minvars[i]
+    :($minvar = typemax(ℒ))
   end
-  Box(withcrs(p, Tuple(cmin)), withcrs(p, Tuple(cmax)))
+  maxinit = ntuple(N) do i
+    maxvar = maxvars[i]
+    :($maxvar = typemin(ℒ))
+  end
+
+  minupdate = ntuple(N) do i
+    minvar = minvars[i]
+    :($minvar = min(c[$i], $minvar))
+  end
+  maxupdate = ntuple(N) do i
+    maxvar = maxvars[i]
+    :($maxvar = max(c[$i], $maxvar))
+  end
+
+  quote
+    p = first(points)
+    ℒ = lentype(p)
+    $(mininit...)
+    $(maxinit...)
+
+    for p in points
+      c = CoordRefSystems.values(convert(Cartesian, coords(p)))
+      $(minupdate...)
+      $(maxupdate...)
+    end
+
+    Box(withcrs(p, ($(minvars...),)), withcrs(p, ($(maxvars...),)))
+  end
 end
 
 function _pboxes(::Type{🌐}, points)
