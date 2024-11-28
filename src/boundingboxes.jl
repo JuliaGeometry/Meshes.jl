@@ -89,25 +89,25 @@ _bboxes(boxes) = _pboxes(point for box in boxes for point in extrema(box))
 _pboxes(points) = _pboxes(manifold(first(points)), points)
 
 @generated function _pboxes(::Type{𝔼{N}}, points) where {N}
-  minvars = ntuple(i -> Symbol(:cmin, i), N)
-  maxvars = ntuple(i -> Symbol(:cmax, i), N)
+  mincoords = ntuple(i -> Symbol(:cmin, i), N)
+  maxcoords = ntuple(i -> Symbol(:cmax, i), N)
 
   mininit = ntuple(N) do i
-    minvar = minvars[i]
-    :($minvar = typemax(ℒ))
+    cmin = mincoords[i]
+    :($cmin = typemax(ℒ))
   end
   maxinit = ntuple(N) do i
-    maxvar = maxvars[i]
-    :($maxvar = typemin(ℒ))
+    cmax = maxcoords[i]
+    :($cmax = typemin(ℒ))
   end
 
   minupdate = ntuple(N) do i
-    minvar = minvars[i]
-    :($minvar = min(c[$i], $minvar))
+    cmin = mincoords[i]
+    :($cmin = min(c[$i], $cmin))
   end
   maxupdate = ntuple(N) do i
-    maxvar = maxvars[i]
-    :($maxvar = max(c[$i], $maxvar))
+    cmax = maxcoords[i]
+    :($cmax = max(c[$i], $cmax))
   end
 
   quote
@@ -122,7 +122,7 @@ _pboxes(points) = _pboxes(manifold(first(points)), points)
       $(maxupdate...)
     end
 
-    Box(withcrs(p, ($(minvars...),)), withcrs(p, ($(maxvars...),)))
+    Box(withcrs(p, ($(mincoords...),)), withcrs(p, ($(maxcoords...),)))
   end
 end
 
