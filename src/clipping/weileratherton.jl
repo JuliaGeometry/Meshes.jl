@@ -46,6 +46,9 @@ RingVertex{VT}(point::Point{M,C}) where {VT<:VertexType,M<:Manifold,C<:CRS} = Ri
 isnormal(::RingVertex{Normal}) = true
 isnormal(::RingVertex) = false
 
+isentering(::RingVertex{Entering}) = true
+isentering(::RingVertex) = false
+
 function appendvertices!(v₁::RingVertex{Normal}, v₂::RingVertex{Normal})
   v₂.left = v₁.left
   v₁.left = v₂
@@ -100,18 +103,20 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
 
   # Convert the subject polygon rings and the clipping ring to the RingVertex data structure.
   clippedrings = [gettraversalring(r) for r in polyrings]
-  startclipping = gettraversalring(ring)
+  clipping = gettraversalring(ring)
 
   # For keeping track of intersected rings, as the non-intersected ones need additional
   # processing at the end.
   intersected = zeros(Bool, length(clippedrings))
 
+  # For marking of clipping ring vertices which touch rings of clipped polygon.
+  clippingtouches = zeros(Bool, nvertices(ring))
+
   # For collecting all entering vertices, as they are used as starting points for collection
   # of the output rings.
   entering = RingVertex{Entering}[]
 
-  clipping = startclipping
-  while true
+  for l in 1:nvertices(ring)
     # Three consecutive clipping vertices are used to properly identify intersection vertex type
     # for corner cases, so the clipping segment is constructed with the two following vertices
     # after the current one.
@@ -119,26 +124,30 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
     clippingedgeend = nextnormal(clippingedgestart)
     clippingsegment = Segment(clippingedgestart.point, clippingedgeend.point)
 
-    for (k, startclipped) in enumerate(clippedrings)
-      clipped = startclipped
-      while true
+    for (k, clipped) in enumerate(clippedrings)
+      for _ in 1:nvertices(polyrings[k])
         # Like for the clipping, the clipped also uses three consecutive vertices.
         clippededgestart = nextnormal(clipped)
         clippededgeend = nextnormal(clippededgestart)
         clippedsegment = Segment(clippededgestart.point, clippededgeend.point)
 
         I = intersection(clippingsegment, clippedsegment)
-        vertex = vertexfromintersection(I, clipping, clipped)
-        success = insertintersections!(vertex, clippingedgestart, clippededgestart, entering)
-        intersected[k] = intersected[k] || success
+
+        if type(I) != NotIntersecting
+          vertices = vertexfromintersection(I, clipping, clipped)
+          if !isnothing(vertices)
+            insertintersections!(vertices, clippingedgestart, clippededgestart, entering)
+            intersected[k] = true
+          elseif type(I) in [EdgeTouching, CornerTouching] && get(I) ≈ clippingedgestart.point
+            clippingtouches[l] = true
+          end
+        end
 
         clipped = nextnormal(clipped)
-        nextnormal(clipped) == nextnormal(startclipped) && break
       end
     end
 
     clipping = nextnormal(clipping)
-    nextnormal(clipping) == nextnormal(startclipping) && break
   end
 
   if !any(intersected)
@@ -147,8 +156,11 @@ function clip(poly::Polygon, ring::Ring, ::WeilerAthertonClipping)
       # For an inner clipping ring take all clipped rings outside of it.
       return PolyArea(collectoutsiderings(ring, polyrings)...)
     else
+      # Align the clippingtouches with the ring vertices.
+      clippingtouches = [clippingtouches[end], clippingtouches[1:(end - 1)]...]
       # For an outer clipping ring add it to act as the outer ring of the clipped ring.
-      collectedrings = all(v ∈ PolyArea(polyrings[1]) for v in vertices(ring)) ? [ring] : []
+      collectedrings =
+        all(t || v ∈ PolyArea(polyrings[1]) for (t, v) in zip(clippingtouches, vertices(ring))) ? [ring] : []
     end
   else
     # Collect rings formed from the intersected rings.
@@ -223,36 +235,27 @@ function insertintersection!(head::RingVertex{Normal}, intersection::RingVertex,
     currentdistance = measure(Segment(head.point, current.point))
 
     if (newdistance < currentdistance) || (current == tail)
-      if !(newdistance ≈ currentdistance) # TODO Check if this is needed.
-        # Only add if it is not coincident with the following vertex, or it could be added twice,
-        # if it is the tail vertex. In such case, the intersection will be detected second time
-        # and added then.
-        setnext!(intersection, current)
-        setnext!(before, intersection)
-      end
+      setnext!(intersection, current)
+      setnext!(before, intersection)
       break
     end
   end
 end
 
-# Inserts the intersection into both the clipping and the clipped rings.
-function insertintersections!(vertex::Tuple, clipping::RingVertex{Normal}, clipped::RingVertex{Normal}, entering)
-  (vtype, point) = vertex
-  if !isnothing(vtype)
-    intersection = RingVertex{vtype}(point)
-    insertintersection!(clipping, intersection, getnextclippingvertex, setnextclippingvertex!)
-    insertintersection!(clipped, intersection, getnextclippedvertex, setnextclippedvertex!)
+insertintersections!(_::Nothing, _, _, _) = nothing
 
-    if vtype == Entering
-      push!(entering, intersection)
-    end
-    return true
+# Inserts the intersection into both the clipping and the clipped rings.
+function insertintersections!(vertex::RingVertex, clipping::RingVertex{Normal}, clipped::RingVertex{Normal}, entering)
+  insertintersection!(clipping, vertex, getnextclippingvertex, setnextclippingvertex!)
+  insertintersection!(clipped, vertex, getnextclippedvertex, setnextclippedvertex!)
+
+  if isentering(vertex)
+    push!(entering, vertex)
   end
-  false
 end
 
 insertintersections!(vertices::Array, clipping, clipped, entering) =
-  any(insertintersections!.(vertices, Ref(clipping), Ref(clipped), Ref(entering)))
+  insertintersections!.(vertices, Ref(clipping), Ref(clipped), Ref(entering))
 
 # Takes a list of entering vertices and returns all rings that contain those vertices.
 function collectclipped(entering::Vector{RingVertex{Entering}})
@@ -270,28 +273,14 @@ function collectclipped(entering::Vector{RingVertex{Entering}})
         break
       end
 
-      push!(ring, vertex)
-      push!(visited, vertex)
-      vertex = getnextresultvertex(vertex)
-    end
-
-    # Remove duplicates.
-    newring = RingVertex[ring[1]]
-    for i in 2:length(ring)
-      if !(ring[i].point ≈ newring[end].point)
-        push!(newring, ring[i])
+      nextvertex = getnextresultvertex(vertex)
+      # Skip adding sequential duplicates, and sequential entering vertices
+      # which can happen with overlapping edge intersections.
+      if !(isentering(vertex) && isentering(nextvertex)) && !(vertex.point ≈ nextvertex.point)
+        push!(ring, vertex)
       end
-    end
-    ring = newring
-
-    # Polygon might start several vertices after the first collected.
-    # This generally happens when there are overlapping edges that lead
-    # to several entering vertices without exiting in between. Then, the
-    # actual polygon is found by discarding the extra vertices before the
-    # proper loop.
-    k = findfirst(x -> ring[end].point == x.point, ring[1:(end - 1)])
-    if !isnothing(k)
-      ring = ring[(k + 1):end]
+      push!(visited, vertex)
+      vertex = nextvertex
     end
 
     if length(ring) > 2
@@ -306,13 +295,13 @@ function vertexfromintersection(I, clipping, clipped)
   type(I) == CornerTouching && return vertexfromcornertouching(get(I), clipping, clipped)
   type(I) == EdgeTouching && return vertexfromedgetouching(get(I), clipping, clipped)
   type(I) == Overlapping && return vertexfromoverlapping(get(I), clipping, clipped)
-  (nothing, nothing)
+  @assert false # No other intersection types expected.
 end
 
 function vertexfromcrossing(point, clipping, clipped)
   cl = Line(nextnormal(clipping).point, nextnormal(nextnormal(clipping)).point)
   vertextype = sideof(nextnormal(nextnormal(clipped)).point, cl) == LEFT ? Entering : Exiting
-  (vertextype, point)
+  RingVertex{vertextype}(point)
 end
 
 function vertexfromedgetouching(point, clipping, clipped)
@@ -336,7 +325,7 @@ function vertexfromedgetouching(point, clipping, clipped)
       Segment(nextnormal(clipping).point, nextnormal(nextnormal(clipping)).point)
     )
   end
-  (vertextype, point)
+  isnothing(vertextype) ? nothing : RingVertex{vertextype}(point)
 end
 
 function vertexfromcornertouching(point, clipping, clipped)
@@ -352,7 +341,7 @@ function vertexfromcornertouching(point, clipping, clipped)
       Segment(point, nextnormal(nextnormal(clipping)).point)
     )
   end
-  (vertextype, point)
+  isnothing(vertextype) ? nothing : RingVertex{vertextype}(point)
 end
 
 function vertexfromoverlapping(segment, clipping, clipped)
@@ -360,7 +349,7 @@ function vertexfromoverlapping(segment, clipping, clipped)
   # the observed vertices for clipped and clipping rings. If it does, attempt adding a
   # point.
 
-  ret = Tuple[]
+  ret = RingVertex[]
   for point in extrema(segment)
     if point ≈ nextnormal(clipped).point
       clippingprev = Segment(nextnormal(clipping).point, point)
@@ -373,7 +362,9 @@ function vertexfromoverlapping(segment, clipping, clipped)
         clippingprev,
         Segment(point, nextnormal(nextnormal(clipping)).point)
       )
-      push!(ret, (vertextype, point))
+      if !isnothing(vertextype)
+        push!(ret, RingVertex{vertextype}(point))
+      end
     end
 
     if point ≈ nextnormal(clipping).point
@@ -387,10 +378,12 @@ function vertexfromoverlapping(segment, clipping, clipped)
         Segment(clipping.point, point),
         Segment(point, nextnormal(nextnormal(clipping)).point)
       )
-      push!(ret, (vertextype, point))
+      if !isnothing(vertextype)
+        push!(ret, RingVertex{vertextype}(point))
+      end
     end
   end
-  ret
+  (length(ret) == 0) ? nothing : ret
 end
 
 # Used to figure out the type of the vertex to add when intersection is other than the crossing
@@ -419,13 +412,13 @@ function decidedirection(clipped₁, clipped₂, clipping₁, clipping₂)
   γ = mod(∠(a, c), twoπ)
   δ = mod(∠(a, d), twoπ)
 
-  if isapprox(γ, zero(γ), atol=tol) || isapprox(γ, twoπ, atol=tol)
+  if isapproxzero(γ, atol=tol) || isapprox(γ, twoπ, atol=tol)
     if δ < β < twoπ
       return Entering
     else
       return Exiting
     end
-  elseif isapprox(δ, zero(δ), atol=tol) || isapprox(δ, twoπ, atol=tol)
+  elseif isapproxzero(δ, atol=tol) || isapprox(δ, twoπ, atol=tol)
     if γ < β < twoπ
       return Exiting
     else

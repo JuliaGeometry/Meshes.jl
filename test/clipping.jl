@@ -143,7 +143,7 @@ end
   clipped = clip(poly, other, WeilerAthertonClipping())
   @test !issimple(clipped)
   crings = rings(clipped)
-  @test all(vertices(crings[1]) .≈ [cart(4, 0), cart(4, 4), cart(0, 4), cart(0, 0)])
+  @test crings[1] ≗ Ring([cart(4, 0), cart(4, 4), cart(0, 4), cart(0, 0)])
   @test crings[2] ≗ inner
 
   # PolyArea with one inner ring inside `other` and another inner ring outside `other`
@@ -170,9 +170,6 @@ end
     ]
   )
 
-  # Tolerances are not properly retrieved for Float32 types, so need to pass them explicitly.
-  atol_el = coords(cart(0.0)).x
-
   # Overlapping clipping polygon with the edges of the hole of the subject polygon.
   triangle = Triangle((0.0, 0.0), (1.0, 0.0), (0.5, 1.0))
   rectangle = Quadrangle((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0))
@@ -185,7 +182,6 @@ end
     isapprox.(
       vertices(crings[1]),
       [cart(0.8, 0.3), cart(0.3, 0.3), cart(0.15, 0.0), cart(0.95, 0.0)],
-      atol=atol(atol_el)
     )
   )
 end
