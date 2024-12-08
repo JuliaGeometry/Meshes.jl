@@ -143,7 +143,7 @@ end
   clipped = clip(poly, other, WeilerAthertonClipping())
   @test !issimple(clipped)
   crings = rings(clipped)
-  @test all(vertices(crings[1]) .≈ [cart(4, 0), cart(4, 4), cart(0, 4), cart(0, 0)])
+  @test crings[1] ≗ Ring([cart(4, 0), cart(4, 4), cart(0, 4), cart(0, 0)])
   @test crings[2] ≗ inner
 
   # PolyArea with one inner ring inside `other` and another inner ring outside `other`
