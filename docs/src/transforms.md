@@ -146,6 +146,23 @@ triangle = Triangle((0, 0), (1, 0), (1, 1))
 triangle |> Proj(Polar)
 ```
 
+## InDomain
+
+```@docs
+InDomain
+```
+
+```@example transforms
+# load coordinate reference system
+using CoordRefSystems: LatLon
+
+# latlon grid
+grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
+
+# retains only the elements in the projection domain
+grid |> InDomain(Mercator)
+```
+
 ## Morphological
 
 ```@docs

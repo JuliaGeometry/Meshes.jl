@@ -539,6 +539,7 @@ export
   Stretch,
   StdCoords,
   Proj,
+  InDomain,
   Morphological,
   LengthUnit,
   Shadow,
