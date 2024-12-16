@@ -6,8 +6,8 @@
     InDomain(CRS)
     InDomain(code)
 
-Retain the geometries within the projection domain
-of type `CRS` or with EPSG/ESRI `code`.
+Retain the geometries within the domain of the
+projection of type `CRS` or with EPSG/ESRI `code`.
 """
 struct InDomain{CRS} <: CoordinateTransform end
 
