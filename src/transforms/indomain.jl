@@ -6,8 +6,8 @@
     InDomain(CRS)
     InDomain(code)
 
-Retain the geometries within the domain of the
-projection of type `CRS` or with EPSG/ESRI `code`.
+Retain the geometries within the projection domain
+of type `CRS` or with EPSG/ESRI `code`.
 """
 struct InDomain{CRS} <: CoordinateTransform end
 
@@ -29,6 +29,18 @@ preprocess(t::InDomain, d::GeometrySet{<:Manifold,<:CRS,<:Union{Polytope,MultiPo
 preprocess(t::InDomain, d::PointSet) = findall(_indomain(t), d)
 
 apply(t::InDomain, d::Domain) = view(d, preprocess(t, d)), nothing
+
+# -----------
+# IO METHODS
+# -----------
+
+Base.show(io::IO, ::InDomain{CRS}) where {CRS} = print(io, "InDomain(CRS: $CRS)")
+
+function Base.show(io::IO, ::MIME"text/plain", t::InDomain{CRS}) where {CRS}
+  summary(io, t)
+  println(io)
+  print(io, "└─ CRS: $CRS")
+end
 
 # -----------------
 # HELPER FUNCTIONS
