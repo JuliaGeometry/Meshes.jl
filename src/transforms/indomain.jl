@@ -2,6 +2,13 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    InDomain(CRS)
+    InDomain(code)
+
+Retain the geometries within the domain of the
+projection of type `CRS` or with EPSG/ESRI `code`.
+"""
 struct InDomain{CRS} <: CoordinateTransform end
 
 InDomain(CRS) = InDomain{CRS}()
@@ -12,30 +19,19 @@ InDomain(code::Type{<:ESRI}) = InDomain(CoordRefSystems.get(code))
 
 parameters(::InDomain{CRS}) where {CRS} = (; CRS)
 
-function preprocess(::InDomain{CRS}, d::Domain) where {CRS}
-  findall(d) do g
-    all(pointify(g)) do p
-      indomain(CRS, coords(p))
-    end
-  end
-end
+preprocess(t::InDomain, d::Domain) = findall(g -> all(_indomain(t), pointify(g)), d)
 
-function preprocess(::InDomain{CRS}, d::Mesh) where {CRS}
-  findall(d) do g
-    all(eachvertex(g)) do p
-      indomain(CRS, coords(p))
-    end
-  end
-end
+preprocess(t::InDomain, d::Mesh) = findall(g -> all(_indomain(t), eachvertex(g)), d)
 
-function preprocess(::InDomain{CRS}, d::GeometrySet{<:Any,<:Any,<:Union{Polytope,MultiPolytope}}) where {CRS}
-  findall(d) do g
-    all(eachvertex(g)) do p
-      indomain(CRS, coords(p))
-    end
-  end
-end
+preprocess(t::InDomain, d::GeometrySet{<:Manifold,<:CRS,<:Union{Polytope,MultiPolytope}}) =
+  findall(g -> all(_indomain(t), eachvertex(g)), d)
 
-preprocess(::InDomain{CRS}, d::PointSet) where {CRS} = findall(p -> indomain(CRS, coords(p)), d)
+preprocess(t::InDomain, d::PointSet) = findall(_indomain(t), d)
 
 apply(t::InDomain, d::Domain) = view(d, preprocess(t, d)), nothing
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_indomain(::InDomain{CRS}) where {CRS} = p -> indomain(CRS, coords(p))
