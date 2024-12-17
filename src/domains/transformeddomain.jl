@@ -22,7 +22,7 @@ function TransformedDomain(d::Domain, t::Transform)
 end
 
 # specialize constructor to avoid deep structures
-TransformedDomain(d::TransformedDomain, t::Transform) = TransformedMesh(d.domain, d.transform → t)
+TransformedDomain(d::TransformedDomain, t::Transform) = TransformedDomain(d.domain, d.transform → t)
 
 Base.parent(d::TransformedDomain) = d.domain
 
