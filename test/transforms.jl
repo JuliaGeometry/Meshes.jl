@@ -1469,24 +1469,24 @@ end
   @test r === d
 end
 
-@testitem "InDomain" setup = [Setup] begin
-  @test !isaffine(InDomain(Mercator))
-  @test !TB.isrevertible(InDomain(Mercator))
-  @test !TB.isinvertible(InDomain(Mercator))
-  @test TB.parameters(InDomain(Mercator)) == (; CRS=Mercator)
-  @test TB.parameters(InDomain(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
-  @test TB.parameters(InDomain(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
-  f = InDomain(Mercator)
-  @test sprint(show, f) == "InDomain(CRS: CoordRefSystems.Mercator)"
+@testitem "ValidCoords" setup = [Setup] begin
+  @test !isaffine(ValidCoords(Mercator))
+  @test !TB.isrevertible(ValidCoords(Mercator))
+  @test !TB.isinvertible(ValidCoords(Mercator))
+  @test TB.parameters(ValidCoords(Mercator)) == (; CRS=Mercator)
+  @test TB.parameters(ValidCoords(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
+  @test TB.parameters(ValidCoords(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
+  f = ValidCoords(Mercator)
+  @test sprint(show, f) == "ValidCoords(CRS: CoordRefSystems.Mercator)"
   @test sprint(show, MIME"text/plain"(), f) == """
-  InDomain transform
+  ValidCoords transform
   └─ CRS: CoordRefSystems.Mercator"""
 
   # ---------
   # POINTSET
   # ---------
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   d = PointSet([latlon(-90, 0), latlon(-45, 0), latlon(0, 0), latlon(45, 0), latlon(90, 0)])
   r, c = TB.apply(f, d)
   @test r == PointSet([latlon(-45, 0), latlon(0, 0), latlon(45, 0)])
@@ -1495,7 +1495,7 @@ end
   # GEOMETRYSET
   # ------------
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   t1 = Triangle(latlon(-90, 0), latlon(-45, 30), latlon(-45, -30))
   t2 = Triangle(latlon(-45, 0), latlon(0, 30), latlon(0, -30))
   t3 = Triangle(latlon(0, -30), latlon(0, 30), latlon(45, 0))
@@ -1504,7 +1504,7 @@ end
   r, c = TB.apply(f, d)
   @test r == GeometrySet([t2, t3])
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   b1 = Box(latlon(-90, -30), latlon(-30, 30))
   b2 = Box(latlon(-30, -30), latlon(30, 30))
   b3 = Box(latlon(30, -30), latlon(90, 30))
@@ -1516,7 +1516,7 @@ end
   # CARTESIANGRID
   # --------------
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   d = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
   r, c = TB.apply(f, d)
   linds = LinearIndices(size(d))
@@ -1526,7 +1526,7 @@ end
   # RECTILINEARGRID
   # ----------------
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
   d = convert(RectilinearGrid, g)
   r, c = TB.apply(f, d)
@@ -1537,7 +1537,7 @@ end
   # STRUCTUREDGRID
   # ---------------
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
   d = convert(StructuredGrid, g)
   r, c = TB.apply(f, d)
@@ -1548,7 +1548,7 @@ end
   # SIMPLEMESH
   # -----------
 
-  f = InDomain(Mercator)
+  f = ValidCoords(Mercator)
   g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
   d = convert(SimpleMesh, g)
   r, c = TB.apply(f, d)

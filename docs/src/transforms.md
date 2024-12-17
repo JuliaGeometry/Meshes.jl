@@ -146,10 +146,10 @@ triangle = Triangle((0, 0), (1, 0), (1, 1))
 triangle |> Proj(Polar)
 ```
 
-## InDomain
+## ValidCoords
 
 ```@docs
-InDomain
+ValidCoords
 ```
 
 ```@example transforms
@@ -160,7 +160,7 @@ using CoordRefSystems: LatLon
 grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
 
 # retains only the elements in the projection domain
-subgrid = grid |> InDomain(Mercator)
+subgrid = grid |> ValidCoords(Mercator)
 
 # plot the projected grid
 viz(subgrid |> Proj(Mercator), showsegments=true)
