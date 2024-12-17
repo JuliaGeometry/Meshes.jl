@@ -289,7 +289,7 @@ export
   # domain traits
   Domain,
   SubDomain,
-  TranformedDomain,
+  TransformedDomain,
   embeddim,
   paramdim,
   crs,
