@@ -5,7 +5,7 @@
 """
     TranformedDomain(domain, transform)
 
-TODO
+Lazy representation of a geometric `transform` applied to a `domain`.
 """
 struct TranformedDomain{M<:Manifold,C<:CRS,D<:Domain,T<:Transform} <: Domain{M,C}
   domain::D
