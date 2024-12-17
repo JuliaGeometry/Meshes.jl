@@ -19,23 +19,23 @@ ValidCoords(code::Type{<:ESRI}) = ValidCoords(CoordRefSystems.get(code))
 
 parameters(::ValidCoords{CRS}) where {CRS} = (; CRS)
 
-preprocess(t::ValidCoords, d::Domain) = findall(g -> all(_indomain(t), pointify(g)), d)
+preprocess(t::ValidCoords, d::Domain) = findall(g -> all(_isvalid(t), pointify(g)), d)
 
 function preprocess(t::ValidCoords, d::Mesh)
-  indomain = _indomain(t)
+  isvalid = _isvalid(t)
   points = vertices(d)
   topo = topology(d)
   ∂₂₀ = Boundary{2,0}(topo)
   findall(1:nelements(d)) do elem
     is = ∂₂₀(elem)
-    all(indomain(points[i]) for i in is)
+    all(isvalid(points[i]) for i in is)
   end
 end
 
 preprocess(t::ValidCoords, d::GeometrySet{<:Manifold,<:CRS,<:Union{Polytope,MultiPolytope}}) =
-  findall(g -> all(_indomain(t), eachvertex(g)), d)
+  findall(g -> all(_isvalid(t), eachvertex(g)), d)
 
-preprocess(t::ValidCoords, d::PointSet) = findall(_indomain(t), d)
+preprocess(t::ValidCoords, d::PointSet) = findall(_isvalid(t), d)
 
 apply(t::ValidCoords, d::Domain) = view(d, preprocess(t, d)), nothing
 
@@ -55,4 +55,4 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-_indomain(::ValidCoords{CRS}) where {CRS} = p -> indomain(CRS, coords(p))
+_isvalid(::ValidCoords{CRS}) where {CRS} = p -> indomain(CRS, coords(p))
