@@ -160,7 +160,10 @@ using CoordRefSystems: LatLon
 grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
 
 # retains only the elements in the projection domain
-grid |> InDomain(Mercator)
+subgrid = grid |> InDomain(Mercator)
+
+# plot the projected grid
+viz(subgrid |> Proj(Mercator), showsegments=true)
 ```
 
 ## Morphological
