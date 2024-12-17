@@ -21,7 +21,16 @@ parameters(::InDomain{CRS}) where {CRS} = (; CRS)
 
 preprocess(t::InDomain, d::Domain) = findall(g -> all(_indomain(t), pointify(g)), d)
 
-preprocess(t::InDomain, d::Mesh) = findall(g -> all(_indomain(t), eachvertex(g)), d)
+function preprocess(t::InDomain, d::Mesh)
+  indomain = _indomain(t)
+  points = vertices(d)
+  topo = topology(d)
+  ∂₂₀ = Boundary{2,0}(topo)
+  findall(1:nelements(d)) do elem
+    is = ∂₂₀(elem)
+    all(indomain(points[i]) for i in is)
+  end
+end
 
 preprocess(t::InDomain, d::GeometrySet{<:Manifold,<:CRS,<:Union{Polytope,MultiPolytope}}) =
   findall(g -> all(_indomain(t), eachvertex(g)), d)
