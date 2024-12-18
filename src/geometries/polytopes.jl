@@ -8,7 +8,7 @@
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces.
-The parameter `K` is also known as the rank or parametric dimension 
+The parameter `K` is also known as the rank or parametric dimension
 of the polytope (<https://en.wikipedia.org/wiki/Abstract_polytope>).
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
@@ -154,6 +154,16 @@ function angles(c::Chain)
   i1 = firstindex(vs) + !isclosed(c)
   i2 = lastindex(vs) - !isclosed(c)
   map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
+end
+
+function (c::Chain)(t)
+  if t < 0 || t > 1
+    throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
+  end
+  s = collect(segments(c))
+  N = length(s)
+  k = max(1, ceil(Int, N * t))
+  s[k](N * t - k + 1)
 end
 
 # implementations of Chain
