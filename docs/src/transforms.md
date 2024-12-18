@@ -156,7 +156,7 @@ ValidCoords
 # load coordinate reference system
 using CoordRefSystems: LatLon
 
-# Regular grid with LatLon coordinates
+# regular grid with LatLon coordinates
 grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
 
 # retain elements in the projection domain
