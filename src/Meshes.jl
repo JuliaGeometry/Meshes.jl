@@ -542,6 +542,7 @@ export
   Proj,
   Morphological,
   LengthUnit,
+  ValidCoords,
   Shadow,
   Slice,
   Repair,
