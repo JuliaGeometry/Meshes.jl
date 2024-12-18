@@ -156,10 +156,10 @@ ValidCoords
 # load coordinate reference system
 using CoordRefSystems: LatLon
 
-# latlon grid
+# Regular grid with LatLon coordinates
 grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
 
-# retains only the elements in the projection domain
+# retain elements in the projection domain
 subgrid = grid |> ValidCoords(Mercator)
 
 # plot the projected grid
