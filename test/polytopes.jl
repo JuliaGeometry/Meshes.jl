@@ -264,6 +264,22 @@ end
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test crs(centroid(r)) === crs(r)
 
+  # parameterization
+  ri = Ring(latlon(45, 0), latlon(45, 90), latlon(90, 90))
+  @test ri(T(0)) == latlon(45, 0)
+  @test ri(T(0.25)) == latlon(45, 67.5)
+  @test ri(T(0.5)) == latlon(67.5, 90)
+  @test ri(T(0.75)) == latlon(78.75, 67.5)
+  @test ri(T(1)) == latlon(45, 0)
+
+  ro = Rope(latlon(45, 0), latlon(45, 90), latlon(90, 90))
+  @test ro(T(0)) == latlon(45, 0)
+  @test ro(T(0.25)) == latlon(45, 45)
+  @test ro(T(0.5)) == latlon(45, 90)
+  @test ro(T(0.75)) == latlon(67.5, 90)
+  @test ro(T(1)) == latlon(90, 90)
+
+
   ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
   ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
   @test sprint(show, ri) == "Ring((x: 1.0 m, y: 1.0 m), (x: 2.0 m, y: 2.0 m), (x: 3.0 m, y: 3.0 m))"
