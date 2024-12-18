@@ -71,8 +71,6 @@ applycoord(t::Proj, g::RectilinearGrid) = TransformedGrid(g, t)
 
 applycoord(t::Proj, g::StructuredGrid) = TransformedGrid(g, t)
 
-applycoord(t::Proj, d::SubDomain) = TransformedDomain(d, t)
-
 # -----------
 # IO METHODS
 # -----------

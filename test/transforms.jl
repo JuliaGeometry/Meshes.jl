@@ -1414,16 +1414,6 @@ end
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
-  # ----------
-  # SUBDOMAIN
-  # ----------
-
-  f = Proj(Polar)
-  g = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
-  d = view(g, 1:10)
-  r, c = TB.apply(f, d)
-  @test r ≈ view(SimpleMesh(f.(vertices(g)), topology(g)), 1:10)
-
   # --------------
   # SPECIAL CASES
   # --------------
