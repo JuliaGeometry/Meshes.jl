@@ -161,9 +161,9 @@ function (c::Chain)(t)
     throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
   end
   n = nvertices(c) - !isclosed(c)
-  k = max(1, ceil(Int, n * t))
+  k = min(n - 1, floor(Int, n * t))
   s, _ = iterate(segments(c), k)
-  s(n * t - k + 1)
+  s(n * t - k)
 end
 
 # implementations of Chain
