@@ -129,23 +129,6 @@ viz(fig[1,2], mesh)
 fig
 ```
 
-## Proj
-
-```@docs
-Proj
-```
-
-```@example transforms
-# load coordinate reference system
-using CoordRefSystems: Polar
-
-# triangle with Cartesian coordinates
-triangle = Triangle((0, 0), (1, 0), (1, 1))
-
-# reproject to polar coordinates
-triangle |> Proj(Polar)
-```
-
 ## ValidCoords
 
 ```@docs
@@ -164,6 +147,23 @@ subgrid = grid |> ValidCoords(Mercator)
 
 # plot the projected grid
 viz(subgrid |> Proj(Mercator), showsegments=true)
+```
+
+## Proj
+
+```@docs
+Proj
+```
+
+```@example transforms
+# load coordinate reference system
+using CoordRefSystems: Polar
+
+# triangle with Cartesian coordinates
+triangle = Triangle((0, 0), (1, 0), (1, 1))
+
+# reproject to polar coordinates
+triangle |> Proj(Polar)
 ```
 
 ## Morphological

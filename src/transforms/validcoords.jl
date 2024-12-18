@@ -49,5 +49,6 @@ end
 # -----------------
 
 _isvalid(::ValidCoords{CRS}, p::Point) where {CRS} = indomain(CRS, coords(p))
-_isvalid(t::ValidCoords, g::Union{Polytope,MultiPolytope}) = all(p -> _isvalid(t, p), eachvertex(g))
+_isvalid(t::ValidCoords, g::Polytope) = all(p -> _isvalid(t, p), eachvertex(g))
+_isvalid(t::ValidCoords, g::MultiPolytope) = all(p -> _isvalid(t, p), eachvertex(g))
 _isvalid(t::ValidCoords, g::Geometry) = all(p -> _isvalid(t, p), pointify(g))
