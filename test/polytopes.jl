@@ -279,7 +279,6 @@ end
   @test ro(T(0.75)) == latlon(67.5, 90)
   @test ro(T(1)) == latlon(90, 90)
 
-
   ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
   ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
   @test sprint(show, ri) == "Ring((x: 1.0 m, y: 1.0 m), (x: 2.0 m, y: 2.0 m), (x: 3.0 m, y: 3.0 m))"
