@@ -4,10 +4,12 @@
 
 """
     ValidCoords(CRS)
+
+Retain the geometries within the domain of the projected `CRS`.
+
     ValidCoords(code)
 
-Retain the geometries within the domain of the
-projection of type `CRS` or with EPSG/ESRI `code`.
+Alternatively, specify the projected `CRS` using a EPSG/ESRI `code`.
 """
 struct ValidCoords{CRS} <: GeometricTransform end
 
