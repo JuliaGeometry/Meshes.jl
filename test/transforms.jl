@@ -1283,6 +1283,17 @@ end
   @test r == GeometrySet([t2, t3])
 
   f = ValidCoords(Mercator)
+  t1 = Triangle(latlon(-90, 0), latlon(-45, 30), latlon(-45, -30))
+  t2 = Triangle(latlon(-45, 0), latlon(0, 30), latlon(0, -30))
+  t3 = Triangle(latlon(0, -30), latlon(0, 30), latlon(45, 0))
+  t4 = Triangle(latlon(45, -30), latlon(45, 30), latlon(90, 0))
+  m1 = Multi([t1, t4])
+  m2 = Multi([t2, t3])
+  d = GeometrySet([m1, m2])
+  r, c = TB.apply(f, d)
+  @test r == GeometrySet([m2])
+
+  f = ValidCoords(Mercator)
   b1 = Box(latlon(-90, -30), latlon(-30, 30))
   b2 = Box(latlon(-30, -30), latlon(30, 30))
   b3 = Box(latlon(30, -30), latlon(90, 30))
