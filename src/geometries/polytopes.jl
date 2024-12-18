@@ -160,8 +160,7 @@ function (c::Chain)(t)
   if t < 0 || t > 1
     throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
   end
-  v = vertices(c)
-  n = length(v) - !isclosed(c)
+  n = nvertices(c) - !isclosed(c)
   k = max(1, ceil(Int, n * t))
   s, _ = iterate(segments(c), k)
   s(n * t - k + 1)
