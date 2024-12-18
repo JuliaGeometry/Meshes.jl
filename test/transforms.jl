@@ -1247,104 +1247,6 @@ end
   @test r == r2
 end
 
-@testitem "ValidCoords" setup = [Setup] begin
-  @test !isaffine(ValidCoords(Mercator))
-  @test !TB.isrevertible(ValidCoords(Mercator))
-  @test !TB.isinvertible(ValidCoords(Mercator))
-  @test TB.parameters(ValidCoords(Mercator)) == (; CRS=Mercator)
-  @test TB.parameters(ValidCoords(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
-  @test TB.parameters(ValidCoords(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
-  f = ValidCoords(Mercator)
-  @test sprint(show, f) == "ValidCoords(CRS: CoordRefSystems.Mercator)"
-  @test sprint(show, MIME"text/plain"(), f) == """
-  ValidCoords transform
-  └─ CRS: CoordRefSystems.Mercator"""
-
-  # ---------
-  # POINTSET
-  # ---------
-
-  f = ValidCoords(Mercator)
-  d = PointSet([latlon(-90, 0), latlon(-45, 0), latlon(0, 0), latlon(45, 0), latlon(90, 0)])
-  r, c = TB.apply(f, d)
-  @test r == PointSet([latlon(-45, 0), latlon(0, 0), latlon(45, 0)])
-
-  # ------------
-  # GEOMETRYSET
-  # ------------
-
-  f = ValidCoords(Mercator)
-  t1 = Triangle(latlon(-90, 0), latlon(-45, 30), latlon(-45, -30))
-  t2 = Triangle(latlon(-45, 0), latlon(0, 30), latlon(0, -30))
-  t3 = Triangle(latlon(0, -30), latlon(0, 30), latlon(45, 0))
-  t4 = Triangle(latlon(45, -30), latlon(45, 30), latlon(90, 0))
-  d = GeometrySet([t1, t2, t3, t4])
-  r, c = TB.apply(f, d)
-  @test r == GeometrySet([t2, t3])
-
-  f = ValidCoords(Mercator)
-  t1 = Triangle(latlon(-90, 0), latlon(-45, 30), latlon(-45, -30))
-  t2 = Triangle(latlon(-45, 0), latlon(0, 30), latlon(0, -30))
-  t3 = Triangle(latlon(0, -30), latlon(0, 30), latlon(45, 0))
-  t4 = Triangle(latlon(45, -30), latlon(45, 30), latlon(90, 0))
-  m1 = Multi([t1, t4])
-  m2 = Multi([t2, t3])
-  d = GeometrySet([m1, m2])
-  r, c = TB.apply(f, d)
-  @test r == GeometrySet([m2])
-
-  f = ValidCoords(Mercator)
-  b1 = Box(latlon(-90, -30), latlon(-30, 30))
-  b2 = Box(latlon(-30, -30), latlon(30, 30))
-  b3 = Box(latlon(30, -30), latlon(90, 30))
-  d = GeometrySet([b1, b2, b3])
-  r, c = TB.apply(f, d)
-  @test r == GeometrySet([b2])
-
-  # --------------
-  # CARTESIANGRID
-  # --------------
-
-  f = ValidCoords(Mercator)
-  d = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
-  r, c = TB.apply(f, d)
-  linds = LinearIndices(size(d))
-  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
-
-  # ----------------
-  # RECTILINEARGRID
-  # ----------------
-
-  f = ValidCoords(Mercator)
-  g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
-  d = convert(RectilinearGrid, g)
-  r, c = TB.apply(f, d)
-  linds = LinearIndices(size(d))
-  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
-
-  # ---------------
-  # STRUCTUREDGRID
-  # ---------------
-
-  f = ValidCoords(Mercator)
-  g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
-  d = convert(StructuredGrid, g)
-  r, c = TB.apply(f, d)
-  linds = LinearIndices(size(d))
-  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
-
-  # -----------
-  # SIMPLEMESH
-  # -----------
-
-  f = ValidCoords(Mercator)
-  g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
-  d = convert(SimpleMesh, g)
-  r, c = TB.apply(f, d)
-  linds = LinearIndices(size(d))
-  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
-end
-
 @testitem "Proj" setup = [Setup] begin
   @test !isaffine(Proj(Polar))
   @test !TB.isrevertible(Proj(Polar))
@@ -1878,6 +1780,104 @@ end
   d = SimpleMesh(p, c)
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+end
+
+@testitem "ValidCoords" setup = [Setup] begin
+  @test !isaffine(ValidCoords(Mercator))
+  @test !TB.isrevertible(ValidCoords(Mercator))
+  @test !TB.isinvertible(ValidCoords(Mercator))
+  @test TB.parameters(ValidCoords(Mercator)) == (; CRS=Mercator)
+  @test TB.parameters(ValidCoords(EPSG{3395})) == (; CRS=Mercator{WGS84Latest})
+  @test TB.parameters(ValidCoords(ESRI{54017})) == (; CRS=Behrmann{WGS84Latest})
+  f = ValidCoords(Mercator)
+  @test sprint(show, f) == "ValidCoords(CRS: CoordRefSystems.Mercator)"
+  @test sprint(show, MIME"text/plain"(), f) == """
+  ValidCoords transform
+  └─ CRS: CoordRefSystems.Mercator"""
+
+  # ---------
+  # POINTSET
+  # ---------
+
+  f = ValidCoords(Mercator)
+  d = PointSet([latlon(-90, 0), latlon(-45, 0), latlon(0, 0), latlon(45, 0), latlon(90, 0)])
+  r, c = TB.apply(f, d)
+  @test r == PointSet([latlon(-45, 0), latlon(0, 0), latlon(45, 0)])
+
+  # ------------
+  # GEOMETRYSET
+  # ------------
+
+  f = ValidCoords(Mercator)
+  t1 = Triangle(latlon(-90, 0), latlon(-45, 30), latlon(-45, -30))
+  t2 = Triangle(latlon(-45, 0), latlon(0, 30), latlon(0, -30))
+  t3 = Triangle(latlon(0, -30), latlon(0, 30), latlon(45, 0))
+  t4 = Triangle(latlon(45, -30), latlon(45, 30), latlon(90, 0))
+  d = GeometrySet([t1, t2, t3, t4])
+  r, c = TB.apply(f, d)
+  @test r == GeometrySet([t2, t3])
+
+  f = ValidCoords(Mercator)
+  t1 = Triangle(latlon(-90, 0), latlon(-45, 30), latlon(-45, -30))
+  t2 = Triangle(latlon(-45, 0), latlon(0, 30), latlon(0, -30))
+  t3 = Triangle(latlon(0, -30), latlon(0, 30), latlon(45, 0))
+  t4 = Triangle(latlon(45, -30), latlon(45, 30), latlon(90, 0))
+  m1 = Multi([t1, t4])
+  m2 = Multi([t2, t3])
+  d = GeometrySet([m1, m2])
+  r, c = TB.apply(f, d)
+  @test r == GeometrySet([m2])
+
+  f = ValidCoords(Mercator)
+  b1 = Box(latlon(-90, -30), latlon(-30, 30))
+  b2 = Box(latlon(-30, -30), latlon(30, 30))
+  b3 = Box(latlon(30, -30), latlon(90, 30))
+  d = GeometrySet([b1, b2, b3])
+  r, c = TB.apply(f, d)
+  @test r == GeometrySet([b2])
+
+  # --------------
+  # CARTESIANGRID
+  # --------------
+
+  f = ValidCoords(Mercator)
+  d = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
+  r, c = TB.apply(f, d)
+  linds = LinearIndices(size(d))
+  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
+
+  # ----------------
+  # RECTILINEARGRID
+  # ----------------
+
+  f = ValidCoords(Mercator)
+  g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
+  d = convert(RectilinearGrid, g)
+  r, c = TB.apply(f, d)
+  linds = LinearIndices(size(d))
+  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
+
+  # ---------------
+  # STRUCTUREDGRID
+  # ---------------
+
+  f = ValidCoords(Mercator)
+  g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
+  d = convert(StructuredGrid, g)
+  r, c = TB.apply(f, d)
+  linds = LinearIndices(size(d))
+  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
+
+  # -----------
+  # SIMPLEMESH
+  # -----------
+
+  f = ValidCoords(Mercator)
+  g = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(3, 3))
+  d = convert(SimpleMesh, g)
+  r, c = TB.apply(f, d)
+  linds = LinearIndices(size(d))
+  @test r == view(d, [linds[2, 1], linds[2, 2], linds[2, 3]])
 end
 
 @testitem "Shadow" setup = [Setup] begin

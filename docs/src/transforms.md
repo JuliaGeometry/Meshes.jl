@@ -129,26 +129,6 @@ viz(fig[1,2], mesh)
 fig
 ```
 
-## ValidCoords
-
-```@docs
-ValidCoords
-```
-
-```@example transforms
-# load coordinate reference system
-using CoordRefSystems: LatLon
-
-# regular grid with LatLon coordinates
-grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
-
-# retain elements in the projection domain
-subgrid = grid |> ValidCoords(Mercator)
-
-# plot the projected grid
-viz(subgrid |> Proj(Mercator), showsegments=true)
-```
-
 ## Proj
 
 ```@docs
@@ -191,6 +171,26 @@ using Unitful: m, cm
 
 # convert meters to centimeters
 Point(1m, 2m, 3m) |> LengthUnit(cm)
+```
+
+## ValidCoords
+
+```@docs
+ValidCoords
+```
+
+```@example transforms
+# load coordinate reference system
+using CoordRefSystems: LatLon
+
+# regular grid with LatLon coordinates
+grid = RegularGrid(Point(LatLon(-90, -180)), Point(LatLon(90, 180)), dims=(10, 10))
+
+# retain elements in the projection domain
+subgrid = grid |> ValidCoords(Mercator)
+
+# plot the projected grid
+viz(subgrid |> Proj(Mercator), showsegments=true)
 ```
 
 ## Shadow
