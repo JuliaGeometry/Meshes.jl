@@ -9,7 +9,7 @@
 Retain the geometries within the domain of the
 projection of type `CRS` or with EPSG/ESRI `code`.
 """
-struct ValidCoords{CRS} <: CoordinateTransform end
+struct ValidCoords{CRS} <: GeometricTransform end
 
 ValidCoords(CRS) = ValidCoords{CRS}()
 
