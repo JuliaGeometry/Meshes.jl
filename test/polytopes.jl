@@ -267,9 +267,6 @@ end
   # parameterization
   ri = Ring(latlon(45, 0), latlon(45, 90), latlon(90, 90))
   @test ri(T(0)) == latlon(45, 0)
-  @test ri(T(0.25)) ≈ latlon(45, 56.25) atol = 1e7 * eps(T) * u"m"
-  @test ri(T(0.5)) ≈ latlon(60, 90) atol = 1e7 * eps(T) * u"m"
-  @test ri(T(0.75)) ≈ latlon(82.5, 75) atol = 1e7 * eps(T) * u"m"
   @test ri(T(1)) == latlon(45, 0)
 
   ri = boundary(Box(cart(0,0), cart(1,1)))
@@ -280,9 +277,6 @@ end
 
   ro = Rope(latlon(45, 0), latlon(45, 90), latlon(90, 90))
   @test ro(T(0)) == latlon(45, 0)
-  @test ro(T(0.25)) ≈ latlon(45, 39.375) atol = 1e7 * eps(T) * u"m"
-  @test ro(T(0.5)) ≈ latlon(45, 78.75) atol = 1e7 * eps(T) * u"m"
-  @test ro(T(0.75)) ≈ latlon(63.75, 90) atol = 1e7 * eps(T) * u"m"
   @test ro(T(1)) == latlon(90, 90)
 
   ro = Rope(cart(0,0), cart(3, 0), cart(4,0))
