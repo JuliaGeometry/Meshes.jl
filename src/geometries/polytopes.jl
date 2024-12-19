@@ -160,10 +160,17 @@ function (c::Chain)(t)
   if t < 0 || t > 1
     throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
   end
-  n = nvertices(c) - !isclosed(c)
-  k = min(n - 1, floor(Int, n * t))
-  s, _ = iterate(segments(c), k)
-  s(n * t - k)
+  segs = segments(c)
+  measures = cumsum(measure.(segs))
+  measures /= measures[end]
+  # measures[k] <= t < measures[k + 1]
+  k = searchsortedfirst(measures, t) - 1
+  s, _ = iterate(segs, k)
+  mk = k == 0 ? 0 : measures[k]
+  mk1 = measures[k + 1]
+  # Map t to [0, 1] in the segment
+  t2 = (t - mk) / (mk1 - mk)
+  s(t2)
 end
 
 # implementations of Chain
