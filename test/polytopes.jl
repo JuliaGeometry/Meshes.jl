@@ -269,7 +269,7 @@ end
   @test ri(T(0)) == latlon(45, 0)
   @test ri(T(1)) == latlon(45, 0)
 
-  ri = boundary(Box(cart(0,0), cart(1,1)))
+  ri = boundary(Box(cart(0, 0), cart(1, 1)))
   @test ri(T(0)) == cart(0, 0)
   @test ri(T(0.25)) == cart(1, 0)
   @test ri(T(0.5)) == cart(1, 1)
@@ -279,7 +279,7 @@ end
   @test ro(T(0)) == latlon(45, 0)
   @test ro(T(1)) == latlon(90, 90)
 
-  ro = Rope(cart(0,0), cart(3, 0), cart(4,0))
+  ro = Rope(cart(0, 0), cart(3, 0), cart(4, 0))
   @test ro(T(0)) == cart(0, 0)
   @test ro(T(0.25)) == cart(1, 0)
   @test ro(T(0.5)) == cart(2, 0)
