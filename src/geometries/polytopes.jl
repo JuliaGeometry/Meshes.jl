@@ -161,16 +161,16 @@ function (c::Chain)(t)
     throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
   end
   segs = segments(c)
-  measures = cumsum(measure.(segs))
-  measures /= measures[end]
-  # measures[k] <= t < measures[k + 1]
-  k = searchsortedfirst(measures, t) - 1
+  sums = cumsum(measure.(segs))
+  sums /= last(sums)
+  # find k such that sums[k] ≤ t < sums[k + 1]
+  k = searchsortedfirst(sums, t) - 1
+  # select segment s at index k
   s, _ = iterate(segs, k)
-  mk = k == 0 ? 0 : measures[k]
-  mk1 = measures[k + 1]
-  # Map t to [0, 1] in the segment
-  t2 = (t - mk) / (mk1 - mk)
-  s(t2)
+  # reparametrization of t within s
+  ∑ₖ = iszero(k) ? zero(eltype(sums)) : sums[k]
+  ∑ₖ₊₁ = sums[k + 1]
+  s((t - ∑ₖ) / (∑ₖ₊₁ - ∑ₖ))
 end
 
 # implementations of Chain
