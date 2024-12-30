@@ -35,6 +35,12 @@ Point(1m, 2m, 3m) # integer is converted to float by design
 """
 struct Point{M<:Manifold,C<:CRS} <: Primitive{M,C}
   coords::C
+  # here the inner constuctor ensures the point does not have more than 3 dimensions
+  function Point{M,C}(coords::C) where {M<:Manifold,C<:CRS}
+    ndim = ncoords(coords)
+    ndim > 3 && error("Points can only be constructed with up to 3 dimensions, but got $ndim.")
+    new{M,C}(coords)
+  end
 end
 
 Point{M}(coords::C) where {M<:Manifold,C<:CRS} = Point{M,C}(coords)
