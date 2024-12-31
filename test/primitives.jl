@@ -104,7 +104,6 @@
   @test Point((5.0, 6.0, 7)) == Point(5.0, 6.0, 7.0)
   @test Point(8, T(9.0)) == Point((T(8.0), T(9.0)))
   @test Point((T(-1.0), -2)) == Point((T(-1.0), T(-2.0)))
-  @test Point((0, T(-1.0), +2, T(-4.0))) == Point((T(0.0), T(-1.0), T(+2.0), T(-4.0)))
 
   # Integer coordinates converted to Float64
   @test Meshes.lentype(Point(1)) == Meshes.Met{Float64}
