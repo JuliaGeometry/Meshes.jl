@@ -46,7 +46,7 @@ See <https://math.stackexchange.com/a/99317>.
 function svdbasis(p::AbstractVector{<:Point})
   checkdim(first(p), 3)
   ℒ = lentype(eltype(p))
-  X = reduce(hcat, to.(p))
+  X = stack(to, p)
   μ = sum(X, dims=2) / size(X, 2)
   Z = X .- μ
   U = usvd(Z).U
