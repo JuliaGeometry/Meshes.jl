@@ -80,7 +80,7 @@ function vizgridfallback!(plot, M, pdim, edim)
 
     uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $vdims[2]) for u in range(0, 1, $vdims[1])]
 
-    mesh = Makie.@lift GB.Mesh(Makie.meta($verts, uv=$uv), $quads)
+    mesh = Makie.@lift GB.Mesh($verts, $quads, uv=$uv)
 
     shading = edim == Val(3) ? Makie.FastShading : Makie.NoShading
 
