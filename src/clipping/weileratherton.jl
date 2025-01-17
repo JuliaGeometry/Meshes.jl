@@ -28,12 +28,12 @@ abstract type Exiting <: VertexType end
 # Data structure for clipping the polygons. Fields left and right are used depending on the
 # VertexType, as designated with the helper functions. The data structure forms a directed
 # graph with each element always pointing to two elements.
-mutable struct RingVertex{VT<:VertexType,M<:Manifold,C<:CRS}
-  point::Point{M,C}
-  left::RingVertex{<:VertexType,M,C}
-  right::RingVertex{<:VertexType,M,C}
+mutable struct RingVertex{VT<:VertexType,P<:Point}
+  point::P
+  left::RingVertex{<:VertexType,P}
+  right::RingVertex{<:VertexType,P}
 
-  function RingVertex{VT,M,C}(point) where {VT<:VertexType,M<:Manifold,C<:CRS}
+  function RingVertex{VT,P}(point) where {VT<:VertexType,P<:Point}
     v = new(point)
     v.left = v
     v.right = v
@@ -41,7 +41,7 @@ mutable struct RingVertex{VT<:VertexType,M<:Manifold,C<:CRS}
   end
 end
 
-RingVertex{VT}(point::Point{M,C}) where {VT<:VertexType,M<:Manifold,C<:CRS} = RingVertex{VT,M,C}(point)
+RingVertex{VT}(point::P) where {VT<:VertexType,P<:Point} = RingVertex{VT,P}(point)
 
 isnormal(::RingVertex{Normal}) = true
 isnormal(::RingVertex) = false
