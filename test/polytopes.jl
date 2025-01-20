@@ -978,7 +978,8 @@ end
   @test crs(w) <: Cartesian{NoDatum}
   @test Meshes.lentype(w) == ℳ
   @test volume(w) ≈ T(1 / 2) * u"m^3"
-  @test w(0, 0, 1) == vertices(w)[4]
+  @test w(T(0), T(0), T(1)) == vertices(w)[4]
+  @test_throws ArgumentError w(T(0), T(0), T(1.5))
   m = boundary(w)
   @test m isa Mesh
   @test nelements(m) == 5
