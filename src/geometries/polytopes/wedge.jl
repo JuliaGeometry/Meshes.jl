@@ -15,3 +15,14 @@ nvertices(::Type{<:Wedge}) = 6
 
 Base.isapprox(t₁::Wedge, t₂::Wedge; atol=atol(lentype(t₁)), kwargs...) =
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(t₁.vertices, t₂.vertices))
+
+function (wedge::Wedge)(u, v, w)
+  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
+    throw(DomainError((u, v, w), "wedge(u, v, w) is not defined for u, v, w outside [0, 1]³."))
+  end
+  a₁, a₂, a₃, b₁, b₂, b₃ = vertices(wedge)
+  q₁ = Quadrangle(a₁, b₁, b₂, a₂)
+  q₂ = Quadrangle(a₁, b₁, b₃, a₃)
+  s = Segment(q₁(u, v), q₂(u, v))
+  s(w)
+end
