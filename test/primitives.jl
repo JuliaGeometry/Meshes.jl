@@ -1248,6 +1248,11 @@ end
   @test crs(f) <: Cartesian{NoDatum}
   @test Meshes.lentype(f) == ℳ
   @test boundary(f) == FrustumSurface(db, dt)
+  @test f(T(0), T(0), T(0)) == center(db)
+  @test norm(f(T(1), T(0), T(0)) - f(T(0), T(0), T(0))) ≈ radius(db)
+  @test f(T(0), T(0), T(1)) == center(dt)
+  @test norm(f(T(1), T(0), T(1)) - f(T(0), T(0), T(1))) ≈ radius(dt)
+  @test_throws DomainError f(T(0), T(0), T(1.5))
 
   @test_throws AssertionError Frustum(db, db)
 
