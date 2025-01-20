@@ -23,8 +23,9 @@ function (wedge::Wedge)(u, v, w)
     throw(DomainError((u, v, w), "wedge(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
   a1, a2, a3, b1, b2, b3 = vertices(wedge)
-  a = Triangle(a1, a2, a3)
-  b = Triangle(b1, b2, b3)
-  s = Segment(a(T(u), T(v)), b(T(u), T(v)))
+  a = Quadrangle(a1, b1, b2, a2)
+  b = Quadrangle(a1, b1, b3, a3)
+  uv = T(u), T(v)
+  s = Segment(a(uv...), b(uv...))
   s(T(w))
 end
