@@ -939,6 +939,9 @@ end
   @test crs(p) <: Cartesian{NoDatum}
   @test Meshes.lentype(p) == ℳ
   @test volume(p) ≈ T(1 / 3) * u"m^3"
+  @test p(T(1), T(1), T(0)) == vertices(w)[3]
+  @test p(T(0), T(0), T(1)) == vertices(w)[5]
+  @test_throws DomainError p(T(0), T(0), T(1.5))
   m = boundary(p)
   @test m isa Mesh
   @test nelements(m) == 5
