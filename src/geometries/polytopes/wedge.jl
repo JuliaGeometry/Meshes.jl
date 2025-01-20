@@ -22,7 +22,7 @@ function (wedge::Wedge)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v, w), "wedge(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
-  a1, a2, a3, b1, b2, b3 = wedge.vertices
+  a1, a2, a3, b1, b2, b3 = vertices(wedge)
   a = Triangle(a1, a2, a3)
   b = Triangle(b1, b2, b3)
   s = Segment(a(T(u), T(v)), b(T(u), T(v)))
