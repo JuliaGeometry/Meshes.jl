@@ -56,53 +56,10 @@ See also [`RegularGrid`](@ref).
 """
 const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 
-CartesianGrid(
-  origin::Point{𝔼{Dim}},
-  spacing::NTuple{Dim,Number},
-  offset::Dims{Dim},
-  topology::GridTopology{Dim}
-) where {Dim} = RegularGrid(_cartpoint(origin), spacing, offset, topology)
+CartesianGrid(args...; kwargs...) = RegularGrid(cartesian.(args)...; kwargs...)
 
-CartesianGrid(
-  dims::Dims{Dim},
-  origin::Point{𝔼{Dim}},
-  spacing::NTuple{Dim,Number},
-  offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim} = RegularGrid(dims, _cartpoint(origin), spacing, offset)
+# enforce Cartesian coordinates for all Point arguments
+cartesian(p::Point) = Point(convert(Cartesian, coords(p)))
 
-CartesianGrid(
-  dims::Dims{Dim},
-  origin::NTuple{Dim,Number},
-  spacing::NTuple{Dim,Number},
-  offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim} = CartesianGrid(dims, Point(origin), spacing, offset)
-
-CartesianGrid(start::Point{𝔼{Dim}}, finish::Point{𝔼{Dim}}, spacing::NTuple{Dim,Number}) where {Dim} =
-  RegularGrid(_cartpoint(start), _cartpoint(finish), spacing)
-
-CartesianGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
-  CartesianGrid(Point(start), Point(finish), spacing)
-
-CartesianGrid(start::Point{𝔼{Dim}}, finish::Point{𝔼{Dim}}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
-  RegularGrid(_cartpoint(start), _cartpoint(finish); dims)
-
-CartesianGrid(
-  start::NTuple{Dim,Number},
-  finish::NTuple{Dim,Number};
-  dims::Dims{Dim}=ntuple(i -> 100, Dim)
-) where {Dim} = CartesianGrid(Point(start), Point(finish); dims)
-
-function CartesianGrid(dims::Dims{Dim}) where {Dim}
-  origin = ntuple(i -> 0.0, Dim)
-  spacing = ntuple(i -> 1.0, Dim)
-  offset = ntuple(i -> 1, Dim)
-  CartesianGrid(dims, origin, spacing, offset)
-end
-
-CartesianGrid(dims::Int...) = CartesianGrid(dims)
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_cartpoint(p) = Point(convert(Cartesian, coords(p)))
+# forward all other arguments without change
+cartesian(o) = o

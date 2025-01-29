@@ -23,6 +23,13 @@ with dimensions `dims`.
 Alternatively, construct a regular grid from a `start` point to a `finish`
 point using a given `spacing`.
 
+    RegularGrid(dims)
+    RegularGrid(dim1, dim2, ...)
+
+Finally, a Cartesian grid can be constructed by only passing the dimensions
+`dims` as a tuple, or by passing each dimension `dim1`, `dim2`, ... separately.
+In this case, the origin and spacing default to (0,0,...) and (1,1,...).
+
 ## Examples
 
 ```
@@ -82,6 +89,13 @@ function RegularGrid(
   RegularGrid(origin, spacing, offset, GridTopology(dims))
 end
 
+RegularGrid(
+  dims::Dims{Dim},
+  origin::NTuple{Dim,Number},
+  spacing::NTuple{Dim,Number},
+  offset::Dims{Dim}=ntuple(i -> 1, Dim)
+) where {Dim} = RegularGrid(dims, Point(origin), spacing, offset)
+
 function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
   _checkorigin(start)
   svals, fvals = _startfinish(start, finish)
@@ -90,12 +104,30 @@ function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) whe
   RegularGrid(dims, start, spac)
 end
 
+RegularGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
+  RegularGrid(Point(start), Point(finish), spacing)
+
 function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(start))))
   _checkorigin(start)
   svals, fvals = _startfinish(start, finish)
   spacing = (fvals .- svals) ./ dims
   RegularGrid(dims, start, spacing)
 end
+
+RegularGrid(
+  start::NTuple{Dim,Number},
+  finish::NTuple{Dim,Number};
+  dims::Dims{Dim}=ntuple(i -> 100, Dim)
+) where {Dim} = RegularGrid(Point(start), Point(finish); dims)
+
+function RegularGrid(dims::Dims{Dim}) where {Dim}
+  origin = ntuple(i -> 0.0, Dim)
+  spacing = ntuple(i -> 1.0, Dim)
+  offset = ntuple(i -> 1, Dim)
+  RegularGrid(dims, origin, spacing, offset)
+end
+
+RegularGrid(dims::Int...) = RegularGrid(dims)
 
 spacing(g::RegularGrid) = g.spacing
 
