@@ -114,11 +114,8 @@ function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, Co
   RegularGrid(dims, start, spacing)
 end
 
-RegularGrid(
-  start::NTuple{Dim,Number},
-  finish::NTuple{Dim,Number};
-  dims::Dims{Dim}=ntuple(i -> 100, Dim)
-) where {Dim} = RegularGrid(Point(start), Point(finish); dims)
+RegularGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
+  RegularGrid(Point(start), Point(finish); dims)
 
 function RegularGrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> 0.0, Dim)
