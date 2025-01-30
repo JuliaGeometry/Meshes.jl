@@ -26,7 +26,7 @@ point using a given `spacing`.
     RegularGrid(dims)
     RegularGrid(dim1, dim2, ...)
 
-Finally, a Cartesian grid can be constructed by only passing the dimensions
+Finally, a regular grid can be constructed by only passing the dimensions
 `dims` as a tuple, or by passing each dimension `dim1`, `dim2`, ... separately.
 In this case, the origin and spacing default to (0,0,...) and (1,1,...).
 
