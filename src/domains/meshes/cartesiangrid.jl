@@ -56,10 +56,10 @@ See also [`RegularGrid`](@ref).
 """
 const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 
-CartesianGrid(args...; kwargs...) = RegularGrid(cartesian.(args)...; kwargs...)
+CartesianGrid(args...; kwargs...) = RegularGrid(_cartesian.(args)...; kwargs...)
 
 # enforce Cartesian coordinates for all Point arguments
-cartesian(p::Point) = Point(convert(Cartesian, coords(p)))
+_cartesian(p::Point) = Point(convert(Cartesian, coords(p)))
 
 # forward all other arguments without change
-cartesian(o) = o
+_cartesian(o) = o
