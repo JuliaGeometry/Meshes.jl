@@ -32,11 +32,22 @@ In this case, the origin and spacing default to (0,0,...) and (1,1,...).
 
 ## Examples
 
+Create a 3D grid with 100x100x50 hexahedrons:
+
+```julia
+julia> RegularGrid(100, 100, 50)
 ```
-RegularGrid((10, 20), Point(LatLon(30.0°, 60.0°)), (1.0, 1.0)) # add coordinate units to spacing
-RegularGrid((10, 20), Point(Polar(0.0cm, 0.0rad)), (10.0mm, 1.0rad)) # convert spacing units to coordinate units
-RegularGrid((10, 20), Point(Mercator(0.0, 0.0)), (1.5, 1.5))
-RegularGrid((10, 20, 30), Point(Cylindrical(0.0, 0.0, 0.0)), (3.0, 2.0, 1.0))
+
+Create a 2D grid with 100 x 100 quadrangles and origin at (10.0, 20.0):
+
+```julia
+julia> RegularGrid((100, 100), (10.0, 20.0), (1.0, 1.0))
+```
+
+Create a 1D grid from -1 to 1 with 100 segments:
+
+```julia
+julia> RegularGrid((-1.0,), (1.0,), dims=(100,))
 ```
 
 See also [`CartesianGrid`](@ref).
