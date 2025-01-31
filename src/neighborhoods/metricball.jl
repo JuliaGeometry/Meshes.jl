@@ -65,6 +65,13 @@ MetricBall(radius::Len, metric=Euclidean()) = MetricBall((radius,), I, metric)
 MetricBall(radius::Number, metric=Euclidean()) = MetricBall(addunit(radius, u"m"), metric)
 
 """
+    hasequalradii(ball)
+
+Tells whether or not the metric `ball` has equal radii.
+"""
+hasequalradii(ball::MetricBall) = allequal(ball.radii)
+
+"""
     radii(ball)
 
 Return the radii of the metric `ball`.
@@ -96,14 +103,6 @@ function radius(ball::MetricBall)
   r = first(ball.radii)
   ball.metric isa Mahalanobis ? oneunit(r) : r
 end
-
-"""
-    isisotropic(ball)
-
-Tells whether or not the metric `ball` is isotropic,
-i.e. if all its radii are equal.
-"""
-isisotropic(ball::MetricBall) = allequal(ball.radii)
 
 function *(α::Real, ball::MetricBall)
   if ball.metric isa Mahalanobis

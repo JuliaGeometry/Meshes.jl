@@ -373,11 +373,11 @@ export
   # neighborhoods
   Neighborhood,
   MetricBall,
+  hasequalradii,
   radii,
   rotation,
   metric,
   radius,
-  isisotropic,
 
   # neighborhood search
   NeighborSearchMethod,

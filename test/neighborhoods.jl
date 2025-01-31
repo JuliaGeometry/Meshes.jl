@@ -13,7 +13,7 @@
   @test evaluate(m, T[0, 0] * u"m", T[0, 0] * u"m") ≤ r
   @test evaluate(m, T[0, 0] * u"m", T[1, 0] * u"m") ≤ r
   @test evaluate(m, T[0, 0] * u"m", T[0, 1] * u"m") ≤ r
-  @test isisotropic(b)
+  @test hasequalradii(b)
   if T === Float32
     @test sprint(show, b) == "MetricBall(1.0f0 m, Euclidean)"
   else
