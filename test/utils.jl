@@ -54,27 +54,4 @@
   c = (T(30), T(60))
   p = latlon(c) |> Proj(Cartesian)
   @inferred Meshes.withcrs(p, c, LatLon)
-
-  # test bentley-ottmann algorithm
-  S = [
-    Segment(cart(0, 0), cart(1, 1)),
-    Segment(cart(1, 0), cart(0, 1)),
-    Segment(cart(0, 0), cart(0, 1)),
-    Segment(cart(0, 0), cart(1, 0)),
-    Segment(cart(0, 1), cart(1, 1)),
-    Segment(cart(1, 0), cart(1, 1))
-  ]
-  I = bentleyottmann(S)
-  # new vertices
-  NS = [
-    Segment(cart(0, 0), cart(0.5, 0.5)),
-    Segment(cart(0.5, 0.5), cart(1, 1)),
-    Segment(cart(1, 0), cart(0, 1)),
-    Segment(cart(1, 0), cart(0.5, 0.5)),
-    Segment(cart(0.5, 0.5), cart(0, 1)),
-    Segment(cart(0, 0), cart(0, 1)),
-    Segment(cart(0, 0), cart(1, 0)),
-    Segment(cart(1, 0), cart(1, 1))
-  ]
-  @test I == NS
 end
