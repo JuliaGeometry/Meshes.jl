@@ -64,4 +64,16 @@
     Segment(cart(0, 1), cart(1, 1)),
     Segment(cart(1, 0), cart(1, 1))
   ]
+  I = BentleyOttmann(S)
+  S_check = Dict(
+    cart(1, 1) => [(cart(0, 0), cart(1, 1)), (cart(0, 1), cart(1, 1)), (cart(1, 0), cart(1, 1))],
+    cart(0, 1) => [(cart(0, 1), cart(1, 0)), (cart(0, 1), cart(1, 1)), (cart(0, 0), cart(0, 1))],
+    cart(0.5, 0.5) => [(cart(0, 0), cart(1, 1)), (cart(0, 1), cart(1, 0))],
+    cart(1, 0) => [(cart(1, 0), cart(1, 1)), (cart(0, 1), cart(1, 0)), (cart(0, 0), cart(1, 0))],
+    cart(0, 0) => [(cart(0, 0), cart(1, 1)), (cart(0, 0), cart(0, 1)), (cart(0, 0), cart(1, 0))]
+  )
+  @test typeof(I) == typeof(S_check)
+  @test length(I) == length(S_check)
+  @test keys(I) == keys(S_check)
+  @test all(values(I) .== values(S_check))
 end
