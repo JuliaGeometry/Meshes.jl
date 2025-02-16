@@ -193,15 +193,7 @@ simplexify(geometry) = simplexify(discretize(geometry))
 
 simplexify(box::Box) = discretize(box, ManualSimplexification())
 
-function simplexify(chain::Chain)
-  np = nvertices(chain) + isclosed(chain)
-  ip = isperiodic(chain)
-
-  points = collect(eachvertex(chain))
-  topo = GridTopology((np - 1,), ip)
-
-  SimpleMesh(points, topo)
-end
+simplexify(chain::Chain) = discretize(chain, ManualSimplexification())
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
@@ -210,6 +202,8 @@ simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(5
 simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(50))
 
 simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
+
+simplexify(tri::Triangle) = discretize(tri, ManualSimplexification())
 
 simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 

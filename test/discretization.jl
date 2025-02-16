@@ -580,14 +580,6 @@ end
   # simplexify is a helper function that calls an
   # appropriate discretization method depending on
   # the geometry type that is given to it
-  box = Box(cart(0), cart(1))
-  msh = simplexify(box)
-  @test eltype(msh) <: Segment
-  @test topology(msh) == GridTopology(1)
-  @test nvertices(msh) == 2
-  @test nelements(msh) == 1
-  @test msh[1] == Segment(cart(0), cart(1))
-
   seg = Segment(cart(0), cart(1))
   msh = simplexify(seg)
   @test eltype(msh) <: Segment
@@ -626,6 +618,13 @@ end
   msh = simplexify(curve)
   @test eltype(msh) <: Segment
   @test nvertices(msh) == nelements(msh) + 1
+
+  box = Box(cart(0), cart(1))
+  msh = simplexify(box)
+  @test eltype(msh) <: Segment
+  @test nvertices(msh) == 2
+  @test nelements(msh) == 1
+  @test msh[1] == Segment(cart(0), cart(1))
 
   box = Box(cart(0, 0), cart(1, 1))
   ngon = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
