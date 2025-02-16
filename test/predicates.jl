@@ -182,7 +182,7 @@ end
   @test merc(0.75, 0.75) ∈ poly
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1170
-  t = Triangle(cart(1, 0, 0), cart(0, 1, 0), (0, 0, 1))
+  t = Triangle(cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test cart(1, 0, 0) ∈ t
   @test cart(0, 1, 0) ∈ t
   @test cart(0, 0, 1) ∈ t
