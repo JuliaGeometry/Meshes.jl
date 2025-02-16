@@ -186,10 +186,10 @@ end
   @test cart(1, 0, 0) ∈ t
   @test cart(0, 1, 0) ∈ t
   @test cart(0, 0, 1) ∈ t
-  @test cart(1/2, 1/2, 0) ∈ t
-  @test cart(1/2, 0, 1/2) ∈ t
-  @test cart(0, 1/2, 1/2) ∈ t
-  @test cart(1/3, 1/3, 1/3) ∈ t
+  @test cart(1 / 2, 1 / 2, 0) ∈ t
+  @test cart(1 / 2, 0, 1 / 2) ∈ t
+  @test cart(0, 1 / 2, 1 / 2) ∈ t
+  @test cart(1 / 3, 1 / 3, 1 / 3) ∈ t
   @test cart(0, 0, 0) ∉ t
   @test cart(1, 1, 1) ∉ t
 end
