@@ -9,6 +9,10 @@ using BinaryTrees
 Compute pairwise intersections between n `segments`
 in O(n⋅log(n)) time using Bentley-Ottmann sweep line
 algorithm.
+
+Outputs a Dictionary of {Point, Vector{Tuple{Point, Point}}}
+where the key is each intersection point and the values are all
+pairs of segments that intersect at that point.
 """
 function bentleyottmann(segments)
   # adjust vertices of segments
