@@ -393,6 +393,9 @@ export
 
   # predicates
   isparametrized,
+  iscurve,
+  issurface,
+  issolid,
   isperiodic,
   issimplex,
   isclosed,
