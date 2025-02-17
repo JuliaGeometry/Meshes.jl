@@ -26,6 +26,24 @@ isparametrized
 paramdim
 ```
 
+## iscurve
+
+```@docs
+iscurve
+```
+
+## issurface
+
+```@docs
+issurface
+```
+
+## issolid
+
+```@docs
+issolid
+```
+
 ## isperiodic
 
 ```@docs
