@@ -180,6 +180,18 @@ end
   @test merc(0.25, 0.25) ∉ poly
   @test merc(0.75, 0.25) ∉ poly
   @test merc(0.75, 0.75) ∈ poly
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1170
+  t = Triangle(cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test cart(1, 0, 0) ∈ t
+  @test cart(0, 1, 0) ∈ t
+  @test cart(0, 0, 1) ∈ t
+  @test cart(1 / 2, 1 / 2, 0) ∈ t
+  @test cart(1 / 2, 0, 1 / 2) ∈ t
+  @test cart(0, 1 / 2, 1 / 2) ∈ t
+  @test cart(1 / 3, 1 / 3, 1 / 3) ∈ t
+  @test cart(0, 0, 0) ∉ t
+  @test cart(1, 1, 1) ∉ t
 end
 
 @testitem "issubset" setup = [Setup] begin

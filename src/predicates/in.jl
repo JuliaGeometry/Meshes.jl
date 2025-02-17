@@ -124,25 +124,24 @@ end
 Base.in(p::Point, poly::Polygon{𝔼{3}}) = any(Δ -> p ∈ Δ, simplexify(poly))
 
 function Base.in(p::Point, t::Triangle{𝔼{3}})
-  # given coordinates
+  # triangle vertices
   a, b, c = vertices(t)
 
-  # evaluate vectors defining geometry
+  # relevant vectors
   v₁ = b - a
   v₂ = c - a
   v₃ = p - a
 
-  # calculate required dot products
+  # check if point is on the same plane
+  isapproxzero(umixed(v₁, v₂, v₃)) || return false
+
+  # barycentric coordinates
   d₁₁ = v₁ ⋅ v₁
   d₁₂ = v₁ ⋅ v₂
   d₂₂ = v₂ ⋅ v₂
   d₃₁ = v₃ ⋅ v₁
   d₃₂ = v₃ ⋅ v₂
-
-  # calculate reused denominator
   d = d₁₁ * d₂₂ - d₁₂ * d₁₂
-
-  # barycentric coordinates
   λ₂ = (d₂₂ * d₃₁ - d₁₂ * d₃₂) / d
   λ₃ = (d₁₁ * d₃₂ - d₁₂ * d₃₁) / d
 
