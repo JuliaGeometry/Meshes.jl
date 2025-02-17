@@ -7,4 +7,4 @@
 
 Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
 """
-iscoplanar(A::Point, B::Point, C::Point, D::Point) = isapproxzero(volume(Tetrahedron(A, B, C, D)))
+iscoplanar(A::Point, B::Point, C::Point, D::Point) = isapproxzero(umixed(B - A, C - A, D - A))
