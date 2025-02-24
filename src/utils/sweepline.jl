@@ -62,10 +62,6 @@ function handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   _processends!(𝒮ₑ, 𝒬, 𝒯, 𝒞)
   _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
   __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
-  println("p: ", p)
-  println("𝒮ₑ:", 𝒮ₑ)
-  println("𝒮ᵢ: ", 𝒮ᵢ)
-  println("-----------------")
   if !isempty(𝒮ₛ ∪ 𝒮ₑ ∪ 𝒮ᵢ)
     corners = 𝒮ₛ ∪ 𝒮ₑ
     crossings = 𝒮ᵢ
@@ -79,27 +75,27 @@ function _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
     prev, next = BinaryTrees.prevnext(𝒯, s)
     s = Segment(s)
     if !isnothing(prev) && !isnothing(next)
-      new_geom, new_type = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
-      if _checkintersection(new_type)
-        BinaryTrees.insert!(𝒬, new_geom)
-        haskey(𝒞, new_geom) ? push!(𝒞[new_geom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
-        (𝒞[new_geom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
+      newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
+      if _checkintersection(newtype)
+        BinaryTrees.insert!(𝒬, newgeom)
+        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
+        (𝒞[newgeom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
       end
     end
     if !isnothing(prev)
-      new_geom, new_type = _newevent(Segment(BinaryTrees.key(prev)), s)
-      if new_type == IntersectionType(0)
-        BinaryTrees.insert!(𝒬, new_geom)
-        haskey(𝒞, new_geom) ? push!(𝒞[new_geom], BinaryTrees.key(prev), vertices(s)) :
-        (𝒞[new_geom] = [BinaryTrees.key(prev), vertices(s)])
+      newgeom, newtype = _newevent(Segment(BinaryTrees.key(prev)), s)
+      if newtype == IntersectionType(0)
+        BinaryTrees.insert!(𝒬, newgeom)
+        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(prev), vertices(s)) :
+        (𝒞[newgeom] = [BinaryTrees.key(prev), vertices(s)])
       end
     end
     if !isnothing(next)
-      new_geom, new_type = _newevent(s, Segment(BinaryTrees.key(next)))
-      if new_type == IntersectionType(0)
-        BinaryTrees.insert!(𝒬, new_geom)
-        haskey(𝒞, new_geom) ? push!(𝒞[new_geom], vertices(s), BinaryTrees.key(next)) :
-        (𝒞[new_geom] = [vertices(s), BinaryTrees.key(next)])
+      newgeom, newtype = _newevent(s, Segment(BinaryTrees.key(next)))
+      if newtype == IntersectionType(0)
+        BinaryTrees.insert!(𝒬, newgeom)
+        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], vertices(s), BinaryTrees.key(next)) :
+        (𝒞[newgeom] = [vertices(s), BinaryTrees.key(next)])
       end
     end
   end
@@ -111,11 +107,11 @@ function _processends!(𝒮ₑ, 𝒬, 𝒯, 𝒞)
     BinaryTrees.delete!(𝒯, s)
     s = Segment(s)
     if !isnothing(prev) && !isnothing(next)
-      new_geom, new_type = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
-      if new_type == IntersectionType(0)
-        BinaryTrees.insert!(𝒬, new_geom)
-        haskey(𝒞, new_geom) ? push!(𝒞[new_geom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
-        (𝒞[new_geom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
+      newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
+      if newtype == IntersectionType(0)
+        BinaryTrees.insert!(𝒬, newgeom)
+        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
+        (𝒞[newgeom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
       end
     end
   end
@@ -132,32 +128,32 @@ function __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
 
       # Remove crossing points rs and tu from event queue
       if !isnothing(r)
-        new_geom, new_type = _newevent(Segment(BinaryTrees.key(r)), Segment(s))
-        if new_type == IntersectionType(0)
-          BinaryTrees.delete!(𝒬, new_geom)
+        newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(s))
+        if newtype == IntersectionType(0)
+          BinaryTrees.delete!(𝒬, newgeom)
         end
       end
       if !isnothing(u)
-        new_geom, new_type = _newevent(Segment(BinaryTrees.key(u)), Segment(BinaryTrees.key(prev)))
-        if new_type == IntersectionType(0)
-          BinaryTrees.delete!(𝒬, new_geom)
+        newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(BinaryTrees.key(prev)))
+        if newtype == IntersectionType(0)
+          BinaryTrees.delete!(𝒬, newgeom)
         end
       end
 
       # Add crossing points rt and su to event queue
       if !isnothing(r)
-        new_geom, new_type = _newevent(Segment(BinaryTrees.key(r)), Segment(BinaryTrees.key(prev)))
-        if new_type == IntersectionType(0)
-          BinaryTrees.insert!(𝒬, new_geom)
-          haskey(𝒞, new_geom) ? push!(𝒞[new_geom], BinaryTrees.key(r), BinaryTrees.key(prev)) :
-          (𝒞[new_geom] = [BinaryTrees.key(r), BinaryTrees.key(prev)])
+        newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(BinaryTrees.key(prev)))
+        if newtype == IntersectionType(0)
+          BinaryTrees.insert!(𝒬, newgeom)
+          haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(r), BinaryTrees.key(prev)) :
+          (𝒞[newgeom] = [BinaryTrees.key(r), BinaryTrees.key(prev)])
         end
       end
       if !isnothing(u)
-        new_geom, new_type = _newevent(Segment(BinaryTrees.key(u)), Segment(s))
-        if new_type == IntersectionType(0)
-          BinaryTrees.insert!(𝒬, new_geom)
-          haskey(𝒞, new_geom) ? push!(𝒞[new_geom], BinaryTrees.key(u), s) : (𝒞[new_geom] = [BinaryTrees.key(u), s])
+        newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(s))
+        if newtype == IntersectionType(0)
+          BinaryTrees.insert!(𝒬, newgeom)
+          haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(u), s) : (𝒞[newgeom] = [BinaryTrees.key(u), s])
         end
       end
     end
@@ -170,11 +166,10 @@ function _pushintersection(lookup, corners, crossings)
     (IntersectionType(0), [lookup[segment] for segment in crossings])
   ]
 end
-_key(node::Nothing) = nothing
 function _newevent(s₁::Segment, s₂::Segment)
-  new_event = intersection(s₁, s₂)
-  if !isnothing(new_event)
-    get(new_event), type(new_event)
+  newevent = intersection(s₁, s₂)
+  if !isnothing(newevent)
+    get(newevent), type(newevent)
   else
     nothing, nothing
   end
