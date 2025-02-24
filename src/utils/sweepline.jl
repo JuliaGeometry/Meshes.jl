@@ -65,7 +65,7 @@ function handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   if !isempty(𝒮ₛ ∪ 𝒮ₑ ∪ 𝒮ᵢ)
     corners = 𝒮ₛ ∪ 𝒮ₑ
     crossings = 𝒮ᵢ
-    I[p] = _intersection(lookup, corners, crossings)
+    I[p] = _pushintersection(lookup, corners, crossings)
   end
 end
 
