@@ -54,7 +54,7 @@ DirectionPartition
 ## IndexPredicate
 
 ```@docs
-PredicatePartition
+IndexPredicatePartition
 ```
 
 ## PointPredicate
