@@ -5,7 +5,7 @@
 """
     BisectPointPartition(normal, point)
 
-A method for partitioning spatial objects into two half spaces
+A method for partitioning objects into two half spaces
 defined by a `normal` direction and a reference `point`.
 """
 struct BisectPointPartition{V<:Vec,P<:Point} <: PartitionMethod

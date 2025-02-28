@@ -51,16 +51,16 @@ PlanePartition
 ```@docs
 DirectionPartition
 ```
-## Predicate
+## IndexPredicate
 
 ```@docs
-PredicatePartition
+IndexPredicatePartition
 ```
 
-## SpatialPredicate
+## PointPredicate
 
 ```@docs
-SpatialPredicatePartition
+PointPredicatePartition
 ```
 
 ## Product

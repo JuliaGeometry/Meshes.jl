@@ -3,11 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    BisectFractionPartition(normal, fraction=0.5, maxiter=10)
+    BisectFractionPartition(normal; fraction=0.5, maxiter=10)
 
-A method for partitioning spatial objects into two half spaces
-defined by a `normal` direction and a `fraction` of points.
-The partition is returned within `maxiter` bisection iterations.
+A method for partitioning objects into two half spaces defined by
+a `normal` direction and a `fraction` of points. The partition is
+returned within `maxiter` bisection iterations.
 """
 struct BisectFractionPartition{V<:Vec} <: PartitionMethod
   normal::V
@@ -16,11 +16,11 @@ struct BisectFractionPartition{V<:Vec} <: PartitionMethod
   BisectFractionPartition{V}(normal, fraction, maxiter) where {V<:Vec} = new(unormalize(normal), fraction, maxiter)
 end
 
-BisectFractionPartition(normal::V, fraction=0.5, maxiter=10) where {V<:Vec} =
+BisectFractionPartition(normal::V; fraction=0.5, maxiter=10) where {V<:Vec} =
   BisectFractionPartition{V}(normal, fraction, maxiter)
 
-BisectFractionPartition(normal::Tuple, fraction=0.5, maxiter=10) =
-  BisectFractionPartition(Vec(normal), fraction, maxiter)
+BisectFractionPartition(normal::Tuple; fraction=0.5, maxiter=10) =
+  BisectFractionPartition(Vec(normal); fraction, maxiter)
 
 function partitioninds(rng::AbstractRNG, domain::Domain, method::BisectFractionPartition)
   u = unit(lentype(domain))

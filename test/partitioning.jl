@@ -7,14 +7,14 @@
 
   rng = StableRNG(123)
   g = cartgrid(3, 3)
-  p = partition(rng, g, UniformPartition(3, false))
+  p = partition(rng, g, UniformPartition(3, shuffle=false))
   @test setify(indices(p)) == setify([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
   rng = StableRNG(123)
   p = partition(rng, g, UniformPartition(3))
   @test setify(indices(p)) == setify([[5, 4, 2], [6, 7, 8], [9, 3, 1]])
 
   g = cartgrid(2, 3)
-  p = partition(g, UniformPartition(3, false))
+  p = partition(g, UniformPartition(3, shuffle=false))
   @test setify(indices(p)) == setify([[1, 2], [3, 4], [5, 6]])
 
   # reproducible results with rng
@@ -26,7 +26,7 @@
   @test p1 == p2
 end
 
-@testitemm "DirectionPartition" setup = [Setup] begin
+@testitem "DirectionPartition" setup = [Setup] begin
   g = cartgrid(3, 3)
 
   # basic checks on small grids
@@ -52,16 +52,16 @@ end
   # partition of arbitrarily large grid always
   # returns the "lines" and "columns"
   for n in [10, 100, 200]
-    g = cartgrid(n, n)
+    gₙ = cartgrid(n, n)
 
-    p = partition(g, DirectionPartition(T.((1, 0))))
-    @test setify(indices(p)) == setify([collect(((i - 1) * n + 1):(i * n)) for i in 1:n])
-    ns = [nelements(d) for d in p]
+    pₙ = partition(gₙ, DirectionPartition(T.((1, 0))))
+    @test setify(indices(pₙ)) == setify([collect(((i - 1) * n + 1):(i * n)) for i in 1:n])
+    ns = [nelements(d) for d in pₙ]
     @test all(ns .== n)
 
-    p = partition(g, DirectionPartition(T.((0, 1))))
-    @test setify(indices(p)) == setify([collect(i:n:(n * n)) for i in 1:n])
-    ns = [nelements(d) for d in p]
+    pₙ = partition(gₙ, DirectionPartition(T.((0, 1))))
+    @test setify(indices(pₙ)) == setify([collect(i:n:(n * n)) for i in 1:n])
+    ns = [nelements(d) for d in pₙ]
     @test all(ns .== n)
   end
 
@@ -72,6 +72,12 @@ end
   rng = StableRNG(123)
   p2 = partition(rng, g, DirectionPartition(T.((1, 0))))
   @test p1 == p2
+
+  # custom tolerance
+  rng = StableRNG(123)
+  g = cartgrid(10, 10)
+  p = partition(rng, g, DirectionPartition(T.((1, 0)), tol=T(2)))
+  @test length(p) == 4
 end
 
 @testitem "FractionPartition" setup = [Setup] begin
@@ -177,7 +183,7 @@ end
 @testitem "BisectFractionPartition" setup = [Setup] begin
   g = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
-  p = partition(g, BisectFractionPartition(T.((1.0, 0.0)), T(0.2)))
+  p = partition(g, BisectFractionPartition(T.((1.0, 0.0)), fraction=T(0.2)))
   p1, p2 = p[1], p[2]
   @test nelements(p1) == 20
   @test nelements(p2) == 80
@@ -193,22 +199,22 @@ end
   @test all(X2[1, j] > M1[1] for j in 1:size(X2, 2))
 
   # flipping normal direction is equivalent to swapping subsets
-  p₁ = partition(g, BisectFractionPartition(T.((1.0, 0.0)), T(0.2)))
-  p₂ = partition(g, BisectFractionPartition(T.((-1.0, 0.0)), T(0.8)))
+  p₁ = partition(g, BisectFractionPartition(T.((1.0, 0.0)), fraction=T(0.2)))
+  p₂ = partition(g, BisectFractionPartition(T.((-1.0, 0.0)), fraction=T(0.8)))
   @test nelements(p₁[1]) == nelements(p₂[2]) == 20
   @test nelements(p₁[2]) == nelements(p₂[1]) == 80
 
   # reproducible results with rng
   rng = StableRNG(123)
   g = cartgrid(10, 10)
-  p1 = partition(rng, g, BisectFractionPartition(T.((1, 0)), T(0.5)))
+  p1 = partition(rng, g, BisectFractionPartition(T.((1, 0)), fraction=T(0.5)))
   rng = StableRNG(123)
-  p2 = partition(rng, g, BisectFractionPartition(T.((1, 0)), T(0.5)))
+  p2 = partition(rng, g, BisectFractionPartition(T.((1, 0)), fraction=T(0.5)))
   @test p1 == p2
 
   # CRS propagation
   g = CartesianGrid((10, 10), merc(0, 0), (T(1), T(1)))
-  p = partition(g, BisectFractionPartition(T.((1.0, 0.0)), T(0.2)))
+  p = partition(g, BisectFractionPartition(T.((1.0, 0.0)), fraction=T(0.2)))
   @test crs(first(p)) === crs(g)
 end
 
@@ -256,12 +262,12 @@ end
   @test p1 == p2
 end
 
-@testitem "PredicatePartition" setup = [Setup] begin
+@testitem "IndexPredicatePartition" setup = [Setup] begin
   g = CartesianGrid((3, 3), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   # partition even from odd locations
   pred(i, j) = iseven(i + j)
-  partitioner = PredicatePartition(pred)
+  partitioner = IndexPredicatePartition(pred)
   p = partition(g, partitioner)
   @test setify(indices(p)) == setify([1:2:9, 2:2:8])
 
@@ -274,19 +280,19 @@ end
   @test p1 == p2
 end
 
-@testitem "SpatialPredicatePartition" setup = [Setup] begin
+@testitem "PointPredicatePartition" setup = [Setup] begin
   g = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
 
   # check if there are 100 partitions, each one having only 1 point
-  sp = SpatialPredicatePartition((x, y) -> norm(x - y) < T(1) * u"m")
+  sp = PointPredicatePartition((pᵢ, pⱼ) -> norm(pᵢ - pⱼ) < T(1) * u"m")
   s = indices(partition(g, sp))
   @test length(s) == 100
   nelms = [nelements(d) for d in partition(g, sp)]
   @test all(nelms .== 1)
 
   # defining a predicate to check if points x and y belong to the square [0.,5.]x[0.,5.]
-  pred(x, y) = all(T[0, 0] * u"m" .<= x .<= T[5, 5] * u"m") && all(T[0, 0] * u"m" .<= y .<= T[5, 5] * u"m")
-  sp = SpatialPredicatePartition(pred)
+  pred(pᵢ, pⱼ) = all(T[0, 0] * u"m" .<= to(pᵢ) .<= T[5, 5] * u"m") && all(T[0, 0] * u"m" .<= to(pⱼ) .<= T[5, 5] * u"m")
+  sp = PointPredicatePartition(pred)
   p = partition(g, sp)
   s = indices(p)
   n = nelements.(p)
@@ -334,6 +340,22 @@ end
   rng = StableRNG(123)
   p2 = partition(rng, g, bmn)
   @test p1 == p2
+
+  # product of index predicate partitions
+  rng = StableRNG(123)
+  g = cartgrid(10, 10)
+  i1 = IndexPredicatePartition((i, j) -> iseven(i + j))
+  i2 = IndexPredicatePartition((i, j) -> isodd(i + j))
+  p = partition(rng, g, ProductPartition(i1, i2))
+  @test length(p) == 100
+
+  # product of point predicate partitions
+  rng = StableRNG(123)
+  g = cartgrid(10, 10)
+  i1 = PointPredicatePartition((pᵢ, pⱼ) -> norm(pᵢ - pⱼ) < T(1) * u"m")
+  i2 = PointPredicatePartition((pᵢ, pⱼ) -> norm(pᵢ - pⱼ) < T(2) * u"m")
+  p = partition(rng, g, ProductPartition(i1, i2))
+  @test length(p) == 100
 end
 
 @testitem "HierarchicalPartition" setup = [Setup] begin

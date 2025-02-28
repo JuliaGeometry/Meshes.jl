@@ -31,13 +31,15 @@ applied to the `object` with random number generator `rng`.
 function partitioninds end
 
 """
-    PredicatePartitionMethod
+    IndexPredicatePartitionMethod
 
-A method for partitioning domain/data objects with predicate functions.
+A method for partitioning a domain/data object with predicate functions
+of the form `pred(i, j)` where `i` and `j` are the linear indices of the
+elements of the object.
 """
-abstract type PredicatePartitionMethod <: PartitionMethod end
+abstract type IndexPredicatePartitionMethod <: PartitionMethod end
 
-function partitioninds(rng::AbstractRNG, domain::Domain, method::PredicatePartitionMethod)
+function partitioninds(rng::AbstractRNG, domain::Domain, method::IndexPredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
@@ -59,23 +61,23 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::PredicatePartit
 end
 
 """
-    SPredicatePartitionMethod
+    PointPredicatePartitionMethod
 
-A method for partitioning domain/data objects with spatial predicate functions.
+A method for partitioning a domain/data object with predicate functions
+of the form `pred(pᵢ, pⱼ)` where `pᵢ` and `pⱼ` are the centroid points
+of the the `i`-th and `j-th` elements of the object.
 """
-abstract type SPredicatePartitionMethod <: PartitionMethod end
+abstract type PointPredicatePartitionMethod <: PartitionMethod end
 
-function partitioninds(rng::AbstractRNG, domain::Domain, method::SPredicatePartitionMethod)
+function partitioninds(rng::AbstractRNG, domain::Domain, method::PointPredicatePartitionMethod)
   nelms = nelements(domain)
   subsets = Vector{Int}[]
   for i in randperm(rng, nelms)
-    p = centroid(domain, i)
-    x = to(p)
+    pᵢ = centroid(domain, i)
     inserted = false
     for subset in subsets
-      q = centroid(domain, subset[1])
-      y = to(q)
-      if method(x, y)
+      pⱼ = centroid(domain, subset[1])
+      if method(pᵢ, pⱼ)
         push!(subset, i)
         inserted = true
         break
@@ -101,7 +103,7 @@ include("partitioning/bisectfraction.jl")
 include("partitioning/ball.jl")
 include("partitioning/plane.jl")
 include("partitioning/direction.jl")
-include("partitioning/predicate.jl")
-include("partitioning/spatialpredicate.jl")
+include("partitioning/indexpred.jl")
+include("partitioning/pointpred.jl")
 include("partitioning/product.jl")
 include("partitioning/hierarchical.jl")

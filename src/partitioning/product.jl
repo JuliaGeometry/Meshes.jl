@@ -3,21 +3,21 @@
 # ------------------------------------------------------------------
 
 """
-    ProductPartition(p₁, p₂)
+    ProductPartition(first, second)
 
-A method for partitioning spatial objects using the product of two
-partitioning methods `p₁` and `p₂`.
+A method for partitioning objects using the product of
+`first` and `second` partitioning methods.
 """
 struct ProductPartition{P1,P2} <: PartitionMethod
-  p₁::P1
-  p₂::P2
+  first::P1
+  second::P2
 end
 
 # general case
 function partitioninds(rng::AbstractRNG, domain::Domain, method::ProductPartition)
   # individual partition results
-  s₁, _ = partitioninds(rng, domain, method.p₁)
-  s₂, _ = partitioninds(rng, domain, method.p₂)
+  s₁, _ = partitioninds(rng, domain, method.first)
+  s₂, _ = partitioninds(rng, domain, method.second)
 
   # label-based representation
   l₁ = Vector{Int}(undef, nelements(domain))
@@ -44,25 +44,25 @@ function partitioninds(rng::AbstractRNG, domain::Domain, method::ProductPartitio
 
   # return partition using label predicate
   pred(i, j) = l[i] == l[j]
-  partitioninds(rng, domain, PredicatePartition(pred))
+  partitioninds(rng, domain, IndexPredicatePartition(pred))
 end
 
-# predicate partition method
+# index predicate partition method
 function partitioninds(
   rng::AbstractRNG,
   domain::Domain,
   method::ProductPartition{P1,P2}
-) where {P1<:PredicatePartitionMethod,P2<:PredicatePartitionMethod}
-  pred(i, j) = method.p₁(i, j) * method.p₂(i, j)
-  partitioninds(rng, domain, PredicatePartition(pred))
+) where {P1<:IndexPredicatePartitionMethod,P2<:IndexPredicatePartitionMethod}
+  pred(i, j) = method.first(i, j) * method.second(i, j)
+  partitioninds(rng, domain, IndexPredicatePartition(pred))
 end
 
-# spatial predicate partition method
+# point predicate partition method
 function partitioninds(
   rng::AbstractRNG,
   domain::Domain,
   method::ProductPartition{P1,P2}
-) where {P1<:SPredicatePartitionMethod,P2<:SPredicatePartitionMethod}
-  pred(x, y) = method.p₁(x, y) * method.p₂(x, y)
-  partitioninds(rng, domain, SpatialPredicatePartition(pred))
+) where {P1<:PointPredicatePartitionMethod,P2<:PointPredicatePartitionMethod}
+  pred(pᵢ, pⱼ) = method.first(pᵢ, pⱼ) * method.second(pᵢ, pⱼ)
+  partitioninds(rng, domain, PointPredicatePartition(pred))
 end

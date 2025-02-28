@@ -339,8 +339,8 @@ export
 
   # partitioning
   PartitionMethod,
-  PredicatePartitionMethod,
-  SPredicatePartitionMethod,
+  IndexPredicatePartitionMethod,
+  PointPredicatePartitionMethod,
   UniformPartition,
   FractionPartition,
   BlockPartition,
@@ -349,8 +349,8 @@ export
   BallPartition,
   PlanePartition,
   DirectionPartition,
-  PredicatePartition,
-  SpatialPredicatePartition,
+  IndexPredicatePartition,
+  PointPredicatePartition,
   ProductPartition,
   HierarchicalPartition,
   partition,

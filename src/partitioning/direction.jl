@@ -5,24 +5,23 @@
 """
     DirectionPartition(direction; [tol])
 
-A method for partitioning spatial objects along a given `direction`
-with bandwidth tolerance `tol`.
+A method for partitioning objects along a given `direction` with bandwidth tolerance `tol`.
 """
-struct DirectionPartition{V<:Vec,ℒ<:Len} <: SPredicatePartitionMethod
-  direction::V
+struct DirectionPartition{V<:Vec,ℒ<:Len} <: PointPredicatePartitionMethod
+  dir::V
   tol::ℒ
-  DirectionPartition(direction::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(direction), tol)
+  DirectionPartition(dir::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(dir), tol)
 end
 
-DirectionPartition(direction::Vec, tol) = DirectionPartition(direction, addunit(tol, u"m"))
+DirectionPartition(dir::Vec, tol) = DirectionPartition(dir, addunit(tol, u"m"))
 
-DirectionPartition(direction::Vec; tol=atol(eltype(direction))) = DirectionPartition(direction, tol)
+DirectionPartition(dir::Vec; tol=atol(eltype(dir))) = DirectionPartition(dir, tol)
 
-DirectionPartition(direction::Tuple; kwargs...) = DirectionPartition(Vec(direction); kwargs...)
+DirectionPartition(dir::Tuple; kwargs...) = DirectionPartition(Vec(dir); kwargs...)
 
-function (p::DirectionPartition)(x, y)
-  δ = x - y
-  d = p.direction
+function (p::DirectionPartition)(pᵢ, pⱼ)
+  δ = pᵢ - pⱼ
+  d = p.dir
   k = ustrip(δ ⋅ d)
   norm(δ - k * d) < p.tol
 end
