@@ -72,6 +72,12 @@ end
   rng = StableRNG(123)
   p2 = partition(rng, g, DirectionPartition(T.((1, 0))))
   @test p1 == p2
+
+  # custom tolerance
+  rng = StableRNG(123)
+  g = cartgrid(10, 10)
+  p = partition(rng, g, DirectionPartition(T.((1, 0)), tol=T(2)))
+  @test length(p) == 4
 end
 
 @testitem "FractionPartition" setup = [Setup] begin
@@ -334,6 +340,22 @@ end
   rng = StableRNG(123)
   p2 = partition(rng, g, bmn)
   @test p1 == p2
+
+  # product of index predicate partitions
+  rng = StableRNG(123)
+  g = cartgrid(10, 10)
+  i1 = IndexPredicatePartition((i, j) -> iseven(i + j))
+  i2 = IndexPredicatePartition((i, j) -> isodd(i + j))
+  p = partition(rng, g, ProductPartition(i1, i2))
+  @test length(p) == 100
+
+  # product of point predicate partitions
+  rng = StableRNG(123)
+  g = cartgrid(10, 10)
+  i1 = PointPredicatePartition((pᵢ, pⱼ) -> norm(pᵢ - pⱼ) < T(1) * u"m")
+  i2 = PointPredicatePartition((pᵢ, pⱼ) -> norm(pᵢ - pⱼ) < T(2) * u"m")
+  p = partition(rng, g, ProductPartition(i1, i2))
+  @test length(p) == 100
 end
 
 @testitem "HierarchicalPartition" setup = [Setup] begin
