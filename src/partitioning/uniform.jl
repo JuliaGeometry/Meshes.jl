@@ -3,18 +3,17 @@
 # ------------------------------------------------------------------
 
 """
-    UniformPartition(k, [shuffle])
+    UniformPartition(k; shuffle=true)
 
-A method for partitioning spatial objects uniformly into `k` subsets
-of approximately equal size. Optionally `shuffle` the data (default
-to `true`).
+A method for partitioning objects uniformly into `k` subsets
+of approximately equal size. Optionally `shuffle` the data.
 """
 struct UniformPartition <: PartitionMethod
   k::Int
   shuffle::Bool
 end
 
-UniformPartition(k) = UniformPartition(k, true)
+UniformPartition(k; shuffle=true) = UniformPartition(k, shuffle)
 
 function partitioninds(rng::AbstractRNG, domain::Domain, method::UniformPartition)
   n = nelements(domain)
