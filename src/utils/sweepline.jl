@@ -12,7 +12,7 @@ Outputs a Dictionary of {Point, Vector{Tuple{Point, Point}}}
 where the key is each intersection point and the values are all
 pairs of segments that intersect at that point.
 """
-function BentleyOttmann(segments)
+function bentleyottmann(segments)
   # adjust vertices of segments
   segs = map(segments) do s
     a, b = extrema(s)
@@ -50,7 +50,7 @@ function BentleyOttmann(segments)
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    Meshes.handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
   I
 end
