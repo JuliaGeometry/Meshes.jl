@@ -55,7 +55,7 @@ function bentleyottmann(segments)
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    Meshes.handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
   I
 end
