@@ -66,7 +66,7 @@ end
     Segment(cart(0, 1), cart(1, 1)),
     Segment(cart(1, 0), cart(1, 1))
   ]
-  I = BentleyOttmann(S)
+  I = bentleyottmann(S)
   S_check = Dict(
     cart(1, 1) => [(cart(0, 0), cart(1, 1)), (cart(0, 1), cart(1, 1)), (cart(1, 0), cart(1, 1))],
     cart(0, 1) => [(cart(0, 1), cart(1, 0)), (cart(0, 1), cart(1, 1)), (cart(0, 0), cart(0, 1))],

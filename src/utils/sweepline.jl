@@ -1,8 +1,8 @@
-# Implementation of Bentley-Ottmann algorith
-# https://en.wikipedia.org/wiki/Bentley%E2%80%93Ottmann_algorithm
-
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
 """
-    BentleyOttmann(segments)
+    bentleyottmann(segments)
 
 Compute pairwise intersections between n `segments`
 in O(n⋅log(n)) time using Bentley-Ottmann sweep line
@@ -11,8 +11,13 @@ algorithm.
 Outputs a Dictionary of {Point, Vector{Tuple{Point, Point}}}
 where the key is each intersection point and the values are all
 pairs of segments that intersect at that point.
+
+## References
+
+* Bentley, J. L., & Ottmann, T. 1979. [Algorithms for reporting and counting geometric intersections]
+  (https://www.itseng.org/research/papers/topics/VLSI_Physical_Design_Automation/Physical_Verification/DRC/Geometric_Intersection_Problems/1979-Bentley.pdf)
 """
-function BentleyOttmann(segments)
+function bentleyottmann(segments)
   # adjust vertices of segments
   segs = map(segments) do s
     a, b = extrema(s)
@@ -56,22 +61,22 @@ function BentleyOttmann(segments)
 end
 
 function handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
-  𝒮ₛ = get(ℒ, p, S[])
-  𝒮ₑ = get(𝒰, p, S[])
-  𝒮ᵢ = get(𝒞, p, S[])
-  _processends!(𝒮ₑ, 𝒬, 𝒯, 𝒞)
-  _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
-  __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
-  if !isempty(𝒮ₛ ∪ 𝒮ₑ ∪ 𝒮ᵢ)
-    corners = 𝒮ₛ ∪ 𝒮ₑ
-    crossings = 𝒮ᵢ
+  ℬ = get(ℒ, p, S[])
+  ℰ = get(𝒰, p, S[])
+  ℐ = get(𝒞, p, S[])
+  _processend!(ℰ, 𝒬, 𝒯, 𝒞)
+  _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
+  _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
+  if !isempty(ℬ ∪ ℰ ∪ ℐ)
+    corners = ℬ ∪ ℰ
+    crossings = ℐ
     I[p] = _pushintersection(lookup, corners, crossings)
   end
 end
 
-function _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
-  [BinaryTrees.insert!(𝒯, s) for s in 𝒮ₛ]
-  for s in 𝒮ₛ
+function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
+  [BinaryTrees.insert!(𝒯, s) for s in ℬ]
+  for s in ℬ
     prev, next = BinaryTrees.prevnext(𝒯, s)
     s = Segment(s)
     if !isnothing(prev) && !isnothing(next)
@@ -84,7 +89,7 @@ function _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
     end
     if !isnothing(prev)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(prev)), s)
-      if newtype == IntersectionType(0)
+      if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(prev), vertices(s)) :
         (𝒞[newgeom] = [BinaryTrees.key(prev), vertices(s)])
@@ -92,7 +97,7 @@ function _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
     end
     if !isnothing(next)
       newgeom, newtype = _newevent(s, Segment(BinaryTrees.key(next)))
-      if newtype == IntersectionType(0)
+      if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         haskey(𝒞, newgeom) ? push!(𝒞[newgeom], vertices(s), BinaryTrees.key(next)) :
         (𝒞[newgeom] = [vertices(s), BinaryTrees.key(next)])
@@ -101,14 +106,14 @@ function _processstarts!(𝒮ₛ, 𝒬, 𝒯, 𝒞)
   end
 end
 
-function _processends!(𝒮ₑ, 𝒬, 𝒯, 𝒞)
-  for s in 𝒮ₑ
+function _processend!(ℰ, 𝒬, 𝒯, 𝒞)
+  for s in ℰ
     prev, next = BinaryTrees.prevnext(𝒯, s)
     BinaryTrees.delete!(𝒯, s)
     s = Segment(s)
     if !isnothing(prev) && !isnothing(next)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
-      if newtype == IntersectionType(0)
+      if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
         (𝒞[newgeom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
@@ -117,8 +122,8 @@ function _processends!(𝒮ₑ, 𝒬, 𝒯, 𝒞)
   end
 end
 
-function __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
-  for s in 𝒮ᵢ
+function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
+  for s in ℐ
     prev, _ = BinaryTrees.prevnext(𝒯, s)
     if !isnothing(prev)
 
@@ -129,13 +134,13 @@ function __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
       # Remove crossing points rs and tu from event queue
       if !isnothing(r)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(s))
-        if newtype == IntersectionType(0)
+        if _checkintersection(newtype)
           BinaryTrees.delete!(𝒬, newgeom)
         end
       end
       if !isnothing(u)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(BinaryTrees.key(prev)))
-        if newtype == IntersectionType(0)
+        if _checkintersection(newtype)
           BinaryTrees.delete!(𝒬, newgeom)
         end
       end
@@ -143,7 +148,7 @@ function __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
       # Add crossing points rt and su to event queue
       if !isnothing(r)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(BinaryTrees.key(prev)))
-        if newtype == IntersectionType(0)
+        if _checkintersection(newtype)
           BinaryTrees.insert!(𝒬, newgeom)
           haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(r), BinaryTrees.key(prev)) :
           (𝒞[newgeom] = [BinaryTrees.key(r), BinaryTrees.key(prev)])
@@ -151,7 +156,7 @@ function __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
       end
       if !isnothing(u)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(s))
-        if newtype == IntersectionType(0)
+        if _checkintersection(newtype)
           BinaryTrees.insert!(𝒬, newgeom)
           haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(u), s) : (𝒞[newgeom] = [BinaryTrees.key(u), s])
         end
@@ -161,9 +166,9 @@ function __processintersects!(𝒮ᵢ, 𝒬, 𝒯, 𝒞)
 end
 
 function _pushintersection(lookup, corners, crossings)
-  return [
-    (IntersectionType(4), [lookup[segment] for segment in corners]),
-    (IntersectionType(0), [lookup[segment] for segment in crossings])
+  [
+    (CornerCrossing, unique([lookup[segment] for segment in corners])),
+    (Crossing, unique([lookup[segment] for segment in crossings]))
   ]
 end
 function _newevent(s₁::Segment, s₂::Segment)
@@ -176,5 +181,5 @@ function _newevent(s₁::Segment, s₂::Segment)
 end
 
 function _checkintersection(type)
-  type == IntersectionType(0) || type == IntersectionType(1) || type == IntersectionType(2)
+  type == Crossing || type == EdgeTouching
 end
