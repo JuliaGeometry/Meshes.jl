@@ -51,16 +51,17 @@ function bentleyottmann(segments)
   end
 
   # sweep line
-  I = Dict{P,Vector{Tuple{IntersectionType,Vector{Int}}}}()
+  points = Vector{P}()
+  segs = Vector{Vector{Int}}()
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    handle!(points, segs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
-  I
+  points, segs
 end
 
-function handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+function handle!(points, segs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   ℬ = get(ℒ, p, S[])
   ℰ = get(𝒰, p, S[])
   ℐ = get(𝒞, p, S[])
@@ -68,9 +69,9 @@ function handle!(I, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
   _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
   if !isempty(ℬ ∪ ℰ ∪ ℐ)
-    corners = ℬ ∪ ℰ
-    crossings = ℐ
-    I[p] = _pushintersection(lookup, corners, crossings)
+    segments = ℬ ∪ ℰ ∪ ℐ
+    push!(points, p)
+    push!(segs, _pushintersection(lookup, segments))
   end
 end
 
@@ -165,12 +166,8 @@ function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
   end
 end
 
-function _pushintersection(lookup, corners, crossings)
-  [
-    (CornerCrossing, unique([lookup[segment] for segment in corners])),
-    (Crossing, unique([lookup[segment] for segment in crossings]))
-  ]
-end
+_pushintersection(lookup, segments) = unique([lookup[segment] for segment in segments])
+
 function _newevent(s₁::Segment, s₂::Segment)
   newevent = intersection(s₁, s₂)
   if !isnothing(newevent)
