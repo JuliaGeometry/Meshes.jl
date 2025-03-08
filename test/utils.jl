@@ -66,16 +66,12 @@ end
     Segment(cart(0, 1), cart(1, 1)),
     Segment(cart(1, 0), cart(1, 1))
   ]
-  I = bentleyottmann(S)
-  S_check = Dict(
-    cart(1, 1) => [(cart(0, 0), cart(1, 1)), (cart(0, 1), cart(1, 1)), (cart(1, 0), cart(1, 1))],
-    cart(0, 1) => [(cart(0, 1), cart(1, 0)), (cart(0, 1), cart(1, 1)), (cart(0, 0), cart(0, 1))],
-    cart(0.5, 0.5) => [(cart(0, 0), cart(1, 1)), (cart(0, 1), cart(1, 0))],
-    cart(1, 0) => [(cart(1, 0), cart(1, 1)), (cart(0, 1), cart(1, 0)), (cart(0, 0), cart(1, 0))],
-    cart(0, 0) => [(cart(0, 0), cart(1, 1)), (cart(0, 0), cart(0, 1)), (cart(0, 0), cart(1, 0))]
-  )
-  @test typeof(I) == typeof(S_check)
-  @test length(I) == length(S_check)
-  @test keys(I) == keys(S_check)
-  @test all(values(I) .== values(S_check))
+  points, segs = bentleyottmann(S)
+
+  @inferred bentleyottmann(S)
+  @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
+  @test length(points) == 6
+  @test length(segs) == 6
+  @test maximum(reduce(vcat, segs)) == length(S)
+  @test segs == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
 end
