@@ -1,16 +1,13 @@
 # ------------------------------------------------------------------
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
+
 """
     bentleyottmann(segments)
 
 Compute pairwise intersections between n `segments`
 in O(n⋅log(n)) time using Bentley-Ottmann sweep line
 algorithm.
-
-Outputs a Dictionary of {Point, Vector{Tuple{Point, Point}}}
-where the key is each intersection point and the values are all
-pairs of segments that intersect at that point.
 
 ## References
 
@@ -52,16 +49,16 @@ function bentleyottmann(segments)
 
   # sweep line
   points = Vector{P}()
-  segs = Vector{Vector{Int}}()
+  segmentidxs = Vector{Vector{Int}}()
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    handle!(points, segs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    _handle!(points, segmentidxs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
-  points, segs
+  points, segmentidxs
 end
 
-function handle!(points, segs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+function _handle!(points, segmentidxs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   ℬ = get(ℒ, p, S[])
   ℰ = get(𝒰, p, S[])
   ℐ = get(𝒞, p, S[])
@@ -71,12 +68,14 @@ function handle!(points, segs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   if !isempty(ℬ ∪ ℰ ∪ ℐ)
     segments = ℬ ∪ ℰ ∪ ℐ
     push!(points, p)
-    push!(segs, _pushintersection(lookup, segments))
+    push!(segmentidxs, _pushintersection(lookup, segments))
   end
 end
 
 function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
-  [BinaryTrees.insert!(𝒯, s) for s in ℬ]
+  for s in ℬ
+    BinaryTrees.insert!(𝒯, s)
+  end
   for s in ℬ
     prev, next = BinaryTrees.prevnext(𝒯, s)
     s = Segment(s)
@@ -166,7 +165,7 @@ function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
   end
 end
 
-_pushintersection(lookup, segments) = unique([lookup[segment] for segment in segments])
+_pushintersection(lookup, segments) = unique(lookup[segment] for segment in segments)
 
 function _newevent(s₁::Segment, s₂::Segment)
   newevent = intersection(s₁, s₂)
@@ -177,6 +176,4 @@ function _newevent(s₁::Segment, s₂::Segment)
   end
 end
 
-function _checkintersection(type)
-  type == Crossing || type == EdgeTouching
-end
+_checkintersection(type) = type == Crossing || type == EdgeTouching
