@@ -5,14 +5,13 @@
 """
     bentleyottmann(segments)
 
-Compute pairwise intersections between n `segments`
-in O(n⋅log(n)) time using Bentley-Ottmann sweep line
-algorithm.
+Compute pairwise intersections between n `segments` in
+O(n⋅log(n)) time using Bentley-Ottmann sweep line algorithm.
 
 ## References
 
-* Bentley, J. L., & Ottmann, T. 1979. [Algorithms for reporting and counting geometric intersections]
-    (https://ieeexplore.ieee.org/document/1675432)
+* Bentley, J. L., & Ottmann, T. 1979. [Algorithms for reporting
+  and counting geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
 function bentleyottmann(segments)
   # adjust vertices of segments
@@ -65,10 +64,10 @@ function _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   _processend!(ℰ, 𝒬, 𝒯, 𝒞)
   _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
   _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
-  if !isempty(ℬ ∪ ℰ ∪ ℐ)
-    segments = ℬ ∪ ℰ ∪ ℐ
+  segs = ℬ ∪ ℰ ∪ ℐ
+  if !isempty(segs)
     push!(points, p)
-    push!(seginds, _pushintersection(lookup, segments))
+    push!(seginds, _pushintersection(lookup, segs))
   end
 end
 
@@ -123,11 +122,11 @@ function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
     prev, _ = BinaryTrees.prevnext(𝒯, s)
     if !isnothing(prev)
 
-      # Find segments r and u
+      # find segments r and u
       r, _ = BinaryTrees.prevnext(𝒯, s)
       _, u = BinaryTrees.prevnext(𝒯, BinaryTrees.key(prev))
 
-      # Remove crossing points rs and tu from event queue
+      # remove crossing points rs and tu from event queue
       if !isnothing(r)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(s))
         if _checkintersection(newtype)
@@ -141,7 +140,7 @@ function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
         end
       end
 
-      # Add crossing points rt and su to event queue
+      # add crossing points rt and su to event queue
       if !isnothing(r)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(BinaryTrees.key(prev)))
         if _checkintersection(newtype)
