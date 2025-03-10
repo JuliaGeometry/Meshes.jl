@@ -12,7 +12,7 @@ algorithm.
 ## References
 
 * Bentley, J. L., & Ottmann, T. 1979. [Algorithms for reporting and counting geometric intersections]
-  (https://www.itseng.org/research/papers/topics/VLSI_Physical_Design_Automation/Physical_Verification/DRC/Geometric_Intersection_Problems/1979-Bentley.pdf)
+    (https://ieeexplore.ieee.org/document/1675432)
 """
 function bentleyottmann(segments)
   # adjust vertices of segments
@@ -49,16 +49,16 @@ function bentleyottmann(segments)
 
   # sweep line
   points = Vector{P}()
-  segmentidxs = Vector{Vector{Int}}()
+  seginds = Vector{Vector{Int}}()
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    _handle!(points, segmentidxs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
-  points, segmentidxs
+  points, seginds
 end
 
-function _handle!(points, segmentidxs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+function _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   ℬ = get(ℒ, p, S[])
   ℰ = get(𝒰, p, S[])
   ℐ = get(𝒞, p, S[])
@@ -68,7 +68,7 @@ function _handle!(points, segmentidxs, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞
   if !isempty(ℬ ∪ ℰ ∪ ℐ)
     segments = ℬ ∪ ℰ ∪ ℐ
     push!(points, p)
-    push!(segmentidxs, _pushintersection(lookup, segments))
+    push!(seginds, _pushintersection(lookup, segments))
   end
 end
 
@@ -83,24 +83,21 @@ function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
-        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
-        (𝒞[newgeom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
+        _newintersection!(𝒞, newgeom, BinaryTrees.key(next), BinaryTrees.key(prev))
       end
     end
     if !isnothing(prev)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(prev)), s)
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
-        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(prev), vertices(s)) :
-        (𝒞[newgeom] = [BinaryTrees.key(prev), vertices(s)])
+        _newintersection!(𝒞, newgeom, BinaryTrees.key(prev), vertices(s))
       end
     end
     if !isnothing(next)
       newgeom, newtype = _newevent(s, Segment(BinaryTrees.key(next)))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
-        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], vertices(s), BinaryTrees.key(next)) :
-        (𝒞[newgeom] = [vertices(s), BinaryTrees.key(next)])
+        _newintersection!(𝒞, newgeom, vertices(s), BinaryTrees.key(next))
       end
     end
   end
@@ -115,8 +112,7 @@ function _processend!(ℰ, 𝒬, 𝒯, 𝒞)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
-        haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(next), BinaryTrees.key(prev)) :
-        (𝒞[newgeom] = [BinaryTrees.key(next), BinaryTrees.key(prev)])
+        _newintersection!(𝒞, newgeom, BinaryTrees.key(next), BinaryTrees.key(prev))
       end
     end
   end
@@ -150,15 +146,14 @@ function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(BinaryTrees.key(prev)))
         if _checkintersection(newtype)
           BinaryTrees.insert!(𝒬, newgeom)
-          haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(r), BinaryTrees.key(prev)) :
-          (𝒞[newgeom] = [BinaryTrees.key(r), BinaryTrees.key(prev)])
+          _newintersection!(𝒞, newgeom, BinaryTrees.key(r), BinaryTrees.key(prev))
         end
       end
       if !isnothing(u)
         newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(s))
         if _checkintersection(newtype)
           BinaryTrees.insert!(𝒬, newgeom)
-          haskey(𝒞, newgeom) ? push!(𝒞[newgeom], BinaryTrees.key(u), s) : (𝒞[newgeom] = [BinaryTrees.key(u), s])
+          _newintersection!(𝒞, newgeom, BinaryTrees.key(u), s)
         end
       end
     end
@@ -177,3 +172,11 @@ function _newevent(s₁::Segment, s₂::Segment)
 end
 
 _checkintersection(type) = type == Crossing || type == EdgeTouching
+
+function _newintersection!(𝒞, newgeom, seg₁, seg₂)
+  if haskey(𝒞, newgeom)
+    push!(𝒞[newgeom], seg₁, seg₂)
+  else
+    𝒞[newgeom] = [seg₁, seg₂]
+  end
+end
