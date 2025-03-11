@@ -10,8 +10,8 @@ O(n⋅log(n)) time using Bentley-Ottmann sweep line algorithm.
 
 ## References
 
-* Bentley, J. L., & Ottmann, T. 1979. [Algorithms for reporting
-  and counting geometric intersections](https://ieeexplore.ieee.org/document/1675432)
+* Bentley & Ottmann 1979. [Algorithms for reporting and counting
+  geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
 function bentleyottmann(segments)
   # adjust vertices of segments

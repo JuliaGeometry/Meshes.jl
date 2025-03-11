@@ -56,9 +56,8 @@
   @inferred Meshes.withcrs(p, c, LatLon)
 end
 
-@testitem "Pairwise Intersections" setup = [Setup] begin
-  # test bentley-ottmann algorithm
-  S = [
+@testitem "Bentley-Ottmann" setup = [Setup] begin
+  segs = [
     Segment(cart(0, 0), cart(1.1, 1.1)),
     Segment(cart(1, 0), cart(0, 1)),
     Segment(cart(0, 0), cart(0, 1)),
@@ -66,12 +65,13 @@ end
     Segment(cart(0, 1), cart(1, 1)),
     Segment(cart(1, 0), cart(1, 1))
   ]
-  points, segs = bentleyottmann(S)
 
-  @inferred bentleyottmann(S)
+  points, seginds = Meshes.bentleyottmann(segs)
+
+  @inferred Meshes.bentleyottmann(segs)
   @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
   @test length(points) == 6
-  @test length(segs) == 6
-  @test maximum(reduce(vcat, segs)) == length(S)
-  @test segs == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
+  @test length(seginds) == 6
+  @test maximum(reduce(vcat, seginds)) == length(segs)
+  @test seginds == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
 end
