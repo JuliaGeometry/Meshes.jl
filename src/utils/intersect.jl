@@ -77,7 +77,6 @@ function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
   end
   for s in ℬ
     prev, next = BinaryTrees.prevnext(𝒯, s)
-    s = Segment(s)
     if !isnothing(prev) && !isnothing(next)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
       if _checkintersection(newtype)
@@ -86,17 +85,17 @@ function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
       end
     end
     if !isnothing(prev)
-      newgeom, newtype = _newevent(Segment(BinaryTrees.key(prev)), s)
+      newgeom, newtype = _newevent(Segment(BinaryTrees.key(prev)), Segment(s))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
-        _newintersection!(𝒞, newgeom, BinaryTrees.key(prev), vertices(s))
+        _newintersection!(𝒞, newgeom, BinaryTrees.key(prev), s)
       end
     end
     if !isnothing(next)
-      newgeom, newtype = _newevent(s, Segment(BinaryTrees.key(next)))
+      newgeom, newtype = _newevent(Segment(s), Segment(BinaryTrees.key(next)))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
-        _newintersection!(𝒞, newgeom, vertices(s), BinaryTrees.key(next))
+        _newintersection!(𝒞, newgeom, s, BinaryTrees.key(next))
       end
     end
   end
@@ -106,7 +105,6 @@ function _processend!(ℰ, 𝒬, 𝒯, 𝒞)
   for s in ℰ
     prev, next = BinaryTrees.prevnext(𝒯, s)
     BinaryTrees.delete!(𝒯, s)
-    s = Segment(s)
     if !isnothing(prev) && !isnothing(next)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
       if _checkintersection(newtype)
