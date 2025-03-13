@@ -39,10 +39,10 @@ function bentleyottmann(segments)
     BinaryTrees.insert!(𝒬, b)
     haskey(ℒ, a) ? push!(ℒ[a], (a, b)) : (ℒ[a] = [(a, b)])
     haskey(𝒰, b) ? push!(𝒰[b], (a, b)) : (𝒰[b] = [(a, b)])
-    haskey(ℒ, b) || (ℒ[b] = Vector{S}())
-    haskey(𝒰, a) || (𝒰[a] = Vector{S}())
-    haskey(𝒞, a) || (𝒞[a] = Vector{S}())
-    haskey(𝒞, b) || (𝒞[b] = Vector{S}())
+    haskey(ℒ, b) || (ℒ[b] = S[])
+    haskey(𝒰, a) || (𝒰[a] = S[])
+    haskey(𝒞, a) || (𝒞[a] = S[])
+    haskey(𝒞, b) || (𝒞[b] = S[])
     lookup[(a, b)] = i
   end
 
@@ -58,9 +58,9 @@ function bentleyottmann(segments)
 end
 
 function _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
-  ℬ = get(ℒ, p, Vector{S}())
-  ℰ = get(𝒰, p, Vector{S}())
-  ℐ = get(𝒞, p, Vector{S}())
+  ℬ = get(ℒ, p, S[])
+  ℰ = get(𝒰, p, S[])
+  ℐ = get(𝒞, p, S[])
   _processend!(ℰ, 𝒬, 𝒯, 𝒞)
   _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
   _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
