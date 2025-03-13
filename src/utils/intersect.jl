@@ -24,25 +24,25 @@ function bentleyottmann(segments)
   s = first(segs)
   p = minimum(s)
   P = typeof(p)
-  V = Tuple{P,P}
+  S = Tuple{P,P}
 
   # initialization
   𝒬 = BinaryTrees.AVLTree{P}()
-  𝒯 = BinaryTrees.AVLTree{V}()
-  ℒ = Dict{P,Vector{V}}()
-  𝒰 = Dict{P,Vector{V}}()
-  𝒞 = Dict{P,Vector{V}}()
-  lookup = Dict{V,Int}()
+  𝒯 = BinaryTrees.AVLTree{S}()
+  ℒ = Dict{P,Vector{S}}()
+  𝒰 = Dict{P,Vector{S}}()
+  𝒞 = Dict{P,Vector{S}}()
+  lookup = Dict{S,Int}()
   for (i, s) in enumerate(segs)
     a, b = extrema(s)
     BinaryTrees.insert!(𝒬, a)
     BinaryTrees.insert!(𝒬, b)
     haskey(ℒ, a) ? push!(ℒ[a], (a, b)) : (ℒ[a] = [(a, b)])
     haskey(𝒰, b) ? push!(𝒰[b], (a, b)) : (𝒰[b] = [(a, b)])
-    haskey(ℒ, b) || (ℒ[b] = Vector{V}())
-    haskey(𝒰, a) || (𝒰[a] = Vector{V}())
-    haskey(𝒞, a) || (𝒞[a] = Vector{V}())
-    haskey(𝒞, b) || (𝒞[b] = Vector{V}())
+    haskey(ℒ, b) || (ℒ[b] = Vector{S}())
+    haskey(𝒰, a) || (𝒰[a] = Vector{S}())
+    haskey(𝒞, a) || (𝒞[a] = Vector{S}())
+    haskey(𝒞, b) || (𝒞[b] = Vector{S}())
     lookup[(a, b)] = i
   end
 
@@ -52,15 +52,15 @@ function bentleyottmann(segments)
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    _handle!(points, seginds, lookup, p, V, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
   points, seginds
 end
 
-function _handle!(points, seginds, lookup, p, V, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
-  ℬ = get(ℒ, p, Vector{V}())
-  ℰ = get(𝒰, p, Vector{V}())
-  ℐ = get(𝒞, p, Vector{V}())
+function _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+  ℬ = get(ℒ, p, Vector{S}())
+  ℰ = get(𝒰, p, Vector{S}())
+  ℐ = get(𝒞, p, Vector{S}())
   _processend!(ℰ, 𝒬, 𝒯, 𝒞)
   _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
   _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
