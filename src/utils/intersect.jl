@@ -95,26 +95,23 @@ end
 
 function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
   for s in ℳₚ
-    prev, _ = BinaryTrees.prevnext(ℛ, s)
-    if !isnothing(prev)
-      # find segments r and u
-      r = prev
-      _, u = BinaryTrees.prevnext(ℛ, BinaryTrees.key(prev))
-
-      # remove crossing points rs and tu from event queue
-      if !isnothing(r)
-        _rmevent!(𝒬, BinaryTrees.key(r), s)
+    prev, next = BinaryTrees.prevnext(ℛ, s)
+    r = !isnothing(prev) ? BinaryTrees.key(prev) : nothing
+    t = !isnothing(next) ? BinaryTrees.key(next) : nothing
+    if !isnothing(r)
+      _rmevent!(𝒬, r, s)
+      if !isnothing(t)
+        _newevent!(𝒬, ℳ, r, t)
       end
+    end
+    if !isnothing(t)
+      _, next = BinaryTrees.prevnext(ℛ, BinaryTrees.key(next))
+      u = !isnothing(next) ? BinaryTrees.key(next) : nothing
       if !isnothing(u)
-        _rmevent!(𝒬, BinaryTrees.key(u), BinaryTrees.key(prev))
-      end
-
-      # add crossing points rt and su to event queue
-      if !isnothing(r)
-        _newevent!(𝒬, ℳ, BinaryTrees.key(r), BinaryTrees.key(prev))
-      end
-      if !isnothing(u)
-        _newevent!(𝒬, ℳ, BinaryTrees.key(u), s)
+        _rmevent!(𝒬, t, u)
+        if !isnothing(r)
+          _newevent!(𝒬, ℳ, r, u)
+        end
       end
     end
   end
