@@ -42,6 +42,7 @@
   s = Segment(cart(0, 0), cart(1, 1))
   equaltest(s)
   isapproxtest(s)
+  vertextest(s)
 
   s = Segment(Point(1.0, 1.0, 1.0, 1.0), Point(2.0, 2.0, 2.0, 2.0))
   @test all(Point(x, x, x, x) ∈ s for x in 1:0.01:2)
@@ -118,10 +119,12 @@ end
   c = Rope(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(c)
   isapproxtest(c)
+  vertextest(c)
 
   c = Ring(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(c)
   isapproxtest(c)
+  vertextest(c)
 
   # circular equality
   c1 = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
@@ -261,6 +264,25 @@ end
   r = Ring(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test crs(centroid(r)) === crs(r)
 
+  # parameterization
+  r = boundary(Box(cart(0, 0), cart(1, 1)))
+  @test r(T(0)) == cart(0, 0)
+  @test r(T(0.25)) == cart(1, 0)
+  @test r(T(0.5)) == cart(1, 1)
+  @test r(T(0.75)) == cart(0, 1)
+  r = Rope(cart(0, 0), cart(3, 0), cart(4, 0))
+  @test r(T(0)) == cart(0, 0)
+  @test r(T(0.25)) == cart(1, 0)
+  @test r(T(0.5)) == cart(2, 0)
+  @test r(T(0.75)) == cart(3, 0)
+  @test r(T(1)) == cart(4, 0)
+  r = Ring(latlon(45, 0), latlon(45, 90), latlon(90, 90))
+  @test r(T(0)) == latlon(45, 0)
+  @test r(T(1)) == latlon(45, 0)
+  r = Rope(latlon(45, 0), latlon(45, 90), latlon(90, 90))
+  @test r(T(0)) == latlon(45, 0)
+  @test r(T(1)) == latlon(90, 90)
+
   ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
   ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
   @test sprint(show, ri) == "Ring((x: 1.0 m, y: 1.0 m), (x: 2.0 m, y: 2.0 m), (x: 3.0 m, y: 3.0 m))"
@@ -293,13 +315,14 @@ end
 @testitem "Ngons" setup = [Setup] begin
   pts = (cart(0, 0), cart(1, 0), cart(0, 1))
   tups = (T.((0, 0)), T.((1, 0)), T.((0, 1)))
+  verts = SVector(pts)
   @test paramdim(Ngon) == 2
-  @test vertices(Ngon(pts)) == pts
-  @test vertices(Ngon(pts...)) == pts
-  @test vertices(Ngon(tups...)) == pts
-  @test vertices(Ngon{3}(pts)) == pts
-  @test vertices(Ngon{3}(pts...)) == pts
-  @test vertices(Ngon{3}(tups...)) == pts
+  @test vertices(Ngon(pts)) == verts
+  @test vertices(Ngon(pts...)) == verts
+  @test vertices(Ngon(tups...)) == verts
+  @test vertices(Ngon{3}(pts)) == verts
+  @test vertices(Ngon{3}(pts...)) == verts
+  @test vertices(Ngon{3}(tups...)) == verts
 
   NGONS = [Triangle, Quadrangle, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon]
   NVERT = 3:10
@@ -351,6 +374,7 @@ end
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(t)
   isapproxtest(t)
+  vertextest(t)
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test perimeter(t) ≈ T(1 + 1 + √2) * u"m"
@@ -465,6 +489,7 @@ end
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   equaltest(q)
   isapproxtest(q)
+  vertextest(q)
 
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test_throws DomainError((T(1.2), T(1.2)), "q(u, v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
@@ -536,6 +561,7 @@ end
   p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(p)
   isapproxtest(p)
+  vertextest(p)
 
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
   # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
@@ -645,9 +671,27 @@ end
   @test centroid(poly) == cart(0.5, 0.5)
 
   # single vertex access
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
+  hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
+  poly = PolyArea([outer, hole1, hole2])
   @test vertex(poly, 1) == cart(0, 0)
+  @test vertex(poly, 2) == cart(1, 0)
+  @test vertex(poly, 3) == cart(1, 1)
   @test vertex(poly, 4) == cart(0, 1)
+  @test vertex(poly, 5) == cart(0.2, 0.2)
+  @test vertex(poly, 6) == cart(0.4, 0.2)
+  @test vertex(poly, 7) == cart(0.4, 0.4)
+  @test vertex(poly, 8) == cart(0.2, 0.4)
+  @test vertex(poly, 9) == cart(0.6, 0.2)
+  @test vertex(poly, 10) == cart(0.8, 0.2)
+  @test vertex(poly, 11) == cart(0.8, 0.4)
+  @test vertex(poly, 12) == cart(0.6, 0.4)
+  @test_throws BoundsError vertex(poly, 13)
+  # type stability
+  @inferred vertex(poly, 4)
+  @inferred vertex(poly, 8)
+  @inferred vertex(poly, 12)
 
   # point in polygonal area
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
@@ -720,6 +764,7 @@ end
   t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
   equaltest(t)
   isapproxtest(t)
+  vertextest(t)
 
   # CRS propagation
   c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
@@ -785,6 +830,7 @@ end
   )
   equaltest(h)
   isapproxtest(h)
+  vertextest(t)
 
   h = Hexahedron(
     cart(0, 0, 0),
@@ -893,6 +939,9 @@ end
   @test crs(p) <: Cartesian{NoDatum}
   @test Meshes.lentype(p) == ℳ
   @test volume(p) ≈ T(1 / 3) * u"m^3"
+  @test p(T(1), T(1), T(0)) == vertices(p)[3]
+  @test p(T(0), T(0), T(1)) == vertices(p)[5]
+  @test_throws DomainError p(T(0), T(0), T(1.5))
   m = boundary(p)
   @test m isa Mesh
   @test nelements(m) == 5
@@ -903,6 +952,7 @@ end
   @test m[5] isa Triangle
   equaltest(p)
   isapproxtest(p)
+  vertextest(p)
 
   p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
@@ -931,6 +981,8 @@ end
   @test crs(w) <: Cartesian{NoDatum}
   @test Meshes.lentype(w) == ℳ
   @test volume(w) ≈ T(1 / 2) * u"m^3"
+  @test w(T(1), T(1), T(1)) == vertices(w)[6]
+  @test_throws DomainError w(T(0), T(0), T(1.5))
   m = boundary(w)
   @test m isa Mesh
   @test nelements(m) == 5
@@ -941,6 +993,7 @@ end
   @test m[5] isa Quadrangle
   equaltest(w)
   isapproxtest(w)
+  vertextest(w)
 
   w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
   @test sprint(show, w) == "Wedge((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 1.0 m, z: 1.0 m))"

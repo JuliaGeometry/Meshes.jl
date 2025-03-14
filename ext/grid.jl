@@ -63,7 +63,7 @@ function vizgridfallback!(plot, M, pdim, edim)
     # decide whether or not to reverse connectivity list
     rfunc = Makie.@lift _reverse($grid)
 
-    verts = Makie.@lift map(asmakie, vertices($grid))
+    verts = Makie.@lift map(asmakie, eachvertex($grid))
     quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
 
     dims = Makie.@lift size($grid)
@@ -80,7 +80,7 @@ function vizgridfallback!(plot, M, pdim, edim)
 
     uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $vdims[2]) for u in range(0, 1, $vdims[1])]
 
-    mesh = Makie.@lift GB.Mesh(Makie.meta($verts, uv=$uv), $quads)
+    mesh = Makie.@lift GB.Mesh($verts, $quads, uv=$uv)
 
     shading = edim == Val(3) ? Makie.FastShading : Makie.NoShading
 

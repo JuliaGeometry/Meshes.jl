@@ -3,8 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    iscoplanar(A, B, C, D)
+    issolid(g)
 
-Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
+Tells whether or not the geometry `g` is a solid (i.e., 3D volume).
 """
-iscoplanar(A::Point, B::Point, C::Point, D::Point) = isapproxzero(umixed(B - A, C - A, D - A))
+issolid(g::Geometry) = paramdim(g) == 3
+issolid(d::Domain) = paramdim(d) == 3

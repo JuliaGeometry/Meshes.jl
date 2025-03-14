@@ -44,10 +44,10 @@ _laplacian(mesh) = laplacematrix(mesh, kind=:uniform)
 
 function _smooth(mesh, L, n, λ, μ; revert=false)
   # retrieve vertices
-  points = vertices(mesh)
+  points = eachvertex(mesh)
 
   # matrix with coordinates (nvertices x ndims)
-  X = reduce(hcat, to.(points)) |> transpose
+  X = stack(to, points, dims=1)
 
   # choose between apply and revert mode
   λ₁, λ₂ = revert ? (-μ, -λ) : (λ, μ)

@@ -24,7 +24,7 @@ end
 DouglasPeuckerSimplification(τ) = DouglasPeuckerSimplification(addunit(τ, u"m"))
 
 function simplify(chain::Chain, method::DouglasPeuckerSimplification)
-  verts = _douglaspeucker(vertices(chain), method.τ) |> collect
+  verts = _douglaspeucker(vertices(chain), method.τ)
   isclosed(chain) ? Ring(verts) : Rope(verts)
 end
 

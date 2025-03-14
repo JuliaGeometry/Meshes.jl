@@ -114,7 +114,7 @@ withprecision(T, v::Vec) = numconvert.(T, v)
 withprecision(T, p::Point) = Meshes.withcrs(p, withprecision(T, to(p)))
 withprecision(T, len::Meshes.Len) = numconvert(T, len)
 withprecision(T, lens::NTuple{Dim,Meshes.Len}) where {Dim} = numconvert.(T, lens)
-withprecision(T, geoms::NTuple{Dim,<:Geometry}) where {Dim} = withprecision.(T, geoms)
+withprecision(T, geoms::StaticVector{Dim,<:Geometry}) where {Dim} = withprecision.(T, geoms)
 withprecision(T, geoms::AbstractVector{<:Geometry}) = [withprecision(T, g) for g in geoms]
 withprecision(T, geoms::CircularVector{<:Geometry}) = CircularVector([withprecision(T, g) for g in geoms])
 @generated function withprecision(T, g::G) where {G<:Meshes.GeometryOrDomain}
@@ -175,4 +175,18 @@ function _isapproxtest(g::Geometry, ::Val{3})
   @test isapprox(g, Translate(τ32, 0u"m", 0u"m")(g32), atol=1.1τ32)
   @test isapprox(g, Translate(0u"m", τ32, 0u"m")(g32), atol=1.1τ32)
   @test isapprox(g, Translate(0u"m", 0u"m", τ32)(g32), atol=1.1τ32)
+end
+
+function eachvertexalloc(g)
+  iterate(eachvertex(g)) # precompile run
+  @allocated for _ in eachvertex(g)
+  end
+end
+
+function vertextest(g)
+  @test collect(eachvertex(g)) == vertices(g)
+  @test eachvertexalloc(g) == 0
+  # type stability
+  @test isconcretetype(eltype(vertices(g)))
+  @inferred vertices(g)
 end

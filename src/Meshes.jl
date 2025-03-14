@@ -15,20 +15,20 @@ using Random
 
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
-using StatsBase: AbstractWeights, Weights, quantile
+using CoordRefSystems: Basic, Geographic, Projected
 using Distances: PreMetric, Euclidean, Mahalanobis
 using Distances: Haversine, SphericalAngle
 using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
-using TiledIteration: TileIterator
-using CoordRefSystems: Basic, Projected, Geographic
 using NearestNeighbors: KDTree, BallTree
 using NearestNeighbors: knn, inrange
 using DelaunayTriangulation: triangulate, voronoi
 using DelaunayTriangulation: each_solid_triangle
 using DelaunayTriangulation: get_polygons
 using DelaunayTriangulation: get_polygon_points
+using StatsBase: AbstractWeights, Weights, quantile
+using TiledIteration: TileIterator
 using ScopedValues: ScopedValue
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
@@ -37,7 +37,6 @@ import Random
 import Base: sort
 import Base: ==, !
 import Base: +, -, *
-import Base: <, >, ≤, ≥
 import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
@@ -222,6 +221,7 @@ export
   vertex,
   vertices,
   nvertices,
+  eachvertex,
   rings,
   segments,
   angles,
@@ -290,6 +290,7 @@ export
   # domain traits
   Domain,
   SubDomain,
+  TransformedDomain,
   embeddim,
   paramdim,
   crs,
@@ -314,6 +315,7 @@ export
   vertex,
   vertices,
   nvertices,
+  eachvertex,
   element,
   elements,
   nelements,
@@ -338,8 +340,8 @@ export
 
   # partitioning
   PartitionMethod,
-  PredicatePartitionMethod,
-  SPredicatePartitionMethod,
+  IndexPredicatePartitionMethod,
+  PointPredicatePartitionMethod,
   UniformPartition,
   FractionPartition,
   BlockPartition,
@@ -348,8 +350,8 @@ export
   BallPartition,
   PlanePartition,
   DirectionPartition,
-  PredicatePartition,
-  SpatialPredicatePartition,
+  IndexPredicatePartition,
+  PointPredicatePartition,
   ProductPartition,
   HierarchicalPartition,
   partition,
@@ -372,11 +374,11 @@ export
   # neighborhoods
   Neighborhood,
   MetricBall,
+  hasequalradii,
   radii,
   rotation,
   metric,
   radius,
-  isisotropic,
 
   # neighborhood search
   NeighborSearchMethod,
@@ -392,6 +394,9 @@ export
 
   # predicates
   isparametrized,
+  iscurve,
+  issurface,
+  issolid,
   isperiodic,
   issimplex,
   isclosed,
@@ -541,6 +546,7 @@ export
   Proj,
   Morphological,
   LengthUnit,
+  ValidCoords,
   Shadow,
   Slice,
   Repair,

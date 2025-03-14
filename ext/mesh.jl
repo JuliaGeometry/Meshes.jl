@@ -64,7 +64,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
     dim = embeddim($mesh)
     nvert = nvertices($mesh)
     nelem = nelements($mesh)
-    verts = vertices($mesh)
+    verts = eachvertex($mesh)
     topo = topology($mesh)
     elems = elements(topo)
 

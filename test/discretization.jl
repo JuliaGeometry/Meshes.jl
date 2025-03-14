@@ -8,6 +8,10 @@
   @test eltype(mesh) <: Triangle
   @test vertices(mesh) == pts
   @test collect(elements(mesh)) == tris
+
+  # type stability tests
+  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @inferred discretize(poly, FanTriangulation())
 end
 
 @testitem "DehnTriangulation" setup = [Setup] begin
@@ -26,10 +30,6 @@ end
   @test nelements(mesh) == 6
   @test eltype(mesh) <: Triangle
 
-  # type stability tests
-  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  @inferred discretize(poly, DehnTriangulation())
-
   octa = Octagon(
     cart(0.2, 0.2, 0.0),
     cart(0.5, -0.5, 0.0),
@@ -44,6 +44,10 @@ end
   @test nvertices(mesh) == 8
   @test nelements(mesh) == 6
   @test eltype(mesh) <: Triangle
+
+  # type stability tests
+  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @inferred discretize(poly, DehnTriangulation())
 end
 
 @testitem "HeldTriangulation" setup = [Setup] begin
@@ -128,6 +132,10 @@ end
   mesh = discretize(poly, HeldTriangulation(rng))
   @test nvertices(mesh) == 5
   @test nelements(mesh) == 3
+
+  # type stability tests
+  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @inferred discretize(poly, HeldTriangulation())
 end
 
 @testitem "DelaunayTriangulation" setup = [Setup] begin
@@ -572,14 +580,6 @@ end
   # simplexify is a helper function that calls an
   # appropriate discretization method depending on
   # the geometry type that is given to it
-  box = Box(cart(0), cart(1))
-  msh = simplexify(box)
-  @test eltype(msh) <: Segment
-  @test topology(msh) == GridTopology(1)
-  @test nvertices(msh) == 2
-  @test nelements(msh) == 1
-  @test msh[1] == Segment(cart(0), cart(1))
-
   seg = Segment(cart(0), cart(1))
   msh = simplexify(seg)
   @test eltype(msh) <: Segment
@@ -618,6 +618,13 @@ end
   msh = simplexify(curve)
   @test eltype(msh) <: Segment
   @test nvertices(msh) == nelements(msh) + 1
+
+  box = Box(cart(0), cart(1))
+  msh = simplexify(box)
+  @test eltype(msh) <: Segment
+  @test nvertices(msh) == 2
+  @test nelements(msh) == 1
+  @test msh[1] == Segment(cart(0), cart(1))
 
   box = Box(cart(0, 0), cart(1, 1))
   ngon = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))

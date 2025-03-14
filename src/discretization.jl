@@ -105,8 +105,7 @@ function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
 
   # handle degenerate polygons
   if nvertices(cpoly) == 1
-    v = first(vertices(cpoly))
-    points = [v, v, v]
+    points = fill(vertex(cpoly, 1), 3)
     connec = [connect((1, 2, 3))]
     return SimpleMesh(points, connec)
   end
@@ -153,8 +152,8 @@ function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
 end
 
 function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
-  # collect vertices to get rid of static containers
-  points = collect(vertices(ring))
+  # retrieve vertices of ring
+  points = collect(eachvertex(ring))
 
   # discretize within 2D ring with given method
   ring2D = Ring(_proj2D(manifold(ring), points))
@@ -194,15 +193,7 @@ simplexify(geometry) = simplexify(discretize(geometry))
 
 simplexify(box::Box) = discretize(box, ManualSimplexification())
 
-function simplexify(chain::Chain)
-  np = nvertices(chain) + isclosed(chain)
-  ip = isperiodic(chain)
-
-  points = collect(vertices(chain))
-  topo = GridTopology((np - 1,), ip)
-
-  SimpleMesh(points, topo)
-end
+simplexify(chain::Chain) = discretize(chain, ManualSimplexification())
 
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
@@ -211,6 +202,8 @@ simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(5
 simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(50))
 
 simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
+
+simplexify(tri::Triangle) = discretize(tri, ManualSimplexification())
 
 simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 

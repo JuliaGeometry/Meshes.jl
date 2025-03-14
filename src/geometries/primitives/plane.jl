@@ -44,8 +44,8 @@ normal(p::Plane) = unormalize(ucross(p.u, p.v))
   p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ && p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁
 
 Base.isapprox(p₁::Plane, p₂::Plane; atol=atol(lentype(p₁)), kwargs...) =
+  isapproxzero(norm(ucross(normal(p₁), normal(p₂))); atol, kwargs...) &&
   isapproxzero(udot(p₁(0, 0) - p₂(0, 0), normal(p₂)); atol, kwargs...) &&
-  isapproxzero(udot(p₂(0, 0) - p₁(0, 0), normal(p₁)); atol, kwargs...) &&
-  isapproxzero(norm(ucross(normal(p₁), normal(p₂))); atol, kwargs...)
+  isapproxzero(udot(p₂(0, 0) - p₁(0, 0), normal(p₁)); atol, kwargs...)
 
 (p::Plane)(u, v) = p.p + u * p.u + v * p.v

@@ -1,3 +1,122 @@
+@testitem "isparametrized" setup = [Setup] begin
+  # primitives
+  @test isparametrized(Ray)
+  @test isparametrized(Line)
+  @test isparametrized(Plane)
+  @test isparametrized(Box{<:𝔼})
+  @test isparametrized(Ball{<:𝔼})
+  @test isparametrized(Sphere{<:𝔼})
+  @test isparametrized(Ellipsoid)
+  @test isparametrized(Disk)
+  @test isparametrized(Circle)
+  @test isparametrized(BezierCurve)
+  @test isparametrized(ParametrizedCurve)
+  @test isparametrized(Cylinder)
+  @test isparametrized(CylinderSurface)
+  @test isparametrized(Cone)
+  @test isparametrized(ConeSurface)
+  @test isparametrized(ParaboloidSurface)
+  @test isparametrized(Torus)
+
+  # polytopes
+  @test isparametrized(Segment)
+  @test isparametrized(Triangle)
+  @test isparametrized(Quadrangle)
+  @test isparametrized(Hexahedron)
+end
+
+@testitem "iscurve" setup = [Setup] begin
+  # geometries
+  @test iscurve(rand(Circle))
+  @test iscurve(rand(BezierCurve))
+  @test iscurve(ParametrizedCurve(t -> Point(cos(t), sin(t)), (T(0), T(2π))))
+  @test iscurve(rand(Segment))
+  @test iscurve(rand(Rope))
+  @test iscurve(rand(Ring))
+
+  # domains
+  @test iscurve(discretize(rand(Circle)))
+end
+
+@testitem "issurface" setup = [Setup] begin
+  # geometries
+  @test issurface(Box(cart(0, 0), cart(1, 1)))
+  @test issurface(rand(Disk))
+  @test issurface(Sphere(cart(0, 0, 0)))
+  @test issurface(rand(Triangle))
+  @test issurface(rand(Quadrangle))
+
+  # domains
+  @test issurface(discretize(rand(Disk)))
+end
+
+@testitem "issolid" setup = [Setup] begin
+  # geometries
+  @test issolid(Ball(cart(0, 0, 0)))
+  @test issolid(rand(Tetrahedron))
+  @test issolid(rand(Pyramid))
+  @test issolid(rand(Wedge))
+
+  # domains
+  @test issolid(discretize(Box(cart(0, 0, 0), cart(1, 1, 1))))
+end
+
+@testitem "isperiodic" setup = [Setup] begin
+  # primitives
+  @test isperiodic(Box{𝔼{2},Cartesian2D}) == (false, false)
+  @test isperiodic(Box{𝔼{3},Cartesian3D}) == (false, false, false)
+  @test isperiodic(Ball{𝔼{2},Cartesian2D}) == (false, true)
+  @test isperiodic(Ball{𝔼{3},Cartesian3D}) == (false, false, true)
+  @test isperiodic(Sphere{𝔼{2},Cartesian2D}) == (true,)
+  @test isperiodic(Sphere{𝔼{3},Cartesian3D}) == (false, true)
+  @test isperiodic(Ellipsoid) == (false, true)
+  @test isperiodic(Cylinder) == (false, true, false)
+  @test isperiodic(CylinderSurface) == (true, false)
+  @test isperiodic(ParaboloidSurface) == (false, true)
+  @test isperiodic(Torus) == (true, true)
+
+  # polytopes
+  @test isperiodic(Segment) == (false,)
+  @test isperiodic(Quadrangle) == (false, false)
+  @test isperiodic(Hexahedron) == (false, false, false)
+
+  @test isperiodic(cartgrid(10, 10)) == (false, false)
+  @test isperiodic(cartgrid(10, 10, 10)) == (false, false, false)
+end
+
+@testitem "in" setup = [Setup] begin
+  h = first(cartgrid(10, 10, 10))
+  @test cart(0, 0, 0) ∈ h
+  @test cart(0.5, 0.5, 0.5) ∈ h
+  @test cart(-1, 0, 0) ∉ h
+  @test cart(0, 2, 0) ∉ h
+
+  outer = [merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)]
+  hole1 = [merc(0.2, 0.2), merc(0.4, 0.2), merc(0.4, 0.4), merc(0.2, 0.4)]
+  hole2 = [merc(0.6, 0.2), merc(0.8, 0.2), merc(0.8, 0.4), merc(0.6, 0.4)]
+  poly = PolyArea([outer, hole1, hole2])
+  @test all(p ∈ poly for p in outer)
+  @test merc(0.5, 0.5) ∈ poly
+  @test merc(0.2, 0.6) ∈ poly
+  @test merc(1.5, 0.5) ∉ poly
+  @test merc(-0.5, 0.5) ∉ poly
+  @test merc(0.25, 0.25) ∉ poly
+  @test merc(0.75, 0.25) ∉ poly
+  @test merc(0.75, 0.75) ∈ poly
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1170
+  t = Triangle(cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test cart(1, 0, 0) ∈ t
+  @test cart(0, 1, 0) ∈ t
+  @test cart(0, 0, 1) ∈ t
+  @test cart(1 / 2, 1 / 2, 0) ∈ t
+  @test cart(1 / 2, 0, 1 / 2) ∈ t
+  @test cart(0, 1 / 2, 1 / 2) ∈ t
+  @test cart(1 / 3, 1 / 3, 1 / 3) ∈ t
+  @test cart(0, 0, 0) ∉ t
+  @test cart(1, 1, 1) ∉ t
+end
+
 @testitem "issimplex" setup = [Setup] begin
   @test issimplex(Segment)
   @test issimplex(Segment(cart(0, 0), cart(1, 0)))
@@ -109,77 +228,6 @@ end
   @test !isconvex(poly2)
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)]))
   @test !isconvex(poly)
-end
-
-@testitem "isparametrized" setup = [Setup] begin
-  # primitives
-  @test isparametrized(Ray)
-  @test isparametrized(Line)
-  @test isparametrized(Plane)
-  @test isparametrized(Box{<:𝔼})
-  @test isparametrized(Ball{<:𝔼})
-  @test isparametrized(Sphere{<:𝔼})
-  @test isparametrized(Ellipsoid)
-  @test isparametrized(Disk)
-  @test isparametrized(Circle)
-  @test isparametrized(BezierCurve)
-  @test isparametrized(ParametrizedCurve)
-  @test isparametrized(Cylinder)
-  @test isparametrized(CylinderSurface)
-  @test isparametrized(Cone)
-  @test isparametrized(ConeSurface)
-  @test isparametrized(ParaboloidSurface)
-  @test isparametrized(Torus)
-
-  # polytopes
-  @test isparametrized(Segment)
-  @test isparametrized(Triangle)
-  @test isparametrized(Quadrangle)
-  @test isparametrized(Hexahedron)
-end
-
-@testitem "isperiodic" setup = [Setup] begin
-  # primitives
-  @test isperiodic(Box{𝔼{2},Cartesian2D}) == (false, false)
-  @test isperiodic(Box{𝔼{3},Cartesian3D}) == (false, false, false)
-  @test isperiodic(Ball{𝔼{2},Cartesian2D}) == (false, true)
-  @test isperiodic(Ball{𝔼{3},Cartesian3D}) == (false, false, true)
-  @test isperiodic(Sphere{𝔼{2},Cartesian2D}) == (true,)
-  @test isperiodic(Sphere{𝔼{3},Cartesian3D}) == (false, true)
-  @test isperiodic(Ellipsoid) == (false, true)
-  @test isperiodic(Cylinder) == (false, true, false)
-  @test isperiodic(CylinderSurface) == (true, false)
-  @test isperiodic(ParaboloidSurface) == (false, true)
-  @test isperiodic(Torus) == (true, true)
-
-  # polytopes
-  @test isperiodic(Segment) == (false,)
-  @test isperiodic(Quadrangle) == (false, false)
-  @test isperiodic(Hexahedron) == (false, false, false)
-
-  @test isperiodic(cartgrid(10, 10)) == (false, false)
-  @test isperiodic(cartgrid(10, 10, 10)) == (false, false, false)
-end
-
-@testitem "in" setup = [Setup] begin
-  h = first(cartgrid(10, 10, 10))
-  @test cart(0, 0, 0) ∈ h
-  @test cart(0.5, 0.5, 0.5) ∈ h
-  @test cart(-1, 0, 0) ∉ h
-  @test cart(0, 2, 0) ∉ h
-
-  outer = [merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)]
-  hole1 = [merc(0.2, 0.2), merc(0.4, 0.2), merc(0.4, 0.4), merc(0.2, 0.4)]
-  hole2 = [merc(0.6, 0.2), merc(0.8, 0.2), merc(0.8, 0.4), merc(0.6, 0.4)]
-  poly = PolyArea([outer, hole1, hole2])
-  @test all(p ∈ poly for p in outer)
-  @test merc(0.5, 0.5) ∈ poly
-  @test merc(0.2, 0.6) ∈ poly
-  @test merc(1.5, 0.5) ∉ poly
-  @test merc(-0.5, 0.5) ∉ poly
-  @test merc(0.25, 0.25) ∉ poly
-  @test merc(0.75, 0.25) ∉ poly
-  @test merc(0.75, 0.75) ∈ poly
 end
 
 @testitem "issubset" setup = [Setup] begin

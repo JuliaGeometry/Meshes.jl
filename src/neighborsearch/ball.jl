@@ -5,7 +5,9 @@
 """
     BallSearch(domain, ball)
 
-A method for searching neighbors in `domain` inside `ball`.
+A method for searching neighbors in `domain` inside metric `ball`.
+
+See [`MetricBall`](@ref) for additional details.
 """
 struct BallSearch{D<:Domain,B<:MetricBall,T} <: NeighborSearchMethod
   # input fields

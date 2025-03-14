@@ -8,7 +8,7 @@
 We say that a geometry is a K-polytope when it is a collection of "flat" sides
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces.
-The parameter `K` is also known as the rank or parametric dimension 
+The parameter `K` is also known as the rank or parametric dimension
 of the polytope (<https://en.wikipedia.org/wiki/Abstract_polytope>).
 
 The term polytope expresses a particular combinatorial structure. A polyhedron,
@@ -32,13 +32,13 @@ macro polytope(type, K, N)
   structexpr = if K == 3
     quote
       struct $type{C<:CRS,Mₚ<:Manifold} <: Polytope{$K,𝔼{3},C}
-        vertices::NTuple{$N,Point{Mₚ,C}}
+        vertices::SVector{$N,Point{Mₚ,C}}
       end
     end
   else
     quote
       struct $type{M<:Manifold,C<:CRS} <: Polytope{$K,M,C}
-        vertices::NTuple{$N,Point{M,C}}
+        vertices::SVector{$N,Point{M,C}}
       end
     end
   end
@@ -46,6 +46,7 @@ macro polytope(type, K, N)
   expr = quote
     $Base.@__doc__ $structexpr
 
+    $type(vertices::NTuple{$N,P}) where {P<:Point} = $type(SVector(vertices))
     $type(vertices::Vararg{Tuple,$N}) = $type(Point.(vertices))
     $type(vertices::Vararg{P,$N}) where {P<:Point} = $type(vertices)
   end
@@ -155,6 +156,23 @@ function angles(c::Chain)
   map(i -> ∠(vs[i - 1], vs[i], vs[i + 1]), i1:i2)
 end
 
+function (c::Chain)(t)
+  if t < 0 || t > 1
+    throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
+  end
+  segs = segments(c)
+  sums = cumsum(measure.(segs))
+  sums /= last(sums)
+  # find k such that sums[k] ≤ t < sums[k + 1]
+  k = searchsortedfirst(sums, t) - 1
+  # select segment s at index k
+  s, _ = iterate(segs, k)
+  # reparametrization of t within s
+  ∑ₖ = iszero(k) ? zero(eltype(sums)) : sums[k]
+  ∑ₖ₊₁ = sums[k + 1]
+  s((t - ∑ₖ) / (∑ₖ₊₁ - ∑ₖ))
+end
+
 # implementations of Chain
 include("polytopes/segment.jl")
 include("polytopes/rope.jl")
@@ -246,9 +264,16 @@ vertices(p::Polytope) = p.vertices
 """
     nvertices(polytope)
 
-Return the number of vertices in the `polytope`.
+Return the number of vertices of the `polytope`.
 """
 nvertices(p::Polytope) = nvertices(typeof(p))
+
+"""
+    eachvertex(polytope)
+
+Return an iterator for the vertices of the `polytope`.
+"""
+eachvertex(p::Polytope) = (vertex(p, i) for i in 1:nvertices(p))
 
 """
     unique(polytope)

@@ -143,6 +143,7 @@ include("domains/sets.jl")
 include("domains/meshes.jl")
 include("domains/trajecs.jl")
 include("domains/subdomains.jl")
+include("domains/transformeddomain.jl")
 
 # ------------
 # CONVERSIONS

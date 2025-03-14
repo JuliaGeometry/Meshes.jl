@@ -90,11 +90,11 @@
       # degenerate cases
       points = [cart(0, 0), cart(1, 0), cart(2, 0)]
       chull = hull(points, method)
-      @test vertices(chull) == (cart(0, 0), cart(2, 0))
+      @test vertices(chull) == SVector(cart(0, 0), cart(2, 0))
 
       points = [cart(0, 0), cart(1, 0), cart(2, 0), cart(10, 0), cart(100, 0)]
       chull = hull(points, method)
-      @test vertices(chull) == (cart(0, 0), cart(100, 0))
+      @test vertices(chull) == SVector(cart(0, 0), cart(100, 0))
 
       # partially collinear 
       points = [

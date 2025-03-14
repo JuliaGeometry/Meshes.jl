@@ -79,7 +79,7 @@ applycoord(t::CoordinateTransform, g::TransformedGeometry) = TransformedGeometry
 applycoord(t::CoordinateTransform, m::TransformedMesh) = TransformedMesh(m, t)
 
 # special treatment for lists of geometries
-applycoord(t::CoordinateTransform, g::NTuple{<:Any,<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
+applycoord(t::CoordinateTransform, g::StaticVector{<:Any,<:Geometry}) = map(gᵢ -> applycoord(t, gᵢ), g)
 applycoord(t::CoordinateTransform, g::AbstractVector{<:Geometry}) = [applycoord(t, gᵢ) for gᵢ in g]
 applycoord(t::CoordinateTransform, g::CircularVector{<:Geometry}) = CircularVector([applycoord(t, gᵢ) for gᵢ in g])
 
@@ -96,6 +96,7 @@ include("transforms/stdcoords.jl")
 include("transforms/proj.jl")
 include("transforms/morphological.jl")
 include("transforms/lengthunit.jl")
+include("transforms/validcoords.jl")
 include("transforms/shadow.jl")
 include("transforms/slice.jl")
 include("transforms/repair.jl")

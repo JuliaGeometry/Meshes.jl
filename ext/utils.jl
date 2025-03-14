@@ -34,9 +34,9 @@ asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), v
 
 function asmakie(poly::Polygon)
   rs = rings(poly)
-  outer = [asmakie(p) for p in vertices(first(rs))]
+  outer = map(asmakie, eachvertex(rs[1]))
   if hasholes(poly)
-    inners = map(i -> [asmakie(p) for p in vertices(rs[i])], 2:length(rs))
+    inners = map(i -> map(asmakie, eachvertex(rs[i])), 2:length(rs))
     Makie.Polygon(outer, inners)
   else
     Makie.Polygon(outer)

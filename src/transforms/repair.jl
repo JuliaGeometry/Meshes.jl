@@ -63,7 +63,7 @@ function apply(::Repair{1}, mesh::Mesh)
     ntuple(i -> inds[elem[i]], length(elem))
   end
 
-  points = vertices(mesh)[seen]
+  points = [vertex(mesh, ind) for ind in seen]
 
   connec = connect.(elems)
 
@@ -97,8 +97,6 @@ function apply(::Repair{8}, ring::Ring)
   v = ring |> vertices |> repair8
   Ring(v), nothing
 end
-
-repair8(v) = repair8(collect(v))
 
 repair8(v::AbstractVector) = repair8(CircularVector(v))
 

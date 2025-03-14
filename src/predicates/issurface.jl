@@ -3,8 +3,9 @@
 # ------------------------------------------------------------------
 
 """
-    iscoplanar(A, B, C, D)
+    issurface(g)
 
-Tells whether or not the points `A`, `B`, `C` and `D` are coplanar.
+Tells whether or not the geometry `g` is a surface.
 """
-iscoplanar(A::Point, B::Point, C::Point, D::Point) = isapproxzero(umixed(B - A, C - A, D - A))
+issurface(g::Geometry) = paramdim(g) == 2
+issurface(d::Domain) = paramdim(d) == 2
