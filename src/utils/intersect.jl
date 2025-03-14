@@ -43,28 +43,32 @@ function bentleyottmann(segments)
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
   while !_isempty(𝒬)
+    # current point (or event)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
+
+    # delete point from event queue
     BinaryTrees.delete!(𝒬, p)
-    _handle!(points, seginds, lookup, p, 𝒬, ℛ, ℬ, ℰ, ℳ)
+
+    # handle event, i.e. update 𝒬, ℛ and ℳ
+    ℬₚ = get(ℬ, p, S[]) # segments with p at the begin
+    ℰₚ = get(ℰ, p, S[]) # segments with p at the end
+    ℳₚ = get(ℳ, p, S[]) # segments with p at the middle
+    _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
+    _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
+    _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
+
+    # report intersection point and segment indices
+    inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
+    if !isempty(inds)
+      push!(points, p)
+      push!(seginds, inds)
+    end
   end
+
   points, seginds
 end
 
-function _handle!(points, seginds, lookup, p, 𝒬, ℛ, ℬ, ℰ, ℳ)
-  ℬₚ = _segmentswith(ℬ, p)
-  ℰₚ = _segmentswith(ℰ, p)
-  ℳₚ = _segmentswith(ℳ, p)
-  _processend!(ℰₚ, 𝒬, ℛ, ℳ)
-  _processbeg!(ℬₚ, 𝒬, ℛ, ℳ)
-  _processmid!(ℳₚ, 𝒬, ℛ, ℳ)
-  inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
-  if !isempty(inds)
-    push!(points, p)
-    push!(seginds, inds)
-  end
-end
-
-function _processbeg!(ℬₚ, 𝒬, ℛ, ℳ)
+function _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
   for s in ℬₚ
     BinaryTrees.insert!(ℛ, s)
   end
@@ -79,7 +83,7 @@ function _processbeg!(ℬₚ, 𝒬, ℛ, ℳ)
   end
 end
 
-function _processend!(ℰₚ, 𝒬, ℛ, ℳ)
+function _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
   for s in ℰₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev) && !isnothing(next)
@@ -89,7 +93,7 @@ function _processend!(ℰₚ, 𝒬, ℛ, ℳ)
   end
 end
 
-function _processmid!(ℳₚ, 𝒬, ℛ, ℳ)
+function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
   for s in ℳₚ
     prev, _ = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev)
@@ -141,9 +145,3 @@ function _rmevent!(𝒬, s₁, s₂)
 end
 
 _isempty(𝒬) = isnothing(BinaryTrees.root(𝒬))
-
-function _segmentswith(𝒟, p)
-  P = typeof(p)
-  S = Tuple{P,P}
-  get(𝒟, p, S[])
-end
