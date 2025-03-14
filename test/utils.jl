@@ -65,13 +65,20 @@ end
     Segment(cart(0, 1), cart(1, 1)),
     Segment(cart(1, 0), cart(1, 1))
   ]
-
   points, seginds = Meshes.bentleyottmann(segs)
-
-  @inferred Meshes.bentleyottmann(segs)
   @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
   @test length(points) == 6
   @test length(seginds) == 6
   @test maximum(reduce(vcat, seginds)) == length(segs)
   @test seginds == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
+
+  # finds all intersections in a grid
+  segs = facets(cartgrid(10, 10))
+  points, seginds = Meshes.bentleyottmann(segs)
+  @test length(points) == 121
+  @test length(seginds) == 121
+  @test unique(length.(seginds)) == [2, 3, 4]
+
+  # inference test
+  @inferred Meshes.bentleyottmann(segs)
 end
