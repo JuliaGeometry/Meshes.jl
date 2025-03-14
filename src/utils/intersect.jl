@@ -68,7 +68,7 @@ function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
   inds = [lookup[s] for s in segs]
   if !isempty(segs)
     push!(points, p)
-    push!(seginds, unique(inds))
+    push!(seginds, inds)
   end
 end
 
