@@ -65,9 +65,10 @@ function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
   _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
   _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
   segs = ℬ ∪ ℰ ∪ ℐ
+  inds = [lookup[s] for s in segs]
   if !isempty(segs)
     push!(points, p)
-    push!(seginds, _pushintersection(lookup, segs))
+    push!(seginds, unique(inds))
   end
 end
 
@@ -125,8 +126,6 @@ function _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
     end
   end
 end
-
-_pushintersection(lookup, segments) = unique(lookup[segment] for segment in segments)
 
 function _newevent!(𝒬, 𝒞, (a₁, b₁), (a₂, b₂))
   intersection(Segment(a₁, b₁), Segment(a₂, b₂)) do I
