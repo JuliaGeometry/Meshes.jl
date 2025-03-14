@@ -78,21 +78,21 @@ function _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
   for s in ℬ
     prev, next = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev) && !isnothing(next)
-      newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
+      newgeom, newtype = _newevent(BinaryTrees.key(next), BinaryTrees.key(prev))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         _newintersection!(𝒞, newgeom, BinaryTrees.key(next), BinaryTrees.key(prev))
       end
     end
     if !isnothing(prev)
-      newgeom, newtype = _newevent(Segment(BinaryTrees.key(prev)), Segment(s))
+      newgeom, newtype = _newevent(BinaryTrees.key(prev), s)
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         _newintersection!(𝒞, newgeom, BinaryTrees.key(prev), s)
       end
     end
     if !isnothing(next)
-      newgeom, newtype = _newevent(Segment(s), Segment(BinaryTrees.key(next)))
+      newgeom, newtype = _newevent(s, BinaryTrees.key(next))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         _newintersection!(𝒞, newgeom, s, BinaryTrees.key(next))
@@ -106,7 +106,7 @@ function _processend!(ℰ, 𝒬, ℛ, 𝒞)
     prev, next = BinaryTrees.prevnext(ℛ, s)
     BinaryTrees.delete!(ℛ, s)
     if !isnothing(prev) && !isnothing(next)
-      newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
+      newgeom, newtype = _newevent(BinaryTrees.key(next), BinaryTrees.key(prev))
       if _checkintersection(newtype)
         BinaryTrees.insert!(𝒬, newgeom)
         _newintersection!(𝒞, newgeom, BinaryTrees.key(next), BinaryTrees.key(prev))
@@ -126,13 +126,13 @@ function _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
 
       # remove crossing points rs and tu from event queue
       if !isnothing(r)
-        newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(s))
+        newgeom, newtype = _newevent(BinaryTrees.key(r), s)
         if _checkintersection(newtype)
           BinaryTrees.delete!(𝒬, newgeom)
         end
       end
       if !isnothing(u)
-        newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(BinaryTrees.key(prev)))
+        newgeom, newtype = _newevent(BinaryTrees.key(u), BinaryTrees.key(prev))
         if _checkintersection(newtype)
           BinaryTrees.delete!(𝒬, newgeom)
         end
@@ -140,14 +140,14 @@ function _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
 
       # add crossing points rt and su to event queue
       if !isnothing(r)
-        newgeom, newtype = _newevent(Segment(BinaryTrees.key(r)), Segment(BinaryTrees.key(prev)))
+        newgeom, newtype = _newevent(BinaryTrees.key(r), BinaryTrees.key(prev))
         if _checkintersection(newtype)
           BinaryTrees.insert!(𝒬, newgeom)
           _newintersection!(𝒞, newgeom, BinaryTrees.key(r), BinaryTrees.key(prev))
         end
       end
       if !isnothing(u)
-        newgeom, newtype = _newevent(Segment(BinaryTrees.key(u)), Segment(s))
+        newgeom, newtype = _newevent(BinaryTrees.key(u), s)
         if _checkintersection(newtype)
           BinaryTrees.insert!(𝒬, newgeom)
           _newintersection!(𝒞, newgeom, BinaryTrees.key(u), s)
@@ -159,8 +159,8 @@ end
 
 _pushintersection(lookup, segments) = unique(lookup[segment] for segment in segments)
 
-function _newevent(s₁::Segment, s₂::Segment)
-  newevent = intersection(s₁, s₂)
+function _newevent((a₁, b₁), (a₂, b₂))
+  newevent = intersection(Segment(a₁, b₁), Segment(a₂, b₂))
   if !isnothing(newevent)
     get(newevent), type(newevent)
   else
