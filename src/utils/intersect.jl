@@ -20,7 +20,7 @@ function bentleyottmann(segments)
     a > b ? reverse(s) : s
   end
 
-  # retrieve relevant info
+  # retrieve types
   s = first(segs)
   p = minimum(s)
   P = typeof(p)
@@ -28,7 +28,7 @@ function bentleyottmann(segments)
 
   # initialization
   𝒬 = BinaryTrees.AVLTree{P}()
-  𝒯 = BinaryTrees.AVLTree{S}()
+  ℛ = BinaryTrees.AVLTree{S}()
   ℒ = Dict{P,Vector{S}}()
   𝒰 = Dict{P,Vector{S}}()
   𝒞 = Dict{P,Vector{S}}()
@@ -52,18 +52,18 @@ function bentleyottmann(segments)
   while !isnothing(BinaryTrees.root(𝒬))
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+    _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
   end
   points, seginds
 end
 
-function _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
+function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
   ℬ = get(ℒ, p, S[])
   ℰ = get(𝒰, p, S[])
   ℐ = get(𝒞, p, S[])
-  _processend!(ℰ, 𝒬, 𝒯, 𝒞)
-  _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
-  _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
+  _processend!(ℰ, 𝒬, ℛ, 𝒞)
+  _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
+  _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
   segs = ℬ ∪ ℰ ∪ ℐ
   if !isempty(segs)
     push!(points, p)
@@ -71,12 +71,12 @@ function _handle!(points, seginds, lookup, p, S, 𝒬, 𝒯, ℒ, 𝒰, 𝒞)
   end
 end
 
-function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
+function _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
   for s in ℬ
-    BinaryTrees.insert!(𝒯, s)
+    BinaryTrees.insert!(ℛ, s)
   end
   for s in ℬ
-    prev, next = BinaryTrees.prevnext(𝒯, s)
+    prev, next = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev) && !isnothing(next)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
       if _checkintersection(newtype)
@@ -101,10 +101,10 @@ function _processbegin!(ℬ, 𝒬, 𝒯, 𝒞)
   end
 end
 
-function _processend!(ℰ, 𝒬, 𝒯, 𝒞)
+function _processend!(ℰ, 𝒬, ℛ, 𝒞)
   for s in ℰ
-    prev, next = BinaryTrees.prevnext(𝒯, s)
-    BinaryTrees.delete!(𝒯, s)
+    prev, next = BinaryTrees.prevnext(ℛ, s)
+    BinaryTrees.delete!(ℛ, s)
     if !isnothing(prev) && !isnothing(next)
       newgeom, newtype = _newevent(Segment(BinaryTrees.key(next)), Segment(BinaryTrees.key(prev)))
       if _checkintersection(newtype)
@@ -115,14 +115,14 @@ function _processend!(ℰ, 𝒬, 𝒯, 𝒞)
   end
 end
 
-function _processintersects!(ℐ, 𝒬, 𝒯, 𝒞)
+function _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
   for s in ℐ
-    prev, _ = BinaryTrees.prevnext(𝒯, s)
+    prev, _ = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev)
 
       # find segments r and u
-      r, _ = BinaryTrees.prevnext(𝒯, s)
-      _, u = BinaryTrees.prevnext(𝒯, BinaryTrees.key(prev))
+      r, _ = BinaryTrees.prevnext(ℛ, s)
+      _, u = BinaryTrees.prevnext(ℛ, BinaryTrees.key(prev))
 
       # remove crossing points rs and tu from event queue
       if !isnothing(r)
