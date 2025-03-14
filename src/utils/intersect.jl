@@ -39,10 +39,6 @@ function bentleyottmann(segments)
     BinaryTrees.insert!(𝒬, b)
     haskey(ℒ, a) ? push!(ℒ[a], (a, b)) : (ℒ[a] = [(a, b)])
     haskey(𝒰, b) ? push!(𝒰[b], (a, b)) : (𝒰[b] = [(a, b)])
-    haskey(ℒ, b) || (ℒ[b] = S[])
-    haskey(𝒰, a) || (𝒰[a] = S[])
-    haskey(𝒞, a) || (𝒞[a] = S[])
-    haskey(𝒞, b) || (𝒞[b] = S[])
     lookup[(a, b)] = i
   end
 
