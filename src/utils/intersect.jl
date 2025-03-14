@@ -27,15 +27,15 @@ function bentleyottmann(segments)
   # initialization
   𝒬 = BinaryTrees.AVLTree{P}()
   ℛ = BinaryTrees.AVLTree{S}()
-  ℒ = Dict{P,Vector{S}}()
-  𝒰 = Dict{P,Vector{S}}()
-  𝒞 = Dict{P,Vector{S}}()
+  ℬ = Dict{P,Vector{S}}()
+  ℰ = Dict{P,Vector{S}}()
+  ℳ = Dict{P,Vector{S}}()
   lookup = Dict{S,Int}()
   for (i, (a, b)) in enumerate(segs)
     BinaryTrees.insert!(𝒬, a)
     BinaryTrees.insert!(𝒬, b)
-    haskey(ℒ, a) ? push!(ℒ[a], (a, b)) : (ℒ[a] = [(a, b)])
-    haskey(𝒰, b) ? push!(𝒰[b], (a, b)) : (𝒰[b] = [(a, b)])
+    haskey(ℬ, a) ? push!(ℬ[a], (a, b)) : (ℬ[a] = [(a, b)])
+    haskey(ℰ, b) ? push!(ℰ[b], (a, b)) : (ℰ[b] = [(a, b)])
     lookup[(a, b)] = i
   end
 
@@ -45,52 +45,52 @@ function bentleyottmann(segments)
   while !_isempty(𝒬)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
+    _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℬ, ℰ, ℳ)
   end
   points, seginds
 end
 
-function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
-  ℬ = get(ℒ, p, S[])
-  ℰ = get(𝒰, p, S[])
-  ℳ = get(𝒞, p, S[])
-  _processend!(ℰ, 𝒬, ℛ, 𝒞)
-  _processbeg!(ℬ, 𝒬, ℛ, 𝒞)
-  _processmid!(ℳ, 𝒬, ℛ, 𝒞)
-  inds = [lookup[s] for s in ℬ ∪ ℰ ∪ ℳ]
+function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℬ, ℰ, ℳ)
+  ℬₚ = get(ℬ, p, S[])
+  ℰₚ = get(ℰ, p, S[])
+  ℳₚ = get(ℳ, p, S[])
+  _processend!(ℰₚ, 𝒬, ℛ, ℳ)
+  _processbeg!(ℬₚ, 𝒬, ℛ, ℳ)
+  _processmid!(ℳₚ, 𝒬, ℛ, ℳ)
+  inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
   if !isempty(inds)
     push!(points, p)
     push!(seginds, inds)
   end
 end
 
-function _processbeg!(ℬ, 𝒬, ℛ, 𝒞)
-  for s in ℬ
+function _processbeg!(ℬₚ, 𝒬, ℛ, ℳ)
+  for s in ℬₚ
     BinaryTrees.insert!(ℛ, s)
   end
-  for s in ℬ
+  for s in ℬₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev)
-      _newevent!(𝒬, 𝒞, BinaryTrees.key(prev), s)
+      _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s)
     end
     if !isnothing(next)
-      _newevent!(𝒬, 𝒞, s, BinaryTrees.key(next))
+      _newevent!(𝒬, ℳ, s, BinaryTrees.key(next))
     end
   end
 end
 
-function _processend!(ℰ, 𝒬, ℛ, 𝒞)
-  for s in ℰ
+function _processend!(ℰₚ, 𝒬, ℛ, ℳ)
+  for s in ℰₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev) && !isnothing(next)
-      _newevent!(𝒬, 𝒞, BinaryTrees.key(next), BinaryTrees.key(prev))
+      _newevent!(𝒬, ℳ, BinaryTrees.key(next), BinaryTrees.key(prev))
     end
     BinaryTrees.delete!(ℛ, s)
   end
 end
 
-function _processmid!(ℳ, 𝒬, ℛ, 𝒞)
-  for s in ℳ
+function _processmid!(ℳₚ, 𝒬, ℛ, ℳ)
+  for s in ℳₚ
     prev, _ = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev)
       # find segments r and u
@@ -107,24 +107,24 @@ function _processmid!(ℳ, 𝒬, ℛ, 𝒞)
 
       # add crossing points rt and su to event queue
       if !isnothing(r)
-        _newevent!(𝒬, 𝒞, BinaryTrees.key(r), BinaryTrees.key(prev))
+        _newevent!(𝒬, ℳ, BinaryTrees.key(r), BinaryTrees.key(prev))
       end
       if !isnothing(u)
-        _newevent!(𝒬, 𝒞, BinaryTrees.key(u), s)
+        _newevent!(𝒬, ℳ, BinaryTrees.key(u), s)
       end
     end
   end
 end
 
-function _newevent!(𝒬, 𝒞, (a₁, b₁), (a₂, b₂))
+function _newevent!(𝒬, ℳ, (a₁, b₁), (a₂, b₂))
   intersection(Segment(a₁, b₁), Segment(a₂, b₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       p = get(I)
       BinaryTrees.insert!(𝒬, p)
-      if haskey(𝒞, p)
-        push!(𝒞[p], (a₁, b₁), (a₂, b₂))
+      if haskey(ℳ, p)
+        push!(ℳ[p], (a₁, b₁), (a₂, b₂))
       else
-        𝒞[p] = [(a₁, b₁), (a₂, b₂)]
+        ℳ[p] = [(a₁, b₁), (a₂, b₂)]
       end
     end
   end
