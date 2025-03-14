@@ -14,16 +14,14 @@ O(n⋅log(n)) time using Bentley-Ottmann sweep line algorithm.
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
 function bentleyottmann(segments)
-  # adjust vertices of segments
+  # orient segments
   segs = map(segments) do s
     a, b = extrema(s)
-    a > b ? reverse(s) : s
+    a > b ? (b, a) : (a, b)
   end
 
   # retrieve types
-  s = first(segs)
-  p = minimum(s)
-  P = typeof(p)
+  P = eltype(first(segs))
   S = Tuple{P,P}
 
   # initialization
@@ -33,8 +31,7 @@ function bentleyottmann(segments)
   𝒰 = Dict{P,Vector{S}}()
   𝒞 = Dict{P,Vector{S}}()
   lookup = Dict{S,Int}()
-  for (i, s) in enumerate(segs)
-    a, b = extrema(s)
+  for (i, (a, b)) in enumerate(segs)
     BinaryTrees.insert!(𝒬, a)
     BinaryTrees.insert!(𝒬, b)
     haskey(ℒ, a) ? push!(ℒ[a], (a, b)) : (ℒ[a] = [(a, b)])
@@ -45,7 +42,7 @@ function bentleyottmann(segments)
   # sweep line
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
-  while !isnothing(BinaryTrees.root(𝒬))
+  while !_isempty(𝒬)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
     _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
@@ -56,25 +53,23 @@ end
 function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℒ, 𝒰, 𝒞)
   ℬ = get(ℒ, p, S[])
   ℰ = get(𝒰, p, S[])
-  ℐ = get(𝒞, p, S[])
+  ℳ = get(𝒞, p, S[])
   _processend!(ℰ, 𝒬, ℛ, 𝒞)
-  _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
-  _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
-  segs = ℬ ∪ ℰ ∪ ℐ
-  inds = [lookup[s] for s in segs]
-  if !isempty(segs)
+  _processbeg!(ℬ, 𝒬, ℛ, 𝒞)
+  _processmid!(ℳ, 𝒬, ℛ, 𝒞)
+  inds = [lookup[s] for s in ℬ ∪ ℰ ∪ ℳ]
+  if !isempty(inds)
     push!(points, p)
     push!(seginds, inds)
   end
 end
 
-function _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
+function _processbeg!(ℬ, 𝒬, ℛ, 𝒞)
   for s in ℬ
     BinaryTrees.insert!(ℛ, s)
   end
   for s in ℬ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-
     if !isnothing(prev)
       _newevent!(𝒬, 𝒞, BinaryTrees.key(prev), s)
     end
@@ -94,8 +89,8 @@ function _processend!(ℰ, 𝒬, ℛ, 𝒞)
   end
 end
 
-function _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
-  for s in ℐ
+function _processmid!(ℳ, 𝒬, ℛ, 𝒞)
+  for s in ℳ
     prev, _ = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev)
       # find segments r and u
@@ -132,8 +127,8 @@ function _newevent!(𝒬, 𝒞, (a₁, b₁), (a₂, b₂))
         𝒞[p] = [(a₁, b₁), (a₂, b₂)]
       end
     end
-    nothing
   end
+  nothing
 end
 
 function _rmevent!(𝒬, (a₁, b₁), (a₂, b₂))
@@ -141,6 +136,8 @@ function _rmevent!(𝒬, (a₁, b₁), (a₂, b₂))
     if type(I) == Crossing || type(I) == EdgeTouching
       BinaryTrees.delete!(𝒬, get(I))
     end
-    nothing
   end
+  nothing
 end
+
+_isempty(𝒬) = isnothing(BinaryTrees.root(𝒬))
