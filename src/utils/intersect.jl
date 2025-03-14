@@ -39,21 +39,21 @@ function bentleyottmann(segments)
     lookup[(a, b)] = i
   end
 
-  # sweep line
+  # sweep line algorithm
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
   while !_isempty(𝒬)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
     BinaryTrees.delete!(𝒬, p)
-    _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℬ, ℰ, ℳ)
+    _handle!(points, seginds, lookup, p, 𝒬, ℛ, ℬ, ℰ, ℳ)
   end
   points, seginds
 end
 
-function _handle!(points, seginds, lookup, p, S, 𝒬, ℛ, ℬ, ℰ, ℳ)
-  ℬₚ = get(ℬ, p, S[])
-  ℰₚ = get(ℰ, p, S[])
-  ℳₚ = get(ℳ, p, S[])
+function _handle!(points, seginds, lookup, p, 𝒬, ℛ, ℬ, ℰ, ℳ)
+  ℬₚ = _segmentswith(ℬ, p)
+  ℰₚ = _segmentswith(ℰ, p)
+  ℳₚ = _segmentswith(ℳ, p)
   _processend!(ℰₚ, 𝒬, ℛ, ℳ)
   _processbeg!(ℬₚ, 𝒬, ℛ, ℳ)
   _processmid!(ℳₚ, 𝒬, ℛ, ℳ)
@@ -116,28 +116,34 @@ function _processmid!(ℳₚ, 𝒬, ℛ, ℳ)
   end
 end
 
-function _newevent!(𝒬, ℳ, (a₁, b₁), (a₂, b₂))
-  intersection(Segment(a₁, b₁), Segment(a₂, b₂)) do I
+function _newevent!(𝒬, ℳ, s₁, s₂)
+  intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       p = get(I)
       BinaryTrees.insert!(𝒬, p)
       if haskey(ℳ, p)
-        push!(ℳ[p], (a₁, b₁), (a₂, b₂))
+        push!(ℳ[p], s₁, s₂)
       else
-        ℳ[p] = [(a₁, b₁), (a₂, b₂)]
+        ℳ[p] = [s₁, s₂]
       end
     end
+    nothing
   end
-  nothing
 end
 
-function _rmevent!(𝒬, (a₁, b₁), (a₂, b₂))
-  intersection(Segment(a₁, b₁), Segment(a₂, b₂)) do I
+function _rmevent!(𝒬, s₁, s₂)
+  intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       BinaryTrees.delete!(𝒬, get(I))
     end
+    nothing
   end
-  nothing
 end
 
 _isempty(𝒬) = isnothing(BinaryTrees.root(𝒬))
+
+function _segmentswith(𝒟, p)
+  P = typeof(p)
+  S = Tuple{P,P}
+  get(𝒟, p, S[])
+end
