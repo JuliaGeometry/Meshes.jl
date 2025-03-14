@@ -74,9 +74,7 @@ function _processbegin!(ℬ, 𝒬, ℛ, 𝒞)
   end
   for s in ℬ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-    if !isnothing(prev) && !isnothing(next)
-      _newevent!(𝒬, 𝒞, BinaryTrees.key(next), BinaryTrees.key(prev))
-    end
+
     if !isnothing(prev)
       _newevent!(𝒬, 𝒞, BinaryTrees.key(prev), s)
     end
@@ -101,7 +99,7 @@ function _processintersects!(ℐ, 𝒬, ℛ, 𝒞)
     prev, _ = BinaryTrees.prevnext(ℛ, s)
     if !isnothing(prev)
       # find segments r and u
-      r, _ = BinaryTrees.prevnext(ℛ, s)
+      r = prev
       _, u = BinaryTrees.prevnext(ℛ, BinaryTrees.key(prev))
 
       # remove crossing points rs and tu from event queue
