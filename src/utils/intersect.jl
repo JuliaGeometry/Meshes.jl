@@ -42,7 +42,7 @@ function bentleyottmann(segments)
   # sweep line algorithm
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
-  while !_isempty(𝒬)
+  while !BinaryTrees.isempty(𝒬)
     # current point (or event)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
 
@@ -82,7 +82,7 @@ end
 function _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
   for s in ℰₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-    isnothing(prev) || isnothing(next) || _newevent!(𝒬, ℳ, BinaryTrees.key(next), BinaryTrees.key(prev))
+    isnothing(prev) || isnothing(next) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), BinaryTrees.key(next))
     BinaryTrees.delete!(ℛ, s)
   end
 end
@@ -134,5 +134,3 @@ function _rmevent!(𝒬, s₁, s₂)
     nothing
   end
 end
-
-_isempty(𝒬) = isnothing(BinaryTrees.root(𝒬))
