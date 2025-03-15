@@ -58,19 +58,31 @@ end
 
 @testitem "Bentley-Ottmann" setup = [Setup] begin
   # basic check with a small number of segments
-  segs = [
-    Segment(cart(0, 0), cart(1.1, 1.1)),
-    Segment(cart(1, 0), cart(0, 1)),
-    Segment(cart(0, 0), cart(0, 1)),
-    Segment(cart(0, 0), cart(1, 0)),
-    Segment(cart(0, 1), cart(1, 1)),
-    Segment(cart(1, 0), cart(1, 1))
-  ]
+  segs = Segment.([
+    (cart(0, 0), cart(1.1, 1.1)),
+    (cart(1, 0), cart(0, 1)),
+    (cart(0, 0), cart(0, 1)),
+    (cart(0, 0), cart(1, 0)),
+    (cart(0, 1), cart(1, 1)),
+    (cart(1, 0), cart(1, 1))
+  ])
   points, seginds = Meshes.bentleyottmann(segs)
   @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
   @test length(points) == 6
   @test length(seginds) == 6
   @test seginds == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
+
+  segs = Segment.([
+    (cart(9, 13), cart(6, 9)),
+    (cart(2, 12), cart(5.2, 8.5)),
+    (cart(12, 11), cart(4, 7)),
+    (cart(2.5, 10), cart(12.5, 2)),
+    (cart(13, 6), cart(10, 4)),
+    (cart(10.5, 5.5), cart(9, 1)),
+    (cart(10, 4), cart(11, -1))
+  ])
+  # TODO: fix loop
+  #points, seginds = Meshes.bentleyottmann(segs)
 
   # finds all intersections in a grid
   segs = facets(cartgrid(10, 10))
@@ -89,5 +101,6 @@ end
   end
 
   # inference test
+  segs = facets(cartgrid(10, 10))
   @inferred Meshes.bentleyottmann(segs)
 end
