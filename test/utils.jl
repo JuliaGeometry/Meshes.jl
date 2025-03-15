@@ -77,7 +77,7 @@ end
   points, seginds = Meshes.bentleyottmann(segs)
   @test length(points) == 121
   @test length(seginds) == 121
-  @test unique(length.(seginds)) == [2, 3, 4]
+  @test Set(length.(seginds)) == Set([2, 3, 4])
 
   # result is invariant under rotations
   segs = collect(segs)
@@ -85,7 +85,7 @@ end
     points, seginds = Meshes.bentleyottmann(segs |> Rotate(θ))
     @test length(points) == 121
     @test length(seginds) == 121
-    @test unique(length.(seginds)) == [2, 3, 4]
+    @test Set(length.(seginds)) == Set([2, 3, 4])
   end
 
   # inference test
