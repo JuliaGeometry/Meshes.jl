@@ -41,11 +41,12 @@ function bentleyottmann(segments)
 
   # sweep line algorithm
   points = Vector{P}()
+  visited = Dict{P,Int}()
   seginds = Vector{Vector{Int}}()
+  i = 1
   while !BinaryTrees.isempty(𝒬)
     # current point (or event)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
-
     # delete point from event queue
     BinaryTrees.delete!(𝒬, p)
 
@@ -53,16 +54,24 @@ function bentleyottmann(segments)
     ℬₚ = get(ℬ, p, S[]) # segments with p at the begin
     ℰₚ = get(ℰ, p, S[]) # segments with p at the end
     ℳₚ = get(ℳ, p, S[]) # segments with p at the middle
-    _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
-    _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
-    _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
+    Meshes._handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
+    Meshes._handleend!(ℰₚ, 𝒬, ℛ, ℳ)
+    Meshes._handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
 
     # report intersection point and segment indices
     inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
     if !isempty(inds)
-      push!(points, p)
-      push!(seginds, inds)
+      if p ∈ keys(visited)
+        seginds[visited[p]] = inds
+      else
+        push!(points, p)
+        push!(seginds, inds)
+        push!(visited, p => i)
+        i += 1
+      end
     end
+    𝒬
+    hcat(points, seginds)
   end
 
   points, seginds
@@ -93,7 +102,7 @@ function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
     r = !isnothing(prev) ? BinaryTrees.key(prev) : nothing
     t = !isnothing(next) ? BinaryTrees.key(next) : nothing
     if !isnothing(r)
-      _rmevent!(𝒬, r, s)
+      _newevent!(𝒬, ℳ, r, s)
       if !isnothing(t)
         _newevent!(𝒬, ℳ, r, t)
       end
@@ -102,7 +111,7 @@ function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
       _, next = BinaryTrees.prevnext(ℛ, BinaryTrees.key(next))
       u = !isnothing(next) ? BinaryTrees.key(next) : nothing
       if !isnothing(u)
-        _rmevent!(𝒬, t, u)
+        _newevent!(𝒬, ℳ, t, u)
         if !isnothing(r)
           _newevent!(𝒬, ℳ, r, u)
         end
@@ -111,21 +120,28 @@ function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
   end
 end
 
+#TODO potentially include visited here, to nudge values to existing points
+# TODO Maybe just check if p near a key in \scrM
 function _newevent!(𝒬, ℳ, s₁, s₂)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       p = get(I)
-      BinaryTrees.insert!(𝒬, p)
       if haskey(ℳ, p)
-        push!(ℳ[p], s₁, s₂)
+        if s₁ ∉ ℳ[p]
+          push!(ℳ[p], s₁)
+          BinaryTrees.insert!(𝒬, p)
+        end
+        if s₂ ∉ ℳ[p]
+          push!(ℳ[p], s₂)
+        end
       else
         ℳ[p] = [s₁, s₂]
+        BinaryTrees.insert!(𝒬, p)
       end
     end
     nothing
   end
 end
-
 function _rmevent!(𝒬, s₁, s₂)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
