@@ -74,21 +74,15 @@ function _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
   end
   for s in ℬₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-    if !isnothing(prev)
-      _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s)
-    end
-    if !isnothing(next)
-      _newevent!(𝒬, ℳ, s, BinaryTrees.key(next))
-    end
+    isnothing(prev) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s)
+    isnothing(next) || _newevent!(𝒬, ℳ, s, BinaryTrees.key(next))
   end
 end
 
 function _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
   for s in ℰₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-    if !isnothing(prev) && !isnothing(next)
-      _newevent!(𝒬, ℳ, BinaryTrees.key(next), BinaryTrees.key(prev))
-    end
+    isnothing(prev) || isnothing(next) || _newevent!(𝒬, ℳ, BinaryTrees.key(next), BinaryTrees.key(prev))
     BinaryTrees.delete!(ℛ, s)
   end
 end
