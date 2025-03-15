@@ -81,7 +81,7 @@ end
 
   # result is invariant under rotations
   segs = collect(segs)
-  for θ in T(π/6):T(π/6):T(2π-π/6)
+  for θ in T(π / 6):T(π / 6):T(2π - π / 6)
     points, seginds = Meshes.bentleyottmann(segs |> Rotate(θ))
     @test length(points) == 121
     @test length(seginds) == 121
