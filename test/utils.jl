@@ -73,7 +73,6 @@ end
   @test length(seginds) == 6
   @test seginds == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
 
-  #TODO original complex test
   segs =
     Segment.([
       (cart(9, 13), cart(6, 9)),
@@ -84,22 +83,8 @@ end
       (cart(10.5, 5.5), cart(9, 1)),
       (cart(10, 4), cart(11, -1))
     ])
-  # points, seginds = Meshes.bentleyottmann(segs)
-
-  #TODO more intensive test
-  segs =
-    Segment.([
-      (cart(9, 13), cart(6, 9)),
-      (cart(2, 12), cart(9, 4.8)),
-      (cart(12, 11), cart(4, 7)),
-      (cart(2.5, 10), cart(12.5, 2)),
-      (cart(13, 6), cart(10, 4)),
-      (cart(10.5, 5.5), cart(9, 1)),
-      (cart(10, 4), cart(11, -1)),
-      (cart(10, 3), cart(10, 5))
-    ])
-  #  points, seginds = Meshes.bentleyottmann(segs)
-  #  hcat(points, seginds)
+  # TODO: fix loop
+  #points, seginds = Meshes.bentleyottmann(segs)
 
   # finds all intersections in a grid
   segs = facets(cartgrid(10, 10))
