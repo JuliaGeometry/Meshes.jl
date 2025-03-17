@@ -62,8 +62,10 @@ end
 
 rounds the coordinates of a point to specified presicion.
 """
-function round(a::Point, r::RoundingMode=RoundNearest; kwargs...)
-  A = to(a)
-  rounded = Unitful.round.(eltype(A), A, r; kwargs...)
-  Point(Tuple(rounded))
+function Base.round(a::Point, r::RoundingMode=RoundNearest; kwargs...)
+  c = coords(a)
+  vals = CoordRefSystems.values(c)
+  newcoords = round.(eltype(vals), vals, r; kwargs...)
+  cnew = CoordRefSystems.constructor(c)(newcoords...)
+  Point(cnew)
 end
