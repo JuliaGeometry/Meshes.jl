@@ -54,6 +54,13 @@
   c = (T(30), T(60))
   p = latlon(c) |> Proj(Cartesian)
   @inferred Meshes.withcrs(p, c, LatLon)
+
+  # round
+  p₁ = cart(1, 1)
+  p₂ = cart(1.0000000000004, 0.9999999999996)
+  @test Meshes.roundcoords(p₁, sigdigits=5) == p₁
+  @test Meshes.roundcoords(p₂, digits=10) == p₁
+  @inferred Meshes.roundcoords(p₁, digits=10)
 end
 
 @testitem "Bentley-Ottmann" setup = [Setup] begin
