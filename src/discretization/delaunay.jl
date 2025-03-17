@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    DelaunayTriangulation()
+    DelaunayTriangulation([rng])
 
 Constrained Delaunay triangulation of polygons.
 Optionally, specify the random number generator `rng`.
