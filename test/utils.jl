@@ -74,7 +74,7 @@ end
       (cart(0, 1), cart(1, 1)),
       (cart(1, 0), cart(1, 1))
     ])
-  points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = Meshes.bentleyottmann(segs; digits=10)
   @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
   @test length(points) == 6
   @test length(seginds) == 6
@@ -83,19 +83,25 @@ end
   segs =
     Segment.([
       (cart(9, 13), cart(6, 9)),
-      (cart(2, 12), cart(5.2, 8.5)),
+      (cart(2, 12), cart(9, 4.8)),
       (cart(12, 11), cart(4, 7)),
       (cart(2.5, 10), cart(12.5, 2)),
       (cart(13, 6), cart(10, 4)),
       (cart(10.5, 5.5), cart(9, 1)),
-      (cart(10, 4), cart(11, -1))
+      (cart(10, 4), cart(11, -1)),
+      (cart(10, 3), cart(10, 5))
     ])
-  # TODO: fix loop
-  #points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = Meshes.bentleyottmann(segs; digits=10)
+  @test length(points) == 17
+  @test length(seginds) == 17
+  @test Set(reduce(vcat, seginds)) == Set(1:8)
+  @test points[findfirst(p -> p ≈ cart(10, 4), points)] ≈ cart(10, 4)
+  @test Set(seginds[findfirst(p -> p ≈ cart(10, 4), points)]) == Set([4, 5, 6, 7, 8])
+  @test Set(seginds[findfirst(p -> p ≈ cart(9, 4.8), points)]) == Set([4, 2])
 
   # finds all intersections in a grid
   segs = facets(cartgrid(10, 10))
-  points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = Meshes.bentleyottmann(segs; digits=10)
   @test length(points) == 121
   @test length(seginds) == 121
   @test Set(length.(seginds)) == Set([2, 3, 4])
@@ -103,7 +109,7 @@ end
   # result is invariant under rotations
   segs = collect(segs)
   for θ in T(π / 6):T(π / 6):T(2π - π / 6)
-    θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ))
+    θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ); digits=10)
     @test length(θpoints) == 121
     @test length(θseginds) == 121
     @test Set(length.(θseginds)) == Set([2, 3, 4])
@@ -111,5 +117,5 @@ end
 
   # inference test
   segs = facets(cartgrid(10, 10))
-  @inferred Meshes.bentleyottmann(segs)
+  @inferred Meshes.bentleyottmann(segs; digits=10)
 end

@@ -3,17 +3,18 @@
 # ------------------------------------------------------------------
 
 """
-    bentleyottmann(segments)
+    bentleyottmann(segments; digits)
 
-Compute pairwise intersections between n `segments` in
-O(n⋅log(n)) time using Bentley-Ottmann sweep line algorithm.
+Compute pairwise intersections between n `segments`
+with `digits` precision in O(n⋅log(n)) time using
+Bentley-Ottmann sweep line algorithm.
 
 ## References
 
 * Bentley & Ottmann 1979. [Algorithms for reporting and counting
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
-function bentleyottmann(segments)
+function bentleyottmann(segments; kwargs...)
   # orient segments
   segs = map(segments) do s
     a, b = extrema(s)
@@ -42,6 +43,8 @@ function bentleyottmann(segments)
   # sweep line algorithm
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
+  visited = Dict{P,Int}()
+  i = 1
   while !BinaryTrees.isempty(𝒬)
     # current point (or event)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
@@ -53,83 +56,89 @@ function bentleyottmann(segments)
     ℬₚ = get(ℬ, p, S[]) # segments with p at the begin
     ℰₚ = get(ℰ, p, S[]) # segments with p at the end
     ℳₚ = get(ℳ, p, S[]) # segments with p at the middle
-    _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
-    _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
-    _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
+    _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; kwargs...)
+    _handleend!(ℰₚ, 𝒬, ℛ, ℳ; kwargs...)
+    _handlemid!(ℳₚ, 𝒬, ℛ, ℳ; kwargs...)
 
     # report intersection point and segment indices
     inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
     if !isempty(inds)
-      push!(points, p)
-      push!(seginds, inds)
+      if p ∈ keys(visited)
+        seginds[visited[p]] = inds
+      else
+        push!(points, p)
+        push!(seginds, inds)
+        push!(visited, p => i)
+        i += 1
+      end
     end
+    𝒬
+    hcat(points, seginds)
   end
 
   points, seginds
 end
 
-function _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ)
+function _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; kwargs...)
   for s in ℬₚ
     BinaryTrees.insert!(ℛ, s)
   end
   for s in ℬₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-    isnothing(prev) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s)
-    isnothing(next) || _newevent!(𝒬, ℳ, s, BinaryTrees.key(next))
+    isnothing(prev) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s; kwargs...)
+    isnothing(next) || _newevent!(𝒬, ℳ, s, BinaryTrees.key(next); kwargs...)
   end
 end
 
-function _handleend!(ℰₚ, 𝒬, ℛ, ℳ)
+function _handleend!(ℰₚ, 𝒬, ℛ, ℳ; kwargs...)
   for s in ℰₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
-    isnothing(prev) || isnothing(next) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), BinaryTrees.key(next))
+    isnothing(prev) || isnothing(next) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), BinaryTrees.key(next); kwargs...)
     BinaryTrees.delete!(ℛ, s)
   end
 end
 
-function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ)
+function _handlemid!(ℳₚ, 𝒬, ℛ, ℳ; kwargs...)
   for s in ℳₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
     r = !isnothing(prev) ? BinaryTrees.key(prev) : nothing
     t = !isnothing(next) ? BinaryTrees.key(next) : nothing
     if !isnothing(r)
-      _rmevent!(𝒬, r, s)
+      _newevent!(𝒬, ℳ, r, s; kwargs...)
       if !isnothing(t)
-        _newevent!(𝒬, ℳ, r, t)
+        _newevent!(𝒬, ℳ, r, t; kwargs...)
       end
     end
     if !isnothing(t)
       _, next = BinaryTrees.prevnext(ℛ, BinaryTrees.key(next))
       u = !isnothing(next) ? BinaryTrees.key(next) : nothing
       if !isnothing(u)
-        _rmevent!(𝒬, t, u)
+        _newevent!(𝒬, ℳ, t, u; kwargs...)
         if !isnothing(r)
-          _newevent!(𝒬, ℳ, r, u)
+          _newevent!(𝒬, ℳ, r, u; kwargs...)
         end
       end
     end
   end
 end
 
-function _newevent!(𝒬, ℳ, s₁, s₂)
+function _newevent!(𝒬, ℳ, s₁, s₂; kwargs...)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       p = get(I)
-      BinaryTrees.insert!(𝒬, p)
-      if haskey(ℳ, p)
-        push!(ℳ[p], s₁, s₂)
+      p′ = roundcoords(p; kwargs...)
+      if haskey(ℳ, p′)
+        if s₁ ∉ ℳ[p′]
+          push!(ℳ[p′], s₁)
+          BinaryTrees.insert!(𝒬, p′)
+        end
+        if s₂ ∉ ℳ[p′]
+          push!(ℳ[p′], s₂)
+        end
       else
-        ℳ[p] = [s₁, s₂]
+        ℳ[p′] = [s₁, s₂]
+        BinaryTrees.insert!(𝒬, p′)
       end
-    end
-    nothing
-  end
-end
-
-function _rmevent!(𝒬, s₁, s₂)
-  intersection(Segment(s₁), Segment(s₂)) do I
-    if type(I) == Crossing || type(I) == EdgeTouching
-      BinaryTrees.delete!(𝒬, get(I))
     end
     nothing
   end
