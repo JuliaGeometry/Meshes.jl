@@ -55,3 +55,17 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   end
   Expr(:tuple, exprs...)
 end
+
+"""
+    roundcoords(point, r=RoundNearest; digits=0, base=10)
+    roundcoords(point, r=RoundNearest; sigdigits=0)
+
+Rounds the coordinates of a `point` to specified presicion.
+"""
+function roundcoords(p::Point, r::RoundingMode=RoundNearest; kwargs...)
+  c = coords(p)
+  x = CoordRefSystems.values(c)
+  x′ = round.(eltype(x), x, r; kwargs...)
+  c′ = CoordRefSystems.constructor(c)(x′...)
+  Point(c′)
+end
