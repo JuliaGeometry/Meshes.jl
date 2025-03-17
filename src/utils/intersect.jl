@@ -72,8 +72,6 @@ function bentleyottmann(segments; kwargs...)
         i += 1
       end
     end
-    𝒬
-    hcat(points, seginds)
   end
 
   points, seginds

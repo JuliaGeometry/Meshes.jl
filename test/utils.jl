@@ -65,6 +65,7 @@ end
 
 @testitem "Bentley-Ottmann" setup = [Setup] begin
   # basic check with a small number of segments
+  digits = -Int(log10(atol(T)))
   segs =
     Segment.([
       (cart(0, 0), cart(1.1, 1.1)),
@@ -74,7 +75,7 @@ end
       (cart(0, 1), cart(1, 1)),
       (cart(1, 0), cart(1, 1))
     ])
-  points, seginds = Meshes.bentleyottmann(segs; digits=10)
+  points, seginds = Meshes.bentleyottmann(segs; digits=digits)
   @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
   @test length(points) == 6
   @test length(seginds) == 6
@@ -91,7 +92,7 @@ end
       (cart(10, 4), cart(11, -1)),
       (cart(10, 3), cart(10, 5))
     ])
-  points, seginds = Meshes.bentleyottmann(segs; digits=10)
+  points, seginds = Meshes.bentleyottmann(segs; digits=digits)
   @test length(points) == 17
   @test length(seginds) == 17
   @test Set(reduce(vcat, seginds)) == Set(1:8)
@@ -101,7 +102,7 @@ end
 
   # finds all intersections in a grid
   segs = facets(cartgrid(10, 10))
-  points, seginds = Meshes.bentleyottmann(segs; digits=10)
+  points, seginds = Meshes.bentleyottmann(segs; digits=digits)
   @test length(points) == 121
   @test length(seginds) == 121
   @test Set(length.(seginds)) == Set([2, 3, 4])
@@ -109,7 +110,7 @@ end
   # result is invariant under rotations
   segs = collect(segs)
   for θ in T(π / 6):T(π / 6):T(2π - π / 6)
-    θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ); digits=10)
+    θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ); digits=digits)
     @test length(θpoints) == 121
     @test length(θseginds) == 121
     @test Set(length.(θseginds)) == Set([2, 3, 4])
