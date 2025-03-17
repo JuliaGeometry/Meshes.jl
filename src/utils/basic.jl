@@ -57,15 +57,15 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
 end
 
 """
-    round(point, r=RoundNearest; digits=0, base=10)
-    round(point, r=RoundNearest; sigdigits=0)
+    roundcoords(point, r=RoundNearest; digits=0, base=10)
+    roundcoords(point, r=RoundNearest; sigdigits=0)
 
-rounds the coordinates of a point to specified presicion.
+Rounds the coordinates of a `point` to specified presicion.
 """
-function Base.round(a::Point, r::RoundingMode=RoundNearest; kwargs...)
-  c = coords(a)
-  vals = CoordRefSystems.values(c)
-  newcoords = round.(eltype(vals), vals, r; kwargs...)
-  cnew = CoordRefSystems.constructor(c)(newcoords...)
-  Point(cnew)
+function roundcoords(p::Point, r::RoundingMode=RoundNearest; kwargs...)
+  c = coords(p)
+  x = CoordRefSystems.values(c)
+  x′ = round.(eltype(x), x, r; kwargs...)
+  c′ = CoordRefSystems.constructor(c)(x′...)
+  Point(c′)
 end
