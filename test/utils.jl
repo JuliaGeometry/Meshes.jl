@@ -65,7 +65,7 @@ end
 
 @testitem "Bentley-Ottmann" setup = [Setup] begin
   # basic check with a small number of segments
-  precision = -Int(log10(atol(T)))
+  precision = Int(4)
   segs =
     Segment.([
       (cart(0, 0), cart(1.1, 1.1)),
