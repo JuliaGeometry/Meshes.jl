@@ -127,8 +127,7 @@ end
 function _newevent!(𝒬, ℳ, s₁, s₂; kwargs...)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
-      p = get(I)
-      p = roundcoords(p; kwargs...)
+      p = roundcoords(get(I); kwargs...)
       if haskey(ℳ, p)
         if s₁ ∉ ℳ[p]
           push!(ℳ[p], s₁)
@@ -149,8 +148,7 @@ end
 function _rmevent!(𝒬, s₁, s₂; kwargs...)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
-      p = get(I)
-      p = roundcoords(p; kwargs...)
+      p = roundcoords(get(I); kwargs...)
       BinaryTrees.delete!(𝒬, p)
     end
     nothing
