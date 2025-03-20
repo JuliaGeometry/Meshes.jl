@@ -59,6 +59,9 @@ function bentleyottmann(segments; kwargs...)
     _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; kwargs...)
     _handleend!(ℰₚ, 𝒬, ℛ, ℳ; kwargs...)
     _handlemid!(ℳₚ, 𝒬, ℛ, ℳ; kwargs...)
+    # Meshes._handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; digits=digits)
+    # Meshes._handleend!(ℰₚ, 𝒬, ℛ, ℳ; digits=digits)
+    # Meshes._handlemid!(ℳₚ, 𝒬, ℛ, ℳ; digits=digits)
 
     # report intersection point and segment indices
     inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
@@ -85,6 +88,7 @@ function _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; kwargs...)
     prev, next = BinaryTrees.prevnext(ℛ, s)
     isnothing(prev) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s; kwargs...)
     isnothing(next) || _newevent!(𝒬, ℳ, s, BinaryTrees.key(next); kwargs...)
+    isnothing(prev) || isnothing(next) || _rmevent!(𝒬, s, s; kwargs...)
   end
 end
 
@@ -124,19 +128,30 @@ function _newevent!(𝒬, ℳ, s₁, s₂; kwargs...)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       p = get(I)
-      p′ = roundcoords(p; kwargs...)
-      if haskey(ℳ, p′)
-        if s₁ ∉ ℳ[p′]
-          push!(ℳ[p′], s₁)
-          BinaryTrees.insert!(𝒬, p′)
+      p = roundcoords(p; kwargs...)
+      if haskey(ℳ, p)
+        if s₁ ∉ ℳ[p]
+          push!(ℳ[p], s₁)
+          BinaryTrees.insert!(𝒬, p)
         end
-        if s₂ ∉ ℳ[p′]
-          push!(ℳ[p′], s₂)
+        if s₂ ∉ ℳ[p]
+          push!(ℳ[p], s₂)
         end
       else
-        ℳ[p′] = [s₁, s₂]
-        BinaryTrees.insert!(𝒬, p′)
+        ℳ[p] = [s₁, s₂]
+        BinaryTrees.insert!(𝒬, p)
       end
+    end
+    nothing
+  end
+end
+
+function _rmevent!(𝒬, s₁, s₂; kwargs...)
+  intersection(Segment(s₁), Segment(s₂)) do I
+    if type(I) == Crossing || type(I) == EdgeTouching
+      p = get(I)
+      p = roundcoords(p; kwargs...)
+      BinaryTrees.delete!(𝒬, p)
     end
     nothing
   end
