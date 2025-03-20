@@ -59,9 +59,6 @@ function bentleyottmann(segments; kwargs...)
     _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; kwargs...)
     _handleend!(ℰₚ, 𝒬, ℛ, ℳ; kwargs...)
     _handlemid!(ℳₚ, 𝒬, ℛ, ℳ; kwargs...)
-    # Meshes._handlebeg!(ℬₚ, 𝒬, ℛ, ℳ; digits=digits)
-    # Meshes._handleend!(ℰₚ, 𝒬, ℛ, ℳ; digits=digits)
-    # Meshes._handlemid!(ℳₚ, 𝒬, ℛ, ℳ; digits=digits)
 
     # report intersection point and segment indices
     inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
