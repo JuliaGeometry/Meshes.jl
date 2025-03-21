@@ -41,10 +41,10 @@ function bentleyottmann(segments; kwargs...)
   end
 
   # sweep line algorithm
+  counter = 1
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
   visited = Dict{P,Int}()
-  i = 1
   while !BinaryTrees.isempty(𝒬)
     # current point (or event)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
@@ -68,8 +68,8 @@ function bentleyottmann(segments; kwargs...)
       else
         push!(points, p)
         push!(seginds, inds)
-        push!(visited, p => i)
-        i += 1
+        push!(visited, p => counter)
+        counter += 1
       end
     end
   end
