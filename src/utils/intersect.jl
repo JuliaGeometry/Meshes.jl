@@ -157,7 +157,7 @@ end
 
 function _digits(segments)
   s = first(segments)
-  ℒ = Meshes.lentype(s)
+  ℒ = lentype(s)
   τ = ustrip(atol(ℒ))
-  round(Int, -log10(τ))
+  round(Int, -log10(τ)) - 1
 end
