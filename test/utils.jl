@@ -64,7 +64,7 @@
 end
 
 @testitem "bentleyottmann" setup = [Setup] begin
-  digits = Int(4) # precision in number of digits
+  digits = 4 # precision in number of digits
 
   # basic check with a small number of segments
   segs =
