@@ -75,10 +75,10 @@ end
       (cart(1, 0), cart(1, 1))
     ])
   points, seginds = Meshes.bentleyottmann(segs)
-  @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
-  @test length(points) == 6
-  @test length(seginds) == 6
-  @test seginds == [[1, 3, 4], [2, 5, 3], [1, 2], [6, 2, 4], [5, 6, 1], [1]]
+  @test all(points .≈ [cart(0.5, 0.5), cart(1, 1)])
+  @test length(points) == 2
+  @test length(seginds) == 2
+  @test seginds == [[1, 2], [1, 5, 6]]
   @inferred Meshes.bentleyottmann(segs)
 
   segs =
@@ -93,19 +93,21 @@ end
       (cart(10, 3), cart(10, 5))
     ])
   points, seginds = Meshes.bentleyottmann(segs)
-  @test length(points) == 17
-  @test length(seginds) == 17
-  @test Set(reduce(vcat, seginds)) == Set(1:8)
+  @test length(points) == 4
+  @test length(seginds) == 4
+  @test Set(reduce(vcat, seginds)) == Set(2:8)
   @test points[findfirst(p -> p ≈ cart(10, 4), points)] ≈ cart(10, 4)
   @test Set(seginds[findfirst(p -> p ≈ cart(10, 4), points)]) == Set([4, 5, 6, 7, 8])
   @test Set(seginds[findfirst(p -> p ≈ cart(9, 4.8), points)]) == Set([4, 2])
 
   # finds all intersections in a grid
-  segs = facets(cartgrid(10, 10))
+  horizontal = [Segment((1, i), (n, i)) for i in 1:n]
+  vertical = [Segment((i, 1), (i, n)) for i in 1:n]
+  segs = [horizontal; vertical]
   points, seginds = Meshes.bentleyottmann(segs)
   @test length(points) == 121
   @test length(seginds) == 121
-  @test Set(length.(seginds)) == Set([2, 3, 4])
+  @test Set(length.(seginds)) == Set([2])
 
   # result is invariant under rotations
   segs = collect(segs)
@@ -113,7 +115,7 @@ end
     θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ))
     @test length(θpoints) == 121
     @test length(θseginds) == 121
-    @test Set(length.(θseginds)) == Set([2, 3, 4])
+    @test Set(length.(θseginds)) == Set([2])
   end
 
   # inference test

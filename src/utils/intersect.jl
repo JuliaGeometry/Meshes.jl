@@ -64,7 +64,7 @@ function bentleyottmann(segments; digits=_digits(segments))
     _handlemid!(ℳₚ, 𝒬, ℛ, ℳ, digits)
 
     # report intersection point and segment indices
-    inds = [lookup[s] for s in ℬₚ ∪ ℰₚ ∪ ℳₚ]
+    inds = [lookup[s] for s in ℳₚ]
     if !isempty(inds)
       if p ∈ keys(visited)
         seginds[visited[p]] = inds
@@ -83,8 +83,6 @@ end
 function _handlebeg!(ℬₚ, 𝒬, ℛ, ℳ, digits)
   for s in ℬₚ
     BinaryTrees.insert!(ℛ, s)
-  end
-  for s in ℬₚ
     prev, next = BinaryTrees.prevnext(ℛ, s)
     isnothing(prev) || _newevent!(𝒬, ℳ, BinaryTrees.key(prev), s, digits)
     isnothing(next) || _newevent!(𝒬, ℳ, s, BinaryTrees.key(next), digits)
