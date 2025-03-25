@@ -100,7 +100,5 @@ include("neighborsearch/kball.jl")
 # HELPER FUNCTIONS
 # -----------------
 
-# raw coordinates of point as SVector
-# needed because NearestNeighbors.jl only accepts vectors
-_rawcoords(p::Point) = _rawcoords(coords(p))
-_rawcoords(c::CRS) = SVector(CoordRefSystems.raw(c))
+# NearestNeighbors.jl only accepts AbstractVector
+_svector(c::CRS) = SVector(CoordRefSystems.raw(c))

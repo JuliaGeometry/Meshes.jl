@@ -22,7 +22,7 @@ end
 
 function KBallSearch(domain::D, k::Int, ball::B) where {D<:Domain,B<:MetricBall}
   m = metric(ball)
-  xs = [_rawcoords(centroid(domain, i)) for i in 1:nelements(domain)]
+  xs = [_svector(coords(centroid(domain, i))) for i in 1:nelements(domain)]
   tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
   KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
 end
@@ -41,7 +41,7 @@ function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; ma
   r = ustrip(u, radius(method.ball))
 
   # adjust CRS of query point
-  x = _rawcoords(convert(C, coords(pₒ)))
+  x = _svector(convert(C, coords(pₒ)))
 
   inds, dists = knn(tree, x, k, true)
 
