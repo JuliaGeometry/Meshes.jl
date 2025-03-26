@@ -64,6 +64,24 @@ grid = StructuredGrid(X, Y)
 viz(grid, showsegments = true)
 ```
 
+```@example meshes
+# grid with latitude and longitude coordinates
+LAT = [i for i in 0:90, j in 0:90]
+LON = [j for i in 0:90, j in 0:90]
+C = typeof(LatLon(0, 0))
+grid = StructuredGrid{🌐,C}(LAT, LON)
+
+viz(grid, showsegments = true)
+```
+
+```@example meshes
+# grid with custom datum
+C = typeof(LatLon{NAD83}(0, 0))
+grid = StructuredGrid{🌐,C}(LAT, LON)
+
+viz(grid, showsegments = true)
+```
+
 ```@docs
 SimpleMesh
 ```
