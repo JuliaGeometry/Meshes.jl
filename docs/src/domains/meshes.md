@@ -63,6 +63,42 @@ grid = StructuredGrid(X, Y)
 
 viz(grid, showsegments = true)
 ```
+Grids can be initialized using a CRS (from `CoordinateRefSystems.jl`) and the 🌐 manifold to represent points on the globe: 
+```@example meshes
+# Grid based on latitude and longitude coordinates with unit annotation
+lat = repeat(collect(0:2:90), 1,46)
+lon = repeat(collect(0:2:90), 1, size(lat)[1])
+C = typeof(GeodeticLatLon(0,0))
+
+grid = StructuredGrid{🌐,C}(lat', lon)
+viz(grid, showsegments = true)
+```
+
+With a different geodetic datum:
+```@example meshes
+# Grid based on latitude and longitude coordinates with unit annotation
+lat = repeat(collect(0:2:90), 1,46)
+lon = repeat(collect(0:2:90), 1, size(lat)[1])
+C = typeof(LatLon{NAD83}(0,0))
+
+grid = StructuredGrid{🌐,C}(lat', lon)
+viz(grid, showsegments = true)
+```
+
+The topology can also be specified separately. 
+Note that the topology needs to be smaller than each dimension by 1 to avoid a
+bounds error.
+
+```@example meshes
+# Grid based on latitude and longitude coordinates with unit annotation
+lat = repeat(collect(0:2:90), 1,46)
+lon = repeat(collect(0:2:90), 1, size(lat)[1])
+C = typeof(LatLon{NAD83}(0,0))
+topo = GridTopology((45,45), (false, true))
+
+grid = StructuredGrid{🌐,C}((lat', lon), topo)
+viz(grid, showsegments = true)
+```
 
 ```@docs
 SimpleMesh
