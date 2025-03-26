@@ -27,6 +27,13 @@ grid = RegularGrid((8, 8), Point(Polar(0, 0)), (1, π/4))
 viz(grid, showsegments = true)
 ```
 
+```@example meshes
+# regular grid with latitude and longitude coordinates
+grid = RegularGrid(Point(LatLon(0, 0)), Point(LatLon(90, 90)), dims=(10, 10))
+
+viz(grid, showsegments = true)
+```
+
 ```@docs
 CartesianGrid
 ```
