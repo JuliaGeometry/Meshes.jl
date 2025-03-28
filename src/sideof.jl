@@ -37,7 +37,7 @@ Possible results are `LEFT`, `RIGHT` or `ON` the `line`.
 
 ### Notes
 
-* Assumes the orientation of `Segment(line(0), line(1))`.
+Assumes the orientation of `Segment(line(0), line(1))`.
 """
 function sideof(point::Point, line::Line)
   a = signarea(point, line(0), line(1))

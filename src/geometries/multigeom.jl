@@ -12,8 +12,8 @@ multiple polygons as a single entity (e.g. country with islands).
 
 ### Notes
 
-- Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
-  [`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
+Type aliases are [`MultiPoint`](@ref), [`MultiSegment`](@ref),
+[`MultiRope`](@ref), [`MultiRing`](@ref), [`MultiPolygon`](@ref).
 """
 struct Multi{M<:Manifold,C<:CRS,G<:Geometry{M,C}} <: Geometry{M,C}
   geoms::Vector{G}

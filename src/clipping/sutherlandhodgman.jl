@@ -14,7 +14,7 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 
 ### Notes
 
-* The algorithm assumes that the clipping geometry is convex.
+The algorithm assumes that the clipping geometry is convex.
 """
 struct SutherlandHodgmanClipping <: ClippingMethod end
 

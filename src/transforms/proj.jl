@@ -25,9 +25,9 @@ Proj(ESRI{54017})
 
 ### Notes
 
-* By default, only the vertices of the polytopes are transformed,
-  disregarding distortions that occur in manifold conversions.
-  To handle this case, use [`TransformedGeometry`](@ref).
+By default, only the vertices of the polytopes are transformed,
+disregarding distortions that occur in manifold conversions.
+To handle this case, use [`TransformedGeometry`](@ref).
 """
 struct Proj{CRS} <: CoordinateTransform end
 

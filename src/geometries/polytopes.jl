@@ -23,7 +23,7 @@ have (K-1)-polytopes in common. See <https://en.wikipedia.org/wiki/Polytope>.
 
 ### Notes
 
-- Type aliases are `Chain`, `Polygon`, `Polyhedron`.
+Type aliases are `Chain`, `Polygon`, `Polyhedron`.
 """
 abstract type Polytope{K,M<:Manifold,C<:CRS} <: Geometry{M,C} end
 

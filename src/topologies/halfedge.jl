@@ -71,24 +71,24 @@ See also [`Topology`](@ref).
 
 ### Notes
 
-- Two types of half-edges exist (Kettner 1999). This
-  implementation is the most common type that splits
-  the incident elements.
+Two types of half-edges exist (Kettner 1999). This
+implementation is the most common type that splits
+the incident elements.
 
-- A vector of `halfedges` together with a dictionary of
-  `half4elem` and a dictionary of `half4vert` can be
-  used to retrieve topolological relations in optimal
-  time. In this case, `half4vert[i]` returns the index
-  of the half-edge in `halfedges` with head equal to `i`.
-  Similarly, `half4elem[i]` returns the index of a
-  half-edge in `halfedges` that is in the element `i`.
-  Additionally, a dictionary `edge4pair` returns the
-  index of the edge (i.e. two halves) for a given
-  pair of vertices.
+A vector of `halfedges` together with a dictionary of
+`half4elem` and a dictionary of `half4vert` can be
+used to retrieve topolological relations in optimal
+time. In this case, `half4vert[i]` returns the index
+of the half-edge in `halfedges` with head equal to `i`.
+Similarly, `half4elem[i]` returns the index of a
+half-edge in `halfedges` that is in the element `i`.
+Additionally, a dictionary `edge4pair` returns the
+index of the edge (i.e. two halves) for a given
+pair of vertices.
 
-- If the `elements` of the mesh already have consistent
-  orientation, then the `sort` option can be disabled
-  for maximum performance.
+If the `elements` of the mesh already have consistent
+orientation, then the `sort` option can be disabled
+for maximum performance.
 """
 struct HalfEdgeTopology <: Topology
   halfedges::Vector{HalfEdge}
