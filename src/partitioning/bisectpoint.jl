@@ -7,6 +7,10 @@
 
 A method for partitioning objects into two half spaces
 defined by a `normal` direction and a reference `point`.
+
+The first half space contains objects on the "left" of (i.e. below) the bisecting plane,
+while the second half space contains objects on the other side of (i.e. "right", above) the
+bisecting plane.
 """
 struct BisectPointPartition{V<:Vec,P<:Point} <: PartitionMethod
   normal::V
