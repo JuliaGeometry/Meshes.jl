@@ -15,6 +15,8 @@ A data structure for constructing topological relations in a [`Mesh`](@ref).
 """
 abstract type Topology end
 
+topology(t::Topology) = t
+
 """
     vertex(topology, ind)
 
