@@ -122,8 +122,7 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
   edge4pair = Dict{Tuple{Int,Int},Int}()
   for (i, (h₁, h₂)) in enumerate(ordered)
     u, v = h₁.head, h₂.head
-    edge4pair[(u, v)] = i
-    edge4pair[(v, u)] = i
+    edge4pair[minmax(u, v)] = i
   end
 
   HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
@@ -208,10 +207,9 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
-    if (u, v) ∉ visited
+    if minmax(u, v) ∉ visited
       push!(halves, (he, he.half))
-      push!(visited, (u, v))
-      push!(visited, (v, u))
+      push!(visited, minmax(u, v))
     end
   end
 
@@ -294,14 +292,14 @@ vertices `uv`.
 
 Always return the half-edge to the "left".
 """
-half4pair(t::HalfEdgeTopology, uv::Tuple{Int,Int}) = half4edge(t, t.edge4pair[uv])
+half4pair(t::HalfEdgeTopology, uv::Tuple{Int,Int}) = half4edge(t, edge4pair(t, uv))
 
 """
     edge4pair(t, uv)
 
 Return the edge of the half-edge topology `t` for the pair of vertices `uv`.
 """
-edge4pair(t, uv) = t.edge4pair[uv]
+edge4pair(t, uv) = t.edge4pair[minmax(uv...)]
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
