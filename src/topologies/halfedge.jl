@@ -141,7 +141,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  adjelems = sort ? adjsort(elems) : elems
+  adjelems = sort ? adjsort(elems)::typeof(elems) : elems
   eleminds = sort ? indexin(adjelems, elems) : 1:length(elems)
 
   # start assuming that all elements are
@@ -151,7 +151,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
   elem = first(adjelems)
-  inds = collect(indices(elem))
+  inds::Vector{Int} = collect(indices(elem))
   v = CircularVector(inds)
   n = length(v)
   for i in 1:n
@@ -191,8 +191,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # add missing pointers
   for (e, elem) in Iterators.enumerate(adjelems)
-    inds = CCW[e] ? indices(elem) : reverse(indices(elem))
-    v = CircularVector(collect(inds))
+    inds = CCW[e] ? collect(indices(elem)) : reverse(collect(indices(elem)))
+    v = CircularVector(inds)
     n = length(v)
     for i in 1:n
       # update pointers prev and next
@@ -228,8 +228,9 @@ end
 function adjsort(elems::AbstractVector{<:Connectivity})
   # initialize list of adjacent elements
   # with first element from original list
-  list = indices.(elems)
-  adjs = Tuple[popfirst!(list)]
+  list::Vector{Tuple{Vararg{Int}}} = map(indices, elems)
+  adjs = similar(list, 0)
+  push!(adjs, popfirst!(list))
 
   # the loop will terminate if the mesh
   # is manifold, and that is always true
@@ -260,7 +261,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  connect.(adjs)
+  map(connect, adjs)
 end
 
 paramdim(::HalfEdgeTopology) = 2
