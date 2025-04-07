@@ -348,16 +348,15 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     found = false
     vinds = last(adjs)
     for i in vinds
-      einds = findall(e -> i ∈ e, list)
-      if !isempty(einds)
-        # lookup all elements that share at
-        # least two vertices (i.e. edge)
-        for j in sort(einds, rev=true)
-          if length(vinds ∩ list[j]) > 1
-            found = true
-            push!(adjs, popat!(list, j))
-          end
-        end
+      not_i = filter(!=(i), vinds)
+      for j in reverse(eachindex(list))
+        # equivalent to `length(vinds ∩ list[j]) > 1` but more efficient (no allocs(?))
+        any(==(i), list[j]) || continue
+        isdisjoint(not_i, list[j]) && continue
+
+        # implicitly `list[j]` contains `i` and at least one other vertex
+        found = true
+        push!(adjs, popat!(list, j))
       end
     end
 
