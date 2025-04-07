@@ -335,8 +335,9 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 function adjsort(elems::AbstractVector{<:Connectivity})
   # initialize list of adjacent elements
   # with first element from original list
-  list = indices.(elems)
-  adjs = Tuple[popfirst!(list)]
+  list::Vector{Tuple{Vararg{Int}}} = map(indices, elems)
+  adjs = similar(list, 0)
+  push!(adjs, popfirst!(list))
 
   # the loop will terminate if the mesh
   # is manifold, and that is always true
@@ -367,7 +368,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  connect.(adjs)
+  map(connect, adjs)
 end
 
 function anyhalf(inds, half4pair)
