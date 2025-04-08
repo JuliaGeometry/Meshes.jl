@@ -41,7 +41,7 @@ If `weights` is passed, the weighted sum will be returned.
 """
 function coordsum(points; weights=nothing)
   values = _coordsum(points, weights)
-  fromvalues(first(points), values)
+  _fromvalues(first(points), values)
 end
 
 """
@@ -57,25 +57,43 @@ function coordmean(points; weights=nothing)
     sum(weights)
   end
   values = _coordsum(points, weights) ./ den
-  fromvalues(first(points), values)
+  _fromvalues(first(points), values)
 end
 
-function tovalues(p)
+"""
+    coordround(point, r=RoundNearest; digits=0, base=10)
+    coordround(point, r=RoundNearest; sigdigits=0)
+
+Round the coordinates of a `point` to specified presicion.
+"""
+function coordround(point::Point, r::RoundingMode=RoundNearest; kwargs...)
+  c = coords(point)
+  x = CoordRefSystems.values(c)
+  x′ = round.(eltype(x), x, r; kwargs...)
+  c′ = CoordRefSystems.constructor(c)(x′...)
+  Point(c′)
+end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _tovalues(p)
   CRS = _basecrs(manifold(p))
   c = convert(CRS, coords(p))
   CoordRefSystems.values(c)
 end
 
-function fromvalues(g, values)
+function _fromvalues(g, values)
   CRS = _basecrs(manifold(g))
   withcrs(g, values, CRS)
 end
 
 function _coordsum(points, weights)
   if isnothing(weights)
-    mapreduce(tovalues, .+, points)
+    mapreduce(_tovalues, .+, points)
   else
-    mapreduce((p, w) -> tovalues(p) .* w, .+, points, weights)
+    mapreduce((p, w) -> _tovalues(p) .* w, .+, points, weights)
   end
 end
 
