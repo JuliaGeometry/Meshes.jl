@@ -34,6 +34,19 @@ flat(p::Point) = Point(flat(coords(p)))
 flat(c::CRS) = Cartesian{datum(c)}(CoordRefSystems.raw(c))
 
 """
+    svec(p)
+
+Return `SVector` with raw coordinates of point `p`.
+
+### Notes
+
+This utility function exists because NearestNeighbors.jl
+currently only accepts coordinates of type `AbstractVector`.
+"""
+svec(p::Point) = svec(coords(p))
+svec(c::CRS) = SVector(CoordRefSystems.raw(c))
+
+"""
     coordsum(points; weights=nothing)
   
 Sum of the base coordinates of the points, `Cartesian` for `𝔼` and `LatLon` for `🌐`.
