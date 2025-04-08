@@ -219,7 +219,7 @@ end
 function adjsort(elems::AbstractVector{<:Connectivity})
   # initialize list of adjacent elements
   # with first element from original list
-  list = map(indices, elems)
+  list::Vector{Tuple{Vararg{Int}}} = map(indices, elems)
   adjs = similar(list, 0)
   push!(adjs, popfirst!(list))
 
@@ -231,7 +231,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     # one vertex with the last adjacent element
     found = false
     vinds = last(adjs)
-    for i::Int in vinds
+    for i in vinds
       not_i = (filter(!=(i), vinds)...,)
       for j in reverse(eachindex(list))
         # equivalent to `length(vinds ∩ list[j]) > 1` but more efficient (no allocs(?))
