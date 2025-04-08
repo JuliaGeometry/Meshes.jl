@@ -5,7 +5,7 @@
 """
     LinearPath()
 
-Traverse a domain with `N` elements in order `1:N`.
+Traverse a domain with `n` elements in order `1:n`.
 """
 struct LinearPath <: Path end
 

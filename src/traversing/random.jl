@@ -5,8 +5,8 @@
 """
     RandomPath()
 
-Traverse a domain with `N` elements in a random
-permutation of `1:N`.
+Traverse a domain with `n` elements in a random
+permutation of `1:n`.
 """
 struct RandomPath{R<:AbstractRNG} <: Path
   rng::R
