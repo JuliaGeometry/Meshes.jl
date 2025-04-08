@@ -251,7 +251,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     end
   end
 
-  return map(connect, adjs)
+  map(connect, adjs)
 end
 
 paramdim(::HalfEdgeTopology) = 2
