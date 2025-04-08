@@ -237,7 +237,7 @@ function adjsort(elems::AbstractVector{<:Connectivity})
     found = false
     vinds = last(adjs)
     for i in vinds
-      not_i = (filter(!=(i), vinds)...,)
+      not_i = filter(!=(i), vinds)
       for j in reverse(eachindex(list))
         # equivalent to `length(vinds ∩ list[j]) > 1` but more efficient (no allocs(?))
         any(==(i), list[j]) || continue
