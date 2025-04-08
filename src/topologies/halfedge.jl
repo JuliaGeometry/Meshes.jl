@@ -98,11 +98,23 @@ struct HalfEdgeTopology <: Topology
 end
 
 function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
-  # make sure that first half-edge is in the interior
-  ordered = [isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂) for (h₁, h₂) in halves]
+  halfedges = Vector{HalfEdge}(undef, 2 * length(halves))
+  edge4pair = Dict{Tuple{Int,Int},Int}()
+  sizehint!(edge4pair, length(halves))
 
   # flatten pairs of half-edges into a vector
-  halfedges = [half for pair in ordered for half in pair]
+  for (i, (h₁, h₂)) in enumerate(halves)
+    # make sure that first half-edge is in the interior
+    (h₁, h₂) = isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂)
+
+    j = (i - 1) * 2 + 1
+    halfedges[j] = h₁
+    halfedges[j + 1] = h₂
+
+    # map pair of vertices to an edge (i.e. two halves)
+    u, v = h₁.head, h₂.head
+    edge4pair[minmax(u, v)] = i
+  end
 
   # map element and vertex to a half-edge
   half4elem = Dict{Int,Int}()
@@ -116,13 +128,6 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
         half4vert[h.head] = i
       end
     end
-  end
-
-  # map pair of vertices to an edge (i.e. two halves)
-  edge4pair = Dict{Tuple{Int,Int},Int}()
-  for (i, (h₁, h₂)) in enumerate(ordered)
-    u, v = h₁.head, h₂.head
-    edge4pair[minmax(u, v)] = i
   end
 
   HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
