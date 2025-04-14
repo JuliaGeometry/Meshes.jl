@@ -141,8 +141,12 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  adjelems = sort ? adjsort(elems)::typeof(elems) : elems
-  eleminds = sort ? indexin(adjelems, elems) : 1:length(elems)
+  if sort
+    eleminds = adjsortperm(elems)
+    adjelems = map(collect ∘ indices, elems[eleminds])::Vector{Vector{Int}}
+  else
+    adjelems, eleminds = map(collect ∘ indices, elems)::Vector{Vector{Int}}, eachindex(elems)
+  end
 
   # start assuming that all elements are
   # oriented consistently as CCW
@@ -150,8 +154,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
-  elem = first(adjelems)
-  inds::Vector{Int} = collect(indices(elem))
+  inds = first(adjelems)
   v = CircularVector(inds)
   n = length(v)
   for i in 1:n
@@ -160,8 +163,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # insert all other elements
   for e in 2:length(adjelems)
-    elem = adjelems[e]
-    inds = collect(indices(elem))
+    inds = adjelems[e]
     v = CircularVector(inds)
     n = length(v)
     for i in 1:n
@@ -190,8 +192,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   end
 
   # add missing pointers
-  for (e, elem) in Iterators.enumerate(adjelems)
-    inds = CCW[e] ? collect(indices(elem)) : reverse(collect(indices(elem)))
+  for (e, inds) in Iterators.enumerate(adjelems)
+    inds = CCW[e] ? inds : reverse(inds)
     v = CircularVector(inds)
     n = length(v)
     for i in 1:n
@@ -225,42 +227,50 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   HalfEdgeTopology(halves, length(elems))
 end
 
-function adjsort(elems::AbstractVector{<:Connectivity})
+function adjsortperm(elems::AbstractVector{<:Connectivity})
+  listi = collect(eachindex(elems)[2:end])
   # initialize list of adjacent elements
   # with first element from original list
-  list::Vector{Tuple{Vararg{Int}}} = map(indices, elems)
-  adjs = similar(list, 0)
-  push!(adjs, popfirst!(list))
+  adjs = Int[1]
+  sizehint!(adjs, length(elems))
 
-  # the loop will terminate if the mesh
-  # is manifold, and that is always true
-  # with half-edge topology
-  while !isempty(list)
+  # found minimizes adjacency discontinuities. if `found == true` for the last edge in an
+  # element, then we continue from that new element adjacent to that edge
+  found = false
+  while !isempty(listi)
     # lookup all elements that share at least
     # one vertex with the last adjacent element
-    found = false
-    vinds = last(adjs)
+    adj = last(adjs)
+    vinds::Tuple{Vararg{Int}} = indices(elems[adj])
     for i in vinds
       not_i = filter(!=(i), vinds)
-      for j in reverse(eachindex(list))
+      j = 1
+      while j ≤ length(listi)
         # equivalent to `length(vinds ∩ list[j]) > 1` but more efficient (no allocs(?))
-        any(==(i), list[j]) || continue
-        isdisjoint(not_i, list[j]) && continue
-
-        # implicitly `list[j]` contains `i` and at least one other vertex
-        found = true
-        push!(adjs, popat!(list, j))
+        elem = indices(elems[listi[j]])
+        if any(==(i), elem) && !isdisjoint(not_i, elem)::Bool
+          # `list[j]` contains `i` and at least one other vertex
+          push!(adjs, popat!(listi, j))
+          found = true
+          # don't increment j here because `popat!` just put the j+1 element at j
+          # (avoids the need to reverse the array)
+        else
+          j += 1
+          found = false
+          iter += 1
+        end
       end
     end
 
-    if !found && !isempty(list)
+    if !found && !isempty(listi)
       # we are done with this connected component
       # pop a new element from the original list
-      push!(adjs, popfirst!(list))
+      push!(adjs, popfirst!(listi))
+      found = false
     end
   end
 
-  map(connect, adjs)
+  adjs
 end
 
 paramdim(::HalfEdgeTopology) = 2
