@@ -333,49 +333,49 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 # -----------------
 
 function adjsortperm(elems::AbstractVector{<:Connectivity})
-  listi = collect(eachindex(elems)[2:end])
   # initialize list of adjacent elements
   # with first element from original list
-  adjs = Int[1]
-  sizehint!(adjs, length(elems))
+  einds = Int[1]
+  sizehint!(einds, length(elems))
 
-  # found minimizes adjacency discontinuities. if `found == true` for the last edge in an
-  # element, then we continue from that new element adjacent to that edge
+  # remaining list of elements to process
+  oinds = collect(2:length(elems))
+
+  # lookup all elements that share at least
+  # two vertices (i.e., edge) with the last
+  # adjacent element
   found = false
-  while !isempty(listi)
-    # lookup all elements that share at least
-    # one vertex with the last adjacent element
-    adj = last(adjs)
-    vinds::Tuple{Vararg{Int}} = indices(elems[adj])
-    for i in vinds
-      not_i = filter(!=(i), vinds)
-      j = 1
-      while j ≤ length(listi)
-        # equivalent to `length(vinds ∩ list[j]) > 1` but more efficient (no allocs(?))
-        elem = indices(elems[listi[j]])
-        if any(==(i), elem) && !isdisjoint(not_i, elem)::Bool
-          # `list[j]` contains `i` and at least one other vertex
-          push!(adjs, popat!(listi, j))
+  while !isempty(oinds)
+    lelem = elems[last(einds)]
+    vinds = indices(lelem)
+    for v in vinds
+      # vertices that are not `v`
+      v! = filter(!=(v), vinds)
+
+      # iteratively test other elements
+      iter = 1
+      while iter ≤ length(oinds)
+        oelem = elems[oinds[iter]]
+        vinds′ = indices(oelem)
+        if any(==(v), vinds′) && !isdisjoint(v!, vinds′)
           found = true
-          # don't increment j here because `popat!` just put the j+1 element at j
-          # (avoids the need to reverse the array)
+          push!(einds, popat!(oinds, iter))
         else
-          j += 1
           found = false
           iter += 1
         end
       end
     end
 
-    if !found && !isempty(listi)
+    if !found && !isempty(oinds)
       # we are done with this connected component
       # pop a new element from the original list
-      push!(adjs, popfirst!(listi))
+      push!(einds, popfirst!(oinds))
       found = false
     end
   end
 
-  adjs
+  einds
 end
 
 function anyhalf(inds, half4pair)
