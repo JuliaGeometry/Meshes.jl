@@ -142,7 +142,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   # sort elements to make sure that they
   # are traversed in adjacent-first order
   eleminds = sort ? adjsortperm(elems) : eachindex(elems)
-  adjelems = map(collect ∘ indices, elems[eleminds])
+  adjelems = map(collect ∘ indices, elems[eleminds])::Vector{Vector{Int}}
 
   # start assuming that all elements are
   # oriented consistently as CCW
@@ -232,10 +232,13 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
   # remaining list of elements to process
   oinds = collect(2:length(elems))
 
+  # `found` minimizes adjacency discontinuities. if `found == true` for the last edge in an
+  # element, then we continue from that new element adjacent to that edge
+  found = false
+
   # lookup all elements that share at least
   # two vertices (i.e., edge) with the last
   # adjacent element
-  found = false
   while !isempty(oinds)
     lelem = elems[last(einds)]
     vinds = indices(lelem)
@@ -251,6 +254,8 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
         if any(==(v), vinds′) && !isdisjoint(v!, vinds′)
           found = true
           push!(einds, popat!(oinds, iter))
+          # don't increment j here because `popat!` just put the j+1 element at j
+          # (avoids the need to reverse the array)
         else
           found = false
           iter += 1
