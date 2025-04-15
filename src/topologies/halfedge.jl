@@ -333,23 +333,24 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 # -----------------
 
 function adjsortperm(elems::AbstractVector{<:Connectivity})
+  # remaining list of elements to process
+  oinds = collect(eachindex(elems)[2:end])
+
   # initialize list of adjacent elements
   # with first element from original list
-  einds = Int[1]
+  einds = Int[]
   sizehint!(einds, length(elems))
-
-  # remaining list of elements to process
-  oinds = collect(2:length(elems))
 
   # `found` minimizes adjacency discontinuities. if `found == true` for the last edge in an
   # element, then we continue from that new element adjacent to that edge
   found = false
+  lastfound = firstindex(elems)
 
   # lookup all elements that share at least
   # two vertices (i.e., edge) with the last
   # adjacent element
   while !isempty(oinds)
-    lelem = elems[last(einds)]
+    lelem = elems[lastfound]
     vinds = indices(lelem)
     for v in vinds
       # vertices that are not `v`
@@ -362,23 +363,27 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
         vinds′ = indices(oelem)
         if any(==(v), vinds′) && !isdisjoint(v!, vinds′)
           found = true
-          push!(einds, popat!(oinds, iter))
+          push!(einds, lastfound)
+          lastfound = popat!(oinds, iter)
           # don't increment j here because `popat!` just put the j+1 element at j
           # (avoids the need to reverse the array)
         else
-          found = false
           iter += 1
         end
       end
     end
 
-    if !found && !isempty(oinds)
+    if found
+      found = false
+    elseif !isempty(oinds)
       # we are done with this connected component
       # pop a new element from the original list
-      push!(einds, popfirst!(oinds))
+      push!(einds, lastfound)
+      lastfound = popfirst!(oinds)
       found = false
     end
   end
+  push!(einds, lastfound)
 
   einds
 end
