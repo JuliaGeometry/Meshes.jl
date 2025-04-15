@@ -251,7 +251,6 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
         else
           found = false
           iter += 1
-          continue
         end
       end
     end
