@@ -333,57 +333,64 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 # -----------------
 
 function adjsortperm(elems::AbstractVector{<:Connectivity})
+  reduce(vcat, connected_components(elems))
+end
+
+function connected_components(elems::AbstractVector{<:Connectivity})
   # remaining list of elements to process
   oinds = collect(eachindex(elems)[2:end])
 
   # initialize list of adjacent elements
   # with first element from original list
-  einds = Int[]
-  sizehint!(einds, length(elems))
+  einds = Vector{Vector{Int}}(undef, 0)
+  push!(einds, Int[firstindex(elems)])
 
-  # `found` minimizes adjacency discontinuities. if `found == true` for the last edge in an
-  # element, then we continue from that new element adjacent to that edge
+  seen = Set{Int}()
+
   found = false
-  lastfound = firstindex(elems)
+  for v in indices(elems[firstindex(elems)])
+    push!(seen, v)
+  end
 
-  # lookup all elements that share at least
-  # two vertices (i.e., edge) with the last
-  # adjacent element
   while !isempty(oinds)
-    lelem = elems[lastfound]
-    vinds = indices(lelem)
-    for v in vinds
-      # vertices that are not `v`
-      v! = filter(!=(v), vinds)
-
-      # iteratively test other elements
-      iter = 1
-      while iter ≤ length(oinds)
-        oelem = elems[oinds[iter]]
-        vinds′ = indices(oelem)
-        if any(==(v), vinds′) && !isdisjoint(v!, vinds′)
-          found = true
-          push!(einds, lastfound)
-          lastfound = popat!(oinds, iter)
-          # don't increment j here because `popat!` just put the j+1 element at j
-          # (avoids the need to reverse the array)
-        else
-          iter += 1
-        end
+    # iteratively test other elements
+    iter = 1
+    while iter ≤ length(oinds)
+      lelem = elems[oinds[iter]]
+      vinds = indices(lelem)
+      cnt = count(∈(seen), vinds)
+      # add elements that share at least two vertices (i.e., edge) with the last
+      # adjacent element
+      if cnt > 1
+        push!.((seen,), vinds)
+        found = true
+        push!(last(einds), popat!(oinds, iter))
+        # don't increment j here because `popat!` just put the j+1 element at j
+        # (avoids the need to reverse the array)
+      else
+        iter += 1
       end
     end
 
     if found
+      # new vertices were "seen" while iterating `oinds`, so we need to iterate
+      # again because there may be elements which are now adjacent with the newly
+      # "seen" vertices
       found = false
     elseif !isempty(oinds)
       # we are done with this connected component
       # pop a new element from the original list
-      push!(einds, lastfound)
-      lastfound = popfirst!(oinds)
+      push!(einds, Int[])
+      push!(last(einds), popfirst!(oinds))
+      # a disconnected component means that ≥N-1 vertices in the newest element
+      # haven't been "seen" (but its possible the new component is connected
+      # by a single vertex)
+      for v in indices(elems[last(last(einds))])
+        push!(seen, v)
+      end
       found = false
     end
   end
-  push!(einds, lastfound)
 
   einds
 end
