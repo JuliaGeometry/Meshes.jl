@@ -98,32 +98,32 @@ struct HalfEdgeTopology <: Topology
 end
 
 function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
-  # make sure that first half-edge is in the interior
-  ordered = [isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂) for (h₁, h₂) in halves]
-
-  # flatten pairs of half-edges into a vector
-  halfedges = [half for pair in ordered for half in pair]
-
-  # map element and vertex to a half-edge
+  halfedges = Vector{HalfEdge}(undef, 2 * length(halves))
+  edge4pair = Dict{Tuple{Int,Int},Int}()
   half4elem = Dict{Int,Int}()
   half4vert = Dict{Int,Int}()
-  for (i, h) in enumerate(halfedges)
-    if !isnothing(h.elem) # interior half-edge
-      if !haskey(half4elem, h.elem)
-        half4elem[h.elem] = i
-      end
-      if !haskey(half4vert, h.head)
-        half4vert[h.head] = i
+  sizehint!(edge4pair, length(halves))
+
+  # flatten pairs of half-edges into a vector
+  for (i, (h₁, h₂)) in enumerate(halves)
+    # make sure that first half-edge is in the interior
+    (h₁, h₂) = isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂)
+
+    j = 2i - 1
+    halfedges[j] = h₁
+    halfedges[j + 1] = h₂
+
+    # map element and vertex to a half-edge
+    for (k, h) in zip(j:(j + 1), (h₁, h₂))
+      if !isnothing(h.elem) # interior half-edge
+        get!(half4elem, h.elem, k)
+        get!(half4vert, h.head, k)
       end
     end
-  end
 
-  # map pair of vertices to an edge (i.e. two halves)
-  edge4pair = Dict{Tuple{Int,Int},Int}()
-  for (i, (h₁, h₂)) in enumerate(ordered)
+    # map pair of vertices to an edge (i.e. two halves)
     u, v = h₁.head, h₂.head
-    edge4pair[(u, v)] = i
-    edge4pair[(v, u)] = i
+    edge4pair[minmax(u, v)] = i
   end
 
   HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
@@ -134,8 +134,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  adjelems = sort ? adjsort(elems) : elems
-  eleminds = sort ? indexin(adjelems, elems) : 1:length(elems)
+  eleminds = sort ? adjsortperm(elems) : eachindex(elems)
+  adjelems = map(collect ∘ indices, elems[eleminds])::Vector{Vector{Int}}
 
   # start assuming that all elements are
   # oriented consistently as CCW
@@ -143,8 +143,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
-  elem = first(adjelems)
-  inds = collect(indices(elem))
+  inds = first(adjelems)
   v = CircularVector(inds)
   n = length(v)
   for i in 1:n
@@ -153,8 +152,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # insert all other elements
   for e in 2:length(adjelems)
-    elem = adjelems[e]
-    inds = collect(indices(elem))
+    inds = adjelems[e]
     v = CircularVector(inds)
     n = length(v)
     for i in 1:n
@@ -183,9 +181,9 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   end
 
   # add missing pointers
-  for (e, elem) in Iterators.enumerate(adjelems)
-    inds = CCW[e] ? indices(elem) : reverse(indices(elem))
-    v = CircularVector(collect(inds))
+  for (e, inds) in Iterators.enumerate(adjelems)
+    inds = CCW[e] ? inds : reverse(inds)
+    v = CircularVector(inds)
     n = length(v)
     for i in 1:n
       # update pointers prev and next
@@ -208,52 +206,76 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
-    if (u, v) ∉ visited
+    if minmax(u, v) ∉ visited
       push!(halves, (he, he.half))
-      push!(visited, (u, v))
-      push!(visited, (v, u))
+      push!(visited, minmax(u, v))
     end
   end
 
   HalfEdgeTopology(halves)
 end
 
-function adjsort(elems::AbstractVector{<:Connectivity})
+function adjsortperm(elems::AbstractVector{<:Connectivity})
+  reduce(vcat, connected_components(elems))
+end
+
+function connected_components(elems::AbstractVector{<:Connectivity})
+  # remaining list of elements to process
+  oinds = collect(eachindex(elems)[2:end])
+
   # initialize list of adjacent elements
   # with first element from original list
-  list = indices.(elems)
-  adjs = Tuple[popfirst!(list)]
+  einds = Vector{Vector{Int}}(undef, 0)
+  push!(einds, Int[firstindex(elems)])
 
-  # the loop will terminate if the mesh
-  # is manifold, and that is always true
-  # with half-edge topology
-  while !isempty(list)
-    # lookup all elements that share at least
-    # one vertex with the last adjacent element
-    found = false
-    vinds = last(adjs)
-    for i in vinds
-      einds = findall(e -> i ∈ e, list)
-      if !isempty(einds)
-        # lookup all elements that share at
-        # least two vertices (i.e. edge)
-        for j in sort(einds, rev=true)
-          if length(vinds ∩ list[j]) > 1
-            found = true
-            push!(adjs, popat!(list, j))
-          end
-        end
+  seen = Set{Int}()
+
+  found = false
+  for v in indices(elems[firstindex(elems)])
+    push!(seen, v)
+  end
+
+  while !isempty(oinds)
+    # iteratively test other elements
+    iter = 1
+    while iter ≤ length(oinds)
+      lelem = elems[oinds[iter]]
+      vinds = indices(lelem)
+      cnt = count(∈(seen), vinds)
+      # add elements that share at least two vertices (i.e., edge) with the last
+      # adjacent element
+      if cnt > 1
+        push!.((seen,), vinds)
+        found = true
+        push!(last(einds), popat!(oinds, iter))
+        # don't increment j here because `popat!` just put the j+1 element at j
+        # (avoids the need to reverse the array)
+      else
+        iter += 1
       end
     end
 
-    if !found && !isempty(list)
+    if found
+      # new vertices were "seen" while iterating `oinds`, so we need to iterate
+      # again because there may be elements which are now adjacent with the newly
+      # "seen" vertices
+      found = false
+    elseif !isempty(oinds)
       # we are done with this connected component
       # pop a new element from the original list
-      push!(adjs, popfirst!(list))
+      push!(einds, Int[])
+      push!(last(einds), popfirst!(oinds))
+      # a disconnected component means that ≥N-1 vertices in the newest element
+      # haven't been "seen" (but its possible the new component is connected
+      # by a single vertex)
+      for v in indices(elems[last(last(einds))])
+        push!(seen, v)
+      end
+      found = false
     end
   end
 
-  connect.(adjs)
+  einds
 end
 
 paramdim(::HalfEdgeTopology) = 2
@@ -294,14 +316,14 @@ vertices `uv`.
 
 Always return the half-edge to the "left".
 """
-half4pair(t::HalfEdgeTopology, uv::Tuple{Int,Int}) = half4edge(t, t.edge4pair[uv])
+half4pair(t::HalfEdgeTopology, uv::Tuple{Int,Int}) = half4edge(t, edge4pair(t, uv))
 
 """
     edge4pair(t, uv)
 
 Return the edge of the half-edge topology `t` for the pair of vertices `uv`.
 """
-edge4pair(t, uv) = t.edge4pair[uv]
+edge4pair(t, uv) = t.edge4pair[minmax(uv...)]
 
 # ---------------------
 # HIGH-LEVEL INTERFACE
