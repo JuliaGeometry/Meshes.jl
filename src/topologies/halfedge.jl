@@ -347,14 +347,16 @@ function connected_components(elems::AbstractVector{<:Connectivity})
 
   seen = Set{Int}()
 
-  found = false
+  # initialize seen with vertices in first element
   for v in indices(elems[firstindex(elems)])
     push!(seen, v)
   end
 
+  found = false
   while !isempty(oinds)
-    # iteratively test other elements
     iter = 1
+    # this loop only exits when oinds is empty, or if we have iterated through all elements
+    # and none are adjacent to >1 "seen" elements
     while iter ≤ length(oinds)
       lelem = elems[oinds[iter]]
       vinds = indices(lelem)
@@ -363,10 +365,11 @@ function connected_components(elems::AbstractVector{<:Connectivity})
       # adjacent element
       if cnt > 1
         push!.((seen,), vinds)
-        found = true
         push!(last(einds), popat!(oinds, iter))
+        found = true
         # don't increment j here because `popat!` just put the j+1 element at j
-        # (avoids the need to reverse the array)
+        # (avoids the need to reverse the array, even though we are modifying during
+        # iteration)
       else
         iter += 1
       end
@@ -378,17 +381,18 @@ function connected_components(elems::AbstractVector{<:Connectivity})
       # "seen" vertices
       found = false
     elseif !isempty(oinds)
-      # we are done with this connected component
-      # pop a new element from the original list
+      # there are more elements, but none are adjacent (>1 shared vertices) to previously
+      # seen elements
+      # pop a new element from the original list to start a new connected component
       push!(einds, Int[])
       push!(last(einds), popfirst!(oinds))
+
       # a disconnected component means that ≥N-1 vertices in the newest element
       # haven't been "seen" (but its possible the new component is connected
       # by a single vertex)
       for v in indices(elems[last(last(einds))])
         push!(seen, v)
       end
-      found = false
     end
   end
 
