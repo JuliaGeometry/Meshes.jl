@@ -254,6 +254,7 @@ function connected_components(elems::AbstractVector{<:Connectivity})
     push!(seen, v)
   end
 
+  found = false
   while !isempty(oinds)
     iter = 1
     # this loop only exits when oinds is empty, or if we have iterated through all elements
@@ -275,13 +276,15 @@ function connected_components(elems::AbstractVector{<:Connectivity})
         # we may have "seen" a new vertex which makes element(s) in `oinds[1:iter]` adjacent
         # now. reset `j` so that we can check earlier elements for adjacency before adding
         # later elements
-        iter = 1
+        found = true
       else
         iter += 1
       end
     end
 
-    if !isempty(oinds)
+    if found
+      found = false
+    elseif !isempty(oinds)
       # there are more elements, but none are adjacent (>1 shared vertices) to previously
       # seen elements
       # pop a new element from the original list to start a new connected component
