@@ -227,6 +227,17 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
   reduce(vcat, connected_components(elems))
 end
 
+function _update_adjacency!(seen, inds, in_seen=∈(seen))
+  # add elements that have at least two previously seen vertices
+  if count(in_seen, inds) > 1
+    for v in inds
+      push!(seen, v)
+    end
+    return true
+  end
+  return false
+end
+
 function connected_components(elems::AbstractVector{<:Connectivity})
   # remaining list of elements to process
   oinds = collect(eachindex(elems)[2:end])
@@ -249,12 +260,17 @@ function connected_components(elems::AbstractVector{<:Connectivity})
     # and none are adjacent to >1 "seen" elements
     while iter ≤ length(oinds)
       lelem = elems[oinds[iter]]
-      vinds = indices(lelem)
-      cnt = count(∈(seen), vinds)
-      # add elements that share at least two vertices (i.e., edge) with the last
-      # adjacent element
-      if cnt > 1
-        push!.((seen,), vinds)
+
+      # manually union-split two most common connectivities for max type stability and speed
+      adjacent = if lelem isa Connectivity{Triangle, 3}
+        _update_adjacency!(seen, indices(lelem), in_seen)
+      elseif lelem isa Connectivity{Quadrangle, 4}
+        _update_adjacency!(seen, indices(lelem), in_seen)
+      else
+        _update_adjacency!(seen, indices(lelem), in_seen)
+      end
+
+      if adjacent
         push!(last(einds), popat!(oinds, iter))
         # we may have "seen" a new vertex which makes element(s) in `oinds[1:iter]` adjacent
         # now. reset `j` so that we can check earlier elements for adjacency before adding
