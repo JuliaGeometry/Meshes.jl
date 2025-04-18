@@ -17,7 +17,7 @@ julia> GeometrySet([Ball((0.0, 0.0)), Ball((1.0, 1.0))])
 
 ### Notes
 
-* Geometries with different CRS will be projected to the CRS of the first geometry.
+Geometries with different CRS will be projected to the CRS of the first geometry.
 """
 struct GeometrySet{M<:Manifold,C<:CRS,G<:Geometry{M,C}} <: Domain{M,C}
   geoms::Vector{G}

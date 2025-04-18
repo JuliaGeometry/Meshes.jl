@@ -35,7 +35,7 @@ Vec(1m, 2m, 3m) # integer is converted to float by design
 
 ### Notes
 
-- A `Vec` is a subtype of `StaticVector` from StaticArrays.jl
+A `Vec` is a subtype of `StaticVector` from StaticArrays.jl.
 """
 struct Vec{Dim,ℒ<:Len} <: StaticVector{Dim,ℒ}
   coords::NTuple{Dim,ℒ}

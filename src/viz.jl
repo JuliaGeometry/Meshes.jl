@@ -52,9 +52,9 @@ viz!(boundary(polygon))
 
 ### Notes
 
-* This function will only work in the presence of
-  a Makie.jl backend via package extensions in
-  Julia v1.9 or later versions of the language.
+This function will only work in the presence of
+a Makie.jl backend via package extensions in
+Julia v1.9 or later versions of the language.
 """
 function viz end
 

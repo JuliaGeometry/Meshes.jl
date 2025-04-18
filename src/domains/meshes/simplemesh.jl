@@ -27,9 +27,9 @@ See also [`Topology`](@ref), [`GridTopology`](@ref),
 
 ### Notes
 
-- The option `relations=true` changes the underlying topology
-  of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
-  [`SimpleTopology`](@ref).
+The option `relations=true` changes the underlying topology
+of the mesh to a [`HalfEdgeTopology`](@ref) instead of a
+[`SimpleTopology`](@ref).
 """
 struct SimpleMesh{M<:Manifold,C<:CRS,V<:AbstractVector{Point{M,C}},TP<:Topology} <: Mesh{M,C,TP}
   vertices::V

@@ -29,9 +29,9 @@ Point(1m, 2m, 3m) # integer is converted to float by design
 
 ### Notes
 
-- Integer coordinates are not supported because most geometric processing
-  algorithms assume a continuous space. The conversion to float avoids
-  `InexactError` and other unexpected results.
+Integer coordinates are not supported because most geometric processing
+algorithms assume a continuous space. The conversion to float avoids
+`InexactError` and other unexpected results.
 """
 struct Point{M<:Manifold,C<:CRS} <: Primitive{M,C}
   coords::C

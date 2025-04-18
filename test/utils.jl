@@ -58,9 +58,9 @@
   # round
   p₁ = cart(1, 1)
   p₂ = cart(1.0000000000004, 0.9999999999996)
-  @test Meshes.roundcoords(p₁, sigdigits=5) == p₁
-  @test Meshes.roundcoords(p₂, digits=10) == p₁
-  @inferred Meshes.roundcoords(p₁, digits=10)
+  @test Meshes.coordround(p₁, sigdigits=5) == p₁
+  @test Meshes.coordround(p₂, digits=10) == p₁
+  @inferred Meshes.coordround(p₁, digits=10)
 end
 
 @testitem "bentleyottmann" setup = [Setup] begin

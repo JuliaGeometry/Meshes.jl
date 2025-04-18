@@ -21,9 +21,9 @@ triangle |> Morphological(c -> LatLonAlt(c.lat, c.lon, 0.0m))
 
 ### Notes
 
-* By default, only the vertices of the polytopes are transformed,
-  disregarding distortions that occur in manifold conversions.
-  To handle this case, use [`TransformedGeometry`](@ref).
+By default, only the vertices of the polytopes are transformed,
+disregarding distortions that occur in manifold conversions.
+To handle this case, use [`TransformedGeometry`](@ref).
 """
 struct Morphological{F<:Function} <: CoordinateTransform
   fun::F

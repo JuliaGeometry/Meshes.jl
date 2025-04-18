@@ -16,8 +16,8 @@ Tells whether or not `geometry₁` and `geometry₂` intersect.
 
 ### Notes
 
-* The fallback algorithm works with any geometry that has
-  a well-defined [`supportfun`](@ref).
+The fallback algorithm works with any geometry that has
+a well-defined [`supportfun`](@ref).
 """
 function intersects end
 
