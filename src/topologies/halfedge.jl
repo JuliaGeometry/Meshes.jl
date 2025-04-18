@@ -238,14 +238,14 @@ function connected_components(elems::AbstractVector{<:Connectivity})
 
   seen = Set{Int}()
 
-  found = false
   for v in indices(elems[firstindex(elems)])
     push!(seen, v)
   end
 
   while !isempty(oinds)
-    # iteratively test other elements
     iter = 1
+    # this loop only exits when oinds is empty, or if we have iterated through all elements
+    # and none are adjacent to >1 "seen" elements
     while iter ≤ length(oinds)
       lelem = elems[oinds[iter]]
       vinds = indices(lelem)
@@ -254,32 +254,29 @@ function connected_components(elems::AbstractVector{<:Connectivity})
       # adjacent element
       if cnt > 1
         push!.((seen,), vinds)
-        found = true
         push!(last(einds), popat!(oinds, iter))
-        # don't increment j here because `popat!` just put the j+1 element at j
-        # (avoids the need to reverse the array)
+        # we may have "seen" a new vertex which makes element(s) in `oinds[1:iter]` adjacent
+        # now. reset `j` so that we can check earlier elements for adjacency before adding
+        # later elements
+        iter = 1
       else
         iter += 1
       end
     end
 
-    if found
-      # new vertices were "seen" while iterating `oinds`, so we need to iterate
-      # again because there may be elements which are now adjacent with the newly
-      # "seen" vertices
-      found = false
-    elseif !isempty(oinds)
-      # we are done with this connected component
-      # pop a new element from the original list
+    if !isempty(oinds)
+      # there are more elements, but none are adjacent (>1 shared vertices) to previously
+      # seen elements
+      # pop a new element from the original list to start a new connected component
       push!(einds, Int[])
       push!(last(einds), popfirst!(oinds))
+
       # a disconnected component means that ≥N-1 vertices in the newest element
       # haven't been "seen" (but its possible the new component is connected
       # by a single vertex)
       for v in indices(elems[last(last(einds))])
         push!(seen, v)
       end
-      found = false
     end
   end
 
