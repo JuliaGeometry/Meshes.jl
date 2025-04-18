@@ -346,6 +346,7 @@ function connected_components(elems::AbstractVector{<:Connectivity})
   push!(einds, Int[firstindex(elems)])
 
   seen = Set{Int}()
+  in_seen = ∈(seen)
 
   # initialize seen with vertices in first element
   for v in indices(elems[firstindex(elems)])
