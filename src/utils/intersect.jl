@@ -20,7 +20,7 @@ function bentleyottmann(segments; digits=_digits(segments))
   TOL = 1 / 10^digits # precomputed tolerance for floating point comparisons
   # orient segments
   segs = map(segments) do s
-    a, b = roundcoords.(extrema(s); digits)
+    a, b = coordround.(extrema(s); digits)
     a > b ? (b, a) : (a, b)
   end
 
@@ -127,7 +127,7 @@ end
 function _newevent!(𝒬, p, s₁, s₂, digits)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
-      p′ = roundcoords(get(I); digits)
+      p′ = coordround(get(I); digits)
       if p′ ≥ p && isnothing(BinaryTrees.search(𝒬, p′))
         BinaryTrees.insert!(𝒬, p′)
       end
