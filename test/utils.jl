@@ -65,6 +65,11 @@ end
 
 @testitem "bentleyottmann" setup = [Setup] begin
   # basic check with a small number of segments
+  segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(0, 2), cart(2, 0)), (cart(0, 1), cart(0.5, 1))])
+  points, seginds = Meshes.bentleyottmann(segs)
+  @test length(points) == 7
+  @test length(seginds) == 7
+
   segs =
     Segment.([
       (cart(0, 0), cart(1.1, 1.1)),
@@ -75,11 +80,10 @@ end
       (cart(1, 0), cart(1, 1))
     ])
   points, seginds = Meshes.bentleyottmann(segs)
-  @test all(points .≈ [cart(0.5, 0.5), cart(1, 1)])
-  @test length(points) == 2
-  @test length(seginds) == 2
-  @test seginds == [[1, 2], [1, 5, 6]]
-  @inferred Meshes.bentleyottmann(segs)
+  @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
+  @test length(points) == 6
+  @test length(seginds) == 6
+  @test Set.(seginds[[3, 5]]) == [Set([1, 2]), Set([1, 6, 5])]
 
   segs =
     Segment.([
@@ -93,28 +97,28 @@ end
       (cart(10, 3), cart(10, 5))
     ])
   points, seginds = Meshes.bentleyottmann(segs)
-  @test length(points) == 4
-  @test length(seginds) == 4
-  @test Set(reduce(vcat, seginds)) == Set(2:8)
+  @test length(points) == 17
+  @test length(seginds) == 17
+  @test Set(reduce(vcat, seginds)) == Set(1:8)
   @test points[findfirst(p -> p ≈ cart(10, 4), points)] ≈ cart(10, 4)
   @test Set(seginds[findfirst(p -> p ≈ cart(10, 4), points)]) == Set([4, 5, 6, 7, 8])
   @test Set(seginds[findfirst(p -> p ≈ cart(9, 4.8), points)]) == Set([4, 2])
 
   # finds all intersections in a grid
-  horizontal = [Segment((1, i), (n, i)) for i in 1:n]
-  vertical = [Segment((i, 1), (i, n)) for i in 1:n]
+  n = 10
+  horizontal = [Segment(cart(1, i), cart(n, i)) for i in 1:n]
+  vertical = [Segment(cart(i, 1), cart(i, n)) for i in 1:n]
   segs = [horizontal; vertical]
   points, seginds = Meshes.bentleyottmann(segs)
-  @test length(points) == 121
-  @test length(seginds) == 121
+  @test length(points) == 100
+  @test length(seginds) == 100
   @test Set(length.(seginds)) == Set([2])
 
   # result is invariant under rotations
-  segs = collect(segs)
   for θ in T(π / 6):T(π / 6):T(2π - π / 6)
     θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ))
-    @test length(θpoints) == 121
-    @test length(θseginds) == 121
+    @test length(θpoints) == 100
+    @test length(θseginds) == 100
     @test Set(length.(θseginds)) == Set([2])
   end
 
