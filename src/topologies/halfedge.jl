@@ -139,6 +139,29 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}; nele
   HalfEdgeTopology(halfedges, half4elem, half4vert, edge4pair)
 end
 
+function any_edges_exist(inds, half4pair)
+  n = length(inds)
+  for i in eachindex(inds)
+    uv = (inds[i], inds[mod1(i + 1, n)])
+    if haskey(half4pair, uv)
+      return true
+    end
+  end
+  return false
+end
+
+const NULL_EDGE = HalfEdge(0, nothing)
+function any_claimed_edges_exist(inds, half4pair)
+  n = length(inds)
+  for i in eachindex(inds)
+    uv = (inds[i], inds[mod1(i + 1, n)])
+    if !isnothing(get(half4pair, uv, NULL_EDGE).elem)
+      return true
+    end
+  end
+  return false
+end
+
 function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   assertion(all(e -> paramdim(e) == 2, elems), "invalid element for half-edge topology")
 
@@ -153,75 +176,100 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
-  elem = first(adjelems)
-  inds = collect(indices(elem))
-  v = CircularVector(inds)
-  n = length(v)
-  for i in 1:n
-    half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[1])
+  inds = first(adjelems)
+  for i in eachindex(inds)
+    u = inds[i]
+    u1 = inds[mod1(i + 1, length(inds))]
+    ei = eleminds[1]
+    he = get!(() -> HalfEdge(u, ei), half4pair, (u, u1))
+    # reserve half-edge to enable recognizing orientation mismatches
+    half = get!(() -> HalfEdge(u1, nothing), half4pair, (u1, u))
+    he.half = half
+    half.half = he
   end
 
   # insert all other elements
-  for e in 2:length(adjelems)
-    elem = adjelems[e]
-    inds = collect(indices(elem))
-    v = CircularVector(inds)
-    n = length(v)
-    for i in 1:n
-      # if pair of vertices is already in the
-      # dictionary this means that the current
-      # polygon has inconsistent orientation
-      if haskey(half4pair, (v[i], v[i + 1]))
-        # delete inserted pairs so far
-        CCW[e] = false
-        for j in 1:(i - 1)
-          delete!(half4pair, (v[j], v[j + 1]))
-        end
-        break
+  remaining = collect(2:length(adjelems))
+  added = false
+  disconnected = false
+  while !isempty(remaining)
+    iter = 1
+    while iter ≤ length(remaining)
+      e = remaining[iter]
+      inds = adjelems[e]
+      n = length(inds)
+      if any_edges_exist(inds, half4pair) || disconnected
+        # at least one edge has been reserved, so we can assess the orientation w.r.t.
+        # previously added elements/edges
+        deleteat!(remaining, iter)
+        added = true
+        disconnected = false
       else
-        # insert pair in consistent orientation
-        half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[e])
+        iter += 1
+        continue
+      end
+
+      if any_claimed_edges_exist(inds, half4pair)
+        CCW[e] = false
+      end
+
+      ei = eleminds[e]
+      if !CCW[e]
+        # reinsert pairs in CCW orientation
+        for i in eachindex(inds)
+          u = inds[i]
+          u1 = inds[mod1(i + 1, n)]
+          he = get!(() -> HalfEdge(u1, ei), half4pair, (u1, u))
+          if !isnothing(he.elem)
+            @assert he.elem === ei lazy"inconsistent duplicate edge $he for $(ei) and $(he.elem)"
+          else
+            he.elem = ei
+          end
+          half = get!(() -> HalfEdge(u, nothing), half4pair, (u, u1))
+          he.half = half
+          half.half = he
+        end
+      else
+        for i in eachindex(inds)
+          u = inds[i]
+          u1 = inds[mod1(i + 1, n)]
+          he = get!(() -> HalfEdge(u, ei), half4pair, (u, u1))
+          he.elem = ei # this may be a pre-existing/reserved edge with a nothing `elem` field
+          half = get!(() -> HalfEdge(u1, nothing), half4pair, (u1, u))
+          he.half = half
+          half.half = he
+        end
       end
     end
 
-    if !CCW[e]
-      # reinsert pairs in CCW orientation
-      for i in 1:n
-        half4pair[(v[i + 1], v[i])] = HalfEdge(v[i + 1], eleminds[e])
-      end
+    if added
+      added = false
+    elseif !isempty(remaining)
+      disconnected = true
+      added = false
     end
   end
 
-  # add missing pointers
-  for (e, elem) in Iterators.enumerate(adjelems)
-    inds = CCW[e] ? indices(elem) : reverse(indices(elem))
-    v = CircularVector(collect(inds))
-    n = length(v)
-    for i in 1:n
-      # update pointers prev and next
-      he = half4pair[(v[i], v[i + 1])]
-      he.prev = half4pair[(v[i - 1], v[i])]
-      he.next = half4pair[(v[i + 1], v[i + 2])]
-
-      # if not a border element, update half
-      if haskey(half4pair, (v[i + 1], v[i]))
-        he.half = half4pair[(v[i + 1], v[i])]
-      else # create half-edge for border
-        be = HalfEdge(v[i + 1], nothing)
-        be.half = he
-        he.half = be
-      end
-    end
-  end
-
-  # save halfedges in a vector of pairs
+  # add missing pointers and save halfedges in a vector of pairs
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
-  for ((u, v), he) in half4pair
-    uv = minmax(u, v)
-    if uv ∉ visited
-      push!(halves, (he, he.half))
-      push!(visited, uv)
+  for (e, inds) in enumerate(adjelems)
+    inds = CCW[e] ? inds : reverse(inds)
+    n = length(inds)
+    for i in eachindex(inds)
+      vi = inds[i]
+      vi1 = inds[mod1(i + 1, n)]
+      vi2 = inds[mod1(i + 2, n)]
+      # update pointers prev and next
+      he = half4pair[(vi, vi1)]
+      he.next = half4pair[(vi1, vi2)]
+      he.next.prev = he
+
+      uv = minmax(vi, vi1)
+      if uv ∉ visited
+        push!(halves, (he, he.half))
+        push!(visited, uv)
+      end
     end
   end
 
