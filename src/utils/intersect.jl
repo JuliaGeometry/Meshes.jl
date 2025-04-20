@@ -76,9 +76,9 @@ function bentleyottmann(segments; digits=_digits(segments))
         isnothing(sₗ) || isnothing(sᵣ) || _newevent!(𝒬, p, _keyseg(sₗ), _keyseg(sᵣ), digits)
       end
     else
-      BinaryTrees.isempty(ℛ) || _handlebottom!(activesegs, ℛ, 𝒬, p, digits)
+      BinaryTrees.isempty(ℛ) || _handlebottom!(activesegs, ℛ, sweepline, 𝒬, p, digits)
 
-      BinaryTrees.isempty(ℛ) || _handletop!(activesegs, ℛ, 𝒬, p, digits)
+      BinaryTrees.isempty(ℛ) || _handletop!(activesegs, ℛ, sweepline, 𝒬, p, digits)
     end
   end
 
@@ -102,8 +102,8 @@ function _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p, TOL)
   end
 end
 
-function _handlebottom!(activesegs, ℛ, 𝒬, p, digits)
-  s′ = BinaryTrees.key(_minsearch(activesegs, BinaryTrees.root(ℛ)))
+function _handlebottom!(activesegs, ℛ, sweepline, 𝒬, p, digits)
+  s′ = BinaryTrees.key(_minsearch(ℛ, activesegs, sweepline))
 
   sₗ, _ = !isnothing(s′) ? BinaryTrees.prevnext(ℛ, s′) : (nothing, nothing)
   if !isnothing(sₗ)
@@ -111,8 +111,8 @@ function _handlebottom!(activesegs, ℛ, 𝒬, p, digits)
   end
 end
 
-function _handletop!(activesegs, ℛ, 𝒬, p, digits)
-  s″ = BinaryTrees.key(_maxsearch(activesegs, BinaryTrees.root(ℛ)))
+function _handletop!(activesegs, ℛ, sweepline, 𝒬, p, digits)
+  s″ = BinaryTrees.key(_maxsearch(ℛ, activesegs, sweepline))
 
   _, sᵤ = !isnothing(s″) ? BinaryTrees.prevnext(ℛ, s″) : (nothing, nothing)
   if !isnothing(sᵤ)
@@ -149,33 +149,16 @@ function _keyseg(segment)
 end
 
 # find the minimum segment among active segments in tree
-_minsearch(activesegs, node) = _minsearch(activesegs, node, nothing)
 
-function _minsearch(activesegs, node, best)
-  isnothing(node) && return best
-
-  curr = BinaryTrees.key(node)
-  if _segment(curr) ∈ activesegs
-    best = isnothing(best) || curr < BinaryTrees.key(best) ? node : best
-  end
-
-  best = _minsearch(activesegs, BinaryTrees.left(node), best)
-  best = _minsearch(activesegs, BinaryTrees.right(node), best)
+function _minsearch(ℛ, activesegs, sweepline)
+  activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
+  BinaryTrees.search(ℛ, activeordered[begin])
 end
 
 # find the maximum segment among active segments in tree
-_maxsearch(activesegs, node) = _maxsearch(activesegs, node, nothing)
-
-function _maxsearch(activesegs, node, best)
-  isnothing(node) && return best
-
-  curr = BinaryTrees.key(node)
-  if _segment(curr) ∈ activesegs
-    best = isnothing(best) || curr > BinaryTrees.key(best) ? node : best
-  end
-
-  best = _maxsearch(activesegs, BinaryTrees.right(node), best)
-  best = _maxsearch(activesegs, BinaryTrees.left(node), best)
+function _maxsearch(ℛ, activesegs, sweepline)
+  activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
+  BinaryTrees.search(ℛ, activeordered[end])
 end
 
 # nudge the sweepline to get correct ℛ ordering
@@ -206,9 +189,9 @@ function _search!(node, segments, x, y, TOL)
   ℒ = hypot(dx, dy) # handling precision issues
 
   # Ensure the point is not the endpoint (avoids duplicates)
-  check = (x₂ - TOL ≤ x ≤ x₂ + TOL) && (y₂ - TOL ≤ y ≤ y₂ + TOL)
+  skip = (x₂ - TOL ≤ x ≤ x₂ + TOL) && (y₂ - TOL ≤ y ≤ y₂ + TOL)
   # if collinear and not an endpoint
-  if !check && abs(dy * (x - x₁) - dx * (y - y₁)) ≤ TOL * ℒ
+  if skip || abs(dy * (x - x₁) - dx * (y - y₁)) ≤ TOL * ℒ
     push!(segments, seg)
   end
   _search!(BinaryTrees.left(node), segments, x, y, TOL)
