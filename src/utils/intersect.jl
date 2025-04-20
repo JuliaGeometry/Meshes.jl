@@ -90,7 +90,7 @@ end
 ##
 
 function _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p, TOL)
-  for s in ℰₚ ∪ ℳₚ
+  for s in reverse(ℰₚ ∪ ℳₚ)
     segsweep = _SweepSegment(s, sweepline)
     isnothing(BinaryTrees.search(ℛ, segsweep)) || BinaryTrees.delete!(ℛ, segsweep)
   end
@@ -191,7 +191,7 @@ function _search!(node, segments, x, y, TOL)
   # Ensure the point is not the endpoint (avoids duplicates)
   skip = (x₂ - TOL ≤ x ≤ x₂ + TOL) && (y₂ - TOL ≤ y ≤ y₂ + TOL)
   # if collinear and not an endpoint
-  if skip || abs(dy * (x - x₁) - dx * (y - y₁)) ≤ TOL * ℒ
+  if abs(dy * (x - x₁) - dx * (y - y₁)) ≤ TOL * ℒ && !skip
     push!(segments, seg)
   end
   _search!(BinaryTrees.left(node), segments, x, y, TOL)
