@@ -59,18 +59,20 @@ function bentleyottmann(segments; digits=_digits(segments))
     P = typeof(p)
     ℳₚ = S[]
     _findintersections!(ℳₚ, ℛ, p, TOL) # segments with p at the middle
+    activesegs = Set(ℬₚ ∪ ℳₚ)
 
     # report intersections
-    if length(ℳₚ ∪ ℬₚ ∪ ℰₚ) > 0
-      inds = unique(lookup[s] for s in ℳₚ ∪ ℬₚ ∪ ℰₚ)
+    if !isempty(activesegs) || !isempty(ℰₚ)
+      inds = Set{Int}()
+      for s in activesegs ∪ ℰₚ
+        push!(inds, lookup[s])
+      end
       push!(points, p)
-      push!(seginds, inds)
+      push!(seginds, collect(inds))
     end
 
     # handle status line
     _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p, TOL)
-
-    activesegs = Set(ℬₚ ∪ ℳₚ)
 
     if isempty(activesegs)
       for s in ℰₚ
@@ -137,40 +139,8 @@ function _newevent!(𝒬, p, s₁, s₂, digits)
   end
 end
 
-# compute rounding digits
-function _digits(segments)
-  s = first(segments)
-  ℒ = lentype(s)
-  τ = ustrip(atol(ℒ))
-  round(Int, -log10(τ)) - 1
-end
-
-# convenience function to get the segment from the node
-function _keyseg(segment)
-  _segment(BinaryTrees.key(segment))
-end
-
-# find the minimum segment among active segments in tree
-
-function _minsearch(ℛ, activesegs, sweepline)
-  activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
-  BinaryTrees.search(ℛ, activeordered[begin])
-end
-
-# find the maximum segment among active segments in tree
-function _maxsearch(ℛ, activesegs, sweepline)
-  activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
-  BinaryTrees.search(ℛ, activeordered[end])
-end
-
-# nudge the sweepline to get correct ℛ ordering
-function _nudge(p, TOL)
-  x, y = CoordRefSystems.values(coords(p))
-  nudgefactor = unit(x) * TOL * 2
-  Point(x + nudgefactor, y + nudgefactor)
-end
-
 # find segments that intersect with the point p
+
 function _findintersections!(ℳₚ, ℛ, p, TOL)
   x, y = CoordRefSystems.values(coords(p))
   tol = TOL * unit(x) # ensure TOL is in the same unit as x and y
@@ -190,11 +160,61 @@ function _search!(node, ℳₚ, x, y, TOL)
   # Ensure the point is not the endpoint (avoids duplicates)
   skip = (x₂ - TOL ≤ x ≤ x₂ + TOL) && (y₂ - TOL ≤ y ≤ y₂ + TOL)
   # if collinear and not an endpoint
-  if abs(dy * (x - x₁) - dx * (y - y₁)) ≤ TOL * ℒ && !skip
-    push!(ℳₚ, seg)
+  collinear = dy * (x - x₁) - dx * (y - y₁)
+  boundcheck = (x₁ - TOL ≤ x ≤ x₂ + TOL) && (y₁ - TOL ≤ y ≤ y₂ + TOL)
+
+  if abs(collinear) ≤ TOL * ℒ #&& boundcheck
+    skip || push!(ℳₚ, seg)
   end
-  _search!(BinaryTrees.left(node), ℳₚ, x, y, TOL)
-  _search!(BinaryTrees.right(node), ℳₚ, x, y, TOL)
+
+  # Using difference in y to determine the side of the segment
+  # this was needed to avoid recursion depth issues
+  # and floating point weirdness.
+  ŷ = y₁ + (y₂ - y₁) * (x - x₁) / dx # y coordinate of the segment at x
+
+  diff = y - ŷ # difference between the point and the segment
+
+  if diff < -TOL
+    _search!(BinaryTrees.left(node), ℳₚ, x, y, TOL)
+  elseif diff > TOL
+    _search!(BinaryTrees.right(node), ℳₚ, x, y, TOL)
+  else
+    # if the point is on the segment, check both sides
+    _search!(BinaryTrees.left(node), ℳₚ, x, y, TOL)
+    _search!(BinaryTrees.right(node), ℳₚ, x, y, TOL)
+  end
+end
+
+# find the minimum segment among active segments in tree
+
+function _minsearch(ℛ, activesegs, sweepline)
+  activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
+  BinaryTrees.search(ℛ, activeordered[begin])
+end
+
+# find the maximum segment among active segments in tree
+function _maxsearch(ℛ, activesegs, sweepline)
+  activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
+  BinaryTrees.search(ℛ, activeordered[end])
+end
+
+# compute rounding digits
+function _digits(segments)
+  s = first(segments)
+  ℒ = lentype(s)
+  τ = ustrip(atol(ℒ))
+  round(Int, -log10(τ)) - 1
+end
+
+# convenience function to get the segment from the node
+function _keyseg(segment)
+  _segment(BinaryTrees.key(segment))
+end
+# nudge the sweepline to get correct ℛ ordering
+function _nudge(p, TOL)
+  x, y = CoordRefSystems.values(coords(p))
+  nudgefactor = unit(x) * TOL * 2
+  Point(x + nudgefactor, y + nudgefactor)
 end
 
 ##
