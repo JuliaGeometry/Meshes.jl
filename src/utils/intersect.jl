@@ -56,7 +56,9 @@ function bentleyottmann(segments; digits=_digits(segments))
     # handle event, i.e. update 𝒬, ℛ and ℳ
     ℬₚ = get(ℬ, p, S[]) # segments with p at the begin
     ℰₚ = get(ℰ, p, S[]) # segments with p at the end
-    ℳₚ = _findintersections(ℛ, p, TOL) # segments with p at the middle
+    P = typeof(p)
+    ℳₚ = S[]
+    _findintersections!(ℳₚ, ℛ, p, TOL) # segments with p at the middle
 
     # report intersections
     if length(ℳₚ ∪ ℬₚ ∪ ℰₚ) > 0
@@ -169,16 +171,13 @@ function _nudge(p, TOL)
 end
 
 # find segments that intersect with the point p
-function _findintersections(ℛ, p, TOL)
+function _findintersections!(ℳₚ, ℛ, p, TOL)
   x, y = CoordRefSystems.values(coords(p))
   tol = TOL * unit(x) # ensure TOL is in the same unit as x and y
-  P = typeof(p)
-  segments = Vector{Tuple{P,P}}()
-
-  _search!(BinaryTrees.root(ℛ), segments, x, y, tol)
-  segments
+  _search!(BinaryTrees.root(ℛ), ℳₚ, x, y, tol)
+  ℳₚ
 end
-function _search!(node, segments, x, y, TOL)
+function _search!(node, ℳₚ, x, y, TOL)
   isnothing(node) && return
   seg = _segment(BinaryTrees.key(node))
   x₁, y₁ = CoordRefSystems.values(coords(seg[1]))
@@ -192,10 +191,10 @@ function _search!(node, segments, x, y, TOL)
   skip = (x₂ - TOL ≤ x ≤ x₂ + TOL) && (y₂ - TOL ≤ y ≤ y₂ + TOL)
   # if collinear and not an endpoint
   if abs(dy * (x - x₁) - dx * (y - y₁)) ≤ TOL * ℒ && !skip
-    push!(segments, seg)
+    push!(ℳₚ, seg)
   end
-  _search!(BinaryTrees.left(node), segments, x, y, TOL)
-  _search!(BinaryTrees.right(node), segments, x, y, TOL)
+  _search!(BinaryTrees.left(node), ℳₚ, x, y, TOL)
+  _search!(BinaryTrees.right(node), ℳₚ, x, y, TOL)
 end
 
 ##
