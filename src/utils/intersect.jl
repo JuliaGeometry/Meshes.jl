@@ -18,7 +18,7 @@ tolerance of the length type of the segments.
 """
 function bentleyottmann(segments; digits=_digits(segments))
   TOL = 1 / 10^digits # precomputed tolerance for floating point comparisons
-  
+
   # orient segments
   segs = map(segments) do s
     a, b = coordround.(extrema(s); digits)
@@ -57,7 +57,6 @@ function bentleyottmann(segments; digits=_digits(segments))
     # handle event, i.e. update 𝒬, ℛ and ℳ
     ℬₚ = get(ℬ, p, S[]) # segments with p at the begin
     ℰₚ = get(ℰ, p, S[]) # segments with p at the end
-    P = typeof(p)
     ℳₚ = S[]
     _findintersections!(ℳₚ, ℛ, p, TOL) # segments with p at the middle
     activesegs = Set(ℬₚ ∪ ℳₚ)
@@ -133,7 +132,7 @@ function _newevent!(𝒬, p, s₁, s₂, digits)
   intersection(Segment(s₁), Segment(s₂)) do I
     if type(I) == Crossing || type(I) == EdgeTouching
       p′ = coordround(get(I); digits)
-      if p′ ≥ p && isnothing(BinaryTrees.search(𝒬, p′))
+      if p′ ≥ p
         BinaryTrees.insert!(𝒬, p′)
       end
     end
