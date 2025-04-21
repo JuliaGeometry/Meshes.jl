@@ -18,6 +18,7 @@ tolerance of the length type of the segments.
 """
 function bentleyottmann(segments; digits=_digits(segments))
   TOL = 1 / 10^digits # precomputed tolerance for floating point comparisons
+  
   # orient segments
   segs = map(segments) do s
     a, b = coordround.(extrema(s); digits)
@@ -124,9 +125,9 @@ function _handletop!(activesegs, ℛ, sweepline, 𝒬, p, digits)
   end
 end
 
-##
-## helper functions
-##
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
 
 function _newevent!(𝒬, p, s₁, s₂, digits)
   intersection(Segment(s₁), Segment(s₂)) do I
@@ -140,13 +141,13 @@ function _newevent!(𝒬, p, s₁, s₂, digits)
 end
 
 # find segments that intersect with the point p
-
 function _findintersections!(ℳₚ, ℛ, p, TOL)
   x, y = CoordRefSystems.values(coords(p))
   tol = TOL * unit(x) # ensure TOL is in the same unit as x and y
   _search!(BinaryTrees.root(ℛ), ℳₚ, x, y, tol)
   ℳₚ
 end
+
 function _search!(node, ℳₚ, x, y, TOL)
   isnothing(node) && return
   seg = _segment(BinaryTrees.key(node))
@@ -167,9 +168,8 @@ function _search!(node, ℳₚ, x, y, TOL)
     skip || push!(ℳₚ, seg)
   end
 
-  # Using difference in y to determine the side of the segment
-  # this was needed to avoid recursion depth issues
-  # and floating point weirdness.
+  # using difference in y to determine the side of the segment
+  # needed to avoid recursion depth and floating point issues
   ŷ = y₁ + (y₂ - y₁) * (x - x₁) / dx # y coordinate of the segment at x
 
   diff = y - ŷ # difference between the point and the segment
@@ -186,7 +186,6 @@ function _search!(node, ℳₚ, x, y, TOL)
 end
 
 # find the minimum segment among active segments in tree
-
 function _minsearch(ℛ, activesegs, sweepline)
   activeordered = sort([_SweepSegment(s, sweepline) for s in activesegs])
   BinaryTrees.search(ℛ, activeordered[begin])
@@ -217,9 +216,9 @@ function _nudge(p, TOL)
   Point(x + nudgefactor, y + nudgefactor)
 end
 
-##
-## Sweep line data structures
-##
+# ----------------
+# DATA STRUCTURES
+# ----------------
 
 # tracks sweepline and current y position for searching
 mutable struct _SweepLine{P<:Point}
