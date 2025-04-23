@@ -23,8 +23,14 @@ struct SimpleTopology{C<:Connectivity} <: Topology
   elems::Vector{Int}
 
   function SimpleTopology{C}(connec) where {C}
-    ranks = [paramdim(c) for c in connec]
-    elems = findall(isequal(maximum(ranks)), ranks)
+    # TODO: Handle Union's too?
+    if typeof(C) <: DataType # one concrete Connectivity type
+      ranks = fill(paramdim(first(connec)), length(connec))
+      elems = collect(eachindex(connec))
+    else # mixed connectivity types
+      ranks = [paramdim(c) for c in connec]
+      elems = findall(isequal(maximum(ranks)), ranks)
+    end
     new(connec, ranks, elems)
   end
 end
