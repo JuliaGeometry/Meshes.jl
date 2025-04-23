@@ -47,9 +47,11 @@ apply(::Repair{0}, mesh::Mesh) = error("not implemented")
 # --------------
 
 function apply(::Repair{1}, mesh::Mesh)
-  count = Ref(0) # Ref to avoid boxing from map closure (JuliaLang/julia#15276)
+  # Ref to avoid boxing from map closure
+  # see https://github.com/JuliaLang/julia/issues/15276
+  count = Ref(0)
 
-  # ordered
+  # ordered list of indices
   seen = Int[]
   inds = Dict{Int,Int}()
 
