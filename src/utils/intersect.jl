@@ -25,6 +25,11 @@ function bentleyottmann(segments; digits=_digits(segments))
     a > b ? (b, a) : (a, b)
   end
 
+  minp, maxp = segs |> Meshes.boundingbox |> Stretch(1.05) |> extrema
+  ymin = CoordRefSystems.values(coords(minp))[2]
+  ymax = CoordRefSystems.values(coords(maxp))[2]
+  ybounds = (ymin, ymax)
+
   # retrieve types
   T = lentype(first(segs)[1])
   P = typeof(first(segs)[1])
@@ -47,10 +52,12 @@ function bentleyottmann(segments; digits=_digits(segments))
   # sweep line algorithm
   points = Vector{P}()
   seginds = Vector{Vector{Int}}()
-  sweepline = _initsweep(segs)
+  sweepline = _initsweep(segs, ybounds)
   while !BinaryTrees.isempty(𝒬)
     # current point (or event)
     p = BinaryTrees.key(BinaryTrees.minnode(𝒬))
+
+    sweepline.point = p # update sweepline position
 
     # delete point from event queue
     BinaryTrees.delete!(𝒬, p)
@@ -58,9 +65,8 @@ function bentleyottmann(segments; digits=_digits(segments))
     ℬₚ = get(ℬ, p, S[]) # segments with p at the begin
     ℰₚ = get(ℰ, p, S[]) # segments with p at the end
     ℳₚ = S[]
-    _findintersections!(ℳₚ, ℛ, p, TOL) # segments with p at the middle
+    _findintersections!(ℳₚ, ℛ, sweepline, TOL) # segments with p at the middle
     activesegs = Set(ℬₚ ∪ ℳₚ)
-
     # report intersections
     if !isempty(activesegs) || !isempty(ℰₚ)
       inds = Set{Int}()
@@ -94,12 +100,15 @@ end
 ##
 
 function _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p, TOL)
+  # nudge back to get correct ordering for removal
+  sweepline.point = _nudge(p, TOL, -)
   for s in reverse(ℰₚ ∪ ℳₚ)
     segsweep = _SweepSegment(s, sweepline)
     isnothing(BinaryTrees.search(ℛ, segsweep)) || BinaryTrees.delete!(ℛ, segsweep)
   end
 
-  sweepline.point = _nudge(p, TOL)
+  # nudge forward to get correct ordering for adding
+  sweepline.point = _nudge(p, TOL, +)
 
   for s in ℬₚ ∪ ℳₚ
     BinaryTrees.insert!(ℛ, _SweepSegment(s, sweepline))
@@ -140,47 +149,44 @@ function _newevent!(𝒬, p, s₁, s₂, digits)
 end
 
 # find segments that intersect with the point p
-function _findintersections!(ℳₚ, ℛ, p, TOL)
-  x, y = CoordRefSystems.values(coords(p))
-  tol = TOL * unit(x) # ensure TOL is in the same unit as x and y
-  _search!(BinaryTrees.root(ℛ), ℳₚ, x, y, tol)
+function _findintersections!(ℳₚ, ℛ, sweepline, TOL)
+  tol = TOL * unit(_sweepx(sweepline)) # ensure TOL is in the same unit as p
+  _search!(BinaryTrees.root(ℛ), ℳₚ, sweepline, tol)
   ℳₚ
 end
 
-function _search!(node, ℳₚ, x, y, TOL)
+function _search!(node, ℳₚ, sweepline, TOL)
   isnothing(node) && return
   seg = _segment(BinaryTrees.key(node))
-  x₁, y₁ = CoordRefSystems.values(coords(seg[1]))
   x₂, y₂ = CoordRefSystems.values(coords(seg[2]))
-
-  # Precompute reused values
-  dx, dy = x₂ - x₁, y₂ - y₁
-  ℒ = hypot(dx, dy) # handling precision issues
+  x, y = CoordRefSystems.values(coords(_sweeppoint(sweepline)))
 
   # Ensure the point is not the endpoint (avoids duplicates)
   skip = (x₂ - TOL ≤ x ≤ x₂ + TOL) && (y₂ - TOL ≤ y ≤ y₂ + TOL)
-  # if collinear and not an endpoint
-  collinear = dy * (x - x₁) - dx * (y - y₁)
-  boundcheck = (x₁ - TOL ≤ x ≤ x₂ + TOL) && (y₁ - TOL ≤ y ≤ y₂ + TOL)
+  I = intersect(Segment(seg), Segment(_sweepline(sweepline)))
 
-  if abs(collinear) ≤ TOL * ℒ #&& boundcheck
+  if isnothing(I) # segment ends just before sweepline (this is expected bc of our nudging)
+    ŷ = y₂
+  elseif I isa Segment # segment means vertical
+    ŷ = y
+  else
+    _, ŷ = CoordRefSystems.values(coords(I))
+  end
+  dy = y - ŷ # difference between the point and the segment
+  if abs(dy) ≤ TOL || I isa Segment
     skip || push!(ℳₚ, seg)
   end
 
   # using difference in y to determine the side of the segment
-  # needed to avoid recursion depth and floating point issues
-  ŷ = y₁ + (y₂ - y₁) * (x - x₁) / dx # y coordinate of the segment at x
 
-  diff = y - ŷ # difference between the point and the segment
-
-  if diff < -TOL
-    _search!(BinaryTrees.left(node), ℳₚ, x, y, TOL)
-  elseif diff > TOL
-    _search!(BinaryTrees.right(node), ℳₚ, x, y, TOL)
+  if dy < -TOL
+    _search!(BinaryTrees.left(node), ℳₚ, sweepline, TOL)
+  elseif dy > TOL
+    _search!(BinaryTrees.right(node), ℳₚ, sweepline, TOL)
   else
-    # if the point is on the segment, check both sides
-    _search!(BinaryTrees.left(node), ℳₚ, x, y, TOL)
-    _search!(BinaryTrees.right(node), ℳₚ, x, y, TOL)
+    # if the point is on the segment, check both sides for adjacents
+    _search!(BinaryTrees.left(node), ℳₚ, sweepline, TOL)
+    _search!(BinaryTrees.right(node), ℳₚ, sweepline, TOL)
   end
 end
 
@@ -209,10 +215,10 @@ function _keyseg(segment)
   _segment(BinaryTrees.key(segment))
 end
 # nudge the sweepline to get correct ℛ ordering
-function _nudge(p, TOL)
+function _nudge(p, TOL, operation)
   x, y = CoordRefSystems.values(coords(p))
-  nudgefactor = unit(x) * TOL * 2
-  Point(x + nudgefactor, y + nudgefactor)
+  nudgefactor = unit(x) * TOL * 1
+  Point(operation(x, nudgefactor), operation(y, nudgefactor))
 end
 
 # ----------------
@@ -220,12 +226,16 @@ end
 # ----------------
 
 # tracks sweepline and current y position for searching
-mutable struct _SweepLine{P<:Point}
+mutable struct _SweepLine{P<:Point,T}
   point::P
+  ybounds::Tuple{T,T}
 end
 _sweeppoint(sweepline::_SweepLine) = getfield(sweepline, :point)
 _sweepx(sweepline::_SweepLine) = CoordRefSystems.values(coords(_sweeppoint(sweepline)))[1]
 _sweepy(sweepline::_SweepLine) = CoordRefSystems.values(coords(_sweeppoint(sweepline)))[2]
+_sweepbounds(sweepline::_SweepLine) = getfield(sweepline, :ybounds)
+_sweepline(sweepline::_SweepLine) =
+  (Point(_sweepx(sweepline), sweepline.ybounds[1]), Point(_sweepx(sweepline), sweepline.ybounds[2]))
 
 # compute the intersection of a segment with the sweepline
 function _sweepintersect(seg, sweepline)
@@ -234,15 +244,21 @@ function _sweepintersect(seg, sweepline)
   x₂, y₂ = CoordRefSystems.values(p₂)
   T = eltype(x₁)
 
-  x = T(_sweepx(sweepline))
-  y = T(_sweepy(sweepline))
+  x, y = CoordRefSystems.values(coords(_sweeppoint(sweepline)))
 
-  if abs(x₁ - x₂) < atol(eltype(x₁))
+  # if vertical, return the y coordinate of current active point or segment
+  if abs(x₁ - x₂) < atol(T)
     return T(min(y, y₂)) # vertical goes at end
   end
 
-  t = (x - x₁) / (x₂ - x₁)
-  T(y₁ + t * (y₂ - y₁))
+  I = intersect(Segment(seg), Segment(_sweepline(sweepline)))
+
+  if isnothing(I)
+    return y₂ # segment is on the sweepline
+  end
+
+  x, y = CoordRefSystems.values(coords(I))
+  y
 end
 
 # takes input segment and assigns where it intersects sweepline
@@ -278,7 +294,7 @@ Base.isless(a::_SweepSegment, b::_SweepSegment) = begin
 end
 
 # initialize the sweep line with them minimum
-function _initsweep(segs)
+function _initsweep(segs, bounds)
   U = lentype(coords(segs[1][1]))
-  _SweepLine(Point(U(-Inf), U(-Inf)))
+  _SweepLine(Point(U(-Inf), U(-Inf)), bounds)
 end
