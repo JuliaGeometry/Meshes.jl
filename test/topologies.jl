@@ -372,8 +372,17 @@ end
     for e in 1:nelements(topology)
       he = half4elem(topology, e)
       inds = indices(elems[e])
-      @test he.elem == e
-      @test he.head ∈ inds
+      i = 1
+      while i ≤ length(inds)
+        @test he.elem == e
+        @test he.head ∈ inds
+        @test he.next.elem == e
+        @test he.prev.elem == e
+        @test he.next.prev == he
+        @test he.prev.next == he
+        he = he.next
+        i += 1
+      end
     end
   end
 
@@ -483,6 +492,7 @@ end
   # correct construction from inconsistent orientation
   e = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
   t = HalfEdgeTopology(e)
+  test_halfedge(e, t)
   n = collect(elements(t))
   @test n[1] == e[1]
   @test n[2] != e[2]
@@ -492,8 +502,13 @@ end
   # more challenging case with inconsistent orientation
   e = connect.([(4, 1, 5), (2, 6, 4), (3, 5, 6), (4, 5, 6)])
   t = HalfEdgeTopology(e)
+  test_halfedge(e, t)
   n = collect(elements(t))
   @test n == connect.([(5, 4, 1), (6, 2, 4), (6, 5, 3), (4, 5, 6)])
+
+  e = connect.([(1, 2, 3), (1, 3, 4), (2, 5, 3), (5, 4, 6), (3, 5, 4)], Triangle)
+  t = HalfEdgeTopology(e)
+  test_halfedge(e, t)
 
   # indexable api
   g = GridTopology(10, 10)
