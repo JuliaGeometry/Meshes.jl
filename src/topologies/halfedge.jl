@@ -42,7 +42,7 @@ end
 
 """
     HalfEdgeTopology(elements; sort=true)
-    HalfEdgeTopology(halfedges)
+    HalfEdgeTopology(halfedges; nelems=nothing)
 
 A data structure for orientable 2-manifolds based on
 half-edges constructed from a vector of connectivity
@@ -51,6 +51,9 @@ half-edges constructed from a vector of connectivity
 The option `sort` can be used to sort the elements in
 adjacent-first order in case of inconsistent orientation
 (i.e. mix of clockwise and counter-clockwise).
+
+The option `nelems` can be used to specify an approximate
+number of `elements` as a size hint.
 
 ## Examples
 
@@ -97,7 +100,7 @@ struct HalfEdgeTopology <: Topology
   edge4pair::Dict{Tuple{Int,Int},Int}
 end
 
-function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nelems=nothing)
+function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}; nelems=nothing)
   # pre-allocate memory and provide size hints
   halfedges = Vector{HalfEdge}(undef, 2 * length(halves))
   edge4pair = Dict{Tuple{Int,Int},Int}()
@@ -222,7 +225,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
     end
   end
 
-  HalfEdgeTopology(halves, length(elems))
+  HalfEdgeTopology(halves; nelems=length(elems))
 end
 
 function adjsort(elems::AbstractVector{<:Connectivity})
