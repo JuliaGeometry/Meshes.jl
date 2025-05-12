@@ -411,7 +411,7 @@ end
   h9.prev = h7
   h9.next = h4
   halves = [(h1, h2), (h3, h4), (h5, h6), (h7, h8), (h9, h10)]
-  struc = HalfEdgeTopology(halves)
+  struc = HalfEdgeTopology(halves, 2)
   @test half4elem(struc, 1) == h1
   @test half4elem(struc, 2) == h4
   @test half4vert(struc, 1) == h1

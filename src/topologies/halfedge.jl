@@ -97,12 +97,13 @@ struct HalfEdgeTopology <: Topology
   edge4pair::Dict{Tuple{Int,Int},Int}
 end
 
-function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}})
+function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nelems::Int)
   halfedges = Vector{HalfEdge}(undef, 2 * length(halves))
   edge4pair = Dict{Tuple{Int,Int},Int}()
   half4elem = Dict{Int,Int}()
   half4vert = Dict{Int,Int}()
   sizehint!(edge4pair, length(halves))
+  sizehint!(half4elem , nelems)
 
   # flatten pairs of half-edges into a vector
   for (i, (h₁, h₂)) in enumerate(halves)
@@ -214,7 +215,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
     end
   end
 
-  HalfEdgeTopology(halves)
+  HalfEdgeTopology(halves, length(elems))
 end
 
 function adjsort(elems::AbstractVector{<:Connectivity})
