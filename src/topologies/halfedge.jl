@@ -209,9 +209,10 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for ((u, v), he) in half4pair
-    if minmax(u, v) ∉ visited
+    uv = minmax(u, v)
+    if uv ∉ visited
       push!(halves, (he, he.half))
-      push!(visited, minmax(u, v))
+      push!(visited, uv)
     end
   end
 
