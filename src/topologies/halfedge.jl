@@ -97,10 +97,7 @@ struct HalfEdgeTopology <: Topology
   edge4pair::Dict{Tuple{Int,Int},Int}
 end
 
-function HalfEdgeTopology(
-    halves::AbstractVector{Tuple{HalfEdge,HalfEdge}},
-    nelems::Union{Nothing,Int}=nothing
-)
+function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nelems=nothing)
   halfedges = Vector{HalfEdge}(undef, 2 * length(halves))
   edge4pair = Dict{Tuple{Int,Int},Int}()
   half4elem = Dict{Int,Int}()
