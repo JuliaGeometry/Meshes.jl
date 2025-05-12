@@ -120,11 +120,13 @@ function HalfEdgeTopology(
     halfedges[j + 1] = h₂
 
     # map element and vertex to a half-edge
-    for (k, h) in zip(j:(j + 1), (h₁, h₂))
-      if !isnothing(h.elem) # interior half-edge
-        get!(half4elem, h.elem, k)
-        get!(half4vert, h.head, k)
-      end
+    if !isnothing(h₁.elem)
+        get!(half4elem, h₁.elem, j)
+        get!(half4vert, h₁.head, j)
+    end
+    if !isnothing(h₂.elem)
+        get!(half4elem, h₂.elem, j+1)
+        get!(half4vert, h₂.head, j+1)
     end
 
     # map pair of vertices to an edge (i.e. two halves)
