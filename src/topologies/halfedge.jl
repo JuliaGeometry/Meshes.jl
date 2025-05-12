@@ -103,7 +103,7 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nele
   half4elem = Dict{Int,Int}()
   half4vert = Dict{Int,Int}()
   sizehint!(edge4pair, length(halves))
-  sizehint!(half4elem , nelems)
+  sizehint!(half4elem, nelems)
 
   # flatten pairs of half-edges into a vector
   for (i, (h₁, h₂)) in enumerate(halves)
