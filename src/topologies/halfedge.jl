@@ -98,6 +98,7 @@ struct HalfEdgeTopology <: Topology
 end
 
 function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nelems=nothing)
+  # pre-allocate memory and provide size hints
   halfedges = Vector{HalfEdge}(undef, 2 * length(halves))
   edge4pair = Dict{Tuple{Int,Int},Int}()
   half4elem = Dict{Int,Int}()
@@ -112,6 +113,7 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nele
     # make sure that first half-edge is in the interior
     (h₁, h₂) = isnothing(h₁.elem) ? (h₂, h₁) : (h₁, h₂)
 
+    # store half-edge with a linear index
     j = 2i - 1
     halfedges[j] = h₁
     halfedges[j + 1] = h₂
