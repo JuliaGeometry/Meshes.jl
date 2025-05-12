@@ -104,7 +104,7 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nele
   half4vert = Dict{Int,Int}()
   sizehint!(edge4pair, length(halves))
   if !isnothing(nelems)
-      sizehint!(half4elem, nelems)
+    sizehint!(half4elem, nelems)
   end
 
   # flatten pairs of half-edges into a vector
@@ -118,12 +118,12 @@ function HalfEdgeTopology(halves::AbstractVector{Tuple{HalfEdge,HalfEdge}}, nele
 
     # map element and vertex to a half-edge
     if !isnothing(h₁.elem)
-        get!(half4elem, h₁.elem, j)
-        get!(half4vert, h₁.head, j)
+      get!(half4elem, h₁.elem, j)
+      get!(half4vert, h₁.head, j)
     end
     if !isnothing(h₂.elem)
-        get!(half4elem, h₂.elem, j+1)
-        get!(half4vert, h₂.head, j+1)
+      get!(half4elem, h₂.elem, j + 1)
+      get!(half4vert, h₂.head, j + 1)
     end
 
     # map pair of vertices to an edge (i.e. two halves)
