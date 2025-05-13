@@ -255,7 +255,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for (e, inds) in enumerate(adjelems)
-    inds = REV_DIR[e] ? reverse(inds) : inds
+    inds = REV_DIR[e] ? circshift!(reverse!(inds), 1) : inds
     n = length(inds)
     for i in eachindex(inds)
       vi = inds[i]
