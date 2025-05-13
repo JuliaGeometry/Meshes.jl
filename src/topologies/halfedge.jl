@@ -171,8 +171,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   eleminds = sort ? indexin(adjelems, elems) : 1:length(elems)
 
   # start assuming that all elements are
-  # oriented consistently as CCW
-  CCW = trues(length(adjelems))
+  # oriented consistently
+  REV_DIR = falses(length(adjelems))
 
   # initialize with first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
@@ -210,12 +210,12 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
       end
 
       if any_claimed_edges_exist(inds, half4pair)
-        CCW[e] = false
+        REV_DIR[e] = true
       end
 
       ei = eleminds[e]
-      if !CCW[e]
-        # reinsert pairs in CCW orientation
+      if REV_DIR[e]
+        # insert pairs in consistent orientation
         for i in eachindex(inds)
           u = inds[i]
           u1 = inds[mod1(i + 1, n)]
@@ -254,7 +254,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
   for (e, inds) in enumerate(adjelems)
-    inds = CCW[e] ? inds : reverse(inds)
+    inds = REV_DIR[e] ? reverse(inds) : inds
     n = length(inds)
     for i in eachindex(inds)
       vi = inds[i]
