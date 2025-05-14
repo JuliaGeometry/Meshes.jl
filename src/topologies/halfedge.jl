@@ -167,9 +167,9 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  _elems = sort ? adjsort(elems) : elems
-  eleminds = sort ? indexin(_elems, elems) : 1:length(elems)
-  adjelems::Vector{Vector{Int}} = map(collect ∘ indices, _elems)
+  elemsort = sort ? adjsort(elems) : elems
+  eleminds = sort ? indexin(elemsort, elems) : 1:length(elems)
+  adjelems::Vector{Vector{Int}} = map(collect ∘ indices, elemsort)
 
   # start assuming that all elements are
   # oriented consistently
