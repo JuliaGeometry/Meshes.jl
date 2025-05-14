@@ -372,8 +372,7 @@ end
     for e in 1:nelements(topology)
       he = half4elem(topology, e)
       inds = indices(elems[e])
-      i = 1
-      while i ≤ length(inds)
+      for _ in inds
         @test he.elem == e
         @test he.head ∈ inds
         @test he.next.elem == e
@@ -381,7 +380,6 @@ end
         @test he.next.prev == he
         @test he.prev.next == he
         he = he.next
-        i += 1
       end
     end
   end
