@@ -150,12 +150,12 @@ function any_edges_exist(inds, half4pair)
   return false
 end
 
-const NULL_EDGE = HalfEdge(0, nothing)
+const NULLEDGE = HalfEdge(0, nothing)
 function any_claimed_edges_exist(inds, half4pair)
   n = length(inds)
   for i in eachindex(inds)
     uv = (inds[i], inds[mod1(i + 1, n)])
-    if !isnothing(get(half4pair, uv, NULL_EDGE).elem)
+    if !isnothing(get(half4pair, uv, NULLEDGE).elem)
       return true
     end
   end
