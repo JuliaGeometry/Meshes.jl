@@ -383,11 +383,10 @@ function anyhalf(inds, half4pair)
 end
 
 function anyhalfclaimed(inds, half4pair)
-  ∅ = HalfEdge(0, nothing)
   n = length(inds)
   for i in eachindex(inds)
     uv = (inds[i], inds[mod1(i + 1, n)])
-    if !isnothing(get(half4pair, uv, ∅).elem)
+    if !isnothing(get(() -> HalfEdge(0, nothing), half4pair, uv).elem)
       return true
     end
   end
