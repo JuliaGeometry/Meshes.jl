@@ -195,32 +195,28 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
       # insert half-edges in consistent orientation
       if isreversed[other]
-        for i in eachindex(inds)
-          u = inds[i]
-          v = inds[mod1(i + 1, n)]
-          he = get!(() -> HalfEdge(v, elem), half4pair, (v, u))
-          if isnothing(he.elem)
-            he.elem = elem
-          else
-            assertion(
-              he.elem === elem,
-              lazy"duplicate edge $((v, u)) for element $(elem) is inconsistent with previous edge $he"
-            )
-          end
-          half = get!(() -> HalfEdge(u, nothing), half4pair, (u, v))
-          he.half = half
-          half.half = he
-        end
+        ui = add1_mod1
+        vi = add0
       else
-        for i in eachindex(inds)
-          u = inds[i]
-          v = inds[mod1(i + 1, n)]
-          he = get!(() -> HalfEdge(u, elem), half4pair, (u, v))
-          he.elem = elem # this may be a pre-allocated half-edge with a nothing `elem`
-          half = get!(() -> HalfEdge(v, nothing), half4pair, (v, u))
-          he.half = half
-          half.half = he
+        ui = add0
+        vi = add1_mod1
+      end
+
+      for i in eachindex(inds)
+        u = inds[ui(i, n)]
+        v = inds[vi(i, n)]
+        he = get!(() -> HalfEdge(u, elem), half4pair, (u, v))
+        if isnothing(he.elem)
+          he.elem = elem
+        else
+          assertion(
+            he.elem === elem,
+            lazy"duplicate edge $((u, v)) for element $(elem) is inconsistent with previous edge $he"
+          )
         end
+        half = get!(() -> HalfEdge(v, nothing), half4pair, (v, u))
+        he.half = half
+        half.half = he
       end
     end
 
@@ -395,3 +391,6 @@ function anyhalfclaimed(inds, half4pair)
   end
   return false
 end
+
+add1_mod1(i, n) = mod1(i + 1, n)
+add0(i, n) = i
