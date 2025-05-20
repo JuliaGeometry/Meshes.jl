@@ -189,9 +189,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
         continue
       end
 
-      if anyhalfclaimed(inds, half4pair)
-        isreversed[other] = true
-      end
+      isreversed[other] = anyhalfclaimed(inds, half4pair)
 
       # insert half-edges in consistent orientation
       if isreversed[other]
