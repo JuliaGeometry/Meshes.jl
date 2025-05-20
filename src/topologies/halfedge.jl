@@ -144,126 +144,115 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  adjelems = sort ? adjsort(elems) : elems
-  eleminds = sort ? indexin(adjelems, elems) : 1:length(elems)
+  elemsort = sort ? adjsort(elems) : elems
+  eleminds = sort ? indexin(elemsort, elems) : 1:length(elems)
+  adjelems::Vector{Vector{Int}} = map(collect ∘ indices, elemsort)
 
   # start assuming that all elements are
-  # oriented consistently as CCW
-  CCW = trues(length(adjelems))
+  # oriented consistently (e.g. CCW)
+  isreversed = falses(length(adjelems))
 
-  # initialize with first element
+  # initialize half-edges using first element
   half4pair = Dict{Tuple{Int,Int},HalfEdge}()
-  elem = first(adjelems)
-  inds = collect(indices(elem))
-  v = CircularVector(inds)
-  n = length(v)
-  for i in 1:n
-    half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[1])
+  elem = first(eleminds)
+  inds = first(adjelems)
+  n = length(inds)
+  for i in eachindex(inds)
+    u = inds[i]
+    v = inds[mod1(i + 1, n)]
+    # insert halfedges u -> v and v -> u
+    he = get!(() -> HalfEdge(u, elem), half4pair, (u, v))
+    half = get!(() -> HalfEdge(v, nothing), half4pair, (v, u))
+    he.half = half
+    half.half = he
   end
 
-  # insert all other elements
-  for e in 2:length(adjelems)
-    elem = adjelems[e]
-    inds = collect(indices(elem))
-    v = CircularVector(inds)
-    n = length(v)
-    for i in 1:n
-      # if pair of vertices is already in the
-      # dictionary this means that the current
-      # polygon has inconsistent orientation
-      if haskey(half4pair, (v[i], v[i + 1]))
-        # delete inserted pairs so far
-        CCW[e] = false
-        for j in 1:(i - 1)
-          delete!(half4pair, (v[j], v[j + 1]))
-        end
-        break
+  # update half-edges using all other elements
+  added = false
+  disconnected = false
+  remaining = collect(2:length(adjelems))
+  while !isempty(remaining)
+    iter = 1
+    while iter ≤ length(remaining)
+      other = remaining[iter]
+      elem = eleminds[other]
+      inds = adjelems[other]
+      n = length(inds)
+      if anyhalf(inds, half4pair) || disconnected
+        # at least one half-edge has been found, so we can assess
+        # the orientation w.r.t. previously added elements/edges
+        added = true
+        disconnected = false
+        deleteat!(remaining, iter)
       else
-        # insert pair in consistent orientation
-        half4pair[(v[i], v[i + 1])] = HalfEdge(v[i], eleminds[e])
+        iter += 1
+        continue
+      end
+
+      # if the other element is already claimed by any half-edge
+      # then the element must be reversed before further updates
+      isreversed[other] = anyhalfclaimed(inds, half4pair)
+
+      # insert half-edges in consistent orientation
+      if isreversed[other]
+        step₁ = add1
+        step₂ = add0
+      else
+        step₁ = add0
+        step₂ = add1
+      end
+
+      for i in eachindex(inds)
+        u = inds[step₁(i, n)]
+        v = inds[step₂(i, n)]
+        he = get!(() -> HalfEdge(u, elem), half4pair, (u, v))
+        if isnothing(he.elem)
+          he.elem = elem
+        else
+          assertion(
+            he.elem === elem,
+            lazy"duplicate edge $((u, v)) for element $(elem) is inconsistent with previous edge $he"
+          )
+        end
+        half = get!(() -> HalfEdge(v, nothing), half4pair, (v, u))
+        he.half = half
+        half.half = he
       end
     end
 
-    if !CCW[e]
-      # reinsert pairs in CCW orientation
-      for i in 1:n
-        half4pair[(v[i + 1], v[i])] = HalfEdge(v[i + 1], eleminds[e])
-      end
+    if added
+      added = false
+    elseif !isempty(remaining)
+      disconnected = true
+      added = false
     end
   end
 
-  # add missing pointers
-  for (e, elem) in Iterators.enumerate(adjelems)
-    inds = CCW[e] ? indices(elem) : reverse(indices(elem))
-    v = CircularVector(collect(inds))
-    n = length(v)
-    for i in 1:n
-      # update pointers prev and next
-      he = half4pair[(v[i], v[i + 1])]
-      he.prev = half4pair[(v[i - 1], v[i])]
-      he.next = half4pair[(v[i + 1], v[i + 2])]
-
-      # if not a border element, update half
-      if haskey(half4pair, (v[i + 1], v[i]))
-        he.half = half4pair[(v[i + 1], v[i])]
-      else # create half-edge for border
-        be = HalfEdge(v[i + 1], nothing)
-        be.half = he
-        he.half = be
-      end
-    end
-  end
-
-  # save halfedges in a vector of pairs
+  # add missing pointers and save halfedges in a vector of pairs
   halves = Vector{Tuple{HalfEdge,HalfEdge}}()
   visited = Set{Tuple{Int,Int}}()
-  for ((u, v), he) in half4pair
-    uv = minmax(u, v)
-    if uv ∉ visited
-      push!(halves, (he, he.half))
-      push!(visited, uv)
+  for (e, inds) in enumerate(adjelems)
+    inds = isreversed[e] ? circshift!(reverse!(inds), 1) : inds
+    n = length(inds)
+    for i in eachindex(inds)
+      u = inds[i]
+      v = inds[mod1(i + 1, n)]
+      w = inds[mod1(i + 2, n)]
+
+      # update pointers prev and next
+      he = half4pair[(u, v)]
+      he.next = half4pair[(v, w)]
+      he.next.prev = he
+
+      uv = minmax(u, v)
+      if uv ∉ visited
+        push!(halves, (he, he.half))
+        push!(visited, uv)
+      end
     end
   end
 
   HalfEdgeTopology(halves; nelems=length(elems))
-end
-
-function adjsort(elems::AbstractVector{<:Connectivity})
-  # initialize list of adjacent elements
-  # with first element from original list
-  list = indices.(elems)
-  adjs = Tuple[popfirst!(list)]
-
-  # the loop will terminate if the mesh
-  # is manifold, and that is always true
-  # with half-edge topology
-  while !isempty(list)
-    # lookup all elements that share at least
-    # one vertex with the last adjacent element
-    found = false
-    vinds = last(adjs)
-    for i in vinds
-      einds = findall(e -> i ∈ e, list)
-      if !isempty(einds)
-        # lookup all elements that share at
-        # least two vertices (i.e. edge)
-        for j in sort(einds, rev=true)
-          if length(vinds ∩ list[j]) > 1
-            found = true
-            push!(adjs, popat!(list, j))
-          end
-        end
-      end
-    end
-
-    if !found && !isempty(list)
-      # we are done with this connected component
-      # pop a new element from the original list
-      push!(adjs, popfirst!(list))
-    end
-  end
-
-  connect.(adjs)
 end
 
 paramdim(::HalfEdgeTopology) = 2
@@ -338,3 +327,70 @@ nfacets(t::HalfEdgeTopology) = length(t.halfedges) ÷ 2
 # ------------
 
 Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(elements(t)))
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function adjsort(elems::AbstractVector{<:Connectivity})
+  # initialize list of adjacent elements
+  # with first element from original list
+  list = indices.(elems)
+  adjs = Tuple[popfirst!(list)]
+
+  # the loop will terminate if the mesh
+  # is manifold, and that is always true
+  # with half-edge topology
+  while !isempty(list)
+    # lookup all elements that share at least
+    # one vertex with the last adjacent element
+    found = false
+    vinds = last(adjs)
+    for i in vinds
+      einds = findall(e -> i ∈ e, list)
+      if !isempty(einds)
+        # lookup all elements that share at
+        # least two vertices (i.e. edge)
+        for j in sort(einds, rev=true)
+          if length(vinds ∩ list[j]) > 1
+            found = true
+            push!(adjs, popat!(list, j))
+          end
+        end
+      end
+    end
+
+    if !found && !isempty(list)
+      # we are done with this connected component
+      # pop a new element from the original list
+      push!(adjs, popfirst!(list))
+    end
+  end
+
+  connect.(adjs)
+end
+
+function anyhalf(inds, half4pair)
+  n = length(inds)
+  for i in eachindex(inds)
+    uv = (inds[i], inds[mod1(i + 1, n)])
+    if haskey(half4pair, uv)
+      return true
+    end
+  end
+  return false
+end
+
+function anyhalfclaimed(inds, half4pair)
+  n = length(inds)
+  for i in eachindex(inds)
+    uv = (inds[i], inds[mod1(i + 1, n)])
+    if !isnothing(get(() -> HalfEdge(0, nothing), half4pair, uv).elem)
+      return true
+    end
+  end
+  return false
+end
+
+add0(i, n) = i
+add1(i, n) = mod1(i + 1, n)
