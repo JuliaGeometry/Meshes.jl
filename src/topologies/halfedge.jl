@@ -189,6 +189,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
         continue
       end
 
+      # if the other element is already claimed by any half-edge
+      # then the element must be reversed before further updates
       isreversed[other] = anyhalfclaimed(inds, half4pair)
 
       # insert half-edges in consistent orientation
