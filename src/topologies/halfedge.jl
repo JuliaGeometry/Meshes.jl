@@ -195,16 +195,16 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
       # insert half-edges in consistent orientation
       if isreversed[other]
-        ui = add1_mod1
-        vi = add0
+        step₁ = add1
+        step₂ = add0
       else
-        ui = add0
-        vi = add1_mod1
+        step₁ = add0
+        step₂ = add1
       end
 
       for i in eachindex(inds)
-        u = inds[ui(i, n)]
-        v = inds[vi(i, n)]
+        u = inds[step₁(i, n)]
+        v = inds[step₂(i, n)]
         he = get!(() -> HalfEdge(u, elem), half4pair, (u, v))
         if isnothing(he.elem)
           he.elem = elem
@@ -392,5 +392,5 @@ function anyhalfclaimed(inds, half4pair)
   return false
 end
 
-add1_mod1(i, n) = mod1(i + 1, n)
 add0(i, n) = i
+add1(i, n) = mod1(i + 1, n)
