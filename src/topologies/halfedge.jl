@@ -200,7 +200,10 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
           if isnothing(he.elem)
             he.elem = elem
           else
-            assertion(he.elem === elem, lazy"duplicate edge $((v, u)) for element $(elem) is inconsistent with previous edge $he")
+            assertion(
+              he.elem === elem,
+              lazy"duplicate edge $((v, u)) for element $(elem) is inconsistent with previous edge $he"
+            )
           end
           half = get!(() -> HalfEdge(u, nothing), half4pair, (u, v))
           he.half = half
