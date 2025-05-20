@@ -145,8 +145,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   # sort elements to make sure that they
   # are traversed in adjacent-first order
   eleminds = sort ? adjsortperm(elems) : eachindex(elems)
-  adjelems::Vector{Vector{Int}} = map(collect ∘ indices ∘ Base.Fix1(getindex, elems),
-    eleminds)
+  adjelems::Vector{Vector{Int}} = map(collect ∘ indices ∘ Base.Fix1(getindex, elems), eleminds)
 
   # start assuming that all elements are
   # oriented consistently (e.g. CCW)
@@ -336,7 +335,7 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
   reduce(vcat, connected_components(elems))
 end
 
-function _update_adjacency!(seen, inds, in_seen=∈(seen))
+function _update_adjacency!(seen, inds, in_seen=(∈(seen)))
   # add elements that have at least two previously seen vertices
   if count(in_seen, inds) > 1
     for v in inds
@@ -373,9 +372,9 @@ function connected_components(elems::AbstractVector{<:Connectivity})
       lelem = elems[oinds[iter]]
 
       # manually union-split two most common connectivities for max type stability and speed
-      adjacent = if lelem isa Connectivity{Triangle, 3}
+      adjacent = if lelem isa Connectivity{Triangle,3}
         _update_adjacency!(seen, indices(lelem), in_seen)
-      elseif lelem isa Connectivity{Quadrangle, 4}
+      elseif lelem isa Connectivity{Quadrangle,4}
         _update_adjacency!(seen, indices(lelem), in_seen)
       else
         _update_adjacency!(seen, indices(lelem), in_seen)
