@@ -511,7 +511,7 @@ end
   # indexable api
   g = GridTopology(10, 10)
   t = convert(HalfEdgeTopology, g)
-  @test t[begin] == g[begin]
+  @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
   @test t[end] == connect((120, 109, 110, 121), Quadrangle)
   @test t[10] == connect((22, 21, 10, 11), Quadrangle)
   @test length(t) == 100
