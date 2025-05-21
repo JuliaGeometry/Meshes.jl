@@ -336,24 +336,23 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
 end
 
 function connected_components(elems::AbstractVector{<:Connectivity})
-  # initialize list of adjacent elements
-  # with first element from original list
-  einds = [Int[firstindex(elems)]]
+  # initialize list of connected components
+  comps = [Int[firstindex(elems)]]
 
-  # remaining list of elements to process
-  oinds = collect(eachindex(elems)[2:end])
-
-  # initialize seen vertices with first element
+  # initialize list of seen vertices
   seen = Set{Int}()
   for v in indices(first(elems))
     push!(seen, v)
   end
 
-  found = false
-  while !isempty(oinds)
+  # remaining elements to process
+  remaining = collect(eachindex(elems)[2:end])
+
+  isseen = false
+  while !isempty(remaining)
     iter = 1
-    while iter ≤ length(oinds)
-      elem = elems[oinds[iter]]
+    while iter ≤ length(remaining)
+      elem = elems[remaining[iter]]
 
       # manually union-split two most common polytopes
       # for type stability and maximum performance
@@ -366,35 +365,35 @@ function connected_components(elems::AbstractVector{<:Connectivity})
       end
 
       if adjacent
-        push!(last(einds), popat!(oinds, iter))
-        found = true
+        push!(last(comps), popat!(remaining, iter))
+        isseen = true
       else
         iter += 1
       end
     end
 
-    if found
-      # new vertices were "seen" while iterating `oinds`, so
+    if isseen
+      # new vertices were "seen" while iterating `remaining`, so
       # we need to iterate again because there may be elements
       # which are now adjacent with the newly "seen" vertices
-      found = false
-    elseif !isempty(oinds)
+      isseen = false
+    elseif !isempty(remaining)
       # there are more elements, but none are adjacent to
       # previously seen elements; pop a new element from
       # the original list to start a new connected component
-      push!(einds, Int[])
-      push!(last(einds), popfirst!(oinds))
+      push!(comps, Int[])
+      push!(last(comps), popfirst!(remaining))
 
       # a disconnected component means that ≥n-1 vertices in
       # the newest element haven't been "seen"; its possible
       # the new component is connected by a single vertex
-      for v in indices(elems[last(last(einds))])
+      for v in indices(elems[last(last(comps))])
         push!(seen, v)
       end
     end
   end
 
-  einds
+  comps
 end
 
 function adjupdate!(seen, inds)
