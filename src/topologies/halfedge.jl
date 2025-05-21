@@ -352,16 +352,15 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
     iter = 1
     while iter ≤ length(remaining)
       elem = elems[remaining[iter]]
-      inds = indices(elem)
 
       # manually union-split two most common polytopes
       # for type stability and maximum performance
-      isadjacent = if pltype(elem) <: Triangle
-        adjelem!(seen, inds)
-      elseif pltype(elem) <: Quadrangle
-        adjelem!(seen, inds)
+      isadjacent = if elem isa Connectivity{Triangle,3}
+        adjelem!(seen, indices(elem))
+      elseif elem isa Connectivity{Quadrangle,4}
+        adjelem!(seen, indices(elem))
       else
-        adjelem!(seen, inds)
+        adjelem!(seen, indices(elem))
       end
 
       if isadjacent
