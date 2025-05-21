@@ -512,8 +512,8 @@ end
   g = GridTopology(10, 10)
   t = convert(HalfEdgeTopology, g)
   @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
-  @test t[end] == connect((120, 109, 110, 121), Quadrangle)
-  @test t[10] == connect((22, 21, 10, 11), Quadrangle)
+  @test t[end] == connect((109, 110, 121, 120), Quadrangle)
+  @test t[10] == connect((21, 10, 11, 22), Quadrangle)
   @test length(t) == 100
   @test eltype(t) == Connectivity{Quadrangle,4}
   for e in t
