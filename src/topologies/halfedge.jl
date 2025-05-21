@@ -353,18 +353,19 @@ function connected_components(elems::AbstractVector{<:Connectivity})
     iter = 1
     while iter ≤ length(remaining)
       elem = elems[remaining[iter]]
+      inds = indices(elem)
 
       # manually union-split two most common polytopes
       # for type stability and maximum performance
-      adjacent = if pltype(elem) <: Triangle
-        adjupdate!(seen, indices(elem))
+      isadjacent = if pltype(elem) <: Triangle
+        adjelem!(seen, inds)
       elseif pltype(elem) <: Quadrangle
-        adjupdate!(seen, indices(elem))
+        adjelem!(seen, inds)
       else
-        adjupdate!(seen, indices(elem))
+        adjelem!(seen, inds)
       end
 
-      if adjacent
+      if isadjacent
         push!(last(comps), popat!(remaining, iter))
         isseen = true
       else
@@ -396,8 +397,7 @@ function connected_components(elems::AbstractVector{<:Connectivity})
   comps
 end
 
-function adjupdate!(seen, inds)
-  # add elements that have at least two previously seen vertices
+function adjelem!(seen, inds)
   if count(∈(seen), inds) > 1
     for v in inds
       push!(seen, v)
