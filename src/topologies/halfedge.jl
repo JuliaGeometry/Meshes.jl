@@ -339,7 +339,7 @@ end
 # connected components from list of elements
 function conneccomps(elems::AbstractVector{<:Connectivity})
   # initialize list of connected components
-  comps = [Int[firstindex(elems)]]
+  comps = [[firstindex(elems)]]
 
   # initialize list of seen vertices
   seen = Set(indices(first(elems)))
