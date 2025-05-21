@@ -342,7 +342,10 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
   comps = [[firstindex(elems)]]
 
   # initialize list of seen vertices
-  seen = Set(indices(first(elems)))
+  seen = Set{Int}()
+  for v in indices(first(elems))
+    push!(seen, v)
+  end
 
   # remaining elements to process
   remaining = collect(eachindex(elems)[2:end])
