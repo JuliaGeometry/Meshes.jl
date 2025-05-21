@@ -144,9 +144,8 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
   # sort elements to make sure that they
   # are traversed in adjacent-first order
-  elemsort = sort ? adjsort(elems) : elems
-  eleminds = sort ? indexin(elemsort, elems) : 1:length(elems)
-  adjelems::Vector{Vector{Int}} = map(collect ∘ indices, elemsort)
+  eleminds = sort ? adjsortperm(elems) : eachindex(elems)
+  adjelems::Vector{Vector{Int}} = map(collect ∘ indices ∘ Base.Fix1(getindex, elems), eleminds)
 
   # start assuming that all elements are
   # oriented consistently (e.g. CCW)
@@ -178,7 +177,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
       elem = eleminds[other]
       inds = adjelems[other]
       n = length(inds)
-      if anyhalf(inds, half4pair) || disconnected
+      if anyhalf(half4pair, inds) || disconnected
         # at least one half-edge has been found, so we can assess
         # the orientation w.r.t. previously added elements/edges
         added = true
@@ -191,7 +190,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
       # if the other element is already claimed by any half-edge
       # then the element must be reversed before further updates
-      isreversed[other] = anyhalfclaimed(inds, half4pair)
+      isreversed[other] = anyhalfclaimed(half4pair, inds)
 
       # insert half-edges in consistent orientation
       if isreversed[other]
@@ -332,45 +331,87 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 # HELPER FUNCTIONS
 # -----------------
 
-function adjsort(elems::AbstractVector{<:Connectivity})
-  # initialize list of adjacent elements
-  # with first element from original list
-  list = indices.(elems)
-  adjs = Tuple[popfirst!(list)]
+# permutation of elements in adjacent-first order
+function adjsortperm(elems::AbstractVector{<:Connectivity})
+  reduce(vcat, conneccomps(elems))
+end
 
-  # the loop will terminate if the mesh
-  # is manifold, and that is always true
-  # with half-edge topology
-  while !isempty(list)
-    # lookup all elements that share at least
-    # one vertex with the last adjacent element
-    found = false
-    vinds = last(adjs)
-    for i in vinds
-      einds = findall(e -> i ∈ e, list)
-      if !isempty(einds)
-        # lookup all elements that share at
-        # least two vertices (i.e. edge)
-        for j in sort(einds, rev=true)
-          if length(vinds ∩ list[j]) > 1
-            found = true
-            push!(adjs, popat!(list, j))
-          end
-        end
+# connected components from list of elements
+function conneccomps(elems::AbstractVector{<:Connectivity})
+  # initialize list of connected components
+  comps = [[firstindex(elems)]]
+
+  # initialize list of seen vertices
+  seen = Set{Int}()
+  for v in indices(first(elems))
+    push!(seen, v)
+  end
+
+  # remaining elements to process
+  remaining = collect(eachindex(elems)[2:end])
+
+  added = false
+  while !isempty(remaining)
+    iter = 1
+    while iter ≤ length(remaining)
+      elem = elems[remaining[iter]]
+
+      # manually union-split two most common polytopes
+      # for type stability and maximum performance
+      isadjacent = if elem isa Connectivity{Triangle,3}
+        adjelem!(seen, elem)
+      elseif elem isa Connectivity{Quadrangle,4}
+        adjelem!(seen, elem)
+      else
+        adjelem!(seen, elem)
+      end
+
+      if isadjacent
+        push!(last(comps), popat!(remaining, iter))
+        added = true
+      else
+        iter += 1
       end
     end
 
-    if !found && !isempty(list)
-      # we are done with this connected component
-      # pop a new element from the original list
-      push!(adjs, popfirst!(list))
+    if added
+      # new vertices were "seen" while iterating `remaining`, so
+      # we need to iterate again because there may be elements
+      # which are now adjacent with the newly "seen" vertices
+      added = false
+    elseif !isempty(remaining)
+      # there are more elements, but none are adjacent to
+      # previously seen elements; pop a new element from
+      # the original list to start a new connected component
+      push!(comps, Int[])
+      push!(last(comps), popfirst!(remaining))
+
+      # a disconnected component means that ≥n-1 vertices in
+      # the newest element haven't been "seen"; its possible
+      # the new component is connected by a single vertex
+      for v in indices(elems[last(last(comps))])
+        push!(seen, v)
+      end
     end
   end
 
-  connect.(adjs)
+  comps
 end
 
-function anyhalf(inds, half4pair)
+# update seen vertices if there are ≥2 common indices
+function adjelem!(seen, elem)
+  inds = indices(elem)
+  if count(∈(seen), inds) > 1
+    for v in inds
+      push!(seen, v)
+    end
+    return true
+  end
+  return false
+end
+
+# true if the half-edges already contain the indices
+function anyhalf(half4pair, inds)
   n = length(inds)
   for i in eachindex(inds)
     uv = (inds[i], inds[mod1(i + 1, n)])
@@ -381,7 +422,8 @@ function anyhalf(inds, half4pair)
   return false
 end
 
-function anyhalfclaimed(inds, half4pair)
+# true if the half-edges already have elements assigned to the indices
+function anyhalfclaimed(half4pair, inds)
   n = length(inds)
   for i in eachindex(inds)
     uv = (inds[i], inds[mod1(i + 1, n)])
@@ -392,5 +434,6 @@ function anyhalfclaimed(inds, half4pair)
   return false
 end
 
+# integer addition mod1
 add0(i, n) = i
 add1(i, n) = mod1(i + 1, n)
