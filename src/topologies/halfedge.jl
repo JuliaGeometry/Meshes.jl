@@ -335,77 +335,59 @@ function adjsortperm(elems::AbstractVector{<:Connectivity})
   reduce(vcat, connected_components(elems))
 end
 
-function _update_adjacency!(seen, inds, in_seen=(∈(seen)))
-  # add elements that have at least two previously seen vertices
-  if count(in_seen, inds) > 1
-    for v in inds
-      push!(seen, v)
-    end
-    return true
-  end
-  return false
-end
-
 function connected_components(elems::AbstractVector{<:Connectivity})
+  # initialize list of adjacent elements
+  # with first element from original list
+  einds = [Int[firstindex(elems)]]
+
   # remaining list of elements to process
   oinds = collect(eachindex(elems)[2:end])
 
-  # initialize list of adjacent elements
-  # with first element from original list
-  einds = Vector{Vector{Int}}(undef, 0)
-  push!(einds, Int[firstindex(elems)])
-
+  # initialize seen vertices with first element
   seen = Set{Int}()
-  in_seen = ∈(seen)
-
-  # initialize seen with vertices in first element
-  for v in indices(elems[firstindex(elems)])
+  for v in indices(first(elems))
     push!(seen, v)
   end
 
   found = false
   while !isempty(oinds)
     iter = 1
-    # this loop only exits when oinds is empty, or if we have iterated through all elements
-    # and none are adjacent to >1 "seen" elements
     while iter ≤ length(oinds)
-      lelem = elems[oinds[iter]]
+      elem = elems[oinds[iter]]
 
-      # manually union-split two most common connectivities for max type stability and speed
-      adjacent = if lelem isa Connectivity{Triangle,3}
-        _update_adjacency!(seen, indices(lelem), in_seen)
-      elseif lelem isa Connectivity{Quadrangle,4}
-        _update_adjacency!(seen, indices(lelem), in_seen)
+      # manually union-split two most common polytopes
+      # for type stability and maximum performance
+      adjacent = if pltype(elem) <: Triangle
+        adjupdate!(seen, indices(elem))
+      elseif pltype(elem) <: Quadrangle
+        adjupdate!(seen, indices(elem))
       else
-        _update_adjacency!(seen, indices(lelem), in_seen)
+        adjupdate!(seen, indices(elem))
       end
 
       if adjacent
         push!(last(einds), popat!(oinds, iter))
         found = true
-        # don't increment j here because `popat!` just put the j+1 element at j
-        # (avoids the need to reverse the array, even though we are modifying during
-        # iteration)
       else
         iter += 1
       end
     end
 
     if found
-      # new vertices were "seen" while iterating `oinds`, so we need to iterate
-      # again because there may be elements which are now adjacent with the newly
-      # "seen" vertices
+      # new vertices were "seen" while iterating `oinds`, so
+      # we need to iterate again because there may be elements
+      # which are now adjacent with the newly "seen" vertices
       found = false
     elseif !isempty(oinds)
-      # there are more elements, but none are adjacent (>1 shared vertices) to previously
-      # seen elements
-      # pop a new element from the original list to start a new connected component
+      # there are more elements, but none are adjacent to
+      # previously seen elements; pop a new element from
+      # the original list to start a new connected component
       push!(einds, Int[])
       push!(last(einds), popfirst!(oinds))
 
-      # a disconnected component means that ≥N-1 vertices in the newest element
-      # haven't been "seen" (but its possible the new component is connected
-      # by a single vertex)
+      # a disconnected component means that ≥n-1 vertices in
+      # the newest element haven't been "seen"; its possible
+      # the new component is connected by a single vertex
       for v in indices(elems[last(last(einds))])
         push!(seen, v)
       end
@@ -413,6 +395,17 @@ function connected_components(elems::AbstractVector{<:Connectivity})
   end
 
   einds
+end
+
+function adjupdate!(seen, inds)
+  # add elements that have at least two previously seen vertices
+  if count(∈(seen), inds) > 1
+    for v in inds
+      push!(seen, v)
+    end
+    return true
+  end
+  return false
 end
 
 function anyhalf(inds, half4pair)
