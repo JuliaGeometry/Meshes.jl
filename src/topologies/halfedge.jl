@@ -359,11 +359,11 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
       # manually union-split two most common polytopes
       # for type stability and maximum performance
       isadjacent = if elem isa Connectivity{Triangle,3}
-        adjelem!(seen, indices(elem))
+        adjelem!(seen, elem)
       elseif elem isa Connectivity{Quadrangle,4}
-        adjelem!(seen, indices(elem))
+        adjelem!(seen, elem)
       else
-        adjelem!(seen, indices(elem))
+        adjelem!(seen, elem)
       end
 
       if isadjacent
@@ -399,7 +399,8 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
 end
 
 # update seen vertices if there are ≥2 common indices
-function adjelem!(seen, inds)
+function adjelem!(seen, elem)
+  inds = indices(elem)
   if count(∈(seen), inds) > 1
     for v in inds
       push!(seen, v)
