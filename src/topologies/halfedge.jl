@@ -177,7 +177,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
       elem = eleminds[other]
       inds = adjelems[other]
       n = length(inds)
-      if anyhalf(inds, half4pair) || disconnected
+      if anyhalf(half4pair, inds) || disconnected
         # at least one half-edge has been found, so we can assess
         # the orientation w.r.t. previously added elements/edges
         added = true
@@ -190,7 +190,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
       # if the other element is already claimed by any half-edge
       # then the element must be reversed before further updates
-      isreversed[other] = anyhalfclaimed(inds, half4pair)
+      isreversed[other] = anyhalfclaimed(half4pair, inds)
 
       # insert half-edges in consistent orientation
       if isreversed[other]
@@ -331,24 +331,23 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 # HELPER FUNCTIONS
 # -----------------
 
+# permutation of elements in adjacent-first order
 function adjsortperm(elems::AbstractVector{<:Connectivity})
-  reduce(vcat, connected_components(elems))
+  reduce(vcat, conneccomps(elems))
 end
 
-function connected_components(elems::AbstractVector{<:Connectivity})
+# connected components from list of elements
+function conneccomps(elems::AbstractVector{<:Connectivity})
   # initialize list of connected components
   comps = [Int[firstindex(elems)]]
 
   # initialize list of seen vertices
-  seen = Set{Int}()
-  for v in indices(first(elems))
-    push!(seen, v)
-  end
+  seen = Set(indices(first(elems)))
 
   # remaining elements to process
   remaining = collect(eachindex(elems)[2:end])
 
-  isseen = false
+  added = false
   while !isempty(remaining)
     iter = 1
     while iter ≤ length(remaining)
@@ -367,17 +366,17 @@ function connected_components(elems::AbstractVector{<:Connectivity})
 
       if isadjacent
         push!(last(comps), popat!(remaining, iter))
-        isseen = true
+        added = true
       else
         iter += 1
       end
     end
 
-    if isseen
+    if added
       # new vertices were "seen" while iterating `remaining`, so
       # we need to iterate again because there may be elements
       # which are now adjacent with the newly "seen" vertices
-      isseen = false
+      added = false
     elseif !isempty(remaining)
       # there are more elements, but none are adjacent to
       # previously seen elements; pop a new element from
@@ -397,6 +396,7 @@ function connected_components(elems::AbstractVector{<:Connectivity})
   comps
 end
 
+# update seen vertices if there are ≥2 common indices
 function adjelem!(seen, inds)
   if count(∈(seen), inds) > 1
     for v in inds
@@ -407,7 +407,8 @@ function adjelem!(seen, inds)
   return false
 end
 
-function anyhalf(inds, half4pair)
+# true if the half-edges already contain the indices
+function anyhalf(half4pair, inds)
   n = length(inds)
   for i in eachindex(inds)
     uv = (inds[i], inds[mod1(i + 1, n)])
@@ -418,7 +419,8 @@ function anyhalf(inds, half4pair)
   return false
 end
 
-function anyhalfclaimed(inds, half4pair)
+# true if the half-edges already have elements assigned to the indices
+function anyhalfclaimed(half4pair, inds)
   n = length(inds)
   for i in eachindex(inds)
     uv = (inds[i], inds[mod1(i + 1, n)])
@@ -429,5 +431,6 @@ function anyhalfclaimed(inds, half4pair)
   return false
 end
 
+# integer addition mod1
 add0(i, n) = i
 add1(i, n) = mod1(i + 1, n)
