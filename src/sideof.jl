@@ -173,6 +173,11 @@ end
 
 Determines on which side the `point` is in relation to the surface `mesh`.
 Possible results are `IN` or `OUT` the `mesh`.
+
+## References
+
+* Jacobson et al. 2013. [Robust inside-outside segmentation using generalized winding numbers]
+  (https://dl.acm.org/doi/10.1145/2461912.2461916)
 """
 sideof(point::Point, mesh::Mesh) = sideof((point,), mesh) |> first
 
