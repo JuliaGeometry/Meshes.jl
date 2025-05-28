@@ -188,7 +188,7 @@ function intersection(f, ray::Ray, tri::Triangle)
   # assemble barycentric weights
   w = (u, v, det - u - v)
 
-  if any(isapprox.(o, vs))
+  if any(isapprox(o), vs)
     return @IT CornerTouching ray(λ) f
   elseif isapproxzero(λ)
     if all(x -> x > zero(x), w)
@@ -198,9 +198,9 @@ function intersection(f, ray::Ray, tri::Triangle)
     end
   end
 
-  if count(x -> isapproxzero(x), w) == 1
+  if count(isapproxzero, w) == 1
     return @IT EdgeCrossing ray(λ) f
-  elseif count(x -> isapproxequal(x, det), w) == 1
+  elseif count(Base.Fix2(isapproxequal,det), w) == 1
     return @IT CornerCrossing ray(λ) f
   end
 
