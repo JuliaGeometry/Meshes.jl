@@ -201,7 +201,7 @@ function intersection(f, ray::Ray, tri::Triangle)
 
   if count(isapproxzero, w) == 1
     return @IT EdgeCrossing ray(λ) f
-  elseif count(Base.Fix2(isapproxequal,det), w) == 1
+  elseif count(Base.Fix2(isapproxequal, det), w) == 1
     return @IT CornerCrossing ray(λ) f
   end
 
