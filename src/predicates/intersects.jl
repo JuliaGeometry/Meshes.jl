@@ -25,15 +25,15 @@ intersects(g) = Base.Fix2(intersects, g)
 
 intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
-intersects(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
+intersects(s₁::Segment, s₂::Segment) = type(intersection(s₁, s₂)) !== NotIntersecting
 
-intersects(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
+intersects(b₁::Box, b₂::Box) = type(intersection(b₁, b₂)) !== NotIntersecting
 
-intersects(r::Ray, b::Box) = !isnothing(r ∩ b)
+intersects(r::Ray, b::Box) = type(intersection(r, b)) !== NotIntersecting
 
 intersects(b::Box, r::Ray) = intersects(r, b)
 
-intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
+intersects(r::Ray, t::Triangle) = type(intersection(r, t)) !== NotIntersecting
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
@@ -118,7 +118,7 @@ contains the origin point `O`. Otherwise, it returns a vector with
 the direction for searching the next point.
 
 If the simplex is complete, it removes one point from the set to
-make room for the next point. A complete simplex must have `Dim + 1` points. 
+make room for the next point. A complete simplex must have `Dim + 1` points.
 
 See also [`intersects`](@ref).
 """
