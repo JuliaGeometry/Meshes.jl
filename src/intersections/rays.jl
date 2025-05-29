@@ -153,15 +153,15 @@ function intersection(f, ray::Ray, tri::Triangle)
   det = e₁ ⋅ p
 
   # keep det > 0, modify T accordingly
-  det_atol = atol(det)
-  if det > det_atol
+  detatol = atol(det)
+  if det > detatol
     τ = o - vs[1]
   else
     τ = vs[1] - o
     det = -det
   end
 
-  if det < det_atol
+  if det < detatol
     # This ray is parallel to the plane of the triangle.
     return @IT NotIntersecting nothing f
   end
