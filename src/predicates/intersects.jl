@@ -33,7 +33,7 @@ intersects(r::Ray, b::Box) = someintersection(r, b)
 
 intersects(b::Box, r::Ray) = intersects(r, b)
 
-intersects(r::Ray, t::Triangle) = type(intersection(r, t)) !== NotIntersecting
+intersects(r::Ray, t::Triangle) = someintersection(r, t)
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
