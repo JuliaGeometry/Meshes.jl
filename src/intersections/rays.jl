@@ -65,7 +65,7 @@ function intersection(f, ray₁::Ray, ray₂::Ray)
 end
 
 # The intersection type can be one of four types:
-# 
+#
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
@@ -132,7 +132,7 @@ function intersection(f, ray::Ray, box::Box)
 end
 
 # The intersection type can be one of six types:
-# 
+#
 # 1. Touching - origin of ray intersects middle of triangle
 # 2. EdgeTouching - origin of ray intersects edge of triangle
 # 3. CornerTouching - origin of ray intersects corner of triangle
@@ -153,14 +153,15 @@ function intersection(f, ray::Ray, tri::Triangle)
   det = e₁ ⋅ p
 
   # keep det > 0, modify T accordingly
-  if det > atol(det)
+  detatol = atol(det)
+  if det > detatol
     τ = o - vs[1]
   else
     τ = vs[1] - o
     det = -det
   end
 
-  if det < atol(det)
+  if det < detatol
     # This ray is parallel to the plane of the triangle.
     return @IT NotIntersecting nothing f
   end
@@ -188,7 +189,7 @@ function intersection(f, ray::Ray, tri::Triangle)
   # assemble barycentric weights
   w = (u, v, det - u - v)
 
-  if any(isapprox.(o, vs))
+  if any(isapprox(o), vs)
     return @IT CornerTouching ray(λ) f
   elseif isapproxzero(λ)
     if all(x -> x > zero(x), w)
@@ -198,9 +199,9 @@ function intersection(f, ray::Ray, tri::Triangle)
     end
   end
 
-  if count(x -> isapproxzero(x), w) == 1
+  if count(isapproxzero, w) == 1
     return @IT EdgeCrossing ray(λ) f
-  elseif count(x -> isapproxequal(x, det), w) == 1
+  elseif count(Base.Fix2(isapproxequal, det), w) == 1
     return @IT CornerCrossing ray(λ) f
   end
 

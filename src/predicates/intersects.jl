@@ -25,15 +25,15 @@ intersects(g) = Base.Fix2(intersects, g)
 
 intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
-intersects(s₁::Segment, s₂::Segment) = !isnothing(s₁ ∩ s₂)
+intersects(s₁::Segment, s₂::Segment) = someintersection(s₁, s₂)
 
-intersects(b₁::Box, b₂::Box) = !isnothing(b₁ ∩ b₂)
+intersects(b₁::Box, b₂::Box) = someintersection(b₁, b₂)
 
-intersects(r::Ray, b::Box) = !isnothing(r ∩ b)
+intersects(r::Ray, b::Box) = someintersection(r, b)
 
 intersects(b::Box, r::Ray) = intersects(r, b)
 
-intersects(r::Ray, t::Triangle) = !isnothing(r ∩ t)
+intersects(r::Ray, t::Triangle) = someintersection(r, t)
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
@@ -118,7 +118,7 @@ contains the origin point `O`. Otherwise, it returns a vector with
 the direction for searching the next point.
 
 If the simplex is complete, it removes one point from the set to
-make room for the next point. A complete simplex must have `Dim + 1` points. 
+make room for the next point. A complete simplex must have `Dim + 1` points.
 
 See also [`intersects`](@ref).
 """
@@ -262,3 +262,6 @@ function perphint(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
 end
 
 perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = ucross(v, d, v)
+
+# type-stable check for when there is some intersection
+someintersection(g₁::Geometry, g₂::Geometry) = type(intersection(g₁, g₂)) !== NotIntersecting
