@@ -25,11 +25,11 @@ intersects(g) = Base.Fix2(intersects, g)
 
 intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
-intersects(s₁::Segment, s₂::Segment) = type(intersection(s₁, s₂)) !== NotIntersecting
+intersects(s₁::Segment, s₂::Segment) = someintersection(s₁, s₂)
 
-intersects(b₁::Box, b₂::Box) = type(intersection(b₁, b₂)) !== NotIntersecting
+intersects(b₁::Box, b₂::Box) = someintersection(b₁, b₂)
 
-intersects(r::Ray, b::Box) = type(intersection(r, b)) !== NotIntersecting
+intersects(r::Ray, b::Box) = someintersection(r, b)
 
 intersects(b::Box, r::Ray) = intersects(r, b)
 
@@ -262,3 +262,6 @@ function perphint(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
 end
 
 perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = ucross(v, d, v)
+
+# type-stable check for when there is some intersection
+someintersection(g₁::Geometry, g₂::Geometry) = type(intersection(g₁, g₂)) !== NotIntersecting
