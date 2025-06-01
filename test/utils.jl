@@ -65,6 +65,11 @@ end
 
 @testitem "bentleyottmann" setup = [Setup] begin
   # basic check with a small number of segments
+  segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(1.5, 1), cart(2, 1)), (cart(1.51, 1.3), cart(2, 0.9))])
+  points, seginds = Meshes.bentleyottmann(segs)
+
+  @test length(points) == 7
+
   segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(0, 2), cart(2, 0)), (cart(0, 1), cart(0.5, 1))])
   points, seginds = Meshes.bentleyottmann(segs)
   @test length(points) == 7
@@ -80,10 +85,14 @@ end
       (cart(1, 0), cart(1, 1))
     ])
   points, seginds = Meshes.bentleyottmann(segs)
-  @test all(points .≈ [cart(0, 0), cart(0, 1), cart(0.5, 0.5), cart(1, 0), cart(1, 1), cart(1.1, 1.1)])
+  @test length(
+    setdiff(Set([cart(0, 0), cart(1, 1), cart(1.1, 1.1), cart(0, 1), cart(1, 0), cart(0.5, 0.5)]), Set(points))
+  ) == 0
   @test length(points) == 6
   @test length(seginds) == 6
-  @test Set.(seginds[[3, 5]]) == [Set([1, 2]), Set([1, 6, 5])]
+  inds = Dict(p => i for (i, p) in enumerate(points))
+  @test Set(seginds[inds[cart(0.5, 0.5)]]) == Set([1, 2])
+  @test Set(seginds[inds[cart(1, 1)]]) == Set([1, 6, 5])
 
   segs =
     Segment.([
