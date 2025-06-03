@@ -174,7 +174,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
     iter = 1
     while iter ≤ length(remaining)
       other = remaining[iter]
-      elem = eleminds[other]
+      local elem = eleminds[other]
       inds = adjelems[other]
       n = length(inds)
       if anyhalf(half4pair, inds) || disconnected
