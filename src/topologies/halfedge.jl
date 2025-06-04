@@ -174,10 +174,10 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
     iter = 1
     while iter ≤ length(remaining)
       other = remaining[iter]
-      local elem = eleminds[other]
-      inds = adjelems[other]
-      n = length(inds)
-      if anyhalf(half4pair, inds) || disconnected
+      oelem = eleminds[other]
+      oinds = adjelems[other]
+      n = length(oinds)
+      if anyhalf(half4pair, oinds) || disconnected
         # at least one half-edge has been found, so we can assess
         # the orientation w.r.t. previously added elements/edges
         added = true
@@ -190,7 +190,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
 
       # if the other element is already claimed by any half-edge
       # then the element must be reversed before further updates
-      isreversed[other] = anyhalfclaimed(half4pair, inds)
+      isreversed[other] = anyhalfclaimed(half4pair, oinds)
 
       # insert half-edges in consistent orientation
       if isreversed[other]
@@ -201,16 +201,16 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
         step₂ = add1
       end
 
-      for i in eachindex(inds)
-        u = inds[step₁(i, n)]
-        v = inds[step₂(i, n)]
-        he = get!(() -> HalfEdge(u, elem), half4pair, (u, v))
+      for i in eachindex(oinds)
+        u = oinds[step₁(i, n)]
+        v = oinds[step₂(i, n)]
+        he = get!(() -> HalfEdge(u, oelem), half4pair, (u, v))
         if isnothing(he.elem)
-          he.elem = elem
+          he.elem = oelem
         else
           assertion(
-            he.elem === elem,
-            lazy"duplicate edge $((u, v)) for element $(elem) is inconsistent with previous edge $he"
+            he.elem === oelem,
+            lazy"duplicate edge $((u, v)) for element $(oelem) is inconsistent with previous edge $he"
           )
         end
         half = get!(() -> HalfEdge(v, nothing), half4pair, (v, u))
