@@ -34,27 +34,24 @@ Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
-function lon_in_interval(lon::Deg, left::Deg, right::Deg)
-  return if left < 0 && right ≥ 0
+function inlonrange(lon::Deg, left::Deg, right::Deg)
+  if left < 0 && right ≥ 0
     (lon ≥ 0 && lon ≤ right) || lon ≤ left
   else
     left ≤ lon ≤ right
   end
 end
 
-function Base.in(p::Point{🌐}, b::Box{🌐})
-  b_min = minimum(b)
-  b_max = maximum(b)
+function Base.in(p::Point{🌐}, box::Box{🌐})
+  a, b = extrema(box)
 
-  p_prime, b_min_prime, b_max_prime = promote(p, b_min, b_max)
+  latlonₚ = convert(LatLon, coords(p))
+  latlonₐ = convert(LatLon, coords(a))
+  latlonᵦ = convert(LatLon, coords(b))
 
-  latlon_p = convert(LatLon, p_prime.coords)
-  latlon_b_min = convert(LatLon, b_min_prime.coords)
-  latlon_b_max = convert(LatLon, b_max_prime.coords)
-
-  lon_in_interval(latlon_p.lon, latlon_b_min.lon, latlon_b_max.lon) &&
-    (latlon_b_min.lat ≤ latlon_p.lat ≤ latlon_b_max.lat)
-end
+  latlonₐ.lat ≤  latlonₚ.lat ≤ latlonᵦ.lat &&
+  inlonrange(latlonₐ.lon,  latlonₚ.lon, latlonᵦ.lon)
+  end
 
 function Base.in(p::Point, b::Ball)
   c = center(b)
