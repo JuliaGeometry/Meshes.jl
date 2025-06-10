@@ -43,15 +43,15 @@ function inlonrange(lon::Deg, left::Deg, right::Deg)
 end
 
 function Base.in(p::Point{🌐}, box::Box{🌐})
-  a, b = extrema(box)
+  l, r = extrema(box)
 
   latlonₚ = convert(LatLon, coords(p))
-  latlonₐ = convert(LatLon, coords(a))
-  latlonᵦ = convert(LatLon, coords(b))
+  latlonₗ = convert(LatLon, coords(l))
+  latlonᵣ = convert(LatLon, coords(r))
 
-  latlonₐ.lat ≤  latlonₚ.lat ≤ latlonᵦ.lat &&
-  inlonrange(latlonₐ.lon,  latlonₚ.lon, latlonᵦ.lon)
-  end
+  latlonₗ.lat ≤ latlonₚ.lat ≤ latlonᵣ.lat &&
+  inlonrange(latlonₗ.lon, latlonₚ.lon, latlonᵣ.lon)
+end
 
 function Base.in(p::Point, b::Ball)
   c = center(b)
