@@ -23,10 +23,18 @@ function discretize(geometry::Geometry, method::RegularDiscretization)
     tmesh = appendtopo(geometry, tgrid)
     SimpleMesh(collect(verts), tmesh)
   else
-    box = boundingbox(geometry)
-    grid = discretize(box, method)
-    view(grid, geometry)
+    discretizewithinbox(geometry, method)
   end
+end
+
+discretize(triangle::Triangle, method::RegularDiscretization) = discretizewithinbox(triangle, method)
+
+discretize(tetrahedron::Tetrahedron, method::RegularDiscretization) = discretizewithinbox(tetrahedron, method)
+
+function discretizewithinbox(geometry::Geometry, method::RegularDiscretization)
+  box = boundingbox(geometry)
+  grid = discretize(box, method)
+  view(grid, geometry)
 end
 
 # ----------------------
