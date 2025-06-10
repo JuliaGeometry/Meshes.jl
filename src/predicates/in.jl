@@ -48,7 +48,6 @@ function Base.in(p::Point{🌐}, b::Box{🌐})
 
   p_prime, b_min_prime, b_max_prime = promote(p, b_min, b_max)
 
-
   latlon_p = convert(LatLon, p_prime.coords)
   latlon_b_min = convert(LatLon, b_min_prime.coords)
   latlon_b_max = convert(LatLon, b_max_prime.coords)
@@ -56,8 +55,6 @@ function Base.in(p::Point{🌐}, b::Box{🌐})
   lon_in_interval(latlon_p.lon, latlon_b_min.lon, latlon_b_max.lon) &&
     (latlon_b_min.lat ≤ latlon_p.lat ≤ latlon_b_max.lat)
 end
-
-
 
 function Base.in(p::Point, b::Ball)
   c = center(b)
