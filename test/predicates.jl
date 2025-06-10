@@ -84,7 +84,7 @@ end
   @test isperiodic(cartgrid(10, 10, 10)) == (false, false, false)
 end
 
-@testitem "in" setup = [Setup] tags=[:runnn] begin
+@testitem "in" setup = [Setup] begin
   h = first(cartgrid(10, 10, 10))
   @test cart(0, 0, 0) ∈ h
   @test cart(0.5, 0.5, 0.5) ∈ h
