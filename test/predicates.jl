@@ -77,7 +77,9 @@ end
 
   # polytopes
   @test isperiodic(Segment) == (false,)
+  @test isperiodic(Triangle) == (false, false)
   @test isperiodic(Quadrangle) == (false, false)
+  @test isperiodic(Tetrahedron) == (false, false, false)
   @test isperiodic(Hexahedron) == (false, false, false)
 
   @test isperiodic(cartgrid(10, 10)) == (false, false)
