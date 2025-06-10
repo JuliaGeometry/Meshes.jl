@@ -1,7 +1,7 @@
 using TestItems
 using TestItemRunner
 
-@run_package_tests
+@run_package_tests filter=ti -> :runnn ∈ ti.tags verbose = true
 
 @testsnippet Setup begin
   using Tables

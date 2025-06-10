@@ -84,7 +84,7 @@ end
   @test isperiodic(cartgrid(10, 10, 10)) == (false, false, false)
 end
 
-@testitem "in" setup = [Setup] begin
+@testitem "in" setup = [Setup] tags=[:runnn] begin
   h = first(cartgrid(10, 10, 10))
   @test cart(0, 0, 0) ∈ h
   @test cart(0.5, 0.5, 0.5) ∈ h
@@ -120,6 +120,20 @@ end
   box = Box(Point(LatLon(48.0110, 11.2930)), Point(LatLon(48.2511, 11.8650)))
   @test Point(LatLon(48.1, 11.5)) ∈ box
   @test Point(LatLon(48.034642451455, 10.94121275924084)) ∉ box
+
+
+  box = Box(Point(LatLon(48.0110, -178.5)), Point(LatLon(48.2511, 2.001)))
+  @test Point(LatLon(48.1, 0)) ∈ box
+  @test Point(LatLon(48.1, -179.1)) ∈ box
+  @test Point(LatLon(48.1, 1.1)) ∈ box
+  @test Point(LatLon(48.1, -178.1)) ∉ box
+  @test Point(LatLon(48.1, 2.1)) ∉ box
+
+
+  box = Box(Point(LatLon(48.0110, -50.5)), Point(LatLon(48.2511, -45.4)))
+  @test Point(LatLon(48.1, -48)) ∈ box
+  @test Point(LatLon(48.1, -50.8)) ∉ box
+  @test Point(LatLon(48.1, -45.3)) ∉ box
 end
 
 @testitem "issimplex" setup = [Setup] begin
