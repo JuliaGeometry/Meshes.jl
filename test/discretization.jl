@@ -454,12 +454,20 @@ end
   @test nvertices.(mesh) ⊆ [3, 4]
 
   poly = PolyArea(cart.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
-  mesh = discretize(poly, RegularDiscretization(50))
+  mesh = discretize(poly, RegularDiscretization(10))
   @test mesh isa Meshes.SubGrid
   grid = parent(mesh)
   @test grid isa CartesianGrid
   @test eltype(mesh) <: Quadrangle
   @test all(intersects(poly), mesh)
+
+  tri = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+  mesh = discretize(tri, RegularDiscretization(10))
+  @test mesh isa Meshes.SubGrid
+  grid = parent(mesh)
+  @test grid isa CartesianGrid
+  @test eltype(mesh) <: Quadrangle
+  @test all(intersects(tri), mesh)
 end
 
 @testitem "MaxLengthDiscretization" setup = [Setup] begin
