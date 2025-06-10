@@ -34,6 +34,28 @@ Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
+function Base.in(p::Point{🌐}, b::Box{🌐})
+  b_min = minimum(b)
+  b_max = maximum(b)
+
+  p_prime, b_min_prime, b_max_prime = promote(p, b_min, b_max)
+
+
+  latlon_p = convert(LatLon, p_prime.coords)
+  latlon_b_min = convert(LatLon, b_min_prime.coords)
+  latlon_b_max = convert(LatLon, b_max_prime.coords)
+
+  lat_p, lon_p = latlon_p.lat, latlon_p.lon
+  lat_b_min, lon_b_min = latlon_b_min.lat, latlon_b_min.lon
+  lat_b_max, lon_b_max = latlon_b_max.lat, latlon_b_max.lon
+
+
+  @info "info" lon_p lon_b_min lon_b_max
+  0 ≤ lat_p - lat_b_min ≤ lat_b_max - lat_b_min && 0 ≤  lon_p - lon_b_min ≤ lon_b_max - lon_b_min
+end
+
+
+
 function Base.in(p::Point, b::Ball)
   c = center(b)
   r = radius(b)
