@@ -34,23 +34,23 @@ Base.in(p::Point, pl::Plane) = isapproxzero(udot(normal(pl), p - pl(0, 0)))
 
 Base.in(p::Point, b::Box) = minimum(b) ⪯ p ⪯ maximum(b)
 
-function inlonrange(lon::Deg, left::Deg, right::Deg)
-  if left < 0 && right ≥ 0
-    (lon ≥ 0 && lon ≤ right) || lon ≤ left
-  else
-    left ≤ lon ≤ right
-  end
-end
-
-function Base.in(p::Point{🌐}, box::Box{🌐})
-  l, r = extrema(box)
+function Base.in(p::Point{🌐}, b::Box{🌐})
+  l, r = extrema(b)
 
   latlonₚ = convert(LatLon, coords(p))
   latlonₗ = convert(LatLon, coords(l))
   latlonᵣ = convert(LatLon, coords(r))
 
   latlonₗ.lat ≤ latlonₚ.lat ≤ latlonᵣ.lat &&
-  inlonrange(latlonₗ.lon, latlonₚ.lon, latlonᵣ.lon)
+  _inlon(latlonₚ.lon, latlonₗ.lon, latlonᵣ.lon)
+end
+
+function _inlon(lon::Deg, left::Deg, right::Deg)
+  if isnegative(left) && isnonnegative(right)
+     lon ≤ left || (isnonnegative(lon) && lon ≤ right)
+  else
+    left ≤ lon ≤ right
+  end
 end
 
 function Base.in(p::Point, b::Ball)
