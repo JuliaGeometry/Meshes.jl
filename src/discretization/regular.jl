@@ -27,8 +27,10 @@ function discretize(geometry::Geometry, method::RegularDiscretization)
   end
 end
 
+# triangle is parametrized with barycentric coordinates, so we can't rely on regular sampling
 discretize(triangle::Triangle, method::RegularDiscretization) = discretizewithinbox(triangle, method)
 
+# tetrahedron is parametrized with barycentric coordinates, so we can't rely on regular sampling
 discretize(tetrahedron::Tetrahedron, method::RegularDiscretization) = discretizewithinbox(tetrahedron, method)
 
 function discretizewithinbox(geometry::Geometry, method::RegularDiscretization)
