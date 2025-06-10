@@ -115,6 +115,11 @@ end
   @test cart(1 / 3, 1 / 3, 1 / 3) ∈ t
   @test cart(0, 0, 0) ∉ t
   @test cart(1, 1, 1) ∉ t
+
+  # tests for LatLon
+  box = Box(Point(LatLon(48.0110, 11.2930)), Point(LatLon(48.2511, 11.8650)))
+  @test Point(LatLon(48.1, 11.5)) ∈ box
+  @test Point(LatLon(48.034642451455, 10.94121275924084)) ∉ box
 end
 
 @testitem "issimplex" setup = [Setup] begin
