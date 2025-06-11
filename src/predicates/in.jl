@@ -41,13 +41,12 @@ function Base.in(p::Point{🌐}, b::Box{🌐})
   latlonₗ = convert(LatLon, coords(l))
   latlonᵣ = convert(LatLon, coords(r))
 
-  latlonₗ.lat ≤ latlonₚ.lat ≤ latlonᵣ.lat &&
-  inlonrange(latlonₗ.lon, latlonₚ.lon, latlonᵣ.lon)
+  latlonₗ.lat ≤ latlonₚ.lat ≤ latlonᵣ.lat && inlonrange(latlonₗ.lon, latlonₚ.lon, latlonᵣ.lon)
 end
 
 function inlonrange(lonₗ, lonₚ, lonᵣ)
   if isnegative(lonₗ) && isnonnegative(lonᵣ)
-     lonₚ ≤ lonₗ || (isnonnegative(lonₚ) && lonₚ ≤ lonᵣ)
+    lonₚ ≤ lonₗ || (isnonnegative(lonₚ) && lonₚ ≤ lonᵣ)
   else
     lonₗ ≤ lonₚ ≤ lonᵣ
   end
