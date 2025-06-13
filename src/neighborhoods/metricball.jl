@@ -44,21 +44,17 @@ function MetricBall(radii::NTuple{Dim,ℒ}, rotation=I) where {Dim,ℒ<:Len}
   # scaling weights
   w = SVector((oneunit(ℒ) ./ radii) .^ 2)
 
-  # choose metric based on rotation
-  metric = if rotation == I
-    WeightedEuclidean(w)
-  else
-    # rotation matrix
-    R = rotation
+  # rotation matrix
+  R = rotation
 
-    # scaling matrix
-    W = Diagonal(w)
+  # scaling matrix
+  W = Diagonal(w)
 
-    # anisotropy matrix
-    M = Symmetric(R * W * R')
+  # anisotropy matrix
+  M = Symmetric(R * W * transpose(R))
 
-    Mahalanobis(M)
-  end
+  # Mahalanobis metric
+  metric = Mahalanobis(M)
 
   MetricBall(radii, rotation, metric)
 end
@@ -108,11 +104,11 @@ and `||v|| > r, ∀ v ∉ ball``.
 """
 function radius(ball::MetricBall)
   r = first(ball.radii)
-  _ismahalanobis(ball.metric) ? oneunit(r) : r
+  ball.metric isa Mahalanobis ? oneunit(r) : r
 end
 
 function *(α::Real, ball::MetricBall)
-  if _ismahalanobis(ball.metric)
+  if ball.metric isa Mahalanobis
     MetricBall(α .* ball.radii, ball.rotation)
   else
     MetricBall(α .* ball.radii, I, ball.metric)
@@ -125,11 +121,3 @@ function Base.show(io::IO, ball::MetricBall)
   m = nameof(typeof(ball.metric))
   print(io, "MetricBall($r, $m)")
 end
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_ismahalanobis(_) = false
-_ismahalanobis(::Mahalanobis) = true
-_ismahalanobis(::WeightedEuclidean) = true
