@@ -41,19 +41,26 @@ struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
 end
 
 function MetricBall(radii::NTuple{Dim,ℒ}, rotation=I) where {Dim,ℒ<:Len}
-  # scaling matrix
-  Λ = Diagonal(SVector((oneunit(ℒ) ./ radii) .^ 2))
+  # scaling weights
+  w = SVector((oneunit(ℒ) ./ radii) .^ 2)
 
-  # rotation matrix
-  R = rotation
+  # choose metric based on rotation
+  metric = if rotation == I
+    WeightedEuclidean(w)
+  else
+    # rotation matrix
+    R = rotation
 
-  # anisotropy matrix
-  M = Symmetric(R * Λ * R')
+    # scaling matrix
+    W = Diagonal(w)
 
-  # Mahalanobis metric
-  metric = Mahalanobis(M)
+    # anisotropy matrix
+    M = Symmetric(R * W * R')
 
-  MetricBall(radii, R, metric)
+    Mahalanobis(M)
+  end
+
+  MetricBall(radii, rotation, metric)
 end
 
 MetricBall(radii::NTuple{Dim,Len}, rotation=I) where {Dim} = MetricBall(promote(radii...), rotation)
@@ -101,11 +108,11 @@ and `||v|| > r, ∀ v ∉ ball``.
 """
 function radius(ball::MetricBall)
   r = first(ball.radii)
-  ball.metric isa Mahalanobis ? oneunit(r) : r
+  _ismahalanobis(ball.metric) ? oneunit(r) : r
 end
 
 function *(α::Real, ball::MetricBall)
-  if ball.metric isa Mahalanobis
+  if _ismahalanobis(ball.metric)
     MetricBall(α .* ball.radii, ball.rotation)
   else
     MetricBall(α .* ball.radii, I, ball.metric)
@@ -118,3 +125,11 @@ function Base.show(io::IO, ball::MetricBall)
   m = nameof(typeof(ball.metric))
   print(io, "MetricBall($r, $m)")
 end
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+_ismahalanobis(_) = false
+_ismahalanobis(::Mahalanobis) = true
+_ismahalanobis(::WeightedEuclidean) = true

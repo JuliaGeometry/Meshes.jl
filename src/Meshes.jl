@@ -15,8 +15,8 @@ using Random
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
 using CoordRefSystems: Basic, Geographic, Projected
-using Distances: PreMetric, Euclidean, Mahalanobis
-using Distances: Haversine, SphericalAngle
+using Distances: PreMetric, Euclidean, WeightedEuclidean
+using Distances: Mahalanobis, Haversine, SphericalAngle
 using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
