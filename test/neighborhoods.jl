@@ -56,7 +56,7 @@
 
   # make sure the correct constructor is called
   m = metric(MetricBall(T.((1.0, 0.5, 0.2)), RotXYX(T(0), T(0), T(0))))
-  @test m isa Mahalanobis
+  @test m isa WeightedEuclidean
 
   # make sure the angle is clockwise
   m = metric(MetricBall(T.((20.0, 5.0)), Angle2d(T(π / 2))))
