@@ -39,13 +39,13 @@ function hull(points, ::GrahamScan)
   O = p[i]
 
   # sort other points by polar angle
-  q = p[setdiff(1:n, i)]
+  q = view(p, setdiff(1:n, i))
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
   sort!(q, by=B -> ∠(A, O, B))
 
   # rotational sweep
   r = [O, q[1]]
-  for B in q[2:end]
+  for B in Iterators.drop(q, 1)
     Δ = signarea(r[end - 1], r[end], B)
     while isnegative(Δ) && length(r) > 2
       pop!(r)
