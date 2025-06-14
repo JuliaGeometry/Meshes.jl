@@ -24,7 +24,8 @@ function hull(points, ::JarvisMarch)
   ℒ = lentype(pₒ)
 
   # sanity check
-  assertion(embeddim(pₒ) == 2, "Jarvis's march algorithm is only defined in 2D")
+  ncoords = CoordRefSystems.ncoords(coords(pₒ))
+  assertion(ncoords == 2, "Jarvis's march algorithm is only defined with 2D coordinates")
 
   # remove duplicates
   p = unique(points)
