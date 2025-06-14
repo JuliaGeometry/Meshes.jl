@@ -21,10 +21,10 @@ struct JarvisMarch <: HullMethod end
 
 function hull(points, ::JarvisMarch)
   pₒ = first(points)
-  Dim = embeddim(pₒ)
   ℒ = lentype(pₒ)
 
-  assertion(Dim == 2, "Jarvis's march only defined in 2D")
+  # sanity check
+  assertion(embeddim(pₒ) == 2, "Jarvis's march algorithm is only defined in 2D")
 
   # remove duplicates
   p = unique(points)
@@ -35,7 +35,7 @@ function hull(points, ::JarvisMarch)
   n == 2 && return Segment(p[1], p[2])
 
   # find bottom-left point
-  i = argmin(l -> to(p[l]), 1:n)
+  i = argmin(p)
 
   # candidates for next point
   𝒞 = [1:(i - 1); (i + 1):n]
