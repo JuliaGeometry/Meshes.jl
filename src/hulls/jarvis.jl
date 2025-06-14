@@ -67,5 +67,6 @@ function hull(points, ::JarvisMarch)
     push!(ℐ, j)
   end
 
+  # return polygonal area
   PolyArea(p[ℐ[begin:(end - 1)]])
 end
