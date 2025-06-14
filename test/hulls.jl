@@ -90,11 +90,11 @@
       # degenerate cases
       points = [cart(0, 0), cart(1, 0), cart(2, 0)]
       chull = hull(points, method)
-      @test vertices(chull) == SVector(cart(0, 0), cart(2, 0))
+      @test vertices(chull) == [cart(0, 0), cart(2, 0)]
 
       points = [cart(0, 0), cart(1, 0), cart(2, 0), cart(10, 0), cart(100, 0)]
       chull = hull(points, method)
-      @test vertices(chull) == SVector(cart(0, 0), cart(100, 0))
+      @test vertices(chull) == [cart(0, 0), cart(100, 0)]
 
       # partially collinear 
       points = [
@@ -131,12 +131,19 @@
         cart(11, 11),
         cart(8, 12),
         cart(3, 11),
-        cart(0, 8)
+        cart(0, 8),
+        cart(0, 3)
       ]
       @test vertices(chull) == truth
       push!(points, cart(4, 8), cart(2, 6), cart(6, 2), cart(10, 8), cart(8, 8), cart(10, 6))
       chull = hull(points, method)
       @test vertices(chull) == truth
+
+      # https://github.com/JuliaGeometry/Meshes.jl/issues/1211
+      data = readdlm(joinpath(datadir, "issue1211.dat"))
+      points = Point.(T.(data[:, 1]), T.(data[:, 2]))
+      chull = hull(points, method)
+      @test area(chull) ≈ T(0.0015160200648848573)u"m^2"
     end
   end
 end

@@ -20,11 +20,11 @@ struct GrahamScan <: HullMethod end
 
 function hull(points, ::GrahamScan)
   pₒ = first(points)
-  Dim = embeddim(pₒ)
   ℒ = lentype(pₒ)
-  T = numtype(ℒ)
 
-  assertion(Dim == 2, "Graham's scan only defined in 2D")
+  # sanity check
+  ncoords = CoordRefSystems.ncoords(coords(pₒ))
+  assertion(ncoords == 2, "Graham's scan algorithm is only defined with 2D coordinates")
 
   # remove duplicates
   p = unique(points)
@@ -34,34 +34,32 @@ function hull(points, ::GrahamScan)
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
 
-  # sort points lexicographically
-  p = p[sortperm(to.(p))]
+  # find bottom-left point
+  i = argmin(p)
+  O = p[i]
 
-  # sort points by polar angle
-  O = p[1]
-  q = p[2:n]
+  # sort other points by polar angle
+  q = view(p, setdiff(1:n, i))
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  θ = [∠(A, O, B) for B in q]
-  q = q[sortperm(θ)]
-
-  # skip collinear points at beginning 
-  y(p) = to(p)[2]
-  i = findfirst(qᵢ -> y(qᵢ) ≠ y(O), q)
-
-  # all points are collinear, return segment
-  isnothing(i) && return Segment(O, q[end])
+  sort!(q, by=B -> ∠(A, O, B))
 
   # rotational sweep
-  i = max(i, 2)
-  r = [O, q[i - 1], q[i]]
-  for B in q[(i + 1):end]
-    while ∠(r[end - 1], r[end], B) > atol(T) && length(r) ≥ 3
+  r = [O, q[1]]
+  for B in Iterators.drop(q, 1)
+    Δ = signarea(r[end - 1], r[end], B)
+    while isnegative(Δ) && length(r) > 2
       pop!(r)
+      Δ = signarea(r[end - 1], r[end], B)
     end
-    if !iscollinear(r[end - 1], r[end], B)
+    if ispositive(Δ)
+      push!(r, B)
+    elseif evaluate(Euclidean(), r[end - 1], r[end]) < evaluate(Euclidean(), r[end - 1], B)
+      # point is collinear and further away, i.e., r[end - 1] --> r[end] --> B
+      pop!(r)
       push!(r, B)
     end
   end
 
+  # return polygonal area
   PolyArea(r)
 end
