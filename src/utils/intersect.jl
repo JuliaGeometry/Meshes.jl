@@ -5,7 +5,7 @@
     bentleyottmann(segments; [digits])
 
 Compute pairwise intersections between n `segments`
-with `digits` precision in O(n⋅log(n)) time using
+with `digits` precision in O((n+k)⋅log(n)) time using
 Bentley-Ottmann sweep line algorithm.
 
 By default, set `digits` based on the absolute
@@ -17,6 +17,13 @@ tolerance of the length type of the segments.
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
 function bentleyottmann(segments; digits=_digits(segments))
+  refₚ = first(segments)
+  T = lentype(refₚ)
+  M = manifold(refₚ)
+  C = crs(refₚ)
+  P = Point{M,C}
+  S = Tuple{P,P}
+  U = Set{S}
 
   # orient segments
   segs = map(segments) do s
@@ -30,11 +37,6 @@ function bentleyottmann(segments; digits=_digits(segments))
   ybounds = (ymin, ymax)
 
   # retrieve types
-  T = lentype(first(segs)[1])
-  P = typeof(first(segs)[1])
-  S = Tuple{P,P}
-  U = Set{S}
-
   # initialization
   𝒬 = BinaryTrees.AVLTree{P,Tuple{U,U,U}}()
   ℛ = BinaryTrees.AVLTree{_SweepSegment{P,T}}()
@@ -42,7 +44,6 @@ function bentleyottmann(segments; digits=_digits(segments))
   # loop through segments and insert them into the event queue 𝒬 with start and ending flags for the segments
   # additionally build the lookup table for segment indices
   for (i, (a, b)) in enumerate(segs)
-
     # add starting point and segment
     if !isnothing(BinaryTrees.search(𝒬, a))
       union!(BinaryTrees.value(BinaryTrees.search(𝒬, a))[1], U([(a, b)]))
@@ -62,7 +63,7 @@ function bentleyottmann(segments; digits=_digits(segments))
   end
 
   # initialize sweepline
-  sweepline = _SweepLine(pmin, ybounds)
+  sweepline = _SweepLine{P,T}(pmin, ybounds)
   output = Dict{P,Vector{Int}}()
   # sweep line algorithm
   while !BinaryTrees.isempty(𝒬)
@@ -79,7 +80,6 @@ function bentleyottmann(segments; digits=_digits(segments))
     ℳₚ = setdiff(ℳ, ℰ)
 
     # handle status line
-    # TODO: This is the primary bottleneck of our implementation. Resolve
     _handlestatus!(ℛ, ℬ, ℳₚ, ℰ, sweepline, p)
 
     # build sorted bundle of segments
@@ -166,6 +166,13 @@ end
 # -----------------
 
 function _newevent!(𝒬, sweepline, bundle, p, s₁, s₂, digits)
+  ref = s₁[1]
+  T = lentype(ref)
+  M = manifold(ref)
+  C = crs(ref)
+  P = Point{M,C}
+  S = Tuple{P,P}
+  U = Set{S}
   intersection(Segment(s₁), Segment(s₂)) do I
     t = type(I)
     if t === Crossing || t === EdgeTouching
@@ -179,7 +186,7 @@ function _newevent!(𝒬, sweepline, bundle, p, s₁, s₂, digits)
           node = BinaryTrees.search(𝒬, i)
           # insert new event into the event queue
           if isnothing(node)
-            BinaryTrees.insert!(𝒬, i, (Set{typeof(s₁)}(), Set{typeof(s₁)}(), Set([s₁, s₂])))
+            BinaryTrees.insert!(𝒬, i, (U(), U(), U([s₁, s₂])))
           else
             union!(BinaryTrees.value(node)[3], [s₁, s₂])
           end
@@ -194,7 +201,7 @@ function _digits(segments)
   s = first(segments)
   ℒ = lentype(s)
   τ = ustrip(eps(ℒ))
-  round(Int, -log10(τ)) - 3
+  round(Int, 0.8 * (-log10(τ)))
 end
 
 # convenience function to get the segment from the node
@@ -307,8 +314,14 @@ function Base.isless(a::_SweepSegment{P,T}, b::_SweepSegment{P,T}) where {P<:Poi
   end
 
   # compute intersection over sweepline
-  ya = _ycalc!(a)
+  ya = _xintersect(a)
   yb = _ycalc!(b)
+  # TODO This is the largest performance bottleneck
+  #= this is chosen because always calculating y is slow
+  but this setproperty is type unstable due to being
+  nested in the isless function for the BinaryTree comparator.
+  =#
+  b.xintersect = yb
 
   diff = ustrip(abs(ya - yb))
   tol = eps(T)
@@ -324,13 +337,11 @@ end
 function _ycalc!(a::_SweepSegment{P,T}) where {P<:Point,T<:Number}
   # calculate y-coordinate of intersection with sweepline
   y = convert(T, _sweepintersect(_segment(a), _sweepline(a)))
-  a.xintersect = y
-  y
 end
 
 # function calculates the orientation while accounting for collinearity
 # Use a tolerance for collinearity and orientation
-function _orientationplus(A, B, C; atol=1e-12)
+function _orientationplus(A, B, C; atol=eps(eltype(A)))
   o = iscollinear(A, B, C) ? 0 : (orientation(Ring(A, B, C)) == CCW ? 1 : -1)
   # if o ≈ 0, say its collinear
   if o == 0 || isapprox(ustrip(signarea(A, B, C)), 0; atol=atol)
