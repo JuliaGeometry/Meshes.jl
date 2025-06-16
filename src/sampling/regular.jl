@@ -87,6 +87,16 @@ extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 # SPECIAL CASES
 # --------------
 
+function sample(rng::AbstractRNG, triangle::Triangle, method::RegularSampling)
+  points = sample(rng, boundingbox(triangle), method)
+  (point for point in points if point ∈ triangle)
+end
+
+function sample(rng::AbstractRNG, tetrahedron::Tetrahedron, method::RegularSampling)
+  points = sample(rng, boundingbox(tetrahedron), method)
+  (point for point in points if point ∈ tetrahedron)
+end
+
 function sample(rng::AbstractRNG, grid::OrthoRegularGrid, method::RegularSampling)
   sample(rng, boundingbox(grid), method)
 end
