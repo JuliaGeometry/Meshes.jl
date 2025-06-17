@@ -285,8 +285,8 @@ end
     (1, 1, 1)
   ])
 
-  torus = Torus(cart(0, 0, 0), vector(1, 0, 0), T(2), T(1))
-  ps = sample(torus, RegularSampling(3, 3))
+  tr = Torus(cart(0, 0, 0), vector(1, 0, 0), T(2), T(1))
+  ps = sample(tr, RegularSampling(3, 3))
   ts =
     cart.([
       (0, 0, -3),
@@ -303,9 +303,19 @@ end
     @test p ≈ t
   end
 
-  grid = cartgrid(10, 10)
-  points = sample(grid, RegularSampling(100, 200))
-  @test length(collect(points)) == 20000
+  t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+  ps = sample(t, RegularSampling(9))
+  @test all(∈(t), ps)
+  @test length(collect(ps)) == 45
+
+  t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  ps = sample(t, RegularSampling(9))
+  @test all(∈(t), ps)
+  @test length(collect(ps)) == 165
+
+  g = cartgrid(10, 10)
+  ps = sample(g, RegularSampling(100, 200))
+  @test length(collect(ps)) == 20000
 end
 
 @testitem "HomogeneousSampling" setup = [Setup] begin
