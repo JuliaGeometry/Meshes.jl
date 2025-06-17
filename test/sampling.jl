@@ -303,7 +303,6 @@ end
     @test p ≈ t
   end
 
-
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   ps = sample(t, RegularSampling(9))
   @test all(∈(t), ps)
