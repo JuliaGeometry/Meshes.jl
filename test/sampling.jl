@@ -306,6 +306,7 @@ end
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   ps = sample(t, RegularSampling(10))
   @test all(∈(t), ps)
+  @test length(collect(ps)) == 55
 
   t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
   ps = sample(t, RegularSampling(10))
