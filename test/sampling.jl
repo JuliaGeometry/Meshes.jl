@@ -303,15 +303,16 @@ end
     @test p ≈ t
   end
 
+
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   ps = sample(t, RegularSampling(9))
   @test all(∈(t), ps)
-  @test length(collect(ps)) == 55
+  @test length(collect(ps)) == 45
 
   t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
   ps = sample(t, RegularSampling(9))
   @test all(∈(t), ps)
-  @test length(collect(ps)) == 220
+  @test length(collect(ps)) == 165
 
   g = cartgrid(10, 10)
   ps = sample(g, RegularSampling(100, 200))
