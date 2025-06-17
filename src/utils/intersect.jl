@@ -103,6 +103,7 @@ function bentleyottmann(segments; digits=_digits(segments))
     end
 
     # add necessary points and segment indices to output
+    pround = coordround(p, digits=digits)
     if !isempty(bundle) || !isempty(ℰ)
       inds = Set{Int}()
       # for s in bundle# ∪ ℰₚ
@@ -113,10 +114,10 @@ function bentleyottmann(segments; digits=_digits(segments))
         push!(inds, lookup[s])
       end
       indᵥ = collect(inds)
-      if haskey(output, p)
-        union!(output[p], indᵥ)
+      if haskey(output, pround)
+        union!(output[pround], indᵥ)
       else
-        output[p] = indᵥ
+        output[pround] = indᵥ
       end
     end
   end
@@ -167,7 +168,6 @@ end
 
 function _newevent!(𝒬, sweepline, bundle, p, s₁, s₂, digits)
   ref = s₁[1]
-  T = lentype(ref)
   M = manifold(ref)
   C = crs(ref)
   P = Point{M,C}
@@ -278,13 +278,14 @@ mutable struct _SweepSegment{P<:Point,T<:Number}
   const seg::Tuple{P,P}
   const sweepline::Base.RefValue{_SweepLine{P,T}}
   xintersect::T
+  latestpoint::P
 end
 
 # constructor for _SweepSegment
 function _SweepSegment(seg::Tuple{P,P}, sweepline::_SweepLine{P,T}) where {P<:Point,T<:Number}
   y = _sweepintersect(seg, sweepline)
   ref = Base.RefValue{_SweepLine{P,T}}(sweepline)
-  _SweepSegment{P,T}(seg, ref, y)
+  _SweepSegment{P,T}(seg, ref, y, _sweeppoint(sweepline))
 end
 
 _segment(sweepsegment::_SweepSegment) = getfield(sweepsegment, :seg)
@@ -321,7 +322,6 @@ function Base.isless(a::_SweepSegment{P,T}, b::_SweepSegment{P,T}) where {P<:Poi
   but this setproperty is type unstable due to being
   nested in the isless function for the BinaryTree comparator.
   =#
-  b.xintersect = yb
 
   diff = ustrip(abs(ya - yb))
   tol = eps(T)
@@ -336,7 +336,18 @@ end
 
 function _ycalc!(a::_SweepSegment{P,T}) where {P<:Point,T<:Number}
   # calculate y-coordinate of intersection with sweepline
-  y = convert(T, _sweepintersect(_segment(a), _sweepline(a)))
+  sweepline = _sweepline(a)
+  if a.latestpoint === _sweeppoint(sweepline)
+    # if the latest point is the sweepline point, use the intersect
+    y = a.xintersect
+  else
+    # otherwise, calculate the intersection with the sweepline
+    # and update the latest point
+    y = convert(T, _sweepintersect(_segment(a), sweepline))
+
+    a.latestpoint = _sweeppoint(sweepline)
+    a.xintersect = y
+  end
 end
 
 # function calculates the orientation while accounting for collinearity
