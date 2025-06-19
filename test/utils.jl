@@ -62,3 +62,76 @@
   @test Meshes.coordround(p₂, digits=10) == p₁
   @inferred Meshes.coordround(p₁, digits=10)
 end
+
+@testitem "bentleyottmann" setup = [Setup] begin
+  # basic check with a small number of segments
+  segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(1.5, 1), cart(2, 1)), (cart(1.51, 1.3), cart(2, 0.9))])
+  points, seginds = Meshes.bentleyottmann(segs)
+
+  @test length(points) == 7
+
+  segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(0, 2), cart(2, 0)), (cart(0, 1), cart(0.5, 1))])
+  points, seginds = Meshes.bentleyottmann(segs)
+  @test length(points) == 7
+  @test length(seginds) == 7
+
+  segs =
+    Segment.([
+      (cart(0, 0), cart(1.1, 1.1)),
+      (cart(1, 0), cart(0, 1)),
+      (cart(0, 0), cart(0, 1)),
+      (cart(0, 0), cart(1, 0)),
+      (cart(0, 1), cart(1, 1)),
+      (cart(1, 0), cart(1, 1))
+    ])
+  points, seginds = Meshes.bentleyottmann(segs)
+  @test length(
+    setdiff(Set([cart(0, 0), cart(1, 1), cart(1.1, 1.1), cart(0, 1), cart(1, 0), cart(0.5, 0.5)]), Set(points))
+  ) == 0
+  @test length(points) == 6
+  @test length(seginds) == 6
+  inds = Dict(p => i for (i, p) in enumerate(points))
+  @test Set(seginds[inds[cart(0.5, 0.5)]]) == Set([1, 2])
+  @test Set(seginds[inds[cart(1, 1)]]) == Set([1, 6, 5])
+
+  segs =
+    Segment.([
+      (cart(9, 13), cart(6, 9)),
+      (cart(2, 12), cart(9, 4.8)),
+      (cart(12, 11), cart(4, 7)),
+      (cart(2.5, 10), cart(12.5, 2)),
+      (cart(13, 6), cart(10, 4)),
+      (cart(10.5, 5.5), cart(9, 1)),
+      (cart(10, 4), cart(11, -1)),
+      (cart(10, 3), cart(10, 5))
+    ])
+  points, seginds = Meshes.bentleyottmann(segs)
+  @test length(points) == 17
+  @test length(seginds) == 17
+  @test Set(reduce(vcat, seginds)) == Set(1:8)
+  @test points[findfirst(p -> p ≈ cart(10, 4), points)] ≈ cart(10, 4)
+  @test Set(seginds[findfirst(p -> p ≈ cart(10, 4), points)]) == Set([4, 5, 6, 7, 8])
+  @test Set(seginds[findfirst(p -> p ≈ cart(9, 4.8), points)]) == Set([4, 2])
+
+  # finds all intersections in a grid
+  n = 10
+  horizontal = [Segment(cart(1, i), cart(n, i)) for i in 1:n]
+  vertical = [Segment(cart(i, 1), cart(i, n)) for i in 1:n]
+  segs = [horizontal; vertical]
+  points, seginds = Meshes.bentleyottmann(segs)
+  @test length(points) == 100
+  @test length(seginds) == 100
+  @test Set(length.(seginds)) == Set([2])
+
+  # result is invariant under rotations
+  for θ in T(π / 6):T(π / 6):T(2π - π / 6)
+    θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ))
+    @test length(θpoints) == 100
+    @test length(θseginds) == 100
+    @test Set(length.(θseginds)) == Set([2])
+  end
+
+  # inference test
+  segs = facets(cartgrid(10, 10))
+  @inferred Meshes.bentleyottmann(segs)
+end
