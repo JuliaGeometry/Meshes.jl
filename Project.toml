@@ -1,7 +1,7 @@
 name = "Meshes"
 uuid = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
 authors = ["Júlio Hoffimann and contributors"]
-version = "0.53.22"
+version = "0.53.23"
 
 [deps]
 Bessels = "0e736298-9ec6-45e8-9647-e4fc86a2fe38"
@@ -30,7 +30,7 @@ CoordRefSystems = "0.18"
 DelaunayTriangulation = "1.0"
 Distances = "0.10"
 LinearAlgebra = "1.9"
-Makie = "0.22, 0.23"
+Makie = "0.22 - 0.24"
 NearestNeighbors = "0.4"
 Random = "1.9"
 Rotations = "1.5.1"
