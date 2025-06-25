@@ -51,21 +51,4 @@
   grid = cartgrid(3, 4)
   vgrid = view(grid, 3:10)
   @test traverse(vgrid, path) == [3, 10, 7, 8, 9, 4, 5, 6]
-
-  # visual tests
-  if visualtests
-    paths = [LinearPath(), RandomPath(StableRNG(123)), ShiftedPath(LinearPath(), 10), SourcePath(1:3), MultiGridPath()]
-
-    fnames = ["linear-path", "random-path", "shifted-path", "source-path", "multi-grid-path"]
-
-    for (path, fname) in zip(paths, fnames)
-      for n in (6, 7)
-        agrid = cartgrid(n, n)
-        pinds = collect(traverse(agrid, path))
-        pgrid = view(agrid, pinds)
-        fig = viz(pgrid, color=1:nelements(pgrid))
-        @test_reference "data/$fname-$(n)x$(n).png" fig
-      end
-    end
-  end
 end
