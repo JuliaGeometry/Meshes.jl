@@ -83,7 +83,7 @@
   perim = length(cring)
   if T === Float32
     @test perim ≈ T(15880.919)u"m"
-  elseif T == Float64
+  elseif T === Float64
     @test perim ≈ T(15887.308996863363)u"m"
   end
 end
