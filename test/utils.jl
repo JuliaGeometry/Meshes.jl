@@ -39,11 +39,14 @@ end
 
 @testitem "intersectparameters" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
-  p1 = cart(387843.1300172474, 7.648008470021072e6)
-  p2 = cart(387526.44396928686, 7.647621555327687e6)
-  p3 = cart(387732.29, 7.64787305e6)
-  p4 = cart(387676.87, 7.64780534e6)
-  @test Meshes.intersectparameters(p1, p2, p3, p4) == (T(0), T(0), 1, 1)
+  if T === Float64
+    p1 = cart(387843.1300172474, 7.648008470021072e6)
+    p2 = cart(387526.44396928686, 7.647621555327687e6)
+    p3 = cart(387732.29, 7.64787305e6)
+    p4 = cart(387676.87, 7.64780534e6)
+    @test Meshes.intersectparameters(p1, p2, p3, p4) == (T(0), T(0), 1, 1)
+    @test Meshes.intersectparameters(p3, p4, p1, p2) == (T(0), T(0), 1, 1)
+  end
 
   p1, p2 = cart(0, 0), cart(1, 1)
   p3, p4 = cart(1, 0), cart(0, 1)

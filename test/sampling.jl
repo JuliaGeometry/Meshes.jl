@@ -467,7 +467,7 @@ end
 
   # cannot test some sampling methods with T = Float32
   # because of https://github.com/JuliaStats/StatsBase.jl/issues/695
-  if T == Float64
+  if T === Float64
     for method in [HomogeneousSampling(100), MinDistanceSampling(T(5))]
       rng = StableRNG(2021)
       s1 = sample(rng, dom, method)

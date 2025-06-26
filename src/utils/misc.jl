@@ -99,7 +99,7 @@ function intersectparameters(a::Point, b::Point, c::Point, d::Point)
 
   # calculate parameters of intersection
   if r ≥ 2
-    λ = A[:, SVector(1, 2)] \ A[:,3]
+    λ = A[:, SVector(1, 2)] \ A[:, 3]
     λ₁, λ₂ = λ[1], λ[2]
   else # parallel or collinear
     λ₁, λ₂ = zero(T), zero(T)
