@@ -1112,7 +1112,8 @@ end
   @test r ∩ t ≈ cart(0.5, 0.0, 0.0)
 end
 
-@testitem "Ngon intersection" setup = [Setup] begin
+@testitem "Polygon intersection" setup = [Setup] begin
+  # ray <> octagon
   o = Octagon(
     cart(0.0, 0.0, 1.0),
     cart(0.5, -0.5, 0.0),
@@ -1123,28 +1124,26 @@ end
     cart(0.0, 1.0, 0.0),
     cart(-0.5, 0.5, 0.0)
   )
-
   r = Ray(cart(-1.0, -1.0, -1.0), vector(1.0, 1.0, 1.0))
   @test intersection(r, o) |> type == Intersecting
   @test r ∩ o == PointSet(cart(0.0, 0.0, 0.0))
-
   r = Ray(cart(-1.0, -1.0, -1.0), vector(-1.0, -1.0, -1.0))
   @test intersection(r, o) |> type == NotIntersecting
   @test isnothing(r ∩ o)
 
+  # triangle <> quadrangle
   t = Triangle(cart(0.9356498598903396, 6.5), cart(1.3571428571428377, 6.5), cart(1.0, 7.0))
   q = Quadrangle(cart(0.0, 0.0), cart(6.0, 0.0), cart(1.0, 7.0), cart(1.0, 6.0))
   @test intersection(t, q) |> type == Intersecting
   @test t ∩ q isa PolyArea
   @test q ∩ t isa PolyArea
 
+  # triangle <> triangle
   t1 = Triangle(cart(0.0, 0.0), cart(0.0, 1.000000000000001), cart(1.0, 1.0))
   t2 = Triangle(cart(0.0, 1.0), cart(0.0, 2.0), cart(1.0, 1.000000000001))
   @test intersection(t1, t2) |> type == Intersecting
   @test t1 ∩ t2 isa PolyArea
-end
 
-@testitem "Polygon intersection" setup = [Setup] begin
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
