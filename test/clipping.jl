@@ -73,4 +73,17 @@
   @test length(crings) == 2
   @test all(vertices(crings[1]) .≈ [cart(6, 4), cart(6, 5), cart(1, 2.5), cart(1, 1), cart(5, 2)])
   @test all(vertices(crings[2]) .≈ [cart(3.0, 3.0), cart(3.0, 3.5), cart(10 / 3, 11 / 3), cart(4.0, 3.0)])
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
+  data1 = readdlm(joinpath(datadir, "issue1218-1.dat"), ',')
+  data2 = readdlm(joinpath(datadir, "issue1218-2.dat"), ',')
+  ring1 = Ring(Point.(T.(data1[:,1]), T.(data1[:,2])))
+  ring2 = Ring(Point.(T.(data2[:,1]), T.(data2[:,2])))
+  cring = clip(ring1, ring2, SutherlandHodgmanClipping())
+  perim = length(cring)
+  if T === Float32
+    @test perim ≈ T(15880.919)u"m"
+  elseif T == Float64
+    @test perim ≈ T(15887.308996863363)u"m"
+  end
 end
