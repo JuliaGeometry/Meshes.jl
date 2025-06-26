@@ -77,8 +77,8 @@
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   data1 = readdlm(joinpath(datadir, "issue1218-1.dat"), ',')
   data2 = readdlm(joinpath(datadir, "issue1218-2.dat"), ',')
-  ring1 = Ring(Point.(T.(data1[:, 1]), T.(data1[:, 2])))
-  ring2 = Ring(Point.(T.(data2[:, 1]), T.(data2[:, 2])))
+  ring1 = Ring(cart.(data1[:, 1], data1[:, 2]))
+  ring2 = Ring(cart.(data2[:, 1], data2[:, 2]))
   cring = clip(ring1, ring2, SutherlandHodgmanClipping())
   perim = length(cring)
   if T === Float32
