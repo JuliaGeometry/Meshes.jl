@@ -116,7 +116,7 @@ end
 
   pset = PointSet(cart.([(1, 0), (0, 1)]))
   @test sprint(show, pset) == "2 PointSet"
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), pset) == """
     2 PointSet
     ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
