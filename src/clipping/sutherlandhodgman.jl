@@ -28,37 +28,40 @@ function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 
-  r = vertices(ring)
-  o = vertices(occw)
+  # vertices as circular vectors
+  vᵣ = vertices(ring)
+  vₒ = vertices(occw)
 
-  for i in 1:length(o)
-    lₒ = Line(o[i], o[i + 1])
+  for j in eachindex(vₒ)
+    lₒ = Line(vₒ[j], vₒ[j + 1])
 
-    n = length(r)
+    # retain vertices from vᵣ that satisfy
+    # Sutherland-Hodgeman criteria
+    p = empty(vᵣ)
+    for i in eachindex(vᵣ)
+      v₁ = vᵣ[i]
+      v₂ = vᵣ[i + 1]
+      lᵣ = Line(v₁, v₂)
 
-    u = Vector{eltype(r)}()
-    for j in 1:n
-      r₁ = r[j]
-      r₂ = r[mod1(j + 1, n)]
-      lᵣ = Line(r₁, r₂)
-
-      isinside₁ = (sideof(r₁, lₒ) != RIGHT)
-      isinside₂ = (sideof(r₂, lₒ) != RIGHT)
+      isinside₁ = (sideof(v₁, lₒ) != RIGHT)
+      isinside₂ = (sideof(v₂, lₒ) != RIGHT)
 
       if isinside₁ && isinside₂
-        push!(u, r₁)
+        push!(p, v₁)
       elseif isinside₁ && !isinside₂
-        push!(u, r₁)
-        push!(u, intersectpoint(lᵣ, lₒ))
+        push!(p, v₁)
+        push!(p, intersectpoint(lᵣ, lₒ))
       elseif !isinside₁ && isinside₂
-        push!(u, intersectpoint(lᵣ, lₒ))
+        push!(p, intersectpoint(lᵣ, lₒ))
       end
     end
 
-    r = u
+    # update list of vertices and continue
+    vᵣ = p
   end
 
-  isempty(r) ? nothing : Ring(unique(r))
+  # return appropriate object
+  isempty(vᵣ) ? nothing : Ring(unique(vᵣ))
 end
 
 # helper function to find any intersection point
