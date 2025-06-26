@@ -86,11 +86,14 @@ function intersectparameters(a::Point, b::Point, c::Point, d::Point)
   T = eltype(A)
   τ = atol(T)
 
-  # calculate the ranks by checking the zero entries of
-  # the diagonal of R in the QR matrix factorization
+  # check if a vector is non zero
+  isnonzero(v) = !isapprox(v, zero(v), atol=τ)
+
+  # calculate ranks by checking the zero rows of
+  # the factor R in the QR matrix factorization
   _, R = qr([A y])
-  rₐ = sum(>(τ), sum(abs, R, dims=2))
-  r = sum(>(τ), sum(abs, view(R, :, 1:2), dims=2))
+  r = sum(isnonzero, eachrow(R[:, SVector(1, 2)]))
+  rₐ = sum(isnonzero, eachrow(R))
 
   # calculate parameters of intersection
   if r ≥ 2
