@@ -1,6 +1,17 @@
 using BenchmarkTools
 using Meshes
 
+# auxiliary variables
+pₒ = Point(0, 0)
+ps = rand(Point, 100)
+s = Sphere((0, 0), 1)
+r₁ = Ring([s(t) for t in 0.1:0.1:1.0])
+r₂ = Ring([s(t) + Vec(1, 0) for t in 0.1:0.1:1.0])
+rₛ = Ring([s(t) for t in range(0.1, 1.0, length=5)])
+rₗ = Ring([s(t) for t in range(0.1, 1.0, length=1500)])
+m = discretize(Sphere((0, 0, 0), 1))
+
+# initialize benchmark suite
 const SUITE = BenchmarkGroup()
 
 # ---------
@@ -9,12 +20,7 @@ const SUITE = BenchmarkGroup()
 
 SUITE["clipping"] = BenchmarkGroup()
 
-s1 = Sphere((0, 0), 1)
-s2 = Sphere((1, 0), 1)
-r1 = Ring([s1(t) for t in 0.1:0.1:1.0])
-r2 = Ring([s2(t) for t in 0.1:0.1:1.0])
-
-SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($r1, $r2, SutherlandHodgmanClipping())
+SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($r₁, $r₂, SutherlandHodgmanClipping())
 
 # ---------------
 # DISCRETIZATION
@@ -22,6 +28,21 @@ SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($r1, $r2, Sutherlan
 
 SUITE["discretization"] = BenchmarkGroup()
 
-m = discretize(Sphere((0, 0, 0), 1))
-
 SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($m)
+
+# --------
+# WINDING
+# --------
+
+SUITE["winding"] = BenchmarkGroup()
+
+SUITE["winding"]["mesh"] = @benchmarkable winding($ps, $m)
+
+# -------
+# SIDEOF
+# -------
+
+SUITE["sideof"] = BenchmarkGroup()
+
+SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($pₒ, $rₛ)
+SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($pₒ, $rₗ)

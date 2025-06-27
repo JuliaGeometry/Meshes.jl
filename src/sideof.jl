@@ -59,10 +59,10 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
 function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
   point′ = point |> Proj(crs(ring))
-  if nvertices(ring) ≤ 1000 || Threads.nthreads() == 1
-    _sideofserial(point′, ring)
+  if isthreaded(nvertices(ring) > 1000)
+    _sideofthread(point′, ring)
   else
-    _sideofthreads(point′, ring)
+    _sideofserial(point′, ring)
   end
 end
 
@@ -77,7 +77,7 @@ function _sideofserial(p::Point, r::Ring)
   iseven(k) ? OUT : IN
 end
 
-function _sideofthreads(p::Point, r::Ring)
+function _sideofthread(p::Point, r::Ring)
   v = vertices(r)
   k = Threads.Atomic{Int}(0)
   on = Threads.Atomic{Bool}(false)

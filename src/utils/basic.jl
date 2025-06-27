@@ -55,3 +55,10 @@ Generate the coordinate arrays `XYZ` from the coordinate vectors `xyz`.
   end
   Expr(:tuple, exprs...)
 end
+
+"""
+    isthreaded(cond=true)
+
+Return true if `cond`ition is true in the presence of multiple threads.
+"""
+isthreaded(cond=true) = cond && Threads.nthreads() > 1
