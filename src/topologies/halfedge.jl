@@ -356,7 +356,7 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
     while iter ≤ length(remaining)
       elem = elems[remaining[iter]]
 
-      # manually union-split two most common polytopes
+      # manually union-split most common polytopes
       # for type stability and maximum performance
       isadjacent = if elem isa Connectivity{Triangle,3}
         adjelem!(seen, elem)
