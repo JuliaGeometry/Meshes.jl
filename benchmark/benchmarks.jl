@@ -10,7 +10,7 @@ const SUITE = BenchmarkGroup()
 SUITE["clipping"] = BenchmarkGroup()
 
 s1 = Sphere((0, 0), 1)
-s2 = s1 |> Translate(0.5, 0.5)
+s2 = Sphere((1, 0), 1)
 r1 = Ring([s1(t) for t in 0.1:0.1:1.0])
 r2 = Ring([s2(t) for t in 0.1:0.1:1.0])
 
