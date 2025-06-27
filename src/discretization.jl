@@ -212,43 +212,63 @@ simplexify(poly::Polyhedron) = discretize(poly, ManualSimplexification())
 simplexify(multi::Multi) = mapreduce(simplexify, merge, parent(multi))
 
 function simplexify(mesh::Mesh)
-  # retrieve vertices and topology
+  # retrieve vertices and connectivities
   points = vertices(mesh)
-  topo = topology(mesh)
+  connec = elements(topology(mesh))
 
   # check if there is something to do
-  all(issimplex, elements(topo)) && return mesh
+  all(issimplex, connec) && return mesh
 
+  # function barrier for optimal performance
+  _simplexify(points, connec)
+end
+
+function _simplexify(points, connec)
   # initialize vector of global indices
   ginds = Vector{Int}[]
 
   # simplexify each element and append global indices
-  for connec in elements(topo)
-    # materialize element and indices
-    elem = materialize(connec, points)
-    inds = indices(connec)
-
-    # simplexify element
-    mesh′ = simplexify(elem)
-    topo′ = topology(mesh′)
-    connecs′ = elements(topo′)
-
-    # convert from local to global indices
-    einds = [[inds[i] for i in indices(c′)] for c′ in connecs′]
-
-    # save global indices
-    append!(ginds, einds)
+  for c in connec
+    # manually union-split most common polytopes
+    # for type stability and maximum performance
+    if c isa Connectivity{Triangle,3}
+      _appendinds!(ginds, c, points)
+    elseif c isa Connectivity{Quadrangle,4}
+      _appendinds!(ginds, c, points)
+    elseif c isa Connectivity{Tetrahedron,4}
+      _appendinds!(ginds, c, points)
+    elseif c isa Connectivity{Hexahedron,8}
+      _appendinds!(ginds, c, points)
+    else
+      _appendinds!(ginds, c, points)
+    end
   end
 
-  # simplex type for parametric dimension
-  PL = paramdim(mesh) == 2 ? Triangle : Tetrahedron
-  NV = nvertices(PL)
-
   # new connectivities
-  newconnecs = [connect(ntuple(i -> inds[i], NV), PL) for inds in ginds]
+  newconnec = _newconnec(ginds, connec)
 
-  SimpleMesh(points, newconnecs)
+  SimpleMesh(points, newconnec)
 end
+
+function _appendinds!(ginds, connec, points)
+  # materialize element and indices
+  elem = materialize(connec, points)
+  inds = indices(connec)
+
+  # simplexify element
+  mesh = simplexify(elem)
+  topo = topology(mesh)
+
+  # convert from local to global indices
+  einds = [[inds[i] for i in indices(c)] for c in elements(topo)]
+
+  # save global indices
+  append!(ginds, einds)
+end
+
+_newconnec(ginds, connec) = _newconnec(ginds, Val(paramdim(first(connec))))
+_newconnec(ginds, ::Val{2}) = [connect(ntuple(i -> inds[i], 3), Triangle) for inds in ginds]
+_newconnec(ginds, ::Val{3}) = [connect(ntuple(i -> inds[i], 4), Tetrahedron) for inds in ginds]
 
 # ----------------
 # IMPLEMENTATIONS
