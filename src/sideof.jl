@@ -41,7 +41,7 @@ Assumes the orientation of `Segment(line(0), line(1))`.
 """
 function sideof(point::Point, line::Line)
   a = signarea(point, line(0), line(1))
-  ifelse(a > atol(a), LEFT, ifelse(a < -atol(a), RIGHT, ON))
+  ifelse(ispositive(a), LEFT, ifelse(isnegative(a), RIGHT, ON))
 end
 
 """

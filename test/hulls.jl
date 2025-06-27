@@ -141,7 +141,7 @@
 
       # https://github.com/JuliaGeometry/Meshes.jl/issues/1211
       data = readdlm(joinpath(datadir, "issue1211.dat"))
-      points = Point.(T.(data[:, 1]), T.(data[:, 2]))
+      points = cart.(data[:, 1], data[:, 2])
       chull = hull(points, method)
       @test area(chull) ≈ T(0.0015160200648848573)u"m^2"
     end

@@ -290,7 +290,7 @@ end
     @test nelements(mesh) == 32
   end
 
-  if T == Float64
+  if T === Float64
     poly = PolyArea(
       cart.([
         (-48.03012478813999, -18.323912004531923),

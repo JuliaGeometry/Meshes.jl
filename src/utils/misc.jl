@@ -72,31 +72,34 @@ and the rank `rₐ` of the augmented matrix `[A y⃗]` are
 calculated in order to identify the intersection type:
 
 - Intersection: r == rₐ == 2
-- Colinear: r == rₐ == 1
+- Collinear: r == rₐ == 1
 - No intersection: r != rₐ
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
 function intersectparameters(a::Point, b::Point, c::Point, d::Point)
-  A = ustrip.([(b - a) (c - d)])
-  y = ustrip.(c - a)
+  # augmented linear system
+  A = ustrip.([(b - a) (c - d) (c - a)])
+
+  # normalize by maximum absolute coordinate
+  A = A / maximum(abs, A)
+
+  # numerical tolerance
   T = eltype(A)
-
-  # calculate the rank of the augmented matrix by checking
-  # the zero entries of the diagonal of R
-  _, R = qr([A y])
-
-  # for Dim == 2 one has to check the L1 norm of rows as 
-  # there are more columns than rows
   τ = atol(T)
-  rₐ = sum(>(τ), sum(abs, R, dims=2))
 
-  # calculate the rank of the rectangular matrix
-  r = sum(>(τ), sum(abs, view(R, :, 1:2), dims=2))
+  # check if a vector is non zero
+  isnonzero(v) = !isapprox(v, zero(v), atol=τ)
 
-  # calculate parameters of intersection or closest point
+  # calculate ranks by checking the zero rows of
+  # the factor R in the QR matrix factorization
+  _, R = qr(A)
+  r = sum(isnonzero, eachrow(R[:, SVector(1, 2)]))
+  rₐ = sum(isnonzero, eachrow(R))
+
+  # calculate parameters of intersection
   if r ≥ 2
-    λ = A \ y
+    λ = A[:, SVector(1, 2)] \ A[:, 3]
     λ₁, λ₂ = λ[1], λ[2]
   else # parallel or collinear
     λ₁, λ₂ = zero(T), zero(T)

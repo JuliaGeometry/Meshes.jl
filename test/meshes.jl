@@ -150,7 +150,7 @@
   @test_throws ArgumentError RegularGrid((10, 10, 10), latlon(0, 0), T.((1, 1, 1)))
 
   grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), grid) == """
     10×10 RegularGrid
     ├─ minimum: Point(lat: 0.0f0°, lon: 0.0f0°)
@@ -404,7 +404,7 @@ end
   @test parentindices(grid) == 1:100
 
   grid = cartgrid(200, 100)
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), grid) == """
     200×100 CartesianGrid
     ├─ minimum: Point(x: 0.0f0 m, y: 0.0f0 m)
@@ -539,7 +539,7 @@ end
   y = T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]
   grid = RectilinearGrid(x, y)
   @test sprint(show, grid) == "5×5 RectilinearGrid"
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), grid) == """
     5×5 RectilinearGrid
       36 vertices
@@ -734,7 +734,7 @@ end
   Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)
   grid = StructuredGrid(X, Y)
   @test sprint(show, grid) == "5×5 StructuredGrid"
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), grid) == """
     5×5 StructuredGrid
       36 vertices
@@ -955,7 +955,7 @@ end
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
   @test sprint(show, mesh) == "4 SimpleMesh"
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), mesh) == """
     4 SimpleMesh
       5 vertices
@@ -1071,7 +1071,7 @@ end
   @test tmesh == tmesh
 
   @test sprint(show, tgrid) == "10×10 TransformedGrid"
-  if T == Float32
+  if T === Float32
     @test sprint(show, MIME"text/plain"(), tgrid) == """
     10×10 TransformedGrid
       121 vertices

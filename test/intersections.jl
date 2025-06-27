@@ -587,6 +587,17 @@ end
   l2 = Line(cart(1, 2, 3), cart(1, 1, 1))
   @test l1 ∩ l2 ≈ l2 ∩ l1 ≈ cart(1, 2, 3)
 
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
+  if T === Float64
+    p1 = cart(387843.1300172474, 7.648008470021072e6)
+    p2 = cart(387526.44396928686, 7.647621555327687e6)
+    p3 = cart(387732.29, 7.64787305e6)
+    p4 = cart(387676.87, 7.64780534e6)
+    l1 = Line(p1, p2)
+    l2 = Line(p3, p4)
+    @test l1 ∩ l2 == l2 ∩ l1 == l1
+  end
+
   # type stability tests
   l1 = Line(cart(0, 0), cart(1, 0))
   l2 = Line(cart(-1, -1), cart(-1, 1))
@@ -1000,7 +1011,7 @@ end
   # Special case: the direction vector is not length enough to cross triangle
   r = Ray(cart(0.2, 0.2, 1.0), vector(0.0, 0.0, -0.00001))
   @test intersection(r, t) |> type == Crossing
-  if T == Float64
+  if T === Float64
     @test r ∩ t ≈ cart(0.2, 0.2, 0.0)
   end
   # Special case: reverse direction vector should not hit the triangle
