@@ -79,3 +79,9 @@ end
   @test Meshes.coordround(p₂, digits=10) == p₁
   @inferred Meshes.coordround(p₁, digits=10)
 end
+
+@testitem "isthreaded" setup = [Setup] begin
+  if Threads.nthreads() > 1
+    @test Meshes.isthreaded()
+  end
+end

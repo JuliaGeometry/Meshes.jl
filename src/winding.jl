@@ -45,7 +45,7 @@ function winding(points, mesh::Mesh)
   assertion(paramdim(mesh) == 2, "winding number only defined for surface meshes")
   (eltype(mesh) <: Triangle) || return winding(points, simplexify(mesh))
 
-  function w(p)
+  function windfun(p)
     ∑ = sum(1:nelements(mesh)) do i
       v = vertices(mesh[i])
       a⃗ = v[1] - p
@@ -61,7 +61,22 @@ function winding(points, mesh::Mesh)
     ∑ / oftype(∑, 4π)
   end
 
-  [w(p) for p in points]
+  if isthreaded(points isa AbstractVector && length(points) > 10)
+    _windingthread(windfun, points)
+  else
+    _windingserial(windfun, points)
+  end
+end
+
+_windingserial(windfun, points) = map(windfun, points)
+
+function _windingthread(windfun, points)
+  T = numtype(lentype(first(points)))
+  w = Vector{T}(undef, length(points))
+  Threads.@threads for i in eachindex(points)
+    w[i] = windfun(points[i])
+  end
+  w
 end
 
 winding(point::Point, mesh::Mesh) = winding((point,), mesh) |> first

@@ -74,6 +74,6 @@
   p = first(randpoint2(1))
   r = Ring(randpoint2(500))
   serial = Meshes._sideofserial(p, r)
-  threads = Meshes._sideofthreads(p, r)
-  @test serial == threads
+  thread = Meshes._sideofthread(p, r)
+  @test serial == thread
 end
