@@ -47,17 +47,26 @@ apply(::Repair{0}, mesh::Mesh) = error("not implemented")
 # --------------
 
 function apply(::Repair{1}, mesh::Mesh)
-  count = 0
+  # Ref to avoid boxing from map closure
+  # see https://github.com/JuliaLang/julia/issues/15276
+  count = Ref(0)
+
+  # ordered list of indices
   seen = Int[]
   inds = Dict{Int,Int}()
+
+  # reserve worst case memory need: all vertices are actually used
+  sizehint!(seen, nvertices(mesh))
+  sizehint!(inds, nvertices(mesh))
+
   topo = topology(mesh)
   elems = map(elements(topo)) do e
     elem = indices(e)
     for v in elem
-      if v ∉ seen
+      if !haskey(inds, v)
         push!(seen, v)
-        count += 1
-        inds[v] = count
+        count[] += 1
+        inds[v] = count[]
       end
     end
     ntuple(i -> inds[elem[i]], length(elem))

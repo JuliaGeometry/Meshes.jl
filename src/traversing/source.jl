@@ -32,12 +32,16 @@ function traverse(domain, path::SourcePath)
   batches = Iterators.partition(others, batchsize)
 
   # compute distances to sources
-  dists = []
-  for batch in batches
+  dists = map(batches) do batch
     xs = [svec(centroid(domain, b)) for b in batch]
-    _, ds = knn(kdtree, xs, length(sources), true)
-    append!(dists, ds)
+    _, ds = nn(kdtree, xs)
+    ds
   end
 
-  [sources; view(others, sortperm(dists))]
+  # sort other indices
+  alldists = reduce(vcat, dists)
+  perminds = sortperm(alldists)
+  permuted = view(others, perminds)
+
+  [sources; permuted]
 end

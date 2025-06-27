@@ -41,7 +41,7 @@ Assumes the orientation of `Segment(line(0), line(1))`.
 """
 function sideof(point::Point, line::Line)
   a = signarea(point, line(0), line(1))
-  ifelse(a > atol(a), LEFT, ifelse(a < -atol(a), RIGHT, ON))
+  ifelse(ispositive(a), LEFT, ifelse(isnegative(a), RIGHT, ON))
 end
 
 """
@@ -173,6 +173,11 @@ end
 
 Determines on which side the `point` is in relation to the surface `mesh`.
 Possible results are `IN` or `OUT` the `mesh`.
+
+## References
+
+* Jacobson et al. 2013. [Robust inside-outside segmentation using generalized winding numbers]
+  (https://dl.acm.org/doi/10.1145/2461912.2461916)
 """
 sideof(point::Point, mesh::Mesh) = sideof((point,), mesh) |> first
 

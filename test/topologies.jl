@@ -372,8 +372,15 @@ end
     for e in 1:nelements(topology)
       he = half4elem(topology, e)
       inds = indices(elems[e])
-      @test he.elem == e
-      @test he.head ∈ inds
+      for _ in inds
+        @test he.elem == e
+        @test he.head ∈ inds
+        @test he.next.elem == e
+        @test he.prev.elem == e
+        @test he.next.prev == he
+        @test he.prev.next == he
+        he = he.next
+      end
     end
   end
 
@@ -483,6 +490,7 @@ end
   # correct construction from inconsistent orientation
   e = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
   t = HalfEdgeTopology(e)
+  test_halfedge(e, t)
   n = collect(elements(t))
   @test n[1] == e[1]
   @test n[2] != e[2]
@@ -492,15 +500,20 @@ end
   # more challenging case with inconsistent orientation
   e = connect.([(4, 1, 5), (2, 6, 4), (3, 5, 6), (4, 5, 6)])
   t = HalfEdgeTopology(e)
+  test_halfedge(e, t)
   n = collect(elements(t))
-  @test n == connect.([(5, 4, 1), (6, 2, 4), (6, 5, 3), (4, 5, 6)])
+  @test n == connect.([(4, 1, 5), (4, 6, 2), (6, 5, 3), (4, 5, 6)])
+
+  e = connect.([(1, 2, 3), (1, 3, 4), (2, 5, 3), (5, 4, 6), (3, 5, 4)])
+  t = HalfEdgeTopology(e)
+  test_halfedge(e, t)
 
   # indexable api
   g = GridTopology(10, 10)
   t = convert(HalfEdgeTopology, g)
-  @test t[begin] == connect((13, 12, 1, 2), Quadrangle)
-  @test t[end] == connect((110, 121, 120, 109), Quadrangle)
-  @test t[10] == connect((22, 21, 10, 11), Quadrangle)
+  @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
+  @test t[end] == connect((109, 110, 121, 120), Quadrangle)
+  @test t[10] == connect((21, 10, 11, 22), Quadrangle)
   @test length(t) == 100
   @test eltype(t) == Connectivity{Quadrangle,4}
   for e in t

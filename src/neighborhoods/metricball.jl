@@ -41,19 +41,22 @@ struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
 end
 
 function MetricBall(radii::NTuple{Dim,ℒ}, rotation=I) where {Dim,ℒ<:Len}
-  # scaling matrix
-  Λ = Diagonal(SVector((oneunit(ℒ) ./ radii) .^ 2))
+  # scaling weights
+  w = SVector((oneunit(ℒ) ./ radii) .^ 2)
 
   # rotation matrix
   R = rotation
 
+  # scaling matrix
+  W = Diagonal(w)
+
   # anisotropy matrix
-  M = Symmetric(R * Λ * R')
+  M = Symmetric(R * W * transpose(R))
 
   # Mahalanobis metric
   metric = Mahalanobis(M)
 
-  MetricBall(radii, R, metric)
+  MetricBall(radii, rotation, metric)
 end
 
 MetricBall(radii::NTuple{Dim,Len}, rotation=I) where {Dim} = MetricBall(promote(radii...), rotation)

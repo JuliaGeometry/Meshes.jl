@@ -23,8 +23,13 @@ struct SimpleTopology{C<:Connectivity} <: Topology
   elems::Vector{Int}
 
   function SimpleTopology{C}(connec) where {C}
-    ranks = [paramdim(c) for c in connec]
-    elems = findall(isequal(maximum(ranks)), ranks)
+    if isconcretetype(C) # single concrete connectivity type
+      ranks = fill(paramdim(first(connec)), length(connec))
+      elems = collect(eachindex(connec))
+    else # mixed connectivity types
+      ranks = [paramdim(c) for c in connec]
+      elems = findall(isequal(maximum(ranks)), ranks)
+    end
     new(connec, ranks, elems)
   end
 end
@@ -39,7 +44,7 @@ paramdim(t::SimpleTopology) = paramdim(t.connec[first(t.elems)])
     connec4elem(t, e)
 
 Return linear indices of vertices of `e`-th element of
-the full topology `t`.
+the simple topology `t`.
 """
 connec4elem(t::SimpleTopology, e) = indices(t.connec[t.elems[e]])
 

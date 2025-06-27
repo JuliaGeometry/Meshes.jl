@@ -50,7 +50,11 @@ isperiodic(::Type{<:Rope}) = (false,)
 
 isperiodic(::Type{<:Ring}) = (true,)
 
+isperiodic(::Type{<:Triangle}) = (false, false)
+
 isperiodic(::Type{<:Quadrangle}) = (false, false)
+
+isperiodic(::Type{<:Tetrahedron}) = (false, false, false)
 
 isperiodic(::Type{<:Hexahedron}) = (false, false, false)
 

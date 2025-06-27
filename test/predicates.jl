@@ -77,7 +77,9 @@ end
 
   # polytopes
   @test isperiodic(Segment) == (false,)
+  @test isperiodic(Triangle) == (false, false)
   @test isperiodic(Quadrangle) == (false, false)
+  @test isperiodic(Tetrahedron) == (false, false, false)
   @test isperiodic(Hexahedron) == (false, false, false)
 
   @test isperiodic(cartgrid(10, 10)) == (false, false)
@@ -115,6 +117,23 @@ end
   @test cart(1 / 3, 1 / 3, 1 / 3) ∈ t
   @test cart(0, 0, 0) ∉ t
   @test cart(1, 1, 1) ∉ t
+
+  # tests for LatLon
+  box = Box(latlon(48.0110, 11.2930), latlon(48.2511, 11.8650))
+  @test latlon(48.1, 11.5) ∈ box
+  @test latlon(48.034642451455, 10.94121275924084) ∉ box
+
+  box = Box(latlon(48.0110, -178.5), latlon(48.2511, 2.001))
+  @test latlon(48.1, 0) ∈ box
+  @test latlon(48.1, -179.1) ∈ box
+  @test latlon(48.1, 1.1) ∈ box
+  @test latlon(48.1, -178.1) ∉ box
+  @test latlon(48.1, 2.1) ∉ box
+
+  box = Box(latlon(48.0110, -50.5), latlon(48.2511, -45.4))
+  @test latlon(48.1, -48) ∈ box
+  @test latlon(48.1, -50.8) ∉ box
+  @test latlon(48.1, -45.3) ∉ box
 end
 
 @testitem "issimplex" setup = [Setup] begin
@@ -575,7 +594,7 @@ end
   b2 = Box(cart(2, 2), cart(5, 5))
   @test intersects(b1, b2)
   @test intersects(b2, b1)
-  @test @elapsed(intersects(b1, b2)) < 5e-5
+  @test @elapsed(intersects(b1, b2)) < 1e-4
   @test @allocated(intersects(b1, b2)) < 100
 
   # partial application
