@@ -22,6 +22,6 @@ SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($r1, $r2, Sutherlan
 
 SUITE["discretization"] = BenchmarkGroup()
 
-m = discretize(Sphere(0, 0, 0), 1)
+m = discretize(Sphere((0, 0, 0), 1))
 
 SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($m)
