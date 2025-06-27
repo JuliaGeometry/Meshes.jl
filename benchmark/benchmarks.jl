@@ -1,7 +1,7 @@
 using BenchmarkTools
 using Meshes
 
-# auxiliary variables for tests
+# auxiliary variables
 pₒ = Point(0, 0)
 ps = rand(Point, 100)
 s = Sphere((0, 0), 1)
