@@ -19,6 +19,7 @@ tolerance of the length type of the segments.
 function bentleyottmann(segments; digits=_digits(segments))
   refₚ = first(segments)
   T = lentype(refₚ)
+  # get the coordinate reference system and manifold for stable point type
   M = manifold(refₚ)
   C = crs(refₚ)
   P = Point{M,C}
@@ -45,15 +46,17 @@ function bentleyottmann(segments; digits=_digits(segments))
   # additionally build the lookup table for segment indices
   for (i, (a, b)) in enumerate(segs)
     # add starting point and segment
-    if !isnothing(BinaryTrees.search(𝒬, a))
-      union!(BinaryTrees.value(BinaryTrees.search(𝒬, a))[1], U([(a, b)]))
+    aν = BinaryTrees.search(𝒬, a)
+    if !isnothing(aν)
+      union!(BinaryTrees.value(aν)[1], U([(a, b)]))
     else
       BinaryTrees.insert!(𝒬, a, (U([(a, b)]), U(), U()))
     end
 
     # add ending point and segment
-    if !isnothing(BinaryTrees.search(𝒬, b))
-      union!(BinaryTrees.value(BinaryTrees.search(𝒬, b))[2], U([(a, b)]))
+    bν = BinaryTrees.search(𝒬, b)
+    if !isnothing(bν)
+      union!(BinaryTrees.value(bν)[2], U([(a, b)]))
     else
       BinaryTrees.insert!(𝒬, b, (U(), U([(a, b)]), U()))
     end
@@ -103,7 +106,6 @@ function bentleyottmann(segments; digits=_digits(segments))
     end
 
     # add necessary points and segment indices to output
-    pround = coordround(p, digits=digits)
     if !isempty(bundle) || !isempty(ℰ)
       inds = Set{Int}()
       # for s in bundle# ∪ ℰₚ
@@ -114,10 +116,10 @@ function bentleyottmann(segments; digits=_digits(segments))
         push!(inds, lookup[s])
       end
       indᵥ = collect(inds)
-      if haskey(output, pround)
-        union!(output[pround], indᵥ)
+      if haskey(output, p)
+        union!(output[p], indᵥ)
       else
-        output[pround] = indᵥ
+        output[p] = indᵥ
       end
     end
   end
@@ -141,7 +143,6 @@ function _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p)
   for s in ℬₚ ∪ ℳₚ
     BinaryTrees.insert!(ℛ, _SweepSegment(s, sweepline))
   end
-  nothing
 end
 
 function _handlebottom!(bundle, ℛ, 𝒬, p, digits)
@@ -167,27 +168,24 @@ end
 # -----------------
 
 function _newevent!(𝒬, sweepline, bundle, p, s₁, s₂, digits)
-  ref = s₁[1]
-  M = manifold(ref)
-  C = crs(ref)
-  P = Point{M,C}
-  S = Tuple{P,P}
-  U = Set{S}
   intersection(Segment(s₁), Segment(s₂)) do I
     t = type(I)
     if t === Crossing || t === EdgeTouching
       i = coordround(get(I), digits=digits)
       if i ≥ p
-        if i ≈ p
+        if i ≈ p # if intersection point is the same as the sweepline point
           # this avoids repeatedly inserting the same intersection point
           push!(bundle, _SweepSegment(s₂, sweepline))
           push!(bundle, _SweepSegment(s₁, sweepline))
-        else
+        else # if intersection point is different from the sweepline point
           node = BinaryTrees.search(𝒬, i)
-          # insert new event into the event queue
-          if isnothing(node)
-            BinaryTrees.insert!(𝒬, i, (U(), U(), U([s₁, s₂])))
-          else
+
+          if isnothing(node) # insert new event into the event queue
+            S = typeof(s₁)
+            U = Set{S}
+            ν = (U(), U(), U([s₁, s₂]))
+            BinaryTrees.insert!(𝒬, i, ν)
+          else # union with existing event
             union!(BinaryTrees.value(node)[3], [s₁, s₂])
           end
         end
@@ -196,7 +194,7 @@ function _newevent!(𝒬, sweepline, bundle, p, s₁, s₂, digits)
   end
 end
 
-# compute rounding digits for FP precision
+# compute rounding digits for FP precision # current based on reasonable FP64
 function _digits(segments)
   s = first(segments)
   ℒ = lentype(s)
@@ -205,9 +203,7 @@ function _digits(segments)
 end
 
 # convenience function to get the segment from the node
-function _keyseg(segment)
-  _segment(BinaryTrees.key(segment))
-end
+_keyseg(segment) = _segment(BinaryTrees.key(segment))
 
 # ----------------
 # DATA STRUCTURES
@@ -222,17 +218,17 @@ _sweeppoint(sweepline::_SweepLine) = getfield(sweepline, :point)
 _sweepx(sweepline::_SweepLine) = CoordRefSystems.values(coords(_sweeppoint(sweepline)))[1]
 _sweepy(sweepline::_SweepLine) = CoordRefSystems.values(coords(_sweeppoint(sweepline)))[2]
 _sweepbounds(sweepline::_SweepLine) = getfield(sweepline, :ybounds)
-Base.isless(a::_SweepLine{P,T}, b::_SweepLine{P,T}) where {P<:Point,T} = _sweeppoint(a) < _sweeppoint(b)
 
 #= sweepline definition
-This somewhat complicated definition is used to
+This odd definition is used to
 handle intersections elegantly. It ensures that y coordinates
 of non vertical segments are always correct unless overlapping,
 vertical segments are always on top of the segments next to p,
 ending segments don't intersect,
 and all other segments are correctly ordered.
-=#
 
+Inspired by LEDA implementation, but modified for Julia
+=#
 function _sweepline(sweepline::_SweepLine)
   x = _sweepx(sweepline)
   y = _sweepy(sweepline)
@@ -240,8 +236,8 @@ function _sweepline(sweepline::_SweepLine)
   lower, upper = _sweepbounds(sweepline)
 
   p₁ = Point(x + ϵ, lower)
-  p₂ = Point(x + ϵ, y + ϵ)
-  p₃ = Point(x - ϵ, y + ϵ)
+  p₂ = Point(x + ϵ, y + 2ϵ)
+  p₃ = Point(x - ϵ, y + 2ϵ)
   p₄ = Point(x - ϵ, upper)
 
   ((p₁, p₂), (p₂, p₃), (p₃, p₄))
@@ -252,7 +248,7 @@ function _sweepintersect(seg::Tuple{P,P}, sweepline::_SweepLine{P,T}) where {P<:
   rope = _sweepline(sweepline)
   I = nothing
   # this loop checks for intersections between the segment and the sweepline
-  # Rope intersections are not type stable in this implementation, so this is a workaround
+  # Rope intersections are not type stable, so this is a simple workaround
   for piece in rope
     I = intersection(Segment(seg), Segment(piece)) do I
       t = type(I)
@@ -276,22 +272,21 @@ end
 # takes input segment and attaches where it intersects sweepline
 mutable struct _SweepSegment{P<:Point,T<:Number}
   const seg::Tuple{P,P}
-  const sweepline::Base.RefValue{_SweepLine{P,T}}
-  xintersect::T
-  latestpoint::P
+  const sweepline::_SweepLine{P,T}
+  xintersect::T #information about the intersection with the sweepline
+  latestpoint::P # latest point of the sweepline used to calculate the intersection
 end
 
 # constructor for _SweepSegment
 function _SweepSegment(seg::Tuple{P,P}, sweepline::_SweepLine{P,T}) where {P<:Point,T<:Number}
   y = _sweepintersect(seg, sweepline)
-  ref = Base.RefValue{_SweepLine{P,T}}(sweepline)
-  _SweepSegment{P,T}(seg, ref, y, _sweeppoint(sweepline))
+  _SweepSegment{P,T}(seg, sweepline, y, _sweeppoint(sweepline))
 end
 
 _segment(sweepsegment::_SweepSegment) = getfield(sweepsegment, :seg)
 _xintersect(sweepsegment::_SweepSegment) = getfield(sweepsegment, :xintersect)
-_sweepline(sweepsegment::_SweepSegment) = getfield(sweepsegment, :sweepline)[]
-_sweeppoint(sweepsegment::_SweepSegment) = _sweeppoint(getfield(sweepsegment, :sweepline)[])
+_sweepline(sweepsegment::_SweepSegment) = getfield(sweepsegment, :sweepline)
+_sweeppoint(sweepsegment::_SweepSegment) = _sweeppoint(getfield(sweepsegment, :sweepline))
 
 Base.:(==)(a::_SweepSegment, b::_SweepSegment) = _segment(a) == _segment(b)
 
@@ -302,10 +297,12 @@ function Base.isless(a::_SweepSegment{P,T}, b::_SweepSegment{P,T}) where {P<:Poi
     return false
   end
   # update to latest sweepline reference
-  p = max(_sweeppoint(a), _sweeppoint(b))
+  p = _sweeppoint(a)
+  a₁, _ = CoordRefSystems.values.(coords.(segₐ))
+  b₁, b₂ = CoordRefSystems.values.(coords.(segᵦ))
 
-  if p == segₐ[1]
-    s = _orientationplus(segᵦ[1], segᵦ[2], p; atol=ustrip(atol(T)))
+  if p == a₁
+    s = orient2(b₁, b₂, CoordRefSystems.values(coords(p)))
   else
     s = 0
   end
@@ -314,14 +311,10 @@ function Base.isless(a::_SweepSegment{P,T}, b::_SweepSegment{P,T}) where {P<:Poi
     return s < 0
   end
 
+  #* This is the largest performance bottleneck
   # compute intersection over sweepline
   ya = _xintersect(a)
   yb = _ycalc!(b)
-  # TODO This is the largest performance bottleneck
-  #= this is chosen because always calculating y is slow
-  but this setproperty is type unstable due to being
-  nested in the isless function for the BinaryTree comparator.
-  =#
 
   diff = ustrip(abs(ya - yb))
   tol = eps(T)
@@ -334,8 +327,8 @@ function Base.isless(a::_SweepSegment{P,T}, b::_SweepSegment{P,T}) where {P<:Poi
   end
 end
 
+# calculate y-coordinate of intersection with sweepline
 function _ycalc!(a::_SweepSegment{P,T}) where {P<:Point,T<:Number}
-  # calculate y-coordinate of intersection with sweepline
   sweepline = _sweepline(a)
   if a.latestpoint === _sweeppoint(sweepline)
     # if the latest point is the sweepline point, use the intersect
@@ -348,18 +341,7 @@ function _ycalc!(a::_SweepSegment{P,T}) where {P<:Point,T<:Number}
     a.latestpoint = _sweeppoint(sweepline)
     a.xintersect = y
   end
-end
-
-# function calculates the orientation while accounting for collinearity
-# Use a tolerance for collinearity and orientation
-function _orientationplus(A, B, C; atol=eps(eltype(A)))
-  o = iscollinear(A, B, C) ? 0 : (orientation(Ring(A, B, C)) == CCW ? 1 : -1)
-  # if o ≈ 0, say its collinear
-  if o == 0 || isapprox(ustrip(signarea(A, B, C)), 0; atol=atol)
-    0
-  else
-    o
-  end
+  y
 end
 
 # handles  the degenerate case of segments that are trivial

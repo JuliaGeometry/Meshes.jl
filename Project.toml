@@ -4,6 +4,7 @@ authors = ["Júlio Hoffimann and contributors"]
 version = "0.53.24"
 
 [deps]
+AdaptivePredicates = "35492f91-a3bd-45ad-95db-fcad7dcfedb7"
 Bessels = "0e736298-9ec6-45e8-9647-e4fc86a2fe38"
 BinaryTrees = "289e92be-c05a-437b-9e67-5b0c799891f8"
 CircularArrays = "7a955b69-7140-5f4e-a0ed-f168c5e2e749"
