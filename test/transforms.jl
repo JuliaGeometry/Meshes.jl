@@ -2146,11 +2146,14 @@ end
   @test nvertices(rpoly) == 4
   @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
 
-  repair = Repair(0)
-  @test sprint(show, repair) == "Repair(K: 0)"
-  @test sprint(show, MIME"text/plain"(), repair) == """
-  Repair transform
-  └─ K: 0"""
+  points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (1, 0), (2, 0), (1, 1), (2, 1)])
+  connec = connect.([(1, 2, 4, 3), (5, 6, 8, 7)], Quadrangle)
+  mesh = SimpleMesh(points, connec)
+  rmesh = mesh |> Repair(0)
+  @test nvertices(rmesh) == 6
+  @test nelements(rmesh) == 2
+  @test vertices(rmesh) == cart.([(0, 0), (1, 0), (0, 1), (1, 1), (2, 0), (2, 1)])
+  @test collect(topology(rmesh)) == connect.([(1, 2, 4, 3), (2, 5, 6, 4)], Quadrangle)
 end
 
 @testitem "Repair(1)" setup = [Setup] begin
@@ -2278,6 +2281,16 @@ end
   repair = Repair(11)
   rgset, cache = TB.apply(repair, gset)
   @test rgset == GeometrySet([repair(poly1), repair(poly2)])
+end
+
+@testitem "Repair IO" setup = [Setup] begin
+  for K in 0:12
+    repair = Repair(K)
+    @test sprint(show, repair) == "Repair(K: $K)"
+    @test sprint(show, MIME"text/plain"(), repair) == """
+    Repair transform
+    └─ K: $K"""
+  end
 end
 
 @testitem "Bridge" setup = [Setup] begin
