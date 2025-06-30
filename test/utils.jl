@@ -81,17 +81,19 @@ end
 end
 
 @testitem "bentleyottmann" setup = [Setup] begin
-  # basic check with a small number of segments
-  segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(1.5, 1), cart(2, 1)), (cart(1.51, 1.3), cart(2, 0.9))])
-  points, seginds = Meshes.bentleyottmann(segs)
-
-  @test length(points) == 7
-
+  # simple endpoint case
   segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(0, 2), cart(2, 0)), (cart(0, 1), cart(0.5, 1))])
   points, seginds = Meshes.bentleyottmann(segs)
   @test length(points) == 7
   @test length(seginds) == 7
 
+  # small number of segments, handling endpoints and precision
+  segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(1.5, 1), cart(2, 1)), (cart(1.51, 1.3), cart(2, 0.9))])
+  points, seginds = Meshes.bentleyottmann(segs)
+
+  @test length(points) == 7
+
+  # box case with one segment outside
   segs =
     Segment.([
       (cart(0, 0), cart(1.1, 1.1)),
@@ -111,6 +113,7 @@ end
   @test Set(seginds[inds[cart(0.5, 0.5)]]) == Set([1, 2])
   @test Set(seginds[inds[cart(1, 1)]]) == Set([1, 6, 5])
 
+  # multiple intersections, endpoints as intersections
   # in FP32, the outputs are correct, but spread over multiple points
   # off by 1e-7. All segments are still found
   segs =
@@ -150,6 +153,7 @@ end
     # Rotation by π in FP32 is not robust, skips test
     # technically the bentley-ottmann algorithm as implemented cant handle
     # infinitessimally off vertical segments with middle intersections.
+    # so we snap the segments to the nearest integer coordinates
     if θ isa Float32 && θ == T(π)
       θsegs = map(segs) do s
         a, b = vertices(s)
