@@ -50,8 +50,8 @@ function bentleyottmann(segments; digits=_digits(segments))
   # Initialize event queue and lookup table
   for (i, seg) in enumerate(segs)
     a, b = seg
-    _initstartpoints!(𝒬, a, b, U)
-    _initendpoints!(𝒬, a, b, U)
+    _addstartpoint!(𝒬, a, b, U)
+    _addendpoint!(𝒬, a, b, U)
     lookup[seg] = i
   end
 
@@ -221,7 +221,7 @@ end
 # updates existing events if needed
 
 # Add starting point and segment
-function _initstartpoints!(𝒬, a, b, U)
+function _addstartpoint!(𝒬, a, b, U)
   node = BinaryTrees.search(𝒬, a)
   if !isnothing(node)
     union!(BinaryTrees.value(node)[1], U([(a, b)]))
@@ -231,7 +231,7 @@ function _initstartpoints!(𝒬, a, b, U)
 end
 
 # Add ending point and segment
-function _initendpoints!(𝒬, a, b, U)
+function _addendpoint!(𝒬, a, b, U)
   node = BinaryTrees.search(𝒬, b)
   if !isnothing(node)
     union!(BinaryTrees.value(node)[2], U([(a, b)]))
