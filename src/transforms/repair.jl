@@ -40,7 +40,29 @@ Repair(K) = Repair{K}()
 
 apply(::Repair{0}, geom::Polytope) = unique(geom), nothing
 
-apply(::Repair{0}, mesh::Mesh) = error("not implemented")
+function apply(::Repair{0}, mesh::Mesh)
+  # retrieve vertices and connectivities
+  verts = vertices(mesh)
+  elems = elements(topology(mesh))
+
+  # remove duplicate vertices
+  uverts = unique(verts)
+  uindex = indexin(verts, uverts)
+
+  # update indices of connectivities
+  uelems = map(elems) do elem
+    newinds = map(i -> uindex[i], indices(elem))
+    connect(newinds, pltype(elem))
+  end
+
+  # remove duplicate connectivities
+  uconnec = unique(elem -> Set(indices(elem)), uelems)
+
+  # repaired mesh without duplicates
+  rmesh = SimpleMesh(uverts, uconnec)
+
+  rmesh, nothing
+end
 
 # --------------
 # OPERATION (1)
