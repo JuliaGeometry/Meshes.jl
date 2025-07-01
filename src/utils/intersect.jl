@@ -56,12 +56,11 @@ function bentleyottmann(segments; digits=_digits(segments))
   end
 
   # Initialize sweepline
-  lowest, _ = extrema(segs)
-  pmin, _ = lowest
+  pmin, _ = extrema(first.(segs))
   sweepline = _SweepLine{P,ℒ}(pmin, ybounds)
 
-  # Output dictionary
-  output = Dict{P,Vector{Int}}()
+  # Output dictionary (planar graph 𝐺)
+  𝐺 = Dict{P,Vector{Int}}()
 
   # Vector holding segments intersecting the current event point
   bundle = Vector{_SweepSegment{P,ℒ}}()
@@ -118,15 +117,15 @@ function bentleyottmann(segments; digits=_digits(segments))
 
       # Add indices to output
       indᵥ = collect(inds)
-      if haskey(output, p)
-        union!(output[p], indᵥ)
+      if haskey(𝐺, p)
+        union!(𝐺[p], indᵥ)
       else
-        output[p] = indᵥ
+        𝐺[p] = indᵥ
       end
     end
   end
 
-  (collect(keys(output)), collect(values(output)))
+  (collect(keys(𝐺)), collect(values(𝐺)))
 end
 
 # ------------------------------------
@@ -136,8 +135,8 @@ end
 function _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p)
   # remove segments that are no longer active or need to be updated
   for s in ℰₚ ∪ ℳₚ
-    segsweep = _SweepSegment(s, sweepline)
-    BinaryTrees.delete!(ℛ, segsweep)
+    sweepseg = _SweepSegment(s, sweepline)
+    BinaryTrees.delete!(ℛ, sweepseg)
   end
 
   # update sweepline
@@ -327,7 +326,7 @@ end
 mutable struct _SweepSegment{P<:Point,ℒ<:Number}
   const seg::Tuple{P,P}
   const sweepline::_SweepLine{P,ℒ}
-  xintersect::ℒ #information about the intersection with the sweepline
+  yintersect::ℒ #information about the intersection with the sweepline
   latestpoint::P # latest point of the sweepline used to calculate the intersection
 end
 
@@ -339,7 +338,7 @@ end
 
 # getters for _SweepSegment
 _segment(sweepsegment::_SweepSegment) = getfield(sweepsegment, :seg)
-_xintersect(sweepsegment::_SweepSegment) = getfield(sweepsegment, :xintersect)
+_yintersect(sweepsegment::_SweepSegment) = getfield(sweepsegment, :yintersect)
 _sweepline(sweepsegment::_SweepSegment) = getfield(sweepsegment, :sweepline)
 _sweeppoint(sweepsegment::_SweepSegment) = _sweeppoint(getfield(sweepsegment, :sweepline))
 
@@ -371,7 +370,7 @@ function Base.isless(a::_SweepSegment{P,ℒ}, b::_SweepSegment{P,ℒ}) where {P<
 
   #* Calculating the y intersect is the largest performance bottleneck
   # compute intersection over sweepline
-  ya = _xintersect(a) # a is always up-to-date
+  ya = _yintersect(a) # a is always up-to-date
   yb = _ycalc!(b)
 
   diff = ustrip(abs(ya - yb))
@@ -392,14 +391,14 @@ function _ycalc!(a::_SweepSegment{P,ℒ}) where {P<:Point,ℒ<:Number}
 
   # if the latest point is the sweepline point, use the precalculated intersection
   if a.latestpoint === _sweeppoint(sweepline)
-    y = a.xintersect
+    y = a.yintersect
   else
     # otherwise, calculate the intersection with the sweepline
     # and update
     y = convert(ℒ, _sweepintersect(_segment(a), sweepline))
 
     a.latestpoint = _sweeppoint(sweepline)
-    a.xintersect = y
+    a.yintersect = y
   end
   y
 end
