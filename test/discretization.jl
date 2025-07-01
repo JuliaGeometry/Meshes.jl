@@ -455,7 +455,7 @@ end
 
   poly = PolyArea(cart.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
   mesh = discretize(poly, RegularDiscretization(10))
-  @test mesh isa Meshes.SubGrid
+  @test mesh isa SubGrid
   grid = parent(mesh)
   @test grid isa CartesianGrid
   @test eltype(mesh) <: Quadrangle
@@ -463,7 +463,7 @@ end
 
   tri = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   mesh = discretize(tri, RegularDiscretization(10))
-  @test mesh isa Meshes.SubGrid
+  @test mesh isa SubGrid
   grid = parent(mesh)
   @test grid isa CartesianGrid
   @test eltype(mesh) <: Quadrangle
