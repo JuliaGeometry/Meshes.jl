@@ -359,7 +359,8 @@ function Base.isless(a::_SweepSegment{P,ℒ}, b::_SweepSegment{P,ℒ}) where {P<
 
   # If start of a is on the event point, use orientation to determine order relative to b
   if p == a₁
-    s = orient2(b₁, b₂, CoordRefSystems.values(coords(p)))
+    s = sign(signarea(b₁, b₂, CoordRefSystems.values(coords(p))))
+    # AdaptivePredicates.jl may be more robust (maybe needed in the future)
   else
     s = 0
   end

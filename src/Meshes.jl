@@ -30,7 +30,6 @@ using DelaunayTriangulation: get_polygon_points
 using StatsBase: AbstractWeights, Weights, quantile
 using TiledIteration: TileIterator
 using ScopedValues: ScopedValue
-using AdaptivePredicates: orient2, orient2fast
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
