@@ -304,9 +304,10 @@ export
 
   # meshes
   Mesh,
-  Grid,
   SimpleMesh,
   TransformedMesh,
+  Grid,
+  SubGrid,
   RegularGrid,
   CartesianGrid,
   RectilinearGrid,
