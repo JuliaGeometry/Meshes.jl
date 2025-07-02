@@ -171,6 +171,7 @@ end
   # inference test
   segs = facets(cartgrid(10, 10))
   @inferred Meshes.bentleyottmann(segs)
+end
 
 @testitem "isthreaded" setup = [Setup] begin
   if Threads.nthreads() > 1
