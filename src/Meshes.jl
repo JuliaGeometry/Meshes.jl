@@ -4,11 +4,11 @@
 
 module Meshes
 
-using BinaryTrees
 using CoordRefSystems
 using StaticArrays
 using SparseArrays
 using CircularArrays
+using BinaryTrees
 using LinearAlgebra
 using Unitful
 using Random
