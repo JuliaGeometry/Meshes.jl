@@ -50,6 +50,28 @@ function (𝒞::Coboundary{0,D,D,T})(ind::Integer) where {D,T<:GridTopology}
   ntuple(i -> inds[i], length(inds))
 end
 
+# general case with 0 < P < Q = D
+function (𝒞::Coboundary{P,D,D,T})(ind::Integer) where {P,D,T<:GridTopology}
+  topo = 𝒞.topology
+  𝒞₀ = Coboundary{0,D}(topo)
+  ∂₀ = Boundary{P,0}(topo)
+  ∂₁ = Boundary{D,P}(topo)
+
+  inds = Int[]
+  for v in ∂₀(ind) # vertices of edge
+    for e in 𝒞₀(v) # elements sharing vertex
+      if ind ∈ ∂₁(e) # edges of element
+        push!(inds, e)
+      end
+    end
+  end
+
+  # remove duplicates
+  unique!(inds)
+
+  ntuple(i -> inds[i], length(inds))
+end
+
 # -------------------
 # HALF-EDGE TOPOLOGY
 # -------------------
