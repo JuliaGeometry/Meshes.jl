@@ -33,7 +33,7 @@ rand(Segment, 5, crs=LatLon)
 For reproducibility purposes, a random number generator can be passed as the first argument in both methods:
 
 ```@example rand
-rng = MersenneTwister(123)
+rng = Xoshiro(123)
 rand(rng, Triangle)
 ```
 
