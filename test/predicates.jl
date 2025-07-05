@@ -410,6 +410,21 @@ end
   @test intersects(r, b)
   @test intersects(b, r)
 
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/809
+  t = Triangle(cart(-60.0, -35.0, 55.0), cart(-68.75, -33.43333, 54.90143), cart(-68.75, -35.0, 55.0))
+  b = Box(cart(-77.5, -35.0, 54.6073), cart(-68.75, -31.8914, 55.0))
+  @test intersects(t, b)
+  @test intersects(b, t)
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/810
+  b = Box(cart(-130, -18.78, 46.25), cart(-110.75, -5.05, 60.0))
+  s = Segment(cart(-70,-50,0), cart(-130, 0, 50))
+  r = Ray(cart(-70,-50,0), cart(-130, 0, 50)-cart(-70,-50,0))
+  @test !intersects(b, s)
+  @test !intersects(s, b)
+  @test !intersects(b, r)
+  @test !intersects(r, b)
+
   t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(1, 2, 0))
   r1 = Ray(cart(1, 1, 1), vector(0, 0, -1))
   r2 = Ray(cart(1, 1, 1), vector(0, 0, 1))

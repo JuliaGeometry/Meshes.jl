@@ -196,6 +196,7 @@ function _gjk!(::Val{3}, O, points)
       d = ABCᵀ
     elseif ispositive(ADBᵀ ⋅ AO)
       popat!(points, 2) # pop C
+      points[1], points[2] = points[2], points[1]
       d = ADBᵀ
     elseif ispositive(ACDᵀ ⋅ AO)
       popat!(points, 3) # pop B
