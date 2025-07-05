@@ -15,6 +15,10 @@ tolerance of the length type of the segments.
 
 * Bentley & Ottmann 1979. [Algorithms for reporting and counting
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
+
+### Note
+
+FP32 will likely be incorrect for precision-sensitive tasks. Rounding will help.
 """
 function bentleyottmann(segments; digits=_digits(segments))
   refₚ = first(segments)
@@ -102,7 +106,7 @@ function bentleyottmann(segments; digits=_digits(segments))
     end
 
     # Add intersection points and corresponding segment indices to the output
-    if !isempty(bundle) || !isempty(ℰ)
+    if length(bundle) > length(ℬ) # bundle only has ℬ unless p is an intersection
       inds = Set{Int}()
 
       # Start and crossing segments
@@ -219,25 +223,22 @@ end
 # Ensure each initial event point contains all needed segments
 # updates existing events if needed
 
-# Add starting point and segment
-function _addstartpoint!(𝒬, a, b, U)
-  node = BinaryTrees.search(𝒬, a)
+# Add a segment to the event queue at a given point and position (1=start, 2=end)
+function _addinitpoint!(𝒬, p, s, U, pos)
+  node = BinaryTrees.search(𝒬, p)
   if !isnothing(node)
-    union!(BinaryTrees.value(node)[1], U([(a, b)]))
+    union!(BinaryTrees.value(node)[pos], U([s]))
   else
-    BinaryTrees.insert!(𝒬, a, (U([(a, b)]), U(), U()))
+    vals = ntuple(i -> i == pos ? U([s]) : U(), 3) # (Starts, Ends, Crossings)
+    BinaryTrees.insert!(𝒬, p, vals)
   end
 end
 
+# Add starting point and segment
+_addstartpoint!(𝒬, a, b, U) = _addinitpoint!(𝒬, a, (a, b), U, 1)
+
 # Add ending point and segment
-function _addendpoint!(𝒬, a, b, U)
-  node = BinaryTrees.search(𝒬, b)
-  if !isnothing(node)
-    union!(BinaryTrees.value(node)[2], U([(a, b)]))
-  else
-    BinaryTrees.insert!(𝒬, b, (U(), U([(a, b)]), U()))
-  end
-end
+_addendpoint!(𝒬, a, b, U) = _addinitpoint!(𝒬, b, (a, b), U, 2)
 
 # Compute y bounds of the segment domain
 function _ybounds(::Type{T}, segs) where {T<:Number}
