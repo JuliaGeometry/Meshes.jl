@@ -84,4 +84,5 @@ end
   if Threads.nthreads() > 1
     @test Meshes.isthreaded()
   end
+  @test !Meshes.isthreaded(false)
 end
