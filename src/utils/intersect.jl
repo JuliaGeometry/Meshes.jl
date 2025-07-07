@@ -1,6 +1,7 @@
 # ------------------------------------------------------------------
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
+
 """
     bentleyottmann(segments; [digits])
 
@@ -21,37 +22,28 @@ tolerance of the length type of the segments.
 FP32 will likely be incorrect for precision-sensitive tasks. Rounding will help.
 """
 function bentleyottmann(segments; digits=_digits(segments))
-  refₚ = first(segments)
-  # Define number types
-  ℒ = lentype(refₚ)
-  T = numtype(ℒ)
-  # Define point type
-  P = typeof(minimum(refₚ))
-  # Define segment and set types for event handling
-  S = Tuple{P,P}           # Segment type as a tuple of points
-  U = Set{S}               # Set of segments, used to track segments at each event point
-
-  # orient and snap segments to grid
+  # orient segments and round coordinates
   segs = map(segments) do s
     a, b = coordround.(extrema(s), digits=digits)
     a > b ? (b, a) : (a, b)
   end
 
-  # Compute y bounds of the segment domain
-  ybounds = _ybounds(T, segs)
+  # retrieve relevant types
+  P = typeof(first(first(segs)))
+  ℒ = lentype(P)
+  S = Tuple{P,P}
+  U = Set{S}
 
-  #* Initialization
-
-  # Event queue: stores points with associated sets of starting, ending, and crossing segments (in that order)
+  # event queue: stores points with associated sets of starting, ending, and crossing segments
   𝒬 = BinaryTrees.AVLTree{P,Tuple{U,U,U}}()
 
-  # Status structure: stores segments currently intersecting the sweepline
+  # status structure: stores segments currently intersecting the sweepline
   ℛ = BinaryTrees.AVLTree{_SweepSegment{P,ℒ}}()
 
   # lookup table for segment indices
   lookup = Dict{S,Int}()
 
-  # Initialize event queue and lookup table
+  # initialize event queue and lookup table
   for (i, seg) in enumerate(segs)
     a, b = seg
     _addstartpoint!(𝒬, a, b, U)
@@ -59,30 +51,31 @@ function bentleyottmann(segments; digits=_digits(segments))
     lookup[seg] = i
   end
 
-  # Initialize sweepline
+  # initialize sweepline
   pmin, _ = extrema(first.(segs))
+  ybounds = _ybounds(segs)
   sweepline = _SweepLine{P,ℒ}(pmin, ybounds)
 
-  # Output dictionary (planar graph 𝐺)
+  # output dictionary (planar graph 𝐺)
   𝐺 = Dict{P,Vector{Int}}()
 
-  # Vector holding segments intersecting the current event point
+  # vector holding segments intersecting the current event point
   bundle = Vector{_SweepSegment{P,ℒ}}()
 
-  #* Sweep Line Algorithm
+  # sweep line algorithm
   while !BinaryTrees.isempty(𝒬)
     # current event point
-    node = BinaryTrees.minnode(𝒬)
-    p = BinaryTrees.key(node)
+    n = BinaryTrees.minnode(𝒬)
+    p = BinaryTrees.key(n)
     BinaryTrees.delete!(𝒬, p)
 
-    # Sets of beginning, ending, and crossing segments that include the current event point
-    ℬ, ℰ, ℳ = BinaryTrees.value(node)
+    # sets of beginning, ending, and crossing segments that include the current event point
+    ℬ, ℰ, ℳ = BinaryTrees.value(n)
 
-    # Crosses that arent endpoints (including them can lead to duplicates)
+    # crosses that aren't endpoints (including them can lead to duplicates)
     ℳₚ = setdiff(ℳ, ℰ)
 
-    # Handle status structure
+    # handle status structure
     _handlestatus!(ℛ, ℬ, ℳₚ, ℰ, sweepline, p)
 
     # build bundle of segments crossing the current event point
@@ -92,34 +85,32 @@ function bentleyottmann(segments; digits=_digits(segments))
     end
     sort!(bundle)
 
-    # Process bundled events
+    # process bundled events
     if isempty(bundle) # occurs at endpoints
-      # Check newly adjacent segments
+      # check newly adjacent segments
       sₗ, sᵣ = BinaryTrees.prevnext(ℛ, _SweepSegment(first(ℰ), sweepline))
       isnothing(sₗ) || isnothing(sᵣ) || _newevent!(𝒬, sweepline, bundle, p, _keyseg(sₗ), _keyseg(sᵣ), digits)
     else
-
       # handle bottom and top events
       BinaryTrees.isempty(ℛ) || _handlebottom!(bundle, ℛ, 𝒬, p, digits)
-
       BinaryTrees.isempty(ℛ) || _handletop!(bundle, ℛ, 𝒬, p, digits)
     end
 
-    # Add intersection points and corresponding segment indices to the output
+    # add intersection points and corresponding segment indices to the output
     if length(bundle) > length(ℬ) # bundle only has ℬ unless p is an intersection
       inds = Set{Int}()
 
-      # Start and crossing segments
+      # start and crossing segments
       for s in bundle
         push!(inds, lookup[_segment(s)])
       end
 
-      # Ending segments
+      # ending segments
       for s in ℰ
         push!(inds, lookup[s])
       end
 
-      # Add indices to output
+      # add indices to output
       indᵥ = collect(inds)
       if haskey(𝐺, p)
         union!(𝐺[p], indᵥ)
@@ -193,15 +184,15 @@ function _newevent!(𝒬, sweepline, bundle, p, s₁, s₂, digits)
           push!(bundle, _SweepSegment(s₁, sweepline))
         else
           # Otherwise, insert or update the event queue with the new intersection
-          node = BinaryTrees.search(𝒬, i)
-          if isnothing(node)
+          n = BinaryTrees.search(𝒬, i)
+          if isnothing(n)
             S = typeof(s₁) # Segment type
             U = Set{S} # Set of segments
             ν = (U(), U(), U([s₁, s₂])) # (start, end, crossing segments)
             BinaryTrees.insert!(𝒬, i, ν)
           else
             # If the node already exists, update the crossing segments
-            union!(BinaryTrees.value(node)[3], [s₁, s₂])
+            union!(BinaryTrees.value(n)[3], [s₁, s₂])
           end
         end
       end
@@ -241,7 +232,8 @@ _addstartpoint!(𝒬, a, b, U) = _addinitpoint!(𝒬, a, (a, b), U, 1)
 _addendpoint!(𝒬, a, b, U) = _addinitpoint!(𝒬, b, (a, b), U, 2)
 
 # Compute y bounds of the segment domain
-function _ybounds(::Type{T}, segs) where {T<:Number}
+function _ybounds(segs)
+  T = numtype(lentype(first(first(segs))))
   pmin, pmax = segs |> boundingbox |> Stretch(T(1.05)) |> extrema
   _, ymin = CoordRefSystems.values(coords(pmin))
   _, ymax = CoordRefSystems.values(coords(pmax))
