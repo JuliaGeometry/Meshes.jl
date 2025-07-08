@@ -76,6 +76,11 @@ function isright(c::CylinderWall)
   isparallelv && isparallelw
 end
 
+function hasintersectingplanes(c::CylinderWall)
+  x = c.bot ∩ c.top
+  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < c.radius
+end
+
 ==(c₁::CylinderWall, c₂::CylinderWall) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius
 
 Base.isapprox(c₁::CylinderWall, c₂::CylinderWall; atol=atol(lentype(c₁)), kwargs...) =
@@ -84,8 +89,3 @@ Base.isapprox(c₁::CylinderWall, c₂::CylinderWall; atol=atol(lentype(c₁)), 
   isapprox(c₁.radius, c₂.radius; atol, kwargs...)
 
 (c::CylinderWall)(φ, z) = Cylinder(bottom(c), top(c), radius(c))(1, φ, z)
-
-function hasintersectingplanes(c::CylinderWall)
-  x = c.bot ∩ c.top
-  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < c.radius
-end

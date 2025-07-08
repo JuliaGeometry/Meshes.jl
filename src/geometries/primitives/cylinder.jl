@@ -60,6 +60,8 @@ top(c::Cylinder) = c.top
 
 radius(c::Cylinder) = c.radius
 
+wall(c::Cylinder) = wall(boundary(c))
+
 axis(c::Cylinder) = axis(boundary(c))
 
 isright(c::Cylinder) = isright(boundary(c))
