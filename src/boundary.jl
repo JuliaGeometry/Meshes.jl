@@ -80,6 +80,10 @@ boundary(c::Cylinder) = CylinderSurface(bottom(c), top(c), radius(c))
 
 boundary(::CylinderSurface) = nothing
 
+function boundary(c::CylinderWall)
+  # TODO: return MultiCircle
+end
+
 boundary(c::Cone) = ConeSurface(base(c), apex(c))
 
 boundary(::ConeSurface) = nothing

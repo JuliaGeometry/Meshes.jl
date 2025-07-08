@@ -60,6 +60,8 @@ top(c::CylinderSurface) = c.top
 
 radius(c::CylinderSurface) = c.radius
 
+wall(c::CylinderSurface) = CylinderWall(c.bot, c.top, c.radius)
+
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
 function isright(c::CylinderSurface)

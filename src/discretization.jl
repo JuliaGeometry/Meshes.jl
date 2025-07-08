@@ -58,7 +58,10 @@ discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
 
 discretize(cyl::Cylinder) = discretize(cyl, RegularDiscretization(2, 50, 2))
 
+# TODO: fix method
 discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
+
+discretize(cylwall::CylinderWall) = discretize(cylwall, RegularDiscretization(50, 2))
 
 discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
 

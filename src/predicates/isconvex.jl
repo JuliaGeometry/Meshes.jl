@@ -50,6 +50,8 @@ isconvex(::Cylinder) = true
 
 isconvex(::CylinderSurface) = false
 
+isconvex(::CylinderWall) = false
+
 isconvex(::Frustum) = true
 
 isconvex(::Torus) = false
