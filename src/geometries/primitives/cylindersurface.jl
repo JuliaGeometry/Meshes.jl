@@ -54,11 +54,11 @@ end
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
-radius(c::CylinderSurface) = c.radius
-
 bottom(c::CylinderSurface) = c.bot
 
 top(c::CylinderSurface) = c.top
+
+radius(c::CylinderSurface) = c.radius
 
 axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
