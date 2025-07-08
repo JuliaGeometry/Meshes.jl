@@ -22,9 +22,9 @@ end
 
 paramdim(::Type{<:Cone}) = 3
 
-base(c::Cone) = base(boundary(c))
+base(c::Cone) = c.base
 
-apex(c::Cone) = apex(boundary(c))
+apex(c::Cone) = c.apex
 
 height(c::Cone) = norm(center(base(c)) - apex(c))
 

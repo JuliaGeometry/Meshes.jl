@@ -54,11 +54,11 @@ end
 
 paramdim(::Type{<:Cylinder}) = 3
 
-bottom(c::Cylinder) = bottom(boundary(c))
+bottom(c::Cylinder) = c.bot
 
-top(c::Cylinder) = top(boundary(c))
+top(c::Cylinder) = c.top
 
-radius(c::Cylinder) = radius(boundary(c))
+radius(c::Cylinder) = c.radius
 
 axis(c::Cylinder) = axis(boundary(c))
 
