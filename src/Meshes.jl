@@ -187,6 +187,7 @@ export
   plane,
   bottom,
   top,
+  wall,
   axis,
   base,
   apex,
