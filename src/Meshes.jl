@@ -167,6 +167,7 @@ export
   Circle,
   Cylinder,
   CylinderSurface,
+  CylinderWall,
   ParaboloidSurface,
   Cone,
   ConeSurface,
