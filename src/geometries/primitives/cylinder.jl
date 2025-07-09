@@ -60,19 +60,6 @@ top(c::Cylinder) = c.top
 
 radius(c::Cylinder) = c.radius
 
-wall(c::Cylinder) = wall(boundary(c))
-
-axis(c::Cylinder) = axis(boundary(c))
-
-isright(c::Cylinder) = isright(boundary(c))
-
-hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
-
-==(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) == boundary(c₂)
-
-Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
-
 function (c::Cylinder)(ρ, φ, z)
   ℒ = lentype(c)
   T = numtype(ℒ)
@@ -85,17 +72,40 @@ function (c::Cylinder)(ρ, φ, z)
   a = axis(c)
   d = a(T(1)) - a(T(0))
   h = norm(d)
-  o = b(T(0), T(0))
 
   # rotation to align z axis with cylinder axis
-  Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
+  R = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
+
+  # offset to translate cylinder to final position
+  o = to(centroid(c))
 
   # project a parametric segment between the top and bottom planes
   ρ′ = T(ρ) * r
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, zero(ℒ))))
-  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, h)))
-  l = Line(p₁, p₂) |> Affine(Q, to(o))
+  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, -h / 2)))
+  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, h / 2)))
+  l = Line(p₁, p₂) |> Affine(R, o)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
 end
+
+# ----------------------------------------------
+# forward methods to boundary (CylinderSurface)
+# ----------------------------------------------
+
+wall(c::Cylinder) = wall(boundary(c))
+
+axis(c::Cylinder) = axis(boundary(c))
+
+bottomdisk(c::Cylinder) = bottomdisk(boundary(c))
+
+topdisk(c::Cylinder) = topdisk(boundary(c))
+
+isright(c::Cylinder) = isright(boundary(c))
+
+hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
+
+==(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) == boundary(c₂)
+
+Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs...) =
+  isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)

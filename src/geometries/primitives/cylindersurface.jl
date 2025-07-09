@@ -60,6 +60,18 @@ top(c::CylinderSurface) = c.top
 
 radius(c::CylinderSurface) = c.radius
 
+function bottomdisk(c::CylinderSurface)
+  # TODO: implement bottomdisk
+end
+
+function topdisk(c::CylinderSurface)
+  # TODO: implement top disk
+end
+
+# ---------------------------------------
+# forward methods to wall (CylinderWall)
+# ---------------------------------------
+
 wall(c::CylinderSurface) = CylinderWall(c.bot, c.top, c.radius)
 
 axis(c::CylinderSurface) = axis(wall(c))
@@ -68,11 +80,7 @@ isright(c::CylinderSurface) = isright(wall(c))
 
 hasintersectingplanes(c::CylinderSurface) = hasintersectingplanes(wall(c))
 
-==(c₁::CylinderSurface, c₂::CylinderSurface) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius
+==(c₁::CylinderSurface, c₂::CylinderSurface) = wall(c₁) == wall(c₂)
 
 Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(c₁.bot, c₂.bot; atol, kwargs...) &&
-  isapprox(c₁.top, c₂.top; atol, kwargs...) &&
-  isapprox(c₁.radius, c₂.radius; atol, kwargs...)
-
-(c::CylinderSurface)(φ, z) = Cylinder(bottom(c), top(c), radius(c))(1, φ, z)
+  isapprox(wall(c₁), wall(c₂); atol, kwargs...)

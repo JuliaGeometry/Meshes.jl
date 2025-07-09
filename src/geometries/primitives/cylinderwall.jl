@@ -62,6 +62,10 @@ radius(c::CylinderWall) = c.radius
 
 axis(c::CylinderWall) = Line(c.bot(0, 0), c.top(0, 0))
 
+bottomcircle(c::CylinderWall) = boundary(bottomdisk(Cylinder(bottom(c), top(c), radius(c))))
+
+topcircle(c::CylinderWall) = boundary(topdisk(Cylinder(bottom(c), top(c), radius(c))))
+
 function isright(c::CylinderWall)
   ℒ = lentype(c)
   T = numtype(ℒ)
@@ -69,19 +73,17 @@ function isright(c::CylinderWall)
   # is aligned with plane normals
   a = axis(c)
   d = a(T(1)) - a(T(0))
-  v = normal(c.bot)
-  w = normal(c.top)
-  isparallelv = isapproxzero(norm(d × v))
-  isparallelw = isapproxzero(norm(d × w))
-  isparallelv && isparallelw
+  u = normal(bottom(c))
+  v = normal(top(c))
+  isapproxzero(norm(d × u)) && isapproxzero(norm(d × v))
 end
 
 function hasintersectingplanes(c::CylinderWall)
-  x = c.bot ∩ c.top
-  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < c.radius
+  x = bottom(c) ∩ top(c)
+  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < radius(c)
 end
 
-==(c₁::CylinderWall, c₂::CylinderWall) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius
+==(c₁::CylinderWall, c₂::CylinderWall) = bottom(c₁) == bottom(c₂) && top(c₁) == top(c₂) && radius(c₁) == radius(c₂)
 
 Base.isapprox(c₁::CylinderWall, c₂::CylinderWall; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(c₁.bot, c₂.bot; atol, kwargs...) &&
