@@ -7,12 +7,12 @@
 
 A recursive Bézier curve with control points `points`.
 See <https://en.wikipedia.org/wiki/Bézier_curve>.
-A point on the curve `b` can be evaluated by calling
-`b(t)` with `t` between `0` and `1`.
-The evaluation method defaults to DeCasteljau's algorithm
-for accurate evaluation. Horner's method, faster with a
-large number of points but less precise, can be used via
-`b(t, Horner())`.
+
+A point on the Bézier curve `b` can be evaluated by calling
+`b(t)` with `t` between `0` and `1`. The evaluation method
+defaults to DeCasteljau's algorithm for accurate evaluation.
+Horner's method, faster with a large number of points but
+less precise, can be used via `b(t, Horner())`.
 
 ## Examples
 
@@ -86,10 +86,10 @@ end
 # Horner's rule recursively reconstructs B from a sequence bᵢ
 # with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
 function (curve::BezierCurve)(t, ::Horner)
-  T = numtype(lentype(curve))
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
+  T = numtype(lentype(curve))
   cs = curve.controls
   t̄ = one(T) - t
   n = degree(curve)

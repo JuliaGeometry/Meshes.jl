@@ -27,6 +27,12 @@ function discretize(geometry::Geometry, method::RegularDiscretization)
   end
 end
 
+# box is trivial to discretize into a regular grid
+function discretize(box::Box, method::RegularDiscretization)
+  sz = fitdims(method.sizes, paramdim(box))
+  RegularGrid(extrema(box)..., dims=sz)
+end
+
 # triangle is parametrized with barycentric coordinates, so we can't rely on regular sampling
 discretize(triangle::Triangle, method::RegularDiscretization) = discretizewithinbox(triangle, method)
 
@@ -179,13 +185,4 @@ function _appendpoles(tg, d, ccw)
   push!(south, connect((s, swap(v, u)...)))
 
   SimpleTopology([trunk; north; south])
-end
-
-# --------------
-# SPECIAL CASES
-# --------------
-
-function discretize(box::Box, method::RegularDiscretization)
-  sz = fitdims(method.sizes, paramdim(box))
-  RegularGrid(extrema(box)..., dims=sz)
 end

@@ -32,10 +32,10 @@ Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kw
   isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
 
 function (c::ConeSurface)(φ, h)
-  T = numtype(lentype(c))
   if (φ < 0 || φ > 1) || (h < 0 || h > 1)
     throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
   end
+  T = numtype(lentype(c))
   a = c.apex
   b = c.base(one(T), φ)
   Segment(b, a)(h)

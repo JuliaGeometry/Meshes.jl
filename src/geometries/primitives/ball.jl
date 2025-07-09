@@ -37,10 +37,10 @@ Base.isapprox(b₁::Ball, b₂::Ball; atol=atol(lentype(b₁)), kwargs...) =
   isapprox(b₁.center, b₂.center; atol, kwargs...) && isapprox(b₁.radius, b₂.radius; atol, kwargs...)
 
 function (b::Ball{𝔼{2}})(ρ, φ)
-  T = numtype(lentype(b))
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
+  T = numtype(lentype(b))
   c = b.center
   r = b.radius
   ρ′ = T(ρ) * r

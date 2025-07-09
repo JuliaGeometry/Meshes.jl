@@ -53,10 +53,10 @@ Base.isapprox(c₁::Circle, c₂::Circle; atol=atol(lentype(c₁)), kwargs...) =
   isapprox(c₁.plane, c₂.plane; atol, kwargs...) && isapprox(c₁.radius, c₂.radius; atol, kwargs...)
 
 function (c::Circle)(φ)
-  T = numtype(lentype(c))
   if (φ < 0 || φ > 1)
     throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))
   end
+  T = numtype(lentype(c))
   r = c.radius
   l = r
   sφ, cφ = sincospi(2 * T(φ))
