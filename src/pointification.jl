@@ -37,8 +37,6 @@ pointify(t::Torus) = _rsample(t)
 
 pointify(c::CylinderSurface) = _rsample(c)
 
-pointify(c::CylinderWall) = _rsample(c)
-
 pointify(c::ConeSurface) = _rsample(c)
 
 pointify(p::PolyArea) = vertices(p)

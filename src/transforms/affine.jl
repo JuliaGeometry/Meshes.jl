@@ -77,8 +77,6 @@ applycoord(t::Affine, c::Cylinder) = TransformedGeometry(c, t)
 
 applycoord(t::Affine, c::CylinderSurface) = TransformedGeometry(c, t)
 
-applycoord(t::Affine, c::CylinderWall) = TransformedGeometry(c, t)
-
 applycoord(t::Affine, p::ParaboloidSurface) = TransformedGeometry(p, t)
 
 applycoord(t::Affine, tr::Torus) = TransformedGeometry(tr, t)

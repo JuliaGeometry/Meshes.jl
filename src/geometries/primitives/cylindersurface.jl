@@ -22,7 +22,7 @@ with `start` and `finish` end points.
 
 Finally, construct a right vertical circular cylinder surface with given `radius`.
 
-See also [`CylinderWall`](@ref) and [`Cylinder`](@ref).
+See also [`Cylinder`](@ref).
 """
 struct CylinderSurface{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
   bot::P
@@ -60,19 +60,31 @@ top(c::CylinderSurface) = c.top
 
 radius(c::CylinderSurface) = c.radius
 
-# ---------------------------------------
-# forward methods to wall (CylinderWall)
-# ---------------------------------------
+axis(c::CylinderSurface) = Line(bottom(c)(0, 0), top(c)(0, 0))
 
-wall(c::CylinderSurface) = CylinderWall(bottom(c), top(c), radius(c))
+function isright(c::CylinderSurface)
+  ℒ = lentype(c)
+  T = numtype(ℒ)
+  # cylinder is right if axis
+  # is aligned with plane normals
+  a = axis(c)
+  d = a(T(1)) - a(T(0))
+  u = normal(bottom(c))
+  v = normal(top(c))
+  isapproxzero(norm(d × u)) && isapproxzero(norm(d × v))
+end
 
-axis(c::CylinderSurface) = axis(wall(c))
+function hasintersectingplanes(c::CylinderSurface)
+  x = bottom(c) ∩ top(c)
+  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < radius(c)
+end
 
-isright(c::CylinderSurface) = isright(wall(c))
-
-hasintersectingplanes(c::CylinderSurface) = hasintersectingplanes(wall(c))
-
-==(c₁::CylinderSurface, c₂::CylinderSurface) = wall(c₁) == wall(c₂)
+==(c₁::CylinderSurface, c₂::CylinderSurface) =
+  bottom(c₁) == bottom(c₂) && top(c₁) == top(c₂) && radius(c₁) == radius(c₂)
 
 Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(wall(c₁), wall(c₂); atol, kwargs...)
+  isapprox(bottom(c₁), bottom(c₂); atol, kwargs...) &&
+  isapprox(top(c₁), top(c₂); atol, kwargs...) &&
+  isapprox(radius(c₁), radius(c₂); atol, kwargs...)
+
+(c::CylinderSurface)(φ, z) = Cylinder(bottom(c), top(c), radius(c))(1, φ, z)

@@ -111,7 +111,6 @@ Circle
 ```@docs
 Cylinder
 CylinderSurface
-CylinderWall
 ```
 
 ```@example primitives

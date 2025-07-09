@@ -68,8 +68,6 @@ applycoord(t::Scale, c::Cylinder) = TransformedGeometry(c, t)
 
 applycoord(t::Scale, c::CylinderSurface) = TransformedGeometry(c, t)
 
-applycoord(t::Scale, c::CylinderWall) = TransformedGeometry(c, t)
-
 applycoord(t::Scale, p::ParaboloidSurface) = TransformedGeometry(p, t)
 
 applycoord(t::Scale, tr::Torus) = TransformedGeometry(tr, t)

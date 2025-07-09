@@ -21,9 +21,7 @@ centroid(p::Plane) = p(0, 0)
 
 centroid(c::Cylinder) = centroid(boundary(c))
 
-centroid(c::CylinderSurface) = centroid(wall(c))
-
-function centroid(c::CylinderWall)
+function centroid(c::CylinderSurface)
   a = centroid(bottom(c))
   b = centroid(top(c))
   withcrs(c, (to(a) + to(b)) / 2)

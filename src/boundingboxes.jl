@@ -46,9 +46,7 @@ function boundingbox(s::Sphere)
   Box(c - r⃗, c + r⃗)
 end
 
-boundingbox(c::CylinderSurface) = boundingbox(wall(c))
-
-function boundingbox(c::CylinderWall)
+function boundingbox(c::CylinderSurface)
   us = (0, 1 / 4, 1 / 2, 3 / 4)
   vs = (0, 1 / 2, 1)
   ps = [c(u, v) for (u, v) in Iterators.product(us, vs)]

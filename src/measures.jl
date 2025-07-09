@@ -61,14 +61,6 @@ function measure(c::CylinderSurface)
   2 * (π * r) * (h + r)
 end
 
-function measure(c::CylinderWall)
-  t = top(c)
-  b = bottom(c)
-  r = radius(c)
-  h = norm(t(0, 0) - b(0, 0))
-  2 * (π * r) * h
-end
-
 function measure(p::ParaboloidSurface)
   T = numtype(lentype(p))
   r = radius(p)

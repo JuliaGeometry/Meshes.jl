@@ -22,7 +22,7 @@ with `start` and `finish` end points.
 
 Finally, construct a right vertical circular cylinder with given `radius`.
 
-See also [`CylinderSurface`](@ref) and [`CylinderWall`](@ref).
+See also [`CylinderSurface`](@ref).
 """
 struct Cylinder{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
   bot::P

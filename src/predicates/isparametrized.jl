@@ -41,9 +41,7 @@ isparametrized(::Type{<:Circle}) = true
 
 isparametrized(::Type{<:Cylinder}) = true
 
-isparametrized(::Type{<:CylinderSurface}) = false
-
-isparametrized(::Type{<:CylinderWall}) = true
+isparametrized(::Type{<:CylinderSurface}) = true
 
 isparametrized(::Type{<:Cone}) = true
 
