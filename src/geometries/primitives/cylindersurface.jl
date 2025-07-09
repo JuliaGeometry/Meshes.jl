@@ -64,7 +64,7 @@ radius(c::CylinderSurface) = c.radius
 # forward methods to wall (CylinderWall)
 # ---------------------------------------
 
-wall(c::CylinderSurface) = CylinderWall(c.bot, c.top, c.radius)
+wall(c::CylinderSurface) = CylinderWall(bottom(c), top(c), radius(c))
 
 axis(c::CylinderSurface) = axis(wall(c))
 
