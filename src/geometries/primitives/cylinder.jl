@@ -71,19 +71,18 @@ function (c::Cylinder)(ρ, φ, z)
   r = radius(c)
   a = axis(c)
   d = a(T(1)) - a(T(0))
-  h = norm(d)
 
   # rotation to align z axis with cylinder axis
   R = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), d)
 
   # offset to translate cylinder to final position
-  o = to(centroid(c))
+  o = to(b(T(0), T(0)))
 
   # project a parametric segment between the top and bottom planes
   ρ′ = T(ρ) * r
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, -h / 2)))
-  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, h / 2)))
+  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, zero(ℒ))))
+  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, norm(d))))
   l = Line(p₁, p₂) |> Affine(R, o)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
