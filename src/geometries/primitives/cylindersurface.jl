@@ -60,14 +60,6 @@ top(c::CylinderSurface) = c.top
 
 radius(c::CylinderSurface) = c.radius
 
-function bottomdisk(c::CylinderSurface)
-  # TODO: implement bottomdisk
-end
-
-function topdisk(c::CylinderSurface)
-  # TODO: implement top disk
-end
-
 # ---------------------------------------
 # forward methods to wall (CylinderWall)
 # ---------------------------------------

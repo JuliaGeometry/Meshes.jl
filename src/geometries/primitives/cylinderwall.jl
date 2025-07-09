@@ -60,11 +60,7 @@ top(c::CylinderWall) = c.top
 
 radius(c::CylinderWall) = c.radius
 
-axis(c::CylinderWall) = Line(c.bot(0, 0), c.top(0, 0))
-
-bottomcircle(c::CylinderWall) = boundary(bottomdisk(Cylinder(bottom(c), top(c), radius(c))))
-
-topcircle(c::CylinderWall) = boundary(topdisk(Cylinder(bottom(c), top(c), radius(c))))
+axis(c::CylinderWall) = Line(bottom(c)(0, 0), top(c)(0, 0))
 
 function isright(c::CylinderWall)
   ℒ = lentype(c)
