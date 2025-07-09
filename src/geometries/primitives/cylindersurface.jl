@@ -22,6 +22,8 @@ with `start` and `finish` end points.
 
 Finally, construct a right vertical circular cylinder surface with given `radius`.
 
+See <https://en.wikipedia.org/wiki/Cylinder>.
+
 See also [`Cylinder`](@ref).
 """
 struct CylinderSurface{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
