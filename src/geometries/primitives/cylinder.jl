@@ -92,8 +92,6 @@ end
 # forward methods to boundary (CylinderSurface)
 # ----------------------------------------------
 
-wall(c::Cylinder) = wall(boundary(c))
-
 axis(c::Cylinder) = axis(boundary(c))
 
 bottomdisk(c::Cylinder) = bottomdisk(boundary(c))
