@@ -94,10 +94,6 @@ end
 
 axis(c::Cylinder) = axis(boundary(c))
 
-bottomdisk(c::Cylinder) = bottomdisk(boundary(c))
-
-topdisk(c::Cylinder) = topdisk(boundary(c))
-
 isright(c::Cylinder) = isright(boundary(c))
 
 hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
