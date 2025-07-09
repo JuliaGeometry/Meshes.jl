@@ -61,11 +61,11 @@ top(c::Cylinder) = c.top
 radius(c::Cylinder) = c.radius
 
 function (c::Cylinder)(ρ, φ, z)
-  ℒ = lentype(c)
-  T = numtype(ℒ)
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
   end
+  ℒ = lentype(c)
+  T = numtype(ℒ)
   t = top(c)
   b = bottom(c)
   r = radius(c)

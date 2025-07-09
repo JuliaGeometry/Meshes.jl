@@ -62,11 +62,9 @@ radius(c::CylinderSurface) = c.radius
 
 axis(c::CylinderSurface) = Line(bottom(c)(0, 0), top(c)(0, 0))
 
+# cylinder is right if axis is aligned with plane normals
 function isright(c::CylinderSurface)
-  ℒ = lentype(c)
-  T = numtype(ℒ)
-  # cylinder is right if axis
-  # is aligned with plane normals
+  T = numtype(lentype(c))
   a = axis(c)
   d = a(T(1)) - a(T(0))
   u = normal(bottom(c))
@@ -75,8 +73,8 @@ function isright(c::CylinderSurface)
 end
 
 function hasintersectingplanes(c::CylinderSurface)
-  x = bottom(c) ∩ top(c)
-  !isnothing(x) && evaluate(Euclidean(), axis(c), x) < radius(c)
+  l = bottom(c) ∩ top(c)
+  !isnothing(l) && evaluate(Euclidean(), axis(c), l) < radius(c)
 end
 
 ==(c₁::CylinderSurface, c₂::CylinderSurface) =
