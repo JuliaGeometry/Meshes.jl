@@ -140,74 +140,68 @@ end
 # 5. EdgeCrossing - middle of ray intersects edge of triangle
 # 6. CornerCrossing - middle of ray intersects corner of triangle
 #
-# Möller, T. & Trumbore, B., 1997.
-# (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
+# The implementation follows the notation of the non-culling branch of
+# Möller, T. & Trumbore, B., 1997 (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
 function intersection(f, ray::Ray, tri::Triangle)
-  vs = vertices(tri)
-  o = ray(0)
-  d = ray(1) - ray(0)
+  O = ray(0)
+  D = ray(1) - ray(0)
+  V = vertices(tri)
 
-  e₁ = vs[3] - vs[1]
-  e₂ = vs[2] - vs[1]
-  p = d × e₂
-  det = e₁ ⋅ p
+  E₁ = V[2] - V[1]
+  E₂ = V[3] - V[1]
+  P = D × E₂
 
-  # keep det > 0, modify T accordingly
-  detatol = atol(det)
-  if det > detatol
-    τ = o - vs[1]
-  else
-    τ = vs[1] - o
-    det = -det
-  end
+  det = E₁ ⋅ P
 
-  if det < detatol
-    # This ray is parallel to the plane of the triangle.
+  if abs(det) < atol(det)
+    # ray is parallel to the plane of the triangle
     return @IT NotIntersecting nothing f
   end
+
+  det⁻¹ = inv(det)
+
+  T = O - V[1]
 
   # calculate u parameter and test bounds
-  u = τ ⋅ p
-  if u < -atol(u) || u > det
+  u = (T ⋅ P) * det⁻¹
+  if u < zero(u) || u > one(u)
     return @IT NotIntersecting nothing f
   end
 
-  q = τ × e₁
+  Q = T × E₁
 
   # calculate v parameter and test bounds
-  v = d ⋅ q
-  if v < -atol(v) || u + v > det
+  v = (D ⋅ Q) * det⁻¹
+  if v < zero(v) || u + v > one(u)
     return @IT NotIntersecting nothing f
   end
 
-  λ = (e₂ ⋅ q) * inv(det)
-
-  if λ < -atol(λ)
+  # calculate t parameter and test bounds
+  t = (E₂ ⋅ Q) * det⁻¹
+  if t < zero(t)
     return @IT NotIntersecting nothing f
   end
 
-  # assemble barycentric weights
-  w = (u, v, det - u - v)
+  # calculate barycentric coordinates
+  w = (u, v, one(u) - u - v)
 
-  if any(isapprox(o), vs)
-    return @IT CornerTouching ray(λ) f
-  elseif isapproxzero(λ)
-    if all(x -> x > zero(x), w)
-      return @IT Touching ray(λ) f
+  if any(isapprox(O), V)
+    return @IT CornerTouching ray(t) f
+  elseif isapproxzero(t)
+    if all(ispositive, w)
+      return @IT Touching ray(t) f
     else
-      return @IT EdgeTouching ray(λ) f
+      return @IT EdgeTouching ray(t) f
     end
   end
 
   if count(isapproxzero, w) == 1
-    return @IT EdgeCrossing ray(λ) f
-  elseif count(Base.Fix2(isapproxequal, det), w) == 1
-    return @IT CornerCrossing ray(λ) f
+    return @IT EdgeCrossing ray(t) f
+  elseif count(isapproxone, w) == 1
+    return @IT CornerCrossing ray(t) f
   end
 
-  λ = clamp(λ, zero(λ), typemax(λ))
-
-  return @IT Crossing ray(λ) f
+  return @IT Crossing ray(t) f
 end
 
 intersection(f, ray::Ray, p::Polygon) = intersection(f, GeometrySet([ray]), simplexify(p))

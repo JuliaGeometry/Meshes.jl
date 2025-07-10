@@ -1008,7 +1008,7 @@ end
   r = Ray(cart(0.2, 0.2, 0.0), vector(0.0, 0.0, -1.0))
   @test intersection(r, t) |> type == Touching
   @test r ∩ t == cart(0.2, 0.2, 0.0)
-  # Special case: the direction vector is not length enough to cross triangle
+  # Special case: the direction vector is not long enough to cross triangle
   r = Ray(cart(0.2, 0.2, 1.0), vector(0.0, 0.0, -0.00001))
   @test intersection(r, t) |> type == Crossing
   if T === Float64
