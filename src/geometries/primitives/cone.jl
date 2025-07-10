@@ -26,9 +26,9 @@ base(c::Cone) = c.base
 
 apex(c::Cone) = c.apex
 
-height(c::Cone) = norm(center(base(c)) - apex(c))
+height(c::Cone) = height(boundary(c))
 
-halfangle(c::Cone) = atan(radius(base(c)), height(c))
+halfangle(c::Cone) = halfangle(boundary(c))
 
 ==(c₁::Cone, c₂::Cone) = boundary(c₁) == boundary(c₂)
 
@@ -39,7 +39,7 @@ function (c::Cone)(r, φ, h)
   if (r < 0 || r > 1) || (φ < 0 || φ > 1) || (h < 0 || h > 1)
     throw(DomainError((r, φ, h), "c(r, φ, h) is not defined for r, φ, h outside [0, 1]³."))
   end
-  a = c.apex
-  b = c.base(r, φ)
+  b = base(c)(r, φ)
+  a = apex(c)
   Segment(b, a)(h)
 end

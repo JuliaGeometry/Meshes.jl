@@ -26,17 +26,13 @@ base(c::ConeSurface) = c.base
 
 apex(c::ConeSurface) = c.apex
 
-==(c₁::ConeSurface, c₂::ConeSurface) = c₁.base == c₂.base && c₁.apex == c₂.apex
+height(c::ConeSurface) = norm(center(base(c)) - apex(c))
+
+halfangle(c::ConeSurface) = atan(radius(base(c)), height(c))
+
+==(c₁::ConeSurface, c₂::ConeSurface) = base(c₁) == base(c₂) && apex(c₁) == apex(c₂)
 
 Base.isapprox(c₁::ConeSurface, c₂::ConeSurface; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(c₁.base, c₂.base; atol, kwargs...) && isapprox(c₁.apex, c₂.apex; atol, kwargs...)
+  isapprox(base(c₁), base(c₂); atol, kwargs...) && isapprox(apex(c₁), apex(c₂); atol, kwargs...)
 
-function (c::ConeSurface)(φ, h)
-  if (φ < 0 || φ > 1) || (h < 0 || h > 1)
-    throw(DomainError((φ, h), "c(φ, h) is not defined for φ, h outside [0, 1]²."))
-  end
-  T = numtype(lentype(c))
-  a = c.apex
-  b = c.base(one(T), φ)
-  Segment(b, a)(h)
-end
+(c::ConeSurface)(φ, h) = Cone(base(c), apex(c))(1, φ, h)

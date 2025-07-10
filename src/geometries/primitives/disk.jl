@@ -34,10 +34,10 @@ Base.isapprox(d₁::Disk, d₂::Disk; atol=atol(lentype(d₁)), kwargs...) =
   isapprox(d₁.plane, d₂.plane; atol, kwargs...) && isapprox(d₁.radius, d₂.radius; atol, kwargs...)
 
 function (d::Disk)(ρ, φ)
-  T = numtype(lentype(d))
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
+  T = numtype(lentype(d))
   r = d.radius
   l = T(ρ) * r
   sφ, cφ = sincospi(2 * T(φ))
