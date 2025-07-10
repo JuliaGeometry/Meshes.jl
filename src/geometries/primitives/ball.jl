@@ -50,10 +50,10 @@ function (b::Ball{𝔼{2}})(ρ, φ)
 end
 
 function (b::Ball{𝔼{3}})(ρ, θ, φ)
-  T = numtype(lentype(b))
   if (ρ < 0 || ρ > 1) || (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((ρ, θ, φ), "b(ρ, θ, φ) is not defined for ρ, θ, φ outside [0, 1]³."))
   end
+  T = numtype(lentype(b))
   c = b.center
   r = b.radius
   ρ′ = T(ρ) * r

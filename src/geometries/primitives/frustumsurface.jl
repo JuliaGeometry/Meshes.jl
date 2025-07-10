@@ -36,35 +36,9 @@ height(f::FrustumSurface) = norm(center(bottom(f)) - center(top(f)))
 
 axis(f::FrustumSurface) = Line(center(bottom(f)), center(top(f)))
 
-==(f₁::FrustumSurface, f₂::FrustumSurface) = f₁.bot == f₂.bot && f₁.top == f₂.top
+==(f₁::FrustumSurface, f₂::FrustumSurface) = bottom(f₁) == bottom(f₂) && top(f₁) == top(f₂)
 
 Base.isapprox(f₁::FrustumSurface, f₂::FrustumSurface; atol=atol(lentype(f₁)), kwargs...) =
-  isapprox(f₁.bot, f₂.bot; atol, kwargs...) && isapprox(f₁.top, f₂.top; atol, kwargs...)
+  isapprox(bottom(f₁), bottom(f₂); atol, kwargs...) && isapprox(top(f₁), top(f₂); atol, kwargs...)
 
-function (f::FrustumSurface)(φ, z)
-  ℒ = lentype(f)
-  T = numtype(ℒ)
-  if (φ < 0 || φ > 1) || (z < 0 || z > 1)
-    throw(DomainError((φ, z), "f(φ, z) is not defined for φ, z outside [0, 1]²."))
-  end
-  rb = radius(bottom(f))
-  rt = radius(top(f))
-  a = axis(f)
-  d = a(1) - a(0)
-  l = norm(d)
-
-  # rotation to align z axis with cylinder axis
-  Q = urotbetween(d, Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)))
-
-  # scale coordinates
-  φₛ = 2T(π) * φ
-  zₛ = z * l
-
-  # local coordinates, that will be transformed with rotation and position of the FrustumSurface
-  x = cos(φₛ) * (rb * (l - zₛ) + rt * zₛ) / l
-  y = sin(φₛ) * (rb * (l - zₛ) + rt * zₛ) / l
-  z = zₛ
-  p = Vec(x, y, z)
-
-  center(bottom(f)) + Q' * p
-end
+(f::FrustumSurface)(φ, z) = Frustum(bottom(f), top(f))(1, φ, z)

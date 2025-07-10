@@ -62,6 +62,17 @@ top(c::Cylinder) = c.top
 
 radius(c::Cylinder) = c.radius
 
+axis(c::Cylinder) = axis(boundary(c))
+
+isright(c::Cylinder) = isright(boundary(c))
+
+hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
+
+==(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) == boundary(c₂)
+
+Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs...) =
+  isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
+
 function (c::Cylinder)(ρ, φ, z)
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
     throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
@@ -89,18 +100,3 @@ function (c::Cylinder)(ρ, φ, z)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))
 end
-
-# ----------------------------------------------
-# forward methods to boundary (CylinderSurface)
-# ----------------------------------------------
-
-axis(c::Cylinder) = axis(boundary(c))
-
-isright(c::Cylinder) = isright(boundary(c))
-
-hasintersectingplanes(c::Cylinder) = hasintersectingplanes(boundary(c))
-
-==(c₁::Cylinder, c₂::Cylinder) = boundary(c₁) == boundary(c₂)
-
-Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)

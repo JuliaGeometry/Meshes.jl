@@ -43,24 +43,13 @@ paramdim(::Type{<:Circle}) = 1
 
 plane(c::Circle) = c.plane
 
-center(c::Circle) = c.plane(0, 0)
-
 radius(c::Circle) = c.radius
 
-==(c₁::Circle, c₂::Circle) = c₁.plane == c₂.plane && c₁.radius == c₂.radius
+center(c::Circle) = plane(c)(0, 0)
+
+==(c₁::Circle, c₂::Circle) = plane(c₁) == plane(c₂) && radius(c₁) == radius(c₂)
 
 Base.isapprox(c₁::Circle, c₂::Circle; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(c₁.plane, c₂.plane; atol, kwargs...) && isapprox(c₁.radius, c₂.radius; atol, kwargs...)
+  isapprox(plane(c₁), plane(c₂); atol, kwargs...) && isapprox(radius(c₁), radius(c₂); atol, kwargs...)
 
-function (c::Circle)(φ)
-  if (φ < 0 || φ > 1)
-    throw(DomainError(φ, "c(φ) is not defined for φ outside [0, 1]."))
-  end
-  T = numtype(lentype(c))
-  r = c.radius
-  l = r
-  sφ, cφ = sincospi(2 * T(φ))
-  u = ustrip(l * cφ)
-  v = ustrip(l * sφ)
-  c.plane(u, v)
-end
+(c::Circle)(φ) = Disk(plane(c), radius(c))(1, φ)
