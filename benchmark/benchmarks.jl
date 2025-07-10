@@ -2,14 +2,16 @@ using BenchmarkTools
 using Meshes
 
 # auxiliary variables
-pₒ = Point(0, 0)
-ps = rand(Point, 100)
-s = Sphere((0, 0), 1)
-r₁ = Ring([s(t) for t in 0.1:0.1:1.0])
-r₂ = Ring([s(t) + Vec(1, 0) for t in 0.1:0.1:1.0])
-rₛ = Ring([s(t) for t in range(0.1, 1.0, length=5)])
-rₗ = Ring([s(t) for t in range(0.1, 1.0, length=1500)])
-m = discretize(Sphere((0, 0, 0), 1))
+point1 = Point(0, 0)
+points = rand(Point, 100)
+sphere = Sphere((0, 0), 1)
+ring1 = Ring([sphere(t) for t in 0.1:0.1:1.0])
+ring2 = Ring([sphere(t) + Vec(1, 0) for t in 0.1:0.1:1.0])
+ring3 = Ring([sphere(t) for t in range(0.1, 1.0, length=5)])
+ring4 = Ring([sphere(t) for t in range(0.1, 1.0, length=1500)])
+mesh = discretize(Sphere((0, 0, 0), 1))
+ray = Ray((-1, -1, -1), (0, 0, 1))
+triangle = Triangle((0, 0, 0), (1, 0, 0), (0, 1, 0))
 
 # initialize benchmark suite
 const SUITE = BenchmarkGroup()
@@ -20,7 +22,7 @@ const SUITE = BenchmarkGroup()
 
 SUITE["clipping"] = BenchmarkGroup()
 
-SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($r₁, $r₂, SutherlandHodgmanClipping())
+SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($ring1, $ring2, SutherlandHodgmanClipping())
 
 # ---------------
 # DISCRETIZATION
@@ -28,7 +30,7 @@ SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($r₁, $r₂, Suthe
 
 SUITE["discretization"] = BenchmarkGroup()
 
-SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($m)
+SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($mesh)
 
 # --------
 # WINDING
@@ -36,7 +38,7 @@ SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($m)
 
 SUITE["winding"] = BenchmarkGroup()
 
-SUITE["winding"]["mesh"] = @benchmarkable winding($ps, $m)
+SUITE["winding"]["mesh"] = @benchmarkable winding($points, $mesh)
 
 # -------
 # SIDEOF
@@ -44,5 +46,13 @@ SUITE["winding"]["mesh"] = @benchmarkable winding($ps, $m)
 
 SUITE["sideof"] = BenchmarkGroup()
 
-SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($pₒ, $rₛ)
-SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($pₒ, $rₗ)
+SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point1, $ring3)
+SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point1, $ring4)
+
+# -------------
+# INTERSECTION
+# -------------
+
+SUITE["intersection"] = BenchmarkGroup()
+
+SUITE["intersection"]["ray-triangle"] = @benchmarkable intersection($ray, $triangle)
