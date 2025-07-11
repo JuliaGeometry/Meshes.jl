@@ -3,7 +3,7 @@
   𝒜 = typeof(zero(ℳ)^2)
   𝒱 = typeof(zero(ℳ)^3)
 
-  @test atol(T) == eps(T) ^ (3 // 4)
+  @test atol(T) == eps(T)^(3 // 4)
   @test atol(ℒ) == atol(T) * u"m"
   @test atol(𝒜) == atol(T)^2 * u"m^2"
   @test atol(𝒱) == atol(T)^3 * u"m^3"
