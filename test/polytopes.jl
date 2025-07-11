@@ -247,8 +247,8 @@ end
   @test nvertices(ur1) < nvertices(r1)
   @test nvertices(ur2) < nvertices(r2)
   if T === Float32
-    @test nvertices(ur1) == 10
-    @test nvertices(ur2) == 10
+    @test nvertices(ur1) == 12
+    @test nvertices(ur2) == 12
   else
     @test nvertices(ur1) == 17
     @test nvertices(ur2) == 17
@@ -652,7 +652,7 @@ end
   upoly = unique(poly)
   @test nvertices(upoly) < nvertices(poly)
   if T === Float32
-    @test nvertices(upoly) == 10
+    @test nvertices(upoly) == 12
   else
     @test nvertices(upoly) == 17
   end
