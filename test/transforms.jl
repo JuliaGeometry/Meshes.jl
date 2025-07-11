@@ -2233,7 +2233,7 @@ end
   @test nvertices(rpoly) == nvertices(poly)
   @test length(first(rings(rpoly))) > length(first(rings(poly)))
   opoly = TB.revert(repair, rpoly, cache)
-  @test opoly == poly
+  @test opoly ≈ poly
 end
 
 @testitem "Repair(11)" setup = [Setup] begin
