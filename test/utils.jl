@@ -81,15 +81,25 @@ end
 end
 
 @testitem "bentleyottmann" setup = [Setup] begin
+  # helper to sort points and seginds by point coordinates
+  function sortout(points, seginds)
+    idxs = sortperm(points)
+    sorted_points = points[idxs]
+    sorted_seginds = seginds[idxs]
+    (sorted_points, sorted_seginds)
+  end
+
   # simple endpoint case
   segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(0, 2), cart(2, 0)), (cart(0, 1), cart(0.5, 1))])
   points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = sortout(points, seginds)
   @test length(points) == 1
   @test length(seginds) == 1
 
   # small number of segments, handling endpoints and precision
   segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(1.5, 1), cart(2, 1)), (cart(1.51, 1.3), cart(2, 0.9))])
   points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = sortout(points, seginds)
   @test length(points) == 1
 
   # box case with one segment outside
@@ -103,6 +113,8 @@ end
       (cart(1, 0), cart(1, 1))
     ])
   points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = sortout(points, seginds)
+
   @test length(points) == 2
   @test length(seginds) == 2
   @test Set(seginds[1]) == Set([1, 2])
@@ -122,14 +134,15 @@ end
         (cart(10, 3), cart(10, 5))
       ])
     points, seginds = Meshes.bentleyottmann(segs)
+    points, seginds = sortout(points, seginds)
     @test length(points) == 4
     @test length(seginds) == 4
-    @test points[1] ≈ cart(9, 4.8)
-    @test points[2] ≈ cart(10, 4)
-    @test Set(seginds[1]) == Set([4, 2])
-    @test Set(seginds[2]) == Set([4, 5, 6, 7, 8])
-    @test Set(seginds[3]) == Set([2, 3])
-    @test Set(seginds[4]) == Set([4, 3])
+    @test points[3] ≈ cart(9, 4.8)
+    @test points[4] ≈ cart(10, 4)
+    @test Set(seginds[1]) == Set([4, 3])
+    @test Set(seginds[2]) == Set([2, 3])
+    @test Set(seginds[3]) == Set([4, 2])
+    @test Set(seginds[4]) == Set([4, 5, 6, 7, 8])
   end
 
   # finds all intersections in a grid
