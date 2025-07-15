@@ -16,42 +16,33 @@ tolerance of the length type of the segments.
 
 * Bentley & Ottmann 1979. [Algorithms for reporting and counting
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
-
-### Note
-
-FP32 will likely be incorrect for precision-sensitive tasks. Rounding segments beforehand will help.
 """
 function bentleyottmann(segments; digits=_digits(segments))
-  #= quick reference guide to variable naming groups
-  s: ̲SweepSegment, tracks segment intersections with the sweepline
-  ns: AVLNode{SweepSegment}, ̲Node ̲SweepSegment
-  seg: Tuple{Point,Point} representing a segment
-  a, b: Points of segment
-  p: Point
-  =#
-  # retrieve relevant types
-  P = typeof(first(vertices(first(segments))))
-  ℒ = lentype(P)
-  S = Tuple{P,P}
-  U = Set{S}
-
   # orient segments and round coordinates
   segs = map(segments) do seg
     a, b = coordround.(extrema(seg), digits=digits)
     a > b ? (b, a) : (a, b)
   end
 
+  # retrieve relevant types
+  P = typeof(first(first(segs)))
+  ℒ = lentype(P)
+  S = Tuple{P,P}
+  U = Set{S}
+
   # event queue: stores points with associated sets of starting, ending, and crossing segments
   𝒬 = BinaryTrees.AVLTree{P,Tuple{U,U,U}}()
+
   # status structure: stores segments currently intersecting the sweepline
   ℛ = BinaryTrees.AVLTree{SweepSegment{P,ℒ}}()
-  # lookup table for segment indices
+
+  # lookup table mapping segments to their linear indices
   lookup = Dict{S,Int}()
 
   # add points and segments to event queue and lookup table
   for (i, seg) in enumerate(segs)
-    _addstartpoint!(𝒬, seg)
-    _addendpoint!(𝒬, seg)
+    _addpoint!(𝒬, seg[1], [seg], 1)
+    _addpoint!(𝒬, seg[2], [seg], 2)
     lookup[seg] = i
   end
 
@@ -201,19 +192,17 @@ function _addpoint!(𝒬, p, segs, pos)
   end
 end
 
-# add start point and segment
-_addstartpoint!(𝒬, seg) = _addpoint!(𝒬, seg[1], [seg], 1)
-
-# add end point and segment
-_addendpoint!(𝒬, seg) = _addpoint!(𝒬, seg[2], [seg], 2)
-
-# compute y bounds of the segment domain
+# compute y bounds of the segments
 function _ybounds(segs)
-  T = numtype(lentype(first(first(segs))))
-  pmin, pmax = segs |> boundingbox |> Stretch(T(1.05)) |> extrema
-  _, ymin = CoordRefSystems.values(coords(pmin))
-  _, ymax = CoordRefSystems.values(coords(pmax))
-  (ymin, ymax)
+  # compute bounding box
+  bbox = boundingbox(segs)
+
+  # stretch bounding bbox
+  T = numtype(lentype(bbox))
+  sbox = bbox |> Stretch(T(1.05)) 
+
+  # extract y coordinate values
+  map(p -> coords(p).y, extrema(sbox))
 end
 
 # convenience function to get the segment from a our AVLNode{SweepSegment} structure
