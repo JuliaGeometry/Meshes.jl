@@ -199,7 +199,7 @@ function _ybounds(segs)
 
   # stretch bounding bbox
   T = numtype(lentype(bbox))
-  sbox = bbox |> Stretch(T(1.05)) 
+  sbox = bbox |> Stretch(T(1.05))
 
   # extract y coordinate values
   map(p -> coords(p).y, extrema(sbox))
