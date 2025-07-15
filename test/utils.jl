@@ -82,24 +82,21 @@ end
 
 @testitem "bentleyottmann" setup = [Setup] begin
   # helper to sort points and seginds by point coordinates
-  function sortout(points, seginds)
-    idxs = sortperm(points)
-    sorted_points = points[idxs]
-    sorted_seginds = seginds[idxs]
-    (sorted_points, sorted_seginds)
+  function sortedintersection(segs)
+    points, inds = Meshes.bentleyottmann(segs)
+    perm = sortperm(points)
+    points[perm], inds[perm]
   end
 
   # simple endpoint case
   segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(0, 2), cart(2, 0)), (cart(0, 1), cart(0.5, 1))])
-  points, seginds = Meshes.bentleyottmann(segs)
-  points, seginds = sortout(points, seginds)
+  points, seginds = sortedintersection(segs)
   @test length(points) == 1
   @test length(seginds) == 1
 
   # small number of segments, handling endpoints and precision
   segs = Segment.([(cart(0, 0), cart(2, 2)), (cart(1.5, 1), cart(2, 1)), (cart(1.51, 1.3), cart(2, 0.9))])
-  points, seginds = Meshes.bentleyottmann(segs)
-  points, seginds = sortout(points, seginds)
+  points, seginds = sortedintersection(segs)
   @test length(points) == 1
 
   # box case with one segment outside
@@ -112,9 +109,7 @@ end
       (cart(0, 1), cart(1, 1)),
       (cart(1, 0), cart(1, 1))
     ])
-  points, seginds = Meshes.bentleyottmann(segs)
-  points, seginds = sortout(points, seginds)
-
+  points, seginds = sortedintersection(segs)
   @test length(points) == 2
   @test length(seginds) == 2
   @test Set(seginds[1]) == Set([1, 2])
@@ -133,8 +128,7 @@ end
         (cart(10, 4), cart(11, -1)),
         (cart(10, 3), cart(10, 5))
       ])
-    points, seginds = Meshes.bentleyottmann(segs)
-    points, seginds = sortout(points, seginds)
+    points, seginds = sortedintersection(segs)
     @test length(points) == 4
     @test length(seginds) == 4
     @test points[3] ≈ cart(9, 4.8)
@@ -150,15 +144,16 @@ end
   horizontal = [Segment(cart(1, i), cart(n, i)) for i in 1:n]
   vertical = [Segment(cart(i, 1), cart(i, n)) for i in 1:n]
   segs = [horizontal; vertical]
-  points, seginds = Meshes.bentleyottmann(segs)
+  points, seginds = sortedintersection(segs)
   @test length(points) == n * n - 4
   @test length(seginds) == n * n - 4
   @test Set(length.(seginds)) == Set([2])
-  # result is invariant under rotations
+
+  # number of intersections is invariant under rotations
   for θ in T(π / 6):T(π / 6):T(2π - π / 6)
     # rotation by π in Float32 is not robust, skips test
     T === Float32 && θ == T(π) && continue
-    θpoints, θseginds = Meshes.bentleyottmann(segs |> Rotate(θ))
+    θpoints, θseginds = sortedintersection(segs |> Rotate(θ))
     @test length(θpoints) == n * n - 4
     @test length(θseginds) == n * n - 4
     @test Set(length.(θseginds)) == Set([2])
