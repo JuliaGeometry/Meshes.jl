@@ -75,7 +75,7 @@ function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val,
     marker = Makie.Rect{dim}(-1 .* sp, sp)
 
     # enable shading in 3D
-    shading = dim == 3 ? Makie.FastShading : Makie.NoShading
+    shading = dim == 3
 
     coords, marker, shading
   end
