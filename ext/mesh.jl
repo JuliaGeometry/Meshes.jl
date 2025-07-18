@@ -128,7 +128,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
     end
 
     # enable shading in 3D
-    tshading = dim == 3 ? Makie.FastShading : Makie.NoShading
+    tshading = dim == 3
 
     tcoords, tconnec, tcolors, tshading
   end
