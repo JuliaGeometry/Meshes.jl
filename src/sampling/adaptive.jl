@@ -11,6 +11,8 @@ import IterTools
 
 Incrementally sample points such that the error from linear interpolation between these points is small. This is useful for plotting parametric functions or Bezier curves where curvature is very non-uniform.
 
+This is *only* implemented for geometries with a one-dimensional parameter domain (i.e., realistically, [`ParametrizedCurve`](@ref) or [`BezierCurve`](@ref))!
+
 ## Options
 
 * `tol` - Tolerance for the linear interpolation error. The meaning depends on `errfun`.
