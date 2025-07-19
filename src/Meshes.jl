@@ -517,6 +517,7 @@ export
   ManualSimplexification,
   RegularDiscretization,
   MaxLengthDiscretization,
+  AdaptiveDiscretization,
   discretize,
   discretizewithin,
   simplexify,

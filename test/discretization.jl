@@ -545,6 +545,18 @@ end
   @test nvertices.(mesh) ⊆ [4]
 end
 
+@testitem "AdaptiveDiscretization" setup=[Setup] begin
+  # This is a bit of a dummy test because AdaptiveDiscretization just wraps AdaptiveSampling.
+  min_points = 5
+  max_points = 10
+  method = AdaptiveDiscretization(; min_points, max_points)
+
+  geom = ParametrizedCurve((t -> Point((sin(t * 2π) * t, cos(t * 2π) * t))), (0, 1))
+  mesh = discretize(geom, method)
+  @test nvertices(mesh) == 10
+  @test nelements(mesh) == 9
+end
+
 @testitem "Discretize" setup = [Setup] begin
   ball = Ball(cart(0, 0), T(1))
   mesh = discretize(ball)
