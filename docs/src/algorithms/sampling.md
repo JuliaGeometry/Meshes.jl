@@ -129,3 +129,19 @@ points  = sample(sphere, sampler) |> collect
 
 viz(points)
 ```
+
+### AdaptiveSampling
+
+```@docs
+AdaptiveSampling
+```
+
+```@example sampling
+# Sample between 10 and 100 points
+sampler = AdaptiveSampling(; min_points=10.0, max_points=100.0)
+crv = ParametrizedCurve((t -> Point((sin(t * 2π) * t, cos(t * 2π) * t))), (0, 1))
+points  = sample(crv, sampler) |> collect
+
+viz(points)
+```
+
