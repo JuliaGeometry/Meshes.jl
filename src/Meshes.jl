@@ -494,6 +494,7 @@ export
   HomogeneousSampling,
   MinDistanceSampling,
   FibonacciSampling,
+  AdaptiveSampling,
   sampleinds,
   sample,
 
