@@ -475,6 +475,7 @@ end
     (-0.35876571784227224, 0.8661370617293311),
     (-2.4492935982947064e-16, 1.0)
   ])
+  @test min_points <= length(ps) <= max_points
   for (p, t) in zip(ps, ts)
     @test p ≈ t
   end
@@ -494,6 +495,7 @@ end
     (0.9920654296875, 0.8316650390625),
     (1.0, 1.0)
   ])
+  @test min_points <= length(ps) <= max_points
   for (p, t) in zip(ps, ts)
     @test p ≈ t
   end
@@ -513,6 +515,7 @@ end
     (-0.35876571784227224, 0.8661370617293311, 0.87890625),
     (-2.4492935982947064e-16, 1.0, 1.0)
   ])
+  @test min_points <= length(ps) <= max_points
   for (p, t) in zip(ps, ts)
     @test p ≈ t
   end
@@ -532,6 +535,7 @@ end
     (0.9920654296875, 0.8316650390625, 0.9942626953125),
     (1.0, 1.0, 1.0)
   ])
+  @test min_points <= length(ps) <= max_points
   for (p, t) in zip(ps, ts)
     @test p ≈ t
   end
