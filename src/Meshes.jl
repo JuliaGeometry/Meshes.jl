@@ -494,6 +494,7 @@ export
   HomogeneousSampling,
   MinDistanceSampling,
   FibonacciSampling,
+  AdaptiveSampling,
   sampleinds,
   sample,
 
@@ -516,6 +517,7 @@ export
   ManualSimplexification,
   RegularDiscretization,
   MaxLengthDiscretization,
+  AdaptiveDiscretization,
   discretize,
   discretizewithin,
   simplexify,
