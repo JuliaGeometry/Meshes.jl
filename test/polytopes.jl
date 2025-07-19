@@ -18,6 +18,7 @@
   @test minimum(s) == cart(0, 0)
   @test maximum(s) == cart(1, 1)
   @test extrema(s) == (cart(0, 0), cart(1, 1))
+  @test center(s) == cart(0.5, 0.5)
   @test isapprox(length(s), sqrt(T(2)) * u"m")
   @test s(T(0)) == cart(0, 0)
   @test s(T(1)) == cart(1, 1)
