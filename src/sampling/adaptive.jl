@@ -149,7 +149,7 @@ end
 # sampling
 # --------
 
-function sample(::AbstractRNG, geom::Geometry, method::AdaptiveSampling)
+function sample(::AbstractRNG, geom::Geometry, method::AdaptiveSampling{TV}) where {TV}
     assertion(paramdim(geom) == 1, "Not implemented: Adaptive sampling for > 1 parameter dimension")
 
     T = numtype(lentype(geom))
@@ -170,7 +170,7 @@ function sample(::AbstractRNG, geom::Geometry, method::AdaptiveSampling)
     # Queue of pending splits, in error order, so we can stick to `max_points`. We sort again later.
     # Initialize with pairs of successive points.
     # NB we can almost use RegularSampling for this but we also need the t values.
-    queue = BinaryHeap{Tuple{Float64,ParametrizedSegment}}(Base.By(first), [])
+    queue = BinaryHeap{Tuple{TV,ParametrizedSegment}}(Base.By(first), [])
     for ((t1, v1), (t2, v2)) in IterTools.partition(ps, 2, 1)
         s = ParametrizedSegment(geom, t1, v1, t2, v2)
         maybe_push_errfun!(queue, method.errfun, method.tol, s, ra)
