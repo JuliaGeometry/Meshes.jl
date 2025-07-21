@@ -66,6 +66,7 @@ include("sampling/regular.jl")
 include("sampling/homogeneous.jl")
 include("sampling/mindistance.jl")
 include("sampling/fibonacci.jl")
+include("sampling/adaptive.jl")
 
 # ----------
 # UTILITIES

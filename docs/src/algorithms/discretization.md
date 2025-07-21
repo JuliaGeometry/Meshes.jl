@@ -157,6 +157,20 @@ mesh = discretize(sphere, RegularDiscretization(10,10))
 viz(mesh, showsegments = true)
 ```
 
+## AdaptiveDiscretization
+
+```@docs
+AdaptiveDiscretization
+```
+
+```@example discretization
+crv = ParametrizedCurve((t -> Point((sin(t * 2π) * t, cos(t * 2π) * t))), (0, 1))
+method = AdaptiveDiscretization(; min_points=10.0, max_points=100.0)
+mesh = discretize(crv, method)
+
+viz(mesh, showsegments = true)
+```
+
 ## ManualSimplexification
 
 ```@docs
