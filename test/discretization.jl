@@ -549,7 +549,7 @@ end
   # This is a bit of a dummy test because AdaptiveDiscretization just wraps AdaptiveSampling.
   min_points = 5
   max_points = 10
-  method = AdaptiveDiscretization(; min_points, max_points)
+  method = AdaptiveDiscretization(; minPoints=min_points, maxPoints=max_points)
 
   geom = ParametrizedCurve((t -> Point((sin(t * 2π) * t, cos(t * 2π) * t))), (0, 1))
   mesh = discretize(geom, method)

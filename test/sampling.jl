@@ -458,7 +458,7 @@ end
 @testitem "AdaptiveSampling" setup = [Setup] begin
   min_points = 5
   max_points = 10
-  method = AdaptiveSampling(; min_points, max_points)
+  method = AdaptiveSampling(; minPoints=min_points, maxPoints=max_points)
 
   # 2D parameterized curve
   geom = ParametrizedCurve((t -> Point((sin(t * 2π) * t, cos(t * 2π) * t))), (0, 1))
