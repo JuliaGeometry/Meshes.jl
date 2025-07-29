@@ -100,6 +100,8 @@ and generate specialized code. This is not the case when
 intersection(f, g₁, g₂) = intersection(f, g₂, g₁)
 intersection(g₁, g₂) = intersection(identity, g₁, g₂)
 
+intersects(i::Intersection) = type(i) !== NotIntersecting
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------

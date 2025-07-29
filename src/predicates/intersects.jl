@@ -21,8 +21,6 @@ a well-defined [`supportfun`](@ref).
 """
 function intersects end
 
-intersects(i::Intersection) = type(i) !== NotIntersecting
-
 intersects(g) = Base.Fix2(intersects, g)
 
 intersects(p₁::Point, p₂::Point) = p₁ == p₂
