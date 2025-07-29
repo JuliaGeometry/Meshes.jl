@@ -21,19 +21,21 @@ a well-defined [`supportfun`](@ref).
 """
 function intersects end
 
+intersects(i::Intersection) = type(i) !== NotIntersecting
+
 intersects(g) = Base.Fix2(intersects, g)
 
 intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
-intersects(s₁::Segment, s₂::Segment) = someintersection(s₁, s₂)
+intersects(s₁::Segment, s₂::Segment) = intersects(intersection(s₁, s₂))
 
-intersects(b₁::Box, b₂::Box) = someintersection(b₁, b₂)
+intersects(b₁::Box, b₂::Box) = intersects(intersection(b₁, b₂))
 
-intersects(r::Ray, b::Box) = someintersection(r, b)
+intersects(r::Ray, b::Box) = intersects(intersection(r, b))
 
 intersects(b::Box, r::Ray) = intersects(r, b)
 
-intersects(r::Ray, t::Triangle) = someintersection(r, t)
+intersects(r::Ray, t::Triangle) = intersects(intersection(r, t))
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)
 
@@ -264,5 +266,3 @@ end
 
 perphint(v::Vec{3,ℒ}, d::Vec{3,ℒ}) where {ℒ} = ucross(v, d, v)
 
-# type-stable check for when there is some intersection
-someintersection(g₁::Geometry, g₂::Geometry) = type(intersection(g₁, g₂)) !== NotIntersecting
