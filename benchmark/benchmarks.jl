@@ -32,9 +32,9 @@ SUITE["discretization"] = BenchmarkGroup()
 
 SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($mesh)
 
-# --------
-# TOPOLOGIES
-# --------
+# ---------
+# TOPOLOGY
+# ---------
 
 SUITE["topology"] = BenchmarkGroup()
 
