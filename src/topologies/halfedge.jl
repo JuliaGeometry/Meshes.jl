@@ -208,10 +208,7 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
         if isnothing(he.elem)
           he.elem = oelem
         else
-          assertion(
-            he.elem === oelem,
-            lazy"duplicate edge $((u, v)) for element $(oelem) is inconsistent with previous edge $he"
-          )
+          he.elem === oelem || inconsistentedgeerror(u, v, oelem, he)
         end
         half = get!(() -> HalfEdge(v, nothing), half4pair, (v, u))
         he.half = half
@@ -437,3 +434,6 @@ end
 # integer addition mod1
 add0(i, n) = i
 add1(i, n) = mod1(i + 1, n)
+
+inconsistentedgeerror(u, v, elem, he) =
+  throw(AssertionError("duplicate edge $((u, v)) for element $(elem) is inconsistent with previous edge $he"))
