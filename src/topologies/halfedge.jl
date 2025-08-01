@@ -169,11 +169,11 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
   # update half-edges using all other elements
   added = false
   disconnected = false
-  remaining = collect(2:length(adjelems))
+  remaining = MutableLinkedList(2:length(adjelems))
   while !isempty(remaining)
-    iter = 1
-    while iter ≤ length(remaining)
-      other = remaining[iter]
+    state = iterate(remaining)
+    while !isnothing(state)
+      other, state = state
       oelem = eleminds[other]
       oinds = adjelems[other]
       n = length(oinds)
@@ -182,9 +182,9 @@ function HalfEdgeTopology(elems::AbstractVector{<:Connectivity}; sort=true)
         # the orientation w.r.t. previously added elements/edges
         added = true
         disconnected = false
-        deleteat!(remaining, iter)
+        state = iterate(remaining, popprev!(remaining, state))
       else
-        iter += 1
+        state = iterate(remaining, state)
         continue
       end
 
@@ -345,13 +345,14 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
   end
 
   # remaining elements to process
-  remaining = collect(eachindex(elems)[2:end])
+  remaining = MutableLinkedList(eachindex(elems)[2:end])
 
   added = false
   while !isempty(remaining)
-    iter = 1
-    while iter ≤ length(remaining)
-      elem = elems[remaining[iter]]
+    state = iterate(remaining)
+    while !isnothing(state)
+      iter, state = state
+      elem = elems[iter]
 
       # manually union-split most common polytopes
       # for type stability and maximum performance
@@ -364,10 +365,11 @@ function conneccomps(elems::AbstractVector{<:Connectivity})
       end
 
       if isadjacent
-        push!(last(comps), popat!(remaining, iter))
+        push!(last(comps), iter)
+        state = iterate(remaining, popprev!(remaining, state))
         added = true
       else
-        iter += 1
+        state = iterate(remaining, state)
       end
     end
 
