@@ -7,7 +7,7 @@
 
 Affine transform `Ax + b` with matrix `A` and vector `b`.
 
-# Examples
+## Examples
 
 ```julia
 Affine(AngleAxis(0.2, 1.0, 0.0, 0.0), [-2, 2, 2])

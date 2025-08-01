@@ -8,7 +8,7 @@
 Generate a random geometry of type `G` with CRS `crs`,
 optionally passing a random number generator `rng`.
 
-# Examples
+## Examples
 
 ```julia
 rand(Point)
@@ -26,7 +26,7 @@ Random.rand(rng::Random.AbstractRNG, G::Type{<:Geometry}; crs=Cartesian3D) = _ra
 Generate a vector of `n` random geometries of type `G` with CRS `crs`,
 optionally passing a random number generator `rng`.
 
-# Examples
+## Examples
 
 ```julia
 rand(Point, 10)
