@@ -8,7 +8,7 @@ on:
       - 'ext/'
       - 'test/'
       - 'Project.toml'
-      - '.github/CI.yml'
+      - '.github/workflows/CI.yml'
   push:
     branches:
       - master
