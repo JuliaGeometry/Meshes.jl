@@ -1,13 +1,21 @@
 name: Benchmarks
 on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
   pull_request_target:
     branches: [ master ]
+  workflow_dispatch:
+  
 permissions:
   pull-requests: write
 
 jobs:
   bench:
     runs-on: ubuntu-latest
+    # Only run if CI workflow succeeded or if manually triggered
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'pull_request_target' }}
     strategy:
       matrix:
         version:
@@ -17,4 +25,4 @@ jobs:
       - uses: MilesCranmer/AirspeedVelocity.jl@action-v1
         with:
           julia-version: ${{ matrix.version }}
-          bench-on: ${{ github.event.pull_request.head.sha }}
+          bench-on: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha }}
