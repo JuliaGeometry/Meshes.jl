@@ -5,8 +5,8 @@ on:
       - master
     paths:
       - 'src/'
-      - 'test/'
       - 'ext/'
+      - 'test/'
       - 'Project.toml'
   push:
     branches:
