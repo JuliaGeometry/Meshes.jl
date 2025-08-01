@@ -36,9 +36,9 @@ SUITE["discretization"]["simplexify"] = @benchmarkable simplexify($mesh)
 # TOPOLOGIES
 # --------
 
-SUITE["topologies"] = BenchmarkGroup()
+SUITE["topology"] = BenchmarkGroup()
 
-SUITE["topologies"]["half-edge"] = @benchmarkable convert(HalfEdgeTopology, topology($mesh))
+SUITE["topology"]["half-edge"] = @benchmarkable convert(HalfEdgeTopology, topology($mesh))
 
 # --------
 # WINDING
