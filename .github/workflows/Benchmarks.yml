@@ -23,13 +23,7 @@ jobs:
         with:
           script: |
             // Get the PR associated with this workflow run
-            const { data: prs } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: 'master',
-              head: `${context.payload.workflow_run.head_repository.owner.login}:${context.payload.workflow_run.head_branch}`,
-              state: 'open'
-            });
+            const prs = context.payload.workflow_run.pull_requests;
 
             if (prs.length === 0) {
               console.log('No open PR found for this workflow run');
