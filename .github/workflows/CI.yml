@@ -4,9 +4,9 @@ on:
     branches:
       - master
     paths:
-      - 'src/'
-      - 'ext/'
-      - 'test/'
+      - 'src/**'
+      - 'ext/**'
+      - 'test/**'
       - 'Project.toml'
       - '.github/workflows/CI.yml'
   push:
