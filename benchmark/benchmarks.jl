@@ -43,29 +43,42 @@ SUITE["topology"] = BenchmarkGroup()
 
 SUITE["topology"]["half-edge"] = BenchmarkGroup()
 
-SUITE["topology"]["half-edge"]["adjsortperm-defaultorder"] = @benchmarkable Meshes.adjsortperm(connec) setup=(connec=bigmesh_connec)
-SUITE["topology"]["half-edge"]["adjsortperm-shuffled"] = @benchmarkable Meshes.adjsortperm(connec) setup=(connec=shuffle(bigmesh_connec))
-SUITE["topology"]["half-edge"]["adjsortperm-presorted"] = @benchmarkable Meshes.adjsortperm(connec) setup=(connec=bigmesh_connec[Meshes.adjsortperm(bigmesh_connec)])
-SUITE["topology"]["half-edge"]["adjsortperm-reverse-sorted"] = @benchmarkable Meshes.adjsortperm(connec) setup=begin
-    sp = Meshes.adjsortperm(bigmesh_connec)
-    connec=bigmesh_connec[sp[[1; end:-1:2]]]
+SUITE["topology"]["half-edge"]["adjsortperm-defaultorder"] =
+  @benchmarkable Meshes.adjsortperm(connec) setup = (connec = bigmesh_connec)
+SUITE["topology"]["half-edge"]["adjsortperm-shuffled"] =
+  @benchmarkable Meshes.adjsortperm(connec) setup = (connec = shuffle(bigmesh_connec))
+SUITE["topology"]["half-edge"]["adjsortperm-presorted"] =
+  @benchmarkable Meshes.adjsortperm(connec) setup = (connec = bigmesh_connec[Meshes.adjsortperm(bigmesh_connec)])
+SUITE["topology"]["half-edge"]["adjsortperm-reverse-sorted"] = @benchmarkable Meshes.adjsortperm(connec) setup = begin
+  sp = Meshes.adjsortperm(bigmesh_connec)
+  connec = bigmesh_connec[sp[[1; end:-1:2]]]
 end
 
-SUITE["topology"]["half-edge"]["constructor-defaultorder", "sort=false"] = @benchmarkable HalfEdgeTopology(connec; sort=false) setup=(connec=bigmesh_connec)
-SUITE["topology"]["half-edge"]["constructor-shuffled", "sort=false"] = @benchmarkable HalfEdgeTopology(connec; sort=false) setup=(connec=shuffle(bigmesh_connec))
-SUITE["topology"]["half-edge"]["constructor-presorted", "sort=false"] = @benchmarkable HalfEdgeTopology(connec; sort=false) setup=(connec=bigmesh_connec[Meshes.adjsortperm(bigmesh_connec)])
-SUITE["topology"]["half-edge"]["constructor-reverse-sorted", "sort=false"] = @benchmarkable HalfEdgeTopology(connec; sort=false) setup=begin
+SUITE["topology"]["half-edge"]["constructor-defaultorder", "sort=false"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=false) setup = (connec = bigmesh_connec)
+SUITE["topology"]["half-edge"]["constructor-shuffled", "sort=false"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=false) setup = (connec = shuffle(bigmesh_connec))
+SUITE["topology"]["half-edge"]["constructor-presorted", "sort=false"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=false) setup =
+    (connec = bigmesh_connec[Meshes.adjsortperm(bigmesh_connec)])
+SUITE["topology"]["half-edge"]["constructor-reverse-sorted", "sort=false"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=false) setup = begin
     sp = Meshes.adjsortperm(bigmesh_connec)
-    connec=bigmesh_connec[sp[[1; end:-1:2]]]
-end
+    connec = bigmesh_connec[sp[[1; end:-1:2]]]
+  end
 
-SUITE["topology"]["half-edge"]["constructor-defaultorder", "sort=true"] = @benchmarkable HalfEdgeTopology(connec; sort=true) setup=(connec=bigmesh_connec)
-SUITE["topology"]["half-edge"]["constructor-shuffled", "sort=true"] = @benchmarkable HalfEdgeTopology(connec; sort=true) setup=(connec=shuffle(bigmesh_connec))
-SUITE["topology"]["half-edge"]["constructor-presorted", "sort=true"] = @benchmarkable HalfEdgeTopology(connec; sort=true) setup=(connec=bigmesh_connec[Meshes.adjsortperm(bigmesh_connec)])
-SUITE["topology"]["half-edge"]["constructor-reverse-sorted", "sort=true"] = @benchmarkable HalfEdgeTopology(reverse(connec); sort=true) setup=begin
+SUITE["topology"]["half-edge"]["constructor-defaultorder", "sort=true"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=true) setup = (connec = bigmesh_connec)
+SUITE["topology"]["half-edge"]["constructor-shuffled", "sort=true"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=true) setup = (connec = shuffle(bigmesh_connec))
+SUITE["topology"]["half-edge"]["constructor-presorted", "sort=true"] =
+  @benchmarkable HalfEdgeTopology(connec; sort=true) setup =
+    (connec = bigmesh_connec[Meshes.adjsortperm(bigmesh_connec)])
+SUITE["topology"]["half-edge"]["constructor-reverse-sorted", "sort=true"] =
+  @benchmarkable HalfEdgeTopology(reverse(connec); sort=true) setup = begin
     sp = Meshes.adjsortperm(bigmesh_connec)
-    connec=bigmesh_connec[sp[[1; end:-1:2]]]
-end
+    connec = bigmesh_connec[sp[[1; end:-1:2]]]
+  end
 
 # --------
 # WINDING
