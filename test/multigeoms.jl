@@ -29,7 +29,7 @@
   @test cart(0.5, 1.5) ∉ multi
   @test sprint(show, multi) == "Multi(2×PolyArea)"
   @test sprint(show, MIME"text/plain"(), multi) == """
-  MultiPolyArea
+  Multi(2×PolyArea)
   ├─ PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
   └─ PolyArea((x: 1.0 m, y: 1.0 m), ..., (x: 1.0 m, y: 2.0 m))"""
 
@@ -43,7 +43,7 @@
   @test length(mchn) == T(8) * u"m"
   @test sprint(show, mbox) == "Multi(2×Box)"
   @test sprint(show, MIME"text/plain"(), mbox) == """
-  MultiBox
+  Multi(2×Box)
   ├─ Box(min: (x: 0.0 m, y: 0.0 m), max: (x: 1.0 m, y: 1.0 m))
   └─ Box(min: (x: 1.0 m, y: 1.0 m), max: (x: 2.0 m, y: 2.0 m))"""
 
@@ -72,9 +72,9 @@
   quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   multi = Multi([poly, quad])
   @test unique(multi) == multi
-  @test sprint(show, multi) == "Multi(1×PolyArea, 1×Quadrangle)"
+  @test sprint(show, multi) == "Multi(2×Polygon)"
   @test sprint(show, MIME"text/plain"(), multi) == """
-  MultiPolygon
+  Multi(2×Polygon)
   ├─ PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
   └─ Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"""
 

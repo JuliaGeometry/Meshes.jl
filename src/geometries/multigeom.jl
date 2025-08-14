@@ -74,16 +74,13 @@ rings(m::MultiPolygon) = [ring for poly in m.geoms for ring in rings(poly)]
 # -----------
 
 function Base.summary(io::IO, m::Multi)
-  name = prettyname(eltype(m.geoms))
-  print(io, "Multi$name")
+  pname = prettyname(eltype(m.geoms))
+  ngeom = length(m.geoms)
+  print(io, "Multi($ngeom×$pname)")
 end
 
 function Base.show(io::IO, m::Multi)
-  print(io, "Multi(")
-  geoms = prettyname.(m.geoms)
-  counts = ("$(count(==(g), geoms))×$g" for g in unique(geoms))
-  join(io, counts, ", ")
-  print(io, ")")
+  summary(io, m)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", m::Multi)
