@@ -8,7 +8,7 @@ prettyname(obj) = prettyname(typeof(obj))
 function prettyname(T::Type)
   name = string(T)
   name = replace(name, r"{.*" => "")
-  replace(name, r".+\." => "")
+  replace(name, r".*\." => "")
 end
 
 # helper function to print the elements of an object
