@@ -87,30 +87,29 @@ Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
 function axis(p::ParaboloidSurface)
-  f = p.focallength
-  Line(p.apex, p.apex + Vec(zero(f), zero(f), f))
+  f = focallength(p)
+  a = apex(p)
+  Line(a, a + Vec(zero(f), zero(f), f))
 end
 
 ==(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
   p₁.apex == p₂.apex && p₁.radius == p₂.radius && p₁.focallength == p₂.focallength
 
 Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface; atol=atol(lentype(p₁)), kwargs...) =
-  isapprox(p₁.apex, p₂.apex; atol, kwargs...) &&
-  isapprox(p₁.focallength, p₂.focallength; atol, kwargs...) &&
-  isapprox(p₁.radius, p₂.radius; atol, kwargs...)
+  isapprox(apex(p₁), apex(p₂); atol, kwargs...) &&
+  isapprox(focallength(p₁), focallength(p₂); atol, kwargs...) &&
+  isapprox(radius(p₁), radius(p₂); atol, kwargs...)
 
 function (p::ParaboloidSurface)(ρ, θ)
-  T = numtype(lentype(p))
   if (ρ < 0 || ρ > 1)
     throw(DomainError((ρ, θ), "p(ρ, θ) is not defined for ρ outside [0, 1]."))
   end
-  c = p.apex
-  r = p.radius
-  f = p.focallength
-  l = T(ρ) * r
+  T = numtype(lentype(p))
+  l = T(ρ) * radius(p)
   sθ, cθ = sincospi(2 * T(θ))
   x = l * cθ
   y = l * sθ
+  f = focallength(p)
   z = (x^2 + y^2) / 4f
-  c + Vec(x, y, z)
+  apex(p) + Vec(x, y, z)
 end
