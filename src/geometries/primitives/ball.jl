@@ -41,12 +41,10 @@ function (b::Ball{𝔼{2}})(ρ, φ)
     throw(DomainError((ρ, φ), "b(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
   T = numtype(lentype(b))
-  c = b.center
-  r = b.radius
-  ρ′ = T(ρ) * r
+  ρ′ = T(ρ) * radius(b)
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p = Point(convert(crs(b), Polar(ρ′, φ′)))
-  p + to(c)
+  p + to(center(b))
 end
 
 function (b::Ball{𝔼{3}})(ρ, θ, φ)
@@ -54,11 +52,9 @@ function (b::Ball{𝔼{3}})(ρ, θ, φ)
     throw(DomainError((ρ, θ, φ), "b(ρ, θ, φ) is not defined for ρ, θ, φ outside [0, 1]³."))
   end
   T = numtype(lentype(b))
-  c = b.center
-  r = b.radius
-  ρ′ = T(ρ) * r
+  ρ′ = T(ρ) * radius(b)
   θ′ = T(θ) * T(π) * u"rad"
   φ′ = T(φ) * 2 * T(π) * u"rad"
   p = Point(convert(crs(b), Spherical(ρ′, θ′, φ′)))
-  p + to(c)
+  p + to(center(b))
 end
