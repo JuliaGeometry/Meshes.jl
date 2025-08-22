@@ -68,9 +68,9 @@ center(s::Sphere) = s.center
 
 radius(s::Sphere) = s.radius
 
-==(s₁::Sphere, s₂::Sphere) = s₁.center == s₂.center && s₁.radius == s₂.radius
+==(s₁::Sphere, s₂::Sphere) = center(s₁) == center(s₂) && radius(s₁) == radius(s₂)
 
 Base.isapprox(s₁::Sphere, s₂::Sphere; atol=atol(lentype(s₁)), kwargs...) =
-  isapprox(s₁.center, s₂.center; atol, kwargs...) && isapprox(s₁.radius, s₂.radius; atol, kwargs...)
+  isapprox(center(s₁), center(s₂); atol, kwargs...) && isapprox(radius(s₁), radius(s₂); atol, kwargs...)
 
 (s::Sphere)(uv...) = Ball(center(s), radius(s))(1, uv...)

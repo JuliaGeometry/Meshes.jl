@@ -87,18 +87,18 @@ Return the focal axis, connecting the focus with the apex of the paraboloid.
 The axis is always aligned with the z direction.
 """
 function axis(p::ParaboloidSurface)
-  f = focallength(p)
   a = apex(p)
+  f = focallength(p)
   Line(a, a + Vec(zero(f), zero(f), f))
 end
 
 ==(p₁::ParaboloidSurface, p₂::ParaboloidSurface) =
-  p₁.apex == p₂.apex && p₁.radius == p₂.radius && p₁.focallength == p₂.focallength
+  apex(p₁) == apex(p₂) && radius(p₁) == radius(p₂) && focallength(p₁) == focallength(p₂)
 
 Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface; atol=atol(lentype(p₁)), kwargs...) =
   isapprox(apex(p₁), apex(p₂); atol, kwargs...) &&
-  isapprox(focallength(p₁), focallength(p₂); atol, kwargs...) &&
-  isapprox(radius(p₁), radius(p₂); atol, kwargs...)
+  isapprox(radius(p₁), radius(p₂); atol, kwargs...) &&
+  isapprox(focallength(p₁), focallength(p₂); atol, kwargs...)
 
 function (p::ParaboloidSurface)(ρ, θ)
   if (ρ < 0 || ρ > 1)

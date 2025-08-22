@@ -49,14 +49,14 @@ direction(t::Torus) = t.direction
 
 radii(t::Torus) = (t.major, t.minor)
 
-axis(t::Torus) = Line(t.center, t.center + t.direction)
+axis(t::Torus) = Line(center(t), center(t) + direction(t))
 
 ==(t₁::Torus, t₂::Torus) =
-  t₁.center == t₂.center && t₁.direction == t₂.direction && t₁.major == t₂.major && t₁.minor == t₂.minor
+  center(t₁) == center(t₂) && direction(t₁) == direction(t₂) && t₁.major == t₂.major && t₁.minor == t₂.minor
 
 Base.isapprox(t₁::Torus, t₂::Torus; atol=atol(lentype(t₁)), kwargs...) =
-  isapprox(t₁.center, t₂.center; atol, kwargs...) &&
-  isapprox(t₁.direction, t₂.direction; atol, kwargs...) &&
+  isapprox(center(t₁), center(t₂); atol, kwargs...) &&
+  isapprox(direction(t₁), direction(t₂); atol, kwargs...) &&
   isapprox(t₁.major, t₂.major; atol, kwargs...) &&
   isapprox(t₁.minor, t₂.minor; atol, kwargs...)
 
@@ -66,7 +66,7 @@ function (t::Torus)(θ, φ)
   if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
     throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
-  c, n⃗ = t.center, t.direction
+  c, n⃗ = center(t), direction(t)
   R, r = t.major, t.minor
 
   Q = urotbetween(Vec(zero(ℒ), zero(ℒ), oneunit(ℒ)), n⃗)
