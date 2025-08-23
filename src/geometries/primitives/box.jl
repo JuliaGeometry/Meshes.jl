@@ -49,20 +49,20 @@ Base.minimum(b::Box) = b.min
 
 Base.maximum(b::Box) = b.max
 
-Base.extrema(b::Box) = b.min, b.max
+Base.extrema(b::Box) = minimum(b), maximum(b)
 
-diagonal(b::Box{<:𝔼}) = norm(b.max - b.min)
+diagonal(b::Box{<:𝔼}) = norm(maximum(b) - minimum(b))
 
-sides(b::Box{<:𝔼}) = Tuple(b.max - b.min)
+sides(b::Box{<:𝔼}) = Tuple(maximum(b) - minimum(b))
 
-==(b₁::Box, b₂::Box) = b₁.min == b₂.min && b₁.max == b₂.max
+==(b₁::Box, b₂::Box) = minimum(b₁) == minimum(b₂) && maximum(b₁) == maximum(b₂)
 
 Base.isapprox(b₁::Box, b₂::Box; atol=atol(lentype(b₁)), kwargs...) =
-  isapprox(b₁.min, b₂.min; atol, kwargs...) && isapprox(b₁.max, b₂.max; atol, kwargs...)
+  isapprox(minimum(b₁), minimum(b₂); atol, kwargs...) && isapprox(maximum(b₁), maximum(b₂); atol, kwargs...)
 
 function (b::Box{<:𝔼})(uv...)
   if !all(x -> 0 ≤ x ≤ 1, uv)
     throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
   end
-  b.min + uv .* (b.max - b.min)
+  minimum(b) + uv .* (maximum(b) - minimum(b))
 end

@@ -32,13 +32,13 @@ center(e::Ellipsoid) = e.center
 
 rotation(e::Ellipsoid) = e.rotation
 
-==(e₁::Ellipsoid, e₂::Ellipsoid) = e₁.radii == e₂.radii && e₁.center == e₂.center && e₁.rotation == e₂.rotation
+==(e₁::Ellipsoid, e₂::Ellipsoid) = radii(e₁) == radii(e₂) && center(e₁) == center(e₂) && rotation(e₁) == rotation(e₂)
 
 function Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid; atol=atol(lentype(e₁)), kwargs...)
   u = Unitful.promote_unit(unit(lentype(e₁)), unit(lentype(e₂)))
-  all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(e₁.radii, e₂.radii)) &&
-    isapprox(e₁.center, e₂.center; atol, kwargs...) &&
-    isapprox(e₁.rotation, e₂.rotation; atol=ustrip(u, atol), kwargs...)
+  all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(radii(e₁), radii(e₂))) &&
+    isapprox(center(e₁), center(e₂); atol, kwargs...) &&
+    isapprox(rotation(e₁), rotation(e₂); atol=ustrip(u, atol), kwargs...)
 end
 
 function (e::Ellipsoid)(θ, φ)
@@ -46,9 +46,9 @@ function (e::Ellipsoid)(θ, φ)
     throw(DomainError((θ, φ), "e(θ, φ) is not defined for θ, φ outside [0, 1]²."))
   end
   T = numtype(lentype(e))
-  r = e.radii
-  c = e.center
-  R = e.rotation
+  r = radii(e)
+  c = center(e)
+  R = rotation(e)
   sθ, cθ = sincospi(T(θ))
   sφ, cφ = sincospi(2 * T(φ))
   x = r[1] * sθ * cφ

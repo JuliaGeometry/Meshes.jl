@@ -38,10 +38,9 @@ function (d::Disk)(ρ, φ)
     throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
   end
   T = numtype(lentype(d))
-  r = d.radius
-  l = T(ρ) * r
+  l = T(ρ) * radius(d)
   sφ, cφ = sincospi(2 * T(φ))
   u = ustrip(l * cφ)
   v = ustrip(l * sφ)
-  d.plane(u, v)
+  plane(d)(u, v)
 end

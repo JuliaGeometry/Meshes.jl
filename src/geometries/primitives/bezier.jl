@@ -35,11 +35,11 @@ ncontrols(b::BezierCurve) = length(b.controls)
 
 degree(b::BezierCurve) = ncontrols(b) - 1
 
-==(b₁::BezierCurve, b₂::BezierCurve) = b₁.controls == b₂.controls
+==(b₁::BezierCurve, b₂::BezierCurve) = controls(b₁) == controls(b₂)
 
 Base.isapprox(b₁::BezierCurve, b₂::BezierCurve; atol=atol(lentype(b₁)), kwargs...) =
-  length(b₁.controls) == length(b₂.controls) &&
-  all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(b₁.controls, b₂.controls))
+  ncontrols(b₁) == ncontrols(b₂) &&
+  all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(controls(b₁), controls(b₂)))
 
 """
 Evaluation method used to obtain a point along
@@ -64,15 +64,15 @@ See <https://en.wikipedia.org/wiki/Horner%27s_method>.
 """
 struct Horner <: BezierEvalMethod end
 
-(curve::BezierCurve)(t) = curve(t, DeCasteljau())
+(b::BezierCurve)(t) = b(t, DeCasteljau())
 
 # Apply DeCasteljau's method
-function (curve::BezierCurve)(t, ::DeCasteljau)
+function (b::BezierCurve)(t, ::DeCasteljau)
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
-  ss = segments(Rope(curve.controls))
-  points = [s(t) for s in ss]
+  rope = Rope(controls(b))
+  points = [s(t) for s in segments(rope)]
   if length(points) == 1
     points[1]
   else
@@ -85,14 +85,14 @@ end
 # curve, aᵢ = binomial(n, i) * pᵢ * t̄ⁿ⁻ⁱ and t̄ = (1 - t).
 # Horner's rule recursively reconstructs B from a sequence bᵢ
 # with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
-function (curve::BezierCurve)(t, ::Horner)
+function (b::BezierCurve)(t, ::Horner)
   if t < 0 || t > 1
     throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
   end
-  T = numtype(lentype(curve))
-  cs = curve.controls
+  T = numtype(lentype(b))
+  cs = controls(b)
   t̄ = one(T) - t
-  n = degree(curve)
+  n = degree(b)
   pₙ = to(last(cs))
   aₙ = pₙ
 
@@ -109,7 +109,7 @@ function (curve::BezierCurve)(t, ::Horner)
   end
 
   b₀ = bᵢ₋₁
-  withcrs(curve, b₀)
+  withcrs(b, b₀)
 end
 
 # -----------
@@ -119,7 +119,7 @@ end
 function Base.show(io::IO, b::BezierCurve)
   ioctx = IOContext(io, :compact => true)
   print(io, "BezierCurve(controls: [")
-  join(ioctx, b.controls, ", ")
+  join(ioctx, controls(b), ", ")
   print(io, "])")
 end
 
@@ -127,6 +127,6 @@ function Base.show(io::IO, ::MIME"text/plain", b::BezierCurve)
   summary(io, b)
   println(io)
   print(io, "└─ controls: [")
-  join(io, b.controls, ", ")
+  join(io, controls(b), ", ")
   print(io, "]")
 end

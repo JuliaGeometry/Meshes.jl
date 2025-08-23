@@ -31,10 +31,10 @@ center(b::Ball) = b.center
 
 radius(b::Ball) = b.radius
 
-==(b₁::Ball, b₂::Ball) = b₁.center == b₂.center && b₁.radius == b₂.radius
+==(b₁::Ball, b₂::Ball) = center(b₁) == center(b₂) && radius(b₁) == radius(b₂)
 
 Base.isapprox(b₁::Ball, b₂::Ball; atol=atol(lentype(b₁)), kwargs...) =
-  isapprox(b₁.center, b₂.center; atol, kwargs...) && isapprox(b₁.radius, b₂.radius; atol, kwargs...)
+  isapprox(center(b₁), center(b₂); atol, kwargs...) && isapprox(radius(b₁), radius(b₂); atol, kwargs...)
 
 function (b::Ball{𝔼{2}})(ρ, φ)
   if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
