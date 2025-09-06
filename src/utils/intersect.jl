@@ -26,124 +26,103 @@ function bentleyottmann(segments; digits=_digits(segments))
 
   # retrieve relevant types
   P = typeof(first(first(segs)))
-  ℒ = lentype(P)
   S = Tuple{P,P}
-  U = Set{S}
 
   # event queue: stores points with associated sets of starting, ending, and crossing segments
-  𝒬 = BinaryTrees.AVLTree{P,Tuple{U,U,U}}()
-
-  # status structure: stores segments currently intersecting the sweepline
-  ℛ = BinaryTrees.AVLTree{SweepSegment{P,ℒ}}()
-
+  𝒬 = BinaryTrees.AVLTree{EventPoint{P,S}}()
   # lookup table mapping segments to their linear indices
   lookup = Dict{S,Int}()
 
   # add points and segments to event queue and lookup table
-  for (i, seg) in enumerate(segs)
-    _addpoint!(𝒬, seg[1], [seg], 1)
-    _addpoint!(𝒬, seg[2], [seg], 2)
-    lookup[seg] = i
-  end
+  buildqueue!(𝒬, lookup, segs)
 
   # initialize sweepline
-  pmin, _ = first(extrema(segs))
-  ybounds = _ybounds(segs)
-  sweepline = SweepLine{P,ℒ}(pmin, ybounds)
+  sweep = SweepLine(segs)
   # output dictionary (planar graph 𝐺)
   𝐺 = Dict{P,Vector{Int}}()
+
+  # handle events
+  handle!(𝐺, sweep, 𝒬, lookup, digits)
+
+  (collect(keys(𝐺)), collect(values(𝐺)))
+end
+
+# -----------------------
+# BentleyOttmann Handling
+# -----------------------
+
+function handle!(𝐺, sweep, 𝒬, lookup, digits)
+  # types
+  P = typeof(sweep.p)
+  ℒ = lentype(P)
   # vector holding segments intersecting the current event point
   bundle = Vector{SweepSegment{P,ℒ}}()
   # holds segment indices for output
   inds = Set{Int}()
 
-  # sweep line algorithm
+  _innerloops(𝐺, sweep, 𝒬, lookup, bundle, inds, digits)
+  𝐺
+end
+
+function _innerloops(𝐺, sweep, 𝒬, lookup, bundle, inds, digits)
+  P = typeof(sweep.p)
+  S = Tuple{P,P}
+  ℬₚ, ℰₚ, ℳₚ = (Set{S}() for _ in 1:3)
   while !BinaryTrees.isempty(𝒬)
-    # current event point
-    node = BinaryTrees.minnode(𝒬)
-    p = BinaryTrees.key(node)
-    BinaryTrees.delete!(𝒬, p)
-    # sets of beginning, ending, and crossing segments that include the current event point
-    ℬₚ, ℰₚ, ℳₚ = BinaryTrees.value(node)
-    # crosses that aren't endpoints (including them can lead to duplicates)
-    setdiff!(ℳₚ, ℰₚ)
+    # pre allocate dictionary of intersection types
+    # pull the next event point and associated data
+    p, ℬₚ, ℰₚ, ℳₚ = _pullevent!(𝒬, ℬₚ, ℰₚ, ℳₚ)
+
+    # active segments at current event
+    activesegs = activesegments(sweep)
+
     # update the status structure with the current event point
-    _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p)
+    _handlestatus!(activesegs, ℬₚ, ℳₚ, ℰₚ, sweep, p)
 
     # build bundle of segments crossing the current event point
-    bundle = empty!(bundle)
-    for seg in Iterators.flatten((ℬₚ, ℳₚ))
-      push!(bundle, SweepSegment(seg, sweepline))
-    end
+    bundle = _buildbundle!(bundle, ℬₚ, ℳₚ, sweep)
     sort!(bundle)
-    # process bundled events
-    if isempty(bundle) # occurs at endpoints
-      # check newly adjacent segments
-      nsₗ, nsᵤ = BinaryTrees.prevnext(ℛ, SweepSegment(first(ℰₚ), sweepline))
-      isnothing(nsₗ) || isnothing(nsᵤ) || _newevent!(𝒬, sweepline, bundle, p, _keyseg(nsₗ), _keyseg(nsᵤ), digits)
-    else
-      # check for intersections with adjacent segments below and above the current event point
-      BinaryTrees.isempty(ℛ) || _handlebottom!(bundle, ℛ, 𝒬, p, digits)
-      BinaryTrees.isempty(ℛ) || _handletop!(bundle, ℛ, 𝒬, p, digits)
-    end
+
+    _findintersections!(bundle, activesegs, 𝒬, p, ℰₚ, sweep, digits)
 
     # add intersection points and corresponding segment indices to 𝐺
-    if length(bundle) > length(ℬₚ) # bundle only has ℬₚ unless p is an intersection
-      # add start and crossing segments
-      for s in bundle
-        push!(inds, lookup[_segment(s)])
-      end
-      # add ending segments
-      for seg in ℰₚ
-        push!(inds, lookup[seg])
-      end
-
-      # add indices to output
-      indᵥ = collect(inds)
-      if haskey(𝐺, p)
-        union!(𝐺[p], indᵥ)
-      else
-        𝐺[p] = indᵥ
-      end
-      empty!(inds)
-    end
+    _buildoutput!(𝐺, bundle, inds, lookup, ℬₚ, ℰₚ, p)
   end
-  (collect(keys(𝐺)), collect(values(𝐺)))
+  𝐺
 end
 
 # ------------------------------------
-# Sweep line status and event handling
+# Status and event handlers
 # ------------------------------------
 
 # updates the status structure with the current event point
-function _handlestatus!(ℛ, ℬₚ, ℳₚ, ℰₚ, sweepline, p)
-  # remove end segments that are no longer active and crossings to update
+function _handlestatus!(activesegs, ℬₚ, ℳₚ, ℰₚ, sweep, p)
   for seg in Iterators.flatten((ℰₚ, ℳₚ))
-    BinaryTrees.delete!(ℛ, SweepSegment(seg, sweepline))
+    BinaryTrees.delete!(activesegs, SweepSegment(seg, sweep))
   end
-  # update sweepline
-  sweepline.p = p
-  # insert new and crossing segments into the status structure
+
+  update!(sweep, p)
+
   for seg in Iterators.flatten((ℬₚ, ℳₚ))
-    BinaryTrees.insert!(ℛ, SweepSegment(seg, sweepline))
+    BinaryTrees.insert!(activesegs, SweepSegment(seg, sweep))
   end
 end
 
-function _handlebottom!(bundle, ℛ, 𝒬, p, digits)
-  # bundle is sorted sequence, so the first segment is minimum
+function _handlebottom!(bundle, activesegs, 𝒬, p, digits)
+  # check segment below lowest
   s′ = bundle[begin]
-  # element below s′
-  nsₗ, _ = !isnothing(s′) ? BinaryTrees.prevnext(ℛ, s′) : (nothing, nothing)
+
+  nsₗ, _ = !isnothing(s′) ? BinaryTrees.prevnext(activesegs, s′) : (nothing, nothing)
   if !isnothing(nsₗ)
     _newevent!(𝒬, _sweepline(s′), bundle, p, _segment(s′), _keyseg(nsₗ), digits)
   end
 end
 
-function _handletop!(bundle, ℛ, 𝒬, p, digits)
-  # bundle is sorted sequence, so the last segment is maximum
+function _handletop!(bundle, activesegs, 𝒬, p, digits)
+  # check segment above highest
   s″ = bundle[end]
-  # element above s″
-  _, nsᵤ = !isnothing(s″) ? BinaryTrees.prevnext(ℛ, s″) : (nothing, nothing)
+
+  _, nsᵤ = !isnothing(s″) ? BinaryTrees.prevnext(activesegs, s″) : (nothing, nothing)
   if !isnothing(nsᵤ)
     _newevent!(𝒬, _sweepline(s″), bundle, p, _segment(s″), _keyseg(nsᵤ), digits)
   end
@@ -152,20 +131,106 @@ end
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
+# builds event queue
+function buildqueue!(𝒬, lookup, segs)
+  for (i, seg) in enumerate(segs)
+    _addpoint!(𝒬, seg[1], [seg], :starts)
+    _addpoint!(𝒬, seg[2], [seg], :ends)
+    lookup[seg] = i
+  end
+end
 
-# function to add new events to the event queue as needed
-function _newevent!(𝒬, sweepline, bundle, p, seg₁, seg₂, digits)
+# obtains current event point and segments
+function _pullevent!(𝒬, ℬₚ, ℰₚ, ℳₚ)
+  node = BinaryTrees.minnode(𝒬)
+  ep = BinaryTrees.key(node)
+  p = ep.p
+  S = typeof(ℬₚ)
+  ℬₚ = haskey(ep.types, :starts) ? ep.types[:starts] : S()
+  ℰₚ = haskey(ep.types, :ends) ? ep.types[:ends] : S()
+  ℳₚ = haskey(ep.types, :crossings) ? ep.types[:crossings] : S()
+  # crosses that aren't endpoints (including them can lead to duplicates)
+  setdiff!(ℳₚ, ℰₚ)
+  BinaryTrees.delete!(𝒬, ep)
+
+  p, ℬₚ, ℰₚ, ℳₚ
+end
+
+# builds bundle of segments crossing the current event point
+function _buildbundle!(bundle, ℬₚ, ℳₚ, sweep)
+  empty!(bundle)
+  for seg in Iterators.flatten((ℬₚ, ℳₚ))
+    push!(bundle, SweepSegment(seg, sweep))
+  end
+  bundle
+end
+
+# finds new intersections
+function _findintersections!(bundle, activesegs, 𝒬, p, ℰₚ, sweep, digits)
+  if isempty(bundle) # occurs at endpoints
+    endseg = SweepSegment(first(ℰₚ), sweep) # segment at endpoint
+    # check newly adjacent segments
+    nsₗ, nsᵤ = BinaryTrees.prevnext(activesegs, endseg)
+    isnothing(nsₗ) || isnothing(nsᵤ) || _newevent!(𝒬, sweep, bundle, p, _keyseg(nsₗ), _keyseg(nsᵤ), digits)
+  else
+    # check for intersections with adjacent segments below and above the current event point
+    BinaryTrees.isempty(activesegs) || _handlebottom!(bundle, activesegs, 𝒬, p, digits)
+    BinaryTrees.isempty(activesegs) || _handletop!(bundle, activesegs, 𝒬, p, digits)
+  end
+end
+
+# builds output for the current event point
+function _buildoutput!(𝐺, bundle, inds, lookup, ℬ, ℰ, p)
+  # add intersection points and corresponding segment indices to 𝐺
+  if length(bundle) > length(ℬ) # bundle only has ℬ unless p is an intersection
+    # add start and crossing segments
+    for s in bundle
+      push!(inds, lookup[_segment(s)])
+    end
+    # add ending segments
+    for seg in ℰ
+      push!(inds, lookup[seg])
+    end
+
+    # add indices to output
+    indᵥ = collect(inds)
+    if haskey(𝐺, p)
+      union!(𝐺[p], indᵥ)
+    else
+      𝐺[p] = indᵥ
+    end
+  end
+  empty!(inds)
+  nothing
+end
+
+# add new events to the event queue as needed
+function _newevent!(𝒬, sweep, bundle, p, seg₁, seg₂, digits)
   intersection(Segment(seg₁), Segment(seg₂)) do I
     t = type(I)
     if t === Crossing || t === EdgeTouching
       i = coordround(get(I), digits=digits)
       if i ≈ p # helps with vertical+horizontal intersections
-        push!(bundle, SweepSegment(seg₂, sweepline))
-        push!(bundle, SweepSegment(seg₁, sweepline))
+        push!(bundle, SweepSegment(seg₂, sweep))
+        push!(bundle, SweepSegment(seg₁, sweep))
       elseif i > p # add to 𝒬, update existing point if needed
-        _addpoint!(𝒬, i, [seg₁, seg₂], 3)
+        _addpoint!(𝒬, i, [seg₁, seg₂], :crossings)
       end
     end
+  end
+end
+
+# add an endpoint and corresponding segment to the event queue at a given position (1=start, 2=end, 3=crossing)
+function _addpoint!(𝒬, p, segs, pos)
+  P = typeof(p)
+  S = Tuple{P,P}
+  node = BinaryTrees.search(𝒬, EventPoint(p, S))
+  # updates or adds event point based on existing events in 𝒬
+  if !isnothing(node)
+    update!(node.key, segs, pos)
+  else
+    # create a new event point for given position
+    BinaryTrees.insert!(𝒬, EventPoint(p, segs, pos))
   end
 end
 
@@ -176,20 +241,6 @@ function _digits(segments)
   ℒ = lentype(seg)
   τ = ustrip(eps(ℒ))
   round(Int, 0.8 * (-log10(τ))) # 0.8 is a heuristic to avoid numerical issues
-end
-
-# add an endpoint and corresponding segment to the event queue at a given position (1=start, 2=end, 3=crossing)
-function _addpoint!(𝒬, p, segs, pos)
-  U = Set{typeof(first(segs))} # set of segments
-  node = BinaryTrees.search(𝒬, p)
-  # updates or adds event point based on existing events in 𝒬
-  if !isnothing(node)
-    union!(BinaryTrees.value(node)[pos], segs)
-  else
-    # create a new event point with the value of (U(), U(), U()). pos determines whether inserted segments are starts or ends
-    vals = ntuple(i -> i == pos ? U(segs) : U(), 3) # (Starts, Ends, Crossings)
-    BinaryTrees.insert!(𝒬, p, vals)
-  end
 end
 
 # compute y bounds of the segments
@@ -208,9 +259,6 @@ end
 # convenience function to get the segment from a our AVLNode{SweepSegment} structure
 _keyseg(ns) = _segment(BinaryTrees.key(ns))
 
-# handles  the degenerate case of trivial (0-length) segments
-_istrivial(seg) = seg[1] == seg[2]
-
 # ----------------
 # DATA STRUCTURES
 # ----------------
@@ -218,13 +266,14 @@ _istrivial(seg) = seg[1] == seg[2]
 # tracks the event point and constructs the sweepline lazily
 mutable struct SweepLine{P<:Point,ℒ<:Number}
   p::P
-  ybounds::Tuple{ℒ,ℒ}
+  const ybounds::Tuple{ℒ,ℒ}
+  activesegments::Any # sorted sequence of segments currently intersecting the sweepline
 end
+
 # getters
-_sweeppoint(sweepline::SweepLine) = getfield(sweepline, :p)
-_sweepx(sweepline::SweepLine) = CoordRefSystems.values(coords(_sweeppoint(sweepline)))[1]
-_sweepy(sweepline::SweepLine) = CoordRefSystems.values(coords(_sweeppoint(sweepline)))[2]
-_sweepbounds(sweepline::SweepLine) = getfield(sweepline, :ybounds)
+_sweepcoords(sweep::SweepLine) = CoordRefSystems.values(coords(sweep.p))
+activesegments(sweep::SweepLine) = sweep.activesegments
+update!(sweep::SweepLine, p) = (sweep.p = p; sweep)
 
 #= Sweepline Definition ---
 
@@ -243,12 +292,11 @@ ending segments don't intersect, and all other segments are correctly ordered.
 
 Inspired by LEDA implementation, but modified for Julia
 =#
-function _sweepline(sweepline::SweepLine)
-  x = _sweepx(sweepline)
-  y = _sweepy(sweepline)
+function sweepline(sweep::SweepLine)
+  x, y = _sweepcoords(sweep)
   # perturbation to avoid numerical issues
   ϵ = atol(x) + eps(x)
-  lower, upper = _sweepbounds(sweepline)
+  lower, upper = sweep.ybounds
 
   p₁ = Point(x + ϵ, lower) # lowest point
   p₂ = Point(x + ϵ, y + 2ϵ) # doubled to avoid precision issues
@@ -260,19 +308,15 @@ function _sweepline(sweepline::SweepLine)
 end
 
 # sweepline intersection with segment
-function _sweepintersect(seg::Tuple{P,P}, sweepline::SweepLine{P,ℒ}) where {P<:Point,ℒ<:Number}
-  rope = _sweepline(sweepline)
+function _sweepintersect(seg::Tuple{P,P}, sweep::SweepLine{P,ℒ}) where {P<:Point,ℒ<:Number}
+  rope = sweepline(sweep)
   I = nothing
   # check for intersections between the segment and the sweepline.
   # `Rope()` intersections are not type stable; this loop is a workaround.
   for segᵣ in rope
-    I = intersection(Segment(seg), Segment(segᵣ)) do I
-      t = type(I)
-      if t === Crossing || t === EdgeTouching || t === CornerTouching
-        get(I)
-      else
-        nothing
-      end
+    I = intersection(Segment(seg), Segment(segᵣ)) do 𝑖
+      t = type(𝑖)
+      (t === Crossing || t === EdgeTouching || t === CornerTouching) ? get(𝑖) : nothing
     end
     if !isnothing(I)
       break
@@ -293,19 +337,25 @@ mutable struct SweepSegment{P<:Point,ℒ<:Number}
   latestpoint::P # latest point of the sweepline used to calculate the intersection
 end
 
-# constructor for SweepSegment using Sweepline
-function SweepSegment(seg::Tuple{P,P}, sweepline::SweepLine{P,ℒ}) where {P<:Point,ℒ<:Number}
-  y = _sweepintersect(seg, sweepline)
-  SweepSegment{P,ℒ}(seg, sweepline, y, _sweeppoint(sweepline))
+# constructor for SweepSegment using SweepLine
+function SweepSegment(seg::Tuple{P,P}, sweep::SweepLine{P,ℒ}) where {P<:Point,ℒ<:Number}
+  y = _sweepintersect(seg, sweep)
+  SweepSegment{P,ℒ}(seg, sweep, y, sweep.p)
+end
+# extend SweepLine for SweepSegment
+function SweepLine(segs)
+  P = typeof(first(first(segs)))
+  ℒ = lentype(P)
+  ybounds = _ybounds(segs)
+  pmin, _ = first(extrema(segs))
+  SweepLine{P,ℒ}(pmin, ybounds, BinaryTrees.AVLTree{SweepSegment{P,ℒ}}())
 end
 
 # getters for SweepSegment
 _segment(s::SweepSegment) = getfield(s, :seg)
-_yintersect(s::SweepSegment) = getfield(s, :yintersect)
 _sweepline(s::SweepSegment) = getfield(s, :sweepline)
-_sweeppoint(s::SweepSegment) = _sweeppoint(getfield(s, :sweepline))
 
-Base.:(==)(s₁::SweepSegment, s₂::SweepSegment) = _segment(s₁) == _segment(s₂)
+Base.:(==)(s₁::SweepSegment, s₂::SweepSegment) = s₁.seg == s₂.seg
 
 # compare two segments based on their sweepline intersection relative to the current event point.
 function Base.isless(s₁::SweepSegment{P,ℒ}, s₂::SweepSegment{P,ℒ}) where {P<:Point,ℒ}
@@ -314,7 +364,7 @@ function Base.isless(s₁::SweepSegment{P,ℒ}, s₂::SweepSegment{P,ℒ}) where
     return false
   end
   #* calculating the y intersect is the largest performance bottleneck
-  ya = _yintersect(s₁) # s₁ is always up-to-date
+  ya = s₁.yintersect # s₁ is always up-to-date
   yb = _ycalc!(s₂)
 
   diff = ustrip(abs(ya - yb))
@@ -324,23 +374,48 @@ function Base.isless(s₁::SweepSegment{P,ℒ}, s₂::SweepSegment{P,ℒ}) where
     ya < yb
   else
     # fallback to lexicographic ordering of segments
-    seg₁, seg₂ = _segment(s₁), _segment(s₂)
+    seg₁, seg₂ = s₁.seg, s₂.seg
     seg₁ < seg₂
   end
 end
 
 # calculate y-coordinate of intersection with sweepline
 function _ycalc!(s::SweepSegment{P,ℒ}) where {P<:Point,ℒ<:Number}
-  sweepline = _sweepline(s)
+  sweep = s.sweepline
   # if the latest point is the sweepline point, use the precalculated intersection
-  if s.latestpoint === _sweeppoint(sweepline)
+  if s.latestpoint === sweep.p
     y = s.yintersect
   else
     # otherwise, calculate the intersection with the sweepline
     # and update
-    y = convert(ℒ, _sweepintersect(_segment(s), sweepline))
-    s.latestpoint = _sweeppoint(sweepline)
+    y = convert(ℒ, _sweepintersect(s.seg, sweep))
+    s.latestpoint = sweep.p
     s.yintersect = y
   end
   y
+end
+
+struct EventPoint{P,S}
+  p::P
+  types::Dict{Symbol,Set{S}}
+end
+
+# empty point constructor
+function EventPoint(p::P, ::Type{S}) where {P,S}
+  types = Dict{Symbol,Set{S}}()
+  EventPoint{P,S}(p, types)
+end
+
+function EventPoint(p::P, segs::Vector{S}, pos::Symbol) where {P,S}
+  types = Dict{Symbol,Set{S}}()
+  # Add the position symbol and set
+  types[pos] = Set(segs)
+  EventPoint{P,S}(p, types)
+end
+
+Base.isless(ep₁::EventPoint, ep₂::EventPoint) = ep₁.p < ep₂.p
+
+function update!(ep::EventPoint{P,S}, segs, pos::Symbol) where {P,S}
+  set = get!(ep.types, pos, Set{S}())
+  foreach(s -> push!(set, s), segs)
 end
