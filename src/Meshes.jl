@@ -8,6 +8,7 @@ using CoordRefSystems
 using StaticArrays
 using SparseArrays
 using CircularArrays
+using BinaryTrees
 using LinearAlgebra
 using Unitful
 using Random
