@@ -159,6 +159,16 @@ end
     @test Set(length.(θseginds)) == Set([2])
   end
 
+  # tests coverage for when intervals don't overlap
+  segs = [
+    Segment(cart(0, 2), cart(2, 0)),
+    Segment(cart(0, 0), cart(2, 2)),
+    Segment(cart(3, 1), cart(3, 3)),
+    Segment(cart(3, 3), cart(3, 3))
+  ]
+  points, seginds = sortedintersection(segs)
+  @test length(points) == 1
+
   # inference test
   segs = facets(cartgrid(10, 10))
   @inferred Nothing (Meshes.intervalsweep(segs))
