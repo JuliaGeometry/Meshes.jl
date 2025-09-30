@@ -80,10 +80,10 @@ end
   @inferred Meshes.coordround(p₁, digits=10)
 end
 
-@testitem "bentleyottmann" setup = [Setup] begin
+@testitem "intervalsweep" setup = [Setup] begin
   # helper to sort points and seginds by point coordinates
   function sortedintersection(segs)
-    points, inds = Meshes.bentleyottmann(segs)
+    points, inds = Meshes.intervalsweep(segs)
     perm = sortperm(points)
     points[perm], inds[perm]
   end
@@ -161,7 +161,7 @@ end
 
   # inference test
   segs = facets(cartgrid(10, 10))
-  @inferred Nothing (Meshes.bentleyottmann(segs))
+  @inferred Nothing (Meshes.intervalsweep(segs))
 end
 
 @testitem "isthreaded" setup = [Setup] begin

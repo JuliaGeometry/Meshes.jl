@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    bentleyottmann(segments; [digits])
+    intervalsweep(segments; [digits])
 
 Compute pairwise intersections between n `segments`
-with `digits` precision in O((n+k)⋅log(n)) time using
-Bentley-Ottmann sweep line algorithm.
+with `digits` precision in O(n⋅log(n+k)) time using
+an x-interval sweep line algorithm. Similar to an optimal
+Bentley-Ottmann algorithm in sparse systems, and closer to O(n²) in dense systems.
 
 By default, set `digits` based on the absolute
 tolerance of the length type of the segments.
@@ -17,7 +18,7 @@ tolerance of the length type of the segments.
 * Bentley & Ottmann 1979. [Algorithms for reporting and counting
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
-function bentleyottmann(segments; digits=_digits(segments))
+function intervalsweep(segments; digits=_digits(segments))
   # orient segments and round coordinates
   segs = map(segments) do seg
     a, b = coordround.(extrema(seg), digits=digits)
