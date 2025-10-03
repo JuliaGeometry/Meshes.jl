@@ -25,7 +25,7 @@ function pairwiseintersect(segments; digits=_digits(segments))
     a, b = coordround.(extrema(seg), digits=digits)
     a > b ? (b, a) : (a, b)
   end
-  sweep1D!(_initqueue(segs); digits=digits)
+  sweep1D(_initqueue(segs); digits=digits)
 end
 
 function _initqueue(segs::Vector{<:Tuple{Point,Point}})
@@ -66,13 +66,13 @@ end
 # ----------------
 
 """
-  sweep1D!(queue; [digits])
+  sweep1D(queue; [digits])
 
 Iterate through a sweep interval queue and compute all intersection points
 between overlapping intervals. Returns a tuple of intersection points and
 the sets of segment indices that intersect at each point.
 """
-function sweep1D!(𝒬::Vector{SweepLineInterval}; digits=10)
+function sweep1D(𝒬::Vector{SweepLineInterval}; digits=10)
   𝐺 = Dict{Point,Set{Int}}()
   n = length(𝒬)
   for i in 1:n
