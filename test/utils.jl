@@ -80,10 +80,10 @@ end
   @inferred Meshes.coordround(p₁, digits=10)
 end
 
-@testitem "intervalsweep" setup = [Setup] begin
+@testitem "pairwiseintersect" setup = [Setup] begin
   # helper to sort points and seginds by point coordinates
   function sortedintersection(segs)
-    points, inds = Meshes.intervalsweep(segs)
+    points, inds = Meshes.pairwiseintersect(segs)
     perm = sortperm(points)
     points[perm], inds[perm]
   end
@@ -171,7 +171,7 @@ end
 
   # inference test
   segs = facets(cartgrid(10, 10))
-  @inferred Nothing (Meshes.intervalsweep(segs))
+  @inferred Nothing (Meshes.pairwiseintersect(segs))
 end
 
 @testitem "isthreaded" setup = [Setup] begin
