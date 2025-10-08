@@ -853,7 +853,7 @@ end
   equaltest(c)
   isapproxtest(c)
 
-  # Ensure mixed-unit construction produces correct parametrization
+  # ensure mixed-unit construction produces correct parametrization
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   r = T(1) * u"mm"
   c = Circle(p, r)
