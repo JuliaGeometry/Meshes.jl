@@ -807,7 +807,7 @@ end
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   r = T(1) * u"mm"
   d = Disk(p, r)
-  @test LinearAlgebra.norm(d(1, 0) - center(d)) == r
+  @test norm(d(1, 0) - center(d)) == r
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
