@@ -798,6 +798,12 @@ end
   @test cart(0, 0, 1) ∉ d
   @test boundary(d) == Circle(p, T(2))
 
+  # ensure mixed-unit construction produces correct parametrization
+  p = Plane(cart(0, 0, 0), vector(0, 0, 1))
+  r = T(1) * u"mm"
+  d = Disk(p, r)
+  @test norm(d(1, 0) - center(d)) == r
+
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
   equaltest(d)
@@ -841,6 +847,12 @@ end
   c = Circle(p, T(2))
   equaltest(c)
   isapproxtest(c)
+
+  # ensure mixed-unit construction produces correct parametrization
+  p = Plane(cart(0, 0, 0), vector(0, 0, 1))
+  r = T(1) * u"mm"
+  c = Circle(p, r)
+  @test norm(c(0) - center(c)) == r
 
   # 3D circumcircle
   p1 = cart(0, 4, 0)
