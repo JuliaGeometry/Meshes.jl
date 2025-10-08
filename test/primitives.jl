@@ -698,6 +698,11 @@ end
   @test cart(0, 0, 2) ∈ s
   @test cart(3, 5, 2) ∉ s
 
+  # Ensure mixed-unit construction produces correct parametrization
+  r = T(1) * u"mm"
+  s = Sphere(cart(0, 0, 0), r)
+  @test LinearAlgebra.norm(s(1, 0) - center(s)) == r
+
   # 2D sphere passing through 3 points
   s = Sphere(cart(0, 0), cart(0.5, 0), cart(1, 1))
   @test center(s) == cart(0.25, 0.75)
@@ -798,6 +803,12 @@ end
   @test cart(0, 0, 1) ∉ d
   @test boundary(d) == Circle(p, T(2))
 
+  # Ensure mixed-unit construction produces correct parametrization
+  p = Plane(cart(0, 0, 0), vector(0, 0, 1))
+  r = T(1) * u"mm"
+  d = Disk(p, r)
+  @test LinearAlgebra.norm(d(1, 0) - center(d)) == r
+
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
   equaltest(d)
@@ -841,6 +852,12 @@ end
   c = Circle(p, T(2))
   equaltest(c)
   isapproxtest(c)
+
+  # Ensure mixed-unit construction produces correct parametrization
+  p = Plane(cart(0, 0, 0), vector(0, 0, 1))
+  r = T(1) * u"mm"
+  c = Circle(p, r)
+  @test LinearAlgebra.norm(c(0) - center(c)) == r
 
   # 3D circumcircle
   p1 = cart(0, 4, 0)
