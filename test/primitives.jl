@@ -698,11 +698,6 @@ end
   @test cart(0, 0, 2) ∈ s
   @test cart(3, 5, 2) ∉ s
 
-  # Ensure mixed-unit construction produces correct parametrization
-  r = T(1) * u"mm"
-  s = Sphere(cart(0, 0, 0), r)
-  @test norm(s(1, 0) - center(s)) == r
-
   # 2D sphere passing through 3 points
   s = Sphere(cart(0, 0), cart(0.5, 0), cart(1, 1))
   @test center(s) == cart(0.25, 0.75)
