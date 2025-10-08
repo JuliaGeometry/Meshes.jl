@@ -857,7 +857,7 @@ end
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   r = T(1) * u"mm"
   c = Circle(p, r)
-  @test LinearAlgebra.norm(c(0) - center(c)) == r
+  @test norm(c(0) - center(c)) == r
 
   # 3D circumcircle
   p1 = cart(0, 4, 0)
