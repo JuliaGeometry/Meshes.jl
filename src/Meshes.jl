@@ -13,7 +13,7 @@ using Unitful
 using Random
 
 using Bessels: gamma
-using Unitful: AbstractQuantity, numtype, unit
+using Unitful: AbstractQuantity, numtype
 using CoordRefSystems: Basic, Geographic, Projected
 using Distances: PreMetric, Euclidean, Mahalanobis
 using Distances: Haversine, SphericalAngle
