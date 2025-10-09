@@ -7,7 +7,7 @@
 
 Compute pairwise intersections between n `segments`
 with `digits` precision in O(n⋅log(n+k)) time using
-an x-interval sweep line algorithm. Similar to an optimal
+a sweep line algorithm. Similar to an optimal
 Bentley-Ottmann algorithm in sparse systems,
 and closer to O(n²) in dense systems.
 
@@ -25,17 +25,48 @@ function pairwiseintersect(segments; digits=_digits(segments))
     a, b = coordround.(extrema(seg), digits=digits)
     a > b ? (b, a) : (a, b)
   end
-  sweep1D(_initqueue(segs); digits=digits)
-end
 
-function _initqueue(segs::Vector{<:Tuple{Point,Point}})
-  𝒬 = Vector{SweepLineInterval}()
-  for (i, seg) in enumerate(segs)
+  starts, stops = map(segs) do seg
     x₁, _ = CoordRefSystems.values(coords(seg[1]))
     x₂, _ = CoordRefSystems.values(coords(seg[2]))
-    push!(𝒬, SweepLineInterval(min(x₁, x₂), max(x₁, x₂), seg, i))
+    (x₁, x₂)
+  end |> x -> (first.(x), last.(x))
+  # sort indices based on start x coordinates
+  sortedindices = sortperm(starts)
+  # reorder everything based on sorted indices
+  starts, stops, segs = getindex.((starts, stops, segs), Ref(sortedindices))
+  # keep track of original indices
+  n = length(segs)
+  oldindices = collect(1:n)[sortedindices]
+
+  # primary sweepline algorithm
+  𝐺 = Dict{Point,Vector{Int}}()
+  for i in eachindex(segs)
+    for k in (i + 1):n
+      I = _checkintersection(i, k, starts, stops, segs)
+
+      # break if no overlap, continue if no intersection, add intersection otherwise
+      if I == :break
+        break
+      elseif I == :continue
+        continue
+      else
+        _addintersection!(𝐺, I, oldindices[i], oldindices[k]; digits=digits)
+      end
+    end
   end
-  sort!(𝒬, by=s -> s.start)
+  (collect(keys(𝐺)), collect(values(𝐺)))
+end
+
+overlaps(startᵢ, stopᵢ, startₖ) = (startᵢ ≤ startₖ ≤ stopᵢ)
+
+function _checkintersection(i, k, starts, stops, segs)
+  overlap = overlaps(starts[i], stops[i], starts[k])
+  overlap || return :break
+  intersection(Segment(segs[i]), Segment(segs[k])) do 𝑖
+    t = type(𝑖)
+    (t === Crossing || t === EdgeTouching) ? get(𝑖) : :continue
+  end
 end
 
 # compute the number of significant digits based on the segment type
@@ -47,58 +78,13 @@ function _digits(segments)
   round(Int, 0.8 * (-log10(τ))) # 0.8 is a heuristic to avoid numerical issues
 end
 
-# ----------------
-# DATA STRUCTURES
-# ----------------
-
-struct SweepLineInterval{T<:Number}
-  start::T
-  stop::T
-  segment::Any
-  index::Int
-end
-
-function overlaps(i₁::SweepLineInterval, i₂::SweepLineInterval)
-  i₁.start ≤ i₂.start && i₁.stop ≥ i₂.start
-end
-# ----------------
-# SWEEP LINE HANDLER
-# ----------------
-
-"""
-  sweep1D(queue; [digits])
-
-Iterate through a sweep interval queue and compute all intersection points
-between overlapping intervals. Returns a tuple of intersection points and
-the sets of segment indices that intersect at each point.
-"""
-function sweep1D(𝒬::Vector{SweepLineInterval}; digits=10)
-  𝐺 = Dict{Point,Set{Int}}()
-  n = length(𝒬)
-  for i in 1:n
-    current = 𝒬[i]
-    for k in (i + 1):n
-      candidate = 𝒬[k]
-      # If the intervals no longer overlap, break out of the inner loop
-      if !overlaps(current, candidate)
-        break
-      end
-      # Check if the segments actually intersect
-      I = intersection(Segment(current.segment), Segment(candidate.segment)) do 𝑖
-        t = type(𝑖)
-        (t === Crossing || t === EdgeTouching) ? get(𝑖) : nothing
-      end
-      isnothing(I) || _addintersection!(𝐺, I, current.index, candidate.index; digits=digits)
-    end
-  end
-  (collect(keys(𝐺)), collect(values(𝐺)))
-end
-function _addintersection!(𝐺::Dict{Point,Set{Int}}, I::Point, index₁::Int, index₂::Int; digits=10)
+# add an intersection point to the dictionary with segment indices
+function _addintersection!(𝐺, I::Point, index₁::Int, index₂::Int; digits=10)
   p = coordround(I, digits=digits)
   if haskey(𝐺, p)
-    union!(𝐺[p], index₁)
-    union!(𝐺[p], index₂)
+    append!(𝐺[p], (index₁, index₂))
+    unique!(𝐺[p])
   else
-    𝐺[p] = Set([index₁, index₂])
+    𝐺[p] = Vector{Int}([index₁, index₂])
   end
 end
