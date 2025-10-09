@@ -23,6 +23,14 @@
   push!(geoms, Segment(cart(1, 1), cart(0, 0)))
   gset = GeometrySet(geoms)
   @test eltype(gset) <: Segment
+  @test nelements(gset) == 3
+
+  # construction with custom vectors of geometries
+  # https://github.com/JuliaEarth/GeoStats.jl/issues/551
+  geoms = @SVector [cart(0, 0), cart(1, 1)]
+  gset = GeometrySet(geoms)
+  @test eltype(gset) <: Point
+  @test nelements(gset) == 2
 
   # different CRS
   s = Segment(latlon(0, 0), latlon(1, 1))
