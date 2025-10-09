@@ -50,7 +50,7 @@ Base.vcat(d1::Domain, d2::GeometrySet) = GeometrySet(vcat(collect(d1), d2.geoms)
 # SPECIAL CASE: POINT SET
 # ------------------------
 
-const PointSet{M<:Manifold,C<:CRS,V<:AbstractVector} = GeometrySet{M,C,Point{M,C},V}
+const PointSet{M<:Manifold,C<:CRS,V<:AbstractVector{Point{M,C}}} = GeometrySet{M,C,Point{M,C},V}
 
 """
     PointSet(points)
