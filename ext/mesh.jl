@@ -174,36 +174,47 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  # retrieve coordinates parameters
+  # retrieve raw coordinates
   coords = Makie.@lift let
     # relevant settings
-    T = Unitful.numtype(Meshes.lentype($mesh))
+    ℒ = Meshes.lentype($mesh)
+    T = Unitful.numtype(ℒ)
     dim = embeddim($mesh)
     topo = topology($mesh)
     nvert = nvertices($mesh)
     verts = vertices($mesh)
-    coords = map(p -> ustrip.(to(p)), verts)
 
-    # use a sophisticated data structure
-    # to extract the edges from the n-gons
-    t = convert(HalfEdgeTopology, topo)
-    ∂ = Boundary{1,0}(t)
+    # extract coordinates and insert sentinel
+    # vertex with NaN coordinates at the end
+    xyz = map(p -> ustrip.(to(p)), verts)
+    push!(xyz, SVector(ntuple(i -> T(NaN), dim)))
 
-    # append indices of incident vertices
-    # interleaved with a sentinel index
+    # find indices of incident vertices
     inds = Int[]
-    for i in 1:nfacets(t)
-      for j in ∂(i)
-        push!(inds, j)
+    try # efficient algorithm with half-edge topology
+      t = convert(HalfEdgeTopology, topo)
+      ∂ = Boundary{1,0}(t)
+      for i in 1:nfacets(t)
+        for j in ∂(i)
+          push!(inds, j)
+        end
+        # interleave with a sentinel index
+        push!(inds, nvert + 1)
       end
-      push!(inds, nvert + 1)
+    catch # brute force algorithm with duplicate edges
+      t = topo
+      ∂ = Boundary{2,0}(t)
+      for i in 1:nelements(t)
+        for j in ∂(i)
+          push!(inds, j)
+        end
+        # interleave with a sentinel index
+        push!(inds, nvert + 1)
+      end
     end
 
-    # fill sentinel index with NaN coordinates
-    push!(coords, SVector(ntuple(i -> T(NaN), dim)))
-
     # extract incident vertices
-    coords[inds]
+    xyz[inds]
   end
 
   Makie.lines!(plot, coords, color=segmentcolor, linewidth=segmentsize)
