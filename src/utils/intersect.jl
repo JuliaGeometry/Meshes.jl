@@ -20,27 +20,27 @@ tolerance of the length type of the segments.
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
 function pairwiseintersect(segments; digits=_digits(segments))
+  P = typeof(vertices(first(segments))[1])
   # orient segments and round coordinates
   segs = map(segments) do seg
     a, b = coordround.(extrema(seg), digits=digits)
     a > b ? (b, a) : (a, b)
   end
 
-  starts, stops = map(segs) do seg
-    x₁, _ = CoordRefSystems.values(coords(seg[1]))
-    x₂, _ = CoordRefSystems.values(coords(seg[2]))
-    (x₁, x₂)
-  end |> x -> (first.(x), last.(x))
+  starts = [CoordRefSystems.values(coords(seg[1]))[1] for seg in segs]
+  stops = [CoordRefSystems.values(coords(seg[2]))[1] for seg in segs]
   # sort indices based on start x coordinates
-  sortedindices = sortperm(starts)
+  inds = sortperm(starts)
   # reorder everything based on sorted indices
-  starts, stops, segs = getindex.((starts, stops, segs), Ref(sortedindices))
+  starts = starts[inds]
+  stops = stops[inds]
+  segs = segs[inds]
   # keep track of original indices
   n = length(segs)
-  oldindices = collect(1:n)[sortedindices]
+  oldindices = (1:n)[inds]
 
-  # primary sweepline algorithm
-  𝐺 = Dict{Point,Vector{Int}}()
+  # sweepline algorithm
+  𝐺 = Dict{P,Vector{Int}}()
   for i in eachindex(segs)
     for k in (i + 1):n
       I = _checkintersection(i, k, starts, stops, segs)
@@ -58,10 +58,10 @@ function pairwiseintersect(segments; digits=_digits(segments))
   (collect(keys(𝐺)), collect(values(𝐺)))
 end
 
-overlaps(startᵢ, stopᵢ, startₖ) = (startᵢ ≤ startₖ ≤ stopᵢ)
+_overlaps(startᵢ, stopᵢ, startₖ) = (startᵢ ≤ startₖ ≤ stopᵢ)
 
 function _checkintersection(i, k, starts, stops, segs)
-  overlap = overlaps(starts[i], stops[i], starts[k])
+  overlap = _overlaps(starts[i], stops[i], starts[k])
   overlap || return :break
   intersection(Segment(segs[i]), Segment(segs[k])) do 𝑖
     t = type(𝑖)
