@@ -76,3 +76,16 @@ function isconvex(q::Quadrangle)
   d2 = Segment(B, D)
   intersects(d1, d2)
 end
+
+function isconvex(h::Hexahedron)
+  msh = boundary(h)
+
+  # Check all faces are convex and consistently oriented
+  for face in msh
+    if !isconvex(face)
+      return false
+    end
+  end
+
+  true
+end

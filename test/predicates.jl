@@ -247,6 +247,39 @@ end
   @test !isconvex(poly2)
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)]))
   @test !isconvex(poly)
+  hexa1 = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(1, 1, 1),
+    cart(0, 1, 1)
+  )
+  hexa2 = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(0.85, 0.9, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(0.9, 0.9, 1),
+    cart(0, 1, 1)
+  )
+  hexa3 = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(0.9, 0.9, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(0.9, 0.9, 1),
+    cart(0, 1, 1)
+  )
+  @test isconvex(hexa1)
+  @test !isconvex(hexa2)
+  @test isconvex(hexa3) # works even if not cube
 end
 
 @testitem "issubset" setup = [Setup] begin
