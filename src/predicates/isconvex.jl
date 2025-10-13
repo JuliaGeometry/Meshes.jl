@@ -77,4 +77,17 @@ function isconvex(q::Quadrangle)
   intersects(d1, d2)
 end
 
-isconvex(h::Hexahedron) = all(isconvex, boundary(h))
+isconvex(h::Hexahedron) = all(isconvex, boundary(h)) && _isconvex(h)
+
+function _isconvex(h::Hexahedron)
+  # check that any segment between two vertices intersects the boundary only at the endpoints
+  vs = vertices(h)
+  for i in eachindex(vs), j in (i + 1):length(vs)
+    p₁, p₂ = vs[i], vs[j]
+    d = Segment(p₁, p₂)
+    # if any segment between two vertices intersects a face other
+    # than the two faces containing the vertices, it's not convex
+    any(intersects(d, e) && !(p₁ ∈ e || p₂ ∈ e) for e in boundary(h)) && return false
+  end
+  true
+end
