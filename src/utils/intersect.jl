@@ -20,12 +20,12 @@ tolerance of the length type of the segments.
   geometric intersections](https://ieeexplore.ieee.org/document/1675432)
 """
 function pairwiseintersect(segments; digits=_digits(segments))
-  P = typeof(vertices(first(segments))[1])
   # orient segments and round coordinates
   segs = map(segments) do seg
     a, b = coordround.(extrema(seg), digits=digits)
     a > b ? (b, a) : (a, b)
   end
+  P = typeof(first(segs)[1])
 
   starts = [CoordRefSystems.values(coords(seg[1]))[1] for seg in segs]
   stops = [CoordRefSystems.values(coords(seg[2]))[1] for seg in segs]
@@ -43,12 +43,17 @@ function pairwiseintersect(segments; digits=_digits(segments))
   𝐺 = Dict{P,Vector{Int}}()
   for i in eachindex(segs)
     for k in (i + 1):n
-      I = _checkintersection(i, k, starts, stops, segs)
+      overlap = _overlaps(starts[i], stops[i], starts[k])
+      # if no overlap, break inner loop
+      overlap || break
 
-      # break if no overlap, continue if no intersection, add intersection otherwise
-      if I == :break
-        break
-      elseif I == :continue
+      I = intersection(Segment(segs[i]), Segment(segs[k])) do 𝑖
+        t = type(𝑖)
+        (t === Crossing || t === EdgeTouching) ? get(𝑖) : nothing
+      end
+
+      # continue if no intersection, add intersection otherwise
+      if isnothing(I)
         continue
       else
         _addintersection!(𝐺, I, oldindices[i], oldindices[k]; digits=digits)
@@ -59,16 +64,6 @@ function pairwiseintersect(segments; digits=_digits(segments))
 end
 
 _overlaps(startᵢ, stopᵢ, startₖ) = (startᵢ ≤ startₖ ≤ stopᵢ)
-
-function _checkintersection(i, k, starts, stops, segs)
-  overlap = _overlaps(starts[i], stops[i], starts[k])
-  overlap || return :break
-  intersection(Segment(segs[i]), Segment(segs[k])) do 𝑖
-    t = type(𝑖)
-    (t === Crossing || t === EdgeTouching) ? get(𝑖) : :continue
-  end
-end
-
 # compute the number of significant digits based on the segment type
 # this is used to determine the precision of the points
 function _digits(segments)
