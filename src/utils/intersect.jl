@@ -35,27 +35,15 @@ function pairwiseintersect(segments; digits=_digits(segments))
   stops = stops[inds]
   segs = segs[inds]
 
-  # keep track of original indices
-  n = length(segs)
-  oldindices = (1:n)[inds]
-
   # sweepline algorithm
   P = eltype(first(segs))
   𝐺 = Dict{P,Vector{Int}}()
-  for i in eachindex(segs)
-    for j in (i + 1):length(segs)
-      _overlaps(starts[i], stops[i], starts[j]) || break
+  for i in eachindex(segs), j in (i + 1):length(segs)
+    _overlaps(starts[i], stops[i], starts[j]) || break
 
-      I = intersection(Segment(segs[i]), Segment(segs[j])) do 𝑖
-        t = type(𝑖)
-        (t === Crossing || t === EdgeTouching) ? get(𝑖) : nothing
-      end
-
-      # continue if no intersection, add intersection otherwise
-      if isnothing(I)
-        continue
-      else
-        _addintersection!(𝐺, I, oldindices[i], oldindices[j]; digits=digits)
+    intersection(Segment(segs[i]), Segment(segs[j])) do I
+      if type(I) == Crossing || type(I) == EdgeTouching
+        _addintersection!(𝐺, I, inds[i], inds[j]; digits=digits)
       end
     end
   end
