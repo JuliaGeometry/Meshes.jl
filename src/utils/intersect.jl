@@ -38,13 +38,16 @@ function pairwiseintersect(segments; digits=_digits(segments))
   # sweepline algorithm
   P = eltype(first(segs))
   𝐺 = Dict{P,Vector{Int}}()
-  for i in eachindex(segs), j in (i + 1):length(segs)
-    _overlaps(starts[i], stops[i], starts[j]) || break
+  for i in eachindex(segs)
+    for j in (i + 1):length(segs)
+      _overlaps(starts[i], stops[i], starts[j]) || break
 
-    intersection(Segment(segs[i]), Segment(segs[j])) do I
-      if type(I) == Crossing || type(I) == EdgeTouching
-        _addintersection!(𝐺, get(I), inds[i], inds[j]; digits=digits)
+      intersection(Segment(segs[i]), Segment(segs[j])) do I
+        if type(I) == Crossing || type(I) == EdgeTouching
+          _addintersection!(𝐺, get(I), inds[i], inds[j]; digits=digits)
+        end
       end
+      continue
     end
   end
   (collect(keys(𝐺)), collect(values(𝐺)))
