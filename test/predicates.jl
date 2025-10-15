@@ -260,26 +260,62 @@ end
   hexa2 = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
-    cart(0.85, 0.9, 0),
+    cart(0.9, 0.9, 0),
     cart(0, 1, 0),
     cart(0, 0, 1),
     cart(1, 0, 1),
-    cart(0.9, 0.9, 1),
+    cart(1, 1, 1),
     cart(0, 1, 1)
   )
   hexa3 = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
-    cart(0.9, 0.9, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0.25, 0.25, 0.2),
+    cart(0.75, 0.25, 0.2),
+    cart(0.75, 0.26, 0.2),
+    cart(0.25, 0.26, 0.2)
+  )
+  hexa4 = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0.25, 0.25, 0.2),
+    cart(0.75, 0.25, 0.2),
+    cart(0.75, 0.25, 0.21),
+    cart(0.25, 0.25, 0.21)
+  )
+  hexa5 = Hexahedron(
+    cart(0, 0, 0.1),
+    cart(1, 0, 0.1),
+    cart(1, 1, 0.1),
+    cart(0, 1, 0.1),
+    cart(0, 0, 0.3),
+    cart(1, 0, 0.2),
+    cart(1, 1, 0.3),
+    cart(0, 1, 0.2)
+  )
+  hexa6 = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
     cart(0, 1, 0),
     cart(0, 0, 1),
     cart(1, 0, 1),
-    cart(0.9, 0.9, 1),
-    cart(0, 1, 1)
+    cart(1, 1, -1),
+    cart(0, 1, -1)
   )
   @test isconvex(hexa1)
   @test !isconvex(hexa2)
-  @test isconvex(hexa3) # works even if not cube
+  @test isconvex(hexa3) # symmetric deformation
+  @test !isconvex(hexa4) # tiny non-symmetric deformation
+  @test !isconvex(hexa5)
+  @test !isconvex(hexa6)
+  for transform in [Affine(AngleAxis(0.75, 1.0, 0.5, 0.25), [-5, 2, 2]), Stretch(1.0, 2.0, 5.0)]
+    @test isconvex(hexa3 |> transform)
+  end
 end
 
 @testitem "issubset" setup = [Setup] begin
