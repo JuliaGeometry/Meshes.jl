@@ -25,29 +25,28 @@ function pairwiseintersect(segments; digits=_digits(segments))
     a, b = coordround.(extrema(seg), digits=digits)
     a > b ? (b, a) : (a, b)
   end
-  P = typeof(first(segs)[1])
 
   starts = [CoordRefSystems.values(coords(seg[1]))[1] for seg in segs]
   stops = [CoordRefSystems.values(coords(seg[2]))[1] for seg in segs]
-  # sort indices based on start x coordinates
+
+  # sort segments based on start coordinates
   inds = sortperm(starts)
-  # reorder everything based on sorted indices
   starts = starts[inds]
   stops = stops[inds]
   segs = segs[inds]
+
   # keep track of original indices
   n = length(segs)
   oldindices = (1:n)[inds]
 
   # sweepline algorithm
+  P = eltype(first(segs))
   𝐺 = Dict{P,Vector{Int}}()
   for i in eachindex(segs)
-    for k in (i + 1):n
-      overlap = _overlaps(starts[i], stops[i], starts[k])
-      # if no overlap, break inner loop
-      overlap || break
+    for j in (i + 1):length(segs)
+      _overlaps(starts[i], stops[i], starts[j]) || break
 
-      I = intersection(Segment(segs[i]), Segment(segs[k])) do 𝑖
+      I = intersection(Segment(segs[i]), Segment(segs[j])) do 𝑖
         t = type(𝑖)
         (t === Crossing || t === EdgeTouching) ? get(𝑖) : nothing
       end
@@ -56,7 +55,7 @@ function pairwiseintersect(segments; digits=_digits(segments))
       if isnothing(I)
         continue
       else
-        _addintersection!(𝐺, I, oldindices[i], oldindices[k]; digits=digits)
+        _addintersection!(𝐺, I, oldindices[i], oldindices[j]; digits=digits)
       end
     end
   end
@@ -64,6 +63,7 @@ function pairwiseintersect(segments; digits=_digits(segments))
 end
 
 _overlaps(startᵢ, stopᵢ, startₖ) = (startᵢ ≤ startₖ ≤ stopᵢ)
+
 # compute the number of significant digits based on the segment type
 # this is used to determine the precision of the points
 function _digits(segments)
