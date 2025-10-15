@@ -43,7 +43,7 @@ function pairwiseintersect(segments; digits=_digits(segments))
 
     intersection(Segment(segs[i]), Segment(segs[j])) do I
       if type(I) == Crossing || type(I) == EdgeTouching
-        _addintersection!(𝐺, I, inds[i], inds[j]; digits=digits)
+        _addintersection!(𝐺, get(I), inds[i], inds[j]; digits=digits)
       end
     end
   end
