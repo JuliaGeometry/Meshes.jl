@@ -82,7 +82,7 @@ and apply function `f` to it. Default function is `identity`.
 
 ```julia
 intersection(g₁, g₂) do I
-  if I isa CrossingLines
+  if type(I) == CrossingLines
     # do something
   else
     # do nothing
