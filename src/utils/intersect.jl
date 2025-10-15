@@ -47,7 +47,6 @@ function pairwiseintersect(segments; digits=_digits(segments))
           _addintersection!(𝐺, get(I), inds[i], inds[j]; digits=digits)
         end
       end
-      continue
     end
   end
   (collect(keys(𝐺)), collect(values(𝐺)))
