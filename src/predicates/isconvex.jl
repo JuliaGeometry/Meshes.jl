@@ -64,6 +64,8 @@ _isconvex(p::Polygon, ::Val{2}) = Set(eachvertex(convexhull(p))) == Set(eachvert
 
 _isconvex(p::Polygon, ::Val{3}) = isconvex(proj2D(p))
 
+isconvex(h::Hexahedron) = all(isconvex, boundary(h))
+
 isconvex(m::Multi) = isapproxequal(measure(convexhull(m)), measure(m))
 
 # --------------
