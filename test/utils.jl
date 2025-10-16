@@ -147,7 +147,7 @@ end
   points, seginds = sortedintersection(segs)
   @test length(points) == n * n - 4
   @test length(seginds) == n * n - 4
-  @test Set(length.(seginds)) == Set([2])
+  @test all(==(2), length.(seginds))
 
   # number of intersections is invariant under rotations
   for θ in T(π / 6):T(π / 6):T(2π - π / 6)
@@ -156,7 +156,7 @@ end
     θpoints, θseginds = sortedintersection(segs |> Rotate(θ))
     @test length(θpoints) == n * n - 4
     @test length(θseginds) == n * n - 4
-    @test Set(length.(θseginds)) == Set([2])
+    @test all(==(2), length.(θseginds))
   end
 
   # tests coverage for when intervals don't overlap
