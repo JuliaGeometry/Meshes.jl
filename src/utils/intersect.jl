@@ -11,8 +11,19 @@ a sweep line algorithm. Similar to an optimal
 Bentley-Ottmann algorithm in sparse systems,
 and closer to O(n²) in dense systems.
 
+Return intersection points and corresponding indices
+of segments involved in the intersection.
+
 By default, set `digits` based on the absolute
 tolerance of the length type of the segments.
+
+## Examples
+
+```julia
+points, seginds = pairwiseintersect(segments)
+points[i] # i-th intersection point
+seginds[i] # corresponding segments
+```
 
 ## References
 
