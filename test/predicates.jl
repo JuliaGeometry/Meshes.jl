@@ -247,7 +247,7 @@ end
   @test !isconvex(poly2)
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)]))
   @test !isconvex(poly)
-  hexa1 = Hexahedron(
+  h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
     cart(1, 1, 0),
@@ -257,7 +257,8 @@ end
     cart(1, 1, 1),
     cart(0, 1, 1)
   )
-  hexa2 = Hexahedron(
+  @test isconvex(h)
+  h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
     cart(0.9, 0.9, 0),
@@ -267,7 +268,8 @@ end
     cart(1, 1, 1),
     cart(0, 1, 1)
   )
-  hexa3 = Hexahedron(
+  @test !isconvex(h)
+  h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
     cart(1, 1, 0),
@@ -277,7 +279,8 @@ end
     cart(0.75, 0.26, 0.2),
     cart(0.25, 0.26, 0.2)
   )
-  hexa4 = Hexahedron(
+  @test isconvex(h)
+  h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
     cart(1, 1, 0),
@@ -287,7 +290,8 @@ end
     cart(0.75, 0.25, 0.21),
     cart(0.25, 0.25, 0.21)
   )
-  hexa5 = Hexahedron(
+  @test !isconvex(h)
+  h = Hexahedron(
     cart(0, 0, 0.1),
     cart(1, 0, 0.1),
     cart(1, 1, 0.1),
@@ -297,7 +301,8 @@ end
     cart(1, 1, 0.3),
     cart(0, 1, 0.2)
   )
-  hexa6 = Hexahedron(
+  @test !isconvex(h)
+  h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
     cart(1, 1, 0),
@@ -307,15 +312,22 @@ end
     cart(1, 1, -1),
     cart(0, 1, -1)
   )
-  @test isconvex(hexa1)
-  @test !isconvex(hexa2)
-  @test isconvex(hexa3) # symmetric deformation
-  @test !isconvex(hexa4) # tiny non-symmetric deformation
-  @test !isconvex(hexa5)
-  @test !isconvex(hexa6)
-  for transform in [Affine(AngleAxis(0.75, 1.0, 0.5, 0.25), [-5, 2, 2]), Stretch(1.0, 2.0, 5.0)]
-    @test isconvex(hexa3 |> transform)
-  end
+  @test !isconvex(h)
+  h0 = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0.25, 0.25, 0.2),
+    cart(0.75, 0.25, 0.2),
+    cart(0.75, 0.26, 0.2),
+    cart(0.25, 0.26, 0.2)
+  )
+  h1 = h0 |> Affine(AngleAxis(T(0.75), T(1.0), T(0.5), T(0.25)), T[-5, 2, 2])
+  h2 = h0 |> Stretch(T(1.0), T(2.0), T(5.0))
+  @test isconvex(h0)
+  @test isconvex(h1)
+  @test isconvex(h2)
 end
 
 @testitem "issubset" setup = [Setup] begin
