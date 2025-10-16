@@ -51,10 +51,19 @@ function pairwiseintersect(segments; digits=_digits(segments))
       intersection(segs[i], segs[j]) do I
         if type(I) == Crossing || type(I) == EdgeTouching
           p = coordround(get(I); digits)
-          _addintersection!(D, p, inds[i], inds[j])
+          if haskey(D, p)
+            append!(D[p], (inds[i], inds[j]))
+          else
+            D[p] = [inds[i], inds[j]]
+          end
         end
       end
     end
+  end
+
+  # remove duplicate indices
+  for p in keys(D)
+    unique!(D[p])
   end
 
   collect(keys(D)), collect(values(D))
@@ -67,14 +76,4 @@ function _digits(segments)
   ℒ = lentype(s)
   τ = ustrip(eps(ℒ))
   round(Int, 0.8 * (-log10(τ))) # 0.8 is a heuristic to avoid numerical issues
-end
-
-# add an intersection point to the dictionary with segment indices
-function _addintersection!(D, p::Point, i::Int, j::Int)
-  if haskey(D, p)
-    append!(D[p], (i, j))
-    unique!(D[p])
-  else
-    D[p] = Vector{Int}([i, j])
-  end
 end
