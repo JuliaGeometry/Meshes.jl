@@ -52,7 +52,7 @@ function pairwiseintersect(segments; digits=_digits(segments))
 
   # sweepline algorithm
   n = length(segs)
-  P = eltype(first(segs))
+  P = eltype(vertices(first(segs)))
   D = Dict{P,Vector{Int}}()
   for i in 1:n
     for j in (i + 1):n
