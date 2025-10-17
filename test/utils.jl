@@ -171,7 +171,7 @@ end
 
   # inference test
   segs = facets(cartgrid(10, 10))
-  @inferred Nothing (Meshes.pairwiseintersect(segs))
+  @inferred (Meshes.pairwiseintersect(segs))
 end
 
 @testitem "isthreaded" setup = [Setup] begin
