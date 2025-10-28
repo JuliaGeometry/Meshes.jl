@@ -19,6 +19,20 @@ function evaluate(::Euclidean, p::Point, l::Line)
 end
 
 """
+    evaluate(distance::Euclidean, point, segment)
+
+Evaluate the Euclidean `distance` between `point` and `segment`.
+"""
+function evaluate(::Euclidean, p::Point, s::Segment)
+  a, b = s(0), s(1)
+  u = p - a
+  v = b - a
+  α = (u ⋅ v) / (v ⋅ v)
+  α = clamp(α, 0, 1)
+  norm(u - α * v)
+end
+
+"""
     evaluate(distance::Euclidean, line₁, line₂)
 
 Evaluate the minimum Euclidean `distance` between `line₁` and `line₂`.
@@ -32,6 +46,25 @@ function evaluate(d::Euclidean, l₁::Line, l₂::Line)
     return evaluate(d, l₁(0), l₂)
   else  # get distance between closest points on each line
     return evaluate(d, l₁(λ₁), l₂(λ₂))
+  end
+end
+
+"""
+    evaluate(distance::Euclidean, segment₁, segment₂)
+
+Evaluate the minimum Euclidean `distance` between `segment₁` and `segment₂`.
+"""
+function evaluate(d::Euclidean, s₁::Segment, s₂::Segment)
+  λ₁, λ₂, r, rₐ = intersectparameters(s₁(0), s₁(1), s₂(0), s₂(1))
+  λ₁ = clamp(λ₁, 0, 1)
+  λ₂ = clamp(λ₂, 0, 1)
+
+  if (r == rₐ == 1)  # lines intersect or are colinear
+    return zero(result_type(d, lentype(s₁), lentype(s₂)))
+  elseif (r == 1) && (rₐ == 2)  # lines are parallel
+    return evaluate(d, s₁(0), s₂)
+  else  # get distance between closest points on each line
+    return evaluate(d, s₁(λ₁), s₂(λ₂))
   end
 end
 
