@@ -26,14 +26,18 @@
   seg1 = Segment(cart(-1, 0, 0), cart(1, 0, 0))
   seg2 = Segment(cart(0, -1, 1), cart(0, 1, 1))  # seg2 ⟂ seg1, z++
   seg3 = Segment(cart(-1, 1, 0), cart(1, 1, 0))  # seg3 ∥ seg1
-  seg4 = Segment(cart(-2, 0, 0), cart(2, 0, 0))  # seg4 colinear with seg1
+  seg4 = Segment(cart(-0, 0, 0), cart(2, 0, 0))  # seg4 colinear with seg1
   seg5 = Segment(cart(0, -1, 0), cart(0, 1, 0))  # seg5 intersects seg1
   seg6 = Segment(cart(0, -1, 0), cart(0, -2, 0))  # seg6 intersects seg1, if infinite
+  seg7 = Segment(cart(2, 0, 0), cart(4, 0, 0))  # seg7 colinear with seg1 but shifted (gap of 1)
+  seg8 = Segment(cart(3, -2, 0), cart(5, -2, 0))  # seg8 ∥ seg1 but offset (gap of 2 by 2=√8)
   @test evaluate(Euclidean(), seg1, seg2) ≈ T(1) * u"m"
   @test evaluate(Euclidean(), seg1, seg3) ≈ T(1) * u"m"
   @test evaluate(Euclidean(), seg1, seg4) ≈ T(0) * u"m"
   @test evaluate(Euclidean(), seg1, seg5) ≈ T(0) * u"m"
   @test evaluate(Euclidean(), seg1, seg6) ≈ T(1) * u"m"
+  @test evaluate(Euclidean(), seg1, seg7) ≈ T(1) * u"m"
+  @test evaluate(Euclidean(), seg1, seg8) ≈ T(√8) * u"m"
 
   p1, p2 = cart(1, 0), cart(0, 1)
   @test evaluate(Chebyshev(), p1, p2) == T(1) * u"m"

@@ -59,10 +59,8 @@ function evaluate(d::Euclidean, s₁::Segment, s₂::Segment)
   λ₁ = clamp(λ₁, 0, 1)
   λ₂ = clamp(λ₂, 0, 1)
 
-  if (r == rₐ == 1)  # lines intersect or are colinear
-    return zero(result_type(d, lentype(s₁), lentype(s₂)))
-  elseif (r == 1) && (rₐ == 2)  # lines are parallel
-    return evaluate(d, s₁(0), s₂)
+  if (r == rₐ == 1) || (r == 1 && rₐ == 2)  # lines are colinear or parallel
+    return min(evaluate(d, s₁(0), s₂), evaluate(d, s₁(1), s₂))
   else  # get distance between closest points on each line
     return evaluate(d, s₁(λ₁), s₂(λ₂))
   end
