@@ -3,20 +3,41 @@
   l = Line(cart(0, 0), cart(1, 0))
   @test evaluate(Euclidean(), p, l) == T(1) * u"m"
   @test evaluate(Euclidean(), l, p) == T(1) * u"m"
+  p = cart(-3, 4)
+  s = Segment(cart(0, 0), cart(1, 0))
+  @test evaluate(Euclidean(), p, s) == T(5) * u"m"
+  @test evaluate(Euclidean(), s, p) == T(5) * u"m"
+  @test evaluate(Euclidean(), p, l) != T(5) * u"m"
 
   p = cart(68, 259)
   l = Line(cart(68, 260), cart(69, 261))
   @test evaluate(Euclidean(), p, l) ≤ T(0.8) * u"m"
-
   line1 = Line(cart(-1, 0, 0), cart(1, 0, 0))
   line2 = Line(cart(0, -1, 1), cart(0, 1, 1))  # line2 ⟂ line1, z++
   line3 = Line(cart(-1, 1, 0), cart(1, 1, 0))  # line3 ∥ line1
   line4 = Line(cart(-2, 0, 0), cart(2, 0, 0))  # line4 colinear with line1
   line5 = Line(cart(0, -1, 0), cart(0, 1, 0))  # line5 intersects line1
+  line6 = Line(cart(0, -1, 0), cart(0, -2, 0))  # line6 intersects line1, if infinite
   @test evaluate(Euclidean(), line1, line2) ≈ T(1) * u"m"
   @test evaluate(Euclidean(), line1, line3) ≈ T(1) * u"m"
   @test evaluate(Euclidean(), line1, line4) ≈ T(0) * u"m"
   @test evaluate(Euclidean(), line1, line5) ≈ T(0) * u"m"
+  @test evaluate(Euclidean(), line1, line6) ≈ T(0) * u"m"
+  seg1 = Segment(cart(-1, 0, 0), cart(1, 0, 0))
+  seg2 = Segment(cart(0, -1, 1), cart(0, 1, 1))  # seg2 ⟂ seg1, z++
+  seg3 = Segment(cart(-1, 1, 0), cart(1, 1, 0))  # seg3 ∥ seg1
+  seg4 = Segment(cart(-0, 0, 0), cart(2, 0, 0))  # seg4 colinear with seg1
+  seg5 = Segment(cart(0, -1, 0), cart(0, 1, 0))  # seg5 intersects seg1
+  seg6 = Segment(cart(0, -1, 0), cart(0, -2, 0))  # seg6 intersects seg1, if infinite
+  seg7 = Segment(cart(2, 0, 0), cart(4, 0, 0))  # seg7 colinear with seg1 but shifted (gap of 1)
+  seg8 = Segment(cart(3, -2, 0), cart(5, -2, 0))  # seg8 ∥ seg1 but offset (gap of 2 by 2=√8)
+  @test evaluate(Euclidean(), seg1, seg2) ≈ T(1) * u"m"
+  @test evaluate(Euclidean(), seg1, seg3) ≈ T(1) * u"m"
+  @test evaluate(Euclidean(), seg1, seg4) ≈ T(0) * u"m"
+  @test evaluate(Euclidean(), seg1, seg5) ≈ T(0) * u"m"
+  @test evaluate(Euclidean(), seg1, seg6) ≈ T(1) * u"m"
+  @test evaluate(Euclidean(), seg1, seg7) ≈ T(1) * u"m"
+  @test evaluate(Euclidean(), seg1, seg8) ≈ T(√8) * u"m"
 
   p1, p2 = cart(1, 0), cart(0, 1)
   @test evaluate(Chebyshev(), p1, p2) == T(1) * u"m"
