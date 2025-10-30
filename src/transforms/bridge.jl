@@ -18,7 +18,7 @@ struct Bridge{ℒ<:Len} <: GeometricTransform
   Bridge(δ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(δ)
 end
 
-Bridge(δ) = Bridge(addunit(δ, u"m"))
+Bridge(δ) = Bridge(aslen(δ))
 
 Bridge() = Bridge(0.0u"m")
 

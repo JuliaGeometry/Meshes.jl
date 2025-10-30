@@ -15,7 +15,7 @@ end
 
 Translate(offsets::NTuple{Dim,Len}) where {Dim} = Translate(promote(offsets...))
 
-Translate(offsets::Tuple) = Translate(addunit.(offsets, u"m"))
+Translate(offsets::Tuple) = Translate(aslen.(offsets))
 
 Translate(offsets...) = Translate(offsets)
 

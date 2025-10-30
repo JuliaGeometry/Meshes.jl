@@ -16,7 +16,7 @@ end
 
 CylindricalTrajectory(centroids, radius::Len) = CylindricalTrajectory(collect(centroids), radius)
 
-CylindricalTrajectory(centroids, radius) = CylindricalTrajectory(centroids, addunit(radius, u"m"))
+CylindricalTrajectory(centroids, radius) = CylindricalTrajectory(centroids, aslen(radius))
 
 CylindricalTrajectory(centroids::Vector{P}) where {P<:Point} = CylindricalTrajectory(centroids, oneunit(lentype(P)))
 

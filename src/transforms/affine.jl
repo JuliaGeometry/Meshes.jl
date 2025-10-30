@@ -25,7 +25,7 @@ struct Affine{Dim,M<:StaticMatrix{Dim,Dim},V<:StaticVector{Dim,<:Len}} <: Coordi
   end
 end
 
-Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim}) where {Dim} = Affine(A, addunit(b, u"m"))
+Affine(A::StaticMatrix{Dim,Dim}, b::StaticVector{Dim}) where {Dim} = Affine(A, aslen.(b))
 
 function Affine(A::AbstractMatrix, b::AbstractVector)
   sz = size(A)

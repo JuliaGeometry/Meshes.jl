@@ -33,7 +33,7 @@ struct CylinderSurface{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
   CylinderSurface(bot::P, top::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new{C,P,float(ℒ)}(bot, top, radius)
 end
 
-CylinderSurface(bot::P, top::P, radius) where {P<:Plane} = CylinderSurface(bot, top, addunit(radius, u"m"))
+CylinderSurface(bot::P, top::P, radius) where {P<:Plane} = CylinderSurface(bot, top, aslen(radius))
 
 function CylinderSurface(start::Point, finish::Point, radius)
   dir = finish - start

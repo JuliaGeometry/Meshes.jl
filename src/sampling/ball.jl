@@ -22,7 +22,7 @@ end
 
 BallSampling(radius::Len; metric=Euclidean(), maxsize=nothing) = BallSampling(radius, metric, maxsize)
 
-BallSampling(radius; kwargs...) = BallSampling(addunit(radius, u"m"); kwargs...)
+BallSampling(radius; kwargs...) = BallSampling(aslen(radius); kwargs...)
 
 function sampleinds(rng::AbstractRNG, d::Domain, method::BallSampling)
   radius = method.radius

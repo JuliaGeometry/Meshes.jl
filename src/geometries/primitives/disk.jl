@@ -16,7 +16,7 @@ struct Disk{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
   Disk(plane::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new{C,P,float(ℒ)}(plane, radius)
 end
 
-Disk(plane::Plane, radius) = Disk(plane, addunit(radius, u"m"))
+Disk(plane::Plane, radius) = Disk(plane, aslen(radius))
 
 paramdim(::Type{<:Disk}) = 2
 

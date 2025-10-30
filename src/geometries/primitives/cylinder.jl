@@ -33,7 +33,7 @@ struct Cylinder{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
   Cylinder(bot::P, top::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new{C,P,float(ℒ)}(bot, top, radius)
 end
 
-Cylinder(bot::P, top::P, radius) where {P<:Plane} = Cylinder(bot, top, addunit(radius, u"m"))
+Cylinder(bot::P, top::P, radius) where {P<:Plane} = Cylinder(bot, top, aslen(radius))
 
 function Cylinder(start::Point, finish::Point, radius)
   dir = finish - start

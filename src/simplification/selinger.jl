@@ -20,7 +20,7 @@ struct SelingerSimplification{ℒ<:Len} <: SimplificationMethod
   SelingerSimplification(τ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(τ)
 end
 
-SelingerSimplification(τ) = SelingerSimplification(addunit(τ, u"m"))
+SelingerSimplification(τ) = SelingerSimplification(aslen(τ))
 
 function simplify(chain::Chain, method::SelingerSimplification)
   ℒ = lentype(chain)

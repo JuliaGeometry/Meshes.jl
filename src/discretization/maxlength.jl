@@ -12,7 +12,7 @@ struct MaxLengthDiscretization{ℒ<:Len} <: DiscretizationMethod
   MaxLengthDiscretization(length::ℒ) where {ℒ<:Len} = new{float(ℒ)}(length)
 end
 
-MaxLengthDiscretization(length) = MaxLengthDiscretization(addunit(length, u"m"))
+MaxLengthDiscretization(length) = MaxLengthDiscretization(aslen(length))
 
 function discretize(box::Box, method::MaxLengthDiscretization)
   sizes = ceil.(Int, _sides(box) ./ method.length)

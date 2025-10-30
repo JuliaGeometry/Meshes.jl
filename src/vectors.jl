@@ -44,7 +44,7 @@ end
 
 Vec(coords::NTuple{Dim,ℒ}) where {Dim,ℒ<:Len} = Vec{Dim,float(ℒ)}(coords)
 Vec(coords::NTuple{Dim,Len}) where {Dim} = Vec(promote(coords...))
-Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec(addunit.(coords, u"m"))
+Vec(coords::NTuple{Dim,Number}) where {Dim} = Vec(aslen.(coords))
 
 Vec(coords::Number...) = Vec(coords)
 

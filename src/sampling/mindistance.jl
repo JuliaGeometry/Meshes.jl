@@ -33,7 +33,7 @@ end
 
 MinDistanceSampling(α::Len, ρ::Len, δ, metric) = MinDistanceSampling(promote(α, ρ)..., δ, metric)
 
-MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(addunit(α, u"m"), addunit(ρ, u"m"), δ, metric)
+MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(aslen(α), aslen(ρ), δ, metric)
 
 MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 

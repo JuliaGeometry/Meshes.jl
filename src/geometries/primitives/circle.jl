@@ -16,7 +16,7 @@ struct Circle{C<:CRS,P<:Plane{C},ℒ<:Len} <: Primitive{𝔼{3},C}
   Circle(plane::P, radius::ℒ) where {C<:CRS,P<:Plane{C},ℒ<:Len} = new{C,P,float(ℒ)}(plane, radius)
 end
 
-Circle(plane::Plane, radius) = Circle(plane, addunit(radius, u"m"))
+Circle(plane::Plane, radius) = Circle(plane, aslen(radius))
 
 """
     Circle(p1, p2, p3)

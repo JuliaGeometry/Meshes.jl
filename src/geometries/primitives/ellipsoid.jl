@@ -15,7 +15,7 @@ struct Ellipsoid{C<:CRS,Mₚ<:Manifold,R,ℒ<:Len} <: Primitive{𝔼{3},C}
     new{C,Mₚ,R,float(ℒ)}(radii, center, rotation)
 end
 
-Ellipsoid(radii::Tuple, center::Point, rotation) = Ellipsoid(addunit.(radii, u"m"), center, rotation)
+Ellipsoid(radii::Tuple, center::Point, rotation) = Ellipsoid(aslen.(radii), center, rotation)
 
 Ellipsoid(radii::Tuple, center::Tuple, rotation) = Ellipsoid(radii, Point(center), rotation)
 

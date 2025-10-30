@@ -13,7 +13,7 @@ struct DirectionPartition{V<:Vec,ℒ<:Len} <: PointPredicatePartitionMethod
   DirectionPartition(dir::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(dir), tol)
 end
 
-DirectionPartition(dir::Vec, tol) = DirectionPartition(dir, addunit(tol, u"m"))
+DirectionPartition(dir::Vec, tol) = DirectionPartition(dir, aslen(tol))
 
 DirectionPartition(dir::Vec; tol=atol(eltype(dir))) = DirectionPartition(dir, tol)
 

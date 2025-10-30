@@ -20,7 +20,7 @@ end
 
 BlockPartition(sides::NTuple{Dim,Len}; neighbors=false) where {Dim} = BlockPartition(promote(sides...), neighbors)
 
-BlockPartition(sides::Tuple; neighbors=false) = BlockPartition(addunit.(sides, u"m"), neighbors)
+BlockPartition(sides::Tuple; neighbors=false) = BlockPartition(aslen.(sides), neighbors)
 
 BlockPartition(sides...; neighbors=false) = BlockPartition(sides; neighbors=neighbors)
 
