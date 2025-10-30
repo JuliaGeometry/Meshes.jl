@@ -20,8 +20,7 @@ end
 
 Torus(center::Point, direction::Vec, major::Len, minor::Len) = Torus(center, direction, promote(major, minor)...)
 
-Torus(center::Point, direction::Vec, major, minor) =
-  Torus(center, direction, aslen(major), aslen(minor))
+Torus(center::Point, direction::Vec, major, minor) = Torus(center, direction, aslen(major), aslen(minor))
 
 Torus(center::Tuple, direction::Tuple, major, minor) = Torus(Point(center), Vec(direction), major, minor)
 

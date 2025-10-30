@@ -42,8 +42,7 @@ end
 
 ParaboloidSurface(apex::Point, radius::Len, focallength::Len) = ParaboloidSurface(apex, promote(radius, focallength)...)
 
-ParaboloidSurface(apex::Point, radius, focallength) =
-  ParaboloidSurface(apex, aslen(radius), aslen(focallength))
+ParaboloidSurface(apex::Point, radius, focallength) = ParaboloidSurface(apex, aslen(radius), aslen(focallength))
 
 ParaboloidSurface(apex::Tuple, radius, focallength) = ParaboloidSurface(Point(apex), radius, focallength)
 
