@@ -21,7 +21,7 @@ struct DouglasPeuckerSimplification{ℒ<:Len} <: SimplificationMethod
   DouglasPeuckerSimplification(τ::ℒ) where {ℒ<:Len} = new{float(ℒ)}(τ)
 end
 
-DouglasPeuckerSimplification(τ) = DouglasPeuckerSimplification(addunit(τ, u"m"))
+DouglasPeuckerSimplification(τ) = DouglasPeuckerSimplification(aslen(τ))
 
 function simplify(chain::Chain, method::DouglasPeuckerSimplification)
   verts = _douglaspeucker(vertices(chain), method.τ)

@@ -15,7 +15,7 @@ struct PlanePartition{V<:Vec,ℒ<:Len} <: PointPredicatePartitionMethod
   PlanePartition(normal::V, tol::ℒ) where {V<:Vec,ℒ<:Len} = new{V,float(ℒ)}(unormalize(normal), tol)
 end
 
-PlanePartition(normal::Vec, tol) = PlanePartition(normal, addunit(tol, u"m"))
+PlanePartition(normal::Vec, tol) = PlanePartition(normal, aslen(tol))
 
 PlanePartition(normal::Vec; tol=atol(eltype(normal))) = PlanePartition(normal, tol)
 

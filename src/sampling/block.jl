@@ -19,7 +19,7 @@ end
 
 BlockSampling(sides::NTuple{Dim,Len}) where {Dim} = BlockSampling(promote(sides...))
 
-BlockSampling(sides::Tuple) = BlockSampling(addunit.(sides, u"m"))
+BlockSampling(sides::Tuple) = BlockSampling(aslen.(sides))
 
 BlockSampling(sides...) = BlockSampling(sides)
 

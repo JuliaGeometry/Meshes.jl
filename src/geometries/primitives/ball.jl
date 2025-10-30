@@ -15,7 +15,7 @@ struct Ball{M<:Manifold,C<:CRS,ℒ<:Len} <: Primitive{M,C}
   Ball(center::Point{M,C}, radius::ℒ) where {M<:Manifold,C<:CRS,ℒ<:Len} = new{M,C,float(ℒ)}(center, radius)
 end
 
-Ball(center::Point, radius) = Ball(center, addunit(radius, u"m"))
+Ball(center::Point, radius) = Ball(center, aslen(radius))
 
 Ball(center::Tuple, radius) = Ball(Point(center), radius)
 

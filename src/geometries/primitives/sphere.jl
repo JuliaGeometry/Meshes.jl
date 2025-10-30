@@ -15,7 +15,7 @@ struct Sphere{M<:Manifold,C<:CRS,ℒ<:Len} <: Primitive{M,C}
   Sphere(center::Point{M,C}, radius::ℒ) where {M<:Manifold,C<:CRS,ℒ<:Len} = new{M,C,float(ℒ)}(center, radius)
 end
 
-Sphere(center::Point, radius) = Sphere(center, addunit(radius, u"m"))
+Sphere(center::Point, radius) = Sphere(center, aslen(radius))
 
 Sphere(center::Tuple, radius) = Sphere(Point(center), radius)
 

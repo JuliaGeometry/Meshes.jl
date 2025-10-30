@@ -61,11 +61,11 @@ end
 
 MetricBall(radii::NTuple{Dim,Len}, rotation=I) where {Dim} = MetricBall(promote(radii...), rotation)
 
-MetricBall(radii::Tuple, rotation=I) = MetricBall(addunit.(radii, u"m"), rotation)
+MetricBall(radii::Tuple, rotation=I) = MetricBall(aslen.(radii), rotation)
 
 MetricBall(radius::Len, metric=Euclidean()) = MetricBall((radius,), I, metric)
 
-MetricBall(radius::Number, metric=Euclidean()) = MetricBall(addunit(radius, u"m"), metric)
+MetricBall(radius::Number, metric=Euclidean()) = MetricBall(aslen(radius), metric)
 
 """
     hasequalradii(ball)

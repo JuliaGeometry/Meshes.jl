@@ -13,7 +13,7 @@ struct BallPartition{ℒ<:Len,M} <: PointPredicatePartitionMethod
   BallPartition(radius::ℒ, metric::M) where {ℒ<:Len,M} = new{float(ℒ),M}(radius, metric)
 end
 
-BallPartition(radius, metric) = BallPartition(addunit(radius, u"m"), metric)
+BallPartition(radius, metric) = BallPartition(aslen(radius), metric)
 
 BallPartition(radius; metric=Euclidean()) = BallPartition(radius, metric)
 

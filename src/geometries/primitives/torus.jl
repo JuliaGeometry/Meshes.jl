@@ -21,7 +21,7 @@ end
 Torus(center::Point, direction::Vec, major::Len, minor::Len) = Torus(center, direction, promote(major, minor)...)
 
 Torus(center::Point, direction::Vec, major, minor) =
-  Torus(center, direction, addunit(major, u"m"), addunit(minor, u"m"))
+  Torus(center, direction, aslen(major), aslen(minor))
 
 Torus(center::Tuple, direction::Tuple, major, minor) = Torus(Point(center), Vec(direction), major, minor)
 
@@ -37,7 +37,7 @@ function Torus(p1::Point, p2::Point, p3::Point, minor::Len)
   Torus(center(c), normal(p), radius(c), minor)
 end
 
-Torus(p1::Point, p2::Point, p3::Point, minor) = Torus(p1, p2, p3, addunit(minor, u"m"))
+Torus(p1::Point, p2::Point, p3::Point, minor) = Torus(p1, p2, p3, aslen(minor))
 
 Torus(p1::Tuple, p2::Tuple, p3::Tuple, minor) = Torus(Point(p1), Point(p2), Point(p3), minor)
 
