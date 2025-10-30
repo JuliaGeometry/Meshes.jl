@@ -444,6 +444,7 @@ export
   # clipping
   ClippingMethod,
   SutherlandHodgmanClipping,
+  GreinerHormannClipping,
   clip,
 
   # intersections
