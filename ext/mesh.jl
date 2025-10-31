@@ -58,6 +58,7 @@ end
 
 function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
   showsegments = plot[:showsegments]
+  shading = plot[:shading]
 
   # retrieve triangle mesh parameters
   tparams = Makie.@lift let
@@ -128,7 +129,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
     end
 
     # enable shading in 3D
-    tshading = edim == 3
+    tshading = (dim == 3)&$shading
 
     tverts, telems, tcolors, tshading
   end

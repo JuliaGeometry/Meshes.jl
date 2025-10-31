@@ -33,7 +33,8 @@ Makie.@recipe(Viz, object) do scene
     showpoints=false,
     pointmarker=:circle,
     pointcolor=:gray30,
-    pointsize=4
+    pointsize=4,
+    shading=false,
   )
 end
 
