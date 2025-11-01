@@ -74,6 +74,20 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
+function indices(grid::TransformedGrid, geometry::Geometry)
+  g = grid.mesh
+  t = grid.transform
+
+  # find the invertible part (e.g., Rotate, Affine)
+  invertible_part = only(x for x in t if isinvertible(x))
+
+  # un-transform the geometry using only that part
+  p = revert(invertible_part, geometry, nothing)
+  
+  # find indices on the non-deformed mesh
+  indices(g, p)
+end
+
 # ----------------
 # CARTESIAN RANGE
 # ----------------
