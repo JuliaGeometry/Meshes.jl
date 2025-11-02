@@ -75,8 +75,8 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
 end
 
 function indices(grid::TransformedGrid, geometry::Geometry)
-  g = grid.mesh
-  t = grid.transform
+  g = parent(grid)
+  t = transform(grid)
 
   # find the invertible part (e.g., Rotate, Affine)
   invertible_part = only(x for x in t if isinvertible(x))
