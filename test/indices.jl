@@ -204,7 +204,7 @@
   @test isempty(indices(grid, p6))
 
   # transformed grid
-  g = cartgrid(20, 20)
+  grid = cartgrid(20, 20)
   poly1 = PolyArea(cart.([(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)]))
   expectedinds = indices(g, poly1)
   linds = LinearIndices(size(g))
