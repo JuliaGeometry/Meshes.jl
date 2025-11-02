@@ -81,11 +81,8 @@ function indices(grid::TransformedGrid, geometry::Geometry)
   # construct reverse transform from revertible steps
   r = reduce(→, reverse(filter(isrevertible, t)))
 
-  # un-transform the geometry using only that part
-  p = revert(invertible_part, geometry, nothing)
-  
-  # find indices on the non-deformed mesh
-  indices(g, p)
+  # find indices before transformation
+  indices(g, r(geometry))
 end
 
 # ----------------
