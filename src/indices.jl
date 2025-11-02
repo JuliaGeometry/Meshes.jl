@@ -79,7 +79,7 @@ function indices(grid::TransformedGrid, geometry::Geometry)
   t = transform(grid)
 
   # find the invertible part (e.g., Rotate, Affine)
-  invertible_part = only(x for x in t if isinvertible(x))
+  r = reduce(→, reverse(filter(isrevertible, t)))
 
   # un-transform the geometry using only that part
   p = revert(invertible_part, geometry, nothing)
