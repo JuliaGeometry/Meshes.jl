@@ -75,14 +75,11 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
 end
 
 function indices(grid::TransformedGrid, geometry::Geometry)
-  g = parent(grid)
-  t = transform(grid)
-
   # construct reverse transform from revertible steps
-  r = reduce(→, reverse(filter(isrevertible, t)))
+  revtrans = reduce(→, reverse(filter(isrevertible, transform(t))))
 
-  # find indices before transformation
-  indices(g, r(geometry))
+  # find indices in non-transformed space
+  indices(parent(grid), revtrans(geometry))
 end
 
 # ----------------
