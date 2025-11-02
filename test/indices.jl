@@ -205,15 +205,12 @@
 
   # transformed grid
   grid = cartgrid(20, 20)
-  poly1 = PolyArea(cart.([(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)]))
-  expectedinds = indices(g, poly1)
-  linds = LinearIndices(size(g))
-  @test linds[12, 6] ∈ expectedinds
-  taff = Rotate(Angle2d(T(π / 2)))
-  tmorph = Morphological(c -> Cartesian(c.x + c.y, c.y, c.x - c.y))
-  tseq = taff → tmorph
-  grid = TransformedGrid(g, tseq)
-  poly2 = taff(poly1)
-  actualinds = indices(grid, poly2)
-  @test actualinds == expectedinds
+  poly = PolyArea(cart.([(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)]))
+  inds = indices(grid, poly)
+  linds = LinearIndices(size(grid))
+  @test linds[12, 6] ∈ indices(grid, poly)
+  trans = Rotate(Angle2d(T(π / 2))) → Morphological(c -> Cartesian(c.x + c.y, c.y, c.x - c.y))
+  tgrid = trans(grid)
+  tpoly = trans(poly)
+  @test indices(tgrid, tpoly) == indices(grid, poly)
 end
