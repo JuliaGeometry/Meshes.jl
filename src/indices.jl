@@ -74,9 +74,9 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-function indices(grid::TransformedGrid, geometry::Geometry)
+function indice(grid::TransformedGrid, geometry::Geometry)
   # construct reverse transform from revertible steps
-  revtrans = reduce(→, reverse(filter(isrevertible, transform(t))))
+  revtrans = reduce(→, reverse(filter(isrevertible, transform(grid))))
 
   # find indices in non-transformed space
   indices(parent(grid), revtrans(geometry))
