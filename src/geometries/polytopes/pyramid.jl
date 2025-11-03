@@ -11,6 +11,11 @@ A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 
 nvertices(::Type{<:Pyramid}) = 5
 
+function base(p::Pyramid)
+  a, b, c, d, o = vertices(p)
+  Quadrangle(a, b, c, d)
+end
+
 ==(p₁::Pyramid, p₂::Pyramid) = p₁.vertices == p₂.vertices
 
 Base.isapprox(p₁::Pyramid, p₂::Pyramid; atol=atol(lentype(p₁)), kwargs...) =
