@@ -328,6 +328,10 @@ end
   @test isconvex(h0)
   @test isconvex(h1)
   @test isconvex(h2)
+  p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test isconvex(p)
+  p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(0.25, 0.25, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test !isconvex(p)
 end
 
 @testitem "issubset" setup = [Setup] begin

@@ -226,6 +226,8 @@ export
   angles,
   innerangles,
   normal,
+  base,
+  apex,
   ≗,
 
   # multi-geometries
