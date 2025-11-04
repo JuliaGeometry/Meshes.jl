@@ -27,8 +27,8 @@ function (pyramid::Pyramid)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v, w), "pyramid(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
-  a, b, c, d, o = p.vertices
-  q = Quadrangle(a, b, c, d)
+  o = last(pyramid.vertices)
+  q = base(pyramid)
   s = Segment(q(u, v), o)
   s(w)
 end
