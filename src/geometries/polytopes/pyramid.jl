@@ -18,17 +18,19 @@ function base(p::Pyramid)
   Quadrangle(a, b, c, d)
 end
 
+apex(p::Pyramid) = last(p.vertices)
+
 ==(p₁::Pyramid, p₂::Pyramid) = p₁.vertices == p₂.vertices
 
 Base.isapprox(p₁::Pyramid, p₂::Pyramid; atol=atol(lentype(p₁)), kwargs...) =
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 
-function (pyramid::Pyramid)(u, v, w)
+function (p::Pyramid)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v, w), "pyramid(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
-  o = last(pyramid.vertices)
-  q = base(pyramid)
+  q = base(p)
+  o = apex(p)
   s = Segment(q(u, v), o)
   s(w)
 end
