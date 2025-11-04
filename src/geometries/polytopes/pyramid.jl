@@ -6,6 +6,8 @@
     Pyramid(p1, p2, p3, p4, p5)
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
+The first four points correspond to the vertices of the base and the last is the top of the pyramid.
+Please note, that the current implementation doesn't handle non-convex bases correctly.
 """
 @polytope Pyramid 3 5
 
