@@ -7,7 +7,7 @@
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
 
-The first four points form the base and the last is the is the apex.
+The first four points form the base and the last is the apex.
 """
 @polytope Pyramid 3 5
 
