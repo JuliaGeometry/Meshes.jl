@@ -955,6 +955,7 @@ end
   isapproxtest(p)
   vertextest(p)
   @test base(p) == Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
+  @test apex(p) == cart(0, 0, 1)
 
   p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test sprint(show, p) == "Pyramid((x: 0.0 m, y: 0.0 m, z: 0.0 m), ..., (x: 0.0 m, y: 0.0 m, z: 1.0 m))"
