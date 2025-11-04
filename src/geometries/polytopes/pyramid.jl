@@ -6,6 +6,8 @@
     Pyramid(p1, p2, p3, p4, p5)
 
 A pyramid with points `p1`, `p2`, `p3`, `p4`, `p5`.
+The first four points correspond to the vertices of
+the base and the last point is the apex.
 """
 @polytope Pyramid 3 5
 
@@ -25,8 +27,7 @@ function (pyramid::Pyramid)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
     throw(DomainError((u, v, w), "pyramid(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
-  a, b, c, d, o = p.vertices
-  q = Quadrangle(a, b, c, d)
+  q = base(p)
   s = Segment(q(u, v), o)
   s(w)
 end
