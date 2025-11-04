@@ -27,7 +27,7 @@ Base.isapprox(p₁::Pyramid, p₂::Pyramid; atol=atol(lentype(p₁)), kwargs...)
 
 function (p::Pyramid)(u, v, w)
   if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
-    throw(DomainError((u, v, w), "pyramid(u, v, w) is not defined for u, v, w outside [0, 1]³."))
+    throw(DomainError((u, v, w), "p(u, v, w) is not defined for u, v, w outside [0, 1]³."))
   end
   q = base(p)
   o = apex(p)
