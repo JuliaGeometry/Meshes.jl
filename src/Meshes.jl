@@ -133,6 +133,18 @@ include("projecting.jl")
 # visualization
 include("viz.jl")
 
+function __init__()
+  # register error hints for visualization functions
+  # since this is a recurring issue for new users
+  Base.Experimental.register_error_hint(MethodError) do io, exc, argtypes, kwargs
+    if exc.f == viz || exc.f == viz!
+      if isnothing(Base.get_extension(Meshes, :MeshesMakieExt))
+        print(io, "\nDid you import a Makie.jl backend (e.g., GLMakie.jl, CairoMakie.jl) for visualization?")
+      end
+    end
+  end
+end
+
 export
   # vectors
   Vec,
