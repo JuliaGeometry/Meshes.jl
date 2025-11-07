@@ -38,11 +38,10 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
-  rset = plot[:object]
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
 
-  Dim = embeddim(rset[])
+  Dim = embeddim(first(geoms[]))
 
   Dim ∈ (2, 3) || error("not implemented")
 
@@ -54,6 +53,52 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
 
   if showpoints[]
     vizfacets!(plot, geoms)
+  end
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colorant)
+  segmentsize = plot[:segmentsize]
+
+  # split vertical and diagonal lines
+  inter = Makie.@lift [line ∩ Line((0, 0), (0, 1)) for line in $geoms]
+  vinds = Makie.@lift findall(isnothing, $inter)
+  dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
+
+  # split colors accordingly
+  if colorant[] isa AbstractVector
+    vcolor = Makie.@lift $colorant[$vinds]
+    dcolor = Makie.@lift $colorant[$dinds]
+  else
+    vcolor = colorant
+    dcolor = colorant
+  end
+
+  # visualize vertical lines
+  if !isempty(vinds[])
+    vlines = Makie.@lift $geoms[$vinds]
+    xcoord = Makie.@lift map($vlines) do vline
+      c = coords(vline(0))
+      x = convert(Cartesian, c).x
+      ustrip(x)
+    end
+    Makie.vlines!(plot, xcoord, color=vcolor, linewidth=segmentsize)
+  end
+
+  # visualize diagonal lines
+  if !isempty(dinds[])
+    dlines = Makie.@lift $geoms[$dinds]
+    dinter = Makie.@lift $inter[$dinds]
+    ycoord = Makie.@lift map($dinter) do point
+      c = coords(point)
+      y = convert(Cartesian, c).y
+      ustrip(y)
+    end
+    slopes = Makie.@lift map($dlines) do dline
+      c1 = convert(Cartesian, coords(dline(0)))
+      c2 = convert(Cartesian, coords(dline(1)))
+      (c2.y - c1.y) / (c2.x - c1.x)
+    end
+    Makie.ablines!(plot, ycoord, slopes, color=dcolor, linewidth=segmentsize)
   end
 end
 
