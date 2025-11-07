@@ -59,7 +59,7 @@ end
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colorant)
   segmentsize = plot[:segmentsize]
 
-  # split vertical and diagonal lines
+  # split vertical and non-vertical lines
   inter = Makie.@lift [line ∩ Line((0, 0), (0, 1)) for line in $geoms]
   vinds = Makie.@lift findall(isnothing, $inter)
   dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
