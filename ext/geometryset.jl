@@ -84,7 +84,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
     Makie.vlines!(plot, xcoord, color=vcolor, linewidth=segmentsize)
   end
 
-  # visualize diagonal lines
+  # visualize non-vertical lines
   if !isempty(dinds[])
     dlines = Makie.@lift $geoms[$dinds]
     dinter = Makie.@lift $inter[$dinds]
