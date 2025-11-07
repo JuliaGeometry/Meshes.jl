@@ -28,6 +28,8 @@ function vizmany!(plot, objs, color)
   viz!(plot, object, color=colors, alpha=alphas, colormap=colormap, pointsize=pointsize, segmentsize=segmentsize)
 end
 
+asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
+
 asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
 
 asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
