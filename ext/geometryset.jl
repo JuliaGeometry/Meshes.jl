@@ -43,13 +43,20 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
 
   Dim = embeddim(first(geoms[]))
 
-  Dim ∈ (2, 3) || error("not implemented")
-
   # visualize as built-in arrows
   orig = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   dirs = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
-  size = Makie.@lift 0.1 * $segmentsize
-  Makie.arrows!(plot, orig, dirs, color=colorant, arrowsize=size)
+  if Dim == 2
+    tipwidth = Makie.@lift 5 * $segmentsize
+    shaftwidth = Makie.@lift 0.2 * $tipwidth
+    Makie.arrows2d!(plot, orig, dirs, color=colorant, tipwidth=tipwidth, shaftwidth=shaftwidth)
+  elseif Dim == 3
+    tipradius = Makie.@lift 0.05 * $segmentsize
+    shaftradius = Makie.@lift 0.5 * $tipradius
+    Makie.arrows3d!(plot, orig, dirs, color=colorant, tipradius=tipradius, shaftradius=shaftradius)
+  else
+    error("not implemented")
+  end
 
   if showpoints[]
     vizfacets!(plot, geoms)
