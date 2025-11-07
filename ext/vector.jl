@@ -10,8 +10,6 @@ function Makie.plot!(plot::Viz{<:Tuple{AbstractVector{Vec{Dim,ℒ}}}}) where {Di
   colorrange = plot[:colorrange]
   segmentsize = plot[:segmentsize]
 
-  Dim ∈ (2, 3) || error("not implemented")
-
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
@@ -19,6 +17,15 @@ function Makie.plot!(plot::Viz{<:Tuple{AbstractVector{Vec{Dim,ℒ}}}}) where {Di
   T = Unitful.numtype(ℒ)
   orig = Makie.@lift fill(zero(Makie.Point{Dim,T}), length($vecs))
   dirs = Makie.@lift asmakie.($vecs)
-  size = Makie.@lift 0.1 * $segmentsize
-  Makie.arrows!(plot, orig, dirs, color=colorant, arrowsize=size)
+  if Dim == 2
+    tipwidth = Makie.@lift 5 * $segmentsize
+    shaftwidth = Makie.@lift 0.2 * $tipwidth
+    Makie.arrows2d!(plot, orig, dirs, color=colorant, tipwidth=tipwidth, shaftwidth=shaftwidth)
+  elseif Dim == 3
+    tipradius = Makie.@lift 0.05 * $segmentsize
+    shaftradius = Makie.@lift 0.5 * $tipradius
+    Makie.arrows3d!(plot, orig, dirs, color=colorant, tipradius=tipradius, shaftradius=shaftradius)
+  else
+    error("not implemented")
+  end
 end
