@@ -38,22 +38,74 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
-  rset = plot[:object]
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
 
-  Dim = embeddim(rset[])
-
-  Dim ∈ (2, 3) || error("not implemented")
+  Dim = embeddim(first(geoms[]))
 
   # visualize as built-in arrows
   orig = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   dirs = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
-  size = Makie.@lift 0.1 * $segmentsize
-  Makie.arrows!(plot, orig, dirs, color=colorant, arrowsize=size)
+  if Dim == 2
+    tipwidth = Makie.@lift 5 * $segmentsize
+    shaftwidth = Makie.@lift 0.2 * $tipwidth
+    Makie.arrows2d!(plot, orig, dirs, color=colorant, tipwidth=tipwidth, shaftwidth=shaftwidth)
+  elseif Dim == 3
+    tipradius = Makie.@lift 0.05 * $segmentsize
+    shaftradius = Makie.@lift 0.5 * $tipradius
+    Makie.arrows3d!(plot, orig, dirs, color=colorant, tipradius=tipradius, shaftradius=shaftradius)
+  else
+    error("not implemented")
+  end
 
   if showpoints[]
     vizfacets!(plot, geoms)
+  end
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colorant)
+  segmentsize = plot[:segmentsize]
+
+  # split vertical and non-vertical lines
+  inter = Makie.@lift [line ∩ Line((0, 0), (0, 1)) for line in $geoms]
+  vinds = Makie.@lift findall(isnothing, $inter)
+  dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
+
+  # split colors accordingly
+  if colorant[] isa AbstractVector
+    vcolor = Makie.@lift $colorant[$vinds]
+    dcolor = Makie.@lift $colorant[$dinds]
+  else
+    vcolor = colorant
+    dcolor = colorant
+  end
+
+  # visualize vertical lines
+  if !isempty(vinds[])
+    vlines = Makie.@lift $geoms[$vinds]
+    xcoord = Makie.@lift map($vlines) do vline
+      c = coords(vline(0))
+      x = convert(Cartesian, c).x
+      ustrip(x)
+    end
+    Makie.vlines!(plot, xcoord, color=vcolor, linewidth=segmentsize)
+  end
+
+  # visualize non-vertical lines
+  if !isempty(dinds[])
+    dlines = Makie.@lift $geoms[$dinds]
+    dinter = Makie.@lift $inter[$dinds]
+    ycoord = Makie.@lift map($dinter) do point
+      c = coords(point)
+      y = convert(Cartesian, c).y
+      ustrip(y)
+    end
+    slopes = Makie.@lift map($dlines) do dline
+      c1 = convert(Cartesian, coords(dline(0)))
+      c2 = convert(Cartesian, coords(dline(1)))
+      (c2.y - c1.y) / (c2.x - c1.x)
+    end
+    Makie.ablines!(plot, ycoord, slopes, color=dcolor, linewidth=segmentsize)
   end
 end
 
