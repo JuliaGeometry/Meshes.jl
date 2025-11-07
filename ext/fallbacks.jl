@@ -15,11 +15,11 @@ Makie.convert_arguments(::Type{<:Viz}, mesh::Mesh) = (mesh,)
 Makie.convert_arguments(::Type{<:Viz}, gset::GeometrySet) = (gset,)
 Makie.convert_arguments(::Type{<:Viz}, subdom::SubDomain) = (subdom,)
 
-# vector of geometries for convenience
+# vector of geometries (for convenience)
 Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
 Makie.convert_arguments(::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) = (GeometrySet(geoms),)
 
-# geometric vectors for convenience
+# geometric vectors (for convenience)
 Makie.plottype(::Vec) = Viz{<:Tuple{Vec}}
 Makie.convert_arguments(::Type{<:Viz}, vec::Vec) = (GeometrySet([asray(vec)]),)
 Makie.plottype(::AbstractVector{<:Vec}) = Viz{<:Tuple{AbstractVector{<:Vec}}}
