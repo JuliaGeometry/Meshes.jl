@@ -202,4 +202,15 @@
   @test linds[2, 2] == only(indices(grid, p4))
   @test linds[10, 10] == only(indices(grid, p5))
   @test isempty(indices(grid, p6))
+
+  # transformed grid
+  grid = cartgrid(20, 20)
+  poly = PolyArea(cart.([(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)]))
+  inds = indices(grid, poly)
+  linds = LinearIndices(size(grid))
+  @test linds[12, 6] ∈ indices(grid, poly)
+  trans = Rotate(Angle2d(T(π / 2))) → Morphological(c -> Cartesian(c.x + c.y, c.y, c.x - c.y))
+  tgrid = trans(grid)
+  tpoly = trans(poly)
+  @test indices(tgrid, tpoly) == indices(grid, poly)
 end
