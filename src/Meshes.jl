@@ -32,7 +32,7 @@ using ScopedValues: ScopedValue
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
-import Random
+using Random: Random
 import Base: sort
 import Base: ==, !
 import Base: +, -, *
@@ -41,7 +41,7 @@ import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # Transforms API
-import TransformsBase: Transform, →
+import TransformsBase: Transform, →, SequentialTransform, Identity
 import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
 import TransformsBase: parameters, preprocess
@@ -77,6 +77,9 @@ include("domains.jl")
 
 # utilities
 include("utils.jl")
+
+# transforms
+include("transforms.jl")
 
 # domain indices
 include("indices.jl")
@@ -120,8 +123,7 @@ include("discretization.jl")
 include("refinement.jl")
 include("coarsening.jl")
 
-# transforms
-include("transforms.jl")
+
 
 # miscellaneous
 include("rand.jl")
@@ -134,441 +136,441 @@ include("projecting.jl")
 include("viz.jl")
 
 export
-  # vectors
-  Vec,
-  ∠,
-  ⋅,
-  ×,
+	# vectors
+	Vec,
+	∠,
+	⋅,
+	×,
 
-  # manifolds
-  𝔼,
-  🌐,
+	# manifolds
+	𝔼,
+	🌐,
 
-  # geometries
-  Geometry,
-  embeddim,
-  paramdim,
-  crs,
-  manifold,
+	# geometries
+	Geometry,
+	embeddim,
+	paramdim,
+	crs,
+	manifold,
 
-  # primitives
-  Primitive,
-  Point,
-  Ray,
-  Line,
-  BezierCurve,
-  ParametrizedCurve,
-  Plane,
-  Box,
-  Ball,
-  Sphere,
-  Ellipsoid,
-  Disk,
-  Circle,
-  Cylinder,
-  CylinderSurface,
-  ParaboloidSurface,
-  Cone,
-  ConeSurface,
-  Frustum,
-  FrustumSurface,
-  Torus,
-  controls,
-  ncontrols,
-  degree,
-  Horner,
-  DeCasteljau,
-  coords,
-  to,
-  center,
-  radius,
-  radii,
-  plane,
-  bottom,
-  top,
-  axis,
-  base,
-  apex,
-  isright,
-  sides,
-  diagonal,
-  focallength,
-  direction,
+	# primitives
+	Primitive,
+	Point,
+	Ray,
+	Line,
+	BezierCurve,
+	ParametrizedCurve,
+	Plane,
+	Box,
+	Ball,
+	Sphere,
+	Ellipsoid,
+	Disk,
+	Circle,
+	Cylinder,
+	CylinderSurface,
+	ParaboloidSurface,
+	Cone,
+	ConeSurface,
+	Frustum,
+	FrustumSurface,
+	Torus,
+	controls,
+	ncontrols,
+	degree,
+	Horner,
+	DeCasteljau,
+	coords,
+	to,
+	center,
+	radius,
+	radii,
+	plane,
+	bottom,
+	top,
+	axis,
+	base,
+	apex,
+	isright,
+	sides,
+	diagonal,
+	focallength,
+	direction,
 
-  # polytopes
-  Polytope,
-  Chain,
-  Segment,
-  Rope,
-  Ring,
-  Polygon,
-  Ngon,
-  Triangle,
-  Quadrangle,
-  Pentagon,
-  Hexagon,
-  Heptagon,
-  Octagon,
-  Nonagon,
-  Decagon,
-  PolyArea,
-  Polyhedron,
-  Tetrahedron,
-  Hexahedron,
-  Pyramid,
-  Wedge,
-  vertex,
-  vertices,
-  nvertices,
-  eachvertex,
-  rings,
-  segments,
-  angles,
-  innerangles,
-  normal,
-  ≗,
+	# polytopes
+	Polytope,
+	Chain,
+	Segment,
+	Rope,
+	Ring,
+	Polygon,
+	Ngon,
+	Triangle,
+	Quadrangle,
+	Pentagon,
+	Hexagon,
+	Heptagon,
+	Octagon,
+	Nonagon,
+	Decagon,
+	PolyArea,
+	Polyhedron,
+	Tetrahedron,
+	Hexahedron,
+	Pyramid,
+	Wedge,
+	vertex,
+	vertices,
+	nvertices,
+	eachvertex,
+	rings,
+	segments,
+	angles,
+	innerangles,
+	normal,
+	≗,
 
-  # multi-geometries
-  Multi,
-  MultiPoint,
-  MultiSegment,
-  MultiRope,
-  MultiRing,
-  MultiPolygon,
-  MultiPolyhedron,
+	# multi-geometries
+	Multi,
+	MultiPoint,
+	MultiSegment,
+	MultiRope,
+	MultiRing,
+	MultiPolygon,
+	MultiPolyhedron,
 
-  # transformed geometry
-  TransformedGeometry,
+	# transformed geometry
+	TransformedGeometry,
 
-  # connectivities
-  Connectivity,
-  paramdim,
-  indices,
-  connect,
-  materialize,
-  pltype,
+	# connectivities
+	Connectivity,
+	paramdim,
+	indices,
+	connect,
+	materialize,
+	pltype,
 
-  # topologies
-  Topology,
-  vertex,
-  vertices,
-  nvertices,
-  element,
-  elements,
-  nelements,
-  facet,
-  facets,
-  nfacets,
-  faces,
-  nfaces,
-  GridTopology,
-  HalfEdgeTopology,
-  HalfEdge,
-  SimpleTopology,
-  elem2cart,
-  cart2elem,
-  corner2cart,
-  cart2corner,
-  elem2corner,
-  corner2elem,
-  elementtype,
-  facettype,
-  half4elem,
-  half4vert,
-  half4edge,
-  half4pair,
-  edge4pair,
-  connec4elem,
+	# topologies
+	Topology,
+	vertex,
+	vertices,
+	nvertices,
+	element,
+	elements,
+	nelements,
+	facet,
+	facets,
+	nfacets,
+	faces,
+	nfaces,
+	GridTopology,
+	HalfEdgeTopology,
+	HalfEdge,
+	SimpleTopology,
+	elem2cart,
+	cart2elem,
+	corner2cart,
+	cart2corner,
+	elem2corner,
+	corner2elem,
+	elementtype,
+	facettype,
+	half4elem,
+	half4vert,
+	half4edge,
+	half4pair,
+	edge4pair,
+	connec4elem,
 
-  # topological relations
-  TopologicalRelation,
-  Boundary,
-  Coboundary,
-  Adjacency,
+	# topological relations
+	TopologicalRelation,
+	Boundary,
+	Coboundary,
+	Adjacency,
 
-  # domain traits
-  Domain,
-  SubDomain,
-  TransformedDomain,
-  embeddim,
-  paramdim,
-  crs,
-  manifold,
-  element,
-  nelements,
+	# domain traits
+	Domain,
+	SubDomain,
+	TransformedDomain,
+	embeddim,
+	paramdim,
+	crs,
+	manifold,
+	element,
+	nelements,
 
-  # sets
-  GeometrySet,
-  PointSet,
+	# sets
+	GeometrySet,
+	PointSet,
 
-  # meshes
-  Mesh,
-  SimpleMesh,
-  TransformedMesh,
-  Grid,
-  SubGrid,
-  RegularGrid,
-  CartesianGrid,
-  RectilinearGrid,
-  StructuredGrid,
-  TransformedGrid,
-  vertex,
-  vertices,
-  nvertices,
-  eachvertex,
-  element,
-  elements,
-  nelements,
-  facet,
-  facets,
-  nfacets,
-  topology,
-  topoconvert,
-  spacing,
-  offset,
+	# meshes
+	Mesh,
+	SimpleMesh,
+	TransformedMesh,
+	Grid,
+	SubGrid,
+	RegularGrid,
+	CartesianGrid,
+	RectilinearGrid,
+	StructuredGrid,
+	TransformedGrid,
+	vertex,
+	vertices,
+	nvertices,
+	eachvertex,
+	element,
+	elements,
+	nelements,
+	facet,
+	facets,
+	nfacets,
+	topology,
+	topoconvert,
+	spacing,
+	offset,
 
-  # trajectories
-  CylindricalTrajectory,
+	# trajectories
+	CylindricalTrajectory,
 
-  # indices
-  indices,
+	# indices
+	indices,
 
-  # partitions
-  Partition,
-  indices,
-  metadata,
+	# partitions
+	Partition,
+	indices,
+	metadata,
 
-  # partitioning
-  PartitionMethod,
-  IndexPredicatePartitionMethod,
-  PointPredicatePartitionMethod,
-  UniformPartition,
-  FractionPartition,
-  BlockPartition,
-  BisectPointPartition,
-  BisectFractionPartition,
-  BallPartition,
-  PlanePartition,
-  DirectionPartition,
-  IndexPredicatePartition,
-  PointPredicatePartition,
-  ProductPartition,
-  HierarchicalPartition,
-  partition,
-  split,
+	# partitioning
+	PartitionMethod,
+	IndexPredicatePartitionMethod,
+	PointPredicatePartitionMethod,
+	UniformPartition,
+	FractionPartition,
+	BlockPartition,
+	BisectPointPartition,
+	BisectFractionPartition,
+	BallPartition,
+	PlanePartition,
+	DirectionPartition,
+	IndexPredicatePartition,
+	PointPredicatePartition,
+	ProductPartition,
+	HierarchicalPartition,
+	partition,
+	split,
 
-  # sorting
-  SortingMethod,
-  DirectionSort,
-  sortinds,
+	# sorting
+	SortingMethod,
+	DirectionSort,
+	sortinds,
 
-  # traversing
-  Path,
-  LinearPath,
-  RandomPath,
-  ShiftedPath,
-  SourcePath,
-  MultiGridPath,
-  traverse,
+	# traversing
+	Path,
+	LinearPath,
+	RandomPath,
+	ShiftedPath,
+	SourcePath,
+	MultiGridPath,
+	traverse,
 
-  # neighborhoods
-  Neighborhood,
-  MetricBall,
-  hasequalradii,
-  radii,
-  rotation,
-  metric,
-  radius,
+	# neighborhoods
+	Neighborhood,
+	MetricBall,
+	hasequalradii,
+	radii,
+	rotation,
+	metric,
+	radius,
 
-  # neighborhood search
-  NeighborSearchMethod,
-  BoundedNeighborSearchMethod,
-  BallSearch,
-  KNearestSearch,
-  KBallSearch,
-  search!,
-  searchdists!,
-  search,
-  searchdists,
-  maxneighbors,
+	# neighborhood search
+	NeighborSearchMethod,
+	BoundedNeighborSearchMethod,
+	BallSearch,
+	KNearestSearch,
+	KBallSearch,
+	search!,
+	searchdists!,
+	search,
+	searchdists,
+	maxneighbors,
 
-  # predicates
-  isparametrized,
-  iscurve,
-  issurface,
-  issolid,
-  isperiodic,
-  issimplex,
-  isclosed,
-  isconvex,
-  issimple,
-  hasholes,
-  intersects,
-  iscollinear,
-  iscoplanar,
-  ≺,
-  ≻,
-  ⪯,
-  ⪰,
+	# predicates
+	isparametrized,
+	iscurve,
+	issurface,
+	issolid,
+	isperiodic,
+	issimplex,
+	isclosed,
+	isconvex,
+	issimple,
+	hasholes,
+	intersects,
+	iscollinear,
+	iscoplanar,
+	≺,
+	≻,
+	⪯,
+	⪰,
 
-  # centroids
-  centroid,
+	# centroids
+	centroid,
 
-  # measures
-  measure,
-  area,
-  volume,
-  perimeter,
+	# measures
+	measure,
+	area,
+	volume,
+	perimeter,
 
-  # boundary
-  boundary,
+	# boundary
+	boundary,
 
-  # winding number
-  winding,
+	# winding number
+	winding,
 
-  # sideof
-  sideof,
-  SideType,
-  IN,
-  OUT,
-  ON,
-  LEFT,
-  RIGHT,
+	# sideof
+	sideof,
+	SideType,
+	IN,
+	OUT,
+	ON,
+	LEFT,
+	RIGHT,
 
-  # orientation
-  orientation,
-  OrientationType,
-  CW,
-  CCW,
+	# orientation
+	orientation,
+	OrientationType,
+	CW,
+	CCW,
 
-  # clipping
-  ClippingMethod,
-  SutherlandHodgmanClipping,
-  clip,
+	# clipping
+	ClippingMethod,
+	SutherlandHodgmanClipping,
+	clip,
 
-  # intersections
-  IntersectionType,
-  Crossing,
-  CornerCrossing,
-  EdgeCrossing,
-  Touching,
-  CornerTouching,
-  EdgeTouching,
-  Overlapping,
-  PosOverlapping,
-  NegOverlapping,
-  NotIntersecting,
-  Intersecting,
+	# intersections
+	IntersectionType,
+	Crossing,
+	CornerCrossing,
+	EdgeCrossing,
+	Touching,
+	CornerTouching,
+	EdgeTouching,
+	Overlapping,
+	PosOverlapping,
+	NegOverlapping,
+	NotIntersecting,
+	Intersecting,
 
-  # intersecting
-  Intersection,
-  intersection,
-  type,
+	# intersecting
+	Intersection,
+	intersection,
+	type,
 
-  # simplification
-  SimplificationMethod,
-  SelingerSimplification,
-  DouglasPeuckerSimplification,
-  MinMaxSimplification,
-  simplify,
+	# simplification
+	SimplificationMethod,
+	SelingerSimplification,
+	DouglasPeuckerSimplification,
+	MinMaxSimplification,
+	simplify,
 
-  # bounding boxes
-  boundingbox,
+	# bounding boxes
+	boundingbox,
 
-  # hulls
-  HullMethod,
-  GrahamScan,
-  JarvisMarch,
-  hull,
-  convexhull,
+	# hulls
+	HullMethod,
+	GrahamScan,
+	JarvisMarch,
+	hull,
+	convexhull,
 
-  # sampling
-  SamplingMethod,
-  DiscreteSamplingMethod,
-  ContinuousSamplingMethod,
-  UniformSampling,
-  WeightedSampling,
-  BallSampling,
-  BlockSampling,
-  RegularSampling,
-  HomogeneousSampling,
-  MinDistanceSampling,
-  FibonacciSampling,
-  sampleinds,
-  sample,
+	# sampling
+	SamplingMethod,
+	DiscreteSamplingMethod,
+	ContinuousSamplingMethod,
+	UniformSampling,
+	WeightedSampling,
+	BallSampling,
+	BlockSampling,
+	RegularSampling,
+	HomogeneousSampling,
+	MinDistanceSampling,
+	FibonacciSampling,
+	sampleinds,
+	sample,
 
-  # pointification
-  pointify,
+	# pointification
+	pointify,
 
-  # tesselation
-  TesselationMethod,
-  DelaunayTesselation,
-  VoronoiTesselation,
-  tesselate,
+	# tesselation
+	TesselationMethod,
+	DelaunayTesselation,
+	VoronoiTesselation,
+	tesselate,
 
-  # discretization
-  DiscretizationMethod,
-  BoundaryTriangulationMethod,
-  FanTriangulation,
-  DehnTriangulation,
-  HeldTriangulation,
-  DelaunayTriangulation,
-  ManualSimplexification,
-  RegularDiscretization,
-  MaxLengthDiscretization,
-  discretize,
-  discretizewithin,
-  simplexify,
+	# discretization
+	DiscretizationMethod,
+	BoundaryTriangulationMethod,
+	FanTriangulation,
+	DehnTriangulation,
+	HeldTriangulation,
+	DelaunayTriangulation,
+	ManualSimplexification,
+	RegularDiscretization,
+	MaxLengthDiscretization,
+	discretize,
+	discretizewithin,
+	simplexify,
 
-  # refinement
-  RefinementMethod,
-  TriRefinement,
-  QuadRefinement,
-  RegularRefinement,
-  CatmullClarkRefinement,
-  TriSubdivision,
-  refine,
+	# refinement
+	RefinementMethod,
+	TriRefinement,
+	QuadRefinement,
+	RegularRefinement,
+	CatmullClarkRefinement,
+	TriSubdivision,
+	refine,
 
-  # coarsening
-  CoarseningMethod,
-  RegularCoarsening,
-  coarsen,
+	# coarsening
+	CoarseningMethod,
+	RegularCoarsening,
+	coarsen,
 
-  # transforms
-  GeometricTransform,
-  CoordinateTransform,
-  Rotate,
-  Translate,
-  Scale,
-  Affine,
-  Stretch,
-  StdCoords,
-  Proj,
-  Morphological,
-  LengthUnit,
-  ValidCoords,
-  Shadow,
-  Slice,
-  Repair,
-  Bridge,
-  LambdaMuSmoothing,
-  LaplaceSmoothing,
-  TaubinSmoothing,
-  isaffine,
-  isinvertible,
-  inverse,
+	# transforms
+	GeometricTransform,
+	CoordinateTransform,
+	Rotate,
+	Translate,
+	Scale,
+	Affine,
+	Stretch,
+	StdCoords,
+	Proj,
+	Morphological,
+	LengthUnit,
+	ValidCoords,
+	Shadow,
+	Slice,
+	Repair,
+	Bridge,
+	LambdaMuSmoothing,
+	LaplaceSmoothing,
+	TaubinSmoothing,
+	isaffine,
+	isinvertible,
+	inverse,
 
-  # miscellaneous
-  signarea,
-  householderbasis,
-  supportfun,
-  laplacematrix,
-  measurematrix,
-  adjacencymatrix,
-  atol,
+	# miscellaneous
+	signarea,
+	householderbasis,
+	supportfun,
+	laplacematrix,
+	measurematrix,
+	adjacencymatrix,
+	atol,
 
-  # visualization
-  viz,
-  viz!
+	# visualization
+	viz,
+	viz!
 
 end # module
