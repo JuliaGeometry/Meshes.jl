@@ -247,6 +247,11 @@ end
   @test !isconvex(poly2)
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)]))
   @test !isconvex(poly)
+  poly1 = PolyArea(cart.([(0, 0), (4, 0), (0, 4), (4, 4)]))
+  poly2 = PolyArea(cart.([(0, 0), (4, 0), (4, 4), (2, 3), (0, 4)]))
+  @test !isconvex(poly1)
+  @test !isconvex(poly2)
+
   h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),

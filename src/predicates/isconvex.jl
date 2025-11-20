@@ -60,7 +60,11 @@ isconvex(::Tetrahedron) = true
 
 isconvex(p::Polygon) = _isconvex(p, Val(embeddim(p)))
 
-_isconvex(p::Polygon, ::Val{2}) = Set(eachvertex(convexhull(p))) == Set(eachvertex(p))
+function _isconvex(p::Polygon, ::Val{2})
+  hasholes(p) && return false
+  r = first(rings(p))
+  all(θ -> θ ≤ oftype(θ, π), innerangles(r))
+end
 
 _isconvex(p::Polygon, ::Val{3}) = isconvex(proj2D(p))
 
