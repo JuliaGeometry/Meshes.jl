@@ -8,6 +8,7 @@ using CoordRefSystems
 using StaticArrays
 using SparseArrays
 using CircularArrays
+using BinaryTrees
 using LinearAlgebra
 using Unitful
 using Random
@@ -106,6 +107,7 @@ include("winding.jl")
 include("sideof.jl")
 include("orientation.jl")
 include("merging.jl")
+include("geobooleanops.jl")
 include("clipping.jl")
 include("clamping.jl")
 include("intersections.jl")
@@ -470,6 +472,14 @@ export
   OrientationType,
   CW,
   CCW,
+
+  # geometric boolean operations
+  geobooleanop,
+  GeoBoolean,
+  GeoIntersection,
+  GeoUnion,
+  GeoDifference,
+  GeoSymDifference,
 
   # clipping
   ClippingMethod,
