@@ -32,7 +32,7 @@ using ScopedValues: ScopedValue
 using Base.Cartesian: @nloops, @nref, @ntuple
 using Base: @propagate_inbounds
 
-using Random: Random
+import Random
 import Base: sort
 import Base: ==, !
 import Base: +, -, *
