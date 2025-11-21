@@ -41,7 +41,7 @@ import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # Transforms API
-import TransformsBase: Transform, →
+import TransformsBase: Transform, →, SequentialTransform, Identity
 import TransformsBase: isrevertible, isinvertible
 import TransformsBase: apply, revert, reapply, inverse
 import TransformsBase: parameters, preprocess
@@ -77,6 +77,9 @@ include("domains.jl")
 
 # utilities
 include("utils.jl")
+
+# transforms
+include("transforms.jl")
 
 # domain indices
 include("indices.jl")
@@ -119,9 +122,6 @@ include("tesselation.jl")
 include("discretization.jl")
 include("refinement.jl")
 include("coarsening.jl")
-
-# transforms
-include("transforms.jl")
 
 # miscellaneous
 include("rand.jl")
