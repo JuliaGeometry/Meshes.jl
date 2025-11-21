@@ -256,8 +256,11 @@ export
 	angles,
 	innerangles,
 	normal,
+<<<<<<< HEAD
 	base,
 	apex,
+=======
+>>>>>>> c7c91f967fcb868cac7b2a34b9aeecfad09490a8
 	≗,
 
 	# multi-geometries
