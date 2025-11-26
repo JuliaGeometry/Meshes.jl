@@ -81,6 +81,12 @@
   tb = TransformedGeometry(b, t)
   @test boundary(tb) == TransformedGeometry(boundary(b), t)
 
+  # empty boundary
+  r = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  t = Translate(T(1), T(2))
+  tr = TransformedGeometry(r, t)
+  @test isnothing(boundary(tr))
+
   b = Box(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
   tb = TransformedGeometry(b, t)
