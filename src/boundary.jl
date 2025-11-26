@@ -132,5 +132,6 @@ end
 function boundary(g::TransformedGeometry)
   b = boundary(parent(g))
   t = transform(g)
+  isnothing(b) && return b
   hasdistortedboundary(g) ? TransformedGeometry(b, t) : t(b)
 end
