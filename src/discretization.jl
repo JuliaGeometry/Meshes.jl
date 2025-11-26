@@ -70,7 +70,7 @@ discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
 function discretize(geometry::TransformedGeometry)
   T = numtype(lentype(geometry))
-  mesh = if hasdistortedboundary(geometry)
+  mesh = if isdistorted(geometry)
     discretize(parent(geometry), MaxLengthDiscretization(T(1000) * u"km"))
   else
     discretize(parent(geometry))
