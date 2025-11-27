@@ -166,3 +166,22 @@ end
     @test_reference "data/trisubdivision-$T.png" fig
   end
 end
+
+@testitem "MaxLengthRefinement" setup = [Setup] begin
+  # 2D grids
+  grid = CartesianGrid(cart(0, 0), cart(10, 10), dims=(10, 10))
+  tgrid = CartesianGrid(cart(0, 0), cart(10, 10), dims=(20, 20))
+  method = MaxLengthRefinement(T(0.5) * u"m")
+  @test refine(grid, method) == tgrid
+  rgrid = convert(RectilinearGrid, grid)
+  trgrid = convert(RectilinearGrid, tgrid)
+  @test refine(rgrid, method) == trgrid
+  sgrid = convert(StructuredGrid, grid)
+  tsgrid = convert(StructuredGrid, tgrid)
+  @test refine(sgrid, method) == tsgrid
+
+  # general meshes
+  mesh = convert(SimpleMesh, cartgrid(2, 2))
+  rmesh = refine(mesh, MaxLengthRefinement(T(0.5) * u"m"))
+  @test all(e -> perimeter(e) / 3 ≤ T(0.5) * u"m", rmesh)
+end

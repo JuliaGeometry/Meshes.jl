@@ -557,6 +557,7 @@ export
   RegularRefinement,
   CatmullClarkRefinement,
   TriSubdivision,
+  MaxLengthRefinement,
   refine,
 
   # coarsening

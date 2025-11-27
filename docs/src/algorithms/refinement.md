@@ -122,3 +122,25 @@ viz(fig[2,1], ref2, showsegments = true)
 viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
+
+## MaxLengthRefinement
+
+```@docs
+MaxLengthRefinement
+```
+
+```@example refinement
+grid = CartesianGrid(10, 10)
+
+# refine three times
+ref1 = refine(grid, MaxLengthRefinement(0.5))
+ref2 = refine(ref1, MaxLengthRefinement(0.25))
+ref3 = refine(ref2, MaxLengthRefinement(0.1))
+
+fig = Mke.Figure(size = (800, 800))
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
+fig
+```
