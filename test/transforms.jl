@@ -489,7 +489,7 @@ end
   @test r ≈ Quadrangle(cart(1, 1), cart(1, 2), cart(0, 2), cart(0, 1))
   @test TB.revert(f, r, c) ≈ g
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Meshes.urotbetween(vector(0, 0, 1), vector(1, 0, 0)), T[1, 2, 3])
   g = Box(cart(0, 0, 0), cart(1, 1, 1))
   r, c = TB.apply(f, g)
   @test r ≈ Hexahedron(
@@ -604,7 +604,7 @@ end
   # TRIANGLE
   # ---------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[1, 2, 3])
+  f = Affine(Meshes.urotbetween(vector(0, 0, 1), vector(1, 0, 0)), T[1, 2, 3])
   g = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 1))
   r, c = TB.apply(f, g)
   @test r ≈ Triangle(cart(1, 2, 3), cart(1, 2, 2), cart(2, 3, 3))
@@ -625,7 +625,7 @@ end
   # PLANE
   # ------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[0, 0, 1])
+  f = Affine(Meshes.urotbetween(vector(0, 0, 1), vector(1, 0, 0)), T[0, 0, 1])
   g = Plane(cart(0, 0, 0), vector(0, 0, 1))
   r, c = TB.apply(f, g)
   @test r ≈ Plane(cart(0, 0, 1), vector(1, 0, 0))
@@ -635,7 +635,7 @@ end
   # CYLINDER
   # ---------
 
-  f = Affine(rotation_between(SVector{3,T}(0, 0, 1), SVector{3,T}(1, 0, 0)), T[0, 0, 1])
+  f = Affine(Meshes.urotbetween(vector(0, 0, 1), vector(1, 0, 0)), T[0, 0, 1])
   g = Cylinder(T(1))
   r, c = TB.apply(f, g)
   @test r ≈ Cylinder(cart(0, 0, 1), cart(1, 0, 1))
