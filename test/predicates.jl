@@ -134,6 +134,13 @@ end
   @test latlon(48.1, -48) ∈ box
   @test latlon(48.1, -50.8) ∉ box
   @test latlon(48.1, -45.3) ∉ box
+
+  # transformed box
+  b = Box(cart(0, 0), cart(1, 1))
+  t = Affine(T[1 0; 0 1], T[1, 2])
+  @test cart(0, 0) ∉ t(b)
+  @test cart(1, 2) ∈ t(b)
+  @test cart(2, 3) ∈ t(b)
 end
 
 @testitem "issimplex" setup = [Setup] begin
