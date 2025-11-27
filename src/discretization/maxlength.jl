@@ -28,13 +28,13 @@ discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> discretize(s, method), merge, segments(chain))
 
 discretize(multi::Multi, method::MaxLengthDiscretization) =
-  refine(simplexify(multi), MaxLengthRefinement(method.length))
+  refine(discretize(multi), MaxLengthRefinement(method.length))
 
 discretize(geometry::TransformedGeometry, method::MaxLengthDiscretization) =
   transform(geometry)(discretize(parent(geometry), method))
 
 discretize(geometry::Geometry, method::MaxLengthDiscretization) =
-  refine(simplexify(geometry), MaxLengthRefinement(method.length))
+  refine(discretize(geometry), MaxLengthRefinement(method.length))
 
 # -----------------
 # HELPER FUNCTIONS
