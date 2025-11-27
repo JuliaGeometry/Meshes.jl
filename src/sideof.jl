@@ -56,10 +56,7 @@ Possible results are `IN`, `OUT` or `ON` the `ring`.
   Differential Coding Boolean Operations on Polygons]
   (https://www.mdpi.com/2073-8994/10/10/477)
 """
-sideof(point::Point, ring::Ring) = _sideof(point, ring)
-sideof(point::Point, ring::TransformedRing) = _sideof(point, ring)
-
-function _sideof(point::Point, ring)
+function sideof(point::Point, ring::Ring)
   assertion(CoordRefSystems.ncoords(crs(point)) == 2, "points must have 2 coordinates")
   point′ = point |> Proj(crs(ring))
   if isthreaded(nvertices(ring) > 1000)
