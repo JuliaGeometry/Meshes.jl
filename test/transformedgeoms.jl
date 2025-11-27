@@ -79,7 +79,7 @@
   b = Box(latlon(0, 0), latlon(1, 1))
   t = Proj(Mercator)
   tb = TransformedGeometry(b, t)
-  @test boundary(tb) == TransformedGeometry(boundary(b), t)
+  @test boundary(tb) == t(boundary(b))
 
   # empty boundary
   r = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))

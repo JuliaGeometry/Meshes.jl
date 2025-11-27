@@ -426,12 +426,11 @@ end
   @test all(∈(box), ps)
   @test ps[2] ≈ cart(mod(1 / π, 1), 1 / 99)
 
-  tbox = Box(cart(0, 0), cart(1, 1))
-  af = Affine(T[1 1; 0 1], T[2, 0])
-  tbox = af(tbox)
+  box = Box(cart(0, 0), cart(1, 1))
+  tbox = box |> Affine(T[1 1; 0 1], T[2, 0])
   ps = sample(tbox, FibonacciSampling(100)) |> collect
   @test first(ps) isa Point
-  @test first(ps) ≈ af(cart(0, 0))
+  @test first(ps) ≈ cart(2, 0)
   @test all(∈(tbox), ps)
 
   disk = Disk(Plane(cart(3, 0, 0), Vec(1, 0, 0)), T(2))
