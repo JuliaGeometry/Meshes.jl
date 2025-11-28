@@ -56,24 +56,16 @@ boundary(::Plane) = nothing
 
 embedboundary(p::Plane) = p
 
-boundary(b::Box{𝔼{1}}) = embedboundary(b)
+boundary(b::Box{𝔼{1}}) = Multi([minimum(b), maximum(b)])
 
-boundary(b::Box{𝔼{2}}) = embedboundary(b)
-
-boundary(b::Box{𝔼{3}}) = embedboundary(b)
-
-boundary(b::Box{🌐}) = embedboundary(b)
-
-embedboundary(b::Box{𝔼{1}}) = Multi([minimum(b), maximum(b)])
-
-function embedboundary(b::Box{𝔼{2}})
+function boundary(b::Box{𝔼{2}})
   A = convert(Cartesian, coords(minimum(b)))
   B = convert(Cartesian, coords(maximum(b)))
   v = [withcrs(b, (A.x, A.y)), withcrs(b, (B.x, A.y)), withcrs(b, (B.x, B.y)), withcrs(b, (A.x, B.y))]
   Ring(v)
 end
 
-function embedboundary(b::Box{𝔼{3}})
+function boundary(b::Box{𝔼{3}})
   A = convert(Cartesian, coords(minimum(b)))
   B = convert(Cartesian, coords(maximum(b)))
   v = [
@@ -90,7 +82,7 @@ function embedboundary(b::Box{𝔼{3}})
   SimpleMesh(v, connect.(c))
 end
 
-function embedboundary(b::Box{🌐})
+function boundary(b::Box{🌐})
   A = convert(LatLon, coords(minimum(b)))
   B = convert(LatLon, coords(maximum(b)))
   v = [
@@ -102,9 +94,17 @@ function embedboundary(b::Box{🌐})
   Ring(v)
 end
 
-boundary(b::Ball) = embedboundary(b)
+embedboundary(b::Box{𝔼{1}}) = boundary(b)
 
-embedboundary(b::Ball) = Sphere(center(b), radius(b))
+embedboundary(b::Box{𝔼{2}}) = boundary(b)
+
+embedboundary(b::Box{𝔼{3}}) = boundary(b)
+
+embedboundary(b::Box{🌐}) = boundary(b)
+
+boundary(b::Ball) = Sphere(center(b), radius(b))
+
+embedboundary(b::Ball) = boundary(b)
 
 boundary(::Sphere) = nothing
 
@@ -122,25 +122,25 @@ boundary(::Circle) = nothing
 
 embedboundary(c::Circle) = c
 
-boundary(c::Cylinder) = embedboundary(c)
+boundary(c::Cylinder) = CylinderSurface(bottom(c), top(c), radius(c))
 
-embedboundary(c::Cylinder) = CylinderSurface(bottom(c), top(c), radius(c))
+embedboundary(c::Cylinder) = boundary(c)
 
 boundary(::CylinderSurface) = nothing
 
 embedboundary(c::CylinderSurface) = c
 
-boundary(c::Cone) = embedboundary(c)
+boundary(c::Cone) = ConeSurface(base(c), apex(c))
 
-embedboundary(c::Cone) = ConeSurface(base(c), apex(c))
+embedboundary(c::Cone) = boundary(c)
 
 boundary(::ConeSurface) = nothing
 
 embedboundary(c::ConeSurface) = c
 
-boundary(f::Frustum) = embedboundary(f)
+boundary(f::Frustum) = FrustumSurface(bottom(f), top(f))
 
-embedboundary(f::Frustum) = FrustumSurface(bottom(f), top(f))
+embedboundary(f::Frustum) = boundary(f)
 
 boundary(::FrustumSurface) = nothing
 
@@ -173,33 +173,33 @@ boundary(p::Polygon) = hasholes(p) ? Multi(rings(p)) : first(rings(p))
 
 embedboundary(p::Polygon) = paramdim(p) < embeddim(p) ? p : boundary(p)
 
-boundary(t::Tetrahedron) = embedboundary(t)
-
-function embedboundary(t::Tetrahedron)
+function boundary(t::Tetrahedron)
   indices = [(3, 2, 1), (4, 1, 2), (4, 3, 1), (4, 2, 3)]
   SimpleMesh(collect(eachvertex(t)), connect.(indices))
 end
 
-boundary(h::Hexahedron) = embedboundary(h)
+embedboundary(t::Tetrahedron) = boundary(t)
 
-function embedboundary(h::Hexahedron)
+function boundary(h::Hexahedron)
   indices = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
   SimpleMesh(collect(eachvertex(h)), connect.(indices))
 end
 
-boundary(p::Pyramid) = embedboundary(p)
+embedboundary(h::Hexahedron) = boundary(h)
 
-function embedboundary(p::Pyramid)
+function boundary(p::Pyramid)
   indices = [(4, 3, 2, 1), (5, 1, 2), (5, 4, 1), (5, 3, 4), (5, 2, 3)]
   SimpleMesh(collect(eachvertex(p)), connect.(indices))
 end
 
-boundary(w::Wedge) = embedboundary(w)
+embedboundary(p::Pyramid) = boundary(p)
 
-function embedboundary(w::Wedge)
+function boundary(w::Wedge)
   indices = [(1, 3, 2), (4, 5, 6), (1, 2, 5, 4), (2, 3, 6, 5), (3, 1, 4, 6)]
   SimpleMesh(collect(eachvertex(w)), connect.(indices))
 end
+
+embedboundary(w::Wedge) = boundary(w)
 
 function boundary(m::Multi)
   bounds = [boundary(geom) for geom in parent(m)]
