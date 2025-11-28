@@ -17,8 +17,7 @@ Support function of `geometry` for given `direction`.
 function supportfun(g::Geometry, d::Vec)
   v = pointify(g)
   c = centroid(g)
-  _, i = findmax(vᵢ -> (vᵢ - c) ⋅ d, v)
-  v[i]
+  argmax(vᵢ -> (vᵢ - c) ⋅ d, v)
 end
 
 function supportfun(b::Ball, d::Vec)
