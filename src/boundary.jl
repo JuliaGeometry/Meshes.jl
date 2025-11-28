@@ -3,9 +3,14 @@
 # ------------------------------------------------------------------
 
 """
-    boundary(object)
+    boundary(g)
 
-Return the boundary of the `object`.
+The relative boundary of the geometry `g` is the subset of points
+`p ∈ g` such that for all `ϵ > 0` the intersection of the `ϵ`-ball
+centered at `p` with the affine hull of `g` contains points in `g`
+*and* in the complement of `g`.
+
+See <https://en.wikipedia.org/wiki/Relative_interior>.
 """
 function boundary end
 
