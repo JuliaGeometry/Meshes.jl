@@ -202,15 +202,13 @@ end
 embedboundary(w::Wedge) = boundary(w)
 
 function boundary(m::Multi)
-  bounds = [boundary(geom) for geom in parent(m)]
-  valid = filter(!isnothing, bounds)
-  isempty(valid) ? nothing : reduce(merge, valid)
+  bs = filter(!isnothing, [boundary(g) for g in parent(m)])
+  isempty(bs) ? nothing : reduce(merge, bs)
 end
 
 function embedboundary(m::Multi)
-  bounds = [embedboundary(geom) for geom in parent(m)]
-  valid = filter(!isnothing, bounds)
-  isempty(valid) ? nothing : reduce(merge, valid)
+  bs = [embedboundary(g) for g in parent(m)]
+  reduce(merge, bs)
 end
 
 function boundary(g::TransformedGeometry)
@@ -220,5 +218,5 @@ end
 
 function embedboundary(g::TransformedGeometry)
   b = embedboundary(parent(g))
-  isnothing(b) ? nothing : transform(g)(b)
+  transform(g)(b)
 end
