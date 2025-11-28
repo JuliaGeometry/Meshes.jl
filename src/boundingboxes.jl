@@ -67,7 +67,7 @@ function boundingbox(p::ParaboloidSurface)
   Box(v + Vec(-r, -r, zero(r)), v + Vec(r, r, r^2 / (4f)))
 end
 
-boundingbox(t::Torus) = _pboxes(pointify(t))
+boundingbox(t::Torus) = _pboxes(vertices(discretize(t)))
 
 boundingbox(g::OrthoRegularGrid) = Box(extrema(g)...)
 

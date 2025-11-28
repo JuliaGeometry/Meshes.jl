@@ -59,7 +59,7 @@ nvertices(::Type{<:Ngon{N}}) where {N} = N
 Base.isapprox(p₁::Ngon, p₂::Ngon; atol=atol(lentype(p₁)), kwargs...) =
   nvertices(p₁) == nvertices(p₂) && all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 
-rings(ngon::Ngon) = [Ring(pointify(ngon))]
+rings(ngon::Ngon) = [Ring(collect(eachvertex(ngon)))]
 
 angles(ngon::Ngon) = angles(boundary(ngon))
 

@@ -11,7 +11,7 @@ function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
-  points = Makie.@lift pointify.($geoms)
+  points = Makie.@lift aspoints.($geoms)
   vizmany!(plot, points, colorant)
 end
 
