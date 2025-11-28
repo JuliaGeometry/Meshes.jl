@@ -452,6 +452,7 @@ export
 
   # boundary
   boundary,
+  embedboundary,
 
   # winding number
   winding,
