@@ -1364,18 +1364,13 @@ end
   @test paramdim(c) == 1
   @test crs(c) <: Polar{NoDatum}
   @test Meshes.lentype(c) == ℳ
-
-  f(t) = Point(Polar(T(1), T(t)))
-  c = ParametrizedCurve(f, (T(0), T(2π)))
-  equaltest(c)
-
-  f(t) = Point(Polar(T(1), T(t)))
-  c = ParametrizedCurve(f, (T(0), T(2π)))
   @test c(T(0)) == f(T(0))
   @test c(T(1)) == f(T(2π))
   @test c(T(0.5)) == f(T(π))
   @test_throws DomainError(T(-0.1), "c(t) is not defined for t outside [0, 1].") c(T(-0.1))
   @test_throws DomainError(T(1.2), "c(t) is not defined for t outside [0, 1].") c(T(1.2))
+
+  equaltest(c)
 
   @test isnothing(boundary(c))
   @test embedboundary(c) == c
@@ -1385,11 +1380,11 @@ end
   @test perimeter(c) == zero(ℳ)
 
   # CRS propagation
-  f(t) = merc(t, 2t)
-  c = ParametrizedCurve(f, (T(0), T(1)))
+  g(t) = merc(t, 2t)
+  c = ParametrizedCurve(g, (T(0), T(1)))
   @test crs(c(T(0))) === crs(c)
 
-  @test sprint(show, c) == "ParametrizedCurve(fun: f, range: (0.0, 1.0))"
+  @test sprint(show, c) == "ParametrizedCurve(fun: g, range: (0.0, 1.0))"
 end
 
 @testitem "Torus" setup = [Setup] begin
