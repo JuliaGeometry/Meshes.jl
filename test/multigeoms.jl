@@ -1,4 +1,4 @@
-@testitem "Multigeometries" setup = [Setup] begin
+@testitem "MultiGeometry" setup = [Setup] begin
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
   hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
@@ -13,6 +13,7 @@
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test boundary(multi) == merge(boundary(poly), boundary(poly))
+  @test embedboundary(multi) == merge(embedboundary(poly), embedboundary(poly))
   @test rings(multi) == [rings(poly); rings(poly)]
 
   poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -41,6 +42,8 @@
   @test mchn isa Multi
   @test isnothing(noth)
   @test length(mchn) == T(8) * u"m"
+  @test embedboundary(mbox) == boundary(mbox)
+  @test embedboundary(mchn) == mchn
   @test sprint(show, mbox) == "Multi(2×Box)"
   @test sprint(show, MIME"text/plain"(), mbox) == """
   Multi(2×Box)
@@ -66,6 +69,7 @@
   @test mesh isa Mesh
   @test nvertices(mesh) == 16
   @test nelements(mesh) == 12
+  @test embedboundary(mbox) == boundary(mbox)
 
   # unique vertices
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
