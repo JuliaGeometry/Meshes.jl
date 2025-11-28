@@ -31,7 +31,7 @@ function _complement(b, m::MultiRing)
   Multi([[outer]; inners])
 end
 
-function _complement(b, p::Primitive)
-  ring = Ring(pointify(p))
-  PolyArea([b, reverse(ring)])
+function _complement(b, s::Sphere{𝔼{2}})
+  points = vertices(discretize(s))
+  _complement(b, Ring(points))
 end
