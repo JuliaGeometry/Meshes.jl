@@ -282,7 +282,9 @@ end
   end
 
   # issimple benchmark
-  r = Sphere(cart(0, 0), T(1)) |> pointify |> Ring
+  s = Sphere(cart(0, 0), T(1))
+  v = vertices(discretize(s))
+  r = Ring(v)
   @test issimple(r)
   @test @elapsed(issimple(r)) < 0.02
   @test @allocated(issimple(r)) < 950000

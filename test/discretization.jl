@@ -167,7 +167,7 @@ end
     m = Multi([q, t])
     mesh = discretize(m, method)
     elms = collect(elements(mesh))
-    @test vertices(mesh) == [pointify(q); pointify(t)]
+    @test vertices(mesh) == [collect(eachvertex(q)); collect(eachvertex(t))]
     @test vertices(elms[1]) ⊆ vertices(q)
     @test vertices(elms[2]) ⊆ vertices(q)
     @test vertices(elms[3]) ⊆ vertices(t)
@@ -199,9 +199,9 @@ end
     @test nelements(mesh) == 2
 
     # preserves order of vertices
-    poly = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-    mesh = simplexify(poly)
-    @test pointify(mesh) == pointify(poly)
+    quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+    mesh = simplexify(quad)
+    @test vertices(mesh) == collect(eachvertex(quad))
   end
 end
 
@@ -343,7 +343,16 @@ end
   @test eltype(mesh) <: Triangle
 
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
-  hexa = Hexahedron(pointify(box)...)
+  hexa = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(1, 1, 1),
+    cart(0, 1, 1)
+  )
   bmesh = discretize(box, ManualSimplexification())
   hmesh = discretize(hexa, ManualSimplexification())
   @test bmesh == hmesh
@@ -689,7 +698,7 @@ end
   # https://github.com/JuliaGeometry/Meshes.jl/issues/499
   quad = Quadrangle(cart(0, 1, -1), cart(0, 1, 1), cart(0, -1, 1), cart(0, -1, -1))
   mesh = simplexify(quad)
-  @test vertices(mesh) == pointify(quad)
+  @test vertices(mesh) == collect(eachvertex(quad))
 
   if visualtests
     grid = cartgrid(3, 3)
@@ -702,7 +711,16 @@ end
 
   # tetrahedralization
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
-  hex = Hexahedron(pointify(box)...)
+  hex = Hexahedron(
+    cart(0, 0, 0),
+    cart(1, 0, 0),
+    cart(1, 1, 0),
+    cart(0, 1, 0),
+    cart(0, 0, 1),
+    cart(1, 0, 1),
+    cart(1, 1, 1),
+    cart(0, 1, 1)
+  )
   bmesh = simplexify(box)
   hmesh = simplexify(hex)
   @test bmesh == hmesh
