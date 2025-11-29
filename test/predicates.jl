@@ -143,8 +143,8 @@ end
   @test cart(2, 3) ∈ t(b)
   b = Box(latlon(0, 0), latlon(1, 1))
   t = Proj(Mercator)
-  merc(0.5, 0.5) ∈ t(b)
-  merc(-1, -1) ∉ t(b)
+  @test merc(0.5, 0.5) ∈ t(b)
+  @test merc(-1, -1) ∉ t(b)
 end
 
 @testitem "issimplex" setup = [Setup] begin
