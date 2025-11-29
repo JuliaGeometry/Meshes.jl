@@ -19,6 +19,11 @@
   equaltest(tb)
   isapproxtest(tb)
 
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  t = Translate(T(1), T(2), T(3))
+  tb = TransformedGeometry(b, t)
+  @test boundary(tb) isa Mesh
+
   b = Ball(latlon(0, 0), T(1))
   t = Proj(Cartesian)
   tb = TransformedGeometry(b, t)
