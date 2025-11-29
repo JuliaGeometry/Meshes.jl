@@ -86,6 +86,8 @@ function discretize(geometry::TransformedGeometry)
   _mayberefinemaxlen(pmesh, tmesh)
 end
 
+discretize(mesh::Mesh) = mesh
+
 # ----------
 # FALLBACKS
 # ----------
