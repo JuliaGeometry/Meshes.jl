@@ -14,6 +14,9 @@ end
 
 MaxLengthDiscretization(length) = MaxLengthDiscretization(aslen(length))
 
+_discretize(geometry::Geometry, method::MaxLengthDiscretization) =
+  refine(discretize(geometry), MaxLengthRefinement(method.length))
+
 function _discretize(box::Box, method::MaxLengthDiscretization)
   sizes = ceil.(Int, _sides(box) ./ method.length)
   discretize(box, RegularDiscretization(sizes))
@@ -26,9 +29,6 @@ end
 
 _discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> _discretize(s, method), merge, segments(chain))
-
-_discretize(geometry::Geometry, method::MaxLengthDiscretization) =
-  refine(discretize(geometry), MaxLengthRefinement(method.length))
 
 # -----------------
 # HELPER FUNCTIONS
