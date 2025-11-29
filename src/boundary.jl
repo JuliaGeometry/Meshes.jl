@@ -214,11 +214,21 @@ end
 function boundary(g::TransformedGeometry)
   b = boundary(parent(g))
   t = transform(g)
-  isnothing(b) ? nothing : TransformedGeometry(b, t)
+  if isnothing(b)
+    nothing
+  elseif b isa Geometry
+    TransformedGeometry(b, t)
+  elseif b isa Mesh
+    TransformedMesh(b, t)
+  end
 end
 
 function embedboundary(g::TransformedGeometry)
   b = embedboundary(parent(g))
   t = transform(g)
-  TransformedGeometry(b, t)
+  if b isa Geometry
+    TransformedGeometry(b, t)
+  elseif b isa Mesh
+    TransformedMesh(b, t)
+  end
 end
