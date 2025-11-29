@@ -583,8 +583,8 @@ end
   tbox = TransformedGeometry(box, Proj(Mercator))
   mesh = discretize(tbox)
   @test nvertices(mesh) == 81
-  @test nelements(mesh) == 128
-  @test eltype(mesh) <: Triangle
+  @test nelements(mesh) == 64
+  @test eltype(mesh) <: Quadrangle
 
   grid = CartesianGrid(10)
   @test discretize(grid) == grid
