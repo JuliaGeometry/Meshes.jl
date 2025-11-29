@@ -109,6 +109,10 @@ end
 
 discretize(geometry::Geometry, method::BoundaryTriangulationMethod) = discretizewithin(boundary(geometry), method)
 
+# this method exists to fix ambiguity
+discretize(multi::Multi, method::BoundaryTriangulationMethod) =
+  mapreduce(geom -> discretize(geom, method), merge, parent(multi))
+
 function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
   # clean up polygon if necessary
   cpoly = polygon |> Repair(0) |> Repair(8)
