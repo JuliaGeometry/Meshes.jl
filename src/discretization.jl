@@ -47,7 +47,7 @@ function discretizewithin end
 # -----------
 
 function discretize(geometry::Geometry)
-  if manifold(geometry) == 🌐
+  if manifold(geometry) === 🌐
     _discretize(geometry) |> _refinemaxlen
   else
     _discretize(geometry)
@@ -166,7 +166,7 @@ function discretize(polygon::Polygon, method::BoundaryTriangulationMethod)
 end
 
 function discretizewithin(ring::Ring, method::BoundaryTriangulationMethod)
-  if manifold(ring) == 🌐
+  if manifold(ring) === 🌐
     _discretizewithin🌐(ring, method)
   else
     _discretizewithin𝔼(ring, method)
@@ -322,12 +322,12 @@ include("discretization/maxlength.jl")
 # -----------------
 
 function _mayberefinemaxlen(pmesh, tmesh)
-  # if the manifold changes from 🌐 to 𝔼 or vice-versa
   # the mesh might be distorted in the target manifold
-  # we refine the mesh further until the segments have
-  # a maximum predefined length in physical units
+  # if the manifold changes from 🌐 to 𝔼 (or vice-versa)
+  # we refine the mesh further until the segments have a
+  # maximum predefined length in physical units
   Mₚ, Mₜ = manifold(pmesh), manifold(tmesh)
-  changed = (Mₚ == 🌐 && Mₜ != 🌐) || (Mₚ != 🌐 && Mₜ == 🌐)
+  changed = (Mₚ === 🌐 && Mₜ !== 🌐) || (Mₚ !== 🌐 && Mₜ === 🌐)
   changed ? _refinemaxlen(tmesh) : tmesh
 end
 
