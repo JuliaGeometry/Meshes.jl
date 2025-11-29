@@ -169,6 +169,15 @@ end
 
 Base.in(p::Point, m::Multi) = any(g -> p ∈ g, parent(m))
 
+function Base.in(p::Point, g::TransformedGeometry)
+  t = transform(g)
+  if isinvertible(t)
+    inverse(t)(p) ∈ parent(g)
+  else
+    p ∈ discretize(g)
+  end
+end
+
 """
     point ∈ domain
 
