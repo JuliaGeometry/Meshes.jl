@@ -3,55 +3,18 @@
 # ------------------------------------------------------------------
 
 """
-    pointify(object)
+    pointify(geometry)
 
-Convert `object` into a vector of [`Point`](@ref)
-by sampling its boundary.
+Return vector of [`Point`](@ref)s on the
+[`embedboundary`](@ref) of the `geometry`.
 """
-function pointify end
+pointify(g::Geometry) = _points(embedboundary(g))
 
-# ----------
-# FALLBACKS
-# ----------
+# discretize boundary and extract vertices
+_points(g::Geometry) = vertices(discretize(g))
 
-pointify(p::Primitive) = pointify(boundary(p))
+# skip discretization
+_points(p::Point) = [p]
 
-pointify(p::Polytope) = collect(eachvertex(p))
-
-pointify(m::Multi) = pointify(parent(m))
-
-pointify(g::TransformedGeometry) = isdistorted(g) ? pointify(discretize(g)) : map(transform(g), pointify(parent(g)))
-
-pointify(geoms) = mapreduce(pointify, vcat, geoms)
-
-# ----------------
-# SPECIALIZATIONS
-# ----------------
-
-pointify(p::Point) = [p]
-
-pointify(s::Sphere) = _rsample(s)
-
-pointify(t::Torus) = _rsample(t)
-
-pointify(c::CylinderSurface) = _rsample(c)
-
-pointify(c::ConeSurface) = _rsample(c)
-
-pointify(p::PolyArea) = vertices(p)
-
-pointify(r::Ring) = vertices(r)
-
-pointify(r::Rope) = vertices(r)
-
-pointify(m::MultiPoint) = parent(m)
-
-pointify(p::PointSet) = collect(p)
-
-pointify(m::Mesh) = vertices(m)
-
-# ----------------
-# IMPLEMENTATIONS
-# ----------------
-
-_rsample(g::Geometry) = collect(sample(g, RegularSampling(50)))
+# skip discretization
+_points(m::MultiPoint) = parent(m)

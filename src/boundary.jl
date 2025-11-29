@@ -213,10 +213,12 @@ end
 
 function boundary(g::TransformedGeometry)
   b = boundary(parent(g))
-  isnothing(b) ? nothing : transform(g)(b)
+  t = transform(g)
+  isnothing(b) ? nothing : TransformedGeometry(b, t)
 end
 
 function embedboundary(g::TransformedGeometry)
   b = embedboundary(parent(g))
-  transform(g)(b)
+  t = transform(g)
+  TransformedGeometry(b, t)
 end

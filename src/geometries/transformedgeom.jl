@@ -39,14 +39,6 @@ Base.parent(g::TransformedGeometry) = g.geometry
 
 transform(g::TransformedGeometry) = g.transform
 
-isdistorted(g::TransformedGeometry) = _isdistorted(manifold(g), manifold(parent(g)))
-
-_isdistorted(::Type, ::Type) = false
-
-_isdistorted(::Type{<:𝔼}, ::Type{<:🌐}) = true
-
-_isdistorted(::Type{<:🌐}, ::Type{<:𝔼}) = true
-
 # ---------
 # GEOMETRY
 # ---------
