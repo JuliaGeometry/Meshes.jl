@@ -14,26 +14,20 @@ end
 
 MaxLengthDiscretization(length) = MaxLengthDiscretization(aslen(length))
 
-function discretize(box::Box, method::MaxLengthDiscretization)
+function _discretize(box::Box, method::MaxLengthDiscretization)
   sizes = ceil.(Int, _sides(box) ./ method.length)
   discretize(box, RegularDiscretization(sizes))
 end
 
-function discretize(segment::Segment, method::MaxLengthDiscretization)
+function _discretize(segment::Segment, method::MaxLengthDiscretization)
   size = ceil(Int, measure(segment) / method.length)
   discretize(segment, RegularDiscretization(size))
 end
 
-discretize(chain::Chain, method::MaxLengthDiscretization) =
-  mapreduce(s -> discretize(s, method), merge, segments(chain))
+_discretize(chain::Chain, method::MaxLengthDiscretization) =
+  mapreduce(s -> _discretize(s, method), merge, segments(chain))
 
-discretize(multi::Multi, method::MaxLengthDiscretization) =
-  refine(discretize(multi), MaxLengthRefinement(method.length))
-
-discretize(geometry::TransformedGeometry, method::MaxLengthDiscretization) =
-  transform(geometry)(discretize(parent(geometry), method))
-
-discretize(geometry::Geometry, method::MaxLengthDiscretization) =
+_discretize(geometry::Geometry, method::MaxLengthDiscretization) =
   refine(discretize(geometry), MaxLengthRefinement(method.length))
 
 # -----------------

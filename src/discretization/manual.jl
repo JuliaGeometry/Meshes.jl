@@ -9,9 +9,9 @@ Simplexify convex geometries manually using indices of vertices.
 """
 struct ManualSimplexification <: DiscretizationMethod end
 
-discretize(geom::Geometry, ::ManualSimplexification) = SimpleMesh(_manualverts(geom), _manualconnec(geom))
+_discretize(geom::Geometry, ::ManualSimplexification) = SimpleMesh(_manualverts(geom), _manualconnec(geom))
 
-function discretize(chain::Chain, ::ManualSimplexification)
+function _discretize(chain::Chain, ::ManualSimplexification)
   np = nvertices(chain) + isclosed(chain)
   ip = isperiodic(chain)
 
