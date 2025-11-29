@@ -21,7 +21,7 @@ abstract type TriangulationMethod <: DiscretizationMethod end
 
 Discretize `geometry` with discretization `method`.
 
-If the `method` is ommitted, a default is used as a
+If the `method` is omitted, a default is used as a
 function of the `geometry`. Geometries over the `🌐`
 manifold are refined until the segments are shorter
 than a maximum length.
