@@ -46,27 +46,37 @@ function discretizewithin end
 # DISCRETIZE
 # -----------
 
-discretize(geometry::Geometry) = simplexify(geometry)
+function discretize(geometry::Geometry)
+  if manifold(geometry) == 🌐
+    _discretize(geometry) |> _refinemaxlen
+  else
+    _discretize(geometry)
+  end
+end
 
-discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
+_discretize(geometry::Geometry) = _simplexify(geometry)
 
-discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
+_discretize(box::Box) = discretize(box, RegularDiscretization(1))
 
-discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
+_discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
 
-discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
+_discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
 
-discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
+_discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
 
-discretize(cyl::Cylinder) = discretize(cyl, RegularDiscretization(2, 50, 2))
+_discretize(ellipsoid::Ellipsoid) = discretize(ellipsoid, RegularDiscretization(50))
 
-discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
+_discretize(torus::Torus) = discretize(torus, RegularDiscretization(50))
 
-discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
+_discretize(cyl::Cylinder) = discretize(cyl, RegularDiscretization(2, 50, 2))
 
-discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
+_discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
 
-discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
+_discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
+
+_discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
+
+_discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
 
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
@@ -76,23 +86,11 @@ function discretize(geometry::TransformedGeometry)
   _mayberefinemaxlen(pmesh, tmesh)
 end
 
-discretize(mesh::Mesh) = mesh
-
 # ----------
 # FALLBACKS
 # ----------
 
-function discretize(geometry::Geometry, method::DiscretizationMethod)
-  if manifold(geometry) == 🌐
-    _discretize🌐(geometry, method)
-  else
-    _discretize𝔼(geometry, method)
-  end
-end
-
-_discretize🌐(geometry::Geometry, method::DiscretizationMethod) = _refinemaxlen(_discretize(geometry, method))
-
-_discretize𝔼(geometry::Geometry, method::DiscretizationMethod) = _discretize(geometry, method)
+discretize(geometry::Geometry, method::DiscretizationMethod) = _discretize(geometry, method)
 
 discretize(multi::Multi, method::DiscretizationMethod) =
   mapreduce(geom -> discretize(geom, method), merge, parent(multi))
@@ -177,8 +175,7 @@ function _discretizewithin🌐(ring::Ring, method::BoundaryTriangulationMethod)
   points = collect(eachvertex(ring))
   ring𝔼2 = Ring([flat(p |> Proj(LatLon)) for p in points])
   mesh𝔼2 = _discretizewithin𝔼2(ring𝔼2, method)
-  mesh🌐 = SimpleMesh(points, topology(mesh𝔼2))
-  _refinemaxlen(mesh🌐)
+  SimpleMesh(points, topology(mesh𝔼2))
 end
 
 function _discretizewithin𝔼(ring::Ring, method::BoundaryTriangulationMethod)
@@ -209,25 +206,33 @@ when the `object` has parametric dimension 2.
 """
 function simplexify end
 
-simplexify(geometry::Geometry) = simplexify(discretize(geometry))
+function simplexify(geometry::Geometry)
+  if manifold(geometry) == 🌐
+    _simplexify(geometry) |> _refinemaxlen
+  else
+    _simplexify(geometry)
+  end
+end
 
-simplexify(box::Box) = discretize(box, ManualSimplexification())
+_simplexify(geometry::Geometry) = _simplexify(_discretize(geometry))
 
-simplexify(chain::Chain) = discretize(chain, ManualSimplexification())
+_simplexify(box::Box) = discretize(box, ManualSimplexification())
 
-simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
+_simplexify(chain::Chain) = discretize(chain, ManualSimplexification())
 
-simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(50))
+_simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
-simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(50))
+_simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(50))
 
-simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
+_simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(50))
 
-simplexify(tri::Triangle) = discretize(tri, ManualSimplexification())
+_simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
-simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
+_simplexify(tri::Triangle) = discretize(tri, ManualSimplexification())
 
-simplexify(poly::Polyhedron) = discretize(poly, ManualSimplexification())
+_simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
+
+_simplexify(poly::Polyhedron) = discretize(poly, ManualSimplexification())
 
 simplexify(multi::Multi) = mapreduce(simplexify, merge, parent(multi))
 
@@ -237,7 +242,9 @@ function simplexify(geometry::TransformedGeometry)
   _mayberefinemaxlen(pmesh, tmesh)
 end
 
-function simplexify(mesh::Mesh)
+simplexify(mesh::Mesh) = _simplexify(mesh)
+
+function _simplexify(mesh::Mesh)
   # retrieve vertices and connectivities
   points = vertices(mesh)
   connec = elements(topology(mesh))
@@ -282,7 +289,7 @@ function _appendinds!(ginds, connec, points)
   inds = indices(connec)
 
   # simplexify element
-  mesh = simplexify(elem)
+  mesh = _simplexify(elem)
   topo = topology(mesh)
 
   # convert from local to global indices
