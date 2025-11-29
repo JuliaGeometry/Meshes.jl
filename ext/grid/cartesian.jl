@@ -23,9 +23,10 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   sz = Makie.@lift size($grid)
 
   if nc[] == 1
-    # visualize bounding box with a single
-    # color for maximum performance
-    bbox = Makie.@lift boundingbox($grid)
+    # visualize bounding box with a single color for maximum performance,
+    # make sure the box is discretized into a triangle mesh to avoid
+    # infinite loops calling this same recipe with grids recursively
+    bbox = Makie.@lift simplexify(boundingbox($grid))
     viz!(plot, bbox, color=colorant)
 
     if showsegments[]
