@@ -10,11 +10,10 @@ Return vector of [`Point`](@ref)s on the
 """
 pointify(g::Geometry) = _points(embedboundary(g))
 
-# discretize boundary and extract vertices
+# discretize boundary
 _points(g::Geometry) = vertices(discretize(g))
 
 # skip discretization
 _points(p::Point) = [p]
-
-# skip discretization
 _points(m::MultiPoint) = parent(m)
+_points(m::Mesh) = vertices(m)
