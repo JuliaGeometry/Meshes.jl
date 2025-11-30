@@ -92,10 +92,10 @@ prettyname(g::TransformedGeometry) = "Transformed$(prettyname(g.geometry))"
 # HELPER FUNCTIONS
 # -----------------
 
-_isequal(g₁, g₂) = pointify(g₁) == pointify(g₂)
+_isequal(g₁, g₂) = boundarypoints(g₁) == boundarypoints(g₂)
 
 function _isapprox(g₁, g₂; kwargs...)
-  ps₁ = pointify(g₁)
-  ps₂ = pointify(g₂)
+  ps₁ = boundarypoints(g₁)
+  ps₂ = boundarypoints(g₂)
   length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
 end

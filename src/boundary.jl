@@ -232,3 +232,19 @@ function embedboundary(g::TransformedGeometry)
     TransformedMesh(b, t)
   end
 end
+
+"""
+    boundarypoints(geometry)
+
+Return vector of [`Point`](@ref)s on the
+[`embedboundary`](@ref) of the `geometry`.
+"""
+boundarypoints(g::Geometry) = _points(embedboundary(g))
+
+# discretize boundary
+_points(g::Geometry) = vertices(discretize(g))
+
+# skip discretization
+_points(p::Point) = [p]
+_points(m::MultiPoint) = parent(m)
+_points(m::Mesh) = vertices(m)

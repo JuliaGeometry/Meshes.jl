@@ -68,6 +68,6 @@ convexhull(m::Mesh) = _pconvexhull(eachvertex(m))
 # IMPLEMENTATIONS
 # ----------------
 
-_gconvexhull(geoms) = _pconvexhull(p for g in geoms for p in pointify(g))
+_gconvexhull(geoms) = _pconvexhull(p for g in geoms for p in boundarypoints(g))
 
 _pconvexhull(points) = hull(points, GrahamScan())
