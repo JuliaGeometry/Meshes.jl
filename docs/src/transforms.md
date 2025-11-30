@@ -160,6 +160,20 @@ triangle = Triangle((0, 0), (1, 0), (1, 1))
 triangle |> Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
 ```
 
+## ReinterpretCoords
+
+```@docs
+ReinterpretCoords
+```
+
+```@example transforms
+# triangle with Cartesian coordinates
+triangle = Triangle((0, 0), (1, 0), (1, 1))
+
+# transform triangle coordinates
+triangle |> ReinterpretCoords(Cartesian, LatLon)
+```
+
 ## LengthUnit
 
 ```@docs

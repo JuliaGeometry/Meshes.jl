@@ -1602,6 +1602,148 @@ end
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 end
 
+@testitem "ReinterpretCoords" setup = [Setup] begin
+  f = ReinterpretCoords(Cartesian, LatLon)
+  @test TB.isrevertible(f)
+  @test TB.isinvertible(f)
+  @test TB.parameters(f) == (; CRS₁=Cartesian, CRS₂=LatLon)
+  @test inverse(f) == ReinterpretCoords(LatLon, Cartesian)
+
+  # ----
+  # VEC
+  # ----
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  v = vector(1, 0)
+  r, c = TB.apply(f, v)
+  @test r == v
+
+  # ------
+  # POINT
+  # ------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  g = cart(1, 2)
+  r, c = TB.apply(f, g)
+  @test r == latlon(2, 1)
+
+  # --------
+  # SEGMENT
+  # --------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  g = Segment(cart(1, 2), cart(3, 4))
+  r, c = TB.apply(f, g)
+  @test r ≈ Segment(latlon(2, 1), latlon(4, 3))
+
+  # ----
+  # BOX
+  # ----
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  g = Box(cart(0, 0), cart(1, 1))
+  r, c = TB.apply(f, g)
+  @test r ≈ Quadrangle(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0))
+
+  # ---------
+  # TRIANGLE
+  # ---------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  g = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  r, c = TB.apply(f, g)
+  @test r ≈ Triangle(latlon(0, 0), latlon(0, 1), latlon(1, 1))
+
+  # ----------
+  # MULTIGEOM
+  # ----------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  g = Multi([t, t])
+  r, c = TB.apply(f, g)
+  @test r ≈ Multi([f(t), f(t)])
+
+  # --------------------
+  # TRANSFORMEDGEOMETRY
+  # --------------------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  b = Box(cart(0, 0), cart(1, 1))
+  g = TransformedGeometry(b, Identity())
+  r, c = TB.apply(f, g)
+  @test r ≈ Quadrangle(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0))
+
+  # ---------
+  # POINTSET
+  # ---------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  d = PointSet([cart(0, 0), cart(1, 0), cart(1, 1)])
+  r, c = TB.apply(f, d)
+  @test r ≈ PointSet([latlon(0, 0), latlon(0, 1), latlon(1, 1)])
+
+  # ------------
+  # GEOMETRYSET
+  # ------------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  d = GeometrySet([t, t])
+  r, c = TB.apply(f, d)
+  @test r ≈ GeometrySet([f(t), f(t)])
+  d = [t, t]
+  r, c = TB.apply(f, d)
+  @test all(r .≈ [f(t), f(t)])
+
+  # --------------
+  # CARTESIANGRID
+  # --------------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  d = cartgrid(10, 10)
+  r, c = TB.apply(f, d)
+  @test r isa Grid
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # ----------------
+  # RECTILINEARGRID
+  # ----------------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  d = convert(RectilinearGrid, cartgrid(10, 10))
+  r, c = TB.apply(f, d)
+  @test r isa Grid
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # ---------------
+  # STRUCTUREDGRID
+  # ---------------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  d = convert(StructuredGrid, cartgrid(10, 10))
+  r, c = TB.apply(f, d)
+  @test r isa Grid
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # -----------
+  # SIMPLEMESH
+  # -----------
+
+  f = ReinterpretCoords(Cartesian, LatLon)
+  p = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  d = SimpleMesh(p, c)
+  r, c = TB.apply(f, d)
+  @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
+
+  # throws error with invalid arguments
+  f = ReinterpretCoords(Cartesian, LatLon)
+  @test_throws ArgumentError f(latlon(0, 0))
+  f = ReinterpretCoords(LatLon, Cartesian)
+  @test_throws ArgumentError f(cart(0, 0))
+end
+
 @testitem "LengthUnit" setup = [Setup] begin
   @test !isaffine(LengthUnit(u"km"))
   @test !TB.isrevertible(LengthUnit(u"cm"))
