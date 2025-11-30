@@ -559,7 +559,7 @@ end
 
   # rounding errors
   for k in 1:1000
-    δ = k * atol(T)
+    δ = k * Meshes.atol(T)
     lo = Line(cart(3.0, 1.0), cart(2.0, 2.0))
     lδ = Line(cart(1.5, 1.5 + δ), cart(3.0, 1.5 + δ))
     p = cart(2.5 - δ, 1.5 + δ)
@@ -1011,7 +1011,7 @@ end
   # Special case: the direction vector is not long enough to cross triangle
   r = Ray(cart(0.2, 0.2, 1.0), vector(0.0, 0.0, -0.00001))
   @test intersection(r, t) |> type == Crossing
-  @test evaluate(Euclidean(), r ∩ t, cart(0.2, 0.2, 0.0)) < 1000atol(ℳ)
+  @test evaluate(Euclidean(), r ∩ t, cart(0.2, 0.2, 0.0)) < 1000 * Meshes.atol(ℳ)
   # Special case: reverse direction vector should not hit the triangle
   r = Ray(cart(0.2, 0.2, 1.0), vector(0.0, 0.0, 1.0))
   @test intersection(r, t) |> type == NotIntersecting

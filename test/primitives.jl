@@ -332,7 +332,7 @@ end
   # normal to plane has norm one regardless of basis
   p = Plane(cart(0, 0, 0), vector(2, 0, 0), vector(0, 3, 0))
   n = normal(p)
-  @test isapprox(norm(n), oneunit(ℳ), atol=atol(ℳ))
+  @test isapprox(norm(n), oneunit(ℳ), atol=Meshes.atol(ℳ))
 
   # plane passing through three points
   p₁ = cart(0, 0, 0)
