@@ -19,6 +19,7 @@ with EPSG/ESRI `code₁` and `code₂`.
 ```julia
 ReinterpretCoords(Cartesian, LatLon)
 ReinterpretCoords(LatLon, Mercator)
+ReinterpretCoords(EPSG{4326}, EPSG{3395})
 ```
 """
 struct ReinterpretCoords{CRS₁,CRS₂} <: CoordinateTransform end
