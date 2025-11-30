@@ -54,7 +54,6 @@
   @test !(s ≈ Segment(Point(1, 1, 2, 1), Point(0, 0, 0, 0)))
 
   s = Segment(cart(0, 0, 0), cart(1, 1, 1))
-  @test boundary(s) == Multi([cart(0, 0, 0), cart(1, 1, 1)])
   @test perimeter(s) == zero(T) * u"m"
   @test centroid(s) == cart(0.5, 0.5, 0.5)
   @test Meshes.lentype(centroid(s)) == ℳ
@@ -63,7 +62,6 @@
   x1 = T(0)u"m"
   x2 = T(1)u"m"
   s = Segment(Point(x1, x1, x1), Point(x2, x2, x2))
-  @test boundary(s) == Multi([Point(x1, x1, x1), Point(x2, x2, x2)])
   @test perimeter(s) == 0u"m"
   xm = T(0.5)u"m"
   @test centroid(s) == Point(xm, xm, xm)
@@ -72,17 +70,6 @@
   # CRS propagation
   s = Segment(merc(0, 0), merc(1, 1))
   @test crs(s(T(0))) === crs(s)
-
-  # boundary
-  s = Segment(cart(0), cart(1))
-  @test boundary(s) == Multi([cart(0), cart(1)])
-  @test embedboundary(s) == boundary(s)
-  s = Segment(cart(0, 0), cart(1, 1))
-  @test boundary(s) == Multi([cart(0, 0), cart(1, 1)])
-  @test embedboundary(s) == s
-  s = Segment(cart(0, 0, 0), cart(1, 1, 1))
-  @test boundary(s) == Multi([cart(0, 0, 0), cart(1, 1, 1)])
-  @test embedboundary(s) == s
 
   # measure
   s = Segment(merc(0, 0), merc(1, 1))
@@ -196,26 +183,6 @@ end
   c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test centroid(c) == cart(0.5, 0.5)
 
-  # boundary
-  c = Rope(cart.([(0,), (1,), (1,), (0,)]))
-  @test boundary(c) == Multi(cart.([(0,), (0,)]))
-  @test embedboundary(c) == boundary(c)
-  c = Rope(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test boundary(c) == Multi(cart.([(0, 0), (0, 1)]))
-  @test embedboundary(c) == c
-  c = Rope(cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]))
-  @test boundary(c) == Multi(cart.([(0, 0, 0), (0, 1, 0)]))
-  @test embedboundary(c) == c
-  c = Ring(cart.([(0,), (1,), (1,), (0,)]))
-  @test isnothing(boundary(c))
-  @test embedboundary(c) == boundary(c)
-  c = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test isnothing(boundary(c))
-  @test embedboundary(c) == c
-  c = Ring(cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]))
-  @test isnothing(boundary(c))
-  @test embedboundary(c) == c
-
   # degenerate rings with 1 or 2 vertices are allowed
   r = Ring(cart.([(0, 0)]))
   @test isclosed(r)
@@ -294,7 +261,7 @@ end
   @test crs(centroid(r)) === crs(r)
 
   # parameterization
-  r = boundary(Box(cart(0, 0), cart(1, 1)))
+  r = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test r(T(0)) == cart(0, 0)
   @test r(T(0.25)) == cart(1, 0)
   @test r(T(0.5)) == cart(1, 1)
@@ -403,12 +370,6 @@ end
   equaltest(t)
   isapproxtest(t)
   vertextest(t)
-
-  t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-  @test boundary(t) == embedboundary(t) == first(rings(t))
-  t = Triangle(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0))
-  @test boundary(t) == first(rings(t))
-  @test embedboundary(t) == t
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test perimeter(t) ≈ T(1 + 1 + √2) * u"m"
@@ -525,12 +486,6 @@ end
   vertextest(q)
 
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  @test boundary(q) == embedboundary(q) == first(rings(q))
-  q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
-  @test boundary(q) == first(rings(q))
-  @test embedboundary(q) == q
-
-  q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test_throws DomainError((T(1.2), T(1.2)), "q(u, v) is not defined for u, v outside [0, 1]².") q(T(1.2), T(1.2))
 
   q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
@@ -602,20 +557,6 @@ end
   isapproxtest(p)
   vertextest(p)
 
-  # boundary
-  outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
-  hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-  poly = PolyArea([outer, hole1, hole2])
-  @test boundary(poly) == Multi(rings(poly))
-  @test embedboundary(poly) == boundary(poly)
-  outer = cart.([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)])
-  hole1 = cart.([(0.2, 0.2, 0.0), (0.4, 0.2, 0.0), (0.4, 0.4, 0.0), (0.2, 0.4, 0.0)])
-  hole2 = cart.([(0.6, 0.2, 0.0), (0.8, 0.2, 0.0), (0.8, 0.4, 0.0), (0.6, 0.4, 0.0)])
-  poly = PolyArea([outer, hole1, hole2])
-  @test boundary(poly) == Multi(rings(poly))
-  @test embedboundary(poly) == poly
-
   # COMMAND USED TO GENERATE TEST FILES (VARY --seed = 1, 2, ..., 5)
   # rpg --cluster 30 --algo 2opt --format line --seed 1 --output poly1
   fnames = ["poly$i.line" for i in 1:5]
@@ -623,8 +564,6 @@ end
   for poly in polys1
     @test !hasholes(poly)
     @test issimple(poly)
-    @test boundary(poly) == first(rings(poly))
-    @test embedboundary(poly) == boundary(poly)
     @test nvertices(poly) == 30
     @test orientation(poly) == CCW
     @test unique(poly) == poly
@@ -637,8 +576,6 @@ end
   for poly in polys2
     @test !hasholes(poly)
     @test issimple(poly)
-    @test boundary(poly) == first(rings(poly))
-    @test embedboundary(poly) == boundary(poly)
     @test nvertices(poly) == 120
     @test orientation(poly) == CCW
     @test unique(poly) == poly
@@ -652,8 +589,6 @@ end
     rs = rings(poly)
     @test hasholes(poly)
     @test !issimple(poly)
-    @test boundary(poly) == Multi(rs)
-    @test embedboundary(poly) == boundary(poly)
     @test nvertices(first(rs)) < 30
     @test all(nvertices.(rs[2:end]) .< 18)
     o = orientation(poly)
@@ -801,17 +736,7 @@ end
   @test vertex(t, 2) == cart(1, 0, 0)
   @test vertex(t, 3) == cart(0, 1, 0)
   @test vertex(t, 4) == cart(0, 0, 1)
-  @test boundary(t) == embedboundary(t)
   @test measure(t) == T(1 / 6) * u"m^3"
-  m = boundary(t)
-  n = normal.(m)
-  @test m isa Mesh
-  @test nvertices(m) == 4
-  @test nelements(m) == 4
-  @test n[1] == vector(0, 0, -1)
-  @test n[2] == vector(0, -1, 0)
-  @test n[3] == vector(-1, 0, 0)
-  @test all(>(T(0) * u"m"), n[4])
   @test t(T(0), T(0), T(0)) ≈ cart(0, 0, 0)
   @test t(T(1), T(0), T(0)) ≈ cart(1, 0, 0)
   @test t(T(0), T(1), T(0)) ≈ cart(0, 1, 0)
@@ -864,7 +789,6 @@ end
   )
   @test crs(h) <: Cartesian{NoDatum}
   @test Meshes.lentype(h) == ℳ
-  @test boundary(h) == embedboundary(h)
   @test vertex(h, 1) == cart(0, 0, 0)
   @test vertex(h, 8) == cart(0, 1, 1)
   @test h(T(0), T(0), T(0)) == cart(0, 0, 0)
@@ -938,10 +862,6 @@ end
     cart(1, 1, 1),
     cart(0, 1, 1)
   )
-  m = boundary(h)
-  @test m isa Mesh
-  @test nvertices(m) == 8
-  @test nelements(m) == 6
 
   # CRS propagation
   c1 = Cartesian{WGS84Latest}(T(0), T(0), T(0))
@@ -996,19 +916,10 @@ end
   p = Pyramid(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test crs(p) <: Cartesian{NoDatum}
   @test Meshes.lentype(p) == ℳ
-  @test boundary(p) == embedboundary(p)
   @test volume(p) ≈ T(1 / 3) * u"m^3"
   @test p(T(1), T(1), T(0)) == vertices(p)[3]
   @test p(T(0), T(0), T(1)) == vertices(p)[5]
   @test_throws DomainError p(T(0), T(0), T(1.5))
-  m = boundary(p)
-  @test m isa Mesh
-  @test nelements(m) == 5
-  @test m[1] isa Quadrangle
-  @test m[2] isa Triangle
-  @test m[3] isa Triangle
-  @test m[4] isa Triangle
-  @test m[5] isa Triangle
   equaltest(p)
   isapproxtest(p)
   vertextest(p)
@@ -1041,18 +952,9 @@ end
   w = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(1, 0, 1), cart(0, 1, 1))
   @test crs(w) <: Cartesian{NoDatum}
   @test Meshes.lentype(w) == ℳ
-  @test boundary(w) == embedboundary(w)
   @test volume(w) ≈ T(1 / 2) * u"m^3"
   @test w(T(1), T(1), T(1)) == vertices(w)[6]
   @test_throws DomainError w(T(0), T(0), T(1.5))
-  m = boundary(w)
-  @test m isa Mesh
-  @test nelements(m) == 5
-  @test m[1] isa Triangle
-  @test m[2] isa Triangle
-  @test m[3] isa Quadrangle
-  @test m[4] isa Quadrangle
-  @test m[5] isa Quadrangle
   equaltest(w)
   isapproxtest(w)
   vertextest(w)

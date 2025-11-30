@@ -12,8 +12,6 @@
   @test vertex(multi, 1) == vertex(poly, 1)
   @test vertices(multi) == [vertices(poly); vertices(poly)]
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
-  @test boundary(multi) == merge(boundary(poly), boundary(poly))
-  @test embedboundary(multi) == merge(embedboundary(poly), embedboundary(poly))
   @test rings(multi) == [rings(poly); rings(poly)]
 
   poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
@@ -37,13 +35,6 @@
   box1 = Box(cart(0, 0), cart(1, 1))
   box2 = Box(cart(1, 1), cart(2, 2))
   mbox = Multi([box1, box2])
-  mchn = boundary(mbox)
-  noth = boundary(mchn)
-  @test mchn isa Multi
-  @test isnothing(noth)
-  @test length(mchn) == T(8) * u"m"
-  @test embedboundary(mbox) == boundary(mbox)
-  @test embedboundary(mchn) == mchn
   @test sprint(show, mbox) == "Multi(2×Box)"
   @test sprint(show, MIME"text/plain"(), mbox) == """
   Multi(2×Box)
@@ -60,16 +51,6 @@
   grid = cartgrid(10, 10)
   multi = Multi(grid)
   @test parent(multi) == collect(grid)
-
-  # boundary of multi-3D-geometry
-  box1 = Box(cart(0, 0, 0), cart(1, 1, 1))
-  box2 = Box(cart(1, 1, 1), cart(2, 2, 2))
-  mbox = Multi([box1, box2])
-  mesh = boundary(mbox)
-  @test mesh isa Mesh
-  @test nvertices(mesh) == 16
-  @test nelements(mesh) == 12
-  @test embedboundary(mbox) == boundary(mbox)
 
   # unique vertices
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))

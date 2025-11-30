@@ -129,16 +129,6 @@
   @test measure(cart(1, 2)) == zero(ℳ)
   @test measure(cart(1, 2, 3)) == zero(ℳ)
 
-  # relative boundary
-  @test isnothing(boundary(cart(1)))
-  @test isnothing(boundary(cart(1, 2)))
-  @test isnothing(boundary(cart(1, 2, 3)))
-
-  # embedded boundary
-  @test embedboundary(cart(1)) == cart(1)
-  @test embedboundary(cart(1, 2)) == cart(1, 2)
-  @test embedboundary(cart(1, 2, 3)) == cart(1, 2, 3)
-
   # check broadcasting works as expected
   @test cart(2, 2) .- [cart(2, 3), cart(3, 1)] == [vector(0.0, -1.0), vector(-1.0, 1.0)]
   @test cart(2, 2, 2) .- [cart(2, 3, 1), cart(3, 1, 4)] == [vector(0.0, -1.0, 1.0), vector(-1.0, 1.0, -2.0)]
@@ -204,8 +194,6 @@ end
   @test Meshes.lentype(r) == ℳ
   @test measure(r) == typemax(ℳ)
   @test length(r) == typemax(ℳ)
-  @test boundary(r) == cart(0, 0)
-  @test embedboundary(r) == r
   @test perimeter(r) == zero(ℳ)
 
   r = Ray(cart(0, 0), vector(1, 1))
@@ -265,8 +253,6 @@ end
   @test Meshes.lentype(l) == ℳ
   @test measure(l) == typemax(ℳ)
   @test length(l) == typemax(ℳ)
-  @test isnothing(boundary(l))
-  @test embedboundary(l) == l
   @test perimeter(l) == zero(ℳ)
 
   l = Line(cart(0, 0), cart(1, 1))
@@ -321,8 +307,6 @@ end
   @test area(p) == typemax(ℳ)^2
   @test p(T(0), T(0)) == cart(0, 0, 0)
   @test normal(p) == Vec(0, 0, 1)
-  @test isnothing(boundary(p))
-  @test embedboundary(p) == p
   @test perimeter(p) == zero(ℳ)
 
   p = Plane(cart(0, 0, 0), vector(1, 0, 0), vector(0, 1, 0))
@@ -398,12 +382,7 @@ end
     @test_throws DomainError(T(1.2), "b(t) is not defined for t outside [0, 1].") b(T(1.2), method)
   end
 
-  b = BezierCurve(cart(0, 0), cart(0.5, 1), cart(1, 0))
-  @test boundary(b) == Multi([cart(0, 0), cart(1, 0)])
-  @test embedboundary(b) == b
   b = BezierCurve(cart(0, 0), cart(1, 1))
-  @test boundary(b) == Multi([cart(0, 0), cart(1, 1)])
-  @test embedboundary(b) == b
   @test perimeter(b) == zero(ℳ)
 
   # CRS propagation
@@ -460,7 +439,6 @@ end
   isapproxtest(b)
 
   b = Box(cart(0), cart(1))
-  @test boundary(b) == embedboundary(b) == Multi([cart(0), cart(1)])
   @test measure(b) == T(1) * u"m"
   @test cart(0) ∈ b
   @test cart(1) ∈ b
@@ -477,32 +455,6 @@ end
   @test sides(b) == (T(1) * u"m", T(1) * u"m")
   @test centroid(b) == cart(1.5, 1.5)
   @test diagonal(b) == √T(2) * u"m"
-
-  b = Box(cart(1, 2), cart(3, 4))
-  v = cart.([(1, 2), (3, 2), (3, 4), (1, 4)])
-  @test boundary(b) == embedboundary(b) == Ring(v)
-
-  b = Box(cart(1, 2, 3), cart(4, 5, 6))
-  v = cart.([(1, 2, 3), (4, 2, 3), (4, 5, 3), (1, 5, 3), (1, 2, 6), (4, 2, 6), (4, 5, 6), (1, 5, 6)])
-  c = connect.([(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)])
-  @test boundary(b) == embedboundary(b) == SimpleMesh(v, c)
-
-  b = Box(cart(0, 0), cart(1, 1))
-  @test boundary(b) == embedboundary(b) == Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-
-  b = Box(latlon(0, 0), latlon(1, 1))
-  @test boundary(b) == embedboundary(b) == Ring(latlon.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-
-  b = Box(cart(0, 0, 0), cart(1, 1, 1))
-  m = boundary(b)
-  @test m isa Mesh
-  @test nvertices(m) == 8
-  @test nelements(m) == 6
-  b = Box(cart(0, 0, 0), cart(1, 1, 1))
-  m = embedboundary(b)
-  @test m isa Mesh
-  @test nvertices(m) == 8
-  @test nelements(m) == 6
 
   # subsetting with boxes
   b1 = Box(cart(0, 0), cart(0.5, 0.5))
@@ -596,11 +548,6 @@ end
   b3 = Ball(T.((0, 0)))
   @test b1 == b2 == b3
 
-  b = Ball(cart(0, 0), T(1))
-  @test boundary(b) == embedboundary(b) == Sphere(cart(0, 0), T(1))
-  b = Ball(cart(0, 0, 0), T(1))
-  @test boundary(b) == embedboundary(b) == Sphere(cart(0, 0, 0), T(1))
-
   b = Ball(cart(0, 0), T(2))
   @test measure(b) ≈ T(π) * (T(2)^2) * u"m^2"
   b = Ball(cart(0, 0, 0), T(2))
@@ -669,8 +616,6 @@ end
   @test center(s) == cart(0, 0, 0)
   @test radius(s) == T(1) * u"m"
   @test extrema(s) == (cart(-1, -1, -1), cart(1, 1, 1))
-  @test isnothing(boundary(s))
-  @test embedboundary(s) == s
   @test perimeter(s) == zero(ℳ)
 
   s = Sphere(latlon(0, 0), T(1))
@@ -691,8 +636,6 @@ end
   @test center(s) == cart(0, 0)
   @test radius(s) == T(1) * u"m"
   @test extrema(s) == (cart(-1, -1), cart(1, 1))
-  @test isnothing(boundary(s))
-  @test embedboundary(s) == s
 
   s1 = Sphere(cart(0, 0), T(1))
   s2 = Sphere(cart(0, 0))
@@ -779,8 +722,6 @@ end
   @test Meshes.lentype(e) == ℳ
   @test radii(e) == (T(3) * u"m", T(2) * u"m", T(1) * u"m")
   @test center(e) == cart(0, 0, 0)
-  @test isnothing(boundary(e))
-  @test embedboundary(e) == e
   @test perimeter(e) == zero(ℳ)
 
   e = Ellipsoid((T(3), T(2), T(1)))
@@ -820,8 +761,6 @@ end
   @test area(d) == measure(d)
   @test cart(0, 0, 0) ∈ d
   @test cart(0, 0, 1) ∉ d
-  @test boundary(d) == Circle(p, T(2))
-  @test embedboundary(d) == d
 
   # ensure mixed-unit construction produces correct parametrization
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
@@ -866,8 +805,6 @@ end
   @test cart(2, 0, 0) ∈ c
   @test cart(0, 2, 0) ∈ c
   @test cart(0, 0, 0) ∉ c
-  @test isnothing(boundary(c))
-  @test embedboundary(c) == c
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   c = Circle(p, T(2))
@@ -969,7 +906,6 @@ end
   @test centroid(c) == cart(0.0, 0.0, 0.5)
   @test axis(c) == Line(cart(0, 0, 0), cart(0, 0, 1))
   @test isright(c)
-  @test boundary(c) == embedboundary(c) == CylinderSurface(cart(0, 0, 0), cart(0, 0, 1), T(1))
   @test measure(c) == volume(c) ≈ T(π) * u"m^3"
   @test cart(0, 0, 0) ∈ c
   @test cart(0, 0, 1) ∈ c
@@ -1016,8 +952,6 @@ end
   @test centroid(c) == cart(0.0, 0.0, 0.5)
   @test axis(c) == Line(cart(0, 0, 0), cart(0, 0, 1))
   @test isright(c)
-  @test isnothing(boundary(c))
-  @test embedboundary(c) == c
   @test measure(c) == area(c) ≈ (2 * T(2)^2 * pi + 2 * T(2) * pi) * u"m^2"
   @test !Meshes.hasintersectingplanes(c)
 
@@ -1089,8 +1023,6 @@ end
   @test focallength(p) == T(2) * u"m"
   @test radius(p) == T(1) * u"m"
   @test axis(p) == Line(cart(0, 0, 0), cart(0, 0, T(2)))
-  @test isnothing(boundary(p))
-  @test embedboundary(p) == p
   @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
   @test centroid(p) == cart(0, 0, 1 / 16)
 
@@ -1160,7 +1092,6 @@ end
   @test paramdim(c) == 3
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
-  @test boundary(c) == embedboundary(c) == ConeSurface(d, a)
   @test_throws DomainError c(T(0), T(0), nextfloat(T(1)))
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
@@ -1238,8 +1169,6 @@ end
   @test paramdim(s) == 2
   @test crs(s) <: Cartesian{NoDatum}
   @test Meshes.lentype(s) == ℳ
-  @test isnothing(boundary(s))
-  @test embedboundary(s) == s
   @test_throws DomainError s(T(0), nextfloat(T(1)))
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
@@ -1289,7 +1218,6 @@ end
   @test embeddim(f) == 3
   @test crs(f) <: Cartesian{NoDatum}
   @test Meshes.lentype(f) == ℳ
-  @test boundary(f) == embedboundary(f) == FrustumSurface(db, dt)
   @test f(T(0), T(0), T(0)) == center(db)
   @test norm(f(T(1), T(0), T(0)) - f(T(0), T(0), T(0))) ≈ radius(db)
   @test f(T(0), T(0), T(1)) == center(dt)
@@ -1343,8 +1271,6 @@ end
   @test paramdim(f) == 2
   @test crs(f) <: Cartesian{NoDatum}
   @test Meshes.lentype(f) == ℳ
-  @test isnothing(boundary(f))
-  @test embedboundary(f) == f
 
   @test_throws AssertionError FrustumSurface(db, db)
 
@@ -1372,11 +1298,7 @@ end
 
   equaltest(c)
 
-  @test isnothing(boundary(c))
-  @test embedboundary(c) == c
-
   c = ParametrizedCurve(t -> cart(cospi(t), sinpi(t)), (T(0), T(1)))
-  @test boundary(c) == Multi([cart(1, 0), cart(-1, 0)])
   @test perimeter(c) == zero(ℳ)
 
   # CRS propagation
@@ -1398,8 +1320,6 @@ end
   @test direction(t) == vector(1, 0, 0)
   @test radii(t) == (T(2) * u"m", T(1) * u"m")
   @test axis(t) == Line(cart(1, 1, 1), cart(2, 1, 1))
-  @test isnothing(boundary(t))
-  @test embedboundary(t) == t
   @test measure(t) ≈ 8 * T(π)^2 * u"m^2"
   @test_throws ArgumentError length(t)
   @test_throws ArgumentError volume(t)

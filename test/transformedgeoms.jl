@@ -19,11 +19,6 @@
   equaltest(tb)
   isapproxtest(tb)
 
-  b = Box(cart(0, 0, 0), cart(1, 1, 1))
-  t = Translate(T(1), T(2), T(3))
-  tb = TransformedGeometry(b, t)
-  @test boundary(tb) isa Mesh
-
   b = Ball(latlon(0, 0), T(1))
   t = Proj(Cartesian)
   tb = TransformedGeometry(b, t)
@@ -57,30 +52,6 @@
   @test unique(tp2) == tp
   equaltest(tp)
   isapproxtest(tp)
-
-  # boundary
-  b = Box(cart(0, 0), cart(1, 1))
-  t = Translate(T(1), T(2))
-  tb = TransformedGeometry(b, t)
-  @test boundary(tb) == t(boundary(b))
-  @test embedboundary(tb) == boundary(tb)
-  b = Box(latlon(0, 0), latlon(1, 1))
-  t = Proj(Mercator)
-  tb = TransformedGeometry(b, t)
-  @test boundary(tb) == t(boundary(b))
-  @test embedboundary(tb) == boundary(tb)
-
-  # empty relative boundary
-  r = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  t = Translate(T(1), T(2))
-  tr = TransformedGeometry(r, t)
-  @test isnothing(boundary(tr))
-
-  # non-empty embedded boundary
-  r = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  t = Translate(T(1), T(2))
-  tr = TransformedGeometry(r, t)
-  @test embedboundary(tr) == tr
 
   b = Box(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
