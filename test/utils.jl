@@ -1,8 +1,8 @@
 @testitem "signarea" setup = [Setup] begin
   a, b, c = cart(0, 0), cart(1, 0), cart(0, 1)
-  @test signarea(a, b, c) == T(0.5) * u"m^2"
+  @test Meshes.signarea(a, b, c) == T(0.5) * u"m^2"
   a, b, c = cart(0, 0), cart(0, 1), cart(1, 0)
-  @test signarea(a, b, c) == T(-0.5) * u"m^2"
+  @test Meshes.signarea(a, b, c) == T(-0.5) * u"m^2"
 end
 
 @testitem "householderbasis" setup = [Setup] begin
@@ -16,17 +16,17 @@ end
     vector(ntuple(i -> rand() - 0.5, 3))
   ]
   for n in normals
-    u, v = householderbasis(n)
+    u, v = Meshes.householderbasis(n)
     @test u isa Vec{3}
     @test v isa Vec{3}
     @test ustrip.(u × v) ≈ n ./ norm(n)
   end
   n = Vec(T(1) * u"cm", T(1) * u"cm", T(1) * u"cm")
-  u, v = householderbasis(n)
+  u, v = Meshes.householderbasis(n)
   @test unit(eltype(u)) == u"cm"
   @test unit(eltype(v)) == u"cm"
   n = Vec(T(1) * u"km", T(1) * u"km", T(1) * u"km")
-  u, v = householderbasis(n)
+  u, v = Meshes.householderbasis(n)
   @test unit(eltype(u)) == u"km"
   @test unit(eltype(v)) == u"km"
 end

@@ -6,18 +6,6 @@
     intersects(geometry₁, geometry₂)
 
 Tells whether or not `geometry₁` and `geometry₂` intersect.
-
-## References
-
-* Gilbert, E., Johnson, D., Keerthi, S. 1988. [A fast
-  Procedure for Computing the Distance Between Complex
-  Objects in Three-Dimensional Space]
-  (https://ieeexplore.ieee.org/document/2083)
-
-### Notes
-
-The fallback algorithm works with any geometry that has
-a well-defined [`supportfun`](@ref).
 """
 function intersects end
 
@@ -253,8 +241,8 @@ minkowskipoint(g₁::Geometry, g₂::Geometry, d) = withcrs(g₁, supportfun(g�
 minkowskiorigin(Dim, ℒ) = Point(ntuple(i -> zero(ℒ), Dim))
 
 # find a vector perpendicular to `v` using vector `d` as some direction hint
-# expect that `perphint(v, d) ⋅ d ≥ 0` or, in other words,
-# that the angle between the result vector and `d` is less or equal than 90º
+# expect that `perphint(v, d) ⋅ d ≥ 0` or, in other words, that the angle
+# between the result vector and `d` is less or equal than 90º
 function perphint(v::Vec{2,ℒ}, d::Vec{2,ℒ}) where {ℒ}
   a = Vec(v[1], v[2], zero(ℒ))
   b = Vec(d[1], d[2], zero(ℒ))

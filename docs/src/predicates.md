@@ -114,7 +114,6 @@ Base.issubset(::Geometry, ::Geometry)
 
 ```@docs
 intersects
-supportfun
 ```
 
 ```@example intersects

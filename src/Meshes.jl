@@ -588,9 +588,6 @@ export
   inverse,
 
   # miscellaneous
-  signarea,
-  householderbasis,
-  supportfun,
   laplacematrix,
   measurematrix,
   adjacencymatrix,
