@@ -1604,6 +1604,7 @@ end
 
 @testitem "ReinterpretCoords" setup = [Setup] begin
   f = ReinterpretCoords(Cartesian, LatLon)
+  @test !isaffine(f)
   @test TB.isrevertible(f)
   @test TB.isinvertible(f)
   @test TB.parameters(f) == (; CRS₁=Cartesian, CRS₂=LatLon)
