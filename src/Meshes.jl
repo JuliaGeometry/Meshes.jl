@@ -591,7 +591,6 @@ export
   laplacematrix,
   measurematrix,
   adjacencymatrix,
-  atol,
 
   # visualization
   viz,
