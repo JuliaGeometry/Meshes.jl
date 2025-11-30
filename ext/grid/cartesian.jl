@@ -23,7 +23,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   sz = Makie.@lift size($grid)
 
   if nc[] == 1
-    # visualize bounding box with a single color for maximum performance,
+    # visualize bounding box with a single color for maximum performance
     # make sure the box is discretized into a triangle mesh to avoid
     # infinite loops calling this same recipe with grids recursively
     tmesh = Makie.@lift simplexify(boundingbox($grid))
@@ -76,7 +76,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
   xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
 
   if nc[] == 1
-    # visualize bounding box with a single color for maximum performance,
+    # visualize bounding box with a single color for maximum performance
     # make sure the box is discretized into a triangle mesh to avoid
     # infinite loops calling this same recipe with grids recursively
     tmesh = Makie.@lift simplexify(boundingbox($grid))
