@@ -331,8 +331,4 @@ function _mayberefinemaxlen(pmesh, tmesh)
   changed ? _refinemaxlen(tmesh) : tmesh
 end
 
-function _refinemaxlen(tmesh)
-  T = numtype(lentype(tmesh))
-  l = T(1000) * u"km"
-  refine(tmesh, MaxLengthRefinement(l))
-end
+_refinemaxlen(tmesh) = refine(tmesh, MaxLengthRefinement(maxlen()))
