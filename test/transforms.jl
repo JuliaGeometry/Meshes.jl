@@ -1609,6 +1609,9 @@ end
   @test TB.parameters(f) == (; CRS₁=Cartesian, CRS₂=LatLon)
   @test inverse(f) == ReinterpretCoords(LatLon, Cartesian)
 
+  f = ReinterpretCoords(EPSG{4326}, EPSG{3395})
+  @test TB.parameters(f) == (; CRS₁=LatLon{WGS84Latest}, CRS₂=Mercator{WGS84Latest})
+
   # ----
   # VEC
   # ----
