@@ -114,7 +114,6 @@ include("simplification.jl")
 include("boundingboxes.jl")
 include("hulls.jl")
 include("sampling.jl")
-include("pointification.jl")
 include("tesselation.jl")
 include("discretization.jl")
 include("refinement.jl")
@@ -453,6 +452,7 @@ export
   # boundary
   boundary,
   embedboundary,
+  boundarypoints,
 
   # winding number
   winding,
@@ -527,9 +527,6 @@ export
   FibonacciSampling,
   sampleinds,
   sample,
-
-  # pointification
-  pointify,
 
   # tesselation
   TesselationMethod,

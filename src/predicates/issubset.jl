@@ -19,7 +19,7 @@ function Base.issubset(g₁::Geometry, g₂::Geometry)
   end
 end
 
-_boundarypoints(p::Primitive) = pointify(p)
+_boundarypoints(p::Primitive) = boundarypoints(p)
 
 _boundarypoints(p::Polytope) = vertices(p)
 
