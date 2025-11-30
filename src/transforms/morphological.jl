@@ -18,12 +18,6 @@ ball |> Morphological(c -> Cartesian(c.x + c.y, c.y, c.x - c.y))
 triangle = Triangle(Point(LatLon(0, 0)), Point(LatLon(0, 45)), Point(LatLon(45, 0)))
 triangle |> Morphological(c -> LatLonAlt(c.lat, c.lon, 0.0m))
 ```
-
-### Notes
-
-By default, only the vertices of the polytopes are transformed,
-disregarding distortions that occur in manifold conversions.
-To handle this case, use [`TransformedGeometry`](@ref).
 """
 struct Morphological{F<:Function} <: CoordinateTransform
   fun::F
