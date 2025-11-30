@@ -11,7 +11,7 @@ See [https://en.wikipedia.org/wiki/Fan_triangulation]
 """
 struct FanTriangulation <: BoundaryTriangulationMethod end
 
-function discretizewithin(ring::Ring, ::FanTriangulation)
+function _discretizewithin𝔼2(ring::Ring, ::FanTriangulation)
   points = collect(eachvertex(ring))
   connec = [connect((1, i, i + 1)) for i in 2:(nvertices(ring) - 1)]
   SimpleMesh(points, connec)

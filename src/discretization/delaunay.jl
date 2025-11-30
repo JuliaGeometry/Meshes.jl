@@ -24,7 +24,7 @@ end
 
 DelaunayTriangulation(rng=Random.default_rng()) = DelaunayTriangulation(rng)
 
-function discretizewithin(ring::Ring{𝔼{2}}, method::DelaunayTriangulation)
+function _discretizewithin𝔼2(ring::Ring, method::DelaunayTriangulation)
   points = collect(eachvertex(ring))
   coords = map(p -> ustrip.(to(p)), points)
   bnodes = [1:nvertices(ring); 1]

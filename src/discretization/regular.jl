@@ -17,31 +17,31 @@ end
 
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} = RegularDiscretization(sizes)
 
-function discretize(geometry::Geometry, method::RegularDiscretization)
+function _discretize(geometry::Geometry, method::RegularDiscretization)
   if isparametrized(geometry)
     verts, tgrid = wrapgrid(geometry, method)
     tmesh = appendtopo(geometry, tgrid)
     SimpleMesh(collect(verts), tmesh)
   else
-    discretizewithinbox(geometry, method)
+    _discretizewithinbox(geometry, method)
   end
 end
 
 # box is trivial to discretize into a regular grid
-function discretize(box::Box, method::RegularDiscretization)
+function _discretize(box::Box, method::RegularDiscretization)
   sz = fitdims(method.sizes, paramdim(box))
   RegularGrid(extrema(box)..., dims=sz)
 end
 
 # triangle is parametrized with barycentric coordinates, so we can't rely on regular sampling
-discretize(triangle::Triangle, method::RegularDiscretization) = discretizewithinbox(triangle, method)
+_discretize(triangle::Triangle, method::RegularDiscretization) = _discretizewithinbox(triangle, method)
 
 # tetrahedron is parametrized with barycentric coordinates, so we can't rely on regular sampling
-discretize(tetrahedron::Tetrahedron, method::RegularDiscretization) = discretizewithinbox(tetrahedron, method)
+_discretize(tetrahedron::Tetrahedron, method::RegularDiscretization) = _discretizewithinbox(tetrahedron, method)
 
-function discretizewithinbox(geometry::Geometry, method::RegularDiscretization)
+function _discretizewithinbox(geometry::Geometry, method::RegularDiscretization)
   box = boundingbox(geometry)
-  grid = discretize(box, method)
+  grid = _discretize(box, method)
   view(grid, geometry)
 end
 

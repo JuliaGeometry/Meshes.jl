@@ -15,11 +15,19 @@ end
 
 MaxLengthRefinement(length) = MaxLengthRefinement(aslen(length))
 
-refine(grid::OrthoRegularGrid, method::MaxLengthRefinement) = _refineregular(grid, method)
+refine(grid::OrthoRegularGrid, method::MaxLengthRefinement) = _refinesides(grid, method)
 
-refine(grid::RectilinearGrid, method::MaxLengthRefinement) = _refineregular(grid, method)
+refine(grid::RectilinearGrid, method::MaxLengthRefinement) = _refinesides(grid, method)
 
-refine(grid::OrthoStructuredGrid, method::MaxLengthRefinement) = _refineregular(grid, method)
+refine(grid::OrthoStructuredGrid, method::MaxLengthRefinement) = _refinesides(grid, method)
+
+function refine(grid::RegularGrid, method::MaxLengthRefinement)
+  iscoarse(e) = perimeter(e) > method.length * nvertices(e)
+  while iscoarse(first(grid)) || iscoarse(last(grid))
+    grid = refine(grid, RegularRefinement(2))
+  end
+  grid
+end
 
 function refine(mesh::Mesh, method::MaxLengthRefinement)
   iscoarse(e) = perimeter(e) > method.length * nvertices(e)
@@ -33,7 +41,7 @@ end
 # HELPER FUNCTIONS
 #------------------
 
-function _refineregular(grid, method)
+function _refinesides(grid, method)
   esize = sides(boundingbox(grid)) ./ size(grid)
   factors = ceil.(Int, esize ./ method.length)
   refine(grid, RegularRefinement(factors))

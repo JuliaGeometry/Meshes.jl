@@ -21,7 +21,7 @@ with small number of vertices.
 """
 struct DehnTriangulation <: BoundaryTriangulationMethod end
 
-function discretizewithin(ring::Ring{𝔼{2}}, ::DehnTriangulation)
+function _discretizewithin𝔼2(ring::Ring, ::DehnTriangulation)
   points = collect(eachvertex(ring))
   connec = dehn1899(points, 1:length(points))
   SimpleMesh(points, connec)

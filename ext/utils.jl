@@ -52,15 +52,3 @@ end
 asmakie(p::Point) = Makie.Point{embeddim(p),numtype(lentype(p))}(ustrip.(Tuple(to(p))))
 
 asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(ustrip.(Tuple(v)))
-
-_discretize(geom) = discretize(geom)
-
-function _discretize(box::Box{🌐})
-  T = numtype(Meshes.lentype(box))
-  discretize(box, MaxLengthDiscretization(T(100) * u"km"))
-end
-
-function _discretize(chain::Chain{🌐})
-  T = numtype(Meshes.lentype(chain))
-  discretize(chain, MaxLengthDiscretization(T(1000) * u"km"))
-end

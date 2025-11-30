@@ -29,7 +29,7 @@ end
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
   showpoints = plot[:showpoints]
 
-  meshes = Makie.@lift _discretize.($geoms)
+  meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
 
   if showpoints[]
@@ -112,7 +112,7 @@ end
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, geoms, colorant)
   showsegments = plot[:showsegments]
 
-  meshes = Makie.@lift _discretize.($geoms)
+  meshes = Makie.@lift discretize.($geoms)
   vizmany!(plot, meshes, colorant)
 
   if showsegments[]
@@ -140,7 +140,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVec
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
-  meshes = Makie.@lift _discretize.(boundary.($geoms))
+  meshes = Makie.@lift discretize.(boundary.($geoms))
   vizmany!(plot, meshes, colorant)
 end
 

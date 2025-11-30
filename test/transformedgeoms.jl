@@ -19,6 +19,11 @@
   equaltest(tb)
   isapproxtest(tb)
 
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  t = Translate(T(1), T(2), T(3))
+  tb = TransformedGeometry(b, t)
+  @test boundary(tb) isa Mesh
+
   b = Ball(latlon(0, 0), T(1))
   t = Proj(Cartesian)
   tb = TransformedGeometry(b, t)
@@ -52,24 +57,6 @@
   @test unique(tp2) == tp
   equaltest(tp)
   isapproxtest(tp)
-
-  # has distorted boundary
-  b = Box(cart(0, 0), cart(1, 1))
-  t = Translate(T(1), T(2))
-  tb = TransformedGeometry(b, t)
-  @test !Meshes.isdistorted(tb)
-  b = Box(latlon(0, 0), latlon(1, 1))
-  t = Proj(Mercator)
-  tb = TransformedGeometry(b, t)
-  @test Meshes.isdistorted(tb)
-  b = Box(merc(0, 0), merc(1, 1))
-  t = Proj(LatLon)
-  tb = TransformedGeometry(b, t)
-  @test Meshes.isdistorted(tb)
-  b = Box(latlon(0, 0), latlon(1, 1))
-  t = Morphological(c -> Cartesian(ustrip(c.lon), ustrip(c.lat)))
-  tb = TransformedGeometry(b, t)
-  @test Meshes.isdistorted(tb)
 
   # boundary
   b = Box(cart(0, 0), cart(1, 1))

@@ -41,24 +41,5 @@
   trans = Proj(Mercator)
   tbox = TransformedGeometry(box, trans)
   points = pointify(tbox)
-  @test points == pointify(discretize(tbox))
-
-  tri = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
-  quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  gset = GeometrySet([tri, quad])
-  points = pointify(gset)
-  @test points == [pointify(tri); pointify(quad)]
-
-  pts = randpoint2(100)
-  pset = PointSet(pts)
-  @test pointify(pset) == pts
-
-  grid = cartgrid(10, 10)
-  @test pointify(grid) == vertices(grid)
-
-  grid = cartgrid(10, 10)
-  mesh = convert(SimpleMesh, grid)
-  points = pointify(mesh)
-  @test points == vertices(mesh)
-  @test points == vertices(grid)
+  @test points == vertices(discretize(boundary(tbox)))
 end

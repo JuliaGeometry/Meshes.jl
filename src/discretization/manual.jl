@@ -9,9 +9,9 @@ Simplexify convex geometries manually using indices of vertices.
 """
 struct ManualSimplexification <: DiscretizationMethod end
 
-discretize(geom::Geometry, ::ManualSimplexification) = SimpleMesh(_manualverts(geom), _manualconnec(geom))
+_discretize(geometry::Geometry, ::ManualSimplexification) = SimpleMesh(_manualverts(geometry), _manualconnec(geometry))
 
-function discretize(chain::Chain, ::ManualSimplexification)
+function _discretize(chain::Chain, ::ManualSimplexification)
   np = nvertices(chain) + isclosed(chain)
   ip = isperiodic(chain)
 
@@ -21,11 +21,15 @@ function discretize(chain::Chain, ::ManualSimplexification)
   SimpleMesh(verts, topo)
 end
 
-_manualverts(b::Box{𝔼{1}}) = [minimum(b), maximum(b)]
+# -----------------------------------
+# MANUAL VERTICES AND CONNECTIVITIES
+# -----------------------------------
 
-_manualverts(b::Box) = vertices(boundary(b))
+_manualverts(box::Box{𝔼{1}}) = [minimum(box), maximum(box)]
 
-_manualverts(p::Polytope) = collect(eachvertex(p))
+_manualverts(box::Box) = vertices(boundary(box))
+
+_manualverts(poly::Polytope) = collect(eachvertex(poly))
 
 function _manualconnec(::Box{𝔼{1}})
   [connect((1, 2), Segment)]
