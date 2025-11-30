@@ -11,17 +11,13 @@ function Base.issubset(g₁::Geometry, g₂::Geometry)
   if g₁ == g₂
     return true
   elseif isconvex(g₁) && isconvex(g₂)
-    return _boundarypoints(g₁) ⊆ g₂
+    return boundarypoints(g₁) ⊆ g₂
   elseif isconvex(g₁)
-    return _boundarypoints(g₁) ⊆ g₂ && !intersects(g₁, !g₂)
+    return boundarypoints(g₁) ⊆ g₂ && !intersects(g₁, !g₂)
   else
     return all(g -> g ⊆ g₂, simplexify(g₁))
   end
 end
-
-_boundarypoints(p::Primitive) = boundarypoints(p)
-
-_boundarypoints(p::Polytope) = vertices(p)
 
 # --------------
 # OPTIMIZATIONS
