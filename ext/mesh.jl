@@ -51,11 +51,11 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colors)
   end
 
   # extract segment coords and colors
-  lcoords = Makie.@lift $segs[1]
-  lcolors = Makie.@lift $segs[2]
+  scoords = Makie.@lift $segs[1]
+  scolors = Makie.@lift $segs[2]
 
   # visualize segments
-  Makie.lines!(plot, lcoords, color=lcolors, linewidth=segmentsize)
+  Makie.lines!(plot, scoords, color=scolors, linewidth=segmentsize)
 end
 
 function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colors)
@@ -233,18 +233,18 @@ function segmentsof(topo, vert, colors)
   vec = first(xyz)
   nan = typeof(vec)(ntuple(i -> NaN, length(vec)))
 
-  lcoords = reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], xyzs)
-  lcolors = reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], cols)
+  scoords = reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], xyzs)
+  scolors = reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], cols)
 
-  lcoords, lcolors
+  scoords, scolors
 end
 
 function segmentsof(topo::GridTopology, vert, colors)
   xyz = map(p -> ustrip.(to(p)), vert)
   ip = only(isperiodic(topo))
 
-  lcoords = ip ? [xyz; [first(xyz)]] : xyz
-  lcolors = ip ? [colors; [last(colors)]; [first(colors)]] : [colors; [last(colors)]]
+  scoords = ip ? [xyz; [first(xyz)]] : xyz
+  scolors = ip ? [colors; [last(colors)]; [first(colors)]] : [colors; [last(colors)]]
 
-  lcoords, lcolors
+  scoords, scolors
 end
