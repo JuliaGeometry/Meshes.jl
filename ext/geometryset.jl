@@ -11,7 +11,7 @@ function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
-  points = Makie.@lift aspoints.($geoms)
+  points = Makie.@lift boundarypoints.($geoms)
   vizmany!(plot, points, colorant)
 end
 
@@ -106,6 +106,25 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
       (c2.y - c1.y) / (c2.x - c1.x)
     end
     Makie.ablines!(plot, ycoord, slopes, color=dcolor, linewidth=segmentsize)
+  end
+end
+
+vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colorant) =
+  vizgsetbox𝔼!(plot, geoms, colorant)
+
+vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colorant) =
+  vizgsetbox𝔼!(plot, geoms, colorant)
+
+function vizgsetbox𝔼!(plot, geoms::ObservableVector{<:Box}, colorant)
+  showsegments = plot[:showsegments]
+
+  # visualize as built-in boxes
+  boxes = Makie.@lift asmakie.($geoms)
+  shading = Makie.@lift embeddim(first($geoms)) == 3
+  Makie.mesh!(plot, boxes, color=colorant, shading=shading)
+
+  if showsegments[]
+    vizfacets!(plot, geoms)
   end
 end
 

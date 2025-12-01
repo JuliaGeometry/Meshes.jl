@@ -23,11 +23,9 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   sz = Makie.@lift size($grid)
 
   if nc[] == 1
-    # visualize bounding box with a single color for maximum performance
-    # make sure the box is discretized into a triangle mesh to avoid
-    # infinite loops calling this same recipe with grids recursively
-    tmesh = Makie.@lift simplexify(boundingbox($grid))
-    viz!(plot, tmesh, color=colorant)
+    # visualize bounding box for maximum performance
+    bbox = Makie.@lift boundingbox($grid)
+    viz!(plot, bbox, color=colorant)
 
     if showsegments[]
       vizfacets!(plot)
@@ -76,11 +74,9 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
   xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
 
   if nc[] == 1
-    # visualize bounding box with a single color for maximum performance
-    # make sure the box is discretized into a triangle mesh to avoid
-    # infinite loops calling this same recipe with grids recursively
-    tmesh = Makie.@lift simplexify(boundingbox($grid))
-    viz!(plot, tmesh, color=colorant)
+    # visualize bounding box for maximum performance
+    bbox = Makie.@lift boundingbox($grid)
+    viz!(plot, bbox, color=colorant)
   else
     if nc[] == nv[]
       error("not implemented")
