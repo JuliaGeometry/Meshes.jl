@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    name: $Julia {{ matrix.package }} - ${{ matrix.os }} - ${{ matrix.arch }}
+    name: Julia ${{ matrix.package }} - ${{ matrix.os }} - ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
