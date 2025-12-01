@@ -32,6 +32,8 @@ jobs:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+        arch:
+          - x64
         package:
           - MeshVizTests.jl
     steps:
