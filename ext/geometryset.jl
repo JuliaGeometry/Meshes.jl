@@ -90,16 +90,16 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
 
-  Dim = embeddim(first(geoms[]))
+  edim = embeddim(first(geoms[]))
 
   # visualize as built-in arrows
   orig = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   dirs = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
-  if Dim == 2
+  if edim == 2
     tipwidth = Makie.@lift 5 * $segmentsize
     shaftwidth = Makie.@lift 0.2 * $tipwidth
     Makie.arrows2d!(plot, orig, dirs, color=colorant, tipwidth=tipwidth, shaftwidth=shaftwidth)
-  elseif Dim == 3
+  elseif edim == 3
     tipradius = Makie.@lift 0.05 * $segmentsize
     shaftradius = Makie.@lift 0.5 * $tipradius
     Makie.arrows3d!(plot, orig, dirs, color=colorant, tipradius=tipradius, shaftradius=shaftradius)
@@ -121,13 +121,8 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
 
   # split colors accordingly
-  if colorant[] isa AbstractVector
-    vcolor = Makie.@lift $colorant[$vinds]
-    dcolor = Makie.@lift $colorant[$dinds]
-  else
-    vcolor = colorant
-    dcolor = colorant
-  end
+  vcolor = Makie.@lift $colorant[$vinds]
+  dcolor = Makie.@lift $colorant[$dinds]
 
   # visualize vertical lines
   if !isempty(vinds[])
@@ -201,12 +196,8 @@ function vizgsetmulti!(plot, M, pdim, edim, geoms, colorant)
   # retrieve parent geometries
   parents = Makie.@lift mapreduce(parent, vcat, $geoms)
 
-  # repeat colors if necessary
-  colors = Makie.@lift if $colorant isa AbstractVector
-    [$colorant[i] for (i, g) in enumerate($geoms) for _ in 1:length(parent(g))]
-  else
-    $colorant
-  end
+  # repeat colors for parents
+  colors = Makie.@lift [$colorant[i] for (i, g) in enumerate($geoms) for _ in 1:length(parent(g))]
 
   # call recipe for parents
   vizgset!(plot, M, pdim, edim, parents, colors)
