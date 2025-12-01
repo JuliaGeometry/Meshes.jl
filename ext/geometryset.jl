@@ -47,35 +47,35 @@ end
 # IMPLEMENTATION
 # ---------------
 
-function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colorant)
+function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colors)
   # fallback to Euclidean recipes because Makie doesn't provide
   # more specific recipes for spherical geometries currently
-  vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
+  vizgset!(plot, 𝔼, pdim, edim, geoms, colors)
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colors)
   showsegments = plot[:showsegments]
   showpoints = plot[:showpoints]
 
   if pdim === Val(1)
     meshes = Makie.@lift discretize.($geoms)
-    vizmany!(plot, meshes, colorant)
+    vizmany!(plot, meshes, colors)
     if showpoints[]
       vizfacets!(plot, geoms)
     end
   elseif pdim === Val(2)
     meshes = Makie.@lift discretize.($geoms)
-    vizmany!(plot, meshes, colorant)
+    vizmany!(plot, meshes, colors)
     if showsegments[]
       vizfacets!(plot, geoms)
     end
   elseif pdim == Val(3)
     meshes = Makie.@lift discretize.(boundary.($geoms))
-    vizmany!(plot, meshes, colorant)
+    vizmany!(plot, meshes, colors)
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colors)
   pointmarker = plot[:pointmarker]
   pointsize = plot[:pointsize]
 
@@ -83,10 +83,10 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector
   coords = Makie.@lift map(p -> ustrip.(to(p)), $geoms)
 
   # visualize points with given marker and size
-  Makie.scatter!(plot, coords, color=colorant, marker=pointmarker, markersize=pointsize, overdraw=true)
+  Makie.scatter!(plot, coords, color=colors, marker=pointmarker, markersize=pointsize, overdraw=true)
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colors)
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
 
@@ -98,11 +98,11 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
   if edim == 2
     tipwidth = Makie.@lift 5 * $segmentsize
     shaftwidth = Makie.@lift 0.2 * $tipwidth
-    Makie.arrows2d!(plot, orig, dirs, color=colorant, tipwidth=tipwidth, shaftwidth=shaftwidth)
+    Makie.arrows2d!(plot, orig, dirs, color=colors, tipwidth=tipwidth, shaftwidth=shaftwidth)
   elseif edim == 3
     tipradius = Makie.@lift 0.05 * $segmentsize
     shaftradius = Makie.@lift 0.5 * $tipradius
-    Makie.arrows3d!(plot, orig, dirs, color=colorant, tipradius=tipradius, shaftradius=shaftradius)
+    Makie.arrows3d!(plot, orig, dirs, color=colors, tipradius=tipradius, shaftradius=shaftradius)
   else
     error("not implemented")
   end
@@ -112,7 +112,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colors)
   segmentsize = plot[:segmentsize]
 
   # split vertical and non-vertical lines
@@ -121,8 +121,8 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
 
   # split colors accordingly
-  vcolor = Makie.@lift $colorant[$vinds]
-  dcolor = Makie.@lift $colorant[$dinds]
+  vcolor = Makie.@lift $colors[$vinds]
+  dcolor = Makie.@lift $colors[$dinds]
 
   # visualize vertical lines
   if !isempty(vinds[])
@@ -153,26 +153,26 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   end
 end
 
-vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colorant) =
-  vizgsetbox𝔼!(plot, geoms, colorant)
+vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colors) =
+  vizgsetbox𝔼!(plot, geoms, colors)
 
-vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colorant) =
-  vizgsetbox𝔼!(plot, geoms, colorant)
+vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colors) =
+  vizgsetbox𝔼!(plot, geoms, colors)
 
-function vizgsetbox𝔼!(plot, geoms::ObservableVector{<:Box}, colorant)
+function vizgsetbox𝔼!(plot, geoms::ObservableVector{<:Box}, colors)
   showsegments = plot[:showsegments]
 
   # visualize as built-in boxes
   boxes = Makie.@lift asmakie.($geoms)
   shading = Makie.@lift embeddim(first($geoms)) == 3
-  Makie.mesh!(plot, boxes, color=colorant, shading=shading)
+  Makie.mesh!(plot, boxes, color=colors, shading=shading)
 
   if showsegments[]
     vizfacets!(plot, geoms)
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Polygon}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Polygon}, colors)
   showsegments = plot[:showsegments]
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
@@ -180,27 +180,27 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVec
   # visualize as built-in polygons
   polys = Makie.@lift asmakie.($geoms)
   if showsegments[]
-    Makie.poly!(plot, polys, color=colorant, strokecolor=segmentcolor, strokewidth=segmentsize)
+    Makie.poly!(plot, polys, color=colors, strokecolor=segmentcolor, strokewidth=segmentsize)
   else
-    Makie.poly!(plot, polys, color=colorant)
+    Makie.poly!(plot, polys, color=colors)
   end
 end
 
-vizgset!(plot, M::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Multi}, colorant) =
-  vizgsetmulti!(plot, M, pdim, edim, geoms, colorant)
+vizgset!(plot, M::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Multi}, colors) =
+  vizgsetmulti!(plot, M, pdim, edim, geoms, colors)
 
-vizgset!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableVector{<:Multi}, colorant) =
-  vizgsetmulti!(plot, M, pdim, edim, geoms, colorant)
+vizgset!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableVector{<:Multi}, colors) =
+  vizgsetmulti!(plot, M, pdim, edim, geoms, colors)
 
-function vizgsetmulti!(plot, M, pdim, edim, geoms, colorant)
+function vizgsetmulti!(plot, M, pdim, edim, geoms, colors)
   # retrieve parent geometries
   parents = Makie.@lift mapreduce(parent, vcat, $geoms)
 
   # repeat colors for parents
-  colors = Makie.@lift [$colorant[i] for (i, g) in enumerate($geoms) for _ in 1:length(parent(g))]
+  pcolors = Makie.@lift [$colors[i] for (i, g) in enumerate($geoms) for _ in 1:length(parent(g))]
 
   # call recipe for parents
-  vizgset!(plot, M, pdim, edim, parents, colors)
+  vizgset!(plot, M, pdim, edim, parents, pcolors)
 end
 
 # -------
