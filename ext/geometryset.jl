@@ -33,7 +33,11 @@ function vizgset!(plot; facets=false)
     if facets
       vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
     else
-      cvec = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
+      cvec = Makie.@lift if $colorant isa AbstractVector
+        $colorant[$inds]
+      else
+        fill($colorant, length($inds))
+      end
       vizgset!(plot, M[], Val(pdim[]), Val(edim[]), gvec, cvec)
     end
   end
@@ -53,10 +57,7 @@ function vizgset!(plot, ::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableV
   showsegments = plot[:showsegments]
   showpoints = plot[:showpoints]
 
-  if pdim === Val(0)
-    points = Makie.@lift boundarypoints.($geoms)
-    vizmany!(plot, points, colorant)
-  elseif pdim === Val(1)
+  if pdim === Val(1)
     meshes = Makie.@lift discretize.($geoms)
     vizmany!(plot, meshes, colorant)
     if showpoints[]
