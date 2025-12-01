@@ -158,7 +158,12 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val)
     bounds = boundary.(geoms)
     discretize.(bounds)
   end
-  vizmany!(plot, meshes, color)
+  colors = Makie.@lift if $color isa AbstractVector
+    $color
+  else
+    fill($color, length($meshes))
+  end
+  vizmany!(plot, meshes, colors)
 end
 
 function vizfacets!(plot::Viz{<:Tuple{Mesh}})
