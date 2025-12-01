@@ -1,0 +1,64 @@
+# Note: this file is inspired by the downstream testing facilities in the SciML ecosystem
+# x-ref: https://github.com/SciML/SciMLBase.jl/blob/ffe68aebedee5915190623cb08160d7ef1fbcce0/.github/workflows/Downstream.yml
+
+name: Downstream
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    tags: ['*']
+
+# Cancel redundant CI tests automatically
+concurrency:
+  # Skip intermediate builds: always.
+  # Cancel intermediate builds: only if it is a pull request build.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+jobs:
+  test:
+    name: $Julia {{ matrix.package }} - ${{ matrix.os }} - ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - 'lts'
+          - '1'
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        package:
+          - MeshVizTests.jl
+    steps:
+      - uses: actions/checkout@v5
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - run: julia -e 'using InteractiveUtils; versioninfo(verbose=true)'
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      - name: Retrieve downstream package
+        # Note: we retrieve the current `main` branch of the downstream package to ensure
+        # that compatibility errors we make in Meshes.jl are detected already here
+        # See also https://github.com/trixi-framework/Trixi.jl/pull/1707#discussion_r1382938895
+        uses: actions/checkout@v5
+        with:
+          repository: JuliaGeometry/${{ matrix.package }}
+          path: downstream
+      - name: Load upstream package into downstream environment
+        shell: julia --color=yes --project=downstream {0}
+        run: |
+          using Pkg
+          Pkg.develop(PackageSpec(path="."))
+          Pkg.update()
+      - name: Run downstream tests (without coverage)
+        shell: julia --color=yes --project=downstream {0}
+        run: |
+          using Pkg
+          Pkg.test(coverage=false)
