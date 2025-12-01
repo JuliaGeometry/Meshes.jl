@@ -20,28 +20,23 @@ function vizmesh!(plot)
   # process color spec into colorant
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
-  # always pass a vector of colors
-  colors = Makie.@lift if $colorant isa AbstractVector
-    $colorant
-  else
-    fill($colorant, nelements($mesh))
-  end
-
-  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]), mesh, colors)
+  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]), mesh, colorant)
 end
 
 # ---------------
 # IMPLEMENTATION
 # ---------------
 
-function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colors)
+function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colorant)
   # fallback to Euclidean recipes because Makie doesn't provide
   # more specific recipes for spherical geometries currently
-  vizmesh!(plot, 𝔼, pdim, edim, mesh, colors)
+  vizmesh!(plot, 𝔼, pdim, edim, mesh, colorant)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colors)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
   segmentsize = plot[:segmentsize]
+
+  colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
 
   # retrieve segments
   segs = Makie.@lift let
@@ -58,7 +53,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colors)
   Makie.lines!(plot, scoords, color=scolors, linewidth=segmentsize)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colors)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
   showsegments = plot[:showsegments]
 
   # retrieve triangle mesh parameters
@@ -87,40 +82,47 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colors)
     end
 
     # element vs. vertex coloring
-    ncolor = length($colors)
-    if ncolor == nelem # element coloring
-      # duplicate vertices and adjust
-      # connectivities to avoid linear
-      # interpolation of colors
-      tind = 0
-      elem4tri = Dict{Int,Int}()
-      sizehint!(elem4tri, ntris)
-      for (eind, e) in enumerate(elems)
-        for _ in 1:(nvertices(pltype(e)) - 2)
-          tind += 1
-          elem4tri[tind] = eind
+    if $colorant isa AbstractVector
+      ncolor = length($colorant)
+      if ncolor == nelem # element coloring
+        # duplicate vertices and adjust
+        # connectivities to avoid linear
+        # interpolation of colors
+        tind = 0
+        elem4tri = Dict{Int,Int}()
+        sizehint!(elem4tri, ntris)
+        for (eind, e) in enumerate(elems)
+          for _ in 1:(nvertices(pltype(e)) - 2)
+            tind += 1
+            elem4tri[tind] = eind
+          end
         end
+        nv = 3ntris
+        tcoords = [coords[i] for tri in tris for i in tri]
+        tconnec = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntris)]
+        tcolors = map(1:nv) do i
+          t = ceil(Int, i / 3)
+          e = elem4tri[t]
+          $colorant[e]
+        end
+      elseif ncolor == nvert # vertex coloring
+        # nothing needs to be done because
+        # this is the default in Makie and
+        # because the triangulation above
+        # does not change the vertices in
+        # the original polygonal mesh
+        tcoords = coords
+        tconnec = tris
+        tcolors = $colorant
+      else
+        throw(ArgumentError("Provided $ncolor colors but the mesh has
+                            $nvert vertices and $nelem elements."))
       end
-      nv = 3ntris
-      tcoords = [coords[i] for tri in tris for i in tri]
-      tconnec = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntris)]
-      tcolors = map(1:nv) do i
-        t = ceil(Int, i / 3)
-        e = elem4tri[t]
-        $colors[e]
-      end
-    elseif ncolor == nvert # vertex coloring
-      # nothing needs to be done because
-      # this is the default in Makie and
-      # because the triangulation above
-      # does not change the vertices in
-      # the original polygonal mesh
+    else # single color
+      # nothing needs to be done
       tcoords = coords
       tconnec = tris
-      tcolors = $colors
-    else
-      throw(ArgumentError("Provided $ncolor colors but the mesh has
-                          $nvert vertices and $nelem elements."))
+      tcolors = $colorant
     end
 
     # enable shading in 3D
@@ -146,12 +148,13 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colors)
   end
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, mesh, colors)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, mesh, colorant)
   meshes = Makie.@lift let
     geoms = elements($mesh)
     bounds = boundary.(geoms)
     discretize.(bounds)
   end
+  colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
   vizmany!(plot, meshes, colors)
 end
 
