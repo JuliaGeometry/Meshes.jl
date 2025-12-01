@@ -67,11 +67,12 @@ function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val,
     dim = embeddim(grid)
     sp = ustrip.(spacing(grid))
 
-    # coordinates of centroids
-    coord(e) = ustrip.(to(centroid(e)))
-    coords = [coord(e) .+ sp ./ 2 for e in $subgrid]
+    # coordinates of markers
+    coords = map($subgrid) do e
+      ustrip.(to(centroid(e))) .+ sp ./ 2
+    end
 
-    # rectangle marker
+    # rectangle markers
     marker = Makie.Rect{dim}(-1 .* sp, sp)
 
     # enable shading in 3D
