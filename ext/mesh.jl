@@ -43,21 +43,19 @@ end
 function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colors)
   segmentsize = plot[:segmentsize]
 
-  # retrieve coordinates of segments
-  coords = Makie.@lift let
+  # retrieve segments
+  segs = Makie.@lift let
     topo = topology($mesh)
     vert = vertices($mesh)
-    segmentsof(topo, vert)
+    segmentsof(topo, vert, $colors)
   end
 
-  # repeat colors for vertices of segments
-  color = Makie.@lift let
-    c = [$colors[e] for e in 1:nelements($mesh) for _ in 1:3]
-    c[begin:(end - 1)]
-  end
+  # extract segment coords and colors
+  lcoords = Makie.@lift $segs[1]
+  lcolors = Makie.@lift $segs[2]
 
   # visualize segments
-  Makie.lines!(plot, coords, color=color, linewidth=segmentsize)
+  Makie.lines!(plot, lcoords, color=lcolors, linewidth=segmentsize)
 end
 
 function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colors)
@@ -220,23 +218,33 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
   Makie.lines!(plot, coords, color=segmentcolor, linewidth=segmentsize)
 end
 
-function segmentsof(topo, vert)
-  p = first(vert)
-  T = Unitful.numtype(Meshes.lentype(p))
-  Dim = embeddim(p)
-  nan = SVector(ntuple(i -> T(NaN), Dim))
-  xs = map(p -> ustrip.(to(p)), vert)
-
-  coords = map(elements(topo)) do e
-    inds = indices(e)
-    xs[collect(inds)]
+function segmentsof(topo, vert, colors)
+  xyz = map(p -> ustrip.(to(p)), vert)
+  res = map(1:nelements(topo)) do e
+    inds = indices(element(topo, e))
+    xyzₑ = xyz[collect(inds)]
+    colₑ = fill(colors[e], length(inds))
+    xyzₑ, colₑ
   end
 
-  reduce((x, y) -> [x; [nan]; y], coords)
+  xyzs = first.(res)
+  cols = last.(res)
+
+  vec = first(xyz)
+  nan = typeof(vec)(ntuple(i -> NaN, length(vec)))
+
+  lcoords = reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], xyzs)
+  lcolors = reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], cols)
+
+  lcoords, lcolors
 end
 
-function segmentsof(topo::GridTopology, vert)
-  xs = map(p -> ustrip.(to(p)), vert)
-  ip = first(isperiodic(topo))
-  ip ? [xs; [first(xs)]] : xs
+function segmentsof(topo::GridTopology, vert, colors)
+  xyz = map(p -> ustrip.(to(p)), vert)
+  ip = only(isperiodic(topo))
+
+  lcoords = ip ? [xyz; [first(xyz)]] : xyz
+  lcolors = ip ? [colors; [last(colors)]; [first(colors)]] : [colors; [last(colors)]]
+
+  lcoords, lcolors
 end
