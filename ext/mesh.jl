@@ -21,26 +21,26 @@ function vizmesh!(plot)
   colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
   # always pass a vector of colors
-  cvec = Makie.@lift if $colorant isa AbstractVector
+  colors = Makie.@lift if $colorant isa AbstractVector
     $colorant
   else
     fill($colorant, nelements($mesh))
   end
 
-  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]), mesh, cvec)
+  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]), mesh, colors)
 end
 
 # ---------------
 # IMPLEMENTATION
 # ---------------
 
-function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colorant)
+function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colors)
   # fallback to Euclidean recipes because Makie doesn't provide
   # more specific recipes for spherical geometries currently
-  vizmesh!(plot, 𝔼, pdim, edim, mesh, colorant)
+  vizmesh!(plot, 𝔼, pdim, edim, mesh, colors)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colors)
   segmentsize = plot[:segmentsize]
 
   # retrieve coordinates of segments
@@ -51,16 +51,16 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
   end
 
   # repeat colors for vertices of segments
-  colors = Makie.@lift let
-    c = [$colorant[e] for e in 1:nelements($mesh) for _ in 1:3]
+  color = Makie.@lift let
+    c = [$colors[e] for e in 1:nelements($mesh) for _ in 1:3]
     c[begin:(end - 1)]
   end
 
   # visualize segments
-  Makie.lines!(plot, coords, color=colors, linewidth=segmentsize)
+  Makie.lines!(plot, coords, color=color, linewidth=segmentsize)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colors)
   showsegments = plot[:showsegments]
 
   # retrieve triangle mesh parameters
@@ -89,7 +89,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
     end
 
     # element vs. vertex coloring
-    ncolor = length($colorant)
+    ncolor = length($colors)
     if ncolor == nelem # element coloring
       # duplicate vertices and adjust
       # connectivities to avoid linear
@@ -109,7 +109,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
       tcolors = map(1:nv) do i
         t = ceil(Int, i / 3)
         e = elem4tri[t]
-        $colorant[e]
+        $colors[e]
       end
     elseif ncolor == nvert # vertex coloring
       # nothing needs to be done because
@@ -119,7 +119,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
       # the original polygonal mesh
       tcoords = coords
       tconnec = tris
-      tcolors = $colorant
+      tcolors = $colors
     else
       throw(ArgumentError("Provided $ncolor colors but the mesh has
                           $nvert vertices and $nelem elements."))
@@ -148,13 +148,13 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
   end
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, mesh, colorant)
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, mesh, colors)
   meshes = Makie.@lift let
     geoms = elements($mesh)
     bounds = boundary.(geoms)
     discretize.(bounds)
   end
-  vizmany!(plot, meshes, colorant)
+  vizmany!(plot, meshes, colors)
 end
 
 # -------
