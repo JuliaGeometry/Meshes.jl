@@ -38,19 +38,28 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
 
   colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
 
-  # retrieve segments
-  segs = Makie.@lift let
-    topo = topology($mesh)
-    vert = vertices($mesh)
-    segmentsof(topo, vert, $colors)
+  # retrieve coordinates of vertices
+  xyzs = Makie.@lift map(p -> ustrip.(to(p)), vertices($mesh))
+
+  # retrieve connectivities of segments
+  inds = Makie.@lift map(collect ∘ indices, elements(topology($mesh)))
+
+  # extract coordinates and colors of segments
+  scoords = Makie.@lift [$xyzs[indsₑ] for indsₑ in $inds]
+  scolors = Makie.@lift [fill($colors[e], length(indsₑ)) for (e, indsₑ) in enumerate($inds)]
+
+  # sentinel coordinates
+  nan = Makie.@lift let
+    v = first($xyzs)
+    typeof(v)(ntuple(i -> NaN, length(v)))
   end
 
-  # extract segment coords and colors
-  scoords = Makie.@lift $segs[1]
-  scolors = Makie.@lift $segs[2]
+  # splice sentinel coordinates to get discrete colors
+  lcoords = Makie.@lift reduce((xyz₁, xyz₂) -> [xyz₁; [$nan]; xyz₂], $scoords)
+  lcolors = Makie.@lift reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], $scolors)
 
   # visualize segments
-  Makie.lines!(plot, scoords, color=scolors, linewidth=segmentsize)
+  Makie.lines!(plot, lcoords, color=lcolors, linewidth=segmentsize)
 end
 
 function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
@@ -219,35 +228,4 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
   end
 
   Makie.lines!(plot, coords, color=segmentcolor, linewidth=segmentsize)
-end
-
-function segmentsof(topo, vert, colors)
-  xyz = map(p -> ustrip.(to(p)), vert)
-  res = map(1:nelements(topo)) do e
-    inds = indices(element(topo, e))
-    xyzₑ = xyz[collect(inds)]
-    colₑ = fill(colors[e], length(inds))
-    xyzₑ, colₑ
-  end
-
-  xyzs = first.(res)
-  cols = last.(res)
-
-  vec = first(xyz)
-  nan = typeof(vec)(ntuple(i -> NaN, length(vec)))
-
-  scoords = reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], xyzs)
-  scolors = reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], cols)
-
-  scoords, scolors
-end
-
-function segmentsof(topo::GridTopology, vert, colors)
-  xyz = map(p -> ustrip.(to(p)), vert)
-  ip = only(isperiodic(topo))
-
-  scoords = ip ? [xyz; [first(xyz)]] : xyz
-  scolors = ip ? [colors; [last(colors)]; [first(colors)]] : [colors; [last(colors)]]
-
-  scoords, scolors
 end
