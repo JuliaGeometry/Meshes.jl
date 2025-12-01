@@ -2,9 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot)
-
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
+
+Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot)
 
 # split heterogeneous geometry sets into homogeneous vectors
 # of geometries and send these vectors to specialized recipes
