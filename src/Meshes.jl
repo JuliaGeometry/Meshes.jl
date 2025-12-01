@@ -574,6 +574,7 @@ export
   StdCoords,
   Proj,
   Morphological,
+  ReinterpretCoords,
   LengthUnit,
   ValidCoords,
   Shadow,
