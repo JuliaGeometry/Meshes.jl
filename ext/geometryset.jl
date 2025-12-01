@@ -48,8 +48,6 @@ end
 # ---------------
 
 function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colors)
-  # fallback to Euclidean recipes because Makie doesn't provide
-  # more specific recipes for spherical geometries currently
   vizgset!(plot, 𝔼, pdim, edim, geoms, colors)
 end
 

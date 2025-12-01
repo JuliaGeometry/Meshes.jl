@@ -28,8 +28,6 @@ end
 # ---------------
 
 function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colorant)
-  # fallback to Euclidean recipes because Makie doesn't provide
-  # more specific recipes for spherical geometries currently
   vizmesh!(plot, 𝔼, pdim, edim, mesh, colorant)
 end
 
