@@ -34,9 +34,11 @@ aspoints(multi::MultiPoint) = parent(multi)
 
 asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
 
-asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
+asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(ustrip.(Tuple(v)))
 
-asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
+asmakie(p::Point) = Makie.Point{embeddim(p),numtype(lentype(p))}(ustrip.(Tuple(to(p))))
+
+asmakie(b::Box) = Makie.Rect([asmakie(p) for p in boundarypoints(b)])
 
 function asmakie(poly::Polygon)
   rs = rings(poly)
@@ -49,6 +51,6 @@ function asmakie(poly::Polygon)
   end
 end
 
-asmakie(p::Point) = Makie.Point{embeddim(p),numtype(lentype(p))}(ustrip.(Tuple(to(p))))
-
-asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(ustrip.(Tuple(v)))
+# TODO: eliminate these methods
+asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
+asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
