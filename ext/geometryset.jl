@@ -109,9 +109,11 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   end
 end
 
-vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colorant) = vizgsetbox𝔼!(plot, geoms, colorant)
+vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colorant) =
+  vizgsetbox𝔼!(plot, geoms, colorant)
 
-vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colorant) = vizgsetbox𝔼!(plot, geoms, colorant)
+vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colorant) =
+  vizgsetbox𝔼!(plot, geoms, colorant)
 
 function vizgsetbox𝔼!(plot, geoms::ObservableVector{<:Box}, colorant)
   showsegments = plot[:showsegments]
