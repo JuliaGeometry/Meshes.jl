@@ -31,7 +31,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
       if nc[] == nv[]
         # visualize as a simple mesh so that
         # colors can be specified at vertices
-        vizmesh!(plot, M, pdim, edim)
+        vizmesh!(plot)
       else
         # visualize as built-in heatmap
         sz = Makie.@lift size($grid)
