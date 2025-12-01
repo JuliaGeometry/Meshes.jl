@@ -58,9 +58,11 @@ _discretize(geometry::Geometry) = _simplexify(geometry)
 
 _discretize(box::Box) = discretize(box, RegularDiscretization(1))
 
-_discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(50))
+_discretize(ball::Ball{𝔼{2}}) = discretize(ball, RegularDiscretization(2, 50))
 
 _discretize(disk::Disk) = discretize(disk, RegularDiscretization(50))
+
+_discretize(ball::Ball{𝔼{3}}) = discretize(ball, RegularDiscretization(2, 50, 50))
 
 _discretize(sphere::Sphere{𝔼{3}}) = discretize(sphere, RegularDiscretization(50))
 
