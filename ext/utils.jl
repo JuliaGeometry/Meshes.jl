@@ -46,7 +46,3 @@ function asmakie(poly::Polygon)
     Makie.Polygon(outer)
   end
 end
-
-# TODO: eliminate these methods
-asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
-asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)
