@@ -33,7 +33,7 @@ jobs:
         arch:
           - x64
         package:
-          - MeshVizTests.jl
+          - GeoStatsVizTests.jl
     steps:
       - uses: actions/checkout@v5
       - uses: julia-actions/setup-julia@v2
@@ -49,7 +49,7 @@ jobs:
         # See also https://github.com/trixi-framework/Trixi.jl/pull/1707#discussion_r1382938895
         uses: actions/checkout@v5
         with:
-          repository: JuliaGeometry/${{ matrix.package }}
+          repository: JuliaEarth/${{ matrix.package }}
           path: downstream
       - name: Load upstream package into downstream environment
         shell: julia --color=yes --project=downstream {0}
