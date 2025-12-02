@@ -80,6 +80,8 @@ appendtopo(::ConeSurface, tg) = _appendpoles(tg, 1, false)
 
 appendtopo(::FrustumSurface, tg) = _appendpoles(tg, 1, false)
 
+appendtopo(::ParaboloidSurface, tg) = _appendcenter(tg)
+
 function _appendcenter(tg)
   # auxiliary variables
   _, ny = size(tg)

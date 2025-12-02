@@ -457,8 +457,8 @@ end
 
   parsurf = rand(ParaboloidSurface)
   mesh = discretize(parsurf, RegularDiscretization(10))
-  @test nvertices(mesh) == 10 * (10 + 1)
-  @test nelements(mesh) == 10 * 10
+  @test nvertices(mesh) == 10 * (10 + 1) + 1
+  @test nelements(mesh) == 10 * (10 + 1)
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
 
