@@ -559,7 +559,7 @@ end
   mesh = discretize(ball)
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
-  @test nelements(mesh) == 2550
+  @test nelements(mesh) == 150
 
   sphere = Sphere(cart(0, 0, 0), T(1))
   mesh = discretize(sphere)
