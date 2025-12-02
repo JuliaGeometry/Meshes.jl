@@ -2,61 +2,66 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
-  # retrieve mesh and dimensions
+Makie.plot!(plot::Viz{<:Tuple{Mesh}}) = vizmesh!(plot)
+
+function vizmesh!(plot)
+  # retrieve mesh and plot attributes
   mesh = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
+
+  # retrieve manifold and dimensions
   M = Makie.@lift manifold($mesh)
   pdim = Makie.@lift paramdim($mesh)
   edim = Makie.@lift embeddim($mesh)
-  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]))
+
+  # process color spec into colorant
+  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+
+  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]), mesh, colorant)
 end
 
-function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  vizmesh!(plot, 𝔼, pdim, edim)
+# ---------------
+# IMPLEMENTATION
+# ---------------
+
+function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colorant)
+  vizmesh!(plot, 𝔼, pdim, edim, mesh, colorant)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val)
-  mesh = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
   segmentsize = plot[:segmentsize]
 
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+  colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
 
-  # retrieve coordinates of segments
-  coords = Makie.@lift let
-    topo = topology($mesh)
-    vert = vertices($mesh)
-    segmentsof(topo, vert)
+  # retrieve coordinates of vertices
+  xyzs = Makie.@lift map(p -> ustrip.(to(p)), vertices($mesh))
+
+  # retrieve connectivities of segments
+  inds = Makie.@lift map(collect ∘ indices, elements(topology($mesh)))
+
+  # extract coordinates and colors of segments
+  scoords = Makie.@lift [$xyzs[indsₑ] for indsₑ in $inds]
+  scolors = Makie.@lift [fill($colors[e], length(indsₑ)) for (e, indsₑ) in enumerate($inds)]
+
+  # sentinel coordinates
+  nan = Makie.@lift let
+    v = first($xyzs)
+    typeof(v)(ntuple(i -> NaN, length(v)))
   end
 
-  # repeat colors for vertices of segments
-  colors = Makie.@lift let
-    if $colorant isa AbstractVector
-      c = [$colorant[e] for e in 1:nelements($mesh) for _ in 1:3]
-      c[begin:(end - 1)]
-    else
-      $colorant
-    end
-  end
+  # splice sentinel coordinates to get discrete colors
+  lcoords = Makie.@lift reduce((xyz₁, xyz₂) -> [xyz₁; [$nan]; xyz₂], $scoords)
+  lcolors = Makie.@lift reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], $scolors)
 
   # visualize segments
-  Makie.lines!(plot, coords, color=colors, linewidth=segmentsize)
+  Makie.lines!(plot, lcoords, color=lcolors, linewidth=segmentsize)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
-  mesh = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
   showsegments = plot[:showsegments]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
 
   # retrieve triangle mesh parameters
   tparams = Makie.@lift let
@@ -150,16 +155,19 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val)
   end
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val)
-  mesh = plot[:object]
-  color = plot[:color]
+function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, mesh, colorant)
   meshes = Makie.@lift let
     geoms = elements($mesh)
     bounds = boundary.(geoms)
     discretize.(bounds)
   end
-  vizmany!(plot, meshes, color)
+  colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
+  vizmany!(plot, meshes, colors)
 end
+
+# -------
+# FACETS
+# -------
 
 function vizfacets!(plot::Viz{<:Tuple{Mesh}})
   mesh = plot[:object]
@@ -218,25 +226,4 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
   end
 
   Makie.lines!(plot, coords, color=segmentcolor, linewidth=segmentsize)
-end
-
-function segmentsof(topo, vert)
-  p = first(vert)
-  T = Unitful.numtype(Meshes.lentype(p))
-  Dim = embeddim(p)
-  nan = SVector(ntuple(i -> T(NaN), Dim))
-  xs = map(p -> ustrip.(to(p)), vert)
-
-  coords = map(elements(topo)) do e
-    inds = indices(e)
-    xs[collect(inds)]
-  end
-
-  reduce((x, y) -> [x; [nan]; y], coords)
-end
-
-function segmentsof(topo::GridTopology, vert)
-  xs = map(p -> ustrip.(to(p)), vert)
-  ip = first(isperiodic(topo))
-  ip ? [xs; [first(xs)]] : xs
 end

@@ -457,8 +457,8 @@ end
 
   parsurf = rand(ParaboloidSurface)
   mesh = discretize(parsurf, RegularDiscretization(10))
-  @test nvertices(mesh) == 10 * (10 + 1)
-  @test nelements(mesh) == 10 * 10
+  @test nvertices(mesh) == 10 * (10 + 1) + 1
+  @test nelements(mesh) == 10 * (10 + 1)
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
 
@@ -559,7 +559,7 @@ end
   mesh = discretize(ball)
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
-  @test nelements(mesh) == 2550
+  @test nelements(mesh) == 150
 
   sphere = Sphere(cart(0, 0, 0), T(1))
   mesh = discretize(sphere)

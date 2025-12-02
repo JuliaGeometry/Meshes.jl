@@ -2,20 +2,78 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgeoms!(plot)
-
 const ObservableVector{T} = Makie.Observable{<:AbstractVector{T}}
 
-function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms, colorant)
-  vizgset!(plot, 𝔼, pdim, edim, geoms, colorant)
+Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot)
+
+# split heterogeneous geometry sets into homogeneous vectors
+# of geometries and send these vectors to specialized recipes
+function vizgset!(plot; facets=false)
+  gset = plot[:object]
+  color = plot[:color]
+  alpha = plot[:alpha]
+  colormap = plot[:colormap]
+  colorrange = plot[:colorrange]
+
+  # process color spec into colorant
+  colorant = facets ? nothing : Makie.@lift(process($color, $colormap, $colorrange, $alpha))
+
+  # get geometries
+  geoms = Makie.@lift parent($gset)
+
+  # get geometry types
+  types = Makie.@lift unique(typeof.($geoms))
+
+  for G in types[]
+    inds = Makie.@lift findall(g -> g isa G, $geoms)
+    gvec = Makie.@lift collect(G, $geoms[$inds])
+    M = Makie.@lift manifold(first($gvec))
+    pdim = Makie.@lift paramdim(first($gvec))
+    edim = Makie.@lift embeddim(first($gvec))
+    if facets
+      vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
+    else
+      cvec = Makie.@lift if $colorant isa AbstractVector
+        $colorant[$inds]
+      else
+        fill($colorant, length($inds))
+      end
+      vizgset!(plot, M[], Val(pdim[]), Val(edim[]), gvec, cvec)
+    end
+  end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms, colorant)
-  points = Makie.@lift boundarypoints.($geoms)
-  vizmany!(plot, points, colorant)
+# ---------------
+# IMPLEMENTATION
+# ---------------
+
+function vizgset!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colors)
+  vizgset!(plot, 𝔼, pdim, edim, geoms, colors)
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colors)
+  showsegments = plot[:showsegments]
+  showpoints = plot[:showpoints]
+
+  if pdim === Val(1)
+    meshes = Makie.@lift simplexify.($geoms)
+    vizmany!(plot, meshes, colors)
+    if showpoints[]
+      vizfacets!(plot, geoms)
+    end
+  elseif pdim === Val(2)
+    meshes = Makie.@lift simplexify.($geoms)
+    vizmany!(plot, meshes, colors)
+    if showsegments[]
+      vizfacets!(plot, geoms)
+    end
+  elseif pdim == Val(3)
+    meshes = Makie.@lift simplexify.(boundary.($geoms))
+    vizmany!(plot, meshes, colors)
+  end
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector{<:Point}, colors)
   pointmarker = plot[:pointmarker]
   pointsize = plot[:pointsize]
 
@@ -23,37 +81,26 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{0}, ::Val, geoms::ObservableVector
   coords = Makie.@lift map(p -> ustrip.(to(p)), $geoms)
 
   # visualize points with given marker and size
-  Makie.scatter!(plot, coords, color=colorant, marker=pointmarker, markersize=pointsize, overdraw=true)
+  Makie.scatter!(plot, coords, color=colors, marker=pointmarker, markersize=pointsize, overdraw=true)
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms, colorant)
-  showpoints = plot[:showpoints]
-
-  meshes = Makie.@lift discretize.($geoms)
-  vizmany!(plot, meshes, colorant)
-
-  if showpoints[]
-    vizfacets!(plot, geoms)
-  end
-end
-
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector{<:Ray}, colors)
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
 
-  Dim = embeddim(first(geoms[]))
+  edim = embeddim(first(geoms[]))
 
   # visualize as built-in arrows
   orig = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   dirs = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
-  if Dim == 2
+  if edim == 2
     tipwidth = Makie.@lift 5 * $segmentsize
     shaftwidth = Makie.@lift 0.2 * $tipwidth
-    Makie.arrows2d!(plot, orig, dirs, color=colorant, tipwidth=tipwidth, shaftwidth=shaftwidth)
-  elseif Dim == 3
+    Makie.arrows2d!(plot, orig, dirs, color=colors, tipwidth=tipwidth, shaftwidth=shaftwidth)
+  elseif edim == 3
     tipradius = Makie.@lift 0.05 * $segmentsize
     shaftradius = Makie.@lift 0.5 * $tipradius
-    Makie.arrows3d!(plot, orig, dirs, color=colorant, tipradius=tipradius, shaftradius=shaftradius)
+    Makie.arrows3d!(plot, orig, dirs, color=colors, tipradius=tipradius, shaftradius=shaftradius)
   else
     error("not implemented")
   end
@@ -63,7 +110,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, geoms::ObservableVector
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVector{<:Line}, colors)
   segmentsize = plot[:segmentsize]
 
   # split vertical and non-vertical lines
@@ -72,13 +119,8 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
 
   # split colors accordingly
-  if colorant[] isa AbstractVector
-    vcolor = Makie.@lift $colorant[$vinds]
-    dcolor = Makie.@lift $colorant[$dinds]
-  else
-    vcolor = colorant
-    dcolor = colorant
-  end
+  vcolor = Makie.@lift $colors[$vinds]
+  dcolor = Makie.@lift $colors[$dinds]
 
   # visualize vertical lines
   if !isempty(vinds[])
@@ -109,48 +151,13 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   end
 end
 
-vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colorant) =
-  vizgsetbox𝔼!(plot, geoms, colorant)
-
-vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colorant) =
-  vizgsetbox𝔼!(plot, geoms, colorant)
-
-function vizgsetbox𝔼!(plot, geoms::ObservableVector{<:Box}, colorant)
-  showsegments = plot[:showsegments]
-
-  # visualize as built-in boxes
-  boxes = Makie.@lift asmakie.($geoms)
-  shading = Makie.@lift embeddim(first($geoms)) == 3
-  Makie.mesh!(plot, boxes, color=colorant, shading=shading)
-
-  if showsegments[]
-    vizfacets!(plot, geoms)
-  end
-end
-
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, geoms, colorant)
-  showsegments = plot[:showsegments]
-
-  meshes = Makie.@lift discretize.($geoms)
-  vizmany!(plot, meshes, colorant)
-
-  if showsegments[]
-    vizfacets!(plot, geoms)
-  end
-end
-
-const PolygonLike = Union{Polygon,MultiPolygon}
-
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:PolygonLike}, colorant)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Polygon}, colors)
   showsegments = plot[:showsegments]
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  # repeat colors if necessary
-  colors = Makie.@lift mayberepeat($colorant, $geoms)
-
-  # visualize as built-in poly
-  polys = Makie.@lift asmakie($geoms)
+  # visualize as built-in polygons
+  polys = Makie.@lift asmakie.($geoms)
   if showsegments[]
     Makie.poly!(plot, polys, color=colors, strokecolor=segmentcolor, strokewidth=segmentsize)
   else
@@ -158,12 +165,28 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVec
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, geoms, colorant)
-  meshes = Makie.@lift discretize.(boundary.($geoms))
-  vizmany!(plot, meshes, colorant)
+vizgset!(plot, M::Type{<:🌐}, pdim::Val, edim::Val, geoms::ObservableVector{<:Multi}, colors) =
+  vizgsetmulti!(plot, M, pdim, edim, geoms, colors)
+
+vizgset!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableVector{<:Multi}, colors) =
+  vizgsetmulti!(plot, M, pdim, edim, geoms, colors)
+
+function vizgsetmulti!(plot, M, pdim, edim, geoms, colors)
+  # retrieve parent geometries
+  parents = Makie.@lift mapreduce(parent, vcat, $geoms)
+
+  # repeat colors for parents
+  pcolors = Makie.@lift [$colors[i] for (i, g) in enumerate($geoms) for _ in 1:length(parent(g))]
+
+  # call recipe for parents
+  vizgset!(plot, M, pdim, edim, parents, pcolors)
 end
 
-vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizgeoms!(plot, facets=false)
+# -------
+# FACETS
+# -------
+
+vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot, facets=false)
 
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms)
   M = Makie.@lift manifold(first($geoms))
@@ -191,35 +214,4 @@ function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms)
   bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
   bset = Makie.@lift GeometrySet($bounds)
   viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
-end
-
-function vizgeoms!(plot; facets=false)
-  gset = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-
-  # process color spec into colorant
-  colorant = facets ? nothing : Makie.@lift(process($color, $colormap, $colorrange, $alpha))
-
-  # get geometries
-  geoms = Makie.@lift parent($gset)
-
-  # get geometry types
-  types = Makie.@lift unique(typeof.($geoms))
-
-  for G in types[]
-    inds = Makie.@lift findall(g -> g isa G, $geoms)
-    gvec = Makie.@lift collect(G, $geoms[$inds])
-    M = Makie.@lift manifold(first($gvec))
-    pdim = Makie.@lift paramdim(first($gvec))
-    edim = Makie.@lift embeddim(first($gvec))
-    if facets
-      vizgsetfacets!(plot, M[], Val(pdim[]), Val(edim[]), gvec)
-    else
-      cvec = Makie.@lift $colorant isa AbstractVector ? $colorant[$inds] : $colorant
-      vizgset!(plot, M[], Val(pdim[]), Val(edim[]), gvec, cvec)
-    end
-  end
 end

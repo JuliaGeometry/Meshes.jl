@@ -2,30 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-mayberepeat(value, objs) = value
-
-mayberepeat(value::AbstractVector, objs) = [value[e] for (e, obj) in enumerate(objs) for _ in 1:length(obj)]
-
-mayberepeat(value::AbstractVector, objs::AbstractVector{<:Multi}) =
-  [value[e] for (e, obj) in enumerate(objs) for _ in 1:length(parent(obj))]
-
-mayberepeat(value::AbstractVector, objs::AbstractVector{<:Geometry}) = value
-
-concat(obj₁, obj₂) = vcat(obj₁, obj₂)
-
-concat(mesh₁::Mesh, mesh₂::Mesh) = merge(mesh₁, mesh₂)
-
-function vizmany!(plot, objs, color)
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
+# assumes that meshes and colors have the same length
+# and that colors are processed with alpha and colormap
+function vizmany!(plot, meshes, colors)
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
 
-  object = Makie.@lift reduce(concat, $objs)
-  colors = Makie.@lift mayberepeat($color, $objs)
-  alphas = Makie.@lift mayberepeat($alpha, $objs)
+  rmesh = Makie.@lift reduce(merge, $meshes)
+  color = Makie.@lift [$colors[i] for (i, m) in enumerate($meshes) for _ in 1:nelements(m)]
 
-  viz!(plot, object, color=colors, alpha=alphas, colormap=colormap, pointsize=pointsize, segmentsize=segmentsize)
+  viz!(plot, rmesh, color=color, pointsize=pointsize, segmentsize=segmentsize)
 end
 
 asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
@@ -46,7 +32,3 @@ function asmakie(poly::Polygon)
     Makie.Polygon(outer)
   end
 end
-
-# TODO: eliminate these methods
-asmakie(geoms::AbstractVector{<:Geometry}) = asmakie.(geoms)
-asmakie(multis::AbstractVector{<:Multi}) = mapreduce(m -> asmakie.(parent(m)), vcat, multis)

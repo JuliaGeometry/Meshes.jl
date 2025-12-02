@@ -24,14 +24,14 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     ys = Makie.@lift $xyz[2]
 
     if nc[] == 1
-      # visualize bounding box for maximum performance
+      # visualize bounding box with single color for maximum performance
       bbox = Makie.@lift boundingbox($grid)
       viz!(plot, bbox, color=colorant)
     else
       if nc[] == nv[]
         # visualize as a simple mesh so that
         # colors can be specified at vertices
-        vizmesh!(plot, M, pdim, edim)
+        vizmesh!(plot)
       else
         # visualize as built-in heatmap
         sz = Makie.@lift size($grid)

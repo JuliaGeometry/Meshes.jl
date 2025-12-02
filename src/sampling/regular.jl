@@ -83,6 +83,10 @@ firstoffset(::FrustumSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::FrustumSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
+firstoffset(::ParaboloidSurface) = (n -> inv(n), n -> zero(n))
+lastoffset(::ParaboloidSurface) = (n -> zero(n), n -> inv(n))
+extrapoints(p::ParaboloidSurface, sz) = (apex(p),)
+
 # --------------
 # SPECIAL CASES
 # --------------

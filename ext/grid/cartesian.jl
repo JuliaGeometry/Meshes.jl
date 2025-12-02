@@ -23,7 +23,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   sz = Makie.@lift size($grid)
 
   if nc[] == 1
-    # visualize bounding box for maximum performance
+    # visualize bounding box with single color for maximum performance
     bbox = Makie.@lift boundingbox($grid)
     viz!(plot, bbox, color=colorant)
 
@@ -74,7 +74,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
   xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
 
   if nc[] == 1
-    # visualize bounding box for maximum performance
+    # visualize bounding box with single color for maximum performance
     bbox = Makie.@lift boundingbox($grid)
     viz!(plot, bbox, color=colorant)
   else

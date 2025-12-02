@@ -33,7 +33,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
         vizfacets!(plot)
       end
     else
-      vizmesh!(plot, M, pdim, edim)
+      vizmesh!(plot)
     end
   else
     vizgridfallback!(plot, M, pdim, edim)

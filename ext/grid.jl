@@ -2,7 +2,9 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{Grid}})
+Makie.plot!(plot::Viz{<:Tuple{Grid}}) = vizgrid!(plot)
+
+function vizgrid!(plot)
   grid = plot[:object]
   M = Makie.@lift manifold($grid)
   pdim = Makie.@lift paramdim($grid)
@@ -10,34 +12,15 @@ function Makie.plot!(plot::Viz{<:Tuple{Grid}})
   vizgrid!(plot, M[], Val(pdim[]), Val(edim[]))
 end
 
+# ---------------
+# IMPLEMENTATION
+# ---------------
+
 function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
   vizgrid!(plot, 𝔼, pdim, edim)
 end
 
 vizgrid!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
-
-function vizfacets!(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object]
-  M = Makie.@lift manifold($grid)
-  pdim = Makie.@lift paramdim($grid)
-  edim = Makie.@lift embeddim($grid)
-  vizgridfacets!(plot, M[], Val(pdim[]), Val(edim[]))
-end
-
-vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pdim, edim)
-
-# ----------------
-# SPECIALIZATIONS
-# ----------------
-
-include("grid/cartesian.jl")
-include("grid/rectilinear.jl")
-include("grid/structured.jl")
-include("grid/transformed.jl")
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
 
 function vizgridfallback!(plot, M, pdim, edim)
   grid = plot[:object]
@@ -61,7 +44,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   # or when there is a large number of elements
   if pdim == Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
     # decide whether or not to reverse connectivity list
-    rfunc = Makie.@lift _reverse($grid)
+    rfunc = Makie.@lift crs($grid) <: LatLon && orientation(first($grid)) == CW ? reverse : identity
 
     verts = Makie.@lift map(asmakie, eachvertex($grid))
     quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
@@ -91,11 +74,36 @@ function vizgridfallback!(plot, M, pdim, edim)
       vizfacets!(plot)
     end
   else # fallback to triangle mesh visualization
-    vizmesh!(plot, M, pdim, edim)
+    vizmesh!(plot)
   end
 end
 
-_reverse(grid) = crs(grid) <: LatLon && orientation(first(grid)) == CW ? reverse : identity
+# -------
+# FACETS
+# -------
+
+function vizfacets!(plot::Viz{<:Tuple{Grid}})
+  grid = plot[:object]
+  M = Makie.@lift manifold($grid)
+  pdim = Makie.@lift paramdim($grid)
+  edim = Makie.@lift embeddim($grid)
+  vizgridfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+end
+
+vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pdim, edim)
+
+# ----------------
+# SPECIALIZATIONS
+# ----------------
+
+include("grid/cartesian.jl")
+include("grid/rectilinear.jl")
+include("grid/structured.jl")
+include("grid/transformed.jl")
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
 
 # helper functions to create a minimum number
 # of line segments within Cartesian/Rectilinear grid

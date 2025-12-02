@@ -2,13 +2,19 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
+Makie.plot!(plot::Viz{<:Tuple{SubDomain}}) = vizsubdom!(plot)
+
+function vizsubdom!(plot)
   subdom = plot[:object]
   M = Makie.@lift manifold($subdom)
   pdim = Makie.@lift paramdim($subdom)
   edim = Makie.@lift embeddim($subdom)
   vizsubdom!(plot, M[], Val(pdim[]), Val(edim[]))
 end
+
+# ---------------
+# IMPLEMENTATION
+# ---------------
 
 function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
   vizsubdom!(plot, 𝔼, pdim, edim)
