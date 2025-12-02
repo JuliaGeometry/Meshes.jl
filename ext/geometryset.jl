@@ -151,25 +151,6 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   end
 end
 
-vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colors) =
-  vizgsetbox𝔼!(plot, geoms, colors)
-
-vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colors) =
-  vizgsetbox𝔼!(plot, geoms, colors)
-
-function vizgsetbox𝔼!(plot, geoms::ObservableVector{<:Box}, colors)
-  showsegments = plot[:showsegments]
-
-  # visualize as built-in boxes
-  boxes = Makie.@lift asmakie.($geoms)
-  shading = Makie.@lift embeddim(first($geoms)) == 3
-  Makie.mesh!(plot, boxes, color=colors, shading=shading)
-
-  if showsegments[]
-    vizfacets!(plot, geoms)
-  end
-end
-
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Polygon}, colors)
   showsegments = plot[:showsegments]
   segmentcolor = plot[:segmentcolor]

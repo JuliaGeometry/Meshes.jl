@@ -24,9 +24,11 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     ys = Makie.@lift $xyz[2]
 
     if nc[] == 1
-      # visualize bounding box for maximum performance
+      # visualize bounding box with single color for maximum performance
+      # perform simplexification to avoid infinite loops (boxes <-> grids)
       bbox = Makie.@lift boundingbox($grid)
-      viz!(plot, bbox, color=colorant)
+      tmesh = Makie.@lift simplexify($bbox)
+      viz!(plot, tmesh, color=colorant)
     else
       if nc[] == nv[]
         # visualize as a simple mesh so that
