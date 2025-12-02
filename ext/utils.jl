@@ -2,16 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# assumes that meshes and colors have the same length
+# and that colors are processed with alpha and colormap
 function vizmany!(plot, meshes, colors)
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
   pointsize = plot[:pointsize]
   segmentsize = plot[:segmentsize]
 
-  mesh = Makie.@lift reduce(merge, $meshes)
+  rmesh = Makie.@lift reduce(merge, $meshes)
   color = Makie.@lift [$colors[i] for (i, m) in enumerate($meshes) for _ in 1:nelements(m)]
 
-  viz!(plot, mesh, color=color, alpha=alpha, colormap=colormap, pointsize=pointsize, segmentsize=segmentsize)
+  viz!(plot, rmesh, color=color, pointsize=pointsize, segmentsize=segmentsize)
 end
 
 asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
