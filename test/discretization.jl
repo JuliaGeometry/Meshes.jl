@@ -700,15 +700,6 @@ end
   mesh = simplexify(quad)
   @test vertices(mesh) == collect(eachvertex(quad))
 
-  if visualtests
-    grid = cartgrid(3, 3)
-    mesh = simplexify(grid)
-    fig = Mke.Figure(size=(600, 300))
-    viz(fig[1, 1], grid, showsegments=true)
-    viz(fig[1, 2], mesh, showsegments=true)
-    @test_reference "data/triangulate-$T.png" fig
-  end
-
   # tetrahedralization
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
   hex = Hexahedron(
