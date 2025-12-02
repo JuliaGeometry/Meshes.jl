@@ -36,10 +36,18 @@ to(::Point)
 Ray
 ```
 
+```@example primitives
+Ray((1, 2, 3), (1, 0, 1)) |> viz
+```
+
 ### Line
 
 ```@docs
 Line
+```
+
+```@example primitives
+Line((1, 2), (3, 5)) |> viz
 ```
 
 ### BezierCurve
@@ -49,7 +57,7 @@ BezierCurve
 ```
 
 ```@example primitives
-BezierCurve((0.,0.), (1.,0.), (1.,1.)) |> viz
+BezierCurve((0, 0), (1, 0), (1, 1)) |> viz
 ```
 
 ### ParametrizedCurve
@@ -75,7 +83,7 @@ Box
 ```
 
 ```@example primitives
-Box((0.,0.,0.), (1.,1.,1.)) |> viz
+Box((0, 0, 0), (1, 1, 1)) |> viz
 ```
 
 ### Ball/Sphere
@@ -86,7 +94,7 @@ Sphere
 ```
 
 ```@example primitives
-Ball((0.,0.,0.), 1.) |> viz
+Ball((0, 0, 0), 1) |> viz
 ```
 
 ### Ellipsoid
@@ -96,7 +104,7 @@ Ellipsoid
 ```
 
 ```@example primitives
-Ellipsoid((3., 2., 1.)) |> viz
+Ellipsoid((3, 2, 1)) |> viz
 ```
 
 ### Disk/Circle
@@ -104,6 +112,10 @@ Ellipsoid((3., 2., 1.)) |> viz
 ```@docs
 Disk
 Circle
+```
+
+```@example primitives
+Disk(Plane((0, 0, 0), (1, 0, 1)), 1) |> viz
 ```
 
 ### Cylinder/CylinderSurface
@@ -114,7 +126,7 @@ CylinderSurface
 ```
 
 ```@example primitives
-Cylinder(1.0) |> viz
+Cylinder(1) |> viz
 ```
 
 ### Cone/ConeSurface
@@ -125,7 +137,10 @@ ConeSurface
 ```
 
 ```@example primitives
-Cone(Disk(Plane((0,0,0), (0,0,1)), 1), (0,0,1)) |> viz
+Cone(
+  Disk(Plane((0, 0, 0), (0, 0, 1)), 1),
+  (0, 0, 1)
+) |> viz
 ```
 
 ### Frustum/FrustumSurface
@@ -137,8 +152,8 @@ FrustumSurface
 
 ```@example primitives
 Frustum(
-  Disk(Plane((0,0,0), (0,0,1)), 2),
-  Disk(Plane((0,0,10), (0,0,1)), 1)
+  Disk(Plane((0, 0, 0), (0, 0, 1)), 2),
+  Disk(Plane((0, 0, 10), (0, 0, 1)), 1)
 ) |> viz
 ```
 
@@ -149,7 +164,7 @@ Torus
 ```
 
 ```@example primitives
-Torus((0.,0.,0.), (1.,0.,0.), (0.,1.,0.), 0.2) |> viz
+Torus((0, 0, 0), (1, 0, 0), (0, 1, 0), 0.2) |> viz
 ```
 
 ### ParaboloidSurface
@@ -159,5 +174,5 @@ ParaboloidSurface
 ```
 
 ```@example primitives
-ParaboloidSurface((5., 2., 4.), 1.0, 0.25) |> viz
+ParaboloidSurface((0, 0, 0), 1, 0.25) |> viz
 ```
