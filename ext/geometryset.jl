@@ -56,19 +56,19 @@ function vizgset!(plot, ::Type{<:𝔼}, pdim::Val, edim::Val, geoms::ObservableV
   showpoints = plot[:showpoints]
 
   if pdim === Val(1)
-    meshes = Makie.@lift discretize.($geoms)
+    meshes = Makie.@lift simplexify.($geoms)
     vizmany!(plot, meshes, colors)
     if showpoints[]
       vizfacets!(plot, geoms)
     end
   elseif pdim === Val(2)
-    meshes = Makie.@lift discretize.($geoms)
+    meshes = Makie.@lift simplexify.($geoms)
     vizmany!(plot, meshes, colors)
     if showsegments[]
       vizfacets!(plot, geoms)
     end
   elseif pdim == Val(3)
-    meshes = Makie.@lift discretize.(boundary.($geoms))
+    meshes = Makie.@lift simplexify.(boundary.($geoms))
     vizmany!(plot, meshes, colors)
   end
 end
@@ -149,20 +149,6 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
     end
     Makie.ablines!(plot, ycoord, slopes, color=dcolor, linewidth=segmentsize)
   end
-end
-
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colors)
-  # use simplexify instead of discretize
-  # to avoid infinite loops in grid recipes
-  meshes = Makie.@lift simplexify.($geoms)
-  vizmany!(plot, meshes, colors)
-end
-
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colors)
-  # use simplexify instead of discretize
-  # to avoid infinite loops in grid recipes
-  meshes = Makie.@lift simplexify.(boundary.($geoms))
-  vizmany!(plot, meshes, colors)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Polygon}, colors)
