@@ -20,8 +20,6 @@ asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(ustrip.(Tuple(v)))
 
 asmakie(p::Point) = Makie.Point{embeddim(p),numtype(lentype(p))}(ustrip.(Tuple(to(p))))
 
-asmakie(b::Box) = Makie.Rect([asmakie(p) for p in boundarypoints(b)])
-
 function asmakie(poly::Polygon)
   rs = rings(poly)
   outer = map(asmakie, eachvertex(rs[1]))

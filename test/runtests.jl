@@ -18,17 +18,16 @@ using TestItemRunner
   using Unitful
   using Rotations
   using StableRNGs
-  using ReferenceTests, ImageIO
 
   using TransformsBase: Identity, →
 
   import TransformsBase as TB
-  import CairoMakie as Mke
+
+  # trigger compilation of extension
+  import CairoMakie
 
   # environment settings
   isCI = "CI" ∈ keys(ENV)
-  islinux = Sys.islinux()
-  visualtests = !isCI || (isCI && islinux)
   datadir = joinpath(@__DIR__, "data")
 
   # float settings

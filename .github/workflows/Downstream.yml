@@ -26,7 +26,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - 'lts'
           - '1'
         os:
           - ubuntu-latest
