@@ -151,6 +151,20 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val{2}, geoms::ObservableVec
   end
 end
 
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Box}, colors)
+  # use simplexify instead of discretize
+  # to avoid infinite loops in grid recipes
+  meshes = Makie.@lift simplexify.($geoms)
+  vizmany!(plot, meshes, colors)
+end
+
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val{3}, geoms::ObservableVector{<:Box}, colors)
+  # use simplexify instead of discretize
+  # to avoid infinite loops in grid recipes
+  meshes = Makie.@lift simplexify.(boundary.($geoms))
+  vizmany!(plot, meshes, colors)
+end
+
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVector{<:Polygon}, colors)
   showsegments = plot[:showsegments]
   segmentcolor = plot[:segmentcolor]
