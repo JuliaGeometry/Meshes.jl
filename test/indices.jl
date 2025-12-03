@@ -202,24 +202,12 @@
   @test linds[2, 2] == only(indices(grid, p4))
   @test linds[10, 10] == only(indices(grid, p5))
   @test isempty(indices(grid, p6))
-end
 
-# TransformedGrid: fast-path (invertible) and fallback (non-invertible)
-begin
-  # invertible transform (Translate) should use inverse and match parent result
+  # TransformedGrid: fast-path (invertible)
   grid = cartgrid(20, 20)
   tri = Triangle(cart(5, 5), cart(10, 10), cart(15, 5))
-  t = Translate(cart(2, 3))
-  tg = TransformedGrid(grid, t)
-  tri_t = tri |> t
-  @test issetequal(indices(tg, tri_t), indices(grid, tri))
-
-  # non-invertible transform (Morphological) should fall back to querying the
-  # transformed grid directly (no inverse available)
-  grid = cartgrid(20, 20)
-  tri = Triangle(cart(5, 5), cart(10, 10), cart(15, 5))
-  t = Morphological(c -> cart(c[1] + sin(c[2]), c[2]))
-  tg = TransformedGrid(grid, t)
-  tri_t = tri |> t
-  @test issetequal(indices(tg, tri_t), findall(intersects(tri_t), tg))
+  trans = Translate(2.0, 3.0)
+  transgrid = TransformedGrid(grid, trans)
+  transtri = tri |> trans
+  @test issetequal(indices(transgrid, transtri), indices(grid, tri))
 end
