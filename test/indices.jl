@@ -209,5 +209,5 @@
   trans = Translate(2.0, 3.0)
   ttri = TransformedGeometry(tri, trans)
   tgrid = TransformedGrid(grid, trans)
-  @test issetequal(indices(tgrid, transtri), indices(grid, tri))
+  @test issetequal(indices(tgrid, ttri), indices(grid, tri))
 end
