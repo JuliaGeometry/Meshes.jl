@@ -25,6 +25,8 @@ function indices(domain::TransformedDomain, geometry::Geometry)
   end
 end
 
+indices(domain::Domain, geometry::TransformedGeometry) = reduce(vcat, indices(domain, g) for g in discretize(geometry))
+
 indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
 function indices(grid::OrthoRegularGrid, point::Point)
