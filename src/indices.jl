@@ -13,6 +13,20 @@ Return the indices of the elements of the `domain` that intersect with the `geom
 """
 indices(domain::Domain, geometry::Geometry) = indicesfallback(domain, geometry)
 
+function indices(domain::TransformedDomain, geometry::Geometry)
+  t = transform(domain)
+  if isinvertible(t)
+    # query indices in parent domain
+    g = geometry |> Proj(crs(domain))
+    indices(parent(domain), inverse(t)(g))
+  else
+    # fallback to slow algorithm
+    indicesfallback(domain, geometry)
+  end
+end
+
+indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
+
 function indices(grid::OrthoRegularGrid, point::Point)
   point ∉ grid && return Int[]
 
@@ -73,20 +87,6 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
 end
-
-function indices(grid::TransformedGrid, geometry::Geometry)
-  t = transform(grid)
-  if isinvertible(t)
-    # query indices in parent grid
-    g = geometry |> Proj(crs(grid))
-    indices(parent(grid), inverse(t)(g))
-  else
-    # fallback to slow algorithm
-    indicesfallback(grid, geometry)
-  end
-end
-
-indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
 # ----------------
 # CARTESIAN RANGE
