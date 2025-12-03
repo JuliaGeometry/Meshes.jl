@@ -74,6 +74,21 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
+# Fast path for transformed grids: if the grid's transform is invertible,
+# map the query geometry back to the parent grid coordinates and query
+# the parent grid. Falls back to the generic findall for non-invertible
+# transforms.
+function indices(grid::TransformedGrid, geometry::Geometry)
+  t = transform(grid)
+  if isinvertible(t)
+    # map geometry to parent domain and query indices
+    indices(parent(grid), inverse(t)(geometry))
+  else
+    # fallback to slow path
+    findall(intersects(geometry), grid)
+  end
+end
+
 # ----------------
 # CARTESIAN RANGE
 # ----------------
