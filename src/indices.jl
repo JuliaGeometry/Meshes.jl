@@ -6,12 +6,15 @@
 # LINEAR INDICES
 # ---------------
 
+# auxiliary fallback method to aviod infinite recursion
+indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
+
 """
     indices(domain, geometry)
 
 Return the indices of the elements of the `domain` that intersect with the `geometry`.
 """
-indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
+indices(domain::Domain, geometry::Geometry) = indicesfallback(domain, geometry)
 
 function indices(grid::OrthoRegularGrid, point::Point)
   point ∉ grid && return Int[]
@@ -82,12 +85,12 @@ function indices(grid::TransformedGrid, geometry::Geometry)
   t = transform(grid)
   if isinvertible(t)
     # project geometry to grid CRS
-    p = Proj(crs(grid))(geometry)
+    g = geometry |> Proj(crs(grid))
     # map to parent domain and query indices
-    indices(parent(grid), inverse(t)(p))
+    indices(parent(grid), inverse(t)(g))
   else
     # fallback to slow path
-    findall(intersects(geometry), grid)
+    indicesfallback(grid, geometry)
   end
 end
 
