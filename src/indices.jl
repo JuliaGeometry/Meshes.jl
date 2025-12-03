@@ -13,7 +13,17 @@ Return the indices of the elements of the `domain` that intersect with the `geom
 """
 indices(domain::Domain, geometry::Geometry) = indicesfallback(domain, geometry)
 
-function indices(domain::TransformedDomain, geometry::Geometry)
+indices(domain::TransformedDomain, geometry::Geometry) = indicestransformed(domain, geometry)
+
+indices(domain::TransformedMesh, geometry::Geometry) = indicestransformed(domain, geometry)
+
+indices(domain::Domain, geometry::TransformedGeometry) = indicesreduced(domain, geometry)
+
+indices(domain::TransformedDomain, geometry::TransformedGeometry) = indicestransformed(domain, geometry)
+
+indices(domain::TransformedMesh, geometry::TransformedGeometry) = indicestransformed(domain, geometry)
+
+function indicestransformed(domain, geometry)
   t = transform(domain)
   if isinvertible(t)
     # query indices in parent domain
@@ -25,9 +35,13 @@ function indices(domain::TransformedDomain, geometry::Geometry)
   end
 end
 
-indices(domain::Domain, geometry::TransformedGeometry) = reduce(vcat, indices(domain, g) for g in discretize(geometry))
+indicesreduced(domain, geometry) = reduce(vcat, indices(domain, g) for g in discretize(geometry))
 
-indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
+indicesfallback(domain, geometry) = findall(intersects(geometry), domain)
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
 
 function indices(grid::OrthoRegularGrid, point::Point)
   point ∉ grid && return Int[]
