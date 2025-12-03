@@ -6,9 +6,6 @@
 # LINEAR INDICES
 # ---------------
 
-# auxiliary fallback method to aviod infinite recursion
-indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
-
 """
     indices(domain, geometry)
 
@@ -77,22 +74,19 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-# Fast path for transformed grids: if the grid's transform is invertible,
-# map the query geometry back to the parent grid coordinates and query
-# the parent grid. Falls back to the generic findall for non-invertible
-# transforms.
 function indices(grid::TransformedGrid, geometry::Geometry)
   t = transform(grid)
   if isinvertible(t)
-    # project geometry to grid CRS
+    # query indices in parent grid
     g = geometry |> Proj(crs(grid))
-    # map to parent domain and query indices
     indices(parent(grid), inverse(t)(g))
   else
-    # fallback to slow path
+    # fallback to slow algorithm
     indicesfallback(grid, geometry)
   end
 end
+
+indicesfallback(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
 
 # ----------------
 # CARTESIAN RANGE

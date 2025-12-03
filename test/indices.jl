@@ -203,11 +203,11 @@
   @test linds[10, 10] == only(indices(grid, p5))
   @test isempty(indices(grid, p6))
 
-  # TransformedGrid: fast-path (invertible)
-  grid = cartgrid(20, 20)
+  # fast method for transformed grids with invertible transforms
   tri = Triangle(cart(5, 5), cart(10, 10), cart(15, 5))
+  grid = cartgrid(20, 20)
   trans = Translate(2.0, 3.0)
-  transgrid = TransformedGrid(grid, trans)
-  transtri = tri |> trans
-  @test isequal(indices(transgrid, transtri), indices(grid, tri))
+  ttri = TransformedGeometry(tri, trans)
+  tgrid = TransformedGrid(grid, trans)
+  @test issetequal(indices(tgrid, ttri), indices(grid, tri))
 end
