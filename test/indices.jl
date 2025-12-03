@@ -209,5 +209,14 @@
   trans = Translate(2.0, 3.0)
   ttri = TransformedGeometry(tri, trans)
   tgrid = TransformedGrid(grid, trans)
-  @test issetequal(indices(tgrid, ttri), indices(grid, tri))
+  @test indices(tgrid, ttri) == indices(grid, tri)
+  smesh = convert(SimpleMesh, grid)
+  tmesh = TransformedMesh(smesh, trans)
+  @test indices(tmesh, ttri) == indices(smesh, tri)
+  @test indices(tgrid, tri) == indices(grid, inverse(trans)(tri))
+  @test indices(grid, ttri) == reduce(vcat, indices(grid, g) for g in discretize(ttri))
+  pipeline = Affine([1.0 0.0; 0.0 1.0], [1.0, 2.0]) → ReinterpretCoords(Cartesian, LatLon)
+  pipelinegrid = TransformedGrid(grid, pipeline)
+  pipelinetri = tri |> pipeline
+  @test indices(pipelinegrid, pipelinetri) == indices(grid, tri)
 end
