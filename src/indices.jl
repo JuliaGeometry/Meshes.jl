@@ -81,8 +81,10 @@ end
 function indices(grid::TransformedGrid, geometry::Geometry)
   t = transform(grid)
   if isinvertible(t)
-    # map geometry to parent domain and query indices
-    indices(parent(grid), inverse(t)(geometry))
+    # project geometry to grid CRS
+    p = Proj(crs(grid))(geometry)
+    # map to parent domain and query indices
+    indices(parent(grid), inverse(t)(p))
   else
     # fallback to slow path
     findall(intersects(geometry), grid)
