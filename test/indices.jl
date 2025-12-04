@@ -202,4 +202,25 @@
   @test linds[2, 2] == only(indices(grid, p4))
   @test linds[10, 10] == only(indices(grid, p5))
   @test isempty(indices(grid, p6))
+
+  # transformed grid with invertible transform
+  trans = Translate(2.0, 3.0)
+  tri = Triangle(cart(0, 0), cart(10, 10), cart(0, 10))
+  grid = cartgrid(100, 100)
+  ttri = TransformedGeometry(tri, trans)
+  tgrid = TransformedGrid(grid, trans)
+  @test indices(tgrid, ttri) == indices(grid, tri)
+  @test indices(tgrid, tri) == indices(grid, inverse(trans)(tri))
+  @test indices(grid, ttri) == unique(mapreduce(g -> indices(grid, g), vcat, discretize(ttri)))
+
+  # transformed mesh with invertible transform
+  trans = Translate(2.0, 3.0)
+  tri = Triangle(cart(0, 0), cart(10, 10), cart(0, 10))
+  grid = cartgrid(100, 100)
+  mesh = convert(SimpleMesh, grid)
+  ttri = TransformedGeometry(tri, trans)
+  tmesh = TransformedMesh(mesh, trans)
+  @test indices(tmesh, ttri) == indices(mesh, tri)
+  @test indices(tmesh, tri) == indices(mesh, inverse(trans)(tri))
+  @test indices(mesh, ttri) == unique(mapreduce(g -> indices(mesh, g), vcat, discretize(ttri)))
 end

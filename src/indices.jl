@@ -11,24 +11,53 @@
 
 Return the indices of the elements of the `domain` that intersect with the `geometry`.
 """
-indices(domain::Domain, geometry::Geometry) = findall(intersects(geometry), domain)
+indices(domain::Domain, geometry::Geometry) = indicesfallback(domain, geometry)
+
+indices(domain::TransformedDomain, geometry::Geometry) = indicestransformed(domain, geometry)
+
+indices(domain::TransformedMesh, geometry::Geometry) = indicestransformed(domain, geometry)
+
+indices(domain::Domain, geometry::TransformedGeometry) = indicesreduced(domain, geometry)
+
+indices(domain::TransformedDomain, geometry::TransformedGeometry) = indicestransformed(domain, geometry)
+
+indices(domain::TransformedMesh, geometry::TransformedGeometry) = indicestransformed(domain, geometry)
+
+function indicestransformed(domain, geometry)
+  t = transform(domain)
+  if isinvertible(t)
+    # query indices in parent domain
+    g = geometry |> Proj(crs(domain))
+    indices(parent(domain), inverse(t)(g))
+  else
+    # fallback to slow algorithm
+    indicesfallback(domain, geometry)
+  end
+end
+
+indicesreduced(domain, geometry) = mapreduce(g -> indices(domain, g), vcat, discretize(geometry)) |> unique
+
+indicesfallback(domain, geometry) = findall(intersects(geometry), domain)
+
+# ----------------
+# SPECIALIZATIONS
+# ----------------
 
 function indices(grid::OrthoRegularGrid, point::Point)
-  point ∉ grid && return Int[]
-
-  # grid properties
+  # point coordinates in grid
   orig = minimum(grid)
   spac = spacing(grid)
   dims = size(grid)
+  xyz = (point - orig) ./ spac
 
-  # integer coordinates
-  coords = ceil.(Int, (point - orig) ./ spac)
-
-  # fix coordinates that are on the grid border
-  coords = clamp.(coords, 1, dims)
-
-  # convert to linear index
-  [LinearIndices(dims)[coords...]]
+  # check if point is in/out grid
+  if all(i -> 0 ≤ xyz[i] ≤ dims[i], eachindex(xyz))
+    ijk = ceil.(Int, xyz)
+    ijk = clamp.(ijk, 1, dims)
+    [LinearIndices(dims)[ijk...]]
+  else
+    Int[]
+  end
 end
 
 function indices(grid::OrthoRegularGrid, chain::Chain)
@@ -57,20 +86,14 @@ function indices(grid::OrthoRegularGrid, poly::Polygon)
 end
 
 function indices(grid::OrthoRegularGrid, box::Box)
-  # cartesian range
   range = cartesianrange(grid, box)
-
-  # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
 end
 
 indices(grid::OrthoRegularGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
 function indices(grid::OrthoRectilinearGrid, box::Box)
-  # cartesian range
   range = cartesianrange(grid, box)
-
-  # convert to linear indices
   LinearIndices(size(grid))[range] |> vec
 end
 

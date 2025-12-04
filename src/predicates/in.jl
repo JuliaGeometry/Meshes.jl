@@ -185,3 +185,11 @@ end
 Tells whether or not the `point` is in the `domain`.
 """
 Base.in(p::Point, d::Domain) = any(e -> p ∈ e, d)
+
+function Base.in(p::Point, g::OrthoRegularGrid)
+  o = minimum(g)
+  s = spacing(g)
+  n = size(g)
+  x = (p - o) ./ s
+  all(i -> 0 ≤ x[i] ≤ n[i], eachindex(x))
+end
