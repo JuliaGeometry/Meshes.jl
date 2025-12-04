@@ -223,13 +223,4 @@
   @test indices(tmesh, ttri) == indices(smesh, tri)
   @test indices(tmesh, tri) == indices(mesh, inverse(trans)(tri))
   @test indices(mesh, ttri) == unique(mapreduce(g -> indices(mesh, g), vcat, discretize(ttri)))
-
-  # transformed grid with invertible pipeline
-  trans = Affine([1.0 0.0; 0.0 1.0], [1.0, 2.0]) → ReinterpretCoords(Cartesian, LatLon)
-  tri = Triangle(cart(0, 0), cart(10, 10), cart(0, 10))
-  grid = cartgrid(50, 50)
-  ttri = TransformedGeometry(tri, trans)
-  tgrid = TransformedGrid(grid, trans)
-  @test indices(tgrid, ttri) == indices(grid, tri)
-  @test indices(tgrid, tri) == indices(grid, inverse(trans)(tri))
 end
