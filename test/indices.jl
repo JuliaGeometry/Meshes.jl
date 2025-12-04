@@ -220,7 +220,7 @@
   mesh = convert(SimpleMesh, grid)
   ttri = TransformedGeometry(tri, trans)
   tmesh = TransformedMesh(mesh, trans)
-  @test indices(tmesh, ttri) == indices(smesh, tri)
+  @test indices(tmesh, ttri) == indices(mesh, tri)
   @test indices(tmesh, tri) == indices(mesh, inverse(trans)(tri))
   @test indices(mesh, ttri) == unique(mapreduce(g -> indices(mesh, g), vcat, discretize(ttri)))
 end
