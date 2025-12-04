@@ -203,20 +203,33 @@
   @test linds[10, 10] == only(indices(grid, p5))
   @test isempty(indices(grid, p6))
 
-  # fast method for transformed grids with invertible transforms
-  tri = Triangle(cart(5, 5), cart(10, 10), cart(15, 5))
-  grid = cartgrid(20, 20)
+  # transformed grid with invertible transform
   trans = Translate(2.0, 3.0)
+  tri = Triangle(cart(0, 0), cart(10, 10), cart(0, 10))
+  grid = cartgrid(100, 100)
   ttri = TransformedGeometry(tri, trans)
   tgrid = TransformedGrid(grid, trans)
   @test indices(tgrid, ttri) == indices(grid, tri)
   @test indices(tgrid, tri) == indices(grid, inverse(trans)(tri))
-  @test indices(grid, ttri) == reduce(vcat, indices(grid, g) for g in discretize(ttri))
-  smesh = convert(SimpleMesh, grid)
-  tmesh = TransformedMesh(smesh, trans)
+  @test indices(grid, ttri) == unique(mapreduce(g -> indices(grid, g), vcat, discretize(ttri)))
+
+  # transformed mesh with invertible transform
+  trans = Translate(2.0, 3.0)
+  tri = Triangle(cart(0, 0), cart(10, 10), cart(0, 10))
+  grid = cartgrid(100, 100)
+  mesh = convert(SimpleMesh, grid)
+  ttri = TransformedGeometry(tri, trans)
+  tmesh = TransformedMesh(mesh, trans)
   @test indices(tmesh, ttri) == indices(smesh, tri)
-  pipeline = Affine([1.0 0.0; 0.0 1.0], [1.0, 2.0]) → ReinterpretCoords(Cartesian, LatLon)
-  pipelinegrid = TransformedGrid(grid, pipeline)
-  pipelinetri = tri |> pipeline
-  @test indices(pipelinegrid, pipelinetri) == indices(grid, tri)
+  @test indices(tmesh, tri) == indices(mesh, inverse(trans)(tri))
+  @test indices(mesh, ttri) == unique(mapreduce(g -> indices(mesh, g), vcat, discretize(ttri)))
+
+  # transformed grid with invertible pipeline
+  trans = Affine([1.0 0.0; 0.0 1.0], [1.0, 2.0]) → ReinterpretCoords(Cartesian, LatLon)
+  tri = Triangle(cart(0, 0), cart(10, 10), cart(0, 10))
+  grid = cartgrid(50, 50)
+  ttri = TransformedGeometry(tri, trans)
+  tgrid = TransformedGrid(grid, trans)
+  @test indices(tgrid, ttri) == indices(grid, tri)
+  @test indices(tgrid, tri) == indices(grid, inverse(trans)(tri))
 end
