@@ -44,21 +44,20 @@ indicesfallback(domain, geometry) = findall(intersects(geometry), domain)
 # ----------------
 
 function indices(grid::OrthoRegularGrid, point::Point)
-  point ∉ grid && return Int[]
-
-  # grid properties
+  # point coordinates in grid
   orig = minimum(grid)
   spac = spacing(grid)
   dims = size(grid)
+  xyz = (point - orig) ./ spac
 
-  # integer coordinates
-  ijk = ceil.(Int, (point - orig) ./ spac)
-
-  # fix coordinates that are on the grid border
-  ijk = clamp.(ijk, 1, dims)
-
-  # convert to linear index
-  [LinearIndices(dims)[ijk...]]
+  # check if point is in/out grid
+  if all(i -> 0 ≤ xyz[i] ≤ dims[i], eachindex(xyz))
+    ijk = ceil.(Int, xyz)
+    ijk = clamp.(ijk, 1, dims)
+    [LinearIndices(dims)[ijk...]]
+  else
+    Int[]
+  end
 end
 
 function indices(grid::OrthoRegularGrid, chain::Chain)
