@@ -40,7 +40,7 @@ indicesreduced(domain, geometry) = mapreduce(g -> indices(domain, g), vcat, disc
 indicesfallback(domain, geometry) = findall(intersects(geometry), domain)
 
 # ----------------
-# IMPLEMENTATIONS
+# SPECIALIZATIONS
 # ----------------
 
 function indices(grid::OrthoRegularGrid, point::Point)
