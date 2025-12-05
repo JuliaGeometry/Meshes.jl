@@ -122,5 +122,5 @@ end
   mesh = topoconvert(SimpleTopology, grid)
   rmesh = refine(mesh)
   @test eltype(rmesh) <: Triangle
-  @test nelements(rmesh) == 200
+  @test nelements(rmesh) == 400
 end
