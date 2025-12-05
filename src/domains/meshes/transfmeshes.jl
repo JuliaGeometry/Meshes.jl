@@ -51,21 +51,3 @@ function Base.summary(io::IO, g::TransformedGrid)
   join(io, size(g), "×")
   print(io, " TransformedGrid")
 end
-
-"""
-    TransformedSubMesh(submesh, transform)
-  
-Lazy representation of a coordinate `transform` applied to a `submesh`.
-"""
-const TransformedSubMesh{M<:Manifold,C<:CRS,TP<:Topology,MS<:SubMesh,TR<:Transform} = TransformedMesh{M,C,TP,MS,TR}
-
-TransformedSubMesh(m::SubMesh, t::Transform) = view(TransformedMesh(parent(m), t), parentindices(m))
-
-"""
-    TransformedSubGrid(subgrid, transform)
-
-Lazy representation of a coordinate `transform` applied to a `subgrid`.
-"""
-const TransformedSubGrid{M<:Manifold,C<:CRS,TP<:Topology,MS<:SubGrid,TR<:Transform} = TransformedMesh{M,C,TP,MS,TR}
-
-TransformedSubGrid(g::SubGrid, t::Transform) = view(TransformedGrid(parent(g), t), parentindices(g))

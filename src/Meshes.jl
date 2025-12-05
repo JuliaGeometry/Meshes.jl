@@ -341,8 +341,6 @@ export
   StructuredGrid,
   TransformedMesh,
   TransformedGrid,
-  TransformedSubMesh,
-  TransformedSubGrid,
   vertex,
   vertices,
   nvertices,
