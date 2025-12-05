@@ -553,9 +553,9 @@ export
   RefinementMethod,
   TriRefinement,
   QuadRefinement,
-  RegularRefinement,
-  CatmullClarkRefinement,
   TriSubdivision,
+  CatmullClarkRefinement,
+  RegularRefinement,
   MaxLengthRefinement,
   refine,
 

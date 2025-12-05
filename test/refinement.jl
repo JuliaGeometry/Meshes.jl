@@ -41,6 +41,24 @@ end
   @test nvertices(ref) == 22
 end
 
+@testitem "TriSubdivision" setup = [Setup] begin
+  # CRS propagation
+  points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, TriSubdivision())
+  @test crs(ref) === crs(mesh)
+end
+
+@testitem "CatmullClark" setup = [Setup] begin
+  # CRS propagation
+  points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, CatmullClarkRefinement())
+  @test crs(ref) === crs(mesh)
+end
+
 @testitem "RegularRefinement" setup = [Setup] begin
   # 2D grids
   grid = CartesianGrid(cart(0, 0), cart(10, 10), dims=(10, 10))
@@ -67,24 +85,6 @@ end
   @test refine(sgrid, RegularRefinement(2)) == tsgrid
   tfgrid = TransformedGrid(grid, Identity())
   @test refine(tfgrid, RegularRefinement(2)) == refine(grid, RegularRefinement(2))
-end
-
-@testitem "CatmullClark" setup = [Setup] begin
-  # CRS propagation
-  points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
-  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
-  mesh = SimpleMesh(points, connec)
-  ref = refine(mesh, CatmullClarkRefinement())
-  @test crs(ref) === crs(mesh)
-end
-
-@testitem "TriSubdivision" setup = [Setup] begin
-  # CRS propagation
-  points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
-  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)])
-  mesh = SimpleMesh(points, connec)
-  ref = refine(mesh, TriSubdivision())
-  @test crs(ref) === crs(mesh)
 end
 
 @testitem "MaxLengthRefinement" setup = [Setup] begin
