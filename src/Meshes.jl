@@ -318,7 +318,6 @@ export
   # domain traits
   Domain,
   SubDomain,
-  TransformedDomain,
   embeddim,
   paramdim,
   crs,
@@ -332,15 +331,18 @@ export
 
   # meshes
   Mesh,
+  SubMesh,
   SimpleMesh,
-  TransformedMesh,
   Grid,
   SubGrid,
   RegularGrid,
   CartesianGrid,
   RectilinearGrid,
   StructuredGrid,
+  TransformedMesh,
   TransformedGrid,
+  TransformedSubMesh,
+  TransformedSubGrid,
   vertex,
   vertices,
   nvertices,

@@ -139,11 +139,10 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
-include("domains/sets.jl")
+include("domains/subdomains.jl")
+include("domains/geomsets.jl")
 include("domains/meshes.jl")
 include("domains/trajecs.jl")
-include("domains/subdomains.jl")
-include("domains/transformeddomain.jl")
 
 # ------------
 # CONVERSIONS

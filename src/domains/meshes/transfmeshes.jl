@@ -35,7 +35,11 @@ vertex(m::TransformedMesh, ind::Int) = m.transform(vertex(m.mesh, ind))
 
 ==(m₁::TransformedMesh, m₂::TransformedMesh) = m₁.transform == m₂.transform && m₁.mesh == m₂.mesh
 
-# alias to improve readability in IO methods
+"""
+    TransformedGrid(grid, transform)
+
+Lazy representation of a coordinate `transform` applied to a `grid`.
+"""
 const TransformedGrid{M<:Manifold,C<:CRS,Dim,G<:Grid,TR<:Transform} = TransformedMesh{M,C,GridTopology{Dim},G,TR}
 
 TransformedGrid(g::Grid, t::Transform) = TransformedMesh(g, t)
@@ -47,3 +51,21 @@ function Base.summary(io::IO, g::TransformedGrid)
   join(io, size(g), "×")
   print(io, " TransformedGrid")
 end
+
+"""
+    TransformedSubMesh(submesh, transform)
+  
+Lazy representation of a coordinate `transform` applied to a `submesh`.
+"""
+const TransformedSubMesh{M<:Manifold,C<:CRS,TP<:Topology,MS<:SubMesh,TR<:Transform} = TransformedMesh{M,C,TP,MS,TR}
+
+TransformedSubMesh(m::SubMesh, t::Transform) = view(TransformedMesh(parent(m), t), parentindices(m))
+
+"""
+    TransformedSubGrid(subgrid, transform)
+
+Lazy representation of a coordinate `transform` applied to a `subgrid`.
+"""
+const TransformedSubGrid{M<:Manifold,C<:CRS,TP<:Topology,MS<:SubGrid,TR<:Transform} = TransformedMesh{M,C,TP,MS,TR}
+
+TransformedSubGrid(g::SubGrid, t::Transform) = view(TransformedGrid(parent(g), t), parentindices(g))

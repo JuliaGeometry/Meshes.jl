@@ -13,13 +13,9 @@ Return the indices of the elements of the `domain` that intersect with the `geom
 """
 indices(domain::Domain, geometry::Geometry) = indicesfallback(domain, geometry)
 
-indices(domain::TransformedDomain, geometry::Geometry) = indicestransformed(domain, geometry)
-
 indices(domain::TransformedMesh, geometry::Geometry) = indicestransformed(domain, geometry)
 
 indices(domain::Domain, geometry::TransformedGeometry) = indicesreduced(domain, geometry)
-
-indices(domain::TransformedDomain, geometry::TransformedGeometry) = indicestransformed(domain, geometry)
 
 indices(domain::TransformedMesh, geometry::TransformedGeometry) = indicestransformed(domain, geometry)
 

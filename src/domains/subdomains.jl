@@ -19,14 +19,6 @@ end
 # specialize constructor to avoid infinite loops
 SubDomain(d::SubDomain, inds::AbstractVector{Int}) = SubDomain(d.domain, d.inds[inds])
 
-"""
-    SubGrid{M,CRS,Dim}
-
-A subgrid of geometries in a given manifold `M` with point coordinates specified
-in a coordinate reference system `CRS`, which is embedded in `Dim` dimensions.
-"""
-const SubGrid{M<:Manifold,C<:CRS,Dim} = SubDomain{M,C,<:Grid{M,C,Dim}}
-
 # -----------------
 # DOMAIN INTERFACE
 # -----------------
