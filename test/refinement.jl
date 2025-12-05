@@ -105,3 +105,17 @@ end
   rmesh = refine(mesh, MaxLengthRefinement(T(0.5) * u"m"))
   @test all(e -> perimeter(e) / 3 ≤ T(0.5) * u"m", rmesh)
 end
+
+@testitem "Refine" setup = [Setup] begin
+  # 2D grids
+  grid = cartgrid(10, 10)
+  rgrid = refine(grid)
+  @test size(rgrid) == (20, 20)
+
+  # general meshes
+  grid = cartgrid(10, 10)
+  mesh = topoconvert(SimpleTopology, grid)
+  rmesh = refine(mesh)
+  @test eltype(rmesh) <: Triangle
+  @test nelements(rmesh) == 200
+end
