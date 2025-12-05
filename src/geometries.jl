@@ -87,8 +87,8 @@ end
 
 include("geometries/primitives.jl")
 include("geometries/polytopes.jl")
-include("geometries/multigeom.jl")
-include("geometries/transformedgeom.jl")
+include("geometries/multigeoms.jl")
+include("geometries/transfgeoms.jl")
 
 # ------------
 # CONVERSIONS

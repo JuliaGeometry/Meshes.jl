@@ -248,12 +248,13 @@ end
 # IMPLEMENTATIONS
 # ----------------
 
+include("meshes/submeshes.jl")
 include("meshes/regulargrid.jl")
 include("meshes/cartesiangrid.jl")
 include("meshes/rectilineargrid.jl")
 include("meshes/structuredgrid.jl")
 include("meshes/simplemesh.jl")
-include("meshes/transformedmesh.jl")
+include("meshes/transfmeshes.jl")
 
 # aliases for dispatch purposes
 const OrthoRegularGrid{M<:𝔼,C<:Union{Cartesian,Projected}} = RegularGrid{M,C}

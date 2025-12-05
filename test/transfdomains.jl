@@ -1,5 +1,4 @@
 @testitem "TransformedDomain" setup = [Setup] begin
-  # constructor
   pset = PointSet(randpoint2(10))
   trans1 = Scale(T(2), T(2))
   trans2 = Translate(T(4), T(4))

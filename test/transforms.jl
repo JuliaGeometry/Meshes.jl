@@ -2550,3 +2550,13 @@ end
   @test nelements(smesh) == nelements(mesh)
   @test topology(smesh) == topology(mesh)
 end
+
+@testitem "Miscellaneous transforms" setup = [Setup] begin
+  # make sure projection of subgrid is only applied
+  # to elements of the subgrid, not the parent grid
+  grid = RegularGrid(latlon(-90, -180), latlon(90, 180), dims=(10, 10))
+  vgrid = grid |> ValidCoords(Mercator)
+  pgrid = vgrid |> Proj(Mercator)
+  @test pgrid isa TransformedDomain
+  @test nelements(pgrid) == nelements(vgrid)
+end
