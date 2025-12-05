@@ -54,19 +54,19 @@ viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
 
-## RegularRefinement
+## TriSubdivision
 
 ```@docs
-RegularRefinement
+TriSubdivision
 ```
 
 ```@example refinement
 grid = CartesianGrid(10, 10)
 
 # refine three times
-ref1 = refine(grid, RegularRefinement(2, 2))
-ref2 = refine(ref1, RegularRefinement(3, 2))
-ref3 = refine(ref2, RegularRefinement(2, 3))
+ref1 = refine(grid, TriSubdivision())
+ref2 = refine(ref1, TriSubdivision())
+ref3 = refine(ref2, TriSubdivision())
 
 fig = Mke.Figure(size = (800, 800))
 viz(fig[1,1], grid, showsegments = true)
@@ -101,19 +101,19 @@ viz(fig[2,2], ref3, showsegments = true)
 fig
 ```
 
-## TriSubdivision
+## RegularRefinement
 
 ```@docs
-TriSubdivision
+RegularRefinement
 ```
 
 ```@example refinement
 grid = CartesianGrid(10, 10)
 
 # refine three times
-ref1 = refine(grid, TriSubdivision())
-ref2 = refine(ref1, TriSubdivision())
-ref3 = refine(ref2, TriSubdivision())
+ref1 = refine(grid, RegularRefinement(2, 2))
+ref2 = refine(ref1, RegularRefinement(3, 2))
+ref3 = refine(ref2, RegularRefinement(2, 3))
 
 fig = Mke.Figure(size = (800, 800))
 viz(fig[1,1], grid, showsegments = true)
