@@ -18,7 +18,6 @@ TriRefinement() = TriRefinement(nothing)
 
 function refine(mesh, method::TriRefinement)
   assertion(paramdim(mesh) == 2, "TriRefinement only defined for surface meshes")
-  (eltype(mesh) <: Triangle) || return simplexify(mesh)
 
   # retrieve geometry and topology
   points = vertices(mesh)
