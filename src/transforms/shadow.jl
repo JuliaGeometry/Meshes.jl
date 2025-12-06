@@ -55,7 +55,7 @@ function apply(t::Shadow, g::CartesianGrid)
   sp = spacing(g)[dims]
   sz = size(g)[dims]
   ip = isperiodic(g)[dims]
-  tp = GridTopology(sz , ip)
+  tp = GridTopology(sz, ip)
   CartesianGrid(or, sp, tp), nothing
 end
 

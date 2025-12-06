@@ -1886,7 +1886,11 @@ end
   f = LengthUnit(u"cm")
   d = RegularGrid(Point(Polar(T(1), T(0))), (T(1), T(π / 4)), GridTopology(8, 8))
   r, c = TB.apply(f, d)
-  @test r ≈ RegularGrid(Point(Polar(T(100) * u"cm", T(0) * u"rad")), (T(100) * u"cm", T(π / 4) * u"rad"), GridTopology(8, 8))
+  @test r ≈ RegularGrid(
+    Point(Polar(T(100) * u"cm", T(0) * u"rad")),
+    (T(100) * u"cm", T(π / 4) * u"rad"),
+    GridTopology(8, 8)
+  )
 
   # --------------
   # CARTESIANGRID
