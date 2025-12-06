@@ -81,22 +81,15 @@ function RegularGrid(
   RegularGrid{M,C,N,typeof(spac)}(origin, spac, topology)
 end
 
-function RegularGrid(
-  dims::Dims{N},
-  origin::Point,
-  spacing::NTuple{N,Number},
-) where {N}
+function RegularGrid(dims::Dims{N}, origin::Point, spacing::NTuple{N,Number}) where {N}
   if !all(>(0), dims)
     throw(ArgumentError("dimensions must be positive"))
   end
   RegularGrid(origin, spacing, GridTopology(dims))
 end
 
-RegularGrid(
-  dims::Dims{Dim},
-  origin::NTuple{Dim,Number},
-  spacing::NTuple{Dim,Number},
-) where {Dim} = RegularGrid(dims, Point(origin), spacing)
+RegularGrid(dims::Dims{Dim}, origin::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
+  RegularGrid(dims, Point(origin), spacing)
 
 function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
   _checkorigin(start)
