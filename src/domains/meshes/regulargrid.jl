@@ -3,46 +3,33 @@
 # ------------------------------------------------------------------
 
 """
-    RegularGrid(start, finish; dims=dims)
+    RegularGrid(min, max; dims=dims)
 
-A regular grid from `start` point to `finish` point with dimensions `dims`.
+A regular grid from `min` point to `max` point with dimensions `dims`.
 The number of dimensions must match the number of coordinates of the points.
 
-    RegularGrid(start, finish, spacing)
+    RegularGrid(min, max, spacing)
 
-Alternatively, construct a regular grid from `start` point to `finish` point
+Alternatively, construct a regular grid from `min` point to `max` point
 by specifying the `spacing` for each dimension.
 
     RegularGrid(dims, origin, spacing)
 
-Alternatively, construct a regular grid with dimensions `dims`, lower left
-corner at `origin` point, and `spacing` for each dimension.
+Alternatively, construct a regular grid with dimensions `dims`, `origin` point,
+and `spacing` for each dimension.
 
     RegularGrid(dims)
     RegularGrid(dim₁, dim₂, ...)
 
 Alternatively, construct a regular grid with dimensions `dims = (dim₁, dim₂, ...)`,
-origin point with coordinates `(0m, 0m, ...)` and spacing equal to `(1m, 1m, ...)`.
+min point at `(0m, 0m, ...)` and spacing equal to `(1m, 1m, ...)`.
 
 ## Examples
 
-Create a 3D grid with 100x100x50 hexahedrons:
-
 ```julia
-julia> RegularGrid(100, 100, 50)
-```
-
-Create a 2D grid from point (0.0, 0.0) to point (10.0, 20.0)
-with spacing equal to (1.0, 2.0):
-
-```julia
-julia> RegularGrid((0.0, 0.0), (10.0, 20.0), (1.0, 2.0))
-```
-
-Create a 1D grid from -1 to 1 with 100 segments:
-
-```julia
-julia> RegularGrid((-1.0,), (1.0,), dims=(100,))
+julia> RegularGrid((-1.0,), (1.0,), dims=(100,)) # 1D grid with 100 segments
+julia> RegularGrid((0.0, 0.0), (10.0, 20.0), (1.0, 2.0)) # 2D grid with tall quadrangles
+julia> RegularGrid(100, 100, 50) # 3D grid with 100x100x50 hexahedrons
 ```
 
 See also [`CartesianGrid`](@ref).
@@ -91,26 +78,26 @@ end
 RegularGrid(dims::Dims{Dim}, origin::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
   RegularGrid(dims, Point(origin), spacing)
 
-function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
-  _checkorigin(start)
-  svals, fvals = _startfinish(start, finish)
-  spac = _spacing(start, spacing)
-  dims = ceil.(Int, (fvals .- svals) ./ spac)
-  RegularGrid(dims, start, spac)
+function RegularGrid(min::Point, max::Point, spacing::NTuple{N,Number}) where {N}
+  _checkorigin(min)
+  cmin, cmax = _minmaxcoords(min, max)
+  spac = _spacing(min, spacing)
+  dims = ceil.(Int, (cmax .- cmin) ./ spac)
+  RegularGrid(dims, min, spac)
 end
 
-RegularGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
-  RegularGrid(Point(start), Point(finish), spacing)
+RegularGrid(min::NTuple{Dim,Number}, max::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
+  RegularGrid(Point(min), Point(max), spacing)
 
-function RegularGrid(start::Point, finish::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(start))))
-  _checkorigin(start)
-  svals, fvals = _startfinish(start, finish)
-  spacing = (fvals .- svals) ./ dims
-  RegularGrid(dims, start, spacing)
+function RegularGrid(min::Point, max::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(min))))
+  _checkorigin(min)
+  cmin, cmax = _minmaxcoords(min, max)
+  spacing = (cmax .- cmin) ./ dims
+  RegularGrid(dims, min, spacing)
 end
 
-RegularGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
-  RegularGrid(Point(start), Point(finish); dims)
+RegularGrid(min::NTuple{Dim,Number}, max::NTuple{Dim,Number}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
+  RegularGrid(Point(min), Point(max); dims)
 
 function RegularGrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> 0.0, Dim)
@@ -194,19 +181,18 @@ function _spacing(origin, spacing)
   ntuple(i -> numconvert(T, withunit(spacing[i], us[i])), nc)
 end
 
-function _startfinish(start::Point{<:𝔼}, finish::Point{<:𝔼})
-  scoords = coords(start)
-  fcoords = convert(crs(start), coords(finish))
-  svals = CoordRefSystems.values(scoords)
-  fvals = CoordRefSystems.values(fcoords)
-  svals, fvals
+function _minmaxcoords(min::Point{<:𝔼}, max::Point{<:𝔼})
+  mincoords = coords(min)
+  maxcoords = convert(crs(min), coords(max))
+  minvalues = CoordRefSystems.values(mincoords)
+  maxvalues = CoordRefSystems.values(maxcoords)
+  minvalues, maxvalues
 end
 
-function _startfinish(start::Point{<:🌐}, finish::Point{<:🌐})
-  slatlon = convert(LatLon, coords(start))
-  flatlon = convert(LatLon, coords(finish))
-  slon = flatlon.lon < slatlon.lon ? slatlon.lon - 360u"°" : slatlon.lon
-  svals = (slatlon.lat, slon)
-  fvals = (flatlon.lat, flatlon.lon)
-  svals, fvals
+function _minmaxcoords(min::Point{<:🌐}, max::Point{<:🌐})
+  mincoords = convert(LatLon, coords(min))
+  maxcoords = convert(LatLon, coords(max))
+  minvalues = (mincoords.lat, maxcoords.lon < mincoords.lon ? mincoords.lon - 360u"°" : mincoords.lon)
+  maxvalues = (maxcoords.lat, maxcoords.lon)
+  minvalues, maxvalues
 end
