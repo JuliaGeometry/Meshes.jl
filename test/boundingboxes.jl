@@ -86,7 +86,7 @@
   d = cartgrid(100, 200)
   @test boundingbox(d) == Box(cart(0, 0), cart(100, 200))
   @test @allocated(boundingbox(d)) < 50
-  d = CartesianGrid(T.((1, 1)), T.((1, 1)), GridTopology(10, 10))
+  d = CartesianGrid(cart(1, 1), cart(11, 11))
   @test boundingbox(d) == Box(cart(1, 1), cart(11, 11))
   @test @allocated(boundingbox(d)) < 50
 
@@ -140,7 +140,7 @@
   # CRS propagation
   r = Ray(merc(-1, 1), vector(1, -1))
   @test crs(boundingbox(r)) === crs(r)
-  g = CartesianGrid(merc(0, 0), (T(1), T(1)), GridTopology(10, 10))
+  g = CartesianGrid(merc(0, 0), merc(10, 10))
   m = convert(SimpleMesh, g)
   @test crs(boundingbox(m)) === crs(m)
 

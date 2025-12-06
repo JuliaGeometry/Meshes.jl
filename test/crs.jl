@@ -35,7 +35,7 @@
   @test crs(d) <: Mercator{WGS84Latest}
   d = PointSet([merc(0, 0), merc(1, 1)])
   @test crs(d) <: Mercator{WGS84Latest}
-  d = RegularGrid(merc(0, 0), (T(1), T(1)), GridTopology(10, 10))
+  d = RegularGrid(merc(0, 0), merc(10, 10))
   @test crs(d) <: Mercator{WGS84Latest}
   p = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
   c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
@@ -139,7 +139,7 @@ end
   @test crs(d) <: LatLon{WGS84Latest}
   d = PointSet([latlon(0, 0), latlon(1, 1)])
   @test crs(d) <: LatLon{WGS84Latest}
-  d = RegularGrid(latlon(0, 0), (T(1), T(1)), GridTopology(10, 10))
+  d = RegularGrid(latlon(0, 0), latlon(10, 10))
   @test crs(d) <: LatLon{WGS84Latest}
   p = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.5, 0.5)])
   c = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
