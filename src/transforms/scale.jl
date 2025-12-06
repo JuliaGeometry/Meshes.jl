@@ -73,10 +73,9 @@ applycoord(t::Scale, p::ParaboloidSurface) = TransformedGeometry(p, t)
 applycoord(t::Scale, tr::Torus) = TransformedGeometry(tr, t)
 
 function applycoord(t::Scale, g::RegularGrid)
-  dims = size(g)
   orig = applycoord(t, minimum(g))
   spac = t.factors .* spacing(g)
-  RegularGrid(dims, orig, spac)
+  RegularGrid(orig, spac, topology(g))
 end
 
 applycoord(t::Scale, g::RectilinearGrid) =

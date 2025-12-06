@@ -367,7 +367,7 @@ end
   # ------------
 
   f = Translate(T(1), T(1))
-  d = RegularGrid((8, 8), Point(Polar(T(0), T(0))), (T(1), T(π / 4)))
+  d = RegularGrid(Point(Polar(T(0), T(0))), (T(1), T(π / 4)), GridTopology(8, 8))
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   @test TB.revert(f, r, c) ≈ d
@@ -395,7 +395,7 @@ end
   @test TB.revert(f, r, c) ≈ d
 
   f = Translate(T(1), T(1))
-  g = RegularGrid((8, 8), Point(Polar(T(0), T(0))), (T(1), T(π / 4)))
+  g = RegularGrid(Point(Polar(T(0), T(0))), (T(1), T(π / 4)), GridTopology(8, 8))
   d = convert(RectilinearGrid, g)
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
@@ -413,7 +413,7 @@ end
   @test TB.revert(f, r, c) ≈ d
 
   f = Translate(T(1), T(1))
-  g = RegularGrid((8, 8), Point(Polar(T(0), T(0))), (T(1), T(π / 4)))
+  g = RegularGrid(Point(Polar(T(0), T(0))), (T(1), T(π / 4)), GridTopology(8, 8))
   d = convert(StructuredGrid, g)
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
@@ -1381,7 +1381,7 @@ end
   # --------------
 
   f = Proj(Polar)
-  d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
+  d = CartesianGrid(cart(1, 1), T.((1, 1)), GridTopology(10, 10))
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
@@ -1419,7 +1419,7 @@ end
   # ----------
 
   f = Proj(Polar)
-  g = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
+  g = CartesianGrid(cart(1, 1), T.((1, 1)), GridTopology(10, 10))
   d = view(g, 1:10)
   r, c = TB.apply(f, d)
   @test r ≈ view(SimpleMesh(f.(vertices(g)), topology(g)), 1:10)
@@ -1568,7 +1568,7 @@ end
   # --------------
 
   f = Morphological(c -> Cartesian(c.x, c.y, zero(c.x)))
-  d = CartesianGrid((10, 10), cart(1, 1), T.((1, 1)))
+  d = CartesianGrid(cart(1, 1), T.((1, 1)), GridTopology(10, 10))
   r, c = TB.apply(f, d)
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
 
@@ -1884,19 +1884,23 @@ end
   # ------------
 
   f = LengthUnit(u"cm")
-  d = RegularGrid((8, 8), Point(Polar(T(1), T(0))), (T(1), T(π / 4)))
+  d = RegularGrid(Point(Polar(T(1), T(0))), (T(1), T(π / 4)), GridTopology(8, 8))
   r, c = TB.apply(f, d)
-  @test r ≈ RegularGrid((8, 8), Point(Polar(T(100) * u"cm", T(0) * u"rad")), (T(100) * u"cm", T(π / 4) * u"rad"))
+  @test r ≈ RegularGrid(
+    Point(Polar(T(100) * u"cm", T(0) * u"rad")),
+    (T(100) * u"cm", T(π / 4) * u"rad"),
+    GridTopology(8, 8)
+  )
 
   # --------------
   # CARTESIANGRID
   # --------------
 
   f = LengthUnit(u"km")
-  d = CartesianGrid((10, 10), cart(1000, 1000), T.((1000, 1000)))
+  d = CartesianGrid(cart(1000, 1000), T.((1000, 1000)), GridTopology(10, 10))
   r, c = TB.apply(f, d)
   @test r isa CartesianGrid
-  @test r ≈ CartesianGrid((10, 10), Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"))
+  @test r ≈ CartesianGrid(Point(T(1) * u"km", T(1) * u"km"), (T(1) * u"km", T(1) * u"km"), GridTopology(10, 10))
 
   # ----------------
   # RECTILINEARGRID
@@ -2210,7 +2214,7 @@ end
   # ------------
 
   f = Shadow(:yz)
-  d = RegularGrid((8, 8, 8), Point(Cylindrical(T(0), T(0), T(0))), (T(1), T(π / 4), T(1)))
+  d = RegularGrid(Point(Cylindrical(T(0), T(0), T(0))), (T(1), T(π / 4), T(1)), GridTopology(8, 8, 8))
   r, c = TB.apply(f, d)
   @test r == SimpleMesh(f.(vertices(d)), topology(d))
 
@@ -2219,10 +2223,10 @@ end
   # --------------
 
   f = Shadow(:yz)
-  d = CartesianGrid((10, 11, 12), cart(1, 2, 3), T.((1.0, 1.1, 1.2)))
+  d = CartesianGrid(cart(1, 2, 3), T.((1.0, 1.1, 1.2)), GridTopology(10, 11, 12))
   r, c = TB.apply(f, d)
   @test r isa CartesianGrid
-  @test r == CartesianGrid((11, 12), cart(2, 3), T.((1.1, 1.2)))
+  @test r == CartesianGrid(cart(2, 3), T.((1.1, 1.2)), GridTopology(11, 12))
 
   # ----------------
   # RECTILINEARGRID
@@ -2272,7 +2276,7 @@ end
   d = cartgrid(10, 10, 10)
   r, c = TB.apply(f, d)
   @test r isa CartesianGrid
-  @test r == CartesianGrid((10, 10, 4), cart(0, 0, 1), T.((1, 1, 1)))
+  @test r == CartesianGrid(cart(0, 0, 1), T.((1, 1, 1)), GridTopology(10, 10, 4))
 
   # ----------------
   # RECTILINEARGRID
@@ -2282,7 +2286,7 @@ end
   d = convert(RectilinearGrid, cartgrid(10, 10))
   r, c = TB.apply(f, d)
   @test r isa RectilinearGrid
-  @test r == convert(RectilinearGrid, CartesianGrid((10, 4), cart(0, 3), T.((1, 1))))
+  @test r == convert(RectilinearGrid, CartesianGrid(cart(0, 3), T.((1, 1)), GridTopology(10, 4)))
 end
 
 @testitem "Repair(0)" setup = [Setup] begin

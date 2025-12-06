@@ -22,7 +22,7 @@ RegularGrid
 
 ```@example meshes
 # 2D regular grid
-grid = RegularGrid((8, 8), Point(Polar(0, 0)), (1, π/4))
+grid = RegularGrid(Point(Polar(0, 0)), Point(Polar(8, 2π)), dims=(8, 8))
 
 viz(grid, showsegments = true)
 ```

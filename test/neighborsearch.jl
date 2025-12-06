@@ -1,5 +1,5 @@
 @testitem "BallSearch" setup = [Setup] begin
-  𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
+  𝒟 = CartesianGrid(T.((-0.5, -0.5)), T.((1.0, 1.0)), GridTopology(10, 10))
 
   s = BallSearch(𝒟, MetricBall(T(1)))
   n = search(cart(0, 0), s)
@@ -29,7 +29,7 @@
   @test Set(n) == Set([100, 99, 90])
 
   # non MinkowskiMetric example
-  𝒟 = CartesianGrid((360, 180), T.((0.0, -90.0)), T.((1.0, 1.0)))
+  𝒟 = CartesianGrid(T.((0.0, -90.0)), T.((1.0, 1.0)), GridTopology(360, 180))
   s = BallSearch(𝒟, MetricBall(T(150), Haversine(T(6371))))
   n = search(cart(0, 0), s)
   @test Set(n) == Set([32041, 32400, 32401, 32760])
@@ -39,14 +39,14 @@
   @test s isa BallSearch
 
   # latlon coodinates
-  𝒟 = RegularGrid((10, 10), latlon(0, 0), T.((1.0, 1.0)))
+  𝒟 = RegularGrid(latlon(0, 0), T.((1.0, 1.0)), GridTopology(10, 10))
   s = BallSearch(𝒟, MetricBall(T(3e5), Haversine()))
   n = search(latlon(0, 0), s)
   @test Set(n) == Set([1, 2, 3, 11, 12, 21])
 end
 
 @testitem "KNearestSearch" setup = [Setup] begin
-  𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
+  𝒟 = CartesianGrid(T.((-0.5, -0.5)), T.((1.0, 1.0)), GridTopology(10, 10))
   s = KNearestSearch(𝒟, 3)
   n = search(cart(0, 0), s)
   @test Set(n) == Set([1, 2, 11])
@@ -81,14 +81,14 @@ end
   @test s isa KNearestSearch
 
   # latlon coodinates
-  𝒟 = RegularGrid((10, 10), latlon(0, 0), T.((1.0, 1.0)))
+  𝒟 = RegularGrid(latlon(0, 0), T.((1.0, 1.0)), GridTopology(10, 10))
   s = KNearestSearch(𝒟, 3, metric=Haversine())
   n = search(latlon(0, 0), s)
   @test Set(n) == Set([1, 2, 11])
 end
 
 @testitem "KBallSearch" setup = [Setup] begin
-  𝒟 = CartesianGrid((10, 10), T.((-0.5, -0.5)), T.((1.0, 1.0)))
+  𝒟 = CartesianGrid(T.((-0.5, -0.5)), T.((1.0, 1.0)), GridTopology(10, 10))
 
   s = KBallSearch(𝒟, 10, MetricBall(T(100)))
   n = search(cart(5, 5), s)
@@ -143,7 +143,7 @@ end
   @test s isa KBallSearch
 
   # latlon coodinates
-  𝒟 = RegularGrid((10, 10), latlon(0, 0), T.((1.0, 1.0)))
+  𝒟 = RegularGrid(latlon(0, 0), T.((1.0, 1.0)), GridTopology(10, 10))
   s = KBallSearch(𝒟, 10, MetricBall(T(3e5), Haversine()))
   n = search(latlon(5, 5), s)
   @test length(n) == 10

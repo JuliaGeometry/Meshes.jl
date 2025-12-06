@@ -1,5 +1,5 @@
 @testitem "RegularGrid" setup = [Setup] begin
-  grid = RegularGrid((10, 20), merc(0, 0), T.((1, 1)))
+  grid = RegularGrid(merc(0, 0), T.((1, 1)), GridTopology(10, 20))
   @test embeddim(grid) == 2
   @test paramdim(grid) == 2
   @test crs(grid) <: Mercator
@@ -17,7 +17,7 @@
   @test grid[1, 1] == grid[1]
   @test grid[10, 20] == grid[200]
 
-  grid = RegularGrid((10, 20), latlon(0, 0), T.((1, 1)))
+  grid = RegularGrid(latlon(0, 0), T.((1, 1)), GridTopology(10, 20))
   @test embeddim(grid) == 3
   @test paramdim(grid) == 2
   @test crs(grid) <: LatLon
@@ -35,7 +35,7 @@
   @test grid[1, 1] == grid[1]
   @test grid[10, 20] == grid[200]
 
-  grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
+  grid = RegularGrid(Point(Polar(T(0), T(0))), T.((1, 1)), GridTopology(10, 20))
   @test embeddim(grid) == 2
   @test paramdim(grid) == 2
   @test crs(grid) <: Polar
@@ -53,7 +53,7 @@
   @test grid[1, 1] == grid[1]
   @test grid[10, 20] == grid[200]
 
-  grid = RegularGrid((10, 20, 30), Point(Cylindrical(T(0), T(0), T(0))), T.((1, 1, 1)))
+  grid = RegularGrid(Point(Cylindrical(T(0), T(0), T(0))), T.((1, 1, 1)), GridTopology(10, 20, 30))
   @test embeddim(grid) == 3
   @test paramdim(grid) == 3
   @test crs(grid) <: Cylindrical
@@ -97,30 +97,30 @@
   @test spacing(grid) == (T(10) * u"°", T(12) * u"°")
 
   # spacing unit and numtype
-  grid = RegularGrid((10, 20), Point(Polar(T(0) * u"cm", T(0) * u"rad")), (10.0 * u"mm", 1.0f0 * u"rad"))
+  grid = RegularGrid(Point(Polar(T(0) * u"cm", T(0) * u"rad")), (10.0 * u"mm", 1.0f0 * u"rad"), GridTopology(10, 20))
   @test unit.(spacing(grid)) == (u"cm", u"rad")
   @test Unitful.numtype.(spacing(grid)) == (T, T)
 
   # xyz & XYZ
-  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  grid = RegularGrid(latlon(0, 0), T.((1, 1)), GridTopology(10, 10))
   @test Meshes.xyz(grid) == (T.(0:10) * u"°", T.(0:10) * u"°")
   x = T.(0:10) * u"°"
   y = T.(0:10)' * u"°"
   @test Meshes.XYZ(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
-  grid = RegularGrid((10, 10), Point(Polar(T(0), T(0))), T.((1, 1)))
+  grid = RegularGrid(Point(Polar(T(0), T(0))), T.((1, 1)), GridTopology(10, 10))
   @test Meshes.xyz(grid) == (T.(0:10) * u"m", T.(0:10) * u"rad")
   x = T.(0:10) * u"m"
   y = T.(0:10)' * u"rad"
   @test Meshes.XYZ(grid) == (repeat(x, 1, 11), repeat(y, 11, 1))
 
   # indexing into a subgrid
-  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  grid = RegularGrid(latlon(0, 0), T.((1, 1)), GridTopology(10, 10))
   sub = grid[1:2, 1:2]
   @test size(sub) == (2, 2)
   @test spacing(sub) == spacing(grid)
   @test minimum(sub) == minimum(grid)
   @test maximum(sub) == latlon(2, 2)
-  grid = RegularGrid((10, 10), Point(Polar(T(0), T(0))), T.((1, 1)))
+  grid = RegularGrid(Point(Polar(T(0), T(0))), T.((1, 1)), GridTopology(10, 10))
   sub = grid[2:4, 3:7]
   @test size(sub) == (3, 5)
   @test spacing(sub) == spacing(grid)
@@ -128,11 +128,11 @@
   @test maximum(sub) == Point(Polar(T(4), T(7)))
 
   # vertex iteration
-  grid = RegularGrid((10, 10), cart(0, 0), T.((1, 1)))
+  grid = RegularGrid(cart(0, 0), T.((1, 1)), GridTopology(10, 10))
   vertextest(grid)
 
   # type stability
-  grid = RegularGrid((10, 20), Point(Polar(T(0), T(0))), T.((1, 1)))
+  grid = RegularGrid(Point(Polar(T(0), T(0))), T.((1, 1)), GridTopology(10, 20))
   @inferred vertex(grid, (1, 1))
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
@@ -140,16 +140,16 @@
   @inferred Meshes.XYZ(grid)
 
   # error: dimensions must be positive
-  @test_throws ArgumentError RegularGrid((-10, -10), latlon(0, 0), T.((1, 1)))
+  @test_throws ArgumentError RegularGrid(latlon(0, 0), T.((1, 1)), GridTopology(-10, -10))
   # error: spacing must be positive
-  @test_throws ArgumentError RegularGrid((10, 10), latlon(0, 0), T.((-1, -1)))
+  @test_throws ArgumentError RegularGrid(latlon(0, 0), T.((-1, -1)), GridTopology(10, 10))
   # error: regular spacing on `🌐` requires `LatLon` coordinates
   p = latlon(0, 0) |> Proj(Cartesian)
-  @test_throws ArgumentError RegularGrid((10, 10), p, T.((1, 1)))
+  @test_throws ArgumentError RegularGrid(p, T.((1, 1)), GridTopology(10, 10))
   # error: the number of dimensions must be equal to the number of coordinates
-  @test_throws ArgumentError RegularGrid((10, 10, 10), latlon(0, 0), T.((1, 1, 1)))
+  @test_throws ArgumentError RegularGrid(latlon(0, 0), T.((1, 1, 1)), GridTopology(10, 10, 10))
 
-  grid = RegularGrid((10, 10), latlon(0, 0), T.((1, 1)))
+  grid = RegularGrid(latlon(0, 0), T.((1, 1)), GridTopology(10, 10))
   if T === Float32
     @test sprint(show, MIME"text/plain"(), grid) == """
     10×10 RegularGrid
@@ -200,7 +200,7 @@ end
   @test grid[1, 1] == grid[1]
   @test grid[200, 100] == grid[20000]
 
-  grid = CartesianGrid((200, 100, 50), T.((0, 0, 0)), T.((1, 1, 1)))
+  grid = CartesianGrid(T.((0, 0, 0)), T.((1, 1, 1)), GridTopology(200, 100, 50))
   @test embeddim(grid) == 3
   @test crs(grid) <: Cartesian{NoDatum}
   @test Meshes.lentype(grid) == ℳ
@@ -237,7 +237,7 @@ end
   @test nelements(grid) == 200 * 100
   @test eltype(grid) <: Quadrangle
 
-  grid = CartesianGrid((20, 10, 5), T.((0, 0, 0)), T.((5, 5, 5)))
+  grid = CartesianGrid(T.((0, 0, 0)), T.((5, 5, 5)), GridTopology(20, 10, 5))
   @test embeddim(grid) == 3
   @test crs(grid) <: Cartesian{NoDatum}
   @test Meshes.lentype(grid) == ℳ
@@ -261,7 +261,7 @@ end
   @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
   # mixed units
-  grid = CartesianGrid((10, 10), (T(0) * u"m", T(0) * u"cm"), (T(100) * u"cm", T(1) * u"m"))
+  grid = CartesianGrid((T(0) * u"m", T(0) * u"cm"), (T(100) * u"cm", T(1) * u"m"), GridTopology(10, 10))
   @test unit(Meshes.lentype(grid)) == u"m"
   grid = CartesianGrid((T(0) * u"cm", T(0) * u"m"), (T(10) * u"m", T(1000) * u"cm"), (T(100) * u"cm", T(1) * u"m"))
   @test unit(Meshes.lentype(grid)) == u"m"
@@ -361,7 +361,7 @@ end
   @test Meshes.XYZ(g3D) == (repeat(x, 1, 11, 11), repeat(y, 11, 1, 11), repeat(z, 11, 11, 1))
 
   # units
-  grid = CartesianGrid((10, 10), cart(0, 0), (T(1) * u"m", T(1) * u"m"))
+  grid = CartesianGrid(cart(0, 0), (T(1) * u"m", T(1) * u"m"), GridTopology(10, 10))
   o = minimum(grid)
   s = spacing(grid)
   @test unit(Meshes.lentype(o)) == u"m"

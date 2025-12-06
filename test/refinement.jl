@@ -1,6 +1,6 @@
 @testitem "TriRefinement" setup = [Setup] begin
   # CRS propagation
-  grid = CartesianGrid((3, 3), merc(0, 0), (T(1), T(1)))
+  grid = CartesianGrid(merc(0, 0), merc(3, 3))
   rgrid = refine(grid, TriRefinement())
   @test crs(rgrid) === crs(grid)
 
