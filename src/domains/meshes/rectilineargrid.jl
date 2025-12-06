@@ -9,6 +9,13 @@
 A rectilinear grid with vertices at sorted coordinates `x`, `y`, `z`, ...,
 manifold `M` (default to `𝔼`) and CRS type `C` (default to `Cartesian`).
 
+    RectilinearGrid((x, y, z, ...), topology)
+    RectilinearGrid{M,C}((x, y, z, ...), topology)
+
+Alternatively, construct a rectilinear grid with `(x, y, z, ...)` coordinates
+and grid `topology`. This method is available for advanced use cases involving
+periodic dimensions. See [`GridTopology`](@ref) for more details.
+
 ## Examples
 
 Create a 2D rectilinear grid with regular spacing in `x` dimension
@@ -54,11 +61,16 @@ end
 
 RectilinearGrid{M,C}(xyz::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(xyz)
 
-function RectilinearGrid(xyz::NTuple{N,AbstractVector}) where {N}
+function RectilinearGrid(xyz::NTuple{N,AbstractVector}, topology::GridTopology{N}) where {N}
   L = promote_type(ntuple(i -> aslentype(eltype(xyz[i])), N)...)
   M = 𝔼{N}
   C = Cartesian{NoDatum,N,L}
-  RectilinearGrid{M,C}(xyz)
+  RectilinearGrid{M,C}(xyz, topology)
+end
+
+function RectilinearGrid(xyz::NTuple{N,AbstractVector}) where {N}
+  topology = GridTopology(length.(xyz) .- 1)
+  RectilinearGrid(xyz, topology)
 end
 
 RectilinearGrid(xyz::AbstractVector...) = RectilinearGrid(xyz)
