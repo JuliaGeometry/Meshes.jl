@@ -54,8 +54,7 @@ function apply(t::Shadow, g::CartesianGrid)
   sz = size(g)[dims]
   or = t(minimum(g))
   sp = spacing(g)[dims]
-  of = offset(g)[dims]
-  CartesianGrid(sz, or, sp, of), nothing
+  CartesianGrid(sz, or, sp), nothing
 end
 
 # -----------------

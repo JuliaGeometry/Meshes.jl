@@ -36,8 +36,7 @@ function applycoord(t::LengthUnit, g::RegularGrid)
   dims = size(g)
   orig = applycoord(t, minimum(g))
   spac = map(s -> applycoord(t, s), spacing(g))
-  offs = offset(g)
-  RegularGrid(dims, orig, spac, offs)
+  RegularGrid(dims, orig, spac)
 end
 
 applycoord(t::LengthUnit, g::RectilinearGrid) = TransformedGrid(g, t)

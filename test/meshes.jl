@@ -260,18 +260,6 @@ end
   )
   @test all(centroid(grid, i) == centroid(grid[i]) for i in 1:nelements(grid))
 
-  # constructor with offset
-  grid = CartesianGrid((10, 10), T.((1.0, 1.0)), T.((1.0, 1.0)), (2, 2))
-  @test embeddim(grid) == 2
-  @test crs(grid) <: Cartesian{NoDatum}
-  @test Meshes.lentype(grid) == ℳ
-  @test size(grid) == (10, 10)
-  @test minimum(grid) == cart(0.0, 0.0)
-  @test maximum(grid) == cart(10.0, 10.0)
-  @test spacing(grid) == (T(1) * u"m", T(1) * u"m")
-  @test nelements(grid) == 10 * 10
-  @test eltype(grid) <: Quadrangle
-
   # mixed units
   grid = CartesianGrid((10, 10), (T(0) * u"m", T(0) * u"cm"), (T(100) * u"cm", T(1) * u"m"))
   @test unit(Meshes.lentype(grid)) == u"m"
@@ -315,13 +303,6 @@ end
   @test maximum(sub) == cart(11, 8)
   @test_throws BoundsError grid[3:11, :]
 
-  # subgrid with comparable vertices of grid
-  grid = CartesianGrid((10, 10), cart(0.0, 0.0), T.((1.2, 1.2)))
-  sub = grid[2:4, 5:7]
-  @test sub == CartesianGrid((3, 3), cart(0.0, 0.0), T.((1.2, 1.2)), (0, -3))
-  ind = reshape(reshape(1:121, 11, 11)[2:5, 5:8], :)
-  @test vertices(grid)[ind] == vertices(sub)
-
   # subgrid from Cartesian ranges
   grid = cartgrid(10, 10)
   sub1 = grid[1:2, 4:6]
@@ -336,14 +317,6 @@ end
   @test eltype(grid) <: Quadrangle
   @test grid[1] == Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test grid[2] == Quadrangle(cart(1, 0), cart(2, 0), cart(2, 1), cart(1, 1))
-
-  # expand CartesianGrid with comparable vertices
-  grid = CartesianGrid((10, 10), cart(0.0, 0.0), T.((1.0, 1.0)))
-  left, right = (1, 1), (1, 1)
-  newdim = size(grid) .+ left .+ right
-  newoffset = offset(grid) .+ left
-  grid2 = CartesianGrid(newdim, minimum(grid), spacing(grid), newoffset)
-  @test issubset(vertices(grid), vertices(grid2))
 
   # GridTopology from CartesianGrid
   grid = cartgrid(5, 5)
