@@ -39,7 +39,7 @@ applycoord(::Translate, v::Vec) = v
 
 applycoord(t::Translate, g::RegularGrid) = TransformedGrid(g, t)
 
-applycoord(t::Translate, g::OrthoRegularGrid) = RegularGrid(size(g), applycoord(t, minimum(g)), spacing(g))
+applycoord(t::Translate, g::OrthoRegularGrid) = RegularGrid(applycoord(t, minimum(g)), spacing(g), topology(g))
 
 applycoord(t::Translate, g::RectilinearGrid) = TransformedGrid(g, t)
 

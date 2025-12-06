@@ -13,16 +13,17 @@ The number of dimensions must match the number of coordinates of the points.
 Alternatively, construct a regular grid from `min` point to `max` point
 by specifying the `spacing` for each dimension.
 
-    RegularGrid(dims, origin, spacing)
-
-Alternatively, construct a regular grid with dimensions `dims`, `origin` point,
-and `spacing` for each dimension.
-
     RegularGrid(dims)
     RegularGrid(dim₁, dim₂, ...)
 
 Alternatively, construct a regular grid with dimensions `dims = (dim₁, dim₂, ...)`,
 min point at `(0m, 0m, ...)` and spacing equal to `(1m, 1m, ...)`.
+
+    RegularGrid(origin, spacing, topology)
+
+Finally, construct a regular grid with `origin` point, `spacing` and grid `topology`.
+This method is available for advanced use cases involving periodic dimensions. See
+[`GridTopology`](@ref) for more details.
 
 ## Examples
 
@@ -68,41 +69,34 @@ function RegularGrid(
   RegularGrid{M,C,N,typeof(spac)}(origin, spac, topology)
 end
 
-function RegularGrid(dims::Dims{N}, origin::Point, spacing::NTuple{N,Number}) where {N}
-  if !all(>(0), dims)
-    throw(ArgumentError("dimensions must be positive"))
-  end
-  RegularGrid(origin, spacing, GridTopology(dims))
-end
-
-RegularGrid(dims::Dims{Dim}, origin::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
-  RegularGrid(dims, Point(origin), spacing)
+RegularGrid(origin::NTuple{N,Number}, spacing::NTuple{N,Number}, topology::GridTopology{N}) where {N} =
+  RegularGrid(Point(origin), spacing, topology)
 
 function RegularGrid(min::Point, max::Point, spacing::NTuple{N,Number}) where {N}
   _checkorigin(min)
   cmin, cmax = _minmaxcoords(min, max)
   spac = _spacing(min, spacing)
   dims = ceil.(Int, (cmax .- cmin) ./ spac)
-  RegularGrid(dims, min, spac)
+  RegularGrid(min, spac, GridTopology(dims))
 end
 
-RegularGrid(min::NTuple{Dim,Number}, max::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
+RegularGrid(min::NTuple{N,Number}, max::NTuple{N,Number}, spacing::NTuple{N,Number}) where {N} =
   RegularGrid(Point(min), Point(max), spacing)
 
 function RegularGrid(min::Point, max::Point; dims::Dims=ntuple(i -> 100, CoordRefSystems.ncoords(crs(min))))
   _checkorigin(min)
   cmin, cmax = _minmaxcoords(min, max)
-  spacing = (cmax .- cmin) ./ dims
-  RegularGrid(dims, min, spacing)
+  spac = (cmax .- cmin) ./ dims
+  RegularGrid(min, spac, GridTopology(dims))
 end
 
-RegularGrid(min::NTuple{Dim,Number}, max::NTuple{Dim,Number}; dims::Dims{Dim}=ntuple(i -> 100, Dim)) where {Dim} =
+RegularGrid(min::NTuple{N,Number}, max::NTuple{N,Number}; dims::Dims{N}=ntuple(i -> 100, N)) where {N} =
   RegularGrid(Point(min), Point(max); dims)
 
-function RegularGrid(dims::Dims{Dim}) where {Dim}
-  origin = ntuple(i -> 0.0, Dim)
-  spacing = ntuple(i -> 1.0, Dim)
-  RegularGrid(dims, origin, spacing)
+function RegularGrid(dims::Dims{N}) where {N}
+  orig = ntuple(i -> 0.0, N)
+  spac = ntuple(i -> 1.0, N)
+  RegularGrid(orig, spac, GridTopology(dims))
 end
 
 RegularGrid(dims::Int...) = RegularGrid(dims)
@@ -133,10 +127,10 @@ XYZ(g::RegularGrid) = XYZ(xyz(g))
 
 function Base.getindex(g::RegularGrid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)
-  dims = size(I)
   orig = vertex(g, Tuple(first(I)))
   spac = spacing(g)
-  RegularGrid(dims, orig, spac)
+  topo = GridTopology(size(I), isperiodic(topology(g)))
+  RegularGrid(orig, spac, topo)
 end
 
 function ==(g₁::RegularGrid, g₂::RegularGrid)

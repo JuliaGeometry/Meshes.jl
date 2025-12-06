@@ -21,6 +21,9 @@ struct GridTopology{D} <: Topology
   open::NTuple{D,Bool}
 
   function GridTopology{D}(dims, periodic) where {D}
+    if !all(>(0), dims)
+      throw(ArgumentError("dimensions must be positive"))
+    end
     new(dims, .!periodic)
   end
 end

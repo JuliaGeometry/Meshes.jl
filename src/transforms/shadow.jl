@@ -51,10 +51,12 @@ apply(::Shadow, ::Plane) = throw(ArgumentError("Shadow transform doesn't yet sup
 
 function apply(t::Shadow, g::CartesianGrid)
   dims = _sort(t.dims)
-  sz = size(g)[dims]
   or = t(minimum(g))
   sp = spacing(g)[dims]
-  CartesianGrid(sz, or, sp), nothing
+  sz = size(g)[dims]
+  ip = isperiodic(g)[dims]
+  tp = GridTopology(sz , ip)
+  CartesianGrid(or, sp, tp), nothing
 end
 
 # -----------------

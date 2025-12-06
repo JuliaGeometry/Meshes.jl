@@ -88,7 +88,7 @@ cartgrid(T::Type, dims...) = cartgrid(T, dims)
 function cartgrid(T::Type, dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> T(0.0), Dim)
   spacing = ntuple(i -> T(1.0), Dim)
-  CartesianGrid(dims, origin, spacing)
+  CartesianGrid(origin, spacing, GridTopology(dims))
 end
 
 randcart(T, Dim, n) = [Point(ntuple(i -> rand(T), Dim)) for _ in 1:n]
