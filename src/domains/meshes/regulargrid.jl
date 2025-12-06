@@ -27,10 +27,22 @@ This method is available for advanced use cases involving periodic dimensions. S
 
 ## Examples
 
+Create a 1D grid from -1.0 to 1.0 with 100 segments:
+
 ```julia
-julia> RegularGrid((-1.0,), (1.0,), dims=(100,)) # 1D grid with 100 segments
-julia> RegularGrid((0.0, 0.0), (10.0, 20.0), (1.0, 2.0)) # 2D grid with tall quadrangles
-julia> RegularGrid(100, 100, 50) # 3D grid with 100x100x50 hexahedrons
+julia> RegularGrid((-1.0,), (1.0,), dims=(100,))
+```
+
+Create a 2D grid with quadrangles of size (1.0, 2.0):
+
+```julia
+julia> RegularGrid((0.0, 0.0), (10.0, 20.0), (1.0, 2.0))
+```
+
+Create a 3D grid with 100x100x50 hexahedra:
+
+```julia
+julia> RegularGrid(100, 100, 50)
 ```
 
 See also [`CartesianGrid`](@ref).

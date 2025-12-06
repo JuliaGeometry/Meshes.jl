@@ -9,6 +9,13 @@
 A structured grid with vertices at sorted coordinates `X`, `Y`, `Z`, ...,
 manifold `M` (default to `𝔼`) and CRS type `C` (default to `Cartesian`).
 
+    StructuredGrid((X, Y, Z, ...), topology)
+    StructuredGrid{M,C}((X, Y, Z, ...), topology)
+
+Alternatively, construct a structured grid with `(X, Y, Z, ...)` coordinates
+and grid `topology`. This method is available for advanced use cases involving
+periodic dimensions. See [`GridTopology`](@ref) for more details.
+
 ## Examples
 
 Create a 2D structured grid with regular spacing in `x` dimension
@@ -48,30 +55,24 @@ function StructuredGrid{M,C}(XYZ::NTuple{N,AbstractArray}, topology::GridTopolog
 end
 
 function StructuredGrid{M,C}(XYZ::NTuple{N,AbstractArray}) where {M<:Manifold,C<:CRS,N}
-  if !allequal(size(X) for X in XYZ)
-    throw(ArgumentError("all coordinate arrays must be the same size"))
-  end
-
-  nd = ndims(first(XYZ))
-
-  if nd ≠ N
-    throw(ArgumentError("""
-    A $N-dimensional structured grid requires coordinate arrays with $N dimensions.
-    The provided coordinate arrays have $nd dimensions.
-    """))
-  end
-
+  _assertXYZ(XYZ, N)
   topology = GridTopology(size(first(XYZ)) .- 1)
   StructuredGrid{M,C}(XYZ, topology)
 end
 
 StructuredGrid{M,C}(XYZ::AbstractArray...) where {M<:Manifold,C<:CRS} = StructuredGrid{M,C}(XYZ)
 
-function StructuredGrid(XYZ::NTuple{N,AbstractArray}) where {N}
+function StructuredGrid(XYZ::NTuple{N,AbstractArray}, topology::GridTopology{N}) where {N}
   L = promote_type(ntuple(i -> aslentype(eltype(XYZ[i])), N)...)
   M = 𝔼{N}
   C = Cartesian{NoDatum,N,L}
-  StructuredGrid{M,C}(XYZ)
+  StructuredGrid{M,C}(XYZ, topology)
+end
+
+function StructuredGrid(XYZ::NTuple{N,AbstractArray}) where {N}
+  _assertXYZ(XYZ, N)
+  topology = GridTopology(size(first(XYZ)) .- 1)
+  StructuredGrid(XYZ, topology)
 end
 
 StructuredGrid(XYZ::AbstractArray...) = StructuredGrid(XYZ)
@@ -98,4 +99,19 @@ end
 function Base.summary(io::IO, g::StructuredGrid)
   join(io, size(g), "×")
   print(io, " StructuredGrid")
+end
+
+function _assertXYZ(XYZ, N)
+  if !allequal(size(X) for X in XYZ)
+    throw(ArgumentError("all coordinate arrays must have the same size"))
+  end
+
+  nd = ndims(first(XYZ))
+
+  if N ≠ nd
+    throw(ArgumentError("""
+    A $N-dimensional structured grid requires coordinate arrays with $N dimensions.
+    The provided coordinate arrays have $nd dimensions.
+    """))
+  end
 end
