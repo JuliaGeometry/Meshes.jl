@@ -13,10 +13,10 @@ The number of dimensions must match the number of coordinates of the points.
 Alternatively, construct a regular grid from `start` point to `finish` point
 by specifying the `spacing` for each dimension.
 
-    RegularGrid(dims, origin, spacing, offset=(1, 1, ...))
+    RegularGrid(dims, origin, spacing)
 
 Alternatively, construct a regular grid with dimensions `dims`, lower left
-corner of `offset` element at `origin` point, and `spacing` for each dimension.
+corner at `origin` point, and `spacing` for each dimension.
 
     RegularGrid(dims)
     RegularGrid(dim₁, dim₂, ...)
@@ -50,21 +50,19 @@ See also [`CartesianGrid`](@ref).
 struct RegularGrid{M<:Manifold,C<:CRS,N,S<:NTuple{N,Quantity}} <: Grid{M,C,N}
   origin::Point{M,C}
   spacing::S
-  offset::Dims{N}
   topology::GridTopology{N}
 
-  function RegularGrid{M,C,N,S}(origin, spacing, offset, topology) where {M<:Manifold,C<:CRS,N,S<:NTuple{N,Quantity}}
+  function RegularGrid{M,C,N,S}(origin, spacing, topology) where {M<:Manifold,C<:CRS,N,S<:NTuple{N,Quantity}}
     if !all(s -> s > zero(s), spacing)
       throw(ArgumentError("spacing must be positive"))
     end
-    new(origin, spacing, offset, topology)
+    new(origin, spacing, topology)
   end
 end
 
 function RegularGrid(
   origin::Point{M,C},
   spacing::NTuple{N,Number},
-  offset::Dims{N},
   topology::GridTopology{N}
 ) where {M<:Manifold,C<:CRS,N}
   _checkorigin(origin)
@@ -80,27 +78,18 @@ function RegularGrid(
 
   spac = _spacing(origin, spacing)
 
-  RegularGrid{M,C,N,typeof(spac)}(origin, spac, offset, topology)
+  RegularGrid{M,C,N,typeof(spac)}(origin, spac, topology)
 end
 
-function RegularGrid(
-  dims::Dims{N},
-  origin::Point,
-  spacing::NTuple{N,Number},
-  offset::Dims{N}=ntuple(i -> 1, N)
-) where {N}
+function RegularGrid(dims::Dims{N}, origin::Point, spacing::NTuple{N,Number}) where {N}
   if !all(>(0), dims)
     throw(ArgumentError("dimensions must be positive"))
   end
-  RegularGrid(origin, spacing, offset, GridTopology(dims))
+  RegularGrid(origin, spacing, GridTopology(dims))
 end
 
-RegularGrid(
-  dims::Dims{Dim},
-  origin::NTuple{Dim,Number},
-  spacing::NTuple{Dim,Number},
-  offset::Dims{Dim}=ntuple(i -> 1, Dim)
-) where {Dim} = RegularGrid(dims, Point(origin), spacing, offset)
+RegularGrid(dims::Dims{Dim}, origin::NTuple{Dim,Number}, spacing::NTuple{Dim,Number}) where {Dim} =
+  RegularGrid(dims, Point(origin), spacing)
 
 function RegularGrid(start::Point, finish::Point, spacing::NTuple{N,Number}) where {N}
   _checkorigin(start)
@@ -126,20 +115,17 @@ RegularGrid(start::NTuple{Dim,Number}, finish::NTuple{Dim,Number}; dims::Dims{Di
 function RegularGrid(dims::Dims{Dim}) where {Dim}
   origin = ntuple(i -> 0.0, Dim)
   spacing = ntuple(i -> 1.0, Dim)
-  offset = ntuple(i -> 1, Dim)
-  RegularGrid(dims, origin, spacing, offset)
+  RegularGrid(dims, origin, spacing)
 end
 
 RegularGrid(dims::Int...) = RegularGrid(dims)
 
 spacing(g::RegularGrid) = g.spacing
 
-offset(g::RegularGrid) = g.offset
-
 function vertex(g::RegularGrid, ijk::Dims)
   ctor = CoordRefSystems.constructor(crs(g))
   orig = CoordRefSystems.values(coords(g.origin))
-  vals = orig .+ (ijk .- g.offset) .* g.spacing
+  vals = orig .+ (ijk .- 1) .* g.spacing
   Point(ctor(vals...))
 end
 
@@ -161,14 +147,15 @@ XYZ(g::RegularGrid) = XYZ(xyz(g))
 function Base.getindex(g::RegularGrid, I::CartesianIndices)
   @boundscheck _checkbounds(g, I)
   dims = size(I)
-  offset = g.offset .- Tuple(first(I)) .+ 1
-  RegularGrid(dims, g.origin, g.spacing, offset)
+  orig = vertex(g, Tuple(first(I)))
+  spac = spacing(g)
+  RegularGrid(dims, orig, spac)
 end
 
 function ==(g₁::RegularGrid, g₂::RegularGrid)
   orig₁ = CoordRefSystems.values(coords(g₁.origin))
   orig₂ = CoordRefSystems.values(coords(g₂.origin))
-  g₁.topology == g₂.topology && g₁.spacing == g₂.spacing && orig₁ .- orig₂ == (g₁.offset .- g₂.offset) .* g₁.spacing
+  orig₁ == orig₂ && g₁.spacing == g₂.spacing && g₁.topology == g₂.topology
 end
 
 # -----------

@@ -76,8 +76,7 @@ function applycoord(t::Scale, g::RegularGrid)
   dims = size(g)
   orig = applycoord(t, minimum(g))
   spac = t.factors .* spacing(g)
-  offs = offset(g)
-  RegularGrid(dims, orig, spac, offs)
+  RegularGrid(dims, orig, spac)
 end
 
 applycoord(t::Scale, g::RectilinearGrid) =
