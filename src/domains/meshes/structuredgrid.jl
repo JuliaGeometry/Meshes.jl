@@ -63,7 +63,7 @@ end
 StructuredGrid{M,C}(XYZ::AbstractArray...) where {M<:Manifold,C<:CRS} = StructuredGrid{M,C}(XYZ)
 
 function StructuredGrid(XYZ::NTuple{N,AbstractArray}, topology::GridTopology{N}) where {N}
-  L = promote_type(ntuple(i -> aslentype(eltype(XYZ[i])), N)...)
+  L = promote_type(ntuple(i -> aslentype(float(eltype(XYZ[i]))), N)...)
   M = 𝔼{N}
   C = Cartesian{NoDatum,N,L}
   StructuredGrid{M,C}(XYZ, topology)
