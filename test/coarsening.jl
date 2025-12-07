@@ -47,20 +47,20 @@
   tfgrid = TransformedGrid(grid, Identity())
   @test size(coarsen(tfgrid, RegularCoarsening(7, 5, 3))) == (2, 4, 8)
 
+  # preserve topology
+  topo = GridTopology((100, 100), (true, false))
+  ttopo = GridTopology((50, 50), (true, false))
+  grid = CartesianGrid(cart(0, 0), T.((1, 1)), topo)
+  @test topology(coarsen(grid, RegularCoarsening(2))) == ttopo
+  rgrid = convert(RectilinearGrid, grid)
+  @test topology(coarsen(rgrid, RegularCoarsening(2))) == ttopo
+  sgrid = convert(StructuredGrid, grid)
+  @test topology(coarsen(sgrid, RegularCoarsening(2))) == ttopo
+  tfgrid = TransformedGrid(grid, Identity())
+  @test topology(coarsen(tfgrid, RegularCoarsening(2))) == ttopo
+
   # large 2D grid
   grid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(16200, 8100))
   tgrid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(203, 203))
   @test coarsen(grid, RegularCoarsening(80, 40)) == tgrid
-
-  # preserve topology
-  topo = GridTopology((100, 100), (true, false))
-  ctopo = GridTopology((50, 50), (true, false))
-  grid = CartesianGrid(cart(0, 0), T.((1, 1)), topo)
-  @test topology(coarsen(grid, RegularCoarsening(2))) == ctopo
-  rgrid = convert(RectilinearGrid, grid)
-  @test topology(coarsen(rgrid, RegularCoarsening(2))) == ctopo
-  sgrid = convert(StructuredGrid, grid)
-  @test topology(coarsen(sgrid, RegularCoarsening(2))) == ctopo
-  tfgrid = TransformedGrid(grid, Identity())
-  @test topology(coarsen(tfgrid, RegularCoarsening(2))) == ctopo
 end
