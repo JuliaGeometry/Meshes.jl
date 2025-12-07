@@ -22,24 +22,38 @@ RegularRefinement(factors::Vararg{Int,N}) where {N} = RegularRefinement(factors)
 
 function refine(grid::RegularGrid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
-  RegularGrid(minimum(grid), maximum(grid), dims=size(grid) .* factors)
+  dims = size(grid) .* factors
+  orig = minimum(grid)
+  cmin = CoordRefSystems.values(coords(minimum(grid)))
+  cmax = CoordRefSystems.values(coords(maximum(grid)))
+  spac = (cmax .- cmin) ./ dims
+  topo = GridTopology(dims, isperiodic(grid))
+  RegularGrid(orig, spac, topo)
 end
 
 function refine(grid::RectilinearGrid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
   xyzₛ = xyz(grid)
   xyzₜ = ntuple(i -> _refinedims(xyzₛ[i], factors[i]), paramdim(grid))
-  RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ)
+  dims = length.(xyzₜ) .- 1
+  topo = GridTopology(dims, isperiodic(grid))
+  RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ, topo)
 end
 
 function refine(grid::OrthoStructuredGrid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
-  XYZ′ = _XYZ(grid, factors)
-  StructuredGrid{manifold(grid),crs(grid)}(XYZ′)
+  XYZₜ = _XYZ(grid, factors)
+  dims = size(first(XYZₜ)) .- 1
+  topo = GridTopology(dims, isperiodic(grid))
+  StructuredGrid{manifold(grid),crs(grid)}(XYZₜ, topo)
 end
 
 refine(grid::TransformedGrid, method::RegularRefinement) =
   TransformedGrid(refine(parent(grid), method), transform(grid))
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
 
 function _refinedims(x, f)
   x′ = mapreduce(vcat, 1:(length(x) - 1)) do i
