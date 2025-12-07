@@ -62,7 +62,7 @@ end
 RectilinearGrid{M,C}(xyz::AbstractVector...) where {M<:Manifold,C<:CRS} = RectilinearGrid{M,C}(xyz)
 
 function RectilinearGrid(xyz::NTuple{N,AbstractVector}, topology::GridTopology{N}) where {N}
-  L = promote_type(ntuple(i -> aslentype(eltype(xyz[i])), N)...)
+  L = promote_type(ntuple(i -> aslentype(float(eltype(xyz[i]))), N)...)
   M = 𝔼{N}
   C = Cartesian{NoDatum,N,L}
   RectilinearGrid{M,C}(xyz, topology)

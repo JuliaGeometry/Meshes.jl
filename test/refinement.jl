@@ -79,8 +79,8 @@ end
   @test refine(tfgrid, RegularRefinement(2)) == refine(grid, RegularRefinement(2))
 
   # 3D grids
-  grid = cartgrid(3, 3, 3)
-  tgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(6, 6, 6))
+  grid = cartgrid(10, 10, 10)
+  tgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(20, 20, 20))
   @test refine(grid, RegularRefinement(2)) == tgrid
   rgrid = convert(RectilinearGrid, grid)
   trgrid = convert(RectilinearGrid, tgrid)
@@ -90,6 +90,50 @@ end
   @test refine(sgrid, RegularRefinement(2)) == tsgrid
   tfgrid = TransformedGrid(grid, Identity())
   @test refine(tfgrid, RegularRefinement(2)) == refine(grid, RegularRefinement(2))
+
+  # non-multiple dimensions (2D grids)
+  grid = CartesianGrid(cart(0, 0), cart(13, 17), dims=(13, 17))
+  tgrid = CartesianGrid(cart(0, 0), cart(13, 17), dims=(65, 51))
+  @test refine(grid, RegularRefinement(5, 3)) == tgrid
+  rgrid = convert(RectilinearGrid, grid)
+  @test size(refine(rgrid, RegularRefinement(5, 3))) == (65, 51)
+  sgrid = convert(StructuredGrid, grid)
+  @test size(refine(sgrid, RegularRefinement(5, 3))) == (65, 51)
+  tfgrid = TransformedGrid(grid, Identity())
+  @test size(refine(tfgrid, RegularRefinement(5, 3))) == (65, 51)
+
+  # non-multiple dimensions (3D grids)
+  grid = CartesianGrid(cart(0, 0, 0), cart(13, 17, 23), dims=(13, 17, 23))
+  tgrid = CartesianGrid(cart(0, 0, 0), cart(13, 17, 23), dims=(91, 85, 69))
+  @test refine(grid, RegularRefinement(7, 5, 3)) == tgrid
+  rgrid = convert(RectilinearGrid, grid)
+  @test size(refine(rgrid, RegularRefinement(7, 5, 3))) == (91, 85, 69)
+  sgrid = convert(StructuredGrid, grid)
+  @test size(refine(sgrid, RegularRefinement(7, 5, 3))) == (91, 85, 69)
+  tfgrid = TransformedGrid(grid, Identity())
+  @test size(refine(tfgrid, RegularRefinement(7, 5, 3))) == (91, 85, 69)
+
+  # preserve topology
+  topo = GridTopology((50, 50), (true, false))
+  ttopo = GridTopology((100, 100), (true, false))
+  grid = CartesianGrid(cart(0, 0), T.((1, 1)), topo)
+  @test topology(refine(grid, RegularRefinement(2))) == ttopo
+  rgrid = convert(RectilinearGrid, grid)
+  @test topology(refine(rgrid, RegularRefinement(2))) == ttopo
+  sgrid = convert(StructuredGrid, grid)
+  @test topology(refine(sgrid, RegularRefinement(2))) == ttopo
+  tfgrid = TransformedGrid(grid, Identity())
+  @test topology(refine(tfgrid, RegularRefinement(2))) == ttopo
+
+  # large 2D grid
+  grid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(203, 203))
+  tgrid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(16240, 8120))
+  @test refine(grid, RegularRefinement(80, 40)) == tgrid
+
+  # LatLon grid
+  grid = RegularGrid(latlon(0, 0), latlon(45, 45), dims=(5, 5))
+  tgrid = RegularGrid(latlon(0, 0), latlon(45, 45), dims=(10, 10))
+  @test refine(grid, RegularRefinement(2)) == tgrid
 end
 
 @testitem "MaxLengthRefinement" setup = [Setup] begin
