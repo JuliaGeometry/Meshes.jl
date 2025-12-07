@@ -1,34 +1,34 @@
 @testitem "RegularCoarsening" setup = [Setup] begin
   # 2D grids
   grid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(20, 20))
-  cgrid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(10, 10))
-  @test coarsen(grid, RegularCoarsening(2)) == cgrid
+  tgrid = CartesianGrid(cart(0.0, 0.0), cart(10.0, 10.0), dims=(10, 10))
+  @test coarsen(grid, RegularCoarsening(2)) == tgrid
   rgrid = convert(RectilinearGrid, grid)
-  crgrid = convert(RectilinearGrid, cgrid)
+  crgrid = convert(RectilinearGrid, tgrid)
   @test coarsen(rgrid, RegularCoarsening(2)) == crgrid
   sgrid = convert(StructuredGrid, grid)
-  csgrid = convert(StructuredGrid, cgrid)
+  csgrid = convert(StructuredGrid, tgrid)
   @test coarsen(sgrid, RegularCoarsening(2)) == csgrid
   tfgrid = TransformedGrid(grid, Identity())
-  @test coarsen(tfgrid, RegularCoarsening(2)) == cgrid
+  @test coarsen(tfgrid, RegularCoarsening(2)) == tgrid
 
   # 3D grids
   grid = cartgrid(100, 100, 100)
-  cgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(50, 25, 20))
-  @test coarsen(grid, RegularCoarsening(2, 4, 5)) == cgrid
+  tgrid = CartesianGrid(minimum(grid), maximum(grid), dims=(50, 25, 20))
+  @test coarsen(grid, RegularCoarsening(2, 4, 5)) == tgrid
   rgrid = convert(RectilinearGrid, grid)
-  crgrid = convert(RectilinearGrid, cgrid)
+  crgrid = convert(RectilinearGrid, tgrid)
   @test coarsen(rgrid, RegularCoarsening(2, 4, 5)) == crgrid
   sgrid = convert(StructuredGrid, grid)
-  csgrid = convert(StructuredGrid, cgrid)
+  csgrid = convert(StructuredGrid, tgrid)
   @test coarsen(sgrid, RegularCoarsening(2, 4, 5)) == csgrid
   tfgrid = TransformedGrid(grid, Identity())
   @test coarsen(tfgrid, RegularCoarsening(2, 4, 5)) == coarsen(grid, RegularCoarsening(2, 4, 5))
 
   # non-multiple dimensions (2D grids)
   grid = CartesianGrid(cart(0, 0), cart(13, 17), dims=(13, 17))
-  cgrid = CartesianGrid(cart(0, 0), cart(13, 17), dims=(3, 6))
-  @test coarsen(grid, RegularCoarsening(5, 3)) == cgrid
+  tgrid = CartesianGrid(cart(0, 0), cart(13, 17), dims=(3, 6))
+  @test coarsen(grid, RegularCoarsening(5, 3)) == tgrid
   rgrid = convert(RectilinearGrid, grid)
   @test size(coarsen(rgrid, RegularCoarsening(5, 3))) == (3, 6)
   sgrid = convert(StructuredGrid, grid)
@@ -38,8 +38,8 @@
 
   # non-multiple dimensions (3D grids)
   grid = CartesianGrid(cart(0, 0, 0), cart(13, 17, 23), dims=(13, 17, 23))
-  cgrid = CartesianGrid(cart(0, 0, 0), cart(13, 17, 23), dims=(2, 4, 8))
-  @test coarsen(grid, RegularCoarsening(7, 5, 3)) == cgrid
+  tgrid = CartesianGrid(cart(0, 0, 0), cart(13, 17, 23), dims=(2, 4, 8))
+  @test coarsen(grid, RegularCoarsening(7, 5, 3)) == tgrid
   rgrid = convert(RectilinearGrid, grid)
   @test size(coarsen(rgrid, RegularCoarsening(7, 5, 3))) == (2, 4, 8)
   sgrid = convert(StructuredGrid, grid)
@@ -49,8 +49,8 @@
 
   # large 2D grid
   grid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(16200, 8100))
-  cgrid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(203, 203))
-  @test coarsen(grid, RegularCoarsening(80, 40)) == cgrid
+  tgrid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(203, 203))
+  @test coarsen(grid, RegularCoarsening(80, 40)) == tgrid
 
   # preserve topology
   topo = GridTopology((100, 100), (true, false))
