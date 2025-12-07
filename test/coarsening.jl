@@ -63,4 +63,9 @@
   grid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(16200, 8100))
   tgrid = CartesianGrid(cart(0, 0), cart(16200, 8100), dims=(203, 203))
   @test coarsen(grid, RegularCoarsening(80, 40)) == tgrid
+
+  # LatLon grid
+  grid = RegularGrid(latlon(0, 0), latlon(45, 45), dims=(10, 10))
+  tgrid = RegularGrid(latlon(0, 0), latlon(45, 45), dims=(5, 5))
+  @test coarsen(grid, RegularCoarsening(2)) == tgrid
 end

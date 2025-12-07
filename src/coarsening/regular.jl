@@ -20,11 +20,13 @@ end
 
 RegularCoarsening(factors::Vararg{Int,N}) where {N} = RegularCoarsening(factors)
 
-function coarsen(grid::OrthoRegularGrid, method::RegularCoarsening)
+function coarsen(grid::RegularGrid, method::RegularCoarsening)
   factors = fitdims(method.factors, paramdim(grid))
   dims = _coarsesize(grid, factors)
   orig = minimum(grid)
-  spac = Tuple((maximum(grid) - minimum(grid)) ./ dims)
+  cmin = CoordRefSystems.values(coords(minimum(grid)))
+  cmax = CoordRefSystems.values(coords(maximum(grid)))
+  spac = (cmax .- cmin) ./ dims
   topo = GridTopology(dims, isperiodic(grid))
   RegularGrid(orig, spac, topo)
 end
