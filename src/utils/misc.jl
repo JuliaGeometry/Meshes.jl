@@ -8,7 +8,7 @@
 Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
 function signarea(A::Point, B::Point, C::Point)
-  checkdim(A, 2)
+  assertion(embeddim(A) == 2, "points must be 2-dimensional")
   ((B - A) × (C - A)) / 2
 end
 
@@ -44,7 +44,7 @@ using the singular value decomposition (SVD).
 See <https://math.stackexchange.com/a/99317>.
 """
 function svdbasis(p::AbstractVector{<:Point})
-  checkdim(first(p), 3)
+  assertion(embeddim(first(p)) == 3, "points must be 3-dimensional")
   ℒ = lentype(eltype(p))
   X = stack(to, p)
   μ = sum(X, dims=2) / size(X, 2)
@@ -54,4 +54,39 @@ function svdbasis(p::AbstractVector{<:Point})
   v = Vec(U[:, 2]...)
   n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
   isnegative((u × v) ⋅ n) ? (v, u) : (u, v)
+end
+
+"""
+    approxsides(geometry)
+
+Approximate sides of the given `geometry`.
+"""
+function approxsides end
+
+approxsides(box::Box{𝔼{2}}) = approxsides(convert(Quadrangle, box))
+
+approxsides(box::Box{𝔼{3}}) = approxsides(convert(Hexahedron, box))
+
+approxsides(box::Box{<:🌐}) = approxsides(convert(Quadrangle, box))
+
+function approxsides(tri::Triangle)
+  A, B, C = vertices(tri)
+  AB = Segment(A, B)
+  BC = Segment(B, C)
+  measure(AB), measure(BC)
+end
+
+function approxsides(quad::Quadrangle)
+  A, B, C, _ = vertices(quad)
+  AB = Segment(A, B)
+  BC = Segment(B, C)
+  measure(AB), measure(BC)
+end
+
+function approxsides(hexa::Hexahedron)
+  A, B, C, _, E, _, _, _ = vertices(hexa)
+  AB = Segment(A, B)
+  BC = Segment(B, C)
+  AE = Segment(A, E)
+  measure(AB), measure(BC), measure(AE)
 end

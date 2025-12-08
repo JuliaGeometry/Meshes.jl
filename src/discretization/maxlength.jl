@@ -18,7 +18,7 @@ _discretize(geometry::Geometry, method::MaxLengthDiscretization) =
   refine(discretize(geometry), MaxLengthRefinement(method.length))
 
 function _discretize(box::Box, method::MaxLengthDiscretization)
-  sizes = ceil.(Int, _sides(box) ./ method.length)
+  sizes = ceil.(Int, approxsides(box) ./ method.length)
   discretize(box, RegularDiscretization(sizes))
 end
 
@@ -30,18 +30,12 @@ end
 _discretize(chain::Chain, method::MaxLengthDiscretization) =
   mapreduce(s -> _discretize(s, method), merge, segments(chain))
 
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
+function _discretize(quad::Quadrangle, method::MaxLengthDiscretization)
+  sizes = ceil.(Int, approxsides(quad) ./ method.length)
+  discretize(quad, RegularDiscretization(sizes))
+end
 
-_sides(box::Box{<:𝔼}) = sides(box)
-
-function _sides(box::Box{<:🌐})
-  A, B = extrema(box)
-  a = convert(LatLon, coords(A))
-  b = convert(LatLon, coords(B))
-  P = withcrs(box, (a.lat, b.lon), LatLon)
-  AP = Segment(A, P)
-  PB = Segment(P, B)
-  (measure(AP), measure(PB))
+function _discretize(hexa::Hexahedron, method::MaxLengthDiscretization)
+  sizes = ceil.(Int, approxsides(hexa) ./ method.length)
+  discretize(hexa, RegularDiscretization(sizes))
 end

@@ -41,7 +41,7 @@ function coarsen(grid::RectilinearGrid, method::RegularCoarsening)
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ, topo)
 end
 
-function coarsen(grid::StructuredGrid, method::RegularCoarsening)
+function coarsen(grid::Grid, method::RegularCoarsening)
   factors = fitdims(method.factors, paramdim(grid))
   inds = _coarseinds(grid, factors)
   XYZₛ = XYZ(grid)

@@ -15,24 +15,15 @@ end
 
 MaxLengthRefinement(length) = MaxLengthRefinement(aslen(length))
 
-refine(grid::OrthoRegularGrid, method::MaxLengthRefinement) = _refinesides(grid, method)
+refine(grid::OrthoRegularGrid, method::MaxLengthRefinement) = _refinesides(grid, method.length)
 
-refine(grid::RectilinearGrid, method::MaxLengthRefinement) = _refinesides(grid, method)
+refine(grid::RectilinearGrid, method::MaxLengthRefinement) = _refinesides(grid, method.length)
 
-refine(grid::OrthoStructuredGrid, method::MaxLengthRefinement) = _refinesides(grid, method)
-
-function refine(grid::RegularGrid, method::MaxLengthRefinement)
-  iscoarse(e) = perimeter(e) > method.length * nvertices(e)
-  while iscoarse(first(grid)) || iscoarse(last(grid))
-    grid = refine(grid, RegularRefinement(2))
-  end
-  grid
-end
+refine(grid::OrthoStructuredGrid, method::MaxLengthRefinement) = _refinesides(grid, method.length)
 
 function refine(mesh::Mesh, method::MaxLengthRefinement)
-  iscoarse(e) = perimeter(e) > method.length * nvertices(e)
-  while any(iscoarse, mesh)
-    mesh = refine(mesh, TriSubdivision())
+  while _iscoarse(mesh, method.length)
+    mesh = refine(mesh)
   end
   mesh
 end
@@ -41,8 +32,14 @@ end
 # HELPER FUNCTIONS
 #------------------
 
-function _refinesides(grid, method)
+function _refinesides(grid, len)
   esize = sides(boundingbox(grid)) ./ size(grid)
-  factors = ceil.(Int, esize ./ method.length)
+  factors = ceil.(Int, esize ./ len)
   refine(grid, RegularRefinement(factors))
 end
+
+_iscoarse(mesh::Mesh, len) = any(g -> any(>(len), approxsides(g)), _coarsegeoms(mesh))
+
+_coarsegeoms(mesh::Mesh) = mesh
+
+_coarsegeoms(grid::Grid) = [grid[begin], grid[(begin + end) ÷ 2], grid[end]]

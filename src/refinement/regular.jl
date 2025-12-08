@@ -40,9 +40,9 @@ function refine(grid::RectilinearGrid, method::RegularRefinement)
   RectilinearGrid{manifold(grid),crs(grid)}(xyzₜ, topo)
 end
 
-function refine(grid::OrthoStructuredGrid, method::RegularRefinement)
+function refine(grid::Grid, method::RegularRefinement)
   factors = fitdims(method.factors, paramdim(grid))
-  XYZₜ = _XYZ(grid, factors)
+  XYZₜ = XYZ(grid, factors)
   dims = size(first(XYZₜ)) .- 1
   topo = GridTopology(dims, isperiodic(grid))
   StructuredGrid{manifold(grid),crs(grid)}(XYZₜ, topo)
@@ -61,64 +61,4 @@ function _refinedims(x, f)
   end
   push!(x′, last(x))
   x′
-end
-
-_XYZ(grid::OrthoStructuredGrid, factors::Dims) = _XYZ(grid, Val(paramdim(grid)), factors)
-
-function _XYZ(grid::OrthoStructuredGrid, ::Val{2}, factors::Dims{2})
-  T = numtype(lentype(grid))
-  fᵢ, fⱼ = factors
-  sᵢ, sⱼ = size(grid)
-  us = 0:T(1 / fᵢ):1
-  vs = 0:T(1 / fⱼ):1
-  catᵢ(A...) = cat(A..., dims=Val(1))
-  catⱼ(A...) = cat(A..., dims=Val(2))
-
-  mat(quad) = [to(quad(u, v)) for u in us, v in vs]
-  M = [mat(grid[i, j]) for i in 1:sᵢ, j in 1:sⱼ]
-
-  C = mapreduce(catⱼ, 1:sⱼ) do j
-    Mⱼ = mapreduce(catᵢ, 1:sᵢ) do i
-      Mᵢⱼ = M[i, j]
-      i == sᵢ ? Mᵢⱼ : Mᵢⱼ[begin:(end - 1), :]
-    end
-    j == sⱼ ? Mⱼ : Mⱼ[:, begin:(end - 1)]
-  end
-
-  X = getindex.(C, 1)
-  Y = getindex.(C, 2)
-
-  (X, Y)
-end
-
-function _XYZ(grid::OrthoStructuredGrid, ::Val{3}, factors::Dims{3})
-  T = numtype(lentype(grid))
-  fᵢ, fⱼ, fₖ = factors
-  sᵢ, sⱼ, sₖ = size(grid)
-  us = 0:T(1 / fᵢ):1
-  vs = 0:T(1 / fⱼ):1
-  ws = 0:T(1 / fₖ):1
-  catᵢ(A...) = cat(A..., dims=Val(1))
-  catⱼ(A...) = cat(A..., dims=Val(2))
-  catₖ(A...) = cat(A..., dims=Val(3))
-
-  mat(hex) = [to(hex(u, v, w)) for u in us, v in vs, w in ws]
-  M = [mat(grid[i, j, k]) for i in 1:sᵢ, j in 1:sⱼ, k in 1:sₖ]
-
-  C = mapreduce(catₖ, 1:sₖ) do k
-    Mₖ = mapreduce(catⱼ, 1:sⱼ) do j
-      Mⱼₖ = mapreduce(catᵢ, 1:sᵢ) do i
-        Mᵢⱼₖ = M[i, j, k]
-        i == sᵢ ? Mᵢⱼₖ : Mᵢⱼₖ[begin:(end - 1), :, :]
-      end
-      j == sⱼ ? Mⱼₖ : Mⱼₖ[:, begin:(end - 1), :]
-    end
-    k == sₖ ? Mₖ : Mₖ[:, :, begin:(end - 1)]
-  end
-
-  X = getindex.(C, 1)
-  Y = getindex.(C, 2)
-  Z = getindex.(C, 3)
-
-  (X, Y, Z)
 end
