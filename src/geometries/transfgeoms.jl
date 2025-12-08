@@ -93,13 +93,13 @@ prettyname(g::TransformedGeometry) = "Transformed$(prettyname(g.geometry))"
 # -----------------
 
 function _isequal(g₁, g₂)
-  ps₁ = sort(boundarypoints(g₁))
-  ps₂ = sort(boundarypoints(g₂))
+  ps₁ = boundarypoints(g₁)
+  ps₂ = boundarypoints(g₂)
   length(ps₁) == length(ps₂) && all(p₁ == p₂ for (p₁, p₂) in zip(ps₁, ps₂))
 end
 
 function _isapprox(g₁, g₂; kwargs...)
-  ps₁ = sort(boundarypoints(g₁))
-  ps₂ = sort(boundarypoints(g₂))
+  ps₁ = boundarypoints(g₁)
+  ps₂ = boundarypoints(g₂)
   length(ps₁) == length(ps₂) && all(isapprox(p₁, p₂; atol, kwargs...) for (p₁, p₂) in zip(ps₁, ps₂))
 end
