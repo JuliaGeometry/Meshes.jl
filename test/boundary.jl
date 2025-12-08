@@ -257,7 +257,7 @@
   @test m[4] isa Quadrangle
   @test m[5] isa Quadrangle
 
-  # multi
+  # multi-geometry
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
   hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
@@ -284,7 +284,7 @@
   @test nelements(mesh) == 12
   @test embedboundary(mbox) == boundary(mbox)
 
-  # transformed
+  # transformed geometry
   b = Box(cart(0, 0), cart(1, 1))
   t = Translate(T(1), T(2))
   tb = TransformedGeometry(b, t)
@@ -307,6 +307,14 @@
   t = Translate(T(1), T(2))
   tr = TransformedGeometry(r, t)
   @test embedboundary(tr) == tr
+
+  # transformed geometry with paramdim == 2 && embeddim == 3
+  b = Box(cart(0, 0), cart(1, 1))
+  t = ReinterpretCoords(Cartesian, LatLon)
+  tb = TransformedGeometry(b, t)
+  @test paramdim(tb) == 2
+  @test embeddim(tb) == 3
+  @test embedboundary(tb) == tb
 end
 
 @testitem "boundarypoints" setup = [Setup] begin

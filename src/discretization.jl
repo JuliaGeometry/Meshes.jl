@@ -78,6 +78,10 @@ _discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretiza
 
 _discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
 
+_discretize(quad::Quadrangle) = discretize(quad, RegularDiscretization(1))
+
+_discretize(hexa::Hexahedron) = discretize(hexa, RegularDiscretization(1))
+
 discretize(multi::Multi) = mapreduce(discretize, merge, parent(multi))
 
 function discretize(geometry::TransformedGeometry)
@@ -220,8 +224,6 @@ _simplexify(geometry::Geometry) = _simplexify(_discretize(geometry))
 
 _simplexify(box::Box) = discretize(box, ManualSimplexification())
 
-_simplexify(chain::Chain) = discretize(chain, ManualSimplexification())
-
 _simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
 _simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(50))
@@ -230,7 +232,11 @@ _simplexify(sphere::Sphere{𝔼{2}}) = discretize(sphere, RegularDiscretization(
 
 _simplexify(circle::Circle) = discretize(circle, RegularDiscretization(50))
 
+_simplexify(chain::Chain) = discretize(chain, ManualSimplexification())
+
 _simplexify(tri::Triangle) = discretize(tri, ManualSimplexification())
+
+_simplexify(quad::Quadrangle) = discretize(quad, ManualSimplexification())
 
 _simplexify(poly::Polygon) = discretize(poly, nvertices(poly) > 5000 ? DelaunayTriangulation() : DehnTriangulation())
 
