@@ -224,6 +224,7 @@ function boundary(g::TransformedGeometry)
 end
 
 function embedboundary(g::TransformedGeometry)
+  paramdim(g) < embeddim(g) && return g
   b = embedboundary(parent(g))
   t = transform(g)
   if b isa Geometry
