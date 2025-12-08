@@ -20,7 +20,7 @@ grids using regular refinement with a factor of two.
 """
 function refine end
 
-refine(mesh::Mesh) = refine(mesh, TriRefinement())
+refine(mesh::Mesh) = refine(mesh, QuadRefinement())
 
 refine(grid::Grid) = refine(grid, RegularRefinement(2))
 

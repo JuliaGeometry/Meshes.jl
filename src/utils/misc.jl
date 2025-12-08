@@ -55,38 +55,3 @@ function svdbasis(p::AbstractVector{<:Point})
   n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
   isnegative((u × v) ⋅ n) ? (v, u) : (u, v)
 end
-
-"""
-    approxsides(geometry)
-
-Approximate sides of the given `geometry`.
-"""
-function approxsides end
-
-approxsides(box::Box{𝔼{2}}) = approxsides(convert(Quadrangle, box))
-
-approxsides(box::Box{𝔼{3}}) = approxsides(convert(Hexahedron, box))
-
-approxsides(box::Box{<:🌐}) = approxsides(convert(Quadrangle, box))
-
-function approxsides(tri::Triangle)
-  A, B, C = vertices(tri)
-  AB = Segment(A, B)
-  BC = Segment(B, C)
-  measure(AB), measure(BC)
-end
-
-function approxsides(quad::Quadrangle)
-  A, B, C, _ = vertices(quad)
-  AB = Segment(A, B)
-  BC = Segment(B, C)
-  measure(AB), measure(BC)
-end
-
-function approxsides(hexa::Hexahedron)
-  A, B, C, _, E, _, _, _ = vertices(hexa)
-  AB = Segment(A, B)
-  BC = Segment(B, C)
-  AE = Segment(A, E)
-  measure(AB), measure(BC), measure(AE)
-end
