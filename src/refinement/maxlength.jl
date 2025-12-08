@@ -55,19 +55,19 @@ function _sides(tri::Triangle)
   measure(AB), measure(AC)
 end
 
+function _sides(quad::Quadrangle)
+  A, B, C, _ = vertices(quad)
+  AB = Segment(A, B)
+  BC = Segment(B, C)
+  measure(AB), measure(BC)
+end
+
 function _sides(tetra::Tetrahedron)
   A, B, C, D = vertices(tetra)
   AB = Segment(A, B)
   AC = Segment(A, C)
   AD = Segment(A, D)
   measure(AB), measure(AC), measure(AD)
-end
-
-function _sides(quad::Quadrangle)
-  A, B, C, _ = vertices(quad)
-  AB = Segment(A, B)
-  BC = Segment(B, C)
-  measure(AB), measure(BC)
 end
 
 function _sides(hexa::Hexahedron)
