@@ -26,7 +26,7 @@ atol(𝒜::Type{<:Area}) = atol(numtype(𝒜))^2 * unit(𝒜)
 atol(𝒱::Type{<:Vol}) = atol(numtype(𝒱))^3 * unit(𝒱)
 
 # maximum length for discretization of non-Euclidean geometries
-const MAXLEN = ScopedValue(1000u"km")
+const MAXLEN = ScopedValue(500u"km")
 
 """
 Maximum length used for discretization of non-Euclidean geometries.
