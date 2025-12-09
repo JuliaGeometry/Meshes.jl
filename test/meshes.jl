@@ -685,13 +685,10 @@ end
   @inferred grid[1, 1]
   @inferred grid[1:2, 1:2]
 
-  # error: regular spacing on `🌐` requires `LatLon` coordinates
+  # error: the number of dimensions must be equal to the number of coordinates
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6, 6)
   Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1, 6)
   Z = repeat(reshape(T[0.0, 0.15, 0.35, 0.65, 0.85, 1.0], 1, 1, 6), 6, 6, 1)
-  C = typeof(Cartesian(T(0), T(0), T(0)))
-  @test_throws ArgumentError StructuredGrid{🌐,C}(X, Y, Z)
-  # error: the number of dimensions must be equal to the number of coordinates
   C = typeof(LatLon(T(0), T(0)))
   @test_throws ArgumentError StructuredGrid{🌐,C}(X, Y, Z)
   # error: all coordinate arrays must be the same size

@@ -30,7 +30,10 @@ julia> RectilinearGrid(x, y)
 struct RectilinearGrid{M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}} <: Grid{M,C,N}
   xyz::X
   topology::GridTopology{N}
-  RectilinearGrid{M,C,N,X}(xyz, topology) where {M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}} = new(xyz, topology)
+
+  function RectilinearGrid{M,C,N,X}(xyz, topology) where {M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractVector}}
+    new(xyz, topology)
+  end
 end
 
 function RectilinearGrid{M,C}(xyz::NTuple{N,AbstractVector}, topology::GridTopology{N}) where {M<:Manifold,C<:CRS,N}
