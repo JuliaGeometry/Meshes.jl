@@ -321,7 +321,6 @@ include("discretization/held.jl")
 include("discretization/delaunay.jl")
 include("discretization/manual.jl")
 include("discretization/regular.jl")
-include("discretization/maxlength.jl")
 
 # -----------------
 # HELPER FUNCTIONS

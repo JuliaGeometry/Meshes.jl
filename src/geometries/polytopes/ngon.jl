@@ -70,7 +70,7 @@ innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 # ----------
 
 function normal(t::Triangle)
-  checkdim(t, 3)
+  assertion(embeddim(t) == 3, "triangle must be 3-dimensional")
   A, B, C = t.vertices
   unormalize(ucross((B - A), (C - A)))
 end

@@ -698,11 +698,6 @@ end
   X = rand(T, 6, 6)
   Y = rand(T, 5, 5)
   @test_throws ArgumentError StructuredGrid(X, Y)
-  # error: the number of array dimensions must be equal to the number of grid dimensions
-  X = rand(T, 6, 6)
-  Y = rand(T, 6, 6)
-  Z = rand(T, 6, 6)
-  @test_throws ArgumentError StructuredGrid(X, Y, Z)
 
   X = repeat(range(zero(T), stop=one(T), length=6), 1, 6)
   Y = repeat(T[0.0, 0.1, 0.3, 0.7, 0.9, 1.0]', 6, 1)

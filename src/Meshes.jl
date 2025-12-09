@@ -544,7 +544,6 @@ export
   DelaunayTriangulation,
   ManualSimplexification,
   RegularDiscretization,
-  MaxLengthDiscretization,
   discretize,
   discretizewithin,
   simplexify,

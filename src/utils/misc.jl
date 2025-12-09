@@ -8,7 +8,7 @@
 Compute signed area of triangle formed by points `A`, `B` and `C`.
 """
 function signarea(A::Point, B::Point, C::Point)
-  checkdim(A, 2)
+  assertion(embeddim(A) == 2, "points must be 2-dimensional")
   ((B - A) × (C - A)) / 2
 end
 
@@ -44,7 +44,7 @@ using the singular value decomposition (SVD).
 See <https://math.stackexchange.com/a/99317>.
 """
 function svdbasis(p::AbstractVector{<:Point})
-  checkdim(first(p), 3)
+  assertion(embeddim(first(p)) == 3, "points must be 3-dimensional")
   ℒ = lentype(eltype(p))
   X = stack(to, p)
   μ = sum(X, dims=2) / size(X, 2)

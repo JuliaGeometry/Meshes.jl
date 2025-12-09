@@ -152,7 +152,7 @@ end
   # general meshes
   mesh = convert(SimpleMesh, cartgrid(2, 2))
   rmesh = refine(mesh, MaxLengthRefinement(T(0.5) * u"m"))
-  @test all(e -> perimeter(e) / 3 ≤ T(0.5) * u"m", rmesh)
+  @test all(g -> perimeter(g) / 4 ≤ T(0.5) * u"m", rmesh)
 end
 
 @testitem "Refine" setup = [Setup] begin
@@ -165,6 +165,5 @@ end
   grid = cartgrid(10, 10)
   mesh = topoconvert(SimpleTopology, grid)
   rmesh = refine(mesh)
-  @test eltype(rmesh) <: Triangle
   @test nelements(rmesh) == 400
 end
