@@ -379,14 +379,24 @@ end
 end
 
 @testitem "Misc partition" setup = [Setup] begin
+  # Bm*Bn = Bm->Bn
   g = CartesianGrid(T.((-0.5, -0.5)), T.((1.0, 1.0)), GridTopology(100, 100))
   bm = BlockPartition(T(10), T(10))
   bn = BlockPartition(T(5), T(5))
   bmn = ProductPartition(bm, bn)
   hmn = HierarchicalPartition(bm, bn)
-
-  # Bm*Bn = Bm->Bn
   s1 = indices(partition(g, bmn))
   s2 = indices(partition(g, hmn))
   @test setify(s1) == setify(s2)
+
+  # show methods
+  g = cartgrid(10, 10)
+  p = partition(g, BlockPartition(5, 5))
+  @test sprint(show, p) == "4 Partition"
+  @test sprint(show, MIME("text/plain"), p) == """
+  4 Partition
+  ├─ 25 view(::CartesianGrid, [1, 2, 3, 4, ..., 42, 43, 44, 45])
+  ├─ 25 view(::CartesianGrid, [6, 7, 8, 9, ..., 47, 48, 49, 50])
+  ├─ 25 view(::CartesianGrid, [51, 52, 53, 54, ..., 92, 93, 94, 95])
+  └─ 25 view(::CartesianGrid, [56, 57, 58, 59, ..., 97, 98, 99, 100])"""
 end
