@@ -48,7 +48,7 @@ end
 # ---------------
 
 # fallback to visualization of discretized geometries
-function vizgset!(plot, M::Type, pdim::Val, edim::Val, geoms::ObservableVector{<:Geometry}, colors)
+function vizgset!(plot, ::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geometry}, colors)
   showsegments = plot[:showsegments]
   showpoints = plot[:showpoints]
 
@@ -98,20 +98,18 @@ function vizgset!(plot, ::Type, ::Val, ::Val, geoms::ObservableVector{<:Point}, 
   Makie.scatter!(plot, coords, color=colors, marker=pointmarker, markersize=pointsize, overdraw=true)
 end
 
-function vizgset!(plot, ::Type, ::Val, ::Val, geoms::ObservableVector{<:Ray}, colors)
+function vizgset!(plot, ::Type, ::Val, edim::Val, geoms::ObservableVector{<:Ray}, colors)
   segmentsize = plot[:segmentsize]
   showpoints = plot[:showpoints]
-
-  edim = embeddim(first(geoms[]))
 
   # visualize as built-in arrows
   orig = Makie.@lift [asmakie(ray(0)) for ray in $geoms]
   dirs = Makie.@lift [asmakie(ray(1) - ray(0)) for ray in $geoms]
-  if edim == 2
+  if edim === Val(2)
     tipwidth = Makie.@lift 5 * $segmentsize
     shaftwidth = Makie.@lift 0.2 * $tipwidth
     Makie.arrows2d!(plot, orig, dirs, color=colors, tipwidth=tipwidth, shaftwidth=shaftwidth)
-  elseif edim == 3
+  elseif edim === Val(3)
     tipradius = Makie.@lift 0.05 * $segmentsize
     shaftradius = Makie.@lift 0.5 * $tipradius
     Makie.arrows3d!(plot, orig, dirs, color=colors, tipradius=tipradius, shaftradius=shaftradius)
