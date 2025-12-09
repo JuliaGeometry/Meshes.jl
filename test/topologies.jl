@@ -359,6 +359,7 @@
   @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
   @test t[end] == connect((109, 110, 121, 120), Quadrangle)
   @test t[10] == connect((10, 11, 22, 21), Quadrangle)
+  @test t[1:3] == [t[i] for i in 1:3]
   @test length(t) == 100
   @test eltype(t) == Connectivity{Quadrangle,4}
   for e in t
@@ -514,6 +515,7 @@ end
   @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
   @test t[end] == connect((109, 110, 121, 120), Quadrangle)
   @test t[10] == connect((21, 10, 11, 22), Quadrangle)
+  @test t[1:3] == [t[i] for i in 1:3]
   @test length(t) == 100
   @test eltype(t) == Connectivity{Quadrangle,4}
   for e in t
@@ -581,6 +583,7 @@ end
   @test t[begin] == connect((1, 2, 13, 12), Quadrangle)
   @test t[end] == connect((109, 110, 121, 120), Quadrangle)
   @test t[10] == connect((10, 11, 22, 21), Quadrangle)
+  @test t[1:3] == [t[i] for i in 1:3]
   @test length(t) == 100
   @test eltype(t) == Connectivity{Quadrangle,4}
   for e in t
