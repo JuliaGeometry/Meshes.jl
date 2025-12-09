@@ -40,10 +40,6 @@ struct StructuredGrid{M<:Manifold,C<:CRS,N,X<:NTuple{N,AbstractArray},D,TP<:Grid
 end
 
 function StructuredGrid{M,C}(XYZ::NTuple{N,AbstractArray}, topology::GridTopology{D}) where {M<:Manifold,C<:CRS,N,D}
-  if M <: 🌐 && !(C <: LatLon)
-    throw(ArgumentError("structured grid on `🌐` requires `LatLon` coordinates"))
-  end
-
   T = CoordRefSystems.mactype(C)
   nc = CoordRefSystems.ncoords(C)
   us = CoordRefSystems.units(C)
