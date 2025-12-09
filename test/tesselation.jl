@@ -17,7 +17,7 @@
   @test crs(mesh) === crs(pset)
 
   # error: the number of coordinates of the points must be 2
-  pset = PointSet([cart(1, 1, 1),  cart(2, 2, 2)])
+  pset = PointSet([cart(1, 1, 1), cart(2, 2, 2)])
   @test_throws AssertionError tesselate(pset, DelaunayTesselation(StableRNG(2024)))
 end
 
