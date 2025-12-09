@@ -51,7 +51,7 @@ include("utils.jl")
 # viz recipes
 include("mesh.jl")
 include("grid.jl")
-include("geometryset.jl")
+include("geomset.jl")
 include("subdomain.jl")
 include("fallbacks.jl")
 
