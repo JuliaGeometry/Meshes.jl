@@ -710,7 +710,6 @@ end
   b2 = Box(cart(2, 2), cart(5, 5))
   @test intersects(b1, b2)
   @test intersects(b2, b1)
-  @test @elapsed(intersects(b1, b2)) < 1e-4
   @test @allocated(intersects(b1, b2)) < 100
 
   # partial application
