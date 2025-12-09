@@ -514,7 +514,7 @@ end
   grid = CartesianGrid(10)
   @test discretize(grid) == grid
 
-  mesh = SimpleMesh(randpoint2(3), connect.([(1, 2, 3)]))
+  mesh = SimpleMesh([cart(0, 0), cart(1, 0), cart(1, 1)], connect.([(1, 2, 3)]))
   @test discretize(mesh) == mesh
 end
 

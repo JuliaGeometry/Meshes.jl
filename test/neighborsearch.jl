@@ -35,7 +35,7 @@
   @test Set(n) == Set([32041, 32400, 32401, 32760])
 
   # construct from vector of geometries
-  s = BallSearch(randpoint2(100), MetricBall(T(1)))
+  s = BallSearch([cart(1, 1), cart(2, 2), cart(3, 3)], MetricBall(T(1)))
   @test s isa BallSearch
 
   # latlon coodinates
@@ -77,7 +77,7 @@ end
   @test Set(n) == Set([100, 99, 90])
 
   # construct from vector of geometries
-  s = KNearestSearch(randpoint2(100), 3)
+  s = KNearestSearch([cart(1, 1), cart(2, 2), cart(3, 3)], 3)
   @test s isa KNearestSearch
 
   # latlon coodinates
@@ -139,7 +139,7 @@ end
   @test Set(n) == Set([56, 66, 55, 57, 46])
 
   # construct from vector of geometries
-  s = KBallSearch(randpoint2(100), 10, MetricBall(T(1)))
+  s = KBallSearch([cart(1, 1), cart(2, 2), cart(3, 3)], 3, MetricBall(T(1)))
   @test s isa KBallSearch
 
   # latlon coodinates

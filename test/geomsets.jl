@@ -67,25 +67,25 @@
 end
 
 @testitem "PointSet" setup = [Setup] begin
-  pset = PointSet(randpoint1(100))
+  pset = PointSet([cart(1), cart(2), cart(3)])
   @test embeddim(pset) == 1
   @test crs(pset) <: Cartesian{NoDatum}
   @test Meshes.lentype(pset) === ℳ
-  @test nelements(pset) == 100
+  @test nelements(pset) == 3
   @test eltype(pset) <: Point
 
-  pset = PointSet(randpoint2(100))
+  pset = PointSet([cart(1, 1), cart(2, 2), cart(3, 3)])
   @test embeddim(pset) == 2
   @test crs(pset) <: Cartesian{NoDatum}
   @test Meshes.lentype(pset) === ℳ
-  @test nelements(pset) == 100
+  @test nelements(pset) == 3
   @test eltype(pset) <: Point
 
-  pset = PointSet(randpoint3(100))
+  pset = PointSet([cart(1, 1, 1), cart(2, 2, 2), cart(3, 3, 3)])
   @test embeddim(pset) == 3
   @test crs(pset) <: Cartesian{NoDatum}
   @test Meshes.lentype(pset) === ℳ
-  @test nelements(pset) == 100
+  @test nelements(pset) == 3
   @test eltype(pset) <: Point
 
   pset1 = PointSet([cart(1, 2, 3), cart(4, 5, 6)])

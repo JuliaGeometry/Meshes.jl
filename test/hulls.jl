@@ -1,13 +1,14 @@
 @testitem "Hulls" setup = [Setup] begin
   for method in [GrahamScan(), JarvisMarch()]
     # basic test
-    pts = randpoint2(100)
+    pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
     @test all(pts .∈ Ref(chul))
 
     # duplicated points
-    pts = [randpoint2(100); randpoint2(100)]
-    chul = hull(pts, method)
+    pts = [cart(rand(T), rand(T)) for _ in 1:10]
+    dup = [pts; pts]
+    chul = hull(dup, method)
     @test all(pts .∈ Ref(chul))
 
     # corner cases
