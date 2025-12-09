@@ -74,7 +74,7 @@ end
   @test nelements(pset) == 3
   @test eltype(pset) <: Point
 
-  pset = PointSet([cart(1,1), cart(2, 2),cart(3, 3)])
+  pset = PointSet([cart(1, 1), cart(2, 2), cart(3, 3)])
   @test embeddim(pset) == 2
   @test crs(pset) <: Cartesian{NoDatum}
   @test Meshes.lentype(pset) === ℳ
