@@ -1220,7 +1220,7 @@ end
   # ---------
 
   f = StdCoords()
-  d = view(PointSet(randpoint2(100)), 1:50)
+  d = PointSet([cart(rand(T), rand(T)) for _ in 1:10])
   r, c = TB.apply(f, d)
   @test all(sides(boundingbox(r)) .≤ oneunit(ℳ))
   @test TB.revert(f, r, c) ≈ d
@@ -2329,7 +2329,7 @@ end
 
 @testitem "Repair(7)" setup = [Setup] begin
   # mesh with inconsistent orientation
-  points = randpoint3(6)
+  points = [cart(rand(T), rand(T), rand(T)) for _ in 1:6]
   connec = connect.([(1, 2, 3), (3, 4, 2), (4, 3, 5), (6, 3, 1)])
   mesh = SimpleMesh(points, connec)
   rmesh = mesh |> Repair(7)

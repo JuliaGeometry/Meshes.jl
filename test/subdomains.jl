@@ -1,11 +1,11 @@
 @testitem "SubDomain" setup = [Setup] begin
-  pset = PointSet(randpoint3(100))
-  inds = rand(1:100, 3)
+  pset = PointSet([cart(1, 1, 1), cart(2, 2, 2), cart(3, 3, 3)])
+  inds = [3, 1]
   v = view(pset, inds)
-  @test nelements(v) == 3
+  @test nelements(v) == 2
   @test crs(v) <: Cartesian{NoDatum}
   @test Meshes.lentype(v) == ℳ
-  for i in 1:3
+  for i in 1:2
     p = pset[inds[i]]
     @test v[i] == p
     @test centroid(v, i) == p

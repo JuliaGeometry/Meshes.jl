@@ -98,9 +98,6 @@ cart(xs...) = cart(T, xs...)
 merc(xs...) = merc(T, xs...)
 latlon(xs...) = latlon(T, xs...)
 vector(xs...) = vector(T, xs...)
-randpoint1(n) = randcart(T, 1, n)
-randpoint2(n) = randcart(T, 2, n)
-randpoint3(n) = randcart(T, 3, n)
 
 # ----------------
 # OTHER FUNCTIONS
