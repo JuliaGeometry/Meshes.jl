@@ -572,7 +572,7 @@ end
   mesh = discretize(ring)
   @test topology(mesh) == GridTopology((12,), (true,))
   @test nvertices(mesh) == 12
-  @test nelements(mesh) == 12 
+  @test nelements(mesh) == 12
   @test eltype(mesh) <: Segment
   @test nvertices.(mesh) ⊆ [2]
 
