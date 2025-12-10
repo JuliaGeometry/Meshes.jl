@@ -68,12 +68,15 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
     verts = map(asmakie, eachvertex($mesh))
     elems = elements(topology($mesh))
 
+    # decide whether or not to reverse connectivity list
+    rfunc = crs($mesh) <: LatLon && orientation(first($mesh)) == CW ? reverse : identity
+
     # fan triangulation (assume convexity)
-    ntris = sum(e -> nvertices(pltype(e)) - 2, elems)
-    tris = Vector{GB.TriangleFace{Int}}(undef, ntris)
+    ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
+    tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     tind = 0
     for elem in elems
-      I = indices(elem)
+      I = rfunc(indices(elem))
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
@@ -89,16 +92,16 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
         # interpolation of colors
         tind = 0
         elem4tri = Dict{Int,Int}()
-        sizehint!(elem4tri, ntris)
+        sizehint!(elem4tri, ntri)
         for (eind, e) in enumerate(elems)
           for _ in 1:(nvertices(pltype(e)) - 2)
             tind += 1
             elem4tri[tind] = eind
           end
         end
-        nv = 3ntris
+        nv = 3ntri
         tverts = [verts[i] for tri in tris for i in tri]
-        telems = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntris)]
+        telems = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntri)]
         tcolors = map(1:nv) do i
           t = ceil(Int, i / 3)
           e = elem4tri[t]
