@@ -17,30 +17,30 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
-  # origin, spacing and size of grid
-  or = Makie.@lift ustrip.(to(minimum($grid)))
-  sp = Makie.@lift ustrip.(spacing($grid))
+  # size and extrema coordinates
   sz = Makie.@lift size($grid)
+  xy = Makie.@lift let
+    x, y = Meshes.xyz($grid)
+    xₛ, xₑ = extrema(ustrip.(x))
+    yₛ, yₑ = extrema(ustrip.(y))
+    (xₛ, xₑ), (yₛ, yₑ)
+  end
+  x = Makie.@lift $xy[1]
+  y = Makie.@lift $xy[2]
 
   if nc[] == nv[]
     # visualize as built-in image with interpolation
     C = Makie.@lift reshape($colorant, $sz .+ 1)
-    Makie.image!(plot, C, interpolate=true)
+    Makie.image!(plot, x, y, C, interpolate=true)
   else
     # visualize as built-in image without interpolation
     C = Makie.@lift $nc == 1 ? fill($colorant, $sz) : reshape($colorant, $sz)
-    Makie.image!(plot, C, interpolate=false)
+    Makie.image!(plot, x, y, C, interpolate=false)
   end
 
   if showsegments[]
     vizfacets!(plot)
   end
-
-  # adjust spacing and origin
-  spx, spy = sp[]
-  orx, ory = or[]
-  Makie.scale!(plot, spx, spy)
-  Makie.translate!(plot, orx, ory)
 end
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
@@ -85,9 +85,13 @@ function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
-  tup = Makie.@lift xysegments($xyz...)
-  x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+  xy = Makie.@lift let
+    x, y = Meshes.xyz($grid)
+    xysegments(ustrip.(x), ustrip.(y))
+  end
+  x = Makie.@lift $xy[1]
+  y = Makie.@lift $xy[2]
+
   Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
 end
 
@@ -96,8 +100,13 @@ function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
-  tup = Makie.@lift xyzsegments($xyz...)
-  x, y, z = Makie.@lift($tup[1]), Makie.@lift($tup[2]), Makie.@lift($tup[3])
+  xyz = Makie.@lift let
+    x, y, z = Meshes.xyz($grid)
+    xyzsegments(ustrip.(x), ustrip.(y), ustrip.(z))
+  end
+  x = Makie.@lift $xyz[1]
+  y = Makie.@lift $xyz[2]
+  z = Makie.@lift $xyz[3]
+
   Makie.lines!(plot, x, y, z, color=segmentcolor, linewidth=segmentsize)
 end
