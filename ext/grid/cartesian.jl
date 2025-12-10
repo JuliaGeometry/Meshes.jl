@@ -22,35 +22,25 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   sp = Makie.@lift ustrip.(spacing($grid))
   sz = Makie.@lift size($grid)
 
-  if nc[] == 1
-    # visualize bounding box with single color for maximum performance
-    bbox = Makie.@lift boundingbox($grid)
-    viz!(plot, bbox, color=colorant)
-
-    if showsegments[]
-      vizfacets!(plot)
-    end
+  if nc[] == nv[]
+    # visualize as built-in image with interpolation
+    C = Makie.@lift reshape($colorant, $sz .+ 1)
+    Makie.image!(plot, C, interpolate=true)
   else
-    if nc[] == nv[]
-      # visualize as built-in image with interpolation
-      C = Makie.@lift reshape($colorant, $sz .+ 1)
-      Makie.image!(plot, C, interpolate=true)
-    else
-      # visualize as built-in image without interpolation
-      C = Makie.@lift reshape($colorant, $sz)
-      Makie.image!(plot, C, interpolate=false)
-    end
-
-    if showsegments[]
-      vizfacets!(plot)
-    end
-
-    # adjust spacing and origin
-    spx, spy = sp[]
-    orx, ory = or[]
-    Makie.scale!(plot, spx, spy)
-    Makie.translate!(plot, orx, ory)
+    # visualize as built-in image without interpolation
+    C = Makie.@lift reshape($colorant, $sz)
+    Makie.image!(plot, C, interpolate=false)
   end
+
+  if showsegments[]
+    vizfacets!(plot)
+  end
+
+  # adjust spacing and origin
+  spx, spy = sp[]
+  orx, ory = or[]
+  Makie.scale!(plot, spx, spy)
+  Makie.translate!(plot, orx, ory)
 end
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
@@ -73,22 +63,16 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
   sp = Makie.@lift ustrip.(spacing($grid))
   xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
 
-  if nc[] == 1
-    # visualize bounding box with single color for maximum performance
-    bbox = Makie.@lift boundingbox($grid)
-    viz!(plot, bbox, color=colorant)
+  if nc[] == nv[]
+    error("not implemented")
   else
-    if nc[] == nv[]
-      error("not implemented")
-    else
-      # visualize as built-in meshscatter
-      xs = Makie.@lift $xyz[1][(begin + 1):end]
-      ys = Makie.@lift $xyz[2][(begin + 1):end]
-      zs = Makie.@lift $xyz[3][(begin + 1):end]
-      rect = Makie.@lift Makie.Rect3(-1 .* $sp, $sp)
-      coords = Makie.@lift [(x, y, z) for z in $zs for y in $ys for x in $xs]
-      Makie.meshscatter!(plot, coords, marker=rect, markersize=1, color=colorant)
-    end
+    # visualize as built-in meshscatter
+    xs = Makie.@lift $xyz[1][(begin + 1):end]
+    ys = Makie.@lift $xyz[2][(begin + 1):end]
+    zs = Makie.@lift $xyz[3][(begin + 1):end]
+    rect = Makie.@lift Makie.Rect3(-1 .* $sp, $sp)
+    coords = Makie.@lift [(x, y, z) for z in $zs for y in $ys for x in $xs]
+    Makie.meshscatter!(plot, coords, marker=rect, markersize=1, color=colorant)
   end
 
   if showsegments[]
