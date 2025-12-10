@@ -17,10 +17,8 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   nv = Makie.@lift nvertices($grid)
   nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
 
-  # size of grid
+  # size and extrema coordinates
   sz = Makie.@lift size($grid)
-
-  # grid extrema coordinates
   xy = Makie.@lift let
     x, y = Meshes.xyz($grid)
     xₛ, xₑ = extrema(ustrip.(x))
