@@ -480,6 +480,54 @@ end
 end
 
 @testitem "Discretize" setup = [Setup] begin
+  bezier = BezierCurve(cart(0, 0), cart(10, 0), cart(10, 10))
+  mesh = discretize(bezier)
+  @test topology(mesh) == GridTopology((50,), (false,))
+  @test nvertices(mesh) == 51
+  @test nelements(mesh) == 50
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
+  bezier = BezierCurve(latlon(0, 0), latlon(0, 10), latlon(10, 10))
+  mesh = discretize(bezier)
+  @test topology(mesh) == GridTopology((50,), (false,))
+  @test nvertices(mesh) == 51
+  @test nelements(mesh) == 50
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
+  bezier = BezierCurve(cart(0, 0), cart(10, 0), cart(10, 10), cart(0, 0))
+  mesh = discretize(bezier)
+  @test topology(mesh) == GridTopology((50,), (true,))
+  @test nvertices(mesh) == 50
+  @test nelements(mesh) == 50
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
+  bezier = BezierCurve(latlon(0, 0), latlon(0, 10), latlon(10, 10), latlon(0, 0))
+  mesh = discretize(bezier)
+  @test topology(mesh) == GridTopology((50,), (true,))
+  @test nvertices(mesh) == 50
+  @test nelements(mesh) == 50
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
+  curve = ParametrizedCurve(t -> Point(cos(t), sin(t), T(0.2) * t), (T(0), T(4π)))
+  mesh = discretize(curve)
+  @test topology(mesh) == GridTopology((50,), (false,))
+  @test nvertices(mesh) == 51
+  @test nelements(mesh) == 50
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
+  curve = ParametrizedCurve(t -> Point(cospi(2t), sinpi(2t)))
+  mesh = discretize(curve)
+  @test topology(mesh) == GridTopology((50,), (true,))
+  @test nvertices(mesh) == 50
+  @test nelements(mesh) == 50
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
   box = Box(cart(0, 0), cart(10, 10))
   mesh = discretize(box)
   @test topology(mesh) == GridTopology((1, 1), (false, false))
