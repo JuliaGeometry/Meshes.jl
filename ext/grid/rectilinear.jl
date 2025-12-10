@@ -23,21 +23,15 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     xs = Makie.@lift $xyz[1]
     ys = Makie.@lift $xyz[2]
 
-    if nc[] == 1
-      # visualize bounding box with single color for maximum performance
-      bbox = Makie.@lift boundingbox($grid)
-      viz!(plot, bbox, color=colorant)
+    if nc[] == nv[]
+      # visualize as a simple mesh so that
+      # colors can be specified at vertices
+      vizmesh!(plot)
     else
-      if nc[] == nv[]
-        # visualize as a simple mesh so that
-        # colors can be specified at vertices
-        vizmesh!(plot)
-      else
-        # visualize as built-in heatmap
-        sz = Makie.@lift size($grid)
-        C = Makie.@lift reshape($colorant, $sz)
-        Makie.heatmap!(plot, xs, ys, C)
-      end
+      # visualize as built-in heatmap
+      sz = Makie.@lift size($grid)
+      C = Makie.@lift $nc == 1 ? fill($colorant, $sz) : reshape($colorant, $sz)
+      Makie.heatmap!(plot, xs, ys, C)
     end
 
     if showsegments[]
