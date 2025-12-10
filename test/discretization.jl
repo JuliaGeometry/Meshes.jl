@@ -512,7 +512,7 @@ end
   @test eltype(mesh) <: Segment
   @test nvertices.(mesh) ⊆ [2]
 
-  curve = ParametrizedCurve(t -> Point(cos(t), sin(t), T(0.2)*t), (T(0), T(4π)))
+  curve = ParametrizedCurve(t -> Point(cos(t), sin(t), T(0.2) * t), (T(0), T(4π)))
   mesh = discretize(curve)
   @test topology(mesh) == GridTopology((50,), (false,))
   @test nvertices(mesh) == 51
