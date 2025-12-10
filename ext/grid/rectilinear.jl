@@ -30,7 +30,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     else
       # visualize as built-in heatmap
       sz = Makie.@lift size($grid)
-      C = Makie.@lift reshape($colorant, $sz)
+      C = Makie.@lift $nc == 1 ? fill($colorant, $sz) : reshape($colorant, $sz)
       Makie.heatmap!(plot, xs, ys, C)
     end
 
