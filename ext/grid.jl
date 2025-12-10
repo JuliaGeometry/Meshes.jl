@@ -16,11 +16,7 @@ end
 # IMPLEMENTATION
 # ---------------
 
-function vizgrid!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  vizgrid!(plot, 𝔼, pdim, edim)
-end
-
-vizgrid!(plot, M::Type{<:𝔼}, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
+vizgrid!(plot, M::Type, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
 function vizgridfallback!(plot, M, pdim, edim)
   grid = plot[:object]
@@ -42,7 +38,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   # plots with uv coords are always interpolated,
   # so it is only used in the case ncolor == nverts
   # or when there is a large number of elements
-  if pdim == Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
+  if pdim === Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
     # decide whether or not to reverse connectivity list
     rfunc = Makie.@lift crs($grid) <: LatLon && orientation(first($grid)) == CW ? reverse : identity
 
@@ -66,7 +62,7 @@ function vizgridfallback!(plot, M, pdim, edim)
     mesh = Makie.@lift GB.Mesh($verts, $quads, uv=$uv)
 
     # enable shading in 3D
-    shading = edim == Val(3)
+    shading = edim === Val(3)
 
     Makie.mesh!(plot, mesh, color=texture, shading=shading)
 

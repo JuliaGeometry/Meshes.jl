@@ -27,11 +27,7 @@ end
 # IMPLEMENTATION
 # ---------------
 
-function vizmesh!(plot, ::Type{<:🌐}, pdim::Val, edim::Val, mesh, colorant)
-  vizmesh!(plot, 𝔼, pdim, edim, mesh, colorant)
-end
-
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
+function vizmesh!(plot, ::Type, ::Val{1}, ::Val, mesh, colorant)
   segmentsize = plot[:segmentsize]
 
   colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
@@ -60,28 +56,27 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{1}, ::Val, mesh, colorant)
   Makie.lines!(plot, lcoords, color=lcolors, linewidth=segmentsize)
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
+function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
   showsegments = plot[:showsegments]
 
   # retrieve triangle mesh parameters
   tparams = Makie.@lift let
     # relevant settings
-    dim = embeddim($mesh)
+    edim = embeddim($mesh)
     nvert = nvertices($mesh)
     nelem = nelements($mesh)
-    verts = eachvertex($mesh)
-    topo = topology($mesh)
-    elems = elements(topo)
+    verts = map(asmakie, eachvertex($mesh))
+    elems = elements(topology($mesh))
 
-    # coordinates of vertices
-    coords = map(asmakie, verts)
+    # decide whether or not to reverse connectivity list
+    rfunc = crs($mesh) <: LatLon && orientation(first($mesh)) == CW ? reverse : identity
 
     # fan triangulation (assume convexity)
-    ntris = sum(e -> nvertices(pltype(e)) - 2, elems)
-    tris = Vector{GB.TriangleFace{Int}}(undef, ntris)
+    ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
+    tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     tind = 0
     for elem in elems
-      I = indices(elem)
+      I = rfunc(indices(elem))
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
@@ -97,16 +92,16 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
         # interpolation of colors
         tind = 0
         elem4tri = Dict{Int,Int}()
-        sizehint!(elem4tri, ntris)
+        sizehint!(elem4tri, ntri)
         for (eind, e) in enumerate(elems)
           for _ in 1:(nvertices(pltype(e)) - 2)
             tind += 1
             elem4tri[tind] = eind
           end
         end
-        nv = 3ntris
-        tcoords = [coords[i] for tri in tris for i in tri]
-        tconnec = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntris)]
+        nv = 3ntri
+        tverts = [verts[i] for tri in tris for i in tri]
+        telems = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntri)]
         tcolors = map(1:nv) do i
           t = ceil(Int, i / 3)
           e = elem4tri[t]
@@ -118,8 +113,8 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
         # because the triangulation above
         # does not change the vertices in
         # the original polygonal mesh
-        tcoords = coords
-        tconnec = tris
+        tverts = verts
+        telems = tris
         tcolors = $colorant
       else
         throw(ArgumentError("Provided $ncolor colors but the mesh has
@@ -127,25 +122,25 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
       end
     else # single color
       # nothing needs to be done
-      tcoords = coords
-      tconnec = tris
+      tverts = verts
+      telems = tris
       tcolors = $colorant
     end
 
     # enable shading in 3D
-    tshading = dim == 3
+    tshading = edim == 3
 
-    tcoords, tconnec, tcolors, tshading
+    tverts, telems, tcolors, tshading
   end
 
   # unpack observable of parameters
-  tcoords = Makie.@lift $tparams[1]
-  tconnec = Makie.@lift $tparams[2]
+  tverts = Makie.@lift $tparams[1]
+  telems = Makie.@lift $tparams[2]
   tcolors = Makie.@lift $tparams[3]
   tshading = Makie.@lift $tparams[4]
 
   # Makie's triangle mesh
-  mkemesh = Makie.@lift GB.Mesh($tcoords, $tconnec)
+  mkemesh = Makie.@lift GB.Mesh($tverts, $telems)
 
   # main visualization
   Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
@@ -155,7 +150,7 @@ function vizmesh!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val, mesh, colorant)
   end
 end
 
-function vizmesh!(plot, ::Type{<:𝔼}, ::Val{3}, ::Val, mesh, colorant)
+function vizmesh!(plot, ::Type, ::Val{3}, ::Val, mesh, colorant)
   meshes = Makie.@lift let
     geoms = elements($mesh)
     bounds = boundary.(geoms)
@@ -187,7 +182,7 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
     # relevant settings
     ℒ = Meshes.lentype($mesh)
     T = Unitful.numtype(ℒ)
-    dim = embeddim($mesh)
+    edim = embeddim($mesh)
     topo = topology($mesh)
     nvert = nvertices($mesh)
     verts = vertices($mesh)
@@ -195,7 +190,7 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
     # extract coordinates and insert sentinel
     # vertex with NaN coordinates at the end
     xyz = map(p -> ustrip.(to(p)), verts)
-    push!(xyz, SVector(ntuple(i -> T(NaN), dim)))
+    push!(xyz, SVector(ntuple(i -> T(NaN), edim)))
 
     # find indices of incident vertices
     inds = Int[]
