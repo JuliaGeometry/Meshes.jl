@@ -127,7 +127,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, geoms::ObservableVector
 
   # split vertical and non-vertical lines
   inter = Makie.@lift [line ∩ Line((0, 0), (0, 1)) for line in $geoms]
-  vinds = Makie.@lift findall(isnothing, $inter)
+  vinds = Makie.@lift findall(g -> isnothing(g) || g isa Line, $inter)
   dinds = Makie.@lift setdiff(1:length($geoms), $vinds)
 
   # split colors accordingly
@@ -149,9 +149,12 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, geoms::ObservableVector
   if !isempty(dinds[])
     dlines = Makie.@lift $geoms[$dinds]
     dinter = Makie.@lift $inter[$dinds]
-    ycoord = Makie.@lift map($dinter) do point
-      c = coords(point)
-      y = convert(Cartesian, c).y
+    ycoord = Makie.@lift map($dinter) do I
+      y = if I isa Line # horizontal line through origin
+        zero(Meshes.lentype(I))
+      else # intersection point with vertical axis
+        convert(Cartesian, coords(I)).y
+      end
       ustrip(y)
     end
     slopes = Makie.@lift map($dlines) do dline
