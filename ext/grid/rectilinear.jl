@@ -47,8 +47,12 @@ function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::V
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
-  tup = Makie.@lift xysegments($xyz...)
-  x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
+  xy = Makie.@lift let
+    x, y = Meshes.xyz($grid)
+    xysegments(ustrip.(x), ustrip.(y))
+  end
+  x = Makie.@lift $xy[1]
+  y = Makie.@lift $xy[2]
+
   Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
 end
