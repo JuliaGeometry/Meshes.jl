@@ -15,7 +15,6 @@ using TestItemRunner
   using SparseArrays
   using TransformsBase
   using DelimitedFiles
-  using PlyIO
   using Unitful
   using Rotations
   using StableRNGs
