@@ -2539,7 +2539,7 @@ end
   # smoothing doesn't change the topology
   trans = LaplaceSmoothing(30)
   @test TB.isrevertible(trans)
-  mesh = readply(T, joinpath(datadir, "beethoven.ply"))
+  mesh = discretize(Sphere(cart(0, 0, 0), T(1)))
   smesh = trans(mesh)
   @test nvertices(smesh) == nvertices(mesh)
   @test nelements(smesh) == nelements(mesh)
@@ -2548,7 +2548,7 @@ end
   # smoothing doesn't change the topology
   trans = TaubinSmoothing(30)
   @test TB.isrevertible(trans)
-  mesh = readply(T, joinpath(datadir, "beethoven.ply"))
+  mesh = discretize(Sphere(cart(0, 0, 0), T(1)))
   smesh = trans(mesh)
   @test nvertices(smesh) == nvertices(mesh)
   @test nelements(smesh) == nelements(mesh)

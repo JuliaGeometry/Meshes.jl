@@ -13,18 +13,13 @@ using TestItemRunner
   using CircularArrays
   using StaticArrays
   using SparseArrays
+  using TransformsBase
   using DelimitedFiles
-  using PlyIO
   using Unitful
   using Rotations
   using StableRNGs
 
-  using TransformsBase: Identity, →
-
   import TransformsBase as TB
-
-  # trigger compilation of extension
-  import CairoMakie
 
   # environment settings
   isCI = "CI" ∈ keys(ENV)

@@ -56,17 +56,6 @@ function readpoly(T, fname)
   end
 end
 
-# helper function to read *.ply files containing meshes
-function readply(T, fname)
-  ply = load_ply(fname)
-  x = T.(ply["vertex"]["x"])
-  y = T.(ply["vertex"]["y"])
-  z = T.(ply["vertex"]["z"])
-  points = Point.(x, y, z)
-  connec = [connect(Tuple(c .+ 1)) for c in ply["face"]["vertex_indices"]]
-  SimpleMesh(points, connec)
-end
-
 # --------------
 # CRS FUNCTIONS
 # --------------
