@@ -68,4 +68,13 @@
   grid = RegularGrid(latlon(0, 0), latlon(45, 45), dims=(10, 10))
   tgrid = RegularGrid(latlon(0, 0), latlon(45, 45), dims=(5, 5))
   @test coarsen(grid, RegularCoarsening(2)) == tgrid
+
+  # ncoords ≠ paramdim
+  X = rand(T, 11, 21)
+  Y = rand(T, 11, 21)
+  Z = rand(T, 11, 21)
+  t = GridTopology(10, 20)
+  grid = StructuredGrid((X, Y, Z), t)
+  tgrid = StructuredGrid((X[begin:2:end, begin:2:end], Y[begin:2:end, begin:2:end], Z[begin:2:end, begin:2:end]), GridTopology(5, 10))
+  @test coarsen(grid, RegularCoarsening(2)) == tgrid
 end
