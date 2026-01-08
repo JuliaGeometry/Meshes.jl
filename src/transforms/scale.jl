@@ -72,14 +72,8 @@ applycoord(t::Scale, p::ParaboloidSurface) = TransformedGeometry(p, t)
 
 applycoord(t::Scale, tr::Torus) = TransformedGeometry(tr, t)
 
-function applycoord(t::Scale, g::RegularGrid)
-  orig = applycoord(t, minimum(g))
-  spac = t.factors .* spacing(g)
-  RegularGrid(orig, spac, topology(g))
-end
+applycoord(t::Scale, g::RegularGrid) = RegularGrid(applycoord(t, minimum(g)), t.factors .* spacing(g), topology(g))
 
-applycoord(t::Scale, g::RectilinearGrid) =
-  RectilinearGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * xyz(g)[i], paramdim(g)))
+applycoord(t::Scale, g::RectilinearGrid) = RectilinearGrid{manifold(g),crs(g)}(t.factors .* xyz(g), topology(g))
 
-applycoord(t::Scale, g::StructuredGrid) =
-  StructuredGrid{manifold(g),crs(g)}(ntuple(i -> t.factors[i] * XYZ(g)[i], paramdim(g)))
+applycoord(t::Scale, g::StructuredGrid) = StructuredGrid{manifold(g),crs(g)}(t.factors .* XYZ(g), topology(g))
