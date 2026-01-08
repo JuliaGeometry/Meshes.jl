@@ -419,6 +419,18 @@ end
   @test r ≈ SimpleMesh(f.(vertices(d)), topology(d))
   @test TB.revert(f, r, c) ≈ d
 
+  # ncoords ≠ paramdim
+  f = Translate(T(1), T(1), T(1))
+  X = rand(T, 11, 21)
+  Y = rand(T, 11, 21)
+  Z = rand(T, 11, 21)
+  t = GridTopology(10, 20)
+  d = StructuredGrid((X, Y, Z), t)
+  r, c = TB.apply(f, d)
+  @test r isa StructuredGrid
+  @test all(Meshes.XYZ(r) .≈ map(.+, Meshes.XYZ(d), (T(1)u"m", T(1)u"m", T(1)u"m")))
+  @test TB.revert(f, r, c) ≈ d
+
   # -----------
   # SIMPLEMESH
   # -----------
