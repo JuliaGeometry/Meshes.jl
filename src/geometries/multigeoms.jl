@@ -25,9 +25,9 @@ Multi(geoms) = Multi(collect(geoms))
 # type aliases for convenience
 const MultiPoint{M<:Manifold,C<:CRS} = Multi{M,C,<:Point{M,C}}
 const MultiSegment{M<:Manifold,C<:CRS} = Multi{M,C,<:Segment{M,C}}
-const MultiChain{M<:Manifold,C<:CRS} = Multi{M,C,<:Chain{M,C}}
 const MultiRope{M<:Manifold,C<:CRS} = Multi{M,C,<:Rope{M,C}}
 const MultiRing{M<:Manifold,C<:CRS} = Multi{M,C,<:Ring{M,C}}
+const MultiChain{M<:Manifold,C<:CRS} = Multi{M,C,<:Chain{M,C}}
 const MultiPolygon{M<:Manifold,C<:CRS} = Multi{M,C,<:Polygon{M,C}}
 const MultiPolyhedron{M<:Manifold,C<:CRS} = Multi{M,C,<:Polyhedron{M,C}}
 const MultiPolytope{K,M<:Manifold,C<:CRS} = Multi{M,C,<:Polytope{K,M,C}}

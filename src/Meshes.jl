@@ -261,9 +261,9 @@ export
   Multi,
   MultiPoint,
   MultiSegment,
-  MultiChain,
   MultiRope,
   MultiRing,
+  MultiChain,
   MultiPolygon,
   MultiPolyhedron,
 

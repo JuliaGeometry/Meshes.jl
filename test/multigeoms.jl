@@ -72,9 +72,9 @@
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test Multi([p, p]) isa MultiPoint
   @test Multi([segm, segm]) isa MultiSegment
-  @test Multi([rope, ring]) isa MultiChain
   @test Multi([rope, rope]) isa MultiRope
   @test Multi([ring, ring]) isa MultiRing
+  @test Multi([rope, ring]) isa MultiChain
   @test Multi([tri, tri]) isa MultiPolygon
   @test Multi([poly, poly]) isa MultiPolygon
 
