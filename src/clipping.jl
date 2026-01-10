@@ -20,4 +20,5 @@ function clip end
 # IMPLEMENTATIONS
 # ----------------
 
+include("clipping/martinezrueda.jl")
 include("clipping/sutherlandhodgman.jl")

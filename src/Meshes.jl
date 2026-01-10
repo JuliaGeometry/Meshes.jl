@@ -107,7 +107,7 @@ include("winding.jl")
 include("sideof.jl")
 include("orientation.jl")
 include("merging.jl")
-include("geobooleanops.jl")
+include("polygonboolean.jl")
 include("clipping.jl")
 include("clamping.jl")
 include("intersections.jl")
@@ -474,16 +474,12 @@ export
   CCW,
 
   # geometric boolean operations
-  geobooleanop,
-  GeoBoolean,
-  GeoIntersection,
-  GeoUnion,
-  GeoDifference,
-  GeoSymDifference,
+  polygonbooleanop,
 
   # clipping
   ClippingMethod,
   SutherlandHodgmanClipping,
+  MartinezRuedaClipping,
   clip,
 
   # intersections
