@@ -78,6 +78,7 @@ end
 
 # TODO: build up functions progressively over PRs
 # TODO: possible support for other being line segments that split poly
+# TODO: polygon vs ring method dispatch needs to be tweaked. best for now, both operands same type
 function polygonbooleanop!(poly::Polygon, other::Geometry, operation)
   subjrings = rings(poly)
   cliprings = rings(other)
@@ -89,7 +90,10 @@ function polygonbooleanop!(ring::Ring, other::Ring, operation)
   subjrings = rings(ring)
   cliprings = rings(other)
 
+  # build rings with polygon relationship information
   res = _buildrings(subjrings, cliprings, operation)
+
+  # build polygons from rings
 end
 
 function _buildrings(subjrings, cliprings, operation)
@@ -104,4 +108,8 @@ function _buildrings(subjrings, cliprings, operation)
   # insert intersections into rings
   allrings = vertices.((subjrings, cliprings))
   _insertintersections!(intersections, seginds, allrings)
+
+  # annotate segments with fill information
+
+  # cleanup of annotations
 end
