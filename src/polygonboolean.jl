@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 # TODO: include subfolders for modularity
+include("polygonboolean/utils.jl")
 # include("polygonboolean/fillsegments.jl")
-# include("polygonboolean/utils.jl")
 # include("polygonboolean/sweep.jl")
 # include("polygonboolean/selection.jl")
 # include("polygonboolean/reconstruction.jl")
@@ -79,65 +79,29 @@ end
 # TODO: build up functions progressively over PRs
 # TODO: possible support for other being line segments that split poly
 function polygonbooleanop!(poly::Polygon, other::Geometry, operation)
-  subjrings = _getrings(poly)
-  cliprings = _getrings(other)
+  subjrings = rings(poly)
+  cliprings = rings(other)
 
   res = _buildrings(subjrings, cliprings, operation)
 end
 
 function polygonbooleanop!(ring::Ring, other::Ring, operation)
-  subjrings = _getrings(ring)
-  cliprings = _getrings(other)
+  subjrings = rings(ring)
+  cliprings = rings(other)
 
   res = _buildrings(subjrings, cliprings, operation)
 end
 
 function _buildrings(subjrings, cliprings, operation)
   # flatten rings into segments for intersection
-  subjsegs = [seg for r in subjrings for seg in Meshes.segments(Ring(r))]
-  clipsegs = [seg for r in cliprings for seg in Meshes.segments(Ring(r))]
+  subjsegs = Meshes.segments.(subjrings)
+  clipsegs = Meshes.segments.(cliprings)
 
   # intersect
-  allsegs = [subjsegs; clipsegs]
+  allsegs = Iterators.flatten((subjsegs, clipsegs))
   intersections, seginds = pairwiseintersect(allsegs)
 
   # insert intersections into rings
-  allrings = [subjrings; cliprings]
+  allrings = vertices.((subjrings, cliprings))
   _insertintersections!(intersections, seginds, allrings)
-
-  # re-create segments from modified rings
-  newsubjsegs = [seg for r in subjrings for seg in Meshes.segments(Ring(r))]
-  newclipsegs = [seg for r in cliprings for seg in Meshes.segments(Ring(r))]
-
-  nsegsfirst = length(newsubjsegs)
-  newallsegs = [newsubjsegs; newclipsegs]
-
-  # fill
-  fillsegs = FillSegments(newallsegs)
-  _annotatefill!(fillsegs, nsegsfirst)
-
-  # select
-  segments, fills = _selectsegments(fillsegs, operation)
-  isempty(segments) && return nothing
-
-  # remove degenerate segments
-  keep = [s[1] != s[2] for s in segments]
-  if !all(keep)
-    segments = segments[keep]
-    fills = fills[keep]
-  end
-
-  segments, fills
-end
-
-function _getrings(poly::Polygon)
-  [collect(vertices(r)) for r in rings(poly)]
-end
-
-function _getrings(geom::Geometry)
-  _getrings(convert(Quadrangle, geom))
-end
-
-function _getrings(ring::Ring)
-  [collect(vertices(ring))]
 end
