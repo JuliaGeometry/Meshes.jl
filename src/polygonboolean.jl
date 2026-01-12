@@ -38,32 +38,27 @@ function polygonbooleanop end
 
 Compute the geometric union of geometries `g₁` and `g₂`.
 """
-Base.union
+Base.union(a::Geometry, b::Geometry) = polygonbooleanop(a, b, union)
 
 """
   setdiff(g₁, g₂)
 
 Compute the geometric difference of geometries `g₁` and `g₂`.
 """
-Base.setdiff
+Base.setdiff(a::Geometry, b::Geometry) = polygonbooleanop(a, b, setdiff)
 
 """
   symdiff(g₁, g₂)
 
 Compute the symmetric difference of geometries `g₁` and `g₂`.
 """
-Base.symdiff
+Base.symdiff(a::Geometry, b::Geometry) = polygonbooleanop(a, b, symdiff)
 
 """
   g₁ ⊻ g₂
 
 Compute the symmetric difference (exclusive or) of geometries `g₁` and `g₂`.
 """
-Base.xor
-
-Base.union(a::Geometry, b::Geometry) = polygonbooleanop(a, b, union)
-Base.setdiff(a::Geometry, b::Geometry) = polygonbooleanop(a, b, setdiff)
-Base.symdiff(a::Geometry, b::Geometry) = polygonbooleanop(a, b, symdiff)
 Base.xor(a::Geometry, b::Geometry) = polygonbooleanop(a, b, symdiff)
 
 function polygonbooleanop(g1::Geometry, g2::Geometry, operation)
@@ -79,7 +74,7 @@ end
 # TODO: build up functions progressively over PRs
 # TODO: possible support for other being line segments that split poly
 # TODO: polygon vs ring method dispatch needs to be tweaked. best for now, both operands same type
-function polygonbooleanop!(poly::Polygon, other::Geometry, operation)
+function polygonbooleanop!(poly::Polygon, other::Polygon, operation)
   subjrings = rings(poly)
   cliprings = rings(other)
 

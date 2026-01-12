@@ -7,14 +7,9 @@ function _insertintersections!(intersections, seginds, allrings)
   # group intersections by segment index
   P = eltype(intersections)
   G = Dict{Int,Vector{P}}()
-  for (p, segs) in zip(intersections, seginds)
-    for s in segs
-      push!(get!(G, s, P[]), p)
-    end
+  for (p, segs) in zip(intersections, seginds), s in segs
+    push!(get!(G, s, P[]), p)
   end
-
-  sortedseginds = sort(collect(keys(G)))
-
   # precompute offsets
   ℒ = size.(allrings, 1)
   offsets = [0; cumsum(ℒ)]
@@ -22,8 +17,9 @@ function _insertintersections!(intersections, seginds, allrings)
   # track inserted points per ring
   insertcounts = zeros(Int, length(allrings))
 
-  for ind in sortedseginds
-    # find ring index
+  # insert missing points *with correct orientation* to split segments at intersections
+  for ind in sort!(collect(keys(G)))
+    # find ring index of points
     rind = searchsortedfirst(offsets, ind) - 1
     lind = ind - offsets[rind]
 
@@ -36,13 +32,18 @@ function _insertintersections!(intersections, seginds, allrings)
     ps = v[startind]
     pe = lind < n₀ ? v[startind + 1] : v[1]
 
+    # check if point is present at this segment (i.e an existing endpoint)
     filter!(p -> !isapprox(p, ps) && !isapprox(p, pe), pts)
     isempty(pts) && continue
 
+    # ensure L-R ordering
     sort!(pts)
+    # order by segment direction
     ps > pe && reverse!(pts)
 
+    # inserting at the end of a `CircularVector` places points at beginning, leading to offset bugs
     if lind < n₀
+      # `CircularVector` doesn't implement `splice!` so we use `insert!`
       for (offset, pt) in enumerate(pts)
         insert!(v, startind + offset, pt)
       end
