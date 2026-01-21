@@ -11,7 +11,7 @@ ring3 = Ring([sphere(t) for t in range(0.1, 1.0, length=5)])
 ring4 = Ring([sphere(t) for t in range(0.1, 1.0, length=1500)])
 mesh = discretize(Sphere((0, 0, 0), 1))
 ray = Ray((-1, -1, -1), (0, 0, 1))
-triangle = Triangle((0, 0, 0), (1, 0, 0), (0, 1, 0))
+tri = Triangle((0, 0, 0), (1, 0, 0), (0, 1, 0))
 
 # initialize benchmark suite
 const SUITE = BenchmarkGroup()
@@ -63,4 +63,4 @@ SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point1, $ring4)
 
 SUITE["intersection"] = BenchmarkGroup()
 
-SUITE["intersection"]["ray-triangle"] = @benchmarkable intersection($ray, $triangle)
+SUITE["intersection"]["ray-triangle"] = @benchmarkable intersection($ray, $tri)
