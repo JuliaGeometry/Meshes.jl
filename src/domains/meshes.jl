@@ -12,6 +12,13 @@ well-defined topology `TP`.
 abstract type Mesh{M<:Manifold,C<:CRS,TP<:Topology} <: Domain{M,C} end
 
 """
+    topology(mesh)
+
+Return the topological structure of the `mesh`.
+"""
+topology(m::Mesh) = m.topology
+
+"""
     vertex(mesh, ind)
 
 Return the vertex of a `mesh` at index `ind`.
