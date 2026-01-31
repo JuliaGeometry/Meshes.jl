@@ -22,8 +22,6 @@ CylindricalTrajectory(centroids::Vector{P}) where {P<:Point} = CylindricalTrajec
 
 CylindricalTrajectory(centroids) = CylindricalTrajectory(collect(centroids))
 
-topology(t::CylindricalTrajectory) = GridTopology(length(t.centroids))
-
 function element(t::CylindricalTrajectory, ind::Int)
   ℒ = lentype(t)
   T = numtype(ℒ)

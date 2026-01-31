@@ -7,7 +7,6 @@
   @test eltype(t) <: Cylinder
   @test nelements(t) == 10
   @test radius(t) == T(1) * u"m"
-  @test topology(t) == GridTopology(10)
   @test centroid(t, 1) == cart(0, 0, 0)
   @test centroid(t, 10) == cart(0, 0, 1)
 
@@ -19,7 +18,6 @@
   @test eltype(t) <: Cylinder
   @test nelements(t) == 20
   @test radius(t) == T(2) * u"m"
-  @test topology(t) == GridTopology(20)
   @test centroid(t, 1) == cart(0, 0, 0)
   @test centroid(t, 20) == cart(3, 0, 7)
 
@@ -30,6 +28,5 @@
   @test eltype(t) <: Cylinder
   @test nelements(t) == 1
   @test radius(t) == T(1) * u"m"
-  @test topology(t) == GridTopology(1)
   @test t[1] == Cylinder(cart(0, 0, -0.5), cart(0, 0, 0.5), T(1))
 end

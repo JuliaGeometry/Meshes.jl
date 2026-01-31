@@ -27,7 +27,10 @@ element(d::SubDomain, ind::Int) = element(d.domain, d.inds[ind])
 
 nelements(d::SubDomain) = length(d.inds)
 
-# specializations
+# ----------------
+# SPECIALIZATIONS
+# ----------------
+
 Base.eltype(d::SubDomain) = eltype(d.domain)
 
 function Base.vcat(d1::SubDomain, d2::SubDomain)
