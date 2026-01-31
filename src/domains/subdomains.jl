@@ -76,7 +76,7 @@ Base.parentindices(d::SubDomain) = d.inds
 
 Return the "concrete domain" of a domain view.
 """
-materialize(d::SubDomain) = GeometrySet(collect(elements(d)))
+materialize(d::SubDomain) = GeometrySet(collect(d))
 
 # -----------
 # IO METHODS

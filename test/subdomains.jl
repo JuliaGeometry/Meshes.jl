@@ -78,6 +78,27 @@
   @test eltype(v2) <: Hexahedron
   @test eltype(v3) <: Primitive
 
+  # materialize subdomain
+  pset = PointSet([cart(1, 1, 1), cart(2, 2, 2), cart(3, 3, 3)])
+  vset = view(pset, [3, 2])
+  mset = materialize(vset)
+  @test mset isa PointSet
+  @test nelements(mset) == 2
+  @test mset[1] == pset[3]
+  @test mset[2] == pset[2]
+
+  # materialize submesh
+  points = cart.([(0, 0), (1, 0), (0, 1), (1, 1), (0.5, 0.5)])
+  connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
+  mesh = SimpleMesh(points, connec)
+  vmesh = view(mesh, [3, 4])
+  mmesh = materialize(vmesh)
+  @test mmesh isa SimpleMesh
+  @test nelements(mmesh) == 2
+  @test nvertices(mmesh) == 4
+  @test mmesh[1] == mesh[3]
+  @test mmesh[2] == mesh[4]
+
   # show
   pset = PointSet(cart.(1:100, 1:100))
   v1 = view(pset, 1:10)
