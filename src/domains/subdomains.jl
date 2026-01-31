@@ -67,6 +67,17 @@ Returns the indices used to create the domain view.
 """
 Base.parentindices(d::SubDomain) = d.inds
 
+# ------------------
+# MATERIALIZE VIEWS
+# ------------------
+
+"""
+    materialize(subdomain)
+
+Return the "concrete domain" of a domain view.
+"""
+materialize(d::SubDomain) = GeometrySet(collect(d))
+
 # -----------
 # IO METHODS
 # -----------

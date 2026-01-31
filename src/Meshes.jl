@@ -316,16 +316,21 @@ export
   Coboundary,
   Adjacency,
 
-  # domain traits
+  # domains
   Domain,
-  SubDomain,
-  TransformedDomain,
   embeddim,
   paramdim,
   crs,
   manifold,
   element,
   nelements,
+
+  # subdomains
+  SubDomain,
+  materialize,
+
+  # transformed domains
+  TransformedDomain,
 
   # sets
   GeometrySet,
