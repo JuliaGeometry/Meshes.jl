@@ -30,7 +30,7 @@ function materialize(m::SubMesh)
   # map old vertex indices to new vertex indices
   newind = collect(1:nvertices(ptopo))
   @inbounds for i in others
-    newind[i+1:end] .-= 1
+    newind[(i + 1):end] .-= 1
   end
   newind[others] .= 0
 
