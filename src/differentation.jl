@@ -10,6 +10,19 @@ A method for calculating derivatives.
 abstract type DifferentiationMethod end
 
 """
+    derivative(geom, uvw, j, method)
+
+Calculate the derivative of the `geom`etry's parametric function
+at parametric coordinates `uvw` and along `j`-th coordinate using
+a differentiation `method`.
+"""
+function derivative end
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+"""
     FiniteDifference(ϵ=1e-6)
 
 Finite-difference method with unitless step size `ϵ`.
@@ -23,15 +36,7 @@ end
 
 FiniteDifference() = FiniteDifference(1e-6)
 
-"""
-    jacobian(geom, uvw, method=FiniteDifference())
-
-Calculate the Jacobian of a geometry's parametric function
-at parametric coordinates `uvw` using a differentiation `method`.
-"""
-jacobian(geom::Geometry, uvw, method=FiniteDifference()) = jacobianimpl(geom, uvw, method)
-
-function jacobianimpl(geom::Geometry, uvw, method::FiniteDifference)
+function derivative(geom::Geometry, uvw, j, method::FiniteDifference)
   # sanity check
   pdim = paramdim(geom)
   if pdim != length(uvw)
@@ -41,25 +46,29 @@ function jacobianimpl(geom::Geometry, uvw, method::FiniteDifference)
   # unitless step size
   ϵ = method.ϵ
 
-  # partial derivatives along dimensions j=1,2,...
-  ntuple(pdim) do j
-    pre = ntuple(i -> i == j ? uvw[i] - ϵ : uvw[i], pdim)
-    pos = ntuple(i -> i == j ? uvw[i] + ϵ : uvw[i], pdim)
-    if uvw[j] < 0.01 # right
-      (geom(pos...) - geom(uvw...)) / ϵ
-    elseif 0.99 < uvw[j] # left
-      (geom(uvw...) - geom(pre...)) / ϵ
-    else # central
-      (geom(pos...) - geom(pre...)) / 2ϵ
-    end
-  end
+  # central difference
+  pre = ntuple(i -> i == j ? uvw[i] - ϵ : uvw[i], pdim)
+  pos = ntuple(i -> i == j ? uvw[i] + ϵ : uvw[i], pdim)
+  (geom(pos...) - geom(pre...)) / 2eps
 end
+
+# ----------
+# FALLBACKS
+# ----------
+
+"""
+    jacobian(geom, uvw, method=FiniteDifference())
+
+Calculate the Jacobian of the `geom`etry's parametric function
+at parametric coordinates `uvw` using a differentiation `method`.
+"""
+jacobian(geom::Geometry, uvw, method=FiniteDifference()) = ntuple(j -> derivative(geom, uvw, j, method), paramdim(geom))
 
 """
     differential(geom, uvw, method=FiniteDifference())
 
 Calculate the differential element (length, area, volume, etc.)
-of the geometry `geom` at parametric coordinates `uvw` using a
+of the `geom`etry at parametric coordinates `uvw` using a
 differentation `method`.
 """
 function differential(geom::Geometry, uvw, method=FiniteDifference())
