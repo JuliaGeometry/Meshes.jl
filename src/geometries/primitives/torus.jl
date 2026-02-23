@@ -62,9 +62,6 @@ Base.isapprox(t₁::Torus, t₂::Torus; atol=atol(lentype(t₁)), kwargs...) =
 function (t::Torus)(θ, φ)
   ℒ = lentype(t)
   T = numtype(ℒ)
-  if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
-    throw(DomainError((θ, φ), "t(θ, φ) is not defined for θ, φ outside [0, 1]²."))
-  end
   c, n⃗ = center(t), direction(t)
   R, r = t.major, t.minor
 

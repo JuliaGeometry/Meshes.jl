@@ -29,9 +29,6 @@ Base.isapprox(s₁::Segment, s₂::Segment; atol=atol(lentype(s₁)), kwargs...)
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(s₁.vertices, s₂.vertices))
 
 function (s::Segment)(t)
-  if t < 0 || t > 1
-    throw(DomainError(t, "s(t) is not defined for t outside [0, 1]."))
-  end
   a, b = s.vertices
   coordsum((a, b), weights=((1 - t), t))
 end

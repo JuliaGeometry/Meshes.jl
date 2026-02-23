@@ -74,9 +74,6 @@ Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs..
   isapprox(boundary(c₁), boundary(c₂); atol, kwargs...)
 
 function (c::Cylinder)(ρ, φ, z)
-  if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1) || (z < 0 || z > 1)
-    throw(DomainError((ρ, φ, z), "c(ρ, φ, z) is not defined for ρ, φ, z outside [0, 1]³."))
-  end
   ℒ = lentype(c)
   T = numtype(ℒ)
   t = top(c)

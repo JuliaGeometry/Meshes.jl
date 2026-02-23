@@ -205,7 +205,6 @@ end
   @test r(T(1.0)) == cart(1, 1)
   @test r(T(Inf)) == cart(Inf, Inf)
   @test r(T(1.0)) - r(T(0.0)) == vector(1, 1)
-  @test_throws DomainError(T(-1), "r(t) is not defined for t < 0.") r(T(-1))
 
   p₁ = cart(3, 3, 3)
   p₂ = cart(-3, -3, -3)
@@ -378,8 +377,6 @@ end
     @test b(T(1), method) == cart(1, 0)
     @test b(T(0.5), method) == cart(0.5, 0.5)
     @test b(T(0.5), method) == cart(0.5, 0.5)
-    @test_throws DomainError(T(-0.1), "b(t) is not defined for t outside [0, 1].") b(T(-0.1), method)
-    @test_throws DomainError(T(1.2), "b(t) is not defined for t outside [0, 1].") b(T(1.2), method)
   end
 
   b = BezierCurve(cart(0, 0), cart(1, 1))
@@ -879,7 +876,6 @@ end
   @test c(0, 0, 0) ≈ bottom(c)(0, 0)
   @test c(0, 0, 1) ≈ top(c)(0, 0)
   @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
-  @test_throws DomainError c(1.1, 0, 0)
 
   c = Cylinder(T(1))
   equaltest(c)
@@ -1051,8 +1047,6 @@ end
   @test measure(p) == area(p) ≈ T(128π / 3 * (73√73 / 512 - 1)) * u"m^2"
   @test p(T(0), T(0)) ≈ cart(1, 5, 2)
   @test p(T(1), T(0)) ≈ cart(4, 5, 2 + 3^2 / (4 * 4))
-  @test_throws DomainError p(T(-0.1), T(0))
-  @test_throws DomainError p(T(1.1), T(0))
 
   p = ParaboloidSurface()
   @test Meshes.lentype(p) == Meshes.Met{Float64}
@@ -1092,7 +1086,6 @@ end
   @test paramdim(c) == 3
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
-  @test_throws DomainError c(T(0), T(0), nextfloat(T(1)))
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1169,7 +1162,6 @@ end
   @test paramdim(s) == 2
   @test crs(s) <: Cartesian{NoDatum}
   @test Meshes.lentype(s) == ℳ
-  @test_throws DomainError s(T(0), nextfloat(T(1)))
 
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1222,7 +1214,6 @@ end
   @test norm(f(T(1), T(0), T(0)) - f(T(0), T(0), T(0))) ≈ radius(db)
   @test f(T(0), T(0), T(1)) == center(dt)
   @test norm(f(T(1), T(0), T(1)) - f(T(0), T(0), T(1))) ≈ radius(dt)
-  @test_throws DomainError f(T(0), T(0), T(1.5))
 
   @test_throws AssertionError Frustum(db, db)
 
@@ -1293,9 +1284,6 @@ end
   @test c(T(0)) == f(T(0))
   @test c(T(1)) == f(T(2π))
   @test c(T(0.5)) == f(T(π))
-  @test_throws DomainError(T(-0.1), "c(t) is not defined for t outside [0, 1].") c(T(-0.1))
-  @test_throws DomainError(T(1.2), "c(t) is not defined for t outside [0, 1].") c(T(1.2))
-
   equaltest(c)
 
   c = ParametrizedCurve(t -> cart(cospi(t), sinpi(t)), (T(0), T(1)))

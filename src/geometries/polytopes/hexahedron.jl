@@ -17,9 +17,6 @@ Base.isapprox(h₁::Hexahedron, h₂::Hexahedron; atol=atol(lentype(h₁)), kwar
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(h₁.vertices, h₂.vertices))
 
 function (h::Hexahedron)(u, v, w)
-  if (u < 0 || u > 1) || (v < 0 || v > 1) || (w < 0 || w > 1)
-    throw(DomainError((u, v, w), "h(u, v, w) is not defined for u, v, w outside [0, 1]³."))
-  end
   A1, A2, A4, A3, A5, A6, A8, A7 = to.(h.vertices)
   withcrs(
     h,

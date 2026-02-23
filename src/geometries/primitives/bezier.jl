@@ -68,9 +68,6 @@ struct Horner <: BezierEvalMethod end
 
 # Apply DeCasteljau's method
 function (b::BezierCurve)(t, ::DeCasteljau)
-  if t < 0 || t > 1
-    throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
-  end
   rope = Rope(controls(b))
   points = [s(t) for s in segments(rope)]
   if length(points) == 1
@@ -86,9 +83,6 @@ end
 # Horner's rule recursively reconstructs B from a sequence bᵢ
 # with bₙ = aₙ and bᵢ₋₁ = aᵢ₋₁ + bᵢ * t until b₀ = B.
 function (b::BezierCurve)(t, ::Horner)
-  if t < 0 || t > 1
-    throw(DomainError(t, "b(t) is not defined for t outside [0, 1]."))
-  end
   T = numtype(lentype(b))
   cs = controls(b)
   t̄ = one(T) - t
