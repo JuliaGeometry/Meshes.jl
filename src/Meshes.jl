@@ -98,6 +98,9 @@ include("neighborsearch.jl")
 # predicates
 include("predicates.jl")
 
+# calculus
+include("differentation.jl")
+
 # operations
 include("centroid.jl")
 include("measures.jl")
@@ -446,6 +449,12 @@ export
   ≻,
   ⪯,
   ⪰,
+
+  # calculus
+  DifferentiationMethod,
+  FiniteDifference,
+  jacobian,
+  differential,
 
   # centroids
   centroid,
