@@ -29,5 +29,5 @@ function derivative(geom::Geometry, uvw, j, method::FiniteDifference)
   # central difference
   pre = ntuple(i -> i == j ? uvw[i] - ϵ : uvw[i], pdim)
   pos = ntuple(i -> i == j ? uvw[i] + ϵ : uvw[i], pdim)
-  (geom(pos...) - geom(pre...)) / 2eps
+  (geom(pos...) - geom(pre...)) / 2ϵ
 end
