@@ -26,8 +26,8 @@ FiniteDifference() = FiniteDifference(1e-6)
 """
     jacobian(geom, uvw, method=FiniteDifference())
 
-Calculate the Jacobian of a geometry's parametric function at parametric coordinates `uvw`
-using a particular differentiation `method`.
+Calculate the Jacobian of a geometry's parametric function
+at parametric coordinates `uvw` using a differentiation `method`.
 """
 jacobian(geom::Geometry, uvw, method=FiniteDifference()) = jacobianimpl(geom, uvw, method)
 
@@ -60,7 +60,7 @@ end
 
 Calculate the differential element (length, area, volume, etc.)
 of the geometry `geom` at parametric coordinates `uvw` using a
-particular differentation `method`.
+differentation `method`.
 """
 function differential(geom::Geometry, uvw, method=FiniteDifference())
   J = jacobian(geom, uvw, method)
