@@ -453,6 +453,7 @@ export
   # calculus
   DifferentiationMethod,
   FiniteDifference,
+  derivative,
   jacobian,
   differential,
 
