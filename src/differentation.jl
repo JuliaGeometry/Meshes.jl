@@ -16,7 +16,13 @@ Calculate the derivative of the `geom`etry's parametric function
 at parametric coordinates `uvw` and along `j`-th coordinate using
 a differentiation `method`.
 """
-function derivative end
+function derivative(geom::Geometry, uvw, j, method::DifferentiationMethod)
+  d = paramdim(geom)
+  n = length(uvw)
+  d == n || throw(ArgumentError("invalid number of parametric coordinates for geometry"))
+  1 ≤ j ≤ n || throw(ArgumentError("attempting to compute derivative along invalid coordinate"))
+  deriv(geom, uvw, j, method)
+end
 
 # ----------------
 # IMPLEMENTATIONS
