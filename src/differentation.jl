@@ -26,7 +26,7 @@ FiniteDifference() = FiniteDifference(1e-6)
 """
     jacobian(geom, uvw, method=FiniteDifference())
 
-Calculate the Jacobian of a geometry `geom` at parametric coordinates `uvw`
+Calculate the Jacobian of a geometry's parametric function at parametric coordinates `uvw`
 using a particular differentiation `method`.
 """
 jacobian(geom::Geometry, uvw, method=FiniteDifference()) = jacobianimpl(geom, uvw, method)
