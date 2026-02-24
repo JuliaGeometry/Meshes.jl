@@ -29,6 +29,7 @@ end
 # ----------------
 
 include("differentiation/finitediff.jl")
+include("differentiation/autodiff.jl")
 
 # ----------
 # FALLBACKS

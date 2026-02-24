@@ -20,6 +20,7 @@ using TestItemRunner
   using StableRNGs
 
   import TransformsBase as TB
+  import Mooncake
 
   # environment settings
   isCI = "CI" ∈ keys(ENV)

@@ -49,6 +49,8 @@ import TransformsBase: parameters, preprocess
 # CoordRefSystems API
 import CoordRefSystems: lentype
 
+import DifferentiationInterface as DI
+
 # unit utils
 include("units.jl")
 
@@ -453,6 +455,7 @@ export
   # calculus
   DifferentiationMethod,
   FiniteDifference,
+  AutoDiff,
   derivative,
   jacobian,
   differential,
