@@ -69,47 +69,47 @@ end
 @testitem "Differential" setup = [Setup] begin
   # Only run tests for `Float64` since `Float32` would need tolerances to pass tests
   if T == Float64
-    method = FiniteDifference(T(1e-6))
+    for method in (FiniteDifference(T(1e-6)), AutoDiff(DI.AutoMooncakeForward()))
+      # line element
+      a = cart(T(1), T(2))
+      b = cart(T(3), T(6))
+      seg = Segment(a, b)
+      @test differential(seg, (T(0.25),), method) ≈ measure(seg)
 
-    # line element
-    a = cart(T(1), T(2))
-    b = cart(T(3), T(6))
-    seg = Segment(a, b)
-    @test differential(seg, (T(0.25),), method) ≈ measure(seg)
+      # surface element
+      v₁ = cart(T(0), T(0), T(0))
+      v₂ = cart(T(2), T(0), T(0))
+      v₃ = cart(T(0), T(3), T(1))
+      tri = Triangle(v₁, v₂, v₃)
+      expectedarea = norm((v₂ - v₁) × (v₃ - v₁))
+      @test differential(tri, (T(0.3), T(0.2)), method) ≈ expectedarea
 
-    # surface element
-    v₁ = cart(T(0), T(0), T(0))
-    v₂ = cart(T(2), T(0), T(0))
-    v₃ = cart(T(0), T(3), T(1))
-    tri = Triangle(v₁, v₂, v₃)
-    expectedarea = norm((v₂ - v₁) × (v₃ - v₁))
-    @test differential(tri, (T(0.3), T(0.2)), method) ≈ expectedarea
+      # volume element
+      pmin = cart(T(0), T(0), T(0))
+      pmax = cart(T(2), T(3), T(4))
+      box = Box(pmin, pmax)
+      @test differential(box, (T(0.1), T(0.2), T(0.3)), method) ≈ measure(box)
 
-    # volume element
-    pmin = cart(T(0), T(0), T(0))
-    pmax = cart(T(2), T(3), T(4))
-    box = Box(pmin, pmax)
-    @test differential(box, (T(0.1), T(0.2), T(0.3)), method) ≈ measure(box)
+      # non-constant differential element (bilinear quadrangle)
+      c₀₀ = cart(T(0), T(0))
+      c₀₁ = cart(T(2), T(0))
+      c₁₁ = cart(T(3), T(3))
+      c₁₀ = cart(T(0), T(2))
+      quad = Quadrangle(c₀₀, c₀₁, c₁₁, c₁₀)
 
-    # non-constant differential element (bilinear quadrangle)
-    c₀₀ = cart(T(0), T(0))
-    c₀₁ = cart(T(2), T(0))
-    c₁₁ = cart(T(3), T(3))
-    c₁₀ = cart(T(0), T(2))
-    quad = Quadrangle(c₀₀, c₀₁, c₁₁, c₁₀)
+      # differential varies with position due to non-constant Jacobian
+      d00 = differential(quad, (T(0), T(0)), method)
+      d11 = differential(quad, (T(1), T(1)), method)
+      dcenter = differential(quad, (T(0.5), T(0.5)), method)
 
-    # differential varies with position due to non-constant Jacobian
-    d00 = differential(quad, (T(0), T(0)), method)
-    d11 = differential(quad, (T(1), T(1)), method)
-    dcenter = differential(quad, (T(0.5), T(0.5)), method)
+      # compute expected values from cross product magnitudes
+      expected_d00 = norm((c₀₁ - c₀₀) × (c₁₀ - c₀₀))
+      expected_d11 = norm((c₁₁ - c₁₀) × (c₁₁ - c₀₁))
+      expected_dcenter = norm(((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2 × ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2)
 
-    # compute expected values from cross product magnitudes
-    expected_d00 = norm((c₀₁ - c₀₀) × (c₁₀ - c₀₀))
-    expected_d11 = norm((c₁₁ - c₁₀) × (c₁₁ - c₀₁))
-    expected_dcenter = norm(((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2 × ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2)
-
-    @test d00 ≈ expected_d00
-    @test d11 ≈ expected_d11
-    @test dcenter ≈ expected_dcenter
+      @test d00 ≈ expected_d00
+      @test d11 ≈ expected_d11
+      @test dcenter ≈ expected_dcenter
+    end
   end
 end
