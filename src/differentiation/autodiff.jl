@@ -7,7 +7,7 @@
 
 Automatic differentiation method using DifferentiationInterface.jl.
 
-The default backend is MooncakeForward. Any DI-compatible backend can be used:
+The default backend is MooncakeForward. It is the only one that currently works (tested).
 
     AutoDiff()                              # MooncakeForward (default)
     AutoDiff(DI.AutoMooncakeForward())      # MooncakeForward (explicit)
