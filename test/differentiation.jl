@@ -71,21 +71,20 @@ end
     a = cart(T(1), T(2))
     b = cart(T(3), T(6))
     seg = Segment(a, b)
-    @test differential(seg, (T(0.25),), method) ≈ measure(seg)
+    @test differential(seg, (T(0.25),), method) ≈ length(seg)
 
     # surface element
-    v₁ = cart(T(0), T(0), T(0))
-    v₂ = cart(T(2), T(0), T(0))
-    v₃ = cart(T(0), T(3), T(1))
-    tri = Triangle(v₁, v₂, v₃)
-    expectedarea = norm((v₂ - v₁) × (v₃ - v₁))
-    @test differential(tri, (T(0.3), T(0.2)), method) ≈ expectedarea
+    p₁ = cart(T(0), T(0), T(0))
+    p₂ = cart(T(2), T(0), T(0))
+    p₃ = cart(T(0), T(3), T(1))
+    tri = Triangle(p₁, p₂, p₃)
+    @test differential(tri, (T(0.3), T(0.2)), method) ≈ 2area(tri)
 
     # volume element
     pmin = cart(T(0), T(0), T(0))
     pmax = cart(T(2), T(3), T(4))
     box = Box(pmin, pmax)
-    @test differential(box, (T(0.1), T(0.2), T(0.3)), method) ≈ measure(box)
+    @test differential(box, (T(0.1), T(0.2), T(0.3)), method) ≈ volume(box)
 
     # non-constant differential element (bilinear quadrangle)
     c₀₀ = cart(T(0), T(0))
@@ -95,17 +94,13 @@ end
     quad = Quadrangle(c₀₀, c₀₁, c₁₁, c₁₀)
 
     # differential varies with position due to non-constant Jacobian
-    d00 = differential(quad, (T(0), T(0)), method)
-    d11 = differential(quad, (T(1), T(1)), method)
-    dcenter = differential(quad, (T(0.5), T(0.5)), method)
+    d₀₀ = differential(quad, (T(0), T(0)), method)
+    d₁₁ = differential(quad, (T(1), T(1)), method)
+    dc = differential(quad, (T(0.5), T(0.5)), method)
 
     # compute expected values from cross product magnitudes
-    expected_d00 = norm((c₀₁ - c₀₀) × (c₁₀ - c₀₀))
-    expected_d11 = norm((c₁₁ - c₁₀) × (c₁₁ - c₀₁))
-    expected_dcenter = norm(((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2 × ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2)
-
-    @test d00 ≈ expected_d00
-    @test d11 ≈ expected_d11
-    @test dcenter ≈ expected_dcenter
+    @test d₀₀ ≈ norm((c₀₁ - c₀₀) × (c₁₀ - c₀₀))
+    @test d₁₁ ≈ norm((c₁₁ - c₁₀) × (c₁₁ - c₀₁))
+    @test dc ≈ norm(((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2 × ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2)
   end
 end
