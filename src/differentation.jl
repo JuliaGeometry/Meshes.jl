@@ -29,10 +29,6 @@ function derivative(geom::Geometry, uvw, j, method::DI.AbstractADType=FINITEDIFF
   Vec((∂ .* u)...)
 end
 
-# ----------
-# FALLBACKS
-# ----------
-
 """
     jacobian(geom, uvw[, method])
 
