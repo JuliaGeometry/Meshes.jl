@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 # default differentation method
-const FINITEDIFF = DI.AutoFiniteDifferences(; fdm=central_fdm(5, 1))
+const FINITEDIFF = DI.AutoFiniteDifferences(fdm=central_fdm(5, 1))
 
 """
     derivative(geom, uvw, j[, method])
