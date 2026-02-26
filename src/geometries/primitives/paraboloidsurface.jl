@@ -100,9 +100,6 @@ Base.isapprox(p₁::ParaboloidSurface, p₂::ParaboloidSurface; atol=atol(lentyp
   isapprox(focallength(p₁), focallength(p₂); atol, kwargs...)
 
 function (p::ParaboloidSurface)(ρ, θ)
-  if (ρ < 0 || ρ > 1)
-    throw(DomainError((ρ, θ), "p(ρ, θ) is not defined for ρ outside [0, 1]."))
-  end
   T = numtype(lentype(p))
   l = T(ρ) * radius(p)
   sθ, cθ = sincospi(2 * T(θ))

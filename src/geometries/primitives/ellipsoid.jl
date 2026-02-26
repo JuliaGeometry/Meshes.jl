@@ -42,9 +42,6 @@ function Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid; atol=atol(lentype(e₁)
 end
 
 function (e::Ellipsoid)(θ, φ)
-  if (θ < 0 || θ > 1) || (φ < 0 || φ > 1)
-    throw(DomainError((θ, φ), "e(θ, φ) is not defined for θ, φ outside [0, 1]²."))
-  end
   T = numtype(lentype(e))
   r = radii(e)
   c = center(e)

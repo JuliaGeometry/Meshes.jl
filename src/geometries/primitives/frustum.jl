@@ -42,9 +42,6 @@ Base.isapprox(f₁::Frustum, f₂::Frustum; atol=atol(lentype(f₁)), kwargs...)
   isapprox(boundary(f₁), boundary(f₂); atol, kwargs...)
 
 function (frustum::Frustum)(r, φ, h)
-  if (r < 0 || r > 1) || (φ < 0 || φ > 1) || (h < 0 || h > 1)
-    throw(DomainError((r, φ, h), "frustum(r, φ, h) is not defined for r, φ, h outside [0, 1]³."))
-  end
   a = bottom(frustum)(r, φ)
   b = top(frustum)(r, φ)
   Segment(a, b)(h)

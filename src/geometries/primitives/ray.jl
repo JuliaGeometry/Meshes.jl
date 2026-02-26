@@ -23,9 +23,4 @@ paramdim(::Type{<:Ray}) = 1
 Base.isapprox(r₁::Ray, r₂::Ray; atol=atol(lentype(r₁)), kwargs...) =
   isapprox(r₁.p, r₂.p; atol, kwargs...) && isapprox(r₁.v, r₂.v; atol, kwargs...)
 
-function (r::Ray)(t)
-  if t < 0
-    throw(DomainError(t, "r(t) is not defined for t < 0."))
-  end
-  r.p + t * r.v
-end
+(r::Ray)(t) = r.p + t * r.v

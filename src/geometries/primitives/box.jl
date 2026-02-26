@@ -60,9 +60,4 @@ sides(b::Box{<:𝔼}) = Tuple(maximum(b) - minimum(b))
 Base.isapprox(b₁::Box, b₂::Box; atol=atol(lentype(b₁)), kwargs...) =
   isapprox(minimum(b₁), minimum(b₂); atol, kwargs...) && isapprox(maximum(b₁), maximum(b₂); atol, kwargs...)
 
-function (b::Box{<:𝔼})(uv...)
-  if !all(x -> 0 ≤ x ≤ 1, uv)
-    throw(DomainError(uv, "b(u, v, ...) is not defined for u, v, ... outside [0, 1]ⁿ."))
-  end
-  minimum(b) + uv .* (maximum(b) - minimum(b))
-end
+(b::Box{<:𝔼})(uvw...) = minimum(b) + uvw .* (maximum(b) - minimum(b))

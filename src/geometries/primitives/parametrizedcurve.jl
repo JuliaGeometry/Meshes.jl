@@ -36,9 +36,6 @@ Base.maximum(curve::ParametrizedCurve) = curve.fun(last(curve.range))
 Base.extrema(curve::ParametrizedCurve) = minimum(curve), maximum(curve)
 
 function (curve::ParametrizedCurve)(t)
-  if t < 0 || t > 1
-    throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
-  end
   a, b = curve.range
   curve.fun(a + t * (b - a))
 end

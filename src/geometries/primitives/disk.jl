@@ -34,9 +34,6 @@ Base.isapprox(d₁::Disk, d₂::Disk; atol=atol(lentype(d₁)), kwargs...) =
   isapprox(boundary(d₁), boundary(d₂); atol, kwargs...)
 
 function (d::Disk)(ρ, φ)
-  if (ρ < 0 || ρ > 1) || (φ < 0 || φ > 1)
-    throw(DomainError((ρ, φ), "d(ρ, φ) is not defined for ρ, φ outside [0, 1]²."))
-  end
   ℒ = lentype(d)
   T = numtype(ℒ)
   l = T(ρ) * radius(d)
