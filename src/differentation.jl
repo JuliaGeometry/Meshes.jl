@@ -12,7 +12,7 @@ Calculate the derivative of the `geom`etry's parametric function
 at parametric coordinates `uvw` and along `j`-th coordinate using
 an automatic differentiation `method` from DifferentationInterface.jl.
 """
-function derivative(geom::Geometry, uvw, j, method::DI.AbstractADType=FINITEDIFF)
+function derivative(geom::Geometry, uvw, j, method=FINITEDIFF)
   # sanity check
   d = paramdim(geom)
   n = length(uvw)
