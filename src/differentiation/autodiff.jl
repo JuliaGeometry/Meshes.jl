@@ -2,23 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    AutoDiff(backend=DI.AutoMooncakeForward())
-
-Automatic differentiation method using DifferentiationInterface.jl.
-
-The default backend is MooncakeForward. It is the only one that currently works (tested).
-
-    AutoDiff()                              # MooncakeForward (default)
-    AutoDiff(DI.AutoMooncakeForward())      # MooncakeForward (explicit)
-"""
-struct AutoDiff{B} <: DifferentiationMethod
-  backend::B
-end
-
-AutoDiff() = AutoDiff(DI.AutoMooncakeForward())
-
-function deriv(geom::Geometry, uvw, j, method::AutoDiff)
+function deriv(geom::Geometry, uvw, j, method::DI.AbstractADType)
   dim = paramdim(geom)
   function f(t)
     args = ntuple(i -> i == j ? t : uvw[i], dim)
