@@ -7,37 +7,33 @@
     a = cart(T(1), T(2))
     b = cart(T(3), T(6))
     seg = Segment(a, b)
-    Jmid = jacobian(seg, (T(0.5),), method)
-    Jleft = jacobian(seg, (T(0.0),), method)
-    Jright = jacobian(seg, (T(1.0),), method)
-    @test length(Jmid) == 1
-    @test Jmid[1] ≈ b - a
-    @test Jleft[1] ≈ b - a
-    @test Jright[1] ≈ b - a
+    Jl = jacobian(seg, (T(0.0),), method)
+    Jr = jacobian(seg, (T(1.0),), method)
+    Jm = jacobian(seg, (T(0.5),), method)
+    @test Jl[1] ≈ b - a
+    @test Jr[1] ≈ b - a
+    @test Jm[1] ≈ b - a
 
     # invalid number of parametric coordinates
     @test_throws ArgumentError jacobian(seg, (T(0.1), T(0.2)), method)
 
     # 2D geometry (triangle): barycentric map derivatives
-    v₁ = cart(T(0), T(0), T(0))
-    v₂ = cart(T(2), T(0), T(0))
-    v₃ = cart(T(0), T(3), T(1))
-    tri = Triangle(v₁, v₂, v₃)
-    Jtri = jacobian(tri, (T(0.2), T(0.3)), method)
-    @test length(Jtri) == 2
-    @test Jtri[1] ≈ v₂ - v₁
-    @test Jtri[2] ≈ v₃ - v₁
-
+    p₁ = cart(T(0), T(0), T(0))
+    p₂ = cart(T(2), T(0), T(0))
+    p₃ = cart(T(0), T(3), T(1))
+    tri = Triangle(p₁, p₂, p₃)
+    J = jacobian(tri, (T(0.2), T(0.3)), method)
+    @test J[1] ≈ p₂ - p₁
+    @test J[2] ≈ p₃ - p₁
     # 3D geometry (box): axis-aligned derivatives
     pmin = cart(T(0), T(0), T(0))
     pmax = cart(T(2), T(3), T(4))
     box = Box(pmin, pmax)
-    Jbox = jacobian(box, (T(0.4), T(0.6), T(0.7)), method)
+    J = jacobian(box, (T(0.4), T(0.6), T(0.7)), method)
     sides = pmax - pmin
-    @test length(Jbox) == 3
-    @test Jbox[1] ≈ vector(sides[1], T(0), T(0))
-    @test Jbox[2] ≈ vector(T(0), sides[2], T(0))
-    @test Jbox[3] ≈ vector(T(0), T(0), sides[3])
+    @test J[1] ≈ vector(sides[1], T(0), T(0))
+    @test J[2] ≈ vector(T(0), sides[2], T(0))
+    @test J[3] ≈ vector(T(0), T(0), sides[3])
 
     # non-constant Jacobian
     # q(u,v) = (1-u)(1-v)c₀₀ + u(1-v)c₀₁ + (1-u)v c₁₀ + uv c₁₁
@@ -50,19 +46,19 @@
     quad = Quadrangle(c₀₀, c₀₁, c₁₁, c₁₀)
 
     # corner (0,0): ∂u = c₀₁ - c₀₀, ∂v = c₁₀ - c₀₀
-    J00 = jacobian(quad, (T(0), T(0)), method)
-    @test J00[1] ≈ c₀₁ - c₀₀
-    @test J00[2] ≈ c₁₀ - c₀₀
+    J₀₀ = jacobian(quad, (T(0), T(0)), method)
+    @test J₀₀[1] ≈ c₀₁ - c₀₀
+    @test J₀₀[2] ≈ c₁₀ - c₀₀
 
     # corner (1,1): ∂u = c₁₁ - c₁₀, ∂v = c₁₁ - c₀₁
-    J11 = jacobian(quad, (T(1), T(1)), method)
-    @test J11[1] ≈ c₁₁ - c₁₀
-    @test J11[2] ≈ c₁₁ - c₀₁
+    J₁₁ = jacobian(quad, (T(1), T(1)), method)
+    @test J₁₁[1] ≈ c₁₁ - c₁₀
+    @test J₁₁[2] ≈ c₁₁ - c₀₁
 
     # center (0.5, 0.5): derivatives are averages
-    J_center = jacobian(quad, (T(0.5), T(0.5)), method)
-    @test J_center[1] ≈ ((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2
-    @test J_center[2] ≈ ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2
+    Jc = jacobian(quad, (T(0.5), T(0.5)), method)
+    @test Jc[1] ≈ ((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2
+    @test Jc[2] ≈ ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2
   end
 end
 
