@@ -40,6 +40,10 @@ import StatsBase: sample
 import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
+# Differentation API
+import DifferentiationInterface as DI
+import FiniteDifferences: central_fdm
+
 # Transforms API
 import TransformsBase: Transform, →
 import TransformsBase: isrevertible, isinvertible

@@ -1,35 +1,33 @@
 @testitem "Jacobian" setup = [Setup] begin
   # Only run tests for `Float64` since `Float32` would need tolerances to pass tests
   if T == Float64
-    method = FiniteDifference(T(1e-6))
-
     # 1D geometry (segment): constant tangent vector
     a = cart(T(1), T(2))
     b = cart(T(3), T(6))
     seg = Segment(a, b)
-    Jl = jacobian(seg, (T(0.0),), method)
-    Jr = jacobian(seg, (T(1.0),), method)
-    Jm = jacobian(seg, (T(0.5),), method)
+    Jl = jacobian(seg, (T(0.0),))
+    Jr = jacobian(seg, (T(1.0),))
+    Jm = jacobian(seg, (T(0.5),))
     @test Jl[1] ≈ b - a
     @test Jr[1] ≈ b - a
     @test Jm[1] ≈ b - a
 
     # invalid number of parametric coordinates
-    @test_throws ArgumentError jacobian(seg, (T(0.1), T(0.2)), method)
+    @test_throws ArgumentError jacobian(seg, (T(0.1), T(0.2)))
 
     # 2D geometry (triangle): barycentric map derivatives
     p₁ = cart(T(0), T(0), T(0))
     p₂ = cart(T(2), T(0), T(0))
     p₃ = cart(T(0), T(3), T(1))
     tri = Triangle(p₁, p₂, p₃)
-    J = jacobian(tri, (T(0.2), T(0.3)), method)
+    J = jacobian(tri, (T(0.2), T(0.3)))
     @test J[1] ≈ p₂ - p₁
     @test J[2] ≈ p₃ - p₁
     # 3D geometry (box): axis-aligned derivatives
     pmin = cart(T(0), T(0), T(0))
     pmax = cart(T(2), T(3), T(4))
     box = Box(pmin, pmax)
-    J = jacobian(box, (T(0.4), T(0.6), T(0.7)), method)
+    J = jacobian(box, (T(0.4), T(0.6), T(0.7)))
     sides = pmax - pmin
     @test J[1] ≈ vector(sides[1], T(0), T(0))
     @test J[2] ≈ vector(T(0), sides[2], T(0))
@@ -46,17 +44,17 @@
     quad = Quadrangle(c₀₀, c₀₁, c₁₁, c₁₀)
 
     # corner (0,0): ∂u = c₀₁ - c₀₀, ∂v = c₁₀ - c₀₀
-    J₀₀ = jacobian(quad, (T(0), T(0)), method)
+    J₀₀ = jacobian(quad, (T(0), T(0)))
     @test J₀₀[1] ≈ c₀₁ - c₀₀
     @test J₀₀[2] ≈ c₁₀ - c₀₀
 
     # corner (1,1): ∂u = c₁₁ - c₁₀, ∂v = c₁₁ - c₀₁
-    J₁₁ = jacobian(quad, (T(1), T(1)), method)
+    J₁₁ = jacobian(quad, (T(1), T(1)))
     @test J₁₁[1] ≈ c₁₁ - c₁₀
     @test J₁₁[2] ≈ c₁₁ - c₀₁
 
     # center (0.5, 0.5): derivatives are averages
-    Jc = jacobian(quad, (T(0.5), T(0.5)), method)
+    Jc = jacobian(quad, (T(0.5), T(0.5)))
     @test Jc[1] ≈ ((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2
     @test Jc[2] ≈ ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2
   end
@@ -65,26 +63,24 @@ end
 @testitem "Differential" setup = [Setup] begin
   # Only run tests for `Float64` since `Float32` would need tolerances to pass tests
   if T == Float64
-    method = FiniteDifference(T(1e-6))
-
     # line element
     a = cart(T(1), T(2))
     b = cart(T(3), T(6))
     seg = Segment(a, b)
-    @test differential(seg, (T(0.25),), method) ≈ length(seg)
+    @test differential(seg, (T(0.25),)) ≈ length(seg)
 
     # surface element
     p₁ = cart(T(0), T(0), T(0))
     p₂ = cart(T(2), T(0), T(0))
     p₃ = cart(T(0), T(3), T(1))
     tri = Triangle(p₁, p₂, p₃)
-    @test differential(tri, (T(0.3), T(0.2)), method) ≈ 2area(tri)
+    @test differential(tri, (T(0.3), T(0.2))) ≈ 2area(tri)
 
     # volume element
     pmin = cart(T(0), T(0), T(0))
     pmax = cart(T(2), T(3), T(4))
     box = Box(pmin, pmax)
-    @test differential(box, (T(0.1), T(0.2), T(0.3)), method) ≈ volume(box)
+    @test differential(box, (T(0.1), T(0.2), T(0.3))) ≈ volume(box)
 
     # non-constant differential element (bilinear quadrangle)
     c₀₀ = cart(T(0), T(0))
@@ -94,9 +90,9 @@ end
     quad = Quadrangle(c₀₀, c₀₁, c₁₁, c₁₀)
 
     # differential varies with position due to non-constant Jacobian
-    d₀₀ = differential(quad, (T(0), T(0)), method)
-    d₁₁ = differential(quad, (T(1), T(1)), method)
-    dc = differential(quad, (T(0.5), T(0.5)), method)
+    d₀₀ = differential(quad, (T(0), T(0)))
+    d₁₁ = differential(quad, (T(1), T(1)))
+    dc = differential(quad, (T(0.5), T(0.5)))
 
     # compute expected values from cross product magnitudes
     @test d₀₀ ≈ norm((c₀₁ - c₀₀) × (c₁₀ - c₀₀))
