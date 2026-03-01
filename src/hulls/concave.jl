@@ -82,16 +82,16 @@ function hull(points, ::Concave; k=3)
 
     its = true
     indᵢ = 0
-    while its && indᵢ < k
-      indᵢ += 1
+    # ring is concave, so must avoid intersections with existing segments
+    for indᵢ in 1:(k - 1)
       cpointᵢ = p[𝒩[indᵢ]]
       lastpoint = cpointᵢ == p[ℐ[begin]] ? 1 : 0
       indⱼ = 2
-      its = false
-      while !its && indⱼ < length(ℐ) - lastpoint
+      for indⱼ in 2:(length(ℐ) - lastpoint - 1)
         its = intersects(Segment(p[ℐ[step]], cpointᵢ), Segment(p[ℐ[step - indⱼ + 1]], p[ℐ[step - indⱼ]]))
-        indⱼ += 1
+        its && break
       end
+      !its && break
     end
 
     its && return hull(points, Concave(); k=kk + 1)
