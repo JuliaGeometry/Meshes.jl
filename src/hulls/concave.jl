@@ -6,22 +6,21 @@
     Concave()
 
 Compute the concave hull of a set of points or geometries using a
-knearest approach. See [https://en.wikipedia.org/wiki/Gift_wrapping_algorithm]
-(https://en.wikipedia.org/wiki/Gift_wrapping_algorithm).
+knearest neighbors approach. The `k` parameter controls the level of concavity, with larger values resulting in a more convex hull. If `k` is too large, the algorithm will fall back to computing the convex hull.
 
-The algorithm has complexity `O(n)` where `n` is the number of points
+The algorithm has empirical complexity `O(n)` where `n` is the number of points
 
 ## References
+
+* Moreira, A. & Santos, M. Y. 2007. "CONCAVE HULL: A K-NEAREST NEIGHBOURS APPROACH FOR THE COMPUTATION OF THE REGION OCCUPIED BY A SET OF POINTS". In: *Proceedings of the Second International Conference on Computer Graphics Theory and Applications*. SciTePress, pp. 61–68.
 
 """
 struct Concave <: HullMethod end
 
 function hull(points, ::Concave; k=3)
   kk = max(k, 3)
-  println("Computing concave hull with k=$kk")
   pₒ = first(points)
   ℒ = lentype(pₒ)
-  T = numtype(ℒ)
 
   # sanity check
   ncoords = CoordRefSystems.ncoords(coords(pₒ))
@@ -42,7 +41,7 @@ function hull(points, ::Concave; k=3)
   kk >= n - 1 && return convexhull(p)
 
   # find bottom-left point
-  i = argmin(p)
+  i = argmin(i -> reverse(svec(p[i])), 1:n)
   searcher = KNearestSearch(p, kk)
 
   # candidates for next point
@@ -55,7 +54,7 @@ function hull(points, ::Concave; k=3)
   # initialize ring of indices
   ℐ = [i, j]
 
-  mask = trues(length(points))
+  mask = trues(n)
   mask[[i, j]] .= false
 
   # rotational sweep

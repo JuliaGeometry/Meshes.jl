@@ -102,6 +102,6 @@ _gconvexhull(geoms) = _pconvexhull(p for g in geoms for p in boundarypoints(g))
 
 _pconvexhull(points) = hull(points, GrahamScan())
 
-_gconcavehull(geoms) = _pconcavehull(parent(geoms))
+_gconcavehull(geoms) = _pconcavehull(p for g in geoms for p in boundarypoints(g))
 
 _pconcavehull(points) = hull(points, Concave())
