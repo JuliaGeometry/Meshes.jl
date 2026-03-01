@@ -1,5 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  for method in [GrahamScan(), JarvisMarch()]
+  for method in [GrahamScan(), JarvisMarch(), Concave()]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
@@ -20,21 +20,25 @@
     @test chul == Segment(cart(0, 1), cart(1, 0))
     pts = cart.([(1, 0), (0, 0), (0, 1)])
     chul = hull(pts, method)
-    @test vertices(chul) == cart.([(0, 0), (1, 0), (0, 1)])
+    @test Set(vertices(chul)) == Set(cart.([(0, 0), (1, 0), (0, 1)]))
 
     # original point set is already in hull
     pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
     chul = hull(pts, method)
     verts = vertices(chul)
-    @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    @test Set(verts) == Set(cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]))
 
-    # random points in interior do not affect result
+    # random points in interior should include all points
     p1 = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
     p2 = cart.([0.5 .* (rand(), rand()) .+ 0.5 for _ in 1:10])
     pts = [p1; p2]
     chul = hull(pts, method)
     verts = vertices(chul)
-    @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    @test all(p1 .∈ Ref(chul))
+    @test all(p2 .∈ Ref(chul))
+    if method != Concave() # convex hull should be unaffected by interior points
+      @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    end
 
     pts =
       cart.([
@@ -78,7 +82,7 @@
       points = [cart(i - 1, j - 1) for i in 1:11 for j in 1:11]
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(10, 0), cart(10, 10), cart(0, 10)]
-      for _ in 1:100 # test presence of interior points doesn't affect the result 
+      for _ in 1:100 # test presence of interior points doesn't affect the result
         push!(points, cart(10 * rand(), 10 * rand()))
       end
       chull = hull(points, method)
@@ -97,7 +101,7 @@
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(100, 0)]
 
-      # partially collinear 
+      # partially collinear
       points = [
         cart(2, 0),
         cart(4, 0),
@@ -170,4 +174,20 @@ end
   h = convexhull(Multi([b1, b2]))
   @test cart(-0.8, -0.8) ∈ h
   @test cart(0.2, 0.2) ∈ h
+end
+
+@testitem "Concave hulls" setup = [Setup] begin
+  @test concavehull(cart(0, 0)) == cart(0, 0)
+
+  @test concavehull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
+
+  @test concavehull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  b1 = Box(cart(0, 0), cart(1, 1))
+  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  @test concavehull(Multi([b1, b2])) isa PolyArea
 end
