@@ -1,5 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  for method in [GrahamScan(), JarvisMarch()]
+  for method in [GrahamScan(), JarvisMarch(), Concave()]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
