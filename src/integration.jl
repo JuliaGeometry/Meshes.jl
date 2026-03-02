@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    integral(fun, geom; order=1)
+    integral(fun, geom; order=100)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 [`Point`](@ref)s to values in a linear space.
@@ -12,10 +12,10 @@ The quadrature `order` can be specified to increase the accuracy.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom; order=1) = localintegral(fun ∘ geom, geom; order)
+integral(fun, geom; order=100) = localintegral(fun ∘ geom, geom; order)
 
 """
-    localintegral(fun, geom; order=1)
+    localintegral(fun, geom; order=100)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 parametric coordinates `uvw` to values in a linear space.
@@ -24,7 +24,7 @@ The quadrature `order` can be specified to increase the accuracy.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom; order=1)
+function localintegral(fun, geom; order=100)
   # parametric dimension
   dim = paramdim(geom)
 
