@@ -3,33 +3,33 @@
 # ------------------------------------------------------------------
 
 """
-    integral(fun, geom; order=100)
+    integral(fun, geom; n=100)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 [`Point`](@ref)s to values in a linear space.
 
-The quadrature `order` can be specified to increase the accuracy.
+Polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom; order=100) = localintegral(fun ∘ geom, geom; order)
+integral(fun, geom; n=100) = localintegral(fun ∘ geom, geom; n)
 
 """
-    localintegral(fun, geom; order=100)
+    localintegral(fun, geom; n=100)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 parametric coordinates `uvw` to values in a linear space.
 
-The quadrature `order` can be specified to increase the accuracy.
+Polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom; order=100)
+function localintegral(fun, geom; n=100)
   # parametric dimension
   dim = paramdim(geom)
 
   # Gauss-Legendre quadrature points and weights
-  ts, ws = gausslegendre(order)
+  ts, ws = gausslegendre(n)
   tgrid = Iterators.product(ntuple(_ -> ts, dim)...)
   wgrid = Iterators.product(ntuple(_ -> ws, dim)...)
 
