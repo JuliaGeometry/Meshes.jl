@@ -25,21 +25,22 @@ Polynomials of degree up to `2n-1` are integrated exactly.
 See also [`integral`](@ref).
 """
 function localintegral(fun, geom; n=100)
-  # parametric dimension
-  dim = paramdim(geom)
+  # parametric dimension and number type
+  N = paramdim(geom)
+  T = numtype(lentype(geom))
 
   # Gauss-Legendre quadrature points and weights
   ts, ws = gausslegendre(n)
-  tgrid = Iterators.product(ntuple(_ -> ts, dim)...)
-  wgrid = Iterators.product(ntuple(_ -> ws, dim)...)
+  tgrid = Iterators.product(ntuple(_ -> T.(ts), N)...)
+  wgrid = Iterators.product(ntuple(_ -> T.(ws), N)...)
 
   # compute integral with change of variable and differential element
   Σwᵢfᵢ = sum(zip(tgrid, wgrid)) do (t, w)
     # change of variable [-1, 1] → [0, 1]
-    uvw = ntuple(i -> (t[i] + 1) / 2, dim)
+    uvw = ntuple(i -> (t[i] + 1) / 2, N)
     prod(w) * fun(uvw...) * differential(geom, uvw)
   end
 
   # adjust for change of variable
-  Σwᵢfᵢ / 2^dim
+  Σwᵢfᵢ / 2^N
 end
