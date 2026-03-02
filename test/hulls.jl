@@ -70,12 +70,20 @@
         (0, 6)
       ])
     chul = hull(pts, method)
-    @test nvertices(chul) < length(pts)
+    if method == Concave()
+      @test Set(vertices(chul)) == Set(pts)
+    else
+      @test nvertices(chul) < length(pts)
+    end
 
     poly = readpoly(T, joinpath(datadir, "hull.line"))
     pts = vertices(poly)
     chul = hull(pts, method)
-    @test nvertices(chul) < length(pts)
+    if method == Concave()
+      @test Set(vertices(chul)) == Set(pts)
+    else
+      @test nvertices(chul) < length(pts)
+    end
 
     if method == GrahamScan()
       # simplifying rectangular hull / triangular
@@ -188,6 +196,11 @@ end
   @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
 
   b1 = Box(cart(0, 0), cart(1, 1))
+  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  @test Set(vertices(concavehull(Multi([b1, b2])))) ==
+        Set(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+
+  b1 = Ball(cart(0, 0), T(1))
   b2 = Box(cart(-1, -1), cart(0.5, 0.5))
   @test concavehull(Multi([b1, b2])) isa PolyArea
 end

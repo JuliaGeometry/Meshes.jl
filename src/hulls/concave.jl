@@ -37,25 +37,26 @@ function hull(points, ::Concave; k=3)
 
   kk = min(kk, n - 1)
 
-  # prevent infinite recursion - if k is too large, fall back to convex hull
+  # if k is larger than number of points, return convex hull
   kk >= n - 1 && return convexhull(p)
 
   # find bottom-left point
   i = argmin(i -> reverse(svec(p[i])), 1:n)
   searcher = KNearestSearch(p, kk)
 
-  # candidates for next point
-  𝒞 = [1:(i - 1); (i + 1):n]
+  # mask to filter used points
+  mask = trues(n)
+  mask[i] = false
 
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  j = argmin(l -> ∠(A, O, p[l]), 𝒞)
+  𝒩 = search(O, searcher; mask=mask)
+  j = argmin(l -> ∠(A, O, p[l]), 𝒩)
 
   # initialize ring of indices
   ℐ = [i, j]
 
-  mask = trues(n)
-  mask[[i, j]] .= false
+  mask[j] = false
 
   # rotational sweep
   step = 2
@@ -66,32 +67,29 @@ function hull(points, ::Concave; k=3)
     last = p[i]
     v = curr - last
 
-    # update candidates
-    𝒞 = setdiff(1:n, [i, j])
-
     # find next segment
     i = j
     O = p[i]
     A = O + v
 
-    neighbors = search(curr, searcher; mask=mask)
-    k = min(kk, length(neighbors))
-    𝒩 = neighbors[1:k]
-
+    𝒩 = search(curr, searcher; mask=mask)
+    isempty(𝒩) && return hull(points, Concave(); k=kk + 1)
     sort!(𝒩, by=l -> ∠(A, O, p[l]))
 
     its = true
     indᵢ = 0
     # ring is concave, so must avoid intersections with existing segments
-    for indᵢ in 1:(k - 1)
+    while its && indᵢ < length(𝒩)
+      indᵢ += 1
       cpointᵢ = p[𝒩[indᵢ]]
+
       lastpoint = cpointᵢ == p[ℐ[begin]] ? 1 : 0
       indⱼ = 2
-      for indⱼ in 2:(length(ℐ) - lastpoint - 1)
+      its = false
+      while !its && indⱼ < length(ℐ) - lastpoint
         its = intersects(Segment(p[ℐ[step]], cpointᵢ), Segment(p[ℐ[step - indⱼ + 1]], p[ℐ[step - indⱼ]]))
-        its && break
+        indⱼ += 1
       end
-      !its && break
     end
 
     its && return hull(points, Concave(); k=kk + 1)
@@ -102,8 +100,10 @@ function hull(points, ::Concave; k=3)
 
     push!(ℐ, 𝒩[indᵢ])
   end
+
   poly = PolyArea(p[ℐ[begin:(end - 1)]])
   # if not all points are in the polygon, increase k and try again
   !all(points .∈ poly) && return hull(points, Concave(); k=kk + 1)
   poly
 end
+\
