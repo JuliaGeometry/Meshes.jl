@@ -6,7 +6,7 @@
     (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
   end
   solution = T(2π) * u"Ω*m"
-  @test integral(integrand, curve, n=10) ≈ solution rtol=1e-2
+  @test integral(integrand, curve, n=10) ≈ solution rtol = 1e-2
 
   # Box 1D
   a = T(π)
@@ -16,7 +16,7 @@
     √(a^2 - x₁^2) * u"A"
   end
   solution = T(π) * a^2 / 4 * u"A*m"
-  @test integral(integrand, box, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, box, n=10) ≈ solution rtol = 1e-3
 
   # Box 2D
   a = T(π)
@@ -26,7 +26,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
   end
   solution = 2a * (T(π) * a^2 / 4) * u"A*m^2"
-  @test integral(integrand, box, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, box, n=10) ≈ solution rtol = 1e-3
 
   # Box 3D
   a = T(π)
@@ -36,7 +36,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
-  @test integral(integrand, box, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, box, n=10) ≈ solution rtol = 1e-3
 
   # Ball 2D
   origin = cart(0, 0)
@@ -47,7 +47,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test integral(integrand, ball, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, ball, n=10) ≈ solution rtol = 1e-3
 
   # Ellipsoid
   origin = cart(0, 0, 0)
@@ -58,7 +58,7 @@
     (z^2) * u"A"
   end
   solution = (T(4π) * R^4 / 3) * u"A*m^2"
-  @test integral(integrand, ellipsoid, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, ellipsoid, n=10) ≈ solution rtol = 1e-3
 
   # Disk
   center = cart(1, 2, 3)
@@ -72,7 +72,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test integral(integrand, disk, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, disk, n=10) ≈ solution rtol = 1e-3
 
   # Circle
   center = cart(1, 2, 3)
@@ -86,7 +86,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
-  @test integral(integrand, circle, n=10) ≈ solution rtol=1e-3
+  @test integral(integrand, circle, n=10) ≈ solution rtol = 1e-3
 end
 
 @testitem "localintegral" setup = [Setup] begin
