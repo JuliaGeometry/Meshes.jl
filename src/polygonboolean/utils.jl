@@ -2,64 +2,83 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# insert intersection points into rings
-function _insertintersections!(intersections, seginds, allrings)
-  # group intersections by segment index
+# group intersections by (ringind, segind) using global segment indices
+# returns Vector{Dict{Int,Vector{P}}} - one dict per ring
+function _groupbyring(intersections, seginds, ringlengths)
   P = eltype(intersections)
-  G = Dict{Int,Vector{P}}()
-  for (p, segs) in zip(intersections, seginds), s in segs
-    push!(get!(G, s, P[]), p)
+  nrings = length(ringlengths)
+  offsets = [0; cumsum(ringlengths)]
+
+  # one dict per ring: segind -> points
+  groups = [Dict{Int,Vector{P}}() for _ in 1:nrings]
+
+  for (p, globalsegs) in zip(intersections, seginds), gind in globalsegs
+    rind = searchsortedfirst(offsets, gind) - 1
+    lind = gind - offsets[rind]
+    push!(get!(groups[rind], lind, P[]), p)
   end
-  # precompute offsets
-  ℒ = size.(allrings, 1)
-  offsets = [0; cumsum(ℒ)]
 
-  # track inserted points per ring
-  insertcounts = zeros(Int, length(allrings))
+  groups
+end
 
-  # insert missing points *with correct orientation* to split segments at intersections
-  for ind in sort!(collect(keys(G)))
-    # find ring index of points
-    rind = searchsortedfirst(offsets, ind) - 1
-    lind = ind - offsets[rind]
+# splice/append intersection points into vertex vector for one ring
+# insertions: Dict mapping segment index -> points
+function _insertintoring!(v, n, insertions::Dict)
+  isempty(insertions) && return v
 
-    pts = G[ind]
-    v = allrings[rind]
+  offset = 0
+  for lind in sort!(collect(keys(insertions)))
+    pts = insertions[lind]
+    i = lind + offset
 
-    n₀ = ℒ[rind]
-    startind = lind + insertcounts[rind]
+    pₛ = v[i]
+    pₑ = lind < n ? v[i + 1] : v[1]
 
-    ps = v[startind]
-    pe = lind < n₀ ? v[startind + 1] : v[1]
-
-    # check if point is present at this segment (i.e an existing endpoint)
-    filter!(p -> !isapprox(p, ps) && !isapprox(p, pe), pts)
+    # filter endpoints
+    filter!(p -> !isapprox(p, pₛ) && !isapprox(p, pₑ), pts)
     isempty(pts) && continue
 
-    # ensure L-R ordering
+    # sort L-R, then order by segment direction
     sort!(pts)
-    # order by segment direction
-    ps > pe && reverse!(pts)
+    pₛ > pₑ && reverse!(pts)
 
-    # inserting at the end of a `CircularVector` places points at beginning, leading to offset bugs
-    if lind < n₀
-      # `CircularVector` doesn't implement `splice!` so we use `insert!`
-      for (offset, pt) in enumerate(pts)
-        insert!(v, startind + offset, pt)
-      end
+    # splice or append
+    if lind < n
+      splice!(v, (i + 1):i, pts)
     else
       append!(v, pts)
     end
 
-    insertcounts[rind] += size(pts, 1)
+    offset += length(pts)
   end
+
+  v
 end
 
-##########
-# CONSTANTS for segment fill bitmasks
-# segment fills describe whether a segment is filled by a subject or clip polygon
-# above or below the segment
-##########
+"""
+    _insertintersections!(rings, intersections, seginds)
+
+Insert intersection points into rings based on global segment indices from
+`pairwiseintersect`.
+
+"""
+function _insertintersections!(rings, intersections, seginds)
+  isempty(intersections) && return rings
+
+  ringlengths = nvertices.(rings)
+  groups = _groupbyring(intersections, seginds, ringlengths)
+
+  for (i, (ring, group)) in enumerate(zip(rings, groups))
+    isempty(group) && continue
+    v = vertices(ring)
+    _insertintoring!(v, ringlengths[i], group)
+  end
+
+  rings
+end
+
+# segment fill bitmasks
+# describe whether segment is filled by subject or clip polygon above or below
 const NONE = 0b0000
 const SUBJTOP = 0b0001
 const SUBJBOTTOM = 0b0010
@@ -69,41 +88,33 @@ const BOTHTOP = SUBJTOP | CLIPTOP
 const BOTHBOTTOM = SUBJBOTTOM | CLIPBOTTOM
 
 """
-  Segment Fill Rules for Boolean Operations
+    _filled(operation, bits, subjmask, clipmask)
 
-Internal utility functions for determining segment fill states during polygon boolean operations.
+Determine if segment is filled based on operation and fill bits.
 
-# Fill Rules by Operation
-
-- **Union**: Segment is filled if either subject OR clip polygon is filled
-- **Intersection**: Segment is filled if both subject AND clip polygons are filled
-- **Difference**: Segment is filled if subject is filled AND clip is NOT filled
-- **Symmetric Difference (XOR)**: Segment is filled if exactly one of subject or clip is filled
-
-# Purpose
-
-These rules establish segment-polygon relationships used to:
-- Select relevant segments for the output
-- Determine hole vs outer polygon relationships
-- Build the final boolean operation result
+Fill rules:
+- `union`: filled if either subject or clip is filled
+- `intersect`: filled if both are filled
+- `setdiff`: filled if subject filled and clip not
+- `symdiff`/`xor`: filled if exactly one is filled
 """
-function _filled(operation, bits, above)
-  masksubj = above ? SUBJTOP : SUBJBOTTOM
-  maskclip = above ? CLIPTOP : CLIPBOTTOM
-
-  # any subject/clip filled?
-  subjfilled = (bits & masksubj) != 0
-  clipfilled = (bits & maskclip) != 0
+function _filled(operation, bits, subjmask, clipmask)
+  sj = (bits & subjmask) != 0
+  cl = (bits & clipmask) != 0
 
   if operation == intersect
-    subjfilled && clipfilled
+    sj && cl
   elseif operation == union
-    subjfilled || clipfilled
+    sj || cl
   elseif operation == setdiff
-    subjfilled && !clipfilled
+    sj && !cl
   elseif operation == symdiff || operation == xor
-    subjfilled ⊻ clipfilled
+    sj ⊻ cl
   else
-    operation(subjfilled, clipfilled)
+    operation(sj, cl)
   end
 end
+
+# convenience wrappers for above/below fill checks
+_filledabove(operation, bits) = _filled(operation, bits, SUBJTOP, CLIPTOP)
+_filledbelow(operation, bits) = _filled(operation, bits, SUBJBOTTOM, CLIPBOTTOM)

@@ -1,5 +1,5 @@
 @testitem "Polygon Boolean internals" setup = [Setup] begin
-  # _insertintersections! function test
+  # insertintersections! function test
   # simple case: two rings intersecting at two points
   ring1 = Ring(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   ring2 = Ring(cart(2, -1), cart(2, 5), cart(5, 5), cart(5, -1))
@@ -9,19 +9,13 @@
   allsegs = Iterators.flatten(segs)
   intersections, seginds = Meshes.pairwiseintersect(allsegs)
 
-  Meshes._insertintersections!(intersections, seginds, vertices.(rings))
+  Meshes._insertintersections!(rings, intersections, seginds)
 
-  # check that intersections were inserted correctly
-  newring1 = rings[1]
-  newring2 = rings[2]
+  @test length(vertices(rings[1])) == 6  # two intersections added
+  @test length(vertices(rings[2])) == 6  # two intersections added
 
-  @test length(vertices(newring1)) == 6  # two intersections added
-  @test length(vertices(newring2)) == 6  # two intersections added
-
-  @test cart(2, 0) in vertices(newring1)
-  @test cart(2, 4) in vertices(newring1)
-  @test cart(2, 0) in vertices(newring2)
-  @test cart(2, 4) in vertices(newring2)
+  @test all(vertices(rings[1]) .== cart.([(0, 0), (2, 0), (4, 0), (4, 4), (2, 4), (0, 4)]))
+  @test all(vertices(rings[2]) .== cart.([(2, -1), (2, 0), (2, 4), (2, 5), (5, 5), (5, -1)]))
 
   # degenerate case: intersections at segment endpoints
   ring3 = Ring(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
@@ -30,34 +24,37 @@
   segs2 = segments.(rings2)
   allsegs2 = Iterators.flatten(segs2)
   intersections2, seginds2 = Meshes.pairwiseintersect(allsegs2)
-  Meshes._insertintersections!(intersections2, seginds2, vertices.(rings2))
-  newring3 = rings2[1]
-  newring4 = rings2[2]
-  @test length(vertices(newring3)) == 4  # no new points added
-  @test length(vertices(newring4)) == 4  # no new points added
+  Meshes._insertintersections!(rings2, intersections2, seginds2)
+  @test length(vertices(rings2[1])) == 4  # no new points added
+  @test length(vertices(rings2[2])) == 4  # no new points added
 
-  ## _filled function test
-  # test fills above
-  @test Meshes._filled(union, 0b0001, true) == true
-  @test Meshes._filled(union, 0b0010, true) == false
-  @test Meshes._filled(union, 0b0000, true) == false
-  @test Meshes._filled(intersect, 0b0001, true) == false
-  @test Meshes._filled(intersect, 0b0100, true) == false
-  @test Meshes._filled(intersect, 0b0101, true) == true
-  @test Meshes._filled(setdiff, 0b0001, true) == true
-  @test Meshes._filled(setdiff, 0b0101, true) == false
-  @test Meshes._filled(symdiff, 0b0001, true) == true
-  @test Meshes._filled(symdiff, 0b0100, true) == true
-  @test Meshes._filled(symdiff, 0b0110, true) == true
-  # test fills below
-  @test Meshes._filled(union, 0b0100, false) == false
-  @test Meshes._filled(union, 0b1000, false) == true
-  @test Meshes._filled(union, 0b0000, false) == false
-  @test Meshes._filled(intersect, 0b0010, false) == false
-  @test Meshes._filled(intersect, 0b1010, false) == true
-  @test Meshes._filled(setdiff, 0b0010, false) == true
-  @test Meshes._filled(setdiff, 0b1010, false) == false
-  @test Meshes._filled(symdiff, 0b1000, false) == true
-  @test Meshes._filled(symdiff, 0b0110, false) == true
-  @test Meshes._filled(symdiff, 0b1110, false) == false
+  # _filledabove and _filledbelow correctness across all operations and bit patterns
+  ops = [union, intersect, setdiff, symdiff]
+
+  for op in ops
+    for bits in 0b0000:0b1111
+      result_above = Meshes._filledabove(op, bits)
+      result_below = Meshes._filledbelow(op, bits)
+
+      @test isa(result_above, Bool)
+      @test isa(result_below, Bool)
+
+      if op == union
+        babove = (bits & 0b0001) == 1 || (bits & 0b0100) == 4
+        bbelow = (bits & 0b0010) == 2 || (bits & 0b1000) == 8
+      elseif op == intersect
+        babove = (bits & 0b0001) == 1 && (bits & 0b0100) == 4
+        bbelow = (bits & 0b0010) == 2 && (bits & 0b1000) == 8
+      elseif op == setdiff
+        babove = (bits & 0b0001) == 1 && (bits & 0b0100) != 4
+        bbelow = (bits & 0b0010) == 2 && (bits & 0b1000) != 8
+      elseif op == symdiff
+        babove = ((bits & 0b0001) == 1) ⊻ ((bits & 0b0100) == 4)
+        bbelow = ((bits & 0b0010) == 2) ⊻ ((bits & 0b1000) == 8)
+      end
+
+      @test result_above == babove
+      @test result_below == bbelow
+    end
+  end
 end

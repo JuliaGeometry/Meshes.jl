@@ -213,6 +213,34 @@ Return the outer and inner rings of the polygon.
 """
 function rings end
 
+"""
+  g₁ ∪ g₂
+
+Compute the geometric union of geometries `g₁` and `g₂`.
+"""
+Base.union(a::Polygon, b::Polygon) = polygonbooleanop(a, b, union)
+
+"""
+  setdiff(g₁, g₂)
+
+Compute the geometric difference of geometries `g₁` and `g₂`.
+"""
+Base.setdiff(a::Polygon, b::Polygon) = polygonbooleanop(a, b, setdiff)
+
+"""
+  symdiff(g₁, g₂)
+
+Compute the symmetric difference of geometries `g₁` and `g₂`.
+"""
+Base.symdiff(a::Polygon, b::Polygon) = polygonbooleanop(a, b, symdiff)
+
+"""
+  g₁ ⊻ g₂
+
+Compute the symmetric difference (exclusive or) of geometries `g₁` and `g₂`.
+"""
+Base.xor(a::Polygon, b::Polygon) = polygonbooleanop(a, b, symdiff)
+
 # implementations of Polygon
 include("polytopes/ngon.jl")
 include("polytopes/polyarea.jl")
