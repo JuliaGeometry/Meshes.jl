@@ -41,10 +41,10 @@ function hull(points, ::Concave; k=3)
   kk >= n - 1 && return convexhull(p)
 
   # find bottom-left point
-  i = argmin(i -> reverse(svec(p[i])), 1:n)
+  i = argmin(p)
   searcher = KNearestSearch(p, kk)
 
-  # mask to filter used points
+  # mask to filter used points for the searcher
   mask = trues(n)
   mask[i] = false
 
@@ -106,4 +106,3 @@ function hull(points, ::Concave; k=3)
   !all(points .∈ poly) && return hull(points, Concave(); k=kk + 1)
   poly
 end
-\
