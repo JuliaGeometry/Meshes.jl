@@ -87,6 +87,18 @@
   end
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
   @test integral(integrand, circle, n=10) ≈ solution rtol = 1e-3
+
+  # Cone
+  r = T(2.5)u"m"
+  h = T(3.5)u"m"
+  origin = cart(0, 0, 0)
+  plane = Plane(origin, vector(0, 0, 1))
+  base = Disk(plane, r)
+  apex = cart(0u"m", 0u"m", h)
+  cone = Cone(base, apex)
+  integrand(p) = T(1.0)u"A"
+  solution = (T(π) * r^2 * h / 3) * u"A"
+  @test integral(integrand, cone) ≈ solution
 end
 
 @testitem "localintegral" setup = [Setup] begin

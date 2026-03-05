@@ -24,7 +24,20 @@ Polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom; n=3)
+localintegral(fun, geom; n=3) = _uvwintegral(fun, geom; n)
+
+# --------------
+# SPECIAL CASES
+# --------------
+
+# cone surface is the union of the lateral surface and the base disk
+localintegral(fun, conesurf::ConeSurface; n=3) = _uvwintegral(fun, conesurf; n) + _uvwintegral(fun, base(conesurf); n)
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+function _uvwintegral(fun, geom; n=3)
   # parametric dimension and number type
   N = paramdim(geom)
   T = numtype(lentype(geom))
