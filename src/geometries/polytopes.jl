@@ -213,6 +213,8 @@ Return the outer and inner rings of the polygon.
 """
 function rings end
 
+#TODO insert polygon boolean operations such as ∪, ∩, setdiff, ⊻
+
 # implementations of Polygon
 include("polytopes/ngon.jl")
 include("polytopes/polyarea.jl")
