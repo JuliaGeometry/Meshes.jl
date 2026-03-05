@@ -88,6 +88,43 @@
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
   @test integral(integrand, circle, n=10) ≈ solution rtol = 1e-3
 
+  # Cylinder
+  h = T(8.5)u"m"
+  ρ = T(1.3)u"m"
+  a = cart(0, 0, 0)
+  b = cart(0u"m", 0u"m", h)
+  cyl = Cylinder(a, b, ρ)
+  function integrand(p)
+    c = convert(Cylindrical, coords(p))
+    ρ = c.ρ
+    φ = c.ϕ
+    z = c.z
+    ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
+  end
+  solution = ((T(π) * h * ρ^2) + (T(π) * h^2 * ρ) + (T(2π) * T(π) * u"m" * h * ρ)) * u"A"
+  @test integral(integrand, cyl, n=10) ≈ solution
+
+  # CylinderSurface
+  h = T(8.5)u"m"
+  ρ = T(1.3)u"m"
+  a = cart(0, 0, 0)
+  b = cart(0u"m", 0u"m", h)
+  cylsurf = CylinderSurface(a, b, ρ)
+  function integrand(p)
+    c = convert(Cylindrical, coords(p))
+    ρ = c.ρ
+    φ = c.ϕ
+    z = c.z
+    ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
+  end
+  solution = let
+    A1 = (T(2π) * h * ρ) + (T(π) * ρ^2) + (T(π) * u"m" * ρ * T(2π))
+    A2 = (T(π) * ρ^2) + (T(π) * u"m" * ρ * T(2π))
+    A3 = (T(2π) * h * ρ) + (T(2π)^2 * u"m" * h) + (T(π) * h^2)
+    (A1 + A2 + A3) * u"A"
+  end
+  @test_broken integral(integrand, cylsurf) ≈ solution
+
   # Cone
   r = T(2.5)u"m"
   h = T(3.5)u"m"
@@ -99,6 +136,53 @@
   integrand(p) = T(1.0)u"A"
   solution = (T(π) * r^2 * h / 3) * u"A"
   @test integral(integrand, cone) ≈ solution
+
+  # ConeSurface
+  r = T(2.5)u"m"
+  h = T(3.5)u"m"
+  origin = cart(0, 0, 0)
+  plane = Plane(origin, vector(0, 0, 1))
+  base = Disk(plane, r)
+  apex = cart(0u"m", 0u"m", h)
+  cone = ConeSurface(base, apex)
+  integrand(p) = T(1.0)u"A"
+  solution = ((T(π) * r^2) + (T(π) * r * hypot(h, r))) * u"A"
+  @test integral(integrand, cone) ≈ solution
+
+  # Frustum
+  r = T(2.5)u"m"
+  h = T(3.5)u"m"
+  origin = cart(0, 0, 0)
+  normal = vector(0, 0, 1)
+  midpoint = cart(0.0u"m", 0.0u"m", h / 2)
+  base = Disk(Plane(origin, normal), r)
+  disk = Disk(Plane(midpoint, normal), r / 2)
+  frustum = Frustum(base, disk)
+  integrand(p) = T(1.0)u"A"
+  solution = (T(7) / T(8)) * (T(π) * r^2 * h / T(3)) * u"A"
+  @test integral(integrand, frustum) ≈ solution
+
+  # FrustumSurface
+  rbot = T(2.5)u"m"
+  rtop = T(1.25)u"m"
+  height = T(2π) * u"m"
+  origin = cart(0, 0, 0)
+  normal = vector(0, 0, 1)
+  planebot = Plane(origin, normal)
+  diskbot = Disk(planebot, rbot)
+  centertop = cart(0.0u"m", 0.0u"m", height / 2)
+  planetop = Plane(centertop, normal)
+  disktop = Disk(planetop, rtop)
+  frustum = FrustumSurface(diskbot, disktop)
+  integrand(p) = T(1.0)u"A"
+  solution = let
+    A1 = T(π) * rbot * hypot(height, rbot)
+    A2 = T(π) * rtop * hypot(height / 2, rtop)
+    A3 = T(π) * rtop^2
+    A4 = T(π) * rbot^2
+    (A1 - A2 + A3 + A4) * u"A"
+  end
+  @test integral(integrand, frustum) ≈ solution
 end
 
 @testitem "localintegral" setup = [Setup] begin
