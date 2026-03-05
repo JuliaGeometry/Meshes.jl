@@ -863,8 +863,8 @@ end
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
   @test radius(c) == T(5) * u"m"
-  @test bottom(c) == Plane(cart(1, 2, 3), vector(0, 0, 1))
-  @test top(c) == Plane(cart(4, 5, 6), vector(0, 0, 1))
+  @test bottom(c) == Disk(Plane(cart(1, 2, 3), vector(0, 0, 1)), Meshes.bottomradius(c))
+  @test top(c) == Disk(Plane(cart(4, 5, 6), vector(0, 0, 1)), Meshes.topradius(c))
   @test axis(c) == Line(cart(1, 2, 3), cart(4, 5, 6))
   @test !isright(c)
   @test measure(c) == volume(c) ≈ T(5)^2 * pi * T(3) * sqrt(T(3)) * u"m^3"
@@ -897,8 +897,8 @@ end
 
   c = Cylinder(cart(0, 0, 0), cart(0, 0, 1), T(1))
   @test radius(c) == T(1) * u"m"
-  @test bottom(c) == Plane(cart(0, 0, 0), vector(0, 0, 1))
-  @test top(c) == Plane(cart(0, 0, 1), vector(0, 0, 1))
+  @test bottom(c) == Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1))
+  @test top(c) == Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1))
   @test centroid(c) == cart(0.0, 0.0, 0.5)
   @test axis(c) == Line(cart(0, 0, 0), cart(0, 0, 1))
   @test isright(c)
@@ -943,8 +943,8 @@ end
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
   @test radius(c) == T(2) * u"m"
-  @test bottom(c) == Plane(cart(0, 0, 0), vector(0, 0, 1))
-  @test top(c) == Plane(cart(0, 0, 1), vector(0, 0, 1))
+  @test bottom(c) == Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2))
+  @test top(c) == Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(2))
   @test centroid(c) == cart(0.0, 0.0, 0.5)
   @test axis(c) == Line(cart(0, 0, 0), cart(0, 0, 1))
   @test isright(c)

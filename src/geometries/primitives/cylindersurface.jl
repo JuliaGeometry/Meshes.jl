@@ -56,35 +56,38 @@ end
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
-bottom(c::CylinderSurface) = c.bot
+bottom(∂c::CylinderSurface) = Disk(∂c.bot, bottomradius(∂c))
 
-top(c::CylinderSurface) = c.top
+top(∂c::CylinderSurface) = Disk(∂c.top, topradius(∂c))
 
-radius(c::CylinderSurface) = c.radius
+bottomradius(∂c::CylinderSurface) = bottomradius(Cylinder(∂c.bot, ∂c.top, ∂c.radius))
 
-axis(c::CylinderSurface) = Line(bottom(c)(0, 0), top(c)(0, 0))
+topradius(∂c::CylinderSurface) = topradius(Cylinder(∂c.bot, ∂c.top, ∂c.radius))
+
+radius(∂c::CylinderSurface) = ∂c.radius
+
+axis(∂c::CylinderSurface) = Line(∂c.bot(0, 0), ∂c.top(0, 0))
 
 # cylinder is right if axis is aligned with plane normals
-function isright(c::CylinderSurface)
-  T = numtype(lentype(c))
-  a = axis(c)
+function isright(∂c::CylinderSurface)
+  T = numtype(lentype(∂c))
+  a = axis(∂c)
   d = a(T(1)) - a(T(0))
-  u = normal(bottom(c))
-  v = normal(top(c))
+  u = normal(∂c.bot)
+  v = normal(∂c.top)
   isapproxzero(norm(d × u)) && isapproxzero(norm(d × v))
 end
 
-function hasintersectingplanes(c::CylinderSurface)
-  l = bottom(c) ∩ top(c)
-  !isnothing(l) && evaluate(Euclidean(), axis(c), l) < radius(c)
+function hasintersectingplanes(∂c::CylinderSurface)
+  l = ∂c.bot ∩ ∂c.top
+  !isnothing(l) && evaluate(Euclidean(), axis(∂c), l) < ∂c.radius
 end
 
-==(c₁::CylinderSurface, c₂::CylinderSurface) =
-  bottom(c₁) == bottom(c₂) && top(c₁) == top(c₂) && radius(c₁) == radius(c₂)
+==(∂c₁::CylinderSurface, ∂c₂::CylinderSurface) = ∂c₁.bot == ∂c₂.bot && ∂c₁.top == ∂c₂.top && ∂c₁.radius == ∂c₂.radius
 
-Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface; atol=atol(lentype(c₁)), kwargs...) =
-  isapprox(bottom(c₁), bottom(c₂); atol, kwargs...) &&
-  isapprox(top(c₁), top(c₂); atol, kwargs...) &&
-  isapprox(radius(c₁), radius(c₂); atol, kwargs...)
+Base.isapprox(∂c₁::CylinderSurface, ∂c₂::CylinderSurface; atol=atol(lentype(∂c₁)), kwargs...) =
+  isapprox(∂c₁.bot, ∂c₂.bot; atol, kwargs...) &&
+  isapprox(∂c₁.top, ∂c₂.top; atol, kwargs...) &&
+  isapprox(∂c₁.radius, ∂c₂.radius; atol, kwargs...)
 
-(c::CylinderSurface)(φ, z) = Cylinder(bottom(c), top(c), radius(c))(1, φ, z)
+(∂c::CylinderSurface)(φ, z) = Cylinder(∂c.bot, ∂c.top, ∂c.radius)(1, φ, z)
