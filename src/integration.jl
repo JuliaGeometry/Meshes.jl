@@ -52,7 +52,7 @@ localintegral(fun, frustumsurf::FrustumSurface; n=3) =
   _uvwintegral(fun, frustumsurf, n) + _uvwintegral(fun, top(frustumsurf), n) + _uvwintegral(fun, bottom(frustumsurf), n)
 
 # chain is the union of its segments
-localintegral(fun, chain::Chain; n=3) = sum(_uvwinteral(fun, seg, n) for seg in segments(chain))
+localintegral(fun, chain::Chain; n=3) = sum(_uvwintegral(fun, seg, n) for seg in segments(chain))
 
 # -----------------
 # HELPER FUNCTIONS
