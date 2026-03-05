@@ -8,11 +8,18 @@
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 [`Point`](@ref)s to values in a linear space.
 
+    integral(fun, dom; n=3)
+
+Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
+summing the integrals for each constituent geometry.
+
 Polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom; n=3) = localintegral(fun ∘ geom, geom; n)
+integral(fun, geom::Geometry; n=3) = localintegral(fun ∘ geom, geom; n)
+
+integral(fun, dom::Domain; n=3) = sum(integral(fun, geom; n) for geom in dom)
 
 """
     localintegral(fun, geom; n=3)
@@ -24,7 +31,7 @@ Polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`integral`](@ref).
 """
-localintegral(fun, geom; n=3) = _uvwintegral(fun, geom, n)
+localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
 
 # --------------
 # SPECIAL CASES
