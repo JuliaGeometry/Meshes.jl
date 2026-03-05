@@ -56,38 +56,38 @@ end
 
 paramdim(::Type{<:CylinderSurface}) = 2
 
-bottom(∂c::CylinderSurface) = Disk(∂c.bot, bottomradius(∂c))
+bottom(c::CylinderSurface) = Disk(c.bot, bottomradius(c))
 
-top(∂c::CylinderSurface) = Disk(∂c.top, topradius(∂c))
+top(c::CylinderSurface) = Disk(c.top, topradius(c))
 
-bottomradius(∂c::CylinderSurface) = bottomradius(Cylinder(∂c.bot, ∂c.top, ∂c.radius))
+bottomradius(c::CylinderSurface) = bottomradius(Cylinder(c.bot, c.top, c.radius))
 
-topradius(∂c::CylinderSurface) = topradius(Cylinder(∂c.bot, ∂c.top, ∂c.radius))
+topradius(c::CylinderSurface) = topradius(Cylinder(c.bot, c.top, c.radius))
 
-radius(∂c::CylinderSurface) = ∂c.radius
+radius(c::CylinderSurface) = c.radius
 
-axis(∂c::CylinderSurface) = Line(∂c.bot(0, 0), ∂c.top(0, 0))
+axis(c::CylinderSurface) = Line(c.bot(0, 0), c.top(0, 0))
 
 # cylinder is right if axis is aligned with plane normals
-function isright(∂c::CylinderSurface)
-  T = numtype(lentype(∂c))
-  a = axis(∂c)
+function isright(c::CylinderSurface)
+  T = numtype(lentype(c))
+  a = axis(c)
   d = a(T(1)) - a(T(0))
-  u = normal(∂c.bot)
-  v = normal(∂c.top)
+  u = normal(c.bot)
+  v = normal(c.top)
   isapproxzero(norm(d × u)) && isapproxzero(norm(d × v))
 end
 
-function hasintersectingplanes(∂c::CylinderSurface)
-  l = ∂c.bot ∩ ∂c.top
-  !isnothing(l) && evaluate(Euclidean(), axis(∂c), l) < ∂c.radius
+function hasintersectingplanes(c::CylinderSurface)
+  l = c.bot ∩ c.top
+  !isnothing(l) && evaluate(Euclidean(), axis(c), l) < c.radius
 end
 
-==(∂c₁::CylinderSurface, ∂c₂::CylinderSurface) = ∂c₁.bot == ∂c₂.bot && ∂c₁.top == ∂c₂.top && ∂c₁.radius == ∂c₂.radius
+==(c₁::CylinderSurface, c₂::CylinderSurface) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius
 
-Base.isapprox(∂c₁::CylinderSurface, ∂c₂::CylinderSurface; atol=atol(lentype(∂c₁)), kwargs...) =
-  isapprox(∂c₁.bot, ∂c₂.bot; atol, kwargs...) &&
-  isapprox(∂c₁.top, ∂c₂.top; atol, kwargs...) &&
-  isapprox(∂c₁.radius, ∂c₂.radius; atol, kwargs...)
+Base.isapprox(c₁::CylinderSurface, c₂::CylinderSurface; atol=atol(lentype(c₁)), kwargs...) =
+  isapprox(c₁.bot, c₂.bot; atol, kwargs...) &&
+  isapprox(c₁.top, c₂.top; atol, kwargs...) &&
+  isapprox(c₁.radius, c₂.radius; atol, kwargs...)
 
-(∂c::CylinderSurface)(φ, z) = Cylinder(∂c.bot, ∂c.top, ∂c.radius)(1, φ, z)
+(c::CylinderSurface)(φ, z) = Cylinder(c.bot, c.top, c.radius)(1, φ, z)
