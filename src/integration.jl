@@ -37,9 +37,6 @@ localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
 # SPECIAL CASES
 # --------------
 
-# the integral of a (bounded) function over a single point is always zero
-localintegral(fun, point::Point; n=3) = zero(lentype(point))
-
 # cylinder surface is the union of the lateral surface and the top and bottom disks
 localintegral(fun, cylsurf::CylinderSurface; n=3) =
   _uvwintegral(fun, cylsurf, n) + _uvwintegral(fun, top(cylsurf), n) + _uvwintegral(fun, bottom(cylsurf), n)
