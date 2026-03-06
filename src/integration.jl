@@ -40,7 +40,7 @@ localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
 # ray is parametrized over [0, ∞] interval
 # first map: [-1, 1] → [0, 1] with t -> (t + 1) / 2
 # second map: [0, 1] → [0, ∞] with t -> t / (1 - t^2)
-localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> (t / (1 - t^2)) ∘ ((t + 1) / 2))
+localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=(t -> t / (1 - t^2)) ∘ (t -> (t + 1) / 2))
 
 # line is parametrized over [-∞, ∞] interval
 localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> t / (1 - t^2))
