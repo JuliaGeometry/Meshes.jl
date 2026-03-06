@@ -37,6 +37,17 @@ localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
 # SPECIAL CASES
 # --------------
 
+# ray is parametrized over [0, ∞] interval
+# first map: [-1, 1] → [0, 1] with t -> (t + 1) / 2
+# second map: [0, 1] → [0, ∞] with t -> t / (1 - t^2)
+localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> (t / (1 - t^2)) ∘ ((t + 1) / 2))
+
+# line is parametrized over [-∞, ∞] interval
+localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> t / (1 - t^2))
+
+# plane is parametrized over [-∞, ∞] interval
+localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> t / (1 - t^2))
+
 # cylinder surface is the union of the lateral surface and the top and bottom disks
 localintegral(fun, cylsurf::CylinderSurface; n=3) =
   _uvwintegral(fun, cylsurf, n) + _uvwintegral(fun, top(cylsurf), n) + _uvwintegral(fun, bottom(cylsurf), n)
@@ -55,7 +66,9 @@ localintegral(fun, chain::Chain; n=3) = sum(_uvwintegral(fun, seg, n) for seg in
 # HELPER FUNCTIONS
 # -----------------
 
-function _uvwintegral(fun, geom, n)
+# we set t -> (t + 1) / 2 by default to map [-1, 1] → [0, 1]
+# i.e., quadrature nodes to parametric coordinates in [0, 1]
+function _uvwintegral(fun, geom, n; trans=t -> (t + 1) / 2)
   # parametric dimension and number type
   N = paramdim(geom)
   T = numtype(lentype(geom))
@@ -67,8 +80,7 @@ function _uvwintegral(fun, geom, n)
 
   # compute integral with change of variable and differential element
   Σwᵢfᵢ = sum(zip(tgrid, wgrid)) do (t, w)
-    # change of variable [-1, 1] → [0, 1]
-    uvw = ntuple(i -> (t[i] + 1) / 2, N)
+    uvw = ntuple(i -> trans(t[i]), N)
     prod(w) * fun(uvw...) * differential(geom, uvw)
   end
 

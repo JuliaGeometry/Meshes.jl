@@ -184,7 +184,3 @@
   end
   @test integral(funfrustumsurf, frustumsurf) ≈ solution
 end
-
-@testitem "localintegral" setup = [Setup] begin
-  # TODO
-end
