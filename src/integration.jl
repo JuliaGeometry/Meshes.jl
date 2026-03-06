@@ -57,7 +57,9 @@ localintegral(fun, conesurf::ConeSurface; n=3) = _uvwintegral(fun, conesurf, n) 
 
 # frustum surface is the union of the lateral surface and the top and bottom disks
 localintegral(fun, frustumsurf::FrustumSurface; n=3) =
-  _uvwintegral(fun, frustumsurf, n) + localintegral(fun, top(frustumsurf); n) + localintegral(fun, bottom(frustumsurf); n)
+  _uvwintegral(fun, frustumsurf, n) +
+  localintegral(fun, top(frustumsurf); n) +
+  localintegral(fun, bottom(frustumsurf); n)
 
 # chain is the union of its segments
 localintegral(fun, chain::Chain; n=3) = sum(localintegral(fun, seg; n) for seg in segments(chain))
