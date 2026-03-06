@@ -97,9 +97,9 @@
   function funcylinder(p)
     c = convert(Cylindrical, coords(p))
     ρ = c.ρ
-    φ = c.ϕ
+    ϕ = c.ϕ
     z = c.z
-    ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
+    ρ^(-1) * (ρ + ϕ * u"m" + z) * u"A"
   end
   solution = ((T(π) * h * ρ^2) + (T(π) * h^2 * ρ) + (T(2π) * T(π) * u"m" * h * ρ)) * u"A"
   @test integral(funcylinder, cyl, n=10) ≈ solution
@@ -113,9 +113,9 @@
   function funcylsurf(p)
     c = convert(Cylindrical, coords(p))
     ρ = c.ρ
-    φ = c.ϕ
+    ϕ = c.ϕ
     z = c.z
-    ρ^(-1) * (ρ + φ * u"m" + z) * u"A"
+    ρ^(-1) * (ρ + ϕ * u"m" + z) * u"A"
   end
   solution = let
     A1 = (T(2π) * h * ρ) + (T(π) * ρ^2) + (T(π) * u"m" * ρ * T(2π))
