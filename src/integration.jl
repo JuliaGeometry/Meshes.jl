@@ -50,17 +50,32 @@ localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> t
 
 # cylinder surface is the union of the lateral surface and the top and bottom disks
 localintegral(fun, cylsurf::CylinderSurface; n=3) =
-  _uvwintegral(fun, cylsurf, n) + _uvwintegral(fun, top(cylsurf), n) + _uvwintegral(fun, bottom(cylsurf), n)
+  _uvwintegral(fun, cylsurf, n) + localintegral(fun, top(cylsurf); n) + localintegral(fun, bottom(cylsurf); n)
 
 # cone surface is the union of the lateral surface and the base disk
-localintegral(fun, conesurf::ConeSurface; n=3) = _uvwintegral(fun, conesurf, n) + _uvwintegral(fun, base(conesurf), n)
+localintegral(fun, conesurf::ConeSurface; n=3) = _uvwintegral(fun, conesurf, n) + localintegral(fun, base(conesurf); n)
 
 # frustum surface is the union of the lateral surface and the top and bottom disks
 localintegral(fun, frustumsurf::FrustumSurface; n=3) =
-  _uvwintegral(fun, frustumsurf, n) + _uvwintegral(fun, top(frustumsurf), n) + _uvwintegral(fun, bottom(frustumsurf), n)
+  _uvwintegral(fun, frustumsurf, n) + localintegral(fun, top(frustumsurf); n) + localintegral(fun, bottom(frustumsurf); n)
 
 # chain is the union of its segments
-localintegral(fun, chain::Chain; n=3) = sum(_uvwintegral(fun, seg, n) for seg in segments(chain))
+localintegral(fun, chain::Chain; n=3) = sum(localintegral(fun, seg; n) for seg in segments(chain))
+
+# polygon is the union of simpler n-gons
+localintegral(fun, poly::Polygon; n=3) = sum(localintegral(fun, ngon; n) for ngon in discretize(poly))
+
+# triangle is parametrized with barycentric coordinates
+# TODO:
+
+# specialize quadrangle for performance
+localintegral(fun, quad::Quadrangle; n=3) = _uvwintegral(fun, quad, n)
+
+# tetrahedron is parametrized with barycentric coordinates
+# TODO:
+
+# multi-geometry is the union of simpler geometries
+localintegral(fun, multi::Multi; n=3) = sum(localintegral(fun, geom; n) for geom in parent(multi))
 
 # -----------------
 # HELPER FUNCTIONS
