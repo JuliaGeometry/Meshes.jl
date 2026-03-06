@@ -1,4 +1,10 @@
 @testitem "integral" setup = [Setup] begin
+  # Ray
+  # TODO:
+
+  # Line
+  # TODO:
+
   # Bezier Curve
   bezier = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
   function funbezier(p)
@@ -7,6 +13,9 @@
   end
   solution = T(2π) * u"Ω*m"
   @test integral(funbezier, bezier, n=10) ≈ solution rtol = 1e-2
+
+  # Plane
+  # TODO:
 
   # Box 1D
   a = T(π)
@@ -183,4 +192,19 @@
     (A1 - A2 + A3 + A4) * u"A"
   end
   @test integral(funfrustumsurf, frustumsurf) ≈ solution
+
+  # Segment
+  # TODO:
+
+  # Triangle
+  # TODO:
+
+  # Quadrangle
+  # TODO:
+
+  # Tetrahedron
+  # TODO:
+
+  # Hexahedron
+  # TODO:
 end
