@@ -196,6 +196,15 @@
   # Segment
   # TODO:
 
+  # Rope
+  # TODO:
+
+  # Ring
+  # TODO:
+
+  # PolyArea
+  # TODO:
+
   # Triangle
   # TODO:
 
