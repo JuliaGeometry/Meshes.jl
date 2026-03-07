@@ -24,11 +24,14 @@ integral(fun, cylsurf::CylinderSurface; n=3) =
   localintegral(fun ∘ cylsurf, cylsurf; n) + integral(fun, top(cylsurf); n) + integral(fun, bottom(cylsurf); n)
 
 # cone surface is the union of lateral surface and base disk
-integral(fun, conesurf::ConeSurface; n=3) = localintegral(fun ∘ conesurf, conesurf; n) + integral(fun, base(conesurf); n)
+integral(fun, conesurf::ConeSurface; n=3) =
+  localintegral(fun ∘ conesurf, conesurf; n) + integral(fun, base(conesurf); n)
 
 # frustum surface is the union of lateral surface and top/bottom disks
 integral(fun, frustumsurf::FrustumSurface; n=3) =
-  localintegral(fun ∘ frustumsurf, frustumsurf; n) + integral(fun, top(frustumsurf); n) + integral(fun, bottom(frustumsurf); n)
+  localintegral(fun ∘ frustumsurf, frustumsurf; n) +
+  integral(fun, top(frustumsurf); n) +
+  integral(fun, bottom(frustumsurf); n)
 
 integral(fun, dom::Domain; n=3) = sum(integral(fun, geom; n) for geom in dom)
 

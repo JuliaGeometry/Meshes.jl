@@ -132,7 +132,7 @@
     A3 = (T(2π) * h * ρ) + (2T(π)^2 * u"m" * h) + (T(π) * h^2)
     (A1 + A2 + A3) * u"A"
   end
-  @test integral(funcylsurf, cylsurf, n = 10) ≈ solution
+  @test integral(funcylsurf, cylsurf, n=10) ≈ solution
 
   # Cone
   r = T(2.5)u"m"
