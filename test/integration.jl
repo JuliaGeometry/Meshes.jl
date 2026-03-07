@@ -129,10 +129,10 @@
   solution = let
     A1 = (T(2π) * h * ρ) + (T(π) * ρ^2) + (T(π) * u"m" * ρ * T(2π))
     A2 = (T(π) * ρ^2) + (T(π) * u"m" * ρ * T(2π))
-    A3 = (T(2π) * h * ρ) + (T(2π)^2 * u"m" * h) + (T(π) * h^2)
+    A3 = (T(2π) * h * ρ) + (2T(π)^2 * u"m" * h) + (T(π) * h^2)
     (A1 + A2 + A3) * u"A"
   end
-  @test_broken integral(funcylsurf, cylsurf) ≈ solution
+  @test integral(funcylsurf, cylsurf, n = 10) ≈ solution
 
   # Cone
   r = T(2.5)u"m"

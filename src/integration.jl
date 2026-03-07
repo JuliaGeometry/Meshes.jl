@@ -19,6 +19,17 @@ See also [`localintegral`](@ref).
 """
 integral(fun, geom::Geometry; n=3) = localintegral(fun ∘ geom, geom; n)
 
+# cylinder surface is the union of lateral surface and top/bottom disks
+integral(fun, cylsurf::CylinderSurface; n=3) =
+  localintegral(fun ∘ cylsurf, cylsurf; n) + integral(fun, top(cylsurf); n) + integral(fun, bottom(cylsurf); n)
+
+# cone surface is the union of lateral surface and base disk
+integral(fun, conesurf::ConeSurface; n=3) = localintegral(fun ∘ conesurf, conesurf; n) + integral(fun, base(conesurf); n)
+
+# frustum surface is the union of lateral surface and top/bottom disks
+integral(fun, frustumsurf::FrustumSurface; n=3) =
+  localintegral(fun ∘ frustumsurf, frustumsurf; n) + integral(fun, top(frustumsurf); n) + integral(fun, bottom(frustumsurf); n)
+
 integral(fun, dom::Domain; n=3) = sum(integral(fun, geom; n) for geom in dom)
 
 """
@@ -47,19 +58,6 @@ localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> t / 
 
 # plane is parametrized over [-∞, ∞] interval
 localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> t / (1 - t^2))
-
-# cylinder surface is the union of the lateral surface and the top and bottom disks
-localintegral(fun, cylsurf::CylinderSurface; n=3) =
-  _uvwintegral(fun, cylsurf, n) + localintegral(fun, top(cylsurf); n) + localintegral(fun, bottom(cylsurf); n)
-
-# cone surface is the union of the lateral surface and the base disk
-localintegral(fun, conesurf::ConeSurface; n=3) = _uvwintegral(fun, conesurf, n) + localintegral(fun, base(conesurf); n)
-
-# frustum surface is the union of the lateral surface and the top and bottom disks
-localintegral(fun, frustumsurf::FrustumSurface; n=3) =
-  _uvwintegral(fun, frustumsurf, n) +
-  localintegral(fun, top(frustumsurf); n) +
-  localintegral(fun, bottom(frustumsurf); n)
 
 # chain is the union of its segments
 localintegral(fun, chain::Chain; n=3) = sum(localintegral(fun, seg; n) for seg in segments(chain))
