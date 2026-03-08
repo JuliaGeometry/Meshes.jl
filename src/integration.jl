@@ -62,12 +62,6 @@ localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> t / 
 # plane is parametrized over [-∞, ∞] interval
 localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> t / (1 - t^2))
 
-# chain is the union of its segments
-localintegral(fun, chain::Chain; n=3) = sum(localintegral(fun, seg; n) for seg in segments(chain))
-
-# polygon is the union of simpler n-gons
-localintegral(fun, poly::Polygon; n=3) = sum(localintegral(fun, ngon; n) for ngon in discretize(poly))
-
 # triangle is parametrized with barycentric coordinates
 # TODO:
 
@@ -76,9 +70,6 @@ localintegral(fun, quad::Quadrangle; n=3) = _uvwintegral(fun, quad, n)
 
 # tetrahedron is parametrized with barycentric coordinates
 # TODO:
-
-# multi-geometry is the union of simpler geometries
-localintegral(fun, multi::Multi; n=3) = sum(localintegral(fun, geom; n) for geom in parent(multi))
 
 # -----------------
 # HELPER FUNCTIONS
