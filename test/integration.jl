@@ -218,16 +218,57 @@
   @test integral(funfrustumsurf, frustumsurf) ≈ solution
 
   # Segment
-  # TODO:
+  ϕ = 7T(pi) / 6
+  θ = T(pi) / 3
+  a = cart(0, 0, 0)
+  b = cart(sin(θ) * cos(ϕ), sin(θ) * sin(ϕ), cos(θ))
+  seg = Segment(a, b)
+  ka = T(7.1)
+  kb = T(4.6)
+  function funseg(p)
+    r = ustrip(u"m", norm(to(p)))
+    exp(r * log(ka) + (1 - r) * log(kb)) * u"A"
+  end
+  solution = ((ka - kb) / (log(ka) - log(kb))) * u"A*m"
+  @test integral(funseg, seg) ≈ solution
 
   # Rope
-  # TODO:
+  a = cart(0, 0, 0)
+  b = cart(1, 0, 0)
+  c = cart(1, 1, 0)
+  d = cart(1, 1, 1)
+  rope = Rope(a, b, c, d)
+  function funrope(p)
+    x, y, z = ustrip.(to(p))
+    (x + 2y + 3z) * u"A"
+  end
+  solution = 7.0u"A*m"
+  @test_broken integral(funrope, rope, n=10) ≈ solution
 
   # Ring
-  # TODO:
+  a = cart(0, 0, 0)
+  b = cart(1, 0, 0)
+  c = cart(1, 1, 0)
+  d = cart(1, 1, 1)
+  ring = Ring(a, b, c, d, c, b)
+  function funring(p)
+    x, y, z = ustrip.(to(p))
+    (x + 2y + 3z) * u"A"
+  end
+  solution = 14.0u"A*m"
+  @test_broken integral(funring, ring, n=10) ≈ solution
 
   # PolyArea
-  # TODO:
+  a, b, c, z = T(0.4), T(0.6), T(1.0), T(0.0)
+  outer = [(z, z), (c, z), (c, c), (z, c)]
+  hole = [(a, a), (a, b), (b, b), (b, a)]
+  poly = PolyArea([outer, hole])
+  function funpoly(p)
+    x, y = ustrip.(u"m", to(p))
+    2x * u"A"
+  end
+  solution = (c^2 - (b - a) * (b^2 - a^2)) * u"A*m^2"
+  @test_broken integral(funpoly, poly) ≈ solution
 
   # Triangle
   # TODO:
