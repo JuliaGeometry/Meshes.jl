@@ -1,9 +1,25 @@
 @testitem "integral" setup = [Setup] begin
   # Ray
-  # TODO:
+  a = cart(0, 0, 0)
+  v = vector(1, 1, 1)
+  ray = Ray(a, v)
+  function funray(p)
+    r = ustrip(u"m", norm(to(p)))
+    exp(-r^2) * u"A"
+  end
+  solution = sqrt(T(π)) / 2 * u"A*m"
+  @test_broken integral(funray, ray) ≈ solution
 
   # Line
-  # TODO:
+  a = cart(0, 0, 0)
+  b = cart(1, 1, 1)
+  line = Line(a, b)
+  function linefun(p)
+    r = ustrip(u"m", norm(to(p)))
+    exp(-r^2) * u"A"
+  end
+  solution = sqrt(T(π)) * u"A*m"
+  @test_broken integral(linefun, line) ≈ solution
 
   # Bezier Curve
   bezier = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
@@ -15,7 +31,15 @@
   @test integral(funbezier, bezier, n=10) ≈ solution rtol = 1e-2
 
   # Plane
-  # TODO:
+  p = cart(0, 0, 0)
+  v = vector(0, 0, 1)
+  plane = Plane(p, v)
+  function planefun(p)
+    r = ustrip(u"m", norm(to(p)))
+    exp(-r^2) * u"A"
+  end
+  solution = T(π) * u"A*m^2"
+  @test_broken integral(planefun, plane) ≈ solution
 
   # Box 1D
   a = T(π)
@@ -224,5 +248,8 @@
   # TODO:
 
   # SimpleMesh
+  # TODO:
+
+  # Grid
   # TODO:
 end
