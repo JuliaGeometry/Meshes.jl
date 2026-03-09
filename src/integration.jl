@@ -52,15 +52,13 @@ localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
 # --------------
 
 # ray is parametrized over [0, ∞] interval
-# first map: [-1, 1] → [0, 1] with t -> (t + 1) / 2
-# second map: [0, 1] → [0, ∞] with t -> t / (1 - t^2)
-localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=(t -> t / (1 - t^2)) ∘ (t -> (t + 1) / 2))
+localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> t / (1 - t))
 
 # line is parametrized over [-∞, ∞] interval
-localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> t / (1 - t^2))
+localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> log(t) - log(1 - t))
 
 # plane is parametrized over [-∞, ∞] interval
-localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> t / (1 - t^2))
+localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> log(t) - log(1 - t))
 
 # triangle is parametrized with barycentric coordinates
 # TODO:
@@ -75,9 +73,7 @@ localintegral(fun, quad::Quadrangle; n=3) = _uvwintegral(fun, quad, n)
 # HELPER FUNCTIONS
 # -----------------
 
-# we set t -> (t + 1) / 2 by default to map [-1, 1] → [0, 1]
-# i.e., quadrature nodes to parametric coordinates in [0, 1]
-function _uvwintegral(fun, geom, n; trans=t -> (t + 1) / 2)
+function _uvwintegral(fun, geom, n; trans=identity)
   # parametric dimension and number type
   N = paramdim(geom)
   T = numtype(lentype(geom))
@@ -87,9 +83,13 @@ function _uvwintegral(fun, geom, n; trans=t -> (t + 1) / 2)
   tgrid = Iterators.product(ntuple(_ -> T.(ts), N)...)
   wgrid = Iterators.product(ntuple(_ -> T.(ws), N)...)
 
+  # map quadrature points in [-1, 1] to parametric coordinates in [0, 1],
+  # and then map parametric coordinates in [0, 1] to uvw parametrization
+  g = trans ∘ (t -> (t + 1) / 2)
+
   # compute integral with change of variable and differential element
   Σwᵢfᵢ = sum(zip(tgrid, wgrid)) do (t, w)
-    uvw = ntuple(i -> trans(t[i]), N)
+    uvw = ntuple(i -> g(t[i]), N)
     prod(w) * fun(uvw...) * differential(geom, uvw)
   end
 
