@@ -316,14 +316,24 @@
   @test integral(funhexa, hexa, n=10) ≈ solution rtol = 1e-3
 
   # Multi
-  # TODO:
+  box = Box(cart(0, 0), cart(1, 1))
+  ball = Ball(cart(5, 5), T(1))
+  multi = Multi([box, ball])
+  funmulti(p) = sum(to(p))
+  @test integral(funmulti, multi) ≈ integral(funmulti, box) + integral(funmulti, ball)
 
   # GeometrySet
-  # TODO:
+  box = Box(cart(0, 0), cart(1, 1))
+  ball = Ball(cart(5, 5), T(1))
+  gset = GeometrySet([box, ball])
+  fungset(p) = sum(to(p))
+  @test integral(fungset, gset) ≈ integral(fungset, box) + integral(fungset, ball)
 
   # SimpleMesh
   # TODO:
 
   # Grid
-  # TODO:
+  grid = cartgrid(10, 10)
+  fungrid(p) = T(1) * u"A"
+  @test integral(fungrid, grid) ≈ 100 * integral(fungrid, first(grid))
 end
