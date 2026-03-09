@@ -294,7 +294,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
-  @test integral(funhexa, hexa, n=10) ≈ solution rtol=1e-3
+  @test integral(funhexa, hexa, n=10) ≈ solution rtol = 1e-3
 
   # Multi
   # TODO:
