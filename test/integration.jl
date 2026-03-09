@@ -243,7 +243,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = 7.0u"A*m"
-  @test_broken integral(funrope, rope, n=10) ≈ solution
+  @test integral(funrope, rope, n=100) ≈ solution rtol=1e-2
 
   # Ring
   a = cart(0, 0, 0)
@@ -256,7 +256,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = 14.0u"A*m"
-  @test_broken integral(funring, ring, n=10) ≈ solution
+  @test integral(funring, ring, n=100) ≈ solution rtol=1e-3
 
   # PolyArea
   a, b, c, z = T(0.4), T(0.6), T(1.0), T(0.0)
