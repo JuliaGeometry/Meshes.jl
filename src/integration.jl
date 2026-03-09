@@ -19,15 +19,12 @@ See also [`localintegral`](@ref).
 """
 integral(fun, geom::Geometry; n=3) = localintegral(fun ∘ geom, geom; n)
 
-# cylinder surface is the union of lateral surface and top/bottom disks
 integral(fun, cylsurf::CylinderSurface; n=3) =
   localintegral(fun ∘ cylsurf, cylsurf; n) + integral(fun, top(cylsurf); n) + integral(fun, bottom(cylsurf); n)
 
-# cone surface is the union of lateral surface and base disk
 integral(fun, conesurf::ConeSurface; n=3) =
   localintegral(fun ∘ conesurf, conesurf; n) + integral(fun, base(conesurf); n)
 
-# frustum surface is the union of lateral surface and top/bottom disks
 integral(fun, frustumsurf::FrustumSurface; n=3) =
   localintegral(fun ∘ frustumsurf, frustumsurf; n) +
   integral(fun, top(frustumsurf); n) +
@@ -46,10 +43,6 @@ Polynomials of degree up to `2n-1` are integrated exactly.
 See also [`integral`](@ref).
 """
 localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
-
-# --------------
-# SPECIAL CASES
-# --------------
 
 # ray is parametrized over [0, ∞] interval
 localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> t / (1 - t))
