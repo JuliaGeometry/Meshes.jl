@@ -62,12 +62,8 @@ localintegral(fun, tri::Triangle; n=3) = _uvwintegral(fun, tri, n, trans=t -> (t
 localintegral(fun, quad::Quadrangle; n=3) = _uvwintegral(fun, quad, n)
 
 # tetrahedron is parametrized with barycentric coordinates
-localintegral(fun, tetra::Tetrahedron; n=3) = _uvwintegral(
-  fun,
-  tetra,
-  n,
-  trans=t -> (t[2] * t[3] - t[1] * t[2] * t[3], t[1] * t[2] * t[3], t[3] - t[2] * t[3])
-)
+localintegral(fun, tetra::Tetrahedron; n=3) =
+  _uvwintegral(fun, tetra, n, trans=t -> (t[2] * t[3] - t[1] * t[2] * t[3], t[1] * t[2] * t[3], t[3] - t[2] * t[3]))
 
 # -----------------
 # HELPER FUNCTIONS
