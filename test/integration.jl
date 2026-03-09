@@ -274,13 +274,27 @@
   # TODO:
 
   # Quadrangle
-  # TODO:
+  quad = Quadrangle(cart(-1.0, 0.0), cart(-1.0, 1.0), cart(1.0, 1.0), cart(1.0, 0.0))
+  function funquad(p)
+    r = ustrip(u"m", norm(to(p)))
+    exp(-r^2) * u"A"
+  end
+  solution = T(π) * T(0.8427007929497149)^2 / 2 * u"A*m^2" # erf(1) = 0.8427007929497149
+  @test integral(funquad, quad, n=10) ≈ solution rtol = 1e-3
 
   # Tetrahedron
   # TODO:
 
   # Hexahedron
-  # TODO:
+  a = π
+  box = Box(cart(0, 0, 0), cart(a, a, a))
+  hexa = convert(Hexahedron, box)
+  function funhexa(p)
+    x₁, x₂, x₃ = ustrip.(to(p))
+    (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
+  end
+  solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
+  @test integral(funhexa, hexa, n=10) ≈ solution rtol=1e-3
 
   # Multi
   # TODO:
