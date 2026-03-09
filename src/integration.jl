@@ -45,13 +45,13 @@ See also [`integral`](@ref).
 localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
 
 # ray is parametrized over [0, ∞] interval
-localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> t / (1 - t))
+localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> @. t / (1 - t))
 
 # line is parametrized over [-∞, ∞] interval
-localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> log(t) - log(1 - t))
+localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> @. log(t) - log(1 - t))
 
 # plane is parametrized over [-∞, ∞] interval
-localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> log(t) - log(1 - t))
+localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> @. log(t) - log(1 - t))
 
 # triangle is parametrized with barycentric coordinates
 # TODO:
@@ -78,11 +78,11 @@ function _uvwintegral(fun, geom, n; trans=identity)
 
   # map quadrature points in [-1, 1] to parametric coordinates in [0, 1],
   # and then map parametric coordinates in [0, 1] to uvw parametrization
-  g = trans ∘ (t -> (t + 1) / 2)
+  g = trans ∘ (t -> @. (t + 1) / 2)
 
   # compute integral with change of variable and differential element
   Σwᵢfᵢ = sum(zip(tgrid, wgrid)) do (t, w)
-    uvw = ntuple(i -> g(t[i]), N)
+    uvw = g(t)
     prod(w) * fun(uvw...) * differential(geom, uvw)
   end
 
