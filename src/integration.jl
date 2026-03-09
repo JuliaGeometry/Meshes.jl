@@ -30,6 +30,8 @@ integral(fun, frustumsurf::FrustumSurface; n=3) =
   integral(fun, top(frustumsurf); n) +
   integral(fun, bottom(frustumsurf); n)
 
+integral(fun, multi::Multi; n=3) = sum(integral(fun, geom; n) for geom in parent(multi))
+
 integral(fun, dom::Domain; n=3) = sum(integral(fun, geom; n) for geom in dom)
 
 """
