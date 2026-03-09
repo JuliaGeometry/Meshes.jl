@@ -271,7 +271,16 @@
   @test_broken integral(funpoly, poly) ≈ solution
 
   # Triangle
-  # TODO:
+  a = cart(0, 0, 0)
+  b = cart(1, 0, 0)
+  c = cart(0, 1, 0)
+  tri = Triangle(a, b, c)
+  function funtri(p)
+    x, y, z = ustrip.(u"m", to(p))
+    (x + 2y + 3z) * u"A"
+  end
+  solution = T(0.5) * u"A*m^2"
+  @test_broken integral(funtri, tri) ≈ solution
 
   # Quadrangle
   quad = Quadrangle(cart(-1.0, 0.0), cart(-1.0, 1.0), cart(1.0, 1.0), cart(1.0, 0.0))
@@ -283,7 +292,17 @@
   @test integral(funquad, quad, n=10) ≈ solution rtol = 1e-3
 
   # Tetrahedron
-  # TODO:
+  a = cart(0, 0, 0)
+  b = cart(1, 0, 0)
+  c = cart(0, 1, 0)
+  d = cart(0, 0, 1)
+  tetra = Tetrahedron(a, b, c, d)
+  function funtetra(p)
+    x, y, z = ustrip.(u"m", to(p))
+    (x + 2y + 3z) * u"A"
+  end
+  solution = T(0.25) * u"A*m^3"
+  @test_broken integral(funtetra, tetra) ≈ solution
 
   # Hexahedron
   a = π
