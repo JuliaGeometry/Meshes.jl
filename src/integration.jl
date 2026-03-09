@@ -54,13 +54,18 @@ localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> @. l
 localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> @. log(t) - log(1 - t))
 
 # triangle is parametrized with barycentric coordinates
-# TODO:
+localintegral(fun, tri::Triangle; n=3) = _uvwintegral(fun, tri, n, trans=t -> (t[1] * t[2], t[2] - t[1] * t[2]))
 
 # specialize quadrangle for performance
 localintegral(fun, quad::Quadrangle; n=3) = _uvwintegral(fun, quad, n)
 
 # tetrahedron is parametrized with barycentric coordinates
-# TODO:
+localintegral(fun, tetra::Tetrahedron; n=3) = _uvwintegral(
+  fun,
+  tetra,
+  n,
+  trans=t -> (t[2] * t[3] - t[1] * t[2] * t[3], t[1] * t[2] * t[3], t[3] - t[2] * t[3])
+)
 
 # -----------------
 # HELPER FUNCTIONS
