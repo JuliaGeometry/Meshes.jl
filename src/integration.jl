@@ -2,62 +2,69 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# default integration method
+const GAUSSLEGENDRE = II.Backend.Quadrature(gausslegendre(3))
+
 """
-    integral(fun, geom; n=3)
+    integral(fun, geom[, method]) 
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 [`Point`](@ref)s to values in a linear space.
 
-    integral(fun, dom; n=3)
+    integral(fun, dom[, method])
 
 Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
 summing the integrals for each constituent geometry.
 
-Polynomials of degree up to `2n-1` are integrated exactly.
+By default, use Gauss-Legendre quadrature rule with `n` nodes so that
+polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom::Geometry; n=3) = localintegral(fun ∘ geom, geom; n)
+integral(fun, geom::Geometry, method=GAUSSLEGENDRE) = localintegral(fun ∘ geom, geom, method)
 
 # cylinder surface is the union of the curved surface and the top and bottom disks
-integral(fun, cylsurf::CylinderSurface; n=3) =
-  localintegral(fun ∘ cylsurf, cylsurf; n) + integral(fun, top(cylsurf); n) + integral(fun, bottom(cylsurf); n)
+integral(fun, cylsurf::CylinderSurface, method=GAUSSLEGENDRE) =
+  localintegral(fun ∘ cylsurf, cylsurf, method) +
+  integral(fun, top(cylsurf), method) +
+  integral(fun, bottom(cylsurf), method)
 
 # cone surface is the union of the curved surface and the base disk
-integral(fun, conesurf::ConeSurface; n=3) =
-  localintegral(fun ∘ conesurf, conesurf; n) + integral(fun, base(conesurf); n)
+integral(fun, conesurf::ConeSurface, method=GAUSSLEGENDRE) =
+  localintegral(fun ∘ conesurf, conesurf, method) + integral(fun, base(conesurf), method)
 
 # frustum surface is the union of the curved surface and the top and bottom disks
-integral(fun, frustumsurf::FrustumSurface; n=3) =
-  localintegral(fun ∘ frustumsurf, frustumsurf; n) +
-  integral(fun, top(frustumsurf); n) +
-  integral(fun, bottom(frustumsurf); n)
+integral(fun, frustumsurf::FrustumSurface, method=GAUSSLEGENDRE) =
+  localintegral(fun ∘ frustumsurf, frustumsurf, method) +
+  integral(fun, top(frustumsurf), method) +
+  integral(fun, bottom(frustumsurf), method)
 
 # multi-geometry is the union of its constituent geometries
-integral(fun, multi::Multi; n=3) = sum(integral(fun, geom; n) for geom in parent(multi))
+integral(fun, multi::Multi, method=GAUSSLEGENDRE) = sum(integral(fun, geom, method) for geom in parent(multi))
 
 # domain is the union of its constituent geometries
-integral(fun, dom::Domain; n=3) = sum(integral(fun, geom; n) for geom in dom)
+integral(fun, dom::Domain, method=GAUSSLEGENDRE) = sum(integral(fun, geom, method) for geom in dom)
 
 """
-    localintegral(fun, geom; n=3)
+    localintegral(fun, geom[, method])
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 parametric coordinates `uvw` to values in a linear space.
 
-Polynomials of degree up to `2n-1` are integrated exactly.
+By default, use Gauss-Legendre quadrature rule with `n` nodes so that
+polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom::Geometry; n=3)
-  # domain of integration
+function localintegral(fun, geom::Geometry, method=GAUSSLEGENDRE)
+  # integrand is equal to function times differential element
+  integrand = uvw -> fun(uvw...) * differential(geom, uvw)
+
+  # domain of integration varies depending on geometry
   domain = ∫dom(geom)
 
-  # Gauss-Legendre quadrature
-  backend = II.Backend.Quadrature(gausslegendre(n))
-
   # integral of function times differential element
-  I = II.integral(uvw -> fun(uvw...) * differential(geom, uvw), domain; backend)
+  I = II.integral(integrand, domain; backend=method)
 
   # perform numerical integration
   I()
