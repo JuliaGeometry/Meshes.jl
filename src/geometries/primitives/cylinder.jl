@@ -56,9 +56,13 @@ end
 
 paramdim(::Type{<:Cylinder}) = 3
 
-bottom(c::Cylinder) = c.bot
+bottom(c::Cylinder) = Disk(c.bot, bottomradius(c))
 
-top(c::Cylinder) = c.top
+top(c::Cylinder) = Disk(c.top, topradius(c))
+
+bottomradius(c::Cylinder) = norm(c(1, 0, 0) - c(0, 0, 0))
+
+topradius(c::Cylinder) = norm(c(1, 0, 1) - c(0, 0, 1))
 
 radius(c::Cylinder) = c.radius
 
@@ -76,10 +80,12 @@ Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs..
 function (c::Cylinder)(ρ, φ, z)
   ℒ = lentype(c)
   T = numtype(ℒ)
-  t = top(c)
-  b = bottom(c)
-  r = radius(c)
-  a = axis(c)
+  C = crs(c)
+  D = datum(C)
+  b = c.bot
+  t = c.top
+  r = c.radius
+  a = Line(b(0, 0), t(0, 0))
   d = a(T(1)) - a(T(0))
 
   # rotation to align z axis with cylinder axis
@@ -91,8 +97,8 @@ function (c::Cylinder)(ρ, φ, z)
   # project a parametric segment between the top and bottom planes
   ρ′ = T(ρ) * r
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p₁ = Point(convert(crs(c), Cylindrical(ρ′, φ′, zero(ℒ))))
-  p₂ = Point(convert(crs(c), Cylindrical(ρ′, φ′, norm(d))))
+  p₁ = Point(convert(C, Cylindrical{D}(ρ′, φ′, zero(ℒ))))
+  p₂ = Point(convert(C, Cylindrical{D}(ρ′, φ′, norm(d))))
   l = Line(p₁, p₂) |> Affine(R, o)
   s = Segment(l ∩ b, l ∩ t)
   s(T(z))

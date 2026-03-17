@@ -122,7 +122,7 @@ boundary(::Circle) = nothing
 
 embedboundary(c::Circle) = c
 
-boundary(c::Cylinder) = CylinderSurface(bottom(c), top(c), radius(c))
+boundary(c::Cylinder) = CylinderSurface(plane(bottom(c)), plane(top(c)), radius(c))
 
 embedboundary(c::Cylinder) = boundary(c)
 

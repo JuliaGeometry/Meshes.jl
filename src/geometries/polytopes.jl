@@ -157,20 +157,22 @@ function angles(c::Chain)
 end
 
 function (c::Chain)(t)
-  if t < 0 || t > 1
-    throw(DomainError(t, "c(t) is not defined for t outside [0, 1]."))
-  end
   segs = segments(c)
   sums = cumsum(measure.(segs))
   sums /= last(sums)
-  # find k such that sums[k] ≤ t < sums[k + 1]
-  k = searchsortedfirst(sums, t) - 1
-  # select segment s at index k
-  s, _ = iterate(segs, k)
+  # find first k such that t ≤ sums[k]
+  k = searchsortedfirst(sums, clamp(t, zero(t), one(t)))
   # reparametrization of t within s
-  ∑ₖ = iszero(k) ? zero(eltype(sums)) : sums[k]
-  ∑ₖ₊₁ = sums[k + 1]
-  s((t - ∑ₖ) / (∑ₖ₊₁ - ∑ₖ))
+  if isone(k)
+    s = first(segs)
+    Σₖ = sums[k]
+    s(t / Σₖ)
+  else
+    s = first(Iterators.drop(segs, k - 1))
+    Σₖ = sums[k]
+    Σₖ₋₁ = sums[k - 1]
+    s((t - Σₖ₋₁) / (Σₖ - Σₖ₋₁))
+  end
 end
 
 # implementations of Chain
