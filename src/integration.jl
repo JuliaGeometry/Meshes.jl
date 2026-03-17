@@ -49,51 +49,45 @@ Polynomials of degree up to `2n-1` are integrated exactly.
 
 See also [`integral`](@ref).
 """
-localintegral(fun, geom::Geometry; n=3) = _uvwintegral(fun, geom, n)
+function localintegral(fun, geom::Geometry; n=3)
+  # domain of integration
+  domain = ∫dom(geom)
 
-# ray is parametrized over [0, ∞] interval
-localintegral(fun, ray::Ray; n=3) = _uvwintegral(fun, ray, n, trans=t -> @. t / (1 - t))
+  # Gauss-Legendre quadrature
+  backend = II.Backend.Quadrature(gausslegendre(n))
 
-# line is parametrized over [-∞, ∞] interval
-localintegral(fun, line::Line; n=3) = _uvwintegral(fun, line, n, trans=t -> @. log(t) - log(1 - t))
+  # integral of function times differential element
+  I = II.integral(uvw -> fun(uvw...) * differential(geom, uvw), domain; backend)
 
-# plane is parametrized over [-∞, ∞] interval
-localintegral(fun, plane::Plane; n=3) = _uvwintegral(fun, plane, n, trans=t -> @. log(t) - log(1 - t))
+  # perform numerical integration
+  I()
+end
 
-# triangle is parametrized with barycentric coordinates
-localintegral(fun, tri::Triangle; n=3) = _uvwintegral(fun, tri, n, trans=t -> (t[1] * t[2], t[2] - t[1] * t[2]))
-
-# specialize quadrangle for performance
-localintegral(fun, quad::Quadrangle; n=3) = _uvwintegral(fun, quad, n)
-
-# tetrahedron is parametrized with barycentric coordinates
-localintegral(fun, tetra::Tetrahedron; n=3) =
-  _uvwintegral(fun, tetra, n, trans=t -> (t[2] * t[3] - t[1] * t[2] * t[3], t[1] * t[2] * t[3], t[3] - t[2] * t[3]))
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-function _uvwintegral(fun, geom, n; trans=identity)
-  # parametric dimension and number type
+function ∫dom(geom::Geometry)
   N = paramdim(geom)
   T = numtype(lentype(geom))
+  a = ntuple(_ -> zero(T), N)
+  b = ntuple(_ -> one(T), N)
+  II.Domain.Box(a, b)
+end
 
-  # Gauss-Legendre quadrature points and weights
-  ts, ws = gausslegendre(n)
-  tgrid = Iterators.product(ntuple(_ -> T.(ts), N)...)
-  wgrid = Iterators.product(ntuple(_ -> T.(ws), N)...)
+function ∫dom(ray::Ray)
+  T = numtype(lentype(ray))
+  a = (zero(T),)
+  b = (II.Infinity(one(T)),)
+  II.Domain.Box(a, b)
+end
 
-  # map quadrature points in [-1, 1] to parametric coordinates in [0, 1],
-  # and then map parametric coordinates in [0, 1] to uvw parametrization
-  g = trans ∘ (t -> @. (t + 1) / 2)
+function ∫dom(line::Line)
+  T = numtype(lentype(line))
+  a = (-II.Infinity(one(T)),)
+  b = (II.Infinity(one(T)),)
+  II.Domain.Box(a, b)
+end
 
-  # compute integral with change of variable and differential element
-  Σwᵢfᵢ = sum(zip(tgrid, wgrid)) do (t, w)
-    uvw = g(t)
-    prod(w) * fun(uvw...) * differential(geom, uvw)
-  end
-
-  # adjust for change of variable
-  Σwᵢfᵢ / 2^N
+function ∫dom(plane::Plane)
+  T = numtype(lentype(plane))
+  a = (-II.Infinity(one(T)), -II.Infinity(one(T)))
+  b = (II.Infinity(one(T)), II.Infinity(one(T)))
+  II.Domain.Box(a, b)
 end
