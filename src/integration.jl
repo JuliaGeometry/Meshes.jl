@@ -19,19 +19,24 @@ See also [`localintegral`](@ref).
 """
 integral(fun, geom::Geometry; n=3) = localintegral(fun ∘ geom, geom; n)
 
+# cylinder surface is the union of the curved surface and the top and bottom disks
 integral(fun, cylsurf::CylinderSurface; n=3) =
   localintegral(fun ∘ cylsurf, cylsurf; n) + integral(fun, top(cylsurf); n) + integral(fun, bottom(cylsurf); n)
 
+# cone surface is the union of the curved surface and the base disk
 integral(fun, conesurf::ConeSurface; n=3) =
   localintegral(fun ∘ conesurf, conesurf; n) + integral(fun, base(conesurf); n)
 
+# frustum surface is the union of the curved surface and the top and bottom disks
 integral(fun, frustumsurf::FrustumSurface; n=3) =
   localintegral(fun ∘ frustumsurf, frustumsurf; n) +
   integral(fun, top(frustumsurf); n) +
   integral(fun, bottom(frustumsurf); n)
 
+# multi-geometry is the union of its constituent geometries
 integral(fun, multi::Multi; n=3) = sum(integral(fun, geom; n) for geom in parent(multi))
 
+# domain is the union of its constituent geometries
 integral(fun, dom::Domain; n=3) = sum(integral(fun, geom; n) for geom in dom)
 
 """
