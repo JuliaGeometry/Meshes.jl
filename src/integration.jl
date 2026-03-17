@@ -58,19 +58,16 @@ See also [`integral`](@ref).
 """
 function localintegral(fun, geom::Geometry, method=GAUSSLEGENDRE)
   # integrand is equal to function times differential element
-  integrand = uvw -> fun(uvw...) * differential(geom, uvw)
+  integrand(uvw) = fun(uvw...) * differential(geom, uvw)
 
-  # domain of integration varies depending on geometry
-  domain = ∫dom(geom)
-
-  # integral of function times differential element
-  I = II.integral(integrand, domain; backend=method)
+  # domain of integration for the given geometry
+  domain = ∫domain(geom)
 
   # perform numerical integration
-  I()
+  II.integral(integrand, domain; backend=method)()
 end
 
-function ∫dom(geom::Geometry)
+function ∫domain(geom::Geometry)
   N = paramdim(geom)
   T = numtype(lentype(geom))
   a = ntuple(_ -> zero(T), N)
@@ -78,21 +75,21 @@ function ∫dom(geom::Geometry)
   II.Domain.Box(a, b)
 end
 
-function ∫dom(ray::Ray)
+function ∫domain(ray::Ray)
   T = numtype(lentype(ray))
   a = (zero(T),)
   b = (II.Infinity(one(T)),)
   II.Domain.Box(a, b)
 end
 
-function ∫dom(line::Line)
+function ∫domain(line::Line)
   T = numtype(lentype(line))
   a = (-II.Infinity(one(T)),)
   b = (II.Infinity(one(T)),)
   II.Domain.Box(a, b)
 end
 
-function ∫dom(plane::Plane)
+function ∫domain(plane::Plane)
   T = numtype(lentype(plane))
   a = (-II.Infinity(one(T)), -II.Infinity(one(T)))
   b = (II.Infinity(one(T)), II.Infinity(one(T)))
