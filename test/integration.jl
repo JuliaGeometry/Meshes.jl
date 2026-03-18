@@ -28,7 +28,7 @@
     (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
   end
   solution = T(2π) * u"Ω*m"
-  @test integral(funbezier, bezier, n=10) ≈ solution rtol = 1e-2
+  @test integral(funbezier, bezier) ≈ solution rtol = 1e-2
 
   # Plane
   p = cart(0, 0, 0)
@@ -49,7 +49,7 @@
     √(a^2 - x₁^2) * u"A"
   end
   solution = T(π) * a^2 / 4 * u"A*m"
-  @test integral(funbox1, box, n=10) ≈ solution rtol = 1e-3
+  @test integral(funbox1, box) ≈ solution rtol = 1e-3
 
   # Box 2D
   a = T(π)
@@ -59,7 +59,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
   end
   solution = 2a * (T(π) * a^2 / 4) * u"A*m^2"
-  @test integral(funbox2, box, n=10) ≈ solution rtol = 1e-3
+  @test integral(funbox2, box) ≈ solution rtol = 1e-3
 
   # Box 3D
   a = T(π)
@@ -69,7 +69,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
-  @test integral(funbox3, box, n=10) ≈ solution rtol = 1e-3
+  @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
   # Ball 2D
   origin = cart(0, 0)
@@ -80,7 +80,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test integral(funball2, ball, n=10) ≈ solution rtol = 1e-3
+  @test integral(funball2, ball) ≈ solution rtol = 1e-3
 
   # Ellipsoid
   origin = cart(0, 0, 0)
@@ -91,7 +91,7 @@
     (z^2) * u"A"
   end
   solution = (T(4π) * R^4 / 3) * u"A*m^2"
-  @test integral(funellips, ellipsoid, n=10) ≈ solution rtol = 1e-3
+  @test integral(funellips, ellipsoid) ≈ solution rtol = 1e-3
 
   # Disk
   center = cart(1, 2, 3)
@@ -105,7 +105,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test integral(fundisk, disk, n=10) ≈ solution rtol = 1e-3
+  @test integral(fundisk, disk) ≈ solution rtol = 1e-3
 
   # Circle
   center = cart(1, 2, 3)
@@ -119,7 +119,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
-  @test integral(funcircle, circle, n=10) ≈ solution rtol = 1e-3
+  @test integral(funcircle, circle) ≈ solution rtol = 1e-3
 
   # Cylinder
   h = T(8.5)u"m"
@@ -135,7 +135,7 @@
     ρ^(-1) * (ρ + ϕ * u"m" + z) * u"A"
   end
   solution = ((T(π) * h * ρ^2) + (T(π) * h^2 * ρ) + (T(2π) * T(π) * u"m" * h * ρ)) * u"A"
-  @test integral(funcylinder, cyl, n=10) ≈ solution
+  @test integral(funcylinder, cyl) ≈ solution
 
   # CylinderSurface
   h = T(8.5)u"m"
@@ -156,7 +156,7 @@
     A3 = (T(2π) * h * ρ) + (2T(π)^2 * u"m" * h) + (T(π) * h^2)
     (A1 + A2 + A3) * u"A"
   end
-  @test integral(funcylsurf, cylsurf, n=10) ≈ solution
+  @test integral(funcylsurf, cylsurf) ≈ solution
 
   # Cone
   r = T(2.5)u"m"
@@ -243,7 +243,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = T(7.0)u"A*m"
-  @test integral(funrope, rope, n=100) ≈ solution rtol = 1e-2
+  @test integral(funrope, rope) ≈ solution rtol = 1e-2
 
   # Ring
   a = cart(0, 0, 0)
@@ -256,7 +256,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = T(14.0)u"A*m"
-  @test integral(funring, ring, n=100) ≈ solution rtol = 1e-2
+  @test integral(funring, ring) ≈ solution rtol = 1e-2
 
   # PolyArea
   a, b, c, z = T(0.4), T(0.6), T(1.0), T(0.0)
@@ -289,7 +289,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(π) * T(0.8427007929497149)^2 / 2 * u"A*m^2" # erf(1) = 0.8427007929497149
-  @test integral(funquad, quad, n=10) ≈ solution rtol = 1e-3
+  @test integral(funquad, quad) ≈ solution rtol = 1e-3
 
   # Tetrahedron
   a = cart(0, 0, 0)
