@@ -69,8 +69,13 @@ function localintegral(fun, geom::Geometry, method=GAUSSLEGENDRE)
   # domain of integration for the given geometry
   domain = ∫domain(geom)
 
+  # strip units to help integration methods
+  f(uvw...) = ustrip(integrand(uvw...))
+  o = ntuple(_ -> 0, paramdim(geom))
+  u = unit(integrand(o...))
+
   # perform numerical integration
-  II.integral(integrand, domain; backend=method)
+  II.integral(f, domain; backend=method) * u
 end
 
 function ∫domain(geom::Geometry)
