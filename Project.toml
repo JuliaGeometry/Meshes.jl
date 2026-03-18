@@ -56,3 +56,6 @@ TiledIteration = "0.5"
 TransformsBase = "1.6"
 Unitful = "1.17"
 julia = "1.10"
+
+[sources]
+IntegrationInterface = {url = "https://github.com/pablosanjose/IntegrationInterface.jl", rev = "main"}
