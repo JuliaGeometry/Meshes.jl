@@ -8,7 +8,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) / 2 * u"A*m"
-  @test integral(funray, ray) ≈ solution rtol=1e-3
+  @test integral(funray, ray) ≈ solution rtol = 1e-3
 
   # Line
   a = cart(0, 0, 0)
@@ -19,7 +19,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) * u"A*m"
-  @test integral(funline, line) ≈ solution rtol=1e-3
+  @test integral(funline, line) ≈ solution rtol = 1e-3
 
   # Bezier Curve
   bezier = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
@@ -330,7 +330,12 @@
   @test_broken integral(fungset, gset) ≈ integral(fungset, box) + integral(fungset, ball)
 
   # SimpleMesh
-  # TODO:
+  points = [cart(0, 0), cart(1, 0), cart(0, 1), cart(1, 1), cart(0.25, 0.5), cart(0.75, 0.5)]
+  tris = connect.([(1, 5, 3), (4, 6, 2)], Triangle)
+  quads = connect.([(1, 2, 6, 5), (4, 3, 5, 6)], Quadrangle)
+  mesh = SimpleMesh(points, [tris; quads])
+  funmesh(p) = T(1) * u"A"
+  @test_broken integral(funmesh, mesh) ≈ T(1) * u"A * m^2"
 
   # Grid
   grid = cartgrid(10, 10)
