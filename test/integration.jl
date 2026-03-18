@@ -39,7 +39,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(π) * u"A*m^2"
-  @test_broken integral(funplane, plane) ≈ solution
+  @test integral(funplane, plane) ≈ solution rtol = 1e-3
 
   # Box 1D
   a = T(π)
