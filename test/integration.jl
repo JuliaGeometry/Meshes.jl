@@ -335,6 +335,7 @@
   quads = connect.([(1, 2, 6, 5), (4, 3, 5, 6)], Quadrangle)
   mesh = SimpleMesh(points, [tris; quads])
   funmesh(p) = T(1) * u"A"
+  @test_broken integral(funmesh, mesh) ≈ sum(integral(funmesh, elem) for elem in mesh)
   @test_broken integral(funmesh, mesh) ≈ T(1) * u"A * m^2"
 
   # Grid
