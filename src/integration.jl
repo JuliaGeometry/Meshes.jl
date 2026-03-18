@@ -39,6 +39,12 @@ integral(fun, frustumsurf::FrustumSurface, method=GAUSSLEGENDRE) =
   integral(fun, top(frustumsurf), method) +
   integral(fun, bottom(frustumsurf), method)
 
+# rope is the union of its constituent segments
+integral(fun, rope::Rope, method=GAUSSLEGENDRE) = sum(integral(fun, seg, method) for seg in segments(rope))
+
+# ring is the union of its constituent segments
+integral(fun, ring::Ring, method=GAUSSLEGENDRE) = sum(integral(fun, seg, method) for seg in segments(ring))
+
 # multi-geometry is the union of its constituent geometries
 integral(fun, multi::Multi, method=GAUSSLEGENDRE) = sum(integral(fun, geom, method) for geom in parent(multi))
 
