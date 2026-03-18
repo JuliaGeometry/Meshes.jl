@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 # default integration method
-const GAUSSLEGENDRE = II.Backend.Quadrature(gausslegendre(3))
+const GAUSSLEGENDRE = II.Backend.Quadrature(gausslegendre(20))
 
 """
     integral(fun, geom[, method]) 
