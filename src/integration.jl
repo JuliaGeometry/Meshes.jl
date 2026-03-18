@@ -6,7 +6,7 @@
 const GAUSSLEGENDRE = II.Backend.Quadrature(gausslegendre(20))
 
 """
-    integral(fun, geom[, method]) 
+    integral(fun, geom[, method])
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 [`Point`](@ref)s to values in a linear space.
@@ -70,7 +70,7 @@ function localintegral(fun, geom::Geometry, method=GAUSSLEGENDRE)
   domain = ∫domain(geom)
 
   # perform numerical integration
-  II.integral(integrand, domain; backend=method)()
+  II.integral(integrand, domain; backend=method)
 end
 
 function ∫domain(geom::Geometry)
