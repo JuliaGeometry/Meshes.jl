@@ -59,7 +59,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
   end
   solution = 2a * (T(π) * a^2 / 4) * u"A*m^2"
-  @test_broken integral(funbox2, box) ≈ solution rtol = 1e-3
+  @test integral(funbox2, box) ≈ solution rtol = 1e-3
 
   # Box 3D
   a = T(π)
@@ -80,7 +80,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test_broken integral(funball2, ball) ≈ solution rtol = 1e-3
+  @test integral(funball2, ball) ≈ solution
 
   # Ellipsoid
   origin = cart(0, 0, 0)
@@ -91,7 +91,7 @@
     (z^2) * u"A"
   end
   solution = (T(4π) * R^4 / 3) * u"A*m^2"
-  @test_broken integral(funellips, ellipsoid) ≈ solution rtol = 1e-3
+  @test integral(funellips, ellipsoid) ≈ solution
 
   # Disk
   center = cart(1, 2, 3)
@@ -105,7 +105,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test_broken integral(fundisk, disk) ≈ solution rtol = 1e-3
+  @test integral(fundisk, disk) ≈ solution
 
   # Circle
   center = cart(1, 2, 3)
@@ -119,7 +119,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
-  @test_broken integral(funcircle, circle) ≈ solution rtol = 1e-3
+  @test integral(funcircle, circle) ≈ solution
 
   # Cylinder
   h = T(8.5)u"m"
@@ -313,21 +313,21 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
-  @test_broken integral(funhexa, hexa, n=10) ≈ solution rtol = 1e-3
+  @test_broken integral(funhexa, hexa) ≈ solution rtol = 1e-3
 
   # Multi
   box = Box(cart(0, 0), cart(1, 1))
   ball = Ball(cart(5, 5), T(1))
   multi = Multi([box, ball])
   funmulti(p) = sum(to(p))
-  @test_broken integral(funmulti, multi) ≈ integral(funmulti, box) + integral(funmulti, ball)
+  @test integral(funmulti, multi) ≈ integral(funmulti, box) + integral(funmulti, ball)
 
   # GeometrySet
   box = Box(cart(0, 0), cart(1, 1))
   ball = Ball(cart(5, 5), T(1))
   gset = GeometrySet([box, ball])
   fungset(p) = sum(to(p))
-  @test_broken integral(fungset, gset) ≈ integral(fungset, box) + integral(fungset, ball)
+  @test integral(fungset, gset) ≈ integral(fungset, box) + integral(fungset, ball)
 
   # SimpleMesh
   points = [cart(0, 0), cart(1, 0), cart(0, 1), cart(1, 1), cart(0.25, 0.5), cart(0.75, 0.5)]
@@ -341,5 +341,5 @@
   # Grid
   grid = cartgrid(10, 10)
   fungrid(p) = T(1) * u"A"
-  @test_broken integral(fungrid, grid) ≈ 100 * integral(fungrid, first(grid))
+  @test integral(fungrid, grid) ≈ 100 * integral(fungrid, first(grid))
 end
