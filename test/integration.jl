@@ -69,7 +69,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
-  @test_broken integral(funbox3, box) ≈ solution rtol = 1e-3
+  @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
   # Ball 2D
   origin = cart(0, 0)
@@ -135,7 +135,7 @@
     ρ^(-1) * (ρ + ϕ * u"m" + z) * u"A"
   end
   solution = ((T(π) * h * ρ^2) + (T(π) * h^2 * ρ) + (T(2π) * T(π) * u"m" * h * ρ)) * u"A"
-  @test_broken integral(funcylinder, cyl) ≈ solution
+  @test integral(funcylinder, cyl) ≈ solution
 
   # CylinderSurface
   h = T(8.5)u"m"
@@ -156,7 +156,7 @@
     A3 = (T(2π) * h * ρ) + (2T(π)^2 * u"m" * h) + (T(π) * h^2)
     (A1 + A2 + A3) * u"A"
   end
-  @test_broken integral(funcylsurf, cylsurf) ≈ solution
+  @test integral(funcylsurf, cylsurf) ≈ solution
 
   # Cone
   r = T(2.5)u"m"
@@ -168,7 +168,7 @@
   cone = Cone(base, apex)
   funcone(p) = T(1.0)u"A"
   solution = (T(π) * r^2 * h / 3) * u"A"
-  @test_broken integral(funcone, cone) ≈ solution
+  @test integral(funcone, cone) ≈ solution
 
   # ConeSurface
   r = T(2.5)u"m"
@@ -180,7 +180,7 @@
   conesurf = ConeSurface(base, apex)
   funconesurf(p) = T(1.0)u"A"
   solution = ((T(π) * r^2) + (T(π) * r * hypot(h, r))) * u"A"
-  @test_broken integral(funconesurf, conesurf) ≈ solution
+  @test integral(funconesurf, conesurf) ≈ solution
 
   # Frustum
   r = T(2.5)u"m"
@@ -193,7 +193,7 @@
   frustum = Frustum(base, disk)
   funfrustum(p) = T(1.0)u"A"
   solution = (T(7) / T(8)) * (T(π) * r^2 * h / T(3)) * u"A"
-  @test_broken integral(funfrustum, frustum) ≈ solution
+  @test integral(funfrustum, frustum) ≈ solution
 
   # FrustumSurface
   rbot = T(2.5)u"m"
@@ -215,7 +215,7 @@
     A4 = T(π) * rbot^2
     (A1 - A2 + A3 + A4) * u"A"
   end
-  @test_broken integral(funfrustumsurf, frustumsurf) ≈ solution
+  @test integral(funfrustumsurf, frustumsurf) ≈ solution
 
   # Segment
   ϕ = 7T(pi) / 6
@@ -289,7 +289,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(π) * T(0.8427007929497149)^2 / 2 * u"A*m^2" # erf(1) = 0.8427007929497149
-  @test_broken integral(funquad, quad) ≈ solution rtol = 1e-3
+  @test integral(funquad, quad) ≈ solution rtol = 1e-3
 
   # Tetrahedron
   a = cart(0, 0, 0)
@@ -313,7 +313,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
-  @test_broken integral(funhexa, hexa) ≈ solution rtol = 1e-3
+  @test integral(funhexa, hexa) ≈ solution rtol = 1e-3
 
   # Multi
   box = Box(cart(0, 0), cart(1, 1))
@@ -335,7 +335,7 @@
   quads = connect.([(1, 2, 6, 5), (4, 3, 5, 6)], Quadrangle)
   mesh = SimpleMesh(points, [tris; quads])
   funmesh(p) = T(1) * u"A"
-  @test_broken integral(funmesh, mesh) ≈ sum(integral(funmesh, elem) for elem in mesh)
+  @test integral(funmesh, mesh) ≈ sum(integral(funmesh, elem) for elem in mesh)
   @test_broken integral(funmesh, mesh) ≈ T(1) * u"A * m^2"
 
   # Grid
