@@ -58,7 +58,7 @@ See also [`integral`](@ref).
 """
 function localintegral(fun, geom::Geometry, method=GAUSSLEGENDRE)
   # integrand is equal to function times differential element
-  integrand(uvw) = fun(uvw...) * differential(geom, uvw)
+  integrand(uvw...) = fun(uvw...) * differential(geom, uvw)
 
   # domain of integration for the given geometry
   domain = ∫domain(geom)
