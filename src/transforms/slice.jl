@@ -6,8 +6,8 @@
     Slice(x=(xmin, xmax), y=(ymin, ymax), z=(zmin, zmax))
     Slice(lat=(latmin, latmax), lon=(lonmin, lonmax))
 
-Retain the domain elements within `x` limits [`xmax`,`xmax`],
-`y` limits [`ymax`,`ymax`] and `z` limits [`zmin`,`zmax`]
+Retain the domain elements within `x` limits [`xmin`,`xmax`],
+`y` limits [`ymin`,`ymax`] and `z` limits [`zmin`,`zmax`]
 in length units (default to meters), or within `lat` limits
 [`latmin`,`latmax`] and `lon` limits [`lonmin`,`lonmax`]
 in degree units.
