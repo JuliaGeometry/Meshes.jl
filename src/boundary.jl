@@ -240,23 +240,20 @@ end
 Return vector of [`Point`](@ref)s that approximate
 the [`embedboundary`](@ref) of the `geometry`.
 """
-boundarypoints(g::Geometry) = _boundarypoints(embedboundary(g))
-
-# discretize boundary and extract vertices
-_boundarypoints(g::Geometry) = vertices(discretize(g))
+boundarypoints(g::Geometry) = vertices(discretize(embedboundary(g)))
 
 # --------------
 # OPTIMIZATIONS
 # --------------
 
-_boundarypoints(p::Point) = [p]
+boundarypoints(p::Point) = [p]
 
-_boundarypoints(m::MultiPoint) = parent(m)
+boundarypoints(m::MultiPoint) = parent(m)
 
-_boundarypoints(p::Polytope) = _boundarypoints(manifold(p), p)
+boundarypoints(p::Polytope) = _boundarypoints(manifold(p), p)
 
 _boundarypoints(::Type{<:𝔼}, p::Polytope) = vertices(p)
 
 _boundarypoints(::Type{<:🌐}, p::Polytope) = vertices(discretize(p))
 
-_boundarypoints(m::Mesh) = vertices(m)
+boundarypoints(m::Mesh) = vertices(m)
