@@ -255,5 +255,3 @@ boundarypoints(p::Polytope) = _boundarypoints(manifold(p), p)
 _boundarypoints(::Type{<:𝔼}, p::Polytope) = vertices(p)
 
 _boundarypoints(::Type{<:🌐}, p::Polytope) = vertices(discretize(p))
-
-boundarypoints(m::Mesh) = vertices(m)
