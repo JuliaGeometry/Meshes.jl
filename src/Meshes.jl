@@ -46,7 +46,7 @@ import FiniteDifferences: central_fdm
 
 # Integration API
 import IntegrationInterface as II
-import FastGaussQuadrature: gausslegendre
+import HAdaptiveIntegration
 
 # Transforms API
 import TransformsBase: Transform, →
