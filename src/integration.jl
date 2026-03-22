@@ -83,8 +83,8 @@ function localintegral(fun, geom::Geometry, method=HADAPTIVE)
   # integrand can be evaluated at zeros
   N = paramdim(geom)
   T = numtype(lentype(geom))
-  ∅ = ntuple(_ -> zero(T), N)
-  u = unit.(integrand(∅...))
+  o = ntuple(_ -> zero(T), N)
+  u = unit.(integrand(o...))
 
   # strip units to help integration backends
   f(uvw...) = ustrip.(integrand(uvw...))
