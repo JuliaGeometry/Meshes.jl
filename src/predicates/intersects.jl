@@ -88,7 +88,7 @@ function intersects(geoms₁, geoms₂)
 end
 
 # -------------------------
-# solve method ambiguities
+# SOLVE METHOD AMBIGUITIES
 # -------------------------
 
 intersects(p::Point, c::Chain) = p ∈ c
