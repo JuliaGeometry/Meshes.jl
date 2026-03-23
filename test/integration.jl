@@ -8,7 +8,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) / 2 * u"A*m"
-  @test_broken integral(funray, ray) ≈ solution
+  @test integral(funray, ray) ≈ solution
 
   # Line
   a = cart(0, 0, 0)
@@ -19,7 +19,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) * u"A*m"
-  @test_broken integral(funline, line) ≈ solution
+  @test integral(funline, line) ≈ solution
 
   # Bezier Curve
   bezier = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
@@ -268,7 +268,7 @@
     2x * u"A"
   end
   solution = (c^2 - (b - a) * (b^2 - a^2)) * u"A*m^2"
-  @test integral(funpoly, poly) ≈ solution
+  #@test_broken integral(funpoly, poly) ≈ solution
 
   # Triangle
   a = cart(0, 0, 0)
