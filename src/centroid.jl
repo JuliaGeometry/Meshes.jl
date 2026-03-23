@@ -13,6 +13,8 @@ centroid(p::Point) = p
 
 centroid(p::Polygon) = centroid(first(rings(p)))
 
+centroid(n::Ngon) = coordmean(vertices(n))
+
 centroid(p::Polytope) = coordmean(vertices(p))
 
 centroid(b::Box) = coordmean(extrema(b))
