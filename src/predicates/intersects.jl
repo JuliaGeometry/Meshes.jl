@@ -84,7 +84,7 @@ function intersects(geoms₁, geoms₂)
   for g₁ in geoms₁, g₂ in geoms₂
     intersects(g₁, g₂) && return true
   end
-  return false
+  false
 end
 
 # -------------------------
