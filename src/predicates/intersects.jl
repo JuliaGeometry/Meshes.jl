@@ -54,9 +54,6 @@ intersects(c::Chain, g::Geometry) = any(∈(g), eachvertex(c)) || intersects(c, 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
 function intersects(g₁::Geometry, g₂::Geometry)
-  Dim = embeddim(g₁)
-  ℒ = lentype(g₁)
-
   # must have intersection of bounding boxes
   intersects(boundingbox(g₁), boundingbox(g₂)) || return false
 
@@ -68,6 +65,18 @@ function intersects(g₁::Geometry, g₂::Geometry)
     d₂ = simplexify(g₂)
     return intersects(g₁, d₂)
   end
+
+  return gjk_intersects(g₁, g₂)
+end
+
+"""
+    gjk_intersects(g₁::Geometry, g₂::Geometry)
+
+Run the GJK algorithm for two convex geometries.
+"""
+function gjk_intersects(g₁::Geometry, g₂::Geometry)
+  Dim = embeddim(g₁)
+  ℒ = lentype(g₁)
 
   # initial direction
   c₁, c₂ = centroid(g₁), centroid(g₂)
