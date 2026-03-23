@@ -54,9 +54,6 @@ intersects(c::Chain, g::Geometry) = any(∈(g), eachvertex(c)) || intersects(c, 
 intersects(g::Geometry, c::Chain) = intersects(c, g)
 
 function intersects(g₁::Geometry, g₂::Geometry)
-  Dim = embeddim(g₁)
-  ℒ = lentype(g₁)
-
   # must have intersection of bounding boxes
   intersects(boundingbox(g₁), boundingbox(g₂)) || return false
 
@@ -68,6 +65,56 @@ function intersects(g₁::Geometry, g₂::Geometry)
     d₂ = simplexify(g₂)
     return intersects(g₁, d₂)
   end
+
+  gjkintersects(g₁, g₂)
+end
+
+intersects(m::Multi, g::Geometry) = intersects(parent(m), [g])
+
+intersects(g::Geometry, m::Multi) = intersects(m, g)
+
+intersects(m₁::Multi, m₂::Multi) = intersects(parent(m₁), parent(m₂))
+
+intersects(d::Domain, g::Geometry) = intersects(d, [g])
+
+intersects(g::Geometry, d::Domain) = intersects(d, g)
+
+# fallback with iterators of geometries
+function intersects(geoms₁, geoms₂)
+  for g₁ in geoms₁, g₂ in geoms₂
+    intersects(g₁, g₂) && return true
+  end
+  false
+end
+
+# -------------------------
+# SOLVE METHOD AMBIGUITIES
+# -------------------------
+
+intersects(p::Point, c::Chain) = p ∈ c
+
+intersects(c::Chain, p::Point) = intersects(p, c)
+
+intersects(p::Point, m::Multi) = p ∈ m
+
+intersects(m::Multi, p::Point) = intersects(p, m)
+
+intersects(c::Chain, m::Multi) = intersects(segments(c), parent(m))
+
+intersects(m::Multi, c::Chain) = intersects(c, m)
+
+# ------------------
+#  HELPER FUNCTIONS
+# ------------------
+
+"""
+    gjkintersects(g₁::Geometry, g₂::Geometry)
+
+Run the GJK algorithm for two convex geometries.
+"""
+function gjkintersects(g₁::Geometry, g₂::Geometry)
+  Dim = embeddim(g₁)
+  ℒ = lentype(g₁)
 
   # initial direction
   c₁, c₂ = centroid(g₁), centroid(g₂)
@@ -195,44 +242,6 @@ function _gjk!(::Val{3}, O, points)
   end
   d
 end
-
-intersects(m::Multi, g::Geometry) = intersects(parent(m), [g])
-
-intersects(g::Geometry, m::Multi) = intersects(m, g)
-
-intersects(m₁::Multi, m₂::Multi) = intersects(parent(m₁), parent(m₂))
-
-intersects(d::Domain, g::Geometry) = intersects(d, [g])
-
-intersects(g::Geometry, d::Domain) = intersects(d, g)
-
-# fallback with iterators of geometries
-function intersects(geoms₁, geoms₂)
-  for g₁ in geoms₁, g₂ in geoms₂
-    intersects(g₁, g₂) && return true
-  end
-  return false
-end
-
-# -------------------------
-# solve method ambiguities
-# -------------------------
-
-intersects(p::Point, c::Chain) = p ∈ c
-
-intersects(c::Chain, p::Point) = intersects(p, c)
-
-intersects(p::Point, m::Multi) = p ∈ m
-
-intersects(m::Multi, p::Point) = intersects(p, m)
-
-intersects(c::Chain, m::Multi) = intersects(segments(c), parent(m))
-
-intersects(m::Multi, c::Chain) = intersects(c, m)
-
-# ------------------
-# utility functions
-# ------------------
 
 # support point in Minkowski difference
 minkowskipoint(g₁::Geometry, g₂::Geometry, d) = withcrs(g₁, supportfun(g₁, d) - supportfun(g₂, -d))
