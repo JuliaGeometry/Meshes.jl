@@ -28,7 +28,7 @@
     (1 / sqrt(1 + cos(ux)^2)) * u"Ω"
   end
   solution = T(2π) * u"Ω*m"
-  @test_broken integral(funbezier, bezier) ≈ solution
+  @test integral(funbezier, bezier) ≈ solution rtol = 1e-2
 
   # Plane
   p = cart(0, 0, 0)
@@ -39,7 +39,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(π) * u"A*m^2"
-  @test_broken integral(funplane, plane) ≈ solution
+  @test integral(funplane, plane) ≈ solution rtol = 1e-3
 
   # Box 1D
   a = T(π)
@@ -59,7 +59,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2)) * u"A"
   end
   solution = 2a * (T(π) * a^2 / 4) * u"A*m^2"
-  @test_broken integral(funbox2, box) ≈ solution
+  @test integral(funbox2, box) ≈ solution rtol = 1e-2
 
   # Box 3D
   a = T(π)
@@ -80,7 +80,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test_broken integral(funball2, ball) ≈ solution
+  @test integral(funball2, ball) ≈ solution rtol = 1e-3
 
   # Ellipsoid
   origin = cart(0, 0, 0)
@@ -91,7 +91,7 @@
     (z^2) * u"A"
   end
   solution = (T(4π) * R^4 / 3) * u"A*m^2"
-  @test_broken integral(funellips, ellipsoid) ≈ solution
+  @test integral(funellips, ellipsoid) ≈ solution rtol = 1e-2
 
   # Disk
   center = cart(1, 2, 3)
@@ -105,7 +105,7 @@
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
-  @test_broken integral(fundisk, disk) ≈ solution
+  @test integral(fundisk, disk) ≈ solution rtol = 1e-3
 
   # Circle
   center = cart(1, 2, 3)
