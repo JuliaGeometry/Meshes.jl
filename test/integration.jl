@@ -8,7 +8,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) / 2 * u"A*m"
-  @test integral(funray, ray) ≈ solution
+  @test integral(funray, ray) ≈ solution rtol=1e-3
 
   # Line
   a = cart(0, 0, 0)
@@ -19,7 +19,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) * u"A*m"
-  @test integral(funline, line) ≈ solution
+  @test integral(funline, line) ≈ solution rtol=1e-3
 
   # Bezier Curve
   bezier = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
@@ -49,7 +49,7 @@
     √(a^2 - x₁^2) * u"A"
   end
   solution = T(π) * a^2 / 4 * u"A*m"
-  @test integral(funbox1, box) ≈ solution
+  @test integral(funbox1, box) ≈ solution rtol = 1e-3
 
   # Box 2D
   a = T(π)
@@ -69,7 +69,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
-  #@test_broken integral(funbox3, box) ≈ solution
+  @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
   # Ball 2D
   origin = cart(0, 0)
@@ -119,7 +119,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
-  @test integral(funcircle, circle) ≈ solution
+  @test integral(funcircle, circle) ≈ solution rtol = 1e-3
 
   # Cylinder
   h = T(8.5)u"m"
@@ -135,7 +135,7 @@
     ρ^(-1) * (ρ + ϕ * u"m" + z) * u"A"
   end
   solution = ((T(π) * h * ρ^2) + (T(π) * h^2 * ρ) + (T(2π) * T(π) * u"m" * h * ρ)) * u"A"
-  @test integral(funcylinder, cyl) ≈ solution
+  @test integral(funcylinder, cyl) ≈ solution rtol = 1e-3
 
   # CylinderSurface
   h = T(8.5)u"m"
@@ -156,7 +156,7 @@
     A3 = (T(2π) * h * ρ) + (2T(π)^2 * u"m" * h) + (T(π) * h^2)
     (A1 + A2 + A3) * u"A"
   end
-  @test integral(funcylsurf, cylsurf) ≈ solution
+  @test integral(funcylsurf, cylsurf) ≈ solution rtol = 1e-3
 
   # Cone
   r = T(2.5)u"m"
@@ -168,7 +168,7 @@
   cone = Cone(base, apex)
   funcone(p) = T(1.0)u"A"
   solution = (T(π) * r^2 * h / 3) * u"A"
-  @test integral(funcone, cone) ≈ solution
+  @test integral(funcone, cone) ≈ solution rtol = 1e-3
 
   # ConeSurface
   r = T(2.5)u"m"
@@ -180,7 +180,7 @@
   conesurf = ConeSurface(base, apex)
   funconesurf(p) = T(1.0)u"A"
   solution = ((T(π) * r^2) + (T(π) * r * hypot(h, r))) * u"A"
-  @test integral(funconesurf, conesurf) ≈ solution
+  @test integral(funconesurf, conesurf) ≈ solution rtol = 1e-3
 
   # Frustum
   r = T(2.5)u"m"
@@ -193,7 +193,7 @@
   frustum = Frustum(base, disk)
   funfrustum(p) = T(1.0)u"A"
   solution = (T(7) / T(8)) * (T(π) * r^2 * h / T(3)) * u"A"
-  @test integral(funfrustum, frustum) ≈ solution
+  @test integral(funfrustum, frustum) ≈ solution rtol = 1e-3
 
   # FrustumSurface
   rbot = T(2.5)u"m"
@@ -215,7 +215,7 @@
     A4 = T(π) * rbot^2
     (A1 - A2 + A3 + A4) * u"A"
   end
-  @test integral(funfrustumsurf, frustumsurf) ≈ solution
+  @test integral(funfrustumsurf, frustumsurf) ≈ solution rtol = 1e-3
 
   # Segment
   ϕ = 7T(pi) / 6
@@ -230,7 +230,7 @@
     exp(r * log(ka) + (1 - r) * log(kb)) * u"A"
   end
   solution = ((ka - kb) / (log(ka) - log(kb))) * u"A*m"
-  @test integral(funseg, seg) ≈ solution
+  @test integral(funseg, seg) ≈ solution rtol = 1e-3
 
   # Rope
   a = cart(0, 0, 0)
@@ -243,7 +243,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = T(7.0)u"A*m"
-  @test integral(funrope, rope) ≈ solution
+  @test integral(funrope, rope) ≈ solution rtol = 1e-3
 
   # Ring
   a = cart(0, 0, 0)
@@ -256,7 +256,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = T(14.0)u"A*m"
-  @test integral(funring, ring) ≈ solution
+  @test integral(funring, ring) ≈ solution rtol = 1e-3
 
   # PolyArea
   a, b, c, z = T(0.4), T(0.6), T(1.0), T(0.0)
@@ -268,7 +268,7 @@
     2x * u"A"
   end
   solution = (c^2 - (b - a) * (b^2 - a^2)) * u"A*m^2"
-  #@test_broken integral(funpoly, poly) ≈ solution
+  #@test integral(funpoly, poly) ≈ solution rtol = 1e-3
 
   # Triangle
   a = cart(0, 0, 0)
@@ -280,7 +280,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = T(0.5) * u"A*m^2"
-  @test integral(funtri, tri) ≈ solution
+  @test integral(funtri, tri) ≈ solution rtol = 1e-3
 
   # Quadrangle
   quad = Quadrangle(cart(-1.0, 0.0), cart(-1.0, 1.0), cart(1.0, 1.0), cart(1.0, 0.0))
@@ -289,7 +289,7 @@
     exp(-r^2) * u"A"
   end
   solution = T(π) * T(0.8427007929497149)^2 / 2 * u"A*m^2" # erf(1) = 0.8427007929497149
-  @test integral(funquad, quad) ≈ solution
+  @test integral(funquad, quad) ≈ solution rtol = 1e-3
 
   # Tetrahedron
   a = cart(0, 0, 0)
@@ -302,7 +302,7 @@
     (x + 2y + 3z) * u"A"
   end
   solution = T(0.25) * u"A*m^3"
-  @test integral(funtetra, tetra) ≈ solution
+  @test integral(funtetra, tetra) ≈ solution rtol = 1e-3
 
   # Hexahedron
   a = π
@@ -313,7 +313,7 @@
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
   solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
-  #@test_broken integral(funhexa, hexa) ≈ solution rtol = 1e-3
+  @test integral(funhexa, hexa) ≈ solution rtol = 1e-3
 
   # Multi
   box = Box(cart(0, 0), cart(1, 1))
@@ -336,7 +336,7 @@
   mesh = SimpleMesh(points, [tris; quads])
   funmesh(p) = T(1) * u"A"
   @test integral(funmesh, mesh) ≈ sum(integral(funmesh, elem) for elem in mesh)
-  @test integral(funmesh, mesh) ≈ T(1) * u"A * m^2"
+  @test integral(funmesh, mesh) ≈ T(1) * u"A * m^2" rtol = 1e-3
 
   # Grid
   grid = cartgrid(10, 10)

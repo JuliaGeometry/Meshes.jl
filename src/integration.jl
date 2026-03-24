@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 # default integration method
-const HADAPTIVE = II.Backend.HAdaptiveIntegration()
+const HADAPTIVE = II.Backend.HAdaptiveIntegration(rtol=1e-3)
 
 """
     integral(fun, geom[, method])
