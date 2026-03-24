@@ -268,7 +268,7 @@
     2x * u"A"
   end
   solution = (c^2 - (b - a) * (b^2 - a^2)) * u"A*m^2"
-  #@test integral(funpoly, poly) ≈ solution rtol = 1e-3
+  @test integral(funpoly, poly) ≈ solution rtol = 1e-3
 
   # Triangle
   a = cart(0, 0, 0)
