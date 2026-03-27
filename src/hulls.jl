@@ -22,7 +22,6 @@ function hull end
 
 include("hulls/graham.jl")
 include("hulls/jarvis.jl")
-include("hulls/concave.jl")
 
 # ----------
 # UTILITIES
@@ -40,7 +39,7 @@ function convexhull end
 
 Concave hull of `object`.
 """
-function concavehull end
+# function concavehull end
 
 # ----------
 # FALLBACKS
@@ -104,4 +103,4 @@ _pconvexhull(points) = hull(points, GrahamScan())
 
 _gconcavehull(geoms) = _pconcavehull(p for g in geoms for p in boundarypoints(g))
 
-_pconcavehull(points) = hull(points, Concave())
+_pconcavehull(points) = hull(points, JarvisMarch(3)) # default k = 3 for concave hulls
