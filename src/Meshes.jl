@@ -517,7 +517,6 @@ export
   HullMethod,
   GrahamScan,
   JarvisMarch,
-  Concave,
   hull,
   convexhull,
   concavehull,
