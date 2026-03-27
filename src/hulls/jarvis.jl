@@ -52,47 +52,63 @@ function hull(points, method::JarvisMarch)
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
 
   # perform primary Jarvis march loop
-  ℐ = _jarvisloop!(method, points, p, n, i, O, A)
+  ℐ = _jarvisloop(method, points, p, n, i, O, A)
+  # if no hull is found, return convex hull as fallback
   isnothing(ℐ) && return convexhull(p)
+
+  # return polygonal area
   PolyArea(p[ℐ[begin:(end - 1)]])
 end
 
 # convex hull
-function _jarvisloop!(::JarvisMarch{Nothing}, points, p, n, i, O, A)
+function _jarvisloop(::JarvisMarch{Nothing}, points, p, n, i, O, A)
+  # candidates for next point
   𝒞 = [1:(i - 1); (i + 1):n]
+
+  # find next point with smallest angle
   j = argmin(l -> ∠(A, O, p[l]), 𝒞)
+
+  # initialize ring of indices
   ℐ = [i, j]
 
   # rotational sweep
   while first(ℐ) != last(ℐ)
+    # direction of current segment
     v = p[j] - p[i]
+
+    # update candidates
+    𝒞 = setdiff(1:n, [i, j])
+
+    #find next segment
     i = j
     O = p[i]
     A = O + v
-    𝒞 = setdiff(1:n, [i, j])
     j = argmin(l -> ∠(A, O, p[l]), 𝒞)
+
+    # update ring of indices
     push!(ℐ, j)
   end
 
+  # return indices of hull vertices
   ℐ
 end
 
 # concave hull
-function _jarvisloop!(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:Integer}
-  m = I(n - 1)
+function _jarvisloop(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:Integer}
+  m = I(n - 2)
   k = min(max(method.k, 3), m)
   assertion(ispositive(k), "k must be a positive integer")
-  k >= m && return _jarvisloop!(JarvisMarch{Nothing}(nothing), points, p, n, i, O, A) # fallback to convex hull if k is too large
+  k > m && return _jarvisloop(JarvisMarch{Nothing}(nothing), points, p, n, i, O, A) # fallback to convex hull
 
-  # starting indices and points for each loop
-  i₀ = i
-  O₀ = O
-  A₀ = A
+  # Initial state for retries
+  i₀, O₀, A₀ = i, O, A
 
-  # loop to increase k until a valid hull is found or k exceeds n - 1
-  while k < m
-    searcher = KNearestSearch(p, k)
+  # Try increasing k until valid hull found
+  for ki in k:m
+    searcher = KNearestSearch(p, ki)
     mask = trues(n)
+
+    # apply initial point information
     i = i₀
     O = O₀
     A = A₀
@@ -113,21 +129,22 @@ function _jarvisloop!(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:I
     while first(ℐ) != last(ℐ)
       # reinsert first point after 5 steps. Otherwise the searcher may double back and fail to find a valid hull.
       step == 5 && (mask[ℐ[begin]] = true)
-      v = p[j] - p[i]
 
+      # direction of current segment
+      v = p[j] - p[i]
       i = j
       O = p[i]
       A = O + v
 
-      # find next point with smallest angle among k nearest neighbors
-      search!(𝒩, O, searcher; mask=mask)
-      isempty(𝒩) && (failed = true; break)
+      # order neighbors by angle
+      search!(𝒩, O, searcher; mask)
+      isempty(𝒩) && break
       sort!(𝒩, by=l -> ∠(A, O, p[l]))
 
       found = false
-      # find the first point that doesn't cause an intersection with the existing hull
-      for indᵢ in eachindex(𝒩)
-        cpoint = p[𝒩[indᵢ]]
+
+      for nᵢ in 𝒩
+        cpoint = p[nᵢ]
         last = cpoint == p[ℐ[begin]] ? 1 : 0
 
         its = false
@@ -138,12 +155,13 @@ function _jarvisloop!(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:I
         end
 
         if !its
-          j = 𝒩[indᵢ]
+          j = nᵢ
           found = true
           break
         end
       end
 
+      # if no candidate found, break and try again with larger k
       !found && (failed = true; break)
 
       mask[j] = false
@@ -151,12 +169,11 @@ function _jarvisloop!(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:I
       push!(ℐ, j)
     end
 
+    # check if hull is valid
     if !failed
       poly = PolyArea(p[ℐ[begin:(end - 1)]])
       all(points .∈ poly) && return ℐ
     end
-
-    k += 1
   end
 
   nothing
