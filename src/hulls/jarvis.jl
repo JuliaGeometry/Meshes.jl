@@ -4,10 +4,14 @@
 
 """
     JarvisMarch()
+    JarvisMarch(k)
 
 Compute the convex hull of a set of points or geometries using the
 Jarvis's march algorithm. See [https://en.wikipedia.org/wiki/Gift_wrapping_algorithm]
 (https://en.wikipedia.org/wiki/Gift_wrapping_algorithm).
+
+If `k` is provided, the algorithm will attempt to compute a concave hull using [k,n)
+nearest neighbors.
 
 The algorithm has complexity `O(n*h)` where `n` is the number of points
 and `h` is the number of points in the hull.
@@ -16,10 +20,15 @@ and `h` is the number of points in the hull.
 
 * Jarvis 1973. [On the identification of the convex hull of a finite set of
   points in the plane](https://www.sciencedirect.com/science/article/abs/pii/0020019073900203)
+* Moreira, A. & Santos, M. Y. 2007. "concave hull: a k-nearest neighbours approach for the computation of the region occupied by a set of points". In: *Proceedings of the Second International Conference on Computer Graphics Theory and Applications*. SciTePress, pp. 61–68.
 """
-struct JarvisMarch <: HullMethod end
+struct JarvisMarch{K} <: HullMethod
+  k::K
+end
+JarvisMarch() = JarvisMarch{Nothing}(nothing)
+JarvisMarch(k::I) where {I<:Integer} = JarvisMarch{I}(k)
 
-function hull(points, ::JarvisMarch)
+function hull(points, method::JarvisMarch)
   pₒ = first(points)
   ℒ = lentype(pₒ)
 
@@ -34,39 +43,121 @@ function hull(points, ::JarvisMarch)
   # corner cases
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
+  n == 3 && return PolyArea(p)
 
   # find bottom-left point
   i = argmin(p)
-
-  # candidates for next point
-  𝒞 = [1:(i - 1); (i + 1):n]
-
   # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  j = argmin(l -> ∠(A, O, p[l]), 𝒞)
 
-  # initialize ring of indices
+  # perform primary Jarvis march loop
+  ℐ = _jarvisloop!(method, points, p, n, i, O, A)
+  isnothing(ℐ) && return convexhull(p)
+  PolyArea(p[ℐ[begin:(end - 1)]])
+end
+
+# convex hull
+function _jarvisloop!(::JarvisMarch{Nothing}, points, p, n, i, O, A)
+  𝒞 = [1:(i - 1); (i + 1):n]
+  j = argmin(l -> ∠(A, O, p[l]), 𝒞)
   ℐ = [i, j]
 
   # rotational sweep
   while first(ℐ) != last(ℐ)
-    # direction of current segment
     v = p[j] - p[i]
-
-    # update candidates
-    𝒞 = setdiff(1:n, [i, j])
-
-    # find next segment
     i = j
     O = p[i]
     A = O + v
+    𝒞 = setdiff(1:n, [i, j])
     j = argmin(l -> ∠(A, O, p[l]), 𝒞)
-
-    # update ring of indices
     push!(ℐ, j)
   end
 
-  # return polygonal area
-  PolyArea(p[ℐ[begin:(end - 1)]])
+  ℐ
+end
+
+# concave hull
+function _jarvisloop!(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:Integer}
+  m = I(n - 1)
+  k = min(max(method.k, 3), m)
+  assertion(ispositive(k), "k must be a positive integer")
+  k >= m && return _jarvisloop!(JarvisMarch{Nothing}(nothing), points, p, n, i, O, A) # fallback to convex hull if k is too large
+
+  # starting indices and points for each loop
+  i₀ = i
+  O₀ = O
+  A₀ = A
+
+  # loop to increase k until a valid hull is found or k exceeds n - 1
+  while k < m
+    searcher = KNearestSearch(p, k)
+    mask = trues(n)
+    i = i₀
+    O = O₀
+    A = A₀
+    mask[i] = false
+
+    # find next point with smallest angle among k nearest neighbors
+    𝒩 = search(O, searcher; mask=mask)
+    isempty(𝒩) && (k += 1; continue)
+
+    j = argmin(l -> ∠(A, O, p[l]), 𝒩)
+    ℐ = [i, j]
+
+    # no longer searchable
+    mask[j] = false
+    step = 2
+    failed = false
+
+    while first(ℐ) != last(ℐ)
+      # reinsert first point after 5 steps. Otherwise the searcher may double back and fail to find a valid hull.
+      step == 5 && (mask[ℐ[begin]] = true)
+      v = p[j] - p[i]
+
+      i = j
+      O = p[i]
+      A = O + v
+
+      # find next point with smallest angle among k nearest neighbors
+      search!(𝒩, O, searcher; mask=mask)
+      isempty(𝒩) && (failed = true; break)
+      sort!(𝒩, by=l -> ∠(A, O, p[l]))
+
+      found = false
+      # find the first point that doesn't cause an intersection with the existing hull
+      for indᵢ in eachindex(𝒩)
+        cpoint = p[𝒩[indᵢ]]
+        last = cpoint == p[ℐ[begin]] ? 1 : 0
+
+        its = false
+        indⱼ = 2
+        while !its && indⱼ < length(ℐ) - last
+          its = intersects(Segment(p[ℐ[step]], cpoint), Segment(p[ℐ[step - indⱼ + 1]], p[ℐ[step - indⱼ]]))
+          indⱼ += 1
+        end
+
+        if !its
+          j = 𝒩[indᵢ]
+          found = true
+          break
+        end
+      end
+
+      !found && (failed = true; break)
+
+      mask[j] = false
+      step += 1
+      push!(ℐ, j)
+    end
+
+    if !failed
+      poly = PolyArea(p[ℐ[begin:(end - 1)]])
+      all(points .∈ poly) && return ℐ
+    end
+
+    k += 1
+  end
+
+  nothing
 end

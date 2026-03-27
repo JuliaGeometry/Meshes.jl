@@ -1,5 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  for method in [GrahamScan(), JarvisMarch(), Concave()]
+  for method in [GrahamScan(), JarvisMarch(), JarvisMarch(3)]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
@@ -36,7 +36,7 @@
     verts = vertices(chul)
     @test all(p1 .∈ Ref(chul))
     @test all(p2 .∈ Ref(chul))
-    if method != Concave() # convex hull should be unaffected by interior points
+    if !(method isa JarvisMarch && !isnothing(method.k)) # convex hull should be unaffected by interior points
       @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
     end
 
@@ -70,7 +70,7 @@
         (0, 6)
       ])
     chul = hull(pts, method)
-    if method == Concave()
+    if method isa JarvisMarch && !isnothing(method.k)
       @test Set(vertices(chul)) == Set(pts)
     else
       @test nvertices(chul) < length(pts)
@@ -79,7 +79,7 @@
     poly = readpoly(T, joinpath(datadir, "hull.line"))
     pts = vertices(poly)
     chul = hull(pts, method)
-    if method == Concave()
+    if method isa JarvisMarch && !isnothing(method.k)
       @test Set(vertices(chul)) == Set(pts)
     else
       @test nvertices(chul) < length(pts)
@@ -202,5 +202,7 @@ end
 
   b1 = Ball(cart(0, 0), T(1))
   b2 = Box(cart(-1, -1), cart(0.5, 0.5))
-  @test concavehull(Multi([b1, b2])) isa PolyArea
+  h = concavehull(Multi([b1, b2]))
+  @test h isa PolyArea
+  @test all(Set([boundarypoints(b1); boundarypoints(b2)]) .∈ Ref(h))
 end
