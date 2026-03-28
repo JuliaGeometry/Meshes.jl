@@ -8,7 +8,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) / 2 * u"A*m"
-  @test integral(funray, ray) ≈ solution rtol=1e-3
+  @test integral(funray, ray) ≈ solution rtol = 1e-3
 
   # Line
   a = cart(0, 0, 0)
@@ -19,7 +19,7 @@
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) * u"A*m"
-  @test integral(funline, line) ≈ solution rtol=1e-3
+  @test integral(funline, line) ≈ solution rtol = 1e-3
 
   # Bezier Curve
   bezier = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
