@@ -44,6 +44,10 @@ import NearestNeighbors: MinkowskiMetric
 import DifferentiationInterface as DI
 import FiniteDifferences: central_fdm
 
+# Integration API
+import IntegrationInterface as II
+import HAdaptiveIntegration
+
 # Transforms API
 import TransformsBase: Transform, →
 import TransformsBase: isrevertible, isinvertible
@@ -104,6 +108,7 @@ include("predicates.jl")
 
 # calculus
 include("differentation.jl")
+include("integration.jl")
 
 # operations
 include("centroid.jl")
@@ -458,6 +463,8 @@ export
   derivative,
   jacobian,
   differential,
+  integral,
+  localintegral,
 
   # centroids
   centroid,
