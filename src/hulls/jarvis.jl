@@ -79,7 +79,7 @@ function _jarvisloop(::JarvisMarch{Nothing}, points, p, n, i, O, A)
     # update candidates
     𝒞 = setdiff(1:n, [i, j])
 
-    #find next segment
+    # find next segment
     i = j
     O = p[i]
     A = O + v
@@ -100,10 +100,10 @@ function _jarvisloop(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:In
   assertion(ispositive(k), "k must be a positive integer")
   k > m && return _jarvisloop(JarvisMarch{Nothing}(nothing), points, p, n, i, O, A) # fallback to convex hull
 
-  # Initial state for retries
+  # initial state for retries
   i₀, O₀, A₀ = i, O, A
 
-  # Try increasing k until valid hull found
+  # try increasing k until valid hull found
   for ki in k:m
     searcher = KNearestSearch(p, ki)
     mask = trues(n)
