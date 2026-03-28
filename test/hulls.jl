@@ -1,5 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  for method in [GrahamScan(), JarvisMarch()]
+  for method in [GrahamScan(), JarvisMarch(), JarvisMarch(3)]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
@@ -20,21 +20,25 @@
     @test chul == Segment(cart(0, 1), cart(1, 0))
     pts = cart.([(1, 0), (0, 0), (0, 1)])
     chul = hull(pts, method)
-    @test vertices(chul) == cart.([(0, 0), (1, 0), (0, 1)])
+    @test Set(vertices(chul)) == Set(cart.([(0, 0), (1, 0), (0, 1)]))
 
     # original point set is already in hull
     pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
     chul = hull(pts, method)
     verts = vertices(chul)
-    @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    @test Set(verts) == Set(cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]))
 
-    # random points in interior do not affect result
+    # all points should be in hull, even if random 
     p1 = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
     p2 = cart.([0.5 .* (rand(), rand()) .+ 0.5 for _ in 1:10])
     pts = [p1; p2]
     chul = hull(pts, method)
     verts = vertices(chul)
-    @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    @test all(p1 .∈ Ref(chul))
+    @test all(p2 .∈ Ref(chul))
+    if !(method isa JarvisMarch && !isnothing(method.k)) # convex hull should be unaffected by interior points
+      @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    end
 
     pts =
       cart.([
@@ -66,12 +70,20 @@
         (0, 6)
       ])
     chul = hull(pts, method)
-    @test nvertices(chul) < length(pts)
+    if method isa JarvisMarch && !isnothing(method.k)
+      @test Set(vertices(chul)) == Set(pts)
+    else
+      @test nvertices(chul) < length(pts)
+    end
 
     poly = readpoly(T, joinpath(datadir, "hull.line"))
     pts = vertices(poly)
     chul = hull(pts, method)
-    @test nvertices(chul) < length(pts)
+    if method isa JarvisMarch && !isnothing(method.k)
+      @test Set(vertices(chul)) == Set(pts)
+    else
+      @test nvertices(chul) < length(pts)
+    end
 
     if method == GrahamScan()
       # simplifying rectangular hull / triangular
@@ -170,4 +182,27 @@ end
   h = convexhull(Multi([b1, b2]))
   @test cart(-0.8, -0.8) ∈ h
   @test cart(0.2, 0.2) ∈ h
+end
+
+@testitem "Concave hulls" setup = [Setup] begin
+  @test concavehull(cart(0, 0)) == cart(0, 0)
+
+  @test concavehull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
+
+  @test concavehull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  b1 = Box(cart(0, 0), cart(1, 1))
+  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  @test Set(vertices(concavehull(Multi([b1, b2])))) ==
+        Set(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+
+  b1 = Ball(cart(0, 0), T(1))
+  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  h = concavehull(Multi([b1, b2]))
+  @test h isa PolyArea
+  @test all(Set([boundarypoints(b1); boundarypoints(b2)]) .∈ Ref(h))
 end
