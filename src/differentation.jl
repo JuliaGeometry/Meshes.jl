@@ -10,8 +10,8 @@ const FINITEDIFF = DI.AutoFiniteDifferences(fdm=central_fdm(5, 1))
 
 Calculate the derivative of the `geom`etry's parametric function
 at parametric coordinates `uvw` and along `j`-th coordinate using
-an automatic differentiation `∂backend` from DifferentationInterface.jl.
-By default, the `∂backend` is set to central finite differences.
+a differentiation `∂backend` from DifferentationInterface.jl.
+By default, the `∂backend` is set to finite differences.
 """
 function derivative(geom::Geometry, uvw, j; ∂backend=FINITEDIFF)
   # sanity check
@@ -20,7 +20,7 @@ function derivative(geom::Geometry, uvw, j; ∂backend=FINITEDIFF)
   d == n || throw(ArgumentError("invalid number of parametric coordinates for geometry"))
   1 ≤ j ≤ n || throw(ArgumentError("attempting to compute derivative along invalid coordinate"))
 
-  # strip units to help autodiff methods
+  # strip units to help differentiation backends
   f(t) = ustrip.(to(geom(ntuple(i -> i == j ? t : uvw[i], d)...)))
 
   # compute derivative and re-add unit
@@ -34,10 +34,10 @@ end
     jacobian(geom, uvw; ∂backend)
 
 Calculate the Jacobian of the `geom`etry's parametric function
-at parametric coordinates `uvw` using an automatic differentiation
-`∂backend` from DifferentationInterface.jl. Returns a tuple of vectors,
-each corresponding to the derivative along a parametric coordinate.
-`∂backend` is set to central finite differences.
+at parametric coordinates `uvw` using a differentiation `∂backend`
+from DifferentationInterface.jl. Returns a tuple of vectors, each
+corresponding to the derivative along a parametric coordinate.
+By default, `∂backend` is set to finite differences.
 """
 jacobian(geom::Geometry, uvw; ∂backend=FINITEDIFF) = ntuple(j -> derivative(geom, uvw, j; ∂backend), paramdim(geom))
 
@@ -45,9 +45,9 @@ jacobian(geom::Geometry, uvw; ∂backend=FINITEDIFF) = ntuple(j -> derivative(ge
     differential(geom, uvw; ∂backend)
 
 Calculate the differential element (length, area, volume, etc.)
-of the `geom`etry at parametric coordinates `uvw` using an
-automatic differentation `∂backend` from DifferentiationInterface.jl.
-By default, the `∂backend` is set to central finite differences.
+of the `geom`etry at parametric coordinates `uvw` using a
+differentiation `∂backend` from DifferentiationInterface.jl.
+By default, the `∂backend` is set to finite differences.
 """
 function differential(geom::Geometry, uvw; ∂backend=FINITEDIFF)
   J = jacobian(geom, uvw; ∂backend)
