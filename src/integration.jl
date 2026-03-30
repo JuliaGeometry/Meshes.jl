@@ -6,18 +6,20 @@
 const HADAPTIVE = II.Backend.HAdaptiveIntegration(rtol=1e-3)
 
 """
-    integral(fun, geom; ∫backend)
+    integral(fun, geom; ∫backend, ∂backend)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 [`Point`](@ref)s to values in a linear space using an integration `∫backend`
-from IntegrationInterface.jl.
+from IntegrationInterface.jl and a differentiation `∂backend` from
+DifferentiationInterface.jl.
 
-    integral(fun, dom; ∫backend)
+    integral(fun, dom; ∫backend, ∂backend)
 
 Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
 summing the integrals for each constituent geometry.
 
-By default, use h-adaptive integration for good accuracy on a wide range of geometries.
+By default, `∫backend` is set to h-adaptive integration for good accuracy
+across a wide range of geometries and `∂backend` is set to finite differences.
 
 See also [`localintegral`](@ref).
 """
@@ -70,7 +72,8 @@ Calculate the integral over the `geom`etry of the `fun`ction that maps
 parametric coordinates `uvw` to values in a linear space using an
 integration `∫backend` from IntegrationInterface.jl.
 
-By default, use h-adaptive integration for good accuracy on a wide range of geometries.
+By default, `∫backend` is set to h-adaptive integration for good accuracy
+across a wide range of geometries and `∂backend` is set to finite differences.
 
 See also [`integral`](@ref).
 """
