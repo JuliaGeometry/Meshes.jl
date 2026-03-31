@@ -57,7 +57,8 @@ integral(fun, poly::Polygon; ibackend=hadaptive(poly), dbackend=FINITEDIFF) =
 integral(fun, tri::Triangle; ibackend=hadaptive(tri), dbackend=FINITEDIFF) = _integral(fun, tri, ibackend, dbackend)
 
 # integrate quadrangle with local integration
-integral(fun, quad::Quadrangle; ibackend=hadaptive(quad), dbackend=FINITEDIFF) = _integral(fun, quad, ibackend, dbackend)
+integral(fun, quad::Quadrangle; ibackend=hadaptive(quad), dbackend=FINITEDIFF) =
+  _integral(fun, quad, ibackend, dbackend)
 
 # multi-geometry is the union of its constituent geometries
 integral(fun, multi::Multi; ibackend=hadaptive(multi), dbackend=FINITEDIFF) =
