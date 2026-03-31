@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# default differentation method
+# default differentation backend
 const FINITEDIFF = DI.AutoFiniteDifferences(fdm=central_fdm(5, 1))
 
 """
