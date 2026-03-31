@@ -6,75 +6,86 @@
 const HADAPTIVE = II.Backend.HAdaptiveIntegration(rtol=1e-3)
 
 """
-    integral(fun, geom[, method])
+    integral(fun, geom; ibackend, dbackend)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
-[`Point`](@ref)s to values in a linear space.
+[`Point`](@ref)s to values in a linear space using an integration `ibackend`
+from IntegrationInterface.jl and a differentiation `dbackend` from
+DifferentiationInterface.jl.
 
-    integral(fun, dom[, method])
+    integral(fun, dom; ibackend, dbackend)
 
 Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
 summing the integrals for each constituent geometry.
 
-By default, use h-adaptive integration for good accuracy on a wide range of geometries.
+By default, `ibackend` is set to h-adaptive integration for good accuracy
+across a wide range of geometries and `dbackend` is set to finite differences.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom::Geometry, method=HADAPTIVE) = _integral(fun, geom, method)
+integral(fun, geom::Geometry; ibackend=HADAPTIVE, dbackend=FINITEDIFF) = _integral(fun, geom, ibackend, dbackend)
 
 # cylinder surface is the union of the curved surface and the top and bottom disks
-integral(fun, cylsurf::CylinderSurface, method=HADAPTIVE) =
-  localintegral(fun ∘ cylsurf, cylsurf, method) +
-  integral(fun, top(cylsurf), method) +
-  integral(fun, bottom(cylsurf), method)
+integral(fun, cylsurf::CylinderSurface; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  localintegral(fun ∘ cylsurf, cylsurf; ibackend, dbackend) +
+  integral(fun, top(cylsurf); ibackend, dbackend) +
+  integral(fun, bottom(cylsurf); ibackend, dbackend)
 
 # cone surface is the union of the curved surface and the base disk
-integral(fun, conesurf::ConeSurface, method=HADAPTIVE) =
-  localintegral(fun ∘ conesurf, conesurf, method) + integral(fun, base(conesurf), method)
+integral(fun, conesurf::ConeSurface; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  localintegral(fun ∘ conesurf, conesurf; ibackend, dbackend) + integral(fun, base(conesurf); ibackend, dbackend)
 
 # frustum surface is the union of the curved surface and the top and bottom disks
-integral(fun, frustumsurf::FrustumSurface, method=HADAPTIVE) =
-  localintegral(fun ∘ frustumsurf, frustumsurf, method) +
-  integral(fun, top(frustumsurf), method) +
-  integral(fun, bottom(frustumsurf), method)
+integral(fun, frustumsurf::FrustumSurface; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  localintegral(fun ∘ frustumsurf, frustumsurf; ibackend, dbackend) +
+  integral(fun, top(frustumsurf); ibackend, dbackend) +
+  integral(fun, bottom(frustumsurf); ibackend, dbackend)
 
 # rope is the union of its constituent segments
-integral(fun, rope::Rope, method=HADAPTIVE) = sum(integral(fun, seg, method) for seg in segments(rope))
+integral(fun, rope::Rope; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, seg; ibackend, dbackend) for seg in segments(rope))
 
 # ring is the union of its constituent segments
-integral(fun, ring::Ring, method=HADAPTIVE) = sum(integral(fun, seg, method) for seg in segments(ring))
+integral(fun, ring::Ring; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, seg; ibackend, dbackend) for seg in segments(ring))
 
 # polygon is the union of its constituent ngons
-integral(fun, poly::Polygon, method=HADAPTIVE) = sum(integral(fun, ngon, method) for ngon in discretize(poly))
+integral(fun, poly::Polygon; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, ngon; ibackend, dbackend) for ngon in discretize(poly))
 
 # integrate triangles with local integration
-integral(fun, tri::Triangle, method=HADAPTIVE) = _integral(fun, tri, method)
+integral(fun, tri::Triangle; ibackend=HADAPTIVE, dbackend=FINITEDIFF) = _integral(fun, tri, ibackend, dbackend)
 
 # integrate quadrangle with local integration
-integral(fun, quad::Quadrangle, method=HADAPTIVE) = _integral(fun, quad, method)
+integral(fun, quad::Quadrangle; ibackend=HADAPTIVE, dbackend=FINITEDIFF) = _integral(fun, quad, ibackend, dbackend)
 
 # multi-geometry is the union of its constituent geometries
-integral(fun, multi::Multi, method=HADAPTIVE) = sum(integral(fun, geom, method) for geom in parent(multi))
+integral(fun, multi::Multi; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, geom; ibackend, dbackend) for geom in parent(multi))
 
 # domain is the union of its constituent geometries
-integral(fun, dom::Domain, method=HADAPTIVE) = sum(integral(fun, geom, method) for geom in dom)
+integral(fun, dom::Domain; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, geom; ibackend, dbackend) for geom in dom)
 
 # fallback to local integration of fun ∘ geom
-_integral(fun, geom, method) = localintegral(fun ∘ geom, geom, method)
+_integral(fun, geom, ibackend, dbackend) = localintegral(fun ∘ geom, geom; ibackend, dbackend)
 
 """
-    localintegral(fun, geom[, method])
+    localintegral(fun, geom; ibackend, dbackend)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
-parametric coordinates `uvw` to values in a linear space.
+parametric coordinates `uvw` to values in a linear space using an integration
+`ibackend` from IntegrationInterface.jl and a differentiation `dbackend`
+from DifferentiationInterface.jl.
 
-By default, use h-adaptive integration for good accuracy on a wide range of geometries.
+By default, `ibackend` is set to h-adaptive integration for good accuracy
+across a wide range of geometries and `dbackend` is set to finite differences.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom::Geometry, method=HADAPTIVE)
+function localintegral(fun, geom::Geometry; ibackend=HADAPTIVE, dbackend=FINITEDIFF)
   # integrand is equal to function times differential element
-  integrand(uvw...) = fun(uvw...) * differential(geom, uvw)
+  integrand(uvw...) = fun(uvw...) * differential(geom, uvw; dbackend)
 
   # domain of integration for the given geometry
   domain = ∫domain(geom)
@@ -90,7 +101,7 @@ function localintegral(fun, geom::Geometry, method=HADAPTIVE)
   f(uvw...) = ustrip.(integrand(uvw...))
 
   # perform numerical integration
-  II.integral(f, domain; backend=method) .* u
+  II.integral(f, domain; backend=ibackend) .* u
 end
 
 function ∫domain(geom::Geometry)
