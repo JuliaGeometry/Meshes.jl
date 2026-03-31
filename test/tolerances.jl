@@ -22,5 +22,5 @@
   @inferred Meshes.rtol(T)
 
   # maximum length for discretization
-  @test maxlen() == 500u"km"
+  @test Meshes.maxlen() == 500u"km"
 end
