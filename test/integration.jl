@@ -66,9 +66,9 @@
   box = Box(cart(0, 0, 0), cart(a, a, a))
   function funbox3(p)
     x₁, x₂, x₃ = ustrip.(to(p))
-    (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
+    (cos(x₁) + cos(x₂) + cos(x₃)) * u"A"
   end
-  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
+  solution = zero(T) * u"A*m^3"
   @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
   # Ball 2D
@@ -310,9 +310,9 @@
   hexa = convert(Hexahedron, box)
   function funhexa(p)
     x₁, x₂, x₃ = ustrip.(to(p))
-    (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
+    (cos(x₁) + cos(x₂) + cos(x₃)) * u"A"
   end
-  solution = 3a^2 * (π * a^2 / 4) * u"A*m^3"
+  solution = zero(T) * u"A*m^3"
   @test integral(funhexa, hexa) ≈ solution rtol = 1e-3
 
   # Multi
