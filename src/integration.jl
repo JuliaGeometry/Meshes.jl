@@ -6,86 +6,86 @@
 const HADAPTIVE = II.Backend.HAdaptiveIntegration(rtol=1e-3)
 
 """
-    integral(fun, geom; ∫backend, ∂backend)
+    integral(fun, geom; ibackend, dbackend)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
-[`Point`](@ref)s to values in a linear space using an integration `∫backend`
-from IntegrationInterface.jl and a differentiation `∂backend` from
+[`Point`](@ref)s to values in a linear space using an integration `ibackend`
+from IntegrationInterface.jl and a differentiation `dbackend` from
 DifferentiationInterface.jl.
 
-    integral(fun, dom; ∫backend, ∂backend)
+    integral(fun, dom; ibackend, dbackend)
 
 Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
 summing the integrals for each constituent geometry.
 
-By default, `∫backend` is set to h-adaptive integration for good accuracy
-across a wide range of geometries and `∂backend` is set to finite differences.
+By default, `ibackend` is set to h-adaptive integration for good accuracy
+across a wide range of geometries and `dbackend` is set to finite differences.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom::Geometry; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) = _integral(fun, geom, ∫backend, ∂backend)
+integral(fun, geom::Geometry; ibackend=HADAPTIVE, dbackend=FINITEDIFF) = _integral(fun, geom, ibackend, dbackend)
 
 # cylinder surface is the union of the curved surface and the top and bottom disks
-integral(fun, cylsurf::CylinderSurface; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  localintegral(fun ∘ cylsurf, cylsurf; ∫backend, ∂backend) +
-  integral(fun, top(cylsurf); ∫backend, ∂backend) +
-  integral(fun, bottom(cylsurf); ∫backend, ∂backend)
+integral(fun, cylsurf::CylinderSurface; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  localintegral(fun ∘ cylsurf, cylsurf; ibackend, dbackend) +
+  integral(fun, top(cylsurf); ibackend, dbackend) +
+  integral(fun, bottom(cylsurf); ibackend, dbackend)
 
 # cone surface is the union of the curved surface and the base disk
-integral(fun, conesurf::ConeSurface; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  localintegral(fun ∘ conesurf, conesurf; ∫backend, ∂backend) + integral(fun, base(conesurf); ∫backend, ∂backend)
+integral(fun, conesurf::ConeSurface; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  localintegral(fun ∘ conesurf, conesurf; ibackend, dbackend) + integral(fun, base(conesurf); ibackend, dbackend)
 
 # frustum surface is the union of the curved surface and the top and bottom disks
-integral(fun, frustumsurf::FrustumSurface; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  localintegral(fun ∘ frustumsurf, frustumsurf; ∫backend, ∂backend) +
-  integral(fun, top(frustumsurf); ∫backend, ∂backend) +
-  integral(fun, bottom(frustumsurf); ∫backend, ∂backend)
+integral(fun, frustumsurf::FrustumSurface; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  localintegral(fun ∘ frustumsurf, frustumsurf; ibackend, dbackend) +
+  integral(fun, top(frustumsurf); ibackend, dbackend) +
+  integral(fun, bottom(frustumsurf); ibackend, dbackend)
 
 # rope is the union of its constituent segments
-integral(fun, rope::Rope; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  sum(integral(fun, seg; ∫backend, ∂backend) for seg in segments(rope))
+integral(fun, rope::Rope; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, seg; ibackend, dbackend) for seg in segments(rope))
 
 # ring is the union of its constituent segments
-integral(fun, ring::Ring; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  sum(integral(fun, seg; ∫backend, ∂backend) for seg in segments(ring))
+integral(fun, ring::Ring; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, seg; ibackend, dbackend) for seg in segments(ring))
 
 # polygon is the union of its constituent ngons
-integral(fun, poly::Polygon; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  sum(integral(fun, ngon; ∫backend, ∂backend) for ngon in discretize(poly))
+integral(fun, poly::Polygon; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, ngon; ibackend, dbackend) for ngon in discretize(poly))
 
 # integrate triangles with local integration
-integral(fun, tri::Triangle; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) = _integral(fun, tri, ∫backend, ∂backend)
+integral(fun, tri::Triangle; ibackend=HADAPTIVE, dbackend=FINITEDIFF) = _integral(fun, tri, ibackend, dbackend)
 
 # integrate quadrangle with local integration
-integral(fun, quad::Quadrangle; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) = _integral(fun, quad, ∫backend, ∂backend)
+integral(fun, quad::Quadrangle; ibackend=HADAPTIVE, dbackend=FINITEDIFF) = _integral(fun, quad, ibackend, dbackend)
 
 # multi-geometry is the union of its constituent geometries
-integral(fun, multi::Multi; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  sum(integral(fun, geom; ∫backend, ∂backend) for geom in parent(multi))
+integral(fun, multi::Multi; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, geom; ibackend, dbackend) for geom in parent(multi))
 
 # domain is the union of its constituent geometries
-integral(fun, dom::Domain; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF) =
-  sum(integral(fun, geom; ∫backend, ∂backend) for geom in dom)
+integral(fun, dom::Domain; ibackend=HADAPTIVE, dbackend=FINITEDIFF) =
+  sum(integral(fun, geom; ibackend, dbackend) for geom in dom)
 
 # fallback to local integration of fun ∘ geom
-_integral(fun, geom, ∫backend, ∂backend) = localintegral(fun ∘ geom, geom; ∫backend, ∂backend)
+_integral(fun, geom, ibackend, dbackend) = localintegral(fun ∘ geom, geom; ibackend, dbackend)
 
 """
-    localintegral(fun, geom; ∫backend, ∂backend)
+    localintegral(fun, geom; ibackend, dbackend)
 
 Calculate the integral over the `geom`etry of the `fun`ction that maps
 parametric coordinates `uvw` to values in a linear space using an integration
-`∫backend` from IntegrationInterface.jl and a differentiation `∂backend`
+`ibackend` from IntegrationInterface.jl and a differentiation `dbackend`
 from DifferentiationInterface.jl.
 
-By default, `∫backend` is set to h-adaptive integration for good accuracy
-across a wide range of geometries and `∂backend` is set to finite differences.
+By default, `ibackend` is set to h-adaptive integration for good accuracy
+across a wide range of geometries and `dbackend` is set to finite differences.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom::Geometry; ∫backend=HADAPTIVE, ∂backend=FINITEDIFF)
+function localintegral(fun, geom::Geometry; ibackend=HADAPTIVE, dbackend=FINITEDIFF)
   # integrand is equal to function times differential element
-  integrand(uvw...) = fun(uvw...) * differential(geom, uvw; ∂backend)
+  integrand(uvw...) = fun(uvw...) * differential(geom, uvw; dbackend)
 
   # domain of integration for the given geometry
   domain = ∫domain(geom)
@@ -101,7 +101,7 @@ function localintegral(fun, geom::Geometry; ∫backend=HADAPTIVE, ∂backend=FIN
   f(uvw...) = ustrip.(integrand(uvw...))
 
   # perform numerical integration
-  II.integral(f, domain; backend=∫backend) .* u
+  II.integral(f, domain; backend=ibackend) .* u
 end
 
 function ∫domain(geom::Geometry)

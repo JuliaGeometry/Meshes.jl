@@ -6,14 +6,14 @@
 const FINITEDIFF = DI.AutoFiniteDifferences(fdm=central_fdm(5, 1))
 
 """
-    derivative(geom, uvw, j; ∂backend)
+    derivative(geom, uvw, j; dbackend)
 
 Calculate the derivative of the `geom`etry's parametric function
 at parametric coordinates `uvw` and along `j`-th coordinate using
-a differentiation `∂backend` from DifferentationInterface.jl.
-By default, the `∂backend` is set to finite differences.
+a differentiation `dbackend` from DifferentationInterface.jl.
+By default, the `dbackend` is set to finite differences.
 """
-function derivative(geom::Geometry, uvw, j; ∂backend=FINITEDIFF)
+function derivative(geom::Geometry, uvw, j; dbackend=FINITEDIFF)
   # sanity check
   d = paramdim(geom)
   n = length(uvw)
@@ -24,33 +24,33 @@ function derivative(geom::Geometry, uvw, j; ∂backend=FINITEDIFF)
   f(t) = ustrip.(to(geom(ntuple(i -> i == j ? t : uvw[i], d)...)))
 
   # compute derivative and re-add unit
-  ∂ = DI.derivative(f, ∂backend, uvw[j])
+  ∂ = DI.derivative(f, dbackend, uvw[j])
   u = unit(lentype(geom))
 
   Vec((∂ .* u)...)
 end
 
 """
-    jacobian(geom, uvw; ∂backend)
+    jacobian(geom, uvw; dbackend)
 
 Calculate the Jacobian of the `geom`etry's parametric function
-at parametric coordinates `uvw` using a differentiation `∂backend`
+at parametric coordinates `uvw` using a differentiation `dbackend`
 from DifferentationInterface.jl. Returns a tuple of vectors, each
 corresponding to the derivative along a parametric coordinate.
-By default, `∂backend` is set to finite differences.
+By default, `dbackend` is set to finite differences.
 """
-jacobian(geom::Geometry, uvw; ∂backend=FINITEDIFF) = ntuple(j -> derivative(geom, uvw, j; ∂backend), paramdim(geom))
+jacobian(geom::Geometry, uvw; dbackend=FINITEDIFF) = ntuple(j -> derivative(geom, uvw, j; dbackend), paramdim(geom))
 
 """
-    differential(geom, uvw; ∂backend)
+    differential(geom, uvw; dbackend)
 
 Calculate the differential element (length, area, volume, etc.)
 of the `geom`etry at parametric coordinates `uvw` using a
-differentiation `∂backend` from DifferentiationInterface.jl.
-By default, the `∂backend` is set to finite differences.
+differentiation `dbackend` from DifferentiationInterface.jl.
+By default, the `dbackend` is set to finite differences.
 """
-function differential(geom::Geometry, uvw; ∂backend=FINITEDIFF)
-  J = jacobian(geom, uvw; ∂backend)
+function differential(geom::Geometry, uvw; dbackend=FINITEDIFF)
+  J = jacobian(geom, uvw; dbackend)
   if length(J) == 1
     norm(J[1])
   elseif length(J) == 2
