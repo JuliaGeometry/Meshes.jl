@@ -4,7 +4,7 @@
   v = vector(1, 1, 1)
   ray = Ray(a, v)
   function funray(p)
-    r = ustrip(u"m", norm(to(p)))
+    r = ustrip(norm(to(p)))
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) / 2 * u"A*m"
@@ -15,7 +15,7 @@
   b = cart(1, 1, 1)
   line = Line(a, b)
   function funline(p)
-    r = ustrip(u"m", norm(to(p)))
+    r = ustrip(norm(to(p)))
     exp(-r^2) * u"A"
   end
   solution = sqrt(T(π)) * u"A*m"
@@ -35,7 +35,7 @@
   v = vector(0, 0, 1)
   plane = Plane(p, v)
   function funplane(p)
-    r = ustrip(u"m", norm(to(p)))
+    r = ustrip(norm(to(p)))
     exp(-r^2) * u"A"
   end
   solution = T(π) * u"A*m^2"
@@ -66,9 +66,9 @@
   box = Box(cart(0, 0, 0), cart(a, a, a))
   function funbox3(p)
     x₁, x₂, x₃ = ustrip.(to(p))
-    (cos(x₁) + cos(x₂) + cos(x₃)) * u"A"
+    (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
-  solution = zero(T) * u"A*m^3"
+  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3" 
   @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
   # Ball 2D
@@ -76,7 +76,7 @@
   radius = T(2.8)
   ball = Ball(origin, radius)
   function funball2(p)
-    r = ustrip(u"m", norm(to(p)))
+    r = ustrip(norm(to(p)))
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
@@ -87,7 +87,7 @@
   R = r₁ = r₂ = r₃ = T(4.1)
   ellipsoid = Ellipsoid((r₁, r₂, r₃), origin)
   function funellips(p)
-    x, y, z = ustrip.(u"m", to(p))
+    x, y, z = ustrip.(to(p))
     (z^2) * u"A"
   end
   solution = (T(4π) * R^4 / 3) * u"A*m^2"
@@ -101,7 +101,7 @@
   disk = Disk(plane, radius)
   function fundisk(p)
     offset = p - center
-    r = ustrip(u"m", norm(offset))
+    r = ustrip(norm(offset))
     exp(-r^2) * u"A"
   end
   solution = (T(π) - T(π) * exp(-radius^2)) * u"A*m^2"
@@ -115,7 +115,7 @@
   circle = Circle(plane, radius)
   function funcircle(p)
     offset = p - center
-    r = ustrip(u"m", norm(offset))
+    r = ustrip(norm(offset))
     exp(-r^2) * u"A"
   end
   solution = T(2π) * radius * exp(-radius^2) * u"A*m"
@@ -226,7 +226,7 @@
   ka = T(7.1)
   kb = T(4.6)
   function funseg(p)
-    r = ustrip(u"m", norm(to(p)))
+    r = ustrip(norm(to(p)))
     exp(r * log(ka) + (1 - r) * log(kb)) * u"A"
   end
   solution = ((ka - kb) / (log(ka) - log(kb))) * u"A*m"
@@ -264,7 +264,7 @@
   hole = [(a, a), (a, b), (b, b), (b, a)]
   poly = PolyArea([outer, hole])
   function funpoly(p)
-    x, y = ustrip.(u"m", to(p))
+    x, y = ustrip.(to(p))
     2x * u"A"
   end
   solution = (c^2 - (b - a) * (b^2 - a^2)) * u"A*m^2"
@@ -276,7 +276,7 @@
   c = cart(0, 1, 0)
   tri = Triangle(a, b, c)
   function funtri(p)
-    x, y, z = ustrip.(u"m", to(p))
+    x, y, z = ustrip.(to(p))
     (x + 2y + 3z) * u"A"
   end
   solution = T(0.5) * u"A*m^2"
@@ -285,7 +285,7 @@
   # Quadrangle
   quad = Quadrangle(cart(-1.0, 0.0), cart(-1.0, 1.0), cart(1.0, 1.0), cart(1.0, 0.0))
   function funquad(p)
-    r = ustrip(u"m", norm(to(p)))
+    r = ustrip(norm(to(p)))
     exp(-r^2) * u"A"
   end
   solution = T(π) * T(0.8427007929497149)^2 / 2 * u"A*m^2" # erf(1) = 0.8427007929497149
@@ -298,7 +298,7 @@
   d = cart(0, 0, 1)
   tetra = Tetrahedron(a, b, c, d)
   function funtetra(p)
-    x, y, z = ustrip.(u"m", to(p))
+    x, y, z = ustrip.(to(p))
     (x + 2y + 3z) * u"A"
   end
   solution = T(0.25) * u"A*m^3"
@@ -310,9 +310,9 @@
   hexa = convert(Hexahedron, box)
   function funhexa(p)
     x₁, x₂, x₃ = ustrip.(to(p))
-    (cos(x₁) + cos(x₂) + cos(x₃)) * u"A"
+    (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
-  solution = zero(T) * u"A*m^3"
+  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3" 
   @test integral(funhexa, hexa) ≈ solution rtol = 1e-3
 
   # Multi
