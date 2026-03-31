@@ -68,7 +68,7 @@
     x₁, x₂, x₃ = ustrip.(to(p))
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
-  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3" 
+  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
   @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
   # Ball 2D
@@ -312,7 +312,7 @@
     x₁, x₂, x₃ = ustrip.(to(p))
     (√(a^2 - x₁^2) + √(a^2 - x₂^2) + √(a^2 - x₃^2)) * u"A"
   end
-  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3" 
+  solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
   @test integral(funhexa, hexa) ≈ solution rtol = 1e-3
 
   # Multi
