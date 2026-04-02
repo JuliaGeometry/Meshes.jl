@@ -44,7 +44,7 @@ import NearestNeighbors: MinkowskiMetric
 import DifferentiationInterface as DI
 import FiniteDifferences: central_fdm
 
-# Integration API
+# Integration API (irrelevant change)
 import IntegrationInterface as II
 import HAdaptiveIntegration
 
