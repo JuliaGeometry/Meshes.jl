@@ -43,15 +43,15 @@ integral(fun, frustumsurf::FrustumSurface; ibackend=hadaptive(frustumsurf), dbac
 
 # rope is the union of its constituent segments
 integral(fun, rope::Rope; ibackend=hadaptive(rope), dbackend=FINITEDIFF) =
-  sum(seg -> integral(fun, seg; ibackend, dbackend), segments(rope))
+  sum([integral(fun, seg; ibackend, dbackend) for seg in segments(rope)])
 
 # ring is the union of its constituent segments
 integral(fun, ring::Ring; ibackend=hadaptive(ring), dbackend=FINITEDIFF) =
-  sum(seg -> integral(fun, seg; ibackend, dbackend), segments(ring))
+  sum([integral(fun, seg; ibackend, dbackend) for seg in segments(ring)])
 
 # polygon is the union of its constituent ngons
 integral(fun, poly::Polygon; ibackend=hadaptive(poly), dbackend=FINITEDIFF) =
-  sum(ngon -> integral(fun, ngon; ibackend, dbackend), discretize(poly))
+  sum([integral(fun, ngon; ibackend, dbackend) for ngon in discretize(poly)])
 
 # integrate triangles with local integration
 integral(fun, tri::Triangle; ibackend=hadaptive(tri), dbackend=FINITEDIFF) = _integral(fun, tri, ibackend, dbackend)
@@ -62,11 +62,11 @@ integral(fun, quad::Quadrangle; ibackend=hadaptive(quad), dbackend=FINITEDIFF) =
 
 # multi-geometry is the union of its constituent geometries
 integral(fun, multi::Multi; ibackend=hadaptive(multi), dbackend=FINITEDIFF) =
-  sum(geom -> integral(fun, geom; ibackend, dbackend), parent(multi))
+  sum([integral(fun, geom; ibackend, dbackend) for geom in parent(multi)])
 
 # domain is the union of its constituent geometries
 integral(fun, dom::Domain; ibackend=hadaptive(dom), dbackend=FINITEDIFF) =
-  sum(geom -> integral(fun, geom; ibackend, dbackend), dom)
+  sum([integral(fun, geom; ibackend, dbackend) for geom in dom])
 
 # fallback to local integration of fun ∘ geom
 _integral(fun, geom, ibackend, dbackend) = localintegral(fun ∘ geom, geom; ibackend, dbackend)
