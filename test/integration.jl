@@ -71,6 +71,16 @@
   solution = 3a^2 * (T(π) * a^2 / 4) * u"A*m^3"
   @test integral(funbox3, box) ≈ solution rtol = 1e-3
 
+  # Box 3D
+  a = T(π)
+  box = Box(cart(0, 0, 0), cart(a, a, a))
+  function funbox4(p)
+    x₁, x₂, x₃ = ustrip.(to(p))
+    (cos(x₁) + cos(x₂) + cos(x₃)) * u"A"
+  end
+  solution = zero(T) * u"A*m^3"
+  @test integral(funbox4, box) ≈ solution atol = 1e-3 * u"A*m^3"
+
   # Ball 2D
   origin = cart(0, 0)
   radius = T(2.8)
