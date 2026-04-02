@@ -42,14 +42,17 @@ integral(fun, frustumsurf::FrustumSurface; ibackend=hadaptive(frustumsurf), dbac
   integral(fun, bottom(frustumsurf); ibackend, dbackend)
 
 # rope is the union of its constituent segments
+# note: extra allocation with sum([...]) is intentional to workaround a Julia bug
 integral(fun, rope::Rope; ibackend=hadaptive(rope), dbackend=FINITEDIFF) =
   sum([integral(fun, seg; ibackend, dbackend) for seg in segments(rope)])
 
 # ring is the union of its constituent segments
+# note: extra allocation with sum([...]) is intentional to workaround a Julia bug
 integral(fun, ring::Ring; ibackend=hadaptive(ring), dbackend=FINITEDIFF) =
   sum([integral(fun, seg; ibackend, dbackend) for seg in segments(ring)])
 
 # polygon is the union of its constituent ngons
+# note: extra allocation with sum([...]) is intentional to workaround a Julia bug
 integral(fun, poly::Polygon; ibackend=hadaptive(poly), dbackend=FINITEDIFF) =
   sum([integral(fun, ngon; ibackend, dbackend) for ngon in discretize(poly)])
 
@@ -61,10 +64,12 @@ integral(fun, quad::Quadrangle; ibackend=hadaptive(quad), dbackend=FINITEDIFF) =
   _integral(fun, quad, ibackend, dbackend)
 
 # multi-geometry is the union of its constituent geometries
+# note: extra allocation with sum([...]) is intentional to workaround a Julia bug
 integral(fun, multi::Multi; ibackend=hadaptive(multi), dbackend=FINITEDIFF) =
   sum([integral(fun, geom; ibackend, dbackend) for geom in parent(multi)])
 
 # domain is the union of its constituent geometries
+# note: extra allocation with sum([...]) is intentional to workaround a Julia bug
 integral(fun, dom::Domain; ibackend=hadaptive(dom), dbackend=FINITEDIFF) =
   sum([integral(fun, geom; ibackend, dbackend) for geom in dom])
 
