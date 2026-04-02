@@ -3,7 +3,10 @@
 # ------------------------------------------------------------------
 
 # default integration backend
-hadaptive(geom) = II.Backend.HAdaptiveIntegration(rtol=rtol(numtype(lentype(geom))))
+function hadaptive(geom)
+  T = numtype(lentype(geom))
+  II.Backend.HAdaptiveIntegration(rtol=rtol(T), atol=atol(T))
+end
 
 """
     integral(fun, geom; ibackend, dbackend)
