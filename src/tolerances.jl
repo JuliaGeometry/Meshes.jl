@@ -25,6 +25,22 @@ atol(ℒ::Type{<:Len}) = atol(numtype(ℒ)) * unit(ℒ)
 atol(𝒜::Type{<:Area}) = atol(numtype(𝒜))^2 * unit(𝒜)
 atol(𝒱::Type{<:Vol}) = atol(numtype(𝒱))^3 * unit(𝒱)
 
+# relative tolerance for single and double precision
+const RTOL32 = ScopedValue(eps(Float32)^(1 // 3))
+const RTOL64 = ScopedValue(eps(Float64)^(1 // 3))
+
+"""
+    rtol(T)
+    rtol(x::T)
+
+Relative tolerance used in algorithms for approximate
+comparison with numbers of type `T`. It is used in the
+source code for numerical integration for example.
+"""
+rtol(x) = rtol(typeof(x))
+rtol(::Type{Float32}) = RTOL32[]
+rtol(::Type{Float64}) = RTOL64[]
+
 # maximum length for discretization of non-Euclidean geometries
 const MAXLEN = ScopedValue(500u"km")
 

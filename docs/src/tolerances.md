@@ -17,6 +17,23 @@ with(Meshes.ATOL64 => 1e-9, Meshes.ATOL32 => 1f-4) do
 end
 ```
 
+## Relative tolerance for floating point comparisons
+
+The relative tolerance used for floating point comparisons is hard-coded in
+the project to `eps(T) ^ (1 // 3)` where `T` is either `Float64` or `Float32`.
+This formula preserves roughly 1/3 of the significant digits of the type `T`.
+You can use [ScopedValues.jl](https://github.com/vchuravy/ScopedValues.jl) to
+customize these tolerance values in specific computations:
+
+```julia
+using Meshes
+using ScopedValues
+
+with(Meshes.RTOL64 => 1e-4, Meshes.RTOL32 => 1f-2) do
+  # do your computations with custom tolerances
+end
+```
+
 ## Maximum length for default refinement of meshes on `🌐`
 
 The default discretization of geometries on the `🌐` manifold includes an additional
