@@ -32,6 +32,7 @@ makedocs(
         "algorithms/hulls.md"
       ],
       "Transforms" => "transforms.md",
+      "Calculus" => "calculus.md",
       "Random" => "rand.md",
       "Visualization" => "visualization.md",
       "Input/Output" => "io.md",
