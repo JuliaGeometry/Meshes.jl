@@ -47,8 +47,9 @@ makedocs(
 repo = "github.com/JuliaGeometry/MeshesDocs.git"
 
 withenv("GITHUB_REPOSITORY" => repo) do
-  deploydocs(; repo, versions=["stable" => "v^", "dev" => "dev"],
-             push_preview=all(!isempty,
-                              (get(ENV, "GITHUB_TOKEN", ""),
-                               get(ENV, "DOCUMENTER_KEY", ""))))
+  deploydocs(;
+    repo,
+    versions=["stable" => "v^", "dev" => "dev"],
+    push_preview=all(!isempty, (get(ENV, "GITHUB_TOKEN", ""), get(ENV, "DOCUMENTER_KEY", "")))
+  )
 end
