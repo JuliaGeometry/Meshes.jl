@@ -3,11 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    withcrs(g, coords, CRS=basecrs(g))
+    withcrs(g, c, srccrs=manifoldcrs(g))
 
-Point with the same CRS of `g` from another point with `coords` in given `CRS`.
+Point with the same CRS of geometry `g` converted from a
+tuple of coordinates `c` in a given source CRS `srccrs`.
 """
-withcrs(g::GeometryOrDomain, coords::Tuple, CRS=basecrs(g)) = Point{manifold(g)}(convert(crs(g), CRS(coords...)))
+withcrs(g::GeometryOrDomain, c::Tuple, srccrs=manifoldcrs(g)) = Point{manifold(g)}(convert(crs(g), srccrs(c...)))
 
 """
     withcrs(g, v)
@@ -17,18 +18,14 @@ Point at the end of the vector `v` with the same CRS of `g`.
 withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), Cartesian{datum(crs(g))})
 
 """
-    basecrs(g)
+    manifoldcrs(g)
 
-Base coordinate reference system of `g` as a function of the manifold.
+Coordinate reference system for the manifold of geometry `g`.
 """
-function basecrs(p::Point)
-  D = datum(crs(p))
-  manifold(p) === 🌐 ? LatLon{D} : Cartesian{D}
+function manifoldcrs(g::GeometryOrDomain)
+  D = datum(crs(g))
+  manifold(g) === 🌐 ? LatLon{D} : Cartesian{D}
 end
-
-basecrs(g::Geometry) = basecrs(centroid(g))
-
-basecrs(d::Domain) = basecrs(first(d))
 
 """
     flat(p)
@@ -94,7 +91,7 @@ end
 # -----------------
 
 function _coordsum(points, weights)
-  coordvals(p) = CoordRefSystems.values(convert(basecrs(p), coords(p)))
+  coordvals(p) = CoordRefSystems.values(convert(manifoldcrs(p), coords(p)))
   if isnothing(weights)
     mapreduce(coordvals, .+, points)
   else
