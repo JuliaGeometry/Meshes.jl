@@ -22,9 +22,8 @@ withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), Cartesian{d
 Base coordinate reference system of `g` as a function of the manifold.
 """
 function basecrs(p::Point)
-  C = manifold(p) === 🌐 ? LatLon : Cartesian
   D = datum(crs(p))
-  C{D}
+  manifold(p) === 🌐 ? LatLon{D} : Cartesian{D}
 end
 
 basecrs(g::Geometry) = basecrs(centroid(g))
