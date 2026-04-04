@@ -11,7 +11,7 @@ const FORWARDDIFF = DI.AutoForwardDiff()
 Calculate the derivative of the `geom`etry's parametric function
 at parametric coordinates `uvw` and along `j`-th coordinate using
 a differentiation `dbackend` from DifferentiationInterface.jl.
-Default to forward mode automatic differentiation.
+By default, `dbackend` is set to ForwardDiff.jl.
 """
 function derivative(geom::Geometry, uvw, j; dbackend=FORWARDDIFF)
   # sanity check
@@ -37,7 +37,7 @@ Calculate the Jacobian of the `geom`etry's parametric function
 at parametric coordinates `uvw` using a differentiation `dbackend`
 from DifferentiationInterface.jl. Returns a tuple of vectors, each
 corresponding to the derivative along a parametric coordinate.
-Default to forward mode automatic differentiation.
+By default, `dbackend` is set to ForwardDiff.jl.
 """
 jacobian(geom::Geometry, uvw; dbackend=FORWARDDIFF) = ntuple(j -> derivative(geom, uvw, j; dbackend), paramdim(geom))
 
@@ -47,7 +47,7 @@ jacobian(geom::Geometry, uvw; dbackend=FORWARDDIFF) = ntuple(j -> derivative(geo
 Calculate the differential element (length, area, volume, etc.)
 of the `geom`etry at parametric coordinates `uvw` using a
 differentiation `dbackend` from DifferentiationInterface.jl.
-Default to forward mode automatic differentiation.
+By default, `dbackend` is set to ForwardDiff.jl.
 """
 function differential(geom::Geometry, uvw; dbackend=FORWARDDIFF)
   J = jacobian(geom, uvw; dbackend)
