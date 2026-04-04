@@ -69,7 +69,7 @@ end
   @inferred Meshes.withcrs(p, c)
   c = (T(30), T(60))
   p = latlon(c) |> Proj(Cartesian)
-  @inferred Meshes.withcrs(p, c, LatLon)
+  @inferred Meshes.withcrs(p, c, LatLon{datum(crs(p))})
 end
 
 @testitem "coordround" setup = [Setup] begin

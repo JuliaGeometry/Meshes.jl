@@ -145,5 +145,5 @@ function _pboxes(::Type{🌐}, points)
     lonmax = max(c.lon, lonmax)
     latmax = max(c.lat, latmax)
   end
-  Box(withcrs(p, (latmin, lonmin), LatLon), withcrs(p, (latmax, lonmax), LatLon))
+  Box(withcrs(p, (latmin, lonmin)), withcrs(p, (latmax, lonmax)))
 end
