@@ -70,12 +70,8 @@ Mean of the base coordinates of the points, `Cartesian` for `𝔼` and `LatLon` 
 If `weights` is passed, the weighted mean will be returned.
 """
 function coordmean(points; weights=nothing)
-  den = if isnothing(weights)
-    length(points)
-  else
-    sum(weights)
-  end
-  values = _coordsum(points, weights) ./ den
+  denom = isnothing(weights) ? length(points) : sum(weights)
+  values = _coordsum(points, weights) ./ denom
   withcrs(first(points), values)
 end
 
@@ -97,15 +93,11 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-function _basecrsvalues(p)
-  c = convert(basecrs(p), coords(p))
-  CoordRefSystems.values(c)
-end
-
 function _coordsum(points, weights)
+  coordvals(p) = CoordRefSystems.values(convert(basecrs(p), coords(p)))
   if isnothing(weights)
-    mapreduce(_basecrsvalues, .+, points)
+    mapreduce(coordvals, .+, points)
   else
-    mapreduce((p, w) -> _basecrsvalues(p) .* w, .+, points, weights)
+    mapreduce((p, w) -> coordvals(p) .* w, .+, points, weights)
   end
 end
