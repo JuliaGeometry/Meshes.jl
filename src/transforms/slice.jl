@@ -73,7 +73,7 @@ function _slicebox(box::Box{🌐}, limits)
   lonmin, lonmax = get(limits, :lon, (min.lon, max.lon))
   bmin = _asdeg.((latmin, lonmin))
   bmax = _asdeg.((latmax, lonmax))
-  Box(withcrs(box, bmin, LatLon), withcrs(box, bmax, LatLon))
+  Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 
 _aslen(x::Len) = float(x)

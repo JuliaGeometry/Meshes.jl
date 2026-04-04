@@ -3,26 +3,33 @@
 # ------------------------------------------------------------------
 
 """
-    withcrs(g, coords, CRS=Cartesian)
+    withcrs(g, coords, CRS=basecrs(g))
 
 Point with the same CRS of `g` from another point with `coords` in given `CRS`.
 """
-function withcrs(g::GeometryOrDomain, coords::Tuple, ::Type{CRS}) where {CRS}
-  M = manifold(g)
-  C = crs(g)
-  D = datum(C)
-  c = convert(C, CRS{D}(coords...))
-  Point{M}(c)
-end
-
-withcrs(g::GeometryOrDomain, coords::Tuple) = withcrs(g, coords, Cartesian)
+withcrs(g::GeometryOrDomain, coords::Tuple, CRS=basecrs(g)) = Point{manifold(g)}(convert(crs(g), CRS(coords...)))
 
 """
     withcrs(g, v)
 
 Point at the end of the vector `v` with the same CRS of `g`.
 """
-withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), Cartesian)
+withcrs(g::GeometryOrDomain, v::StaticVector) = withcrs(g, Tuple(v), Cartesian{datum(crs(g))})
+
+"""
+    basecrs(g)
+
+Base coordinate reference system of `g` as a function of the manifold.
+"""
+function basecrs(p::Point)
+  C = manifold(p) === 🌐 ? LatLon : Cartesian
+  D = datum(crs(p))
+  C{D}
+end
+
+basecrs(g::Geometry) = basecrs(centroid(g))
+
+basecrs(d::Domain) = basecrs(first(d))
 
 """
     flat(p)
@@ -54,7 +61,7 @@ If `weights` is passed, the weighted sum will be returned.
 """
 function coordsum(points; weights=nothing)
   values = _coordsum(points, weights)
-  _fromvalues(first(points), values)
+  withcrs(first(points), values)
 end
 
 """
@@ -70,7 +77,7 @@ function coordmean(points; weights=nothing)
     sum(weights)
   end
   values = _coordsum(points, weights) ./ den
-  _fromvalues(first(points), values)
+  withcrs(first(points), values)
 end
 
 """
@@ -91,24 +98,15 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-function _tovalues(p)
-  CRS = _basecrs(manifold(p))
-  c = convert(CRS, coords(p))
+function _basecrsvalues(p)
+  c = convert(basecrs(p), coords(p))
   CoordRefSystems.values(c)
-end
-
-function _fromvalues(g, values)
-  CRS = _basecrs(manifold(g))
-  withcrs(g, values, CRS)
 end
 
 function _coordsum(points, weights)
   if isnothing(weights)
-    mapreduce(_tovalues, .+, points)
+    mapreduce(_basecrsvalues, .+, points)
   else
-    mapreduce((p, w) -> _tovalues(p) .* w, .+, points, weights)
+    mapreduce((p, w) -> _basecrsvalues(p) .* w, .+, points, weights)
   end
 end
-
-_basecrs(::Type{<:𝔼}) = Cartesian
-_basecrs(::Type{<:🌐}) = LatLon
