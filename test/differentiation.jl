@@ -93,4 +93,9 @@ end
   @test d₀₀ ≈ norm((c₀₁ - c₀₀) × (c₁₀ - c₀₀))
   @test d₁₁ ≈ norm((c₁₁ - c₁₀) × (c₁₁ - c₀₁))
   @test dc ≈ norm(((c₀₁ - c₀₀) + (c₁₁ - c₁₀)) / 2 × ((c₁₀ - c₀₀) + (c₁₁ - c₀₁)) / 2)
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1336
+  b = BezierCurve([cart(t, sin(t), 0) for t in range(-π, π, length=361)])
+  t = T(0.7878788f0)
+  @test !isnan(differential(b, (t,)))
 end

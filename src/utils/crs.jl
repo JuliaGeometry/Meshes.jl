@@ -8,7 +8,11 @@
 Point with the same CRS of geometry `g` converted from a
 tuple of coordinates `c` in a given source CRS `srccrs`.
 """
-withcrs(g::GeometryOrDomain, c::Tuple, srccrs=manifoldcrs(g)) = Point{manifold(g)}(convert(crs(g), srccrs(c...)))
+function withcrs(g::GeometryOrDomain, c::Tuple, srccrs=manifoldcrs(g))
+  dstcrs = basecrs(g)
+  coords = convert(dstcrs, srccrs(c...))
+  Point{manifold(g)}(coords)
+end
 
 """
     withcrs(g, v)
@@ -26,6 +30,13 @@ function manifoldcrs(g::GeometryOrDomain)
   D = datum(crs(g))
   manifold(g) === 🌐 ? LatLon{D} : Cartesian{D}
 end
+
+"""
+    basecrs(g)
+
+Coordinate reference system of geometry `g` without number type.
+"""
+basecrs(g::GeometryOrDomain) = CoordRefSystems.constructor(crs(g))
 
 """
     flat(p)

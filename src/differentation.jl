@@ -3,17 +3,17 @@
 # ------------------------------------------------------------------
 
 # default differentation backend
-const FINITEDIFF = DI.AutoFiniteDifferences(fdm=central_fdm(5, 1))
+const FORWARDDIFF = DI.AutoForwardDiff()
 
 """
     derivative(geom, uvw, j; dbackend)
 
 Calculate the derivative of the `geom`etry's parametric function
 at parametric coordinates `uvw` and along `j`-th coordinate using
-a differentiation `dbackend` from DifferentationInterface.jl.
-By default, the `dbackend` is set to finite differences.
+a differentiation `dbackend` from DifferentiationInterface.jl.
+Default to forward mode automatic differentiation.
 """
-function derivative(geom::Geometry, uvw, j; dbackend=FINITEDIFF)
+function derivative(geom::Geometry, uvw, j; dbackend=FORWARDDIFF)
   # sanity check
   d = paramdim(geom)
   n = length(uvw)
@@ -35,11 +35,11 @@ end
 
 Calculate the Jacobian of the `geom`etry's parametric function
 at parametric coordinates `uvw` using a differentiation `dbackend`
-from DifferentationInterface.jl. Returns a tuple of vectors, each
+from DifferentiationInterface.jl. Returns a tuple of vectors, each
 corresponding to the derivative along a parametric coordinate.
-By default, `dbackend` is set to finite differences.
+Default to forward mode automatic differentiation.
 """
-jacobian(geom::Geometry, uvw; dbackend=FINITEDIFF) = ntuple(j -> derivative(geom, uvw, j; dbackend), paramdim(geom))
+jacobian(geom::Geometry, uvw; dbackend=FORWARDDIFF) = ntuple(j -> derivative(geom, uvw, j; dbackend), paramdim(geom))
 
 """
     differential(geom, uvw; dbackend)
@@ -47,9 +47,9 @@ jacobian(geom::Geometry, uvw; dbackend=FINITEDIFF) = ntuple(j -> derivative(geom
 Calculate the differential element (length, area, volume, etc.)
 of the `geom`etry at parametric coordinates `uvw` using a
 differentiation `dbackend` from DifferentiationInterface.jl.
-By default, the `dbackend` is set to finite differences.
+Default to forward mode automatic differentiation.
 """
-function differential(geom::Geometry, uvw; dbackend=FINITEDIFF)
+function differential(geom::Geometry, uvw; dbackend=FORWARDDIFF)
   J = jacobian(geom, uvw; dbackend)
   if length(J) == 1
     norm(J[1])
