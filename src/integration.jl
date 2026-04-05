@@ -21,59 +21,59 @@ DifferentiationInterface.jl.
 Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
 summing the integrals for each constituent geometry.
 
-By default, `ibackend` is set to h-adaptive integration for good accuracy
-across a wide range of geometries and `dbackend` is set to finite differences.
+By default, `ibackend` is set to HAdaptiveIntegration.jl for good accuracy
+across a wide range of geometries and `dbackend` is set to ForwardDiff.jl.
 
 See also [`localintegral`](@ref).
 """
-integral(fun, geom::Geometry; ibackend=hadaptive(geom), dbackend=FINITEDIFF) = _integral(fun, geom, ibackend, dbackend)
+integral(fun, geom::Geometry; ibackend=hadaptive(geom), dbackend=FORWARDDIFF) = _integral(fun, geom, ibackend, dbackend)
 
 # cylinder surface is the union of the curved surface and the top and bottom disks
-integral(fun, cylsurf::CylinderSurface; ibackend=hadaptive(cylsurf), dbackend=FINITEDIFF) =
+integral(fun, cylsurf::CylinderSurface; ibackend=hadaptive(cylsurf), dbackend=FORWARDDIFF) =
   localintegral(fun ∘ cylsurf, cylsurf; ibackend, dbackend) +
   integral(fun, top(cylsurf); ibackend, dbackend) +
   integral(fun, bottom(cylsurf); ibackend, dbackend)
 
 # cone surface is the union of the curved surface and the base disk
-integral(fun, conesurf::ConeSurface; ibackend=hadaptive(conesurf), dbackend=FINITEDIFF) =
+integral(fun, conesurf::ConeSurface; ibackend=hadaptive(conesurf), dbackend=FORWARDDIFF) =
   localintegral(fun ∘ conesurf, conesurf; ibackend, dbackend) + integral(fun, base(conesurf); ibackend, dbackend)
 
 # frustum surface is the union of the curved surface and the top and bottom disks
-integral(fun, frustumsurf::FrustumSurface; ibackend=hadaptive(frustumsurf), dbackend=FINITEDIFF) =
+integral(fun, frustumsurf::FrustumSurface; ibackend=hadaptive(frustumsurf), dbackend=FORWARDDIFF) =
   localintegral(fun ∘ frustumsurf, frustumsurf; ibackend, dbackend) +
   integral(fun, top(frustumsurf); ibackend, dbackend) +
   integral(fun, bottom(frustumsurf); ibackend, dbackend)
 
 # rope is the union of its constituent segments
 # note: extra allocation with sum([...]) is intentional to workaround a Julia bug
-integral(fun, rope::Rope; ibackend=hadaptive(rope), dbackend=FINITEDIFF) =
+integral(fun, rope::Rope; ibackend=hadaptive(rope), dbackend=FORWARDDIFF) =
   sum([integral(fun, seg; ibackend, dbackend) for seg in segments(rope)])
 
 # ring is the union of its constituent segments
 # note: extra allocation with sum([...]) is intentional to workaround a Julia bug
-integral(fun, ring::Ring; ibackend=hadaptive(ring), dbackend=FINITEDIFF) =
+integral(fun, ring::Ring; ibackend=hadaptive(ring), dbackend=FORWARDDIFF) =
   sum([integral(fun, seg; ibackend, dbackend) for seg in segments(ring)])
 
 # polygon is the union of its constituent ngons
 # note: extra allocation with sum([...]) is intentional to workaround a Julia bug
-integral(fun, poly::Polygon; ibackend=hadaptive(poly), dbackend=FINITEDIFF) =
+integral(fun, poly::Polygon; ibackend=hadaptive(poly), dbackend=FORWARDDIFF) =
   sum([integral(fun, ngon; ibackend, dbackend) for ngon in discretize(poly)])
 
 # integrate triangles with local integration
-integral(fun, tri::Triangle; ibackend=hadaptive(tri), dbackend=FINITEDIFF) = _integral(fun, tri, ibackend, dbackend)
+integral(fun, tri::Triangle; ibackend=hadaptive(tri), dbackend=FORWARDDIFF) = _integral(fun, tri, ibackend, dbackend)
 
 # integrate quadrangle with local integration
-integral(fun, quad::Quadrangle; ibackend=hadaptive(quad), dbackend=FINITEDIFF) =
+integral(fun, quad::Quadrangle; ibackend=hadaptive(quad), dbackend=FORWARDDIFF) =
   _integral(fun, quad, ibackend, dbackend)
 
 # multi-geometry is the union of its constituent geometries
 # note: extra allocation with sum([...]) is intentional to workaround a Julia bug
-integral(fun, multi::Multi; ibackend=hadaptive(multi), dbackend=FINITEDIFF) =
+integral(fun, multi::Multi; ibackend=hadaptive(multi), dbackend=FORWARDDIFF) =
   sum([integral(fun, geom; ibackend, dbackend) for geom in parent(multi)])
 
 # domain is the union of its constituent geometries
 # note: extra allocation with sum([...]) is intentional to workaround a Julia bug
-integral(fun, dom::Domain; ibackend=hadaptive(dom), dbackend=FINITEDIFF) =
+integral(fun, dom::Domain; ibackend=hadaptive(dom), dbackend=FORWARDDIFF) =
   sum([integral(fun, geom; ibackend, dbackend) for geom in dom])
 
 # fallback to local integration of fun ∘ geom
@@ -87,12 +87,12 @@ parametric coordinates `uvw` to values in a linear space using an integration
 `ibackend` from IntegrationInterface.jl and a differentiation `dbackend`
 from DifferentiationInterface.jl.
 
-By default, `ibackend` is set to h-adaptive integration for good accuracy
-across a wide range of geometries and `dbackend` is set to finite differences.
+By default, `ibackend` is set to HAdaptiveIntegration.jl for good accuracy
+across a wide range of geometries and `dbackend` is set to ForwardDiff.jl.
 
 See also [`integral`](@ref).
 """
-function localintegral(fun, geom::Geometry; ibackend=hadaptive(geom), dbackend=FINITEDIFF)
+function localintegral(fun, geom::Geometry; ibackend=hadaptive(geom), dbackend=FORWARDDIFF)
   # integrand is equal to function times differential element
   integrand(uvw...) = fun(uvw...) * differential(geom, uvw; dbackend)
 

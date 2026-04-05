@@ -80,7 +80,7 @@ Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs..
 function (c::Cylinder)(ρ, φ, z)
   ℒ = lentype(c)
   T = numtype(ℒ)
-  C = crs(c)
+  C = basecrs(c)
   D = datum(C)
   b = c.bot
   t = c.top
@@ -95,11 +95,11 @@ function (c::Cylinder)(ρ, φ, z)
   o = to(b(T(0), T(0)))
 
   # project a parametric segment between the top and bottom planes
-  ρ′ = T(ρ) * r
-  φ′ = T(φ) * 2 * T(π) * u"rad"
+  ρ′ = ρ * r
+  φ′ = φ * 2 * T(π) * u"rad"
   p₁ = Point(convert(C, Cylindrical{D}(ρ′, φ′, zero(ℒ))))
   p₂ = Point(convert(C, Cylindrical{D}(ρ′, φ′, norm(d))))
   l = Line(p₁, p₂) |> Affine(R, o)
   s = Segment(l ∩ b, l ∩ t)
-  s(T(z))
+  s(z)
 end
