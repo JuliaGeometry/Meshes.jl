@@ -536,6 +536,7 @@ export
   HullMethod,
   GrahamScan,
   JarvisMarch,
+  AdaptiveJarvisMarch,
   hull,
   convexhull,
   concavehull,

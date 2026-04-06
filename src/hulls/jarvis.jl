@@ -28,6 +28,30 @@ end
 JarvisMarch() = JarvisMarch{Nothing}(nothing)
 JarvisMarch(k::I) where {I<:Integer} = JarvisMarch{I}(k)
 
+struct AdaptiveJarvisMarch{K<:JarvisMarch{<:Integer}} <: HullMethod
+  march::K
+end
+AdaptiveJarvisMarch(k::I) where {I<:Integer} = AdaptiveJarvisMarch(JarvisMarch(k))
+
+function hull(points, method::AdaptiveJarvisMarch)
+  k = method.march.k
+  kmax = length(points)
+  while true
+    try
+      chul = hull(points, JarvisMarch(k))
+      all(p .∈ Ref(chul) for p in points) && return chul
+      throw(ArgumentError("Not all points are in hull with k = $k. Try increasing k."))
+    catch e
+      if e isa ArgumentError
+        k += 1
+        k > kmax && return hull(points, JarvisMarch())
+      else
+        rethrow(e)
+      end
+    end
+  end
+end
+
 function hull(points, method::JarvisMarch)
   pₒ = first(points)
   ℒ = lentype(pₒ)
@@ -47,134 +71,94 @@ function hull(points, method::JarvisMarch)
 
   # find bottom-left point
   i = argmin(p)
+  i₀ = copy(i)
+  # initialize hull with i
+  ℐ = [i]
+
+  # initialize candidate set and searcher for k-nearest neighbors if needed
+  k = method.k
+  if k isa Integer
+    T = typeof(k)
+    k = min(max(k, 3), n)
+    assertion(ispositive(k), "k must be a positive integer")
+    k > T(n - 2) && return hull(points, JarvisMarch()) # fallback to convex hull
+    searcher = KNearestSearch(p, k)
+    𝒞 = trues(n)
+  else
+    searcher = nothing
+    𝒞 = 1:n
+  end
+  candidates = jarviscandidates(searcher, 𝒞, n, p, i)
   # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-
-  # perform primary Jarvis march loop
-  ℐ = _jarvisloop(method, points, p, n, i, O, A)
-  # if no hull is found, return convex hull as fallback
-  isnothing(ℐ) && return convexhull(p)
-
-  # return polygonal area
-  PolyArea(p[ℐ[begin:(end - 1)]])
-end
-
-# convex hull
-function _jarvisloop(::JarvisMarch{Nothing}, points, p, n, i, O, A)
-  # candidates for next point
-  𝒞 = [1:(i - 1); (i + 1):n]
-
-  # find next point with smallest angle
-  j = argmin(l -> ∠(A, O, p[l]), 𝒞)
+  j = jarvisnext(searcher, candidates, p, ℐ, A, O, k)
 
   # initialize ring of indices
-  ℐ = [i, j]
+  push!(ℐ, j)
 
   # rotational sweep
+  step = 0 # only used for k-nearest approach but low cost inclusion
   while first(ℐ) != last(ℐ)
+    # if k-nearest neighbors are being used, reinsert first point after a bit
+    k isa Integer && step == 5 && (𝒞[i₀] = true)
     # direction of current segment
     v = p[j] - p[i]
 
     # update candidates
-    𝒞 = setdiff(1:n, [i, j])
+    candidates = jarviscandidates(searcher, 𝒞, n, p, j)
+    isempty(candidates) && throw(
+      ArgumentError(
+        "Not enough points to compute hull with k = $k. Try increasing k or computing the convex hull instead."
+      )
+    )
 
     # find next segment
     i = j
     O = p[i]
     A = O + v
-    j = argmin(l -> ∠(A, O, p[l]), 𝒞)
+    j = jarvisnext(searcher, candidates, p, ℐ, A, O, k)
 
     # update ring of indices
     push!(ℐ, j)
+    step += 1
   end
 
-  # return indices of hull vertices
-  ℐ
+  # return polygonal area
+  PolyArea(p[ℐ[begin:(end - 1)]])
 end
 
-# concave hull
-function _jarvisloop(method::JarvisMarch{I}, points, p, n, i, O, A) where {I<:Integer}
-  m = I(n - 2)
-  k = min(max(method.k, 3), m)
-  assertion(ispositive(k), "k must be a positive integer")
-  k > m && return _jarvisloop(JarvisMarch{Nothing}(nothing), points, p, n, i, O, A) # fallback to convex hull
-
-  # initial state for retries
-  i₀, O₀, A₀ = i, O, A
-
-  # try increasing k until valid hull found
-  for ki in k:m
-    searcher = KNearestSearch(p, ki)
-    mask = trues(n)
-
-    # apply initial point information
-    i = i₀
-    O = O₀
-    A = A₀
-    mask[i] = false
-
-    # find next point with smallest angle among k nearest neighbors
-    𝒩 = search(O, searcher; mask=mask)
-    isempty(𝒩) && (k += 1; continue)
-
-    j = argmin(l -> ∠(A, O, p[l]), 𝒩)
-    ℐ = [i, j]
-
-    # no longer searchable
-    mask[j] = false
-    step = 2
-    failed = false
-
-    while first(ℐ) != last(ℐ)
-      # reinsert first point after 5 steps. Otherwise the searcher may double back and fail to find a valid hull.
-      step == 5 && (mask[ℐ[begin]] = true)
-
-      # direction of current segment
-      v = p[j] - p[i]
-      i = j
-      O = p[i]
-      A = O + v
-
-      # order neighbors by angle
-      search!(𝒩, O, searcher; mask)
-      isempty(𝒩) && break
-      sort!(𝒩, by=l -> ∠(A, O, p[l]))
-
-      found = false
-
-      for nᵢ in 𝒩
-        cpoint = p[nᵢ]
-        last = cpoint == p[ℐ[begin]] ? 1 : 0
-
-        its = false
-        indⱼ = 2
-        while !its && indⱼ < length(ℐ) - last
-          its = intersects(Segment(p[ℐ[step]], cpoint), Segment(p[ℐ[step - indⱼ + 1]], p[ℐ[step - indⱼ]]))
-          indⱼ += 1
-        end
-
-        if !its
-          j = nᵢ
-          found = true
-          break
-        end
-      end
-
-      # if no candidate found, break and try again with larger k
-      !found && (failed = true; break)
-
-      mask[j] = false
-      step += 1
-      push!(ℐ, j)
+# helper to find next point for concave hull
+function jarvisnext(::KNearestSearch, candidates, p, ℐ, A, O, k)
+  sort!(candidates, by=l -> ∠(A, O, p[l]))
+  valid = nothing
+  # if fewer than 3 points, we can skip intersection checks
+  length(ℐ) < 3 && return first(candidates)
+  # check candidates in order of angle until we find one that doesn't intersect the existing hull
+  for idx in eachindex(candidates)
+    nᵢ = candidates[idx]
+    cpoint = p[nᵢ]
+    offset = cpoint == p[ℐ[begin]] ? 1 : 0
+    limit = length(ℐ) - 1 - offset
+    ok = limit < 2 || !any(2:limit) do indⱼ
+      intersects(Segment(p[ℐ[end]], cpoint), Segment(p[ℐ[end - indⱼ + 1]], p[ℐ[end - indⱼ]]))
     end
-
-    # check if hull is valid
-    if !failed
-      poly = PolyArea(p[ℐ[begin:(end - 1)]])
-      all(points .∈ poly) && return ℐ
+    if ok
+      valid = idx
+      break
     end
   end
+  isnothing(valid) && throw(ArgumentError("No valid candidate point found for hull construction with k = $k"))
+  candidates[valid]
+end
 
-  nothing
+jarvisnext(::Nothing, candidates, p, ℐ, A, O, k) = argmin(l -> ∠(A, O, p[l]), candidates)
+
+# helper to get candidate indices for next point
+jarviscandidates(searcher::Nothing, 𝒞, n, p, i) = setdiff(1:n, i)
+
+function jarviscandidates(searcher::KNearestSearch, 𝒞, n, p, i)
+  # mask current point to avoid returning it as a candidate
+  𝒞[i] = false # updates 𝒞 in place so prior points lead to early termination
+  search(p[i], searcher; mask=𝒞)
 end

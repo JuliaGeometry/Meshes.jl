@@ -1,5 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  for method in [GrahamScan(), JarvisMarch(), JarvisMarch(3)]
+  for method in [GrahamScan(), JarvisMarch(), AdaptiveJarvisMarch(3)]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
@@ -28,7 +28,7 @@
     verts = vertices(chul)
     @test Set(verts) == Set(cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]))
 
-    # all points should be in hull, even if random 
+    # all points should be in hull, even if random
     p1 = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
     p2 = cart.([0.5 .* (rand(), rand()) .+ 0.5 for _ in 1:10])
     pts = [p1; p2]
@@ -70,7 +70,7 @@
         (0, 6)
       ])
     chul = hull(pts, method)
-    if method isa JarvisMarch && !isnothing(method.k)
+    if method isa AdaptiveJarvisMarch
       @test Set(vertices(chul)) == Set(pts)
     else
       @test nvertices(chul) < length(pts)
@@ -79,7 +79,7 @@
     poly = readpoly(T, joinpath(datadir, "hull.line"))
     pts = vertices(poly)
     chul = hull(pts, method)
-    if method isa JarvisMarch && !isnothing(method.k)
+    if method isa AdaptiveJarvisMarch
       @test Set(vertices(chul)) == Set(pts)
     else
       @test nvertices(chul) < length(pts)
@@ -90,7 +90,7 @@
       points = [cart(i - 1, j - 1) for i in 1:11 for j in 1:11]
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(10, 0), cart(10, 10), cart(0, 10)]
-      for _ in 1:100 # test presence of interior points doesn't affect the result 
+      for _ in 1:100 # test presence of interior points doesn't affect the result
         push!(points, cart(10 * rand(), 10 * rand()))
       end
       chull = hull(points, method)
@@ -109,7 +109,7 @@
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(100, 0)]
 
-      # partially collinear 
+      # partially collinear
       points = [
         cart(2, 0),
         cart(4, 0),
