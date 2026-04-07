@@ -21,8 +21,9 @@ DifferentiationInterface.jl.
 Alternatively, calculate the integral over the `dom`ain (e.g., mesh) by
 summing the integrals for each constituent geometry.
 
-By default, `ibackend` is set to HAdaptiveIntegration.jl for good accuracy
-across a wide range of geometries and `dbackend` is set to ForwardDiff.jl.
+By default, performs automatic differentation with ForwardDiff.jl and
+h-adaptive integration with HAdaptiveIntegration.jl for good accuracy
+across a wide range of geometries.
 
 See also [`localintegral`](@ref).
 """
@@ -87,8 +88,9 @@ parametric coordinates `uvw` to values in a linear space using an integration
 `ibackend` from IntegrationInterface.jl and a differentiation `dbackend`
 from DifferentiationInterface.jl.
 
-By default, `ibackend` is set to HAdaptiveIntegration.jl for good accuracy
-across a wide range of geometries and `dbackend` is set to ForwardDiff.jl.
+By default, performs automatic differentation with ForwardDiff.jl and
+h-adaptive integration with HAdaptiveIntegration.jl for good accuracy
+across a wide range of geometries.
 
 See also [`integral`](@ref).
 """
