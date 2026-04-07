@@ -42,11 +42,13 @@ function Base.isapprox(e₁::Ellipsoid, e₂::Ellipsoid; atol=atol(lentype(e₁)
 end
 
 function (e::Ellipsoid)(θ, φ)
+  ℒ = lentype(e)
+  T = promote_type(numtype(ℒ), typeof(θ), typeof(φ))
   r = radii(e)
   c = center(e)
   R = rotation(e)
-  sθ, cθ = sincospi(θ)
-  sφ, cφ = sincospi(2 * φ)
+  sθ, cθ = sincospi(T(θ))
+  sφ, cφ = sincospi(2 * T(φ))
   x = r[1] * sθ * cφ
   y = r[2] * sθ * sφ
   z = r[3] * cθ
