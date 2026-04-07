@@ -421,7 +421,7 @@ end
   @test all(∈(box), ps)
 
   box = Box(cart(0, 0), cart(1, 1))
-  ps = sample(box, FibonacciSampling(100, π)) |> collect
+  ps = sample(box, FibonacciSampling(100, T(π))) |> collect
   @test first(ps) isa Point
   @test all(∈(box), ps)
   @test ps[2] ≈ cart(mod(1 / π, 1), 1 / 99)

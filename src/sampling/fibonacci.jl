@@ -32,18 +32,20 @@ function sample(geom::Geometry, method::FibonacciSampling)
     throw(ArgumentError("Fibonacci sampling only defined for 2D geometries"))
   end
 
+  T = numtype(lentype(geom))
+
   fib = _fibmap(geom)
 
   function point(i)
-    u = mod(i / method.ϕ, 1)
-    v = i / (method.n - 1)
+    u = T(mod(i / method.ϕ, 1))
+    v = T(i / (method.n - 1))
     geom(fib(u, v)...)
   end
 
   (point(i) for i in 0:(method.n - 1))
 end
 
-_fibmap(g) = (u, v) -> (u, v)
+_fibmap(g::Geometry) = (u, v) -> (u, v)
 _fibmap(d::Disk) = (u, v) -> (√u, v)
 _fibmap(b::Ball{𝔼{2}}) = (u, v) -> (√u, v)
 _fibmap(b::Ball{🌐}) = (u, v) -> (√u, v)
