@@ -60,4 +60,4 @@ sides(b::Box{<:𝔼}) = Tuple(maximum(b) - minimum(b))
 Base.isapprox(b₁::Box, b₂::Box; atol=atol(lentype(b₁)), kwargs...) =
   isapprox(minimum(b₁), minimum(b₂); atol, kwargs...) && isapprox(maximum(b₁), maximum(b₂); atol, kwargs...)
 
-(b::Box{<:𝔼})(uvw...) = minimum(b) + uvw .* (maximum(b) - minimum(b))
+(b::Box{<:𝔼})(uvw...) = minimum(b) + promote(uvw...) .* (maximum(b) - minimum(b))
