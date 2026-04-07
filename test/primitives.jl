@@ -574,8 +574,7 @@ end
   # machine type is preserved in parameterization
   b = Ball(cart(0, 0), T(2))
   @test Meshes.lentype(b(0, 0)) == ℳ
-  @test Meshes.lentype(b(0.0, 0.0)) == ℳ
-  @test Meshes.lentype(b(0.0f0, 0.0f0)) == ℳ
+  @test Meshes.lentype(b(T(0), T(0))) == ℳ
 
   b = Ball(cart(7, 7), T(1.5))
   ps = b.(1, rand(T, 100))
@@ -693,8 +692,7 @@ end
   # machine type is preserved in parameterization
   s = Sphere(cart(0, 0), T(2))
   @test Meshes.lentype(s(0)) == ℳ
-  @test Meshes.lentype(s(0.0)) == ℳ
-  @test Meshes.lentype(s(0.0f0)) == ℳ
+  @test Meshes.lentype(s(T(0))) == ℳ
 
   s = Sphere(cart(0, 0, 0), T(1))
   @test sprint(show, s) == "Sphere(center: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m)"
@@ -875,7 +873,7 @@ end
   @test !Meshes.hasintersectingplanes(c)
   @test c(0, 0, 0) ≈ bottom(c)(0, 0)
   @test c(0, 0, 1) ≈ top(c)(0, 0)
-  @test c(1, 0.25, 0.5) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
+  @test c(T(1), T(0.25), T(0.5)) ≈ Point(T(4.330127018922193), T(10.330127018922191), T(4.5))
 
   c = Cylinder(T(1))
   equaltest(c)
@@ -915,8 +913,7 @@ end
   # machine type is preserved in parameterization
   c = Cylinder(T(1))
   @test Meshes.lentype(c(0, 0, 0)) == ℳ
-  @test Meshes.lentype(c(0.0, 0.0, 0.0)) == ℳ
-  @test Meshes.lentype(c(0.0f0, 0.0f0, 0.0f0)) == ℳ
+  @test Meshes.lentype(c(T(0), T(0), T(0))) == ℳ
 
   c = Cylinder(cart(0, 0, 0), cart(0, 0, 1), T(1))
   @test sprint(show, c) ==
@@ -976,8 +973,7 @@ end
   # machine type is preserved in parameterization
   c = CylinderSurface(T(1))
   @test Meshes.lentype(c(0, 0)) == ℳ
-  @test Meshes.lentype(c(0.0, 0.0)) == ℳ
-  @test Meshes.lentype(c(0.0f0, 0.0f0)) == ℳ
+  @test Meshes.lentype(c(T(0), T(0))) == ℳ
 
   c = CylinderSurface(1.0)
   @test Meshes.lentype(c) == Meshes.Met{Float64}
