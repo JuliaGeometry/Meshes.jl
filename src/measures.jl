@@ -77,6 +77,8 @@ end
 
 measure(s::Segment{<:𝔼}) = norm(maximum(s) - minimum(s))
 
+measure(c::Chain{<:𝔼}) = sum(measure, segments(c))
+
 function measure(t::Triangle{<:𝔼})
   A, B, C = vertices(t)
   norm((B - A) × (C - A)) / 2
@@ -97,7 +99,13 @@ function measure(p::Polygon{𝔼{2}})
   abs(Σ)
 end
 
+measure(m::Multi{<:𝔼}) = sum(measure, parent(m))
+
+measure(g::Geometry{<:𝔼}) = sum(measure, simplexify(g))
+
 measure(d::PointSet) = zero(lentype(d))
+
+measure(d::Domain{<:𝔼}) = sum(measure, d)
 
 # --------
 # ALIASES
