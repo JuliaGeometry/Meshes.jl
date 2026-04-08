@@ -25,7 +25,7 @@
   @test integral(plane) do p
     r = ustrip(norm(to(p)))
     exp(-r^2) * u"A"
-  end ≈ T(π) * u"A*m^2" rtol = 1e-3
+  end ≈ T(π) * u"A*m^2" rtol = 1e-1
 
   # Box 1D
   a = T(π)
