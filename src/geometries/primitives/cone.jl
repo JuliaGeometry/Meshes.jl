@@ -38,5 +38,5 @@ Base.isapprox(c₁::Cone, c₂::Cone; atol=atol(lentype(c₁)), kwargs...) =
 function (c::Cone)(r, φ, h)
   b = base(c)(r, φ)
   a = apex(c)
-  Segment(b, a)(h)
+  Segment(promote(b, a)...)(h)
 end

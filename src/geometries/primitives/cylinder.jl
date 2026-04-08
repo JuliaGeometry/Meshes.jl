@@ -79,8 +79,8 @@ Base.isapprox(c₁::Cylinder, c₂::Cylinder; atol=atol(lentype(c₁)), kwargs..
 
 function (c::Cylinder)(ρ, φ, z)
   ℒ = lentype(c)
-  T = numtype(ℒ)
-  C = crs(c)
+  T = promote_type(numtype(ℒ), typeof(ρ), typeof(φ), typeof(z))
+  C = basecrs(c)
   D = datum(C)
   b = c.bot
   t = c.top

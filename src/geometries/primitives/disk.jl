@@ -35,7 +35,7 @@ Base.isapprox(d₁::Disk, d₂::Disk; atol=atol(lentype(d₁)), kwargs...) =
 
 function (d::Disk)(ρ, φ)
   ℒ = lentype(d)
-  T = numtype(ℒ)
+  T = promote_type(numtype(ℒ), typeof(ρ), typeof(φ))
   l = T(ρ) * radius(d)
   sφ, cφ = sincospi(2 * T(φ))
   u = ustrip(unit(ℒ), l * cφ)

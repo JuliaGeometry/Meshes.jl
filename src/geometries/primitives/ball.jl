@@ -37,18 +37,22 @@ Base.isapprox(b₁::Ball, b₂::Ball; atol=atol(lentype(b₁)), kwargs...) =
   isapprox(center(b₁), center(b₂); atol, kwargs...) && isapprox(radius(b₁), radius(b₂); atol, kwargs...)
 
 function (b::Ball{𝔼{2}})(ρ, φ)
-  T = numtype(lentype(b))
+  ℒ = lentype(b)
+  T = promote_type(numtype(ℒ), typeof(ρ), typeof(φ))
+  C = basecrs(b)
   ρ′ = T(ρ) * radius(b)
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p = Point(convert(crs(b), Polar(ρ′, φ′)))
+  p = Point(convert(C, Polar(ρ′, φ′)))
   p + to(center(b))
 end
 
 function (b::Ball{𝔼{3}})(ρ, θ, φ)
-  T = numtype(lentype(b))
+  ℒ = lentype(b)
+  T = promote_type(numtype(ℒ), typeof(ρ), typeof(θ), typeof(φ))
+  C = basecrs(b)
   ρ′ = T(ρ) * radius(b)
   θ′ = T(θ) * T(π) * u"rad"
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p = Point(convert(crs(b), Spherical(ρ′, θ′, φ′)))
+  p = Point(convert(C, Spherical(ρ′, θ′, φ′)))
   p + to(center(b))
 end

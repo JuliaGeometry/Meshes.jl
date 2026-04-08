@@ -42,7 +42,7 @@ import NearestNeighbors: MinkowskiMetric
 
 # Differentation API
 import DifferentiationInterface as DI
-import FiniteDifferences: central_fdm
+import ForwardDiff
 
 # Integration API
 import IntegrationInterface as II
