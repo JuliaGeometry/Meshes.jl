@@ -41,6 +41,10 @@ source code for numerical integration for example.
 rtol(x) = rtol(typeof(x))
 rtol(::Type{Float32}) = RTOL32[]
 rtol(::Type{Float64}) = RTOL64[]
+rtol(ℒ::Type{<:Len}) = rtol(numtype(ℒ))
+rtol(𝒜::Type{<:Area}) = rtol(numtype(𝒜))
+rtol(𝒱::Type{<:Vol}) = rtol(numtype(𝒱))
+rtol(𝒟::Type{<:ForwardDiff.Dual}) = rtol(ForwardDiff.valtype(𝒟))
 
 # maximum length for discretization of non-Euclidean geometries
 const MAXLEN = ScopedValue(500u"km")

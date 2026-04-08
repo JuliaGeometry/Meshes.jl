@@ -15,7 +15,7 @@
   @test discretize(tb) == t(discretize(b))
   t3 = Scale(T(2), T(2))
   tb3 = TransformedGeometry(b, t3)
-  @test measure(tb3) == 4 * measure(b)
+  @test measure(tb3) ≈ 4measure(b)
   equaltest(tb)
   isapproxtest(tb)
 

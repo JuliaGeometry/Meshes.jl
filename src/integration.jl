@@ -58,7 +58,7 @@ integral(fun, ring::Ring; ibackend=hadaptive(ring), dbackend=FORWARDDIFF) =
 # polygon is the union of its constituent ngons
 # note: extra allocation with sum([...]) is intentional to workaround a Julia bug
 integral(fun, poly::Polygon; ibackend=hadaptive(poly), dbackend=FORWARDDIFF) =
-  sum([integral(fun, ngon; ibackend, dbackend) for ngon in discretize(poly)])
+  sum([integral(fun, ngon; ibackend, dbackend) for ngon in simplexify(poly)])
 
 # integrate triangles with local integration
 integral(fun, tri::Triangle; ibackend=hadaptive(tri), dbackend=FORWARDDIFF) = _integral(fun, tri, ibackend, dbackend)

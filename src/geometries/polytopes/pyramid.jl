@@ -26,8 +26,7 @@ Base.isapprox(p₁::Pyramid, p₂::Pyramid; atol=atol(lentype(p₁)), kwargs...)
   all(isapprox(v₁, v₂; atol, kwargs...) for (v₁, v₂) in zip(p₁.vertices, p₂.vertices))
 
 function (p::Pyramid)(u, v, w)
-  q = base(p)
-  o = apex(p)
-  s = Segment(q(u, v), o)
-  s(w)
+  b = base(p)(u, v)
+  a = apex(p)
+  Segment(promote(b, a)...)(w)
 end

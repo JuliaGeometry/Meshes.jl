@@ -263,6 +263,11 @@ end
   @test !isconvex(poly1)
   @test !isconvex(poly2)
 
+  # multi-geometry with single convex geometry
+  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  multi = Multi([poly])
+  @test isconvex(multi)
+
   h = Hexahedron(
     cart(0, 0, 0),
     cart(1, 0, 0),
