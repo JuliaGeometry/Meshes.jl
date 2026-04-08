@@ -15,7 +15,7 @@ This function is also known as [`length`](@ref),
 [`area`](@ref) or [`volume`](@ref) depending on
 the parametric dimension of the object.
 """
-function measure end
+measure(g::GeometryOrDomain) = integral(_ -> 1, g)
 
 measure(p::Point) = zero(lentype(p))
 
@@ -77,17 +77,7 @@ end
 
 measure(s::Segment{<:𝔼}) = norm(maximum(s) - minimum(s))
 
-# TODO: replace Haversine by an appropriate geodesic distance
-# that considers the west-east orientation of segments
-function measure(s::Segment{<:🌐})
-  T = numtype(lentype(s))
-  🌎 = ellipsoid(datum(crs(s)))
-  r = numconvert(T, majoraxis(🌎))
-
-  evaluate(Haversine(r), extrema(s)...)
-end
-
-function measure(t::Triangle)
+function measure(t::Triangle{<:𝔼})
   A, B, C = vertices(t)
   norm((B - A) × (C - A)) / 2
 end
@@ -107,15 +97,7 @@ function measure(p::Polygon{𝔼{2}})
   abs(Σ)
 end
 
-measure(c::Chain) = sum(measure, segments(c))
-
-measure(g::Geometry) = sum(measure, simplexify(g))
-
-measure(m::Multi) = sum(measure, parent(m))
-
 measure(d::PointSet) = zero(lentype(d))
-
-measure(d::Domain) = sum(measure, d)
 
 # --------
 # ALIASES
@@ -174,6 +156,14 @@ Return the perimeter of the `object`, i.e.
 the [`measure`](@ref) of its [`boundary`](@ref).
 """
 perimeter(g) = measure(boundary(g))
+
+perimeter(s::Segment) = zero(lentype(s))
+
+perimeter(c::BezierCurve) = zero(lentype(c))
+
+perimeter(c::ParametrizedCurve) = zero(lentype(c))
+
+perimeter(r::Ray) = zero(lentype(r))
 
 perimeter(l::Line) = zero(lentype(l))
 

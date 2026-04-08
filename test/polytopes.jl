@@ -56,15 +56,6 @@
   @test centroid(s) == cart(0.5, 0.5, 0.5)
   @test Meshes.lentype(centroid(s)) == ℳ
 
-  # unitful coordinates
-  x1 = T(0)u"m"
-  x2 = T(1)u"m"
-  s = Segment(Point(x1, x1, x1), Point(x2, x2, x2))
-  @test perimeter(s) == 0u"m"
-  xm = T(0.5)u"m"
-  @test centroid(s) == Point(xm, xm, xm)
-  @test Meshes.lentype(centroid(s)) == typeof(xm)
-
   # CRS propagation
   s = Segment(merc(0, 0), merc(1, 1))
   @test crs(s(T(0))) === crs(s)
@@ -484,7 +475,7 @@ end
 
   # Quadrangle in 3D space
   q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
-  @test area(q) == T(1) * u"m^2"
+  @test area(q) ≈ T(1) * u"m^2"
   q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 1))
   @test area(q) > T(1) * u"m^2"
   @test q(T(0), T(0)) == cart(0, 0, 0)

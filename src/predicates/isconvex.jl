@@ -72,7 +72,11 @@ isconvex(h::Hexahedron) = all(isconvex, boundary(h))
 
 isconvex(p::Pyramid) = isconvex(base(p))
 
-isconvex(m::Multi) = isapproxequal(measure(convexhull(m)), measure(m))
+function isconvex(m::Multi)
+  m1 = measure(m)
+  m2 = measure(convexhull(m))
+  isapprox(m1, m2, rtol=rtol(m1), atol=atol(m1))
+end
 
 # --------------
 # OPTIMIZATIONS
