@@ -821,7 +821,7 @@ end
   @test nelements(mesh) == 18
   @test collect(mpts) == collect(gpts)
   @test eltype(mesh) <: Triangle
-  @test measure(mesh) ≈ measure(grid)
+  @test measure(mesh) == measure(grid)
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/499
   quad = Quadrangle(cart(0, 1, -1), cart(0, 1, 1), cart(0, -1, 1), cart(0, -1, -1))

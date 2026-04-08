@@ -475,7 +475,7 @@ end
 
   # Quadrangle in 3D space
   q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 0))
-  @test area(q) ≈ T(1) * u"m^2"
+  @test area(q) == T(1) * u"m^2"
   q = Quadrangle(cart(0, 0, 0), cart(1, 0, 0), cart(1, 1, 0), cart(0, 1, 1))
   @test area(q) > T(1) * u"m^2"
   @test q(T(0), T(0)) == cart(0, 0, 0)
