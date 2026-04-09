@@ -75,7 +75,7 @@ isconvex(p::Pyramid) = isconvex(base(p))
 function isconvex(m::Multi)
   m1 = measure(m)
   m2 = measure(convexhull(m))
-  isapprox(m1, m2, rtol=rtol(m1), atol=atol(m1))
+  isapprox(m1, m2, rtol=rtol(m1), atol=atol(m1)) # TODO
 end
 
 # --------------
