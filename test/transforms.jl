@@ -2381,8 +2381,7 @@ end
   @test rings(rpoly) == [Ring(cart(0, 0))]
   @test vertices(rpoly) == [cart(0, 0)]
 
-  # triangle with very close LatLon coordinates
-  # doesn't take forever to repair
+  # triangle with LatLon coordinates doesn't take forever to repair
   p1 = latlon(-7.203501929837444, -52.717445221483445)
   p2 = latlon(-7.289858499430579, -52.74748228916803)
   p3 = latlon(-7.417676396987474, -52.79194068831828)
