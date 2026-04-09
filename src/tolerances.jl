@@ -50,8 +50,8 @@ rtol(𝒟::Type{<:ForwardDiff.Dual}) = rtol(ForwardDiff.valtype(𝒟))
 const MAXLEN = ScopedValue(500u"km")
 
 """
-Maximum length used for discretization of non-Euclidean geometries.
-It is used in the source code in calls to the [`discretize`](@ref)
-and [`simplexify`](@ref) functions.
+    maxlen()
+
+Maximum length used for refinement of non-Euclidean geometries.
 """
 maxlen() = MAXLEN[]

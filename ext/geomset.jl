@@ -48,7 +48,7 @@ end
 # ---------------
 
 # fallback to visualization of discretized geometries
-function vizgset!(plot, ::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geometry}, colors)
+function vizgset!(plot, M::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geometry}, colors)
   showsegments = plot[:showsegments]
   showpoints = plot[:showpoints]
 
@@ -57,20 +57,27 @@ function vizgset!(plot, ::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geom
   # turning the quadrangles into triangles
   triangulate = simplexify ∘ discretize
 
+  # refine meshes over the 🌐 manifold until
+  # they satisfy the maximum length criterion
+  mayberefine = M === 🌐 ? refinemaxlen : identity
+
+  # final discretization pipeline
+  trirefine = mayberefine ∘ triangulate
+
   if pdim === Val(1)
-    meshes = Makie.@lift triangulate.($geoms)
+    meshes = Makie.@lift trirefine.($geoms)
     vizmany!(plot, meshes, colors)
     if showpoints[]
       vizfacets!(plot, geoms)
     end
   elseif pdim === Val(2)
-    meshes = Makie.@lift triangulate.($geoms)
+    meshes = Makie.@lift trirefine.($geoms)
     vizmany!(plot, meshes, colors)
     if showsegments[]
       vizfacets!(plot, geoms)
     end
   elseif pdim == Val(3)
-    meshes = Makie.@lift triangulate.(boundary.($geoms))
+    meshes = Makie.@lift trirefine.(boundary.($geoms))
     vizmany!(plot, meshes, colors)
   end
 end

@@ -7,6 +7,7 @@ import CairoMakie as Mke # hide
 
 ```@docs
 refine
+refinemaxlen
 RefinementMethod
 ```
 

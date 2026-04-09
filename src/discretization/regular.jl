@@ -7,9 +7,9 @@
 
 A method to discretize primitive geometries with
 `n1×n2×...×np` elements sampled regularly along
-each parametric dimensions. The adequate number
-of points is calculated for each type of geometry
-and passed to [`RegularSampling`](@ref).
+each parametric dimension. The adequate number of
+points is calculated for each type of geometry and
+forwarded to [`RegularSampling`](@ref).
 """
 struct RegularDiscretization{N} <: DiscretizationMethod
   sizes::Dims{N}
@@ -17,32 +17,32 @@ end
 
 RegularDiscretization(sizes::Vararg{Int,N}) where {N} = RegularDiscretization(sizes)
 
-function _discretize(geometry::Geometry, method::RegularDiscretization)
-  if isparametrized(geometry)
-    verts, tgrid = wrapgrid(geometry, method)
-    tmesh = appendtopo(geometry, tgrid)
+function discretize(geom::Geometry, method::RegularDiscretization)
+  if isparametrized(geom)
+    verts, tgrid = wrapgrid(geom, method)
+    tmesh = appendtopo(geom, tgrid)
     SimpleMesh(collect(verts), tmesh)
   else
-    _discretizewithinbox(geometry, method)
+    _discretizewithinbox(geom, method)
   end
 end
 
 # box is trivial to discretize into a regular grid
-function _discretize(box::Box, method::RegularDiscretization)
+function discretize(box::Box, method::RegularDiscretization)
   sz = fitdims(method.sizes, paramdim(box))
   RegularGrid(extrema(box)..., dims=sz)
 end
 
 # triangle is parametrized with barycentric coordinates, so we can't rely on regular sampling
-_discretize(triangle::Triangle, method::RegularDiscretization) = _discretizewithinbox(triangle, method)
+discretize(tri::Triangle, method::RegularDiscretization) = _discretizewithinbox(tri, method)
 
 # tetrahedron is parametrized with barycentric coordinates, so we can't rely on regular sampling
-_discretize(tetrahedron::Tetrahedron, method::RegularDiscretization) = _discretizewithinbox(tetrahedron, method)
+discretize(tetra::Tetrahedron, method::RegularDiscretization) = _discretizewithinbox(tetra, method)
 
-function _discretizewithinbox(geometry::Geometry, method::RegularDiscretization)
-  box = boundingbox(geometry)
-  grid = _discretize(box, method)
-  view(grid, geometry)
+function _discretizewithinbox(geom::Geometry, method::RegularDiscretization)
+  box = boundingbox(geom)
+  grid = discretize(box, method)
+  view(grid, geom)
 end
 
 # ----------------------

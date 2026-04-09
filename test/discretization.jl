@@ -489,7 +489,7 @@ end
   @test nvertices.(mesh) ⊆ [2]
 
   bezier = BezierCurve(latlon(0, 0), latlon(0, 10), latlon(10, 10))
-  mesh = discretize(bezier)
+  mesh = discretize(bezier) |> refinemaxlen
   @test topology(mesh) == GridTopology((50,), (false,))
   @test nvertices(mesh) == 51
   @test nelements(mesh) == 50
@@ -505,7 +505,7 @@ end
   @test nvertices.(mesh) ⊆ [2]
 
   bezier = BezierCurve(latlon(0, 0), latlon(0, 10), latlon(10, 10), latlon(0, 0))
-  mesh = discretize(bezier)
+  mesh = discretize(bezier) |> refinemaxlen
   @test topology(mesh) == GridTopology((50,), (true,))
   @test nvertices(mesh) == 50
   @test nelements(mesh) == 50
@@ -537,7 +537,7 @@ end
   @test nvertices.(mesh) ⊆ [4]
 
   box = Box(latlon(0, 0), latlon(10, 10))
-  mesh = discretize(box)
+  mesh = discretize(box) |> refinemaxlen
   @test topology(mesh) == GridTopology((4, 4), (false, false))
   @test nvertices(mesh) == 5 * 5
   @test nelements(mesh) == 4 * 4
@@ -585,7 +585,7 @@ end
   @test nvertices.(mesh) ⊆ [2]
 
   seg = Segment(latlon(0, 0), latlon(10, 10))
-  mesh = discretize(seg)
+  mesh = discretize(seg) |> refinemaxlen
   @test topology(mesh) == GridTopology((4,), (false,))
   @test nvertices(mesh) == 5
   @test nelements(mesh) == 4
@@ -601,7 +601,7 @@ end
   @test nvertices.(mesh) ⊆ [2]
 
   rope = Rope(latlon(0, 0), latlon(0, 10), latlon(10, 0))
-  mesh = discretize(rope)
+  mesh = discretize(rope) |> refinemaxlen
   @test topology(mesh) == GridTopology((8,), (false,))
   @test nvertices(mesh) == 9
   @test nelements(mesh) == 8
@@ -617,7 +617,7 @@ end
   @test nvertices.(mesh) ⊆ [2]
 
   ring = Ring(latlon(0, 0), latlon(0, 10), latlon(10, 0))
-  mesh = discretize(ring)
+  mesh = discretize(ring) |> refinemaxlen
   @test topology(mesh) == GridTopology((12,), (true,))
   @test nvertices(mesh) == 12
   @test nelements(mesh) == 12
@@ -632,7 +632,7 @@ end
   @test nvertices.(mesh) ⊆ [3]
 
   tri = Triangle(latlon(0, 0), latlon(0, 10), latlon(10, 0))
-  mesh = discretize(tri)
+  mesh = discretize(tri) |> refinemaxlen
   @test nvertices(mesh) == 19
   @test nelements(mesh) == 12
   @test eltype(mesh) <: Quadrangle
@@ -647,7 +647,7 @@ end
   @test nvertices.(mesh) ⊆ [4]
 
   quad = Quadrangle(latlon(0, 0), latlon(0, 10), latlon(10, 10), latlon(10, 0))
-  mesh = discretize(quad)
+  mesh = discretize(quad) |> refinemaxlen
   @test topology(mesh) == GridTopology((4, 4), (false, false))
   @test nvertices(mesh) == 25
   @test nelements(mesh) == 16
@@ -668,7 +668,7 @@ end
   hole1 = latlon.([(2, 2), (4, 2), (4, 4), (2, 4)])
   hole2 = latlon.([(2, 6), (4, 6), (4, 8), (2, 8)])
   poly = PolyArea([outer, hole1, hole2])
-  mesh = discretize(poly)
+  mesh = discretize(poly) |> refinemaxlen
   @test nvertices(mesh) == 191
   @test nelements(mesh) == 168
   @test eltype(mesh) <: Quadrangle
@@ -686,7 +686,7 @@ end
   tri = Triangle(latlon(0, -10), latlon(0, 0), latlon(10, -10))
   quad = Quadrangle(latlon(0, 0), latlon(0, 10), latlon(10, 10), latlon(10, 0))
   multi = Multi([tri, quad])
-  mesh = discretize(multi)
+  mesh = discretize(multi) |> refinemaxlen
   @test nvertices(mesh) == 44
   @test nelements(mesh) == 28
   @test eltype(mesh) <: Quadrangle
