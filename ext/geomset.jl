@@ -56,9 +56,9 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geo
   # they satisfy the maximum length criterion
   mayberefine = M === 🌐 ? refinemaxlen : identity
 
-  # make sure the geometries are discretized
-  # with efficient "grid-like" methods before
-  # turning the quadrangles into triangles
+  # make sure the geometries are refined with
+  # efficient "grid-like" methods before turning
+  # quadrangles/hexahedra into triangles/tetrahedra
   triangulate = simplexify ∘ mayberefine ∘ discretize
 
   if pdim === Val(1)
