@@ -582,6 +582,7 @@ export
   RegularRefinement,
   MaxLengthRefinement,
   refine,
+  refinemaxlen,
 
   # coarsening
   CoarseningMethod,

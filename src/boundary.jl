@@ -243,4 +243,7 @@ boundarypoints(m::MultiPoint) = parent(m)
 
 boundarypoints(p::Polytope) = manifold(p) === 🌐 ? _boundarypoints(p) : vertices(p)
 
-_boundarypoints(g::Geometry) = vertices(discretize(embedboundary(g)))
+function _boundarypoints(g::Geometry)
+  mayberefine = manifold(g) === 🌐 ? refinemaxlen : identity
+  vertices(mayberefine(discretize(embedboundary(g))))
+end
