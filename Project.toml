@@ -1,6 +1,6 @@
 name = "Meshes"
 uuid = "eacbb407-ea5a-433e-ab97-5258b1ca43fa"
-version = "0.57.0"
+version = "0.57.1"
 authors = ["Júlio Hoffimann and contributors"]
 
 [deps]
