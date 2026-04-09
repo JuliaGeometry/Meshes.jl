@@ -52,32 +52,29 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geo
   showsegments = plot[:showsegments]
   showpoints = plot[:showpoints]
 
-  # make sure the geometries are discretized
-  # with efficient "grid-like" methods before
-  # turning the quadrangles into triangles
-  triangulate = simplexify ∘ discretize
-
   # refine meshes over the 🌐 manifold until
   # they satisfy the maximum length criterion
   mayberefine = M === 🌐 ? refinemaxlen : identity
 
-  # final discretization pipeline
-  trirefine = mayberefine ∘ triangulate
+  # make sure the geometries are discretized
+  # with efficient "grid-like" methods before
+  # turning the quadrangles into triangles
+  triangulate = simplexify ∘ mayberefine ∘ discretize
 
   if pdim === Val(1)
-    meshes = Makie.@lift trirefine.($geoms)
+    meshes = Makie.@lift triangulate.($geoms)
     vizmany!(plot, meshes, colors)
     if showpoints[]
       vizfacets!(plot, geoms)
     end
   elseif pdim === Val(2)
-    meshes = Makie.@lift trirefine.($geoms)
+    meshes = Makie.@lift triangulate.($geoms)
     vizmany!(plot, meshes, colors)
     if showsegments[]
       vizfacets!(plot, geoms)
     end
   elseif pdim == Val(3)
-    meshes = Makie.@lift trirefine.(boundary.($geoms))
+    meshes = Makie.@lift triangulate.(boundary.($geoms))
     vizmany!(plot, meshes, colors)
   end
 end
