@@ -1,5 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  for method in [GrahamScan(), JarvisMarch(), AdaptiveJarvisMarch(3)]
+  for method in [GrahamScan(), JarvisMarch(), AdaptiveJarvisMarch()]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
@@ -36,7 +36,7 @@
     verts = vertices(chul)
     @test all(p1 .∈ Ref(chul))
     @test all(p2 .∈ Ref(chul))
-    if !(method isa JarvisMarch && !isnothing(method.k)) # convex hull should be unaffected by interior points
+    if !(method isa JarvisMarch || method isa AdaptiveJarvisMarch) # convex hull should be unaffected by interior points
       @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
     end
 

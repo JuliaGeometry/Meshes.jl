@@ -103,4 +103,4 @@ _pconvexhull(points) = hull(points, GrahamScan())
 
 _gconcavehull(geoms) = _pconcavehull(p for g in geoms for p in boundarypoints(g))
 
-_pconcavehull(points) = hull(points, JarvisMarch(3)) # default k = 3 for concave hulls
+_pconcavehull(points) = hull(points, AdaptiveJarvisMarch()) # default k = 3 for concave hulls
