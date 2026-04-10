@@ -62,19 +62,19 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geo
   triangulate = simplexify ∘ mayberefine ∘ discretize
 
   if pdim === Val(1)
-    meshes = Makie.@lift triangulate.($geoms)
+    meshes = Makie.@lift map(triangulate, $geoms)
     vizmany!(plot, meshes, colors)
     if showpoints[]
       vizfacets!(plot, geoms)
     end
   elseif pdim === Val(2)
-    meshes = Makie.@lift triangulate.($geoms)
+    meshes = Makie.@lift map(triangulate, $geoms)
     vizmany!(plot, meshes, colors)
     if showsegments[]
       vizfacets!(plot, geoms)
     end
   elseif pdim == Val(3)
-    meshes = Makie.@lift triangulate.(boundary.($geoms))
+    meshes = Makie.@lift map(triangulate, boundary.($geoms))
     vizmany!(plot, meshes, colors)
   end
 end
