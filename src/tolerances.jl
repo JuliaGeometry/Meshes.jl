@@ -21,9 +21,7 @@ isapprox(a::T, b::T, atol=atol(T))
 atol(x) = atol(typeof(x))
 atol(::Type{Float32}) = ATOL32[]
 atol(::Type{Float64}) = ATOL64[]
-atol(ℒ::Type{<:Len}) = atol(numtype(ℒ)) * unit(ℒ)
-atol(𝒜::Type{<:Area}) = atol(numtype(𝒜))^2 * unit(𝒜)
-atol(𝒱::Type{<:Vol}) = atol(numtype(𝒱))^3 * unit(𝒱)
+atol(𝒬::Type{<:Quantity}) = atol(numtype(𝒬)) * unit(𝒬)
 atol(𝒟::Type{<:ForwardDiff.Dual}) = atol(ForwardDiff.valtype(𝒟))
 
 # relative tolerance for single and double precision
@@ -41,9 +39,7 @@ source code for numerical integration for example.
 rtol(x) = rtol(typeof(x))
 rtol(::Type{Float32}) = RTOL32[]
 rtol(::Type{Float64}) = RTOL64[]
-rtol(ℒ::Type{<:Len}) = rtol(numtype(ℒ))
-rtol(𝒜::Type{<:Area}) = rtol(numtype(𝒜))
-rtol(𝒱::Type{<:Vol}) = rtol(numtype(𝒱))
+rtol(𝒬::Type{<:Quantity}) = rtol(numtype(𝒬))
 rtol(𝒟::Type{<:ForwardDiff.Dual}) = rtol(ForwardDiff.valtype(𝒟))
 
 # maximum length for discretization of non-Euclidean geometries

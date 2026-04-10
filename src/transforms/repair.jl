@@ -136,8 +136,7 @@ function repair8(v::CircularVector{<:Point})
   keep = Int[]
   for i in 1:n
     t = Triangle(flat(v[i - 1]), flat(v[i]), flat(v[i + 1]))
-    a = area(t)
-    a > atol(a) && push!(keep, i)
+    ispositive(area(t)) && push!(keep, i)
   end
   isempty(keep) ? v[begin] : v[keep]
 end
