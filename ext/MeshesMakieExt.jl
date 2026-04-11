@@ -38,9 +38,14 @@ Makie.@recipe(Viz, object) do scene
 end
 
 # choose between 2D and 3D axis
-Makie.args_preferred_axis(g::Geometry) = embeddim(g) === 3 ? Makie.LScene : Makie.Axis
-Makie.args_preferred_axis(d::Domain) = embeddim(d) === 3 ? Makie.LScene : Makie.Axis
-Makie.args_preferred_axis(::AbstractVector{<:Vec{Dim}}) where {Dim} = Dim === 3 ? Makie.LScene : Makie.Axis
+Makie.args_preferred_axis(g::Geometry) = embeddim(g) === 3 ? Makie.Axis3 : Makie.Axis
+Makie.args_preferred_axis(d::Domain) = embeddim(d) === 3 ? Makie.Axis3 : Makie.Axis
+Makie.args_preferred_axis(::AbstractVector{<:Vec{Dim}}) where {Dim} = Dim === 3 ? Makie.Axis3 : Makie.Axis
+
+# choose default axis attributes
+Makie.preferred_axis_attributes(::Viz, ::Type{<:Makie.Axis}) = (aspect=Makie.DataAspect(), xlabel="X", ylabel="Y")
+Makie.preferred_axis_attributes(::Viz, ::Type{<:Makie.Axis3}) =
+  (aspect=:data, viewmode=:free, perspectiveness=0.5, xlabel="X", ylabel="Y", zlabel="Z")
 
 # color handling
 include("colors.jl")
