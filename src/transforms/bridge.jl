@@ -46,19 +46,19 @@ apply(::Bridge, poly::Ngon) = poly, Tuple{Int,Int}[]
 
 function bridge(rings, rinds, δ)
   # extract vertices and indices
-  verts = vertices.(rings)
+  verts = map(vertices, rings)
   vinds = rinds
 
   # retrieve coordinate type
   ℒ = lentype(first(rings))
 
   # initialize outer boundary
-  outer = flat.(verts[1])
+  outer = map(flat, verts[1])
   oinds = vinds[1]
 
   # merge holes into outer boundary
   for i in 2:length(verts)
-    inner = flat.(verts[i])
+    inner = map(flat, verts[i])
     iinds = vinds[i]
 
     # find closest pair of vertices (A, B)

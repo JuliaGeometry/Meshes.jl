@@ -57,8 +57,7 @@ function structuredsegments(grid)
   for j in axes(cinds, 2)
     for i in axes(cinds, 1)
       p = vertex(grid, cinds[i, j])
-      c = ustrip.(Tuple(to(p)))
-      push!(coords, c)
+      push!(coords, Tuple(ustrip.(to(p))))
     end
     push!(coords, (NaN, NaN))
   end
@@ -66,8 +65,7 @@ function structuredsegments(grid)
   for i in axes(cinds, 1)
     for j in axes(cinds, 2)
       p = vertex(grid, cinds[i, j])
-      c = ustrip.(Tuple(to(p)))
-      push!(coords, c)
+      push!(coords, Tuple(ustrip.(to(p))))
     end
     push!(coords, (NaN, NaN))
   end

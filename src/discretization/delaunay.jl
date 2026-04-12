@@ -29,6 +29,6 @@ function _discretizewithin𝔼2(ring::Ring, method::DelaunayTriangulation)
   coords = map(p -> ustrip.(to(p)), points)
   bnodes = [1:nvertices(ring); 1]
   triang = triangulate(coords, boundary_nodes=bnodes, rng=method.rng)
-  connec = connect.(each_solid_triangle(triang))
+  connec = map(connect, each_solid_triangle(triang))
   SimpleMesh(points, connec)
 end

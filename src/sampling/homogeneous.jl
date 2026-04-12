@@ -18,10 +18,10 @@ HomogeneousSampling(size::Int) = HomogeneousSampling(size, nothing)
 
 function sample(rng::AbstractRNG, d::Domain, method::HomogeneousSampling)
   size = method.size
-  weights = isnothing(method.weights) ? measure.(d) : method.weights
+  weights = isnothing(method.weights) ? map(measure, d) : method.weights
 
   # sample elements with weights
-  w = WeightedSampling(size, ustrip.(weights), replace=true)
+  w = WeightedSampling(size, map(ustrip, weights), replace=true)
 
   # within each element sample a single point
   h = HomogeneousSampling(1)

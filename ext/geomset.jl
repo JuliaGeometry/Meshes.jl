@@ -22,7 +22,7 @@ function vizgset!(plot; facets=false)
   geoms = Makie.@lift parent($gset)
 
   # get geometry types
-  types = Makie.@lift unique(typeof.($geoms))
+  types = Makie.@lift unique(map(typeof, $geoms))
 
   for G in types[]
     inds = Makie.@lift findall(g -> g isa G, $geoms)
@@ -73,8 +73,8 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, geoms::ObservableVector{<:Geo
     if showsegments[]
       vizfacets!(plot, geoms)
     end
-  elseif pdim == Val(3)
-    meshes = Makie.@lift map(triangulate, boundary.($geoms))
+  elseif pdim === Val(3)
+    meshes = Makie.@lift map(triangulate ∘ boundary, $geoms)
     vizmany!(plot, meshes, colors)
   end
 end
@@ -176,7 +176,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, geoms::ObservableVec
   segmentsize = plot[:segmentsize]
 
   # visualize as built-in polygons
-  polys = Makie.@lift asmakie.($geoms)
+  polys = Makie.@lift map(asmakie, $geoms)
   if showsegments[]
     Makie.poly!(plot, polys, color=colors, strokecolor=segmentcolor, strokewidth=segmentsize)
   else
@@ -203,7 +203,7 @@ function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, geoms)
   pointsize = plot[:pointsize]
 
   # all boundaries are points or multipoints
-  points = Makie.@lift filter(!isnothing, boundary.($geoms))
+  points = Makie.@lift filter(!isnothing, map(boundary, $geoms))
   pset = Makie.@lift GeometrySet($points)
   viz!(plot, pset, color=pointcolor, pointmarker=pointmarker, pointsize=pointsize)
 end
@@ -213,7 +213,7 @@ function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms)
   segmentsize = plot[:segmentsize]
 
   # all boundaries are 1D geometries
-  bounds = Makie.@lift filter(!isnothing, boundary.($geoms))
+  bounds = Makie.@lift filter(!isnothing, map(boundary, $geoms))
   bset = Makie.@lift GeometrySet($bounds)
   viz!(plot, bset, color=segmentcolor, segmentsize=segmentsize)
 end

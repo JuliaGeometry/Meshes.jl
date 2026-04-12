@@ -85,7 +85,7 @@ function partitioninds(::AbstractRNG, domain::Domain, method::BlockPartition)
   end
 
   # filter out empty blocks
-  empty = isempty.(subsets)
+  empty = map(isempty, subsets)
   subsets = subsets[.!empty]
   neighbors = neighbors[.!empty]
   for i in findall(empty)

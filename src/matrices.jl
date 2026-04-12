@@ -108,7 +108,7 @@ function measurematrix(mesh)
   𝒞 = Coboundary{0,D}(𝒯)
 
   # pre-compute all measures
-  A = measure.(mesh)
+  A = map(measure, mesh)
 
   # initialize matrix
   n = nvertices(mesh)

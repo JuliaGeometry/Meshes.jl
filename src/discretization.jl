@@ -125,12 +125,12 @@ function discretize(poly::Polygon, method::BoundaryTriangulationMethod)
     for (i, j) in dups
       points[i] = centroid(Segment(points[i], points[j]))
     end
-    repeated = sort(last.(dups))
+    repeated = sort(map(last, dups))
     deleteat!(points, repeated)
 
     # adjust connectivities
     elems = elements(topology(mesh))
-    twin = Dict(reverse.(dups))
+    twin = Dict(map(reverse, dups))
     rrep = reverse(repeated)
     einds = map(elems) do elem
       inds = indices(elem)
