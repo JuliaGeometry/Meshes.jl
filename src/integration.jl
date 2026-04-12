@@ -106,10 +106,10 @@ function localintegral(fun, geom::Geometry; ibackend=hadaptive(geom), dbackend=F
   N = paramdim(geom)
   T = numtype(lentype(geom))
   o = ntuple(_ -> zero(T), N)
-  u = unit.(integrand(o...))
+  u = map(unit, integrand(o...))
 
   # strip units to help integration backends
-  f(uvw...) = ustrip.(integrand(uvw...))
+  f(uvw...) = map(ustrip, integrand(uvw...))
 
   # perform numerical integration
   II.integral(f, domain; backend=ibackend) .* u

@@ -21,7 +21,7 @@ function derivative(geom::Geometry, uvw, j; dbackend=FORWARDDIFF)
   1 ≤ j ≤ n || throw(ArgumentError("attempting to compute derivative along invalid coordinate"))
 
   # strip units to help differentiation backends
-  f(t) = ustrip.(to(geom(ntuple(i -> i == j ? t : uvw[i], d)...)))
+  f(t) = map(ustrip, to(geom(ntuple(i -> i == j ? t : uvw[i], d)...)))
 
   # compute derivative and re-add unit
   ∂ = DI.derivative(f, dbackend, uvw[j])

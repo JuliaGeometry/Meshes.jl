@@ -50,8 +50,8 @@ function _slicebox(box::Box{𝔼{2}}, limits)
   max = convert(Cartesian, coords(maximum(box)))
   xmin, xmax = get(limits, :x, (min.x, max.x))
   ymin, ymax = get(limits, :y, (min.y, max.y))
-  bmin = _aslen.((xmin, ymin))
-  bmax = _aslen.((xmax, ymax))
+  bmin = map(_aslen, (xmin, ymin))
+  bmax = map(_aslen, (xmax, ymax))
   Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 
@@ -61,8 +61,8 @@ function _slicebox(box::Box{𝔼{3}}, limits)
   xmin, xmax = get(limits, :x, (min.x, max.x))
   ymin, ymax = get(limits, :y, (min.y, max.y))
   zmin, zmax = get(limits, :z, (min.z, max.z))
-  bmin = _aslen.((xmin, ymin, zmin))
-  bmax = _aslen.((xmax, ymax, zmax))
+  bmin = map(_aslen, (xmin, ymin, zmin))
+  bmax = map(_aslen, (xmax, ymax, zmax))
   Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 
@@ -71,8 +71,8 @@ function _slicebox(box::Box{🌐}, limits)
   max = convert(LatLon, coords(maximum(box)))
   latmin, latmax = get(limits, :lat, (min.lat, max.lat))
   lonmin, lonmax = get(limits, :lon, (min.lon, max.lon))
-  bmin = _asdeg.((latmin, lonmin))
-  bmax = _asdeg.((latmax, lonmax))
+  bmin = map(_asdeg, (latmin, lonmin))
+  bmax = map(_asdeg, (latmax, lonmax))
   Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 

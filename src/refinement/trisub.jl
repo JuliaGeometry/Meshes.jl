@@ -57,7 +57,7 @@ function refine(mesh, ::TriSubdivision)
     triangles[t + 4] = (m1, m2, m3)
   end
 
-  SimpleMesh(points, connect.(triangles))
+  SimpleMesh(points, map(connect, triangles))
 end
 
 _ordered(i, j) = i < j ? (i, j) : (j, i)

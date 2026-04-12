@@ -79,7 +79,7 @@ function boundary(b::Box{𝔼{3}})
     withcrs(b, (A.x, B.y, B.z))
   ]
   c = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
-  SimpleMesh(v, connect.(c))
+  SimpleMesh(v, map(connect, c))
 end
 
 function boundary(b::Box{🌐})
@@ -170,28 +170,28 @@ embedboundary(p::Polygon) = paramdim(p) < embeddim(p) ? p : boundary(p)
 
 function boundary(t::Tetrahedron)
   indices = [(3, 2, 1), (4, 1, 2), (4, 3, 1), (4, 2, 3)]
-  SimpleMesh(collect(eachvertex(t)), connect.(indices))
+  SimpleMesh(collect(eachvertex(t)), map(connect, indices))
 end
 
 embedboundary(t::Tetrahedron) = boundary(t)
 
 function boundary(h::Hexahedron)
   indices = [(4, 3, 2, 1), (6, 5, 1, 2), (3, 7, 6, 2), (4, 8, 7, 3), (1, 5, 8, 4), (6, 7, 8, 5)]
-  SimpleMesh(collect(eachvertex(h)), connect.(indices))
+  SimpleMesh(collect(eachvertex(h)), map(connect, indices))
 end
 
 embedboundary(h::Hexahedron) = boundary(h)
 
 function boundary(p::Pyramid)
   indices = [(4, 3, 2, 1), (5, 1, 2), (5, 4, 1), (5, 3, 4), (5, 2, 3)]
-  SimpleMesh(collect(eachvertex(p)), connect.(indices))
+  SimpleMesh(collect(eachvertex(p)), map(connect, indices))
 end
 
 embedboundary(p::Pyramid) = boundary(p)
 
 function boundary(w::Wedge)
   indices = [(1, 3, 2), (4, 5, 6), (1, 2, 5, 4), (2, 3, 6, 5), (3, 1, 4, 6)]
-  SimpleMesh(collect(eachvertex(w)), connect.(indices))
+  SimpleMesh(collect(eachvertex(w)), map(connect, indices))
 end
 
 embedboundary(w::Wedge) = boundary(w)

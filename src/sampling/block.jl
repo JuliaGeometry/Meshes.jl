@@ -25,5 +25,5 @@ BlockSampling(sides...) = BlockSampling(sides)
 
 function sampleinds(::AbstractRNG, d::Domain, method::BlockSampling)
   Π = partition(d, BlockPartition(method.sides))
-  first.(indices(Π))
+  map(first, indices(Π))
 end

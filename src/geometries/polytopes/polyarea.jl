@@ -64,7 +64,7 @@ function Base.show(io::IO, p::PolyArea)
     r = first(rings)
     printverts(io, vertices(r))
   else
-    nverts = nvertices.(rings)
+    nverts = map(nvertices, rings)
     join(io, ("$n-Ring" for n in nverts), ", ")
   end
   print(io, ")")

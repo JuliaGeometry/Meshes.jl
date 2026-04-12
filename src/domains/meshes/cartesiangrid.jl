@@ -12,7 +12,7 @@ possible `args` and `kwargs`.
 """
 const CartesianGrid{M<:𝔼,C<:Cartesian} = RegularGrid{M,C}
 
-CartesianGrid(args...; kwargs...) = RegularGrid(_cartesian.(args)...; kwargs...)
+CartesianGrid(args...; kwargs...) = RegularGrid(map(_cartesian, args)...; kwargs...)
 
 # enforce Cartesian coordinates for all Point arguments
 _cartesian(p::Point) = Point(convert(Cartesian, coords(p)))

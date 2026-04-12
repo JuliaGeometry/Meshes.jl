@@ -151,11 +151,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
 end
 
 function vizmesh!(plot, ::Type, ::Val{3}, ::Val, mesh, colorant)
-  meshes = Makie.@lift let
-    geoms = elements($mesh)
-    bounds = boundary.(geoms)
-    discretize.(bounds)
-  end
+  meshes = Makie.@lift map(discretize ∘ boundary, $mesh)
   colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
   vizmany!(plot, meshes, colors)
 end

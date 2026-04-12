@@ -23,4 +23,4 @@ Makie.convert_arguments(::Type{<:Viz}, geoms::AbstractVector{<:Geometry}) = (Geo
 Makie.plottype(::Vec) = Viz{<:Tuple{Vec}}
 Makie.convert_arguments(::Type{<:Viz}, vec::Vec) = (GeometrySet([asray(vec)]),)
 Makie.plottype(::AbstractVector{<:Vec}) = Viz{<:Tuple{AbstractVector{<:Vec}}}
-Makie.convert_arguments(::Type{<:Viz}, vecs::AbstractVector{<:Vec}) = (GeometrySet(asray.(vecs)),)
+Makie.convert_arguments(::Type{<:Viz}, vecs::AbstractVector{<:Vec}) = (GeometrySet(map(asray, vecs)),)

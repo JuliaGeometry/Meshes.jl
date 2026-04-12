@@ -59,7 +59,7 @@ function _smooth(mesh, L, n, λ, μ; revert=false)
   end
 
   # new points
-  newpoints = Point.(Tuple.(eachrow(X)))
+  newpoints = map(Point ∘ Tuple, eachrow(X))
 
   # new mesh
   SimpleMesh(newpoints, topology(mesh))

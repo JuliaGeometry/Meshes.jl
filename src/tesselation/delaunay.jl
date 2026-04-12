@@ -30,6 +30,6 @@ function tesselate(pset::PointSet, method::DelaunayTesselation)
   # perform tesselation with raw coordinates
   rawval = map(p -> CoordRefSystems.raw(coords(p)), pset)
   triang = triangulate(rawval, rng=method.rng)
-  connec = connect.(each_solid_triangle(triang))
+  connec = map(connect, each_solid_triangle(triang))
   SimpleMesh(collect(pset), connec)
 end
