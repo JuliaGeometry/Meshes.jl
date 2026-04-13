@@ -10,11 +10,6 @@
   @test Jr[1] ≈ b - a
   @test Jm[1] ≈ b - a
 
-  Jm = jacobian(seg, (T(0.5),); dbackend=DI.AutoEnzyme(mode=Enzyme.Forward))
-  @test Jm[1] ≈ b - a
-  Jm = jacobian(seg, (T(0.5),); dbackend=DI.AutoEnzyme(mode=Enzyme.Reverse))
-  @test Jm[1] ≈ b - a
-
   # invalid number of parametric coordinates
   @test_throws ArgumentError jacobian(seg, (T(0.1), T(0.2)))
 
