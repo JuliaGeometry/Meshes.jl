@@ -1,4 +1,7 @@
 @testitem "Jacobian" setup = [Setup] begin
+  import DifferentiationInterface as DI
+  import Enzyme
+
   # 1D geometry (segment): constant tangent vector
   a = cart(T(1), T(2))
   b = cart(T(3), T(6))
@@ -8,6 +11,11 @@
   Jm = jacobian(seg, (T(0.5),))
   @test Jl[1] ≈ b - a
   @test Jr[1] ≈ b - a
+  @test Jm[1] ≈ b - a
+
+  Jm = jacobian(seg, (T(0.5),); dbackend=DI.AutoEnzyme(mode = Enzyme.Forward))
+  @test Jm[1] ≈ b - a
+  Jm = jacobian(seg, (T(0.5),); dbackend=DI.AutoEnzyme(mode = Enzyme.Reverse))
   @test Jm[1] ≈ b - a
 
   # invalid number of parametric coordinates
