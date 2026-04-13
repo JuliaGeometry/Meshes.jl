@@ -21,6 +21,9 @@ using TestItemRunner
 
   import TransformsBase as TB
 
+  import DifferentiationInterface as DI
+  import Enzyme
+
   # environment settings
   isCI = "CI" ∈ keys(ENV)
   datadir = joinpath(@__DIR__, "data")
