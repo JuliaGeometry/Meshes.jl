@@ -73,3 +73,23 @@ SUITE["intersects"]["triangle-tetrahedron"] = @benchmarkable intersects($tri, $t
 SUITE["intersection"] = BenchmarkGroup()
 
 SUITE["intersection"]["ray-triangle"] = @benchmarkable intersection($ray, $tri)
+
+# -------------
+# DIFFERENTIATION
+# -------------
+
+SUITE["differentiation"] = BenchmarkGroup()
+
+SUITE["differentiation"]["ray"] = @benchmarkable jacobian($ray, (0.2, 0.3))
+SUITE["differentiation"]["triangle"] = @benchmarkable jacobian($tri, (0.2, 0.3))
+SUITE["differentiation"]["tetrahedron"] = @benchmarkable jacobian($tet, (0.2, 0.3, 0.4))
+
+# -------------
+# INTEGRATION
+# -------------
+
+SUITE["integration"] = BenchmarkGroup()
+
+SUITE["integration"]["ray"] = @benchmarkable integral(p -> 1, $ray)
+SUITE["integration"]["triangle"] = @benchmarkable integral(p -> 1, $tri)
+SUITE["integration"]["tetrahedron"] = @benchmarkable integral(p -> 1, $tet)
