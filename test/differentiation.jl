@@ -100,7 +100,7 @@ end
   @test !isnan(differential(b, (t,)))
 end
 
-@testitem "Jacobian with Enzyme.jl" setup = [Setup] begin
+@testitem "Tests with Enzyme.jl" setup = [Setup] begin
   a = cart(T(1), T(2))
   b = cart(T(3), T(6))
   seg = Segment(a, b)
