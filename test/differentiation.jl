@@ -99,3 +99,17 @@ end
   t = T(0.7878788f0)
   @test !isnan(differential(b, (t,)))
 end
+
+@testitem "Tests with Enzyme.jl" setup = [Setup] begin
+  a = cart(T(1), T(2))
+  b = cart(T(3), T(6))
+  seg = Segment(a, b)
+
+  Jm = jacobian(seg, (T(0.5),); dbackend=DI.AutoEnzyme(mode=Enzyme.Forward))
+  @test Jm[1] ≈ b - a
+  Jm = jacobian(seg, (T(0.5),); dbackend=DI.AutoEnzyme(mode=Enzyme.Reverse))
+  @test Jm[1] ≈ b - a
+
+  @test differential(seg, (T(0.25),); dbackend=DI.AutoEnzyme(mode=Enzyme.Forward)) ≈ length(seg)
+  @test differential(seg, (T(0.25),); dbackend=DI.AutoEnzyme(mode=Enzyme.Reverse)) ≈ length(seg)
+end
