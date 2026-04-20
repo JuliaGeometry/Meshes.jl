@@ -88,8 +88,6 @@ function hull(points, method::JarvisMarch)
   # if no candidates exist (k too large), fallback to convex hull
   isnothing(𝒞) && return hull(points, JarvisMarch())
 
-  # k isa Integer && (𝒞[start] = true)
-
   candidates = jarviscandidates(searcher, 𝒞, n, p, i, start)
 
   # find next point with smallest angle
@@ -134,10 +132,17 @@ function jarvisnext(::KNearestSearch, candidates, p, ℐ, A, O, k)
   # check candidates in order of angle until we find one that doesn't intersect the existing hull
   for nᵢ in candidates
     cpoint = p[nᵢ]
+    cseg = Segment(p[ℐ[end]], cpoint)
+    cbox = boundingbox(cseg)
     offset = cpoint == p[ℐ[begin]] ? 1 : 0
     limit = length(ℐ) - 1 - offset
     ok = limit < 2 || !any(2:limit) do indⱼ
-      intersects(Segment(p[ℐ[end]], cpoint), Segment(p[ℐ[end - indⱼ + 1]], p[ℐ[end - indⱼ]]))
+      p₁ = p[ℐ[end - indⱼ + 1]]
+      p₂ = p[ℐ[end - indⱼ]]
+      eseg = Segment(p₁, p₂)
+      # quick check to see if segments could intersect before doing more expensive segment intersection check
+      intersects(cbox, boundingbox(eseg)) || return false
+      intersects(cseg, eseg)
     end
     ok && return nᵢ
   end
@@ -148,6 +153,7 @@ end
 jarviscandidates(::Nothing, 𝒞, n, p, i, start) = setdiff(1:n, i)
 
 function jarviscandidates(searcher::KNearestSearch, 𝒞, n, p, i, start)
+  # mask out points already in the hull, except for the starting point
   mask = .!𝒞
   mask[start] = true
   mask[i] = false
