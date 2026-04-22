@@ -40,6 +40,13 @@
       @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
     end
 
+    # collinear test
+    # points along the same hull edges force angle ties during the march
+    pts = cart.([(0, 0), (1, 0), (2, 0), (3, 0), (3, 1), (3, 2), (0, 2), (1, 1)])
+    chul = hull(pts, method)
+    @test !isnothing(chul)
+    @test all(pts .∈ Ref(chul))
+
     pts =
       cart.([
         (0, 5),

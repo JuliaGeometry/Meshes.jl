@@ -88,7 +88,7 @@ function hull(points, method::JarvisMarch)
   # if no candidates exist (k too large), fallback to convex hull
   isnothing(𝒞) && return hull(points, JarvisMarch())
 
-  candidates = jarviscandidates(searcher, 𝒞, n, p, i, start)
+  candidates = jarviscandidates(searcher, 𝒞, n, p, i, i, start)
 
   # find next point with smallest angle
   O = p[i]
@@ -105,7 +105,8 @@ function hull(points, method::JarvisMarch)
     v = p[j] - p[i]
 
     # find candidates for next point
-    candidates = jarviscandidates(searcher, 𝒞, n, p, j, start)
+    inds = isnothing(searcher) ? (i, j) : j
+    candidates = jarviscandidates(searcher, 𝒞, n, p, j, inds, start)
     isempty(candidates) && return nothing # no candidates, should only happen if k is too small
 
     # find next segment
@@ -124,7 +125,7 @@ function hull(points, method::JarvisMarch)
   PolyArea(p[ℐ[begin:(end - 1)]])
 end
 
-# helper to find next point for concave hull
+# helper to find next point for convex hull
 jarvisnext(::Nothing, candidates, p, ℐ, A, O, k) = argmin(l -> ∠(A, O, p[l]), candidates)
 
 function jarvisnext(::KNearestSearch, candidates, p, ℐ, A, O, k)
@@ -150,14 +151,22 @@ function jarvisnext(::KNearestSearch, candidates, p, ℐ, A, O, k)
 end
 
 # helper to get candidate indices for next point
-jarviscandidates(::Nothing, 𝒞, n, p, i, start) = setdiff(1:n, i)
+jarviscandidates(::Nothing, 𝒞, n, p, current, inds, start) = setdiff(1:n, inds)
 
-function jarviscandidates(searcher::KNearestSearch, 𝒞, n, p, i, start)
+setexcluded!(mask, inds::Integer) = (mask[inds] = false)
+
+function setexcluded!(mask, inds)
+  for ind in inds
+    mask[ind] = false
+  end
+end
+
+function jarviscandidates(searcher::KNearestSearch, 𝒞, n, p, current, inds, start)
   # mask out points already in the hull, except for the starting point
   mask = .!𝒞
   mask[start] = true
-  mask[i] = false
-  search(p[i], searcher; mask=mask)
+  setexcluded!(mask, inds)
+  search(p[current], searcher; mask=mask)
 end
 
 # outputs k, searcher, and a mask of candidate point indices
