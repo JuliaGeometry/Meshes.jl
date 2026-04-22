@@ -153,19 +153,11 @@ end
 # helper to get candidate indices for next point
 jarviscandidates(::Nothing, 𝒞, n, p, current, inds, start) = setdiff(1:n, inds)
 
-setexcluded!(mask, inds::Integer) = (mask[inds] = false)
-
-function setexcluded!(mask, inds)
-  for ind in inds
-    mask[ind] = false
-  end
-end
-
 function jarviscandidates(searcher::KNearestSearch, 𝒞, n, p, current, inds, start)
   # mask out points already in the hull, except for the starting point
   mask = .!𝒞
   mask[start] = true
-  setexcluded!(mask, inds)
+  mask[inds] = false
   search(p[current], searcher; mask=mask)
 end
 

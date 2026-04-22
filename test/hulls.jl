@@ -1,4 +1,7 @@
 @testitem "Hulls" setup = [Setup] begin
+  # can AdaptiveJarvisMarch(Integer) be constructed with an integer k and work
+  @test hull(cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]), AdaptiveJarvisMarch(3)) isa PolyArea
+
   for method in [GrahamScan(), JarvisMarch(), AdaptiveJarvisMarch()]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
@@ -40,7 +43,7 @@
       @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
     end
 
-    # collinear test
+    # collinear test for regressions
     # points along the same hull edges force angle ties during the march
     pts = cart.([(0, 0), (1, 0), (2, 0), (3, 0), (3, 1), (3, 2), (0, 2), (1, 1)])
     chul = hull(pts, method)
@@ -202,14 +205,34 @@ end
   @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
   @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
 
+  @test concavehull(Triangle(cart(0, 0), cart(1, 0), cart(0, 1))) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+
+  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  @test concavehull(poly) == convexhull(poly)
+
+  b = Box(cart(0, 0), cart(1, 1))
+  @test concavehull(b) == convexhull(b)
+
+  b = BezierCurve(cart(0, 0), cart(0.5, -1), cart(1, 0))
+  @test concavehull(b) == convexhull(b)
+
   b1 = Box(cart(0, 0), cart(1, 1))
   b2 = Box(cart(-1, -1), cart(0.5, 0.5))
   @test Set(vertices(concavehull(Multi([b1, b2])))) ==
         Set(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+
+  geoms = GeometrySet([b1, b2])
+  @test Set(vertices(concavehull(geoms))) == Set(vertices(convexhull(geoms)))
 
   b1 = Ball(cart(0, 0), T(1))
   b2 = Box(cart(-1, -1), cart(0.5, 0.5))
   h = concavehull(Multi([b1, b2]))
   @test h isa PolyArea
   @test all(Set([boundarypoints(b1); boundarypoints(b2)]) .∈ Ref(h))
+
+  mesh = SimpleMesh(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]), connect.([(1, 2, 3), (1, 3, 4)]))
+  @test Set(vertices(concavehull(mesh))) == Set(vertices(convexhull(mesh)))
+
+  grid = cartgrid(2, 2)
+  @test concavehull(grid) == convexhull(grid)
 end
