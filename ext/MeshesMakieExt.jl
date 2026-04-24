@@ -46,10 +46,10 @@ Makie.args_preferred_axis(v::AbstractVector{<:Vec}) = Makie.args_preferred_axis(
 axis(dim) = dim === 3 ? Makie.Axis3 : Makie.Axis
 
 # choose default axis attributes
-Makie.preferred_axis_attributes(::Type, g::Geometry) = axisattributes(g)
-Makie.preferred_axis_attributes(::Type, d::Domain) = axisattributes(d)
-Makie.preferred_axis_attributes(::Type, ::Vec{Dim,ℒ}) where {Dim,ℒ} = axisattributes(Dim, ℒ)
-Makie.preferred_axis_attributes(A::Type, v::AbstractVector{<:Vec}) = Makie.preferred_axis_attributes(A, first(v))
+Makie.preferred_axis_attributes(_, g::Geometry) = axisattributes(g)
+Makie.preferred_axis_attributes(_, d::Domain) = axisattributes(d)
+Makie.preferred_axis_attributes(_, ::Vec{Dim,ℒ}) where {Dim,ℒ} = axisattributes(Dim, ℒ)
+Makie.preferred_axis_attributes(A, v::AbstractVector{<:Vec}) = Makie.preferred_axis_attributes(A, first(v))
 
 function axisattributes(g)
   aspect = fixaspect(embeddim(g))
