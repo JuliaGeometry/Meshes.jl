@@ -65,7 +65,7 @@ function components(elems::AbstractVector{<:Connectivity})
       push!(last(comps), popfirst!(remaining))
 
       # a disconnected component means that ≥n-1 vertices in
-      # the newest element haven't been "seen"; its possible
+      # the newest element haven't been "seen"; it's possible
       # the new component is connected by a single vertex
       for v in indices(elems[last(last(comps))])
         push!(seen, v)
