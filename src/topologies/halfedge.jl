@@ -329,71 +329,7 @@ Base.convert(::Type{HalfEdgeTopology}, t::Topology) = HalfEdgeTopology(collect(e
 # -----------------
 
 # permutation of elements in adjacent-first order
-function adjsortperm(elems::AbstractVector{<:Connectivity})
-  reduce(vcat, conneccomps(elems))
-end
-
-# connected components from list of elements
-function conneccomps(elems::AbstractVector{<:Connectivity})
-  # initialize list of connected components
-  comps = [[firstindex(elems)]]
-
-  # initialize list of seen vertices
-  seen = Set{Int}()
-  for v in indices(first(elems))
-    push!(seen, v)
-  end
-
-  # remaining elements to process
-  remaining = collect(eachindex(elems)[2:end])
-
-  added = false
-  while !isempty(remaining)
-    iter = 1
-    while iter ≤ length(remaining)
-      elem = elems[remaining[iter]]
-
-      # manually union-split most common polytopes
-      # for type stability and maximum performance
-      isadjacent = if elem isa Connectivity{Triangle,3}
-        adjelem!(seen, elem)
-      elseif elem isa Connectivity{Quadrangle,4}
-        adjelem!(seen, elem)
-      else
-        adjelem!(seen, elem)
-      end
-
-      if isadjacent
-        push!(last(comps), popat!(remaining, iter))
-        added = true
-      else
-        iter += 1
-      end
-    end
-
-    if added
-      # new vertices were "seen" while iterating `remaining`, so
-      # we need to iterate again because there may be elements
-      # which are now adjacent with the newly "seen" vertices
-      added = false
-    elseif !isempty(remaining)
-      # there are more elements, but none are adjacent to
-      # previously seen elements; pop a new element from
-      # the original list to start a new connected component
-      push!(comps, Int[])
-      push!(last(comps), popfirst!(remaining))
-
-      # a disconnected component means that ≥n-1 vertices in
-      # the newest element haven't been "seen"; its possible
-      # the new component is connected by a single vertex
-      for v in indices(elems[last(last(comps))])
-        push!(seen, v)
-      end
-    end
-  end
-
-  comps
-end
+adjsortperm(elems::AbstractVector{<:Connectivity}) = reduce(vcat, components(elems))
 
 # update seen vertices if there are ≥2 common indices
 function adjelem!(seen, elem)

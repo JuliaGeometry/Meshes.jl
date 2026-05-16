@@ -23,6 +23,12 @@ FractionPartition
 BlockPartition
 ```
 
+## Components
+
+```@docs
+ComponentsPartition
+```
+
 ## Bisect-Point
 
 ```@docs

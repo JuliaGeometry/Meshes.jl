@@ -393,6 +393,7 @@ export
   UniformPartition,
   FractionPartition,
   BlockPartition,
+  ComponentsPartition,
   BisectPointPartition,
   BisectFractionPartition,
   BallPartition,
