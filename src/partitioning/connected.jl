@@ -10,7 +10,7 @@ A method for partitioning meshes into connected components.
 struct ConnectedPartition <: PartitionMethod end
 
 function partitioninds(::AbstractRNG, domain::Domain, ::ConnectedPartition)
-  @assert domain isa Mesh "connected components only defined for meshes"
+  assertion(domain isa Mesh, "connected components only defined for meshes")
   elems = collect(elements(topology(domain)))
   components(elems), Dict()
 end
