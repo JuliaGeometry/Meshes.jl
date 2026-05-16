@@ -23,6 +23,12 @@ FractionPartition
 BlockPartition
 ```
 
+## Connected
+
+```@docs
+ConnectedPartition
+```
+
 ## Bisect-Point
 
 ```@docs
