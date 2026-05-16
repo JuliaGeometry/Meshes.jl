@@ -147,9 +147,9 @@ end
   @test m1 == m2
 end
 
-@testitem "ConnectedPartition" setup = [Setup] begin
+@testitem "ComponentsPartition" setup = [Setup] begin
   g = cartgrid(10, 10)
-  p = partition(g, ConnectedPartition())
+  p = partition(g, ComponentsPartition())
   @test length(p) == 1
   @test nelements(first(p)) == 100
 
@@ -159,7 +159,7 @@ end
   vview = [v[1:22]; v[(121 - 22 + 1):121]]
   eview = [e[1:10]; e[91:100]]
   m = SimpleMesh(vview, eview)
-  p = partition(m, ConnectedPartition())
+  p = partition(m, ComponentsPartition())
   @test length(p) == 2
   @test nelements(p[1]) == 10
   @test nelements(p[2]) == 10
@@ -167,9 +167,9 @@ end
   # reproducible results with rng
   rng = StableRNG(123)
   g = cartgrid(10, 10)
-  p1 = partition(rng, g, ConnectedPartition())
+  p1 = partition(rng, g, ComponentsPartition())
   rng = StableRNG(123)
-  p2 = partition(rng, g, ConnectedPartition())
+  p2 = partition(rng, g, ComponentsPartition())
   @test p1 == p2
 end
 

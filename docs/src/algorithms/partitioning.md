@@ -23,10 +23,10 @@ FractionPartition
 BlockPartition
 ```
 
-## Connected
+## Components
 
 ```@docs
-ConnectedPartition
+ComponentsPartition
 ```
 
 ## Bisect-Point

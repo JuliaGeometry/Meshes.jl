@@ -3,13 +3,13 @@
 # ------------------------------------------------------------------
 
 """
-    ConnectedPartition()
+    ComponentsPartition()
 
 A method for partitioning meshes into connected components.
 """
-struct ConnectedPartition <: PartitionMethod end
+struct ComponentsPartition <: PartitionMethod end
 
-function partitioninds(::AbstractRNG, domain::Domain, ::ConnectedPartition)
+function partitioninds(::AbstractRNG, domain::Domain, ::ComponentsPartition)
   assertion(domain isa Mesh, "connected components only defined for meshes")
   elems = collect(elements(topology(domain)))
   components(elems), Dict()
