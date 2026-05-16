@@ -156,7 +156,7 @@ end
   g = cartgrid(10, 10)
   v = vertices(g)
   e = collect(elements(topology(g)))
-  vview = [v[1:22]; v[121-22+1:121]]
+  vview = [v[1:22]; v[(121 - 22 + 1):121]]
   eview = [e[1:10]; e[91:100]]
   m = SimpleMesh(vview, eview)
   p = partition(m, ConnectedPartition())
