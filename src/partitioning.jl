@@ -98,6 +98,7 @@ end
 include("partitioning/uniform.jl")
 include("partitioning/fraction.jl")
 include("partitioning/block.jl")
+include("partitioning/connected.jl")
 include("partitioning/bisectpoint.jl")
 include("partitioning/bisectfraction.jl")
 include("partitioning/ball.jl")
