@@ -103,4 +103,15 @@ _pconvexhull(points) = hull(points, GrahamScan())
 
 _gconcavehull(geoms) = _pconcavehull(p for g in geoms for p in boundarypoints(g))
 
-_pconcavehull(points) = hull(points, AdaptiveJarvisMarch()) # default k = 3 for concave hulls
+function _pconcavehull(points)
+  pointsꜝ = unique(points)
+  n = length(pointsꜝ) - 1
+  for k in 3:n
+    chul = hull(pointsꜝ, JarvisMarch(k))
+    # validate we found a hull that contains all points, if so return it, otherwise increase k and try again
+    isnothing(chul) && continue
+    all(pointsꜝ .∈ Ref(chul)) && return chul
+  end
+  # otherwise, fallback to convex hull
+  hull(pointsꜝ, JarvisMarch())
+end

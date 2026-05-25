@@ -1,8 +1,5 @@
 @testitem "Hulls" setup = [Setup] begin
-  # can AdaptiveJarvisMarch(Integer) be constructed with an integer k and work
-  @test hull(cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]), AdaptiveJarvisMarch(3)) isa PolyArea
-
-  for method in [GrahamScan(), JarvisMarch(), AdaptiveJarvisMarch()]
+  for method in [GrahamScan(), JarvisMarch()]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     chul = hull(pts, method)
@@ -39,9 +36,7 @@
     verts = vertices(chul)
     @test all(p1 .∈ Ref(chul))
     @test all(p2 .∈ Ref(chul))
-    if !(method isa JarvisMarch || method isa AdaptiveJarvisMarch) # convex hull should be unaffected by interior points
-      @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
-    end
+    @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
 
     # collinear test for regressions
     # points along the same hull edges force angle ties during the march
@@ -80,20 +75,12 @@
         (0, 6)
       ])
     chul = hull(pts, method)
-    if method isa AdaptiveJarvisMarch
-      @test Set(vertices(chul)) == Set(pts)
-    else
-      @test nvertices(chul) < length(pts)
-    end
+    @test nvertices(chul) < length(pts)
 
     poly = readpoly(T, joinpath(datadir, "hull.line"))
     pts = vertices(poly)
     chul = hull(pts, method)
-    if method isa AdaptiveJarvisMarch
-      @test Set(vertices(chul)) == Set(pts)
-    else
-      @test nvertices(chul) < length(pts)
-    end
+    @test nvertices(chul) < length(pts)
 
     if method == GrahamScan()
       # simplifying rectangular hull / triangular
@@ -169,6 +156,52 @@
       @test area(chull) ≈ T(0.0015160200648848573)u"m^2"
     end
   end
+
+  @testitem "Jarvis k-nearest hulls" setup = [Setup] begin
+    method = JarvisMarch(3)
+
+    # k-nearest hull on a simple concave point set.
+    @test hull(cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)]), method) isa PolyArea
+
+    pts =
+      cart.([
+        (0, 5),
+        (1, 5),
+        (1, 4),
+        (2, 4),
+        (2, 3),
+        (3, 3),
+        (4, 3),
+        (5, 3),
+        (5, 4),
+        (6, 4),
+        (6, 5),
+        (7, 5),
+        (7, 6),
+        (7, 7),
+        (6, 7),
+        (6, 8),
+        (5, 8),
+        (5, 9),
+        (4, 9),
+        (3, 9),
+        (2, 9),
+        (2, 8),
+        (1, 8),
+        (1, 7),
+        (0, 7),
+        (0, 6)
+      ])
+    chul = hull(pts, method)
+    @test !isnothing(chul)
+    @test Set(vertices(chul)) == Set(pts)
+
+    poly = readpoly(T, joinpath(datadir, "hull.line"))
+    linepts = vertices(poly)
+    chul = hull(linepts, method)
+    @test !isnothing(chul)
+    @test Set(vertices(chul)) == Set(linepts)
+  end
 end
 
 @testitem "Convex hulls" setup = [Setup] begin
@@ -235,4 +268,41 @@ end
 
   grid = cartgrid(2, 2)
   @test concavehull(grid) == convexhull(grid)
+
+  pts =
+    cart.([
+      (0, 5),
+      (1, 5),
+      (1, 4),
+      (2, 4),
+      (2, 3),
+      (3, 3),
+      (4, 3),
+      (5, 3),
+      (5, 4),
+      (6, 4),
+      (6, 5),
+      (7, 5),
+      (7, 6),
+      (7, 7),
+      (6, 7),
+      (6, 8),
+      (5, 8),
+      (5, 9),
+      (4, 9),
+      (3, 9),
+      (2, 9),
+      (2, 8),
+      (1, 8),
+      (1, 7),
+      (0, 7),
+      (0, 6)
+    ])
+  chul = concavehull(pts)
+  @test Set(vertices(chul)) == Set(pts)
+
+  poly = readpoly(T, joinpath(datadir, "hull.line"))
+  pts = vertices(poly)
+  chul = concavehull(pts)
+  @test Set(vertices(chul)) == Set(pts)
 end
