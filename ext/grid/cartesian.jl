@@ -72,9 +72,8 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
       map(elements(topology($grid))) do elem
         i1, i2, i3, i4, i5, i6, i7, i8 = indices(elem)
         [
-          # follow the same ordering of vertices
-          # specified in the `boundary` method for
-          # Hexahedron in Meshes.jl source code
+          # follow the same order of vertices specified
+          # in the `boundary` method for Hexahedron
           GB.QuadFace(i4, i3, i2, i1),
           GB.QuadFace(i6, i5, i1, i2),
           GB.QuadFace(i3, i7, i6, i2),
