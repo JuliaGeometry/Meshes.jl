@@ -73,7 +73,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
         i1, i2, i3, i4, i5, i6, i7, i8 = indices(elem)
         [
           # follow the same order of vertices specified
-          # in the `boundary` method for Hexahedron
+          # in the `boundary` method for `Hexahedron`
           GB.QuadFace(i4, i3, i2, i1),
           GB.QuadFace(i6, i5, i1, i2),
           GB.QuadFace(i3, i7, i6, i2),
