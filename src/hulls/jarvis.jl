@@ -11,13 +11,14 @@ Jarvis's march algorithm. See [https://en.wikipedia.org/wiki/Gift_wrapping_algor
 (https://en.wikipedia.org/wiki/Gift_wrapping_algorithm).
 
 If `k` is provided, the algorithm will attempt to compute a concave hull using k
-nearest neighbors.
+nearest neighbors. However, the algorithm is not guaranteed to succeed for any particular `k`.
 
 The algorithm has complexity `O(n*h)` where `n` is the number of points
 and `h` is the number of points in the hull.
 
 see `concavehull` for a version that iteratively increases `k` until all
 points are in the hull, which is useful when an effective `k` is not known prior.
+This gurantees correctness.
 
 ## References
 
