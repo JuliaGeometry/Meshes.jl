@@ -34,9 +34,9 @@
     pts = [p1; p2]
     chul = hull(pts, method)
     isnothing(chul) || (verts = vertices(chul))
-    @test method == JarvisMarch(5) || @test all(p1 .∈ Ref(chul))
-    @test method == JarvisMarch(5) || @test all(p2 .∈ Ref(chul))
-    @test method == JarvisMarch(5) || @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    @test method == JarvisMarch(5) || all(p1 .∈ Ref(chul))
+    @test method == JarvisMarch(5) || all(p2 .∈ Ref(chul))
+    @test method == JarvisMarch(5) || verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
 
     # collinear test for regressions
     # points along the same hull edges force angle ties during the march
