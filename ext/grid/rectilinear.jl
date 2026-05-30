@@ -3,35 +3,40 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
-  grid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
   showsegments = plot[:showsegments]
 
-  if crs(grid[]) <: Cartesian
+  if crs(plot[:object][]) <: Cartesian
     # process color spec into colorant
-    colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+    Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
     # number of vertices and colors
-    nv = Makie.@lift nvertices($grid)
-    nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+    Makie.map!(nvertices, plot, [:object], :nv)
+    Makie.map!(plot, [:colorant], :nc) do colorant
+      colorant isa AbstractVector ? length(colorant) : 1
+    end
 
     # grid coordinates
-    xyz = Makie.@lift map(x -> ustrip.(x), Meshes.xyz($grid))
-    xs = Makie.@lift $xyz[1]
-    ys = Makie.@lift $xyz[2]
+    Makie.map!(plot, [:object], :xyz) do grid
+      map(x -> ustrip.(x), Meshes.xyz(grid))
+    end
+    Makie.map!(plot, [:xyz], :xs) do xyz
+      xyz[1]
+    end
+    Makie.map!(plot, [:xyz], :ys) do xyz
+      xyz[2]
+    end
 
-    if nc[] == nv[]
+    if plot[:nc][] == plot[:nv][]
       # visualize as a simple mesh so that
       # colors can be specified at vertices
       vizmesh!(plot)
     else
       # visualize as built-in heatmap
-      sz = Makie.@lift size($grid)
-      C = Makie.@lift $nc == 1 ? fill($colorant, $sz) : reshape($colorant, $sz)
-      Makie.heatmap!(plot, xs, ys, C)
+      Makie.map!(size, plot, [:object], :sz)
+      Makie.map!(plot, [:nc, :colorant, :sz], :C) do nc, colorant, sz
+        nc == 1 ? fill(colorant, sz) : reshape(colorant, sz)
+      end
+      Makie.heatmap!(plot, plot[:xs], plot[:ys], plot[:C])
     end
 
     if showsegments[]
@@ -43,16 +48,19 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  grid = plot[:object]
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  xy = Makie.@lift let
-    x, y = Meshes.xyz($grid)
+  Makie.map!(plot, [:object], :xy) do grid
+    x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
   end
-  x = Makie.@lift $xy[1]
-  y = Makie.@lift $xy[2]
+  Makie.map!(plot, [:xy], :x) do xy
+    xy[1]
+  end
+  Makie.map!(plot, [:xy], :y) do xy
+    xy[2]
+  end
 
-  Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot[:x], plot[:y], color=segmentcolor, linewidth=segmentsize)
 end
