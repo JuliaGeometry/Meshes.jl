@@ -5,11 +5,11 @@
 Makie.plot!(plot::Viz{<:Tuple{SubDomain}}) = vizsubdom!(plot)
 
 function vizsubdom!(plot)
-  subdom = plot[:object]
-  M = Makie.@lift manifold($subdom)
-  pdim = Makie.@lift paramdim($subdom)
-  edim = Makie.@lift embeddim($subdom)
-  vizsubdom!(plot, M[], Val(pdim[]), Val(edim[]))
+  subdom = plot[:object][]
+  M = manifold(subdom)
+  pdim = paramdim(subdom)
+  edim = embeddim(subdom)
+  vizsubdom!(plot, M, Val(pdim), Val(edim))
 end
 
 # ---------------
@@ -21,7 +21,6 @@ function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
 end
 
 function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
-  subdom = plot[:object]
   color = plot[:color]
   alpha = plot[:alpha]
   colormap = plot[:colormap]
@@ -35,12 +34,14 @@ function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
   pointsize = plot[:pointsize]
 
   # construct the geometry set
-  gset = Makie.@lift GeometrySet(collect($subdom))
+  Makie.map!(plot, [:object], :gset) do subdom
+    GeometrySet(collect(subdom))
+  end
 
   # forward attributes
   viz!(
     plot,
-    gset;
+    plot[:gset];
     color,
     alpha,
     colormap,
@@ -58,23 +59,18 @@ end
 const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
 
 function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, ::Val)
-  subgrid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
   # retrieve grid paramaters
-  gparams = Makie.@lift let
-    grid = parent($subgrid)
+  Makie.map!(plot, [:object], :gparams) do subgrid
+    grid = parent(subgrid)
     dim = embeddim(grid)
     sp = ustrip.(spacing(grid))
 
     # coordinates of markers
-    coords = map($subgrid) do e
+    coords = map(subgrid) do e
       ustrip.(to(centroid(e))) .+ sp ./ 2
     end
 
@@ -88,10 +84,10 @@ function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val,
   end
 
   # unpack observable parameters
-  coords = Makie.@lift $gparams[1]
-  marker = Makie.@lift $gparams[2]
-  shading = Makie.@lift $gparams[3]
+  Makie.map!(plot, [:gparams], :coords) do gparams; gparams[1] end
+  Makie.map!(plot, [:gparams], :marker) do gparams; gparams[2] end
+  Makie.map!(plot, [:gparams], :shading) do gparams; gparams[3] end
 
   # all geometries are equal, use mesh scatter
-  Makie.meshscatter!(plot, coords, marker=marker, markersize=1, color=colorant, shading=shading)
+  Makie.meshscatter!(plot, plot[:coords], marker=plot[:marker], markersize=1, color=plot[:colorant], shading=plot[:shading])
 end

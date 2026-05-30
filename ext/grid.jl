@@ -5,11 +5,11 @@
 Makie.plot!(plot::Viz{<:Tuple{Grid}}) = vizgrid!(plot)
 
 function vizgrid!(plot)
-  grid = plot[:object]
-  M = Makie.@lift manifold($grid)
-  pdim = Makie.@lift paramdim($grid)
-  edim = Makie.@lift embeddim($grid)
-  vizgrid!(plot, M[], Val(pdim[]), Val(edim[]))
+  grid = plot[:object][]
+  M = manifold(grid)
+  pdim = paramdim(grid)
+  edim = embeddim(grid)
+  vizgrid!(plot, M, Val(pdim), Val(edim))
 end
 
 # ---------------
@@ -19,52 +19,62 @@ end
 vizgrid!(plot, M::Type, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
 function vizgridfallback!(plot, M, pdim, edim)
-  grid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
   showsegments = plot[:showsegments]
 
   # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
   # number of vertices, elements and colors
-  nverts = Makie.@lift nvertices($grid)
-  nelems = Makie.@lift nelements($grid)
-  ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+  Makie.map!(nvertices, plot, [:object], :nverts)
+  Makie.map!(nelements, plot, [:object], :nelems)
+  Makie.map!(plot, [:colorant], :ncolor) do colorant
+    colorant isa AbstractVector ? length(colorant) : 1
+  end
 
   # visualize quadrangle mesh with texture using uv coords
   # plots with uv coords are always interpolated,
   # so it is only used in the case ncolor == nverts
   # or when there is a large number of elements
-  if pdim === Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
+  if pdim === Val(2) && (plot[:ncolor][] == 1 || plot[:ncolor][] == plot[:nverts][] || plot[:nelems][] ≥ 1000)
     # decide whether or not to reverse connectivity list
-    rfunc = Makie.@lift crs($grid) <: LatLon && orientation(first($grid)) == CW ? reverse : identity
-
-    verts = Makie.@lift map(asmakie, eachvertex($grid))
-    quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
-
-    dims = Makie.@lift size($grid)
-    vdims = Makie.@lift Meshes.vsize($grid)
-    texture = if ncolor[] == 1
-      Makie.@lift fill($colorant, $dims)
-    elseif ncolor[] == nelems[]
-      Makie.@lift reshape($colorant, $dims)
-    elseif ncolor[] == nverts[]
-      Makie.@lift reshape($colorant, $vdims)
-    else
-      throw(ArgumentError("invalid number of colors"))
+    Makie.map!(plot, [:object], :rfunc) do grid
+      crs(grid) <: LatLon && orientation(first(grid)) == CW ? reverse : identity
     end
 
-    uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $vdims[2]) for u in range(0, 1, $vdims[1])]
+    Makie.map!(plot, [:object], :verts) do grid
+      map(asmakie, eachvertex(grid))
+    end
+    Makie.map!(plot, [:object, :rfunc], :quads) do grid, rfunc
+      [GB.QuadFace(rfunc(indices(e))) for e in elements(topology(grid))]
+    end
 
-    mesh = Makie.@lift GB.Mesh($verts, $quads, uv=$uv)
+    Makie.map!(size, plot, [:object], :dims)
+    Makie.map!(Meshes.vsize, plot, [:object], :vdims)
+
+    Makie.map!(plot, [:colorant, :ncolor, :nelems, :nverts, :dims, :vdims], :texture) do colorant, ncolor, nelems, nverts, dims, vdims
+      if ncolor == 1
+        fill(colorant, dims)
+      elseif ncolor == nelems
+        reshape(colorant, dims)
+      elseif ncolor == nverts
+        reshape(colorant, vdims)
+      else
+        throw(ArgumentError("invalid number of colors"))
+      end
+    end
+
+    Makie.map!(plot, [:vdims], :uv) do vdims
+      [Makie.Vec2f(v, 1 - u) for v in range(0, 1, vdims[2]) for u in range(0, 1, vdims[1])]
+    end
+
+    Makie.map!(plot, [:verts, :quads, :uv], :mesh) do verts, quads, uv
+      GB.Mesh(verts, quads, uv=uv)
+    end
 
     # enable shading in 3D
     shading = edim === Val(3)
 
-    Makie.mesh!(plot, mesh, color=texture, shading=shading)
+    Makie.mesh!(plot, plot[:mesh], color=plot[:texture], shading=shading)
 
     if showsegments[]
       vizfacets!(plot)
@@ -79,11 +89,11 @@ end
 # -------
 
 function vizfacets!(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object]
-  M = Makie.@lift manifold($grid)
-  pdim = Makie.@lift paramdim($grid)
-  edim = Makie.@lift embeddim($grid)
-  vizgridfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+  grid = plot[:object][]
+  M = manifold(grid)
+  pdim = paramdim(grid)
+  edim = embeddim(grid)
+  vizgridfacets!(plot, M, Val(pdim), Val(edim))
 end
 
 vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pdim, edim)
