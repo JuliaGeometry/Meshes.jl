@@ -153,7 +153,14 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
     Makie.map!(plot, [tipwidth_sym], shaftwidth_sym) do tw
       0.2 * tw
     end
-    Makie.arrows2d!(plot, plot[orig_sym], plot[dirs_sym], color=plot[colors], tipwidth=plot[tipwidth_sym], shaftwidth=plot[shaftwidth_sym])
+    Makie.arrows2d!(
+      plot,
+      plot[orig_sym],
+      plot[dirs_sym],
+      color=plot[colors],
+      tipwidth=plot[tipwidth_sym],
+      shaftwidth=plot[shaftwidth_sym]
+    )
   elseif edim === Val(3)
     tipradius_sym = Symbol(geoms, :_tipradius)
     shaftradius_sym = Symbol(geoms, :_shaftradius)
@@ -163,7 +170,14 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
     Makie.map!(plot, [tipradius_sym], shaftradius_sym) do tr
       0.5 * tr
     end
-    Makie.arrows3d!(plot, plot[orig_sym], plot[dirs_sym], color=plot[colors], tipradius=plot[tipradius_sym], shaftradius=plot[shaftradius_sym])
+    Makie.arrows3d!(
+      plot,
+      plot[orig_sym],
+      plot[dirs_sym],
+      color=plot[colors],
+      tipradius=plot[tipradius_sym],
+      shaftradius=plot[shaftradius_sym]
+    )
   else
     error("not implemented")
   end

@@ -51,7 +51,11 @@ function vizgridfallback!(plot, M, pdim, edim)
     Makie.map!(size, plot, [:object], :dims)
     Makie.map!(Meshes.vsize, plot, [:object], :vdims)
 
-    Makie.map!(plot, [:colorant, :ncolor, :nelems, :nverts, :dims, :vdims], :texture) do colorant, ncolor, nelems, nverts, dims, vdims
+    Makie.map!(
+      plot,
+      [:colorant, :ncolor, :nelems, :nverts, :dims, :vdims],
+      :texture
+    ) do colorant, ncolor, nelems, nverts, dims, vdims
       if ncolor == 1
         fill(colorant, dims)
       elseif ncolor == nelems
