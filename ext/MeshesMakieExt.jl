@@ -41,6 +41,7 @@ end
 Makie.args_preferred_axis(g::Geometry) = axis(embeddim(g))
 Makie.args_preferred_axis(d::Domain) = axis(embeddim(d))
 Makie.args_preferred_axis(::Vec{Dim}) where {Dim} = axis(Dim)
+Makie.args_preferred_axis(g::AbstractVector{<:Geometry}) = Makie.args_preferred_axis(first(g))
 Makie.args_preferred_axis(v::AbstractVector{<:Vec}) = Makie.args_preferred_axis(first(v))
 
 axis(dim) = dim === 3 ? Makie.Axis3 : Makie.Axis
@@ -49,6 +50,7 @@ axis(dim) = dim === 3 ? Makie.Axis3 : Makie.Axis
 Makie.preferred_axis_attributes(_, g::Geometry) = axisattributes(g)
 Makie.preferred_axis_attributes(_, d::Domain) = axisattributes(d)
 Makie.preferred_axis_attributes(_, ::Vec{Dim,ℒ}) where {Dim,ℒ} = axisattributes(Dim, ℒ)
+Makie.preferred_axis_attributes(A, g::AbstractVector{<:Geometry}) = Makie.preferred_axis_attributes(A, first(g))
 Makie.preferred_axis_attributes(A, v::AbstractVector{<:Vec}) = Makie.preferred_axis_attributes(A, first(v))
 
 function axisattributes(g)
