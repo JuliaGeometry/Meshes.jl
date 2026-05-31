@@ -22,11 +22,10 @@ box = Box((0.25, 0.25), (0.75, 0.75))
 clamped = clamp(points, box)
 
 fig = Mke.Figure(size=(800, 400))
-ax = Mke.Axis(fig[1,1], title="unclamped", aspect=1, limits=(0,1,0,1))
-viz!(ax, box)
-viz!(ax, points, color=:black, pointsize=6)
-ax = Mke.Axis(fig[1,2], title="clamped", aspect=1, limits=(0,1,0,1))
-viz!(ax, box)
-viz!(ax, clamped, color=:black, pointsize=6)
+viz(fig[1, 1], box, axis=(; title="unclamped"))
+viz!(fig[1, 1], points, color=:black, pointsize=6)
+viz(fig[1, 2], box, axis=(; title="clamped"))
+viz!(fig[1, 2], clamped, color=:black, pointsize=6)
+Mke.linkaxes!(fig.content...)
 fig
 ```

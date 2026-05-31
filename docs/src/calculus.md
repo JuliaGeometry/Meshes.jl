@@ -77,3 +77,40 @@ localintegral
 # local integral in terms of parametric coordinates in [0, 1]²
 localintegral((u, v) -> u^2 + 3v, q)
 ```
+
+All these methods are implemented for curved geometries
+(e.g., spherical geometry):
+
+```@example calculus
+using CoordRefSystems
+
+# curved quadrangle over the globe
+q = Quadrangle(Point(LatLon(0, 0)), Point(LatLon(0, 90)), Point(LatLon(80, 90)), Point(LatLon(80, 0)))
+
+# Jacobian components as rays over the quadrangle
+uv = Iterators.product(0:0.1:1, 0:0.1:1)
+rs = [Ray.(q(u, v), 0.05 .* jacobian(q, (u, v))) for (u, v) in uv]
+
+# split rays into u and v components
+rᵤ = first.(rs) |> vec
+rᵥ = last.(rs) |> vec
+
+viz(q, color="teal")
+viz!(rᵤ, color="gray80")
+viz!(rᵥ, color="gray80")
+
+# Bezier curve over the globe
+c = BezierCurve(Point(LatLon(0, 0)), Point(LatLon(40, 90)), Point(LatLon(80, 0)))
+
+# Jacobian components as rays over the curve
+ts = 0:0.1:1
+rs = [Ray.(c(t), 0.05 .* jacobian(c, (t,))) for t in ts]
+
+# extract t component
+rₜ = first.(rs) |> vec
+
+viz!(c, color="yellow", segmentsize=4)
+viz!(rₜ, color="magenta")
+
+Mke.current_figure()
+```
