@@ -38,9 +38,43 @@ Makie.@recipe(Viz, object) do scene
 end
 
 # choose between 2D and 3D axis
-Makie.args_preferred_axis(g::Geometry) = embeddim(g) === 3 ? Makie.LScene : Makie.Axis
-Makie.args_preferred_axis(d::Domain) = embeddim(d) === 3 ? Makie.LScene : Makie.Axis
-Makie.args_preferred_axis(::AbstractVector{<:Vec{Dim}}) where {Dim} = Dim === 3 ? Makie.LScene : Makie.Axis
+Makie.args_preferred_axis(g::Geometry) = axis(embeddim(g))
+Makie.args_preferred_axis(d::Domain) = axis(embeddim(d))
+Makie.args_preferred_axis(::Vec{Dim}) where {Dim} = axis(Dim)
+Makie.args_preferred_axis(v::AbstractVector{<:Vec}) = Makie.args_preferred_axis(first(v))
+
+axis(dim) = dim === 3 ? Makie.Axis3 : Makie.Axis
+
+# choose default axis attributes
+Makie.preferred_axis_attributes(_, g::Geometry) = axisattributes(g)
+Makie.preferred_axis_attributes(_, d::Domain) = axisattributes(d)
+Makie.preferred_axis_attributes(_, ::Vec{Dim,ℒ}) where {Dim,ℒ} = axisattributes(Dim, ℒ)
+Makie.preferred_axis_attributes(A, v::AbstractVector{<:Vec}) = Makie.preferred_axis_attributes(A, first(v))
+
+function axisattributes(g)
+  aspect = fixaspect(embeddim(g))
+  labels = xyzlabels(crs(g))
+  merge(aspect, labels)
+end
+
+function axisattributes(Dim, ℒ)
+  aspect = fixaspect(Dim)
+  labels = xyzlabels(Cartesian{NoDatum,Dim,ℒ})
+  merge(aspect, labels)
+end
+
+fixaspect(dim) = dim === 3 ? (aspect=:data, viewmode=:free, perspectiveness=0.5) : (aspect=Makie.DataAspect(),)
+
+function xyzlabels(CRS)
+  u = CoordRefSystems.lentype(CRS) |> unit
+  if CoordRefSystems.ndims(CRS) === 3
+    (xlabel="X [$u]", ylabel="Y [$u]", zlabel="Z [$u]")
+  elseif CRS <: CoordRefSystems.Projected
+    (xlabel="Easting [$u]", ylabel="Northing [$u]")
+  else
+    (xlabel="X [$u]", ylabel="Y [$u]")
+  end
+end
 
 # color handling
 include("colors.jl")
