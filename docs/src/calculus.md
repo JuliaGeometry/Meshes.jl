@@ -3,6 +3,8 @@
 ```@example calculus
 using Meshes # hide
 using Unitful # hide
+using CoordRefSystems # hide
+import CairoMakie as Mke # hide
 ```
 
 Calculus with geometries is possible thanks to careful
@@ -82,8 +84,6 @@ All these methods are implemented for curved geometries
 (e.g., spherical geometry):
 
 ```@example calculus
-using CoordRefSystems
-
 # curved quadrangle over the globe
 q = Quadrangle(Point(LatLon(0, 0)), Point(LatLon(0, 90)), Point(LatLon(80, 90)), Point(LatLon(80, 0)))
 
