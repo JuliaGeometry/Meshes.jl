@@ -17,8 +17,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
 
     # grid coordinates
     Makie.map!(plot, [:object], [:xs, :ys]) do grid
-      xs, ys, _ = map(x -> ustrip.(x), Meshes.xyz(grid))
-      [xs, ys]
+      map(x -> ustrip.(x), Meshes.xyz(grid))
     end
 
     if plot[:nc][] == plot[:nv][]
@@ -47,7 +46,7 @@ function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::V
   segmentsize = plot[:segmentsize]
 
   Makie.map!(plot, [:object], [:facets_x, :facets_y]) do grid
-    x, y, _ = Meshes.xyz(grid)
+    x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
   end
 

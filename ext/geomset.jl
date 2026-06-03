@@ -201,7 +201,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
     inter = [line ∩ Line((0, 0), (0, 1)) for line in gvec]
     vinds = findall(g -> isnothing(g) || g isa Line, inter)
     dinds = setdiff(1:length(gvec), vinds)
-    inter, vinds, dinds
+    (inter, vinds, dinds)
   end
 
   # split colors accordingly

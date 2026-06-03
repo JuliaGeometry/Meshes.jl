@@ -20,7 +20,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     x, y = Meshes.xyz(grid)
     xₛ, xₑ = extrema(ustrip.(x))
     yₛ, yₑ = extrema(ustrip.(y))
-    [(xₛ, xₑ), (yₛ, yₑ)]
+    ((xₛ, xₑ), (yₛ, yₑ))
   end
 
   if plot[:nc][] == plot[:nv][]

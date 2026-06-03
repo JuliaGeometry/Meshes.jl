@@ -146,7 +146,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
 
   # unpack observable of parameters
   Makie.map!(plot, [:tparams], [:tverts, :telems, :tcolors, :tshading]) do tparams
-    tparams[1], tparams[2], tparams[3], tparams[4]
+    (tparams[1], tparams[2], tparams[3], tparams[4])
   end
 
   # Makie's triangle mesh

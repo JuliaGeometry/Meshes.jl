@@ -85,7 +85,7 @@ function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val,
 
   # unpack observable parameters
   Makie.map!(plot, [:gparams], [:coords, :marker, :shading]) do gparams
-    gparams[1], gparams[2], gparams[3]
+    (gparams[1], gparams[2], gparams[3])
   end
 
   # all geometries are equal, use mesh scatter

@@ -21,8 +21,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
         size(grid) .+ 1
       end
       Makie.map!(plot, [:object], [:X, :Y]) do grid
-        x, y, _ = map(X -> ustrip.(X), Meshes.XYZ(grid))
-        [x, y]
+        map(X -> ustrip.(X), Meshes.XYZ(grid))
       end
 
       # visualize as built-in surface
@@ -48,7 +47,7 @@ function vizgridfacets!(plot::Viz{<:Tuple{StructuredGrid}}, ::Type{<:𝔼}, ::Va
 
   Makie.map!(structuredsegments, plot, [:object], :facets_tup)
   Makie.map!(plot, [:facets_tup], [:facets_x, :facets_y]) do tup
-    [tup[1], tup[2]]
+    (tup[1], tup[2])
   end
   Makie.lines!(plot, plot[:facets_x], plot[:facets_y], color=segmentcolor, linewidth=segmentsize)
 end
