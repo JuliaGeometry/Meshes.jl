@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  showsegments = plot[:showsegments]
+  showsegments = plot.showsegments
 
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
@@ -23,18 +23,18 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     ((xₛ, xₑ), (yₛ, yₑ))
   end
 
-  if plot[:nc][] == plot[:nv][]
+  if plot.nc[] == plot.nv[]
     # visualize as built-in image with interpolation
     Makie.map!(plot, [:colorant, :sz], :C) do colorant, sz
       reshape(colorant, sz .+ 1)
     end
-    Makie.image!(plot, plot[:x], plot[:y], plot[:C], interpolate=true)
+    Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=true)
   else
     # visualize as built-in image without interpolation
     Makie.map!(plot, [:nc, :colorant, :sz], :C) do nc, colorant, sz
       nc == 1 ? fill(colorant, sz) : reshape(colorant, sz)
     end
-    Makie.image!(plot, plot[:x], plot[:y], plot[:C], interpolate=false)
+    Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=false)
   end
 
   if showsegments[]
@@ -44,7 +44,7 @@ end
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
   # retrieve parameters
-  showsegments = plot[:showsegments]
+  showsegments = plot.showsegments
 
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
@@ -63,7 +63,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     map(x -> ustrip.(x), Meshes.xyz(grid))
   end
 
-  if plot[:nc][] == plot[:nv][]
+  if plot.nc[] == plot.nv[]
     # visualize as a quadrangle mesh so that
     # colors can be specified at vertices
     Makie.map!(plot, [:object], :verts) do grid
@@ -88,7 +88,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
       )
     end
     Makie.map!(GB.Mesh, plot, [:verts, :quads], :mesh)
-    Makie.mesh!(plot, plot[:mesh], color=plot[:colorant], shading=true)
+    Makie.mesh!(plot, plot.mesh, color=plot.colorant, shading=true)
   else
     # visualize as built-in meshscatter
     Makie.map!(plot, [:xyz], :coords) do xyz
@@ -100,7 +100,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.map!(plot, [:sp], :rect) do sp
       Makie.Rect3(-1 .* sp, sp)
     end
-    Makie.meshscatter!(plot, plot[:coords], marker=plot[:rect], markersize=1, color=plot[:colorant])
+    Makie.meshscatter!(plot, plot.coords, marker=plot.rect, markersize=1, color=plot.colorant)
   end
 
   if showsegments[]
@@ -109,25 +109,25 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
+  segmentcolor = plot.segmentcolor
+  segmentsize = plot.segmentsize
 
   Makie.map!(plot, [:object], [:facets_x, :facets_y]) do grid
     x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
   end
 
-  Makie.lines!(plot, plot[:facets_x], plot[:facets_y], color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.facets_x, plot.facets_y, color=segmentcolor, linewidth=segmentsize)
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
+  segmentcolor = plot.segmentcolor
+  segmentsize = plot.segmentsize
 
   Makie.map!(plot, [:object], [:facets_x, :facets_y, :facets_z]) do grid
     x, y, z = Meshes.xyz(grid)
     xyzsegments(ustrip.(x), ustrip.(y), ustrip.(z))
   end
 
-  Makie.lines!(plot, plot[:facets_x], plot[:facets_y], plot[:facets_z], color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.facets_x, plot.facets_y, plot.facets_z, color=segmentcolor, linewidth=segmentsize)
 end

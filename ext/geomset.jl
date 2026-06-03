@@ -7,7 +7,7 @@ Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot)
 # split heterogeneous geometry sets into homogeneous vectors
 # of geometries and send these vectors to specialized recipes
 function vizgset!(plot; facets=false)
-  gset = plot[:object][]
+  gset = plot.object[]
 
   # process color spec into colorant
   if !facets
@@ -55,8 +55,8 @@ end
 
 # fallback to visualization of discretized geometries
 function vizgset!(plot, M::Type, pdim::Val, ::Val, G::Type{<:Geometry}, geoms::Symbol, colors::Symbol)
-  showsegments = plot[:showsegments]
-  showpoints = plot[:showpoints]
+  showsegments = plot.showsegments
+  showpoints = plot.showpoints
 
   # refine meshes over the 🌐 manifold until
   # they satisfy the maximum length criterion
@@ -115,8 +115,8 @@ function vizgset!(plot, M::Type, pdim::Val, edim::Val, G::Type{<:Multi}, geoms::
 end
 
 function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, geoms::Symbol, colors::Symbol)
-  pointmarker = plot[:pointmarker]
-  pointsize = plot[:pointsize]
+  pointmarker = plot.pointmarker
+  pointsize = plot.pointsize
 
   coords_sym = Symbol(geoms, :_coords)
 
@@ -130,8 +130,7 @@ function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, geoms::Symbol, c
 end
 
 function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol, colors::Symbol)
-  segmentsize = plot[:segmentsize]
-  showpoints = plot[:showpoints]
+  showpoints = plot.showpoints
 
   orig_sym = Symbol(geoms, :_orig)
   dirs_sym = Symbol(geoms, :_dirs)
@@ -188,7 +187,7 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms::Symbol, colors::Symbol)
-  segmentsize = plot[:segmentsize]
+  segmentsize = plot.segmentsize
 
   inter_sym = Symbol(geoms, :_inter)
   vinds_sym = Symbol(geoms, :_vinds)
@@ -248,9 +247,9 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, G::Type{<:Polygon}, geoms::Symbol, colors::Symbol)
-  showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
+  showsegments = plot.showsegments
+  segmentcolor = plot.segmentcolor
+  segmentsize = plot.segmentsize
 
   polys_sym = Symbol(geoms, :_polys)
 
@@ -281,9 +280,9 @@ function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, G::Type, geoms::Symbol)
 end
 
 function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, G::Type, geoms::Symbol)
-  pointmarker = plot[:pointmarker]
-  pointcolor = plot[:pointcolor]
-  pointsize = plot[:pointsize]
+  pointmarker = plot.pointmarker
+  pointcolor = plot.pointcolor
+  pointsize = plot.pointsize
 
   pset_sym = Symbol(geoms, :_pset)
 
@@ -297,8 +296,8 @@ function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, G::Type, geoms::Symbol)
 end
 
 function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, G::Type, geoms::Symbol)
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
+  segmentcolor = plot.segmentcolor
+  segmentsize = plot.segmentsize
 
   bset_sym = Symbol(geoms, :_bset)
 

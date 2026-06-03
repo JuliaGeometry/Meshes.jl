@@ -5,7 +5,7 @@
 Makie.plot!(plot::Viz{<:Tuple{SubDomain}}) = vizsubdom!(plot)
 
 function vizsubdom!(plot)
-  subdom = plot[:object][]
+  subdom = plot.object[]
   M = manifold(subdom)
   pdim = paramdim(subdom)
   edim = embeddim(subdom)
@@ -21,18 +21,6 @@ function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
 end
 
 function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-  showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
-  showpoints = plot[:showpoints]
-  pointmarker = plot[:pointmarker]
-  pointcolor = plot[:pointcolor]
-  pointsize = plot[:pointsize]
-
   # construct the geometry set
   Makie.map!(plot, [:object], :gset) do subdom
     GeometrySet(collect(subdom))
@@ -41,18 +29,18 @@ function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
   # forward attributes
   viz!(
     plot,
-    plot[:gset];
-    color,
-    alpha,
-    colormap,
-    colorrange,
-    showsegments,
-    segmentcolor,
-    segmentsize,
-    showpoints,
-    pointmarker,
-    pointcolor,
-    pointsize
+    plot.gset;
+    plot.color,
+    plot.alpha,
+    plot.colormap,
+    plot.colorrange,
+    plot.showsegments,
+    plot.segmentcolor,
+    plot.segmentsize,
+    plot.showpoints,
+    plot.pointmarker,
+    plot.pointcolor,
+    plot.pointsize
   )
 end
 
@@ -91,10 +79,10 @@ function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val,
   # all geometries are equal, use mesh scatter
   Makie.meshscatter!(
     plot,
-    plot[:coords],
-    marker=plot[:marker],
+    plot.coords,
+    marker=plot.marker,
     markersize=1,
-    color=plot[:colorant],
-    shading=plot[:shading]
+    color=plot.colorant,
+    shading=plot.shading
   )
 end

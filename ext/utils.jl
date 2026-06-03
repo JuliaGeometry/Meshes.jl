@@ -5,8 +5,8 @@
 # assumes that meshes and colors have the same length
 # and that colors are processed with alpha and colormap
 function vizmany!(plot, meshes, colors)
-  pointsize = plot[:pointsize]
-  segmentsize = plot[:segmentsize]
+  pointsize = plot.pointsize
+  segmentsize = plot.segmentsize
 
   rmesh = Makie.map(meshes) do ms
     reduce(merge, ms)

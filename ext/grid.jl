@@ -5,7 +5,7 @@
 Makie.plot!(plot::Viz{<:Tuple{Grid}}) = vizgrid!(plot)
 
 function vizgrid!(plot)
-  grid = plot[:object][]
+  grid = plot.object[]
   M = manifold(grid)
   pdim = paramdim(grid)
   edim = embeddim(grid)
@@ -19,7 +19,7 @@ end
 vizgrid!(plot, M::Type, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
 function vizgridfallback!(plot, M, pdim, edim)
-  showsegments = plot[:showsegments]
+  showsegments = plot.showsegments
 
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
@@ -35,7 +35,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   # plots with uv coords are always interpolated,
   # so it is only used in the case ncolor == nverts
   # or when there is a large number of elements
-  if pdim === Val(2) && (plot[:ncolor][] == 1 || plot[:ncolor][] == plot[:nverts][] || plot[:nelems][] ≥ 1000)
+  if pdim === Val(2) && (plot.ncolor[] == 1 || plot.ncolor[] == plot.nverts[] || plot.nelems[] ≥ 1000)
     # decide whether or not to reverse connectivity list
     Makie.map!(plot, [:object], :rfunc) do grid
       crs(grid) <: LatLon && orientation(first(grid)) == CW ? reverse : identity
@@ -78,7 +78,7 @@ function vizgridfallback!(plot, M, pdim, edim)
     # enable shading in 3D
     shading = edim === Val(3)
 
-    Makie.mesh!(plot, plot[:mesh], color=plot[:texture], shading=shading)
+    Makie.mesh!(plot, plot.mesh, color=plot.texture, shading=shading)
 
     if showsegments[]
       vizfacets!(plot)
@@ -93,7 +93,7 @@ end
 # -------
 
 function vizfacets!(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object][]
+  grid = plot.object[]
   M = manifold(grid)
   pdim = paramdim(grid)
   edim = embeddim(grid)

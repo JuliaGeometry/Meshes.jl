@@ -5,7 +5,7 @@
 Makie.plot!(plot::Viz{<:Tuple{Mesh}}) = vizmesh!(plot)
 
 function vizmesh!(plot)
-  mesh = plot[:object][]
+  mesh = plot.object[]
 
   # retrieve manifold and dimensions
   M = manifold(mesh)
@@ -23,7 +23,7 @@ end
 # ---------------
 
 function vizmesh!(plot, ::Type, ::Val{1}, ::Val)
-  segmentsize = plot[:segmentsize]
+  segmentsize = plot.segmentsize
 
   Makie.map!(plot, [:colorant, :object], :colors) do colorant, mesh
     colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
@@ -64,11 +64,11 @@ function vizmesh!(plot, ::Type, ::Val{1}, ::Val)
   end
 
   # visualize segments
-  Makie.lines!(plot, plot[:lcoords], color=plot[:lcolors], linewidth=segmentsize)
+  Makie.lines!(plot, plot.lcoords, color=plot.lcolors, linewidth=segmentsize)
 end
 
 function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
-  showsegments = plot[:showsegments]
+  showsegments = plot.showsegments
 
   # retrieve triangle mesh parameters
   Makie.map!(plot, [:object, :colorant], :tparams) do mesh, colorant
@@ -153,7 +153,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
   Makie.map!(GB.Mesh, plot, [:tverts, :telems], :mkemesh)
 
   # main visualization
-  Makie.mesh!(plot, plot[:mkemesh], color=plot[:tcolors], shading=plot[:tshading])
+  Makie.mesh!(plot, plot.mkemesh, color=plot.tcolors, shading=plot.tshading)
 
   if showsegments[]
     vizfacets!(plot)
@@ -167,7 +167,7 @@ function vizmesh!(plot, ::Type, ::Val{3}, ::Val)
   Makie.map!(plot, [:colorant, :object], :colors) do colorant, mesh
     colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
   end
-  vizmany!(plot, plot[:meshes], plot[:colors])
+  vizmany!(plot, plot.meshes, plot.colors)
 end
 
 # -------
@@ -175,7 +175,7 @@ end
 # -------
 
 function vizfacets!(plot::Viz{<:Tuple{Mesh}})
-  mesh = plot[:object][]
+  mesh = plot.object[]
   M = manifold(mesh)
   pdim = paramdim(mesh)
   edim = embeddim(mesh)
@@ -183,8 +183,8 @@ function vizfacets!(plot::Viz{<:Tuple{Mesh}})
 end
 
 function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
+  segmentcolor = plot.segmentcolor
+  segmentsize = plot.segmentsize
 
   # retrieve raw coordinates
   Makie.map!(plot, [:object], :coords) do mesh
@@ -229,5 +229,5 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
     xyz[inds]
   end
 
-  Makie.lines!(plot, plot[:coords], color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.coords, color=segmentcolor, linewidth=segmentsize)
 end

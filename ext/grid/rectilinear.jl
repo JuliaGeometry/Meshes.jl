@@ -3,9 +3,9 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
-  showsegments = plot[:showsegments]
+  showsegments = plot.showsegments
 
-  if crs(plot[:object][]) <: Cartesian
+  if crs(plot.object[]) <: Cartesian
     # process color spec into colorant
     Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
@@ -19,8 +19,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     Makie.map!(plot, [:object], [:xs, :ys]) do grid
       map(x -> ustrip.(x), Meshes.xyz(grid))
     end
-
-    if plot[:nc][] == plot[:nv][]
+    if plot.nc[] == plot.nv[]
       # visualize as a simple mesh so that
       # colors can be specified at vertices
       vizmesh!(plot)
@@ -30,7 +29,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
       Makie.map!(plot, [:nc, :colorant, :sz], :C) do nc, colorant, sz
         nc == 1 ? fill(colorant, sz) : reshape(colorant, sz)
       end
-      Makie.heatmap!(plot, plot[:xs], plot[:ys], plot[:C])
+      Makie.heatmap!(plot, plot.xs, plot.ys, plot.C)
     end
 
     if showsegments[]
@@ -42,13 +41,13 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
+  segmentcolor = plot.segmentcolor
+  segmentsize = plot.segmentsize
 
   Makie.map!(plot, [:object], [:facets_x, :facets_y]) do grid
     x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
   end
 
-  Makie.lines!(plot, plot[:facets_x], plot[:facets_y], color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.facets_x, plot.facets_y, color=segmentcolor, linewidth=segmentsize)
 end
