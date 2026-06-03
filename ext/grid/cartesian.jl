@@ -16,17 +16,11 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
 
   # size and extrema coordinates
   Makie.map!(size, plot, [:object], :sz)
-  Makie.map!(plot, [:object], :xy) do grid
+  Makie.map!(plot, [:object], [:x, :y]) do grid
     x, y = Meshes.xyz(grid)
     xₛ, xₑ = extrema(ustrip.(x))
     yₛ, yₑ = extrema(ustrip.(y))
-    (xₛ, xₑ), (yₛ, yₑ)
-  end
-  Makie.map!(plot, [:xy], :x) do xy
-    xy[1]
-  end
-  Makie.map!(plot, [:xy], :y) do xy
-    xy[2]
+    [(xₛ, xₑ), (yₛ, yₑ)]
   end
 
   if plot[:nc][] == plot[:nv][]
@@ -97,20 +91,14 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.mesh!(plot, plot[:mesh], color=plot[:colorant], shading=true)
   else
     # visualize as built-in meshscatter
-    Makie.map!(plot, [:xyz], :xs) do xyz
-      xyz[1][(begin + 1):end]
-    end
-    Makie.map!(plot, [:xyz], :ys) do xyz
-      xyz[2][(begin + 1):end]
-    end
-    Makie.map!(plot, [:xyz], :zs) do xyz
-      xyz[3][(begin + 1):end]
+    Makie.map!(plot, [:xyz], :coords) do xyz
+      xs = xyz[1][(begin + 1):end]
+      ys = xyz[2][(begin + 1):end]
+      zs = xyz[3][(begin + 1):end]
+      [(x, y, z) for z in zs for y in ys for x in xs]
     end
     Makie.map!(plot, [:sp], :rect) do sp
       Makie.Rect3(-1 .* sp, sp)
-    end
-    Makie.map!(plot, [:xs, :ys, :zs], :coords) do xs, ys, zs
-      [(x, y, z) for z in zs for y in ys for x in xs]
     end
     Makie.meshscatter!(plot, plot[:coords], marker=plot[:rect], markersize=1, color=plot[:colorant])
   end
@@ -124,15 +112,9 @@ function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  Makie.map!(plot, [:object], :facets_xy) do grid
+  Makie.map!(plot, [:object], [:facets_x, :facets_y]) do grid
     x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
-  end
-  Makie.map!(plot, [:facets_xy], :facets_x) do xy
-    xy[1]
-  end
-  Makie.map!(plot, [:facets_xy], :facets_y) do xy
-    xy[2]
   end
 
   Makie.lines!(plot, plot[:facets_x], plot[:facets_y], color=segmentcolor, linewidth=segmentsize)
@@ -142,18 +124,9 @@ function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  Makie.map!(plot, [:object], :facets_xyz) do grid
+  Makie.map!(plot, [:object], [:facets_x, :facets_y, :facets_z]) do grid
     x, y, z = Meshes.xyz(grid)
     xyzsegments(ustrip.(x), ustrip.(y), ustrip.(z))
-  end
-  Makie.map!(plot, [:facets_xyz], :facets_x) do xyz
-    xyz[1]
-  end
-  Makie.map!(plot, [:facets_xyz], :facets_y) do xyz
-    xyz[2]
-  end
-  Makie.map!(plot, [:facets_xyz], :facets_z) do xyz
-    xyz[3]
   end
 
   Makie.lines!(plot, plot[:facets_x], plot[:facets_y], plot[:facets_z], color=segmentcolor, linewidth=segmentsize)

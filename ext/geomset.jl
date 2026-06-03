@@ -197,14 +197,11 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
   dcolor_sym = Symbol(colors, :_dcolor)
 
   # split vertical and non-vertical lines
-  Makie.map!(plot, [geoms], inter_sym) do gvec
-    [line ∩ Line((0, 0), (0, 1)) for line in gvec]
-  end
-  Makie.map!(plot, [inter_sym], vinds_sym) do inter
-    findall(g -> isnothing(g) || g isa Line, inter)
-  end
-  Makie.map!(plot, [geoms, vinds_sym], dinds_sym) do gvec, vinds
-    setdiff(1:length(gvec), vinds)
+  Makie.map!(plot, [geoms], [inter_sym, vinds_sym, dinds_sym]) do gvec
+    inter = [line ∩ Line((0, 0), (0, 1)) for line in gvec]
+    vinds = findall(g -> isnothing(g) || g isa Line, inter)
+    dinds = setdiff(1:length(gvec), vinds)
+    inter, vinds, dinds
   end
 
   # split colors accordingly

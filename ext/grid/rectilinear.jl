@@ -16,14 +16,9 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     end
 
     # grid coordinates
-    Makie.map!(plot, [:object], :xyz) do grid
-      map(x -> ustrip.(x), Meshes.xyz(grid))
-    end
-    Makie.map!(plot, [:xyz], :xs) do xyz
-      xyz[1]
-    end
-    Makie.map!(plot, [:xyz], :ys) do xyz
-      xyz[2]
+    Makie.map!(plot, [:object], [:xs, :ys]) do grid
+      xs, ys, _ = map(x -> ustrip.(x), Meshes.xyz(grid))
+      [xs, ys]
     end
 
     if plot[:nc][] == plot[:nv][]
@@ -51,15 +46,9 @@ function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::V
   segmentcolor = plot[:segmentcolor]
   segmentsize = plot[:segmentsize]
 
-  Makie.map!(plot, [:object], :facets_xy) do grid
-    x, y = Meshes.xyz(grid)
+  Makie.map!(plot, [:object], [:facets_x, :facets_y]) do grid
+    x, y, _ = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
-  end
-  Makie.map!(plot, [:facets_xy], :facets_x) do xy
-    xy[1]
-  end
-  Makie.map!(plot, [:facets_xy], :facets_y) do xy
-    xy[2]
   end
 
   Makie.lines!(plot, plot[:facets_x], plot[:facets_y], color=segmentcolor, linewidth=segmentsize)
