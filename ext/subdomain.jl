@@ -77,12 +77,5 @@ function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val,
   end
 
   # all geometries are equal, use mesh scatter
-  Makie.meshscatter!(
-    plot,
-    plot.coords,
-    marker=plot.marker,
-    markersize=1,
-    color=plot.colorant,
-    shading=plot.shading
-  )
+  Makie.meshscatter!(plot, plot.coords, marker=plot.marker, markersize=1, color=plot.colorant, shading=plot.shading)
 end
