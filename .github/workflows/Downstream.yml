@@ -43,15 +43,13 @@ jobs:
       - uses: julia-actions/cache@v3
       - uses: julia-actions/julia-buildpkg@v1
       - name: Retrieve downstream package
-        # Note: we retrieve the current `main` branch of the downstream package (MeshesVizTests.jl) to ensure
+        # Note: we retrieve the current `main` branch of the downstream package to ensure
         # that compatibility errors we make in Meshes.jl are detected already here
         # See also https://github.com/trixi-framework/Trixi.jl/pull/1707#discussion_r1382938895
         uses: actions/checkout@v6
         with:
           repository: JuliaGeometry/${{ matrix.package }}
           path: downstream
-        # Note: this script loads the upstream (to-be-tested) version of Meshes.jl
-        # See also https://github.com/JuliaGeometry/Meshes.jl/pull/1366#issuecomment-4605948374
       - name: Load upstream package into downstream environment
         shell: julia --color=yes --project=downstream {0}
         run: |
