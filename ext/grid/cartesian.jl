@@ -70,7 +70,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.mesh!(plot, plot.mesh, color=plot.colorant, shading=true)
   else
     # visualize as built-in meshscatter
-    Makie.map!(plot, :object, [:xyz, :rect]) do grid
+    Makie.map!(plot, :object, [:xyz, :rec]) do grid
       sp = ustrip.(spacing(grid))
       xs, ys, zs = map(Meshes.xyz(grid)) do c
         ustrip.(c[(begin + 1):end])
