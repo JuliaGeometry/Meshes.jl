@@ -21,8 +21,8 @@ function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
 end
 
 function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
-  # construct the geometry set
-  Makie.map!(plot, [:object], :gset) do subdom
+  # construct geometry set
+  Makie.map!(plot, :object, :gset) do subdom
     GeometrySet(collect(subdom))
   end
 
@@ -46,36 +46,29 @@ end
 
 const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
 
-function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, ::Val)
-
+function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, edim::Val)
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
   # retrieve grid paramaters
-  Makie.map!(plot, [:object], :gparams) do subgrid
+  Makie.map!(plot, :object, [:scoords, :smarker]) do subgrid
     grid = parent(subgrid)
-    dim = embeddim(grid)
     sp = ustrip.(spacing(grid))
 
     # coordinates of markers
-    coords = map(subgrid) do e
+    scoords = map(subgrid) do e
       ustrip.(to(centroid(e))) .+ sp ./ 2
     end
 
     # rectangle markers
-    marker = Makie.Rect{dim}(-1 .* sp, sp)
+    smarker = Makie.Rect{length(sp)}(-1 .* sp, sp)
 
-    # enable shading in 3D
-    shading = dim == 3
-
-    coords, marker, shading
+    scoords, smarker
   end
 
-  # unpack observable parameters
-  Makie.map!(plot, [:gparams], [:coords, :marker, :shading]) do gparams
-    (gparams[1], gparams[2], gparams[3])
-  end
+  # enable shading in 3D
+  shading = edim == Val(3)
 
   # all geometries are equal, use mesh scatter
-  Makie.meshscatter!(plot, plot.coords, marker=plot.marker, markersize=1, color=plot.colorant, shading=plot.shading)
+  Makie.meshscatter!(plot, plot.scoords, marker=plot.smarker, markersize=1, color=plot.colorant, shading=shading)
 end
