@@ -3,34 +3,27 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
-  showsegments = plot.showsegments
-
   if crs(plot.object[]) <: Cartesian
     # process color spec into colorant
     Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
     # number of vertices and colors
-    Makie.map!(nvertices, plot, [:object], :nv)
-    Makie.map!(plot, [:colorant], :nc) do colorant
-      colorant isa AbstractVector ? length(colorant) : 1
+    Makie.map!(plot, [:object, :colorant], [:nv, :nc]) do grid, colorant
+      nv = nvertices(grid)
+      nc = colorant isa AbstractVector ? length(colorant) : 1
+      nv, nc
     end
 
     if plot.nc[] == plot.nv[]
-      # size and coordinates
-      Makie.map!(plot, [:object], :sz) do grid
-        size(grid) .+ 1
-      end
-      Makie.map!(plot, [:object], [:X, :Y]) do grid
-        map(X -> ustrip.(X), Meshes.XYZ(grid))
-      end
-
       # visualize as built-in surface
-      Makie.map!(plot, [:colorant, :sz], :C) do colorant, sz
-        reshape(colorant, sz)
+      Makie.map!(plot, [:object, :colorant], [:X, :Y, :C]) do grid, colorant
+        X, Y = map(c -> ustrip.(c), Meshes.XYZ(grid))
+        C = reshape(colorant, Meshes.vsize(grid))
+        X, Y, C
       end
       Makie.surface!(plot, plot.X, plot.Y, color=plot.C)
 
-      if showsegments[]
+      if plot.showsegments[]
         vizfacets!(plot)
       end
     else
@@ -42,11 +35,8 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{StructuredGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  segmentcolor = plot.segmentcolor
-  segmentsize = plot.segmentsize
-
   Makie.map!(structuredsegments, plot, [:object], [:xfacets, :yfacets])
-  Makie.lines!(plot, plot.xfacets, plot.yfacets, color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.xfacets, plot.yfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
 
 function structuredsegments(grid)
