@@ -21,7 +21,7 @@ end
 # ---------------
 
 function vizmesh!(plot, ::Type, ::Val{1}, ::Val)
-  # compute line segment coordinates and colors
+  # retrieve segment coordinates and colors
   Makie.map!(plot, [:object, :colorant], [:lcoords, :lcolors]) do mesh, colorant
     # retrieve colors of segments
     colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
@@ -51,11 +51,10 @@ function vizmesh!(plot, ::Type, ::Val{1}, ::Val)
   Makie.lines!(plot, plot.lcoords, color=plot.lcolors, linewidth=plot.segmentsize)
 end
 
-function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
-  # retrieve triangle mesh parameters
-  Makie.map!(plot, [:object, :colorant], :tparams) do mesh, colorant
+function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
+  # compute triangle mesh and colors
+  Makie.map!(plot, [:object, :colorant], [:tmesh, :tcolors]) do mesh, colorant
     # relevant settings
-    edim = embeddim(mesh)
     nvert = nvertices(mesh)
     nelem = nelements(mesh)
     verts = map(asmakie, eachvertex(mesh))
@@ -110,8 +109,8 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
         telems = tris
         tcolors = colorant
       else
-        throw(ArgumentError("Provided $ncolor colors but the mesh has
-                            $nvert vertices and $nelem elements."))
+        throw(ArgumentError("provided $ncolor colors but the mesh has
+                             $nvert vertices and $nelem elements."))
       end
     else # single color
       # nothing needs to be done
@@ -120,22 +119,17 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
       tcolors = colorant
     end
 
-    # enable shading in 3D
-    tshading = edim == 3
+    # triangle mesh
+    tmesh = GB.Mesh(tverts, telems)
 
-    tverts, telems, tcolors, tshading
+    tmesh, tcolors
   end
 
-  # unpack observable of parameters
-  Makie.map!(plot, [:tparams], [:tverts, :telems, :tcolors, :tshading]) do tparams
-    (tparams[1], tparams[2], tparams[3], tparams[4])
-  end
+  # enable shading in 3D
+  shading = edim == Val(3)
 
-  # Makie's triangle mesh
-  Makie.map!(GB.Mesh, plot, [:tverts, :telems], :mkemesh)
-
-  # main visualization
-  Makie.mesh!(plot, plot.mkemesh, color=plot.tcolors, shading=plot.tshading)
+  # visualize as triangle mesh
+  Makie.mesh!(plot, plot.tmesh, color=plot.tcolors, shading=shading)
 
   if plot.showsegments[]
     vizfacets!(plot)
@@ -143,11 +137,10 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
 end
 
 function vizmesh!(plot, ::Type, ::Val{3}, ::Val)
-  Makie.map!(plot, [:object], :meshes) do mesh
-    map(discretize ∘ boundary, mesh)
-  end
-  Makie.map!(plot, [:colorant, :object], :colors) do colorant, mesh
-    colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
+  Makie.map!(plot, [:object, :colorant], [:meshes, :colors]) do mesh, colorant
+    meshes = map(discretize ∘ boundary, mesh)
+    colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
+    meshes, colors
   end
   vizmany!(plot, plot.meshes, plot.colors)
 end
@@ -165,11 +158,8 @@ function vizfacets!(plot::Viz{<:Tuple{Mesh}})
 end
 
 function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
-  segmentcolor = plot.segmentcolor
-  segmentsize = plot.segmentsize
-
   # retrieve raw coordinates
-  Makie.map!(plot, [:object], :coords) do mesh
+  Makie.map!(plot, :object, :coords) do mesh
     # relevant settings
     ℒ = Meshes.lentype(mesh)
     T = Unitful.numtype(ℒ)
@@ -211,5 +201,6 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
     xyz[inds]
   end
 
-  Makie.lines!(plot, plot.coords, color=segmentcolor, linewidth=segmentsize)
+  # visualize as built-in lines
+  Makie.lines!(plot, plot.coords, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
