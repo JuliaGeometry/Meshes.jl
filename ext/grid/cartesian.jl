@@ -3,8 +3,6 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  showsegments = plot.showsegments
-
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
@@ -37,15 +35,12 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=false)
   end
 
-  if showsegments[]
+  if plot.showsegments[]
     vizfacets!(plot)
   end
 end
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
-  # retrieve parameters
-  showsegments = plot.showsegments
-
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
@@ -96,31 +91,23 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.meshscatter!(plot, plot.coords, marker=plot.rect, markersize=1, color=plot.colorant)
   end
 
-  if showsegments[]
+  if plot.showsegments[]
     vizfacets!(plot)
   end
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  segmentcolor = plot.segmentcolor
-  segmentsize = plot.segmentsize
-
   Makie.map!(plot, [:object], [:xfacets, :yfacets]) do grid
     x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
   end
-
-  Makie.lines!(plot, plot.xfacets, plot.yfacets, color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.xfacets, plot.yfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
-  segmentcolor = plot.segmentcolor
-  segmentsize = plot.segmentsize
-
   Makie.map!(plot, [:object], [:xfacets, :yfacets, :zfacets]) do grid
     x, y, z = Meshes.xyz(grid)
     xyzsegments(ustrip.(x), ustrip.(y), ustrip.(z))
   end
-
-  Makie.lines!(plot, plot.xfacets, plot.yfacets, plot.zfacets, color=segmentcolor, linewidth=segmentsize)
+  Makie.lines!(plot, plot.xfacets, plot.yfacets, plot.zfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
