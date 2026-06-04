@@ -6,34 +6,29 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
-  # number of vertices and colors
-  Makie.map!(nvertices, plot, [:object], :nv)
-  Makie.map!(plot, [:colorant], :nc) do colorant
-    colorant isa AbstractVector ? length(colorant) : 1
-  end
+  # compute coordinates and color matrix
+  Makie.map!(plot, [:object, :colorant], [:x, :y, :C, :interpolate]) do grid, colorant
+    sz = size(grid)
+    nv = nvertices(grid)
+    nc = colorant isa AbstractVector ? length(colorant) : 1
 
-  # size and extrema coordinates
-  Makie.map!(size, plot, [:object], :sz)
-  Makie.map!(plot, [:object], [:x, :y]) do grid
-    x, y = Meshes.xyz(grid)
-    xₛ, xₑ = extrema(ustrip.(x))
-    yₛ, yₑ = extrema(ustrip.(y))
-    ((xₛ, xₑ), (yₛ, yₑ))
-  end
+    xs, ys = Meshes.xyz(grid)
+    x = extrema(ustrip.(xs))
+    y = extrema(ustrip.(ys))
 
-  if plot.nc[] == plot.nv[]
-    # visualize as built-in image with interpolation
-    Makie.map!(plot, [:colorant, :sz], :C) do colorant, sz
+    C = if nc == 1
+      fill(colorant, sz)
+    elseif nc == nv
       reshape(colorant, sz .+ 1)
+    else
+      reshape(colorant, sz)
     end
-    Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=true)
-  else
-    # visualize as built-in image without interpolation
-    Makie.map!(plot, [:colorant, :sz, :nc], :C) do colorant, sz, nc
-      nc == 1 ? fill(colorant, sz) : reshape(colorant, sz)
-    end
-    Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=false)
+
+    x, y, C, (nc == nv)
   end
+
+  # visualize as built-in image with or without interpolation
+  Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=plot.interpolate)
 
   if plot.showsegments[]
     vizfacets!(plot)
