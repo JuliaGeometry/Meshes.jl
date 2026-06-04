@@ -12,9 +12,9 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     nv = nvertices(grid)
     nc = colorant isa AbstractVector ? length(colorant) : 1
 
-    xs, ys = Meshes.xyz(grid)
-    x = extrema(ustrip.(xs))
-    y = extrema(ustrip.(ys))
+    x, y = map(Meshes.xyz(grid)) do c
+      extrema(ustrip.(c))
+    end
 
     C = if nc == 1
       fill(colorant, sz)
@@ -89,16 +89,16 @@ end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
   Makie.map!(plot, :object, [:xfacets, :yfacets]) do grid
-    x, y = Meshes.xyz(grid)
-    xysegments(ustrip.(x), ustrip.(y))
+    x, y = map(c -> ustrip.(c), Meshes.xyz(grid))
+    xysegments(x, y)
   end
   Makie.lines!(plot, plot.xfacets, plot.yfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
   Makie.map!(plot, :object, [:xfacets, :yfacets, :zfacets]) do grid
-    x, y, z = Meshes.xyz(grid)
-    xyzsegments(ustrip.(x), ustrip.(y), ustrip.(z))
+    x, y, z = map(c -> ustrip.(c), Meshes.xyz(grid))
+    xyzsegments(x, y, z)
   end
   Makie.lines!(plot, plot.xfacets, plot.yfacets, plot.zfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
