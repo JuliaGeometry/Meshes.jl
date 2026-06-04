@@ -40,19 +40,18 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
   # number of vertices and colors
-  Makie.map!(nvertices, plot, [:object], :nv)
-  Makie.map!(plot, [:colorant], :nc) do colorant
-    colorant isa AbstractVector ? length(colorant) : 1
+  Makie.map!(plot, [:object, :colorant], [:nv, :nc]) do grid, colorant
+    nv = nvertices(grid)
+    nc = colorant isa AbstractVector ? length(colorant) : 1
+    nv, nc
   end
 
   if plot.nc[] == plot.nv[]
     # visualize as a quadrangle mesh so that
     # colors can be specified at vertices
-    Makie.map!(plot, [:object], :verts) do grid
-      map(asmakie, eachvertex(grid))
-    end
-    Makie.map!(plot, [:object], :quads) do grid
-      reduce(
+    Makie.map!(plot, :object, :mesh) do grid
+      verts = map(asmakie, eachvertex(grid))
+      quads = reduce(
         vcat,
         map(elements(topology(grid))) do elem
           i1, i2, i3, i4, i5, i6, i7, i8 = indices(elem)
@@ -68,8 +67,8 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
           ]
         end
       )
+      GB.Mesh(verts, quads)
     end
-    Makie.map!(GB.Mesh, plot, [:verts, :quads], :mesh)
     Makie.mesh!(plot, plot.mesh, color=plot.colorant, shading=true)
   else
     # visualize as built-in meshscatter
