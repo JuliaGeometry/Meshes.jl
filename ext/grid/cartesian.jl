@@ -6,7 +6,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
-  # compute coordinates and color matrix
+  # visualize as built-in image with or without interpolation
   Makie.map!(plot, [:object, :colorant], [:x, :y, :C, :interpolate]) do grid, colorant
     sz = size(grid)
     nv = nvertices(grid)
@@ -26,8 +26,6 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
 
     x, y, C, (nc == nv)
   end
-
-  # visualize as built-in image with or without interpolation
   Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=plot.interpolate)
 
   if plot.showsegments[]
