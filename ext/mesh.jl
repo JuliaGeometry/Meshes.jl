@@ -6,8 +6,6 @@ Makie.plot!(plot::Viz{<:Tuple{Mesh}}) = vizmesh!(plot)
 
 function vizmesh!(plot)
   mesh = plot.object[]
-
-  # retrieve manifold and dimensions
   M = manifold(mesh)
   pdim = paramdim(mesh)
   edim = embeddim(mesh)
@@ -23,53 +21,37 @@ end
 # ---------------
 
 function vizmesh!(plot, ::Type, ::Val{1}, ::Val)
-  segmentsize = plot.segmentsize
+  # compute line segment coordinates and colors
+  Makie.map!(plot, [:object, :colorant], [:lcoords, :lcolors]) do mesh, colorant
+    # retrieve colors of segments
+    colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
 
-  Makie.map!(plot, [:colorant, :object], :colors) do colorant, mesh
-    colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
+    # retrieve coordinates of vertices
+    xyzs = map(p -> ustrip.(to(p)), vertices(mesh))
+
+    # retrieve connectivities of segments
+    inds = map(collect ∘ indices, elements(topology(mesh)))
+
+    # sentinel coordinates
+    xyz = first(xyzs)
+    nan = typeof(xyz)(ntuple(i -> NaN, length(xyz)))
+
+    # extract coordinates and colors of segments
+    scoords = [xyzs[indsₑ] for indsₑ in inds]
+    scolors = [fill(colors[e], length(indsₑ)) for (e, indsₑ) in enumerate(inds)]
+
+    # splice sentinel coordinates to get discrete colors
+    lcoords = reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], scoords)
+    lcolors = reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], scolors)
+
+    lcoords, lcolors
   end
 
-  # retrieve coordinates of vertices
-  Makie.map!(plot, [:object], :xyzs) do mesh
-    map(p -> ustrip.(to(p)), vertices(mesh))
-  end
-
-  # retrieve connectivities of segments
-  Makie.map!(plot, [:object], :inds) do mesh
-    map(collect ∘ indices, elements(topology(mesh)))
-  end
-
-  # extract coordinates and colors of segments
-  Makie.map!(plot, [:xyzs, :inds], :scoords) do xyzs, inds
-    [xyzs[indsₑ] for indsₑ in inds]
-  end
-
-  Makie.map!(plot, [:colors, :inds], :scolors) do colors, inds
-    [fill(colors[e], length(indsₑ)) for (e, indsₑ) in enumerate(inds)]
-  end
-
-  # sentinel coordinates
-  Makie.map!(plot, [:xyzs], :nan) do xyzs
-    v = first(xyzs)
-    typeof(v)(ntuple(i -> NaN, length(v)))
-  end
-
-  # splice sentinel coordinates to get discrete colors
-  Makie.map!(plot, [:scoords, :nan], :lcoords) do scoords, nan
-    reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], scoords)
-  end
-
-  Makie.map!(plot, [:scolors], :lcolors) do scolors
-    reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], scolors)
-  end
-
-  # visualize segments
-  Makie.lines!(plot, plot.lcoords, color=plot.lcolors, linewidth=segmentsize)
+  # visualize as built-in lines
+  Makie.lines!(plot, plot.lcoords, color=plot.lcolors, linewidth=plot.segmentsize)
 end
 
 function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
-  showsegments = plot.showsegments
-
   # retrieve triangle mesh parameters
   Makie.map!(plot, [:object, :colorant], :tparams) do mesh, colorant
     # relevant settings
@@ -80,14 +62,14 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
     elems = elements(topology(mesh))
 
     # decide whether or not to reverse connectivity list
-    rfunc = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? reverse : identity
+    rev = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? reverse : identity
 
     # fan triangulation (assume convexity)
     ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     tind = 0
     for elem in elems
-      I = rfunc(indices(elem))
+      I = rev(indices(elem))
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
@@ -155,7 +137,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val)
   # main visualization
   Makie.mesh!(plot, plot.mkemesh, color=plot.tcolors, shading=plot.tshading)
 
-  if showsegments[]
+  if plot.showsegments[]
     vizfacets!(plot)
   end
 end
