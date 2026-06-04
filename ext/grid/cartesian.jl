@@ -31,7 +31,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=true)
   else
     # visualize as built-in image without interpolation
-    Makie.map!(plot, [:nc, :colorant, :sz], :C) do nc, colorant, sz
+    Makie.map!(plot, [:colorant, :sz, :nc], :C) do colorant, sz, nc
       nc == 1 ? fill(colorant, sz) : reshape(colorant, sz)
     end
     Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=false)
