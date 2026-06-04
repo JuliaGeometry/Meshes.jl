@@ -97,6 +97,16 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
+function indices(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐})
+  range = cartesianrange(grid, box)
+  LinearIndices(size(grid))[range] |> vec
+end
+
+function indices(grid::RectilinearGrid{🌐,<:LatLon}, box::Box{🌐})
+  range = cartesianrange(grid, box)
+  LinearIndices(size(grid))[range] |> vec
+end
+
 # ----------------
 # CARTESIAN RANGE
 # ----------------
@@ -108,9 +118,14 @@ Return the Cartesian range of the elements of the `grid` that intersect with the
 """
 cartesianrange(grid::Grid{M}, box::Box{M}) where {M} = _manifoldrange(M, grid, box)
 
+cartesianrange(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐}) = _geodesicrange(grid, box)
+
+cartesianrange(grid::RectilinearGrid{🌐,<:LatLon}, box::Box{🌐}) = _geodesicrange(grid, box)
+
 _manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box)
 
-_manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
+_manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) =
+  throw(ArgumentError("cartesianrange for geodesic boxes requires a regular or rectilinear grid in LatLon coordinates"))
 
 function _euclideanrange(grid::OrthoRegularGrid, box::Box)
   # grid properties
@@ -150,65 +165,77 @@ function _euclideanrange(grid::OrthoRectilinearGrid, box::Box)
   CartesianIndex(ijkₛ):CartesianIndex(ijkₑ .- 1)
 end
 
-function _geodesicrange(grid::Grid, box::Box)
-  nlon, nlat = vsize(grid)
-
+function _geodesicrange(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐})
+  lat, lon = xyz(grid)
   boxmin = convert(LatLon, coords(minimum(box)))
   boxmax = convert(LatLon, coords(maximum(box)))
+  latrange = _regularaxisrange(lat, boxmin.lat, boxmax.lat)
+  lonrange = _regularlonrange(lon, boxmin.lon, boxmax.lon)
+  CartesianIndices((latrange, lonrange))
+end
 
-  a = convert(LatLon, coords(vertex(grid, (1, 1))))
-  b = convert(LatLon, coords(vertex(grid, (nlon, 1))))
-  c = convert(LatLon, coords(vertex(grid, (1, nlat))))
-
-  swaplon = a.lon > b.lon
-  swaplat = a.lat > c.lat
-
-  loninds = swaplon ? (nlon:-1:1) : (1:1:nlon)
-  latinds = swaplat ? (nlat:-1:1) : (1:1:nlat)
-
-  gridlonₛ, gridlonₑ = swaplon ? (b.lon, a.lon) : (a.lon, b.lon)
-  gridlatₛ, gridlatₑ = swaplat ? (c.lat, a.lat) : (a.lat, c.lat)
-
-  lonmin = max(boxmin.lon, gridlonₛ)
-  latmin = max(boxmin.lat, gridlatₛ)
-  lonmax = min(boxmax.lon, gridlonₑ)
-  latmax = min(boxmax.lat, gridlatₑ)
-
-  iₛ = findlast(loninds) do i
-    p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
-    c.lon ≤ lonmin
-  end
-  iₑ = findfirst(loninds) do i
-    p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
-    c.lon ≥ lonmax
-  end
-
-  jₛ = findlast(latinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
-    c.lat ≤ latmin
-  end
-  jₑ = findfirst(latinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
-    c.lat ≥ latmax
-  end
-
-  if iₛ == iₑ || jₛ == jₑ
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
-
-  iₛ, iₑ = swaplon ? (iₑ, iₛ) : (iₛ, iₑ)
-  jₛ, jₑ = swaplat ? (jₑ, jₛ) : (jₛ, jₑ)
-
-  CartesianIndex(loninds[iₛ], latinds[jₛ]):CartesianIndex(loninds[iₑ] - 1, latinds[jₑ] - 1)
+function _geodesicrange(grid::RectilinearGrid{🌐,<:LatLon}, box::Box{🌐})
+  lat, lon = xyz(grid)
+  boxmin = convert(LatLon, coords(minimum(box)))
+  boxmax = convert(LatLon, coords(maximum(box)))
+  latrange = _rectilinearaxisrange(lat, boxmin.lat, boxmax.lat)
+  lonrange = _rectilinearlonrange(lon, boxmin.lon, boxmax.lon)
+  CartesianIndices((latrange, lonrange))
 end
 
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
+
+function _regularaxisrange(vals, lo, hi)
+  gridlo, gridhi = first(vals), last(vals)
+  lo′, hi′ = max(lo, gridlo), min(hi, gridhi)
+  lo′ > hi′ && return 1:0
+
+  orig = first(vals)
+  spac = step(vals)
+  sz = length(vals) - 1
+  iₛ = max(ceil(Int, (lo′ - orig) / spac), 1)
+  iₑ = min(floor(Int, (hi′ - orig) / spac) + 1, sz)
+  iₛ:iₑ
+end
+
+function _rectilinearaxisrange(vals, lo, hi)
+  gridlo, gridhi = first(vals), last(vals)
+  lo′, hi′ = max(lo, gridlo), min(hi, gridhi)
+  lo′ > hi′ && return 1:0
+
+  iₛ = findlast(x -> x ≤ lo′, vals)
+  iₑ = findfirst(x -> x ≥ hi′, vals)
+  if isnothing(iₛ) || isnothing(iₑ) || iₛ > iₑ - 1
+    1:0
+  else
+    iₛ:(iₑ - 1)
+  end
+end
+
+_regularlonrange(vals, lo, hi) = _lonrange(vals, lo, hi, _regularaxisrange)
+
+_rectilinearlonrange(vals, lo, hi) = _lonrange(vals, lo, hi, _rectilinearaxisrange)
+
+function _lonrange(vals, lo, hi, axisrange)
+  Δ = 360u"°"
+  lo, hi = hi < lo ? (lo - Δ, hi) : (lo, hi)
+
+  ranges = UnitRange{Int}[]
+  for k in -2:2
+    range = axisrange(vals, lo + k * Δ, hi + k * Δ)
+    isempty(range) || push!(ranges, range)
+  end
+
+  isempty(ranges) && return 1:0
+  firsts = first.(ranges)
+  lasts = last.(ranges)
+  if maximum(firsts) - minimum(lasts) > 1
+    throw(ArgumentError("cartesianrange cannot represent a geodesic box with disjoint longitude ranges"))
+  end
+  minimum(firsts):maximum(lasts)
+end
 
 function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)

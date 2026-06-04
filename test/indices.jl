@@ -102,6 +102,33 @@
     ]
   )
 
+  # geodesic grids
+  g = RegularGrid(latlon(0, 0), latlon(10, 10), dims=(10, 10))
+  b = Box(latlon(2, 2), latlon(4, 4))
+  @test Meshes.cartesianrange(g, b) == CartesianIndices((2:5, 2:5))
+  linds = LinearIndices(size(g))
+  @test indices(g, b) == linds[2:5, 2:5] |> vec
+
+  b = Box(latlon(8.1, 8.1), latlon(10, 10))
+  @test Meshes.cartesianrange(g, b) == CartesianIndices((9:10, 9:10))
+  @test indices(g, b) == linds[9:10, 9:10] |> vec
+
+  g = RegularGrid(latlon(-10, 170), latlon(10, -170), dims=(10, 10))
+  linds = LinearIndices(size(g))
+  b = Box(latlon(-5, 175), latlon(5, -175))
+  @test Meshes.cartesianrange(g, b) == CartesianIndices((3:8, 3:8))
+  @test indices(g, b) == linds[3:8, 3:8] |> vec
+
+  b = Box(latlon(20, 175), latlon(25, -175))
+  @test isempty(indices(g, b))
+
+  C = typeof(LatLon(T(0), T(0)))
+  g = RectilinearGrid{🌐,C}(x, y)
+  b = Box(latlon(0.25, 0.15), latlon(0.95, 0.85))
+  @test Meshes.cartesianrange(g, b) == CartesianIndices((2:5, 2:4))
+  linds = LinearIndices(size(g))
+  @test indices(g, b) == linds[2:5, 2:4] |> vec
+
   # convex polygons
   tri = Triangle(cart(5, 7), cart(10, 12), cart(15, 7))
   pent = Pentagon(cart(6, 1), cart(2, 10), cart(10, 16), cart(18, 10), cart(14, 1))
