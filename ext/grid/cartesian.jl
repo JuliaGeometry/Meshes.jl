@@ -55,14 +55,6 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     colorant isa AbstractVector ? length(colorant) : 1
   end
 
-  # spacing and coordinates
-  Makie.map!(plot, [:object], :sp) do grid
-    ustrip.(spacing(grid))
-  end
-  Makie.map!(plot, [:object], :xyz) do grid
-    map(x -> ustrip.(x), Meshes.xyz(grid))
-  end
-
   if plot.nc[] == plot.nv[]
     # visualize as a quadrangle mesh so that
     # colors can be specified at vertices
@@ -91,14 +83,15 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.mesh!(plot, plot.mesh, color=plot.colorant, shading=true)
   else
     # visualize as built-in meshscatter
-    Makie.map!(plot, [:xyz], :coords) do xyz
+    Makie.map!(plot, [:object], [:coords, :rect]) do grid
+      xyz = map(x -> ustrip.(x), Meshes.xyz(grid))
       xs = xyz[1][(begin + 1):end]
       ys = xyz[2][(begin + 1):end]
       zs = xyz[3][(begin + 1):end]
-      [(x, y, z) for z in zs for y in ys for x in xs]
-    end
-    Makie.map!(plot, [:sp], :rect) do sp
-      Makie.Rect3(-1 .* sp, sp)
+      coords = [(x, y, z) for z in zs for y in ys for x in xs]
+      sp = ustrip.(spacing(grid))
+      rect = Makie.Rect3(-1 .* sp, sp)
+      (coords, rect)
     end
     Makie.meshscatter!(plot, plot.coords, marker=plot.rect, markersize=1, color=plot.colorant)
   end
