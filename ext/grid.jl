@@ -19,60 +19,50 @@ end
 vizgrid!(plot, M::Type, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
 function vizgridfallback!(plot, M, pdim, edim)
-  showsegments = plot.showsegments
-
   # process color spec into colorant
   Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
 
   # number of vertices, elements and colors
-  Makie.map!(nvertices, plot, [:object], :nverts)
-  Makie.map!(nelements, plot, [:object], :nelems)
-  Makie.map!(plot, [:colorant], :ncolor) do colorant
-    colorant isa AbstractVector ? length(colorant) : 1
+  Makie.map!(plot, [:object, :colorant], [:nv, :ne, :nc]) do grid, colorant
+    nv = nvertices(grid)
+    ne = nelements(grid)
+    nc = colorant isa AbstractVector ? length(colorant) : 1
+    nv, ne, nc
   end
 
-  # visualize quadrangle mesh with texture using uv coords
-  # plots with uv coords are always interpolated,
-  # so it is only used in the case ncolor == nverts
-  # or when there is a large number of elements
-  if pdim === Val(2) && (plot.ncolor[] == 1 || plot.ncolor[] == plot.nverts[] || plot.nelems[] ≥ 1000)
-    # decide whether or not to reverse connectivity list
-    Makie.map!(plot, [:object], :rfunc) do grid
-      crs(grid) <: LatLon && orientation(first(grid)) == CW ? reverse : identity
-    end
+  # plots with uv coords are always interpolated, so it is
+  # only used in the case nc == nv or when the grid is large
+  if pdim === Val(2) && (plot.nc[] == 1 || plot.nc[] == plot.nv[] || plot.ne[] ≥ 1000)
+    # visualize quadrangle mesh with texture using uv coords
+    Makie.map!(plot, [:object, :colorant], [:mesh, :texture]) do grid, colorant
+      # retrieve relevant sizes
+      sz = size(grid)
+      vz = Meshes.vsize(grid)
 
-    Makie.map!(plot, [:object], :verts) do grid
-      map(asmakie, eachvertex(grid))
-    end
-    Makie.map!(plot, [:object, :rfunc], :quads) do grid, rfunc
-      [GB.QuadFace(rfunc(indices(e))) for e in elements(topology(grid))]
-    end
+      # decide whether or not to reverse connectivity list
+      rev = crs(grid) <: LatLon && orientation(first(grid)) == CW ? reverse : identity
 
-    Makie.map!(size, plot, [:object], :dims)
-    Makie.map!(Meshes.vsize, plot, [:object], :vdims)
+      # vertices and quadrangles
+      verts = map(asmakie, eachvertex(grid))
+      quads = [GB.QuadFace(rev(indices(e))) for e in elements(topology(grid))]
 
-    Makie.map!(
-      plot,
-      [:colorant, :ncolor, :nelems, :nverts, :dims, :vdims],
-      :texture
-    ) do colorant, ncolor, nelems, nverts, dims, vdims
-      if ncolor == 1
-        fill(colorant, dims)
-      elseif ncolor == nelems
-        reshape(colorant, dims)
-      elseif ncolor == nverts
-        reshape(colorant, vdims)
+      # uv coordinates for texture mapping
+      uv = [Makie.Vec2f(v, 1 - u) for v in range(0, 1, vz[2]) for u in range(0, 1, vz[1])]
+
+      mesh = GB.Mesh(verts, quads; uv)
+
+      # texture map
+      texture = if plot.nc[] == 1
+        fill(colorant, sz)
+      elseif plot.nc[] == plot.nv[]
+        reshape(colorant, vz)
+      elseif plot.nc[] == plot.ne[]
+        reshape(colorant, sz)
       else
         throw(ArgumentError("invalid number of colors"))
       end
-    end
 
-    Makie.map!(plot, [:vdims], :uv) do vdims
-      [Makie.Vec2f(v, 1 - u) for v in range(0, 1, vdims[2]) for u in range(0, 1, vdims[1])]
-    end
-
-    Makie.map!(plot, [:verts, :quads, :uv], :mesh) do verts, quads, uv
-      GB.Mesh(verts, quads, uv=uv)
+      mesh, texture
     end
 
     # enable shading in 3D
@@ -80,10 +70,11 @@ function vizgridfallback!(plot, M, pdim, edim)
 
     Makie.mesh!(plot, plot.mesh, color=plot.texture, shading=shading)
 
-    if showsegments[]
+    if plot.showsegments[]
       vizfacets!(plot)
     end
-  else # fallback to triangle mesh visualization
+  else
+    # fallback to triangle mesh visualization
     vizmesh!(plot)
   end
 end
