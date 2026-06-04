@@ -42,7 +42,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{RectilinearGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  Makie.map!(plot, [:object], [:xfacets, :yfacets]) do grid
+  Makie.map!(plot, :object, [:xfacets, :yfacets]) do grid
     x, y = map(c -> ustrip.(c), Meshes.xyz(grid))
     xysegments(x, y)
   end

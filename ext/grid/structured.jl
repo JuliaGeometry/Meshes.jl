@@ -35,7 +35,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{StructuredGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  Makie.map!(structuredsegments, plot, [:object], [:xfacets, :yfacets])
+  Makie.map!(structuredsegments, plot, :object, [:xfacets, :yfacets])
   Makie.lines!(plot, plot.xfacets, plot.yfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
 
