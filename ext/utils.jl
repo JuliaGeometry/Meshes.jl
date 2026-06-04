@@ -8,14 +8,16 @@ function vizmany!(plot, meshes, colors)
   pointsize = plot.pointsize
   segmentsize = plot.segmentsize
 
-  rmesh = Makie.map(meshes) do ms
-    reduce(merge, ms)
-  end
-  color = Makie.map(colors, meshes) do cs, ms
-    [cs[i] for (i, m) in enumerate(ms) for _ in 1:nelements(m)]
+  rmesh = Symbol(meshes, :_rmeshes)
+  rcolor = Symbol(meshes, :_rcolor)
+
+  Makie.map!(plot, [meshes, colors], [rmesh, rcolor]) do ms, cs
+    rmes = reduce(merge, ms)
+    color = [cs[i] for (i, m) in enumerate(ms) for _ in 1:nelements(m)]
+    (rmes, color)
   end
 
-  viz!(plot, rmesh, color=color, pointsize=pointsize, segmentsize=segmentsize)
+  viz!(plot, plot[rmesh], color=plot[rcolor], pointsize=pointsize, segmentsize=segmentsize)
 end
 
 asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
