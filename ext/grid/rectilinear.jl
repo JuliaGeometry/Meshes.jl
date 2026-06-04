@@ -20,10 +20,10 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
       vizmesh!(plot)
     else
       # visualize as built-in heatmap
-      Makie.map!(plot, [:object, :colorant, :nc], [:x, :y, :C]) do grid, colorant, nc
+      Makie.map!(plot, [:object, :colorant], [:x, :y, :C]) do grid, colorant
         sz = size(grid)
         x, y = map(c -> ustrip.(c), Meshes.xyz(grid))
-        C = if nc == 1
+        C = if plot.nc[] == 1
           fill(colorant, sz)
         else
           reshape(colorant, sz)
