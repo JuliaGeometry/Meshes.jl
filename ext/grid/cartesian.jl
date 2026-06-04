@@ -70,7 +70,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.mesh!(plot, plot.mesh, color=plot.colorant, shading=true)
   else
     # visualize as built-in meshscatter
-    Makie.map!(plot, [:object], [:xyz, :rect]) do grid
+    Makie.map!(plot, :object, [:xyz, :rect]) do grid
       sp = ustrip.(spacing(grid))
       cs = map(x -> ustrip.(x), Meshes.xyz(grid))
       xs = cs[1][(begin + 1):end]
@@ -89,7 +89,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  Makie.map!(plot, [:object], [:xfacets, :yfacets]) do grid
+  Makie.map!(plot, :object, [:xfacets, :yfacets]) do grid
     x, y = Meshes.xyz(grid)
     xysegments(ustrip.(x), ustrip.(y))
   end
@@ -97,7 +97,7 @@ function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
-  Makie.map!(plot, [:object], [:xfacets, :yfacets, :zfacets]) do grid
+  Makie.map!(plot, :object, [:xfacets, :yfacets, :zfacets]) do grid
     x, y, z = Meshes.xyz(grid)
     xyzsegments(ustrip.(x), ustrip.(y), ustrip.(z))
   end
