@@ -73,17 +73,17 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, :
     Makie.mesh!(plot, plot.mesh, color=plot.colorant, shading=true)
   else
     # visualize as built-in meshscatter
-    Makie.map!(plot, [:object], [:coords, :rect]) do grid
-      xyz = map(x -> ustrip.(x), Meshes.xyz(grid))
-      xs = xyz[1][(begin + 1):end]
-      ys = xyz[2][(begin + 1):end]
-      zs = xyz[3][(begin + 1):end]
-      coords = [(x, y, z) for z in zs for y in ys for x in xs]
+    Makie.map!(plot, [:object], [:xyz, :rect]) do grid
       sp = ustrip.(spacing(grid))
+      cs = map(x -> ustrip.(x), Meshes.xyz(grid))
+      xs = cs[1][(begin + 1):end]
+      ys = cs[2][(begin + 1):end]
+      zs = cs[3][(begin + 1):end]
+      xyz = [(x, y, z) for z in zs for y in ys for x in xs]
       rect = Makie.Rect3(-1 .* sp, sp)
-      (coords, rect)
+      xyz, rect
     end
-    Makie.meshscatter!(plot, plot.coords, marker=plot.rect, markersize=1, color=plot.colorant)
+    Makie.meshscatter!(plot, plot.xyz, marker=plot.rect, markersize=1, color=plot.colorant)
   end
 
   if plot.showsegments[]
