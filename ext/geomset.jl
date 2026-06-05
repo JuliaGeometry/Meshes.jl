@@ -57,7 +57,7 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, G::Type{<:Geometry}, geoms::S
     end
     vizmany!(plot, plot[meshes_sym], plot[colors])
     if plot.showpoints[]
-      vizfacets!(plot, G, geoms)
+      vizfacets!(plot, geoms)
     end
   elseif pdim === Val(2)
     Makie.map!(plot, [geoms], meshes_sym) do gvec
@@ -65,7 +65,7 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, G::Type{<:Geometry}, geoms::S
     end
     vizmany!(plot, plot[meshes_sym], plot[colors])
     if plot.showsegments[]
-      vizfacets!(plot, G, geoms)
+      vizfacets!(plot, geoms)
     end
   elseif pdim === Val(3)
     Makie.map!(plot, [geoms], meshes_sym) do gvec
@@ -160,7 +160,7 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
   end
 
   if plot.showpoints[]
-    vizfacets!(plot, G, geoms)
+    vizfacets!(plot, geoms)
   end
 end
 
@@ -243,17 +243,15 @@ end
 # FACETS
 # -------
 
-vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizfacets!(plot)
-
-function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, G::Type, geoms::Symbol)
+function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms::Symbol)
   gvec = plot[geoms][]
   M = manifold(first(gvec))
   pdim = paramdim(first(gvec))
   edim = embeddim(first(gvec))
-  vizgsetfacets!(plot, M, Val(pdim), Val(edim), G, geoms)
+  vizgsetfacets!(plot, M, Val(pdim), Val(edim), geoms)
 end
 
-function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, G::Type, geoms::Symbol)
+function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, geoms::Symbol)
   pset_sym = Symbol(geoms, :_pset)
 
   # all boundaries are points or multipoints
@@ -265,7 +263,7 @@ function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, G::Type, geoms::Symbol)
   viz!(plot, plot[pset_sym], color=plot.pointcolor, pointmarker=plot.pointmarker, pointsize=plot.pointsize)
 end
 
-function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, G::Type, geoms::Symbol)
+function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms::Symbol)
   bset_sym = Symbol(geoms, :_bset)
 
   # all boundaries are 1D geometries
