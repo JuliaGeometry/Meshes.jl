@@ -3,38 +3,39 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
-  # collect geometries into geometry set
-  Makie.map!(plot, :object, :gset) do subdom
-    GeometrySet(collect(subdom))
-  end
+  # retrieve parent domain
+  Makie.map!(parent, plot, :object, :pdom)
 
-  # visualize as geometry set
-  viz!(
-    plot,
-    plot.gset,
-    color=plot.color,
-    alpha=plot.alpha,
-    colormap=plot.colormap,
-    colorrange=plot.colorrange,
-    showsegments=plot.showsegments,
-    segmentcolor=plot.segmentcolor,
-    segmentsize=plot.segmentsize,
-    showpoints=plot.showpoints,
-    pointmarker=plot.pointmarker,
-    pointcolor=plot.pointcolor,
-    pointsize=plot.pointsize
-  )
+  if plot.pdom[] isa CartesianGrid
+    # visualize with optimized method
+    colorant!(plot)
+    vizsubcartgrid!(plot)
+  else
+    # fallback to geometry set visualization
+    Makie.map!(sdom -> convert(GeometrySet, sdom), plot, :object, :gset)
+    viz!(
+      plot,
+      plot.gset,
+      color=plot.color,
+      alpha=plot.alpha,
+      colormap=plot.colormap,
+      colorrange=plot.colorrange,
+      showsegments=plot.showsegments,
+      segmentcolor=plot.segmentcolor,
+      segmentsize=plot.segmentsize,
+      showpoints=plot.showpoints,
+      pointmarker=plot.pointmarker,
+      pointcolor=plot.pointcolor,
+      pointsize=plot.pointsize
+    )
+  end
 end
 
 # ----------------
 # SPECIALIZATIONS
 # ----------------
 
-const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
-
-function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
-  colorant!(plot)
-
+function vizsubcartgrid!(plot)
   # retrieve grid paramaters
   Makie.map!(plot, :object, [:scoords, :smarker]) do subgrid
     grid = parent(subgrid)
