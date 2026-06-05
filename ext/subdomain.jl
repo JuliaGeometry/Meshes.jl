@@ -12,7 +12,7 @@ function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
     vizsubcartgrid!(plot)
   else
     # visualize as geometry set
-    Makie.map!(sdom -> convert(GeometrySet, sdom), plot, :object, :gset)
+    Makie.map!(sdom -> GeometrySet(collect(sdom)), plot, :object, :gset)
     viz!(
       plot,
       plot.gset,
