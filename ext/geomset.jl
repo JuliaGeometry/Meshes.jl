@@ -17,15 +17,14 @@ function vizgset!(plot)
   types = unique(map(typeof, geoms))
 
   for (i, G) in enumerate(types)
-    inds_sym = Symbol(:inds_, i)
     gvec_sym = Symbol(:gvec_, i)
     cvec_sym = Symbol(:cvec_, i)
 
-    Makie.map!(plot, [:object, :colorant], [inds_sym, gvec_sym, cvec_sym]) do g, colorant
+    Makie.map!(plot, [:object, :colorant], [gvec_sym, cvec_sym]) do g, colorant
       inds = findall(x -> x isa G, parent(g))
       gvec = collect(G, parent(g)[inds])
       cvec = colorant isa AbstractVector ? colorant[inds] : fill(colorant, length(inds))
-      inds, gvec, cvec
+      gvec, cvec
     end
 
     gvec = collect(G, geoms[findall(x -> x isa G, geoms)])
