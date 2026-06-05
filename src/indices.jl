@@ -97,12 +97,12 @@ function indices(grid::OrthoRectilinearGrid, box::Box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-function indices(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐})
+function indices(grid::RegularGrid{🌐}, box::Box{🌐})
   range = cartesianrange(grid, box)
   LinearIndices(size(grid))[range] |> vec
 end
 
-function indices(grid::RectilinearGrid{🌐,<:LatLon}, box::Box{🌐})
+function indices(grid::RectilinearGrid{🌐}, box::Box{🌐})
   range = cartesianrange(grid, box)
   LinearIndices(size(grid))[range] |> vec
 end
@@ -118,14 +118,9 @@ Return the Cartesian range of the elements of the `grid` that intersect with the
 """
 cartesianrange(grid::Grid{M}, box::Box{M}) where {M} = _manifoldrange(M, grid, box)
 
-cartesianrange(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐}) = _geodesicrange(grid, box)
-
-cartesianrange(grid::RectilinearGrid{🌐,<:LatLon}, box::Box{🌐}) = _geodesicrange(grid, box)
-
 _manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box)
 
-_manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) =
-  throw(ArgumentError("cartesianrange for geodesic boxes requires a regular or rectilinear grid in LatLon coordinates"))
+_manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
 
 function _euclideanrange(grid::OrthoRegularGrid, box::Box)
   # grid properties
