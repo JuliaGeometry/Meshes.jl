@@ -18,6 +18,16 @@ aslen(x::Number) = x * u"m"
 aslen(::Quantity) = throw(ArgumentError("invalid length unit"))
 
 """
+    asdeg(x)
+
+Adds degree unit if the argument is not a quantity
+with angle unit, otherwise, returns `x` as is.
+"""
+asdeg(x::Deg) = x
+asdeg(x::Number) = x * u"°"
+asdeg(::Quantity) = throw(ArgumentError("invalid angle unit"))
+
+"""
     aslentype(T)
 
 If `T` has length unit, return it. If `T` is number, return it with meter unit.

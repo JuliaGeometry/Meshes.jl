@@ -25,7 +25,7 @@ struct Slice{T} <: GeometricTransform
   limits::T
 end
 
-Slice(; kwargs...) = Slice(values(kwargs))
+Slice(; kwargs...) = Slice(map(x -> float.(x), values(kwargs)))
 
 parameters(t::Slice) = (; limits=t.limits)
 
@@ -50,8 +50,8 @@ function _slicebox(box::Box{𝔼{2}}, limits)
   max = convert(Cartesian, coords(maximum(box)))
   xmin, xmax = get(limits, :x, (min.x, max.x))
   ymin, ymax = get(limits, :y, (min.y, max.y))
-  bmin = map(_aslen, (xmin, ymin))
-  bmax = map(_aslen, (xmax, ymax))
+  bmin = map(aslen, (xmin, ymin))
+  bmax = map(aslen, (xmax, ymax))
   Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 
@@ -61,8 +61,8 @@ function _slicebox(box::Box{𝔼{3}}, limits)
   xmin, xmax = get(limits, :x, (min.x, max.x))
   ymin, ymax = get(limits, :y, (min.y, max.y))
   zmin, zmax = get(limits, :z, (min.z, max.z))
-  bmin = map(_aslen, (xmin, ymin, zmin))
-  bmax = map(_aslen, (xmax, ymax, zmax))
+  bmin = map(aslen, (xmin, ymin, zmin))
+  bmax = map(aslen, (xmax, ymax, zmax))
   Box(withcrs(box, bmin), withcrs(box, bmax))
 end
 
@@ -71,15 +71,7 @@ function _slicebox(box::Box{🌐}, limits)
   max = convert(LatLon, coords(maximum(box)))
   latmin, latmax = get(limits, :lat, (min.lat, max.lat))
   lonmin, lonmax = get(limits, :lon, (min.lon, max.lon))
-  bmin = map(_asdeg, (latmin, lonmin))
-  bmax = map(_asdeg, (latmax, lonmax))
+  bmin = map(asdeg, (latmin, lonmin))
+  bmax = map(asdeg, (latmax, lonmax))
   Box(withcrs(box, bmin), withcrs(box, bmax))
 end
-
-_aslen(x::Len) = float(x)
-_aslen(x::Number) = float(x) * u"m"
-_aslen(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
-
-_asdeg(x::Deg) = float(x)
-_asdeg(x::Number) = float(x) * u"°"
-_asdeg(::Quantity) = throw(ArgumentError("invalid units, please check the documentation"))
