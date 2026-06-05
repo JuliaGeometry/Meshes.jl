@@ -86,6 +86,7 @@ include("mesh.jl")
 include("grid.jl")
 include("geomset.jl")
 include("subdomain.jl")
+include("transfdomain.jl")
 include("fallbacks.jl")
 
 end

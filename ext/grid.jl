@@ -100,7 +100,6 @@ vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pd
 include("grid/cartesian.jl")
 include("grid/rectilinear.jl")
 include("grid/structured.jl")
-include("grid/transformed.jl")
 
 # -----------------
 # HELPER FUNCTIONS

@@ -2,31 +2,38 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
-  # retrieve parent grid and transformation
-  Makie.map!(plot, :object, [:pgrid, :trans]) do tgrid
-    pgrid = parent(tgrid)
-    trans = transformation(tgrid)
-    pgrid, trans
+function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
+  # retrieve parent domain and transformation
+  Makie.map!(plot, :object, [:pdom, :trans]) do tdom
+    pdom = parent(tdom)
+    trans = transformation(tdom)
+    pdom, trans
   end
 
   if isoptimized(plot.trans[])
-    # visualize parent grid and transform visualization
+    # visualize parent domain and transform visualization
     viz!(
       plot,
-      plot.pgrid,
+      plot.pdom,
       color=plot.color,
       alpha=plot.alpha,
       colormap=plot.colormap,
       colorrange=plot.colorrange,
       showsegments=plot.showsegments,
       segmentcolor=plot.segmentcolor,
-      segmentsize=plot.segmentsize
+      segmentsize=plot.segmentsize,
+      showpoints=plot.showpoints,
+      pointmarker=plot.pointmarker,
+      pointcolor=plot.pointcolor,
+      pointsize=plot.pointsize
     )
     makietransform!(plot)
+  elseif plot.pdom[] isa Grid
+    # visualize as grid
+    Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+    vizgrid!(plot)
   else
-    # fallback to full grid visualization
-    vizgridfallback!(plot, M, pdim, edim)
+    error("not implemented")
   end
 end
 
@@ -79,3 +86,4 @@ end
 makietransform!(plot, trans::TB.Identity) = nothing
 
 makietransform!(plot, trans::TB.SequentialTransform) = foreach(t -> makietransform!(plot, t), trans)
+
