@@ -9,7 +9,7 @@ function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Va
   if isoptimized(plot.trans[])
     # visualize parent grid and transform visualization
     pgrid = parent(plot.object[])
-    Makie.update!(plot, object = pgrid)
+    Makie.update!(plot, object=pgrid)
     vizgrid!(plot)
     makietransform!(plot)
   else
