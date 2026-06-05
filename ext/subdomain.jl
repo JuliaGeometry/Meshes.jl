@@ -24,7 +24,7 @@ vizsubdom!(plot, M::Type, pdim::Val, edim::Val) = vizsubdomfallback!(plot, M, pd
 function vizsubdomfallback!(plot, ::Type, ::Val, ::Val)
   # visualize as geometry set
   gset = GeometrySet(collect(plot.object[]))
-  Mke.update!(plot, object=gset)
+  Makie.update!(plot, object=gset)
   vizgset!(plot)
 end
 
