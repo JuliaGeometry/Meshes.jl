@@ -37,25 +37,23 @@ end
 
 function vizsubcartgrid!(plot)
   # retrieve grid paramaters
-  Makie.map!(plot, :object, [:coords, :marker, :shading]) do sgrid
-    pgrid = parent(sgrid)
-    nd = embeddim(pgrid)
-    sp = ustrip.(spacing(pgrid))
+  Makie.map!(plot, :object, [:xyz, :rec]) do sgrid
+    sp = ustrip.(spacing(parent(sgrid)))
 
     # coordinates of markers
-    coords = map(sgrid) do e
+    xyz = map(sgrid) do e
       ustrip.(to(centroid(e))) .+ sp ./ 2
     end
 
     # rectangle markers
-    marker = Makie.Rect{length(sp)}(-1 .* sp, sp)
+    rec = Makie.Rect{length(sp)}(-1 .* sp, sp)
 
-    # enable shading in 3D
-    shading = nd == 3
-
-    coords, marker, shading
+    xyz, rec
   end
 
+  # enable shading in 3D
+  shading = embeddim(plot.object[]) == 3
+
   # all geometries are equal, use mesh scatter
-  Makie.meshscatter!(plot, plot.coords, marker=plot.marker, markersize=1, color=plot.colorant, shading=plot.shading)
+  Makie.meshscatter!(plot, plot.xyz, marker=plot.rec, markersize=1, color=plot.colorant, shading=shading)
 end
