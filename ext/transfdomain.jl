@@ -27,7 +27,7 @@ function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
       pointcolor=plot.pointcolor,
       pointsize=plot.pointsize
     )
-    makietransform!(plot)
+    makietransform!(plot, plot.trans[])
   elseif plot.pdom[] isa Grid
     # visualize as grid
     colorant!(plot)
@@ -51,8 +51,6 @@ function isoptimized(t::Affine{2})
 end
 isoptimized(::TB.Identity) = true
 isoptimized(t::TB.SequentialTransform) = all(isoptimized, t)
-
-makietransform!(plot) = makietransform!(plot, plot.trans[])
 
 function makietransform!(plot, trans::Rotate{<:Angle2d})
   rot = first(TB.parameters(trans))
