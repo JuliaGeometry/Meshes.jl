@@ -3,29 +3,27 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-  vizsubdom!(plot)
-end
+  # collect geometries into geometry set
+  Makie.map!(plot, :object, :gset) do subdom
+    GeometrySet(collect(subdom))
+  end
 
-function vizsubdom!(plot)
-  subdom = plot.object[]
-  M = manifold(subdom)
-  pdim = paramdim(subdom)
-  edim = embeddim(subdom)
-  vizsubdom!(plot, M, Val(pdim), Val(edim))
-end
-
-# ---------------
-# IMPLEMENTATION
-# ---------------
-
-vizsubdom!(plot, M::Type, pdim::Val, edim::Val) = vizsubdomfallback!(plot, M, pdim, edim)
-
-function vizsubdomfallback!(plot, ::Type, ::Val, ::Val)
   # visualize as geometry set
-  gset = GeometrySet(collect(plot.object[]))
-  Makie.update!(plot, object=gset)
-  vizgset!(plot)
+  viz!(
+    plot,
+    plot.gset,
+    color=plot.color,
+    alpha=plot.alpha,
+    colormap=plot.colormap,
+    colorrange=plot.colorrange,
+    showsegments=plot.showsegments,
+    segmentcolor=plot.segmentcolor,
+    segmentsize=plot.segmentsize,
+    showpoints=plot.showpoints,
+    pointmarker=plot.pointmarker,
+    pointcolor=plot.pointcolor,
+    pointsize=plot.pointsize
+  )
 end
 
 # ----------------
@@ -34,7 +32,9 @@ end
 
 const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
 
-function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type, ::Val, edim::Val)
+function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+
   # retrieve grid paramaters
   Makie.map!(plot, :object, [:scoords, :smarker]) do subgrid
     grid = parent(subgrid)

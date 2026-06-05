@@ -3,14 +3,26 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
-  # retrieve transformation
-  Makie.map!(transformation, plot, :object, :trans)
+  # retrieve parent grid and transformation
+  Makie.map!(plot, :object, [:pgrid, :trans]) do tgrid
+    pgrid = parent(tgrid)
+    trans = transformation(tgrid)
+    pgrid, trans
+  end
 
   if isoptimized(plot.trans[])
     # visualize parent grid and transform visualization
-    pgrid = parent(plot.object[])
-    Makie.update!(plot, object=pgrid)
-    vizgrid!(plot)
+    viz!(
+      plot,
+      plot.pgrid,
+      color=plot.color,
+      alpha=plot.alpha,
+      colormap=plot.colormap,
+      colorrange=plot.colorrange,
+      showsegments=plot.showsegments,
+      segmentcolor=plot.segmentcolor,
+      segmentsize=plot.segmentsize
+    )
     makietransform!(plot)
   else
     # fallback to full grid visualization
