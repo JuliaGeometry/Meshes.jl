@@ -85,44 +85,40 @@ function indices(grid::OrthoRegularGrid, poly::Polygon)
   LinearIndices(dims)[mask .> 0]
 end
 
-function indices(grid::OrthoRegularGrid, box::Box)
-  range = cartesianrange(grid, box)
-  LinearIndices(size(grid))[range] |> vec
-end
-
 indices(grid::OrthoRegularGrid, multi::Multi) = mapreduce(geom -> indices(grid, geom), vcat, parent(multi)) |> unique
 
-function indices(grid::OrthoRectilinearGrid, box::Box)
+indices(grid::OrthoRegularGrid{M}, box::Box{M}) where {M} = cartesianindices(grid, box)
+
+indices(grid::OrthoRectilinearGrid{M}, box::Box{M}) where {M} = cartesianindices(grid, box)
+
+indices(grid::RegularGrid{🌐}, box::Box{🌐}) = cartesianindices(grid, box)
+
+indices(grid::RectilinearGrid{🌐}, box::Box{🌐}) = cartesianindices(grid, box)
+
+# ------------------
+# CARTESIAN INDICES
+# ------------------
+
+"""
+    cartesianindices(grid, box)
+
+Return the linear indices of the elements of the `grid` that
+intersect with the `box` using the corresponding Cartesian range.
+"""
+function cartesianindices(grid::Grid, box::Box)
   range = cartesianrange(grid, box)
   LinearIndices(size(grid))[range] |> vec
 end
-
-function indices(grid::RegularGrid{🌐}, box::Box{🌐})
-  range = cartesianrange(grid, box)
-  LinearIndices(size(grid))[range] |> vec
-end
-
-function indices(grid::RectilinearGrid{🌐}, box::Box{🌐})
-  range = cartesianrange(grid, box)
-  LinearIndices(size(grid))[range] |> vec
-end
-
-# ----------------
-# CARTESIAN RANGE
-# ----------------
 
 """
     cartesianrange(grid, box)
 
-Return the Cartesian range of the elements of the `grid` that intersect with the `box`.
+Return the Cartesian range of the elements of the `grid` that
+intersect with the `box`.
 """
-cartesianrange(grid::Grid{M}, box::Box{M}) where {M} = _manifoldrange(M, grid, box)
+function cartesianrange end
 
-_manifoldrange(::Type{<:𝔼}, grid::Grid, box::Box) = _euclideanrange(grid, box)
-
-_manifoldrange(::Type{<:🌐}, grid::Grid, box::Box) = _geodesicrange(grid, box)
-
-function _euclideanrange(grid::OrthoRegularGrid, box::Box)
+function cartesianrange(grid::OrthoRegularGrid{M}, box::Box{M}) where {M}
   # grid properties
   or = minimum(grid)
   sp = spacing(grid)
@@ -139,7 +135,7 @@ function _euclideanrange(grid::OrthoRegularGrid, box::Box)
   CartesianIndex(Tuple(ijkₛ)):CartesianIndex(Tuple(ijkₑ))
 end
 
-function _euclideanrange(grid::OrthoRectilinearGrid, box::Box)
+function cartesianrange(grid::OrthoRectilinearGrid{M}, box::Box{M}) where {M}
   # grid properties
   nd = paramdim(grid)
 
@@ -160,8 +156,8 @@ function _euclideanrange(grid::OrthoRectilinearGrid, box::Box)
   CartesianIndex(ijkₛ):CartesianIndex(ijkₑ .- 1)
 end
 
-function _geodesicrange(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐})
-  lat, lon = xyz(grid)
+function cartesianrange(grid::RegularGrid{🌐}, box::Box{🌐})
+  lat, lon = xyz(grid |> Proj(LatLon))
   boxmin = convert(LatLon, coords(minimum(box)))
   boxmax = convert(LatLon, coords(maximum(box)))
   latrange = _regularaxisrange(lat, boxmin.lat, boxmax.lat)
@@ -169,8 +165,8 @@ function _geodesicrange(grid::RegularGrid{🌐,<:LatLon}, box::Box{🌐})
   CartesianIndices((latrange, lonrange))
 end
 
-function _geodesicrange(grid::RectilinearGrid{🌐,<:LatLon}, box::Box{🌐})
-  lat, lon = xyz(grid)
+function cartesianrange(grid::RectilinearGrid{🌐}, box::Box{🌐})
+  lat, lon = xyz(grid |> Proj(LatLon))
   boxmin = convert(LatLon, coords(minimum(box)))
   boxmax = convert(LatLon, coords(maximum(box)))
   latrange = _rectilinearaxisrange(lat, boxmin.lat, boxmax.lat)
