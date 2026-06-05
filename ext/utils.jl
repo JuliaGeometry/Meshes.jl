@@ -8,19 +8,14 @@ process(value, colorscheme, colorrange, alphas) = process([value], colorscheme, 
 
 # assumes that meshes and colors have the same length
 function vizmany!(plot, meshes, colors)
-  pointsize = plot.pointsize
-  segmentsize = plot.segmentsize
-
-  rmesh = Symbol(meshes, :_rmeshes)
-  rcolor = Symbol(meshes, :_rcolor)
-
-  Makie.map!(plot, [meshes, colors], [rmesh, rcolor]) do ms, cs
-    rmes = reduce(merge, ms)
+  meshid = Symbol(meshes, :_meshes)
+  colorid = Symbol(meshes, :_color)
+  Makie.map!(plot, [meshes, colors], [meshid, colorid]) do ms, cs
+    mesh = reduce(merge, ms)
     color = [cs[i] for (i, m) in enumerate(ms) for _ in 1:nelements(m)]
-    (rmes, color)
+    mesh, color
   end
-
-  viz!(plot, plot[rmesh], color=plot[rcolor], pointsize=pointsize, segmentsize=segmentsize)
+  viz!(plot, plot[meshid], color=plot[colorid], pointsize=plot.pointsize, segmentsize=plot.segmentsize)
 end
 
 asray(v::Vec) = Ray(Point(zero(v)...), v)
