@@ -7,11 +7,11 @@ function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
   Makie.map!(parent, plot, :object, :pdom)
 
   if plot.pdom[] isa CartesianGrid
-    # visualize with optimized method
+    # visualize as subset of Cartesian grid
     colorant!(plot)
     vizsubcartgrid!(plot)
   else
-    # fallback to geometry set visualization
+    # visualize as geometry set
     Makie.map!(sdom -> convert(GeometrySet, sdom), plot, :object, :gset)
     viz!(
       plot,
@@ -31,9 +31,9 @@ function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
   end
 end
 
-# ----------------
-# SPECIALIZATIONS
-# ----------------
+# --------------
+# OPTIMIZATIONS
+# --------------
 
 function vizsubcartgrid!(plot)
   # retrieve grid paramaters
