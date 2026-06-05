@@ -3,10 +3,7 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
-  # retrieve parent domain
-  Makie.map!(parent, plot, :object, :pdom)
-
-  if plot.pdom[] isa CartesianGrid
+  if parent(plot.object[]) isa CartesianGrid
     # visualize as subset of Cartesian grid
     colorant!(plot)
     vizsubcartgrid!(plot)
