@@ -10,27 +10,27 @@ end
 # split heterogeneous geometry sets into homogeneous vectors
 # of geometries and send these vectors to specialized recipes
 function vizgset!(plot)
-  # get geometries
+  # retrieve geometries and their types
   geoms = parent(plot.object[])
-
-  # get geometry types
   types = unique(map(typeof, geoms))
 
   for (i, G) in enumerate(types)
-    gvec_sym = Symbol(:gvec_, i)
-    cvec_sym = Symbol(:cvec_, i)
-
-    Makie.map!(plot, [:object, :colorant], [gvec_sym, cvec_sym]) do g, colorant
-      inds = findall(x -> x isa G, parent(g))
-      gvec = collect(G, parent(g)[inds])
+    # add nodes to compute graph for this type of geometry
+    gvecid = Symbol(:geoms, i)
+    cvecid = Symbol(:colors, i)
+    Makie.map!(plot, [:object, :colorant], [gvecid, cvecid]) do gset, colorant
+      geos = parent(gset)
+      inds = findall(x -> x isa G, geos)
+      gvec = collect(G, geos[inds])
       cvec = colorant isa AbstractVector ? colorant[inds] : fill(colorant, length(inds))
       gvec, cvec
     end
-    gvec = plot[gvec_sym][]
-    M = manifold(first(gvec))
-    pdim = paramdim(first(gvec))
-    edim = embeddim(first(gvec))
-    vizgset!(plot, M, Val(pdim), Val(edim), G, gvec_sym, cvec_sym)
+
+    # dispatch specialized recipe for this type of geometry
+    M = manifold(G)
+    pdim = paramdim(G)
+    edim = embeddim(G)
+    vizgset!(plot, M, Val(pdim), Val(edim), G, gvecid, cvecid)
   end
 end
 
