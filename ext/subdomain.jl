@@ -33,7 +33,7 @@ end
 const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
 
 function Makie.plot!(plot::Viz{<:Tuple{SubCartesianGrid}})
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  colorant!(plot)
 
   # retrieve grid paramaters
   Makie.map!(plot, :object, [:scoords, :smarker]) do subgrid

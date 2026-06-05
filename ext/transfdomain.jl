@@ -30,7 +30,7 @@ function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
     makietransform!(plot)
   elseif plot.pdom[] isa Grid
     # visualize as grid
-    Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+    colorant!(plot)
     vizgrid!(plot)
   else
     error("not implemented")
@@ -86,4 +86,3 @@ end
 makietransform!(plot, trans::TB.Identity) = nothing
 
 makietransform!(plot, trans::TB.SequentialTransform) = foreach(t -> makietransform!(plot, t), trans)
-

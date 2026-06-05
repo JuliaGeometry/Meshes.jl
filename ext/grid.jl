@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{Grid}})
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  colorant!(plot)
   vizgrid!(plot)
 end
 

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  colorant!(plot)
   vizmesh!(plot)
 end
 

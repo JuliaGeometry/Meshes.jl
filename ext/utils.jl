@@ -2,9 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# preprocess colors provided by user
-process(values::AbstractVector, colorscheme, colorrange, alphas) = colorfy(values; alphas, colorscheme, colorrange)
-process(value, colorscheme, colorrange, alphas) = process([value], colorscheme, colorrange, alphas) |> first
+# update plot with processed colors
+function colorant!(plot)
+  Makie.map!(plot, [:color, :alpha, :colormap, :colorrange], :colorant) do color, alphas, colorscheme, colorrange
+    if color isa AbstractVector
+      colorfy(color; alphas, colorscheme, colorrange)
+    else
+      colorfy([color]; alphas, colorscheme, colorrange) |> first
+    end
+  end
+end
 
 # assumes that meshes and colors have the same length
 function vizmany!(plot, meshes, colors)
