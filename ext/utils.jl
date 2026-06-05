@@ -2,8 +2,11 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+# preprocess colors provided by user
+process(values::AbstractVector, colorscheme, colorrange, alphas) = colorfy(values; alphas, colorscheme, colorrange)
+process(value, colorscheme, colorrange, alphas) = process([value], colorscheme, colorrange, alphas) |> first
+
 # assumes that meshes and colors have the same length
-# and that colors are processed with alpha and colormap
 function vizmany!(plot, meshes, colors)
   pointsize = plot.pointsize
   segmentsize = plot.segmentsize
@@ -20,7 +23,7 @@ function vizmany!(plot, meshes, colors)
   viz!(plot, plot[rmesh], color=plot[rcolor], pointsize=pointsize, segmentsize=segmentsize)
 end
 
-asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
+asray(v::Vec) = Ray(Point(zero(v)...), v)
 
 asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(Tuple(ustrip.(v)))
 

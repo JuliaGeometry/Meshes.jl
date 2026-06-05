@@ -78,9 +78,6 @@ function xyzlabels(CRS)
   end
 end
 
-# color handling
-include("colors.jl")
-
 # utilities
 include("utils.jl")
 
