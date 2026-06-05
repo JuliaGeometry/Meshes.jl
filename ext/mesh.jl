@@ -2,17 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{Mesh}}) = vizmesh!(plot)
+function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  vizmesh!(plot)
+end
 
 function vizmesh!(plot)
   mesh = plot.object[]
   M = manifold(mesh)
   pdim = paramdim(mesh)
   edim = embeddim(mesh)
-
-  # process color spec into colorant
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-
   vizmesh!(plot, M, Val(pdim), Val(edim))
 end
 

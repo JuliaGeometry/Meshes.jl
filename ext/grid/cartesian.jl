@@ -3,9 +3,6 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  # process color spec into colorant
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-
   # visualize as built-in image with or without interpolation
   Makie.map!(plot, [:object, :colorant], [:x, :y, :C, :interpolate]) do grid, colorant
     sz = size(grid)
@@ -34,9 +31,6 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
 end
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{3}, ::Val{3})
-  # process color spec into colorant
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-
   # number of vertices and colors
   Makie.map!(plot, [:object, :colorant], [:nv, :nc]) do grid, colorant
     nv = nvertices(grid)

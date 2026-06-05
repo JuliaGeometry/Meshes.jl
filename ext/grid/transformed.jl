@@ -3,22 +3,18 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{TransformedGrid}}, M::Type{<:𝔼}, pdim::Val, edim::Val)
-  color = plot.color
-  alpha = plot.alpha
-  colormap = plot.colormap
-  colorrange = plot.colorrange
-  showsegments = plot.showsegments
-  segmentcolor = plot.segmentcolor
-  segmentsize = plot.segmentsize
-
-  # retrieve transformation
-  Makie.map!(Meshes.transform, plot, :object, :trans)
+  # parent grid and transformation
+  Makie.map!(plot, :object, [:pgrid, :trans]) do grid
+    pgrid = parent(grid)
+    trans = transformation(grid)
+    pgrid, trans
+  end
 
   if isoptimized(plot.trans[])
     # visualize parent grid and transform visualization
-    Makie.map!(parent, plot, :object, :grid)
-    viz!(plot, plot.grid; color, alpha, colormap, colorrange, showsegments, segmentcolor, segmentsize)
-    makietransform!(plot, plot.trans[])
+    plot.object = plot.pgrid
+    vizgrid!(plot)
+    makietransform!(plot)
   else
     # fallback to full grid visualization
     vizgridfallback!(plot, M, pdim, edim)
@@ -39,6 +35,8 @@ function isoptimized(t::Affine{2})
 end
 isoptimized(::TB.Identity) = true
 isoptimized(t::TB.SequentialTransform) = all(isoptimized, t)
+
+makietransform!(plot) = makietransform!(plot, plot.trans[])
 
 function makietransform!(plot, trans::Rotate{<:Angle2d})
   rot = first(TB.parameters(trans))

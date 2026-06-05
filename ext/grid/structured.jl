@@ -4,9 +4,6 @@
 
 function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
   if crs(plot.object[]) <: Cartesian
-    # process color spec into colorant
-    Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-
     # number of vertices and colors
     Makie.map!(plot, [:object, :colorant], [:nv, :nc]) do grid, colorant
       nv = nvertices(grid)

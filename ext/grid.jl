@@ -2,7 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{Grid}}) = vizgrid!(plot)
+function Makie.plot!(plot::Viz{<:Tuple{Grid}})
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  vizgrid!(plot)
+end
 
 function vizgrid!(plot)
   grid = plot.object[]
@@ -19,9 +22,6 @@ end
 vizgrid!(plot, M::Type, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
 function vizgridfallback!(plot, M, pdim, edim)
-  # process color spec into colorant
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-
   # number of vertices, elements and colors
   Makie.map!(plot, [:object, :colorant], [:nv, :ne, :nc]) do grid, colorant
     nv = nvertices(grid)

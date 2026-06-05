@@ -2,7 +2,10 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{SubDomain}}) = vizsubdom!(plot)
+function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  vizsubdom!(plot)
+end
 
 function vizsubdom!(plot)
   subdom = plot.object[]
@@ -16,40 +19,24 @@ end
 # IMPLEMENTATION
 # ---------------
 
-function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  vizsubdom!(plot, 𝔼, pdim, edim)
-end
+vizsubdom!(plot, M::Type, pdim::Val, edim::Val) = vizsubdomfallback!(plot, M, pdim, edim)
 
-function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
-  # construct geometry set
+function vizsubdomfallback!(plot, ::Type, ::Val, ::Val)
+  # visualize as geometry set
   Makie.map!(plot, :object, :gset) do subdom
     GeometrySet(collect(subdom))
   end
-
-  # forward attributes
-  viz!(
-    plot,
-    plot.gset;
-    plot.color,
-    plot.alpha,
-    plot.colormap,
-    plot.colorrange,
-    plot.showsegments,
-    plot.segmentcolor,
-    plot.segmentsize,
-    plot.showpoints,
-    plot.pointmarker,
-    plot.pointcolor,
-    plot.pointsize
-  )
+  plot.object = plot.gset
+  vizgset!(plot)
 end
+
+# ----------------
+# SPECIALIZATIONS
+# ----------------
 
 const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
 
-function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, edim::Val)
-  # process color spec into colorant
-  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-
+function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type, ::Val, edim::Val)
   # retrieve grid paramaters
   Makie.map!(plot, :object, [:scoords, :smarker]) do subgrid
     grid = parent(subgrid)
