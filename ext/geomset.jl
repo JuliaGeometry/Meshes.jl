@@ -26,8 +26,7 @@ function vizgset!(plot)
       cvec = colorant isa AbstractVector ? colorant[inds] : fill(colorant, length(inds))
       gvec, cvec
     end
-
-    gvec = collect(G, geoms[findall(x -> x isa G, geoms)])
+    gvec = plot[gvec_sym][]
     M = manifold(first(gvec))
     pdim = paramdim(first(gvec))
     edim = embeddim(first(gvec))
