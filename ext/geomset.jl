@@ -2,20 +2,16 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot)
+function Makie.plot!(plot::Viz{<:Tuple{GeometrySet}})
+  Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
+  vizgset!(plot)
+end
 
 # split heterogeneous geometry sets into homogeneous vectors
 # of geometries and send these vectors to specialized recipes
-function vizgset!(plot; facets=false)
-  gset = plot.object[]
-
-  # process color spec into colorant
-  if !facets
-    Makie.map!(process, plot, [:color, :colormap, :colorrange, :alpha], :colorant)
-  end
-
+function vizgset!(plot)
   # get geometries
-  geoms = parent(gset)
+  geoms = parent(plot.object[])
 
   # get geometry types
   types = unique(map(typeof, geoms))
@@ -23,29 +19,20 @@ function vizgset!(plot; facets=false)
   for (i, G) in enumerate(types)
     inds_sym = Symbol(:inds_, i)
     gvec_sym = Symbol(:gvec_, i)
+    cvec_sym = Symbol(:cvec_, i)
 
-    Makie.map!(plot, [:object], inds_sym) do g
-      findall(x -> x isa G, parent(g))
-    end
-
-    Makie.map!(plot, [:object, inds_sym], gvec_sym) do g, inds
-      collect(G, parent(g)[inds])
+    Makie.map!(plot, [:object, :colorant], [inds_sym, gvec_sym, cvec_sym]) do g, colorant
+      inds = findall(x -> x isa G, parent(g))
+      gvec = collect(G, parent(g)[inds])
+      cvec = colorant isa AbstractVector ? colorant[inds] : fill(colorant, length(inds))
+      inds, gvec, cvec
     end
 
     gvec = collect(G, geoms[findall(x -> x isa G, geoms)])
     M = manifold(first(gvec))
     pdim = paramdim(first(gvec))
     edim = embeddim(first(gvec))
-
-    if facets
-      vizgsetfacets!(plot, M, Val(pdim), Val(edim), G, gvec_sym)
-    else
-      cvec_sym = Symbol(:cvec_, i)
-      Makie.map!(plot, [:colorant, inds_sym], cvec_sym) do colorant, inds
-        colorant isa AbstractVector ? colorant[inds] : fill(colorant, length(inds))
-      end
-      vizgset!(plot, M, Val(pdim), Val(edim), G, gvec_sym, cvec_sym)
-    end
+    vizgset!(plot, M, Val(pdim), Val(edim), G, gvec_sym, cvec_sym)
   end
 end
 
@@ -269,7 +256,7 @@ end
 # FACETS
 # -------
 
-vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizgset!(plot, facets=false)
+vizfacets!(plot::Viz{<:Tuple{GeometrySet}}) = vizfacets!(plot)
 
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, G::Type, geoms::Symbol)
   gvec = plot[geoms][]
