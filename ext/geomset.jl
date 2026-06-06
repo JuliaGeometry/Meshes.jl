@@ -69,25 +69,23 @@ end
 
 # collect and visualize parents of multi-geometries
 function vizgset!(plot, M::Type, pdim::Val, edim::Val, ::Type{<:Multi}, gvecid::Symbol, cvecid::Symbol)
+  # repeat colors for parents
   parentsid = Symbol(gvecid, :_parents)
   pcolorsid = Symbol(cvecid, :_pcolors)
-
-  # repeat colors for parents
   Makie.map!(plot, [gvecid, cvecid], [parentsid, pcolorsid]) do gvec, cvec
     parents = mapreduce(parent, vcat, gvec)
     pcolors = [cvec[i] for (i, g) in enumerate(gvec) for _ in 1:length(parent(g))]
     parents, pcolors
   end
 
-  # call recipe for parents
+  # visualize as set of parents
   P = typeof(first(plot[parentsid][]))
   vizgset!(plot, M, pdim, edim, P, parentsid, pcolorsid)
 end
 
 function vizgset!(plot, ::Type, ::Val, ::Val, ::Type{<:Point}, gvecid::Symbol, cvecid::Symbol)
-  coordsid = Symbol(gvecid, :_coords)
-
   # get raw Cartesian coordinates of points
+  coordsid = Symbol(gvecid, :_coords)
   Makie.map!(plot, gvecid, coordsid) do gvec
     map(p -> ustrip.(to(p)), gvec)
   end
