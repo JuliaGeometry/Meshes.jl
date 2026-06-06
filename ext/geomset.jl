@@ -53,7 +53,7 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, ::Type{<:Geometry}, gvecid::S
   # the resulting quadrangles into triangles
   triangulate = simplexify ∘ mayberefine ∘ discretize ∘ maybeboundary
 
-  # visualize geometries as single mesh of triangles
+  # visualize geometries as single mesh of simplices
   meshid = Symbol(gvecid, :_mesh)
   colorid = Symbol(cvecid, :_color)
   Makie.map!(plot, [gvecid, cvecid], [meshid, colorid]) do gvec, cvec
@@ -62,7 +62,8 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, ::Type{<:Geometry}, gvecid::S
     color = [cvec[i] for (i, m) in enumerate(meshes) for _ in 1:nelements(m)]
     mesh, color
   end
-  viz!(plot, plot[meshid], color=plot[colorid])
+  # forward segment size in case of 1D simplices
+  viz!(plot, plot[meshid], color=plot[colorid], segmentsize=plot.segmentsize)
 
   # visualize facets if requested
   pdim === Val(1) && plot.showpoints[] && vizfacets!(plot, gvecid)
