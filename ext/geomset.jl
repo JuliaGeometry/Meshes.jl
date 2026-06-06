@@ -27,9 +27,10 @@ function vizgset!(plot)
     end
 
     # dispatch specialized recipe for this type of geometry
-    M = manifold(G)
-    pdim = paramdim(G)
-    edim = embeddim(G)
+    g = first(plot[gvecid][])
+    M = manifold(g)
+    pdim = paramdim(g)
+    edim = embeddim(g)
     vizgset!(plot, M, Val(pdim), Val(edim), G, gvecid, cvecid)
   end
 end
@@ -39,7 +40,10 @@ end
 # ---------------
 
 # fallback to visualization of discretized geometries
-function vizgset!(plot, M::Type, pdim::Val, ::Val, G::Type{<:Geometry}, geoms::Symbol, colors::Symbol)
+function vizgset!(plot, M::Type, pdim::Val, ::Val, ::Type{<:Geometry}, gvecid::Symbol, cvecid::Symbol)
+  # visualize 3D geometries as boundary meshes
+  maybeboundary = pdim === Val(3) ? boundary : identity
+
   # refine meshes over the 🌐 manifold until
   # they satisfy the maximum length criterion
   mayberefine = M === 🌐 ? refinemaxlen : identity
@@ -47,57 +51,45 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, G::Type{<:Geometry}, geoms::S
   # make sure that the geometries are refined with
   # efficient "grid-like" methods before splitting
   # the resulting quadrangles into triangles
-  triangulate = simplexify ∘ mayberefine ∘ discretize
+  triangulate = simplexify ∘ mayberefine ∘ discretize ∘ maybeboundary
 
-  meshes_sym = Symbol(geoms, :_meshes)
-
-  if pdim === Val(1)
-    Makie.map!(plot, [geoms], meshes_sym) do gvec
-      map(triangulate, gvec)
-    end
-    vizmany!(plot, plot[meshes_sym], plot[colors])
-    if plot.showpoints[]
-      vizfacets!(plot, geoms)
-    end
-  elseif pdim === Val(2)
-    Makie.map!(plot, [geoms], meshes_sym) do gvec
-      map(triangulate, gvec)
-    end
-    vizmany!(plot, plot[meshes_sym], plot[colors])
-    if plot.showsegments[]
-      vizfacets!(plot, geoms)
-    end
-  elseif pdim === Val(3)
-    Makie.map!(plot, [geoms], meshes_sym) do gvec
-      map(triangulate ∘ boundary, gvec)
-    end
-    vizmany!(plot, plot[meshes_sym], plot[colors])
+  # add node to compute graph for triangle meshes
+  meshesid = Symbol(gvecid, :_meshes)
+  Makie.map!(plot, gvecid, meshesid) do gvec
+    map(triangulate, gvec)
   end
+
+  # visualize geometries
+  vizmany!(plot, plot[meshesid], plot[cvecid])
+
+  # visualize facets if requested
+  pdim === Val(1) && plot.showpoints[] && vizfacets!(plot, gvecid)
+  pdim === Val(2) && plot.showsegments[] && vizfacets!(plot, gvecid)
 end
 
 # collect and visualize parents of multi-geometries
-function vizgset!(plot, M::Type, pdim::Val, edim::Val, G::Type{<:Multi}, geoms::Symbol, colors::Symbol)
-  parents_sym = Symbol(geoms, :_parents)
-  pcolors_sym = Symbol(colors, :_pcolors)
+function vizgset!(plot, M::Type, pdim::Val, edim::Val, ::Type{<:Multi}, gvecid::Symbol, cvecid::Symbol)
+  parents_sym = Symbol(gvecid, :_parents)
+  pcolors_sym = Symbol(cvecid, :_pcolors)
 
   # repeat colors for parents
-  Makie.map!(plot, [colors, geoms], [pcolors_sym, parents_sym]) do cvec, gvec
+  Makie.map!(plot, [cvecid, gvecid], [pcolors_sym, parents_sym]) do cvec, gvec
     pcolors = [cvec[i] for (i, g) in enumerate(gvec) for _ in 1:length(parent(g))]
     pgeoms = mapreduce(parent, vcat, gvec)
     pcolors, pgeoms
   end
 
-  P = typeof(first(parent(first(plot[geoms][]))))
+  P = typeof(first(parent(first(plot[gvecid][]))))
 
   # call recipe for parents
   vizgset!(plot, M, pdim, edim, P, parents_sym, pcolors_sym)
 end
 
-function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, geoms::Symbol, colors::Symbol)
-  coords_sym = Symbol(geoms, :_coords)
+function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, gvecid::Symbol, cvecid::Symbol)
+  coords_sym = Symbol(gvecid, :_coords)
 
   # get raw Cartesian coordinates of points
-  Makie.map!(plot, [geoms], coords_sym) do gvec
+  Makie.map!(plot, [gvecid], coords_sym) do gvec
     map(p -> ustrip.(to(p)), gvec)
   end
 
@@ -105,27 +97,27 @@ function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, geoms::Symbol, c
   Makie.scatter!(
     plot,
     plot[coords_sym],
-    color=plot[colors],
+    color=plot[cvecid],
     marker=plot.pointmarker,
     markersize=plot.pointsize,
     overdraw=true
   )
 end
 
-function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol, colors::Symbol)
-  orig_sym = Symbol(geoms, :_orig)
-  dirs_sym = Symbol(geoms, :_dirs)
+function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, gvecid::Symbol, cvecid::Symbol)
+  orig_sym = Symbol(gvecid, :_orig)
+  dirs_sym = Symbol(gvecid, :_dirs)
 
   # visualize as built-in arrows
-  Makie.map!(plot, [geoms], [orig_sym, dirs_sym]) do gvec
+  Makie.map!(plot, [gvecid], [orig_sym, dirs_sym]) do gvec
     oris = [asmakie(ray(0)) for ray in gvec]
     dirs = [asmakie(ray(1) - ray(0)) for ray in gvec]
     oris, dirs
   end
 
   if edim === Val(2)
-    tipwidth_sym = Symbol(geoms, :_tipwidth)
-    shaftwidth_sym = Symbol(geoms, :_shaftwidth)
+    tipwidth_sym = Symbol(gvecid, :_tipwidth)
+    shaftwidth_sym = Symbol(gvecid, :_shaftwidth)
     Makie.map!(plot, [:segmentsize], [tipwidth_sym, shaftwidth_sym]) do sz
       tw = 5 * sz
       sw = 0.2 * tw
@@ -135,13 +127,13 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
       plot,
       plot[orig_sym],
       plot[dirs_sym],
-      color=plot[colors],
+      color=plot[cvecid],
       tipwidth=plot[tipwidth_sym],
       shaftwidth=plot[shaftwidth_sym]
     )
   elseif edim === Val(3)
-    tipradius_sym = Symbol(geoms, :_tipradius)
-    shaftradius_sym = Symbol(geoms, :_shaftradius)
+    tipradius_sym = Symbol(gvecid, :_tipradius)
+    shaftradius_sym = Symbol(gvecid, :_shaftradius)
     Makie.map!(plot, [:segmentsize], [tipradius_sym, shaftradius_sym]) do sz
       tr = 0.05 * sz
       sr = 0.5 * tr
@@ -151,7 +143,7 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
       plot,
       plot[orig_sym],
       plot[dirs_sym],
-      color=plot[colors],
+      color=plot[cvecid],
       tipradius=plot[tipradius_sym],
       shaftradius=plot[shaftradius_sym]
     )
@@ -160,21 +152,21 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, geoms::Symbol,
   end
 
   if plot.showpoints[]
-    vizfacets!(plot, geoms)
+    vizfacets!(plot, gvecid)
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms::Symbol, colors::Symbol)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, gvecid::Symbol, cvecid::Symbol)
   segmentsize = plot.segmentsize
 
-  inter_sym = Symbol(geoms, :_inter)
-  vinds_sym = Symbol(geoms, :_vinds)
-  dinds_sym = Symbol(geoms, :_dinds)
-  vcolor_sym = Symbol(colors, :_vcolor)
-  dcolor_sym = Symbol(colors, :_dcolor)
+  inter_sym = Symbol(gvecid, :_inter)
+  vinds_sym = Symbol(gvecid, :_vinds)
+  dinds_sym = Symbol(gvecid, :_dinds)
+  vcolor_sym = Symbol(cvecid, :_vcolor)
+  dcolor_sym = Symbol(cvecid, :_dcolor)
 
   # split vertical and non-vertical lines
-  Makie.map!(plot, [geoms], [inter_sym, vinds_sym, dinds_sym]) do gvec
+  Makie.map!(plot, [gvecid], [inter_sym, vinds_sym, dinds_sym]) do gvec
     inter = [line ∩ Line((0, 0), (0, 1)) for line in gvec]
     vinds = findall(g -> isnothing(g) || g isa Line, inter)
     dinds = setdiff(1:length(gvec), vinds)
@@ -182,15 +174,15 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
   end
 
   # split colors accordingly
-  Makie.map!(plot, [colors, vinds_sym], vcolor_sym) do cvec, vinds
+  Makie.map!(plot, [cvecid, vinds_sym], vcolor_sym) do cvec, vinds
     cvec[vinds]
   end
-  Makie.map!(plot, [colors, dinds_sym], dcolor_sym) do cvec, dinds
+  Makie.map!(plot, [cvecid, dinds_sym], dcolor_sym) do cvec, dinds
     cvec[dinds]
   end
 
-  xcoord_sym = Symbol(geoms, :_xcoord)
-  Makie.map!(plot, [geoms, vinds_sym], xcoord_sym) do gvec, vinds
+  xcoord_sym = Symbol(gvecid, :_xcoord)
+  Makie.map!(plot, [gvecid, vinds_sym], xcoord_sym) do gvec, vinds
     vlines = gvec[vinds]
     map(vlines) do vline
       c = coords(vline(0))
@@ -200,8 +192,8 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
   end
   Makie.vlines!(plot, plot[xcoord_sym], color=plot[vcolor_sym], linewidth=segmentsize)
 
-  ycoord_sym = Symbol(geoms, :_ycoord)
-  slopes_sym = Symbol(geoms, :_slopes)
+  ycoord_sym = Symbol(gvecid, :_ycoord)
+  slopes_sym = Symbol(gvecid, :_slopes)
   Makie.map!(plot, [inter_sym, dinds_sym], ycoord_sym) do inter, dinds
     dinter = inter[dinds]
     map(dinter) do I
@@ -213,7 +205,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
       ustrip(y)
     end
   end
-  Makie.map!(plot, [geoms, dinds_sym], slopes_sym) do gvec, dinds
+  Makie.map!(plot, [gvecid, dinds_sym], slopes_sym) do gvec, dinds
     dlines = gvec[dinds]
     map(dlines) do dline
       c1 = convert(Cartesian, coords(dline(0)))
@@ -224,18 +216,18 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, geoms:
   Makie.ablines!(plot, plot[ycoord_sym], plot[slopes_sym], color=plot[dcolor_sym], linewidth=segmentsize)
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, G::Type{<:Polygon}, geoms::Symbol, colors::Symbol)
-  polys_sym = Symbol(geoms, :_polys)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, G::Type{<:Polygon}, gvecid::Symbol, cvecid::Symbol)
+  polys_sym = Symbol(gvecid, :_polys)
 
   # visualize as built-in polygons
-  Makie.map!(plot, [geoms], polys_sym) do gvec
+  Makie.map!(plot, [gvecid], polys_sym) do gvec
     map(asmakie, gvec)
   end
 
   if plot.showsegments[]
-    Makie.poly!(plot, plot[polys_sym], color=plot[colors], strokecolor=plot.segmentcolor, strokewidth=plot.segmentsize)
+    Makie.poly!(plot, plot[polys_sym], color=plot[cvecid], strokecolor=plot.segmentcolor, strokewidth=plot.segmentsize)
   else
-    Makie.poly!(plot, plot[polys_sym], color=plot[colors])
+    Makie.poly!(plot, plot[polys_sym], color=plot[cvecid])
   end
 end
 
@@ -243,19 +235,19 @@ end
 # FACETS
 # -------
 
-function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, geoms::Symbol)
-  gvec = plot[geoms][]
+function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, gvecid::Symbol)
+  gvec = plot[gvecid][]
   M = manifold(first(gvec))
   pdim = paramdim(first(gvec))
   edim = embeddim(first(gvec))
-  vizgsetfacets!(plot, M, Val(pdim), Val(edim), geoms)
+  vizgsetfacets!(plot, M, Val(pdim), Val(edim), gvecid)
 end
 
-function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, geoms::Symbol)
-  pset_sym = Symbol(geoms, :_pset)
+function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, gvecid::Symbol)
+  pset_sym = Symbol(gvecid, :_pset)
 
   # all boundaries are points or multipoints
-  Makie.map!(plot, [geoms], pset_sym) do gvec
+  Makie.map!(plot, [gvecid], pset_sym) do gvec
     points = filter(!isnothing, map(boundary, gvec))
     GeometrySet(points)
   end
@@ -263,11 +255,11 @@ function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, geoms::Symbol)
   viz!(plot, plot[pset_sym], color=plot.pointcolor, pointmarker=plot.pointmarker, pointsize=plot.pointsize)
 end
 
-function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, geoms::Symbol)
-  bset_sym = Symbol(geoms, :_bset)
+function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, gvecid::Symbol)
+  bset_sym = Symbol(gvecid, :_bset)
 
   # all boundaries are 1D geometries
-  Makie.map!(plot, [geoms], bset_sym) do gvec
+  Makie.map!(plot, [gvecid], bset_sym) do gvec
     bounds = filter(!isnothing, map(boundary, gvec))
     GeometrySet(bounds)
   end
