@@ -74,7 +74,7 @@ function vizgridfallback!(plot, M, pdim, edim)
       vizfacets!(plot)
     end
   else
-    # fallback to triangle mesh visualization
+    # visualize as simple mesh
     vizmesh!(plot)
   end
 end

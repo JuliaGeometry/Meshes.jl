@@ -24,6 +24,7 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
         vizfacets!(plot)
       end
     else
+      # visualize as simple mesh
       vizmesh!(plot)
     end
   else

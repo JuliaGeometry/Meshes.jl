@@ -3,6 +3,9 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
+  # add colorant to compute graph
+  colorant!(plot)
+
   # add parent domain and transformation to compute graph
   Makie.map!(plot, :object, [:pdom, :trans]) do tdom
     pdom = parent(tdom)
@@ -16,7 +19,6 @@ function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
     makietransform!(plot, plot.trans[])
   elseif plot.pdom[] isa Grid
     # visualize as grid
-    colorant!(plot)
     vizgrid!(plot)
   else
     error("not implemented")

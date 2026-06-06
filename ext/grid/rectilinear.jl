@@ -12,8 +12,7 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
     end
 
     if plot.nc[] == plot.nv[]
-      # visualize as a simple mesh so that
-      # colors can be specified at vertices
+      # visualize as simple mesh
       vizmesh!(plot)
     else
       # visualize as built-in heatmap
