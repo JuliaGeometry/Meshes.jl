@@ -167,7 +167,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid:
   # split colors accordingly
   vcolorid = Symbol(cvecid, :_vcolor)
   dcolorid = Symbol(cvecid, :_dcolor)
-  Makie.map!(plot, [cvecid, vindsid, dindsid], vcolorid) do cvec, vinds, dinds
+  Makie.map!(plot, [cvecid, vindsid, dindsid], [vcolorid, dcolorid]) do cvec, vinds, dinds
     cvec[vinds], cvec[dinds]
   end
 
@@ -175,7 +175,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid:
   xcoordid = Symbol(gvecid, :_xcoord)
   ycoordid = Symbol(gvecid, :_ycoord)
   slopesid = Symbol(gvecid, :_slopes)
-  Makie.map!(plot, [interid, gvecid, vindsid, dindsid], [xcoordid, ycoordid, slopesid]) do inter, gvec, vinds, dinds
+  Makie.map!(plot, [gvecid, interid, vindsid, dindsid], [xcoordid, ycoordid, slopesid]) do gvec, inter, vinds, dinds
     # x coordinates of vertical lines
     xcoords = map(gvec[vinds]) do vline
       c = coords(vline(0))
