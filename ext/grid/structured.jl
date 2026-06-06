@@ -3,36 +3,28 @@
 # ------------------------------------------------------------------
 
 function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val{2}, edim::Val{2})
-  grid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-  showsegments = plot[:showsegments]
-
-  if crs(grid[]) <: Cartesian
-    # process color spec into colorant
-    colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
+  if crs(plot.object[]) <: Cartesian
     # number of vertices and colors
-    nv = Makie.@lift nvertices($grid)
-    nc = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+    Makie.map!(plot, [:object, :colorant], [:nv, :nc]) do grid, colorant
+      nv = nvertices(grid)
+      nc = colorant isa AbstractVector ? length(colorant) : 1
+      nv, nc
+    end
 
-    if nc[] == nv[]
-      # size and coordinates
-      sz = Makie.@lift size($grid) .+ 1
-      XYZ = Makie.@lift map(X -> ustrip.(X), Meshes.XYZ($grid))
-      X = Makie.@lift $XYZ[1]
-      Y = Makie.@lift $XYZ[2]
-
+    if plot.nc[] == plot.nv[]
       # visualize as built-in surface
-      C = Makie.@lift reshape($colorant, $sz)
-      Makie.surface!(plot, X, Y, color=C)
+      Makie.map!(plot, [:object, :colorant], [:X, :Y, :C]) do grid, colorant
+        X, Y = map(c -> ustrip.(c), Meshes.XYZ(grid))
+        C = reshape(colorant, Meshes.vsize(grid))
+        X, Y, C
+      end
+      Makie.surface!(plot, plot.X, plot.Y, color=plot.C)
 
-      if showsegments[]
+      if plot.showsegments[]
         vizfacets!(plot)
       end
     else
+      # visualize as simple mesh
       vizmesh!(plot)
     end
   else
@@ -41,13 +33,8 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
 end
 
 function vizgridfacets!(plot::Viz{<:Tuple{StructuredGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
-  grid = plot[:object]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
-
-  tup = Makie.@lift structuredsegments($grid)
-  x, y = Makie.@lift($tup[1]), Makie.@lift($tup[2])
-  Makie.lines!(plot, x, y, color=segmentcolor, linewidth=segmentsize)
+  Makie.map!(structuredsegments, plot, :object, [:xfacets, :yfacets])
+  Makie.lines!(plot, plot.xfacets, plot.yfacets, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end
 
 function structuredsegments(grid)

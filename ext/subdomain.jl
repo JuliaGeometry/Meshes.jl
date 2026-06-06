@@ -2,96 +2,41 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{SubDomain}}) = vizsubdom!(plot)
-
-function vizsubdom!(plot)
-  subdom = plot[:object]
-  M = Makie.@lift manifold($subdom)
-  pdim = Makie.@lift paramdim($subdom)
-  edim = Makie.@lift embeddim($subdom)
-  vizsubdom!(plot, M[], Val(pdim[]), Val(edim[]))
+function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
+  if parent(plot.object[]) isa CartesianGrid
+    # visualize as subset of Cartesian grid
+    colorant!(plot)
+    vizsubcartgrid!(plot)
+  else
+    # visualize as geometry set
+    Makie.map!(sdom -> GeometrySet(collect(sdom)), plot, :object, :gset)
+    viz!(plot, plot.attributes, plot.gset)
+  end
 end
 
-# ---------------
-# IMPLEMENTATION
-# ---------------
+# --------------
+# OPTIMIZATIONS
+# --------------
 
-function vizsubdom!(plot, ::Type{<:🌐}, pdim::Val, edim::Val)
-  vizsubdom!(plot, 𝔼, pdim, edim)
-end
-
-function vizsubdom!(plot, ::Type{<:𝔼}, ::Val, ::Val)
-  subdom = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-  showsegments = plot[:showsegments]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
-  showpoints = plot[:showpoints]
-  pointmarker = plot[:pointmarker]
-  pointcolor = plot[:pointcolor]
-  pointsize = plot[:pointsize]
-
-  # construct the geometry set
-  gset = Makie.@lift GeometrySet(collect($subdom))
-
-  # forward attributes
-  viz!(
-    plot,
-    gset;
-    color,
-    alpha,
-    colormap,
-    colorrange,
-    showsegments,
-    segmentcolor,
-    segmentsize,
-    showpoints,
-    pointmarker,
-    pointcolor,
-    pointsize
-  )
-end
-
-const SubCartesianGrid{M,CRS} = SubDomain{M,CRS,<:CartesianGrid}
-
-function vizsubdom!(plot::Viz{<:Tuple{SubCartesianGrid}}, ::Type{<:𝔼}, ::Val, ::Val)
-  subgrid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
+function vizsubcartgrid!(plot)
   # retrieve grid paramaters
-  gparams = Makie.@lift let
-    grid = parent($subgrid)
-    dim = embeddim(grid)
-    sp = ustrip.(spacing(grid))
+  Makie.map!(plot, :object, [:xyz, :rec]) do sgrid
+    sp = ustrip.(spacing(parent(sgrid)))
 
     # coordinates of markers
-    coords = map($subgrid) do e
+    xyz = map(sgrid) do e
       ustrip.(to(centroid(e))) .+ sp ./ 2
     end
 
     # rectangle markers
-    marker = Makie.Rect{dim}(-1 .* sp, sp)
+    rec = Makie.Rect{length(sp)}(-1 .* sp, sp)
 
-    # enable shading in 3D
-    shading = dim == 3
-
-    coords, marker, shading
+    xyz, rec
   end
 
-  # unpack observable parameters
-  coords = Makie.@lift $gparams[1]
-  marker = Makie.@lift $gparams[2]
-  shading = Makie.@lift $gparams[3]
+  # enable shading in 3D
+  shading = embeddim(plot.object[]) == 3
 
   # all geometries are equal, use mesh scatter
-  Makie.meshscatter!(plot, coords, marker=marker, markersize=1, color=colorant, shading=shading)
+  Makie.meshscatter!(plot, plot.xyz, marker=plot.rec, markersize=1, color=plot.colorant, shading=shading)
 end

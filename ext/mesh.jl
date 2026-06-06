@@ -2,81 +2,72 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{Mesh}}) = vizmesh!(plot)
+function Makie.plot!(plot::Viz{<:Tuple{Mesh}})
+  colorant!(plot)
+  vizmesh!(plot)
+end
 
 function vizmesh!(plot)
-  # retrieve mesh and plot attributes
-  mesh = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-
-  # retrieve manifold and dimensions
-  M = Makie.@lift manifold($mesh)
-  pdim = Makie.@lift paramdim($mesh)
-  edim = Makie.@lift embeddim($mesh)
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
-  vizmesh!(plot, M[], Val(pdim[]), Val(edim[]), mesh, colorant)
+  mesh = plot.object[]
+  M = manifold(mesh)
+  pdim = paramdim(mesh)
+  edim = embeddim(mesh)
+  vizmesh!(plot, M, Val(pdim), Val(edim))
 end
 
 # ---------------
 # IMPLEMENTATION
 # ---------------
 
-function vizmesh!(plot, ::Type, ::Val{1}, ::Val, mesh, colorant)
-  segmentsize = plot[:segmentsize]
+function vizmesh!(plot, ::Type, ::Val{1}, ::Val)
+  # retrieve segment coordinates and colors
+  Makie.map!(plot, [:object, :colorant], [:lcoords, :lcolors]) do mesh, colorant
+    # retrieve colors of segments
+    colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
 
-  colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
+    # retrieve coordinates of vertices
+    xyzs = map(p -> ustrip.(to(p)), vertices(mesh))
 
-  # retrieve coordinates of vertices
-  xyzs = Makie.@lift map(p -> ustrip.(to(p)), vertices($mesh))
+    # retrieve connectivities of segments
+    inds = map(collect ∘ indices, elements(topology(mesh)))
 
-  # retrieve connectivities of segments
-  inds = Makie.@lift map(collect ∘ indices, elements(topology($mesh)))
+    # sentinel coordinates
+    xyz = first(xyzs)
+    nan = typeof(xyz)(ntuple(i -> NaN, length(xyz)))
 
-  # extract coordinates and colors of segments
-  scoords = Makie.@lift [$xyzs[indsₑ] for indsₑ in $inds]
-  scolors = Makie.@lift [fill($colors[e], length(indsₑ)) for (e, indsₑ) in enumerate($inds)]
+    # extract coordinates and colors of segments
+    scoords = [xyzs[indsₑ] for indsₑ in inds]
+    scolors = [fill(colors[e], length(indsₑ)) for (e, indsₑ) in enumerate(inds)]
 
-  # sentinel coordinates
-  nan = Makie.@lift let
-    v = first($xyzs)
-    typeof(v)(ntuple(i -> NaN, length(v)))
+    # splice sentinel coordinates to get discrete colors
+    lcoords = reduce((xyz₁, xyz₂) -> [xyz₁; [nan]; xyz₂], scoords)
+    lcolors = reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], scolors)
+
+    lcoords, lcolors
   end
 
-  # splice sentinel coordinates to get discrete colors
-  lcoords = Makie.@lift reduce((xyz₁, xyz₂) -> [xyz₁; [$nan]; xyz₂], $scoords)
-  lcolors = Makie.@lift reduce((col₁, col₂) -> [col₁; [first(col₁)]; col₂], $scolors)
-
-  # visualize segments
-  Makie.lines!(plot, lcoords, color=lcolors, linewidth=segmentsize)
+  # visualize as built-in lines
+  Makie.lines!(plot, plot.lcoords, color=plot.lcolors, linewidth=plot.segmentsize)
 end
 
-function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
-  showsegments = plot[:showsegments]
-
-  # retrieve triangle mesh parameters
-  tparams = Makie.@lift let
+function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
+  # compute triangle mesh and colors
+  Makie.map!(plot, [:object, :colorant], [:tmesh, :tcolors]) do mesh, colorant
     # relevant settings
-    edim = embeddim($mesh)
-    nvert = nvertices($mesh)
-    nelem = nelements($mesh)
-    verts = map(asmakie, eachvertex($mesh))
-    elems = elements(topology($mesh))
+    nvert = nvertices(mesh)
+    nelem = nelements(mesh)
+    verts = map(asmakie, eachvertex(mesh))
+    elems = elements(topology(mesh))
 
     # decide whether or not to reverse connectivity list
-    rfunc = crs($mesh) <: LatLon && orientation(first($mesh)) == CW ? reverse : identity
+    rev = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? reverse : identity
 
     # fan triangulation (assume convexity)
     ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     tind = 0
     for elem in elems
-      I = rfunc(indices(elem))
+      I = rev(indices(elem))
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
@@ -84,8 +75,8 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
     end
 
     # element vs. vertex coloring
-    if $colorant isa AbstractVector
-      ncolor = length($colorant)
+    if colorant isa AbstractVector
+      ncolor = length(colorant)
       if ncolor == nelem # element coloring
         # duplicate vertices and adjust
         # connectivities to avoid linear
@@ -105,7 +96,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
         tcolors = map(1:nv) do i
           t = ceil(Int, i / 3)
           e = elem4tri[t]
-          $colorant[e]
+          colorant[e]
         end
       elseif ncolor == nvert # vertex coloring
         # nothing needs to be done because
@@ -115,45 +106,48 @@ function vizmesh!(plot, ::Type, ::Val{2}, ::Val, mesh, colorant)
         # the original polygonal mesh
         tverts = verts
         telems = tris
-        tcolors = $colorant
+        tcolors = colorant
       else
-        throw(ArgumentError("Provided $ncolor colors but the mesh has
-                            $nvert vertices and $nelem elements."))
+        throw(ArgumentError("provided $ncolor colors but the mesh has
+                             $nvert vertices and $nelem elements."))
       end
     else # single color
       # nothing needs to be done
       tverts = verts
       telems = tris
-      tcolors = $colorant
+      tcolors = colorant
     end
 
-    # enable shading in 3D
-    tshading = edim == 3
+    # triangle mesh
+    tmesh = GB.Mesh(tverts, telems)
 
-    tverts, telems, tcolors, tshading
+    tmesh, tcolors
   end
 
-  # unpack observable of parameters
-  tverts = Makie.@lift $tparams[1]
-  telems = Makie.@lift $tparams[2]
-  tcolors = Makie.@lift $tparams[3]
-  tshading = Makie.@lift $tparams[4]
+  # enable shading in 3D
+  shading = edim == Val(3)
 
-  # Makie's triangle mesh
-  mkemesh = Makie.@lift GB.Mesh($tverts, $telems)
+  # visualize as triangle mesh
+  Makie.mesh!(plot, plot.tmesh, color=plot.tcolors, shading=shading)
 
-  # main visualization
-  Makie.mesh!(plot, mkemesh, color=tcolors, shading=tshading)
-
-  if showsegments[]
+  if plot.showsegments[]
     vizfacets!(plot)
   end
 end
 
-function vizmesh!(plot, ::Type, ::Val{3}, ::Val, mesh, colorant)
-  meshes = Makie.@lift map(discretize ∘ boundary, $mesh)
-  colors = Makie.@lift $colorant isa AbstractVector ? $colorant : fill($colorant, nelements($mesh))
-  vizmany!(plot, meshes, colors)
+function vizmesh!(plot, ::Type, ::Val{3}, ::Val)
+  Makie.map!(plot, [:object, :colorant], [:bmesh, :bcolor]) do mesh, colorant
+    # discretize boundaries of elements
+    meshes = map(discretize ∘ boundary, mesh)
+    colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
+
+    # merge into single boundary mesh
+    bmesh = reduce(merge, meshes)
+    bcolor = [colors[i] for (i, m) in enumerate(meshes) for _ in 1:nelements(m)]
+
+    bmesh, bcolor
+  end
+  viz!(plot, plot.bmesh, color=plot.bcolor)
 end
 
 # -------
@@ -161,27 +155,23 @@ end
 # -------
 
 function vizfacets!(plot::Viz{<:Tuple{Mesh}})
-  mesh = plot[:object]
-  M = Makie.@lift manifold($mesh)
-  pdim = Makie.@lift paramdim($mesh)
-  edim = Makie.@lift embeddim($mesh)
-  vizmeshfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+  mesh = plot.object[]
+  M = manifold(mesh)
+  pdim = paramdim(mesh)
+  edim = embeddim(mesh)
+  vizmeshfacets!(plot, M, Val(pdim), Val(edim))
 end
 
 function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
-  mesh = plot[:object]
-  segmentcolor = plot[:segmentcolor]
-  segmentsize = plot[:segmentsize]
-
   # retrieve raw coordinates
-  coords = Makie.@lift let
+  Makie.map!(plot, :object, :coords) do mesh
     # relevant settings
-    ℒ = Meshes.lentype($mesh)
+    ℒ = Meshes.lentype(mesh)
     T = Unitful.numtype(ℒ)
-    edim = embeddim($mesh)
-    topo = topology($mesh)
-    nvert = nvertices($mesh)
-    verts = vertices($mesh)
+    edim = embeddim(mesh)
+    topo = topology(mesh)
+    nvert = nvertices(mesh)
+    verts = vertices(mesh)
 
     # extract coordinates and insert sentinel
     # vertex with NaN coordinates at the end
@@ -216,5 +206,6 @@ function vizmeshfacets!(plot, ::Type, ::Val{2}, ::Val)
     xyz[inds]
   end
 
-  Makie.lines!(plot, coords, color=segmentcolor, linewidth=segmentsize)
+  # visualize as built-in lines
+  Makie.lines!(plot, plot.coords, color=plot.segmentcolor, linewidth=plot.segmentsize)
 end

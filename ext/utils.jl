@@ -2,19 +2,18 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-# assumes that meshes and colors have the same length
-# and that colors are processed with alpha and colormap
-function vizmany!(plot, meshes, colors)
-  pointsize = plot[:pointsize]
-  segmentsize = plot[:segmentsize]
-
-  rmesh = Makie.@lift reduce(merge, $meshes)
-  color = Makie.@lift [$colors[i] for (i, m) in enumerate($meshes) for _ in 1:nelements(m)]
-
-  viz!(plot, rmesh, color=color, pointsize=pointsize, segmentsize=segmentsize)
+# update plot with processed colors
+function colorant!(plot)
+  Makie.map!(plot, [:color, :alpha, :colormap, :colorrange], :colorant) do color, alphas, colorscheme, colorrange
+    if color isa AbstractVector
+      colorfy(color; alphas, colorscheme, colorrange)
+    else
+      colorfy([color]; alphas, colorscheme, colorrange) |> first
+    end
+  end
 end
 
-asray(vec::Vec{Dim,ℒ}) where {Dim,ℒ} = Ray(Point(ntuple(i -> zero(ℒ), Dim)), vec)
+asray(v::Vec) = Ray(Point(zero(v)...), v)
 
 asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(Tuple(ustrip.(v)))
 

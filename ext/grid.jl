@@ -2,14 +2,17 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-Makie.plot!(plot::Viz{<:Tuple{Grid}}) = vizgrid!(plot)
+function Makie.plot!(plot::Viz{<:Tuple{Grid}})
+  colorant!(plot)
+  vizgrid!(plot)
+end
 
 function vizgrid!(plot)
-  grid = plot[:object]
-  M = Makie.@lift manifold($grid)
-  pdim = Makie.@lift paramdim($grid)
-  edim = Makie.@lift embeddim($grid)
-  vizgrid!(plot, M[], Val(pdim[]), Val(edim[]))
+  grid = plot.object[]
+  M = manifold(grid)
+  pdim = paramdim(grid)
+  edim = embeddim(grid)
+  vizgrid!(plot, M, Val(pdim), Val(edim))
 end
 
 # ---------------
@@ -19,57 +22,59 @@ end
 vizgrid!(plot, M::Type, pdim::Val, edim::Val) = vizgridfallback!(plot, M, pdim, edim)
 
 function vizgridfallback!(plot, M, pdim, edim)
-  grid = plot[:object]
-  color = plot[:color]
-  alpha = plot[:alpha]
-  colormap = plot[:colormap]
-  colorrange = plot[:colorrange]
-  showsegments = plot[:showsegments]
-
-  # process color spec into colorant
-  colorant = Makie.@lift process($color, $colormap, $colorrange, $alpha)
-
   # number of vertices, elements and colors
-  nverts = Makie.@lift nvertices($grid)
-  nelems = Makie.@lift nelements($grid)
-  ncolor = Makie.@lift $colorant isa AbstractVector ? length($colorant) : 1
+  Makie.map!(plot, [:object, :colorant], [:nv, :ne, :nc]) do grid, colorant
+    nv = nvertices(grid)
+    ne = nelements(grid)
+    nc = colorant isa AbstractVector ? length(colorant) : 1
+    nv, ne, nc
+  end
 
-  # visualize quadrangle mesh with texture using uv coords
-  # plots with uv coords are always interpolated,
-  # so it is only used in the case ncolor == nverts
-  # or when there is a large number of elements
-  if pdim === Val(2) && (ncolor[] == 1 || ncolor[] == nverts[] || nelems[] ≥ 1000)
-    # decide whether or not to reverse connectivity list
-    rfunc = Makie.@lift crs($grid) <: LatLon && orientation(first($grid)) == CW ? reverse : identity
+  # plots with uv coords are always interpolated, so it is
+  # only used in the case nc == nv or when the grid is large
+  if pdim === Val(2) && (plot.nc[] == 1 || plot.nc[] == plot.nv[] || plot.ne[] ≥ 1000)
+    # visualize quadrangle mesh with texture using uv coords
+    Makie.map!(plot, [:object, :colorant, :nv, :ne, :nc], [:mesh, :texture]) do grid, colorant, nv, ne, nc
+      # retrieve relevant sizes
+      sz = size(grid)
+      vz = Meshes.vsize(grid)
 
-    verts = Makie.@lift map(asmakie, eachvertex($grid))
-    quads = Makie.@lift [GB.QuadFace($rfunc(indices(e))) for e in elements(topology($grid))]
+      # decide whether or not to reverse connectivity list
+      rev = crs(grid) <: LatLon && orientation(first(grid)) == CW ? reverse : identity
 
-    dims = Makie.@lift size($grid)
-    vdims = Makie.@lift Meshes.vsize($grid)
-    texture = if ncolor[] == 1
-      Makie.@lift fill($colorant, $dims)
-    elseif ncolor[] == nelems[]
-      Makie.@lift reshape($colorant, $dims)
-    elseif ncolor[] == nverts[]
-      Makie.@lift reshape($colorant, $vdims)
-    else
-      throw(ArgumentError("invalid number of colors"))
+      # vertices and quadrangles
+      verts = map(asmakie, eachvertex(grid))
+      quads = [GB.QuadFace(rev(indices(e))) for e in elements(topology(grid))]
+
+      # uv coordinates for texture mapping
+      uv = [Makie.Vec2f(v, 1 - u) for v in range(0, 1, vz[2]) for u in range(0, 1, vz[1])]
+
+      mesh = GB.Mesh(verts, quads; uv)
+
+      # texture map
+      texture = if nc == 1
+        fill(colorant, sz)
+      elseif nc == nv
+        reshape(colorant, vz)
+      elseif nc == ne
+        reshape(colorant, sz)
+      else
+        throw(ArgumentError("invalid number of colors"))
+      end
+
+      mesh, texture
     end
-
-    uv = Makie.@lift [Makie.Vec2f(v, 1 - u) for v in range(0, 1, $vdims[2]) for u in range(0, 1, $vdims[1])]
-
-    mesh = Makie.@lift GB.Mesh($verts, $quads, uv=$uv)
 
     # enable shading in 3D
     shading = edim === Val(3)
 
-    Makie.mesh!(plot, mesh, color=texture, shading=shading)
+    Makie.mesh!(plot, plot.mesh, color=plot.texture, shading=shading)
 
-    if showsegments[]
+    if plot.showsegments[]
       vizfacets!(plot)
     end
-  else # fallback to triangle mesh visualization
+  else
+    # visualize as simple mesh
     vizmesh!(plot)
   end
 end
@@ -79,11 +84,11 @@ end
 # -------
 
 function vizfacets!(plot::Viz{<:Tuple{Grid}})
-  grid = plot[:object]
-  M = Makie.@lift manifold($grid)
-  pdim = Makie.@lift paramdim($grid)
-  edim = Makie.@lift embeddim($grid)
-  vizgridfacets!(plot, M[], Val(pdim[]), Val(edim[]))
+  grid = plot.object[]
+  M = manifold(grid)
+  pdim = paramdim(grid)
+  edim = embeddim(grid)
+  vizgridfacets!(plot, M, Val(pdim), Val(edim))
 end
 
 vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pdim, edim)
@@ -95,7 +100,6 @@ vizgridfacets!(plot, M::Type, pdim::Val, edim::Val) = vizmeshfacets!(plot, M, pd
 include("grid/cartesian.jl")
 include("grid/rectilinear.jl")
 include("grid/structured.jl")
-include("grid/transformed.jl")
 
 # -----------------
 # HELPER FUNCTIONS
