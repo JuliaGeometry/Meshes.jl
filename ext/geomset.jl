@@ -69,34 +69,33 @@ end
 
 # collect and visualize parents of multi-geometries
 function vizgset!(plot, M::Type, pdim::Val, edim::Val, ::Type{<:Multi}, gvecid::Symbol, cvecid::Symbol)
-  parents_sym = Symbol(gvecid, :_parents)
-  pcolors_sym = Symbol(cvecid, :_pcolors)
+  parentsid = Symbol(gvecid, :_parents)
+  pcolorsid = Symbol(cvecid, :_pcolors)
 
   # repeat colors for parents
-  Makie.map!(plot, [cvecid, gvecid], [pcolors_sym, parents_sym]) do cvec, gvec
+  Makie.map!(plot, [gvecid, cvecid], [parentsid, pcolorsid]) do gvec, cvec
+    parents = mapreduce(parent, vcat, gvec)
     pcolors = [cvec[i] for (i, g) in enumerate(gvec) for _ in 1:length(parent(g))]
-    pgeoms = mapreduce(parent, vcat, gvec)
-    pcolors, pgeoms
+    parents, pcolors
   end
 
-  P = typeof(first(parent(first(plot[gvecid][]))))
-
   # call recipe for parents
-  vizgset!(plot, M, pdim, edim, P, parents_sym, pcolors_sym)
+  P = typeof(first(plot[parentsid][]))
+  vizgset!(plot, M, pdim, edim, P, parentsid, pcolorsid)
 end
 
-function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, gvecid::Symbol, cvecid::Symbol)
-  coords_sym = Symbol(gvecid, :_coords)
+function vizgset!(plot, ::Type, ::Val, ::Val, ::Type{<:Point}, gvecid::Symbol, cvecid::Symbol)
+  coordsid = Symbol(gvecid, :_coords)
 
   # get raw Cartesian coordinates of points
-  Makie.map!(plot, [gvecid], coords_sym) do gvec
+  Makie.map!(plot, gvecid, coordsid) do gvec
     map(p -> ustrip.(to(p)), gvec)
   end
 
   # visualize points with given marker and size
   Makie.scatter!(
     plot,
-    plot[coords_sym],
+    plot[coordsid],
     color=plot[cvecid],
     marker=plot.pointmarker,
     markersize=plot.pointsize,
@@ -104,48 +103,48 @@ function vizgset!(plot, ::Type, ::Val, ::Val, G::Type{<:Point}, gvecid::Symbol, 
   )
 end
 
-function vizgset!(plot, ::Type, ::Val, edim::Val, G::Type{<:Ray}, gvecid::Symbol, cvecid::Symbol)
-  orig_sym = Symbol(gvecid, :_orig)
-  dirs_sym = Symbol(gvecid, :_dirs)
+function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol, cvecid::Symbol)
+  origid = Symbol(gvecid, :_orig)
+  dirsid = Symbol(gvecid, :_dirs)
 
   # visualize as built-in arrows
-  Makie.map!(plot, [gvecid], [orig_sym, dirs_sym]) do gvec
-    oris = [asmakie(ray(0)) for ray in gvec]
+  Makie.map!(plot, gvecid, [origid, dirsid]) do gvec
+    orig = [asmakie(ray(0)) for ray in gvec]
     dirs = [asmakie(ray(1) - ray(0)) for ray in gvec]
-    oris, dirs
+    orig, dirs
   end
 
   if edim === Val(2)
-    tipwidth_sym = Symbol(gvecid, :_tipwidth)
-    shaftwidth_sym = Symbol(gvecid, :_shaftwidth)
-    Makie.map!(plot, [:segmentsize], [tipwidth_sym, shaftwidth_sym]) do sz
+    tipwidthid = Symbol(gvecid, :_tipwidth)
+    shaftwidthid = Symbol(gvecid, :_shaftwidth)
+    Makie.map!(plot, :segmentsize, [tipwidthid, shaftwidthid]) do sz
       tw = 5 * sz
       sw = 0.2 * tw
       tw, sw
     end
     Makie.arrows2d!(
       plot,
-      plot[orig_sym],
-      plot[dirs_sym],
+      plot[origid],
+      plot[dirsid],
       color=plot[cvecid],
-      tipwidth=plot[tipwidth_sym],
-      shaftwidth=plot[shaftwidth_sym]
+      tipwidth=plot[tipwidthid],
+      shaftwidth=plot[shaftwidthid]
     )
   elseif edim === Val(3)
-    tipradius_sym = Symbol(gvecid, :_tipradius)
-    shaftradius_sym = Symbol(gvecid, :_shaftradius)
-    Makie.map!(plot, [:segmentsize], [tipradius_sym, shaftradius_sym]) do sz
+    tipradiusid = Symbol(gvecid, :_tipradius)
+    shaftradiusid = Symbol(gvecid, :_shaftradius)
+    Makie.map!(plot, :segmentsize, [tipradiusid, shaftradiusid]) do sz
       tr = 0.05 * sz
       sr = 0.5 * tr
       tr, sr
     end
     Makie.arrows3d!(
       plot,
-      plot[orig_sym],
-      plot[dirs_sym],
+      plot[origid],
+      plot[dirsid],
       color=plot[cvecid],
-      tipradius=plot[tipradius_sym],
-      shaftradius=plot[shaftradius_sym]
+      tipradius=plot[tipradiusid],
+      shaftradius=plot[shaftradiusid]
     )
   else
     error("not implemented")
