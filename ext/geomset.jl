@@ -174,41 +174,45 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid:
     cvec[vinds], cvec[dinds]
   end
 
-  # compute coordinates and slopes of lines
-  xcoordid = Symbol(gvecid, :_xcoord)
-  ycoordid = Symbol(gvecid, :_ycoord)
-  slopesid = Symbol(gvecid, :_slopes)
-  Makie.map!(plot, [gvecid, interid, vindsid, dindsid], [xcoordid, ycoordid, slopesid]) do gvec, inter, vinds, dinds
-    # x coordinates of vertical lines
-    xcoords = map(gvec[vinds]) do vline
-      c = coords(vline(0))
-      x = convert(Cartesian, c).x
-      ustrip(x)
-    end
-
-    # y coordinates of non-vertical lines
-    ycoords = map(inter[dinds]) do I
-      y = if I isa Line # horizontal line through origin
-        zero(Meshes.lentype(I))
-      else # intersection point with vertical axis
-        convert(Cartesian, coords(I)).y
+  # visualize vertical lines
+  if !isempty(plot[vindsid][])
+    xcoordid = Symbol(gvecid, :_xcoord)
+    Makie.map!(plot, [gvecid, vindsid], xcoordid) do gvec, vinds
+      # x coordinates of vertical lines
+      map(gvec[vinds]) do vline
+        c = coords(vline(0))
+        x = convert(Cartesian, c).x
+        ustrip(x)
       end
-      ustrip(y)
     end
-
-    # slopes of non-vertical lines
-    slopes = map(gvec[dinds]) do dline
-      c1 = convert(Cartesian, coords(dline(0)))
-      c2 = convert(Cartesian, coords(dline(1)))
-      (c2.y - c1.y) / (c2.x - c1.x)
-    end
-
-    xcoords, ycoords, slopes
+    Makie.vlines!(plot, plot[xcoordid], color=plot[vcolorid], linewidth=plot.segmentsize)
   end
 
-  # visualize vertical and non-vertical lines
-  Makie.vlines!(plot, plot[xcoordid], color=plot[vcolorid], linewidth=plot.segmentsize)
-  Makie.ablines!(plot, plot[ycoordid], plot[slopesid], color=plot[dcolorid], linewidth=plot.segmentsize)
+  # visualize non-vertical lines
+  if !isempty(plot[dindsid][])
+    ycoordid = Symbol(gvecid, :_ycoord)
+    Makie.map!(plot, [interid, dindsid], ycoordid) do inter, dinds
+      # y coordinates of non-vertical lines
+      map(inter[dinds]) do I
+        y = if I isa Line # horizontal line through origin
+          zero(Meshes.lentype(I))
+        else # intersection point with vertical axis
+          convert(Cartesian, coords(I)).y
+        end
+        ustrip(y)
+      end
+    end
+    slopesid = Symbol(gvecid, :_slopes)
+    Makie.map!(plot, [gvecid, dindsid], slopesid) do gvec, dinds
+      # slopes of non-vertical lines
+      map(gvec[dinds]) do dline
+        c1 = convert(Cartesian, coords(dline(0)))
+        c2 = convert(Cartesian, coords(dline(1)))
+        (c2.y - c1.y) / (c2.x - c1.x)
+      end
+    end
+    Makie.ablines!(plot, plot[ycoordid], plot[slopesid], color=plot[dcolorid], linewidth=plot.segmentsize)
+  end
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, ::Type{<:Polygon}, gvecid::Symbol, cvecid::Symbol)
