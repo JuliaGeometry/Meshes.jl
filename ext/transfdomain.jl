@@ -2,7 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
+function Makie.plot!(plot::Viz{<:Tuple{TransformedGrid}})
   # add colorant to compute graph
   colorant!(plot)
 
@@ -15,11 +15,9 @@ function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
     # visualize parent domain and transform visualization
     viz!(plot, plot.attributes, plot.pdom)
     makietransform!(plot, plot.trans[])
-  elseif plot.pdom[] isa Grid
+  else
     # visualize as grid
     vizgrid!(plot)
-  else
-    error("not implemented")
   end
 end
 

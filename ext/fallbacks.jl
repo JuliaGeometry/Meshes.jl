@@ -14,7 +14,7 @@ Makie.convert_arguments(::Type{<:Viz}, domain::Domain) = (GeometrySet(collect(do
 Makie.convert_arguments(::Type{<:Viz}, mesh::Mesh) = (mesh,)
 Makie.convert_arguments(::Type{<:Viz}, gset::GeometrySet) = (gset,)
 Makie.convert_arguments(::Type{<:Viz}, sdom::SubDomain) = (sdom,)
-Makie.convert_arguments(::Type{<:Viz}, tdom::TransformedDomain) = (tdom,)
+Makie.convert_arguments(::Type{<:Viz}, tgrid::TransformedGrid) = (tgrid,)
 
 # vector of geometries (for convenience)
 Makie.plottype(::AbstractVector{<:Geometry}) = Viz{<:Tuple{AbstractVector{<:Geometry}}}
