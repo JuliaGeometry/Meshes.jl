@@ -104,10 +104,9 @@ function vizgset!(plot, ::Type, ::Val, ::Val, ::Type{<:Point}, gvecid::Symbol, c
 end
 
 function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol, cvecid::Symbol)
+  # visualize as built-in arrows
   origid = Symbol(gvecid, :_orig)
   dirsid = Symbol(gvecid, :_dirs)
-
-  # visualize as built-in arrows
   Makie.map!(plot, gvecid, [origid, dirsid]) do gvec
     orig = [asmakie(ray(0)) for ray in gvec]
     dirs = [asmakie(ray(1) - ray(0)) for ray in gvec]
@@ -156,10 +155,10 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol,
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid::Symbol, cvecid::Symbol)
+  # split vertical and non-vertical lines
   interid = Symbol(gvecid, :_inter)
   vindsid = Symbol(gvecid, :_vinds)
   dindsid = Symbol(gvecid, :_dinds)
-  # split vertical and non-vertical lines
   Makie.map!(plot, gvecid, [interid, vindsid, dindsid]) do gvec
     inter = [line ∩ Line((0, 0), (0, 1)) for line in gvec]
     vinds = findall(g -> isnothing(g) || g isa Line, inter)
@@ -174,6 +173,7 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid:
     cvec[vinds], cvec[dinds]
   end
 
+  # compute coordinates and slopes of lines
   xcoordid = Symbol(gvecid, :_xcoord)
   ycoordid = Symbol(gvecid, :_ycoord)
   slopesid = Symbol(gvecid, :_slopes)
@@ -211,13 +211,11 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid:
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, ::Type{<:Polygon}, gvecid::Symbol, cvecid::Symbol)
-  polysid = Symbol(gvecid, :_polys)
-
   # visualize as built-in polygons
+  polysid = Symbol(gvecid, :_polys)
   Makie.map!(plot, gvecid, polysid) do gvec
     map(asmakie, gvec)
   end
-
   if plot.showsegments[]
     Makie.poly!(plot, plot[polysid], color=plot[cvecid], strokecolor=plot.segmentcolor, strokewidth=plot.segmentsize)
   else
@@ -230,33 +228,29 @@ end
 # -------
 
 function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, gvecid::Symbol)
-  gvec = plot[gvecid][]
-  M = manifold(first(gvec))
-  pdim = paramdim(first(gvec))
-  edim = embeddim(first(gvec))
+  g = first(plot[gvecid][])
+  M = manifold(g)
+  pdim = paramdim(g)
+  edim = embeddim(g)
   vizgsetfacets!(plot, M, Val(pdim), Val(edim), gvecid)
 end
 
 function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, gvecid::Symbol)
-  pset_sym = Symbol(gvecid, :_pset)
-
   # all boundaries are points or multipoints
-  Makie.map!(plot, [gvecid], pset_sym) do gvec
+  psetid = Symbol(gvecid, :_pset)
+  Makie.map!(plot, [gvecid], psetid) do gvec
     points = filter(!isnothing, map(boundary, gvec))
     GeometrySet(points)
   end
-
-  viz!(plot, plot[pset_sym], color=plot.pointcolor, pointmarker=plot.pointmarker, pointsize=plot.pointsize)
+  viz!(plot, plot[psetid], color=plot.pointcolor, pointmarker=plot.pointmarker, pointsize=plot.pointsize)
 end
 
 function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, gvecid::Symbol)
-  bset_sym = Symbol(gvecid, :_bset)
-
   # all boundaries are 1D geometries
-  Makie.map!(plot, [gvecid], bset_sym) do gvec
+  bsetid = Symbol(gvecid, :_bset)
+  Makie.map!(plot, [gvecid], bsetid) do gvec
     bounds = filter(!isnothing, map(boundary, gvec))
     GeometrySet(bounds)
   end
-
-  viz!(plot, plot[bset_sym], color=plot.segmentcolor, segmentsize=plot.segmentsize)
+  viz!(plot, plot[bsetid], color=plot.segmentcolor, segmentsize=plot.segmentsize)
 end
