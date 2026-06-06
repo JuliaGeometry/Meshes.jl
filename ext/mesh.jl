@@ -136,12 +136,18 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
 end
 
 function vizmesh!(plot, ::Type, ::Val{3}, ::Val)
-  Makie.map!(plot, [:object, :colorant], [:meshes, :colors]) do mesh, colorant
+  Makie.map!(plot, [:object, :colorant], [:bmesh, :bcolor]) do mesh, colorant
+    # discretize boundaries of elements
     meshes = map(discretize ∘ boundary, mesh)
     colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
-    meshes, colors
+
+    # merge into single boundary mesh
+    bmesh =  reduce(merge, meshes)
+    bcolor = [colors[i] for (i, m) in enumerate(meshes) for _ in 1:nelements(m)]
+
+    bmesh, bcolor
   end
-  vizmany!(plot, plot.meshes, plot.colors)
+  viz!(plot, plot.bmesh, color=plot.bcolor)
 end
 
 # -------

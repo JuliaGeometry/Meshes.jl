@@ -53,14 +53,16 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, ::Type{<:Geometry}, gvecid::S
   # the resulting quadrangles into triangles
   triangulate = simplexify ∘ mayberefine ∘ discretize ∘ maybeboundary
 
-  # add node to compute graph for triangle meshes
-  meshesid = Symbol(gvecid, :_meshes)
-  Makie.map!(plot, gvecid, meshesid) do gvec
-    map(triangulate, gvec)
+  # visualize geometries as single mesh of triangles
+  meshid = Symbol(gvecid, :_mesh)
+  colorid = Symbol(cvecid, :_color)
+  Makie.map!(plot, [gvecid, cvecid], [meshid, colorid]) do gvec, cvec
+    meshes = map(triangulate, gvec)
+    mesh = reduce(merge, meshes)
+    color = [cvec[i] for (i, m) in enumerate(meshes) for _ in 1:nelements(m)]
+    mesh, color
   end
-
-  # visualize geometries
-  vizmany!(plot, plot[meshesid], plot[cvecid])
+  viz!(plot, plot[meshid], color=plot[colorid])
 
   # visualize facets if requested
   pdim === Val(1) && plot.showpoints[] && vizfacets!(plot, gvecid)

@@ -13,18 +13,6 @@ function colorant!(plot)
   end
 end
 
-# assumes that meshes and colors have the same length
-function vizmany!(plot, meshes, colors)
-  meshid = Symbol(meshes, :_meshes)
-  colorid = Symbol(meshes, :_color)
-  Makie.map!(plot, [meshes, colors], [meshid, colorid]) do ms, cs
-    mesh = reduce(merge, ms)
-    color = [cs[i] for (i, m) in enumerate(ms) for _ in 1:nelements(m)]
-    mesh, color
-  end
-  viz!(plot, plot[meshid], color=plot[colorid], pointsize=plot.pointsize, segmentsize=plot.segmentsize)
-end
-
 asray(v::Vec) = Ray(Point(zero(v)...), v)
 
 asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(Tuple(ustrip.(v)))
