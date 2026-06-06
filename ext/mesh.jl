@@ -142,7 +142,7 @@ function vizmesh!(plot, ::Type, ::Val{3}, ::Val)
     colors = colorant isa AbstractVector ? colorant : fill(colorant, nelements(mesh))
 
     # merge into single boundary mesh
-    bmesh =  reduce(merge, meshes)
+    bmesh = reduce(merge, meshes)
     bcolor = [colors[i] for (i, m) in enumerate(meshes) for _ in 1:nelements(m)]
 
     bmesh, bcolor
