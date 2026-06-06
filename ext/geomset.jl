@@ -155,47 +155,38 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol,
   end
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, gvecid::Symbol, cvecid::Symbol)
-  segmentsize = plot.segmentsize
-
-  inter_sym = Symbol(gvecid, :_inter)
-  vinds_sym = Symbol(gvecid, :_vinds)
-  dinds_sym = Symbol(gvecid, :_dinds)
-  vcolor_sym = Symbol(cvecid, :_vcolor)
-  dcolor_sym = Symbol(cvecid, :_dcolor)
-
+function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid::Symbol, cvecid::Symbol)
+  interid = Symbol(gvecid, :_inter)
+  vindsid = Symbol(gvecid, :_vinds)
+  dindsid = Symbol(gvecid, :_dinds)
   # split vertical and non-vertical lines
-  Makie.map!(plot, [gvecid], [inter_sym, vinds_sym, dinds_sym]) do gvec
+  Makie.map!(plot, gvecid, [interid, vindsid, dindsid]) do gvec
     inter = [line ∩ Line((0, 0), (0, 1)) for line in gvec]
     vinds = findall(g -> isnothing(g) || g isa Line, inter)
     dinds = setdiff(1:length(gvec), vinds)
-    (inter, vinds, dinds)
+    inter, vinds, dinds
   end
 
   # split colors accordingly
-  Makie.map!(plot, [cvecid, vinds_sym], vcolor_sym) do cvec, vinds
-    cvec[vinds]
-  end
-  Makie.map!(plot, [cvecid, dinds_sym], dcolor_sym) do cvec, dinds
-    cvec[dinds]
+  vcolorid = Symbol(cvecid, :_vcolor)
+  dcolorid = Symbol(cvecid, :_dcolor)
+  Makie.map!(plot, [cvecid, vindsid, dindsid], vcolorid) do cvec, vinds, dinds
+    cvec[vinds], cvec[dinds]
   end
 
-  xcoord_sym = Symbol(gvecid, :_xcoord)
-  Makie.map!(plot, [gvecid, vinds_sym], xcoord_sym) do gvec, vinds
-    vlines = gvec[vinds]
-    map(vlines) do vline
+  xcoordid = Symbol(gvecid, :_xcoord)
+  ycoordid = Symbol(gvecid, :_ycoord)
+  slopesid = Symbol(gvecid, :_slopes)
+  Makie.map!(plot, [interid, gvecid, vindsid, dindsid], [xcoordid, ycoordid, slopesid]) do inter, gvec, vinds, dinds
+    # x coordinates of vertical lines
+    xcoords = map(gvec[vinds]) do vline
       c = coords(vline(0))
       x = convert(Cartesian, c).x
       ustrip(x)
     end
-  end
-  Makie.vlines!(plot, plot[xcoord_sym], color=plot[vcolor_sym], linewidth=segmentsize)
 
-  ycoord_sym = Symbol(gvecid, :_ycoord)
-  slopes_sym = Symbol(gvecid, :_slopes)
-  Makie.map!(plot, [inter_sym, dinds_sym], ycoord_sym) do inter, dinds
-    dinter = inter[dinds]
-    map(dinter) do I
+    # y coordinates of non-vertical lines
+    ycoords = map(inter[dinds]) do I
       y = if I isa Line # horizontal line through origin
         zero(Meshes.lentype(I))
       else # intersection point with vertical axis
@@ -203,16 +194,20 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, G::Type{<:Line}, gvecid
       end
       ustrip(y)
     end
-  end
-  Makie.map!(plot, [gvecid, dinds_sym], slopes_sym) do gvec, dinds
-    dlines = gvec[dinds]
-    map(dlines) do dline
+
+    # slopes of non-vertical lines
+    slopes = map(gvec[dinds]) do dline
       c1 = convert(Cartesian, coords(dline(0)))
       c2 = convert(Cartesian, coords(dline(1)))
       (c2.y - c1.y) / (c2.x - c1.x)
     end
+
+    xcoords, ycoords, slopes
   end
-  Makie.ablines!(plot, plot[ycoord_sym], plot[slopes_sym], color=plot[dcolor_sym], linewidth=segmentsize)
+
+  # visualize vertical and non-vertical lines
+  Makie.vlines!(plot, plot[xcoordid], color=plot[vcolorid], linewidth=plot.segmentsize)
+  Makie.ablines!(plot, plot[ycoordid], plot[slopesid], color=plot[dcolorid], linewidth=plot.segmentsize)
 end
 
 function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, G::Type{<:Polygon}, gvecid::Symbol, cvecid::Symbol)
