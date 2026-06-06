@@ -10,21 +10,7 @@ function Makie.plot!(plot::Viz{<:Tuple{SubDomain}})
   else
     # visualize as geometry set
     Makie.map!(sdom -> GeometrySet(collect(sdom)), plot, :object, :gset)
-    viz!(
-      plot,
-      plot.gset,
-      color=plot.color,
-      alpha=plot.alpha,
-      colormap=plot.colormap,
-      colorrange=plot.colorrange,
-      showsegments=plot.showsegments,
-      segmentcolor=plot.segmentcolor,
-      segmentsize=plot.segmentsize,
-      showpoints=plot.showpoints,
-      pointmarker=plot.pointmarker,
-      pointcolor=plot.pointcolor,
-      pointsize=plot.pointsize
-    )
+    viz!(plot, plot.attributes, plot.gset)
   end
 end
 

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
-  # retrieve parent domain and transformation
+  # add parent domain and transformation to compute graph
   Makie.map!(plot, :object, [:pdom, :trans]) do tdom
     pdom = parent(tdom)
     trans = transformation(tdom)
@@ -12,21 +12,7 @@ function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
 
   if isoptimized(plot.trans[])
     # visualize parent domain and transform visualization
-    viz!(
-      plot,
-      plot.pdom,
-      color=plot.color,
-      alpha=plot.alpha,
-      colormap=plot.colormap,
-      colorrange=plot.colorrange,
-      showsegments=plot.showsegments,
-      segmentcolor=plot.segmentcolor,
-      segmentsize=plot.segmentsize,
-      showpoints=plot.showpoints,
-      pointmarker=plot.pointmarker,
-      pointcolor=plot.pointcolor,
-      pointsize=plot.pointsize
-    )
+    viz!(plot, plot.attributes, plot.pdom)
     makietransform!(plot, plot.trans[])
   elseif plot.pdom[] isa Grid
     # visualize as grid
