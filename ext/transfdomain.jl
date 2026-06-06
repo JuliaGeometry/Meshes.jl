@@ -8,9 +8,7 @@ function Makie.plot!(plot::Viz{<:Tuple{TransformedDomain}})
 
   # add parent domain and transformation to compute graph
   Makie.map!(plot, :object, [:pdom, :trans]) do tdom
-    pdom = parent(tdom)
-    trans = transformation(tdom)
-    pdom, trans
+    parent(tdom), Meshes.transform(tdom)
   end
 
   if isoptimized(plot.trans[])
