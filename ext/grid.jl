@@ -34,7 +34,7 @@ function vizgridfallback!(plot, M, pdim, edim)
   # only used in the case nc == nv or when the grid is large
   if pdim === Val(2) && (plot.nc[] == 1 || plot.nc[] == plot.nv[] || plot.ne[] ≥ 1000)
     # visualize quadrangle mesh with texture using uv coords
-    Makie.map!(plot, [:object, :colorant], [:mesh, :texture]) do grid, colorant
+    Makie.map!(plot, [:object, :colorant, :nv, :ne, :nc], [:mesh, :texture]) do grid, colorant, nv, ne, nc
       # retrieve relevant sizes
       sz = size(grid)
       vz = Meshes.vsize(grid)
@@ -52,11 +52,11 @@ function vizgridfallback!(plot, M, pdim, edim)
       mesh = GB.Mesh(verts, quads; uv)
 
       # texture map
-      texture = if plot.nc[] == 1
+      texture = if nc == 1
         fill(colorant, sz)
-      elseif plot.nc[] == plot.nv[]
+      elseif nc == nv
         reshape(colorant, vz)
-      elseif plot.nc[] == plot.ne[]
+      elseif nc == ne
         reshape(colorant, sz)
       else
         throw(ArgumentError("invalid number of colors"))
