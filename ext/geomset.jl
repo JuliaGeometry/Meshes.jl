@@ -210,18 +210,18 @@ function vizgset!(plot, ::Type{<:𝔼}, ::Val, ::Val{2}, ::Type{<:Line}, gvecid:
   Makie.ablines!(plot, plot[ycoordid], plot[slopesid], color=plot[dcolorid], linewidth=plot.segmentsize)
 end
 
-function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, G::Type{<:Polygon}, gvecid::Symbol, cvecid::Symbol)
-  polys_sym = Symbol(gvecid, :_polys)
+function vizgset!(plot, ::Type{<:𝔼}, ::Val{2}, ::Val{2}, ::Type{<:Polygon}, gvecid::Symbol, cvecid::Symbol)
+  polysid = Symbol(gvecid, :_polys)
 
   # visualize as built-in polygons
-  Makie.map!(plot, [gvecid], polys_sym) do gvec
+  Makie.map!(plot, gvecid, polysid) do gvec
     map(asmakie, gvec)
   end
 
   if plot.showsegments[]
-    Makie.poly!(plot, plot[polys_sym], color=plot[cvecid], strokecolor=plot.segmentcolor, strokewidth=plot.segmentsize)
+    Makie.poly!(plot, plot[polysid], color=plot[cvecid], strokecolor=plot.segmentcolor, strokewidth=plot.segmentsize)
   else
-    Makie.poly!(plot, plot[polys_sym], color=plot[cvecid])
+    Makie.poly!(plot, plot[polysid], color=plot[cvecid])
   end
 end
 
