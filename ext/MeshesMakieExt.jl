@@ -21,20 +21,18 @@ import Makie.GeometryBasics as GB
 import Meshes: viz, viz!
 import Makie
 
-Makie.@recipe(Viz, object) do scene
-  Makie.Attributes(
-    color=:slategray3,
-    alpha=nothing,
-    colormap=nothing,
-    colorrange=nothing,
-    showsegments=false,
-    segmentcolor=:gray30,
-    segmentsize=1.5,
-    showpoints=false,
-    pointmarker=:circle,
-    pointcolor=:gray30,
-    pointsize=4
-  )
+Makie.@recipe Viz (object,) begin
+  color = :slategray3
+  alpha = nothing
+  colormap = nothing
+  colorrange = nothing
+  showsegments = false
+  segmentcolor = :gray30
+  segmentsize = 1.5
+  showpoints = false
+  pointmarker = :circle
+  pointcolor = :gray30
+  pointsize = 4
 end
 
 # choose between 2D and 3D axis
