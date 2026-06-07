@@ -168,5 +168,5 @@ box = Box((0., 0., 0.), (1., 1., 1.))
 
 mesh = discretize(box, ManualSimplexification())
 
-viz(mesh, colors = 1:nelements(mesh))
+viz(mesh, color = 1:nelements(mesh))
 ```
