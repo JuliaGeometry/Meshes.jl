@@ -7,7 +7,8 @@
 
 Visualize Meshes.jl `object` (e.g., mesh, geometry)
 with `options` such as `color` and `alpha` values for
-transparency. All available options are documented below.
+transparency. All available options will be documented
+below upon loading a Makie.jl backend.
 
 ## Examples
 
