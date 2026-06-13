@@ -9,10 +9,10 @@ Visualize Meshes.jl `object` with various `options`.
 
 ## Available options
 
-* `color`        - color of geometries
-* `alpha`        - transparency in [0,1]
-* `colormap`     - color scheme/map from ColorSchemes.jl
-* `colorrange`   - minimum and maximum color values
+* `color`        - scalar or vector of colors for geometries
+* `alpha`        - scalar or vector of transparency values in [0, 1]
+* `colormap`     - color scheme (a.k.a. map) from ColorSchemes.jl
+* `colorrange`   - minimum and maximum color values or symbol
 * `showsegments` - visualize segments
 * `segmentcolor` - color of segments
 * `segmentsize`  - width of segments
@@ -21,10 +21,13 @@ Visualize Meshes.jl `object` with various `options`.
 * `pointcolor`   - color of points
 * `pointsize`    - size of points
 
-The option `color` can be a single scalar or a vector
-of scalars. For [`Mesh`](@ref) subtypes, the length of
-the vector of colors determines if the colors should be
-assigned to vertices or to elements.
+For [`Mesh`](@ref) subtypes, the length of the vector of
+colors determines if the colors should be assigned to
+vertices or to elements.
+
+Values passed to `color` can be of any type, as long as they
+can be converted to colors by the `colorfy` function from the
+Colorfy.jl package.
 
 ## Examples
 
