@@ -25,27 +25,27 @@ import Makie
     Viz
 """
 Makie.@recipe Viz (object,) begin
-  # scalar or vector of colors for geometries
+  "scalar or vector of colors for geometries"
   color = :slategray3
-  # scalar or vector of transparency values in [0, 1]
+  "scalar or vector of transparency values in [0, 1]"
   alpha = 1.0
-  # color scheme (a.k.a. map) from ColorSchemes.jl
+  "color scheme (a.k.a. map) from ColorSchemes.jl"
   colormap = :viridis
-  # minimum and maximum color values or symbol
+  "minimum and maximum color values or symbol"
   colorrange = :extrema
-  # visualize segments
+  "visualize segments"
   showsegments = false
-  # color of segments
+  "color of segments"
   segmentcolor = :gray30
-  # width of segments
+  "width of segments"
   segmentsize = 1.5
-  # visualize points
+  "visualize points"
   showpoints = false
-  # marker of points
+  "marker of points"
   pointmarker = :circle
-  # color of points
+  "color of points"
   pointcolor = :gray30
-  # size of points
+  "size of points"
   pointsize = 4
 end
 
