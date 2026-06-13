@@ -5,29 +5,10 @@
 """
     viz(object; [options])
 
-Visualize Meshes.jl `object` with various `options`.
-
-## Available options
-
-* `color`        - scalar or vector of colors for geometries
-* `alpha`        - scalar or vector of transparency values in [0, 1]
-* `colormap`     - color scheme (a.k.a. map) from ColorSchemes.jl
-* `colorrange`   - minimum and maximum color values or symbol
-* `showsegments` - visualize segments
-* `segmentcolor` - color of segments
-* `segmentsize`  - width of segments
-* `showpoints`   - visualize points
-* `pointmarker`  - marker of points
-* `pointcolor`   - color of points
-* `pointsize`    - size of points
-
-For [`Mesh`](@ref) subtypes, the length of the vector of
-colors determines if the colors should be assigned to
-vertices or to elements.
-
-Values passed to `color` can be of any type, as long as they
-can be converted to colors by the `colorfy` function from the
-Colorfy.jl package.
+Visualize Meshes.jl `object` (e.g., mesh, geometry)
+with `options` such as `color` and `alpha` values for
+transparency. All available options will be documented
+below upon loading a Makie.jl backend.
 
 ## Examples
 
@@ -55,16 +36,24 @@ viz!(boundary(polygon))
 
 ### Notes
 
-This function will only work in the presence of
-a Makie.jl backend via package extensions in
-Julia v1.9 or later versions of the language.
+This function will only work in the presence of a Makie.jl
+backend via package extensions in Julia v1.9 or later
+versions of the language.
+
+Values passed to the `color` option can be of any type, as
+long as they can be converted to colors by the `colorfy`
+function from the Colorfy.jl package.
+
+For [`Mesh`](@ref) subtypes, the length of the vector of
+colors determines if the colors should be assigned to
+vertices or to elements.
 """
 function viz end
 
 """
     viz!(object; [options])
 
-Visualize Meshes.jl `object` in an existing
-scene with `options` forwarded to [`viz`](@ref).
+Visualize Meshes.jl `object` (e.g., mesh, geometry) in an
+existing scene with `options` forwarded to [`viz`](@ref).
 """
 function viz! end
