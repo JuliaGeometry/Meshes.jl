@@ -4,11 +4,11 @@
 
 # update plot with processed colors
 function colorant!(plot)
-  Makie.map!(plot, [:color, :alpha, :colormap, :colorrange], :colorant) do color, alphas, colorscheme, colorrange
+  Makie.map!(plot, [:color, :alpha, :colormap, :colorrange], :colorant) do color, alpha, colorscheme, colorrange
     if color isa AbstractVector
-      colorfy(color; alphas, colorscheme, colorrange)
+      colorfy(color; alpha, colorscheme, colorrange)
     else
-      colorfy([color]; alphas, colorscheme, colorrange) |> first
+      colorfy([color]; alpha, colorscheme, colorrange) |> first
     end
   end
 end

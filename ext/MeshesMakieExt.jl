@@ -23,9 +23,9 @@ import Makie
 
 Makie.@recipe Viz (object,) begin
   color = :slategray3
-  alpha = nothing
-  colormap = nothing
-  colorrange = nothing
+  alpha = 1.0
+  colormap = :viridis
+  colorrange = :extrema
   showsegments = false
   segmentcolor = :gray30
   segmentsize = 1.5
