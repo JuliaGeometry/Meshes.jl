@@ -12,9 +12,6 @@ using LinearAlgebra
 using CoordRefSystems
 using Colorfy
 
-using Unitful: numtype
-using Meshes: lentype
-
 import TransformsBase as TB
 import Makie.GeometryBasics as GB
 

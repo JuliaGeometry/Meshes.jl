@@ -15,9 +15,21 @@ end
 
 asray(v::Vec) = Ray(Point(zero(v)...), v)
 
-asmakie(v::Vec) = Makie.Vec{length(v),numtype(eltype(v))}(Tuple(ustrip.(v)))
+function asmakie(v::Vec)
+  N = length(v)
+  ℒ = eltype(v)
+  T = Unitful.numtype(ℒ)
+  x = Tuple(ustrip.(v))
+  Makie.Vec{N,T}(x)
+end
 
-asmakie(p::Point) = Makie.Point{embeddim(p),numtype(lentype(p))}(Tuple(ustrip.(to(p))))
+function asmakie(p::Point)
+  N = embeddim(p)
+  ℒ = Meshes.lentype(p)
+  T = Unitful.numtype(ℒ)
+  x = Tuple(ustrip.(to(p)))
+  Makie.Point{N,T}(x)
+end
 
 function asmakie(poly::Polygon)
   rs = rings(poly)
