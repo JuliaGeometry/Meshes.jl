@@ -3,34 +3,28 @@
 # ------------------------------------------------------------------
 
 """
-    Vec(x₁, x₂, ..., xₙ)
-    Vec((x₁, x₂, ..., xₙ))
+    Vec(x, [y, z])
+    Vec((x, [y, z]))
 
-A geometric vector in `Dim`-dimensional space with coordinates
-in length units (default to meters) for linear algebra.
+A vector with `Cartesian` coordinates in length units (default to meters).
+Vectors are used in linear algebra and can be obtained by subtracting two
+[`Point`](@ref)s in any coordinate reference system.
 
-By default, integer coordinates are converted to float.
-
-A vector can be obtained by subtracting two [`Point`](@ref) objects.
+See [`Point`](@ref) for more details on preprocessing of coordinates and units.
 
 ## Examples
 
 ```julia
-A = Point(0.0, 0.0)
-B = Point(1.0, 0.0)
-v = B - A
+# vectors in 2D Euclidean space
+Vec(1.0, 2.0)
+Vec(1km, 2km)
 
-# 2D vectors
-Vec(1.0, 2.0) # add default units
-Vec(1.0m, 2.0m) # double precision as expected
-Vec(1f0km, 2f0km) # single precision as expected
-Vec(1m, 2m) # integer is converted to float by design
+# vectors in 3D Euclidean space
+Vec(1.0, 2.0, 3.0)
+Vec(1km, 2km, 3km)
 
-# 3D vectors
-Vec(1.0, 2.0, 3.0) # add default units
-Vec(1.0m, 2.0m, 3.0m) # double precision as expected
-Vec(1f0km, 2f0km, 3f0km) # single precision as expected
-Vec(1m, 2m, 3m) # integer is converted to float by design
+# vector as the difference of two points
+Point(1.0, 1.0) - Point(0.0, 0.0)
 ```
 
 ### Notes

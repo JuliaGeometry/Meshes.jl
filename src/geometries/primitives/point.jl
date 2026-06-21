@@ -3,28 +3,42 @@
 # ------------------------------------------------------------------
 
 """
-    Point(x₁, x₂, ..., xₙ)
-    Point((x₁, x₂, ..., xₙ))
+    Point(x, [y, z])
+    Point((x, [y, z]))
 
-A point in `Dim`-dimensional space with coordinates in length units (default to meters).
+A point with `Cartesian` coordinates in length units (default to meters).
+The coordinates `y` and `z` are optional for 2D and 3D points, respectively.
 
-The coordinates of the point are given with respect to the canonical
-Euclidean basis, and integer coordinates are converted to float.
+    Point(CRS(...))
+
+A point with coordinates in a specified coordinate reference system (`CRS`).
+Please check CoordRefSystems.jl for available coordinate reference systems.
+
+    Point{M}(CRS(...))
+
+Optionally, specify the manifold `M` of the point. The default manifold is
+`𝔼{dim}` (Euclidean space). It can also be `🌐` in which case the point is
+interpreted as a point on the surface of the Earth (or any other spheroid).
 
 ## Examples
 
 ```julia
-# 2D points
-Point(1.0, 2.0) # add default units
+# points in 2D Euclidean space
+Point(1.0, 2.0) # meter units by default
 Point(1.0m, 2.0m) # double precision as expected
-Point(1f0km, 2f0km) # single precision as expected
+Point(1f0m, 2f0m) # single precision as expected
 Point(1m, 2m) # integer is converted to float by design
 
-# 3D points
-Point(1.0, 2.0, 3.0) # add default units
-Point(1.0m, 2.0m, 3.0m) # double precision as expected
-Point(1f0km, 2f0km, 3f0km) # single precision as expected
-Point(1m, 2m, 3m) # integer is converted to float by design
+# points in 3D Euclidean space
+Point(1km, 2km, 3km) # specify kilometer units
+Point(1m, 2ft, 3in) # mixed units are promoted
+
+# points on the surface of the Earth
+Point(LatLon(0.0, 0.0)) # degree units by default
+Point(LatLon(0.0°, 0.0°)) # specify units explicitly
+
+# specify manifold explicitly
+Point{🌐}(convert(Cartesian, LatLon(0.0, 0.0)))
 ```
 
 ### Notes
