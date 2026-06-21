@@ -98,4 +98,7 @@ include("subdomain.jl")
 include("transfdomain.jl")
 include("fallbacks.jl")
 
+# precompile workloads
+include("precompile.jl")
+
 end
