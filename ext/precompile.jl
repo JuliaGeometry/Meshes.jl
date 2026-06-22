@@ -22,6 +22,10 @@ using PrecompileTools
     RegularGrid(Point(C(xyz₁...)), Point(C(xyz₂...)), dims=dims)
   end
 
+  # point clouds in 3D Euclidean space
+  ctype = [Cartesian3D]
+  clouds = [rand(Point, 3, crs=C) for C in ctype]
+
   # surface meshes in 3D Euclidean space
   ctype = [Cartesian3D]
   meshes = map(ctype) do C
@@ -38,6 +42,10 @@ using PrecompileTools
 
     for i in eachindex(grids)
       viz(grids[i], color=1:nelements(grids[i]))
+    end
+
+    for i in eachindex(clouds)
+      viz(clouds[i], color=1:length(clouds[i]))
     end
 
     for i in eachindex(meshes)
