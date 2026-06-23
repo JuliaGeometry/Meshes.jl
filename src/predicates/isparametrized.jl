@@ -15,8 +15,6 @@ isparametrized(g) = isparametrized(typeof(g))
 
 isparametrized(::Type{<:Geometry}) = false
 
-isparametrized(::Type{<:Segment}) = true
-
 isparametrized(::Type{<:Ray}) = true
 
 isparametrized(::Type{<:Line}) = true
@@ -52,6 +50,8 @@ isparametrized(::Type{<:FrustumSurface}) = true
 isparametrized(::Type{<:ParaboloidSurface}) = true
 
 isparametrized(::Type{<:Torus}) = true
+
+isparametrized(::Type{<:Chain}) = true
 
 isparametrized(::Type{<:Triangle}) = true
 

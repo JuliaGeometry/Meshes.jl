@@ -20,6 +20,8 @@
 
   # polytopes
   @test isparametrized(Segment)
+  @test isparametrized(Rope)
+  @test isparametrized(Ring)
   @test isparametrized(Triangle)
   @test isparametrized(Quadrangle)
   @test isparametrized(Hexahedron)
