@@ -268,6 +268,12 @@ end
   @test r(T(0)) == latlon(45, 0)
   @test r(T(1)) == latlon(90, 90)
 
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1381
+  r = Rope(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test_throws ArgumentError area(r)
+  r = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test_throws ArgumentError area(r)
+
   ri = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
   ro = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
   @test sprint(show, ri) == "Ring((x: 1.0 m, y: 1.0 m), (x: 2.0 m, y: 2.0 m), (x: 3.0 m, y: 3.0 m))"
