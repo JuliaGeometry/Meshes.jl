@@ -9,9 +9,6 @@
   <a href="https://JuliaGeometry.github.io/MeshesDocs/stable">
     <img src="https://img.shields.io/badge/docs-stable-blue?style=flat-square">
   </a>
-  <a href="https://JuliaGeometry.github.io/MeshesDocs/dev">
-    <img src="https://img.shields.io/badge/docs-latest-blue?style=flat-square">
-  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
   </a>
@@ -40,8 +37,7 @@ Get the latest stable release with Julia's package manager:
 
 ## Documentation
 
-- [**STABLE**][docs-stable-url] &mdash; **most recently tagged version of the documentation.**
-- [**LATEST**][docs-latest-url] &mdash; *in-development version of the documentation.*
+Check out the [latest documentation][docs-stable-url] to learn more.
 
 ## Contributing
 
@@ -68,6 +64,3 @@ As ideas become concrete, they can be converted into GitHub issues for further a
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue?style=flat-square
 [docs-stable-url]: https://JuliaGeometry.github.io/MeshesDocs/stable
-
-[docs-latest-img]: https://img.shields.io/badge/docs-latest-blue?style=flat-square
-[docs-latest-url]: https://JuliaGeometry.github.io/MeshesDocs/dev
