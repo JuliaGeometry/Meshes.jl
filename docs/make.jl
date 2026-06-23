@@ -4,7 +4,7 @@ makedocs(
   warnonly=[:missing_docs, :cross_references],
   format=Documenter.HTML(prettyurls=get(ENV, "CI", "false") == "true"),
   sitename="Meshes.jl",
-  authors="Júlio Hoffimann and contributors",
+  authors="Júlio Hoffimann",
   pages=[
     "Home" => "index.md",
     "Reference guide" => [
@@ -44,9 +44,8 @@ makedocs(
   ]
 )
 
-deploydocs(;
+deploydocs(
   repo="github.com/JuliaGeometry/Meshes.jl",
   deploy_repo="github.com/JuliaGeometry/MeshesDocs.git",
-  versions=["stable" => "v^", "dev" => "dev"],
-  push_preview=all(!isempty, (get(ENV, "GITHUB_TOKEN", ""), get(ENV, "DOCUMENTER_KEY", "")))
+  versions=["stable" => "v^", "dev" => "dev"]
 )
