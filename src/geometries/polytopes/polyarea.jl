@@ -6,13 +6,18 @@
     PolyArea(outer)
     PolyArea([outer, inner₁, inner₂, ..., innerₖ])
 
-A polygonal area with `outer` ring, and optional inner
-rings `inner₁`, `inner₂`, ..., `innerₖ`.
+A polygonal area with `outer` ring oriented counter-clockwise,
+and optional inner rings `inner₁`, `inner₂`, ..., `innerₖ`
+oriented clockwise.
 
-Rings can be a vector of [`Point`](@ref) or a
-vector of tuples with coordinates for convenience,
-in which case the first point should *not* be repeated
-at the end of the vector.
+Rings can be specified either as a vector of [`Point`](@ref)s or,
+for convenience, as a vector of tuples of coordinates. The first
+point should *not* be repeated at the end of the vector. Use the
+[`orientation`](@ref) function to verify that the rings satisfy
+the orientation requirements described above.
+
+The [`Repair`](@ref) transform can be used to correct the orientation
+of rings in polygonal areas that have already been constructed.
 """
 struct PolyArea{M<:Manifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
