@@ -34,6 +34,13 @@ Convex hull of `object`.
 """
 function convexhull end
 
+"""
+    concavehull(object)
+
+Concave hull of `object`.
+"""
+# function concavehull end
+
 # ----------
 # FALLBACKS
 # ----------
@@ -45,6 +52,14 @@ convexhull(p::Primitive) = convexhull(boundary(p))
 convexhull(m::Multi) = _gconvexhull(parent(m))
 
 convexhull(geoms) = _gconvexhull(geoms)
+
+concavehull(p::Polytope) = _pconcavehull(eachvertex(p))
+
+concavehull(p::Primitive) = concavehull(boundary(p))
+
+concavehull(m::Multi) = _gconcavehull(parent(m))
+
+concavehull(geoms) = _gconcavehull(geoms)
 
 # ----------------
 # SPECIALIZATIONS
@@ -64,6 +79,20 @@ convexhull(g::Grid) = Box(extrema(g)...)
 
 convexhull(m::Mesh) = _pconvexhull(eachvertex(m))
 
+concavehull(p::Point) = p
+
+concavehull(b::Box) = b
+
+concavehull(b::Ball) = b
+
+concavehull(s::Sphere) = Ball(center(s), radius(s))
+
+concavehull(t::Triangle) = t
+
+concavehull(g::Grid) = Box(extrema(g)...)
+
+concavehull(m::Mesh) = _pconcavehull(eachvertex(m))
+
 # ----------------
 # IMPLEMENTATIONS
 # ----------------
@@ -71,3 +100,18 @@ convexhull(m::Mesh) = _pconvexhull(eachvertex(m))
 _gconvexhull(geoms) = _pconvexhull(p for g in geoms for p in boundarypoints(g))
 
 _pconvexhull(points) = hull(points, GrahamScan())
+
+_gconcavehull(geoms) = _pconcavehull(p for g in geoms for p in boundarypoints(g))
+
+function _pconcavehull(points)
+  pointsꜝ = unique(points)
+  n = length(pointsꜝ) - 1
+  for k in 3:n
+    chul = hull(pointsꜝ, JarvisMarch(k))
+    # validate we found a hull that contains all points, if so return it, otherwise increase k and try again
+    isnothing(chul) && continue
+    all(pointsꜝ .∈ Ref(chul)) && return chul
+  end
+  # otherwise, fallback to convex hull
+  hull(pointsꜝ, JarvisMarch())
+end
