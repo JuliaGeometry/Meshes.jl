@@ -13,6 +13,9 @@ Rings can be a vector of [`Point`](@ref) or a
 vector of tuples with coordinates for convenience,
 in which case the first point should *not* be repeated
 at the end of the vector.
+
+For the inner rings to count as holes (negative area) they need to have a **clockwise** orientation.
+You can check the correct orientation using [`orientation`](@ref).
 """
 struct PolyArea{M<:Manifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
