@@ -53,6 +53,8 @@ isparametrized(::Type{<:ParaboloidSurface}) = true
 
 isparametrized(::Type{<:Torus}) = true
 
+isparametrized(::Type{<:Chain}) = true
+
 isparametrized(::Type{<:Triangle}) = true
 
 isparametrized(::Type{<:Quadrangle}) = true
