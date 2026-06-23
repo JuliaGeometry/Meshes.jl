@@ -15,8 +15,6 @@ isparametrized(g) = isparametrized(typeof(g))
 
 isparametrized(::Type{<:Geometry}) = false
 
-isparametrized(::Type{<:Segment}) = true
-
 isparametrized(::Type{<:Ray}) = true
 
 isparametrized(::Type{<:Line}) = true
