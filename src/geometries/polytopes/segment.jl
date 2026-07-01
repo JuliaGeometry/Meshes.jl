@@ -21,7 +21,7 @@ Base.maximum(s::Segment) = s.vertices[2]
 
 Base.extrema(s::Segment) = s.vertices[1], s.vertices[2]
 
-center(s::Segment) = centroid(s)
+center(s::Segment) = coordmean(extrema(s))
 
 ==(s₁::Segment, s₂::Segment) = s₁.vertices == s₂.vertices
 

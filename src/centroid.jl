@@ -7,19 +7,23 @@
 
 The centroid of the `geometry`.
 """
-centroid(g::Geometry) = center(g) # some geometries have a natural center
+centroid(g::Geometry) = withcrs(g, integral(to, g) / measure(g))
 
 centroid(p::Point) = p
 
-centroid(p::Polygon) = centroid(first(rings(p)))
+centroid(s::Segment) = center(s)
 
-centroid(n::Ngon) = coordmean(vertices(n))
+centroid(p::Plane) = center(p)
 
-centroid(p::Polytope) = coordmean(vertices(p))
+centroid(b::Box) = center(b)
 
-centroid(b::Box) = coordmean(extrema(b))
+centroid(b::Ball) = center(b)
 
-centroid(p::Plane) = p(0, 0)
+centroid(s::Sphere) = center(s)
+
+centroid(d::Disk) = center(d)
+
+centroid(c::Circle) = center(c)
 
 centroid(c::Cylinder) = centroid(boundary(c))
 

@@ -51,6 +51,8 @@ Base.maximum(b::Box) = b.max
 
 Base.extrema(b::Box) = minimum(b), maximum(b)
 
+center(b::Box) = coordmean(extrema(b))
+
 diagonal(b::Box{<:𝔼}) = norm(maximum(b) - minimum(b))
 
 sides(b::Box{<:𝔼}) = Tuple(maximum(b) - minimum(b))
