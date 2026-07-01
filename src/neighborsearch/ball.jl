@@ -9,36 +9,30 @@ A method for searching neighbors in `domain` inside metric `ball`.
 
 See [`MetricBall`](@ref) for additional details.
 """
-struct BallSearch{D<:Domain,B<:MetricBall,T} <: NeighborSearchMethod
-  # input fields
-  domain::D
-  ball::B
-
-  # state fields
+struct BallSearch{C<:CRS,T,R} <: NeighborSearchMethod
   tree::T
+  radius::R
 end
 
 function BallSearch(domain::D, ball::B) where {D<:Domain,B<:MetricBall}
+  C = crs(domain)
   m = metric(ball)
-  xs = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
-  tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
-  BallSearch{D,B,typeof(tree)}(domain, ball, tree)
+  r = ustrip(unit(lentype(C)), radius(ball))
+  X = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
+  t = m isa MinkowskiMetric ? KDTree(X, m) : BallTree(X, m)
+  BallSearch{C,typeof(t),typeof(r)}(t, r)
 end
 
 BallSearch(geoms, ball) = BallSearch(GeometrySet(geoms), ball)
 
-function search(pₒ::Point, method::BallSearch; mask=nothing)
-  C = crs(method.domain)
-  u = unit(lentype(method.domain))
-  tree = method.tree
-
-  # adjust unit of query radius
-  r = ustrip(u, radius(method.ball))
+function search(pₒ::Point, method::BallSearch{C}; mask=nothing) where {C<:CRS}
+  t = method.tree
+  r = method.radius
 
   # adjust CRS of query point
   x = svec(convert(C, coords(pₒ)))
 
-  inds = inrange(tree, x, r)
+  inds = inrange(t, x, r)
 
   if isnothing(mask)
     inds

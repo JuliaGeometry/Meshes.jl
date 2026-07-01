@@ -4,17 +4,21 @@ using Unitful
 using LinearAlgebra
 
 # auxiliary variables
-point1 = Point(0, 0)
+point = Point(0, 0)
 points = rand(Point, 100)
 sphere = Sphere((0, 0), 1)
 ring1 = Ring([sphere(t) for t in 0.1:0.1:1.0])
 ring2 = Ring([sphere(t) + Vec(1, 0) for t in 0.1:0.1:1.0])
 ring3 = Ring([sphere(t) for t in range(0.1, 1.0, length=5)])
 ring4 = Ring([sphere(t) for t in range(0.1, 1.0, length=1500)])
+grid = CartesianGrid(100, 100)
 mesh = discretize(Sphere((0, 0, 0), 1))
 ray = Ray((-1, -1, -1), (0, 0, 1))
 tri = Triangle((0, 0, 0), (1, 0, 0), (0, 1, 0))
 tet = Tetrahedron((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
+search1 = KNearestSearch(grid, 20)
+search2 = BallSearch(grid, MetricBall(30))
+search3 = KBallSearch(grid, 20, MetricBall(30))
 
 # initialize benchmark suite
 const SUITE = BenchmarkGroup()
@@ -43,6 +47,16 @@ SUITE["topology"] = BenchmarkGroup()
 
 SUITE["topology"]["half-edge"] = @benchmarkable convert(HalfEdgeTopology, topology($mesh))
 
+# ----------------
+# NEIGHBOR SEARCH
+# ----------------
+
+SUITE["neighborsearch"] = BenchmarkGroup()
+
+SUITE["neighborsearch"]["knn"] = @benchmarkable search($point, $search1)
+SUITE["neighborsearch"]["ball"] = @benchmarkable search($point, $search2)
+SUITE["neighborsearch"]["knnball"] = @benchmarkable search($point, $search3)
+
 # --------
 # WINDING
 # --------
@@ -57,8 +71,8 @@ SUITE["winding"]["mesh"] = @benchmarkable winding($points, $mesh)
 
 SUITE["sideof"] = BenchmarkGroup()
 
-SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point1, $ring3)
-SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point1, $ring4)
+SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point, $ring3)
+SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring4)
 
 # -----------
 # INTERSECTS

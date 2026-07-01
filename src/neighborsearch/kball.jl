@@ -10,40 +10,37 @@ these neighbors using a metric `ball`.
 
 See [`MetricBall`](@ref) for additional details.
 """
-struct KBallSearch{D<:Domain,B<:MetricBall,T} <: BoundedNeighborSearchMethod
-  # input fields
-  domain::D
-  k::Int
-  ball::B
-
-  # state fields
+struct KBallSearch{C<:CRS,T,R} <: BoundedNeighborSearchMethod
   tree::T
+  radius::R
+  k::Int
 end
 
 function KBallSearch(domain::D, k::Int, ball::B) where {D<:Domain,B<:MetricBall}
+  C = crs(domain)
   m = metric(ball)
-  xs = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
-  tree = m isa MinkowskiMetric ? KDTree(xs, m) : BallTree(xs, m)
-  KBallSearch{D,B,typeof(tree)}(domain, k, ball, tree)
+  r = ustrip(unit(lentype(C)), radius(ball))
+  X = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
+  t = m isa MinkowskiMetric ? KDTree(X, m) : BallTree(X, m)
+  KBallSearch{C,typeof(t),typeof(r)}(t, r, k)
 end
 
 KBallSearch(geoms, k, ball) = KBallSearch(GeometrySet(geoms), k, ball)
 
 maxneighbors(method::KBallSearch) = method.k
 
-function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch; mask=nothing)
-  C = crs(method.domain)
-  u = unit(lentype(method.domain))
-  tree = method.tree
+function searchdists!(neighbors, distances, pₒ::Point, method::KBallSearch{C}; mask=nothing) where {C<:CRS}
+  t = method.tree
+  r = method.radius
   k = method.k
 
-  # adjust unit of query radius
-  r = ustrip(u, radius(method.ball))
+  # retrieve unit of length for distances
+  u = unit(lentype(C))
 
   # adjust CRS of query point
   x = svec(convert(C, coords(pₒ)))
 
-  inds, dists = knn(tree, x, k, true)
+  inds, dists = knn(t, x, k, true)
 
   # keep neighbors inside ball
   keep = dists .≤ r
