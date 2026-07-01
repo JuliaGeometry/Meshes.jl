@@ -12,23 +12,25 @@ abstract type NeighborSearchMethod end
 """
     search(pₒ, method, mask=nothing)
 
-Return neighbors of point `pₒ` using `method`. Optionally,
-specify a `mask` for all indices of the domain.
+Return neighbors of point `pₒ` using neighbor search `method`.
+Optionally, specify a `mask` for all indices of the domain.
 """
 function search end
 
 """
     BoundedNeighborSearchMethod
 
-A method for searching neighbors with the property that the number of neighbors
-is bounded above by a known constant (e.g. k-nearest neighbors).
+A method for searching neighbors with the property that the
+number of neighbors is bounded above by a known constant
+(e.g. k-nearest neighbors).
 """
 abstract type BoundedNeighborSearchMethod <: NeighborSearchMethod end
 
 """
     maxneighbors(method)
 
-Return the maximum number of neighbors obtained with bounded search `method`.
+Return the maximum number of neighbors obtained with bounded
+neighbor search `method`.
 
 See [`BoundedNeighborSearchMethod`](@ref) for additional details.
 """
@@ -37,9 +39,9 @@ function maxneighbors end
 """
     search!(neighbors, pₒ, method; mask=nothing)
 
-Update `neighbors` of point `pₒ` using bounded search `method` and return
-number of neighbors found. Optionally, specify a `mask` for all indices of
-the domain.
+Update `neighbors` of point `pₒ` using bounded neighbor search `method`
+and return number of neighbors found. Optionally, specify a `mask` for
+all indices of the domain.
 
 See [`BoundedNeighborSearchMethod`](@ref) for additional details.
 """
@@ -48,9 +50,9 @@ function search! end
 """
     searchdists!(neighbors, distances, pₒ, method; mask=nothing)
 
-Update `neighbors` and `distances` of point `pₒ` using bounded search `method`
-and return number of neighbors found. Optionally, specify a `mask` for all
-indices of the domain.
+Update `neighbors` and `distances` of point `pₒ` using bounded neighbor
+search `method` and return number of neighbors found. Optionally, specify
+a `mask` for all indices of the domain.
 
 See [`BoundedNeighborSearchMethod`](@ref) for additional details.
 """
@@ -59,8 +61,8 @@ function searchdists! end
 """
     searchdists(pₒ, method, mask=nothing)
 
-Return neighbors and distances of point `pₒ` using bounded search `method`.
-Optionally, specify a `mask` for all indices of the domain.
+Return neighbors and distances of point `pₒ` using bounded neighbor search
+`method`. Optionally, specify a `mask` for all indices of the domain.
 
 See [`BoundedNeighborSearchMethod`](@ref) for additional details.
 """

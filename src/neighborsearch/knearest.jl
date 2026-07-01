@@ -8,30 +8,28 @@
 A method for searching `k` nearest neighbors in `domain`
 according to `metric`.
 """
-struct KNearestSearch{D<:Domain,T} <: BoundedNeighborSearchMethod
-  # input fields
-  domain::D
-  k::Int
-
-  # state fields
+struct KNearestSearch{C<:CRS,T} <: BoundedNeighborSearchMethod
   tree::T
+  k::Int
 end
 
 function KNearestSearch(domain::D, k::Int; metric=Euclidean()) where {D<:Domain}
-  xs = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
-  tree = metric isa MinkowskiMetric ? KDTree(xs, metric) : BallTree(xs, metric)
-  KNearestSearch{D,typeof(tree)}(domain, k, tree)
+  C = crs(domain)
+  X = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
+  tree = metric isa MinkowskiMetric ? KDTree(X, metric) : BallTree(X, metric)
+  KNearestSearch{C,typeof(tree)}(tree, k)
 end
 
 KNearestSearch(geoms, k; metric=Euclidean()) = KNearestSearch(GeometrySet(geoms), k; metric)
 
 maxneighbors(method::KNearestSearch) = method.k
 
-function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch; mask=nothing)
-  C = crs(method.domain)
-  u = unit(lentype(method.domain))
+function searchdists!(neighbors, distances, pₒ::Point, method::KNearestSearch{C}; mask=nothing) where {C<:CRS}
   tree = method.tree
   k = method.k
+
+  # retrieve unit of length for distances
+  u = unit(lentype(C))
 
   # adjust CRS of query point
   x = svec(convert(C, coords(pₒ)))
