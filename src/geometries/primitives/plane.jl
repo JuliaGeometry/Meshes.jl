@@ -40,6 +40,8 @@ paramdim(::Type{<:Plane}) = 2
 
 normal(p::Plane) = unormalize(ucross(p.u, p.v))
 
+center(p::Plane) = p(0, 0)
+
 ==(p₁::Plane, p₂::Plane) =
   p₁(0, 0) ∈ p₂ && p₁(1, 0) ∈ p₂ && p₁(0, 1) ∈ p₂ && p₂(0, 0) ∈ p₁ && p₂(1, 0) ∈ p₁ && p₂(0, 1) ∈ p₁
 
