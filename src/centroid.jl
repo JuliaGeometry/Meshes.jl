@@ -43,15 +43,15 @@ end
 
 centroid(t::Torus) = center(t)
 
-centroid(s::Segment) = s(1//2)
+centroid(s::Segment) = s(1 // 2)
 
-centroid(t::Triangle) = t(1//3, 1//3)
+centroid(t::Triangle) = t(1 // 3, 1 // 3)
 
-centroid(q::Quadrangle) = q(1//2, 1//2)
+centroid(q::Quadrangle) = q(1 // 2, 1 // 2)
 
-centroid(t::Tetrahedron) = t(1//4, 1//4, 1//4)
+centroid(t::Tetrahedron) = t(1 // 4, 1 // 4, 1 // 4)
 
-centroid(h::Hexahedron) = h(1//2, 1//2, 1//2)
+centroid(h::Hexahedron) = h(1 // 2, 1 // 2, 1 // 2)
 
 centroid(m::Multi) = centroid(GeometrySet(parent(m)))
 
