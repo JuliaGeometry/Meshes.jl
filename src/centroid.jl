@@ -7,19 +7,21 @@
 
 The centroid of the `geometry`.
 """
-centroid(g::Geometry) = center(g) # some geometries have a natural center
+centroid(g::Geometry) = withcrs(g, integral(to, g) / measure(g))
 
 centroid(p::Point) = p
 
-centroid(p::Polygon) = centroid(first(rings(p)))
+centroid(p::Plane) = center(p)
 
-centroid(n::Ngon) = coordmean(vertices(n))
+centroid(b::Box) = center(b)
 
-centroid(p::Polytope) = coordmean(vertices(p))
+centroid(b::Ball) = center(b)
 
-centroid(b::Box) = coordmean(extrema(b))
+centroid(s::Sphere) = center(s)
 
-centroid(p::Plane) = p(0, 0)
+centroid(d::Disk) = center(d)
+
+centroid(c::Circle) = center(c)
 
 centroid(c::Cylinder) = centroid(boundary(c))
 
@@ -38,6 +40,18 @@ function centroid(p::ParaboloidSurface)
   y = zero(z)
   c + Vec(x, y, z / 2)
 end
+
+centroid(t::Torus) = center(t)
+
+centroid(s::Segment) = s(1 // 2)
+
+centroid(t::Triangle) = t(1 // 3, 1 // 3)
+
+centroid(q::Quadrangle) = q(1 // 2, 1 // 2)
+
+centroid(t::Tetrahedron) = t(1 // 4, 1 // 4, 1 // 4)
+
+centroid(h::Hexahedron) = h(1 // 2, 1 // 2, 1 // 2)
 
 centroid(m::Multi) = centroid(GeometrySet(parent(m)))
 

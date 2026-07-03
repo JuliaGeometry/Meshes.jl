@@ -117,14 +117,13 @@ function gjkintersects(g₁::Geometry, g₂::Geometry)
   ℒ = lentype(g₁)
 
   # initial direction
-  c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{Dim,ℒ}) : c₂ - c₁
+  d = Vec(ntuple(i -> isone(i) ? oneunit(ℒ) : zero(ℒ), Dim))
+
+  # origin of coordinate system
+  O = Point(ntuple(i -> zero(ℒ), Dim))
 
   # first point in Minkowski difference
   P = minkowskipoint(g₁, g₂, d)
-
-  # origin of coordinate system
-  O = minkowskiorigin(Dim, ℒ)
 
   # initialize simplex vertices
   points = [P]
@@ -245,9 +244,6 @@ end
 
 # support point in Minkowski difference
 minkowskipoint(g₁::Geometry, g₂::Geometry, d) = withcrs(g₁, supportfun(g₁, d) - supportfun(g₂, -d))
-
-# origin of coordinate system
-minkowskiorigin(Dim, ℒ) = Point(ntuple(i -> zero(ℒ), Dim))
 
 # find a vector perpendicular to `v` using vector `d` as some direction hint
 # expect that `perphint(v, d) ⋅ d ≥ 0` or, in other words, that the angle

@@ -5,7 +5,9 @@
   gset = GeometrySet([s, t, p])
   @test crs(gset) <: Cartesian{NoDatum}
   @test Meshes.lentype(gset) == ℳ
-  @test [centroid(gset, i) for i in 1:3] == cart.([(1 / 2, 1 / 2), (1 / 3, 1 / 3), (1 / 2, 1 / 2)])
+  @test centroid(gset, 1) ≈ cart(1 / 2, 1 / 2)
+  @test centroid(gset, 2) ≈ cart(1 / 3, 1 / 3)
+  @test centroid(gset, 3) ≈ cart(1 / 2, 1 / 2)
 
   s = Segment(cart(0, 0), cart(1, 1))
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))

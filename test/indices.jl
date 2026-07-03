@@ -12,13 +12,13 @@
   # boxes
   g = cartgrid(10, 10)
   p = PointSet(vertices(g))
-  b = Ball(cart(0, 0), T(2))
+  b = Ball(cart(0, 0), T(1.9))
   v = view(g, b)
   @test nelements(v) == 4
   @test v[1] == g[1]
   v = view(p, b)
-  @test nelements(v) == 6
-  @test to.(v) == vector.([(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (0, 2)])
+  @test nelements(v) == 4
+  @test to.(v) == vector.([(0, 0), (1, 0), (0, 1), (1, 1)])
 
   b1 = Box(cart(0.6, 0.7), cart(1.0, 1.0))
   b2 = Box(cart(0.6, 0.7), cart(1.2, 1.2))

@@ -105,6 +105,8 @@ measure(g::Geometry{<:𝔼}) = sum(measure, simplexify(g))
 
 measure(d::PointSet) = zero(lentype(d))
 
+measure(d::OrthoRegularGrid) = nelements(d) * measure(first(d))
+
 measure(d::Domain{<:𝔼}) = sum(measure, d)
 
 # --------
