@@ -30,6 +30,12 @@
   @inferred Meshes.rtol(𝒜)
   @inferred Meshes.rtol(𝒱)
 
+  # generic AbstractFloat fallback (e.g. BigFloat)
+  @test Meshes.atol(BigFloat) == eps(BigFloat)^(3 // 4)
+  @test Meshes.rtol(BigFloat) == eps(BigFloat)^(1 // 3)
+  @test Meshes.atol(zero(BigFloat)) == Meshes.atol(BigFloat)
+  @test Meshes.rtol(zero(BigFloat)) == Meshes.rtol(BigFloat)
+
   # maximum length for discretization
   @test Meshes.maxlen() == 500u"km"
 end
