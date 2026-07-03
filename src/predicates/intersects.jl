@@ -117,8 +117,7 @@ function gjkintersects(g₁::Geometry, g₂::Geometry)
   ℒ = lentype(g₁)
 
   # initial direction
-  c₁, c₂ = centroid(g₁), centroid(g₂)
-  d = c₁ ≈ c₂ ? rand(Vec{Dim,ℒ}) : c₂ - c₁
+  d = Vec(ntuple(i -> isone(i) ? oneunit(ℒ) : zero(ℒ), Dim))
 
   # first point in Minkowski difference
   P = minkowskipoint(g₁, g₂, d)
