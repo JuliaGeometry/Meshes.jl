@@ -11,8 +11,6 @@ centroid(g::Geometry) = withcrs(g, integral(to, g) / measure(g))
 
 centroid(p::Point) = p
 
-centroid(s::Segment) = center(s)
-
 centroid(p::Plane) = center(p)
 
 centroid(b::Box) = center(b)
@@ -42,6 +40,18 @@ function centroid(p::ParaboloidSurface)
   y = zero(z)
   c + Vec(x, y, z / 2)
 end
+
+centroid(t::Torus) = center(t)
+
+centroid(s::Segment) = s(1//2)
+
+centroid(t::Triangle) = t(1//3, 1//3)
+
+centroid(q::Quadrangle) = q(1//2, 1//2)
+
+centroid(t::Tetrahedron) = t(1//4, 1//4, 1//4)
+
+centroid(h::Hexahedron) = h(1//2, 1//2, 1//2)
 
 centroid(m::Multi) = centroid(GeometrySet(parent(m)))
 
