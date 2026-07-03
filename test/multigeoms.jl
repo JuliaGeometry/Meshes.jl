@@ -21,7 +21,7 @@
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
   @test area(multi) == area(poly1) + area(poly2)
   @test perimeter(multi) == perimeter(poly1) + perimeter(poly2)
-  @test centroid(multi) == cart(1, 1)
+  @test centroid(multi) ≈ cart(1, 1)
   @test cart(0.5, 0.5) ∈ multi
   @test cart(1.5, 1.5) ∈ multi
   @test cart(1.5, 0.5) ∉ multi

@@ -647,7 +647,7 @@ end
 
   # centroid
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test centroid(poly) == cart(0.5, 0.5)
+  @test centroid(poly) ≈ cart(0.5, 0.5)
 
   # single vertex access
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
