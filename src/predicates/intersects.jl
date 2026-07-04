@@ -116,6 +116,9 @@ function gjkintersects(g₁::Geometry, g₂::Geometry)
   Dim = embeddim(g₁)
   ℒ = lentype(g₁)
 
+  # prepare geometries for GJK
+  pg₁, pg₂ = gjkprepare(g₁), gjkprepare(g₂)
+
   # initial direction
   d = Vec(ntuple(i -> isone(i) ? oneunit(ℒ) : zero(ℒ), Dim))
 
@@ -123,7 +126,7 @@ function gjkintersects(g₁::Geometry, g₂::Geometry)
   O = Point(ntuple(i -> zero(ℒ), Dim))
 
   # first point in Minkowski difference
-  P = minkowskipoint(g₁, g₂, d)
+  P = minkowskipoint(pg₁, pg₂, d)
 
   # initialize simplex vertices
   points = [P]
@@ -131,7 +134,7 @@ function gjkintersects(g₁::Geometry, g₂::Geometry)
   # move towards the origin
   d = O - P
   while true
-    P = minkowskipoint(g₁, g₂, d)
+    P = minkowskipoint(pg₁, pg₂, d)
     if isnegative((P - O) ⋅ d)
       return false
     end
@@ -141,6 +144,26 @@ function gjkintersects(g₁::Geometry, g₂::Geometry)
     isnothing(d) && return true
   end
 end
+
+# fallback to points on the boundary
+gjkprepare(g::Geometry) = centroid(g), boundarypoints(g)
+
+# ball has efficient support function
+gjkprepare(b::Ball) = b
+
+# support point in Minkowski difference
+function minkowskipoint(pg₁, pg₂, d)
+  v = _supportfun(pg₁, d) - _supportfun(pg₂, -d)
+  withcrs(_targetgeom(pg₁), v)
+end
+
+# support function for prepared geometries
+_supportfun(pg::Geometry, d) = supportfun(pg, d)
+_supportfun((c, p), d) = argmax(pᵢ -> (pᵢ - c) ⋅ d, p)
+
+# target geometry to extract CRS
+_targetgeom(pg::Geometry) = pg
+_targetgeom((c, p)) = c
 
 """
     gjk!(O::Point{Dim}, points) where {Dim}
@@ -241,9 +264,6 @@ function _gjk!(::Val{3}, O, points)
   end
   d
 end
-
-# support point in Minkowski difference
-minkowskipoint(g₁::Geometry, g₂::Geometry, d) = withcrs(g₁, supportfun(g₁, d) - supportfun(g₂, -d))
 
 # find a vector perpendicular to `v` using vector `d` as some direction hint
 # expect that `perphint(v, d) ⋅ d ≥ 0` or, in other words, that the angle
