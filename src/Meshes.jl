@@ -538,7 +538,6 @@ export
   JarvisMarch,
   hull,
   convexhull,
-  concavehull,
 
   # sampling
   SamplingMethod,

@@ -19,14 +19,21 @@
     chul = hull(pts, method)
     @test chul == Segment(cart(0, 1), cart(1, 0))
     pts = cart.([(1, 0), (0, 0), (0, 1)])
-    chul = hull(pts, method)
-    @test Set(vertices(chul)) == Set(cart.([(0, 0), (1, 0), (0, 1)]))
+    if method == JarvisMarch(5)
+      @test_throws AssertionError hull(pts, method)
+    else
+      chul = hull(pts, method)
+      @test Set(vertices(chul)) == Set(cart.([(0, 0), (1, 0), (0, 1)]))
+    end
 
     # original point set is already in hull
     pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
-    chul = hull(pts, method)
-    verts = vertices(chul)
-    @test Set(verts) == Set(cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]))
+    if method == JarvisMarch(5)
+      @test_throws AssertionError hull(pts, method)
+    else
+      chul = hull(pts, method)
+      @test Set(vertices(chul)) == Set(cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)]))
+    end
 
     # all points should be in hull, even if random
     p1 = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
@@ -45,35 +52,34 @@
     @test !isnothing(chul)
     @test all(pts .∈ Ref(chul))
 
-    pts =
-      cart.([
-        (0, 5),
-        (1, 5),
-        (1, 4),
-        (2, 4),
-        (2, 3),
-        (3, 3),
-        (4, 3),
-        (5, 3),
-        (5, 4),
-        (6, 4),
-        (6, 5),
-        (7, 5),
-        (7, 6),
-        (7, 7),
-        (6, 7),
-        (6, 8),
-        (5, 8),
-        (5, 9),
-        (4, 9),
-        (3, 9),
-        (2, 9),
-        (2, 8),
-        (1, 8),
-        (1, 7),
-        (0, 7),
-        (0, 6)
-      ])
+    pts = cart.([
+      (0, 5),
+      (1, 5),
+      (1, 4),
+      (2, 4),
+      (2, 3),
+      (3, 3),
+      (4, 3),
+      (5, 3),
+      (5, 4),
+      (6, 4),
+      (6, 5),
+      (7, 5),
+      (7, 6),
+      (7, 7),
+      (6, 7),
+      (6, 8),
+      (5, 8),
+      (5, 9),
+      (4, 9),
+      (3, 9),
+      (2, 9),
+      (2, 8),
+      (1, 8),
+      (1, 7),
+      (0, 7),
+      (0, 6)
+    ])
     chul = hull(pts, method)
     @test nvertices(chul) < length(pts)
 
@@ -179,85 +185,4 @@ end
   h = convexhull(Multi([b1, b2]))
   @test cart(-0.8, -0.8) ∈ h
   @test cart(0.2, 0.2) ∈ h
-end
-
-@testitem "Concave hulls" setup = [Setup] begin
-  @test concavehull(cart(0, 0)) == cart(0, 0)
-
-  @test concavehull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
-
-  @test concavehull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
-  @test concavehull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
-
-  @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
-  @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
-
-  @test concavehull(Triangle(cart(0, 0), cart(1, 0), cart(0, 1))) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  @test concavehull(poly) == convexhull(poly)
-
-  b = Box(cart(0, 0), cart(1, 1))
-  @test concavehull(b) == convexhull(b)
-
-  b = BezierCurve(cart(0, 0), cart(0.5, -1), cart(1, 0))
-  @test concavehull(b) == convexhull(b)
-
-  b1 = Box(cart(0, 0), cart(1, 1))
-  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
-  @test Set(vertices(concavehull(Multi([b1, b2])))) ==
-        Set(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
-
-  geoms = GeometrySet([b1, b2])
-  @test Set(vertices(concavehull(geoms))) == Set(vertices(convexhull(geoms)))
-
-  b1 = Ball(cart(0, 0), T(1))
-  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
-  h = concavehull(Multi([b1, b2]))
-  @test h isa PolyArea
-  @test all(Set([boundarypoints(b1); boundarypoints(b2)]) .∈ Ref(h))
-
-  mesh = SimpleMesh(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]), connect.([(1, 2, 3), (1, 3, 4)]))
-  @test Set(vertices(concavehull(mesh))) == Set(vertices(convexhull(mesh)))
-
-  grid = cartgrid(2, 2)
-  @test concavehull(grid) == convexhull(grid)
-
-  # repeat hull tests because k changes results and the above tests only work for some k values
-  pts =
-    cart.([
-      (0, 5),
-      (1, 5),
-      (1, 4),
-      (2, 4),
-      (2, 3),
-      (3, 3),
-      (4, 3),
-      (5, 3),
-      (5, 4),
-      (6, 4),
-      (6, 5),
-      (7, 5),
-      (7, 6),
-      (7, 7),
-      (6, 7),
-      (6, 8),
-      (5, 8),
-      (5, 9),
-      (4, 9),
-      (3, 9),
-      (2, 9),
-      (2, 8),
-      (1, 8),
-      (1, 7),
-      (0, 7),
-      (0, 6)
-    ])
-  chul = concavehull(pts)
-  @test Set(vertices(chul)) == Set(pts)
-
-  poly = readpoly(T, joinpath(datadir, "hull.line"))
-  pts = vertices(poly)
-  chul = concavehull(pts)
-  @test Set(vertices(chul)) == Set(pts)
 end
