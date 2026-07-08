@@ -1,15 +1,20 @@
 @testitem "Hulls" setup = [Setup] begin
   for method in [GrahamScan(), JarvisMarch(), JarvisMarch(5)]
     # basic test
+    # skip fixed k for random points, hull is not guaranteed to exist
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
-    chul = hull(pts, method)
-    @test method == JarvisMarch(5) || all(pts .∈ Ref(chul))
+    if method ≠ JarvisMarch(5)
+      chul = hull(pts, method)
+      @test all(pts .∈ Ref(chul))
+    end
 
     # duplicated points
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
     dup = [pts; pts]
-    chul = hull(dup, method)
-    @test method == JarvisMarch(5) || all(pts .∈ Ref(chul))
+    if method ≠ JarvisMarch(5)
+      chul = hull(dup, method)
+      @test all(pts .∈ Ref(chul))
+    end
 
     # corner cases
     pts = cart.([(0, 0)])
@@ -36,20 +41,21 @@
     end
 
     # all points should be in hull, even if random
+    # skip fixed k for random points, hull is not guaranteed to exist
     p1 = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
     p2 = cart.([0.5 .* (rand(), rand()) .+ 0.5 for _ in 1:10])
     pts = [p1; p2]
-    chul = hull(pts, method)
-    isnothing(chul) || (verts = vertices(chul))
-    @test method == JarvisMarch(5) || all(p1 .∈ Ref(chul))
-    @test method == JarvisMarch(5) || all(p2 .∈ Ref(chul))
-    @test method == JarvisMarch(5) || verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    if method ≠ JarvisMarch(5)
+      chul = hull(pts, method)
+      @test all(p1 .∈ Ref(chul))
+      @test all(p2 .∈ Ref(chul))
+      @test vertices(chul) == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
+    end
 
     # collinear test for regressions
     # points along the same hull edges force angle ties during the march
     pts = cart.([(0, 0), (1, 0), (2, 0), (3, 0), (3, 1), (3, 2), (0, 2), (1, 1)])
     chul = hull(pts, method)
-    @test !isnothing(chul)
     @test all(pts .∈ Ref(chul))
 
     pts = cart.([
@@ -161,6 +167,68 @@
       chull = hull(points, method)
       @test area(chull) ≈ T(0.0015160200648848573)u"m^2"
     end
+  end
+end
+
+@testitem "JarvisMarch k-nearest neighbors" setup = [Setup] begin
+  # k must be greater than 2 and less than the number of unique points
+  pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
+  @test_throws AssertionError hull(pts, JarvisMarch(2))
+  @test_throws AssertionError hull(pts, JarvisMarch(5))
+  @test_throws AssertionError hull(pts, JarvisMarch(6))
+
+  # U-shaped point set with a notch between x=1 and x=3 above y=1
+  pts = cart.([
+    (0, 0),
+    (1, 0),
+    (2, 0),
+    (3, 0),
+    (4, 0),
+    (4, 1),
+    (4, 2),
+    (4, 3),
+    (4, 4),
+    (3, 4),
+    (3, 3),
+    (3, 2),
+    (3, 1),
+    (2, 1),
+    (1, 1),
+    (1, 2),
+    (1, 3),
+    (1, 4),
+    (0, 4),
+    (0, 3),
+    (0, 2),
+    (0, 1)
+  ])
+
+  # k too small to close a valid hull
+  @test_throws ArgumentError hull(pts, JarvisMarch(3))
+  @test_throws ArgumentError hull(pts, JarvisMarch(4))
+
+  # large enough k recovers the concave boundary
+  chul = hull(pts, JarvisMarch(5))
+  @test issimple(chul)
+  @test nvertices(chul) ≥ 3
+  @test all(pts .∈ Ref(chul))
+  @test area(chul) < area(hull(pts, JarvisMarch()))
+  @test area(chul) ≈ T(10) * u"m^2"
+  @test vertices(chul) == pts
+
+  # hull either fails or is a simple polygon with at least 3 vertices,
+  # never a degenerate ring that closes back on the starting point too early
+  rng = StableRNG(2025)
+  for _ in 1:100, k in (3, 4, 5)
+    rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
+    chul = try
+      hull(rpts, JarvisMarch(k))
+    catch e
+      @test e isa ArgumentError
+      continue
+    end
+    @test nvertices(chul) ≥ 3
+    @test issimple(chul)
   end
 end
 
