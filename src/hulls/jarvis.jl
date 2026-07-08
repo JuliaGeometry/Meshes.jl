@@ -10,15 +10,12 @@ Compute the convex hull of a set of points or geometries using the
 Jarvis's march algorithm. See [https://en.wikipedia.org/wiki/Gift_wrapping_algorithm]
 (https://en.wikipedia.org/wiki/Gift_wrapping_algorithm).
 
-If `k` is provided, the algorithm will attempt to compute a concave hull using k
-nearest neighbors. However, the algorithm is not guaranteed to succeed for any particular `k`.
+If `k` is provided, the algorithm will attempt to compute a concave hull using the
+k nearest neighbors as proposed by Moreira & Santos 2007. The value of `k` must be
+greater than 2 and less than the number of unique points.
 
 The algorithm has complexity `O(n*h)` where `n` is the number of points
 and `h` is the number of points in the hull.
-
-see `concavehull` for a version that iteratively increases `k` until all
-points are in the hull, which is useful when an effective `k` is not known prior.
-This gurantees correctness.
 
 ## References
 
@@ -29,7 +26,9 @@ This gurantees correctness.
 struct JarvisMarch{K} <: HullMethod
   k::K
 end
+
 JarvisMarch() = JarvisMarch{Nothing}(nothing)
+
 JarvisMarch(k::I) where {I<:Integer} = JarvisMarch{I}(k)
 
 function hull(points, method::JarvisMarch)
@@ -47,8 +46,8 @@ function hull(points, method::JarvisMarch)
   # corner cases
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
-  kₒ = method.k
-  isnothing(kₒ) || kₒ ≥ n && return hull(points, JarvisMarch())
+  k = method.k
+  !isnothing(k) && assertion(2 < k < n, "k must be greater than 2 and less than the number of points")
 
   # find bottom-left point
   i = argmin(p)
@@ -56,8 +55,8 @@ function hull(points, method::JarvisMarch)
   # initialize hull with i
   ℐ = [i]
 
-  # initialize mask of candidate points and searcher for k-nearest neighbors if needed
-  k, searcher, pointmask = jarvissearcher(method.k, n, p)
+  # initialize searcher and mask of visited points for k-nearest neighbors if needed
+  searcher, pointmask = jarvissearcher(k, n, p)
 
   # find neighbor candidates
   𝒞 = jarviscandidates(searcher, pointmask, n, p, i, i, start)
@@ -69,28 +68,29 @@ function hull(points, method::JarvisMarch)
 
   # initialize ring of indices
   push!(ℐ, j)
-  k isa Integer && (pointmask[j] = true)
+  jarvisupdate!(searcher, pointmask, j)
 
   # rotational sweep
   while first(ℐ) != last(ℐ)
     # direction of current segment
     v = p[j] - p[i]
 
-    # find candidates for next point
-    inds = isnothing(searcher) ? (i, j) : j
-    𝒞 = jarviscandidates(searcher, pointmask, n, p, j, inds, start)
-    isempty(𝒞) && return nothing # no candidates, should only happen if k is too small
+    # find candidates for next point, excluding endpoints of current segment
+    𝒞 = jarviscandidates(searcher, pointmask, n, p, j, (i, j), start)
+    # no candidates, should only happen if k is too small
+    isempty(𝒞) && throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
 
     # find next segment
     i = j
     O = p[i]
     A = O + v
     j = jarvisnext(searcher, 𝒞, p, ℐ, A, O, k)
-    isnothing(j) && return nothing # no valid next point, should only happen if k is too small
+    # no valid next point, should only happen if k is too small
+    isnothing(j) && throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
 
     # update ring of indices
     push!(ℐ, j)
-    k isa Integer && (pointmask[j] = true)
+    jarvisupdate!(searcher, pointmask, j)
   end
 
   # return polygonal area
@@ -107,7 +107,7 @@ function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O, k)
     cpoint = p[nᵢ]
     cseg = Segment(p[ℐ[end]], cpoint)
     cbox = boundingbox(cseg)
-    offset = cpoint == p[ℐ[begin]] ? 1 : 0
+    offset = nᵢ == ℐ[begin] ? 1 : 0
     limit = length(ℐ) - 1 - offset
     ok = limit < 2 || !any(2:limit) do indⱼ
       p₁ = p[ℐ[end - indⱼ + 1]]
@@ -129,15 +129,16 @@ function jarviscandidates(searcher::KNearestSearch, pointmask, n, p, current, in
   # mask out points already in the hull, except for the starting point
   mask = .!pointmask
   mask[start] = true
-  mask[inds] = false
+  for ind in inds
+    mask[ind] = false
+  end
   search(p[current], searcher; mask=mask)
 end
 
-# outputs k, searcher, and a mask of candidate point indices
-jarvissearcher(k, n, p) = nothing, nothing, 1:n
+# helper to mark point as visited after it is added to the hull
+jarvisupdate!(::Nothing, pointmask, j) = nothing
+jarvisupdate!(::KNearestSearch, pointmask, j) = pointmask[j] = true
 
-function jarvissearcher(kₒ::T, n, p) where {T<:Integer}
-  k = min(max(kₒ, T(3)), n)
-  assertion(ispositive(k), "k must be a positive integer")
-  k, KNearestSearch(p, k), falses(n)
-end
+# helper to create searcher and mask of visited points
+jarvissearcher(k::Integer, n, p) = KNearestSearch(p, k), falses(n)
+jarvissearcher(k::Nothing, n, p) = nothing, 1:n
