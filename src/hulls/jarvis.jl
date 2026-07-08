@@ -64,7 +64,7 @@ function hull(points, method::JarvisMarch)
   # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  j = jarvisnext(searcher, 𝒞, p, ℐ, A, O, k)
+  j = jarvisnext(searcher, 𝒞, p, ℐ, A, O)
 
   # initialize ring of indices
   push!(ℐ, j)
@@ -84,7 +84,7 @@ function hull(points, method::JarvisMarch)
     i = j
     O = p[i]
     A = O + v
-    j = jarvisnext(searcher, 𝒞, p, ℐ, A, O, k)
+    j = jarvisnext(searcher, 𝒞, p, ℐ, A, O)
     # no valid next point, should only happen if k is too small
     isnothing(j) && throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
 
@@ -98,26 +98,23 @@ function hull(points, method::JarvisMarch)
 end
 
 # helper to find next point for convex hull
-jarvisnext(::Nothing, 𝒞, p, ℐ, A, O, k) = argmin(l -> ∠(A, O, p[l]), 𝒞)
+jarvisnext(::Nothing, 𝒞, p, ℐ, A, O) = argmin(l -> ∠(A, O, p[l]), 𝒞)
 
-function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O, k)
+function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
   sort!(𝒞, by=l -> ∠(A, O, p[l]))
-  # check candidates in order of angle until we find one that doesn't intersect the existing hull
+  # accept first candidate whose segment does not cross the existing hull,
+  # skipping the last edge, which shares a vertex with the candidate segment,
+  # and the first edge when the candidate is the starting point
   for nᵢ in 𝒞
-    cpoint = p[nᵢ]
-    cseg = Segment(p[ℐ[end]], cpoint)
+    cseg = Segment(p[ℐ[end]], p[nᵢ])
     cbox = boundingbox(cseg)
-    offset = nᵢ == ℐ[begin] ? 1 : 0
-    limit = length(ℐ) - 1 - offset
-    ok = limit < 2 || !any(2:limit) do indⱼ
-      p₁ = p[ℐ[end - indⱼ + 1]]
-      p₂ = p[ℐ[end - indⱼ]]
-      eseg = Segment(p₁, p₂)
-      # quick check to see if segments could intersect before doing more expensive segment intersection check
-      intersects(cbox, boundingbox(eseg)) || return false
-      intersects(cseg, eseg)
+    tₒ = nᵢ == ℐ[begin] ? 2 : 1
+    valid = !any(tₒ:(length(ℐ) - 2)) do t
+      eseg = Segment(p[ℐ[t]], p[ℐ[t + 1]])
+      #check if segments could intersect before doing more expensive segment intersection check
+      intersects(cbox, boundingbox(eseg)) && intersects(cseg, eseg)
     end
-    ok && return nᵢ
+    valid && return nᵢ
   end
   nothing
 end
