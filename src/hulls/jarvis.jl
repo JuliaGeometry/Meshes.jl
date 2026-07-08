@@ -15,7 +15,8 @@ k nearest neighbors as proposed by Moreira & Santos 2007. The value of `k` must 
 greater than 2 and less than the number of unique points.
 
 The algorithm has complexity `O(n*h)` where `n` is the number of points
-and `h` is the number of points in the hull.
+and `h` is the number of points in the hull. The concave variant adds a
+k-nearest-neighbor search and hull-intersection checks per hull vertex.
 
 ## References
 
@@ -47,21 +48,22 @@ function hull(points, method::JarvisMarch)
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
   k = method.k
-  !isnothing(k) && assertion(2 < k < n, "k must be greater than 2 and less than the number of points")
+  !isnothing(k) && assertion(2 < k < n, "k must be greater than 2 and less than the number of unique points")
 
   # find bottom-left point
   i = argmin(p)
-  start = i
   # initialize hull with i
   ℐ = [i]
 
   # initialize searcher and mask of visited points for k-nearest neighbors if needed
-  searcher, pointmask = jarvissearcher(k, n, p)
+  searcher, pointmask = jarvissearcher(k, p)
 
   # find neighbor candidates
-  𝒞 = jarviscandidates(searcher, pointmask, n, p, i, i, start)
+  𝒞 = jarviscandidates(searcher, pointmask, p, ℐ)
 
-  # find next point with smallest angle
+  # find next point with smallest angle,
+  # this always succeeds: candidates are nonempty since k < n,
+  # and with a single hull point there are no edges to cross
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
   j = jarvisnext(searcher, 𝒞, p, ℐ, A, O)
@@ -76,7 +78,7 @@ function hull(points, method::JarvisMarch)
     v = p[j] - p[i]
 
     # find candidates for next point, excluding endpoints of current segment
-    𝒞 = jarviscandidates(searcher, pointmask, n, p, j, (i, j), start)
+    𝒞 = jarviscandidates(searcher, pointmask, p, ℐ)
     # no candidates, should only happen if k is too small
     isempty(𝒞) && throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
 
@@ -97,21 +99,19 @@ function hull(points, method::JarvisMarch)
   PolyArea(p[ℐ[begin:(end - 1)]])
 end
 
-# helper to find next point for convex hull
+# helpers to find next point with smallest angle
 jarvisnext(::Nothing, 𝒞, p, ℐ, A, O) = argmin(l -> ∠(A, O, p[l]), 𝒞)
 
 function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
-  sort!(𝒞, by=l -> ∠(A, O, p[l]))
-  # accept first candidate whose segment does not cross the existing hull,
-  # skipping the last edge, which shares a vertex with the candidate segment,
-  # and the first edge when the candidate is the starting point
-  for nᵢ in 𝒞
+  # check candidates in order of increasing angle and accept the first one
+  # whose segment does not cross the existing hull, skipping the last edge
+  for nᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
     cseg = Segment(p[ℐ[end]], p[nᵢ])
     cbox = boundingbox(cseg)
     tₒ = nᵢ == ℐ[begin] ? 2 : 1
     valid = !any(tₒ:(length(ℐ) - 2)) do t
       eseg = Segment(p[ℐ[t]], p[ℐ[t + 1]])
-      #check if segments could intersect before doing more expensive segment intersection check
+      # quick check to see if segments could intersect before doing more expensive segment intersection check
       intersects(cbox, boundingbox(eseg)) && intersects(cseg, eseg)
     end
     valid && return nᵢ
@@ -119,23 +119,24 @@ function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
   nothing
 end
 
-# helper to get candidate indices for next point
-jarviscandidates(::Nothing, pointmask, n, p, current, inds, start) = setdiff(1:n, inds)
+# helpers to get candidate indices for next point,
+# excluding the endpoints of the current segment
+jarviscandidates(::Nothing, pointmask, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
 
-function jarviscandidates(searcher::KNearestSearch, pointmask, n, p, current, inds, start)
+function jarviscandidates(searcher::KNearestSearch, pointmask, p, ℐ)
   # mask out points already in the hull, except for the starting point
   mask = .!pointmask
-  mask[start] = true
-  for ind in inds
+  mask[ℐ[begin]] = true
+  for ind in last(ℐ, 2)
     mask[ind] = false
   end
-  search(p[current], searcher; mask=mask)
+  search(p[ℐ[end]], searcher; mask=mask)
 end
 
-# helper to mark point as visited after it is added to the hull
+# helpers to mark point as visited after it is added to the hull
 jarvisupdate!(::Nothing, pointmask, j) = nothing
 jarvisupdate!(::KNearestSearch, pointmask, j) = pointmask[j] = true
 
-# helper to create searcher and mask of visited points
-jarvissearcher(k::Integer, n, p) = KNearestSearch(p, k), falses(n)
-jarvissearcher(k::Nothing, n, p) = nothing, 1:n
+# helpers to create searcher and mask of visited points
+jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
+jarvissearcher(k::Nothing, p) = nothing, nothing
