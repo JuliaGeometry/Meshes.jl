@@ -89,15 +89,7 @@ function measure(t::Tetrahedron)
   abs((A - D) ⋅ ((B - D) × (C - D))) / 6
 end
 
-function measure(p::Polygon{𝔼{2}})
-  Σ = sum(rings(p)) do r
-    v = vertices(r)
-    n = nvertices(r)
-    c = centroid(r)
-    sum(signarea(c, v[i], v[i + 1]) for i in 1:n)
-  end
-  abs(Σ)
-end
+measure(p::Polygon{𝔼{2}}) = abs(sum(signedenclosedarea, rings(p)))
 
 measure(m::Multi{<:𝔼}) = sum(measure, parent(m))
 

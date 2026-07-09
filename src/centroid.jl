@@ -25,6 +25,32 @@ centroid(c::Circle) = center(c)
 
 centroid(c::Cylinder) = centroid(boundary(c))
 
+function centroid(p::Polygon{𝔼{2}})
+  # weighted average of the centroids by their
+  # signed (!!!) area (would be the mass, but it's uniform)
+  res = sum(rings(p)) do r
+    sum(segments(r)) do s
+      # calculates the centroid of the enclosed area by the ring
+      p₁, p₂ = to.(vertices(s))
+      x = (p₁[1], p₂[1])
+      y = (p₁[2], p₂[2])
+
+      k = x[1]*y[2] - x[2]*y[1]
+      SA[(x[2]+x[1])*k, (y[2]+y[1])*k]
+    end * 1/6 #= * 1/signedenclosedarea(r) * signedenclosedarea(r) =#
+    # the actual calculation needs dividing
+    # by  the enclosed area, but since we're
+    # doing a weighted average where the
+    # weight is the enclosed area we can simplify
+  end / sum(signedenclosedarea, rings(p))
+
+  # There is a subtle issue, if area is defined with "abs", then
+  # the centroid for a CW ring will be of flipped
+  # sign, while a signed area approach.
+
+  withcrs(p, res)
+end
+
 function centroid(c::CylinderSurface)
   a = centroid(bottom(c))
   b = centroid(top(c))

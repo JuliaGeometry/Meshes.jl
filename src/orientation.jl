@@ -28,6 +28,11 @@ end
 
 orientation(r::Ring{𝔼{3}}) = orientation(proj2D(r))
 
+function orientation(r::Ring{𝔼{2}})
+  A = signedenclosedarea(r)
+  A ≥ zero(A) ? CCW : CW
+end
+
 function orientation(r::Ring)
   ℒ = lentype(r)
   v = vertices(r)

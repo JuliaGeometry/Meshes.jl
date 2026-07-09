@@ -649,6 +649,11 @@ end
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test centroid(poly) ≈ cart(0.5, 0.5)
 
+  # centroid is orientation-invariant
+  # (CW-oriented polygon should give the same centroid as CCW)
+  polyCW = PolyArea(reverse(vertices(Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)])))))
+  @test centroid(polyCW) ≈ cart(0.5, 0.5)
+
   # single vertex access
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])

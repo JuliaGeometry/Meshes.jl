@@ -13,6 +13,21 @@ function signarea(A::Point, B::Point, C::Point)
 end
 
 """
+    signedenclosedarea(r)
+
+Computes the enclosed area of a ring using the shoelace formula on its vertices.
+"""
+function signedenclosedarea(r::Ring{𝔼{2}})
+  sum(segments(r)) do s
+    p₁, p₂ = to.(vertices(s))
+    x = (p₁[1], p₂[1])
+    y = (p₁[2], p₂[2])
+
+    (x[2]+x[1])*(y[2]-y[1])/2
+  end
+end
+
+"""
     householderbasis(n)
 
 Returns a pair of orthonormal tangent vectors `u` and `v` from a normal `n`,
