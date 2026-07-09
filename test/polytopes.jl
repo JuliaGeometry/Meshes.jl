@@ -650,9 +650,10 @@ end
   @test centroid(poly) ≈ cart(0.5, 0.5)
 
   # centroid is orientation-invariant
-  # (CW-oriented polygon should give the same centroid as CCW)
-  polyCW = PolyArea(reverse(vertices(Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)])))))
-  @test centroid(polyCW) ≈ cart(0.5, 0.5)
+  verts = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+  poly1 = PolyArea(verts)
+  poly2 = PolyArea(reverse(verts))
+  @test centroid(poly1) ≈ centroid(poly2)
 
   # single vertex access
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
