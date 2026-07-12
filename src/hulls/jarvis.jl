@@ -79,8 +79,6 @@ function hull(points, method::JarvisMarch)
 
     # find candidates for next point, excluding endpoints of current segment
     𝒞 = jarviscandidates(searcher, pointmask, p, ℐ)
-    # no candidates, should only happen if k is too small
-    isempty(𝒞) && throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
 
     # find next segment
     i = j
@@ -95,8 +93,13 @@ function hull(points, method::JarvisMarch)
     jarvisupdate!(searcher, pointmask, j)
   end
 
+  poly = PolyArea(p[ℐ[begin:(end - 1)]])
+
+  # invalid hull, should only happen if k is too small
+  validatehull(k, poly, p) || throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
+
   # return polygonal area
-  PolyArea(p[ℐ[begin:(end - 1)]])
+  poly
 end
 
 # helpers to find next point with smallest angle
@@ -140,3 +143,7 @@ jarvisupdate!(::KNearestSearch, pointmask, j) = pointmask[j] = true
 # helpers to create searcher and mask of visited points
 jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
 jarvissearcher(k::Nothing, p) = nothing, nothing
+
+# helpers to validate output of hull function
+validatehull(::Nothing, poly, p) = true
+validatehull(::Integer, poly, p) = issimple(poly) && nvertices(poly) ≥ 3 && all(∈(poly), p)
