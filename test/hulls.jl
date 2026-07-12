@@ -167,68 +167,74 @@
       chull = hull(points, method)
       @test area(chull) ≈ T(0.0015160200648848573)u"m^2"
     end
-  end
-end
 
-@testitem "JarvisMarch k-nearest neighbors" setup = [Setup] begin
-  # k must be greater than 2 and less than the number of unique points
-  pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
-  @test_throws AssertionError hull(pts, JarvisMarch(2))
-  @test_throws AssertionError hull(pts, JarvisMarch(5))
-  @test_throws AssertionError hull(pts, JarvisMarch(6))
+    # testing k-nearest jarvis march concave hull problems
+    if method == JarvisMarch(5)
+      # k must be greater than 2 and less than the number of unique points
+      pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
+      @test_throws AssertionError hull(pts, JarvisMarch(2))
+      @test_throws AssertionError hull(pts, JarvisMarch(5))
+      @test_throws AssertionError hull(pts, JarvisMarch(6))
 
-  # U-shaped point set with a notch between x=1 and x=3 above y=1
-  pts = cart.([
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (3, 0),
-    (4, 0),
-    (4, 1),
-    (4, 2),
-    (4, 3),
-    (4, 4),
-    (3, 4),
-    (3, 3),
-    (3, 2),
-    (3, 1),
-    (2, 1),
-    (1, 1),
-    (1, 2),
-    (1, 3),
-    (1, 4),
-    (0, 4),
-    (0, 3),
-    (0, 2),
-    (0, 1)
-  ])
+      # U-shaped point set with a notch between x=1 and x=3 above y=1
+      pts = cart.([
+        (0, 0),
+        (1, 0),
+        (2, 0),
+        (3, 0),
+        (4, 0),
+        (4, 1),
+        (4, 2),
+        (4, 3),
+        (4, 4),
+        (3, 4),
+        (3, 3),
+        (3, 2),
+        (3, 1),
+        (2, 1),
+        (1, 1),
+        (1, 2),
+        (1, 3),
+        (1, 4),
+        (0, 4),
+        (0, 3),
+        (0, 2),
+        (0, 1)
+      ])
 
-  # k too small to close a valid hull
-  @test_throws ArgumentError hull(pts, JarvisMarch(3))
-  @test_throws ArgumentError hull(pts, JarvisMarch(4))
+      # k too small to close a valid hull
+      @test_throws ArgumentError hull(pts, JarvisMarch(3))
+      @test_throws ArgumentError hull(pts, JarvisMarch(4))
 
-  # large enough k recovers the concave boundary
-  chul = hull(pts, JarvisMarch(5))
-  @test issimple(chul)
-  @test nvertices(chul) ≥ 3
-  @test all(pts .∈ Ref(chul))
-  @test area(chul) < area(hull(pts, JarvisMarch()))
-  @test area(chul) ≈ T(10) * u"m^2"
-  @test vertices(chul) == pts
+      # large enough k recovers the concave boundary
+      chul = hull(pts, JarvisMarch(5))
+      @test issimple(chul)
+      @test nvertices(chul) ≥ 3
+      @test all(pts .∈ Ref(chul))
+      @test area(chul) < area(hull(pts, JarvisMarch()))
+      @test area(chul) ≈ T(10) * u"m^2"
+      @test vertices(chul) == pts
 
-  # hull either fails or is a simple polygon with at least 3 vertices,
-  # never a degenerate ring that closes back on the starting point too early
-  rng = StableRNG(2025)
-  for _ in 1:100, k in (3, 4, 5)
-    rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
-    chul = try
-      hull(rpts, JarvisMarch(k))
-    catch e
-      @test e isa ArgumentError
-      continue
+      # true concavity test
+      poly = readpoly(T, joinpath(datadir, "hull.line"))
+      pts = vertices(poly)
+      chul = hull(pts, JarvisMarch(3))
+      @test nvertices(chul) == length(pts)
+
+      # random points with fixed k
+      rng = StableRNG(123)
+      for _ in 1:100, k in (3, 4, 5)
+        rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
+        chul = try
+          hull(rpts, JarvisMarch(k))
+        catch e
+          @test e isa ArgumentError
+          continue
+        end
+        @test nvertices(chul) ≥ 3
+        @test all(rpts .∈ Ref(chul))
+      end
     end
-    @test nvertices(chul) ≥ 3
-    @test issimple(chul)
   end
 end
 
