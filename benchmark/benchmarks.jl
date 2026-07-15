@@ -16,6 +16,7 @@ mesh = discretize(Sphere((0, 0, 0), 1))
 ray = Ray((-1, -1, -1), (0, 0, 1))
 tri = Triangle((0, 0, 0), (1, 0, 0), (0, 1, 0))
 tet = Tetrahedron((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
+poly = PolyArea((0, 0), (1, 0), (1, 1), (0.5, 2), (0, 1))
 search1 = KNearestSearch(grid, 20)
 search2 = BallSearch(grid, MetricBall(30))
 search3 = KBallSearch(grid, 20, MetricBall(30))
@@ -112,3 +113,11 @@ SUITE["integration"]["ray"] = @benchmarkable integral($ray) do p
 end
 SUITE["integration"]["triangle"] = @benchmarkable integral(p -> 1, $tri)
 SUITE["integration"]["tetrahedron"] = @benchmarkable integral(p -> 1, $tet)
+
+# ---------
+# CENTROID
+# ---------
+
+SUITE["centroid"] = BenchmarkGroup()
+
+SUITE["centroid"]["polyarea"] = @benchmarkable centroid($poly)

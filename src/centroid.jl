@@ -53,6 +53,8 @@ centroid(t::Tetrahedron) = t(1 // 4, 1 // 4, 1 // 4)
 
 centroid(h::Hexahedron) = h(1 // 2, 1 // 2, 1 // 2)
 
+centroid(p::Polygon{<:𝔼}) = centroid(simplexify(p))
+
 centroid(m::Multi) = centroid(GeometrySet(parent(m)))
 
 centroid(g::TransformedGeometry) = transform(g)(centroid(parent(g)))
