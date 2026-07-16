@@ -49,10 +49,6 @@ centroid(t::Triangle) = t(1 // 3, 1 // 3)
 
 centroid(q::Quadrangle) = q(1 // 2, 1 // 2)
 
-centroid(t::Tetrahedron) = t(1 // 4, 1 // 4, 1 // 4)
-
-centroid(h::Hexahedron) = h(1 // 2, 1 // 2, 1 // 2)
-
 function centroid(p::Polygon{𝔼{2}})
   c = sum(rings(p)) do r
     v = vertices(r)
@@ -66,6 +62,10 @@ function centroid(p::Polygon{𝔼{2}})
   end
   withcrs(p, c / measure(p))
 end
+
+centroid(t::Tetrahedron) = t(1 // 4, 1 // 4, 1 // 4)
+
+centroid(h::Hexahedron) = h(1 // 2, 1 // 2, 1 // 2)
 
 centroid(m::Multi) = centroid(GeometrySet(parent(m)))
 
