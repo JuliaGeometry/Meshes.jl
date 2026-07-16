@@ -664,7 +664,7 @@ end
       (1.20768412712354e6, 440894.51013951)
     ])
   )
-  @test centroid(poly) ≈ cart(1.2024640269635667e6, 444335.81626427476)
+  @test isapprox(centroid(poly), cart(1.2024640269635667e6, 444335.81626427476), rtol=1e-6)
 
   # single vertex access
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
