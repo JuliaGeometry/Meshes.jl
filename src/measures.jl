@@ -93,8 +93,8 @@ function measure(p::Polygon{𝔼{2}})
   Σ = sum(rings(p)) do r
     v = vertices(r)
     n = nvertices(r)
-    c = centroid(r)
-    sum(signarea(c, v[i], v[i + 1]) for i in 1:n)
+    o = coordmean(v)
+    sum(signarea(o, v[i], v[i + 1]) for i in 1:n)
   end
   abs(Σ)
 end

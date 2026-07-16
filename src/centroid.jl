@@ -53,6 +53,20 @@ centroid(t::Tetrahedron) = t(1 // 4, 1 // 4, 1 // 4)
 
 centroid(h::Hexahedron) = h(1 // 2, 1 // 2, 1 // 2)
 
+function centroid(p::Polygon{𝔼{2}})
+  c = sum(rings(p)) do r
+    v = vertices(r)
+    n = nvertices(r)
+    o = coordmean(v)
+    sum(1:n) do i
+      w = signarea(o, v[i], v[i + 1])
+      t = Triangle(o, v[i], v[i + 1])
+      w * to(centroid(t))
+    end
+  end
+  withcrs(p, c / measure(p))
+end
+
 centroid(m::Multi) = centroid(GeometrySet(parent(m)))
 
 centroid(g::TransformedGeometry) = transform(g)(centroid(parent(g)))
