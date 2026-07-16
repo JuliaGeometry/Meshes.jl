@@ -93,7 +93,7 @@ function measure(p::Polygon{𝔼{2}})
   Σ = sum(rings(p)) do r
     v = vertices(r)
     n = nvertices(r)
-    c = centroid(r)
+    c = centroid(PointSet(v))
     sum(signarea(c, v[i], v[i + 1]) for i in 1:n)
   end
   abs(Σ)
