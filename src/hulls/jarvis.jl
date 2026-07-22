@@ -22,15 +22,13 @@ k-nearest-neighbor search and hull-intersection checks per hull vertex.
 
 * Jarvis 1973. [On the identification of the convex hull of a finite set of
   points in the plane](https://www.sciencedirect.com/science/article/abs/pii/0020019073900203)
-* Moreira, A. & Santos, M. Y. 2007. "concave hull: a k-nearest neighbours approach for the computation of the region occupied by a set of points". In: *Proceedings of the Second International Conference on Computer Graphics Theory and Applications*. SciTePress, pp. 61–68.
+* Moreira, A. & Santos, M. Y. 2007. [concave hull: a k-nearest neighbours approach for the computation of the region occupied by a set of points](https://www.semanticscholar.org/paper/Concave-hull:-A-k-nearest-neighbours-approach-for-a-Moreira-Santos/319a3450f9909043d46eb7ceb4299efceb984d4f)
 """
-struct JarvisMarch{K} <: HullMethod
-  k::K
+struct JarvisMarch <: HullMethod
+  k::Union{Nothing,Int}
 end
 
-JarvisMarch() = JarvisMarch{Nothing}(nothing)
-
-JarvisMarch(k::I) where {I<:Integer} = JarvisMarch{I}(k)
+JarvisMarch() = JarvisMarch(nothing)
 
 function hull(points, method::JarvisMarch)
   pₒ = first(points)
@@ -47,6 +45,7 @@ function hull(points, method::JarvisMarch)
   # corner cases
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
+
   k = method.k
   !isnothing(k) && assertion(2 < k < n, "k must be greater than 2 and less than the number of unique points")
 
