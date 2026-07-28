@@ -126,9 +126,8 @@ end
 jarviscandidates(::Nothing, pointmask, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
 
 function jarviscandidates(searcher::KNearestSearch, pointmask, p, ℐ)
-  # mask out points already in the hull, except for the starting point
+  # mask out points already in the hull except for second to last to prevent infinite loops
   mask = .!pointmask
-  mask[ℐ[begin]] = true
   mask[last(ℐ, 2)] .= false
   search(p[ℐ[end]], searcher; mask=mask)
 end

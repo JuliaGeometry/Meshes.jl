@@ -229,6 +229,8 @@ end
   pts = vertices(poly)
   chul = hull(pts, JarvisMarch(3))
   @test nvertices(chul) == length(pts)
+  chul = hull(pts, JarvisMarch(length(pts)-1))
+  @test nvertices(chul) < length(pts)
 
   # random points with fixed k
   rng = StableRNG(123)
