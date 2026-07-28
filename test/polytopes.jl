@@ -316,6 +316,13 @@ end
   @test_throws ArgumentError Ngon(cart(0, 0), cart(1, 1))
   @test_throws ArgumentError Ngon{2}(cart(0, 0), cart(1, 1))
 
+  q = Quadrangle(cart(0, 0, 0), cart(0, 1, 0), cart(0, 1, 1), cart(0, 0, 1))
+  @test isapprox(normal(q), vector(1, 0, 0))
+  @test isapprox(norm(normal(q)), oneunit(ℳ))
+  q = Quadrangle(cart(0, 0, 0), cart(2, 0, 0), cart(2, 2, 2), cart(0, 2, 2))
+  @test isapprox(normal(q), vector(0, -0.7071067811865475, 0.7071067811865475))
+  @test isapprox(norm(normal(q)), oneunit(ℳ))
+
   # ---------
   # TRIANGLE
   # ---------

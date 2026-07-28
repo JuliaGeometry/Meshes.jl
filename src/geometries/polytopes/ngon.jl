@@ -65,6 +65,24 @@ angles(ngon::Ngon) = angles(boundary(ngon))
 
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
+# Normal calculation using Newell's algorithm
+# https://people.eecs.berkeley.edu/~ug/slide/pipeline/assignments/backfacecull.shtml
+function normal(ngon::Ngon{N}) where {N}
+  assertion(embeddim(ngon) == 3, "ngon must be 3-dimensional")
+  verts = ngon.vertices
+  nextverts = circshift(ngon.vertices, 1)
+  nx = ny = nz = 0.0 #zero(lentype(ngon))^2
+  for (p₁,p₂) in zip(verts,nextverts)
+    x₁, y₁, z₁ = ustrip.(to(p₁))
+    x₂, y₂, z₂ = ustrip.(to(p₂))
+    nx += (z₂+z₁) * (y₂-y₁)
+    ny += (x₂+x₁) * (z₂-z₁)
+    nz += (y₂+y₁) * (x₂-x₁)
+  end
+  lt = unit(lentype(ngon))
+  return unormalize(Vec(nx*lt, ny*lt, nz*lt))
+end
+
 # ----------
 # TRIANGLES
 # ----------
