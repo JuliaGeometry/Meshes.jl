@@ -171,7 +171,7 @@ end
   @test cart(0.2, 0.2) ∈ h
 end
 
-@testitem "Jarvis March concave hull" setup = [Setup] begin
+@testitem "JarvisMarch(k)" setup = [Setup] begin
   # k must be greater than 2 and less than the number of unique points
   pt = cart.([(0, 0)])
   @test pt[1] == hull(pt, JarvisMarch(3))

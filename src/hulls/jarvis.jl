@@ -64,10 +64,10 @@ function hull(points, method::JarvisMarch)
   ℐ = [i]
 
   # initialize searcher and mask of visited points
-  searcher, pointmask = jarvissearcher(k, p)
+  searcher, visited = jarvissearcher(k, p)
 
   # find neighbor candidates
-  𝒞 = jarviscandidates(searcher, pointmask, p, ℐ)
+  𝒞 = jarviscandidates(searcher, visited, p, ℐ)
 
   # find next point with smallest angle
   O = p[i]
@@ -76,7 +76,7 @@ function hull(points, method::JarvisMarch)
 
   # initialize ring of indices
   push!(ℐ, j)
-  jarvisupdate!(searcher, pointmask, j)
+  jarvisupdate!(searcher, visited, j)
 
   # rotational sweep
   while first(ℐ) != last(ℐ)
@@ -84,7 +84,7 @@ function hull(points, method::JarvisMarch)
     v = p[j] - p[i]
 
     # update candidates
-    𝒞 = jarviscandidates(searcher, pointmask, p, ℐ)
+    𝒞 = jarviscandidates(searcher, visited, p, ℐ)
 
     # find next segment
     i = j
@@ -96,7 +96,7 @@ function hull(points, method::JarvisMarch)
 
     # update ring of indices
     push!(ℐ, j)
-    jarvisupdate!(searcher, pointmask, j)
+    jarvisupdate!(searcher, visited, j)
   end
 
   poly = PolyArea(p[ℐ[begin:(end - 1)]])
@@ -128,25 +128,24 @@ function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
   nothing
 end
 
-# helpers to get candidate indices for next point,
+# helper to get candidate indices for next point,
 # excluding the endpoints of the current segment
-jarviscandidates(::Nothing, pointmask, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
-
-function jarviscandidates(searcher::KNearestSearch, pointmask, p, ℐ)
+jarviscandidates(::Nothing, visited, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
+function jarviscandidates(searcher::KNearestSearch, visited, p, ℐ)
   # mask out points already in the hull except for second to last to prevent infinite loops
-  mask = .!pointmask
+  mask = .!visited
   mask[last(ℐ, 2)] .= false
   search(p[ℐ[end]], searcher; mask=mask)
 end
 
-# helpers to mark point as visited after it is added to the hull
-jarvisupdate!(::Nothing, pointmask, j) = nothing
-jarvisupdate!(::KNearestSearch, pointmask, j) = pointmask[j] = true
+# helper to mark point as visited after it is added to the hull
+jarvisupdate!(::Nothing, visited, j) = nothing
+jarvisupdate!(::KNearestSearch, visited, j) = visited[j] = true
 
-# helpers to create searcher and mask of visited points
+# helper to create searcher and mask of visited points
 jarvissearcher(k::Nothing, p) = nothing, nothing
 jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
 
-# helpers to validate output of hull function
+# helper to validate output of hull function
 validatehull(::Nothing, poly, p) = true
 validatehull(::Integer, poly, p) = issimple(poly) && nvertices(poly) ≥ 3 && all(∈(poly), p)
