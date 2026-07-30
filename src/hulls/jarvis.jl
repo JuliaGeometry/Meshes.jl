@@ -4,11 +4,12 @@
 
 """
     JarvisMarch()
-    JarvisMarch(k)
 
 Compute the convex hull of a set of points or geometries using the
 Jarvis's march algorithm. See [https://en.wikipedia.org/wiki/Gift_wrapping_algorithm]
 (https://en.wikipedia.org/wiki/Gift_wrapping_algorithm).
+
+    JarvisMarch(k)
 
 If `k` is provided, the algorithm will attempt to compute a concave hull using the
 k nearest neighbors as proposed by Moreira & Santos 2007. The value of `k` must be
@@ -26,6 +27,12 @@ k-nearest-neighbor search and hull-intersection checks per hull vertex.
 """
 struct JarvisMarch <: HullMethod
   k::Union{Nothing,Int}
+
+  function JarvisMarch(k)
+    isok = isnothing(k) || (isinteger(k) && k > 2)
+    assertion(isok, "k must be greater than 2 or nothing")
+    new(k)
+  end
 end
 
 JarvisMarch() = JarvisMarch(nothing)
@@ -33,6 +40,7 @@ JarvisMarch() = JarvisMarch(nothing)
 function hull(points, method::JarvisMarch)
   pₒ = first(points)
   ℒ = lentype(pₒ)
+  k = method.k
 
   # sanity check
   ncoords = CoordRefSystems.ncoords(coords(pₒ))
@@ -42,15 +50,16 @@ function hull(points, method::JarvisMarch)
   p = unique(points)
   n = length(p)
 
+  # sanity check
+  isnothing(k) || assertion(k ≤ n, "k must be less than the number of unique points")
+
   # corner cases
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
 
-  k = method.k
-  !isnothing(k) && assertion(2 < k < n, "k must be greater than 2 and less than the number of unique points")
-
   # find bottom-left point
   i = argmin(p)
+
   # initialize hull with i
   ℐ = [i]
 
