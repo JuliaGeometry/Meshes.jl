@@ -63,7 +63,7 @@ function hull(points, method::JarvisMarch)
   # initialize hull with i
   ℐ = [i]
 
-  # initialize searcher and mask of visited points for k-nearest neighbors if needed
+  # initialize searcher and mask of visited points
   searcher, pointmask = jarvissearcher(k, p)
 
   # find neighbor candidates
@@ -146,8 +146,8 @@ jarvisupdate!(::Nothing, pointmask, j) = nothing
 jarvisupdate!(::KNearestSearch, pointmask, j) = pointmask[j] = true
 
 # helpers to create searcher and mask of visited points
-jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
 jarvissearcher(k::Nothing, p) = nothing, nothing
+jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
 
 # helpers to validate output of hull function
 validatehull(::Nothing, poly, p) = true
