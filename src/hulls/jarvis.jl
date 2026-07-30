@@ -51,7 +51,7 @@ function hull(points, method::JarvisMarch)
   n = length(p)
 
   # sanity check
-  isnothing(k) || assertion(k ≤ n, "k must be less than the number of unique points")
+  isnothing(k) || assertion(k < n, "k must be less than the number of unique points")
 
   # corner cases
   n == 1 && return p[1]
