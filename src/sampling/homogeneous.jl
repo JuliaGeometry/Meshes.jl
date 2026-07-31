@@ -53,7 +53,7 @@ function sample(rng::AbstractRNG, triangle::Triangle, method::HomogeneousSamplin
 end
 
 function sample(rng::AbstractRNG, tetrahedron::Tetrahedron, method::HomogeneousSampling)
-  @error "not implemented"
+  error("not implemented")
 end
 
 sample(rng::AbstractRNG, ball::Ball, method::HomogeneousSampling) = _sample(rng, ball, Val(embeddim(ball)), method)

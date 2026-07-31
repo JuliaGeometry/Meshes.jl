@@ -91,7 +91,7 @@ end
 
 # vertices of quadrangle on 3D grid
 function (∂::Boundary{2,0,3,T})(ind::Integer) where {T<:GridTopology}
-  throw(ErrorException("not implemented"))
+  error("not implemented")
 end
 
 # segments making up quadrangles in 2D grid
