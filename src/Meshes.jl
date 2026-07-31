@@ -262,7 +262,6 @@ export
   nvertices,
   eachvertex,
   rings,
-  segments,
   angles,
   innerangles,
   normal,
@@ -481,6 +480,9 @@ export
   boundary,
   embedboundary,
   boundarypoints,
+
+  # segments
+  segments,
 
   # winding number
   winding,
