@@ -9,7 +9,7 @@ function intersection(f, poly₁::Polygon, poly₂::Polygon)
   elseif isconvex(poly₁)
     clip(poly₂, poly₁, SutherlandHodgmanClipping())
   else
-    throw(ErrorException("intersection not implemented between two non-convex polygons"))
+    error("intersection not implemented between two non-convex polygons")
   end
 
   if isnothing(clipped)

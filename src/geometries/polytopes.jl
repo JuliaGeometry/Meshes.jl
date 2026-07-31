@@ -69,17 +69,6 @@ See also [`Segment`](@ref), [`Rope`](@ref), [`Ring`](@ref).
 const Chain = Polytope{1}
 
 """
-    segments(chain)
-
-Return the segments linking consecutive points of the `chain`.
-"""
-function segments(c::Chain)
-  v = vertices(c)
-  n = length(v) - !isclosed(c)
-  @inbounds (Segment(v[i], v[i + 1]) for i in 1:n)
-end
-
-"""
     close(chain)
 
 Close the `chain`, i.e. add a segment going from the last to the first vertex.

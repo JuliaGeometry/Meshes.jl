@@ -62,7 +62,7 @@ function faces(t::Topology, rank)
   elseif rank == D - 1
     facets(t)
   else
-    throw(ErrorException("not implemented"))
+    error("not implemented")
   end
 end
 
@@ -80,7 +80,7 @@ function nfaces(t::Topology, rank)
   elseif rank == D - 1
     nfacets(t)
   else
-    throw(ErrorException("not implemented"))
+    error("not implemented")
   end
 end
 

@@ -134,12 +134,6 @@ end
   @test vertex(c, 3) == cart(1, 1)
   @test vertex(c, 4) == cart(2, 2)
 
-  c = Rope(cart.([(1, 1), (2, 2), (3, 3)]))
-  @test collect(segments(c)) == [Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 3))]
-  c = Ring(cart.([(1, 1), (2, 2), (3, 3)]))
-  @test collect(segments(c)) ==
-        [Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 3)), Segment(cart(3, 3), cart(1, 1))]
-
   c = Rope(cart.([(1, 1), (2, 2), (2, 2), (3, 3)]))
   @test unique(c) == Rope(cart.([(1, 1), (2, 2), (3, 3)]))
   @test c == Rope(cart.([(1, 1), (2, 2), (2, 2), (3, 3)]))
@@ -176,11 +170,9 @@ end
   r = Ring(cart.([(0, 0)]))
   @test isclosed(r)
   @test nvertices(r) == 1
-  @test collect(segments(r)) == [Segment(cart(0, 0), cart(0, 0))]
   r = Ring(cart.([(0, 0), (1, 1)]))
   @test isclosed(r)
   @test nvertices(r) == 2
-  @test collect(segments(r)) == [Segment(cart(0, 0), cart(1, 1)), Segment(cart(1, 1), cart(0, 0))]
 
   p1 = cart(1, 1)
   p2 = cart(3, 1)
