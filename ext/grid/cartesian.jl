@@ -25,15 +25,16 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
     x, y, C, (nc == nv), (ne ≥ 100000)
   end
 
-  if plot.usetiles[] && plot.interpolate[]
+  if plot.usetiles[] && !plot.interpolate[]
     for (i, (xs, ys)) in enumerate(TileIterator(axes(plot.C[]), (100, 100)))
       xi = Symbol(:x, i)
       yi = Symbol(:y, i)
       Ci = Symbol(:C, i)
-      Makie.map!(plot, [:x, :y, :C], [xi, yi, Ci]) do x, y, C
+      Makie.map!(plot, [:object, :C], [xi, yi, Ci]) do grid, C
+        x, y = ustrip.(Meshes.xyz(grid))
         xrange = first(xs):(last(xs) + 1)
         yrange = first(ys):(last(ys) + 1)
-        view(x, xrange), view(y, yrange), view(C, xs, ys)
+        extrema(view(x, xrange)), extrema(view(y, yrange)), view(C, xs, ys)
       end
       Makie.image!(plot, plot[xi], plot[yi], plot[Ci], interpolate=plot.interpolate)
     end
