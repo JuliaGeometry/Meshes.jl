@@ -209,7 +209,7 @@ end
 # 3. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 4. the segment is degenerate and is outside the polygon (NotIntersecting -> Nothing)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
+function intersection(f, seg::Segment, poly::Polygon)
 
   a, b = vertices(seg)
 
