@@ -203,9 +203,84 @@ function intersection(f, seg::Segment, line::Line)
   end
 end
 
+# intersection between a segment and a polygon
+# 1. overlap of line and polygon (Overlapping -> Segment)
+# 2. intersect at one an point, exactly (Touching -> Point)
+# 3. the segment is degenerate and is inside the polygon (Touching -> Point)
+# 4. the segment is degenerate and is outside the polygon (NotIntersecting -> Nothing)
+# 5. do not overlap nor intersect (NotIntersecting -> Nothing)
+function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
+
+  a, b = vertices(seg)
+
+  # check for degenerate segments
+  if a ≈ b
+    if a ∈ poly
+      return @IT Touching a f # Case 3
+    else
+      return @IT NotIntersecting nothing f # Case 4
+    end
+  end
+
+  # segment endpoints as scalars + segment vector
+  segλs = [0.0, 1.0]; v = b-a;
+
+  # assess intersections with the edges
+  boundarypoints = Point[]
+  for ring in rings(poly)
+    for edge in segments(ring)
+      I = intersection(seg, edge)
+      itype = type(I)
+      # no intersection
+      if itype == NotIntersecting
+        continue
+      end
+      # some intersection
+      geom = get(I)
+      if geom isa Point # crosses or touches 
+        push!(boundarypoints, geom)
+        λ = ustrip((geom-a) ⋅ v / (v ⋅ v))
+        push!(segλs, λ)
+      elseif geom isa Segment # overlaps
+        c, d = vertices(geom)
+        λc = ustrip((c-a) ⋅ v / (v ⋅ v))
+        λd = ustrip((d-a) ⋅ v / (v ⋅ v))
+        push!(segλs, λc, λd)
+      else
+        @error "Unexpected Segment × Polygon edge intersection geometry: " * "$(typeof(geometry))"
+      end
+    end
+  end
+
+  # Define collection of intersected segment pieces
+  sort!(segλs); pieces = Segment[]
+  for (λ₁, λ₂) in zip(segλs[1:(end - 1)], segλs[2:end])
+    λ₁ ≈ λ₂ && continue
+    λmid = (λ₁ + λ₂) / 2
+    if seg(λmid) ∈ poly
+      push!(
+        pieces,
+        Segment(seg(λ₁), seg(λ₂))
+      )
+    end
+  end
+
+  # classifying intersections
+  if !isempty(pieces) # Positive-length intersection
+    geometry = length(pieces) == 1 ? only(pieces) : Multi(pieces) 
+    return @IT Overlapping geometry f # Case 1
+  elseif !isempty(boundarypoints) # no segments, but some intersection
+    geometry = length(boundarypoints) == 1 ? only(pieces) : first(pieces) # it gotta be a single point!
+    return @IT Touching geometry f # Case 2
+  else
+    return @IT NotIntersecting nothing f # Case 5 
+  end 
+
+end
+
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-function intersection(f, seg::Segment, tri::Triangle)
+function intersection(f, seg::Segment{𝔼{3}}, tri::Triangle{𝔼{3}})
   Q1, Q2 = vertices(seg)
   V1, V2, V3 = vertices(tri)
 
