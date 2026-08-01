@@ -129,8 +129,7 @@ end
 
 function nfaces(t::GridTopology{3}, ::Val{1})
   p = GridTopology(t.dims[1:2], .!t.open[1:2])
-  nfaces(p, 1) * (t.dims[3] + t.open[3]) +
-  nvertices(p) * (t.dims[3] + !t.open[3])
+  nfaces(p, 1) * (t.dims[3] + t.open[3]) + nvertices(p) * (t.dims[3] + !t.open[3])
 end
 
 function element(t::GridTopology{D}, ind) where {D}
