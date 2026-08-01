@@ -36,6 +36,15 @@ radius(b::Ball) = b.radius
 Base.isapprox(b₁::Ball, b₂::Ball; atol=atol(lentype(b₁)), kwargs...) =
   isapprox(center(b₁), center(b₂); atol, kwargs...) && isapprox(radius(b₁), radius(b₂); atol, kwargs...)
 
+function (b::Ball{𝔼{1}})(ρ)
+  ℒ = lentype(b)
+  T = promote_type(numtype(ℒ), typeof(ρ))
+  C = basecrs(b)
+  ρ′ = T(2ρ - 1) * radius(b)
+  p = Point(convert(C, Cartesian(ρ′)))
+  p + to(center(b))
+end
+
 function (b::Ball{𝔼{2}})(ρ, φ)
   ℒ = lentype(b)
   T = promote_type(numtype(ℒ), typeof(ρ), typeof(φ))
