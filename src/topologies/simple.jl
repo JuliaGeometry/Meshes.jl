@@ -54,7 +54,7 @@ connec4elem(t::SimpleTopology, e) = indices(t.connec[t.elems[e]])
 
 nvertices(t::SimpleTopology) = maximum(i for c in t.connec for i in indices(c))
 
-function faces(t::SimpleTopology, rank)
+function faces(t::SimpleTopology, ::Val{rank}) where {rank}
   cs = t.connec
   (cs[i] for i in 1:length(cs) if paramdim(cs[i]) == rank)
 end

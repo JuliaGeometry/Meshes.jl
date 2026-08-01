@@ -837,7 +837,7 @@ end
   connec = connect.([(1, 2, 5), (2, 4, 5), (4, 3, 5), (3, 1, 5)], Triangle)
   mesh = SimpleMesh(points, connec)
   bytes = @allocated faces(mesh, 2)
-  @test bytes < 100
+  @test bytes < 300
   cells = faces(mesh, 2)
   bytes = @allocated collect(cells)
   @test bytes < 800

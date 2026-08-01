@@ -53,7 +53,9 @@ triangles    = faces(topology, 2)
 segments     = faces(topology, 1)
 ```
 """
-function faces(t::Topology, rank)
+faces(t::Topology, rank::Int) = faces(t, Val(rank))
+
+function faces(t::Topology, ::Val{rank}) where {rank}
   D = paramdim(t)
   if rank == 0
     vertices(t)
@@ -71,7 +73,9 @@ end
 
 Return the number of `rank`-faces of the `topology`.
 """
-function nfaces(t::Topology, rank)
+nfaces(t::Topology, rank::Int) = nfaces(t, Val(rank))
+
+function nfaces(t::Topology, ::Val{rank}) where {rank}
   D = paramdim(t)
   if rank == 0
     nvertices(t)
