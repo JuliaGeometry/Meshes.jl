@@ -567,14 +567,26 @@ end
   @test cart(0, 0, 2) ∈ b
   @test cart(3, 5, 2) ∉ b
 
+  b = Ball(cart(0), T(2))
+  @test b(T(0)) ≈ cart(0)
+  @test b(T(1)) ≈ cart(2)
   b = Ball(cart(0, 0), T(2))
   @test b(T(0), T(0)) ≈ cart(0, 0)
   @test b(T(1), T(0)) ≈ cart(2, 0)
+  b = Ball(cart(0, 0, 0), T(2))
+  @test b(T(0), T(0), T(0)) ≈ cart(0, 0, 0)
+  @test b(T(1), T(0), T(0)) ≈ cart(2, 0, 0)
 
   # machine type is preserved in parameterization
+  b = Ball(cart(0), T(2))
+  @test Meshes.lentype(b(0)) == ℳ
+  @test Meshes.lentype(b(T(0))) == ℳ
   b = Ball(cart(0, 0), T(2))
   @test Meshes.lentype(b(0, 0)) == ℳ
   @test Meshes.lentype(b(T(0), T(0))) == ℳ
+  b = Ball(cart(0, 0, 0), T(2))
+  @test Meshes.lentype(b(0, 0, 0)) == ℳ
+  @test Meshes.lentype(b(T(0), T(0), T(0))) == ℳ
 
   b = Ball(cart(7, 7), T(1.5))
   ps = b.(1, rand(T, 100))
