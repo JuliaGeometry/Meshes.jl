@@ -146,8 +146,6 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol,
       tipradius=plot[tipradiusid],
       shaftradius=plot[shaftradiusid]
     )
-  else
-    error("not implemented")
   end
 
   if plot.showpoints[]

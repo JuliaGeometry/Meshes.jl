@@ -89,11 +89,6 @@ function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   (i1, i2, i3, i4, i5, i6, i7, i8)
 end
 
-# vertices of quadrangle on 3D grid
-function (∂::Boundary{2,0,3,T})(ind::Integer) where {T<:GridTopology}
-  error("not implemented")
-end
-
 # segments making up quadrangles in 2D grid
 function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
   t = ∂.topology

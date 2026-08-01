@@ -32,6 +32,13 @@ function _segments(::SimpleTopology, m)
     m′ = topoconvert(HalfEdgeTopology, m)
     _segments(topology(m′), m′)
   catch
-    error("not implemented")
+    throw(ArgumentError("""
+    cannot compute segments of mesh with `SimpleTopology`.
+
+    Consider converting to a topology that provides an
+    efficient implementation of `faces(mesh, 1)` such as
+    `HalfEdgeTopology`. Check `topoconvert` for available
+    conversion methods.
+    """))
   end
 end
