@@ -54,16 +54,16 @@ function _homogeneouspoint(rng, t::Tetrahedron)
 end
 
 function _homogeneouspoint(rng, b::Ball)
-  d = paramdim(b)
+  D = paramdim(b)
   T = numtype(lentype(b))
-  u = rand(rng, T, d)
-  if d == 1
+  u = rand(rng, T, D)
+  if D == 1
     b(u...)
-  elseif d == 2
+  elseif D == 2
     λ₁ = √u[1]
     λ₂ = u[2]
     b(λ₁, λ₂)
-  elseif d == 3
+  elseif D == 3
     λ₁ = ∛u[1]
     λ₂ = acos(1 - 2u[2]) / T(π)
     λ₃ = u[3]
