@@ -40,7 +40,7 @@ function (b::Ball{𝔼{1}})(ρ)
   ℒ = lentype(b)
   T = promote_type(numtype(ℒ), typeof(ρ))
   C = basecrs(b)
-  ρ′ = T(ρ) * radius(b)
+  ρ′ = T(2ρ - 1) * radius(b)
   p = Point(convert(C, Cartesian(ρ′)))
   p + to(center(b))
 end

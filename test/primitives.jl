@@ -568,7 +568,8 @@ end
   @test cart(3, 5, 2) ∉ b
 
   b = Ball(cart(0), T(2))
-  @test b(T(0)) ≈ cart(0)
+  @test b(T(0)) ≈ cart(-2)
+  @test b(T(0.5)) ≈ cart(0)
   @test b(T(1)) ≈ cart(2)
   b = Ball(cart(0, 0), T(2))
   @test b(T(0), T(0)) ≈ cart(0, 0)
