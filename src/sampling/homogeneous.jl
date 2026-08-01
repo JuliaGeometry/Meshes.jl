@@ -37,7 +37,7 @@ function sample(rng::AbstractRNG, g::Geometry, method::HomogeneousSampling)
   end
 end
 
-_homogeneouspoint(rng, g) = g(rand(rng, numtype(lentype(g)), paramdim(g))...)
+_homogeneouspoint(rng, g::Geometry) = g(rand(rng, numtype(lentype(g)), paramdim(g))...)
 
 function _homogeneouspoint(rng, t::Triangle)
   u₁, u₂ = rand(rng, numtype(lentype(t)), paramdim(t))
