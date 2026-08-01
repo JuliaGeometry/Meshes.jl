@@ -209,7 +209,7 @@ end
 # 3. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 4. the segment is degenerate and is outside the polygon (NotIntersecting -> Nothing)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment, poly::Polygon)
+function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   a, b = vertices(seg)
 
@@ -229,25 +229,27 @@ function intersection(f, seg::Segment, poly::Polygon)
   boundarypoints = Point[]
   for ring in rings(poly)
     for edge in segments(ring)
-      I = intersection(seg, edge)
-      itype = type(I)
-      # no intersection
-      if itype == NotIntersecting
-        continue
-      end
-      # some intersection
-      geom = get(I)
-      if geom isa Point # crosses or touches 
-        push!(boundarypoints, geom)
-        λ = ustrip((geom-a) ⋅ v / (v ⋅ v))
-        push!(segλs, λ)
-      elseif geom isa Segment # overlaps
-        c, d = vertices(geom)
-        λc = ustrip((c-a) ⋅ v / (v ⋅ v))
-        λd = ustrip((d-a) ⋅ v / (v ⋅ v))
-        push!(segλs, λc, λd)
-      else
-        @error "Unexpected Segment × Polygon edge intersection geometry: " * "$(typeof(geometry))"
+      if intersects(boundingbox(seg), boundingbox(edge))
+        intersection(seg, edge) do I
+          # no intersection
+          if type(I) == NotIntersecting
+            return
+          end
+          # some intersection
+          geom = get(I)
+          if geom isa Point # Crossing, EdgeTouching, CornerTouching, etc.
+            push!(boundarypoints, geom)
+            λ = ustrip((geom-a) ⋅ v / (v ⋅ v))
+            push!(segλs, λ)
+          elseif geom isa Segment # Overlapping collinear segments
+            c, d = vertices(geom)
+            λc = ustrip((c-a) ⋅ v / (v ⋅ v))
+            λd = ustrip((d-a) ⋅ v / (v ⋅ v))
+            push!(segλs, λc, λd)
+          else
+            @error "Unexpected Segment × Polygon edge intersection geometry: " * "$(typeof(geom))"
+          end
+        end
       end
     end
   end
@@ -270,7 +272,7 @@ function intersection(f, seg::Segment, poly::Polygon)
     geometry = length(pieces) == 1 ? only(pieces) : Multi(pieces) 
     return @IT Overlapping geometry f # Case 1
   elseif !isempty(boundarypoints) # no segments, but some intersection
-    geometry = length(boundarypoints) == 1 ? only(pieces) : first(pieces) # it gotta be a single point!
+    geometry = length(boundarypoints) == 1 ? only(boundarypoints) : first(boundarypoints) # it gotta be a single point!
     return @IT Touching geometry f # Case 2
   else
     return @IT NotIntersecting nothing f # Case 5 
