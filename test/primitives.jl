@@ -575,7 +575,7 @@ end
   @test b(T(1), T(0)) ≈ cart(2, 0)
   b = Ball(cart(0, 0, 0), T(2))
   @test b(T(0), T(0), T(0)) ≈ cart(0, 0, 0)
-  @test b(T(1), T(0), T(0)) ≈ cart(2, 0, 0)
+  @test b(T(1), T(0), T(0)) ≈ cart(0, 0, 2)
 
   # machine type is preserved in parameterization
   b = Ball(cart(0), T(2))
