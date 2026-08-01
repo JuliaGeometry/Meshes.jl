@@ -16,13 +16,32 @@ function vizgrid!(plot::Viz{<:Tuple{RectilinearGrid}}, M::Type{<:𝔼}, pdim::Va
       vizmesh!(plot)
     else
       # visualize as built-in heatmap
-      Makie.map!(plot, [:object, :colorant], [:x, :y, :C]) do grid, colorant
+      Makie.map!(plot, [:object, :colorant], [:x, :y, :C, :usetiles]) do grid, colorant
         sz = size(grid)
+        ne = nelements(grid)
         x, y = map(c -> ustrip.(c), Meshes.xyz(grid))
         C = colorant isa AbstractVector ? reshape(colorant, sz) : fill(colorant, sz)
-        x, y, C
+        x, y, C, (ne ≥ 100000)
       end
-      Makie.heatmap!(plot, plot.x, plot.y, plot.C)
+
+      if plot.usetiles[]
+        for (i, tile) in enumerate(TileIterator(axes(plot.C[]), (100, 100)))
+          xi = Symbol(:x, i)
+          yi = Symbol(:y, i)
+          Ci = Symbol(:C, i)
+          Makie.map!(plot, [:x, :y, :C], [xi, yi, Ci]) do x, y, C
+            xlims, ylims = map((x, y), tile) do c, t
+              # note: non-interpolate case requires adding 1 to the end of the tile range
+              ctile = first(t):(last(t) + 1)
+              extrema(view(c, ctile))
+            end
+            xlims, ylims, view(C, tile...)
+          end
+          Makie.heatmap!(plot, plot[xi], plot[yi], plot[Ci])
+        end
+      else
+        Makie.heatmap!(plot, plot.x, plot.y, plot.C)
+      end
     end
 
     if plot.showsegments[]

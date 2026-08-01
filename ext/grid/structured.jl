@@ -13,12 +13,26 @@ function vizgrid!(plot::Viz{<:Tuple{StructuredGrid}}, M::Type{<:𝔼}, pdim::Val
 
     if plot.nc[] == plot.nv[]
       # visualize as built-in surface
-      Makie.map!(plot, [:object, :colorant], [:X, :Y, :C]) do grid, colorant
+      Makie.map!(plot, [:object, :colorant], [:X, :Y, :C, :usetiles]) do grid, colorant
+        ne = nelements(grid)
         X, Y = map(c -> ustrip.(c), Meshes.XYZ(grid))
         C = reshape(colorant, Meshes.vsize(grid))
-        X, Y, C
+        X, Y, C, (ne ≥ 100000)
       end
-      Makie.surface!(plot, plot.X, plot.Y, color=plot.C)
+
+      if plot.usetiles[]
+        for (i, tile) in enumerate(TileIterator(axes(plot.C[]), (100, 100)))
+          Xi = Symbol(:X, i)
+          Yi = Symbol(:Y, i)
+          Ci = Symbol(:C, i)
+          Makie.map!(plot, [:X, :Y, :C], [Xi, Yi, Ci]) do X, Y, C
+            view(X, tile...), view(Y, tile...), view(C, tile...)
+          end
+          Makie.surface!(plot, plot[Xi], plot[Yi], color=plot[Ci])
+        end
+      else
+        Makie.surface!(plot, plot.X, plot.Y, color=plot.C)
+      end
 
       if plot.showsegments[]
         vizfacets!(plot)

@@ -22,7 +22,7 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
       reshape(colorant, sz)
     end
 
-    x, y, C, (nc == nv), (ne ≥ 100000 && nc == ne)
+    x, y, C, (nc == nv), (ne ≥ 100000)
   end
 
   if plot.usetiles[]
@@ -30,10 +30,12 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
       xi = Symbol(:x, i)
       yi = Symbol(:y, i)
       Ci = Symbol(:C, i)
-      Makie.map!(plot, [:object, :C], [xi, yi, Ci]) do grid, C
-        xy = ustrip.(Meshes.xyz(grid))
+      Makie.map!(plot, [:object, :C, :interpolate], [xi, yi, Ci]) do grid, C, interpolate
+        xy = map(c -> ustrip.(c), Meshes.xyz(grid))
         xlims, ylims = map(xy, tile) do c, t
-          extrema(view(c, first(t):(last(t) + 1)))
+          # note: non-interpolate case requires adding 1 to the end of the tile range
+          ctile = first(t):(last(t) + !interpolate)
+          extrema(view(c, ctile))
         end
         xlims, ylims, view(C, tile...)
       end
