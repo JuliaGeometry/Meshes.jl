@@ -258,7 +258,7 @@ paramdim(::HalfEdgeTopology) = 2
 
 Return a half-edge of the half-edge topology `t` on the `e`-th elem.
 """
-half4elem(t::HalfEdgeTopology, e::Integer) = t.halfedges[t.half4elem[e]]
+half4elem(t::HalfEdgeTopology, e::Int) = t.halfedges[t.half4elem[e]]
 
 """
     half4vert(t, v)
@@ -266,7 +266,7 @@ half4elem(t::HalfEdgeTopology, e::Integer) = t.halfedges[t.half4elem[e]]
 Return the half-edge of the half-edge topology `t` for which the
 head is the `v`-th index.
 """
-half4vert(t::HalfEdgeTopology, v::Integer) = t.halfedges[t.half4vert[v]]
+half4vert(t::HalfEdgeTopology, v::Int) = t.halfedges[t.half4vert[v]]
 
 """
     half4edge(t, e)
@@ -277,7 +277,7 @@ Return the half-edge of the half-edge topology `t` for the edge `e`.
 
 Always return the half-edge to the "left".
 """
-half4edge(t::HalfEdgeTopology, e::Integer) = t.halfedges[2e - 1]
+half4edge(t::HalfEdgeTopology, e::Int) = t.halfedges[2e - 1]
 
 """
     half4pair(t, uv)

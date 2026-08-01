@@ -25,8 +25,8 @@ end
 # GRID TOPOLOGY
 # --------------
 
-# quadrangle faces making up hexahedrons in 3D grid
-function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
+# quadrangle faces making up hexahedron in 3D grid
+function (∂::Boundary{3,2,3,T})(ind::Int) where {T<:GridTopology}
   t = ∂.topology
   cx, cy, cz = isperiodic(t)
   nx, ny, nz = size(t)
@@ -66,8 +66,8 @@ function (∂::Boundary{3,2,3,T})(ind::Integer) where {T<:GridTopology}
   (i1, i2, i3, i4, i5, i6)
 end
 
-# vertices of hexahedron on 3D grid
-function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
+# vertices of hexahedron in 3D grid
+function (∂::Boundary{3,0,3,T})(ind::Int) where {T<:GridTopology}
   t = ∂.topology
   cx, cy, cz = isperiodic(t)
   nx, ny, nz = size(t)
@@ -89,8 +89,13 @@ function (∂::Boundary{3,0,3,T})(ind::Integer) where {T<:GridTopology}
   (i1, i2, i3, i4, i5, i6, i7, i8)
 end
 
-# segments making up quadrangles in 2D grid
-function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
+# vertices of segment in 3D grid
+function (∂::Boundary{1,0,3,T})(ind::Int) where {T<:GridTopology}
+  error("not implemented")
+end
+
+# segments making up quadrangle in 2D grid
+function (∂::Boundary{2,1,2,T})(ind::Int) where {T<:GridTopology}
   t = ∂.topology
   cx, cy = isperiodic(t)
   nx, ny = size(t)
@@ -121,8 +126,8 @@ function (∂::Boundary{2,1,2,T})(ind::Integer) where {T<:GridTopology}
   (i1, i2, i3, i4)
 end
 
-# vertices of quadrangle on 2D grid
-function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
+# vertices of quadrangle in 2D grid
+function (∂::Boundary{2,0,2,T})(ind::Int) where {T<:GridTopology}
   t = ∂.topology
   cx, cy = isperiodic(t)
   nx, ny = size(t)
@@ -139,8 +144,8 @@ function (∂::Boundary{2,0,2,T})(ind::Integer) where {T<:GridTopology}
   (i1, i2, i3, i4)
 end
 
-# vertices of segment on 2D grid
-function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
+# vertices of segment in 2D grid
+function (∂::Boundary{1,0,2,T})(ind::Int) where {T<:GridTopology}
   t = ∂.topology
   cx, cy = isperiodic(t)
   nx, ny = size(t)
@@ -164,8 +169,8 @@ function (∂::Boundary{1,0,2,T})(ind::Integer) where {T<:GridTopology}
   (i1, i2)
 end
 
-# vertices of segment on 1D grid
-function (∂::Boundary{1,0,1,T})(ind::Integer) where {T<:GridTopology}
+# vertices of segment in 1D grid
+function (∂::Boundary{1,0,1,T})(ind::Int) where {T<:GridTopology}
   t = ∂.topology
   c = first(isperiodic(t))
   n = first(size(t))
@@ -180,7 +185,7 @@ end
 # HALF-EDGE TOPOLOGY
 # -------------------
 
-function (∂::Boundary{2,1,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
+function (∂::Boundary{2,1,2,T})(elem::Int) where {T<:HalfEdgeTopology}
   t = ∂.topology
   l = loop(half4elem(t, elem))
   n = length(l)
@@ -189,14 +194,14 @@ function (∂::Boundary{2,1,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
   end
 end
 
-function (∂::Boundary{2,0,2,T})(elem::Integer) where {T<:HalfEdgeTopology}
+function (∂::Boundary{2,0,2,T})(elem::Int) where {T<:HalfEdgeTopology}
   t = ∂.topology
   l = loop(half4elem(t, elem))
   n = length(l)
   ntuple(i -> l[i], n)
 end
 
-function (∂::Boundary{1,0,2,T})(edge::Integer) where {T<:HalfEdgeTopology}
+function (∂::Boundary{1,0,2,T})(edge::Int) where {T<:HalfEdgeTopology}
   t = ∂.topology
   e = half4edge(t, edge)
   (e.head, e.half.head)
@@ -206,6 +211,6 @@ end
 # SIMPLE TOPOLOGY
 # ----------------
 
-function (∂::Boundary{D,0,D,T})(ind::Integer) where {D,T<:SimpleTopology}
+function (∂::Boundary{D,0,D,T})(ind::Int) where {D,T<:SimpleTopology}
   connec4elem(∂.topology, ind)
 end

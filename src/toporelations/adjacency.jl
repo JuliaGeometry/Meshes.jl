@@ -25,7 +25,7 @@ end
 # --------------
 
 # adjacent vertices in a D-dimensional grid topology
-function (𝒜::Adjacency{0,D,T})(ind::Integer) where {D,T<:GridTopology}
+function (𝒜::Adjacency{0,D,T})(ind::Int) where {D,T<:GridTopology}
   # retrieve topology info
   topo = 𝒜.topology
   dims = size(topo)
@@ -39,7 +39,7 @@ function (𝒜::Adjacency{0,D,T})(ind::Integer) where {D,T<:GridTopology}
 end
 
 # adjacent elements in a D-dimensional grid topology
-function (𝒜::Adjacency{D,D,T})(ind::Integer) where {D,T<:GridTopology}
+function (𝒜::Adjacency{D,D,T})(ind::Int) where {D,T<:GridTopology}
   topo = 𝒜.topology
   dims = size(topo)
   cycl = isperiodic(topo)
@@ -71,7 +71,7 @@ end
 # -------------------
 
 # adjacent vertices in a 2D half-edge topology
-function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
+function (𝒜::Adjacency{0,2,T})(vert::Int) where {T<:HalfEdgeTopology}
   e = half4vert(𝒜.topology, vert)
 
   # initialize result
@@ -104,7 +104,7 @@ function (𝒜::Adjacency{0,2,T})(vert::Integer) where {T<:HalfEdgeTopology}
 end
 
 # adjacent elements in a 2D half-edge topology
-function (𝒜::Adjacency{2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
+function (𝒜::Adjacency{2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   inds = Int[]
 
   e = half4elem(𝒜.topology, ind)
