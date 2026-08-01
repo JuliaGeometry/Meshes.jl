@@ -29,12 +29,12 @@ function sample(rng::AbstractRNG, d::Domain, method::HomogeneousSampling)
   (first(sample(rng, e, h)) for e in sample(rng, d, w))
 end
 
-function sample(rng::AbstractRNG, geom::Geometry, method::HomogeneousSampling)
-  if isparametrized(geom)
-    randpoint() = geom(rand(rng, numtype(lentype(geom)), paramdim(geom))...)
+function sample(rng::AbstractRNG, g::Geometry, method::HomogeneousSampling)
+  if isparametrized(g)
+    randpoint() = g(rand(rng, numtype(lentype(g)), paramdim(g))...)
     (randpoint() for _ in 1:(method.size))
   else
-    sample(rng, discretize(geom), method)
+    sample(rng, discretize(g), method)
   end
 end
 
@@ -42,34 +42,47 @@ end
 # SPECIAL CASES
 # --------------
 
-function sample(rng::AbstractRNG, triangle::Triangle, method::HomogeneousSampling)
+function sample(rng::AbstractRNG, t::Triangle, method::HomogeneousSampling)
   function randpoint()
     # sample barycentric coordinates
-    u₁, u₂ = rand(rng, numtype(lentype(triangle)), 2)
+    u₁, u₂ = rand(rng, numtype(lentype(t)), paramdim(t))
     λ₁, λ₂ = 1 - √u₁, u₂ * √u₁
-    triangle(λ₁, λ₂)
+    t(λ₁, λ₂)
   end
   (randpoint() for _ in 1:(method.size))
 end
 
-function sample(rng::AbstractRNG, tetrahedron::Tetrahedron, method::HomogeneousSampling)
-  error("not implemented")
-end
-
-sample(rng::AbstractRNG, ball::Ball, method::HomogeneousSampling) = _sample(rng, ball, Val(embeddim(ball)), method)
-
-function _sample(rng::AbstractRNG, ball::Ball, ::Val{2}, method::HomogeneousSampling)
+function sample(rng::AbstractRNG, t::Tetrahedron, method::HomogeneousSampling)
   function randpoint()
-    u₁, u₂ = rand(rng, numtype(lentype(ball)), 2)
-    ball(√u₁, u₂)
+    # sample barycentric coordinates
+    u₁, u₂, u₃ = rand(rng, numtype(lentype(t)), paramdim(t))
+    λ₁ = 1 - ∛u₁
+    λ₂ = (1 - λ₁) * (1 - √u₂)
+    λ₃ = (1 - λ₁) * √u₂ * u₃
+    t(λ₁, λ₂, λ₃)
   end
   (randpoint() for _ in 1:(method.size))
 end
 
-function _sample(rng::AbstractRNG, ball::Ball, ::Val{3}, method::HomogeneousSampling)
+sample(rng::AbstractRNG, b::Ball, method::HomogeneousSampling) = _sample(rng, b, Val(paramdim(b)), method)
+
+function _sample(rng::AbstractRNG, b::Ball, ::Val{2}, method::HomogeneousSampling)
   function randpoint()
-    u₁, u₂, u₃ = rand(rng, numtype(lentype(ball)), 3)
-    ball(∛u₁, acos(1 - 2u₂) / π, u₃)
+    u₁, u₂ = rand(rng, numtype(lentype(b)), paramdim(b))
+    λ₁, λ₂ = √u₁, u₂
+    b(λ₁, λ₂)
+  end
+  (randpoint() for _ in 1:(method.size))
+end
+
+function _sample(rng::AbstractRNG, b::Ball, ::Val{3}, method::HomogeneousSampling)
+  function randpoint()
+    T = numtype(lentype(b))
+    u₁, u₂, u₃ = rand(rng, T, paramdim(b))
+    λ₁ = ∛u₁
+    λ₂ = acos(1 - 2u₂) / T(π)
+    λ₃ = u₃
+    b(λ₁, λ₂, λ₃)
   end
   (randpoint() for _ in 1:(method.size))
 end

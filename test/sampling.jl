@@ -354,6 +354,11 @@ end
   @test first(ps) isa Point
   @test all(∈(q), ps)
 
+  t = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  ps = sample(t, HomogeneousSampling(100))
+  @test first(ps) isa Point
+  @test all(∈(t), ps)
+
   b = Ball(cart(10, 10), T(3))
   ps = sample(b, HomogeneousSampling(100))
   @test first(ps) isa Point
