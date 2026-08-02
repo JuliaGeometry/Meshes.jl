@@ -100,17 +100,14 @@ function (∂::Boundary{1,0,3,T})(ind::Int) where {T<:GridTopology}
   ∂z = Boundary{1,0}(tz)
   nv = nvertices(tz)
   nf = nfacets(tz)
+  ne = (nz + !cz) * nf
 
-  # index in 2D grid
-  indz = mod1(ind, nf)
-
-  # offset in 3D grid
-  oz = (ind - indz) ÷ nf
-
-  if oz ≤ nz
-    ∂z(indz) .+ oz * nv
-  else
-    i = ind - (nz + !cz) * nf
+  if ind ≤ ne # edges perpendicular to z
+    i = mod1(ind, nf)
+    o = (ind - i) ÷ nf
+    ∂z(i) .+ o * nv
+  else # edges parallel to z
+    i = ind - ne
     (i, i + nv)
   end
 end
