@@ -26,13 +26,15 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
   end
 
   if plot.usetiles[]
+    Makie.map!(plot, [:object], [:xcoord, :ycoord]) do grid
+      map(c -> ustrip.(c), Meshes.xyz(grid))
+    end
     for (i, tile) in enumerate(TileIterator(axes(plot.C[]), (100, 100)))
       xi = Symbol(:x, i)
       yi = Symbol(:y, i)
       Ci = Symbol(:C, i)
-      Makie.map!(plot, [:object, :C, :interpolate], [xi, yi, Ci]) do grid, C, interpolate
-        xy = map(c -> ustrip.(c), Meshes.xyz(grid))
-        xlims, ylims = map(xy, tile) do c, t
+      Makie.map!(plot, [:xcoord, :ycoord, :C, :interpolate], [xi, yi, Ci]) do x, y, C, interpolate
+        xlims, ylims = map((x, y), tile) do c, t
           # note: non-interpolate case requires adding 1 to the end of the tile range
           ctile = first(t):(last(t) + !interpolate)
           extrema(view(c, ctile))
