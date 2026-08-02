@@ -204,7 +204,7 @@ function intersection(f, seg::Segment, line::Line)
 end
 
 # intersection between a segment and a polygon
-# 1. overlap of line and polygon (Overlapping -> Segment)
+# 1. overlap of segment and polygon (Overlapping -> Segment)
 # 2. intersect at one an point, exactly (Touching -> Point)
 # 3. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 4. the segment is degenerate and is outside the polygon (NotIntersecting -> Nothing)
