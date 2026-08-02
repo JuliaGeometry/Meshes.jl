@@ -91,7 +91,23 @@ end
 
 # vertices of segment in 3D grid
 function (∂::Boundary{1,0,3,T})(ind::Int) where {T<:GridTopology}
-  error("not implemented")
+  t = ∂.topology
+  cx, cy, _ = isperiodic(t)
+  nx, ny, _ = size(t)
+
+  # edges perpendicular to z
+  tz = GridTopology((nx, ny), (cx, cy))
+  ∂z = Boundary{1,0}(tz)
+  nv = nvertices(tz)
+  nf = nfacets(tz)
+
+  # index in 2D grid
+  k = mod1(ind, nf)
+
+  # offset in 3D grid
+  o = (ind - k) ÷ nf
+
+  ∂z(k) .+ o * nv
 end
 
 # segments making up quadrangle in 2D grid
