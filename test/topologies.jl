@@ -242,6 +242,7 @@
   @test element(t, 1) == connect((1, 2, 6, 5, 21, 22, 26, 25), Hexahedron)
   @test element(t, 5) == connect((6, 7, 11, 10, 26, 27, 31, 30), Hexahedron)
   @test faces(t, 3) == elements(t)
+  @test length(faces(t, 1)) == 133
   @test faces(t, 0) == vertices(t)
   @test vertices(t) == 1:60
   @test vertex(t, 1) == 1
