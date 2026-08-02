@@ -211,7 +211,7 @@ end
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
-  a, b = vertices(seg)
+  a, b = vertices(seg); segbbox = boundingbox(seg); polybbox = boundingbox(poly)
 
   # check for degenerate segments
   if a ≈ b
@@ -222,14 +222,22 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     end
   end
 
+  # assess obvious no intersection case beforehand
+  if !intersects(segbbox, polybbox)
+    return @IT NotIntersecting nothing f # Case 5
+  end
+  
   # segment endpoints as scalars + segment vector
   segλs = [0.0, 1.0]; v = b-a;
 
   # assess intersections with the edges
   boundarypoints = Point[]
   for ring in rings(poly)
+    ringbbox = boundingbox(ring)
     for edge in segments(ring)
-      if intersects(boundingbox(seg), boundingbox(edge))
+      intersects(segbbox, ringbbox) || continue
+      edgebbox = boundingbox(edge)
+      if intersects(segbbox, edgebbox)
         intersection(seg, edge) do I
           # no intersection
           if type(I) == NotIntersecting
@@ -272,7 +280,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     geometry = length(pieces) == 1 ? only(pieces) : Multi(pieces) 
     return @IT Overlapping geometry f # Case 1
   elseif !isempty(boundarypoints) # no segments, but some intersection
-    geometry = length(boundarypoints) == 1 ? only(boundarypoints) : first(boundarypoints) # it gotta be a single point!
+    geometry = length(boundarypoints) == 1 ? only(boundarypoints) : Multi(boundarypoints) 
     return @IT Touching geometry f # Case 2
   else
     return @IT NotIntersecting nothing f # Case 5 
