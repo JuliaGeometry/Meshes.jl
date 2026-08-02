@@ -128,8 +128,10 @@ function faces(t::GridTopology{3}, rank::Val{1})
 end
 
 function nfaces(t::GridTopology{3}, ::Val{1})
-  p = GridTopology(t.dims[1:2], .!t.open[1:2])
-  nfacets(p) * (t.dims[3] + t.open[3]) + nvertices(p) * (t.dims[3] + !t.open[3])
+  nx, ny, nz = size(t)
+  cx, cy, cz = isperiodic(t)
+  tz = GridTopology((nx, ny), (cx, cy))
+  (nz + !cz) * nfacets(tz) + nz * nvertices(tz)
 end
 
 function element(t::GridTopology{D}, ind) where {D}
