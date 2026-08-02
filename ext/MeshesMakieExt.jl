@@ -44,6 +44,8 @@ Makie.@recipe Viz (object,) begin
   pointcolor = :gray30
   "size of points"
   pointsize = 4
+  "mesh normals, either per-face or per-vertex (decided based on length)"
+  normals = nothing
 end
 
 # choose between 2D and 3D axis
