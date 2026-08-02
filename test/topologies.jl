@@ -237,6 +237,7 @@
   @test nvertices(t) == 60
   @test nfaces(t, 3) == 24
   @test nfaces(t, 2) == 3 * 24 + 3 * 4 + 4 * 2 + 3 * 2
+  @test nfaces(t, 1) == (2 + 1) * (3 * (4 + 1) + (3 + 1) * 4) + 2 * (3 + 1) * (4 + 1)
   @test nfaces(t, 0) == 60
   @test element(t, 1) == connect((1, 2, 6, 5, 21, 22, 26, 25), Hexahedron)
   @test element(t, 5) == connect((6, 7, 11, 10, 26, 27, 31, 30), Hexahedron)
@@ -296,6 +297,7 @@
   @test nvertices(t) == 2 * 3 * 4
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4)
+  @test nfaces(t, 1) == 4 * 12 + 4 * 6
   @test element(t, 1) == connect((1, 2, 4, 3, 7, 8, 10, 9), Hexahedron)
   @test element(t, 2) == connect((2, 1, 3, 4, 8, 7, 9, 10), Hexahedron)
   @test element(t, 24) == connect((24, 23, 19, 20, 6, 5, 1, 2), Hexahedron)
@@ -305,6 +307,7 @@
   @test nvertices(t) == 3 * 3 * 4
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4) + 3 * 4
+  @test nfaces(t, 1) == 4 * 15 + 4 * 9
   @test element(t, 1) == connect((1, 2, 5, 4, 10, 11, 14, 13), Hexahedron)
   @test element(t, 2) == connect((2, 3, 6, 5, 11, 12, 15, 14), Hexahedron)
   @test element(t, 24) == connect((35, 36, 30, 29, 8, 9, 3, 2), Hexahedron)
@@ -314,6 +317,7 @@
   @test nvertices(t) == 2 * 4 * 4
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4) + 2 * 4
+  @test nfaces(t, 1) == 4 * 14 + 4 * 8
   @test element(t, 1) == connect((1, 2, 4, 3, 9, 10, 12, 11), Hexahedron)
   @test element(t, 2) == connect((2, 1, 3, 4, 10, 9, 11, 12), Hexahedron)
   @test element(t, 24) == connect((30, 29, 31, 32, 6, 5, 7, 8), Hexahedron)
@@ -323,6 +327,7 @@
   @test nvertices(t) == 2 * 3 * 5
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4) + 2 * 3
+  @test nfaces(t, 1) == (4 + 1) * 12 + 4 * 6
   @test element(t, 1) == connect((1, 2, 4, 3, 7, 8, 10, 9), Hexahedron)
   @test element(t, 2) == connect((2, 1, 3, 4, 8, 7, 9, 10), Hexahedron)
   @test element(t, 24) == connect((24, 23, 19, 20, 30, 29, 25, 26), Hexahedron)
@@ -332,6 +337,7 @@
   @test nvertices(t) == 2 * 4 * 5
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4) + 2 * 4 + 2 * 3
+  @test nfaces(t, 1) == (4 + 1) * 14 + 4 * 8
   @test element(t, 1) == connect((1, 2, 4, 3, 9, 10, 12, 11), Hexahedron)
   @test element(t, 2) == connect((2, 1, 3, 4, 10, 9, 11, 12), Hexahedron)
   @test element(t, 24) == connect((30, 29, 31, 32, 38, 37, 39, 40), Hexahedron)
@@ -341,6 +347,7 @@
   @test nvertices(t) == 3 * 3 * 5
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4) + 3 * 4 + 2 * 3
+  @test nfaces(t, 1) == (4 + 1) * 15 + 4 * 9
   @test element(t, 1) == connect((1, 2, 5, 4, 10, 11, 14, 13), Hexahedron)
   @test element(t, 2) == connect((2, 3, 6, 5, 11, 12, 15, 14), Hexahedron)
   @test element(t, 24) == connect((35, 36, 30, 29, 44, 45, 39, 38), Hexahedron)
@@ -350,6 +357,7 @@
   @test nvertices(t) == 3 * 4 * 4
   @test nelements(t) == 2 * 3 * 4
   @test nfacets(t) == 3 * (2 * 3 * 4) + 3 * 4 + 2 * 4
+  @test nfaces(t, 1) == 4 * 17 + 4 * 12
   @test element(t, 1) == connect((1, 2, 5, 4, 13, 14, 17, 16), Hexahedron)
   @test element(t, 2) == connect((2, 3, 6, 5, 14, 15, 18, 17), Hexahedron)
   @test element(t, 24) == connect((44, 45, 48, 47, 8, 9, 12, 11), Hexahedron)
