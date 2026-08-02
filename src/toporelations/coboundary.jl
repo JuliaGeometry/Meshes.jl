@@ -26,7 +26,7 @@ end
 # --------------
 
 # elements sharing vertex in grid
-function (𝒞::Coboundary{0,D,D,T})(ind::Integer) where {D,T<:GridTopology}
+function (𝒞::Coboundary{0,D,D,T})(ind::Int) where {D,T<:GridTopology}
   topo = 𝒞.topology
   dims = size(topo)
   cycl = isperiodic(topo)
@@ -51,7 +51,7 @@ function (𝒞::Coboundary{0,D,D,T})(ind::Integer) where {D,T<:GridTopology}
 end
 
 # general case with 0 < P < Q = D
-function (𝒞::Coboundary{P,D,D,T})(ind::Integer) where {P,D,T<:GridTopology}
+function (𝒞::Coboundary{P,D,D,T})(ind::Int) where {P,D,T<:GridTopology}
   topo = 𝒞.topology
   𝒞₀ = Coboundary{0,D}(topo)
   ∂₀ = Boundary{P,0}(topo)
@@ -77,7 +77,7 @@ end
 # -------------------
 
 # segments sharing a vertex in 2D mesh
-function (𝒞::Coboundary{0,1,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
+function (𝒞::Coboundary{0,1,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   t = 𝒞.topology
   𝒜 = Adjacency{0}(t)
   o = 𝒜(ind)
@@ -87,7 +87,7 @@ function (𝒞::Coboundary{0,1,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
 end
 
 # elements sharing a vertex in 2D mesh
-function (𝒞::Coboundary{0,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
+function (𝒞::Coboundary{0,2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   e = half4vert(𝒞.topology, ind)
 
   # initialize result
@@ -117,7 +117,7 @@ function (𝒞::Coboundary{0,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
 end
 
 # elements sharing a segment in 2D mesh
-function (𝒞::Coboundary{1,2,2,T})(ind::Integer) where {T<:HalfEdgeTopology}
+function (𝒞::Coboundary{1,2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   e = half4edge(𝒞.topology, ind)
   isnothing(e.half.elem) ? (e.elem,) : (e.elem, e.half.elem)
 end

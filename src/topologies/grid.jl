@@ -120,6 +120,20 @@ facettype(::GridTopology{3}) = Quadrangle
 
 nvertices(t::GridTopology) = prod(t.dims .+ t.open)
 
+function faces(t::GridTopology{3}, rank::Val{1})
+  n = nfaces(t, rank)
+  ∂ = Boundary{1,0}(t)
+  T = Segment
+  (connect(∂(ind), T) for ind in 1:n)
+end
+
+function nfaces(t::GridTopology{3}, ::Val{1})
+  nx, ny, nz = size(t)
+  cx, cy, cz = isperiodic(t)
+  tz = GridTopology((nx, ny), (cx, cy))
+  (nz + !cz) * nfacets(tz) + nz * nvertices(tz)
+end
+
 function element(t::GridTopology{D}, ind) where {D}
   ∂ = Boundary{D,0}(t)
   T = elementtype(t)

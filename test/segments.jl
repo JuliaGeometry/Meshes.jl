@@ -27,4 +27,8 @@
   @test length(collect(segments(g))) == 17
   @test length(collect(segments(h))) == 17
   @test length(collect(segments(s))) == 17
+  g = cartgrid(2, 2, 2)
+  @test length(collect(segments(g))) == 54
+  g = cartgrid(2, 3, 4)
+  @test length(collect(segments(g))) == 133
 end
