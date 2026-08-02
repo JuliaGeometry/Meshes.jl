@@ -108,7 +108,10 @@ function (∂::Boundary{1,0,3,T})(ind::Int) where {T<:GridTopology}
     ∂z(i) .+ o * nv
   else # edges parallel to z
     i = ind - ne
-    (i, i + nv)
+    ix, iy, iz = corner2cart(t, i)
+    iz₊ = cz ? mod1(iz + 1, nz) : iz + 1
+    i₊ = cart2corner(t, ix, iy, iz₊)
+    (i, i₊)
   end
 end
 
