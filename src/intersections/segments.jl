@@ -207,30 +207,25 @@ end
 # 1. overlap of segment and polygon (Overlapping -> Segment)
 # 2. intersect at one an point, exactly (Touching -> Point)
 # 3. the segment is degenerate and is inside the polygon (Touching -> Point)
-# 4. the segment is degenerate and is outside the polygon (NotIntersecting -> Nothing)
-# 5. do not overlap nor intersect (NotIntersecting -> Nothing)
+# 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   a, b = vertices(seg)
   segbbox = boundingbox(seg)
   polybbox = boundingbox(poly)
 
   # check for degenerate segments
-  if a ≈ b
-    if a ∈ poly
-      return @IT Touching a f # Case 3
-    else
-      return @IT NotIntersecting nothing f # Case 4
-    end
+  if a ≈ b && a ∈ poly
+    return @IT Touching a f # Case 3
   end
 
   # assess obvious no intersection case beforehand
   if !intersects(segbbox, polybbox)
-    return @IT NotIntersecting nothing f # Case 5
+    return @IT NotIntersecting nothing f # Case 4
   end
 
   # segment endpoints as scalars + segment vector
-  segλs = [0.0, 1.0];
-  v = b-a;
+  segλs = [0.0, 1.0]
+  v = b - a
 
   # Extract the first Cartesian coordinate
   x(p) = flat(coords(p)).x
@@ -238,9 +233,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   # Choose the polygon's longest bounding-box axis
   polymin, polymax = extrema(polybbox)
-  xspan = x(polymax) - x(polymin)
-  yspan = y(polymax) - y(polymin)
-  axiscoord = xspan ≥ yspan ? x : y
+  xside = x(polymax) - x(polymin)
+  yside = y(polymax) - y(polymin)
+  axiscoord = xside ≥ yside ? x : y
 
   # Segment range along the chosen axis
   segmin, segmax = extrema(segbbox)
@@ -248,7 +243,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   segstop = axiscoord(segmax)
 
   # assess intersections
-  boundarypoints = Point[]
+  boundarypoints = typeof(a)[]
   for ring in rings(poly)
     ringbbox = boundingbox(ring)
     # check for obvious no intersection case beforehand
@@ -272,10 +267,10 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     starts = starts[inds]
     stops = stops[inds]
     for i in eachindex(edges)
-      # Edge ends before the segment begins. Later edges may still overlap, so skip only this edge
+      # Edge ends before the segment begins. Later edges may still overlap, so skip only this edge.
       stops[i] < segstart && continue
 
-      # Edge starts after the segment ends. Since edges are sorted by the selected axis minimum, all later edges are also too far right
+      # Edge starts after the segment ends. Since edges are sorted by the selected axis minimum, all later edges are also too far right.
       starts[i] > segstop && break
 
       # The selected axis ranges overlap, but the full bounding boxes may still be separated along the other axis
@@ -305,15 +300,45 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     end
   end
 
-  # Define collection of intersected segment pieces
-  sort!(segλs);
-  pieces = Segment[]
+  # get unique boundary points
+  unique!(boundarypoints)
+  # remove duplicate λ values and sort them
+  sort!(segλs)
+  for i in 2:length(segλs)
+    segλs[i] = mayberound(segλs[i], segλs[i - 1])
+  end
+  unique!(segλs)
+  # create segments from the λ values that are inside the polygon
+  pieces = typeof(seg)[]
   for (λ₁, λ₂) in zip(segλs[1:(end - 1)], segλs[2:end])
     λ₁ ≈ λ₂ && continue
     λmid = (λ₁ + λ₂) / 2
     if seg(λmid) ∈ poly
       push!(pieces, Segment(seg(λ₁), seg(λ₂)))
     end
+  end
+  # merge continuous segments
+  if length(pieces) > 1
+    merged = typeof(seg)[]
+    for piece in pieces
+      if isempty(merged)
+        push!(merged, piece)
+      else
+        previous = last(merged)
+        if !intersects(boundingbox(previous), boundingbox(piece))
+          push!(merged, piece)
+          continue
+        end
+        p₁, p₂ = vertices(previous)
+        q₁, q₂ = vertices(piece)
+        if p₂ ≈ q₁
+          merged[end] = Segment(p₁, q₂)
+        else
+          push!(merged, piece)
+        end
+      end
+    end
+    pieces = merged
   end
 
   # classifying intersections
