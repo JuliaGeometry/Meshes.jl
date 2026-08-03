@@ -55,3 +55,25 @@ function svdbasis(p::AbstractVector{<:Point})
   n = Vec(zero(ℒ), zero(ℒ), oneunit(ℒ))
   isnegative((u × v) ⋅ n) ? (v, u) : (u, v)
 end
+
+"""
+    newellnormal(points)
+
+Return the normal vector of a polygon defined
+by a list of 3D `points` using Newell's method.
+
+See <https://people.eecs.berkeley.edu/~ug/slide/pipeline/assignments/backfacecull.shtml>.
+"""
+function newellnormal(p::AbstractVector{<:Point})
+  assertion(embeddim(first(p)) == 3, "points must be embedded in ℝ³")
+  v = CircularVector(p)
+  n = sum(eachindex(v)) do i
+    x₁, y₁, z₁ = ustrip.(to(v[i]))
+    x₂, y₂, z₂ = ustrip.(to(v[i + 1]))
+    nx = (z₁ + z₂) * (y₁ - y₂)
+    ny = (x₁ + x₂) * (z₁ - z₂)
+    nz = (y₁ + y₂) * (x₁ - x₂)
+    Vec(nx, ny, nz)
+  end
+  unormalize(n)
+end

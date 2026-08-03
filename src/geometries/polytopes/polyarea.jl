@@ -54,6 +54,8 @@ nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
 
 rings(p::PolyArea) = p.rings
 
+normal(p::PolyArea) = newellnormal(vertices(first(p.rings)))
+
 function Base.unique!(p::PolyArea)
   foreach(unique!, p.rings)
   inds = findall(r -> nvertices(r) ≤ 2, p.rings)

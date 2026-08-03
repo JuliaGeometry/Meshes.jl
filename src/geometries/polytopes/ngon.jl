@@ -65,21 +65,7 @@ angles(ngon::Ngon) = angles(boundary(ngon))
 
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
-# normal of n-gon using Newell's algorithm
-# https://people.eecs.berkeley.edu/~ug/slide/pipeline/assignments/backfacecull.shtml
-function normal(ngon::Ngon)
-  assertion(embeddim(ngon) == 3, "ngon must be embedded in ℝ³")
-  v = CircularVector(ngon.vertices)
-  n = sum(eachindex(v)) do i
-    x₁, y₁, z₁ = ustrip.(to(v[i]))
-    x₂, y₂, z₂ = ustrip.(to(v[i + 1]))
-    nx = (z₁ + z₂) * (y₁ - y₂)
-    ny = (x₁ + x₂) * (z₁ - z₂)
-    nz = (y₁ + y₂) * (x₁ - x₂)
-    Vec(nx, ny, nz)
-  end
-  unormalize(n)
-end
+normal(ngon::Ngon) = newellnormal(vertices(ngon))
 
 # ----------
 # TRIANGLES
