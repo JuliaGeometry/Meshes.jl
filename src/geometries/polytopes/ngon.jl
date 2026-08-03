@@ -65,12 +65,14 @@ angles(ngon::Ngon) = angles(boundary(ngon))
 
 innerangles(ngon::Ngon) = innerangles(boundary(ngon))
 
+normal(ngon::Ngon) = newellnormal(vertices(ngon))
+
 # ----------
 # TRIANGLES
 # ----------
 
 function normal(t::Triangle)
-  assertion(embeddim(t) == 3, "triangle must be 3-dimensional")
+  assertion(embeddim(t) == 3, "triangle must be embedded in ℝ³")
   A, B, C = t.vertices
   unormalize(ucross((B - A), (C - A)))
 end
