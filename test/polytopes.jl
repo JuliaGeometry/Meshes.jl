@@ -392,11 +392,6 @@ end
   @test t(T(1.0), T(0.0)) == cart(0, 1, 0)
   @test t(T(0.0), T(1.0)) == cart(0, 0, 1)
   @test t(T(0.5), T(0.5)) == cart(0, 0.5, 0.5)
-  @test isapprox(normal(t), vector(1, 0, 0))
-  @test isapprox(norm(normal(t)), oneunit(ℳ))
-  t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(0, 2, 2))
-  @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475))
-  @test isapprox(norm(normal(t)), oneunit(ℳ))
 
   # CRS propagation
   t = Triangle(merc(0, 0), merc(1, 0), merc(0, 1))
@@ -413,6 +408,14 @@ end
   # centroid
   t = Triangle(latlon(0, 0), latlon(0, 45), latlon(45, 0))
   @test centroid(t) == latlon(15, 15)
+
+  # normal
+  t = Triangle(cart(0, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  @test isapprox(normal(t), vector(1, 0, 0))
+  @test isapprox(norm(normal(t)), oneunit(ℳ))
+  t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(0, 2, 2))
+  @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475))
+  @test isapprox(norm(normal(t)), oneunit(ℳ))
 
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
   @test sprint(show, t) == "Triangle((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 0.0 m), (x: 0.0 m, y: 1.0 m))"
@@ -646,6 +649,14 @@ end
   # centroid
   poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test centroid(poly) ≈ cart(0.5, 0.5)
+
+  # normal
+  poly = PolyArea(cart(0, 0, 0), cart(0, 1, 0), cart(0, 1, 1), cart(0, 0, 1))
+  @test isapprox(normal(poly), vector(1, 0, 0))
+  @test isapprox(norm(normal(poly)), oneunit(ℳ))
+  poly = PolyArea(cart(0, 0, 0), cart(2, 0, 0), cart(2, 2, 2), cart(0, 2, 2))
+  @test isapprox(normal(poly), vector(0, -0.7071067811865475, 0.7071067811865475))
+  @test isapprox(norm(normal(poly)), oneunit(ℳ))
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1385
   poly = PolyArea(
