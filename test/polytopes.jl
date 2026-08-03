@@ -413,6 +413,7 @@ end
   t = Triangle(cart(0, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
   @test isapprox(normal(t), vector(1, 0, 0))
   @test isapprox(norm(normal(t)), oneunit(ℳ))
+  @test (@allocated normal(t)) == 0
   t = Triangle(cart(0, 0, 0), cart(2, 0, 0), cart(0, 2, 2))
   @test isapprox(normal(t), vector(0, -0.7071067811865475, 0.7071067811865475))
   @test isapprox(norm(normal(t)), oneunit(ℳ))
@@ -505,6 +506,7 @@ end
   q = Quadrangle(cart(0, 0, 0), cart(0, 1, 0), cart(0, 1, 1), cart(0, 0, 1))
   @test isapprox(normal(q), vector(1, 0, 0))
   @test isapprox(norm(normal(q)), oneunit(ℳ))
+  @test (@allocated normal(q)) == 0
   q = Quadrangle(cart(0, 0, 0), cart(2, 0, 0), cart(2, 2, 2), cart(0, 2, 2))
   @test isapprox(normal(q), vector(0, -0.7071067811865475, 0.7071067811865475))
   @test isapprox(norm(normal(q)), oneunit(ℳ))
@@ -654,6 +656,7 @@ end
   poly = PolyArea(cart(0, 0, 0), cart(0, 1, 0), cart(0, 1, 1), cart(0, 0, 1))
   @test isapprox(normal(poly), vector(1, 0, 0))
   @test isapprox(norm(normal(poly)), oneunit(ℳ))
+  @test (@allocated normal(poly)) == 0
   poly = PolyArea(cart(0, 0, 0), cart(2, 0, 0), cart(2, 2, 2), cart(0, 2, 2))
   @test isapprox(normal(poly), vector(0, -0.7071067811865475, 0.7071067811865475))
   @test isapprox(norm(normal(poly)), oneunit(ℳ))
