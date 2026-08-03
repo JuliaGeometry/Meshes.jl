@@ -4,9 +4,10 @@
 
 function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, ::Val{2})
   # visualize as built-in image with or without interpolation
-  Makie.map!(plot, [:object, :colorant], [:x, :y, :C, :interpolate]) do grid, colorant
+  Makie.map!(plot, [:object, :colorant], [:x, :y, :C, :interpolate, :usetiles]) do grid, colorant
     sz = size(grid)
     nv = nvertices(grid)
+    ne = nelements(grid)
     nc = colorant isa AbstractVector ? length(colorant) : 1
 
     x, y = map(Meshes.xyz(grid)) do c
@@ -21,9 +22,30 @@ function vizgrid!(plot::Viz{<:Tuple{CartesianGrid}}, ::Type{<:𝔼}, ::Val{2}, :
       reshape(colorant, sz)
     end
 
-    x, y, C, (nc == nv)
+    x, y, C, (nc == nv), (ne ≥ 100000)
   end
-  Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=plot.interpolate)
+
+  if plot.usetiles[]
+    Makie.map!(plot, [:object], [:xcoord, :ycoord]) do grid
+      map(c -> ustrip.(c), Meshes.xyz(grid))
+    end
+    for (i, tile) in enumerate(TileIterator(axes(plot.C[]), (100, 100)))
+      xi = Symbol(:x, i)
+      yi = Symbol(:y, i)
+      Ci = Symbol(:C, i)
+      Makie.map!(plot, [:xcoord, :ycoord, :C, :interpolate], [xi, yi, Ci]) do x, y, C, interpolate
+        xlims, ylims = map((x, y), tile) do c, t
+          # note: non-interpolate case requires adding 1 to the end of the tile range
+          ctile = first(t):(last(t) + !interpolate)
+          extrema(view(c, ctile))
+        end
+        xlims, ylims, view(C, tile...)
+      end
+      Makie.image!(plot, plot[xi], plot[yi], plot[Ci], interpolate=plot.interpolate)
+    end
+  else
+    Makie.image!(plot, plot.x, plot.y, plot.C, interpolate=plot.interpolate)
+  end
 
   if plot.showsegments[]
     vizfacets!(plot)

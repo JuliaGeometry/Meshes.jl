@@ -12,6 +12,8 @@ using LinearAlgebra
 using CoordRefSystems
 using Colorfy
 
+using TiledIteration: TileIterator
+
 import TransformsBase as TB
 import Makie.GeometryBasics as GB
 
