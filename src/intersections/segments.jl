@@ -317,7 +317,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 
   # classifying intersections
-  if !isempty(pieces) # Positive-length intersection
+  if !isempty(pieces) # positive-length intersection
     geometry = length(pieces) == 1 ? only(pieces) : Multi(pieces)
     return @IT Overlapping geometry f # Case 1
   elseif !isempty(boundarypoints) # no segments, but some intersection
