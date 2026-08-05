@@ -333,7 +333,7 @@ end
 
 # intersection between a segment and a polygon
 # 1. overlap of segment and polygon (Overlapping -> Segment)
-# 2. intersect at one an point, exactly (Touching -> Point)
+# 2. intersect at one point, exactly (Touching -> Point)
 # 3. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
