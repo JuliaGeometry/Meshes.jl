@@ -238,6 +238,74 @@ end
   @test intersection(s₁₀, s₃) |> type == NotIntersecting
   @test intersection(s₃, s₁₀) |> type == NotIntersecting
 
+  # segments and polygons in 2D
+  poly = PolyArea([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
+
+  # CASE 1: Intersecting, segment inside polygon
+  s = Segment(cart(1, 2), cart(3, 2))
+  @test s ∩ poly ≈ poly ∩ s ≈ s
+  @test intersection(s, poly) |> type == Intersecting
+  @test intersection(poly, s) |> type == Intersecting
+
+  # CASE 1: Intersecting, segment crosses polygon
+  s = Segment(cart(-1, 2), cart(5, 2))
+  expected = Segment(cart(0, 2), cart(4, 2))
+  @test s ∩ poly ≈ poly ∩ s ≈ expected
+  @test intersection(s, poly) |> type == Intersecting
+  @test intersection(poly, s) |> type == Intersecting
+
+  # CASE 1: concave polygon with disconnected intersection pieces
+  poly = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  s = Segment(cart(-1, 4), cart(7, 4))
+  expected = Multi([Segment(cart(0, 4), cart(2, 4)), Segment(cart(4, 4), cart(6, 4))])
+  @test s ∩ poly ≈ poly ∩ s ≈ expected
+  @test intersection(s, poly) |> type == Intersecting
+  @test intersection(poly, s) |> type == Intersecting
+
+  # CASE 2: EdgeTouching, segment lies on polygon boundary
+  s = Segment(cart(-1, 0), cart(5, 0))
+  expected = Segment(cart(0, 0), cart(4, 0))
+  @test s ∩ poly ≈ poly ∩ s ≈ expected
+  @test intersection(s, poly) |> type == EdgeTouching
+  @test intersection(poly, s) |> type == EdgeTouching
+
+  # CASE 3: CornerTouching polygon edge
+  poly = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  s = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
+  @test s ∩ poly ≈ poly ∩ s ≈ cart(0, 0)
+  @test intersection(s, poly) |> type == CornerTouching
+  @test intersection(poly, s) |> type == CornerTouching
+
+  # CASE 4: Touching polygon edge
+  s = Segment(cart(-1, 2), cart(0, 2))
+  @test s ∩ poly ≈ poly ∩ s ≈ cart(0, 2)
+  @test intersection(s, poly) |> type == Touching
+  @test intersection(poly, s) |> type == Touching
+
+  # CASE 4: Touching polygon corner
+  s = Segment(cart(-1, -1), cart(0, 0))
+  @test s ∩ poly ≈ poly ∩ s ≈ cart(0, 0)
+  @test intersection(s, poly) |> type == Touching
+  @test intersection(poly, s) |> type == Touching
+
+  # CASE 5: Degenerate segment inside polygon
+  s = Segment(cart(2, 2), cart(2, 2))
+  @test s ∩ poly ≈ poly ∩ s ≈ cart(2, 2)
+  @test intersection(s, poly) |> type == Touching
+  @test intersection(poly, s) |> type == Touching
+
+  # CASE 6: Degenerate segment outside polygon
+  s = Segment(cart(5, 5), cart(5, 5))
+  @test s ∩ poly === poly ∩ s === nothing
+  @test intersection(s, poly) |> type == NotIntersecting
+  @test intersection(poly, s) |> type == NotIntersecting
+
+  # CASE 6: Segment outside polygon
+  s = Segment(cart(-1, 5), cart(5, 5))
+  @test s ∩ poly === poly ∩ s === nothing
+  @test intersection(s, poly) |> type == NotIntersecting
+  @test intersection(poly, s) |> type == NotIntersecting
+
   # segments in 3D
   s1 = Segment(cart(0.0, 0.0, 0.0), cart(1.0, 0.0, 0.0))
   s2 = Segment(cart(0.5, 1.0, 0.0), cart(0.5, -1.0, 0.0))
@@ -450,65 +518,6 @@ end
   @test intersection(s₁, s₁) |> type == CornerTouching
   @test intersection(s₂, s₂) |> type == CornerTouching
   @test intersection(s₃, s₃) |> type == CornerTouching
-
-  # segments and polygons in 2D
-  p = PolyArea([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
-
-  # segment inside polygon
-  s = Segment(cart(1, 2), cart(3, 2))
-  @test s ∩ p ≈ p ∩ s ≈ s
-  @test intersection(s, p) |> type == Overlapping
-  @test intersection(p, s) |> type == Overlapping
-
-  # segment crosses polygon
-  s = Segment(cart(-1, 2), cart(5, 2))
-  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 2), cart(4, 2))
-  @test intersection(s, p) |> type == Overlapping
-  @test intersection(p, s) |> type == Overlapping
-
-  # segment lies on polygon boundary
-  s = Segment(cart(-1, 0), cart(5, 0))
-  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(4, 0))
-  @test intersection(s, p) |> type == Overlapping
-  @test intersection(p, s) |> type == Overlapping
-
-  # touching polygon edge
-  s = Segment(cart(-1, 2), cart(0, 2))
-  @test s ∩ p ≈ p ∩ s ≈ cart(0, 2)
-  @test intersection(s, p) |> type == Touching
-  @test intersection(p, s) |> type == Touching
-
-  # touching polygon corner
-  s = Segment(cart(-1, -1), cart(0, 0))
-  @test s ∩ p ≈ p ∩ s ≈ cart(0, 0)
-  @test intersection(s, p) |> type == Touching
-  @test intersection(p, s) |> type == Touching
-
-  # degenerate segment inside polygon
-  s = Segment(cart(2, 2), cart(2, 2))
-  @test s ∩ p ≈ p ∩ s ≈ cart(2, 2)
-  @test intersection(s, p) |> type == Touching
-  @test intersection(p, s) |> type == Touching
-
-  # degenerate segment outside polygon
-  s = Segment(cart(5, 5), cart(5, 5))
-  @test s ∩ p === p ∩ s === nothing
-  @test intersection(s, p) |> type == NotIntersecting
-  @test intersection(p, s) |> type == NotIntersecting
-
-  # segment outside polygon
-  s = Segment(cart(-1, 5), cart(5, 5))
-  @test s ∩ p === p ∩ s === nothing
-  @test intersection(s, p) |> type == NotIntersecting
-  @test intersection(p, s) |> type == NotIntersecting
-
-  # concave polygon with disconnected intersection pieces
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
-
-  s = Segment(cart(-1, 4), cart(7, 4))
-  @test s ∩ p ≈ p ∩ s ≈ Multi([Segment(cart(0, 4), cart(2, 4)), Segment(cart(4, 4), cart(6, 4))])
-  @test intersection(s, p) |> type == Overlapping
-  @test intersection(p, s) |> type == Overlapping
 
   # utils
   @test Meshes._sort4vals(2.5, 1.4, 1.1, 2.0) == (1.4, 2.0)
