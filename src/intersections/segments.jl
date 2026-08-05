@@ -203,6 +203,203 @@ function intersection(f, seg::Segment, line::Line)
   end
 end
 
+# intersection between a segment and a polygon
+# 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
+# 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
+# 3. intersect at an interior point of the segment and a polygon vertex (CornerTouching -> Point)
+# 4. intersect only at an endpoint of the segment (Touching -> Point)
+# 5. the segment is degenerate and is inside the polygon (Touching -> Point)
+# 6. do not overlap nor intersect (NotIntersecting -> Nothing)
+function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
+  a, b = vertices(seg)
+  segbbox = boundingbox(seg)
+  polybbox = boundingbox(poly)
+
+  # check for degenerate segments
+  if a ≈ b && a ∈ poly
+    return @IT Touching a f # Case 5
+  end
+
+  # assess obvious no intersection case beforehand
+  if !intersects(segbbox, polybbox)
+    return @IT NotIntersecting nothing f # Case 6
+  end
+
+  # segment endpoints as scalars + segment vector
+  segλs = [0.0, 1.0]
+  v = b - a
+  v² = v ⋅ v
+
+  # extract the first Cartesian coordinate
+  x(p) = flat(coords(p)).x
+  y(p) = flat(coords(p)).y
+
+  # choose the polygon's longest bounding-box axis
+  polymin, polymax = extrema(polybbox)
+  xside = x(polymax) - x(polymin)
+  yside = y(polymax) - y(polymin)
+  axiscoord = xside ≥ yside ? x : y
+
+  # segment range along the chosen axis
+  segmin, segmax = extrema(segbbox)
+  segstart = axiscoord(segmin)
+  segstop = axiscoord(segmax)
+
+  # assess intersections
+  boundarypoints = typeof(a)[]
+  boundaryoverlaps = Tuple{Float64,Float64}[]
+
+  for ring in rings(poly)
+    ringbbox = boundingbox(ring)
+
+    # check for obvious no intersection case beforehand
+    intersects(segbbox, ringbbox) || continue
+
+    edges = collect(segments(ring))
+    boxes = boundingbox.(edges)
+
+    # edge ranges
+    starts = map(boxes) do box
+      pmin, _ = extrema(box)
+      axiscoord(pmin)
+    end
+    stops = map(boxes) do box
+      _, pmax = extrema(box)
+      axiscoord(pmax)
+    end
+
+    # Sort by minimum coordinate
+    inds = sortperm(starts)
+    edges = edges[inds]
+    boxes = boxes[inds]
+    starts = starts[inds]
+    stops = stops[inds]
+
+    for i in eachindex(edges)
+      # edge ends before the segment begins. Later edges may still overlap, so skip only this edge.
+      stops[i] < segstart && continue
+
+      # edge starts after the segment ends. Since edges are sorted by the selected axis minimum, all later edges are also too far right.
+      starts[i] > segstop && break
+
+      # the selected axis ranges overlap, but the full bounding boxes may still be separated along the other axis
+      intersects(segbbox, boxes[i]) || continue
+
+      edge = edges[i]
+      intersection(seg, edge) do I
+        itype = type(I)
+        # no intersection
+        if itype == NotIntersecting
+          return
+        elseif itype == Overlapping
+          # Overlapping segments
+          overlap = get(I)
+          c, d = vertices(overlap)
+          λc = ustrip((c - a) ⋅ v / v²)
+          λd = ustrip((d - a) ⋅ v / v²)
+          λ₁, λ₂ = minmax(λc, λd)
+          push!(segλs, λ₁, λ₂)
+          push!(boundaryoverlaps, (λ₁, λ₂))
+        else
+          # Crossing, EdgeTouching, CornerTouching, etc.
+          p = get(I)
+          push!(boundarypoints, p)
+          λ = ustrip((p - a) ⋅ v / v²)
+          push!(segλs, λ)
+        end
+      end
+    end
+  end
+
+  # get unique boundary points
+  uniquepoints = typeof(a)[]
+  for p in boundarypoints
+    any(q -> q ≈ p, uniquepoints) || push!(uniquepoints, p)
+  end
+  boundarypoints = uniquepoints
+
+  # remove duplicate λ values and sort them
+  sort!(segλs)
+  for i in 2:length(segλs)
+    segλs[i] = mayberound(segλs[i], segλs[i - 1])
+  end
+  unique!(segλs)
+
+  # check if a λ value lies in a boundary overlap
+  function inboundaryoverlap(λ)
+    any(boundaryoverlaps) do (λ₁, λ₂)
+      λ₁ < λ < λ₂ || λ ≈ λ₁ || λ ≈ λ₂
+    end
+  end
+
+  # create segments from the λ values
+  pieces = typeof(seg)[]
+  interiorpieces = typeof(seg)[]
+  boundarypieces = typeof(seg)[]
+  for (λ₁, λ₂) in zip(segλs[1:(end - 1)], segλs[2:end])
+    λ₁ ≈ λ₂ && continue
+    λmid = (λ₁ + λ₂) / 2
+    piece = Segment(seg(λ₁), seg(λ₂))
+
+    if inboundaryoverlap(λmid)
+      push!(pieces, piece)
+      push!(boundarypieces, piece)
+    elseif seg(λmid) ∈ poly
+      push!(pieces, piece)
+      push!(interiorpieces, piece)
+    end
+  end
+
+  # merge continuous segments
+  function mergepieces(pieces)
+    length(pieces) ≤ 1 && return pieces
+
+    merged = eltype(pieces)[]
+    for piece in pieces
+      if isempty(merged)
+        push!(merged, piece)
+      else
+        previous = last(merged)
+        p₁, p₂ = vertices(previous)
+        q₁, q₂ = vertices(piece)
+        if p₂ ≈ q₁
+          merged[end] = Segment(p₁, q₂)
+        else
+          push!(merged, piece)
+        end
+      end
+    end
+    merged
+  end
+
+  pieces = mergepieces(pieces)
+  interiorpieces = mergepieces(interiorpieces)
+  boundarypieces = mergepieces(boundarypieces)
+
+  # create geometry from pieces
+  piecegeometry(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
+
+  # classifying intersections
+  if !isempty(interiorpieces)
+    geometry = piecegeometry(pieces)
+    return @IT Intersecting geometry f # Case 1
+  elseif !isempty(boundarypieces)
+    geometry = piecegeometry(boundarypieces)
+    return @IT EdgeTouching geometry f # Case 2
+  elseif length(boundarypoints) == 1
+    p = only(boundarypoints)
+    if p ≈ a || p ≈ b
+      return @IT Touching p f # Case 4
+    else
+      return @IT CornerTouching p f # Case 3
+    end
+  elseif !isempty(boundarypoints)
+    return @IT Intersecting Multi(boundarypoints) f # Case 1
+  else
+    return @IT NotIntersecting nothing f # Case 6
+  end
+end
+
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
 function intersection(f, seg::Segment{𝔼{3}}, tri::Triangle{𝔼{3}})
@@ -329,156 +526,6 @@ function intersection(f, seg::Segment{𝔼{3}}, tri::Triangle{𝔼{3}})
   p = Segment(Q1, Q2)(λ)
 
   return @IT Intersecting p f
-end
-
-# intersection between a segment and a polygon
-# 1. overlap of segment and polygon (Overlapping -> Segment)
-# 2. intersect at one point, exactly (Touching -> Point)
-# 3. the segment is degenerate and is inside the polygon (Touching -> Point)
-# 4. do not overlap nor intersect (NotIntersecting -> Nothing)
-function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
-  a, b = vertices(seg)
-  segbbox = boundingbox(seg)
-  polybbox = boundingbox(poly)
-
-  # check for degenerate segments
-  if a ≈ b && a ∈ poly
-    return @IT Touching a f # Case 3
-  end
-
-  # assess obvious no intersection case beforehand
-  if !intersects(segbbox, polybbox)
-    return @IT NotIntersecting nothing f # Case 4
-  end
-
-  # segment endpoints as scalars + segment vector
-  segλs = [0.0, 1.0]
-  v = b - a
-
-  # Extract the first Cartesian coordinate
-  x(p) = flat(coords(p)).x
-  y(p) = flat(coords(p)).y
-
-  # Choose the polygon's longest bounding-box axis
-  polymin, polymax = extrema(polybbox)
-  xside = x(polymax) - x(polymin)
-  yside = y(polymax) - y(polymin)
-  axiscoord = xside ≥ yside ? x : y
-
-  # Segment range along the chosen axis
-  segmin, segmax = extrema(segbbox)
-  segstart = axiscoord(segmin)
-  segstop = axiscoord(segmax)
-
-  # assess intersections
-  boundarypoints = typeof(a)[]
-  for ring in rings(poly)
-    ringbbox = boundingbox(ring)
-    # check for obvious no intersection case beforehand
-    intersects(segbbox, ringbbox) || continue
-    edges = collect(segments(ring))
-    boxes = boundingbox.(edges)
-    # Edge ranges
-    starts = map(boxes) do box
-      pmin, _ = extrema(box)
-      axiscoord(pmin)
-    end
-    stops = map(boxes) do box
-      _, pmax = extrema(box)
-      axiscoord(pmax)
-    end
-
-    # Sort by minimum coordinate
-    inds = sortperm(starts)
-    edges = edges[inds]
-    boxes = boxes[inds]
-    starts = starts[inds]
-    stops = stops[inds]
-    for i in eachindex(edges)
-      # Edge ends before the segment begins. Later edges may still overlap, so skip only this edge.
-      stops[i] < segstart && continue
-
-      # Edge starts after the segment ends. Since edges are sorted by the selected axis minimum, all later edges are also too far right.
-      starts[i] > segstop && break
-
-      # The selected axis ranges overlap, but the full bounding boxes may still be separated along the other axis
-      intersects(segbbox, boxes[i]) || continue
-
-      edge = edges[i]
-      intersection(seg, edge) do I
-        itype = type(I)
-        # no intersection
-        if itype == NotIntersecting
-          return
-        elseif itype == Overlapping
-          # Overlapping segments
-          seg = get(I)
-          c, d = vertices(seg)
-          λc = ustrip((c-a) ⋅ v / (v ⋅ v))
-          λd = ustrip((d-a) ⋅ v / (v ⋅ v))
-          push!(segλs, λc, λd)
-        else
-          # Crossing, EdgeTouching, CornerTouching, etc.
-          p = get(I)
-          push!(boundarypoints, p)
-          λ = ustrip((p-a) ⋅ v / (v ⋅ v))
-          push!(segλs, λ)
-        end
-      end
-    end
-  end
-
-  # get unique boundary points
-  unique!(boundarypoints)
-  # remove duplicate λ values and sort them
-  sort!(segλs)
-  for i in 2:length(segλs)
-    segλs[i] = mayberound(segλs[i], segλs[i - 1])
-  end
-  unique!(segλs)
-  # create segments from the λ values that are inside the polygon
-  pieces = typeof(seg)[]
-  for (λ₁, λ₂) in zip(segλs[1:(end - 1)], segλs[2:end])
-    λ₁ ≈ λ₂ && continue
-    λmid = (λ₁ + λ₂) / 2
-    if seg(λmid) ∈ poly
-      push!(pieces, Segment(seg(λ₁), seg(λ₂)))
-    end
-  end
-  # merge continuous segments
-  if length(pieces) > 1
-    merged = typeof(seg)[]
-    for piece in pieces
-      if isempty(merged)
-        push!(merged, piece)
-      else
-        previous = last(merged)
-        if !intersects(boundingbox(previous), boundingbox(piece))
-          push!(merged, piece)
-          continue
-        end
-        p₁, p₂ = vertices(previous)
-        q₁, q₂ = vertices(piece)
-        if p₂ ≈ q₁
-          merged[end] = Segment(p₁, q₂)
-        else
-          push!(merged, piece)
-        end
-      end
-    end
-    pieces = merged
-  end
-
-  # classifying intersections
-  if !isempty(pieces) # positive-length intersection
-    geometry = length(pieces) == 1 ? only(pieces) : Multi(pieces)
-    return @IT Overlapping geometry f # Case 1
-  elseif !isempty(boundarypoints) # no segments, but some intersection
-    geometry = length(boundarypoints) == 1 ? only(boundarypoints) : Multi(boundarypoints)
-    return @IT Touching geometry f # Case 2
-  else
-    return @IT NotIntersecting nothing f # Case 5 
-  end
 end
 
 # sorts four numbers using a sorting network 
