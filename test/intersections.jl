@@ -478,7 +478,7 @@ end
   @test intersection(s, p) |> type == CornerTouching
   @test intersection(p, s) |> type == CornerTouching
   s = Segment(cart(-1, 2), cart(0, 2))
-  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ cart(0, 2)
   @test intersection(s, p) |> type == Touching
   @test intersection(p, s) |> type == Touching
@@ -488,7 +488,7 @@ end
   @test intersection(s, p) |> type == Touching
   @test intersection(p, s) |> type == Touching
   s = Segment(cart(2, 2), cart(2, 2))
-  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ cart(2, 2)
   @test intersection(s, p) |> type == Touching
   @test intersection(p, s) |> type == Touching
@@ -499,6 +499,11 @@ end
   @test intersection(p, s) |> type == NotIntersecting
   s = Segment(cart(-1, 5), cart(5, 5))
   p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  @test s ∩ p === p ∩ s === nothing
+  @test intersection(s, p) |> type == NotIntersecting
+  @test intersection(p, s) |> type == NotIntersecting
+  s = Segment(cart(3, 3), cart(3, 5))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p === p ∩ s === nothing
   @test intersection(s, p) |> type == NotIntersecting
   @test intersection(p, s) |> type == NotIntersecting
