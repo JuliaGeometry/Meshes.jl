@@ -207,7 +207,7 @@ end
 # 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
 # 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
 # 3. intersect at an interior point of the segment and a polygon vertex (CornerTouching -> Point)
-# 4. intersect only at an endpoint of the segment (Touching -> Point)
+# 4. intersect at an endpoint of the segment (Touching -> Point)
 # 5. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
