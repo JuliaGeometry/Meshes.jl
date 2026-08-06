@@ -508,6 +508,17 @@ end
   @test intersection(s, p) |> type == NotIntersecting
   @test intersection(p, s) |> type == NotIntersecting
 
+  # type stability tests
+  s₁ = Segment(cart(-1, 4), cart(7, 4))
+  s₂ = Segment(cart(-1, 0), cart(5, 0))
+  s₃ = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
+  s₄ = Segment(cart(-1, 2), cart(0, 2))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @inferred someornone(s₁, p)
+  @inferred someornone(s₂, p)
+  @inferred someornone(s₃, p)
+  @inferred someornone(s₄, p)
+
   # utils
   @test Meshes._sort4vals(2.5, 1.4, 1.1, 2.0) == (1.4, 2.0)
   @test Meshes._sort4vals(2.0, 1.1, 1.4, 2.5) == (1.4, 2.0)
