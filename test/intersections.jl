@@ -469,7 +469,7 @@ end
   @test intersection(p, s) |> type == Intersecting
   s = Segment(cart(-1, 0), cart(5, 0))
   p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
-  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(4, 0))
+  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(5, 0))
   @test intersection(s, p) |> type == EdgeTouching
   @test intersection(p, s) |> type == EdgeTouching
   s = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
