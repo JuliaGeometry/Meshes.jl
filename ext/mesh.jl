@@ -88,7 +88,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
 
     if facecolors
       # initialize normals data
-      tnormals = Vector{Makie.Vec{3,Float32}}(undef, ntri)
+      tnormals = edim == Val(3) ? Vector{Makie.Vec{3,Float32}}(undef, ntri) : nothing
       tcolors = Vector{typeof(first(colors))}(undef, ntri)
     else # vertex coloring
       # nothing needs to be done because
@@ -101,12 +101,16 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     end
     for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
-      n = normal(mesh[eind])
+      if edim == Val(3)
+        n = normal(mesh[eind])
+      end
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
         if facecolors
-          tnormals[tind] = normalsign * asmakie(n)
+          if edim == Val(3)
+            tnormals[tind] = normalsign * asmakie(n)
+          end
           tcolors[tind] = colors[eind]
         end
       end
@@ -114,7 +118,9 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
 
     # element vs. vertex coloring
     if facecolors
-      tnormals = GB.FaceView(tnormals, GB.GLTriangleFace.(eachindex(tnormals)))
+      if edim == Val(3)
+        tnormals = GB.FaceView(tnormals, GB.GLTriangleFace.(eachindex(tnormals)))
+      end
       tcolors = GB.FaceView(tcolors, GB.GLTriangleFace.(eachindex(tcolors)))
     end
 
