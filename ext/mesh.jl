@@ -52,83 +52,82 @@ end
 
 function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
   # compute triangle mesh and colors
-  Makie.map!(plot, [:object, :colorant], [:tmesh, :tcolors]) do mesh, colorant
+  Makie.map!(plot, [:object, :colorant], [:tmesh]) do mesh, colorant
     # relevant settings
     nvert = nvertices(mesh)
     nelem = nelements(mesh)
     verts = map(asmakie, eachvertex(mesh))
     elems = elements(topology(mesh))
 
-    # decide whether or not to reverse connectivity list
-    rev = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? reverse : identity
+    facecolors = false
+    if colorant isa AbstractVector
+      colors = Makie.RGBAf.(colorant) # GB.Mesh needs RGBA(f) type
+      ncolor = length(colorant)
+      if ncolor == nelem # element coloring
+        facecolors = true
+      elseif ncolor != nvert
+        throw(ArgumentError("provided $ncolor colors but the mesh has
+                             $nvert vertices and $nelem elements."))
+      end
+    else
+      colors = fill(Makie.RGBAf(colorant), nvert)
+    end
+
+    # decide whether or not to reverse connectivity list and normals
+    rev = identity
+    normalsign = 1.0
+    if crs(mesh) <: LatLon && orientation(first(mesh)) == CW
+      rev = reverse
+      normalsign = -1.0
+    end
 
     # fan triangulation (assume convexity)
     ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     tind = 0
-    for elem in elems
+
+    if facecolors
+      # initialize normals data
+      tnormals = Vector{Makie.Vec{3,Float32}}(undef, ntri)
+      tcolors = Vector{typeof(first(colors))}(undef, ntri)
+    else # vertex coloring
+      # nothing needs to be done because
+      # this is the default in Makie and
+      # because the triangulation below
+      # does not change the vertices in
+      # the original polygonal mesh
+      tnormals = nothing
+      tcolors = colors
+    end
+    for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
+      n = normal(mesh[eind])
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
+        if facecolors
+          tnormals[tind] = normalsign * asmakie(n)
+          tcolors[tind] = colors[eind]
+        end
       end
     end
 
     # element vs. vertex coloring
-    if colorant isa AbstractVector
-      ncolor = length(colorant)
-      if ncolor == nelem # element coloring
-        # duplicate vertices and adjust
-        # connectivities to avoid linear
-        # interpolation of colors
-        tind = 0
-        elem4tri = Dict{Int,Int}()
-        sizehint!(elem4tri, ntri)
-        for (eind, e) in enumerate(elems)
-          for _ in 1:(nvertices(pltype(e)) - 2)
-            tind += 1
-            elem4tri[tind] = eind
-          end
-        end
-        nv = 3ntri
-        tverts = [verts[i] for tri in tris for i in tri]
-        telems = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntri)]
-        tcolors = map(1:nv) do i
-          t = ceil(Int, i / 3)
-          e = elem4tri[t]
-          colorant[e]
-        end
-      elseif ncolor == nvert # vertex coloring
-        # nothing needs to be done because
-        # this is the default in Makie and
-        # because the triangulation above
-        # does not change the vertices in
-        # the original polygonal mesh
-        tverts = verts
-        telems = tris
-        tcolors = colorant
-      else
-        throw(ArgumentError("provided $ncolor colors but the mesh has
-                             $nvert vertices and $nelem elements."))
-      end
-    else # single color
-      # nothing needs to be done
-      tverts = verts
-      telems = tris
-      tcolors = colorant
+    if facecolors
+      tnormals = GB.FaceView(tnormals, GB.GLTriangleFace.(eachindex(tnormals)))
+      tcolors = GB.FaceView(tcolors, GB.GLTriangleFace.(eachindex(tcolors)))
     end
 
     # triangle mesh
-    tmesh = GB.Mesh(tverts, telems)
-
-    tmesh, tcolors
+    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
+    return (tmesh,)
   end
 
   # enable shading in 3D
   shading = edim == Val(3)
 
   # visualize as triangle mesh
-  Makie.mesh!(plot, plot.tmesh, color=plot.tcolors, shading=shading)
+  Makie.mesh!(plot, plot.tmesh, shading=shading)
 
   if plot.showsegments[]
     vizfacets!(plot)
