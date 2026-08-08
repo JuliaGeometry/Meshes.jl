@@ -174,9 +174,9 @@ end
 @testitem "JarvisMarch(k)" setup = [Setup] begin
   # k must be greater than 2 and less than the number of unique points
   pt = cart.([(0, 0)])
-  @test pt[1] == hull(pt, JarvisMarch(3))
+  @test_throws AssertionError hull(pt, JarvisMarch(2))
   line = cart.([(0, 0), (1, 0)])
-  @test Segment(line...) == hull(line, JarvisMarch(3))
+  @test_throws AssertionError hull(line, JarvisMarch(2))
   triangle = cart.([(0, 0), (1, 0), (0, 1)])
   @test_throws AssertionError hull(triangle, JarvisMarch(2))
   @test_throws AssertionError hull(triangle, JarvisMarch(3))
@@ -184,6 +184,8 @@ end
   @test_throws AssertionError hull(pts, JarvisMarch(2))
   @test_throws AssertionError hull(pts, JarvisMarch(5))
   @test_throws AssertionError hull(pts, JarvisMarch(6))
+  chul = hull(pts, JarvisMarch(4))
+  @test issimple(chul) && nvertices(chul) ≥ 3 && all(pts .∈ Ref(chul))
 
   # U-shaped point set with a notch between x=1 and x=3 above y=1
   pts = cart.([
