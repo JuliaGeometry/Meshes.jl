@@ -36,24 +36,25 @@ grid = CartesianGrid(10, 10, 10)
 viz(grid, showsegments = true, segmentcolor = :teal)
 ```
 
-### Normals
+### Colors
 
-By default, Makie will compute per-vertex normals, resulting in a smoothed
-representation of e.g. a discretized sphere:
+Colors can be set globaly for the entire geometry as with the triangles above.
+If the colors are a vector that is the same size as the number of vertices,
+the coloring is per-vertex:
 
 ```@example viz
 sphere = Sphere((0.,0.,0.), 1.)
 mesh = discretize(sphere, RegularDiscretization(10,10))
-viz(mesh)
+viz(mesh; color=rand([:red,:green,:blue],nvertices(mesh)))
 ```
 
-If this smoothing is not desired, the `normals` keyword can be used to set the
-normals that will be used by Makie when rendering. If the number of normals
-equals the number of mesh elements then per-face normals are assumed, if it
-matches the number of vertices they are used as per-vertex normals.
+If the number of colors is equal to the number of elements, per-face coloring
+is used. In this case, the normals used in the visualization are also
+calculated per face, resulting in a faceted appearance, even if the same
+color is applied to each face:
 
 ```@example viz
 sphere = Sphere((0.,0.,0.), 1.)
 mesh = discretize(sphere, RegularDiscretization(10,10))
-viz(mesh; normals=normal.(mesh))
+viz(mesh; color=fill(:grey,nelements(mesh)))
 ```
