@@ -73,15 +73,6 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       colors = fill(Makie.RGBAf(colorant), nvert)
     end
 
-    normals_in = plot.normals[]
-    normals = nothing
-    nnormals = isnothing(normals_in) ? 0 : length(normals_in)
-    facenormals = nnormals == nelem
-    if nnormals != 0 && nnormals != nelem && nnormals != nvert
-        throw(ArgumentError("provided $nnormals normals but the mesh has
-                             $nvert vertices and $nelem elements."))
-    end
-
     # decide whether or not to reverse connectivity list and normals
     rev = identity
     normalsign = 1.0
@@ -94,16 +85,10 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     tind = 0
-    # initialize normals data
-    if nnormals != 0
-      if facenormals
-        normals = Vector{Makie.Vec{3, Float32}}(undef, ntri)
-      else
-        # vertex normals can be copied
-        normals = map(asmakie, normals_in) .* normalsign
-      end
-    end
+
     if facecolors
+      # initialize normals data
+      tnormals = Vector{Makie.Vec{3,Float32}}(undef, ntri)
       tcolors = Vector{typeof(first(colors))}(undef, ntri)
     else # vertex coloring
       # nothing needs to be done because
@@ -111,33 +96,30 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       # because the triangulation below
       # does not change the vertices in
       # the original polygonal mesh
+      tnormals = nothing
       tcolors = colors
     end
     for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
+      n = normal(mesh[eind])
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
-        if facenormals
-          normals[tind] = normalsign * asmakie(normals_in[eind])
-        end
         if facecolors
+          tnormals[tind] = normalsign * asmakie(n)
           tcolors[tind] = colors[eind]
         end
       end
     end
 
-    if facenormals
-      normals = GB.FaceView(normals, GB.GLTriangleFace.(eachindex(normals)))
-    end
-
     # element vs. vertex coloring
     if facecolors
+      tnormals = GB.FaceView(tnormals, GB.GLTriangleFace.(eachindex(tnormals)))
       tcolors = GB.FaceView(tcolors, GB.GLTriangleFace.(eachindex(tcolors)))
     end
 
     # triangle mesh
-    tmesh = GB.mesh(verts, tris; color=tcolors, normal=normals)
+    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
     return (tmesh,)
   end
 
