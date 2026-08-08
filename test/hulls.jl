@@ -36,35 +36,34 @@
     verts = vertices(chul)
     @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
 
-    pts =
-      cart.([
-        (0, 5),
-        (1, 5),
-        (1, 4),
-        (2, 4),
-        (2, 3),
-        (3, 3),
-        (4, 3),
-        (5, 3),
-        (5, 4),
-        (6, 4),
-        (6, 5),
-        (7, 5),
-        (7, 6),
-        (7, 7),
-        (6, 7),
-        (6, 8),
-        (5, 8),
-        (5, 9),
-        (4, 9),
-        (3, 9),
-        (2, 9),
-        (2, 8),
-        (1, 8),
-        (1, 7),
-        (0, 7),
-        (0, 6)
-      ])
+    pts = cart.([
+      (0, 5),
+      (1, 5),
+      (1, 4),
+      (2, 4),
+      (2, 3),
+      (3, 3),
+      (4, 3),
+      (5, 3),
+      (5, 4),
+      (6, 4),
+      (6, 5),
+      (7, 5),
+      (7, 6),
+      (7, 7),
+      (6, 7),
+      (6, 8),
+      (5, 8),
+      (5, 9),
+      (4, 9),
+      (3, 9),
+      (2, 9),
+      (2, 8),
+      (1, 8),
+      (1, 7),
+      (0, 7),
+      (0, 6)
+    ])
     chul = hull(pts, method)
     @test nvertices(chul) < length(pts)
 
@@ -78,7 +77,7 @@
       points = [cart(i - 1, j - 1) for i in 1:11 for j in 1:11]
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(10, 0), cart(10, 10), cart(0, 10)]
-      for _ in 1:100 # test presence of interior points doesn't affect the result 
+      for _ in 1:100 # test presence of interior points doesn't affect the result
         push!(points, cart(10 * rand(), 10 * rand()))
       end
       chull = hull(points, method)
@@ -97,7 +96,7 @@
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(100, 0)]
 
-      # partially collinear 
+      # partially collinear
       points = [
         cart(2, 0),
         cart(4, 0),
@@ -170,4 +169,82 @@ end
   h = convexhull(Multi([b1, b2]))
   @test cart(-0.8, -0.8) ∈ h
   @test cart(0.2, 0.2) ∈ h
+end
+
+@testitem "JarvisMarch(k)" setup = [Setup] begin
+  # k must be greater than 2 and less than the number of unique points
+  pt = cart.([(0, 0)])
+  @test_throws AssertionError hull(pt, JarvisMarch(2))
+  line = cart.([(0, 0), (1, 0)])
+  @test_throws AssertionError hull(line, JarvisMarch(2))
+  triangle = cart.([(0, 0), (1, 0), (0, 1)])
+  @test_throws AssertionError hull(triangle, JarvisMarch(2))
+  @test_throws AssertionError hull(triangle, JarvisMarch(3))
+  pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
+  @test_throws AssertionError hull(pts, JarvisMarch(2))
+  @test_throws AssertionError hull(pts, JarvisMarch(5))
+  @test_throws AssertionError hull(pts, JarvisMarch(6))
+  chul = hull(pts, JarvisMarch(4))
+  @test issimple(chul) && nvertices(chul) ≥ 3 && all(pts .∈ Ref(chul))
+
+  # U-shaped point set with a notch between x=1 and x=3 above y=1
+  pts = cart.([
+    (0, 0),
+    (1, 0),
+    (2, 0),
+    (3, 0),
+    (4, 0),
+    (4, 1),
+    (4, 2),
+    (4, 3),
+    (4, 4),
+    (3, 4),
+    (3, 3),
+    (3, 2),
+    (3, 1),
+    (2, 1),
+    (1, 1),
+    (1, 2),
+    (1, 3),
+    (1, 4),
+    (0, 4),
+    (0, 3),
+    (0, 2),
+    (0, 1)
+  ])
+
+  # k too small to close a valid hull
+  @test_throws ArgumentError hull(pts, JarvisMarch(3))
+  @test_throws ArgumentError hull(pts, JarvisMarch(4))
+
+  # large enough k recovers the concave boundary
+  chul = hull(pts, JarvisMarch(5))
+  @test issimple(chul)
+  @test nvertices(chul) ≥ 3
+  @test all(pts .∈ Ref(chul))
+  @test area(chul) < area(hull(pts, JarvisMarch()))
+  @test area(chul) ≈ T(10) * u"m^2"
+  @test Set(vertices(chul)) == Set(pts)
+
+  # true concavity test
+  poly = readpoly(T, joinpath(datadir, "hull.line"))
+  pts = vertices(poly)
+  chul = hull(pts, JarvisMarch(3))
+  @test nvertices(chul) == length(pts)
+  chul = hull(pts, JarvisMarch(length(pts)-1))
+  @test nvertices(chul) < length(pts)
+
+  # random points with fixed k
+  rng = StableRNG(123)
+  for _ in 1:100, k in (3, 4, 5)
+    rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
+    local chul = try
+      hull(rpts, JarvisMarch(k))
+    catch e
+      @test e isa ArgumentError
+      continue
+    end
+    @test nvertices(chul) ≥ 3
+    @test all(rpts .∈ Ref(chul))
+  end
 end
