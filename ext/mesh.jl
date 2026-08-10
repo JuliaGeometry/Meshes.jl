@@ -121,7 +121,9 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     end
 
     # triangle mesh
-    GB.mesh(verts, tris; color=tcolors, normal=tnormals)
+    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
+
+    (tmesh,)
   end
 
   # enable shading in 3D
