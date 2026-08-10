@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of five types:
-#
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at one endpoint of one segment (EdgeTouching -> Point)
 # 3. intersect at one endpoint of both segments (CornerTouching -> Point)
@@ -98,7 +97,6 @@ function intersection(f, seg₁::Segment, seg₂::Segment)
 end
 
 # The intersection type can be one of five types:
-# 
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at one end point of segment xor origin of ray (EdgeTouching -> Point)
 # 3. intersects at one end point of segment and origin of ray (CornerTouching -> Point)
@@ -169,7 +167,7 @@ function intersection(f, seg::Segment, ray::Ray)
   end
 end
 
-# The intersection type can be one of six types:
+# The intersection type can be one of four types:
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at an end point of segment (Touching -> Point)
 # 3. overlap of line and segment (Overlapping -> Segment)
@@ -203,11 +201,11 @@ function intersection(f, seg::Segment, line::Line)
   end
 end
 
-# intersection between a segment and a polygon
+# The intersection type can be one of six types:
 # 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
-# 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
+# 2. overlap with a polygon edge (EdgeTouching -> Segment or Multi)
 # 3. intersect at a polygon vertex (CornerTouching -> Point)
-# 4. intersect only at an endpoint of the segment, though not at a poligon vertex (Touching -> Point)
+# 4. intersect at an endpoint of the segment (Touching -> Point)
 # 5. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
