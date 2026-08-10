@@ -215,20 +215,19 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
   if !intersects(sbox, pbox)
-    return @IT NotIntersecting nothing f # Case 6
+    return @IT NotIntersecting nothing f
   end
 
   # check for degenerate segments
   if a ≈ b && a ∈ poly && !any(v -> a ≈ v, vertices(poly))
-    return @IT Touching a f # Case 5
+    return @IT Touching a f
   elseif a ≈ b && any(v -> a ≈ v, vertices(poly))
-    return @IT CornerTouching a f # Case 3
+    return @IT CornerTouching a f
   end
 
   # segment endpoints as scalars + segment vector
-  segλs = [0.0, 1.0]
-  v = b - a
-  v² = v ⋅ v
+  λs = [0.0, 1.0]
+  v = normalize(b - a)
 
   # extract flat xy coordinates
   x(p) = flat(coords(p)).x
@@ -268,7 +267,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       axiscoord(pmax)
     end
 
-    # Sort by minimum coordinate
+    # sort by minimum coordinate
     inds = sortperm(starts)
     edges = edges[inds]
     boxes = boxes[inds]
@@ -288,24 +287,21 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       edge = edges[i]
       intersection(seg, edge) do I
         itype = type(I)
-        # no intersection
         if itype == NotIntersecting
-          return
+          return nothing
         elseif itype == Overlapping
-          # Overlapping segments
           overlap = get(I)
           c, d = vertices(overlap)
-          λc = ustrip((c - a) ⋅ v / v²)
-          λd = ustrip((d - a) ⋅ v / v²)
+          λc = ustrip((c - a) ⋅ v)
+          λd = ustrip((d - a) ⋅ v)
           λ₁, λ₂ = minmax(λc, λd)
-          push!(segλs, λ₁, λ₂)
+          push!(λs, λ₁, λ₂)
           push!(boundaryoverlaps, (λ₁, λ₂))
         else
-          # Crossing, EdgeTouching, CornerTouching, etc.
           p = get(I)
           push!(boundarypoints, p)
-          λ = ustrip((p - a) ⋅ v / v²)
-          push!(segλs, λ)
+          λ = ustrip((p - a) ⋅ v)
+          push!(λs, λ)
         end
       end
     end
@@ -319,11 +315,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   boundarypoints = uniquepoints
 
   # remove duplicate λ values and sort them
-  sort!(segλs)
-  for i in 2:length(segλs)
-    segλs[i] = mayberound(segλs[i], segλs[i - 1])
+  sort!(λs)
+  for i in 2:length(λs)
+    λs[i] = mayberound(λs[i], λs[i - 1])
   end
-  unique!(segλs)
+  unique!(λs)
 
   # check if a λ value lies in a boundary overlap
   function inboundaryoverlap(λ)
@@ -336,7 +332,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   pieces = typeof(seg)[]
   interiorpieces = typeof(seg)[]
   boundarypieces = typeof(seg)[]
-  for (λ₁, λ₂) in zip(segλs[1:(end - 1)], segλs[2:end])
+  for (λ₁, λ₂) in zip(λs[1:(end - 1)], λs[2:end])
     λ₁ ≈ λ₂ && continue
     λmid = (λ₁ + λ₂) / 2
     piece = Segment(seg(λ₁), seg(λ₂))
@@ -360,27 +356,27 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # classifying intersections
   if !isempty(interiorpieces)
     geometry = piecegeometry(pieces)
-    return @IT Intersecting geometry f # Case 1
+    return @IT Intersecting geometry f
   elseif !isempty(boundarypieces)
     geometry = piecegeometry(boundarypieces)
-    return @IT EdgeTouching geometry f # Case 2
+    return @IT EdgeTouching geometry f
   elseif length(boundarypoints) == 1
     p = only(boundarypoints)
     isendpoint = (p ≈ a || p ≈ b)
     isvertex = any(v -> p ≈ v, vertices(poly))
     if isendpoint && !isvertex
-      return @IT Touching p f # Case 4
+      return @IT Touching p f
     else
-      return @IT CornerTouching p f # Case 3
+      return @IT CornerTouching p f
     end
   elseif !isempty(boundarypoints)
-    return @IT Intersecting Multi(boundarypoints) f # Case 1
+    return @IT Intersecting Multi(boundarypoints) f
   else
-    return @IT NotIntersecting nothing f # Case 6
+    return @IT NotIntersecting nothing f
   end
 end
 
-# Merge the continuous segments of a segment list (`pieces`) into a single geometry
+# merge the continuous segments of a segment list (`pieces`) into a single geometry
 function _mergepieces(pieces)
   length(pieces) ≤ 1 && return pieces
   merged = eltype(pieces)[]
