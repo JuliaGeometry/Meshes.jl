@@ -201,15 +201,14 @@ function intersection(f, seg::Segment, line::Line)
   end
 end
 
-# The intersection type can be one of six types:
+# intersection between a segment and a polygon
 # 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
-# 2. overlap with a polygon edge (EdgeTouching -> Segment or Multi)
+# 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
 # 3. intersect at a polygon vertex (CornerTouching -> Point)
-# 4. intersect at an endpoint of the segment (Touching -> Point)
-# 5. the segment is degenerate and is inside the polygon (Touching -> Point)
-# 6. do not overlap nor intersect (NotIntersecting -> Nothing)
+# 4. intersect at a single non-vertex point (Touching -> Point)
+# 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
-  # check bounding boxes for early exit
+  # check bounding ebox for early exit
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
   if !intersects(sbox, pbox)
@@ -224,64 +223,64 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     return @IT CornerTouching a f
   end
 
-  # segment endpoints as scalars + segment vector
-  λs = [0.0, 1.0]
-  v = normalize(b - a)
-
   # extract flat xy coordinates
   x(p) = flat(coords(p)).x
   y(p) = flat(coords(p)).y
 
   # choose the polygon's longest bounding-box axis
-  polymin, polymax = extrema(pbox)
-  xside = x(polymax) - x(polymin)
-  yside = y(polymax) - y(polymin)
+  pmin, pmax = extrema(pbox)
+  xside = x(pmax) - x(pmin)
+  yside = y(pmax) - y(pmin)
   axiscoord = xside ≥ yside ? x : y
 
   # segment range along the chosen axis
-  segmin, segmax = extrema(sbox)
-  segstart = axiscoord(segmin)
-  segstop = axiscoord(segmax)
+  smin, smax = extrema(sbox)
+  sstart = axiscoord(smin)
+  sstop = axiscoord(smax)
 
   # assess intersections
   boundarypoints = typeof(a)[]
   boundaryoverlaps = Tuple{Float64,Float64}[]
 
+  # segment endpoints as scalars + segment vector
+  λs = [0.0, 1.0]
+  v = (b-a) / ((b-a) ⋅ (b-a))
+
   for ring in rings(poly)
-    ringbbox = boundingbox(ring)
+    rbox = boundingbox(ring)
 
     # check for obvious no intersection case beforehand
-    intersects(sbox, ringbbox) || continue
+    intersects(sbox, rbox) || continue
 
     edges = collect(segments(ring))
-    boxes = boundingbox.(edges)
+    ebox = boundingbox.(edges)
 
     # edge ranges
-    starts = map(boxes) do box
+    estart = map(ebox) do box
       pmin, _ = extrema(box)
       axiscoord(pmin)
     end
-    stops = map(boxes) do box
+    estop = map(ebox) do box
       _, pmax = extrema(box)
       axiscoord(pmax)
     end
 
     # sort by minimum coordinate
-    inds = sortperm(starts)
+    inds = sortperm(estart)
     edges = edges[inds]
-    boxes = boxes[inds]
-    starts = starts[inds]
-    stops = stops[inds]
+    ebox = ebox[inds]
+    estart = estart[inds]
+    estop = estop[inds]
 
     for i in eachindex(edges)
       # edge ends before the segment begins. Later edges may still overlap, so skip only this edge.
-      stops[i] < segstart && continue
+      estop[i] < sstart && continue
 
       # edge starts after the segment ends. Since edges are sorted by the selected axis minimum, all later edges are also too far right.
-      starts[i] > segstop && break
+      estart[i] > sstop && break
 
       # the selected axis ranges overlap, but the full bounding boxes may still be separated along the other axis
-      intersects(sbox, boxes[i]) || continue
+      intersects(sbox, ebox[i]) || continue
 
       edge = edges[i]
       intersection(seg, edge) do I
