@@ -329,14 +329,18 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   pieces = typeof(seg)[]
   interiorpieces = typeof(seg)[]
   boundarypieces = typeof(seg)[]
-  for (λ₁, λ₂) in zip(λs[1:(end - 1)], λs[2:end])
+  for i in 1:(length(λs) - 1)
+    λ₁ = λs[i]
+    λ₂ = λs[i + 1]
+
     λ₁ ≈ λ₂ && continue
-    λmid = (λ₁ + λ₂) / 2
+
+    λₘ = (λ₁ + λ₂) / 2
     piece = Segment(seg(λ₁), seg(λ₂))
-    if inboundaryoverlap(λmid)
+    if inboundaryoverlap(λₘ)
       push!(pieces, piece)
       push!(boundarypieces, piece)
-    elseif seg(λmid) ∈ poly
+      elseif seg(λₘ) ∈ poly
       push!(pieces, piece)
       push!(interiorpieces, piece)
     end
