@@ -224,7 +224,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       intersects(sbox, boundingbox(edge)) || continue
       intersection(seg, edge) do I
         if type(I) == NotIntersecting
-          continue
+          return nothing
         elseif type(I) == Overlapping
           s = get(I)
           push!(splitpoints, vertices(s)...)
