@@ -210,8 +210,13 @@ end
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   a, b = vertices(seg)
-  segbbox = boundingbox(seg)
-  polybbox = boundingbox(poly)
+
+  # check bounding boxes for early exit
+  sbox = boundingbox(seg)
+  pbox = boundingbox(poly)
+  if !intersects(sbox, pbox)
+    return @IT NotIntersecting nothing f # Case 6
+  end
 
   # check for degenerate segments
   if a ≈ b && a ∈ poly && !any(v -> a ≈ v, vertices(poly))
@@ -220,28 +225,23 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     return @IT CornerTouching a f # Case 3
   end
 
-  # assess obvious no intersection case beforehand
-  if !intersects(segbbox, polybbox)
-    return @IT NotIntersecting nothing f # Case 6
-  end
-
   # segment endpoints as scalars + segment vector
   segλs = [0.0, 1.0]
   v = b - a
   v² = v ⋅ v
 
-  # extract the first Cartesian coordinate
+  # extract flat xy coordinates
   x(p) = flat(coords(p)).x
   y(p) = flat(coords(p)).y
 
   # choose the polygon's longest bounding-box axis
-  polymin, polymax = extrema(polybbox)
+  polymin, polymax = extrema(pbox)
   xside = x(polymax) - x(polymin)
   yside = y(polymax) - y(polymin)
   axiscoord = xside ≥ yside ? x : y
 
   # segment range along the chosen axis
-  segmin, segmax = extrema(segbbox)
+  segmin, segmax = extrema(sbox)
   segstart = axiscoord(segmin)
   segstop = axiscoord(segmax)
 
@@ -253,7 +253,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     ringbbox = boundingbox(ring)
 
     # check for obvious no intersection case beforehand
-    intersects(segbbox, ringbbox) || continue
+    intersects(sbox, ringbbox) || continue
 
     edges = collect(segments(ring))
     boxes = boundingbox.(edges)
@@ -283,7 +283,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       starts[i] > segstop && break
 
       # the selected axis ranges overlap, but the full bounding boxes may still be separated along the other axis
-      intersects(segbbox, boxes[i]) || continue
+      intersects(sbox, boxes[i]) || continue
 
       edge = edges[i]
       intersection(seg, edge) do I
