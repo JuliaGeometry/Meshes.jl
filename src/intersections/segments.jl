@@ -208,7 +208,7 @@ end
 # 4. intersect at a single non-vertex point (Touching -> Point)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
-  # check bounding boxes for early exit
+  # early exit if bounding boxes do not intersect
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
@@ -224,18 +224,16 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     end
   end
 
-  # extract flat xy coordinates
+  # coordinate with largest bounding box side
+  xside, yside = sides(pbox)
   x(p) = flat(coords(p)).x
   y(p) = flat(coords(p)).y
-
-  # choose the polygon's longest bounding box axis
-  xside, yside = sides(pbox)
-  axiscoord = xside ≥ yside ? x : y
+  coord = xside ≥ yside ? x : y
 
   # segment range along the chosen axis
   smin, smax = extrema(sbox)
-  sstart = axiscoord(smin)
-  sstop = axiscoord(smax)
+  sstart = coord(smin)
+  sstop = coord(smax)
 
   # assess intersections
   boundarypoints = typeof(a)[]
@@ -257,11 +255,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     # edge ranges
     estart = map(ebox) do box
       pmin, _ = extrema(box)
-      axiscoord(pmin)
+      coord(pmin)
     end
     estop = map(ebox) do box
       _, pmax = extrema(box)
-      axiscoord(pmax)
+      coord(pmax)
     end
 
     # sort by minimum coordinate
