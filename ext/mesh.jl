@@ -59,6 +59,9 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     verts = map(asmakie, eachvertex(mesh))
     elems = elements(topology(mesh))
 
+    # decide whether or not to reverse connectivity list and normals
+    rev, sign = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? (reverse, -1) : (identity, 1)
+
     facecolors = false
     if colorant isa AbstractVector
       colors = Makie.RGBAf.(colorant) # GB.Mesh needs RGBA(f) type
@@ -71,14 +74,6 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       end
     else
       colors = fill(Makie.RGBAf(colorant), nvert)
-    end
-
-    # decide whether or not to reverse connectivity list and normals
-    rev = identity
-    normalsign = 1.0
-    if crs(mesh) <: LatLon && orientation(first(mesh)) == CW
-      rev = reverse
-      normalsign = -1.0
     end
 
     # fan triangulation (assume convexity)
@@ -99,6 +94,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       tnormals = nothing
       tcolors = colors
     end
+
     for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
       if edim == Val(3)
@@ -109,7 +105,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
         if facecolors
           if edim == Val(3)
-            tnormals[tind] = normalsign * asmakie(n)
+            tnormals[tind] = sign * asmakie(n)
           end
           tcolors[tind] = colors[eind]
         end
@@ -125,8 +121,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     end
 
     # triangle mesh
-    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
-    return (tmesh,)
+    GB.mesh(verts, tris; color=tcolors, normal=tnormals)
   end
 
   # enable shading in 3D
