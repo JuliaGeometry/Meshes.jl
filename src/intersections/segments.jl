@@ -213,28 +213,22 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   pbox = boundingbox(poly)
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
 
-  # assess intersections
-  a, b = vertices(seg)
-  splitpoints = typeof(a)[a, b]
-  boundarypoints = typeof(a)[]
+  # store and classify intersection points
+  splitpoints = collect(eachvertex(seg))
+  boundarypoints = empty(splitpoints)
   boundaryoverlaps = typeof(seg)[]
-
   for ring in rings(poly)
     rbox = boundingbox(ring)
-    # check for obvious no intersection case beforehand
     intersects(sbox, rbox) || continue
     for edge in segments(ring)
-      # the selected axis ranges overlap, but the full bounding boxes may still be separated along the other axis
       intersects(sbox, boundingbox(edge)) || continue
       intersection(seg, edge) do I
-        itype = type(I)
-        if itype == NotIntersecting
-          return nothing
-        elseif itype == Overlapping
-          overlap = get(I)
-          c, d = vertices(overlap)
-          push!(splitpoints, c, d)
-          push!(boundaryoverlaps, overlap)
+        if type(I) == NotIntersecting
+          continue
+        elseif type(I) == Overlapping
+          s = get(I)
+          push!(splitpoints, vertices(s)...)
+          push!(boundaryoverlaps, s)
         else
           p = get(I)
           push!(splitpoints, p)
@@ -243,10 +237,14 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       end
     end
   end
-  unique!(boundarypoints)
-  dir = normalize(b-a)
-  λ(p) = ustrip((p - a) ⋅ dir)
+
+  # sort intersection points along the segment
+  a, b = vertices(seg)
+  λ(p) = (p - a) ⋅ (b - a)
   sort!(splitpoints, by=λ)
+
+  # remove duplicate points in boundary
+  unique!(boundarypoints)
 
   # create resulting intersection segments from base intersection points
   pieces = typeof(seg)[]
