@@ -215,10 +215,13 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   # check for degenerate segments
   a, b = vertices(seg)
-  if a ≈ b && a ∈ poly && !any(v -> a ≈ v, vertices(poly))
-    return @IT Touching a f
-  elseif a ≈ b && any(v -> a ≈ v, vertices(poly))
-    return @IT CornerTouching a f
+  if a ≈ b
+    isvertex = any(≈(a), eachvertex(poly))
+    if a ∈ poly && !isvertex
+      return @IT Touching a f
+    elseif isvertex
+      return @IT CornerTouching a f
+    end
   end
 
   # extract flat xy coordinates
