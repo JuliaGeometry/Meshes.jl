@@ -209,8 +209,6 @@ end
 # 5. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
-  a, b = vertices(seg)
-
   # check bounding boxes for early exit
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
@@ -219,6 +217,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 
   # check for degenerate segments
+  a, b = vertices(seg)
   if a ≈ b && a ∈ poly && !any(v -> a ≈ v, vertices(poly))
     return @IT Touching a f
   elseif a ≈ b && any(v -> a ≈ v, vertices(poly))
