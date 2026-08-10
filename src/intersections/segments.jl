@@ -206,8 +206,8 @@ end
 # intersection between a segment and a polygon
 # 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
 # 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
-# 3. intersect at an interior point of the segment and a polygon vertex (CornerTouching -> Point)
-# 4. intersect at an endpoint of the segment (Touching -> Point)
+# 3. intersect at a polygon vertex (CornerTouching -> Point)
+# 4. intersect only at an endpoint of the segment, though not at a poligon vertex (Touching -> Point)
 # 5. the segment is degenerate and is inside the polygon (Touching -> Point)
 # 6. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
@@ -216,8 +216,10 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   polybbox = boundingbox(poly)
 
   # check for degenerate segments
-  if a ≈ b && a ∈ poly
+  if a ≈ b && a ∈ poly && !any(v -> a ≈ v, vertices(poly))
     return @IT Touching a f # Case 5
+  elseif a ≈ b && any(v -> a ≈ v, vertices(poly))
+    return @IT CornerTouching a f # Case 3
   end
 
   # assess obvious no intersection case beforehand
@@ -340,7 +342,6 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     λ₁ ≈ λ₂ && continue
     λmid = (λ₁ + λ₂) / 2
     piece = Segment(seg(λ₁), seg(λ₂))
-
     if inboundaryoverlap(λmid)
       push!(pieces, piece)
       push!(boundarypieces, piece)
@@ -351,30 +352,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 
   # merge continuous segments
-  function mergepieces(pieces)
-    length(pieces) ≤ 1 && return pieces
-
-    merged = eltype(pieces)[]
-    for piece in pieces
-      if isempty(merged)
-        push!(merged, piece)
-      else
-        previous = last(merged)
-        p₁, p₂ = vertices(previous)
-        q₁, q₂ = vertices(piece)
-        if p₂ ≈ q₁
-          merged[end] = Segment(p₁, q₂)
-        else
-          push!(merged, piece)
-        end
-      end
-    end
-    merged
-  end
-
-  pieces = mergepieces(pieces)
-  interiorpieces = mergepieces(interiorpieces)
-  boundarypieces = mergepieces(boundarypieces)
+  pieces = _mergepieces(pieces)
+  interiorpieces = _mergepieces(interiorpieces)
+  boundarypieces = _mergepieces(boundarypieces)
 
   # create geometry from pieces
   piecegeometry(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
@@ -388,7 +368,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     return @IT EdgeTouching geometry f # Case 2
   elseif length(boundarypoints) == 1
     p = only(boundarypoints)
-    if p ≈ a || p ≈ b
+    isendpoint = (p ≈ a || p ≈ b)
+    isvertex = any(v -> p ≈ v, vertices(poly))
+    if isendpoint && !isvertex
       return @IT Touching p f # Case 4
     else
       return @IT CornerTouching p f # Case 3
@@ -398,6 +380,27 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   else
     return @IT NotIntersecting nothing f # Case 6
   end
+end
+
+# Merge the continuous segments of a segment list (`pieces`) into a single geometry
+function _mergepieces(pieces)
+  length(pieces) ≤ 1 && return pieces
+  merged = eltype(pieces)[]
+  for piece in pieces
+    if isempty(merged)
+      push!(merged, piece)
+    else
+      previous = last(merged)
+      p₁, p₂ = vertices(previous)
+      q₁, q₂ = vertices(piece)
+      if p₂ ≈ q₁
+        merged[end] = Segment(p₁, q₂)
+      else
+        push!(merged, piece)
+      end
+    end
+  end
+  merged
 end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
