@@ -201,19 +201,17 @@ function intersection(f, seg::Segment, line::Line)
   end
 end
 
-# intersection between a segment and a polygon
+# The intersection type can be one of five types:
 # 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
 # 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
 # 3. intersect at a polygon vertex (CornerTouching -> Point)
 # 4. intersect at a single non-vertex point (Touching -> Point)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
-  # check bounding ebox for early exit
+  # check bounding boxes for early exit
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
-  if !intersects(sbox, pbox)
-    return @IT NotIntersecting nothing f
-  end
+  intersects(sbox, pbox) || return @IT NotIntersecting nothing f
 
   # check for degenerate segments
   a, b = vertices(seg)
@@ -227,10 +225,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   x(p) = flat(coords(p)).x
   y(p) = flat(coords(p)).y
 
-  # choose the polygon's longest bounding-box axis
-  pmin, pmax = extrema(pbox)
-  xside = x(pmax) - x(pmin)
-  yside = y(pmax) - y(pmin)
+  # choose the polygon's longest bounding box axis
+  xside, yside = sides(pbox)
   axiscoord = xside ≥ yside ? x : y
 
   # segment range along the chosen axis
