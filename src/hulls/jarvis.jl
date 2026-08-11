@@ -58,7 +58,7 @@ function hull(points, method::JarvisMarch)
   n == 2 && return Segment(p[1], p[2])
 
   # initialize searcher and mask of visited points
-  searcher, visited = jarvissearcher(k, p)
+  searcher, visited = jarvissearcher(p, k)
 
   # find bottom-left point
   i = argmin(p)
@@ -104,8 +104,8 @@ function hull(points, method::JarvisMarch)
 end
 
 # helper to create searcher and mask of visited points
-jarvissearcher(k::Nothing, p) = nothing, nothing
-jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
+jarvissearcher(p, k::Nothing) = nothing, nothing
+jarvissearcher(p, k::Integer) = KNearestSearch(p, k), falses(length(p))
 
 # helper to get candidate indices for next point,
 # excluding the endpoints of the current segment
@@ -113,7 +113,7 @@ jarviscandidates!(searcher::Nothing, visited, p, ℐ) = setdiff(1:length(p), las
 function jarviscandidates!(searcher::KNearestSearch, visited, p, ℐ)
   mask = .!visited
   mask[last(ℐ, 2)] .= false
-  search(p[ℐ[end]], searcher; mask=mask)
+  search(p[last(ℐ)], searcher; mask)
 end
 
 # helpers to find next point with smallest angle
