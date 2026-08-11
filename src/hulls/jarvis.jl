@@ -57,24 +57,24 @@ function hull(points, method::JarvisMarch)
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
 
+  # initialize searcher and mask of visited points
+  searcher, visited = jarvissearcher(k, p)
+
   # find bottom-left point
   i = argmin(p)
 
-  # initialize hull with i
+  # initialize hull
   ℐ = [i]
-
-  # initialize searcher and mask of visited points
-  searcher, visited = jarvissearcher(k, p)
 
   # find neighbor candidates
   𝒞 = jarviscandidates(searcher, visited, p, ℐ)
 
-  # find next point with smallest angle
+  # find point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
   j = jarvisnext(searcher, 𝒞, p, ℐ, A, O)
 
-  # initialize ring of indices
+  # update hull and mark point as visited
   push!(ℐ, j)
   jarvisupdate!(searcher, visited, j)
 
