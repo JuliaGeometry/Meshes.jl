@@ -57,8 +57,8 @@ function hull(points, method::JarvisMarch)
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
 
-  # initialize searcher and mask of unseen points
-  searcher, unseen = jarvissearcher(p, k)
+  # initialize searcher and mask of available points
+  searcher, mask = jarvissearcher(p, k)
 
   # find bottom-left point
   i = argmin(p)
@@ -67,7 +67,7 @@ function hull(points, method::JarvisMarch)
   ℐ = [i]
 
   # initialize candidates for next point
-  𝒞 = jarviscandidates!(searcher, unseen, p, ℐ)
+  𝒞 = jarviscandidates!(searcher, mask, p, ℐ)
 
   # find next point with smallest angle
   O = p[i]
@@ -76,7 +76,7 @@ function hull(points, method::JarvisMarch)
 
   # update hull and mark point as seen
   push!(ℐ, j)
-  jarvisupdate!(searcher, unseen, j)
+  jarvisupdate!(searcher, mask, j)
 
   # rotational sweep
   while first(ℐ) != last(ℐ)
@@ -84,7 +84,7 @@ function hull(points, method::JarvisMarch)
     v = p[j] - p[i]
 
     # update candidate points
-    𝒞 = jarviscandidates!(searcher, unseen, p, ℐ)
+    𝒞 = jarviscandidates!(searcher, mask, p, ℐ)
 
     # find next point
     i = j
@@ -97,26 +97,24 @@ function hull(points, method::JarvisMarch)
 
     # update ring of indices
     push!(ℐ, j)
-    jarvisupdate!(searcher, unseen, j)
+    jarvisupdate!(searcher, mask, j)
   end
 
   PolyArea(p[ℐ[begin:(end - 1)]])
 end
 
-# helper to create searcher and mask of unseen points
+# helper to create searcher and mask of available points
 jarvissearcher(p, k::Nothing) = nothing, nothing
 jarvissearcher(p, k::Integer) = KNearestSearch(p, k), trues(length(p))
 
 # helper to get candidate indices for next point
-jarviscandidates!(searcher::Nothing, unseen, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
-function jarviscandidates!(searcher::KNearestSearch, unseen, p, ℐ)
-  # exclude the current point and its predecessor without allocating a new
-  # mask: flip their bits off in place, search, then restore them
-  idx = last(ℐ, 2)
-  saved = unseen[idx]
-  unseen[idx] .= false
-  𝒞 = search(p[last(ℐ)], searcher; mask=unseen)
-  unseen[idx] .= saved
+jarviscandidates!(searcher::Nothing, mask, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
+function jarviscandidates!(searcher::KNearestSearch, mask, p, ℐ)
+  inds = last(ℐ, 2)
+  saved = mask[inds]
+  mask[inds] .= false
+  𝒞 = search(p[last(ℐ)], searcher; mask)
+  mask[inds] .= saved
   𝒞
 end
 
@@ -140,5 +138,5 @@ function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
 end
 
 # helper to mark point as seen after it is added to the hull
-jarvisupdate!(::Nothing, unseen, j) = nothing
-jarvisupdate!(::KNearestSearch, unseen, j) = unseen[j] = false
+jarvisupdate!(::Nothing, mask, j) = nothing
+jarvisupdate!(::KNearestSearch, mask, j) = mask[j] = false
