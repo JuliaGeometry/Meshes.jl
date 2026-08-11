@@ -103,13 +103,26 @@ function hull(points, method::JarvisMarch)
   PolyArea(p[ℐ[begin:(end - 1)]])
 end
 
+# helper to create searcher and mask of visited points
+jarvissearcher(k::Nothing, p) = nothing, nothing
+jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
+
+# helper to get candidate indices for next point,
+# excluding the endpoints of the current segment
+jarviscandidates(searcher::Nothing, visited, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
+function jarviscandidates(searcher::KNearestSearch, visited, p, ℐ)
+  mask = .!visited
+  mask[last(ℐ, 2)] .= false
+  search(p[ℐ[end]], searcher; mask=mask)
+end
+
 # helpers to find next point with smallest angle
-jarvisnext(::Nothing, 𝒞, p, ℐ, A, O) = argmin(l -> ∠(A, O, p[l]), 𝒞)
+jarvisnext(::Nothing, 𝒞, p, ℐ, A, O) = argmin(i -> ∠(A, O, p[i]), 𝒞)
 
 function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
   # check candidates in order of increasing angle and accept the first one
   # whose segment does not cross the existing hull, skipping the last edge
-  for nᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
+  for nᵢ in sort(𝒞, by=i -> ∠(A, O, p[i]))
     cseg = Segment(p[ℐ[end]], p[nᵢ])
     cbox = boundingbox(cseg)
     tₒ = nᵢ == ℐ[begin] ? 2 : 1
@@ -123,19 +136,6 @@ function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
   nothing
 end
 
-# helper to get candidate indices for next point,
-# excluding the endpoints of the current segment
-jarviscandidates(searcher::Nothing, visited, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
-function jarviscandidates(searcher::KNearestSearch, visited, p, ℐ)
-  mask = .!visited
-  mask[last(ℐ, 2)] .= false
-  search(p[ℐ[end]], searcher; mask=mask)
-end
-
 # helper to mark point as visited after it is added to the hull
 jarvisupdate!(::Nothing, visited, j) = nothing
 jarvisupdate!(::KNearestSearch, visited, j) = visited[j] = true
-
-# helper to create searcher and mask of visited points
-jarvissearcher(k::Nothing, p) = nothing, nothing
-jarvissearcher(k::Integer, p) = KNearestSearch(p, k), falses(length(p))
