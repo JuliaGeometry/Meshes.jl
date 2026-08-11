@@ -66,10 +66,10 @@ function hull(points, method::JarvisMarch)
   # initialize hull
   ℐ = [i]
 
-  # find neighbor candidates
+  # initialize candidates for next point
   𝒞 = jarviscandidates!(searcher, visited, p, ℐ)
 
-  # find point with smallest angle
+  # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
   j = jarvisnext(searcher, 𝒞, p, ℐ, A, O)
@@ -83,10 +83,10 @@ function hull(points, method::JarvisMarch)
     # direction of current segment
     v = p[j] - p[i]
 
-    # update candidates
+    # update candidate points
     𝒞 = jarviscandidates!(searcher, visited, p, ℐ)
 
-    # find next segment
+    # find next point
     i = j
     O = p[i]
     A = O + v
@@ -107,8 +107,7 @@ end
 jarvissearcher(p, k::Nothing) = nothing, nothing
 jarvissearcher(p, k::Integer) = KNearestSearch(p, k), falses(length(p))
 
-# helper to get candidate indices for next point,
-# excluding the endpoints of the current segment
+# helper to get candidate indices for next point
 jarviscandidates!(searcher::Nothing, visited, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
 function jarviscandidates!(searcher::KNearestSearch, visited, p, ℐ)
   mask = .!visited
@@ -116,9 +115,8 @@ function jarviscandidates!(searcher::KNearestSearch, visited, p, ℐ)
   search(p[last(ℐ)], searcher; mask)
 end
 
-# helpers to find next point with smallest angle
+# helper to find next point with smallest angle
 jarvisnext(::Nothing, 𝒞, p, ℐ, A, O) = argmin(i -> ∠(A, O, p[i]), 𝒞)
-
 function jarvisnext(::KNearestSearch, 𝒞, p, ℐ, A, O)
   # check candidates in order of increasing angle and accept the first one
   # whose segment does not cross the existing hull, skipping the last edge
