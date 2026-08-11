@@ -91,6 +91,7 @@ function hull(points, method::JarvisMarch)
     O = p[i]
     A = O + v
     j = jarvisnext(searcher, 𝒞, p, ℐ, A, O)
+
     # no valid next point, should only happen if k is too small
     isnothing(j) && throw(ArgumentError("could not find concave hull with k = $k, try a larger k"))
 
