@@ -184,7 +184,7 @@ end
   @test_throws AssertionError hull(pts, JarvisMarch(2))
   @test_throws AssertionError hull(pts, JarvisMarch(5))
   @test_throws AssertionError hull(pts, JarvisMarch(6))
-  chul = hull(pts, JarvisMarch(4))
+  chul = hull(pts, JarvisMarch(4)) # k = n-1
   @test issimple(chul) && nvertices(chul) ≥ 3 && all(pts .∈ Ref(chul))
 
   # U-shaped point set with a notch between x=1 and x=3 above y=1
@@ -233,6 +233,29 @@ end
   @test nvertices(chul) == length(pts)
   chul = hull(pts, JarvisMarch(length(pts)-1))
   @test nvertices(chul) < length(pts)
+
+  # moreira self-intersect test (errors without self-intersection check)
+  pts = cart.([
+    (3.7, 12.9),
+    (5.9, 12.9),
+    (9.3, 12.9),
+    (10.4, 11.8),
+    (1.5, 10.7),
+    (7.9, 10.4),
+    (0.4, 8.4),
+    (3.0, 8.2),
+    (5.7, 8.2),
+    (4.4, 6.0),
+    (0.4, 5.1),
+    (1.5, 2.9),
+    (7.0, 0.6),
+    (5.7, 3.8),
+    (9.3, 2.9),
+    (4.8, 1.7)
+  ])
+  @test_throws ArgumentError hull(pts, JarvisMarch(3))
+  chul = hull(pts, JarvisMarch(4))
+  @test issimple(chul) && nvertices(chul) ≥ 3 && all(pts .∈ Ref(chul))
 
   # random points with fixed k
   rng = StableRNG(123)
