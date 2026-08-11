@@ -17,7 +17,7 @@ greater than 2 and less than the number of unique points.
 
 The algorithm has complexity `O(n*h)` where `n` is the number of points
 and `h` is the number of points in the hull. The concave variant adds a
-k-nearest-neighbor search and hull-intersection checks per hull vertex.
+`k`-nearest-neighbor search and hull-intersection checks per hull vertex.
 
 ## References
 
@@ -130,9 +130,8 @@ end
 
 # helper to get candidate indices for next point,
 # excluding the endpoints of the current segment
-jarviscandidates(::Nothing, visited, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
+jarviscandidates(searcher::Nothing, visited, p, ℐ) = setdiff(1:length(p), last(ℐ, 2))
 function jarviscandidates(searcher::KNearestSearch, visited, p, ℐ)
-  # mask out points already in the hull except for second to last to prevent infinite loops
   mask = .!visited
   mask[last(ℐ, 2)] .= false
   search(p[ℐ[end]], searcher; mask=mask)
