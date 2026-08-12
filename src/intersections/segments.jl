@@ -246,7 +246,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # remove duplicate points in boundary
   unique!(boundarypoints)
 
-  # create resulting intersection segments from base intersection points
+  # collect intersection segments
   pieces = typeof(seg)[]
   interiorpieces = typeof(seg)[]
   boundarypieces = typeof(seg)[]
@@ -257,7 +257,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     p₁ ≈ p₂ && continue
 
     piece = Segment(p₁, p₂)
-    midpoint = piece(0.5)
+    midpoint = center(piece)
 
     if any(overlap -> midpoint ∈ overlap, boundaryoverlaps)
       push!(pieces, piece)
