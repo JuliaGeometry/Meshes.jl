@@ -224,7 +224,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       I = intersection(seg, edge)
       itype = type(I)
       if itype == NotIntersecting
-        return nothing
+        continue
       elseif itype == Overlapping
         c, d = vertices(get(I))
         if λ(d) < λ(c)
