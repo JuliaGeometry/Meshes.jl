@@ -213,87 +213,96 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   pbox = boundingbox(poly)
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
 
-  # store and classify intersection points
-  splitpoints = collect(eachvertex(seg))
-  boundarypoints = empty(splitpoints)
-  boundaryoverlaps = typeof(seg)[]
+  # collect boundary events
+  a, b = vertices(seg)
+  events = Tuple{typeof(a),Bool,Int8}[(a, false, Int8(0)), (b, false, Int8(0))] # event = (point, docross, overlap)
+  λ(p) = (p - a) ⋅ (b - a)
   for ring in rings(poly)
-    rbox = boundingbox(ring)
-    intersects(sbox, rbox) || continue
+    intersects(sbox, boundingbox(ring)) || continue
     for edge in segments(ring)
       intersects(sbox, boundingbox(edge)) || continue
       intersection(seg, edge) do I
-        if type(I) == NotIntersecting
-          return nothing
-        elseif type(I) == Overlapping
-          s = get(I)
-          push!(splitpoints, vertices(s)...)
-          push!(boundaryoverlaps, s)
+        itype = type(I)
+        itype == NotIntersecting && return
+        if itype == Overlapping
+          c, d = vertices(get(I))
+          if λ(d) < λ(c)
+            c, d = d, c
+          end
+          push!(events, (c, false, Int8(1)))
+          push!(events, (d, false, Int8(-1)))
         else
           p = get(I)
-          push!(splitpoints, p)
-          push!(boundarypoints, p)
+          push!(events, (p, true, Int8(0)))
         end
       end
     end
   end
 
-  # sort intersection points along the segment
-  a, b = vertices(seg)
-  λ(p) = (p - a) ⋅ (b - a)
-  sort!(splitpoints, by=λ)
+  # sort events along the segment
+  sort!(events, by=e -> λ(e[1]))
 
-  # remove duplicate points in boundary
-  unique!(boundarypoints)
-
-  # collect intersection segments
+  # collect intersection pieces
   pieces = typeof(seg)[]
   interiorpieces = typeof(seg)[]
   boundarypieces = typeof(seg)[]
-  for i in 1:(length(splitpoints) - 1)
-    p₁ = splitpoints[i]
-    p₂ = splitpoints[i + 1]
-
-    p₁ ≈ p₂ && continue
-
-    piece = Segment(p₁, p₂)
-    midpoint = center(piece)
-
-    if any(overlap -> midpoint ∈ overlap, boundaryoverlaps)
-      push!(pieces, piece)
-      push!(boundarypieces, piece)
-    elseif midpoint ∈ poly
-      push!(pieces, piece)
-      push!(interiorpieces, piece)
+  j = 1
+  overlapdepth = 0
+  for i in 2:length(events)
+    eᵢ = events[i]
+    eⱼ = events[j]
+    if eᵢ[1] ≈ eⱼ[1]
+      # merge coincident events
+      events[j] = (eⱼ[1], eⱼ[2] || eᵢ[2], eⱼ[3] + eᵢ[3])
+    else
+      # eⱼ is now fully merged, so piece it with the next distinct event (eᵢ)
+      overlapdepth += eⱼ[3]
+      piece = Segment(eⱼ[1], eᵢ[1])
+      if overlapdepth > 0
+        push!(pieces, piece)
+        push!(boundarypieces, piece)
+      else
+        midpoint = center(piece)
+        if midpoint ∈ poly
+          push!(pieces, piece)
+          push!(interiorpieces, piece)
+        end
+      end
+      j += 1
+      events[j] = eᵢ
     end
   end
+  resize!(events, j)
 
   # merge continuous segments
   pieces = _mergepieces(pieces)
   interiorpieces = _mergepieces(interiorpieces)
   boundarypieces = _mergepieces(boundarypieces)
+  ncross = count(e -> e[2], events)
 
   # create geometry from pieces
-  piecegeometry(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
+  piecegeometry(ps) = length(ps) == 1 ? only(ps) : Multi(ps)
 
-  # classifying intersections
+  # classify intersection
   if !isempty(interiorpieces)
     geometry = piecegeometry(pieces)
     return @IT Intersecting geometry f
   elseif !isempty(boundarypieces)
     geometry = piecegeometry(boundarypieces)
     return @IT EdgeTouching geometry f
-  elseif length(boundarypoints) == 1
-    p = only(boundarypoints)
-    isendpoint = (p ≈ a || p ≈ b)
+  elseif ncross == 1
+    i = findfirst(e -> e[2], events)
+    p = events[i][1]
+    isendpoint = p ≈ a || p ≈ b
     isvertex = any(v -> p ≈ v, vertices(poly))
     if isendpoint && !isvertex
       return @IT Touching p f
     else
       return @IT CornerTouching p f
     end
-  elseif !isempty(boundarypoints)
-    return @IT Intersecting Multi(boundarypoints) f
+  elseif ncross > 1
+    points = typeof(a)[e[1] for e in events if e[2]]
+    return @IT Intersecting Multi(points) f
   else
     return @IT NotIntersecting nothing f
   end
