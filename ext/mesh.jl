@@ -95,7 +95,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
 
     makefaceview(facevalues, elem4tri) =
       GB.FaceView(map(eind -> facevalues[eind], elem4tri), GB.GLTriangleFace.(eachindex(elem4tri)))
-    tnormals = facenormals ? makefaceview(sign .* asmakie.(normal.(mesh)), elem4tri) : nothing
+    tnormals = facenormals ? makefaceview(sign .* GB.Vec{3,Float32}.(asmakie.(normal.(mesh))), elem4tri) : nothing
     tcolors = facecolors ? makefaceview(colors, elem4tri) : colors
 
     # triangle mesh
