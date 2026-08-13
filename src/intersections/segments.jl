@@ -223,8 +223,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       intersects(sbox, boundingbox(edge)) || continue
       intersection(seg, edge) do I
         itype = type(I)
-        itype == NotIntersecting && return
-        if itype == Overlapping
+        if itype == NotIntersecting
+          return nothing
+        elseif itype == Overlapping
           c, d = vertices(get(I))
           if λ(d) < λ(c)
             c, d = d, c
