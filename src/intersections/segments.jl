@@ -208,7 +208,6 @@ end
 # 4. intersect at a single non-vertex point (Touching -> Point)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
-  # early exit if bounding boxes do not intersect
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
@@ -236,7 +235,6 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
         p = get(I)
         push!(events, (p, true, Int8(0)))
       end
-    end
     end
   end
 
