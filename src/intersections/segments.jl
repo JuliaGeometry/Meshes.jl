@@ -221,22 +221,22 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     intersects(sbox, boundingbox(ring)) || continue
     for edge in segments(ring)
       intersects(sbox, boundingbox(edge)) || continue
-      intersection(seg, edge) do I
-        itype = type(I)
-        if itype == NotIntersecting
-          return nothing
-        elseif itype == Overlapping
-          c, d = vertices(get(I))
-          if λ(d) < λ(c)
-            c, d = d, c
-          end
-          push!(events, (c, false, Int8(1)))
-          push!(events, (d, false, Int8(-1)))
-        else
-          p = get(I)
-          push!(events, (p, true, Int8(0)))
+      I = intersection(seg, edge)
+      itype = type(I)
+      if itype == NotIntersecting
+        return nothing
+      elseif itype == Overlapping
+        c, d = vertices(get(I))
+        if λ(d) < λ(c)
+          c, d = d, c
         end
+        push!(events, (c, false, Int8(1)))
+        push!(events, (d, false, Int8(-1)))
+      else
+        p = get(I)
+        push!(events, (p, true, Int8(0)))
       end
+    end
     end
   end
 
