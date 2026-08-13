@@ -76,49 +76,27 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       colors = fill(Makie.RGBAf(colorant), nvert)
     end
 
+    facenormals = facecolors && edim == Val(3)
+
     # fan triangulation (assume convexity)
     ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
+    elem4tri = Vector{Int}(undef, ntri)
     tind = 0
-
-    if facecolors
-      # initialize normals data
-      tnormals = edim == Val(3) ? Vector{Makie.Vec{3,Float32}}(undef, ntri) : nothing
-      tcolors = Vector{typeof(first(colors))}(undef, ntri)
-    else # vertex coloring
-      # nothing needs to be done because
-      # this is the default in Makie and
-      # because the triangulation below
-      # does not change the vertices in
-      # the original polygonal mesh
-      tnormals = nothing
-      tcolors = colors
-    end
 
     for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
-      if edim == Val(3)
-        n = normal(mesh[eind])
-      end
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
-        if facecolors
-          if edim == Val(3)
-            tnormals[tind] = sign * asmakie(n)
-          end
-          tcolors[tind] = colors[eind]
-        end
+        elem4tri[tind] = eind
       end
     end
 
-    # element vs. vertex coloring
-    if facecolors
-      if edim == Val(3)
-        tnormals = GB.FaceView(tnormals, GB.GLTriangleFace.(eachindex(tnormals)))
-      end
-      tcolors = GB.FaceView(tcolors, GB.GLTriangleFace.(eachindex(tcolors)))
-    end
+    makefaceview(facevalues, elem4tri) =
+      GB.FaceView(map(eind -> facevalues[eind], elem4tri), GB.GLTriangleFace.(eachindex(elem4tri)))
+    tnormals = facenormals ? makefaceview(sign .* asmakie.(normal.(mesh)), elem4tri) : nothing
+    tcolors = facecolors ? makefaceview(colors, elem4tri) : colors
 
     # triangle mesh
     tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
