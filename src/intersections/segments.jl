@@ -214,7 +214,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   # collect boundary events
   a, b = vertices(seg)
-  events = Tuple{typeof(a),Bool,Int8}[(a, false, Int8(0)), (b, false, Int8(0))] # event = (point, docross, overlap)
+  events = [(a, false, Int8(0)), (b, false, Int8(0))] # event = (point, docross, overlap)
   λ(p) = (p - a) ⋅ (b - a)
   for ring in rings(poly)
     intersects(sbox, boundingbox(ring)) || continue
