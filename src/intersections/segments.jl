@@ -208,11 +208,12 @@ end
 # 4. intersect at a single non-vertex point (Touching -> Point)
 # 5. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
+  # early exit if bounding boxes do not intersect
   sbox = boundingbox(seg)
   pbox = boundingbox(poly)
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
 
-  # collect boundary events
+  # collect and classify boundary events
   a, b = vertices(seg)
   events = [(a, false, Int8(0)), (b, false, Int8(0))] # event = (point, docross, overlap)
   λ(p) = (p - a) ⋅ (b - a)
@@ -221,10 +222,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     for edge in segments(ring)
       intersects(sbox, boundingbox(edge)) || continue
       I = intersection(seg, edge)
-      itype = type(I)
-      if itype == NotIntersecting
+      if type(I) == NotIntersecting
         continue
-      elseif itype == Overlapping
+      elseif type(I) == Overlapping
         c, d = vertices(get(I))
         if λ(d) < λ(c)
           c, d = d, c
@@ -241,10 +241,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # sort events along the segment
   sort!(events, by=e -> λ(e[1]))
 
-  # collect intersection pieces
-  pieces = typeof(seg)[]
-  interiorpieces = typeof(seg)[]
-  boundarypieces = typeof(seg)[]
+  # collect unique intersection pieces
+  pieces = Tuple{typeof(seg),Bool}[] # pieces = (piece, isinterior)
   j = 1
   overlapdepth = 0
   for i in 2:length(events)
@@ -258,13 +256,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       overlapdepth += eⱼ[3]
       piece = Segment(eⱼ[1], eᵢ[1])
       if overlapdepth > 0
-        push!(pieces, piece)
-        push!(boundarypieces, piece)
+        _pushpiece!(pieces, piece, false)
       else
         midpoint = center(piece)
         if midpoint ∈ poly
-          push!(pieces, piece)
-          push!(interiorpieces, piece)
+          _pushpiece!(pieces, piece, true)
         end
       end
       j += 1
@@ -273,21 +269,19 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
   resize!(events, j)
 
-  # merge continuous segments
-  pieces = _mergepieces(pieces)
-  interiorpieces = _mergepieces(interiorpieces)
-  boundarypieces = _mergepieces(boundarypieces)
-  ncross = count(e -> e[2], events)
-
   # create geometry from pieces
   piecegeometry(ps) = length(ps) == 1 ? only(ps) : Multi(ps)
 
+  # create auxiliary variables
+  ncross = count(e -> e[2], events)
+  hasinterior = any(p -> p[2], pieces)
+
   # classify intersection
-  if !isempty(interiorpieces)
-    geometry = piecegeometry(pieces)
+  if hasinterior
+    geometry = piecegeometry(first.(pieces))
     return @IT Intersecting geometry f
-  elseif !isempty(boundarypieces)
-    geometry = piecegeometry(boundarypieces)
+  elseif !isempty(pieces)
+    geometry = piecegeometry(first.(pieces))
     return @IT EdgeTouching geometry f
   elseif ncross == 1
     i = findfirst(e -> e[2], events)
@@ -307,25 +301,20 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 end
 
-# merge the continuous segments of a segment list (`pieces`) into a single geometry
-function _mergepieces(pieces)
-  length(pieces) ≤ 1 && return pieces
-  merged = eltype(pieces)[]
-  for piece in pieces
-    if isempty(merged)
-      push!(merged, piece)
-    else
-      previous = last(merged)
-      p₁, p₂ = vertices(previous)
-      q₁, q₂ = vertices(piece)
-      if p₂ ≈ q₁
-        merged[end] = Segment(p₁, q₂)
-      else
-        push!(merged, piece)
-      end
+# merge the continuous segments of a segment list (`pieces`) into a single geometry and push then, indicating whether they are an interior segment
+function _pushpiece!(pieces, piece, isinterior)
+  if !isempty(pieces)
+    previous, previous_isinterior = last(pieces)
+    p₁, p₂ = vertices(previous)
+    q₁, q₂ = vertices(piece)
+    if p₂ ≈ q₁
+      mergedpiece = Segment(p₁, q₂)
+      pieces[end] = (mergedpiece, previous_isinterior || isinterior)
+      return nothing
     end
   end
-  merged
+  push!(pieces, (piece, isinterior))
+  return nothing
 end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
