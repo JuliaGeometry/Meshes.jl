@@ -63,19 +63,22 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     rev, sign = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? (reverse, -1) : (identity, 1)
 
     # extract vector of colors for vertices or faces
-    facecolors = true
-    if colorant isa AbstractVector
-      colors = map(Makie.RGBAf, colorant) # GB.Mesh needs RGBA(f) type
-      ncolor = length(colorant)
-      if ncolor == nvert
-        facecolors = false
-      elseif ncolor != nelem
-        throw(ArgumentError("provided $ncolor colors but the mesh has
-                             $nvert vertices and $nelem elements."))
-      end
+    # convert to RGBA(f) for GB.Mesh compatibility
+    colors = if colorant isa AbstractVector
+      map(Makie.RGBAf, colorant)
     else
-      colors = fill(Makie.RGBAf(colorant), nelem)
+      fill(Makie.RGBAf(colorant), nelem)
     end
+
+    # sanity check on number of colors
+    ncolor = length(colors)
+    if ncolor ∉ (nvert, nelem)
+      throw(ArgumentError("provided $ncolor colors but the mesh has
+                           $nvert vertices and $nelem elements."))
+    end
+
+    # determine if face or vertex colors should be used
+    facecolors = ncolor == nelem
 
     # determine if face normals should be computed
     facenormals = facecolors && edim == Val(3)
