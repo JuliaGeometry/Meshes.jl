@@ -62,11 +62,12 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     # decide whether or not to reverse connectivity list and normals
     rev, sign = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? (reverse, -1) : (identity, 1)
 
+    # extract vector of colors for vertices or faces
     facecolors = false
     if colorant isa AbstractVector
-      colors = Makie.RGBAf.(colorant) # GB.Mesh needs RGBA(f) type
+      colors = map(Makie.RGBAf, colorant) # GB.Mesh needs RGBA(f) type
       ncolor = length(colorant)
-      if ncolor == nelem # element coloring
+      if ncolor == nelem
         facecolors = true
       elseif ncolor != nvert
         throw(ArgumentError("provided $ncolor colors but the mesh has
@@ -76,6 +77,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       colors = fill(Makie.RGBAf(colorant), nvert)
     end
 
+    # determine if face normals should be computed
     facenormals = facecolors && edim == Val(3)
 
     # fan triangulation (assume convexity)
@@ -83,7 +85,6 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
     elem4tri = Vector{Int}(undef, ntri)
     tind = 0
-
     for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
       for i in 2:(length(I) - 1)
@@ -93,10 +94,10 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
       end
     end
 
-    makefaceview(facevalues, elem4tri) =
-      GB.FaceView(map(eind -> facevalues[eind], elem4tri), GB.GLTriangleFace.(eachindex(elem4tri)))
-    tnormals = facenormals ? makefaceview(sign .* GB.Vec{3,Float32}.(asmakie.(normal.(mesh))), elem4tri) : nothing
-    tcolors = facecolors ? makefaceview(colors, elem4tri) : colors
+    # create face view for colors and normals
+    faceview(vals) = GB.FaceView(map(eind -> vals[eind], elem4tri), GB.TriangleFace.(eachindex(elem4tri)))
+    tcolors = facecolors ? faceview(colors) : colors
+    tnormals = facenormals ? faceview([asmakie(sign * normal(elem)) for elem in mesh]) : nothing
 
     # triangle mesh
     tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
