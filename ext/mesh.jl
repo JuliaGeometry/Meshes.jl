@@ -98,7 +98,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     end
 
     # create face view for colors and normals
-    faceview(vals) = GB.FaceView(map(eind -> vals[eind], elem4tri), GB.TriangleFace.(eachindex(elem4tri)))
+    faceview(vals) = GB.FaceView(view(vals, elem4tri), map(GB.TriangleFace, eachindex(elem4tri)))
     tcolors = facecolors ? faceview(colors) : colors
     tnormals = facenormals ? faceview([asmakie(sign * normal(elem)) for elem in mesh]) : nothing
 
