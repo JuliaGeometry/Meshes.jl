@@ -242,9 +242,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   sort!(events, by=e -> λ(e[1]))
 
   # collect unique intersection pieces
-  pieces = Tuple{typeof(seg),Bool}[] # pieces = (piece, isinterior)
   j = 1
   overlapdepth = 0
+  pieces = Tuple{typeof(seg),Bool}[] # pieces = (piece, isinterior)
   for i in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
