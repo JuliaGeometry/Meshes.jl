@@ -244,7 +244,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # collect unique intersection pieces
   j = 1
   overlapdepth = 0
-  pieces = Tuple{typeof(seg),Bool}[] # pieces = (piece, isinterior)
+  pieces = typeof(seg)[]
+  isinterior = Bool[]
   for i in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
@@ -252,15 +253,15 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       # merge coincident events
       events[j] = (eⱼ[1], eⱼ[2] || eᵢ[2], eⱼ[3] + eᵢ[3])
     else
-      # eⱼ is now fully merged, so piece it with the next distinct event (eᵢ)
+      # eⱼ is now fully merged, so piece it with the next distinct event
       overlapdepth += eⱼ[3]
       piece = Segment(eⱼ[1], eᵢ[1])
       if overlapdepth > 0
-        _pushpiece!(pieces, piece, false)
+        _pushpiece!(pieces, isinterior, piece, false)
       else
         midpoint = center(piece)
         if midpoint ∈ poly
-          _pushpiece!(pieces, piece, true)
+          _pushpiece!(pieces, isinterior, piece, true)
         end
       end
       j += 1
@@ -301,20 +302,20 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 end
 
-# merge the continuous segments of a segment list (`pieces`) into a single geometry and push then, indicating whether they are an interior segment
-function _pushpiece!(pieces, piece, isinterior)
+# merge the continuous segments of a segment list (`pieces`) into a single geometry and push then, indicating whether they are an interior segment in the `isinterior` vector.
+function _pushpiece!(pieces, isinterior, piece, isint)
   if !isempty(pieces)
-    previous, previous_isinterior = last(pieces)
-    p₁, p₂ = vertices(previous)
+    prev = last(pieces)
+    p₁, p₂ = vertices(prev)
     q₁, q₂ = vertices(piece)
     if p₂ ≈ q₁
-      mergedpiece = Segment(p₁, q₂)
-      pieces[end] = (mergedpiece, previous_isinterior || isinterior)
-      return nothing
+      pieces[end] = Segment(p₁, q₂)
+      isinterior[end] |= isint
+      return
     end
   end
-  push!(pieces, (piece, isinterior))
-  return nothing
+  push!(pieces, piece)
+  push!(isinterior, isint)
 end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
