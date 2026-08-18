@@ -257,11 +257,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       overlapdepth += eⱼ[3]
       piece = Segment(eⱼ[1], eᵢ[1])
       if overlapdepth > 0
-        _pushpiece!(pieces, isinterior, piece, false)
+        _pushflagpiece!(pieces, isinterior, piece, false)
       else
         midpoint = center(piece)
         if midpoint ∈ poly
-          _pushpiece!(pieces, isinterior, piece, true)
+          _pushflagpiece!(pieces, isinterior, piece, true)
         end
       end
       j += 1
@@ -275,14 +275,14 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   # create auxiliary variables
   ncross = count(e -> e[2], events)
-  hasinterior = any(p -> p[2], pieces)
+  hasinterior = any(isinterior)
 
   # classify intersection
   if hasinterior
-    geometry = piecegeometry(first.(pieces))
+    geometry = piecegeometry(pieces)
     return @IT Intersecting geometry f
   elseif !isempty(pieces)
-    geometry = piecegeometry(first.(pieces))
+    geometry = piecegeometry(pieces)
     return @IT EdgeTouching geometry f
   elseif ncross == 1
     i = findfirst(e -> e[2], events)
