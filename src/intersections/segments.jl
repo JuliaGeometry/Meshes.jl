@@ -257,11 +257,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       overlapdepth += eⱼ[3]
       piece = Segment(eⱼ[1], eᵢ[1])
       if overlapdepth > 0
-        _pushflagpiece!(pieces, isinterior, piece, false)
+        _pushpiece!(pieces, isinterior, piece, false)
       else
         midpoint = center(piece)
         if midpoint ∈ poly
-          _pushflagpiece!(pieces, isinterior, piece, true)
+          _pushpiece!(pieces, isinterior, piece, true)
         end
       end
       j += 1
