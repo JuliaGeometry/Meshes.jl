@@ -215,8 +215,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   # collect and classify boundary events
   a, b = vertices(seg)
-  events = [(a, false, Int8(0)), (b, false, Int8(0))] # event = (point, docross, overlap)
   λ(p) = (p - a) ⋅ (b - a)
+  events = [(a, false, 0), (b, false, 0)] # event = (point, crosses, overlaps)
   for ring in rings(poly)
     intersects(sbox, boundingbox(ring)) || continue
     for edge in segments(ring)
@@ -229,11 +229,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
         if λ(d) < λ(c)
           c, d = d, c
         end
-        push!(events, (c, false, Int8(1)))
-        push!(events, (d, false, Int8(-1)))
+        push!(events, (c, false, 1))
+        push!(events, (d, false, -1))
       else
         p = get(I)
-        push!(events, (p, true, Int8(0)))
+        push!(events, (p, true, 0))
       end
     end
   end
