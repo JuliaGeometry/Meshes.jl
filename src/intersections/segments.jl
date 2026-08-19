@@ -254,7 +254,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       # merge coincident events
       events[i] = (eᵢ[1], eᵢ[2] || eⱼ[2], eᵢ[3] + eⱼ[3])
     else
-      # eᵢ is fully merged, so piece it with the next distinct event
+      # eᵢ is fully merged, connect it with the next event
       depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
       if depth > 0 
@@ -269,11 +269,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
   resize!(events, i)
 
-  # glue pieces together into a single geometry
-  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
-
   # number of crossing events
   ncrosses = count(e -> e[2], events)
+
+  # glue pieces together into a single geometry
+  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
 
   # classify intersection
   if inpoly
