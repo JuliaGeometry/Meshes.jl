@@ -268,21 +268,18 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
   resize!(events, i)
 
-  # create geometry from pieces
-  piecegeometry(ps) = length(ps) == 1 ? only(ps) : Multi(ps)
+  # glue pieces together into a single geometry
+  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
 
-  # create auxiliary variables
-  ncross = count(e -> e[2], events)
-  hasinterior = any(isinterior)
+  # number of crossing events
+  ncrosses = count(e -> e[2], events)
 
   # classify intersection
-  if hasinterior
-    geometry = piecegeometry(pieces)
-    return @IT Intersecting geometry f
+  if any(isinterior)
+    return @IT Intersecting glue(pieces) f
   elseif !isempty(pieces)
-    geometry = piecegeometry(pieces)
-    return @IT EdgeTouching geometry f
-  elseif ncross == 1
+    return @IT EdgeTouching glue(pieces) f
+  elseif ncrosses == 1
     i = findfirst(e -> e[2], events)
     p = events[i][1]
     isendpoint = p ≈ a || p ≈ b
@@ -292,7 +289,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
     else
       return @IT CornerTouching p f
     end
-  elseif ncross > 1
+  elseif ncrosses > 1
     points = typeof(a)[e[1] for e in events if e[2]]
     return @IT Intersecting Multi(points) f
   else
