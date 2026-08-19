@@ -216,7 +216,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # collect and classify boundary events, which are of the
   # form (point, iscrossing, endtype). The endtype is +1 if
   # the segment is entering the polygon, -1 if it is leaving
-  # the polygon, and 0 if it is neither (e.g. crossing)
+  # the polygon, and 0 otherwise
   a, b = vertices(seg)
   λ(p) = (p - a) ⋅ (b - a)
   events = [(a, false, Int8(0)), (b, false, Int8(0))]
