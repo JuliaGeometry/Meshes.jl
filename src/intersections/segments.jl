@@ -245,8 +245,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # collect unique intersection pieces
   i = 1
   depth = 0
+  inpoly = false
   pieces = typeof(seg)[]
-  anyinterior = false
   for j in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
@@ -260,8 +260,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       if depth > 0 
         _pushpiece!(pieces, piece) 
       elseif center(piece) ∈ poly 
+        inpoly = true 
         _pushpiece!(pieces, piece) 
-        anyinterior = true 
       end
       i += 1
       events[i] = eⱼ
@@ -276,7 +276,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   ncrosses = count(e -> e[2], events)
 
   # classify intersection
-  if anyinterior
+  if inpoly
     return @IT Intersecting glue(pieces) f
   elseif !isempty(pieces)
     return @IT EdgeTouching glue(pieces) f
