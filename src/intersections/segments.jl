@@ -243,7 +243,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 
   # collect unique intersection pieces
   j = 1
-  overlapdepth = 0
+  depth = 0
   pieces = typeof(seg)[]
   isinterior = Bool[]
   for i in 2:length(events)
@@ -254,15 +254,12 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       events[j] = (eⱼ[1], eⱼ[2] || eᵢ[2], eⱼ[3] + eᵢ[3])
     else
       # eⱼ is now fully merged, so piece it with the next distinct event
-      overlapdepth += eⱼ[3]
+      depth += eⱼ[3]
       piece = Segment(eⱼ[1], eᵢ[1])
-      if overlapdepth > 0
+      if depth > 0
         _pushpiece!(pieces, isinterior, piece, false)
-      else
-        midpoint = center(piece)
-        if midpoint ∈ poly
-          _pushpiece!(pieces, isinterior, piece, true)
-        end
+      elseif center(piece) ∈ poly
+        _pushpiece!(pieces, isinterior, piece, true)
       end
       j += 1
       events[j] = eᵢ
