@@ -290,7 +290,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       return @IT CornerTouching p f
     end
   elseif ncrosses > 1
-    points = typeof(a)[e[1] for e in events if e[2]]
+    points = [e[1] for e in events if e[2]]
     return @IT Intersecting Multi(points) f
   else
     return @IT NotIntersecting nothing f
