@@ -258,10 +258,10 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
       if depth > 0 
-        _pushpiece!(pieces, piece) 
+        push!(pieces, piece) 
       elseif center(piece) ∈ poly 
         inpoly = true 
-        _pushpiece!(pieces, piece) 
+        push!(pieces, piece) 
       end
       i += 1
       events[i] = eⱼ
@@ -296,21 +296,6 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   else
     return @IT NotIntersecting nothing f
   end
-end
-
-# merge the continuous segments of a segment list (`pieces`) into
-# a single geometry and push then.
-function _pushpiece!(pieces, piece)
-  if !isempty(pieces)
-    prev = last(pieces)
-    p₁, p₂ = vertices(prev)
-    q₁, q₂ = vertices(piece)
-    if p₂ ≈ q₁
-      pieces[end] = Segment(p₁, q₂)
-      return
-    end
-  end
-  push!(pieces, piece)
 end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
