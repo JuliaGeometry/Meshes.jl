@@ -297,7 +297,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 end
 
-# merge the continuous segments of a segment list (`pieces`) into a single geometry and push then, indicating whether they are an interior segment in the `isinterior` vector.
+# merge the continuous segments of a segment list (`pieces`) into
+# a single geometry and push then, indicating whether they are an
+# interior segment in the `isinterior` vector.
 function _pushpiece!(pieces, isinterior, piece, isint)
   if !isempty(pieces)
     prev = last(pieces)
