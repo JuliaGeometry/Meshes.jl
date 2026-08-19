@@ -84,7 +84,7 @@ function _moreirahull(p, k)
   # rotational sweep
   while first(ℐ) != last(ℐ)
     # start point re-enters candidacy once the ring has enough vertices to close
-    length(ℐ) >= 4 && (mask[first(ℐ)] = true)
+    length(ℐ) == 4 && (mask[first(ℐ)] = true)
 
     v = p[j] - p[i]
     i = j
