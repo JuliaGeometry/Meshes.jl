@@ -117,6 +117,7 @@ function moreiranext(searcher, mask, p, ℐ, A, O)
   for cpointᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
     cseg = Segment(p[ℐ[end]], p[cpointᵢ]) #segment to next point
     # check if the segment intersects any existing edge
+    tₒ = cpointᵢ == ℐ[begin] ? 2 : 1
     valid = !any(tₒ:(length(ℐ) - 2)) do t
       eseg = Segment(p[ℐ[t]], p[ℐ[t + 1]])
       intersects(cseg, eseg)
