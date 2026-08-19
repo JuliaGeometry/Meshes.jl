@@ -213,10 +213,13 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   pbox = boundingbox(poly)
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
 
-  # collect and classify boundary events
+  # collect and classify boundary events, which are of the
+  # form (point, iscrossing, enteringmode). The enteringmode
+  # is +1 if the segment is entering the polygon, -1 if it is
+  # leaving the polygon, and 0 if it is neither (e.g. crossing)
   a, b = vertices(seg)
   λ(p) = (p - a) ⋅ (b - a)
-  events = [(a, false, 0), (b, false, 0)] # event = (point, crosses, overlaps)
+  events = [(a, false, 0), (b, false, 0)]
   for ring in rings(poly)
     intersects(sbox, boundingbox(ring)) || continue
     for edge in segments(ring)
@@ -237,8 +240,6 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       end
     end
   end
-
-  # sort events along the segment
   sort!(events, by=e -> λ(e[1]))
 
   # collect unique intersection pieces
