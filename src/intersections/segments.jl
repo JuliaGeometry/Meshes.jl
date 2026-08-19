@@ -219,7 +219,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # leaving the polygon, and 0 if it is neither (e.g. crossing)
   a, b = vertices(seg)
   λ(p) = (p - a) ⋅ (b - a)
-  events = [(a, false, 0), (b, false, 0)]
+  events = [(a, false, Int8(0)), (b, false, Int8(0))]
   for ring in rings(poly)
     intersects(sbox, boundingbox(ring)) || continue
     for edge in segments(ring)
@@ -232,11 +232,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
         if λ(d) < λ(c)
           c, d = d, c
         end
-        push!(events, (c, false, 1))
-        push!(events, (d, false, -1))
+        push!(events, (c, false, Int8(+1)))
+        push!(events, (d, false, Int8(-1)))
       else
         p = get(I)
-        push!(events, (p, true, 0))
+        push!(events, (p, true, Int8(0)))
       end
     end
   end
