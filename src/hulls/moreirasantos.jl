@@ -51,11 +51,11 @@ function hull(points, method::MoreiraSantosMarch)
 end
 
 function _moreirahull(p, k)
-  n = length(p)
-  ℒ = lentype(first(p))
-
   # clamp the number of neighbours considered at each step
   kk = clamp(k, 3, n - 1)
+
+  n = length(p)
+  ℒ = lentype(first(p))
 
   # find bottom-left point as the start of the ring
   i = argmin(p)
@@ -65,7 +65,7 @@ function _moreirahull(p, k)
 
   # available points: everything but the start, until the ring has ≥ 4 vertices
   mask = trues(n)
-  mask[i] = false
+  mask[i] = false #remove first point
 
   # initialize ring of indices
   ℐ = [i]
@@ -94,6 +94,7 @@ function _moreirahull(p, k)
     j = moreiranext(searcher, mask, p, ℐ, A, O)
     isnothing(j) && return _moreirahull(p, k + 1)
 
+    # add point to ring and remove from candidacy
     push!(ℐ, j)
     mask[j] = false
   end
@@ -113,16 +114,16 @@ function moreiranext(searcher, mask, p, ℐ, A, O)
   isempty(𝒞) && return nothing
 
   # iterate over candidates in order of increasing angle, returning the first valid one
-  for nᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
-    cseg = Segment(p[ℐ[end]], p[nᵢ])
-    cbox = boundingbox(cseg) # bbox check for efficiency
-    tₒ = nᵢ == ℐ[begin] ? 2 : 1
+  for cpointᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
+    cseg = Segment(p[ℐ[end]], p[cpointᵢ]) #segment to next point
+    # check if the segment intersects any existing edge
     valid = !any(tₒ:(length(ℐ) - 2)) do t
       eseg = Segment(p[ℐ[t]], p[ℐ[t + 1]])
-      intersects(cbox, boundingbox(eseg)) && intersects(cseg, eseg)
+      intersects(cseg, eseg)
     end
-    valid && return nᵢ
+    valid && return cpointᵢ
   end
 
+  # if no valid candidate can be found, return nothing
   nothing
 end
