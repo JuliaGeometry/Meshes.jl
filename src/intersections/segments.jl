@@ -214,9 +214,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   intersects(sbox, pbox) || return @IT NotIntersecting nothing f
 
   # collect and classify boundary events, which are of the
-  # form (point, iscrossing, enteringmode). The enteringmode
-  # is +1 if the segment is entering the polygon, -1 if it is
-  # leaving the polygon, and 0 if it is neither (e.g. crossing)
+  # form (point, iscrossing, endtype). The endtype is +1 if
+  # the segment is entering the polygon, -1 if it is leaving
+  # the polygon, and 0 if it is neither (e.g. crossing)
   a, b = vertices(seg)
   λ(p) = (p - a) ⋅ (b - a)
   events = [(a, false, Int8(0)), (b, false, Int8(0))]
@@ -254,7 +254,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       # merge coincident events
       events[i] = (eᵢ[1], eᵢ[2] || eⱼ[2], eᵢ[3] + eⱼ[3])
     else
-      # eᵢ is fully merged, connect it with the next event
+      # event is fully merged, connect it with the next event
       depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
       if depth > 0 
