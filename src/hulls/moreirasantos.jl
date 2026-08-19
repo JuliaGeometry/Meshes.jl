@@ -51,11 +51,11 @@ function hull(points, method::MoreiraSantosMarch)
 end
 
 function _moreirahull(p, k)
-  # clamp the number of neighbours considered at each step
-  kk = clamp(k, 3, n - 1)
-
   n = length(p)
   ℒ = lentype(first(p))
+
+  # clamp the number of neighbours considered at each step
+  kk = clamp(k, 3, n - 1)
 
   # find bottom-left point as the start of the ring
   i = argmin(p)
