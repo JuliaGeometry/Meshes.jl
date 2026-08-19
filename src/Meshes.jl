@@ -540,6 +540,7 @@ export
   HullMethod,
   GrahamScan,
   JarvisMarch,
+  MoreiraSantosMarch,
   hull,
   convexhull,
 
