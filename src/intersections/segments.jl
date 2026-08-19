@@ -246,7 +246,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   i = 1
   depth = 0
   pieces = typeof(seg)[]
-  isinterior = Bool[]
+  anyinterior = false
   for j in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
@@ -257,10 +257,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       # eᵢ is fully merged, so piece it with the next distinct event
       depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
-      if depth > 0
-        _pushpiece!(pieces, isinterior, piece, false)
-      elseif center(piece) ∈ poly
-        _pushpiece!(pieces, isinterior, piece, true)
+      if depth > 0 
+        _pushpiece!(pieces, piece) 
+      elseif center(piece) ∈ poly 
+        _pushpiece!(pieces, piece) 
+        anyinterior = true 
       end
       i += 1
       events[i] = eⱼ
@@ -275,7 +276,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   ncrosses = count(e -> e[2], events)
 
   # classify intersection
-  if any(isinterior)
+  if anyinterior
     return @IT Intersecting glue(pieces) f
   elseif !isempty(pieces)
     return @IT EdgeTouching glue(pieces) f
@@ -298,21 +299,18 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
 end
 
 # merge the continuous segments of a segment list (`pieces`) into
-# a single geometry and push then, indicating whether they are an
-# interior segment in the `isinterior` vector.
-function _pushpiece!(pieces, isinterior, piece, isint)
+# a single geometry and push then.
+function _pushpiece!(pieces, piece)
   if !isempty(pieces)
     prev = last(pieces)
     p₁, p₂ = vertices(prev)
     q₁, q₂ = vertices(piece)
     if p₂ ≈ q₁
       pieces[end] = Segment(p₁, q₂)
-      isinterior[end] |= isint
       return
     end
   end
   push!(pieces, piece)
-  push!(isinterior, isint)
 end
 
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
