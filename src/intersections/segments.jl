@@ -243,30 +243,30 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   sort!(events, by=e -> λ(e[1]))
 
   # collect unique intersection pieces
-  j = 1
+  i = 1
   depth = 0
   pieces = typeof(seg)[]
   isinterior = Bool[]
-  for i in 2:length(events)
+  for j in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
     if eᵢ[1] ≈ eⱼ[1]
       # merge coincident events
-      events[j] = (eⱼ[1], eⱼ[2] || eᵢ[2], eⱼ[3] + eᵢ[3])
+      events[i] = (eᵢ[1], eᵢ[2] || eⱼ[2], eᵢ[3] + eⱼ[3])
     else
-      # eⱼ is now fully merged, so piece it with the next distinct event
-      depth += eⱼ[3]
-      piece = Segment(eⱼ[1], eᵢ[1])
+      # eᵢ is fully merged, so piece it with the next distinct event
+      depth += eᵢ[3]
+      piece = Segment(eᵢ[1], eⱼ[1])
       if depth > 0
         _pushpiece!(pieces, isinterior, piece, false)
       elseif center(piece) ∈ poly
         _pushpiece!(pieces, isinterior, piece, true)
       end
-      j += 1
-      events[j] = eᵢ
+      i += 1
+      events[i] = eⱼ
     end
   end
-  resize!(events, j)
+  resize!(events, i)
 
   # create geometry from pieces
   piecegeometry(ps) = length(ps) == 1 ? only(ps) : Multi(ps)
