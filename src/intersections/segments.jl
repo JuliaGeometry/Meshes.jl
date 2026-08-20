@@ -283,7 +283,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   elseif ncrosses == 1
     i = findfirst(e -> e[2], events)
     p = events[i][1]
-    isvertex = any(v -> p ≈ v, vertices(poly))
+    isvertex = any(v -> p ≈ v, eachvertex(poly))
     if isvertex
       return @IT CornerTouching p f
     else
