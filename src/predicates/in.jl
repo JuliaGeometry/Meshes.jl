@@ -45,11 +45,7 @@ function Base.in(p::Point{🌐}, b::Box{🌐})
 end
 
 function inlonrange(lonₗ, lonₚ, lonᵣ)
-  if isnegative(lonₗ) && isnonnegative(lonᵣ)
-    lonₚ ≤ lonₗ || (isnonnegative(lonₚ) && lonₚ ≤ lonᵣ)
-  else
-    lonₗ ≤ lonₚ ≤ lonᵣ
-  end
+  lonₗ ≤ lonᵣ ? lonₗ ≤ lonₚ ≤ lonᵣ : lonₗ ≤ lonₚ || lonₚ ≤ lonᵣ
 end
 
 function Base.in(p::Point, b::Ball)
