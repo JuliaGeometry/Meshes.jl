@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of four types:
-# 
+#
 # 1. overlap with non-zero measure (Overlapping -> Box)
 # 2. intersect at corner point (CornerTouching -> Point)
 # 3. intersect at one of the facets (Touching -> Box)
@@ -91,17 +91,14 @@ function _lonintersections(lo₁, hi₁, lo₂, hi₂)
 
   # -180° and 180° represent the same meridian
   Δ = oftype(lo₁, 180u"°")
-  if _containsantimeridian(intervals₁, Δ) && _containsantimeridian(intervals₂, Δ) &&
-     !_containsantimeridian(ranges, Δ)
+  if _containsantimeridian(intervals₁, Δ) && _containsantimeridian(intervals₂, Δ) && !_containsantimeridian(ranges, Δ)
     push!(ranges, (Δ, Δ))
   end
 
   # pieces meeting at the antimeridian form a single wrapped interval
-  if length(ranges) == 2
-    if first(ranges)[1] == -Δ && last(ranges)[2] == Δ
-      lo, hi = last(ranges)[1], first(ranges)[2]
-      return lo == Δ && hi == -Δ ? [(Δ, Δ)] : [(lo, hi)]
-    end
+  if length(ranges) ≥ 2 && first(ranges)[1] == -Δ && last(ranges)[2] == Δ
+    lo, hi = last(ranges)[1], first(ranges)[2]
+    return lo == Δ && hi == -Δ ? [(Δ, Δ)] : [(lo, hi)]
   end
   ranges
 end

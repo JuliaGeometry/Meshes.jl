@@ -99,7 +99,7 @@ end
   hole1 = [merc(0.2, 0.2), merc(0.4, 0.2), merc(0.4, 0.4), merc(0.2, 0.4)]
   hole2 = [merc(0.6, 0.2), merc(0.8, 0.2), merc(0.8, 0.4), merc(0.6, 0.4)]
   poly = PolyArea([outer, hole1, hole2])
-  @test all(p ∈ poly for p in outer)
+  @test all(p in poly for p in outer)
   @test merc(0.5, 0.5) ∈ poly
   @test merc(0.2, 0.6) ∈ poly
   @test merc(1.5, 0.5) ∉ poly
