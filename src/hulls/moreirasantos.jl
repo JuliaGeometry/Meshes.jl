@@ -55,13 +55,13 @@ function _moreirahull(p, k)
   ℒ = lentype(first(p))
 
   # clamp the number of neighbours considered at each step
-  kk = clamp(k, 3, n - 1)
+  kk = max(k, 3)
 
   # find bottom-left point as the start of the ring
   i = argmin(p)
 
-  # initinitialize k nearest searcher
-  searcher = KNearestSearch(p, kk + 1)
+  # initialize k nearest searcher
+  searcher = KNearestSearch(p, kk)
 
   # available points: everything but the start, until the ring has ≥ 4 vertices
   mask = trues(n)
@@ -117,10 +117,9 @@ function moreiranext(searcher, mask, p, ℐ, A, O)
   for cpointᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
     cseg = Segment(p[ℐ[end]], p[cpointᵢ]) #segment to next point
     # check if the segment intersects any existing edge
-    tₒ = cpointᵢ == ℐ[begin] ? 2 : 1
+    tₒ = cpointᵢ == ℐ[begin] ? 2 : 1 # skip the last edge if the candidate is the start point
     valid = !any(tₒ:(length(ℐ) - 2)) do t
-      eseg = Segment(p[ℐ[t]], p[ℐ[t + 1]])
-      intersects(cseg, eseg)
+      intersects(cseg, Segment(p[ℐ[t]], p[ℐ[t + 1]])) # prior edges
     end
     valid && return cpointᵢ
   end
