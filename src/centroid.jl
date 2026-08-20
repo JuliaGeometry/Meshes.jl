@@ -19,6 +19,8 @@ centroid(b::Ball) = center(b)
 
 centroid(s::Sphere) = center(s)
 
+centroid(e::Ellipsoid) = center(e)
+
 centroid(d::Disk) = center(d)
 
 centroid(c::Circle) = center(c)
