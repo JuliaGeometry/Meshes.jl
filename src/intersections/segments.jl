@@ -257,11 +257,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       # event is fully merged, connect it with the next event
       depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
-      if depth > 0 
-        push!(pieces, piece) 
-      elseif center(piece) ∈ poly 
-        inpoly = true 
-        push!(pieces, piece) 
+      if depth > 0
+        push!(pieces, piece)
+      elseif center(piece) ∈ poly
+        inpoly = true
+        push!(pieces, piece)
       end
       i += 1
       events[i] = eⱼ
