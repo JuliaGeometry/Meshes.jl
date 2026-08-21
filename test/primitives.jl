@@ -730,7 +730,11 @@ end
   @test Meshes.lentype(e) == ℳ
   @test radii(e) == (T(3) * u"m", T(2) * u"m", T(1) * u"m")
   @test center(e) == cart(0, 0, 0)
+  @test centroid(e) == cart(0, 0, 0)
   @test perimeter(e) == zero(ℳ)
+
+  e = Ellipsoid((T(3), T(2), T(1)), cart(1, 2, 3))
+  @test centroid(e) == cart(1, 2, 3)
 
   e = Ellipsoid((T(3), T(2), T(1)))
   equaltest(e)
