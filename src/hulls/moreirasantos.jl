@@ -73,7 +73,8 @@ function _moreirahull(p, k)
   # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  j = moreiranext(searcher, mask, p, ℐ, A, O)
+  𝒞 = Vector{Int}(undef, kk) # preallocate candidate vector
+  j = moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
 
   # if no next point can be found, increase k and try again
   isnothing(j) && return _moreirahull(p, k + 1)
@@ -91,7 +92,7 @@ function _moreirahull(p, k)
     O = p[i]
     A = O + v
 
-    j = moreiranext(searcher, mask, p, ℐ, A, O)
+    j = moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
     isnothing(j) && return _moreirahull(p, k + 1)
 
     # add point to ring and remove from candidacy
@@ -109,12 +110,12 @@ function _moreirahull(p, k)
 end
 
 # find the nearest candidate by angle whose segment avoids existing hull edges.
-function moreiranext(searcher, mask, p, ℐ, A, O)
-  𝒞 = search(O, searcher; mask)
-  isempty(𝒞) && return nothing
+function moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+  nc = search!(𝒞, O, searcher; mask) # number of candidates
+  nc == 0 && return nothing
 
   # iterate over candidates in order of increasing angle, returning the first valid one
-  for cpointᵢ in sort(𝒞, by=l -> ∠(A, O, p[l]))
+  for cpointᵢ in sort!(view(𝒞, 1:nc), by=l -> ∠(A, O, p[l]))
     cseg = Segment(p[ℐ[end]], p[cpointᵢ]) #segment to next point
     # check if the segment intersects any existing edge
     tₒ = cpointᵢ == ℐ[begin] ? 2 : 1 # skip the last edge if the candidate is the start point
