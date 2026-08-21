@@ -342,6 +342,13 @@ end
   @test nelements(mesh) == 2
   @test eltype(mesh) <: Triangle
 
+  tetra = Tetrahedron(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1))
+  mesh = discretize(tetra, ManualSimplexification())
+  @test nvertices(mesh) == 4
+  @test nelements(mesh) == 1
+  @test eltype(mesh) <: Tetrahedron
+  @test measure(mesh) ≈ measure(tetra)
+
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
   hexa = Hexahedron(
     cart(0, 0, 0),
@@ -426,6 +433,14 @@ end
   @test nelements(mesh) == 10 * 10 + 10
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
+
+  ball = Ball(cart(0, 0, 0), T(1))
+  mesh = discretize(ball, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 11 * 10 + 2 * 11 + 1
+  @test nelements(mesh) == 10 * 10 * 10 + 2 * 10 * 10 + 10 * 10 + 2 * 10
+  @test eltype(mesh) <: Polyhedron
+  @test nvertices.(mesh) ⊆ [4, 5, 6, 8]
+  @test measure(mesh) ≈ measure(simplexify(mesh))
 
   disk = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1))
   mesh = discretize(disk, RegularDiscretization(10))
@@ -557,6 +572,11 @@ end
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 150
+
+  ball = Ball(cart(0, 0, 0), T(1))
+  mesh = discretize(ball)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 7800
 
   sphere = Sphere(cart(0, 0, 0), T(1))
   mesh = discretize(sphere)

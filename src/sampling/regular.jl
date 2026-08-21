@@ -53,6 +53,14 @@ firstoffset(b::Ball) = (n -> inv(n), firstoffset(boundary(b))...)
 lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
 extrapoints(b::Ball, sz) = (center(b),)
 
+function extrapoints(b::Ball{𝔼{3}}, sz)
+  T = numtype(lentype(b))
+  n = sz[1]
+  δₛ, δₑ = first(firstoffset(b)), first(lastoffset(b))
+  rs = range(T(δₛ(n)), stop=T(1 - δₑ(n)), length=n)
+  (center(b), (b(r, 0, 0) for r in rs)..., (b(r, 1, 0) for r in rs)...)
+end
+
 _firstoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> zero(n))
 _lastoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> inv(n))
 _extrapoints(s::Sphere, ::Val{3}, sz) = (s(0, 0), s(1, 0))

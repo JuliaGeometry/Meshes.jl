@@ -61,6 +61,10 @@ function _manualconnec(::Quadrangle)
   [connect((1, 2, 3), Triangle), connect((1, 3, 4), Triangle)]
 end
 
+function _manualconnec(::Tetrahedron)
+  [connect((1, 2, 3, 4), Tetrahedron)]
+end
+
 function _manualconnec(::Hexahedron)
   [
     connect((1, 5, 6, 8), Tetrahedron),

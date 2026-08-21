@@ -66,6 +66,8 @@ appendtopo(g, tg) = tg
 
 appendtopo(::Ball{𝔼{2}}, tg) = _appendcenter(tg)
 
+appendtopo(::Ball{𝔼{3}}, tg) = _appendcenteraxis(tg)
+
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
 appendtopo(::Sphere{𝔼{3}}, tg) = _appendpoles(tg, 2, true)
@@ -103,6 +105,57 @@ function _appendcenter(tg)
   push!(tris, connect((c, u, v)))
 
   SimpleTopology([quads; tris])
+end
+
+function _appendcenteraxis(tg)
+  # auxiliary variables
+  nr, nt, np = size(tg)
+  it, nvert = nt + 1, nvertices(tg)
+
+  # center and points along the polar axis
+  c = nvert + 1
+  north(i) = nvert + 1 + i
+  south(i) = nvert + 1 + (nr + 1) + i
+
+  # wrap periodic azimuthal index
+  wrap(k) = k > np ? 1 : k
+
+  # connect hexahedra in the interior
+  hexas = collect(elements(tg))
+
+  # connect polar axis with wedges
+  winds = NTuple{6,Int}[]
+  for i in 1:nr, k in 1:np
+    l = wrap(k + 1)
+    u1, v1 = cart2corner(tg, i, 1, k), cart2corner(tg, i, 1, l)
+    u2, v2 = cart2corner(tg, i + 1, 1, k), cart2corner(tg, i + 1, 1, l)
+    push!(winds, (north(i), u1, v1, north(i + 1), u2, v2))
+    u1, v1 = cart2corner(tg, i, it, k), cart2corner(tg, i, it, l)
+    u2, v2 = cart2corner(tg, i + 1, it, k), cart2corner(tg, i + 1, it, l)
+    push!(winds, (south(i), v1, u1, south(i + 1), v2, u2))
+  end
+  wedges = [connect(ind, Wedge) for ind in winds]
+
+  # connect center with pyramids
+  pinds = NTuple{5,Int}[]
+  for j in 1:nt, k in 1:np
+    l = wrap(k + 1)
+    u1, v1 = cart2corner(tg, 1, j, k), cart2corner(tg, 1, j, l)
+    u2, v2 = cart2corner(tg, 1, j + 1, k), cart2corner(tg, 1, j + 1, l)
+    push!(pinds, (u1, v1, v2, u2, c))
+  end
+  pyramids = [connect(ind, Pyramid) for ind in pinds]
+
+  # connect center and poles with tetrahedra
+  tinds = NTuple{4,Int}[]
+  for k in 1:np
+    l = wrap(k + 1)
+    push!(tinds, (c, north(1), cart2corner(tg, 1, 1, k), cart2corner(tg, 1, 1, l)))
+    push!(tinds, (c, south(1), cart2corner(tg, 1, it, l), cart2corner(tg, 1, it, k)))
+  end
+  tetras = [connect(ind, Tetrahedron) for ind in tinds]
+
+  SimpleTopology([hexas; wedges; pyramids; tetras])
 end
 
 function _appendaxis(tg)
