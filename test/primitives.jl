@@ -195,6 +195,7 @@ end
   @test measure(r) == typemax(ℳ)
   @test length(r) == typemax(ℳ)
   @test perimeter(r) == zero(ℳ)
+  @test_throws ArgumentError centroid(r)
 
   r = Ray(cart(0, 0), vector(1, 1))
   equaltest(r)
@@ -253,6 +254,7 @@ end
   @test measure(l) == typemax(ℳ)
   @test length(l) == typemax(ℳ)
   @test perimeter(l) == zero(ℳ)
+  @test_throws ArgumentError centroid(l)
 
   l = Line(cart(0, 0), cart(1, 1))
   equaltest(l)
@@ -304,6 +306,7 @@ end
   @test Meshes.lentype(p) == ℳ
   @test measure(p) == typemax(ℳ)^2
   @test area(p) == typemax(ℳ)^2
+  @test_throws ArgumentError centroid(p)
   @test p(T(0), T(0)) == cart(0, 0, 0)
   @test normal(p) == Vec(0, 0, 1)
   @test perimeter(p) == zero(ℳ)
@@ -1108,7 +1111,7 @@ end
   @test paramdim(c) == 3
   @test crs(c) <: Cartesian{NoDatum}
   @test Meshes.lentype(c) == ℳ
-  @test c(T(0), T(0), T(0)) ≈ centroid(p)
+  @test c(T(0), T(0), T(0)) ≈ p(0, 0)
   @test c(T(0), T(0), T(1)) ≈ a
   @test c(T(1.0), T(0.25), T(0.0)) ≈ cart(0, 2, 0)
 

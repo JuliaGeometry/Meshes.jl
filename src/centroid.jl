@@ -12,7 +12,11 @@ centroid(g::Geometry) = withcrs(g, integral(to, g) / measure(g))
 
 centroid(p::Point) = p
 
-centroid(p::Plane) = center(p)
+centroid(::Ray) = throw(ArgumentError("centroid is not defined for unbounded geometries"))
+
+centroid(::Line) = throw(ArgumentError("centroid is not defined for unbounded geometries"))
+
+centroid(::Plane) = throw(ArgumentError("centroid is not defined for unbounded geometries"))
 
 centroid(b::Box) = center(b)
 
