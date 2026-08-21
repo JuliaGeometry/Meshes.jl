@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of five types:
-#
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at one endpoint of one segment (EdgeTouching -> Point)
 # 3. intersect at one endpoint of both segments (CornerTouching -> Point)
@@ -98,7 +97,6 @@ function intersection(f, seg₁::Segment, seg₂::Segment)
 end
 
 # The intersection type can be one of five types:
-# 
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at one end point of segment xor origin of ray (EdgeTouching -> Point)
 # 3. intersects at one end point of segment and origin of ray (CornerTouching -> Point)
@@ -169,7 +167,7 @@ function intersection(f, seg::Segment, ray::Ray)
   end
 end
 
-# The intersection type can be one of six types:
+# The intersection type can be one of four types:
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at an end point of segment (Touching -> Point)
 # 3. overlap of line and segment (Overlapping -> Segment)
@@ -203,9 +201,104 @@ function intersection(f, seg::Segment, line::Line)
   end
 end
 
+# The intersection type can be one of five types:
+# 1. overlap with the polygon interior (Intersecting -> Segment or Multi)
+# 2. overlap with a polygon edge only (EdgeTouching -> Segment or Multi)
+# 3. intersect at a polygon vertex (CornerTouching -> Point)
+# 4. intersect at a single non-vertex point (Touching -> Point)
+# 5. do not overlap nor intersect (NotIntersecting -> Nothing)
+function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
+  # early exit if bounding boxes do not intersect
+  sbox = boundingbox(seg)
+  pbox = boundingbox(poly)
+  intersects(sbox, pbox) || return @IT NotIntersecting nothing f
+
+  # collect and classify boundary events, which are of the
+  # form (point, iscrossing, endtype). The endtype is +1 if
+  # the segment is entering the polygon, -1 if it is leaving
+  # the polygon, and 0 otherwise
+  a, b = vertices(seg)
+  λ(p) = (p - a) ⋅ (b - a)
+  events = [(a, false, Int8(0)), (b, false, Int8(0))]
+  for ring in rings(poly)
+    intersects(sbox, boundingbox(ring)) || continue
+    for edge in segments(ring)
+      intersects(sbox, boundingbox(edge)) || continue
+      I = intersection(seg, edge)
+      if type(I) == NotIntersecting
+        continue
+      elseif type(I) == Overlapping
+        c, d = vertices(get(I))
+        if λ(d) < λ(c)
+          c, d = d, c
+        end
+        push!(events, (c, false, Int8(+1)))
+        push!(events, (d, false, Int8(-1)))
+      else
+        p = get(I)
+        push!(events, (p, true, Int8(0)))
+      end
+    end
+  end
+  sort!(events, by=e -> λ(e[1]))
+
+  # collect unique intersection pieces
+  i = 1
+  depth = 0
+  inpoly = false
+  pieces = typeof(seg)[]
+  for j in 2:length(events)
+    eᵢ = events[i]
+    eⱼ = events[j]
+    if eᵢ[1] ≈ eⱼ[1]
+      # merge coincident events
+      events[i] = (eᵢ[1], eᵢ[2] || eⱼ[2], eᵢ[3] + eⱼ[3])
+    else
+      # event is fully merged, connect it with the next event
+      depth += eᵢ[3]
+      piece = Segment(eᵢ[1], eⱼ[1])
+      if depth > 0
+        push!(pieces, piece)
+      elseif center(piece) ∈ poly
+        inpoly = true
+        push!(pieces, piece)
+      end
+      i += 1
+      events[i] = eⱼ
+    end
+  end
+  resize!(events, i)
+
+  # number of crossing events
+  ncrosses = count(e -> e[2], events)
+
+  # glue pieces together into a single geometry
+  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
+
+  # classify intersection
+  if inpoly
+    return @IT Intersecting glue(pieces) f
+  elseif !isempty(pieces)
+    return @IT EdgeTouching glue(pieces) f
+  elseif ncrosses == 1
+    i = findfirst(e -> e[2], events)
+    p = events[i][1]
+    if any(≈(p), eachvertex(poly))
+      return @IT CornerTouching p f
+    else
+      return @IT Touching p f
+    end
+  elseif ncrosses > 1
+    points = [e[1] for e in events if e[2]]
+    return @IT Intersecting Multi(points) f
+  else
+    return @IT NotIntersecting nothing f
+  end
+end
+
 # Algorithm 4 of Jiménez, J., Segura, R. and Feito, F. 2009.
 # (https://www.sciencedirect.com/science/article/pii/S0925772109001448?via%3Dihub)
-function intersection(f, seg::Segment, tri::Triangle)
+function intersection(f, seg::Segment{𝔼{3}}, tri::Triangle{𝔼{3}})
   Q1, Q2 = vertices(seg)
   V1, V2, V3 = vertices(tri)
 

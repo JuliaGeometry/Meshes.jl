@@ -238,6 +238,33 @@ end
   @test intersection(s₁₀, s₃) |> type == NotIntersecting
   @test intersection(s₃, s₁₀) |> type == NotIntersecting
 
+  # degenerate segments
+  A = cart(0.0, 0.0)
+  B = cart(0.5, 0.0)
+  C = cart(1.0, 0.0)
+  s₀ = Segment(A, C)
+  s₁ = Segment(A, A)
+  s₂ = Segment(B, B)
+  s₃ = Segment(C, C)
+  @test s₀ ∩ s₁ ≈ s₁ ∩ s₀ ≈ A
+  @test s₀ ∩ s₂ ≈ s₂ ∩ s₀ ≈ B
+  @test s₀ ∩ s₃ ≈ s₃ ∩ s₀ ≈ C
+  @test intersection(s₀, s₁) |> type == CornerTouching
+  @test intersection(s₀, s₂) |> type == EdgeTouching
+  @test intersection(s₀, s₃) |> type == CornerTouching
+  @test s₁ ∩ s₂ === s₂ ∩ s₁ === nothing
+  @test s₁ ∩ s₃ === s₃ ∩ s₁ === nothing
+  @test s₂ ∩ s₃ === s₃ ∩ s₂ === nothing
+  @test intersection(s₁, s₂) |> type == NotIntersecting
+  @test intersection(s₁, s₃) |> type == NotIntersecting
+  @test intersection(s₂, s₃) |> type == NotIntersecting
+  @test s₁ ∩ s₁ ≈ A
+  @test s₂ ∩ s₂ ≈ B
+  @test s₃ ∩ s₃ ≈ C
+  @test intersection(s₁, s₁) |> type == CornerTouching
+  @test intersection(s₂, s₂) |> type == CornerTouching
+  @test intersection(s₃, s₃) |> type == CornerTouching
+
   # segments in 3D
   s1 = Segment(cart(0.0, 0.0, 0.0), cart(1.0, 0.0, 0.0))
   s2 = Segment(cart(0.5, 1.0, 0.0), cart(0.5, -1.0, 0.0))
@@ -424,32 +451,62 @@ end
   @test intersection(l₁, s₇) |> type == NotIntersecting # CASE 4
   @test l₁ ∩ s₇ === s₇ ∩ l₁ === nothing
 
-  # degenerate segments
-  A = cart(0.0, 0.0)
-  B = cart(0.5, 0.0)
-  C = cart(1.0, 0.0)
-  s₀ = Segment(A, C)
-  s₁ = Segment(A, A)
-  s₂ = Segment(B, B)
-  s₃ = Segment(C, C)
-  @test s₀ ∩ s₁ ≈ s₁ ∩ s₀ ≈ A
-  @test s₀ ∩ s₂ ≈ s₂ ∩ s₀ ≈ B
-  @test s₀ ∩ s₃ ≈ s₃ ∩ s₀ ≈ C
-  @test intersection(s₀, s₁) |> type == CornerTouching
-  @test intersection(s₀, s₂) |> type == EdgeTouching
-  @test intersection(s₀, s₃) |> type == CornerTouching
-  @test s₁ ∩ s₂ === s₂ ∩ s₁ === nothing
-  @test s₁ ∩ s₃ === s₃ ∩ s₁ === nothing
-  @test s₂ ∩ s₃ === s₃ ∩ s₂ === nothing
-  @test intersection(s₁, s₂) |> type == NotIntersecting
-  @test intersection(s₁, s₃) |> type == NotIntersecting
-  @test intersection(s₂, s₃) |> type == NotIntersecting
-  @test s₁ ∩ s₁ ≈ A
-  @test s₂ ∩ s₂ ≈ B
-  @test s₃ ∩ s₃ ≈ C
-  @test intersection(s₁, s₁) |> type == CornerTouching
-  @test intersection(s₂, s₂) |> type == CornerTouching
-  @test intersection(s₃, s₃) |> type == CornerTouching
+  # segments and polygons in 2D
+  s = Segment(cart(1, 2), cart(3, 2))
+  p = PolyArea([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
+  @test s ∩ p ≈ p ∩ s ≈ s
+  @test intersection(s, p) |> type == Intersecting
+  s = Segment(cart(-1, 2), cart(5, 2))
+  p = PolyArea([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
+  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 2), cart(4, 2))
+  @test intersection(s, p) |> type == Intersecting
+  s = Segment(cart(-1, 4), cart(7, 4))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @test s ∩ p ≈ p ∩ s ≈ Multi([Segment(cart(0, 4), cart(2, 4)), Segment(cart(4, 4), cart(6, 4))])
+  @test intersection(s, p) |> type == Intersecting
+  s = Segment(cart(-1, 0), cart(5, 0))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(5, 0))
+  @test intersection(s, p) |> type == EdgeTouching
+  s = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
+  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  @test s ∩ p ≈ p ∩ s ≈ cart(0, 0)
+  @test intersection(s, p) |> type == CornerTouching
+  s = Segment(cart(-1, 2), cart(0, 2))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @test s ∩ p ≈ p ∩ s ≈ cart(0, 2)
+  @test intersection(s, p) |> type == Touching
+  s = Segment(cart(-1, -1), cart(0, 0))
+  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  @test s ∩ p ≈ p ∩ s ≈ cart(0, 0)
+  @test intersection(s, p) |> type == CornerTouching
+  s = Segment(cart(2, 2), cart(2, 2))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @test s ∩ p ≈ p ∩ s ≈ cart(2, 2)
+  @test intersection(s, p) |> type == CornerTouching
+  s = Segment(cart(5, 5), cart(5, 5))
+  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  @test s ∩ p === p ∩ s === nothing
+  @test intersection(s, p) |> type == NotIntersecting
+  s = Segment(cart(-1, 5), cart(5, 5))
+  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  @test s ∩ p === p ∩ s === nothing
+  @test intersection(s, p) |> type == NotIntersecting
+  s = Segment(cart(3, 3), cart(3, 5))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @test s ∩ p === p ∩ s === nothing
+  @test intersection(s, p) |> type == NotIntersecting
+
+  # type stability tests
+  s₁ = Segment(cart(-1, 4), cart(7, 4))
+  s₂ = Segment(cart(-1, 0), cart(5, 0))
+  s₃ = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
+  s₄ = Segment(cart(-1, 2), cart(0, 2))
+  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  @inferred someornone(s₁, p)
+  @inferred someornone(s₂, p)
+  @inferred someornone(s₃, p)
+  @inferred someornone(s₄, p)
 
   # utils
   @test Meshes._sort4vals(2.5, 1.4, 1.1, 2.0) == (1.4, 2.0)
