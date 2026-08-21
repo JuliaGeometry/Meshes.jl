@@ -5,7 +5,8 @@
 """
     centroid(geometry)
 
-The centroid of the `geometry`.
+The centroid of the `geometry` is the integral of the
+position vector over the geometry, divided by its measure.
 """
 centroid(g::Geometry) = withcrs(g, integral(to, g) / measure(g))
 
@@ -76,7 +77,8 @@ centroid(g::TransformedGeometry) = transform(g)(centroid(parent(g)))
 """
     centroid(domain)
 
-The centroid of the `domain`.
+The centroid of the `domain` is the measure-weighted
+average of the centroids of its elements (i.e. geometries).
 """
 function centroid(d::Domain)
   vector(i) = to(centroid(d, i))
@@ -91,7 +93,9 @@ end
 """
     centroid(domain, ind)
 
-The centroid of the `ind`-th element of the `domain`.
+The centroid of the `ind`-th element of the `domain`
+can sometimes be computed directly without materializing
+the element (e.g., centroid of element in a `CartesianGrid`).
 """
 centroid(d::Domain, ind::Int) = centroid(d[ind])
 
