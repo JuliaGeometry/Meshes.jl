@@ -23,7 +23,7 @@ struct MoreiraMarch <: HullMethod
   k::Int
 
   function MoreiraMarch(k)
-    assertion(isinteger(k) && k > 2, "k must be greater than 2")
+    assertion(isinteger(k) && k > 2, "k must be an integer greater than 2")
     new(k)
   end
 end
