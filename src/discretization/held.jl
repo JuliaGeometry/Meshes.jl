@@ -20,11 +20,11 @@ generator `rng`.
 
 ## References
 
-* Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of Polygons]
-  (https://link.springer.com/article/10.1007/s00453-001-0028-4)
-* Eder et al. 2018. [Parallelized ear clipping for the triangulation and
-  constrained Delaunay triangulation of polygons]
-  (https://www.sciencedirect.com/science/article/pii/S092577211830004X)
+* Held, M. 1998. [FIST: Fast Industrial-Strength Triangulation of
+  Polygons](https://link.springer.com/article/10.1007/s00453-001-0028-4)
+* Eder et al. 2018. [Parallelized ear clipping for the
+  triangulation and constrained Delaunay triangulation of
+  polygons](https://www.sciencedirect.com/science/article/pii/S092577211830004X)
 """
 struct HeldTriangulation{RNG<:AbstractRNG} <: BoundaryTriangulationMethod
   rng::RNG

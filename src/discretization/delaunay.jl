@@ -10,8 +10,7 @@ Optionally, specify the random number generator `rng`.
 
 ## References
 
-* Cheng et al. 2012. [Delaunay Mesh Generation]
-  (https://people.eecs.berkeley.edu/~jrs/meshbook.html)
+* Cheng et al. 2012. [Delaunay Mesh Generation](https://people.eecs.berkeley.edu/~jrs/meshbook.html)
 
 ### Notes
 

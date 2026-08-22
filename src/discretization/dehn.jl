@@ -16,8 +16,8 @@ with small number of vertices.
 
 ## References
 
-* Devadoss, S & Rourke, J. 2011. [Discrete and computational geometry]
-  (https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
+* Devadoss, S & Rourke, J. 2011. [Discrete and computational
+  geometry](https://press.princeton.edu/books/hardcover/9780691145532/discrete-and-computational-geometry)
 """
 struct DehnTriangulation <: BoundaryTriangulationMethod end
 

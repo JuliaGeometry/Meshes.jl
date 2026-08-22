@@ -117,8 +117,8 @@ viz(fig[1,2], mesh, showsegments = true)
 fig
 ```
 
-As can be seen in the following example, all discretization methods
-for [`Polygon`](@ref) automatically work in the presence of holes:
+All discretization methods for [`Polygon`](@ref)
+automatically work in the presence of holes:
 
 ```@example discretization
 outer = [(0.18142937, 0.54681134), (0.38282228, 0.107781954), (0.43220532, 0.013640274),
