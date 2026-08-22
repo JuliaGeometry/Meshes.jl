@@ -78,7 +78,7 @@
       points = [cart(i - 1, j - 1) for i in 1:11 for j in 1:11]
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(10, 0), cart(10, 10), cart(0, 10)]
-      for _ in 1:100 # test presence of interior points doesn't affect the result 
+      for _ in 1:100 # test presence of interior points doesn't affect the result
         push!(points, cart(10 * rand(), 10 * rand()))
       end
       chull = hull(points, method)
@@ -97,7 +97,7 @@
       chull = hull(points, method)
       @test vertices(chull) == [cart(0, 0), cart(100, 0)]
 
-      # partially collinear 
+      # partially collinear
       points = [
         cart(2, 0),
         cart(4, 0),
@@ -170,4 +170,101 @@ end
   h = convexhull(Multi([b1, b2]))
   @test cart(-0.8, -0.8) ∈ h
   @test cart(0.2, 0.2) ∈ h
+end
+
+@testitem "MoreiraMarch" setup = [Setup] begin
+  # constructor validation: k must be an integer > 2
+  @test_throws AssertionError MoreiraMarch(2)
+
+  # basic random points
+  pts = [cart(rand(T), rand(T)) for _ in 1:10]
+  chul = hull(pts, MoreiraMarch(3))
+  @test all(∈(chul), pts)
+
+  # corner cases bypass k entirely
+  pts = cart.([(0, 0)])
+  @test hull(pts, MoreiraMarch(3)) == cart(0, 0)
+  pts = cart.([(0, 0), (1, 0)])
+  @test hull(pts, MoreiraMarch(3)) == Segment(cart(0, 0), cart(1, 0))
+  pts = cart.([(1, 0), (0, 0), (0, 1)])
+  chul = hull(pts, MoreiraMarch(3))
+  @test Set(vertices(chul)) == Set(pts)
+
+  # hull-level k < n validation still applies once n > 3
+  pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
+  @test_throws AssertionError hull(pts, MoreiraMarch(5))
+  @test_throws AssertionError hull(pts, MoreiraMarch(6))
+  chul = hull(pts, MoreiraMarch(4))
+  @test issimple(chul) && all(∈(chul), pts)
+
+  # fuzz test without a try/catch escape hatch: must never throw
+  rng = StableRNG(123)
+  for _ in 1:100, k in (3, 4, 5)
+    rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
+    rhul = hull(rpts, MoreiraMarch(k))
+    @test nvertices(rhul) ≥ 3
+    @test all(∈(rhul), rpts)
+  end
+
+  # U-shaped point set with a notch between x=1 and x=3 above y=1
+  pts = [
+    cart(0, 0),
+    cart(1, 0),
+    cart(2, 0),
+    cart(3, 0),
+    cart(4, 0),
+    cart(4, 1),
+    cart(4, 2),
+    cart(4, 3),
+    cart(4, 4),
+    cart(3, 4),
+    cart(3, 3),
+    cart(3, 2),
+    cart(3, 1),
+    cart(2, 1),
+    cart(1, 1),
+    cart(1, 2),
+    cart(1, 3),
+    cart(1, 4),
+    cart(0, 4),
+    cart(0, 3),
+    cart(0, 2),
+    cart(0, 1)
+  ]
+  chul = hull(pts, MoreiraMarch())
+  @test issimple(chul) && nvertices(chul) ≥ 3
+  @test all(∈(chul), pts)
+  @test Set(vertices(chul)) == Set(pts)
+  @test area(chul) ≈ T(10) * u"m^2"
+
+  # moreira self-intersection regression
+  pts = [
+    cart(3.7, 12.9),
+    cart(5.9, 12.9),
+    cart(9.3, 12.9),
+    cart(10.4, 11.8),
+    cart(1.5, 10.7),
+    cart(7.9, 10.4),
+    cart(0.4, 8.4),
+    cart(3.0, 8.2),
+    cart(5.7, 8.2),
+    cart(4.4, 6.0),
+    cart(0.4, 5.1),
+    cart(1.5, 2.9),
+    cart(7.0, 0.6),
+    cart(5.7, 3.8),
+    cart(9.3, 2.9),
+    cart(4.8, 1.7)
+  ]
+  chul = hull(pts, MoreiraMarch())
+  @test issimple(chul) && nvertices(chul) ≥ 3
+  @test all(∈(chul), pts)
+
+  # true concavity regression against real data
+  pts = vertices(readpoly(T, joinpath(datadir, "hull.line")))
+  chul3 = hull(pts, MoreiraMarch(3))
+  chuln = hull(pts, MoreiraMarch(length(pts) - 1))
+  @test issimple(chul3) && all(∈(chul3), pts)
+  @test issimple(chuln) && all(∈(chuln), pts)
+  @test nvertices(chuln) ≤ nvertices(chul3)
 end
