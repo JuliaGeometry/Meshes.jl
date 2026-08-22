@@ -36,34 +36,34 @@
     verts = vertices(chul)
     @test verts == cart.([(0, 0), (0.5, -1), (1, 0), (1, 1), (0, 1)])
 
-    pts = cart.([
-      (0, 5),
-      (1, 5),
-      (1, 4),
-      (2, 4),
-      (2, 3),
-      (3, 3),
-      (4, 3),
-      (5, 3),
-      (5, 4),
-      (6, 4),
-      (6, 5),
-      (7, 5),
-      (7, 6),
-      (7, 7),
-      (6, 7),
-      (6, 8),
-      (5, 8),
-      (5, 9),
-      (4, 9),
-      (3, 9),
-      (2, 9),
-      (2, 8),
-      (1, 8),
-      (1, 7),
-      (0, 7),
-      (0, 6)
-    ])
+    pts = [
+      cart(0, 5),
+      cart(1, 5),
+      cart(1, 4),
+      cart(2, 4),
+      cart(2, 3),
+      cart(3, 3),
+      cart(4, 3),
+      cart(5, 3),
+      cart(5, 4),
+      cart(6, 4),
+      cart(6, 5),
+      cart(7, 5),
+      cart(7, 6),
+      cart(7, 7),
+      cart(6, 7),
+      cart(6, 8),
+      cart(5, 8),
+      cart(5, 9),
+      cart(4, 9),
+      cart(3, 9),
+      cart(2, 9),
+      cart(2, 8),
+      cart(1, 8),
+      cart(1, 7),
+      cart(0, 7),
+      cart(0, 6)
+    ]
     chul = hull(pts, method)
     @test nvertices(chul) < length(pts)
 
@@ -206,30 +206,30 @@ end
   end
 
   # U-shaped point set with a notch between x=1 and x=3 above y=1
-  pts = cart.([
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (3, 0),
-    (4, 0),
-    (4, 1),
-    (4, 2),
-    (4, 3),
-    (4, 4),
-    (3, 4),
-    (3, 3),
-    (3, 2),
-    (3, 1),
-    (2, 1),
-    (1, 1),
-    (1, 2),
-    (1, 3),
-    (1, 4),
-    (0, 4),
-    (0, 3),
-    (0, 2),
-    (0, 1)
-  ])
+  pts = [
+    cart(0, 0),
+    cart(1, 0),
+    cart(2, 0),
+    cart(3, 0),
+    cart(4, 0),
+    cart(4, 1),
+    cart(4, 2),
+    cart(4, 3),
+    cart(4, 4),
+    cart(3, 4),
+    cart(3, 3),
+    cart(3, 2),
+    cart(3, 1),
+    cart(2, 1),
+    cart(1, 1),
+    cart(1, 2),
+    cart(1, 3),
+    cart(1, 4),
+    cart(0, 4),
+    cart(0, 3),
+    cart(0, 2),
+    cart(0, 1)
+  ]
   chul = hull(pts, MoreiraSantosMarch(3))
   @test issimple(chul) && nvertices(chul) ≥ 3
   @test all(pts .∈ Ref(chul))
@@ -238,24 +238,24 @@ end
   @test area(chul) < area(hull(pts, JarvisMarch()))
 
   # moreira self-intersection regression
-  pts = cart.([
-    (3.7, 12.9),
-    (5.9, 12.9),
-    (9.3, 12.9),
-    (10.4, 11.8),
-    (1.5, 10.7),
-    (7.9, 10.4),
-    (0.4, 8.4),
-    (3.0, 8.2),
-    (5.7, 8.2),
-    (4.4, 6.0),
-    (0.4, 5.1),
-    (1.5, 2.9),
-    (7.0, 0.6),
-    (5.7, 3.8),
-    (9.3, 2.9),
-    (4.8, 1.7)
-  ])
+  pts = [
+    cart(3.7, 12.9),
+    cart(5.9, 12.9),
+    cart(9.3, 12.9),
+    cart(10.4, 11.8),
+    cart(1.5, 10.7),
+    cart(7.9, 10.4),
+    cart(0.4, 8.4),
+    cart(3.0, 8.2),
+    cart(5.7, 8.2),
+    cart(4.4, 6.0),
+    cart(0.4, 5.1),
+    cart(1.5, 2.9),
+    cart(7.0, 0.6),
+    cart(5.7, 3.8),
+    cart(9.3, 2.9),
+    cart(4.8, 1.7)
+  ]
   chul = hull(pts, MoreiraSantosMarch(3))
   @test issimple(chul) && nvertices(chul) ≥ 3
   @test all(pts .∈ Ref(chul))
