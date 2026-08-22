@@ -49,26 +49,27 @@ function hull(points, method::MoreiraMarch)
 end
 
 function _moreiramarch(p, k)
+  # auxiliary variables
   n = length(p)
   ℒ = lentype(first(p))
 
-  # clamp the number of neighbors considered at each step
+  # number of neighbors at each step
   m = max(k, 3)
 
-  # find bottom-left point as the start of the ring
-  i = argmin(p)
-
-  # initialize k nearest searcher
+  # k-nearest neighbor search
   searcher = KNearestSearch(p, m)
 
-  # available points: everything but the start, until the ring has ≥ 4 vertices
-  mask = trues(n)
-  mask[i] = false
+  # find bottom-left point
+  i = argmin(p)
 
   # initialize ring of indices
   ℐ = [i]
 
-  # initialize candidate indices
+  # initialize search mask
+  mask = trues(n)
+  mask[i] = false
+
+  # pre-allocate vector of candidate indices
   𝒞 = Vector{Int}(undef, m)
 
   # find next point with smallest angle
@@ -79,6 +80,7 @@ function _moreiramarch(p, k)
   # if no next point can be found, increase k and try again
   isnothing(j) && return _moreiramarch(p, k + 1)
 
+  # add point to ring and remove from candidacy
   push!(ℐ, j)
   mask[j] = false
 
@@ -87,12 +89,16 @@ function _moreiramarch(p, k)
     # start point re-enters candidacy once the ring has enough vertices to close
     length(ℐ) == 4 && (mask[first(ℐ)] = true)
 
+    # direction of current segment
     v = p[j] - p[i]
+
+    # find next point with smallest angle
     i = j
     O = p[i]
     A = O + v
-
     j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+
+    # if no next point can be found, increase k and try again
     isnothing(j) && return _moreiramarch(p, k + 1)
 
     # add point to ring and remove from candidacy
