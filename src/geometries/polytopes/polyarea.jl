@@ -82,11 +82,11 @@ function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
   summary(io, p)
   println(io)
   if length(rings) > 1
-    println(io, "  outer ring ($(nvertices(rings[1])) vertices)")
+    println(io, "  outer ring")
     printelms(io, vertices(rings[1]), tab="    ")
     for i in 2:length(rings)
       println(io)
-      println(io, "  inner ring $(i-1) ($(nvertices(rings[i])) vertices)")
+      println(io, "  inner ring $(i-1)")
       printelms(io, vertices(rings[i]), tab="    ")
     end
   else
