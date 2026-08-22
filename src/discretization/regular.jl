@@ -68,11 +68,11 @@ appendtopo(::Ball{𝔼{2}}, tg) = _appendcenter(tg)
 
 appendtopo(::Ball{𝔼{3}}, tg) = _appendcenteraxis(tg)
 
-appendtopo(::Disk, tg) = _appendcenter(tg)
-
 appendtopo(::Sphere{𝔼{3}}, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
+
+appendtopo(::Disk, tg) = _appendcenter(tg)
 
 appendtopo(::Cylinder, tg) = _appendaxis(tg)
 
