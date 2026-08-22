@@ -163,32 +163,31 @@ function _appendaxis(tg)
   _, ny, nz = size(tg)
 
   # number of grid vertices
-  nvert = nvertices(tg)
+  nv = nvertices(tg)
 
   # connect hexahedra in the volume
   hexas = collect(elements(tg))
 
   # connect axis with wedges
-  inds = NTuple{6,Int}[]
+  wedges = Connectivity{Wedge,6}[]
   for k in 1:nz
     for j in 1:(ny - 1)
-      a1 = nvert + k
+      a1 = nv + k
       b1 = cart2corner(tg, 1, j, k)
       c1 = cart2corner(tg, 1, j + 1, k)
-      a2 = nvert + k + 1
+      a2 = nv + k + 1
       b2 = cart2corner(tg, 1, j, k + 1)
       c2 = cart2corner(tg, 1, j + 1, k + 1)
-      push!(inds, (a1, b1, c1, a2, b2, c2))
+      push!(wedges, connect((a1, b1, c1, a2, b2, c2), Wedge))
     end
-    a1 = nvert + k
+    a1 = nv + k
     b1 = cart2corner(tg, 1, ny, k)
     c1 = cart2corner(tg, 1, 1, k)
-    a2 = nvert + k + 1
+    a2 = nv + k + 1
     b2 = cart2corner(tg, 1, ny, k + 1)
     c2 = cart2corner(tg, 1, 1, k + 1)
-    push!(inds, (a1, b1, c1, a2, b2, c2))
+    push!(wedges, connect((a1, b1, c1, a2, b2, c2), Wedge))
   end
-  wedges = [connect(ind, Wedge) for ind in inds]
 
   SimpleTopology([hexas; wedges])
 end
