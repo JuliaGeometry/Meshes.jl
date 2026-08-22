@@ -463,6 +463,14 @@ end
   @test eltype(mesh) <: Polyhedron
   @test nvertices.(mesh) ⊆ [6, 8]
 
+  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
+  mesh = discretize(cone, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 * 11 + 11 + 1
+  @test nelements(mesh) == 10 * 10 * 10 + 10 * 10 + 10 * 10 + 10
+  @test eltype(mesh) <: Polyhedron
+  @test nvertices.(mesh) ⊆ [4, 5, 6, 8]
+  @test measure(mesh) ≈ measure(simplexify(mesh))
+
   cylsurf = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
   mesh = discretize(cylsurf, RegularDiscretization(10))
   @test nvertices(mesh) == 10 * 11 + 2
@@ -596,6 +604,11 @@ end
   @test !(eltype(mesh) <: Wedge)
   @test !(eltype(mesh) <: Hexahedron)
   @test nelements(mesh) == 300
+
+  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
+  mesh = discretize(cone)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 450
 
   cylsurf = CylinderSurface(T(1))
   mesh = discretize(cylsurf)

@@ -67,6 +67,18 @@ firstoffset(::CylinderSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::CylinderSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::CylinderSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 
+firstoffset(::Cone) = (n -> inv(n), n -> zero(n), n -> zero(n))
+lastoffset(::Cone) = (n -> zero(n), n -> inv(n), n -> inv(n))
+function extrapoints(c::Cone, sz)
+  T = numtype(lentype(c))
+  δₛ = firstoffset(c)
+  δₑ = lastoffset(c)
+  tₛ = T(0 + δₛ[3](sz[3]))
+  tₑ = T(1 - δₑ[3](sz[3]))
+  hs = range(tₛ, stop=tₑ, length=sz[3])
+  ((c(0, 0, h) for h in hs)..., apex(c))
+end
+
 firstoffset(::ConeSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::ConeSurface) = (n -> inv(n), n -> inv(n))
 extrapoints(c::ConeSurface, sz) = (base(c)(0, 0), apex(c))
