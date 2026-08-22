@@ -28,10 +28,8 @@ struct MoreiraSantosMarch <: HullMethod
 end
 
 function hull(points, method::MoreiraSantosMarch)
-  pₒ = first(points)
-
   # sanity check
-  ncoords = CoordRefSystems.ncoords(coords(pₒ))
+  ncoords = CoordRefSystems.ncoords(coords(first(points)))
   assertion(ncoords == 2, "Moreira & Santos's march algorithm is only defined with 2D coordinates")
 
   # remove duplicates
@@ -44,13 +42,13 @@ function hull(points, method::MoreiraSantosMarch)
   n == 3 && return PolyArea(p)
 
   # sanity check
-  assertion(method.k < n, "k must be less than the number of unique points")
+  assertion(method.k < n, "k must be smaller than the number of unique points")
 
-  # main worker
-  _moreirahull(p, method.k)
+  # recursively attempt to find a valid hull, increasing k if necessary
+  _moreirasantos(p, method.k)
 end
 
-function _moreirahull(p, k)
+function _moreirasantos(p, k)
   n = length(p)
   ℒ = lentype(first(p))
 
@@ -65,7 +63,7 @@ function _moreirahull(p, k)
 
   # available points: everything but the start, until the ring has ≥ 4 vertices
   mask = trues(n)
-  mask[i] = false #remove first point
+  mask[i] = false
 
   # initialize ring of indices
   ℐ = [i]
@@ -74,10 +72,10 @@ function _moreirahull(p, k)
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
   𝒞 = Vector{Int}(undef, kk) # preallocate candidate vector
-  j = moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+  j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
 
   # if no next point can be found, increase k and try again
-  isnothing(j) && return _moreirahull(p, k + 1)
+  isnothing(j) && return _moreirasantos(p, k + 1)
 
   push!(ℐ, j)
   mask[j] = false
@@ -92,8 +90,8 @@ function _moreirahull(p, k)
     O = p[i]
     A = O + v
 
-    j = moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
-    isnothing(j) && return _moreirahull(p, k + 1)
+    j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+    isnothing(j) && return _moreirasantos(p, k + 1)
 
     # add point to ring and remove from candidacy
     push!(ℐ, j)
@@ -104,18 +102,18 @@ function _moreirahull(p, k)
   poly = PolyArea(ring)
 
   # every input point must fall inside or on the resulting hull
-  all(q -> q ∈ poly, p) || return _moreirahull(p, k + 1)
+  all(q -> q ∈ poly, p) || return _moreirasantos(p, k + 1)
 
   poly
 end
 
-# find the nearest candidate by angle whose segment avoids existing hull edges.
-function moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
-  nc = search!(𝒞, O, searcher; mask) # number of candidates
-  nc == 0 && return nothing
+# find the nearest candidate by angle whose segment avoids existing hull edges
+function _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+  n = search!(𝒞, O, searcher; mask)
+  iszero(n) && return nothing
 
   # iterate over candidates in order of increasing angle, returning the first valid one
-  for cpointᵢ in sort!(view(𝒞, 1:nc), by=l -> ∠(A, O, p[l]))
+  for cpointᵢ in sort!(view(𝒞, 1:n), by=l -> ∠(A, O, p[l]))
     cseg = Segment(p[ℐ[end]], p[cpointᵢ]) #segment to next point
     # check if the segment intersects any existing edge
     tₒ = cpointᵢ == ℐ[begin] ? 2 : 1 # skip the last edge if the candidate is the start point
