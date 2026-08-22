@@ -36,8 +36,9 @@ end
 
 function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   # corners in a common CRS
-  m₁, M₁ = coords.(extrema(box₁))
-  m₂, M₂ = coords.(extrema(box₂ |> Proj(crs(box₁))))
+  crs = manifoldcrs(box₁)
+  m₁, M₁ = coords.(extrema(box₁ |> Proj(crs)))
+  m₂, M₂ = coords.(extrema(box₂ |> Proj(crs)))
 
   # intersect coordinate ranges
   latₛ, latₑ = max(m₁.lat, m₂.lat), min(M₁.lat, M₂.lat)
