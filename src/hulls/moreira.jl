@@ -106,11 +106,11 @@ function _moreiramarch(p, k)
     mask[j] = false
   end
 
-  ring = p[ℐ[begin:(end - 1)]]
-  poly = PolyArea(ring)
+  # construct polygonal area from ring of indices
+  poly = PolyArea(p[ℐ[begin:(end - 1)]])
 
-  # every input point must fall inside or on the resulting hull
-  all(q -> q ∈ poly, p) || return _moreiramarch(p, k + 1)
+  # every point must be in the hull, otherwise increase k and try again
+  all(∈(poly), p) || return _moreiramarch(p, k + 1)
 
   poly
 end
