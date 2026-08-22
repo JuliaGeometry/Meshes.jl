@@ -599,16 +599,16 @@ end
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 2600
 
+  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
+  mesh = discretize(cone)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 450
+
   cyl = Cylinder(T(1))
   mesh = discretize(cyl)
   @test !(eltype(mesh) <: Wedge)
   @test !(eltype(mesh) <: Hexahedron)
   @test nelements(mesh) == 300
-
-  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
-  mesh = discretize(cone)
-  @test !(eltype(mesh) <: Hexahedron)
-  @test nelements(mesh) == 450
 
   cylsurf = CylinderSurface(T(1))
   mesh = discretize(cylsurf)
