@@ -68,15 +68,17 @@ appendtopo(::Ball{𝔼{2}}, tg) = _appendcenter(tg)
 
 appendtopo(::Ball{𝔼{3}}, tg) = _appendcenteraxis(tg)
 
-appendtopo(::Disk, tg) = _appendcenter(tg)
-
 appendtopo(::Sphere{𝔼{3}}, tg) = _appendpoles(tg, 2, true)
 
 appendtopo(::Ellipsoid, tg) = _appendpoles(tg, 2, true)
 
+appendtopo(::Disk, tg) = _appendcenter(tg)
+
 appendtopo(::Cylinder, tg) = _appendaxis(tg)
 
 appendtopo(::CylinderSurface, tg) = _appendpoles(tg, 1, false)
+
+appendtopo(::Cone, tg) = _appendaxisapex(tg)
 
 appendtopo(::ConeSurface, tg) = _appendpoles(tg, 1, false)
 
@@ -155,6 +157,51 @@ function _appendcenteraxis(tg)
     u2, v2 = cart2corner(tg, 1, it, k), cart2corner(tg, 1, it, l)
     push!(tetras, connect((c, north(1), u1, v1), Tetrahedron))
     push!(tetras, connect((c, south(1), v2, u2), Tetrahedron))
+  end
+
+  SimpleTopology([hexas; wedges; pyramids; tetras])
+end
+
+function _appendaxisapex(tg)
+  # auxiliary variables
+  nr, np, nh = size(tg)
+  nv = nvertices(tg)
+  ih = nh + 1
+
+  # points along the axis and apex
+  axis(k) = nv + k
+  apex = nv + ih + 1
+
+  # wrap periodic azimuthal index
+  wrap(j) = j > np ? 1 : j
+
+  # connect hexahedra in the volume
+  hexas = collect(elements(tg))
+
+  # connect axis with wedges
+  wedges = Connectivity{Wedge,6}[]
+  for k in 1:nh, j in 1:np
+    l = wrap(j + 1)
+    u1, v1 = cart2corner(tg, 1, j, k), cart2corner(tg, 1, l, k)
+    u2, v2 = cart2corner(tg, 1, j, k + 1), cart2corner(tg, 1, l, k + 1)
+    push!(wedges, connect((axis(k), u1, v1, axis(k + 1), u2, v2), Wedge))
+  end
+
+  # connect apex with pyramids
+  pyramids = Connectivity{Pyramid,5}[]
+  for i in 1:nr, j in 1:np
+    l = wrap(j + 1)
+    u1, v1 = cart2corner(tg, i, j, ih), cart2corner(tg, i, l, ih)
+    u2, v2 = cart2corner(tg, i + 1, j, ih), cart2corner(tg, i + 1, l, ih)
+    push!(pyramids, connect((u1, u2, v2, v1, apex), Pyramid))
+  end
+
+  # connect axis and apex with tetrahedra
+  tetras = Connectivity{Tetrahedron,4}[]
+  for j in 1:np
+    l = wrap(j + 1)
+    u, v = cart2corner(tg, 1, j, ih), cart2corner(tg, 1, l, ih)
+    push!(tetras, connect((apex, axis(ih), v, u), Tetrahedron))
   end
 
   SimpleTopology([hexas; wedges; pyramids; tetras])

@@ -413,27 +413,6 @@ end
   @test eltype(mesh) <: Quadrangle
   @test nvertices.(mesh) ⊆ [4]
 
-  sphere = Sphere(cart(0, 0), T(1))
-  mesh = discretize(sphere, RegularDiscretization(10))
-  @test nvertices(mesh) == 10
-  @test nelements(mesh) == 10
-  @test eltype(mesh) <: Segment
-  @test nvertices.(mesh) ⊆ [2]
-
-  sphere = Sphere(cart(0, 0, 0), T(1))
-  mesh = discretize(sphere, RegularDiscretization(10))
-  @test nvertices(mesh) == 11 * 10 + 2
-  @test nelements(mesh) == 10 * 10 + 2 * 10
-  @test eltype(mesh) <: Ngon
-  @test nvertices.(mesh) ⊆ [3, 4]
-
-  ellips = Ellipsoid((T(3), T(2), T(1)))
-  mesh = discretize(ellips, RegularDiscretization(10))
-  @test nvertices(mesh) == 11 * 10 + 2
-  @test nelements(mesh) == 10 * 10 + 2 * 10
-  @test eltype(mesh) <: Ngon
-  @test nvertices.(mesh) ⊆ [3, 4]
-
   ball = Ball(cart(0, 0), T(1))
   mesh = discretize(ball, RegularDiscretization(10))
   @test nvertices(mesh) == 11 * 10 + 1
@@ -448,6 +427,27 @@ end
   @test eltype(mesh) <: Polyhedron
   @test nvertices.(mesh) ⊆ [4, 5, 6, 8]
   @test measure(mesh) ≈ measure(simplexify(mesh))
+
+  sphere = Sphere(cart(0, 0), T(1))
+  mesh = discretize(sphere, RegularDiscretization(10))
+  @test nvertices(mesh) == 10
+  @test nelements(mesh) == 10
+  @test eltype(mesh) <: Segment
+  @test nvertices.(mesh) ⊆ [2]
+
+  sphere = Sphere(cart(0, 0, 0), T(1))
+  mesh = discretize(sphere, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 + 2
+  @test nelements(mesh) == 10 * 10 + 2 * 10
+  @test eltype(mesh) <: Ngon
+  @test nvertices.(mesh) ⊆ [3, 4]
+
+  ellip = Ellipsoid((T(3), T(2), T(1)))
+  mesh = discretize(ellip, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 + 2
+  @test nelements(mesh) == 10 * 10 + 2 * 10
+  @test eltype(mesh) <: Ngon
+  @test nvertices.(mesh) ⊆ [3, 4]
 
   disk = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1))
   mesh = discretize(disk, RegularDiscretization(10))
@@ -469,6 +469,14 @@ end
   @test nelements(mesh) == 10 * 10 + 2 * 10
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
+
+  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
+  mesh = discretize(cone, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 * 11 + 11 + 1
+  @test nelements(mesh) == 10 * 10 * 10 + 10 * 10 + 10 * 10 + 10
+  @test eltype(mesh) <: Polyhedron
+  @test nvertices.(mesh) ⊆ [4, 5, 6, 8]
+  @test measure(mesh) ≈ measure(simplexify(mesh))
 
   consurf = ConeSurface(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
   mesh = discretize(consurf, RegularDiscretization(10))
@@ -610,6 +618,11 @@ end
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 200
+
+  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
+  mesh = discretize(cone)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 450
 
   frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
   mesh = discretize(frust)

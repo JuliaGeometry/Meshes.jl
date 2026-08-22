@@ -59,6 +59,8 @@ discretize(cyl::Cylinder) = discretize(cyl, RegularDiscretization(2, 50, 2))
 
 discretize(cylsurf::CylinderSurface) = discretize(cylsurf, RegularDiscretization(50, 2))
 
+discretize(cone::Cone) = discretize(cone, RegularDiscretization(2, 50, 2))
+
 discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
 
 discretize(frust::Frustum) = discretize(frust, RegularDiscretization(2, 50, 2))

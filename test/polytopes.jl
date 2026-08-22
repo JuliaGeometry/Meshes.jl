@@ -728,17 +728,55 @@ end
   poly2 = PolyArea([outer, reverse(hole1), reverse(hole2)])
   @test sprint(show, poly1) == "PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
   @test sprint(show, poly2) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
-  @test sprint(show, MIME("text/plain"), poly1) == """
-  PolyArea
-    outer
-    └─ Ring((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"""
-  @test sprint(show, MIME("text/plain"), poly2) == """
-  PolyArea
-    outer
-    └─ Ring((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
-    inner
-    ├─ Ring((x: 0.2 m, y: 0.2 m), ..., (x: 0.4 m, y: 0.2 m))
-    └─ Ring((x: 0.6 m, y: 0.2 m), ..., (x: 0.8 m, y: 0.2 m))"""
+  if T === Float32
+    @test sprint(show, MIME("text/plain"), poly1) == """
+    PolyArea
+    ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+    ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+    ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+    └─ Point(x: 0.0f0 m, y: 1.0f0 m)"""
+    @test sprint(show, MIME("text/plain"), poly2) == """
+    PolyArea
+      outer ring
+        ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
+        ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
+        └─ Point(x: 0.0f0 m, y: 1.0f0 m)
+      inner ring 1
+        ├─ Point(x: 0.2f0 m, y: 0.2f0 m)
+        ├─ Point(x: 0.2f0 m, y: 0.4f0 m)
+        ├─ Point(x: 0.4f0 m, y: 0.4f0 m)
+        └─ Point(x: 0.4f0 m, y: 0.2f0 m)
+      inner ring 2
+        ├─ Point(x: 0.6f0 m, y: 0.2f0 m)
+        ├─ Point(x: 0.6f0 m, y: 0.4f0 m)
+        ├─ Point(x: 0.8f0 m, y: 0.4f0 m)
+        └─ Point(x: 0.8f0 m, y: 0.2f0 m)"""
+  else
+    @test sprint(show, MIME("text/plain"), poly1) == """
+    PolyArea
+    ├─ Point(x: 0.0 m, y: 0.0 m)
+    ├─ Point(x: 1.0 m, y: 0.0 m)
+    ├─ Point(x: 1.0 m, y: 1.0 m)
+    └─ Point(x: 0.0 m, y: 1.0 m)"""
+    @test sprint(show, MIME("text/plain"), poly2) == """
+    PolyArea
+      outer ring
+        ├─ Point(x: 0.0 m, y: 0.0 m)
+        ├─ Point(x: 1.0 m, y: 0.0 m)
+        ├─ Point(x: 1.0 m, y: 1.0 m)
+        └─ Point(x: 0.0 m, y: 1.0 m)
+      inner ring 1
+        ├─ Point(x: 0.2 m, y: 0.2 m)
+        ├─ Point(x: 0.2 m, y: 0.4 m)
+        ├─ Point(x: 0.4 m, y: 0.4 m)
+        └─ Point(x: 0.4 m, y: 0.2 m)
+      inner ring 2
+        ├─ Point(x: 0.6 m, y: 0.2 m)
+        ├─ Point(x: 0.6 m, y: 0.4 m)
+        ├─ Point(x: 0.8 m, y: 0.4 m)
+        └─ Point(x: 0.8 m, y: 0.2 m)"""
+  end
 end
 
 @testitem "Polyhedra" setup = [Setup] begin
