@@ -179,7 +179,7 @@ end
   # basic random points
   pts = [cart(rand(T), rand(T)) for _ in 1:10]
   chul = hull(pts, MoreiraMarch(3))
-  @test all(pts .∈ Ref(chul))
+  @test all(∈(chul), pts)
 
   # corner cases bypass k entirely
   pts = cart.([(0, 0)])
@@ -195,7 +195,7 @@ end
   @test_throws AssertionError hull(pts, MoreiraMarch(5))
   @test_throws AssertionError hull(pts, MoreiraMarch(6))
   chul = hull(pts, MoreiraMarch(4))
-  @test issimple(chul) && all(pts .∈ Ref(chul))
+  @test issimple(chul) && all(∈(chul), pts)
 
   # fuzz test without a try/catch escape hatch: must never throw
   rng = StableRNG(123)
@@ -203,7 +203,7 @@ end
     rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
     rhul = hull(rpts, MoreiraMarch(k))
     @test nvertices(rhul) ≥ 3
-    @test all(rpts .∈ Ref(rhul))
+    @test all(∈(rhul), rpts)
   end
 
   # U-shaped point set with a notch between x=1 and x=3 above y=1
@@ -233,7 +233,7 @@ end
   ]
   chul = hull(pts, MoreiraMarch(3))
   @test issimple(chul) && nvertices(chul) ≥ 3
-  @test all(pts .∈ Ref(chul))
+  @test all(∈(chul), pts)
   @test Set(vertices(chul)) == Set(pts)
   @test area(chul) ≈ T(10) * u"m^2"
 
@@ -258,13 +258,13 @@ end
   ]
   chul = hull(pts, MoreiraMarch(3))
   @test issimple(chul) && nvertices(chul) ≥ 3
-  @test all(pts .∈ Ref(chul))
+  @test all(∈(chul), pts)
 
   # true concavity regression against real data
   pts = vertices(readpoly(T, joinpath(datadir, "hull.line")))
   chul3 = hull(pts, MoreiraMarch(3))
   chuln = hull(pts, MoreiraMarch(length(pts) - 1))
-  @test issimple(chul3) && all(pts .∈ Ref(chul3))
-  @test issimple(chuln) && all(pts .∈ Ref(chuln))
+  @test issimple(chul3) && all(∈(chul3), pts)
+  @test issimple(chuln) && all(∈(chuln), pts)
   @test nvertices(chuln) ≤ nvertices(chul3)
 end
