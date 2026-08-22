@@ -82,6 +82,8 @@ appendtopo(::Cone, tg) = _appendaxisapex(tg)
 
 appendtopo(::ConeSurface, tg) = _appendpoles(tg, 1, false)
 
+appendtopo(::Frustum, tg) = _appendaxis(tg)
+
 appendtopo(::FrustumSurface, tg) = _appendpoles(tg, 1, false)
 
 appendtopo(::ParaboloidSurface, tg) = _appendcenter(tg)

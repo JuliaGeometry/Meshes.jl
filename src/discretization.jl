@@ -63,6 +63,8 @@ discretize(cone::Cone) = discretize(cone, RegularDiscretization(2, 50, 2))
 
 discretize(consurf::ConeSurface) = discretize(consurf, RegularDiscretization(50, 2))
 
+discretize(frust::Frustum) = discretize(frust, RegularDiscretization(2, 50, 2))
+
 discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
 
 discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
