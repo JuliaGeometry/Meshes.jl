@@ -110,12 +110,13 @@ end
 function _appendcenteraxis(tg)
   # auxiliary variables
   nr, nt, np = size(tg)
-  it, nvert = nt + 1, nvertices(tg)
+  nv = nvertices(tg)
+  it = nt + 1
 
   # center and points along the polar axis
-  c = nvert + 1
-  north(i) = nvert + 1 + i
-  south(i) = nvert + 1 + (nr + 1) + i
+  c = nv + 1
+  north(i) = nv + 1 + i
+  south(i) = nv + 1 + (nr + 1) + i
 
   # wrap periodic azimuthal index
   wrap(k) = k > np ? 1 : k
@@ -124,36 +125,35 @@ function _appendcenteraxis(tg)
   hexas = collect(elements(tg))
 
   # connect polar axis with wedges
-  winds = NTuple{6,Int}[]
+  wedges = Connectivity{Wedge,6}[]
   for i in 1:nr, k in 1:np
     l = wrap(k + 1)
     u1, v1 = cart2corner(tg, i, 1, k), cart2corner(tg, i, 1, l)
     u2, v2 = cart2corner(tg, i + 1, 1, k), cart2corner(tg, i + 1, 1, l)
-    push!(winds, (north(i), u1, v1, north(i + 1), u2, v2))
+    push!(wedges, connect((north(i), u1, v1, north(i + 1), u2, v2), Wedge))
     u1, v1 = cart2corner(tg, i, it, k), cart2corner(tg, i, it, l)
     u2, v2 = cart2corner(tg, i + 1, it, k), cart2corner(tg, i + 1, it, l)
-    push!(winds, (south(i), v1, u1, south(i + 1), v2, u2))
+    push!(wedges, connect((south(i), v1, u1, south(i + 1), v2, u2), Wedge))
   end
-  wedges = [connect(ind, Wedge) for ind in winds]
 
   # connect center with pyramids
-  pinds = NTuple{5,Int}[]
+  pyramids = Connectivity{Pyramid,5}[]
   for j in 1:nt, k in 1:np
     l = wrap(k + 1)
     u1, v1 = cart2corner(tg, 1, j, k), cart2corner(tg, 1, j, l)
     u2, v2 = cart2corner(tg, 1, j + 1, k), cart2corner(tg, 1, j + 1, l)
-    push!(pinds, (u1, v1, v2, u2, c))
+    push!(pyramids, connect((u1, v1, v2, u2, c), Pyramid))
   end
-  pyramids = [connect(ind, Pyramid) for ind in pinds]
 
   # connect center and poles with tetrahedra
-  tinds = NTuple{4,Int}[]
+  tetras = Connectivity{Tetrahedron,4}[]
   for k in 1:np
     l = wrap(k + 1)
-    push!(tinds, (c, north(1), cart2corner(tg, 1, 1, k), cart2corner(tg, 1, 1, l)))
-    push!(tinds, (c, south(1), cart2corner(tg, 1, it, l), cart2corner(tg, 1, it, k)))
+    u1, v1 = cart2corner(tg, 1, 1, k), cart2corner(tg, 1, 1, l)
+    u2, v2 = cart2corner(tg, 1, it, k), cart2corner(tg, 1, it, l)
+    push!(tetras, connect((c, north(1), u1, v1), Tetrahedron))
+    push!(tetras, connect((c, south(1), v2, u2), Tetrahedron))
   end
-  tetras = [connect(ind, Tetrahedron) for ind in tinds]
 
   SimpleTopology([hexas; wedges; pyramids; tetras])
 end
