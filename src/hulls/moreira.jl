@@ -75,7 +75,7 @@ function _moreiramarch(p, k)
   # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+  j = _moreiranext!(𝒞, searcher, mask, p, ℐ, A, O)
 
   # if no next point can be found, increase k and try again
   isnothing(j) && return _moreiramarch(p, k + 1)
@@ -96,7 +96,7 @@ function _moreiramarch(p, k)
     i = j
     O = p[i]
     A = O + v
-    j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+    j = _moreiranext!(𝒞, searcher, mask, p, ℐ, A, O)
 
     # if no next point can be found, increase k and try again
     isnothing(j) && return _moreiramarch(p, k + 1)
@@ -116,21 +116,19 @@ function _moreiramarch(p, k)
 end
 
 # find the nearest candidate by angle whose segment avoids existing hull edges
-function _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
+function _moreiranext!(𝒞, searcher, mask, p, ℐ, A, O)
   n = search!(𝒞, O, searcher; mask)
-  iszero(n) && return nothing
-
-  # iterate over candidates in order of increasing angle, returning the first valid one
-  for cpointᵢ in sort!(view(𝒞, 1:n), by=l -> ∠(A, O, p[l]))
-    cseg = Segment(p[ℐ[end]], p[cpointᵢ]) #segment to next point
+  for i in sort!(view(𝒞, 1:n), by=i -> ∠(A, O, p[i]))
+    segᵢ = Segment(p[last(ℐ)], p[i])
     # check if the segment intersects any existing edge
-    tₒ = cpointᵢ == ℐ[begin] ? 2 : 1 # skip the last edge if the candidate is the start point
-    valid = !any(tₒ:(length(ℐ) - 2)) do t
-      intersects(cseg, Segment(p[ℐ[t]], p[ℐ[t + 1]])) # prior edges
+    # skip the last edge if the candidate is the start point
+    jₛ = i == first(ℐ) ? 2 : 1
+    jₑ = length(ℐ) - 2
+    valid = !any(jₛ:jₑ) do j
+      segⱼ = Segment(p[ℐ[j]], p[ℐ[j + 1]])
+      intersects(segᵢ, segⱼ)
     end
-    valid && return cpointᵢ
+    valid && return i
   end
-
-  # if no valid candidate can be found, return nothing
   nothing
 end
