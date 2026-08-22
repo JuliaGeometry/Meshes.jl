@@ -5,12 +5,13 @@
 """
     MoreiraMarch(k)
 
-Compute the concave hull of a set of points using k-nearest-neighbours. `k` must
-be between 2 and `n - 1`, where `n` is the number of unique points in the input.
+Compute the concave hull of a set of points or geometries using Moreira's
+march algorithm. `k` is the minimum number of nearest neighbors in the
+interval `(2, n)` where `n` is the number of unique points in the input.
 
-The algorithm has complexity `O(k*n*h)` where `n` is the number of points
-and `h` is the number of points in the hull, per attempt, and the number of
-attempts is bounded above by `n - 1 - k`.
+The algorithm increases `k` until a valid hull is found, or until `k` reaches
+`n - 1`. It has complexity `O(k*n*h)` where `h` is the number of points in the
+hull, per attempt. The number of attempts is bounded above by `n - 1 - k`.
 
 ## References
 
