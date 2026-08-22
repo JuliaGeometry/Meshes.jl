@@ -231,7 +231,7 @@ end
     cart(0, 2),
     cart(0, 1)
   ]
-  chul = hull(pts, MoreiraMarch(3))
+  chul = hull(pts, MoreiraMarch())
   @test issimple(chul) && nvertices(chul) ≥ 3
   @test all(∈(chul), pts)
   @test Set(vertices(chul)) == Set(pts)
@@ -256,7 +256,7 @@ end
     cart(9.3, 2.9),
     cart(4.8, 1.7)
   ]
-  chul = hull(pts, MoreiraMarch(3))
+  chul = hull(pts, MoreiraMarch())
   @test issimple(chul) && nvertices(chul) ≥ 3
   @test all(∈(chul), pts)
 

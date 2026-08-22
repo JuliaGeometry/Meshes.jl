@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    MoreiraMarch(k)
+    MoreiraMarch(k=3)
 
 Compute the concave hull of a set of points or geometries using Moreira's
 march algorithm. `k` is the minimum number of nearest neighbors in the
@@ -27,6 +27,8 @@ struct MoreiraMarch <: HullMethod
     new(k)
   end
 end
+
+MoreiraMarch() = MoreiraMarch(3)
 
 function hull(points, method::MoreiraMarch)
   # sanity check
