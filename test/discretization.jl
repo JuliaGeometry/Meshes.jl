@@ -463,6 +463,14 @@ end
   @test eltype(mesh) <: Polyhedron
   @test nvertices.(mesh) ⊆ [6, 8]
 
+  frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
+  mesh = discretize(frust, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 * 11 + 11
+  @test nelements(mesh) == 11 * 10 * 10
+  @test eltype(mesh) <: Polyhedron
+  @test nvertices.(mesh) ⊆ [6, 8]
+  @test measure(mesh) ≈ measure(simplexify(mesh))
+
   cylsurf = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
   mesh = discretize(cylsurf, RegularDiscretization(10))
   @test nvertices(mesh) == 10 * 11 + 2
@@ -593,6 +601,12 @@ end
 
   cyl = Cylinder(T(1))
   mesh = discretize(cyl)
+  @test !(eltype(mesh) <: Wedge)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 300
+
+  frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
+  mesh = discretize(frust)
   @test !(eltype(mesh) <: Wedge)
   @test !(eltype(mesh) <: Hexahedron)
   @test nelements(mesh) == 300

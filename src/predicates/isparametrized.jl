@@ -45,6 +45,8 @@ isparametrized(::Type{<:Cone}) = true
 
 isparametrized(::Type{<:ConeSurface}) = true
 
+isparametrized(::Type{<:Frustum}) = true
+
 isparametrized(::Type{<:FrustumSurface}) = true
 
 isparametrized(::Type{<:ParaboloidSurface}) = true

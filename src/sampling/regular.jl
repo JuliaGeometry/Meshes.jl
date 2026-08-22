@@ -71,6 +71,16 @@ firstoffset(::ConeSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::ConeSurface) = (n -> inv(n), n -> inv(n))
 extrapoints(c::ConeSurface, sz) = (base(c)(0, 0), apex(c))
 
+firstoffset(::Frustum) = (n -> inv(n), n -> zero(n), n -> zero(n))
+lastoffset(::Frustum) = (n -> zero(n), n -> inv(n), n -> zero(n))
+function extrapoints(f::Frustum, sz)
+  T = numtype(lentype(f))
+  b = bottom(f)(0, 0)
+  t = top(f)(0, 0)
+  s = Segment(b, t)
+  [s(t) for t in range(zero(T), one(T), sz[3])]
+end
+
 firstoffset(::FrustumSurface) = (n -> zero(n), n -> zero(n))
 lastoffset(::FrustumSurface) = (n -> inv(n), n -> zero(n))
 extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
