@@ -730,15 +730,27 @@ end
   @test sprint(show, poly2) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
   @test sprint(show, MIME("text/plain"), poly1) == """
   PolyArea
-    outer
-    └─ Ring((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"""
+  ├─ Point(x: 0.0 m, y: 0.0 m)
+  ├─ Point(x: 1.0 m, y: 0.0 m)
+  ├─ Point(x: 1.0 m, y: 1.0 m)
+  └─ Point(x: 0.0 m, y: 1.0 m)"""
   @test sprint(show, MIME("text/plain"), poly2) == """
   PolyArea
-    outer
-    └─ Ring((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
-    inner
-    ├─ Ring((x: 0.2 m, y: 0.2 m), ..., (x: 0.4 m, y: 0.2 m))
-    └─ Ring((x: 0.6 m, y: 0.2 m), ..., (x: 0.8 m, y: 0.2 m))"""
+    outer ring (4 vertices)
+      ├─ Point(x: 0.0 m, y: 0.0 m)
+      ├─ Point(x: 1.0 m, y: 0.0 m)
+      ├─ Point(x: 1.0 m, y: 1.0 m)
+      └─ Point(x: 0.0 m, y: 1.0 m)
+    inner ring 1 (4 vertices)
+      ├─ Point(x: 0.2 m, y: 0.2 m)
+      ├─ Point(x: 0.2 m, y: 0.4 m)
+      ├─ Point(x: 0.4 m, y: 0.4 m)
+      └─ Point(x: 0.4 m, y: 0.2 m)
+    inner ring 2 (4 vertices)
+      ├─ Point(x: 0.6 m, y: 0.2 m)
+      ├─ Point(x: 0.6 m, y: 0.4 m)
+      ├─ Point(x: 0.8 m, y: 0.4 m)
+      └─ Point(x: 0.8 m, y: 0.2 m)"""
 end
 
 @testitem "Polyhedra" setup = [Setup] begin
