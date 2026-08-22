@@ -171,36 +171,36 @@ end
   @test cart(0.2, 0.2) ∈ h
 end
 
-@testitem "MoreiraSantosMarch" setup = [Setup] begin
+@testitem "MoreiraMarch" setup = [Setup] begin
   # constructor validation: k must be an integer > 2
-  @test_throws AssertionError MoreiraSantosMarch(2)
+  @test_throws AssertionError MoreiraMarch(2)
 
   # basic random points
   pts = [cart(rand(T), rand(T)) for _ in 1:10]
-  chul = hull(pts, MoreiraSantosMarch(3))
+  chul = hull(pts, MoreiraMarch(3))
   @test all(pts .∈ Ref(chul))
 
   # corner cases bypass k entirely
   pt = cart.([(0, 0)])
-  @test hull(pt, MoreiraSantosMarch(3)) == cart(0, 0)
+  @test hull(pt, MoreiraMarch(3)) == cart(0, 0)
   line = cart.([(0, 0), (1, 0)])
-  @test hull(line, MoreiraSantosMarch(3)) == Segment(cart(0, 0), cart(1, 0))
+  @test hull(line, MoreiraMarch(3)) == Segment(cart(0, 0), cart(1, 0))
   triangle = cart.([(1, 0), (0, 0), (0, 1)])
-  chul = hull(triangle, MoreiraSantosMarch(3))
+  chul = hull(triangle, MoreiraMarch(3))
   @test Set(vertices(chul)) == Set(triangle)
 
   # hull-level k < n validation still applies once n > 3
   pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
-  @test_throws AssertionError hull(pts, MoreiraSantosMarch(5))
-  @test_throws AssertionError hull(pts, MoreiraSantosMarch(6))
-  chul = hull(pts, MoreiraSantosMarch(4))
+  @test_throws AssertionError hull(pts, MoreiraMarch(5))
+  @test_throws AssertionError hull(pts, MoreiraMarch(6))
+  chul = hull(pts, MoreiraMarch(4))
   @test issimple(chul) && all(pts .∈ Ref(chul))
 
   # fuzz test without a try/catch escape hatch: must never throw
   rng = StableRNG(123)
   for _ in 1:100, k in (3, 4, 5)
     rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
-    local chul = hull(rpts, MoreiraSantosMarch(k))
+    local chul = hull(rpts, MoreiraMarch(k))
     @test nvertices(chul) ≥ 3
     @test all(rpts .∈ Ref(chul))
   end
@@ -230,7 +230,7 @@ end
     cart(0, 2),
     cart(0, 1)
   ]
-  chul = hull(pts, MoreiraSantosMarch(3))
+  chul = hull(pts, MoreiraMarch(3))
   @test issimple(chul) && nvertices(chul) ≥ 3
   @test all(pts .∈ Ref(chul))
   @test Set(vertices(chul)) == Set(pts)
@@ -256,14 +256,14 @@ end
     cart(9.3, 2.9),
     cart(4.8, 1.7)
   ]
-  chul = hull(pts, MoreiraSantosMarch(3))
+  chul = hull(pts, MoreiraMarch(3))
   @test issimple(chul) && nvertices(chul) ≥ 3
   @test all(pts .∈ Ref(chul))
 
   # true concavity regression against real data
   pts = vertices(readpoly(T, joinpath(datadir, "hull.line")))
-  chul3 = hull(pts, MoreiraSantosMarch(3))
-  chuln = hull(pts, MoreiraSantosMarch(length(pts) - 1))
+  chul3 = hull(pts, MoreiraMarch(3))
+  chuln = hull(pts, MoreiraMarch(length(pts) - 1))
   @test issimple(chul3) && all(pts .∈ Ref(chul3))
   @test issimple(chuln) && all(pts .∈ Ref(chuln))
   @test nvertices(chuln) ≤ nvertices(chul3)

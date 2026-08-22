@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    MoreiraSantosMarch(k)
+    MoreiraMarch(k)
 
 Compute the concave hull of a set of points using k-nearest-neighbours. `k` must
 be between 2 and `n - 1`, where `n` is the number of unique points in the input.
@@ -18,16 +18,16 @@ attempts is bounded above by `n - 1 - k`.
   approach for the computation of the region occupied by a set of points]
   (https://www.semanticscholar.org/paper/Concave-hull:-A-k-nearest-neighbours-approach-for-a-Moreira-Santos/319a3450f9909043d46eb7ceb4299efceb984d4f)
 """
-struct MoreiraSantosMarch <: HullMethod
+struct MoreiraMarch <: HullMethod
   k::Int
 
-  function MoreiraSantosMarch(k)
+  function MoreiraMarch(k)
     assertion(isinteger(k) && k > 2, "k must be greater than 2")
     new(k)
   end
 end
 
-function hull(points, method::MoreiraSantosMarch)
+function hull(points, method::MoreiraMarch)
   # sanity check
   ncoords = CoordRefSystems.ncoords(coords(first(points)))
   assertion(ncoords == 2, "Moreira & Santos's march algorithm is only defined with 2D coordinates")
