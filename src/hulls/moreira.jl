@@ -30,7 +30,7 @@ end
 function hull(points, method::MoreiraMarch)
   # sanity check
   ncoords = CoordRefSystems.ncoords(coords(first(points)))
-  assertion(ncoords == 2, "Moreira & Santos's march algorithm is only defined with 2D coordinates")
+  assertion(ncoords == 2, "Moreira's march algorithm is only defined with 2D coordinates")
 
   # remove duplicates
   p = unique(points)
