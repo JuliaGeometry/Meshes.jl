@@ -442,17 +442,17 @@ end
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
 
-  disk = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1))
-  mesh = discretize(disk, RegularDiscretization(10))
-  @test nvertices(mesh) == 11 * 10 + 1
-  @test nelements(mesh) == 10 * 10 + 10
-  @test eltype(mesh) <: Ngon
-  @test nvertices.(mesh) ⊆ [3, 4]
-
   ellip = Ellipsoid((T(3), T(2), T(1)))
   mesh = discretize(ellip, RegularDiscretization(10))
   @test nvertices(mesh) == 11 * 10 + 2
   @test nelements(mesh) == 10 * 10 + 2 * 10
+  @test eltype(mesh) <: Ngon
+  @test nvertices.(mesh) ⊆ [3, 4]
+
+  disk = Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1))
+  mesh = discretize(disk, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 + 1
+  @test nelements(mesh) == 10 * 10 + 10
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
 
