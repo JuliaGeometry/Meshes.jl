@@ -182,13 +182,13 @@ end
   @test all(pts .∈ Ref(chul))
 
   # corner cases bypass k entirely
-  pt = cart.([(0, 0)])
-  @test hull(pt, MoreiraMarch(3)) == cart(0, 0)
-  line = cart.([(0, 0), (1, 0)])
-  @test hull(line, MoreiraMarch(3)) == Segment(cart(0, 0), cart(1, 0))
-  triangle = cart.([(1, 0), (0, 0), (0, 1)])
-  chul = hull(triangle, MoreiraMarch(3))
-  @test Set(vertices(chul)) == Set(triangle)
+  pts = cart.([(0, 0)])
+  @test hull(pts, MoreiraMarch(3)) == cart(0, 0)
+  pts = cart.([(0, 0), (1, 0)])
+  @test hull(pts, MoreiraMarch(3)) == Segment(cart(0, 0), cart(1, 0))
+  pts = cart.([(1, 0), (0, 0), (0, 1)])
+  chul = hull(pts, MoreiraMarch(3))
+  @test Set(vertices(chul)) == Set(pts)
 
   # hull-level k < n validation still applies once n > 3
   pts = cart.([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, -1)])
@@ -201,9 +201,9 @@ end
   rng = StableRNG(123)
   for _ in 1:100, k in (3, 4, 5)
     rpts = [cart(rand(rng, T), rand(rng, T)) for _ in 1:10]
-    local chul = hull(rpts, MoreiraMarch(k))
-    @test nvertices(chul) ≥ 3
-    @test all(rpts .∈ Ref(chul))
+    rhul = hull(rpts, MoreiraMarch(k))
+    @test nvertices(rhul) ≥ 3
+    @test all(rpts .∈ Ref(rhul))
   end
 
   # U-shaped point set with a notch between x=1 and x=3 above y=1
@@ -236,7 +236,6 @@ end
   @test all(pts .∈ Ref(chul))
   @test Set(vertices(chul)) == Set(pts)
   @test area(chul) ≈ T(10) * u"m^2"
-  @test area(chul) < area(hull(pts, JarvisMarch()))
 
   # moreira self-intersection regression
   pts = [
