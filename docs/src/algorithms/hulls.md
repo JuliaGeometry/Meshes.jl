@@ -12,6 +12,7 @@ convexhull
 HullMethod
 GrahamScan
 JarvisMarch
+MoreiraMarch
 ```
 
 ```@example hull
