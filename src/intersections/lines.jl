@@ -3,10 +3,9 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of three types:
-# 
-# 1. intersect at one point
-# 2. overlap at more than one point
-# 3. do not overlap nor intersect
+# 1. intersect at one point (Crossing -> Point)
+# 2. overlap at more than one point (Overlapping -> Line)
+# 3. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, line₁::Line, line₂::Line)
   a, b = line₁(0), line₁(1)
   c, d = line₂(0), line₂(1)

@@ -47,7 +47,6 @@ function intersection(f, line::LineLike, plane::Plane)
 end
 
 # Intersection of a `Plane` and non-parallel `Segment` given a segment parameter `λ`.
-# 
 # Return types:
 #   λ < 0 or  λ > 1 ⟹ NotIntersecting
 #   λ ≈ 0 or  λ ≈ 1 ⟹ Touching
@@ -72,7 +71,6 @@ function _intersection(f, seg::Segment, λ)
 end
 
 # Intersection of a `Plane` and non-parallel `Ray` given ray parameter `λ`.
-# 
 # Return types:
 #   λ < 0 ⟹ NotIntersecting
 #   λ ≈ 0 ⟹ Touching

@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of six types:
-#
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at origin of one ray (EdgeTouching -> Point)
 # 3. intersect at origin of both rays (CornerTouching -> Point)
@@ -65,7 +64,6 @@ function intersection(f, ray₁::Ray, ray₂::Ray)
 end
 
 # The intersection type can be one of four types:
-#
 # 1. intersect at one inner point (Crossing -> Point)
 # 2. intersect at origin of ray (Touching -> Point)
 # 3. overlap of line and ray (Overlapping -> Ray)
@@ -131,18 +129,17 @@ function intersection(f, ray::Ray, box::Box)
   return @IT Crossing Segment(ray(tmin), ray(tmax)) f
 end
 
-# The intersection type can be one of six types:
-#
-# 1. Touching - origin of ray intersects middle of triangle
-# 2. EdgeTouching - origin of ray intersects edge of triangle
-# 3. CornerTouching - origin of ray intersects corner of triangle
-# 4. Crossing - middle of ray intersects middle of triangle
-# 5. EdgeCrossing - middle of ray intersects edge of triangle
-# 6. CornerCrossing - middle of ray intersects corner of triangle
-#
-# The implementation follows the notation of the non-culling branch of
-# Möller, T. & Trumbore, B., 1997 (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
+# The intersection type can be one of seven types:
+# 1. origin of ray intersects middle of triangle (Touching -> Point)
+# 2. origin of ray intersects edge of triangle (EdgeTouching -> Point)
+# 3. origin of ray intersects corner of triangle (CornerTouching -> Point)
+# 4. middle of ray intersects middle of triangle (Crossing -> Point)
+# 5. middle of ray intersects edge of triangle (EdgeCrossing -> Point)
+# 6. middle of ray intersects corner of triangle (CornerCrossing -> Point)
+# 7. ray does not intersect triangle (NotIntersecting -> Nothing)
 function intersection(f, ray::Ray, tri::Triangle)
+  # The implementation follows the notation of the non-culling branch of
+  # Möller, T. & Trumbore, B., 1997 (https://www.tandfonline.com/doi/abs/10.1080/10867651.1997.10487468)
   O = ray(0)
   D = ray(1) - ray(0)
   V = vertices(tri)
