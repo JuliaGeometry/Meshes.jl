@@ -52,14 +52,14 @@ function _moreiramarch(p, k)
   n = length(p)
   ℒ = lentype(first(p))
 
-  # clamp the number of neighbours considered at each step
-  kk = max(k, 3)
+  # clamp the number of neighbors considered at each step
+  m = max(k, 3)
 
   # find bottom-left point as the start of the ring
   i = argmin(p)
 
   # initialize k nearest searcher
-  searcher = KNearestSearch(p, kk)
+  searcher = KNearestSearch(p, m)
 
   # available points: everything but the start, until the ring has ≥ 4 vertices
   mask = trues(n)
@@ -68,10 +68,12 @@ function _moreiramarch(p, k)
   # initialize ring of indices
   ℐ = [i]
 
+  # initialize candidate indices
+  𝒞 = Vector{Int}(undef, m)
+
   # find next point with smallest angle
   O = p[i]
   A = O + Vec(zero(ℒ), -oneunit(ℒ))
-  𝒞 = Vector{Int}(undef, kk) # preallocate candidate vector
   j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
 
   # if no next point can be found, increase k and try again
