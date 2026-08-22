@@ -463,14 +463,6 @@ end
   @test eltype(mesh) <: Polyhedron
   @test nvertices.(mesh) ⊆ [6, 8]
 
-  frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
-  mesh = discretize(frust, RegularDiscretization(10))
-  @test nvertices(mesh) == 11 * 10 * 11 + 11
-  @test nelements(mesh) == 11 * 10 * 10
-  @test eltype(mesh) <: Polyhedron
-  @test nvertices.(mesh) ⊆ [6, 8]
-  @test measure(mesh) ≈ measure(simplexify(mesh))
-
   cylsurf = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
   mesh = discretize(cylsurf, RegularDiscretization(10))
   @test nvertices(mesh) == 10 * 11 + 2
@@ -484,6 +476,14 @@ end
   @test nelements(mesh) == 10 * 10 + 2 * 10
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
+
+  frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
+  mesh = discretize(frust, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 * 11 + 11
+  @test nelements(mesh) == 11 * 10 * 10
+  @test eltype(mesh) <: Polyhedron
+  @test nvertices.(mesh) ⊆ [6, 8]
+  @test measure(mesh) ≈ measure(simplexify(mesh))
 
   parsurf = rand(ParaboloidSurface)
   mesh = discretize(parsurf, RegularDiscretization(10))
@@ -605,17 +605,17 @@ end
   @test !(eltype(mesh) <: Hexahedron)
   @test nelements(mesh) == 300
 
-  frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
-  mesh = discretize(frust)
-  @test !(eltype(mesh) <: Wedge)
-  @test !(eltype(mesh) <: Hexahedron)
-  @test nelements(mesh) == 300
-
   cylsurf = CylinderSurface(T(1))
   mesh = discretize(cylsurf)
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 200
+
+  frust = Frustum(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(2)), Disk(Plane(cart(0, 0, 1), vector(0, 0, 1)), T(1)))
+  mesh = discretize(frust)
+  @test !(eltype(mesh) <: Wedge)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 300
 
   seg = Segment(cart(0, 0), cart(10, 10))
   mesh = discretize(seg)
