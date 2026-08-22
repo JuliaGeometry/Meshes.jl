@@ -349,6 +349,13 @@ end
   @test eltype(mesh) <: Tetrahedron
   @test measure(mesh) ≈ measure(tetra)
 
+  wedge = Wedge(cart(0, 0, 0), cart(1, 0, 0), cart(0, 1, 0), cart(0, 0, 1), cart(0.5, 0, 1), cart(0, 0.5, 1))
+  mesh = discretize(wedge, ManualSimplexification())
+  @test nvertices(mesh) == 6
+  @test nelements(mesh) == 3
+  @test eltype(mesh) <: Tetrahedron
+  @test measure(mesh) ≈ T(7 / 24) * u"m^3"
+
   box = Box(cart(0, 0, 0), cart(1, 1, 1))
   hexa = Hexahedron(
     cart(0, 0, 0),
