@@ -456,6 +456,20 @@ end
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
 
+  cyl = Cylinder(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
+  mesh = discretize(cyl, RegularDiscretization(10))
+  @test nvertices(mesh) == 11 * 10 * 11 + 11
+  @test nelements(mesh) == 11 * 10 * 10
+  @test eltype(mesh) <: Polyhedron
+  @test nvertices.(mesh) ⊆ [6, 8]
+
+  cylsurf = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
+  mesh = discretize(cylsurf, RegularDiscretization(10))
+  @test nvertices(mesh) == 10 * 11 + 2
+  @test nelements(mesh) == 10 * 10 + 2 * 10
+  @test eltype(mesh) <: Ngon
+  @test nvertices.(mesh) ⊆ [3, 4]
+
   cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
   mesh = discretize(cone, RegularDiscretization(10))
   @test nvertices(mesh) == 11 * 10 * 11 + 11 + 1
@@ -466,20 +480,6 @@ end
 
   consurf = ConeSurface(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
   mesh = discretize(consurf, RegularDiscretization(10))
-  @test nvertices(mesh) == 10 * 11 + 2
-  @test nelements(mesh) == 10 * 10 + 2 * 10
-  @test eltype(mesh) <: Ngon
-  @test nvertices.(mesh) ⊆ [3, 4]
-
-  cyl = Cylinder(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
-  mesh = discretize(cyl, RegularDiscretization(10))
-  @test nvertices(mesh) == 11 * 10 * 11 + 11
-  @test nelements(mesh) == 11 * 10 * 10
-  @test eltype(mesh) <: Polyhedron
-  @test nvertices.(mesh) ⊆ [6, 8]
-
-  cylsurf = CylinderSurface(Plane(cart(0, 0, 0), vector(0, 0, 1)), Plane(cart(1, 1, 1), vector(0, 0, 1)), T(1))
-  mesh = discretize(cylsurf, RegularDiscretization(10))
   @test nvertices(mesh) == 10 * 11 + 2
   @test nelements(mesh) == 10 * 10 + 2 * 10
   @test eltype(mesh) <: Ngon
@@ -599,11 +599,6 @@ end
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 2600
 
-  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
-  mesh = discretize(cone)
-  @test !(eltype(mesh) <: Hexahedron)
-  @test nelements(mesh) == 450
-
   cyl = Cylinder(T(1))
   mesh = discretize(cyl)
   @test !(eltype(mesh) <: Wedge)
@@ -615,6 +610,11 @@ end
   @test !(eltype(mesh) <: Triangle)
   @test !(eltype(mesh) <: Quadrangle)
   @test nelements(mesh) == 200
+
+  cone = Cone(Disk(Plane(cart(0, 0, 0), vector(0, 0, 1)), T(1)), cart(0, 0, 1))
+  mesh = discretize(cone)
+  @test !(eltype(mesh) <: Hexahedron)
+  @test nelements(mesh) == 450
 
   seg = Segment(cart(0, 0), cart(10, 10))
   mesh = discretize(seg)
