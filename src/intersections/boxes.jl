@@ -3,7 +3,6 @@
 # ------------------------------------------------------------------
 
 # The intersection type can be one of four types:
-#
 # 1. overlap with non-zero measure (Overlapping -> Box)
 # 2. intersect at corner point (CornerTouching -> Point)
 # 3. intersect at one of the facets (Touching -> Box)
@@ -34,6 +33,11 @@ function intersection(f, box₁::Box, box₂::Box)
   end
 end
 
+# The intersection type can be one of four types:
+# 1. overlap with non-zero measure (Overlapping -> Box)
+# 2. intersect at corner point (CornerTouching -> Point)
+# 3. intersect at one of the facets (Touching -> Box)
+# 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   # corners in a common CRS
   crs = manifoldcrs(box₁)
