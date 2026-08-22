@@ -41,21 +41,13 @@ firstoffset(g::Geometry) = _firstoffset(g, Val(embeddim(g)))
 lastoffset(g::Geometry) = _lastoffset(g, Val(embeddim(g)))
 extrapoints(g::Geometry, sz) = _extrapoints(g, Val(embeddim(g)), sz)
 
-_firstoffset(g::Geometry, ::Val) = ntuple(i -> (n -> zero(n)), paramdim(g))
-_lastoffset(g::Geometry, ::Val) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
-_extrapoints(::Geometry, ::Val, sz) = ()
-
 firstoffset(d::Disk) = (n -> inv(n), firstoffset(boundary(d))...)
 lastoffset(d::Disk) = (n -> zero(n), lastoffset(boundary(d))...)
 extrapoints(d::Disk, sz) = (center(d),)
 
 firstoffset(b::Ball) = (n -> inv(n), firstoffset(boundary(b))...)
 lastoffset(b::Ball) = (n -> zero(n), lastoffset(boundary(b))...)
-extrapoints(b::Ball, sz) = (center(b),)
-
-_firstoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> zero(n))
-_lastoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> inv(n))
-_extrapoints(s::Sphere, ::Val{3}, sz) = (s(0, 0), s(1, 0))
+extrapoints(b::Ball, sz) = _extrapoints(b, Val(embeddim(b)), sz)
 
 firstoffset(::Ellipsoid) = (n -> inv(n + 1), n -> zero(n))
 lastoffset(::Ellipsoid) = (n -> inv(n + 1), n -> inv(n))
@@ -86,6 +78,29 @@ extrapoints(c::FrustumSurface, sz) = (bottom(c)(0, 0), top(c)(0, 0))
 firstoffset(::ParaboloidSurface) = (n -> inv(n), n -> zero(n))
 lastoffset(::ParaboloidSurface) = (n -> zero(n), n -> inv(n))
 extrapoints(p::ParaboloidSurface, sz) = (apex(p),)
+
+# -------------------
+# DIMENSION-SPECIFIC
+# -------------------
+
+_firstoffset(g::Geometry, ::Val) = ntuple(i -> (n -> zero(n)), paramdim(g))
+_lastoffset(g::Geometry, ::Val) = ntuple(i -> (n -> isperiodic(g)[i] ? inv(n) : zero(n)), paramdim(g))
+_extrapoints(::Geometry, ::Val, sz) = ()
+
+_extrapoints(b::Ball, ::Val{2}, sz) = (center(b),)
+function _extrapoints(b::Ball, ::Val{3}, sz)
+  T = numtype(lentype(b))
+  δₛ = firstoffset(b)
+  δₑ = lastoffset(b)
+  tₛ = T(0 + δₛ[1](sz[1]))
+  tₑ = T(1 - δₑ[1](sz[1]))
+  rs = range(tₛ, stop=tₑ, length=sz[1])
+  (center(b), (b(r, 0, 0) for r in rs)..., (b(r, 1, 0) for r in rs)...)
+end
+
+_firstoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> zero(n))
+_lastoffset(::Sphere, ::Val{3}) = (n -> inv(n + 1), n -> inv(n))
+_extrapoints(s::Sphere, ::Val{3}, sz) = (s(0, 0), s(1, 0))
 
 # --------------
 # SPECIAL CASES

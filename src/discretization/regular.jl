@@ -66,6 +66,8 @@ appendtopo(g, tg) = tg
 
 appendtopo(::Ball{𝔼{2}}, tg) = _appendcenter(tg)
 
+appendtopo(::Ball{𝔼{3}}, tg) = _appendcenteraxis(tg)
+
 appendtopo(::Disk, tg) = _appendcenter(tg)
 
 appendtopo(::Sphere{𝔼{3}}, tg) = _appendpoles(tg, 2, true)
@@ -105,37 +107,87 @@ function _appendcenter(tg)
   SimpleTopology([quads; tris])
 end
 
+function _appendcenteraxis(tg)
+  # auxiliary variables
+  nr, nt, np = size(tg)
+  nv = nvertices(tg)
+  it = nt + 1
+
+  # center and points along the polar axis
+  c = nv + 1
+  north(i) = nv + 1 + i
+  south(i) = nv + 1 + (nr + 1) + i
+
+  # wrap periodic azimuthal index
+  wrap(k) = k > np ? 1 : k
+
+  # connect hexahedra in the interior
+  hexas = collect(elements(tg))
+
+  # connect polar axis with wedges
+  wedges = Connectivity{Wedge,6}[]
+  for i in 1:nr, k in 1:np
+    l = wrap(k + 1)
+    u1, v1 = cart2corner(tg, i, 1, k), cart2corner(tg, i, 1, l)
+    u2, v2 = cart2corner(tg, i + 1, 1, k), cart2corner(tg, i + 1, 1, l)
+    push!(wedges, connect((north(i), u1, v1, north(i + 1), u2, v2), Wedge))
+    u1, v1 = cart2corner(tg, i, it, k), cart2corner(tg, i, it, l)
+    u2, v2 = cart2corner(tg, i + 1, it, k), cart2corner(tg, i + 1, it, l)
+    push!(wedges, connect((south(i), v1, u1, south(i + 1), v2, u2), Wedge))
+  end
+
+  # connect center with pyramids
+  pyramids = Connectivity{Pyramid,5}[]
+  for j in 1:nt, k in 1:np
+    l = wrap(k + 1)
+    u1, v1 = cart2corner(tg, 1, j, k), cart2corner(tg, 1, j, l)
+    u2, v2 = cart2corner(tg, 1, j + 1, k), cart2corner(tg, 1, j + 1, l)
+    push!(pyramids, connect((u1, v1, v2, u2, c), Pyramid))
+  end
+
+  # connect center and poles with tetrahedra
+  tetras = Connectivity{Tetrahedron,4}[]
+  for k in 1:np
+    l = wrap(k + 1)
+    u1, v1 = cart2corner(tg, 1, 1, k), cart2corner(tg, 1, 1, l)
+    u2, v2 = cart2corner(tg, 1, it, k), cart2corner(tg, 1, it, l)
+    push!(tetras, connect((c, north(1), u1, v1), Tetrahedron))
+    push!(tetras, connect((c, south(1), v2, u2), Tetrahedron))
+  end
+
+  SimpleTopology([hexas; wedges; pyramids; tetras])
+end
+
 function _appendaxis(tg)
   # auxiliary variables
   _, ny, nz = size(tg)
 
   # number of grid vertices
-  nvert = nvertices(tg)
+  nv = nvertices(tg)
 
   # connect hexahedra in the volume
   hexas = collect(elements(tg))
 
   # connect axis with wedges
-  inds = NTuple{6,Int}[]
+  wedges = Connectivity{Wedge,6}[]
   for k in 1:nz
     for j in 1:(ny - 1)
-      a1 = nvert + k
+      a1 = nv + k
       b1 = cart2corner(tg, 1, j, k)
       c1 = cart2corner(tg, 1, j + 1, k)
-      a2 = nvert + k + 1
+      a2 = nv + k + 1
       b2 = cart2corner(tg, 1, j, k + 1)
       c2 = cart2corner(tg, 1, j + 1, k + 1)
-      push!(inds, (a1, b1, c1, a2, b2, c2))
+      push!(wedges, connect((a1, b1, c1, a2, b2, c2), Wedge))
     end
-    a1 = nvert + k
+    a1 = nv + k
     b1 = cart2corner(tg, 1, ny, k)
     c1 = cart2corner(tg, 1, 1, k)
-    a2 = nvert + k + 1
+    a2 = nv + k + 1
     b2 = cart2corner(tg, 1, ny, k + 1)
     c2 = cart2corner(tg, 1, 1, k + 1)
-    push!(inds, (a1, b1, c1, a2, b2, c2))
+    push!(wedges, connect((a1, b1, c1, a2, b2, c2), Wedge))
   end
-  wedges = [connect(ind, Wedge) for ind in inds]
 
   SimpleTopology([hexas; wedges])
 end
