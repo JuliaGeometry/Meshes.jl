@@ -22,7 +22,7 @@ function hull end
 
 include("hulls/graham.jl")
 include("hulls/jarvis.jl")
-include("hulls/moreirasantos.jl")
+include("hulls/moreira.jl")
 
 # ----------
 # UTILITIES
