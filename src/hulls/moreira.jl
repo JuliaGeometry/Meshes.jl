@@ -45,10 +45,10 @@ function hull(points, method::MoreiraMarch)
   assertion(method.k < n, "k must be smaller than the number of unique points")
 
   # recursively attempt to find a valid hull, increasing k if necessary
-  _moreirasantos(p, method.k)
+  _moreiramarch(p, method.k)
 end
 
-function _moreirasantos(p, k)
+function _moreiramarch(p, k)
   n = length(p)
   ℒ = lentype(first(p))
 
@@ -75,7 +75,7 @@ function _moreirasantos(p, k)
   j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
 
   # if no next point can be found, increase k and try again
-  isnothing(j) && return _moreirasantos(p, k + 1)
+  isnothing(j) && return _moreiramarch(p, k + 1)
 
   push!(ℐ, j)
   mask[j] = false
@@ -91,7 +91,7 @@ function _moreirasantos(p, k)
     A = O + v
 
     j = _moreiranext(𝒞, searcher, mask, p, ℐ, A, O)
-    isnothing(j) && return _moreirasantos(p, k + 1)
+    isnothing(j) && return _moreiramarch(p, k + 1)
 
     # add point to ring and remove from candidacy
     push!(ℐ, j)
@@ -102,7 +102,7 @@ function _moreirasantos(p, k)
   poly = PolyArea(ring)
 
   # every input point must fall inside or on the resulting hull
-  all(q -> q ∈ poly, p) || return _moreirasantos(p, k + 1)
+  all(q -> q ∈ poly, p) || return _moreiramarch(p, k + 1)
 
   poly
 end
