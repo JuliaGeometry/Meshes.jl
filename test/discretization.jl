@@ -315,6 +315,15 @@ end
   @test nelements(mesh) == 1
   @test vertices(mesh) == [cart(0, 0), cart(0, 0), cart(0, 0)]
   @test mesh[1] == Triangle(cart(0, 0), cart(0, 0), cart(0, 0))
+
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/629
+  outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
+  inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
+  poly = PolyArea(outer, inner)
+  mesh = discretize(poly)
+  @test all(v -> !any(isnan, to(v)), vertices(mesh))
+  @test Set(vertices(poly)) ⊆ Set(vertices(mesh))
+  @test sum(measure, mesh) ≈ measure(poly)
 end
 
 @testitem "ManualSimplexification" setup = [Setup] begin

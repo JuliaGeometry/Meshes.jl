@@ -77,8 +77,12 @@ function bridge(rings, rinds, δ)
     A = outer[omax]
     B = inner[imax]
 
+    # the rings may share the vertex, in which case the segment A--B
+    # degenerates and the bridge is oriented towards the hole instead
+    shared = A == B
+
     # direction and normal to segment A--B
-    v = B - A
+    v = shared ? (coordmean(inner) - A) : (B - A)
     u = Vec(-v[2], v[1])
     n = norm(u)
 
@@ -90,18 +94,23 @@ function bridge(rings, rinds, δ)
     B′ = B + (δ / 2n) * u
     B′′ = B - (δ / 2n) * u
 
+    # a bridge of zero length needs a single pair of split points
+    head = shared ? [A′] : [A′, B′]
+    tail = shared ? [A′′] : [B′′, A′′]
+    sinds = circshift(iinds, -imax + 1)
+    hinds = shared ? sinds[2:end] : [sinds; iinds[imax]]
+
     # insert hole at closest vertex
     outer = [
       outer[begin:(omax - 1)]
-      [A′, B′]
+      head
       circshift(inner, -imax + 1)[2:end]
-      [B′′, A′′]
+      tail
       outer[(omax + 1):end]
     ]
     oinds = [
       oinds[begin:omax]
-      circshift(iinds, -imax + 1)
-      [iinds[imax]]
+      hinds
       oinds[omax:end]
     ]
   end
