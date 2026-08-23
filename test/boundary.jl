@@ -93,16 +93,6 @@
   @test isnothing(boundary(e))
   @test embedboundary(e) == e
 
-  # torus
-  t = Torus(T.((1, 1, 1)), T.((1, 0, 0)), 2, 1)
-  @test isnothing(boundary(t))
-  @test embedboundary(t) == t
-
-  # paraboloid surface
-  p = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
-  @test isnothing(boundary(p))
-  @test embedboundary(p) == p
-
   # cylinder
   c = Cylinder(cart(0, 0, 0), cart(0, 0, 1), T(1))
   @test boundary(c) == embedboundary(c) == CylinderSurface(cart(0, 0, 0), cart(0, 0, 1), T(1))
@@ -143,6 +133,16 @@
   f = FrustumSurface(db, dt)
   @test isnothing(boundary(f))
   @test embedboundary(f) == f
+
+  # paraboloid
+  p = Paraboloid(cart(0, 0, 0), T(1), T(2))
+  @test isnothing(boundary(p))
+  @test embedboundary(p) == p
+
+  # torus
+  t = Torus(T.((1, 1, 1)), T.((1, 0, 0)), 2, 1)
+  @test isnothing(boundary(t))
+  @test embedboundary(t) == t
 
   # segment
   s = Segment(cart(0), cart(1))

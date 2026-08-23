@@ -76,8 +76,6 @@ end
   t = Plane(latlon(90, 0), vector(1, 0, 0), vector(0, 1, 0))
   g = CylinderSurface(b, t, T(5))
   @test crs(g) <: LatLon{WGS84Latest}
-  g = ParaboloidSurface(latlon(0, 0), T(1), T(2))
-  @test crs(g) <: LatLon{WGS84Latest}
   p = Plane(latlon(-90, 0), vector(1, 0, 0), vector(0, 1, 0))
   d = Disk(p, T(2))
   a = latlon(90, 0)
@@ -99,6 +97,8 @@ end
   pt = Plane(latlon(90, 0), vector(1, 0, 0), vector(0, 1, 0))
   dt = Disk(pt, T(2))
   g = FrustumSurface(db, dt)
+  @test crs(g) <: LatLon{WGS84Latest}
+  g = Paraboloid(latlon(0, 0), T(1), T(2))
   @test crs(g) <: LatLon{WGS84Latest}
   g = Torus(latlon(0, 0), vector(1, 0, 0), T(2), T(1))
   @test crs(g) <: LatLon{WGS84Latest}

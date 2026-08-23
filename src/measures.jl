@@ -61,7 +61,7 @@ function measure(c::CylinderSurface)
   2 * (π * r) * (h + r)
 end
 
-function measure(p::ParaboloidSurface)
+function measure(p::Paraboloid)
   T = numtype(lentype(p))
   r = radius(p)
   f = focallength(p)

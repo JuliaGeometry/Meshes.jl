@@ -49,7 +49,7 @@ isparametrized(::Type{<:Frustum}) = true
 
 isparametrized(::Type{<:FrustumSurface}) = true
 
-isparametrized(::Type{<:ParaboloidSurface}) = true
+isparametrized(::Type{<:Paraboloid}) = true
 
 isparametrized(::Type{<:Torus}) = true
 

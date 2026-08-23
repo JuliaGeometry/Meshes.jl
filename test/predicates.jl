@@ -15,7 +15,7 @@
   @test isparametrized(CylinderSurface)
   @test isparametrized(Cone)
   @test isparametrized(ConeSurface)
-  @test isparametrized(ParaboloidSurface)
+  @test isparametrized(Paraboloid)
   @test isparametrized(Torus)
 
   # polytopes
@@ -74,7 +74,7 @@ end
   @test isperiodic(Ellipsoid) == (false, true)
   @test isperiodic(Cylinder) == (false, true, false)
   @test isperiodic(CylinderSurface) == (true, false)
-  @test isperiodic(ParaboloidSurface) == (false, true)
+  @test isperiodic(Paraboloid) == (false, true)
   @test isperiodic(Torus) == (true, true)
 
   # polytopes

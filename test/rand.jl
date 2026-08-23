@@ -116,15 +116,6 @@
   @test crs(c) <: LatLon
   @test Meshes.lentype(c) === Meshes.Met{Float64}
 
-  p = rand(ParaboloidSurface)
-  @test p isa ParaboloidSurface
-  @test crs(p) <: Cartesian3D
-  @test Meshes.lentype(p) === Meshes.Met{Float64}
-  p = rand(ParaboloidSurface, crs=LatLon)
-  @test p isa ParaboloidSurface
-  @test crs(p) <: LatLon
-  @test Meshes.lentype(p) === Meshes.Met{Float64}
-
   c = rand(Cone)
   @test c isa Cone
   @test crs(c) <: Cartesian3D
@@ -160,6 +151,15 @@
   @test f isa FrustumSurface
   @test crs(f) <: LatLon
   @test Meshes.lentype(f) === Meshes.Met{Float64}
+
+  p = rand(Paraboloid)
+  @test p isa Paraboloid
+  @test crs(p) <: Cartesian3D
+  @test Meshes.lentype(p) === Meshes.Met{Float64}
+  p = rand(Paraboloid, crs=LatLon)
+  @test p isa Paraboloid
+  @test crs(p) <: LatLon
+  @test Meshes.lentype(p) === Meshes.Met{Float64}
 
   t = rand(Torus)
   @test t isa Torus

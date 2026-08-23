@@ -38,7 +38,7 @@ function centroid(c::CylinderSurface)
   withcrs(c, (to(a) + to(b)) / 2)
 end
 
-function centroid(p::ParaboloidSurface)
+function centroid(p::Paraboloid)
   c = apex(p)
   r = radius(p)
   f = focallength(p)

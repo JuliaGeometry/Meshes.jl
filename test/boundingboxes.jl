@@ -50,6 +50,9 @@
   b = boundingbox(c)
   @test b == Box(cart(-1, -1, 0), cart(1, 1, 1))
 
+  p = Paraboloid(cart(1, 2, 3), T(5), T(4))
+  @test boundingbox(p) ≈ Box(cart(-4, -3, 3), cart(6, 7, 73 / 16))
+
   b = Box(cart(-3, -1), cart(0.5, 0.5))
   s = Sphere(cart(0, 0), T(2))
   m = Multi([b, s])
@@ -120,9 +123,6 @@
   m = convert(SimpleMesh, g)
   @test boundingbox(m) == Box(cart(0, 0), cart(10, 10))
   @test @allocated(boundingbox(m)) < 50
-
-  p = ParaboloidSurface(cart(1, 2, 3), T(5), T(4))
-  @test boundingbox(p) ≈ Box(cart(-4, -3, 3), cart(6, 7, 73 / 16))
 
   # latlon coordinates
   t = Triangle(latlon(0, 0), latlon(0, 2), latlon(1, 1))
