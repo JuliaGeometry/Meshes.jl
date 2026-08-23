@@ -402,6 +402,29 @@ end
   end
 end
 
+@testitem "ParametrizedCurve" setup = [Setup] begin
+  f(t) = Point(Polar(T(1), T(t)))
+  c = ParametrizedCurve(f, (T(0), T(2π)))
+  @test embeddim(c) == 2
+  @test paramdim(c) == 1
+  @test crs(c) <: Polar{NoDatum}
+  @test Meshes.lentype(c) == ℳ
+  @test c(T(0)) == f(T(0))
+  @test c(T(1)) == f(T(2π))
+  @test c(T(0.5)) == f(T(π))
+  equaltest(c)
+
+  c = ParametrizedCurve(t -> cart(cospi(t), sinpi(t)), (T(0), T(1)))
+  @test perimeter(c) == zero(ℳ)
+
+  # CRS propagation
+  g(t) = merc(t, 2t)
+  c = ParametrizedCurve(g, (T(0), T(1)))
+  @test crs(c(T(0))) === crs(c)
+
+  @test sprint(show, c) == "ParametrizedCurve(fun: g, range: (0.0, 1.0))"
+end
+
 @testitem "Box" setup = [Setup] begin
   b = Box(cart(0), cart(1))
   @test embeddim(b) == 1
@@ -1026,73 +1049,6 @@ end
   end
 end
 
-@testitem "ParaboloidSurface" setup = [Setup] begin
-  p = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
-  @test embeddim(p) == 3
-  @test paramdim(p) == 2
-  @test crs(p) <: Cartesian{NoDatum}
-  @test Meshes.lentype(p) == ℳ
-  @test focallength(p) == T(2) * u"m"
-  @test radius(p) == T(1) * u"m"
-  @test axis(p) == Line(cart(0, 0, 0), cart(0, 0, T(2)))
-  @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
-  @test centroid(p) == cart(0, 0, 1 / 16)
-
-  p = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
-  equaltest(p)
-  isapproxtest(p)
-
-  p1 = ParaboloidSurface(cart(1, 2, 3), T(1), T(1))
-  p2 = ParaboloidSurface(cart(1, 2, 3), T(1))
-  p3 = ParaboloidSurface(cart(1, 2, 3))
-  @test p1 == p2 == p3
-  @test p1 ≈ p2 ≈ p3
-
-  p1 = ParaboloidSurface((1, 2, 3), 1.0, 1.0)
-  p2 = ParaboloidSurface((1, 2, 3), 1.0)
-  p3 = ParaboloidSurface((1, 2, 3))
-  @test p1 == p2 == p3
-  @test p1 ≈ p2 ≈ p3
-
-  p = ParaboloidSurface((1.0, 2.0, 3.0), 4.0, 5.0)
-  @test Meshes.lentype(p) == Meshes.Met{Float64}
-  @test radius(p) == 4.0 * u"m"
-  @test focallength(p) == 5.0 * u"m"
-
-  p = ParaboloidSurface(cart(1, 5, 2), T(3), T(4))
-  @test measure(p) == area(p) ≈ T(128π / 3 * (73√73 / 512 - 1)) * u"m^2"
-  @test p(T(0), T(0)) ≈ cart(1, 5, 2)
-  @test p(T(1), T(0)) ≈ cart(4, 5, 2 + 3^2 / (4 * 4))
-
-  p = ParaboloidSurface()
-  @test Meshes.lentype(p) == Meshes.Met{Float64}
-  @test p(0.0, 0.0) ≈ Point(0, 0, 0)
-  @test p(0.5, 0.0) ≈ Point(0.5, 0, 0.5^2 / 4)
-  @test p(0.0, 0.5) ≈ Point(0, 0, 0)
-  @test p(0.5, 0.5) ≈ Point(-0.5, 0, 0.5^2 / 4)
-
-  p = ParaboloidSurface(Point(0.0, 0.0, 0.0))
-  @test Meshes.lentype(p) == Meshes.Met{Float64}
-  p = ParaboloidSurface(Point(0.0f0, 0.0f0, 0.0f0))
-  @test Meshes.lentype(p) == Meshes.Met{Float32}
-
-  p = ParaboloidSurface(cart(0, 0, 0), T(1), T(1))
-  @test sprint(show, p) == "ParaboloidSurface(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
-  if T === Float32
-    @test sprint(show, MIME("text/plain"), p) == """
-    ParaboloidSurface
-    ├─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
-    ├─ radius: 1.0f0 m
-    └─ focallength: 1.0f0 m"""
-  else
-    @test sprint(show, MIME("text/plain"), p) == """
-    ParaboloidSurface
-    ├─ apex: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
-    ├─ radius: 1.0 m
-    └─ focallength: 1.0 m"""
-  end
-end
-
 @testitem "Cone" setup = [Setup] begin
   p = Plane(cart(0, 0, 0), vector(0, 0, 1))
   d = Disk(p, T(2))
@@ -1290,27 +1246,71 @@ end
   isapproxtest(f)
 end
 
-@testitem "ParametrizedCurve" setup = [Setup] begin
-  f(t) = Point(Polar(T(1), T(t)))
-  c = ParametrizedCurve(f, (T(0), T(2π)))
-  @test embeddim(c) == 2
-  @test paramdim(c) == 1
-  @test crs(c) <: Polar{NoDatum}
-  @test Meshes.lentype(c) == ℳ
-  @test c(T(0)) == f(T(0))
-  @test c(T(1)) == f(T(2π))
-  @test c(T(0.5)) == f(T(π))
-  equaltest(c)
+@testitem "Paraboloid" setup = [Setup] begin
+  p = Paraboloid(cart(0, 0, 0), T(1), T(2))
+  @test embeddim(p) == 3
+  @test paramdim(p) == 2
+  @test crs(p) <: Cartesian{NoDatum}
+  @test Meshes.lentype(p) == ℳ
+  @test focallength(p) == T(2) * u"m"
+  @test radius(p) == T(1) * u"m"
+  @test axis(p) == Line(cart(0, 0, 0), cart(0, 0, T(2)))
+  @test measure(p) == area(p) ≈ T(32π / 3 * (17√17 / 64 - 1)) * u"m^2"
+  @test centroid(p) == cart(0, 0, 1 / 16)
 
-  c = ParametrizedCurve(t -> cart(cospi(t), sinpi(t)), (T(0), T(1)))
-  @test perimeter(c) == zero(ℳ)
+  p = Paraboloid(cart(0, 0, 0), T(1), T(2))
+  equaltest(p)
+  isapproxtest(p)
 
-  # CRS propagation
-  g(t) = merc(t, 2t)
-  c = ParametrizedCurve(g, (T(0), T(1)))
-  @test crs(c(T(0))) === crs(c)
+  p1 = Paraboloid(cart(1, 2, 3), T(1), T(1))
+  p2 = Paraboloid(cart(1, 2, 3), T(1))
+  p3 = Paraboloid(cart(1, 2, 3))
+  @test p1 == p2 == p3
+  @test p1 ≈ p2 ≈ p3
 
-  @test sprint(show, c) == "ParametrizedCurve(fun: g, range: (0.0, 1.0))"
+  p1 = Paraboloid((1, 2, 3), 1.0, 1.0)
+  p2 = Paraboloid((1, 2, 3), 1.0)
+  p3 = Paraboloid((1, 2, 3))
+  @test p1 == p2 == p3
+  @test p1 ≈ p2 ≈ p3
+
+  p = Paraboloid((1.0, 2.0, 3.0), 4.0, 5.0)
+  @test Meshes.lentype(p) == Meshes.Met{Float64}
+  @test radius(p) == 4.0 * u"m"
+  @test focallength(p) == 5.0 * u"m"
+
+  p = Paraboloid(cart(1, 5, 2), T(3), T(4))
+  @test measure(p) == area(p) ≈ T(128π / 3 * (73√73 / 512 - 1)) * u"m^2"
+  @test p(T(0), T(0)) ≈ cart(1, 5, 2)
+  @test p(T(1), T(0)) ≈ cart(4, 5, 2 + 3^2 / (4 * 4))
+
+  p = Paraboloid()
+  @test Meshes.lentype(p) == Meshes.Met{Float64}
+  @test p(0.0, 0.0) ≈ Point(0, 0, 0)
+  @test p(0.5, 0.0) ≈ Point(0.5, 0, 0.5^2 / 4)
+  @test p(0.0, 0.5) ≈ Point(0, 0, 0)
+  @test p(0.5, 0.5) ≈ Point(-0.5, 0, 0.5^2 / 4)
+
+  p = Paraboloid(Point(0.0, 0.0, 0.0))
+  @test Meshes.lentype(p) == Meshes.Met{Float64}
+  p = Paraboloid(Point(0.0f0, 0.0f0, 0.0f0))
+  @test Meshes.lentype(p) == Meshes.Met{Float32}
+
+  p = Paraboloid(cart(0, 0, 0), T(1), T(1))
+  @test sprint(show, p) == "Paraboloid(apex: (x: 0.0 m, y: 0.0 m, z: 0.0 m), radius: 1.0 m, focallength: 1.0 m)"
+  if T === Float32
+    @test sprint(show, MIME("text/plain"), p) == """
+    Paraboloid
+    ├─ apex: Point(x: 0.0f0 m, y: 0.0f0 m, z: 0.0f0 m)
+    ├─ radius: 1.0f0 m
+    └─ focallength: 1.0f0 m"""
+  else
+    @test sprint(show, MIME("text/plain"), p) == """
+    Paraboloid
+    ├─ apex: Point(x: 0.0 m, y: 0.0 m, z: 0.0 m)
+    ├─ radius: 1.0 m
+    └─ focallength: 1.0 m"""
+  end
 end
 
 @testitem "Torus" setup = [Setup] begin

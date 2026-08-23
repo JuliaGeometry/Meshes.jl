@@ -589,12 +589,12 @@ end
   @test centroid(r) ≈ f(centroid(g))
   @test discretize(TB.revert(f, r, c)) ≈ m
 
-  # ------------------
-  # PARABOLOIDSURFACE
-  # ------------------
+  # -----------
+  # PARABOLOID
+  # -----------
 
   f = Affine(Diagonal(T[1, 2, 3]), T[1, 1, 1])
-  g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
+  g = Paraboloid(cart(0, 0, 0), T(1), T(2))
   m = discretize(g)
   r, c = TB.apply(f, g)
   @test discretize(r) ≈ f(m)
@@ -918,12 +918,12 @@ end
   @test centroid(r) ≈ f(centroid(g))
   @test discretize(TB.revert(f, r, c)) ≈ m
 
-  # ------------------
-  # PARABOLOIDSURFACE
-  # ------------------
+  # -----------
+  # PARABOLOID
+  # -----------
 
   f = Scale(T(1), T(2), T(3))
-  g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
+  g = Paraboloid(cart(0, 0, 0), T(1), T(2))
   m = discretize(g)
   r, c = TB.apply(f, g)
   @test discretize(r) ≈ f(m)
@@ -2172,12 +2172,12 @@ end
   r, c = TB.apply(f, g)
   @test discretize(r) ≈ f(m)
 
-  # ------------------
-  # PARABOLOIDSURFACE
-  # ------------------
+  # -----------
+  # PARABOLOID
+  # -----------
 
   f = Shadow(:yz)
-  g = ParaboloidSurface(cart(0, 0, 0), T(1), T(2))
+  g = Paraboloid(cart(0, 0, 0), T(1), T(2))
   m = discretize(g)
   r, c = TB.apply(f, g)
   @test discretize(r) ≈ f(m)

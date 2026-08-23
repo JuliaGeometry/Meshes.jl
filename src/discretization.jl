@@ -67,7 +67,7 @@ discretize(frust::Frustum) = discretize(frust, RegularDiscretization(2, 50, 2))
 
 discretize(frustsurf::FrustumSurface) = discretize(frustsurf, RegularDiscretization(50, 2))
 
-discretize(parsurf::ParaboloidSurface) = discretize(parsurf, RegularDiscretization(50))
+discretize(parab::Paraboloid) = discretize(parab, RegularDiscretization(50))
 
 discretize(quad::Quadrangle) = discretize(quad, RegularDiscretization(1))
 

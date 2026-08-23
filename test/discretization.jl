@@ -493,8 +493,8 @@ end
   @test nvertices.(mesh) ⊆ [6, 8]
   @test measure(mesh) ≈ measure(simplexify(mesh))
 
-  parsurf = rand(ParaboloidSurface)
-  mesh = discretize(parsurf, RegularDiscretization(10))
+  parab = rand(Paraboloid)
+  mesh = discretize(parab, RegularDiscretization(10))
   @test nvertices(mesh) == 10 * (10 + 1) + 1
   @test nelements(mesh) == 10 * (10 + 1)
   @test eltype(mesh) <: Ngon

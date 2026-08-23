@@ -60,7 +60,7 @@ function boundingbox(c::ConeSurface)
   boundingbox([ps; apex(c)])
 end
 
-function boundingbox(p::ParaboloidSurface)
+function boundingbox(p::Paraboloid)
   v = apex(p)
   r = radius(p)
   f = focallength(p)

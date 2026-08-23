@@ -157,6 +157,16 @@ Frustum(
 ) |> viz
 ```
 
+### Paraboloid
+
+```@docs
+Paraboloid
+```
+
+```@example primitives
+Paraboloid((0, 0, 0), 1, 0.25) |> viz
+```
+
 ### Torus
 
 ```@docs
@@ -165,14 +175,4 @@ Torus
 
 ```@example primitives
 Torus((0, 0, 0), (1, 0, 0), (0, 1, 0), 0.2) |> viz
-```
-
-### ParaboloidSurface
-
-```@docs
-ParaboloidSurface
-```
-
-```@example primitives
-ParaboloidSurface((0, 0, 0), 1, 0.25) |> viz
 ```

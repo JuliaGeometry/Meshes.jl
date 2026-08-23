@@ -86,7 +86,7 @@ appendtopo(::Frustum, tg) = _appendaxis(tg)
 
 appendtopo(::FrustumSurface, tg) = _appendpoles(tg, 1, false)
 
-appendtopo(::ParaboloidSurface, tg) = _appendcenter(tg)
+appendtopo(::Paraboloid, tg) = _appendcenter(tg)
 
 function _appendcenter(tg)
   # auxiliary variables

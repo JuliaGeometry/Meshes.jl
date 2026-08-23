@@ -141,9 +141,9 @@ boundary(::FrustumSurface) = nothing
 
 embedboundary(f::FrustumSurface) = f
 
-boundary(::ParaboloidSurface) = nothing
+boundary(::Paraboloid) = nothing
 
-embedboundary(p::ParaboloidSurface) = p
+embedboundary(p::Paraboloid) = p
 
 boundary(::Torus) = nothing
 
