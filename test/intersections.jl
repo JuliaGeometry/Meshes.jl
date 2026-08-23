@@ -850,39 +850,46 @@ end
   b1 = Box(latlon(-10, 170), latlon(10, -170))
   b2 = Box(latlon(-5, 175), latlon(5, -175))
   @test intersection(b1, b2) |> type == Overlapping
-  @test b1 ∩ b2 == Box(latlon(-5, 175), latlon(5, -175))
-  @test b2 ∩ b1 == b1 ∩ b2
+  @test b1 ∩ b2 == b2 ∩ b1 == Box(latlon(-5, 175), latlon(5, -175))
 
+  b1 = Box(latlon(-10, 170), latlon(10, -170))
   b2 = Box(latlon(-5, 160), latlon(5, 175))
-  @test b1 ∩ b2 == Box(latlon(-5, 170), latlon(5, 175))
-  b2 = Box(latlon(-5, -175), latlon(5, -160))
-  @test b1 ∩ b2 == Box(latlon(-5, -175), latlon(5, -170))
+  @test intersection(b1, b2) |> type == Overlapping
+  @test b1 ∩ b2 == b2 ∩ b1 == Box(latlon(-5, 170), latlon(5, 175))
 
+  b1 = Box(latlon(-10, 170), latlon(10, -170))
+  b2 = Box(latlon(-5, -175), latlon(5, -160))
+  @test intersection(b1, b2) |> type == Overlapping
+  @test b1 ∩ b2 == b2 ∩ b1 == Box(latlon(-5, -175), latlon(5, -170))
+
+  b1 = Box(latlon(-10, 170), latlon(10, -170))
   b2 = Box(latlon(-5, -160), latlon(5, 160))
   @test intersection(b1, b2) |> type == NotIntersecting
-  @test isnothing(b1 ∩ b2)
+  @test b1 ∩ b2 === b2 ∩ b1 === nothing
 
+  b1 = Box(latlon(-10, 170), latlon(10, -170))
   b2 = Box(latlon(-5, 160), latlon(5, 170))
   @test intersection(b1, b2) |> type == Touching
-  @test b1 ∩ b2 == Box(latlon(-5, 170), latlon(5, 170))
+  @test b1 ∩ b2 == b2 ∩ b1 == Box(latlon(-5, 170), latlon(5, 170))
 
+  b1 = Box(latlon(-10, 170), latlon(10, -170))
   b2 = Box(latlon(10, 160), latlon(20, 170))
   @test intersection(b1, b2) |> type == CornerTouching
-  @test b1 ∩ b2 == latlon(10, 170)
+  @test b1 ∩ b2 == b2 ∩ b1 == latlon(10, 170)
 
   b1 = Box(latlon(-10, 170), latlon(10, 180))
   b2 = Box(latlon(-5, -180), latlon(5, -170))
   @test intersection(b1, b2) |> type == Touching
-  @test b1 ∩ b2 == Box(latlon(-5, 180), latlon(5, 180))
+  @test b1 ∩ b2 == b2 ∩ b1 == Box(latlon(-5, 180), latlon(5, 180))
 
   b1 = Box(latlon(-10, 180), latlon(10, -180))
   b2 = Box(latlon(10, 180), latlon(20, -180))
   @test intersection(b1, b2) |> type == CornerTouching
-  @test b1 ∩ b2 == latlon(10, 180)
+  @test b1 ∩ b2 == b2 ∩ b1 == latlon(10, 180)
 
   b1 = Box(latlon(-10, -150), latlon(10, 150))
   b2 = Box(latlon(-5, 30), latlon(5, -30))
-  @test b1 ∩ b2 == Multi([Box(latlon(-5, -150), latlon(5, -30)), Box(latlon(-5, 30), latlon(5, 150))])
+  @test b1 ∩ b2 == b2 ∩ b1 == Multi([Box(latlon(-5, -150), latlon(5, -30)), Box(latlon(-5, 30), latlon(5, 150))])
 
   # Ray-Box intersection
   b = Box(cart(0, 0, 0), cart(1, 1, 1))
