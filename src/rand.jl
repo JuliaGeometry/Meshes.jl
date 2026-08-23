@@ -95,8 +95,7 @@ function _rand(rng::Random.AbstractRNG, ::Type{FrustumSurface}, CRS)
   FrustumSurface(bottom, top)
 end
 
-_rand(rng::Random.AbstractRNG, ::Type{Paraboloid}, CRS) =
-  Paraboloid(_rand(rng, Point, CRS), _rlen(rng), _rlen(rng))
+_rand(rng::Random.AbstractRNG, ::Type{Paraboloid}, CRS) = Paraboloid(_rand(rng, Point, CRS), _rlen(rng), _rlen(rng))
 
 _rand(rng::Random.AbstractRNG, ::Type{Torus}, CRS) =
   Torus(_rand(rng, Point, CRS), _rvec(rng, CRS), _rlen(rng), _rlen(rng))
