@@ -889,6 +889,7 @@ end
 
   b1 = Box(latlon(-10, -150), latlon(10, 150))
   b2 = Box(latlon(-5, 30), latlon(5, -30))
+  @test intersection(b1, b2) |> type == Overlapping
   @test b1 ∩ b2 == b2 ∩ b1 == Multi([Box(latlon(-5, -150), latlon(5, -30)), Box(latlon(-5, 30), latlon(5, 150))])
 
   # Ray-Box intersection
