@@ -12,7 +12,7 @@ intersection(f, chain₁::Chain, chain₂::Chain) =
 # 4. no intersection (NotIntersecting)
 function intersection(f, chain::Chain, poly::Polygon)
   # assess intersections 
-  pieces = Geometry{𝔼{2},crs(chain)}[]
+  pieces = Geometry{manifold(chain), crs(chain)}[]
   hasintersection = false
   onlytouching = true
   onlyedgetouching = true
