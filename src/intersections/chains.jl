@@ -10,7 +10,7 @@ intersection(f, chain₁::Chain, chain₂::Chain) =
 # 2. intersect at boundary points (Touching)
 # 3. overlaps at the polygon edges (EdgeTouching)
 # 4. no intersection (NotIntersecting)
-function intersection(f, chain::Chain{𝔼{2}}, poly::Polygon{𝔼{2}})
+function intersection(f, chain::Chain, poly::Polygon)
   # assess intersections 
   pieces = Geometry{𝔼{2},crs(chain)}[]
   hasintersection = false
