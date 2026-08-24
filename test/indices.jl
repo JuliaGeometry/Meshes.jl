@@ -249,6 +249,15 @@ end
   @test length(Meshes.cartesianrange(agrid, box)) == nelems
   @test length(Meshes.cartesianrange(dgrid, box)) == nelems
 
+  # grids may store the longitude in the first axis
+  X = [T(j - 1) for i in 1:11, j in 1:11]
+  Y = [T(i - 1) for i in 1:11, j in 1:11]
+  lonfirst = StructuredGrid{🌐,C}(X, Y)
+  abox = Box(latlon(2, 5), latlon(4, 8))
+  rlat = Meshes.cartesianrange(agrid, abox)
+  rlon = Meshes.cartesianrange(lonfirst, abox)
+  @test rlat.indices == reverse(rlon.indices)
+
   # the Slice transform relies on the range
   sliced = ggrid |> Slice(lat=(T(2) * u"°", T(4) * u"°"), lon=(T(2) * u"°", T(4) * u"°"))
   @test size(sliced) == (4, 4)

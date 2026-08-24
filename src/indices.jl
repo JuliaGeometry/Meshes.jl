@@ -151,41 +151,43 @@ function _euclideanrange(grid::OrthoRectilinearGrid, box::Box)
 end
 
 function _geodesicrange(grid::Grid, box::Box)
-  nlat, nlon = vsize(grid)
+  n₁, n₂ = vsize(grid)
+
+  # the latitude may be stored in the first or in the second axis
+  v₁ = convert(LatLon, coords(vertex(grid, (1, 1))))
+  v₂ = convert(LatLon, coords(vertex(grid, (2, 1))))
+  latfirst = abs(v₂.lat - v₁.lat) > abs(v₂.lon - v₁.lon)
+
+  nlat, nlon = latfirst ? (n₁, n₂) : (n₂, n₁)
+  latcoord(i) = convert(LatLon, coords(vertex(grid, latfirst ? (i, 1) : (1, i)))).lat
+  loncoord(j) = convert(LatLon, coords(vertex(grid, latfirst ? (1, j) : (j, 1)))).lon
 
   boxmin = convert(LatLon, coords(minimum(box)))
   boxmax = convert(LatLon, coords(maximum(box)))
 
-  a = convert(LatLon, coords(vertex(grid, (1, 1))))
-  b = convert(LatLon, coords(vertex(grid, (nlat, 1))))
-  c = convert(LatLon, coords(vertex(grid, (1, nlon))))
-
   # vertex indices in increasing latitude and longitude
-  swaplat = a.lat > b.lat
-  swaplon = a.lon > c.lon
+  swaplat = latcoord(1) > latcoord(nlat)
+  swaplon = loncoord(1) > loncoord(nlon)
   latinds = swaplat ? (nlat:-1:1) : (1:1:nlat)
   loninds = swaplon ? (nlon:-1:1) : (1:1:nlon)
 
-  gridlatₛ, gridlatₑ = swaplat ? (b.lat, a.lat) : (a.lat, b.lat)
-  gridlonₛ, gridlonₑ = swaplon ? (c.lon, a.lon) : (a.lon, c.lon)
+  latmin = max(boxmin.lat, latcoord(first(latinds)))
+  latmax = min(boxmax.lat, latcoord(last(latinds)))
+  lonmin = max(boxmin.lon, loncoord(first(loninds)))
+  lonmax = min(boxmax.lon, loncoord(last(loninds)))
 
-  latmin = max(boxmin.lat, gridlatₛ)
-  latmax = min(boxmax.lat, gridlatₑ)
-  lonmin = max(boxmin.lon, gridlonₛ)
-  lonmax = min(boxmax.lon, gridlonₑ)
-
-  latₛ, latₑ = _axisrange(latinds, latmin, latmax) do i
-    convert(LatLon, coords(vertex(grid, (i, 1)))).lat
-  end
-  lonₛ, lonₑ = _axisrange(loninds, lonmin, lonmax) do j
-    convert(LatLon, coords(vertex(grid, (1, j)))).lon
-  end
+  latₛ, latₑ = _axisrange(latcoord, latinds, latmin, latmax)
+  lonₛ, lonₑ = _axisrange(loncoord, loninds, lonmin, lonmax)
 
   # map back to element indices of the grid
   i₁, i₂ = swaplat ? (nlat - latₑ, nlat - latₛ) : (latₛ, latₑ)
   j₁, j₂ = swaplon ? (nlon - lonₑ, nlon - lonₛ) : (lonₛ, lonₑ)
 
-  CartesianIndex(i₁, j₁):CartesianIndex(i₂, j₂)
+  if latfirst
+    CartesianIndex(i₁, j₁):CartesianIndex(i₂, j₂)
+  else
+    CartesianIndex(j₁, i₁):CartesianIndex(j₂, i₂)
+  end
 end
 
 # -----------------
