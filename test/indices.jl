@@ -224,3 +224,41 @@
   @test indices(tmesh, tri) == indices(mesh, inverse(trans)(tri))
   @test indices(mesh, ttri) == unique(mapreduce(g -> indices(mesh, g), vcat, discretize(ttri)))
 end
+
+@testitem "CartesianRange" setup = [Setup] begin
+  # the range on a geodesic grid matches the range
+  # on the corresponding Euclidean grid
+  # https://github.com/JuliaGeometry/Meshes.jl/issues/1304
+  ggrid = RegularGrid(latlon(0, 0), latlon(10, 10), dims=(10, 10))
+  egrid = cartgrid(10, 10)
+  for (lo, up) in [((2, 2), (4, 4)), ((0, 0), (10, 10)), ((1, 1), (3, 3))]
+    gbox = Box(latlon(lo...), latlon(up...))
+    ebox = Box(cart(lo...), cart(up...))
+    @test Meshes.cartesianrange(ggrid, gbox) == Meshes.cartesianrange(egrid, ebox)
+  end
+
+  # grids with decreasing latitude and longitude
+  C = typeof(LatLon(T(0), T(0)))
+  lats = T.(0:10)
+  lons = T.(0:10)
+  agrid = RectilinearGrid{🌐,C}(lats, lons)
+  dgrid = RectilinearGrid{🌐,C}(reverse(lats), reverse(lons))
+  box = Box(latlon(2, 2), latlon(4, 4))
+  ebox = Box(cart(2, 2), cart(4, 4))
+  nelems = length(Meshes.cartesianrange(egrid, ebox))
+  @test length(Meshes.cartesianrange(agrid, box)) == nelems
+  @test length(Meshes.cartesianrange(dgrid, box)) == nelems
+
+  # grids may store the longitude in the first axis
+  X = [T(j - 1) for i in 1:11, j in 1:11]
+  Y = [T(i - 1) for i in 1:11, j in 1:11]
+  lonfirst = StructuredGrid{🌐,C}(X, Y)
+  abox = Box(latlon(2, 5), latlon(4, 8))
+  rlat = Meshes.cartesianrange(agrid, abox)
+  rlon = Meshes.cartesianrange(lonfirst, abox)
+  @test rlat.indices == reverse(rlon.indices)
+
+  # the Slice transform relies on the range
+  sliced = ggrid |> Slice(lat=(T(2) * u"°", T(4) * u"°"), lon=(T(2) * u"°", T(4) * u"°"))
+  @test size(sliced) == (4, 4)
+end
