@@ -151,64 +151,58 @@ function _euclideanrange(grid::OrthoRectilinearGrid, box::Box)
 end
 
 function _geodesicrange(grid::Grid, box::Box)
-  nlon, nlat = vsize(grid)
+  nlat, nlon = vsize(grid)
 
   boxmin = convert(LatLon, coords(minimum(box)))
   boxmax = convert(LatLon, coords(maximum(box)))
 
   a = convert(LatLon, coords(vertex(grid, (1, 1))))
-  b = convert(LatLon, coords(vertex(grid, (nlon, 1))))
-  c = convert(LatLon, coords(vertex(grid, (1, nlat))))
+  b = convert(LatLon, coords(vertex(grid, (nlat, 1))))
+  c = convert(LatLon, coords(vertex(grid, (1, nlon))))
 
-  swaplon = a.lon > b.lon
-  swaplat = a.lat > c.lat
-
-  loninds = swaplon ? (nlon:-1:1) : (1:1:nlon)
+  # vertex indices in increasing latitude and longitude
+  swaplat = a.lat > b.lat
+  swaplon = a.lon > c.lon
   latinds = swaplat ? (nlat:-1:1) : (1:1:nlat)
+  loninds = swaplon ? (nlon:-1:1) : (1:1:nlon)
 
-  gridlonₛ, gridlonₑ = swaplon ? (b.lon, a.lon) : (a.lon, b.lon)
-  gridlatₛ, gridlatₑ = swaplat ? (c.lat, a.lat) : (a.lat, c.lat)
+  gridlatₛ, gridlatₑ = swaplat ? (b.lat, a.lat) : (a.lat, b.lat)
+  gridlonₛ, gridlonₑ = swaplon ? (c.lon, a.lon) : (a.lon, c.lon)
 
-  lonmin = max(boxmin.lon, gridlonₛ)
   latmin = max(boxmin.lat, gridlatₛ)
-  lonmax = min(boxmax.lon, gridlonₑ)
   latmax = min(boxmax.lat, gridlatₑ)
+  lonmin = max(boxmin.lon, gridlonₛ)
+  lonmax = min(boxmax.lon, gridlonₑ)
 
-  iₛ = findlast(loninds) do i
-    p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
-    c.lon ≤ lonmin
+  latₛ, latₑ = _axisrange(latinds, latmin, latmax) do i
+    convert(LatLon, coords(vertex(grid, (i, 1)))).lat
   end
-  iₑ = findfirst(loninds) do i
-    p = vertex(grid, (i, 1))
-    c = convert(LatLon, coords(p))
-    c.lon ≥ lonmax
+  lonₛ, lonₑ = _axisrange(loninds, lonmin, lonmax) do j
+    convert(LatLon, coords(vertex(grid, (1, j)))).lon
   end
 
-  jₛ = findlast(latinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
-    c.lat ≤ latmin
-  end
-  jₑ = findfirst(latinds) do i
-    p = vertex(grid, (1, i))
-    c = convert(LatLon, coords(p))
-    c.lat ≥ latmax
-  end
+  # map back to element indices of the grid
+  i₁, i₂ = swaplat ? (nlat - latₑ, nlat - latₛ) : (latₛ, latₑ)
+  j₁, j₂ = swaplon ? (nlon - lonₑ, nlon - lonₛ) : (lonₛ, lonₑ)
 
-  if iₛ == iₑ || jₛ == jₑ
-    throw(ArgumentError("the passed limits are not valid for the grid"))
-  end
-
-  iₛ, iₑ = swaplon ? (iₑ, iₛ) : (iₛ, iₑ)
-  jₛ, jₑ = swaplat ? (jₑ, jₛ) : (jₛ, jₑ)
-
-  CartesianIndex(loninds[iₛ], latinds[jₛ]):CartesianIndex(loninds[iₑ] - 1, latinds[jₑ] - 1)
+  CartesianIndex(i₁, j₁):CartesianIndex(i₂, j₂)
 end
 
 # -----------------
 # HELPER FUNCTIONS
 # -----------------
+
+# range of elements along an axis that intersect the interval [cmin, cmax],
+# where `inds` lists the vertex indices in increasing coordinate order
+function _axisrange(coord, inds, cmin, cmax)
+  n = length(inds)
+  sₚ = findfirst(p -> coord(inds[p]) ≥ cmin, 1:n)
+  eₚ = findlast(p -> coord(inds[p]) ≤ cmax, 1:n)
+  if isnothing(sₚ) || isnothing(eₚ) || eₚ < sₚ - 1
+    throw(ArgumentError("the passed limits are not valid for the grid"))
+  end
+  clamp(sₚ - 1, 1, n - 1), clamp(eₚ, 1, n - 1)
+end
 
 function _fill!(mask, grid, val, triangle)
   v = vertices(triangle)
