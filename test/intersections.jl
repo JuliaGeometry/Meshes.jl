@@ -1259,7 +1259,7 @@ end
   # CASE 1: chain crosses polygon
   c = Rope([cart(-1, 2), cart(2, 2), cart(5, 2)])
   @test intersection(c, poly) |> type == Intersecting
-  @test c ∩ poly ≈ GeometrySet([Segment(cart(0, 2), cart(2, 2)), Segment(cart(2, 2), cart(4, 2))])
+  @test c ∩ poly ≈ Multi([Segment(cart(0, 2), cart(2, 2)), Segment(cart(2, 2), cart(4, 2))])
 
   c = Ring([cart(-1, 1), cart(2, 1), cart(2, 3), cart(-1, 3)])
   @test intersection(c, poly) |> type == Intersecting
@@ -1271,7 +1271,7 @@ end
   # CASE 1: chain entirely inside polygon
   c = Rope([cart(1, 1), cart(2, 2), cart(3, 1)])
   @test intersection(c, poly) |> type == Intersecting
-  @test c ∩ poly ≈ GeometrySet([Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 1))])
+  @test c ∩ poly ≈ Multi([Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 1))])
 
   c = Ring([cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3)])
   @test intersection(c, poly) |> type == Intersecting
@@ -1300,18 +1300,18 @@ end
   # CASE 2: multiple isolated touches
   c = Rope([cart(-1, 1), cart(0, 1), cart(-1, 2), cart(0, 3), cart(-1, 3)])
   @test intersection(c, poly) |> type == Touching
-  @test c ∩ poly ≈ GeometrySet([cart(0, 1), cart(0, 3)])
+  @test c ∩ poly ≈ Multi([cart(0, 1), cart(0, 3)])
 
   # CASE 2: mixture of EdgeTouching and CornerTouching
   # should still collapse to Touching at the Rope-Polygon level
   c = Rope([cart(-1, 2), cart(0, 2), cart(-1, 1), cart(0, 0), cart(-1, -1)])
   @test intersection(c, poly) |> type == Touching
-  @test c ∩ poly ≈ GeometrySet([cart(0, 2), cart(0, 0)])
+  @test c ∩ poly ≈ Multi([cart(0, 2), cart(0, 0)])
 
   # CASE 3: chain overlaps polygon boundary
   c = Rope([cart(-1, 0), cart(2, 0), cart(5, 0)])
   @test intersection(c, poly) |> type == EdgeTouching
-  @test c ∩ poly ≈ GeometrySet([Segment(cart(0, 0), cart(2, 0)), Segment(cart(2, 0), cart(4, 0))])
+  @test c ∩ poly ≈ Multi([Segment(cart(0, 0), cart(2, 0)), Segment(cart(2, 0), cart(4, 0))])
 
   # CASE 4: chain completely outside polygon
   c = Rope([cart(-3, 1), cart(-2, 2), cart(-1, 3)])
