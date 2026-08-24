@@ -12,7 +12,7 @@ intersection(f, chain₁::Chain, chain₂::Chain) =
 # 4. no intersection (NotIntersecting)
 function intersection(f, chain::Chain{𝔼{2}}, poly::Polygon{𝔼{2}})
   # assess intersections 
-  pieces = Geometry[]
+  pieces = Geometry{𝔼{2},crs(chain)}[]
   hasintersection = false
   onlytouching = true
   onlyedgetouching = true
@@ -31,7 +31,7 @@ function intersection(f, chain::Chain{𝔼{2}}, poly::Polygon{𝔼{2}})
   end
 
   unique!(pieces)
-  glue(pieces) = length(pieces) == 1 ? only(pieces) : GeometrySet(pieces)
+  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
 
   # classifying intersections
   if !hasintersection
