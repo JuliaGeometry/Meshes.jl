@@ -9,12 +9,12 @@
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, box₁::Box, box₂::Box)
   # retrieve corner points
-  m1, M1 = to.(extrema(box₁))
-  m2, M2 = to.(extrema(box₂))
+  m₁, M₁ = to.(extrema(box₁))
+  m₂, M₂ = to.(extrema(box₂))
 
   # relevant vertices
-  u = withcrs(box₁, max.(promote(m1, m2)...))
-  v = withcrs(box₁, min.(promote(M1, M2)...))
+  u = withcrs(box₁, max.(promote(m₁, m₂)...))
+  v = withcrs(box₁, min.(promote(M₁, M₂)...))
 
   # auxiliary variables
   δ = v - u
@@ -44,11 +44,12 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   m₁, M₁ = coords.(extrema(box₁ |> Proj(crs)))
   m₂, M₂ = coords.(extrema(box₂ |> Proj(crs)))
 
-  # intersect coordinate ranges
+  # check latitude coordinate
   latₛ, latₑ = max(m₁.lat, m₂.lat), min(M₁.lat, M₂.lat)
   latₛ > latₑ && return @IT NotIntersecting nothing f
 
-  lons = _lonintersections(m₁.lon, M₁.lon, m₂.lon, M₂.lon)
+  # check longitude coordinate
+  lons = _lonintersects(m₁.lon, M₁.lon, m₂.lon, M₂.lon)
   isempty(lons) && return @IT NotIntersecting nothing f
 
   # classify
@@ -78,13 +79,7 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   end
 end
 
-# longitude intervals in the canonical [-180°, 180°] range
-function _lonintervals(lo, hi)
-  Δ = oftype(lo, 180u"°")
-  lo ≤ hi ? [(lo, hi)] : [(-Δ, hi), (lo, Δ)]
-end
-
-function _lonintersections(lo₁, hi₁, lo₂, hi₂)
+function _lonintersects(lo₁, hi₁, lo₂, hi₂)
   intervals₁ = _lonintervals(lo₁, hi₁)
   intervals₂ = _lonintervals(lo₂, hi₂)
   ranges = Tuple{typeof(lo₁),typeof(lo₁)}[]
@@ -105,6 +100,12 @@ function _lonintersections(lo₁, hi₁, lo₂, hi₂)
     return lo == Δ && hi == -Δ ? [(Δ, Δ)] : [(lo, hi)]
   end
   ranges
+end
+
+# longitude intervals in the canonical [-180°, 180°] range
+function _lonintervals(lo, hi)
+  Δ = oftype(lo, 180u"°")
+  lo ≤ hi ? [(lo, hi)] : [(-Δ, hi), (lo, Δ)]
 end
 
 _containsantimeridian(ranges, Δ) = any(r -> first(r) == -Δ || last(r) == Δ, ranges)
