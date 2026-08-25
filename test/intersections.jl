@@ -664,7 +664,7 @@ end
 @testitem "Chain intersection" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/644
   r = Rope(cart(0, 0), cart(1, 1))
-  @test r ∩ r == GeometrySet([Segment(cart(0, 0), cart(1, 1))])
+  @test r ∩ r == Segment(cart(0, 0), cart(1, 1))
   @inferred someornone(r, r)
 
   # CASE 1: chain crosses polygon
@@ -1286,7 +1286,7 @@ end
   )
   r = Ray(cart(-1.0, -1.0, -1.0), vector(1.0, 1.0, 1.0))
   @test intersection(r, o) |> type == Intersecting
-  @test r ∩ o == PointSet(cart(0.0, 0.0, 0.0))
+  @test r ∩ o == cart(0.0, 0.0, 0.0)
   r = Ray(cart(-1.0, -1.0, -1.0), vector(-1.0, -1.0, -1.0))
   @test intersection(r, o) |> type == NotIntersecting
   @test isnothing(r ∩ o)
@@ -1340,9 +1340,11 @@ end
 
 @testitem "Domain intersection" setup = [Setup] begin
   grid = cartgrid(4, 4)
-  pset = PointSet(centroid.(grid))
+  cent = centroid.(grid)
+  pset = PointSet(cent)
+  mult = Multi(cent)
   ball = Ball(cart(0, 0), T(1))
-  @test pset ∩ pset == pset
-  @test pset ∩ grid == grid ∩ pset == pset
-  @test pset ∩ ball == ball ∩ pset == PointSet(cart(0.5, 0.5))
+  @test pset ∩ pset == mult
+  @test pset ∩ grid == grid ∩ pset == mult
+  @test pset ∩ ball == ball ∩ pset == cart(0.5, 0.5)
 end
