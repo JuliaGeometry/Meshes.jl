@@ -11,11 +11,16 @@ intersection(f, chain₁::Chain, chain₂::Chain) =
 # 3. overlaps at the polygon edges (EdgeTouching)
 # 4. no intersection (NotIntersecting)
 function intersection(f, chain::Chain, poly::Polygon)
-  # assess intersections 
-  pieces = Geometry{manifold(chain), crs(chain)}[]
-  hasintersection = false
+  # retrieve manifold and crs
+  M = manifold(chain)
+  C = crs(chain)
+
+  # collect intersection pieces and
+  # classify final intersection type
   onlytouching = true
   onlyedgetouching = true
+  hasintersection = false
+  pieces = Geometry{M,C}[]
   for seg in segments(chain)
     I = intersection(seg, poly)
     type(I) == NotIntersecting && continue
@@ -29,11 +34,10 @@ function intersection(f, chain::Chain, poly::Polygon)
       push!(pieces, geom)
     end
   end
-
   unique!(pieces)
+
   glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
 
-  # classifying intersections
   if !hasintersection
     return @IT NotIntersecting nothing f
   elseif onlytouching
