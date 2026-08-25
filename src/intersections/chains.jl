@@ -36,15 +36,13 @@ function intersection(f, chain::Chain, poly::Polygon)
   end
   unique!(pieces)
 
-  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
-
   if !hasintersection
     return @IT NotIntersecting nothing f
   elseif onlytouching
-    return @IT Touching glue(pieces) f
+    return @IT Touching maybemulti(pieces) f
   elseif onlyedgetouching
-    return @IT EdgeTouching glue(pieces) f
+    return @IT EdgeTouching maybemulti(pieces) f
   else
-    return @IT Intersecting glue(pieces) f
+    return @IT Intersecting maybemulti(pieces) f
   end
 end

@@ -272,14 +272,11 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   # number of crossing events
   ncrosses = count(e -> e[2], events)
 
-  # glue pieces together into a single geometry
-  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
-
   # classify intersection
   if inpoly
-    return @IT Intersecting glue(pieces) f
+    return @IT Intersecting maybemulti(pieces) f
   elseif !isempty(pieces)
-    return @IT EdgeTouching glue(pieces) f
+    return @IT EdgeTouching maybemulti(pieces) f
   elseif ncrosses == 1
     i = findfirst(e -> e[2], events)
     p = events[i][1]

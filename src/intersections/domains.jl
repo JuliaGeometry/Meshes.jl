@@ -5,12 +5,10 @@
 function intersection(f, geom::Geometry, pset::PointSet)
   ps = filter(∈(geom), collect(pset))
 
-  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
-
   if isempty(ps)
     return @IT NotIntersecting nothing f
   else
-    return @IT Intersecting glue(ps) f
+    return @IT Intersecting maybemulti(ps) f
   end
 end
 
@@ -31,12 +29,10 @@ function intersection(f, dom₁::Domain, dom₂::Domain)
   # handle intersection at shared facets
   unique!(gs)
 
-  glue(pieces) = length(pieces) == 1 ? only(pieces) : Multi(pieces)
-
   # return intersection
   if isempty(gs)
     return @IT NotIntersecting nothing f
   else
-    return @IT Intersecting glue(gs) f
+    return @IT Intersecting maybemulti(gs) f
   end
 end
