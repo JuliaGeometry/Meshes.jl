@@ -667,88 +667,93 @@ end
   @test r ∩ r == Segment(cart(0, 0), cart(1, 1))
   @inferred someornone(r, r)
 
-  # CASE 1: chain crosses polygon
+  # chain crosses polygon
   r = Rope([cart(-1, 2), cart(2, 2), cart(5, 2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
   @test r ∩ p ≈ p ∩ r ≈ Multi([Segment(cart(0, 2), cart(2, 2)), Segment(cart(2, 2), cart(4, 2))])
 
+  # chain crosses polygon
   r = Ring([cart(-1, 1), cart(2, 1), cart(2, 3), cart(-1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
 
-  # CASE 1: one segment inside, others outside
+  # one segment inside, others outside
   r = Rope([cart(-1, 2), cart(1, 2), cart(3, 2), cart(5, 2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
 
-  # CASE 1: chain entirely inside polygon
+  # chain entirely inside polygon
   r = Rope([cart(1, 1), cart(2, 2), cart(3, 1)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
   @test r ∩ p ≈ p ∩ r ≈ Multi([Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 1))])
 
+  # chain entirely inside polygon
   r = Ring([cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
 
-  # CASE 1: mixed touching and intersecting
+  # mixed touching and intersecting
   r = Rope([cart(-1, 0), cart(0, 0), cart(2, 2), cart(5, 2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
 
+  # chain touching polygon
   r = Ring([cart(-1, 0), cart(2, 0), cart(2, -2), cart(-1, -2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
 
-  # CASE 2: touches polygon at edge only
+  # chain vertex touches polygon edge
   r = Rope([cart(-2, 2), cart(0, 2), cart(-2, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Touching
   @test r ∩ p ≈ p ∩ r ≈ cart(0, 2)
 
-  # CASE 2: touches polygon at corner only
+  # chain vertex touches polygon vertex
   r = Rope([cart(-2, -1), cart(0, 0), cart(-1, -2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Touching
   @test r ∩ p ≈ p ∩ r ≈ cart(0, 0)
 
+  # chain vertex touches polygon vertex
   r = Ring([cart(-2, -2), cart(0, 0), cart(-2, 2), cart(-3, 0)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Touching
   @test r ∩ p ≈ p ∩ r ≈ cart(0, 0)
 
-  # CASE 2: multiple isolated touches
+  # multiple isolated touches
   r = Rope([cart(-1, 1), cart(0, 1), cart(-1, 2), cart(0, 3), cart(-1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Touching
   @test r ∩ p ≈ p ∩ r ≈ Multi([cart(0, 1), cart(0, 3)])
 
-  # CASE 2: mixture of EdgeTouching and CornerTouching
+  # mixture of EdgeTouching and CornerTouching
   # should still collapse to Touching at the Rope-Polygon level
   r = Rope([cart(-1, 2), cart(0, 2), cart(-1, 1), cart(0, 0), cart(-1, -1)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Touching
   @test r ∩ p ≈ p ∩ r ≈ Multi([cart(0, 2), cart(0, 0)])
 
-  # CASE 3: chain overlaps polygon boundary
+  # chain overlaps polygon boundary
   r = Rope([cart(-1, 0), cart(2, 0), cart(5, 0)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == EdgeTouching
   @test r ∩ p ≈ p ∩ r ≈ Multi([Segment(cart(0, 0), cart(2, 0)), Segment(cart(2, 0), cart(4, 0))])
 
-  # CASE 4: chain completely outside polygon
+  # chain completely outside polygon
   r = Rope([cart(-3, 1), cart(-2, 2), cart(-1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == NotIntersecting
   @test r ∩ p === p ∩ r === nothing
 
+  # chain completely outside polygon
   r = Ring([cart(-3, -3), cart(-1, -3), cart(-1, -1), cart(-3, -1)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == NotIntersecting
   @test r ∩ p === p ∩ r === nothing
 
-  # CASE 4: bounding boxes overlap but geometries don't
+  # bounding boxes overlap but geometries don't
   r = Rope([cart(-1, 3.5), cart(1, 5), cart(3, 5)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == NotIntersecting
