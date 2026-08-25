@@ -62,3 +62,10 @@ end
 Return true if `cond`ition is true in the presence of multiple threads.
 """
 isthreaded(cond=true) = cond && Threads.nthreads() > 1
+
+"""
+    maybemulti(geoms)
+
+Return `only(geoms)` or `Multi(geoms)` depending on the length of `geoms`.
+"""
+maybemulti(geoms) = length(geoms) == 1 ? only(geoms) : Multi(geoms)
