@@ -4,7 +4,6 @@
 
 function intersection(f, geom::Geometry, pset::PointSet)
   ps = filter(∈(geom), collect(pset))
-
   if isempty(ps)
     return @IT NotIntersecting nothing f
   else
