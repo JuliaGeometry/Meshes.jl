@@ -113,7 +113,7 @@ function _splitaxis(centers, perm, first, last)
     end
   end
 
-  return argmax(hi .- lo)
+  argmax(hi .- lo)
 end
 
 function candidates(query, bvh::BVH)
@@ -143,7 +143,7 @@ function candidates!(inds::Vector{Int}, query, bvh::BVH)
     push!(inds, ind)
   end
 
-  return inds
+  inds
 end
 
 """
