@@ -109,6 +109,9 @@ include("predicates.jl")
 include("differentation.jl")
 include("integration.jl")
 
+# spatial indexes
+include("spatialindex.jl")
+
 # operations
 include("centroid.jl")
 include("measures.jl")
@@ -398,6 +401,10 @@ export
 
   # indices
   indices,
+  SpatialIndex,
+  BVH,
+  candidates,
+  candidates!,
 
   # partitions
   Partition,
