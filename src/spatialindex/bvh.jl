@@ -130,7 +130,7 @@ The indices are stored in the preallocated vector `inds`, which is emptied befor
 The function returns `inds` for convenience.
 
 This is a convenience wrapper around [`foreachcandidate`](@ref) that materializes the candidate 
-indices in a vector. Algorithms that processcandidates immediately may obtain better performance 
+indices in a vector. Algorithms that process candidates immediately may obtain better performance 
 by using `foreachcandidate` directly.
 
 See also: [`candidates`](@ref), [`foreachcandidate`](@ref).
