@@ -389,6 +389,7 @@ export
   BVH,
   candidates,
   candidates!,
+  foreachcandidate,
 
   # partitions
   Partition,
