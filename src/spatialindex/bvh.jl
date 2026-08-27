@@ -40,7 +40,8 @@ function BVH(domain::Domain; leafsize::Int=8)
 
   # compute the bounding boxes of the elements, their corresponding centers, 
   boxes = [boundingbox(element(domain, i)) for i in 1:n]
-  centers = [_boxcenter(box) for box in boxes]
+  centers = center.(boxes)
+  names = propertynames(coords(first(centers)))
 
   # initialize a permutation vector
   perm = collect(1:n)
@@ -50,27 +51,13 @@ function BVH(domain::Domain; leafsize::Int=8)
   nodes = BVHNode{B}[]
 
   # recursively build the BVH and store the nodes in the `nodes` vector
-  _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
+  _buildbvh!(nodes, boxes, centers, names, perm, 1, n, leafsize)
 
   # return the constructed BVH
   BVH{typeof(domain),B}(domain, boxes, perm, nodes, leafsize)
 end
 
-function _boxcenter(box::Box)
-  # compute the center of the bounding box by averaging its lower and upper corners
-  lo, hi = extrema(box)
-
-  clo = lo.coords
-  chi = hi.coords
-  names = propertynames(coords(hi))
-
-  ntuple(length(names)) do i
-    name = names[i]
-    (getproperty(clo, name) + getproperty(chi, name)) / 2
-  end
-end
-
-function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
+function _buildbvh!(nodes, boxes, centers, names, perm, first, last, leafsize)
   # reserve the node position so that the root remains node 1.
   nodeind = length(nodes) + 1
   push!(nodes, BVHNode(boxes[perm[first]], 0, 0, 0, 0))
@@ -83,17 +70,17 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   end
 
   # get axis to be splitted
-  axis = _splitaxis(centers, perm, first, last)
+  axis = _splitaxis(centers, names, perm, first, last)
 
   # partial sort the elements in the range [first, last] by the center of their bounding boxes along the chosen axis
   range = view(perm, first:last)
   localmiddle = cld(length(range), 2)
-  partialsort!(range, localmiddle; by=i -> centers[i][axis]) # range is a view of perm, so perm is modified in place!
+  partialsort!(range, localmiddle; by=i -> getproperty(coords(centers[i]), names[axis])) # range is a view of perm, so perm is modified in place!
   middle = first + localmiddle - 1
 
   # recursively build and store in `nodes` the left and right children
-  left = _buildbvh!(nodes, boxes, centers, perm, first, middle, leafsize)
-  right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, last, leafsize)
+  left = _buildbvh!(nodes, boxes, centers, names, perm, first, middle, leafsize)
+  right = _buildbvh!(nodes, boxes, centers, names, perm, middle + 1, last, leafsize)
 
   # compute the bounding box of the current node by merging the bounding boxes of its left and right children
   nodebox = _bboxes((nodes[left].box, nodes[right].box))
@@ -106,22 +93,20 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   nodeind
 end
 
-function _splitaxis(centers, perm, first, last)
+function _splitaxis(centers, names, perm, first, last)
   # compute the axis with the widest spread of the centers of the bounding boxes in the range [first, last]
-  dim = length(centers[perm[first]])
-
-  lo = collect(centers[perm[first]])
+  dim = length(names)
+  c₀ = coords(centers[perm[first]])
+  lo = [getproperty(c₀, names[axis]) for axis in 1:dim]
   hi = copy(lo)
-
   for k in (first + 1):last
-    center = centers[perm[k]]
+    c = coords(centers[perm[k]])
     for axis in 1:dim
-      value = center[axis]
+      value = getproperty(c, names[axis])
       lo[axis] = min(lo[axis], value)
       hi[axis] = max(hi[axis], value)
     end
   end
-
   return argmax(hi .- lo)
 end
 
