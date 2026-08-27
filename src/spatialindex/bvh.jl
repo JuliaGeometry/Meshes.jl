@@ -52,6 +52,7 @@ function BVH(domain::Domain; leafsize::Int=8)
   # determine the element type of the bounding boxes and initialize an empty vector of BVH nodes
   B = eltype(boxes)
   nodes = BVHNode{B}[]
+  sizehint!(nodes, 2 * cld(n, leafsize))
 
   # recursively build the BVH and store the nodes in the `nodes` vector
   _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
@@ -122,17 +123,49 @@ end
 
 """
     candidates!(inds, query, bvh)
-Find the indices of the elements in `bvh` whose bounding boxes intersect with the bounding box of `query`. 
-The indices are stored in the preallocated vector `inds`, which is cleared before storing the results. 
-The function returns the vector `inds` for convenience.
+
+Find the indices of the elements in `bvh` whose bounding boxes intersect the bounding box of `query`.
+
+The indices are stored in the preallocated vector `inds`, which is emptied before the search. 
+The function returns `inds` for convenience.
+
+This is a convenience wrapper around [`foreachcandidate`](@ref) that materializes the candidate 
+indices in a vector. Algorithms that processcandidates immediately may obtain better performance 
+by using `foreachcandidate` directly.
+
+See also: [`candidates`](@ref), [`foreachcandidate`](@ref).
 """
 function candidates!(inds::Vector{Int}, query, bvh::BVH)
   # clear the output vector to ensure it only contains the results of the current query
   empty!(inds)
 
+  foreachcandidate(query, bvh) do ind
+    push!(inds, ind)
+  end
+
+  return inds
+end
+
+"""
+    foreachcandidate(f, query, bvh)
+
+Traverse the bounding volume hierarchy `bvh` and invoke the function `f` on the index of each element 
+whose bounding box intersects the bounding box of `query`.
+
+The traversal performs a broad-phase search only. Candidate indices are reported based on bounding-box 
+intersection and are **not** guaranteed to satisfy any exact geometric predicate.
+
+This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
+interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
+vector of indices.
+
+See also: [`candidates`](@ref), [`candidates!`](@ref).
+"""
+function foreachcandidate(f, query, bvh::BVH)
+  stack = Int[1]
+
   # compute the bounding box of the query and initialize a stack with the root node index
   querybox = boundingbox(query)
-  stack = Int[1]
 
   # traverse the BVH using a stack-based approach to find all nodes whose bounding boxes intersect with the query bounding box
   while !isempty(stack)
@@ -148,17 +181,14 @@ function candidates!(inds::Vector{Int}, query, bvh::BVH)
     if _isleaf(node)
       for k in node.first:node.last
         ind = bvh.perm[k]
-        if intersects(bvh.boxes[ind], querybox)
-          push!(inds, ind)
-        end
+        intersects(bvh.boxes[ind], querybox) || continue
+        f(ind)
       end
     else
       push!(stack, node.left)
       push!(stack, node.right)
     end
   end
-
-  return inds
 end
 
 _isleaf(node::BVHNode) = iszero(node.left)
