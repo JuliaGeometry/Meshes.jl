@@ -622,7 +622,6 @@ export
   # distances
   GeometricDistance,
   EuclideanDistance,
-  ManhattanDistance,
   GeodesicDistance,
 
   # miscellaneous

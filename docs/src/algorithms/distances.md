@@ -12,7 +12,6 @@ is available at compile time.
 ```@docs
 GeometricDistance
 EuclideanDistance
-ManhattanDistance
 GeodesicDistance
 ```
 

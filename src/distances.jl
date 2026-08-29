@@ -45,24 +45,6 @@ struct EuclideanDistance <: GeometricDistance end
 (::EuclideanDistance)(p₁::Point{M}, p₂::Point{M}) where {M} = norm(p₂ - p₁)
 
 """
-    ManhattanDistance()
-
-Sum of the absolute differences of the coordinates of two points
-in Euclidean space (`𝔼`), also known as the taxicab distance.
-
-## Examples
-
-```julia
-d = ManhattanDistance()
-
-d(Point(0, 0), Point(1, 1))
-```
-"""
-struct ManhattanDistance <: GeometricDistance end
-
-(::ManhattanDistance)(p₁::Point{𝔼{Dim}}, p₂::Point{𝔼{Dim}}) where {Dim} = sum(abs, p₂ - p₁)
-
-"""
     GeodesicDistance()
 
 Length of the shortest path along the manifold of two points.
@@ -98,18 +80,15 @@ function (::GeodesicDistance)(p₁::Point{🌐}, p₂::Point{🌐})
   # the manifold only tells us that the points lie on a sphere,
   # the ellipsoid itself comes from the datum of the coordinates
   🌎 = ellipsoid(datum(c₁))
-  a = majoraxis(🌎)
-  f = flattening(🌎)
 
   T = numtype(lentype(q₁))
   # the series of Karney need double precision to reach round-off
   S = promote_type(T, Float64)
-  g = GeodesicEllipsoid(S(ustrip(a)), S(f))
 
   lat₁, lon₁ = S(ustrip(u"°", c₁.lat)), S(ustrip(u"°", c₁.lon))
   lat₂, lon₂ = S(ustrip(u"°", c₂.lat)), S(ustrip(u"°", c₂.lon))
 
-  T(_geodesic(g, lat₁, lon₁, lat₂, lon₂)) * unit(a)
+  T(_geodesic(🌎, lat₁, lon₁, lat₂, lon₂)) * unit(majoraxis(🌎))
 end
 
 # ----------------

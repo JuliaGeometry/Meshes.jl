@@ -71,18 +71,10 @@ end
   @test d(cart(0, 0, 0), cart(1, 2, 2)) == T(3) * u"m"
   @test d(cart(1, 1), cart(1, 1)) == T(0) * u"m"
 
-  d = ManhattanDistance()
-  @test d(cart(0, 0), cart(3, 4)) == T(7) * u"m"
-  @test d(cart(0, 0, 0), cart(1, -2, 2)) == T(5) * u"m"
-  @test d(cart(1, 1), cart(1, 1)) == T(0) * u"m"
-
   # the geodesic of Euclidean space is the straight line
   d = GeodesicDistance()
   @test d(cart(0, 0), cart(3, 4)) == EuclideanDistance()(cart(0, 0), cart(3, 4))
   @test d(cart(0, 0, 0), cart(1, 2, 2)) == EuclideanDistance()(cart(0, 0, 0), cart(1, 2, 2))
-
-  # the Manhattan distance is not defined on the ellipsoid
-  @test_throws MethodError ManhattanDistance()(latlon(0, 0), latlon(0, 1))
 
   # ---------
   # ELLIPSOID

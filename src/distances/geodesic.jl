@@ -12,6 +12,9 @@
 # bisected whenever a Newton step leaves the legal range. This keeps the
 # solution accurate for nearly antipodal points, where the simpler series
 # of Vincenty fails to converge.
+#
+# Only oblate ellipsoids are handled, which is what CoordRefSystems.jl can
+# represent, so the prolate branches of the reference algorithm are omitted.
 
 # ---------------
 # ANGLE UTILITIES
@@ -163,30 +166,23 @@ end
 # INVERSE PROBLEM
 # ----------------
 
-# constants of the ellipsoid that are reused across the iteration
-struct GeodesicEllipsoid{T}
-  a::T
-  f::T
-  f₁::T
-  e′²::T
-  n::T
-  b::T
-  a₃::NTuple{6,T}
-  c₃::Tuple{NTuple{5,T},NTuple{4,T},NTuple{3,T},NTuple{2,T},NTuple{1,T}}
-  τ::T
-end
-
-function GeodesicEllipsoid(a::T, f::T) where {T}
+# quantities that Karney's series need on top of the parameters that
+# CoordRefSystems.jl already provides for the ellipsoid of revolution
+function _geodesicparams(🌎::Type{<:RevolutionEllipsoid}, ::Type{T}) where {T}
+  a = T(ustrip(majoraxis(🌎)))
+  b = T(ustrip(minoraxis(🌎)))
+  f = T(flattening(🌎))
+  e² = T(eccentricity²(🌎))
   f₁ = 1 - f
-  e² = f * (2 - f)
-  n = f / (2 - f)
+  e′² = e² / (1 - e²)  # second eccentricity squared
+  n = f / (2 - f)      # third flattening
   # threshold on σ₁₂ below which the auxiliary sphere solution is accurate enough
   τ = T(0.1) * sqrt(eps(T)) / sqrt(max(T(0.001), abs(f)) * min(one(T), 1 - f / 2) / 2)
-  GeodesicEllipsoid{T}(a, f, f₁, e² / (f₁ * f₁), n, a * f₁, _A3coeffs(n), _C3coeffs(n), τ)
+  (; a, b, f, f₁, e′², n, a₃=_A3coeffs(n), c₃=_C3coeffs(n), τ)
 end
 
 # distance and reduced length divided by the polar semi-axis (Karney, eq. 15 and 38)
-function _lengths(🌎::GeodesicEllipsoid, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
+function _lengths(𝐠, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
   A₁ = _A1m1(ε)
   A₂ = _A2m1(ε)
   C₁ = _C1(ε)
@@ -230,7 +226,7 @@ function _astroid(x::T, y::T) where {T}
 end
 
 # starting azimuth for Newton's method (Karney, section 5)
-function _inversestart(🌎::GeodesicEllipsoid{T}, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂) where {T}
+function _inversestart(𝐠, sβ₁::T, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂) where {T}
   σ₁₂ = -one(T)
   dnₘ = one(T)
   sβ₁₂ = sβ₂ * cβ₁ - cβ₂ * sβ₁
@@ -241,8 +237,8 @@ function _inversestart(🌎::GeodesicEllipsoid{T}, sβ₁, cβ₁, dn₁, sβ₂
   if short
     sβₘ² = (sβ₁ + sβ₂)^2
     sβₘ² /= sβₘ² + (cβ₁ + cβ₂)^2
-    dnₘ = sqrt(1 + 🌎.e′² * sβₘ²)
-    sω₁₂, cω₁₂ = sincos(λ₁₂ / (🌎.f₁ * dnₘ))
+    dnₘ = sqrt(1 + 𝐠.e′² * sβₘ²)
+    sω₁₂, cω₁₂ = sincos(λ₁₂ / (𝐠.f₁ * dnₘ))
   else
     sω₁₂, cω₁₂ = sλ₁₂, cλ₁₂
   end
@@ -255,43 +251,29 @@ function _inversestart(🌎::GeodesicEllipsoid{T}, sβ₁, cβ₁, dn₁, sβ₂
 
   sα₂ = zero(T)
   cα₂ = zero(T)
-  if short && sσ₁₂ < 🌎.τ
+  if short && sσ₁₂ < 𝐠.τ
     # really short line, no iteration needed
     sα₂ = cβ₁ * sω₁₂
     cα₂ = sβ₁₂ - cβ₁ * sβ₂ * (cω₁₂ ≥ 0 ? sω₁₂^2 / (1 + cω₁₂) : 1 - cω₁₂)
     sα₂, cα₂ = _hnorm(sα₂, cα₂)
     σ₁₂ = atan(sσ₁₂, cσ₁₂)
-  elseif !(abs(🌎.n) > T(0.1) || cσ₁₂ ≥ 0 || sσ₁₂ ≥ 6 * abs(🌎.n) * T(π) * cβ₁^2)
+  elseif !(abs(𝐠.n) > T(0.1) || cσ₁₂ ≥ 0 || sσ₁₂ ≥ 6 * abs(𝐠.n) * T(π) * cβ₁^2)
     # nearly antipodal, the spherical guess is useless and the astroid is solved
     # in a frame where the antipodal point is at the origin (Karney, section 5)
     λ₁₂ₓ = atan(-sλ₁₂, -cλ₁₂)
-    if 🌎.f ≥ 0
-      k² = sβ₁^2 * 🌎.e′²
-      ε = k² / (2 * (1 + sqrt(1 + k²)) + k²)
-      λscale = 🌎.f * cβ₁ * evalpoly(ε, 🌎.a₃) * T(π)
-      βscale = λscale * cβ₁
-      x = λ₁₂ₓ / λscale
-      y = sβ₁₂ₐ / βscale
-    else
-      β₁₂ₐ = atan(sβ₁₂ₐ, cβ₂ * cβ₁ - sβ₂ * sβ₁)
-      _, m₁₂, m₀ = _lengths(🌎, 🌎.n, T(π) + β₁₂ₐ, sβ₁, -cβ₁, dn₁, sβ₂, cβ₂, dn₂)
-      x = -1 + m₁₂ / (cβ₁ * cβ₂ * m₀ * T(π))
-      βscale = x < T(-0.01) ? sβ₁₂ₐ / x : -🌎.f * cβ₁^2 * T(π)
-      λscale = βscale / cβ₁
-      y = λ₁₂ₓ / λscale
-    end
+    k² = sβ₁^2 * 𝐠.e′²
+    ε = k² / (2 * (1 + sqrt(1 + k²)) + k²)
+    λscale = 𝐠.f * cβ₁ * evalpoly(ε, 𝐠.a₃) * T(π)
+    βscale = λscale * cβ₁
+    x = λ₁₂ₓ / λscale
+    y = sβ₁₂ₐ / βscale
     if y > -200eps(T) && x > -1 - 1000sqrt(eps(T))
       # strip near the cut
-      if 🌎.f ≥ 0
-        sα₁ = min(one(T), -x)
-        cα₁ = -sqrt(1 - sα₁^2)
-      else
-        cα₁ = max(x > -200eps(T) ? zero(T) : -one(T), x)
-        sα₁ = sqrt(1 - cα₁^2)
-      end
+      sα₁ = min(one(T), -x)
+      cα₁ = -sqrt(1 - sα₁^2)
     else
       k = _astroid(x, y)
-      ω₁₂ₐ = λscale * (🌎.f ≥ 0 ? -x * k / (1 + k) : -y * (1 + k) / k)
+      ω₁₂ₐ = -λscale * x * k / (1 + k)
       sω₁₂ = sin(ω₁₂ₐ)
       cω₁₂ = -cos(ω₁₂ₐ)
       sα₁ = cβ₂ * sω₁₂
@@ -309,7 +291,7 @@ function _inversestart(🌎::GeodesicEllipsoid{T}, sβ₁, cβ₁, dn₁, sβ₂
 end
 
 # residual λ₁₂(α₁) - λ₁₂ and its derivative (Karney, section 4)
-function _lambda12(🌎::GeodesicEllipsoid{T}, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, diff) where {T}
+function _lambda12(𝐠, sβ₁::T, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, diff) where {T}
   # break the degeneracy of the equatorial line
   (iszero(sβ₁) && iszero(cα₁)) && (cα₁ = -sqrt(floatmin(T)))
 
@@ -339,27 +321,28 @@ function _lambda12(🌎::GeodesicEllipsoid{T}, sβ₁, cβ₁, dn₁, sβ₂, c�
   cω₁₂ = cω₁ * cω₂ + sω₁ * sω₂
   η = atan(sω₁₂ * cλ₁₂ - cω₁₂ * sλ₁₂, cω₁₂ * cλ₁₂ + sω₁₂ * sλ₁₂)
 
-  k² = cα₀^2 * 🌎.e′²
+  k² = cα₀^2 * 𝐠.e′²
   ε = k² / (2 * (1 + sqrt(1 + k²)) + k²)
-  C₃ = _C3(🌎.c₃, ε)
+  C₃ = _C3(𝐠.c₃, ε)
   B₃ = _sinseries(sσ₂, cσ₂, C₃) - _sinseries(sσ₁, cσ₁, C₃)
-  v = η - 🌎.f * evalpoly(ε, 🌎.a₃) * sα₀ * (σ₁₂ + B₃)
+  v = η - 𝐠.f * evalpoly(ε, 𝐠.a₃) * sα₀ * (σ₁₂ + B₃)
 
   # the derivative follows from the reduced length (Karney, eq. 38)
   dv = if !diff
     zero(T)
   elseif iszero(cα₂)
-    -2 * 🌎.f₁ * dn₁ / sβ₁
+    -2 * 𝐠.f₁ * dn₁ / sβ₁
   else
-    _, m₁₂, _ = _lengths(🌎, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
-    m₁₂ * 🌎.f₁ / (cα₂ * cβ₂)
+    _, m₁₂, _ = _lengths(𝐠, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
+    m₁₂ * 𝐠.f₁ / (cα₂ * cβ₂)
   end
 
   (v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε)
 end
 
 # length of the shortest geodesic between two points given in degrees
-function _geodesic(🌎::GeodesicEllipsoid{T}, lat₁::T, lon₁::T, lat₂::T, lon₂::T) where {T}
+function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat₂::T, lon₂::T) where {T}
+  𝐠 = _geodesicparams(🌎, T)
   tiny = sqrt(floatmin(T))
   tol = eps(T)
   maxit₁ = 20
@@ -386,11 +369,11 @@ function _geodesic(🌎::GeodesicEllipsoid{T}, lat₁::T, lon₁::T, lat₂::T, 
 
   # reduced latitudes
   sβ₁, cβ₁ = sincosd(lat₁)
-  sβ₁ *= 🌎.f₁
+  sβ₁ *= 𝐠.f₁
   sβ₁, cβ₁ = _hnorm(sβ₁, cβ₁)
   cβ₁ = max(tiny, cβ₁)
   sβ₂, cβ₂ = sincosd(lat₂)
-  sβ₂ *= 🌎.f₁
+  sβ₂ *= 𝐠.f₁
   sβ₂, cβ₂ = _hnorm(sβ₂, cβ₂)
   cβ₂ = max(tiny, cβ₂)
 
@@ -401,8 +384,8 @@ function _geodesic(🌎::GeodesicEllipsoid{T}, lat₁::T, lon₁::T, lat₂::T, 
     abs(sβ₂) == -sβ₁ && (cβ₂ = cβ₁)
   end
 
-  dn₁ = sqrt(1 + 🌎.e′² * sβ₁^2)
-  dn₂ = sqrt(1 + 🌎.e′² * sβ₂^2)
+  dn₁ = sqrt(1 + 𝐠.e′² * sβ₁^2)
+  dn₂ = sqrt(1 + 𝐠.e′² * sβ₂^2)
 
   s₁₂ = zero(T)
 
@@ -412,24 +395,20 @@ function _geodesic(🌎::GeodesicEllipsoid{T}, lat₁::T, lon₁::T, lat₂::T, 
     sσ₁, cσ₁ = sβ₁, cλ₁₂ * cβ₁
     sσ₂, cσ₂ = sβ₂, cβ₂
     σ₁₂ = atan(max(zero(T), cσ₁ * sσ₂ - sσ₁ * cσ₂), cσ₁ * cσ₂ + sσ₁ * sσ₂)
-    s₁₂, m₁₂, _ = _lengths(🌎, 🌎.n, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
-    if σ₁₂ < sqrt(tol) || m₁₂ ≥ 0
-      (σ₁₂ < 3tiny || (σ₁₂ < tol && (s₁₂ < 0 || m₁₂ < 0))) && (s₁₂ = zero(T))
-      s₁₂ *= 🌎.b
-    else
-      # prolate ellipsoid with points too close to antipodal
-      meridian = false
-    end
+    s₁₂, m₁₂, _ = _lengths(𝐠, 𝐠.n, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
+    # zero length geodesics might yield a negative reduced length
+    (σ₁₂ < 3tiny || (σ₁₂ < tol && (s₁₂ < 0 || m₁₂ < 0))) && (s₁₂ = zero(T))
+    s₁₂ *= 𝐠.b
   end
 
-  if !meridian && iszero(sβ₁) && (🌎.f ≤ 0 || lon₁₂ₛ ≥ 🌎.f * 180)
+  if !meridian && iszero(sβ₁) && (iszero(𝐠.f) || lon₁₂ₛ ≥ 𝐠.f * 180)
     # the geodesic runs along the equator
-    s₁₂ = 🌎.a * λ₁₂
+    s₁₂ = 𝐠.a * λ₁₂
   elseif !meridian
-    σ₁₂, sα₁, cα₁, _, _, dnₘ = _inversestart(🌎, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂)
+    σ₁₂, sα₁, cα₁, _, _, dnₘ = _inversestart(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂)
     if σ₁₂ ≥ 0
       # short line, the auxiliary sphere solution is accurate enough
-      s₁₂ = σ₁₂ * 🌎.b * dnₘ
+      s₁₂ = σ₁₂ * 𝐠.b * dnₘ
     else
       # Newton's method on the azimuth α₁, with a bracketing interval that is
       # bisected whenever a Newton step would leave the legal range
@@ -441,7 +420,7 @@ function _geodesic(🌎::GeodesicEllipsoid{T}, lat₁::T, lon₁::T, lat₂::T, 
       tripb = false
       while true
         v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε =
-          _lambda12(🌎, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, numit < maxit₁)
+          _lambda12(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, numit < maxit₁)
         (tripb || !(abs(v) ≥ (tripn ? 8 : 1) * tol) || numit == maxit₂) && break
 
         # shrink the bracketing interval
@@ -479,8 +458,8 @@ function _geodesic(🌎::GeodesicEllipsoid{T}, lat₁::T, lon₁::T, lat₂::T, 
 
         numit += 1
       end
-      s₁₂, _, _ = _lengths(🌎, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
-      s₁₂ *= 🌎.b
+      s₁₂, _, _ = _lengths(𝐠, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
+      s₁₂ *= 𝐠.b
     end
   end
 
