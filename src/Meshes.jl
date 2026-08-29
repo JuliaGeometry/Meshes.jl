@@ -619,6 +619,12 @@ export
   isinvertible,
   inverse,
 
+  # distances
+  GeometricDistance,
+  EuclideanDistance,
+  ManhattanDistance,
+  GeodesicDistance,
+
   # miscellaneous
   laplacematrix,
   measurematrix,
