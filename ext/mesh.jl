@@ -67,7 +67,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     colors = if colorant isa AbstractVector
       map(Makie.RGBAf, colorant)
     else
-      fill(Makie.RGBAf(colorant), nelem)
+      fill(Makie.RGBAf(colorant), nvert)
     end
 
     # sanity check on number of colors
@@ -103,7 +103,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     tnormals = facenormals ? faceview([asmakie(sign * normal(elem)) for elem in mesh]) : nothing
 
     # triangle mesh
-    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
+    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals, facetype=GB.TriangleFace{Int})
 
     (tmesh,)
   end
