@@ -31,6 +31,7 @@ struct GeodesicDistance <: GeometricDistance end
 (::GeodesicDistance)(p₁::Point{𝔼{Dim}}, p₂::Point{𝔼{Dim}}) where {Dim} = norm(p₂ - p₁)
 
 function (::GeodesicDistance)(p₁::Point{🌐}, p₂::Point{🌐})
+  # convert coordinates to same LatLon CRS
   q₁, q₂ = promote(p₁, p₂)
   c₁ = convert(manifoldcrs(q₁), coords(q₁))
   c₂ = convert(manifoldcrs(q₂), coords(q₂))
@@ -42,7 +43,6 @@ function (::GeodesicDistance)(p₁::Point{🌐}, p₂::Point{🌐})
   # the series of Karney need double precision to reach round-off
   T = numtype(lentype(c₁))
   S = promote_type(T, Float64)
-
   lat₁, lon₁ = S(ustrip(c₁.lat)), S(ustrip(c₁.lon))
   lat₂, lon₂ = S(ustrip(c₂.lat)), S(ustrip(c₂.lon))
 
@@ -63,155 +63,131 @@ end
 # Only oblate ellipsoids are handled, which is what CoordRefSystems.jl can
 # represent, so the prolate branches of the reference algorithm are omitted.
 
-# ---------------
-# ANGLE UTILITIES
-# ---------------
+# length of the shortest geodesic between two points given in degrees
+function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat₂::T, lon₂::T) where {T}
+  𝐠 = _geodesicparams(🌎, T)
+  tiny = sqrt(floatmin(T))
+  tol = eps(T)
+  maxit₁ = 20
+  maxit₂ = maxit₁ + precision(T) + 10
 
-_hnorm(x, y) = (h = hypot(x, y); (x / h, y / h))
-
-# coarsen x to the resolution available near 1/16 degree, so that angles
-# that are tiny but not zero do not turn into near singular cases. The
-# expression is not a no-op, the rounding happens in the two subtractions.
-function _anground(x::T) where {T}
-  z = T(1) / 16
-  y = abs(x)
-  w = z - y
-  y = w > 0 ? z - w : y
-  copysign(y, x)
-end
-
-# sum with error term
-function _twosum(u::T, v::T) where {T}
-  s = u + v
-  uᵣ = s - v
-  vᵣ = s - uᵣ
-  uᵣ -= u
-  vᵣ -= v
-  (s, iszero(s) ? s : -(uᵣ + vᵣ))
-end
-
-# difference y - x in (-180, 180] with error term
-function _angdiff(x::T, y::T) where {T}
-  d, e = _twosum(rem(-x, T(360), RoundNearest), rem(y, T(360), RoundNearest))
-  d, e = _twosum(rem(d, T(360), RoundNearest), e)
-  if iszero(d) || abs(d) == 180
-    d = copysign(d, iszero(e) ? y - x : -e)
+  # longitude difference, made positive
+  lon₁₂, δlon₁₂ = _angdiff(lon₁, lon₂)
+  if signbit(lon₁₂)
+    lon₁₂ = -lon₁₂
+    δlon₁₂ = -δlon₁₂
   end
-  (d, e)
-end
+  λ₁₂ = deg2rad(lon₁₂)
+  sλ₁₂, cλ₁₂ = _sincosde(lon₁₂, δlon₁₂)
+  lon₁₂ₛ = (T(180) - lon₁₂) - δlon₁₂
 
-# sine and cosine of (x + t) degrees with exact reduction of x
-function _sincosde(x::T, t::T) where {T}
-  d = rem(x, T(90), RoundNearest)
-  q = round(Int, (x - d) / 90)
-  d = _anground(d + t)
-  r = deg2rad(d)
-  s, c = sincos(r)
-  if 2abs(d) == 90
-    c = sqrt(T(1) / 2)
-    s = copysign(c, r)
-  elseif 3abs(d) == 90
-    c = sqrt(T(3)) / 2
-    s = copysign(T(1) / 2, r)
+  # canonical form -90 ≤ lat₁ ≤ -0 and lat₁ ≤ lat₂ ≤ -lat₁, which the
+  # branches below rely on. Reflections do not change the distance.
+  lat₁ = _anground(lat₁)
+  lat₂ = _anground(lat₂)
+  abs(lat₁) < abs(lat₂) && ((lat₁, lat₂) = (lat₂, lat₁))
+  latsign = signbit(lat₁) ? 1 : -1
+  lat₁ *= latsign
+  lat₂ *= latsign
+
+  # reduced latitudes
+  sβ₁, cβ₁ = sincosd(lat₁)
+  sβ₁ *= 𝐠.f₁
+  sβ₁, cβ₁ = _hnorm(sβ₁, cβ₁)
+  cβ₁ = max(tiny, cβ₁)
+  sβ₂, cβ₂ = sincosd(lat₂)
+  sβ₂ *= 𝐠.f₁
+  sβ₂, cβ₂ = _hnorm(sβ₂, cβ₂)
+  cβ₂ = max(tiny, cβ₂)
+
+  # force β₂ = ±β₁ exactly when the difference vanishes
+  if cβ₁ < -sβ₁
+    cβ₂ == cβ₁ && (sβ₂ = copysign(sβ₁, sβ₂))
+  else
+    abs(sβ₂) == -sβ₁ && (cβ₂ = cβ₁)
   end
-  m = q & 3
-  m == 0 ? (s, c) : m == 1 ? (c, -s) : m == 2 ? (-s, -c) : (-c, s)
-end
 
-# Clenshaw summation of ∑ cₗ sin(2lx)
-@inline function _sinseries(sinx::T, cosx::T, c::NTuple{N,T}) where {N,T}
-  α = 2 * (cosx - sinx) * (cosx + sinx)
-  b₁ = zero(T)
-  b₂ = zero(T)
-  for cₗ in reverse(c)
-    b₁, b₂ = α * b₁ - b₂ + cₗ, b₁
+  dn₁ = sqrt(1 + 𝐠.e′² * sβ₁^2)
+  dn₂ = sqrt(1 + 𝐠.e′² * sβ₂^2)
+
+  s₁₂ = zero(T)
+
+  # the geodesic may lie on a meridian
+  meridian = lat₁ == -90 || iszero(sλ₁₂)
+  if meridian
+    sσ₁, cσ₁ = sβ₁, cλ₁₂ * cβ₁
+    sσ₂, cσ₂ = sβ₂, cβ₂
+    σ₁₂ = atan(max(zero(T), cσ₁ * sσ₂ - sσ₁ * cσ₂), cσ₁ * cσ₂ + sσ₁ * sσ₂)
+    s₁₂, m₁₂, _ = _lengths(𝐠, 𝐠.n, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
+    # zero length geodesics might yield a negative reduced length
+    (σ₁₂ < 3tiny || (σ₁₂ < tol && (s₁₂ < 0 || m₁₂ < 0))) && (s₁₂ = zero(T))
+    s₁₂ *= 𝐠.b
   end
-  2 * sinx * cosx * b₁
+
+  if !meridian && iszero(sβ₁) && (iszero(𝐠.f) || lon₁₂ₛ ≥ 𝐠.f * 180)
+    # the geodesic runs along the equator
+    s₁₂ = 𝐠.a * λ₁₂
+  elseif !meridian
+    σ₁₂, sα₁, cα₁, _, _, dnₘ = _inversestart(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂)
+    if σ₁₂ ≥ 0
+      # short line, the auxiliary sphere solution is accurate enough
+      s₁₂ = σ₁₂ * 𝐠.b * dnₘ
+    else
+      # Newton's method on the azimuth α₁, with a bracketing interval that is
+      # bisected whenever a Newton step would leave the legal range
+      sσ₁ = cσ₁ = sσ₂ = cσ₂ = ε = zero(T)
+      sα₁ₐ, cα₁ₐ = tiny, one(T)
+      sα₁ᵦ, cα₁ᵦ = tiny, -one(T)
+      numit = 0
+      tripn = false
+      tripb = false
+      while true
+        v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε =
+          _lambda12(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, numit < maxit₁)
+        (tripb || !(abs(v) ≥ (tripn ? 8 : 1) * tol) || numit == maxit₂) && break
+
+        # shrink the bracketing interval
+        if v > 0 && (numit > maxit₁ || cα₁ / sα₁ > cα₁ᵦ / sα₁ᵦ)
+          sα₁ᵦ, cα₁ᵦ = sα₁, cα₁
+        elseif v < 0 && (numit > maxit₁ || cα₁ / sα₁ < cα₁ₐ / sα₁ₐ)
+          sα₁ₐ, cα₁ₐ = sα₁, cα₁
+        end
+
+        newton = false
+        if numit < maxit₁ && dv > 0
+          dα₁ = -v / dv
+          if abs(dα₁) < π
+            sdα₁, cdα₁ = sincos(dα₁)
+            sα₁′ = sα₁ * cdα₁ + cα₁ * sdα₁
+            if sα₁′ > 0
+              cα₁ = cα₁ * cdα₁ - sα₁ * sdα₁
+              sα₁ = sα₁′
+              sα₁, cα₁ = _hnorm(sα₁, cα₁)
+              # the slope vanishes in some regimes, so the convergence
+              # criterion is based on eps and not on its square root
+              tripn = abs(v) ≤ 16tol
+              newton = true
+            end
+          end
+        end
+
+        if !newton
+          sα₁ = (sα₁ₐ + sα₁ᵦ) / 2
+          cα₁ = (cα₁ₐ + cα₁ᵦ) / 2
+          sα₁, cα₁ = _hnorm(sα₁, cα₁)
+          tripn = false
+          tripb = abs(sα₁ₐ - sα₁) + (cα₁ₐ - cα₁) < tol || abs(sα₁ - sα₁ᵦ) + (cα₁ - cα₁ᵦ) < tol
+        end
+
+        numit += 1
+      end
+      s₁₂, _, _ = _lengths(𝐠, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
+      s₁₂ *= 𝐠.b
+    end
+  end
+
+  s₁₂
 end
-
-# -------------
-# KARNEY SERIES
-# -------------
-
-# A₁ - 1 (Karney, eq. 17)
-_A1m1(ε::T) where {T} = (evalpoly(ε * ε, (T(0), T(64), T(4), T(1))) / 256 + ε) / (1 - ε)
-
-# A₂ - 1 (Karney, eq. 42)
-_A2m1(ε::T) where {T} = (evalpoly(ε * ε, (T(0), T(-192), T(-28), T(-11))) / 256 - ε) / (1 + ε)
-
-# C₁ₗ (Karney, eq. 18)
-function _C1(ε::T) where {T}
-  ε² = ε * ε
-  (
-    ε * evalpoly(ε², (T(-16), T(6), T(-1))) / 32,
-    ε^2 * evalpoly(ε², (T(-128), T(64), T(-9))) / 2048,
-    ε^3 * evalpoly(ε², (T(-16), T(9))) / 768,
-    ε^4 * evalpoly(ε², (T(-5), T(3))) / 512,
-    ε^5 * T(-7) / 1280,
-    ε^6 * T(-7) / 2048
-  )
-end
-
-# C₂ₗ (Karney, eq. 43)
-function _C2(ε::T) where {T}
-  ε² = ε * ε
-  (
-    ε * evalpoly(ε², (T(16), T(2), T(1))) / 32,
-    ε^2 * evalpoly(ε², (T(384), T(64), T(35))) / 2048,
-    ε^3 * evalpoly(ε², (T(80), T(15))) / 768,
-    ε^4 * evalpoly(ε², (T(35), T(7))) / 512,
-    ε^5 * T(63) / 1280,
-    ε^6 * T(77) / 2048
-  )
-end
-
-# coefficients of A₃ as a polynomial in ε (Karney, eq. 24)
-function _A3coeffs(n::T) where {T}
-  (
-    one(T),
-    (n - 1) / 2,
-    evalpoly(n, (T(-2), T(-1), T(3))) / 8,
-    -evalpoly(n, (T(1), T(3), T(1))) / 16,
-    -(2n + 3) / 64,
-    T(-3) / 128
-  )
-end
-
-# coefficients of C₃ₗ as polynomials in ε (Karney, eq. 25)
-function _C3coeffs(n::T) where {T}
-  (
-    (
-      evalpoly(n, (T(1), T(-1))) / 4,
-      evalpoly(n, (T(1), T(0), T(-1))) / 8,
-      evalpoly(n, (T(3), T(3), T(-1))) / 64,
-      evalpoly(n, (T(5), T(2))) / 128,
-      T(3) / 128
-    ),
-    (
-      evalpoly(n, (T(2), T(-3), T(1))) / 32,
-      evalpoly(n, (T(3), T(-2), T(-3))) / 64,
-      evalpoly(n, (T(3), T(1))) / 128,
-      T(5) / 256
-    ),
-    (evalpoly(n, (T(5), T(-9), T(5))) / 192, evalpoly(n, (T(9), T(-10))) / 384, T(7) / 512),
-    (evalpoly(n, (T(7), T(-14))) / 512, T(7) / 512),
-    (T(21) / 2560,)
-  )
-end
-
-function _C3(c₃, ε::T) where {T}
-  (
-    ε * evalpoly(ε, c₃[1]),
-    ε^2 * evalpoly(ε, c₃[2]),
-    ε^3 * evalpoly(ε, c₃[3]),
-    ε^4 * evalpoly(ε, c₃[4]),
-    ε^5 * evalpoly(ε, c₃[5])
-  )
-end
-
-# ----------------
-# INVERSE PROBLEM
-# ----------------
 
 # quantities that Karney's series need on top of the parameters that
 # CoordRefSystems.jl already provides for the ellipsoid of revolution
@@ -387,128 +363,148 @@ function _lambda12(𝐠, sβ₁::T, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁
   (v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε)
 end
 
-# length of the shortest geodesic between two points given in degrees
-function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat₂::T, lon₂::T) where {T}
-  𝐠 = _geodesicparams(🌎, T)
-  tiny = sqrt(floatmin(T))
-  tol = eps(T)
-  maxit₁ = 20
-  maxit₂ = maxit₁ + precision(T) + 10
+# ----------------
+# ANGLE UTILITIES
+# ----------------
 
-  # longitude difference, made positive
-  lon₁₂, δlon₁₂ = _angdiff(lon₁, lon₂)
-  if signbit(lon₁₂)
-    lon₁₂ = -lon₁₂
-    δlon₁₂ = -δlon₁₂
+_hnorm(x, y) = (h = hypot(x, y); (x / h, y / h))
+
+# coarsen x to the resolution available near 1/16 degree, so that angles
+# that are tiny but not zero do not turn into near singular cases. The
+# expression is not a no-op, the rounding happens in the two subtractions.
+function _anground(x::T) where {T}
+  z = T(1) / 16
+  y = abs(x)
+  w = z - y
+  y = w > 0 ? z - w : y
+  copysign(y, x)
+end
+
+# sum with error term
+function _twosum(u::T, v::T) where {T}
+  s = u + v
+  uᵣ = s - v
+  vᵣ = s - uᵣ
+  uᵣ -= u
+  vᵣ -= v
+  (s, iszero(s) ? s : -(uᵣ + vᵣ))
+end
+
+# difference y - x in (-180, 180] with error term
+function _angdiff(x::T, y::T) where {T}
+  d, e = _twosum(rem(-x, T(360), RoundNearest), rem(y, T(360), RoundNearest))
+  d, e = _twosum(rem(d, T(360), RoundNearest), e)
+  if iszero(d) || abs(d) == 180
+    d = copysign(d, iszero(e) ? y - x : -e)
   end
-  λ₁₂ = deg2rad(lon₁₂)
-  sλ₁₂, cλ₁₂ = _sincosde(lon₁₂, δlon₁₂)
-  lon₁₂ₛ = (T(180) - lon₁₂) - δlon₁₂
+  (d, e)
+end
 
-  # canonical form -90 ≤ lat₁ ≤ -0 and lat₁ ≤ lat₂ ≤ -lat₁, which the
-  # branches below rely on. Reflections do not change the distance.
-  lat₁ = _anground(lat₁)
-  lat₂ = _anground(lat₂)
-  abs(lat₁) < abs(lat₂) && ((lat₁, lat₂) = (lat₂, lat₁))
-  latsign = signbit(lat₁) ? 1 : -1
-  lat₁ *= latsign
-  lat₂ *= latsign
-
-  # reduced latitudes
-  sβ₁, cβ₁ = sincosd(lat₁)
-  sβ₁ *= 𝐠.f₁
-  sβ₁, cβ₁ = _hnorm(sβ₁, cβ₁)
-  cβ₁ = max(tiny, cβ₁)
-  sβ₂, cβ₂ = sincosd(lat₂)
-  sβ₂ *= 𝐠.f₁
-  sβ₂, cβ₂ = _hnorm(sβ₂, cβ₂)
-  cβ₂ = max(tiny, cβ₂)
-
-  # force β₂ = ±β₁ exactly when the difference vanishes
-  if cβ₁ < -sβ₁
-    cβ₂ == cβ₁ && (sβ₂ = copysign(sβ₁, sβ₂))
-  else
-    abs(sβ₂) == -sβ₁ && (cβ₂ = cβ₁)
+# sine and cosine of (x + t) degrees with exact reduction of x
+function _sincosde(x::T, t::T) where {T}
+  d = rem(x, T(90), RoundNearest)
+  q = round(Int, (x - d) / 90)
+  d = _anground(d + t)
+  r = deg2rad(d)
+  s, c = sincos(r)
+  if 2abs(d) == 90
+    c = sqrt(T(1) / 2)
+    s = copysign(c, r)
+  elseif 3abs(d) == 90
+    c = sqrt(T(3)) / 2
+    s = copysign(T(1) / 2, r)
   end
+  m = q & 3
+  m == 0 ? (s, c) : m == 1 ? (c, -s) : m == 2 ? (-s, -c) : (-c, s)
+end
 
-  dn₁ = sqrt(1 + 𝐠.e′² * sβ₁^2)
-  dn₂ = sqrt(1 + 𝐠.e′² * sβ₂^2)
-
-  s₁₂ = zero(T)
-
-  # the geodesic may lie on a meridian
-  meridian = lat₁ == -90 || iszero(sλ₁₂)
-  if meridian
-    sσ₁, cσ₁ = sβ₁, cλ₁₂ * cβ₁
-    sσ₂, cσ₂ = sβ₂, cβ₂
-    σ₁₂ = atan(max(zero(T), cσ₁ * sσ₂ - sσ₁ * cσ₂), cσ₁ * cσ₂ + sσ₁ * sσ₂)
-    s₁₂, m₁₂, _ = _lengths(𝐠, 𝐠.n, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
-    # zero length geodesics might yield a negative reduced length
-    (σ₁₂ < 3tiny || (σ₁₂ < tol && (s₁₂ < 0 || m₁₂ < 0))) && (s₁₂ = zero(T))
-    s₁₂ *= 𝐠.b
+# Clenshaw summation of ∑ cₗ sin(2lx)
+@inline function _sinseries(sinx::T, cosx::T, c::NTuple{N,T}) where {N,T}
+  α = 2 * (cosx - sinx) * (cosx + sinx)
+  b₁ = zero(T)
+  b₂ = zero(T)
+  for cₗ in reverse(c)
+    b₁, b₂ = α * b₁ - b₂ + cₗ, b₁
   end
+  2 * sinx * cosx * b₁
+end
 
-  if !meridian && iszero(sβ₁) && (iszero(𝐠.f) || lon₁₂ₛ ≥ 𝐠.f * 180)
-    # the geodesic runs along the equator
-    s₁₂ = 𝐠.a * λ₁₂
-  elseif !meridian
-    σ₁₂, sα₁, cα₁, _, _, dnₘ = _inversestart(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂)
-    if σ₁₂ ≥ 0
-      # short line, the auxiliary sphere solution is accurate enough
-      s₁₂ = σ₁₂ * 𝐠.b * dnₘ
-    else
-      # Newton's method on the azimuth α₁, with a bracketing interval that is
-      # bisected whenever a Newton step would leave the legal range
-      sσ₁ = cσ₁ = sσ₂ = cσ₂ = ε = zero(T)
-      sα₁ₐ, cα₁ₐ = tiny, one(T)
-      sα₁ᵦ, cα₁ᵦ = tiny, -one(T)
-      numit = 0
-      tripn = false
-      tripb = false
-      while true
-        v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε =
-          _lambda12(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, numit < maxit₁)
-        (tripb || !(abs(v) ≥ (tripn ? 8 : 1) * tol) || numit == maxit₂) && break
+# --------------
+# KARNEY SERIES
+# --------------
 
-        # shrink the bracketing interval
-        if v > 0 && (numit > maxit₁ || cα₁ / sα₁ > cα₁ᵦ / sα₁ᵦ)
-          sα₁ᵦ, cα₁ᵦ = sα₁, cα₁
-        elseif v < 0 && (numit > maxit₁ || cα₁ / sα₁ < cα₁ₐ / sα₁ₐ)
-          sα₁ₐ, cα₁ₐ = sα₁, cα₁
-        end
+# A₁ - 1 (Karney, eq. 17)
+_A1m1(ε::T) where {T} = (evalpoly(ε * ε, (T(0), T(64), T(4), T(1))) / 256 + ε) / (1 - ε)
 
-        newton = false
-        if numit < maxit₁ && dv > 0
-          dα₁ = -v / dv
-          if abs(dα₁) < π
-            sdα₁, cdα₁ = sincos(dα₁)
-            sα₁′ = sα₁ * cdα₁ + cα₁ * sdα₁
-            if sα₁′ > 0
-              cα₁ = cα₁ * cdα₁ - sα₁ * sdα₁
-              sα₁ = sα₁′
-              sα₁, cα₁ = _hnorm(sα₁, cα₁)
-              # the slope vanishes in some regimes, so the convergence
-              # criterion is based on eps and not on its square root
-              tripn = abs(v) ≤ 16tol
-              newton = true
-            end
-          end
-        end
+# A₂ - 1 (Karney, eq. 42)
+_A2m1(ε::T) where {T} = (evalpoly(ε * ε, (T(0), T(-192), T(-28), T(-11))) / 256 - ε) / (1 + ε)
 
-        if !newton
-          sα₁ = (sα₁ₐ + sα₁ᵦ) / 2
-          cα₁ = (cα₁ₐ + cα₁ᵦ) / 2
-          sα₁, cα₁ = _hnorm(sα₁, cα₁)
-          tripn = false
-          tripb = abs(sα₁ₐ - sα₁) + (cα₁ₐ - cα₁) < tol || abs(sα₁ - sα₁ᵦ) + (cα₁ - cα₁ᵦ) < tol
-        end
+# C₁ₗ (Karney, eq. 18)
+function _C1(ε::T) where {T}
+  ε² = ε * ε
+  (
+    ε * evalpoly(ε², (T(-16), T(6), T(-1))) / 32,
+    ε^2 * evalpoly(ε², (T(-128), T(64), T(-9))) / 2048,
+    ε^3 * evalpoly(ε², (T(-16), T(9))) / 768,
+    ε^4 * evalpoly(ε², (T(-5), T(3))) / 512,
+    ε^5 * T(-7) / 1280,
+    ε^6 * T(-7) / 2048
+  )
+end
 
-        numit += 1
-      end
-      s₁₂, _, _ = _lengths(𝐠, ε, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
-      s₁₂ *= 𝐠.b
-    end
-  end
+# C₂ₗ (Karney, eq. 43)
+function _C2(ε::T) where {T}
+  ε² = ε * ε
+  (
+    ε * evalpoly(ε², (T(16), T(2), T(1))) / 32,
+    ε^2 * evalpoly(ε², (T(384), T(64), T(35))) / 2048,
+    ε^3 * evalpoly(ε², (T(80), T(15))) / 768,
+    ε^4 * evalpoly(ε², (T(35), T(7))) / 512,
+    ε^5 * T(63) / 1280,
+    ε^6 * T(77) / 2048
+  )
+end
 
-  s₁₂
+# coefficients of A₃ as a polynomial in ε (Karney, eq. 24)
+function _A3coeffs(n::T) where {T}
+  (
+    one(T),
+    (n - 1) / 2,
+    evalpoly(n, (T(-2), T(-1), T(3))) / 8,
+    -evalpoly(n, (T(1), T(3), T(1))) / 16,
+    -(2n + 3) / 64,
+    T(-3) / 128
+  )
+end
+
+# coefficients of C₃ₗ as polynomials in ε (Karney, eq. 25)
+function _C3coeffs(n::T) where {T}
+  (
+    (
+      evalpoly(n, (T(1), T(-1))) / 4,
+      evalpoly(n, (T(1), T(0), T(-1))) / 8,
+      evalpoly(n, (T(3), T(3), T(-1))) / 64,
+      evalpoly(n, (T(5), T(2))) / 128,
+      T(3) / 128
+    ),
+    (
+      evalpoly(n, (T(2), T(-3), T(1))) / 32,
+      evalpoly(n, (T(3), T(-2), T(-3))) / 64,
+      evalpoly(n, (T(3), T(1))) / 128,
+      T(5) / 256
+    ),
+    (evalpoly(n, (T(5), T(-9), T(5))) / 192, evalpoly(n, (T(9), T(-10))) / 384, T(7) / 512),
+    (evalpoly(n, (T(7), T(-14))) / 512, T(7) / 512),
+    (T(21) / 2560,)
+  )
+end
+
+function _C3(c₃, ε::T) where {T}
+  (
+    ε * evalpoly(ε, c₃[1]),
+    ε^2 * evalpoly(ε, c₃[2]),
+    ε^3 * evalpoly(ε, c₃[3]),
+    ε^4 * evalpoly(ε, c₃[4]),
+    ε^5 * evalpoly(ε, c₃[5])
+  )
 end
