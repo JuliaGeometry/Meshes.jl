@@ -655,26 +655,34 @@ end
     @test l1 ∩ l2 == l2 ∩ l1 == l1
   end
 
-  # Line-Box intersection
-  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  # type stability tests
+  l1 = Line(cart(0, 0), cart(1, 0))
+  l2 = Line(cart(-1, -1), cart(-1, 1))
+  @inferred someornone(l1, l2)
 
+  # Line-Box intersection
   l = Line(cart(0, 0, 0), cart(1, 1, 1))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
   @test intersection(l, b) |> type == Crossing
   @test l ∩ b == Segment(cart(0, 0, 0), cart(1, 1, 1))
 
   l = Line(cart(-0.5, 0.0, 0.0), cart(0.5, 1.0, 1.0))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
   @test intersection(l, b) |> type == Crossing
   @test l ∩ b == Segment(cart(0.0, 0.5, 0.5), cart(0.5, 1.0, 1.0))
 
   l = Line(cart(3.0, 0.0, 0.5), cart(2.0, 1.0, 0.5))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
   @test intersection(l, b) |> type == NotIntersecting
 
   l = Line(cart(2.0, 0.0, 0.5), cart(1.0, 1.0, 0.5))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
   @test intersection(l, b) |> type == Touching
   @test l ∩ b == cart(1.0, 1.0, 0.5)
 
   # the line on a face of the box, got NaN in calculation
   l = Line(cart(1.5, 0.0, 0.0), cart(0.5, 1.0, 0.0))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
   @test intersection(l, b) |> type == Crossing
   @test l ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
 
@@ -684,11 +692,6 @@ end
   @test l ∩ b == Segment(cart(0, 0), cart(1, 1))
   @test intersects(l, b)
   @test intersects(b, l)
-
-  # type stability tests
-  l1 = Line(cart(0, 0), cart(1, 0))
-  l2 = Line(cart(-1, -1), cart(-1, 1))
-  @inferred someornone(l1, l2)
 end
 
 @testitem "Chain intersection" setup = [Setup] begin
