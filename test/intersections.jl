@@ -426,7 +426,7 @@ end
   @inferred someornone(l₁, s₁)
   @inferred someornone(l₁, s₂)
 
-  # 3d tests
+  # 3D tests
   l₁ = Line(cart(1, 0, 1), cart(3, 1, 1))
   s₁ = Segment(cart(0, 2, 1), cart(2, -1, 1)) # Crossing
   s₂ = Segment(cart(0.5, 1, 1), cart(0, 0, 1)) # NotIntersecting
