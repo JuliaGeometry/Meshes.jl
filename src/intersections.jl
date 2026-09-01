@@ -115,3 +115,53 @@ include("intersections/planes.jl")
 include("intersections/boxes.jl")
 include("intersections/polygons.jl")
 include("intersections/domains.jl")
+
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
+
+# Williams A, Barrus S, Morley R K, et al., 2005.
+# (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
+function _williamsintersect(f, linelike, box::Box)
+  invdir = map(inv, linelike(1) - linelike(0))
+  lo, up = map(to, extrema(box))
+  orig = to(linelike(0))
+
+  tmin, tmax = _williamsinit(linelike)
+
+  # check for intersection with slabs along with each axis
+  for i in 1:embeddim(linelike)
+    imin = (lo[i] - orig[i]) * invdir[i]
+    imax = (up[i] - orig[i]) * invdir[i]
+
+    # swap variables if necessary
+    iinv = invdir[i]
+    iinv < zero(iinv) && ((imin, imax) = (imax, imin))
+
+    # the line is on a face of the box, avoid NaN
+    (isnan(imin) || isnan(imax)) && continue
+
+    (tmin > imax || imin > tmax) && return @IT NotIntersecting nothing f
+
+    tmin = max(tmin, imin)
+    tmax = min(tmax, imax)
+  end
+
+  tmin ≈ tmax && return @IT Touching linelike(tmin) f
+
+  return @IT Crossing Segment(linelike(tmin), linelike(tmax)) f
+end
+
+function _williamsinit(ray::Ray)
+  T = numtype(lentype(ray))
+  tmin = zero(T)
+  tmax = typemax(T)
+  tmin, tmax
+end
+
+function _williamsinit(line::Line)
+  T = numtype(lentype(line))
+  tmin = typemin(T)
+  tmax = typemax(T)
+  tmin, tmax
+end

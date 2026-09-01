@@ -21,6 +21,10 @@ intersects(r::Ray, b::Box) = someintersection(r, b)
 
 intersects(b::Box, r::Ray) = intersects(r, b)
 
+intersects(l::Line, b::Box) = someintersection(l, b)
+
+intersects(b::Box, l::Line) = intersects(l, b)
+
 intersects(r::Ray, t::Triangle) = someintersection(r, t)
 
 intersects(t::Triangle, r::Ray) = intersects(r, t)

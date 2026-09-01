@@ -20,3 +20,9 @@ function intersection(f, line₁::Line, line₂::Line)
     return @IT NotIntersecting nothing f
   end
 end
+
+# The intersection type can be one of three types:
+# 1. intersect at one point (Touching -> Point)
+# 2. intersect at two points (Crossing -> Segment)
+# 3. do not intersect (NotIntersecting -> Nothing)
+intersection(f, line::Line, box::Box) = _williamsintersect(f, line, box)
