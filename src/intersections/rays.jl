@@ -98,7 +98,7 @@ end
 # 1. intersect at one point (Touching -> Point)
 # 2. intersect at two points (Crossing -> Segment)
 # 3. do not intersect (NotIntersecting -> Nothing)
-intersection(f, ray::Ray, box::Box) = williamsintersect(f, ray, box)
+intersection(f, ray::Ray, box::Box) = _williamsintersect(f, ray, box)
 
 # The intersection type can be one of seven types:
 # 1. origin of ray intersects middle of triangle (Touching -> Point)

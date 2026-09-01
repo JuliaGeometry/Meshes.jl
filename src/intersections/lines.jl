@@ -25,4 +25,4 @@ end
 # 1. intersect at one point (Touching -> Point)
 # 2. intersect at two points (Crossing -> Segment)
 # 3. do not intersect (NotIntersecting -> Nothing)
-intersection(f, line::Line, box::Box) = williamsintersect(f, line, box)
+intersection(f, line::Line, box::Box) = _williamsintersect(f, line, box)
