@@ -135,9 +135,11 @@ include("coarsening.jl")
 # transforms
 include("transforms.jl")
 
+# distances
+include("distances.jl")
+
 # miscellaneous
 include("rand.jl")
-include("distances.jl")
 include("supportfun.jl")
 include("matrices.jl")
 include("projecting.jl")
@@ -618,6 +620,11 @@ export
   isaffine,
   isinvertible,
   inverse,
+
+  # distances
+  GeometricDistance,
+  EuclideanDistance,
+  GeodesicDistance,
 
   # miscellaneous
   laplacematrix,

@@ -2,6 +2,35 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    GeometricDistance
+
+A distance between points that is meaningful in physical settings.
+
+Distances are functors, and are evaluated with a pair of points:
+
+```julia
+d = EuclideanDistance()
+
+d(p₁, p₂)
+```
+
+The definition that is used depends on the manifold of the points,
+which is available at compile time.
+"""
+abstract type GeometricDistance end
+
+# ----------------
+# IMPLEMENTATIONS
+# ----------------
+
+include("distances/euclidean.jl")
+include("distances/geodesic.jl")
+
+# -------------
+# DISTANCES.JL
+# -------------
+
 # flip arguments so that points always come first
 evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
 
