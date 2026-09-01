@@ -23,8 +23,7 @@ d(Point(LatLon(0, 0)), Point(LatLon(0, 1)))
 
 ## References
 
-* Karney, C. F. F. 2013. [Algorithms for geodesics]
-  (https://doi.org/10.1007/s00190-012-0578-0)
+* Karney, C. F. F. 2013. [Algorithms for geodesics](https://doi.org/10.1007/s00190-012-0578-z)
 """
 struct GeodesicDistance <: GeometricDistance end
 
