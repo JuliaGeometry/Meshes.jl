@@ -28,11 +28,11 @@ makedocs(
         "algorithms/sideof.md",
         "algorithms/orientation.md",
         "algorithms/neighborsearch.md",
-        "algorithms/distances.md",
         "algorithms/boundingbox.md",
         "algorithms/hulls.md"
       ],
       "Transforms" => "transforms.md",
+      "Distances" => "distances.md",
       "Calculus" => "calculus.md",
       "Random" => "rand.md",
       "Visualization" => "visualization.md",

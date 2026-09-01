@@ -36,4 +36,4 @@ EuclideanDistance()(sydney, london), GeodesicDistance()(sydney, london)
 ```
 
 The ellipsoid is taken from the datum of the coordinate reference system,
-so points stored in a different datum are measured on a different ellipsoid.
+so all parameters are retrieved automatically for the user.
