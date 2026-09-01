@@ -50,7 +50,7 @@ end
 
 # Solution of the inverse geodesic problem on an ellipsoid of revolution
 # following Karney, C. F. F. 2013. Algorithms for geodesics. Journal of
-# Geodesy 87(1), 43-55. https://doi.org/10.1007/s00190-012-0578-0
+# Geodesy 87(1), 43-55. https://doi.org/10.1007/s00190-012-0578-z
 #
 # The series are truncated at order 6, which reaches round-off in double
 # precision for ellipsoids with terrestrial flattening. Newton's method is
