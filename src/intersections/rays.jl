@@ -94,40 +94,11 @@ function intersection(f, ray::Ray, line::Line)
   end
 end
 
-# Williams A, Barrus S, Morley R K, et al., 2005.
-# (https://dl.acm.org/doi/abs/10.1145/1198555.1198748)
-function intersection(f, ray::Ray, box::Box)
-  ℒ = lentype(ray)
-  invdir = inv.(ray(1) - ray(0))
-  lo, up = to.(extrema(box))
-  orig = to(ray(0))
-
-  T = numtype(ℒ)
-  tmin = zero(T)
-  tmax = typemax(T)
-
-  # check for intersection with slabs along with each axis
-  for i in 1:embeddim(ray)
-    imin = (lo[i] - orig[i]) * invdir[i]
-    imax = (up[i] - orig[i]) * invdir[i]
-
-    # swap variables if necessary
-    iinv = invdir[i]
-    iinv < zero(iinv) && ((imin, imax) = (imax, imin))
-
-    # the ray is on a face of the box, avoid NaN
-    (isnan(imin) || isnan(imax)) && continue
-
-    (tmin > imax || imin > tmax) && return @IT NotIntersecting nothing f
-
-    tmin = max(tmin, imin)
-    tmax = min(tmax, imax)
-  end
-
-  tmin ≈ tmax && return @IT Touching ray(tmin) f
-
-  return @IT Crossing Segment(ray(tmin), ray(tmax)) f
-end
+# The intersection type can be one of three types:
+# 1. intersect at one point (Touching -> Point)
+# 2. intersect at two points (Crossing -> Segment)
+# 3. do not intersect (NotIntersecting -> Nothing)
+intersection(f, ray::Ray, box::Box) = williamsintersect(f, ray, box)
 
 # The intersection type can be one of seven types:
 # 1. origin of ray intersects middle of triangle (Touching -> Point)
