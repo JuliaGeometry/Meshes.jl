@@ -33,6 +33,7 @@ makedocs(
       ],
       "Transforms" => "transforms.md",
       "Distances" => "distances.md",
+      "Geodesics" => "geodesics.md",
       "Calculus" => "calculus.md",
       "Random" => "rand.md",
       "Visualization" => "visualization.md",

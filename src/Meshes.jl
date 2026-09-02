@@ -626,6 +626,10 @@ export
   EuclideanDistance,
   GeodesicDistance,
 
+  # geodesics
+  geodesicfwd,
+  geodesicbwd,
+
   # miscellaneous
   laplacematrix,
   measurematrix,

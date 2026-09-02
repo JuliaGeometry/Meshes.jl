@@ -1,0 +1,48 @@
+# Geodesics
+
+```@example geodesics
+using Meshes # hide
+using CoordRefSystems # hide
+```
+
+A geodesic is the shortest path between two points along a manifold.
+On the ellipsoid there are two classical problems, and each has its
+own function. Both are solved with the series of Karney (2013), on the
+ellipsoid attached to the datum of the coordinates.
+
+```@docs
+geodesicfwd
+geodesicbwd
+```
+
+The direct problem walks a given length along a given azimuth:
+
+```@example geodesics
+p = Point(LatLon(-33.8688, 151.2093))
+
+geodesicfwd(p, 45u"°", 1000u"km")
+```
+
+The inverse problem recovers the azimuth that connects two points.
+Its length is [`GeodesicDistance`](@ref), so the two together describe
+the geodesic completely:
+
+```@example geodesics
+sydney = Point(LatLon(-33.8688, 151.2093))
+london = Point(LatLon(51.5074, -0.1278))
+
+geodesicbwd(sydney, london), GeodesicDistance()(sydney, london)
+```
+
+Walking that azimuth for that length arrives at the second point:
+
+```@example geodesics
+geodesicfwd(sydney, geodesicbwd(sydney, london), GeodesicDistance()(sydney, london))
+```
+
+The azimuth at the far end points back along the same geodesic, and is
+obtained by swapping the arguments:
+
+```@example geodesics
+geodesicbwd(london, sydney)
+```

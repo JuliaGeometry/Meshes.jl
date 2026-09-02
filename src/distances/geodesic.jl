@@ -45,7 +45,97 @@ function (::GeodesicDistance)(p₁::Point{🌐}, p₂::Point{🌐})
   lat₁, lon₁ = S(ustrip(c₁.lat)), S(ustrip(c₁.lon))
   lat₂, lon₂ = S(ustrip(c₂.lat)), S(ustrip(c₂.lon))
 
-  T(_geodesic(🌎, lat₁, lon₁, lat₂, lon₂)) * unit(majoraxis(🌎))
+  s₁₂, _, _ = _geodesic(🌎, lat₁, lon₁, lat₂, lon₂)
+
+  T(s₁₂) * unit(majoraxis(🌎))
+end
+
+"""
+    geodesicfwd(p, ϕ, l)
+
+Solve the direct geodesic problem: return the point reached from the
+point `p` after walking the length `l` along the geodesic that leaves
+`p` with the azimuth `ϕ`, measured clockwise from the north.
+
+The geodesic is the one of the ellipsoid attached to the datum of `p`,
+and is computed with the series of Karney (2013).
+
+See also [`geodesicbwd`](@ref).
+
+## Examples
+
+```julia
+p = Point(LatLon(0, 0))
+
+geodesicfwd(p, 90u"°", 1000u"km")
+
+geodesicfwd(p, 90, 1000000)
+```
+
+## References
+
+* Karney, C. F. F. 2013. [Algorithms for geodesics](https://doi.org/10.1007/s00190-012-0578-z)
+"""
+function geodesicfwd(p::Point{🌐}, ϕ, l)
+  c = convert(manifoldcrs(p), coords(p))
+
+  # the ellipsoid comes from the datum of the coordinates
+  🌎 = ellipsoid(datum(c))
+
+  # the series of Karney need double precision to reach round-off
+  T = numtype(lentype(c))
+  S = promote_type(T, Float64)
+  lat, lon = S(ustrip(c.lat)), S(ustrip(c.lon))
+  azi = S(ustrip(u"°", asdeg(ϕ)))
+  len = S(ustrip(unit(majoraxis(🌎)), aslen(l)))
+
+  lat′, lon′, _ = _geodesicdirect(🌎, lat, lon, azi, len)
+
+  withcrs(p, (T(lat′), T(lon′)))
+end
+
+"""
+    geodesicbwd(p₁, p₂)
+
+Solve the inverse geodesic problem: return the azimuth at the point `p₁`
+of the shortest geodesic connecting `p₁` to the point `p₂`, measured
+clockwise from the north.
+
+The length of that geodesic is [`GeodesicDistance`](@ref), and the
+azimuth at the other end is `geodesicbwd(p₂, p₁)`.
+
+See also [`geodesicfwd`](@ref).
+
+## Examples
+
+```julia
+p₁ = Point(LatLon(0, 0))
+p₂ = Point(LatLon(0, 1))
+
+geodesicbwd(p₁, p₂)
+```
+
+## References
+
+* Karney, C. F. F. 2013. [Algorithms for geodesics](https://doi.org/10.1007/s00190-012-0578-z)
+"""
+function geodesicbwd(p₁::Point{🌐}, p₂::Point{🌐})
+  # convert coordinates to same LatLon CRS
+  q₁, q₂ = promote(p₁, p₂)
+  c₁ = convert(manifoldcrs(q₁), coords(q₁))
+  c₂ = convert(manifoldcrs(q₂), coords(q₂))
+
+  🌎 = ellipsoid(datum(c₁))
+
+  # the series of Karney need double precision to reach round-off
+  T = numtype(lentype(c₁))
+  S = promote_type(T, Float64)
+  lat₁, lon₁ = S(ustrip(c₁.lat)), S(ustrip(c₁.lon))
+  lat₂, lon₂ = S(ustrip(c₂.lat)), S(ustrip(c₂.lon))
+
+  _, ϕ₁, _ = _geodesic(🌎, lat₁, lon₁, lat₂, lon₂)
+
+  T(ϕ₁) * u"°"
 end
 
 # Solution of the inverse geodesic problem on an ellipsoid of revolution
@@ -62,7 +152,8 @@ end
 # Only oblate ellipsoids are handled, which is what CoordRefSystems.jl can
 # represent, so the prolate branches of the reference algorithm are omitted.
 
-# length of the shortest geodesic between two points given in degrees
+# length of the shortest geodesic between two points given in degrees,
+# together with the forward azimuths at both points in degrees
 function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat₂::T, lon₂::T) where {T}
   𝐠 = _geodesicparams(🌎, T)
   tiny = sqrt(floatmin(T))
@@ -72,19 +163,23 @@ function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat�
 
   # longitude difference, made positive
   lon₁₂, δlon₁₂ = _angdiff(lon₁, lon₂)
-  if signbit(lon₁₂)
-    lon₁₂ = -lon₁₂
-    δlon₁₂ = -δlon₁₂
-  end
+  lonsign = signbit(lon₁₂) ? -1 : 1
+  lon₁₂ *= lonsign
+  δlon₁₂ *= lonsign
   λ₁₂ = deg2rad(lon₁₂)
   sλ₁₂, cλ₁₂ = _sincosde(lon₁₂, δlon₁₂)
   lon₁₂ₛ = (T(180) - lon₁₂) - δlon₁₂
 
-  # canonical form -90 ≤ lat₁ ≤ -0 and lat₁ ≤ lat₂ ≤ -lat₁, which the
-  # branches below rely on. Reflections do not change the distance.
+  # canonical form 0 ≤ lon₁₂ ≤ 180, -90 ≤ lat₁ ≤ -0 and lat₁ ≤ lat₂ ≤ -lat₁,
+  # which the branches below rely on. The three transforms lonsign, swapp and
+  # latsign record the reflections and are undone on the azimuths at the end.
   lat₁ = _anground(lat₁)
   lat₂ = _anground(lat₂)
-  abs(lat₁) < abs(lat₂) && ((lat₁, lat₂) = (lat₂, lat₁))
+  swapp = abs(lat₁) < abs(lat₂) ? -1 : 1
+  if swapp < 0
+    lonsign = -lonsign
+    lat₁, lat₂ = lat₂, lat₁
+  end
   latsign = signbit(lat₁) ? 1 : -1
   lat₁ *= latsign
   lat₂ *= latsign
@@ -110,12 +205,16 @@ function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat�
   dn₂ = sqrt(1 + 𝐠.e′² * sβ₂^2)
 
   s₁₂ = zero(T)
+  sα₁ = cα₁ = sα₂ = cα₂ = zero(T)
 
   # the geodesic may lie on a meridian
   meridian = lat₁ == -90 || iszero(sλ₁₂)
   if meridian
-    sσ₁, cσ₁ = sβ₁, cλ₁₂ * cβ₁
-    sσ₂, cσ₂ = sβ₂, cβ₂
+    # head to the target longitude, and arrive heading north
+    sα₁, cα₁ = sλ₁₂, cλ₁₂
+    sα₂, cα₂ = zero(T), one(T)
+    sσ₁, cσ₁ = sβ₁, cα₁ * cβ₁
+    sσ₂, cσ₂ = sβ₂, cα₂ * cβ₂
     σ₁₂ = atan(max(zero(T), cσ₁ * sσ₂ - sσ₁ * cσ₂), cσ₁ * cσ₂ + sσ₁ * sσ₂)
     s₁₂, m₁₂, _ = _lengths(𝐠, 𝐠.n, σ₁₂, sσ₁, cσ₁, dn₁, sσ₂, cσ₂, dn₂)
     # zero length geodesics might yield a negative reduced length
@@ -125,9 +224,11 @@ function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat�
 
   if !meridian && iszero(sβ₁) && (iszero(𝐠.f) || lon₁₂ₛ ≥ 𝐠.f * 180)
     # the geodesic runs along the equator
+    sα₁ = sα₂ = one(T)
+    cα₁ = cα₂ = zero(T)
     s₁₂ = 𝐠.a * λ₁₂
   elseif !meridian
-    σ₁₂, sα₁, cα₁, _, _, dnₘ = _inversestart(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂)
+    σ₁₂, sα₁, cα₁, sα₂, cα₂, dnₘ = _inversestart(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, λ₁₂, sλ₁₂, cλ₁₂)
     if σ₁₂ ≥ 0
       # short line, the auxiliary sphere solution is accurate enough
       s₁₂ = σ₁₂ * 𝐠.b * dnₘ
@@ -141,7 +242,7 @@ function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat�
       tripn = false
       tripb = false
       while true
-        v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε =
+        v, dv, sα₂, cα₂, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε =
           _lambda12(𝐠, sβ₁, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁, cα₁, sλ₁₂, cλ₁₂, numit < maxit₁)
         (tripb || !(abs(v) ≥ (tripn ? 8 : 1) * tol) || numit == maxit₂) && break
 
@@ -185,7 +286,95 @@ function _geodesic(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, lat�
     end
   end
 
-  s₁₂
+  # undo the canonicalising transforms on the azimuths
+  if swapp < 0
+    sα₁, sα₂ = sα₂, sα₁
+    cα₁, cα₂ = cα₂, cα₁
+  end
+  sα₁ *= swapp * lonsign
+  cα₁ *= swapp * latsign
+  sα₂ *= swapp * lonsign
+  cα₂ *= swapp * latsign
+
+  (s₁₂, atand(sα₁, cα₁), atand(sα₂, cα₂))
+end
+
+# Solution of the direct geodesic problem: the point reached from (lat₁, lon₁)
+# after walking s₁₂ along the geodesic that leaves with azimuth azi₁, following
+# Karney (2013) section 3. Angles are in degrees, the length in the unit of the
+# semi-axes. Only the position and the azimuth at the second point are returned.
+function _geodesicdirect(🌎::Type{<:RevolutionEllipsoid}, lat₁::T, lon₁::T, azi₁::T, s₁₂::T) where {T}
+  𝐠 = _geodesicparams(🌎, T)
+  tiny = sqrt(floatmin(T))
+
+  # the geodesic is fixed by the azimuth at the first point
+  sα₁, cα₁ = sincosd(_anground(_angnormalize(azi₁)))
+
+  # reduced latitude, forced away from the pole so that the quadrants below
+  # are unambiguous
+  sβ₁, cβ₁ = sincosd(_anground(lat₁))
+  sβ₁ *= 𝐠.f₁
+  sβ₁, cβ₁ = _hnorm(sβ₁, cβ₁)
+  cβ₁ = max(tiny, cβ₁)
+
+  # Clairaut's relation at the northward crossing of the equator, where σ = ω = 0
+  sα₀ = sα₁ * cβ₁
+  cα₀ = hypot(cα₁, sα₁ * sβ₁)
+
+  sσ₁ = sβ₁
+  sω₁ = sα₀ * sβ₁
+  cσ₁ = cω₁ = (iszero(sβ₁) && iszero(cα₁)) ? one(T) : cβ₁ * cα₁
+  sσ₁, cσ₁ = _hnorm(sσ₁, cσ₁)
+
+  k² = cα₀^2 * 𝐠.e′²
+  ε = k² / (2 * (1 + sqrt(1 + k²)) + k²)
+
+  A₁ = 1 + _A1m1(ε)
+  C₁ = _C1(ε)
+  B₁₁ = _sinseries(sσ₁, cσ₁, C₁)
+  sB₁₁, cB₁₁ = sincos(B₁₁)
+  sτ₁ = sσ₁ * cB₁₁ + cσ₁ * sB₁₁
+  cτ₁ = cσ₁ * cB₁₁ - sσ₁ * sB₁₁
+
+  # the reverted series gives the arc length directly from the distance,
+  # with no iteration (Karney, eq. 20 and 21)
+  τ₁₂ = s₁₂ / (𝐠.b * A₁)
+  sτ₁₂, cτ₁₂ = sincos(τ₁₂)
+  B₁₂ = -_sinseries(sτ₁ * cτ₁₂ + cτ₁ * sτ₁₂, cτ₁ * cτ₁₂ - sτ₁ * sτ₁₂, _C1p(ε))
+  σ₁₂ = τ₁₂ - (B₁₂ - B₁₁)
+  sσ₁₂, cσ₁₂ = sincos(σ₁₂)
+
+  if abs(𝐠.f) > T(0.01)
+    # the reverted series is inaccurate for strongly flattened ellipsoids,
+    # one Newton step on σ₁₂ recovers the accuracy of the direct series
+    sσ₂ = sσ₁ * cσ₁₂ + cσ₁ * sσ₁₂
+    cσ₂ = cσ₁ * cσ₁₂ - sσ₁ * sσ₁₂
+    δ = A₁ * (σ₁₂ + (_sinseries(sσ₂, cσ₂, C₁) - B₁₁)) - s₁₂ / 𝐠.b
+    σ₁₂ -= δ / sqrt(1 + k² * sσ₂^2)
+    sσ₁₂, cσ₁₂ = sincos(σ₁₂)
+  end
+
+  sσ₂ = sσ₁ * cσ₁₂ + cσ₁ * sσ₁₂
+  cσ₂ = cσ₁ * cσ₁₂ - sσ₁ * sσ₁₂
+
+  sβ₂ = cα₀ * sσ₂
+  cβ₂ = hypot(sα₀, cα₀ * cσ₂)
+  # break the degeneracy of a meridian passing over the pole
+  iszero(cβ₂) && ((cβ₂, cσ₂) = (tiny, tiny))
+  sα₂, cα₂ = sα₀, cα₀ * cσ₂
+
+  # longitude on the auxiliary sphere, mapped back to the ellipsoid (Karney, eq. 8)
+  sω₂, cω₂ = sα₀ * sσ₂, cσ₂
+  ω₁₂ = atan(sω₂ * cω₁ - cω₂ * sω₁, cω₂ * cω₁ + sω₂ * sω₁)
+  C₃ = _C3(𝐠.c₃, ε)
+  B₃₁₂ = _sinseries(sσ₂, cσ₂, C₃) - _sinseries(sσ₁, cσ₁, C₃)
+  λ₁₂ = ω₁₂ - 𝐠.f * sα₀ * evalpoly(ε, 𝐠.a₃) * (σ₁₂ + B₃₁₂)
+
+  lat₂ = atand(sβ₂, 𝐠.f₁ * cβ₂)
+  lon₂ = _angnormalize(_angnormalize(lon₁) + _angnormalize(rad2deg(λ₁₂)))
+  azi₂ = atand(sα₂, cα₂)
+
+  (lat₂, lon₂, azi₂)
 end
 
 # quantities that Karney's series need on top of the parameters that
@@ -359,7 +548,7 @@ function _lambda12(𝐠, sβ₁::T, cβ₁, dn₁, sβ₂, cβ₂, dn₂, sα₁
     m₁₂ * 𝐠.f₁ / (cα₂ * cβ₂)
   end
 
-  (v, dv, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε)
+  (v, dv, sα₂, cα₂, σ₁₂, sσ₁, cσ₁, sσ₂, cσ₂, ε)
 end
 
 # ----------------
@@ -377,6 +566,12 @@ function _anground(x::T) where {T}
   w = z - y
   y = w > 0 ? z - w : y
   copysign(y, x)
+end
+
+# reduce x to (-180, 180]
+function _angnormalize(x::T) where {T}
+  y = rem(x, T(360), RoundNearest)
+  abs(y) == 180 ? copysign(T(180), x) : y
 end
 
 # sum with error term
@@ -448,6 +643,19 @@ function _C1(ε::T) where {T}
     ε^4 * evalpoly(ε², (T(-5), T(3))) / 512,
     ε^5 * T(-7) / 1280,
     ε^6 * T(-7) / 2048
+  )
+end
+
+# C₁ₗ′, the reverted series taking τ back to σ (Karney, eq. 21)
+function _C1p(ε::T) where {T}
+  ε² = ε * ε
+  (
+    ε * evalpoly(ε², (T(768), T(-432), T(205))) / 1536,
+    ε^2 * evalpoly(ε², (T(3840), T(-4736), T(4005))) / 12288,
+    ε^3 * evalpoly(ε², (T(116), T(-225))) / 384,
+    ε^4 * evalpoly(ε², (T(2695), T(-7173))) / 7680,
+    ε^5 * T(3467) / 7680,
+    ε^6 * T(38081) / 61440
   )
 end
 
