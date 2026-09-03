@@ -15,12 +15,13 @@ geodesicfwd
 geodesicbwd
 ```
 
-The direct problem walks a given length along a given azimuth:
+The direct problem walks a given length along a given azimuth. Plain
+numbers are taken to be degrees and meters:
 
 ```@example geodesics
 p = Point(LatLon(-33.8688, 151.2093))
 
-geodesicfwd(p, 45u"°", 1000u"km")
+geodesicfwd(p, 45, 1000000)
 ```
 
 The inverse problem recovers the azimuth that connects two points.

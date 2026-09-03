@@ -247,7 +247,7 @@ end
     end
 
     # on a datum with a spherical ellipsoid the azimuth is the great circle one
-    S = CoordRefSystems.GRS80S
+    S = GRS80S
     r₁ = Point(LatLon{S}(10, 20))
     r₂ = Point(LatLon{S}(30, 50))
     Δ = deg2rad(50 - 20)
