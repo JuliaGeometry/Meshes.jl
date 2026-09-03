@@ -297,7 +297,7 @@ function apply(::Repair{13}, g::PolyArea)
 
   outer = first(repaired)
 
-  # Polygon collapsed to a lower-dimensional geometry
+  # polygon collapsed to a lower-dimensional geometry
   outer isa Ring || return outer, nothing
 
   validholes = filter(r -> r isa Ring, repaired[2:end])
