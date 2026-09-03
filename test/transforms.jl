@@ -2443,6 +2443,119 @@ end
   @test rpoly == PolyArea(outer)
 end
 
+@testitem "Repair(13)" setup = [Setup] begin
+  seg = Segment(cart(0, 0), cart(1, 0))
+  rope = Rope(cart(0, 0), cart(1, 0), cart(2, 0))
+  ring = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  poly = PolyArea(ring)
+  ngon = Ngon(vertices(ring)...)
+  multi = Multi([seg, rope, ring, poly, ngon])
+  repair = Repair(13)
+
+  # unduplicated geometries are preserved
+  rseg, cache = TB.apply(repair, seg)
+  @test rseg == seg
+  rrope, cache = TB.apply(repair, rope)
+  @test rrope == rope
+  rring, cache = TB.apply(repair, ring)
+  @test rring == ring
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == poly
+  rngon, cache = TB.apply(repair, ngon)
+  @test rngon == ngon
+  rmulti, cache = TB.apply(repair, multi)
+  @test rmulti == Multi([seg, rope, ring, poly, ngon])
+
+  # duplicated geometries are repaired
+  dseg = Rope([vertices(seg)..., vertices(seg)...])
+  drope = Rope([vertices(rope)..., vertices(rope)[2:end]...])
+  dring = Ring([vertices(ring)..., vertices(ring)...])
+  dpoly = PolyArea([vertices(poly)..., vertices(poly)...])
+  dnpoly = Ngon(vertices(poly)..., vertices(poly)...)
+  dmulti = Multi([dseg, drope, dring, dpoly, dnpoly])
+
+  rseg, cache = TB.apply(repair, dseg)
+  @test rseg == seg
+  rrope, cache = TB.apply(repair, drope)
+  @test rrope == rope
+  rring, cache = TB.apply(repair, dring)
+  @test rring == ring
+  rpoly, cache = TB.apply(repair, dpoly)
+  @test rpoly == poly
+  rngon, cache = TB.apply(repair, dnpoly)
+  @test rngon == ngon
+  rmulti, cache = TB.apply(repair, dmulti)
+  @test rmulti == Multi([seg, rope, ring, poly, ngon])
+
+  # branching rope
+  a = cart(0, 3)
+  b = cart(1, 2)
+  c = cart(0, 1)
+  d = cart(1, 0)
+  e = cart(2, 2)
+  branch = Rope(a, b, c, b, d, b, e)
+
+  rbranch, cache = TB.apply(repair, branch)
+  @test rbranch == Multi([Rope(a, b, c), Segment(b, d), Segment(b, e)])
+
+  # two-vertex ring collapses to a segment
+  dring = Ring(cart(0, 0), cart(1, 0))
+
+  rring, cache = TB.apply(repair, dring)
+  @test rring == Segment(cart(0, 0), cart(1, 0))
+
+  # poly with holes
+  outer = Ring(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  inner = Ring(cart(1, 1), cart(2, 1), cart(2, 2), cart(1, 2))
+  poly = PolyArea(outer, inner)
+
+  rpoly, cache = TB.apply(repair, poly)
+  @test rpoly == poly
+
+  # degenerate hole is removed
+  hole = Ring(cart(1, 1), cart(2, 1))
+  hpoly = PolyArea([outer, hole])
+
+  rpoly, cache = TB.apply(repair, hpoly)
+  @test rpoly == PolyArea(outer)
+
+  # degenerate outer ring collapses the polygon
+  outer = Ring(cart(0, 0), cart(1, 0))
+  dpoly = PolyArea(outer)
+
+  rpoly, cache = TB.apply(repair, dpoly)
+  @test rpoly == Segment(cart(0, 0), cart(1, 0))
+
+  # duplicated geometries in a Multi are removed
+  p1 = cart(0, 0)
+  p2 = cart(1, 1)
+  dmulti = Multi([p1, p1, p2])
+
+  rmulti, cache = TB.apply(repair, dmulti)
+  @test rmulti == Multi([p1, p2])
+
+  # nested Multis are flattened
+  p1 = cart(0, 0)
+  p2 = cart(1, 1)
+  p3 = cart(2, 2)
+  nmulti = Multi([p1, Multi([p2, p3])])
+
+  rmulti, cache = TB.apply(repair, nmulti)
+  @test rmulti == Multi([p1, p2, p3])
+
+  # nested Multis are flattened and duplicated geometries are removed
+  dmulti = Multi([p1, Multi([p1, p2]), p2])
+
+  rmulti, cache = TB.apply(repair, dmulti)
+  @test rmulti == Multi([p1, p2])
+
+  # a Multi with a single unique geometry is unwrapped
+  dmulti = Multi([p1, p1])
+
+  rmulti, cache = TB.apply(repair, dmulti)
+  @test rmulti == p1
+end
+
 @testitem "Repair fallbacks" setup = [Setup] begin
   quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
   repair = Repair(10)

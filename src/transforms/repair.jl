@@ -244,8 +244,10 @@ end
 # ---------------
 
 function apply(::Repair{13}, g::Chain)
-  verts = vertices(g)
+  verts = collect(vertices(g))
 
+  # make sure the chain is closed if it is a ring
+  g isa Ring && push!(verts, first(verts))
   # tuple of already seen edges (a, b) where a < b
   seen = Set{Tuple{eltype(verts),eltype(verts)}}()
   # already costructed chain parts
@@ -262,7 +264,7 @@ function apply(::Repair{13}, g::Chain)
 
     # if the edge has already been seen, we close the current part and start a new one
     if key in seen
-      length(current) >= 2 && push!(parts, current)
+      length(current) ≥ 2 && push!(parts, current)
       current = [b]
       # if the edge is new, we add it to the seen set and continue building the current part
     else
@@ -272,7 +274,7 @@ function apply(::Repair{13}, g::Chain)
   end
 
   # if the last part has at least two vertices, we add it to the parts
-  length(current) >= 2 && push!(parts, current)
+  length(current) ≥ 2 && push!(parts, current)
 
   # construct geometries from the parts
   geoms = map(parts) do verts
@@ -299,8 +301,13 @@ function apply(::Repair{13}, g::PolyArea)
   outer isa Ring || return outer, nothing
 
   validholes = filter(r -> r isa Ring, repaired[2:end])
+  
+  if isempty(validholes)
+    return PolyArea([outer]), nothing
+  else
+    return PolyArea([outer; validholes]), nothing
+  end
 
-  PolyArea(outer, validholes), nothing
 end
 
 function apply(::Repair{13}, g::Ngon)
@@ -308,17 +315,17 @@ function apply(::Repair{13}, g::Ngon)
 
   repaired isa Ring || return repaired
 
-  Ngon(vertices(repaired)...)
+  Ngon(vertices(repaired)...), nothing
 end
 
 function _flatten!(out, geom)
-    if geom isa Multi
-        for g in parent(geom)
-            _flatten!(out, g)
-        end
-    else
-        push!(out, geom)
+  if geom isa Multi
+    for g in parent(geom)
+      _flatten!(out, g)
     end
+  else
+    push!(out, geom)
+  end
 end
 
 function apply(::Repair{13}, g::Multi)
@@ -330,7 +337,7 @@ function apply(::Repair{13}, g::Multi)
   for geom in repaired
     _flatten!(flattened, geom)
   end
-  
+
   maybemulti(unique(flattened)), nothing
 end
 
