@@ -2512,7 +2512,7 @@ end
   rpoly, cache = TB.apply(repair, poly)
   @test rpoly == poly
 
-  # degenerate hole is removed
+  # degenerate hole is removed (equivalent to Repair(12))
   hole = Ring(cart(1, 1), cart(2, 1))
   hpoly = PolyArea([outer, hole])
 
