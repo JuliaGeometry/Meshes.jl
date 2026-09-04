@@ -39,7 +39,7 @@ function BVH(domain::Domain; leafsize::Int=8)
   n = nelements(domain)
 
   # compute the bounding boxes of the elements, their corresponding centers, 
-  boxes = [boundingbox(element(domain, i)) for i in 1:n]
+  boxes = boundingbox.(domain)
   centers = map(boxes) do box
     c = coords(center(box))
     names = propertynames(c)
