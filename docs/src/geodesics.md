@@ -13,6 +13,8 @@ ellipsoid attached to the datum of the coordinates.
 ```@docs
 geodesicfwd
 geodesicbwd
+geodesictangent
+geodesicazimuth
 ```
 
 The direct problem walks a given length along a given azimuth. Plain
@@ -51,4 +53,20 @@ obtained by swapping the arguments:
 
 ```@example geodesics
 geodesicbwd(london, sydney)
+```
+
+## Tangent vectors
+
+An azimuth at a point can also be expressed as a unit vector tangent to
+the ellipsoid there, in geocentric Cartesian coordinates:
+
+```@example geodesics
+geodesictangent(sydney, geodesicbwd(sydney, london))
+```
+
+The conversion goes both ways, and any component of the vector along the
+normal of the ellipsoid is ignored:
+
+```@example geodesics
+geodesicazimuth(sydney, geodesictangent(sydney, 45))
 ```

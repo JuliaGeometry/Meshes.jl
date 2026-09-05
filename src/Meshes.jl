@@ -475,6 +475,8 @@ export
   # geodesics
   geodesicfwd,
   geodesicbwd,
+  geodesictangent,
+  geodesicazimuth,
 
   # centroids
   centroid,
