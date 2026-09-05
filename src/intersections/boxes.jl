@@ -49,17 +49,17 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   latₛ > latₑ && return @IT NotIntersecting nothing f
 
   # check longitude coordinate
-  lons = _lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
-  isempty(lons) && return @IT NotIntersecting nothing f
+  lonranges = _lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
+  isempty(lonranges) && return @IT NotIntersecting nothing f
 
-  # classify
+  # classify intersection
   latpoint = isapproxzero(latₑ - latₛ)
-  lonpoints = all(r -> isapproxzero(last(r) - first(r)), lons)
+  lonpoints = all(r -> isapproxzero(last(r) - first(r)), lonranges)
   corner = latpoint && lonpoints
   overlap = !latpoint && !lonpoints
 
   # construct geometry
-  geoms = map(lons) do (lonₛ, lonₑ)
+  geoms = map(lonranges) do (lonₛ, lonₑ)
     u = withcrs(box₁, (latₛ, lonₛ))
     if corner
       u
@@ -79,17 +79,17 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   end
 end
 
-function _lonintersects(lo₁, hi₁, lo₂, hi₂)
-  ranges₁ = _lonranges(lo₁, hi₁)
-  ranges₂ = _lonranges(lo₂, hi₂)
-  ranges = Tuple{typeof(lo₁),typeof(lo₁)}[]
+function _lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
+  ranges₁ = _lonranges(minlon₁, maxlon₁)
+  ranges₂ = _lonranges(minlon₂, maxlon₂)
+  ranges = Tuple{T,T}[]
   for (a, b) in ranges₁, (c, d) in ranges₂
     lo, hi = max(a, c), min(b, d)
     lo ≤ hi && push!(ranges, (lo, hi))
   end
 
   # -180° and 180° represent the same meridian
-  Δ = oftype(lo₁, 180u"°")
+  Δ = oftype(minlon₁, 180u"°")
   if _containsantimeridian(ranges₁, Δ) && _containsantimeridian(ranges₂, Δ) && !_containsantimeridian(ranges, Δ)
     push!(ranges, (Δ, Δ))
   end
