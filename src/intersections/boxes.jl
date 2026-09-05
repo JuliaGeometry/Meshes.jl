@@ -53,15 +53,15 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   isempty(lonranges) && return @IT NotIntersecting nothing f
 
   # classify intersection
-  latpoint = isapproxzero(latₑ - latₛ)
-  lonpoints = all(r -> isapproxzero(last(r) - first(r)), lonranges)
-  corner = latpoint && lonpoints
-  overlap = !latpoint && !lonpoints
+  singlelat = isapproxequal(latₛ, latₑ)
+  singlelon = all(lon -> isapproxequal(lon[1], lon[2]), lonranges)
+  iscorner = singlelat && singlelon
+  overlaps = !singlelat && !singlelon
 
   # construct geometry
   geoms = map(lonranges) do (lonₛ, lonₑ)
     u = withcrs(box₁, (latₛ, lonₛ))
-    if corner
+    if iscorner
       u
     else
       v = withcrs(box₁, (latₑ, lonₑ))
@@ -70,9 +70,9 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   end
   geom = length(geoms) == 1 ? only(geoms) : Multi(geoms)
 
-  if overlap
+  if overlaps
     return @IT Overlapping geom f
-  elseif corner
+  elseif iscorner
     return @IT CornerTouching geom f
   else
     return @IT Touching geom f
