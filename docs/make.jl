@@ -31,9 +31,10 @@ makedocs(
         "algorithms/boundingbox.md",
         "algorithms/hulls.md"
       ],
+      "Calculus" => "calculus.md",
+      "Geodesics" => "geodesics.md",
       "Transforms" => "transforms.md",
       "Distances" => "distances.md",
-      "Calculus" => "calculus.md",
       "Random" => "rand.md",
       "Visualization" => "visualization.md",
       "Input/Output" => "io.md",
