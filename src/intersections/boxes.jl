@@ -76,32 +76,32 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
 end
 
 function _lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
-  ranges₁ = _lonranges(minlon₁, maxlon₁)
-  ranges₂ = _lonranges(minlon₂, maxlon₂)
-  ranges = Tuple{T,T}[]
-  for (a, b) in ranges₁, (c, d) in ranges₂
-    lo, hi = max(a, c), min(b, d)
-    lo ≤ hi && push!(ranges, (lo, hi))
-  end
-
   # -180° and 180° represent the same meridian
-  Δ = oftype(minlon₁, 180u"°")
-  if _containsantimeridian(ranges₁, Δ) && _containsantimeridian(ranges₂, Δ) && !_containsantimeridian(ranges, Δ)
-    push!(ranges, (Δ, Δ))
+  πdeg = oftype(T, 180u"°")
+
+  # convert range to one or two non-decreasing ranges,
+  # depending on whether it crosses the antimeridian
+  ranges₁ = minlon₁ ≤ maxlon₁ ? ((minlon₁, maxlon₁),) : ((-πdeg, maxlon₁), (minlon₁, πdeg))
+  ranges₂ = minlon₂ ≤ maxlon₂ ? ((minlon₂, maxlon₂),) : ((-πdeg, maxlon₂), (minlon₂, πdeg))
+
+  # compute the intersection of the two sets of ranges
+  ranges = Tuple{T,T}[]
+  for (a₁, b₁) in ranges₁, (a₂, b₂) in ranges₂
+    a, b = max(a₁, a₂), min(b₁, b₂)
+    a ≤ b && push!(ranges, (a, b))
   end
 
-  # pieces meeting at the antimeridian form a single wrapped interval
-  if length(ranges) ≥ 2 && first(ranges)[1] == -Δ && last(ranges)[2] == Δ
-    lo, hi = last(ranges)[1], first(ranges)[2]
-    return lo == Δ && hi == -Δ ? [(Δ, Δ)] : [(lo, hi)]
+  # check if the intersection contains the antimeridian
+  _hasπdeg(ranges) = any(lon -> lon[1] == -πdeg || lon[2] == πdeg, ranges)
+  if _hasπdeg(ranges₁) && _hasπdeg(ranges₂) && !_hasπdeg(ranges)
+    push!(ranges, (πdeg, πdeg))
   end
+
+  # ranges meeting at the antimeridian form a single wrapped interval
+  if length(ranges) ≥ 2 && first(ranges)[1] == -πdeg && last(ranges)[2] == πdeg
+    a, b = last(ranges)[1], first(ranges)[2]
+    return a == πdeg && b == -πdeg ? [(πdeg, πdeg)] : [(a, b)]
+  end
+
   ranges
 end
-
-# longitude intervals in the canonical [-180°, 180°] range
-function _lonranges(lo, hi)
-  Δ = oftype(lo, 180u"°")
-  lo ≤ hi ? ((lo, hi),) : ((-Δ, hi), (lo, Δ))
-end
-
-_containsantimeridian(ranges, Δ) = any(r -> first(r) == -Δ || last(r) == Δ, ranges)
