@@ -90,6 +90,57 @@ function geodesicbwd(p₁::Point{🌐}, p₂::Point{🌐})
   T(ϕ₁) * u"°"
 end
 
+"""
+    geodesictangent(p, ϕ)
+
+Unit vector tangent to the ellipsoid at the point `p`, pointing along
+the azimuth `ϕ`, measured clockwise from the north.
+
+The vector is expressed in the geocentric Cartesian coordinates of the
+datum of `p`, and is the direction in which [`geodesicfwd`](@ref) walks.
+
+See also [`geodesicazimuth`](@ref).
+
+## Examples
+
+```julia
+p = Point(LatLon(0, 0))
+
+geodesictangent(p, 90u"°")
+
+geodesictangent(p, 90)
+```
+"""
+function geodesictangent(p::Point{🌐}, ϕ)
+  T = numtype(lentype(p))
+  ê, n̂ = _eastnorth(p)
+  s, c = sincosd(T(ustrip(u"°", asdeg(ϕ))))
+  unormalize(c * n̂ + s * ê)
+end
+
+"""
+    geodesicazimuth(p, v)
+
+Azimuth of the vector `v` at the point `p` of the ellipsoid, measured
+clockwise from the north. Any component of `v` along the normal of the
+ellipsoid is ignored, and the azimuth is undefined if nothing is left.
+
+See also [`geodesictangent`](@ref).
+
+## Examples
+
+```julia
+p = Point(LatLon(0, 0))
+
+geodesicazimuth(p, Vec(0, 1, 0))
+```
+"""
+function geodesicazimuth(p::Point{🌐}, v::Vec{3})
+  T = numtype(lentype(p))
+  ê, n̂ = _eastnorth(p)
+  T(atand(v ⋅ ê, v ⋅ n̂)) * u"°"
+end
+
 # Solution of the direct geodesic problem: the point reached from (lat₁, lon₁)
 # after walking s₁₂ along the geodesic that leaves with azimuth azi₁, following
 # Karney (2013) section 3. Angles are in degrees, the length in the unit of the
@@ -332,6 +383,19 @@ end
 # ------------------------
 # MISCELLANEOUS UTILITIES
 # ------------------------
+
+# East and north unit vectors of the local frame at the point p, expressed in
+# geocentric Cartesian coordinates. Together with the normal of the ellipsoid
+# they form the frame in which azimuths are measured.
+function _eastnorth(p::Point{🌐})
+  c = convert(manifoldcrs(p), coords(p))
+  sφ, cφ = sincosd(ustrip(c.lat))
+  sλ, cλ = sincosd(ustrip(c.lon))
+  u = unit(lentype(p))
+  ê = Vec(-sλ * u, cλ * u, zero(sλ) * u)
+  n̂ = Vec(-sφ * cλ * u, -sφ * sλ * u, cφ * u)
+  (ê, n̂)
+end
 
 # quantities that Karney's series need on top of the parameters that
 # CoordRefSystems.jl already provides for the ellipsoid of revolution

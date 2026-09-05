@@ -94,3 +94,55 @@
     @test isapprox(geodesicbwd(r₁, r₂), greatcircle * u"°", atol=1e-9u"°")
   end
 end
+
+@testitem "Tangent vectors" setup = [Setup] begin
+  # taking the direction from a chord differences two geocentric vectors of
+  # about 6400 km, which leaves little of a Float32 mantissa for a short chord
+  τϕ = T === Float64 ? 1e-2u"°" : 1u"°"
+
+  # tangent vectors and azimuths are only defined on the ellipsoid
+  @test_throws MethodError geodesictangent(cart(0, 0, 0), 90)
+  @test_throws MethodError geodesicazimuth(cart(0, 0, 0), vector(0, 1, 0))
+
+  # the frame at the origin of the coordinates is aligned with the axes
+  p = latlon(0, 0)
+  @test geodesictangent(p, 0) ≈ vector(0, 0, 1)
+  @test geodesictangent(p, 90) ≈ vector(0, 1, 0)
+  @test geodesictangent(p, 180) ≈ vector(0, 0, -1)
+
+  # the vector is a unit vector in the length unit of the point
+  for ϕ in (0, 37, 90, 143, 180, -75)
+    @test isapprox(norm(geodesictangent(latlon(43, -21), ϕ)), oneunit(T) * u"m", atol=1e-6u"m")
+  end
+
+  # units are optional, and the numeric type follows the point and not the angle
+  @test geodesictangent(latlon(30, 40), 25u"°") ≈ geodesictangent(latlon(30, 40), 25)
+  @test Unitful.numtype(eltype(geodesictangent(latlon(30, 40), 25))) === T
+  @test Unitful.numtype(typeof(geodesicazimuth(latlon(30, 40), geodesictangent(latlon(30, 40), 25)))) === T
+
+  # azimuth inverts tangent
+  for lat in T.(-80:20:80), lon in T.(-150:50:150), ϕ in T.(-150:50:150)
+    q = latlon(lat, lon)
+    @test isapprox(geodesicazimuth(q, geodesictangent(q, ϕ)), ϕ * u"°", atol=1e-4u"°")
+  end
+
+  # the two tangents span the horizon plane, and any component of the
+  # vector along the normal of that plane is ignored
+  q = latlon(45, 10)
+  v = geodesictangent(q, 30)
+  n = normal(Plane(q, geodesictangent(q, 90), geodesictangent(q, 0)))
+  @test geodesicazimuth(q, v) ≈ geodesicazimuth(q, 2v)
+  @test isapprox(geodesicazimuth(q, v + n), geodesicazimuth(q, v), atol=1000eps(T) * u"°")
+  @test isapprox(geodesicazimuth(q, v - 3n), geodesicazimuth(q, v), atol=1000eps(T) * u"°")
+
+  # the tangent points in the direction that geodesicfwd walks
+  for ϕ in T.((-120, -30, 15, 88, 170))
+    q = latlon(-12, 77)
+    @test isapprox(geodesicazimuth(q, geodesicfwd(q, ϕ, 1000) - q), ϕ * u"°", atol=τϕ)
+  end
+
+  # the tangent is consistent with the azimuth of the inverse problem
+  p₁ = latlon(-33.8688, 151.2093)
+  p₂ = latlon(51.5074, -0.1278)
+  @test isapprox(geodesicazimuth(p₁, geodesictangent(p₁, geodesicbwd(p₁, p₂))), geodesicbwd(p₁, p₂), atol=1e-4u"°")
+end
