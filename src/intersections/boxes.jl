@@ -9,12 +9,12 @@
 # 4. do not overlap nor intersect (NotIntersecting -> Nothing)
 function intersection(f, box₁::Box, box₂::Box)
   # retrieve corner points
-  m₁, M₁ = to.(extrema(box₁))
-  m₂, M₂ = to.(extrema(box₂))
+  min₁, max₁ = to.(extrema(box₁))
+  min₂, max₂ = to.(extrema(box₂))
 
   # relevant vertices
-  u = withcrs(box₁, max.(promote(m₁, m₂)...))
-  v = withcrs(box₁, min.(promote(M₁, M₂)...))
+  u = withcrs(box₁, max.(promote(min₁, min₂)...))
+  v = withcrs(box₁, min.(promote(max₁, max₂)...))
 
   # auxiliary variables
   δ = v - u
@@ -41,15 +41,15 @@ end
 function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   # corners in a common CRS
   crs = manifoldcrs(box₁)
-  m₁, M₁ = coords.(extrema(box₁ |> Proj(crs)))
-  m₂, M₂ = coords.(extrema(box₂ |> Proj(crs)))
+  min₁, max₁ = coords.(extrema(box₁ |> Proj(crs)))
+  min₂, max₂ = coords.(extrema(box₂ |> Proj(crs)))
 
   # check latitude coordinate
-  latₛ, latₑ = max(m₁.lat, m₂.lat), min(M₁.lat, M₂.lat)
+  latₛ, latₑ = max(min₁.lat, min₂.lat), min(max₁.lat, max₂.lat)
   latₛ > latₑ && return @IT NotIntersecting nothing f
 
   # check longitude coordinate
-  lons = _lonintersects(m₁.lon, M₁.lon, m₂.lon, M₂.lon)
+  lons = _lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
   isempty(lons) && return @IT NotIntersecting nothing f
 
   # classify
