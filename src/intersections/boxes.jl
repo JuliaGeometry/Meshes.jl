@@ -61,12 +61,8 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   # construct geometry
   geoms = map(lonranges) do (lonₛ, lonₑ)
     u = withcrs(box₁, (latₛ, lonₛ))
-    if iscorner
-      u
-    else
-      v = withcrs(box₁, (latₑ, lonₑ))
-      Box(u, v)
-    end
+    v = withcrs(box₁, (latₑ, lonₑ))
+    iscorner ? u : Box(u, v)
   end
   geom = length(geoms) == 1 ? only(geoms) : Multi(geoms)
 
