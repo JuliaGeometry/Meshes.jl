@@ -77,7 +77,7 @@ end
 
 function _lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
   # -180° and 180° represent the same meridian
-  πdeg = oftype(T, 180u"°")
+  πdeg = T(180u"°")
 
   # convert range to one or two non-decreasing ranges,
   # depending on whether it crosses the antimeridian
