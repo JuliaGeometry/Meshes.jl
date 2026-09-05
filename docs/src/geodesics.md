@@ -32,13 +32,18 @@ the geodesic completely:
 sydney = Point(LatLon(-33.8688, 151.2093))
 london = Point(LatLon(51.5074, -0.1278))
 
-geodesicbwd(sydney, london), GeodesicDistance()(sydney, london)
+geodesicdist = GeodesicDistance()
+
+ϕ = geodesicbwd(sydney, london)
+d = geodesicdist(sydney, london)
+
+ϕ, d
 ```
 
 Walking that azimuth for that length arrives at the second point:
 
 ```@example geodesics
-geodesicfwd(sydney, geodesicbwd(sydney, london), GeodesicDistance()(sydney, london))
+geodesicfwd(sydney, geodesicbwd(sydney, london), geodesicdist(sydney, london))
 ```
 
 The azimuth at the far end points back along the same geodesic, and is
