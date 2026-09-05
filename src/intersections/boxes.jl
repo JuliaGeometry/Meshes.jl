@@ -80,17 +80,17 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
 end
 
 function _lonintersects(lo₁, hi₁, lo₂, hi₂)
-  intervals₁ = _lonintervals(lo₁, hi₁)
-  intervals₂ = _lonintervals(lo₂, hi₂)
+  ranges₁ = _lonranges(lo₁, hi₁)
+  ranges₂ = _lonranges(lo₂, hi₂)
   ranges = Tuple{typeof(lo₁),typeof(lo₁)}[]
-  for (a, b) in intervals₁, (c, d) in intervals₂
+  for (a, b) in ranges₁, (c, d) in ranges₂
     lo, hi = max(a, c), min(b, d)
     lo ≤ hi && push!(ranges, (lo, hi))
   end
 
   # -180° and 180° represent the same meridian
   Δ = oftype(lo₁, 180u"°")
-  if _containsantimeridian(intervals₁, Δ) && _containsantimeridian(intervals₂, Δ) && !_containsantimeridian(ranges, Δ)
+  if _containsantimeridian(ranges₁, Δ) && _containsantimeridian(ranges₂, Δ) && !_containsantimeridian(ranges, Δ)
     push!(ranges, (Δ, Δ))
   end
 
@@ -103,9 +103,9 @@ function _lonintersects(lo₁, hi₁, lo₂, hi₂)
 end
 
 # longitude intervals in the canonical [-180°, 180°] range
-function _lonintervals(lo, hi)
+function _lonranges(lo, hi)
   Δ = oftype(lo, 180u"°")
-  lo ≤ hi ? [(lo, hi)] : [(-Δ, hi), (lo, Δ)]
+  lo ≤ hi ? ((lo, hi),) : ((-Δ, hi), (lo, Δ))
 end
 
 _containsantimeridian(ranges, Δ) = any(r -> first(r) == -Δ || last(r) == Δ, ranges)
