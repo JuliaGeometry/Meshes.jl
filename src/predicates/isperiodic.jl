@@ -16,6 +16,8 @@ isperiodic(::Type{<:Ray}) = (false,)
 
 isperiodic(::Type{<:Line}) = (false,)
 
+isperiodic(g::Geodesic) = (minimum(g) == maximum(g),)
+
 isperiodic(b::BezierCurve) = (first(controls(b)) == last(controls(b)),)
 
 isperiodic(c::ParametrizedCurve) = (minimum(c) == maximum(c),)

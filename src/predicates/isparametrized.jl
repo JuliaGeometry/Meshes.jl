@@ -19,11 +19,13 @@ isparametrized(::Type{<:Ray}) = true
 
 isparametrized(::Type{<:Line}) = true
 
-isparametrized(::Type{<:Plane}) = true
+isparametrized(::Type{<:Geodesic}) = true
 
 isparametrized(::Type{<:BezierCurve}) = true
 
 isparametrized(::Type{<:ParametrizedCurve}) = true
+
+isparametrized(::Type{<:Plane}) = true
 
 isparametrized(::Type{<:Box{<:𝔼}}) = true
 

@@ -201,6 +201,8 @@ function simplexify end
 
 simplexify(box::Box) = discretize(box, ManualSimplexification())
 
+simplexify(geodesic::Geodesic) = discretize(geodesic, RegularDiscretization(50))
+
 simplexify(bezier::BezierCurve) = discretize(bezier, RegularDiscretization(50))
 
 simplexify(curve::ParametrizedCurve) = discretize(curve, RegularDiscretization(50))

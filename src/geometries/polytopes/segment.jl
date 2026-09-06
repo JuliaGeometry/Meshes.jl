@@ -5,11 +5,9 @@
 """
     Segment(p1, p2)
 
-An oriented line segment with end points `p1`, `p2`.
-The segment can be called as `s(t)` with `t` between
-`0` and `1` to interpolate linearly between its endpoints.
+An oriented line segment from point `p1` to `p2`.
 
-See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
+See also [`Geodesic`](@ref), [`Line`](@ref).
 """
 @polytope Segment 1 2
 

@@ -7,7 +7,7 @@
 
 A line passing through points `a` and `b`.
 
-See also [`Segment`](@ref).
+See also [`Segment`](@ref), [`Geodesic`](@ref).
 """
 struct Line{M<:Manifold,C<:CRS} <: Primitive{M,C}
   a::Point{M,C}

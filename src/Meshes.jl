@@ -201,6 +201,7 @@ export
   Point,
   Ray,
   Line,
+  Geodesic,
   BezierCurve,
   ParametrizedCurve,
   Plane,

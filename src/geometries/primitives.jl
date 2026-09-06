@@ -15,6 +15,7 @@ abstract type Primitive{M<:Manifold,C<:CRS} <: Geometry{M,C} end
 include("primitives/point.jl")
 include("primitives/ray.jl")
 include("primitives/line.jl")
+include("primitives/geodesic.jl")
 include("primitives/beziercurve.jl")
 include("primitives/paramcurve.jl")
 include("primitives/plane.jl")
