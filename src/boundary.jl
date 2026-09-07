@@ -37,6 +37,13 @@ boundary(::Line) = nothing
 
 embedboundary(l::Line) = l
 
+function boundary(g::Geodesic)
+  p₁, p₂ = extrema(g)
+  p₁ ≈ p₂ ? nothing : Multi([p₁, p₂])
+end
+
+embedboundary(g::Geodesic) = g
+
 function boundary(b::BezierCurve)
   p = controls(b)
   p₁, p₂ = first(p), last(p)

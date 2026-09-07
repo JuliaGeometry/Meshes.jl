@@ -19,6 +19,8 @@ measure(g::GeometryOrDomain) = integral(_ -> 1, g)
 
 measure(p::Point) = zero(lentype(p))
 
+measure(g::Geodesic) = length(g)
+
 measure(r::Ray) = typemax(lentype(r))
 
 measure(l::Line) = typemax(lentype(l))
@@ -168,6 +170,8 @@ the [`measure`](@ref) of its [`boundary`](@ref).
 perimeter(g) = measure(boundary(g))
 
 perimeter(s::Segment) = zero(lentype(s))
+
+perimeter(g::Geodesic) = zero(lentype(g))
 
 perimeter(c::BezierCurve) = zero(lentype(c))
 

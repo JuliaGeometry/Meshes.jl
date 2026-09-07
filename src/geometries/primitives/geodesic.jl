@@ -15,15 +15,15 @@ struct Geodesic{M<:Manifold,C<:CRS,V<:Vec,ℒ<:Len} <: Primitive{M,C}
   b::Point{M,C}
 
   # state fields
-  dirvec::V
-  length::ℒ
+  v::V
+  l::ℒ
 end
 
 function Geodesic(a::Point, b::Point)
   a′, b′ = promote(a, b)
-  dirvec = _geodesicdirection(a′, b′)
-  length = GeodesicDistance()(a′, b′)
-  Geodesic(a′, b′, dirvec, length)
+  v = _geodesicdir(a′, b′)
+  l = _geodesiclen(a′, b′)
+  Geodesic(a′, b′, v, l)
 end
 
 Geodesic(a::Tuple, b::Tuple) = Geodesic(Point(a), Point(b))
@@ -36,16 +36,16 @@ Base.maximum(g::Geodesic) = g.b
 
 Base.extrema(g::Geodesic) = g.a, g.b
 
-Base.length(g::Geodesic) = g.length
+Base.length(g::Geodesic) = g.l
 
 ==(g₁::Geodesic, g₂::Geodesic) = g₁.a == g₂.a && g₁.b == g₂.b
 
 Base.isapprox(g₁::Geodesic, g₂::Geodesic; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₁.a, g₂.a; atol=atol, kwargs...) && isapprox(g₁.b, g₂.b; atol=atol, kwargs...)
 
-(g::Geodesic{<:𝔼})(t) = g.a + t * g.length * g.dirvec
+(g::Geodesic{<:𝔼})(t) = g.a + (t * g.l) * g.v
 
-(g::Geodesic{🌐})(t) = geodesicfwd(g.a, geodesicazimuth(g.a, g.dirvec), t * g.length)
+(g::Geodesic{🌐})(t) = geodesicfwd(g.a, geodesicazimuth(g.a, g.v), t * g.l)
 
 Base.reverse(g::Geodesic) = Geodesic(g.b, g.a)
 
@@ -70,5 +70,6 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-_geodesicdirection(a::Point{<:𝔼}, b::Point{<:𝔼}) = unormalize(b - a)
-_geodesicdirection(a::Point{🌐}, b::Point{🌐}) = geodesictangent(a, geodesicbwd(a, b))
+_geodesicdir(a::Point{𝔼{Dim}}, b::Point{𝔼{Dim}}) where {Dim} = unormalize(b - a)
+_geodesicdir(a::Point{🌐}, b::Point{🌐}) = geodesictangent(a, geodesicbwd(a, b))
+_geodesiclen(a::Point, b::Point) = GeodesicDistance()(a, b)
