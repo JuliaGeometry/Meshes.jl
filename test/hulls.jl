@@ -171,6 +171,76 @@ end
   @test cart(0.2, 0.2) ∈ h
 end
 
+@testitem "Concave hulls" setup = [Setup] begin
+  @test concavehull(cart(0, 0)) == cart(0, 0)
+
+  @test concavehull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
+
+  @test concavehull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test concavehull(Triangle(cart(0, 0), cart(1, 0), cart(0, 1))) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+
+  @test concavehull(CartesianGrid(10, 10)) == Box(cart(0, 0), cart(10, 10))
+
+  # degenerate point sets bypass the algorithm
+  @test concavehull(Segment(cart(0, 1), cart(1, 0))) == Segment(cart(0, 1), cart(1, 0))
+  quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test vertices(concavehull(quad)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
+
+  # convex point sets reduce to the convex hull
+  b1 = Box(cart(0, 0), cart(1, 1))
+  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  @test concavehull(Multi([b1, b2])) == PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+  @test concavehull(GeometrySet([b1, b2])) == PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+
+  # concave point sets are not simplified to the convex hull
+  pts =
+    cart.([
+      (0, 0),
+      (1, 0),
+      (2, 0),
+      (3, 0),
+      (4, 0),
+      (4, 1),
+      (4, 2),
+      (4, 3),
+      (4, 4),
+      (3, 4),
+      (3, 3),
+      (3, 2),
+      (3, 1),
+      (2, 1),
+      (1, 1),
+      (1, 2),
+      (1, 3),
+      (1, 4),
+      (0, 4),
+      (0, 3),
+      (0, 2),
+      (0, 1)
+    ])
+  mpts = Multi(pts)
+  chul = concavehull(mpts)
+  @test chul isa PolyArea
+  @test issimple(chul)
+  @test all(∈(chul), pts)
+  @test Set(vertices(chul)) == Set(pts)
+  @test area(chul) ≈ T(10) * u"m^2"
+  @test area(chul) < area(convexhull(mpts))
+
+  # TODO: currently throws ArgumentError from KNearestSearch because
+  # _moreiramarch dead-ends for every k and recurses past k = n
+  b1 = Ball(cart(0, 0), T(1))
+  b2 = Box(cart(-1, -1), cart(0, 0))
+  chul = concavehull(Multi([b1, b2]))
+  @test cart(-0.8, -0.8) ∈ chul
+  @test cart(0.2, 0.2) ∈ chul
+end
+
 @testitem "MoreiraMarch" setup = [Setup] begin
   # constructor validation: k must be an integer > 2
   @test_throws AssertionError MoreiraMarch(2)
