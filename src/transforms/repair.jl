@@ -22,7 +22,7 @@ Perform repairing operation with code `K`.
 - K = 10: outer rings of polygon are expanded
 - K = 11: rings of polygon are coherently oriented
 - K = 12: degenerate rings of polygon are removed
-- K = 13: duplicate edges of chains and polygons are removed (no type stability guarantee)
+- K = 13: duplicate edges of chains are removed
 
 ## Examples
 
@@ -243,102 +243,32 @@ end
 # OPERATION (13)
 # ---------------
 
-function apply(::Repair{13}, g::Chain)
-  verts = collect(vertices(g))
+_segmentkey(seg) = begin
+  a, b = vertices(seg)
+  isless(a, b) ? (a, b) : (b, a)
+end
 
-  # make sure the chain is closed if it is a ring
-  g isa Ring && push!(verts, first(verts))
-  # tuple of already seen edges (a, b) where a < b
-  seen = Set{Tuple{eltype(verts),eltype(verts)}}()
-  # already costructed chain parts
-  parts = Vector{eltype(verts)}[]
-  # currently working chain part
-  current = [first(verts)]
+function _uniquesegments(segs::AbstractVector{<:Segment})
+  seen = Set([_segmentkey(first(segs))])
+  unique = [first(segs)]
 
-  for i in 1:(length(verts) - 1)
-    a = verts[i]
-    b = verts[i + 1]
+  for seg in Iterators.drop(segs, 1)
+    key = _segmentkey(seg)
 
-    # create a key for the edge that is independent of the order of vertices
-    key = isless(a, b) ? (a, b) : (b, a)
-
-    # if the edge has already been seen, we close the current part and start a new one
-    if key in seen
-      length(current) ≥ 2 && push!(parts, current)
-      current = [b]
-      # if the edge is new, we add it to the seen set and continue building the current part
-    else
+    if key ∉ seen
       push!(seen, key)
-      push!(current, b)
+      push!(unique, seg)
     end
   end
 
-  # if the last part has at least two vertices, we add it to the parts
-  length(current) ≥ 2 && push!(parts, current)
-
-  # construct geometries from the parts
-  geoms = map(parts) do verts
-    if length(verts) == 2
-      Segment(verts...)
-    elseif first(verts) == last(verts)
-      Ring(verts[1:(end - 1)])
-    else
-      Rope(verts)
-    end
-  end
-
-  maybemulti(geoms), nothing
+  unique
 end
 
-function apply(::Repair{13}, g::PolyArea)
-  repaired = map(rings(g)) do ring
-    first(apply(Repair(13), ring))
-  end
+apply(::Repair{13}, g::Segment) = g, nothing
 
-  outer = first(repaired)
-
-  # polygon collapsed to a lower-dimensional geometry
-  outer isa Ring || return outer, nothing
-
-  validholes = filter(r -> r isa Ring, repaired[2:end])
-  
-  if isempty(validholes)
-    return PolyArea([outer]), nothing
-  else
-    return PolyArea([outer; validholes]), nothing
-  end
-
-end
-
-function apply(::Repair{13}, g::Ngon)
-  repaired = first(apply(Repair(13), Ring(vertices(g))))
-
-  repaired isa Ring || return repaired
-
-  Ngon(vertices(repaired)...), nothing
-end
-
-function _flatten!(out, geom)
-  if geom isa Multi
-    for g in parent(geom)
-      _flatten!(out, g)
-    end
-  else
-    push!(out, geom)
-  end
-end
-
-function apply(::Repair{13}, g::Multi)
-  repaired = map(parent(g)) do geom
-    first(apply(Repair(13), geom))
-  end
-
-  flattened = Vector{eltype(repaired)}()
-  for geom in repaired
-    _flatten!(flattened, geom)
-  end
-
-  maybemulti(unique(flattened)), nothing
+function apply(::Repair{13}, g::Chain)
+  segs = collect(segments(g))
+  Multi(_uniquesegments(segs)), nothing
 end
 
 # ----------

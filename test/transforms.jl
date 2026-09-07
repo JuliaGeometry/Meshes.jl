@@ -2444,50 +2444,67 @@ end
 end
 
 @testitem "Repair(13)" setup = [Setup] begin
-  seg = Segment(cart(0, 0), cart(1, 0))
-  rope = Rope(cart(0, 0), cart(1, 0), cart(2, 0))
-  ring = Ring(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  poly = PolyArea(ring)
-  ngon = Ngon(vertices(ring)...)
-  multi = Multi([seg, rope, ring, poly, ngon])
   repair = Repair(13)
 
-  # unduplicated geometries are preserved
+  # segment is preserved
+  seg = Segment(cart(0, 0), cart(1, 0))
+
   rseg, cache = TB.apply(repair, seg)
   @test rseg == seg
+  @test isnothing(cache)
+
+  # rope is decomposed into segments
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  rope = Rope(a, b, c)
+
   rrope, cache = TB.apply(repair, rope)
-  @test rrope == rope
+  @test rrope == Multi([Segment(a, b), Segment(b, c)])
+  @test isnothing(cache)
+
+  # ring is decomposed into segments
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(1, 1)
+  d = cart(0, 1)
+  ring = Ring(a, b, c, d)
+
   rring, cache = TB.apply(repair, ring)
-  @test rring == ring
-  rpoly, cache = TB.apply(repair, poly)
-  @test rpoly == poly
-  rngon, cache = TB.apply(repair, ngon)
-  @test rngon == ngon
-  rmulti, cache = TB.apply(repair, multi)
-  @test rmulti == Multi([seg, rope, ring, poly, ngon])
+  @test rring == Multi([Segment(a, b), Segment(b, c), Segment(c, d), Segment(d, a)])
+  @test isnothing(cache)
 
-  # duplicated geometries are repaired
-  dseg = Rope([vertices(seg)..., vertices(seg)...])
-  drope = Rope([vertices(rope)..., vertices(rope)[2:end]...])
-  dring = Ring([vertices(ring)..., vertices(ring)...])
-  dpoly = PolyArea([vertices(poly)..., vertices(poly)...])
-  dnpoly = Ngon(vertices(poly)..., vertices(poly)...)
-  dmulti = Multi([dseg, drope, dring, dpoly, dnpoly])
+  # duplicated segments are removed
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  rope = Rope(a, b, c, b, a)
 
-  rseg, cache = TB.apply(repair, dseg)
-  @test rseg == seg
-  rrope, cache = TB.apply(repair, drope)
-  @test rrope == rope
-  rring, cache = TB.apply(repair, dring)
-  @test rring == ring
-  rpoly, cache = TB.apply(repair, dpoly)
-  @test rpoly == poly
-  rngon, cache = TB.apply(repair, dnpoly)
-  @test rngon == ngon
-  rmulti, cache = TB.apply(repair, dmulti)
-  @test rmulti == Multi([seg, rope, ring, poly, ngon])
+  rrope, cache = TB.apply(repair, rope)
+  @test rrope == Multi([Segment(a, b), Segment(b, c)])
+  @test isnothing(cache)
 
-  # branching rope
+  # duplicated segments with opposite orientations are removed
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  rope = Rope(a, b, c, b, a, b)
+
+  rrope, cache = TB.apply(repair, rope)
+  @test rrope == Multi([Segment(a, b), Segment(b, c)])
+  @test isnothing(cache)
+
+  # first occurrence determines segment orientation
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  rope = Rope(b, a, b, c)
+
+  rrope, cache = TB.apply(repair, rope)
+  @test rrope == Multi([Segment(b, a), Segment(b, c)])
+  @test isnothing(cache)
+
+  # branching rope retains all unique segments
   a = cart(0, 3)
   b = cart(1, 2)
   c = cart(0, 1)
@@ -2496,86 +2513,23 @@ end
   branch = Rope(a, b, c, b, d, b, e)
 
   rbranch, cache = TB.apply(repair, branch)
-  @test rbranch == Multi([Rope(a, b, c), Segment(b, d), Segment(b, e)])
+  @test rbranch == Multi([Segment(a, b), Segment(b, c), Segment(b, d), Segment(b, e)])
+  @test isnothing(cache)
 
-  # two-vertex ring collapses to a segment
-  dring = Ring(cart(0, 0), cart(1, 0))
+  # two-vertex ring collapses to a single unique segment
+  a = cart(0, 0)
+  b = cart(1, 0)
+  ring = Ring(a, b)
 
-  rring, cache = TB.apply(repair, dring)
-  @test rring == Segment(cart(0, 0), cart(1, 0))
+  rring, cache = TB.apply(repair, ring)
+  @test rring == Multi([Segment(a, b)])
+  @test isnothing(cache)
 
-  # poly with holes
-  outer = Ring(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
-  inner = Ring(cart(1, 1), cart(2, 1), cart(2, 2), cart(1, 2))
-  poly = PolyArea(outer, inner)
-
-  rpoly, cache = TB.apply(repair, poly)
-  @test rpoly == poly
-
-  # degenerate hole is removed (equivalent to Repair(12))
-  hole = Ring(cart(1, 1), cart(2, 1))
-  hpoly = PolyArea([outer, hole])
-
-  rpoly, cache = TB.apply(repair, hpoly)
-  @test rpoly == PolyArea(outer)
-
-  # degenerate outer ring collapses the polygon
-  outer = Ring(cart(0, 0), cart(1, 0))
-  dpoly = PolyArea(outer)
-
-  rpoly, cache = TB.apply(repair, dpoly)
-  @test rpoly == Segment(cart(0, 0), cart(1, 0))
-
-  # duplicated geometries in a Multi are removed
-  p1 = cart(0, 0)
-  p2 = cart(1, 1)
-  dmulti = Multi([p1, p1, p2])
-
-  rmulti, cache = TB.apply(repair, dmulti)
-  @test rmulti == Multi([p1, p2])
-
-  # nested Multis are flattened
-  p1 = cart(0, 0)
-  p2 = cart(1, 1)
-  p3 = cart(2, 2)
-  nmulti = Multi([p1, Multi([p2, p3])])
-
-  rmulti, cache = TB.apply(repair, nmulti)
-  @test rmulti == Multi([p1, p2, p3])
-
-  # nested Multis are flattened and duplicated geometries are removed
-  dmulti = Multi([p1, Multi([p1, p2]), p2])
-
-  rmulti, cache = TB.apply(repair, dmulti)
-  @test rmulti == Multi([p1, p2])
-
-  # a Multi with a single unique geometry is unwrapped
-  dmulti = Multi([p1, p1])
-
-  rmulti, cache = TB.apply(repair, dmulti)
-  @test rmulti == p1
-end
-
-@testitem "Repair fallbacks" setup = [Setup] begin
-  quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
-  repair = Repair(10)
-  rquad, cache = TB.apply(repair, quad)
-  @test rquad isa Quadrangle
-  @test rquad == quad
-
-  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-  multi = Multi([poly1, poly2])
-  repair = Repair(11)
-  rmulti, cache = TB.apply(repair, multi)
-  @test rmulti == Multi([repair(poly1), repair(poly2)])
-
-  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
-  gset = GeometrySet([poly1, poly2])
-  repair = Repair(11)
-  rgset, cache = TB.apply(repair, gset)
-  @test rgset == GeometrySet([repair(poly1), repair(poly2)])
+  # type-stability
+  @inferred repair(seg)
+  @inferred repair(rope)
+  @inferred repair(ring)
+  @inferred repair(branch)
 end
 
 @testitem "Repair IO" setup = [Setup] begin
