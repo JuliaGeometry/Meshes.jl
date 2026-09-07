@@ -96,8 +96,7 @@
   @test vertices(t) == 1:20
   @test vertex(t, 1) == 1
   @test vertex(t, 20) == 20
-  @test facet.(Ref(t), 1:31) ==
-        connect.([
+  @test facet.(Ref(t), 1:31) == connect.([
     (1, 5),
     (2, 6),
     (3, 7),
