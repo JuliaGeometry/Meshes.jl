@@ -75,7 +75,7 @@ function measure(t::Torus)
   4 * T(π)^2 * R * r
 end
 
-measure(s::Segment{<:𝔼}) = norm(maximum(s) - minimum(s))
+measure(s::Segment) = length(s)
 
 measure(c::Chain{<:𝔼}) = sum(measure, segments(c))
 
