@@ -127,10 +127,15 @@ end
 
   box = Box(latlon(48.0110, -178.5), latlon(48.2511, 2.001))
   @test latlon(48.1, 0) ∈ box
-  @test latlon(48.1, -179.1) ∈ box
+  @test latlon(48.1, -179.1) ∉ box
   @test latlon(48.1, 1.1) ∈ box
-  @test latlon(48.1, -178.1) ∉ box
+  @test latlon(48.1, -178.1) ∈ box
   @test latlon(48.1, 2.1) ∉ box
+
+  box = Box(latlon(-10, 170), latlon(10, -170))
+  @test latlon(0, 175) ∈ box
+  @test latlon(0, -175) ∈ box
+  @test latlon(0, 0) ∉ box
 
   box = Box(latlon(48.0110, -50.5), latlon(48.2511, -45.4))
   @test latlon(48.1, -48) ∈ box
