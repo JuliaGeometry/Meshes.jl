@@ -36,14 +36,18 @@ Base.maximum(g::Geodesic) = g.b
 
 Base.extrema(g::Geodesic) = g.a, g.b
 
+Base.length(g::Geodesic) = g.length
+
 ==(g₁::Geodesic, g₂::Geodesic) = g₁.a == g₂.a && g₁.b == g₂.b
 
 Base.isapprox(g₁::Geodesic, g₂::Geodesic; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₁.a, g₂.a; atol=atol, kwargs...) && isapprox(g₁.b, g₂.b; atol=atol, kwargs...)
 
-(g::Geodesic{<:𝔼})(t) = g.a + t * (g.b - g.a)
+(g::Geodesic{<:𝔼})(t) = g.a + t * g.length * g.dirvec
 
 (g::Geodesic{🌐})(t) = geodesicfwd(g.a, geodesicazimuth(g.a, g.dirvec), t * g.length)
+
+Base.reverse(g::Geodesic) = Geodesic(g.b, g.a)
 
 # -----------
 # IO METHODS
