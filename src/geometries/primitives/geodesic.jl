@@ -41,7 +41,7 @@ Base.extrema(g::Geodesic) = g.a, g.b
 Base.isapprox(g₁::Geodesic, g₂::Geodesic; atol=atol(lentype(g₁)), kwargs...) =
   isapprox(g₁.a, g₂.a; atol=atol, kwargs...) && isapprox(g₁.b, g₂.b; atol=atol, kwargs...)
 
-(g::Geodesic{𝔼})(t) = g.a + (t * g.length) * g.dirvec
+(g::Geodesic{<:𝔼})(t) = g.a + t * (g.b - g.a)
 
 (g::Geodesic{🌐})(t) = geodesicfwd(g.a, geodesicazimuth(g.a, g.dirvec), t * g.length)
 
@@ -66,5 +66,5 @@ end
 # HELPER FUNCTIONS
 # -----------------
 
-_geodesicdirection(a::Point{𝔼}, b::Point{𝔼}) = unormalize(b - a)
+_geodesicdirection(a::Point{<:𝔼}, b::Point{<:𝔼}) = unormalize(b - a)
 _geodesicdirection(a::Point{🌐}, b::Point{🌐}) = geodesictangent(a, geodesicbwd(a, b))
