@@ -69,3 +69,83 @@ isthreaded(cond=true) = cond && Threads.nthreads() > 1
 Return `only(geoms)` or `Multi(geoms)` depending on the length of `geoms`.
 """
 maybemulti(geoms) = length(geoms) == 1 ? only(geoms) : Multi(geoms)
+
+"""
+    glue(segs)
+Glue unique segments into `Segment`s, `Rope`s and `Ring`s. Segments are sorted.
+"""
+function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
+  length(segs) == 1 && return only(segs)
+
+  # sort segments independently of input order
+  segs = sort(segs; by=_segmentkey)
+
+  # build adjacency dictionary
+  adj = Dict{Point{M,C},Vector{Int}}()
+  for (i, seg) in enumerate(segs)
+    a, b = vertices(seg)
+    push!(get!(adj, a, Int[]), i)
+    push!(get!(adj, b, Int[]), i)
+  end
+
+  visited = falses(length(segs))
+  chains = Chain{M,C}[]
+
+  # trace a maximal path from a starting vertex through a segment
+  function trace(start, segind)
+    verts = [start]
+    current = start
+    currentind = segind
+
+    while true
+      visited[currentind] = true
+
+      a, b = vertices(segs[currentind])
+      next = current == a ? b : a
+      push!(verts, next)
+
+      # stop at terminal or branching vertices
+      length(adj[next]) == 2 || break
+
+      i, j = adj[next]
+      nextind = i == currentind ? j : i
+
+      visited[nextind] && break
+
+      current = next
+      currentind = nextind
+    end
+
+    verts
+  end
+
+  # first trace maximal non-cyclic paths
+  starts = sort([v for (v, inds) in adj if length(inds) != 2])
+
+  for start in starts
+    for segind in adj[start]
+      visited[segind] && continue
+
+      verts = trace(start, segind)
+
+      geom = length(verts) == 2 ? Segment(verts...) : Rope(verts)
+      push!(chains, geom)
+    end
+  end
+
+  # remaining unvisited segments belong to cycles
+  for segind in eachindex(segs)
+    visited[segind] && continue
+
+    a, b = vertices(segs[segind])
+    start = isless(a, b) ? a : b
+
+    verts = trace(start, segind)
+
+    push!(chains, Ring(verts[1:(end - 1)]))
+  end
+
+  chains
+end
+
+glue(g::Multi) = glue(parent(g))
