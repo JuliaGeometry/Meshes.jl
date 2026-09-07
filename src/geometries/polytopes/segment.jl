@@ -34,6 +34,8 @@ Segment(ab::Tuple) = Segment(ab...)
 
 nvertices(::Type{<:Segment}) = 2
 
+vertices(s::Segment) = SVector(s.a, s.b)
+
 Base.minimum(s::Segment) = s.a
 
 Base.maximum(s::Segment) = s.b
