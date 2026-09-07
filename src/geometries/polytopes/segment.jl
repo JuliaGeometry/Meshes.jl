@@ -28,7 +28,9 @@ end
 
 Segment(a::Tuple, b::Tuple) = Segment(Point(a), Point(b))
 
-Segment(vertices::AbstractVector) = Segment(vertices...)
+Segment(ab::AbstractVector) = Segment(ab...)
+
+Segment(ab::Tuple) = Segment(ab...)
 
 nvertices(::Type{<:Segment}) = 2
 
