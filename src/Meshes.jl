@@ -516,6 +516,7 @@ export
   # clipping
   ClippingMethod,
   SutherlandHodgmanClipping,
+  WeilerAthertonClipping,
   clip,
 
   # intersections
