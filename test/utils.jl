@@ -37,6 +37,20 @@ end
   @test Meshes.mayberound(1.1, 1.0, 0.05) ≈ 1.1
 end
 
+@testitem "approxunique" setup = [Setup] begin
+  points = [cart(0, 0), cart(1, 1), cart(1, 1), cart(2, 2)]
+  pts = Meshes.approxunique(points)
+  @test length(pts) == 3
+  @test all(p in pts for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
+
+  points = [cart(0, 0), cart(1, 1 + eps(T)), cart(1, 1), cart(2, 2)]
+  box = Box(cart(0, 0), cart(2, 2))
+  pts = Meshes.approxunique(points)
+  @test length(pts) == 3
+  @test all(any(isapprox(i, p) for i in pts) for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
+  @test all(p in box for p in pts)
+end
+
 @testitem "intersectparameters" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   if T === Float64
@@ -100,15 +114,14 @@ end
   @test length(points) == 1
 
   # box case with one segment outside
-  segs =
-    Segment.([
-      (cart(0, 0), cart(1.1, 1.1)),
-      (cart(1, 0), cart(0, 1)),
-      (cart(0, 0), cart(0, 1)),
-      (cart(0, 0), cart(1, 0)),
-      (cart(0, 1), cart(1, 1)),
-      (cart(1, 0), cart(1, 1))
-    ])
+  segs = Segment.([
+    (cart(0, 0), cart(1.1, 1.1)),
+    (cart(1, 0), cart(0, 1)),
+    (cart(0, 0), cart(0, 1)),
+    (cart(0, 0), cart(1, 0)),
+    (cart(0, 1), cart(1, 1)),
+    (cart(1, 0), cart(1, 1))
+  ])
   points, seginds = sortedintersection(segs)
   @test length(points) == 2
   @test length(seginds) == 2
@@ -117,17 +130,16 @@ end
 
   # multiple intersections, endpoints as intersections
   if T === Float64
-    segs =
-      Segment.([
-        (cart(9, 13), cart(6, 9)),
-        (cart(2, 12), cart(9, 4.8)),
-        (cart(12, 11), cart(4, 7)),
-        (cart(2.5, 10), cart(12.5, 2)),
-        (cart(13, 6), cart(10, 4)),
-        (cart(10.5, 5.5), cart(9, 1)),
-        (cart(10, 4), cart(11, -1)),
-        (cart(10, 3), cart(10, 5))
-      ])
+    segs = Segment.([
+      (cart(9, 13), cart(6, 9)),
+      (cart(2, 12), cart(9, 4.8)),
+      (cart(12, 11), cart(4, 7)),
+      (cart(2.5, 10), cart(12.5, 2)),
+      (cart(13, 6), cart(10, 4)),
+      (cart(10.5, 5.5), cart(9, 1)),
+      (cart(10, 4), cart(11, -1)),
+      (cart(10, 3), cart(10, 5))
+    ])
     points, seginds = sortedintersection(segs)
     @test length(points) == 4
     @test length(seginds) == 4
