@@ -29,21 +29,29 @@ geodesicfwd(p, 90, 1000000)
 * Karney, C. F. F. 2013. [Algorithms for geodesics](https://doi.org/10.1007/s00190-012-0578-z)
 """
 function geodesicfwd(p::Point{🌐}, ϕ, l)
+  # convert coordinates to LatLon
   c = convert(manifoldcrs(p), coords(p))
-
-  # the ellipsoid comes from the datum of the coordinates
   🌎 = ellipsoid(datum(c))
+  u = unit(majoraxis(🌎))
+
+  # unitful azimuth and length
+  ϕ′ = asdeg(ϕ)
+  l′ = aslen(l)
 
   # the series of Karney need double precision to reach round-off
   T = numtype(lentype(c))
-  S = promote_type(T, Float64)
-  lat, lon = S(ustrip(c.lat)), S(ustrip(c.lon))
-  azi = S(ustrip(u"°", asdeg(ϕ)))
-  len = S(ustrip(unit(majoraxis(🌎)), aslen(l)))
+  U = numtype(typeof(ϕ′))
+  V = numtype(typeof(l′))
+  R = promote_type(T, U, V)
+  S = promote_type(T, U, V, Float64)
+  lat = S(ustrip(c.lat))
+  lon = S(ustrip(c.lon))
+  azi = S(ustrip(ϕ′))
+  len = S(ustrip(u, l′))
 
   lat′, lon′, _ = _geodesicdirect(🌎, lat, lon, azi, len)
 
-  withcrs(p, (T(lat′), T(lon′)))
+  withcrs(p, (R(lat′), R(lon′)))
 end
 
 """
@@ -112,9 +120,12 @@ geodesictangent(p, 90)
 ```
 """
 function geodesictangent(p::Point{🌐}, ϕ)
+  ϕ′ = asdeg(ϕ)
   T = numtype(lentype(p))
+  U = numtype(typeof(ϕ′))
+  S = promote_type(T, U)
   ê, n̂ = _eastnorth(p)
-  s, c = sincosd(T(ustrip(u"°", asdeg(ϕ))))
+  s, c = sincosd(S(ustrip(ϕ′)))
   unormalize(c * n̂ + s * ê)
 end
 
@@ -137,8 +148,10 @@ geodesicazimuth(p, Vec(0, 1, 0))
 """
 function geodesicazimuth(p::Point{🌐}, v::Vec{3})
   T = numtype(lentype(p))
+  U = numtype(eltype(v))
+  S = promote_type(T, U)
   ê, n̂ = _eastnorth(p)
-  T(atand(v ⋅ ê, v ⋅ n̂)) * u"°"
+  S(atand(v ⋅ ê, v ⋅ n̂)) * u"°"
 end
 
 # Solution of the direct geodesic problem: the point reached from (lat₁, lon₁)
