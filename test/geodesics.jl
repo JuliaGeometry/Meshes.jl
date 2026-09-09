@@ -1,6 +1,6 @@
 @testitem "Geodesics" setup = [Setup] begin
   # the geodesics are accurate to nanometres, which is far coarser than the
-  # picometre default tolerance that Meshes uses to compare points
+  # picometer default tolerance that Meshes uses to compare points
   τ = T === Float64 ? 1e-7u"m" : 10u"m"
 
   # the azimuth is only defined for points on the ellipsoid

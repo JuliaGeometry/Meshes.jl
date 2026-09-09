@@ -67,12 +67,10 @@
   r = majoraxis(ellipsoid(datum(crs(s))))
   C = 2 * T(π) * ℳ(r)
   @test measure(s) ≈ C / 4
-  # TODO: fix measure of segments on the globe
-  s = Segment(latlon(0, 135), latlon(0, 45))
-  @test_broken measure(s) ≈ 3C / 4
+  @test measure(reverse(s)) ≈ C / 4
 
   # the geodesics are accurate to nanometres, which is far coarser than the
-  # picometre default tolerance that Meshes uses to compare points
+  # picometer default tolerance that Meshes uses to compare points
   τ = T === Float64 ? 1e-7u"m" : 10u"m"
   s = Segment(latlon(45, 0), latlon(45, 90))
   @test isapprox(s(T(0)), latlon(45, 0), atol=τ)
@@ -254,7 +252,7 @@ end
   @test r(T(1)) == cart(4, 0)
 
   # the geodesics are accurate to nanometres, which is far coarser than the
-  # picometre default tolerance that Meshes uses to compare points
+  # picometer default tolerance that Meshes uses to compare points
   τ = T === Float64 ? 1e-7u"m" : 10u"m"
   r = Ring(latlon(45, 0), latlon(45, 90), latlon(90, 90))
   @test isapprox(r(T(0)), latlon(45, 0), atol=τ)
