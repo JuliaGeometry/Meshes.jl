@@ -29,21 +29,28 @@ geodesicfwd(p, 90, 1000000)
 * Karney, C. F. F. 2013. [Algorithms for geodesics](https://doi.org/10.1007/s00190-012-0578-z)
 """
 function geodesicfwd(p::Point{🌐}, ϕ, l)
+  # convert coordinates to LatLon
   c = convert(manifoldcrs(p), coords(p))
-
-  # the ellipsoid comes from the datum of the coordinates
   🌎 = ellipsoid(datum(c))
+  u = unit(majoraxis(🌎))
+
+  # unitful azimuth and length
+  ϕ′ = asdeg(ϕ)
+  l′ = aslen(l)
 
   # the series of Karney need double precision to reach round-off
   T = numtype(lentype(c))
-  S = promote_type(T, Float64)
-  lat, lon = S(ustrip(c.lat)), S(ustrip(c.lon))
-  azi = S(ustrip(u"°", asdeg(ϕ)))
-  len = S(ustrip(unit(majoraxis(🌎)), aslen(l)))
+  U = numtype(typeof(ϕ′))
+  V = numtype(typeof(l′))
+  S = promote_type(T, U, V, Float64)
+  lat = S(ustrip(c.lat))
+  lon = S(ustrip(c.lon))
+  azi = S(ustrip(ϕ′))
+  len = S(ustrip(u, l′))
 
   lat′, lon′, _ = _geodesicdirect(🌎, lat, lon, azi, len)
 
-  withcrs(p, (T(lat′), T(lon′)))
+  withcrs(p, (lat′, lon′))
 end
 
 """
