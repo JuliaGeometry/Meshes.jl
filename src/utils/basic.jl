@@ -148,4 +148,23 @@ function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
   chains
 end
 
-glue(g::Multi) = glue(parent(g))
+_segmentkey(seg) = begin
+  a, b = vertices(seg)
+  isless(a, b) ? (a, b) : (b, a)
+end
+
+function glue(g::Multi)
+  geoms = flatten(g)
+  segs = collect(Iterators.flatten(segments(geom) for geom in geoms))
+  glue(segs)
+end
+
+"""
+    flatten(g)
+
+Return a vector of the geometries contained in `g`. If `g` is a `Multi`, it recursively flattens its parents.
+"""
+function flatten(g)
+	g isa Multi || return [g]
+	mapreduce(flatten, vcat, parent(g))
+end

@@ -22,7 +22,6 @@ Perform repairing operation with code `K`.
 - K = 10: outer rings of polygon are expanded
 - K = 11: rings of polygon are coherently oriented
 - K = 12: degenerate rings of polygon are removed
-- K = 13: duplicate edges of chains are removed
 
 ## Examples
 
@@ -237,38 +236,6 @@ function apply(::Repair{12}, poly::PolyArea)
   inners = filter(r -> nvertices(r) > 2, r[2:end])
 
   PolyArea([outer; inners]), nothing
-end
-
-# ---------------
-# OPERATION (13)
-# ---------------
-
-_segmentkey(seg) = begin
-  a, b = vertices(seg)
-  isless(a, b) ? (a, b) : (b, a)
-end
-
-function _uniquesegments(segs::AbstractVector{<:Segment})
-  seen = Set([_segmentkey(first(segs))])
-  unique = [first(segs)]
-
-  for seg in Iterators.drop(segs, 1)
-    key = _segmentkey(seg)
-
-    if key ∉ seen
-      push!(seen, key)
-      push!(unique, seg)
-    end
-  end
-
-  unique
-end
-
-apply(::Repair{13}, g::Segment) = g, nothing
-
-function apply(::Repair{13}, g::Chain)
-  segs = collect(segments(g))
-  Multi(_uniquesegments(segs)), nothing
 end
 
 # ----------
