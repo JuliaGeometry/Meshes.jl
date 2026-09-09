@@ -10,10 +10,10 @@ An oriented, geodesic line segment from point `p1` to point `p2`.
 ## Examples
 
 ```julia
-# segment in Euclidean manifold
+# straight segment in Euclidean space
 Segment((0, 0), (1, 1))
 
-# segment in ellipsoid manifold
+# geodesic segment in Earth's surface
 Segment(Point(LatLon(0, 0)), Point(LatLon(45, 90)))
 ```
 
