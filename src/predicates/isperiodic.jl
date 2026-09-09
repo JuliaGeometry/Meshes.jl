@@ -48,7 +48,7 @@ isperiodic(::Type{<:Paraboloid}) = (false, true)
 
 isperiodic(::Type{<:Torus}) = (true, true)
 
-isperiodic(s::Segment) = (minimum(s) == maximum(s),)
+isperiodic(::Type{<:Segment}) = (false,)
 
 isperiodic(::Type{<:Rope}) = (false,)
 
