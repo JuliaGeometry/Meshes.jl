@@ -165,6 +165,6 @@ end
 Return a vector of the geometries contained in `g`. If `g` is a `Multi`, it recursively flattens its parents.
 """
 function flatten(g)
-	g isa Multi || return [g]
-	mapreduce(flatten, vcat, parent(g))
+  g isa Multi || return [g]
+  mapreduce(flatten, vcat, parent(g))
 end
