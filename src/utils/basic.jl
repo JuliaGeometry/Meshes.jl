@@ -75,7 +75,7 @@ maybemulti(geoms) = length(geoms) == 1 ? only(geoms) : Multi(geoms)
 Glue unique segments into `Segment`s, `Rope`s and `Ring`s. Segments are sorted.
 """
 function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
-  length(segs) == 1 && return only(segs)
+  length(segs) == 1 && return [only(segs)]
 
   # sort segments independently of input order
   segs = sort(segs; by=_segmentkey)
@@ -160,14 +160,20 @@ function glue(g::Multi)
   points = filter(geom -> geom isa Point, geoms)
   chains = filter(geom -> geom isa Chain, geoms)
 
+  # if there are no chains, we can return the glued geometry immediately
+  isempty(chains) && return points
+
   # collect all segments from the chains
   segs = collect(Iterators.flatten(segments(g) for g in chains))
   glued = glue(segs)
 
+  # if there are no points, we can return the glued geometry immediately
+  isempty(points) && return glued
+  
   # remove points already represented by the glued 1D geometry
-  points = filter(p -> !any(seg -> p ∈ seg, glued), points)
+  points = filter(p -> !any(chain -> p ∈ chain, glued), points)
 
-  maybemulti([glued..., points...])
+  [glued..., points...]
 end
 
 """

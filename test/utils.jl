@@ -297,4 +297,65 @@ end
 
   glued = Meshes.glue(multi)
   @test glued == Chain[Rope(a, b, c, d)]
+
+  # point at a segment vertex is removed
+  multi = Multi([Segment(a, b), b])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b)]
+
+  # point in the interior of a segment is removed
+  p = cart(0.5, 0)
+  multi = Multi([Segment(a, b), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b)]
+
+  # point not contained in the glued geometry is preserved
+  p = cart(0, 1)
+  multi = Multi([Segment(a, b), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b), p]
+
+  # point contained in a rope is removed after gluing
+  multi = Multi([Segment(a, b), Segment(b, c), b])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c)]
+
+  # interior point of a glued rope is removed
+  p = cart(1.5, 0)
+  multi = Multi([Segment(a, b), Segment(b, c), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c)]
+
+  # unrelated point survives alongside a glued rope
+  p = cart(1, 1)
+  multi = Multi([Segment(a, b), Segment(b, c), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c), p]
+
+  # redundant and unrelated points are handled independently
+  p = cart(1, 1)
+  multi = Multi([Segment(a, b), Segment(b, c), b, p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c), p]
+
+  # points contained in different glued components are all removed
+  multi = Multi([Segment(a, b), Segment(c, d), a, d])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b), Segment(c, d)]
+
+  # unrelated points are preserved with multiple glued components
+  p1 = cart(0, 1)
+  p2 = cart(3, 1)
+  multi = Multi([Segment(a, b), Segment(c, d), p1, p2])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b), Segment(c, d), p1, p2]
 end
