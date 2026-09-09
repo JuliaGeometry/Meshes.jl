@@ -100,15 +100,14 @@ end
   @test length(points) == 1
 
   # box case with one segment outside
-  segs =
-    Segment.([
-      (cart(0, 0), cart(1.1, 1.1)),
-      (cart(1, 0), cart(0, 1)),
-      (cart(0, 0), cart(0, 1)),
-      (cart(0, 0), cart(1, 0)),
-      (cart(0, 1), cart(1, 1)),
-      (cart(1, 0), cart(1, 1))
-    ])
+  segs = Segment.([
+    (cart(0, 0), cart(1.1, 1.1)),
+    (cart(1, 0), cart(0, 1)),
+    (cart(0, 0), cart(0, 1)),
+    (cart(0, 0), cart(1, 0)),
+    (cart(0, 1), cart(1, 1)),
+    (cart(1, 0), cart(1, 1))
+  ])
   points, seginds = sortedintersection(segs)
   @test length(points) == 2
   @test length(seginds) == 2
@@ -117,17 +116,16 @@ end
 
   # multiple intersections, endpoints as intersections
   if T === Float64
-    segs =
-      Segment.([
-        (cart(9, 13), cart(6, 9)),
-        (cart(2, 12), cart(9, 4.8)),
-        (cart(12, 11), cart(4, 7)),
-        (cart(2.5, 10), cart(12.5, 2)),
-        (cart(13, 6), cart(10, 4)),
-        (cart(10.5, 5.5), cart(9, 1)),
-        (cart(10, 4), cart(11, -1)),
-        (cart(10, 3), cart(10, 5))
-      ])
+    segs = Segment.([
+      (cart(9, 13), cart(6, 9)),
+      (cart(2, 12), cart(9, 4.8)),
+      (cart(12, 11), cart(4, 7)),
+      (cart(2.5, 10), cart(12.5, 2)),
+      (cart(13, 6), cart(10, 4)),
+      (cart(10.5, 5.5), cart(9, 1)),
+      (cart(10, 4), cart(11, -1)),
+      (cart(10, 3), cart(10, 5))
+    ])
     points, seginds = sortedintersection(segs)
     @test length(points) == 4
     @test length(seginds) == 4

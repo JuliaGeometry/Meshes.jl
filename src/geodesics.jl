@@ -575,7 +575,7 @@ end
 # ANGLE UTILITIES
 # ----------------
 
-_hnorm(x, y) = (h = hypot(x, y); (x / h, y / h))
+_hnorm(x, y) = (h=hypot(x, y); (x / h, y / h))
 
 # coarsen x to the resolution available near 1/16 degree, so that angles
 # that are tiny but not zero do not turn into near singular cases. The

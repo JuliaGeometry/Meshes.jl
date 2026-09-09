@@ -16,8 +16,7 @@ function Base.in(p::Point, s::Segment)
   # segment ab if and only if vectors satisfy 0 ≤ ap ⋅ ab ≤ ||ab||²
   a, b = vertices(s)
   ab, ap = b - a, p - a
-  iscollinear(a, b, p) && (abap = ab ⋅ ap;
-  isnonnegative(abap) && abap ≤ ab ⋅ ab)
+  iscollinear(a, b, p) && (abap=ab ⋅ ap; isnonnegative(abap) && abap ≤ ab ⋅ ab)
 end
 
 Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && isnonnegative((p - r(0)) ⋅ (r(1) - r(0)))
@@ -44,13 +43,7 @@ function Base.in(p::Point{🌐}, b::Box{🌐})
   latlonₗ.lat ≤ latlonₚ.lat ≤ latlonᵣ.lat && inlonrange(latlonₗ.lon, latlonₚ.lon, latlonᵣ.lon)
 end
 
-function inlonrange(lonₗ, lonₚ, lonᵣ)
-  if isnegative(lonₗ) && isnonnegative(lonᵣ)
-    lonₚ ≤ lonₗ || (isnonnegative(lonₚ) && lonₚ ≤ lonᵣ)
-  else
-    lonₗ ≤ lonₚ ≤ lonᵣ
-  end
-end
+inlonrange(lonₗ, lonₚ, lonᵣ) = lonₗ ≤ lonᵣ ? lonₗ ≤ lonₚ ≤ lonᵣ : lonₗ ≤ lonₚ || lonₚ ≤ lonᵣ
 
 function Base.in(p::Point, b::Ball)
   c = center(b)
