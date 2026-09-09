@@ -252,12 +252,16 @@ end
   @test r(T(0.5)) == cart(2, 0)
   @test r(T(0.75)) == cart(3, 0)
   @test r(T(1)) == cart(4, 0)
+
+  # the geodesics are accurate to nanometres, which is far coarser than the
+  # picometre default tolerance that Meshes uses to compare points
+  τ = T === Float64 ? 1e-7u"m" : 10u"m"
   r = Ring(latlon(45, 0), latlon(45, 90), latlon(90, 90))
-  @test r(T(0)) == latlon(45, 0)
-  @test r(T(1)) == latlon(45, 0)
+  @test isapprox(r(T(0)), latlon(45, 0), atol=τ)
+  @test isapprox(r(T(1)), latlon(45, 0), atol=τ)
   r = Rope(latlon(45, 0), latlon(45, 90), latlon(90, 90))
-  @test r(T(0)) == latlon(45, 0)
-  @test r(T(1)) == latlon(90, 90)
+  @test isapprox(r(T(0)), latlon(45, 0), atol=τ)
+  @test isapprox(r(T(1)), latlon(90, 90), atol=τ)
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1381
   r = Rope(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
