@@ -155,8 +155,19 @@ end
 
 function glue(g::Multi)
   geoms = flatten(g)
-  segs = collect(Iterators.flatten(segments(geom) for geom in geoms))
-  glue(segs)
+
+  # separate between points and chains
+  points = filter(geom -> geom isa Point, geoms)
+  chains = filter(geom -> geom isa Chain, geoms)
+
+  # collect all segments from the chains
+  segs = collect(Iterators.flatten(segments(g) for g in chains))
+  glued = glue(segs)
+
+  # remove points already represented by the glued 1D geometry
+  points = filter(p -> !any(seg -> p ∈ seg, glued), points)
+
+  maybemulti([glued..., points...])
 end
 
 """
