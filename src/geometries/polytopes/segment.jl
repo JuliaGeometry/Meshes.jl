@@ -57,23 +57,6 @@ Base.isapprox(s₁::Segment, s₂::Segment; atol=atol(lentype(s₁)), kwargs...)
 
 Base.reverse(s::Segment) = Segment(s.b, s.a)
 
-# -----------
-# IO METHODS
-# -----------
-
-function Base.show(io::IO, s::Segment)
-  name = prettyname(s)
-  ioctx = IOContext(io, :compact => true)
-  print(io, "$name(")
-  printfields(ioctx, s, (:a, :b), singleline=true)
-  print(io, ")")
-end
-
-function Base.show(io::IO, ::MIME"text/plain", s::Segment)
-  summary(io, s)
-  printfields(io, s, (:a, :b))
-end
-
 # -----------------
 # HELPER FUNCTIONS
 # -----------------

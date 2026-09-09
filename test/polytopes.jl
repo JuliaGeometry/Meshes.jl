@@ -71,13 +71,15 @@
   s = Segment(latlon(0, 135), latlon(0, 45))
   @test_broken measure(s) ≈ 3C / 4
 
-  # parameterization
+  # the geodesics are accurate to nanometres, which is far coarser than the
+  # picometre default tolerance that Meshes uses to compare points
+  τ = T === Float64 ? 1e-7u"m" : 10u"m"
   s = Segment(latlon(45, 0), latlon(45, 90))
-  @test s(T(0)) == latlon(45, 0)
-  @test s(T(0.25)) == latlon(45, 22.5)
-  @test s(T(0.5)) == latlon(45, 45)
-  @test s(T(0.75)) == latlon(45, 67.5)
-  @test s(T(1)) == latlon(45, 90)
+  @test isapprox(s(T(0)), latlon(45, 0), atol=τ)
+  @test isapprox(s(T(0.25)), latlon(52.08325138646326, 20.102377286894075), atol=τ)
+  @test isapprox(s(T(0.5)), latlon(54.76310539889228, 45), atol=τ)
+  @test isapprox(s(T(0.75)), latlon(52.08325138646326, 69.89762271310592), atol=τ)
+  @test isapprox(s(T(1)), latlon(45, 90), atol=τ)
 
   s = Segment(cart(0, 0), cart(1, 1))
   @test sprint(show, s) == "Segment((x: 0.0 m, y: 0.0 m), (x: 1.0 m, y: 1.0 m))"
