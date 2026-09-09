@@ -75,7 +75,7 @@ function measure(t::Torus)
   4 * T(π)^2 * R * r
 end
 
-measure(s::Segment) = length(s)
+measure(s::Segment) = GeodesicDistance()(extrema(s)...)
 
 measure(c::Chain{<:𝔼}) = sum(measure, segments(c))
 

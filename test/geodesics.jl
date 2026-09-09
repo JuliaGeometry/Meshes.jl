@@ -137,8 +137,8 @@ end
 
   # the tangent points in the direction that geodesicfwd walks
   for ϕ in T.((-120, -30, 15, 88, 170))
-    q = latlon(-12, 77)
-    @test isapprox(geodesicazimuth(q, geodesicfwd(q, ϕ, 1000) - q), ϕ * u"°", atol=τϕ)
+    ll = latlon(-12, 77)
+    @test isapprox(geodesicazimuth(ll, geodesicfwd(ll, ϕ, 1000) - ll), ϕ * u"°", atol=τϕ)
   end
 
   # the tangent is consistent with the azimuth of the inverse problem

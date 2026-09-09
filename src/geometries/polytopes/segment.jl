@@ -9,21 +9,9 @@ An oriented line segment from point `p1` to point `p2`.
 
 See also [`Rope`](@ref), [`Ring`](@ref), [`Line`](@ref).
 """
-struct Segment{M<:Manifold,C<:CRS,V<:Vec,ℒ<:Len} <: Chain{M,C}
-  # input fields
+struct Segment{M<:Manifold,C<:CRS} <: Chain{M,C}
   a::Point{M,C}
   b::Point{M,C}
-
-  # state fields
-  v::V
-  l::ℒ
-end
-
-function Segment(a::Point, b::Point)
-  a′, b′ = promote(a, b)
-  v = _geodesicvec(a′, b′)
-  l = _geodesiclen(a′, b′)
-  Segment(a′, b′, v, l)
 end
 
 Segment(a::Tuple, b::Tuple) = Segment(Point(a), Point(b))
@@ -42,8 +30,6 @@ Base.maximum(s::Segment) = s.b
 
 Base.extrema(s::Segment) = s.a, s.b
 
-Base.length(s::Segment) = s.l
-
 center(s::Segment{<:𝔼}) = s(1 // 2)
 
 ==(s₁::Segment, s₂::Segment) = s₁.a == s₂.a && s₁.b == s₂.b
@@ -51,16 +37,12 @@ center(s::Segment{<:𝔼}) = s(1 // 2)
 Base.isapprox(s₁::Segment, s₂::Segment; atol=atol(lentype(s₁)), kwargs...) =
   isapprox(s₁.a, s₂.a; atol=atol, kwargs...) && isapprox(s₁.b, s₂.b; atol=atol, kwargs...)
 
-(s::Segment{<:𝔼})(t) = s.a + (t * ustrip(s.l)) * s.v
+(s::Segment{<:𝔼})(t) = s.a + t * (s.b - s.a)
 
-(s::Segment{🌐})(t) = geodesicfwd(s.a, geodesicazimuth(s.a, s.v), t * s.l)
+function (s::Segment{🌐})(t)
+  d = GeodesicDistance()
+  ϕ = geodesicbwd(s.a, s.b)
+  geodesicfwd(s.a, ϕ, t * d(s.a, s.b))
+end
 
 Base.reverse(s::Segment) = Segment(s.b, s.a)
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_geodesicvec(a::Point{𝔼{Dim}}, b::Point{𝔼{Dim}}) where {Dim} = unormalize(b - a)
-_geodesicvec(a::Point{🌐}, b::Point{🌐}) = geodesictangent(a, geodesicbwd(a, b))
-_geodesiclen(a::Point, b::Point) = GeodesicDistance()(a, b)
