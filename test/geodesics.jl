@@ -73,14 +73,14 @@
       )
     ]
     for (lat₁, lon₁, azi₁, lat₂, lon₂, azi₂, s₁₂) in cases
-      p₁ = latlon(lat₁, lon₁)
-      p₂ = latlon(lat₂, lon₂)
+      ll₁ = latlon(lat₁, lon₁)
+      ll₂ = latlon(lat₂, lon₂)
       # inverse problem: the azimuth at each end
-      @test isapprox(geodesicbwd(p₁, p₂), azi₁ * u"°", atol=τϕ)
-      @test isapprox(geodesicbwd(p₂, p₁), (azi₂ - 180) * u"°", atol=τϕ)
+      @test isapprox(geodesicbwd(ll₁, ll₂), azi₁ * u"°", atol=τϕ)
+      @test isapprox(geodesicbwd(ll₂, ll₁), (azi₂ - 180) * u"°", atol=τϕ)
       # direct problem: the point reached and the distance to it
-      @test isapprox(geodesicfwd(p₁, azi₁, s₁₂), p₂, atol=τ)
-      @test isapprox(GeodesicDistance()(p₁, geodesicfwd(p₁, azi₁, s₁₂)), s₁₂ * u"m", atol=1e-7u"m")
+      @test isapprox(geodesicfwd(ll₁, azi₁, s₁₂), ll₂, atol=τ)
+      @test isapprox(GeodesicDistance()(ll₁, geodesicfwd(ll₁, azi₁, s₁₂)), s₁₂ * u"m", atol=1e-7u"m")
     end
 
     # on a datum with a spherical ellipsoid the azimuth is the great circle one
