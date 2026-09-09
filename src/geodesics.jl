@@ -42,6 +42,7 @@ function geodesicfwd(p::Point{🌐}, ϕ, l)
   T = numtype(lentype(c))
   U = numtype(typeof(ϕ′))
   V = numtype(typeof(l′))
+  R = promote_type(T, U, V)
   S = promote_type(T, U, V, Float64)
   lat = S(ustrip(c.lat))
   lon = S(ustrip(c.lon))
@@ -50,7 +51,7 @@ function geodesicfwd(p::Point{🌐}, ϕ, l)
 
   lat′, lon′, _ = _geodesicdirect(🌎, lat, lon, azi, len)
 
-  withcrs(p, (lat′, lon′))
+  withcrs(p, (R(lat′), R(lon′)))
 end
 
 """
@@ -119,9 +120,12 @@ geodesictangent(p, 90)
 ```
 """
 function geodesictangent(p::Point{🌐}, ϕ)
+  ϕ′ = asdeg(ϕ)
   T = numtype(lentype(p))
+  U = numtype(typeof(ϕ′))
+  S = promote_type(T, U)
   ê, n̂ = _eastnorth(p)
-  s, c = sincosd(T(ustrip(u"°", asdeg(ϕ))))
+  s, c = sincosd(S(ustrip(ϕ′)))
   unormalize(c * n̂ + s * ê)
 end
 
@@ -144,8 +148,10 @@ geodesicazimuth(p, Vec(0, 1, 0))
 """
 function geodesicazimuth(p::Point{🌐}, v::Vec{3})
   T = numtype(lentype(p))
+  U = numtype(eltype(v))
+  S = promote_type(T, U)
   ê, n̂ = _eastnorth(p)
-  T(atand(v ⋅ ê, v ⋅ n̂)) * u"°"
+  S(atand(v ⋅ ê, v ⋅ n̂)) * u"°"
 end
 
 # Solution of the direct geodesic problem: the point reached from (lat₁, lon₁)
