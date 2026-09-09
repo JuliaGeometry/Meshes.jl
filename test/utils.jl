@@ -186,7 +186,7 @@ end
   seg = Segment(a, b)
 
   glued = Meshes.glue([seg])
-  @test glued == seg
+  @test glued == [seg]
 
   # connected segments are glued into a rope
   a = cart(0, 0)
@@ -262,7 +262,6 @@ end
   a = cart(0, 0)
   b = cart(1, 0)
   c = cart(2, 0)
-
   d = cart(0, 2)
   e = cart(1, 2)
   f = cart(1, 3)

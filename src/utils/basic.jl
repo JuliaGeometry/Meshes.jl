@@ -157,7 +157,7 @@ function glue(g::Multi)
   geoms = flatten(g)
 
   # separate between points and chains
-  points = filter(geom -> geom isa Point, geoms)
+  points = unique(filter(geom -> geom isa Point, geoms))
   chains = filter(geom -> geom isa Chain, geoms)
 
   # if there are no chains, we can return the glued geometry immediately
