@@ -298,8 +298,3 @@ end
   glued = Meshes.glue(multi)
   @test glued == Chain[Rope(a, b, c, d)]
 end
-
-a = Point(0, 0)
-b = Point(1, 0)
-c = Point(1, 1)
-d = Point(0, 1)
