@@ -52,83 +52,67 @@ end
 
 function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
   # compute triangle mesh and colors
-  Makie.map!(plot, [:object, :colorant], [:tmesh, :tcolors]) do mesh, colorant
+  Makie.map!(plot, [:object, :colorant], [:tmesh]) do mesh, colorant
     # relevant settings
     nvert = nvertices(mesh)
     nelem = nelements(mesh)
     verts = map(asmakie, eachvertex(mesh))
     elems = elements(topology(mesh))
 
-    # decide whether or not to reverse connectivity list
-    rev = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? reverse : identity
+    # decide whether or not to reverse connectivity list and normals
+    rev, sign = crs(mesh) <: LatLon && orientation(first(mesh)) == CW ? (reverse, -1) : (identity, 1)
+
+    # extract vector of colors for vertices or faces
+    # convert to RGBA(f) for GB.Mesh compatibility
+    colors = if colorant isa AbstractVector
+      map(Makie.RGBAf, colorant)
+    else
+      fill(Makie.RGBAf(colorant), nelem)
+    end
+
+    # sanity check on number of colors
+    ncolor = length(colors)
+    if ncolor ∉ (nvert, nelem)
+      throw(ArgumentError("provided $ncolor colors but the mesh has
+                           $nvert vertices and $nelem elements."))
+    end
+
+    # determine if face or vertex colors should be used
+    facecolors = ncolor == nelem
+
+    # determine if face normals should be computed
+    facenormals = facecolors && edim == Val(3)
 
     # fan triangulation (assume convexity)
     ntri = sum(e -> nvertices(pltype(e)) - 2, elems)
     tris = Vector{GB.TriangleFace{Int}}(undef, ntri)
+    elem4tri = Vector{Int}(undef, ntri)
     tind = 0
-    for elem in elems
+    for (eind, elem) in enumerate(elems)
       I = rev(indices(elem))
       for i in 2:(length(I) - 1)
         tind += 1
         tris[tind] = GB.TriangleFace(I[1], I[i], I[i + 1])
+        elem4tri[tind] = eind
       end
     end
 
-    # element vs. vertex coloring
-    if colorant isa AbstractVector
-      ncolor = length(colorant)
-      if ncolor == nelem # element coloring
-        # duplicate vertices and adjust
-        # connectivities to avoid linear
-        # interpolation of colors
-        tind = 0
-        elem4tri = Dict{Int,Int}()
-        sizehint!(elem4tri, ntri)
-        for (eind, e) in enumerate(elems)
-          for _ in 1:(nvertices(pltype(e)) - 2)
-            tind += 1
-            elem4tri[tind] = eind
-          end
-        end
-        nv = 3ntri
-        tverts = [verts[i] for tri in tris for i in tri]
-        telems = [GB.TriangleFace(i, i + 1, i + 2) for i in range(start=1, step=3, length=ntri)]
-        tcolors = map(1:nv) do i
-          t = ceil(Int, i / 3)
-          e = elem4tri[t]
-          colorant[e]
-        end
-      elseif ncolor == nvert # vertex coloring
-        # nothing needs to be done because
-        # this is the default in Makie and
-        # because the triangulation above
-        # does not change the vertices in
-        # the original polygonal mesh
-        tverts = verts
-        telems = tris
-        tcolors = colorant
-      else
-        throw(ArgumentError("provided $ncolor colors but the mesh has
-                             $nvert vertices and $nelem elements."))
-      end
-    else # single color
-      # nothing needs to be done
-      tverts = verts
-      telems = tris
-      tcolors = colorant
-    end
+    # create face view for colors and normals
+    faceview(vals) = GB.FaceView(view(vals, elem4tri), map(GB.TriangleFace, eachindex(elem4tri)))
+    tcolors = facecolors ? faceview(colors) : colors
+    tnormals = facenormals ? faceview([asmakie(sign * normal(elem)) for elem in mesh]) : nothing
 
     # triangle mesh
-    tmesh = GB.Mesh(tverts, telems)
+    tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals)
 
-    tmesh, tcolors
+    (tmesh,)
   end
 
   # enable shading in 3D
   shading = edim == Val(3)
 
   # visualize as triangle mesh
-  Makie.mesh!(plot, plot.tmesh, color=plot.tcolors, shading=shading)
+  Makie.mesh!(plot, plot.tmesh, shading=shading)
 
   if plot.showsegments[]
     vizfacets!(plot)
