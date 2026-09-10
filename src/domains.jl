@@ -56,7 +56,7 @@ Base.parentindices(d::Domain) = 1:nelements(d)
 
 Base.vcat(d1::Domain, d2::Domain) = GeometrySet(vcat(collect(d1), collect(d2)))
 
-Base.vcat(ds::Domain...) = reduce(vcat, ds)
+Base.vcat(d::Domain, ds::Domain...) = reduce(vcat, ds, init=d)
 
 Base.view(domain::Domain, inds::AbstractVector{Int}) = SubDomain(domain, inds)
 

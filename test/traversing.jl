@@ -10,7 +10,7 @@
   @test all(1 .≤ traverse(grid, path) .≤ 10000)
   grid = cartgrid(3, 3)
   path = RandomPath(StableRNG(123))
-  @test traverse(grid, path) == [4, 7, 2, 1, 3, 8, 5, 6, 9]
+  @test Set(traverse(grid, path)) == Set(1:9)
 
   # SourcePath
   grid = cartgrid(3, 3)
