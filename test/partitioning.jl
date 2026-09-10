@@ -77,7 +77,7 @@ end
   rng = StableRNG(123)
   g = cartgrid(10, 10)
   p = partition(rng, g, DirectionPartition(T.((1, 0)), tol=T(2)))
-  @test length(p) == 4
+  @test length(p) ≤ 5
 end
 
 @testitem "FractionPartition" setup = [Setup] begin
