@@ -72,6 +72,7 @@ maybemulti(geoms::AbstractVector{<:Geometry}) = length(geoms) == 1 ? only(geoms)
 
 """
     glue(segs)
+
 Glue unique segments into `Segment`s, `Rope`s and `Ring`s. Segments are sorted.
 """
 function glue(segs::AbstractVector{<:Segment})
