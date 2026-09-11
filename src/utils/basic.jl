@@ -84,11 +84,10 @@ function glue(segs::AbstractVector{<:Segment})
     ifelse(a < b, (a, b), (b, a))
   end)
 
-  # determine the manifold and crs of the segments
-  M = manifold(eltype(segs))
-  C = crs(eltype(segs))
-
   # build adjacency dictionary
+  S = eltype(segs)
+  M = manifold(S)
+  C = crs(S)
   adj = Dict{Point{M,C},Vector{Int}}()
   for (i, seg) in enumerate(segs)
     a, b = vertices(seg)
