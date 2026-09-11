@@ -178,3 +178,181 @@ end
   end
   @test !Meshes.isthreaded(false)
 end
+
+@testitem "glue" setup = [Setup] begin
+  # single segment is preserved
+  a = cart(0, 0)
+  b = cart(1, 0)
+  seg = Segment(a, b)
+  glued = Meshes.glue([seg])
+  @test glued == [seg]
+
+  # connected segments are glued into a rope
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  segs = [Segment(a, b), Segment(b, c)]
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Rope(a, b, c)]
+
+  # input ordering does not affect the result
+  glued = Meshes.glue(reverse(segs))
+  @test glued == Chain[Rope(a, b, c)]
+
+  # segment orientation does not affect the result
+  segs = [Segment(b, a), Segment(c, b)]
+
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Rope(a, b, c)]
+
+  # disconnected segments remain separate
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  d = cart(3, 0)
+  segs = [Segment(a, b), Segment(c, d)]
+
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Segment(a, b), Segment(c, d)]
+
+  # disconnected ropes are glued independently
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  d = cart(3, 0)
+  e = cart(4, 0)
+  f = cart(5, 0)
+  segs = [Segment(b, c), Segment(e, f), Segment(a, b), Segment(d, e)]
+
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Rope(a, b, c), Rope(d, e, f)]
+
+  # branching vertices terminate glued ropes
+  a = cart(0, 3)
+  b = cart(1, 2)
+  c = cart(0, 1)
+  d = cart(1, 0)
+  e = cart(2, 2)
+  segs = [Segment(a, b), Segment(b, c), Segment(b, d), Segment(b, e)]
+
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Segment(c, b), Segment(a, b), Segment(d, b), Segment(b, e)]
+
+  # branching result is independent of input ordering
+  glued = Meshes.glue(segs[[4, 2, 1, 3]])
+  @test glued == Chain[Segment(c, b), Segment(a, b), Segment(d, b), Segment(b, e)]
+
+  # cyclic components are glued into rings
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(1, 1)
+  d = cart(0, 1)
+  segs = [Segment(a, b), Segment(b, c), Segment(c, d), Segment(d, a)]
+
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Ring(a, d, c, b)]
+
+  # ring result is independent of input ordering
+  glued = Meshes.glue(segs[[3, 1, 4, 2]])
+  @test glued == Chain[Ring(a, d, c, b)]
+
+  # open and cyclic components can coexist
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  d = cart(0, 2)
+  e = cart(1, 2)
+  f = cart(1, 3)
+  g = cart(0, 3)
+
+  segs = [Segment(a, b), Segment(b, c), Segment(d, e), Segment(e, f), Segment(f, g), Segment(g, d)]
+
+  glued = Meshes.glue(segs)
+  @test glued == Chain[Rope(a, b, c), Ring(d, g, f, e)]
+end
+
+@testitem "glue Multi" setup = [Setup] begin
+  a = cart(0, 0)
+  b = cart(1, 0)
+  c = cart(2, 0)
+  d = cart(3, 0)
+
+  # segments in a Multi are glued
+  multi = Multi([Segment(a, b), Segment(b, c), Segment(c, d)])
+
+  glued = Meshes.glue(multi)
+  @test glued == Chain[Rope(a, b, c, d)]
+
+  # chains in a Multi are decomposed into segments and glued
+  multi = Multi([Rope(a, b, c), Segment(c, d)])
+
+  glued = Meshes.glue(multi)
+  @test glued == Chain[Rope(a, b, c, d)]
+
+  # nested Multis are flattened before gluing
+  multi = Multi([Segment(a, b), Multi([Segment(b, c), Segment(c, d)])])
+
+  glued = Meshes.glue(multi)
+  @test glued == Chain[Rope(a, b, c, d)]
+
+  # point at a segment vertex is removed
+  multi = Multi([Segment(a, b), b])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b)]
+
+  # point in the interior of a segment is removed
+  p = cart(0.5, 0)
+  multi = Multi([Segment(a, b), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b)]
+
+  # point not contained in the glued geometry is preserved
+  p = cart(0, 1)
+  multi = Multi([Segment(a, b), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b), p]
+
+  # point contained in a rope is removed after gluing
+  multi = Multi([Segment(a, b), Segment(b, c), b])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c)]
+
+  # interior point of a glued rope is removed
+  p = cart(1.5, 0)
+  multi = Multi([Segment(a, b), Segment(b, c), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c)]
+
+  # unrelated point survives alongside a glued rope
+  p = cart(1, 1)
+  multi = Multi([Segment(a, b), Segment(b, c), p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c), p]
+
+  # redundant and unrelated points are handled independently
+  p = cart(1, 1)
+  multi = Multi([Segment(a, b), Segment(b, c), b, p])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Rope(a, b, c), p]
+
+  # points contained in different glued components are all removed
+  multi = Multi([Segment(a, b), Segment(c, d), a, d])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b), Segment(c, d)]
+
+  # unrelated points are preserved with multiple glued components
+  p1 = cart(0, 1)
+  p2 = cart(3, 1)
+  multi = Multi([Segment(a, b), Segment(c, d), p1, p2])
+
+  glued = Meshes.glue(multi)
+  @test glued == [Segment(a, b), Segment(c, d), p1, p2]
+end
