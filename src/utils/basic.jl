@@ -136,7 +136,7 @@ function glue(segs::AbstractVector{<:Segment})
 
       verts = trace(start, segind)
 
-      geom = length(verts) == 2 ? Segment(verts) : Rope(verts)
+      geom = length(verts) == 2 ? Segment(verts...) : Rope(verts)
       push!(chains, geom)
     end
   end
