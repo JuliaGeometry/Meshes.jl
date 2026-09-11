@@ -150,7 +150,7 @@ end
 
 _segmentkey(seg) = begin
   a, b = vertices(seg)
-  isless(a, b) ? (a, b) : (b, a)
+  a < b ? (a, b) : (b, a)
 end
 
 function glue(g::Multi)
