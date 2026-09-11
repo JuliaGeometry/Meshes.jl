@@ -66,19 +66,26 @@ isthreaded(cond=true) = cond && Threads.nthreads() > 1
 """
     maybemulti(geoms)
 
-Return `only(geoms)` or `Multi(geoms)` depending on the length of `geoms`.
+Return `only(geoms)` or `Multi(geoms)` depending on the length of the `geoms` vector.
 """
-maybemulti(geoms) = length(geoms) == 1 ? only(geoms) : Multi(geoms)
+maybemulti(geoms::AbstractVector{<:Geometry}) = length(geoms) == 1 ? only(geoms) : Multi(geoms)
 
 """
     glue(segs)
 Glue unique segments into `Segment`s, `Rope`s and `Ring`s. Segments are sorted.
 """
-function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
+function glue(segs::AbstractVector{<:Segment})
   length(segs) == 1 && return [only(segs)]
 
   # sort segments independently of input order
-  segs = sort(segs; by=_segmentkey)
+  segs = sort(segs; by=seg -> begin
+    a, b = vertices(seg)
+    ifelse(a < b, (a, b), (b, a))
+  end)
+
+  # determine the manifold and crs of the segments
+  M = manifold(eltype(segs))
+  C = crs(eltype(segs))
 
   # build adjacency dictionary
   adj = Dict{Point{M,C},Vector{Int}}()
@@ -101,14 +108,14 @@ function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
       visited[currentind] = true
 
       a, b = vertices(segs[currentind])
-      next = current == a ? b : a
+      next = ifelse(current ≈ a, b, a)
       push!(verts, next)
 
       # stop at terminal or branching vertices
       length(adj[next]) == 2 || break
 
       i, j = adj[next]
-      nextind = i == currentind ? j : i
+      nextind = ifelse(i == currentind, j, i)
 
       visited[nextind] && break
 
@@ -138,7 +145,7 @@ function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
     visited[segind] && continue
 
     a, b = vertices(segs[segind])
-    start = isless(a, b) ? a : b
+    start = ifelse(a < b, a, b)
 
     verts = trace(start, segind)
 
@@ -146,11 +153,6 @@ function glue(segs::AbstractVector{<:Segment{M,C}}) where {M,C}
   end
 
   chains
-end
-
-_segmentkey(seg) = begin
-  a, b = vertices(seg)
-  a < b ? (a, b) : (b, a)
 end
 
 function glue(g::Multi)
@@ -180,6 +182,9 @@ end
     flatten(g)
 
 Return a vector of the geometries contained in `g`. If `g` is a `Multi`, it recursively flattens its parents.
+The output is a vector containing all the geometries within `g`, with any nested `Multi` geometries recursively flattened.
+
+See [`maybemulti`](@ref) for turning this vector into a single geometry. 
 """
 function flatten(g)
   g isa Multi || return [g]
