@@ -192,7 +192,6 @@ end
   b = cart(1, 0)
   c = cart(2, 0)
   segs = [Segment(a, b), Segment(b, c)]
-
   glued = Meshes.glue(segs)
   @test glued == Chain[Rope(a, b, c)]
 
