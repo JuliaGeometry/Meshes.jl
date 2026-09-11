@@ -184,7 +184,6 @@ end
   a = cart(0, 0)
   b = cart(1, 0)
   seg = Segment(a, b)
-
   glued = Meshes.glue([seg])
   @test glued == [seg]
 
