@@ -186,8 +186,6 @@ The output is a vector containing all the geometries within `g`, with any nested
 
 See [`maybemulti`](@ref) for turning this vector into a single geometry. 
 """
-function flatten(g::Multi)
-  mapreduce(flatten, vcat, parent(g))
-end
+flatten(g::Multi) = mapreduce(flatten, vcat, parent(g))
 
 flatten(g::Geometry) = [g]
