@@ -85,10 +85,9 @@ function glue(segs::AbstractVector{<:Segment})
   end)
 
   # build adjacency dictionary
-  S = eltype(segs)
-  M = manifold(S)
-  C = crs(S)
-  adj = Dict{Point{M,C},Vector{Int}}()
+  s = first(segs)
+  P = typeof(s(0))
+  adj = Dict{P,Vector{Int}}()
   for (i, seg) in enumerate(segs)
     a, b = vertices(seg)
     push!(get!(adj, a, Int[]), i)
@@ -96,7 +95,6 @@ function glue(segs::AbstractVector{<:Segment})
   end
 
   visited = falses(length(segs))
-  chains = Chain{M,C}[]
 
   # trace a maximal path from a starting vertex through a segment
   function trace(start, segind)
@@ -127,32 +125,34 @@ function glue(segs::AbstractVector{<:Segment})
   end
 
   # first trace maximal non-cyclic paths
+  paths = Vector{P}[]
   starts = sort([v for (v, inds) in adj if length(inds) != 2])
 
   for start in starts
     for segind in adj[start]
       visited[segind] && continue
-
-      verts = trace(start, segind)
-
-      geom = length(verts) == 2 ? Segment(verts...) : Rope(verts)
-      push!(chains, geom)
+      push!(paths, trace(start, segind))
     end
   end
 
   # remaining unvisited segments belong to cycles
   for segind in eachindex(segs)
     visited[segind] && continue
-
     a, b = vertices(segs[segind])
     start = ifelse(a < b, a, b)
-
-    verts = trace(start, segind)
-
-    push!(chains, Ring(verts[1:(end - 1)]))
+    push!(paths, trace(start, segind))
   end
 
-  chains
+  # convert traced vertex paths into appropriate geometries (Ring, Segment, Rope)
+  map(paths) do verts
+    if first(verts) ≈ last(verts)
+      Ring(verts[1:(end - 1)])
+    elseif length(verts) == 2
+      Segment(verts...)
+    else
+      Rope(verts)
+    end
+  end
 end
 
 function glue(g::Multi)
