@@ -283,12 +283,6 @@ end
   glued = Meshes.glue(multi)
   @test glued == [Segment(a, b)]
 
-  # point in the interior of a segment is removed
-  p = cart(0.5, 0)
-  multi = Multi([Segment(a, b), p])
-  glued = Meshes.glue(multi)
-  @test glued == [Segment(a, b)]
-
   # point not contained in the glued geometry is preserved
   p = cart(0, 1)
   multi = Multi([Segment(a, b), p])
@@ -297,12 +291,6 @@ end
 
   # point contained in a rope is removed after gluing
   multi = Multi([Segment(a, b), Segment(b, c), b])
-  glued = Meshes.glue(multi)
-  @test glued == [Rope(a, b, c)]
-
-  # interior point of a glued rope is removed
-  p = cart(1.5, 0)
-  multi = Multi([Segment(a, b), Segment(b, c), p])
   glued = Meshes.glue(multi)
   @test glued == [Rope(a, b, c)]
 

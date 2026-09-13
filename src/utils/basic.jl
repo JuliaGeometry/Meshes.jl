@@ -173,7 +173,7 @@ function glue(g::Multi)
   isempty(points) && return glued
 
   # remove points already represented by the glued 1D geometry
-  points = filter(p -> !any(chain -> p ∈ chain, glued), points)
+  points = filter(p -> !any(chain -> any(≈(p), eachvertex(chain)), glued), points)
 
   [glued..., points...]
 end
