@@ -112,7 +112,7 @@ function glue(segs::AbstractVector{<:Segment})
       length(adj[next]) == 2 || break
 
       i, j = adj[next]
-      nextind = ifelse(i == currentind, j, i)
+      nextind = i == currentind ? j : i
 
       visited[nextind] && break
 
