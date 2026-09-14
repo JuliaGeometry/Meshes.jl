@@ -255,15 +255,12 @@ end
   segs = [Segment(a, b), Segment(b, c), Segment(d, e), Segment(e, f), Segment(f, g), Segment(g, d)]
   glued = Meshes.glue(segs)
   @test glued == [Rope(a, b, c), Ring(d, g, f, e)]
-end
 
-@testitem "glue Multi" setup = [Setup] begin
+  # segments in a Multi are glued
   a = cart(0, 0)
   b = cart(1, 0)
   c = cart(2, 0)
   d = cart(3, 0)
-
-  # segments in a Multi are glued
   multi = Multi([Segment(a, b), Segment(b, c), Segment(c, d)])
   glued = Meshes.glue(multi)
   @test glued == [Rope(a, b, c, d)]
