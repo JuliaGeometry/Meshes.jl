@@ -76,9 +76,10 @@ maybemulti(geoms::AbstractVector{<:Geometry}) = length(geoms) == 1 ? only(geoms)
 Glue unique segments into `Segment`s, `Rope`s and `Ring`s. Segments are sorted.
 """
 function glue(segs::AbstractVector{<:Segment})
+  # trivial case with a single segment
   length(segs) == 1 && return [only(segs)]
 
-  # sort segments independently of input order
+  # sort segments lexicographically
   segs = sort(segs; by=seg -> begin
     a, b = vertices(seg)
     a < b ? (a, b) : (b, a)
@@ -93,6 +94,7 @@ function glue(segs::AbstractVector{<:Segment})
     push!(get!(adj, b, Int[]), i)
   end
 
+  # track visited segments
   visited = falses(length(segs))
 
   # trace a maximal path from a starting vertex through a segment
@@ -100,7 +102,6 @@ function glue(segs::AbstractVector{<:Segment})
     verts = [start]
     current = start
     currentind = segind
-
     while true
       visited[currentind] = true
 
@@ -126,7 +127,6 @@ function glue(segs::AbstractVector{<:Segment})
   # first trace maximal non-cyclic paths
   paths = Vector{P}[]
   starts = sort([v for (v, inds) in adj if length(inds) != 2])
-
   for start in starts
     for segind in adj[start]
       visited[segind] && continue
@@ -142,7 +142,8 @@ function glue(segs::AbstractVector{<:Segment})
     push!(paths, trace(start, segind))
   end
 
-  # convert traced vertex paths into appropriate geometries (Ring, Segment, Rope)
+  # convert traced vertex paths into
+  # geometries (Segment, Rope, Ring)
   map(paths) do verts
     if first(verts) ≈ last(verts)
       Ring(verts[1:(end - 1)])
@@ -155,6 +156,7 @@ function glue(segs::AbstractVector{<:Segment})
 end
 
 function glue(g::Multi)
+  # flatten multi-geometry into a vector of its constituent geometries
   geoms = flatten(g)
 
   # separate between points and chains
