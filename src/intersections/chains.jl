@@ -38,11 +38,14 @@ function intersection(f, chain::Chain, poly::Polygon)
 
   if !hasintersection
     return @IT NotIntersecting nothing f
-  elseif onlytouching
-    return @IT Touching maybemulti(glue(Multi(pieces))) f
-  elseif onlyedgetouching
-    return @IT EdgeTouching maybemulti(glue(Multi(pieces))) f
   else
-    return @IT Intersecting maybemulti(glue(Multi(pieces))) f
+    geom = maybemulti(glue(Multi(pieces)))
+    if onlytouching
+      return @IT Touching geom f
+    elseif onlyedgetouching
+      return @IT EdgeTouching geom f
+    else
+      return @IT Intersecting geom f
+    end
   end
 end
