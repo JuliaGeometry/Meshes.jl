@@ -247,7 +247,6 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   depth = 0
   inpoly = false
   pieces = typeof(seg)[]
-  haspieces = false
   for j in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
@@ -269,7 +268,9 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       end
       # add the current segment piece to the list if it should be kept
       if keep
-        if haspieces
+        if isempty(pieces)
+          push!(pieces, piece)
+        else
           a, b = vertices(last(pieces))
           c, d = vertices(piece)
           if b ≈ c
@@ -277,9 +278,6 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
           else
             push!(pieces, piece)
           end
-        else
-          haspieces = true
-          push!(pieces, piece)
         end
       end
       i += 1
