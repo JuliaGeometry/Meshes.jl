@@ -210,12 +210,12 @@ end
   # disconnected segments remain separate
   segs = [Segment(a, b), Segment(c, d)]
   glued = Meshes.glue(segs)
-  @test glued == Chain[Segment(a, b), Segment(c, d)]
+  @test glued == [Segment(a, b), Segment(c, d)]
 
   # disconnected ropes are glued independently
   segs = [Segment(b, c), Segment(e, f), Segment(a, b), Segment(d, e)]
   glued = Meshes.glue(segs)
-  @test glued == Chain[Rope(a, b, c), Rope(d, e, f)]
+  @test glued == [Rope(a, b, c), Rope(d, e, f)]
 
   # branching vertices terminate glued ropes
   a = cart(0, 3)
@@ -225,11 +225,11 @@ end
   e = cart(2, 2)
   segs = [Segment(a, b), Segment(b, c), Segment(b, d), Segment(b, e)]
   glued = Meshes.glue(segs)
-  @test glued == Chain[Segment(c, b), Segment(a, b), Segment(d, b), Segment(b, e)]
+  @test glued == [Segment(c, b), Segment(a, b), Segment(d, b), Segment(b, e)]
 
   # branching result is independent of input ordering
   glued = Meshes.glue(segs[[4, 2, 1, 3]])
-  @test glued == Chain[Segment(c, b), Segment(a, b), Segment(d, b), Segment(b, e)]
+  @test glued == [Segment(c, b), Segment(a, b), Segment(d, b), Segment(b, e)]
 
   # cyclic components are glued into rings
   a = cart(0, 0)
@@ -238,11 +238,11 @@ end
   d = cart(0, 1)
   segs = [Segment(a, b), Segment(b, c), Segment(c, d), Segment(d, a)]
   glued = Meshes.glue(segs)
-  @test glued == Chain[Ring(a, d, c, b)]
+  @test glued == [Ring(a, d, c, b)]
 
   # ring result is independent of input ordering
   glued = Meshes.glue(segs[[3, 1, 4, 2]])
-  @test glued == Chain[Ring(a, d, c, b)]
+  @test glued == [Ring(a, d, c, b)]
 
   # open and cyclic components can coexist
   a = cart(0, 0)
@@ -254,7 +254,7 @@ end
   g = cart(0, 3)
   segs = [Segment(a, b), Segment(b, c), Segment(d, e), Segment(e, f), Segment(f, g), Segment(g, d)]
   glued = Meshes.glue(segs)
-  @test glued == Chain[Rope(a, b, c), Ring(d, g, f, e)]
+  @test glued == [Rope(a, b, c), Ring(d, g, f, e)]
 end
 
 @testitem "glue Multi" setup = [Setup] begin
@@ -266,17 +266,17 @@ end
   # segments in a Multi are glued
   multi = Multi([Segment(a, b), Segment(b, c), Segment(c, d)])
   glued = Meshes.glue(multi)
-  @test glued == Chain[Rope(a, b, c, d)]
+  @test glued == [Rope(a, b, c, d)]
 
   # chains in a Multi are decomposed into segments and glued
   multi = Multi([Rope(a, b, c), Segment(c, d)])
   glued = Meshes.glue(multi)
-  @test glued == Chain[Rope(a, b, c, d)]
+  @test glued == [Rope(a, b, c, d)]
 
   # nested Multis are flattened before gluing
   multi = Multi([Segment(a, b), Multi([Segment(b, c), Segment(c, d)])])
   glued = Meshes.glue(multi)
-  @test glued == Chain[Rope(a, b, c, d)]
+  @test glued == [Rope(a, b, c, d)]
 
   # point at a segment vertex is removed
   multi = Multi([Segment(a, b), b])
