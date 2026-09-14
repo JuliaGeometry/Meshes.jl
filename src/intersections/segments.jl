@@ -247,6 +247,7 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
   depth = 0
   inpoly = false
   pieces = typeof(seg)[]
+  haspieces = false
   for j in 2:length(events)
     eᵢ = events[i]
     eⱼ = events[j]
@@ -257,11 +258,29 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       # event is fully merged, connect it with the next event
       depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
+      # determine if the current segment piece should be kept
       if depth > 0
-        push!(pieces, piece)
+        keep = true
       elseif center(piece) ∈ poly
         inpoly = true
-        push!(pieces, piece)
+        keep = true
+      else
+        keep = false
+      end
+      # add the current segment piece to the list if it should be kept
+      if keep
+        if haspieces
+          a, b = vertices(last(pieces))
+          c, d = vertices(piece)
+          if b ≈ c
+            pieces[end] = Segment(a, d)
+          else
+            push!(pieces, piece)
+          end
+        else
+          haspieces = true
+          push!(pieces, piece)
+        end
       end
       i += 1
       events[i] = eⱼ

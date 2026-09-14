@@ -39,10 +39,10 @@ function intersection(f, chain::Chain, poly::Polygon)
   if !hasintersection
     return @IT NotIntersecting nothing f
   elseif onlytouching
-    return @IT Touching maybemulti(pieces) f
+    return @IT Touching maybemulti(glue(Multi(pieces))) f
   elseif onlyedgetouching
-    return @IT EdgeTouching maybemulti(pieces) f
+    return @IT EdgeTouching maybemulti(glue(Multi(pieces))) f
   else
-    return @IT Intersecting maybemulti(pieces) f
+    return @IT Intersecting maybemulti(glue(Multi(pieces))) f
   end
 end
