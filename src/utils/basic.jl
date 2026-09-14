@@ -81,12 +81,11 @@ function glue(segs::AbstractVector{<:Segment})
   # sort segments independently of input order
   segs = sort(segs; by=seg -> begin
     a, b = vertices(seg)
-    ifelse(a < b, (a, b), (b, a))
+    a < b ? (a, b) : (b, a)
   end)
 
   # build adjacency dictionary
-  s = first(segs)
-  P = typeof(s(0))
+  P = typeof(first(segs)(0))
   adj = Dict{P,Vector{Int}}()
   for (i, seg) in enumerate(segs)
     a, b = vertices(seg)
@@ -106,7 +105,7 @@ function glue(segs::AbstractVector{<:Segment})
       visited[currentind] = true
 
       a, b = vertices(segs[currentind])
-      next = ifelse(current ≈ a, b, a)
+      next = current ≈ a ? b : a
       push!(verts, next)
 
       # stop at terminal or branching vertices
@@ -139,7 +138,7 @@ function glue(segs::AbstractVector{<:Segment})
   for segind in eachindex(segs)
     visited[segind] && continue
     a, b = vertices(segs[segind])
-    start = ifelse(a < b, a, b)
+    start = a < b ? a : b
     push!(paths, trace(start, segind))
   end
 
