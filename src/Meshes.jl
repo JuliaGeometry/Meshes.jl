@@ -110,9 +110,6 @@ include("predicates.jl")
 include("differentation.jl")
 include("integration.jl")
 
-# geodesics
-include("geodesics.jl")
-
 # operations
 include("centroid.jl")
 include("measures.jl")
@@ -471,12 +468,6 @@ export
   differential,
   integral,
   localintegral,
-
-  # geodesics
-  geodesicfwd,
-  geodesicbwd,
-  geodesictangent,
-  geodesicazimuth,
 
   # centroids
   centroid,

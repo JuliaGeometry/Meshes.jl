@@ -42,10 +42,11 @@ function (s::Segment{<:𝔼})(t)
 end
 
 function (s::Segment{🌐})(t)
-  a, b = s.vertices
-  d = GeodesicDistance()
+  a, b = map(coords, s.vertices)
   ϕ = geodesicbwd(a, b)
-  geodesicfwd(a, ϕ, t * d(a, b))
+  d = geodesicdistance(a, b)
+  c = geodesicfwd(a, ϕ, t * d)
+  Point{🌐}(c)
 end
 
 Base.reverse(s::Segment) = Segment(reverse(s.vertices))
