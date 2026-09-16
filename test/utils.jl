@@ -43,7 +43,7 @@ end
   @test length(pts) == 3
   @test all(p in pts for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
 
-  points = [cart(0, 0), cart(1, 1 + eps(T)), cart(1, 1), cart(2, 2)]
+  points = [cart(0, 0), cart(1, 1 - eps(T)), cart(1, 1), cart(2, 2)]
   box = Box(cart(0, 0), cart(2, 2))
   pts = Meshes.approxunique(points)
   @test length(pts) == 3
