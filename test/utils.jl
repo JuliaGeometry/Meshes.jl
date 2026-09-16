@@ -114,7 +114,7 @@ end
   @test length(points) == 1
 
   # box case with one segment outside
-  segs = 
+  segs =
     Segment.([
       (cart(0, 0), cart(1.1, 1.1)),
       (cart(1, 0), cart(0, 1)),
@@ -131,7 +131,7 @@ end
 
   # multiple intersections, endpoints as intersections
   if T === Float64
-    segs = 
+    segs =
       Segment.([
         (cart(9, 13), cart(6, 9)),
         (cart(2, 12), cart(9, 4.8)),
