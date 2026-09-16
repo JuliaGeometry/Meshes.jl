@@ -255,9 +255,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       events[i] = (eᵢ[1], eᵢ[2] || eⱼ[2], eᵢ[3] + eⱼ[3])
     else
       # event is fully merged, connect it with the next event
-      depth += eᵢ[3]
       piece = Segment(eᵢ[1], eⱼ[1])
-      # determine if the current segment piece should be kept
+      depth += eᵢ[3]
       if depth > 0
         keep = true
       elseif center(piece) ∈ poly
@@ -266,7 +265,8 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
       else
         keep = false
       end
-      # add the current segment piece to the list if it should be kept
+
+      # update pieces if necessary
       if keep
         if isempty(pieces)
           push!(pieces, piece)
@@ -274,12 +274,15 @@ function intersection(f, seg::Segment{𝔼{2}}, poly::Polygon{𝔼{2}})
           a, b = vertices(last(pieces))
           c, d = vertices(piece)
           if b ≈ c
+            # merge collinear segments
             pieces[end] = Segment(a, d)
           else
+            # append new segment
             push!(pieces, piece)
           end
         end
       end
+
       i += 1
       events[i] = eⱼ
     end
