@@ -3,21 +3,25 @@
 # ------------------------------------------------------------------
 
 """
-    EdgeRefinement(pred)
+    EdgeRefinement([pred])
 
-Refinement of a mesh by splitting the edges for which the predicate
-`pred` holds true. Elements with split edges are subdivided into
-triangles, and all other elements are preserved.
+Refine polygonal mesh by splitting the edges for which the predicate
+`pred` holds true. n-gons with split edges are subdivided into triangles,
+and all other n-gons are preserved. Midpoints of split edges are connected
+to the centroids of the n-gon when n > 3 or to other midpoints when n == 3.
+The default predicate is `e -> true`, meaning all edges are to be split.
 
 ## Examples
 
 ```julia
-EdgeRefinement(e -> measure(e) > 500u"km")
+EdgeRefinement(e -> length(e) > 500u"km")
 ```
 """
 struct EdgeRefinement{F} <: RefinementMethod
   pred::F
 end
+
+EdgeRefinement() = EdgeRefinement(e -> true)
 
 function refine(mesh, method::EdgeRefinement)
   assertion(paramdim(mesh) == 2, "EdgeRefinement only defined for surface meshes")
