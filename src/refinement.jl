@@ -33,8 +33,8 @@ refinemaxlen(mesh::Mesh) = refine(mesh, MaxLengthRefinement(maxlen()))
 # ----------------
 
 include("refinement/tri.jl")
-include("refinement/edge.jl")
 include("refinement/quad.jl")
+include("refinement/edge.jl")
 include("refinement/trisub.jl")
 include("refinement/catmullclark.jl")
 include("refinement/regular.jl")
