@@ -21,7 +21,13 @@ refine(grid::RectilinearGrid, method::MaxLengthRefinement) = _refinesides(grid, 
 
 refine(grid::OrthoStructuredGrid, method::MaxLengthRefinement) = _refinesides(grid, method.length)
 
-refine(mesh::Mesh, method::MaxLengthRefinement) = refine(mesh, EdgeRefinement(e -> length(e) > method.length))
+function refine(mesh::Mesh, method::MaxLengthRefinement)
+  while true
+    rmesh = refine(mesh, EdgeRefinement(e -> length(e) > method.length))
+    nelements(rmesh) == nelements(mesh) && return mesh
+    mesh = rmesh
+  end
+end
 
 #------------------
 # HELPER FUNCTIONS
