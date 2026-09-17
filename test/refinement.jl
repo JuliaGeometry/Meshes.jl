@@ -52,6 +52,15 @@ end
   rgrid = refine(grid, EdgeRefinement(e -> true))
   @test crs(rgrid) === crs(grid)
 
+  # elements without split edges are preserved
+  grid = cartgrid(10, 10)
+  rgrid = refine(grid, EdgeRefinement(e -> false))
+  @test nvertices(rgrid) == nvertices(grid)
+  @test nelements(rgrid) == nelements(grid)
+  @test all(e -> e isa Quadrangle, rgrid)
+  rgrid = refine(grid, EdgeRefinement(e -> to(centroid(e))[1] < T(5) * u"m"))
+  @test count(e -> e isa Quadrangle, rgrid) == 50
+
   # two triangles sharing a diagonal
   points = cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
   connec = connect.([(1, 2, 3), (2, 4, 3)])
@@ -71,6 +80,22 @@ end
   rmesh = refine(mesh, EdgeRefinement(e -> measure(e) > T(1.2) * u"m"))
   @test nvertices(rmesh) == 5
   @test nelements(rmesh) == 4
+
+  # a triangle is split into two, three or four triangles
+  points = cart.([(0, 0), (1, 0), (0, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3)]))
+  mids = cart.([(0.5, 0), (0.5, 0.5), (0, 0.5)])
+  for (inds, n) in (([], 1), ([1], 2), ([2], 2), ([3], 2), ([1, 2], 3), ([2, 3], 3), ([3, 1], 3), ([1, 2, 3], 4))
+    pred(e) = any(i -> centroid(e) ≈ mids[i], inds)
+    @test nelements(refine(mesh, EdgeRefinement(pred))) == n
+  end
+
+  # other n-gons are split around their centroid
+  points = cart.([(0, 0), (2, 0), (3, 1), (1, 2), (-1, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3, 4, 5)]))
+  rmesh = refine(mesh, EdgeRefinement(e -> measure(e) > T(2) * u"m"))
+  @test nvertices(rmesh) == 8
+  @test nelements(rmesh) == 7
 
   # the predicate can bound the length of all edges
   mesh = convert(SimpleMesh, cartgrid(2, 2))
