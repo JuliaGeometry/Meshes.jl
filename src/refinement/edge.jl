@@ -24,8 +24,58 @@ end
 EdgeRefinement() = EdgeRefinement(e -> true)
 
 function refine(mesh, method::EdgeRefinement)
-  assertion(paramdim(mesh) == 2, "EdgeRefinement only defined for surface meshes")
+  if paramdim(mesh) == 1
+    _edgerefinement1D(mesh, method)
+  elseif paramdim(mesh) == 2
+    _edgerefinement2D(mesh, method)
+  else
+    throw(ArgumentError("EdgeRefinement only defined for 1D and 2D meshes"))
+  end
+end
 
+_edgerefinement1D(mesh, method) = _edgerefinement1D(topology(mesh), vertices(mesh), method.pred)
+
+function _edgerefinement1D(topo::GridTopology, verts, pred)
+  # insert midpoints for edges that satisfy the predicate
+  pts = empty(verts)
+  ∂₁₀ = Boundary{1,0}(topo)
+  for eind in 1:nelements(topo)
+    i, j = ∂₁₀(eind)
+    edge = Segment(verts[i], verts[j])
+    push!(pts, verts[i])
+    pred(edge) && push!(pts, centroid(edge))
+  end
+  only(isperiodic(topo)) || push!(pts, last(verts))
+
+  # new grid topology with the same periodicity
+  dims = length(pts) .- .!isperiodic(topo)
+  newtopo = GridTopology(dims, isperiodic(topo))
+
+  SimpleMesh(pts, newtopo)
+end
+
+function _edgerefinement1D(topo, verts, pred)
+  # midpoints of edges that satisfy the predicate
+  mids = empty(verts)
+  segs = Connectivity{Segment,2}[]
+  ∂₁₀ = Boundary{1,0}(topo)
+  for eind in 1:nelements(topo)
+    i, j = ∂₁₀(eind)
+    edge = Segment(verts[i], verts[j])
+    if pred(edge)
+      push!(mids, centroid(edge))
+      k = length(verts) + length(mids)
+      push!(segs, connect((i, k)))
+      push!(segs, connect((k, j)))
+    else
+      push!(segs, connect((i, j)))
+    end
+  end
+
+  SimpleMesh([verts; mids], segs)
+end
+
+function _edgerefinement2D(mesh, method)
   # convert topology to half-edge structure
   t = convert(HalfEdgeTopology, topology(mesh))
 
