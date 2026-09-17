@@ -20,6 +20,14 @@
   @test nelements(rmesh) == 15
   @test nvertices(rmesh) == 13
 
+  # elements that do not satisfy the predicate are preserved
+  grid = cartgrid(4, 4)
+  rgrid = refine(grid, TriRefinement(e -> false))
+  @test nelements(rgrid) == nelements(grid)
+  @test all(e -> e isa Quadrangle, rgrid)
+  rgrid = refine(grid, TriRefinement(e -> to(centroid(e))[1] < T(2) * u"m"))
+  @test nelements(rgrid) == 40
+
   # latlon
   points = latlon.([(0, 0), (0, 4), (0, 8), (1, 3), (1, 5), (2, 2), (2, 4), (2, 6), (4, 4)])
   connec = connect.([(1, 2, 6), (2, 3, 8), (6, 8, 9), (2, 5, 4), (4, 5, 7), (4, 7, 6), (5, 8, 7)])

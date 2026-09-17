@@ -47,7 +47,7 @@ function refine(mesh, method::TriRefinement)
   newpoints = [vpts; rpts]
 
   # new connectivities in refined mesh
-  newconnec = Connectivity{Triangle,3}[]
+  ngons = Tuple[]
 
   # offset to new vertex indices
   offset = length(vpts)
@@ -60,15 +60,14 @@ function refine(mesh, method::TriRefinement)
       u = i + offset
       v = verts[mod1(j, nv)]
       w = verts[mod1(j + 1, nv)]
-      tri = connect((u, v, w))
-      push!(newconnec, tri)
+      push!(ngons, (u, v, w))
     end
   end
 
   # connectivities of preserved elements
   for elem in pinds
-    push!(newconnec, element(topo, elem))
+    push!(ngons, ∂₂₀(elem))
   end
 
-  SimpleMesh(newpoints, newconnec)
+  SimpleMesh(newpoints, map(connect, ngons))
 end
