@@ -48,32 +48,35 @@ function refine(mesh, method::EdgeRefinement)
   ∂₂₀ = Boundary{2,0}(t)
   connec = Connectivity[]
   for eind in 1:nelements(t)
-    verts = ∂₂₀(eind)
-    mids = _midpoints(mdict, verts)
-    if all(iszero, mids)
+    vinds = ∂₂₀(eind)
+    minds = _midpoints(mdict, vinds)
+    if all(iszero, minds)
       push!(connec, element(t, eind))
-    elseif length(verts) == 3
-      _subtriangles!(connec, verts, mids)
+    elseif length(vinds) == 3
+      _subtriangles!(connec, vinds, minds)
     else
-      push!(cpts, coordmean(vpts[i] for i in verts))
-      _subngons!(connec, verts, mids, length(vpts) + length(mpts) + length(cpts))
+      push!(cpts, coordmean(vpts[i] for i in vinds))
+      _subngons!(connec, vinds, minds, length(vpts) + length(mpts) + length(cpts))
     end
   end
 
   # new points in refined mesh
   newpoints = [vpts; mpts; cpts]
 
-  SimpleMesh(newpoints, map(identity, connec))
+  # new connectivity in refined mesh
+  newconnec = map(identity, connec)
+
+  SimpleMesh(newpoints, newconnec)
 end
 
 # indices of the midpoints inserted on the edges of an element, in the
 # order of its vertices, which are zero if the edge is not split. the
 # midpoints are shared with the adjacent elements, so the refined mesh
 # has no hanging vertices.
-function _midpoints(mdict, verts)
-  nv = length(verts)
+function _midpoints(mdict, vinds)
+  nv = length(vinds)
   map(1:nv) do i
-    u, v = verts[i], verts[mod1(i + 1, nv)]
+    u, v = vinds[i], vinds[mod1(i + 1, nv)]
     get(mdict, minmax(u, v), 0)
   end
 end
@@ -100,11 +103,11 @@ end
 
 # subdivide the n-gon into triangles that connect its centroid `c` to
 # the vertices and midpoints along its boundary
-function _subngons!(connec, verts, mids, c)
+function _subngons!(connec, vinds, minds, c)
   ring = Int[]
-  for (i, v) in enumerate(verts)
+  for (i, v) in enumerate(vinds)
     push!(ring, v)
-    mids[i] > 0 && push!(ring, mids[i])
+    minds[i] > 0 && push!(ring, minds[i])
   end
   nr = length(ring)
   for i in 1:nr
