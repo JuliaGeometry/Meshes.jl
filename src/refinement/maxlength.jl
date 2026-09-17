@@ -21,9 +21,23 @@ refine(grid::RectilinearGrid, method::MaxLengthRefinement) = _refinesides(grid, 
 
 refine(grid::OrthoStructuredGrid, method::MaxLengthRefinement) = _refinesides(grid, method.length)
 
+function refine(grid::Grid, method::MaxLengthRefinement)
+  while _iscoarse(grid, method.length)
+    grid = refine(grid)
+  end
+  grid
+end
+
 function refine(mesh::Mesh, method::MaxLengthRefinement)
-  while _iscoarse(mesh, method.length)
-    mesh = refine(mesh)
+  if paramdim(mesh) == 2
+    islong(s) = measure(s) > method.length
+    while any(islong, segments(mesh))
+      mesh = refine(mesh, EdgeRefinement(islong))
+    end
+  else
+    while _iscoarse(mesh, method.length)
+      mesh = refine(mesh)
+    end
   end
   mesh
 end
