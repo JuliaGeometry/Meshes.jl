@@ -29,6 +29,23 @@
   @test nvertices(rmesh) == 16
 end
 
+@testitem "QuadRefinement" setup = [Setup] begin
+  # CRS propagation
+  points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
+  connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, QuadRefinement())
+  @test crs(ref) === crs(mesh)
+
+  # latlon
+  points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.25, 0.25), (0.25, 0.75), (0.75, 0.5)])
+  connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
+  mesh = SimpleMesh(points, connec)
+  ref = refine(mesh, QuadRefinement())
+  @test nelements(ref) == 15
+  @test nvertices(ref) == 22
+end
+
 @testitem "EdgeRefinement" setup = [Setup] begin
   # CRS propagation
   grid = CartesianGrid(merc(0, 0), merc(3, 3))
@@ -76,23 +93,6 @@ end
   for (i, j) in ((1, 2), (2, 3), (3, 1))
     @test any(p -> p ≈ centroid(Segment(points[i], points[j])), vertices(rmesh))
   end
-end
-
-@testitem "QuadRefinement" setup = [Setup] begin
-  # CRS propagation
-  points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
-  connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
-  mesh = SimpleMesh(points, connec)
-  ref = refine(mesh, QuadRefinement())
-  @test crs(ref) === crs(mesh)
-
-  # latlon
-  points = latlon.([(0, 0), (0, 1), (1, 0), (1, 1), (0.25, 0.25), (0.25, 0.75), (0.75, 0.5)])
-  connec = connect.([(1, 2, 6, 5), (1, 5, 7, 3), (2, 4, 7, 6), (3, 7, 4)])
-  mesh = SimpleMesh(points, connec)
-  ref = refine(mesh, QuadRefinement())
-  @test nelements(ref) == 15
-  @test nvertices(ref) == 22
 end
 
 @testitem "TriSubdivision" setup = [Setup] begin
