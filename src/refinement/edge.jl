@@ -33,15 +33,15 @@ function refine(mesh, method::EdgeRefinement)
   vpts = vertices(tmesh)
 
   # midpoints of edges that satisfy the predicate
-  mpts = similar(vpts, 0)
-  midpoints = Dict{Tuple{Int,Int},Int}()
+  mpts = empty(vpts)
+  mdict = Dict{Tuple{Int,Int},Int}()
   ∂₁₀ = Boundary{1,0}(t)
   for eind in 1:nfacets(t)
     i, j = ∂₁₀(eind)
     edge = Segment(vpts[i], vpts[j])
     if method.pred(edge)
       push!(mpts, centroid(edge))
-      midpoints[_ordered(i, j)] = length(vpts) + length(mpts)
+      mdict[minmax(i, j)] = length(vpts) + length(mpts)
     end
   end
 
@@ -53,9 +53,9 @@ function refine(mesh, method::EdgeRefinement)
   triangles = Tuple{Int,Int,Int}[]
   for tind in 1:nelements(t)
     i, j, k = ∂₂₀(tind)
-    m1 = get(midpoints, _ordered(i, j), 0)
-    m2 = get(midpoints, _ordered(j, k), 0)
-    m3 = get(midpoints, _ordered(k, i), 0)
+    m1 = get(mdict, minmax(i, j), 0)
+    m2 = get(mdict, minmax(j, k), 0)
+    m3 = get(mdict, minmax(k, i), 0)
     _subtriangles!(triangles, (i, j, k), (m1, m2, m3))
   end
 
