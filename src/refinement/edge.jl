@@ -46,17 +46,17 @@ function refine(mesh, method::EdgeRefinement)
 
   # construct subelements of faces
   ∂₂₀ = Boundary{2,0}(t)
-  connec = Connectivity[]
+  ngons = Tuple[]
   for eind in 1:nelements(t)
     vinds = ∂₂₀(eind)
     minds = _midpoints(mdict, vinds)
     if all(iszero, minds)
-      push!(connec, element(t, eind))
+      push!(ngons, vinds)
     elseif length(vinds) == 3
-      _subtriangles!(connec, vinds, minds)
+      _subtriangles!(ngons, vinds, minds)
     else
       push!(cpts, coordmean(vpts[i] for i in vinds))
-      _subngons!(connec, vinds, minds, length(vpts) + length(mpts) + length(cpts))
+      _subngons!(ngons, vinds, minds, length(vpts) + length(mpts) + length(cpts))
     end
   end
 
@@ -64,7 +64,7 @@ function refine(mesh, method::EdgeRefinement)
   newpoints = [vpts; mpts; cpts]
 
   # new connectivity in refined mesh
-  newconnec = map(identity, connec)
+  newconnec = map(connect, ngons)
 
   SimpleMesh(newpoints, newconnec)
 end
@@ -83,27 +83,27 @@ end
 
 # subdivide the triangle (i, j, k) into two, three or four triangles
 # given the midpoints (m1, m2, m3) of its edges (i, j), (j, k) and (k, i)
-function _subtriangles!(connec, (i, j, k), (m1, m2, m3))
+function _subtriangles!(ngons, (i, j, k), (m1, m2, m3))
   if m1 > 0 && m2 > 0 && m3 > 0
-    push!(connec, connect((i, m1, m3)), connect((j, m2, m1)), connect((k, m3, m2)), connect((m1, m2, m3)))
+    push!(ngons, (i, m1, m3), (j, m2, m1), (k, m3, m2), (m1, m2, m3))
   elseif m1 > 0 && m2 > 0
-    push!(connec, connect((k, i, m1)), connect((k, m1, m2)), connect((m2, m1, j)))
+    push!(ngons, (k, i, m1), (k, m1, m2), (m2, m1, j))
   elseif m2 > 0 && m3 > 0
-    push!(connec, connect((i, j, m2)), connect((i, m2, m3)), connect((m3, m2, k)))
+    push!(ngons, (i, j, m2), (i, m2, m3), (m3, m2, k))
   elseif m3 > 0 && m1 > 0
-    push!(connec, connect((j, k, m3)), connect((j, m3, m1)), connect((m1, m3, i)))
+    push!(ngons, (j, k, m3), (j, m3, m1), (m1, m3, i))
   elseif m1 > 0
-    push!(connec, connect((i, m1, k)), connect((m1, j, k)))
+    push!(ngons, (i, m1, k), (m1, j, k))
   elseif m2 > 0
-    push!(connec, connect((j, m2, i)), connect((m2, k, i)))
+    push!(ngons, (j, m2, i), (m2, k, i))
   else
-    push!(connec, connect((k, m3, j)), connect((m3, i, j)))
+    push!(ngons, (k, m3, j), (m3, i, j))
   end
 end
 
 # subdivide the n-gon into triangles that connect its centroid `c` to
 # the vertices and midpoints along its boundary
-function _subngons!(connec, vinds, minds, c)
+function _subngons!(ngons, vinds, minds, c)
   ring = Int[]
   for (i, v) in enumerate(vinds)
     push!(ring, v)
@@ -111,6 +111,6 @@ function _subngons!(connec, vinds, minds, c)
   end
   nr = length(ring)
   for i in 1:nr
-    push!(connec, connect((c, ring[i], ring[mod1(i + 1, nr)])))
+    push!(ngons, (c, ring[i], ring[mod1(i + 1, nr)]))
   end
 end
