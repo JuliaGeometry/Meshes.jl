@@ -583,6 +583,7 @@ export
   # refinement
   RefinementMethod,
   TriRefinement,
+  EdgeRefinement,
   QuadRefinement,
   TriSubdivision,
   CatmullClarkRefinement,

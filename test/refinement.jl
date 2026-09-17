@@ -29,6 +29,55 @@
   @test nvertices(rmesh) == 16
 end
 
+@testitem "EdgeRefinement" setup = [Setup] begin
+  # CRS propagation
+  grid = CartesianGrid(merc(0, 0), merc(3, 3))
+  rgrid = refine(grid, EdgeRefinement(e -> true))
+  @test crs(rgrid) === crs(grid)
+
+  # two triangles sharing a diagonal
+  points = cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  connec = connect.([(1, 2, 3), (2, 4, 3)])
+  mesh = SimpleMesh(points, connec)
+
+  # no edge is split
+  rmesh = refine(mesh, EdgeRefinement(e -> false))
+  @test nvertices(rmesh) == 4
+  @test nelements(rmesh) == 2
+
+  # all five edges are split
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test nvertices(rmesh) == 9
+  @test nelements(rmesh) == 8
+
+  # only the diagonal is split
+  rmesh = refine(mesh, EdgeRefinement(e -> measure(e) > T(1.2) * u"m"))
+  @test nvertices(rmesh) == 5
+  @test nelements(rmesh) == 4
+
+  # the predicate can bound the length of all edges
+  mesh = convert(SimpleMesh, cartgrid(2, 2))
+  len = T(0.5) * u"m"
+  islong(s) = measure(s) > len
+  rmesh = refine(refine(mesh, EdgeRefinement(islong)), EdgeRefinement(islong))
+  @test nelements(rmesh) == 64
+  @test !any(islong, segments(rmesh))
+
+  # adjacent elements share the split edges
+  topo = convert(HalfEdgeTopology, topology(rmesh))
+  @test nvertices(rmesh) - nfacets(topo) + nelements(rmesh) == 1
+
+  # midpoints are on the geodesic over the ellipsoid
+  points = latlon.([(0, 0), (0, 10), (10, 0)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3)]))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test crs(rmesh) === crs(mesh)
+  @test nelements(rmesh) == 4
+  for (i, j) in ((1, 2), (2, 3), (3, 1))
+    @test any(p -> p ≈ centroid(Segment(points[i], points[j])), vertices(rmesh))
+  end
+end
+
 @testitem "QuadRefinement" setup = [Setup] begin
   # CRS propagation
   points = merc.([(0, 0), (1, 0), (0, 1), (1, 1), (0.25, 0.25), (0.75, 0.25), (0.5, 0.75)])
