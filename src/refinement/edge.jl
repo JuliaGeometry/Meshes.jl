@@ -8,9 +8,8 @@
 Refine polygonal mesh by splitting the edges for which the predicate
 `pred` holds true. n-gons with split edges are subdivided into triangles,
 and all other n-gons are preserved. Midpoints of split edges are connected
-to a new point inside the n-gon when n > 3 or to other midpoints when n == 3.
-The default predicate is `e -> true`, meaning all edges are splitted in the
-refined mesh.
+to a new point inside the n-gon when n > 3. The default predicate splits all
+edges in the mesh.
 
 ## Examples
 
