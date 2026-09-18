@@ -118,6 +118,29 @@ end
   for (i, j) in ((1, 2), (2, 3), (3, 1))
     @test any(p -> p ≈ centroid(Segment(points[i], points[j])), vertices(rmesh))
   end
+
+  # meshes of segments
+  points = cart.([(0, 0), (1, 0), (1, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2), (2, 3)]))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test nvertices(rmesh) == 5
+  @test nelements(rmesh) == 4
+
+  # meshes of segments with grid topology
+  points = cart.([(0, 0), (1, 0), (1, 1)])
+  mesh = SimpleMesh(points, GridTopology((2,), (false,)))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test topology(rmesh) == GridTopology((4,), (false,))
+  @test nvertices(rmesh) == 5
+  @test nelements(rmesh) == 4
+
+  # meshes of segments with periodic grid topology
+  points = cart.([(0, 0), (1, 0), (1, 1)])
+  mesh = SimpleMesh(points, GridTopology((3,), (true,)))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test topology(rmesh) == GridTopology((6,), (true,))
+  @test nvertices(rmesh) == 6
+  @test nelements(rmesh) == 6
 end
 
 @testitem "TriSubdivision" setup = [Setup] begin
