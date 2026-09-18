@@ -162,7 +162,7 @@ vector of indices.
 See also: [`candidates`](@ref), [`candidates!`](@ref).
 """
 function foreachcandidate(f, query, bvh::BVH)
-  stack = Int[1]
+  stack = [1]
 
   # compute the bounding box of the query and initialize a stack with the root node index
   querybox = boundingbox(query)
