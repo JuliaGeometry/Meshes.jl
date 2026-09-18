@@ -585,11 +585,11 @@ end
 
   box = Box(latlon(0, 0), latlon(10, 10))
   mesh = discretize(box) |> refinemaxlen
-  @test topology(mesh) isa SimpleTopology
+  @test topology(mesh) == GridTopology((4, 4), (false, false))
   @test nvertices(mesh) == 25
-  @test nelements(mesh) == 32
-  @test eltype(mesh) <: Triangle
-  @test nvertices.(mesh) ⊆ [3]
+  @test nelements(mesh) == 16
+  @test eltype(mesh) <: Quadrangle
+  @test nvertices.(mesh) ⊆ [4]
 
   box = Box(cart(0, 0, 0), cart(10, 10, 10))
   mesh = discretize(box)
@@ -711,11 +711,11 @@ end
 
   quad = Quadrangle(latlon(0, 0), latlon(0, 10), latlon(10, 10), latlon(10, 0))
   mesh = discretize(quad) |> refinemaxlen
-  @test topology(mesh) isa SimpleTopology
+  @test topology(mesh) == GridTopology((4, 4), (false, false))
   @test nvertices(mesh) == 25
-  @test nelements(mesh) == 32
-  @test eltype(mesh) <: Triangle
-  @test nvertices.(mesh) ⊆ [3]
+  @test nelements(mesh) == 16
+  @test eltype(mesh) <: Quadrangle
+  @test nvertices.(mesh) ⊆ [4]
 
   outer = cart.([(0, 0), (10, 0), (10, 10), (0, 10)])
   hole1 = cart.([(2, 2), (2, 4), (4, 4), (4, 2)])
@@ -767,11 +767,11 @@ end
   box = Box(latlon(0, 0), latlon(10, 10))
   tbox = TransformedGeometry(box, Proj(Mercator))
   mesh = discretize(tbox)
-  @test topology(mesh) isa SimpleTopology
+  @test topology(mesh) == GridTopology((4, 4), (false, false))
   @test nvertices(mesh) == 25
-  @test nelements(mesh) == 32
-  @test eltype(mesh) <: Triangle
-  @test nvertices.(mesh) ⊆ [3]
+  @test nelements(mesh) == 16
+  @test eltype(mesh) <: Quadrangle
+  @test nvertices.(mesh) ⊆ [4]
 
   grid = cartgrid(10)
   @test discretize(grid) == grid
