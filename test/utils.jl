@@ -38,7 +38,7 @@ end
 end
 
 @testitem "approxunique" setup = [Setup] begin
-  points = [cart(0,0)]
+  points = [cart(0, 0)]
   pts = Meshes.approxunique(points)
   @test length(pts) == 1
   @test all(p in pts for p in [cart(0, 0)])
