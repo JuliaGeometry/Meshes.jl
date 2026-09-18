@@ -38,6 +38,11 @@ end
 end
 
 @testitem "approxunique" setup = [Setup] begin
+  points = [cart(0,0)]
+  pts = Meshes.approxunique(points)
+  @test length(pts) == 1
+  @test all(p in pts for p in [cart(0, 0)])
+
   points = [cart(0, 0), cart(1, 1), cart(1, 1), cart(2, 2)]
   pts = Meshes.approxunique(points)
   @test length(pts) == 3
@@ -47,7 +52,7 @@ end
   box = Box(cart(0, 0), cart(2, 2))
   pts = Meshes.approxunique(points)
   @test length(pts) == 3
-  @test all(any(isapprox(i, p) for i in pts) for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
+  @test all(any(p ≈ p′ for p′ in pts) for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
   @test all(p in box for p in pts)
 end
 
