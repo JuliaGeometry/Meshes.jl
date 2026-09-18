@@ -37,6 +37,25 @@ end
   @test Meshes.mayberound(1.1, 1.0, 0.05) ≈ 1.1
 end
 
+@testitem "approxunique" setup = [Setup] begin
+  points = [cart(0, 0)]
+  pts = Meshes.approxunique(points)
+  @test length(pts) == 1
+  @test all(p in pts for p in [cart(0, 0)])
+
+  points = [cart(0, 0), cart(1, 1), cart(1, 1), cart(2, 2)]
+  pts = Meshes.approxunique(points)
+  @test length(pts) == 3
+  @test all(p in pts for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
+
+  points = [cart(0, 0), cart(1, 1 - eps(T)), cart(1, 1), cart(2, 2)]
+  box = Box(cart(0, 0), cart(2, 2))
+  pts = Meshes.approxunique(points)
+  @test length(pts) == 3
+  @test all(any(p ≈ p′ for p′ in pts) for p in [cart(0, 0), cart(1, 1), cart(2, 2)])
+  @test all(p in box for p in pts)
+end
+
 @testitem "intersectparameters" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   if T === Float64
