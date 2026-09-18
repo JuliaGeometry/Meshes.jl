@@ -3,6 +3,13 @@
 # ------------------------------------------------------------------
 
 """
+    assertion(cond, msg)
+
+Throws an `AssertionError(msg)` if `cond` is `false`.
+"""
+assertion(cond, msg) = cond || throw(AssertionError(msg))
+
+"""
     constructor(G)
 
 Given a (parametric) type `G{T₁,T₂,...}`, return the type `G`.
