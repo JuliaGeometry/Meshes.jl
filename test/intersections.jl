@@ -464,6 +464,10 @@ end
   p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ Multi([Segment(cart(0, 4), cart(2, 4)), Segment(cart(4, 4), cart(6, 4))])
   @test intersection(s, p) |> type == Intersecting
+  s = Segment(cart(-1, 0), cart(3, 0))
+  p = PolyArea([cart(0, 0), cart(1, 0), cart(1, -1), cart(2, -1), cart(2, 1), cart(0, 1)])
+  @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(2, 0))
+  @test intersection(s, p) |> type == Intersecting
   s = Segment(cart(-1, 0), cart(5, 0))
   p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(5, 0))
@@ -704,38 +708,43 @@ end
   r = Rope([cart(-1, 2), cart(2, 2), cart(5, 2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
-  @test r ∩ p ≈ p ∩ r ≈ Multi([Segment(cart(0, 2), cart(2, 2)), Segment(cart(2, 2), cart(4, 2))])
+  @test r ∩ p ≈ p ∩ r ≈ Rope([cart(0, 2), cart(2, 2), cart(4, 2)])
 
   # chain crosses polygon
   r = Ring([cart(-1, 1), cart(2, 1), cart(2, 3), cart(-1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
+  @test r ∩ p ≈ p ∩ r ≈ Rope([cart(0, 1), cart(2, 1), cart(2, 3), cart(0, 3)])
 
   # one segment inside, others outside
   r = Rope([cart(-1, 2), cart(1, 2), cart(3, 2), cart(5, 2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
+  @test r ∩ p ≈ p ∩ r ≈ Rope([cart(0, 2), cart(1, 2), cart(3, 2), cart(4, 2)])
 
   # chain entirely inside polygon
   r = Rope([cart(1, 1), cart(2, 2), cart(3, 1)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
-  @test r ∩ p ≈ p ∩ r ≈ Multi([Segment(cart(1, 1), cart(2, 2)), Segment(cart(2, 2), cart(3, 1))])
+  @test r ∩ p ≈ p ∩ r ≈ r
 
   # chain entirely inside polygon
   r = Ring([cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
+  @test r ∩ p ≈ p ∩ r ≈ Ring([cart(1, 1), cart(1, 3), cart(3, 3), cart(3, 1)])
 
   # mixed touching and intersecting
   r = Rope([cart(-1, 0), cart(0, 0), cart(2, 2), cart(5, 2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
+  @test r ∩ p ≈ p ∩ r ≈ Rope([cart(0, 0), cart(2, 2), cart(4, 2)])
 
   # chain touching polygon
   r = Ring([cart(-1, 0), cart(2, 0), cart(2, -2), cart(-1, -2)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
+  @test r ∩ p ≈ p ∩ r ≈ Segment(cart(0, 0), cart(2, 0))
 
   # chain vertex touches polygon edge
   r = Rope([cart(-2, 2), cart(0, 2), cart(-2, 3)])
@@ -772,7 +781,7 @@ end
   r = Rope([cart(-1, 0), cart(2, 0), cart(5, 0)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == EdgeTouching
-  @test r ∩ p ≈ p ∩ r ≈ Multi([Segment(cart(0, 0), cart(2, 0)), Segment(cart(2, 0), cart(4, 0))])
+  @test r ∩ p ≈ p ∩ r ≈ Rope([cart(0, 0), cart(2, 0), cart(4, 0)])
 
   # chain completely outside polygon
   r = Rope([cart(-3, 1), cart(-2, 2), cart(-1, 3)])
