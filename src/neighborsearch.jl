@@ -5,14 +5,14 @@
 """
     NeighborSearchMethod
 
-A method for searching neighbors given a reference point.
+A method for searching neighbors given a reference geometry.
 """
 abstract type NeighborSearchMethod end
 
 """
-    search(pₒ, method, mask=nothing)
+    search(geom, method, mask=nothing)
 
-Return neighbors of point `pₒ` using neighbor search `method`.
+Return neighbors of geometry `geom` using neighbor search `method`.
 Optionally, specify a `mask` for all indices of the domain.
 """
 function search end
@@ -37,9 +37,9 @@ See [`BoundedNeighborSearchMethod`](@ref) for additional details.
 function maxneighbors end
 
 """
-    search!(neighbors, pₒ, method; mask=nothing)
+    search!(neighbors, geom, method; mask=nothing)
 
-Update `neighbors` of point `pₒ` using bounded neighbor search `method`
+Update `neighbors` of geometry `geom` using bounded neighbor search `method`
 and return number of neighbors found. Optionally, specify a `mask` for
 all indices of the domain.
 
@@ -97,3 +97,4 @@ end
 include("neighborsearch/ball.jl")
 include("neighborsearch/knearest.jl")
 include("neighborsearch/kball.jl")
+include("neighborsearch/bvh.jl")
