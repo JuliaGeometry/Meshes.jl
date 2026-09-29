@@ -732,7 +732,7 @@ end
   r = Ring([cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3)])
   p = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test intersection(r, p) |> type == Intersecting
-  @test r ∩ p ≈ p ∩ r ≈ Ring([cart(1, 1), cart(1, 3), cart(3, 3), cart(3, 1)])
+  @test r ∩ p ≈ p ∩ r ≈ Ring([cart(3, 1), cart(3, 3), cart(1, 3), cart(1, 1)])
 
   # mixed touching and intersecting
   r = Rope([cart(-1, 0), cart(0, 0), cart(2, 2), cart(5, 2)])
