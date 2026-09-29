@@ -67,8 +67,24 @@ function refine(mesh, method::TriRefinement)
 
   # connectivities of preserved elements
   for elem in pinds
-    push!(newconnec, element(topo, elem))
+    inds = ∂₂₀(elem)
+    if length(inds) == 3
+      push!(newconnec, connect(inds))
+    else
+      append!(newconnec, _triangles(inds, newpoints))
+    end
   end
 
   SimpleMesh(newpoints, newconnec)
+end
+
+# triangulate the n-gon with vertex indices `inds` into triangles
+# with global indices, as it would be done by `simplexify`
+function _triangles(inds, points)
+  ngon = materialize(connect(inds), points)
+  topo = topology(simplexify(ngon))
+  map(elements(topo)) do connec
+    i, j, k = indices(connec)
+    connect((inds[i], inds[j], inds[k]))
+  end
 end
