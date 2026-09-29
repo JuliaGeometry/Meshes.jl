@@ -156,7 +156,7 @@ vector of indices.
 See also: [`search`](@ref), [`search!`](@ref).
 """
 function _foreachcandidate(f, query, method::BoundingVolumeHierarchySearch)
-  stack = Int[1]
+  stack = [1]
 
   # compute the bounding box of the query and initialize a stack with the root node index
   querybox = boundingbox(query)
