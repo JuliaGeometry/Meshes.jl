@@ -2,19 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    BVH(domain; leafsize=8)
-
-Construct a static bounding volume hierarchy over the elements of
-`domain`.
-
-The hierarchy stores axis-aligned bounding boxes and supports broad-phase
-queries with [`candidates`](@ref) and [`candidates!`](@ref).
-
-The `leafsize` parameter specifies the maximum number of elements stored
-in each leaf node. The root node is always the first node in the `nodes` 
-vector.
-"""
 struct BVHNode{B}
   box::B
   left::Int
@@ -23,7 +10,20 @@ struct BVHNode{B}
   last::Int
 end
 
-struct BVH{D,B} <: SpatialIndex
+"""
+	BoundingVolumeHierarchySearch(domain; leafsize=8)
+
+Construct a static bounding volume hierarchy over the elements of
+`domain`.
+
+The hierarchy stores axis-aligned bounding boxes and supports broad-phase
+queries with [`search`](@ref) and [`search!`](@ref).
+
+The `leafsize` parameter specifies the maximum number of elements stored
+in each leaf node. The root node is always the first node in the `nodes` 
+vector.
+"""
+struct BoundingVolumeHierarchySearch{D,B} <: NeighborSearchMethod
   domain::D
   boxes::Vector{B}
   perm::Vector{Int}
@@ -31,7 +31,7 @@ struct BVH{D,B} <: SpatialIndex
   leafsize::Int
 end
 
-function BVH(domain::Domain; leafsize::Int=8)
+function BoundingVolumeHierarchySearch(domain::D; leafsize::Int=8) where {D<:Domain}
   # validate the leaf size
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
@@ -58,7 +58,7 @@ function BVH(domain::Domain; leafsize::Int=8)
   _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
 
   # return the constructed BVH
-  BVH{typeof(domain),B}(domain, boxes, perm, nodes, leafsize)
+  BoundingVolumeHierarchySearch{D,B}(domain, boxes, perm, nodes, leafsize)
 end
 
 function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
@@ -99,70 +99,64 @@ end
 
 function _splitaxis(centers, perm, first, last)
   # compute the axis with the widest spread of the centers of the bounding boxes in the range [first, last]
-  dim = length(centers[perm[first]])
+  @inbounds begin
+    dim = length(centers[perm[first]])
 
-  lo = collect(centers[perm[first]])
-  hi = copy(lo)
+    lo = collect(centers[perm[first]])
+    hi = copy(lo)
 
-  for k in (first + 1):last
-    center = centers[perm[k]]
-    for axis in 1:dim
-      value = center[axis]
-      lo[axis] = min(lo[axis], value)
-      hi[axis] = max(hi[axis], value)
+    for k in (first + 1):last
+      center = centers[perm[k]]
+      for axis in 1:dim
+        value = center[axis]
+        lo[axis] = min(lo[axis], value)
+        hi[axis] = max(hi[axis], value)
+      end
     end
+
+    argmax(hi .- lo)
   end
-
-  argmax(hi .- lo)
 end
 
-function candidates(query, bvh::BVH)
+function search(query, method::BoundingVolumeHierarchySearch; mask=nothing)
   inds = Int[]
-  candidates!(inds, query, bvh)
+  search!(inds, query, method; mask=mask)
 end
 
-"""
-    candidates!(inds, query, bvh)
-
-Find the indices of the elements in `bvh` whose bounding boxes intersect the bounding box of `query`.
-
-The indices are stored in the preallocated vector `inds`, which is emptied before the search. 
-The function returns `inds` for convenience.
-
-This is a convenience wrapper around [`foreachcandidate`](@ref) that materializes the candidate 
-indices in a vector. Algorithms that process candidates immediately may obtain better performance 
-by using `foreachcandidate` directly.
-
-See also: [`candidates`](@ref), [`foreachcandidate`](@ref).
-"""
-function candidates!(inds::Vector{Int}, query, bvh::BVH)
+function search!(inds::Vector{Int}, query, method::BoundingVolumeHierarchySearch; mask=nothing)
   # clear the output vector to ensure it only contains the results of the current query
   empty!(inds)
 
-  foreachcandidate(query, bvh) do ind
+  _foreachcandidate(query, method) do ind
     push!(inds, ind)
   end
 
-  inds
+  if isnothing(mask)
+    inds
+  else
+    neighbors = Vector{Int}()
+    @inbounds for ind in inds
+      if mask[ind]
+        push!(neighbors, ind)
+      end
+    end
+    neighbors
+  end
 end
 
 """
-    foreachcandidate(f, query, bvh)
+	_foreachcandidate(f, query, method)
 
-Traverse the bounding volume hierarchy `bvh` and invoke the function `f` on the index of each element 
-whose bounding box intersects the bounding box of `query`.
-
-The traversal performs a broad-phase search only. Candidate indices are reported based on bounding-box 
-intersection and are **not** guaranteed to satisfy any exact geometric predicate.
+Apply `f` to the index of each candidate selected by `method` for `query`.
 
 This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
 interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
 vector of indices.
 
-See also: [`candidates`](@ref), [`candidates!`](@ref).
+See also: [`search`](@ref), [`search!`](@ref).
 """
-function foreachcandidate(f, query, bvh::BVH)
-  stack = [1]
+function _foreachcandidate(f, query, method::BoundingVolumeHierarchySearch)
+  stack = Int[1]
 
   # compute the bounding box of the query and initialize a stack with the root node index
   querybox = boundingbox(query)
@@ -171,7 +165,7 @@ function foreachcandidate(f, query, bvh::BVH)
   while !isempty(stack)
     # pop the last node index from the stack and retrieve the corresponding node from the BVH
     nodeid = pop!(stack)
-    node = bvh.nodes[nodeid]
+    node = method.nodes[nodeid]
 
     # check if the bounding box of the current node intersects with the query bounding box; if not, skip to the next iteration
     intersects(node.box, querybox) || continue
@@ -179,9 +173,9 @@ function foreachcandidate(f, query, bvh::BVH)
     # if the current node is a leaf node, check each element in the range [first, last] to see if its bounding box intersects
     # with the query bounding box; if so, add its index to the output vector
     if _isleaf(node)
-      for k in node.first:node.last
-        ind = bvh.perm[k]
-        intersects(bvh.boxes[ind], querybox) || continue
+      @inbounds for k in node.first:node.last
+        ind = method.perm[k]
+        intersects(method.boxes[ind], querybox) || continue
         f(ind)
       end
     else

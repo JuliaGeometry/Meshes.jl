@@ -110,8 +110,8 @@ include("predicates.jl")
 include("differentation.jl")
 include("integration.jl")
 
-# spatial indexes
-include("spatialindex.jl")
+# geodesics
+include("geodesics.jl")
 
 # operations
 include("centroid.jl")
@@ -385,11 +385,6 @@ export
 
   # indices
   indices,
-  SpatialIndex,
-  BVH,
-  candidates,
-  candidates!,
-  foreachcandidate,
 
   # partitions
   Partition,
@@ -445,6 +440,7 @@ export
   BallSearch,
   KNearestSearch,
   KBallSearch,
+  BoundingVolumeHierarchySearch,
   search!,
   searchdists!,
   search,
