@@ -149,19 +149,19 @@ end
   @test length(n) == 10
 end
 
-@testitem "BoundingVolumeHierarchySearch" setup = [Setup] begin
+@testitem "BoundingBoxSearch" setup = [Setup] begin
   box = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   domain = GeometrySet(box)
 
   # basic query
-  bvh = BoundingVolumeHierarchySearch(domain; leafsize=1)
+  bvh = BoundingBoxSearch(domain; leafsize=1)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   answer = findall(box -> intersects(box, query), box)
   result = sort(search(query, bvh))
   @test result == answer
 
   # no candidates
-  bvh = BoundingVolumeHierarchySearch(domain)
+  bvh = BoundingBoxSearch(domain)
   query = Box(cart(10, 10), cart(11, 11))
   @test isempty(search(query, bvh))
 
@@ -169,14 +169,14 @@ end
   query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
   answer = findall(box -> intersects(box, query), box)
   for leafsize in (1, 2, 3, 8)
-    leafbvh = BoundingVolumeHierarchySearch(domain; leafsize)
+    leafbvh = BoundingBoxSearch(domain; leafsize)
     @test sort(search(query, leafbvh)) == answer
   end
 
   # leaf size greater than or equal to the number of elements
   n = nelements(domain)
   for leafsize in (n, n + 1, 2n)
-    leafbvh = BoundingVolumeHierarchySearch(domain; leafsize)
+    leafbvh = BoundingBoxSearch(domain; leafsize)
     root = leafbvh.nodes[1]
     @test length(leafbvh.nodes) == 1
     @test Meshes._isleaf(root)
@@ -187,7 +187,7 @@ end
   end
 
   # preallocated output
-  bvh = BoundingVolumeHierarchySearch(domain)
+  bvh = BoundingBoxSearch(domain)
   query = Box(cart(0.5, 0.5), cart(1.5, 1.5))
   inds = [100, 200]
   result = search!(inds, query, bvh)
@@ -195,8 +195,8 @@ end
   @test inds == [1]
 
   # invalid leaf size
-  @test_throws ArgumentError BoundingVolumeHierarchySearch(domain; leafsize=0)
-  @test_throws ArgumentError BoundingVolumeHierarchySearch(domain; leafsize=-1)
+  @test_throws ArgumentError BoundingBoxSearch(domain; leafsize=0)
+  @test_throws ArgumentError BoundingBoxSearch(domain; leafsize=-1)
 
   # randomized brute-force equivalence
   rng = StableRNG(1234)
@@ -211,7 +211,7 @@ end
   ]
   randd = GeometrySet(randb)
   for leafsize in (1, 2, 4, 8, 16)
-    randbvh = BoundingVolumeHierarchySearch(randd; leafsize)
+    randbvh = BoundingBoxSearch(randd; leafsize)
     for _ in 1:100
       local query, answer, result
       xmin = rand(rng) * 100
@@ -226,11 +226,11 @@ end
   end
 
   # root bounding box
-  bvh = BoundingVolumeHierarchySearch(randd)
+  bvh = BoundingBoxSearch(randd)
   @test bvh.nodes[1].box ≈ boundingbox(randd)
 
   # internal node invariants
-  bvh = BoundingVolumeHierarchySearch(randd; leafsize=1)
+  bvh = BoundingBoxSearch(randd; leafsize=1)
   for node in bvh.nodes
     if !Meshes._isleaf(node)
       leftbox = bvh.nodes[node.left].box
@@ -242,7 +242,7 @@ end
   end
 
   # leaf invariants
-  bvh = BoundingVolumeHierarchySearch(randd; leafsize=2)
+  bvh = BoundingBoxSearch(randd; leafsize=2)
   for node in bvh.nodes
     if Meshes._isleaf(node)
       @test node.left == 0
@@ -263,7 +263,7 @@ end
   @test length(unique(leafinds)) == nelements(randd)
 
   # type stability tests
-  bvh = BoundingVolumeHierarchySearch(domain)
+  bvh = BoundingBoxSearch(domain)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   @inferred search(query, bvh)
   inds = Int[]
