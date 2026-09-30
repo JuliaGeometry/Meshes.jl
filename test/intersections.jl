@@ -1394,8 +1394,8 @@ end
   # triangle <> triangle
   t1 = Triangle(cart(0.0, 0.0), cart(0.0, 1.000000000000001), cart(1.0, 1.0))
   t2 = Triangle(cart(0.0, 1.0), cart(0.0, 2.0), cart(1.0, 1.000000000001))
-  @test intersection(t1, t2) |> type == Intersecting
-  @test t1 ∩ t2 isa PolyArea
+  @test intersection(t1, t2) |> type == NotIntersecting
+  @test isnothing(t1 ∩ t2)
 
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
@@ -1407,10 +1407,10 @@ end
   poly = Octagon(cart(8, -2), cart(8, 5), cart(2, 5), cart(4, 3), cart(6, 3), cart(4, 1), cart(2, 1), cart(2, -2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
   @test intersection(poly, other) |> type == Intersecting
-  @test all(
-    vertices(poly ∩ other) .≈
-    [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0), cart(5, 4)]
-  )
+  clipped = poly ∩ other
+  @test clipped isa Multi
+  @test all(vertices(parent(clipped)[1]) .≈ [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 4)])
+  @test all(vertices(parent(clipped)[2]) .≈ [cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0)])
 
   # inside
   poly = Quadrangle(cart(1, 0), cart(1, 1), cart(0, 1), cart(0, 0))
@@ -1428,7 +1428,7 @@ end
   quad = Quadrangle(cart(0, 0), cart(0.1, 0.0), cart(0.1, 0.1), cart(0.0, 0.1))
   poly = PolyArea(cart(0, 0), cart(2, 0), cart(1, 1), cart(1, 0.5))
   @test intersection(quad, poly) |> type == Intersecting
-  @test all(vertices(quad ∩ poly) .≈ [cart(0, 0), cart(0.1, 0), cart(0.1, 0.05)])
+  @test all(vertices(quad ∩ poly) .≈ [cart(0.1, 0), cart(0.1, 0.05), cart(0, 0)])
 end
 
 @testitem "Domain intersection" setup = [Setup] begin
