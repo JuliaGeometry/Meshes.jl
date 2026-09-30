@@ -11,10 +11,9 @@ struct BVHNode{B}
 end
 
 """
-	BoundingVolumeHierarchySearch(domain; leafsize=8)
+	BoundingBoxSearch(domain; leafsize=8)
 
-Construct a static bounding volume hierarchy over the elements of
-`domain`.
+Construct a static bounding volume hierarchy (BVH) over the elements of `domain`.
 
 The hierarchy stores axis-aligned bounding boxes and supports broad-phase
 queries with [`search`](@ref) and [`search!`](@ref).
@@ -23,7 +22,7 @@ The `leafsize` parameter specifies the maximum number of elements stored
 in each leaf node. The root node is always the first node in the `nodes` 
 vector.
 """
-struct BoundingVolumeHierarchySearch{D,B} <: NeighborSearchMethod
+struct BoundingBoxSearch{D,B} <: NeighborSearchMethod
   domain::D
   boxes::Vector{B}
   perm::Vector{Int}
@@ -31,7 +30,7 @@ struct BoundingVolumeHierarchySearch{D,B} <: NeighborSearchMethod
   leafsize::Int
 end
 
-function BoundingVolumeHierarchySearch(domain::D; leafsize::Int=8) where {D<:Domain}
+function BoundingBoxSearch(domain::D; leafsize::Int=8) where {D<:Domain}
   # validate the leaf size
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
@@ -58,7 +57,7 @@ function BoundingVolumeHierarchySearch(domain::D; leafsize::Int=8) where {D<:Dom
   _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
 
   # return the constructed BVH
-  BoundingVolumeHierarchySearch{D,B}(domain, boxes, perm, nodes, leafsize)
+  BoundingBoxSearch{D,B}(domain, boxes, perm, nodes, leafsize)
 end
 
 function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
@@ -118,26 +117,26 @@ function _splitaxis(centers, perm, first, last)
   end
 end
 
-function search(query, method::BoundingVolumeHierarchySearch; mask=nothing)
+function search(geom, method::BoundingBoxSearch; mask=nothing)
   inds = Int[]
-  search!(inds, query, method; mask=mask)
+  search!(inds, geom, method; mask=mask)
 end
 
-function search!(inds::Vector{Int}, query, method::BoundingVolumeHierarchySearch; mask=nothing)
-  # clear the output vector to ensure it only contains the results of the current query
-  empty!(inds)
+function search!(neighbors, geom, method::BoundingBoxSearch; mask=nothing)
+  # clear the output vector to ensure it only contains the results of the current query geometry
+  empty!(neighbors)
 
-  _foreachcandidate(query, method) do ind
-    push!(inds, ind)
+  _foreachcandidate(geom, method) do ind
+    push!(neighbors, ind)
   end
 
   if isnothing(mask)
-    inds
+    neighbors
   else
-    neighbors = Vector{Int}()
-    @inbounds for ind in inds
+    maskedneighbors = Vector{Int}()
+    @inbounds for ind in neighbors
       if mask[ind]
-        push!(neighbors, ind)
+        push!(maskedneighbors, ind)
       end
     end
     neighbors
@@ -145,9 +144,9 @@ function search!(inds::Vector{Int}, query, method::BoundingVolumeHierarchySearch
 end
 
 """
-	_foreachcandidate(f, query, method)
+	_foreachcandidate(f, geom, method)
 
-Apply `f` to the index of each candidate selected by `method` for `query`.
+Apply `f` to the index of each candidate selected by `method` for `geom`.
 
 This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
 interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
@@ -155,11 +154,10 @@ vector of indices.
 
 See also: [`search`](@ref), [`search!`](@ref).
 """
-function _foreachcandidate(f, query, method::BoundingVolumeHierarchySearch)
+function _foreachcandidate(f, geom, method::BoundingBoxSearch)
+  # compute the bounding box of the query geometry `geom` and initialize a stack with the root node index
+  geombox = boundingbox(geom)
   stack = [1]
-
-  # compute the bounding box of the query and initialize a stack with the root node index
-  querybox = boundingbox(query)
 
   # traverse the BVH using a stack-based approach to find all nodes whose bounding boxes intersect with the query bounding box
   while !isempty(stack)
@@ -167,15 +165,15 @@ function _foreachcandidate(f, query, method::BoundingVolumeHierarchySearch)
     nodeid = pop!(stack)
     node = method.nodes[nodeid]
 
-    # check if the bounding box of the current node intersects with the query bounding box; if not, skip to the next iteration
-    intersects(node.box, querybox) || continue
+    # check if the bounding box of the current node intersects with the geom bounding box; if not, skip to the next iteration
+    intersects(node.box, geombox) || continue
 
     # if the current node is a leaf node, check each element in the range [first, last] to see if its bounding box intersects
-    # with the query bounding box; if so, add its index to the output vector
+    # with the geom bounding box; if so, add its index to the output vector
     if _isleaf(node)
       @inbounds for k in node.first:node.last
         ind = method.perm[k]
-        intersects(method.boxes[ind], querybox) || continue
+        intersects(method.boxes[ind], geombox) || continue
         f(ind)
       end
     else
