@@ -36,7 +36,7 @@ function hull(points, method::MoreiraMarch)
   assertion(ncoords == 2, "Moreira's march algorithm is only defined with 2D coordinates")
 
   # remove duplicates
-  p = unique(points)
+  p = approxunique(points)
   n = length(p)
 
   # corner cases

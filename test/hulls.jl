@@ -266,4 +266,12 @@ end
   @test issimple(chul3) && all(∈(chul3), pts)
   @test issimple(chuln) && all(∈(chuln), pts)
   @test nvertices(chuln) ≤ nvertices(chul3)
+
+  # approxunique fixes singularity
+  b1 = Ball(cart(0, 0), T(1))
+  b2 = Box(cart(-1, -1), cart(0, 0))
+  chul = convexhull(Multi([b1, b2]))
+  @test !isnothing(chul)
+  @test cart(-0.8, -0.8) ∈ chul
+  @test cart(0.2, 0.2) ∈ chul
 end
