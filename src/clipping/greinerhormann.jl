@@ -24,9 +24,14 @@ other geometry.
 """
 struct GreinerHormannClipping <: ClippingMethod end
 
-function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
-  srings = subject |> Repair(11) |> rings
-  orings = other |> Repair(11) |> rings
+clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping) = _ghclip(subject, other, :intersection)
+
+# clip the subject polygon with the other polygon, where `op` is
+# one of :intersection, :union or :difference
+function _ghclip(subject, other, op)
+  srings = _ghrings(subject)
+  # the difference is the intersection with the complement of the other polygon
+  orings = op == :difference ? reverse.(_ghrings(other)) : _ghrings(other)
 
   # intersection phase
   slist, olist = _ghintersect(srings, orings)
@@ -35,14 +40,27 @@ function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
   _ghmark!(slist, olist)
   _ghflags!(slist, orings)
   _ghflags!(olist, srings)
+  op == :intersection || _ghinvert!(slist)
+  op == :union && _ghinvert!(olist)
 
   # tracing phase
   crings = _ghtrace(slist, olist)
-  append!(crings, _ghinner(slist, orings, common=true))
-  append!(crings, _ghinner(olist, srings, common=false))
+  append!(crings, _ghinner(slist, orings, inside=(op == :intersection), common=(op == :intersection)))
+  append!(crings, _ghinner(olist, srings, inside=(op ≠ :union), common=false))
 
   isempty(crings) ? nothing : _ghpolygons(crings)
 end
+
+# swap entry and exit points
+function _ghinvert!(list)
+  for v in list.verts
+    v.crossing && (v.entry = !v.entry)
+  end
+end
+
+_ghrings(p::Polygon) = p |> Repair(11) |> rings
+
+_ghrings(m::Multi) = mapreduce(_ghrings, vcat, parent(m))
 
 # vertex of the doubly-linked lists of the algorithm
 mutable struct GHVertex{P<:Point}
@@ -374,7 +392,7 @@ function _ghtrace(list₁, list₂)
 end
 
 # components without crossing vertices that lie inside the other polygon
-function _ghinner(list, rings; common)
+function _ghinner(list, rings; inside, common)
   P = typeof(first(list.verts).point)
   inner = Vector{P}[]
   for range in list.comps
@@ -384,8 +402,8 @@ function _ghinner(list, rings; common)
       # the component encloses the same region as a component of the other polygon
       common && push!(inner, [list.verts[i].point for i in range])
     else
-      _, inside = start
-      inside && push!(inner, [list.verts[i].point for i in range])
+      _, isin = start
+      isin == inside && push!(inner, [list.verts[i].point for i in range])
     end
   end
   inner
