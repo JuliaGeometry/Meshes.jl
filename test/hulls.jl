@@ -267,7 +267,7 @@ end
   @test issimple(chuln) && all(∈(chuln), pts)
   @test nvertices(chuln) ≤ nvertices(chul3)
 
-  # test that approxunique fixes singularity
+  # approxunique fixes singularity
   b1 = Ball(cart(0, 0), T(1))
   b2 = Box(cart(-1, -1), cart(0, 0))
   h = convexhull(Multi([b1, b2]))
