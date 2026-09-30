@@ -238,7 +238,6 @@ end
   d = cart(0, 1)
   segs = [Segment(a, b), Segment(b, c), Segment(c, d), Segment(d, a)]
   glued = Meshes.glue(segs)
-  print(glued)
   @test glued == [Ring(b, c, d, a)]
 
   # ring result is independent of input ordering
