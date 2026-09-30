@@ -2450,7 +2450,7 @@ end
   seg = Segment(cart(0, 0), cart(1, 0))
 
   rseg, cache = TB.apply(repair, seg)
-  @test rseg == seg
+  @test rseg == Multi([seg])
   @test isnothing(cache)
 
   # rope is decomposed into segments
@@ -2530,6 +2530,28 @@ end
   @inferred repair(rope)
   @inferred repair(ring)
   @inferred repair(branch)
+end
+
+@testitem "Repair fallbacks" setup = [Setup] begin
+  quad = Quadrangle(cart(0, 1, 0), cart(1, 1, 0), cart(1, 0, 0), cart(0, 0, 0))
+  repair = Repair(10)
+  rquad, cache = TB.apply(repair, quad)
+  @test rquad isa Quadrangle
+  @test rquad == quad
+
+  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  multi = Multi([poly1, poly2])
+  repair = Repair(11)
+  rmulti, cache = TB.apply(repair, multi)
+  @test rmulti == Multi([repair(poly1), repair(poly2)])
+
+  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  gset = GeometrySet([poly1, poly2])
+  repair = Repair(11)
+  rgset, cache = TB.apply(repair, gset)
+  @test rgset == GeometrySet([repair(poly1), repair(poly2)])
 end
 
 @testitem "Repair IO" setup = [Setup] begin
