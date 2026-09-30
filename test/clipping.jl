@@ -87,3 +87,52 @@
     @test perim ≈ T(15887.308996863363)u"m"
   end
 end
+
+@testitem "GreinerHormann" setup = [Setup] begin
+  # same result as Sutherland-Hodgman when the clipping geometry is convex
+  poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
+  other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test issimple(clipped)
+  @test all(vertices(clipped) .≈ [cart(5, 3), cart(4, 4), cart(2, 4), cart(0, 2), cart(5, 2)])
+
+  # non-convex clipping geometry
+  poly = PolyArea(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
+  other = PolyArea(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test all(vertices(clipped) .≈ [cart(4, 1), cart(0, 1), cart(0, 0), cart(4, 0)])
+
+  # clipped polygon with two components
+  poly = Quadrangle(cart(0, 0), cart(6, 0), cart(6, 1), cart(0, 1))
+  other = PolyArea(cart.([(0, 0.25), (2, 0.25), (2, 2), (4, 2), (4, 0.25), (6, 0.25), (6, 3), (0, 3)]))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test clipped isa Multi
+  @test length(parent(clipped)) == 2
+  @test measure(clipped) ≈ T(3) * u"m^2"
+
+  # polygon with hole
+  outer = Ring(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]))
+  inner = Ring(cart.([(3, 3), (3, 7), (7, 7), (7, 3)]))
+  poly = PolyArea([outer, inner])
+  other = Quadrangle(cart(5, -2), cart(14, -2), cart(14, 12), cart(5, 12))
+  @test measure(clip(poly, other, GreinerHormannClipping())) ≈ T(42) * u"m^2"
+
+  # vertices on edges and shared edges
+  sq = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  @test measure(clip(sq, sq, GreinerHormannClipping())) ≈ T(16) * u"m^2"
+  @test isnothing(clip(Quadrangle(cart(4, 0), cart(8, 0), cart(8, 4), cart(4, 4)), sq, GreinerHormannClipping()))
+  @test isnothing(clip(Quadrangle(cart(4, 4), cart(8, 4), cart(8, 8), cart(4, 8)), sq, GreinerHormannClipping()))
+  clipped = clip(Triangle(cart(2, 4), cart(6, 2), cart(6, 6)), sq, GreinerHormannClipping())
+  @test all(vertices(clipped) .≈ [cart(2, 4), cart(4, 3), cart(4, 4)])
+
+  # inside and outside
+  poly = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
+  @test all(vertices(clip(poly, sq, GreinerHormannClipping())) .≈ vertices(poly))
+  poly = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
+  @test isnothing(clip(poly, sq, GreinerHormannClipping()))
+
+  # CRS propagation
+  poly = Triangle(merc(6, 2), merc(3, 5), merc(0, 2))
+  other = Quadrangle(merc(5, 0), merc(5, 4), merc(0, 4), merc(0, 0))
+  @test crs(clip(poly, other, GreinerHormannClipping())) === crs(poly)
+end
