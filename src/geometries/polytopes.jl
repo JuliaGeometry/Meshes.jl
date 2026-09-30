@@ -5,7 +5,7 @@
 """
     Polytope{K,M,CRS}
 
-We say that a geometry is a K-polytope when it is a collection of "flat" sides
+We say that a geometry is a `K`-polytope when it is a collection of "sides"
 that constitute a `K`-dimensional subspace. They are called chain, polygon and
 polyhedron respectively for 1D (`K=1`), 2D (`K=2`) and 3D (`K=3`) subspaces.
 The parameter `K` is also known as the rank or parametric dimension

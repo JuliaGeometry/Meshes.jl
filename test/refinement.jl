@@ -20,6 +20,13 @@
   @test nelements(rmesh) == 15
   @test nvertices(rmesh) == 13
 
+  # elements that do not satisfy the predicate are triangulated
+  grid = cartgrid(4, 4)
+  @test refine(grid, TriRefinement(e -> false)) == simplexify(grid)
+  rgrid = refine(grid, TriRefinement(e -> to(centroid(e))[1] < T(2) * u"m"))
+  @test eltype(rgrid) <: Triangle
+  @test nelements(rgrid) == 48
+
   # latlon
   points = latlon.([(0, 0), (0, 4), (0, 8), (1, 3), (1, 5), (2, 2), (2, 4), (2, 6), (4, 4)])
   connec = connect.([(1, 2, 6), (2, 3, 8), (6, 8, 9), (2, 5, 4), (4, 5, 7), (4, 7, 6), (5, 8, 7)])
@@ -44,6 +51,103 @@ end
   ref = refine(mesh, QuadRefinement())
   @test nelements(ref) == 15
   @test nvertices(ref) == 22
+end
+
+@testitem "EdgeRefinement" setup = [Setup] begin
+  # CRS propagation
+  grid = CartesianGrid(merc(0, 0), merc(3, 3))
+  rgrid = refine(grid, EdgeRefinement(e -> true))
+  @test crs(rgrid) === crs(grid)
+
+  # elements without split edges are preserved
+  grid = cartgrid(10, 10)
+  rgrid = refine(grid, EdgeRefinement(e -> false))
+  @test nvertices(rgrid) == nvertices(grid)
+  @test nelements(rgrid) == nelements(grid)
+  @test all(e -> e isa Quadrangle, rgrid)
+  rgrid = refine(grid, EdgeRefinement(e -> to(centroid(e))[1] < T(5) * u"m"))
+  @test count(e -> e isa Quadrangle, rgrid) == 50
+
+  # two triangles sharing a diagonal
+  points = cart.([(0, 0), (1, 0), (0, 1), (1, 1)])
+  connec = connect.([(1, 2, 3), (2, 4, 3)])
+  mesh = SimpleMesh(points, connec)
+
+  # no edge is split
+  rmesh = refine(mesh, EdgeRefinement(e -> false))
+  @test nvertices(rmesh) == 4
+  @test nelements(rmesh) == 2
+
+  # all five edges are split
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test nvertices(rmesh) == 9
+  @test nelements(rmesh) == 8
+
+  # only the diagonal is split
+  rmesh = refine(mesh, EdgeRefinement(e -> measure(e) > T(1.2) * u"m"))
+  @test nvertices(rmesh) == 5
+  @test nelements(rmesh) == 4
+
+  # a triangle is split into two, three or four triangles
+  points = cart.([(0, 0), (1, 0), (0, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3)]))
+  mids = cart.([(0.5, 0), (0.5, 0.5), (0, 0.5)])
+  for (inds, n) in (([], 1), ([1], 2), ([2], 2), ([3], 2), ([1, 2], 3), ([2, 3], 3), ([3, 1], 3), ([1, 2, 3], 4))
+    pred(e) = any(i -> centroid(e) ≈ mids[i], inds)
+    @test nelements(refine(mesh, EdgeRefinement(pred))) == n
+  end
+
+  # other n-gons are split around their centroid
+  points = cart.([(0, 0), (2, 0), (3, 1), (1, 2), (-1, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3, 4, 5)]))
+  rmesh = refine(mesh, EdgeRefinement(e -> measure(e) > T(2) * u"m"))
+  @test nvertices(rmesh) == 8
+  @test nelements(rmesh) == 7
+
+  # the predicate can bound the length of all edges
+  mesh = convert(SimpleMesh, cartgrid(2, 2))
+  len = T(0.5) * u"m"
+  islong(s) = measure(s) > len
+  rmesh = refine(refine(mesh, EdgeRefinement(islong)), EdgeRefinement(islong))
+  @test nelements(rmesh) == 64
+  @test !any(islong, segments(rmesh))
+
+  # adjacent elements share the split edges
+  topo = convert(HalfEdgeTopology, topology(rmesh))
+  @test nvertices(rmesh) - nfacets(topo) + nelements(rmesh) == 1
+
+  # midpoints are on the geodesic over the ellipsoid
+  points = latlon.([(0, 0), (0, 10), (10, 0)])
+  mesh = SimpleMesh(points, connect.([(1, 2, 3)]))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test crs(rmesh) === crs(mesh)
+  @test nelements(rmesh) == 4
+  for (i, j) in ((1, 2), (2, 3), (3, 1))
+    @test any(p -> p ≈ centroid(Segment(points[i], points[j])), vertices(rmesh))
+  end
+
+  # meshes of segments
+  points = cart.([(0, 0), (1, 0), (1, 1)])
+  mesh = SimpleMesh(points, connect.([(1, 2), (2, 3)]))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test nvertices(rmesh) == 5
+  @test nelements(rmesh) == 4
+
+  # meshes of segments with grid topology
+  points = cart.([(0, 0), (1, 0), (1, 1)])
+  mesh = SimpleMesh(points, GridTopology((2,), (false,)))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test topology(rmesh) == GridTopology((4,), (false,))
+  @test nvertices(rmesh) == 5
+  @test nelements(rmesh) == 4
+
+  # meshes of segments with periodic grid topology
+  points = cart.([(0, 0), (1, 0), (1, 1)])
+  mesh = SimpleMesh(points, GridTopology((3,), (true,)))
+  rmesh = refine(mesh, EdgeRefinement(e -> true))
+  @test topology(rmesh) == GridTopology((6,), (true,))
+  @test nvertices(rmesh) == 6
+  @test nelements(rmesh) == 6
 end
 
 @testitem "TriSubdivision" setup = [Setup] begin

@@ -29,23 +29,4 @@ struct GeodesicDistance <: GeometricDistance end
 
 (::GeodesicDistance)(p₁::Point{𝔼{Dim}}, p₂::Point{𝔼{Dim}}) where {Dim} = norm(p₂ - p₁)
 
-function (::GeodesicDistance)(p₁::Point{🌐}, p₂::Point{🌐})
-  # convert coordinates to same LatLon CRS
-  q₁, q₂ = promote(p₁, p₂)
-  c₁ = convert(manifoldcrs(q₁), coords(q₁))
-  c₂ = convert(manifoldcrs(q₂), coords(q₂))
-
-  # the manifold only tells us that the points lie on a sphere,
-  # the ellipsoid itself comes from the datum of the coordinates
-  🌎 = ellipsoid(datum(c₁))
-
-  # the series of Karney need double precision to reach round-off
-  T = numtype(lentype(c₁))
-  S = promote_type(T, Float64)
-  lat₁, lon₁ = S(ustrip(c₁.lat)), S(ustrip(c₁.lon))
-  lat₂, lon₂ = S(ustrip(c₂.lat)), S(ustrip(c₂.lon))
-
-  s₁₂, _, _ = _geodesicinverse(🌎, lat₁, lon₁, lat₂, lon₂)
-
-  T(s₁₂) * unit(majoraxis(🌎))
-end
+(::GeodesicDistance)(p₁::Point{🌐}, p₂::Point{🌐}) = geodesicdistance(coords(p₁), coords(p₂))

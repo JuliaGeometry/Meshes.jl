@@ -10,8 +10,6 @@ along each parametric dimension.
 """
 isperiodic(g::Geometry) = isperiodic(typeof(g))
 
-isperiodic(::Type{<:Segment}) = (false,)
-
 isperiodic(::Type{<:Ray}) = (false,)
 
 isperiodic(::Type{<:Line}) = (false,)
@@ -49,6 +47,8 @@ isperiodic(::Type{<:FrustumSurface}) = (true, false)
 isperiodic(::Type{<:Paraboloid}) = (false, true)
 
 isperiodic(::Type{<:Torus}) = (true, true)
+
+isperiodic(::Type{<:Segment}) = (false,)
 
 isperiodic(::Type{<:Rope}) = (false,)
 

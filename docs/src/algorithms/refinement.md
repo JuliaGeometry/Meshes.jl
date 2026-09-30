@@ -2,6 +2,7 @@
 
 ```@example refinement
 using Meshes # hide
+using Unitful # hide
 import CairoMakie as Mke # hide
 ```
 
@@ -46,6 +47,30 @@ grid = CartesianGrid(10, 10)
 ref1 = refine(grid, QuadRefinement())
 ref2 = refine(ref1, QuadRefinement())
 ref3 = refine(ref2, QuadRefinement())
+
+fig = Mke.Figure(size = (800, 800))
+viz(fig[1,1], grid, showsegments = true)
+viz(fig[1,2], ref1, showsegments = true)
+viz(fig[2,1], ref2, showsegments = true)
+viz(fig[2,2], ref3, showsegments = true)
+fig
+```
+
+## EdgeRefinement
+
+```@docs
+EdgeRefinement
+```
+
+```@example refinement
+grid = CartesianGrid(10, 10)
+
+# refine the left half three times
+pred(e) = first(to(centroid(e))) < 5.0u"m"
+
+ref1 = refine(grid, EdgeRefinement(pred))
+ref2 = refine(ref1, EdgeRefinement(pred))
+ref3 = refine(ref2, EdgeRefinement(pred))
 
 fig = Mke.Figure(size = (800, 800))
 viz(fig[1,1], grid, showsegments = true)

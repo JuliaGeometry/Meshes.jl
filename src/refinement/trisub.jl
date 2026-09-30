@@ -39,7 +39,7 @@ function refine(mesh, ::TriSubdivision)
     i, j = ∂₁₀(eind)
     edge = Segment(points[i], points[j])
     push!(points, centroid(edge))
-    midpoints[_ordered(i, j)] = (np += 1)
+    midpoints[minmax(i, j)] = (np += 1)
   end
 
   # construct subtriangles of faces
@@ -48,9 +48,9 @@ function refine(mesh, ::TriSubdivision)
   for tind in 1:nt
     t = 4 * (tind - 1)
     i, j, k = ∂₂₀(tind)
-    m1 = midpoints[_ordered(i, j)]
-    m2 = midpoints[_ordered(j, k)]
-    m3 = midpoints[_ordered(k, i)]
+    m1 = midpoints[minmax(i, j)]
+    m2 = midpoints[minmax(j, k)]
+    m3 = midpoints[minmax(k, i)]
     triangles[t + 1] = (i, m1, m3)
     triangles[t + 2] = (j, m2, m1)
     triangles[t + 3] = (k, m3, m2)
@@ -59,5 +59,3 @@ function refine(mesh, ::TriSubdivision)
 
   SimpleMesh(points, map(connect, triangles))
 end
-
-_ordered(i, j) = i < j ? (i, j) : (j, i)

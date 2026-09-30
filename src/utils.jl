@@ -6,7 +6,6 @@
 const GeometryOrDomain = Union{Geometry,Domain}
 
 include("utils/basic.jl")
-include("utils/assert.jl")
 include("utils/cmp.jl")
 include("utils/units.jl")
 include("utils/crs.jl")
