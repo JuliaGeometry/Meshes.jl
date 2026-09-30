@@ -274,5 +274,4 @@ end
   @test !isnothing(h)
   @test cart(-0.8, -0.8) ∈ h
   @test cart(0.2, 0.2) ∈ h
-
 end
