@@ -257,11 +257,11 @@ end
   d = cart(0, 1)
   segs = [Segment(a, b), Segment(b, c), Segment(c, d), Segment(d, a)]
   glued = Meshes.glue(segs)
-  @test glued == [Ring(a, d, c, b)]
+  @test glued == [Ring(b, c, d, a)]
 
   # ring result is independent of input ordering
   glued = Meshes.glue(segs[[3, 1, 4, 2]])
-  @test glued == [Ring(a, d, c, b)]
+  @test glued == [Ring(b, c, d, a)]
 
   # open and cyclic components can coexist
   a = cart(0, 0)
@@ -273,7 +273,7 @@ end
   g = cart(0, 3)
   segs = [Segment(a, b), Segment(b, c), Segment(d, e), Segment(e, f), Segment(f, g), Segment(g, d)]
   glued = Meshes.glue(segs)
-  @test glued == [Rope(a, b, c), Ring(d, g, f, e)]
+  @test glued == [Rope(a, b, c), Ring(e, f, g, d)]
 
   # segments in a Multi are glued
   a = cart(0, 0)

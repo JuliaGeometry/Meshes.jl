@@ -90,7 +90,7 @@ function glue(segs::AbstractVector{<:Segment})
   segs = sort(segs; by=seg -> begin
     a, b = vertices(seg)
     a < b ? (a, b) : (b, a)
-  end)
+  end, rev=true)
 
   # build adjacency dictionary
   P = typeof(first(segs)(0))
