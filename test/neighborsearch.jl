@@ -148,3 +148,124 @@ end
   n = search(latlon(5, 5), s)
   @test length(n) == 10
 end
+
+@testitem "BoundingBoxSearch" setup = [Setup] begin
+  box = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  domain = GeometrySet(box)
+
+  # basic query
+  bvh = BoundingBoxSearch(domain; leafsize=1)
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
+  answer = findall(box -> intersects(box, query), box)
+  result = sort(search(query, bvh))
+  @test result == answer
+
+  # no candidates
+  bvh = BoundingBoxSearch(domain)
+  query = Box(cart(10, 10), cart(11, 11))
+  @test isempty(search(query, bvh))
+
+  # different leaf sizes
+  query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
+  answer = findall(box -> intersects(box, query), box)
+  for leafsize in (1, 2, 3, 8)
+    leafbvh = BoundingBoxSearch(domain; leafsize)
+    @test sort(search(query, leafbvh)) == answer
+  end
+
+  # leaf size greater than or equal to the number of elements
+  n = nelements(domain)
+  for leafsize in (n, n + 1, 2n)
+    leafbvh = BoundingBoxSearch(domain; leafsize)
+    root = leafbvh.nodes[1]
+    @test length(leafbvh.nodes) == 1
+    @test Meshes._isleaf(root)
+    @test root.first == 1
+    @test root.last == n
+    @test sort(leafbvh.perm) == collect(1:n)
+    @test sort(search(boundingbox(domain), leafbvh)) == collect(1:n)
+  end
+
+  # preallocated output
+  bvh = BoundingBoxSearch(domain)
+  query = Box(cart(0.5, 0.5), cart(1.5, 1.5))
+  inds = [100, 200]
+  result = search!(inds, query, bvh)
+  @test result === inds
+  @test inds == [1]
+
+  # invalid leaf size
+  @test_throws ArgumentError BoundingBoxSearch(domain; leafsize=0)
+  @test_throws ArgumentError BoundingBoxSearch(domain; leafsize=-1)
+
+  # randomized brute-force equivalence
+  rng = StableRNG(1234)
+  randb = [
+    let
+      xmin = rand(rng) * 100
+      ymin = rand(rng) * 100
+      width = rand(rng) * 10
+      height = rand(rng) * 10
+      Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
+    end for _ in 1:200
+  ]
+  randd = GeometrySet(randb)
+  for leafsize in (1, 2, 4, 8, 16)
+    randbvh = BoundingBoxSearch(randd; leafsize)
+    for _ in 1:100
+      local query, answer, result
+      xmin = rand(rng) * 100
+      ymin = rand(rng) * 100
+      width = rand(rng) * 20
+      height = rand(rng) * 20
+      query = Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
+      answer = findall(box -> intersects(box, query), randb)
+      result = sort(search(query, randbvh))
+      @test result == answer
+    end
+  end
+
+  # root bounding box
+  bvh = BoundingBoxSearch(randd)
+  @test bvh.nodes[1].box ≈ boundingbox(randd)
+
+  # internal node invariants
+  bvh = BoundingBoxSearch(randd; leafsize=1)
+  for node in bvh.nodes
+    if !Meshes._isleaf(node)
+      leftbox = bvh.nodes[node.left].box
+      rightbox = bvh.nodes[node.right].box
+      @test node.box ≈ Meshes._bboxes((leftbox, rightbox))
+      @test node.first == 0
+      @test node.last == 0
+    end
+  end
+
+  # leaf invariants
+  bvh = BoundingBoxSearch(randd; leafsize=2)
+  for node in bvh.nodes
+    if Meshes._isleaf(node)
+      @test node.left == 0
+      @test node.right == 0
+      @test 1 ≤ node.first ≤ node.last ≤ length(bvh.perm)
+      @test node.last - node.first + 1 ≤ bvh.leafsize
+    end
+  end
+
+  # leaf partition completeness
+  leafinds = Int[]
+  for node in bvh.nodes
+    if Meshes._isleaf(node)
+      append!(leafinds, bvh.perm[node.first:node.last])
+    end
+  end
+  @test sort(leafinds) == collect(1:nelements(randd))
+  @test length(unique(leafinds)) == nelements(randd)
+
+  # type stability tests
+  bvh = BoundingBoxSearch(domain)
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
+  @inferred search(query, bvh)
+  inds = Int[]
+  @inferred search!(inds, query, bvh)
+end
