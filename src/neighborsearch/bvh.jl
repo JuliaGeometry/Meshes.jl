@@ -13,14 +13,8 @@ end
 """
 	BoundingBoxSearch(domain; leafsize=8)
 
-Construct a static bounding volume hierarchy (BVH) over the elements of `domain`.
-
-The hierarchy stores axis-aligned bounding boxes and supports broad-phase
-queries with [`search`](@ref) and [`search!`](@ref).
-
-The `leafsize` parameter specifies the maximum number of elements stored
-in each leaf node. The root node is always the first node in the `nodes` 
-vector.
+A method for searching elements whose bounding boxes intersect the bounding
+box of a query using a bounding volume hierarchy (BVH).
 """
 struct BoundingBoxSearch{D,B} <: NeighborSearchMethod
   domain::D
