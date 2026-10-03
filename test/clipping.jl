@@ -77,8 +77,8 @@
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   data1 = readdlm(joinpath(datadir, "issue1218-1.dat"), ',')
   data2 = readdlm(joinpath(datadir, "issue1218-2.dat"), ',')
-  poly1 = Ring(cart.(data1[:, 1], data1[:, 2]))
-  poly2 = Ring(cart.(data2[:, 1], data2[:, 2]))
+  poly1 = PolyArea(cart.(data1[:, 1], data1[:, 2]))
+  poly2 = PolyArea(cart.(data2[:, 1], data2[:, 2]))
   cpoly = clip(poly1, poly2, SutherlandHodgmanClipping())
   perim = perimeter(cpoly)
   if T === Float32
