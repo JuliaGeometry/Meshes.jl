@@ -36,11 +36,11 @@
   @test issimple(clipped)
   @test all(vertices(clipped) .≈ vertices(other))
 
-  # PolyArea with box
+  # PolyArea with Quadrangle
   outer = Ring(cart(8, 0), cart(4, 8), cart(2, 8), cart(-2, 0), cart(0, 0), cart(1, 2), cart(5, 2), cart(6, 0))
   inner = Ring(cart(4, 4), cart(2, 4), cart(3, 6))
   poly = PolyArea([outer, inner])
-  other = Box(cart(0, 1), cart(3, 7))
+  other = Quadrangle(cart(0, 1), cart(3, 1), cart(3, 7), cart(0, 7))
   clipped = clip(poly, other, SutherlandHodgmanClipping())
   crings = rings(clipped)
   @test !issimple(clipped)

@@ -5,16 +5,16 @@
 """
     ClippingMethod
 
-A method for clipping subject geometries with other geometries.
+A method for clipping polygons with other polygons.
 """
 abstract type ClippingMethod end
 
 """
     clip(subject, other, method)
 
-Clip the `subject` geometry with `other` geometry using clipping `method`.
+Clip the `subject` polygon with `other` polygon using clipping `method`.
 """
-clip(subject::Geometry, other::Geometry, method::ClippingMethod) = clip(_aspolygon(subject), _aspolygon(other), method)
+function clip end
 
 # ----------------
 # IMPLEMENTATIONS
@@ -22,10 +22,3 @@ clip(subject::Geometry, other::Geometry, method::ClippingMethod) = clip(_aspolyg
 
 include("clipping/sutherlandhodgman.jl")
 include("clipping/greinerhormann.jl")
-
-# -----------------
-# HELPER FUNCTIONS
-# -----------------
-
-_aspolygon(p::Polygon) = p
-_aspolygon(b::Box) = convert(Quadrangle, b)
