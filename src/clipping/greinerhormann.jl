@@ -24,23 +24,6 @@ other geometry.
 """
 struct GreinerHormannClipping <: ClippingMethod end
 
-# vertex of the doubly-linked lists of the algorithm
-mutable struct GHVertex{P<:Point}
-  point::P
-  inter::Bool
-  neighbor::Int
-  crossing::Bool
-  entry::Bool
-  visited::Bool
-end
-
-# list of vertices split into components (rings)
-struct GHList{P<:Point}
-  verts::Vector{GHVertex{P}}
-  comps::Vector{UnitRange{Int}}
-  compof::Vector{Int}
-end
-
 function clip(poly::Polygon, other::Geometry, ::GreinerHormannClipping)
   rings₁ = _ghrings(poly)
   rings₂ = _ghrings(other)
@@ -59,6 +42,23 @@ function clip(poly::Polygon, other::Geometry, ::GreinerHormannClipping)
   append!(rs, _ghinner(list₂, rings₁, common=false))
 
   isempty(rs) ? nothing : _ghpolygons(rs)
+end
+
+# vertex of the doubly-linked lists of the algorithm
+mutable struct GHVertex{P<:Point}
+  point::P
+  inter::Bool
+  neighbor::Int
+  crossing::Bool
+  entry::Bool
+  visited::Bool
+end
+
+# doubly-linked list of vertices split into components (rings)
+struct GHList{P<:Point}
+  verts::Vector{GHVertex{P}}
+  comps::Vector{UnitRange{Int}}
+  compof::Vector{Int}
 end
 
 # -------------------
