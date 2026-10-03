@@ -26,13 +26,13 @@ function clip(subject::Polygon, other::Polygon, ::SutherlandHodgmanClipping)
   srings = rings(subject)
   crings = empty(srings)
   for sring in srings
-    cring = _shclip(sring, first(orings))
-    isnothing(cring) || push!(crings, cring)
+    verts = _shvertices(sring, first(orings))
+    isempty(verts) || push!(crings, Ring(verts))
   end
   isempty(crings) ? nothing : PolyArea(crings)
 end
 
-function _shclip(ring::Ring, other::Ring)
+function _shvertices(ring::Ring, other::Ring)
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 
@@ -68,8 +68,7 @@ function _shclip(ring::Ring, other::Ring)
     vᵣ = p
   end
 
-  # return appropriate object
-  isempty(vᵣ) ? nothing : Ring(unique(vᵣ))
+  unique(vᵣ)
 end
 
 # helper function to find any intersection point

@@ -14,8 +14,7 @@ abstract type ClippingMethod end
 
 Clip the `subject` geometry with `other` geometry using clipping `method`.
 """
-clip(subject::Geometry, other::Geometry, method::ClippingMethod) =
-  clip(_aspolygon(subject), _aspolygon(other), method)
+clip(subject::Geometry, other::Geometry, method::ClippingMethod) = clip(_aspolygon(subject), _aspolygon(other), method)
 
 # ----------------
 # IMPLEMENTATIONS
