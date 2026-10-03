@@ -24,8 +24,8 @@ other geometry.
 """
 struct GreinerHormannClipping <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, ::GreinerHormannClipping)
-  rings₁ = _ghrings(poly)
+function clip(subject::Polygon, other::Geometry, ::GreinerHormannClipping)
+  rings₁ = _ghrings(subject)
   rings₂ = _ghrings(other)
 
   # intersection phase
