@@ -115,21 +115,26 @@ end
   inner = Ring(cart.([(3, 3), (3, 7), (7, 7), (7, 3)]))
   poly = PolyArea([outer, inner])
   other = Quadrangle(cart(5, -2), cart(14, -2), cart(14, 12), cart(5, 12))
-  @test measure(clip(poly, other, GreinerHormannClipping())) ≈ T(42) * u"m^2"
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test measure(clipped) ≈ T(42) * u"m^2"
 
   # vertices on edges and shared edges
-  sq = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
-  @test measure(clip(sq, sq, GreinerHormannClipping())) ≈ T(16) * u"m^2"
-  @test isnothing(clip(Quadrangle(cart(4, 0), cart(8, 0), cart(8, 4), cart(4, 4)), sq, GreinerHormannClipping()))
-  @test isnothing(clip(Quadrangle(cart(4, 4), cart(8, 4), cart(8, 8), cart(4, 8)), sq, GreinerHormannClipping()))
-  clipped = clip(Triangle(cart(2, 4), cart(6, 2), cart(6, 6)), sq, GreinerHormannClipping())
+  tri = Triangle(cart(2, 4), cart(6, 2), cart(6, 6))
+  quad1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  quad2 = Quadrangle(cart(4, 0), cart(8, 0), cart(8, 4), cart(4, 4))
+  quad3 = Quadrangle(cart(4, 4), cart(8, 4), cart(8, 8), cart(4, 8))
+  @test measure(clip(quad1, quad1, GreinerHormannClipping())) ≈ T(16) * u"m^2"
+  @test isnothing(clip(quad2, quad1, GreinerHormannClipping()))
+  @test isnothing(clip(quad3, quad1, GreinerHormannClipping()))
+  clipped = clip(tri, quad1, GreinerHormannClipping())
   @test all(vertices(clipped) .≈ [cart(2, 4), cart(4, 3), cart(4, 4)])
 
   # inside and outside
-  poly = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
-  @test all(vertices(clip(poly, sq, GreinerHormannClipping())) .≈ vertices(poly))
-  poly = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
-  @test isnothing(clip(poly, sq, GreinerHormannClipping()))
+  quad1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  quad2 = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
+  quad3 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
+  @test all(vertices(clip(quad2, quad1, GreinerHormannClipping())) .≈ vertices(quad2))
+  @test isnothing(clip(quad3, quad1, GreinerHormannClipping()))
 
   # CRS propagation
   poly = Triangle(merc(6, 2), merc(3, 5), merc(0, 2))
