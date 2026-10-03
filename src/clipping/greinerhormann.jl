@@ -66,11 +66,7 @@ end
 # -------------------
 
 # rings of the geometry with outer rings oriented CCW and inner rings CW
-function _ghrings(p::Polygon)
-  rs = rings(p)
-  [i == 1 ? _ghccw(r) : _ghcw(r) for (i, r) in enumerate(rs)]
-end
-
+_ghrings(p::Polygon) = p |> Repair(11) |> rings
 _ghrings(g::Geometry) = _ghrings(boundary(g))
 _ghrings(r::Ring) = [_ghccw(r)]
 _ghrings(m::Multi) = mapreduce(_ghrings, vcat, parent(m))
