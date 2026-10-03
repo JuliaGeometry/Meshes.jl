@@ -29,10 +29,11 @@ other = Box((0,1), (3,7))
 clipped = clip(poly, other, SutherlandHodgmanClipping())
 
 viz(poly)
-viz!(other, color = :black, alpha = 0.2)
-viz!(boundary(clipped), color = :red, segmentsize = 3)
+viz!(other, color = "black", alpha = 0.2)
+viz!(boundary(clipped), color = "red", segmentsize = 3)
 Mke.current_figure()
 ```
+
 ## Greiner-Hormann
 
 ```@docs
@@ -52,7 +53,7 @@ other = PolyArea(Ring((0, 1), (6, 1), (6, 7), (4, 7), (4, 3), (2, 3), (2, 7), (0
 clipped = clip(poly, other, GreinerHormannClipping())
 
 viz(poly)
-viz!(other, color = :black, alpha = 0.2)
-viz!(boundary(clipped), color = :red, segmentsize = 3)
+viz!(other, color = "black", alpha = 0.2)
+viz!(boundary(clipped), color = "red", segmentsize = 3)
 Mke.current_figure()
 ```
