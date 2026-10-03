@@ -77,10 +77,10 @@
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   data1 = readdlm(joinpath(datadir, "issue1218-1.dat"), ',')
   data2 = readdlm(joinpath(datadir, "issue1218-2.dat"), ',')
-  ring1 = Ring(cart.(data1[:, 1], data1[:, 2]))
-  ring2 = Ring(cart.(data2[:, 1], data2[:, 2]))
-  cring = clip(ring1, ring2, SutherlandHodgmanClipping())
-  perim = length(cring)
+  poly1 = Ring(cart.(data1[:, 1], data1[:, 2]))
+  poly2 = Ring(cart.(data2[:, 1], data2[:, 2]))
+  cpoly = clip(poly1, poly2, SutherlandHodgmanClipping())
+  perim = perimeter(cpoly)
   if T === Float32
     @test perim ≈ T(15880.919)u"m"
   elseif T === Float64
