@@ -22,8 +22,8 @@ outer = Ring((8, 0), (4, 8), (2, 8), (-2, 0), (0, 0), (1, 2), (5, 2), (6, 0))
 inner = Ring((4, 4), (2, 4), (3, 6))
 poly = PolyArea([outer, inner])
 
-# clipping geometry
-other = Box((0,1), (3,7))
+# clipping polygon
+other = Quadrangle((0, 1), (3, 1), (3, 7), (0, 7))
 
 # clipped polygon
 clipped = clip(poly, other, SutherlandHodgmanClipping())
@@ -46,8 +46,8 @@ outer = Ring((8, 0), (4, 8), (2, 8), (-2, 0), (0, 0), (1, 2), (5, 2), (6, 0))
 inner = Ring((4, 4), (2, 4), (3, 6))
 poly = PolyArea([outer, inner])
 
-# non-convex clipping geometry
-other = PolyArea(Ring((0, 1), (6, 1), (6, 7), (4, 7), (4, 3), (2, 3), (2, 7), (0, 7)))
+# non-convex clipping polygon
+other = PolyArea((0, 1), (6, 1), (6, 7), (4, 7), (4, 3), (2, 3), (2, 7), (0, 7))
 
 # clipped polygon
 clipped = clip(poly, other, GreinerHormannClipping())
