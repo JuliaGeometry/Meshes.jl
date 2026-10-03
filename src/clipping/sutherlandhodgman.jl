@@ -18,13 +18,13 @@ The algorithm assumes that the clipping geometry is convex.
 """
 struct SutherlandHodgmanClipping <: ClippingMethod end
 
-function clip(subject::Polygon, other::Geometry, method::SutherlandHodgmanClipping)
-  c = [clip(ring, boundary(other), method) for ring in rings(subject)]
+function clip(subject::Polygon, other::Geometry, ::SutherlandHodgmanClipping)
+  c = [_shclip(ring, boundary(other)) for ring in rings(subject)]
   r = [r for r in c if !isnothing(r)]
   isempty(r) ? nothing : PolyArea(r)
 end
 
-function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
+function _shclip(ring::Ring, other::Ring)
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 
@@ -50,9 +50,9 @@ function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
         push!(p, p₁)
       elseif isinside₁ && !isinside₂
         push!(p, p₁)
-        push!(p, intersectpoint(lᵣ, lₒ))
+        push!(p, _shpoint(lᵣ, lₒ))
       elseif !isinside₁ && isinside₂
-        push!(p, intersectpoint(lᵣ, lₒ))
+        push!(p, _shpoint(lᵣ, lₒ))
       end
     end
 
@@ -66,7 +66,7 @@ end
 
 # helper function to find any intersection point
 # between crossing or overlapping lines
-function intersectpoint(l₁::Line, l₂::Line)
+function _shpoint(l₁::Line, l₂::Line)
   λ(I) = type(I) == Overlapping ? l₁(0) : get(I)
   intersection(λ, l₁, l₂)
 end
