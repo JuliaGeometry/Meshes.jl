@@ -5,14 +5,14 @@
 """
     ClippingMethod
 
-A method for clipping geometries with other geometries.
+A method for clipping subject geometries with other geometries.
 """
 abstract type ClippingMethod end
 
 """
-    clip(geometry, other, method)
+    clip(subject, other, method)
 
-Clip the subject `geometry` with `other` geometry using clipping `method`.
+Clip the `subject` geometry with `other` geometry using clipping `method`.
 """
 function clip end
 
