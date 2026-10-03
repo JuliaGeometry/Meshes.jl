@@ -10,8 +10,8 @@ of Foster et al. for degenerate intersections.
 
 ## References
 
-* Greiner, G. & Hormann, K. 1998. [Efficient clipping of arbitrary polygons]
-  (https://dl.acm.org/doi/pdf/10.1145/274363.274364)
+* Greiner, G. & Hormann, K. 1998. [Efficient clipping of arbitrary
+  polygons](https://dl.acm.org/doi/pdf/10.1145/274363.274364)
 
 * Foster, E. L., Hormann, K. & Popa, R. T. 2019. [Clipping simple polygons
   with degenerate intersections](https://doi.org/10.1016/j.cagx.2019.100007)
@@ -48,7 +48,7 @@ function clip(poly::Polygon, other::Geometry, ::GreinerHormannClipping)
   # intersection phase
   list₁, list₂ = _ghintersect(rings₁, rings₂)
 
-  # labelling phase
+  # labeling phase
   _ghmark!(list₁, list₂)
   _ghflags!(list₁, rings₂)
   _ghflags!(list₂, rings₁)
@@ -61,9 +61,9 @@ function clip(poly::Polygon, other::Geometry, ::GreinerHormannClipping)
   isempty(rs) ? nothing : _ghpolygons(rs)
 end
 
-# ----------------
-# INTERSECTION
-# ----------------
+# -------------------
+# INTERSECTION PHASE
+# -------------------
 
 # rings of the geometry with outer rings oriented CCW and inner rings CW
 function _ghrings(p::Polygon)
@@ -219,9 +219,9 @@ function _ghprev(list, i)
   i == first(r) ? last(r) : i - 1
 end
 
-# ----------------
-# LABELLING
-# ----------------
+# ---------------
+# LABELING PHASE
+# ---------------
 
 # mark intersection vertices as crossing or bouncing
 function _ghmark!(list₁, list₂)
@@ -335,9 +335,9 @@ end
 
 _ghmidpoint(p₁, p₂) = p₁ + (p₂ - p₁) / 2
 
-# ----------------
-# TRACING
-# ----------------
+# --------------
+# TRACING PHASE
+# --------------
 
 # trace the components of the clipped polygon
 function _ghtrace(list₁, list₂)
@@ -405,7 +405,7 @@ function _ghinner(list, rings; common)
 end
 
 # ----------------
-# RESULT
+# MERGING RESULTS
 # ----------------
 
 _ghinside(point, rings) = isodd(count(r -> sideof(point, r) == IN, rings))
