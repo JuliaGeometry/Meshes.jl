@@ -18,8 +18,8 @@ The algorithm assumes that the clipping geometry is convex.
 """
 struct SutherlandHodgmanClipping <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, method::SutherlandHodgmanClipping)
-  c = [clip(ring, boundary(other), method) for ring in rings(poly)]
+function clip(subject::Polygon, other::Geometry, method::SutherlandHodgmanClipping)
+  c = [clip(ring, boundary(other), method) for ring in rings(subject)]
   r = [r for r in c if !isnothing(r)]
   isempty(r) ? nothing : PolyArea(r)
 end
