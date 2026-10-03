@@ -120,6 +120,7 @@ include("sideof.jl")
 include("orientation.jl")
 include("merging.jl")
 include("clipping.jl")
+include("booleans.jl")
 include("clamping.jl")
 include("intersections.jl")
 include("complement.jl")
@@ -507,6 +508,7 @@ export
   # clipping
   ClippingMethod,
   SutherlandHodgmanClipping,
+  GreinerHormannClipping,
   clip,
 
   # intersections

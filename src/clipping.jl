@@ -5,14 +5,14 @@
 """
     ClippingMethod
 
-A method for clipping geometries with other geometries.
+A method for clipping polygons with other polygons.
 """
 abstract type ClippingMethod end
 
 """
-    clip(geometry, other, method)
+    clip(subject, other, method)
 
-Clip the subject `geometry` with `other` geometry using clipping `method`.
+Clip the `subject` polygon with `other` polygon using clipping `method`.
 """
 function clip end
 
@@ -21,3 +21,4 @@ function clip end
 # ----------------
 
 include("clipping/sutherlandhodgman.jl")
+include("clipping/greinerhormann.jl")
