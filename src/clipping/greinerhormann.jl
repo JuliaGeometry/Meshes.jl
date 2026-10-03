@@ -24,24 +24,24 @@ other geometry.
 """
 struct GreinerHormannClipping <: ClippingMethod end
 
-function clip(subject::Polygon, other::Geometry, ::GreinerHormannClipping)
-  rings₁ = _ghrings(subject)
-  rings₂ = _ghrings(other)
+function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
+  srings = subject |> Repair(11) |> rings
+  orings = other |> Repair(11) |> rings
 
   # intersection phase
-  list₁, list₂ = _ghintersect(rings₁, rings₂)
+  slist, olist = _ghintersect(srings, orings)
 
   # labeling phase
-  _ghmark!(list₁, list₂)
-  _ghflags!(list₁, rings₂)
-  _ghflags!(list₂, rings₁)
+  _ghmark!(slist, olist)
+  _ghflags!(slist, orings)
+  _ghflags!(olist, srings)
 
   # tracing phase
-  rs = _ghtrace(list₁, list₂)
-  append!(rs, _ghinner(list₁, rings₂, common=true))
-  append!(rs, _ghinner(list₂, rings₁, common=false))
+  crings = _ghtrace(slist, olist)
+  append!(crings, _ghinner(slist, orings, common=true))
+  append!(crings, _ghinner(olist, srings, common=false))
 
-  isempty(rs) ? nothing : _ghpolygons(rs)
+  isempty(crings) ? nothing : _ghpolygons(crings)
 end
 
 # vertex of the doubly-linked lists of the algorithm
@@ -64,15 +64,6 @@ end
 # -------------------
 # INTERSECTION PHASE
 # -------------------
-
-# rings of the geometry with outer rings oriented CCW and inner rings CW
-_ghrings(p::Polygon) = p |> Repair(11) |> rings
-_ghrings(g::Geometry) = _ghrings(boundary(g))
-_ghrings(r::Ring) = [_ghccw(r)]
-_ghrings(m::Multi) = mapreduce(_ghrings, vcat, parent(m))
-
-_ghccw(r) = orientation(r) == CCW ? r : reverse(r)
-_ghcw(r) = orientation(r) == CW ? r : reverse(r)
 
 # insert the intersections of the two sets of rings as vertices in both lists
 function _ghintersect(rings₁, rings₂)
