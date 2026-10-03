@@ -18,10 +18,18 @@ The algorithm assumes that the other geometry [`isconvex`](@ref).
 """
 struct SutherlandHodgmanClipping <: ClippingMethod end
 
-function clip(subject::Polygon, other::Geometry, ::SutherlandHodgmanClipping)
-  c = [_shclip(ring, boundary(other)) for ring in rings(subject)]
-  r = [r for r in c if !isnothing(r)]
-  isempty(r) ? nothing : PolyArea(r)
+function clip(subject::Polygon, other::Polygon, ::SutherlandHodgmanClipping)
+  orings = rings(other)
+  if length(orings) > 1
+    throw(ArgumentError("Sutherland-Hodgman requires convex clipping polygon"))
+  end
+  srings = rings(subject)
+  crings = empty(srings)
+  for sring in srings
+    cring = _shclip(sring, first(orings))
+    isnothing(cring) || push!(crings, cring)
+  end
+  isempty(crings) ? nothing : PolyArea(crings)
 end
 
 function _shclip(ring::Ring, other::Ring)
