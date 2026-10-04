@@ -208,7 +208,9 @@ function _ghlist(vs, tags, ins)
     compof[i] = c
   end
 
-  GHList(verts, comps, compof), map
+  list = GHList(verts, comps, compof)
+
+  list, map
 end
 
 # ---------------
