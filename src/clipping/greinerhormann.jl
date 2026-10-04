@@ -180,9 +180,9 @@ function _ghintersect(rings₁, rings₂)
   list₁, list₂
 end
 
-_ghtag!(tags, i, event) = iszero(tags[i]) && (tags[i] = event)
-
 _ghinunit(λ) = (λ > 0 || isapproxzero(λ)) && (λ < 1 && !isapproxone(λ))
+
+_ghtag!(tags, i, event) = iszero(tags[i]) && (tags[i] = event)
 
 # build the list of vertices with the intersections inserted along the edges
 function _ghlist(vs, tags, ins)
