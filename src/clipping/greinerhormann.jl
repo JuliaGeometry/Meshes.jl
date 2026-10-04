@@ -88,20 +88,23 @@ function _ghintersect(rings₁, rings₂)
 
   nevents = 0
   for r₁ in eachindex(vs₁), i in eachindex(vs₁[r₁])
-    a₁, a₂ = vs₁[r₁][i], vs₁[r₁][i + 1]
+    a₁ = vs₁[r₁][i]
+    a₂ = vs₁[r₁][i + 1]
     for r₂ in eachindex(vs₂), j in eachindex(vs₂[r₂])
-      b₁, b₂ = vs₂[r₂][j], vs₂[r₂][j + 1]
+      b₁ = vs₂[r₂][j]
+      b₂ = vs₂[r₂][j + 1]
 
-      sa₁, sa₂ = signarea(a₁, b₁, b₂), signarea(a₂, b₁, b₂)
-      sb₁, sb₂ = signarea(b₁, a₁, a₂), signarea(b₂, a₁, a₂)
+      sa₁ = signarea(a₁, b₁, b₂)
+      sa₂ = signarea(a₂, b₁, b₂)
+      sb₁ = signarea(b₁, a₁, a₂)
+      sb₂ = signarea(b₂, a₁, a₂)
 
-      parallel = isapproxzero(sa₁ - sa₂) || isapproxzero(sb₁ - sb₂)
-
-      if !parallel
+      if !isapproxzero(sa₁ - sa₂) && !isapproxzero(sb₁ - sb₂) # not parallel
         α = sa₁ / (sa₁ - sa₂)
         β = sb₁ / (sb₁ - sb₂)
         (_ghinunit(α) && _ghinunit(β)) || continue
-        αzero, βzero = isapproxzero(α), isapproxzero(β)
+        αzero = isapproxzero(α)
+        βzero = isapproxzero(β)
         if !αzero && !βzero
           # X-intersection: new vertex on both edges
           nevents += 1
@@ -199,10 +202,12 @@ function _ghlist(vs, tags, ins)
     end
     push!(comps, start:length(verts))
   end
+
   compof = zeros(Int, length(verts))
   for (c, range) in enumerate(comps), i in range
     compof[i] = c
   end
+
   GHList(verts, comps, compof), map
 end
 
