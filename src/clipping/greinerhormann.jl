@@ -61,12 +61,12 @@ struct GHList{P<:Point}
   compof::Vector{Int}
 end
 
-function _ghnext(list, i)
+function nextindex(list::GHList, i)
   r = list.comps[list.compof[i]]
   i == last(r) ? first(r) : i + 1
 end
 
-function _ghprev(list, i)
+function previndex(list::GHList, i)
   r = list.comps[list.compof[i]]
   i == first(r) ? last(r) : i - 1
 end
@@ -228,9 +228,9 @@ function _ghmark!(list₁, list₂)
     elseif types[i] ∈ (:lefton, :righton)
       # chain of vertices along a common segment
       x = types[i] == :lefton ? :left : :right
-      j = _ghnext(list₁, i)
+      j = nextindex(list₁, i)
       while types[j] == :onon
-        j = _ghnext(list₁, j)
+        j = nextindex(list₁, j)
       end
       y = types[j] == :onleft ? :left : (types[j] == :onright ? :right : :none)
       # delayed crossing if the polygon changes side along the chain
@@ -247,26 +247,26 @@ end
 
 # local position of the first polygon with respect to the second one
 function _ghlocaltype(list₁, list₂, i)
-  p₋ = list₁.verts[_ghprev(list₁, i)]
+  p₋ = list₁.verts[previndex(list₁, i)]
   p₀ = list₁.verts[i]
-  p₊ = list₁.verts[_ghnext(list₁, i)]
+  p₊ = list₁.verts[nextindex(list₁, i)]
 
   k = p₀.neighbor
-  q₋ = list₂.verts[_ghprev(list₂, k)]
-  q₊ = list₂.verts[_ghnext(list₂, k)]
+  q₋ = list₂.verts[previndex(list₂, k)]
+  q₊ = list₂.verts[nextindex(list₂, k)]
 
   # edges of the first polygon that overlap with the second one
-  onnext = p₊.inter && (p₊.neighbor == _ghprev(list₂, k) || p₊.neighbor == _ghnext(list₂, k))
-  onprev = p₋.inter && (p₋.neighbor == _ghprev(list₂, k) || p₋.neighbor == _ghnext(list₂, k))
+  onnext = p₊.inter && (p₊.neighbor == previndex(list₂, k) || p₊.neighbor == nextindex(list₂, k))
+  onprev = p₋.inter && (p₋.neighbor == previndex(list₂, k) || p₋.neighbor == nextindex(list₂, k))
 
   if onnext && onprev
     :onon
   elseif onnext
-    q = p₊.neighbor == _ghnext(list₂, k) ? q₋ : q₊
+    q = p₊.neighbor == nextindex(list₂, k) ? q₋ : q₊
     side = _ghsideof(q.point, p₋.point, p₀.point, p₊.point)
     side == :right ? :lefton : :righton
   elseif onprev
-    q = p₋.neighbor == _ghprev(list₂, k) ? q₊ : q₋
+    q = p₋.neighbor == previndex(list₂, k) ? q₊ : q₋
     side = _ghsideof(q.point, p₋.point, p₀.point, p₊.point)
     side == :right ? :onleft : :onright
   else
@@ -302,7 +302,7 @@ function _ghflags!(list, rings)
         v.entry = !inside
         inside = !inside
       end
-      i = _ghnext(list, i)
+      i = nextindex(list, i)
     end
   end
 end
@@ -317,7 +317,7 @@ function _ghstart(list, range, rings)
   end
   # all vertices are intersections, use the midpoint of an edge
   for i in range
-    j = _ghnext(list, i)
+    j = nextindex(list, i)
     m = _ghmidpoint(list.verts[i].point, list.verts[j].point)
     any(r -> sideof(m, r) == ON, rings) && continue
     return j, _ghinside(m, rings)
@@ -353,7 +353,7 @@ function _ghtrace(list₁, list₂)
       # walk until the next crossing vertex with opposite flag
       forward = v.entry
       while true
-        i = forward ? _ghnext(list, i) : _ghprev(list, i)
+        i = forward ? nextindex(list, i) : previndex(list, i)
         w = list.verts[i]
         (w.crossing && w.entry ≠ forward) && break
         push!(points, w.point)
