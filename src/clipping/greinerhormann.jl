@@ -45,13 +45,13 @@ function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
 end
 
 # vertex of the doubly-linked lists of the algorithm
-mutable struct GHVertex{P<:Point}
+@kwdef mutable struct GHVertex{P<:Point}
   point::P
   inter::Bool
-  neighbor::Int
-  crossing::Bool
-  entry::Bool
-  visited::Bool
+  neighbor::Int = 0
+  crossing::Bool = false
+  entry::Bool = false
+  visited::Bool = false
 end
 
 # doubly-linked list of vertices split into components (rings)
@@ -89,36 +89,36 @@ function _ghintersect(rings₁, rings₂)
   nevents = 0
   for r₁ in eachindex(vs₁), i in eachindex(vs₁[r₁])
     a₁ = vs₁[r₁][i]
-    a₂ = vs₁[r₁][i + 1]
+    b₁ = vs₁[r₁][i + 1]
     for r₂ in eachindex(vs₂), j in eachindex(vs₂[r₂])
-      b₁ = vs₂[r₂][j]
+      a₂ = vs₂[r₂][j]
       b₂ = vs₂[r₂][j + 1]
 
-      sa₁ = signarea(a₁, b₁, b₂)
-      sa₂ = signarea(a₂, b₁, b₂)
-      sb₁ = signarea(b₁, a₁, a₂)
-      sb₂ = signarea(b₂, a₁, a₂)
+      sa₁ = signarea(a₁, a₂, b₂)
+      sb₁ = signarea(b₁, a₂, b₂)
+      sa₂ = signarea(a₂, a₁, b₁)
+      sb₂ = signarea(b₂, a₁, b₁)
 
-      if !isapproxzero(sa₁ - sa₂) && !isapproxzero(sb₁ - sb₂) # not parallel
-        α = sa₁ / (sa₁ - sa₂)
-        β = sb₁ / (sb₁ - sb₂)
+      if !isapproxzero(sa₁ - sb₁) && !isapproxzero(sa₂ - sb₂) # not parallel
+        α = sa₁ / (sa₁ - sb₁)
+        β = sa₂ / (sa₂ - sb₂)
         (_ghinunit(α) && _ghinunit(β)) || continue
         αzero = isapproxzero(α)
         βzero = isapproxzero(β)
         if !αzero && !βzero
           # X-intersection: new vertex on both edges
           nevents += 1
-          push!(ins₁[r₁][i], (α, a₁ + α * (a₂ - a₁), nevents))
-          push!(ins₂[r₂][j], (β, b₁ + β * (b₂ - b₁), nevents))
+          _ghins!(ins₁[r₁], i, (α, a₁ + α * (b₁ - a₁), nevents))
+          _ghins!(ins₂[r₂], j, (β, a₂ + β * (b₂ - a₂), nevents))
         elseif !αzero
           # T-intersection: vertex of the second ring on an edge of the first
           nevents += 1
-          push!(ins₁[r₁][i], (α, b₁, nevents))
+          _ghins!(ins₁[r₁], i, (α, a₂, nevents))
           _ghtag!(tags₂[r₂], j, nevents)
         elseif !βzero
           # T-intersection: vertex of the first ring on an edge of the second
           nevents += 1
-          push!(ins₂[r₂][j], (β, a₁, nevents))
+          _ghins!(ins₂[r₂], j, (β, a₁, nevents))
           _ghtag!(tags₁[r₁], i, nevents)
         else
           # V-intersection: coincident vertices
@@ -126,30 +126,31 @@ function _ghintersect(rings₁, rings₂)
           _ghtag!(tags₁[r₁], i, nevents)
           _ghtag!(tags₂[r₂], j, nevents)
         end
-      elseif isapproxzero(sa₁) && isapproxzero(sa₂) && isapproxzero(sb₁) && isapproxzero(sb₂)
+      elseif isapproxzero(sa₁) && isapproxzero(sb₁) && isapproxzero(sa₂) && isapproxzero(sb₂)
         # collinear edges, possibly overlapping
-        u, v = a₂ - a₁, b₂ - b₁
-        α = (b₁ - a₁) ⋅ u / (u ⋅ u)
-        β = (a₁ - b₁) ⋅ v / (v ⋅ v)
+        u₁ = b₁ - a₁
+        u₂ = b₂ - a₂
+        α = (a₂ - a₁) ⋅ u₁ / (u₁ ⋅ u₁)
+        β = (a₁ - a₂) ⋅ u₂ / (u₂ ⋅ u₂)
         αin = _ghinunit(α) && !isapproxzero(α)
         βin = _ghinunit(β) && !isapproxzero(β)
         if αin && βin
           # X-overlap: both vertices lie inside the other edge
           nevents += 1
-          push!(ins₁[r₁][i], (α, b₁, nevents))
+          _ghins!(ins₁[r₁], i, (α, a₂, nevents))
           _ghtag!(tags₂[r₂], j, nevents)
           nevents += 1
-          push!(ins₂[r₂][j], (β, a₁, nevents))
+          _ghins!(ins₂[r₂], j, (β, a₁, nevents))
           _ghtag!(tags₁[r₁], i, nevents)
         elseif βin
           # T-overlap: vertex of the first ring inside an edge of the second
           nevents += 1
-          push!(ins₂[r₂][j], (β, a₁, nevents))
+          _ghins!(ins₂[r₂], j, (β, a₁, nevents))
           _ghtag!(tags₁[r₁], i, nevents)
         elseif αin
           # T-overlap: vertex of the second ring inside an edge of the first
           nevents += 1
-          push!(ins₁[r₁][i], (α, b₁, nevents))
+          _ghins!(ins₁[r₁], i, (α, a₂, nevents))
           _ghtag!(tags₂[r₂], j, nevents)
         elseif isapproxzero(α) && isapproxzero(β)
           # V-overlap: coincident vertices
@@ -166,10 +167,11 @@ function _ghintersect(rings₁, rings₂)
 
   # link the two copies of each intersection vertex
   for (event, i) in map₁
-    j = get(map₂, event, 0)
-    j == 0 && continue
-    list₁.verts[i].neighbor = j
-    list₂.verts[j].neighbor = i
+    if haskey(map₂, event)
+      j = map₂[event]
+      list₁.verts[i].neighbor = j
+      list₂.verts[j].neighbor = i
+    end
   end
 
   # vertices without a neighbor are not intersections
@@ -184,6 +186,8 @@ _ghinunit(λ) = (λ > 0 || isapproxzero(λ)) && (λ < 1 && !isapproxone(λ))
 
 _ghtag!(tags, i, event) = iszero(tags[i]) && (tags[i] = event)
 
+_ghins!(ins, i, event) = push!(ins[i], event)
+
 # build the list of vertices with the intersections inserted along the edges
 function _ghlist(vs, tags, ins)
   P = eltype(first(vs))
@@ -193,10 +197,12 @@ function _ghlist(vs, tags, ins)
   for r in eachindex(vs)
     start = length(verts) + 1
     for i in eachindex(vs[r])
-      push!(verts, GHVertex(vs[r][i], !iszero(tags[r][i]), 0, false, false, false))
-      iszero(tags[r][i]) || (map[tags[r][i]] = length(verts))
+      tag = tags[r][i]
+      inter = !iszero(tag)
+      push!(verts, GHVertex(point=vs[r][i], inter=inter))
+      inter && (map[tag] = length(verts))
       for (_, point, event) in sort(ins[r][i], by=first)
-        push!(verts, GHVertex(point, true, 0, false, false, false))
+        push!(verts, GHVertex(point=point, inter=true))
         map[event] = length(verts)
       end
     end
