@@ -80,11 +80,15 @@ function _ghintersect(rings₁, rings₂)
   vs₁ = [vertices(r) for r in rings₁]
   vs₂ = [vertices(r) for r in rings₂]
 
+  # point type and alpha/beta type
+  P = promote_type(eltype(first(vs₁)), eltype(first(vs₂)))
+  T = numtype(lentype(P))
+
   # events attached to original vertices, and inserted along edges
   tag₁ = [zeros(Int, length(v)) for v in vs₁]
   tag₂ = [zeros(Int, length(v)) for v in vs₂]
-  ins₁ = [[Tuple{Float64,eltype(v),Int}[] for _ in v] for v in vs₁]
-  ins₂ = [[Tuple{Float64,eltype(v),Int}[] for _ in v] for v in vs₂]
+  ins₁ = [[Tuple{T,P,Int}[] for _ in v] for v in vs₁]
+  ins₂ = [[Tuple{T,P,Int}[] for _ in v] for v in vs₂]
 
   nevents = 0
   for r₁ in eachindex(vs₁), i in eachindex(vs₁[r₁])
@@ -132,9 +136,9 @@ function _ghintersect(rings₁, rings₂)
         u₂ = b₂ - a₂
         α = (a₂ - a₁) ⋅ u₁ / (u₁ ⋅ u₁)
         β = (a₁ - a₂) ⋅ u₂ / (u₂ ⋅ u₂)
-        αin = _ghinunit(α) && !isapproxzero(α)
-        βin = _ghinunit(β) && !isapproxzero(β)
-        if αin && βin
+        αinside = _ghinunit(α) && !isapproxzero(α)
+        βinside = _ghinunit(β) && !isapproxzero(β)
+        if αinside && βinside
           # X-overlap: both vertices lie inside the other edge
           nevents += 1
           _ghins!(ins₁[r₁], i, (α, a₂, nevents))
@@ -142,12 +146,12 @@ function _ghintersect(rings₁, rings₂)
           nevents += 1
           _ghins!(ins₂[r₂], j, (β, a₁, nevents))
           _ghtag!(tag₁[r₁], i, nevents)
-        elseif βin
+        elseif βinside
           # T-overlap: vertex of the first ring inside an edge of the second
           nevents += 1
           _ghins!(ins₂[r₂], j, (β, a₁, nevents))
           _ghtag!(tag₁[r₁], i, nevents)
-        elseif αin
+        elseif αinside
           # T-overlap: vertex of the second ring inside an edge of the first
           nevents += 1
           _ghins!(ins₁[r₁], i, (α, a₂, nevents))
