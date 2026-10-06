@@ -193,7 +193,7 @@ _ghtag!(tag, i, event) = iszero(tag[i]) && (tag[i] = event)
 _ghins!(ins, i, event) = push!(ins[i], event)
 
 # build the list of vertices with the intersections inserted along the edges
-function _ghlist(vs, tags, ins)
+function _ghlist(vs, tag, ins)
   P = eltype(first(vs))
   verts = GHVertex{P}[]
   comps = UnitRange{Int}[]
@@ -201,10 +201,11 @@ function _ghlist(vs, tags, ins)
   for r in eachindex(vs)
     start = length(verts) + 1
     for i in eachindex(vs[r])
-      tag = tags[r][i]
-      intersect = !iszero(tag)
-      push!(verts, GHVertex(point=vs[r][i], intersect=intersect))
-      intersect && (map[tag] = length(verts))
+      thispoint = vs[r][i]
+      thisevent = tag[r][i]
+      intersect = !iszero(thisevent)
+      push!(verts, GHVertex(point=thispoint, intersect=intersect))
+      intersect && (map[thisevent] = length(verts))
       for (_, point, event) in sort(ins[r][i], by=first)
         push!(verts, GHVertex(point=point, intersect=true))
         map[event] = length(verts)
