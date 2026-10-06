@@ -47,7 +47,7 @@ end
 # vertex of the doubly-linked lists of the algorithm
 @kwdef mutable struct GHVertex{P<:Point}
   point::P
-  inter::Bool
+  intersect::Bool
   neighbor::Int = 0
   crossing::Bool = false
   entry::Bool = false
@@ -81,8 +81,8 @@ function _ghintersect(rings₁, rings₂)
   vs₂ = [vertices(r) for r in rings₂]
 
   # events attached to original vertices, and inserted along edges
-  tags₁ = [zeros(Int, length(v)) for v in vs₁]
-  tags₂ = [zeros(Int, length(v)) for v in vs₂]
+  tag₁ = [zeros(Int, length(v)) for v in vs₁]
+  tag₂ = [zeros(Int, length(v)) for v in vs₂]
   ins₁ = [[Tuple{Float64,eltype(v),Int}[] for _ in v] for v in vs₁]
   ins₂ = [[Tuple{Float64,eltype(v),Int}[] for _ in v] for v in vs₂]
 
@@ -114,17 +114,17 @@ function _ghintersect(rings₁, rings₂)
           # T-intersection: vertex of the second ring on an edge of the first
           nevents += 1
           _ghins!(ins₁[r₁], i, (α, a₂, nevents))
-          _ghtag!(tags₂[r₂], j, nevents)
+          _ghtag!(tag₂[r₂], j, nevents)
         elseif !βzero
           # T-intersection: vertex of the first ring on an edge of the second
           nevents += 1
           _ghins!(ins₂[r₂], j, (β, a₁, nevents))
-          _ghtag!(tags₁[r₁], i, nevents)
+          _ghtag!(tag₁[r₁], i, nevents)
         else
           # V-intersection: coincident vertices
           nevents += 1
-          _ghtag!(tags₁[r₁], i, nevents)
-          _ghtag!(tags₂[r₂], j, nevents)
+          _ghtag!(tag₁[r₁], i, nevents)
+          _ghtag!(tag₂[r₂], j, nevents)
         end
       elseif isapproxzero(sa₁) && isapproxzero(sb₁) && isapproxzero(sa₂) && isapproxzero(sb₂)
         # collinear edges, possibly overlapping
@@ -138,32 +138,32 @@ function _ghintersect(rings₁, rings₂)
           # X-overlap: both vertices lie inside the other edge
           nevents += 1
           _ghins!(ins₁[r₁], i, (α, a₂, nevents))
-          _ghtag!(tags₂[r₂], j, nevents)
+          _ghtag!(tag₂[r₂], j, nevents)
           nevents += 1
           _ghins!(ins₂[r₂], j, (β, a₁, nevents))
-          _ghtag!(tags₁[r₁], i, nevents)
+          _ghtag!(tag₁[r₁], i, nevents)
         elseif βin
           # T-overlap: vertex of the first ring inside an edge of the second
           nevents += 1
           _ghins!(ins₂[r₂], j, (β, a₁, nevents))
-          _ghtag!(tags₁[r₁], i, nevents)
+          _ghtag!(tag₁[r₁], i, nevents)
         elseif αin
           # T-overlap: vertex of the second ring inside an edge of the first
           nevents += 1
           _ghins!(ins₁[r₁], i, (α, a₂, nevents))
-          _ghtag!(tags₂[r₂], j, nevents)
+          _ghtag!(tag₂[r₂], j, nevents)
         elseif isapproxzero(α) && isapproxzero(β)
           # V-overlap: coincident vertices
           nevents += 1
-          _ghtag!(tags₁[r₁], i, nevents)
-          _ghtag!(tags₂[r₂], j, nevents)
+          _ghtag!(tag₁[r₁], i, nevents)
+          _ghtag!(tag₂[r₂], j, nevents)
         end
       end
     end
   end
 
-  list₁, map₁ = _ghlist(vs₁, tags₁, ins₁)
-  list₂, map₂ = _ghlist(vs₂, tags₂, ins₂)
+  list₁, map₁ = _ghlist(vs₁, tag₁, ins₁)
+  list₂, map₂ = _ghlist(vs₂, tag₂, ins₂)
 
   # link the two copies of each intersection vertex
   for (event, i) in map₁
@@ -176,7 +176,7 @@ function _ghintersect(rings₁, rings₂)
 
   # vertices without a neighbor are not intersections
   for list in (list₁, list₂), v in list.verts
-    iszero(v.neighbor) && (v.inter = false)
+    iszero(v.neighbor) && (v.intersect = false)
   end
 
   list₁, list₂
@@ -184,7 +184,7 @@ end
 
 _ghinunit(λ) = (λ > 0 || isapproxzero(λ)) && (λ < 1 && !isapproxone(λ))
 
-_ghtag!(tags, i, event) = iszero(tags[i]) && (tags[i] = event)
+_ghtag!(tag, i, event) = iszero(tag[i]) && (tag[i] = event)
 
 _ghins!(ins, i, event) = push!(ins[i], event)
 
@@ -198,11 +198,11 @@ function _ghlist(vs, tags, ins)
     start = length(verts) + 1
     for i in eachindex(vs[r])
       tag = tags[r][i]
-      inter = !iszero(tag)
-      push!(verts, GHVertex(point=vs[r][i], inter=inter))
-      inter && (map[tag] = length(verts))
+      intersect = !iszero(tag)
+      push!(verts, GHVertex(point=vs[r][i], intersect=intersect))
+      intersect && (map[tag] = length(verts))
       for (_, point, event) in sort(ins[r][i], by=first)
-        push!(verts, GHVertex(point=point, inter=true))
+        push!(verts, GHVertex(point=point, intersect=true))
         map[event] = length(verts)
       end
     end
@@ -227,7 +227,7 @@ end
 function _ghmark!(list₁, list₂)
   types = Vector{Symbol}(undef, length(list₁.verts))
   for i in eachindex(list₁.verts)
-    types[i] = list₁.verts[i].inter ? _ghlocaltype(list₁, list₂, i) : :none
+    types[i] = list₁.verts[i].intersect ? _ghlocaltype(list₁, list₂, i) : :none
   end
 
   for i in eachindex(list₁.verts)
@@ -249,7 +249,7 @@ function _ghmark!(list₁, list₂)
   # the other polygon crosses at the same vertices
   for i in eachindex(list₁.verts)
     v = list₁.verts[i]
-    v.inter && (list₂.verts[v.neighbor].crossing = v.crossing)
+    v.intersect && (list₂.verts[v.neighbor].crossing = v.crossing)
   end
 end
 
@@ -264,8 +264,8 @@ function _ghlocaltype(list₁, list₂, i)
   q₊ = list₂.verts[nextindex(list₂, k)]
 
   # edges of the first polygon that overlap with the second one
-  onnext = p₊.inter && (p₊.neighbor == previndex(list₂, k) || p₊.neighbor == nextindex(list₂, k))
-  onprev = p₋.inter && (p₋.neighbor == previndex(list₂, k) || p₋.neighbor == nextindex(list₂, k))
+  onnext = p₊.intersect && (p₊.neighbor == previndex(list₂, k) || p₊.neighbor == nextindex(list₂, k))
+  onprev = p₋.intersect && (p₋.neighbor == previndex(list₂, k) || p₋.neighbor == nextindex(list₂, k))
 
   if onnext && onprev
     :onon
@@ -318,7 +318,7 @@ end
 # first vertex of the component that is not an intersection, and its status
 function _ghstart(list, range, rings)
   for i in range
-    list.verts[i].inter && continue
+    list.verts[i].intersect && continue
     point = list.verts[i].point
     any(r -> sideof(point, r) == ON, rings) && continue
     return i, _ghinside(point, rings)
@@ -346,7 +346,7 @@ function _ghtrace(list₁, list₂)
   for start in eachindex(list₁.verts)
     v = list₁.verts[start]
     # start at entry points so that components keep the orientation of the subject
-    (v.inter && v.crossing && v.entry && !v.visited) || continue
+    (v.intersect && v.crossing && v.entry && !v.visited) || continue
 
     points = P[]
     i, first₁ = start, true
@@ -366,7 +366,7 @@ function _ghtrace(list₁, list₂)
         (w.crossing && w.entry ≠ forward) && break
         push!(points, w.point)
         w.visited = true
-        w.inter && (other.verts[w.neighbor].visited = true)
+        w.intersect && (other.verts[w.neighbor].visited = true)
       end
 
       w = list.verts[i]
