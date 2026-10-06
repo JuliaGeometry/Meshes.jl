@@ -166,13 +166,13 @@ function _ghintersect(rings₁, rings₂)
     end
   end
 
-  list₁, map₁ = _ghlist(vs₁, tag₁, ins₁)
-  list₂, map₂ = _ghlist(vs₂, tag₂, ins₂)
+  list₁, idict₁ = _ghlist(vs₁, tag₁, ins₁)
+  list₂, idict₂ = _ghlist(vs₂, tag₂, ins₂)
 
   # link the two copies of each intersection vertex
-  for (event, i) in map₁
-    if haskey(map₂, event)
-      j = map₂[event]
+  for (event, i) in idict₁
+    if haskey(idict₂, event)
+      j = idict₂[event]
       list₁.verts[i].neighbor = j
       list₂.verts[j].neighbor = i
     end
@@ -197,7 +197,7 @@ function _ghlist(vs, tag, ins)
   P = eltype(first(vs))
   verts = GHVertex{P}[]
   comps = UnitRange{Int}[]
-  map = Dict{Int,Int}()
+  idict = Dict{Int,Int}()
   for r in eachindex(vs)
     start = length(verts) + 1
     for i in eachindex(vs[r])
@@ -205,10 +205,10 @@ function _ghlist(vs, tag, ins)
       thisevent = tag[r][i]
       intersect = !iszero(thisevent)
       push!(verts, GHVertex(point=thispoint, intersect=intersect))
-      intersect && (map[thisevent] = length(verts))
+      intersect && (idict[thisevent] = length(verts))
       for (_, point, event) in sort(ins[r][i], by=first)
         push!(verts, GHVertex(point=point, intersect=true))
-        map[event] = length(verts)
+        idict[event] = length(verts)
       end
     end
     push!(comps, start:length(verts))
@@ -221,7 +221,7 @@ function _ghlist(vs, tag, ins)
 
   list = GHList(verts, comps, compof)
 
-  list, map
+  list, idict
 end
 
 # ---------------
