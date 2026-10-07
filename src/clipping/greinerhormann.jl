@@ -220,9 +220,8 @@ end
 
 # mark intersection vertices as crossing or bouncing
 function _ghmark!(list₁, list₂)
-  types = Vector{Symbol}(undef, length(list₁.verts))
-  for i in eachindex(list₁.verts)
-    types[i] = list₁.verts[i].intersect ? _ghlocaltype(list₁, list₂, i) : :none
+  types = map(eachindex(list₁.verts)) do i
+    list₁.verts[i].intersect ? _ghlocaltype(list₁, list₂, i) : :none
   end
 
   for i in eachindex(list₁.verts)
