@@ -431,7 +431,7 @@ function _ghpolygons(rs)
     PolyArea([outer; holes])
   end
 
-  length(polys) == 1 ? first(polys) : Multi(polys)
+  maybemulti(polys)
 end
 
 function _ghsimplify(points)
