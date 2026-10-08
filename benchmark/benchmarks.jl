@@ -20,7 +20,6 @@ poly = Pgon((0, 0), (1, 0), (1, 1), (0.5, 2), (0, 1))
 search1 = KNearestSearch(grid, 20)
 search2 = BallSearch(grid, MetricBall(30))
 search3 = KBallSearch(grid, 20, MetricBall(30))
-search4 = BoundingBoxSearch(grid)
 
 # initialize benchmark suite
 const SUITE = BenchmarkGroup()
@@ -31,7 +30,7 @@ const SUITE = BenchmarkGroup()
 
 SUITE["clipping"] = BenchmarkGroup()
 
-SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($poly1, $poly2, SutherlandHodgmanClipping())
+SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($ring1, $ring2, SutherlandHodgmanClipping())
 
 # ---------------
 # DISCRETIZATION
@@ -58,8 +57,6 @@ SUITE["neighborsearch"] = BenchmarkGroup()
 SUITE["neighborsearch"]["knn"] = @benchmarkable search($point, $search1)
 SUITE["neighborsearch"]["ball"] = @benchmarkable search($point, $search2)
 SUITE["neighborsearch"]["knnball"] = @benchmarkable search($point, $search3)
-SUITE["neighborsearch"]["bbox-point"] = @benchmarkable search($point, $search4)
-SUITE["neighborsearch"]["bbox-poly"] = @benchmarkable search($poly, $search4)
 
 # --------
 # WINDING
@@ -75,8 +72,8 @@ SUITE["winding"]["mesh"] = @benchmarkable winding($points, $mesh)
 
 SUITE["sideof"] = BenchmarkGroup()
 
-SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point, $ring1)
-SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring2)
+SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point, $ring3)
+SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring4)
 
 # -----------
 # INTERSECTS
