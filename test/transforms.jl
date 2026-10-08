@@ -2427,6 +2427,11 @@ end
   router, rinner = rings(rpoly)
   @test router == Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
   @test rinner == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+
+  quad = Quadrangle(cart(0, 0), cart(0, 2), cart(2, 2), cart(2, 0))
+  repair = Repair(11)
+  rquad, cache = TB.apply(repair, quad)
+  @test rquad == Quadrangle(cart(0, 0), cart(2, 0), cart(2, 2), cart(0, 2))
 end
 
 @testitem "Repair(12)" setup = [Setup] begin

@@ -19,11 +19,11 @@ The algorithm assumes that the other geometry [`isconvex`](@ref).
 struct SutherlandHodgmanClipping <: ClippingMethod end
 
 function clip(subject::Polygon, other::Polygon, ::SutherlandHodgmanClipping)
-  orings = rings(other)
-  if length(orings) > 1
+  if !isconvex(other)
     throw(ArgumentError("Sutherland-Hodgman requires convex clipping polygon"))
   end
   srings = rings(subject)
+  orings = rings(other)
   crings = empty(srings)
   for sring in srings
     verts = _shvertices(sring, first(orings))
