@@ -96,7 +96,7 @@ function (𝒞::Coboundary{0,2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   # search in CCW orientation
   p = e.prev
   h = p.half
-  while !isnothing(h.elem) && h != e
+  while !isnothing(h.elem) && h ≠ e
     push!(inds, h.elem)
     p = h.prev
     h = p.half

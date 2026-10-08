@@ -121,7 +121,7 @@ Return the length of the `object`.
 See also [`measure`](@ref).
 """
 function Base.length(g::GeometryOrDomain)
-  if isparametrized(g) && paramdim(g) != 1
+  if isparametrized(g) && paramdim(g) ≠ 1
     throw(ArgumentError("invalid parametric dimension for computing length"))
   end
   measure(g)
@@ -135,7 +135,7 @@ Return the area of the `object`.
 See also [`measure`](@ref).
 """
 function area(g::GeometryOrDomain)
-  if isparametrized(g) && paramdim(g) != 2
+  if isparametrized(g) && paramdim(g) ≠ 2
     throw(ArgumentError("invalid parametric dimension for computing area"))
   end
   measure(g)
@@ -149,7 +149,7 @@ Return the volume of the `object`.
 See also [`measure`](@ref).
 """
 function volume(g::GeometryOrDomain)
-  if isparametrized(g) && paramdim(g) != 3
+  if isparametrized(g) && paramdim(g) ≠ 3
     throw(ArgumentError("invalid parametric dimension for computing volume"))
   end
   measure(g)

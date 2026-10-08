@@ -29,7 +29,7 @@ Loop over the heads of a cycle starting at given `halfedge`.
 function loop(e::HalfEdge)
   n = e.next
   v = [e.head]
-  while n != e
+  while n ≠ e
     push!(v, n.head)
     n = n.next
   end

@@ -133,7 +133,7 @@ function glue(segs::AbstractVector{<:Segment})
 
   # first trace maximal non-cyclic paths
   paths = Vector{P}[]
-  starts = sort([v for (v, inds) in adj if length(inds) != 2])
+  starts = sort([v for (v, inds) in adj if length(inds) ≠ 2])
   for start in starts
     for segind in adj[start]
       visited[segind] && continue

@@ -28,7 +28,7 @@ end
 FibonacciSampling(n::Int) = FibonacciSampling(n, (1 + √5) / 2)
 
 function sample(geom::Geometry, method::FibonacciSampling)
-  if paramdim(geom) != 2
+  if paramdim(geom) ≠ 2
     throw(ArgumentError("Fibonacci sampling only defined for 2D geometries"))
   end
 

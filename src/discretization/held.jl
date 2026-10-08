@@ -184,8 +184,8 @@ function incone(v, j, i)
   s1 = sideof(v[j], Line(v[i], v[i - 1]))
   s2 = sideof(v[j], Line(v[i], v[i + 1]))
   if vexity(v, i) == :CONVEX
-    s1 != LEFT && s2 != RIGHT
+    s1 ≠ LEFT && s2 ≠ RIGHT
   else
-    s1 != LEFT || s2 != RIGHT
+    s1 ≠ LEFT || s2 ≠ RIGHT
   end
 end

@@ -48,8 +48,8 @@ function _shvertices(ring::Ring, other::Ring)
       p₂ = vᵣ[i + 1]
       lᵣ = Line(p₁, p₂)
 
-      isinside₁ = (sideof(p₁, lₒ) != RIGHT)
-      isinside₂ = (sideof(p₂, lₒ) != RIGHT)
+      isinside₁ = (sideof(p₁, lₒ) ≠ RIGHT)
+      isinside₂ = (sideof(p₂, lₒ) ≠ RIGHT)
 
       if isinside₁ && isinside₂
         push!(p, p₁)

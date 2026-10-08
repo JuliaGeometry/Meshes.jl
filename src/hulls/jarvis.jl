@@ -50,7 +50,7 @@ function hull(points, ::JarvisMarch)
   ℐ = [i, j]
 
   # rotational sweep
-  while first(ℐ) != last(ℐ)
+  while first(ℐ) ≠ last(ℐ)
     # direction of current segment
     v = p[j] - p[i]
 

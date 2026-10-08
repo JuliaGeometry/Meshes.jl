@@ -80,7 +80,7 @@ function (𝒜::Adjacency{0,2,T})(vert::Int) where {T<:HalfEdgeTopology}
   # search in CCW orientation
   p = e.prev
   h = p.half
-  while !isnothing(h.elem) && h != e
+  while !isnothing(h.elem) && h ≠ e
     push!(inds, p.head)
     p = h.prev
     h = p.half
@@ -112,7 +112,7 @@ function (𝒜::Adjacency{2,2,T})(ind::Int) where {T<:HalfEdgeTopology}
   isnothing(i) || push!(inds, i)
 
   n = e.next
-  while n != e
+  while n ≠ e
     i = n.half.elem
     isnothing(i) || push!(inds, i)
     n = n.next
