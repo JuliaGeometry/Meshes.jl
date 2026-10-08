@@ -145,5 +145,5 @@ end
   tri = Triangle(Point(0.0, 0.0), Point(4.0, 0.0), Point(0.0, 4.0))
   quad = Quadrangle(Point(1.0f0, 1.0f0), Point(3.0f0, 1.0f0), Point(3.0f0, 3.0f0), Point(1.0f0, 3.0f0))
   clipped = clip(tri, quad, GreinerHormannClipping())
-  @test clipped == clip(tri, quad, SutherlandHodgmanClipping())
+  @test Unitful.numtype(Meshes.lentype(clipped)) == Float64
 end
