@@ -19,9 +19,6 @@ The algorithm assumes that the other geometry [`isconvex`](@ref).
 struct SutherlandHodgmanClipping <: ClippingMethod end
 
 function clip(subject::Polygon, other::Polygon, ::SutherlandHodgmanClipping)
-  if !isconvex(other)
-    throw(ArgumentError("Sutherland-Hodgman requires convex clipping polygon"))
-  end
   srings = rings(subject)
   orings = rings(other)
   crings = empty(srings)
