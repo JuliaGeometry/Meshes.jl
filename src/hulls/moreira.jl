@@ -109,7 +109,7 @@ function _moreiramarch(p, k)
     mask[j] = false
   end
 
-  # construct polygonal area from ring of indices
+  # construct polygon from ring of indices
   poly = Pgon(p[ℐ[begin:(end - 1)]])
 
   # every point must be in the hull, otherwise increase k and try again
