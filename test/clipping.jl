@@ -140,4 +140,10 @@ end
   poly = Triangle(merc(6, 2), merc(3, 5), merc(0, 2))
   other = Quadrangle(merc(5, 0), merc(5, 4), merc(0, 4), merc(0, 0))
   @test crs(clip(poly, other, GreinerHormannClipping())) === crs(poly)
+
+  # polygons with different machine precision
+  tri = Triangle(Point(0.0, 0.0), Point(4.0, 0.0), Point(0.0, 4.0))
+  quad = Quadrangle(Point(1.0f0, 1.0f0), Point(3.0f0, 1.0f0), Point(3.0f0, 3.0f0), Point(1.0f0, 3.0f0))
+  clipped = clip(tri, quad, GreinerHormannClipping())
+  @test clipped == clip(tri, quad, SutherlandHodgmanClipping())
 end

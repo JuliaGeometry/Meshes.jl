@@ -70,9 +70,11 @@ function _ghintersect(rings₁, rings₂)
   vs₁ = [vertices(r) for r in rings₁]
   vs₂ = [vertices(r) for r in rings₂]
 
-  # point type and alpha/beta type
-  P = promote_type(eltype(first(vs₁)), eltype(first(vs₂)))
+  # common point type of both polygons, and alpha/beta type
+  P = typeof(first(promote(first(first(vs₁)), first(first(vs₂)))))
   T = numtype(lentype(P))
+  vs₁ = [CircularVector(collect(P, v)) for v in vs₁]
+  vs₂ = [CircularVector(collect(P, v)) for v in vs₂]
 
   # events attached to original vertices, and inserted along edges
   tag₁ = [zeros(Int, length(v)) for v in vs₁]
