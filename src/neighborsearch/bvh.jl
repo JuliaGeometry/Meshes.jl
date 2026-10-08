@@ -1,0 +1,180 @@
+# ------------------------------------------------------------------
+# Licensed under the MIT License. See LICENSE in the project root.
+# ------------------------------------------------------------------
+
+struct BVHNode{B}
+  box::B
+  left::Int
+  right::Int
+  first::Int
+  last::Int
+end
+
+"""
+	BoundingBoxSearch(domain; leafsize=8)
+
+A method for searching elements whose bounding boxes intersect the bounding
+box of a query using a bounding volume hierarchy (BVH).
+"""
+struct BoundingBoxSearch{D,B} <: NeighborSearchMethod
+  domain::D
+  boxes::Vector{B}
+  perm::Vector{Int}
+  nodes::Vector{BVHNode{B}}
+  leafsize::Int
+end
+
+function BoundingBoxSearch(domain::D; leafsize::Int=8) where {D<:Domain}
+  # validate the leaf size
+  leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
+
+  # get the number of elements in the domain and compute their bounding boxes
+  n = nelements(domain)
+
+  # compute the bounding boxes of the elements, their corresponding centers, 
+  boxes = boundingbox.(domain)
+  centers = map(boxes) do box
+    c = coords(center(box))
+    names = propertynames(c)
+    ntuple(i -> getproperty(c, names[i]), length(names))
+  end
+
+  # initialize a permutation vector
+  perm = collect(1:n)
+
+  # determine the element type of the bounding boxes and initialize an empty vector of BVH nodes
+  B = eltype(boxes)
+  nodes = BVHNode{B}[]
+  sizehint!(nodes, 2 * cld(n, leafsize))
+
+  # recursively build the BVH and store the nodes in the `nodes` vector
+  _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
+
+  # return the constructed BVH
+  BoundingBoxSearch{D,B}(domain, boxes, perm, nodes, leafsize)
+end
+
+function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
+  # reserve the node position so that the root remains node 1.
+  nodeind = length(nodes) + 1
+  push!(nodes, BVHNode(boxes[perm[first]], 0, 0, 0, 0))
+
+  # arrived at a leaf node, store the range of elements and return
+  if last - first + 1 ≤ leafsize
+    nodebox = _bboxes(boxes[perm[i]] for i in first:last)
+    nodes[nodeind] = BVHNode(nodebox, 0, 0, first, last)
+    return nodeind
+  end
+
+  # get axis to be splitted
+  axis = _splitaxis(centers, perm, first, last)
+
+  # partial sort the elements in the range [first, last] by the center of their bounding boxes along the chosen axis
+  range = view(perm, first:last)
+  localmiddle = cld(length(range), 2)
+  partialsort!(range, localmiddle; by=i -> centers[i][axis]) # range is a view of perm, so perm is modified in place!
+  middle = first + localmiddle - 1
+
+  # recursively build and store in `nodes` the left and right children
+  left = _buildbvh!(nodes, boxes, centers, perm, first, middle, leafsize)
+  right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, last, leafsize)
+
+  # compute the bounding box of the current node by merging the bounding boxes of its left and right children
+  nodebox = _bboxes((nodes[left].box, nodes[right].box))
+
+  # store the current node with the bounding box and the indices of the left and right children
+  # the first and last indices are not used for non-leaf nodes, so they are set to 0
+  nodes[nodeind] = BVHNode(nodebox, left, right, 0, 0)
+
+  # return the current node index to the caller so that it can be stored in its parent node
+  nodeind
+end
+
+function _splitaxis(centers, perm, first, last)
+  # compute the axis with the widest spread of the centers of the bounding boxes in the range [first, last]
+  @inbounds begin
+    dim = length(centers[perm[first]])
+
+    lo = collect(centers[perm[first]])
+    hi = copy(lo)
+
+    for k in (first + 1):last
+      center = centers[perm[k]]
+      for axis in 1:dim
+        value = center[axis]
+        lo[axis] = min(lo[axis], value)
+        hi[axis] = max(hi[axis], value)
+      end
+    end
+
+    argmax(hi .- lo)
+  end
+end
+
+function search(geom, method::BoundingBoxSearch; mask=nothing)
+  inds = Int[]
+  search!(inds, geom, method; mask=mask)
+end
+
+function search!(neighbors, geom, method::BoundingBoxSearch; mask=nothing)
+  # clear the output vector to ensure it only contains the results of the current query geometry
+  empty!(neighbors)
+
+  _foreachcandidate(geom, method) do ind
+    push!(neighbors, ind)
+  end
+
+  if isnothing(mask)
+    neighbors
+  else
+    maskedneighbors = Vector{Int}()
+    @inbounds for ind in neighbors
+      if mask[ind]
+        push!(maskedneighbors, ind)
+      end
+    end
+    neighbors
+  end
+end
+
+"""
+	_foreachcandidate(f, geom, method)
+
+Apply `f` to the index of each candidate selected by `method` for `geom`.
+
+This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
+interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
+vector of indices.
+
+See also: [`search`](@ref), [`search!`](@ref).
+"""
+function _foreachcandidate(f, geom, method::BoundingBoxSearch)
+  # compute the bounding box of the query geometry `geom` and initialize a stack with the root node index
+  geombox = boundingbox(geom)
+  stack = [1]
+
+  # traverse the BVH using a stack-based approach to find all nodes whose bounding boxes intersect with the query bounding box
+  while !isempty(stack)
+    # pop the last node index from the stack and retrieve the corresponding node from the BVH
+    nodeid = pop!(stack)
+    node = method.nodes[nodeid]
+
+    # check if the bounding box of the current node intersects with the geom bounding box; if not, skip to the next iteration
+    intersects(node.box, geombox) || continue
+
+    # if the current node is a leaf node, check each element in the range [first, last] to see if its bounding box intersects
+    # with the geom bounding box; if so, add its index to the output vector
+    if _isleaf(node)
+      @inbounds for k in node.first:node.last
+        ind = method.perm[k]
+        intersects(method.boxes[ind], geombox) || continue
+        f(ind)
+      end
+    else
+      push!(stack, node.left)
+      push!(stack, node.right)
+    end
+  end
+end
+
+_isleaf(node::BVHNode) = iszero(node.left)

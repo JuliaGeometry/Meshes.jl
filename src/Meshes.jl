@@ -437,6 +437,7 @@ export
   BallSearch,
   KNearestSearch,
   KBallSearch,
+  BoundingBoxSearch,
   search!,
   searchdists!,
   search,
