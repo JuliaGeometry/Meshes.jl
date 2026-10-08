@@ -17,7 +17,7 @@ SelingerSimplification
 ```
 
 ```@example simplification
-pgon = Pgon([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),
+poly = Pgon([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.38217533),
              (0.3072999, 0.272418), (0.34814754, 0.18421611), (0.37949452, 0.11756973),
              (0.4013409, 0.07247882), (0.41368666, 0.048943404), (0.42597583, 0.031655528),
              (0.4382084, 0.0206152), (0.45038435, 0.015822414), (0.4625037, 0.017277176),
@@ -58,12 +58,12 @@ pgon = Pgon([(0.22926679, 0.47329807), (0.23094065, 0.44913536), (0.2569517, 0.3
              (0.37951034, 0.31436795), (0.37547874, 0.30905423), (0.36070493, 0.3204269),
              (0.33518887, 0.348486), (0.29893062, 0.3932315), (0.25193012, 0.45466346)])
 
-simp1 = simplify(pgon, SelingerSimplification(0.01))
-simp2 = simplify(pgon, SelingerSimplification(0.05))
-simp3 = simplify(pgon, SelingerSimplification(0.10))
+simp1 = simplify(poly, SelingerSimplification(0.01))
+simp2 = simplify(poly, SelingerSimplification(0.05))
+simp3 = simplify(poly, SelingerSimplification(0.10))
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], pgon)
+viz(fig[1,1], poly)
 viz(fig[1,2], simp1)
 viz(fig[2,1], simp2)
 viz(fig[2,2], simp3)
@@ -77,12 +77,12 @@ DouglasPeuckerSimplification
 ```
 
 ```@example simplification
-simp1 = simplify(pgon, DouglasPeuckerSimplification(0.01))
-simp2 = simplify(pgon, DouglasPeuckerSimplification(0.05))
-simp3 = simplify(pgon, DouglasPeuckerSimplification(0.10))
+simp1 = simplify(poly, DouglasPeuckerSimplification(0.01))
+simp2 = simplify(poly, DouglasPeuckerSimplification(0.05))
+simp3 = simplify(poly, DouglasPeuckerSimplification(0.10))
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], pgon)
+viz(fig[1,1], poly)
 viz(fig[1,2], simp1)
 viz(fig[2,1], simp2)
 viz(fig[2,2], simp3)
@@ -96,12 +96,12 @@ MinMaxSimplification
 ```
 
 ```@example simplification
-simp1 = simplify(pgon, MinMaxSimplification(DouglasPeuckerSimplification, max=20))
-simp2 = simplify(pgon, MinMaxSimplification(DouglasPeuckerSimplification, max=10))
-simp3 = simplify(pgon, MinMaxSimplification(DouglasPeuckerSimplification, max=5))
+simp1 = simplify(poly, MinMaxSimplification(DouglasPeuckerSimplification, max=20))
+simp2 = simplify(poly, MinMaxSimplification(DouglasPeuckerSimplification, max=10))
+simp3 = simplify(poly, MinMaxSimplification(DouglasPeuckerSimplification, max=5))
 
 fig = Mke.Figure(size = (800, 800))
-viz(fig[1,1], pgon)
+viz(fig[1,1], poly)
 viz(fig[1,2], simp1)
 viz(fig[2,1], simp2)
 viz(fig[2,2], simp3)
