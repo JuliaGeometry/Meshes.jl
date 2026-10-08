@@ -20,6 +20,7 @@ poly = PolyArea((0, 0), (1, 0), (1, 1), (0.5, 2), (0, 1))
 search1 = KNearestSearch(grid, 20)
 search2 = BallSearch(grid, MetricBall(30))
 search3 = KBallSearch(grid, 20, MetricBall(30))
+search4 = BoundingBoxSearch(grid)
 
 # initialize benchmark suite
 const SUITE = BenchmarkGroup()
@@ -57,6 +58,8 @@ SUITE["neighborsearch"] = BenchmarkGroup()
 SUITE["neighborsearch"]["knn"] = @benchmarkable search($point, $search1)
 SUITE["neighborsearch"]["ball"] = @benchmarkable search($point, $search2)
 SUITE["neighborsearch"]["knnball"] = @benchmarkable search($point, $search3)
+SUITE["neighborsearch"]["bbox-point"] = @benchmarkable search($point, $search4)
+SUITE["neighborsearch"]["bbox-poly"] = @benchmarkable search($poly, $search4)
 
 # --------
 # WINDING
