@@ -32,9 +32,9 @@ function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
   slist, olist = _ghintersect(srings, orings)
 
   # labeling phase
-  _ghmark!(slist, olist)
-  _ghflags!(slist, orings)
-  _ghflags!(olist, srings)
+  _ghcrossing!(slist, olist)
+  _ghentry!(slist, orings)
+  _ghentry!(olist, srings)
 
   # tracing phase
   crings = _ghtrace(slist, olist)
@@ -219,7 +219,7 @@ end
 # ---------------
 
 # mark intersection vertices as crossing or bouncing
-function _ghmark!(list₁, list₂)
+function _ghcrossing!(list₁, list₂)
   types = map(eachindex(list₁.verts)) do i
     list₁.verts[i].intersect ? _ghlocaltype(list₁, list₂, i) : :none
   end
@@ -305,7 +305,7 @@ function _ghsideof(point, p₋, p₀, p₊)
 end
 
 # label crossing vertices alternately as entry and exit points
-function _ghflags!(list, rings)
+function _ghentry!(list, rings)
   for range in list.comps
     start = _ghstart(list, range, rings)
     isnothing(start) && continue
@@ -437,6 +437,7 @@ end
 function _ghsimplify(points)
   n = length(points)
   n < 3 && return points
-  keep = [i for i in 1:n if !isapproxzero(signarea(points[mod1(i - 1, n)], points[i], points[mod1(i + 1, n)]))]
+  pts = CircularVector(points)
+  keep = [i for i in 1:n if !isapproxzero(signarea(pts[i - 1], pts[i], pts[i + 1]))]
   length(keep) < 3 ? points : points[keep]
 end
