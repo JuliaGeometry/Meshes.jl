@@ -56,17 +56,17 @@ Ngon
 Triangle((0, 0), (1, 0), (0, 1)) |> viz
 ```
 
-### PolyArea
+### Pgon
 
 ```@docs
-PolyArea
+Pgon
 ```
 
 ```@example polytopes
 outer = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
 hole1 = [(0.2, 0.2), (0.2, 0.4), (0.4, 0.4), (0.4, 0.2)]
 hole2 = [(0.6, 0.2), (0.6, 0.4), (0.8, 0.4), (0.8, 0.2)]
-PolyArea([outer, hole1, hole2]) |> viz
+Pgon([outer, hole1, hole2]) |> viz
 ```
 
 ### Tetrahedron

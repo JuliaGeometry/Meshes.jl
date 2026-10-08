@@ -178,7 +178,7 @@ include("polytopes/ring.jl")
 
 A polygon is a 2-polytope, i.e. a polytope with parametric dimension 2.
 
-See also [`Ngon`](@ref) and [`PolyArea`](@ref).
+See also [`Ngon`](@ref) and [`Pgon`](@ref).
 """
 const Polygon = Polytope{2}
 
@@ -206,7 +206,7 @@ function rings end
 
 # implementations of Polygon
 include("polytopes/ngon.jl")
-include("polytopes/polyarea.jl")
+include("polytopes/pgon.jl")
 
 # ------------------------
 # 3-POLYTOPE (POLYHEDRON)

@@ -20,13 +20,13 @@ function _boxboundary(g)
   boundary(t(b))
 end
 
-_complement(b, r::Ring) = PolyArea([b, reverse(r)])
+_complement(b, r::Ring) = Pgon([b, reverse(r)])
 
 function _complement(b, m::MultiRing)
   rings = parent(m)
 
-  outer = PolyArea([b, reverse(first(rings))])
-  inners = [PolyArea(reverse(rings[i])) for i in 2:length(rings)]
+  outer = Pgon([b, reverse(first(rings))])
+  inners = [Pgon(reverse(rings[i])) for i in 2:length(rings)]
 
   Multi([[outer]; inners])
 end

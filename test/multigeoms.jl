@@ -2,7 +2,7 @@
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
   hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   multi = Multi([poly, poly])
   @test multi == multi
   @test multi ≈ multi
@@ -14,8 +14,8 @@
   @test nvertices(multi) == nvertices(poly) + nvertices(poly)
   @test rings(multi) == [rings(poly); rings(poly)]
 
-  poly1 = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  poly2 = PolyArea(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
+  poly1 = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly2 = Pgon(cart.([(1, 1), (2, 1), (2, 2), (1, 2)]))
   multi = Multi([poly1, poly2])
   @test vertices(multi) == [vertices(poly1); vertices(poly2)]
   @test nvertices(multi) == nvertices(poly1) + nvertices(poly2)
@@ -26,11 +26,11 @@
   @test cart(1.5, 1.5) ∈ multi
   @test cart(1.5, 0.5) ∉ multi
   @test cart(0.5, 1.5) ∉ multi
-  @test sprint(show, multi) == "Multi(2×PolyArea)"
+  @test sprint(show, multi) == "Multi(2×Pgon)"
   @test sprint(show, MIME"text/plain"(), multi) == """
-  Multi(2×PolyArea)
-  ├─ PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
-  └─ PolyArea((x: 1.0 m, y: 1.0 m), ..., (x: 1.0 m, y: 2.0 m))"""
+  Multi(2×Pgon)
+  ├─ Pgon((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
+  └─ Pgon((x: 1.0 m, y: 1.0 m), ..., (x: 1.0 m, y: 2.0 m))"""
 
   box1 = Box(cart(0, 0), cart(1, 1))
   box2 = Box(cart(1, 1), cart(2, 2))
@@ -53,14 +53,14 @@
   @test parent(multi) == collect(grid)
 
   # unique vertices
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   multi = Multi([poly, quad])
   @test unique(multi) == multi
   @test sprint(show, multi) == "Multi(2×Polygon)"
   @test sprint(show, MIME"text/plain"(), multi) == """
   Multi(2×Polygon)
-  ├─ PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
+  ├─ Pgon((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))
   └─ Quadrangle((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"""
 
   # type aliases
@@ -69,7 +69,7 @@
   rope = Rope(cart.([(0, 0), (1, 0), (1, 1)]))
   ring = Ring(cart.([(0, 0), (1, 0), (1, 1)]))
   tri = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test Multi([p, p]) isa MultiPoint
   @test Multi([segm, segm]) isa MultiSegment
   @test Multi([rope, rope]) isa MultiRope
@@ -79,8 +79,8 @@
   @test Multi([poly, poly]) isa MultiPolygon
 
   # CRS propagation
-  poly1 = PolyArea(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
-  poly2 = PolyArea(merc.([(1, 1), (2, 1), (2, 2), (1, 2)]))
+  poly1 = Pgon(merc.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly2 = Pgon(merc.([(1, 1), (2, 1), (2, 2), (1, 2)]))
   multi = Multi([poly1, poly2])
   @test crs(centroid(multi)) === crs(multi)
 
@@ -89,10 +89,10 @@
   ring2 = Ring(cart.([(0, 0), (2, 0), (2, 2), (0, 2)]))
   ring3 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
   ring4 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-  poly1 = PolyArea(ring1)
-  poly2 = PolyArea(ring2)
-  poly3 = PolyArea([ring1, ring3])
-  poly4 = PolyArea([ring2, ring4])
+  poly1 = Pgon(ring1)
+  poly2 = Pgon(ring2)
+  poly3 = Pgon([ring1, ring3])
+  poly4 = Pgon([ring2, ring4])
   multi1 = Multi([ring1, ring2, ring3, ring4])
   multi2 = Multi([poly1, poly2])
   multi3 = Multi([poly3, poly4])

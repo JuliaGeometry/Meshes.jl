@@ -212,11 +212,11 @@
     (x + 2y + 3z) * u"A"
   end ≈ T(14.0)u"A*m" rtol = 1e-3
 
-  # PolyArea
+  # Pgon
   a, b, c, z = T(0.4), T(0.6), T(1.0), T(0.0)
   outer = [(z, z), (c, z), (c, c), (z, c)]
   hole = [(a, a), (a, b), (b, b), (b, a)]
-  poly = PolyArea([outer, hole])
+  poly = Pgon([outer, hole])
   @test integral(poly) do p
     x = ustrip(coords(p).x)
     2x * u"A"

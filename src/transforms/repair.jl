@@ -114,9 +114,9 @@ apply(::Repair{7}, mesh::Mesh) = topoconvert(HalfEdgeTopology, mesh), nothing
 # OPERATION (8)
 # --------------
 
-function apply(::Repair{8}, poly::PolyArea)
+function apply(::Repair{8}, poly::Pgon)
   v = poly |> rings .|> vertices .|> repair8
-  PolyArea(v), nothing
+  Pgon(v), nothing
 end
 
 function apply(::Repair{8}, poly::Ngon)
@@ -145,9 +145,9 @@ end
 # OPERATION (9)
 # --------------
 
-function apply(::Repair{9}, poly::PolyArea)
+function apply(::Repair{9}, poly::Pgon)
   newrings, indices = poly |> rings |> repair9
-  PolyArea(newrings), indices
+  Pgon(newrings), indices
 end
 
 apply(::Repair{9}, poly::Ngon) = poly, []
@@ -182,17 +182,17 @@ end
 # OPERATION (10)
 # ---------------
 
-function apply(::Repair{10}, poly::PolyArea)
+function apply(::Repair{10}, poly::Pgon)
   t = _stretch10(poly)
   r = rings(poly)
   n, c = apply(t, first(r))
-  PolyArea([n; r[2:end]]), (t, c)
+  Pgon([n; r[2:end]]), (t, c)
 end
 
-function revert(::Repair{10}, poly::PolyArea, c)
+function revert(::Repair{10}, poly::Pgon, c)
   r = rings(poly)
   o = revert(c[1], first(r), c[2])
-  PolyArea([o; r[2:end]])
+  Pgon([o; r[2:end]])
 end
 
 function _stretch10(g::Geometry)
@@ -204,9 +204,9 @@ end
 # OPERATION (11)
 # ---------------
 
-function apply(::Repair{11}, poly::PolyArea)
+function apply(::Repair{11}, poly::Pgon)
   rs = poly |> rings |> repair11
-  PolyArea(rs), nothing
+  Pgon(rs), nothing
 end
 
 function apply(::Repair{11}, poly::Ngon)
@@ -223,7 +223,7 @@ end
 # OPERATION (12)
 # ---------------
 
-function apply(::Repair{12}, poly::PolyArea)
+function apply(::Repair{12}, poly::Pgon)
   r = rings(poly)
 
   # fix degeneracy
@@ -239,7 +239,7 @@ function apply(::Repair{12}, poly::PolyArea)
   # remove degenerated rings
   inners = filter(r -> nvertices(r) > 2, r[2:end])
 
-  PolyArea([outer; inners]), nothing
+  Pgon([outer; inners]), nothing
 end
 
 # ----------

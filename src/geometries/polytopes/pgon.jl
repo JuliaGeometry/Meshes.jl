@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------
 
 """
-    PolyArea(outer)
-    PolyArea([outer, inner₁, inner₂, ..., innerₖ])
+    Pgon(outer)
+    Pgon([outer, inner₁, inner₂, ..., innerₖ])
 
 A polygonal area with `outer` ring oriented counter-clockwise,
 and optional inner rings `inner₁`, `inner₂`, ..., `innerₖ`
@@ -19,24 +19,24 @@ the orientation requirements described above.
 The [`Repair`](@ref) transform can be used to correct the orientation
 of rings in polygonal areas that have already been constructed.
 """
-struct PolyArea{M<:Manifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
+struct Pgon{M<:Manifold,C<:CRS,R<:Ring{M,C},V<:AbstractVector{R}} <: Polygon{M,C}
   rings::V
 end
 
-PolyArea(vertices::AbstractVector{<:AbstractVector}) = PolyArea([Ring(v) for v in vertices])
+Pgon(vertices::AbstractVector{<:AbstractVector}) = Pgon([Ring(v) for v in vertices])
 
-PolyArea(outer::Ring) = PolyArea([outer])
+Pgon(outer::Ring) = Pgon([outer])
 
-PolyArea(outer::AbstractVector) = PolyArea(Ring(outer))
+Pgon(outer::AbstractVector) = Pgon(Ring(outer))
 
-PolyArea(outer...) = PolyArea(collect(outer))
+Pgon(outer...) = Pgon(collect(outer))
 
-==(p₁::PolyArea, p₂::PolyArea) = p₁.rings == p₂.rings
+==(p₁::Pgon, p₂::Pgon) = p₁.rings == p₂.rings
 
-Base.isapprox(p₁::PolyArea, p₂::PolyArea; atol=atol(lentype(p₁)), kwargs...) =
+Base.isapprox(p₁::Pgon, p₂::Pgon; atol=atol(lentype(p₁)), kwargs...) =
   length(p₁.rings) == length(p₂.rings) && all(isapprox(r₁, r₂; atol, kwargs...) for (r₁, r₂) in zip(p₁.rings, p₂.rings))
 
-function vertex(p::PolyArea, ind)
+function vertex(p::Pgon, ind)
   offset = 0
   for r in p.rings
     nverts = nvertices(r)
@@ -48,15 +48,15 @@ function vertex(p::PolyArea, ind)
   throw(BoundsError(p, ind))
 end
 
-vertices(p::PolyArea) = collect(eachvertex(p))
+vertices(p::Pgon) = collect(eachvertex(p))
 
-nvertices(p::PolyArea) = mapreduce(nvertices, +, p.rings)
+nvertices(p::Pgon) = mapreduce(nvertices, +, p.rings)
 
-rings(p::PolyArea) = p.rings
+rings(p::Pgon) = p.rings
 
-normal(p::PolyArea) = newellnormal(vertices(first(p.rings)))
+normal(p::Pgon) = newellnormal(vertices(first(p.rings)))
 
-function Base.unique!(p::PolyArea)
+function Base.unique!(p::Pgon)
   foreach(unique!, p.rings)
   inds = findall(r -> nvertices(r) ≤ 2, p.rings)
   setdiff!(inds, 1) # don't remove outer ring
@@ -64,9 +64,9 @@ function Base.unique!(p::PolyArea)
   p
 end
 
-function Base.show(io::IO, p::PolyArea)
+function Base.show(io::IO, p::Pgon)
   rings = p.rings
-  print(io, "PolyArea(")
+  print(io, "Pgon(")
   if length(rings) == 1
     r = first(rings)
     printverts(io, vertices(r))
@@ -77,7 +77,7 @@ function Base.show(io::IO, p::PolyArea)
   print(io, ")")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", p::PolyArea)
+function Base.show(io::IO, ::MIME"text/plain", p::Pgon)
   rings = p.rings
   summary(io, p)
   println(io)

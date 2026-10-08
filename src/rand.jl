@@ -114,7 +114,7 @@ end
 
 _rand(rng::Random.AbstractRNG, ::Type{Ngon{N}}, CRS) where {N} = Ngon{N}(_rtuple(rng, CRS, N))
 
-_rand(rng::Random.AbstractRNG, ::Type{PolyArea}, CRS) = PolyArea(_rand(rng, Ring, CRS))
+_rand(rng::Random.AbstractRNG, ::Type{Pgon}, CRS) = Pgon(_rand(rng, Ring, CRS))
 
 _rand(rng::Random.AbstractRNG, ::Type{Tetrahedron}, CRS) = Tetrahedron(_rtuple(rng, CRS, 4))
 

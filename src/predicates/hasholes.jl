@@ -11,4 +11,4 @@ hasholes(g::Geometry) = hasholes(typeof(g))
 
 hasholes(::Type{<:Geometry}) = false
 
-hasholes(p::PolyArea) = length(rings(p)) > 1
+hasholes(p::Pgon) = length(rings(p)) > 1

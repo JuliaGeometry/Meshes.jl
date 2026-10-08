@@ -100,9 +100,9 @@
   # ---------
 
   f = Rotate(Angle2d(T(π / 2)))
-  p = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  p = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   r, c = TB.apply(f, p)
-  @test r ≈ PolyArea(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
+  @test r ≈ Pgon(cart(0, 0), cart(0, 1), cart(-1, 1), cart(-1, 0))
   @test TB.revert(f, r, c) ≈ p
 
   # ----------
@@ -2315,7 +2315,7 @@ end
 
 @testitem "Repair(0)" setup = [Setup] begin
   @test !isaffine(Repair)
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (0, 1), (0, 1)]))
   rpoly = poly |> Repair(0)
   @test nvertices(rpoly) == 4
   @test vertices(rpoly) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
@@ -2368,14 +2368,13 @@ end
 end
 
 @testitem "Repair(8)" setup = [Setup] begin
-  poly =
-    PolyArea(cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)]))
+  poly = Pgon(cart.([(0.0, 0.0), (0.5, -0.5), (1.0, 0.0), (1.5, 0.5), (1.0, 1.0), (0.5, 1.5), (0.0, 1.0), (-0.5, 0.5)]))
   rpoly = poly |> Repair(8)
   @test nvertices(rpoly) == 4
   @test vertices(rpoly) == cart.([(0.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 0.5)])
 
   # degenerate triangle with repeated vertices
-  poly = PolyArea(cart.([(0, 0), (1, 1), (1, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 1), (1, 1)]))
   rpoly = poly |> Repair(8)
   @test !hasholes(rpoly)
   @test rings(rpoly) == [Ring(cart(0, 0))]
@@ -2400,16 +2399,16 @@ end
   outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
   inner1 = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
   inner2 = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
-  poly = PolyArea([outer, inner1, inner2])
+  poly = Pgon([outer, inner1, inner2])
   repair = Repair(9)
   rpoly, cache = TB.apply(repair, poly)
-  @test rpoly == PolyArea([outer, inner2, inner1])
+  @test rpoly == Pgon([outer, inner2, inner1])
 end
 
 @testitem "Repair(10)" setup = [Setup] begin
   outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
   inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
-  poly = PolyArea(outer, inner)
+  poly = Pgon(outer, inner)
   repair = Repair(10)
   rpoly, cache = TB.apply(repair, poly)
   @test nvertices(rpoly) == nvertices(poly)
@@ -2421,7 +2420,7 @@ end
 @testitem "Repair(11)" setup = [Setup] begin
   outer = cart.([(0, 0), (0, 2), (2, 2), (2, 0)])
   inner = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  poly = PolyArea(outer, inner)
+  poly = Pgon(outer, inner)
   repair = Repair(11)
   rpoly, cache = TB.apply(repair, poly)
   router, rinner = rings(rpoly)
@@ -2435,17 +2434,17 @@ end
 end
 
 @testitem "Repair(12)" setup = [Setup] begin
-  poly = PolyArea(cart.([(0, 0), (1, 0)]))
+  poly = Pgon(cart.([(0, 0), (1, 0)]))
   repair = Repair(12)
   rpoly, cache = TB.apply(repair, poly)
-  @test rpoly == PolyArea(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
+  @test rpoly == Pgon(cart.([(0, 0), (0.5, 0.0), (1, 0)]))
 
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   inner = cart.([(1, 2), (2, 3)])
-  poly = PolyArea(outer, inner)
+  poly = Pgon(outer, inner)
   repair = Repair(12)
   rpoly, cache = TB.apply(repair, poly)
-  @test rpoly == PolyArea(outer)
+  @test rpoly == Pgon(outer)
 end
 
 @testitem "Repair fallbacks" setup = [Setup] begin
@@ -2455,15 +2454,15 @@ end
   @test rquad isa Quadrangle
   @test rquad == quad
 
-  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  poly1 = Pgon(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+  poly2 = Pgon(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
   multi = Multi([poly1, poly2])
   repair = Repair(11)
   rmulti, cache = TB.apply(repair, multi)
   @test rmulti == Multi([repair(poly1), repair(poly2)])
 
-  poly1 = PolyArea(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
-  poly2 = PolyArea(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  poly1 = Pgon(cart.([(0, 0), (0, 2), (2, 2), (2, 0)]))
+  poly2 = Pgon(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
   gset = GeometrySet([poly1, poly2])
   repair = Repair(11)
   rgset, cache = TB.apply(repair, gset)
@@ -2492,7 +2491,7 @@ end
   outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
   inner₁ = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
   inner₂ = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
-  poly = PolyArea([outer, inner₁, inner₂])
+  poly = Pgon([outer, inner₁, inner₂])
   bpoly = poly |> Bridge(T(0.1))
   @test !hasholes(bpoly)
   @test nvertices(bpoly) == 15
@@ -2501,9 +2500,9 @@ end
   @inferred poly |> Bridge(T(0.1))
 
   # unique and bridges
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1), (0, 1)]))
   cpoly = poly |> Repair(0) |> Bridge()
-  @test cpoly == PolyArea(cart.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
+  @test cpoly == Pgon(cart.([(0, 0), (1, 0), (1, 1), (1, 2), (0, 2), (0, 1)]))
 
   # basic ngon tests
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
@@ -2515,7 +2514,7 @@ end
   outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
   hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-  poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
+  poly = Pgon([outer, reverse(hole1), reverse(hole2)])
   @test vertices(poly) == cart.([
     (0, 0),
     (1, 0),
@@ -2560,7 +2559,7 @@ end
   outer = latlon.([(0, 0), (0, 90), (90, 90), (90, 0)])
   hole1 = latlon.([(10, 10), (10, 20), (20, 20), (20, 10)])
   hole2 = latlon.([(10, 80), (10, 90), (20, 90), (20, 80)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   bpoly = poly |> Bridge()
   @test nvertices(bpoly) == 16
 end

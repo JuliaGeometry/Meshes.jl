@@ -40,14 +40,14 @@
   equaltest(ts)
   isapproxtest(ts)
 
-  p = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  p = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   t = Translate(T(1), T(2))
   tp = TransformedGeometry(p, t)
   @test vertex(tp, 1) == t(vertex(p, 1))
   @test vertices(tp) == t.(vertices(p))
   @test nvertices(tp) == nvertices(p)
   @test rings(tp) == t.(rings(p))
-  p2 = PolyArea(cart(0, 0), cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  p2 = Pgon(cart(0, 0), cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   tp2 = TransformedGeometry(p2, t)
   @test unique(tp2) == tp
   equaltest(tp)

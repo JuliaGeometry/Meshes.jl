@@ -218,14 +218,14 @@ s1 ∩ s2
 
 Polytopes are widely used in GIS software under names such as "LineString" and "Polygon".
 We provide robust implementations of these concepts, which are formally known as polygonal
-[`Chain`](@ref) and [`PolyArea`](@ref).
+[`Chain`](@ref) and [`Polygon`](@ref).
 
 We can compute the orientation of a chain as clockwise or counter-clockwise, can open and
 close the chain, create bridges between the various inner rings with the outer ring, and
 other useful functionality:
 
 ```@example overview
-p = PolyArea((0,0), (2,0), (2,2), (1,3), (0,2))
+p = Pgon((0,0), (2,0), (2,2), (1,3), (0,2))
 
 viz(p)
 ```

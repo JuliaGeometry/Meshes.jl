@@ -25,7 +25,7 @@
   @test crs(g) <: Mercator{WGS84Latest}
   g = Quadrangle(merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1))
   @test crs(g) <: Mercator{WGS84Latest}
-  g = PolyArea(merc(0, 0), merc(1, 0), merc(0, 1))
+  g = Pgon(merc(0, 0), merc(1, 0), merc(0, 1))
   @test crs(g) <: Mercator{WGS84Latest}
   g = Multi([merc(0, 0), merc(1, 1)])
   @test crs(g) <: Mercator{WGS84Latest}
@@ -112,7 +112,7 @@ end
   @test crs(g) <: LatLon{WGS84Latest}
   g = Quadrangle(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0))
   @test crs(g) <: LatLon{WGS84Latest}
-  g = PolyArea(latlon(0, 0), latlon(0, 1), latlon(1, 0))
+  g = Pgon(latlon(0, 0), latlon(0, 1), latlon(1, 0))
   @test crs(g) <: LatLon{WGS84Latest}
   g = Tetrahedron(latlon(0, 0), latlon(0, 90), latlon(0, -90), latlon(90, 0))
   @test crs(g) <: LatLon{WGS84Latest}

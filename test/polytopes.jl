@@ -532,19 +532,19 @@ end
 end
 
 @testitem "PolyAreas" setup = [Setup] begin
-  @test paramdim(PolyArea) == 2
+  @test paramdim(Pgon) == 2
 
   # equality and approximate equality
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
   hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   @test poly == poly
   @test poly ≈ poly
   @test crs(poly) <: Cartesian{NoDatum}
   @test Meshes.lentype(poly) == ℳ
 
-  p = PolyArea(cart(0, 0), cart(1, 0), cart(0, 1))
+  p = Pgon(cart(0, 0), cart(1, 0), cart(0, 1))
   equaltest(p)
   isapproxtest(p)
   vertextest(p)
@@ -602,12 +602,12 @@ end
 
   # test uniqueness
   points = cart.([(1, 1), (2, 2), (2, 2), (3, 3)])
-  poly = PolyArea(points)
+  poly = Pgon(points)
   unique!(poly)
   @test first(rings(poly)) == Ring(cart.([(1, 1), (2, 2), (3, 3)]))
 
   # approximately equal vertices
-  poly = PolyArea(
+  poly = Pgon(
     cart.(
       [
         (-48.04448403189499, -18.326530800015174)
@@ -644,25 +644,25 @@ end
   outer = Ring([cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1)])
   p1, p2 = [cart(0, 0), cart(1, 1)]
   inner = Ring(p1, p1, p2)
-  poly = PolyArea([outer, inner])
+  poly = Pgon([outer, inner])
   upoly = unique(poly)
   @test hasholes(poly)
   @test !hasholes(upoly)
 
   # centroid
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   @test centroid(poly) ≈ cart(0.5, 0.5)
 
   # normal
-  poly = PolyArea(cart(0, 0, 0), cart(0, 1, 0), cart(0, 1, 1), cart(0, 0, 1))
+  poly = Pgon(cart(0, 0, 0), cart(0, 1, 0), cart(0, 1, 1), cart(0, 0, 1))
   @test isapprox(normal(poly), vector(1, 0, 0))
   @test isapprox(norm(normal(poly)), oneunit(ℳ))
-  poly = PolyArea(cart(0, 0, 0), cart(2, 0, 0), cart(2, 2, 2), cart(0, 2, 2))
+  poly = Pgon(cart(0, 0, 0), cart(2, 0, 0), cart(2, 2, 2), cart(0, 2, 2))
   @test isapprox(normal(poly), vector(0, -0.7071067811865475, 0.7071067811865475))
   @test isapprox(norm(normal(poly)), oneunit(ℳ))
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1385
-  poly = PolyArea(
+  poly = Pgon(
     cart.([
       (1.20921750106109e6, 442557.765689318),
       (1.19971692661997e6, 450548.653675972),
@@ -684,7 +684,7 @@ end
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
   hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   @test vertex(poly, 1) == cart(0, 0)
   @test vertex(poly, 2) == cart(1, 0)
   @test vertex(poly, 3) == cart(1, 1)
@@ -707,7 +707,7 @@ end
   outer = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
   hole1 = cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)])
   hole2 = cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   @test all(p ∈ poly for p in outer)
   @test cart(0.5, 0.5) ∈ poly
   @test cart(0.2, 0.6) ∈ poly
@@ -721,25 +721,25 @@ end
   outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
   hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-  poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
+  poly = Pgon([outer, reverse(hole1), reverse(hole2)])
   @test area(poly) ≈ T(0.92) * u"m^2"
 
   outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
   hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-  poly1 = PolyArea(outer)
-  poly2 = PolyArea([outer, reverse(hole1), reverse(hole2)])
-  @test sprint(show, poly1) == "PolyArea((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
-  @test sprint(show, poly2) == "PolyArea(4-Ring, 4-Ring, 4-Ring)"
+  poly1 = Pgon(outer)
+  poly2 = Pgon([outer, reverse(hole1), reverse(hole2)])
+  @test sprint(show, poly1) == "Pgon((x: 0.0 m, y: 0.0 m), ..., (x: 0.0 m, y: 1.0 m))"
+  @test sprint(show, poly2) == "Pgon(4-Ring, 4-Ring, 4-Ring)"
   if T === Float32
     @test sprint(show, MIME("text/plain"), poly1) == """
-    PolyArea
+    Pgon
     ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
     ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
     ├─ Point(x: 1.0f0 m, y: 1.0f0 m)
     └─ Point(x: 0.0f0 m, y: 1.0f0 m)"""
     @test sprint(show, MIME("text/plain"), poly2) == """
-    PolyArea
+    Pgon
       outer ring
         ├─ Point(x: 0.0f0 m, y: 0.0f0 m)
         ├─ Point(x: 1.0f0 m, y: 0.0f0 m)
@@ -757,13 +757,13 @@ end
         └─ Point(x: 0.8f0 m, y: 0.2f0 m)"""
   else
     @test sprint(show, MIME("text/plain"), poly1) == """
-    PolyArea
+    Pgon
     ├─ Point(x: 0.0 m, y: 0.0 m)
     ├─ Point(x: 1.0 m, y: 0.0 m)
     ├─ Point(x: 1.0 m, y: 1.0 m)
     └─ Point(x: 0.0 m, y: 1.0 m)"""
     @test sprint(show, MIME("text/plain"), poly2) == """
-    PolyArea
+    Pgon
       outer ring
         ├─ Point(x: 0.0 m, y: 0.0 m)
         ├─ Point(x: 1.0 m, y: 0.0 m)
