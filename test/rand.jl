@@ -209,12 +209,12 @@
     @test Meshes.lentype(n) === Meshes.Met{Float64}
   end
 
-  p = rand(PolyArea)
-  @test p isa PolyArea
+  p = rand(Pgon)
+  @test p isa Pgon
   @test crs(p) <: Cartesian3D
   @test Meshes.lentype(p) === Meshes.Met{Float64}
-  p = rand(PolyArea, crs=Cartesian2D)
-  @test p isa PolyArea
+  p = rand(Pgon, crs=Cartesian2D)
+  @test p isa Pgon
   @test crs(p) <: Cartesian2D
   @test Meshes.lentype(p) === Meshes.Met{Float64}
 

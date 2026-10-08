@@ -98,7 +98,7 @@ end
   outer = [merc(0, 0), merc(1, 0), merc(1, 1), merc(0, 1)]
   hole1 = [merc(0.2, 0.2), merc(0.4, 0.2), merc(0.4, 0.4), merc(0.2, 0.4)]
   hole2 = [merc(0.6, 0.2), merc(0.8, 0.2), merc(0.8, 0.4), merc(0.6, 0.4)]
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   @test all(p ∈ poly for p in outer)
   @test merc(0.5, 0.5) ∈ poly
   @test merc(0.2, 0.6) ∈ poly
@@ -250,7 +250,7 @@ end
   inner = cart.([(15, 7), (10, 12), (5, 7)])
   pent = Pentagon(outer...)
   tri = Triangle(inner...)
-  poly = PolyArea([outer, reverse(inner)])
+  poly = Pgon([outer, reverse(inner)])
   multi = Multi([poly, tri])
   @test isconvex(pent)
   @test isconvex(tri)
@@ -259,19 +259,19 @@ end
   outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
   hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-  poly1 = PolyArea(outer)
-  poly2 = PolyArea([outer, reverse(hole1), reverse(hole2)])
+  poly1 = Pgon(outer)
+  poly2 = Pgon([outer, reverse(hole1), reverse(hole2)])
   @test isconvex(poly1)
   @test !isconvex(poly2)
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0.5, 0.5), (0, 1)]))
   @test !isconvex(poly)
-  poly1 = PolyArea(cart.([(0, 0), (4, 0), (0, 4), (4, 4)]))
-  poly2 = PolyArea(cart.([(0, 0), (4, 0), (4, 4), (2, 3), (0, 4)]))
+  poly1 = Pgon(cart.([(0, 0), (4, 0), (0, 4), (4, 4)]))
+  poly2 = Pgon(cart.([(0, 0), (4, 0), (4, 4), (2, 3), (0, 4)]))
   @test !isconvex(poly1)
   @test !isconvex(poly2)
 
   # multi-geometry with single convex geometry
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   multi = Multi([poly])
   @test isconvex(multi)
 
@@ -399,7 +399,7 @@ end
   ball = Ball(cart(0, 0))
   quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   pent = Pentagon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0.5, 1.5), cart(0, 1))
-  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test tri ⊆ quad
   @test !(quad ⊆ tri)
   @test tri ⊆ box
@@ -417,7 +417,7 @@ end
 
   quad1 = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   quad2 = Quadrangle(cart(0, 0), cart(1.1, 0), cart(1, 1), cart(0, 1))
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   multi = Multi([poly])
   @test quad1 ⊆ poly
   @test !(quad2 ⊆ poly)
@@ -438,8 +438,8 @@ end
   inner = cart.([(15, 7), (10, 12), (5, 7)])
   pent = Pentagon(outer...)
   tri = Triangle(inner...)
-  poly1 = PolyArea(outer)
-  poly2 = PolyArea([outer, reverse(inner)])
+  poly1 = Pgon(outer)
+  poly2 = Pgon([outer, reverse(inner)])
   multi = Multi([poly2, tri])
   @test tri ⊆ pent
   @test tri ⊆ poly1
@@ -449,11 +449,11 @@ end
   @test pent ⊈ poly2
   @test pent ⊆ multi
 
-  poly1 = PolyArea(cart.([(-2, 8), (-3, 4), (2, -2), (13, -2), (16, 1), (16, 8), (11, 11), (4, 12)]))
-  poly2 = PolyArea(cart.([(9, 0), (11, 4), (10, 7), (4, 7), (1, 6), (3, 4), (1, 2), (3, 0)]))
-  poly3 = PolyArea(cart.([(12, 1), (14, 4), (12, 8), (3, 8), (4, 4), (3, 2)]))
-  poly4 = PolyArea(cart.([(10, 4), (9, 6), (5, 6), (5, 4), (8, 2)]))
-  poly5 = PolyArea(cart.([(10, 9), (10, 10), (6, 11), (3, 9)]))
+  poly1 = Pgon(cart.([(-2, 8), (-3, 4), (2, -2), (13, -2), (16, 1), (16, 8), (11, 11), (4, 12)]))
+  poly2 = Pgon(cart.([(9, 0), (11, 4), (10, 7), (4, 7), (1, 6), (3, 4), (1, 2), (3, 0)]))
+  poly3 = Pgon(cart.([(12, 1), (14, 4), (12, 8), (3, 8), (4, 4), (3, 2)]))
+  poly4 = Pgon(cart.([(10, 4), (9, 6), (5, 6), (5, 4), (8, 2)]))
+  poly5 = Pgon(cart.([(10, 9), (10, 10), (6, 11), (3, 9)]))
   @test poly2 ⊆ poly1
   @test poly3 ⊆ poly1
   @test poly4 ⊆ poly1
@@ -601,8 +601,8 @@ end
   outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
   hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-  poly1 = PolyArea(outer)
-  poly2 = PolyArea([outer, reverse(hole1), reverse(hole2)])
+  poly1 = Pgon(outer)
+  poly2 = Pgon([outer, reverse(hole1), reverse(hole2)])
   ball1 = Ball(cart(0.5, 0.5), T(0.05))
   ball2 = Ball(cart(0.3, 0.3), T(0.05))
   ball3 = Ball(cart(0.7, 0.3), T(0.05))
@@ -633,7 +633,7 @@ end
   @test intersects(p, p)
   @test !intersects(p, p + vector(1, 1))
 
-  poly = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   box = Box(cart(0, 0), cart(2, 2))
   @test intersects(poly, box)
 
@@ -726,7 +726,7 @@ end
 
   # partial application
   points = cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-  poly = PolyArea(points)
+  poly = Pgon(points)
   box = Box(cart(0, 0), cart(2, 2))
   @test intersects(box)(poly)
   @test all(intersects(box), points)

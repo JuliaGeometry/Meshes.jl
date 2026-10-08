@@ -26,7 +26,7 @@ function clip(subject::Polygon, other::Polygon, ::SutherlandHodgmanClipping)
     verts = _shvertices(sring, first(orings))
     isempty(verts) || push!(crings, Ring(verts))
   end
-  isempty(crings) ? nothing : PolyArea(crings)
+  isempty(crings) ? nothing : Pgon(crings)
 end
 
 function _shvertices(ring::Ring, other::Ring)

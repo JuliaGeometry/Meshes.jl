@@ -453,51 +453,51 @@ end
 
   # segments and polygons in 2D
   s = Segment(cart(1, 2), cart(3, 2))
-  p = PolyArea([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
+  p = Pgon([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
   @test s ∩ p ≈ p ∩ s ≈ s
   @test intersection(s, p) |> type == Intersecting
   s = Segment(cart(-1, 2), cart(5, 2))
-  p = PolyArea([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
+  p = Pgon([cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4)])
   @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 2), cart(4, 2))
   @test intersection(s, p) |> type == Intersecting
   s = Segment(cart(-1, 4), cart(7, 4))
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  p = Pgon([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ Multi([Segment(cart(0, 4), cart(2, 4)), Segment(cart(4, 4), cart(6, 4))])
   @test intersection(s, p) |> type == Intersecting
   s = Segment(cart(-1, 0), cart(3, 0))
-  p = PolyArea([cart(0, 0), cart(1, 0), cart(1, -1), cart(2, -1), cart(2, 1), cart(0, 1)])
+  p = Pgon([cart(0, 0), cart(1, 0), cart(1, -1), cart(2, -1), cart(2, 1), cart(0, 1)])
   @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(2, 0))
   @test intersection(s, p) |> type == Intersecting
   s = Segment(cart(-1, 0), cart(5, 0))
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  p = Pgon([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ Segment(cart(0, 0), cart(5, 0))
   @test intersection(s, p) |> type == EdgeTouching
   s = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
-  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  p = Pgon([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
   @test s ∩ p ≈ p ∩ s ≈ cart(0, 0)
   @test intersection(s, p) |> type == CornerTouching
   s = Segment(cart(-1, 2), cart(0, 2))
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  p = Pgon([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ cart(0, 2)
   @test intersection(s, p) |> type == Touching
   s = Segment(cart(-1, -1), cart(0, 0))
-  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  p = Pgon([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
   @test s ∩ p ≈ p ∩ s ≈ cart(0, 0)
   @test intersection(s, p) |> type == CornerTouching
   s = Segment(cart(2, 2), cart(2, 2))
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  p = Pgon([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p ≈ p ∩ s ≈ cart(2, 2)
   @test intersection(s, p) |> type == CornerTouching
   s = Segment(cart(5, 5), cart(5, 5))
-  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  p = Pgon([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
   @test s ∩ p === p ∩ s === nothing
   @test intersection(s, p) |> type == NotIntersecting
   s = Segment(cart(-1, 5), cart(5, 5))
-  p = PolyArea([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
+  p = Pgon([cart(0.0, 0.0), cart(1.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.0)])
   @test s ∩ p === p ∩ s === nothing
   @test intersection(s, p) |> type == NotIntersecting
   s = Segment(cart(3, 3), cart(3, 5))
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  p = Pgon([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @test s ∩ p === p ∩ s === nothing
   @test intersection(s, p) |> type == NotIntersecting
 
@@ -506,7 +506,7 @@ end
   s₂ = Segment(cart(-1, 0), cart(5, 0))
   s₃ = Segment(cart(-1.0, 1.0), cart(1.0, -1.0))
   s₄ = Segment(cart(-1, 2), cart(0, 2))
-  p = PolyArea([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
+  p = Pgon([cart(0, 0), cart(6, 0), cart(6, 6), cart(4, 6), cart(4, 2), cart(2, 2), cart(2, 6), cart(0, 6)])
   @inferred someornone(s₁, p)
   @inferred someornone(s₂, p)
   @inferred someornone(s₃, p)
@@ -1388,14 +1388,14 @@ end
   t = Triangle(cart(0.9356498598903396, 6.5), cart(1.3571428571428377, 6.5), cart(1.0, 7.0))
   q = Quadrangle(cart(0.0, 0.0), cart(6.0, 0.0), cart(1.0, 7.0), cart(1.0, 6.0))
   @test intersection(t, q) |> type == Intersecting
-  @test t ∩ q isa PolyArea
-  @test q ∩ t isa PolyArea
+  @test t ∩ q isa Pgon
+  @test q ∩ t isa Pgon
 
   # triangle <> triangle
   t1 = Triangle(cart(0.0, 0.0), cart(0.0, 1.000000000000001), cart(1.0, 1.0))
   t2 = Triangle(cart(0.0, 1.0), cart(0.0, 2.0), cart(1.0, 1.000000000001))
   @test intersection(t1, t2) |> type == Intersecting
-  @test t1 ∩ t2 isa PolyArea
+  @test t1 ∩ t2 isa Pgon
 
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
@@ -1426,7 +1426,7 @@ end
 
   # convex and non-convex polygons
   quad = Quadrangle(cart(0, 0), cart(0.1, 0.0), cart(0.1, 0.1), cart(0.0, 0.1))
-  poly = PolyArea(cart(0, 0), cart(2, 0), cart(1, 1), cart(1, 0.5))
+  poly = Pgon(cart(0, 0), cart(2, 0), cart(1, 1), cart(1, 0.5))
   @test intersection(quad, poly) |> type == Intersecting
   @test all(vertices(quad ∩ poly) .≈ [cart(0, 0), cart(0.1, 0), cart(0.1, 0.05)])
 end

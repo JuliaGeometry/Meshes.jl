@@ -16,9 +16,9 @@ Simplify geometric `object` with given `method`.
 """
 function simplify end
 
-simplify(box::Box{𝔼{2}}, method::SimplificationMethod) = PolyArea(simplify(boundary(box), method))
+simplify(box::Box{𝔼{2}}, method::SimplificationMethod) = Pgon(simplify(boundary(box), method))
 
-simplify(polygon::Polygon, method::SimplificationMethod) = PolyArea([simplify(ring, method) for ring in rings(polygon)])
+simplify(polygon::Polygon, method::SimplificationMethod) = Pgon([simplify(ring, method) for ring in rings(polygon)])
 
 simplify(multi::Multi, method::SimplificationMethod) = Multi([simplify(geom, method) for geom in parent(multi)])
 

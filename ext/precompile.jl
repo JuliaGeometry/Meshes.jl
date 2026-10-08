@@ -8,7 +8,7 @@ using PrecompileTools
   # vectors of geometries in GIS
   # TODO: include LatLon after https://github.com/JuliaGeometry/Meshes.jl/issues/1367
   ctype = [Cartesian2D]
-  gtype = [Point, Rope, Ring, PolyArea]
+  gtype = [Point, Rope, Ring, Pgon]
   geoms = [rand(G, 3, crs=C) for C in ctype for G in gtype]
   multi = [Multi(geoms[i]) for i in eachindex(geoms)]
 

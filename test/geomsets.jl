@@ -1,7 +1,7 @@
 @testitem "GeometrySet" setup = [Setup] begin
   s = Segment(cart(0, 0), cart(1, 1))
   t = Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-  p = PolyArea(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  p = Pgon(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
   gset = GeometrySet([s, t, p])
   @test crs(gset) <: Cartesian{NoDatum}
   @test Meshes.lentype(gset) == ℳ

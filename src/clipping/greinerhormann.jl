@@ -433,7 +433,7 @@ function _ghpolygons(rs)
 
   polys = map(outers) do outer
     holes = [inner for inner in inners if all(v -> sideof(v, outer) == IN, [first(eachvertex(inner))])]
-    PolyArea([outer; holes])
+    Pgon([outer; holes])
   end
 
   maybemulti(polys)

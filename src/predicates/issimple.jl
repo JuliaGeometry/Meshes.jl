@@ -11,7 +11,7 @@ See [https://en.wikipedia.org/wiki/Simple_polygon]
 """
 issimple(p::Polygon) = issimple(typeof(p))
 
-issimple(p::PolyArea) = !hasholes(p) && issimple(first(rings(p)))
+issimple(p::Pgon) = !hasholes(p) && issimple(first(rings(p)))
 
 issimple(::Type{<:Ngon}) = true
 

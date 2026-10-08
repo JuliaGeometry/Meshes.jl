@@ -61,5 +61,5 @@ function hull(points, ::GrahamScan)
   end
 
   # return polygonal area
-  PolyArea(r)
+  Pgon(r)
 end

@@ -42,7 +42,7 @@ function hull(points, method::MoreiraMarch)
   # corner cases
   n == 1 && return p[1]
   n == 2 && return Segment(p[1], p[2])
-  n == 3 && return PolyArea(p)
+  n == 3 && return Pgon(p)
 
   # sanity check
   assertion(method.k < n, "k must be smaller than the number of unique points")
@@ -110,7 +110,7 @@ function _moreiramarch(p, k)
   end
 
   # construct polygonal area from ring of indices
-  poly = PolyArea(p[ℐ[begin:(end - 1)]])
+  poly = Pgon(p[ℐ[begin:(end - 1)]])
 
   # every point must be in the hull, otherwise increase k and try again
   all(∈(poly), p) || return _moreiramarch(p, k + 1)

@@ -24,7 +24,7 @@ Bridge() = Bridge(0.0u"m")
 
 parameters(t::Bridge) = (; δ=t.δ)
 
-function apply(transform::Bridge, poly::PolyArea)
+function apply(transform::Bridge, poly::Pgon)
   ℒ = lentype(poly)
 
   # sort rings lexicographically
@@ -39,7 +39,7 @@ function apply(transform::Bridge, poly::PolyArea)
     first(rings(rpoly)), Tuple{Int,Int}[]
   end
 
-  PolyArea(ring), dups
+  Pgon(ring), dups
 end
 
 apply(::Bridge, poly::Ngon) = poly, Tuple{Int,Int}[]

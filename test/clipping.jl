@@ -36,10 +36,10 @@
   @test issimple(clipped)
   @test all(vertices(clipped) .≈ vertices(other))
 
-  # PolyArea with Quadrangle
+  # Pgon with Quadrangle
   outer = Ring(cart(8, 0), cart(4, 8), cart(2, 8), cart(-2, 0), cart(0, 0), cart(1, 2), cart(5, 2), cart(6, 0))
   inner = Ring(cart(4, 4), cart(2, 4), cart(3, 6))
-  poly = PolyArea([outer, inner])
+  poly = Pgon([outer, inner])
   other = Quadrangle(cart(0, 1), cart(3, 1), cart(3, 7), cart(0, 7))
   clipped = clip(poly, other, SutherlandHodgmanClipping())
   crings = rings(clipped)
@@ -50,10 +50,10 @@
   )
   @test all(vertices(crings[2]) .≈ [cart(3.0, 4.0), cart(2.0, 4.0), cart(3.0, 6.0)])
 
-  # PolyArea with outer ring outside and inner ring inside
+  # Pgon with outer ring outside and inner ring inside
   outer = Ring(cart(8, 0), cart(2, 6), cart(-4, 0))
   inner = Ring(cart(1, 3), cart(3, 3), cart(3, 1), cart(1, 1))
-  poly = PolyArea([outer, inner])
+  poly = Pgon([outer, inner])
   other = Quadrangle(cart(4, 4), cart(0, 4), cart(0, 0), cart(4, 0))
   clipped = clip(poly, other, SutherlandHodgmanClipping())
   @test !issimple(clipped)
@@ -61,12 +61,12 @@
   @test all(vertices(crings[1]) .≈ vertices(other))
   @test all(vertices(crings[2]) .≈ vertices(inner))
 
-  # PolyArea with one inner ring inside `other` and another inner ring outside `other`
+  # Pgon with one inner ring inside `other` and another inner ring outside `other`
   outer = Ring(cart(6, 4), cart(6, 7), cart(1, 6), cart(1, 1), cart(5, 2))
   inner₁ = Ring(cart(3, 3), cart(3, 4), cart(4, 3))
   inner₂ = Ring(cart(2, 5), cart(2, 6), cart(3, 5))
-  poly = PolyArea([outer, inner₁, inner₂])
-  other = PolyArea(Ring(cart(6, 1), cart(7, 2), cart(6, 5), cart(0, 2), cart(1, 1)))
+  poly = Pgon([outer, inner₁, inner₂])
+  other = Pgon(Ring(cart(6, 1), cart(7, 2), cart(6, 5), cart(0, 2), cart(1, 1)))
   clipped = clip(poly, other, SutherlandHodgmanClipping())
   crings = rings(clipped)
   @test !issimple(clipped)
@@ -77,8 +77,8 @@
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   data1 = readdlm(joinpath(datadir, "issue1218-1.dat"), ',')
   data2 = readdlm(joinpath(datadir, "issue1218-2.dat"), ',')
-  poly1 = PolyArea(cart.(data1[:, 1], data1[:, 2]))
-  poly2 = PolyArea(cart.(data2[:, 1], data2[:, 2]))
+  poly1 = Pgon(cart.(data1[:, 1], data1[:, 2]))
+  poly2 = Pgon(cart.(data2[:, 1], data2[:, 2]))
   cpoly = clip(poly1, poly2, SutherlandHodgmanClipping())
   perim = perimeter(cpoly)
   if T === Float32
@@ -97,14 +97,14 @@ end
   @test all(vertices(clipped) .≈ [cart(5, 3), cart(4, 4), cart(2, 4), cart(0, 2), cart(5, 2)])
 
   # non-convex clipping geometry
-  poly = PolyArea(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
-  other = PolyArea(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
+  poly = Pgon(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
+  other = Pgon(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
   clipped = clip(poly, other, GreinerHormannClipping())
   @test all(vertices(clipped) .≈ [cart(4, 1), cart(0, 1), cart(0, 0), cart(4, 0)])
 
   # clipped polygon with two components
   poly = Quadrangle(cart(0, 0), cart(6, 0), cart(6, 1), cart(0, 1))
-  other = PolyArea(cart.([(0, 0.25), (2, 0.25), (2, 2), (4, 2), (4, 0.25), (6, 0.25), (6, 3), (0, 3)]))
+  other = Pgon(cart.([(0, 0.25), (2, 0.25), (2, 2), (4, 2), (4, 0.25), (6, 0.25), (6, 3), (0, 3)]))
   clipped = clip(poly, other, GreinerHormannClipping())
   @test clipped isa Multi
   @test length(parent(clipped)) == 2
@@ -113,7 +113,7 @@ end
   # polygon with hole
   outer = Ring(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]))
   inner = Ring(cart.([(3, 3), (3, 7), (7, 7), (7, 3)]))
-  poly = PolyArea([outer, inner])
+  poly = Pgon([outer, inner])
   other = Quadrangle(cart(5, -2), cart(14, -2), cart(14, 12), cart(5, 12))
   clipped = clip(poly, other, GreinerHormannClipping())
   @test measure(clipped) ≈ T(42) * u"m^2"

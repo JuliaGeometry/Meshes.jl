@@ -122,8 +122,8 @@
   @test linds[55, 53] ∈ indices(grid, pent)
 
   # non-convex polygons
-  poly1 = PolyArea(cart.([(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)]))
-  poly2 = PolyArea([collect(eachvertex(pent)), collect(eachvertex(tri))])
+  poly1 = Pgon(cart.([(3, 3), (9, 9), (3, 15), (17, 15), (17, 3)]))
+  poly2 = Pgon([collect(eachvertex(pent)), collect(eachvertex(tri))])
 
   grid = cartgrid(20, 20)
   linds = LinearIndices(size(grid))

@@ -10,7 +10,7 @@
   @test collect(elements(mesh)) == tris
 
   # type stability tests
-  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @inferred discretize(poly, FanTriangulation())
 end
 
@@ -46,7 +46,7 @@ end
   @test eltype(mesh) <: Triangle
 
   # type stability tests
-  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @inferred discretize(poly, DehnTriangulation())
 end
 
@@ -86,14 +86,14 @@ end
   points = cart.([(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (1, 2)])
   connec = connect.([(4, 5, 6), (3, 4, 6), (3, 6, 1), (1, 2, 3)], Triangle)
   target = SimpleMesh(points, connec)
-  poly = PolyArea(points)
+  poly = Pgon(points)
   mesh = discretize(poly, HeldTriangulation(shuffle=false))
   @test mesh == target
   @test Set(vertices(poly)) == Set(vertices(mesh))
   @test nelements(mesh) == length(vertices(mesh)) - 2
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/675
-  poly = PolyArea(
+  poly = Pgon(
     cart.([
       (1.1794224993e7, 1.7289506814e7),
       (1.1794045018e7, 1.7289446822e7),
@@ -119,7 +119,7 @@ end
   @test nelements(mesh) == 14
 
   # https://github.com/JuliaGeometry/Meshes.jl/issues/738
-  poly = PolyArea(
+  poly = Pgon(
     cart.([
       (-0.5, 0.3296139),
       (-0.19128194, -0.5),
@@ -134,7 +134,7 @@ end
   @test nelements(mesh) == 3
 
   # type stability tests
-  poly = PolyArea(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @inferred discretize(poly, HeldTriangulation())
 end
 
@@ -177,7 +177,7 @@ end
     outer = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
     hole1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
     hole2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
-    poly = PolyArea([outer, reverse(hole1), reverse(hole2)])
+    poly = Pgon([outer, reverse(hole1), reverse(hole2)])
     bpoly = poly |> Bridge(T(0.01))
     mesh = discretizewithin(boundary(bpoly), method)
     @test nvertices(mesh) == 16
@@ -192,7 +192,7 @@ end
     @test nelements(mesh) == 2
 
     # latlon coordinates
-    poly = PolyArea(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0))
+    poly = Pgon(latlon(0, 0), latlon(0, 1), latlon(1, 1), latlon(1, 0))
     mesh = discretize(poly, method)
     @test vertices(mesh) == vertices(poly)
     @test eltype(mesh) <: Triangle
@@ -291,7 +291,7 @@ end
   end
 
   if T === Float64
-    poly = PolyArea(
+    poly = Pgon(
       cart.([
         (-48.03012478813999, -18.323912004531923),
         (-48.030125176275845, -18.323904748608573),
@@ -309,7 +309,7 @@ end
   end
 
   # degenerate triangle
-  poly = PolyArea(cart.([(0, 0), (1, 1), (1, 1)]))
+  poly = Pgon(cart.([(0, 0), (1, 1), (1, 1)]))
   mesh = discretize(poly)
   @test nvertices(mesh) == 3
   @test nelements(mesh) == 1
@@ -319,7 +319,7 @@ end
   # https://github.com/JuliaGeometry/Meshes.jl/issues/629
   outer = Ring(cart.([(0, 0), (0, 3), (2, 3), (2, 2), (3, 2), (3, 0)]))
   inner = Ring(cart.([(1, 1), (1, 2), (2, 2), (2, 1)]))
-  poly = PolyArea(outer, inner)
+  poly = Pgon(outer, inner)
   mesh = discretize(poly)
   @test all(v -> !any(isnan, to(v)), vertices(mesh))
   @test Set(vertices(poly)) ⊆ Set(vertices(mesh))
@@ -509,7 +509,7 @@ end
   @test eltype(mesh) <: Ngon
   @test nvertices.(mesh) ⊆ [3, 4]
 
-  poly = PolyArea(cart.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
+  poly = Pgon(cart.([(0, 0), (0, 1), (1, 2), (2, 1), (2, 0)]))
   mesh = discretize(poly, RegularDiscretization(10))
   @test mesh isa SubGrid
   grid = parent(mesh)
@@ -720,7 +720,7 @@ end
   outer = cart.([(0, 0), (10, 0), (10, 10), (0, 10)])
   hole1 = cart.([(2, 2), (2, 4), (4, 4), (4, 2)])
   hole2 = cart.([(6, 2), (6, 4), (8, 4), (8, 2)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   mesh = discretize(poly)
   @test nvertices(mesh) == 12
   @test nelements(mesh) == 14
@@ -730,7 +730,7 @@ end
   outer = latlon.([(0, 0), (0, 10), (10, 10), (10, 0)])
   hole1 = latlon.([(2, 2), (4, 2), (4, 4), (2, 4)])
   hole2 = latlon.([(2, 6), (4, 6), (4, 8), (2, 8)])
-  poly = PolyArea([outer, hole1, hole2])
+  poly = Pgon([outer, hole1, hole2])
   mesh = discretize(poly) |> refinemaxlen
   @test nvertices(mesh) == 41
   @test nelements(mesh) == 60
