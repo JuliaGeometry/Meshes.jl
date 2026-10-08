@@ -7,7 +7,7 @@
 
 Tells whether or not the `point` is in the `geometry`.
 """
-Base.in(p::Point, g::Geometry) = sideof(p, boundary(g)) != OUT
+Base.in(p::Point, g::Geometry) = sideof(p, boundary(g)) ≠ OUT
 
 Base.in(p₁::Point, p₂::Point) = p₁ == p₂
 
@@ -123,7 +123,7 @@ end
 
 function Base.in(point::Point, poly::Polygon{𝔼{2}})
   r = rings(poly)
-  inside = sideof(point, first(r)) != OUT
+  inside = sideof(point, first(r)) ≠ OUT
   if hasholes(poly)
     outside = all(sideof(point, r[i]) == OUT for i in 2:length(r))
     inside && outside

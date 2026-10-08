@@ -88,7 +88,7 @@ function _moreiramarch(p, k)
   mask[j] = false
 
   # rotational sweep
-  while first(ℐ) != last(ℐ)
+  while first(ℐ) ≠ last(ℐ)
     # start point re-enters candidacy once the ring has enough vertices to close
     length(ℐ) == 4 && (mask[first(ℐ)] = true)
 

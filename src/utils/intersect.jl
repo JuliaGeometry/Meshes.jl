@@ -19,7 +19,7 @@ calculated in order to identify the intersection type:
 
 - Intersection: r == rₐ == 2
 - Collinear: r == rₐ == 1
-- No intersection: r != rₐ
+- No intersection: r ≠ rₐ
   - No intersection and parallel:  r == 1, rₐ == 2
   - No intersection, skew lines: r == 2, rₐ == 3
 """
