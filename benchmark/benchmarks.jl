@@ -30,7 +30,7 @@ const SUITE = BenchmarkGroup()
 
 SUITE["clipping"] = BenchmarkGroup()
 
-SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($ring1, $ring2, SutherlandHodgmanClipping())
+SUITE["clipping"]["SutherlandHodgman"] = @benchmarkable clip($poly1, $poly2, SutherlandHodgmanClipping())
 
 # ---------------
 # DISCRETIZATION
@@ -72,8 +72,8 @@ SUITE["winding"]["mesh"] = @benchmarkable winding($points, $mesh)
 
 SUITE["sideof"] = BenchmarkGroup()
 
-SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point, $ring3)
-SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring4)
+SUITE["sideof"]["ring"]["small"] = @benchmarkable sideof($point, $ring1)
+SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring2)
 
 # -----------
 # INTERSECTS
