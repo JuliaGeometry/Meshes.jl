@@ -67,14 +67,14 @@ end
 
 # insert the intersections of the two sets of rings as vertices in both lists
 function _ghintersect(rings₁, rings₂)
-  vs₁ = [vertices(r) for r in rings₁]
-  vs₂ = [vertices(r) for r in rings₂]
-
   # common point type of both polygons, and alpha/beta type
-  P = typeof(first(promote(first(first(vs₁)), first(first(vs₂)))))
+  p₁ = first(eachvertex(first(rings₁)))
+  p₂ = first(eachvertex(first(rings₂)))
+  P = eltype(promote(p₁, p₂))
   T = numtype(lentype(P))
-  vs₁ = [CircularVector(collect(P, v)) for v in vs₁]
-  vs₂ = [CircularVector(collect(P, v)) for v in vs₂]
+
+  vs₁ = [_ghvertices(P, r) for r in rings₁]
+  vs₂ = [_ghvertices(P, r) for r in rings₂]
 
   # events attached to original vertices, and inserted along edges
   tag₁ = [zeros(Int, length(v)) for v in vs₁]
@@ -177,6 +177,9 @@ function _ghintersect(rings₁, rings₂)
 
   list₁, list₂
 end
+
+# vertices of the ring in the point type `P`
+_ghvertices(P, r) = eltype(vertices(r)) === P ? vertices(r) : CircularVector(collect(P, vertices(r)))
 
 _ghinunit(λ) = (λ > 0 || isapproxzero(λ)) && (λ < 1 && !isapproxone(λ))
 
