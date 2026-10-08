@@ -175,6 +175,20 @@ function __init__()
   end
 end
 
+# deprecation warnings
+function PolyArea(args...)
+  Base.depwarn(
+    """
+    `PolyArea(args...)` is deprecated.
+
+    Use `Pgon(args...)` instead.
+    """,
+    :PolyArea,
+    force=true
+  )
+  Pgon(args...)
+end
+
 export
   # vectors
   Vec,
@@ -244,6 +258,7 @@ export
   Rope,
   Ring,
   Polygon,
+  PolyArea,
   Pgon,
   Ngon,
   Triangle,
