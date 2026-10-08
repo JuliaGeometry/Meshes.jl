@@ -109,9 +109,6 @@ include("predicates.jl")
 include("differentation.jl")
 include("integration.jl")
 
-# geodesics
-include("geodesics.jl")
-
 # operations
 include("centroid.jl")
 include("measures.jl")
