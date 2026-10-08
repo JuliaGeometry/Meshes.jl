@@ -205,7 +205,7 @@ Return the outer and inner rings of the polygon.
 function rings end
 
 # implementations of Polygon
-include("polytopes/polyarea.jl")
+include("polytopes/pgon.jl")
 include("polytopes/ngon.jl")
 
 # ------------------------
