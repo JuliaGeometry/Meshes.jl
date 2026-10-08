@@ -9,22 +9,27 @@ The Sutherland-Hodgman algorithm for clipping polygons.
 
 ## References
 
-* Sutherland, I.E. & Hodgman, G.W. 1974. [Reentrant Polygon Clipping]
-  (https://dl.acm.org/doi/pdf/10.1145/360767.360802)
+* Sutherland, I.E. & Hodgman, G.W. 1974. [Reentrant Polygon
+  Clipping](https://dl.acm.org/doi/pdf/10.1145/360767.360802)
 
 ### Notes
 
-The algorithm assumes that the clipping geometry is convex.
+The algorithm assumes that the other geometry [`isconvex`](@ref).
 """
 struct SutherlandHodgmanClipping <: ClippingMethod end
 
-function clip(poly::Polygon, other::Geometry, method::SutherlandHodgmanClipping)
-  c = [clip(ring, boundary(other), method) for ring in rings(poly)]
-  r = [r for r in c if !isnothing(r)]
-  isempty(r) ? nothing : PolyArea(r)
+function clip(subject::Polygon, other::Polygon, ::SutherlandHodgmanClipping)
+  srings = rings(subject)
+  orings = rings(other)
+  crings = empty(srings)
+  for sring in srings
+    verts = _shvertices(sring, first(orings))
+    isempty(verts) || push!(crings, Ring(verts))
+  end
+  isempty(crings) ? nothing : PolyArea(crings)
 end
 
-function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
+function _shvertices(ring::Ring, other::Ring)
   # make sure other ring is CCW
   occw = orientation(other) == CCW ? other : reverse(other)
 
@@ -50,9 +55,9 @@ function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
         push!(p, p₁)
       elseif isinside₁ && !isinside₂
         push!(p, p₁)
-        push!(p, intersectpoint(lᵣ, lₒ))
+        push!(p, _shpoint(lᵣ, lₒ))
       elseif !isinside₁ && isinside₂
-        push!(p, intersectpoint(lᵣ, lₒ))
+        push!(p, _shpoint(lᵣ, lₒ))
       end
     end
 
@@ -60,13 +65,12 @@ function clip(ring::Ring, other::Ring, ::SutherlandHodgmanClipping)
     vᵣ = p
   end
 
-  # return appropriate object
-  isempty(vᵣ) ? nothing : Ring(unique(vᵣ))
+  unique(vᵣ)
 end
 
 # helper function to find any intersection point
 # between crossing or overlapping lines
-function intersectpoint(l₁::Line, l₂::Line)
+function _shpoint(l₁::Line, l₂::Line)
   λ(I) = type(I) == Overlapping ? l₁(0) : get(I)
   intersection(λ, l₁, l₂)
 end

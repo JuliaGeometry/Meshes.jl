@@ -205,14 +205,18 @@ end
 # ---------------
 
 function apply(::Repair{11}, poly::PolyArea)
-  r = rings(poly)
+  rs = poly |> rings |> repair11
+  PolyArea(rs), nothing
+end
 
-  # fix orientation
-  ofix(r, o) = orientation(r) == o ? r : reverse(r)
-  outer = ofix(first(r), CCW)
-  inners = ofix.(r[2:end], CW)
+function apply(::Repair{11}, poly::Ngon)
+  vs = poly |> rings |> repair11 |> first |> vertices
+  Ngon(vs...), nothing
+end
 
-  PolyArea([outer; inners]), nothing
+function repair11(r::AbstractVector{<:Ring})
+  rev(rᵢ, o) = orientation(rᵢ) == o ? rᵢ : reverse(rᵢ)
+  map(i -> rev(r[i], i == 1 ? CCW : CW), 1:length(r))
 end
 
 # ---------------

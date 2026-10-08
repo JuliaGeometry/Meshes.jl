@@ -36,11 +36,11 @@
   @test issimple(clipped)
   @test all(vertices(clipped) .≈ vertices(other))
 
-  # PolyArea with box
+  # PolyArea with Quadrangle
   outer = Ring(cart(8, 0), cart(4, 8), cart(2, 8), cart(-2, 0), cart(0, 0), cart(1, 2), cart(5, 2), cart(6, 0))
   inner = Ring(cart(4, 4), cart(2, 4), cart(3, 6))
   poly = PolyArea([outer, inner])
-  other = Box(cart(0, 1), cart(3, 7))
+  other = Quadrangle(cart(0, 1), cart(3, 1), cart(3, 7), cart(0, 7))
   clipped = clip(poly, other, SutherlandHodgmanClipping())
   crings = rings(clipped)
   @test !issimple(clipped)
@@ -77,13 +77,73 @@
   # https://github.com/JuliaGeometry/Meshes.jl/issues/1218
   data1 = readdlm(joinpath(datadir, "issue1218-1.dat"), ',')
   data2 = readdlm(joinpath(datadir, "issue1218-2.dat"), ',')
-  ring1 = Ring(cart.(data1[:, 1], data1[:, 2]))
-  ring2 = Ring(cart.(data2[:, 1], data2[:, 2]))
-  cring = clip(ring1, ring2, SutherlandHodgmanClipping())
-  perim = length(cring)
+  poly1 = PolyArea(cart.(data1[:, 1], data1[:, 2]))
+  poly2 = PolyArea(cart.(data2[:, 1], data2[:, 2]))
+  cpoly = clip(poly1, poly2, SutherlandHodgmanClipping())
+  perim = perimeter(cpoly)
   if T === Float32
     @test perim ≈ T(15880.919)u"m"
   elseif T === Float64
     @test perim ≈ T(15887.308996863363)u"m"
   end
+end
+
+@testitem "GreinerHormann" setup = [Setup] begin
+  # same result as Sutherland-Hodgman when the clipping geometry is convex
+  poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
+  other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test issimple(clipped)
+  @test all(vertices(clipped) .≈ [cart(5, 3), cart(4, 4), cart(2, 4), cart(0, 2), cart(5, 2)])
+
+  # non-convex clipping geometry
+  poly = PolyArea(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
+  other = PolyArea(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test all(vertices(clipped) .≈ [cart(4, 1), cart(0, 1), cart(0, 0), cart(4, 0)])
+
+  # clipped polygon with two components
+  poly = Quadrangle(cart(0, 0), cart(6, 0), cart(6, 1), cart(0, 1))
+  other = PolyArea(cart.([(0, 0.25), (2, 0.25), (2, 2), (4, 2), (4, 0.25), (6, 0.25), (6, 3), (0, 3)]))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test clipped isa Multi
+  @test length(parent(clipped)) == 2
+  @test measure(clipped) ≈ T(3) * u"m^2"
+
+  # polygon with hole
+  outer = Ring(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]))
+  inner = Ring(cart.([(3, 3), (3, 7), (7, 7), (7, 3)]))
+  poly = PolyArea([outer, inner])
+  other = Quadrangle(cart(5, -2), cart(14, -2), cart(14, 12), cart(5, 12))
+  clipped = clip(poly, other, GreinerHormannClipping())
+  @test measure(clipped) ≈ T(42) * u"m^2"
+
+  # vertices on edges and shared edges
+  tri = Triangle(cart(2, 4), cart(6, 2), cart(6, 6))
+  quad1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  quad2 = Quadrangle(cart(4, 0), cart(8, 0), cart(8, 4), cart(4, 4))
+  quad3 = Quadrangle(cart(4, 4), cart(8, 4), cart(8, 8), cart(4, 8))
+  @test measure(clip(quad1, quad1, GreinerHormannClipping())) ≈ T(16) * u"m^2"
+  @test isnothing(clip(quad2, quad1, GreinerHormannClipping()))
+  @test isnothing(clip(quad3, quad1, GreinerHormannClipping()))
+  clipped = clip(tri, quad1, GreinerHormannClipping())
+  @test all(vertices(clipped) .≈ [cart(2, 4), cart(4, 3), cart(4, 4)])
+
+  # inside and outside
+  quad1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  quad2 = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
+  quad3 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
+  @test all(vertices(clip(quad2, quad1, GreinerHormannClipping())) .≈ vertices(quad2))
+  @test isnothing(clip(quad3, quad1, GreinerHormannClipping()))
+
+  # CRS propagation
+  poly = Triangle(merc(6, 2), merc(3, 5), merc(0, 2))
+  other = Quadrangle(merc(5, 0), merc(5, 4), merc(0, 4), merc(0, 0))
+  @test crs(clip(poly, other, GreinerHormannClipping())) === crs(poly)
+
+  # polygons with different machine precision
+  tri = Triangle(Point(0.0, 0.0), Point(4.0, 0.0), Point(0.0, 4.0))
+  quad = Quadrangle(Point(1.0f0, 1.0f0), Point(3.0f0, 1.0f0), Point(3.0f0, 3.0f0), Point(1.0f0, 3.0f0))
+  clipped = clip(tri, quad, GreinerHormannClipping())
+  @test Unitful.numtype(Meshes.lentype(clipped)) == Float64
 end
