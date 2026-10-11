@@ -16,8 +16,6 @@ using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
 using CoordRefSystems: Basic, Geographic, Projected
 using Distances: PreMetric, Euclidean, Mahalanobis
-using Distances: Haversine, SphericalAngle
-using Distances: evaluate, result_type
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
 using NearestNeighbors: KDTree, BallTree
