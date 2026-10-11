@@ -45,6 +45,7 @@ function hull(points, ::GrahamScan)
 
   # rotational sweep
   r = [O, q[1]]
+  d = EuclideanDistance()
   for B in Iterators.drop(q, 1)
     Δ = signarea(r[end - 1], r[end], B)
     while isnegative(Δ) && length(r) > 2
@@ -53,7 +54,7 @@ function hull(points, ::GrahamScan)
     end
     if ispositive(Δ)
       push!(r, B)
-    elseif evaluate(Euclidean(), r[end - 1], r[end]) < evaluate(Euclidean(), r[end - 1], B)
+    elseif d(r[end - 1], r[end]) < d(r[end - 1], B)
       # point is collinear and further away, i.e., r[end - 1] --> r[end] --> B
       pop!(r)
       push!(r, B)

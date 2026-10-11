@@ -23,7 +23,7 @@ Base.in(p::Point, r::Ray) = p ∈ Line(r(0), r(1)) && isnonnegative((p - r(0)) �
 
 function Base.in(p::Point, l::Line)
   w = norm(l(1) - l(0))
-  d = evaluate(Euclidean(), p, l)
+  d = EuclideanDistance()(p, l)
   d + w ≈ w # d ≈ 0.0 will be too precise, and d < atol{T} can't scale.
 end
 

@@ -34,7 +34,7 @@ function _douglaspeucker(v::AbstractVector{P}, τ) where {P<:Point}
   l = Line(first(v), last(v))
   imax, dmax = 0, zero(lentype(P))
   for i in 2:(length(v) - 1)
-    d = evaluate(Euclidean(), v[i], l)
+    d = EuclideanDistance()(v[i], l)
     if d > dmax
       imax = i
       dmax = d

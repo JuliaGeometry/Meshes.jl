@@ -47,7 +47,7 @@ function _initrange(c)
   v = vertices(c)
   n = length(v)
   l = Line(first(v), last(v))
-  d = [evaluate(Euclidean(), v[i], l) for i in 2:(n - 1)]
+  d = [EuclideanDistance()(v[i], l) for i in 2:(n - 1)]
   z = zero(lentype(c))
   τ = quantile(d, 0.25)
   (z, 2τ)

@@ -80,7 +80,7 @@ end
 
 function hasintersectingplanes(c::CylinderSurface)
   l = c.bot ∩ c.top
-  !isnothing(l) && evaluate(Euclidean(), axis(c), l) < c.radius
+  !isnothing(l) && EuclideanDistance()(axis(c), l) < c.radius
 end
 
 ==(c₁::CylinderSurface, c₂::CylinderSurface) = c₁.bot == c₂.bot && c₁.top == c₂.top && c₁.radius == c₂.radius

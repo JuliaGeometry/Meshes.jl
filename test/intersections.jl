@@ -1255,7 +1255,7 @@ end
   # Special case: the direction vector is not long enough to cross triangle
   r = Ray(cart(0.2, 0.2, 1.0), vector(0.0, 0.0, -0.00001))
   @test intersection(r, t) |> type == Crossing
-  @test evaluate(Euclidean(), r ∩ t, cart(0.2, 0.2, 0.0)) < 1000 * Meshes.atol(ℳ)
+  @test norm((r ∩ t) - cart(0.2, 0.2, 0.0)) < 1000 * Meshes.atol(ℳ)
   # Special case: reverse direction vector should not hit the triangle
   r = Ray(cart(0.2, 0.2, 1.0), vector(0.0, 0.0, 1.0))
   @test intersection(r, t) |> type == NotIntersecting
