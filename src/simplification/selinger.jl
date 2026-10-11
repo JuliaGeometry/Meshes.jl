@@ -39,7 +39,7 @@ function simplify(chain::Chain, method::SelingerSimplification)
   for i in 1:n, o in 1:(n - 2)
     j = i + o
     l = Line(p[i], p[j])
-    δ = [evaluate(Euclidean(), p[k], l) for k in (i + 1):(j - 1)]
+    δ = [EuclideanDistance()(p[k], l) for k in (i + 1):(j - 1)]
     if all(<(τ), δ)
       dᵢⱼ = norm(p[j] - p[i])
       σᵢⱼ = o == 1 ? zero(ℒ) : norm(δ)

@@ -5,18 +5,7 @@
 """
     GeometricDistance
 
-A distance between points that is meaningful in physical settings.
-
-Distances are functors, and are evaluated with a pair of points:
-
-```julia
-d = EuclideanDistance()
-
-d(p₁, p₂)
-```
-
-The definition that is used depends on the manifold of the points,
-which is available at compile time.
+A distance between points in geometries.
 """
 abstract type GeometricDistance end
 
@@ -30,68 +19,6 @@ include("distances/geodesic.jl")
 # -------------
 # DISTANCES.JL
 # -------------
-
-# flip arguments so that points always come first
-evaluate(d::PreMetric, g::Geometry, p::Point) = evaluate(d, p, g)
-
-"""
-    evaluate(distance::Euclidean, point, line)
-
-Evaluate the Euclidean `distance` between `point` and `line`.
-"""
-function evaluate(::Euclidean, p::Point, l::Line)
-  a, b = l(0), l(1)
-  u = p - a
-  v = b - a
-  α = (u ⋅ v) / (v ⋅ v)
-  norm(u - α * v)
-end
-
-"""
-    evaluate(distance::Euclidean, point, segment)
-
-Evaluate the Euclidean `distance` between `point` and `segment`.
-"""
-function evaluate(::Euclidean, p::Point, s::Segment)
-  a, b = s(0), s(1)
-  u = p - a
-  v = b - a
-  α = (u ⋅ v) / (v ⋅ v)
-  α = clamp(α, zero(α), one(α))
-  norm(u - α * v)
-end
-
-"""
-    evaluate(distance::Euclidean, line₁, line₂)
-
-Evaluate the minimum Euclidean `distance` between `line₁` and `line₂`.
-"""
-function evaluate(d::Euclidean, l₁::Line, l₂::Line)
-  λ₁, λ₂, r, rₐ = intersectparameters(l₁(0), l₁(1), l₂(0), l₂(1))
-  if (r == rₐ == 2) || (r == rₐ == 1)  # lines intersect or are colinear
-    zero(result_type(d, lentype(l₁), lentype(l₂)))
-  elseif (r == 1) && (rₐ == 2)  # lines are parallel
-    evaluate(d, l₁(0), l₂)
-  else  # get distance between closest points on each line
-    evaluate(d, l₁(λ₁), l₂(λ₂))
-  end
-end
-
-"""
-    evaluate(distance::Euclidean, segment₁, segment₂)
-
-Evaluate the minimum Euclidean `distance` between `segment₁` and `segment₂`.
-"""
-function evaluate(d::Euclidean, s₁::Segment, s₂::Segment)
-  λ₁, λ₂, r, rₐ = intersectparameters(s₁(0), s₁(1), s₂(0), s₂(1))
-  λ₁ = clamp(λ₁, zero(λ₁), one(λ₁))
-  λ₂ = clamp(λ₂, zero(λ₂), one(λ₂))
-  if (r == rₐ == 1) || (r == 1 && rₐ == 2)  # segments are colinear or parallel
-    min(evaluate(d, s₁(0), s₂), evaluate(d, s₁(1), s₂))
-  else  # get distance between closest points on each segment
-    evaluate(d, s₁(λ₁), s₂(λ₂))
-  end
-end
 
 """
     evaluate(distance::PreMetric, point₁, point₂)

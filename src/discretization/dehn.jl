@@ -48,7 +48,7 @@ function dehn1899(v::AbstractVector{<:Point}, inds)
     if !isdiag
       l = Line(v[I[i - 1]], v[I[i + 1]])
       js = rinds[intriangle .+ 1]
-      k = argmax([evaluate(Euclidean(), l, v[I[j]]) for j in js])
+      k = argmax([EuclideanDistance()(l, v[I[j]]) for j in js])
       j = js[k]
       linds = i:j
       rinds = j:(i + n)
