@@ -84,6 +84,9 @@ include("domains.jl")
 # utilities
 include("utils.jl")
 
+# distances
+include("distances.jl")
+
 # domain indices
 include("indices.jl")
 
@@ -132,9 +135,6 @@ include("coarsening.jl")
 
 # transforms
 include("transforms.jl")
-
-# distances
-include("distances.jl")
 
 # miscellaneous
 include("rand.jl")
@@ -393,6 +393,11 @@ export
   # trajectories
   CylindricalTrajectory,
 
+  # distances
+  GeometricDistance,
+  EuclideanDistance,
+  GeodesicDistance,
+
   # indices
   indices,
 
@@ -635,11 +640,6 @@ export
   isaffine,
   isinvertible,
   inverse,
-
-  # distances
-  GeometricDistance,
-  EuclideanDistance,
-  GeodesicDistance,
 
   # miscellaneous
   laplacematrix,

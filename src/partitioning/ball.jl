@@ -3,18 +3,18 @@
 # ------------------------------------------------------------------
 
 """
-    BallPartition(radius; metric=Euclidean())
+    BallPartition(radius; distance=EuclideanDistance())
 
-A method for partitioning objects into balls of a given `radius` using a `metric`.
+A method for partitioning objects into balls of a given `radius` using a `distance`.
 """
-struct BallPartition{ℒ<:Len,M} <: PointPredicatePartitionMethod
+struct BallPartition{ℒ<:Len,D<:GeometricDistance} <: PointPredicatePartitionMethod
   radius::ℒ
-  metric::M
-  BallPartition(radius::ℒ, metric::M) where {ℒ<:Len,M} = new{float(ℒ),M}(radius, metric)
+  distance::D
+  BallPartition(radius::ℒ, distance::D) where {ℒ<:Len,D} = new{float(ℒ),D}(radius, distance)
 end
 
-BallPartition(radius, metric) = BallPartition(aslen(radius), metric)
+BallPartition(radius, distance) = BallPartition(aslen(radius), distance)
 
-BallPartition(radius; metric=Euclidean()) = BallPartition(radius, metric)
+BallPartition(radius; distance=EuclideanDistance()) = BallPartition(radius, distance)
 
-(p::BallPartition)(pᵢ, pⱼ) = evaluate(p.metric, pᵢ, pⱼ) < p.radius
+(p::BallPartition)(pᵢ, pⱼ) = p.distance(pᵢ, pⱼ) < p.radius
