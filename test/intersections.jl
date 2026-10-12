@@ -1,4 +1,4 @@
-@testitem "Point intersection" setup = [Setup] begin
+@testitem "Point booleans" setup = [Setup] begin
   p = cart(0, 0)
   q = cart(-1, -1)
   b = Box(cart(0, 0), cart(1, 1))
@@ -9,7 +9,7 @@
   @test isnothing(q ∩ b)
 end
 
-@testitem "Segment intersection" setup = [Setup] begin
+@testitem "Segment booleans" setup = [Setup] begin
   # segments in 2D
   s1 = Segment(cart(0, 0), cart(1, 0))
   s2 = Segment(cart(0.5, 0.0), cart(2, 0))
@@ -518,7 +518,7 @@ end
   @test Meshes._sort4vals(2.0, 2.5, 1.1, 1.4) == (1.4, 2.0)
 end
 
-@testitem "Ray intersection" setup = [Setup] begin
+@testitem "Ray booleans" setup = [Setup] begin
   # rays in 2D
   r₁ = Ray(cart(1, 0), vector(2, 1))
   r₂ = Ray(cart(0, 2), vector(2, -3))
@@ -603,7 +603,7 @@ end
   @test intersection(l₁, r₆) |> type === NotIntersecting
 end
 
-@testitem "Line intersection" setup = [Setup] begin
+@testitem "Line booleans" setup = [Setup] begin
   # lines in 2D
   l1 = Line(cart(0, 0), cart(1, 0))
   l2 = Line(cart(-1, -1), cart(-1, 1))
@@ -698,7 +698,7 @@ end
   @test intersects(b, l)
 end
 
-@testitem "Chain intersection" setup = [Setup] begin
+@testitem "Chain booleans" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/644
   r = Rope(cart(0, 0), cart(1, 1))
   @test r ∩ r == Segment(cart(0, 0), cart(1, 1))
@@ -809,7 +809,7 @@ end
   @inferred someornone(r₂, p)
 end
 
-@testitem "Plane intersection" setup = [Setup] begin
+@testitem "Plane booleans" setup = [Setup] begin
   # ---------
   # SEGMENTS
   # ---------
@@ -970,7 +970,7 @@ end
   @test crs(p1 ∩ p2) === crs(p1)
 end
 
-@testitem "Box intersection" setup = [Setup] begin
+@testitem "Box booleans" setup = [Setup] begin
   b1 = Box(cart(0, 0), cart(1, 1))
   b2 = Box(cart(0.5, 0.5), cart(2, 2))
   b3 = Box(cart(2, 2), cart(3, 3))
@@ -1114,7 +1114,7 @@ end
   @test r ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
 end
 
-@testitem "Triangle intersection" setup = [Setup] begin
+@testitem "Triangle booleans" setup = [Setup] begin
   # utility to reverse segments, to more fully
   # test branches in the intersection algorithm
   reverse_segment(s) = Segment(vertices(s)[2], vertices(s)[1])
@@ -1365,7 +1365,7 @@ end
   @test r ∩ t ≈ cart(0.5, 0.0, 0.0)
 end
 
-@testitem "Polygon intersection" setup = [Setup] begin
+@testitem "Polygon booleans" setup = [Setup] begin
   # ray <> octagon
   o = Octagon(
     cart(0.0, 0.0, 1.0),
@@ -1430,9 +1430,62 @@ end
   poly = Pgon(cart(0, 0), cart(2, 0), cart(1, 1), cart(1, 0.5))
   @test intersection(quad, poly) |> type == Intersecting
   @test all(vertices(quad ∩ poly) .≈ [cart(0.1, 0), cart(0.1, 0.05), cart(0, 0)])
+
+  # union of overlapping polygons
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
+  u = q1 ∪ q2
+  @test measure(u) ≈ T(28) * u"m^2"
+  @test all(
+    vertices(u) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(6, 2), cart(6, 6), cart(2, 6)]
+  )
+
+  # difference of overlapping polygons
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
+  d1 = setdiff(q1, q2)
+  d2 = setdiff(q2, q1)
+  @test measure(d1) ≈ T(12) * u"m^2"
+  @test measure(d2) ≈ T(12) * u"m^2"
+  @test all(vertices(d1) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(2, 2)])
+
+  # non-convex polygons
+  p1 = Pgon(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
+  p2 = Pgon(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
+  @test measure(p1 ∪ p2) ≈ T(10) * u"m^2"
+  @test measure(setdiff(p1, p2)) ≈ T(3) * u"m^2"
+
+  # polygon inside the other one
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
+  u = q1 ∪ q2
+  d = setdiff(q1, q2)
+  @test measure(u) ≈ T(16) * u"m^2"
+  @test length(rings(u)) == 1
+  @test measure(d) ≈ T(12) * u"m^2"
+  @test length(rings(d)) == 2
+
+  # disjoint polygons
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
+  u = q1 ∪ q2
+  d = setdiff(q1, q2)
+  @test u isa Multi
+  @test measure(u) ≈ T(17) * u"m^2"
+  @test measure(d) ≈ T(16) * u"m^2"
+
+  # difference with itself
+  q = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  @test isnothing(setdiff(q, q))
+
+  # CRS propagation
+  q1 = Quadrangle(merc(0, 0), merc(4, 0), merc(4, 4), merc(0, 4))
+  q2 = Quadrangle(merc(2, 2), merc(6, 2), merc(6, 6), merc(2, 6))
+  @test crs(q1 ∪ q2) === crs(q1)
+  @test crs(setdiff(q1, q2)) === crs(q1)
 end
 
-@testitem "Domain intersection" setup = [Setup] begin
+@testitem "Domain booleans" setup = [Setup] begin
   grid = cartgrid(4, 4)
   cent = centroid.(grid)
   pset = PointSet(cent)
