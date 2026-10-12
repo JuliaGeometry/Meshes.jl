@@ -1408,9 +1408,10 @@ end
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
   @test intersection(poly, other) |> type == Intersecting
   clipped = poly ∩ other
+  poly1, poly2 = parent(clipped)
   @test clipped isa Multi
-  @test all(vertices(parent(clipped)[1]) .≈ [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 4)])
-  @test all(vertices(parent(clipped)[2]) .≈ [cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0)])
+  @test all(vertices(poly1) .≈ [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 4)])
+  @test all(vertices(poly2) .≈ [cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0)])
 
   # inside
   poly = Quadrangle(cart(1, 0), cart(1, 1), cart(0, 1), cart(0, 0))
