@@ -36,5 +36,5 @@ Return the complement of `g` with respect to its bounding box.
 
 include("booleans/intersections.jl")
 include("booleans/unions.jl")
-include("booleans/setdiffs.jl")
+include("booleans/differences.jl")
 include("booleans/complements.jl")
