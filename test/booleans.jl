@@ -1,47 +1,54 @@
 @testitem "Booleans" setup = [Setup] begin
-  sq₁ = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
-  sq₂ = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
-
   # union of overlapping polygons
-  u = union(sq₁, sq₂)
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
+  u = q1 ∪ q2
   @test measure(u) ≈ T(28) * u"m^2"
   @test all(
     vertices(u) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(6, 2), cart(6, 6), cart(2, 6)]
   )
 
   # difference of overlapping polygons
-  d = setdiff(sq₁, sq₂)
-  @test measure(d) ≈ T(12) * u"m^2"
-  @test all(vertices(d) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(2, 2)])
-  @test measure(setdiff(sq₂, sq₁)) ≈ T(12) * u"m^2"
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
+  d1 = setdiff(q1, q2)
+  d2 = setdiff(q2, q1)
+  @test measure(d1) ≈ T(12) * u"m^2"
+  @test measure(d2) ≈ T(12) * u"m^2"
+  @test all(vertices(d1) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(2, 2)])
 
   # non-convex polygons
-  poly₁ = Pgon(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
-  poly₂ = Pgon(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
-  @test measure(union(poly₁, poly₂)) ≈ T(10) * u"m^2"
-  @test measure(setdiff(poly₁, poly₂)) ≈ T(3) * u"m^2"
+  p1 = Pgon(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
+  p2 = Pgon(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
+  @test measure(union(p1, p2)) ≈ T(10) * u"m^2"
+  @test measure(setdiff(p1, p2)) ≈ T(3) * u"m^2"
 
   # polygon inside the other one
-  inner = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
-  @test measure(union(sq₁, inner)) ≈ T(16) * u"m^2"
-  @test length(rings(union(sq₁, inner))) == 1
-  d = setdiff(sq₁, inner)
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
+  u = union(q1, q2)
+  d = setdiff(q1, q2)
+  @test measure(u) ≈ T(16) * u"m^2"
+  @test length(rings(u)) == 1
   @test measure(d) ≈ T(12) * u"m^2"
   @test length(rings(d)) == 2
 
   # disjoint polygons
-  far = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
-  u = union(sq₁, far)
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
+  u = union(q1, q2)
+  d = setdiff(q1, q2)
   @test u isa Multi
   @test measure(u) ≈ T(17) * u"m^2"
-  @test measure(setdiff(sq₁, far)) ≈ T(16) * u"m^2"
+  @test measure(d) ≈ T(16) * u"m^2"
 
   # difference with itself
-  @test isnothing(setdiff(sq₁, sq₁))
+  q = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  @test isnothing(setdiff(q, q))
 
   # CRS propagation
-  poly₁ = Quadrangle(merc(0, 0), merc(4, 0), merc(4, 4), merc(0, 4))
-  poly₂ = Quadrangle(merc(2, 2), merc(6, 2), merc(6, 6), merc(2, 6))
-  @test crs(union(poly₁, poly₂)) === crs(poly₁)
-  @test crs(setdiff(poly₁, poly₂)) === crs(poly₁)
+  q1 = Quadrangle(merc(0, 0), merc(4, 0), merc(4, 4), merc(0, 4))
+  q2 = Quadrangle(merc(2, 2), merc(6, 2), merc(6, 6), merc(2, 6))
+  @test crs(union(q1, q2)) === crs(q1)
+  @test crs(setdiff(q1, q2)) === crs(q1)
 end
