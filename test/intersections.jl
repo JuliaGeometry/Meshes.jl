@@ -1392,8 +1392,8 @@ end
   @test q ∩ t isa Pgon
 
   # triangle <> triangle
-  t1 = Triangle(cart(0.0, 0.0), cart(0.0, 1.000000000000001), cart(1.0, 1.0))
-  t2 = Triangle(cart(0.0, 1.0), cart(0.0, 2.0), cart(1.0, 1.000000000001))
+  t1 = Triangle(cart(0.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.000000000000001))
+  t2 = Triangle(cart(0.0, 1.0), cart(1.0, 1.000000000001), cart(0.0, 2.0))
   @test intersection(t1, t2) |> type == NotIntersecting
   @test isnothing(t1 ∩ t2)
 
