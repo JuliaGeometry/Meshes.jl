@@ -65,14 +65,6 @@ macro IT(type, geom, func)
 end
 
 """
-    g₁ ∩ g₂
-
-Return the intersection of two geometries or domains `g₁` and `g₂`
-as a new (multi-)geometry.
-"""
-Base.intersect(g₁::GeometryOrDomain, g₂::GeometryOrDomain) = get(intersection(g₁, g₂))
-
-"""
     intersection([f], g₁, g₂)
 
 Compute the intersection of two geometries or domains `g₁` and `g₂`
