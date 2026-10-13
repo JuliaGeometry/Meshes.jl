@@ -1,4 +1,4 @@
-@testitem "Point intersection" setup = [Setup] begin
+@testitem "Point booleans" setup = [Setup] begin
   p = cart(0, 0)
   q = cart(-1, -1)
   b = Box(cart(0, 0), cart(1, 1))
@@ -9,7 +9,7 @@
   @test isnothing(q ∩ b)
 end
 
-@testitem "Segment intersection" setup = [Setup] begin
+@testitem "Segment booleans" setup = [Setup] begin
   # segments in 2D
   s1 = Segment(cart(0, 0), cart(1, 0))
   s2 = Segment(cart(0.5, 0.0), cart(2, 0))
@@ -518,7 +518,7 @@ end
   @test Meshes._sort4vals(2.0, 2.5, 1.1, 1.4) == (1.4, 2.0)
 end
 
-@testitem "Ray intersection" setup = [Setup] begin
+@testitem "Ray booleans" setup = [Setup] begin
   # rays in 2D
   r₁ = Ray(cart(1, 0), vector(2, 1))
   r₂ = Ray(cart(0, 2), vector(2, -3))
@@ -603,7 +603,7 @@ end
   @test intersection(l₁, r₆) |> type === NotIntersecting
 end
 
-@testitem "Line intersection" setup = [Setup] begin
+@testitem "Line booleans" setup = [Setup] begin
   # lines in 2D
   l1 = Line(cart(0, 0), cart(1, 0))
   l2 = Line(cart(-1, -1), cart(-1, 1))
@@ -698,7 +698,7 @@ end
   @test intersects(b, l)
 end
 
-@testitem "Chain intersection" setup = [Setup] begin
+@testitem "Chain booleans" setup = [Setup] begin
   # https://github.com/JuliaGeometry/Meshes.jl/issues/644
   r = Rope(cart(0, 0), cart(1, 1))
   @test r ∩ r == Segment(cart(0, 0), cart(1, 1))
@@ -809,7 +809,7 @@ end
   @inferred someornone(r₂, p)
 end
 
-@testitem "Plane intersection" setup = [Setup] begin
+@testitem "Plane booleans" setup = [Setup] begin
   # ---------
   # SEGMENTS
   # ---------
@@ -970,7 +970,7 @@ end
   @test crs(p1 ∩ p2) === crs(p1)
 end
 
-@testitem "Box intersection" setup = [Setup] begin
+@testitem "Box booleans" setup = [Setup] begin
   b1 = Box(cart(0, 0), cart(1, 1))
   b2 = Box(cart(0.5, 0.5), cart(2, 2))
   b3 = Box(cart(2, 2), cart(3, 3))
@@ -1114,7 +1114,7 @@ end
   @test r ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
 end
 
-@testitem "Triangle intersection" setup = [Setup] begin
+@testitem "Triangle booleans" setup = [Setup] begin
   # utility to reverse segments, to more fully
   # test branches in the intersection algorithm
   reverse_segment(s) = Segment(vertices(s)[2], vertices(s)[1])
@@ -1365,7 +1365,7 @@ end
   @test r ∩ t ≈ cart(0.5, 0.0, 0.0)
 end
 
-@testitem "Polygon intersection" setup = [Setup] begin
+@testitem "Polygon booleans" setup = [Setup] begin
   # ray <> octagon
   o = Octagon(
     cart(0.0, 0.0, 1.0),
@@ -1392,10 +1392,10 @@ end
   @test q ∩ t isa Pgon
 
   # triangle <> triangle
-  t1 = Triangle(cart(0.0, 0.0), cart(0.0, 1.000000000000001), cart(1.0, 1.0))
-  t2 = Triangle(cart(0.0, 1.0), cart(0.0, 2.0), cart(1.0, 1.000000000001))
-  @test intersection(t1, t2) |> type == Intersecting
-  @test t1 ∩ t2 isa Pgon
+  t1 = Triangle(cart(0.0, 0.0), cart(1.0, 1.0), cart(0.0, 1.000000000000001))
+  t2 = Triangle(cart(0.0, 1.0), cart(1.0, 1.000000000001), cart(0.0, 2.0))
+  @test intersection(t1, t2) |> type == NotIntersecting
+  @test isnothing(t1 ∩ t2)
 
   # triangle
   poly = Triangle(cart(6, 2), cart(3, 5), cart(0, 2))
@@ -1407,10 +1407,11 @@ end
   poly = Octagon(cart(8, -2), cart(8, 5), cart(2, 5), cart(4, 3), cart(6, 3), cart(4, 1), cart(2, 1), cart(2, -2))
   other = Quadrangle(cart(5, 0), cart(5, 4), cart(0, 4), cart(0, 0))
   @test intersection(poly, other) |> type == Intersecting
-  @test all(
-    vertices(poly ∩ other) .≈
-    [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0), cart(5, 4)]
-  )
+  inter = poly ∩ other
+  poly1, poly2 = parent(inter)
+  @test inter isa Multi
+  @test all(vertices(poly1) .≈ [cart(3, 4), cart(4, 3), cart(5, 3), cart(5, 4)])
+  @test all(vertices(poly2) .≈ [cart(5, 2), cart(4, 1), cart(2, 1), cart(2, 0), cart(5, 0)])
 
   # inside
   poly = Quadrangle(cart(1, 0), cart(1, 1), cart(0, 1), cart(0, 0))
@@ -1428,10 +1429,80 @@ end
   quad = Quadrangle(cart(0, 0), cart(0.1, 0.0), cart(0.1, 0.1), cart(0.0, 0.1))
   poly = Pgon(cart(0, 0), cart(2, 0), cart(1, 1), cart(1, 0.5))
   @test intersection(quad, poly) |> type == Intersecting
-  @test all(vertices(quad ∩ poly) .≈ [cart(0, 0), cart(0.1, 0), cart(0.1, 0.05)])
+  @test all(vertices(quad ∩ poly) .≈ [cart(0.1, 0), cart(0.1, 0.05), cart(0, 0)])
+
+  # union of overlapping polygons
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
+  u = q1 ∪ q2
+  @test measure(u) ≈ T(28) * u"m^2"
+  @test all(
+    vertices(u) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(6, 2), cart(6, 6), cart(2, 6)]
+  )
+
+  # difference of overlapping polygons
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(2, 2), cart(6, 2), cart(6, 6), cart(2, 6))
+  d1 = setdiff(q1, q2)
+  d2 = setdiff(q2, q1)
+  @test measure(d1) ≈ T(12) * u"m^2"
+  @test measure(d2) ≈ T(12) * u"m^2"
+  @test all(vertices(d1) .≈ [cart(2, 4), cart(0, 4), cart(0, 0), cart(4, 0), cart(4, 2), cart(2, 2)])
+
+  # non-convex polygons
+  p1 = Pgon(cart.([(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4)]))
+  p2 = Pgon(cart.([(0, 0), (4, 0), (4, 4), (3, 4), (3, 1), (0, 1)]))
+  @test measure(p1 ∪ p2) ≈ T(10) * u"m^2"
+  @test measure(setdiff(p1, p2)) ≈ T(3) * u"m^2"
+
+  # polygon inside the other one
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(1, 1), cart(3, 1), cart(3, 3), cart(1, 3))
+  u = q1 ∪ q2
+  d = setdiff(q1, q2)
+  @test measure(u) ≈ T(16) * u"m^2"
+  @test length(rings(u)) == 1
+  @test measure(d) ≈ T(12) * u"m^2"
+  @test length(rings(d)) == 2
+
+  # disjoint polygons
+  q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  q2 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
+  u = q1 ∪ q2
+  d = setdiff(q1, q2)
+  @test u isa Multi
+  @test measure(u) ≈ T(17) * u"m^2"
+  @test measure(d) ≈ T(16) * u"m^2"
+
+  # difference with itself
+  q = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
+  @test isnothing(setdiff(q, q))
+
+  # CRS propagation
+  q1 = Quadrangle(merc(0, 0), merc(4, 0), merc(4, 4), merc(0, 4))
+  q2 = Quadrangle(merc(2, 2), merc(6, 2), merc(6, 6), merc(2, 6))
+  @test crs(q1 ∪ q2) === crs(q1)
+  @test crs(setdiff(q1, q2)) === crs(q1)
 end
 
-@testitem "Domain intersection" setup = [Setup] begin
+@testitem "Multi booleans" setup = [Setup] begin
+  q1 = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  q2 = Quadrangle(cart(1, 1), cart(2, 1), cart(2, 2), cart(1, 2))
+  q3 = Quadrangle(cart(0.5, 0.5), cart(1.5, 0.5), cart(1.5, 1.5), cart(0.5, 1.5))
+  m1 = Multi([q2, q3])
+  m2 = Multi([q1, q3])
+  m3 = Multi([q1, q2])
+  @test m1 ∩ q1 == q1 ∩ m1 == Pgon(cart(0.5, 1.0), cart(0.5, 0.5), cart(1.0, 0.5), cart(1.0, 1.0))
+  @test m2 ∩ q2 == q2 ∩ m2 == Pgon(cart(1.5, 1.0), cart(1.5, 1.5), cart(1.0, 1.5), cart(1.0, 1.0))
+  @test m3 ∩ q3 ==
+        q3 ∩ m3 ==
+        Multi([
+          Pgon(cart(1.0, 0.5), cart(1.0, 1.0), cart(0.5, 1.0), cart(0.5, 0.5)),
+          Pgon(cart(1.0, 1.5), cart(1.0, 1.0), cart(1.5, 1.0), cart(1.5, 1.5))
+        ])
+end
+
+@testitem "Domain booleans" setup = [Setup] begin
   grid = cartgrid(4, 4)
   cent = centroid.(grid)
   pset = PointSet(cent)
@@ -1440,4 +1511,62 @@ end
   @test pset ∩ pset == mult
   @test pset ∩ grid == grid ∩ pset == mult
   @test pset ∩ ball == ball ∩ pset == cart(0.5, 0.5)
+end
+
+@testitem "Complements" setup = [Setup] begin
+  τ = Meshes.atol(T)
+
+  t = Triangle(cart(0, 0), cart(1, 0), cart(1, 1))
+  p = !t
+  r = rings(p)
+  @test p isa Pgon
+  @test length(r) == 2
+  @test r[1] ≈ Ring(cart.([(0 - τ, 0 - τ), (1 + τ, 0 - τ), (1 + τ, 1 + τ), (0 - τ, 1 + τ)]))
+  @test r[2] == Ring(cart.([(0, 0), (1, 1), (1, 0)]))
+
+  q = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  p = !q
+  r = rings(p)
+  @test p isa Pgon
+  @test length(r) == 2
+  @test r[1] ≈ Ring(cart.([(0 - τ, 0 - τ), (1 + τ, 0 - τ), (1 + τ, 1 + τ), (0 - τ, 1 + τ)]))
+  @test r[2] == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+
+  p = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  n = !p
+  r = rings(n)
+  @test n isa Pgon
+  @test length(r) == 2
+  @test r[1] ≈ Ring(cart.([(0 - τ, 0 - τ), (1 + τ, 0 - τ), (1 + τ, 1 + τ), (0 - τ, 1 + τ)]))
+  @test r[2] == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+
+  o = Ring(cart.([(0, 0), (1, 0), (1, 1), (0, 1)]))
+  i1 = Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))
+  i2 = Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))
+  p = Pgon([o, reverse(i1), reverse(i2)])
+  m = !p
+  r = rings(m)
+  @test m isa MultiPolygon
+  @test length(r) == 4
+  g = parent(m)
+  @test length(g) == 3
+  @test rings(g[1])[1] ≈ Ring(cart.([(0 - τ, 0 - τ), (1 + τ, 0 - τ), (1 + τ, 1 + τ), (0 - τ, 1 + τ)]))
+  @test rings(g[1])[2] == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+  @test rings(g[2]) == [Ring(cart.([(0.2, 0.2), (0.4, 0.2), (0.4, 0.4), (0.2, 0.4)]))]
+  @test rings(g[3]) == [Ring(cart.([(0.6, 0.2), (0.8, 0.2), (0.8, 0.4), (0.6, 0.4)]))]
+
+  b = Box(cart(0, 0), cart(1, 1))
+  p = !b
+  r = rings(p)
+  @test p isa Pgon
+  @test length(r) == 2
+  @test r[1] ≈ Ring(cart.([(0 - τ, 0 - τ), (1 + τ, 0 - τ), (1 + τ, 1 + τ), (0 - τ, 1 + τ)]))
+  @test r[2] == Ring(cart.([(0, 0), (0, 1), (1, 1), (1, 0)]))
+
+  b = Ball(cart(0, 0), T(1))
+  p = !b
+  r = rings(p)
+  @test p isa Pgon
+  @test length(r) == 2
+  @test r[1] ≈ Ring(cart.([(-1 - τ, -1 - τ), (1 + τ, -1 - τ), (1 + τ, 1 + τ), (-1 - τ, 1 + τ)]))
 end

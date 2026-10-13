@@ -3,10 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    GreinerHormannClipping()
+    GreinerHormannClipping(operation=:∩)
 
 The Greiner-Hormann algorithm for clipping polygons, with the extension
-of Foster et al. for degenerate intersections.
+of Foster et al. for degenerate intersections. Optionally, specify the
+type of clipping `operation` to perform, which can be `:∩`, `:∪`, or `:-`.
 
 ## References
 
@@ -22,11 +23,19 @@ In contrast to [`SutherlandHodgmanClipping`](@ref), the clipping geometry
 can be non-convex, and vertices of one geometry can lie on edges of the
 other geometry.
 """
-struct GreinerHormannClipping <: ClippingMethod end
+struct GreinerHormannClipping <: ClippingMethod
+  operation::Symbol
+end
 
-function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
-  srings = subject |> Repair(11) |> rings
-  orings = other |> Repair(11) |> rings
+GreinerHormannClipping() = GreinerHormannClipping(:∩)
+
+function clip(subject, other, method::GreinerHormannClipping)
+  # determine the type of clipping operation to perform
+  op = method.operation
+
+  # the difference is the intersection with the complement of the other polygon
+  srings = _ghrings(subject)
+  orings = op == :- ? reverse.(_ghrings(other)) : _ghrings(other)
 
   # intersection phase
   slist, olist = _ghintersect(srings, orings)
@@ -35,14 +44,27 @@ function clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping)
   _ghcrossing!(slist, olist)
   _ghentry!(slist, orings)
   _ghentry!(olist, srings)
+  op == :∩ || _ghinvert!(slist)
+  op == :∪ && _ghinvert!(olist)
 
   # tracing phase
   crings = _ghtrace(slist, olist)
-  append!(crings, _ghinner(slist, orings, common=true))
-  append!(crings, _ghinner(olist, srings, common=false))
+  append!(crings, _ghinner(slist, orings, inside=(op == :∩), common=(op == :∩)))
+  append!(crings, _ghinner(olist, srings, inside=(op ≠ :∪), common=false))
 
   isempty(crings) ? nothing : _ghpolygons(crings)
 end
+
+# swap entry and exit points
+function _ghinvert!(list)
+  for v in list.verts
+    v.crossing && (v.entry = !v.entry)
+  end
+end
+
+_ghrings(p::Polygon) = p |> Repair(11) |> rings
+
+_ghrings(m::Multi) = mapreduce(_ghrings, vcat, parent(m))
 
 # vertex of the doubly-linked lists of the algorithm
 @kwdef mutable struct GHVertex{P<:Point}
@@ -398,7 +420,7 @@ function _ghtrace(list₁, list₂)
 end
 
 # components without crossing vertices that lie inside the other polygon
-function _ghinner(list, rings; common)
+function _ghinner(list, rings; inside, common)
   P = typeof(first(list.verts).point)
   inner = Vector{P}[]
   for range in list.comps
@@ -408,8 +430,8 @@ function _ghinner(list, rings; common)
       # the component encloses the same region as a component of the other polygon
       common && push!(inner, [list.verts[i].point for i in range])
     else
-      _, inside = start
-      inside && push!(inner, [list.verts[i].point for i in range])
+      _, isin = start
+      isin == inside && push!(inner, [list.verts[i].point for i in range])
     end
   end
   inner

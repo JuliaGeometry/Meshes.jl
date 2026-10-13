@@ -2,13 +2,7 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-"""
-    !(geometry)
-
-Return the complement of the `geometry` with
-respect to its bounding box.
-"""
-!(g::Geometry) = _complement(_boxboundary(g), boundary(g))
+getcomplement(g::Geometry) = _complement(_boxboundary(g), boundary(g))
 
 function _boxboundary(g)
   ℒ = lentype(g)
