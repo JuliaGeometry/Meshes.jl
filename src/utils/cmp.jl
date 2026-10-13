@@ -31,16 +31,17 @@ end
 Return a collection of points that are unique up to the default tolerance for the type of the points.
 """
 function approxunique(points)
+  p = points isa AbstractVector ? points : collect(points)
   # spatial index to avoid comparing all pairs of points
-  searcher = BallSearch(points, MetricBall(atol(lentype(first(points)))))
+  searcher = BallSearch(p, MetricBall(atol(lentype(first(p)))))
 
-  keep = trues(length(points))
-  for i in eachindex(points)
+  keep = trues(length(p))
+  for i in eachindex(p)
     keep[i] || continue
-    for j in search(points[i], searcher)
-      j > i && points[i] ≈ points[j] && (keep[j] = false)
+    for j in search(p[i], searcher)
+      j > i && p[i] ≈ p[j] && (keep[j] = false)
     end
   end
 
-  points[keep]
+  p[keep]
 end
