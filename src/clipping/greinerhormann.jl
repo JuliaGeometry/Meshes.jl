@@ -29,11 +29,12 @@ end
 
 GreinerHormannClipping() = GreinerHormannClipping(:∩)
 
-clip(subject::Polygon, other::Polygon, method::GreinerHormannClipping) = _ghclip(subject, other, method.operation)
+function clip(subject, other, method::GreinerHormannClipping)
+  # determine the type of clipping operation to perform
+  op = method.operation
 
-function _ghclip(subject, other, op)
-  srings = _ghrings(subject)
   # the difference is the intersection with the complement of the other polygon
+  srings = _ghrings(subject)
   orings = op == :- ? reverse.(_ghrings(other)) : _ghrings(other)
 
   # intersection phase
