@@ -1494,10 +1494,12 @@ end
   m3 = Multi([q1, q2])
   @test m1 ∩ q1 == q1 ∩ m1 == Pgon(cart(0.5, 1.0), cart(0.5, 0.5), cart(1.0, 0.5), cart(1.0, 1.0))
   @test m2 ∩ q2 == q2 ∩ m2 == Pgon(cart(1.5, 1.0), cart(1.5, 1.5), cart(1.0, 1.5), cart(1.0, 1.0))
-  @test m3 ∩ q3 == q3 ∩ m3 == Multi([
-    Pgon(cart(1.0, 0.5), cart(1.0, 1.0), cart(0.5, 1.0), cart(0.5, 0.5)),
-    Pgon(cart(1.0, 1.5), cart(1.0, 1.0), cart(1.5, 1.0), cart(1.5, 1.5))
-  ])
+  @test m3 ∩ q3 ==
+        q3 ∩ m3 ==
+        Multi([
+          Pgon(cart(1.0, 0.5), cart(1.0, 1.0), cart(0.5, 1.0), cart(0.5, 0.5)),
+          Pgon(cart(1.0, 1.5), cart(1.0, 1.0), cart(1.5, 1.0), cart(1.5, 1.5))
+        ])
 end
 
 @testitem "Domain booleans" setup = [Setup] begin
