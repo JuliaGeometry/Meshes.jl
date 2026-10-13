@@ -3,10 +3,11 @@
 # ------------------------------------------------------------------
 
 """
-    GreinerHormannClipping()
+    GreinerHormannClipping(operation=:∩)
 
 The Greiner-Hormann algorithm for clipping polygons, with the extension
-of Foster et al. for degenerate intersections.
+of Foster et al. for degenerate intersections. Optionally, specify the
+type of clipping `operation` to perform, which can be `:∩`, `:∪`, or `:-`.
 
 ## References
 
@@ -22,16 +23,18 @@ In contrast to [`SutherlandHodgmanClipping`](@ref), the clipping geometry
 can be non-convex, and vertices of one geometry can lie on edges of the
 other geometry.
 """
-struct GreinerHormannClipping <: ClippingMethod end
+struct GreinerHormannClipping <: ClippingMethod
+  operation::Symbol
+end
 
-clip(subject::Polygon, other::Polygon, ::GreinerHormannClipping) = _ghclip(subject, other, :intersection)
+GreinerHormannClipping() = GreinerHormannClipping(:∩)
 
-# clip the subject polygon with the other polygon, where `op` is
-# one of :intersection, :union or :difference
+clip(subject::Polygon, other::Polygon, method::GreinerHormannClipping) = _ghclip(subject, other, method.operation)
+
 function _ghclip(subject, other, op)
   srings = _ghrings(subject)
   # the difference is the intersection with the complement of the other polygon
-  orings = op == :difference ? reverse.(_ghrings(other)) : _ghrings(other)
+  orings = op == :- ? reverse.(_ghrings(other)) : _ghrings(other)
 
   # intersection phase
   slist, olist = _ghintersect(srings, orings)
@@ -40,13 +43,13 @@ function _ghclip(subject, other, op)
   _ghcrossing!(slist, olist)
   _ghentry!(slist, orings)
   _ghentry!(olist, srings)
-  op == :intersection || _ghinvert!(slist)
-  op == :union && _ghinvert!(olist)
+  op == :∩ || _ghinvert!(slist)
+  op == :∪ && _ghinvert!(olist)
 
   # tracing phase
   crings = _ghtrace(slist, olist)
-  append!(crings, _ghinner(slist, orings, inside=(op == :intersection), common=(op == :intersection)))
-  append!(crings, _ghinner(olist, srings, inside=(op ≠ :union), common=false))
+  append!(crings, _ghinner(slist, orings, inside=(op == :∩), common=(op == :∩)))
+  append!(crings, _ghinner(olist, srings, inside=(op ≠ :∪), common=false))
 
   isempty(crings) ? nothing : _ghpolygons(crings)
 end
