@@ -1485,6 +1485,21 @@ end
   @test crs(setdiff(q1, q2)) === crs(q1)
 end
 
+@testitem "Multi booleans" setup = [Setup] begin
+  q1 = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  q2 = Quadrangle(cart(1, 1), cart(2, 1), cart(2, 2), cart(1, 2))
+  q3 = Quadrangle(cart(0.5, 0.5), cart(1.5, 0.5), cart(1.5, 1.5), cart(0.5, 1.5))
+  m1 = Multi([q2, q3])
+  m2 = Multi([q1, q3])
+  m3 = Multi([q1, q2])
+  @test m1 ∩ q1 == q1 ∩ m1 == Pgon(cart(0.5, 1.0), cart(0.5, 0.5), cart(1.0, 0.5), cart(1.0, 1.0))
+  @test m2 ∩ q2 == q2 ∩ m2 == Pgon(cart(1.5, 1.0), cart(1.5, 1.5), cart(1.0, 1.5), cart(1.0, 1.0))
+  @test m3 ∩ q3 == q3 ∩ m3 == Multi([
+    Pgon(cart(1.0, 0.5), cart(1.0, 1.0), cart(0.5, 1.0), cart(0.5, 0.5)),
+    Pgon(cart(1.0, 1.5), cart(1.0, 1.0), cart(1.5, 1.0), cart(1.5, 1.5))
+  ])
+end
+
 @testitem "Domain booleans" setup = [Setup] begin
   grid = cartgrid(4, 4)
   cent = centroid.(grid)

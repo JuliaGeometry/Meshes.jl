@@ -106,6 +106,7 @@ include("intersections/chains.jl")
 include("intersections/planes.jl")
 include("intersections/boxes.jl")
 include("intersections/polygons.jl")
+include("intersections/multis.jl")
 include("intersections/domains.jl")
 
 # -----------------
