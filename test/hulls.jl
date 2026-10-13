@@ -232,8 +232,6 @@ end
   @test area(chul) ≈ T(10) * u"m^2"
   @test area(chul) < area(convexhull(mpts))
 
-  # TODO: currently throws ArgumentError from KNearestSearch because
-  # _moreiramarch dead-ends for every k and recurses past k = n
   b1 = Ball(cart(0, 0), T(1))
   b2 = Box(cart(-1, -1), cart(0, 0))
   chul = concavehull(Multi([b1, b2]))
