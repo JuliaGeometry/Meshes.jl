@@ -225,7 +225,7 @@ end
     ])
   mpts = Multi(pts)
   chul = concavehull(mpts)
-  @test chul isa PolyArea
+  @test chul isa Pgon
   @test issimple(chul)
   @test all(∈(chul), pts)
   @test Set(vertices(chul)) == Set(pts)
@@ -338,7 +338,7 @@ end
   # approxunique fixes singularity
   b1 = Ball(cart(0, 0), T(1))
   b2 = Box(cart(-1, -1), cart(0, 0))
-  chul = convexhull(Multi([b1, b2]))
+  chul = hull(boundarypoints(Multi([b1,b2])), MoreiraMarch(3))
   @test !isnothing(chul)
   @test cart(-0.8, -0.8) ∈ chul
   @test cart(0.2, 0.2) ∈ chul
