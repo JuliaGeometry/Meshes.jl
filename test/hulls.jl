@@ -237,7 +237,7 @@ end
   @test cart(-0.8, -0.8) ∈ chul
   @test cart(0.2, 0.2) ∈ chul
 
-  m = CartesianGrid(10,10)
+  m = CartesianGrid(10, 10)
   chul = concavehull(m)
   @test chul isa Box
   @test chul == Box(cart(0, 0), cart(10, 10))
