@@ -92,23 +92,17 @@ end
 
 function _splitaxis(centers, perm, first, last)
   # compute the axis with the widest spread of the centers of the bounding boxes in the range [first, last]
-  @inbounds begin
-    dim = length(centers[perm[first]])
+  lo = centers[perm[first]]
+  hi = lo
 
-    lo = collect(centers[perm[first]])
-    hi = copy(lo)
-
-    for k in (first + 1):last
-      center = centers[perm[k]]
-      for axis in 1:dim
-        value = center[axis]
-        lo[axis] = min(lo[axis], value)
-        hi[axis] = max(hi[axis], value)
-      end
-    end
-
-    argmax(hi .- lo)
+  @inbounds for k in (first + 1):last
+    center = centers[perm[k]]
+    
+    lo = min.(lo, center)
+    hi = max.(hi, center)
   end
+
+  argmax(hi .- lo)
 end
 
 function search(geom, method::BoundingBoxSearch; mask=nothing)
@@ -121,20 +115,12 @@ function search!(neighbors, geom, method::BoundingBoxSearch; mask=nothing)
   empty!(neighbors)
 
   _foreachcandidate(geom, method) do ind
-    push!(neighbors, ind)
+    if isnothing(mask) || mask[ind]
+      push!(neighbors, ind)
+    end
   end
 
-  if isnothing(mask)
-    neighbors
-  else
-    maskedneighbors = Vector{Int}()
-    @inbounds for ind in neighbors
-      if mask[ind]
-        push!(maskedneighbors, ind)
-      end
-    end
-    neighbors
-  end
+  neighbors
 end
 
 """
