@@ -156,8 +156,8 @@ end
     root = leafbvh.nodes[1]
     @test length(leafbvh.nodes) == 1
     @test Meshes._isleaf(root)
-    @test root.first == 1
-    @test root.last == n
+    @test root.a == -1
+    @test root.b == n
     @test sort(leafbvh.perm) == collect(1:n)
     @test sort(search(boundingbox(domain), leafbvh)) == collect(1:n)
   end
@@ -209,11 +209,10 @@ end
   bvh = BoundingBoxSearch(randd; leafsize=1)
   for node in bvh.nodes
     if !Meshes._isleaf(node)
-      leftbox = bvh.nodes[node.left].box
-      rightbox = bvh.nodes[node.right].box
+      leftbox = bvh.nodes[node.a].box
+      rightbox = bvh.nodes[node.b].box
       @test node.box ≈ Meshes._bboxes((leftbox, rightbox))
-      @test node.first == 0
-      @test node.last == 0
+      @test node.a > 0
     end
   end
 
@@ -221,10 +220,8 @@ end
   bvh = BoundingBoxSearch(randd; leafsize=2)
   for node in bvh.nodes
     if Meshes._isleaf(node)
-      @test node.left == 0
-      @test node.right == 0
-      @test 1 ≤ node.first ≤ node.last ≤ length(bvh.perm)
-      @test node.last - node.first + 1 ≤ bvh.leafsize
+      @test 1 ≤ abs(node.a) ≤ node.b ≤ length(bvh.perm)
+      @test node.b - abs(node.a) + 1 ≤ bvh.leafsize
     end
   end
 
@@ -232,7 +229,7 @@ end
   leafinds = Int[]
   for node in bvh.nodes
     if Meshes._isleaf(node)
-      append!(leafinds, bvh.perm[node.first:node.last])
+      append!(leafinds, bvh.perm[abs(node.a):node.b])
     end
   end
   @test sort(leafinds) == collect(1:nelements(randd))
