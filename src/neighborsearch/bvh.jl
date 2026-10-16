@@ -2,12 +2,27 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
+"""
+    BVHNode{B}
+
+A node in a bounding volume hierarchy (BVH), storing a bounding box and either
+child node indices or a range of positions in the permutation vector.
+
+The fields are defined as follows:
+
+1. `box` stores the bounding box of the node.
+2. `a` stores the index of the left child for internal nodes, or the symmetric
+   of the starting position in the permutation vector for leaf nodes.
+3. `b` stores the index of the right child for internal nodes, or the ending
+   position in the permutation vector for leaf nodes.
+
+A negative `a` identifies a leaf node, while a positive `a` identifies an
+internal node.
+"""
 struct BVHNode{B}
   box::B
-  left::Int
-  right::Int
-  first::Int
-  last::Int
+  a::Int
+  b::Int
 end
 
 """
@@ -57,12 +72,12 @@ end
 function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   # reserve the node position so that the root remains node 1.
   nodeind = length(nodes) + 1
-  push!(nodes, BVHNode(boxes[perm[first]], 0, 0, 0, 0))
+  push!(nodes, BVHNode(boxes[perm[first]], 0, 0))
 
-  # arrived at a leaf node, store the range of elements and return
+  # arrived at a leaf node, store the range of elements and return; the negative first index indicates a leaf
   if last - first + 1 ≤ leafsize
     nodebox = _bboxes(boxes[perm[i]] for i in first:last)
-    nodes[nodeind] = BVHNode(nodebox, 0, 0, first, last)
+    nodes[nodeind] = BVHNode(nodebox, -first, last)
     return nodeind
   end
 
@@ -83,8 +98,7 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   nodebox = _bboxes((nodes[left].box, nodes[right].box))
 
   # store the current node with the bounding box and the indices of the left and right children
-  # the first and last indices are not used for non-leaf nodes, so they are set to 0
-  nodes[nodeind] = BVHNode(nodebox, left, right, 0, 0)
+  nodes[nodeind] = BVHNode(nodebox, left, right)
 
   # return the current node index to the caller so that it can be stored in its parent node
   nodeind
@@ -151,16 +165,16 @@ function _foreachcandidate(f, geom, method::BoundingBoxSearch)
     # if the current node is a leaf node, check each element in the range [first, last] to see if its bounding box intersects
     # with the geom bounding box; if so, add its index to the output vector
     if _isleaf(node)
-      @inbounds for k in node.first:node.last
+      @inbounds for k in abs(node.a):node.b
         ind = method.perm[k]
         intersects(method.boxes[ind], geombox) || continue
         f(ind)
       end
     else
-      push!(stack, node.left)
-      push!(stack, node.right)
+      push!(stack, node.a)
+      push!(stack, node.b)
     end
   end
 end
 
-_isleaf(node::BVHNode) = iszero(node.left)
+_isleaf(node::BVHNode) = node.a < 0
