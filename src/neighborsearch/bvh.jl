@@ -84,10 +84,10 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   # get axis to be splitted
   axis = _splitaxis(centers, perm, first, last)
 
-  # partial sort the elements in the range [first, last] by the center of their bounding boxes along the chosen axis
+  # sort the elements in the range [first, last] by the center of their bounding boxes along the chosen axis
   range = view(perm, first:last)
+  sort!(range; by=i -> centers[i][axis])
   localmiddle = cld(length(range), 2)
-  partialsort!(range, localmiddle; by=i -> centers[i][axis]) # range is a view of perm, so perm is modified in place!
   middle = first + localmiddle - 1
 
   # recursively build and store in `nodes` the left and right children
