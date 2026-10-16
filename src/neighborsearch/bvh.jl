@@ -111,7 +111,7 @@ function _splitaxis(centers, perm, first, last)
 
   @inbounds for k in (first + 1):last
     center = centers[perm[k]]
-    
+
     lo = min.(lo, center)
     hi = max.(hi, center)
   end
