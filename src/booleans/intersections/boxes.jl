@@ -26,7 +26,7 @@ function intersection(f, box₁::Box, box₂::Box)
     return @IT Overlapping Box(u, v) f
   elseif all(<(τ), δ̄)
     return @IT CornerTouching u f
-  elseif any(<(τ), δ̄) && (δ == δ̄ || δ == -δ̄)
+  elseif any(<(τ), δ̄) && (δ == δ̄)
     return @IT Touching (u ⪯ v ? Box(u, v) : Box(v, u)) f
   else
     return @IT NotIntersecting nothing f
