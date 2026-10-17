@@ -1,4 +1,4 @@
-@testitem "Hulls" setup = [Setup] begin
+@testitem "GrahamScan / JarvisMarch" setup = [Setup] begin
   for method in [GrahamScan(), JarvisMarch()]
     # basic test
     pts = [cart(rand(T), rand(T)) for _ in 1:10]
@@ -148,101 +148,6 @@
   end
 end
 
-@testitem "Convex hulls" setup = [Setup] begin
-  @test convexhull(cart(0, 0)) == cart(0, 0)
-
-  @test convexhull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
-
-  @test convexhull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
-  @test convexhull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
-
-  @test convexhull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
-  @test convexhull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
-
-  b1 = Box(cart(0, 0), cart(1, 1))
-  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
-  @test convexhull(Multi([b1, b2])) == Pgon(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
-  @test convexhull(GeometrySet([b1, b2])) == Pgon(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
-
-  b1 = Ball(cart(0, 0), T(1))
-  b2 = Box(cart(-1, -1), cart(0, 0))
-  h = convexhull(Multi([b1, b2]))
-  @test cart(-0.8, -0.8) ∈ h
-  @test cart(0.2, 0.2) ∈ h
-end
-
-@testitem "Concave hulls" setup = [Setup] begin
-  @test concavehull(cart(0, 0)) == cart(0, 0)
-
-  @test concavehull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
-
-  @test concavehull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
-  @test concavehull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
-
-  @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
-  @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
-
-  @test concavehull(Triangle(cart(0, 0), cart(1, 0), cart(0, 1))) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
-
-  @test concavehull(CartesianGrid(10, 10)) == Box(cart(0, 0), cart(10, 10))
-
-  # degenerate point sets bypass the algorithm
-  @test concavehull(Segment(cart(0, 1), cart(1, 0))) == Segment(cart(0, 1), cart(1, 0))
-  quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
-  @test vertices(concavehull(quad)) == cart.([(0, 0), (1, 0), (1, 1), (0, 1)])
-
-  # convex point sets reduce to the convex hull
-  b1 = Box(cart(0, 0), cart(1, 1))
-  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
-  @test concavehull(Multi([b1, b2])) == PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
-  @test concavehull(GeometrySet([b1, b2])) == PolyArea(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
-
-  # concave point sets are not simplified to the convex hull
-  pts = [
-    cart(0, 0),
-    cart(1, 0),
-    cart(2, 0),
-    cart(3, 0),
-    cart(4, 0),
-    cart(4, 1),
-    cart(4, 2),
-    cart(4, 3),
-    cart(4, 4),
-    cart(3, 4),
-    cart(3, 3),
-    cart(3, 2),
-    cart(3, 1),
-    cart(2, 1),
-    cart(1, 1),
-    cart(1, 2),
-    cart(1, 3),
-    cart(1, 4),
-    cart(0, 4),
-    cart(0, 3),
-    cart(0, 2),
-    cart(0, 1)
-  ]
-  mpts = Multi(pts)
-  chul = concavehull(mpts)
-  @test chul isa Pgon
-  @test issimple(chul)
-  @test all(∈(chul), pts)
-  @test Set(vertices(chul)) == Set(pts)
-  @test area(chul) ≈ T(10) * u"m^2"
-  @test area(chul) < area(convexhull(mpts))
-
-  b1 = Ball(cart(0, 0), T(1))
-  b2 = Box(cart(-1, -1), cart(0, 0))
-  chul = concavehull(Multi([b1, b2]))
-  @test cart(-0.8, -0.8) ∈ chul
-  @test cart(0.2, 0.2) ∈ chul
-
-  m = CartesianGrid(10, 10)
-  chul = concavehull(m)
-  @test chul isa Box
-  @test chul == Box(cart(0, 0), cart(10, 10))
-end
-
 @testitem "MoreiraMarch" setup = [Setup] begin
   # constructor validation: k must be an integer > 2
   @test_throws AssertionError MoreiraMarch(2)
@@ -346,4 +251,100 @@ end
   @test !isnothing(chul)
   @test cart(-0.8, -0.8) ∈ chul
   @test cart(0.2, 0.2) ∈ chul
+end
+
+@testitem "Convex hulls" setup = [Setup] begin
+  @test convexhull(cart(0, 0)) == cart(0, 0)
+
+  @test convexhull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
+
+  @test convexhull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test convexhull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test convexhull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test convexhull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  b1 = Box(cart(0, 0), cart(1, 1))
+  b2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  @test convexhull(Multi([b1, b2])) == Pgon(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+  @test convexhull(GeometrySet([b1, b2])) == Pgon(cart.([(-1, -1), (0.5, -1), (1, 0), (1, 1), (0, 1), (-1, 0.5)]))
+
+  b1 = Ball(cart(0, 0), T(1))
+  b2 = Box(cart(-1, -1), cart(0, 0))
+  h = convexhull(Multi([b1, b2]))
+  @test cart(-0.8, -0.8) ∈ h
+  @test cart(0.2, 0.2) ∈ h
+end
+
+@testitem "Concave hulls" setup = [Setup] begin
+  @test concavehull(cart(0, 0)) == cart(0, 0)
+
+  @test concavehull(Box(cart(0, 0), cart(1, 1))) == Box(cart(0, 0), cart(1, 1))
+
+  @test concavehull(Ball(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Ball(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test concavehull(Sphere(cart(0, 0), T(1))) == Ball(cart(0, 0), T(1))
+  @test concavehull(Sphere(cart(1, 1), T(1))) == Ball(cart(1, 1), T(1))
+
+  @test concavehull(Triangle(cart(0, 0), cart(1, 0), cart(0, 1))) == Triangle(cart(0, 0), cart(1, 0), cart(0, 1))
+
+  @test concavehull(CartesianGrid(10, 10)) == Box(cart(0, 0), cart(10, 10))
+
+  # degenerate point sets bypass the algorithm
+  seg = Segment(cart(0, 1), cart(1, 0))
+  quad = Quadrangle(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test concavehull(seg) == seg
+  @test vertices(concavehull(quad)) == vertices(quad)
+
+  # convex point sets reduce to the convex hull
+  box1 = Box(cart(0, 0), cart(1, 1))
+  box2 = Box(cart(-1, -1), cart(0.5, 0.5))
+  mult = Multi([box1, box2])
+  gset = GeometrySet([box1, box2])
+  @test concavehull(mult) == convexhull(mult)
+  @test concavehull(gset) == convexhull(gset)
+
+  # concave point sets are not simplified to the convex hull
+  pts = [
+    cart(0, 0),
+    cart(1, 0),
+    cart(2, 0),
+    cart(3, 0),
+    cart(4, 0),
+    cart(4, 1),
+    cart(4, 2),
+    cart(4, 3),
+    cart(4, 4),
+    cart(3, 4),
+    cart(3, 3),
+    cart(3, 2),
+    cart(3, 1),
+    cart(2, 1),
+    cart(1, 1),
+    cart(1, 2),
+    cart(1, 3),
+    cart(1, 4),
+    cart(0, 4),
+    cart(0, 3),
+    cart(0, 2),
+    cart(0, 1)
+  ]
+  mult = Multi(pts)
+  chul = concavehull(mult)
+  @test chul isa Pgon
+  @test issimple(chul)
+  @test all(∈(chul), pts)
+  @test Set(vertices(chul)) == Set(pts)
+  @test area(chul) ≈ T(10) * u"m^2"
+  @test area(chul) < area(convexhull(mult))
+
+  ball = Ball(cart(0, 0), T(1))
+  box = Box(cart(-1, -1), cart(0, 0))
+  chul = concavehull(Multi([ball, box]))
+  @test cart(-0.8, -0.8) ∈ chul
+  @test cart(0.2, 0.2) ∈ chul
+
+  g = CartesianGrid(10, 10)
+  @test concavehull(g) == Box(cart(0, 0), cart(10, 10))
 end
