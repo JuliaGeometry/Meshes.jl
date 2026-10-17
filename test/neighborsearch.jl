@@ -179,7 +179,7 @@ end
 
   # randomized brute-force equivalence
   rng = StableRNG(1234)
-  randb = [
+  boxes = [
     let
       xmin = rand(rng) * 100
       ymin = rand(rng) * 100
@@ -188,9 +188,8 @@ end
       Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
     end for _ in 1:200
   ]
-  randd = GeometrySet(randb)
   for leafsize in (1, 2, 4, 8, 16)
-    randbvh = BBoxSearch(randd, leafsize)
+    randbvh = BBoxSearch(boxes, leafsize)
     for _ in 1:100
       local query, answer, result
       xmin = rand(rng) * 100
@@ -198,18 +197,18 @@ end
       width = rand(rng) * 20
       height = rand(rng) * 20
       query = Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
-      answer = findall(box -> intersects(box, query), randb)
+      answer = findall(box -> intersects(box, query), boxes)
       result = sort(search(query, randbvh))
       @test result == answer
     end
   end
 
   # root bounding box
-  searcher = BBoxSearch(randd)
-  @test searcher.nodes[1].box ≈ boundingbox(randd)
+  searcher = BBoxSearch(boxes)
+  @test searcher.nodes[1].box ≈ boundingbox(boxes)
 
   # internal node invariants
-  searcher = BBoxSearch(randd, 1)
+  searcher = BBoxSearch(boxes, 1)
   for node in searcher.nodes
     if !Meshes._isleaf(node)
       leftbox = searcher.nodes[node.a].box
@@ -220,7 +219,7 @@ end
   end
 
   # leaf invariants
-  searcher = BBoxSearch(randd, 2)
+  searcher = BBoxSearch(boxes, 2)
   for node in searcher.nodes
     if Meshes._isleaf(node)
       @test 1 ≤ abs(node.a) ≤ node.b ≤ length(searcher.perm)
@@ -235,8 +234,8 @@ end
       append!(leafinds, searcher.perm[abs(node.a):node.b])
     end
   end
-  @test sort(leafinds) == collect(1:nelements(randd))
-  @test length(unique(leafinds)) == nelements(randd)
+  @test sort(leafinds) == collect(1:length(boxes))
+  @test length(unique(leafinds)) == length(boxes)
 
   # type stability tests
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
