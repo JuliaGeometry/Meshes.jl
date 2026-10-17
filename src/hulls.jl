@@ -33,30 +33,36 @@ include("hulls/moreira.jl")
 
 Convex hull of `object`.
 """
-convexhull(object) = _hull(object, GrahamScan())
+convexhull(object) = _hullwith(object, GrahamScan())
 
 """
     concavehull(object)
 
 Concave hull of `object`.
 """
-concavehull(object) = _hull(object, MoreiraMarch())
+concavehull(object) = _hullwith(object, MoreiraMarch())
 
 # ----------
 # FALLBACKS
 # ----------
 
-_hull(object, method) = hull(_hullpoints(object), method)
+_hullwith(object, method) = hull(_hullpoints(object), method)
 
 # ----------------
 # SPECIALIZATIONS
 # ----------------
 
-_hull(g::Union{Point,Box,Ball,Triangle}, method) = g
+_hullwith(p::Point, method) = p
 
-_hull(s::Sphere, method) = Ball(center(s), radius(s))
+_hullwith(b::Box, method) = b
 
-_hull(g::Grid, method) = Box(extrema(g)...)
+_hullwith(b::Ball, method) = b
+
+_hullwith(s::Sphere, method) = Ball(center(s), radius(s))
+
+_hullwith(t::Triangle, method) = t
+
+_hullwith(g::Grid, method) = Box(extrema(g)...)
 
 # ----------------
 # IMPLEMENTATIONS
