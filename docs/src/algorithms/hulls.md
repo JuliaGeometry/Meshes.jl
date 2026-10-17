@@ -9,6 +9,7 @@ import CairoMakie as Mke # hide
 ```@docs
 hull
 convexhull
+concavehull
 HullMethod
 GrahamScan
 JarvisMarch
