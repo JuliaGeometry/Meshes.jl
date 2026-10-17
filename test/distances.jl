@@ -141,7 +141,8 @@
 end
 
 @testitem "Distances.jl" setup = [Setup] begin
-  p1, p2 = cart(1, 0), cart(0, 1)
-  @test evaluate(Chebyshev(), p1, p2) == T(1) * u"m"
-  @test evaluate(Euclidean(), p1, p2) == T(√2) * u"m"
+  p₁ = cart(1, 0)
+  p₂ = cart(0, 1)
+  @test Euclidean()(p₁, p₂) == T(√2) * u"m"
+  @test Mahalanobis(I(2))(p₁, p₂) == T(√2) * u"m"
 end
