@@ -38,7 +38,7 @@ function intersects(b₁::Box{🌐}, b₂::Box{🌐})
   latₛ > latₑ && return false
 
   # check longitude overlap
-  !isempty(_lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon))
+  !isempty(lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon))
 end
 
 intersects(r::Ray, b::Box) = someintersection(r, b)

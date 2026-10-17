@@ -49,7 +49,7 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   latₛ > latₑ && return @IT NotIntersecting nothing f
 
   # check longitude coordinate
-  lonranges = _lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
+  lonranges = lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
   isempty(lonranges) && return @IT NotIntersecting nothing f
 
   # classify intersection

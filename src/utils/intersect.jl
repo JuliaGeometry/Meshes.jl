@@ -143,7 +143,7 @@ function _digits(segments)
 end
 
 # Compute the intersection of two longitude intervals, taking into account the antimeridian
-function _lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
+function lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
   # -180° and 180° represent the same meridian
   πdeg = T(180u"°")
 
