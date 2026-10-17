@@ -31,44 +31,49 @@ include("hulls/moreira.jl")
 """
     convexhull(object)
 
-Convex hull of `object`.
+Convex hull of `object` with [`GrahamScan`](@ref) method.
 """
-function convexhull end
+convexhull(object) = _hullwith(object, GrahamScan())
+
+"""
+    concavehull(object)
+
+Concave hull of `object` with [`MoreiraMarch`](@ref) method.
+"""
+concavehull(object) = _hullwith(object, MoreiraMarch())
 
 # ----------
 # FALLBACKS
 # ----------
 
-convexhull(p::Polytope) = _pconvexhull(eachvertex(p))
+_hullwith(object, method) = hull(_hullpoints(object), method)
 
-convexhull(p::Primitive) = convexhull(boundary(p))
-
-convexhull(m::Multi) = _gconvexhull(parent(m))
-
-convexhull(geoms) = _gconvexhull(geoms)
+_hullwith(p::Primitive, method) = _hullwith(boundary(p), method)
 
 # ----------------
 # SPECIALIZATIONS
 # ----------------
 
-convexhull(p::Point) = p
+_hullwith(p::Point, ::HullMethod) = p
 
-convexhull(b::Box) = b
+_hullwith(b::Box, ::HullMethod) = b
 
-convexhull(b::Ball) = b
+_hullwith(b::Ball, ::HullMethod) = b
 
-convexhull(s::Sphere) = Ball(center(s), radius(s))
+_hullwith(s::Sphere, ::HullMethod) = Ball(center(s), radius(s))
 
-convexhull(t::Triangle) = t
+_hullwith(t::Triangle, ::HullMethod) = t
 
-convexhull(g::Grid) = Box(extrema(g)...)
+_hullwith(g::Grid, ::HullMethod) = Box(extrema(g)...)
 
-convexhull(m::Mesh) = _pconvexhull(eachvertex(m))
+# -----------------
+# HELPER FUNCTIONS
+# -----------------
 
-# ----------------
-# IMPLEMENTATIONS
-# ----------------
+_hullpoints(p::Polytope) = eachvertex(p)
 
-_gconvexhull(geoms) = _pconvexhull(p for g in geoms for p in boundarypoints(g))
+_hullpoints(m::Mesh) = eachvertex(m)
 
-_pconvexhull(points) = hull(points, GrahamScan())
+_hullpoints(m::Multi) = _hullpoints(parent(m))
+
+_hullpoints(geoms) = (p for g in geoms for p in boundarypoints(g))
