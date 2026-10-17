@@ -128,47 +128,47 @@ end
 @testitem "BBoxSearch" setup = [Setup] begin
   # basic query
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BBoxSearch(boxes, 1)
+  searcher = BBoxSearch(boxes, 1)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   answer = findall(box -> intersects(box, query), boxes)
-  result = sort(search(query, bvh))
+  result = sort(search(query, searcher))
   @test result == answer
 
   # no candidates
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BBoxSearch(boxes)
+  searcher = BBoxSearch(boxes)
   query = Box(cart(10, 10), cart(11, 11))
-  @test isempty(search(query, bvh))
+  @test isempty(search(query, searcher))
 
   # different leaf sizes
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
   answer = findall(box -> intersects(box, query), boxes)
   for leafsize in (1, 2, 3, 8)
-    leafbvh = BBoxSearch(boxes, leafsize)
-    @test sort(search(query, leafbvh)) == answer
+    leafsearcher = BBoxSearch(boxes, leafsize)
+    @test sort(search(query, leafsearcher)) == answer
   end
 
   # leaf size greater than or equal to the number of elements
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   n = length(boxes)
   for leafsize in (n, n + 1, 2n)
-    leafbvh = BBoxSearch(boxes, leafsize)
-    root = leafbvh.nodes[1]
-    @test length(leafbvh.nodes) == 1
+    leafsearcher = BBoxSearch(boxes, leafsize)
+    root = leafsearcher.nodes[1]
+    @test length(leafsearcher.nodes) == 1
     @test Meshes._isleaf(root)
     @test root.a == -1
     @test root.b == n
-    @test sort(leafbvh.perm) == collect(1:n)
-    @test sort(search(boundingbox(boxes), leafbvh)) == collect(1:n)
+    @test sort(leafsearcher.perm) == collect(1:n)
+    @test sort(search(boundingbox(boxes), leafsearcher)) == collect(1:n)
   end
 
   # preallocated output
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BBoxSearch(boxes)
+  searcher = BBoxSearch(boxes)
   query = Box(cart(0.5, 0.5), cart(1.5, 1.5))
   inds = [100, 200]
-  result = search!(inds, query, bvh)
+  result = search!(inds, query, searcher)
   @test result === inds
   @test inds == [1]
 
@@ -205,34 +205,34 @@ end
   end
 
   # root bounding box
-  bvh = BBoxSearch(randd)
-  @test bvh.nodes[1].box ≈ boundingbox(randd)
+  searcher = BBoxSearch(randd)
+  @test searcher.nodes[1].box ≈ boundingbox(randd)
 
   # internal node invariants
-  bvh = BBoxSearch(randd, 1)
-  for node in bvh.nodes
+  searcher = BBoxSearch(randd, 1)
+  for node in searcher.nodes
     if !Meshes._isleaf(node)
-      leftbox = bvh.nodes[node.a].box
-      rightbox = bvh.nodes[node.b].box
+      leftbox = searcher.nodes[node.a].box
+      rightbox = searcher.nodes[node.b].box
       @test node.box ≈ Meshes._bboxes((leftbox, rightbox))
       @test node.a > 0
     end
   end
 
   # leaf invariants
-  bvh = BBoxSearch(randd, 2)
-  for node in bvh.nodes
+  searcher = BBoxSearch(randd, 2)
+  for node in searcher.nodes
     if Meshes._isleaf(node)
-      @test 1 ≤ abs(node.a) ≤ node.b ≤ length(bvh.perm)
-      @test node.b - abs(node.a) + 1 ≤ bvh.leafsize
+      @test 1 ≤ abs(node.a) ≤ node.b ≤ length(searcher.perm)
+      @test node.b - abs(node.a) + 1 ≤ searcher.leafsize
     end
   end
 
   # leaf partition completeness
   leafinds = Int[]
-  for node in bvh.nodes
+  for node in searcher.nodes
     if Meshes._isleaf(node)
-      append!(leafinds, bvh.perm[abs(node.a):node.b])
+      append!(leafinds, searcher.perm[abs(node.a):node.b])
     end
   end
   @test sort(leafinds) == collect(1:nelements(randd))
@@ -240,9 +240,9 @@ end
 
   # type stability tests
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BBoxSearch(boxes)
+  searcher = BBoxSearch(boxes)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
-  @inferred search(query, bvh)
+  @inferred search(query, searcher)
   inds = Int[]
-  @inferred search!(inds, query, bvh)
+  @inferred search!(inds, query, searcher)
 end
