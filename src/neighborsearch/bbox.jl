@@ -8,14 +8,12 @@
 A method for searching elements whose bounding boxes intersect the bounding
 box of a query using a bounding volume hierarchy (BVH).
 """
-struct BBoxSearch{D,T<:BVHTree} <: NeighborSearchMethod
-  domain::D
+struct BBoxSearch{T<:BVHTree} <: NeighborSearchMethod
   tree::T
 end
 
 function BBoxSearch(domain::Domain, leafsize=8)
-  tree = BVHTree(domain, leafsize)
-  BBoxSearch{typeof(domain),typeof(tree)}(domain, tree)
+  BBoxSearch(BVHTree(domain, leafsize))
 end
 
 BBoxSearch(geoms, leafsize=8) = BBoxSearch(GeometrySet(geoms), leafsize)
