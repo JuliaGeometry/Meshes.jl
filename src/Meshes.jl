@@ -15,7 +15,7 @@ using Random
 using Bessels: gamma
 using Unitful: AbstractQuantity, numtype
 using CoordRefSystems: Basic, Geographic, Projected
-using Distances: PreMetric, Euclidean, Mahalanobis
+using Distances: Euclidean, Mahalanobis
 using Rotations: Rotation, QuatRotation, Angle2d
 using Rotations: rotation_between
 using NearestNeighbors: KDTree, BallTree
@@ -35,7 +35,6 @@ import Base: sort
 import Base: ==, !
 import Base: +, -, *
 import StatsBase: sample
-import Distances: evaluate
 import NearestNeighbors: MinkowskiMetric
 
 # Differentation API
