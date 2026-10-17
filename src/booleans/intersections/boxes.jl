@@ -26,7 +26,7 @@ function intersection(f, box₁::Box, box₂::Box)
     return @IT Overlapping Box(u, v) f
   elseif all(<(τ), δ̄)
     return @IT CornerTouching u f
-  elseif any(<(τ), δ̄) && (δ == δ̄ || δ == -δ̄)
+  elseif any(<(τ), δ̄) && (δ == δ̄)
     return @IT Touching (u ⪯ v ? Box(u, v) : Box(v, u)) f
   else
     return @IT NotIntersecting nothing f
@@ -49,7 +49,7 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   latₛ > latₑ && return @IT NotIntersecting nothing f
 
   # check longitude coordinate
-  lonranges = _lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
+  lonranges = lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon)
   isempty(lonranges) && return @IT NotIntersecting nothing f
 
   # classify intersection
@@ -73,35 +73,4 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   else
     return @IT Touching geom f
   end
-end
-
-function _lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
-  # -180° and 180° represent the same meridian
-  πdeg = T(180u"°")
-
-  # convert range to one or two non-decreasing ranges,
-  # depending on whether it crosses the antimeridian
-  ranges₁ = minlon₁ ≤ maxlon₁ ? ((minlon₁, maxlon₁),) : ((-πdeg, maxlon₁), (minlon₁, πdeg))
-  ranges₂ = minlon₂ ≤ maxlon₂ ? ((minlon₂, maxlon₂),) : ((-πdeg, maxlon₂), (minlon₂, πdeg))
-
-  # compute the intersection of the two sets of ranges
-  ranges = Tuple{T,T}[]
-  for (a₁, b₁) in ranges₁, (a₂, b₂) in ranges₂
-    a, b = max(a₁, a₂), min(b₁, b₂)
-    a ≤ b && push!(ranges, (a, b))
-  end
-
-  # check if the intersection contains the antimeridian
-  _hasπdeg(ranges) = any(lon -> lon[1] == -πdeg || lon[2] == πdeg, ranges)
-  if _hasπdeg(ranges₁) && _hasπdeg(ranges₂) && !_hasπdeg(ranges)
-    push!(ranges, (πdeg, πdeg))
-  end
-
-  # ranges meeting at the antimeridian form a single wrapped interval
-  if length(ranges) ≥ 2 && first(ranges)[1] == -πdeg && last(ranges)[2] == πdeg
-    a, b = last(ranges)[1], first(ranges)[2]
-    return a == πdeg && b == -πdeg ? [(πdeg, πdeg)] : [(a, b)]
-  end
-
-  ranges
 end

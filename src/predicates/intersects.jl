@@ -15,7 +15,31 @@ intersects(p₁::Point, p₂::Point) = p₁ == p₂
 
 intersects(s₁::Segment, s₂::Segment) = someintersection(s₁, s₂)
 
-intersects(b₁::Box, b₂::Box) = someintersection(b₁, b₂)
+function intersects(b₁::Box{<:𝔼}, b₂::Box{<:𝔼})
+  min₁, max₁ = to.(extrema(b₁))
+  min₂, max₂ = to.(extrema(b₂))
+
+  δ = min.(promote(max₁, max₂)...) - max.(promote(min₁, min₂)...)
+  δ̄ = abs.(δ)
+  τ = atol(eltype(δ))
+
+  all(>(τ), δ) || all(<(τ), δ̄) || (any(<(τ), δ̄) && δ == δ̄)
+end
+
+function intersects(b₁::Box{🌐}, b₂::Box{🌐})
+  # corners in a common latitude–longitude CRS
+  crs = manifoldcrs(b₁)
+  min₁, max₁ = coords.(extrema(b₁ |> Proj(crs)))
+  min₂, max₂ = coords.(extrema(b₂ |> Proj(crs)))
+
+  # reject disjoint latitude intervals
+  latₛ = max(min₁.lat, min₂.lat)
+  latₑ = min(max₁.lat, max₂.lat)
+  latₛ > latₑ && return false
+
+  # check longitude overlap
+  !isempty(lonintersects(min₁.lon, max₁.lon, min₂.lon, max₂.lon))
+end
 
 intersects(r::Ray, b::Box) = someintersection(r, b)
 

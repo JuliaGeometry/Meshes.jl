@@ -16,6 +16,9 @@ mesh = discretize(Sphere((0, 0, 0), 1))
 ray = Ray((-1, -1, -1), (0, 0, 1))
 tri = Triangle((0, 0, 0), (1, 0, 0), (0, 1, 0))
 tet = Tetrahedron((0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1))
+box1 = Box((0.0, 0.0), (1.0, 1.0))
+box2 = Box((0.5, 0.5), (1.5, 1.5))
+box3 = Box((2.0, 2.0), (3.0, 3.0))
 poly = Pgon((0, 0), (1, 0), (1, 1), (0.5, 2), (0, 1))
 search1 = KNearestSearch(grid, 20)
 search2 = BallSearch(grid, MetricBall(30))
@@ -82,6 +85,8 @@ SUITE["sideof"]["ring"]["large"] = @benchmarkable sideof($point, $ring2)
 SUITE["intersects"] = BenchmarkGroup()
 
 SUITE["intersects"]["triangle-tetrahedron"] = @benchmarkable intersects($tri, $tet)
+SUITE["intersects"]["box-box"]["overlapping"] = @benchmarkable intersects($box1, $box2)
+SUITE["intersects"]["box-box"]["disjoint"] = @benchmarkable intersects($box1, $box3)
 
 # -------------
 # INTERSECTION
