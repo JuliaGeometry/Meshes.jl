@@ -36,14 +36,10 @@ Makie.@recipe Viz (object,) begin
   segmentcolor = :gray30
   "width of segments"
   segmentsize = 1.5
-  "visualize points"
-  showpoints = false
   "marker of points"
-  pointmarker = :circle
-  "color of points"
-  pointcolor = :gray30
+  marker = :circle
   "size of points"
-  pointsize = 4
+  size = 4
 end
 
 # choose between 2D and 3D axis
