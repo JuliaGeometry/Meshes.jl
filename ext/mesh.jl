@@ -52,7 +52,7 @@ end
 
 function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
   # compute triangle mesh and colors
-  Makie.map!(plot, [:object, :colorant], [:tmesh]) do mesh, colorant
+  Makie.map!(plot, [:object, :colorant], :tmesh) do mesh, colorant
     # relevant settings
     nvert = nvertices(mesh)
     nelem = nelements(mesh)
@@ -105,7 +105,7 @@ function vizmesh!(plot, ::Type, ::Val{2}, edim::Val)
     # triangle mesh
     tmesh = GB.mesh(verts, tris; color=tcolors, normal=tnormals, facetype=GB.TriangleFace{Int})
 
-    (tmesh,)
+    tmesh
   end
 
   # enable shading in 3D
