@@ -26,7 +26,7 @@ struct BVHNode{B}
 end
 
 """
-	BoundingBoxSearch(domain; leafsize=8)
+	BoundingBoxSearch(domain, leafsize=8)
 
 A method for searching elements whose bounding boxes intersect the bounding
 box of a query using a bounding volume hierarchy (BVH).
@@ -39,7 +39,7 @@ struct BoundingBoxSearch{D,B} <: NeighborSearchMethod
   leafsize::Int
 end
 
-function BoundingBoxSearch(domain::D; leafsize::Int=8) where {D<:Domain}
+function BoundingBoxSearch(domain::D, leafsize=8) where {D<:Domain}
   # validate the leaf size
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
@@ -68,6 +68,8 @@ function BoundingBoxSearch(domain::D; leafsize::Int=8) where {D<:Domain}
   # return the constructed BVH
   BoundingBoxSearch{D,B}(domain, boxes, perm, nodes, leafsize)
 end
+
+BoundingBoxSearch(geoms, leafsize=8) = BoundingBoxSearch(GeometrySet(geoms), leafsize)
 
 function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   # reserve the node position so that the root remains node 1.
