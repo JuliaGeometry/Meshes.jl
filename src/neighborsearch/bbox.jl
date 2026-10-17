@@ -26,12 +26,12 @@ struct BVHNode{B}
 end
 
 """
-	BoundingBoxSearch(domain, leafsize=8)
+	BBoxSearch(domain, leafsize=8)
 
 A method for searching elements whose bounding boxes intersect the bounding
 box of a query using a bounding volume hierarchy (BVH).
 """
-struct BoundingBoxSearch{D,B} <: NeighborSearchMethod
+struct BBoxSearch{D,B} <: NeighborSearchMethod
   domain::D
   boxes::Vector{B}
   perm::Vector{Int}
@@ -39,7 +39,7 @@ struct BoundingBoxSearch{D,B} <: NeighborSearchMethod
   leafsize::Int
 end
 
-function BoundingBoxSearch(domain::D, leafsize=8) where {D<:Domain}
+function BBoxSearch(domain::D, leafsize=8) where {D<:Domain}
   # validate the leaf size
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
@@ -66,10 +66,10 @@ function BoundingBoxSearch(domain::D, leafsize=8) where {D<:Domain}
   _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
 
   # return the constructed BVH
-  BoundingBoxSearch{D,B}(domain, boxes, perm, nodes, leafsize)
+  BBoxSearch{D,B}(domain, boxes, perm, nodes, leafsize)
 end
 
-BoundingBoxSearch(geoms, leafsize=8) = BoundingBoxSearch(GeometrySet(geoms), leafsize)
+BBoxSearch(geoms, leafsize=8) = BBoxSearch(GeometrySet(geoms), leafsize)
 
 function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   # reserve the node position so that the root remains node 1.
@@ -121,12 +121,12 @@ function _splitaxis(centers, perm, first, last)
   argmax(hi .- lo)
 end
 
-function search(geom, method::BoundingBoxSearch; mask=nothing)
+function search(geom, method::BBoxSearch; mask=nothing)
   inds = Int[]
   search!(inds, geom, method; mask=mask)
 end
 
-function search!(neighbors, geom, method::BoundingBoxSearch; mask=nothing)
+function search!(neighbors, geom, method::BBoxSearch; mask=nothing)
   # clear the output vector to ensure it only contains the results of the current query geometry
   empty!(neighbors)
 
@@ -150,7 +150,7 @@ vector of indices.
 
 See also: [`search`](@ref), [`search!`](@ref).
 """
-function _foreachcandidate(f, geom, method::BoundingBoxSearch)
+function _foreachcandidate(f, geom, method::BBoxSearch)
   # compute the bounding box of the query geometry `geom` and initialize a stack with the root node index
   geombox = boundingbox(geom)
   stack = [1]

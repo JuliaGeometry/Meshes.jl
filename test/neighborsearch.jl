@@ -125,10 +125,10 @@ end
   @test s isa KBallSearch
 end
 
-@testitem "BoundingBoxSearch" setup = [Setup] begin
+@testitem "BBoxSearch" setup = [Setup] begin
   # basic query
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BoundingBoxSearch(boxes, 1)
+  bvh = BBoxSearch(boxes, 1)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   answer = findall(box -> intersects(box, query), boxes)
   result = sort(search(query, bvh))
@@ -136,7 +136,7 @@ end
 
   # no candidates
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BoundingBoxSearch(boxes)
+  bvh = BBoxSearch(boxes)
   query = Box(cart(10, 10), cart(11, 11))
   @test isempty(search(query, bvh))
 
@@ -145,7 +145,7 @@ end
   query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
   answer = findall(box -> intersects(box, query), boxes)
   for leafsize in (1, 2, 3, 8)
-    leafbvh = BoundingBoxSearch(boxes, leafsize)
+    leafbvh = BBoxSearch(boxes, leafsize)
     @test sort(search(query, leafbvh)) == answer
   end
 
@@ -153,7 +153,7 @@ end
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   n = length(boxes)
   for leafsize in (n, n + 1, 2n)
-    leafbvh = BoundingBoxSearch(boxes, leafsize)
+    leafbvh = BBoxSearch(boxes, leafsize)
     root = leafbvh.nodes[1]
     @test length(leafbvh.nodes) == 1
     @test Meshes._isleaf(root)
@@ -165,7 +165,7 @@ end
 
   # preallocated output
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BoundingBoxSearch(boxes)
+  bvh = BBoxSearch(boxes)
   query = Box(cart(0.5, 0.5), cart(1.5, 1.5))
   inds = [100, 200]
   result = search!(inds, query, bvh)
@@ -174,8 +174,8 @@ end
 
   # invalid leaf size
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  @test_throws ArgumentError BoundingBoxSearch(boxes, 0)
-  @test_throws ArgumentError BoundingBoxSearch(boxes, -1)
+  @test_throws ArgumentError BBoxSearch(boxes, 0)
+  @test_throws ArgumentError BBoxSearch(boxes, -1)
 
   # randomized brute-force equivalence
   rng = StableRNG(1234)
@@ -190,7 +190,7 @@ end
   ]
   randd = GeometrySet(randb)
   for leafsize in (1, 2, 4, 8, 16)
-    randbvh = BoundingBoxSearch(randd, leafsize)
+    randbvh = BBoxSearch(randd, leafsize)
     for _ in 1:100
       local query, answer, result
       xmin = rand(rng) * 100
@@ -205,11 +205,11 @@ end
   end
 
   # root bounding box
-  bvh = BoundingBoxSearch(randd)
+  bvh = BBoxSearch(randd)
   @test bvh.nodes[1].box ≈ boundingbox(randd)
 
   # internal node invariants
-  bvh = BoundingBoxSearch(randd, 1)
+  bvh = BBoxSearch(randd, 1)
   for node in bvh.nodes
     if !Meshes._isleaf(node)
       leftbox = bvh.nodes[node.a].box
@@ -220,7 +220,7 @@ end
   end
 
   # leaf invariants
-  bvh = BoundingBoxSearch(randd, 2)
+  bvh = BBoxSearch(randd, 2)
   for node in bvh.nodes
     if Meshes._isleaf(node)
       @test 1 ≤ abs(node.a) ≤ node.b ≤ length(bvh.perm)
@@ -240,7 +240,7 @@ end
 
   # type stability tests
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  bvh = BoundingBoxSearch(boxes)
+  bvh = BBoxSearch(boxes)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   @inferred search(query, bvh)
   inds = Int[]
