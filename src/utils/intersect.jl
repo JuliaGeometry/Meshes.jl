@@ -141,3 +141,35 @@ function _digits(segments)
   τ = ustrip(eps(ℒ))
   round(Int, 0.8 * (-log10(τ))) # 0.8 is a heuristic to avoid numerical issues
 end
+
+# Compute the intersection of two longitude intervals, taking into account the antimeridian.
+function _lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
+  # -180° and 180° represent the same meridian
+  πdeg = T(180u"°")
+
+  # convert range to one or two non-decreasing ranges,
+  # depending on whether it crosses the antimeridian
+  ranges₁ = minlon₁ ≤ maxlon₁ ? ((minlon₁, maxlon₁),) : ((-πdeg, maxlon₁), (minlon₁, πdeg))
+  ranges₂ = minlon₂ ≤ maxlon₂ ? ((minlon₂, maxlon₂),) : ((-πdeg, maxlon₂), (minlon₂, πdeg))
+
+  # compute the intersection of the two sets of ranges
+  ranges = Tuple{T,T}[]
+  for (a₁, b₁) in ranges₁, (a₂, b₂) in ranges₂
+    a, b = max(a₁, a₂), min(b₁, b₂)
+    a ≤ b && push!(ranges, (a, b))
+  end
+
+  # check if the intersection contains the antimeridian
+  _hasπdeg(ranges) = any(lon -> lon[1] == -πdeg || lon[2] == πdeg, ranges)
+  if _hasπdeg(ranges₁) && _hasπdeg(ranges₂) && !_hasπdeg(ranges)
+    push!(ranges, (πdeg, πdeg))
+  end
+
+  # ranges meeting at the antimeridian form a single wrapped interval
+  if length(ranges) ≥ 2 && first(ranges)[1] == -πdeg && last(ranges)[2] == πdeg
+    a, b = last(ranges)[1], first(ranges)[2]
+    return a == πdeg && b == -πdeg ? [(πdeg, πdeg)] : [(a, b)]
+  end
+
+  ranges
+end

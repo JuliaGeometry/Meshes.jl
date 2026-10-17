@@ -981,6 +981,7 @@ end
   b8 = Box(cart(0, -1), cart(1, 0))
   b9 = Box(cart(1, 0), cart(2, 1))
   b10 = Box(cart(-1, 0), cart(0, 1))
+  b11 = Box(cart(100, 0.5), cart(100, 0.5))
   @test intersection(b1, b2) |> type == Overlapping
   @test b1 ∩ b2 == Box(cart(0.5, 0.5), cart(1, 1))
   @test intersection(b1, b3) |> type == NotIntersecting
@@ -999,6 +1000,8 @@ end
   @test b1 ∩ b9 == Box(cart(1, 0), cart(1, 1))
   @test intersection(b1, b10) |> type == Touching
   @test b1 ∩ b10 == Box(cart(0, 0), cart(0, 1))
+  @test intersection(b1, b11) |> type == NotIntersecting # see PR #1452
+  @test isnothing(b1 ∩ b11)
 
   # more touching examples
   b1 = Box(cart(0, 0), cart(1, 1))

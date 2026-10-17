@@ -16,10 +16,10 @@ intersects(p₁::Point, p₂::Point) = p₁ == p₂
 intersects(s₁::Segment, s₂::Segment) = someintersection(s₁, s₂)
 
 function intersects(b₁::Box{<:𝔼}, b₂::Box{<:𝔼})
-  amin, amax = to.(extrema(b₁))
-  bmin, bmax = to.(extrema(b₂))
+  min₁, max₁ = to.(extrema(b₁))
+  min₂, max₂ = to.(extrema(b₂))
 
-  δ = min.(promote(amax, bmax)...) - max.(promote(amin, bmin)...)
+  δ = min.(promote(max₁, max₂)...) - max.(promote(min₁, min₂)...)
   δ̄ = abs.(δ)
   τ = atol(eltype(δ))
 
