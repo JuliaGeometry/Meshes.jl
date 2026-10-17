@@ -66,7 +66,6 @@ function vizgset!(plot, M::Type, pdim::Val, ::Val, ::Type{<:Geometry}, gvecid::S
   viz!(plot, plot[meshid], color=plot[colorid], segmentsize=plot.segmentsize)
 
   # visualize facets if requested
-  pdim === Val(1) && plot.showpoints[] && vizfacets!(plot, gvecid)
   pdim === Val(2) && plot.showsegments[] && vizfacets!(plot, gvecid)
 end
 
@@ -98,8 +97,8 @@ function vizgset!(plot, ::Type, ::Val, ::Val, ::Type{<:Point}, gvecid::Symbol, c
     plot,
     plot[coordsid],
     color=plot[cvecid],
-    marker=plot.pointmarker,
-    markersize=plot.pointsize,
+    marker=plot.marker,
+    markersize=plot.size,
     overdraw=true
   )
 end
@@ -146,10 +145,6 @@ function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol,
       tipradius=plot[tipradiusid],
       shaftradius=plot[shaftradiusid]
     )
-  end
-
-  if plot.showpoints[]
-    vizfacets!(plot, gvecid)
   end
 end
 
@@ -236,16 +231,6 @@ function vizfacets!(plot::Viz{<:Tuple{GeometrySet}}, gvecid::Symbol)
   pdim = paramdim(g)
   edim = embeddim(g)
   vizgsetfacets!(plot, M, Val(pdim), Val(edim), gvecid)
-end
-
-function vizgsetfacets!(plot, ::Type, ::Val{1}, ::Val, gvecid::Symbol)
-  # all boundaries are points or multipoints
-  psetid = Symbol(gvecid, :_pset)
-  Makie.map!(plot, [gvecid], psetid) do gvec
-    points = filter(!isnothing, map(boundary, gvec))
-    GeometrySet(points)
-  end
-  viz!(plot, plot[psetid], color=plot.pointcolor, pointmarker=plot.pointmarker, pointsize=plot.pointsize)
 end
 
 function vizgsetfacets!(plot, ::Type, ::Val{2}, ::Val, gvecid::Symbol)

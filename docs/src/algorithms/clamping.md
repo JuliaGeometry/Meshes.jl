@@ -23,9 +23,9 @@ clamped = clamp(points, box)
 
 fig = Mke.Figure(size=(800, 400))
 viz(fig[1, 1], box, axis=(; title="unclamped"))
-viz!(fig[1, 1], points, color=:black, pointsize=6)
+viz!(fig[1, 1], points, color="black", size=6)
 viz(fig[1, 2], box, axis=(; title="clamped"))
-viz!(fig[1, 2], clamped, color=:black, pointsize=6)
+viz!(fig[1, 2], clamped, color="black", size=6)
 Mke.linkaxes!(fig.content...)
 fig
 ```
