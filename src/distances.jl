@@ -20,16 +20,14 @@ include("distances/geodesic.jl")
 # DISTANCES.JL
 # -------------
 
-"""
-    evaluate(distance::PreMetric, point₁, point₂)
+(d::Euclidean)(p₁::Point, p₂::Point) = _evaluate(d, p₁, p₂)
+(d::Mahalanobis)(p₁::Point, p₂::Point) = _evaluate(d, p₁, p₂)
 
-Evaluate pre-metric `distance` between coordinates of `point₁` and `point₂`.
-"""
-function evaluate(d::PreMetric, p₁::Point, p₂::Point)
+function _evaluate(d, p₁::Point, p₂::Point)
   u₁ = unit(Meshes.lentype(p₁))
   u₂ = unit(Meshes.lentype(p₂))
   u = Unitful.promote_unit(u₁, u₂)
   v₁ = ustrip.(u, to(p₁))
   v₂ = ustrip.(u, to(p₂))
-  evaluate(d, v₁, v₂) * u
+  d(v₁, v₂) * u
 end
