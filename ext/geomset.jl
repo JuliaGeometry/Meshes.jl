@@ -93,14 +93,7 @@ function vizgset!(plot, ::Type, ::Val, ::Val, ::Type{<:Point}, gvecid::Symbol, c
   end
 
   # visualize points with given marker and size
-  Makie.scatter!(
-    plot,
-    plot[coordsid],
-    color=plot[cvecid],
-    marker=plot.marker,
-    markersize=plot.size,
-    overdraw=true
-  )
+  Makie.scatter!(plot, plot[coordsid], color=plot[cvecid], marker=plot.marker, markersize=plot.size, overdraw=true)
 end
 
 function vizgset!(plot, ::Type, ::Val, edim::Val, ::Type{<:Ray}, gvecid::Symbol, cvecid::Symbol)
