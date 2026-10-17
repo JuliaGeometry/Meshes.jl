@@ -75,8 +75,8 @@ KNearestSearch
 KBallSearch
 ```
 
-## BoundingBoxSearch
+## BBoxSearch
 
 ```@docs
-BoundingBoxSearch
+BBoxSearch
 ```
