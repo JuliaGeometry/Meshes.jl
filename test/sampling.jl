@@ -60,11 +60,13 @@ end
 @testitem "BlockSampling" setup = [Setup] begin
   g = cartgrid(100, 100)
   s = sample(g, BlockSampling(T(10)))
-  @test nelements(s) == 100
-  x = to.(centroid.(s))
-  D = pairwise(Euclidean(), x)
-  d = [D[i, j] for i in 1:length(x) for j in 1:(i - 1)]
-  @test all(≥(T(10) * u"m"), d)
+  d = EuclideanDistance()
+  n = nelements(s)
+  @test n == 100
+  c = centroid.(s)
+  D = [d(c[i], c[j]) for i in 1:n, j in 1:n]
+  δ = [D[i, j] for i in 1:n for j in 1:(i - 1)]
+  @test all(≥(T(10) * u"m"), δ)
 end
 
 @testitem "RegularSampling" setup = [Setup] begin

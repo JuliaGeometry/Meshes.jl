@@ -16,19 +16,3 @@ abstract type GeometricDistance end
 include("distances/euclidean.jl")
 include("distances/mahalanobis.jl")
 include("distances/geodesic.jl")
-
-# -------------
-# DISTANCES.JL
-# -------------
-
-(d::Euclidean)(p₁::Point, p₂::Point) = _evaluate(d, p₁, p₂)
-(d::Mahalanobis)(p₁::Point, p₂::Point) = _evaluate(d, p₁, p₂)
-
-function _evaluate(d, p₁::Point, p₂::Point)
-  u₁ = unit(Meshes.lentype(p₁))
-  u₂ = unit(Meshes.lentype(p₂))
-  u = Unitful.promote_unit(u₁, u₂)
-  v₁ = ustrip.(u, to(p₁))
-  v₂ = ustrip.(u, to(p₂))
-  d(v₁, v₂) * u
-end

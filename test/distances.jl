@@ -154,10 +154,3 @@
     @test isapprox(d(q₁, q₂), d(p₁, p₂), atol=1e-3u"m")
   end
 end
-
-@testitem "Distances.jl" setup = [Setup] begin
-  p₁ = cart(1, 0)
-  p₂ = cart(0, 1)
-  @test Euclidean()(p₁, p₂) == T(√2) * u"m"
-  @test Mahalanobis(I(2))(p₁, p₂) == T(√2) * u"m"
-end

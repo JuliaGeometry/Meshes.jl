@@ -10,7 +10,7 @@ according to a norm-ball of given `radius`.
 
 ## Options
 
-* `metric`  - Metric for the ball (default to `Euclidean()`)
+* `metric`  - Metric for the ball (default to `EuclideanDistance()`)
 * `maxsize` - Maximum size of the resulting sample (default to none)
 """
 struct BallSampling{ℒ<:Len,M} <: DiscreteSamplingMethod
@@ -20,7 +20,7 @@ struct BallSampling{ℒ<:Len,M} <: DiscreteSamplingMethod
   BallSampling(radius::ℒ, metric::M, maxsize) where {ℒ<:Len,M} = new{float(ℒ),M}(radius, metric, maxsize)
 end
 
-BallSampling(radius::Len; metric=Euclidean(), maxsize=nothing) = BallSampling(radius, metric, maxsize)
+BallSampling(radius::Len; metric=EuclideanDistance(), maxsize=nothing) = BallSampling(radius, metric, maxsize)
 
 BallSampling(radius; kwargs...) = BallSampling(aslen(radius); kwargs...)
 
