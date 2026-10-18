@@ -3,34 +3,31 @@
 # ------------------------------------------------------------------
 
 """
-    BallSampling(radius; [options])
+    BallSampling(radius; distance=EuclideanDistance(), maxsize=nothing)
 
 A method for sampling isolated elements from a given domain/data
-according to a norm-ball of given `radius`.
-
-## Options
-
-* `metric`  - Metric for the ball (default to `EuclideanDistance()`)
-* `maxsize` - Maximum size of the resulting sample (default to none)
+according to a norm-ball of given `radius`. Optionally, specify
+the `distance` used for the metric ball and the `maxsize` of the
+resulting sample.
 """
-struct BallSampling{ℒ<:Len,M} <: DiscreteSamplingMethod
+struct BallSampling{ℒ<:Len,D} <: DiscreteSamplingMethod
   radius::ℒ
-  metric::M
+  distance::D
   maxsize::Union{Int,Nothing}
-  BallSampling(radius::ℒ, metric::M, maxsize) where {ℒ<:Len,M} = new{float(ℒ),M}(radius, metric, maxsize)
+  BallSampling(radius::ℒ, distance::D, maxsize) where {ℒ<:Len,D} = new{float(ℒ),D}(radius, distance, maxsize)
 end
 
-BallSampling(radius::Len; metric=EuclideanDistance(), maxsize=nothing) = BallSampling(radius, metric, maxsize)
+BallSampling(radius::Len; distance=EuclideanDistance(), maxsize=nothing) = BallSampling(radius, distance, maxsize)
 
 BallSampling(radius; kwargs...) = BallSampling(aslen(radius); kwargs...)
 
 function sampleinds(rng::AbstractRNG, d::Domain, method::BallSampling)
   radius = method.radius
-  metric = method.metric
+  distance = method.distance
   msize = isnothing(method.maxsize) ? Inf : method.maxsize
 
   # neighborhood search with ball
-  ball = MetricBall(radius, metric)
+  ball = MetricBall(radius, distance)
   searcher = BallSearch(d, ball)
 
   inds = Int[]
