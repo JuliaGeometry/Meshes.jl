@@ -3,23 +3,23 @@
 # ------------------------------------------------------------------
 
 """
-    KNearestSearch(domain, k; metric=EuclideanDistance())
+    KNearestSearch(domain, k; distance=EuclideanDistance())
 
 A method for searching `k` nearest neighbors in `domain`
-according to `metric`.
+according to `distance`.
 """
 struct KNearestSearch{C<:CRS,T} <: BoundedNeighborSearchMethod
   tree::T
   k::Int
 end
 
-function KNearestSearch(domain::D, k::Int; metric=EuclideanDistance()) where {D<:Domain}
+function KNearestSearch(domain::D, k::Int; distance=EuclideanDistance()) where {D<:Domain}
   C = crs(domain)
-  t = _searchtree(domain, metric)
+  t = _searchtree(domain, distance)
   KNearestSearch{C,typeof(t)}(t, k)
 end
 
-KNearestSearch(geoms, k; metric=EuclideanDistance()) = KNearestSearch(GeometrySet(geoms), k; metric)
+KNearestSearch(geoms, k; distance=EuclideanDistance()) = KNearestSearch(GeometrySet(geoms), k; distance)
 
 maxneighbors(method::KNearestSearch) = method.k
 

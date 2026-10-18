@@ -102,13 +102,13 @@ include("neighborsearch/kball.jl")
 # HELPER FUNCTIONS
 # -----------------
 
-function _searchtree(domain, metric)
+function _searchtree(domain, distance)
   X = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
-  if metric isa EuclideanDistance
+  if distance isa EuclideanDistance
     KDTree(X, Euclidean())
-  elseif metric isa MahalanobisDistance
-    BallTree(X, Mahalanobis(metric.matrix))
+  elseif distance isa MahalanobisDistance
+    BallTree(X, Mahalanobis(distance.matrix))
   else
-    error("unsupported metric")
+    error("unsupported distance")
   end
 end

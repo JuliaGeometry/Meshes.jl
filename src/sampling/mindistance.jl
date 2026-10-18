@@ -3,12 +3,12 @@
 # ------------------------------------------------------------------
 
 """
-    MinDistanceSampling(α, ρ=0.65, δ=100, metric=EuclideanDistance())
+    MinDistanceSampling(α, ρ=0.65, δ=100, distance=EuclideanDistance())
 
 Generate sample from geometric object such that all pairs of
 points are at least `α` units of distance away from each other.
 Optionally specify the relative radius `ρ` for the packing
-pattern, the oversampling factor `δ` and the `metric`.
+pattern, the oversampling factor `δ` and the `distance`.
 
 This method is sometimes referred to as Poisson disk sampling
 or blue noise sampling in the computer graphics community.
@@ -23,19 +23,20 @@ or blue noise sampling in the computer graphics community.
 * Medeiros et al. 2014. [Fast adaptive blue noise on polygonal surfaces]
   (https://www.sciencedirect.com/science/article/abs/pii/S1524070313000313)
 """
-struct MinDistanceSampling{ℒ<:Len,M} <: ContinuousSamplingMethod
+struct MinDistanceSampling{ℒ<:Len,D} <: ContinuousSamplingMethod
   α::ℒ
   ρ::ℒ
   δ::Int
-  metric::M
-  MinDistanceSampling(α::ℒ, ρ::ℒ, δ, metric::M) where {ℒ<:Len,M} = new{float(ℒ),M}(α, ρ, δ, metric)
+  distance::D
+  MinDistanceSampling(α::ℒ, ρ::ℒ, δ, distance::D) where {ℒ<:Len,D} = new{float(ℒ),D}(α, ρ, δ, distance)
 end
 
-MinDistanceSampling(α::Len, ρ::Len, δ, metric) = MinDistanceSampling(promote(α, ρ)..., δ, metric)
+MinDistanceSampling(α::Len, ρ::Len, δ, distance) = MinDistanceSampling(promote(α, ρ)..., δ, distance)
 
-MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(aslen(α), aslen(ρ), δ, metric)
+MinDistanceSampling(α, ρ, δ, distance) = MinDistanceSampling(aslen(α), aslen(ρ), δ, distance)
 
-MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=EuclideanDistance()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
+MinDistanceSampling(α::T; ρ=T(0.65), δ=100, distance=EuclideanDistance()) where {T} =
+  MinDistanceSampling(α, ρ, δ, distance)
 
 sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling) = _sample(rng, d, method)
 
@@ -46,7 +47,7 @@ function _sample(rng::AbstractRNG, obj, method::MinDistanceSampling)
   α = method.α
   ρ = method.ρ
   δ = method.δ
-  m = method.metric
+  d = method.distance
 
   # total volume/area of the object
   V = measure(obj)
@@ -65,5 +66,5 @@ function _sample(rng::AbstractRNG, obj, method::MinDistanceSampling)
   𝒫 = PointSet(collect(points))
 
   # discard points that do not satisfy distance criterion
-  sample(rng, 𝒫, BallSampling(α, metric=m))
+  sample(rng, 𝒫, BallSampling(α, distance=d))
 end
