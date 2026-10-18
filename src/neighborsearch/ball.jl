@@ -16,10 +16,8 @@ end
 
 function BallSearch(domain::D, ball::B) where {D<:Domain,B<:MetricBall}
   C = crs(domain)
-  m = metric(ball)
+  t = _searchtree(domain, metric(ball))
   r = ustrip(unit(lentype(C)), radius(ball))
-  X = [svec(centroid(domain, i)) for i in 1:nelements(domain)]
-  t = m isa MinkowskiMetric ? KDTree(X, m) : BallTree(X, m)
   BallSearch{C,typeof(t),typeof(r)}(t, r)
 end
 

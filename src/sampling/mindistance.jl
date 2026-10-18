@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------
 
 """
-    MinDistanceSampling(α, ρ=0.65, δ=100, metric=Euclidean())
+    MinDistanceSampling(α, ρ=0.65, δ=100, metric=EuclideanDistance())
 
 Generate sample from geometric object such that all pairs of
 points are at least `α` units of distance away from each other.
@@ -35,7 +35,7 @@ MinDistanceSampling(α::Len, ρ::Len, δ, metric) = MinDistanceSampling(promote(
 
 MinDistanceSampling(α, ρ, δ, metric) = MinDistanceSampling(aslen(α), aslen(ρ), δ, metric)
 
-MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=Euclidean()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
+MinDistanceSampling(α::T; ρ=T(0.65), δ=100, metric=EuclideanDistance()) where {T} = MinDistanceSampling(α, ρ, δ, metric)
 
 sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling) = _sample(rng, d, method)
 

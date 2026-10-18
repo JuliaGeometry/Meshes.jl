@@ -35,7 +35,6 @@ import Base: sort
 import Base: ==, !
 import Base: +, -, *
 import StatsBase: sample
-import NearestNeighbors: MinkowskiMetric
 
 # Differentation API
 import DifferentiationInterface as DI

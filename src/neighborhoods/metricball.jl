@@ -3,19 +3,17 @@
 # ------------------------------------------------------------------
 
 """
+    MetricBall(radius, metric=EuclideanDistance())
+
+A metric ball expressed in terms of a single `radius` and a
+`metric` (or distance) between geometries.
+
     MetricBall(radii, rotation=I)
-    MetricBall(radius, metric=Euclidean())
 
-A metric ball is a neighborhood that can be expressed in terms
-of a `metric` and a set of `radii`. The two main examples are the
-Euclidean ball an the Mahalanobis (ellipsoid) ball.
-
-When multiple `radii` are provided, they can be rotated by a
-`rotation` specification from the [Rotations.jl]
-(https://github.com/JuliaGeometry/Rotations.jl)
-package. Alternatively, a `metric` from the [Distances.jl]
-(https://github.com/JuliaStats/Distances.jl) package can
-be specified together with a single `radius`.
+A Mahalanobis ball (a.k.a. ellipsoid) expressed in terms
+of multiple `radii` and a `rotation` specification from the
+[Rotations.jl](https://github.com/JuliaGeometry/Rotations.jl)
+package.
 
 ## Examples
 
@@ -35,37 +33,19 @@ struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
   radii::NTuple{Dim,ℒ}
   rotation::R
   metric::M
-
-  MetricBall(radii::NTuple{Dim,ℒ}, rotation::R, metric::M) where {Dim,ℒ<:Len,R,M} =
-    new{Dim,float(ℒ),R,M}(radii, rotation, metric)
 end
 
-function MetricBall(radii::NTuple{Dim,ℒ}, rotation=I) where {Dim,ℒ<:Len}
-  # scaling weights
-  w = SVector((oneunit(ℒ) ./ radii) .^ 2)
-
-  # rotation matrix
+function MetricBall(radii, rotation, metric)
+  r = promote(map(float ∘ aslen, radii)...)
   R = rotation
-
-  # scaling matrix
-  W = Diagonal(w)
-
-  # anisotropy matrix
-  M = Symmetric(R * W * transpose(R))
-
-  # Mahalanobis metric
-  metric = Mahalanobis(M)
-
-  MetricBall(radii, rotation, metric)
+  m = metric
+  MetricBall{length(r),eltype(r),typeof(R),typeof(m)}(r, R, m)
 end
 
-MetricBall(radii::NTuple{Dim,Len}, rotation=I) where {Dim} = MetricBall(promote(radii...), rotation)
+MetricBall(radius::Number, metric=EuclideanDistance()) = MetricBall((aslen(radius),), I, metric)
 
-MetricBall(radii::Tuple, rotation=I) = MetricBall(aslen.(radii), rotation)
-
-MetricBall(radius::Len, metric=Euclidean()) = MetricBall((radius,), I, metric)
-
-MetricBall(radius::Number, metric=Euclidean()) = MetricBall(aslen(radius), metric)
+MetricBall(radii::Tuple, rotation=I) =
+  MetricBall(radii, rotation, MahalanobisDistance(radii, rotation))
 
 """
     hasequalradii(ball)
@@ -104,11 +84,11 @@ and `||v|| > r, ∀ v ∉ ball``.
 """
 function radius(ball::MetricBall)
   r = first(ball.radii)
-  ball.metric isa Mahalanobis ? oneunit(r) : r
+  ball.metric isa MahalanobisDistance ? oneunit(r) : r
 end
 
 function *(α::Real, ball::MetricBall)
-  if ball.metric isa Mahalanobis
+  if ball.metric isa MahalanobisDistance
     MetricBall(α .* ball.radii, ball.rotation)
   else
     MetricBall(α .* ball.radii, I, ball.metric)
