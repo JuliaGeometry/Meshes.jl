@@ -12,6 +12,7 @@ which is available at compile time.
 ```@docs
 GeometricDistance
 EuclideanDistance
+MahalanobisDistance
 GeodesicDistance
 ```
 
