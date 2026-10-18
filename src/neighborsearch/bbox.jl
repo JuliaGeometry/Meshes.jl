@@ -20,20 +20,14 @@ BBoxSearch(geoms, leafsize=8) = BBoxSearch(GeometrySet(geoms), leafsize)
 
 function search(geom, method::BBoxSearch; mask=nothing)
   inds = Int[]
-  search!(inds, geom, method; mask=mask)
-end
-
-function search!(neighbors, geom, method::BBoxSearch; mask=nothing)
-  # clear the output vector to ensure it only contains the results of the current query geometry
-  empty!(neighbors)
 
   _foreachcandidate(geom, method) do ind
     if isnothing(mask) || mask[ind]
-      push!(neighbors, ind)
+      push!(inds, ind)
     end
   end
 
-  neighbors
+  inds
 end
 
 """

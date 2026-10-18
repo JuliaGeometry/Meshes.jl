@@ -155,21 +155,12 @@ end
     @test sort(search(boundingbox(boxes), BBoxSearch(boxes, leafsize))) == collect(eachindex(boxes))
   end
 
-  # preallocated output
+  # masks preserve original domain indices
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   searcher = BBoxSearch(boxes)
-  query = Box(cart(0.5, 0.5), cart(1.5, 1.5))
-  inds = [100, 200]
-  result = search!(inds, query, searcher)
-  @test result === inds
-  @test inds == [1]
-
-  # masks preserve original domain indices
   query = boundingbox(boxes)
   mask = Bool[false, true, false]
   @test search(query, searcher; mask=mask) == [2]
-  @test search!(inds, query, searcher; mask=mask) === inds
-  @test inds == [2]
   @test isempty(search(query, searcher; mask=falses(length(boxes))))
 
   # callback adapter preserves traversal order
@@ -213,8 +204,6 @@ end
   searcher = BBoxSearch(boxes)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   @inferred search(query, searcher)
-  inds = Int[]
-  @inferred search!(inds, query, searcher)
 end
 
 @testitem "BVHTree" setup = [Setup] begin

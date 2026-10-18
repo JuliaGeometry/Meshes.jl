@@ -128,7 +128,7 @@ This function is allocation-free apart from its internal traversal stack and is 
 interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
 vector of indices.
 
-See also: [`search`](@ref), [`search!`](@ref).
+See also: [`search`](@ref).
 """
 function _foreachcandidate(f, geombox::Box, tree::BVHTree)
   # initialize a stack with the root node index
