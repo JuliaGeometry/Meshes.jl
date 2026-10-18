@@ -44,8 +44,7 @@ end
 
 MetricBall(radius::Number, metric=EuclideanDistance()) = MetricBall((aslen(radius),), I, metric)
 
-MetricBall(radii::Tuple, rotation=I) =
-  MetricBall(radii, rotation, MahalanobisDistance(radii, rotation))
+MetricBall(radii::Tuple, rotation=I) = MetricBall(radii, rotation, MahalanobisDistance(radii, rotation))
 
 """
     hasequalradii(ball)
