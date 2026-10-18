@@ -14,6 +14,7 @@ abstract type GeometricDistance end
 # ----------------
 
 include("distances/euclidean.jl")
+include("distances/mahalanobis.jl")
 include("distances/geodesic.jl")
 
 # -------------
