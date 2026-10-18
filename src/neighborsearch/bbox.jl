@@ -12,8 +12,11 @@ struct BBoxSearch{T<:BVHTree} <: NeighborSearchMethod
   tree::T
 end
 
+BBoxSearch(boxes::Vector{<:Box}, leafsize=8) = BBoxSearch(BVHTree(copy(boxes), leafsize))
+
 function BBoxSearch(domain::Domain, leafsize=8)
-  BBoxSearch(BVHTree(domain, leafsize))
+  boxes = boundingbox.(domain)
+  BBoxSearch(BVHTree(boxes, leafsize))
 end
 
 BBoxSearch(geoms, leafsize=8) = BBoxSearch(GeometrySet(geoms), leafsize)

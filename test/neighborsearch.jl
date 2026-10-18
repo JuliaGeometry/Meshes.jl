@@ -134,6 +134,30 @@ end
   result = sort(search(query, searcher))
   @test result == answer
 
+  # constructor paths with default and explicit leaf sizes
+  geoms = [Triangle(cart(i, i), cart(i + 1, i), cart(i, i + 1)) for i in (0, 2, 4)]
+  boxes = boundingbox.(geoms)
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
+  for input in (boxes, GeometrySet(boxes), geoms, GeometrySet(geoms))
+    @test sort(search(query, BBoxSearch(input))) == [1, 2]
+    @test sort(search(query, BBoxSearch(input, 1))) == [1, 2]
+  end
+
+  # searchers retain their original boxes when the caller changes its vector
+  for leafsize in (1, 8)
+    boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+    searchers = (BBoxSearch(boxes, leafsize), BBoxSearch(GeometrySet(boxes), leafsize))
+    boxes[1] = Box(cart(10, 10), cart(11, 11))
+    for searcher in searchers
+      @test sort(search(query, searcher)) == [1, 2]
+    end
+    reverse!(boxes)
+    push!(boxes, Box(cart(0, 0), cart(1, 1)))
+    for searcher in searchers
+      @test sort(search(query, searcher)) == [1, 2]
+    end
+  end
+
   # no candidates
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   searcher = BBoxSearch(boxes)
@@ -211,7 +235,7 @@ end
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   n = length(boxes)
   for leafsize in (n, n + 1, 2n)
-    tree = Meshes.BVHTree(GeometrySet(boxes), leafsize)
+    tree = Meshes.BVHTree(boxes, leafsize)
     root = tree.nodes[1]
     @test length(tree.nodes) == 1
     @test Meshes._isleaf(root)
@@ -223,11 +247,10 @@ end
   # construction and traversal retain original element indices
   boxes = [Box(cart(i, 0), cart(i + 1, 1)) for i in 1:40]
   reverse!(boxes)
-  domain = GeometrySet(boxes)
-  @test_throws ArgumentError Meshes.BVHTree(domain, 0)
-  @test_throws ArgumentError Meshes.BVHTree(domain, -1)
+  @test_throws ArgumentError Meshes.BVHTree(boxes, 0)
+  @test_throws ArgumentError Meshes.BVHTree(boxes, -1)
   for leafsize in (1, 2, 8, 64)
-    tree = @inferred Meshes.BVHTree(domain, leafsize)
+    tree = @inferred Meshes.BVHTree(boxes, leafsize)
     for query in (Box(cart(5.5, 0), cart(12.5, 1)), boundingbox(boxes), Box(cart(100, 0), cart(101, 1)))
       candidates = Int[]
       Meshes._foreachcandidate(i -> push!(candidates, i), query, tree)
@@ -236,11 +259,11 @@ end
   end
 
   # root bounding box
-  tree = Meshes.BVHTree(GeometrySet(boxes))
+  tree = Meshes.BVHTree(boxes)
   @test tree.nodes[1].box ≈ boundingbox(boxes)
 
   # internal node invariants
-  tree = Meshes.BVHTree(GeometrySet(boxes), 1)
+  tree = Meshes.BVHTree(boxes, 1)
   for node in tree.nodes
     if !Meshes._isleaf(node)
       leftbox = tree.nodes[node.left].box
@@ -251,7 +274,7 @@ end
   end
 
   # leaf invariants
-  tree = Meshes.BVHTree(GeometrySet(boxes), 2)
+  tree = Meshes.BVHTree(boxes, 2)
   for node in tree.nodes
     if Meshes._isleaf(node)
       @test 1 ≤ abs(node.left) ≤ node.right ≤ length(tree.perm)

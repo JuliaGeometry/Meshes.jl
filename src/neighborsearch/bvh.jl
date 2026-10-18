@@ -26,11 +26,13 @@ struct BVHNode{B}
 end
 
 """
-    BVHTree(domain, leafsize=8)
+    BVHTree(boxes, leafsize=8)
 
-A static bounding volume hierarchy over the bounding boxes of the elements of
-`domain`. Each leaf stores a range of positions in `perm`. The values at those 
-positions identify the corresponding elements in the original domain.
+A static bounding volume hierarchy over a vector of `Box`es. Each leaf stores a
+range of positions in `perm`. The values at those positions identify the
+corresponding boxes in the input vector.
+
+The input vector is stored without copying and must not be modified while the tree is in use.
 """
 struct BVHTree{B}
   boxes::Vector{B}
@@ -39,15 +41,13 @@ struct BVHTree{B}
   leafsize::Int
 end
 
-function BVHTree(domain::Domain, leafsize=8)
+function BVHTree(boxes::Vector{<:Box}, leafsize=8)
   # validate the leaf size
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
-  # get the number of elements in the domain and compute their bounding boxes
-  n = nelements(domain)
+  n = length(boxes)
 
-  # compute the bounding boxes of the elements, their corresponding centers, 
-  boxes = boundingbox.(domain)
+  # compute the centers of the bounding boxes
   centers = map(boxes) do box
     c = coords(center(box))
     names = propertynames(c)
