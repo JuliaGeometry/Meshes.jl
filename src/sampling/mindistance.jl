@@ -35,7 +35,8 @@ MinDistanceSampling(α::Len, ρ::Len, δ, distance) = MinDistanceSampling(promot
 
 MinDistanceSampling(α, ρ, δ, distance) = MinDistanceSampling(aslen(α), aslen(ρ), δ, distance)
 
-MinDistanceSampling(α::T; ρ=T(0.65), δ=100, distance=EuclideanDistance()) where {T} = MinDistanceSampling(α, ρ, δ, distance)
+MinDistanceSampling(α::T; ρ=T(0.65), δ=100, distance=EuclideanDistance()) where {T} =
+  MinDistanceSampling(α, ρ, δ, distance)
 
 sample(rng::AbstractRNG, d::Domain, method::MinDistanceSampling) = _sample(rng, d, method)
 
