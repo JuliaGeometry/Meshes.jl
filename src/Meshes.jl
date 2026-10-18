@@ -394,6 +394,7 @@ export
   # distances
   GeometricDistance,
   EuclideanDistance,
+  MahalanobisDistance,
   GeodesicDistance,
 
   # indices

@@ -50,6 +50,21 @@
   @test d(seg1, seg7) ≈ T(1) * u"m"
   @test d(seg1, seg8) ≈ T(√8) * u"m"
 
+  # Mahalanobis distance is a generalization of the Euclidean distance
+  d = MahalanobisDistance((T(1), T(1)))
+  @test d(cart(0, 0), cart(1, 1)) == EuclideanDistance()(cart(0, 0), cart(1, 1))
+  @test d(cart(1, 0), cart(0, 1)) == EuclideanDistance()(cart(1, 0), cart(0, 1))
+  d = MahalanobisDistance((T(1), T(2)))
+  @test d(cart(1, 0), cart(0, 1)) != EuclideanDistance()(cart(1, 0), cart(0, 1))
+  @test d(cart(0, 0), cart(1, 0)) == EuclideanDistance()(cart(0, 0), cart(1, 0))
+  @test d(cart(0, 1), cart(1, 0)) != EuclideanDistance()(cart(0, 1), cart(1, 0))
+  @test d(cart(0, 0), cart(1, 1)) != EuclideanDistance()(cart(0, 0), cart(1, 1))
+  d = MahalanobisDistance((T(1), T(2)), Angle2d(π/4))
+  @test d(cart(1, 0), cart(0, 1)) != EuclideanDistance()(cart(1, 0), cart(0, 1))
+  @test d(cart(0, 0), cart(1, 0)) != EuclideanDistance()(cart(0, 0), cart(1, 0))
+  @test d(cart(0, 1), cart(1, 0)) != EuclideanDistance()(cart(0, 1), cart(1, 0))
+  @test d(cart(0, 0), cart(1, -1)) != EuclideanDistance()(cart(0, 0), cart(1, -1))
+
   # the geodesic of Euclidean space is the straight line
   d = GeodesicDistance()
   @test d(cart(0, 0), cart(3, 4)) == EuclideanDistance()(cart(0, 0), cart(3, 4))
