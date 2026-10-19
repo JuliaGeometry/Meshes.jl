@@ -33,16 +33,13 @@ struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
   radii::NTuple{Dim,ℒ}
   rotation::R
   metric::M
+  function MetricBall(radii::NTuple{Dim,ℒ}, rotation::R, metric::M) where {Dim,ℒ,R,M}
+    r = promote(map(float ∘ aslen, radii)...)
+    new{Dim,eltype(r),R,M}(r, rotation, metric)
+  end
 end
 
-function MetricBall(radii, rotation, metric)
-  r = promote(map(float ∘ aslen, radii)...)
-  R = rotation
-  m = metric
-  MetricBall{length(r),eltype(r),typeof(R),typeof(m)}(r, R, m)
-end
-
-MetricBall(radius::Number, metric=EuclideanDistance()) = MetricBall((aslen(radius),), I, metric)
+MetricBall(radius::Number, metric=EuclideanDistance()) = MetricBall((radius,), I, metric)
 
 MetricBall(radii::Tuple, rotation=I) = MetricBall(radii, rotation, MahalanobisDistance(radii, rotation))
 
