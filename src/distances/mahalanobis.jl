@@ -16,11 +16,9 @@ that are defined by a `rotation` specification from the package
 """
 struct MahalanobisDistance{M<:Symmetric} <: GeometricDistance
   matrix::M
-  function MahalanobisDistance(matrix::M) where {M}
-    assertion(issymmetric(matrix), "Mahalanobis matrix must be symmetric")
+  function MahalanobisDistance(matrix::M) where {M<:Symmetric}
     assertion(eigmin(matrix) ≥ 0, "Mahalanobis matrix must be positive semidefinite")
-    Q = Symmetric(matrix)
-    new{typeof(Q)}(Q)
+    new{M}(matrix)
   end
 end
 
@@ -30,7 +28,7 @@ function MahalanobisDistance(radii::Tuple, rotation=I)
   W = Diagonal(w)
   R = rotation
   Q = R * W * transpose(R)
-  MahalanobisDistance(Q)
+  MahalanobisDistance(Symmetric(Q))
 end
 
 function (d::MahalanobisDistance)(p₁::Point, p₂::Point)
