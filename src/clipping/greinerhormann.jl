@@ -454,11 +454,26 @@ function _ghpolygons(rs)
   isempty(outers) && return nothing
 
   polys = map(outers) do outer
-    holes = [inner for inner in inners if all(v -> sideof(v, outer) == IN, [first(eachvertex(inner))])]
+    holes = [inner for inner in inners if _ghnested(inner, outer)]
     Pgon([outer; holes])
   end
 
   maybemulti(polys)
+end
+
+# whether the inner ring is nested within the outer ring
+function _ghnested(inner, outer)
+  for v in eachvertex(inner)
+    side = sideof(v, outer)
+    side == ON || return side == IN
+  end
+  # all vertices lie on the outer ring, use the midpoints of the edges
+  vs = vertices(inner)
+  for i in eachindex(vs)
+    side = sideof(_ghmidpoint(vs[i], vs[i + 1]), outer)
+    side == ON || return side == IN
+  end
+  false
 end
 
 function _ghsimplify(points)
