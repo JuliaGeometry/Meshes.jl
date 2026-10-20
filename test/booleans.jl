@@ -1476,9 +1476,10 @@ end
   @test sum(p -> length(rings(p)), parent(d)) == 4
 
   # difference preserves a hole whose vertices lie on the outer ring
-  p1 = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(0, 5), (5, 0), (10, 5)])])
+  p1 = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(0, 5), (10, 5), (5, 0)])])
   p2 = Pgon(cart.([(50, 50), (52, 50), (52, 52), (50, 52)]))
   d = setdiff(p1, p2)
+  @test p1 == d
   @test measure(d) ≈ T(75) * u"m^2"
   @test length(rings(d)) == 2
 
