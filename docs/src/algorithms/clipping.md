@@ -1,5 +1,8 @@
 # Clipping
 
+Clipping algorithms are used to implement `∪`, `∩` and `setdiff`
+for `Polygon` and `MultiPolygon`.
+
 ```@example clipping
 using Meshes # hide
 import CairoMakie as Mke # hide
