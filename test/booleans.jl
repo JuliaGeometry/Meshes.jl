@@ -1468,6 +1468,20 @@ end
   @test measure(d) ≈ T(12) * u"m^2"
   @test length(rings(d)) == 2
 
+  # difference preserves the holes of the input polygon
+  p1 = Pgon([cart.([(8, 0), (4, 8), (2, 8), (-2, 0), (0, 0), (1, 2), (5, 2), (6, 0)]), cart.([(4, 4), (2, 4), (3, 6)])])
+  p2 = Pgon(cart.([(0, 1), (6, 1), (6, 7), (4, 7), (4, 3), (2, 3), (2, 7), (0, 7)]))
+  d = setdiff(p1, p2)
+  @test measure(d) ≈ T(17) * u"m^2"
+  @test sum(p -> length(rings(p)), parent(d)) == 4
+
+  # difference preserves a hole whose vertices lie on the outer ring
+  p1 = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(0, 5), (5, 0), (10, 5)])])
+  p2 = Pgon(cart.([(50, 50), (52, 50), (52, 52), (50, 52)]))
+  d = setdiff(p1, p2)
+  @test measure(d) ≈ T(75) * u"m^2"
+  @test length(rings(d)) == 2
+
   # disjoint polygons
   q1 = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   q2 = Quadrangle(cart(10, 10), cart(11, 10), cart(11, 11), cart(10, 11))
