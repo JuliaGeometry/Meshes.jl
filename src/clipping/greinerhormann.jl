@@ -49,7 +49,7 @@ function clip(subject, other, method::GreinerHormannClipping)
 
   # tracing phase
   crings = _ghtrace(slist, olist)
-  append!(crings, _ghinner(slist, orings, inside=(op == :∩), common=(op == :∩)))
+  append!(crings, _ghinner(slist, orings, inside=(op == :∩), common=true))
   append!(crings, _ghinner(olist, srings, inside=(op ≠ :∪), common=false))
 
   isempty(crings) ? nothing : _ghpolygons(crings)
@@ -426,15 +426,24 @@ function _ghinner(list, rings; inside, common)
   for range in list.comps
     any(i -> list.verts[i].crossing, range) && continue
     start = _ghstart(list, range, rings)
-    if isnothing(start)
-      # the component encloses the same region as a component of the other polygon
-      common && push!(inner, [list.verts[i].point for i in range])
+    keep = if isnothing(start)
+      # the component lies on a ring of the other polygon, and the two bound the
+      # same region only when they wind the same way
+      common && _ghsamewinding(list, range, rings)
     else
       _, isin = start
-      isin == inside && push!(inner, [list.verts[i].point for i in range])
+      isin == inside
     end
+    keep && push!(inner, [list.verts[i].point for i in range])
   end
   inner
+end
+
+# whether the component winds the same way as the ring it lies on
+function _ghsamewinding(list, range, rings)
+  points = [list.verts[i].point for i in range]
+  i = findfirst(r -> all(p -> sideof(p, r) == ON, points), rings)
+  !isnothing(i) && orientation(Ring(points)) == orientation(rings[i])
 end
 
 # ----------------

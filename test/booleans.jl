@@ -1496,6 +1496,17 @@ end
   q = Quadrangle(cart(0, 0), cart(4, 0), cart(4, 4), cart(0, 4))
   @test isnothing(setdiff(q, q))
 
+  # rings that coincide with a ring of the other polygon
+  q = Pgon(cart.([(0, 0), (4, 0), (4, 4), (0, 4)]))
+  @test q ∪ q == q
+  @test q ∩ q == q
+  poly = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(2, 2), (2, 8), (8, 8), (8, 2)])])
+  outer = Pgon(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]))
+  hole = Pgon(cart.([(2, 2), (8, 2), (8, 8), (2, 8)]))
+  @test setdiff(poly, hole) == poly
+  @test poly ∪ outer == outer
+  @test poly ∩ outer == poly
+
   # CRS propagation
   q1 = Quadrangle(merc(0, 0), merc(4, 0), merc(4, 4), merc(0, 4))
   q2 = Quadrangle(merc(2, 2), merc(6, 2), merc(6, 6), merc(2, 6))
