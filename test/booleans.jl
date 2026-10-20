@@ -1500,13 +1500,12 @@ end
   q = Pgon(cart.([(0, 0), (4, 0), (4, 4), (0, 4)]))
   @test q ∪ q == q
   @test q ∩ q == q
-
-  p1 = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(2, 2), (2, 8), (8, 8), (8, 2)])])
+  poly = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(2, 2), (2, 8), (8, 8), (8, 2)])])
   outer = Pgon(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]))
   hole = Pgon(cart.([(2, 2), (8, 2), (8, 8), (2, 8)]))
-  @test setdiff(p1, hole) == p1
-  @test p1 ∪ outer == outer
-  @test p1 ∩ outer == p1
+  @test setdiff(poly, hole) == poly
+  @test poly ∪ outer == outer
+  @test poly ∩ outer == poly
 
   # CRS propagation
   q1 = Quadrangle(merc(0, 0), merc(4, 0), merc(4, 4), merc(0, 4))
