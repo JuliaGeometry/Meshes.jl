@@ -102,6 +102,7 @@ include("transforms/shadow.jl")
 include("transforms/slice.jl")
 include("transforms/repair.jl")
 include("transforms/bridge.jl")
+include("transforms/dilate.jl")
 include("transforms/smoothing.jl")
 
 # --------------
