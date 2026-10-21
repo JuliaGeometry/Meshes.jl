@@ -618,7 +618,7 @@ end
   # parametrization with datum
   b = Ball(merc(0, 0), T(1))
   p = b(T(0), T(0))
-  @test datum(p) == WGS84Latest
+  @test datum(crs(p)) == WGS84Latest
   @test p ≈ merc(0, 0)
 
   b = Ball(cart(7, 7), T(1.5))
