@@ -33,9 +33,9 @@ struct MetricBall{Dim,ℒ<:Len,R,M} <: Neighborhood
   radii::NTuple{Dim,ℒ}
   rotation::R
   metric::M
-  function MetricBall(radii::NTuple{Dim,ℒ}, rotation::R, metric::M) where {Dim,ℒ,R,M}
+  function MetricBall(radii::Tuple, rotation::R, metric::M) where {R,M}
     r = promote(map(float ∘ aslen, radii)...)
-    new{Dim,eltype(r),R,M}(r, rotation, metric)
+    new{length(r),eltype(r),R,M}(r, rotation, metric)
   end
 end
 
