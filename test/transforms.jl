@@ -2604,6 +2604,16 @@ end
   d = m |> Dilate(T(1.0))
   @test area(d) ≈ T(2π) * u"m^2" atol=1e-1u"m^2"
 
+  # Domain
+  g = GeometrySet([cart(0, 0), cart(3, 3)])
+  d = g |> Dilate(T(1.0))
+  @test area(d) ≈ T(2π) * u"m^2" atol=1e-1u"m^2"
+
+  # vector of geometries
+  g = [cart(0, 0), cart(3, 3)]
+  d = g |> Dilate(T(1.0))
+  @test sum(area, d) ≈ T(2π) * u"m^2" atol=1e-1u"m^2"
+
   # invalid dilation radius
   @test_throws ArgumentError Dilate(T(0.0))
   @test_throws ArgumentError Dilate(T(-1.0))

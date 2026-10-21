@@ -59,3 +59,5 @@ function apply(transform::Dilate, multi::Multi)
   polys = mapreduce(transform, ∪, parent(multi))
   polys, nothing
 end
+
+apply(transform::Dilate, dom::Domain) = GeometrySet([transform(g) for g in dom]), nothing
