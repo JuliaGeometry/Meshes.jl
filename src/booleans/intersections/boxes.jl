@@ -74,3 +74,7 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
     return @IT Touching geom f
   end
 end
+
+intersection(f, box::Box, ball::Ball) = _polygonintersect(f, box, ball)
+
+intersection(f, box::Box, poly::Polygon) = _polygonintersect(f, box, poly)
