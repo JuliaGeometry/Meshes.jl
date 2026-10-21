@@ -75,6 +75,6 @@ function intersection(f, box₁::Box{🌐}, box₂::Box{🌐})
   end
 end
 
-intersection(f, box::Box, ball::Ball) = _polygonintersect(f, box, ball)
+intersection(f, box::Box, ball::Ball) = intersection(f, aspoly(box), aspoly(ball))
 
-intersection(f, box::Box, poly::Polygon) = _polygonintersect(f, box, poly)
+intersection(f, box::Box, poly::Polygon) = intersection(f, aspoly(box), poly)

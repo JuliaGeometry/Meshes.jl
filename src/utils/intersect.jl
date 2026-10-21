@@ -142,7 +142,12 @@ function _digits(segments)
   round(Int, 0.8 * (-log10(τ))) # 0.8 is a heuristic to avoid numerical issues
 end
 
-# compute the intersection of two longitude intervals, taking into account the antimeridian
+"""
+    lonintersects(minlon₁, maxlon₁, minlon₂, maxlon₂)
+
+Check if two longitude intervals intersect, taking into account the antimeridian,
+and return the intersecting longitude intervals.
+"""
 function lonintersects(minlon₁::T, maxlon₁::T, minlon₂::T, maxlon₂::T) where {T}
   # -180° and 180° represent the same meridian
   πdeg = T(180u"°")
