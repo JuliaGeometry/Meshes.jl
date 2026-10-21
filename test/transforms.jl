@@ -2572,6 +2572,16 @@ end
   d = p |> Dilate(2.0)
   @test area(d) ≈ T(4π) * u"m^2" atol=1e-1u"m^2"
 
+  # Box
+  b = Box(cart(0, 0), cart(1, 1))
+  d = b |> Dilate(0.1)
+  @test area(d) ≈ T(1.4313333083910764) * u"m^2"
+
+  # Ball
+  b = Ball(cart(0, 0), 1.0)
+  d = b |> Dilate(1.0)
+  @test area(d) ≈ T(4π) * u"m^2" atol=1e-1u"m^2"
+
   # Chain
   s = Segment(cart(0, 0), cart(1, 0))
   d = s |> Dilate(0.1)

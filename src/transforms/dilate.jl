@@ -27,6 +27,14 @@ function apply(transform::Dilate, point::Point)
   aspoly(b), nothing
 end
 
+apply(transform::Dilate, box::Box) = apply(transform, aspoly(box))
+
+function apply(transform::Dilate, ball::Ball)
+  δ = transform.δ
+  b = Ball(center(ball), radius(ball) + δ)
+  aspoly(b), nothing
+end
+
 function apply(transform::Dilate, chain::Chain{𝔼{2}})
   δ = transform.δ
   balls = mapreduce(∪, vertices(chain)) do p
