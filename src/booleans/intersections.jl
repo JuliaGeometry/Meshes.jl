@@ -159,12 +159,3 @@ function _williamsinit(line::Line)
   tmax = typemax(T)
   tmin, tmax
 end
-
-# intersection via polygonal approximation
-function _polygonintersect(f, geom₁, geom₂)
-  mesh₁ = discretize(boundary(geom₁))
-  mesh₂ = discretize(boundary(geom₂))
-  poly₁ = Pgon(vertices(mesh₁))
-  poly₂ = Pgon(vertices(mesh₂))
-  intersection(f, poly₁, poly₂)
-end

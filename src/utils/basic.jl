@@ -196,3 +196,13 @@ See [`maybemulti`](@ref) for turning this vector into a single geometry.
 """
 flatten(g::Multi) = mapreduce(flatten, vcat, parent(g))
 flatten(g::Geometry) = [g]
+
+"""
+    aspoly(g)
+
+Approximate the given geometry `g` as a polygon.
+"""
+aspoly(b::Box{𝔼{2}}) = convert(Quadrangle, b)
+aspoly(b::Box{🌐}) = convert(Quadrangle, b)
+aspoly(b::Ball{𝔼{2}}) = Pgon(vertices(discretize(boundary(b))))
+aspoly(b::Ball{🌐}) = Pgon(vertices(discretize(boundary(b))))

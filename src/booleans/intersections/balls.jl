@@ -2,6 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root.
 # ------------------------------------------------------------------
 
-intersection(f, ball₁::Ball, ball₂::Ball) = _polygonintersect(f, ball₁, ball₂)
+intersection(f, ball₁::Ball, ball₂::Ball) = intersection(f, aspoly(ball₁), aspoly(ball₂))
 
-intersection(f, ball::Ball, poly::Polygon) = _polygonintersect(f, ball, poly)
+intersection(f, ball::Ball, poly::Polygon) = intersection(f, aspoly(ball), poly)
