@@ -14,7 +14,8 @@ getunion(ball₁::Ball, ball₂::Ball) = _polygonunion(ball₁, ball₂)
 
 getunion(ball::Ball, poly::Polygon) = _polygonunion(ball, poly)
 
-getunion(poly₁::Union{Polygon,MultiPolygon}, poly₂::Union{Polygon,MultiPolygon}) = clip(poly₁, poly₂, GreinerHormannClipping(:∪))
+getunion(poly₁::Union{Polygon,MultiPolygon}, poly₂::Union{Polygon,MultiPolygon}) =
+  clip(poly₁, poly₂, GreinerHormannClipping(:∪))
 
 # -----------------
 # HELPER FUNCTIONS
