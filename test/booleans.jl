@@ -1113,12 +1113,16 @@ end
   @test intersection(box, ball) |> type == Intersecting
   @test box ∩ ball == ball ∩ box
   @test area(box ∩ ball) ≈ T(π / 4) * u"m^2" atol=1e-2u"m^2"
+  @test box ∪ ball == ball ∪ box
+  @test area(box ∪ ball) ≈ area(box) + area(ball) - area(box ∩ ball) atol=1e-2u"m^2"
 
   # Box-Polygon
   box = Box(cart(0, 0), cart(1, 1))
   poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test intersection(box, poly) |> type == Intersecting
   @test box ∩ poly == poly ∩ box == poly
+  @test box ∪ poly == poly ∪ box == poly
+  @test area(box ∪ poly) ≈ area(poly)
 end
 
 @testitem "Ball booleans" setup = [Setup] begin
@@ -1128,12 +1132,14 @@ end
   @test_broken intersection(b2, b2) |> type == Intersecting
   @test intersection(b1, b2) |> type == Intersecting
   @test area(b1 ∩ b2) ≈ T(0.5666656645309782) * u"m^2"
+  @test area(b1 ∪ b2) ≈ area(b1) + area(b2) - area(b1 ∩ b2) atol=1e-1u"m^2"
 
   # Ball-Polygon
   ball = Ball(cart(0, 0), T(1))
   poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
   @test intersection(ball, poly) |> type == Intersecting
   @test area(ball ∩ poly) ≈ T(π / 4) * u"m^2" atol=1e-2u"m^2"
+  @test area(ball ∪ poly) ≈ area(ball) + area(poly) - area(ball ∩ poly) atol=1e-2u"m^2"
 end
 
 @testitem "Triangle booleans" setup = [Setup] begin
