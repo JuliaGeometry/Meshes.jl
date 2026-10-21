@@ -554,19 +554,14 @@ end
   r₃ = Ray(cart(-1, -1.25), vector(-1, -1.25)) # overlapping ray
   r₄ = Ray(cart(1, 3), vector(1, 1.25)) # parallel ray
   r₅ = Ray(cart(1, 1), vector(1, -1)) # no Intersection
-
   @test l₁ ∩ r₁ ≈ r₁ ∩ l₁ ≈ cart(3.0769230769230766, 3.846153846153846) # CASE 1
   @test intersection(l₁, r₁) |> type === Crossing
-
   @test l₁ ∩ r₂ == r₂ ∩ l₁ == r₂(0) # CASE 2
   @test intersection(l₁, r₂) |> type === Touching
-
   @test l₁ ∩ r₃ == r₃ ∩ l₁ == r₃ # CASE 3
   @test intersection(l₁, r₃) |> type === Overlapping
-
   @test l₁ ∩ r₄ == r₄ ∩ l₁ === nothing # CASE 4 parallel
   @test intersection(l₁, r₄) |> type === NotIntersecting
-
   @test l₁ ∩ r₅ == r₅ ∩ l₁ === nothing # CASE 4 no intersection
   @test intersection(l₁, r₅) |> type === NotIntersecting
 
@@ -574,7 +569,6 @@ end
   @inferred someornone(l₁, r₁)
   @inferred someornone(l₁, r₅)
 
-  # 3D tests
   # lines and rays in 3D
   l₁ = Line(cart(0, 0, 0.1), cart(4, 5, 0.1))
   r₁ = Ray(cart(3, 4, 0.1), vector(1, -2, 0)) # crossing ray
@@ -583,24 +577,44 @@ end
   r₄ = Ray(cart(1, 3, 0.1), vector(1, 1.25, 0)) # parallel ray
   r₅ = Ray(cart(1, 1, 0.1), vector(1, -1, 0)) # no Intersection
   r₆ = Ray(cart(3, 4, 0), vector(1, -2, 1)) # crossing ray
-
   @test l₁ ∩ r₁ ≈ r₁ ∩ l₁ ≈ cart(3.0769230769230766, 3.846153846153846, 0.1) # CASE 1
   @test intersection(l₁, r₁) |> type === Crossing
-
   @test l₁ ∩ r₂ == r₂ ∩ l₁ == r₂(0) # CASE 2
   @test intersection(l₁, r₂) |> type === Touching
-
   @test l₁ ∩ r₃ == r₃ ∩ l₁ == r₃ # CASE 3
   @test intersection(l₁, r₃) |> type === Overlapping
-
   @test l₁ ∩ r₄ == r₄ ∩ l₁ === nothing # CASE 4 parallel
   @test intersection(l₁, r₄) |> type === NotIntersecting
-
   @test l₁ ∩ r₅ == r₅ ∩ l₁ === nothing # CASE 4 no intersection
   @test intersection(l₁, r₅) |> type === NotIntersecting
-
   @test l₁ ∩ r₆ == r₆ ∩ l₁ === nothing # CASE 4 no intersection
   @test intersection(l₁, r₆) |> type === NotIntersecting
+
+  # Ray-Box intersection
+  r = Ray(cart(0, 0, 0), vector(1, 1, 1))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  @test intersection(r, b) |> type == Crossing
+  @test r ∩ b == Segment(cart(0, 0, 0), cart(1, 1, 1))
+
+  r = Ray(cart(-0.5, 0, 0), vector(1.0, 1.0, 1.0))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  @test intersection(r, b) |> type == Crossing
+  @test r ∩ b == Segment(cart(0.0, 0.5, 0.5), cart(0.5, 1.0, 1.0))
+
+  r = Ray(cart(3.0, 0.0, 0.5), vector(-1.0, 1.0, 0.0))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  @test intersection(r, b) |> type == NotIntersecting
+
+  r = Ray(cart(2.0, 0.0, 0.5), vector(-1.0, 1.0, 0.0))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  @test intersection(r, b) |> type == Touching
+  @test r ∩ b == cart(1.0, 1.0, 0.5)
+
+  # the ray on a face of the box, got NaN in calculation
+  r = Ray(cart(1.5, 0.0, 0.0), vector(-1.0, 1.0, 0.0))
+  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  @test intersection(r, b) |> type == Crossing
+  @test r ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
 end
 
 @testitem "Line booleans" setup = [Setup] begin
@@ -1093,28 +1107,33 @@ end
   @test intersection(b1, b2) |> type == Overlapping
   @test b1 ∩ b2 == b2 ∩ b1 == Multi([Box(latlon(-5, -150), latlon(5, -30)), Box(latlon(-5, 30), latlon(5, 150))])
 
-  # Ray-Box intersection
-  b = Box(cart(0, 0, 0), cart(1, 1, 1))
+  # Box-Ball
+  box = Box(cart(0, 0), cart(1, 1))
+  ball = Ball(cart(1, 1), T(1))
+  @test intersection(box, ball) |> type == Intersecting
+  @test box ∩ ball == ball ∩ box
+  @test area(box ∩ ball) ≈ T(π / 4) * u"m^2" atol=1e-2u"m^2"
 
-  r = Ray(cart(0, 0, 0), vector(1, 1, 1))
-  @test intersection(r, b) |> type == Crossing
-  @test r ∩ b == Segment(cart(0, 0, 0), cart(1, 1, 1))
+  # Box-Polygon
+  box = Box(cart(0, 0), cart(1, 1))
+  poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test intersection(box, poly) |> type == Intersecting
+  @test box ∩ poly == poly ∩ box == poly
+end
 
-  r = Ray(cart(-0.5, 0, 0), vector(1.0, 1.0, 1.0))
-  @test intersection(r, b) |> type == Crossing
-  @test r ∩ b == Segment(cart(0.0, 0.5, 0.5), cart(0.5, 1.0, 1.0))
+@testitem "Ball booleans" setup = [Setup] begin
+  b1 = Ball(cart(0, 0), T(1))
+  b2 = Ball(cart(1, 1), T(1))
+  @test_broken intersection(b1, b1) |> type == Intersecting
+  @test_broken intersection(b2, b2) |> type == Intersecting
+  @test intersection(b1, b2) |> type == Intersecting
+  @test area(b1 ∩ b2) ≈ T(0.5666656645309782) * u"m^2"
 
-  r = Ray(cart(3.0, 0.0, 0.5), vector(-1.0, 1.0, 0.0))
-  @test intersection(r, b) |> type == NotIntersecting
-
-  r = Ray(cart(2.0, 0.0, 0.5), vector(-1.0, 1.0, 0.0))
-  @test intersection(r, b) |> type == Touching
-  @test r ∩ b == cart(1.0, 1.0, 0.5)
-
-  # the ray on a face of the box, got NaN in calculation
-  r = Ray(cart(1.5, 0.0, 0.0), vector(-1.0, 1.0, 0.0))
-  @test intersection(r, b) |> type == Crossing
-  @test r ∩ b == Segment(cart(1.0, 0.5, 0.0), cart(0.5, 1.0, 0.0))
+  # Ball-Polygon
+  ball = Ball(cart(0, 0), T(1))
+  poly = Pgon(cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1))
+  @test intersection(ball, poly) |> type == Intersecting
+  @test area(ball ∩ poly) ≈ T(π / 4) * u"m^2" atol=1e-2u"m^2"
 end
 
 @testitem "Triangle booleans" setup = [Setup] begin

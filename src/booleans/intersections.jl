@@ -105,6 +105,7 @@ include("intersections/lines.jl")
 include("intersections/chains.jl")
 include("intersections/planes.jl")
 include("intersections/boxes.jl")
+include("intersections/balls.jl")
 include("intersections/polygons.jl")
 include("intersections/multis.jl")
 include("intersections/domains.jl")
@@ -157,4 +158,13 @@ function _williamsinit(line::Line)
   tmin = typemin(T)
   tmax = typemax(T)
   tmin, tmax
+end
+
+# intersection via polygonal approximation
+function _polygonintersect(f, geom₁, geom₂)
+  mesh₁ = discretize(boundary(geom₁))
+  mesh₂ = discretize(boundary(geom₂))
+  poly₁ = Pgon(vertices(mesh₁))
+  poly₂ = Pgon(vertices(mesh₂))
+  intersection(f, poly₁, poly₂)
 end
