@@ -40,8 +40,9 @@ function (b::Ball{𝔼{1}})(ρ)
   ℒ = lentype(b)
   T = promote_type(numtype(ℒ), typeof(ρ))
   C = basecrs(b)
+  D = datum(C)
   ρ′ = T(2ρ - 1) * radius(b)
-  p = Point(convert(C, Cartesian(ρ′)))
+  p = Point(convert(C, Cartesian{D}(ρ′)))
   p + to(center(b))
 end
 
@@ -49,9 +50,10 @@ function (b::Ball{𝔼{2}})(ρ, φ)
   ℒ = lentype(b)
   T = promote_type(numtype(ℒ), typeof(ρ), typeof(φ))
   C = basecrs(b)
+  D = datum(C)
   ρ′ = T(ρ) * radius(b)
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p = Point(convert(C, Polar(ρ′, φ′)))
+  p = Point(convert(C, Polar{D}(ρ′, φ′)))
   p + to(center(b))
 end
 
@@ -59,9 +61,10 @@ function (b::Ball{𝔼{3}})(ρ, θ, φ)
   ℒ = lentype(b)
   T = promote_type(numtype(ℒ), typeof(ρ), typeof(θ), typeof(φ))
   C = basecrs(b)
+  D = datum(C)
   ρ′ = T(ρ) * radius(b)
   θ′ = T(θ) * T(π) * u"rad"
   φ′ = T(φ) * 2 * T(π) * u"rad"
-  p = Point(convert(C, Spherical(ρ′, θ′, φ′)))
+  p = Point(convert(C, Spherical{D}(ρ′, θ′, φ′)))
   p + to(center(b))
 end

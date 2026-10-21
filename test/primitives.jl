@@ -615,6 +615,12 @@ end
   @test Meshes.lentype(b(0, 0, 0)) == ℳ
   @test Meshes.lentype(b(T(0), T(0), T(0))) == ℳ
 
+  # parametrization with datum
+  b = Ball(merc(0, 0), T(1))
+  p = b(T(0), T(0))
+  @test datum(p) == WGS84Latest
+  @test p ≈ merc(0, 0)
+
   b = Ball(cart(7, 7), T(1.5))
   ps = b.(1, rand(T, 100))
   all(∈(b), ps)
