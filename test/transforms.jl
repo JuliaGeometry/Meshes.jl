@@ -2564,6 +2564,41 @@ end
   @test nvertices(bpoly) == 16
 end
 
+@testitem "Dilate" setup = [Setup] begin
+  # Point
+  p = cart(0, 0)
+  d = p |> Dilate(1.0)
+  @test area(d) ≈ T(π) * u"m^2" atol=1e-2u"m^2"
+  d = p |> Dilate(2.0)
+  @test area(d) ≈ T(4π) * u"m^2" atol=1e-1u"m^2"
+
+  # Chain
+  s = Segment(cart(0, 0), cart(1, 0))
+  d = s |> Dilate(0.1)
+  @test area(d) ≈ T(0.2313333083910761) * u"m^2"
+  r = Rope(cart.([(0, 0), (1, 0), (1, 1)]))
+  d = r |> Dilate(0.1)
+  @test area(d) ≈ T(0.42916663548884515) * u"m^2"
+  r = Ring(cart.([(0, 0), (1, 0), (1, 1)]))
+  d = r |> Dilate(0.1)
+  area(d)
+  @test area(d) ≈ T(0.6558917496182337) * u"m^2"
+
+  # Polygon
+  p = Pgon([cart(0, 0), cart(1, 0), cart(1, 1), cart(0, 1)])
+  d = p |> Dilate(0.1)
+  @test area(d) ≈ T(1.4313333083910764) * u"m^2"
+
+  # Multi
+  m = Multi([cart(0, 0), cart(3, 3)])
+  d = m |> Dilate(1.0)
+  @test area(d) ≈ T(2π) * u"m^2" atol=1e-1u"m^2"
+
+  # invalid dilation radius
+  @test_throws ArgumentError Dilate(T(0.0))
+  @test_throws ArgumentError Dilate(T(-1.0))
+end
+
 @testitem "Smoothing" setup = [Setup] begin
   @test !isaffine(LambdaMuSmoothing)
   n, λ, μ = 30, T(0.5), T(0)

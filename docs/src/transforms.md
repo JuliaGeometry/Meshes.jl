@@ -277,6 +277,25 @@ viz(fig[1,2], bpoly)
 fig
 ```
 
+## Dilate
+
+```@docs
+Dilate
+```
+
+```@example transforms
+# rope with zig-zag pattern
+rope = Rope((0, 0), (1, 1), (2, 0), (3, 1))
+
+# dilation with radius 0.1
+drope = rope |> Dilate(0.1)
+
+fig = Mke.Figure(size = (800, 400))
+viz(fig[1,1], rope)
+viz(fig[1,2], drope)
+fig
+```
+
 ## Smoothing
 
 ```@docs

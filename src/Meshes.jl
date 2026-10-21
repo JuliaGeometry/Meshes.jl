@@ -633,6 +633,7 @@ export
   Slice,
   Repair,
   Bridge,
+  Dilate,
   LambdaMuSmoothing,
   LaplaceSmoothing,
   TaubinSmoothing,
