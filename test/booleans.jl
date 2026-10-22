@@ -1566,8 +1566,9 @@ end
   # a hole belongs to the innermost outer ring that contains it
   p1 = Pgon([cart.([(0, 0), (12, 0), (12, 12), (0, 12)]), cart.([(2, 2), (2, 10), (10, 10), (10, 2)])])
   p2 = Pgon([cart.([(4, 4), (8, 4), (8, 8), (4, 8)]), cart.([(5, 5), (5, 7), (7, 7), (7, 5)])])
+  p3 = Pgon(cart.([(50, 50), (52, 50), (52, 52), (50, 52)]))
   m = Multi([p1, p2])
-  @test setdiff(m, Pgon(cart.([(50, 50), (52, 50), (52, 52), (50, 52)]))) == m
+  @test setdiff(m, p3) == m
 end
 
 @testitem "Domain booleans" setup = [Setup] begin
