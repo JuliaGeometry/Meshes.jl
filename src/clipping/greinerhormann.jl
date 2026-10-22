@@ -462,12 +462,26 @@ function _ghpolygons(rs)
 
   isempty(outers) && return nothing
 
-  polys = map(outers) do outer
-    holes = [inner for inner in inners if _ghnested(inner, outer)]
-    Pgon([outer; holes])
+  # a hole belongs to the innermost outer ring that contains it, otherwise every
+  # outer ring that contains it would remove it in turn
+  owner = map(inner -> _ghowner(inner, outers), inners)
+
+  polys = map(eachindex(outers)) do i
+    Pgon([outers[i]; [inners[j] for j in eachindex(inners) if owner[j] == i]])
   end
 
   maybemulti(polys)
+end
+
+# index of the innermost outer ring containing the inner ring, or zero
+function _ghowner(inner, outers)
+  i = 0
+  for j in eachindex(outers)
+    _ghnested(inner, outers[j]) || continue
+    # the innermost of two nested rings is the one inside the other
+    (i == 0 || _ghnested(outers[j], outers[i])) && (i = j)
+  end
+  i
 end
 
 # whether the inner ring is nested within the outer ring
