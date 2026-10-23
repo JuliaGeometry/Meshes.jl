@@ -130,9 +130,10 @@ vector of indices.
 
 See also: [`search`](@ref).
 """
-function _foreachcandidate(f, geombox::Box, tree::BVHTree)
+function _foreachcandidate(f, geombox::Box, tree::BVHTree, stack)
   # initialize a stack with the root node index
-  stack = [1]
+  empty!(stack)
+  push!(stack, 1)
 
   # traverse the BVH using a stack-based approach to find all nodes whose bounding boxes intersect with the query bounding box
   while !isempty(stack)

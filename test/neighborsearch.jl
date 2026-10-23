@@ -189,7 +189,7 @@ end
 
   # callback adapter preserves traversal order
   candidates = Int[]
-  Meshes._foreachcandidate(i -> push!(candidates, i), query, searcher)
+  Meshes._foreachcandidate(i -> push!(candidates, i), query, searcher, Int[])
   @test candidates == search(query, searcher)
 
   # invalid leaf size
@@ -251,9 +251,10 @@ end
   @test_throws ArgumentError Meshes.BVHTree(boxes, -1)
   for leafsize in (1, 2, 8, 64)
     tree = @inferred Meshes.BVHTree(boxes, leafsize)
+    stack = Int[]
     for query in (Box(cart(5.5, 0), cart(12.5, 1)), boundingbox(boxes), Box(cart(100, 0), cart(101, 1)))
       candidates = Int[]
-      Meshes._foreachcandidate(i -> push!(candidates, i), query, tree)
+      Meshes._foreachcandidate(i -> push!(candidates, i), query, tree, stack)
       @test sort(candidates) == findall(box -> intersects(box, query), boxes)
     end
   end
