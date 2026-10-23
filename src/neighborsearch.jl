@@ -97,6 +97,8 @@ end
 include("neighborsearch/ball.jl")
 include("neighborsearch/knearest.jl")
 include("neighborsearch/kball.jl")
+include("neighborsearch/bvh.jl")
+include("neighborsearch/bbox.jl")
 
 # -----------------
 # HELPER FUNCTIONS
