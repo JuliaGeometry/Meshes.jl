@@ -137,25 +137,24 @@ end
   # constructor paths with default and explicit leaf sizes
   geoms = [Triangle(cart(i, i), cart(i + 1, i), cart(i, i + 1)) for i in (0, 2, 4)]
   boxes = boundingbox.(geoms)
+  gset = GeometrySet(geoms)
+  bset = GeometrySet(boxes)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
-  for input in (boxes, GeometrySet(boxes), geoms, GeometrySet(geoms))
+  for input in (gset, bset, boxes, geoms)
     @test sort(search(query, BBoxSearch(input))) == [1, 2]
     @test sort(search(query, BBoxSearch(input, 1))) == [1, 2]
   end
 
   # searchers retain their original boxes when the caller changes its vector
+  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   for leafsize in (1, 8)
-    boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-    searchers = (BBoxSearch(boxes, leafsize), BBoxSearch(GeometrySet(boxes), leafsize))
-    boxes[1] = Box(cart(10, 10), cart(11, 11))
-    for searcher in searchers
-      @test sort(search(query, searcher)) == [1, 2]
-    end
-    reverse!(boxes)
-    push!(boxes, Box(cart(0, 0), cart(1, 1)))
-    for searcher in searchers
-      @test sort(search(query, searcher)) == [1, 2]
-    end
+    lboxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+    lsearcher = BBoxSearch(lboxes, leafsize)
+    lboxes[1] = Box(cart(10, 10), cart(11, 11))
+    @test sort(search(query, lsearcher)) == [1, 2]
+    reverse!(lboxes)
+    push!(lboxes, Box(cart(0, 0), cart(1, 1)))
+    @test sort(search(query, lsearcher)) == [1, 2]
   end
 
   # no candidates
@@ -169,13 +168,14 @@ end
   query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
   answer = findall(box -> intersects(box, query), boxes)
   for leafsize in (1, 2, 3, 8)
-    leafsearcher = BBoxSearch(boxes, leafsize)
-    @test sort(search(query, leafsearcher)) == answer
+    lsearcher = BBoxSearch(boxes, leafsize)
+    @test sort(search(query, lsearcher)) == answer
   end
 
   # leaf size greater than or equal to the number of elements
-  n = length(boxes)
-  for leafsize in (n, n + 1, 2n)
+  boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
+  nboxes = length(boxes)
+  for leafsize in (nboxes, nboxes + 1, 2nboxes)
     @test sort(search(boundingbox(boxes), BBoxSearch(boxes, leafsize))) == collect(eachindex(boxes))
   end
 
@@ -183,9 +183,9 @@ end
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   searcher = BBoxSearch(boxes)
   query = boundingbox(boxes)
-  mask = Bool[false, true, false]
-  @test search(query, searcher; mask=mask) == [2]
-  @test isempty(search(query, searcher; mask=falses(length(boxes))))
+  mask = [false, true, false]
+  @test search(query, searcher, mask=mask) == [2]
+  @test isempty(search(query, searcher, mask=falses(length(boxes))))
 
   # callback adapter preserves traversal order
   candidates = Int[]
@@ -209,17 +209,16 @@ end
     end for _ in 1:200
   ]
   for leafsize in (1, 2, 4, 8, 16)
-    randbvh = BBoxSearch(boxes, leafsize)
+    lsearcher = BBoxSearch(boxes, leafsize)
     for _ in 1:100
-      local query, answer, result
       xmin = rand(rng) * 100
       ymin = rand(rng) * 100
       width = rand(rng) * 20
       height = rand(rng) * 20
-      query = Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
-      answer = findall(box -> intersects(box, query), boxes)
-      result = sort(search(query, randbvh))
-      @test result == answer
+      rquery = Box(cart(xmin, ymin), cart(xmin + width, ymin + height))
+      ranswer = findall(box -> intersects(box, rquery), boxes)
+      rresult = sort(search(rquery, lsearcher))
+      @test rresult == ranswer
     end
   end
 
