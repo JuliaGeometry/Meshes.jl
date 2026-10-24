@@ -120,7 +120,7 @@ function _splitaxis(centers, perm, first, last)
 end
 
 """
-    _foreachcandidate(f, geombox, tree)
+    foreachcandidate(f, geombox, tree)
 
 Apply `f` to each original element index whose cached box in `tree` intersects `geombox`.
 
@@ -130,7 +130,7 @@ vector of indices.
 
 See also: [`search`](@ref).
 """
-function _foreachcandidate(f, geombox::Box, tree::BVHTree, stack)
+function foreachcandidate(f::F, geombox::Box, tree::BVHTree, stack) where {F}
   # initialize a stack with the root node index
   empty!(stack)
   push!(stack, 1)
@@ -146,7 +146,7 @@ function _foreachcandidate(f, geombox::Box, tree::BVHTree, stack)
 
     # if the current node is a leaf node, check each element in the range [first, last] to see if its bounding box intersects
     # with the geom bounding box; if so, add its index to the output vector
-    if _isleaf(node)
+    if isleaf(node)
       @inbounds for k in abs(node.left):node.right
         ind = tree.perm[k]
         intersects(tree.boxes[ind], geombox) || continue
@@ -159,4 +159,4 @@ function _foreachcandidate(f, geombox::Box, tree::BVHTree, stack)
   end
 end
 
-_isleaf(node::BVHNode) = node.left < 0
+isleaf(node::BVHNode) = node.left < 0

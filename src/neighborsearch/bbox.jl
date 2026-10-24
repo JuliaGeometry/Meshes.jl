@@ -25,20 +25,11 @@ function search(geom, method::BBoxSearch; mask=nothing)
   inds = Int[]
   stack = Int[]
 
-  _foreachcandidate(geom, method, stack) do ind
+  foreachcandidate(boundingbox(geom), method.tree, stack) do ind
     if isnothing(mask) || mask[ind]
       push!(inds, ind)
     end
   end
 
   inds
-end
-
-"""
-    _foreachcandidate(f, geom, method, stack)
-
-Apply `f` to each original candidate index for `geom` using the tree of `method`.
-"""
-function _foreachcandidate(f::F, geom, method::BBoxSearch, stack) where {F}
-  _foreachcandidate(f, boundingbox(geom), method.tree, stack)
 end

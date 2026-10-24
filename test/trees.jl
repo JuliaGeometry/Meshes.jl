@@ -6,7 +6,7 @@
     ltree = Meshes.BVHTree(boxes, leafsize)
     lroot = ltree.nodes[1]
     @test length(ltree.nodes) == 1
-    @test Meshes._isleaf(lroot)
+    @test Meshes.isleaf(lroot)
     @test lroot.left == -1
     @test lroot.right == nboxes
     @test sort(ltree.perm) == collect(1:nboxes)
@@ -22,7 +22,7 @@
     stack = Int[]
     for query in (Box(cart(5.5, 0), cart(12.5, 1)), boundingbox(boxes), Box(cart(100, 0), cart(101, 1)))
       candidates = Int[]
-      Meshes._foreachcandidate(i -> push!(candidates, i), query, ltree, stack)
+      Meshes.foreachcandidate(i -> push!(candidates, i), query, ltree, stack)
       @test sort(candidates) == findall(box -> intersects(box, query), boxes)
     end
   end
@@ -36,7 +36,7 @@
   # internal node invariants
   tree = Meshes.BVHTree(boxes, 1)
   for node in tree.nodes
-    if !Meshes._isleaf(node)
+    if !Meshes.isleaf(node)
       leftbox = tree.nodes[node.left].box
       rightbox = tree.nodes[node.right].box
       @test node.box ≈ Meshes._bboxes((leftbox, rightbox))
@@ -47,7 +47,7 @@
   # leaf invariants
   tree = Meshes.BVHTree(boxes, 2)
   for node in tree.nodes
-    if Meshes._isleaf(node)
+    if Meshes.isleaf(node)
       @test 1 ≤ abs(node.left) ≤ node.right ≤ length(tree.perm)
       @test node.right - abs(node.left) + 1 ≤ tree.leafsize
     end
@@ -56,7 +56,7 @@
   # leaf partition completeness
   leafinds = Int[]
   for node in tree.nodes
-    if Meshes._isleaf(node)
+    if Meshes.isleaf(node)
       append!(leafinds, tree.perm[abs(node.left):node.right])
     end
   end

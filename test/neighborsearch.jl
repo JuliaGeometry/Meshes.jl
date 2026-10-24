@@ -189,7 +189,7 @@ end
 
   # callback adapter preserves traversal order
   candidates = Int[]
-  Meshes._foreachcandidate(i -> push!(candidates, i), query, searcher, Int[])
+  Meshes.foreachcandidate(i -> push!(candidates, i), query, searcher.tree, Int[])
   @test candidates == search(query, searcher)
 
   # invalid leaf size
