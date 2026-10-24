@@ -55,7 +55,8 @@ dists
 ```
 
 Finally, the functions [`search!`](@ref) and [`searchdists!`](@ref)
-can be used with supported methods in hot loops to avoid unnecessary memory allocations.
+can be used with [`BoundedNeighborSearchMethod`](@ref) in hot loops
+to avoid unnecessary memory allocations.
 
 ## BallSearch
 
@@ -76,8 +77,6 @@ KBallSearch
 ```
 
 ## BBoxSearch
-
-`BBoxSearch` supports [`search`](@ref), which returns candidate indices whose bounding boxes intersect the query's bounding box. It does not implement [`search!`](@ref).
 
 ```@docs
 BBoxSearch
