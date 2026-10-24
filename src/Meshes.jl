@@ -98,6 +98,9 @@ include("sorting.jl")
 # domain traversal
 include("traversing.jl")
 
+# search trees
+include("trees.jl")
+
 # neighbor search
 include("neighborhoods.jl")
 include("neighborsearch.jl")
