@@ -1,15 +1,15 @@
 @testitem "BVHTree" setup = [Setup] begin
   # leaf size greater than or equal to the number of elements
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  n = length(boxes)
-  for leafsize in (n, n + 1, 2n)
-    tree = Meshes.BVHTree(boxes, leafsize)
-    root = tree.nodes[1]
-    @test length(tree.nodes) == 1
-    @test Meshes._isleaf(root)
-    @test root.left == -1
-    @test root.right == n
-    @test sort(tree.perm) == collect(1:n)
+  nboxes = length(boxes)
+  for leafsize in (nboxes, nboxes + 1, 2nboxes)
+    ltree = Meshes.BVHTree(boxes, leafsize)
+    lroot = ltree.nodes[1]
+    @test length(ltree.nodes) == 1
+    @test Meshes._isleaf(lroot)
+    @test lroot.left == -1
+    @test lroot.right == nboxes
+    @test sort(ltree.perm) == collect(1:nboxes)
   end
 
   # construction and traversal retain original element indices
@@ -18,16 +18,18 @@
   @test_throws ArgumentError Meshes.BVHTree(boxes, 0)
   @test_throws ArgumentError Meshes.BVHTree(boxes, -1)
   for leafsize in (1, 2, 8, 64)
-    tree = @inferred Meshes.BVHTree(boxes, leafsize)
+    ltree = @inferred Meshes.BVHTree(boxes, leafsize)
     stack = Int[]
     for query in (Box(cart(5.5, 0), cart(12.5, 1)), boundingbox(boxes), Box(cart(100, 0), cart(101, 1)))
       candidates = Int[]
-      Meshes._foreachcandidate(i -> push!(candidates, i), query, tree, stack)
+      Meshes._foreachcandidate(i -> push!(candidates, i), query, ltree, stack)
       @test sort(candidates) == findall(box -> intersects(box, query), boxes)
     end
   end
 
   # root bounding box
+  boxes = [Box(cart(i, 0), cart(i + 1, 1)) for i in 1:40]
+  reverse!(boxes)
   tree = Meshes.BVHTree(boxes)
   @test tree.nodes[1].box ≈ boundingbox(boxes)
 
