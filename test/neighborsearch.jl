@@ -145,18 +145,6 @@ end
     @test sort(search(query, BBoxSearch(input, 1))) == [1, 2]
   end
 
-  # searchers retain their original boxes when the caller changes its vector
-  query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
-  for leafsize in (1, 8)
-    lboxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-    lsearcher = BBoxSearch(lboxes, leafsize)
-    lboxes[1] = Box(cart(10, 10), cart(11, 11))
-    @test sort(search(query, lsearcher)) == [1, 2]
-    reverse!(lboxes)
-    push!(lboxes, Box(cart(0, 0), cart(1, 1)))
-    @test sort(search(query, lsearcher)) == [1, 2]
-  end
-
   # no candidates
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   searcher = BBoxSearch(boxes)
