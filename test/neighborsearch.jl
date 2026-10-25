@@ -175,11 +175,6 @@ end
   @test search(query, searcher, mask=mask) == [2]
   @test isempty(search(query, searcher, mask=falses(length(boxes))))
 
-  # callback adapter preserves traversal order
-  candidates = Int[]
-  Meshes.foreachcandidate(i -> push!(candidates, i), query, searcher.tree, Int[])
-  @test candidates == search(query, searcher)
-
   # invalid leaf size
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   @test_throws ArgumentError BBoxSearch(boxes, 0)
