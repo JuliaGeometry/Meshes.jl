@@ -1132,8 +1132,10 @@ end
 @testitem "Ball booleans" setup = [Setup] begin
   b1 = Ball(cart(0, 0), T(1))
   b2 = Ball(cart(1, 1), T(1))
-  @test_broken intersection(b1, b1) |> type == Intersecting
-  @test_broken intersection(b2, b2) |> type == Intersecting
+  @test intersection(b1, b1) |> type == Intersecting
+  @test intersection(b2, b2) |> type == Intersecting
+  @test b1 ∩ b1 == b1 ∪ b1
+  @test isnothing(setdiff(b1, b1))
   @test intersection(b1, b2) |> type == Intersecting
   @test area(b1 ∩ b2) ≈ T(0.5666656645309782) * u"m^2"
   @test area(b1 ∪ b2) ≈ area(b1) + area(b2) - area(b1 ∩ b2) atol=1e-1u"m^2"
@@ -1533,6 +1535,11 @@ end
   q = Pgon(cart.([(0, 0), (4, 0), (4, 4), (0, 4)]))
   @test q ∪ q == q
   @test q ∩ q == q
+  # the midpoint of an edge of this triangle does not land on the edge
+  t = Pgon(cart.([(0, 0), (1, 0), (0.3, 0.7)]))
+  @test t ∪ t == t
+  @test t ∩ t == t
+  @test isnothing(setdiff(t, t))
   poly = Pgon([cart.([(0, 0), (10, 0), (10, 10), (0, 10)]), cart.([(2, 2), (2, 8), (8, 8), (8, 2)])])
   outer = Pgon(cart.([(0, 0), (10, 0), (10, 10), (0, 10)]))
   hole = Pgon(cart.([(2, 2), (8, 2), (8, 8), (2, 8)]))
