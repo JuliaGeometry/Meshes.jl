@@ -425,25 +425,24 @@ function _ghinner(list, rings; inside, common)
   inner = Vector{P}[]
   for range in list.comps
     any(i -> list.verts[i].crossing, range) && continue
-    start = _ghstart(list, range, rings)
-    keep = if isnothing(start)
+    j = _ghonring(list, range, rings)
+    keep = if isnothing(j)
+      start = _ghstart(list, range, rings)
+      isnothing(start) ? false : last(start) == inside
+    else
       # the component lies on a ring of the other polygon, and the two bound the
       # same region only when they wind the same way
-      common && _ghsamewinding(list, range, rings)
-    else
-      _, isin = start
-      isin == inside
+      common && orientation(Ring([list.verts[i].point for i in range])) == orientation(rings[j])
     end
     keep && push!(inner, [list.verts[i].point for i in range])
   end
   inner
 end
 
-# whether the component winds the same way as the ring it lies on
-function _ghsamewinding(list, range, rings)
-  points = [list.verts[i].point for i in range]
-  i = findfirst(r -> all(p -> sideof(p, r) == ON, points), rings)
-  !isnothing(i) && orientation(Ring(points)) == orientation(rings[i])
+# the ring of the other polygon that the whole component lies on, if any
+function _ghonring(list, range, rings)
+  all(i -> list.verts[i].intersect, range) || return nothing
+  findfirst(r -> all(i -> sideof(list.verts[i].point, r) == ON, range), rings)
 end
 
 # ----------------
