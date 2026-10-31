@@ -13,8 +13,7 @@
   end
 
   # construction and traversal retain original element indices
-  boxes = [Box(cart(i, 0), cart(i + 1, 1)) for i in 1:40]
-  reverse!(boxes)
+  boxes = reverse([Box(cart(i, 0), cart(i + 1, 1)) for i in 1:40])
   @test_throws ArgumentError Meshes.BVHTree(boxes, leafsize=0)
   @test_throws ArgumentError Meshes.BVHTree(boxes, leafsize=-1)
   for leafsize in (1, 2, 8, 64)
@@ -28,8 +27,7 @@
   end
 
   # root bounding box
-  boxes = [Box(cart(i, 0), cart(i + 1, 1)) for i in 1:40]
-  reverse!(boxes)
+  boxes = reverse([Box(cart(i, 0), cart(i + 1, 1)) for i in 1:40])
   tree = Meshes.BVHTree(boxes)
   @test tree.nodes[1].box ≈ boundingbox(boxes)
 
