@@ -128,7 +128,7 @@ end
 @testitem "BBoxSearch" setup = [Setup] begin
   # basic query
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  searcher = BBoxSearch(boxes, 1)
+  searcher = BBoxSearch(boxes, leafsize=1)
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   answer = findall(box -> intersects(box, query), boxes)
   result = sort(search(query, searcher))
@@ -142,7 +142,7 @@ end
   query = Box(cart(0.5, 0.5), cart(2.5, 2.5))
   for input in (gset, bset, boxes, geoms)
     @test sort(search(query, BBoxSearch(input))) == [1, 2]
-    @test sort(search(query, BBoxSearch(input, 1))) == [1, 2]
+    @test sort(search(query, BBoxSearch(input, leafsize=1))) == [1, 2]
   end
 
   # no candidates
@@ -156,7 +156,7 @@ end
   query = Box(cart(0.5, 0.5), cart(4.5, 4.5))
   answer = findall(box -> intersects(box, query), boxes)
   for leafsize in (1, 2, 3, 8)
-    lsearcher = BBoxSearch(boxes, leafsize)
+    lsearcher = BBoxSearch(boxes; leafsize)
     @test sort(search(query, lsearcher)) == answer
   end
 
@@ -164,7 +164,7 @@ end
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
   nboxes = length(boxes)
   for leafsize in (nboxes, nboxes + 1, 2nboxes)
-    @test sort(search(boundingbox(boxes), BBoxSearch(boxes, leafsize))) == collect(eachindex(boxes))
+    @test sort(search(boundingbox(boxes), BBoxSearch(boxes; leafsize))) == collect(eachindex(boxes))
   end
 
   # masks preserve original domain indices
@@ -177,8 +177,8 @@ end
 
   # invalid leaf size
   boxes = [Box(cart(0, 0), cart(1, 1)), Box(cart(2, 2), cart(3, 3)), Box(cart(4, 4), cart(5, 5))]
-  @test_throws ArgumentError BBoxSearch(boxes, 0)
-  @test_throws ArgumentError BBoxSearch(boxes, -1)
+  @test_throws ArgumentError BBoxSearch(boxes, leafsize=0)
+  @test_throws ArgumentError BBoxSearch(boxes, leafsize=-1)
 
   # randomized brute-force equivalence
   rng = StableRNG(1234)
@@ -192,7 +192,7 @@ end
     end for _ in 1:200
   ]
   for leafsize in (1, 2, 4, 8, 16)
-    lsearcher = BBoxSearch(boxes, leafsize)
+    lsearcher = BBoxSearch(boxes; leafsize)
     for _ in 1:100
       xmin = rand(rng) * 100
       ymin = rand(rng) * 100
