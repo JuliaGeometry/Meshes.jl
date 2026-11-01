@@ -76,7 +76,7 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
 
   # arrived at a leaf node, store the range of elements and return; the negative first index indicates a leaf
   if last - first + 1 ≤ leafsize
-    nodebox = _bboxes(boxes[perm[i]] for i in first:last)
+    nodebox = boundingbox(boxes[perm[i]] for i in first:last)
     nodes[nodeind] = BVHNode(nodebox, -first, last)
     return nodeind
   end
@@ -95,7 +95,7 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, last, leafsize)
 
   # compute the bounding box of the current node by merging the bounding boxes of its left and right children
-  nodebox = _bboxes((nodes[left].box, nodes[right].box))
+  nodebox = boundingbox((nodes[left].box, nodes[right].box))
 
   # store the current node with the bounding box and the indices of the left and right children
   nodes[nodeind] = BVHNode(nodebox, left, right)
@@ -120,15 +120,13 @@ function _splitaxis(centers, perm, first, last)
 end
 
 """
-    foreachcandidate(f, geombox, tree)
+    foreachcandidate(f, geombox, tree, stack)
 
 Apply `f` to each original element index whose cached box in `tree` intersects `geombox`.
 
 This function is allocation-free apart from its internal traversal stack and is intended as the primitive 
 interface for algorithms that process candidates immediately, avoiding the need to materialize an intermediate
 vector of indices.
-
-See also: [`search`](@ref).
 """
 function foreachcandidate(f::F, geombox::Box, tree::BVHTree, stack) where {F}
   # initialize a stack with the root node index

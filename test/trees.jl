@@ -39,7 +39,7 @@
     if !Meshes.isleaf(node)
       leftbox = tree.nodes[node.left].box
       rightbox = tree.nodes[node.right].box
-      @test node.box ≈ Meshes._bboxes((leftbox, rightbox))
+      @test node.box ≈ Meshes.boundingbox((leftbox, rightbox))
       @test node.left > 0
     end
   end
