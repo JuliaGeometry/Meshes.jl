@@ -26,7 +26,7 @@ struct BVHNode{B}
 end
 
 """
-    BVHTree(boxes, leafsize=8)
+    BVHTree(boxes; leafsize=8)
 
 A static bounding volume hierarchy over a vector of `Box`es. Each leaf stores a
 range of positions in `perm`. The values at those positions identify the
@@ -41,7 +41,7 @@ struct BVHTree{B}
   leafsize::Int
 end
 
-function BVHTree(boxes::Vector{<:Box}, leafsize=8)
+function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
   # validate the leaf size
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
