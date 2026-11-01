@@ -28,11 +28,11 @@ end
 """
     BVHTree(boxes; leafsize=8)
 
-A static bounding volume hierarchy over a vector of `Box`es. Each leaf stores a
-range of positions in `perm`. The values at those positions identify the
-corresponding boxes in the input vector.
+Construct a static bounding volume hierarchy over the bounding boxes in `boxes`.
+The positive integer `leafsize` specifies the maximum number of boxes per leaf.
 
-The input vector is stored without copying and must not be modified while the tree is in use.
+The input vector is stored without copying and must not be modified while
+the tree is in use.
 """
 struct BVHTree{B}
   boxes::Vector{B}
@@ -49,12 +49,10 @@ function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
 
   # compute the centers of the bounding boxes
   centers = map(boxes) do box
-    c = coords(center(box))
-    names = propertynames(c)
-    ntuple(i -> getproperty(c, names[i]), length(names))
+    CoordRefSystems.values(coords(center(box)))
   end
 
-  # initialize a permutation vector
+  # initialize a permutation vector to map positions in the tree partition to original box indices
   perm = collect(1:n)
 
   # determine the element type of the bounding boxes and initialize an empty vector of BVH nodes
@@ -69,30 +67,30 @@ function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
   BVHTree(boxes, perm, nodes, leafsize)
 end
 
-function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
+function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
   # reserve the node position so that the root remains node 1.
   nodeind = length(nodes) + 1
-  push!(nodes, BVHNode(boxes[perm[first]], 0, 0))
+  push!(nodes, BVHNode(boxes[perm[firstind]], 0, 0))
 
   # arrived at a leaf node, store the range of elements and return; the negative first index indicates a leaf
-  if last - first + 1 ≤ leafsize
-    nodebox = boundingbox(boxes[perm[i]] for i in first:last)
-    nodes[nodeind] = BVHNode(nodebox, -first, last)
+  if lastind - firstind + 1 ≤ leafsize
+    nodebox = boundingbox(boxes[perm[i]] for i in firstind:lastind)
+    nodes[nodeind] = BVHNode(nodebox, -firstind, lastind)
     return nodeind
   end
 
   # get axis to be splitted
-  axis = _splitaxis(centers, perm, first, last)
+  axis = _splitaxis(centers, perm, firstind, lastind)
 
-  # sort the elements in the range [first, last] by the center of their bounding boxes along the chosen axis
-  range = view(perm, first:last)
+  # sort the elements in the range [firstind, lastind] by the center of their bounding boxes along the chosen axis
+  range = view(perm, firstind:lastind)
   sort!(range; by=i -> centers[i][axis])
   localmiddle = cld(length(range), 2)
-  middle = first + localmiddle - 1
+  middle = firstind + localmiddle - 1
 
   # recursively build and store in `nodes` the left and right children
-  left = _buildbvh!(nodes, boxes, centers, perm, first, middle, leafsize)
-  right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, last, leafsize)
+  left = _buildbvh!(nodes, boxes, centers, perm, firstind, middle, leafsize)
+  right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, lastind, leafsize)
 
   # compute the bounding box of the current node by merging the bounding boxes of its left and right children
   nodebox = boundingbox((nodes[left].box, nodes[right].box))
@@ -104,12 +102,12 @@ function _buildbvh!(nodes, boxes, centers, perm, first, last, leafsize)
   nodeind
 end
 
-function _splitaxis(centers, perm, first, last)
-  # compute the axis with the widest spread of the centers of the bounding boxes in the range [first, last]
-  lo = centers[perm[first]]
+function _splitaxis(centers, perm, firstind, lastind)
+  # compute the axis with the widest spread of the centers of the bounding boxes in the range [firstind, lastind]
+  lo = centers[perm[firstind]]
   hi = lo
 
-  @inbounds for k in (first + 1):last
+  @inbounds for k in (firstind + 1):lastind
     center = centers[perm[k]]
 
     lo = min.(lo, center)
@@ -142,7 +140,7 @@ function foreachcandidate(f::F, geombox::Box, tree::BVHTree, stack) where {F}
     # check if the bounding box of the current node intersects with the geom bounding box; if not, skip to the next iteration
     intersects(node.box, geombox) || continue
 
-    # if the current node is a leaf node, check each element in the range [first, last] to see if its bounding box intersects
+    # if the current node is a leaf node, check each element in the range [firstind, lastind] to see if its bounding box intersects
     # with the geom bounding box; if so, add its index to the output vector
     if isleaf(node)
       @inbounds for k in abs(node.left):node.right
