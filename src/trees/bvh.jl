@@ -55,12 +55,11 @@ function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
   # initialize a permutation vector to map positions in the tree partition to original box indices
   perm = collect(1:n)
 
-  # determine the element type of the bounding boxes and initialize an empty vector of BVH nodes
-  B = eltype(boxes)
-  nodes = BVHNode{B}[]
+  # initialize an empty vector of BVH nodes providing a size hint for performance
+  nodes = BVHNode{eltype(boxes)}[]
   sizehint!(nodes, 2 * cld(n, leafsize))
 
-  # recursively build the BVH and store the nodes in the `nodes` vector
+  # recursively build the BVH and store the nodes in the nodes vector
   _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
 
   # return the constructed BVH
