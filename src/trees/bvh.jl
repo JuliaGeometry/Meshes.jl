@@ -34,7 +34,7 @@ The positive integer `leafsize` specifies the maximum number of boxes per leaf.
 The input vector is stored without copying and must not be modified while
 the tree is in use.
 """
-struct BVHTree{B}
+struct BVHTree{B<:Box}
   boxes::Vector{B}
   perm::Vector{Int}
   nodes::Vector{BVHNode{B}}
@@ -68,14 +68,15 @@ end
 
 function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
   # reserve the node position so that the root remains node 1.
-  nodeind = length(nodes) + 1
-  push!(nodes, BVHNode(boxes[perm[firstind]], 0, 0))
+  ind = length(nodes) + 1
+  box = boxes[perm[firstind]]
+  push!(nodes, BVHNode(box, 0, 0))
 
   # arrived at a leaf node, store the range of elements and return; the negative first index indicates a leaf
   if lastind - firstind + 1 ≤ leafsize
-    nodebox = boundingbox(boxes[perm[i]] for i in firstind:lastind)
-    nodes[nodeind] = BVHNode(nodebox, -firstind, lastind)
-    return nodeind
+    box = boundingbox(boxes[perm[i]] for i in firstind:lastind)
+    nodes[ind] = BVHNode(box, -firstind, lastind)
+    return ind
   end
 
   # get axis to be splitted
@@ -91,14 +92,12 @@ function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
   left = _buildbvh!(nodes, boxes, centers, perm, firstind, middle, leafsize)
   right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, lastind, leafsize)
 
-  # compute the bounding box of the current node by merging the bounding boxes of its left and right children
-  nodebox = boundingbox((nodes[left].box, nodes[right].box))
-
   # store the current node with the bounding box and the indices of the left and right children
-  nodes[nodeind] = BVHNode(nodebox, left, right)
+  box = boundingbox((nodes[left].box, nodes[right].box))
+  nodes[ind] = BVHNode(box, left, right)
 
   # return the current node index to the caller so that it can be stored in its parent node
-  nodeind
+  ind
 end
 
 function _splitaxis(centers, perm, firstind, lastind)
