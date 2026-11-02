@@ -42,25 +42,26 @@ struct BVHTree{B<:Box}
 end
 
 function BVHTree(boxes::AbstractVector{<:Box}; leafsize=8)
-  # validate the leaf size
+  # sanity check
   leafsize > 0 || throw(ArgumentError("leaf size must be positive"))
 
-  n = length(boxes)
+  # number of boxes
+  nboxes = length(boxes)
+
+  # initialize an empty vector of BVH nodes
+  nodes = BVHNode{eltype(boxes)}[]
+  sizehint!(nodes, 2 * cld(nboxes, leafsize))
 
   # compute the centers of the bounding boxes
   centers = map(boxes) do box
     CoordRefSystems.values(coords(center(box)))
   end
 
-  # initialize a permutation vector to map positions in the tree partition to original box indices
-  perm = collect(1:n)
-
-  # initialize an empty vector of BVH nodes providing a size hint for performance
-  nodes = BVHNode{eltype(boxes)}[]
-  sizehint!(nodes, 2 * cld(n, leafsize))
+  # map nodes in the tree to original box indices
+  perm = collect(1:nboxes)
 
   # recursively build the BVH and store the nodes in the nodes vector
-  _buildbvh!(nodes, boxes, centers, perm, 1, n, leafsize)
+  _buildbvh!(nodes, boxes, centers, perm, 1, nboxes, leafsize)
 
   # return the constructed BVH
   BVHTree(boxes, perm, nodes, leafsize)
@@ -79,18 +80,18 @@ function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
     return ind
   end
 
-  # get axis to be splitted
-  axis = _splitaxis(centers, perm, firstind, lastind)
+  # find dimension to split
+  dim = _splitdim(centers, perm, firstind, lastind)
 
-  # sort the elements in the range [firstind, lastind] by the center of their bounding boxes along the chosen axis
-  range = view(perm, firstind:lastind)
-  sort!(range; by=i -> centers[i][axis])
-  localmiddle = cld(length(range), 2)
-  middle = firstind + localmiddle - 1
+  # sort the elements in the range [firstind, lastind] by the center of their bounding boxes along the chosen dim
+  pview = view(perm, firstind:lastind)
+  sort!(pview; by=i -> centers[i][dim])
+  localind = cld(length(pview), 2)
+  middleind = firstind + localind - 1
 
   # recursively build and store in `nodes` the left and right children
-  left = _buildbvh!(nodes, boxes, centers, perm, firstind, middle, leafsize)
-  right = _buildbvh!(nodes, boxes, centers, perm, middle + 1, lastind, leafsize)
+  left = _buildbvh!(nodes, boxes, centers, perm, firstind, middleind, leafsize)
+  right = _buildbvh!(nodes, boxes, centers, perm, middleind + 1, lastind, leafsize)
 
   # store the current node with the bounding box and the indices of the left and right children
   box = boundingbox((nodes[left].box, nodes[right].box))
@@ -100,7 +101,7 @@ function _buildbvh!(nodes, boxes, centers, perm, firstind, lastind, leafsize)
   ind
 end
 
-function _splitaxis(centers, perm, firstind, lastind)
+function _splitdim(centers, perm, firstind, lastind)
   # compute the axis with the widest spread of the centers of the bounding boxes in the range [firstind, lastind]
   lo = centers[perm[firstind]]
   hi = lo
