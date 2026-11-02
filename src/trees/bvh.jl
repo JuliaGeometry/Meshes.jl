@@ -19,7 +19,7 @@ The fields are defined as follows:
 A negative `left` identifies a leaf node, while a positive `left` identifies an
 internal node.
 """
-struct BVHNode{B}
+struct BVHNode{B<:Box}
   box::B
   left::Int
   right::Int
