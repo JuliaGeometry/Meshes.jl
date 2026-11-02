@@ -46,11 +46,7 @@ function (d::EuclideanDistance)(s₁::Segment, s₂::Segment)
   λ₁′ = clamp(λ₁, zero(λ₁), one(λ₁))
   p₁′ = s₁(λ₁′)
   p₂′ = _nearestpoint(p₁′, s₂)
-  min(
-    d(p₁′, p₂′),
-    d(s₁, s₂(0)),
-    d(s₁, s₂(1)),
-  )
+  min(d(p₁′, p₂′), d(s₁, s₂(0)), d(s₁, s₂(1)))
 end
 
 # exploit symmetry to get more methods for free
